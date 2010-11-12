@@ -58,7 +58,7 @@
 #include "AEEDB.h"
 
 //#define DBG_DB                   1
-#define OEM_IDX_EXT                 ".idx"
+//#define OEM_IDX_EXT                 ".idx"
 #define DB_COMPRESS_PERCENT         50    // Compress database when "junk" records are 50% of good records
 #define DB_COMPRESS_COUNT           5     // Don't compress unless this many records are deleted
 #define DB_INCREASE_SIZE            16	   // Increment used for increasing size of index
@@ -125,7 +125,7 @@ typedef PACKED struct _oemdb_rec_header
 #pragma pack(pop) 
 #endif
 
-typedef dword  oemdb_index;
+//typedef dword  oemdb_index;
 
 
 //=============== Function Prototypes ======================
@@ -635,7 +635,7 @@ void   OEM_DBClose(OEMCONTEXT pDBContext, AEE_DBError*  pDBErr)
          // need to be written unless index changes
          IFILE_Seek(pdb->pDBFile, _SEEK_START, 0);
          
-         IFILE_Write(pdb->pDBFile, &pdb->h, sizeof(oemdb_header));
+         (void)IFILE_Write(pdb->pDBFile, &pdb->h, sizeof(oemdb_header));
       }
    }
    
@@ -822,8 +822,11 @@ static byte * DB_GetRecord(OEMCONTEXT pDBContext,word wRecId,AEE_DBRecInfo*   pR
    //No need to check if a record with NULL Rec ID can be found here as that condition
    //is ruled out at the start of the function.
    if(IFILE_Read(pdb->pDBFile, (void *)pRecBuf, RecHeaderBuf.wRecSize) == RecHeaderBuf.wRecSize){
-      if (pRecInfo) 
-         MEMCPY(pRecInfo, (void *) &RecHeaderBuf, sizeof(RecHeaderBuf));
+      if (pRecInfo)  {
+         pRecInfo->wRecID = RecHeaderBuf.wRecID;
+         pRecInfo->wRecSize = RecHeaderBuf.wRecSize;
+         pRecInfo->dwLastModified = 0;
+      }
       SetDBError(pDBErr, AEE_DB_ERR_NO_ERR);
    }
    else{
@@ -981,7 +984,7 @@ void  OEM_DBRecordDelete(
                          )
 {
    OEMDBase *           pdb = (OEMDBase *) pDBContext;
-			
+
    if (pDBContext == NULL) {
       SetDBError(pDBErr, AEE_DB_ERR_BAD_HANDLE);
       return;
@@ -1148,7 +1151,7 @@ void  OEM_DBFree(
                  AEE_DBError*   pDBErr
                  ) {
    
-    
+   (void) pDBContext; /* unused parameter */
    if (pbyRecBuf) {
       sys_free(pbyRecBuf);
    }
@@ -1166,6 +1169,7 @@ OEM_DBMakeReadOnly
 ============================================================================*/
 void OEM_DBMakeReadOnly(const char * szDBName, AEE_DBError * pDBErr)
 {
+   (void) szDBName; /* unused parameter */
    SetDBError(pDBErr, AEE_DB_ERR_NO_ERR);
 }
 
@@ -1500,7 +1504,7 @@ static void DB_Compress(OEMDBase *pdb)
             // This will leave a valid database file
             DeletedRecHeaderBuf.wRecID = AEE_DB_RECID_NULL;
             dwBuffSz = RecHeaderBuf.wRecSize + sizeof(oemdb_rec_header);
-            dwDelta = (pdb->dwOffsetFrom - pdb->dwOffsetTo - sizeof(oemdb_rec_header));
+            dwDelta = (pdb->dwOffsetFrom - pdb->dwOffsetTo) - sizeof(oemdb_rec_header);
             
             if (dwDelta <= MAX_REC_SIZE) {
                DeletedRecHeaderBuf.wRecSize = (word)dwDelta;
@@ -1571,7 +1575,7 @@ static void DB_Compress(OEMDBase *pdb)
          // Put deleted record header after data in case system crashes while we are waiting
          // for resume. This will leave a valid database file.
          
-         uint32 dwDelta = (pdb->dwOffsetFrom - pdb->dwOffsetTo - sizeof(oemdb_rec_header));
+         uint32 dwDelta = (pdb->dwOffsetFrom - pdb->dwOffsetTo) - sizeof(oemdb_rec_header);
          DeletedRecHeaderBuf.wRecID = AEE_DB_RECID_NULL;
          
          IFILE_Seek(pdb->pDBFile, _SEEK_START, pdb->dwOffsetTo);
@@ -1599,9 +1603,9 @@ static void DB_Compress(OEMDBase *pdb)
       CALLBACK_Cancel(&pdb->cb);
       CALLBACK_Init(&pdb->cb,DB_Compress,pdb);
       {
-         IShell* pIShell = AEE_GetShell();     
+         IShell* pIShell = AEE_GetShell();	      
          ISHELL_Resume(pIShell ,&pdb->cb);
-      }	 
+      }
    }
 }
 
@@ -1980,8 +1984,10 @@ static AEE_DBError DB_SetIdxRecOffset(OEMDBase *pdb, word wRecId, dword offset)
 	if (offset)
 	{
 		if (found)
+      {
 			// Modify an entry
 			pdb->pIndex->e[idx].dwOffset = offset;
+      }
 		else
 		{
 			// Add an entry
@@ -2005,7 +2011,7 @@ static AEE_DBError DB_SetIdxRecOffset(OEMDBase *pdb, word wRecId, dword offset)
 	else if (found)
 	{
 		// Delete entry
-		MEMMOVE((void*)&pdb->pIndex->e[idx],(void*)&pdb->pIndex->e[idx+1],(pdb->pIndex->h.recCount-idx-1)*sizeof(index_entry));
+      MEMMOVE((void*)&pdb->pIndex->e[idx],(void*)&pdb->pIndex->e[idx+1],((pdb->pIndex->h.recCount-idx)-1)*sizeof(index_entry));
 		pdb->pIndex->h.recCount--;
 	}
 
@@ -2087,7 +2093,7 @@ static IFileMgr * GetFileMgr(void)
 {
    IFileMgr *  pFileMgr = NULL;
    IShell* pIShell = AEE_GetShell();
-   
+
    ISHELL_CreateInstance(pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
 
    return(pFileMgr);
@@ -2241,7 +2247,7 @@ static IFile * DB_OpenFile(IFileMgr * pfm,const char * pszFullPath,int nCacheSiz
    AEE_LeaveAppContext(pacRest);
 
    if(pf && nCacheSize)
-      IFILE_SetCacheSize(pf, nCacheSize);
+      (void)IFILE_SetCacheSize(pf, nCacheSize);
 
    return(pf);
 }
@@ -2310,12 +2316,12 @@ static void RemoveIndexFromFile(OEMDBase *pdb)
 {
 	if (pdb->h.dwIndexOffset)
 	{
-		IFILE_Truncate(pdb->pDBFile,pdb->h.dwIndexOffset);
+		(void)IFILE_Truncate(pdb->pDBFile,pdb->h.dwIndexOffset);
 		pdb->h.dwIndexOffset = 0;
 
 		// Write DB header	
-		IFILE_Seek(pdb->pDBFile, _SEEK_START, 0);   
-		IFILE_Write(pdb->pDBFile, &pdb->h, sizeof(oemdb_header));
+		(void)IFILE_Seek(pdb->pDBFile, _SEEK_START, 0);   
+		(void)IFILE_Write(pdb->pDBFile, &pdb->h, sizeof(oemdb_header));
 	}
 }
 

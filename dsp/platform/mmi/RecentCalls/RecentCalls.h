@@ -74,7 +74,7 @@ QINTERFACE(IRecentCalls)
     INHERIT_IApplet(IRecentCalls);
     void (*SendList)(IRecentCalls *p);
     void (*MissedList)(IRecentCalls *p);
-    void (*CallList)(IRecentCalls *p, PFNSELECTEDRECENTCALLSCB cb, SelectRecordType t); //modfied by chengxiao 2009.02.19
+    void (*CallList)(IRecentCalls *p, PFNSELECTEDRECENTCALLSCB cb, SelectRecordType t);
 };
 
 
@@ -92,7 +92,7 @@ QINTERFACE(IRecentCalls)
 
 #define IRecentCalls_MissedList(p)  GET_PVTBL(p,IRecentCalls)->MissedList(p)
 
-#define IRecentCalls_CallList(p,cb,t) GET_PVTBL(p,IRecentCalls)->CallList(p,cb,t) //modfied by chengxiao 2009.02.19
+#define IRecentCalls_CallList(p,cb,t) GET_PVTBL(p,IRecentCalls)->CallList(p,cb,t)
 #endif
 //RECENTCALL_H
 

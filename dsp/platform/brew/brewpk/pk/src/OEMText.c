@@ -139,17 +139,8 @@ when       who     what, where, why
 
 static int snTextModeIndex = 0;
 #define TIMEOUT   460
-#ifdef FEATURE_T9_CHINESE
-#define FEATURE_GRAPHIC_INPUT_BG
-#endif
-
-#define TEXT_BETWEEN_LINE_PIXEL   (3)
-#define INPUT_BETWEEN_LINE_PIXEL   (2)
-
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-#define FEATURE_INPUT_BG_YOFFSET (18)  //added nu chengxiao 2009.04.17
-#endif
-
+#define TEXT_BETWEEN_LINE_PIXEL   (0)
+#define INPUT_BETWEEN_LINE_PIXEL   (0)
 #define  PTRCK_GEN_TMRSET  (0x01)   // Timer is set
 #define TSIM_MODE      (2)
 
@@ -377,7 +368,7 @@ static void TextCtl_DrawCursorTimer(TextCtlContext *pContext);
 extern uint32 ParagraphAlignment(AECHAR *pszText, int nChars);                 
 #endif
 
-#ifdef FEATURE_T9_MT_THAI  
+#ifdef FEATURE_LANG_THAI 
 //泰语字符是否属于辅音
 static boolean isThaiCnsntChar(AECHAR inputChar);
 //泰语字符是否属于上元音
@@ -402,9 +393,6 @@ extern int WMSUtil_CalculateMessagesCount(AECHAR *pWstr,
 static void TextCtl_NumbersTimer(void *pUser);
 /* add the code end */
 static void TextCtl_DrawBackGround(TextCtlContext *pContext, AEERect *pRect);
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-static void TextCtl_DrawInputBackground(TextCtlContext *pContext, AEERect *pRect, int xPos, int yPos);
-#endif
 /*===========================================================================
 
                     STATIC/LOCAL DATA
@@ -765,7 +753,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
 
    // By default we have these settings until the API is enhanced
    pNewContext->font = AEE_FONT_NORMAL;
-   pNewContext->nFontLeading = TEXT_BETWEEN_LINE_PIXEL; // 0 pixels of leading between rows //modified by chengxiao 2009.03.23
+   pNewContext->nFontLeading = TEXT_BETWEEN_LINE_PIXEL; // 0 pixels of leading between rows
    curLngMode = LNG_ENGLISH;//OEM_Lang();  
    pNewContext->m_pImageBg = NULL;
 
@@ -809,12 +797,12 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    // This workaround will ensure there is always enough room to display
    // a single line regardless of the rectangle that the ITextCtl gives us.
    //
-   if (pNewContext->rectDisplay.dy < pNewContext->nLineHeight + 4) {
+   if (pNewContext->rectDisplay.dy < pNewContext->nLineHeight) {
       SETAEERECT(&pNewContext->rectDisplay,
                   pNewContext->rectDisplay.x,
                   pNewContext->rectDisplay.y,
                   pNewContext->rectDisplay.dx,
-                  pNewContext->nLineHeight + 4);
+                  pNewContext->nLineHeight);
    }
 #ifdef FEATURE_T9_CHINESE
    pNewContext->rectChineseInput.x = pNewContext->rectDisplay.x;
@@ -846,7 +834,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
                                           (void **)&pNewContext->m_pMyFont))
     {
         pNewContext->m_pMyFont = NULL;
-        //return NULL;
+        return NULL;
     }  
 
 #endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
@@ -1133,7 +1121,6 @@ SEE ALSO:
 void OEM_TextUpdate(OEMCONTEXT hTextCtl)
 {
    register TextCtlContext *pContext = (TextCtlContext *) hTextCtl;
-
    if (pContext && pContext->bNeedsDraw) {
       OEM_TextDraw(pContext);
    }
@@ -1706,7 +1693,6 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
                     {
                         boolean bSel = (boolean)(pContext->wSelEnd == pContext->wSelStart ? FALSE : TRUE);
                         uint16 wNewSel = (pContext->bSwap ? pContext->wSelEnd : pContext->wSelStart);
-                        
                         if (wNewSel && bSel)
                         {
                             --wNewSel;
@@ -1725,11 +1711,9 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
                     {
                         boolean bSel = (boolean)(pContext->wSelEnd == pContext->wSelStart ? FALSE : TRUE);
                         uint16 wNewSel = ( pContext->bSwap ? pContext->wSelEnd : pContext->wSelStart);
-                        
                         if (bSel)
                         {
                             wNewSel++; // Checks bounds below.
-                            
                             OEM_TextSetSel(pContext, wNewSel, wNewSel);
                             TextCtl_AutoScroll(pContext);
                             OEM_TextUpdate(pContext);
@@ -1757,7 +1741,6 @@ OEM_TextKeyPress_COMM:
                     {
                     	
                         boolean ans = (*sTextModes[pContext->byMode].pfn_char)(pContext,eCode, key);
-						MSG_FATAL("OEM_TextKeyPress_COMM:.....................",0,0,0);
                         if (ans)
                         {
                             OEM_TextUpdate(pContext);
@@ -1844,7 +1827,6 @@ SEE ALSO:
 void OEM_TextAddChar(OEMCONTEXT hTextCtl, AECHAR ch, boolean bOverStrike)
 {
    register TextCtlContext *pContext = (TextCtlContext *) hTextCtl;
-
 #ifdef AEE_DEBUG
    MSG_MED("OEM_TextAddChar 0x%04lX", (unsigned long) ch, 0, 0);
 #endif
@@ -1950,7 +1932,6 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
 #endif
 
     uint32 dwFlags = (IDF_ALIGN_LEFT|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
-
     if (!pContext)
     {
         return;
@@ -1976,9 +1957,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     AECHAR   * pszText;
                     pszText = OEM_TextGet(pContext);
                     szsmscount = 1;
-                    
                     szsmscount = WMSUtil_CalculateMessagesCount(pszText, NULL, NULL);
-
                     // Draw the number of remaining characters.
                     STR_TO_WSTR("%d/%d   ", szFormat, sizeof(szFormat));
                     WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, wRemainingChars, szsmscount);                    
@@ -2039,7 +2018,6 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     int  nBarH = GetTitleBarHeight((IDisplay *)pContext->pIDisplay);
                     int nPixels = IDISPLAY_MeasureText(pContext->pIDisplay,pContext->font,szRemainingCount);
                     IDISPLAY_GetClipRect(pContext->pIDisplay, &oldrc);
-
                     if ( nPixels > m_nPixels)
                     {
 						m_nPixels = nPixels;
@@ -2083,7 +2061,6 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
             }
             bFrame = TRUE;
         }
-
         if (pContext->wLines > pContext->nDisplayLines && (pContext->dwProperties & TP_MULTILINE)) 
         {
             // Draw the scroll bar
@@ -2173,7 +2150,6 @@ void OEM_TextSetCursorPos(OEMCONTEXT hTextField, int32 nOffset)
       nSel  = 0;
    else
       nSel  = (uint16) nOffset;
-
    OEM_TextSetSel(hTextField, nSel, nSel);
 #ifdef FEATURE_T9_INPUT  
 #ifdef FEATURE_T9_ALPHABETIC
@@ -2341,7 +2317,6 @@ static void TextCtl_TextChanged(TextCtlContext *pContext)
    // We must validate various aspects of the text control
    // and determine whether or not the display needs to
    // be re-calculated/re-drawn.
-
    // First normalize the selection if necessary
    if (pContext->wSelEnd < pContext->wSelStart) {
       // Swap start and end of selection
@@ -2387,7 +2362,7 @@ static void TextCtl_TextChanged(TextCtlContext *pContext)
 
    // Calculate maximum number of lines
    if (pContext->dwProperties & TP_FRAME) {
-      pContext->nDisplayLines = ( (pContext->rectDisplay.dy - 4) +
+      pContext->nDisplayLines = ( (pContext->rectDisplay.dy) +
                                   pContext->nFontLeading          ) /
                                      (pContext->nFontAscent +
                                       pContext->nFontDescent +
@@ -2415,11 +2390,11 @@ static void TextCtl_TextChanged(TextCtlContext *pContext)
                                     );
    if (!(pContext->dwProperties & TP_MULTILINE) && (pContext->dwProperties & TP_FIXOEM)) {
       // Adjust for frame
-      pContext->nExtraPixels = pContext->nExtraPixels/2 + 1;
+      pContext->nExtraPixels = pContext->nExtraPixels/2;
    }
    if (pContext->dwProperties & TP_FRAME) {
       // Adjust for frame
-      pContext->nExtraPixels -= 4;
+      pContext->nExtraPixels -= 2;
    }
 
    // We're valid now pending recalc.
@@ -2637,7 +2612,6 @@ SEE ALSO:
 static void TextCtl_AddChar(TextCtlContext *pContext, AECHAR ch)
 {
    boolean bModified = FALSE;
-
    // Don't allow the null character to be inserted.
    if (pContext) {
       AECHAR *pNewContents;
@@ -2724,7 +2698,6 @@ SEE ALSO:
 static void TextCtl_AddString(TextCtlContext *pContext, AECHAR * sz)
 {
    boolean bModified = FALSE;
-
    if( pContext && sz && *sz ){
       AECHAR * pNewContents;
 
@@ -3354,7 +3327,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 */ 
    scratch.x += (int16)( (uint16) scratch.dx >> 1 ) + 1;
    scratch.dx = 1;
-   scratch.dy = 14; 
+   scratch.dy = pContext->nFontAscent + pContext->nFontDescent; 
    // Vertical bar
    // 单行垂直方向居中对齐
    if (IntersectRect(&draw, &scratch, clipRect))
@@ -3435,7 +3408,6 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
 
    /*因为当字符串超过一行或者在行尾时，向字符串插入空格
    会把很长的空间反显(multitap input mode)*/
-   
    if ( (wSelEndLine != wSelStartLine) &&
         ((pContext->sT9awFieldInfo.G.dwStateBits & T9STATEMULTITAPMASK) == T9STATEMULTITAPMASK))
    {
@@ -3450,10 +3422,10 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    rectClip.dy = pContext->rectDisplay.dy;
 
    if (bFrame) {
-      rectClip.x  += 2;
-      rectClip.y  += 2;
-      rectClip.dx -= 4;
-      rectClip.dy -= 4;
+      rectClip.x  += 1;
+      rectClip.y  += 1;
+      rectClip.dx -= 2;
+      rectClip.dy -= 2;
 
       // If we have a frame, the scroll bar overlaps it by 2 pixels
       if (bScroll) {
@@ -3471,7 +3443,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    rectLeading = rectText;
    rectLeading.y += rectText.dy;
    rectLeading.dy = pContext->nFontLeading;
-
+   
    if(pContext->dwProperties & TP_GRAPHIC_BG)
    {
        dwOldBkClr = TEXT_GRAPHIC_BG_COLOR;
@@ -3482,7 +3454,6 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    }
    dwOldBkClr = IDISPLAY_SetColor((IDisplay *)pContext->pIDisplay,CLR_USER_BACKGROUND,
                         dwOldBkClr);//MAKE_RGB(255,255,255)); 
-
    for (; cnt > 0; ++i, --cnt) 
    {
       if (cnt > 1 && pContext->nFontLeading) 
@@ -3570,11 +3541,6 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
          else if (!(pContext->dwProperties & TP_MULTILINE) && 
                   (pContext->dwProperties & TP_FIXOEM))
          {
-            int offSet = 0;
-            if(AEE_TM_NUMBERS == sTextModes[pContext?pContext->byMode:0].info.wID)
-            {
-                offSet = 1;
-            }
             if(pContext->dwProperties & TP_GRAPHIC_BG)
             {
                 TextCtl_DrawBackGround(pContext, &rectClip);
@@ -3584,8 +3550,8 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                                       pContext->pwLineStarts[i] +
                                       pContext->pszContents,
                                       lineChars,
-                                      rectText.x + 1,
-                                      rectText.y + pContext->nExtraPixels + offSet,
+                                      rectText.x,
+                                      rectText.y + pContext->nExtraPixels,
                                       &rectClip,
                                       IDF_TEXT_TRANSPARENT);
             }
@@ -3596,8 +3562,8 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                                       pContext->pwLineStarts[i] +
                                       pContext->pszContents,
                                       lineChars,
-                                      rectText.x + 1,
-                                      rectText.y + pContext->nExtraPixels + offSet/*+pContext->nFontAscent*/,
+                                      rectText.x,
+                                      rectText.y + pContext->nExtraPixels/*+pContext->nFontAscent*/,
                                       &rectClip,
                                       IDF_RECT_FILL/*|IDF_ALIGN_MIDDLE*/);//dwFlags);
             }
@@ -3622,7 +3588,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                 {
                     LineCursor1 = pContext->wSelStart - pContext->pwLineStarts[i];
                     IFONT_MeasureTextCursorPos(pContext->m_pMyFont, rectText.x, 
-                                                        pContext->pwLineStarts[i] + pContext->pszContents, 
+                                                         pContext->pszContents+pContext->pwLineStarts[i], 
                                                         lineChars, &rectText, &cursorx1, LineCursor1, pContext->dwAlignFlags);
                 }
 #else //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
@@ -3663,7 +3629,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                cursRect.y = rectText.y; // Would subtract 1, but vertical leading
                                         // is embedded in our fonts too
                cursRect.dx = 1;
-               cursRect.dy = pContext->nFontAscent + pContext->nFontDescent + 1;
+               cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
                bDrawCursor = TRUE;  // Draw the cursor at the end
             }
          }
@@ -3683,7 +3649,6 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                int32 endX = (wSelEndLine == wSelStartLine)
                                     ?((IDF_ALIGN_LEFT == startAlign)?(rectText.x + (int16) rectText.dx):(rectText.x))
                                     :((IDF_ALIGN_LEFT == endAlign)?(rectText.x + (int16) rectText.dx):(rectText.x));
-
                if (wSelEndLine == i) 
                {
                   if (pContext->wSelEnd > pContext->pwLineStarts[i]) 
@@ -3700,7 +3665,6 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                   else
                         endX = startX;
                }
-
                if ((wSelStartLine == i) && (pContext->wSelStart > pContext->pwLineStarts[i])) 
                {
                     if ( NULL != pContext->m_pMyFont )
@@ -3836,7 +3800,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                cursRect.y = rectText.y; // Would subtract 1, but vertical leading
                                         // is embedded in our fonts too
                cursRect.dx = 5;
-               cursRect.dy = pContext->nFontAscent + pContext->nFontDescent + 1;
+               cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
                bDrawCursor = TRUE;  // Draw the cursor at the end
             }
          } 
@@ -3975,7 +3939,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
             cursRect.x = rectText.x - 2;
             cursRect.y = rectText.y;
             cursRect.dx = 5;
-            cursRect.dy = pContext->nFontAscent + pContext->nFontDescent + 1;
+            cursRect.dy = pContext->nFontAscent + pContext->nFontDescent;
             bDrawCursor = TRUE;
          }
       }
@@ -4016,7 +3980,6 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    }
    
    (void) IDISPLAY_SetColor((IDisplay *)pContext->pIDisplay,CLR_USER_BACKGROUND,dwOldBkClr);
-
 }
 
 /*=============================================================================
@@ -4091,22 +4054,6 @@ static void TextCtl_DrawBackGround(TextCtlContext *pContext, AEERect *pRect)
 {
     Appscommon_ResetBackground(pContext->pIDisplay, pContext->m_pImageBg, APPSCOMMON_BG_COLOR, pRect, 0, 0);
 }
-
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-static void TextCtl_DrawInputBackground(TextCtlContext *pContext, AEERect *pRect, int xPos, int yPos)
-{
-    IImage *pImage = NULL;
-    
-    pImage = ISHELL_LoadResImage(pContext->pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_INPUT_BACKGROUND);
-    Appscommon_ResetBackground(pContext->pIDisplay, pImage, APPSCOMMON_BG_COLOR, pRect, xPos, yPos);
-                            //pContext->rectChineseSyllableInput.x+2, pContext->rectChineseSyllableInput.y+1);
-    if(pImage != NULL)
-    {
-        IImage_Release(pImage);
-        pImage = NULL;
-    }
-}
-#endif
 
 #ifdef FEATURE_T9_INPUT
 /*------------------------------------------------------------------------
@@ -4272,8 +4219,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
     uint16   nBufLen   = pContext->sT9awFieldInfo.G.nBufLen;
     sFocusType sFocus = pContext->sFocus;     
     boolean bFlag = GetArrowFlagonIM();
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key Start",0,0,0);
-
+	MSG_FATAL("T9TextCtl_Latin_Rapid_Key::start:%d",key,0,0);
 #if defined (FEATURE_ALL_KEY_PAD)
 	if(eCode == EVT_KEY_HELD)
 		{
@@ -4307,6 +4253,8 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 	        case AVK_B:
 	        case AVK_N:
 	        case AVK_M:
+	        case AVK_Z:
+	        case AVK_MUTE:
                 for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
     			{           
             		if (key == VLCharKeyItem[i].wParam)
@@ -4400,6 +4348,8 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		        case AVK_ENTER:
 				case AVK_SPACE:
 		        case AVK_RWD:
+		        case AVK_Z:
+	        	case AVK_MUTE:
 		            {
 		                int i = 0;
 		                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
@@ -4415,6 +4365,27 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		    			{    
 		    				switch(OEM_TextGetCurrentMode((OEMCONTEXT)pContext))
 		    				{
+		    				#ifdef FEATURE_T9_RAPID_THAI
+								case TEXT_MODE_T9_RAPID_THAI:
+									{
+										if (key == VLCharKeyItem[i].wParam)
+					            		{
+					        			    if(pContext->is_isShift)
+					                        { 
+					                            TextCtl_NoSelection(pContext);
+					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharShiftThaiKeyItem[i].wp));
+					                            pContext->is_isShift = FALSE;
+					                        }
+					                        else
+					                        {
+					                            TextCtl_NoSelection(pContext);
+					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharThaiKeyItem[i].wp));
+					                        }
+					                     }
+										break;
+
+								    }
+							#endif
 		    				#ifdef FEATURE_T9_RAPID_ARABIC
 		    					case TEXT_MODE_T9_RAPID_ARABIC:
 									{
@@ -4430,6 +4401,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 									{
 					            		if (key == VLCharKeyItem[i].wParam)
 					            		{
+					            			MSG_FATAL("i:::::::::::::::::%d",i,0,0);
 					        			    if(pContext->is_isShift)
 					                        { 
 					                            TextCtl_NoSelection(pContext);
@@ -4492,11 +4464,11 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                   }
 		                   else 
 		                   {  
-		               
 		                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 		                   }
 		            }
-#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+#else//change by xuhui
+//#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 		            if (OEM_TextGetCursorPos(pContext) == 0)
 		                {
 		                    OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
@@ -4519,10 +4491,11 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                            wNewSel = wNewSel - count;
 		                        }
 		                    }
-#endif //FEATURE_LANG_THAI                   
+#endif //FEATURE_LANG_THAI                 
 		                OEM_TextSetSel(pContext, wNewSel, wNewSel);
-		                    (void) TextCtl_AutoScroll(pContext);
+		                    (void) TextCtl_AutoScroll(pContext);                        
 		                }
+#endif                  //change by xuhui      
 		                return TRUE;
 		            }            
 		            break;     
@@ -4543,11 +4516,12 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                   else 
 		                   {  
 		                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-		                       wNewSel --;            
+		                       wNewSel --;          
 		                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 		                   }
 		                }
-#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+#else//change by xuhui
+//#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 		             if (OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
 		                {
 		                    OEM_TextSetCursorPos(pContext, -1);
@@ -4566,10 +4540,11 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                            wNewSel = wNewSel + count;
 		                        }
 		                    }
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI                                
 		                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
-		                    (void) TextCtl_AutoScroll(pContext);
+		                    (void) TextCtl_AutoScroll(pContext);                          
 		                }
+#endif                        //change by xuhui
 		                return TRUE;  
 		            }
 		            break;   
@@ -4879,7 +4854,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 								   }
 								   else 
 								   {  
-							   
 									   OEM_TextSetSel(pContext, wNewSel, wNewSel);						 
 								   }
 							}
@@ -4930,7 +4904,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 								   else 
 								   {  
 									   //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );	
-									   wNewSel --;			  
+									   wNewSel --;			
 									   OEM_TextSetSel(pContext, wNewSel, wNewSel);						 
 								   }
 								}
@@ -4953,7 +4927,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 											wNewSel = wNewSel + count;
 										}
 									}
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI                                
 								 OEM_TextSetSel(pContext, wNewSel, wNewSel);
 									(void) TextCtl_AutoScroll(pContext);
 								}
@@ -5069,7 +5043,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 #else
 	//handle key
     t9Key     = T9_BrewKeyToT9AlphabeticKey (pContext,eCode, key );
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 1 t9Key=%d", t9Key,0,0);
     if(key == AVK_SELECT|| key == AVK_INFO)
     {
         if(FOCUS_SELECTION == pContext->sFocus)
@@ -5093,7 +5066,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
         return FALSE;       
     }
     
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 2", 0,0,0);
     switch ( t9Key) 
     {
         case T9KEYAMBIG1:
@@ -5108,7 +5080,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
         case T9KEYAMBIGA:
         case T9KEYAMBIGB: 
         case T9KEYAMBIGC: 
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 3", 0,0,0);
              if (TEXT_MODE_T9_RAPID_ENGLISH== OEM_TextGetCurrentMode(pContext)
                  && MULTITAP_FIRST_CAP == pContext->nMultitapCaps
                  && !OEM_isFirstCap(pContext)
@@ -5132,7 +5103,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             break;        
 
         case T9KEYLEFT:
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 4", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {   
                 pContext->sFocus = FOCUS_TEXT;               
@@ -5178,7 +5148,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             break;
 
         case T9KEYRIGHT:
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 5", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {   
                 pContext->sFocus = FOCUS_TEXT;             
@@ -5223,7 +5192,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             break;
 
          case T9KEYPREV:
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 6", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {            
                 sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key);   
@@ -5257,7 +5225,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             break;
 
         case T9KEYNEXT:
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 7", 0,0,0);
             if(FOCUS_SELECTION == pContext->sFocus)
             {            
                 sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key);  
@@ -5315,7 +5282,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             break; 
             
         case T9KEYCLEAR:
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 8", 0,0,0);
             if ((0 == pContext->wSelStart) && (pContext->wSelStart == pContext->wSelEnd))
             {
                 return FALSE;
@@ -5327,7 +5293,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             break;
             
         case T9KEYSPACE:  
-            MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 9", 0,0,0);
             if((FOCUS_SELECTION == pContext->sFocus)&&
                 (pContext->wMaxChars == nBufLen))
             {
@@ -5344,7 +5309,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );  
             break;  
     }  
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 10", 0,0,0);    
     if( pContext->sT9awFieldInfo.G.nCurSelObj == 0)
     {
        bFlag =  FALSE;
@@ -5359,7 +5323,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
         }else{
             bFlag = FALSE; }
     }
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 11", 0,0,0);  
     if(bFlag != GetArrowFlagonIM() )
     {
         SetArrowFlagonIM( bFlag);
@@ -5371,11 +5334,9 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
     {          
         bRet = T9_AW_DisplayText ( pContext, key);  
     }
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: 12", 0,0,0);
 #endif
 
 
-    MSG_FATAL("T9TextCtl_Latin_Rapid_Key:: END bRet=%d", bRet,0,0);
     return bRet;
 }
 
@@ -5535,7 +5496,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
     T9STATUS sT9Status = T9STATERROR;  
     T9KEY    t9Key;
     uint16   nBufLen = pContext->sT9awFieldInfo.G.nBufLen;
-    ERR("T9TextCtl_MultitapKey::start",0,0,0);
+    MSG_FATAL("T9TextCtl_MultitapKey::start:%d",key,0,0);
 
 #if defined (FEATURE_ALL_KEY_PAD)
 	if(eCode == EVT_KEY_HELD)
@@ -5570,6 +5531,8 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
         case AVK_B:
         case AVK_N:
         case AVK_M:
+        case AVK_Z:
+	    case AVK_MUTE:
             for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
             {           
                 if (key == VLCharKeyItem[i].wParam)
@@ -5664,6 +5627,8 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	        case AVK_ENTER:
 			case AVK_SPACE:
 	        case AVK_RWD:
+	        case AVK_Z:
+	        case AVK_MUTE:
 	            {
 	                int i = 0;
 	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
@@ -5677,28 +5642,55 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                }
 	                for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
 	    			{       
-	            		if (key == VLCharKeyItem[i].wParam)
-	            		{
-	        			    if(pContext->is_isShift)
-	                        { 
-	                            TextCtl_NoSelection(pContext);
-	                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
-	                            pContext->is_isShift = FALSE;
-	                        }
-	                        else
-	                        {
-	                            TextCtl_NoSelection(pContext);
-								if(pContext->m_bCaplk)
-								{
-									TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
-									pContext->m_bCaplk = FALSE;
+						switch(OEM_TextGetCurrentMode((OEMCONTEXT)pContext))
+		    				{
+		    				#ifdef FEATURE_T9_MT_THAI
+								case TEXT_MODE_T9_MT_THAI:
+									{
+										if (key == VLCharKeyItem[i].wParam)
+			            				{
+			            					TextCtl_NoSelection(pContext);
+			            					if(pContext->is_isShift)
+			                        		{ 
+			                        			TextCtl_AddChar(pContext,(AECHAR)(VLCharShiftThaiKeyItem[i].wp));
+			                            		pContext->is_isShift = FALSE;
+			            					}
+											else
+											{
+												TextCtl_AddChar(pContext,(AECHAR)(VLCharThaiKeyItem[i].wp));
+											}
+										}
+										break;
+									}
+							#endif
+							default:
+							{
+			            		if (key == VLCharKeyItem[i].wParam)
+			            		{
+			        			    if(pContext->is_isShift)
+			                        { 
+			                            TextCtl_NoSelection(pContext);
+			                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
+
+			                        }
+			                        else
+			                        {
+			                            TextCtl_NoSelection(pContext);
+									
+										if(pContext->m_bCaplk)
+										{
+											TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
+											pContext->m_bCaplk = FALSE;
+										}
+										else
+										{
+			                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
+										}
+			                        }
+			                     }
 								}
-								else
-								{
-	                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
-								}
-	                        }
-	                     }
+							break;
+						}
 	                  }
 	            }
 	            return TRUE;
@@ -5740,7 +5732,6 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                   }
 	                   else 
 	                   {  
-	               
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	            }
@@ -5767,7 +5758,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                            wNewSel = wNewSel - count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                   
+#endif //FEATURE_LANG_THAI     
 	                OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -5791,7 +5782,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                   else 
 	                   {  
 	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-	                       wNewSel --;            
+	                       wNewSel --;         
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	                }
@@ -5814,7 +5805,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                            wNewSel = wNewSel + count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI         
 	                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -6248,7 +6239,6 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
     ERR("T9TextCtl_MultitapKey::13",0,0,0);
 #endif	
     
-    MSG_FATAL("T9TextCtl_MultitapKey::END bRet=%d", bRet,0,0);
     return bRet;
 }
 
@@ -6328,7 +6318,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
     T9STATUS sT9Status = T9STATERROR;  
     T9KEY    t9Key;
     uint16   nBufLen = pContext->sT9awFieldInfo.G.nBufLen;
-    ERR("T9TextCtl_MultitapKey::start",0,0,0);
+    MSG_FATAL("T9TextCtl_Cap_Lower_Rapid_Key::start:::%d",key,0,0);
     //handle key
 #if defined (FEATURE_DISP_160X128) || defined (FEATURE_DISP_220X176)
     
@@ -6364,6 +6354,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
         case AVK_B:
         case AVK_N:
         case AVK_M:
+        case AVK_Z:
+        case AVK_MUTE:
             for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
 			{           
         		if (key == VLCharKeyItem[i].wParam)
@@ -6458,6 +6450,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	        case AVK_ENTER:
 			case AVK_SPACE:
 	        case AVK_RWD:
+	        case AVK_Z:
+        	case AVK_MUTE:
 	            {
 	                int i = 0;
 	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
@@ -6471,8 +6465,10 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                }
 	                for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
 	    			{       
+	    			     MSG_FATAL("T9TextCtl_Cap_Lower_Rapid_Key::start:::%d,%d",i,VLCharKeyItem[i].wParam,0);
 	            		if (key == VLCharKeyItem[i].wParam)
 	            		{
+	            			MSG_FATAL("T9TextCtl_Cap_Lower_Rapid_Key::SUCC::::::%d",pContext->is_isShift,0,0);
 	        			    if(pContext->is_isShift)
 	                        { 
 	                            TextCtl_NoSelection(pContext);
@@ -6485,10 +6481,9 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 								AECHAR Tempstrp[5] = {L"."};
 	                            TextCtl_NoSelection(pContext);
 								nBufLen = WSTRLEN(pContext->pszContents);
-								MSG_FATAL("nBufLennBufLennBufLennBufLen::::::::%d",nBufLen,0,0);
 								if(nBufLen == 0)
 								{
-									
+									MSG_FATAL("1T9TextCtl_Cap_Lower_Rapid_Key::SUCC::::::%x",VLCharCapKeyItem[i].wp,0,0);
 	                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
 									
 								}
@@ -6497,6 +6492,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 									if((pContext->m_bCaplk) || (!WSTRCMP(pContext->pszContents+(nBufLen-2),Tempstr))||
 										(!WSTRCMP(pContext->pszContents+(nBufLen-1),Tempstrp)))
 									{
+										MSG_FATAL("T9TextCtl_Cap_Lower_Rapid_Key::SUCC::::::%x",VLCharCapKeyItem[i].wp,0,0);
 										TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
 										pContext->m_bCaplk = FALSE;
 									}
@@ -6548,7 +6544,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   }
 	                   else 
 	                   {  
-	               
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	            }
@@ -6575,7 +6570,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel - count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                   
+#endif //FEATURE_LANG_THAI             
 	                OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -6599,7 +6594,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   else 
 	                   {  
 	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-	                       wNewSel --;            
+	                       wNewSel --;           
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	                }
@@ -6622,7 +6617,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel + count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI      
 	                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -6768,6 +6763,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
         case AVK_B:
         case AVK_N:
         case AVK_M:
+        case AVK_Z:
+        case AVK_MUTE:
             for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
 			{           
         		if (key == VLCharKeyItem[i].wParam)
@@ -6862,6 +6859,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	        case AVK_ENTER:
 			case AVK_SPACE:
 	        case AVK_RWD:
+	        case AVK_Z:
+        	case AVK_MUTE:
 	            {
 	                int i = 0;
 	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
@@ -6889,7 +6888,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 								AECHAR Tempstrp[5] = {L"."};
 	                            TextCtl_NoSelection(pContext);
 								nBufLen = WSTRLEN(pContext->pszContents);
-								MSG_FATAL("nBufLennBufLennBufLennBufLen::::::::%d",nBufLen,0,0);
 								if(nBufLen == 0)
 								{
 									
@@ -6952,7 +6950,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   }
 	                   else 
 	                   {  
-	               
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	            }
@@ -6979,7 +6976,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel - count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                   
+#endif //FEATURE_LANG_THAI        
 	                OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -7003,7 +7000,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   else 
 	                   {  
 	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-	                       wNewSel --;            
+	                       wNewSel --;        
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	                }
@@ -7026,7 +7023,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel + count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI                  
 	                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -7293,7 +7290,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 								AECHAR Tempstrp[5] = {L"."};
 	                            TextCtl_NoSelection(pContext);
 								nBufLen = WSTRLEN(pContext->pszContents);
-								MSG_FATAL("nBufLennBufLennBufLennBufLen::::::::%d",nBufLen,0,0);
 								if(nBufLen == 0)
 								{
 									
@@ -7356,7 +7352,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   }
 	                   else 
 	                   {  
-	               
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	            }
@@ -7383,7 +7378,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel - count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                   
+#endif //FEATURE_LANG_THAI           
 	                OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -7407,7 +7402,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   else 
 	                   {  
 	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-	                       wNewSel --;            
+	                       wNewSel --;     
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	                }
@@ -7430,7 +7425,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel + count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI      
 	                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -7576,6 +7571,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
         case AVK_B:
         case AVK_N:
         case AVK_M:
+        case AVK_Z:
+        case AVK_MUTE:
             for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
 			{           
         		if (key == VLCharKeyItem[i].wParam)
@@ -7670,6 +7667,8 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	        case AVK_ENTER:
 			case AVK_SPACE:
 	        case AVK_RWD:
+	        case AVK_Z:
+        	case AVK_MUTE:
 	            {
 	                int i = 0;
 	                if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
@@ -7697,7 +7696,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 								AECHAR Tempstrp[5] = {L"."};
 	                            TextCtl_NoSelection(pContext);
 								nBufLen = WSTRLEN(pContext->pszContents);
-								MSG_FATAL("nBufLennBufLennBufLennBufLen::::::::%d",nBufLen,0,0);
 								if(nBufLen == 0)
 								{
 									
@@ -7760,7 +7758,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   }
 	                   else 
 	                   {  
-	               
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	            }
@@ -7787,7 +7784,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel - count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                   
+#endif //FEATURE_LANG_THAI            
 	                OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -7811,7 +7808,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                   else 
 	                   {  
 	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
-	                       wNewSel --;            
+	                       wNewSel --;   
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	                }
@@ -7834,7 +7831,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                            wNewSel = wNewSel + count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                                               
+#endif //FEATURE_LANG_THAI    
 	                 OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }
@@ -7948,7 +7945,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	    }   
 	}	
 #endif
-    MSG_FATAL("T9TextCtl_MultitapKey::END bRet=%d", bRet,0,0);
     return bRet;
 }
 static void T9TextCtl_Cap_Lower_Rapid_Exit(TextCtlContext *pContext)
@@ -8460,12 +8456,12 @@ static void T9TextCtl_CJK_CHINESE_Restart(TextCtlContext *pContext)
     // set rectChinese input Rect
     pContext->rectChineseSyllableInput.x = pContext->rectDisplay.x;
     pContext->rectChineseSyllableInput.dx = pContext->rectDisplay.dx -2;
-    pContext->rectChineseSyllableInput.dy = pContext->nLineHeight + 4;    
+    pContext->rectChineseSyllableInput.dy = pContext->nLineHeight;    
     pContext->rectChineseSyllableInput.y = pContext->rectDisplay.y + pContext->rectDisplay.dy - pContext->rectChineseSyllableInput.dy*2;
 
     pContext->rectChineseTextInput.x = pContext->rectChineseSyllableInput.x;
     pContext->rectChineseTextInput.dx = pContext->rectChineseSyllableInput.dx;
-    pContext->rectChineseTextInput.dy = pContext->nLineHeight + 5;    
+    pContext->rectChineseTextInput.dy = pContext->nLineHeight;    
     pContext->rectChineseTextInput.y = pContext->rectDisplay.y + pContext->rectDisplay.dy - pContext->rectChineseTextInput.dy;    
 
     pContext->rectChineseInput.x = pContext->rectChineseSyllableInput.x;
@@ -9343,21 +9339,9 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
                      iWindX+2,   //+T9_FONT_WIDTH,   
                      iWindY+1,
                      iWindDx -4,  
-                     iWindDy);  
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-       if(pContext->dwProperties& TP_GRAPHIC_BG)
-       {
-           TextCtl_DrawBackGround(pContext, &pRect);
-       }
-       else
-       {
-           IDISPLAY_EraseRect ( pContext->pIDisplay, &pRect );
-       }
-       TextCtl_DrawInputBackground(pContext, &pRect, pRect.x, pRect.y);
-#else
+                     iWindDy); 
        // Erase Stroke Rect
        IDISPLAY_EraseRect ( pContext->pIDisplay, &pRect );
-#endif
 
     /* len of the stroke buffer, extra 1 for a component */
     nStrokeLen = pContext->sT9ccFieldInfo.nKeyBufLen;
@@ -9365,7 +9349,6 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
     /*nStrokeDisLen is the length of the strokes and components in spell buffer */
     nStrokeDisLen = pContext->sT9ccFieldInfo.nKeyBufLen;
 
-#if !defined(FEATURE_GRAPHIC_INPUT_BG)
 #ifdef FEATURE_FUNCS_THEME                       
     IDISPLAY_DrawRect(pContext->pIDisplay,
             &pRect,
@@ -9379,30 +9362,19 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
             RGB_WHITE,
             IDF_RECT_FRAME);
 #endif //FEATURE_FUNCS_THEME  
-#endif
     
     /* padding the elipse ..., if stroke len is bigger than the display window */
     if (nStrokeDisLen > MAX_STROKES) 
     {
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-        format = IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT;
-#else
         format = IDF_ALIGN_NONE;
-#endif
         ch[0] = 0x003C; //'<'
         (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                AEE_FONT_NORMAL,
                                ch,
                                -1,
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-                               iWindX+INPUT_BETWEEN_LINE_PIXEL+4,
-                               0,
-                               &pRect,
-#else
                                iWindX+4,  // iWindX,
                                iWindY+3,  // iWindY,
                                NULL,
-#endif
                                format);
         iWindX += T9_STROKE_LEFT_ARROW; // T9_STROKE_FONT_WIDTH;
 
@@ -9418,25 +9390,15 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
     /* Draw each stroke, starting fromt the nstart */
     for (k = nStart; k < pContext->sT9ccFieldInfo.nKeyBufLen - bNumOfComp; k++) 
     {
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-        format = IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT;
-#else
         format = IDF_ALIGN_NONE;
-#endif
         ch[0] = *(pbBuffer+k) + 0x3129;
         (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                AEE_FONT_NORMAL,
                                ch,
                                -1,
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-                               iWindX+INPUT_BETWEEN_LINE_PIXEL+4,
-                               0,
-                               &pRect,
-#else
                                iWindX+4,  // iWindX,
                                iWindY+3,  // iWindY,
                                NULL,
-#endif
                                format);
 
         /* If this character is a NULL terminator, then stop drawing */
@@ -9472,11 +9434,8 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     int     nSpellBufLen    = 0;
     char   *pbSpellBuffer   = NULL;
     T9UINT  nKeyBufLen      = pContext->sT9ccFieldInfo.nKeyBufLen ;
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-    uint32  format          = IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT;
-#else
     uint32  format          = IDF_ALIGN_NONE;
-#endif
+    
     T9UINT  bSpellCode      = 0;
     AECHAR *wszSpellBuf     = NULL;
     AECHAR *wszSpellBufDisp = NULL;
@@ -9499,21 +9458,10 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
                   iWindY+1,
                   iWindDx -6,  
                   iWindDy);  
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-    if(pContext->dwProperties& TP_GRAPHIC_BG)
-    {
-        TextCtl_DrawBackGround(pContext, &pRect);
-    }
-    else
-    {
-        IDISPLAY_EraseRect ( pContext->pIDisplay, &pRect );
-    }
-    TextCtl_DrawInputBackground(pContext, &pRect, pRect.x, pRect.y);
-#else
+
     // Erase BMPF Rect
     IDISPLAY_EraseRect ( pContext->pIDisplay, &pRect );
-#endif
-
+    
     // no syllable to drew
     if ( 0 == nKeyBufLen )
     {
@@ -9618,7 +9566,6 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     SymbToAECHARNCopy ( wszSpellBufDisp, 
                         wszSpellBuf + nSpellCodeStart * (nKeyBufLen+1) ,
                         nWordCountDisp * (nKeyBufLen+1) - 1 );
-#if !defined(FEATURE_GRAPHIC_INPUT_BG)
 #ifdef FEATURE_FUNCS_THEME                       
     IDISPLAY_DrawRect(pContext->pIDisplay,
             &pRect,
@@ -9632,21 +9579,14 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
             RGB_WHITE,
             IDF_RECT_FRAME);
 #endif //FEATURE_FUNCS_THEME  
-#endif
 
     (void) IDISPLAY_DrawText ((IDisplay *)pContext->pIDisplay,
                                AEE_FONT_NORMAL,
                                wszSpellBufDisp,  
                                -1,  
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-                               pRect.x+1+INPUT_BETWEEN_LINE_PIXEL,
-                               0,
-                               &pRect,
-#else
                                pRect.x+1,
                                pRect.y+1,
                                NULL,
-#endif
                                format );
     // Add the character width
     for ( nSelectedCodeTemp=0; nSelectedCodeTemp < SPELLMAX; nSelectedCodeTemp++)
@@ -9691,15 +9631,8 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
             {   // 中文的后面的字母组合的精确位置
                 invertRect.x = iSpellCursX[nSelectedCode]-2;
             }
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-            invertRect.x += INPUT_BETWEEN_LINE_PIXEL;
-#endif
         }
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-        invertRect.y  = pRect.y+2;
-#else
         invertRect.y  = pRect.y+1;
-#endif
         invertRect.dy = CHINESE_FONT_HEIGHT;
         IDISPLAY_InvertRect ( pContext->pIDisplay, &invertRect );
     }                              
@@ -9754,24 +9687,11 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
               iWindY+1, // at the bottom line
               iWindDx -6,     
               iWindDy -1);    
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-    if(pContext->dwProperties& TP_GRAPHIC_BG)
-    {
-        TextCtl_DrawBackGround(pContext, &pRect);
-    }
-    else
-    {
-        IDISPLAY_EraseRect(pContext->pIDisplay, &pRect);
-    }
-    TextCtl_DrawInputBackground(pContext, &pRect, pRect.x, pRect.y - FEATURE_INPUT_BG_YOFFSET);
-#else
     IDISPLAY_EraseRect(pContext->pIDisplay, &pRect);
-#endif
-   
+    
     // blank the selection when focus on TEXT
     if ( FOCUS_TEXT != pContext->sFocus )
     {
-#if !defined(FEATURE_GRAPHIC_INPUT_BG)
 #ifdef FEATURE_FUNCS_THEME     
         IDISPLAY_DrawRect(pContext->pIDisplay,   
                 &pRect,
@@ -9785,7 +9705,6 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
                 RGB_WHITE,
                 IDF_RECT_FRAME);  
 #endif //FEATURE_FUNCS_THEME 
-#endif
     
         /* Point to the buffer to draw */
         psBuffer = pContext->sT9ccFieldInfo.pwSelectPage;
@@ -9793,26 +9712,16 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
         /* Draw each character */
         for (k = 0; k < pContext->sT9ccFieldInfo.nSelectPageMax; k++) 
         {
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-            format = IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT;
-#else
             format = IDF_ALIGN_NONE;
-#endif
              
             ch[0] = *(psBuffer+k); // use GBcode for EVB board    
             (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                    AEE_FONT_NORMAL,
                                    ch,
                                    -1,
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-                                   pRect.x+1+INPUT_BETWEEN_LINE_PIXEL+(T9_FONT_WIDTH)*k,
-                                   0,
-                                   &pRect,
-#else
                                    pRect.x+1+(T9_FONT_WIDTH)*k,
-                                   pRect.y+1,//SCREEN_HEIGHT - pContext->nLineHeight,
+                                   pRect.y,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    NULL,
-#endif
                                    format);
             /* If this character is a NULL terminator, then stop drawing */
             if (*(psBuffer + k ) == 0)  break;
@@ -9827,11 +9736,7 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
             {
                 pContext->nSelectionSelectd = pContext->sT9ccFieldInfo.nSelectPageLen - 1;
             }
-#ifdef FEATURE_GRAPHIC_INPUT_BG
-            invertRect.x = pRect.x+1+INPUT_BETWEEN_LINE_PIXEL+(T9_FONT_WIDTH)*pContext->nSelectionSelectd;
-#else
             invertRect.x = pRect.x+1+(T9_FONT_WIDTH)*pContext->nSelectionSelectd;
-#endif
             invertRect.y = pRect.y+1;
             invertRect.dx = CHINESE_FONT_WIDTH;
             invertRect.dy = CHINESE_FONT_HEIGHT;
@@ -9975,7 +9880,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	    {   
 #if !defined (FEATURE_ALL_KEY_PAD)
 	        case AVK_STAR:
-	          TextCtl_AddChar(pContext, (AECHAR) '*');
+	          //TextCtl_AddChar(pContext, (AECHAR) '*');
 	          return TRUE;            
 
 	        case AVK_POUND:
@@ -10174,7 +10079,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	                   }
 	                   else 
 	                   {  
-	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );                   
+	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );          
 	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 	                   }
 	                }
@@ -10202,7 +10107,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	                            wNewSel = wNewSel - count;
 	                        }
 	                    }
-#endif //FEATURE_LANG_THAI                      
+#endif //FEATURE_LANG_THAI           
 	                    OEM_TextSetSel(pContext, wNewSel, wNewSel);
 	                    (void) TextCtl_AutoScroll(pContext);
 	                }

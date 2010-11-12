@@ -31,9 +31,6 @@
 	<STRING Id="1010" Name="IDS_LED_NETWORK">
 		<Text>เครือข่าย</Text>
 	</STRING>
-	<STRING Id="1011" Name="IDS_CONTRAST_LEVEL1">
-		<Text>มืดมาก</Text>
-	</STRING>
 	<STRING Id="1012" Name="IDS_LED_ALARM">
 		<Text>นาฬิกาปลุก</Text>
 	</STRING>
@@ -88,23 +85,14 @@
 	<STRING Id="1029" Name="IDS_WALLPAPER_TITLE">
 		<Text>วอลเปเปอร์</Text>
 	</STRING>
-	<STRING Id="1030" Name="IDS_CONTRAST_LEVEL2">
+	<STRING Id="1030" Name="IDS_CONTRAST_LEVEL_DARK">
 		<Text>มืด</Text>
 	</STRING>
-	<STRING Id="1031" Name="IDS_CONTRAST_LEVEL3">
-		<Text>มืดน้อย</Text>
+	<STRING Id="1032" Name="IDS_CONTRAST_LEVEL_NORMAL">
+		<Text>Normal</Text>
 	</STRING>
-	<STRING Id="1032" Name="IDS_CONTRAST_LEVEL4">
-		<Text>ปกติ</Text>
-	</STRING>
-	<STRING Id="1033" Name="IDS_CONTRAST_LEVEL5">
-		<Text>สว่างน้อย</Text>
-	</STRING>
-	<STRING Id="1034" Name="IDS_CONTRAST_LEVEL6">
-		<Text>สว่าง</Text>
-	</STRING>
-	<STRING Id="1035" Name="IDS_CONTRAST_LEVEL7">
-		<Text>สว่างมาก</Text>
+	<STRING Id="1034" Name="IDS_CONTRAST_LEVEL_BRIGHT">
+		<Text>Bright</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_DEL_ITEM_YESNO">
 		<Text>ลบ</Text>
@@ -161,38 +149,77 @@
 		<Text>รายการ</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_STRING_RANDOM">
-		<Text>Random</Text>
+		<Text>สุ่ม</Text>
 	</STRING>
 	<STRING Id="1055" Name="IDS_STRING_NORMAL">
-		<Text>Normal</Text>
+		<Text>ปกติ</Text>
 	</STRING>
 	<STRING Id="1056" Name="IDS_CUSTOM_STYLE">
-		<Text>Custom</Text>
+		<Text>กำหนดเอง</Text>
 	</STRING>
 	<STRING Id="1057" Name="IDS_STRING_PURPLE">
-		<Text>Purple</Text>
+		<Text>ม่วง</Text>
 	</STRING>
 	<STRING Id="1058" Name="IDS_STRING_COFFEE">
-		<Text>Coffee</Text>
+		<Text>น้ำตาล</Text>
 	</STRING>
 	<STRING Id="1060" Name="IDS_COLORFUL_MENU_TITLE">
-		<Text>Colorful menu</Text>
+		<Text>เมนูสีสัน</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_PREVIEW">
-		<Text>Preview</Text>
+		<Text>ดูตัวอย่าง</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_PRESET_STYLE">
-		<Text>Preset style</Text>
+		<Text>สไตล์มาตรฐาน</Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_RGB_RED">
-		<Text>Red</Text>
+		<Text>แดง</Text>
 	</STRING>
 	<STRING Id="1064" Name="IDS_RGB_GREEN">
-		<Text>Green</Text>
+		<Text>เขียว</Text>
 	</STRING>
 	<STRING Id="1065" Name="IDS_RGB_BLUE">
-		<Text>Blue</Text>
+		<Text>ฟ้า</Text>
 	</STRING>
+	<String Id="1070" Name="IDS_REND_MENU_TITLE">
+		<Text>ตั้งค่าเอฟเฟ็ค</Text>
+	</String>
+	<String Id="1071" Name="IDS_REND_EFFECT_FADE">
+		<Text>Fade</Text>
+	</String>
+	<String Id="1072" Name="IDS_REND_EFFECT_SHOW_HORZ">
+		<Text>Horizontal Show</Text>
+	</String>
+	<String Id="1073" Name="IDS_REND_EFFECT_SHOW_VERT">
+		<Text>Vertical Show</Text>
+	</String>
+	<String Id="1074" Name="IDS_REND_EFFECT_MOVE_HORZ">
+		<Text>ย้ายแนวนอน</Text>
+	</String>
+	<String Id="1075" Name="IDS_REND_EFFECT_MOVE_VERT">
+		<Text>แสดงแนวตั้ง</Text>
+	</String>
+	<String Id="1076" Name="IDS_REND_EFFECT_FLY_HORZ">
+		<Text>Horizontal Fly</Text>
+	</String>
+	<String Id="1077" Name="IDS_REND_EFFECT_FLY_VERT">
+		<Text>Vertical Fly</Text>
+	</String>
+	<String Id="1078" Name="IDS_REND_EFFECT_ROTAT_HORZ">
+		<Text>Horizontal Rotation</Text>
+	</String>
+	<String Id="1079" Name="IDS_REND_EFFECT_ROTAT_VERT">
+		<Text>Vertical Rotation</Text>
+	</String>
+	<String Id="1080" Name="IDS_REND_EFFECT_BLINDS_VERT">
+		<Text>Horizontal Blind</Text>
+	</String>
+	<String Id="1081" Name="IDS_REND_EFFECT_BLINDS_INTER">
+		<Text>Intersect Blind</Text>
+	</String>
+	<String Id="1083" Name="IDS_REND_EFFECT_ONEBYONE">
+		<Text>ทีละหนึ่ง</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_DISPLAYMENU_MENU" Focus="7004">
@@ -204,7 +231,6 @@
 	</DIALOG>
 	<DIALOG Id="6002" Name="IDD_PICTURE_DLG" Focus="0">
 		<Controls/>
-		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6003" Name="IDD_IMGDELMSG_DLG" Focus="0">
 		<Controls/>
@@ -273,6 +299,13 @@
 	<Dialog Id="6012" Name="IDD_COLOR_SETTING" Focus="0">
 		<Controls>
 			<Menu Id="7012" Name="IDC_COLOR_SETTING">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6013" Name="IDD_REND_MENU" Focus="7013">
+		<Controls>
+			<Menu Id="7013" Name="IDC_REND_MENU">
 				<Items/>
 			</Menu>
 		</Controls>

@@ -65,7 +65,7 @@
 #define  MAX_MATRIX_COLS 4
 #define MAX_TURN_NUM   12
 #endif
-#define FEATURE_ICON_MOVE_ANIMATION //added by chengxiao 2009.04.10
+#define FEATURE_ICON_MOVE_ANIMATION
 
 #if !defined(FEATURE_CARRIER_CHINA_VERTU)
 #define FEATURE_FOCUS_ANIMATION
@@ -192,8 +192,8 @@ typedef struct _MainMenu
     #endif
     
 #ifdef FEATURE_RANDOM_MENU_COLOR
-    RGBVAL         m_nBgColor; //added by chengxiao 2009.02.23
-    boolean         m_nRandomMenu; //added by chengxiao 2009.02.23
+    RGBVAL         m_nBgColor;
+    boolean         m_nRandomMenu;
 #endif
 #ifdef FEATURE_ICON_MOVE_ANIMATION
     IBitmap       *m_pDevImage;

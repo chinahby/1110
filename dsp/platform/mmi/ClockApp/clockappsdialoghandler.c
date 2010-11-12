@@ -322,7 +322,7 @@ static boolean  HandleAlarmMainDialogEvent(CClockApps *pMe,
 //            IMENUCTL_SetProperties( pMenuAlarmList, IMENUCTL_GetProperties( pMenuAlarmList) | MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties( pMenuAlarmList, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY |OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuAlarmList, AEE_APPSCOMMONRES_IMAGESFILE, IDI_ALARM_BACKGROUND); //added by chengxiao 2009.03.23
+            IMENUCTL_SetBackGround(pMenuAlarmList, AEE_APPSCOMMONRES_IMAGESFILE, IDI_ALARM_BACKGROUND);
 #endif
             //IMENUCTL_SetBottomBarType( pMenuAlarmList, BTBAR_OPTION_BACK);
             return TRUE;
@@ -1310,22 +1310,8 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                 }
             }
             
-#if defined( FEATURE_ONCE_ALARM)
-#if defined( FEATURE_CARRIER_THAILAND_HUTCH)
-            if( pMe->m_ClockCfg.RepMode[pMe->m_eCurAlarmType]  == 0 &&
-                pMe->m_ClockCfg.bStateOn[pMe->m_eCurAlarmType] == 0 &&
-                pMe->m_ClockCfg.dwWATime[pMe->m_eCurAlarmType] == 0 &&
-                pMe->m_ClockCfg.Snooze[pMe->m_eCurAlarmType] == 0
-            )
-            {
-                IMENUCTL_SetSel( pMe->m_pRepMode, ITEM_REP_MODE_11);
-            }
-            else
-#endif
-#endif
-            {
-                IMENUCTL_SetSel( pMe->m_pRepMode, pMe->m_ClockCfg.RepMode[pMe->m_eCurAlarmType]);
-            }        
+            IMENUCTL_SetSel( pMe->m_pRepMode, pMe->m_ClockCfg.RepMode[pMe->m_eCurAlarmType]);
+            
             //STATE为真时,状态选中"开"
             IMENUCTL_SetSel(pMe->m_pState, pMe->m_ClockCfg.bStateOn[pMe->m_eCurAlarmType] ? ITEM_STATE_ON : ITEM_STATE_OFF);
             // 统一更新界面

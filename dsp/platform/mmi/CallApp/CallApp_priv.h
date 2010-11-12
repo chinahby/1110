@@ -42,7 +42,12 @@
 #endif
 
 
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 #include "CallApp.brh"
 #include "AEEShell.h"
 #include "AEEModTable.h"
@@ -189,7 +194,11 @@ typedef PACKED struct {
 #define MAX_SIZE_BANNER_TEXT           20
 #define MAX_SIZE_DIALER_TEXT            128
 #define MAX_SIZE_NAME_TEXT              20
+#ifdef FEATURE_ICM
 #define MAX_SIZE_DIAL_STR                  AEECM_MAX_DIAL_STRING +1//33
+#else
+#define MAX_SIZE_DIAL_STR                  83//33  modify by miaoxiaoming
+#endif
 #define TIMEOUT_MS_ONE_SECOND        1000
 //#define DIALER_TEXT_LEN_MAX      32
 #define MAX_COUNT_TO_CHANGE           5
@@ -308,7 +317,7 @@ typedef PACKED struct {
 //#define FEATURE_LARGE_DIALING_DIGITS
 //#define FEATURE_IS2000_SCC_CODES
 /*Temp add*/
-#define DIALER_PAUSE_AECHAR             ((AECHAR)'P')
+#define DIALER_PAUSE_AECHAR              ((AECHAR)'P')
 #define DIALER_PLUS_AECHAR               ((AECHAR)'+')
 #ifdef FEATURE_APP_PAUSE_TIMER
 #define DIALER_TIMER_AECHAR              ((AECHAR)'T')
@@ -441,7 +450,11 @@ typedef struct CallAppMod
 
 typedef struct  _Dialer_call_table
 {
+#ifdef FEATURE_ICM
     AECHAR     call_number[AEECM_MAX_DIGITS_LENGTH];
+#else
+    AECHAR     call_number[AEET_MAX_DIGITS_LENGTH];
+#endif
     AECHAR     call_name[MAX_SIZE_NAME_TEXT];
     uint8      call_id;
     uint32     start_time;
@@ -458,7 +471,11 @@ typedef struct  _Dialer_call_table
 }Dialer_call_table;
 typedef struct  _Dialer_cont_cache
 {
+#ifdef FEATURE_ICM
     AECHAR     call_number[AEECM_MAX_DIGITS_LENGTH];
+#else
+    AECHAR     call_number[AEET_MAX_DIGITS_LENGTH];
+#endif
     AECHAR     call_name[MAX_SIZE_NAME_TEXT];
     char       picture_name[AEE_MAX_FILE_NAME];
     AECHAR       ringer[MAX_FILE_NAME];
@@ -467,10 +484,17 @@ typedef struct _cdg_dsp_info
 {
     boolean               b_last_rec;
     boolean               m_b_show_cdg;
+#ifdef FEATURE_ICM
     AEECMEvent        event;
     AEECMDispType   disp_type;
     AEECMPI             pi;
     AECHAR              alpha[AEECM_MAX_ALPHA_TAG_LENGTH];    
+#else
+    AEETEvent        event;
+    AEETDispType   disp_type;
+    AEETPI             pi;
+    AECHAR              alpha[AEET_MAX_ALPHA_TAG_LENGTH];  
+#endif
 }
 cdg_dsp_info;
 enum
@@ -515,7 +539,13 @@ typedef struct _CCallApp
     IALERT                 *m_pAlert;      // IAlert interface
     IConfig                *m_pConfig;     // IConfig interface
     //IStatic                *m_IStatic;       // Used in the IDD_SILENCED& IDD_MSGBOX dialog
+#ifdef FEATURE_ICM
     ICM                    *m_pICM;                         // instance of ICM
+#else
+    ITelephone           *m_pITelephone;                         // instance of ICM
+	ICallMgr             *m_pICallMgr;
+	IPhoneCtl            *m_pIPhoneCtl;
+#endif
     //IAnnunciator         m_pIAnn;
     AEERect                m_rc;
     IDialog                *m_pActiveDlg;
@@ -536,14 +566,9 @@ typedef struct _CCallApp
     AEERect                m_RectSub;
     IBitmap                *m_pWallSubImage;
 #endif
-
-    //IImage                *m_pBgImage;
-    IImage                *m_pCallingImage;
-    //IImage               *m_pDialerImage;
+#ifndef FEATURE_USES_LOWMEM
     IImage                 *m_pConvImage;
-    //IImage               *m_pCallendImage;
-
-
+#endif
 #ifdef Temp_remove
     IIdle                   *m_pIdle;
 #endif/*Temp_remove*/
@@ -561,8 +586,11 @@ typedef struct _CCallApp
     int                     m_PauseTimer;
     AECHAR                  m_TimerString[MAX_SIZE_DIALER_TEXT];
 #endif
-
+#ifdef FEATURE_ICM
     AECHAR                  m_RedirNumStr[AEECM_MAX_DIGITS_LENGTH];  // redir_num_rec contents
+#else
+    AECHAR                  m_RedirNumStr[AEET_MAX_DIGITS_LENGTH];  // redir_num_rec contents
+#endif
     //AECHAR                  m_DispInfo[AEECM_MAX_DIGITS_LENGTH+1];
     //for CDG test, CNAP with Forwarding
     // Presentation indicator for m_RedirNumStr
@@ -574,8 +602,11 @@ typedef struct _CCallApp
     int                     m_cdg_row;
     // Current number entered in the dialer dialog
     AECHAR                  m_DialString[MAX_SIZE_DIALER_TEXT];//IDLE input number ,can include 'P'  'T'
-
+#ifdef FEATURE_ICM
     AEECMCallState           m_lastCallState;
+#else
+    AEETCallState           m_lastCallState;
+#endif
     boolean                  m_Is3Way;     // TRUE if the current call was a three-way call
     uint32                   m_LastMinuteAlert;//每分钟提示音
 
@@ -583,8 +614,11 @@ typedef struct _CCallApp
     boolean                   m_CallMuted;
     boolean                   m_userCanceled;   // TRUE if the user pressed END while in the
     uint32                    m_MissedCallCount;
-
+#ifdef FEATURE_ICM
     AEECMEndStatus            m_callEndStatus;
+#else
+    AEETEndStatus            m_callEndStatus;
+#endif
     boolean                   m_callEndInOrig; // TRUE if the last call was ended
     boolean                   m_makeCallAfterOTAPA; // TRUE if CallApp_MakeCall() should be
     // invoked after the OTAPA call is torn down
@@ -628,8 +662,15 @@ typedef struct _CCallApp
     AECHAR                     wszPrivateString_tw[20];
     ERefreshVol                m_bRefreshVol;      //for display conversation text
 
-    IFont                      *m_pBigNumFont;       //IFont interface for the dialing big number
+    IFont                     *m_pBigNumFont;        //IFont interface for the dialing big number
     int                        m_large_Num_Height;   //Dialing Number's Height,onle used for NumEdit
+    IFont                     *m_pNormalNumFont;        //IFont interface for the dialing big number
+    int                        m_Normal_Num_Height;   //Dialing Number's Height,onle used for NumEdit
+    IFont                     *m_pCurrNumFont;
+    int                        m_nCurrNumHeight;
+    int                        m_nCurrLineSpace;
+    int                        m_nCurrLine;
+    int                        m_nCurrLineFits[MAX_SIZE_DIALER_TEXT/8];
     boolean                    m_bShowPopMenu;//indicate current focus is pop_menu
     IMenuCtl                  *m_pMenu;          // pop menu
     boolean                    m_bHandFree;    //设置声音是否从扬声器发出
@@ -859,8 +900,11 @@ boolean CallApp_NumberLookup(CCallApp      *pMe,
 boolean CallApp_IsRestictCallNumber_Ex(CCallApp   *pMe,
                                         AECHAR       *pNumber,
                                         boolean      IsOutgoing);
-
+#ifdef FEATURE_ICM
 boolean CallApp_IsEmergencyMode(ICM* pICM);
+#else
+boolean CallApp_IsEmergencyMode(ITelephone* pITelephone);
+#endif
 
 boolean CallApp_IsEmergency_Number(AECHAR *pNumber);
 

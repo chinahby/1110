@@ -179,32 +179,7 @@ int CContApp_BuildOptsMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
                 return EFAILED;
             }       
 #endif            
-/*
-#ifdef FEATURE_RUIM_PHONEBOOK
-            if( IsRunAsUIMVersion() )
-            {
-#ifdef FEATURE_CARRIER_THAILAND_HUTCH               
-                if(IS_RUIM_REC(pMe->m_wSelectCont))
-                {
-                    ai.wText       = IDS_COPYONETOPNONE;
-                }
-                else
-                {
-                    ai.wText       = IDS_COPYONETORUIM;
-                }
-#else                 
-                ai.wText       = IDS_COPY;
-#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
-                ai.wItemID   = IDI_OPTS_MENU_COPY;
-                        
-                if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-                {
-                    FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-                    return EFAILED;
-                }            
-            }
-#endif// FEATURE_RUIM_PHONEBOOK
-*/
+
 #ifdef FEATURE_RUIM_PHONEBOOK
 
             if(IsRunAsUIMVersion())
@@ -301,60 +276,7 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     MEMSET(&ai, 0, sizeof(ai));
     ai.pszResText = CONTAPP_RES_FILE_LANG;
 
-/*#ifdef FEATURE_CARRIER_THAILAND_HUTCH 
-    ai.wText       = IDS_FIND;
-    ai.wItemID   = IDI_MAINMENU_MENU_FIND;
-            
-    if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-    {
-       FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-       return EFAILED;
-    }  
-    
-    ai.wText       = IDS_ADDNEW;
-    ai.wItemID   = IDI_MAINMENU_MENU_ADDNEW;
-            
-    if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-    {
-        FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-        return EFAILED;
-     }               
-
-    ai.wText       = IDS_DELETE;
-    ai.wItemID   = IDI_MAINMENU_MENU_DELETE;
-           
-    if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-    {
-        FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-        return EFAILED;
-    }  
-
-    ai.wText       = IDS_SPEEDDIAL;
-    ai.wItemID     = IDI_MAINMENU_MENU_SPEEDDIAL;
-            
-    if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-    {
-        FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-        return EFAILED;
-    } 
-    
-#ifdef FEATURE_RUIM_PHONEBOOK
-    if( IsRunAsUIMVersion() )
-    {
-        ai.wText       = IDS_SETTING;
-        ai.wItemID   = IDI_MAINMENU_MENU_SETTING;
-
-        if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-        {
-            FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-            return EFAILED;
-        }  
-    }
-#endif */  /* FEATURE_RUIM_PHONEBOOK */    
-  
-//#else //FEATURE_CARRIER_THAILAND_HUTCH
 // 1
-
     ai.wText       = IDS_APPLET;
     ai.wItemID   = IDI_MAINMENU_MENU_DIRECTORTLIST;
             
@@ -450,7 +372,6 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         }            
   //}
 //#endif /* FEATURE_RUIM_PHONEBOOK */    
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH 
       
     //(void)IMENUCTL_Redraw(pMenuCtl);
     return SUCCESS;
@@ -1558,17 +1479,11 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     int           i;
     ContInfo      pContInfo;
     CtlAddItem    ai;
-//#if defined FEATURE_CARRIER_THAILAND_HUTCH
     AECHAR        wszNumName[MAX_INPUT_NAME_TH+4];//带序号的字符串保存buf
-//#else
-//    AECHAR        wszNumName[MAX_INPUT_NAME_TH+3];//带序号的字符串保存buf
-//#endif
     AECHAR        wszFmt[4];
     AECHAR        wszNull[MAX_INPUT_NAME_TH] = {0};
     AECHAR        szTmp[MAX_INPUT_NAME_TH] = {0};
-//#if defined FEATURE_CARRIER_THAILAND_HUTCH
-    AECHAR space[] = {(AECHAR)' ',(AECHAR)'\0'};   	
-//#endif
+    AECHAR space[] = {(AECHAR)' ',(AECHAR)'\0'};
 
     ASSERT(pMe != NULL); 
 
@@ -1613,9 +1528,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
             ISHELL_LoadResString(pMe->m_pShell, CONTAPP_RES_FILE_LANG, IDS_ONEDIAL_NULL, wszNull, sizeof(wszNull));
             STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
             WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL2+2)); //CONTCFG_ONEDIAL1
-//#if defined FEATURE_CARRIER_THAILAND_HUTCH
             WSTRCAT(wszNumName, space);
-//#endif
             WSTRLCAT(wszNumName,wszNull,sizeof(wszNumName));
             ai.pText  = wszNumName;
             ai.wText  = 0;
@@ -1632,9 +1545,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
                 //当已经被设置的号码字段被删除后会获取不到姓名，直接添加"未设置"
                 STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
                 WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL2+2));//CONTCFG_ONEDIAL1
-//#if defined FEATURE_CARRIER_THAILAND_HUTCH
                 WSTRCAT(wszNumName, space);
-//#endif
                 WSTRLCAT(wszNumName,wszNull,sizeof(wszNumName));
                 ai.pText  = wszNumName;
                 ai.wText  = 0;
@@ -1652,9 +1563,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
                 MSG_FATAL("pContInfo.pName == NULL", 0, 0, 0);
                 STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
                 WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL2+2));//CONTCFG_ONEDIAL1
-//#if defined FEATURE_CARRIER_THAILAND_HUTCH
                 WSTRCAT(wszNumName, space);
-//#endif
                 WSTRLCAT(wszNumName,wszNull,sizeof(wszNumName));
                 ai.pText  = wszNumName;
                 ai.wText  = 0;
@@ -1665,9 +1574,7 @@ int CContApp_BuildOneDialMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
                 MSG_FATAL("pContInfo.pName != NULL", 0, 0, 0);
                 STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
                 WSPRINTF(wszNumName,sizeof(wszNumName),wszFmt,(i-CONTCFG_ONEDIAL2+2));//CONTCFG_ONEDIAL1
-//#if defined FEATURE_CARRIER_THAILAND_HUTCH
                 WSTRCAT(wszNumName, space);
-//#endif
                 WSTRLCAT(wszNumName,pContInfo.pName,sizeof(wszNumName));
                 ai.pText  = wszNumName;
                 ai.wText  = 0;
@@ -3029,18 +2936,6 @@ int CContApp_BuildGroupMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         }
     }
 #endif
-
-/*#else    
-    ai.pText = NULL;
-    ai.wText       = IDS_GROUP_NONE;
-    ai.wItemID   = IDI_GROUP_MENU_NONE;
-            
-    if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-    {
-        FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-        return EFAILED;
-     }             
-#endif*/ //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
 
     for( i = CONTCFG_GROUP1; i <= CONTCFG_GROUP6; i++)
     {

@@ -221,13 +221,13 @@ when       who     what, where, why
 #endif
 
 /* Enable MDP support */
-#define FEATURE_QTV_MDP
+//#define FEATURE_QTV_MDP
 
 /* Enable MDP transformations */
-#define FEATURE_QTV_MDP_TRANSFORMATIONS
+//#define FEATURE_QTV_MDP_TRANSFORMATIONS
 
 /* Ascaling */
-#define FEATURE_QTV_MDP_ASCALE
+//#define FEATURE_QTV_MDP_ASCALE
 
 #if (defined T_QSC6065) || (defined T_QSC6075) || (defined T_QSC6085) || (defined T_QSC1100) 
 #ifdef BOOT_MODE_NAND
@@ -270,9 +270,11 @@ when       who     what, where, why
 
 #define FEATURE_QTV_STATIC_TASKS
 
-#define FEATURE_QTV_STATIC_DLAGENT_TASK
-#define FEATURE_QTV_STATIC_DLDSPSVC_TASK
+//#define FEATURE_QTV_STATIC_DLAGENT_TASK
+//#define FEATURE_QTV_STATIC_DLDSPSVC_TASK
 #define FEATURE_QTV_DECODER_INVALIDATE_CACHE
+
+//#define FEATURE_QTV_DISCARD_VIDEO_PLAYER
 
 #endif /* CUSTMP4_H */
 

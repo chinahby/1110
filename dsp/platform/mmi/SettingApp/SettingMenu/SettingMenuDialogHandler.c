@@ -21,7 +21,12 @@
                                  本文件包含的外部文件
 ==============================================================================*/
 #include "SettingMenu_priv.h"
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 #include "CallApp.h"
 #include "OEMRTC.h"
 #include "appscommonimages.brh"
@@ -155,8 +160,11 @@ static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
     uint16 wParam,
     uint32 dwParam
     );
+#ifdef FEATURE_ICM
 void HandleSimChoiceTimer(ICM *m_pICM);
-
+#else
+void HandleSimChoiceTimer(IPhoneCtl *m_pITelephone);
+#endif
 #endif
 #ifdef FEATURE_KEYGUARD
 //对话框 IDD_AKG_MENU 事件处理函数
@@ -237,6 +245,15 @@ static boolean Setting_Handle_ShakeSub(CSettingMenu *pMe,
 	uint32 dwParam
 );
 #endif
+
+
+static boolean Setting_CClockApps_HandleKeyEvent(CSettingMenu *pMe, uint16 wParam);
+
+static boolean Setting_CClockApps_HandleCmdEvent(CSettingMenu *pMe);
+
+//static boolean Setting_CClockApps_HandleNumKeyEvent(CSettingMenu *pMe, uint16 wParam);
+#endif
+
 static boolean Setting_Handle_CallRestrict(CSettingMenu *pMe,
 	AEEEvent eCode,
 	uint16 wParam,
@@ -263,12 +280,6 @@ static boolean Setting_Handle_Msgbox(CSettingMenu *pMe,
 	uint32 dwParam
 );
 
-static boolean Setting_CClockApps_HandleKeyEvent(CSettingMenu *pMe, uint16 wParam);
-
-static boolean Setting_CClockApps_HandleCmdEvent(CSettingMenu *pMe);
-
-//static boolean Setting_CClockApps_HandleNumKeyEvent(CSettingMenu *pMe, uint16 wParam);
-#endif
 static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
     AEEEvent eCode,
     uint16 wParam,
@@ -588,7 +599,7 @@ static boolean  HandleMainDialogEvent(CSettingMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
@@ -776,7 +787,7 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
@@ -907,7 +918,6 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
     uint32 dwParam
 )
 {
-	int rt;
     PARAM_NOT_REF(dwParam)
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
@@ -968,7 +978,7 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
@@ -1255,12 +1265,20 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
 #endif //#ifdef FEATRUE_AUTO_POWER
                     else if(pMe->m_CallSettingSel == IDS_VOICE_PRIVACY)
                     {
+#ifdef FEATURE_ICM
                         if(byte_return == AEECM_PRIVACY_PREF_ENHANCED)    //on
+#else
+                        if(byte_return == AEET_PRIVACY_PREF_ENHANCED)    //on
+#endif
                         {
                             IMENUCTL_SetSel(pMenu, IDS_ENABLE);
                             SetMenuIcon(pMenu, IDS_ENABLE, TRUE);
                         }
+#ifdef FEATURE_ICM
                         else if(byte_return == AEECM_PRIVACY_PREF_STANDARD || byte_return == AEECM_PRIVACY_PREF_NONE)                   //off
+#else
+                        else if(byte_return == AEET_PRIVACY_PREF_STANDARD || byte_return == AEET_PRIVACY_PREF_NONE)
+#endif
                         {
                             IMENUCTL_SetSel(pMenu, IDS_DISABLE);
                             SetMenuIcon(pMenu, IDS_DISABLE, TRUE);
@@ -1283,7 +1301,7 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 				#if 0
@@ -1366,7 +1384,11 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                             return TRUE;
 
                        case IDS_VOICE_PRIVACY:     //voice privacy
+#ifdef FEATURE_ICM
                             callset = AEECM_PRIVACY_PREF_STANDARD;
+#else
+                            callset = AEET_PRIVACY_PREF_STANDARD;
+#endif
                             ICONFIG_SetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY,&callset,sizeof(callset));
                             CLOSE_DIALOG(DLGRET_WARNING)
                             return TRUE;
@@ -1437,7 +1459,11 @@ static boolean  HandleCallSettingSelDialogEvent(CSettingMenu *pMe,
                             return TRUE;
 
                         case IDS_VOICE_PRIVACY:     //voice privacy
+#ifdef FEATURE_ICM
                             callset = AEECM_PRIVACY_PREF_ENHANCED;
+#else
+                            callset = AEET_PRIVACY_PREF_ENHANCED;
+#endif
                             ICONFIG_SetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY,&callset,sizeof(callset));
                             CLOSE_DIALOG(DLGRET_WARNING)
                             return TRUE;
@@ -1633,7 +1659,7 @@ static boolean  HandleNetworkDialogEvent(CSettingMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
@@ -1769,7 +1795,7 @@ static boolean  HandleDivertDialogEvent(CSettingMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
@@ -1965,7 +1991,7 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 			#if 0
@@ -2547,7 +2573,7 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
@@ -2830,7 +2856,7 @@ static boolean  HandleTimeDialogEvent(CSettingMenu *pMe,
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -2988,7 +3014,7 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -3150,7 +3176,7 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                
@@ -3240,12 +3266,22 @@ static boolean HandleSimDialogEvent(CSettingMenu *pMe,
     return FALSE;
     
 }
+
+#ifdef FEATURE_ICM
 void HandleSimChoiceTimer(ICM *m_pICM)
 {
 	ICM_SetOperatingMode(m_pICM, AEECM_OPRT_MODE_RESET);
     ICM_Release(m_pICM);
     m_pICM = NULL;
 }
+#else
+void HandleSimChoiceTimer(IPhoneCtl *m_pIPhoneCtl)
+{
+	IPHONECTL_SetOperatingMode(m_pIPhoneCtl, AEET_OPRT_MODE_RESET);
+    IPHONECTL_Release(m_pIPhoneCtl);
+    m_pIPhoneCtl = NULL;
+}
+#endif
 
 static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
     AEEEvent eCode,
@@ -3295,26 +3331,41 @@ static boolean HandleSimChoiceEvent(CSettingMenu *pMe,
 				case AVK_SELECT:
                 {
                     nv_item_type nviNew;
+#ifdef FEATURE_ICM
                     ICM *pICM = NULL;
+#else
+                    IPhoneCtl *pIPhoneCtl = NULL;
+#endif
                     int nReturnStatus = -1;    
                     MSG_FATAL("HandleSimChoiceEvent AVK_SEND",0,0,0);
 
                     MSG_FATAL("HandleSimChoiceEvent:::::22222 sim_select=%d",pMe->nviNewSimChoice.sim_select,0,0);
                     (void)OEMNV_Put(NV_SIM_SELECT_I,&pMe->nviNewSimChoice);
                     pMe->nviOldSimChoice.sim_select = pMe->nviNewSimChoice.sim_select;
-
+#ifdef FEATURE_ICM
                     nReturnStatus = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CM, (void **) &pICM);   
                     if((pICM == NULL) || (SUCCESS != nReturnStatus))
+#else
+                    nReturnStatus = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_PHONECTL, (void **) &pIPhoneCtl);   
+                    if((pIPhoneCtl == NULL) || (SUCCESS != nReturnStatus))
+#endif
                     {
                         MSG_FATAL("HandleSimDialogEvent:::::33333 ICM cerate Failed",0,0,0);
                         return FALSE;
-                    }                    
+                    }
+#ifdef FEATURE_ICM
                     ICM_SetOperatingMode(pICM, AEECM_OPRT_MODE_OFFLINE);
 					(void)ISHELL_SetTimer(pMe->m_pShell,
                                 500,
                                 (PFNNOTIFY)HandleSimChoiceTimer,
                                 pICM);
-                    
+#else
+                    IPHONECTL_SetOperatingMode(pIPhoneCtl, AEET_OPRT_MODE_OFFLINE);
+					(void)ISHELL_SetTimer(pMe->m_pShell,
+                                500,
+                                (PFNNOTIFY)HandleSimChoiceTimer,
+                                pIPhoneCtl);
+#endif
                     MSG_FATAL("HandleSimChoiceEvent AVK_SEND2",0,0,0);
                     return TRUE;                  
                 }
@@ -3396,11 +3447,9 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_LANG_CHINESE            
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CHINESE, IDS_CHINESE, NULL, 0);
 #endif //FEATURE_LANG_TCHINESE
-
 #ifdef FEATURE_LANG_TCHINESE            
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_TCHINESE, IDS_TCHINESE, NULL, 0);
 #endif //FEATURE_LANG_TCHINESE
-
 #if defined(FEATURE_LANG_ITALIAN)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ITALIAN, IDS_ITALIAN, NULL, 0);
 #endif
@@ -3410,16 +3459,9 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #if defined(FEATURE_LANG_PORTUGUESE)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_PORTUGUESE, IDS_PORTUGUESE, NULL, 0);
 #endif
-
 #if defined(FEATURE_LANG_INDONESIAN)
-#ifndef FEATURE_VERSION_H19C
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_INDONESIAN, IDS_INDONESIAN, NULL, 0);
 #endif
-#if defined(FEATURE_CARRIER_INDONESIA)
-            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CHINESE, IDS_CHINESE, NULL, 0);
-#endif
-#endif
-
 #if defined(FEATURE_LANG_HINDI)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_HINDI, IDS_HINDI, NULL, 0);
 #endif
@@ -3491,17 +3533,9 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #endif /* FEATURE_LANG_PORTUGUESE */
 
 #ifdef FEATURE_LANG_INDONESIAN
-#ifndef FEATURE_VERSION_H19C
                     case NV_LANGUAGE_INDONESIAN:    //印度尼西亚
                         nSelItem = IDS_INDONESIAN;
                         break;
-#endif                        
-#if defined(FEATURE_CARRIER_INDONESIA)
-                    case NV_LANGUAGE_CHINESE:       //中文
-                        nSelItem = IDS_CHINESE;
-                        break;
-#endif  
-                        
 #endif //FEATURE_LANG_INDONESIAN
 
 #ifdef FEATURE_LANG_HINDI
@@ -3560,7 +3594,7 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
@@ -3631,22 +3665,10 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #endif /* FEATURE_LANG_PORTUGUESE */
 
 #ifdef FEATURE_LANG_INDONESIAN
-#ifndef FEATURE_VERSION_H19C
                 case IDS_INDONESIAN:    //印度尼西亚
                     language = NV_LANGUAGE_INDONESIAN;
                     inputmode = OEM_MODE_T9_MT_ENGLISH; //OEM_MODE_T9_MT_INDONESIAN;                           
                     break;
-#endif                    
-#if defined(FEATURE_CARRIER_INDONESIA)
-                case IDS_CHINESE:       //中文
-                    language = NV_LANGUAGE_CHINESE;
-                    (void) ICONFIG_GetItem(pMe->m_pConfig,
-                                           CFGI_INPUTMODE,
-                                           &inputmode,
-                                           sizeof(inputmode));            
-                    break;
-#endif
-                    
 #endif /* FEATURE_LANG_INDONESIAN */
 
 #ifdef FEATURE_LANG_HINDI
@@ -3673,7 +3695,7 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_LANG_THAI
                 case IDS_THAI:    //泰国语
                     language = NV_LANGUAGE_THAI;
-                    inputmode = OEM_MODE_T9_MT_THAI;                           
+                    inputmode = OEM_MODE_T9_RAPID_THAI;                           
                     break;
 #endif /*FEATURE_LANG_THAI*/
 
@@ -3748,7 +3770,11 @@ static void SettingMenu_MakeForwardCall(CSettingMenu *pMe,char *Number)
 {
     if((pMe->m_pShell) && (Number))
     {
+#ifdef FEATURE_ICM
         AECHAR w_buf[AEECM_MAX_DIGITS_LENGTH] = {0};
+#else
+        AECHAR w_buf[AEET_MAX_DIGITS_LENGTH] = {0};
+#endif
         ICallApp         *pCallApp = NULL;
         if ( SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
                                                         AEECLSID_DIALER,
@@ -4001,7 +4027,7 @@ static boolean  HandleNetSelectDialogEvent(CSettingMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             (void) ISHELL_PostEvent( pMe->m_pShell,
@@ -4424,7 +4450,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
 			IANNUNCIATOR_SetFieldText(pMe->m_pAnn,wszTitle);
 			#endif
             {
-                RGBVAL nOldFontColor; //added by chengxiao 2009.03.05
+                RGBVAL nOldFontColor;
                 
                 nOldFontColor = IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
                  //功能
@@ -4647,7 +4673,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             //处理Clock编辑界面应用左右键切换控件
             Setting_CClockApps_HandleKeyEvent(pMe, wParam);
 
-            if( wParam == AVK_UP || wParam == AVK_DOWN || wParam == AVK_INFO || wParam == AVK_STAR) //modified by chengxiao 2009.04.10
+            if( wParam == AVK_UP || wParam == AVK_DOWN || wParam == AVK_INFO || wParam == AVK_STAR)
             {
                 if( pMe->m_nCtlID == IDC_AUTO_POWER_TIME && timeFormatType == OEMNV_TIMEFORM_AMPM)
                 {
@@ -5261,7 +5287,7 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
@@ -5384,7 +5410,7 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_SETTINGMENU, EVT_USER_REDRAW,0, 0);
@@ -6136,7 +6162,7 @@ static boolean Setting_Handle_Shake(CSettingMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             (void) ISHELL_PostEvent( pMe->m_pShell,
@@ -6254,7 +6280,7 @@ static boolean Setting_Handle_ShakeSub(CSettingMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             if(pMe->m_shaketype_sel == SET_MUSIC_CHECK)
@@ -6483,7 +6509,7 @@ static boolean  Setting_Handle_CallRestrict(CSettingMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE | MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
@@ -6599,7 +6625,7 @@ static boolean  Setting_Handle_OutGoing(CSettingMenu *pMe,
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -6765,7 +6791,7 @@ static boolean  Setting_Handle_Incoming(CSettingMenu *pMe,
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -7049,7 +7075,7 @@ static boolean  Setting_Handle_Password(CSettingMenu *pMe,
                         
                     case AVK_SELECT:
                     case AVK_INFO:
-                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) < 4) //modified by chengxiao 2009.03.06
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) < 4)
                         {
                             return TRUE;
                         }
@@ -7284,7 +7310,7 @@ static boolean  HandlePlaneModeDialogEvent(CSettingMenu *pMe,
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 (void) ICONFIG_GetItem(pMe->m_pConfig,

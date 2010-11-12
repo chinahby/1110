@@ -6,7 +6,8 @@
 
 OEM_NONPK_LIB_SOURCES=\
 	OEMDisplayDev.c \
-	oemheap3x.c 
+	oemheap3x.c \
+	AEEMediaUtil.c
 
 ifeq ($(USES_ARM_STACKTRACE),yes)
     OEM_NONPK_LIB_A_SOURCES += \

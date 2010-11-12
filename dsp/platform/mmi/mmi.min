@@ -62,18 +62,27 @@ endif
 #Tools
 include $(CALCAPP)/calcapp.min
 include $(CLOCKAPP)/clockapps.min
+
+ifneq ($(USES_LOWMEM),yes)
 include $(CONVERTER)/converter.min
+include $(STOPWATCH)/stopwatch.min
+include $(TIMERAPP)/timerapp.min
 include $(SCHEDULEAPP)/scheduleapp.min
+endif
 
 ifeq ($(MMI_ADD_SPORT),yes)
 include $(SPORTS)/sports.min
 endif
 
-include $(STOPWATCH)/stopwatch.min
-include $(TIMERAPP)/timerapp.min
+
+
+ifneq ($(USES_LOWMEM),yes)
 ifeq ($(MMI_ADD_WORLDTIME),yes)
 include $(WORLDTIME)/worldtime.min
 endif
+endif
+
+
 #include $(NOTEBOOK)/notebook.min
 
 #Games
@@ -119,7 +128,10 @@ endif
 #include $(UI)/oemui.min
 
 include $(MMIDIR)/core/core.min
+
+ifneq ($(USES_LOWMEM),yes)
 include $(APPLICATION)/application.min
+endif
 
 ifneq ($(USES_LOWMEM),yes)
 include $(GAME)/game.min

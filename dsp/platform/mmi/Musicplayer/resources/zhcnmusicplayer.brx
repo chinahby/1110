@@ -190,8 +190,11 @@
 	<String Id="1063" Name="IDS_MSG_WAITING">
 		<Text>正在加载歌曲，请稍候</Text>
 	</String>
-	<String Id="1064" Name="IDS_STRING_1064">
-		<Text>不能重命名</Text>
+	<String Id="1064" Name="IDS_RENAME_FAILED">
+		<Text>不能替换名称</Text>
+	</String>
+	<String Id="1065" Name="IDS_MUSIC_PLAYER">
+		<Text>音乐播放器</Text>
 	</String>
 </Strings>
 <Dialogs>

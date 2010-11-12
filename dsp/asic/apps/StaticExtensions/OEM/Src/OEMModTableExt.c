@@ -580,17 +580,22 @@ extern int QuickTest_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int CWMSMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int MainMenuMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
 extern int ExtraMenuMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+#ifdef FEATURE_APP_STOPWATCH
 extern int StopWatchMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
+#endif
 extern int ClockAppsMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 extern int CalcMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#ifdef FEATURE_APP_APPLICATION
 extern int ApplicationMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
+#endif
 
 #ifdef FEATURE_APP_WORLDTIME
 extern int WorldTimeMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #endif /*FEATURE_APP_WORLDTIME*/
 
+#ifdef FEATURE_APP_SCHEDULE
 extern int ScheduleApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
-//#endif
+#endif
 
 #ifdef FEATURE_SHORT_CODE_NAM_COUNT
 extern int OtkMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
@@ -931,13 +936,14 @@ extern int MusicPlayer_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int  VideoPlayerMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
-#if defined(FEATURE_APPTIMER)
+#if defined(FEATURE_APP_TIMERAPP)
 extern int AppTimerMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 
-//#if defined(FEATURE_CONVERTER)
+#if defined(FEATURE_CONVERTER)
 extern int  ConverterMod_Load(IShell* ps, void* pHelpers, IModule** ppMod);
-//#endif
+#endif
+
 #ifdef FEATURE_SPORTS_APP
 extern int SportsMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #endif
@@ -961,7 +967,6 @@ extern int GameMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #ifdef FEATURE_VERSION_M8
 extern int FrenDuoAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
-
 #ifdef FEATURE_APP_MULTIMEDIA
 extern int MultimedMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
@@ -991,20 +996,25 @@ static const AEEStaticMod gOEMStaticModList[] =
 
     {AEEFS_MIF_DIR"clockapps.mif", ClockAppsMod_Load},
     {AEEFS_MIF_DIR"calcapp.mif", CalcMod_Load},
-	
+#ifdef FEATURE_APP_WORLDTIME	
     {AEEFS_MIF_DIR"worldtime.mif", WorldTimeMod_Load},
-	
+#endif
+#ifdef FEATURE_APP_STOPWATCH
     {AEEFS_MIF_DIR"stopwatch.mif", StopWatchMod_Load},
-
+#endif    
+#ifdef FEATURE_APP_SCHEDULE
     {AEEFS_MIF_DIR"scheduleapp.mif", ScheduleApp_Load},
+#endif
+
 #ifdef FEATURE_SHORT_CODE_NAM_COUNT
     {AEEFS_MIF_DIR"otk.mif", OtkMod_Load},
 #endif //FEATURE_SHORT_CODE_NAM_COUNT
 
 
     {AEEFS_MIF_DIR"mainmenu.mif", MainMenuMod_Load},
-	
+#ifdef FEATURE_APP_APPLICATION	
     {AEEFS_MIF_DIR"application.mif", ApplicationMod_Load},
+#endif    
 //#if defined( FEATURE_GAME_TETRIS)
 //    {AEEFS_MIF_DIR"tetris.mif", TetrisMod_Load},
 #ifdef FEATURE_APP_GAME
@@ -1280,7 +1290,7 @@ static const AEEStaticMod gOEMStaticModList[] =
     {AEEFS_MIF_DIR"videoplayer.mif", VideoPlayerMod_Load},
 #endif
 
-#if defined(FEATURE_APPTIMER)
+#if defined(FEATURE_APP_TIMERAPP)
       {AEEFS_MIF_DIR"apptimer.mif", AppTimerMod_Load},//wu raojin add
 #endif
 #ifndef WIN32
@@ -1307,9 +1317,10 @@ static const AEEStaticMod gOEMStaticModList[] =
     {AEEFS_MIF_DIR"wecsc.mif", AEEWecscMod_Load},
     {AEEFS_MIF_DIR"pushe.mif", AEEPushMod_Load},
 #endif
-//#if defined(FEATURE_CONVERTER)
+
+#if defined(FEATURE_CONVERTER)
          {AEEFS_MIF_DIR"converter.mif", ConverterMod_Load},
-//#endif
+#endif
 
 #ifdef FEATURE_SPORTS_APP
 { AEEFS_MIF_DIR"sportsapp.mif",SportsMod_Load},

@@ -53,14 +53,63 @@ when       who     what, where, why
       Include Files
 -------------------------------------------------------------------*/
 
-#define MAX_SHEFTKEYPAD_NUMBER 30
+#define MAX_SHEFTKEYPAD_NUMBER 40
 typedef struct _SheftKeyItem_Own  SheftKeyItem_Own;
+typedef struct _UI_character_type UI_character_type ;
 struct _SheftKeyItem_Own
 {
 	uint16          wParam;
 	uint16          wp;
 	AECHAR          name[1];
 };
+struct _UI_character_type
+{
+	uint16          wParam;
+	uint16          wp[8];
+	AECHAR          name[1];
+};
+#ifdef FEATURE_LANG_THAI
+static SheftKeyItem_Own  VLCharKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
+{
+	{AVK_POUND, '#', {'#'}},
+	{AVK_1, '1', {'1'}},
+	{AVK_2, '2', {'2'}},
+	{AVK_3, '3', {'3'}},
+	{AVK_T, '(', {'('}},
+	{AVK_Y, ')', {')'}},
+	{AVK_U, '_', {'_'}},
+
+	{AVK_I, '-', {'-'}},
+	{AVK_O, '+', {'+'}},
+	{AVK_P, '?', {'?'}},
+	{AVK_STAR, '*', {'*'}},
+	{AVK_4, '4', {'4'}},
+	{AVK_5, '5', {'5'}},
+	{AVK_6, '6', {'6'}},
+
+	{AVK_G, '/', {'/'}},
+	{AVK_H, ':', {':'}},
+	{AVK_J, ';', {';'}},
+	{AVK_K, 0x0027, {0x0027}},
+	{AVK_L, 0x0022, {0x0022}},
+	{AVK_Z,NULL,{NULL}},
+	{AVK_7, '7', {'7'}},
+	{AVK_8, '8', {'8'}},
+	
+	{AVK_9, '9', {'9'}},
+	{AVK_B, '!', {'!'}},
+	{AVK_N, ',', {','}},
+	{AVK_M, '.', {'.'}},
+	{AVK_RWD, '$', {'$'}},
+	{AVK_MUTE,'@', {'@'}},
+    {AVK_ENTER,0x000A,{0x000A}},
+    
+    {AVK_SPACE,' ',{' '}},
+	{AVK_0,'0',{'0'}}
+	
+	
+};
+#else
 static SheftKeyItem_Own  VLCharKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 {
 	{AVK_POUND, '#', {'#'}},
@@ -98,7 +147,12 @@ static SheftKeyItem_Own  VLCharKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
     {AVK_SPACE,' ',{' '}},
 	{AVK_0,'0',{'0'}}
 	
+	
 };
+
+#endif
+#ifdef FEATURE_LANG_THAI
+
 static SheftKeyItem_Own  VLCharLowKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 {
     {AVK_POUND, 'q', {'q'}},
@@ -121,11 +175,51 @@ static SheftKeyItem_Own  VLCharLowKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 	{AVK_H, 'h', {'h'}},
 	{AVK_J, 'j', {'j'}},
 	{AVK_K, 'k', {'k'}},
-	{AVK_L, 'l', {'k'}},
+	{AVK_L, 'l', {'l'}},
+
+	{AVK_Z, 'z', {'z'}},
+	{AVK_7, 'x', {'x'}},
+	{AVK_8, 'c', {'c'}},
+	{AVK_9, 'v', {'v'}},
+
+	{AVK_B, 'b', {'b'}},
+	{AVK_N, 'n', {'n'}},
+	{AVK_M, 'm', {'m'}},
+	{AVK_RWD, '$', {'$'}},
+	{AVK_MUTE,'@', {'@'}},
+    {AVK_ENTER,0x000A,{0x000A}},
+    
+    {AVK_SPACE,' ',{' '}}   
+};
+#else
+static SheftKeyItem_Own  VLCharLowKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
+{
+    {AVK_POUND, 'q', {'q'}},
+	{AVK_1, 'w', {'w'}},
+	{AVK_2, 'e', {'e'}},
+	{AVK_3, 'r', {'r'}},
+	{AVK_T, 't', {'t'}},
+	{AVK_Y, 'y', {'y'}},
+	{AVK_U, 'u', {'u'}},
+
+	{AVK_I, 'i', {'i'}},
+	{AVK_O, 'o', {'o'}},
+	{AVK_P, 'p', {'p'}},
+	{AVK_STAR, 'a', {'a'}},
+	{AVK_4, 's', {'s'}},
+	{AVK_5, 'd', {'d'}},
+	{AVK_6, 'f', {'f'}},
+
+	{AVK_G, 'g', {'g'}},
+	{AVK_H, 'h', {'h'}},
+	{AVK_J, 'j', {'j'}},
+	{AVK_K, 'k', {'k'}},
+	{AVK_L, 'l', {'l'}},
 	{AVK_7, 'z', {'z'}},
 	{AVK_8, 'x', {'x'}},
 	
 	{AVK_9, 'c', {'c'}},
+	
 	{AVK_V, 'v', {'v'}},
 	{AVK_B, 'b', {'b'}},
 	{AVK_N, 'n', {'n'}},
@@ -136,6 +230,47 @@ static SheftKeyItem_Own  VLCharLowKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
     {AVK_SPACE,' ',{' '}}   
 };
 
+#endif
+#ifdef FEATURE_LANG_THAI
+static SheftKeyItem_Own  VLCharCapKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
+{
+    {AVK_POUND, 'Q', {'Q'}},
+	{AVK_1, 'W', {'W'}},
+	{AVK_2, 'E', {'E'}},
+	{AVK_3, 'R', {'R'}},
+	{AVK_T, 'T', {'T'}},
+	{AVK_Y, 'Y', {'Y'}},
+	{AVK_U, 'U', {'U'}},
+
+	{AVK_I, 'I', {'I'}},
+	{AVK_O, 'O', {'O'}},
+	{AVK_P, 'P', {'P'}},
+	{AVK_STAR, 'A', {'A'}},
+	{AVK_4, 'S', {'S'}},
+	{AVK_5, 'D', {'D'}},
+	{AVK_6, 'F', {'F'}},
+
+	{AVK_G, 'G', {'G'}},
+	{AVK_H, 'H', {'H'}},
+	{AVK_J, 'J', {'J'}},
+	{AVK_K, 'K', {'K'}},
+	{AVK_L, 'L', {'L'}},
+	
+	{AVK_Z, 'Z', {'Z'}},
+	{AVK_7, 'X', {'X'}},
+	{AVK_8, 'C', {'C'}},
+	{AVK_9, 'V', {'V'}},
+
+	{AVK_B, 'B', {'B'}},
+	{AVK_N, 'N', {'N'}},
+	{AVK_M, 'M', {'M'}},
+	{AVK_RWD, '$', {'$'}},
+	{AVK_MUTE,'@', {'@'}},
+    {AVK_ENTER,0x000A,{0x000A}},
+    
+    {AVK_SPACE,' ',{' '}}  
+};
+#else
 static SheftKeyItem_Own  VLCharCapKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 {
     {AVK_POUND, 'Q', {'Q'}},
@@ -163,6 +298,7 @@ static SheftKeyItem_Own  VLCharCapKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 	{AVK_8, 'X', {'X'}},
 	
 	{AVK_9, 'C', {'C'}},
+	
 	{AVK_V, 'V', {'V'}},
 	{AVK_B, 'B', {'B'}},
 	{AVK_N, 'N', {'N'}},
@@ -173,6 +309,8 @@ static SheftKeyItem_Own  VLCharCapKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
     {AVK_SPACE,' ',{' '}}  
 };
 
+#endif
+#if 0 //change by xuhui
 static SheftKeyItem_Own  VLCharArabicKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 {
 	{AVK_POUND, 0x0636, {0x0636}},
@@ -210,6 +348,132 @@ static SheftKeyItem_Own  VLCharArabicKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
     {AVK_SPACE,' ',{' '}},
 	{AVK_0,0x0637,{0x0637}}
 };
+#else
+//效准阿拉伯语键盘对应值
+static SheftKeyItem_Own  VLCharArabicKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
+{
+	{AVK_POUND, 0x0642, {0x0642}},
+  	{AVK_1, 0x0648, {0x0648}},
+  	{AVK_2, 0x064E, {0x064E}},
+  	{AVK_3, 0x0631, {0x0631}},
+  	{AVK_T, 0x062A, {0x062A}},
+  	{AVK_Y, 0x064A, {0x064A}},
+  	{AVK_U, 0x064F, {0x064F}},
+  
+  	{AVK_I, 0x0650, {0x0650}},
+  	{AVK_O, 0x0652, {0x0652}},
+  	{AVK_P, 0x0637, {0x0637}},
+  	{AVK_STAR, 0x0627, {0x0627}},
+  	{AVK_4, 0x0633, {0x0633}},
+  	{AVK_5, 0x062F, {0x062F}},
+  	{AVK_6, 0x0641, {0x0641}},
+  
+  	{AVK_G, 0x063A, {0x063A}},
+  	{AVK_H, 0x062D, {0x062D}},
+  	{AVK_J, 0x062C, {0x062C}},
+  	{AVK_K, 0x0643, {0x0643}},
+  	{AVK_L, 0x0644, {0x0644}},
+  	{AVK_7, 0x0632, {0x0632}},
+  	{AVK_8, 0x0621, {0x0621}},
+  	
+  	{AVK_9, 0x0635, {0x0635}},
+  	{AVK_V, 0x0651, {0x0651}},
+  	{AVK_B, 0x0628, {0x0628}},
+  	{AVK_N, 0x0646, {0x0646}},
+  	{AVK_M, 0x0645, {0x0645}},
+  	{AVK_RWD, 0x061F, {0x061F}},
+    {AVK_ENTER,0x000A,{0x000A}},
+      
+    {AVK_SPACE,' ',{' '}},
+	{AVK_0,0x0660,{0x0660}}
+};
+#endif
+
+
+#ifdef FEATURE_LANG_THAI
+
+
+static SheftKeyItem_Own VLCharThaiKeyItem[MAX_SHEFTKEYPAD_NUMBER] = 
+{
+	{AVK_POUND, 0xE20, {'Q'}},
+	{AVK_1, 0xE04, {'W'}},
+	{AVK_2, 0xE0E, {'E'}},
+	{AVK_3, 0xE1E, {'R'}},
+	{AVK_T, 0xE02, {'T'}},
+	{AVK_Y, 0xE0A, {'Y'}},
+	{AVK_U, 0xE27, {'U'}},
+
+	{AVK_I, 0xE23, {'I'}},
+	{AVK_O, 0xE19, {'O'}},
+	{AVK_P, 0xE22, {'P'}},
+	{AVK_STAR, 0xE1F, {'A'}},
+	{AVK_4, 0xE2B, {'S'}},
+	{AVK_5, 0xE01, {'D'}},
+	{AVK_6, 0xE14, {'F'}},
+
+	{AVK_G, 0xE0C, {'G'}},
+	{AVK_H, 0xE08, {'H'}},
+	{AVK_J, 0xE1A, {'J'}},
+	{AVK_K, 0xE25, {'K'}},
+	{AVK_L, 0xE2A, {'L'}},
+	{AVK_Z, 0xE1C, {'Z'}},
+	{AVK_7, 0xE1B, {'X'}},
+	
+	{AVK_8, 0xE09, {'C'}},
+	{AVK_9, 0xE2D, {'V'}},
+	{AVK_B, 0xE2E, {'B'}},
+	{AVK_N, 0xE0B, {'N'}},
+	{AVK_M, 0xE17, {'M'}},
+	{AVK_RWD, 0xE21, {'$'}},
+	{AVK_MUTE,0xE1d, {'@'}},
+    {AVK_ENTER,0x000A,{0x000A}},
+    
+    {AVK_SPACE,' ',{' '}}  
+};
+
+
+static SheftKeyItem_Own VLCharShiftThaiKeyItem[MAX_SHEFTKEYPAD_NUMBER] = 
+{
+	{AVK_POUND, 0xE16, {'Q'}},
+	{AVK_1, 0xE15, {'W'}},
+	{AVK_2, 0xE26, {'E'}},
+	{AVK_3, NULL, {'R'}},
+	{AVK_T, NULL, {'T'}},
+	{AVK_Y, NULL, {'Y'}},
+	{AVK_U, NULL, {'U'}},
+
+	{AVK_I, 0xE13, {'I'}},
+	{AVK_O, 0xE07, {'O'}},
+	{AVK_P, 0xE0D, {'P'}},
+	{AVK_STAR, 0xE24, {'A'}},
+	{AVK_4, 0xE06, {'S'}},
+	{AVK_5, 0xE0F, {'D'}},
+	{AVK_6, NULL, {'F'}},
+
+	{AVK_G, NULL, {'G'}},
+	{AVK_H, NULL, {'H'}},
+	{AVK_J, NULL, {'J'}},
+	{AVK_K, 0xE29, {'K'}},
+	{AVK_L, 0xE28, {'L'}},
+	{AVK_Z, 0xE11, {'Z'}},
+	{AVK_7, 0xE18, {'X'}},
+	
+	{AVK_8, 0xE10, {'C'}},
+	{AVK_9, NULL, {'V'}},
+	{AVK_B, NULL, {'B'}},
+	{AVK_N, NULL, {'N'}},
+	{AVK_M, NULL, {'M'}},
+	{AVK_RWD, 0xE12, {'$'}},
+	{AVK_MUTE,0xE2C, {'@'}},
+    {AVK_ENTER,0x000A,{0x000A}},
+    
+    {AVK_SPACE,' ',{' '}}  
+};
+
+
+
+#endif
+
 
 /*-------------------------------------------------------------------
       Type Declarations

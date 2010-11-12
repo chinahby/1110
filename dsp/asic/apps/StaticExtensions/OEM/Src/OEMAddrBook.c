@@ -1973,6 +1973,26 @@ static int InitAddrBkCache()
          return(AEE_SUCCESS);  // no more records
       }
 
+#ifdef CUST_EDITION
+      if(curRec == prevRec)
+      {
+         static uint16 backRecID = AEE_DB_RECID_NULL;
+         if(backRecID == curRec)
+         {
+            // 数据库已严重损坏，不能进行恢复处理，只能完全重建
+            dbErr = OEMAddr_RemoveAllRecs();
+            gbCacheInited = TRUE; 
+            return dbErr;
+         }
+         else
+         {
+            backRecID = curRec;
+            // 此时证明有两个重复记录，尚不清楚什么原因导致，因此，这里直接删除重复的一条记录
+            OEM_DBRecordDelete(ghAddrBk, curRec, &dbErr);
+         }
+         continue;
+      }
+#endif
 
       nRet = OEMAddr_RecordGetByID(curRec,&cat,&pFields, &nCount,&nErr);
       if(nRet == AEE_SUCCESS)

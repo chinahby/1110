@@ -115,7 +115,7 @@
 	<STRING Id="1038" Name="IDS_MCC_LOCK">
 		<Text>Card password</Text>
 	</STRING>
-	<STRING Id="1039" Name="IDS_ISRAEL_BANNER" Encoding="Unicode">
+	<STRING Id="1039" Name="IDS_ISRAEL_BANNER">
 		<Text>פלאפון</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_PLANEMODE">

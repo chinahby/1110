@@ -53,6 +53,86 @@ OEM_LIB_SOURCES=\
 	OEMMangoBrewStubs.c \
 
 else
+ifeq ($(USES_LOWMEM),yes)
+OEM_LIB_SOURCES=\
+	AEEPhone.c \
+	AEETSupps.c \
+	OEMAddrBook.c \
+	OEMAppFrame.c \
+	OEMAppFuncs.c \
+	OEMAppx5.c \
+	OEMBacklight.c \
+	OEMBattery.c \
+	OEMBitmap16.c \
+	OEMBitmap_common.c \
+	OEMBN.c \
+	OEMCall.c \
+	OEMCallHistory.c \
+	OEMConfig.c \
+	OEMConstFiles_Dynamic.c \
+	OEMCriticalSection.c \
+	OEMDB.c \
+	OEMDefaults.c \
+	OEMDeviceNotifier.c \
+	OEMDisp.c \
+	OEMDisplayDev.c \
+	OEMAnnunciatorControl.c \
+	OEMFlip.c \
+	OEMFS.c \
+	OEMFSPath.c \
+	OEMJPEG.c \
+	OEMHeap.c \
+	oemheap3x.c \
+	oemitextctl.c \
+	OEMLogger.c \
+	OEMLoggerBTIL.c \
+	OEMLoggerDMSS.c \
+	OEMLoggerFile.c \
+	OEMMD5.c \
+	OEMMedia.c \
+	OEMMediaCMX.c \
+	OEMMediaDLS.c \
+	OEMMediaFormats.c \
+	OEMMediaPMD.c \
+	OEMMediaUtil.c \
+	OEMMemCache.c \
+	OEMModTable.c \
+	OEMModTableExt.c \
+	OEMMutex.c \
+	OEMNativeNotifier.c \
+	OEMObjectMgr.c \
+	OEMOS.c \
+	OEMPhone.c \
+	OEMPrivacy.c \
+	OEMRUIM.c \
+	OEMAddrBookRUIM.c \
+	OEMRan.c \
+	OEMRegistry.c \
+	OEMResArbiter.c \
+	OEMRinger.c \
+	OEMSecSysClock.c  \
+	OEMSIO.c\
+	OEMAuth.c  \
+	OEMServingNetworks.c  \
+	OEMSound.c \
+	OEMStringFuncs.c \
+	OEMSVC.c \
+	OEMSynthQuality.c \
+	OEMSysClock.c \
+	OEMTAPI.c \
+	OEMTelephone.c \
+	OEMText.c \
+	OEMSMS.c \
+	OEMUASMS.c \
+	OEMUASMSStorage.c \
+	OEMWSMS.c \
+	OEMSMSCust.c \
+	OEMTSupps.c \
+	OEMVocoder.c \
+	OEMFont.c \
+	OEMFontData.c \
+	OEMMangoBrewStubs.c
+else
 OEM_LIB_SOURCES=\
 	AEEPhone.c \
 	AEETSupps.c \
@@ -146,6 +226,7 @@ OEM_LIB_SOURCES=\
         OEMKeysMapping.c \
 	OEMFMRadio.c \
 	OEMFMRDS.c
+endif
 endif
 ifeq ($(USES_UIONE),yes)
 # Tell make where the static extension source files from the Porting Kit are located

@@ -38,7 +38,12 @@
 #include "OEMCFGI.h"
 #include "AEEBattery.h"
 #include "AEERUIM.h"
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 #include "coreapp.brh"
 #ifndef WIN32
 #include "ui.h"
@@ -119,12 +124,12 @@
 // 关机动画文件播放
 #ifdef FEATURE_VERSION_FLEXI203
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
-#define    PWRON_ANI_FRAME_COUNT                 (19)
-#define    PWRON_ANI_RATE                        (200)
+#define    PWRON_ANI_FRAME_COUNT                 (17)
+#define    PWRON_ANI_RATE                        (280)
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronani.png"
-#define    PWROFF_ANI_FRAME_COUNT                (19)
-#define    PWROFF_ANI_RATE                       (200)
-#define    ANI_RATE                              (150)
+#define    PWROFF_ANI_FRAME_COUNT                (17)
+#define    PWROFF_ANI_RATE                       (280)
+#define    ANI_RATE                              (180)
 #elif defined FEATURE_VERSION_SMART
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (10)
@@ -197,6 +202,22 @@
 #define    PWROFF_ANI_FRAME_COUNT                (12)
 #define    PWROFF_ANI_RATE                       (380)
 #define    ANI_RATE                              (3000)
+#elif defined FEATURE_VERSION_C01
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
+#define    PWRON_ANI_FRAME_COUNT                 (12)
+#define    PWRON_ANI_RATE                        (380)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.jpg"
+#define    PWROFF_ANI_FRAME_COUNT                (12)
+#define    PWROFF_ANI_RATE                       (380)
+#define    ANI_RATE                              (150)
+#elif defined FEATURE_VERSION_HITZ181
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
+#define    PWRON_ANI_FRAME_COUNT                 (10)
+#define    PWRON_ANI_RATE                        (400)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.png"
+#define    PWROFF_ANI_FRAME_COUNT                (10)
+#define    PWROFF_ANI_RATE                       (350)
+#define    ANI_RATE                              (180)
 #else
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
 #define    PWRON_ANI_FRAME_COUNT                 (12)
@@ -433,7 +454,13 @@ typedef struct _CCoreApp
     IConfig             *m_pConfig;
     IBattery            *m_pBatt;
     IRUIM               *m_pIRUIM;
+#ifdef FEATURE_ICM
     ICM                 *m_pCM;
+#else
+    ITelephone          *m_pITelephone;
+	ICallMgr            *m_pICallMgr;
+	IPhoneCtl           *m_pIPhoneCtl;
+#endif
     //IPhone       *m_pPhone;
     
     // 当前活动对话框IDialog接口指针
@@ -745,8 +772,11 @@ boolean CoreApp_InitExtInterface(CCoreApp *pMe);
 说明      :  函数用于获取COREAPP是否处于IDLE状态
 ==============================================================================*/
 boolean CoreApp_IsIdle(void);
+#ifdef FEATURE_ICM
 boolean CoreApp_IsEmergencyMode(ICM* pICM);
-
+#else
+boolean CoreApp_IsEmergencyMode(ITelephone* pICM);
+#endif
 void CoreApp_UpdateAnnunciator(CCoreApp *pMe);
 
 void CoreApp_Draw_Charger_image(void *pp);
@@ -796,6 +826,10 @@ int CoreApp_GetBatteryLevel(CCoreApp *pMe);
 void CoreApp_SendSeamlessSMSTimer(void *pme);
 int  CoreApp_SendSeamlessSMS(CCoreApp *pMe);
 #endif //#ifdef FEATURE_SEAMLESS_SMS
+#ifdef FEATURE_ICM
 void InitAfterPhInfo(CCoreApp *pMe, AEECMOprtMode mode);
+#else
+void InitAfterPhInfo(CCoreApp *pMe, AEETOprtMode mode);
+#endif
 void CoreApp_ProcessSubscriptionStatus (CCoreApp *pMe);
 #endif

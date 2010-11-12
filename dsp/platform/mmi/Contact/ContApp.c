@@ -1019,9 +1019,7 @@ static int CContApp_Start(CContApp *pMe)
     pMe->m_pAddNewRemark = NULL;
     pMe->m_nRingToneID = NULL;
     pMe->m_nGroupCat = 0;    
-//#if defined FEATURE_CARRIER_THAILAND_HUTCH
-    pMe->m_wSelectGroup =0;
-//#endif    
+    pMe->m_wSelectGroup =0; 
     pMe->m_nSmartStateType = SMART_STATE_IDD_LIST;
 #ifdef FEATURE_LANG_CHINESE
     pMe->m_nInputModeTable[0] = AEE_TM_LETTERS;
@@ -1250,7 +1248,6 @@ static void CContApp_CFGCacheInit(ContAppCFGCache *pCFGCache)
     pCFGCache->wOneDial7[0] = ONEDIAL_NULL;
     pCFGCache->wOneDial8[0] = ONEDIAL_NULL;
     pCFGCache->wOneDial9[0] = ONEDIAL_NULL;
-//#if defined FEATURE_CARRIER_THAILAND_HUTCH
     pCFGCache->wGroup1[0] = ONEDIAL_NULL;
     pCFGCache->wGroup2[0] = ONEDIAL_NULL;
     pCFGCache->wGroup3[0] = ONEDIAL_NULL;
@@ -1261,7 +1258,6 @@ static void CContApp_CFGCacheInit(ContAppCFGCache *pCFGCache)
 #ifdef FEATURE_LANG_CHINESE
     pCFGCache->inputMode = 0;
 #endif
-//#endif
 } // CContApp_CFGCacheInit
 
 /*==============================================================================
@@ -1444,7 +1440,6 @@ int CContApp_GetConfig( CContApp        *pMe,
             WSTRCPY((AECHAR *)data, pCFGCache->wOneDial9);
             return SUCCESS;
 
-//#if defined FEATURE_CARRIER_THAILAND_HUTCH
         case CONTCFG_GROUP1:
             // 校验数据长度
             if(dataLen < WSTRSIZE(pCFGCache->wGroup1))
@@ -1524,7 +1519,6 @@ int CContApp_GetConfig( CContApp        *pMe,
             *(byte *)data = pCFGCache->inputMode;
             return SUCCESS;
 #endif
-//#endif
         default:
             break;
     }
@@ -1714,7 +1708,6 @@ int CContApp_SetConfig(CContApp        *pMe,
             WSTRCPY(pCFGCache->wOneDial9, (AECHAR *)data);
             break;
 
-//#if defined FEATURE_CARRIER_THAILAND_HUTCH
         case CONTCFG_GROUP1:
             // 校验数据长度
             if(WSTRLEN((AECHAR *)data) > MAX_INPUT_NAME_EN)
@@ -1783,7 +1776,7 @@ int CContApp_SetConfig(CContApp        *pMe,
            
            WSTRCPY(pCFGCache->wGroup7, (AECHAR *)data);
            break;
-//#endif       
+           
 #ifdef FEATURE_LANG_CHINESE
        case CONTTCFG_QUICKSEARCH_INPUT_MODE:
        // 校验数据长度

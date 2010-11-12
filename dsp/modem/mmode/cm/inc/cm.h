@@ -19370,6 +19370,9 @@ typedef enum cm_client_type_e {
   #endif /* FEATURE_RPC */
 
 } cm_client_type_e_type;
+#ifdef FEATURE_CM_LOW_MEM_TARGET
+	#define CM_CLIENT_TYPE_BREW CM_CLIENT_TYPE_MFLO
+#endif
 
 
 /** Enumeration of client API return status

@@ -59,6 +59,7 @@ when       who     what, where, why
 #include "OEMFeatures.h"
 #include "OEMConfig.h"
 #include "OEMCFGI.h"
+
 //#include "zhcnime.brh"
 
 
@@ -113,7 +114,7 @@ when       who     what, where, why
 #endif //FEATURE_LANG_HINDI
 
 #ifdef FEATURE_LANG_THAI
-#define FEATURE_T9_MT_THAI
+//#define FEATURE_T9_MT_THAI
 #define FEATURE_T9_RAPID_THAI
 #endif //FEATURE_LANG_THAI
 
@@ -869,6 +870,19 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 
 /* This list of symbols needs to come out of a resource instead.
 */
+
+#ifdef FEATURE_LANG_THAI
+static const AECHAR sszSymbolListTH[] =
+{
+	0xE30,0xE31,0xE32,0xE33,0xE34,0xE35,
+	0xE36,0xE37,0xE38,0xE39,0xE40,0xE41,
+	0xE42,0xE43,0xE44,0xE4C,0xE47,0xE48,
+	0xE49,0xE4A,0xE48,0xE2F,0xE46,0
+		
+};
+#endif
+
+
 static const AECHAR sszSymbolList[] =
 {
 #if defined FEATURE_CARRIER_CHINA_TELCOM
@@ -2011,7 +2025,7 @@ void OEM_TextEnumModesInit(void) ;
 //Return true if this is a valid mode. Return false if we already reached end
 boolean OEM_TextEnumMode(AEETextMode* pMode) ;
 
-uint16 OEM_TextQuerySymbols(AECHAR *pszOut, uint16 size) ;
+//uint16 OEM_TextQuerySymbols(AECHAR *pszOut, uint16 size) ;
 
 int32 OEM_TextGetCursorPos(OEMCONTEXT hTextField);
 

@@ -80,7 +80,7 @@ typedef struct
    AEEPoint ptPosition;
 } PenTracker;
 
-#define TEXT_BETWEEN_LINE_PIXEL   (3)
+#define TEXT_BETWEEN_LINE_PIXEL   (0)
 
 /*===========================================================================
 
@@ -2550,7 +2550,7 @@ static void     AStatic_DrawBackground(AStatic * pme, AEERect *rc)
     }
     else
     {
-        pImageBg = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEXT_BACKGROUND);
+        pImageBg = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
     }
     
     Appscommon_ResetBackground(pme->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, rc, 0, 0);

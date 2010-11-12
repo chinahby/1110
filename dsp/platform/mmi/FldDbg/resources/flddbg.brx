@@ -310,7 +310,7 @@
 	<STRING Id="103" Name="IDS_BACK">
 		<Text>            Back</Text>
 	</STRING>
-	<STRING Id="104" Name="IDS_HW_VERSION" Encoding="Unicode">
+	<STRING Id="104" Name="IDS_HW_VERSION">
 		<Text>HW Ver: </Text>
 	</STRING>
 	<String Id="201" Name="IDS_BREWSETTUBG_TITLE">

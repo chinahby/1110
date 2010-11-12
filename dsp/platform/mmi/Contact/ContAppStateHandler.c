@@ -2444,7 +2444,6 @@ static NextFSMAction Handler_STATE_GROUPVIEW(CContApp *pMe)
             break;
             
         case DLGRET_OK:
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH   
 			
             if(pMe->m_nGroupCat != AEE_ADDR_CAT_NONE
                 && pMe->m_nGroupCat != AEE_ADDR_CAT_OTHER
@@ -2456,7 +2455,6 @@ static NextFSMAction Handler_STATE_GROUPVIEW(CContApp *pMe)
             else
             {
 
-//#else //FEATURE_CARRIER_THAILAND_HUTCH 
 
             // Load record
            
@@ -2486,8 +2484,6 @@ static NextFSMAction Handler_STATE_GROUPVIEW(CContApp *pMe)
             // Go to list the menu
             
             MOVE_TO_STATE(STATE_GROUPVIEW_LIST);
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
-    /**/
             }
             break;
             
@@ -3179,11 +3175,6 @@ static NextFSMAction Handler_STATE_SELECTGROUP(CContApp *pMe)
                                                       IDC_GROUP_MENU);
             
             (void)IMENUCTL_DeleteItem(pMenuCtl, IDS_GROUP_NONE_STRING);
-
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH    
-//            CContApp_BuildGroupMenu(pMe, pMenuCtl);
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
-            
             return NFSMACTION_WAIT;
         }
         //Proccess yourself dialog retrn value here
@@ -4494,22 +4485,13 @@ static NextFSMAction Handler_STATE_COPYMOVE(CContApp *pMe)
             
             pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                                       IDC_COPYMOVE_MENU);
-   /*         
-#ifndef FEATURE_CARRIER_THAILAND_HUTCH  
-            (void)IMENUCTL_DeleteItem(pMenuCtl, IDI_COPYMOVE_MENU_MOVE);  
-#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
-            */
             //MENU_SET_COMICON(pMenuCtl);
             (void)IMENUCTL_Redraw(pMenuCtl);
             return NFSMACTION_WAIT;
         }
         //Proccess yourself dialog retrn value here
         case DLGRET_CANCELED:
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH  
             MOVE_TO_STATE(STATE_MANAGEMENT);
-//#else
-//            MOVE_TO_STATE(STATE_MANAGEMENT);
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
             break;
             
         case DLGRET_COPY:
@@ -5011,8 +4993,7 @@ static NextFSMAction Handler_STATE_SETTING(CContApp *pMe)
 #ifndef FEATURE_CARRIER_THAILAND_HUTCH   
             (void)IMENUCTL_DeleteItem(pMenuCtl, IDI_SETTING_MENU_COPYMOVE);
             (void)IMENUCTL_DeleteItem(pMenuCtl, IDI_SETTING_MENU_MEMORY);
-#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
-
+#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH
             MENU_SET_COMICON(pMenuCtl);
             (void)IMENUCTL_Redraw(pMenuCtl);
             
@@ -5385,11 +5366,7 @@ static NextFSMAction Handler_STATE_CAPACITY(CContApp *pMe)
         
         //Proccess yourself dialog retrn value here
         case DLGRET_OK:
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH                
- //           MOVE_TO_STATE(STATE_MANAGEMENT);
-//#else
             MOVE_TO_STATE(STATE_MANAGEMENT);
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
             break;
             
         default:

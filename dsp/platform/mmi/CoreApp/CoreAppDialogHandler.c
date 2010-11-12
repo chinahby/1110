@@ -774,6 +774,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 {
                     if(pMe->m_nMsgID ==IDS_EXIT_EMERGENCY_MODE)
                     {
+#ifdef FEATURE_ICM
                         //exit the emergency mode
                         ICM_SetSystemPreference(pMe->m_pCM,
                                                         AEECM_MODE_PREF_PERSISTENT, AEECM_PREF_TERM_PERMANENT, 0,
@@ -781,6 +782,21 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                                                         AEECM_ROAM_PREF_NO_CHANGE, AEECM_HYBR_PREF_NO_CHANGE,
                                                         AEECM_SRV_DOMAIN_PREF_NO_CHANGE, AEECM_NETWORK_SEL_MODE_PREF_NO_CHANGE,
                                                         NULL, NULL, NULL);
+#else
+                    	AEETSystemPreference tSysPref={
+														AEET_MODE_PREF_PERSISTENT, 
+														AEET_PREF_TERM_PERMANENT,
+														0,
+								                        AEET_GW_ACQ_ORDER_PREF_NO_CHANGE,
+								                        AEET_BAND_PREF_NO_CHANGE,
+								                        AEET_ROAM_PREF_NO_CHANGE, 
+								                        AEET_HYBR_PREF_NO_CHANGE,
+								                        AEET_SRV_DOMAIN_PREF_NO_CHANGE, 
+								                        AEET_NETWORK_SEL_MODE_PREF_NO_CHANGE,
+							                            {0xFF,0xFF,0xFF}};  /*if we don,t use plmn set it to 0xff,0xff,0xff*/
+		                //exit the emergency mode
+		                IPHONECTL_SetSystemPreference(pMe->m_pIPhoneCtl,NULL,&tSysPref,sizeof(AEETSystemPreference),NULL);
+#endif
                         pMe->m_bemergencymode = FALSE;
                     }
 #ifdef FEATRUE_AUTO_POWER
@@ -1318,7 +1334,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND); //added by chengxiao 2009.03.20
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
 #endif
 				MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler............................SIZE:%d",emerg_tab.emert_size,0,0);
                 for(i=0; i<emerg_tab.emert_size; i++)
@@ -2539,7 +2555,7 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
         db_put(DB_CAPTURE_WALLPER,&need_capture);
         if(pMe->m_pIAnn != NULL)
         {
-            IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);//added by chengxiao 2008.11.26
+            IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);
         }
 #endif
 
@@ -2799,14 +2815,25 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             switch (wParam)
             {
+#if defined(FEATURE_VERSION_C01)
+                case AVK_MUSIC:     
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+                case AVK_FM:
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+#else
             	//Add By zzg 2010_10_14
             	case AVK_MUSIC:		//现在外壳上位置相反，所以和FM区分
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
 				case AVK_FM:
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
             	//Add End
-				
+#endif
+				case AVK_TV:
+					{
+						return TRUE;
+					}
                 case AVK_UP:
+                case AVK_MESSAGE:
 
 #if defined(FEATURE_WMS_APP)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
@@ -2880,29 +2907,29 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #elif defined (FEATURE_FPT005)
 			   ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 #else
-			   ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+			   ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif /*FEATURE_NASRANI*/
 #else
-               ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+               ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_IVIO203)
-				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #elif defined (FEATURE_VERSION_SMART)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
-				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif /*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_M8)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
-				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/			
 #else
-				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif
 				  return ret;
                 }
@@ -4056,27 +4083,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #endif /*FEATURE_CARRIER_SUDAN_SUDATEL*/
 
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
-
-#if defined FEATURE_DISP_220X176
 	SETAEERECT(&rc, 
 			   IDLE_D_CLOCK_X,
 			   IDLE_D_CLOCK_Y,
 			   pMe->m_rc.dx-2*IDLE_D_CLOCK_X, 
-			   25);	
-#elif defined FEATURE_DISP_320X240
-	SETAEERECT(&rc, 
-			   IDLE_D_CLOCK_X,
-			   IDLE_D_CLOCK_Y,
-			   pMe->m_rc.dx-2*IDLE_D_CLOCK_X, 
-			   30);	
-#else
-	SETAEERECT(&rc, 
-			   IDLE_D_CLOCK_X,
-			   IDLE_D_CLOCK_Y,
-			   pMe->m_rc.dx-2*IDLE_D_CLOCK_X, 
-			   pMe->m_nNormalFontHeight);	
-#endif
-	
+			   pMe->m_nNormalFontHeight);	//26
 	SETAEERECT(&rc_date, 
 			   DATA_X,
 			   DATA_Y,
@@ -4633,7 +4644,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		eBBarType = BTBAR_FACEBOOK_CHAT;
 #else										//Include IVIO
 	#if !defined (FEATURE_FLEXI_STATIC_BREW_APP)
-		eBBarType = BTBAR_MENU_CONTACTS;
+		eBBarType = BTBAR_MESSAGES_CONTACTS;
     #elif defined (FEATURE_FMN2010)
         eBBarType = BTBAR_FMUSLIM_FPORTAL;
 	#elif defined (FEATURE_NASRANI) 
@@ -4641,7 +4652,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	#elif defined (FEATURE_FPT005)
 		eBBarType = BTBAR_CONTACTS_FPORTAL; //add by yangdecai
 	#else
-		eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
+		eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai
 	#endif
 #endif
 	
@@ -4745,7 +4756,6 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
                              (void*)pMe);
 #else
         {
-            MSG_FATAL("CoreApp_PlayPwrOnAni 3",0,0,0);
             #define PWRON_STR L"Welcome"
             extern int GreyBitBrewFont_DrawText(IDisplay *p, int nSize, const AECHAR *psz, int nl, int x, int y, const AEERect *prcb, uint32 flags);
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
@@ -5356,10 +5366,17 @@ void CoreApp_Poweroff_Phone(void *pp)
                                  AEECLSID_CORE_APP,
                                  AEECLSID_BATTERYNOTIFIER,
                                  0);
+#ifdef FEATURE_ICM
     (void) ISHELL_RegisterNotify(pMe->a.m_pIShell, 
                                  AEECLSID_CORE_APP, 
                                  AEECLSID_CM_NOTIFIER, 
                                  0);
+#else
+    (void) ISHELL_RegisterNotify(pMe->a.m_pIShell, 
+                                 AEECLSID_CORE_APP, 
+                                 AEECLSID_PHONENOTIFIER, 
+                                 0);
+#endif
     ICONFIG_SetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
 
     // Turn off RSSI indicator
@@ -5370,7 +5387,11 @@ void CoreApp_Poweroff_Phone(void *pp)
     }
     //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
     //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+#ifdef FEATURE_ICM
     ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_PWROFF);
+#else
+    IPHONECTL_SetOperatingMode(pMe->m_pIPhoneCtl, AEET_OPRT_MODE_PWROFF);
+#endif
     CoreTask_SetPwrDnComplete(TRUE);
 }
 

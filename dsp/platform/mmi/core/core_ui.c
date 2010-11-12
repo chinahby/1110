@@ -450,9 +450,15 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
 	{HS_SPACE_K,					AVK_SPACE,						AVK_METHED_HOLD, FALSE, 0},
 	{HS_SYMBOL_K,					AVK_SYMBOL,						AVK_METHED_HOLD, FALSE, 0},
 	{HS_LCTRL_K,					AVK_LCTRL,						AVK_METHED_HOLD, FALSE, 0},
+	#ifndef FEATURE_LANG_THAI
 	{HS_F1_K,					    AVK_UP,						    AVK_METHED_HOLD, FALSE, 1},
 	{HS_F2_K,					    AVK_DOWN,						AVK_METHED_HOLD, FALSE, 1},
+	#else
+	{HS_F1_K,					    AVK_MESSAGE,				    AVK_METHED_HOLD, FALSE, 1},
+	{HS_F2_K,					    AVK_TV,						    AVK_METHED_HOLD, FALSE, 1},
+	#endif
 	{HS_F3_K,					    AVK_CLR,						AVK_METHED_HOLD, FALSE, 1},
+	{HS_F4_K,					    AVK_MUTE,						AVK_METHED_HOLD, FALSE, 1},
 	
 #endif
 	{HS_NONE_K,                     AVK_UNDEFINED,                  AVK_METHED_NONE, FALSE, 0},
@@ -1693,7 +1699,11 @@ static IBacklight   *gpBacklight = NULL;
 static IBacklight   *gpKeyBacklight = NULL;
 #endif
 static IALERT       *gpAlert = NULL;
+#ifdef FEATURE_ICM
 static ICM          *gpICM = NULL;
+#else
+static ITelephone          *g_pITelephone = NULL;
+#endif
 static boolean      m_isBacklight = FALSE;
 
 
@@ -1717,12 +1727,29 @@ static boolean      m_isBacklight = FALSE;
 ==============================================================================*/
 boolean   brewui_isincall(void)
 {    
+#ifdef FEATURE_ICM
     if (NULL == gpICM)
     {
         return FALSE;
     }
 
     return AEECM_IS_VOICECALL_CONNECTED(gpICM);
+#else
+	AEETCalls po;
+	
+    if (NULL == g_pITelephone)
+    {
+        return FALSE;
+    }
+
+	
+	if(SUCCESS != ITELEPHONE_GetCalls(g_pITelephone, &po,sizeof(AEETCalls)))
+	{
+		return FALSE;
+	}
+	
+    return po.dwCount>0?TRUE:FALSE;
+#endif
 }
 
 static void CoreTask_CreateAEEInstance(void)
@@ -1757,7 +1784,11 @@ static void CoreTask_CreateAEEInstance(void)
     (void) ISHELL_CreateInstance(pShell, AEECLSID_BACKLIGHT_KEYPAD, (void**)&gpKeyBacklight);
 #endif
     (void) ISHELL_CreateInstance(pShell, AEECLSID_ALERT, (void**)&gpAlert);
+#ifdef FEATURE_ICM
     (void) ISHELL_CreateInstance(pShell, AEECLSID_CM,    (void**)&gpICM);
+#else
+    (void) ISHELL_CreateInstance(pShell, AEECLSID_TELEPHONE,(void**)&g_pITelephone);
+#endif
     
     // ±³¹â´¦Àí
     // Turn on the backlight immediately on startup so the
@@ -1789,18 +1820,27 @@ static void CoreTask_FreeAEEInstance(void)
         IALERT_Release(gpAlert);
         gpAlert = NULL;
     }
-    
+#ifdef FEATURE_ICM
     if (gpICM) {
         ICM_Release(gpICM);
         gpICM = NULL;
     }
+#else
+    if (g_pITelephone) {
+        ITELEPHONE_Release(g_pITelephone);
+        g_pITelephone = NULL;
+    }
+#endif
 }
 
 static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam)
 {
     AEECLSID cls;
     boolean  bHandle = FALSE;
-    
+#ifndef FEATURE_ICM
+	AEETCalls po;
+#endif
+
 #ifdef FEATURE_KEYGUARD
     if (OEMKeyguard_HandleEvent(evt, wParam))
     {
@@ -1810,7 +1850,15 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
     
     // AVK_HEADSET_SWITCH means headset key press
     if (wParam == AVK_HEADSET_SWITCH) {
+#ifdef FEATURE_ICM
         if(AEECM_IS_VOICECALL_CONNECTED(gpICM)){
+#else
+		if(SUCCESS != ITELEPHONE_GetCalls(g_pITelephone, &po,sizeof(AEETCalls)))
+		{
+			return FALSE;
+		}
+        if(po.dwCount>0){
+#endif
             // AVK_END instead of AVK_HEADSET_SWITCH in conversation
             wParam = AVK_END;
         }else{

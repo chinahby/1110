@@ -74,7 +74,7 @@ static NextFSMAction  Display_StateMenuStyle_Control_Handler(CDisplayMenu *pMe);
 #endif
 
 #ifdef FEATURE_RANDOM_MENU_COLOR
-static NextFSMAction  Display_StateColorfulMenu_Control_Handler(CDisplayMenu *pMe); //added by chengxiao 2009.02.20
+static NextFSMAction  Display_StateColorfulMenu_Control_Handler(CDisplayMenu *pMe);
 
 static NextFSMAction  Display_StateColorSetting_Handler(CDisplayMenu *pMe);
 #endif

@@ -1554,12 +1554,8 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
          rc.dy =  DevInfo.cyScreen - rc.y - GetBottomBarHeight(pMe->m_pDisplay);
 
          ISTATIC_SetRect(pStatic, &rc);
-         ISTATIC_SetProperties(pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG); //modified by chengxiao 2009.04.07
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-         ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
-#else
+         ISTATIC_SetProperties(pStatic, ST_MIDDLETEXT|ST_GRAPHIC_BG);
          ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); //modified by yangdecai
-#endif
          return TRUE;
       }
 
@@ -1828,12 +1824,7 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
 
          ISTATIC_SetRect(pText, &rc);
          ISTATIC_SetProperties(pText, ST_MIDDLETEXT|ST_GRAPHIC_BG);
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-         ISTATIC_SetBackGround(pText, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
-#else
          ISTATIC_SetBackGround(pText, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modified by yangdecai
-#endif
-
          return TRUE;
       }
 
@@ -1991,7 +1982,7 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
          IMENUCTL_SetOemProperties(pMenuCtl,
                                    OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-         IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND); //added by chengxiao 2009.03.20
+         IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
 #endif
 
 #endif
@@ -3446,7 +3437,7 @@ static boolean MGAppPopupMenu_OnRename(CMediaGalleryApp* pMe,
                            IDS_MG_RENAME ,NULL);
 
          ITEXTCTL_SetProperties(pEditText,
-               TP_FRAME | TP_MULTILINE |TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL | TP_GRAPHIC_BG); //modified by chengxiao 2009.04.13
+               TP_FRAME | TP_MULTILINE |TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL | TP_GRAPHIC_BG);
 
          ITEXTCTL_SetMaxSize(pEditText, MG_MAX_FILE_INPUTLEN);
 
@@ -4483,7 +4474,7 @@ static boolean MGAppPopupMenu_OnSort(CMediaGalleryApp* pMe,
                                       pMenuCtl);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-         IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND); //added by chengxiao 2009.03.20
+         IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
 #endif
 
 		 //add by yangdecai
@@ -4692,15 +4683,9 @@ static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
          rc.dy = pMe->m_rc.dy - rc.y - GetBottomBarHeight(pMe->m_pDisplay);
 
          ISTATIC_SetRect(pDetailText, &rc);
-         ISTATIC_SetProperties(pDetailText, ST_MIDDLETEXT|ST_GRAPHIC_BG); //modified by chengxiao 2009.04.07
-         //added by chengxiao 2009.04.08
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-         ISTATIC_SetBackGround(pDetailText, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
-#else
+         ISTATIC_SetProperties(pDetailText, ST_MIDDLETEXT|ST_GRAPHIC_BG);
          ISTATIC_SetBackGround(pDetailText, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modified by yangdecai
-#endif
-         //end added
-
+         
          RELEASEIF(pMe->m_pDetailText);
          pMe->m_pDetailText = pDetailText;
          ISTATIC_AddRef(pMe->m_pDetailText);
@@ -5429,7 +5414,7 @@ static boolean MediaGalleryApp_ImageSettingDlg_HandleEvent(
          IMENUCTL_SetOemProperties(pMenuCtl,
                OEMMP_DISTINGUISH_INFOKEY_SELECTKEY |OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-         IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND); //added by chengxiao 2009.03.20
+         IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MEDIA_BACKGROUND);
 #endif
 
          MediaGalleryApp_SetExplorerMime(pMe,MG_MIME_IMGBASE);

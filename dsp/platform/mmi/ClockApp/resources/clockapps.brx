@@ -88,7 +88,7 @@
 	<STRING Id="1029" Name="IDS_ALARM_OFF">
 		<Text>Off</Text>
 	</STRING>
-	<STRING Id="1030" Name="IDS_REP_MODE_10" Encoding="Unicode">
+	<STRING Id="1030" Name="IDS_REP_MODE_10" >
 		<Text>Once</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_SNOOZE_1">

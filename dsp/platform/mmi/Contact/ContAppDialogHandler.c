@@ -1095,16 +1095,7 @@ int CContApp_LoadByCat(CContApp *pMe, AEEAddrCat wCategory)
             pMe->m_wFindFldID = AEE_ADDRFIELD_NONE;
             FREEIF(pMe->m_pFindData);
             pMe->m_pFindData  = NULL;
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH    
             return CContApp_LoadPhoneBook(pMe, pMe->m_nViewType); 
-/*#else
-            // Load RUIM record
-            return CContApp_LoadSingleStoreCont(pMe,
-                                                pMe->m_wFindCat,
-                                                pMe->m_wFindFldID,
-                                                pMe->m_pFindData,
-                                                ADDR_STORE_DBFILE);
-#endif*/ //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
         }
         else 
         {
@@ -3658,7 +3649,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             }
             */
             IMENUCTL_SetRect(pMenuCtl, &menurc);
-            MSG_FATAL("EVT_DIALOG_START",0,0,0);
+            
             if(SMART_STATE_IDD_LIST == pMe->m_nSmartStateType)
             {
                 dwMask = (dwMask & (~MP_WRAPSCROLL)) | MP_UNDERLINE_TITLE;
@@ -3670,7 +3661,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             IMENUCTL_SetProperties(pMenuCtl, dwMask);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);   
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
 
             /*if(SMART_STATE_IDD_SELECT == pMe->m_nSmartStateType)
@@ -3696,9 +3687,10 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
 #else
             ITEXTCTL_SetProperties(pTextCtl, TP_STARKEY_SWITCH | TP_FIXOEM|TP_FOCUS_NOSEL |TP_GRAPHIC_BG);
             ITEXTCTL_SetRect(pTextCtl, &textrc);
+            CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
 #endif
             ITEXTCTL_SetMaxSize(pTextCtl, MAX_INPUT_NAME_EN); 
-
+            
             if(NULL != pMe->m_szAlpha)
             {
                 uint32    dwMask;
@@ -3713,8 +3705,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 IMENUCTL_SetProperties(pMenuCtl, dwMask|MP_NO_REDRAW);
                 ITEXTCTL_SetText(pTextCtl, pMe->m_szAlpha, -1);
                 if(SUCCESS != CContApp_FilterSmartItems( pMe,  pMe->m_szAlpha) )
-                {   
-                    MSG_FATAL("SUCCESS != CContApp_FilterSmartItems 222",0,0,0);
+                {
                     pMe->m_bInsmartnofind = TRUE;
                     IMENUCTL_SetActive(pMenuCtl, FALSE);
                     /*guoys add @2008.10.20 for no match dont use select*/    
@@ -3887,33 +3878,41 @@ void CContApp_SmartMenuSetFocus(void *pUser)
 =============================================================================*/
 static void  CContApp_DrawIMEIcon(ITextCtl *pTextCtl, IDisplay *pIDisplay)
 {
-    boolean  bRet = TRUE;
+    boolean     bRet = TRUE;
     IImage     *RightTopImg = NULL; 
-    uint32     nResID=0;
-    AEERect IconRect={0};
+    uint32      nResID=0;
+    AEERect     IconRect={0};
     IShell      *pIShell =AEE_GetShell();
     Theme_Param_type TParam={0};
+    AEEImageInfo myInfo;
     
     if(pTextCtl == NULL ||pIShell == NULL)
         return;
-
+    ITEXTCTL_GetRect(pTextCtl, &IconRect);
+    if(IconRect.dx == 0 || IconRect.dy == 0)
+    {
+        return;
+    }
+    
+    IconRect.x  = 0;
+    IconRect.dx = SEARCH_IMEICON_WIDTH;
+    
     bRet = ITEXTCTL_GetInfo(pTextCtl, AEE_TMINFO_ICONID, (void *)&nResID);
 
     if(!bRet)
         return;
     
-    Appscom_GetThemeParameters(&TParam);   
-
-    ITEXTCTL_GetRect(pTextCtl, &IconRect);
-    IconRect.x = 0;
-    IconRect.dx = SEARCH_IMEICON_WIDTH;
-    IconRect.dy = GetBottomBarHeight(pIDisplay);/* + SEARCH_INPUTBOX_GAP*/ 
-    IDISPLAY_FillRect(pIDisplay, &IconRect, TParam.seltextColor); 
-    
+    Appscom_GetThemeParameters(&TParam);
+    IDISPLAY_FillRect(pIDisplay, &IconRect, TParam.seltextColor);
     RightTopImg = ISHELL_LoadResImage(pIShell, AEE_APPSCOMMONRES_IMAGESFILE, nResID);
     if(RightTopImg != NULL)
     {
-        IIMAGE_Draw(RightTopImg, IconRect.x, IconRect.y);           
+        IIMAGE_GetInfo(RightTopImg, &myInfo);
+        if(myInfo.cy < IconRect.dy)
+        {
+            IconRect.y += (IconRect.dy-myInfo.cy)>>1;
+        }
+        IIMAGE_Draw(RightTopImg, IconRect.x, IconRect.y);
         IIMAGE_Release(RightTopImg);
         RightTopImg = NULL;
     }
@@ -4768,12 +4767,7 @@ static boolean  CContApp_HandleYesNoDlgEvent( CContApp  *pMe,
                 PromptMsg_Param_type  Msg_Param={0};                                
                 Msg_Param.ePMsgType = MESSAGE_CONFIRM;
                 Msg_Param.pwszMsg = pMe->m_pMsgBox_Msg;
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH              
                 Msg_Param.eBBarType = BTBAR_OK_BACK;
-//#else
-//                Msg_Param.eBBarType = BTBAR_OK_CANCEL;
-//#endif            
-            //    Msg_Param.eBBarType = BTBAR_OK_CANCEL;
                 DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);
             }
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
@@ -5048,8 +5042,8 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 			//Add End
 			
             /*必须在textctl初始化完毕后,才能获得icon id,而且要在dialog更新完之后再更新图标*/
-			CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);			
-			ITEXTCTL_Redraw(pTextCtl);			
+            CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
+			ITEXTCTL_Redraw(pTextCtl);
             CContApp_DrawScrollBar(pMe, pMenuCtl);
             IDISPLAY_Update(pMe->m_pDisplay); 
 
@@ -5603,7 +5597,6 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
                         }
                         else if(IS_NUM_FIELD(pMe->m_nFldInputID)) */
                         
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH                            
                         if(AEE_ADDRFIELD_EMAIL == pMe->m_nFldInputID)
                         {
                             int len;
@@ -5627,7 +5620,6 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
                                return TRUE;
                             }
                         }
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
     
                         if(IS_NUM_FIELD(pMe->m_nFldInputID))
                         {
@@ -5821,7 +5813,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
 
             // build menu
@@ -6800,7 +6792,7 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenuCtl,OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
 
             // build options menu
@@ -7027,14 +7019,14 @@ static boolean  CContApp_HandleViewDlgEvent( CContApp  *pMe,
             {
                 IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+                IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             }
             else
             {
                 IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+                IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             }
 
@@ -7320,7 +7312,7 @@ static boolean  CContApp_HandleFldOptsDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             
             {
@@ -7727,12 +7719,10 @@ static boolean  CContApp_HandleGroupDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
 
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH    
             CContApp_BuildGroupMenu(pMe, pMenuCtl);
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
     
             // Set menu select
             //(void)CContApp_SetGroupMenuSel(pMe, pMenuCtl);
@@ -7947,7 +7937,7 @@ static boolean  CContApp_HandlePositionDlgEvent( CContApp  *pMe,
             }
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             {
                 AECHAR WTitle[40] = {0};
@@ -8107,7 +8097,7 @@ static boolean  CContApp_HandleCopyMoveDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             if(COPYMULTIPE == pMe->m_nCopyOrMove)
             {
@@ -8250,18 +8240,8 @@ static boolean  CContApp_HandleCopyMoveDlgEvent( CContApp  *pMe,
                     return TRUE;
                     
                 case IDI_COPYMOVE_MENU_COPY:
-#ifdef FEATURE_CARRIER_THAILAND_HUTCH                        
-                    pMe->m_nCopyMoveType = COPYMULTIPE; 
-#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
                     CLOSE_DIALOG(DLGRET_COPY);
                     return TRUE;
-                    
-#ifdef FEATURE_CARRIER_THAILAND_HUTCH  
-                case IDI_COPYMOVE_MENU_MOVE:
-                    pMe->m_nCopyMoveType = MOVEMULTIPE;
-                    CLOSE_DIALOG(DLGRET_COPY);
-                    return TRUE;
-#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
       */
                 default:
                     break;
@@ -8349,7 +8329,7 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
            // IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             
         }
@@ -8624,7 +8604,7 @@ static boolean  CContApp_HandleOnOffDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             // 根据 pMe->m_bOnOff 初始化菜单
             //MENU_INIT_SELICONS(pMenuCtl);
@@ -8771,7 +8751,7 @@ static boolean  CContApp_HandleOneDialDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE|OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             //MENU_SET_COMICON(pMenuCtl);
             {
@@ -9100,7 +9080,7 @@ static boolean  CContApp_HandleOneDialNumFldSelDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             // build menu
             if(SUCCESS != CContApp_BuildOneDialNumFldSelMenu(pMe, pMenuCtl))
@@ -9314,12 +9294,7 @@ static boolean  CContApp_HandleCapacityDlgEvent( CContApp  *pMe,
 				#endif
             }
             // Draw prompt bar here
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH              
             CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);
-//#else
-//            CONTAPP_DRAW_BOTTOMBAR(BTBAR_CANCEL);
-//#endif
-
             IDISPLAY_Update(pMe->m_pDisplay);
             IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_BACKGROUND, scrollbarFillColor);
             IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
@@ -9472,7 +9447,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY|OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             // build menu
             CContApp_BuildEditMenuMenu(pMe, pMenuCtl, TRUE);
@@ -10100,7 +10075,7 @@ static boolean  CContApp_HandleSettingDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             MENU_SET_COMICON(pMenuCtl);
             
@@ -10181,7 +10156,6 @@ static boolean  CContApp_HandleSettingDlgEvent( CContApp  *pMe,
                     CLOSE_DIALOG(DLGRET_VIEWTYPE);
                     return TRUE;
                     
-//#ifdef FEATURE_CARRIER_THAILAND_HUTCH   
                 case IDI_SETTING_MENU_COPYMOVE:
                     CLOSE_DIALOG(DLGRET_COPY);
                     return TRUE;
@@ -10189,7 +10163,6 @@ static boolean  CContApp_HandleSettingDlgEvent( CContApp  *pMe,
                 case IDI_SETTING_MENU_MEMORY:
                     CLOSE_DIALOG(DLGRET_CHECKCAPACITY);
                     return TRUE;                    
-//#endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
                 
                 default:
                     break;
@@ -10586,7 +10559,7 @@ static boolean  CContApp_HandleSearchDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             {
                 AECHAR WTitle[40] = {0};
@@ -10771,7 +10744,7 @@ static boolean  CContApp_HandleManagementDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
 			#if 0
             IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_CONTACTS_MANAGEMENT,NULL);
@@ -11224,7 +11197,7 @@ static boolean  CContApp_HandleDeleteDlgEvent( CContApp  *pMe,
                 
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY|OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
         }
         return TRUE;
@@ -11668,7 +11641,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, dwMask);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY|OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             {
                 AECHAR WTitle[40] = {0};
@@ -12095,7 +12068,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY|OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
 
             
@@ -12666,7 +12639,7 @@ static boolean  CContApp_HandleGroupOptDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             CContApp_BuildGroupOptMenu(pMe, pMenuCtl);
             IMENUCTL_SetPopMenuRect(pMenuCtl); //wuqan.tang add 
@@ -13036,7 +13009,7 @@ static boolean  CContApp_HandleDeleteSelectDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL | MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
 			#if 0
             IMENUCTL_SetTitle( pMenuCtl,CONTAPP_RES_FILE_LANG,IDS_DELETE_CONTACTS,NULL);
@@ -13213,7 +13186,7 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL | MP_MULTI_SEL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
             // build menu
             if(SUCCESS != CContApp_BuildViewMenu(pMe, pMenuCtl))
@@ -13321,7 +13294,7 @@ static boolean  CContApp_HandlePopNumFldDlgEvent( CContApp  *pMe,
                 //Draw shadow for screen
                 BgImg = ISHELL_LoadResImage(pMe->m_pShell,
                                         AEE_APPSCOMMONRES_IMAGESFILE,
-                                        IDB_BGMASK);
+                                        IDB_BACKGROUND);
 
                 if(STATE_SELECTOPT == pMe->m_ePreState)
                 {
@@ -13517,9 +13490,10 @@ static void CContApp_ShowEditItem(CContApp  *pMe, IMenuCtl  *pMenuCtl, ITextCtl 
         //if(pMe->m_nAddnewOrEdit == ADDOREDIT_EDIT)
         //{
     IMENUCTL_GetSelItemRect( pMenuCtl, &rect);
+    DBGPRINTF("ItemRECT %d %d %d %d",rect.x,rect.y,rect.dx,rect.dy);
     rect.x  = 23;//大概的一个数字
     rect.dx = pMe->m_rc.dx - 27;//five pixels for right edge, 
-    rect.dy -= 1;
+    //rect.dy -= 1;
     ITEXTCTL_SetRect( pTextCtl, &rect);
     CContApp_SetFldMaxSize(pMe,pTextCtl,pMe->m_nFldInputID);
     // 只有数字域才真正在本地编辑，按数字域的属性设置
@@ -13837,7 +13811,7 @@ static boolean  CContApp_HandleNunFldDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY|OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
 
             // build menu
@@ -14440,7 +14414,7 @@ static boolean  CContApp_HandleNunFldViewDlgEvent( CContApp  *pMe,
             IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenuCtl, AEE_APPSCOMMONRES_IMAGESFILE, IDI_CONTACT_BACKGROUND);
 #endif
 			#if 0
             (void)IMENUCTL_SetTitle( pMenuCtl,

@@ -162,7 +162,7 @@ endif
 ifeq ($(USES_MANGO_BREW),yes)
 BREW_LIB=          $(BREWDIR)/pk/lib/Chipset/ADS12arm9_BrewDownloadDisabled# # DEFAULT
 endif
-ifneq ($(USES_BREW_APPMGR),yes)
+ifeq ($(USES_LOWMEM),yes)
 BREW_LIB=          $(BREWDIR)/pk/lib/Chipset/ADS12arm9_BrewDownloadDisabled# # DEFAULT
 endif
 BREW_OEM_SRC=      $(BREWDIR)/pk/src

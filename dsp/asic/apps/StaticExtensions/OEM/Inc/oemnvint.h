@@ -394,7 +394,12 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined FEATURE_VERSION_KARBONN
 #define   OEMNV_STARTUP_MUSIC 13 
 #define   OEMNV_SHUTDOWN_MUSIC 14 
-
+#elif defined FEATURE_VERSION_C01
+#define   OEMNV_STARTUP_MUSIC 11
+#define   OEMNV_SHUTDOWN_MUSIC 12
+#elif defined FEATURE_VERSION_HITZ181
+#define   OEMNV_STARTUP_MUSIC 11
+#define   OEMNV_SHUTDOWN_MUSIC 11
 #else
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 12
@@ -757,13 +762,7 @@ typedef enum {
 
 #define MAX_FMRADIO_VOLUME  15
 #define MAX_FMRADIO_NAME_CHAR 16
-
-#if defined( FEATURE_CARRIER_THAILAND_HUTCH)
 #define MAX_FMRADIO_STORED_CHANNEL 40
-#else
-#define MAX_FMRADIO_STORED_CHANNEL 40
-#endif
-
 #define MAS_BREWSETINT_STRING    64
 
 typedef PACKED struct _sChanInfo
@@ -795,7 +794,7 @@ typedef PACKED struct _ringID
 #endif//WIN32
 
 #if defined FEATURE_LANG_THAI 
-#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_THAI
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_RAPID_THAI
 #elif defined FEATURE_LANG_TCHINESE
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_ZHUYIN
 #elif defined FEATURE_LANG_SPANISH

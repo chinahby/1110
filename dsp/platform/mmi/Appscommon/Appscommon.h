@@ -51,7 +51,7 @@
 #if defined(FEATURE_DISP_176X220)
     #define SCREEN_WIDTH            176
     #define SCREEN_HEIGHT           220
-    #define STATEBAR_HEIGHT         14
+    #define STATEBAR_HEIGHT         22
     #define BOTTOMBAR_HEIGHT        22
     #define TITLEBAR_HEIGHT         30
     #define MENUITEM_HEIGHT         22
@@ -60,16 +60,16 @@
 #elif defined(FEATURE_DISP_128X128)
     #define SCREEN_WIDTH            128
     #define SCREEN_HEIGHT           128
-    #define STATEBAR_HEIGHT            14
+    #define STATEBAR_HEIGHT         16
 	#define BOTTOMBAR_HEIGHT        16
     #define TITLEBAR_HEIGHT         16
-    #define MENUITEM_HEIGHT          16
-    #define SCROLLBAR_WIDTH          5
-    #define STATUSBAR_HEIGHT         16
+    #define MENUITEM_HEIGHT         16
+    #define SCROLLBAR_WIDTH         5
+    #define STATUSBAR_HEIGHT        16
 #elif defined(FEATURE_DISP_160X128)
     #define SCREEN_WIDTH            160
     #define SCREEN_HEIGHT           128
-    #define STATEBAR_HEIGHT         14
+    #define STATEBAR_HEIGHT         16
     #define BOTTOMBAR_HEIGHT        16
     #define TITLEBAR_HEIGHT         16
     #define MENUITEM_HEIGHT         16
@@ -102,7 +102,7 @@
     #define MENUITEM_HEIGHT          16
     #define SCROLLBAR_WIDTH          5
     #define STATUSBAR_HEIGHT         16	
-#elif defined(FEATURE_DISP_320X240)			//240 = statebar(24)+bottombar(24)  +6*menuitem(32)
+#elif defined(FEATURE_DISP_320X240)			//240 = statebar(32)+bottombar(32)  +5*menuitem(32)
 	#define SCREEN_WIDTH            320
     #define SCREEN_HEIGHT           240
     #define STATEBAR_HEIGHT         24
@@ -114,7 +114,7 @@
 #else
     #define SCREEN_WIDTH            160
     #define SCREEN_HEIGHT           128
-    #define STATEBAR_HEIGHT         14
+    #define STATEBAR_HEIGHT         16
     #define BOTTOMBAR_HEIGHT        16
     #define TITLEBAR_HEIGHT         16
     #define MENUITEM_HEIGHT         16
@@ -123,7 +123,7 @@
 #endif
 
 #define APPSCOMMON_BG_COLOR       (RGB_BLACK)
-
+#define APPSCOMMON_TEXT_BG_COLOR  MAKE_RGB(60,60,60)
 #define APPSCOMMON_DEFAULT_REND 0 //wlh 20090405 add for rend 随机效果  REND_RANDOM = 0
 #define TEXT_GRAPHIC_FONT_COLOR  (RGB_WHITE)
 #define TEXT_GRAPHIC_BG_COLOR      (RGB_BLACK)
@@ -324,7 +324,8 @@ typedef enum BottomBar_e_Type
    BTBAR_CONTACTS_FPORTAL,   //fmuslim  ---fnasrani   
 #endif /*FEATURE_FLEXI_STATIC_BREW_APP*/
    BTBAR_OPTION,
-
+   BTBAR_MESSAGES_CONTACTS,   // 信息-----电话本
+   
    BTBAR_MAX = 0xFFFF, /*For ADS compiler allocate one byte to enumerate type
                      variable by default if the max value not exceed 256*/
 
@@ -759,7 +760,7 @@ int Appscomm_is_incoming_state(int bb);
 备注:
        
 ==============================================================================*/
-boolean Appscommon_DrawDialogBoxFrame(AEERect *pBoxRect, boolean bUpward, RGBVAL nFrameColor, RGBVAL nBgColor);//added by  chengxiao 2009.02.16
+boolean Appscommon_DrawDialogBoxFrame(AEERect *pBoxRect, boolean bUpward, RGBVAL nFrameColor, RGBVAL nBgColor);
 
 /*==============================================================================
 函数: 
@@ -784,7 +785,7 @@ boolean Appscommon_DrawDialogBoxFrame(AEERect *pBoxRect, boolean bUpward, RGBVAL
     menu最低一条可显示的起始坐标， 不符的将自动调整。
        
 ==============================================================================*/
-boolean Appscommon_DrawPopUpDialogBox(IDisplay *pIDisplay, int x, int y, AECHAR *strDisplay);//added by  chengxiao 2008.10.31
+boolean Appscommon_DrawPopUpDialogBox(IDisplay *pIDisplay, int x, int y, AECHAR *strDisplay);
 
 /*==============================================================================
 函数: 
@@ -807,7 +808,7 @@ boolean Appscommon_DrawPopUpDialogBox(IDisplay *pIDisplay, int x, int y, AECHAR 
 备注:
        
 ==============================================================================*/
-boolean Appscommon_DrawDigitalNumber (IDisplay *pDisplay, int number, int nLineWidth, AEERect *fontRect, RGBVAL fontColor);//added by chengxiao 2008.12.05
+boolean Appscommon_DrawDigitalNumber (IDisplay *pDisplay, int number, int nLineWidth, AEERect *fontRect, RGBVAL fontColor);
 
 
 /*=============================================================================
@@ -946,7 +947,6 @@ PARAMETERS:
 AECHAR CNLetter2Alpha(AECHAR letter);
 
 #endif
-//added by chengxiao 2009.02.19
 /*==============================================================================
 函数: 
     Appscommon_GetRandomColor

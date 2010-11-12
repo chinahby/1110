@@ -801,7 +801,7 @@ static boolean RecentCalls_MainMenuEvent(CRecentCalls *pMe,
         IMENUCTL_SetProperties(pMe->pMenu, MP_BIND_ITEM_TO_NUMBER_KEY |MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
         IMENUCTL_SetOemProperties( pMe->pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-        IMENUCTL_SetBackGround(pMe->pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_RECENTCALLS_BACKGROUND); //added by chengxiao 2009.03.20
+        IMENUCTL_SetBackGround(pMe->pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_RECENTCALLS_BACKGROUND);
 #endif
         IMENUCTL_SetBottomBarType(pMe->pMenu,BTBAR_SELECT_BACK);
         (void)ISHELL_PostEvent(pMe->m_pShell, 
@@ -931,7 +931,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                 IMENUCTL_SetOemProperties(pMe->pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
             }
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMe->pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_RECENTCALLS_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMe->pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_RECENTCALLS_BACKGROUND);
 #endif
 
             if(pMe->m_eStartMethod == STARTMETHOD_FINDNUMBER)
@@ -951,7 +951,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
             //wuuqan.tang 20081127 add
             else if(STARTMETHOD_FINDNUMBER == pMe->m_eStartMethod)
             {
-                IMENUCTL_SetBottomBarType(pMe->pMenu, BTBAR_OPTION_OK_BACK);//BTBAR_SELECT_BACK); //modified by chengxiao 2009.02.03
+                IMENUCTL_SetBottomBarType(pMe->pMenu, BTBAR_OPTION_OK_BACK);//BTBAR_SELECT_BACK);
             }
             else if(STARTMETHOD_SELECTFIELD == pMe->m_eStartMethod)
             {
@@ -997,7 +997,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                     {
                         (void) ISHELL_LoadResString(pMe->m_pShell,
                                               AEE_RECENTCALLSRES_LANGFILE,
-                                              IDS_NO_NUMBER, //IDS_UNKNOWN_NUMBER, //modified by chengxiao 2009.01.21
+                                              IDS_NO_NUMBER, //IDS_UNKNOWN_NUMBER,
                                               wszName,
                                               sizeof(wszName));
                         
@@ -1089,7 +1089,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
             {
                 case AEECALLHISTORY_CALL_TYPE_MISSED://CALLHISTORY_MISSED_CATEGORY:
                     pMe->selectState = IDS_MISSED_CALLS;
-                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MISSEDCALL*/,ANNUN_STATE_CALL_MISSEDCALL_OFF/*ANNUN_STATE_OFF*/); //modified by chengxiao 2009.01.05
+                    IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MISSEDCALL*/,ANNUN_STATE_CALL_MISSEDCALL_OFF/*ANNUN_STATE_OFF*/);
                     {
                         boolean missed_call_icon;
                         missed_call_icon = FALSE;
@@ -1242,7 +1242,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                         bSelect = RecentCalls_FindSelectRecordListNode(pMe->record_selected);
                         if((!bSelect) && pMe->m_nRemainWMSNum == 0)
                         {
-                            IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL |MP_NO_REDRAW); //added by chengxiao 2009.02.19
+                            IMENUCTL_SetProperties(pMe->pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL |MP_NO_REDRAW);
                             IMENUCTL_SetActive(pMe->pMenu, FALSE);
                             return TRUE;
                         }
@@ -3020,7 +3020,7 @@ Description 当前号码的通话时间,日期
 
 备注：
 ===============================================================================*/
-static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines) //modified by chengxiao 2009.04.20
+static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
 {
 
     AECHAR                  buffer[32] = {0};

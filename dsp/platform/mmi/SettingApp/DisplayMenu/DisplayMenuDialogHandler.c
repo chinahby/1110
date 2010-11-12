@@ -469,7 +469,7 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             (void) ISHELL_PostEvent( pMe->m_pShell,
@@ -1309,7 +1309,7 @@ static boolean  HandleBacklightingDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
             IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             // 设定菜单控件的矩形位置及尺寸
@@ -1512,7 +1512,7 @@ static boolean  HandleContrastDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
             IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
@@ -1708,7 +1708,7 @@ static boolean  HandleScreensaverTimeoutDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
@@ -1894,7 +1894,7 @@ static boolean  HandleDesktop_Theme_DialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
             IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             // 设定菜单控件的矩形位置及尺寸
@@ -2678,7 +2678,7 @@ static boolean Handle_LED_Control_DialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY |OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_OK_BACK);
             ICONFIG_GetItem(pMe->m_pConfig, CFGI_LED_CONTROL, &pMe->m_led_ctr, sizeof(byte));
@@ -3865,7 +3865,7 @@ static boolean HandleMenuStyleDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
             IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             IMENUCTL_SetSel(pMenu,ui16_return);
@@ -3931,7 +3931,6 @@ static boolean HandleMenuStyleDialogEvent(CDisplayMenu *pMe,
 #endif
 
 #ifdef FEATURE_RANDOM_MENU_COLOR
-//added by chengxiao 2009.02.20
 /*==============================================================================
 函数：
        HandleColorfulMenuDialogEvent
@@ -3980,7 +3979,7 @@ static boolean  HandleColorfulMenuDialogEvent(CDisplayMenu *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
             IMENUCTL_SetSel(pMenu, pMe->m_nSubDlgId);
@@ -4158,7 +4157,7 @@ static boolean  HandleColorSettingDialogEvent(CDisplayMenu *pMe,
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
                 IMENUCTL_SetSel(pMenu, pMe->m_nExSubDlgId);

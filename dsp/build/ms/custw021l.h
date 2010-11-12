@@ -19,7 +19,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_GPIO_31_SIGNAL_OUPUT_31		//GPIO_31_SIGNAL == GPIO_OUTPUT_31
 //Add End
 
-#define FEATURE_W021_LOW_MEMORY
+#define FEATURE_USES_LOWMEM
 #define FEATURE_SMS_UDH
 #define FEATURE_WMS_APP
 #define FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
@@ -38,7 +38,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifndef TARGSB2_H
-   #include "targsbw2l.h"
+   #include "targsb3216.h"
 #endif
 
 //#define FEATURE_DATA_STRIP_ATCOP 
@@ -158,8 +158,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_NORPRG_HAS_HEADER 
 #define FEATURE_DLOAD_SECURITY 
 #define FEATURE_OEMSBL_SPLASH_SCREEN 
-//#define FEATURE_BUILD_CDMA_TRIMODE
-#define FEATURE_BUILD_CDMA_CELL
+#define FEATURE_BUILD_CDMA_TRIMODE
 #define FEATURE_TRANS_MANAGER 
 #define FEATURE_PLCM_ENHANCEMENTS 
 #define FEATURE_HHO_ENHANCEMENTS 
@@ -217,13 +216,12 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef CUST_EDITION
 #define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
-#ifndef FEATURE_W021_LOW_MEMORY
+#ifndef FEATURE_USES_LOWMEM
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
 #endif
 
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
-#define FEATURE_USES_LOWMEM
 
 //#define FEATURE_WMS_APP
 #endif

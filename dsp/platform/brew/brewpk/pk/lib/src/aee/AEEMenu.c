@@ -133,7 +133,7 @@ static int IMAGE_WIDTH           = 5;                           // Frame Width f
 #elif defined(FEATURE_DISP_240X320)
 #define MAX_NUM_MENUPOP                 (8) //(6)
 #elif defined(FEATURE_DISP_320X240)
-#define MAX_NUM_MENUPOP                 (6) //(6)
+#define MAX_NUM_MENUPOP                 (8) //(6)
 
 
 #else
@@ -4136,7 +4136,7 @@ static boolean Menu_Draw(CMenuCtl * pme)
    CMenuItem * p = NULL;
    IDisplay *  pd = pme->m_pIDisplay;
 #ifdef FEATURE_RANDOM_MENU_COLOR
-   byte nOldRandMenu = pme->m_nRandomMenu;//added by chengxiao 2009.02.19
+   byte nOldRandMenu = pme->m_nRandomMenu;
 #endif
 #ifdef FEATURE_RANDOM_MENU_COLOR
    if(!IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL)  &&
@@ -4644,7 +4644,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
     {
        /*  这个if用来检测MP_BIND_ITEM_TO_NUMBER_KEY属性是否被设置，有，在菜单前面画一个内嵌序号的正方形 */
        //下面的20 和12可能要改成公式计算
-       SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset + AEE_FRAME_SIZE, 16, prc->dy);
+       SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, 16, prc->dy);
 	   
        STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
        WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
@@ -4872,26 +4872,6 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
     {
         IImage*              underline;
         
-		/*
-        if(pme->SetPopMenu == TRUE)
-		{
-            underline = ISHELL_LoadResImage(pme->m_pIShell, 
-                                           AEE_APPSCOMMONRES_IMAGESFILE,
-                                           IDI_UNDERLINE_SHORT);
-        }
-        else if(IS_PROP_SET(pme->m_dwProps, MP_TRANSPARENT_UNSEL)) 
-		{
-            underline = ISHELL_LoadResImage(pme->m_pIShell, 
-                                           AEE_APPSCOMMONRES_IMAGESFILE,
-                                           IDI_UNDERLINE_SHORT);   
-        }
-        else 
-		{
-            underline = ISHELL_LoadResImage(pme->m_pIShell, 
-                                           AEE_APPSCOMMONRES_IMAGESFILE,
-                                           IDI_UNDERLINE);
-        }
-        */
        	//Add By zzg 2010_07_25
         underline = ISHELL_LoadResImage(pme->m_pIShell, 
                                            AEE_APPSCOMMONRES_IMAGESFILE,
@@ -4903,10 +4883,10 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
         if(NULL != underline)
         {
             /* 由于AdjustRect中为文字显示多加了一个像素，这里补偿回来*/
-            SETAEERECT(&rect, xMenu, prc->y + prc->dy + ps->yOffset - 2*AEE_FRAME_SIZE, menuwidth, AEE_FRAME_SIZE);
+            SETAEERECT(&rect, xMenu, prc->y + prc->dy + ps->yOffset-1, menuwidth, AEE_FRAME_SIZE);
             IIMAGE_GetInfo(underline, &imageInfo);
             
-            Appscommon_ResetBackground(pd, underline, pme->m_c.cBack, &rect, rect.x - (imageInfo.cx - menuwidth)/2, rect.y);
+            Appscommon_ResetBackground(pd, underline, pme->m_c.cBack, &rect, rect.x, rect.y);
             IIMAGE_Release(underline);
         }
     }
@@ -8142,7 +8122,7 @@ static void AdjustRect(AEERect * prc, AEEItemStyle * ps)
    prc->x += ps->xOffset;
    /* 因为显示字体总在字体下方空余一个像素，为了显示美观，
     总是在纵坐标方向多向下偏移一个像素使之看起来更加居中*/
-   prc->y += (ps->yOffset + AEE_FRAME_SIZE);
+   prc->y += (ps->yOffset);
    prc->dx -= (ps->xOffset * 2);
    prc->dy -= (ps->yOffset * 2);
 }
@@ -8213,7 +8193,7 @@ static void IMenuCtl_SetPopMenuRect( IMenuCtl *po)
     //Draw shadow for screen
     BgImg = ISHELL_LoadResImage(pme->m_pIShell,
                             AEE_APPSCOMMONRES_IMAGESFILE,
-                            IDB_BGMASK);
+                            IDB_BACKGROUND);
     if(BgImg != NULL)
     {                  
 
@@ -8360,7 +8340,7 @@ static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
     }
     else
     #endif
-#endif
+#endif 
     {
        if(pme->m_pBgImage == NULL)
        {

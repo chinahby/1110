@@ -451,6 +451,12 @@
 	<STRING Id="1085" Name="IDS_NO_SELECTION">
 		<Text>没有选中记录</Text>
 	</STRING>
+	<String Id="1086" Name="IDS_NO_UIM_CARD">
+		<Text>找不到UIM卡，保存到手机</Text>
+	</String>
+	<String Id="1087" Name="IDS_NO_CARD">
+		<Text>找不到UIM卡</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
@@ -600,6 +606,7 @@
 	<DIALOG Id="6011" Name="IDD_GROUP" Focus="7013">
 		<Controls>
 			<Menu Id="7013" Name="IDC_GROUP_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/>
 			</Menu>
 		</Controls>

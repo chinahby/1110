@@ -58,6 +58,7 @@ typedef struct _ITextCtl ITextCtl;
 #define TP_EDITNUMBER_PTSTRING 0x00000020 //input P\T\+ wehn input number
 #define TP_USELESS_UPDOWN      0x00000040 // the text do not handle AVK_UP  and  AVK_DOWN
 #define TP_GRAPHIC_BG      0x00000080 // use graphic bcakground
+#define TP_STARKEY_ID_SWITCH 0x00000010  //switch input method when input text
 #endif /*CUST_EDITION*/
 
 // Placeholder: Extended Text Properties
@@ -247,7 +248,7 @@ QINTERFACE(ITextCtl)
 #ifdef CUST_EDITION	   
    boolean           (*GetInfo)(ITextCtl *po, uint32 type, uint32 * pvoid);
    int32             (*GetT9End)(ITextCtl *po);
-   void              (*SetBackGround)(ITextCtl *po, char *pstrImgResFile, uint16 nImgResID);//added by chengxiao 2009.04.08
+   void              (*SetBackGround)(ITextCtl *po, char *pstrImgResFile, uint16 nImgResID);
 #endif /*CUST_EDITION*/
 };
 
@@ -288,7 +289,7 @@ QINTERFACE(ITextCtl)
 #ifdef CUST_EDITION	
 #define ITEXTCTL_GetInfo(p,type,pvoid)                GET_PVTBL((p),ITextCtl)->GetInfo((p),(type),(pvoid))
 #define ITEXTCTL_GetT9End(p)                          GET_PVTBL((p),ITextCtl)->GetT9End((p))
-#define ITEXTCTL_SetBackGround(p,s,n)            GET_PVTBL((p),ITextCtl)->SetBackGround(p, s, n) //added by chengxiao 2009.04.08
+#define ITEXTCTL_SetBackGround(p,s,n)            GET_PVTBL((p),ITextCtl)->SetBackGround(p, s, n)
 #endif /*CUST_EDITION*/
 
 #endif    // AEETEXT_H

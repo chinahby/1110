@@ -121,8 +121,11 @@ static void    OEMKeyguard_Set_Annunciator_Enable(boolean b_state);
 
 // TRUE while the keyguard message is being displayed
 static boolean sbMessageActive = FALSE;
-
+#ifdef FEATURE_ICM
 static ICM *spPhone  = NULL;
+#else
+static ITelephone *spPhone  = NULL;
+#endif
 static IALERT *spAlert  = NULL;
 static IShell *sgpShell = NULL;
 static IAnnunciator  *sgpIAnn = NULL;
@@ -172,6 +175,7 @@ SEE ALSO:
 static boolean OEMPriv_IsPhoneIdle(void)
 {
 #if 1
+#ifdef FEATURE_ICM
     AEECMPhInfo phoneInfo;
     if(AEECM_IS_ANYCALL_PRESENT(spPhone))
     {
@@ -185,6 +189,24 @@ static boolean OEMPriv_IsPhoneIdle(void)
             return FALSE;
         }
     }
+#else
+    AEETPhInfo phoneInfo;
+	AEETCalls pout;
+	
+	ITELEPHONE_GetCalls(spPhone,&pout,sizeof(pout));
+    if(pout.dwCount > 0)
+    {
+        return FALSE;
+    }
+
+    if(AEE_SUCCESS == ITELEPHONE_GetPhoneInfo(spPhone, &phoneInfo, sizeof(phoneInfo)))
+    {
+        if(phoneInfo.oprt_mode != AEET_OPRT_MODE_ONLINE && phoneInfo.oprt_mode != AEET_OPRT_MODE_LPM)
+        {
+            return FALSE;
+        }
+    }
+#endif
     KEYGUARD_ERR("OEMPriv_IsPhoneIdle",0,0,0);
     return TRUE;
 #else
@@ -732,7 +754,11 @@ SEE ALSO:
 =============================================================================*/
 void OEMKeyguard_Init(void *pShell,void *pPhone,void *pAlert,void *ann)
 {
+#ifdef FEATURE_ICM
     spPhone = (ICM *)pPhone;
+#else
+    spPhone = (ITelephone *)pPhone;
+#endif
     spAlert   = (IALERT*)pAlert;
     sgpShell = (IShell*)pShell;
     sgpIAnn = (IAnnunciator*)ann;

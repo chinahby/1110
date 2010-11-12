@@ -57,7 +57,12 @@
 #include "AEEConfig.h"
 #include "wms.h"
 #include "AEEWMS.h"
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 #include "OEMWMS_CacheInfo.h"
 #include "OEMHeap.h"
 #include "wmsi.h"
@@ -646,6 +651,8 @@ typedef struct WmsApp
 
 #ifdef FEATURE_ICM
     ICM                             *m_pICM;
+#else
+    ITelephone                      *m_pITelephone;                         // instance of ICM
 #endif
     IStatic                         *m_pStatic;
     IAnnunciator                    *m_pIAnn;

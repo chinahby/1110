@@ -43,7 +43,12 @@ when         who            what, where, why
 #include "Appscommon.h"
 #include "OEMCFGI.h"
 #include "Oemnvint.h"
+#ifdef FEATURE_ICM
 #include "AEECM.h"
+#else
+#include "AEETelephone.h"
+#include "AEETelDef.h"
+#endif
 #ifdef FEATURE_APP_MUSICPLAYER
 #include "MusicPlayer.h"
 #endif 
@@ -76,8 +81,8 @@ when         who            what, where, why
 #define TIMER_SCREEN_WIDTH    80
 #define TIMER_IMAGE_WIDTH      120
 #elif defined(FEATURE_DISP_320X240)
-#define TIMER_SCREEN_WIDTH    140
-#define TIMER_IMAGE_WIDTH      180
+#define TIMER_SCREEN_WIDTH    100
+#define TIMER_IMAGE_WIDTH      140
 #else
 #define TIMER_SCREEN_WIDTH    60
 #define TIMER_IMAGE_WIDTH      100
@@ -345,7 +350,7 @@ static boolean InitAppTimer(CAppTimer *pme)
     //if(pme->m_pmenu)
     //{
         /*»æÖÆÈí¼üÀ¸*/
-        /*SETAEERECT( &rect, 0, pme->cyScreen - BOTTOMBAR_HEIGHT,  pme->cxScreen, BOTTOMBAR_HEIGHT); //modified by chengxiao 2009.02.24
+        /*SETAEERECT( &rect, 0, pme->cyScreen - BOTTOMBAR_HEIGHT,  pme->cxScreen, BOTTOMBAR_HEIGHT);
         IMENUCTL_SetRect(pme->m_pmenu, &rect);
         
         IMENUCTL_SetProperties( pme->m_pmenu, MP_BIND_ITEM_TO_NUMBER_KEY);
@@ -1094,7 +1099,6 @@ SEE ALSO:
 =============================================================================*/
 static void AppTimer_Redraw(CAppTimer *pme)
 {
-    //modified by chengxiao 2009.02.27
     TitleBar_Param_type  TBarParam = {0};
     BottomBar_Param_type  BBarParam ={0};
     AECHAR                   wszTitle[16] = {0};
@@ -1564,7 +1568,8 @@ static void TimerNotifyMP3PlayerAlertEvent(CAppTimer *pMe, boolean toStartAlert)
 extern boolean recorder_GetRunningFlag(void);
 #endif
 boolean AppTimer_CanAlert(CAppTimer *pMe)
-{    
+{
+#ifdef FEATURE_ICM
     ICM *pICM = NULL;
     uint16 num = 0;
     
@@ -1587,7 +1592,31 @@ boolean AppTimer_CanAlert(CAppTimer *pMe)
         ICM_Release(pICM);
         pICM = NULL;
     }
-    
+#else
+   ITelephone *pITelephone = NULL;
+   uint16 num = 0;
+
+   if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
+										   AEECLSID_TELEPHONE, 
+										   (void **)&pITelephone))
+   {
+	   return FALSE;
+   }
+   if(pITelephone)
+   {
+	   
+	   AEETCalls po;
+	   
+	   if(SUCCESS != ITELEPHONE_GetCalls(pITelephone, &po,sizeof(AEETCalls)))
+	   {
+		   return FALSE;
+	   }
+	   num = po.dwCount;
+	   
+	   ITELEPHONE_Release(pITelephone);
+	   pITelephone = NULL;
+   }
+#endif
 #ifdef FEATURE_APP_RECORDER
 if(TRUE == recorder_GetRunningFlag())
 {

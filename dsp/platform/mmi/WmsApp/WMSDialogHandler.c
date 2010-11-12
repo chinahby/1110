@@ -37,11 +37,22 @@
                                  
 ==============================================================================*/
 // 发送短信动画图片文件定义
+#ifndef FEATURE_USES_LOWMEM
 #define SENDINGSMS_ANI      "fs:/image/notice/sendingsms.png"
 // 动画帧数
 #define SENDINGSMS_ANI_N    7
+#else
+#define SENDINGSMS_ANI_N    2
+
+#define SENDINGSMS_ANI      "fs:/image/notice/sendingsmslow.png"
+#endif
+#ifdef FEATURE_SUPPORT_ID
+// 动画起点 Y 坐标
+#define SENDINGSMS_ANI_Y    10
+#else
 // 动画起点 Y 坐标
 #define SENDINGSMS_ANI_Y    20
+#endif
 // 动画播放速率 ms
 #define SENDINGSMS_ANI_R    150
 // 填充背景色
@@ -822,7 +833,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
             {
 				AECHAR WTitle[40] = {0};
@@ -1338,7 +1349,7 @@ static boolean  IDD_PWD_Handler(void       *pUser,
             // 绘制相关信息
             {
                 AECHAR  text[32] = {0};
-                RGBVAL nOldFontColor; //added by chengxiao 2009.03.05
+                RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
                 
                 // 先清屏
@@ -1469,7 +1480,7 @@ static boolean  IDD_PWD_Handler(void       *pUser,
                         
                     case AVK_SELECT:
                     case AVK_INFO:
-                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) < 4) //modified by chengxiao 2009.03.06
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) < 4)
                         {
                             return TRUE;
                         }
@@ -1493,7 +1504,7 @@ static boolean  IDD_PWD_Handler(void       *pUser,
                     default:
                         return TRUE;
                 }
-                nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD)); //modified by chengxiao 2009.03.06
+                nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
                 if (chEnter == 0)
                 {// 删除字符
                     if (nLen > 0)
@@ -1701,7 +1712,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                 IMENUCTL_SetProperties(pMenu, dwMask);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
                 MENU_SETBOTTOMBAR(pMenu, BTBAR_OPTION_BACK);
 
@@ -2512,7 +2523,7 @@ static boolean IDD_DELETEMSGS_Handler(void *pUser,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
 			//add by yangdecai
 			{
@@ -2694,7 +2705,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
 			//add by yangdecai
 			{
@@ -2874,7 +2885,7 @@ static boolean IDD_RESERVEDMSG_Handler(void   *pUser,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
 			//add by yangdecai
 			{
@@ -4308,7 +4319,7 @@ static boolean IDD_PRIORITY_Handler(void *pUser,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
 			//add by yangdecai
 			{
@@ -4476,7 +4487,7 @@ static boolean IDD_SENDMODE_Handler(void *pUser,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             
@@ -4644,7 +4655,7 @@ static boolean IDD_REPORTS_Handler(void *pUser,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
 			//add by yangdecai
 			{
@@ -4964,7 +4975,7 @@ static boolean IDD_CALLBACKNUMSWITCH_Handler(void *pUser,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
 			//add by yangdecai
 			{
@@ -5660,7 +5671,7 @@ static boolean IDD_STORAGE_Handler(void   *pUser,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
 			//add by yangdecai
 			{
@@ -5895,7 +5906,7 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
                 IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, nSelID, TRUE);
@@ -8513,7 +8524,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
     {
         case EVT_DIALOG_INIT:
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
-            //modified by chengxiao 2009.03.25
 #if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
             ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL);
 #else
@@ -9167,7 +9177,7 @@ static boolean IDD_TEMPLATES_Handler(void   *pUser,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND); //added by chengxiao 2009.03.20
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
 			{
 				AECHAR WTitle[40] = {0};
@@ -9349,7 +9359,7 @@ static boolean IDD_EDITTEMPLATE_Handler(void *pUser,
         case EVT_DIALOG_INIT:
             // add the code on 080818
             ITEXTCTL_SetMaxSize(pIText, WMS_TEMPMSG_MAXCHARS);
-            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG| TP_FRAME | TP_MULTILINE|TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_NOUPDATE|TP_FOCUS_NOSEL); //modified by chengxiao 2009.03.25
+            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG| TP_FRAME | TP_MULTILINE|TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
             {
                 AEERect rc;
                 
@@ -11302,7 +11312,7 @@ static boolean IDD_EXTARCTDETAILS_Handler(void *pUser,
         
         case EVT_DIALOG_START:
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
-            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);//added by chengxiao 2009.03.25
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
 #endif
@@ -13201,7 +13211,7 @@ static void WmsApp_PlaySendingAni(void *pUser)
 	oldColor = IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, SENDINGSMS_TEXT_COLOR);
     IDISPLAY_DrawText( pMe->m_pDisplay, 
                                 AEE_FONT_NORMAL, wszPrsend,
-                                -1, 0, 68, NULL, 
+                                -1, 0, (rect.dy), NULL, 
                                 IDF_TEXT_TRANSPARENT|IDF_ALIGN_CENTER);
 	IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
      MSG_FATAL("EVT_USER_REDRAW...::::::::::::::::::::::::: WMS:%d:::%d",pMe->m_idxCurSend,pMe->m_nSendItems,0);

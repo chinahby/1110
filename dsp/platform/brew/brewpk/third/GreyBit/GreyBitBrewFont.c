@@ -23,6 +23,9 @@
 #include "AEEShell.h"
 #include "AEE_OEM.h"
 
+
+
+
 #define __RBMP_PURE_MEMORY_VERSION__
 
 #define SCREENWIDTH (512)
@@ -48,10 +51,6 @@ ALE_UINT16 gLineCharPos [MAXLINESIZE+1];   //position of each char (used by layo
 unsigned char gbFont_Arabic_Hebrew[] = {
 #include "FontDB//Arabic_Hebrew_14x14p.i"
 };
- byte BigNumFontBuf[] = 
-{
-#include "FontDB//bignum.i"
-};
 
 #ifndef ABS
 #define ABS(VAL) (((VAL)>0)?(VAL):(-(VAL)))
@@ -64,25 +63,20 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
                                                         const AEERect *prcClip, int* curx, int LineCursor, uint32 dwFlags);
 #endif
 
+#define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"systemfont.gvf"
 
-#if defined(FEATURE_ARPHIC_LAYOUT_ENGINE)
-#define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"/systemar.gvf"
-#else
-#define MMI_GREYBITTYPE_FONTS_PATH     AEEFS_SYS_DIR"/systemen.gvf"
-#endif
-
-#if defined(FEATURE_DISP_320X240)
-#define BIGNUMBER_FONT_SIZE 26 	//30
-#define NORMAL_FONT_SIZE    22  //24
-#define LARGE_FONT_SIZE     24  //26
-#elif defined(FEATURE_DISP_220X176)
-#define BIGNUMBER_FONT_SIZE 26 
+#if defined(FEATURE_DISP_320X240) || defined(FEATURE_DISP_240X320)
+#define BIGNUMBER_FONT_SIZE 48 
+#define NORMAL_FONT_SIZE    24 
+#define LARGE_FONT_SIZE     28 
+#elif defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_176X220)
+#define BIGNUMBER_FONT_SIZE 40 
 #define NORMAL_FONT_SIZE    20 
-#define LARGE_FONT_SIZE     22 
+#define LARGE_FONT_SIZE     24 
 #else
-#define BIGNUMBER_FONT_SIZE 24
-#define NORMAL_FONT_SIZE    14
-#define LARGE_FONT_SIZE     16
+#define BIGNUMBER_FONT_SIZE 32
+#define NORMAL_FONT_SIZE    15
+#define LARGE_FONT_SIZE     20
 #endif
 
 
@@ -103,13 +97,23 @@ static int    OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars,
                                   int nMaxWidth, int * pnFits, int *pnPixels);
 static int    OEMFont_GetInfo(IFont *pMe, AEEFontInfo *pInfo, int nSize);
 
+#if defined(FEATURE_ARPHIC_LAYOUT_ENGINE)
+static const VTBL(IFont) gOEMFontFuncs =   { OEMFont_AddRef,
+                                             OEMFont_Release,
+                                             OEMFont_QueryInterface,
+                                             OEMFont_DrawText,
+                                             OEMFont_MeasureText,
+                                             OEMFont_GetInfo,
+                                             OEMFont_MeasureTextCursorPos};
+
+#else
 static const VTBL(IFont) gOEMFontFuncs =   { OEMFont_AddRef,
                                              OEMFont_Release,
                                              OEMFont_QueryInterface,
                                              OEMFont_DrawText,
                                              OEMFont_MeasureText,
                                              OEMFont_GetInfo};
-
+#endif
 struct IFont {
    const AEEVTBL(IFont) *pvt;
    uint32                dwRefs;
@@ -126,11 +130,6 @@ static IFont gFontBigNumber        = {&gOEMFontFuncs, 0, BIGNUMBER_FONT_SIZE,FAL
 
 static GBHANDLE g_pLibrary = NULL;
 static GBHANDLE g_pLoader  = NULL;
-#if defined(FEATURE_ARPHIC_LAYOUT_ENGINE)
-extern const AEEConstFile gSYSTEMAR_GVF;
-#else
-extern const AEEConstFile gSYSTEMEN_GVF;
-#endif
 
 void GreyBitBrewFont_Init(void)
 {
@@ -140,12 +139,7 @@ void GreyBitBrewFont_Init(void)
     
     if(g_pLibrary){
         if(g_pLoader == NULL){
-            //g_pLoader = GreyBitType_Loader_New(g_pLibrary, MMI_GREYBITTYPE_FONTS_PATH);
-            #if defined(FEATURE_ARPHIC_LAYOUT_ENGINE)
-            g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMAR_GVF.pFileData, gSYSTEMAR_GVF.dwDataSize);
-			#else
-			g_pLoader = GreyBitType_Loader_New_Memory(g_pLibrary, gSYSTEMEN_GVF.pFileData, gSYSTEMEN_GVF.dwDataSize);
-			#endif
+            g_pLoader = GreyBitType_Loader_New(g_pLibrary, MMI_GREYBITTYPE_FONTS_PATH);
         }
     }
 }
@@ -219,6 +213,108 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
 	int x, int xMin, int xMax, int sy, int oy, int dy, NativeColor clrText, NativeColor clrBack,
 	boolean bTransparency, int *pOutWidth)
 {
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+       AleFontMetrics fm;   //metics of the entrie string
+       int kmask, j, yend, sx, xend, i, xloop;
+       byte m,n;
+       unsigned char *p;
+       word *dp,*dbase;
+       char *pfont;
+       AleGetStringFontInfo getfont_info;  //structure for retrieve font
+       word cText, cBack;
+       uint32 bmp_offset = 0;
+       AECHAR nCharsContent = 0;
+       AECHAR *pText = (AECHAR *)pcText;
+       int16 nRealSize = WSTRLEN(pcText);
+    
+       if(nRealSize > nChars)
+       {
+           nCharsContent = *(pcText + nChars - 1 + 1);
+           pText[nChars] = 0;
+       }
+       
+       /* current line being edited
+          ---------------------------------------- */
+       memset (&getfont_info, 0, sizeof (getfont_info));
+       getfont_info. CodeType = 1;  /* use Unicode */
+       getfont_info. String = (ALE_UINT16 *)pText;
+       getfont_info. FontMetrics = &fm;
+       getfont_info. FontBuffer = gFontDataBuffer;
+       getfont_info. BufferRowByteTotal = SCREENBYTEWIDTH;
+       getfont_info. BufferColumnByteTotal = SCREENHEIGHT;
+       
+       //all the remain fields are unchanged
+       AleGetStringFont (&getfont_info, gAleWorkBuffer);
+       if(nRealSize > nChars)
+       {
+            pText[nChars] = nCharsContent;
+       }
+       
+        xend = fm.horiAdvance;
+        //yend = fm. outBufHeight;
+#ifdef FEATURE_ARPHIC_ARABIC_M16X16P_FONT        
+        yend = (dy > 16)?(16):(dy);
+#else        
+        yend = (dy > 14)?(14):(dy);
+#endif        
+        pfont = gFontDataBuffer;
+    
+        if(x < xMin)
+        {
+            m = (xMin - x) / 8;
+            n = (xMin - x) % 8;
+            sx = xMin;
+            if((x + xend) > xMax)
+            {
+                xloop = xMax - xMin;
+            }
+            else
+            {
+                xloop = xend - (xMin - x);
+            }
+        }
+        else if((x + xend) > xMax)
+        {
+            m = n = 0;
+            sx = x;
+            xloop = xMax - x;
+        }
+        else
+        {
+            m = n = 0;
+            sx = x;
+            xloop = xend;
+        }
+    
+        cText = (word)(clrText & 0xFFFF);
+        cBack = (word)(clrBack & 0xFFFF);
+        
+        bmp_offset = sy*nPitch;
+        dp = dbase = (word*)(pBmp + bmp_offset + (sx<<1));
+        
+        for ( j = 0; j < yend; j++ )
+        {
+            for ( p = (unsigned char*) (pfont + m + oy*SCREENBYTEWIDTH + j*SCREENBYTEWIDTH), 
+                   dp = dbase + j*(nPitch>>1), kmask = (0x80>>n), i = 0;         i < xloop;         i++)
+            {
+                if ( (*p) & kmask )
+                {
+                    *dp = cText;  //this pixel contains font
+                }
+                dp++;
+                
+                kmask >>= 1;
+                if ( !kmask )
+                {
+                    kmask = 0x80;
+                    p++;
+                }
+            }
+        }
+    
+        *pOutWidth = xloop;
+        return;
+#else
     int xSrc, i;
     byte xWidth, xWidthOrig, xxDisp, *sp, *pFontData;
     int bytes_per_row, dispWidth = 0;
@@ -228,6 +324,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
     int bmp_offset;
     GB_Bitmap charBmp;
     int16 foreR, foreG, foreB, backR, backG, backB, diffR, diffG, diffB;
+    
     bmp_offset = sy * nPitch;
     
     cText = (word)(clrText & 0xFFFF);
@@ -265,6 +362,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         
  	    // Clip x coordinate
         xWidthOrig = xWidth;
+        x += charBmp->horioff;
  	    xSrc = 0;
         
    	    if (x < xMin)
@@ -322,41 +420,97 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
                 dp = dpBase += nPitch;
             }
         }else{
-            while (y1--){
-                unsigned int x1 = xxDisp;
-                sp = pFontData;
-                sp += xSrc;
-                
-                while (x1--){
-                    switch(*sp){
-                    case 0:
-                        *dp = cBack;
-                        break;
-                    case 0xFF:
-                        *dp = cText;
-                        break;
-                    default:
-                        foreR = ((diffR * (*sp))/256) + backR;
-                        foreG = ((diffG * (*sp))/256) + backG;
-                        foreB = ((diffB * (*sp))/256) + backB;
-                        *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
-                        break;
-                    }
-                    dp++;
-                    sp++;
-                }  // for loop
-                
-                pFontData += bytes_per_row;
-                dp = dpBase += nPitch;
+            if(charBmp->horioff < 0) //ÈçÌ©ÓïµÈÓïÑÔ
+            {
+                while (y1--){
+                    unsigned int x1 = -charBmp->horioff;
+                    sp = pFontData;
+                    sp += xSrc;
+                    
+                    // draw only foreground color                
+                    while (x1--){
+                        switch(*sp){
+                        case 0:
+                            break;
+                        case 0xFF:
+                            *dp = cText;
+                            break;
+                        default:
+                            backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
+                            backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
+                            backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
+                            backR = (((foreR - backR) * (*sp))/256) + backR;
+                            backG = (((foreG - backG) * (*sp))/256) + backG;
+                            backB = (((foreB - backB) * (*sp))/256) + backB;
+                            *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
+                            break;
+                        }
+                        dp++;
+                        sp++;
+                    }  // for loop            
+                    
+                    x1 = xxDisp+charBmp->horioff;
+                    while (x1--){
+                        switch(*sp){
+                        case 0:
+                            *dp = cBack;
+                            break;
+                        case 0xFF:
+                            *dp = cText;
+                            break;
+                        default:
+                            foreR = ((diffR * (*sp))/256) + backR;
+                            foreG = ((diffG * (*sp))/256) + backG;
+                            foreB = ((diffB * (*sp))/256) + backB;
+                            *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
+                            break;
+                        }
+                        dp++;
+                        sp++;
+                    }  // for loop
+                    
+                    pFontData += bytes_per_row;
+                    dp = dpBase += nPitch;
+                }
+            }
+            else
+            {
+                while (y1--){
+                    unsigned int x1 = xxDisp;
+                    sp = pFontData;
+                    sp += xSrc;
+                    
+                    while (x1--){
+                        switch(*sp){
+                        case 0:
+                            *dp = cBack;
+                            break;
+                        case 0xFF:
+                            *dp = cText;
+                            break;
+                        default:
+                            foreR = ((diffR * (*sp))/256) + backR;
+                            foreG = ((diffG * (*sp))/256) + backG;
+                            foreB = ((diffB * (*sp))/256) + backB;
+                            *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
+                            break;
+                        }
+                        dp++;
+                        sp++;
+                    }  // for loop
+                    
+                    pFontData += bytes_per_row;
+                    dp = dpBase += nPitch;
+                }
             }
         }
         
- 
- 	  dispWidth += xWidth;
-       x += xWidth;
+ 	    dispWidth += xWidth;
+        x += xWidth;
     }
  
     *pOutWidth = dispWidth;
+#endif    
 }
 
 static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nChars,
@@ -476,6 +630,12 @@ static int OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHA
     {
         return SUCCESS;
     }
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+    if ( 0 != HebrewArabicLangInit() )
+    {
+       return EFAILED;
+    }
+#endif    
     
     // Calculate the string length
     if (nChars < 0) 
@@ -498,12 +658,13 @@ static int OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHA
     }
     
     // Get the text width and height
-    OEMFont_MeasureText(pMe, pcText, nChars, 0, NULL, &nWidth);
     nHeight = pMe->wSize;
     
     // Text is horizontally aligned
     if (dwFlags & IDF_ALIGNHORZ_MASK)
     {
+        OEMFont_MeasureText(pMe, pcText, nChars, 0, NULL, &nWidth);
+        
         x = prcBackRect->x;
 
         if (dwFlags & IDF_ALIGN_RIGHT)
@@ -544,12 +705,6 @@ static int OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHA
         return SUCCESS;
     }
     
-    if(prcBackRect->x > (x+ nWidth))
-    {
-        //Overflow the start x coordinate
-        return SUCCESS;
-    }
-    
     if(prcBackRect->y > (y +nHeight))
     {
         //Overflow the start y coordinate
@@ -578,16 +733,7 @@ static int OEMFont_DrawText(IFont *pMe, IBitmap *pDst, int x, int y, const AECHA
     }
     
     clrFrame = IBITMAP_RGBToNative(pDst, CLR_USER_FRAME);
-
-    // If a rectangle flag is passed in, draw it
-    if ((dwFlags & IDF_RECT_MASK) != IDF_RECT_NONE)
-    {
-        if (IBITMAP_FillRect(pDst, prcBackRect, clrFrame, AEE_RO_COPY) != SUCCESS)
-        {
-       	    return EUNSUPPORTED;
-       	}
-    }
-
+    
     return DrawTextEx(pMe, pDst, pcText, nChars, x, y, prcBackRect, dwFlags, clrText, clrBack, clrFrame);
 }
 
@@ -608,6 +754,126 @@ static int OEMFont_GetInfo(IFont *pMe, AEEFontInfo *pInfo, int nSize)
 
 static int OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int nMaxWidth, int *pnCharFits, int *pnPixels)
 {
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+       int nRealStrLen, nTotalWidth = 0;
+       int nCharFitsTemp = 0;
+       int nPixelsTemp = 0;
+    
+        if ( 0 != HebrewArabicLangInit() )
+        {
+           return EFAILED;
+        }
+#if 0
+        if (pMe->nFont == AEE_FONT_USER_2)
+        {
+           return (OEMFont_MeasureTextLargeBold(pMe, pcText, nChars, nMaxWidth, pnCharFits, pnPixels));
+        }
+#endif
+        // Let's perform some sanity checks first
+        if (!pcText)
+        {
+            return SUCCESS;
+        }
+        
+        if (!pnCharFits)
+        {
+            pnCharFits = &nCharFitsTemp;
+        }
+        if(!pnPixels)
+        {
+            pnPixels = &nPixelsTemp;
+        }
+    
+        nRealStrLen = WSTRLEN(pcText);
+    
+        if ((nChars < 0 || nRealStrLen <= nChars) && (nMaxWidth < 0))
+        {
+            nTotalWidth = ArphicMeasureNChars(pcText, nRealStrLen);
+            *pnPixels = nTotalWidth;
+            *pnCharFits = nRealStrLen;
+            
+            return SUCCESS;
+        }
+    
+        if((nRealStrLen > nChars) && (nMaxWidth < 0) )
+        {
+            nTotalWidth = ArphicMeasureNChars(pcText, nChars);
+            *pnPixels = nTotalWidth;
+            *pnCharFits = nChars;
+            return SUCCESS;
+        }
+        
+        if (nChars < 0 || nRealStrLen < nChars)
+        {
+            nChars = nRealStrLen;
+        }
+        if (nMaxWidth <= 0)
+        {
+            nMaxWidth = 0x0FFFFFFF;
+        }
+        
+        if(0 == nChars)
+        {
+            *pnPixels = 0;
+            *pnCharFits = 0;
+            return SUCCESS;
+        }
+    
+        if(nMaxWidth >= (nTotalWidth = ArphicMeasureNChars(pcText, nChars)))
+        {
+            *pnPixels = nTotalWidth;
+            *pnCharFits = nChars;
+            return SUCCESS;
+        }
+    
+        {
+           int start = 0;
+           int end = nChars;
+           int mid;
+           
+           while(start <= end)
+           {
+                mid = (start + end)/2;
+                if(-1 != (nTotalWidth = ArphicMeasureNChars(pcText, mid)))
+                {
+                    // 4,7 is OK, 2 not OK
+                    if(ABS(nTotalWidth - nMaxWidth) <= 4)
+                    {
+                        if(nTotalWidth <= nMaxWidth)
+                        {
+                            *pnPixels = nTotalWidth;
+                            *pnCharFits = mid;
+                        }
+                        else
+                        {
+                            *pnCharFits = mid - 1;
+                            *pnPixels = nMaxWidth;
+                        }
+                        return SUCCESS;
+                    }
+                    else if(nTotalWidth > nMaxWidth)
+                    {
+                        end = mid -1;
+                    }
+                    else
+                    {
+                        start = mid + 1;
+                    }
+                }
+                else
+                {
+                    return -1;
+                }
+             }//end while
+             
+            nTotalWidth = ArphicMeasureNChars(pcText, (start + end)/2);
+            *pnPixels = (nTotalWidth > 0)?(nTotalWidth):(0);
+            *pnCharFits = (start + end)/2;
+        }
+    
+        return SUCCESS;
+#else 
+
     int nRet = SUCCESS;
     int nRealStrLen, nFits, nTotalWidth = 0;
     AECHAR ch;
@@ -656,10 +922,14 @@ static int OEMFont_MeasureText(IFont *pMe, const AECHAR *pcText, int nChars, int
     {
         *pnCharFits = nFits;
     }
-    
-    *pnPixels = nTotalWidth;
+
+    if(pnPixels)
+    {
+        *pnPixels = nTotalWidth;
+    }
     
     return nRet;
+#endif    
 }
 
 int GreyBitBrewFont_New(IShell *piShell, AEECLSID cls, void **ppif)
@@ -718,6 +988,7 @@ int GreyBitBrewFont_Destory(IFont *pMe)
         OEMFont_Destroy(pMe);
         sys_free(pMe);
     }
+    return 0;
 }
 
 #include "AEEDisp.h"

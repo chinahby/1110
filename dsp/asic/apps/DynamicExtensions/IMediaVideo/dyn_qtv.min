@@ -24,6 +24,7 @@ include $(BREW_DYNAMIC_EXTENSIONS)/qplayer/qplayer.min
 vpath %.mif $(BREW_DYNAMIC_EXTENSIONS)/qplayer
 vpath %.bar $(BREW_DYNAMIC_EXTENSIONS)/qplayer
 vpath %.mod $(BREW_DYNAMIC_EXTENSIONS)/qplayer
+vpath %.brx $(BREW_DYNAMIC_EXTENSIONS)/qplayer
 
 CONSTFILE_FILES+=\
         qplayer.mif|fs:/mif/qplayer.mif \

@@ -73,8 +73,8 @@
 	<STRING Id="1024" Name="IDS_FMRADIO_REFUSE_HEADSET_PLUG_OUT">
 		<Text>Headset plug out</Text>
 	</STRING>
-	<String Id="1025" Name="IDS_FMRADIO_FREQ_INPUT">
+	<STRING Id="1025" Name="IDS_FMRADIO_FREQ_INPUT">
 		<Text>87.5-108MHz</Text>
-	</String>
+	</STRING>
 </Strings>
 </BREWRes>

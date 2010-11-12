@@ -962,9 +962,9 @@ BTApp_ATCSCSTableType BTApp_ATCSCSTable[] =
 
 uint8 okResp[ ] = { '\r', '\n', 'O', 'K', '\r', '\n', 0 };
 uint8 errorResp[ ] = { '\r', '\n', 'E', 'R', 'R', 'O', 'R', '\r', '\n', 0 };
-#define SEND_RESP( rsp )  \
-  (DBGPRINTF_FATAL ( "%s", (rsp) ),\
-   IBTEXTAG_SendResponse( pMe->mAG.po, (rsp), STRLEN((const char*)(rsp)) ))
+#define SEND_RESP( rsp ) IBTEXTAG_SendResponse( pMe->mAG.po, (rsp), STRLEN((const char*)(rsp)) )//  \
+  //(DBGPRINTF_FATAL ( "%s", (rsp) ),\
+   IBTEXTAG_SendResponse( pMe->mAG.po, (rsp), STRLEN((const char*)(rsp)) )
 
 #endif //FEATURE_BT_HFP_1_5
 

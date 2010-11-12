@@ -40,13 +40,13 @@ when       who     what, where, why
 #include "AEEClassIDs.h"
 #include "AEEControls.brh"
 #include "AEEPen.h"
-
+#include "AEE_OEM.h"
 #ifndef AEE_SIMULATOR
 #include "Err.h"
 #else
 #include "BREWSimFeatures.h"
 #endif
-
+#include "AEEMenu.h"
 #include "Appscommon.h"
 #include "appscommonimages.brh"
 #include "appscommon.brh"
@@ -217,6 +217,9 @@ static void     TextCtl_SetMode (ITextCtl * pITextCtl,boolean bEdit,AEETextInput
 static void     TextCtl_ShowSymbolDialog(CTextCtl * pme) ;
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
 static uint16   TextCtl_QuerySymbols(CTextCtl *pme, AECHAR *pszOut, uint16 size) ;
+#else 
+static uint16   OEM_TextQuerySymbols(CTextCtl *pme, AECHAR *pszOut, uint16 size);
+
 #endif // FEATURE_CARRIER_CHINA_TELCOM
 static void     TextCtl_ShowFaceSymbolDialog(CTextCtl * pme) ;
 static void     TextCtl_ShowNetSymbolDialog(CTextCtl * pme) ;
@@ -764,6 +767,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                 {
                     pme->m_nCurrInputMode = pme->m_nCurrInputModeList[2];
                 }
+				MSG_FATAL("1pme->m_nCurrInputMode===%d",pme->m_nCurrInputMode,0,0);
                 SetArrowFlagonIM(FALSE);
                 ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0, 0);
                 OEM_SetInputMode((CTextCtl *)pme);
@@ -838,9 +842,9 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                 {
                     return FALSE;
                 }
-
+				MSG_FATAL("2pme->m_nCurrInputMode===%d",pme->m_nCurrInputMode,0,0);
 #if defined FEATURE_T9_MT_THAI  || defined FEATURE_T9_RAPID_THAI
-                 goto NormalKeyEvent;   
+                 //goto NormalKeyEvent;   
 #endif //#if defined FEATURE_T9_MT_THAI  || defined FEATURE_T9_RAPID_THAI
 
                 switch (pme->m_nCurrInputMode)
@@ -853,23 +857,25 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 
 #ifdef FEATURE_T9_MT_THAI                   
                     case OEM_MODE_T9_MT_THAI:                       
-                        goto NormalKeyEvent;                              
+                        //goto NormalKeyEvent;                              
                         break; 
 #endif //FEATURE_T9_MT_THAI  
 
 #ifdef FEATURE_T9_RAPID_THAI                   
                     case OEM_MODE_T9_RAPID_THAI:                       
-                        goto NormalKeyEvent;                              
+                        //goto NormalKeyEvent;                              
                         break; 
   #endif //FEATURE_T9_MT_THAI    
   
                     default:
                         break;                    
-                }               
+                }  
+				MSG_FATAL("3pme->m_nCurrInputMode===%d",pme->m_nCurrInputMode,0,0);
                 if ( !TextCtl_SetNextInputMode(pme) )
                 {
                     pme->m_nCurrInputMode = pme->m_nCurrInputModeList[2];
                 }
+                MSG_FATAL("4pme->m_nCurrInputMode===%d",pme->m_nCurrInputMode,0,0);
                 SetArrowFlagonIM(FALSE);
                 ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0, 0);
                 OEM_SetInputMode((CTextCtl *)pme);
@@ -1456,29 +1462,32 @@ NormalKeyEvent:
 
                 // if the cursor is in Right position then change to FirstCap.
                 //it should check Key release event 
-                if ( ( OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode         // Ab --> ab --> AB --> Ab inputmethod switch
-                       ||OEM_MODE_T9_MT_ENGLISH_LOW == pme->m_nCurrInputMode )
-                       ||OEM_MODE_T9_MT_ENGLISH_UP == pme->m_nCurrInputMode )
-                {
-                    if (OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode)
-                    {
-                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_LOW;    // Ab --> ab inputmethod switch
-                    }
-                    else if (OEM_MODE_T9_MT_ENGLISH_LOW == pme->m_nCurrInputMode)
-                    {
-                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_UP;     // ab --> AB inputmethod switch
-                    }
-                    else if(OEM_MODE_T9_MT_ENGLISH_UP == pme->m_nCurrInputMode)
-                    {
-                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;        // AB --> Ab inputmethod switch
-                    }
+               
+		                if ( ( OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode         // Ab --> ab --> AB --> Ab inputmethod switch
+		                       ||OEM_MODE_T9_MT_ENGLISH_LOW == pme->m_nCurrInputMode )
+		                       ||OEM_MODE_T9_MT_ENGLISH_UP == pme->m_nCurrInputMode )
+		                {
+		                    if (OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode)
+		                    {
+		                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_LOW;    // Ab --> ab inputmethod switch
+		                    }
+		                    else if (OEM_MODE_T9_MT_ENGLISH_LOW == pme->m_nCurrInputMode)
+		                    {
+		                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_UP;     // ab --> AB inputmethod switch
+		                    }
+		                    else if(OEM_MODE_T9_MT_ENGLISH_UP == pme->m_nCurrInputMode)
+		                    {
+		                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;        // AB --> Ab inputmethod switch
+		                    }
+		        
 
-                   OEM_SetInputMode((CTextCtl *)pme);
+		                   OEM_SetInputMode((CTextCtl *)pme);
+		                   
+		                   // set flag
+		                   pme->m_eAutoState = MULTITAP_USER_DENY_AUTOSET;
                    
-                   // set flag
-                   pme->m_eAutoState = MULTITAP_USER_DENY_AUTOSET;
-                   
-                }   
+                		}
+                
 
                 // if the cursor is in Right position then change to FirstCap.
                 //it should check Key release event 
@@ -1736,7 +1745,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
             IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色  
             IDISPLAY_DrawText(pme->m_pIDisplay, 
                 AEE_FONT_BOLD,pme->m_pTitle, -1,
-                qrc.x+2, qrc.y,&qrc,IDF_TEXT_TRANSPARENT | IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER);
+                qrc.x, qrc.y,&qrc,IDF_TEXT_TRANSPARENT | IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER);
             IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色            
             if ((!pme->m_pSoftKey)&&(pme->m_dwProps&TP_STARKEY_SWITCH))
             {
@@ -1751,7 +1760,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                                         pme->m_wResID);
                     if(RightTopImg != NULL)
                     {
-                        IIMAGE_Draw(RightTopImg, qrc.dx-30, qrc.y + TITLEBAR_HEIGHT/4);
+                        IIMAGE_Draw(RightTopImg, qrc.dx-30, qrc.y + 1);
                         IIMAGE_Release(RightTopImg);
                         RightTopImg = NULL;
                     }                    
@@ -2001,7 +2010,7 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
             }
             else
             {
-                pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEXT_BACKGROUND);
+                pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
             }
         }
         OEM_TextSetBackGround(pme->m_pText, pme->m_pImageBg);
@@ -2061,6 +2070,21 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
                 }
             }            
 #endif
+		if(pme->m_dwProps & TP_STARKEY_ID_SWITCH)
+		{
+			if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH || 
+                    pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_LOW ||
+                    pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP ||
+                    pme->m_nCurrInputMode == OEM_MODE_NUMBERS)
+                {
+                	pme->m_nCurrInputMode = OEM_MODE_T9_CAP_LOWER_ENGLISH;
+                }
+                else
+                {
+                	pme->m_nCurrInputMode = OEM_MODE_NUMBERS;
+                }
+                
+		}
         OEM_SetInputMode((CTextCtl *)pme);
     }
 }
@@ -3056,15 +3080,14 @@ static void TextCtl_CalcRects(CTextCtl * pme)
       // round rc.dy to nearest line increment
       if (bIntegral) {
          int lines = (rc.dy + (LINEHEIGHT/2)) / LINEHEIGHT;
-         rc.dy = (LINEHEIGHT * lines) + 6;
+         rc.dy = (LINEHEIGHT * lines);
       }
    }
    else {                                    // single-line
       if (!bFixOEM)
       {
-         rc.dy = (LINEHEIGHT + 6);
+         rc.dy = (LINEHEIGHT);
       }
-      //rc.dy = (LINEHEIGHT + 6);
    }
 
    // check within min/max
@@ -3079,12 +3102,12 @@ static void TextCtl_CalcRects(CTextCtl * pme)
        }
        else
        {
-          rc.dy = CONSTRAIN(rc.dy, (LINEHEIGHT+6), dyMax);
+          rc.dy = CONSTRAIN(rc.dy, (LINEHEIGHT), dyMax);
        }
        if (bFix && bIntegral && bMulti)
-          rc.dy = ((rc.dy / LINEHEIGHT) * LINEHEIGHT) + 6;
+          rc.dy = ((rc.dy / LINEHEIGHT) * LINEHEIGHT);
    }
-
+   
    // calc rectangle of entire control, which will be
    // stored in m_rcGet and returned in GetRect()
    if (!bFixRect) {
@@ -3319,7 +3342,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
    
    //Query Symbols From OEM
 #ifndef FEATURE_CARRIER_CHINA_TELCOM  // modify the code for the Unicom Spec on 081206
-   OEM_TextQuerySymbols(szBuff, sizeof(szBuff)); 
+   OEM_TextQuerySymbols(pme,szBuff, sizeof(szBuff)); 
 #else
    TextCtl_QuerySymbols(pme, szBuff, sizeof(szBuff));
 #endif
@@ -3361,7 +3384,6 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
 
    pszSym = szBuff + (nPage * 9);
 
-   //added by chengxiao 2009.03.31
    if(pme->m_dwProps & TP_GRAPHIC_BG)
    {
         nOldFontColor = TEXT_GRAPHIC_FONT_COLOR;
@@ -3373,7 +3395,7 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
 
    nOldFontColor = IDISPLAY_SetColor(pd, CLR_USER_TEXT, nOldFontColor);
    for(nRow = i = 0; nRow < 3; nRow++, y += cyAdd){
-      for(x = dm.cxScreen/10, nCol = 0; nCol < 3; nCol++, x += cxAdd, i++, pszSym++) //modified by chengxiao 2009.03.31
+      for(x = dm.cxScreen/10, nCol = 0; nCol < 3; nCol++, x += cxAdd, i++, pszSym++)
       {
 
    // See if we hit the end...
@@ -3775,7 +3797,7 @@ static boolean TextCtl_IsSymbolsSupported(CTextCtl * pme)
 
    *szBuff = (AECHAR)0; // in case OEM is misbehaved.
 #ifndef FEATURE_CARRIER_CHINA_TELCOM
-   if( OEM_TextQuerySymbols(szBuff, sizeof(szBuff)) && *szBuff ) 
+   if( OEM_TextQuerySymbols(pme,szBuff, sizeof(szBuff)) && *szBuff ) 
 #else   
    if( TextCtl_QuerySymbols(pme, szBuff, sizeof(szBuff)) && *szBuff )
 #endif
@@ -3812,7 +3834,7 @@ static AECHAR TextCtl_GetSymChar(CTextCtl * pme, int nPos)
    AECHAR  szSyms[128]; //szSyms[64];
 
 #ifndef FEATURE_CARRIER_CHINA_TELCOM
-   if(OEM_TextQuerySymbols(szSyms, sizeof(szSyms)) && *szSyms) 
+   if(OEM_TextQuerySymbols(pme,szSyms, sizeof(szSyms)) && *szSyms) 
 #else
    if(TextCtl_QuerySymbols(pme, szSyms, sizeof(szSyms)) && *szSyms)
 #endif
@@ -5069,6 +5091,21 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
     int i;
     MSG_FATAL("pme->m_nCurrInputMode:::::::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
 	MSG_FATAL("pme->m_nCurrInputModeCount:::::::::::::::::::::%d",pme->m_nCurrInputModeCount,0,0);
+	if(pme->m_dwProps & TP_STARKEY_ID_SWITCH)
+	{
+		if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH || 
+                pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_LOW ||
+                pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP ||
+                pme->m_nCurrInputMode == OEM_MODE_NUMBERS)
+            {
+            	pme->m_nCurrInputMode = OEM_MODE_T9_CAP_LOWER_ENGLISH;
+            }
+            else
+            {
+            	pme->m_nCurrInputMode = OEM_MODE_NUMBERS;
+            }
+	}
+	
     if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_LOW) || (pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP))
     {
         pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;
@@ -5112,6 +5149,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
     {
         if ( pme->m_nCurrInputMode == pme->m_nCurrInputModeList[i] )
         {
+        		
 #if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
             if(pme->m_dwProps & TP_NOSYMBOL)
             {
@@ -5174,10 +5212,17 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
             {
                 // if meet the end , then return the first one
                 MSG_FATAL("pme->m_nCurrInputMode::::end1:::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
+                if(pme->m_dwProps & TP_STARKEY_ID_SWITCH)
+                {
+                	;
+                }
+                else
+                {
                 if (  i == pme->m_nCurrInputModeCount-1 )
                     pme->m_nCurrInputMode = pme->m_nCurrInputModeList[0];
                 else
-                    pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1];                
+                    pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1];     
+                }
             }
             ret = TRUE;
             break;
@@ -5399,15 +5444,33 @@ SIDE EFFECTS:
 SEE ALSO:
 =============================================================================*/
 #ifndef FEATURE_CARRIER_CHINA_TELCOM
-uint16 OEM_TextQuerySymbols(AECHAR *pszOut, uint16 size)
+uint16 OEM_TextQuerySymbols(CTextCtl *pme,AECHAR *pszOut, uint16 size)
 {
-    MSG_FATAL("OEM_TextQuerySymbols Start",0,0,0);
-   if (!pszOut || size < (sizeof(sszSymbolList)/sizeof(sszSymbolList[0])))
-      return(0);
+   MSG_FATAL("pme->m_nCurrInputMode=%d",pme->m_nCurrInputMode,0,0);
 
-   MEMCPY(pszOut, sszSymbolList, sizeof(sszSymbolList));
+#ifdef FEATURE_LANG_THAI
+                    if ((pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_THAI))
+                    {
+							if (!pszOut || size < (sizeof(sszSymbolListTH)/sizeof(sszSymbolListTH[0])))
+      								return(0);
 
-   return(sizeof(sszSymbolList)/sizeof(sszSymbolList[0])) - 1;
+   							MEMCPY(pszOut, sszSymbolListTH, sizeof(sszSymbolListTH));
+
+  							return(sizeof(sszSymbolListTH)/sizeof(sszSymbolListTH[0])) - 1;
+					}
+					else
+                       
+#endif
+				   {
+   							if (!pszOut || size < (sizeof(sszSymbolList)/sizeof(sszSymbolList[0])))
+      								return(0);
+
+   							MEMCPY(pszOut, sszSymbolList, sizeof(sszSymbolList));
+
+  							return(sizeof(sszSymbolList)/sizeof(sszSymbolList[0])) - 1;
+				  }
+						
+				
 }
 #else
 static uint16 TextCtl_QuerySymbols(CTextCtl *pme, AECHAR *pszOut, uint16 size) 
@@ -5688,23 +5751,20 @@ static void TextCtl_DrawBackGround(CTextCtl * pme, AEERect *pRect)
 {
     if(pme->m_pImageBg == NULL)
     {
-        //modified by chengxiao 2009.04.08
         if(pme->m_nBgImgResID != 0 && STRLEN(pme->m_strBgImgResFile) != 0)
         {
             pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, pme->m_strBgImgResFile, pme->m_nBgImgResID);
         }
         else
         {
-            pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEXT_BACKGROUND);
+            pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
         }
-        //chengxiao modify end 2009.04.08
         OEM_TextSetBackGround(pme->m_pText, pme->m_pImageBg);
     }
     Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pImageBg, APPSCOMMON_BG_COLOR, pRect, 0, 0);
 }
 //end added
 
-//added by chengxiao 2009.04.08
 static void CTextCtl_SetBackGround(ITextCtl * po, char *pstrImgResFile, uint16 nImgResID)
 {
     CTextCtl * pme = (CTextCtl *) po;
@@ -6060,7 +6120,7 @@ static void TextCtl_GetSymbDlgInfo(CTextCtl * pme, IDisplay * pd, AEEBitmapInfo 
 	int16  nWidth;
 	int    i;
 #ifndef FEATURE_CARRIER_CHINA_TELCOM 
-    (void)OEM_TextQuerySymbols(pszwBuff, wBuffSize);
+    (void)OEM_TextQuerySymbols(pme, pszwBuff, wBuffSize);
 #else
     (void)TextCtl_QuerySymbols(pme, pszwBuff, wBuffSize);
 #endif
