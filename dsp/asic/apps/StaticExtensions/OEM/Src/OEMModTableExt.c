@@ -253,6 +253,7 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #if defined (FEATURE_IHDR)
 	#include "AEEHDR.h"
 #endif
+#include "IMMITv.h"
 
 // RDM Static Extension
 #if defined (FEATURE_IRDM)
@@ -402,6 +403,10 @@ extern const AEEStaticClass gOEMOverlayClasses[];
 //#ifdef FEATURE_WMS_APP
 	extern int OEMWMS_New (IShell *piShell, AEECLSID cls, void **pp);
 //#endif
+
+#ifdef FEATURE_APP_ATV
+	extern int CTVAppMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+#endif
 
 #ifdef FEATURE_IWMSDIAG
 	extern int AEEWMSDIAG_New (IShell *piShell, AEECLSID cls, void **pp);
@@ -566,6 +571,7 @@ extern int     OEMGenericViewer_New(IShell *pIShell, AEECLSID cls, void **ppif);
 extern int AniCtl_New (IShell * pIShell, AEECLSID clsid, void ** ppif);
 #endif
 
+
 // UI App
 #if defined(FEATURE_APP_UI) && !defined(FEATURE_MANGO_UI)
 extern int CoreApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
@@ -573,6 +579,9 @@ extern int CoreApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int CoreStartApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 #endif
+
+extern int CMMITv_New (IShell * pIShell, AEECLSID clsid, void ** ppif);
+extern int OEMTLGAtv_New(IShell *pIShell,AEECLSID ClsID,OEMINSTANCE* ppInterface);
 
 #ifdef FEATURE_APP_QUICKTEST
 extern int QuickTest_Load(IShell *pIShell,void *ph,IModule **ppMod);
@@ -1049,9 +1058,14 @@ static const AEEStaticMod gOEMStaticModList[] =
 	{ AEEFS_MIF_DIR"recorder.mif", Recorder_Load},
 #endif
 
+#ifdef FEATURE_APP_ATV
+    {AEEFS_MIF_DIR"tvapp.mif", CTVAppMod_Load}, 
+#endif
+
 #if defined(FEATURE_CONTACT_APP)
     {AEEFS_MIF_DIR"contactapp.mif", ContApp_Load},
 #endif
+
 #ifdef FEATURE_APP_PBPRINT
 #error code not present
 #endif //FEATURE_APP_PBPRINT
@@ -1450,6 +1464,10 @@ static const AEEStaticClass gOEMStaticClassList[] = {
 //#if defined (FEATURE_WMS_APP)
    {AEECLSID_WMS,                ASCF_PRIV,0,NULL,OEMWMS_New},
 //#endif
+
+	{MMI_CLSID_IMMITV,		   ASCF_PRIV,0,NULL,CMMITv_New},
+	{AEECLSID_TLG_ATV,		  ASCF_UPGRADE, 0, NULL, OEMTLGAtv_New},
+
 
 #if defined(FEATURE_IWMSDIAG) && !defined(FEATURE_MANGO_UI)
    {AEECLSID_WMSDIAG,         ASCF_PRIV,0,NULL,AEEWMSDIAG_New},
