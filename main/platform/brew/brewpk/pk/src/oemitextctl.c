@@ -2077,7 +2077,9 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
                     pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP ||
                     pme->m_nCurrInputMode == OEM_MODE_NUMBERS)
                 {
+                #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
                 	pme->m_nCurrInputMode = OEM_MODE_T9_CAP_LOWER_ENGLISH;
+                #endif
                 }
                 else
                 {
@@ -5098,7 +5100,9 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
                 pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP ||
                 pme->m_nCurrInputMode == OEM_MODE_NUMBERS)
             {
-            	pme->m_nCurrInputMode = OEM_MODE_T9_CAP_LOWER_ENGLISH;
+            #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
+                	pme->m_nCurrInputMode = OEM_MODE_T9_CAP_LOWER_ENGLISH;
+                #endif
             }
             else
             {
