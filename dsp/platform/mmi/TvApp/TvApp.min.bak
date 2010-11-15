@@ -10,7 +10,8 @@ TVAPP_SOURCES=\
 	TVApp.c \
 	TVAppDialogHandler.c \
 	TVAppStateMachine.c  \
-	CMMITv.c 
+	CMMITv.c \
+	MMITvCommon.c
         
 TVAPP_OBJS :=  $(addprefix $(TARGETDIR)/, $(TVAPP_SOURCES:%.c=%.o))
 $(TVAPP_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
