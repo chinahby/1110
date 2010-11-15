@@ -124,12 +124,12 @@
 // 关机动画文件播放
 #ifdef FEATURE_VERSION_FLEXI203
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
-#define    PWRON_ANI_FRAME_COUNT                 (19)
-#define    PWRON_ANI_RATE                        (200)
+#define    PWRON_ANI_FRAME_COUNT                 (17)
+#define    PWRON_ANI_RATE                        (280)
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronani.png"
-#define    PWROFF_ANI_FRAME_COUNT                (19)
-#define    PWROFF_ANI_RATE                       (200)
-#define    ANI_RATE                              (150)
+#define    PWROFF_ANI_FRAME_COUNT                (17)
+#define    PWROFF_ANI_RATE                       (280)
+#define    ANI_RATE                              (180)
 #elif defined FEATURE_VERSION_SMART
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (10)
