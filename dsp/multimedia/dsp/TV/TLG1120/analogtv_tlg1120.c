@@ -414,15 +414,15 @@ boolean camsensor_tlg1120_init(void)
 
     //ÉùÒôºÍÍ¼ÏñµÄ²âÊÔ
 	TLGAPP_TurnOnTestPattern();
-	//TLGAPP_TurnOnTestToneMode();
+	//  TLGAPP_TurnOnTestToneMode();
 	//TLG_SetAudioTestToneMode(tlg_i2c_addr, TLG_ON);
 	//TLG_SetAudioTestToneL(tlg_i2c_addr, TLG_1KHZ);
 	//TLG_SetAudioTestToneR(tlg_i2c_addr, TLG_1KHZ);
 
 	//dog_kick();
     //register function for sensor driver
-    //TLG1120_tv_register(camsensor_function_table_ptr);
-    //TLG1120_tv_setup_camctrl_tbl(camctrl_tbl_ptr);    
+   //TLG1120_tv_register(camsensor_function_table_ptr);
+   // TLG1120_tv_setup_camctrl_tbl(camctrl_tbl_ptr);    
     //TLG1120_tv_scan_channel
     //TLG_SetAudioGain(TLGI2C_DEFAULT_BASE_ADDR,TLG_DAC, 1);
     

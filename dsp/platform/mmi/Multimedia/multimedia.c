@@ -908,6 +908,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_2, IDS_MULTIMEDIA_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_3, IDS_MULTIMEDIA_TITLE_3, NULL, 0);
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_4, IDS_MULTIMEDIA_TITLE_4, NULL, 0);
+			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_5, IDS_MULTIMEDIA_TITLE_5, NULL, 0);
 
             return TRUE;
             
@@ -988,6 +989,11 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
                     StartApplet(pMe, wParam - IDS_MULTIMEDIA_TITLE_1);
                     return TRUE;
                 }
+				case IDS_MULTIMEDIA_TITLE_5:
+				{
+                    StartApplet(pMe, wParam - IDS_MULTIMEDIA_TITLE_1);
+                    return TRUE;
+                }
             }
             return TRUE;
             
@@ -1025,6 +1031,11 @@ static boolean StartApplet(Multimed *pMe, int i)
         case 3:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
             break;
+		case 4:
+			MSG_FATAL("StartApplet::::::::::::::::::%d",i,0,0);
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_TVAPP); //AEECLSID_Tv_APP
+            MSG_FATAL("StartApplet::::::::::::::::::Result=%d",Result,0,0);
+            break;	
 		default:
 			break;
         

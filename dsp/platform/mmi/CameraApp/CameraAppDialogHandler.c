@@ -591,7 +591,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
         case EVT_DIALOG_INIT:
             pMe->m_bCapturePic = FALSE;
 
-            IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
+          IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
 
 
             (void)ICONFIG_GetItem(pMe->m_pConfig,

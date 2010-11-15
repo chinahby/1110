@@ -82,6 +82,8 @@
 #include "Appscommon.brh"
 #include "OEMSVC.h"
 #include "AEEBacklight.h"
+#include "AEETv.h"
+
 
 /*==============================================================================
                                  类型定义
@@ -215,6 +217,7 @@ typedef enum DLGRetValue
     DLGRET_EXIT 
 } DLGRetValue;
 
+
 /*----------------------状态机相关数据类型声明---------------------*/
 // CameraApp Applet 状态机状态：
 typedef enum
@@ -241,6 +244,27 @@ typedef struct _CameraAppMod
     DECLARE_VTBL(IModule)
     uint32   m_nRefs;
 } CCameraAppMod;
+
+
+typedef struct
+{
+	boolean	b_IsIconHiden;
+	int32 	ResolutionID_DV;	// Resolution for recording
+	int32	BrightnessStep; /*设置亮度0~15*/
+    int32   ContrastStep; /*设置对比度0~15*/
+    int32   DefinitionStep; /*设置清晰度0~63*/
+    int32   SaturationStep; /*设置色彩饱和度0~255*/
+    int32   SoundStep;/*声音*/
+    int ChannelCountAble;//上次搜到的有信号的台总数
+    int CurrentChannel;//上一次退出之前看的那个台索引 
+    int   Bookmarktotal;       //当前存储频道总数
+    TLG_REGION_CODE region;//当前设置的区域
+}MMITV_SETTINGS;
+
+//TTvPropertyValue	ResolutionID_DC;	// Resolution for snapshot
+
+// TvBookmark	Bookmark[32];//最多可以保存32个书签
+
 
 // CameraApp Applet对象结构体：
 typedef struct _CCameraApp

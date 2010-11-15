@@ -11,7 +11,8 @@ AIT_API_SOURCES=\
 	usb_IF_ait_api.c \
 	cam_module.c \
 	AEECameraEx.c \
-	OEMCameraEx.c
+	OEMCameraEx.c \
+	OEMAtv.c
 	
 AIT_API_OBJS :=  $(addprefix $(TARGETDIR)/, $(AIT_API_SOURCES:%.c=%.o))
 $(AIT_API_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC

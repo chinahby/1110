@@ -53,6 +53,8 @@ static NextFSMAction CameraApp_StatePicHandle(CCameraApp *pMe);
 //状态 STATE_CPOPMSG 处理函数
 static NextFSMAction CameraApp_StatePopMSGHandle(CCameraApp *pMe);
 
+
+
 //状态 STATE_EXIT 处理函数
 static NextFSMAction CameraApp_StateExitHandle(CCameraApp *pMe);
 
@@ -118,6 +120,7 @@ NextFSMAction CameraApp_ProcessState(CCameraApp *pMe)
             break;
             
         case STATE_CPOPMSG:
+			MSG_FATAL("CameraApp_ProcessState------STATE_CPOPMSG---",0,0,0);
             retVal = CameraApp_StatePopMSGHandle(pMe);
             break;
                        
@@ -416,6 +419,9 @@ static NextFSMAction CameraApp_StatePopMSGHandle(CCameraApp *pMe)
     
     return NFSMACTION_CONTINUE;
 } 
+
+
+
 
 /*==============================================================================
 函数：

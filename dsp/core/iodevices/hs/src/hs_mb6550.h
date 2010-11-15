@@ -81,6 +81,10 @@ when       who     what, where, why
 */
 #define HS_POLL_CHG_LOOP        50
 
+#ifdef FEATURE_ANALOG_TV
+#define HS_ATV_SET_CHN_SIG      0x0400  /*tv set channel signal*/
+#endif
+
 
 /*---------------------------------------------------------------------------
 

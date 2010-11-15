@@ -72,7 +72,7 @@ typedef enum
 
 #define Delayms(t) clk_busy_wait(1000*t)
 
-//#define AIT_ATV_SUPPORT
+#define AIT_ATV_SUPPORT
 
 //===========================
 // Sensor I/F
