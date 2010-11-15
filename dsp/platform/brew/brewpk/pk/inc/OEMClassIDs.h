@@ -118,8 +118,10 @@ GENERAL DESCRIPTION:
 #endif
 
 #define AEECLSID_MULTIMEDIA_LIST   (AEECLSID_OEM + 0x600)   //add by yangdecai
-#define AEECLSID_STATIC_APP        (AEECLSID_OEM + 0x601)   //addj by yangdecai
-#define AEECLSID_Tv_APP            (AEECLSID_OEM + 0x602)   //addj by pengyuangui
+#define AEECLSID_STATIC_APP        (AEECLSID_OEM + 0x601)   //add by yangdecai
+#define AEECLSID_TVAPP            (AEECLSID_OEM + 0x602)   //add by pengyuangui  AEECLSID_Tv_APP
+#define MMI_CLSID_IMMITV          (AEECLSID_OEM + 0x603)   
+#define AEECLSID_TLG_ATV          (AEECLSID_OEM +0x604)
 #define AEECLSID_BRW_APP    	    0x0104c960
 #define AEECLSID_BLUETOOTH_APP    	0x01015223
 
