@@ -37,7 +37,10 @@
 #include "AEEDate.h"
 #include "AEEMenu.h"
 #include "AEETAPI.h "
+/*2184次修改引起的编译不过*/
+#ifndef  CUST_EDITION   
 #include "CalendarApp.brh"
+#endif
 //
 #include "AEEDB.h"
 #include "AEEText.h"
