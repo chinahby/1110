@@ -2191,6 +2191,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     }
                     else
                     {
+                    	bgRect.x = 32;
                         bgRect.dx = 256;
                     }						
 #else
