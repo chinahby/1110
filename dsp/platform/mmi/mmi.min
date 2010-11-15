@@ -150,3 +150,7 @@ endif
 ifeq ($(USES_WAPBROWSER),yes)
 include $(WAPBROWSER)/WapBrowser.min
 endif
+
+ifeq ($(USES_DSP),yes)
+include $(TVAPP)/TVApp.min
+endif
