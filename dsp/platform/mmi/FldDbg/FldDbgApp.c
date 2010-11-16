@@ -6041,7 +6041,13 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
                {
                   pme->m_dlgID = IDD_VERSION_DIALOG;
                }
+#else
+			   if(STRNCMP(args->pszArgs,"*#2687#",7) == 0)   //add by yangdecai  2010-11-16
+               {
+                  pme->m_dlgID = IDD_VERSION_DIALOG;
+               }
 #endif
+
               if(STRNCMP(args->pszArgs,"*#06#",5) == 0)
               {
                  pme->m_dlgID = IDD_ESN_DIALOG;

@@ -11,7 +11,7 @@
 		<Text>Ubah kode</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_RESTORE">
-		<Text>Atur ulang</Text>
+		<Text>Pabrik atur ulang</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_SECURITY_TITLE">
 		<Text>Keamanan</Text>
