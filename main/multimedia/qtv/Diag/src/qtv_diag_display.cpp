@@ -193,11 +193,26 @@ void qtvdiag_display_frame (
 {
 
   /* Record the clip size */
+  unsigned short buf[12*10] = {0};
+  int i = 0;
+  for(i=0;i<120;i++)
+  {
+  	buf[i] = 0xf800;
+  }
   qtvdiag_display.src_dx  = Width;
   qtvdiag_display.src_dy  = Height;
 
   /* Setup the output video frame display information */
   qtvdiag_display.my_disp_info = disp_get_info();
+
+  	QTV_MSG7(QTVDIAG_GENERAL,"qtvdiag_display : %d,%d,%d,%d,%d,%d,%d",
+		qtvdiag_display.src_dx,
+		       qtvdiag_display.src_y,   
+               qtvdiag_display.src_x, 
+               qtvdiag_display.dest_dy, 
+               qtvdiag_display.dest_dx, 
+               qtvdiag_display.dest_y,  
+               qtvdiag_display.dest_x );
 
   qtvdiag_set_display_rect( OFFSET_X, 
                             OFFSET_Y, 
@@ -224,8 +239,17 @@ void qtvdiag_display_frame (
   (void)mdp_disp_update(&mdpImg);
 
 #else /* Non-MDP */
-
-  disp_update( pFrameBuf, 
+  pFrameBuf = buf;
+	QTV_MSG7(QTVDIAG_GENERAL,"qtvdiag_display : %d,%d,%d,%d,%d,%d,%d",
+		qtvdiag_display.src_dx,
+		       qtvdiag_display.src_y,   
+               qtvdiag_display.src_x, 
+               qtvdiag_display.dest_dy, 
+               qtvdiag_display.dest_dx, 
+               qtvdiag_display.dest_y,  
+               qtvdiag_display.dest_x );
+	
+  disp_update( pFrameBuf,  
                qtvdiag_display.src_dx, 
                qtvdiag_display.src_y,   
                qtvdiag_display.src_x, 

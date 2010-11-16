@@ -50,6 +50,8 @@ typedef enum{
   VIDEO_WMV
 }VideoDecoderType;
 
+
+
 #ifndef PLATFORM_LTK
 
 /* YUV frame data */

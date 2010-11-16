@@ -908,6 +908,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_2, IDS_MULTIMEDIA_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_3, IDS_MULTIMEDIA_TITLE_3, NULL, 0);
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_4, IDS_MULTIMEDIA_TITLE_4, NULL, 0);
+			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_VIDEO, IDS_MULTIMEDIA_TITLE_VIDEO, NULL, 0);
 
             return TRUE;
             
@@ -984,6 +985,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
                 case IDS_MULTIMEDIA_TITLE_2:
                 case IDS_MULTIMEDIA_TITLE_3:
                 case IDS_MULTIMEDIA_TITLE_4:
+				case IDS_MULTIMEDIA_TITLE_VIDEO:
 				{
                     StartApplet(pMe, wParam - IDS_MULTIMEDIA_TITLE_1);
                     return TRUE;
@@ -1025,11 +1027,13 @@ static boolean StartApplet(Multimed *pMe, int i)
         case 3:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
             break;
+		case 4:
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_VIDEOPLAYER);
+            break;
 		default:
 			break;
         
     }
     return TRUE;
 }
-
 

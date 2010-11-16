@@ -91,7 +91,7 @@ when       who     what, where, why
  * each frame before it is displayed.  (i.e. overlays, clipping, watermarking,
  * etc.)
  */
-//#define FEATURE_APP_MPEG4_FRAME_CB
+#define FEATURE_APP_MPEG4_FRAME_CB
 
 
 /* Enable zrex-rex translation to support the Packet Video implementation
@@ -168,7 +168,7 @@ when       who     what, where, why
 
 /* Enable LCD contrast control
  */
-#define FEATURE_MP4_LCD_CONTRAST
+//#define FEATURE_MP4_LCD_CONTRAST
 
 
 /* This audio/video  functionality has been featurized and set to ON by
@@ -207,13 +207,13 @@ when       who     what, where, why
 #endif  /* FEATURE_FILE_FRAGMENTATION */
 
 /* Features for SKT */
-#define FEATURE_QTV_SKT_MOD
-#define FEATURE_QTV_SKT_MOD_MIDI
+//#define FEATURE_QTV_SKT_MOD
+//#define FEATURE_QTV_SKT_MOD_MIDI
 
 
 
 /* Enable DSP interface */
-#define FEATURE_VIDEO_PLAYER_INTERFACE_REV_C
+//#define FEATURE_VIDEO_PLAYER_INTERFACE_REV_C
 
 /* Enable DSP interface for 6260*/
 #ifdef FEATURE_VIDEO_PLAYER_INTERFACE_REV_C
@@ -252,7 +252,7 @@ when       who     what, where, why
    of bytes processed, in addition to the number of samples.
    This feature and the FEATURE_QTV_CMX_AV_SYNC are mutually exclusive
 */
-#define FEATURE_QTV_CMX_AV_SYNC_BYTES
+//#define FEATURE_QTV_CMX_AV_SYNC_BYTES
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
     /* Clock drift compensation is turned off due to 
     introduction of the CMX_AV_SYNC feature */
@@ -263,18 +263,31 @@ when       who     what, where, why
 
 
 /* Enable option to play clips with H264 video + AMR audio */
-#define FEATURE_QTV_H264_AMR
+//#define FEATURE_QTV_H264_AMR
 
 
 
 
 #define FEATURE_QTV_STATIC_TASKS
 
-//#define FEATURE_QTV_STATIC_DLAGENT_TASK
-//#define FEATURE_QTV_STATIC_DLDSPSVC_TASK
+#define FEATURE_QTV_STATIC_DLAGENT_TASK
+#define FEATURE_QTV_STATIC_DLDSPSVC_TASK
 #define FEATURE_QTV_DECODER_INVALIDATE_CACHE
 
 //#define FEATURE_QTV_DISCARD_VIDEO_PLAYER
+
+// IPL ROTATE AND CONVERT YUV420 TO RGB
+#define FEATURE_MP4_AAC_PLUS
+#define FEATURE_QTV_OEM_BUFFER_MGR
+//#define FEATURE_QTV_GENERIC_BCAST
+//#define FEATURE_QTV_QDSP_RELEASE_RESTORE
+//#define FEATURE_QTV_PLAYLIST
+//#define FEATURE_QTV_DIVX_DRM
+//#define FEATURE_ACM
+//#define FEATURE_FRE
+#define SHOW_INFO
+//#define FEATURE_QTV_STREAM_RECORD
+
 
 #endif /* CUSTMP4_H */
 

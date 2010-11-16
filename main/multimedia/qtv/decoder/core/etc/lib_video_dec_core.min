@@ -6,16 +6,22 @@ QTV_DEC_COMMON_SOURCES =\
        vdecoder_utils.cpp \
        vdecoder_i.cpp \
        vdecoder.cpp \
-       frame_buffer_pool.cpp 
+       frame_buffer_pool.cpp\
+	   vdecoder_mp4.cpp
 
+	   
+ifeq ($(QTV_COMPILE_OBJ),yes)
 QTV_DEC_COMMON_OBJS :=  $(addprefix $(LIBDIR)/, $(QTV_DEC_COMMON_SOURCES:%.cpp=%.o))
 
 $(QTV_DEC_COMMON_OBJS): CFLAGS := $(CFLAGS) -zo -Otime -O2 -DFEATURE_QTV_ZREX
 $(QTV_DEC_COMMON_OBJS): CC := $(ARMCC) 
 $(QTV_DEC_COMMON_OBJS): TCPP := $(ARMCPP)
-
+else
+QTV_DEC_COMMON_OBJS :=  $(addprefix $(TARGETDIR)/, $(QTV_DEC_COMMON_SOURCES:%.cpp=%.o))
+endif
 vpath %.cpp $(QTV_DEC_CORE)/../src
 
+ifeq ($(QTV_COMPILE_OBJ),yes)
 $(LIBDIR)/video_dec_common.lib : $(QTV_DEC_COMMON_OBJS)
 	@echo ------------------------------------------------------------------
 	@echo LIBRARY $@
@@ -25,5 +31,8 @@ $(LIBDIR)/video_dec_common.lib : $(QTV_DEC_COMMON_OBJS)
 
 LIBOBJECTS := $(QTV_DEC_COMMON_OBJS) $(LIBOBJECTS)
 LIBRARIES  := $(LIBRARIES) $(LIBDIR)/video_dec_common.lib
+else
+QTV_ALL_SOURCES := $(QTV_ALL_SOURCES) $(QTV_DEC_COMMON_OBJS)
+endif
 
 

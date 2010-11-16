@@ -307,9 +307,11 @@ void qtv_vrend_class::render( VDEC_FRAME* const frame_ptr )
   ASSERT( sizeof(qtv_msg_struct) >= sizeof(frame_event_class) ); 
 
   frame_event_class* event_ptr = ( frame_event_class* )msg_ptr; /*lint !e740 */
+	
 
   if ( msg_ptr )
   {
+  QTV_MSG_PRIO2(QTVDIAG_VIDEO_TASK,QTVDIAG_PRIO_DEBUG,"frame_ptr %d %d",frame_ptr->format.bbp,frame_ptr->format.fourcc);
     event_ptr->init( EVENT_FRAME, frame_ptr );
     ( void )m_vrend_task_.dispatch( this, msg_ptr );
   }
@@ -1072,10 +1074,12 @@ void qtv_vrend_class::active_entry_( void )
     {
       if ( m_sequential_drops_ <= SEQUENTIAL_FRAME_DROP_THRESHOLD )
       {
+        QTV_MSG_PRIO( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_LOW,"send_event_to_self_( EVENT_DROP, 0 );");
         send_event_to_self_( EVENT_DROP, 0 );
       }
       else
       {
+      QTV_MSG_PRIO( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_FATAL,"send_event_to_self_( EVENT_RENDER, 0 );");
         send_event_to_self_( EVENT_RENDER, 0 );
       }
     }
@@ -1090,6 +1094,7 @@ void qtv_vrend_class::active_entry_( void )
     }
     else
     {
+    QTV_MSG_PRIO( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_LOW,"sleep_ms");
       if ( sleep_ms < 0 )
       {
         sleep_ms = 0; /* Small negatives possible due to avsync window */
@@ -1103,6 +1108,7 @@ void qtv_vrend_class::active_entry_( void )
                      sleep_ms,
                      timestamp );
       }
+	  QTV_MSG_PRIO( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_LOW,"m_timer_dispatch_id_");
 
       m_timer_dispatch_id_ =
         send_event_to_self_( EVENT_RENDER, ( unsigned long )sleep_ms );
@@ -1325,6 +1331,8 @@ bool qtv_vrend_class::render_frame_( void )
   frame_link_struct* link_ptr;
   bool is_abort = false;
   bool free_frame = false;
+
+ QTV_MSG_PRIO( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_FATAL,"render_frame_");
 
  CS_Locker lock( m_frame_q_cs );   
   link_ptr = ( frame_link_struct* )q_get( &m_frame_q_ );

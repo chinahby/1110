@@ -716,7 +716,8 @@ void qtvdiag_handle_play_frame( QtvPlayer::InstanceHandleT handle )
 {
   QtvPlayer::FrameInfoT  frameInfo;
   QtvPlayer::ReturnT nReturn = QtvPlayer::QTV_RETURN_ERROR;
-  
+
+  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,"qtvdiag_handle_play_frame");
   /* Ask PV for the frame information */
   nReturn = QtvPlayer::GetFrameInfo(frameInfo, handle);
 
@@ -788,11 +789,13 @@ extern "C" void qtvdiag_callbackFn(
   qtv_status_diag_event_payload.pClientData = NULL;
   bool sendevent = false;
 
+  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"QTV Engine Callback");
+
   if(pData)
   {
     qtv_status_diag_event_payload.pClientData = *((uint32 *)pData);
   }
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"QTV Engine Callback");
+  
   QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"Status %d, pData %d PlayPos", status, pData, state.playbackMsec );
 
   QtvDiagInfoData::SendAll((int) status);
@@ -1059,6 +1062,8 @@ extern "C" void qtvdiag_callbackFunc(
   QTV_MSG_PRIO5(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"Status %d, pData %d, PlayPos %d, Handle %d, UserData %d", status, pClientData, state.playbackMsec, handle, pUserData);
 
   QtvDiagInfoData::SendAll((int) status);
+
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"QTV Engine Callback status = %d",status);
 
   switch (status)
   {
@@ -1327,6 +1332,9 @@ void qtvdiag_handle_cmds( void )
 
   // Handle all commands in the queue, in case two or more signals result in fewer
   // notifications.
+
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
+                      "qtvdiag_handle_cmds cmd_ptr->cmd_id = %d", cmd_ptr->cmd_id);
   while (cmd_ptr != NULL) 
   {
     switch ( cmd_ptr->cmd_id )
@@ -3637,6 +3645,8 @@ bool qtvdiag_exec_api(char *request_packet_ptr, char* response_pkt_ptr, uint32 c
      api retVal is filled in the response packet or not         */
   bool retval_flag = false; 
 
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "qtvdiag_exec_api api_id = %d", api_id );
+
   switch (api_id)
   {
   case QTVDIAG_FRAMEWORK_MUTE_UNMUTE_PLAYBACK_TRACKS_ID:
@@ -5398,6 +5408,8 @@ PACKED void * qtvdiag_handle_api_cmd( PACKED void *request_packet_ptr, word /*pa
     QTVDIAG_ERROR_CODE_COMMAND_ISSUED;
   QtvPlayer::ReturnT retVal = QtvPlayer::QTV_RETURN_ERROR;
 
+  MSG_ERROR("qtvdiag_handle_api_cmd,entrance",0,0,0);
+
   switch (api_id)
   {
     case QTVDIAG_COMMAND_INIT:
@@ -5926,6 +5938,7 @@ SIDE EFFECTS
 void qtvdiag_task ( dword /*dummy*/ )   /* Rex requirement, not used */ 
 {
   rex_sigs_type sigs = NULL;
+   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"qtvdiag_task");
 
   /* Initialize the command Q as soon as the thread is up */
   (void)q_init( &qtvdiag_cmd_q );
@@ -6425,6 +6438,7 @@ QtvDiagReplayErrorType QtvDiagReplayExecCurrentAPIHandler(void)
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"QtvDiagReplayExecCurrentAPIHandler failed");
     return QTVDIAG_REPLAY_INVALID_ARGS;
   }
+  MSG_ERROR("QtvDiagReplayExecCurrentAPIHandler,entrance",0,0,0);
   switch (pQtvReplayDiagApp->currentAPICmdInfo.nAPIId)
   {
     case QTVDIAG_FRAMEWORK_INIT_API_ID:
@@ -6524,7 +6538,7 @@ QtvDiagReplayErrorType QtvDiagReplayExecCurrentAPIHandler(void)
   case QTVDIAG_FRAMEWORK_GET_FRAME_INFO_API_ID:
   {
     /*display the frame, we already displayed the frame */
-    // qtvdiag_handle_play_frame();
+     //qtvdiag_handle_play_frame();
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"Qtv_diag_main,GetFrameInfo");
   }
   break;

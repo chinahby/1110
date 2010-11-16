@@ -59,7 +59,6 @@ Qualcomm Confidential and Proprietary
 #define IMEDIA_SetMediaParm IMedia_SetMediaParm
 #define IMEDIA_Stop IMedia_Stop
 
-
 struct IMedia {
    IMediaVtbl* pvt;
 };

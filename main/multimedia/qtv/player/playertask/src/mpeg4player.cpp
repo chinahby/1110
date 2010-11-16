@@ -1201,6 +1201,8 @@ bool Mpeg4Player::SetFrameInfo(void *pRGBFrame, void *pYUVFrame,
                                unsigned long NumIntraMbs,
                                uint16 wCropWinX2, uint16 wCropWinY2)
 {
+	QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "SetFrameInfo" );
+
    QCUtils::EnterCritSect(&frameInfo_CS);
 
    if ( !IsVideoRenderingOkInState( playerState ) )
@@ -1281,6 +1283,8 @@ bool Mpeg4Player::SetFrameInfo(void *pRGBFrame, void *pYUVFrame,
 
    QCUtils::LeaveCritSect(&frameInfo_CS);
 
+   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "GetVideoCodecType()=%d",GetVideoCodecType() );
+
    if( (Media::MPEG4_CODEC  == GetVideoCodecType()) ||
        (Media::H263_CODEC  == GetVideoCodecType()) ||
        (Media::H264_CODEC  == GetVideoCodecType()))
@@ -1293,6 +1297,7 @@ bool Mpeg4Player::SetFrameInfo(void *pRGBFrame, void *pYUVFrame,
 
    /* Notify the application layer of the decoded frame */
    Notify(QtvPlayer::QTV_PLAYER_STATUS_DECODE_FRAME);
+   //qtvdiag_handle_play_frame( QtvPlayer::InstanceHandleT handle )
 
    return true;
 }
@@ -1354,6 +1359,11 @@ QtvPlayer::ReturnT Mpeg4Player::GetFrameInfo
          frameInfo.bValid = FALSE;
       }
       QCUtils::LeaveCritSect(&frameInfo_CS);
+	  QTV_MSG_PRIO4(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "frameInfo:%d,%d,%d,%d",
+	  	frameInfo.bValid,
+	  	pVM,
+	  	pVM->GetSource(),
+	  	frameInfo.bInfoSetSinceLastPrep);
    }
 
    return nReturn;
@@ -3344,7 +3354,7 @@ void Mpeg4Player::SetState(State newState)
             if (clip.bHasAudio) AudioPlayerIf::ShowInfo(activeAudioPlayerId);
             if (clip.bHasVideo && pActiveVideoPlayer)
        {
-         pActiveVideoPlayer->ShowInfo();
+         pActiveVideoPlayer->ShowInfo(true);
             }
 #endif /* SHOW_INFO */
 
@@ -6758,16 +6768,16 @@ void Mpeg4Player::ShowClip()
 {
    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Mpeg4Player::ShowClip" );
    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "****** Clip :" );
-   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Audio: %d",(int)clip.bHasAudio, 0, 0 );
-   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Video: %d",(int)clip.bHasVideo, 0, 0 );
+   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Audio: %d",(int)clip.bHasAudio);
+   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Video: %d",(int)clip.bHasVideo);
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
-   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Text:  %d",(int)clip.bHasText, 0, 0 );
+   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Text:  %d",(int)clip.bHasText);
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Still: %d",(int)clip.bStillImage, 0, 0 );
-   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Streaming: %d",(int)clip.bStreaming, 0, 0 );
+   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Still: %d",(int)clip.bStillImage);
+   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Streaming: %d",(int)clip.bStreaming);
 
 #ifdef FEATURE_QTV_GENERIC_BCAST_ISDB
-   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Broadcast ISDB: %d",(int)clip.bBcastISDB,0,0);
+   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Broadcast ISDB: %d",(int)clip.bBcastISDB);
 #endif /* FEATURE_QTV_GENERIC_BCAST_ISDB */
 
 #ifdef FEATURE_QTV_GENERIC_BCAST
@@ -6776,7 +6786,7 @@ void Mpeg4Player::ShowClip()
                  ConvertGenericMediaSourceToStr(clib.eGenericBcastMediaID));
 #endif /* FEATURE_QTV_GENERIC_BCAST */
 
-   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Broadcast FLO: %d",(int)clip.bBcastFLO,0,0);
+   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Broadcast FLO: %d",(int)clip.bBcastFLO);
 
    ShowClipInfo();
 }
@@ -6869,11 +6879,11 @@ void Mpeg4Player::ShowClipInfo()
       QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Location ::%s::",clipInfo.info.ExtInfo.StdInfo.Location);
       QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Album ::%s::",clipInfo.info.ExtInfo.StdInfo.Album);
       QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Track Count ::%d::",clipInfo.info.TrackCount);
-      for (i = 0; i < clipInfo.info.TrackCount; i++)
-      {
-         QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Track %d MIME Type ::%s::",clipInfo.info.TrackMIMEType[i]);
-      }
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "");
+//      for (int i = 0; i < clipInfo.info.TrackCount; i++)
+//      {
+//         QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "   Track %d MIME Type ::%s::",clipInfo.info.TrackMIMEType[i]);
+//      }
+//      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "");
    } else
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "No valid Clip Info to report");
 

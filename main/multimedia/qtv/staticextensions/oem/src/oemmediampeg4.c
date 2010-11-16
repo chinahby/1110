@@ -12,7 +12,7 @@
 
 */
 /*=========================================================================
-        Copyright © 1999-2005 QUALCOMM Incorporated.
+        Copyright ?1999-2005 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ===========================================================================*/
@@ -1283,8 +1283,12 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
 static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int32 * p2)
 {
    OEMMediaMPEG4 * pme = (OEMMediaMPEG4 *)po;
-   OEMMediaMPEG4Layer * pOEM = OEMMediaMPEG42PV_GetOEMLayer(pme->m_pMPEG4);
+   OEMMediaMPEG4Layer * pOEM = NULL;
    int nRet = SUCCESS;
+   
+   MSG_FATAL("YY Said : OEMMediaMPEG4_GetMediaParm!",0,0,0);
+   pOEM = OEMMediaMPEG42PV_GetOEMLayer(pme->m_pMPEG4);
+   
 
 #if defined(FEATURE_BMP_ACM)
 #error code not present
@@ -1334,6 +1338,7 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
          break;
 
       case MM_PARM_FRAME:
+	  	MSG_FATAL("YY Said : GET FRAME!",0,0,0);
          if ((p1 == NULL && p2 == NULL) ||
              (p1 != NULL && p2 != NULL))
          { /* Invalid parameters */
@@ -1351,8 +1356,10 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
             /* The standard GetFrame does not care about extended info
                so just pass a NULL for extended info ptr-ptr */
             nRet = OEMMediaMPEG42PV_GetFrame(&pFrame, NULL, pOEM);
+			MSG_FATAL("YY Said : GET FRAME! :nRet = %d",nRet,0,0);
             if (nRet == SUCCESS)
             {
+            MSG_FATAL("YY Said : GET FRAME!",0,0,0);
                *(IBitmap**)p1 = pFrame;
                no_of_getframes_called++;
             }
@@ -1433,10 +1440,10 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
         break;
 
 #endif /* FEATURE_QTV_SKT_MOD_MIDI */
-      case MM_MP4_PARM_ATOM_FTYP_SIZE: //’ftyp’ atom
-      case MM_MP4_PARM_ATOM_DCMD_SIZE: //’dcmd’ atom : DRM
-      case MM_MP4_PARM_ATOM_UDTA_CPRT_SIZE: //’cprt’ atom
-      case MM_MP4_PARM_ATOM_UDTA_AUTH_SIZE: //’auth’ atom
+      case MM_MP4_PARM_ATOM_FTYP_SIZE: //’ftyp?atom
+      case MM_MP4_PARM_ATOM_DCMD_SIZE: //’dcmd?atom : DRM
+      case MM_MP4_PARM_ATOM_UDTA_CPRT_SIZE: //’cprt?atom
+      case MM_MP4_PARM_ATOM_UDTA_AUTH_SIZE: //’auth?atom
       case MM_MP4_PARM_ATOM_UDTA_TITL_SIZE: //'titl' atom
       case MM_MP4_PARM_ATOM_UDTA_DSCP_SIZE: //'dscp' atom
       case MM_MP4_PARM_TEXT_TKHD_ORIGIN_X_SIZE: //Text origin_x
@@ -1446,10 +1453,10 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
         OEMMediaMPEG42PV_GetDataSize((int32)nParmID, (uint32 *)p1);
         break;
 
-      case MM_MP4_PARM_ATOM_FTYP_DATA: //’ftyp’ atom
-      case MM_MP4_PARM_ATOM_DCMD_DATA: //’dcmd’ atom : DRM
-      case MM_MP4_PARM_ATOM_UDTA_CPRT_DATA: //’cprt’ atom
-      case MM_MP4_PARM_ATOM_UDTA_AUTH_DATA: //’auth’ atom
+      case MM_MP4_PARM_ATOM_FTYP_DATA: //’ftyp?atom
+      case MM_MP4_PARM_ATOM_DCMD_DATA: //’dcmd?atom : DRM
+      case MM_MP4_PARM_ATOM_UDTA_CPRT_DATA: //’cprt?atom
+      case MM_MP4_PARM_ATOM_UDTA_AUTH_DATA: //’auth?atom
       case MM_MP4_PARM_ATOM_UDTA_TITL_DATA: //'titl' atom
       case MM_MP4_PARM_ATOM_UDTA_DSCP_DATA: //'dscp' atom
       case MM_MP4_PARM_TEXT_TKHD_ORIGIN_X_DATA: //Text origin_x
@@ -1535,6 +1542,7 @@ static int OEMMediaMPEG4_Play(IMedia * po)
 #if defined(FEATURE_BMP_ACM)
 #error code not present
 #endif 
+	MSG_HIGH("OEMMediaMPEG4_Play",0,0,0);
 
    if (pOEM == NULL) 
    {
@@ -1825,6 +1833,7 @@ void OEMMediaMPEG4_CallbackNotify(AEEMediaCallback * pcb)
   OEMMediaMPEG4 *    pme;
   OEMMediaMPEG4Layer *pOEM;
 
+	MSG_HIGH("OEMMediaMPEG4_CallbackNotify",0,0,0);
   if (!pcb)
   {
     MSG_ERROR("PCB is NULL. Ignoring callback!", 0, 0, 0);
@@ -2506,6 +2515,8 @@ static IBase * OEMMediaMPEG4_New(IShell * ps, AEECLSID cls)
     return NULL;
   }
 
+  MSG_FATAL( "Get IDisplay Failed", 0, 0, 0 );
+
   // Call MPEG4 Layer constructor
   pme = (OEMMediaMPEG4 *)po;
   pme->m_pMPEG4 = OEMMediaMPEG4Layer_New(po, (PFNNOTIFY)OEMMediaMPEG4_CallbackNotify);
@@ -2535,6 +2546,8 @@ static IBase * OEMMediaMPEG4_New(IShell * ps, AEECLSID cls)
 ==================================================================*/
 void IMediaMPEG4_Init(IShell * ps)
 {
+	MSG_HIGH("IMediaMPEG4_Init", 0, 0, 0);
+
    AEEMedia_Init(ps, MT_VIDEO_MPEG4, AEECLSID_MEDIAMPEG4);
    AEEMedia_Init(ps, "video/url", AEECLSID_MEDIAMPEG4);
 #ifndef FEATURE_APP_SDP
@@ -2598,6 +2611,7 @@ void IMediaMPEG4_Init(IShell * ps)
 int IMediaMPEG4_New(IShell * ps, AEECLSID cls, void **ppif)
 {
    IBase * pobj;
+   MSG_HIGH("IMediaMPEG4_New--------------------------------------", 0, 0, 0);
 
    if (g_uMPEG4RefCnt < MAX_NUM_OEM_PLAYBACK_INST)
    {

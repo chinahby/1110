@@ -15099,6 +15099,8 @@ static void CMediaPlayer_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
    * do not process any event when exiting or NULL ptr
    */
   pMP = (CMediaPlayer*)pUser;
+  DBGPRINTF("MP: MediaNotify");
+
   if(pMP == NULL)
   {
     DBGPRINTF_ERROR("MP: MediaNotify, m_pOwner is NULL.");
@@ -15738,6 +15740,7 @@ static void CMediaPlayer_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
         * Get the bitmap info
         */
       (void)IBITMAP_GetInfo(pFrame, &bi, sizeof(bi));
+	  
       DBGPRINTF_MED("MP: pFrame is %d x %d x %d", bi.cx, bi.cy, bi.nDepth);
 
 #ifdef FEATURE_MMOVERLAY

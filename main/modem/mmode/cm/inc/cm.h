@@ -19370,8 +19370,9 @@ typedef enum cm_client_type_e {
   #endif /* FEATURE_RPC */
 
 } cm_client_type_e_type;
+// YY :MODIFY #define CM_CLIENT_TYPE_BREW_APPS OUT OF ENUM
 #ifdef FEATURE_CM_LOW_MEM_TARGET
-	#define CM_CLIENT_TYPE_BREW CM_CLIENT_TYPE_MFLO
+	#define CM_CLIENT_TYPE_BREW_APPS CM_CLIENT_TYPE_MFLO
 #endif
 
 

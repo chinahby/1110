@@ -155,6 +155,7 @@ disp_info_type disp_get_info(void)
   drv_ioctl(fd, IOCTL_DISP_GET_INFO, (void *)&lcd_info);
     
   return lcd_info;
+  
 }
 
 void disp_powerup(void)

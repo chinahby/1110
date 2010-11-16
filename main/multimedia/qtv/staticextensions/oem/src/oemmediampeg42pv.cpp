@@ -1326,6 +1326,8 @@ extern "C" void QtvEngineCB(
       break;
   }
 
+  MSG_HIGH("QTVEngineCB", 0, 0, 0);
+
   if ((MMStatus != MM_STATUS_UNKNOWN) && (cmd != 0)) //no point in queuing if no cmd
   {
     OEMMediaMPEG4_QueueCallback(pOEM->m_pCallbackData, MMStatus, cmd, subCmd, 
@@ -1493,6 +1495,7 @@ static void RTSPStatusCB(int32 statusCode, const char * statusString,
 {
   OEMHandle pOEM = OEMMediaMPEG42PV_GetOEMLayer((OEMHandle)pUserData);
 
+  MSG_LOW("FUNC : RTSPStatusCB",0,0,0);
   if (pOEM == NULL)
   {
     MSG_ERROR("RTSPStatusCB, pOEM is null.", 0, 0, 0);
@@ -1879,6 +1882,8 @@ static int QtvBitmap_New(IBitmap** ppo)
 
 extern "C" int OEMMediaMPEG42PV_Init(OEMHandle pOEM)
 {
+	MSG_ERROR("OEMMediaMPEG42PV_Init,entrance",0,0,0);
+
   QtvPlayer::ReturnT retVal;
 
 #if (defined FEATURE_QTV_QDSP_RELEASE_RESTORE && defined FEATURE_QTV_QOS_SELECTION)
@@ -2799,11 +2804,12 @@ extern "C" int OEMMediaMPEG42PV_GetFrame(IBitmap** ppFrame,
 
   videocodectype = OEMMediaMPEG42PV_GetVideoCodecType();
 #ifdef FEATURE_MP4_AAC_PLUS
-  audiocodectype = OEMMediaMPEG42PV_GetAudioCodecType();
+  audiocodectype = OEMMediaMPEG42PV_GetAudioCodecType(pOEM);
 
 /* Color conversion & rotation is done by Qtv IPL if MPEG4-AAC+ DSP image is downloaded 
  * i.e. qtv_cfg_enable_aacplus is TRUE 
  */
+ MSG_ERROR("YY Said : audiocodectype = %d ", audiocodectype, 0, 0);
   if ( (qtv_cfg_enable_aacplus) && 
        (audiocodectype == MM_MPEG4_AAC_CODEC) && 
        ( (videocodectype == MM_MPEG4_MPEG4_CODEC) || 
@@ -5144,8 +5150,8 @@ static void RotateColorConvert( QtvPlayer::FrameInfoT*  pFrameInfo, OEMHandle pO
   }
   
   // We want to scale the frame relative to the original frame, not the current one
-  if (pOEM->m_IPLScalingFactor != MM_MPEG4_NO_SCALING)
-    ScaleFrame( pFrameInfo, pOEM ); 
+//  if (pOEM->m_IPLScalingFactor != MM_MPEG4_NO_SCALING)
+//    ScaleFrame( pFrameInfo, pOEM ); 
 #ifdef PLATFORM_LTK
 #error code not present
 #endif /* PLATFORM_LTK */

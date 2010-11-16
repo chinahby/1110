@@ -437,4 +437,3 @@ void ConvertStatsToVdecFrame
 #endif // FEATURE_QTV_MDP
 
 }
-

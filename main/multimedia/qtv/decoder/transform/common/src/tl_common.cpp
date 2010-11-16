@@ -47,7 +47,7 @@ extern "C" {
 
 /* QTV config variables */
 
-boolean qtv_cfg_enable_wmv3_optimizations = FALSE;
+//boolean qtv_cfg_enable_wmv3_optimizations = FALSE;
 
 #ifdef FEATURE_QTV_WINDOWS_MEDIA_SMCDB_SUPPORT
 boolean qtv_cfg_enable_wmv3_smcdb_support = TRUE;
@@ -56,14 +56,14 @@ boolean qtv_cfg_enable_wmv3_smcdb_support = TRUE;
 #ifdef FEATURE_MP4_TEMPORAL_SCALABILITY
 /* This flag is set to false to disable temporal scalability by performing
 ** only base layer decoding for clips that have more than one video layer.*/
-boolean qtv_cfg_enable_ts = TRUE;
+//boolean qtv_cfg_enable_ts = TRUE;
 #endif
 
 /* When joining a live-stream, some OEMs want video to be displayed right away,
 ** someothers want to wait for the first available I-frame. If
 ** TRUE: Start playing from the first frame (regardless of P or I frame)
 ** FALSE: Start playing from the first available I-frame */
-boolean qtv_cfg_enable_video_at_first_frame = TRUE;
+//boolean qtv_cfg_enable_video_at_first_frame = TRUE;
 
 #ifdef FEATURE_MPEG4_B_FRAMES
 /* B-frame support for MP4 */
@@ -87,7 +87,7 @@ boolean qtv_cfg_enable_aacplus = TRUE;
 ** TRUE: Profile 3 is enabled and the H263 DSP image is used to decode H263
 ** FALSE: Profile 3 is disabled and the MPEG-AAC+ DSP image is used to decode 
 ** H263 */
-boolean qtv_cfg_enable_h263_profile3 = FALSE;
+//boolean qtv_cfg_enable_h263_profile3 = FALSE;
 
 
 #ifdef FEATURE_MPEG4_DEBLOCKER
@@ -97,7 +97,7 @@ boolean qtv_cfg_enable_h263_profile3 = FALSE;
 boolean qtv_cfg_ARMDeblockingEnable = FALSE;
 #endif 
 
-boolean qtv_cfg_DSPDeblockingEnable;
+//boolean qtv_cfg_DSPDeblockingEnable;
 
 #ifdef FEATURE_DIVX_311_ENABLE
 /* Divx decoder is enabled */
@@ -105,7 +105,7 @@ boolean qtv_cfg_divx_311_enable = TRUE;
 #endif
 
 /* Flag used to enable playing a clip with unsupported Profile Level */
-boolean qtv_cfg_play_unsupported_profile_level = TRUE;
+//boolean qtv_cfg_play_unsupported_profile_level = TRUE;
 
 #ifdef FEATURE_QTV_DYNAMIC_CPU_SWITCHING
 /* Flag to indicate whether the dyanmic ARM/AHB clock switching is enabled.

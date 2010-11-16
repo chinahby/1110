@@ -136,6 +136,7 @@ vbuf_malloc_context = camcorderutil_malloc_init(__MODULE__,__LINE__,&m);
   /* Check allocation of buffer list. */
   if (handle->pool.bufferList == NULL)
   {
+    QTV_MSG(QTVDIAG_DEBUG,"YY Said : VIDEO_BUFFERS_FAILURE");
     return VIDEO_BUFFERS_FAILURE;
   }
 
@@ -150,6 +151,8 @@ vbuf_malloc_context = camcorderutil_malloc_init(__MODULE__,__LINE__,&m);
     vbuf_malloc_context = NULL;
 
 #endif
+	QTV_MSG(QTVDIAG_DEBUG,"YY Said : VIDEO_BUFFERS_FAILURE");
+
 
     return VIDEO_BUFFERS_FAILURE;
   }
@@ -166,6 +169,8 @@ vbuf_malloc_context = camcorderutil_malloc_init(__MODULE__,__LINE__,&m);
     vbuf_malloc_context = NULL;
 
 #endif
+	QTV_MSG(QTVDIAG_DEBUG,"YY Said : VIDEO_BUFFERS_FAILURE");
+
 
     return VIDEO_BUFFERS_FAILURE;
   }
@@ -184,6 +189,8 @@ vbuf_malloc_context = camcorderutil_malloc_init(__MODULE__,__LINE__,&m);
     vbuf_malloc_context = NULL;
 
 #endif
+	QTV_MSG(QTVDIAG_DEBUG,"YY Said : VIDEO_BUFFERS_FAILURE");
+
 
     return VIDEO_BUFFERS_FAILURE;
   }
@@ -213,6 +220,8 @@ vbuf_malloc_context = camcorderutil_malloc_init(__MODULE__,__LINE__,&m);
     vbuf_malloc_context = NULL;
 
 #endif
+	  QTV_MSG(QTVDIAG_DEBUG,"YY Said : VIDEO_BUFFERS_FAILURE");
+
 
       return VIDEO_BUFFERS_FAILURE;
 
@@ -259,6 +268,7 @@ VideoBuffersStatus VideoBuffersIsBufferValid(
     if ( handle->pool.bufferList[i] == buffer )
       return VIDEO_BUFFERS_SUCCESS;
   }
+  QTV_MSG(QTVDIAG_DEBUG,"YY Said : VIDEO_BUFFERS_FAILURE");
   return VIDEO_BUFFERS_FAILURE;
 }
 
