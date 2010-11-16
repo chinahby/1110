@@ -43,7 +43,8 @@ extern const unsigned char DCAM_EINT_NO;
 static void AIT701_set_gpio(u_short pin, u_char level);
 
 extern unsigned char g_ATV_Flag;
-uint16 rgbbuffer[220*176] = {0};
+uint16 rgbbuffer[CAM_BUFFER] = {0};
+
 #if AIT_VIDEO_PHONE_SUPPORT
 unsigned char bVideoChat;
 #endif
@@ -951,7 +952,9 @@ void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 
 	Delayms(10);
 	disp_off();
+    Delayms(1);
 	disp_on();
+    Delayms(1);
 	return;
 }
 
