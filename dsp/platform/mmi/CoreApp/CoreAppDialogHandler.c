@@ -168,13 +168,13 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #define IDLE_D_CLOCK_Y 		50
 
 #define RPLMN_X				IDLE_D_CLOCK_X
-#define RPLMN_Y				(IDLE_D_CLOCK_Y+25)
+#define RPLMN_Y				(IDLE_D_CLOCK_Y+32)
 
 #define DATA_X				IDLE_D_CLOCK_X
-#define DATA_Y				(RPLMN_Y + 30) 
+#define DATA_Y				(RPLMN_Y + 24) 
 
 #define WEEK_X              IDLE_D_CLOCK_X
-#define WEEK_Y              (DATA_Y + 30)
+#define WEEK_Y              (DATA_Y + 24)
 
 
 #else
@@ -4083,11 +4083,27 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 #endif /*FEATURE_CARRIER_SUDAN_SUDATEL*/
 
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
-	SETAEERECT(&rc, 
-			   IDLE_D_CLOCK_X,
-			   IDLE_D_CLOCK_Y,
-			   pMe->m_rc.dx-2*IDLE_D_CLOCK_X, 
-			   pMe->m_nNormalFontHeight);	//26
+
+#if defined FEATURE_DISP_220X176
+		SETAEERECT(&rc, 
+				   IDLE_D_CLOCK_X,
+				   IDLE_D_CLOCK_Y,
+				   pMe->m_rc.dx-2*IDLE_D_CLOCK_X, 
+				   25); 
+#elif defined FEATURE_DISP_320X240
+		SETAEERECT(&rc, 
+				   IDLE_D_CLOCK_X,
+				   IDLE_D_CLOCK_Y,
+				   pMe->m_rc.dx-2*IDLE_D_CLOCK_X, 
+				   32); 
+#else
+		SETAEERECT(&rc, 
+				   IDLE_D_CLOCK_X,
+				   IDLE_D_CLOCK_Y,
+				   pMe->m_rc.dx-2*IDLE_D_CLOCK_X, 
+				   pMe->m_nNormalFontHeight);	
+#endif
+
 	SETAEERECT(&rc_date, 
 			   DATA_X,
 			   DATA_Y,
@@ -4221,7 +4237,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
-	                              30, 
+	                              32, 
 	                              wszDate, -1,
 	                              0, 0, &rc, 
 	                              IDF_ALIGN_MIDDLE

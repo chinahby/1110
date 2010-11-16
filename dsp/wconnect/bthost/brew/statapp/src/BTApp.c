@@ -8110,7 +8110,7 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
   {
     case BT_APP_MENU_NONE:
       key_handled = FALSE;
-      break;
+      break;	
     case BT_APP_MENU_MAIN:
       if ( pMe->uCurrMsgId == 0 )
       {
@@ -8288,8 +8288,15 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
     case BT_APP_MENU_SET_CONN_ROLE:
       (void)POP_MENU();
       break;
-#ifdef FEATURE_BT_EXTPF_OPP
-	case BT_APP_MENU_OPP_SENDFILE:	//Add By zzg 2010_11_10
+#ifdef FEATURE_BT_EXTPF_OPP	
+    //Add By zzg 2010_11_10    
+	case BT_APP_MENU_OPP_SENDFILE:	
+	{  
+		ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );
+		break;       
+	}
+	//Add End
+	  
     case BT_APP_MENU_OPP_TESTS:
     case BT_APP_MENU_OPP_SERVER:
     case BT_APP_MENU_OPP_CLIENT:
@@ -12769,6 +12776,8 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_DEVICE_SEARCH, 0 );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_DEVICES, 0 );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_MY_INFO, 0 );
+
+  /*
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SETTINGS, 0 );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_TESTS, 0 );  
   if ( pMe->mAG.bConnected )
@@ -12779,6 +12788,7 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
       BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_AUDIO_TRANSFER, 0 );
     }
   }
+  */
   
   
   //Add by zzg 2010_10_29

@@ -2221,6 +2221,7 @@ static boolean BTApp_HandleOBEXMainMenu( CBTApp* pMe, uint16 key )
   {
     switch ( key)
     {
+      case AVK_INFO:		//Add By zzg 2010_11_16
       case AVK_SELECT:
       {
         selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -2261,6 +2262,7 @@ static boolean BTApp_HandleOBEXServerMenu( CBTApp* pMe, uint16 key )
   {
     switch ( key )
     {
+      case AVK_INFO:		//Add By zzg 2010_11_16
       case AVK_SELECT:
       {
         selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -2300,6 +2302,7 @@ static boolean BTApp_HandleOBEXClientMenu( CBTApp* pMe, uint16 key )
   {
     switch ( key )
     {
+      case AVK_INFO:		//Add By zzg 2010_11_16
       case AVK_SELECT:
       {
         selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -2345,6 +2348,7 @@ static boolean BTApp_HandleOBEXSettingsMenu( CBTApp* pMe, uint16 key )
 
   switch ( key )
   {
+    case AVK_INFO:		//Add By zzg 2010_11_16
     case AVK_SELECT:
     {
       selection = IMENUCTL_GetSel( pMe->m_pIMenu );

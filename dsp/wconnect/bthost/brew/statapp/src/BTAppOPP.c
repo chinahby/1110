@@ -385,7 +385,7 @@ void BTApp_OPPBuildSendFileMenu( CBTApp* pMe )
     AECHAR WTitle[20] = {0};
 	ISHELL_LoadResString(pMe->a.m_pIShell,
                          BTAPP_RES_FILE,                                
-                         IDS_OPP_TESTS,
+                         IDS_OPP,
                          WTitle,
                          sizeof(WTitle));
  
@@ -1413,6 +1413,7 @@ static boolean BTApp_HandleOPPMainMenu( CBTApp* pMe, uint16 key )
   {
     switch ( key)
     {
+      case AVK_INFO:		//Add By zzg 2010_11_16
       case AVK_SELECT:
       {
         selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -1454,6 +1455,7 @@ static boolean BTApp_HandleOPPServerMenu( CBTApp* pMe, uint16 key )
   {
     switch ( key )
     {
+      case AVK_INFO:		//Add By zzg 2010_11_16
       case AVK_SELECT:
       {
         selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -1494,6 +1496,7 @@ static boolean BTApp_HandleOPPClientMenu( CBTApp* pMe, uint16 key )
   {
     switch ( key )
     {
+      case AVK_INFO:		//Add By zzg 2010_11_16
       case AVK_SELECT:
       {
         selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -1563,6 +1566,7 @@ static boolean BTApp_HandleOPPFileTypesMenu( CBTApp* pMe, uint16 key )
   {
     switch( key )
     {
+      case AVK_INFO:		//Add By zzg 2010_11_16
       case AVK_SELECT:
       {
         /* Create a Vcard/Vms/Vnote/Vcal depending on the selection and push the corresponding file type */
