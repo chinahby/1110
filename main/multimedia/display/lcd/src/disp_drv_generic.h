@@ -411,6 +411,8 @@ int disp_drv_init(void)
         {
             break;
         }
+        
+        i++;
     }while(1);
     
     disp_drv_powerup();
