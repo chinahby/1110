@@ -406,7 +406,7 @@ AEEINTERFACE(ICameraEx)
 // Camera preview/record control APIs:
 #define ICAMERAEX_Preview(p)                      AEEGETPVTBL(p, ICameraEx)->Start(p, CAM_MODE_PREVIEW,  0)
 #define ICAMERAEX_RecordSnapshot(p)               AEEGETPVTBL(p, ICameraEx)->Start(p, CAM_MODE_SNAPSHOT, 0)
-#define ICAMERAEX_UpdateScreen(p, dw)                 AEEGETPVTBL(p, ICameraEx)->Start(p, CAM_MODE_UPDATE, dw)
+#define ICAMERAEX_UpdateScreen(p, dw)             AEEGETPVTBL(p, ICameraEx)->Start(p, CAM_MODE_UPDATE, dw)
 #define ICAMERAEX_RecordMovie(p)                  AEEGETPVTBL(p, ICameraEx)->Start(p, CAM_MODE_MOVIE,    CAM_MOVIE_NORMAL)
 #define ICAMERAEX_RecordMoviePostcard(p)          AEEGETPVTBL(p, ICameraEx)->Start(p, CAM_MODE_MOVIE,    CAM_MOVIE_POSTCARD)
                     

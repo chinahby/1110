@@ -37,12 +37,6 @@
 #error __MMI_MAINLCD_xxxxxxx should be defined in global scope.
 #endif
 
-#ifdef __MMI_MAINLCD_320X240__
-#define CAM_BUFFER 320*240
-#elif defined(__MMI_MAINLCD_220X176__)
-#define CAM_BUFFER 220*176
-#endif
-
 //===========================
 // External Clock
 //===========================

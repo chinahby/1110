@@ -63,7 +63,7 @@ Workaround in .c files to make sure no compiling issue happens in the case.
                       ICamera DECLARATIONS
 
 ===========================================================================*/
-uint16 g_fbuffer[220*176] = {0};
+uint16 g_fbuffer[A8_MAIN_LCD_WIDTH*A8_MAIN_LCD_HEIGHT] = {0};
 static boolean       OEMCameraEx_FilePath(OEMCamera * pme, void * pData);
 static int           OEMCameraEx_Preview(OEMCamera * pme);
 static int           OEMCameraEx_RecordMovie(OEMCamera * pme);
@@ -309,6 +309,7 @@ int OEMCameraEx_Start(OEMINSTANCE h, int16 nMode, uint32 dwParam)
 int OEMCameraEx_Stop(OEMINSTANCE h)
 {
 	//OEMCamera * pme = (OEMCamera *)h;
+	DBGPRINTF("camera exit --------------------------------------");
 	AIT701_cam_exit_preview();
 	return SUCCESS;
 }
@@ -316,8 +317,8 @@ int OEMCameraEx_Update(OEMINSTANCE h, uint32 dwParam)
 {
 	//OEMCamera * pme = (OEMCamera *)h;
     uint16* pbmp = (uint16*)dwParam;
-    MEMCPY(g_fbuffer, pbmp, 77440); //77440 = sizeof(g_fbuffer)
-    AIT701_cam_update_osd(g_fbuffer,0,0,220,176);
+    MEMCPY(g_fbuffer, pbmp, sizeof(g_fbuffer));
+    AIT701_cam_update_osd(g_fbuffer,0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT);
     return SUCCESS;
 }
 
@@ -331,11 +332,11 @@ int OEMCameraEx_EncodeSnapshot(OEMINSTANCE hInstance)
  
 	IFile    *pFileDst = NULL;
     DBGPRINTF("EncodeSnapshot-----%s",pme->m_pszFile);
-    pFileDst = IFILEMGR_OpenFile(pme->m_pFileMgr,pme->m_pszFile,_OFM_READWRITE);
+    pFileDst = IFILEMGR_OpenFile(pme->m_pFileMgr,pme->m_pszFile,_OFM_CREATE);
 
 	if ( pFileDst )
 	{
-	    DBGPRINTF("EncodeSnapshot 00000000-----%0x",pFileDst);
+	    DBGPRINTF("EncodeSnapshot 0000000000000000-----%0x",pFileDst);
 		IFILE_Write(pFileDst,g_fbuffer, pme->m_nFileSize);
 	}
 	RELEASEIF(pFileDst); 

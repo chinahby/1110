@@ -43,7 +43,7 @@ extern const unsigned char DCAM_EINT_NO;
 static void AIT701_set_gpio(u_short pin, u_char level);
 
 extern unsigned char g_ATV_Flag;
-uint16 rgbbuffer[CAM_BUFFER] = {0};
+uint16 rgbbuffer[A8_MAIN_LCD_WIDTH*A8_MAIN_LCD_HEIGHT] = {0};
 
 #if AIT_VIDEO_PHONE_SUPPORT
 unsigned char bVideoChat;
@@ -1010,16 +1010,16 @@ u_int AIT701_Test_capture(uint8 *buf)
 	ext_cam_para.buffer_width = 640;
 	ext_cam_para.buffer_height = 480;
 	ext_cam_para.jpeg_buffer_ptr = buf;
-	ext_cam_para.image_buffer_size = 300*1024;
+	ext_cam_para.image_buffer_size = 300*1024; //A8_MAIN_LCD_WIDTH*A8_MAIN_LCD_HEIGHT
 	ext_cam_para.sticker_capture = FALSE;
 	ext_cam_para.jpeg_compression_ratio = 1;
-	ext_cam_para.preview_width = 220;
-	ext_cam_para.preview_height = 176;
+	ext_cam_para.preview_width = A8_MAIN_LCD_WIDTH;
+	ext_cam_para.preview_height = A8_MAIN_LCD_HEIGHT;
 	ext_cam_para.preview_src = 0;
-	AIT701_cam_capture(&ext_cam_para);
+	AIT701_cam_capture(&ext_cam_para); 
 
-	AIT701_JpegDecode((u_short*)buf,gAitJpegSize,220,176,(u_char*)rgbbuffer,0);
-	disp_update(rgbbuffer,220,0,0,176,220,0,0);
+	AIT701_JpegDecode((u_short*)buf,gAitJpegSize,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT,(u_char*)rgbbuffer,0);
+	disp_update(rgbbuffer,A8_MAIN_LCD_WIDTH,0,0,A8_MAIN_LCD_HEIGHT,A8_MAIN_LCD_WIDTH,0,0);
 	return gAitJpegSize;
 }
 
