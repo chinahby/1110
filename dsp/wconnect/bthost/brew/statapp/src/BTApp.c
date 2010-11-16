@@ -1002,6 +1002,13 @@ static void BTApp_BuildHCIMenu( CBTApp* pMe );
 static void BTApp_BuildOBEXMenu( CBTApp* pMe );
 static void BTApp_BuildTCSMenu( CBTApp* pMe );
 static void BTApp_BuildDeviceList( CBTApp* pMe, BTAppMenuType menu );
+
+//Add By zzg 2010_11_08
+static void BTApp_SaveSendFilePath(CBTApp *pMe, const char* filepath);
+//Add End
+
+static boolean BTApp_HCIModeOn( CBTApp* pMe );
+
 static void BTApp_BuildAGSettingsMenu( CBTApp* pMe);
 static void BTApp_BuildNASettingsMenu( CBTApp* pMe);
 static void BTApp_BuildEnablingMenu( CBTApp* pMe );
@@ -1188,10 +1195,12 @@ int AEEClsCreateInstance( AEECLSID ClsId, IShell* pIShell, IModule* po, void** p
                              (IApplet**) ppObj,
                              (AEEHANDLER) BTApp_HandleEvent,
                              (PFNFREEAPPDATA) BTApp_FreeAppData);
+
     if(created)
     {
       if( BTApp_InitAppData( (IApplet*)*ppObj ) )
       {
+      	
         pTheBTApp = (CBTApp*)*ppObj;
 
         //Data initialized successfully
@@ -1199,6 +1208,8 @@ int AEEClsCreateInstance( AEECLSID ClsId, IShell* pIShell, IModule* po, void** p
       }
       else
       {
+      	
+		
         //Release the applet. This will free the memory allocated for the applet
         IAPPLET_Release( ((IApplet*)*ppObj) );
       }
@@ -1898,8 +1909,7 @@ static boolean BTApp_InitAppData(IApplet* pi)
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
 
-  /* Check for bar file here. */
-  MSG_FATAL("BTApp_InitAppData.......................",0,0,0);
+  /* Check for bar file here. */  
   if ( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_FILEMGR, 
                               (void **)&pIFileMgr ) == SUCCESS )
   {
@@ -1907,8 +1917,10 @@ static boolean BTApp_InitAppData(IApplet* pi)
     {
       success = TRUE;
     }
+	
     IFILEMGR_Release( pIFileMgr );
   }
+   
   if ( success )
   {
     pMe->pText1 = MALLOC( LONG_TEXT_BUF_LEN*sizeof(AECHAR) );
@@ -1927,6 +1939,7 @@ static boolean BTApp_InitAppData(IApplet* pi)
       success = FALSE;
     }
   }
+ 
   if ( success )
   {
     AEEDeviceInfo di;
@@ -1940,7 +1953,7 @@ static boolean BTApp_InitAppData(IApplet* pi)
 
     // increase font size on VGA displays
     //AppComFunc_SelectFonts( pMe->a.m_pIDisplay );
-
+	
     pMe->pMem             = NULL;
     pMe->m_pISoftMenu     = NULL;
     pMe->m_pIMenu         = NULL;
@@ -1954,7 +1967,7 @@ static boolean BTApp_InitAppData(IApplet* pi)
     pMe->mAG.pIncomingCall  = NULL;
     pMe->mAG.pOutgoingCall  = NULL;
 #ifdef FEATURE_BT_EXTPF_OPP
-    pMe->mOPP.po          = NULL;
+    pMe->mOPP.po          = NULL;	
 #endif   
 #ifdef FEATURE_BT_EXTPF_FTP
     pMe->mFTP.po          = NULL;
@@ -1989,6 +2002,9 @@ static boolean BTApp_InitAppData(IApplet* pi)
 #endif
     pMe->bFirstLaunch     = TRUE;
     pMe->bSuspended       = FALSE;
+
+	pMe->bStartFromOtherApp	= FALSE;	//Add By zzg 2010_11_08
+	
     pMe->bVocoderOn       = FALSE;
     pMe->uTopMenu         = 0;
     TOP_MENU              = BT_APP_MENU_MAIN;
@@ -2173,6 +2189,8 @@ static void BTApp_FreeAppData( IApplet* pi )
   }
 
   //Add By zzg 2010_10_29
+  
+  
   if (pMe->m_pIAnn != NULL )
   {
       IANNUNCIATOR_Release(pMe->m_pIAnn);
@@ -2224,6 +2242,7 @@ static void BTApp_OnAppStop( CBTApp* pMe )
       break;
 
 #ifdef FEATURE_BT_EXTPF_OPP
+	case BT_APP_MENU_OPP_SENDFILE:	//Add By zzg 2010_11_09
     case BT_APP_MENU_OPP_TESTS:
     case BT_APP_MENU_OPP_SERVER:
     case BT_APP_MENU_OPP_CLIENT:
@@ -2326,6 +2345,9 @@ static boolean BTApp_HandleEvent
   CBTApp* pMe = (CBTApp*)pi;
   boolean event_processed = TRUE;
   uint16 msgID;
+
+  AEEAppStart *args = (AEEAppStart*)dwParam;		//Add By zzg 2010_11_08
+  
 #ifdef FEATURE_BT_EXTPF_HID_HOST
 #error code not present
 #endif
@@ -2348,13 +2370,19 @@ static boolean BTApp_HandleEvent
     case EVT_APP_START:
     case EVT_APP_RESUME:
     {
-      MSG_HIGH( "HndlEv - START/RESUME ev=%x tm=%x suspend=%x", 
-               eCode, pMe->uTopMenu, pMe->bSuspended );
-	  MSG_FATAL("EVT_APP_START.......................",0,0,0);
+      MSG_HIGH( "HndlEv - START/RESUME ev=%x tm=%x suspend=%x", eCode, pMe->uTopMenu, pMe->bSuspended );
+	 
+		//Add By zzg 2010_11_08
+		if ((args != NULL) && (args->pszArgs != NULL))	//file send via bluetooth
+		{
+			pMe->bStartFromOtherApp	= TRUE;		
+			BTApp_SaveSendFilePath(pMe, args->pszArgs);	
+		}
+		//Add End				
+	  
       if ( !pMe->bSuspended )
       {
         event_processed = BTApp_Init( pMe );
-		MSG_FATAL("EVT_APP_START.......................%d",event_processed,0,0);
       }
       if ( event_processed )
       {
@@ -2370,8 +2398,22 @@ static boolean BTApp_HandleEvent
 #endif /* !FEATURE_AVS_BT_SCO_REWORK */
           }
         }
-		MSG_FATAL("BTApp_BuildTopMenu before................",0,0,0);
-        BTApp_BuildTopMenu( pMe );
+
+		//Add By zzg 2010_11_09
+		if (TRUE == pMe->bStartFromOtherApp)
+		{
+			if ( BTApp_HCIModeOn( pMe ) == FALSE )
+			{
+				BTApp_BuildMenu( pMe, BT_APP_MENU_OPP_SENDFILE);
+			}
+		}
+		else
+		{
+			BTApp_BuildTopMenu( pMe );
+		}
+		//Add End
+        
+		
         IBTEXTRM_GetHCIMode( pMe->mRM.po, &HCIMode );
         if ( HCIMode != AEEBT_HCIM_OFF )
         {
@@ -2379,7 +2421,7 @@ static boolean BTApp_HandleEvent
         }
       }
       pMe->bFirstLaunch = FALSE;
-      pMe->bSuspended = FALSE;
+      pMe->bSuspended = FALSE;						
       break;
     }
     case EVT_APP_STOP:
@@ -2390,6 +2432,7 @@ static boolean BTApp_HandleEvent
       {
         *pb = FALSE;  /* Set the app to background app */
         pMe->bSuspended = TRUE;
+		pMe->bStartFromOtherApp = FALSE;		//Add By zzg 2010_11_08
       }
       BTApp_OnAppStop( pMe );
       break;
@@ -2411,6 +2454,7 @@ static boolean BTApp_HandleEvent
     }
     case EVT_DIALOG_INIT:
     {
+		
       IDIALOG_SetEventHandler( (IDialog*)dwParam, BTApp_TextEditHandleEvent, 
                                pMe );
       IDIALOG_SetProperties( (IDialog*)dwParam, DLG_HANDLE_ALL_EVENTS );
@@ -2445,6 +2489,7 @@ static boolean BTApp_HandleEvent
       }
 
       event_processed = BTApp_MenuHandleEvent( pMe, eCode, wParam, dwParam );
+	  
       if ( event_processed || (wParam == AVK_CLR) )
       {
         return event_processed;
@@ -2855,8 +2900,10 @@ static boolean BTApp_HandleEvent
         case EVT_BPP_SIMPLE_PUSH:
         {
 #ifdef FEATURE_BT_EXTPF_BPP
+
           if ( !BDADDR_VALID( &pMe->mBPP.printerBDAddr ) )
           {
+			
             MSG_LOW( "BPP Printing - No address selected for print", 0, 0, 0 );
             BTApp_ShowMessage( pMe, IDS_BPP_MSG_SEND_FILE_FAILED, NULL, 3 );
             return FALSE;
@@ -2868,6 +2915,7 @@ static boolean BTApp_HandleEvent
           }
           else
           {
+			
             MSG_ERROR( "BPP Printing - failed to create BPP object", 0, 0, 0 );
             BTApp_BPPCleanup( pMe );
             return FALSE;
@@ -3908,7 +3956,7 @@ static boolean BTApp_InitTextDlg( CBTApp* pMe, IDialog* pDlg )
   //SetDefaultSoftkeyLook( pMe->a.m_pIShell, pICurrentMenu );  //Del By zzg 2010_11_01
 
   IMENUCTL_DeleteAll( pICurrentMenu );
-  IMENUCTL_AddItem( pICurrentMenu, BTAPP_RES_FILE, IDS_OK, IDS_OK, NULL, 0);
+  IMENUCTL_AddItem( pICurrentMenu,  APPSCOMMON_RES_FILE, IDS_OK, IDS_OK, NULL, 0); //BTAPP_RES_FILE
 
   //SETAEERECT ( &rc, 10, 10, pMe->m_rect.dx-10, 30 );
   //Modify by zzg 2010_11_01
@@ -6495,6 +6543,7 @@ static boolean BTApp_HandleDevListMenu( CBTApp* pMe, uint16 key )
           switch ( TOP_MENU )
           {
 #ifdef FEATURE_BT_EXTPF_OPP
+			case BT_APP_MENU_OPP_SENDFILE:	//Add By zzg 2010_11_10
             case BT_APP_MENU_OPP_CLIENT:
             {
 #ifdef FEATURE_BT_2_1
@@ -6536,8 +6585,8 @@ static boolean BTApp_HandleDevListMenu( CBTApp* pMe, uint16 key )
             }
             case BT_APP_MENU_BIP_SETTINGS:
             {
-              pMe->mBIP.printerBDAddr = 
-                pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr;
+              pMe->mBIP.printerBDAddr = pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr;
+
               BTApp_BuildMenu( pMe, TOP_MENU );
               break;
             }
@@ -6545,14 +6594,12 @@ static boolean BTApp_HandleDevListMenu( CBTApp* pMe, uint16 key )
 #ifdef FEATURE_BT_EXTPF_BPP
             case BT_APP_MENU_BPP_LIST_TARGET:
             {
-              BTApp_BPPConnect( 
-                pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr );
+              BTApp_BPPConnect(pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr );
               break;
             }
             case BT_APP_MENU_BPP_SETTINGS:
             {
-              pMe->mBPP.printerBDAddr = 
-                pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr;
+              pMe->mBPP.printerBDAddr = pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr;
               BTApp_BuildMenu( pMe, TOP_MENU );
               break;
             }
@@ -7623,8 +7670,8 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
   switch ( menu )
   {
     case BT_APP_MENU_MAIN:
-      BTApp_BuildMainMenu( pMe );
-      break;
+	  BTApp_BuildMainMenu( pMe );      
+      break;	
     case BT_APP_MENU_SEARCH:
       BTApp_BuildDeviceSearchMenu( pMe );
       break;
@@ -7878,6 +7925,7 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
       break;
 #ifdef FEATURE_BT_EXTPF_OPP
     case BT_APP_MENU_OPP_TESTS:
+	case BT_APP_MENU_OPP_SENDFILE:	//Add By zzg 2010_11_09	
     case BT_APP_MENU_OPP_SERVER:
     case BT_APP_MENU_OPP_CLIENT:
     case BT_APP_MENU_OPP_LIST_FILE_TYPES:
@@ -8241,6 +8289,7 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
       (void)POP_MENU();
       break;
 #ifdef FEATURE_BT_EXTPF_OPP
+	case BT_APP_MENU_OPP_SENDFILE:	//Add By zzg 2010_11_10
     case BT_APP_MENU_OPP_TESTS:
     case BT_APP_MENU_OPP_SERVER:
     case BT_APP_MENU_OPP_CLIENT:
@@ -8576,6 +8625,7 @@ static boolean BTApp_MenuHandleEvent
   
   MSG_LOW( "MenuHndlEv - wP=0x%x dw=0x%x m=%d", wParam, dw, TOP_MENU );
 
+
   if ( (wParam != AVK_CLR) && (pMe->uCurrMsgId != 0) )
   {
     return TRUE;
@@ -8699,6 +8749,7 @@ static boolean BTApp_MenuHandleEvent
       return (BTApp_HandleSettingsMenu( pMe, wParam ));
     }
 #ifdef FEATURE_BT_EXTPF_OPP
+	case BT_APP_MENU_OPP_SENDFILE:	//Add By zzg 2010_11_09
     case BT_APP_MENU_OPP_TESTS:
     case BT_APP_MENU_OPP_SERVER:
     case BT_APP_MENU_OPP_CLIENT:
@@ -8829,7 +8880,7 @@ static boolean BTApp_MenuHandleEvent
     case BT_APP_MENU_AG_DISCONNECT:
     case BT_APP_MENU_AUTHORIZE_CONN:
     case BT_APP_MENU_TEST_MODE:
-    case BT_APP_MENU_SET_CONN_ROLE:
+    case BT_APP_MENU_SET_CONN_ROLE:	
 #ifdef FEATURE_BT_2_1
     case BT_APP_MENU_REBOND:
     case BT_APP_MENU_USER_CFM_RQST:
@@ -8856,6 +8907,14 @@ static boolean BTApp_MenuHandleEvent
     }
   }
 
+
+  //Add By zzg 2010_11_03
+  if (TOP_MENU == BT_APP_MENU_DEV_RESP)
+  {
+	  bInStatic = TRUE;				
+  }
+  //Add End
+  
 
   //Add  By zzg 2010_11_03
   if (TRUE == bInStatic)
@@ -12375,8 +12434,6 @@ static boolean BTApp_Init( CBTApp* pMe )
                                AEECLSID_BLUETOOTH_NOTIFIER, 
                                uBTApp_NMask ) == SUCCESS) )
   {
-  	MSG_FATAL("BTApp_Init................................",0,0,0);
-
 	//Del By zzg 2010_10_29
     //SetDefaultMenuLook( pMe->a.m_pIShell, pMe->m_pIMenu );
     //SetDefaultSoftkeyLook( pMe->a.m_pIShell, pMe->m_pISoftMenu );
@@ -12712,9 +12769,8 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_DEVICE_SEARCH, 0 );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_DEVICES, 0 );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_MY_INFO, 0 );
-  //BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SETTINGS, 0 );
-  //BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_TESTS, 0 );
-  /*
+  BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SETTINGS, 0 );
+  BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_TESTS, 0 );  
   if ( pMe->mAG.bConnected )
   {
     if ( (pMe->mAG.bSLCUp != FALSE) ||
@@ -12723,7 +12779,7 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
       BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_AUDIO_TRANSFER, 0 );
     }
   }
-  */
+  
   
   //Add by zzg 2010_10_29
   IMENUCTL_SetProperties(pMe->m_pIMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
@@ -14811,6 +14867,17 @@ static void BTApp_BuildDeviceList( CBTApp* pMe, BTAppMenuType menu )
 #endif //FEATURE_APP_TEST_AUTOMATION
 }
 
+//Add By zzg 2010_11_10
+static void BTApp_SaveSendFilePath(CBTApp *pMe, const char* filepath)
+{	
+	
+
+	MEMSET(pMe->m_pfilepath, 0, AEEBT_MAX_FILE_NAME*sizeof(char) );
+
+	MEMCPY(pMe->m_pfilepath, filepath, STRLEN(filepath));	
+}
+//Add End
+
 /* ==========================================================================
 FUNCTION BTApp_BuildDevRespMenu
 DESCRIPTION
@@ -14820,8 +14887,7 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
   CtlAddItem ai;
   int        result = EFAILED;
   uint8      i, numItems, len = 0;
-  uint16     stringID = 
-    pMe->mSD.bDiscovering ? IDS_SEARCHING : IDS_DISCOVERED_DEVICES;
+  uint16     stringID = pMe->mSD.bDiscovering ? IDS_SEARCHING : IDS_DISCOVERED_DEVICES;
   AEEBTDeviceInfo* pDev;
   AECHAR* pwName;
 #ifdef FEATURE_BT_2_1

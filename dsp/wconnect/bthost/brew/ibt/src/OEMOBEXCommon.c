@@ -237,7 +237,7 @@ mt_obex_security_type OEMOBEX_OEMToMtSecurity(OEMOBEX_BtSecurity OemSec)
 //=============================================================================
 
 int OEMOBEX_CmdStatusToAeeResult(mt_obex_status_type status)
-{
+{	
    switch (status)
    {
       case BT_CS_GN_SUCCESS:

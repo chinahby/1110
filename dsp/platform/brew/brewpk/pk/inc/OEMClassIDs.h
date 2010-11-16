@@ -125,7 +125,6 @@ GENERAL DESCRIPTION:
 #define AEECLSID_BRW_APP    	    0x0104c960
 #define AEECLSID_BLUETOOTH_APP    	0x01015223
 
-
 #endif /*CUST_EDITION*/
 /*=====================================================================
   DATA STRUCTURE DOCUMENTATION

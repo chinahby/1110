@@ -701,12 +701,16 @@ boolean BTApp_BPPRemotePrintReq( CBTApp* pMe, uint32 dwParam )
 {
   BTApp_BPPPrintDetails* printDetails;
   int                    nbufSize = 0;
- 
+
+
+  
   MSG_LOW( "BPPRemotePrintReq - Print req from any BREW APP", 0, 0, 0 );
   /* store the print details */
   printDetails = (BTApp_BPPPrintDetails*)dwParam;
   nbufSize = STRLEN(printDetails->pPrintFileName) + 1;
   pMe->mBPP.printDetails.pPrintFileName = MALLOC( nbufSize );
+
+  
   if ( pMe->mBPP.printDetails.pPrintFileName == NULL )
   {
     MSG_ERROR( "BPPRemotePrintReq - Malloc failed", 0, 0, 0 );
@@ -716,18 +720,23 @@ boolean BTApp_BPPRemotePrintReq( CBTApp* pMe, uint32 dwParam )
     FREEIF( printDetails );
     return FALSE;
   }
-  STRLCPY( pMe->mBPP.printDetails.pPrintFileName, printDetails->pPrintFileName, 
-           nbufSize );
+  
+  STRLCPY( pMe->mBPP.printDetails.pPrintFileName, printDetails->pPrintFileName, nbufSize );
   pMe->mBPP.printDetails.uMIMMediaType = printDetails->uMIMMediaType;
+  
   /* free the memory received from remote APP */
   FREEIF( printDetails->pPrintFileName );
   FREEIF( printDetails );
+
+
+  
   /* register BPP if not registered */
   if ( pMe->mBPP.bRegistered == FALSE )
   {
     BTApp_SetBondable( pMe );
     if ( IBTEXTBPP_Register( pMe->mBPP.po, szServerNameBPP ) != SUCCESS )
     {
+	  
       BTApp_ClearBondable( pMe ); // no need to be bondable anymore
       MSG_HIGH( "BPPRemotePrintReq - BPP registration failed", 0, 0, 0 );
       BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3 );
@@ -745,11 +754,14 @@ boolean BTApp_BPPRemotePrintReq( CBTApp* pMe, uint32 dwParam )
   }
   else if ( pMe->mBPP.bConnected == FALSE )
   {
+
+	
     if ( IBTEXTBPP_Connect( pMe->mBPP.po, 
                             &pMe->mBPP.printerBDAddr, 
                             0x0, 
                             AEEBT_BPP_TARGET_DPS ) != SUCCESS )
     {
+	  
       BTApp_ClearBondable( pMe ); // no need to be bondable anymore
       MSG_HIGH( "BPPRemotePrintReq - conn failed", 0, 0, 0 );
       BTApp_ShowMessage( pMe, IDS_MSG_CONN_FAILED, NULL, 3 );
@@ -760,6 +772,7 @@ boolean BTApp_BPPRemotePrintReq( CBTApp* pMe, uint32 dwParam )
   }
   else
   {
+	
     /* already connected, just print the file */
     pMe->mBPP.bPrintFile = FALSE;
     STRTOWSTR( pMe->mBPP.printDetails.pPrintFileName, wPfileName, 
@@ -770,6 +783,7 @@ boolean BTApp_BPPRemotePrintReq( CBTApp* pMe, uint32 dwParam )
                              NULL,
                              0 ) != SUCCESS )
     {
+	  
       MSG_HIGH( "BPPRemotePrintReq - print file failed", 0, 0, 0 );
       BTApp_ShowMessage( pMe, IDS_BPP_MSG_SEND_FILE_FAILED, wPfileName, 3 );
       FREE( pMe->mBPP.printDetails.pPrintFileName );

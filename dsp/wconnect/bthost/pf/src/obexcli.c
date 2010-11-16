@@ -948,7 +948,9 @@ OI_STATUS OI_OBEXCLI_Put(OI_OBEXCLI_CONNECTION_HANDLE connectionId,
      * Must be connected to an OBEX server.
      */
     connection = LookupConnection(connectionId);
-    if ((connection == NULL) || (connection->state < OBEX_CONNECTED)) {
+	
+    if ((connection == NULL) || (connection->state < OBEX_CONNECTED)) 
+	{
         return OI_OBEX_NOT_CONNECTED;
     }
 
@@ -958,7 +960,9 @@ OI_STATUS OI_OBEXCLI_Put(OI_OBEXCLI_CONNECTION_HANDLE connectionId,
      * is called to force an immediate abort of the put operation. In this case, 
      * we need to cancel the timeout first.
      */
-    if ((connection->abort == ABORT_PUT) && (connection->timeoutCB)) {
+
+    if ((connection->abort == ABORT_PUT) && (connection->timeoutCB)) 
+	{
       OI_Dispatch_CancelFunc(connection->timeoutCB); 
       connection->timeoutCB = 0;
     }
@@ -973,7 +977,8 @@ OI_STATUS OI_OBEXCLI_Put(OI_OBEXCLI_CONNECTION_HANDLE connectionId,
     /*
      * Only one operation at a time on each connection.
      */
-    if ((connection->state != OBEX_CONNECTED) && (connection->state != OBEX_PUTTING)) {
+    if ((connection->state != OBEX_CONNECTED) && (connection->state != OBEX_PUTTING)) 
+	{
         OI_DBGPRINT(("OBEX client PUT: another operation is in progress"));
         return OI_OBEX_OPERATION_IN_PROGRESS;
     }
@@ -989,7 +994,8 @@ OI_STATUS OI_OBEXCLI_Put(OI_OBEXCLI_CONNECTION_HANDLE connectionId,
 #ifdef OI_CODE
 #error code not present
 #else
-    if (connection->abort == ABORT_PUT || connection->abortCurOp) {
+    if (connection->abort == ABORT_PUT || connection->abortCurOp) 
+	{
         if(connection->abortCurOp)
         {
             connection->abort = ABORT_PUT;
@@ -1020,7 +1026,8 @@ OI_STATUS OI_OBEXCLI_Put(OI_OBEXCLI_CONNECTION_HANDLE connectionId,
         return OI_OK;
     }
 
-    if (!cmdHeaders) {
+    if (!cmdHeaders) 
+	{
         return OI_STATUS_INVALID_PARAMETERS;
     }
 
@@ -1032,19 +1039,28 @@ OI_STATUS OI_OBEXCLI_Put(OI_OBEXCLI_CONNECTION_HANDLE connectionId,
      * If a target was specified at connect time we must send the connection id
      * in the first PUT packet.
      */
-    if (connection->state == OBEX_CONNECTED) {
-        if (connection->cid != OI_OBEX_INVALID_CONNECTION_ID) {
+    if (connection->state == OBEX_CONNECTED) 
+	{
+        if (connection->cid != OI_OBEX_INVALID_CONNECTION_ID) 
+		{
             hdr = &headers[headerCount++];
             hdr->id = OI_OBEX_HDR_CONNECTION_ID;
             hdr->val.connectionId = connection->cid;
         }
         connection->state = OBEX_PUTTING;
     }
+	
+	
     status = OI_OBEXCOMMON_MarshalPacket(&connection->common, &pkt, headers, headerCount, cmdHeaders);
-    if (OI_SUCCESS(status)) {
+	
+
+	if (OI_SUCCESS(status)) 
+	{
         status = ClientSendPacket(connection, connection->responseTimeout);
     }
-    if (!OI_SUCCESS(status)) {
+	
+    if (!OI_SUCCESS(status)) 
+	{
         goto PutReqError;
     }
 

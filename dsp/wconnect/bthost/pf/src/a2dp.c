@@ -92,7 +92,8 @@ static const OI_SDPDB_ATTRIBUTE SinkDescription[] = {
 static OI_STATUS internalInit(void)
 {
     this = OI_Malloc(sizeof(A2DP_STATE));
-    if (!this) {
+    if (!this) 
+	{
         return OI_STATUS_OUT_OF_MEMORY;
     }
     

@@ -1825,8 +1825,28 @@ void BTApp_OBEXBuildMainMenu( CBTApp* pMe )
   IMENUCTL_Reset( pMe->m_pIMenu );
   IMENUCTL_SetRect(pMe->m_pIMenu, &pMe->m_rect);  
 
+
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_OBEX_TESTS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_OBEX_TESTS, NULL );  
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_OPP,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
 
   BTApp_InitAddItem( &ai );
 
@@ -1915,6 +1935,8 @@ DESCRIPTION
 boolean BTApp_OBEXBuildMenu( CBTApp* pMe, BTAppMenuType menu )
 {
   boolean built = TRUE;
+
+  
   switch ( menu)
   {
     case BT_APP_MENU_OBEX_TESTS:

@@ -2119,6 +2119,8 @@ boolean BTApp_BIPRemotePrintImage( CBTApp* pMe, uint32 dwParam )
       { 0xE3, 0x3D, 0x95, 0x45, 0x83, 0x74, 0x4A, 0xD7, 
         0x9E, 0xC5, 0xC1, 0x6B, 0xE3, 0x1E, 0xDE, 0x8E };
     BTApp_SetBondable( pMe );
+
+	
     if ( IBTEXTBIP_Connect( 
            pMe->mBIP.po, 
            &pMe->mBIP.printerBDAddr,

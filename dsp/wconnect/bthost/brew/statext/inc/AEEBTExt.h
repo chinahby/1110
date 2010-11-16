@@ -11,7 +11,7 @@ DESCRIPTION: This is the header file for Bluetooth BREW Extension
 
 PUBLIC CLASSES:  Not Applicable
 
-        Copyright © 2004-2009 QUALCOMM Incorporated.
+        Copyright ?2004-2009 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ===========================================================================*/
@@ -47,6 +47,7 @@ extern "C" {
 /* Size of OBEX buffer (subtract max OBEX header size (11) )*/
 /* Used for all OBEX profiles that use a dynamic buffer. */
   /* Currently (16384-11) 16K - max size of OBEX header (11 bytes) */
+
 #define AEEBT_OBEX_BUFFER_SIZE      16373
 
 /* Link key status */
@@ -424,6 +425,35 @@ enum
   AEEBT_OPP_VNOTE,
   AEEBT_OPP_VMESSAGE,
   AEEBT_OPP_JPEG,
+  #ifdef CUST_EDITION
+  AEEBT_OPP_IMAGE_BMP,
+  AEEBT_OPP_IMAGE_PNG,
+  AEEBT_OPP_IMAGE_GIF,
+  AEEBT_OPP_IMAGE_WBMP,
+  AEEBT_OPP_AUDIO_AMR,
+  AEEBT_OPP_AUDIO_AAC,
+  AEEBT_OPP_AUDIO_MP3,
+  AEEBT_OPP_AUDIO_WAV,
+  AEEBT_OPP_AUDIO_IMY,
+  AEEBT_OPP_AUDIO_MID,
+  AEEBT_OPP_AUDIO_MIDI,
+  AEEBT_OPP_AUDIO_MMF,
+  AEEBT_OPP_AUDIO_XMF,
+  AEEBT_OPP_AUDIO_RHZ,
+  AEEBT_OPP_AUDIO_WMA,
+  AEEBT_OPP_AUDIO_M4A,
+  AEEBT_OPP_AUDIO_3GP,
+  AEEBT_OPP_VIDEO_3GP,
+  AEEBT_OPP_VIDEO_MP4,
+  AEEBT_OPP_VIDEO_WMV,
+  AEEBT_OPP_VIDEO_ASF,
+  AEEBT_OPP_TEXT,
+  AEEBT_OPP_JAVA_JAD,
+  AEEBT_OPP_JAVA_JAR,
+  AEEBT_OPP_APPLICATION_DOC,
+  AEEBT_OPP_APPLICATION_PDF,
+  AEEBT_OPP_APPLICATION_EXCEL,
+  #endif
   AEEBT_OPP_UNKNOWN_TYPE
 };
 

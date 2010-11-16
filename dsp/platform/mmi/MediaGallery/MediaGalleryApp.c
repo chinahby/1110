@@ -365,7 +365,6 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
           * */
          MediaGalleryApp_RegisterPlayNext(pMe, FALSE);
          MediaGalleryApp_SetCallbackStateStop(pMe);
-
          RELEASEIF(pMe->m_pMenuPopup);
          ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
 
@@ -1344,7 +1343,7 @@ static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
 
    pMe->m_nRingVolume = MG_MAX_UINT16;
    pMe->m_nKeyBeepVol = MG_MAX_BYTE;
-
+   
    pMe->m_pImage = NULL;
 #ifdef FEATURE_ANICTL
    pMe->m_pAniCtl = NULL;

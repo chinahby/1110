@@ -29,6 +29,11 @@
 #endif
 #include "Msg.h"
 
+//Add By zzg 2010_11_04
+#include "BTApp.h"
+#include "Btapp.brh"
+//Add End
+
 /*===========================================================================
  *                      MACRO DECLARATIONs
  * ==========================================================================
@@ -2393,7 +2398,7 @@ static boolean MediaGalleryApp_OnPopupMenuCommand(CMediaGalleryApp* pMe,
                                    MG_MSGID_DELALL);
       break;
 
-   case IDS_MG_BLUETOOTH:
+   case IDS_MG_BLUETOOTH:   	  
       MGAppPopupMenu_OnBluetooth(pMe, pMenuCtl);
       break;
 
@@ -3910,10 +3915,13 @@ static int MGAppPopupMenu_OnBluetooth(CMediaGalleryApp* pMe,
                                        IMenuCtl* pMenuCtl)
 {
   MGFileInfo *pSelData;
-  char szArg[MG_MAX_FILE_NAME + 2] = {'F','\0'};
+  //char szArg[MG_MAX_FILE_NAME + 2] = {'F','\0'};   
+  char szArg[MG_MAX_FILE_NAME + 1] = {'\0'};   
 
-  if(!pMe || !pMenuCtl)
-      return EBADPARM;
+  if (!pMe || !pMenuCtl)
+  {
+  	return EBADPARM;
+  }
 
   pSelData = MediaGalleryApp_GetCurrentNode(pMe);
 
@@ -3924,11 +3932,42 @@ static int MGAppPopupMenu_OnBluetooth(CMediaGalleryApp* pMe,
   }
 
   STRCAT(szArg, pSelData->szName);
+
+  /*
+  MSG_FATAL("***zzg MGAppPopupMenu_OnBluetooth STRLEN(pSelData->szName)=%s***", STRLEN(pSelData->szName), 0, 0);
+  MSG_FATAL("***zzg MGAppPopupMenu_OnBluetooth STRLEN(szArg)=%s***", STRLEN(szArg), 0, 0);
+
+  {
+	int i=0;
+	for (i=0; i<STRLEN(pSelData->szName); i++)
+	{
+		MSG_FATAL("***zzg MGAppPopupMenu_OnBluetooth filepath[%d]=%x***", i, *(pSelData->szName+i), 0);
+	}	
+
+	for (i=0; i<STRLEN(szArg); i++)
+	{
+		MSG_FATAL("***zzg MGAppPopupMenu_OnBluetooth szArg[%d]=%x***", i, szArg[i], 0);
+	}
+  }
+  */
+
+
+//Add By zzg 2010_11_03
+#ifdef FEATURE_BT_SEND_FILE_ONLY 
+  return ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, szArg);
+#else
+  return FALSE;
+#endif
+//Add End
+
+/*  
 #ifdef FEATURE_SUPPORT_BT_APP
   return ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BTUIAPP, szArg);
 #else
   return FALSE;
 #endif
+*/
+
 }//MGAppPopupMenu_OnBluetooth
 
 /*===========================================================================
@@ -6129,7 +6168,8 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_RENAME);
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_DELETE);
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_DELALL);
-#ifdef FEATURE_SUPPORT_BT_APP
+//#ifdef FEATURE_SUPPORT_BT_APP
+#ifdef FEATURE_BT_SEND_FILE_ONLY		//Modify by zzg 2010_11_03
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_BLUETOOTH);
 #endif
 
@@ -6138,9 +6178,10 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_MOVE);
 #endif
       }
-
+  
       MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_SORT);
       MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_DETAIL);
+	  
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
       IMENUCTL_SetPopMenuRect(*ppPopupMenu);
       IMENUCTL_SetBottomBarType(*ppPopupMenu, BTBAR_SELECT_BACK);
