@@ -618,7 +618,8 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
             
-        case EVT_DIALOG_START:     
+        case EVT_DIALOG_START: 
+           
         
 			//Add By zzg 2010_09_01  			
 #ifdef FEATURE_APP_MUSICPLAYER	
@@ -681,7 +682,12 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 CameraApp_CPreviewStart(pMe);
                 pMe->m_bRePreview = FALSE;
                 return TRUE;
-            }*/ pMe->m_nCameraState = CAM_PREVIEW;  
+                
+            }*/ 
+          //  if(pMe->m_nCameraState == CAM_SAVE)
+               // ICAMERAEX_Preview(pMe->m_pCamera);
+            
+            pMe->m_nCameraState = CAM_PREVIEW;  
             CameraApp_UpdateInit(pMe);
             
             if(pMe->m_nLeftTime)
@@ -720,9 +726,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                         CLOSE_DIALOG(DLGRET_CAMERACFG);
                     }
                     break;
-
-                default:
-                    break;
+                    default:                    break;
             }
             return TRUE;
             
@@ -747,6 +751,13 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     pMe->m_nCameraState = CAM_STOP;
                 }
                 return FALSE;
+                /*
+            case AVK_RIGHT:                    
+                ICAMERAEX_Stop(pMe->m_pCamera);
+                break;
+            case AVK_LEFT:
+                ICAMERAEX_Preview(pMe->m_pCamera);
+                break;*/
 
             case AVK_CLR:
                 (void)ICONFIG_SetItem(pMe->m_pConfig,
@@ -826,6 +837,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     CameraApp_RecordSnapShot(pMe);
                     ICAMERAEX_Stop(pMe->m_pCamera);
                     CameraApp_SavePhoto(pMe);
+                    //DBGPRINTF("save--------------------");
                     CameraApp_PlayShutterSound(pMe);
                     CLOSE_DIALOG(DLGRET_PICMENU);
                 }
@@ -1108,7 +1120,20 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
             CLOSE_DIALOG(DLGRET_POPMSG);
             return TRUE;
  
-        case EVT_KEY_PRESS:   
+        case EVT_KEY_PRESS:
+            /*
+            DBGPRINTF("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+            switch(wParam)
+            {
+            case AVK_RIGHT:                    
+                ICAMERAEX_Stop(pMe->m_pCamera);
+                ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
+                break;
+            case AVK_LEFT:
+                ICAMERAEX_Preview(pMe->m_pCamera);
+                break;
+            default:break;
+            }*/
             return TRUE;
  
         case EVT_KEY_RELEASE:
@@ -1223,6 +1248,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                                                wstrText,
                                                sizeof(wstrText));
                 }
+                DBGPRINTF("msggggg----------------------------------%d---------%d", pMe->m_wMsgID,IDS_DONE);
                
                 switch(pMe->m_wMsgID)
                 {
@@ -1259,8 +1285,10 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 
-            if((pMe->m_wMsgID == IDS_MSG_WAITING) &&(!pMe->m_pCamera))
+            if(pMe->m_wMsgID == IDS_MSG_WAITING || pMe->m_wMsgID == IDS_DONE
+               || pMe->m_wMsgID == IDS_MSG_NOSDCARD || pMe->m_wMsgID == IDS_MSG_NOMEMORY) // &&(!pMe->m_pCamera)
             {
+                DBGPRINTF("cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\n");
                CameraApp_InitCameraCheck(pMe);    
 
                 (void)ISHELL_PostEvent(pMe->m_pShell,
@@ -1306,7 +1334,8 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             
             
             switch (wParam)
-            {
+            {                       
+
                 case AVK_INFO:
                     return TRUE;
                     
@@ -1358,7 +1387,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             
         case EVT_APP_DIALOG_TIMEOUT:  
             if(pMe->m_wMsgID == IDS_MSG_WAITING)
-            {
+            {                
                 CLOSE_DIALOG(DLGRET_PREVIEW);
             }
             else
@@ -3158,11 +3187,11 @@ static boolean CameraApp_GetDateForRecordFileName(CCameraApp *pMe, char * pszDes
     case FILE_TYPE_JPG:
     default:
         STRCAT(pszDest, FS_CARD_PICTURES_FOLDER);
-#ifdef FEATURE_JPEG_ENCODER
+//#ifdef FEATURE_JPEG_ENCODER
         SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.jpg", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
-#else
-        SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.png", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
-#endif
+//#else
+ //       SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.png", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
+//#endif
         break;
    }
    return TRUE;
@@ -3258,6 +3287,7 @@ static void CameraApp_HandleSnapshotPic(CCameraApp *pMe)
                         &pMe->m_rc, 
                         IDF_ALIGN_CENTER|IDF_ALIGN_TOP|IDF_TEXT_TRANSPARENT);
     
+    
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE); 
     
     IDisplay_UpdateEx(pMe->m_pDisplay, FALSE); 
@@ -3338,7 +3368,7 @@ static int CameraApp_UpdateInit(CCameraApp *pMe)
 }
 static int CameraApp_Update(CCameraApp *pMe)
 {
-    DBGPRINTF("camera state--------------%d\n", pMe->m_nCameraState);
+    //DBGPRINTF("camera state--------------%d\n", pMe->m_nCameraState);
     if(pMe->m_nCameraState == CAM_PREVIEW)
     {
         IBitmap* pbmp = NULL;
@@ -3455,10 +3485,12 @@ void CameraApp_InitCameraCheck(void *po)
     {
         MSG_FATAL("pMe->m_pCamera == NULL",0,0,0);
     }
+
+    
     if(pMe->m_pCamera)
     {
          DBGPRINTF("xyj:ICAMERAEX_Preview---------------------");
-        ICAMERAEX_Preview(pMe->m_pCamera);  
+         ICAMERAEX_Preview(pMe->m_pCamera);  
     
         //ICAMERAEX_RegisterNotify(pMe->m_pCamera,(PFNCAMERANOTIFY)CameraApp_EventNotify,po);
     }

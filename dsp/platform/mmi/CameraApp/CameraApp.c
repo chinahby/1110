@@ -540,14 +540,15 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
         CameraApp_FreeAppData(pMe);
         return EFAILED;
     }
- 
+
+ /*
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_DISPLAY,
                                             (void **)&pMe->m_pDisplay))
     {
         CameraApp_FreeAppData(pMe);
         return EFAILED;
-    } 
+    } */
     
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
                                             AEECLSID_FILEMGR, 
@@ -903,16 +904,7 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
         case EVT_KEY:
-        case EVT_COMMAND:
-            /*
-            if(AVK_END == wParam)
-              (void)ISHELL_PostEvent(pMe->m_pShell,
-                                       AEECLSID_APP_CAMERA,
-                                       EVT_APP_STOP,
-                                       0,
-                                       0);*/
-           // DBGPRINTF("key-----------------%d",pMe->m_bAppIsReady);            
-           
+        case EVT_COMMAND:           
             if(!pMe->m_bAppIsReady)
             {
                 return TRUE;
