@@ -4,8 +4,10 @@
 #include "cam_module.h"
 #include "sys_if_ait_api.h"
 //add by yangdecai 09-24
-//#define __MMI_MAINLCD_320X240__
-#define __MMI_MAINLCD_220X176__
+
+#define __MMI_MAINLCD_320X240__
+//#define __MMI_MAINLCD_220X176__
+
 
 //------------------------------------------------------------------------------------//
 // LCD customization definition
@@ -28,7 +30,6 @@
 #elif defined(__MMI_MAINLCD_160X128__)  //add by yangdecai 09-24
 #define A8_MAIN_LCD_WIDTH			(160)
 #define A8_MAIN_LCD_HEIGHT			(128)
-
 #elif defined(__MMI_MAINLCD_128X128__)
 #define A8_MAIN_LCD_WIDTH			(128)
 #define A8_MAIN_LCD_HEIGHT		(128)
@@ -36,6 +37,11 @@
 #error __MMI_MAINLCD_xxxxxxx should be defined in global scope.
 #endif
 
+#ifdef __MMI_MAINLCD_320X240__
+#define CAM_BUFFER 320*240
+#elif defined(__MMI_MAINLCD_220X176__)
+#define CAM_BUFFER 220*176
+#endif
 
 //===========================
 // External Clock
