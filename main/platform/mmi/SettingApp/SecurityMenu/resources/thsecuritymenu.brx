@@ -11,7 +11,7 @@
 		<Text>เปลี่ยนรหัส</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_RESTORE">
-		<Text>ตั้งค่าตามเดิม</Text>
+		<Text>ตั้งค่าตามโรงงาน</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_SECURITY_TITLE">
 		<Text>ความปลอดภัย</Text>

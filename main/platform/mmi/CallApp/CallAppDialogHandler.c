@@ -1004,10 +1004,168 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         {
                             return CallApp_LaunchApplet(pMe,  AEECLSID_APPMANAGER);
                         }
-                        else if (WSTRCMP(pMe->m_DialString, L"*#*#8378#1#") == 0)
+                        else if ((WSTRCMP(pMe->m_DialString, L"*#*#8378#1#") == 0)|| //add by yangdecai 2010-11-16
+                        		 (WSTRCMP(pMe->m_DialString, L"*#37*#") == 0)||
+                        		 (WSTRCMP(pMe->m_DialString, L"*85241#") == 0))
                         {
                             return CallApp_LaunchApplet(pMe, AEECLSID_QUICKTEST);
                         }
+                        if(WSTRCMP(pMe->m_DialString, L"*#0000#") == 0)   //add by yangdecai 2010-11-16
+                        {
+                        	nv_language_enum_type language = NV_LANGUAGE_ENGLISH;
+    						byte inputmode = OEM_MODE_T9_MT_ENGLISH;
+    						(void) ICONFIG_SetItem(pMe->m_pConfig,
+                                   CFGI_LANGUAGE_SELECTION,
+                                   &language,
+                                   sizeof(language));
+            				(void) ICONFIG_SetItem(pMe->m_pConfig,
+                                   CFGI_INPUTMODE,
+                                   &inputmode,
+                                   sizeof(inputmode));  
+                            CLOSE_DIALOG(DLGRET_OK);
+                            return TRUE;
+    						
+                        }
+                        if(WSTRCMP(pMe->m_DialString, L"*#1111#") == 0)
+                        {
+                        	//删除通话记录
+                        	{
+                        		ICallHistory    *m_pCallHistory;
+                        		 if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                             AEECLSID_CALLHISTORY,
+                                             (void **)&m_pCallHistory))
+    							{
+    								;
+    							}
+    							else
+    							{
+                        			if(SUCCESS == ICALLHISTORY_Clear(m_pCallHistory))
+		                          	{
+									  	uint32 value = 0;	
+		                              	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL,ANNUN_STATE_CALL_MISSEDCALL_OFF);
+		                              	{
+		                                  	boolean missed_call_icon;
+		                                  	missed_call_icon = FALSE;
+		                                  	(void) ICONFIG_SetItem(pMe->m_pConfig,
+		                                                     CFGI_MISSED_CALL_ICON,
+		                                                     &missed_call_icon,
+		                                                     sizeof(missed_call_icon));  
+		                              	}
+
+		                              	(void) ICONFIG_SetItem(pMe->m_pConfig,
+		                                                    CFGI_ALL_CALL_TIMER,
+		                                                    &value,
+		                                                    sizeof(uint32));
+		                              	(void) ICONFIG_SetItem(pMe->m_pConfig,
+		                                                    CFGI_RECENT_MO_CALL_TIMER,
+		                                                    &value,
+		                                                    sizeof(uint32));
+		                              	(void) ICONFIG_SetItem(pMe->m_pConfig,
+		                                                    CFGI_RECENT_MT_CALL_TIMER,
+		                                                    &value,
+		                                                     sizeof(uint32));
+		                          	}
+		                          	if(m_pCallHistory)
+    								{
+       									ICALLHISTORY_Release(m_pCallHistory);
+       									m_pCallHistory = NULL;
+    								}
+		                          }
+                        	}
+                        	//删除短信息
+                        	
+                        	{
+                        		IWmsApp *pIWmsApp = NULL;
+        
+						        if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell,
+						                                                AEECLSID_WMSAPP,
+						                                                (void**)&pIWmsApp))
+						        {
+						            if(SUCCESS != IWmsApp_DeleteAllNvCdmaSms(pIWmsApp))
+						            {
+						                return EFAILED;
+						            }
+						        }
+						        
+						        if(NULL != pIWmsApp)
+						        {
+						            (void)IWmsApp_Release(pIWmsApp);
+						            pIWmsApp = NULL;
+						        }
+                        	}
+                        	//删除电话本信息
+                        	{
+                        		IContApp * pIContApp = NULL;
+        
+						        if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell,
+						                                                AEECLSID_APP_CONTACT,
+						                                                (void**)&pIContApp))
+						        {
+						            if(SUCCESS != ICONTAPP_DeleteAll(pIContApp))
+						            {
+						                return EFAILED;
+						            }
+						        }
+						        
+						        if(NULL != pIContApp)
+						        {
+						            (void)ICONTAPP_Release(pIContApp);
+						            pIContApp = NULL;
+						        }
+                        	}
+                        	#ifdef FEATURE_APP_MEDIAGALLERY
+    						// 删除文件夹内的文件 (存储在手机上的)
+    						{
+        						CMediaGallery_ClearMediaFiles(pMe);
+    						}
+							#endif
+							OEM_RestoreFactorySetting();
+							{
+								byte alertType;  
+			                    (void) ICONFIG_GetItem(pMe->m_pConfig,
+			                                           CFGI_ALERT_TYPE,
+			                                           &alertType,
+			                                           sizeof(alertType));
+			                    switch(alertType)
+			                    {
+			                        case OEMNV_ALERTTYPE_OFF :
+			                            //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_SILENT, ANNUN_STATE_ON);
+			                            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_SILENT);
+			                            break;
+
+			                        case OEMNV_ALERTTYPE_RINGER :
+			                            //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RING, ANNUN_STATE_ON);
+			                            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
+			                            break;
+
+			                        case OEMNV_ALERTTYPE_VIB :
+			                            //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_VIBRATE, ANNUN_STATE_ON);
+			                            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRATOR);
+			                            break;
+
+			                        case OEMNV_ALERTTYPE_VIBRINGER :
+			                            //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_ALERT, ANNUN_STATE_ON);
+			                            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
+			                            break;
+			                            
+			                        case OEMNV_ALERTTYPE_VIBANDRINGER :
+			                            //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_ALERT, ANNUN_STATE_ON);
+			                            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
+			                            break;
+
+			                        default :
+			                            break;
+			                    }
+			                }
+			                IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_ALARM, ANNUN_STATE_ALARM_OFF/*ANNUN_STATE_OFF*/);
+					        CLOSE_DIALOG(DLGRET_OK);
+                            return TRUE;
+                        }
+                        if(WSTRCMP(pMe->m_DialString, L"*#2687#") == 0)
+                        {
+                        	ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#2687#");
+                        }
+                        //add by yangdei end 2010-11-16
 #ifdef FEATURE_CARRIER_TAIWAN_APBW
 #ifdef FEATRUE_SET_IP_NUMBER
                         else if (WSTRCMP(pMe->m_DialString, L"*1468#") == 0)

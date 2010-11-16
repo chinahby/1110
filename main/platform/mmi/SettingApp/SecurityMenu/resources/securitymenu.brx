@@ -11,7 +11,7 @@
 		<Text>Change codes</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_RESTORE">
-		<Text>Reset</Text>
+		<Text>Factory Reset</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_SECURITY_TITLE">
 		<Text>Security</Text>
