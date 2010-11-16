@@ -304,7 +304,6 @@ extern int WidgetMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int BTApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 
-
 #if defined FEATURE_SUPPORT_WAP_APP
 extern int EditApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int EditExt_Load(IShell *ps, void *pHelpers, IModule **pMod);
@@ -1121,7 +1120,6 @@ static const AEEStaticMod gOEMStaticModList[] =
 	{AEEFS_MIF_DIR"btapp.mif",  BTApp_Load},
 #endif
 
-
 #if defined(FEATURE_MFLO)
 #error code not present
 #endif
@@ -1308,9 +1306,13 @@ static const AEEStaticMod gOEMStaticModList[] =
       {AEEFS_MIF_DIR"apptimer.mif", AppTimerMod_Load},//wu raojin add
 #endif
 #ifndef WIN32
+
+/*
 #if defined FEATURE_SUPPORT_BT_APP
     {AEEFS_MIF_DIR"bluetooth.mif", tBtuiApp_Load},
 #endif
+*/
+
 #endif
 #if defined FEATURE_SUPPORT_BUIW
     {AEEFS_MIF_DIR"forms.mif", FormsMod_Load},

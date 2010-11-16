@@ -432,14 +432,14 @@ dsm_item_type *dsmi_new_buffer
   DSMI_POOL_LOCK(pool_id);
 
   table = (dsm_pool_mgmt_table_type*)pool_id;
+  
   if (table->free_count == 0)
   {
-    MSG_HIGH("Out of memory in pool %d",pool_id,0,0);
+    MSG_HIGH("Out of memory in pool %d",pool_id,0,0);	
     item_ptr = NULL;
   }
   else
   {
-
     /*-----------------------------------------------------------------
       Actually grab item off of the stack 
     -----------------------------------------------------------------*/
@@ -496,6 +496,7 @@ dsm_item_type *dsmi_new_buffer
 			   DSM_MEM_OP_NEW);
       }
     }
+    dsmi_item_reset(item_ptr);
   }
 
   DSMI_POOL_UNLOCK(pool_id);
@@ -1678,6 +1679,7 @@ uint32 dsmi_pushdown_packed_long
    
   if(size > 0)
   {
+    //uint32 temp;
     /*-----------------------------------------------------------------
       Figure out our offset into the first buffer to pack this 
       efficiently.  Offset should be the number of free bytes at the
@@ -1686,6 +1688,8 @@ uint32 dsmi_pushdown_packed_long
     offset = DSM_POOL_ITEM_SIZE(pool_id) - 
       (size - ((size / DSM_POOL_ITEM_SIZE(pool_id)) * 
 	       DSM_POOL_ITEM_SIZE(pool_id)));
+    //temp = size % DSM_POOL_ITEM_SIZE(pool_id);
+    //offset = temp ? DSM_POOL_ITEM_SIZE(pool_id) - temp : 0;
     /*-----------------------------------------------------------------
       Grab a new buffer here instead of letting dsm_pushdown_tail do 
       it so that we can maintain the kind and priority fields. 
@@ -1876,11 +1880,10 @@ uint32 dsmi_pushdown_tail_long
       Need additional space to copy more data.  Allocate a new item.
     ---------------------------------------------------------------------*/
     if(*pkt_head_ptr == NULL)
-    {
-      if((*pkt_head_ptr = 
-          dsmi_new_buffer(pool_id, file, line)) == NULL)
+    {		
+      if((*pkt_head_ptr = dsmi_new_buffer(pool_id, file, line)) == NULL)
       {
-        ERR("dsm_pushdown_tail: Unable to allocate new item!", 0, 0, 0);
+        ERR("dsm_pushdown_tail: Unable to allocate new item!", 0, 0, 0);		
         return (bytes_copied);
       }
 
@@ -1896,9 +1899,9 @@ uint32 dsmi_pushdown_tail_long
     /*-----------------------------------------------------------------------
       Determine how much room is left at the end of the current item.
     -----------------------------------------------------------------------*/
-
     item_copy_size = DSMI_TAIL_SIZE(*pkt_head_ptr);
     item_copy_size = MIN(item_copy_size, size);
+	
 
     /*-----------------------------------------------------------------------
       If there is stuff to copy, copy it.  Update size and
@@ -1911,13 +1914,15 @@ uint32 dsmi_pushdown_tail_long
       buf = (uint8 *)buf + item_copy_size;
     }
 
-    (*pkt_head_ptr)->used += item_copy_size;
-    bytes_copied += item_copy_size;
+    (*pkt_head_ptr)->used += item_copy_size;	
+    bytes_copied += item_copy_size;	
     size -= item_copy_size;
   }
+
+    
   /*-------------------------------------------------------------------------
     Return the total number of bytes that were pushed on the tail.
-  -------------------------------------------------------------------------*/
+  -------------------------------------------------------------------------*/ 
   return bytes_copied;
 
 } /* dsmi_pushdown_tail_long */

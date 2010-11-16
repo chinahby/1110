@@ -21,6 +21,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_IBT
 #define FEATURE_BT_QSOC_INBAND_SLEEP  
 #define FEATURE_DRM_NO_BREW 
+#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
 
 #define BT_QSC1110//FEATURE_BT_QSC1100
 #define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  ÐÍºÅ
@@ -80,7 +81,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_RRC_SIB_HEAP 
 #define FEATURE_LOW_MEMORY_USAGE 
 //#define FEATURE_FS_LOW_MEMORY_USAGE 
-#define FEATURE_DSM_MINIMIZE 
+
+//#define FEATURE_DSM_MINIMIZE 
+
 //#define FEATURE_MSG_LOW_MEMORY_USAGE 
 #define FEATURE_SIO_NO_DEBUG_TRACE 
 #define FEATURE_DIAG_SMALL_BUFFER 
