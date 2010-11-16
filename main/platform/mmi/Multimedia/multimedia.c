@@ -908,7 +908,9 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_2, IDS_MULTIMEDIA_TITLE_2, NULL, 0);
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_3, IDS_MULTIMEDIA_TITLE_3, NULL, 0);
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_4, IDS_MULTIMEDIA_TITLE_4, NULL, 0);
+#ifdef FEATURE_APP_MPEG4
 			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_VIDEO, IDS_MULTIMEDIA_TITLE_VIDEO, NULL, 0);
+#endif
 
             return TRUE;
             
@@ -985,7 +987,9 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
                 case IDS_MULTIMEDIA_TITLE_2:
                 case IDS_MULTIMEDIA_TITLE_3:
                 case IDS_MULTIMEDIA_TITLE_4:
+#ifdef FEATURE_APP_MPEG4
 				case IDS_MULTIMEDIA_TITLE_VIDEO:
+#endif
 				{
                     StartApplet(pMe, wParam - IDS_MULTIMEDIA_TITLE_1);
                     return TRUE;
