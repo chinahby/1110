@@ -33,6 +33,7 @@
 //#include "appscommon_color.brh"
 #include "appscommon.brh"
 
+
 boolean        FullScreen = FALSE;
 /*=================================================================================================================
                              宏定义和常数
@@ -273,6 +274,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
     #if defined(AEE_STATIC)
         ASSERT(pMe != NULL);
     #endif
+	DBGPRINTF("eCode = %d",eCode);
 
     switch (eCode)
     {
@@ -289,7 +291,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAYERPICTURE_PLAY, 0, 0);                 
             }
             else
-            {
+            {					
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAYERPICTURE_PAUSE, 0, 0);                
             } 
             VideoPlayer_RefreshPlayingTick(pMe);
@@ -734,7 +736,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 
                         if(pMe->IsPause)// 当前状态为暂停时
                         {                             
-                            IMEDIA_Resume(pMe->m_pMedia);
+                            IMEDIA_Resume((IMedia*)pMe->m_pMedia);
                             //ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)(IMEDIA_Resume),pMe->m_pMedia);
                             SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_ON);                              
                         }
@@ -770,7 +772,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                     { 
                         if(pMe->IsPause)// 当前状态为暂停时
                         {
-                            IMEDIA_Resume(pMe->m_pMedia);
+                            IMEDIA_Resume((IMedia*)pMe->m_pMedia);
                             //ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)(IMEDIA_Resume),pMe->m_pMedia);
                             
                         }
@@ -786,7 +788,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                     }
                     else // 当前状态为播放时
                     {   
-                        IMEDIA_Pause(pMe->m_pMedia);
+                        IMEDIA_Pause((IMedia*)pMe->m_pMedia);
                         //ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)(IMEDIA_Pause),pMe->m_pMedia); 
                         
                         pMe->IsPlay=FALSE;
@@ -827,7 +829,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                     
                     if(pMe->m_pMedia)
 					{
-						IMEDIA_Stop(pMe->m_pMedia);
+						IMEDIA_Stop((IMedia*)pMe->m_pMedia);
 					}
                     SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_OFF);
                     //ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)(IMEDIA_Stop),pMe->m_pMedia);                                    
@@ -900,12 +902,12 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             {             
                 if((pMe->bTotalTime - pMe->bCurrentTime) < 5)
                 {
-                    IMEDIA_FastForward(pMe->m_pMedia,pMe->bTotalTime - pMe->bCurrentTime);
+                    IMEDIA_FastForward((IMedia*)pMe->m_pMedia,pMe->bTotalTime - pMe->bCurrentTime);
                     pMe->bCurrentTime=pMe->bTotalTime;
                 }
                 else 
                 {
-                    IMEDIA_FastForward(pMe->m_pMedia,5000); 
+                    IMEDIA_FastForward((IMedia*)pMe->m_pMedia,5000); 
                     pMe->bCurrentTime=pMe->bCurrentTime+5;
                 }
                 if(!pMe->IsFullScreen)
@@ -926,12 +928,12 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             {               
                 if( pMe->bCurrentTime < 5)
                 {                  
-                    IMEDIA_Rewind(pMe->m_pMedia,pMe->bCurrentTime);
+                    IMEDIA_Rewind((IMedia*)pMe->m_pMedia,pMe->bCurrentTime);
                     pMe->bCurrentTime=0;
                 }
                 else
                 {
-                    IMEDIA_Rewind(pMe->m_pMedia,5000);   
+                    IMEDIA_Rewind((IMedia*)pMe->m_pMedia,5000);   
                     pMe->bCurrentTime=pMe->bCurrentTime-5;
                 }
                 if(!pMe->IsFullScreen)
@@ -1016,7 +1018,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                     
                 if(pMe->m_pMedia)
                 {
-                    (void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->totalvolume); 
+                    (void)IMEDIA_SetVolume((IMedia*)pMe->m_pMedia,pMe->totalvolume); 
                 } 
                 if(!pMe->IsFullScreen)
                 {
@@ -1037,7 +1039,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 pMe->totalvolume = pMe->m_bVolumeLevel * VP_VOLUME_STEP;
                 if(pMe->m_pMedia)                                                                                                                                                                   
                 {
-                    (void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->totalvolume);
+                    (void)IMEDIA_SetVolume((IMedia*)pMe->m_pMedia,pMe->totalvolume);
                 } 
                 if(!pMe->IsFullScreen)
                 {
@@ -1277,19 +1279,18 @@ void  VideoPlayer_InitVideo(CVideoPlayer  *pMe)
     pMe->m_md.pData = (void*)pMe->m_FileToPlay;
     pMe->m_md.dwSize = 0;
 	pMe->m_pMediaUtil = 0;
-	
-	DBGPRINTF("uiClsId = %d,pMe->m_pMedia = %d, pMe->m_FileToPlay = %s",uiClsId,pMe->m_pMedia,pMe->m_FileToPlay);
-	DBGPRINTF("pMe->m_pMediaUtil = %d, uiClsId = %d,pMe->m_pMedia = %d",pMe->m_pMediaUtil,uiClsId,pMe->m_pMedia);
-	pMe->m_InitFailed = AEEMediaUtil_CreateMedia(pMe->m_pShell, &pMe->m_md, &pMe->m_pMedia);
+	//pMe->m_InitFailed = AEEMediaUtil_CreateMedia(pMe->m_pShell, &pMe->m_md, &pMe->m_pMedia);
+	pMe->m_InitFailed = AEEMediaUtil_CreateMedia(pMe->m_pShell, &pMe->m_md,&(IMedia*)pMe->m_pMedia);
     DBGPRINTF("pMe->m_InitFailed=%d",pMe->m_InitFailed);
 
     if(pMe->m_InitFailed == SUCCESS)
     {     
-        (void)IMEDIA_RegisterNotify(pMe->m_pMedia, VideoPlayer_VideoNotify, pMe);//注册底层回调 
+        (void)IMEDIA_RegisterNotify((IMedia*)pMe->m_pMedia, VideoPlayer_VideoNotify, pMe);//注册底层回调 
         pMe->bCurrentTime = 0;
         pMe->bTotalTime = 0;
-        (void)IMEDIA_GetTotalTime(pMe->m_pMedia); 
-        (void)IMEDIA_SetVolume(pMe->m_pMedia, pMe->totalvolume); //设置当前音量大小
+		uiClsId = IMEDIA_GetTotalTime((IMedia*)pMe->m_pMedia); 
+		DBGPRINTF("(void)IMEDIA_GetTotalTime(pMe->m_pMedia); %d",uiClsId);
+        (void)IMEDIA_SetVolume((IMedia*)pMe->m_pMedia, pMe->totalvolume); //设置当前音量大小
     }    
 }
 /*=================================================================================================================
@@ -1299,7 +1300,8 @@ void VideoPlayer_PlayVideo(CVideoPlayer *pMe)
 {     
     if(pMe->m_pMedia)
     {  
-        pMe->m_PlayFailed = IMEDIA_Play(pMe->m_pMedia);//播放  
+    	DBGPRINTF("YY Said : Play!!! ");
+        pMe->m_PlayFailed = IMEDIA_Play((IMedia*)pMe->m_pMedia);//播放  
         SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_ON);
     }      
 } 
@@ -1336,7 +1338,7 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
                 pMe->bCurrentTime = 0; 
                 if(! pMe->UserStop)
                 {
-                    (void)IMEDIA_Stop(pMe->m_pMedia); 
+                    (void)IMEDIA_Stop((IMedia*)pMe->m_pMedia); 
                 }
                 VideoPlayer_PlayVideo(pMe);   
                 videoplayer_play_flag = TRUE;
@@ -1359,7 +1361,7 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
             default:  
                 if(! pMe->UserStop)
                 {
-                    (void)IMEDIA_Stop(pMe->m_pMedia); 
+                    (void)IMEDIA_Stop((IMedia*)pMe->m_pMedia); 
                 }
                 //释放本m_pMedia指针
                 VideoPlayer_ReleaseVideo(pMe);
@@ -1397,11 +1399,11 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
                 VideoPlayer_PlayVideo(pMe); 
                 if(pMe->IsPause)
                 {
-                    IMedia_Pause(pMe->m_pMedia);                    
+                    IMedia_Pause((IMedia*)pMe->m_pMedia);                    
                 }
                 if(pMe->UserStop)
                 {
-                    IMedia_Stop(pMe->m_pMedia);                   
+                    IMedia_Stop((IMedia*)pMe->m_pMedia);                   
                 }
                 if(pMe->IsFullScreen)
                 {
@@ -1588,7 +1590,27 @@ static void VideoPlayer_RefreshScheduleBar(CVideoPlayer *pMe)
     
     //取小图标图片
     IImage *image =ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_GLIDER); 
-    
+/*
+		IBitmap *pFrame = NULL;
+//	OEMMediaMPEG4_GetMediaParm(pMe->m_pMedia,MM_PARM_FRAME,((int32 *)&pFrame);
+	//AEEMedia_GetMediaParm(IMedia * po,int nParamID,int32 * pP1,int32 * pP2)
+	
+					IMEDIA_GetMediaParm((IMedia*)pMe->m_pMedia,MM_PARM_FRAME,((int32 *)&pFrame),NULL);
+					DBGPRINTF("pMe->m_pMedia = %d,pFrame = %d,rect : %d,%d,%d,%d",pMe->m_pMedia,pFrame,pMe->m_rc.x,pMe->m_rc.y,pMe->m_rc.dx,pMe->m_rc.dy);
+					if(pFrame != NULL)
+						{
+							IDisplay_BitBlt(pMe->m_pDisplay,
+								pMe->m_rc.x,
+								pMe->m_rc.y,
+								pMe->m_rc.dx,
+								pMe->m_rc.dy,
+								pFrame,
+								0,
+								0,
+								AEE_RO_OR);
+						}
+					IDISPLAY_Update(pMe->m_pDisplay);
+					*/
     //画进度条
     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY, VIDEOPLAYER_SCHEDULE_X, VIDEOPLAYER_SCHEDULE_Y); 
     SETAEERECT(&rc,VIDEOPLAYER_SCHEDULE_X,VIDEOPLAYER_SCHEDULE_Y,5,5);//滑块起始位置 
@@ -1756,7 +1778,7 @@ static void VideoPlayer_VideoNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify
         {   
             // playback done
             case MM_STATUS_DONE: 
-                IMEDIA_Stop(pMe->m_pMedia);
+                IMEDIA_Stop((IMedia*)pMe->m_pMedia);
                 SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_OFF); 
                 pMe->IsPlay=FALSE;
                 pMe->IsPause=FALSE;

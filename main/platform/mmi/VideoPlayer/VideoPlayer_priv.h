@@ -72,6 +72,7 @@
 #include "AEEBacklight.h" 
 #include "Appscommon.h"
 
+
 /*=================================================================================================================
                                宏定义和常数
 =================================================================================================================*/
@@ -103,7 +104,7 @@
 #define  MAX_STR_LEN             64
 
 //图片中名字显示区域的最大像素值
-#define  MAX_NAME_LEN            167
+#define  MAX_NAME_LEN            120//167
 
 // 从GALLERY进入VIDEOPLAYER的标志
 #define STARTARGS_GALLERY       ((char)'G')
@@ -139,58 +140,71 @@
 
 
 //wlh 20090420 add icon x/y
+#define SCR_W 128
+#define SCR_H 160
 //开始暂停
-#define VIDEOPLAYER_PLAY_X 34
-#define VIDEOPLAYER_PLAY_Y 182
+
 #define VIDEOPLAYER_PLAY_W 16
 #define VIDEOPLAYER_PLAY_H 16
+#define VIDEOPLAYER_PLAY_X 34
+#define VIDEOPLAYER_PLAY_Y (SCR_H - VIDEOPLAYER_PLAY_H)//182
+
 
 //开始 PART
-#define VIDEOPLAYER_PLAY_PART_X 16
-#define VIDEOPLAYER_PLAY_PART_Y 182
 #define VIDEOPLAYER_PLAY_PART_W 52
 #define VIDEOPLAYER_PLAY_PART_H 16
+#define VIDEOPLAYER_PLAY_PART_X 16
+#define VIDEOPLAYER_PLAY_PART_Y (SCR_H - VIDEOPLAYER_PLAY_PART_H)//182
+
 //暂停 PART
-#define VIDEOPLAYER_PAUSE_PART_X 16
-#define VIDEOPLAYER_PAUSE_PART_Y 182
 #define VIDEOPLAYER_PAUSE_PART_W 52
 #define VIDEOPLAYER_PAUSE_PART_H 16
+#define VIDEOPLAYER_PAUSE_PART_X 16
+#define VIDEOPLAYER_PAUSE_PART_Y (SCR_H - VIDEOPLAYER_PAUSE_PART_H)//182
+
 //FR PART
-#define VIDEOPLAYER_FR_PART_X 0
-#define VIDEOPLAYER_FR_PART_Y 168
 #define VIDEOPLAYER_FR_PART_W 176
 #define VIDEOPLAYER_FR_PART_H 13
+#define VIDEOPLAYER_FR_PART_X 0
+#define VIDEOPLAYER_FR_PART_Y (SCR_H - VIDEOPLAYER_FR_PART_H)//182
+
 
 //快进
-#define VIDEOPLAYER_FORWARD_X 159
-#define VIDEOPLAYER_FORWARD_Y 168
 #define VIDEOPLAYER_FORWARD_W 17
 #define VIDEOPLAYER_FORWARD_H 13
+#define VIDEOPLAYER_FORWARD_X 159
+#define VIDEOPLAYER_FORWARD_Y (SCR_H - VIDEOPLAYER_FORWARD_H)//182
+
 
 //后退
-#define VIDEOPLAYER_REWIND_X 0
-#define VIDEOPLAYER_REWIND_Y 168
 #define VIDEOPLAYER_REWIND_W 17
 #define VIDEOPLAYER_REWIND_H 13
+#define VIDEOPLAYER_REWIND_X 0
+#define VIDEOPLAYER_REWIND_Y (SCR_H - VIDEOPLAYER_REWIND_H)//182
+
 
 //全屏
-#define VIDEOPLAYER_FULLSCREEN_X 2
-#define VIDEOPLAYER_FULLSCREEN_Y 184
 #define VIDEOPLAYER_FULLSCREEN_W 11
 #define VIDEOPLAYER_FULLSCREEN_H 10
+#define VIDEOPLAYER_FULLSCREEN_X 2
+#define VIDEOPLAYER_FULLSCREEN_Y (SCR_H - VIDEOPLAYER_FULLSCREEN_H)//182
+
 
 //进度点
-#define VIDEOPLAYER_GLIDER_X 19
-#define VIDEOPLAYER_GLIDER_Y 169
 #define VIDEOPLAYER_GLIDER_W 9
 #define VIDEOPLAYER_GLIDER_H 9
+#define VIDEOPLAYER_GLIDER_X 19
+#define VIDEOPLAYER_GLIDER_Y (SCR_H - VIDEOPLAYER_PLAY_PART_H - (VIDEOPLAYER_GLIDER_H >> 1))//182
 
+
+// Unused
 //上一个
-#define VIDEOPLAYER_PREVIOUS_X 16
-#define VIDEOPLAYER_PREVIOUS_Y 184
 #define VIDEOPLAYER_PREVIOUS_W 16
 #define VIDEOPLAYER_PREVIOUS_H 13
+#define VIDEOPLAYER_PREVIOUS_X 16
+#define VIDEOPLAYER_PREVIOUS_Y 184
 
+// Unused
 //下一个
 #define VIDEOPLAYER_NEXT_X 52
 #define VIDEOPLAYER_NEXT_Y 184
@@ -198,34 +212,39 @@
 #define VIDEOPLAYER_NEXT_H 13
 
 //进度条
-#define VIDEOPLAYER_SCHEDULE_X 19
-#define VIDEOPLAYER_SCHEDULE_Y 169
 #define VIDEOPLAYER_SCHEDULE_W 138
 #define VIDEOPLAYER_SCHEDULE_H 10
+#define VIDEOPLAYER_SCHEDULE_X 19
+#define VIDEOPLAYER_SCHEDULE_Y (SCR_H - VIDEOPLAYER_PLAY_PART_H - VIDEOPLAYER_SCHEDULE_H)//169
+
 
 //时间
-#define VIDEOPLAYER_TIME_X 69
-#define VIDEOPLAYER_TIME_Y 181
 #define VIDEOPLAYER_TIME_W 47
 #define VIDEOPLAYER_TIME_H 16
+#define VIDEOPLAYER_TIME_X 69
+#define VIDEOPLAYER_TIME_Y (SCR_H - VIDEOPLAYER_PLAY_PART_H - (VIDEOPLAYER_SCHEDULE_H >> 1))//181
+
 
 //音量
-#define VIDEOPLAYER_VOLUME_X 129
-#define VIDEOPLAYER_VOLUME_Y 182
 #define VIDEOPLAYER_VOLUME_W 33
 #define VIDEOPLAYER_VOLUME_H 14
+#define VIDEOPLAYER_VOLUME_X 129
+#define VIDEOPLAYER_VOLUME_Y (SCR_H - VIDEOPLAYER_VOLUME_H)//182
+
 
 //增加音量
-#define VIDEOPLAYER_VOLUME_ADD_X 162
-#define VIDEOPLAYER_VOLUME_ADD_Y 182
 #define VIDEOPLAYER_VOLUME_ADD_W 12
 #define VIDEOPLAYER_VOLUME_ADD_H 16
+#define VIDEOPLAYER_VOLUME_ADD_X 162
+#define VIDEOPLAYER_VOLUME_ADD_Y (SCR_H - VIDEOPLAYER_VOLUME_ADD_H)//182
+
 
 //降低音量
-#define VIDEOPLAYER_VOLUME_LOW_X 117
-#define VIDEOPLAYER_VOLUME_LOW_Y 182
 #define VIDEOPLAYER_VOLUME_LOW_W 12
 #define VIDEOPLAYER_VOLUME_LOW_H 16
+#define VIDEOPLAYER_VOLUME_LOW_X 117
+#define VIDEOPLAYER_VOLUME_LOW_Y (SCR_H - VIDEOPLAYER_VOLUME_ADD_H)//182
+
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define VIDEOPLAYER_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
@@ -306,7 +325,7 @@ typedef struct _CVideoPlayer
     IShell           *m_pShell;
     IConfig          *m_pConfig;    
     IMenuCtl         *m_pMenuCtl; //IMenuCtl指针
-    IMedia           *m_pMedia;//IMedia指针
+    IMediaMPEG4      *m_pMedia;//IMedia指针
     IMediaUtil		 *m_pMediaUtil;
     IImage           *m_pImage;
     IFileMgr         *m_pIFileMgr;    

@@ -610,9 +610,9 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
                 }
                 if(pMe->IsPlay)
                 {
-                    IMEDIA_Pause(pMe->m_pMedia);
+                    IMEDIA_Pause((IMedia*)pMe->m_pMedia);
                 }
-                IMedia_Stop(pMe->m_pMedia);
+                IMedia_Stop((IMedia*)pMe->m_pMedia);
             }
             //中断相关操作(自动关机,低电量关机,来电)
             return TRUE;
@@ -640,9 +640,9 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
             //中断相关操作(自动关机,低电量关机,来电)
             if(pMe->IsPause || pMe->IsPlay)
             {
-                IMEDIA_Play(pMe->m_pMedia);
-                IMEDIA_FastForward(pMe->m_pMedia,pMe->m_bPauseTime);
-                IMEDIA_Pause(pMe->m_pMedia);
+                IMEDIA_Play((IMedia*)pMe->m_pMedia);
+                IMEDIA_FastForward((IMedia*)pMe->m_pMedia,pMe->m_bPauseTime);
+                IMEDIA_Pause((IMedia*)pMe->m_pMedia);
             }
             //中断相关操作(自动关机,低电量关机,来电)
             if(pMe->m_pMedia == NULL)// 防止中断恢复时会跑到这里
@@ -702,7 +702,7 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
             return TRUE;
             
         case EVT_AUTO_POWERDOWN:           
-            IMEDIA_Pause(pMe->m_pMedia);
+            IMEDIA_Pause((IMedia*)pMe->m_pMedia);
             pMe->IsPlay = FALSE;
             pMe->IsPause = TRUE;
             videoplayer_play_flag = FALSE;
@@ -841,8 +841,8 @@ void VideoPlayer_ReleaseVideo(CVideoPlayer *pMe)
 {
     if(pMe->m_pMedia)
     {
-        (void)IMEDIA_RegisterNotify(pMe->m_pMedia, NULL, pMe);
-        IMEDIA_Release(pMe->m_pMedia);
+        (void)IMEDIA_RegisterNotify((IMedia*)pMe->m_pMedia, NULL, pMe);
+        IMEDIA_Release((IMedia*)pMe->m_pMedia);
         pMe->m_pMedia = NULL;
     }
 } 
@@ -869,6 +869,7 @@ int VideoPlayer_Play(IVideoPlayer *pi,char *VideoName)
     args=(char *)MALLOC((1+MAX_STR_LEN)*sizeof(char));
     args[0]=STARTARGS_GALLERY;
     STRCPY(&args[1],VideoName);
+	
     nRet = ISHELL_StartAppletArgs(pMe->m_pShell,AEECLSID_VIDEOPLAYER,args);   
     if (args) 
     {
