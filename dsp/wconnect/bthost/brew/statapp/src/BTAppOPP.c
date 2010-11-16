@@ -1073,8 +1073,7 @@ boolean BTApp_OPPBuildMenu( CBTApp* pMe, BTAppMenuType menu )
   {
     //Add By zzg 2010_11_09
     case BT_APP_MENU_OPP_SENDFILE:
-		MSG_FATAL("***zzg BTApp_OPPBuildMenu BT_APP_MENU_OPP_SENDFILE***", 0, 0, 0);	
-		
+	{		
 		if (BTApp_OPPInit(pMe) != FALSE)
 		{
 			BTApp_OPPBuildSendFileMenu(pMe);
