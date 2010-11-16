@@ -2143,15 +2143,15 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     {
                         bgRect.dx = 120;
                     }
-#elif defined(FEATURE_DISP_220X176)
-                    if(titleLen > 180)
+#elif defined(FEATURE_DISP_220X176)		//220-28-28
+                    if(titleLen > 164)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 220;
                     }
                     else
                     {
-                        bgRect.dx = 180;
+                        bgRect.dx = 164;
                     }					
 #elif defined(FEATURE_DISP_128X160)
                     if(titleLen > 88)
