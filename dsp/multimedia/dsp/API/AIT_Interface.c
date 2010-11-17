@@ -199,7 +199,7 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 		AIT_CAM_PREV_FULL_MODE,
 		CAM_ROTATE_NORMAL,//CAM_ROTATE_NORMAL,
 		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},
-		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},
+		{0,0,0,0},
 		{0,0,0,0},
 		{0,0,0,0}
 	},
@@ -207,7 +207,7 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 		AIT_CAM_PREV_NOR_MODE,
 		CAM_ROTATE_NORMAL,
 		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},
-		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},
+		{0,0,0,0},
 		{0,0,0,0},
 		{0,0,0,0}
 	},	
@@ -270,7 +270,7 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 		AIT_ATV_PREV_NOR_MODE,
 		CAM_ROTATE_NORMAL,
 		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},
-		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},
+		{0,0,0,0},
 		{0,0,0,0},
 		{0,0,0,0}
 	},
@@ -278,7 +278,7 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 		AIT_ATV_PREV_FULL_MODE,
 		CAM_ROTATE_90,
 		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},
-		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},
+		{0,0,0,0},
 		{0,0,0,0},
 		{0,0,0,0}
 	},
@@ -486,7 +486,7 @@ extern	t_sensor_manager	sensor_bf3703;
 
 //TV
 #ifdef AIT_ATV_SUPPORT
-u_char g_ATV_Flag=0;
+u_char g_ATV_Flag=1;
 extern t_sensor_manager	sensor_tlg1120;
 #endif
 
