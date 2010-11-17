@@ -675,8 +675,8 @@ if(!(x))         \
 #define ANI_NUM 5
 
 //进度条
-#define SCHEDULEBAR_X 50
-#define SCHEDULEBAR_Y 84
+#define SCHEDULEBAR_X 52
+#define SCHEDULEBAR_Y 80
 #define SCHEDULEBAR_W 215 //94
 #define SCHEDULEBAR_H 13
 
@@ -688,39 +688,39 @@ if(!(x))         \
 
 //播放按钮
 #define PLAY_X 130 //66
-#define PLAY_Y 138 //55
+#define PLAY_Y 125 //55
 #define PLAY_W 52 //45
 #define PLAY_H 49 //44
 
 //前一个曲目
-#define PREVIOUSPRESS_X 83 //37
-#define PREVIOUSPRESS_Y 140 //60
+#define PREVIOUSPRESS_X 58 //37
+#define PREVIOUSPRESS_Y 130 //60
 #define PREVIOUSPRESS_W 38 //31
 #define PREVIOUSPRESS_H 38 //32
 
 //后一个曲目
-#define NEXTPRESS_X 190 //107
-#define NEXTPRESS_Y 140 //60
+#define NEXTPRESS_X 220 //107
+#define NEXTPRESS_Y 130 //60
 #define NEXTPRESS_W 38 //31
 #define NEXTPRESS_H 38 //32
 
 //降低音量
-#define DECREASEVOLUMEPRESS_X 8
-#define DECREASEVOLUMEPRESS_Y 157
+#define DECREASEVOLUMEPRESS_X 6
+#define DECREASEVOLUMEPRESS_Y 163
 #define DECREASEVOLUMEPRESS_W 36
-#define DECREASEVOLUMEPRESS_H 34
+#define DECREASEVOLUMEPRESS_H 24
 
 //增加音量
-#define ADDVOLUMEPRESS_X 8
+#define ADDVOLUMEPRESS_X 6
 #define ADDVOLUMEPRESS_Y 88
 #define ADDVOLUMEPRESS_W 36
-#define ADDVOLUMEPRESS_H 34
+#define ADDVOLUMEPRESS_H 24
 
 //音量
-#define VOLUME_X 9
-#define VOLUME_Y 118
+#define VOLUME_X 10
+#define VOLUME_Y 110
 #define VOLUME_W 24
-#define VOLUME_H 34
+#define VOLUME_H 54
 
 //当前序号/总数量
 #define LISTINDEX_X (NEXTPRESS_X+NEXTPRESS_W+5) //5

@@ -5759,7 +5759,7 @@ static void TextCtl_DrawBackGround(CTextCtl * pme, AEERect *pRect)
         }
         else
         {
-            pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+            pme->m_pImageBg = ISHELL_LoadResImage(pme->m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_TEXTBACKGROUND);
         }
         OEM_TextSetBackGround(pme->m_pText, pme->m_pImageBg);
     }
