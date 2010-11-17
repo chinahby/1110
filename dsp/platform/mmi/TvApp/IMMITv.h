@@ -169,11 +169,11 @@ typedef struct IMMITv IMMITv;
         int  (*SetDisplaySize) (iname* p##iname, AEESize *pDisplaySize); \
         \
         int  (*AutoScanTV) (iname* p##iname); \
-       \
+        int  (*SetTvChannel)(iname* p##iname, uint16 Channel,boolean fast); \
         int  (*getTvChannel)(iname* p##iname);    \
         int  (*StartPreview)(iname* p##iname);    \
          int  (*updateimg)(iname* p##iname,uint32 dwParam);    \
-       \
+        int  (*StopPreview)(iname* p##iname);    \
         int  (*SetRegion)(iname* p##iname, TLG_REGION_CODE region); \
         uint8 (*getChannelCountAble)(iname* p##iname); \
         boolean (*hasChannelFinish)(iname* p##iname); \
@@ -206,12 +206,11 @@ struct IMMITv
 //#define IMMITv_GetCapturedFrame(pThis,ppIBitmap)    pThis->pvt->GetCapturedFrame(pThis,ppIBitmap)
 //#define IMMITv_GetVideoFirstFrame(pThis,ppIBitmap)    pThis->pvt->GetVideoFirstFrame(pThis,ppIBitmap)
 #define IMMITv_AutoScanTV(pThis)   pThis->pvt->AutoScanTV(pThis)
-//#define IMMITv_SetTvChannel(pThis, Channel,fast)  pThis->pvt->SetTvChannel(pThis, Channel,fast)
+#define IMMITv_SetTvChannel(pThis, Channel,fast)  pThis->pvt->SetTvChannel(pThis, Channel,fast)
 #define IMMITv_GetTvChannel(pThis)  pThis->pvt->getTvChannel(pThis)
 #define IMMITv_StartPreview(pThis)  pThis->pvt->StartPreview(pThis)
 #define IMMITv_updateimg(pThis,dw)  pThis->pvt->updateimg(pThis,dw)
-
-//#define IMMITv_StopPreview(pThis)   pThis->pvt->StopPreview(pThis)
+#define IMMITv_StopPreview(pThis)   pThis->pvt->StopPreview(pThis)
 //#define IMMITv_getChannelTotal(pThis)  pThis->pvt->getChannelTotal(pThis)
 #define IMMITv_SetRegion(pThis, region) pThis->pvt->SetRegion(pThis, region) 
 #define IMMITv_getChannelCountAble(pThis) pThis->pvt->getChannelCountAble(pThis)

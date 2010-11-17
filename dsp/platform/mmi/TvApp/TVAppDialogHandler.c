@@ -334,6 +334,7 @@ static void TV_OCEANIAMenu(CTVApp *pMe,IMenuCtl *pMenuCtl);
 static int TV_UpdateInit(CTVApp *pMe);
 static int TV_Update(CTVApp *pMe);
 static void TV_StartPreview(CTVApp *pMe);
+static void TV_StopSearchAnimation(CTVApp *pITvUtil);
 
 
 
@@ -641,41 +642,38 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
           pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
 
 		 {
-		int result = SUCCESS;
-						   
-		result = ISHELL_CreateInstance(pMe->m_pShell, MMI_CLSID_IMMITV, (void**)&pMe->pIMMITv);
-		if(pMe->pIMMITv == NULL)
-		 {
-		  return FALSE;
-		 }
-					
-					
-		result = IMMITv_CreateTv(pMe->pIMMITv, &pMe->myICBMMITv);
-		if(MMI_SUCCESS(result))
-		 {
-			 MSG_FATAL("IMMITv_CreateTv---------------------success",0,0,0);
-		 }
-						   
-		 result = IMMITv_StartPreview(pMe->pIMMITv);
-		if(MMI_SUCCESS(result))
-		{
-			MSG_FATAL("IMMITv_StartPreview----------------------success",0,0,0);
-		}
-		MSG_FATAL("IMMITv_StartPreview----------------------will--end",0,0,0);
+			int result = SUCCESS;
+							   
+			result = ISHELL_CreateInstance(pMe->m_pShell, MMI_CLSID_IMMITV, (void**)&pMe->pIMMITv);
+			if(pMe->pIMMITv == NULL)
+			 {
+			  return FALSE;
+			 }
+						
+						
+			result = IMMITv_CreateTv(pMe->pIMMITv, &pMe->myICBMMITv);
+			if(MMI_SUCCESS(result))
+			 {
+				 MSG_FATAL("IMMITv_CreateTv---------------------success",0,0,0);
+			 }
+			//pTvSetting->region=TLG_REGION_SHENZHEN;
+			//result = IMMITv_SetRegion(pMe->pIMMITv,TLG_REGION_SHENZHEN );
+			MSG_FATAL("IMMITv_StartPreview----------------------success12",0,0,0);
+			result = IMMITv_StartPreview(pMe->pIMMITv);
+			if(MMI_SUCCESS(result))
+			{
+				MSG_FATAL("IMMITv_StartPreview----------------------success",0,0,0);
+			}
+			MSG_FATAL("IMMITv_StartPreview----------------------will--end",0,0,0);
 
-       
-		//result = IMMITv_SetRegion(pMe->pIMMITv, pTvSetting->region);
-						   
+		   // IMMITv_AutoScanTV(pMe->pIMMITv); 
+		   //  TV_StopSearchAnimation(pMe);
+  
 		 }
 			
-#if defined(AEE_STATIC)
-		 ASSERT(pMe != NULL);
-#endif
-		 
             //IMENUCTL_SetPopMenuRect(pMenu);
 			//IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             //IMENUCTL_SetBottomBarType(pMenu, BTBAR_OPTION_BACK);//BTBAR_SELECT_BACK
-            
 			 IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);	
             return TRUE;
         	
@@ -693,11 +691,11 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 
         case EVT_USER_REDRAW: 
 
-			 (void)IMENUCTL_Redraw(pMenu);
+			 //(void)IMENUCTL_Redraw(pMenu);
 
-			 TV_UpdateInit(pMe);
-			 TVApp_DrawBottomBarText(pMe, BTBAR_OPTION_BACK); 
-			 TV_Update(pMe);
+			// TV_UpdateInit(pMe);
+			// TVApp_DrawBottomBarText(pMe, BTBAR_OPTION_BACK); 
+			// TV_Update(pMe);
 			//IDISPLAY_Update(pMe->m_pDisplay); //刷屏
             return TRUE;
             
@@ -723,6 +721,7 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 			//TV_MainOptsMenu_HandleEvent(pMe, eCode,wParam, dwParam);
             if(wParam == AVK_SELECT)
             {
+             IMMITv_StopPreview(pMe->pIMMITv);
              CLOSE_DIALOG(DLGRET_POPMSG);//STATE_CPOPMSG
 			      
             }
@@ -742,6 +741,47 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
             break;
     }
     return FALSE;
+}
+
+static void TV_StopSearchAnimation(CTVApp *pITvUtil)
+{  
+    int result = SUCCESS;
+    int i = 0;
+    char title[3];
+    char channel[4];
+    CTVApp* pThis = (CTVApp*)pITvUtil;
+    uint16 *ableChannelArray = IMMITv_getAbleChannelArray(pThis->pIMMITv);
+    int channelCount = IMMITv_getChannelCountAble(pThis->pIMMITv);
+    
+
+  //  MMI_DEBUG(ATV,("CTvUtil_StopSearchAnimation Start"));
+
+    if(channelCount > 0)
+    {
+        pTvSetting->ChannelCountAble = channelCount;
+        pTvSetting->CurrentChannel = ableChannelArray[0];//自动搜索完成后，会跳到索引为0的频道来
+        pThis->currentlyChannel = ableChannelArray[0];
+        pThis->currentlyChannelIndex = 0;
+        result = IMMITv_SetTvChannel(pThis->pIMMITv, ableChannelArray[0],FALSE); 
+       // MMI_DEBUG(ATV, ("search finish，have %d channel",channelCount));
+        if (pThis->pIMMITv != NULL)
+        {
+           // IMMITv_SetProperty(pThis->pIMMITv, TV_PROPERTY_SOUND, pTvSetting->SoundStep);
+            //IMMIAudioDevice_GetOutputVolumn(pThis->pIMMIAudioDevice,AUDIOVOLUME_LEVEL0);
+        }
+        for(; i < channelCount; i++)
+        {
+            SPRINTF(title, "%d", i+1);
+            SPRINTF(channel, "%d",  ableChannelArray[i]);
+           // CTvUtil_BookmarkOperator_InsertAt(channel, title, &pThis->BM_ListFocusIndex);             
+        }
+        IMMITv_ResetScanTag(pThis->pIMMITv);
+       // CTvUtil_UI_ShowCurrentChannel(pThis, TRUE);                     
+   }
+
+	
+   // IUTKForm_DeleteWidgetByID(pThis->pIViewForm, IDW_TV_FORM_IMG_SEARCH);
+   // MMI_DEBUG(ATV,("CTvUtil_StopSearchAnimation END"));
 }
 
 static void TV_StartPreview(CTVApp * pMe)
@@ -795,9 +835,9 @@ static boolean TV_DRAWTOPBAR_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
     switch(eCode) 
     {
         case EVT_DIALOG_INIT:
-            IMENUCTL_SetPopMenuRect(pMenu);
-			IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
-            IMENUCTL_SetBottomBarType(pMenu, BTBAR_OK_BACK);
+           // IMENUCTL_SetPopMenuRect(pMenu);
+			//IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+           // IMENUCTL_SetBottomBarType(pMenu, BTBAR_OK_BACK);
 		
             return TRUE;
         	
@@ -815,6 +855,7 @@ static boolean TV_DRAWTOPBAR_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
             return TRUE;
 
         case EVT_USER_REDRAW:
+			TV_UpdateInit(pMe);
 
             IMENUCTL_Redraw(pMenu);
 				{
@@ -827,7 +868,7 @@ static boolean TV_DRAWTOPBAR_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 				if(pTopBarImage2)
 	            {
 	            
-			    TV_UpdateInit(pMe);
+			    
 	            IIMAGE_GetInfo(pTopBarImage2, &myInfo);
 				MSG_FATAL("m_cxWidth--%d------m_cyHeight--%d-----myInfo----%d",pMe->m_cxWidth,pMe->m_cyHeight,myInfo.cy);
 	            IIMAGE_Draw(pTopBarImage2, (pMe->m_cxWidth - myInfo.cx)/2, pMe->m_cyHeight-(myInfo.cy*2)-15);	
@@ -940,6 +981,7 @@ static boolean TV_DRAWBAR1_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
 	                                           IDI_PNG_TV_SELECT_UNABLE);
 				if(pTopBarImage2)
 	            {
+	             TV_UpdateInit(pMe);
 	            IIMAGE_GetInfo(pTopBarImage2, &myInfo);
 				MSG_FATAL("m_cxWidth--%d------m_cyHeight--%d-----myInfo----%d",pMe->m_cxWidth,pMe->m_cyHeight,myInfo.cy);
 				IIMAGE_Draw(pTopBarImage2, (pMe->m_cxWidth - myInfo.cx)/2, pMe->m_cyHeight-(myInfo.cy*2)-15);	
@@ -948,6 +990,7 @@ static boolean TV_DRAWBAR1_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
 
 				IIMAGE_Release(pTopBarImage2);
 	            pTopBarImage2 = NULL;
+				TV_Update(pMe);
 	            }
             	}
 			//IDISPLAY_Update(pMe->m_pDisplay); //刷屏
@@ -1059,6 +1102,7 @@ static boolean TV_DRAWBAR2_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
 	                                           IDI_PNG_TV_SELECT_UNABLE);
 				if(pTopBarImage2)
 	            {
+	             TV_UpdateInit(pMe);
 	             IIMAGE_GetInfo(BarImageBG, &bgInfo);
 	            IIMAGE_GetInfo(pTopBarImage2, &myInfo);
 				MSG_FATAL("m_cxWidth--%d------m_cyHeight--%d-----myInfo----%d---------bgInfo--%d",pMe->m_cxWidth,pMe->m_cyHeight,myInfo.cy);
@@ -1070,6 +1114,7 @@ static boolean TV_DRAWBAR2_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
 
 				IIMAGE_Release(pTopBarImage2);
 	            pTopBarImage2 = NULL;
+				TV_Update(pMe);
 	            }
             	}
 			//IDISPLAY_Update(pMe->m_pDisplay); //刷屏
@@ -1761,7 +1806,7 @@ static boolean TV_MainOptsMenu_HandleEvent(CTVApp *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-              TV_Build_MainOpts_Menu(pMe,pMenuCtl);
+			   TV_Build_MainOpts_Menu(pMe,pMenuCtl);
 			   MSG_FATAL("TV_MainOptsMenu_HandleEvent ----------------EVT_DIALOG_INIT",0,0,0);
               return TRUE;
             
@@ -1773,7 +1818,7 @@ static boolean TV_MainOptsMenu_HandleEvent(CTVApp *pMe,
             IMENUCTL_SetBottomBarType(pMenuCtl,BTBAR_SELECT_BACK);
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
-                                    AEECLSID_APP_MUSICPLAYER,
+                                    AEECLSID_TVAPP,
                                     EVT_USER_REDRAW,
                                     0,
                                     0); 
@@ -1784,9 +1829,12 @@ static boolean TV_MainOptsMenu_HandleEvent(CTVApp *pMe,
         //lint -fallthrough
         
         case EVT_USER_REDRAW:
+			//TV_UpdateInit(pMe);
 			MSG_FATAL("TV_MainOptsMenu_HandleEvent ----------------EVT_USER_REDRAW",0,0,0);
             //IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
-            IMENUCTL_Redraw(pMenuCtl);
+			
+			IMENUCTL_Redraw(pMenuCtl);
+			//TV_Update(pMe);
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -1883,7 +1931,7 @@ static boolean TV_REGIONMenu_HandleEvent(CTVApp *pMe,
             IMENUCTL_SetBottomBarType(pMenuCtl,BTBAR_SELECT_BACK);
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
-                                    AEECLSID_APP_MUSICPLAYER,
+                                    AEECLSID_TVAPP,
                                     EVT_USER_REDRAW,
                                     0,
                                     0); 
@@ -2011,7 +2059,7 @@ static boolean TV_ASIAMenu_HandleEvent(CTVApp *pMe,
             IMENUCTL_SetBottomBarType(pMenuCtl,BTBAR_SELECT_BACK);
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
-                                    AEECLSID_APP_MUSICPLAYER,
+                                    AEECLSID_TVAPP,
                                     EVT_USER_REDRAW,
                                     0,
                                     0); 
@@ -2109,7 +2157,7 @@ static boolean TV_LATINMenu_HandleEvent(CTVApp *pMe,
             IMENUCTL_SetBottomBarType(pMenuCtl,BTBAR_SELECT_BACK);
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
-                                    AEECLSID_APP_MUSICPLAYER,
+                                    AEECLSID_TVAPP,
                                     EVT_USER_REDRAW,
                                     0,
                                     0); 
@@ -2207,7 +2255,7 @@ static boolean TV_EUROPEMenu_HandleEvent(CTVApp *pMe,
             IMENUCTL_SetBottomBarType(pMenuCtl,BTBAR_SELECT_BACK);
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
-                                    AEECLSID_APP_MUSICPLAYER,
+                                    AEECLSID_TVAPP,
                                     EVT_USER_REDRAW,
                                     0,
                                     0); 
@@ -2305,7 +2353,7 @@ static boolean TV_AFRICAMenu_HandleEvent(CTVApp *pMe,
             IMENUCTL_SetBottomBarType(pMenuCtl,BTBAR_SELECT_BACK);
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
-                                    AEECLSID_APP_MUSICPLAYER,
+                                    AEECLSID_TVAPP,
                                     EVT_USER_REDRAW,
                                     0,
                                     0); 
@@ -2403,7 +2451,7 @@ static boolean TV_OCEANIAMenu_HandleEvent(CTVApp *pMe,
             IMENUCTL_SetBottomBarType(pMenuCtl,BTBAR_SELECT_BACK);
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
-                                    AEECLSID_APP_MUSICPLAYER,
+                                    AEECLSID_TVAPP,
                                     EVT_USER_REDRAW,
                                     0,
                                     0); 
@@ -3731,7 +3779,7 @@ static boolean TVApp_PopMenu_ResetCFGCommandHandleEvent(CTVApp *pMe, uint16 wPar
 /*添加OPT主菜单*/
 static void TV_Build_MainOpts_Menu(CTVApp *pMe,IMenuCtl *pMenuCtl)
 {
-  
+    TVApp_SetPopMenuRect(pMe, pMenuCtl, 5);
     TVMENU_ADDITEM(pMenuCtl,IDS_TV_FAVORITE);
     TVMENU_ADDITEM(pMenuCtl,IDS_REGION);
     TVMENU_ADDITEM(pMenuCtl,IDS_AUTO_SCAN);
@@ -3743,7 +3791,7 @@ static void TV_Build_MainOpts_Menu(CTVApp *pMe,IMenuCtl *pMenuCtl)
 /*添加REGIONMenu主菜单*/
 static void TV_REGIONMenu(CTVApp *pMe,IMenuCtl *pMenuCtl)
 {
- 
+    TVApp_SetPopMenuRect(pMe, pMenuCtl, 5);
     TVMENU_ADDITEM(pMenuCtl,IDS_ASIA);
     TVMENU_ADDITEM(pMenuCtl,IDS_LATIN);
     TVMENU_ADDITEM(pMenuCtl,IDS_EUROPE);

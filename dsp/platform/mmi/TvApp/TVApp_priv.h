@@ -403,6 +403,8 @@ typedef struct _CTVApp
 	AEEApplet        	a;
     IShell 				*pIShell;
 	
+	uint16   currentlyChannel; //当前正在播放的频道
+    uint16   currentlyChannelIndex;//当前正在播放的频道在书签中的逻辑索引
 } CTVApp;
 
 /*==============================================================================                         

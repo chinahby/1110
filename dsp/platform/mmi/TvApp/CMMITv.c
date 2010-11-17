@@ -48,6 +48,9 @@
 //////////////////////////////////////////////////////////////////////////
 #define MMITV_FILEPATH_LENGTH 	AEE_MAX_FILE_NAME
 
+#define MMI_SUCCESS(result) (result == SUCCESS? TRUE:FALSE)
+#define MMI_FAILURE(result) (result == SUCCESS? FALSE:TRUE)
+
 
 
 
@@ -162,8 +165,11 @@ static void CMMITv_AtvSetChn_CallBack(void *pUser, ATV_SetChn_Notify_t *pTvNotif
 int CMMITv_IMMITv_CreateTv(IMMITv* pIMMITv, ICBMMITv *pICBMMITv);
 int CMMITv_IMMITv_SetDisplaySize(IMMITv* pIMMITv,AEESize *pDisplaySize);
 int CMMITv_IMMITv_AutoScanTV(IMMITv* pIMMITv);
+int CMMITv_IMMITv_SetTvChannel(IMMITv* pIMMITv, uint16 Channel,boolean fast);
 int CMMITv_IMMITv_GetTvChannel(IMMITv* pIMMITv);
 int CMMITv_IMMITv_StartPreview(IMMITv* pIMMITv);
+int CMMITv_IMMITv_StopPreview(IMMITv* pIMMITv);
+
 int CMMITv_EnableVolPlay(IMMITv *pIMMITv,boolean  bVal);
 int CMMITv_IMMITv_SetRegion(IMMITv* pIMMITv, TLG_REGION_CODE region);
 uint8 CMMITv_IMMITv_GetChannelCountAble(IMMITv* pIMMITv);//返回搜到了的有信号的台总和
@@ -339,6 +345,25 @@ int CMMITv_IMMITv_AutoScanTV(IMMITv* pIMMITv)
     return SUCCESS;
 }
     
+	int CMMITv_IMMITv_SetTvChannel(IMMITv* pIMMITv, uint16 Channel,boolean fast)
+	{
+		int result = SUCCESS;
+		CMMITv* pThis = (CMMITv*)pIMMITv->pData;
+#ifdef AEE_SIMULATOR
+		return result;
+#endif
+	
+		if (fast == TRUE)
+		{
+			ITV_SetChn(pThis->pITv,Channel,ATV_FAST_SET);//返回0表示没搜到台或者错误。其他值都是正常的	
+		}
+		else
+		{
+			ITV_SetChn(pThis->pITv,Channel,ATV_SET_AV_STOP);//返回0表示没搜到台或者错误。其他值都是正常的
+		}
+		return result;
+	}
+
 
 int CMMITv_IMMITv_GetTvChannel(IMMITv* pIMMITv)
 {
@@ -382,6 +407,48 @@ int CMMITv_IMMITv_updateimg(IMMITv* pIMMITv,uint32 dwParam)
 	ITV_updateimg(pThis->pITv,dwParam);
 
 }
+
+int CMMITv_IMMITv_StopPreview(IMMITv* pIMMITv)
+{
+    CMMITv* pThis = (CMMITv*)pIMMITv->pData;
+    int result = SUCCESS;
+#ifdef AEE_SIMULATOR
+    return result;
+#endif
+    if(pThis->pITv != NULL)
+    {
+        result = ITV_StopPreview(pThis->pITv);
+    }
+#ifdef AEE_SIMULATOR
+	return result;
+#endif
+    
+	//MMI_DEBUG(ATV, ("[CMMITv] CMMITv_IMMITv_StopPreview %x", pThis->Cam_State));
+	
+    if(pThis->pITv != NULL)
+    {
+		if(pThis->Cam_State == CAM_PREVIEW || pThis->Cam_State == CAM_PREVIEWPAUSE)
+		{
+			result = ITV_StopPreview(pThis->pITv);
+			if(MMI_SUCCESS(result))
+			{
+				pThis->Cam_State = CAM_STOPPREVIEW;
+				//MMI_DEBUG(ATV, ("[CMMITv] CMMITv_IMMITv_StopPreview_State CAM_STOPPREVIEW"));
+			}		
+		}
+		else if(pThis->Cam_State != CAM_READY && pThis->Cam_State != CAM_STOPPREVIEW)
+		{
+			result = EBADSTATE;
+		}
+	}
+	else
+	{
+		result = ENOTALLOWED;
+	}
+
+    return result;    
+}
+
 
 int CMMITv_IMMITv_StartPreview(IMMITv* pIMMITv)
 {
@@ -451,11 +518,11 @@ static const AEEVTBL(IMMITv) gIMMITvFuncs =
   //  CMMITv_IMMITv_GetCapturedFrame,
   //  CMMITv_IMMITv_GetVideoFirstFrame,
     CMMITv_IMMITv_AutoScanTV,
-  //  CMMITv_IMMITv_SetTvChannel,
+    CMMITv_IMMITv_SetTvChannel,
     CMMITv_IMMITv_GetTvChannel,
     CMMITv_IMMITv_StartPreview,
     CMMITv_IMMITv_updateimg,
- //   CMMITv_IMMITv_StopPreview,
+    CMMITv_IMMITv_StopPreview,
  //   CMMITv_IMMITv_GetChannelTotal,
     CMMITv_IMMITv_SetRegion,
     CMMITv_IMMITv_GetChannelCountAble,
