@@ -43,6 +43,15 @@
 	<String Id="1023" Name="IDS_APPLICATION_TITLE_13">
 		<Text>Calendar</Text>
 	</String>
+	<String Id="1024" Name="IDS_APPLICATION_TITLE_14">
+		<Text>Browser</Text>
+	</String>
+	<String Id="1025" Name="IDS_APPLICATION_TITLE_15">
+		<Text>Bluetootch</Text>
+	</String>
+	<String Id="1026" Name="IDS_APPLICATION_TITLE_16">
+		<Text>TV</Text>
+	</String>
 	<String Id="1031" Name="IDS_TOOLS_LIST">
 		<Text>Tools</Text>
 	</String>

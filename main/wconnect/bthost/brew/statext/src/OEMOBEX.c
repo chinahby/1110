@@ -1235,7 +1235,6 @@ static mt_obex_status_type OEMOBEX_MapCmdStatus(AEEOBEXCmdStatusType status)
 
 static int  OEMOBEX_CheckCmdStatus( mt_obex_status_type status )
 {
-
   switch (status)
   {
   case MT_OBEX_SUCCESS:

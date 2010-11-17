@@ -1502,10 +1502,12 @@ OI_STATUS OI_MBUF_Append(OI_MBUF* mbuf_ptr,
   uint16 bytes_pushed;
   boolean dsm_allocated = FALSE;
 
+
   if (mbuf_ptr->dsm_ptr == NULL)
   {
     /* if MBUF is empty, grab a DSM item */
     mbuf_ptr->dsm_ptr = bt_get_free_dsm_ptr( BT_TL_OBEX, len );
+	
     if (mbuf_ptr->dsm_ptr == NULL)
     {
       return OI_STATUS_OUT_OF_MEMORY;
@@ -1513,14 +1515,16 @@ OI_STATUS OI_MBUF_Append(OI_MBUF* mbuf_ptr,
     dsm_allocated = TRUE;
   }
 
-  bytes_pushed = dsm_pushdown_tail( &mbuf_ptr->dsm_ptr, (void*)buf_ptr,
-                                    len, DSM_DS_POOL_SIZE(len) );
+  bytes_pushed = dsm_pushdown_tail( &mbuf_ptr->dsm_ptr, (void*)buf_ptr,len, DSM_DS_POOL_SIZE(len) );
+
+  
   if ((bytes_pushed != len))
   {
     if (dsm_allocated)
     {
       dsm_free_packet(&(mbuf_ptr->dsm_ptr));
     }
+
     return OI_STATUS_OUT_OF_MEMORY;
   }
 

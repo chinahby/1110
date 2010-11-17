@@ -58,6 +58,13 @@ extern void    BTApp_ProcessOPPNotifications( CBTApp* pMe, AEEEvent evt,
                                               NotificationData* );
 extern void    BTApp_OPPConnect( CBTApp* pMe, AEEBTBDAddr* pBDAddr );
 
+//Add By zzg 2010_11_09
+extern void    BTApp_OPPBuildSendFileMenu(CBTApp* pMe );
+extern boolean BTApp_OPPHandleSendFileSelection( CBTApp* pMe, uint16 sel );
+
+
+//Add End
+
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION

@@ -420,7 +420,10 @@ when        who   what, where, why
 #include "AEEBTExtICP.h"
 #endif
 #ifdef FEATURE_BT_EXTPF_SAP
+#ifdef FEATURE_BT_TEST_API
 #error code not present
+#endif
+#include "AEECard.h"
 #endif
 #ifdef FEATURE_BT_EXTPF_AV
 #include "AEEBTExtAVRCP.h"
@@ -442,6 +445,16 @@ when        who   what, where, why
 #include "AEEBattery.h"
 #include "AEEAddrBook.h"
 #endif
+
+//Add By zzg 2010_10_29
+#include "AEEAnnunciator.h"
+#include "Appscommon.h"
+#include "Appscommon.brh"
+#include "appscommonimages.brh"
+
+#include "Btapp.brh"
+//Add End
+
 
 #ifdef FEATURE_BT_EXTPF_HID_HOST
 #error code not present
@@ -1733,6 +1746,7 @@ typedef enum
   BT_APP_MENU_OPP_SERVER,
   BT_APP_MENU_OPP_CLIENT,
   BT_APP_MENU_OPP_LIST_FILE_TYPES,
+  BT_APP_MENU_OPP_SENDFILE,					//Add By zzg 2010_11_09
 #endif
 #ifdef FEATURE_BT_EXTPF_FTP
   BT_APP_MENU_FTP_TESTS         = 200,
@@ -1830,8 +1844,13 @@ typedef struct _CBTApp
   IStatic*        m_pStatic;
   ITextCtl*       m_pText;
 
+  IAnnunciator    *m_pIAnn;	//Add By zzg 2010_10_29
+
   BTAppMenuType   menuStack[ MENU_STACK_DEPTH ];
   uint16          uMenuSel[ MENU_STACK_DEPTH ];
+
+  char			  m_pfilepath[AEEBT_MAX_FILE_NAME];
+  
   uint8           uTopMenu;
   BTApp_Enabling  mEnablingType;
   AG              mAG;
@@ -1887,7 +1906,9 @@ typedef struct _CBTApp
   boolean         bVocoderOn;
   boolean         bConfigChanged;
   uint16          uCurrMsgId;
-
+  
+  boolean		  bStartFromOtherApp;				//Add By zzg 2010_11_09  
+  
   AECHAR*         pText1;
   AECHAR*         pText2;
   uint8*          pMem;

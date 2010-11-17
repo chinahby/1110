@@ -48,6 +48,10 @@
 #include "AEEDrawAni.h"
 #endif
 
+//Add By zzg 2010_11_05
+#include "BTApp.h"
+//Add End
+
 #include "BATT_NOTIFIER.BID"
 #include "AEEBatt.h"
 #include "MediaGallery.h"

@@ -178,6 +178,7 @@ void BTApp_ProcessOPPNotifications(
 {
   uint32 userEvent;
 
+
   switch ( evt )
   {
     case AEEBT_OPP_EVT_REG_DONE:    // registration process done
@@ -216,11 +217,15 @@ void BTApp_ProcessOPPNotifications(
     {
       MSG_HIGH("BTAppOPP: Progress Evt: num_bytes = %d, obj_size = %d",
                pData->ProgressInfo.numBytes, pData->ProgressInfo.objSize, 0);
+
+	  
       BTAPP_POST_USER_EVENT( OPP, EVT_OPP_PROG_INFO );
       break;
     }
     case AEEBT_OPP_EVT_PUSH_REQ:    // client pushing object to server
     {
+
+	  
       pMe->mOPP.objType = pData->OppObject.objType;
       WSTRLCPY( pMe->mOPP.wName, pData->OppObject.pwName, 
                 ARR_SIZE( pMe->mOPP.wName ) );
@@ -307,7 +312,29 @@ void BTApp_OPPBuildMainMenu( CBTApp* pMe )
   IMENUCTL_SetRect(pMe->m_pIMenu, &pMe->m_rect);  
 
   // set the title
-  IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_OPP_TESTS, NULL );
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_OPP_TESTS, NULL );
+
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_OPP_TESTS,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
+  //Add End
 
   BTApp_InitAddItem( &ai );
 
@@ -326,11 +353,78 @@ void BTApp_OPPBuildMainMenu( CBTApp* pMe )
     BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_OPP_CLIENT, 0 );
   }
 
+  IMENUCTL_SetBottomBarType(pMe->m_pIMenu, BTBAR_SELECT_BACK);  	//Add By zzg 2010_11_09
+
   // Activate menu
   PUSH_MENU( BT_APP_MENU_OPP_TESTS );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
   IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
 }
+
+//Add By  zzg 2010_11_09
+/* ==========================================================================
+FUNCTION BTApp_OPPBuildSendFileMenu 
+============================================================================= */
+void BTApp_OPPBuildSendFileMenu( CBTApp* pMe )
+{
+  CtlAddItem ai;
+
+  IMENUCTL_Reset( pMe->m_pIMenu );
+  IMENUCTL_SetRect(pMe->m_pIMenu, &pMe->m_rect);  
+
+  // set the title
+  //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_OPP_TESTS, NULL );
+
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  
+  {
+    AECHAR WTitle[20] = {0};
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+                         BTAPP_RES_FILE,                                
+                         IDS_OPP,
+                         WTitle,
+                         sizeof(WTitle));
+ 
+    if(pMe->m_pIAnn != NULL)
+	{
+	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+	
+  }
+  //Add End
+
+  BTApp_InitAddItem( &ai );
+
+  // Add individual entries to the Menu
+  if( pMe->mOPP.bRegistered == TRUE )
+  {
+    BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_OPP_SERVER, 0 );
+  }
+  else if( pMe->mOPP.bConnected == TRUE )
+  {
+    BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_OPP_CLIENT, 0 );
+  }
+  else
+  {
+    BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_OPP_SERVER, 0 );
+    BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_OPP_CLIENT, 0 );
+  }
+
+  IMENUCTL_SetBottomBarType(pMe->m_pIMenu, BTBAR_SELECT_BACK);  	//Add By zzg 2010_11_09
+
+  MSG_FATAL("***zzg BTApp_OPPBuildSendFileMenu PUSH_MENU( BT_APP_MENU_OPP_SENDFILE )***", 0, 0, 0);	
+  
+  // Activate menu
+  PUSH_MENU( BT_APP_MENU_OPP_SENDFILE );
+  IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
+  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+}
+
+//Add End
 
 /* ==========================================================================
 FUNCTION BTApp_OPPBuildServerMenu
@@ -355,11 +449,46 @@ void BTApp_OPPBuildServerMenu( CBTApp* pMe )
 
     STRTOWSTR( szStatus, &pMe->pText2[ len ], 
                (SHORT_TEXT_BUF_LEN-len) * sizeof( AECHAR ) );
-    IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, NULL, pMe->pText2 );
+	
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, NULL, pMe->pText2 );
+
+	//Add By zzg 2010_11_01
+	if(pMe->m_pIAnn != NULL)
+	{
+	  	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+	}  
+
+	{	 
+		if(pMe->m_pIAnn != NULL)
+		{
+		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText2);
+		}		
+	}
+	//Add End
   }
   else
   {
-    IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_OPP_SERVER, NULL );
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_OPP_SERVER, NULL );
+	//Add By zzg 2010_11_01
+	if(pMe->m_pIAnn != NULL)
+	{
+	  	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+	}  
+
+	{
+		AECHAR WTitle[20] = {0};
+		ISHELL_LoadResString(pMe->a.m_pIShell,
+		                     BTAPP_RES_FILE,                                
+		                     IDS_OPP_SERVER,
+		                     WTitle,
+		                     sizeof(WTitle));
+
+		if(pMe->m_pIAnn != NULL)
+		{
+		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+		}
+	}
+	//Add End
   }
 
   BTApp_InitAddItem( &ai );
@@ -373,6 +502,8 @@ void BTApp_OPPBuildServerMenu( CBTApp* pMe )
   {
     BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_DEREGISTER, 0 );
   }
+
+  IMENUCTL_SetBottomBarType(pMe->m_pIMenu, BTBAR_SELECT_BACK);  	//Add By zzg 2010_11_09
 
   // Activate menu
   PUSH_MENU( BT_APP_MENU_OPP_SERVER );
@@ -406,11 +537,44 @@ void BTApp_OPPBuildClientMenu( CBTApp* pMe )
 
     STRTOWSTR( szStatus, &pMe->pText2[ len ], 
                (SHORT_TEXT_BUF_LEN-len) * sizeof( AECHAR ) );
-    IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, NULL, pMe->pText2 );
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, NULL, pMe->pText2 );
+    //Add By zzg 2010_11_01
+	if(pMe->m_pIAnn != NULL)
+	{
+	  	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+	}  
+
+	{	 
+		if(pMe->m_pIAnn != NULL)
+		{
+		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText2);
+		}		
+	}
+	//Add End
   }
   else
   {
-    IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_OPP_CLIENT, NULL );
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_OPP_CLIENT, NULL );
+    //Add By zzg 2010_11_01
+	if(pMe->m_pIAnn != NULL)
+	{
+	  	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+	}  
+
+	{
+		AECHAR WTitle[20] = {0};
+		ISHELL_LoadResString(pMe->a.m_pIShell,
+		                     BTAPP_RES_FILE,                                
+		                     IDS_OPP_CLIENT,
+		                     WTitle,
+		                     sizeof(WTitle));
+
+		if(pMe->m_pIAnn != NULL)
+		{
+		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+		}
+	}
+	//Add End
   }
 
   BTApp_InitAddItem( &ai );
@@ -427,6 +591,8 @@ void BTApp_OPPBuildClientMenu( CBTApp* pMe )
     BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_BUSINESS_CARD_EXCHANGE, 0 );
     BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_DISCONNECT, 0 );
   }
+
+  IMENUCTL_SetBottomBarType(pMe->m_pIMenu, BTBAR_SELECT_BACK);  	//Add By zzg 2010_11_09
   
   // Activate menu
   PUSH_MENU( BT_APP_MENU_OPP_CLIENT );
@@ -442,6 +608,104 @@ void BTApp_OPPBuildClientMenu( CBTApp* pMe )
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
 }
+
+//Add By zzg 2010_11_09
+/* ==========================================================================
+FUNCTION BTApp_OPPBuildSendFileClientMenu
+DESCRIPTION
+============================================================================= */
+void BTApp_OPPBuildSendFileClientMenu( CBTApp* pMe )
+{
+  CtlAddItem ai;
+  char       szStatus[] = " -  ";
+  uint8      len = 0;
+
+  IMENUCTL_Reset( pMe->m_pIMenu );
+  IMENUCTL_SetRect(pMe->m_pIMenu, &pMe->m_rect);  
+
+  MSG_FATAL("***zzg BTApp_OPPBuildSendFileClientMenu***", 0, 0, 0);
+
+  // set the title
+  if ( pMe->mOPP.bConnected != FALSE )
+  {
+    szStatus[ 3 ] = 'C';
+    ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_OPP_CLIENT, 
+                          pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
+    len = WSTRLEN( pMe->pText2 );
+
+    STRTOWSTR( szStatus, &pMe->pText2[ len ], 
+               (SHORT_TEXT_BUF_LEN-len) * sizeof( AECHAR ) );
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, NULL, NULL, pMe->pText2 );
+    //Add By zzg 2010_11_01
+	if(pMe->m_pIAnn != NULL)
+	{
+	  	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+	}  
+
+	{	 
+		if(pMe->m_pIAnn != NULL)
+		{
+		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pMe->pText2);
+		}		
+	}
+	//Add End
+  }
+  else
+  {
+    //IMENUCTL_SetTitle( pMe->m_pIMenu, BTAPP_RES_FILE, IDS_OPP_CLIENT, NULL );
+    //Add By zzg 2010_11_01
+	if(pMe->m_pIAnn != NULL)
+	{
+	  	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+	}  
+
+	{
+		AECHAR WTitle[20] = {0};
+		ISHELL_LoadResString(pMe->a.m_pIShell,
+		                     BTAPP_RES_FILE,                                
+		                     IDS_OPP_CLIENT,
+		                     WTitle,
+		                     sizeof(WTitle));
+
+		if(pMe->m_pIAnn != NULL)
+		{
+		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+		}
+	}
+	//Add End
+  }
+
+  BTApp_InitAddItem( &ai );
+
+  // Add individual entries to the Menu
+  if ( pMe->mOPP.bConnected == FALSE )
+  {
+    BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_CONNECT, 0 );
+  }
+  else
+  {
+    BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_PUSH, 0 );    
+    BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_DISCONNECT, 0 );
+  }
+
+  IMENUCTL_SetBottomBarType(pMe->m_pIMenu, BTBAR_SELECT_BACK);  	//Add By zzg 2010_11_09
+  
+  // Activate menu
+  PUSH_MENU( BT_APP_MENU_OPP_SENDFILE );
+  IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
+  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+
+  if( pMe->mOPP.bObjectTransfer )
+  {
+    ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE );
+  }
+
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif //FEATURE_APP_TEST_AUTOMATION
+}
+
+//Add End
 
 /* ==========================================================================
 FUNCTION BTApp_OPPBuildFileTypeMenu
@@ -474,6 +738,9 @@ void BTApp_OPPBuildFileTypeMenu( CBTApp* pMe )
   IMENUCTL_AddItem( pMe->m_pIMenu, NULL, 0, 
                     AEEBT_OPP_JPEG,
                     JPEG, 0 );
+
+  IMENUCTL_SetBottomBarType(pMe->m_pIMenu, BTBAR_SELECT_BACK);  	//Add By zzg 2010_11_09
+  
     /* Activate menu */
   PUSH_MENU( BT_APP_MENU_OPP_LIST_FILE_TYPES );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
@@ -490,13 +757,13 @@ FUNCTION BTApp_OPPCleanup
 DESCRIPTION
 ============================================================================= */
 void BTApp_OPPCleanup( CBTApp* pMe )
-{
-  if ( pMe->mOPP.po != NULL )
+{  
+  if (pMe->mOPP.po != NULL)
   {
     IBTEXTOPP_Release( pMe->mOPP.po );
     pMe->mOPP.po = NULL;
   }
-  if ( pMe->mOPP.pIFileMgr != NULL )
+  if (pMe->mOPP.pIFileMgr != NULL)
   {
     IFILEMGR_Release( pMe->mOPP.pIFileMgr );
     pMe->mOPP.pIFileMgr = NULL;
@@ -638,9 +905,11 @@ DESCRIPTION
 void BTApp_OPPPush( CBTApp* pMe, AEEBTObjectType objType )
 {
   int result = SUCCESS;
-  const char * pszName = NULL;
+  
+  const char * pszName = NULL;  
+  
   AECHAR* pwName = wDefaultObjectName;
-
+  
   if( objType == AEEBT_OPP_VCARD )
   {
     pszName = DEFAULT_VCARD_NAME;
@@ -668,6 +937,63 @@ void BTApp_OPPPush( CBTApp* pMe, AEEBTObjectType objType )
 
   STRTOWSTR( pszName, wDefaultObjectName, 
             sizeof( wDefaultObjectName ) );
+
+  if ( IFILEMGR_Test( pMe->mOPP.pIFileMgr, pszName ) != SUCCESS )
+  {
+    if ( pMe->mOPP.bRegistered != FALSE ) // server?
+    {     
+      pwName = NULL;
+    }
+    else
+    {
+      BTApp_ShowMessage( pMe, IDS_MSG_OBJ_NOT_FOUND, wDefaultObjectName, 0 );
+      result = EFAILED;
+    }
+  }
+  
+  if ( result == SUCCESS )
+  {  	
+    result = IBTEXTOPP_Push( pMe->mOPP.po, pwName, objType );
+	
+    if ( pMe->mOPP.bRegistered == FALSE ) // client?
+    {    	
+      if ( result == SUCCESS )
+      {       
+        pMe->mOPP.bObjectTransfer = TRUE;
+        ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, 
+                      FALSE );
+      }
+      else
+      {
+        MSG_ERROR( "OPP_Push() failed with %x", result, 0, 0 );
+        BTApp_ShowMessage( pMe, IDS_MSG_OBJ_PUSH_FAILED, pwName, 4 );
+      }
+    }
+  }  
+}
+
+
+//Add By zzg 2010_11_10
+/* ==========================================================================
+FUNCTION BTApp_OPPPushEx
+============================================================================= */
+void BTApp_OPPPushEx( CBTApp* pMe, char* filepath, AEEBTObjectType objType )
+{
+  int result = SUCCESS;
+  int i=0;
+  
+  const char * pszName = filepath;
+  
+  AECHAR* pwName = wDefaultObjectName;
+
+  for (i=0; i<STRLEN(filepath); i++)
+  {
+	MSG_FATAL("***zzg filepath[%d]=%x***", i, *(filepath+i), 0);
+  }
+
+
+  STRTOWSTR(pszName, wDefaultObjectName, sizeof(wDefaultObjectName));
+
   if ( IFILEMGR_Test( pMe->mOPP.pIFileMgr, pszName ) != SUCCESS )
   {
     if ( pMe->mOPP.bRegistered != FALSE ) // server?
@@ -680,10 +1006,12 @@ void BTApp_OPPPush( CBTApp* pMe, AEEBTObjectType objType )
       result = EFAILED;
     }
   }
+    
   if ( result == SUCCESS )
   {
     result = IBTEXTOPP_Push( pMe->mOPP.po, pwName, objType );
 
+	
     if ( pMe->mOPP.bRegistered == FALSE ) // client?
     {
       if ( result == SUCCESS )
@@ -694,13 +1022,14 @@ void BTApp_OPPPush( CBTApp* pMe, AEEBTObjectType objType )
       }
       else
       {
-        MSG_ERROR( "OPP_Push() failed with %x", result, 0, 0 );
+        MSG_ERROR( "BTApp_OPPPExush() failed with %x", result, 0, 0 );
         BTApp_ShowMessage( pMe, IDS_MSG_OBJ_PUSH_FAILED, pwName, 4 );
       }
     }
-  }
+  } 
 }
 
+//Add End
 
 /* ==========================================================================
 FUNCTION BTApp_OPPInit
@@ -728,7 +1057,7 @@ boolean BTApp_OPPInit( CBTApp* pMe )
       uBTApp_NMask |= NMASK_BT_OPP;
       init_done = TRUE;
 
-      pMe->mOPP.bObjectTransfer = FALSE;
+      pMe->mOPP.bObjectTransfer = FALSE;	  
     }
   }
   return init_done;
@@ -742,6 +1071,22 @@ boolean BTApp_OPPBuildMenu( CBTApp* pMe, BTAppMenuType menu )
   boolean built = TRUE;
   switch ( menu)
   {
+    //Add By zzg 2010_11_09
+    case BT_APP_MENU_OPP_SENDFILE:
+	{		
+		if (BTApp_OPPInit(pMe) != FALSE)
+		{
+			BTApp_OPPBuildSendFileMenu(pMe);
+		}
+		else
+		{
+			MSG_ERROR( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
+			BTApp_OPPCleanup( pMe );
+			built = FALSE;
+		}
+		break;
+	}
+    //Add End
     case BT_APP_MENU_OPP_TESTS:
     {
       if ( BTApp_OPPInit( pMe ) != FALSE )
@@ -834,6 +1179,7 @@ boolean BTApp_OPPHandleSelection( CBTApp* pMe, uint16 sel )
     }
     case IDS_CONNECT:
     {
+	  
       if ( pMe->mOPP.bRegistered == FALSE )
       {
         key_handled = BTApp_BuildMenu( pMe, BT_APP_MENU_LIST_OBEX_SERVERS );
@@ -878,6 +1224,177 @@ boolean BTApp_OPPHandleSelection( CBTApp* pMe, uint16 sel )
   return key_handled;
 }
 
+//Add By zzg 2010_11_09
+/* ==========================================================================
+FUNCTION BTApp_OPPHandleSendFileSelection
+============================================================================= */
+boolean BTApp_OPPHandleSendFileSelection( CBTApp* pMe, uint16 sel )
+{
+  int result;
+  boolean key_handled = TRUE;
+  boolean bRegistered = FALSE; 
+
+  
+  switch ( sel )
+  {
+    case IDS_OPP_SERVER:
+    {
+      BTApp_OPPBuildServerMenu( pMe );		//Server keep the code;
+      break;
+    }
+    case IDS_OPP_CLIENT:
+    {
+      	BTApp_OPPBuildSendFileClientMenu( pMe );		//client should change for sendfile from Tcard
+      	break;
+    }
+    case IDS_REGISTER:
+    {
+      BTApp_SetBondable( pMe );
+
+      if ( (result = IBTEXTOPP_Register( pMe->mOPP.po, 
+                                         AEEBT_OPP_FORMAT_ALL, 
+                                         szServerNameOPP )) != SUCCESS )
+      {
+        MSG_ERROR( "OPP_Register() failed with %x", result, 0, 0 );
+        BTApp_ClearBondable( pMe ); // no need to be bondable anymore
+        BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3 );
+      }
+      else
+      {
+        if ( pMe->mSD.bDiscoverable == FALSE )
+        {
+          IBTEXTSD_SetDiscoverable( pMe->mSD.po, TRUE );
+        }
+        BTApp_ShowBusyIcon( pMe ); // wait for command done
+      }
+      break;
+    }
+    case IDS_DEREGISTER:
+    {
+      if ( (result = IBTEXTOPP_Deregister( pMe->mOPP.po )) != SUCCESS )
+      {
+        MSG_ERROR( "OPP_Deregister() failed with %x", result, 0, 0 );
+        BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
+      }
+      else
+      {
+        bRegistered = pMe->mOPP.bRegistered; // backing up the value of mOPP.bRegistered
+        pMe->mOPP.bRegistered = FALSE;
+        BTApp_CheckToClearDiscoverable( pMe );
+        pMe->mOPP.bRegistered =bRegistered;
+        BTApp_ShowBusyIcon( pMe ); // wait for command done
+      }
+      break;
+    }
+    case IDS_CONNECT:
+    {
+		
+      if ( pMe->mOPP.bRegistered == FALSE )
+      {
+        key_handled = BTApp_BuildMenu( pMe, BT_APP_MENU_LIST_OBEX_SERVERS );
+      }
+      else
+      {
+        BTApp_ShowMessage( pMe, IDS_MSG_DEREG_SVR_FIRST, NULL, 0 );
+      }
+      break;
+    }
+    case IDS_PUSH:
+    {
+		
+      //BTApp_BuildMenu( pMe, BT_APP_MENU_OPP_LIST_FILE_TYPES );
+
+#if 0
+	  //char *str = "fs:/card0/pictures/w.png";
+	  //BTApp_OPPPushEx(pMe, str, AEEBT_OPP_UNKNOWN_TYPE);
+	  
+	  pMe->mOPP.bExchanging = TRUE;
+      BTApp_OPPCreateVCard( pMe );
+      BTApp_OPPPushEx( pMe, DEFAULT_VCARD_NAME, AEEBT_OPP_VCARD );
+#else
+		
+	   	int i=0;
+		
+	   	BTApp_OPPPushEx(pMe, pMe->m_pfilepath, AEEBT_OPP_UNKNOWN_TYPE);	
+	   	
+#endif
+		break;
+    }
+
+	/*
+    case IDS_PULL:
+    {
+      BTApp_OPPPull( pMe );
+      break;
+    }
+    */
+    
+    case IDS_DISCONNECT:
+    {
+      if ( IBTEXTOPP_Disconnect( pMe->mOPP.po ) != SUCCESS )
+      {
+        BTApp_ShowMessage( pMe, IDS_MSG_DISCONN_FAILED, NULL, 3 );
+      }
+      break;
+    }
+    default:
+    {
+      key_handled = FALSE;
+      break;
+    }
+  }
+  return key_handled;
+}
+
+
+/* ==========================================================================
+FUNCTION BTApp_HandleOPPSendFileMenu
+DESCRIPTION
+============================================================================= */
+static boolean BTApp_HandleOPPSendFileMenu( CBTApp* pMe, uint16 key )
+{
+  uint16 selection;
+  boolean ev_processed = TRUE;
+
+
+  if ( (selection = BTApp_NumKey2Selection( pMe->m_pIMenu, key )) != 0 )
+  {
+    //ev_processed = BTApp_OPPHandleSelection( pMe, selection );
+    ev_processed = BTApp_OPPHandleSendFileSelection( pMe, selection );
+  }
+  else
+  {
+    switch ( key)
+    {
+      case AVK_INFO:
+      case AVK_SELECT:
+      {
+        selection = IMENUCTL_GetSel( pMe->m_pIMenu );
+
+		
+        //ev_processed = BTApp_OPPHandleSelection( pMe, selection );
+        ev_processed = BTApp_OPPHandleSendFileSelection( pMe, selection );	//Modify by zzg 2010_11_10
+        
+        break;
+      }
+      case AVK_CLR:
+      {
+        BTApp_HandleClearKey( pMe );
+        break;
+      }
+      default:
+      {
+        ev_processed = FALSE;
+        break;
+      }
+    }
+  }
+  return ev_processed;
+}
+
+
+//Add End
+
 /* ==========================================================================
 FUNCTION BTApp_HandleOPPMainMenu
 DESCRIPTION
@@ -887,6 +1404,7 @@ static boolean BTApp_HandleOPPMainMenu( CBTApp* pMe, uint16 key )
   uint16 selection;
   boolean ev_processed = TRUE;
 
+
   if ( (selection = BTApp_NumKey2Selection( pMe->m_pIMenu, key )) != 0 )
   {
     ev_processed = BTApp_OPPHandleSelection( pMe, selection );
@@ -895,6 +1413,7 @@ static boolean BTApp_HandleOPPMainMenu( CBTApp* pMe, uint16 key )
   {
     switch ( key)
     {
+      case AVK_INFO:		//Add By zzg 2010_11_16
       case AVK_SELECT:
       {
         selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -927,6 +1446,7 @@ static boolean BTApp_HandleOPPServerMenu( CBTApp* pMe, uint16 key )
 
   MSG_MED( "HndlOPPServer - k=0x%x", key, 0, 0 );
 
+
   if ( (selection = BTApp_NumKey2Selection( pMe->m_pIMenu, key )) != 0 )
   {
     ev_processed = BTApp_OPPHandleSelection( pMe, selection );
@@ -935,6 +1455,7 @@ static boolean BTApp_HandleOPPServerMenu( CBTApp* pMe, uint16 key )
   {
     switch ( key )
     {
+      case AVK_INFO:		//Add By zzg 2010_11_16
       case AVK_SELECT:
       {
         selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -966,6 +1487,7 @@ static boolean BTApp_HandleOPPClientMenu( CBTApp* pMe, uint16 key )
 
   MSG_MED( "HndlOPPClient - k=0x%x", key, 0, 0 );
 
+
   if ( (selection = BTApp_NumKey2Selection( pMe->m_pIMenu, key )) != 0 )
   {
     ev_processed = BTApp_OPPHandleSelection( pMe, selection );
@@ -974,6 +1496,7 @@ static boolean BTApp_HandleOPPClientMenu( CBTApp* pMe, uint16 key )
   {
     switch ( key )
     {
+      case AVK_INFO:		//Add By zzg 2010_11_16
       case AVK_SELECT:
       {
         selection = IMENUCTL_GetSel( pMe->m_pIMenu );
@@ -1033,6 +1556,7 @@ static boolean BTApp_HandleOPPFileTypesMenu( CBTApp* pMe, uint16 key )
   uint16 selection;
   boolean ev_processed = TRUE;
   int     result = 0;
+
  
   if ( (selection = BTApp_NumKey2Selection( pMe->m_pIMenu, key ) ) != 0 )
   {
@@ -1042,6 +1566,7 @@ static boolean BTApp_HandleOPPFileTypesMenu( CBTApp* pMe, uint16 key )
   {
     switch( key )
     {
+      case AVK_INFO:		//Add By zzg 2010_11_16
       case AVK_SELECT:
       {
         /* Create a Vcard/Vms/Vnote/Vcal depending on the selection and push the corresponding file type */
@@ -1088,8 +1613,15 @@ DESCRIPTION
 boolean BTApp_OPPHandleMenus( CBTApp* pMe, uint16 key, BTAppMenuType menu )
 {
   boolean handled = TRUE;
+
+  
   switch ( menu )
   {
+    //Add By zzg 2010_11_09
+  	case BT_APP_MENU_OPP_SENDFILE:
+	  handled = BTApp_HandleOPPSendFileMenu( pMe, key );
+	  break;
+	//Add End	
     case BT_APP_MENU_OPP_TESTS:
       handled = BTApp_HandleOPPMainMenu( pMe, key );
       break;
@@ -1131,15 +1663,15 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
     }
     case EVT_OPP_PULL_REQ:
     {
-      BTApp_OPPPush( pMe, AEEBT_OPP_VCARD );
+	  
+      BTApp_OPPPush( pMe, AEEBT_OPP_VCARD );	  
       break;
     }
     case EVT_OPP_PROG_INFO:
     {
       if ( IBTEXTOPP_GetProgressInfo( pMe->mOPP.po, &progInfo ) == SUCCESS )
       {
-        MSG_HIGH("BTAppOPP: GetProgInfo num_bytes = %d, obj_size = %d",
-                 progInfo.numBytes, progInfo.objSize, 0);
+        MSG_HIGH("BTAppOPP: GetProgInfo num_bytes = %d, obj_size = %d",progInfo.numBytes, progInfo.objSize, 0);
       }
       else
       {

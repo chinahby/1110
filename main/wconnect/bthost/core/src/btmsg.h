@@ -267,7 +267,7 @@ do {                                               \
                    (uint32) (a),                     \
                    (uint32) (b),                     \
                    (uint32) (c) );                   \
-  ERR( fmt, (a), (b), (c) );                             \
+  MSG_FATAL( fmt, (a), (b), (c) );                             \
 } while( 0 )
 
 #define BT_ERR_FATAL( fmt, a, b, c )               \
@@ -277,7 +277,7 @@ do {                                               \
                    (uint32) (a),                     \
                    (uint32) (b),                     \
                    (uint32) (c) );                   \
-  ERR_FATAL( fmt, (a), (b), (c) );                       \
+  MSG_FATAL( fmt, (a), (b), (c) );                       \
 } while( 0 )
 
 

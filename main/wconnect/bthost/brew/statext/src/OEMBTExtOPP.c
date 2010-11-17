@@ -106,6 +106,8 @@ typedef struct OEMBTExtOPPobj_struct
   bt_pf_opp_cli_conn_id_type  clientConnID;
 
   uint8*                      pBuffer;
+  //uint16*                      pBuffer;
+  
 #ifdef FEATURE_BT_OBEX_DBL_BUF_WRITE
   bt_cmd_status_type          prevWriteStatus;
 #endif /* FEATURE_BT_OBEX_DBL_BUF_WRITE */
@@ -144,6 +146,61 @@ typedef struct
   OEMBTExtOPPobj_t* pNextOPP;    // singly linked list of OPPs
   OEMBTExtOPP_EvCb  FreeEvCb[ 10 ];
 } OEMBTExtOPP_Mgr;
+
+#ifdef CUST_EDITION
+typedef struct
+{
+  AEEBTObjectType	ObjectType;
+  char* 			pMIMEString;
+  char* 			pFileExt;
+} AEEBTObjectTypeMap;
+
+static const AEEBTObjectTypeMap ObjectTypeMap[] =
+{
+	{ AEEBT_OPP_ICAL,				OI_OBEX_ICALENDAR_TYPE, 			".ics" },
+	{ AEEBT_OPP_VCAL,				OI_OBEX_VCALENDAR_TYPE, 			".vcs" },
+	{ AEEBT_OPP_VCARD,				OI_OBEX_VCARD_TYPE, 				".vcf" },
+	{ AEEBT_OPP_VNOTE,				OI_OBEX_VNOTE_TYPE, 				".vnt" },
+	{ AEEBT_OPP_VMESSAGE,			OI_OBEX_VMESSAGE_TYPE, 				".vmg" },
+	{ AEEBT_OPP_JPEG,				OI_OBEX_JPEG_TYPE, 					".jpg" },
+	{ AEEBT_OPP_JPEG,				OI_OBEX_JPEG_TYPE, 					".jpe" },
+	{ AEEBT_OPP_JPEG,				OI_OBEX_JPEG_TYPE, 					".jpeg" },
+	{ AEEBT_OPP_JPEG,				OI_OBEX_JPEG_TYPE, 					".jfif" },
+	{ AEEBT_OPP_JPEG,				OI_OBEX_JPEG_TYPE, 					".jff" },
+	{ AEEBT_OPP_JPEG,				OI_OBEX_JPEG_TYPE, 					".jft" },
+	{ AEEBT_OPP_IMAGE_BMP,			OI_OBEX_IMAGE_BMP_TYPE, 			".bmp" },
+	{ AEEBT_OPP_IMAGE_PNG,			OI_OBEX_IMAGE_PNG_TYPE, 			".png" },
+	{ AEEBT_OPP_IMAGE_GIF,			OI_OBEX_IMAGE_GIF_TYPE, 			".gif" },
+	{ AEEBT_OPP_IMAGE_WBMP,			OI_OBEX_IMAGE_WBMP_TYPE,			".wbmp" },
+	{ AEEBT_OPP_IMAGE_WBMP,			OI_OBEX_IMAGE_WBMP_TYPE,			".wbm" },
+	{ AEEBT_OPP_AUDIO_AMR,			OI_OBEX_AUDIO_AMR_TYPE,				".amr" },
+	{ AEEBT_OPP_AUDIO_AAC,			OI_OBEX_AUDIO_AAC_TYPE,				".aac" },
+	{ AEEBT_OPP_AUDIO_MP3,			OI_OBEX_AUDIO_MP3_TYPE,				".mp3" },
+	{ AEEBT_OPP_AUDIO_WAV,			OI_OBEX_AUDIO_WAV_TYPE,				".wav" },
+	{ AEEBT_OPP_AUDIO_IMY,			OI_OBEX_AUDIO_IMELODY_TYPE,			".imy" },
+	{ AEEBT_OPP_AUDIO_MID,			OI_OBEX_AUDIO_MID_TYPE, 			".mid" },
+	{ AEEBT_OPP_AUDIO_MIDI,			OI_OBEX_AUDIO_MIDI_TYPE,			".midi" },
+	{ AEEBT_OPP_AUDIO_MMF,			OI_OBEX_AUDIO_MMF_TYPE,				".mmf" },
+	{ AEEBT_OPP_AUDIO_XMF,			OI_OBEX_AUDIO_XMF_TYPE,				".xmf" },
+	{ AEEBT_OPP_AUDIO_RHZ,			OI_OBEX_AUDIO_RHZ_TYPE,				".rhz" },
+	{ AEEBT_OPP_AUDIO_WMA,			OI_OBEX_AUDIO_WMA_TYPE,				".wma" },
+	{ AEEBT_OPP_AUDIO_M4A,			OI_OBEX_AUDIO_MP4_TYPE,				".m4a" },
+	{ AEEBT_OPP_AUDIO_3GP,			OI_OBEX_AUDIO_3GPP_TYPE,			".3ga" },
+	{ AEEBT_OPP_VIDEO_3GP,			OI_OBEX_VIDEO_3GPP_TYPE,			".3gp" },
+	{ AEEBT_OPP_VIDEO_MP4,			OI_OBEX_VIDEO_MP4_TYPE,				".mp4" },
+	{ AEEBT_OPP_VIDEO_WMV,			OI_OBEX_VIDEO_WMV_TYPE,				".wmv" },
+	{ AEEBT_OPP_VIDEO_ASF,			OI_OBEX_VIDEO_ASF_TYPE,				".asf" },
+	{ AEEBT_OPP_TEXT,				OI_OBEX_TEXT_TYPE, 					".txt" },
+	{ AEEBT_OPP_JAVA_JAD,			OI_OBEX_APPLICATION_JAD_TYPE,		".jad" },
+	{ AEEBT_OPP_JAVA_JAR,			OI_OBEX_APPLICATION_JAR_TYPE,		".jar" },
+	{ AEEBT_OPP_APPLICATION_DOC,	OI_OBEX_APPLICATION_DOC_TYPE,		".doc" },
+	{ AEEBT_OPP_APPLICATION_PDF,	OI_OBEX_APPLICATION_PDF_TYPE,		".pdf" },
+	{ AEEBT_OPP_APPLICATION_EXCEL,	OI_OBEX_APPLICATION_EXCEL_TYPE,		".xls" },
+	{ AEEBT_OPP_UNKNOWN_TYPE,		NULL, 								NULL }
+};
+
+#endif /* CUST_EDITION */
+
 
 //==========================================================================
 //   Function prototypes
@@ -492,6 +549,9 @@ int OEMBTExtOPP_Push(
   {
     return EFAILED;
   }
+
+  
+#ifndef CUST_EDITION
   if ( (pwFileName == NULL) && (pMe->bIsServer == FALSE) )
   {
     return EBADPARM;
@@ -520,9 +580,64 @@ int OEMBTExtOPP_Push(
       pMe->pszType = NULL;
       break;
   }
+#else
+  if ( ( pwFileName == NULL ) || ( WSTRLEN( pwFileName ) == 0 ) )
+  {
+    	return EBADPARM;
+  }
+
+  pMe->pszType = OI_OBEX_VCARD_TYPE;
+  
+  if ( objType == AEEBT_OPP_UNKNOWN_TYPE )
+  {
+	   uint8 i = 0;
+
+	   AECHAR *pExt = NULL;
+
+	   char suffix[ 6 ] = { 0 };	   
+
+	   pExt = WSTRRCHR( pwFileName, L'.' );
+
+
+	   if ( pExt != NULL )
+	   {
+		    AEEBT_FROM_WSTR( pExt, suffix, sizeof( suffix ) );
+
+			for ( i = 0; i < ( sizeof( ObjectTypeMap ) / sizeof( AEEBTObjectTypeMap ) ); i++ )
+			{
+				  if ( STRICMP( suffix, ObjectTypeMap[ i ].pFileExt ) != 0 )
+			      {
+			     	   pMe->pszType = ObjectTypeMap[ i ].pMIMEString;
+					   break;
+			      }
+			}
+	   }
+  }
+  else
+  {
+	   uint8 i = 0;
+
+
+	   for ( i = 0; i < ( sizeof( ObjectTypeMap ) / sizeof( AEEBTObjectTypeMap ) ); i++ )
+	   {
+			 if ( objType == ObjectTypeMap[ i ].ObjectType )
+		     {
+		     	  pMe->pszType = ObjectTypeMap[ i ].pMIMEString;
+				  break;
+		     }
+	   }
+  }
+
+#endif /* CUST_EDITION */
+
   if ( pwFileName != NULL )
   {
     statIn = BT_CS_GN_SUCCESS;
+	
+#ifdef CUST_EDITION
+	memset((void*)pMe->wName, 0, sizeof(pMe->wName));
+#endif /* CUST_EDITION */
+
     WSTRLCPY( pMe->wName, pwFileName, ARR_SIZE( pMe->wName ) );
     AEEBT_FROM_WSTR( pwFileName, szFileName, sizeof(szFileName) );
 
@@ -547,6 +662,7 @@ int OEMBTExtOPP_Push(
   }
 
   TASKLOCK();
+  
   if ( pMe->bIsServer == FALSE )
   {
     // client calls this function to push data to server
@@ -576,6 +692,7 @@ int OEMBTExtOPP_Push(
     }
   }
 
+
   if ( statIn == OI_OBEX_NOT_FOUND )
   {
     pMe->state = AEEBT_OPP_STATE_CONNECTED;
@@ -586,6 +703,7 @@ int OEMBTExtOPP_Push(
     pMe->bytesSent = 0;
     pMe->bytesRcvd = 0;
   }
+
   TASKFREE();
 
   return OEMBTExtOPP_CheckCmdStatus( statOut );
@@ -763,8 +881,8 @@ static boolean OEMBTExtOPP_HandleCmdDone(
 {
   boolean doSendNotif = TRUE;
 
-  MSG_LOW( "OPP_HandleCmdDone - st=%x stat=%x cmd=%x", pMe->state,
-           pCmdDn->cmd_status, pCmdDn->cmd_type );
+  MSG_LOW( "OPP_HandleCmdDone - st=%x stat=%x cmd=%x", pMe->state, pCmdDn->cmd_status, pCmdDn->cmd_type );
+
 
   switch ( pCmdDn->cmd_type )
   {
@@ -868,8 +986,6 @@ static void OEMBTExtOPP_NotifyProgress(OEMBTExtOPPobj_t* pMe)
                                        pMe->bytesRcvd;
     pN->uID = AEEBT_OPP_EVT_PROGRESS;
 
-    MSG_HIGH( "OPP Notify progress - objSize %x, bytes trans %x",
-               pMe->dwFileSize, pN->data.ProgressInfo.numBytes, 0 );
 
     pN->uID = (pN->uID << 16) | GET_NOTIFIER_MASK( NMASK_BT_OPP );
     IBTEXTNOTIFIER_DoNotify( pMe->pNotifier, pN, pMe->pac );
@@ -882,6 +998,7 @@ static void OEMBTExtOPP_ReadCb( OEMBTExtOPP_EvCb* pEvCb )
   OEMBTExtOPPobj_t* pMe = OEMBTExtOPP_FindMe( pEvCb->appId );
   uint32 bytesRead = 0;
   bt_cmd_status_type status = BT_CS_GN_SUCCESS;
+
 
   if ( pMe == NULL )
   {
@@ -911,6 +1028,7 @@ static void OEMBTExtOPP_ReadCb( OEMBTExtOPP_EvCb* pEvCb )
   }
   else // everything checks out
   {
+	
     if ( pMe->bytesSent == 0 )
     {
       if ( IFILE_Seek( pMe->pFile, _SEEK_START, 0 ) != SUCCESS )
@@ -925,6 +1043,8 @@ static void OEMBTExtOPP_ReadCb( OEMBTExtOPP_EvCb* pEvCb )
     }
     bytesRead = IFILE_Read( pMe->pFile, pMe->pBuffer, bytesRead );
     pMe->bytesSent += bytesRead;
+	
+	
     if ( bytesRead == 0 )
     {
       MSG_ERROR( "ReadCb: failed to read from obj", 0, 0, 0 );
@@ -1114,6 +1234,8 @@ static void OEMBTExtOPP_CloseCb( OEMBTExtOPP_EvCb* pEvCb )
   OEMBTExtOPPobj_t* pMe = OEMBTExtOPP_FindMe( pEvCb->appId );
   AEEBTNotification* notif;
 
+  
+
   if ( pMe == NULL )
   {
     TASKLOCK();
@@ -1158,6 +1280,8 @@ static void OEMBTExtOPP_CloseCb( OEMBTExtOPP_EvCb* pEvCb )
           notif->data.OppObject.pszName = pMe->szFileName;
           notif->uID = AEEBT_OPP_EVT_OBJ_PULLED;
         }
+		
+		
         notif->data.uError = OEMBTExt_MapCmdStatus( pEvCb->status );
 
         notif->uID = (notif->uID << 16) | GET_NOTIFIER_MASK( NMASK_BT_OPP );
@@ -1179,6 +1303,7 @@ static void OEMBTExtOPP_PushDoneCb( OEMBTExtOPP_EvCb* pEvCb )
 {
   OEMBTExtOPPobj_t* pMe = OEMBTExtOPP_FindMe( pEvCb->appId );
   AEEBTNotification* notif;
+
 
   if ( pMe == NULL )
   {
@@ -1637,6 +1762,7 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
 
   pN->data.uError  = AEEBT_OPP_ERR_NONE;
 
+
   switch ( ev_msg_ptr->ev_hdr.ev_type )
   {
     case BT_EV_GN_CMD_DONE:
@@ -1835,6 +1961,8 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
                ev_msg_ptr->ev_msg.ev_opp_cli_read_req.conn_id, 
                ev_msg_ptr->ev_msg.ev_opp_cli_read_req.handle, 0 );
       pEvCb = OEMBTExtOPP_GetFreeEvCb();
+
+	  
       if ( pEvCb != NULL )
       {
         pEvCb->event    = ev_msg_ptr->ev_hdr.ev_type;

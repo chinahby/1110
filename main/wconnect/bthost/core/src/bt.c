@@ -2448,7 +2448,7 @@ LOCAL void bt_process_command
       }
       else
       {
-        BT_MSG_HIGH( "BT: Re-Queuing HC commands until BTS init ", 0, 0, 0 );
+        //BT_MSG_HIGH( "BT: Re-Queuing HC commands until BTS init ", 0, 0, 0 );
         bt_cmd_ptr->cmd_hdr.cmd_status = BT_CS_GN_RETRY_CMD_LATER;
       }
 
@@ -2525,10 +2525,10 @@ LOCAL void bt_process_requeued_commands
             cmd_ptr->cmd_hdr.cmd_state = BT_CST_QUEUED;
             q_put( &bt_cmd_re_q, &cmd_ptr->cmd_hdr.link );
 
-            BT_MSG_DEBUG( "BT: Cmd ReQd Cnt %x Typ %x AID %x",
-                          cmd_ptr->cmd_hdr.cmd_retries,
-                          cmd_ptr->cmd_hdr.cmd_type,
-                          cmd_ptr->cmd_hdr.bt_app_id );
+            //BT_MSG_DEBUG( "BT: Cmd ReQd Cnt %x Typ %x AID %x",
+            //              cmd_ptr->cmd_hdr.cmd_retries,
+            //              cmd_ptr->cmd_hdr.cmd_type,
+            //              cmd_ptr->cmd_hdr.bt_app_id );
           }
           else
           {

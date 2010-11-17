@@ -1563,8 +1563,26 @@ void BTApp_ShowMessage(
   CLEAR_SCREEN();
 
   // get the title
-  ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_BT_TITLE, 
-                        wTempBuf, sizeof( wTempBuf ) );
+  //ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_BT_TITLE, wTempBuf, sizeof( wTempBuf ) );
+
+  //Add By zzg 2010_11_01
+  if(pMe->m_pIAnn != NULL)
+  {
+      IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+  }  
+  {   
+    	ISHELL_LoadResString(pMe->a.m_pIShell,
+                             BTAPP_RES_FILE,                                
+                             IDS_BT_TITLE,
+                             wTempBuf,
+                             sizeof( wTempBuf ));
+  
+      if(pMe->m_pIAnn != NULL)
+    	{
+    	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, wTempBuf);
+    	}
+  }
+  //Add End
 
   if ( msgID == 0 )
   {
@@ -1592,13 +1610,19 @@ void BTApp_ShowMessage(
                pMe->m_rect.dy );
   ISTATIC_SetRect( pMe->m_pStatic, &rc );
 
-  ISTATIC_SetProperties( 
-    pMe->m_pStatic, 
-    ISTATIC_GetProperties( pMe->m_pStatic ) | ST_MIDDLETEXT );
+  ISTATIC_SetProperties(pMe->m_pStatic, ISTATIC_GetProperties( pMe->m_pStatic ) | ST_MIDDLETEXT );
+  
+  //Add By zzg 2010_11_01     
+  ISTATIC_SetProperties(pMe->m_pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);  
+  ISTATIC_SetBackGround(pMe->m_pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); 	
+  //Add End
 
-  ISTATIC_SetText( pMe->m_pStatic, wTempBuf, pText, 
-                   AEE_FONT_BOLD, AEE_FONT_NORMAL );
-  ISTATIC_SizeToFit( pMe->m_pStatic, &rc );
+  //ISTATIC_SetText( pMe->m_pStatic, wTempBuf, pText, AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  //Modify By zzg 2010_11_01
+  ISTATIC_SetText( pMe->m_pStatic, NULL, pText, AEE_FONT_BOLD, AEE_FONT_NORMAL );
+  
+  //ISTATIC_SizeToFit( pMe->m_pStatic, &rc );	//Del By zzg 2010_11_01
+  
   ISTATIC_Redraw( pMe->m_pStatic );
   IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
 
@@ -1731,7 +1755,9 @@ void BTApp_UseBTDevice( CBTApp* pMe, boolean bForceUnmute )
 #endif /* FEATURE_AVS_BT_SCO_REWORK */
 
 #ifdef UI_UISND_NO_DIRECT_STATUS_CALLS
+#ifdef FEATURE_BT_AG
     uisnd_set_device_status( SND_DEVICE_BT_HEADSET, UISND_DEV_ENABLED );
+#endif
 #else
     uisnd_force_device_autoselect();
 #endif /* UI_UISND_NO_DIRECT_STATUS_CALLS */
@@ -1777,7 +1803,9 @@ void BTApp_ReleaseBTDevice( CBTApp* pMe, boolean bForceUnmute )
     pMe->mAG.bAudioSelected = FALSE;
 
 #ifdef UI_UISND_NO_DIRECT_STATUS_CALLS
+#ifdef FEATURE_BT_AG
     uisnd_set_device_status( SND_DEVICE_BT_HEADSET, UISND_DEV_UNATTACHED );
+#endif
 #else
     uisnd_force_device_autoselect();
 #endif /* UI_UISND_NO_DIRECT_STATUS_CALLS */

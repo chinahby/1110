@@ -41,9 +41,11 @@ $(BTHOSTSTATAPP_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 vpath %.c $(BTHOSTSTATAPP_SRC)      
 vpath %.mif $(BTHOSTSTATAPP_INC)
 vpath %.bar $(BTHOSTSTATAPP_INC)
+vpath %.brx $(BTHOSTSTATAPP_INC)
 
 CONSTFILE_FILES+=\
-        btapp.mif|fs:/mif/btapp.mif \
+        btapp.mif|fs:/mif/btapp.mif 
+CONSTFILE_BIN_FILES+=\
         btapp.bar|fs:/mod/btapp/btapp.bar
 
 ifeq ($(DO_LINT),yes)

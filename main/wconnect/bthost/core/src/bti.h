@@ -740,7 +740,7 @@ Qualcomm Confidential and Proprietary.
 #define BT_HV2_PAYLOAD_LEN      20
 #define BT_HV3_PAYLOAD_LEN      30
 
-#define BT_CMD_MAX_RETRIES         20
+#define BT_CMD_MAX_RETRIES         50//20
 
 #ifdef FEATURE_BT_SOC
   #define BT_L2_MAX_MTU              2036

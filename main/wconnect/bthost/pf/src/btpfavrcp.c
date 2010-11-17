@@ -1929,7 +1929,7 @@ void bt_pf_avrcp_cmd_send_generic_reply ( bt_pf_cmd_msg_type *cmd_ptr )
   }
   else
   {
-    dsm_free_packet( &dsm_ptr );
+    dsm_free_packet( &dsm_ptr );	
     cmd_ptr->cmd_hdr.cmd_status = BT_CS_PF_OUT_OF_MEMORY;
   }
   cmd->frame.operand = dsm_ptr;
@@ -2018,7 +2018,7 @@ void bt_pf_avrcp_cmd_send_eventid_reply ( bt_pf_cmd_msg_type *cmd_ptr )
     }
   }
   else
-  {
+  {  
     cmd_ptr->cmd_hdr.cmd_status = BT_CS_PF_OUT_OF_MEMORY;
     BT_ERR("BT PF AVRCP: send event id reply. Out of Memory", 0,0,0);
   }
