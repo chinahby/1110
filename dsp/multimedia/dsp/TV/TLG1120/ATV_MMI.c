@@ -2333,7 +2333,7 @@ void TLGMMI_ClearTvStorage()
 {
 	gTvStorage.mTuneMode = TLG_TUNEMD_MANUAL;
 	gTvStorage.mScrMode = TLG_SCRMD_WINDOW;
-	//gTvStorage.mRegion = TLG_REGION_SHENZHEN;
+	gTvStorage.mRegion = TLG_REGION_SHENZHEN;
 
 	gTvStorage.mCurChnIdx = 0;
 	gTvStorage.mIdxListCnt = 0;
