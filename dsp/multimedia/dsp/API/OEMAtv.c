@@ -257,7 +257,7 @@ static int OEMTLGAtv_Stop(OEMINSTANCE h)
         OEMATV_PRINT("param error",0,0,0);  
         return ret;
     }
-    ret = OEMCamera_Stop(pMe->pCamera);
+    ret = OEMCameraEx_Stop(pMe->pCamera);
     OEMATV_PRINT("OEMTLGAtv_Stop  ret =%d",ret,0,0);
     return ret;
 }
@@ -457,7 +457,7 @@ static int OEMTLGAtv_Update(OEMINSTANCE h, uint32 dwParam)
 	//	Tv_fbuffer[i] = 0xf800;
 	//}
     MEMCPY(Tv_fbuffer, pbmp, 77440); //77440 = sizeof(g_fbuffer)
-    AIT701_cam_update_osd(Tv_fbuffer,0,0,320,240);
+    AIT701_cam_update_osd(Tv_fbuffer,0,0,220,176);
     return SUCCESS;
 }
 
