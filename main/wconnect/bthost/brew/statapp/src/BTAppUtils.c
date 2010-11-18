@@ -506,7 +506,7 @@ uint16 BTApp_FormatSSPCapable(
                         IDS_LABEL_SSP_CAPABLE, wBuf1, 
                         sizeof( wBuf1 ) );
   ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, 
-                        bSSPCapable ? IDS_YES : IDS_NO, 
+                        bSSPCapable ? IDS_BT_YES : IDS_BT_NO, 
                         wBuf2, sizeof( wBuf2 ) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wBuf2 );
   wBuf1[ 0 ] = (AECHAR)(unsigned char) ('\n');
@@ -837,7 +837,7 @@ uint16 BTApp_FormatBondable(
   ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_LABEL_BONDABLE, 
                         wBuf1, sizeof( wBuf1 ) );
   ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, 
-                        bBondable ? IDS_YES : IDS_NO, 
+                        bBondable ? IDS_BT_YES : IDS_BT_NO, 
                         wBuf2, sizeof( wBuf2 ) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wBuf2 );
   wBuf1[ 0 ] = (AECHAR)(unsigned char) ('\n');
@@ -862,7 +862,7 @@ uint16 BTApp_FormatDiscoverable(
   ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, 
                         IDS_LABEL_DISCOVERABLE, wBuf1, sizeof( wBuf1 ) );
   ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, 
-                        bDiscoverable ? IDS_YES : IDS_NO, 
+                        bDiscoverable ? IDS_BT_YES : IDS_BT_NO, 
                         wBuf2, sizeof( wBuf2 ) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wBuf2 );
   wBuf1[ 0 ] = (AECHAR)(unsigned char) ('\n');
@@ -1556,6 +1556,8 @@ void BTApp_ShowMessage(
   uint8   secondsUp // amount of time the message stays on screen, 0 = 4ever
 )
 {
+  CtlAddItem  ai;	//Add by zzg 2010_11_17 for Softkey
+  
   AECHAR  wTempBuf[ 64 ];
   AECHAR* pText = pMe->pText2;
   AEERect rc;
@@ -1607,7 +1609,7 @@ void BTApp_ShowMessage(
   SETAEERECT ( &rc, pMe->m_rect.x, 
                pMe->m_rect.y, 
                pMe->m_rect.dx, 
-               pMe->m_rect.dy );
+               pMe->m_rect.dy);
   ISTATIC_SetRect( pMe->m_pStatic, &rc );
 
   ISTATIC_SetProperties(pMe->m_pStatic, ISTATIC_GetProperties( pMe->m_pStatic ) | ST_MIDDLETEXT );
@@ -1627,7 +1629,7 @@ void BTApp_ShowMessage(
   IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
 
   pMe->uCurrMsgId = msgID;
-  pMe->bBusyIconUp = FALSE;
+  pMe->bBusyIconUp = FALSE;  
 
   if ( secondsUp > 0)
   {

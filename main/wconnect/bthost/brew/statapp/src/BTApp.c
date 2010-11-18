@@ -877,6 +877,8 @@ when       who  what, where, why
 #define BTBAR_HEIGHT	(BOTTOMBAR_HEIGHT + 7)
 //Add End
 
+//Add By zzg 2010_11_16
+static boolean bIsBTOn = FALSE;
 
 const AEEBTBDAddr NULL_BD_ADDR = {0,0,0,0,0,0};
 CBTApp* pTheBTApp = NULL;
@@ -2159,7 +2161,6 @@ static void BTApp_FreeAppData( IApplet* pi )
 
   if ( pMe->m_pStatic != NULL )
   {
-  	MSG_FATAL("***zzg BTApp_FreeAppData.***", 0, 0, 0);
     ISTATIC_Release( pMe->m_pStatic );
     pMe->m_pStatic = NULL;
   }
@@ -2242,6 +2243,7 @@ static void BTApp_OnAppStop( CBTApp* pMe )
       break;
 
 #ifdef FEATURE_BT_EXTPF_OPP
+    case BT_APP_MENU_OPP_SETTING:	//Add By zzg 2010_11_17
 	case BT_APP_MENU_OPP_SENDFILE:	//Add By zzg 2010_11_09
     case BT_APP_MENU_OPP_TESTS:
     case BT_APP_MENU_OPP_SERVER:
@@ -2402,17 +2404,23 @@ static boolean BTApp_HandleEvent
 		//Add By zzg 2010_11_09
 		if (TRUE == pMe->bStartFromOtherApp)
 		{
-			if ( BTApp_HCIModeOn( pMe ) == FALSE )
+			if (bIsBTOn == FALSE)
 			{
-				BTApp_BuildMenu( pMe, BT_APP_MENU_OPP_SENDFILE);
+				BTApp_BuildPrompt(pMe, BT_APP_MENU_OPEN);
+			}
+			else
+			{
+				if ( BTApp_HCIModeOn( pMe ) == FALSE )
+				{
+					BTApp_BuildMenu( pMe, BT_APP_MENU_OPP_SENDFILE);
+				}
 			}
 		}
 		else
 		{
 			BTApp_BuildTopMenu( pMe );
 		}
-		//Add End
-        
+		//Add End        
 		
         IBTEXTRM_GetHCIMode( pMe->mRM.po, &HCIMode );
         if ( HCIMode != AEEBT_HCIM_OFF )
@@ -4699,7 +4707,7 @@ static boolean BTApp_HandleVRCapableMenu( CBTApp* pMe, uint16 key )
 {
   boolean ev_processed = FALSE;
   uint16  selection;
-  uint16  sel = IDS_YES;
+  uint16  sel = IDS_BT_YES;
   boolean vr_enabled;
 
   MSG_MED( "HndlVRCapable - k=0x%x", key, 0, 0 );
@@ -4735,20 +4743,20 @@ static boolean BTApp_HandleVRCapableMenu( CBTApp* pMe, uint16 key )
 
         switch ( sel )
         {
-          case IDS_YES:
-            sel = IDS_NO;
+          case IDS_BT_YES:
+            sel = IDS_BT_NO;
             break;
-          case IDS_NO:
+          case IDS_BT_NO:
             sel = 0;
             break;
         }
       }
       switch ( selection )
       {
-        case IDS_YES:
+        case IDS_BT_YES:
           vr_enabled = TRUE;
           break;
-        case IDS_NO:
+        case IDS_BT_NO:
           vr_enabled = FALSE;
           break;
         default:
@@ -7678,8 +7686,7 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
     case BT_APP_MENU_DEVICE:
       BTApp_BuildDevicesMenu( pMe );
       break;
-    case BT_APP_MENU_MY_INFO:
-	  MSG_FATAL("***zzg BTApp_BuildMyInfoMenu***", 0, 0, 0);
+    case BT_APP_MENU_MY_INFO:	  
       BTApp_BuildMyInfoMenu( pMe );
       break;
     case BT_APP_MENU_SETTINGS:
@@ -7926,6 +7933,7 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
 #ifdef FEATURE_BT_EXTPF_OPP
     case BT_APP_MENU_OPP_TESTS:
 	case BT_APP_MENU_OPP_SENDFILE:	//Add By zzg 2010_11_09	
+	case BT_APP_MENU_OPP_SETTING:	//Add By zzg 2010_11_17
     case BT_APP_MENU_OPP_SERVER:
     case BT_APP_MENU_OPP_CLIENT:
     case BT_APP_MENU_OPP_LIST_FILE_TYPES:
@@ -8256,6 +8264,13 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
       (void)POP_MENU();   // remove prompt
       break;
     }
+	//Add By zzg 2010_11_17
+	case BT_APP_MENU_OPEN:
+	{
+		ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );
+		break;
+	}
+	//Add End
 #ifdef FEATURE_BT_2_1
     case BT_APP_MENU_REBOND:
     {
@@ -8296,7 +8311,8 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
 		break;       
 	}
 	//Add End
-	  
+	
+	case BT_APP_MENU_OPP_SETTING:	//Add By zzg 2010_11_17  
     case BT_APP_MENU_OPP_TESTS:
     case BT_APP_MENU_OPP_SERVER:
     case BT_APP_MENU_OPP_CLIENT:
@@ -8757,6 +8773,7 @@ static boolean BTApp_MenuHandleEvent
     }
 #ifdef FEATURE_BT_EXTPF_OPP
 	case BT_APP_MENU_OPP_SENDFILE:	//Add By zzg 2010_11_09
+	case BT_APP_MENU_OPP_SETTING:	//Add By zzg 2010_11_17
     case BT_APP_MENU_OPP_TESTS:
     case BT_APP_MENU_OPP_SERVER:
     case BT_APP_MENU_OPP_CLIENT:
@@ -8879,6 +8896,7 @@ static boolean BTApp_MenuHandleEvent
     }
     case BT_APP_MENU_MY_INFO:
     case BT_APP_MENU_UNBOND_ALL:
+	case BT_APP_MENU_OPEN:			//Add By zzg 2010_11_17
     case BT_APP_MENU_REMOVE_ALL:
     case BT_APP_MENU_UNBOND_ONE:
     case BT_APP_MENU_REMOVE_ONE:
@@ -9574,6 +9592,7 @@ static boolean BTApp_EnableNA( CBTApp* pMe, boolean* pbSettingBondable)
     if ( pMe->bFirstLaunch != FALSE )
     {
       // must wait for CoreApp to map Data port to BT NA
+	  
       ISHELL_SetTimer( pMe->a.m_pIShell, ONE_SECOND*5, 
                        (PFNNOTIFY) BTApp_EnableBT, pMe );
       return TRUE;
@@ -9624,7 +9643,7 @@ void BTApp_EnableBT( CBTApp* pMe )
   {
     pMe->mEnablingType = BTAPP_ENABLING_AG;
   }
-      
+
   if ( BTApp_HCIModeOn( pMe ) == TRUE )
   {
   	MSG_ERROR("BTApp_HCIModeOn( pMe ) == TRUE!",0,0,0);
@@ -9729,6 +9748,21 @@ void BTApp_EnableBT( CBTApp* pMe )
       break;
     }
   }
+
+  //Add By zzg 2010_11_16
+  bIsBTOn = TRUE;
+
+	if(pMe->m_pIAnn)
+	{
+		IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_ON);
+	}
+
+  if (FALSE == pMe->bStartFromOtherApp)
+  {
+  	BTApp_ShowMessage( pMe, IDS_MSG_BT_ENABLED, NULL, 5);
+  }
+  //Add End
+  
 }
 /* ==========================================================================
 FUNCTION BTApp_DisableBT
@@ -9777,6 +9811,8 @@ static void BTApp_DisableBT( CBTApp* pMe )
 #ifdef FEATURE_BT_EXTPF_OPP
   if ( pMe->mOPP.bRegistered == TRUE )
   {
+    //BTApp_DisableOPPService(CBTApp * pMe);		//Add By zzg 2010_11_17
+    
     if ( (result = IBTEXTOPP_Deregister( pMe->mOPP.po )) != SUCCESS )
     {
       MSG_ERROR( "OPP_Deregister() failed with %x", result, 0, 0 );
@@ -9917,6 +9953,18 @@ static void BTApp_DisableBT( CBTApp* pMe )
   {
     BTApp_ShowBusyIcon( pMe );
   }
+
+  //Add By zzg 2010_11_16
+  bIsBTOn = FALSE;	
+  
+  if(pMe->m_pIAnn)
+  {
+  	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_OFF);
+  }
+  
+  BTApp_ShowMessage( pMe, IDS_MSG_BT_DISABLED, NULL, 5);
+  //Add End
+  
 }
 
 #ifdef FEATURE_BT_HFP_1_5
@@ -11630,7 +11678,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
       }
       break;
     }
-    case IDS_YES:
+    case IDS_BT_YES:
     {
       MSG_LOW( "HndlSlction - YES m=%d", TOP_MENU, 0, 0 );
       switch ( TOP_MENU )
@@ -11658,6 +11706,18 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
           break;
         }
 #endif /* FEATURE_BT_2_1 */
+
+		//Add By zzg 2010_11_17
+		case BT_APP_MENU_OPEN:
+		{
+			if ( BTApp_HCIModeOn( pMe ) == FALSE )
+			{
+				BTApp_EnableBT(pMe);
+				BTApp_BuildMenu( pMe, BT_APP_MENU_OPP_SENDFILE);
+			}			
+			break;
+		}
+		//Add End
         case BT_APP_MENU_UNBOND_ALL:
           BTApp_DoUnbondAll( pMe );
           break;
@@ -11777,7 +11837,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
       }
       break;
     }
-    case IDS_NO:
+    case IDS_BT_NO:
     {
       MSG_LOW( "HndlSlction - NO m=%d", TOP_MENU, 0, 0 );
       if ( TOP_MENU == BT_APP_MENU_AUTHORIZE_CONN )
@@ -11814,28 +11874,66 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
       }
       break;
     }
-    case IDS_DEVICE_SEARCH:
-      if ( BTApp_HCIModeOn( pMe ) == FALSE )
-      {
-        //built = BTApp_BuildMenu( pMe, BT_APP_MENU_SEARCH );
-
-	    //跳过SEARCH选项，直接搜索所有设备。
-		built = BTApp_DoDeviceSearch( pMe, AEEBT_COD_SC_ALL, NULL );	//Modify by zzg 2010_11_02
-      }
-      break;
+    case IDS_DEVICE_SEARCH:		
+	  if (bIsBTOn == FALSE)
+	  {
+	  	BTApp_ShowMessage( pMe, IDS_BT_CLOSED, NULL, 5);
+		return built;
+	  }
+	  else
+	  {
+	      if ( BTApp_HCIModeOn( pMe ) == FALSE )
+	      {
+	        //built = BTApp_BuildMenu( pMe, BT_APP_MENU_SEARCH );
+		    //跳过SEARCH选项，直接搜索所有设备。
+			built = BTApp_DoDeviceSearch( pMe, AEEBT_COD_SC_ALL, NULL );	//Modify by zzg 2010_11_02
+	      }
+		  
+		  break;
+	  }      
     case IDS_DEVICES:
-      built = BTApp_BuildMenu( pMe, BT_APP_MENU_DEVICE );
-      break;
+	  if (bIsBTOn == FALSE)
+	  {
+	  	BTApp_ShowMessage( pMe, IDS_BT_CLOSED, NULL, 5);
+		return built;
+	  }
+	  else
+	  {
+	      built = BTApp_BuildMenu( pMe, BT_APP_MENU_DEVICE );
+	      break;
+	  }
     case IDS_MY_INFO:
-	  MSG_FATAL("***zzg BTApp_HandleSel IDS_MY_INFO***", 0, 0, 0);	
-      built = BTApp_BuildMenu( pMe, BT_APP_MENU_MY_INFO );
-      break;
+	  if (bIsBTOn == FALSE)
+	  {
+	  	BTApp_ShowMessage( pMe, IDS_BT_CLOSED, NULL, 5);
+		return built;
+	  }
+	  else
+	  {
+	      built = BTApp_BuildMenu( pMe, BT_APP_MENU_MY_INFO );
+	      break;
+	  }
+	  
     case IDS_SETTINGS:
       built = BTApp_BuildMenu( pMe, BT_APP_MENU_SETTINGS );
       break;
     case IDS_TESTS:
       built = BTApp_BuildMenu( pMe, BT_APP_MENU_TESTS );
       break;
+	  
+	//Add By zzg 2010_11_17
+	case IDS_BT_OPP_SETTING:
+    	if (bIsBTOn == FALSE)
+    	{
+    		BTApp_ShowMessage( pMe, IDS_BT_CLOSED, NULL, 5);
+    		return built;
+    	}
+    	else
+    	{
+    		built = BTApp_BuildMenu( pMe, BT_APP_MENU_OPP_SETTING );
+    	}
+      break;
+	//Add End
     case IDS_AUDIO_TRANSFER:
     {
       BTAppCallType callPresent = BTApp_CallPresent( pMe );
@@ -12608,7 +12706,9 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
   IMENUCTL_SetRect( pMe->m_pIMenu, &pMe->m_rect );
    
   BTApp_InitAddItem( &ai );
+  
 
+  /*
   if ( pMe->mAG.bEnabled )
   {
     nzStatus[ 3 ] = 'A';
@@ -12713,6 +12813,19 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
     itemID = IDS_BT_OFF;
     bScvEnabled = TRUE;
   }
+  */
+
+  //Add By zzg 2010_11_16
+  if (bIsBTOn == TRUE)
+  {
+	nzStatus[ 3 ] = 'O';
+    nzStatus[ 4 ] = 'N';    
+    itemID = IDS_BT_OFF;
+    bScvEnabled = TRUE;
+  } 
+  //Add End
+
+  
 
   /*
   if ( bScvEnabled )
@@ -12776,6 +12889,10 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_DEVICE_SEARCH, 0 );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_DEVICES, 0 );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_MY_INFO, 0 );
+
+  //Add By zzg 2010_11_17
+  BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_BT_OPP_SETTING, 0);
+  //Add End
 
   /*
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SETTINGS, 0 );
@@ -14437,21 +14554,21 @@ static void BTApp_BuildVRCapableMenu( CBTApp* pMe )
   }
 
   // Add individual entries to the Menu
-  BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_YES, 
+  BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_BT_YES, 
                      pMe->mAG.bVREnabled ? 
                      IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
-  BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_NO,
+  BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_BT_NO,
                      pMe->mAG.bVREnabled ? 
                      IDB_RADIO_UNFILLED : IDB_RADIO_FILLED );
   
   // select current setting
   if ( pMe->mAG.bVREnabled != FALSE )
   {
-    sel = IDS_YES;
+    sel = IDS_BT_YES;
   }
   else
   {
-    sel = IDS_NO;
+    sel = IDS_BT_NO;
   }
   IMENUCTL_SetSel( pMe->m_pIMenu, sel );
 
@@ -14471,7 +14588,7 @@ static void BTApp_BuildPrompt( CBTApp* pMe, BTAppMenuType menu )
   AEERect     rc;
   CtlAddItem  ai;
   uint16      msgID = 0;
-  uint16      defaultMenuItem = IDS_NO;
+  uint16      defaultMenuItem = IDS_BT_NO;
   AECHAR*     pText = pMe->pText2;
 #ifdef FEATURE_BT_2_1
   AECHAR      wBuf[ 100 ];
@@ -14530,10 +14647,17 @@ static void BTApp_BuildPrompt( CBTApp* pMe, BTAppMenuType menu )
       msgID = IDS_PROMPT_UNBOND_ALL;
       break;
 #ifdef FEATURE_BT_2_1
+    //Add By zzg 2010_11_17
+	case BT_APP_MENU_OPEN:
+    {
+      msgID = IDS_OPEN_BT;     
+      break;
+    }
+	//Add End
     case BT_APP_MENU_REBOND:
     {
       msgID = IDS_PROMPT_REBOND;
-      defaultMenuItem = IDS_YES;
+      defaultMenuItem = IDS_BT_YES;
       pText = pMe->pText1;
       break;
     }
@@ -14551,12 +14675,12 @@ static void BTApp_BuildPrompt( CBTApp* pMe, BTAppMenuType menu )
       break;
     case BT_APP_MENU_USE_AUDIO_DEV:
       msgID = IDS_PROMPT_USE_AUDIO_DEV;
-      defaultMenuItem = IDS_YES;
+      defaultMenuItem = IDS_BT_YES;
       pText = pMe->pText1;
       break;
     case BT_APP_MENU_AG_CONNECT:
       msgID = IDS_PROMPT_CONNECT;
-      defaultMenuItem = IDS_YES;
+      defaultMenuItem = IDS_BT_YES;
       pText = pMe->pText1;
       break;
     case BT_APP_MENU_AG_DISCONNECT:
@@ -14590,7 +14714,7 @@ static void BTApp_BuildPrompt( CBTApp* pMe, BTAppMenuType menu )
   SETAEERECT ( &rc, pMe->m_rect.x, 
                pMe->m_rect.y, 
                pMe->m_rect.dx, 
-               pMe->m_rect.dy - BTBAR_HEIGHT); //Modify by zzg 2010_11_01
+               pMe->m_rect.dy-BOTTOMBAR_HEIGHT); 
                //pMe->m_rect.dy - 20); // leave room for SK menu
   ISTATIC_SetRect( pMe->m_pStatic, &rc );
 
@@ -14667,6 +14791,7 @@ static void BTApp_BuildPrompt( CBTApp* pMe, BTAppMenuType menu )
   ISTATIC_SetText( pMe->m_pStatic, NULL, pText, AEE_FONT_BOLD, AEE_FONT_NORMAL );
   ISTATIC_Redraw( pMe->m_pStatic );
 
+ 
   // add the SK menu to bottom of screen
   IMENUCTL_Reset( pMe->m_pISoftMenu );
 
@@ -14678,13 +14803,15 @@ static void BTApp_BuildPrompt( CBTApp* pMe, BTAppMenuType menu )
 
   BTApp_InitAddItem( &ai );
 
-  // Add individual entries to the Menu
-  BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_NO, 0 );
-  BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_YES, 0 );
+  //dd individual entries to the Menu
+  BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_BT_NO, 0 );
+  BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_BT_YES, 0 );
 
   PUSH_MENU( menu );
   IMENUCTL_SetSel( pMe->m_pISoftMenu, defaultMenuItem );
   IMENUCTL_SetActive( pMe->m_pISoftMenu, TRUE );
+  
+  
 }
 
 /* ==========================================================================
@@ -16124,8 +16251,8 @@ static void BTApp_BuildSetConnRoleMenu( CBTApp* pMe )
 
   BTApp_InitAddItem( &ai );
   
-  BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_YES, 0 );
-  BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_NO, 0 );
+  BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_BT_YES, 0 );
+  BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_BT_NO, 0 );
 
   PUSH_MENU( BT_APP_MENU_SET_CONN_ROLE );
   IMENUCTL_SetActive( pMe->m_pISoftMenu, TRUE );
@@ -17916,7 +18043,8 @@ static void BTApp_ProcessAGNotifications(
           IBTEXTAG_Connect( pMe->mAG.po, &pMe->mAG.bdAddr, pMe->mAG.devType );
         }
         pMe->mEnablingType++;
-        BTApp_EnableBT(pMe);
+		
+        //BTApp_EnableBT(pMe);	//Del By zzg 2010_11_18
       }
       break;
     }
@@ -18377,7 +18505,8 @@ static void BTApp_ProcessNANotifications(
       {
         BTApp_ClearBondable( pMe ); // no need to be bondable anymore
       }
-      pMe->mEnablingType++;       
+      pMe->mEnablingType++;    
+	 
       BTApp_EnableBT(pMe);
       break;
     case AEEBT_NA_EVT_DISABLED:

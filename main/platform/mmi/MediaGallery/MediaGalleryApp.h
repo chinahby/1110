@@ -48,11 +48,12 @@
 #include "AEEDrawAni.h"
 #endif
 
-#ifdef FEATURE_BT
+
 //Add By zzg 2010_11_05
+#ifdef FEATURE_BT_SEND_FILE_ONLY
 #include "BTApp.h"
-//Add End
 #endif
+//Add End
 
 #include "BATT_NOTIFIER.BID"
 #include "AEEBatt.h"

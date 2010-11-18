@@ -482,18 +482,22 @@ static void ClientPutCfm(OI_OBEXCLI_CONNECTION_HANDLE connectionId,
             status = client->objops->Read(client->handle, client->maxReadSize, PushReadCfm, (OI_OPP_CONNECTION) client->id);
 
 			
-            if (status == OI_STATUS_END_OF_FILE) {
+            if (status == OI_STATUS_END_OF_FILE) 
+			{
                 PushReadCfm(client->handle, NULL, 0, status, (OI_OPP_CONNECTION) client->id);
                 status = OI_OK;
             }
-            if (!OI_SUCCESS(status)) {
+			
+            if (!OI_SUCCESS(status)) 
+			{
                 /* 
                  * If OFS returns error, there is no pending confirm callback 
                  */
                 client->ofsCfmPending = FALSE;
             }
         }
-        if (!OI_SUCCESS(status)) {
+        if (!OI_SUCCESS(status)) 
+		{
             /*
              * Let obex know the put operation terminated with an error.
              */
@@ -521,7 +525,8 @@ static void PushOpenCfm(OI_OPP_HANDLE handle,
     OI_OBEX_HEADER hdrs[3];
     OI_OBEX_HEADER_LIST hdrList;
 
-    if (!OI_INIT_FLAG_VALUE(OPP_CLI) || (client->state != CLIENT_STATE_PUSH_PENDING) || !client->ofsCfmPending) {
+    if (!OI_INIT_FLAG_VALUE(OPP_CLI) || (client->state != CLIENT_STATE_PUSH_PENDING) || !client->ofsCfmPending) 
+	{
         OI_LOG_ERROR(("Push open confirm called at wrong time"));
         return;
     }
