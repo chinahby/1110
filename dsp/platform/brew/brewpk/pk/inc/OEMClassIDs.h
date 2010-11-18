@@ -124,6 +124,7 @@ GENERAL DESCRIPTION:
 #define AEECLSID_TLG_ATV          (AEECLSID_OEM +0x604)
 #define AEECLSID_BRW_APP    	    0x0104c960
 #define AEECLSID_BLUETOOTH_APP    	0x01015223
+//#define AEECLSID_CAMERAEX          (AEECLSID_OEM + 0x603)
 
 #endif /*CUST_EDITION*/
 /*=====================================================================
