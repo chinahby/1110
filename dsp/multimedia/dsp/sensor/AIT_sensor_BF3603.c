@@ -889,12 +889,17 @@ static u_short 	Sensor_FrameRate(u_short FrameRate)
 u_short g_sensor_side=1;
 static void	Sensor_Enable(u_short enable)
 {
-extern unsigned char init_ATV(void);
-extern void power_off_ATV(void);
-extern void PowerOffFM(void);
-extern	u_char	g_ATV_Flag;
-
-
+	extern unsigned char init_ATV(void);
+	extern void power_off_ATV(void);
+	extern void PowerOffFM(void);
+	extern	u_char	g_ATV_Flag;
+	uint32 m_tv;
+	(void)OEM_GetConfig( CFGI_TV_OR_CAMERA,
+								  &m_tv,
+								  sizeof(uint32));
+		
+	g_ATV_Flag = unsigned char(m_tv);
+    AIT_Message_P1("g_ATV_Flag:::::::::::::::::::::::::%d",g_ATV_Flag);
 	if(enable) 
 	{	
 		A8L_VIF_Init(&preview_mode);	//

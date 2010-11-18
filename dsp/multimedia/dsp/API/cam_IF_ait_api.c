@@ -206,15 +206,19 @@ A8_ERROR_MSG cam_IF_ait_close_AIT(void)
 */
 A8_ERROR_MSG	cam_IF_ait_open_camera (void)
 {
+#ifdef AIT_ATV_SUPPORT
+	extern u_char g_ATV_Flag;
+#endif
 	extern u_char A800_PreInit_Sensor(void);
 	extern u_char	A800_Init_Sensor(void);
 	u_char retVal;
 //	u_short pid_Val_MSB, pid_Val_LSB,sensor_id;
+     uint32 m_tv = 0;
 
-#ifdef AIT_ATV_SUPPORT
-	extern u_char g_ATV_Flag;
-#endif
-
+ (void)OEM_GetConfig(CFGI_TV_OR_CAMERA,&m_tv,sizeof(uint32));
+	
+   g_ATV_Flag = (unsigned char)m_tv;
+   AIT_Message_P1("g_ATV_Flag:::::::::::::::::::::::::%d",g_ATV_Flag);
 #ifdef SENSOR_VIF
 	if(!gsSensorUsing)
 		return A8_SYSTEM_ERROR;

@@ -491,8 +491,13 @@ extern int AEEVocoder_New(IShell *ps, AEECLSID cls, void ** ppo);
 //#if defined(FEATURE_CAMERA_MULTI_SENSOR)
 //#include "AEECamera.bid"
 //#endif
+#ifdef FEATURE_DSP
 extern void  AEECameraEx_Init(IShell * ps);
 extern int   AEECameraEx_New(IShell * ps,AEECLSID cls,void ** ppif);
+#else
+extern void    AEECamera_Init(IShell * ps);
+extern int     AEECamera_New(IShell * ps, AEECLSID cls, void **ppif);
+#endif
 #endif
 
 // ISerialPort interface
@@ -891,11 +896,21 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
 #if defined(FEATURE_LOGGER_BTIL)
    {AEECLSID_LOGGER_BTIL,        ASCF_UPGRADE,0,NULL,OEMLoggerBTIL_New},
 #endif
+#ifdef FEATURE_DSP
+//EECLSID_CAMERAEX,             ASCF_UPGRADE,0,AEECameraEx_Init, AEECameraEx_New},
 #if defined(FEATURE_BREW_CAMERA)
          {AEECLSID_CAMERA,             (ASCF_PRIV | ASCF_UPGRADE), 0, AEECameraEx_Init, AEECameraEx_New},
 //#if defined(FEATURE_CAMERA_MULTI_SENSOR)
         // {AEECLSID_CAMERA2,            (ASCF_PRIV | ASCF_UPGRADE),0,AEECameraEx_Init,AEECameraEx_New},
 //#endif
+#endif
+#else
+#if defined(FEATURE_BREW_CAMERA)
+         {AEECLSID_CAMERA,             (ASCF_PRIV | ASCF_UPGRADE),0,AEECamera_Init,AEECamera_New},
+#if defined(FEATURE_CAMERA_MULTI_SENSOR)
+         {AEECLSID_CAMERA2,            (ASCF_PRIV | ASCF_UPGRADE),0,AEECamera_Init,AEECamera_New},
+#endif
+#endif
 #endif
 #if defined(FEATURE_BREW_SIO)
          {AEECLSID_SERIAL,          (ASCF_PRIV | ASCF_UPGRADE),0,AEESIO_Init,ISerialPort_New},

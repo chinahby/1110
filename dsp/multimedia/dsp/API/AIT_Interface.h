@@ -4,9 +4,13 @@
 #include "cam_module.h"
 #include "sys_if_ait_api.h"
 //add by yangdecai 09-24
-
-//#define __MMI_MAINLCD_320X240__
+#if defined (FEATURE_DISP_320X240)
+#define __MMI_MAINLCD_320X240__
+#elif defined (FEATURE_DISP_220X176)
 #define __MMI_MAINLCD_220X176__
+#else
+#define __MMI_MAINLCD_320X240__
+#endif
 
 
 //------------------------------------------------------------------------------------//
@@ -15,13 +19,13 @@
 #if defined(__MMI_MAINLCD_240X320__)
 #define A8_MAIN_LCD_WIDTH			(240)
 #define A8_MAIN_LCD_HEIGHT		(320)
-#elif defined(__MMI_MAINLCD_320X240__	)
+#elif defined(__MMI_MAINLCD_320X240__)
 #define A8_MAIN_LCD_WIDTH			(320)
 #define A8_MAIN_LCD_HEIGHT		(240)
 #elif defined(__MMI_MAINLCD_176X220__	)
 #define A8_MAIN_LCD_WIDTH			(176)
 #define A8_MAIN_LCD_HEIGHT		(220)
-#elif defined(__MMI_MAINLCD_220X176__	)
+#elif defined(__MMI_MAINLCD_220X176__)
 #define A8_MAIN_LCD_WIDTH			(220)
 #define A8_MAIN_LCD_HEIGHT		(176)
 #elif defined(__MMI_MAINLCD_128X160__)
@@ -33,8 +37,9 @@
 #elif defined(__MMI_MAINLCD_128X128__)
 #define A8_MAIN_LCD_WIDTH			(128)
 #define A8_MAIN_LCD_HEIGHT		(128)
-#elif
-#error __MMI_MAINLCD_xxxxxxx should be defined in global scope.
+#else
+#define A8_MAIN_LCD_WIDTH			(320)
+#define A8_MAIN_LCD_HEIGHT		(240)
 #endif
 
 //===========================

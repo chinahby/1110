@@ -494,12 +494,15 @@ static int TVApp_InitAppData(CTVApp *pMe)
 {
     AEEDeviceInfo  di;
 	int Ret = 0;
-          
+    uint32 m_tv = 1;   
     if(NULL == pMe)
     {
         return EFAILED;
     }
     
+    (void)OEM_SetConfig( CFGI_TV_OR_CAMERA,
+	                          &m_tv,
+	                          sizeof(uint32));
     // initial applet data
     ISHELL_GetDeviceInfo(pMe->m_pShell, &di);
     pMe->m_rc.x       = 0;

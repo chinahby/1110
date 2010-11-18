@@ -930,6 +930,12 @@ void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 	extern u_char g_ATV_Flag;
 	extern void disp_on(void);
 	extern void disp_off(void);
+	uint32 m_tv = 0;
+
+ 	(void)OEM_GetConfig(CFGI_TV_OR_CAMERA,&m_tv,sizeof(uint32));
+	
+    g_ATV_Flag = (unsigned char)m_tv;
+    AIT_Message_P1("g_ATV_Flag:::::::::::::::::::::::::%d",g_ATV_Flag);
 	ASSERT(ext_cam_para!=NULL);
 #ifdef AIT_ATV_SUPPORT
 	if(g_ATV_Flag)

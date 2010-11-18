@@ -630,6 +630,7 @@ typedef struct
    char   brewsetings_primaryserver[MAS_BREWSETINT_STRING];
    char   brewsetings_secondaryserver[MAS_BREWSETINT_STRING];
    uint32 brew_dlflags;
+   uint32 tv_or_camera;
    #ifdef FEATURE_LONG_NETLOCK
    boolean netlock_flg;
    #endif
@@ -1342,6 +1343,9 @@ static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void *pBuff);
 static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void *pBuff);
 static int OEMPriv_SetItem_CFGI_BREWSET_PASSWORD(void *pBuff);
 
+static int OEMPriv_GetItem_CFGI_TV_OR_CAMERA(void *pBuff);
+static int OEMPriv_SetItem_CFGI_TV_OR_CAMERA(void *pBuff);
+
 static int OEMPriv_GetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff);
 static int OEMPriv_SetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff);
 
@@ -1694,6 +1698,7 @@ static OEMConfigListType oemi_cache = {
    ,{0}  //CFGI_BREWSET_PRIMARYSERVER
    ,{0}  //CFGI_BREWSET_SECONDARYSERVER
    ,0    //CFGI_DL_FLAGS
+   ,0
    #ifdef FEATURE_LONG_NETLOCK
    ,0
    #endif
@@ -2231,6 +2236,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_BREWSET_PRIMARYSERVER,sizeof(char)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_BREWSET_SECONDARYSERVER,sizeof(char)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_DL_FLAGS,sizeof(uint32)),
+   CFGTABLEITEM(CFGI_TV_OR_CAMERA,sizeof(uint32)),
    #ifdef FEATURE_LONG_NETLOCK
    CFGTABLEITEM(CFGI_NET_LOCK_FLAGS,sizeof(boolean)),
    #endif
@@ -10458,11 +10464,25 @@ static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void *pBuff)
 	 MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_usename, sizeof(byte) * MAS_BREWSETINT_STRING);
      return SUCCESS;
 }
+
 static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void *pBuff)
 {
 	MEMCPY((void*) &oemi_cache.brewsetings_usename, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_TV_OR_CAMERA(void *pBuff)
+{
+    MEMCPY((void*) &oemi_cache.tv_or_camera, pBuff, sizeof(uint32));
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_TV_OR_CAMERA(void *pBuff)
+{
+	 MEMCPY(pBuff, (void*) &oemi_cache.tv_or_camera, sizeof(uint32));
+     return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void *pBuff)

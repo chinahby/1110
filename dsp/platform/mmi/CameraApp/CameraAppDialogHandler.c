@@ -3457,11 +3457,11 @@ static void CameraApp_EventNotify(CCameraApp *pMe, AEECameraNotify *pcn)
 void CameraApp_InitCameraCheck(void *po)
 {
     int n =  SUCCESS;
-
+    
     CCameraApp *pMe = (CCameraApp *)po; 
-   
+    
     CameraApp_CreateDirectory(pMe);
- 
+    DBGPRINTF("CameraApp_InitCameraCheck-----\n");
     if(pMe->m_pCamera == NULL)
     {        
       n = ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_CAMERA, (void **)&pMe->m_pCamera);

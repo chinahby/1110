@@ -487,7 +487,7 @@ extern	t_sensor_manager	sensor_bf3703;
 
 //TV
 #ifdef AIT_ATV_SUPPORT
-u_char g_ATV_Flag=1;
+u_char g_ATV_Flag = 0;
 extern t_sensor_manager	sensor_tlg1120;
 #endif
 

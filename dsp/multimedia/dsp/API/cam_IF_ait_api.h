@@ -9,6 +9,7 @@
 #include "sys_IF_ait_api.h"
 #include "cam_module.h"
 #include "ait_interface.h"
+#include "OEMCFGI.h"
 
 typedef enum
 {
