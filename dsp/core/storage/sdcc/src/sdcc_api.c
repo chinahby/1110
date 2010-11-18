@@ -136,6 +136,7 @@ when       who     what, where, why
 
 extern unsigned int sdio_card;
 
+
 #if defined(FEATURE_SDCC_FIX_FOR_EXTRA_10MA_ON_TCXO)                            
  #define PULL_DOWN ~GPIO_PULL_MASK | (GPIO_PULL_DOWN << GPIO_PULL_POSITION)
 #endif
@@ -143,6 +144,7 @@ extern unsigned int sdio_card;
 #include "cam_module.h"
 extern ait_sd_func AIT701_SD_Func;
 #endif
+static  boolean m_binit = TRUE;
 
 /*lint -save -e641 Suppress 'Converting enum to int' warning */
 /******************************************************************************
@@ -1062,24 +1064,28 @@ sdcc_init(void)
    while (0);
 #else
 {
-
-   memset(&sdcc_pdata, 0, sizeof(sdcc_data_type));
-   //sdcc_enter_crit_sect();
-   bRet = (AIT701_SD_Func.ait_sd_init() == NULL)?FALSE:TRUE;
-   if(bRet)
+   if(m_binit)
    {
-   		MSG_FATAL("bRet=%d",bRet,0,0);
-       sdcc_pdata.card_type = SDCC_CARD_SD;
-       sdcc_pdata.mem.card_size = AIT701_SD_Func.ait_sd_get_size();
-       sdcc_pdata.mem.block_len = 512;
-	   MSG_FATAL("AIT701_SD_Func.ait_sd_get_size()=%d",AIT701_SD_Func.ait_sd_get_size(),0,0);
-	   MSG_FATAL("sdcc_pdata.card_type=%d",sdcc_pdata.card_type,0,0);
-	   MSG_FATAL("sdcc_pdata.mem.card_size=%d",sdcc_pdata.mem.card_size,0,0);
+	   memset(&sdcc_pdata, 0, sizeof(sdcc_data_type));
+	   //sdcc_enter_crit_sect();
+	   bRet = (AIT701_SD_Func.ait_sd_init() == NULL)?FALSE:TRUE;
+	   if(bRet)
+	   {
+	   		MSG_FATAL("bRet=%d",bRet,0,0);
+	       sdcc_pdata.card_type = SDCC_CARD_SD;
+	       sdcc_pdata.mem.card_size = AIT701_SD_Func.ait_sd_get_size();
+	       sdcc_pdata.mem.block_len = 512;
+		   MSG_FATAL("AIT701_SD_Func.ait_sd_get_size()=%d",AIT701_SD_Func.ait_sd_get_size(),0,0);
+		   MSG_FATAL("sdcc_pdata.card_type=%d",sdcc_pdata.card_type,0,0);
+		   MSG_FATAL("sdcc_pdata.mem.card_size=%d",sdcc_pdata.mem.card_size,0,0);
+	   }
+	   else
+	   {
+	   	   m_binit = FALSE;
+	       memset(&sdcc_pdata, 0, sizeof(sdcc_data_type));
+	   }
    }
-   else
-   {
-       memset(&sdcc_pdata, 0, sizeof(sdcc_data_type));
-   }
+    
    }
    //sdcc_leave_crit_sect();
 #endif

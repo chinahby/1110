@@ -117,8 +117,7 @@ when         who   what, where, why
 #endif
 
 /* Maximum number of SD-Slots present in this device. */
-static int max_sd_slots;
-static boolean m_isinit = FALSE;
+static int max_sd_slots; 
 
 /* Device operations */
 static int fs_sd_open (struct block_device *, void *);
@@ -409,7 +408,7 @@ fs_sd_open (struct block_device *bdev, void *data)
   ASSERT (dev->driveno < max_sd_slots);
   dev->device_idle_state = FALSE;
 
-  if ((! dev->is_open) && (!m_isinit)) {
+  if ((! dev->is_open)) {
 
 #ifdef HAVE_SDCC_HANDLE_SUPPORT
     uint32 phy_part_num = (uint32)data;
@@ -424,8 +423,7 @@ fs_sd_open (struct block_device *bdev, void *data)
     SDCC_INIT (dev->driveno);
 
     /* If sdcc_open fails, then it leaves the card "closed" */
-    dev->is_open = !!sdcc_open (dev->driveno);
-	m_isinit = FALSE;
+    dev->is_open = !!sdcc_open (dev->driveno); 
 #endif /* HAVE_SDCC_HANDLE_SUPPORT */
   }
   return dev->is_open ? 0 : -1;
