@@ -891,7 +891,6 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
 #if defined(FEATURE_LOGGER_BTIL)
    {AEECLSID_LOGGER_BTIL,        ASCF_UPGRADE,0,NULL,OEMLoggerBTIL_New},
 #endif
-{AEECLSID_CAMERAEX,             ASCF_UPGRADE,0,AEECameraEx_Init, AEECameraEx_New},
 #if defined(FEATURE_BREW_CAMERA)
          {AEECLSID_CAMERA,             (ASCF_PRIV | ASCF_UPGRADE), 0, AEECameraEx_Init, AEECameraEx_New},
 //#if defined(FEATURE_CAMERA_MULTI_SENSOR)
