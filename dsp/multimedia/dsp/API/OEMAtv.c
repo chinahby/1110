@@ -23,7 +23,7 @@
 //#include "time_secure.h"
 
 static struct TlgAtv_ScanInfo g_OEMAtv;
-static uint16 Tv_fbuffer[320*240] = {0};
+static uint16 Tv_fbuffer[220*176] = {0};  //后续这里需要修改
 
 
 static const AEEVTBL(ITlgAtv) gMMITlgAtvfuncs=
@@ -70,11 +70,12 @@ int OEMTLGAtv_New(IShell *pIShell,AEECLSID ClsID,OEMINSTANCE* ppInterface)
 #ifndef tv_ver2   
     uint16 pBitmapSize = 0;
 #endif
-//    unsigned long  time;
+	
+	//    unsigned long  time;
        
- //   time_secure_get_local_time_ms(&time);
- //   OEMATV_PRINT("OEMTLGAtv_New Enter time=%u\n",time, 0, 0);
-  MSG_FATAL("---------------------------------------------OEMTLGAtv_New--return",0,0,0);
+ 	//   time_secure_get_local_time_ms(&time);
+ 	//   OEMATV_PRINT("OEMTLGAtv_New Enter time=%u\n",time, 0, 0);
+    MSG_FATAL("---------------------------------------------OEMTLGAtv_New--return",0,0,0);
    // rex_sleep(100);
     OEMATV_PRINT("OEMTLGAtv_New Enter",0,0,0);
     if (pIShell==NULL||ClsID!=AEECLSID_TLG_ATV||ppInterface==NULL)
@@ -82,17 +83,16 @@ int OEMTLGAtv_New(IShell *pIShell,AEECLSID ClsID,OEMINSTANCE* ppInterface)
         OEMATV_PRINT("OEMAtv_New params ClsID = %d,failed",0,0,0);
         return EBADPARM;
     }
-     MSG_FATAL("---------------------------------------------1",0,0,0);
+    MSG_FATAL("---------------------------------------------1",0,0,0);
     pMe = (ITlgAtv*)MALLOC(sizeof(ITlgAtv));
     
     if (pMe != NULL)
     { 
 #ifndef tv_ver2    
-  
         ret = OEMCameraEx_New(AEECLSID_CAMERA3, (IBitmap *)pMe->pBitmap, pBitmapSize, (OEMINSTANCE *)&pMe->pCamera);  
         if (ret != SUCCESS)
         {
-         MSG_FATAL("---------------------------------------------3",0,0,0);
+         	MSG_FATAL("---------------------------------------------3",0,0,0);
             OEMATV_PRINT("OEMCamera_New  failed ret= %d",ret,0,0);
             return ret;
         } 
@@ -104,14 +104,12 @@ int OEMTLGAtv_New(IShell *pIShell,AEECLSID ClsID,OEMINSTANCE* ppInterface)
         pMe->nRefs = 1;
         *ppInterface = (OEMINSTANCE)pMe;
         ret = SUCCESS;
-        //test
-       // ERR("SND_DEVICE_SPEAKER_FM = %d",SND_DEVICE_SPEAKER_FM,0,0);
        
        // g_OEMAtv = pMe;
     }
     else
     {    
-    MSG_FATAL("---------------------------------------------2",0,0,0);
+    	MSG_FATAL("---------------------------------------------2",0,0,0);
         OEMATV_PRINT("OEMAtv_New MALLOC failed",0,0,0);
         ret= EFAILED;
     }
@@ -490,12 +488,14 @@ static int OEMTLGAtv_Update(OEMINSTANCE h, uint32 dwParam)
     uint16* pbmp = (uint16*)dwParam;
 	int i;
 	//MEMSET(Tv_fbuffer, 0x0, 320*240);
+	#if 0
 	MSG_FATAL("OEMTLGAtv_Update--------------------------start",0,0,0);
-	//for(i=0;i<320*240;i++)
-	//{
-	//	Tv_fbuffer[i] = 0xf800;
-	//}
-    MEMCPY(Tv_fbuffer, pbmp, 77440); //77440 = sizeof(g_fbuffer)
+	for(i=0;i<220*176;i++)
+	{
+		Tv_fbuffer[i] = 0x001f;
+	}
+	#endif
+    MEMCPY(Tv_fbuffer, pbmp, 220*176*2); //77440 = sizeof(g_fbuffer)
     AIT701_cam_update_osd(Tv_fbuffer,0,0,220,176);
 	/*write file*/
 #ifdef WRITE_LOG_TO_FILE 
