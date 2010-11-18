@@ -28,11 +28,12 @@
 #include "simutils.h"
 #endif
 #include "Msg.h"
-
+#ifdef FEATURE_BT
 //Add By zzg 2010_11_04
 #include "BTApp.h"
 #include "Btapp.brh"
 //Add End
+#endif
 /*===========================================================================
  *                      MACRO DECLARATIONs
  * ==========================================================================
