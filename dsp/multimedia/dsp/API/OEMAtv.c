@@ -49,6 +49,17 @@ void OEMTLGAtv_Init(void)
 {
    // Empty now
 }
+#define WRITE_LOG_TO_FILE
+#ifdef WRITE_LOG_TO_FILE
+#include "AEEFile.h"
+#include "mediagallery.h"
+    IFileMgr* pIFileMgr = NULL;
+    IFile*    pIFile    = NULL;
+#endif
+
+
+
+
 
 
 int OEMTLGAtv_New(IShell *pIShell,AEECLSID ClsID,OEMINSTANCE* ppInterface)
@@ -104,6 +115,34 @@ int OEMTLGAtv_New(IShell *pIShell,AEECLSID ClsID,OEMINSTANCE* ppInterface)
         OEMATV_PRINT("OEMAtv_New MALLOC failed",0,0,0);
         ret= EFAILED;
     }
+#ifdef WRITE_LOG_TO_FILE
+{    
+    if ( ISHELL_CreateInstance( (IShell *)AEE_GetShell(), AEECLSID_FILEMGR, 
+                                  (void **)&pIFileMgr ) == SUCCESS )
+    {
+        if (pIFileMgr == NULL)
+        {
+            MSG_FATAL("AEECLSID_FILEMGR FAILED",0,0,0);
+        }
+        
+        if( IFILEMGR_Test( pIFileMgr,  AEEFS_ROOT_DIR"/log.txt") != SUCCESS )
+        {
+          pIFile = IFILEMGR_OpenFile( pIFileMgr, AEEFS_ROOT_DIR"/log.txt", _OFM_CREATE );
+        }
+        else if( IFILEMGR_Test( pIFileMgr,  AEEFS_ROOT_DIR"/log1.txt") != SUCCESS )
+        {
+            
+            pIFile = IFILEMGR_OpenFile( pIFileMgr, AEEFS_ROOT_DIR"/log1.txt", _OFM_CREATE );
+        }
+        
+        else
+        {
+          IFILEMGR_Remove( pIFileMgr,  AEEFS_ROOT_DIR"/log.txt");
+          pIFile = IFILEMGR_OpenFile( pIFileMgr, AEEFS_ROOT_DIR"/log.txt", _OFM_CREATE );
+        }   
+    }
+}
+#endif	
  //   time_secure_get_local_time_ms(&time);
   //  OEMATV_PRINT("OEMTLGAtv_New Leave time=%u\n",time, 0, 0);
     OEMATV_PRINT("OEMTLGAtv_New Leave ret = %d",ret,0,0);
@@ -458,6 +497,15 @@ static int OEMTLGAtv_Update(OEMINSTANCE h, uint32 dwParam)
 	//}
     MEMCPY(Tv_fbuffer, pbmp, 77440); //77440 = sizeof(g_fbuffer)
     AIT701_cam_update_osd(Tv_fbuffer,0,0,220,176);
+	/*write file*/
+#ifdef WRITE_LOG_TO_FILE 
+        {
+        	int ret = 0;
+          //  SPRINTF(buf,"CRootApp_HandleUserEvent dwParam = %d\n",dwParam);
+            ret = IFILE_Write( pIFile, (void*)Tv_fbuffer, 77440);
+			MSG_FATAL("qqOEMTLGAtv_Update writefile ret = %d",ret ,0, 0);
+        }
+#endif
     return SUCCESS;
 }
 
