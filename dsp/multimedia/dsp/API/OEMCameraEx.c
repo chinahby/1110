@@ -64,6 +64,7 @@ Workaround in .c files to make sure no compiling issue happens in the case.
 
 ===========================================================================*/
 uint16 g_fbuffer[A8_MAIN_LCD_WIDTH*A8_MAIN_LCD_HEIGHT] = {0};
+
 static boolean       OEMCameraEx_FilePath(OEMCamera * pme, void * pData);
 static int           OEMCameraEx_Preview(OEMCamera * pme);
 static int           OEMCameraEx_RecordMovie(OEMCamera * pme);
@@ -117,11 +118,10 @@ int OEMCameraEx_New(AEECLSID cls, IBitmap * pFrame, uint16 wSize, OEMINSTANCE * 
 	// By default, file size is disabled by setting param to zero
 	pme->m_nFileSize = OEMCAMERA_FILE_SIZE_DISABLED;
 	// Assume we will be using Snapshot mode
-
-    //MEMSET(pme->m_pszFile, 0, sizeof(pme->m_pszFile));
+	
     pme->m_pFileMgr = NULL;
     
-    papplet = (IShell*)AEE_GetShell();//(AEEApplet*)GETAPPINSTANCE(); 
+    papplet = (IShell*)AEE_GetShell();
 
     nRet = ISHELL_CreateInstance(papplet, AEECLSID_FILEMGR, (void **)&pme->m_pFileMgr);
      DBGPRINTF("22222222222---OEMCameraEx_New--%d---%0x\n", nRet,pme->m_pFileMgr);
@@ -333,10 +333,10 @@ int OEMCameraEx_EncodeSnapshot(OEMINSTANCE hInstance)
 	IFile    *pFileDst = NULL;
     DBGPRINTF("EncodeSnapshot-----%s",pme->m_pszFile);
     pFileDst = IFILEMGR_OpenFile(pme->m_pFileMgr,pme->m_pszFile,_OFM_CREATE);
-
+    
 	if ( pFileDst )
 	{
-	    DBGPRINTF("EncodeSnapshot 0000000000000000-----%0x",pFileDst);
+	    DBGPRINTF("EncodeSnapshot-000---%0x---%s",pFileDst,pme->m_pszFile);
 		IFILE_Write(pFileDst,g_fbuffer, pme->m_nFileSize);
 	}
 	RELEASEIF(pFileDst); 
