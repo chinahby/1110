@@ -425,7 +425,7 @@ fs_sd_open (struct block_device *bdev, void *data)
 
     /* If sdcc_open fails, then it leaves the card "closed" */
     dev->is_open = !!sdcc_open (dev->driveno);
-	m_isinit = TRUE;
+	m_isinit = FALSE;
 #endif /* HAVE_SDCC_HANDLE_SUPPORT */
   }
   return dev->is_open ? 0 : -1;

@@ -279,20 +279,8 @@ sdcc_open(int16 driveno)
    sdcc_leave_crit_sect();
    return(rc ? FALSE : TRUE);
 #else
-   boolean bRet = FALSE;
-   sdcc_enter_crit_sect();
-   bRet = (AIT701_SD_Func.ait_sd_init() == NULL)?FALSE:TRUE;
-   if(bRet)
-   {
-       sdcc_pdata.card_type = SDCC_CARD_SD;
-       sdcc_pdata.mem.card_size = AIT701_SD_Func.ait_sd_get_size();
-       sdcc_pdata.mem.block_len = 512;
-   }
-   else
-   {
-       memset(&sdcc_pdata, 0, sizeof(sdcc_data_type));
-   }
-   sdcc_leave_crit_sect();
+   boolean bRet = TRUE;
+   
    return bRet;
 #endif
 }/* sdcc_open */
@@ -968,6 +956,7 @@ boolean
 sdcc_init(void)
 {
    /* Its OK to re-initialize the sdcc critical section */
+   boolean bRet = FALSE;
    sdcc_init_crit_sect();
    sdcc_enter_crit_sect();
 #ifndef FEATURE_DSP
@@ -1072,10 +1061,30 @@ sdcc_init(void)
    }
    while (0);
 #else
+{
+
    memset(&sdcc_pdata, 0, sizeof(sdcc_data_type));
+   //sdcc_enter_crit_sect();
+   bRet = (AIT701_SD_Func.ait_sd_init() == NULL)?FALSE:TRUE;
+   if(bRet)
+   {
+   		MSG_FATAL("bRet=%d",bRet,0,0);
+       sdcc_pdata.card_type = SDCC_CARD_SD;
+       sdcc_pdata.mem.card_size = AIT701_SD_Func.ait_sd_get_size();
+       sdcc_pdata.mem.block_len = 512;
+	   MSG_FATAL("AIT701_SD_Func.ait_sd_get_size()=%d",AIT701_SD_Func.ait_sd_get_size(),0,0);
+	   MSG_FATAL("sdcc_pdata.card_type=%d",sdcc_pdata.card_type,0,0);
+	   MSG_FATAL("sdcc_pdata.mem.card_size=%d",sdcc_pdata.mem.card_size,0,0);
+   }
+   else
+   {
+       memset(&sdcc_pdata, 0, sizeof(sdcc_data_type));
+   }
+   }
+   //sdcc_leave_crit_sect();
 #endif
    sdcc_leave_crit_sect();
-   return(TRUE);
+   return (bRet);
 }/* sdcc_init */
 
 /******************************************************************************
