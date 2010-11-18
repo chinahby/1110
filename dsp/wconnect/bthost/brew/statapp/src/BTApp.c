@@ -9750,8 +9750,13 @@ void BTApp_EnableBT( CBTApp* pMe )
   }
 
   //Add By zzg 2010_11_16
-  bIsBTOn = TRUE;		
-  
+  bIsBTOn = TRUE;
+
+	if(pMe->m_pIAnn)
+	{
+		IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_ON);
+	}
+
   if (FALSE == pMe->bStartFromOtherApp)
   {
   	BTApp_ShowMessage( pMe, IDS_MSG_BT_ENABLED, NULL, 5);
@@ -9950,7 +9955,13 @@ static void BTApp_DisableBT( CBTApp* pMe )
   }
 
   //Add By zzg 2010_11_16
-  bIsBTOn = FALSE;		
+  bIsBTOn = FALSE;	
+  
+  if(pMe->m_pIAnn)
+  {
+  	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_OFF);
+  }
+  
   BTApp_ShowMessage( pMe, IDS_MSG_BT_DISABLED, NULL, 5);
   //Add End
   
@@ -11701,7 +11712,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
 		{
 			if ( BTApp_HCIModeOn( pMe ) == FALSE )
 			{
-				bIsBTOn = TRUE;
+				BTApp_EnableBT(pMe);
 				BTApp_BuildMenu( pMe, BT_APP_MENU_OPP_SENDFILE);
 			}			
 			break;
