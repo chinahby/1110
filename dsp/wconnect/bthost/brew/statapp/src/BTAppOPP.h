@@ -62,7 +62,8 @@ extern void    BTApp_OPPConnect( CBTApp* pMe, AEEBTBDAddr* pBDAddr );
 extern void    BTApp_OPPBuildSendFileMenu(CBTApp* pMe );
 extern boolean BTApp_OPPHandleSendFileSelection( CBTApp* pMe, uint16 sel );
 
-
+extern void    BTApp_OPPBuildSettingMenu(CBTApp* pMe );
+extern boolean BTApp_OPPHandleSettingSelection( CBTApp* pMe, uint16 sel );
 //Add End
 
 #ifdef FEATURE_APP_TEST_AUTOMATION

@@ -3933,25 +3933,6 @@ static int MGAppPopupMenu_OnBluetooth(CMediaGalleryApp* pMe,
 
   STRCAT(szArg, pSelData->szName);
 
-  /*
-  MSG_FATAL("***zzg MGAppPopupMenu_OnBluetooth STRLEN(pSelData->szName)=%s***", STRLEN(pSelData->szName), 0, 0);
-  MSG_FATAL("***zzg MGAppPopupMenu_OnBluetooth STRLEN(szArg)=%s***", STRLEN(szArg), 0, 0);
-
-  {
-	int i=0;
-	for (i=0; i<STRLEN(pSelData->szName); i++)
-	{
-		MSG_FATAL("***zzg MGAppPopupMenu_OnBluetooth filepath[%d]=%x***", i, *(pSelData->szName+i), 0);
-	}	
-
-	for (i=0; i<STRLEN(szArg); i++)
-	{
-		MSG_FATAL("***zzg MGAppPopupMenu_OnBluetooth szArg[%d]=%x***", i, szArg[i], 0);
-	}
-  }
-  */
-
-
 //Add By zzg 2010_11_03
 #ifdef FEATURE_BT_SEND_FILE_ONLY 
   return ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, szArg);
