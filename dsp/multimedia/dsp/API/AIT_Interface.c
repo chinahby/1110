@@ -331,10 +331,11 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 	{
 		AIT_ATV_PREV_FULL_MODE,
 		CAM_ROTATE_NORMAL,
-		{0,0,220,176},		
-		{0,0,220,150},
-		{200,0,0,0},
-		{0,156,0,0}
+		{0,0,220,176},
+		{0,0,220,176/*30*/},
+		{0,0,0,0},
+		{0,0,0,0}
+
 	},
 	{
 		AIT_JPG_PLAY_FULL_MODE,
