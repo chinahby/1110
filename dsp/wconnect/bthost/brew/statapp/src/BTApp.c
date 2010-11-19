@@ -7933,7 +7933,7 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
 #ifdef FEATURE_BT_EXTPF_OPP
     case BT_APP_MENU_OPP_TESTS:
 	case BT_APP_MENU_OPP_SENDFILE:	//Add By zzg 2010_11_09	
-	case BT_APP_MENU_OPP_SETTING:	//Add By zzg 2010_11_17
+	case BT_APP_MENU_OPP_SETTING:	//Add By zzg 2010_11_17	
     case BT_APP_MENU_OPP_SERVER:
     case BT_APP_MENU_OPP_CLIENT:
     case BT_APP_MENU_OPP_LIST_FILE_TYPES:

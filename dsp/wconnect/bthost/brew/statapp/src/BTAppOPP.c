@@ -478,6 +478,67 @@ void BTApp_OPPBuildSettingMenu( CBTApp* pMe )
 }
 
 
+void BTApp_OPPUpdateSendingProgress( CBTApp* pMe )
+{
+	CtlAddItem  ai;  
+	AECHAR  wTempBuf[64];
+	AECHAR* pText = pMe->pText2;
+	AEERect rc;
+	uint8   len = 0;
+	
+	int		percent = 0;
+	char    szConBuf[10];
+	
+	//Draw the title
+	if (pMe->m_pIAnn != NULL)
+	{
+		IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn, FALSE);
+	}  
+	 
+	ISHELL_LoadResString(pMe->a.m_pIShell,
+						 BTAPP_RES_FILE,								
+						 IDS_BPP_SEND_FILE,
+						 wTempBuf,
+						 sizeof( wTempBuf ));
+
+	if (pMe->m_pIAnn != NULL)
+	{
+		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, wTempBuf);
+	}
+
+
+   // set rect for info display area
+    SETAEERECT ( &rc, pMe->m_rect.x, 
+                 pMe->m_rect.y, 
+                 pMe->m_rect.dx, 
+                 pMe->m_rect.dy);
+   
+    ISTATIC_SetRect( pMe->m_pStatic, &rc );  
+    ISTATIC_SetProperties(pMe->m_pStatic, ISTATIC_GetProperties( pMe->m_pStatic ) | ST_MIDDLETEXT );
+    ISTATIC_SetProperties(pMe->m_pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);  
+    ISTATIC_SetBackGround(pMe->m_pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); 	
+
+	if (progInfo.numBytes > 0)
+	{		
+		CLEAR_SCREEN();
+		
+		percent = progInfo.numBytes*100/progInfo.objSize;		
+
+		snprintf(szConBuf, 10, " %d/100 ", percent);			
+
+		ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_BPP_SEND_FILE, pMe->pText2, LONG_TEXT_BUF_LEN * sizeof(AECHAR) );
+		len = WSTRLEN(pMe->pText2);
+		STRTOWSTR(szConBuf, &pMe->pText2[len], (LONG_TEXT_BUF_LEN-len)*sizeof(AECHAR));
+
+		ISTATIC_SetText( pMe->m_pStatic, NULL, pText, AEE_FONT_BOLD, AEE_FONT_NORMAL );
+
+		ISTATIC_Redraw(pMe->m_pStatic);
+		IDISPLAY_UpdateEx(pMe->a.m_pIDisplay, FALSE);					
+	}	  
+}
+
+
+
 //Add End
 
 /* ==========================================================================
@@ -1157,8 +1218,8 @@ void BTApp_OPPPushEx( CBTApp* pMe, char* filepath, AEEBTObjectType objType )
       if ( result == SUCCESS )
       {
         pMe->mOPP.bObjectTransfer = TRUE;
-        ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, 
-                      FALSE );
+		
+        //ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE );
       }
       else
       {
@@ -1251,6 +1312,7 @@ boolean BTApp_OPPBuildMenu( CBTApp* pMe, BTAppMenuType menu )
 		break;
 	}
 	//Add End
+	
     case BT_APP_MENU_OPP_TESTS:
     {
       if ( BTApp_OPPInit( pMe ) != FALSE )
@@ -1970,11 +2032,13 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
     }
     case EVT_OPP_PROG_INFO:
     {
-      if ( IBTEXTOPP_GetProgressInfo( pMe->mOPP.po, &progInfo ) == SUCCESS )
+      if (IBTEXTOPP_GetProgressInfo( pMe->mOPP.po, &progInfo ) == SUCCESS)
       {
         MSG_HIGH("BTAppOPP: GetProgInfo num_bytes = %d, obj_size = %d",progInfo.numBytes, progInfo.objSize, 0);
 		MSG_FATAL("***zzg BTAppOPP: GetProgInfo num_bytes = %d, obj_size = %d",progInfo.numBytes, progInfo.objSize, 0);
-      }
+
+		BTApp_OPPUpdateSendingProgress(pMe);		//Add By zzg 2010_11_19
+	  }
       else
       {
         MSG_ERROR("BTAppOPP: GetProgInfo failed!", 0, 0, 0);
