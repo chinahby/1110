@@ -6,8 +6,8 @@
 #include "AEEInterface.h"
 #include "AEEIBitmap.h"
 
-#include "OEMCameraEx.h"
-#include "AEECameraEx.h"
+#include "OEMCamera.h"
+#include "AEECamera.h"
 
 
 #include "tlgPlatform.h"

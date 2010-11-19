@@ -639,7 +639,7 @@ static void TVApp_FreeAppData(CTVApp *pMe)
 
     if(pMe->m_pTV)
     {
-        ICAMERAEX_Release(pMe->m_pTV);
+        ICAMERA_Release(pMe->m_pTV);
         pMe->m_pTV = NULL;
     }
 
@@ -835,7 +835,7 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
             if(pMe->m_bIsPreview == TRUE && pMe->m_pTV)
             {
                 //ICAMERAEX_RegisterNotify(pMe->m_pTV,NULL, NULL);
-                ICAMERAEX_Stop(pMe->m_pTV);
+                ICAMERA_Stop(pMe->m_pTV);
             }
             (void)ICONFIG_SetItem(pMe->m_pConfig,
                                   CFGI_BACK_LIGHT,
@@ -851,12 +851,12 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
             if(pMe->m_bIsPreview == TRUE && pMe->m_pTV)
             {
                // ICAMERAEX_RegisterNotify(pMe->m_pTV,NULL, NULL);
-                ICAMERAEX_Stop(pMe->m_pTV);
+                ICAMERA_Stop(pMe->m_pTV);
             }
             
             if(pMe->m_nTVState == TV_START && pMe->m_pTV)
             {
-                ICAMERAEX_Release(pMe->m_pTV);
+                ICAMERA_Release(pMe->m_pTV);
                 pMe->m_pTV = NULL;
             }
             pMe->m_bIsPreview = FALSE;
@@ -865,7 +865,7 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
         case EVT_ALARM:
             if(pMe->m_nTVState == TV_START && pMe->m_pTV)
             {
-                ICAMERAEX_Release(pMe->m_pTV);
+                ICAMERA_Release(pMe->m_pTV);
                 pMe->m_pTV = NULL;
             }
             pMe->m_bIsPreview = FALSE;

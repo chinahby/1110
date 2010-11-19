@@ -253,8 +253,9 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #if defined (FEATURE_IHDR)
 	#include "AEEHDR.h"
 #endif
+#ifdef FEATURE_DSP
 #include "IMMITv.h"
-
+#endif
 // RDM Static Extension
 #if defined (FEATURE_IRDM)
 #error code not present
@@ -403,7 +404,7 @@ extern const AEEStaticClass gOEMOverlayClasses[];
 	extern int OEMWMS_New (IShell *piShell, AEECLSID cls, void **pp);
 //#endif
 
-#ifdef FEATURE_APP_ATV
+#ifdef FEATURE_TV
 	extern int CTVAppMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #endif
 
@@ -578,10 +579,10 @@ extern int CoreApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int CoreStartApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 #endif
-
+#ifdef FEATURE_DSP
 extern int CMMITv_New (IShell * pIShell, AEECLSID clsid, void ** ppif);
 extern int OEMTLGAtv_New(IShell *pIShell,AEECLSID ClsID,OEMINSTANCE* ppInterface);
-
+#endif
 #ifdef FEATURE_APP_QUICKTEST
 extern int QuickTest_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #endif
@@ -1057,7 +1058,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 	{ AEEFS_MIF_DIR"recorder.mif", Recorder_Load},
 #endif
 
-#ifdef FEATURE_APP_ATV
+#ifdef FEATURE_TV
     {AEEFS_MIF_DIR"tvapp.mif", CTVAppMod_Load}, 
 #endif
 
@@ -1466,10 +1467,10 @@ static const AEEStaticClass gOEMStaticClassList[] = {
 //#if defined (FEATURE_WMS_APP)
    {AEECLSID_WMS,                ASCF_PRIV,0,NULL,OEMWMS_New},
 //#endif
-
+#ifdef FEATURE_DSP
 	{MMI_CLSID_IMMITV,		   ASCF_PRIV,0,NULL,CMMITv_New},
 	{AEECLSID_TLG_ATV,		  ASCF_UPGRADE, 0, NULL, OEMTLGAtv_New},
-
+#endif
 
 #if defined(FEATURE_IWMSDIAG) && !defined(FEATURE_MANGO_UI)
    {AEECLSID_WMSDIAG,         ASCF_PRIV,0,NULL,AEEWMSDIAG_New},

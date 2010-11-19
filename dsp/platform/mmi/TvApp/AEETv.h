@@ -17,7 +17,7 @@
 #include "AEEIBitmap.h"
 #define INHERIT_FROM_CAMERA
 #ifdef INHERIT_FROM_CAMERA
-#include "AEECameraEx.h"
+#include "AEECamera.h"
 #endif
 
 typedef  unsigned short int ATV_U16;

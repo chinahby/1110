@@ -18,7 +18,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 ============================================================================*/
 
 #include "AEE_OEMComdef.h"
-#include "AEECameraEx.h"
+#include "AEECamera.h"
 #include "AEEClassIDs.h"
 #include "AEECamera.bid"
 

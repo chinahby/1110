@@ -181,11 +181,12 @@ struct OEMCamera
    flg               m_bPaused:1;
    flg               m_bDeferEncode:1;
    int16             m_nPreviewType;
-
+ 
    // Media data.
    AEEMediaData      m_md;
    char *            m_pszMIME;
-   char *            m_pszFile;
+   char *            m_pszFile; 
+   IFileMgr*         m_pFileMgr;
 
    AEECLSID          m_clsVideo;
    uint32            m_dwSubVideo;
@@ -260,7 +261,12 @@ struct OEMCamera
 #error code not present
 #endif //FEATURE_CAMERA_BURST_MODE || FEATURE_CAMERA_MULTISHOT_SINGLE_ENCODE
    uint8                m_nSpaceLimitThreshold;
-   AEESize      sensorSize;
+   AEESize      sensorSize; 
+
+	// Camera mode.
+	
+	// Media data.
+	
 };
 
 //---------------------------------------------------------------------------

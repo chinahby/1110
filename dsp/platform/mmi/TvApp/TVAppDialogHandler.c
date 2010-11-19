@@ -51,7 +51,7 @@
 
 struct ICameraEx
 {
-    VTBL(ICameraEx)    *pvt;
+    VTBL(ICamera)    *pvt;
     int32             m_nRefs;
     OEMCamera        *m_pOEMCamera;
 };
@@ -680,7 +680,7 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
         case EVT_DIALOG_START:
            if(pMe->m_pTV)
             {
-                ICAMERAEX_Release(pMe->m_pTV);
+                ICAMERA_Release(pMe->m_pTV);
                 pMe->m_pTV = NULL;
             }
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);            
@@ -845,7 +845,7 @@ static boolean TV_DRAWTOPBAR_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 
 		if(pMe->m_pTV)
             {
-                ICAMERAEX_Release(pMe->m_pTV);
+                ICAMERA_Release(pMe->m_pTV);
                 pMe->m_pTV = NULL;
             }
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);            
@@ -953,7 +953,7 @@ static boolean TV_DRAWBAR1_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
 
 		if(pMe->m_pTV)
             {
-                ICAMERAEX_Release(pMe->m_pTV);
+                ICAMERA_Release(pMe->m_pTV);
                 pMe->m_pTV = NULL;
             }
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);            
@@ -1073,7 +1073,7 @@ static boolean TV_DRAWBAR2_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
 
 		if(pMe->m_pTV)
             {
-                ICAMERAEX_Release(pMe->m_pTV);
+                ICAMERA_Release(pMe->m_pTV);
                 pMe->m_pTV = NULL;
             }
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);            
@@ -1196,7 +1196,7 @@ static boolean TV_DRAWBAR3_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
 
 		if(pMe->m_pTV)
             {
-                ICAMERAEX_Release(pMe->m_pTV);
+                ICAMERA_Release(pMe->m_pTV);
                 pMe->m_pTV = NULL;
             }
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);            
@@ -1317,7 +1317,7 @@ static boolean TV_DRAWBAR4_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
 
 		if(pMe->m_pTV)
             {
-                ICAMERAEX_Release(pMe->m_pTV);
+                ICAMERA_Release(pMe->m_pTV);
                 pMe->m_pTV = NULL;
             }
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);            
@@ -1438,7 +1438,7 @@ static boolean TV_DRAWBAR5_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
 
 		if(pMe->m_pTV)
             {
-                ICAMERAEX_Release(pMe->m_pTV);
+                ICAMERA_Release(pMe->m_pTV);
                 pMe->m_pTV = NULL;
             }
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);            
@@ -1559,7 +1559,7 @@ static boolean TV_DRAWBAR6_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
 
 		if(pMe->m_pTV)
             {
-                ICAMERAEX_Release(pMe->m_pTV);
+                ICAMERA_Release(pMe->m_pTV);
                 pMe->m_pTV = NULL;
             }
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);            
@@ -1680,7 +1680,7 @@ static boolean TV_DRAWBAR7_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
 
 		if(pMe->m_pTV)
             {
-                ICAMERAEX_Release(pMe->m_pTV);
+                ICAMERA_Release(pMe->m_pTV);
                 pMe->m_pTV = NULL;
             }
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);            
@@ -2687,7 +2687,7 @@ static boolean TVApp_PreviewHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPar
                 ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
                 if(pMe->m_nTVState == TV_PREVIEW)
                 {
-                    ICAMERAEX_Stop(pMe->m_pTV);
+                    ICAMERA_Stop(pMe->m_pTV);
                     pMe->m_nTVState = TV_STOP;
                 }
                 return FALSE;
@@ -2703,14 +2703,14 @@ static boolean TVApp_PreviewHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPar
                     ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
                     if(pMe->m_nTVState == TV_PREVIEW)
                     {
-                        ICAMERAEX_Stop(pMe->m_pTV);
+                        ICAMERA_Stop(pMe->m_pTV);
                         pMe->m_nTVState = TV_STOP;
                     }                        
                     pMe->m_isFormQuicktest = FALSE;
                     ISHELL_CloseApplet(pMe->m_pShell, FALSE);
                     return TRUE;
                 }
-                if(SUCCESS == ICAMERAEX_Stop(pMe->m_pTV))
+                if(SUCCESS == ICAMERA_Stop(pMe->m_pTV))
                 {
                     pMe->m_bIsPreview = FALSE;
                     pMe->m_nTVState = TV_STOP;
@@ -2733,7 +2733,7 @@ static boolean TVApp_PreviewHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPar
                         pMe->m_wMsgID = IDS_MSG_NOSDCARD;
                     }
                     pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
-                    ICAMERAEX_Stop(pMe->m_pTV);
+                    ICAMERA_Stop(pMe->m_pTV);
                     pMe->m_bIsPreview = FALSE;
                     CLOSE_DIALOG(DLGRET_POPMSG);
                     return TRUE;
@@ -2766,7 +2766,7 @@ static boolean TVApp_PreviewHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPar
                 if(nTVSelfTime == 0)
                 {
                     pMe->m_nTVState = TV_CAPTURE;
-                    ICAMERAEX_Stop(pMe->m_pTV);
+                    ICAMERA_Stop(pMe->m_pTV);
                     //TVApp_RecordSnapShot(pMe);
                 }
                 else
@@ -2951,7 +2951,7 @@ static boolean TVApp_TVCFGHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wParam
 
                 case AVK_END:
                     ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
-                    ICAMERAEX_Stop(pMe->m_pTV);
+                    ICAMERA_Stop(pMe->m_pTV);
                     pMe->m_nTVState = TV_STOP;
                     return FALSE;
                     
@@ -3448,7 +3448,7 @@ static boolean TVApp_PopMenu_EnvironmentCommandHandleEvent(CTVApp *pMe, uint16 w
                                   &pMe->m_nTVEnviroment,
                                   sizeof(pMe->m_nTVEnviroment));
             
-            ICAMERAEX_SetFramesPerSecond(pMe->m_pTV, dwFPS);
+            ICAMERA_SetFramesPerSecond(pMe->m_pTV, dwFPS);
             break;
 
         case IDD_CVIDEOCFG:
@@ -3483,7 +3483,7 @@ static boolean TVApp_PopMenu_EnvironmentCommandHandleEvent(CTVApp *pMe, uint16 w
                                   &pMe->m_nTVEnviroment,
                                   sizeof(pMe->m_nTVEnviroment));
             
-            ICAMERAEX_SetFramesPerSecond(pMe->m_pTV, dwFPS);
+            ICAMERA_SetFramesPerSecond(pMe->m_pTV, dwFPS);
             break;
             
     }
@@ -3546,10 +3546,10 @@ static boolean TVApp_PopMenu_QualityCommandHandleEvent(CTVApp *pMe, uint16 wPara
                               &pMe->m_nTVQuality,
                               sizeof(pMe->m_nTVQuality));
 
-        ICAMERAEX_SetQuality(pMe->m_pTV, quality);
+        ICAMERA_SetQuality(pMe->m_pTV, quality);
 
         pMe->m_bRePreview = TRUE;
-        ICAMERAEX_Stop(pMe->m_pTV);
+        ICAMERA_Stop(pMe->m_pTV);
         pMe->m_nTVState = TV_STOP;
     }
     
@@ -3585,18 +3585,18 @@ static boolean TVApp_PopMenu_SizeCommandHandleEvent(CTVApp *pMe, uint16 wParam)
     { 
         TVApp_SetTVCaptureSize(pMe, wParam);
         pMe->m_bRePreview = TRUE;
-        ICAMERAEX_Stop(pMe->m_pTV);
+        ICAMERA_Stop(pMe->m_pTV);
         pMe->m_nTVState = TV_STOP;
     }
 #if defined(FEATURE_DISP_128X128)
     if(pMe->m_nTVSize == OEMNV_CAMERA_SIZE_INDEX_0)
     {
-        ICAMERAEX_SetParm(pMe->m_pTV, CAM_PARM_PREVIEWWITHFRAME, 1, 0);
+        ICAMERA_SetParm(pMe->m_pTV, CAM_PARM_PREVIEWWITHFRAME, 1, 0);
     }
     else
 #endif
     {
-        ICAMERAEX_SetParm(pMe->m_pTV, CAM_PARM_PREVIEWWITHFRAME, 0, 0);
+        ICAMERA_SetParm(pMe->m_pTV, CAM_PARM_PREVIEWWITHFRAME, 0, 0);
     }
   
     CLOSE_DIALOG(DLGRET_CANCELED);
@@ -3732,7 +3732,7 @@ static boolean TVApp_PopMenu_BandingCommandHandleEvent(CTVApp *pMe, uint16 wPara
         default:
             return FALSE;
     }
-    ICAMERAEX_SetParm(pMe->m_pTV, CAM_PARM_BANDING, pMe->m_nTVBanding, 0);
+    ICAMERA_SetParm(pMe->m_pTV, CAM_PARM_BANDING, pMe->m_nTVBanding, 0);
     (void)ICONFIG_SetItem(pMe->m_pConfig,
                           CFGI_CAMERA_BANDING,
                           &pMe->m_nTVBanding,
@@ -3766,7 +3766,7 @@ static boolean TVApp_PopMenu_ResetCFGCommandHandleEvent(CTVApp *pMe, uint16 wPar
         TVApp_InitCFGData(pMe);    
     }
 
-    if(SUCCESS == ICAMERAEX_Stop(pMe->m_pTV))
+    if(SUCCESS == ICAMERA_Stop(pMe->m_pTV))
     {
         pMe->m_bIsPreview = FALSE;
         pMe->m_nTVState = TV_STOP;
@@ -4929,13 +4929,13 @@ static void TVApp_CPreviewStart(CTVApp *pMe)
             break;
     }
     
-    ICAMERAEX_SetParm(pMe->m_pTV, CAM_PARM_PREVIEW_TYPE, CAM_PREVIEW_SNAPSHOT, 0);       
-    ICAMERAEX_SetParm(pMe->m_pTV, CAM_PARM_MULTISHOT, 1, 0);
-    ICAMERAEX_SetQuality(pMe->m_pTV, quality);    
-    ICAMERAEX_SetSize(pMe->m_pTV, &captureSize);
-    ICAMERAEX_SetDisplaySize(pMe->m_pTV, &displaySize);
+    ICAMERA_SetParm(pMe->m_pTV, CAM_PARM_PREVIEW_TYPE, CAM_PREVIEW_SNAPSHOT, 0);       
+    ICAMERA_SetParm(pMe->m_pTV, CAM_PARM_MULTISHOT, 1, 0);
+    ICAMERA_SetQuality(pMe->m_pTV, quality);    
+    ICAMERA_SetSize(pMe->m_pTV, &captureSize);
+    ICAMERA_SetDisplaySize(pMe->m_pTV, &displaySize);
     
-    ICAMERAEX_Preview(pMe->m_pTV); 
+    ICAMERA_Preview(pMe->m_pTV); 
 
     pMe->m_nTVState = TV_PREVIEW;  
 
@@ -4966,16 +4966,16 @@ static void TVApp_RecordSnapShot(CTVApp *pMe)
     
     pMe->m_nTVState = TV_SAVE;
     pMe->m_bCapturePic  = TRUE;
-    (void)ICAMERAEX_DeferEncode(pMe->m_pTV, TRUE);
+    (void)ICAMERA_DeferEncode(pMe->m_pTV, TRUE);
     
     // 拍照状态的处理
-    if(SUCCESS != ICAMERAEX_RecordSnapshot(pMe->m_pTV))
+    if(SUCCESS != ICAMERA_RecordSnapshot(pMe->m_pTV))
     {
         // 拍照失败,默认保留已经拍照成功的相片,并返回到预览界面,避免UI层出现死机现象
         // Vc848.c中处理过,如果拍照失败,直接删除失败的文件.
         pMe->m_wMsgID = IDS_MSG_CAPTURE_FAILED;
         pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
-        ICAMERAEX_Stop(pMe->m_pTV);
+        ICAMERA_Stop(pMe->m_pTV);
         pMe->m_nTVState = TV_STOP;
         pMe->m_bRePreview = TRUE;
         CLOSE_DIALOG(DLGRET_POPMSG);
@@ -5064,7 +5064,7 @@ static boolean TVApp_SelfTimeRecordSnapShot(CTVApp *pMe)
         if(pMe->m_pTV)
         {
             pMe->m_nTVState = TV_CAPTURE;
-            ICAMERAEX_Stop(pMe->m_pTV);
+            ICAMERA_Stop(pMe->m_pTV);
             //TVApp_RecordSnapShot(pMe);
         }
         
@@ -5202,7 +5202,7 @@ static boolean TVApp_SetDateForRecordFileName(CTVApp *pMe)
     md.pData = (void *)pMe->m_sCurrentFileName;
     md.dwSize = 0;
 
-    (void)ICAMERAEX_SetMediaData(pMe->m_pTV, &md, 0);
+    (void)ICAMERA_SetMediaData(pMe->m_pTV, &md, 0);
 
     return TRUE;
 }
@@ -5263,9 +5263,9 @@ static void TVApp_SetTVCaptureSize(CTVApp *pMe, uint16 wParam)
                           &pMe->m_nTVSize,
                           sizeof(pMe->m_nTVSize));
  
-    ICAMERAEX_SetSize(pMe->m_pTV, &captureSize);
+    ICAMERA_SetSize(pMe->m_pTV, &captureSize);
     
-    ICAMERAEX_SetDisplaySize(pMe->m_pTV, &displaySize);
+    ICAMERA_SetDisplaySize(pMe->m_pTV, &displaySize);
 }
 
 static void TVApp_HandleSnapshotPic(CTVApp *pMe)
@@ -5359,8 +5359,8 @@ static void TVApp_SetParamAfterPreview(CTVApp *pMe)
             break;
     }
 
-    ICAMERAEX_SetFramesPerSecond(pMe->m_pTV, dwFPS);
-    ICAMERAEX_SetParm(pMe->m_pTV, CAM_PARM_BANDING, pMe->m_nTVBanding, 0);
+    ICAMERA_SetFramesPerSecond(pMe->m_pTV, dwFPS);
+    ICAMERA_SetParm(pMe->m_pTV, CAM_PARM_BANDING, pMe->m_nTVBanding, 0);
 }
 
 /*===========================================================================
@@ -5417,9 +5417,9 @@ static int TVApp_SavePhoto(CTVApp *pMe)
   md.dwSize = 0;
 
   //Start encoding processing
-  (void)ICAMERAEX_SetMediaData(pMe->m_pTV, &md, 0);
+  (void)ICAMERA_SetMediaData(pMe->m_pTV, &md, 0);
   
-  return ICAMERAEX_EncodeSnapshot(pMe->m_pTV);
+  return ICAMERA_EncodeSnapshot(pMe->m_pTV);
 } /* END TVApp_SavePhoto */
 
 static void TVApp_EventNotify(CTVApp *pMe, AEECameraNotify *pcn)
@@ -5477,7 +5477,7 @@ void TVApp_InitTVCheck(void *po)
     if(pMe->m_pTV != NULL)
     {
         MSG_FATAL("pMe->m_pTV != NULL",0,0,0);
-        ICAMERAEX_GetParm(pMe->m_pTV, CAM_PARM_SENSOR_MODEL, &(pMe->m_sensor_model), NULL);
+        ICAMERA_GetParm(pMe->m_pTV, CAM_PARM_SENSOR_MODEL, &(pMe->m_sensor_model), NULL);
         MSG_FATAL("m_sensor_model=%d",pMe->m_sensor_model,0,0);            
     }
     else
@@ -5486,7 +5486,7 @@ void TVApp_InitTVCheck(void *po)
     }
     if(pMe->m_pTV)
     {
-        ICAMERAEX_RegisterNotify(pMe->m_pTV,(PFNCAMERANOTIFY)TVApp_EventNotify,po);
+        ICAMERA_RegisterNotify(pMe->m_pTV,(PFNCAMERANOTIFY)TVApp_EventNotify,po);
     }
 }
 

@@ -94,6 +94,7 @@ static int     ICamera_Stop(ICamera * pme);
 static int     ICamera_Pause(ICamera * pme, boolean bPause);
 static int     ICamera_GetFrame(ICamera * po, IBitmap ** ppFrame);
 static int     ICamera_EncodeSnapshot(ICamera * pme);
+//static int     ICamera_Update(ICamera * pme,uint32 dwParam);
 
 static AEEVTBL(ICamera) gvtICamera =
 {
@@ -241,7 +242,12 @@ static int ICamera_RegisterNotify( ICamera         *pme,
                                    PFNCAMERANOTIFY  pfnNotify, 
                                    void            *pUser)
 {
+#ifdef FEATURE_DSP
+return SUCCESS;//OEMCameraEx_RegisterNotify(pme->m_pOEMCamera, pfnNotify, pUser);
+
+#else
     return OEMCamera_RegisterNotify(pme->m_pOEMCamera, pfnNotify, pUser);
+#endif
 }
 
 /*==================================================================
@@ -267,6 +273,7 @@ static int ICamera_Start(ICamera * pme, int16 nMode, uint32 dwParam)
 {
     return OEMCamera_Start(pme->m_pOEMCamera, nMode, dwParam);
 }
+
 
 /*==================================================================
 

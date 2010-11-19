@@ -1,8 +1,8 @@
 #include "AEE_OEMComdef.h"
 #include "AEEShell.h"
-#include "OEMCameraEx.h"
-#include "AEECameraEx.h"
-//#include "OEMCameraDMSS.h"
+#include "OEMCamera.h"
+#include "AEECamera.h"
+#include "OEMCameraDMSS.h"
 #include "AEECamera.bid"
 #include "OEMAtv.h"
 #include "hs_mb6550.h"
@@ -89,7 +89,7 @@ int OEMTLGAtv_New(IShell *pIShell,AEECLSID ClsID,OEMINSTANCE* ppInterface)
     if (pMe != NULL)
     { 
 #ifndef tv_ver2    
-        ret = OEMCameraEx_New(AEECLSID_CAMERA3, (IBitmap *)pMe->pBitmap, pBitmapSize, (OEMINSTANCE *)&pMe->pCamera);  
+        ret = OEMCamera_New(AEECLSID_CAMERA3, (IBitmap *)pMe->pBitmap, pBitmapSize, (OEMINSTANCE *)&pMe->pCamera);  
         if (ret != SUCCESS)
         {
          	MSG_FATAL("---------------------------------------------3",0,0,0);
@@ -157,7 +157,7 @@ static int OEMTLGAtv_Create(OEMINSTANCE h)
     
     if (pMe != NULL)
     {
-        ret = OEMCameraEx_New(AEECLSID_CAMERA3, (IBitmap *)pMe->pBitmap, pBitmapSize, (OEMINSTANCE *)&pMe->pCamera);  
+        ret = OEMCamera_New(AEECLSID_CAMERA3, (IBitmap *)pMe->pBitmap, pBitmapSize, (OEMINSTANCE *)&pMe->pCamera);  
         if (ret != SUCCESS)
         {
             OEMATV_PRINT("OEMCamera_New  failed ret= %d",ret,0,0);
@@ -274,7 +274,7 @@ static int OEMTLGAtv_Start(OEMINSTANCE h, int16 nMode, uint32 dwParam)
         return ret;
     }
     OEMATV_PRINT("OEMTLGAtv_Start invoke",0,0,0);
-    ret = OEMCameraEx_Start( pMe->pCamera,  nMode,  dwParam);   
+    ret = OEMCamera_Start( pMe->pCamera,  nMode,  dwParam);   
     
     
     return ret;
@@ -294,7 +294,7 @@ static int OEMTLGAtv_Stop(OEMINSTANCE h)
         OEMATV_PRINT("param error",0,0,0);  
         return ret;
     }
-    ret = OEMCameraEx_Stop(pMe->pCamera);
+    ret = OEMCamera_Stop(pMe->pCamera);
     OEMATV_PRINT("OEMTLGAtv_Stop  ret =%d",ret,0,0);
     return ret;
 }
@@ -431,7 +431,7 @@ static int OEMTLGAtv_SetParam(OEMINSTANCE h,ATV_SET_PARAM_e type, int hparam, in
             AEESize size = *(AEESize *)hparam;
 
             OEMATV_PRINT("OEMTLGAtv_SetParam CAM_SET_DISPLAY_SIZE w=%d, h=%d",size.cx, size.cy,0);
-            ret = OEMCamera_SetParm((ICameraEx *)pMe->pCamera, CAM_PARM_DISPLAY_SIZE, hparam, 0);             
+            ret = OEMCamera_SetParm((ICamera *)pMe->pCamera, CAM_PARM_DISPLAY_SIZE, hparam, 0);             
         }break;
 
         case CAM_SET_SIZE:
@@ -439,7 +439,7 @@ static int OEMTLGAtv_SetParam(OEMINSTANCE h,ATV_SET_PARAM_e type, int hparam, in
             AEESize size = *(AEESize *)hparam;
 
             OEMATV_PRINT("OEMTLGAtv_SetParam CAM_SET_SIZE w=%d, h=%d",size.cx, size.cy,0);            
-            ret = OEMCamera_SetParm((ICameraEx *)pMe->pCamera, CAM_PARM_SIZE, hparam, 0);   
+            ret = OEMCamera_SetParm((ICamera *)pMe->pCamera, CAM_PARM_SIZE, hparam, 0);   
             if (ret != SUCCESS)
             {
                 OEMATV_PRINT("OEMTLGAtv_SetParam OEMCamera_SetParm %d",ret,0,0);

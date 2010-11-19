@@ -61,6 +61,7 @@ Qualcomm Confidential and Proprietary
 #define CAM_STATUS_SPACE_ERROR         (CAM_STATUS_BASE + 9)   // [Record] Memory unavailable to store recording, pData contains CAM_ERR_SPACE_MSG_XXX
 #define CAM_STATUS_FILE_SIZE_EXCEEDED  (CAM_STATUS_BASE + 10)  // [EncodeSnapshot/RecordMovie] Operation completed but output encoded image exceeds specified file size
 #define CAM_STATUS_IO_ERROR            (CAM_STATUS_BASE + 11)  // [EncodeSnapshot/RecordMovie] I/O Error, pData contains CAM_ERR_XXX
+#define CAM_STATUS_UPDATE               (CAM_STATUS_BASE + 12)  // [Preview] Ready to update histogram.
 
 #define CAM_ERR_BASE                   1        // Base used by ICamera
 #define CAM_ERR_USER_BASE              0x1000   // Base for derived class
@@ -95,6 +96,7 @@ Qualcomm Confidential and Proprietary
 #define CAM_CMD_GETPARM             (CAM_CMD_BASE + 1) // GetParm(), nSubCmd = nParmID
 #define CAM_CMD_START               (CAM_CMD_BASE + 2) // Start(), nSubCmd = CAM_MODE_PREVIEW/CAM_MODE_SNAPSHOT/CAM_MODE_MOVIE
 #define CAM_CMD_ENCODESNAPSHOT      (CAM_CMD_BASE + 3) // EncodeSnapshot()
+#define CAM_MODE_UPDATE             (CAM_MODE_BASE + 4)   //update screen after ui paint
 
 //
 // Camera Control Parms
@@ -108,6 +110,8 @@ Qualcomm Confidential and Proprietary
 //    "Camera Control Parameters (CAM_PARM_XXX)" section under
 //    documentation (scroll down a few pages).
 //
+#define TRANS_COLOR                    0x001f
+
 #define CAM_PARM_BASE               1                       // Base used by ICamera
 #define CAM_PARM_USER_BASE          0x8000                  // Base for extension
 
@@ -300,6 +304,8 @@ Qualcomm Confidential and Proprietary
 #define CAM_FLASH_MEDIUM               (CAM_FLASH_BASE + 3) // Medium intensity
 #define CAM_FLASH_HIGH                 (CAM_FLASH_BASE + 4) // High intensity
 #define CAM_FLASH_CUSTOM               (CAM_FLASH_BASE + 5) // Custom value provided by user
+
+
 
 //Preview control
 #define CAM_PREVIEW_BASE                    0                 // Base used by ICamera
@@ -584,6 +590,7 @@ AEEINTERFACE(ICamera)
 
    int         (*GetFrame)(ICamera * po, IBitmap ** ppFrame);
    int         (*EncodeSnapshot)(ICamera * po);
+   //int         (*Update)(ICamera * po,int32 p1);
 };
 
 #define ICAMERA_AddRef(p)                       AEEGETPVTBL(p, ICamera)->AddRef(p)
@@ -601,11 +608,13 @@ AEEINTERFACE(ICamera)
 #define ICAMERA_RecordSnapshot(p)               AEEGETPVTBL(p, ICamera)->Start(p, CAM_MODE_SNAPSHOT, 0)
 #define ICAMERA_RecordMovie(p)                  AEEGETPVTBL(p, ICamera)->Start(p, CAM_MODE_MOVIE,    CAM_MOVIE_NORMAL)
 #define ICAMERA_RecordMoviePostcard(p)          AEEGETPVTBL(p, ICamera)->Start(p, CAM_MODE_MOVIE,    CAM_MOVIE_POSTCARD)
+#define ICAMERA_UpdateScreen(p, dw)             AEEGETPVTBL(p, ICamera)->Start(p, CAM_MODE_UPDATE, dw)
 #define ICAMERA_Stop(p)                         AEEGETPVTBL(p, ICamera)->Stop(p)
 #define ICAMERA_Pause(p)                        AEEGETPVTBL(p, ICamera)->Pause(p, TRUE)
 #define ICAMERA_Resume(p)                       AEEGETPVTBL(p, ICamera)->Pause(p, FALSE)
 #define ICAMERA_GetFrame(p, ppf)                AEEGETPVTBL(p, ICamera)->GetFrame(p, ppf)
 #define ICAMERA_EncodeSnapshot(p)               AEEGETPVTBL(p, ICamera)->EncodeSnapshot(p)
+//#define ICAMERA_Update(p,p1)                    AEEGETPVTBL(p, ICamera)->Update(p,p1)
 #define ICAMERA_DeferEncode(p, b)               ICAMERA_SetParm(p, CAM_PARM_DEFER_ENCODE, (int32)(b), 0)
 //
 // Commonly used APIs to set/get ICamera parm

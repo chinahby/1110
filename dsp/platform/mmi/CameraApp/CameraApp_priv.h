@@ -61,10 +61,10 @@
 #include "AEEBacklight.h"
 #include "AEEConfig.h"
 #include "CameraApp.h"
-#include "AEECameraEx.h"
+
 #include "AEECM.h"
 //#include "ICameraExt.h"
-#include "OEMCameraEx.h"
+
 #include "Appscommon.h"
 #include "BREWVersion.h"
 #include "Appscommon.h"
@@ -82,7 +82,12 @@
 #include "Appscommon.brh"
 #include "OEMSVC.h"
 #include "AEEBacklight.h"
+
+#ifdef FEATURE_DSP
 #include "AEETv.h"
+#endif
+#include "AEECamera.h"
+#include "OEMCamera.h"
 
 
 /*==============================================================================
@@ -245,7 +250,7 @@ typedef struct _CameraAppMod
     uint32   m_nRefs;
 } CCameraAppMod;
 
-
+#ifdef FEATURE_TV
 typedef struct
 {
 	boolean	b_IsIconHiden;
@@ -260,7 +265,7 @@ typedef struct
     int   Bookmarktotal;       //当前存储频道总数
     TLG_REGION_CODE region;//当前设置的区域
 }MMITV_SETTINGS;
-
+#endif
 //TTvPropertyValue	ResolutionID_DC;	// Resolution for snapshot
 
 // TvBookmark	Bookmark[32];//最多可以保存32个书签
@@ -336,8 +341,11 @@ typedef struct _CCameraApp
     OEMCAMERASIZE        m_nCameraSize;          // camera拍照尺寸
     OEMCAMERABANDING     m_nCameraBanding;       // camera bandig设置
     OEMCAMERASTORAGE     m_nCameraStorage;       // camera拍照存储位置
-    
-    ICameraEx              *m_pCamera;
+    #ifdef FEATURE_DSP
+    ICamera              *m_pCamera;
+    #else
+    ICamera                *m_pCamera;
+    #endif
     IFileMgr             *m_pFM; 
     IConfig              *m_pConfig;              // IConfig interface
     IMedia               *m_pMedia;

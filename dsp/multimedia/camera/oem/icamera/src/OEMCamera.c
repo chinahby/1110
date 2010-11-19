@@ -133,6 +133,10 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 #include "AEEPosDet.h"
 #include "AEEStdLib.h"
 
+
+#ifdef FEATURE_DSP
+#include "cam_module.h"
+#endif
 #ifdef FEATURE_ACM
 #include "AEE_OEM.h"
 #endif
@@ -156,9 +160,13 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 #include "custcamsensor.h"
 #endif
 
+
 #include "Camsensor.h"
 #define NUM_OF_SENSORS_ON_PHONE  2
 extern camsensor_static_params_type camsensor_static_params[NUM_OF_SENSORS_ON_PHONE];
+#ifndef RELEASEIF
+#define RELEASEIF(pi)  do { if (pi) { IBASE_Release((IBase*)(pi)); (pi)=0; }} while(0)
+#endif
 
 /*===========================================================================
 Feature condition - FEATURE_CAMERA_LCD_DIRECT_MODE is under condition of FEATURE_MDP
@@ -204,6 +212,10 @@ Workaround in .c files to make sure no compiling issue happens in the case.
 
 ===========================================================================*/
 typedef struct CameraDevice   CameraDevice;
+#ifdef FEATURE_DSP
+uint16 g_fbuffer[A8_MAIN_LCD_WIDTH*A8_MAIN_LCD_HEIGHT] = {0};
+#endif
+
 struct CameraDevice
 {
    int   nRefs;
@@ -528,6 +540,9 @@ static int CameraDevice_Close(void)
 ==================================================================*/
 void OEMCamera_Init(void)
 {
+	#ifdef FEATURE_DSP
+	AIT701_system_init();
+	#endif
   // Empty
 }
 
@@ -758,6 +773,54 @@ static int OEMCamera_ACMTransaction(OEMCamera *pme,int nReasonCode)
 ==================================================================*/
 int OEMCamera_New(AEECLSID cls, IBitmap * pFrame, uint16 wSize, OEMINSTANCE * ph)
 {
+#ifdef FEATURE_DSP
+	OEMCamera *pme = NULL;
+	int        nRet = SUCCESS;
+    IShell*  papplet = NULL;
+
+
+
+	if (!ph)
+		return EBADPARM;
+
+	// Alloc memory for the object
+	pme = (OEMCamera *)MALLOC(sizeof(OEMCamera));
+	if (!pme)
+	{
+		nRet = ENOMEMORY;
+		goto Done;
+	}
+
+	pme->m_nMode = CAM_MODE_READY;
+
+	// By default, file size is disabled by setting param to zero
+	pme->m_nFileSize = OEMCAMERA_FILE_SIZE_DISABLED;
+	// Assume we will be using Snapshot mode
+	
+    pme->m_pFileMgr = NULL;
+    
+    papplet = (IShell*)AEE_GetShell();
+
+    nRet = ISHELL_CreateInstance(papplet, AEECLSID_FILEMGR, (void **)&pme->m_pFileMgr);
+
+    
+	if (nRet != SUCCESS || pme->m_pFileMgr == NULL) 
+	{
+		MSG_FATAL("AEECLSID_FILEMGR Create Failed!",0,0,0);
+		goto Done;
+	}
+					    
+
+	*ph = (OEMINSTANCE)pme;
+		return nRet;
+
+Done:
+	if (ph)
+		*ph = NULL;
+	FREE(pme);
+	return nRet;
+
+#else
   OEMCamera *pme = NULL;
   int        nRet = SUCCESS;
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
@@ -922,6 +985,7 @@ Done:
     *ph = NULL;
   FREE(pme);
   return nRet;
+  #endif
 }
 
 /*==================================================================
@@ -929,6 +993,15 @@ Done:
 ==================================================================*/
 void OEMCamera_Delete(OEMINSTANCE h)
 {
+#ifdef FEATURE_DSP
+	OEMCamera * pme = (OEMCamera *)h;	   
+	 if (!pme )
+	   return;
+
+	 RELEASEIF(pme->m_pFileMgr);
+	 FREE(pme);
+
+#else
   int         i;
   OEMCamera * pme = (OEMCamera *)h;
 
@@ -1000,6 +1073,7 @@ void OEMCamera_Delete(OEMINSTANCE h)
   FREEIF(pme->m_pszFile);
   OEMCAMERA_LEAVE_CRITICAL_SECTION()
   FREE(pme);
+  #endif
 }
 
 /*==================================================================
@@ -1009,6 +1083,9 @@ int OEMCamera_QueryInterface(OEMINSTANCE h, AEECLSID idReq, void ** ppo)
 {
    // OEMs can extend ICAMERA_QueryInterface() to return
    // related objects like IResourceCtl associated with ICamera object.
+   #ifdef FEATURE_DSP
+   return ECLASSNOTSUPPORT;
+   #else
 #if defined (FEATURE_ACM)
 #if defined (FEATURE_ODM_UI)
    OEMCamera *pme = (OEMCamera *)h;
@@ -1033,6 +1110,7 @@ int OEMCamera_QueryInterface(OEMINSTANCE h, AEECLSID idReq, void ** ppo)
 #endif //FEATURE_BMP_ACM
 #endif //FEATURE_ACM
    return ECLASSNOTSUPPORT;
+   #endif
 }
 
 /*==================================================================
@@ -1040,6 +1118,7 @@ int OEMCamera_QueryInterface(OEMINSTANCE h, AEECLSID idReq, void ** ppo)
 ==================================================================*/
 int OEMCamera_RegisterNotify(OEMINSTANCE h, PFNCAMERANOTIFY pfnNotify, void * pUser)
 {
+
    OEMCamera * pme = (OEMCamera *)h;
 
    pme->m_pfnNotify = pfnNotify;
@@ -1053,6 +1132,97 @@ int OEMCamera_RegisterNotify(OEMINSTANCE h, PFNCAMERANOTIFY pfnNotify, void * pU
 ==================================================================*/
 int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
 {
+#ifdef FEATURE_DSP
+	int               nRet = SUCCESS;
+	OEMCamera *       pme = (OEMCamera *)h;
+
+	switch (nParmID)
+	{
+		case CAM_PARM_QUALITY:
+		// Quality is treated differenty for snapshot VS movie modes
+		if (pme->m_nPreviewType == CAM_PREVIEW_SNAPSHOT)
+		{
+			// Valid range for snapshot quality param is 1 to 100
+			// equal the quality percent (for snapshot camera only).
+			if ((p1 >= OEMCAMERA_QUALITY_MIN_VALUE) && (p1 <= OEMCAMERA_QUALITY_MAX_VALUE))
+				pme->m_nQuality = (int16)p1;
+			else
+				nRet = EBADPARM;
+		}
+		else if (pme->m_nPreviewType == CAM_PREVIEW_MOVIE)
+		{
+			if ((p1 >= OEMCAMCORDER_QUALITY_MIN_VALUE) && (p1 <= OEMCAMCORDER_QUALITY_MAX_VALUE))
+			{
+				pme->m_nQuality = (int16)p1;
+			}
+			else
+			{
+				nRet = EBADPARM;
+			}
+		}
+		break;
+        case CAM_PARM_MEDIA_DATA:
+             {
+                AEEMediaData* pmd = (AEEMediaData*)p1;
+                pme->m_pszFile = pmd->pData;
+             }            
+            break;
+
+		case CAM_PARM_FLASH_CTL:
+			if (p1)
+			{
+			}
+			else
+			nRet = EBADPARM;
+			break;
+
+		case CAM_PARM_NIGHTSHOT_MODE:
+		    break;
+
+		case CAM_PARM_EFFECT:
+		
+			if (p1)
+			{
+			}
+			else
+			{
+				nRet = EBADPARM;
+			}
+
+			break;
+
+		case CAM_PARM_FLASH:
+			break;
+
+		case CAM_PARM_FILE_SIZE:
+			// File size will take precidence over Quality if it is non zero
+			// Units are Kilobytes for this param
+			if ((p1 >= OEMCAMERA_FILE_SIZE_MIN_VALUE) && (p1 <= OEMCAMERA_FILE_SIZE_MAX_VALUE))
+			{
+				//pme->m_nFileSize = (int32)p1;
+				nRet = EUNSUPPORTED;
+			}
+			else
+			{
+				nRet = EBADPARM;
+			}
+			break;
+
+		case CAM_PARM_IS_SUPPORT:  // Fall through...
+		case CAM_PARM_IS_MOVIE: // This cannot be set by user
+		case CAM_PARM_PIXEL_COUNT:
+		case CAM_PARM_VIDEO_ENCODE_LIST: // This cannot be set by user
+		case CAM_PARM_AUDIO_ENCODE_LIST: // This cannot be set by user
+		case CAM_PARM_SIZE_LIST: // This cannot be set by user
+		case CAM_PARM_FPS_LIST: // This cannot be set by user
+		default:
+			nRet = EUNSUPPORTED;
+		break;
+	}
+
+	return nRet;
+
+#else
   int               nRet = SUCCESS;
   camera_parm_type  eParm = CAMERA_PARM_MAX;
   CameraData        *pCData = NULL;
@@ -1804,6 +1974,7 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
    }
 
    return nRet;
+   #endif
 }
 
 /*==================================================================
@@ -1811,6 +1982,13 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
 ==================================================================*/
 int OEMCamera_GetParm(OEMINSTANCE h, int16 nParmID, int32 * pP1, int32 * pP2)
 {
+#ifdef FEATURE_DSP
+	OEMCamera *       pme = (OEMCamera *)h;
+   int               nRet = SUCCESS;
+   
+   return nRet;
+
+#else
    OEMCamera *       pme = (OEMCamera *)h;
    int               nRet = SUCCESS;
    camera_parm_type  eParm = CAMERA_PARM_MAX;
@@ -2375,6 +2553,7 @@ int OEMCamera_GetParm(OEMINSTANCE h, int16 nParmID, int32 * pP1, int32 * pP2)
    }
 
    return nRet;
+   #endif
 }
 
 /*==================================================================
@@ -2382,6 +2561,30 @@ int OEMCamera_GetParm(OEMINSTANCE h, int16 nParmID, int32 * pP1, int32 * pP2)
 ==================================================================*/
 int OEMCamera_Start(OEMINSTANCE h, int16 nMode, uint32 dwParam)
 {
+   #ifdef FEATURE_DSP
+   	OEMCamera * pme = (OEMCamera *)h;
+	int         nRet = EFAILED;
+
+	if (nMode == CAM_MODE_PREVIEW)
+	{	    
+		nRet = OEMCamera_Preview(pme,NULL);
+	}
+	else if (nMode == CAM_MODE_SNAPSHOT)
+   	{
+		nRet = OEMCamera_RecordSnapshot(pme,NULL);
+	}
+    else if (nMode == CAM_MODE_UPDATE)
+    {
+        nRet = OEMCamera_Update(pme, dwParam);
+    }
+	else
+    {
+    	nRet = EBADPARM;
+	}
+
+	return nRet;
+   #else
+   
    OEMCamera * pme = (OEMCamera *)h;
    int         nRet = EFAILED;
    CameraRsp * pRsp;
@@ -2542,13 +2745,33 @@ int OEMCamera_Start(OEMINSTANCE h, int16 nMode, uint32 dwParam)
    }
 
    return nRet;
+   #endif
 }
+
+#ifdef FEATURE_DSP
+int OEMCamera_Update(OEMINSTANCE h, uint32 dwParam)
+{
+	//OEMCamera * pme = (OEMCamera *)h;
+    uint16* pbmp = (uint16*)dwParam;
+    MEMCPY(g_fbuffer, pbmp, sizeof(g_fbuffer));
+    AIT701_cam_update_osd(g_fbuffer,0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT);
+    return SUCCESS;
+}
+
+#endif
 
 /*==================================================================
 
 ==================================================================*/
 int OEMCamera_Stop(OEMINSTANCE h)
 {
+#ifdef FEATURE_DSP
+//OEMCamera * pme = (OEMCamera *)h;
+	
+	AIT701_cam_exit_preview();
+	return SUCCESS;
+
+#else
    OEMCamera * pme = (OEMCamera *)h;
    int         nCamRet = -1;
 
@@ -2588,6 +2811,7 @@ int OEMCamera_Stop(OEMINSTANCE h)
       OEMCamera_FreeStartCameraRsp(pme);
    }
    return OEMCamera_AEEError(nCamRet);
+   #endif
 }
 
 /*==================================================================
@@ -2635,6 +2859,24 @@ int OEMCamera_Pause(OEMINSTANCE h, boolean bPause)
 ==================================================================*/
 int OEMCamera_EncodeSnapshot(OEMINSTANCE hInstance)
 {
+#ifdef FEATURE_DSP
+	OEMCamera *          pme = (OEMCamera *)hInstance;
+   int                  nRet;  
+ 
+	IFile    *pFileDst = NULL;
+    DBGPRINTF("EncodeSnapshot-----%s",pme->m_pszFile);
+    pFileDst = IFILEMGR_OpenFile(pme->m_pFileMgr,pme->m_pszFile,_OFM_CREATE);
+    
+	if ( pFileDst )
+	{
+	    DBGPRINTF("EncodeSnapshot-000---%0x---%s",pFileDst,pme->m_pszFile);
+		IFILE_Write(pFileDst,g_fbuffer, pme->m_nFileSize);
+	}
+	RELEASEIF(pFileDst); 
+
+   return (nRet);
+
+#else
    OEMCamera *          pme = (OEMCamera *)hInstance;
    int                  nRet;
    camera_handle_type   h;
@@ -2741,6 +2983,7 @@ int OEMCamera_EncodeSnapshot(OEMINSTANCE hInstance)
 #error code not present
 #endif // FEATURE_BMP_ACM
    return (nRet);
+   #endif
 }
 
 /*==================================================================
@@ -3010,6 +3253,12 @@ static void OEMCamera_FreeCameraRsp(CameraRsp * pRsp)
 ==================================================================*/
 static int OEMCamera_Preview(OEMCamera * pme, CameraRsp * pRsp)
 {
+#ifdef FEATURE_DSP
+	ext_camera_para_struct ext_cam_para = {0};
+	AIT701_cam_preview(&ext_cam_para);	
+	return SUCCESS;
+
+#else
    int      nRet;
    nRet = (int)camera_start_preview(OEMCamera_CameraLayerCB,
                                     (void *)pRsp->hObject);
@@ -3018,6 +3267,7 @@ static int OEMCamera_Preview(OEMCamera * pme, CameraRsp * pRsp)
       pme->m_nNextMode = CAM_MODE_PREVIEW;
    }  
    return OEMCamera_AEEError(nRet);
+   #endif
 }
 
 #ifndef FEATURE_CAMERA_V2
@@ -3186,6 +3436,11 @@ static int OEMCamera_SetFocusRect(AEERect rc)
 ==================================================================*/
 static int OEMCamera_RecordSnapshot(OEMCamera * pme, CameraRsp * pRsp)
 {
+#ifdef FEATURE_DSP
+	pme->m_nFileSize = AIT701_Test_capture(g_fbuffer);
+	return SUCCESS;
+
+#else
    int                  nRet;
 #ifdef FEATURE_CAMERA_ENCODE_PROPERTIES
    camera_encode_properties_type   p;
@@ -3224,6 +3479,7 @@ static int OEMCamera_RecordSnapshot(OEMCamera * pme, CameraRsp * pRsp)
       pme->m_nNextMode = CAM_MODE_SNAPSHOT;
    }
    return OEMCamera_AEEError(nRet);
+   #endif
 }
 
 /*==================================================================

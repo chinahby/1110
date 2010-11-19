@@ -10,8 +10,6 @@ AIT_API_SOURCES=\
 	sys_IF_ait_api.c \
 	usb_IF_ait_api.c \
 	cam_module.c \
-	AEECameraEx.c \
-	OEMCameraEx.c \
 	OEMAtv.c
 	
 AIT_API_OBJS :=  $(addprefix $(TARGETDIR)/, $(AIT_API_SOURCES:%.c=%.o))

@@ -84,6 +84,7 @@ struct ICamera
    // Captured frame
    IBitmap *         m_pFrame;
    uint16            m_wFrameSize;
+   
 };
 #endif // VC0848_CAM_DBG
 #endif /*CUST_EDITION*/
@@ -106,6 +107,9 @@ extern int     OEMCamera_EncodeSnapshot(OEMINSTANCE h);
 extern void    OEMCamera_ReleaseFrame(OEMINSTANCE h);
 extern int     OEMCamera_FrameBlt(void * pDst, uint32 dwDstSize, int xDst, int yDst, int cxDst, int cyDst,
                                   void * pSrc, uint32 dwSrcSize, int xSrc, int ySrc, AEERasterOp rop);
+extern int     OEMCamera_Update(OEMINSTANCE h, uint32 dwParam);
+
+
 
 //---------------------------------------------------------------------------
 //    User Mode AEE-OEM Function Declarations
@@ -113,6 +117,7 @@ extern int     OEMCamera_FrameBlt(void * pDst, uint32 dwDstSize, int xDst, int y
 extern int     OEMCamera_GetConfigInfo(CameraConfigInfo * pInfo);
 extern int     OEMCamera_FrameBitmapNew(IBitmap ** ppFrame, uint16 * pwSize);
 extern boolean OEMCamera_GetFrameTrigger(IBitmap * pFrame);
+
 #ifdef CUST_EDITION	
 #ifdef FEATURE_CAMERA7500
 extern int     OEMCamera_GetMultipleFocusRect(int32* pRc, AEERect **pInfo);

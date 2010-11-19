@@ -492,8 +492,8 @@ extern int AEEVocoder_New(IShell *ps, AEECLSID cls, void ** ppo);
 //#include "AEECamera.bid"
 //#endif
 #ifdef FEATURE_DSP
-extern void  AEECameraEx_Init(IShell * ps);
-extern int   AEECameraEx_New(IShell * ps,AEECLSID cls,void ** ppif);
+extern void  AEECamera_Init(IShell * ps);
+extern int   AEECamera_New(IShell * ps,AEECLSID cls,void ** ppif);
 #else
 extern void    AEECamera_Init(IShell * ps);
 extern int     AEECamera_New(IShell * ps, AEECLSID cls, void **ppif);
@@ -899,7 +899,7 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
 #ifdef FEATURE_DSP
 //EECLSID_CAMERAEX,             ASCF_UPGRADE,0,AEECameraEx_Init, AEECameraEx_New},
 #if defined(FEATURE_BREW_CAMERA)
-         {AEECLSID_CAMERA,             (ASCF_PRIV | ASCF_UPGRADE), 0, AEECameraEx_Init, AEECameraEx_New},
+         {AEECLSID_CAMERA,             (ASCF_PRIV | ASCF_UPGRADE), 0, AEECamera_Init, AEECamera_New},
 //#if defined(FEATURE_CAMERA_MULTI_SENSOR)
         // {AEECLSID_CAMERA2,            (ASCF_PRIV | ASCF_UPGRADE),0,AEECameraEx_Init,AEECameraEx_New},
 //#endif

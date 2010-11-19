@@ -73,7 +73,7 @@
 #include "AEEAnnunciator.h"
 #include "AEEMediaUtil.h"
 #include "AEEMedia.h"
-#include "AEECameraEx.h"
+#include "AEECamera.h"
 #include "tvapp_image.brh"
 #include "db.h"
 #ifdef FEATURE_SUPPORT_VC0848
@@ -388,8 +388,8 @@ typedef struct _CTVApp
     OEMCAMERASTORAGE     m_nTVStorage;       // camera≈ƒ’’¥Ê¥¢Œª÷√
 
 	IImage               *m_pImage;
-	ICameraEx            *m_pCamera;
-    ICameraEx            *m_pTV;
+	ICamera            *m_pCamera;
+    ICamera            *m_pTV;
     IFileMgr             *m_pFM; 
     IConfig              *m_pConfig;              // IConfig interface
     IMedia               *m_pMedia;
