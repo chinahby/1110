@@ -654,11 +654,16 @@ SDCC_CARD_TYPE    sdcc_find_sdio_card( void );
 #define GPIO_SDCC_IN_ADDR       (HWIO_GPIO_IN_0_ADDR+3)
 #define GPIO_SDCC_OUT_MASK      0x3F000000
 #define GPIO_SDCC_OUT_MASK_I    0xC0FFFFFF
+#define GPIO_SDCC_CLK_MASK      0x01000000
+#define GPIO_SDCC_CLK_MASK_I    0xFEFFFFFF
 #define GPIO_SDCC_CLK_H_MASK    0x3F000000
 #define GPIO_SDCC_CLK_L_MASK    0x3E000000
-#define GPIO_SDCC_CMD_MASK      0x1F000000
-#define GPIO_SDCC_DAT_0_MASK    0x3D000000
-#define GPIO_SDCC_DAT_MASK      0x21000000
+#define GPIO_SDCC_CMD_MASK      0x20000000
+#define GPIO_SDCC_CMD_MASK_I    0xDFFFFFFF
+#define GPIO_SDCC_DAT_0_MASK    0x02000000
+#define GPIO_SDCC_DAT_0_MASK_I  0xFDFFFFFF
+#define GPIO_SDCC_DAT_MASK      0x1E000000
+#define GPIO_SDCC_DAT_MASK_I    0xE1FFFFFF
 
 byte   CRC7    ( unsigned char * chr, int cnt );
 uint64 CRC16_4 ( unsigned char * chr, int cnt );

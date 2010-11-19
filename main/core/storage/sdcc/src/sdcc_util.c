@@ -1095,7 +1095,7 @@ void sdcc_send_cmd(sdcc_cmd_type *sdcc_cmd)
     cmd[3] = (byte)(arg>>8);
     cmd[4] = (byte)(arg);
     cmd[5] = CRC7(cmd, 5);
-  
+    
     sdcc_send_cmd_bytes(cmd, 6);
     dog_kick();
     // Get Respond
@@ -1138,6 +1138,7 @@ void sdcc_send_cmd(sdcc_cmd_type *sdcc_cmd)
             {
                 sdcc_cmd->status = SDCC_ERR_CMD_CRC_FAIL;
             }
+            MSG_FATAL("SDCC_SEND_CMD %d %02x %08x",sdcc_cmd->status,cmd[0],arg);
         }
         else if(sdcc_cmd->resp_type == SDCC_RESP_LONG) // 18Bytes
         {
@@ -1331,14 +1332,14 @@ sdcc_find_card( void )
    // output 74 clock
    sdcc_clock_out_slow(100);
 #endif
+   
    /* CMD0: reset card first */
    sdcc_cmd.cmd       = SD_CMD0_GO_IDLE_STATE;
    sdcc_cmd.cmd_arg   = MCI_ARGU_NULL;
    sdcc_cmd.resp_type = SDCC_RESP_NONE;
    sdcc_cmd.prog_scan = 0;
-
    (void)sdcc_command(&sdcc_cmd);
-
+   
    /* card may not be in sync, make sure CMD8 response is received */
    for ( i = 0; i < SDCC_CMD8_RETRIES; i++ )
    {
@@ -3146,7 +3147,7 @@ unsigned long long CRC16_4( unsigned char * buf_ptr, int len )
 static INLINE void sdcc_clock_out(int cnt)
 {
     register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
+    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
     while(cnt)
     {
         outpdw(pDest, clkl);
@@ -3158,7 +3159,7 @@ static INLINE void sdcc_clock_out(int cnt)
 static INLINE void sdcc_clock_out_slow(int cnt)
 {
     register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
+    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
     
     while(cnt--)
     {
@@ -3175,37 +3176,48 @@ static INLINE void sdcc_clock_out_slow(int cnt)
 static INLINE void sdcc_send_cmd_bytes(byte *pdata, int len)
 {
     register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CMD_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
+    register uint32 clkh = (GPIO_SDCC_CLK_MASK|(*pDest))&GPIO_SDCC_CMD_MASK_I;
     register byte data;
-    register uint32 mask = 0x20000000;
+    register uint32 mask = GPIO_SDCC_CMD_MASK;
     
     while(len--)
     {
         data = *pdata;
-        outpdw(pDest, clkl);
+        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
+        outpdw(pDest, ((data<<22)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
         outpdw(pDest, ((data<<22)&mask)|clkh);
-        outpdw(pDest, clkl);
+        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
+        outpdw(pDest, ((data<<23)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
         outpdw(pDest, ((data<<23)&mask)|clkh);
-        outpdw(pDest, clkl);
-        outpdw(pDest, ((data<<26)>>2)|clkh);
-        outpdw(pDest, clkl);
-        outpdw(pDest, ((data<<27)>>2)|clkh);
-        outpdw(pDest, clkl);
-        outpdw(pDest, ((data<<28)>>2)|clkh);
-        outpdw(pDest, clkl);
-        outpdw(pDest, ((data<<29)>>2)|clkh);
-        outpdw(pDest, clkl);
-        outpdw(pDest, ((data<<30)>>2)|clkh);
-        outpdw(pDest, clkl);
-        outpdw(pDest, ((data<<31)>>2)|clkh);
+        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
+        outpdw(pDest, ((data<<24)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<24)&mask)|clkh);
+        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
+        outpdw(pDest, ((data<<25)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<25)&mask)|clkh);
+        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
+        outpdw(pDest, ((data<<26)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<26)&mask)|clkh);
+        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
+        outpdw(pDest, ((data<<27)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<27)&mask)|clkh);
+        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
+        outpdw(pDest, ((data<<28)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<28)&mask)|clkh);
+        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
+        outpdw(pDest, ((data<<29)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<29)&mask)|clkh);
         pdata++;
     }
+    
+    // Reset CMD to 1
+    outpdw(pDest, clkh|GPIO_SDCC_CMD_MASK);
 }
 
 static INLINE void sdcc_recv_cmd_bytes(byte *pdata, int len)
 {
     register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
+    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
     register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     register byte data = 0;
     register byte mask;
@@ -3251,7 +3263,7 @@ static INLINE void sdcc_recv_cmd_bytes(byte *pdata, int len)
 static INLINE byte sdcc_recv_cmd_byte_wait(void)
 {
     register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
+    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
     register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     register byte data = 0;
     register byte mask;
@@ -3302,8 +3314,8 @@ static INLINE byte sdcc_recv_cmd_byte_wait(void)
 static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
 {
     register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
-    register uint32 clkm = GPIO_SDCC_DAT_0_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
+    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
+    register uint32 clkm = clkh&GPIO_SDCC_DAT_0_MASK_I;
     register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     register byte data;
     register uint32 mask = 0x02000000;
@@ -3459,7 +3471,7 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
 static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *buff, int len)
 {
     register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
+    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
     register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     register byte data;
     register byte mask;
@@ -3584,8 +3596,8 @@ static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *buff, int len)
 static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
 {
     register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
-    register uint32 clkm = GPIO_SDCC_DAT_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
+    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
+    register uint32 clkm = clkh&GPIO_SDCC_DAT_MASK_I;
     register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     register byte data;
     register byte maskh = 0xF0,maskl=0x0F;
@@ -3629,7 +3641,7 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     // END Bit
     outpdw(pDest, clkl);
     outpdw(pDest, clkh);
-
+    
     // 2 delay Cycles, HOST Control
     outpdw(pDest, clkl);
     outpdw(pDest, clkh);
@@ -3719,7 +3731,7 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
 static INLINE SDCC_STATUS sdcc_recv_widedata_bytes(byte *buff, int len)
 {
     register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
-    register uint32 clkl = GPIO_SDCC_CLK_L_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I), clkh = GPIO_SDCC_CLK_H_MASK|(*pDest&GPIO_SDCC_OUT_MASK_I);
+    register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
     register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     register byte data;
     register byte maskh = 0xF0,maskl=0x0F;
