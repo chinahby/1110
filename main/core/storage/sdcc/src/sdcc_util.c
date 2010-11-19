@@ -1138,7 +1138,6 @@ void sdcc_send_cmd(sdcc_cmd_type *sdcc_cmd)
             {
                 sdcc_cmd->status = SDCC_ERR_CMD_CRC_FAIL;
             }
-            MSG_FATAL("SDCC_SEND_CMD %d %02x %08x",sdcc_cmd->status,cmd[0],arg);
         }
         else if(sdcc_cmd->resp_type == SDCC_RESP_LONG) // 18Bytes
         {
