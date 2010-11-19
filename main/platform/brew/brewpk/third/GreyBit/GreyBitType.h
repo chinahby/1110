@@ -5,10 +5,11 @@ extern "C"{
 #endif
 
 #ifdef WIN32
-#define ENABLE_GREYBITFILE
 //#define ENABLE_TRUETYPEFILE
 #define ENABLE_ENCODER
 #endif
+#define ENABLE_GREYCOMBINEFILE
+#define ENABLE_GREYBITFILE
 #define ENABLE_GREYVECTORFILE
 #define ENABLE_ITALIC
 #define ENABLE_BOLD
@@ -26,24 +27,37 @@ extern "C"{
 #define GB_WIDTH_DEFAULT           0
 #define GB_HORIOFF_DEFAULT         0
 
+#define BITMAP8TO1_SWITCH_VALUE    0x10  // 小于此值的灰度将变为透明
 
 typedef void*           GBHANDLE;
 typedef char            GB_BOOL;
 typedef unsigned char   GB_BYTE;
 typedef unsigned short  GB_UINT16;
 typedef unsigned long   GB_UINT32;
-typedef short           GB_INT16;
-typedef long            GB_INT32;
+typedef signed short    GB_INT16;
+typedef signed long     GB_INT32;
 typedef GB_INT16        GB_Pos;
 typedef char            GB_CHAR;
-typedef char            GB_INT8;
+typedef signed char     GB_INT8;
 
 typedef enum{
     GB_FORMAT_NONE,
     GB_FORMAT_BITMAP,
     GB_FORMAT_OUTLINE,
+    GB_FORMAT_STREAM,
     GB_FROMAT_MAX
 }GB_DataFormat;
+
+typedef enum{
+    GB_PARAM_NONE,
+    GB_PARAM_CACHEITEM,     // Cached item number
+#ifdef ENABLE_ENCODER
+    GB_PARAM_HEIGHT,        // font height
+    GB_PARAM_BITCOUNT,      // GBF bit count
+    GB_PARAM_COMPRESS,      // Whether of not compress
+#endif
+    GB_PARAM_MAX
+}GB_Param;
 
 typedef struct  _GB_DataRec
 {
@@ -78,52 +92,6 @@ typedef struct  _GB_OutlineRec
     GB_INT16       *contours;        /* the contour end points             */
 } GB_OutlineRec, *GB_Outline;
 
-#ifdef ENABLE_GREYBITFILE
-// .gbf parameter
-typedef union _GB_GbfParamRec
-{
-    struct {
-        GB_INT32        nCacheItem;
-    }decoder;
-#ifdef ENABLE_ENCODER
-    struct {
-        GB_INT16        nHeight;
-        GB_INT16        nBitCount;
-        GB_BOOL         bCompress; // 是否压缩数据
-    }encoder;
-#endif
-} GB_GbfParamRec, *GB_GbfParam;
-#endif
-
-#ifdef ENABLE_TRUETYPEFILE
-// .ttf parameter
-typedef union _GB_TtfParamRec
-{
-    struct {
-        GB_INT32       unused;
-    }decoder;
-#ifdef ENABLE_ENCODER
-    struct {
-        GB_INT32       unused;
-    }encoder;
-#endif
-} GB_TtfParamRec, *GB_TtfParam;
-#endif
-
-#ifdef ENABLE_GREYVECTORFILE
-// .gvf parameter
-typedef union _GB_GvfParamRec
-{
-    struct{
-        GB_INT32        nCacheItem;
-    }decoder;
-#ifdef ENABLE_ENCODER
-    struct{
-        GB_INT16        nHeight;
-    }encoder;
-#endif
-} GB_GvfParamRec, *GB_GvfParam;
-#endif
 /*************************************************************************/
 /*                                                                       */
 /*                                  API                                  */
@@ -149,7 +117,7 @@ extern void         GreyBitType_Outline_Done(GBHANDLE library, GB_Outline outlin
 #ifdef ENABLE_ENCODER
 // Creator
 extern GBHANDLE     GreyBitType_Creator_New(GBHANDLE library, const GB_CHAR* filepathname);
-extern int          GreyBitType_Creator_SetParam(GBHANDLE creator, void *pParam);
+extern int          GreyBitType_Creator_SetParam(GBHANDLE creator, GB_Param nParam, GB_UINT32 dwParam);
 extern int          GreyBitType_Creator_DelChar(GBHANDLE creator, GB_UINT32 nCode);
 extern int          GreyBitType_Creator_SaveChar(GBHANDLE creator, GB_UINT32 nCode, GB_Data pData);
 extern int          GreyBitType_Creator_Flush(GBHANDLE creator);
@@ -158,8 +126,11 @@ extern void         GreyBitType_Creator_Done(GBHANDLE creator);
 
 // Loader
 extern GBHANDLE     GreyBitType_Loader_New(GBHANDLE library, const GB_CHAR* filepathname);
+extern GBHANDLE     GreyBitType_Loader_New_Stream(GBHANDLE library, GBHANDLE stream, GB_INT32 size);
 extern GBHANDLE     GreyBitType_Loader_New_Memory(GBHANDLE library, void *pBuf, GB_INT32 nBufSize);
-extern int          GreyBitType_Loader_SetParam(GBHANDLE loader, void *pParam);
+extern GB_INT32     GreyBitType_Loader_GetCount(GBHANDLE loader);
+extern GB_INT32     GreyBitType_Loader_GetHeight(GBHANDLE loader);
+extern int          GreyBitType_Loader_SetParam(GBHANDLE loader,  GB_Param nParam, GB_UINT32 dwParam);
 extern GB_BOOL      GreyBitType_Loader_IsExist(GBHANDLE loader, GB_UINT32 nCode);
 extern void         GreyBitType_Loader_Done(GBHANDLE loader);
 
