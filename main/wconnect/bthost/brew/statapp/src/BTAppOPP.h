@@ -64,6 +64,7 @@ extern boolean BTApp_OPPHandleSendFileSelection( CBTApp* pMe, uint16 sel );
 
 extern void    BTApp_OPPBuildSettingMenu(CBTApp* pMe );
 extern boolean BTApp_OPPHandleSettingSelection( CBTApp* pMe, uint16 sel );
+extern void    BTApp_OPPUpdateSendingProgress(CBTApp* pMe);
 //Add End
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
