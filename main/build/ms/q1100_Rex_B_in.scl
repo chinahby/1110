@@ -43,7 +43,6 @@ MSM_NOTPAGED +0
   {
     boot_vectors.o (Int_Vect)
     GreyBit*.o(+RO)
-    tmc_nzi.o(+ZI)
     GlobalIMEM.o(+ZI)
   }
 }
@@ -182,6 +181,9 @@ DATA_NOTUSED_NOTPAGED +0x0
   UNINIT_RAM +0x0
   {
     *_nzi.o (+ZI)
+#ifdef FEATURE_LOW_MEMORY_USAGE
+    tmc_nzi.o(+ZI)
+#endif
     GlobalData.o(+ZI)
   }
 }
