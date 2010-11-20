@@ -1556,8 +1556,6 @@ void BTApp_ShowMessage(
   uint8   secondsUp // amount of time the message stays on screen, 0 = 4ever
 )
 {
-  CtlAddItem  ai;	//Add by zzg 2010_11_17 for Softkey
-  
   AECHAR  wTempBuf[ 64 ];
   AECHAR* pText = pMe->pText2;
   AEERect rc;

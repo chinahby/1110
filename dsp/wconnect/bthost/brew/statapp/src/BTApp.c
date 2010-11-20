@@ -11539,6 +11539,7 @@ static void BTApp_LocalOOBCreated( CBTApp* pMe )
     if ( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_FILEMGR, 
                                 (void **)&pIFileMgr ) == SUCCESS )
     {
+		
       STRLCPY( szOOBFileNm, BTAPP_ROOT_DIR , sizeof (szOOBFileNm));
       STRLCAT( szOOBFileNm, DIRECTORY_STR , sizeof (szOOBFileNm) );
       STRLCAT( szOOBFileNm, "OOB-", sizeof (szOOBFileNm) );

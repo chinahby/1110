@@ -638,6 +638,12 @@ when        who   what, where, why
 #define BTAPP_ROOT_DIR        "btapp"
 #endif
 
+//Add By zzg 2010_11_19
+#define BTAPP_PICTURE_DIR	  AEEFS_CARD0_DIR "pictures"
+#define BTAPP_MUSIC_DIR		  AEEFS_CARD0_DIR "music"
+#define BTAPP_OTHER_DIR		  AEEFS_CARD0_DIR
+//Add End
+
 #define BTAPP_CONFIG_FILE  BTAPP_ROOT_DIR DIRECTORY_STR "btapp.cfg"
 
 #ifdef FEATURE_BT_2_1

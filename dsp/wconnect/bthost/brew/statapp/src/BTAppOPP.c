@@ -154,6 +154,51 @@ static AECHAR JPEG[]        =   {'J','p','e','g',0};
 static AEEBTProgressInfo progInfo;
 
 
+
+//Add By zzg 2010_11_19
+
+enum
+{
+	OBJ_IMAGE_JPEG_TYPE= 0,	
+	OBJ_IMAGE_BMP_TYPE,
+	OBJ_IMAGE_PNG_TYPE,
+	OBJ_IMAGE_GIF_TYPE,
+	OBJ_AUDIO_MP3_TYPE,
+	OBJ_AUDIO_WAV_TYPE,
+	OBJ_AUDIO_MID_TYPE,
+	OBJ_AUDIO_MIDI_TYPE,
+	OBJ_AUDIO_WMA_TYPE,
+	OBJ_OTHER_TYPE	
+};
+
+typedef struct
+{
+  int 			type;
+  char* 		pFileExt;
+} BTObjectTypeMap;
+
+static const BTObjectTypeMap TypeMap[] =
+{	
+	{OBJ_IMAGE_JPEG_TYPE,	".jpg" },
+	{OBJ_IMAGE_JPEG_TYPE,	".jpe" },
+	{OBJ_IMAGE_JPEG_TYPE,	".jpeg" },
+	{OBJ_IMAGE_JPEG_TYPE, 	".jfif" },
+	{OBJ_IMAGE_JPEG_TYPE,	".jff" },
+	{OBJ_IMAGE_JPEG_TYPE,	".jft" },
+	{OBJ_IMAGE_BMP_TYPE,	".bmp" },
+	{OBJ_IMAGE_PNG_TYPE,	".png" },
+	{OBJ_IMAGE_GIF_TYPE,	".gif" },	
+	{OBJ_AUDIO_MP3_TYPE,	".mp3" },
+	{OBJ_AUDIO_WAV_TYPE,	".wav" },	
+	{OBJ_AUDIO_MID_TYPE,	".mid" },
+	{OBJ_AUDIO_MIDI_TYPE,	".midi" },
+	{OBJ_AUDIO_WMA_TYPE,	".wma" },	
+	{OBJ_OTHER_TYPE,		NULL }
+};
+
+//Add End
+
+
 // This will store the name of the file
 static AECHAR wDefaultObjectName[ AEEBT_MAX_FILE_NAME + 1 ];
 
@@ -480,7 +525,6 @@ void BTApp_OPPBuildSettingMenu( CBTApp* pMe )
 
 void BTApp_OPPUpdateSendingProgress( CBTApp* pMe )
 {
-	CtlAddItem  ai;  
 	AECHAR  wTempBuf[64];
 	AECHAR* pText = pMe->pText2;
 	AEERect rc;
@@ -497,7 +541,7 @@ void BTApp_OPPUpdateSendingProgress( CBTApp* pMe )
 	 
 	ISHELL_LoadResString(pMe->a.m_pIShell,
 						 BTAPP_RES_FILE,								
-						 IDS_BPP_SEND_FILE,
+						 IDS_BT_TITLE,
 						 wTempBuf,
 						 sizeof( wTempBuf ));
 
@@ -518,6 +562,8 @@ void BTApp_OPPUpdateSendingProgress( CBTApp* pMe )
     ISTATIC_SetProperties(pMe->m_pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);  
     ISTATIC_SetBackGround(pMe->m_pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); 	
 
+	MSG_FATAL("***zzg BTApp_OPPUpdateSendingProgress numBytes=%d, objSize=%d***", progInfo.numBytes, progInfo.objSize, 0);
+
 	if (progInfo.numBytes > 0)
 	{		
 		CLEAR_SCREEN();
@@ -526,7 +572,7 @@ void BTApp_OPPUpdateSendingProgress( CBTApp* pMe )
 
 		snprintf(szConBuf, 10, " %d/100 ", percent);			
 
-		ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_BPP_SEND_FILE, pMe->pText2, LONG_TEXT_BUF_LEN * sizeof(AECHAR) );
+		ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_FILE_PROGRESS, pMe->pText2, LONG_TEXT_BUF_LEN * sizeof(AECHAR) );
 		len = WSTRLEN(pMe->pText2);
 		STRTOWSTR(szConBuf, &pMe->pText2[len], (LONG_TEXT_BUF_LEN-len)*sizeof(AECHAR));
 
@@ -1057,17 +1103,106 @@ void BTApp_OPPPull( CBTApp* pMe )
 
   int  vCardNameLen = sizeof( szVCardName );
 
-  if ( pMe->mOPP.bRegistered == TRUE )
+  MSG_FATAL("***zzg BTApp_OPPPull bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);
+  
+  if (pMe->mOPP.bRegistered == TRUE)
   {
-    STRLCPY( szVCardName, BTAPP_ROOT_DIR, sizeof( szVCardName ) );
-    STRLCAT( szVCardName, DIRECTORY_STR, sizeof( szVCardName ) );
-    WSTRTOSTR( pMe->mOPP.wName, szName, sizeof( szName ) );
-    if ( (STRLEN( szVCardName ) + STRLEN( szName )) > AEEBT_MAX_FILE_NAME*2 )
+  	MSG_FATAL("***zzg BTApp_OPPPull bRegistered == TRUE***", 0, 0, 0);
+	
+    //STRLCPY(szVCardName, BTAPP_ROOT_DIR, sizeof(szVCardName));  
+    //STRLCAT(szVCardName, DIRECTORY_STR, sizeof(szVCardName));
+	//WSTRTOSTR(pMe->mOPP.wName, szName, sizeof(szName));
+
+    ///*
+    //Add By zzg 2010_11_19
+	if (IFILEMGR_Test(pMe->mOPP.pIFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		//Have  T Card
+	{   
+		uint8 i = 0;
+		AECHAR *pExt = NULL;
+		char suffix[6] = {0};	
+		boolean bPicture = FALSE;
+		boolean bMusic = FALSE;
+
+		pExt = WSTRRCHR(pMe->mOPP.wName, L'.' );
+
+		if ( pExt != NULL )
+		{		
+			uint8 len = WSTRLEN(pExt);                         
+			MEMSET((void*)(suffix), 0x0, sizeof(suffix));                       
+			WSTRTOUTF8( (pExt), len, (uint8*)(suffix), sizeof(suffix));   
+
+			for (i = 0; i < (sizeof(TypeMap) / sizeof(BTObjectTypeMap)); i++)
+			{
+				  if (STRICMP(suffix, TypeMap[i].pFileExt) == 0)
+			      {
+					   switch(TypeMap[i].type)
+					   {
+					   	 case OBJ_IMAGE_JPEG_TYPE:
+						 case OBJ_IMAGE_BMP_TYPE:
+						 case OBJ_IMAGE_PNG_TYPE:
+						 case OBJ_IMAGE_GIF_TYPE:							
+						 {
+						 	bPicture = TRUE;
+							break;
+						 }
+						 case OBJ_AUDIO_MP3_TYPE:
+						 case OBJ_AUDIO_WAV_TYPE:
+						 case OBJ_AUDIO_MID_TYPE:
+						 case OBJ_AUDIO_MIDI_TYPE:
+						 case OBJ_AUDIO_WMA_TYPE:
+						 {
+						 	bMusic = TRUE;
+							break;
+						 }	
+						 default:
+						 {
+							break;
+						 }				
+					   }
+							
+					   break;
+			      }
+			}
+				
+		}
+
+	   
+		if (TRUE == bPicture)	//Pictures
+		{			
+			MSG_FATAL("***zzg BTApp_OPPPull TRUE == bPicture***", 0, 0, 0);
+			
+			STRLCPY(szVCardName, BTAPP_PICTURE_DIR, sizeof(szVCardName)); 
+			STRLCAT(szVCardName, DIRECTORY_STR, sizeof(szVCardName));
+			WSTRTOSTR(pMe->mOPP.wName, szName, sizeof(szName));
+		}
+		else if (TRUE == bMusic)	//Music
+		{		
+			MSG_FATAL("***zzg BTApp_OPPPull TRUE == bMusic***", 0, 0, 0);
+			
+			STRLCPY(szVCardName, BTAPP_MUSIC_DIR, sizeof(szVCardName));     	
+		    STRLCAT(szVCardName, DIRECTORY_STR, sizeof(szVCardName));
+			WSTRTOSTR(pMe->mOPP.wName, szName, sizeof(szName));
+		}
+		else	//other
+		{
+			STRLCPY(szVCardName, BTAPP_OTHER_DIR, sizeof(szVCardName));  	
+		    WSTRTOSTR(pMe->mOPP.wName, szName, sizeof(szName));
+		}
+	}
+	else
+	{	 
+		MSG_FATAL("***zzg Tcard not exist, OPPPull File Failed!***", 0, 0, 0);
+	}
+	//Add End
+	//*/
+	
+    if ((STRLEN(szVCardName) + STRLEN(szName)) > AEEBT_MAX_FILE_NAME*2)
     {
       MSG_ERROR( "File / Folder name exceeds max length", 0, 0, 0 );
       BTApp_ShowMessage( pMe, IDS_MSG_OBJ_PULL_FAILED, pMe->mOPP.wName, 3 );
       return;
     }
+	
     STRLCAT( szVCardName, szName, sizeof( szVCardName ) );
   }
   else
@@ -1078,6 +1213,7 @@ void BTApp_OPPPull( CBTApp* pMe )
                           szVCardName, 
                           &vCardNameLen );
   }
+  
   // remove object if exists
   if ( (IFILEMGR_Test( pMe->mOPP.pIFileMgr, szVCardName ) == SUCCESS) &&
        ((result = IFILEMGR_Remove( pMe->mOPP.pIFileMgr, 
@@ -1099,9 +1235,12 @@ void BTApp_OPPPull( CBTApp* pMe )
     if ( pMe->mOPP.bRegistered != TRUE ) // client?
     {
       pMe->mOPP.bObjectTransfer = TRUE;
-      ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, 
-                    FALSE ); // wait for pull confirm
+      ShowBusyIcon(pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE ); // wait for pull confirm
     }
+	else	//server
+	{
+		MSG_FATAL("***pMe->mOPP.bRegistered == TRUE***", 0, 0, 0);
+	}
   }
 }
 
@@ -2019,14 +2158,16 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       IBTEXTOPP_AcceptConnection( pMe->mOPP.po, &pMe->mOPP.remoteBDAddr, 
                                   TRUE, TRUE );
       break;
+	  
     case EVT_OPP_PUSH_REQ:
     {
+	  MSG_FATAL("***zzg EVT_OPP_PUSH_REQ BTApp_OPPPull***", 0, 0, 0); 
       BTApp_OPPPull( pMe );
       break;
     }
+	
     case EVT_OPP_PULL_REQ:
-    {
-	  
+    {	  
       BTApp_OPPPush( pMe, AEEBT_OPP_VCARD );	  
       break;
     }
@@ -2152,7 +2293,8 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       }
       if ( pMe->mOPP.bExchanging != FALSE )
       {
-        pMe->mOPP.bExchanging = FALSE;
+        pMe->mOPP.bExchanging = FALSE;		
+		
         BTApp_OPPPull( pMe );
       }
       break;
@@ -2173,7 +2315,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #endif //FEATURE_APP_TEST_AUTOMATION
       if ( pMe->mOPP.bExchanging != FALSE )
       {
-        pMe->mOPP.bExchanging = FALSE;
+        pMe->mOPP.bExchanging = FALSE;		
         BTApp_OPPPull( pMe );
       }
       else

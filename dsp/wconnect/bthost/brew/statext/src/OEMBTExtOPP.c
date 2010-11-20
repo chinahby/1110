@@ -613,7 +613,7 @@ int OEMBTExtOPP_Push(
 
 			for ( i = 0; i < ( sizeof( ObjectTypeMap ) / sizeof( AEEBTObjectTypeMap ) ); i++ )
 			{
-				  if ( STRICMP( suffix, ObjectTypeMap[ i ].pFileExt ) != 0 )
+				  if ( STRICMP( suffix, ObjectTypeMap[ i ].pFileExt ) == 0 )  //!=0??
 			      {
 			     	   pMe->pszType = ObjectTypeMap[ i ].pMIMEString;
 					   break;
@@ -1010,6 +1010,7 @@ static void OEMBTExtOPP_ReadCb( OEMBTExtOPP_EvCb* pEvCb )
   uint32 bytesRead = 0;
   bt_cmd_status_type status = BT_CS_GN_SUCCESS;
 
+  MSG_FATAL("***zzg OEMBTExtOPP_ReadCb***", 0, 0, 0);
 
   if ( pMe == NULL )
   {
@@ -1089,10 +1090,13 @@ static void OEMBTExtOPP_WriteCb( OEMBTExtOPP_EvCb* pEvCb )
   uint32 bytesWritten = 0;
   bt_cmd_status_type status = BT_CS_GN_SUCCESS;
 
+
 #ifdef FEATURE_BT_OBEX_DBL_BUF_WRITE
   /* Default to TRUE so Write Done notification is done unless explictly disabled. */
   boolean notifyWriteDoneNeeded = TRUE;
 #endif
+
+  MSG_FATAL("***zzg OEMBTExtOPP_WriteCb***", 0, 0, 0);
 
   if ( pMe == NULL )
   {
@@ -1572,6 +1576,8 @@ static void OEMBTExtOPP_OpenCb( OEMBTExtOPP_EvCb* pEvCb )
   char  szVCardName[ AEEBT_MAX_FILE_NAME + 1 ];
   char* pszName = NULL;
 
+  MSG_FATAL("***zzg OEMBTExtOPP_OpenCb***", 0, 0, 0);
+
   if ( (pMe == NULL) || ( pMe->clientConnID != pEvCb->connId ) )
   {
     MSG_ERROR( "OPPEvCb: C open wr req, wrong conn id=%x", 
@@ -1671,6 +1677,10 @@ static void OEMBTExtOPP_SrvOpenCb( OEMBTExtOPP_EvCb* pEvCb )
     AEEBTNotification*  pN    = NULL;
     OEMBTExtOPPobj_t* pMe     = OEMBTExtOPP_FindMe ( pEvCb->appId );
 
+	uint32 dwFreeSpace = 0;
+
+	MSG_FATAL("***zzg OEMBTExtOPP_SrvOpenCb***", 0, 0, 0);
+
     if( pMe == NULL )
     {
       MSG_ERROR( "OEMBTExtOPP_SrvOpenCb - Can't get pMe.",
@@ -1692,12 +1702,20 @@ static void OEMBTExtOPP_SrvOpenCb( OEMBTExtOPP_EvCb* pEvCb )
   }
 
   pN->data.uError  = AEEBT_OPP_ERR_NONE;
+ 
 
+ MSG_FATAL("***zzg OEMBTExtOPP_SrvOpenCb pEvCb->objSize=%d***", pEvCb->objSize, 0, 0);
+ MSG_FATAL("***zzg OEMBTExtOPP_SrvOpenCb 1 FreeSize=%d***", IFILEMGR_GetFreeSpace( pMe->pFileMgr, NULL ), 0, 0);
 
+  IFILEMGR_GetFreeSpaceEx(pMe->pFileMgr, AEEFS_CARD0_DIR, NULL, &dwFreeSpace);	//Check the TCard Free Space
+
+  MSG_FATAL("***zzg OEMBTExtOPP_SrvOpenCb 2 FreeSize=%d***", dwFreeSpace, 0, 0);
+ 
   if ( (pMe->serverConnID == pEvCb->connId) &&
        (pMe->state == AEEBT_OPP_STATE_CONNECTED) &&
        (pMe->bPushAllowed != FALSE) &&
-       (IFILEMGR_GetFreeSpace( pMe->pFileMgr, NULL ) > pEvCb->objSize))
+       //(IFILEMGR_GetFreeSpace( pMe->pFileMgr, NULL ) > pEvCb->objSize))
+       (dwFreeSpace>pEvCb->objSize))	//Modify by zzg 2010_11_19
   {
     pMe->state = AEEBT_OPP_STATE_PUSH_REQ_PENDING;
     pMe->dwFileSize = pEvCb->objSize;
@@ -1737,6 +1755,8 @@ static void OEMBTExtOPP_SrvOpenCb( OEMBTExtOPP_EvCb* pEvCb )
     {
       status = OI_OBEX_SERVICE_UNAVAILABLE;
     }
+
+	MSG_FATAL("***zzg OEMBTExtOPP_SrvOpenCb status=%x***", status, 0, 0);
 
     bt_cmd_pf_opp_srv_open_write_done( pMe->appId, pEvCb->connId, 
                                        (bt_pf_opp_handle_type)NULL, status );
