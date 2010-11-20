@@ -770,7 +770,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 
                 if(!pMe->m_bCanCapture)
                 {
-                    if(!pMe->m_bMemoryCardExist)
+                    if(pMe->m_bMemoryCardExist)
                     {
                         pMe->m_wMsgID = IDS_MSG_NOMEMORY;
                     }
