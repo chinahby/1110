@@ -1863,7 +1863,11 @@ static void DrawFocusIconAnimation(MainMenu *pMe)
 	titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_40 + theFocus;
 #endif
 #elif defined (FEATURE_DISP_220X176)
+#if defined(FEATURE_VERSION_FLEXI203P)
+	titleBarParms.nTitleResID	= IDS_MAIN_MENU_TITLE_1 + theFocus;
+#else
     titleBarParms.nTitleResID   = IDS_MAIN_MENU_TITLE_21 + theFocus;
+#endif
 #elif defined (FEATURE_DISP_128X128)
 
 #ifndef FEATURE_VERSION_H19C   
@@ -2119,10 +2123,10 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
 	int lengthX,lengthY;//下一个宫格的距离
 	int lengthXX,lengthYY;//下一个宫格的距离,绝对值
 	int turnnum;//当前要滚动多少次
-	int turnlengthx = 0;//每次x移动的距离
+	int turnlengthx = 0;//每次x移动的距离 
 	int turnlengthy = 0;//每次y移动的距离
 	int turnx = 0;//每次x移动的距离差价
-	int turny = 0;//每次y移动的距离差价
+	int turny = 0;//每次y移动的距离差价  
 	int x,y;
 	IImage		*m_pImageTurns[4];//存放当前效果资源
     TitleBar_Param_type  titleBarParms;
@@ -2599,6 +2603,65 @@ static boolean StartApplet(MainMenu *pMe, int i)
 
 #endif
 #if defined (FEATURE_DISP_220X176)
+#ifdef FEATURE_VERSION_FLEXI203P
+		        case 0:
+        {
+            
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
+            break;
+        }
+        case 1:
+        {
+            IContactApp *ca = NULL;
+            if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_APP_CONTACT, (void**)&ca))
+            {
+                return FALSE;
+            }
+            else
+            {
+                ICONTAPP_MainMenu(ca);
+                IContactApp_Release(ca);
+            }
+        }
+        break;
+        case 2:
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
+            break;
+        case 3:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPLICATION);
+            break;
+        case 4:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
+            break;
+        case 5:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+            break;    
+        case 6:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MULTIMEDIA_LIST);
+            break;
+        case 7:
+			#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STATIC_APP);
+			#else
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+			#endif
+            break;
+        case 8:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+            break;
+
+        case 9:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
+            break;
+        case 10:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SOUNDMENU);
+            break;
+        case 11:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
+            break;
+
+#else
+
 		case 0:
         	{            
             	Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
@@ -2655,7 +2718,7 @@ static boolean StartApplet(MainMenu *pMe, int i)
         case 11:
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
             break;
-            
+#endif            
 #endif
 
 #if defined (FEATURE_DISP_128X160)

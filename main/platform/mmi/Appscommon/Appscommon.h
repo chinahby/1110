@@ -321,6 +321,7 @@ typedef enum BottomBar_e_Type
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
    BTBAR_FNASRANI_FPORTAL,   //fnasrani--fportal
    BTBAR_FMUSLIM_FPORTAL,   //fmuslim  ---fnasrani
+   BTBAR_FGURU_FPORTAL,
    BTBAR_CONTACTS_FPORTAL,   //fmuslim  ---fnasrani   
 #endif /*FEATURE_FLEXI_STATIC_BREW_APP*/
    BTBAR_OPTION,

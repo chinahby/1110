@@ -28,8 +28,10 @@ CONSTFILE_FILES+=\
 ifneq ($(USES_LOWMEM), yes)
 CONSTFILE_FILES+=\
 	charge.jpg|fs:/image/charge/charge.jpg
-
 ifeq ($(USES_RESDIR), Flexi203)
+CONSTFILE_FILES+=\
+    poweronani.png|fs:/image/pwronoffani/poweronani.png
+else ifeq ($(USES_RESDIR), Flexi203p)    
 CONSTFILE_FILES+=\
     poweronani.png|fs:/image/pwronoffani/poweronani.png
 else ifeq ($(USES_RESDIR), Smart)

@@ -2,7 +2,7 @@
 #define CUSTSFLEXI203MUSLIM_H
 
 #define SOFTWARE_VER04
-#define FEATURE_GURU
+//#define FEATURE_GURU
 #include "custflexi203.h"
 
 #endif /* CUSTSFLEXI203MUSLIM_H*/

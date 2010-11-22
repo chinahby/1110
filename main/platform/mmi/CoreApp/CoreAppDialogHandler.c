@@ -2901,9 +2901,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #if defined (FEATURE_NASRANI)
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
                ret=  CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
+#elif defined  (FEATURE_GURU)
+	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
+	ret=  CoreApp_LaunchApplet(pMe, AEECLSID_FLEXIGURU);
 #elif defined (FEATURE_FMN2010)
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
-               ret=  CoreApp_LaunchApplet(pMe, AEECLSID_FLEXIGURU);
+               ret=  CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
 #elif defined (FEATURE_FPT005)
 			   ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 #else
@@ -4645,6 +4648,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #else										//Include IVIO
 	#if !defined (FEATURE_FLEXI_STATIC_BREW_APP)
 		eBBarType = BTBAR_MESSAGES_CONTACTS;
+	#elif defined (FEATURE_GURU)
+		eBBarType = BTBAR_FGURU_FPORTAL;	
     #elif defined (FEATURE_FMN2010)
         eBBarType = BTBAR_FMUSLIM_FPORTAL;
 	#elif defined (FEATURE_NASRANI) 
@@ -4735,7 +4740,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 #endif
 
 
-
+ 
         // 开始播放开机动画
 #if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)      
         MSG_FATAL("CoreApp_PlayPwrOnAni 21",0,0,0);
@@ -4854,7 +4859,7 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定关机动画的帧数
 #else
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
-
+		MSG_FATAL("CoreApp_PlayPwrOffAni pMe->m_pStartupAniImg = %x",pMe->m_pStartupAniImg,0,0);
         // 设置动画速度(毫秒)
         IIMAGE_SetAnimationRate(pMe->m_pStartupAniImg, PWROFF_ANI_RATE);
 
