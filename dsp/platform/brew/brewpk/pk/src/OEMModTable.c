@@ -491,13 +491,8 @@ extern int AEEVocoder_New(IShell *ps, AEECLSID cls, void ** ppo);
 //#if defined(FEATURE_CAMERA_MULTI_SENSOR)
 //#include "AEECamera.bid"
 //#endif
-#ifdef FEATURE_DSP
 extern void  AEECamera_Init(IShell * ps);
 extern int   AEECamera_New(IShell * ps,AEECLSID cls,void ** ppif);
-#else
-extern void    AEECamera_Init(IShell * ps);
-extern int     AEECamera_New(IShell * ps, AEECLSID cls, void **ppif);
-#endif
 #endif
 
 // ISerialPort interface
