@@ -189,7 +189,11 @@ static snd_device_type out_device;              /* normal out device */
 static boolean out_device_autoselect = TRUE;    /* is the current device there by autoselection? */
 static int num_speaker = 0;                     /* number of speaker users (0=muted) */
 static int num_microphone = 0;                  /* number of microphone users (0=muted) */
+#ifdef CUST_EDITION
+static boolean force_mute = TRUE;               /* Whether we are in a state excluding the reference counters */
+#else
 static boolean force_mute = FALSE;              /* Whether we are in a state excluding the reference counters */
+#endif
 static snd_mute_control_type forced_spkr_mute_state = SND_MUTE_MUTED;
 static snd_mute_control_type forced_mic_mute_state  = SND_MUTE_MUTED;
 static boolean vibrator_on = FALSE;              /* True if the vibrator is on */
@@ -1234,7 +1238,9 @@ boolean uisnd_force_device_mute(
     //try to find the new device
     if (uisnd_is_device_attached(new_device)) {
       out_device = new_device;
+#ifndef CUST_EDITION
       out_device_autoselect = FALSE;
+#endif
       found = TRUE;
     }
   }

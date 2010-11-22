@@ -2827,18 +2827,7 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
              switch(wParam)
              {
                 case AVK_CLR:
-				{			
-					//Add By zzg 2010_07_29
-					if (HS_HEADSET_ON())
-					{						
-						IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_STEREO_HEADSET, 0);	
-					}
-					else
-					{						
-						IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_HANDSET, 0);	
-					}
-					//Add End
-				
+				{
 					CMusicPlayer_ReleaseMedia(pMe);
                     pMe->m_bPlaying = TRUE;
                     pMe->m_bPaused = FALSE;
@@ -2926,17 +2915,6 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
                     
                case AVK_BGPLAY:
 			   	{
-					//Add By zzg 2010_07_29
-					if (HS_HEADSET_ON())
-					{						
-						IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_STEREO_HEADSET, 0);	
-					}
-					else
-					{						
-						IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_HANDSET, 0);	
-					}
-					//Add End
-					
                     CMusicPlayer_ReleaseMedia(pMe);
                     ISHELL_CloseApplet(pMe->m_pShell, TRUE);
                     return TRUE;
@@ -3992,48 +3970,38 @@ boolean CMusicPlayer_InitMusic(CMusicPlayer *pMe)
         bcmapp_ag_set_device(pMe->m_nBTID);
     }
 #endif
-   // 如果是QCP格式的歌曲，必须设置一次声音通道否则声音会自动从RECIVE出来
-   if(pMe->m_eStartMethod == STARTMETHOD_SIMPLEPLAYER)
-   {
-     pf = STRRCHR(pMe->m_pSimplePlayMusicName, '.');
-   }
-   else
-   {
-     pf = STRRCHR(pMe->m_PlayingMusiclist[pMe->m_MusicPlayerCfg.lastPlayMusicID].pMusicName, '.');
-   }
+    // 如果是QCP格式的歌曲，必须设置一次声音通道否则声音会自动从RECIVE出来
+    if(pMe->m_eStartMethod == STARTMETHOD_SIMPLEPLAYER)
+    {
+        pf = STRRCHR(pMe->m_pSimplePlayMusicName, '.');
+    }
+    else
+    {
+        pf = STRRCHR(pMe->m_PlayingMusiclist[pMe->m_MusicPlayerCfg.lastPlayMusicID].pMusicName, '.');
+    }
+    
     pf++;
     if(0 == STRICMP(pf,QCP_TYPE))
-    {    	
-      //IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_SPEAKER, 0);	
-
-	  	//Add By zzg 2010_07_29
-	 	if (HS_HEADSET_ON())
-	 	{
-	 		IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_STEREO_HEADSET, 0);	
-	 	}
-	 	else
-	 	{
-	 		IMEDIA_SetMediaParm( pMe->m_pMedia, MM_PARM_AUDIO_DEVICE, AEE_SOUND_DEVICE_SPEAKER, 0);	
-	 	}
-	 	//Add End
-				
+    {
+        (void)IMEDIA_SetAudioDevice((IMedia *)pMe->m_pMedia, HS_HEADSET_ON()?AEE_SOUND_DEVICE_STEREO_HEADSET:AEE_SOUND_DEVICE_SPEAKER);
     }
+    
     //注册底层回调
-   (void)IMEDIA_RegisterNotify(pMe->m_pMedia, CMusicPlayer_MediaNotify, pMe);
-   if(!pMe->m_bInterrupt)
-   {
+    (void)IMEDIA_RegisterNotify(pMe->m_pMedia, CMusicPlayer_MediaNotify, pMe);
+    if(!pMe->m_bInterrupt)
+    {
         if(pMe->m_eStartMethod != STARTMETHOD_SIMPLEPLAYER)
         {
             pMe->m_nCurrentTime = 0;
             pMe->m_nTotalTime = 0;
         }
-   }
-   pMe->m_nSimPlayCurTime = 0;
-   pMe->m_bInterrupt = FALSE;
-   pMe->m_nAutoScrollIdx = 0;
-   (void)IMEDIA_GetTotalTime(pMe->m_pMedia);
-   pMe->m_nCurrentVolume= pMe->m_MusicPlayerCfg.eMusicVolume * AEE_MAX_VOLUME/5;
-    if(pMe->m_pMedia) 
+    }
+    pMe->m_nSimPlayCurTime = 0;
+    pMe->m_bInterrupt = FALSE;
+    pMe->m_nAutoScrollIdx = 0;
+    (void)IMEDIA_GetTotalTime(pMe->m_pMedia);
+    pMe->m_nCurrentVolume= pMe->m_MusicPlayerCfg.eMusicVolume * AEE_MAX_VOLUME/5;
+    if(pMe->m_pMedia)
     {
         (void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
     }
