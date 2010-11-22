@@ -3284,10 +3284,11 @@ static void StereoHeadsetOn(CCoreApp * pMe)
 		MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
 	}
 
-	snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-	snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
-
-//wangliang modify!  2010-09-25
+    /* Change the audio path */
+    uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_ENABLED);
+    uisnd_set_device_auto(NULL,NULL);
+    
+    //wangliang modify!  2010-09-25
 	(void) ICONFIG_GetItem(pMe->m_pConfig,
 	                    CFGI_PROFILE_RINGER_VOL,
 	                    return_ringer_level,
@@ -3312,8 +3313,7 @@ static void StereoHeadsetOn(CCoreApp * pMe)
 
 	// midi volume
 #ifdef FEATURE_MULTIMEDIA
-	snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MIDI,m_CallVolume, NULL, NULL );
-  
+	snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MIDI,set_ringer_level, NULL, NULL );
 #endif
    
 	devnotify.wParam = TRUE;
@@ -3360,7 +3360,7 @@ static void HeadsetOff(CCoreApp *pMe)
 
 	devnotify.wParam = FALSE;
 	AEE_SEND_HEADSET_EVT(&devnotify);
-   
+    
 	/* Change the audio path */
 	//uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_UNATTACHED);
 	//uisnd_set_device_status(SND_DEVICE_HEADSET, UISND_DEV_UNATTACHED);
@@ -3377,9 +3377,13 @@ static void HeadsetOff(CCoreApp *pMe)
 	{
 		MSG_HIGH("Failed to set config item, %d", nRetVal, 0, 0);
 	}
-
-	snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-	snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+	
+    uisnd_set_device_status(SND_DEVICE_STEREO_HEADSET, UISND_DEV_UNATTACHED);
+    uisnd_set_device_status(SND_DEVICE_HEADSET, UISND_DEV_UNATTACHED);	
+#ifdef FEATURE_FM_OEM
+    uisnd_set_device_status(SND_DEVICE_HEADSET_FM, UISND_DEV_UNATTACHED);
+#endif
+    uisnd_set_device_auto(NULL,NULL);
 
 //wangliang modify!  2010-09-25
 	(void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -3405,9 +3409,9 @@ static void HeadsetOff(CCoreApp *pMe)
 
 	// midi volume
 #ifdef FEATURE_MULTIMEDIA
-	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MIDI,m_CallVolume, NULL, NULL );
-  
-#endif	
+	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MIDI,set_ringer_level, NULL, NULL );
+#endif
+
 	devnotify.wParam = FALSE;
 	AEE_SEND_HEADSET_EVT(&devnotify);
 } /*End HeadsetOff */
