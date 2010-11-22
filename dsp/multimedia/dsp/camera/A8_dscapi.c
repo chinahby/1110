@@ -4739,7 +4739,7 @@ s_short A8L_CheckReadyForA8Command(void)
 	{
 		sys_IF_ait_delay1us(100);	// Sleep delay about 0.1ms or 1ms. Depends on BB System delay function.
 		timeout++;
-		MSG_FATAL("A8L_CheckReadyForA8Command ret = 0x%x,timeout = %d",ret,timeout,0);
+//		MSG_FATAL("A8L_CheckReadyForA8Command ret = 0x%x,timeout = %d",ret,timeout,0);
 	}
 
 	if ( timeout >= A8_CMD_READY_TIME_OUT )
