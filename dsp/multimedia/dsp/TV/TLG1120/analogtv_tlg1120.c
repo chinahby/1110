@@ -3,7 +3,7 @@
 #ifdef FEATURE_PMIC
 #include "pm.h"
 #endif
-
+#include "dog.h"
 //#include "time_secure.h"
 
 #define ANALOGTV_TLG1120_C_DEBUG
@@ -15,9 +15,9 @@
 
 #if defined(FEATURE_ANALOG_TV)
 #define TLG1120_TV
+#define TLG1120_FM
 #endif
 
-#define TLG1120_FM
 
 extern i2c_rw_cmd_type tv_i2c_command;
 
@@ -86,7 +86,6 @@ void TLG1120_tv_power_up(void)
 {
     /*no need do anything*/
    TLG_PRINT_0("TLG1120_tlg1120_power_up invoke");
-
 }
 
 /**/
@@ -444,16 +443,25 @@ boolean camsensor_tlg1120_init(void)
 }
 #endif
 
+
+
+
+
+
+
 /*************************************************************************/
 /*                          下面是FM部分                                 */
 /*************************************************************************/
 
 #ifdef TLG1120_FM
+#include "fm_framework.h"
+#include "uixsnd.h"
+#include "Hs_mb6550.h"
+
 //需要重定向的宏
 
 #define TLG_FMDrv_Mute(a) 
 #define FM_SEARCH_STEP	2 // 1		//2 for -200khz~+200khz compare window size; 1 for -100khz~+100khz compare window size  in 100khz step
-//#define FM_SEARCH_STEP	4 // 2		//5 for -200khz~+200khz compare window size; 2 for -100khz~+100khz compare window size  in 50khz step
 #define MIN_tlgFM_FREQUENCY 875	////	//min fm freq, 875 for 87.5Mhz in 100khz step; 7000 for 70Mhz in 50Khz step
 #define MAX_tlgFM_FREQUENCY 1080	//max fm freq, 1080 for 108Mhz in 100khz step; 10800 for 108Mhz in 50Khz step
 #define FM_FREQ_BOUND_PROC(var) if(*var < MIN_tlgFM_FREQUENCY){ *var = MIN_tlgFM_FREQUENCY;}else if(*var >MAX_tlgFM_FREQUENCY){*var = MAX_tlgFM_FREQUENCY;}
@@ -464,6 +472,8 @@ uint32 ssi_fm[2*FM_SEARCH_STEP + 1];	//
 kal_bool begin_valid_search = FALSE;
 
 static uint16 g_uCurFreq = 0;
+static WarT_Fm_Status_e g_eTLGFmStatus = FM_NOT_INIT;
+static uint8    fm_playing_mute = TRUE;
 
 extern TLGDLL_API uint16 TLG_GetSSIThreshold(void);
 extern TLGDLL_API int TLGAPP_FMSetFrequency(uint32 center_freq_hz);
@@ -581,19 +591,19 @@ static uint8 TLG_FMDrv_ValidStop(short freq, signed char signalvl, bool is_step_
 }
 
 
-void FMDrv_StartScan(void)
+static void FMDrv_StartScan(void)
 {
 	TLGAPP_FMStartScan();
 	TLGAPP_FMSetParam(100000, MIN_tlgFM_FREQUENCY*100000, MAX_tlgFM_FREQUENCY*100000);	
 }
 
-void FMDrv_StopScan(void)
+static void FMDrv_StopScan(void)
 {
 	TLGAPP_FMStopScan();
 }
 
 
-void TLG1120_fm_init(void)
+int TLG1120_fm_init(void)
 {
     TLG_PRINT_0("TLG1120_fm_init Enter");
 	#if 0
@@ -625,39 +635,60 @@ void TLG1120_fm_init(void)
 	TLGAPP_Init(tlg_i2c_addr);
 	TLGAPP_SetChannelMapFM();
 	TLGAPP_SetChannel(p_tlg_cur_map[gFmStorage.mCurChnIdx] CHN_S);
+	fm_playing_mute = TRUE;
+	g_eTLGFmStatus = FM_POWER_DOWN;
     TLG_PRINT_0("TLG1120_fm_init leave");
+	return WART_FM_SUCCESS;
     
 }
 
-boolean TLG1120_fm_mute(boolean mute)
-{
-   ATV_DEBUG("TLG1120_fm_mute",0,0,0);
-   return FALSE;
-}
 
-void TLG1120_fm_power_on(void)
+
+int TLG1120_fm_power_on(void)
 {
     ATV_DEBUG("TLG1120_fm_power_on",0,0,0);
-    return;
+
+	if (g_eTLGFmStatus != FM_NOT_INIT)
+	{
+		return WART_FM_FAILED;
+	}
+	else if(g_eTLGFmStatus == FM_IN_PROGRESS)
+	{
+		return WART_FM_SUCCESS;
+	}
+	g_eTLGFmStatus = FM_POWER_UP;
+
+    return WART_FM_SUCCESS;
 }
 
-void TLG1120_fm_power_off(void)
+int TLG1120_fm_power_off(void)
 {
     ATV_DEBUG("TLG1120_fm_power_off",0,0,0);
+	if (g_eTLGFmStatus != FM_IDLE_STATUS)
+	{
+		return WART_FM_FAILED;
+	}
     TLGAPP_PowerDown();
     TLG1120_reset_chip();
 	//TLG1120_tlg1120_gpio_init_i2c();
     TLG1120_poweroff_chip();
+	g_eTLGFmStatus = FM_POWER_DOWN;
+	
+	return WART_FM_SUCCESS;
 }
 
 
 
-boolean TLG1120_fm_set_channel(int16 freq)
+int TLG1120_fm_set_channel(uint16 freq)
 {
     int i = 0, ret = SUCCESS;
-    boolean result = FALSE;
     
     ATV_DEBUG("TLG1120_fm_set_channel freq=%d",freq,0,0);
+	if (g_eTLGFmStatus != FM_IDLE_STATUS)
+	{
+		return WART_FM_FAILED;
+	}
+	g_eTLGFmStatus = FM_IN_PROGRESS;
 
     g_uCurFreq = freq;
     FMDrv_StartScan();
@@ -665,8 +696,9 @@ boolean TLG1120_fm_set_channel(int16 freq)
     FMDrv_StopScan();
     if (ret == 0)
     {
-        ATV_DEBUG("TLG_FMDrv_ValidStop no sign ret=%d",ret,0,0);
-        return FALSE;
+        ATV_DEBUG("TLG_FMDrv_ValidStop no sign ret=%d",ret,0,0);		
+		g_eTLGFmStatus = FM_IDLE_STATUS;
+        return WART_FM_FAILED;
     }
     else        
     {
@@ -678,50 +710,107 @@ boolean TLG1120_fm_set_channel(int16 freq)
             }
         }  
         TLGAPP_SetChannel(p_tlg_cur_map[i]CHN_S);
-        ATV_DEBUG("TLG_FMDrv_ValidStop have sign ret=%d",ret,0,0);
-        return TRUE;
+        ATV_DEBUG("TLG_FMDrv_ValidStop have sign ret=%d",ret,0,0);		
+		g_eTLGFmStatus = FM_IDLE_STATUS;
+        return WART_FM_SUCCESS;
     }
+	
+	g_eTLGFmStatus = FM_IDLE_STATUS;
+	
+	return WART_FM_FAILED;
 }
 
 
-static uint8 TLG1120_fm_get_sigLv1(int16 curf)
-{
-    ATV_DEBUG("TLG1120_fm_get_sigLv1",0,0,0);
-    return 0;
+
+void TLG1120_fm_mute(boolean on)
+{	
+	if ( ( on == TRUE) && (fm_playing_mute == FALSE) )
+	{
+		fm_playing_mute = TRUE;
+		if (HS_HEADSET_ON())
+		{
+			snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+			snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
+		}
+	}
+	else if ( ( on == FALSE) && (fm_playing_mute == TRUE) )
+	{
+		fm_playing_mute = FALSE;
+
+		snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
+		snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+	}
 }
 
-static boolean TLG1120_Set_Band(uint32 band)
-{
-    ATV_DEBUG("TLG1120_Set_Band",0,0,0);
-    return TRUE;
-}
 
-static boolean TLG1120_fm_set_volume_level(uint8 level)
-{
+
+static int TLG1120_fm_set_volume(uint16 uVolume)
+{	
+	if((uVolume == 0) && (fm_playing_mute == FALSE))
+    {
+        TLG1120_fm_mute(TRUE);
+        return WART_FM_SUCCESS;
+    }
+    else if((uVolume > 0) && (fm_playing_mute == TRUE))
+    {
+        TLG1120_fm_mute(FALSE);
+    }
+
     ATV_DEBUG("TLG1120_fm_set_volume_level",0,0,0);
 
+	if (g_eTLGFmStatus != FM_IDLE_STATUS)
+	{
+		return WART_FM_FAILED;
+	}
+
 #ifdef TLG1120_TV
-    TLG1120_tv_set_param(TLG_SET_VOLUME,(int)level,0);
+    TLG1120_tv_set_param(TLG_SET_VOLUME,(int)uVolume,0);
 #endif
 
-    return TRUE;
+    return WART_FM_SUCCESS;
 }
 
-static int16 TLG1120_Get_Freq(void)
+
+WarT_Fm_Status_e TLG1120_fm_get_status(void)
 {
-    ATV_DEBUG("TLG1120_Get_Freq",0,0,0);    
-    return 0;
+	return g_eTLGFmStatus;
+}
+
+uint16 TLG1120_fm_get_current_channel(void)
+{
+	return g_uCurFreq;
 }
 
 
 
-static uint16 TLG1120_fm_scan_channel(uint8 direction)    
+void TLGFM_Register(WarT_Fm_t *gFm)
+{
+	gFm->fm_initail = TLG1120_fm_init;
+	gFm->fm_powerup = TLG1120_fm_power_on;
+	gFm->fm_powerdown = TLG1120_fm_power_off;
+	gFm->fm_set_channel = TLG1120_fm_set_channel;
+	gFm->fm_setvolume = TLG1120_fm_set_volume;
+	gFm->fm_mute = TLG1120_fm_mute;
+	gFm->fm_get_status = TLG1120_fm_get_status;
+	gFm->fm_GetCurrentChannel = TLG1120_fm_get_current_channel;
+}
+#endif
+
+#if 0
+
+static uint16 TLG1120_fm_scan_channel(WarT_Direction_e direction)    
 {
     int  ret = 0, firstchn = 0;
     uint16 startfreq = g_uCurFreq;
     uint16 getchn = 0;
     
     ATV_DEBUG("TLG1120_fm_scan_channel",0,0,0); 
+	if (g_eTLGFmStatus != FM_IDLE_STATUS)
+	{
+		return WART_FM_FAILED;
+	}
+	
+	g_eTLGFmStatus = FM_IN_PROGRESS;
 
     FMDrv_StartScan();
 #if 1
@@ -779,29 +868,13 @@ static uint16 TLG1120_fm_scan_channel(uint8 direction)
     g_uCurFreq = firstchn;
     
     ret = TLGAPP_SetChannel(firstchn);    
+	
+	g_eTLGFmStatus = FM_IDLE_STATUS;
     ATV_DEBUG("TLGAPP_SetChannel ret = %d",ret ,0,0);
-    return SUCCESS;       
+    return WART_FM_SUCCESS;       
 }
-#if 0   //modi by yangdecai 
-#include "FM_Device.h"
-boolean TLGFM_Register(FM_Device *Fun_table)
-{
-	Fun_table->FM_ChipInit 			= TLG1120_fm_init;
-	Fun_table->FM_Mute				= TLG1120_fm_mute;
-	Fun_table->FM_PowerOffProc		= TLG1120_fm_power_off;
-	Fun_table->FM_PowerOn			= TLG1120_fm_power_on;
-	Fun_table->FM_SetFreq			= TLG1120_fm_set_channel;
-	Fun_table->FM_GetSigLvl			= TLG1120_fm_get_sigLv1;
-	Fun_table->FM_GetFreq			= TLG1120_Get_Freq;
-	Fun_table->FM_SetBand			= TLG1120_Set_Band;
-	Fun_table->FM_Seek				= TLG1120_fm_scan_channel;
-	Fun_table->FM_SetVolumeLevel	= TLG1120_fm_set_volume_level;
-	return TRUE;
-}
-#endif
-#endif
 
-#if 0
+
 static boolean TLG1120_fm_set_channel(int16 freq)    
 {
     int ChnInx = 0, ret = 0, firstchn = 0;
@@ -847,3 +920,5 @@ static boolean TLG1120_fm_set_channel(int16 freq)
        
 }
 #endif
+
+

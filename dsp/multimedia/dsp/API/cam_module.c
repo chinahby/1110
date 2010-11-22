@@ -130,16 +130,21 @@ u_short gLCDX0;
 static mmp_ret_code_type mmpfunc_cam_process(mmp_func_type func, void* client_data, u_int p1, u_int p2, u_int p3, u_int p4, void* pdata)
 {
 	mmp_ret_code_type status = MMP_INVALID_STATE;
+//	return MMP_INVALID_STATE;
 	if(AIT_STATUS_USB_READY <= sys_IF_ait_get_status())
 	{
 		AIT_Message_Error("!!!mmpfunc_cam_process: SD is Busy, AIT Status = %d\r\n", sys_IF_ait_get_status());
 		return MMP_INVALID_STATE;
 	}
+	
+	AIT_Message_Error("!!!mmpfunc_cam_process: SD is Busy, func = %d\r\n", func);
 
 	switch(func)
 	{
 		case	MMPFUNC_CAM_INIT:
 				status = sys_IF_ait_boot_init();
+				
+				AIT_Message_Error("!!!mmpfunc_cam_process: SD is Busy, status = %d\r\n", status);
 				break;
 				
 		case	MMPFUNC_CAM_CMD_MAPPING:
@@ -179,6 +184,7 @@ static mmp_ret_code_type mmpfunc_cam_process(mmp_func_type func, void* client_da
 
 						status = cam_IF_ait_open_camera();
 		
+						MSG_FATAL("cam_IF_ait_open_camera status : %d",status,0,0);
 						if(!status)					
 						{
 							status = cam_IF_ait_preview_start(p1,p2);//(ext_camera_para_struct *) client_data);
@@ -285,7 +291,7 @@ static mmp_ret_code_type mmpfunc_cam_process(mmp_func_type func, void* client_da
 					#if (AIT_VIDREC_INT_POLARITY == AIT_MTK_2_8V_FLASH_LOW )
 					SetA8RegB(0x6800,0x3);						
 					#else
-						SetA8RegB(0x6800,0x1);
+					SetA8RegB(0x6800,0x1);
 					#endif
 					
 					SetA8RegB(0x6810,GetA8RegB(0x6810)|0x04);

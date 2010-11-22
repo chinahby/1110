@@ -13,10 +13,10 @@
 #define SENSOR_LATCH_EDGE           		(A8_SENSOR_POS_EDGE)
 
 #define	SENSOR_I2C_ID  			    		(0xFF)
-#define	SENSOR_PREVIEW_WIDTH  	    		(320) 	//360
-#define	SENSOR_PREVIEW_HEIGHT  	    		(240)	//288
-#define	SENSOR_FULL_WIDTH  		    		(320)	//360
-#define	SENSOR_FULL_HEIGHT  	    		(240)	//288
+#define	SENSOR_PREVIEW_WIDTH  	    		360
+#define	SENSOR_PREVIEW_HEIGHT  	    		288
+#define	SENSOR_FULL_WIDTH  		    		360
+#define	SENSOR_FULL_HEIGHT  	    		288
 
 extern boolean camsensor_tlg1120_init(void);
 
@@ -97,7 +97,8 @@ static u_short SetSensorResolution(mmp_sensor_mode sensor_mode)
 		case SENSOR_INIT:
 		{
             A8L_VIF_Init(&preview_mode); 
-            A8L_SetSensorAttr(&preview_mode);            
+            A8L_SetSensorAttr(&preview_mode);     
+			MSG_FATAL(" SetSensorResolution WIDTH=%d,HEIGHT=%d",preview_mode.image_width,preview_mode.image_height,0);
 			camsensor_tlg1120_init();
             gbSensorInited = 1;
             return fRet;

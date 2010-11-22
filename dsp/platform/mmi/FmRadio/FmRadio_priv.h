@@ -63,7 +63,8 @@
 #include "AEEAnnunciator.h"
 
 #if !defined( AEE_SIMULATOR)
-#include "fm_radio.h"
+//#include "fm_radio.h"
+#include "fm_framework.h"
 #include "err.h"
 #endif //#if !defined( AEE_SIMULATOR)
 

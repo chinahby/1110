@@ -54,6 +54,7 @@ typedef struct _IFmRadio  IFmRadio;
 #define IFmRadio_Release(p)                GET_PVTBL(p,IFmRadio)->Release(p)
 #define IFmRadio_HandleEvent(p,ec,wp,dw)   GET_PVTBL(p,IFmRadio)->HandleEvent(p, ec, wp, dw)
 
+extern int FmRadio_GetChannelTotal(void);
 #endif
 //__FM_RADIO_H
 

@@ -749,7 +749,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 			{
 				if (HS_HEADSET_ON())
 			    {
-			        fm_mute(FALSE);
+			        WarT_Fm_Mute(FALSE);
 			    }
 				ISHELL_CancelTimer( pMe->m_pShell, refreshChannelListCB, (void*)pMe);
 				pMe->globalSearching = FALSE;
@@ -873,7 +873,7 @@ __handleKeyEvent_input_channel_done__:
 			{
 				if (HS_HEADSET_ON())
 			    {
-			        fm_mute(FALSE);
+			        WarT_Fm_Mute(FALSE);
 			    }
 				ISHELL_CancelTimer( pMe->m_pShell, refreshChannelListCB, (void*)pMe);
 				pMe->globalSearching = FALSE;
@@ -1228,7 +1228,7 @@ static boolean setChannelTo( CFmRadio *pMe, uint16 theNewChannel)
     pMe->cfg.channel = theNewChannel;
 
 #if !defined( AEE_SIMULATOR)
-    if( fm_tune_channel( (LOWEST_BAND_FREQ + CHANNEL_SPACE * pMe->cfg.channel)/100) == FM_RADIO_SUCCESSFUL)
+    if( WarT_Fm_Set_Channel( (LOWEST_BAND_FREQ + CHANNEL_SPACE * pMe->cfg.channel)/100) == WART_FM_SUCCESS)
     {
         result = TRUE;
         pMe->ledLightType = FM_RADIO_LED_LIGHT_PLAYING;
@@ -1249,8 +1249,6 @@ static boolean setChannelTo( CFmRadio *pMe, uint16 theNewChannel)
 
 static void changeVolume( CFmRadio *pMe, uint16 keyCode)
 {
-
-    static const int limitValue[] = { 15, 0};
     static const int increment[]  = { 3, -3};
 	int theKey;
 	if(keyCode == AVK_I || keyCode == AVK_O)
@@ -1298,7 +1296,7 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
     {
         pMe->byVolumeLevel = 15;
     }
-    else if(pMe->byVolumeLevel < 0)
+    else if(pMe->byVolumeLevel <= 0)
     {
         pMe->byVolumeLevel = 0;
     }
@@ -1310,7 +1308,7 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
     //Call driver to set Volume
     if (HS_HEADSET_ON())
     {
-        fm_set_volume( pMe->byVolumeLevel);
+        WarT_Fm_Set_Volume( pMe->byVolumeLevel);
     }
 #endif//#if !defined( AEE_SIMULATOR)
    // FmRadio_RefreshVolumeImage(pMe);
@@ -1575,7 +1573,7 @@ static void refreshChannelList( CFmRadio *pMe, boolean begin)
 {
     if (HS_HEADSET_ON())
     {
-        fm_mute(TRUE);//add by xuhui
+        WarT_Fm_Mute(TRUE);//add by xuhui
     }
     pMe->ledLightType = FM_RADIO_LED_LIGHT_SEARCHING;
     if( begin == BEGIN_TO_REFRESH_CHANNEL_LIST)
@@ -1583,7 +1581,7 @@ static void refreshChannelList( CFmRadio *pMe, boolean begin)
         pMe->seekChannelClockwise = TRUE;
         moveOperationModeTo( pMe, FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST);
 #if !defined( AEE_SIMULATOR)
-        fm_tune_channel((LOWEST_BAND_FREQ)/100);
+        WarT_Fm_Set_Channel((LOWEST_BAND_FREQ)/100);
 #endif//#if !defined( AEE_SIMULATOR)
 
         if( pMe->globalSearching)
@@ -1601,7 +1599,7 @@ static void refreshChannelList( CFmRadio *pMe, boolean begin)
     }
 	 pMe->cfg.channel=0;
 #if !defined( AEE_SIMULATOR)
-    fm_seek_start( pMe->seekChannelClockwise, FALSE);
+ //   fm_seek_start( pMe->seekChannelClockwise, FALSE);
 #endif//#if !defined( AEE_SIMULATOR)
 
     ISHELL_SetTimer( pMe->m_pShell, 200, refreshChannelListCB, (void*)pMe);
@@ -1635,10 +1633,9 @@ static void refreshChannelListCB( void *pme)
 #else
 
     boolean  ready                  = FALSE;
-    boolean  reachBandLimit         = FALSE;
     static   int numberOfloop       = 0;
     static   int countSearchChanne  = 0;
-    fm_get_seek_status( &ready, &reachBandLimit, NULL);
+  //  fm_get_seek_status( &ready, &reachBandLimit, NULL);
     pMe->cfg.tuningMode = FM_RADIO_TUNNING_MODE_MANUAL;
     if(((pMe->cfg.channel * CHANNEL_SPACE + LOWEST_BAND_FREQ) >= LOWEST_BAND_FREQ) && 
         ((pMe->cfg.channel * CHANNEL_SPACE + LOWEST_BAND_FREQ) <= UPPEST_BAND_FREQ) &&
@@ -1685,7 +1682,7 @@ static void refreshChannelListCB( void *pme)
     {
         if (HS_HEADSET_ON())
         {
-            fm_mute(FALSE);//add by xuhui
+            WarT_Fm_Mute(FALSE);//add by xuhui
         }
         //OK, Search Band Completed, tune back to pCurChanNode
         if( pMe->globalSearching)
@@ -1766,7 +1763,7 @@ static void refreshChannelListCB( void *pme)
     word     wChannel               = 0;
     static   int numberOfloop       = 0;
     MSG_FATAL("refreshChannelListCB Start",0,0,0);
-    if( fm_get_seek_status( &ready, &reachBandLimit, &wChannel) == FM_RADIO_SUCCESSFUL)
+    if( fm_get_seek_status( &ready, &reachBandLimit, &wChannel) == WART_FM_SUCCESS)
     {
 
         if( ready)
@@ -3085,7 +3082,7 @@ static void FmRadio_DrawVolumeImage(CFmRadio *pMe, uint16 ResID, int x, int y)
 
 static void FmRadio_RefreshVolumeImage(CFmRadio *pMe)
 {
-    uint16 ResID;
+    uint16 ResID = IDI_FM_SIMPLEVOL_THREE;
     switch (pMe->byVolumeLevel)
     {
         case 0:

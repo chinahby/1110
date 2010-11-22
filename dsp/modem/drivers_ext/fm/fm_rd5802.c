@@ -3,6 +3,7 @@
 #include "OEMCFGI.h"
 #include "snd.h"
 #include "err.h"
+#include "fm_framework.h"
 /******************************************************************************
  ** File Name:      fm_drv.c                                                  *
  ** Author:         Wangliang                                             	  *
@@ -56,11 +57,14 @@ Local Definitions and Types
 static uint32	RDA5802_FreqToChan(uint32 frequency);
 static uint8 	RDA5802_ValidStop(int16 freq);
 static uint8 	RDA5802_GetSigLvl(int16 curf );
+void fm_mute(boolean on);
+
 static uint8    fm_playing_mute = TRUE;
+
 /***************************************************
 RDA5802 interfaces
 ****************************************************/
-static fm_status_type fm_work_status = FM_NOT_INIT;
+static WarT_Fm_Status_e fm_work_status = FM_NOT_INIT;
 static word fm_playing_channel = 971;
 
 /* Used to send I2C command */
@@ -475,6 +479,7 @@ int fm_seek_down(word* pChannel)
 	return FM_RADIO_SUCCESSFUL;
 }
 
+#if 0
 //Asynchronization Seek Function
 int fm_seek_start(boolean bIsUp, boolean bIsWrap)
 {
@@ -487,6 +492,7 @@ int fm_get_seek_status(boolean* pIsFinish, boolean* pIsBandLimit, word* pChannel
 	fm_work_status = FM_IDLE_STATUS;
 	return FM_RADIO_SUCCESSFUL;
 }
+#endif
 
 int fm_set_volume(word wVolume)
 {
@@ -547,3 +553,23 @@ void fm_mute(boolean on)
 	}
 	return;
 }
+
+WarT_Fm_Status_e fm_get_status(void)
+{
+	return (WarT_Fm_Status_e)fm_work_status;
+}
+
+
+void RD5802FM_Register(WarT_Fm_t *gFm)
+{
+	gFm->fm_initail = fm_radio_init;
+	gFm->fm_powerup = fm_radio_power_up;
+	gFm->fm_powerdown = fm_radio_power_down;
+	gFm->fm_set_channel = fm_tune_channel;
+	gFm->fm_setvolume = fm_set_volume;
+	gFm->fm_mute = fm_mute;
+	gFm->fm_get_status = fm_get_status;
+}
+
+
+

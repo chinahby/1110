@@ -30,6 +30,7 @@ Notice that changes are listed in reverse chronological order.
 
 #define FM_RADIO_SUCCESSFUL     0
 #define FM_RADIO_FAILED         1
+#if 0
 
 typedef enum
 {
@@ -40,8 +41,7 @@ typedef enum
     FM_IN_PROGRESS,
     
     FM_MAX_STATUS = 0xFFFF
-}   fm_status_type;
-
+}   WarT_Fm_Status_e;
 void fm_radio_pre_init(void);
 
 int fm_radio_init(void);
@@ -68,5 +68,6 @@ boolean fm_radio_is_power_down( void);
 boolean fm_radio_is_tuning( void);
 word    fm_radio_get_playing_channel( void);
 void fm_mute(boolean on);
+#endif
 #endif //__FM_RADIO_H_
 //#define VC0848_HEADSET_PA      //PA OPTION

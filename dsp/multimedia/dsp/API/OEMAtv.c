@@ -49,7 +49,7 @@ void OEMTLGAtv_Init(void)
 {
    // Empty now
 }
-#define WRITE_LOG_TO_FILE
+#undef WRITE_LOG_TO_FILE
 #ifdef WRITE_LOG_TO_FILE
 #include "AEEFile.h"
 #include "mediagallery.h"

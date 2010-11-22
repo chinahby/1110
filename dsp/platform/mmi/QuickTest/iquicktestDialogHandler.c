@@ -26,7 +26,8 @@
 
 #ifndef WIN32
 #if defined( FEATURE_FM_RADIO)
-    #include "fm_radio.h"
+   // #include "fm_radio.h"
+   #include "fm_framework.h"
 #endif
 #endif
 #define RGBA_BLACK             MAKE_RGBA(0,0,0,255)
@@ -2000,15 +2001,15 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
 #ifndef WIN32
             if( pMe->m_fmIsPowerupBeforeFmTest)
             {
-                fm_tune_channel( pMe->m_fmChannelBeforeFmTest);
+                WarT_Fm_Set_Channel( pMe->m_fmChannelBeforeFmTest);
             }
             else
             {
             	if (HS_HEADSET_ON())
             	{
-            		fm_mute(TRUE);
+            		WarT_Fm_Mute(TRUE);
             	}	            
-                fm_radio_power_down();
+                WarT_Fm_PowerDown();
             }
 #endif
             return TRUE;
@@ -2024,7 +2025,7 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
                 case AVK_DOWN:
                 {
 #ifndef WIN32 
-                    uint16 channel = fm_radio_get_playing_channel() + ( wParam == AVK_UP ? 1 : -1);
+                    uint16 channel = WarT_Fm_Get_Current_Channel() + ( wParam == AVK_UP ? 1 : -1);
 #else
                     channel = channel + ( wParam == AVK_UP ? 1 : -1);
 #endif
@@ -2045,7 +2046,7 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
                 case AVK_RIGHT:
                 {
 #ifndef WIN32 
-                    uint16 channel = fm_radio_get_playing_channel() + ( wParam == AVK_RIGHT ? 1 : -1);
+                    uint16 channel = WarT_Fm_Get_Current_Channel() + ( wParam == AVK_RIGHT ? 1 : -1);
 #else
                     channel = channel + ( wParam == AVK_RIGHT ? 1 : -1);
 #endif
@@ -3293,16 +3294,16 @@ static void quicktest_fm_init( CQuickTest* pMe)
 
     pMe->m_bAppIsReady              = FALSE;
 #ifndef WIN32
-    pMe->m_fmIsPowerupBeforeFmTest  = fm_radio_is_power_up();
+    pMe->m_fmIsPowerupBeforeFmTest  = WarT_Fm_Is_Powerup();
 
     if( pMe->m_fmIsPowerupBeforeFmTest)
     {
-        pMe->m_fmChannelBeforeFmTest = fm_radio_get_playing_channel();
+        pMe->m_fmChannelBeforeFmTest = WarT_Fm_Get_Current_Channel();
     }
 
-    if( !fm_radio_is_inited())
+    if( !WarT_Fm_Is_Inited())
     {
-        fm_radio_init();
+        WarT_Fm_Init();
     }
 #endif
     ISHELL_SetTimer( pMe->m_pShell, 1000, quicktest_fm_power_up, (void*)pMe);
@@ -3314,15 +3315,15 @@ static void quicktest_fm_power_up( void* pme)
     CQuickTest* pMe                 = (CQuickTest*)pme;
     AECHAR      defaultChannel[]    = { '9', '8', '.', '5', 0};
 #ifndef WIN32
-    if( !fm_radio_is_power_up())
+    if( !WarT_Fm_Is_Powerup())
     {
-        fm_radio_power_up();
+        WarT_Fm_PowerUp();
     }
 	if (HS_HEADSET_ON())
 	{
-		fm_mute(FALSE);
+		WarT_Fm_Mute(FALSE);
 	}		    
-    fm_set_volume(7);
+    WarT_Fm_Set_Volume(7);
 #endif
     quicktest_fm_set_channel_to( pMe, convertChannelValueFromText( defaultChannel));
 
@@ -3333,7 +3334,7 @@ static void quicktest_fm_power_up( void* pme)
 static void quicktest_fm_set_channel_to( CQuickTest* pMe, uint16 theNewChannel)
 {
 #ifndef WIN32
-    fm_tune_channel( theNewChannel);
+    WarT_Fm_Set_Channel( theNewChannel);
 #endif
     quicktest_fm_paint( pMe);
 }
@@ -3354,7 +3355,7 @@ static void quicktest_fm_paint( CQuickTest* pMe)
         int i = 0;
         int y = 40;
 #ifndef WIN32
-        convertChannelValueToText( fm_radio_get_playing_channel(), text[0], 32);
+        convertChannelValueToText( WarT_Fm_Get_Current_Channel(), text[0], 32);
 #else
         convertChannelValueToText( channel, text[0], 32);
 #endif
