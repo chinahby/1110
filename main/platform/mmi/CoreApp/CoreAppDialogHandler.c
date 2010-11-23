@@ -96,13 +96,21 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #elif defined(FEATURE_DISP_160X128)
 
 #define IDLE_D_CLOCK_X 		5
+#ifdef FEATURE_VERSION_HITZ181
+#define IDLE_D_CLOCK_Y 		SCREEN_HEIGHT - BOTTOMBAR_HEIGHT - 30
+#else
 #define IDLE_D_CLOCK_Y 		25
+#endif
 
 #define RPLMN_X				5
 #define RPLMN_Y				20
 
 #define DATA_X				5
+#ifdef FEATURE_VERSION_HITZ181
+#define DATA_Y				SCREEN_HEIGHT - BOTTOMBAR_HEIGHT - 30
+#else
 #define DATA_Y				36
+#endif
 
 #define WEEK_X              5
 #define WEEK_Y              52
