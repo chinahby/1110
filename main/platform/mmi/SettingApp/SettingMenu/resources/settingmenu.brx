@@ -139,7 +139,7 @@
 	<STRING Id="1046" Name="IDS_LANGUAGE">
 		<Text>Language</Text>
 	</STRING>
-	<STRING Id="1047" Name="IDS_CHINESE">
+	<STRING Id="1047" Name="IDS_CHINESE"  Encoding="Unicode">
 		<Text>简体中文</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_ENGLISH">
@@ -178,10 +178,10 @@
 	<STRING Id="1059" Name="IDS_ITALIAN">
 		<Text>Italian</Text>
 	</STRING>
-	<STRING Id="1060" Name="IDS_SPANISH">
+	<STRING Id="1060" Name="IDS_SPANISH" Encoding="Unicode">
 		<Text>Español</Text>
 	</STRING>
-	<STRING Id="1061" Name="IDS_PORTUGUESE">
+	<STRING Id="1061" Name="IDS_PORTUGUESE" Encoding="Unicode">
 		<Text>Português</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_STATUS">
@@ -196,10 +196,10 @@
 	<STRING Id="1065" Name="IDS_HINDI">
 		<Text>Hindi</Text>
 	</STRING>
-	<STRING Id="1066" Name="IDS_VIETNAMESE">
+	<STRING Id="1066" Name="IDS_VIETNAMESE" Encoding="Unicode">
 		<Text>Tiếng Việt</Text>
 	</STRING>
-	<STRING Id="1067" Name="IDS_ARABIC">
+	<STRING Id="1067" Name="IDS_ARABIC" Encoding="Unicode">
 		<Text>عربيعربي</Text>
 	</STRING>
 	<STRING Id="1068" Name="IDS_HEBREW">
@@ -208,7 +208,7 @@
 	<STRING Id="1069" Name="IDS_THAI" Encoding="Unicode">
 		<Text>ภาษาไท඿</Text>
 	</STRING>
-	<STRING Id="1070" Name="IDS_TCHINESE">
+	<STRING Id="1070" Name="IDS_TCHINESE" Encoding="Unicode">
 		<Text>繁體中文</Text>
 	</STRING>
 	<STRING Id="1071" Name="IDS_RUSSIAN">

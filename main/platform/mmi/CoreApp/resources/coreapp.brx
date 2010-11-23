@@ -115,7 +115,7 @@
 	<STRING Id="1038" Name="IDS_MCC_LOCK">
 		<Text>Card password</Text>
 	</STRING>
-	<STRING Id="1039" Name="IDS_ISRAEL_BANNER">
+	<STRING Id="1039" Name="IDS_ISRAEL_BANNER" Encoding="Unicode">
 		<Text>פלאפון</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_PLANEMODE">
@@ -133,15 +133,15 @@
 	<STRING Id="1044" Name="IDS_CHINA_TELECOM">
 		<Text>China Telecom</Text>
 	</STRING>
-	<String Id="1045" Name="IDS_HEADSET_ON">
+	<STRING Id="1045" Name="IDS_HEADSET_ON">
 		<Text>headset plug in</Text>
-	</String>
-	<String Id="1046" Name="IDS_HEADSET_OFF">
+	</STRING>
+	<STRING Id="1046" Name="IDS_HEADSET_OFF">
 		<Text>headset plug out</Text>
-	</String>
-	<String Id="1047" Name="IDS_WAITING">
+	</STRING>
+	<STRING Id="1047" Name="IDS_WAITING">
 		<Text>Waiting</Text>
-	</String>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

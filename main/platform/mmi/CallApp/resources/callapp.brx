@@ -149,7 +149,7 @@
 		<Text>Record</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_REFUI_SEND">
-		<Text>sending now</Text>
+		<Text>Sending now</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_USE_PHONE">
 		<Text>Use phone</Text>
