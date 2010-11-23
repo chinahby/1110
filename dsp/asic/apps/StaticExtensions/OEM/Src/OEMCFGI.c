@@ -631,6 +631,7 @@ typedef struct
    char   brewsetings_secondaryserver[MAS_BREWSETINT_STRING];
    uint32 brew_dlflags;
    uint32 tv_or_camera;
+   CFG_TvSetting tv_set;
    #ifdef FEATURE_LONG_NETLOCK
    boolean netlock_flg;
    #endif
@@ -1337,6 +1338,12 @@ static int OEMPriv_SetItem_CFGI_PEN_CAL(void *pBuff);
 #endif//FEATURE_TOUCHPAD
 
 
+
+static int OEMPriv_GetItem_CFGI_TV_SETCHANNL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_TV_SETCHANNL(void *pBuff);
+
+
+
 static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void *pBuff);
 static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void *pBuff);
 
@@ -1699,6 +1706,7 @@ static OEMConfigListType oemi_cache = {
    ,{0}  //CFGI_BREWSET_SECONDARYSERVER
    ,0    //CFGI_DL_FLAGS
    ,0
+   ,OEMNV_TV_TvSetting // ’≤ÿº–
    #ifdef FEATURE_LONG_NETLOCK
    ,0
    #endif
@@ -2237,6 +2245,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_BREWSET_SECONDARYSERVER,sizeof(char)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_DL_FLAGS,sizeof(uint32)),
    CFGTABLEITEM(CFGI_TV_OR_CAMERA,sizeof(uint32)),
+   CFGTABLEITEM(CFGI_TV_SETCHANNL,sizeof(CFG_TvSetting)),
    #ifdef FEATURE_LONG_NETLOCK
    CFGTABLEITEM(CFGI_NET_LOCK_FLAGS,sizeof(boolean)),
    #endif
@@ -10942,6 +10951,19 @@ static int OEMPriv_GetItem_CFGI_VIDEO_COLOR(void *pBuff)
 {
    *(byte *) pBuff = oemi_cache.video_color;
    return SUCCESS;
+}
+
+
+static int OEMPriv_GetItem_CFGI_TV_SETCHANNL(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.tv_set, sizeof(CFG_TvSetting));
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_TV_SETCHANNL(void *pBuff)
+{
+    MEMCPY((void*) &oemi_cache.tv_set, pBuff, sizeof(CFG_TvSetting));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_VIDEO_COLOR(void *pBuff)

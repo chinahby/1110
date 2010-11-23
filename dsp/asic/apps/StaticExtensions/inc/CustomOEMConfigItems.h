@@ -1,5 +1,8 @@
 #ifndef CUSTOMOEMCONFIGITEMS_H
 #define CUSTOMOEMCONFIGITEMS_H
+
+#include "AEETv.h"
+
 /*=============================================================================
 
 FILE: CustomOEMConfigItems.h
@@ -210,6 +213,27 @@ typedef byte keyToneLength;
 #define MAX_EMERGENCY_NUM          10
 #define MAX_EMERGENCY_NUM_LEN      10
 #define FEATURE_CODE_MAX_LENTH     10
+#define MAXLEN 32
+typedef struct
+{
+	AECHAR name[MAXLEN];      //频道名，如“中央一台”之类的,名字最多为32个字符
+	uint16 channel;  //频道号，如"1、2"频道之类的 [MAXLEN]
+}TvBookmark;
+
+typedef struct
+{
+	int32	BrightnessStep; /*设置亮度0~15*/
+    int32   ContrastStep; /*设置对比度0~15*/
+    int32   DefinitionStep; /*设置清晰度0~63*/
+    int32   SaturationStep; /*设置色彩饱和度0~255*/
+    int32   SoundStep;/*声音*/
+    int ChannelCountAble;//上次搜到的有信号的台总数
+    int CurrentChannel;//上一次退出之前看的那个台索引
+    TvBookmark   Bookmark[MAXLEN];//最多可以保存32个书签
+    int   Bookmarktotal;       //当前存储频道总数
+    TLG_REGION_CODE region; //当前设置的区域
+}CFG_TvSetting;
+
 typedef PACKED struct// _Emergency_Number
 {
    char  num_buf[MAX_EMERGENCY_NUM_LEN];
@@ -408,6 +432,7 @@ enum{
     CFGI_BREWSET_SECONDARYSERVER,
     CFGI_DL_FLAGS,
     CFGI_TV_OR_CAMERA,
+    CFGI_TV_SETCHANNL,
 #ifdef FEATURE_LONG_NETLOCK
 	CFGI_NET_LOCK_FLAGS,
 #endif
