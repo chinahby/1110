@@ -205,7 +205,7 @@
 	<STRING Id="1068" Name="IDS_HEBREW">
 		<Text>Hebrew</Text>
 	</STRING>
-	<STRING Id="1069" Name="IDS_THAI">
+	<STRING Id="1069" Name="IDS_THAI" Encoding="Unicode">
 		<Text>ภาษาไท඿</Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_TCHINESE">
@@ -371,19 +371,19 @@
 		<Text>UIM Settings</Text>
 	</String>
 	<String Id="1124" Name="IDS_SIM_ONE">
-		<Text>UIM Slot One</Text>
+		<Text>UIM1</Text>
 	</String>
 	<String Id="1125" Name="IDS_SIM_TWO">
-		<Text>UIM Slot Two</Text>
+		<Text>UIM2</Text>
 	</String>
-	<String Id="1126" Name="IDS_SIMSETTING_CHOICE_STRING" Encoding="Unicode">
+	<String Id="1126" Name="IDS_SIMSETTING_CHOICE_STRING">
 		<Text>Are you sure?</Text>
 	</String>
-	<String Id="1127" Name="IDS_CANCEL" Encoding="Unicode">
-		<Text>cancel</Text>
+	<String Id="1127" Name="IDS_CANCEL">
+		<Text>Cancel</Text>
 	</String>
-	<String Id="1128" Name="IDS_YES" Encoding="Unicode">
-		<Text>yes</Text>
+	<String Id="1128" Name="IDS_YES">
+		<Text>Yes</Text>
 	</String>
 </Strings>
 <Dialogs>

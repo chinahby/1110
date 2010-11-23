@@ -368,22 +368,22 @@
 		<Text>Screen Calibration</Text>
 	</String>
 	<String Id="1123" Name="IDS_SIM_SET">
-		<Text>UIM Settings</Text>
+		<Text>UIMค่าตั้งต้น</Text>
 	</String>
 	<String Id="1124" Name="IDS_SIM_ONE">
-		<Text>UIM Slot One</Text>
+		<Text>UIM1</Text>
 	</String>
 	<String Id="1125" Name="IDS_SIM_TWO">
-		<Text>UIM Slot Two</Text>
+		<Text>UIM2</Text>
 	</String>
-	<String Id="1126" Name="IDS_SIMSETTING_CHOICE_STRING" Encoding="Unicode">
+	<String Id="1126" Name="IDS_SIMSETTING_CHOICE_STRING">
 		<Text>Are you sure?</Text>
 	</String>
-	<String Id="1127" Name="IDS_CANCEL" Encoding="Unicode">
-		<Text>cancel</Text>
+	<String Id="1127" Name="IDS_CANCEL">
+		<Text>ยกเลิก</Text>
 	</String>
-	<String Id="1128" Name="IDS_YES" Encoding="Unicode">
-		<Text>yes</Text>
+	<String Id="1128" Name="IDS_YES">
+		<Text>ตกลง</Text>
 	</String>
 </Strings>
 <Dialogs>
