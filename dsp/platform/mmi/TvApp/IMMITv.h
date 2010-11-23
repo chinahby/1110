@@ -165,7 +165,7 @@ typedef struct IMMITv IMMITv;
 
 #define INHERIT_IMMITv(iname) \
         INHERIT_IQueryInterface(iname); \
-        int  (*CreateTv) (iname* p##iname, ICBMMITv *pICBMMITv); \
+        int  (*CreateTv) (iname* p##iname, ICBMMITv *pICBMMITv,uint32 region); \
         int  (*SetDisplaySize) (iname* p##iname, AEESize *pDisplaySize); \
         \
         int  (*AutoScanTV) (iname* p##iname); \
@@ -199,7 +199,7 @@ struct IMMITv
 #define IMMITv_AddRef(pThis)                             pThis->pvt->AddRef(pThis)
 #define IMMITv_Release(pThis)                            pThis->pvt->Release(pThis)
 #define IMMITv_QueryInterface(pThis,ClsID,ppInterface)   pThis->pvt->QueryInterface(pThis,ClsID,ppInterface)
-#define IMMITv_CreateTv(pThis,pICBMMITv)    pThis->pvt->CreateTv(pThis,pICBMMITv)
+#define IMMITv_CreateTv(pThis,pICBMMITv,region)    pThis->pvt->CreateTv(pThis,pICBMMITv,region)
 #define IMMITv_SetDisplaySize(pThis,pDisplaySize)    pThis->pvt->SetDisplaySize(pThis,pDisplaySize)
 //#define IMMITv_CancelCurJob(pThis)    pThis->pvt->CancelCurJob(pThis)
 //#define IMMITv_SetProperty(pThis,Property,Value)    pThis->pvt->SetProperty(pThis,Property,Value)

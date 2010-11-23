@@ -77,10 +77,19 @@
 		<File>..\..\Appscommon\images\220x176\common\TvApp\TV_TOOLBAR.png</File>
 	</Object>
 	<Object Id="5059" Name="IDI_PNG_TV_SELECT">
-		<File>..\..\Appscommon\images\320x240\common\TvApp\TV_TOOLBAR_SELECT.png</File>
+		<File>..\..\Appscommon\images\220x176\common\TvApp\TV_TOOLBAR_SELECT.png</File>
 	</Object>
 		<Object Id="5060" Name="IDI_PNG_TV_SELECT_UNABLE">
-		<File>..\..\Appscommon\images\320x240\common\TvApp\TV_TOOLBAR_SELECT_UNABLE.png</File>
+		<File>..\..\Appscommon\images\220x176\common\TvApp\TV_TOOLBAR_SELECT_UNABLE.png</File>
+	</Object>
+	<Object Id="5061" Name="IDI_PNG_TV_left">
+		<File>..\..\Appscommon\images\220x176\common\TvApp\1.png</File>
+	</Object>
+	<Object Id="5062" Name="IDI_PNG_TV_right">
+		<File>..\..\Appscommon\images\220x176\common\TvApp\2.png</File>
+	</Object>
+	<Object Id="5063" Name="IDI_PNG_TV_AUTOSCAN">
+		<File>..\..\Appscommon\images\220x176\common\TvApp\search.png</File>
 	</Object>
 </Objects>
 </BREWRes>

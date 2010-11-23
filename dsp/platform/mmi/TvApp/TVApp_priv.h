@@ -1,5 +1,8 @@
 #ifndef TVAPP_PRIV_H
 #define TVAPP_PRIV_H
+
+#define AEE_APPSTVAPP_RES_FILE  AEE_RES_LANGDIR TVAPP_RES_FILE
+
 /*==============================================================================
 // 文件：TVApp_priv.h
 //        版权所有(c) 2009 Anylook Tech. CO.,LTD.
@@ -64,7 +67,7 @@
 //#include "AEECamera.h"
 #include "AEECM.h"
 //#include "ICameraExt.h"
-#include "OEMCameraEx.h"
+#include "OEMCamera.h"
 #include "Appscommon.h"
 #include "BREWVersion.h"
 #include "Appscommon.h"
@@ -84,13 +87,14 @@
 #include "AEEBacklight.h"
 #include "AEETv.h"
 #include "IMMITv.h"
-
+//#include "TvSettingCfg.h"
+#include "CustomOEMConfigItems.h"
 
 /*==============================================================================
                                  类型定义
 ==============================================================================*/
 #define AEE_APPSTVAPP_RES_FILE  AEE_RES_LANGDIR TVAPP_RES_FILE
-
+#define SEARCH_ANI_FILE "fs:/image/tvapp/search.gif"
 // camera quality
 #define CAMERA_APP_QUALITY_HIGH  33
 #define CAMERA_APP_QUALITY_MED   67
@@ -186,12 +190,12 @@ typedef struct
     int32   SoundStep;/*声音*/
     int ChannelCountAble;//上次搜到的有信号的台总数
     int CurrentChannel;//上一次退出之前看的那个台索引    
-   // TvBookmark   Bookmark[32];//最多可以保存32个书签
+    TvBookmark   Bookmark[32];//最多可以保存32个书签
     int   Bookmarktotal;       //当前存储频道总数
     TLG_REGION_CODE region;//当前设置的区域
 }MMITV_SETTINGS;
 
-
+#if 0
 // 画界面底部提示条宏定义
 //#define DRAW_BOTTOMBAR(x)                           \
 //{                                                   \
@@ -201,6 +205,7 @@ typedef struct
 //    BarParam.eBBarType = x;                         \
 //    DrawBottomBar(pMe->m_pDisplay, &BarParam);      \
 //}
+#endif
 
 typedef enum
 {
@@ -268,6 +273,8 @@ typedef enum DLGRetValue
     DLGRET_BAR5,
     DLGRET_BAR6,
     DLGRET_BAR7,
+    DLGRET_AUTOSCAN,
+    DLGRET_BOOKMARK,
     DLGRET_EXIT 
 } DLGRetValue;
 
@@ -295,6 +302,8 @@ typedef enum
     STATE_BAR5,
     STATE_BAR6,
     STATE_BAR7,
+    STATE_AUTOSCAN,
+    STATE_BOOKMARK,
     STATE_EXIT
 } FSMState;
 
@@ -402,6 +411,8 @@ typedef struct _CTVApp
 
 	AEEApplet        	a;
     IShell 				*pIShell;
+
+	CFG_TvSetting	*pTvSetting;
 	
 	uint16   currentlyChannel; //当前正在播放的频道
     uint16   currentlyChannelIndex;//当前正在播放的频道在书签中的逻辑索引

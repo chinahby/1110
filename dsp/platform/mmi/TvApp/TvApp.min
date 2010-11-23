@@ -19,12 +19,14 @@ vpath %.c $(TVAPP_SRC)
 vpath %.bar $(TVAPP_RES)
 vpath %.brx $(TVAPP_RES)
 vpath %.bid $(TVAPP_RES)
+vpath %.gif $(APPSCOMMON)/images/$(USES_LCD_SIZE)/common/TvApp
 
 CONSTFILE_FILES+=\
 	tvapp.mif|fs:/mif/tvapp.mif \
 	tvapp.bar|fs:/mod/tvapp/en/tvapp.bar \
 	tvapp_image$(USES_LCD_SIZE).bar|fs:/mod/tvapp/tvapp_image.bar \
-	shutter.mid|fs:/tvapp/shutter.mid
+	shutter.mid|fs:/tvapp/shutter.mid \
+	search.gif|fs:/image/tvapp/search.gif
 	
 
 # 加入另外一种语言资源文件

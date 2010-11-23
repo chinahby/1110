@@ -468,6 +468,11 @@ static uint32 TVApp_Release(ITVApp *p)
  
     (void)ISHELL_Release(pMe->m_pShell);
     (void)IMODULE_Release(pMe->m_pModule);
+	if(pMe->pTvSetting)
+	{
+		FREE(pMe->pTvSetting);
+		pMe->pTvSetting = NULL;
+	}
  
     // 注意:pMe是静态分配空间，因此不需要释放。FREE()
     return 0;
@@ -542,8 +547,11 @@ static int TVApp_InitAppData(CTVApp *pMe)
     pMe->m_pMedia = NULL;
     pMe->m_isFormQuicktest = FALSE;
     pMe->m_sensor_model = -1;
+	
+	pMe->pTvSetting =(CFG_TvSetting*)MALLOC(sizeof(CFG_TvSetting));
+	MEMSET(pMe->pTvSetting,0,sizeof(CFG_TvSetting));
     MEMSET(&pMe->m_CallBack, 0, sizeof(AEECallback));
-
+    
 MSG_FATAL("TVApp_InitAppData-----------------START",0,0,0);
    
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,

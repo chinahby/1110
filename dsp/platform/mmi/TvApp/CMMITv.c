@@ -162,7 +162,7 @@ uint32  CMMITv_IBase_Release(IMMITv* pIMMITv);
 int     CMMITv_IBase_QueryInterface(IMMITv* pIMMITv, AEECLSID ClsID, void** ppInterface);
 static void CMMITv_AtvSetChn_CallBack(void *pUser, ATV_SetChn_Notify_t *pTvNotify);
 
-int CMMITv_IMMITv_CreateTv(IMMITv* pIMMITv, ICBMMITv *pICBMMITv);
+int CMMITv_IMMITv_CreateTv(IMMITv* pIMMITv, ICBMMITv *pICBMMITv,uint32 region);
 int CMMITv_IMMITv_SetDisplaySize(IMMITv* pIMMITv,AEESize *pDisplaySize);
 int CMMITv_IMMITv_AutoScanTV(IMMITv* pIMMITv);
 int CMMITv_IMMITv_SetTvChannel(IMMITv* pIMMITv, uint16 Channel,boolean fast);
@@ -225,9 +225,9 @@ int CMMITv_IBase_QueryInterface(IMMITv* pIMMITv, AEECLSID ClsID, void** ppInterf
 
     return SUCCESS;
 }
-#include "TVApp_priv.h"
- MMITV_SETTINGS	*pTvSetting;
-int CMMITv_IMMITv_CreateTv(IMMITv* pIMMITv,ICBMMITv *pICBMMITv)
+//#include "TVApp_priv.h"
+// extern CFG_TvSetting_bak	*pTvSetting;
+int CMMITv_IMMITv_CreateTv(IMMITv* pIMMITv,ICBMMITv *pICBMMITv,uint32 region)
 {
 
     CMMITv* pThis = (CMMITv*)pIMMITv->pData;
@@ -274,7 +274,7 @@ int CMMITv_IMMITv_CreateTv(IMMITv* pIMMITv,ICBMMITv *pICBMMITv)
 #ifdef tv_ver2	     
 /*创建电视之前需要设置区域*/ 
 		MSG_FATAL("CMMITv_IMMITv_CreateTv- 1111",0,0,0);
-        ITV_SetRegion(pThis->pITv, pTvSetting->region);
+        ITV_SetRegion(pThis->pITv, region);
 	    result = ITV_Create(pThis->pITv);
 		MSG_FATAL("CMMITv_IMMITv_CreateTv- result=%d",result,0,0);
 		if( SUCCESS == result)
@@ -327,8 +327,8 @@ int CMMITv_IMMITv_AutoScanTV(IMMITv* pIMMITv)
    
     ITV_GetChnCount(pThis->pITv, &ChannelTotal);
         
-    //MMI_DEBUG(ATV, ("AutoScanTV count=%d",ChannelTotal));
-  //  MMI_DEBUG(ATV, ("AutoScanTV CurChnIdx=%d",pThis->CurChnIdx));
+    MSG_FATAL("AutoScanTV count=%d",ChannelTotal,0,0);
+    MSG_FATAL("AutoScanTV CurChnIdx=%d",pThis->CurChnIdx,0,0);
     if (pThis->CurChnIdx <= ChannelTotal)//&&(pThis->CurChnIdx==0))
     {
         pThis->hasChannelFinish = FALSE;
@@ -340,7 +340,7 @@ int CMMITv_IMMITv_AutoScanTV(IMMITv* pIMMITv)
         pThis->hasChannelFinish = TRUE;
         pThis->CurChnIdx = 1;//表示搜台已完成,当前频道设为第一个搜到的台
         pThis->ableChannelIndex = 0;
-        ISHELL_PostEvent(pThis->pIShell, AEECLSID_TVAPP,EVT_ATV_AUTOSCANFINISH, 0, 0);
+       // ISHELL_PostEvent(pThis->pIShell, AEECLSID_TVAPP,EVT_ATV_AUTOSCANFINISH, 0, 0);
     }
     return SUCCESS;
 }
@@ -955,12 +955,20 @@ int CMMITv_IMMITv_SetRegion(IMMITv* pIMMITv, TLG_REGION_CODE region)
 #endif      
    // MMI_DEBUG(ATV,("CMMITv_IMMITv_SetRegion region = %d",region));    
     reset = ITV_SetRegion(pThis->pITv, region);
-    pTvSetting->region = region;
+	//pTvSetting->region = region;
+
+	MSG_FATAL("------------ITV_SetRegion.reset1=%d",reset,0,0);
+	
+	MSG_FATAL("------------pTvSetting->region = region=%d",region,0,0);
+   
     if (reset == 1)  /*制式变化需要重启sensor*/
     {
+    MSG_FATAL("------------ITV_SetRegion.reset=%d",reset,0,0);
        // MMI_DEBUG(ATV,("CMMITv_IMMITv_SetRegion reset = %d",reset));    
-        if(pThis->pITv != NULL)
+       #if 0 
+	   if(pThis->pITv != NULL)
         {
+        
     		ITV_RegisterNotify(pThis->pITv, NULL, pThis);
             result = ITV_StopPreview(pThis->pITv);
             //if (MMI_FAILURE(result))
@@ -978,6 +986,8 @@ int CMMITv_IMMITv_SetRegion(IMMITv* pIMMITv, TLG_REGION_CODE region)
       //  }
         pThis->Cam_State = CAM_READY;
         ITV_SetRegion(pThis->pITv, region);
+		#endif
+		
         return reset;
     }
     
