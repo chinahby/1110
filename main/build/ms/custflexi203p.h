@@ -1,0 +1,15 @@
+#ifndef CUSTSFLEXI203NASRANI_H
+#define CUSTSFLEXI203NASRANI_H
+
+#ifndef CUST_EDITION
+#define CUST_EDITION
+#endif
+
+
+#define SOFTWARE_VER04
+#define FEATURE_VERSION_FLEXI203P
+
+#include "custw203.h"
+
+#endif /* CUSTSFLEXI203NASRANI_H*/
+
