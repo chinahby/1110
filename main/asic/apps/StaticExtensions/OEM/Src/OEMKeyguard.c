@@ -647,6 +647,20 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 #ifdef FEATURE_UNLOCK_KEY_SPACE		
 			if (AVK_SPACE == wParam)
 			{
+				if (UNLOCKSTATE_RESET == sUnlockState)
+				{
+					if (!bDrawMessage)
+                    {
+                        OEMPriv_DrawKeyguardTime();
+                    }
+                    else
+                    {
+                        OEMPriv_DrawKeyguardMessage(FALSE);
+                    }
+					
+                    sUnlockState = UNLOCKSTATE_RESET;
+                    bDrawMessage = !bDrawMessage;
+				}				
 				return FALSE;
 			}
 #endif
