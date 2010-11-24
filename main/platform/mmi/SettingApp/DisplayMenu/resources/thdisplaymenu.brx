@@ -83,7 +83,7 @@
 		<Text>5 นาที</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_WALLPAPER_TITLE">
-		<Text>วอลเปเปอร์</Text>
+		<Text>ภาพพื้นหลัง</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_CONTRAST_LEVEL_DARK">
 		<Text>มืด</Text>
@@ -107,7 +107,7 @@
 		<Text>ดาวน์โหลดภาพ %d</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_BACKLIGHT_TITLE">
-		<Text>ความเข้มแสง</Text>
+		<Text>ความสว่าง</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_KEYPAD_LIGHT_TIME">
 		<Text>เวลาไฟปุ่มกด</Text>

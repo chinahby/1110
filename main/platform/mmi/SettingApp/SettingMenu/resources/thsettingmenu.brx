@@ -2,7 +2,7 @@
 <BREWRes Name="thsettingmenu" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_APP_TITLE">
-		<Text>ค่าตั้งต้น</Text>
+		<Text>ตั้งค่า</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_CALLFORWARD_START">
 		<Text>ทำงาน</Text>
@@ -368,7 +368,7 @@
 		<Text>Screen Calibration</Text>
 	</String>
 	<String Id="1123" Name="IDS_SIM_SET">
-		<Text>UIMค่าตั้งต้น</Text>
+		<Text>ตั้งค่า UIM</Text>
 	</String>
 	<String Id="1124" Name="IDS_SIM_ONE">
 		<Text>UIM1</Text>

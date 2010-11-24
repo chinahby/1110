@@ -8,7 +8,7 @@
 		<Text>บริการลูกค้า</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_MAIN_MENU_TITLE_1">
-		<Text>เกมส์</Text>
+		<Text>จัดการไฟล์</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_MAIN_MENU_TITLE_2">
 		<Text>คลังมีเดีย</Text>
@@ -56,7 +56,7 @@
 		<Text>เมนู</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_MAIN_MENU_TITLE_40">
-		<Text>มีเดียแกลเลอรี่</Text>
+		<Text>จัดการไฟล์</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_MAIN_MENU_TITLE_41">
 		<Text>รายชื่อ</Text>
@@ -164,7 +164,7 @@
 		<Text>ตั้งค่า</Text>
 	</String>
 	<String Id="1101" Name="IDS_MAIN_MENU_TITLE_21">
-		<Text>มีเดียแกลเลอรี่</Text>
+		<Text>จัดการไฟล์</Text>
 	</String>
 	<String Id="1102" Name="IDS_MAIN_MENU_TITLE_22">
 		<Text>รายชื่อ</Text>

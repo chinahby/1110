@@ -5,7 +5,7 @@
 		<Text>ใหม่</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_OPTION_GOTODATE">
-		<Text>ไปที่วันที่ </Text>
+		<Text>ไปยังวันที่</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_OPTION_DELETE_ALL">
 		<Text>ลบทั้งหมด</Text>
@@ -160,7 +160,7 @@
 	<STRING Id="1094" Name="IDS_SETUP_SNOOZE_OPTION_30_MIN">
 		<Text>ครึ่งชั่วโมง</Text>
 	</STRING>
-	<STRING Id="1100" Name="IDS_VIEW_PLAN_DETAIL_TITLE" >
+	<STRING Id="1100" Name="IDS_VIEW_PLAN_DETAIL_TITLE">
 		<Text>Plan detail</Text>
 	</STRING>
 	<STRING Id="2200" Name="IDS_APP">

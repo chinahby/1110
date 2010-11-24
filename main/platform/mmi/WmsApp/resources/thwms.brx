@@ -2,22 +2,22 @@
 <BREWRes Name="thwms" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1" Name="IDS_INBOX">
-		<Text>ข้อความเข้า</Text>
+		<Text>ถาดเข้า</Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_WRITEMESSAGE">
 		<Text>สร้าง</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_OUTBOX">
-		<Text>ข้อความออก</Text>
+		<Text>ถาดออก</Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_VOICEMAIL">
 		<Text>ข้อความเสียง</Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_DRAFT">
-		<Text>ข้อความร่าง</Text>
+		<Text>แบบร่าง</Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_TEMPLATES">
-		<Text>ข้อความเฉพาะ</Text>
+		<Text>ข้อความสำเร็จรูป</Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_MENSTATUS">
 		<Text>หน่วยความจำ</Text>
