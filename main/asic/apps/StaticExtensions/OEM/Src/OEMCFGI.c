@@ -2653,9 +2653,9 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.emerg_table.emert_size = OEMNV_EMERT_SEZE;
    oemi_cache.emerg_table.emerg_num[0].num_len = OEMNV_EMERG_NUM_LEN;
    STRCPY(oemi_cache.emerg_table.emerg_num[0].num_buf,OEMNV_EMERG_NUM_ONE);
+#ifndef FEATURE_VERSION_HITZ181 
    oemi_cache.emerg_table.emerg_num[1].num_len = OEMNV_EMERG_NUM_LEN;
    STRCPY(oemi_cache.emerg_table.emerg_num[1].num_buf,OEMNV_EMERG_NUM_TWO);
-#ifndef FEATURE_VERSION_HITZ181   
    oemi_cache.emerg_table.emerg_num[2].num_len = OEMNV_EMERG_NUM_LEN;
    STRCPY(oemi_cache.emerg_table.emerg_num[2].num_buf,OEMNV_EMERG_NUM_TRE);
 #ifndef FEATURE_VERSION_CITYCELL

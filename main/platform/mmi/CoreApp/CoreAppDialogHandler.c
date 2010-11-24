@@ -6073,6 +6073,38 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
        // look for the SP list
        int i;
        int len = sizeof(List_SP)/sizeof(ServiceProviderList);
+       EmergencyNum_Table m_entable = {0};
+       char m_vmnuber[10] = {0}
+       
+       if((curr_mnc == 0) && (curr_mcc == 520))  //add by yangdecai 2010-1124
+       {
+       	   //Hutch
+       	   strcpy(m_vmnuber,"91122");
+       	   m_entable.emert_size = OEMNV_EMERT_SEZE;
+       	   m_entable.emerg_num[0].num_len = OEMNV_EMERG_NUM_LEN;
+       	   STRCPY(m_entable.emerg_num[0].num_buf,OEMNV_EMERG_NUM_ONE);
+       	   (void)OEM_SetConfig(CFGI_EMERGENCYNUM_TABLE,
+	                          (void*)&m_entable,
+	                          sizeof(EmergencyNum_Table));
+	       (void)OEM_SetConfig(CFGI_CALLFORWARD_VOICEMAIL_ENABLE,
+	                          (void*)m_vmnuber,
+	                          sizeof(m_vmnuber));
+       }
+       else if((curr_mnc == 2) && (curr_mcc == 520))
+       {
+       	   //CAT
+       	   strcpy(m_vmnuber,"91100");
+       	   m_entable.emert_size = OEMNV_EMERT_SEZE;
+       	   m_entable.emerg_num[0].num_len = OEMNV_EMERG_NUM_LEN;
+       	   STRCPY(m_entable.emerg_num[0].num_buf,OEMNV_EMERG_NUM_TWO);
+       	   (void)OEM_SetConfig(CFGI_EMERGENCYNUM_TABLE,
+	                          (void*)&m_entable,
+	                          sizeof(EmergencyNum_Table));
+       	   (void)OEM_SetConfig(CFGI_CALLFORWARD_VOICEMAIL_ENABLE,
+	                          (void*)m_vmnuber,
+	                          sizeof(m_vmnuber));
+       	   
+       }
        for (i = 0; i < len; i++)
        {
           if ((List_SP[i].mcc == curr_mcc) && (List_SP[i].mnc == curr_mnc))

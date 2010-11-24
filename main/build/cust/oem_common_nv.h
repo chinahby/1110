@@ -76,7 +76,7 @@
 
 #elif defined(FEATURE_VERSION_HITZ181)  //add by yangdecai 2010-10-08
 //Operator parameters
-#define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"191",3},{"112",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},2} //CFGI_EMERGENCYNUM_TABLE
+#define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"191",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},1} //CFGI_EMERGENCYNUM_TABLE
 #define OEMNV_CALLFORWARD_BUSY_ENABLE               "*90"                       //CFGI_CALLFORWARD_BUSY_ENABLE
 #define OEMNV_CALLFORWARD_BUSY_DISABLE              "*900"                      //CFGI_CALLFORWARD_BUSY_DISABLE
 #define OEMNV_CALLFORWARD_NOANSWER_ENABLE           "*92"                       //CFGI_CALLFORWARD_NOANSWER_ENABLE
