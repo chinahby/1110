@@ -915,11 +915,24 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
             //add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
+				AECHAR WTemp[20]  = {0};
+				AECHAR WTempleft[10] = {L"<<      "};
+				AECHAR WTemprigt[10] = {L"      >>"};
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_RECENTCALLSRES_LANGFILE,                                
                         IDS_MISSED_CALLS,
-                        WTitle,
-                        sizeof(WTitle));
+                        WTemp,
+                        sizeof(WTemp));
+                MSG_FATAL("RecentCalls_ListRecordEvent..................",0,0,0);
+                if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
+                {
+                	WSTRCAT(WTitle,WTempleft);
+                }
+                WSTRCAT(WTitle,WTemp);
+                if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
+                {
+                	WSTRCAT(WTitle,WTemprigt);
+                }
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
             if(pMe->m_eStartMethod == STARTMETHOD_NORMAL)
@@ -1124,11 +1137,25 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
 			#else
 		    {
 		  		AECHAR WTitle[40] = {0};
+				AECHAR WTemp[20]  = {0};
+				AECHAR WTempleft[10] = {L"<<      "};
+				AECHAR WTemprigt[10] = {L"      >>"};
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_RECENTCALLSRES_LANGFILE,                                
                         pMe->selectState,
-                        WTitle,
-                        sizeof(WTitle));
+                        WTemp,
+                        sizeof(WTemp));
+                MSG_FATAL("RecentCalls_ListRecordEvent..................",0,0,0);
+                if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
+                {
+                	WSTRCAT(WTitle,WTempleft);
+                }
+                WSTRCAT(WTitle,WTemp);
+                if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
+                {
+                	WSTRCAT(WTitle,WTemprigt);
+                }
+                
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
 		    }
 			#endif
@@ -1149,8 +1176,18 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
             
             switch(wParam){
                 case AVK_CLR:
-                    pMe->record_selected = 0;
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    if(dwParam == 1)
+                    {
+                    	MSG_FATAL("AVK_CLR.....................",0,0,0);
+                    	pMe->m_selectedItem[1] = IMENUCTL_GetSel(pMe->pMenu); 
+                    	pMe->selectState = IDS_DELETE;
+               			CLOSE_DIALOG(DLGRET_DELONE)
+                    }
+                    else
+                    {
+                    	pMe->record_selected = 0;
+                    	CLOSE_DIALOG(DLGRET_CANCELED)
+                    }
                     break;
                     
                 case AVK_SEND:
@@ -1194,8 +1231,10 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
         case EVT_KEY_PRESS:
             switch(wParam){
                 case AVK_LEFT:
+                    MSG_FATAL("AVK_LEFT.............................",0,0,0);
                     if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
                     {
+                      MSG_FATAL("AVK_LEFT.............................",0,0,0);
                       pMe->record_selected = 0; 
                       switch (pMe->m_callsCategory)
                       {

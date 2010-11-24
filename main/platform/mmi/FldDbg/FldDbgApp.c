@@ -6036,8 +6036,13 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
            } 
            else
            //pme->m_dlgID = IDD_TOP_DIALOG;
-#ifdef FEATURE_CARRIER_CHINA_TELCOM
+#if defined (FEATURE_CARRIER_CHINA_TELCOM)
                if(STRNCMP(args->pszArgs,"*#0000#",7) == 0)
+               {
+                  pme->m_dlgID = IDD_VERSION_DIALOG;
+               }
+#elif defined (FEATURE_VERSION_HITZ181)
+			   if(STRNCMP(args->pszArgs,"*#888#",6) == 0)   //add by yangdecai  2010-11-16
                {
                   pme->m_dlgID = IDD_VERSION_DIALOG;
                }

@@ -2601,7 +2601,14 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             pMe->m_nCurrentVolume= pMe->m_MusicPlayerCfg.eMusicVolume * AEE_MAX_VOLUME/5;
             if(pMe->m_pMedia) 
             {    
-                (void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
+            	 if(pMe->m_isshift)
+            	 {
+            	 	(void)IMEDIA_SetVolume(pMe->m_pMedia,0); 
+            	 }
+            	 else
+            	 {
+                	(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
+                 }
             } 
                 //重新刷新音量bar  
                 MP3_RefreshVolBar(pMe);
@@ -2622,7 +2629,14 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
            pMe->m_nCurrentVolume= pMe->m_MusicPlayerCfg.eMusicVolume * AEE_MAX_VOLUME/5;
             if(pMe->m_pMedia) 
             {  
-                (void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
+				if(pMe->m_isshift)
+				 {
+					(void)IMEDIA_SetVolume(pMe->m_pMedia,0); 
+				 }
+				 else
+				 {
+					(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
+				 }
             } 
                 //重新刷新音量bar  
                 MP3_RefreshVolBar(pMe);
@@ -2735,6 +2749,26 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
          ISHELL_CloseApplet(pMe->m_pShell, TRUE);
         }
         return TRUE;
+   case AVK_SHIFT:
+   		{
+   			if(pMe->m_isshift)
+   			{
+   				if(pMe->m_pMedia) 
+            	{  
+                	(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
+            	} 
+            	pMe->m_isshift = FALSE;
+   			}
+   			else
+   			{
+   				if(pMe->m_pMedia) 
+            	{  
+                	(void)IMEDIA_SetVolume(pMe->m_pMedia,0); 
+            	} 
+            	pMe->m_isshift = TRUE;
+            }
+   		}
+   		return TRUE;
         
    default:
        break;

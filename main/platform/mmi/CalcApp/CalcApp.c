@@ -1212,6 +1212,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
         {
             switch (wParam)
             {
+            	case AVK_O:
                 case AVK_UP:
 					//wlh 20090417 add start
 					//modi ydc 20090408
@@ -1222,7 +1223,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 					//wlh 20090417 add end
                     Calc_PushVal(pme, OP_ADD);
                     break;
-
+				case AVK_I:
                 case AVK_LEFT:
 					//wlh 20090417 add start
 					//modi ydc 20090408
@@ -1233,7 +1234,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 					//wlh 20090417 add end
                     Calc_PushVal(pme, OP_SUB);
                     break;
-
+                case AVK_STAR:
                 case AVK_DOWN:
 					//wlh 20090417 add start
 					//modi ydc 20090408
@@ -1244,7 +1245,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 					//wlh 20090417 add end
                     Calc_PushVal(pme, OP_MUL);
                     break;
-
+                case AVK_G:
                 case AVK_RIGHT:
 					//wlh 20090417 add start
 					//modi ydc 20090408
@@ -1298,8 +1299,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                     ISHELL_SetTimer(pme->a.m_pIShell,50,(PFNNOTIFY)CALC_DrawImageWithOffset, pme);
                     Calc_Backspace(pme);
                     break;
-
-                case AVK_STAR:
+                case AVK_M:
                     Calc_AddChar(pme, (AECHAR)'.', TRUE);
                     break;
 

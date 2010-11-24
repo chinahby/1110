@@ -1165,6 +1165,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         {
                         	ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#2687#");
                         }
+                        #ifdef FEATURE_VERSION_HITZ181
+                        if(WSTRCMP(pMe->m_DialString, L"*#888#") == 0)
+                        {
+                        	ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#888#");
+                        }
+                        #endif
                         //add by yangdei end 2010-11-16
 #ifdef FEATURE_CARRIER_TAIWAN_APBW
 #ifdef FEATRUE_SET_IP_NUMBER
@@ -1614,6 +1620,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 case AVK_CLR:
                 {
                     int len;
+                    #ifdef FEATURE_VERSION_HITZ181
+                    if(dwParam == 1)
+                    {
+                    	MEMSET(pMe->m_DialString,0,MAX_SIZE_DIALER_TEXT);
+                    }
+                    #endif
                     len = WSTRLEN(pMe->m_DialString);
 #ifdef FEATURE_EDITABLE_RECORD
                    if(pMe->m_bEditRecNumber)

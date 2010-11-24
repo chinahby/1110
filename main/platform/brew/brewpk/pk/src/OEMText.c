@@ -11522,6 +11522,11 @@ register TextCtlContext *pContext = (TextCtlContext *) hTextField;
 
 return pContext->wSelEnd;
 }
+boolean          OEM_TextShiftStatus(OEMCONTEXT hTextField)
+{
+	TextCtlContext *pContext = (TextCtlContext *) hTextField;
+	return pContext->is_isShift;
+}
 
 //*****************************************************************************
 // touch screen  Input integration

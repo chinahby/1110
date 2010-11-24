@@ -1044,6 +1044,7 @@ typedef struct _CMusicPlayer
 #endif //FEATURE_SUPPORT_BT_APP
     MP3Recttype m_rtype;////wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
     IAnnunciator *m_pIAnn;
+    boolean       m_isshift;
 } CMusicPlayer;
 
 /*==============================================================================

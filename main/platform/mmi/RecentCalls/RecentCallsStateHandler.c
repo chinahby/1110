@@ -356,7 +356,10 @@ static NextFSMAction staterecordhandle(CRecentCalls *pMe)
         case DLGRET_RECORDDEAL:
             MOVE_TO_STATE(STATE_RECORDDEAL)
             return NFSMACTION_CONTINUE;
-            
+            //add by yangdecai 2010-11-23
+        case DLGRET_DELONE:
+            MOVE_TO_STATE(STATE_RWARN)
+            return NFSMACTION_CONTINUE;     
         case DLGRET_WARN:
             MOVE_TO_STATE(STATE_RWARN)
             return NFSMACTION_CONTINUE;   

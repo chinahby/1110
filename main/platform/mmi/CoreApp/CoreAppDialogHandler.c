@@ -2842,9 +2842,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					}
                 case AVK_UP:
                 case AVK_MESSAGE:
-
+#ifdef FEATURE_VERSION_HITZ181
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+#else
 #if defined(FEATURE_WMS_APP)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#endif
 #endif
                 case AVK_DOWN:
 				{
@@ -2857,6 +2860,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
 	#elif defined (FEATURE_VERSION_M8)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
+	#elif defined (FEATURE_VERSION_HITZ181)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO); 
 	#else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
 	#endif
@@ -2892,14 +2897,21 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
 #elif defined (FEATURE_VERSION_M8)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
+#elif defined (FEATURE_VERSION_HITZ181)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
 #else
+					
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
 #endif					                    
                 }
 				
                 case AVK_RIGHT:
 					{
-						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
+						#ifdef FEATURE_VERSION_HITZ181
+							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);//
+						#else
+							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
+						#endif
 					}
                 case AVK_SELECT:
 		 		{
@@ -4664,8 +4676,10 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		eBBarType = BTBAR_FNASRANI_FPORTAL;
 	#elif defined (FEATURE_FPT005)
 		eBBarType = BTBAR_CONTACTS_FPORTAL; //add by yangdecai
+	#elif defined (FEATURE_VERSION_HITZ181)
+		eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
 	#else
-		eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai
+		eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
 	#endif
 #endif
 	

@@ -129,6 +129,7 @@ if (NULL == pMe->m_pStatic)                                     \
 ==============================================================================*/
 //static void WmsApp_PlaySendingAni(WmsApp *pMe);
 static void WmsApp_PlaySendingAni(void *pUser);
+static void WmsApp_ReadMsg(void *pUser);
 
 //static void WmsApp_StopSendingAni(WmsApp *pMe);
 
@@ -1994,14 +1995,30 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                         return TRUE;
                         
                     case AVK_INFO:
+                        MSG_FATAL("AVK_INFO.....................",0,0,0);
                         pMe->m_wPrevMenuSel = IMENUCTL_GetSel(pMenu);
                         pMe->m_wCurindex = pMe->m_wPrevMenuSel - MSG_CMD_BASE;
-                        
                         CLOSE_DIALOG(DLGRET_LOAD)
                         return TRUE;
                         
                     case AVK_CLR:
-                        CLOSE_DIALOG(DLGRET_CANCELED)
+                    	MSG_FATAL("dwParam = %d",dwParam,0,0);
+						if(dwParam != 1)
+						{
+                        	CLOSE_DIALOG(DLGRET_CANCELED)
+                        }
+                        else
+                        {
+                        	{
+                        		// 读取消息
+                        		pMe->m_wPrevMenuSel = IMENUCTL_GetSel(pMenu);
+                        		pMe->m_wCurindex = pMe->m_wPrevMenuSel - MSG_CMD_BASE;
+                        		WmsApp_ReadMsg(pMe);
+                        		MSG_FATAL("pMe->m_wCurindex=======%d",pMe->m_wCurindex,0,0);
+                    			CLOSE_DIALOG(DLGRET_DELETE)
+                    		}
+                    
+                        }
                         return TRUE;
                         
                     default: 
@@ -2329,71 +2346,74 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
             {
                 case AVK_CLR:
 					{
-						WMSMessageStruct *pTep;
-						int i;
-						int max  = 1;
-						int nlen = 0;
-						int         nBranches=0;
-    					int         nCurBranchNum=0;
-						#ifdef FEATURE_SMS_UDH
-						uint8       total_sm;   // 消息数据包总数
-						uint8       seq_num;    // 消息序号
-						#endif
-						 for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
-    					{
-					        pTep = pMe->m_CurMsgNodesMS[i];
-					        if (pTep != NULL)
-					        {
-					            break;
-					        }
-					    }
-						if (NULL == pTep)
-    					{// 任一非空节点没找到
-    					    CLOSE_DIALOG(DLGRET_CANCELED)
-        					return TRUE;
-    					}
-    
+						
+							WMSMessageStruct *pTep;
+							int i;
+							int max  = 1;
+							int nlen = 0;
+							int         nBranches=0;
+	    					int         nCurBranchNum=0;
+							#ifdef FEATURE_SMS_UDH
+							uint8       total_sm;   // 消息数据包总数
+							uint8       seq_num;    // 消息序号
+							#endif
+							 for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+	    					{
+						        pTep = pMe->m_CurMsgNodesMS[i];
+						        if (pTep != NULL)
+						        {
+						            break;
+						        }
+						    }
+							if (NULL == pTep)
+	    					{// 任一非空节点没找到
+	    					    CLOSE_DIALOG(DLGRET_CANCELED)
+	        					return TRUE;
+	    					}
+	    
 #ifdef FEATURE_SMS_UDH
-					    total_sm = pTep->total_sm;
-					    seq_num = pTep->seq_num;
-					    if (total_sm > 1)
-					    {
-					        // 计算长短信分支总数(每个分支最大含 LONGSMS_MAX_PACKAGES 个数据包)
-					        nBranches = total_sm / (LONGSMS_MAX_PACKAGES);
-					        if ((total_sm % (LONGSMS_MAX_PACKAGES)) != 0)
-					        {
-					            nBranches++;
-					        }
-					        
-					        // 确定当前处理的分支号(0,...,nBranches-1)
-					        nCurBranchNum = (seq_num - 1) / (LONGSMS_MAX_PACKAGES);
-					        if (nBranches>1)
-					        {
-					            nlen += 20;
-					            
-					            if (nCurBranchNum < (nBranches-1))
-					            {
-					                max = LONGSMS_MAX_PACKAGES;
-					            }
-					            else
-					            {
-					                max = total_sm - nCurBranchNum*LONGSMS_MAX_PACKAGES;
-					            }
-					        }
-					        else
-					        {
-					            max = total_sm;
-					        }
-					    }
+						    total_sm = pTep->total_sm;
+						    seq_num = pTep->seq_num;
+						    if (total_sm > 1)
+						    {
+						        // 计算长短信分支总数(每个分支最大含 LONGSMS_MAX_PACKAGES 个数据包)
+						        nBranches = total_sm / (LONGSMS_MAX_PACKAGES);
+						        if ((total_sm % (LONGSMS_MAX_PACKAGES)) != 0)
+						        {
+						            nBranches++;
+						        }
+						        
+						        // 确定当前处理的分支号(0,...,nBranches-1)
+						        nCurBranchNum = (seq_num - 1) / (LONGSMS_MAX_PACKAGES);
+						        if (nBranches>1)
+						        {
+						            nlen += 20;
+						            
+						            if (nCurBranchNum < (nBranches-1))
+						            {
+						                max = LONGSMS_MAX_PACKAGES;
+						            }
+						            else
+						            {
+						                max = total_sm - nCurBranchNum*LONGSMS_MAX_PACKAGES;
+						            }
+						        }
+						        else
+						        {
+						            max = total_sm;
+						        }
+						    }
 #endif   
-						for(i = 0;i<max;i++)
-						{
-							WMSMessageStruct_Reset(pMe->m_CurMsgNodesMS[i]);
-						}
-					}  //ADD BY YANGDECAI 2010-08-16
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+							for(i = 0;i<max;i++)
+							{
+								WMSMessageStruct_Reset(pMe->m_CurMsgNodesMS[i]);
+							}
+						
+	                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    
+                    
                     return TRUE;
-
+					}
 				//Add By zzg 2010_09_09
 				case AVK_SEND:	
 				{
@@ -2472,6 +2492,7 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
         default:
             break;
     }
+    
 
     return FALSE;
 } // IDD_VIEWMSG_Handler
@@ -8499,7 +8520,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
     static AEETextInputMode nMode;
 	AECHAR Annstr[20] = {0};
     WmsApp *pMe = (WmsApp *)pUser;
-    
+    boolean m_Issetmod = FALSE;
     if (NULL == pMe)
     {
         return FALSE;
@@ -8549,7 +8570,20 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 }
             }
 #endif
-			(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_CAPLOWER);
+             
+			(void)OEM_GetConfig(
+	                          CFGI_LANGUAGE_MOD,
+	                          &m_Issetmod,
+	                          sizeof(boolean));
+	         
+	         if(m_Issetmod)
+	         {
+	         	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_THAI_R);
+	         }
+	         else
+	         {
+				(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
+			 }
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -9193,6 +9227,7 @@ static boolean IDD_TEMPLATES_Handler(void   *pUser,
                 CtlAddItem  ai;
                 uint16  i;
                 wms_cache_info_node  *pnode = NULL;
+                #ifndef FEATURE_VERSION_HITZ181
                 uint16  nCmdID[PHRASE_MAX] = {IDS_TEMPLATE1,
                                               IDS_TEMPLATE2,
                                               IDS_TEMPLATE3,
@@ -9204,7 +9239,19 @@ static boolean IDD_TEMPLATES_Handler(void   *pUser,
                                               IDS_TEMPLATE9,
                                               IDS_TEMPLATE10,
                                               0};
-                
+                #else
+                uint16  nCmdID[PHRASE_MAX] = {IDS_TEMPLATEHITZ0,
+                                              IDS_TEMPLATEHITZ1,
+                                              IDS_TEMPLATEHITZ2,
+                                              IDS_TEMPLATEHITZ3,
+                                              IDS_TEMPLATEHITZ4,
+                                              IDS_TEMPLATEHITZ5,
+                                              IDS_TEMPLATEHITZ6,
+                                              IDS_TEMPLATEHITZ7,
+                                              IDS_TEMPLATEHITZ8,
+                                              IDS_TEMPLATEHITZ9,
+                                              0};
+                #endif
                 wms_cacheinfolist_enumbegin(WMS_MB_TEMPLATE);
                 pnode = wms_cacheinfolist_enumnext(WMS_MB_TEMPLATE);
                 MEMSET(&ai, 0, sizeof(ai));
@@ -10840,7 +10887,7 @@ static boolean IDD_DELETING_Handler(void        *pUser,
                         {
                             int i;
                             wms_cache_info_node  *pnode = NULL;
-                            
+                            MSG_FATAL("IWMS_MsgDelete.........0000000000",0,0,0);
                             for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
                             {
                                 if (pMe->m_CurMsgNodes[i] != NULL)
@@ -10851,6 +10898,7 @@ static boolean IDD_DELETING_Handler(void        *pUser,
                                     nRet = ENOMEMORY;
                                     do
                                     {
+                                    	MSG_FATAL("IWMS_MsgDelete.........",0,0,0);
                                         nRet = IWMS_MsgDelete(pMe->m_pwms,
                                                            pMe->m_clientId,
                                                            &pMe->m_callback,
@@ -14241,5 +14289,57 @@ static void WMSApp_DialogTimeout(void *pme)
                             EVT_USER,
                             0,
                             0);
+}
+static void WmsApp_ReadMsg(void *pUser)
+{
+	WmsApp *pMe = (WmsApp *)pUser;
+	// 读取消息
+    uint16 wIndex=0;
+    wms_cache_info_node  *pnode = NULL;
+    int nRet,i,nCount=0;
+    boolean bUIMSMS = FALSE;
+    
+    wIndex = pMe->m_wCurindex;
+    
+    // 取消息 cache info 节点
+    if (wIndex>=RUIM_MSGINDEX_BASE)
+    {
+        wIndex = wIndex - RUIM_MSGINDEX_BASE;
+        pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_RUIM, wIndex);
+    }
+    else
+    {
+        pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_NV_CDMA, wIndex);
+    }
+    
+    if (NULL == pnode)
+    {
+        return ;
+    }
+    
+    // 重置当前消息列表
+    MEMSET(pMe->m_CurMsgNodes, 0, sizeof(pMe->m_CurMsgNodes));
+    WmsApp_FreeMsgNodeMs(pMe);
+    
+    pMe->m_idxCur = 0;
+#ifdef FEATURE_SMS_UDH
+    if (pnode->pItems != NULL)
+    {
+        MEMCPY(pMe->m_CurMsgNodes, pnode->pItems, sizeof(pMe->m_CurMsgNodes));
+        
+        for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
+        {
+            if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
+            {
+                pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
+                break;
+            }
+        }
+    }
+    else
+#endif
+    {
+        pMe->m_CurMsgNodes[0] = pnode;
+    }
 }
 

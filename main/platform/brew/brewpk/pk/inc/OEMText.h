@@ -2059,7 +2059,7 @@ boolean          TSIM_ProcPenDown(OEMCONTEXT hTextCtl,
 								  int16 xpos,
 								  int16 ypos);
 
-
+boolean          OEM_TextShiftStatus(OEMCONTEXT hTextField);
 //#endif
 
 /*========================================================================

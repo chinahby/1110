@@ -173,6 +173,7 @@ OBJECT(CTextCtl)
    IImage                    *m_pImageBg;
    uint16                     m_nBgImgResID;
    char                       m_strBgImgResFile[MAX_FILE_NAME];
+   boolean                    m_isshift;
 };
 
 #define LINEHEIGHT            (pme->m_nFontHeight)
@@ -375,6 +376,7 @@ int TextCtl_New(IShell * pIShell, AEECLSID clsID, void ** ppobj)
    pme->m_SymPageNum = 0;
    pme->m_pImageBg = NULL;
    pme->m_clsMe = clsID;
+   pme->m_isshift = FALSE;
 
    // Increment the reference count on the shell...
    ISHELL_AddRef(pIShell);
@@ -1430,6 +1432,16 @@ NormalKeyEvent:
 
         case EVT_KEY_RELEASE:  
 
+			if ((wParam != AVK_SYMBOL))
+         	{
+         		boolean TempShift = FALSE;
+         		MSG_FATAL("EVT_KEY_RELEASE  AVK_SHIFT",0,0,0);
+         		TempShift = OEM_TextShiftStatus(pme->m_pText);
+         		if(TempShift != pme->m_isshift)
+         		{
+					CTextCtl_Redraw((ITextCtl *)pme);
+				}
+			}
 #if defined (FEATURE_ALL_KEY_PAD)
 			if ((wParam == AVK_SYMBOL))/*&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))*/ //modi by yangdecai
 #else
@@ -1449,7 +1461,7 @@ NormalKeyEvent:
                 
             }
 
-#ifndef FEATURE_DISP_160X128
+#ifndef FEATURE_ALL_KEY_PAD
             if ((!pme->m_pSoftKey) &&       // press the * key switch the Ab(ab,AB) and the En(en,EN) inputmethod 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
                 (wParam == AVK_STAR) &&
@@ -1767,6 +1779,19 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                 }
                 IDISPLAY_Update(pme->m_pIDisplay);
             }
+            #ifdef FEATURE_VERSION_HITZ181
+            pme->m_isshift = OEM_TextShiftStatus(pme->m_pText);
+            if(pme->m_isshift)
+            {
+            	AECHAR Shiftbuf[8] = {L"Shift"};
+            	MSG_FATAL("qrc.x===%d,qrc.y====%d",qrc.x,qrc.y,0);
+            	IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色
+            	IDISPLAY_DrawText(pme->m_pIDisplay,
+                AEE_FONT_BOLD,Shiftbuf, -1,
+                qrc.x, qrc.y,&qrc,IDF_TEXT_TRANSPARENT | IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER);
+                IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色
+            }
+            #endif
         }
         
         if (pme->m_pText) 
@@ -3418,16 +3443,16 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
            // szbuf[0] = (AECHAR)0x3130;
            // szbuf[1] = (AECHAR)'\0';
             AECHAR szbuf[] = {'E', 'n', 't', 'e', 'r', '\0'};
-            IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
+            IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x+10, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
          }
          else if(*pszSym == ' ')
          {
             AECHAR szbuf[] = {'S', 'P','\0'};
-            IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);         
+            IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x+10, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);         
          }
          else
          {
-            IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, pszSym, 1, rc.x, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
+            IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, pszSym, 1, rc.x+10, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
          }
       }  
    }     
@@ -4570,7 +4595,7 @@ static int32 CTextCtl_GetT9End(ITextCtl * po)
 static void OEM_SetInputMode(CTextCtl * pme)
 {
     AEETextInputMode  wMode = TEXT_MODE_MULTITAP;
-    
+    boolean is_Taimod = FALSE;
     if ( pme == NULL )
     {
         return;
@@ -4586,6 +4611,9 @@ static void OEM_SetInputMode(CTextCtl * pme)
         case OEM_MODE_NUMBERS:
             wMode = TEXT_MODE_NUMBERS;//数字输入模式
             pme->m_wResID = IDB_MODE_NUMBERS;
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
             break; 
 
 #ifdef FEATURE_T9_MT_ENGLISH
@@ -4654,11 +4682,17 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
-            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);              
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);  
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
             break;
 
         case OEM_MODE_T9_RAPID_ENGLISH_LOW:
             wMode = TEXT_MODE_T9_RAPID_ENGLISH;
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW  
 	        pme->m_wResID = IDB_MODE_T9_RAPID_HEBREW_ENGLISH_LOW;
 #else
@@ -4762,8 +4796,12 @@ static void OEM_SetInputMode(CTextCtl * pme)
 
 #ifdef FEATURE_T9_RAPID_THAI
         case OEM_MODE_T9_RAPID_THAI:
+        	is_Taimod = TRUE;
             wMode = TEXT_MODE_T9_RAPID_THAI;
             pme->m_wResID = IDB_MODE_T9_RAPID_THAI;
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
             break;
 #endif //FEATURE_T9_RAPID_THAI
 
@@ -4976,8 +5014,10 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 #ifdef FEATURE_T9_RAPID_ENGLISH
     pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_RAPID_ENGLISH;
 #endif //FEATURE_MODE_T9_RAPID_ENGLISH
+#if 1//def //FEATURE_VERSION_HITZ181
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 	pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_CAP_LOWER_ENGLISH;
+#endif
 #endif
 
     pme->m_nCurrInputModeList[i++] = OEM_MODE_NUMBERS;  
@@ -5093,6 +5133,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
     int i;
     MSG_FATAL("pme->m_nCurrInputMode:::::::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
 	MSG_FATAL("pme->m_nCurrInputModeCount:::::::::::::::::::::%d",pme->m_nCurrInputModeCount,0,0);
+	#if  1//def  1//FEATURE_VERSION_HITZ181
 	if(pme->m_dwProps & TP_STARKEY_ID_SWITCH)
 	{
 		if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH || 
@@ -5100,7 +5141,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
                 pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP ||
                 pme->m_nCurrInputMode == OEM_MODE_NUMBERS)
             {
-            #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
+            	#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
                 	pme->m_nCurrInputMode = OEM_MODE_T9_CAP_LOWER_ENGLISH;
                 #endif
             }
@@ -5148,6 +5189,21 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
     {
         pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_FRENCH;
     }
+#endif
+#else
+	if((pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_THAI))
+	{
+		pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH_LOW;
+	}
+	else if(pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_ENGLISH_LOW)
+	{
+		pme->m_nCurrInputMode = OEM_MODE_NUMBERS;
+	}
+	else
+	{
+		pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_THAI;
+	}
+	
 #endif
     for (i=0; i<pme->m_nCurrInputModeCount; i++)
     {
@@ -5216,7 +5272,8 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
             {
                 // if meet the end , then return the first one
                 MSG_FATAL("pme->m_nCurrInputMode::::end1:::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
-                if(pme->m_dwProps & TP_STARKEY_ID_SWITCH)
+                #if 1//def 1//FEATURE_VERSION_HITZ181
+                if((pme->m_dwProps & TP_STARKEY_ID_SWITCH))
                 {
                 	;
                 }
@@ -5227,11 +5284,15 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
                 else
                     pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1];     
                 }
+                #endif
             }
             ret = TRUE;
             break;
         }
     }
+    #if 0//def 0//FEATURE_VERSION_HITZ181
+    ret = TRUE;
+    #endif
     MSG_FATAL("pme->m_nCurrInputMode::::end:::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
     return ret;
 }

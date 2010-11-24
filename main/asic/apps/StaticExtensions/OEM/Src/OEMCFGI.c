@@ -630,6 +630,7 @@ typedef struct
    char   brewsetings_primaryserver[MAS_BREWSETINT_STRING];
    char   brewsetings_secondaryserver[MAS_BREWSETINT_STRING];
    uint32 brew_dlflags;
+   boolean brew_laguagefalgs;//uint16
    #ifdef FEATURE_LONG_NETLOCK
    boolean netlock_flg;
    #endif
@@ -990,6 +991,8 @@ static int OEMPriv_GetItem_CFGI_DEBUG_ERRLOG(void *pBuff);
 static int OEMPriv_GetItem_CFGI_DEBUG_LNA_STATE(void *pBuff);
 static int OEMPriv_GetItem_CFGI_DEBUG_PA_STATE(void *pBuff);
 static int OEMPriv_GetItem_CFGI_DEBUG_RATCHET_STATE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_LANGUAGE_MOD(void *pBuff);
+static int OEMPriv_GetItem_CFGI_LANGUAGE_MOD(void *pBuff);
 
 #if defined(FEATURE_WCDMA)
 #error code not present
@@ -1704,6 +1707,7 @@ static OEMConfigListType oemi_cache = {
    ,{0}  //CFGI_BREWSET_PRIMARYSERVER
    ,{0}  //CFGI_BREWSET_SECONDARYSERVER
    ,0    //CFGI_DL_FLAGS
+   ,FALSE    //CFGI_LANGUAGE_MOD
    #ifdef FEATURE_LONG_NETLOCK
    ,0
    #endif
@@ -2241,6 +2245,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_BREWSET_PRIMARYSERVER,sizeof(char)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_BREWSET_SECONDARYSERVER,sizeof(char)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_DL_FLAGS,sizeof(uint32)),
+   CFGTABLEITEM(CFGI_LANGUAGE_MOD,sizeof(boolean)),
    #ifdef FEATURE_LONG_NETLOCK
    CFGTABLEITEM(CFGI_NET_LOCK_FLAGS,sizeof(boolean)),
    #endif
@@ -2679,7 +2684,7 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.camera_color = OEMNV_CAMERA_COLOR_NORMAL;
    oemi_cache.video_color = OEMNV_CAMERA_COLOR_NORMAL;
    oemi_cache.video_brightness = OEMNV_CAMERA_BRIGHTNESS_LEVEL3;
-
+   
 #ifdef FEATURE_PLANEMODE
    oemi_cache.planeMode = OEMNV_PLANEMODE_OFF;
 #endif
@@ -9465,6 +9470,7 @@ static int OEMPriv_SetItem_CFGI_PROFILE_MISSED_CALL_ALERT(void *pBuff)
    return SUCCESS;
 }
 
+
 //¶à²Ê°´¼üÒô
 static int OEMPriv_GetItem_CFGI_PROFILE_KEYSND_TYPE(void *pBuff)
 {
@@ -10075,6 +10081,7 @@ static int OEMPriv_SetItem_CFGI_AUTO_POWER_ON(void *pBuff)
     return SUCCESS;
 }
 
+
 static int OEMPriv_GetItem_CFGI_AUTO_POWER_OFF(void *pBuff) 
 {
    MEMCPY(pBuff, (void*) &oemi_cache.m_auto_poweroff, sizeof(Auto_Power_Cfg));
@@ -10644,6 +10651,17 @@ static int OEMPriv_SetItem_CFGI_FM_BACKGROUND(void *pBuff)
 {
     MEMCPY((void*) &oemi_cache.m_fm_background, pBuff, sizeof(boolean));
     OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_LANGUAGE_MOD(void *pBuff)
+{
+	memcpy((void *)&oemi_cache.brew_laguagefalgs,pBuff,sizeof(boolean));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_LANGUAGE_MOD(void *pBuff)
+{
+	memcpy(pBuff,(void *)&oemi_cache.brew_laguagefalgs,sizeof(boolean));
     return SUCCESS;
 }
 

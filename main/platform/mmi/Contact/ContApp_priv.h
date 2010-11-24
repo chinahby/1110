@@ -924,6 +924,7 @@ typedef struct _CContApp
     char  *m_strPhonePWD;
     IAnnunciator *m_pIAnn;
 	IRUIM        *m_pIRUIM;
+	boolean      m_isdel;
 } CContApp;
 
 /*==============================================================================

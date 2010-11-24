@@ -328,6 +328,7 @@ static int ContApp_New(IShell * pIShell, IModule * po, void ** ppObj)
         pMe->m_nRefs    = 0;
         pMe->m_pShell   = pIShell;
         pMe->m_pModule  = po;
+        pMe->m_isdel    = FALSE;
     
         (void) ISHELL_AddRef(pMe->m_pShell);
         (void) IMODULE_AddRef(pMe->m_pModule);

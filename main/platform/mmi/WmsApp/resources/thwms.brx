@@ -538,6 +538,36 @@
 	<String Id="185" Name="IDS_ENABLEREPORT_SHORT">
 		<Text>Hdp</Text>
 	</String>
+	<String Id="1001" Name="IDS_TEMPLATEHITZ0">
+		<Text>ไม่ว่างรับสาย, แล้วจะโทรกลับ</Text>
+	</String>
+	<String Id="1002" Name="IDS_TEMPLATEHITZ1">
+		<Text>กรุณาโทรกลับ</Text>
+	</String>
+	<String Id="1003" Name="IDS_TEMPLATEHITZ2">
+		<Text>ขอโทษ,ขณะนี้ไม่ว่าง</Text>
+	</String>
+	<String Id="1004" Name="IDS_TEMPLATEHITZ3">
+		<Text>เดี๋ยวมานะ</Text>
+	</String>
+	<String Id="1005" Name="IDS_TEMPLATEHITZ4">
+		<Text>ขอโทษ</Text>
+	</String>
+	<String Id="1006" Name="IDS_TEMPLATEHITZ5">
+		<Text>ขอบคุณ</Text>
+	</String>
+	<String Id="1007" Name="IDS_TEMPLATEHITZ6">
+		<Text>เป็นไงบ้าง</Text>
+	</String>
+	<String Id="1008" Name="IDS_TEMPLATEHITZ7">
+		<Text>ไม่ได้เจอกันนานแล้วนะ</Text>
+	</String>
+	<String Id="1009" Name="IDS_TEMPLATEHITZ8">
+		<Text>รักมากๆ</Text>
+	</String>
+	<String Id="1010" Name="IDS_TEMPLATEHITZ9">
+		<Text>เป็นอย่างไรบ้าง</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

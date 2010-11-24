@@ -941,6 +941,14 @@ static NextFSMAction WMSST_INBOXES_Handler(WmsApp *pMe)
             WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
             return NFSMACTION_CONTINUE;
             
+        case DLGRET_DELETE:
+        	//释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
+            pMe->m_eEraseWMSType = ERASE_DRAFT_ONE;
+            MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
+            return NFSMACTION_CONTINUE;
+            
         default:
             // 用退出程序代替宏断言
             MOVE_TO_STATE(WMSST_EXIT)
@@ -1817,6 +1825,7 @@ static NextFSMAction WMSST_DRAFT_Handler(WmsApp *pMe)
             return NFSMACTION_WAIT;
             
         case DLGRET_LOAD:
+            MSG_FATAL("DLGRET_LOAD...............",0,0,0);
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
             WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
             return NFSMACTION_WAIT;
@@ -1839,6 +1848,13 @@ static NextFSMAction WMSST_DRAFT_Handler(WmsApp *pMe)
         case DLGRET_OPT:
             pMe->m_eOptType = OPT_VIA_LISTMSG;
             WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
+            return NFSMACTION_CONTINUE;
+         case DLGRET_DELETE:
+        	//释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
+            pMe->m_eEraseWMSType = ERASE_DRAFT_ONE;
+            MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
             return NFSMACTION_CONTINUE;
 
         default:
@@ -1978,6 +1994,7 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_DELETE:
+        
             pMe->m_eEraseWMSType = ERASE_DRAFT_ONE;
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
             return NFSMACTION_CONTINUE;
@@ -2368,43 +2385,83 @@ static NextFSMAction WMSST_EDITTEMPLATE_Handler(WmsApp *pMe)
                     {// 内置常用语
                         switch (pMe->m_wCurTemplate)
                         {
+							#ifndef FEATURE_VERSION_HITZ181
                             case IDS_TEMPLATE1:
+                            #else
+                            case IDS_TEMPLATEHITZ0:
+                            #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START;
                                 break;
                                 
+                            #ifndef FEATURE_VERSION_HITZ181
                             case IDS_TEMPLATE2:
+                            #else
+                            case IDS_TEMPLATEHITZ1:
+                            #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+1;
                                 break;
                                 
+                            #ifndef FEATURE_VERSION_HITZ181
                             case IDS_TEMPLATE3:
+                            #else
+                            case IDS_TEMPLATEHITZ2:
+                            #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+2;
                                 break;
                                 
+                            #ifndef FEATURE_VERSION_HITZ181
                             case IDS_TEMPLATE4:
+                            #else
+                            case IDS_TEMPLATEHITZ3:
+                            #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+3;
                                 break;
                                 
+                            #ifndef FEATURE_VERSION_HITZ181
                             case IDS_TEMPLATE5:
+                            #else
+                            case IDS_TEMPLATEHITZ4:
+                            #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+4;
                                 break;
                                 
+                            #ifndef FEATURE_VERSION_HITZ181
                             case IDS_TEMPLATE6:
+                            #else
+                            case IDS_TEMPLATEHITZ5:
+                            #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+5;
                                 break;
                                 
+                            #ifndef FEATURE_VERSION_HITZ181
                             case IDS_TEMPLATE7:
+                            #else
+                            case IDS_TEMPLATEHITZ6:
+                            #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+6;
                                 break;
                                 
+                            #ifndef FEATURE_VERSION_HITZ181
                             case IDS_TEMPLATE8:
+                            #else
+                            case IDS_TEMPLATEHITZ7:
+                            #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+7;
                                 break;
                                 
+                            #ifndef FEATURE_VERSION_HITZ181
                             case IDS_TEMPLATE9:
+                            #else
+                            case IDS_TEMPLATEHITZ8:
+                            #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+8;
                                 break;
                                 
-                            case IDS_TEMPLATE10:
+                            #ifndef FEATURE_VERSION_HITZ181
+                            case IDS_TEMPLATE10
+                            #else
+                            case IDS_TEMPLATEHITZ9:
+                            #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+9;
                                 break;
                                 
@@ -2897,7 +2954,11 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
         case DLGRET_INSERTTEMPLATES:
             pMe->m_eInsertType = INSERT_EDITWMS;
             pMe->m_bTextFullAlert = FALSE;
+            #ifndef FEATURE_VERSION_HITZ181
             pMe->m_wCurTemplate = IDS_TEMPLATE1;
+            #else
+            pMe->m_wCurTemplate = IDS_TEMPLATEHITZ0;
+            #endif
             MOVE_TO_STATE(WMSST_TEMPLATES)
             return NFSMACTION_CONTINUE;
             
@@ -3355,6 +3416,13 @@ static NextFSMAction WMSST_OUTBOX_Handler(WmsApp *pMe)
             pMe->m_eOptType = OPT_VIA_LISTMSG;
             WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
             return NFSMACTION_WAIT;
+        case DLGRET_DELETE:
+        	//释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
+            pMe->m_eEraseWMSType = ERASE_DRAFT_ONE;
+            MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
+            return NFSMACTION_CONTINUE;
             
         default:
             // 用退出程序代替宏断言
@@ -3856,6 +3924,7 @@ static NextFSMAction WMSST_DELMSGCONFIRM_Handler(WmsApp *pMe)
                         uint16  nMsgs;
                         
                         // 获取消息数
+                        MSG_FATAL("ERASE_DRAFT_ONE000000...............",0,0,0);
                         wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);
                 
                         if (nMsgs == 0)
@@ -3864,6 +3933,7 @@ static NextFSMAction WMSST_DELMSGCONFIRM_Handler(WmsApp *pMe)
                         }
                         else
                         {
+                        	MSG_FATAL("ERASE_DRAFT_ONE1111111.............nMsgs:%d",nMsgs,0,0);
                             MOVE_TO_STATE(WMSST_DRAFT)
                         }
                     }
@@ -3971,8 +4041,12 @@ static NextFSMAction WMSST_DELMSGCONFIRM_Handler(WmsApp *pMe)
                     MOVE_TO_STATE(WMSST_DELETEMSGS)
                     break;
                     
-                case ERASE_TEMPLATE_ONE:
-                    pMe->m_wCurTemplate = IDS_TEMPLATE1;
+                case ERASE_TEMPLATE_ONE: 
+                    #ifndef FEATURE_VERSION_HITZ181
+            		pMe->m_wCurTemplate = IDS_TEMPLATE1;
+            		#else
+            		pMe->m_wCurTemplate = IDS_TEMPLATEHITZ0;
+            		#endif
                     MOVE_TO_STATE(WMSST_TEMPLATES)
                     break;
                     

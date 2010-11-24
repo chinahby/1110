@@ -417,6 +417,7 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
 #endif
     pMe->m_bUse848 = TRUE;
     pMe->m_bUseBT = FALSE;
+    pMe->m_isshift = FALSE;
     SetIsPlayMP3ByBt(FALSE);
     pMe->m_bInterruptByBT = FALSE;
 #endif //FEATURE_SUPPORT_BT_APP
