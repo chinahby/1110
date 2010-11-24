@@ -2444,6 +2444,24 @@ void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unl
     MEMSET(&m_PromptMsg,0,sizeof(PromptMsg_Param_type));
     //SETAEERECT(&rect, 0, 16, 128, 112);
     //m_PromptMsg.prc = &rect;
+
+
+//Add By zzg 2010_11_23
+#ifdef FEATURE_UNLOCK_KEY_SPACE
+	m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_SPACE;
+#else
+	if(TRUE == unlockkey)
+	{
+	    m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_UNLOCKKEY;
+	}
+	else
+	{
+	    m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD;        
+	}
+#endif
+//Add End
+
+	/*
     if(TRUE == unlockkey)
     {
         m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_UNLOCKKEY;
@@ -2452,6 +2470,8 @@ void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unl
     {
         m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD;        
     }
+    */
+    
     STRLCPY(m_PromptMsg.strMsgResFile, AEE_APPSCOMMONRES_LANGFILE,MAX_FILE_NAME);
     m_PromptMsg.ePMsgType = MESSAGE_WARNNING;        
     m_PromptMsg.eBBarType = BTBAR_NONE;        

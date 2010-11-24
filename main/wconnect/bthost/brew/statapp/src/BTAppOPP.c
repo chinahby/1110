@@ -432,9 +432,7 @@ void BTApp_OPPBuildSettingMenu( CBTApp* pMe )
 
   IMENUCTL_Reset( pMe->m_pIMenu );
   IMENUCTL_SetRect(pMe->m_pIMenu, &pMe->m_rect);  
-
-  MSG_FATAL("***zzg BTApp_OPPBuildSettingMenu***", 0, 0, 0);
-
+ 
   //Add By zzg 2010_11_01
   if(pMe->m_pIAnn != NULL)
   {
@@ -829,7 +827,6 @@ void BTApp_OPPSettingClientMenu( CBTApp* pMe )
 
  if ( pMe->mOPP.bConnected == FALSE )
  {
- 	MSG_FATAL("***zzg BTApp_OPPSettingClientMenu pMe->mOPP.bConnected == FALSE***", 0, 0, 0);
 	return;
  }
 
@@ -1610,13 +1607,10 @@ boolean BTApp_OPPHandleSettingSelection( CBTApp* pMe, uint16 sel )
     {			
       BTApp_SetBondable( pMe );
 
-	  MSG_FATAL("***zzg BTApp_OPPHandleSettingSelection***", 0, 0, 0);
       if ( (result = IBTEXTOPP_Register( pMe->mOPP.po, 
                                          AEEBT_OPP_FORMAT_ALL, 
                                          szServerNameOPP )) != SUCCESS )
-      {
-        MSG_FATAL("***zzg IBTEXTOPP_Register != SUCCESS***", 0, 0, 0);
-		
+      {       		
         MSG_ERROR( "OPP_Register() failed with %x", result, 0, 0 );
         BTApp_ClearBondable( pMe ); // no need to be bondable anymore
         BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3 );

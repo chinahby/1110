@@ -14,6 +14,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_HITZ181
 
 
+//Add By zzg 2010_11_23
+#define FEATURE_UNLOCK_KEY_SPACE				//长按SPACE键解锁	
+
+
 //Add By zzg 2010_10_13
 #define FEATURE_DOUBLE_SHIFT_NOTEQUAL_W			//屏蔽连续两次按SHIFT键输入W
 #define FEATURE_SNOOZETIME						//闹钟隔时再响的时间

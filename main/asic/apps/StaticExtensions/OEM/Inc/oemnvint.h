@@ -700,6 +700,7 @@ typedef struct _OEMErrLogType {
    boolean fatal;        // whether fatal
 } OEMErrLogType;
 
+/*
 #ifdef FEATURE_VERSION_CITYCELL
 #define OEMNV_EMERT_SEZE                       3
 #define OEMNV_EMERG_NUM_LEN                    3
@@ -714,6 +715,56 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_TRE                    "911"
 #define OEMNV_EMERG_NUM_FOR                    "999"
 #endif
+*/
+
+#if defined(FEATURE_VERSION_SMART)
+#define OEMNV_EMERT_SEZE                       4
+#define OEMNV_EMERG_NUM_LEN                    3
+#define OEMNV_EMERG_NUM_ONE                    "110"
+#define OEMNV_EMERG_NUM_TWO                    "112"
+#define OEMNV_EMERG_NUM_TRE                    "911"
+#define OEMNV_EMERG_NUM_FOR                    "999"
+#elif defined(FEATURE_VERSION_M8)
+#define OEMNV_EMERT_SEZE                       4
+#define OEMNV_EMERG_NUM_LEN                    3
+#define OEMNV_EMERG_NUM_ONE                    "110"
+#define OEMNV_EMERG_NUM_TWO                    "112"
+#define OEMNV_EMERG_NUM_TRE                    "911"
+#define OEMNV_EMERG_NUM_FOR                    "999"
+#elif defined(FEATURE_VERSION_CITYCELL)  //add by yangdecai 2010-10-06
+#define OEMNV_EMERT_SEZE                       3
+#define OEMNV_EMERG_NUM_LEN                    3
+#define OEMNV_EMERG_NUM_ONE                    "100"
+#define OEMNV_EMERG_NUM_TWO                    "101"
+#define OEMNV_EMERG_NUM_TRE                    "102"
+#elif defined(FEATURE_VERSION_KARBONN)  //add by yangdecai 2010-10-08
+#define OEMNV_EMERT_SEZE                       4
+#define OEMNV_EMERG_NUM_LEN                    3
+#define OEMNV_EMERG_NUM_ONE                    "110"
+#define OEMNV_EMERG_NUM_TWO                    "112"
+#define OEMNV_EMERG_NUM_TRE                    "911"
+#define OEMNV_EMERG_NUM_FOR                    "999"
+#elif defined(FEATURE_VERSION_HITZ181)  //add by yangdecai 2010-10-08
+#define OEMNV_EMERT_SEZE                       2
+#define OEMNV_EMERG_NUM_LEN                    3
+#define OEMNV_EMERG_NUM_ONE                    "191"
+#define OEMNV_EMERG_NUM_TWO                    "112"
+#else
+#define OEMNV_EMERT_SEZE                       4
+#define OEMNV_EMERG_NUM_LEN                    3
+#define OEMNV_EMERG_NUM_ONE                    "110"
+#define OEMNV_EMERG_NUM_TWO                    "112"
+#define OEMNV_EMERG_NUM_TRE                    "911"
+#define OEMNV_EMERG_NUM_FOR                    "999"
+
+#endif
+
+
+
+
+
+
+
 
 #define OEMNV_STEREO_HEADSET_MASK              0x00000001
 #define OEMNV_HEADSET_MASK                     0x00000002

@@ -370,18 +370,14 @@ int OEMBTExtOPP_Register( IBTExtOPP*     pParent,
   bt_cmd_status_type stat;
   OEMBTExtOPPobj_t   *pMe;
 
-  MSG_FATAL("***zzg OEMBTExtOPP_Register***", 0, 0, 0);
-  
   if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                       (OEMINSTANCE*)&pMe ) != TRUE )
   {
-  	MSG_FATAL("***zzg OEMBTExtOPP_Register EFAILED***", 0, 0, 0);
     return EFAILED;
   }
 
   if ( pszServiceName == NULL )
   {
-  	MSG_FATAL("***zzg OEMBTExtOPP_Register EBADPARM***", 0, 0, 0);
     return EBADPARM;
   }
   if ( pMe->state > AEEBT_OPP_STATE_INIT )

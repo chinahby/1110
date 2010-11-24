@@ -824,7 +824,21 @@ static void StopKeyRepeat(hs_to_aee_key_type *ptbl)
 static void KeyHoldCB(void *pUser)
 {
     hs_to_aee_key_type *ptbl = (hs_to_aee_key_type *)pUser;
-    AEE_Event(EVT_KEY_HELD, ptbl->aee_vcode, ptbl->dwparam);
+
+//Add By zzg 2010_11_23
+#ifdef FEATURE_UNLOCK_KEY_SPACE
+#ifdef FEATURE_KEYGUARD
+	extern boolean OEMKeyguard_HandleEvent(AEEEvent  evt, uint16    wParam); 
+
+	if (TRUE == (OEMKeyguard_HandleEvent(EVT_KEY_HELD, ptbl->aee_vcode)))
+	{
+		return;
+	}
+#endif
+#endif
+//Add End
+
+	AEE_Event(EVT_KEY_HELD, ptbl->aee_vcode, ptbl->dwparam);
 }
 
 static void StartKeyHold(hs_to_aee_key_type *ptbl)
@@ -872,6 +886,7 @@ void handle_keys(void)
     
     static int hs2vcodeidx = ARR_SIZE(hs_to_aee_tbl)-1;
     last_vcode = AEE_INVALID_CODE;
+	
 #ifdef FEATURE_KEYPAD_MULTI_KEY
     while ( (key.key_code = GetKey(&key)) != HS_NONE_K) 
 	{
@@ -884,18 +899,20 @@ void handle_keys(void)
 #endif
         if (key.key_code == HS_RELEASE_K) 
 		{
+			
 #ifdef FEATURE_KEYPAD_MULTI_KEY
             hs2vcodeidx = GetHsToVcodeIdx(key.key_parm);
 #endif
             last_vcode = hs_to_aee_tbl[hs2vcodeidx].aee_vcode;
             dwParam_code = hs_to_aee_tbl[hs2vcodeidx].dwparam;	//Add By zzg 2010_09_09
-            
+
+			
             if (last_vcode != AVK_UNDEFINED && hs_to_aee_tbl[hs2vcodeidx].bpressed)
 			{
                 hs_to_aee_tbl[hs2vcodeidx].bpressed = FALSE;
-				
+
                 if (CoreTask_HandleAEEEvt(EVT_KEY_RELEASE, last_vcode, dwParam_code))
-				{
+				{					
                     continue;
                 }
 				
@@ -904,7 +921,7 @@ void handle_keys(void)
                     StopKeyRepeat(&hs_to_aee_tbl[hs2vcodeidx]);
                 }
 				else if(hs_to_aee_tbl[hs2vcodeidx].aee_method == AVK_METHED_HOLD)
-                {
+                {                
                     StopKeyHold(&hs_to_aee_tbl[hs2vcodeidx]);
                 }
                 AEE_Event(EVT_KEY_RELEASE, last_vcode, hs_to_aee_tbl[hs2vcodeidx].dwparam);
@@ -915,18 +932,26 @@ void handle_keys(void)
             hs2vcodeidx = GetHsToVcodeIdx(key.key_code);
             last_vcode = hs_to_aee_tbl[hs2vcodeidx].aee_vcode;
             dwParam_code = hs_to_aee_tbl[hs2vcodeidx].dwparam;	//Add By zzg 2010_09_09
-            if(last_vcode != AVK_UNDEFINED){
+			           
+            if(last_vcode != AVK_UNDEFINED)
+			{	
                 CoreTask_HandleAEEEvt(EVT_KEY_PRESS, last_vcode, dwParam_code);
-                if (CoreTask_HandleAEEEvt(EVT_KEY, last_vcode, dwParam_code)){
+				
+                if (CoreTask_HandleAEEEvt(EVT_KEY, last_vcode, dwParam_code))
+				{
                     continue;
                 }
 
                 hs_to_aee_tbl[hs2vcodeidx].bpressed = TRUE;
                 (void) AEE_Event(EVT_KEY_PRESS, last_vcode, hs_to_aee_tbl[hs2vcodeidx].dwparam);
                 (void) AEE_Event(EVT_KEY,       last_vcode, hs_to_aee_tbl[hs2vcodeidx].dwparam);
-                if(hs_to_aee_tbl[hs2vcodeidx].aee_method == AVK_METHED_REPT){
+				
+                if(hs_to_aee_tbl[hs2vcodeidx].aee_method == AVK_METHED_REPT)
+				{
                     StartKeyRepeat(&hs_to_aee_tbl[hs2vcodeidx]);
-                }else if(hs_to_aee_tbl[hs2vcodeidx].aee_method == AVK_METHED_HOLD){
+                }
+				else if(hs_to_aee_tbl[hs2vcodeidx].aee_method == AVK_METHED_HOLD)
+				{
                     StartKeyHold(&hs_to_aee_tbl[hs2vcodeidx]);
                 }
             }  // end of else
@@ -1841,7 +1866,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 	AEETCalls po;
 #endif
 
-#ifdef FEATURE_KEYGUARD
+#ifdef FEATURE_KEYGUARD	
     if (OEMKeyguard_HandleEvent(evt, wParam))
     {
         return TRUE;

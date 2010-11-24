@@ -477,7 +477,29 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
     
     switch (evt)
     {
-        case EVT_KEY:
+    	//Add By zzg 2010_11_23		
+#ifdef FEATURE_UNLOCK_KEY_SPACE		
+		case EVT_KEY_HELD:
+		{		
+			if (wParam == AVK_SPACE)
+			{		
+				sUnlockState = UNLOCKSTATE_RESET;
+				
+				// Correct key, make a beep...
+				if (spAlert)
+				{
+					IALERT_KeyBeep(spAlert, (AVKType) wParam, TRUE);
+				}
+
+				// Unlock the keyguard
+				OEMKeyguard_SetState(FALSE);
+				OEMPriv_ResumeBREW();
+				return TRUE;	
+			}
+		}
+#endif	
+		//Add End
+        case EVT_KEY:			
             switch ((AVKType)wParam)
             {           
 #if 0            
@@ -537,6 +559,10 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     }
                     break;
 #endif
+
+
+//Add By zzg 2010_11_23
+#ifndef FEATURE_UNLOCK_KEY_SPACE		
                 case AVK_SELECT:
                     bDrawMessage = TRUE;
                     if (UNLOCKSTATE_RESET == sUnlockState)
@@ -573,7 +599,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                         OEMPriv_ResumeBREW();
                         return TRUE;
 
-                    }
+                    }				
                     else
                     {
                         if(!bDrawMessage)
@@ -588,6 +614,16 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     }
                     bDrawMessage = !bDrawMessage;
                     break;                    
+#endif	
+
+//Add By zzg 2010_11_23
+#ifdef FEATURE_UNLOCK_KEY_SPACE		
+			case AVK_SPACE:
+			{
+				return FALSE;					
+			}
+#endif
+//Add End
 
                 default:
                     if(!bDrawMessage)
@@ -606,6 +642,15 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 
         case EVT_KEY_RELEASE:
             // Ensure the key beep is turned off if long keytones are enabled
+            
+            //Add By zzg 2010_11_23
+#ifdef FEATURE_UNLOCK_KEY_SPACE		
+			if (AVK_SPACE == wParam)
+			{
+				return FALSE;
+			}
+#endif
+//Add End
             if (spAlert)
             {
                 IALERT_KeyBeep(spAlert, (AVKType) wParam, FALSE);
@@ -805,7 +850,7 @@ SEE ALSO:
 boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
 {
     boolean bRet = FALSE;
-
+	
     if (OEMKeyguard_IsEnabled() && OEMPriv_IsPhoneIdle())
     {
         boolean bKeyPress = FALSE;
@@ -817,7 +862,8 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
         //    db_value.db_backlight_level = TRUE;
         //    db_put(DB_BACKLIGHT_LEVEL, &db_value);
         //}
-        
+
+		
         if(wParam == AVK_CLR)
         {
             OEMPriv_ResumeBREW();
@@ -834,11 +880,17 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
         }
         
         if(wParam== AVK_CLR ||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
-        {
+        {        
             return FALSE;
         }
-
-        if (EVT_KEY_PRESS == evt)
+       
+//Add By zzg 2010_11_23
+#ifdef FEATURE_UNLOCK_KEY_SPACE	        
+        if ((EVT_KEY_PRESS == evt) || (EVT_KEY_HELD == evt))	
+#else
+		if (EVT_KEY_PRESS == evt)    
+#endif
+//Add End
         {
             bKeyPress = TRUE;
         }
@@ -858,6 +910,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
             // AEE_SetEventHandler() has been used to set a default event
             // handler.  Otherwise it will return zero.
             //
+			
             KEYGUARD_ERR("AEE_Active %x",cls,0,0);
             if ( (cls != AEECLSID_SHELL) && (cls != 0))
             {
@@ -876,6 +929,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
             // (the END key release event would trigger the keyguard message
             //  which would be really annoying)
             //
+
             if (bKeyPress)
             {
                 sbMessageActive = TRUE;
@@ -889,7 +943,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
         }
 
         if (sbMessageActive)
-        {
+        {			
             OEMPriv_ResetMessageTimer();
 
             // Pass the event to the keyguard event handler
