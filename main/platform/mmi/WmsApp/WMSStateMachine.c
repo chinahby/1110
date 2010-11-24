@@ -2458,7 +2458,7 @@ static NextFSMAction WMSST_EDITTEMPLATE_Handler(WmsApp *pMe)
                                 break;
                                 
                             #ifndef FEATURE_VERSION_HITZ181
-                            case IDS_TEMPLATE10
+                            case IDS_TEMPLATE10:
                             #else
                             case IDS_TEMPLATEHITZ9:
                             #endif
