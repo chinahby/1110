@@ -97,7 +97,7 @@ extern boolean   IsRunAsFactoryTestMode(void);
 
 #define IDLE_D_CLOCK_X 		5
 #ifdef FEATURE_VERSION_HITZ181
-#define IDLE_D_CLOCK_Y 		SCREEN_HEIGHT - BOTTOMBAR_HEIGHT - 30
+#define IDLE_D_CLOCK_Y 		SCREEN_HEIGHT - BOTTOMBAR_HEIGHT - 15
 #else
 #define IDLE_D_CLOCK_Y 		25
 #endif
@@ -107,7 +107,7 @@ extern boolean   IsRunAsFactoryTestMode(void);
 
 #define DATA_X				5
 #ifdef FEATURE_VERSION_HITZ181
-#define DATA_Y				SCREEN_HEIGHT - BOTTOMBAR_HEIGHT - 30
+#define DATA_Y				SCREEN_HEIGHT - BOTTOMBAR_HEIGHT - 15
 #else
 #define DATA_Y				36
 #endif
@@ -2831,24 +2831,27 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
             	//Add By zzg 2010_10_14
             	case AVK_MUSIC:		//现在外壳上位置相反，所以和FM区分
+            	#ifdef FEATURE_VERSION_HITZ181
+            		return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+            	#else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+			    #endif
 				case AVK_FM:
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
             	//Add End
 #endif
 				case AVK_TV:
+				
 					{
 						return TRUE;
 					}
                 case AVK_UP:
                 case AVK_MESSAGE:
-#ifdef FEATURE_VERSION_HITZ181
-					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
-#else
+
 #if defined(FEATURE_WMS_APP)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif
-#endif
+
                 case AVK_DOWN:
 				{
 //#if !defined(FEATURE_PROJECT_W022) && !defined(FEATURE_PROJECT_W021) && !defined(FEATURE_PROJECT_W021_128x160) && !defined (FEATURE_PROJECT_W021_176X220) && !defined (FEATURE_PROJECT_W021_240X320)&& !defined (FEATURE_PROJECT_W021_220X176) && !defined (FEATURE_PROJECT_W021_320X240)

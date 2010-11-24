@@ -455,7 +455,7 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
 	{HS_F2_K,					    AVK_DOWN,						AVK_METHED_HOLD, FALSE, 1},
 	#else
 	{HS_F1_K,					    AVK_MESSAGE,				    AVK_METHED_HOLD, FALSE, 1},
-	{HS_F2_K,					    AVK_TV,						    AVK_METHED_HOLD, FALSE, 1},
+	{HS_F2_K,					    AVK_MUSIC,						    AVK_METHED_HOLD, FALSE, 1},
 	#endif
 	{HS_F3_K,					    AVK_CLR,						AVK_METHED_HOLD, FALSE, 1},
 	{HS_F4_K,					    AVK_MUTE,						AVK_METHED_HOLD, FALSE, 1},
