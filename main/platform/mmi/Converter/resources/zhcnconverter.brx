@@ -151,7 +151,7 @@
 	<STRING Id="1049" Name="IDS_AREA_ACRE">
 		<Text>英亩</Text>
 	</STRING>
-	<STRING Id="1050 Name="IDS_TEMPERATURE_C">
+	<STRING Id="1050" Name="IDS_TEMPERATURE_C">
 		<Text>摄氏度</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_TEMPERATURE_F">
