@@ -1646,6 +1646,7 @@ static boolean IDD_CONFIRM_Handler(void        *pUser,
     return FALSE;
 } // IDD_CONFIRM_Handler
 
+
 /*==============================================================================
 函数:
     IDD_MESSAGELIST_Handler
@@ -1926,7 +1927,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
         case EVT_KEY:
             {
                 int nCount = IMENUCTL_GetItemCount(pMenu);
-                
+				
                 switch(wParam)
                 {
                     case AVK_DOWN:
@@ -1934,7 +1935,6 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                         {
                             return TRUE;
                         }
-                        
                         if (IMENUCTL_GetItemID(pMenu, nCount -1) == 
                             IMENUCTL_GetSel(pMenu))
                         {
@@ -1952,6 +1952,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                         return TRUE;
                         
                     case AVK_UP:
+						
                         if (IMENUCTL_GetItemID(pMenu, 0) == 
                             IMENUCTL_GetSel(pMenu))
                         {
@@ -2020,7 +2021,44 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                     
                         }
                         return TRUE;
-                        
+//miaoxiaoming add , press send key at messagelist page,then dial out  						
+#ifdef CUST_EDITION
+					case AVK_SEND:
+					{
+						wms_cache_info_node *pNode;
+						AECHAR  wstrNum[MAX_PH_DIGITS+1];
+						wms_message_index_type wIndex = 0;
+						
+						if (pMe->m_eMBoxType == WMS_MB_INBOX)
+						{				
+						
+							pMe->m_wPrevMenuSel = IMENUCTL_GetSel(pMenu);
+							pMe->m_wCurindex = pMe->m_wPrevMenuSel - MSG_CMD_BASE;
+							wIndex = pMe->m_wCurindex;
+                
+			                // 取消息 cache info 节点
+			                if (wIndex>=RUIM_MSGINDEX_BASE)
+			                {
+			                    wIndex = wIndex - RUIM_MSGINDEX_BASE;
+			                    pNode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_RUIM, wIndex);
+			                }
+			                else
+			                {
+			                    pNode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_NV_CDMA, wIndex);
+			                }
+													
+							(void)STRTOWSTR(pNode->pszNum, wstrNum, sizeof(wstrNum));
+							
+							if (WSTRLEN(wstrNum) > 0)
+		                    {
+		                        // 调用呼叫接口，本 Applet 会被挂起，返回时回到当前状态
+		                        WMSExtApp_CallPhoneNumber(pMe,wstrNum, FALSE);
+		                    }
+							return TRUE;
+						}
+						return TRUE;
+					}
+#endif                        
                     default: 
                         break;
                 }
