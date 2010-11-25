@@ -4630,7 +4630,10 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
-            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);            
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);     
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
             break;            
             
         case OEM_MODE_T9_MT_ENGLISH_LOW:
@@ -4640,7 +4643,10 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #else
             pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
-            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL);            
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL);  
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
             break;
 
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH  //add by yangdecai 2010-0909
@@ -4649,6 +4655,9 @@ static void OEM_SetInputMode(CTextCtl * pme)
 			wMode = AEE_TM_CAPLOWER;//大小写字母输入模式
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
 			//OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);  
+			(void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
 			break;
 #endif
         case OEM_MODE_T9_MT_ENGLISH_UP:
@@ -4664,7 +4673,10 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW         
-            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS);            
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
             break;            
 #endif //FEATURE_T9_MT_ENGLISH
 
@@ -4704,7 +4716,10 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW			
-            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL);             
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL);   
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
             break;
 
         case OEM_MODE_T9_RAPID_ENGLISH_UP:
@@ -4720,7 +4735,10 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
-            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS);              
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS);   
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
             break;            
 #endif //FEATURE_MODE_T9_RAPID_ENGLISH
 
