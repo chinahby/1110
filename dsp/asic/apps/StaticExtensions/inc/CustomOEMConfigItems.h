@@ -433,6 +433,12 @@ enum{
     CFGI_DL_FLAGS,
     CFGI_TV_OR_CAMERA,
     CFGI_TV_SETCHANNL,
+    //Add By zzg 2010_11_22
+#ifdef FEATURE_APP_BLUETOOTH
+	CFGI_BT_STATUS,
+#endif
+	//Add End
+	
 #ifdef FEATURE_LONG_NETLOCK
 	CFGI_NET_LOCK_FLAGS,
 #endif

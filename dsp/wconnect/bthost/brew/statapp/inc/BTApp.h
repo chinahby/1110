@@ -455,6 +455,9 @@ when        who   what, where, why
 #include "Btapp.brh"
 //Add End
 
+#include "AEEConfig.h"		//Add By zzg 2010_11_23
+
+
 
 #ifdef FEATURE_BT_EXTPF_HID_HOST
 #error code not present
@@ -1852,7 +1855,8 @@ typedef struct _CBTApp
   IStatic*        m_pStatic;
   ITextCtl*       m_pText;
 
-  IAnnunciator    *m_pIAnn;	//Add By zzg 2010_10_29
+  IAnnunciator    *m_pIAnn;		//Add By zzg 2010_10_29
+  IConfig         *m_pConfig;	//Add By zzg 2010_11_23 
 
   BTAppMenuType   menuStack[ MENU_STACK_DEPTH ];
   uint16          uMenuSel[ MENU_STACK_DEPTH ];

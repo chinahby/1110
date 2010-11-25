@@ -396,7 +396,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     MSG_FATAL("IANNUNCIATOR_SetFieldIsActiveEx::::croeapp111:::",0,0,0);
     IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
     CoreTask_SetPwrDnComplete(FALSE);
-    
+
     if( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
     {
         return FALSE;
@@ -540,6 +540,20 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 				extern void EnableUIKeys (boolean flag);
             	EnableUIKeys(TRUE);
 			}
+
+//Add By zzg 2010_11_25				
+#ifdef FEATURE_APP_BLUETOOTH 
+			{
+				boolean bt_status = FALSE;
+				ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
+
+				if (TRUE == bt_status)
+				{
+					ISHELL_StartBackgroundApplet(pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP, NULL); 					
+				}
+			}
+#endif
+//Add End			
             
             (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
                                   RESETPROFILE_TIME,

@@ -370,18 +370,16 @@ int OEMBTExtOPP_Register( IBTExtOPP*     pParent,
   bt_cmd_status_type stat;
   OEMBTExtOPPobj_t   *pMe;
 
-  MSG_FATAL("***zzg OEMBTExtOPP_Register***", 0, 0, 0);
+ 
   
   if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                       (OEMINSTANCE*)&pMe ) != TRUE )
   {
-  	MSG_FATAL("***zzg OEMBTExtOPP_Register EFAILED***", 0, 0, 0);
     return EFAILED;
   }
 
   if ( pszServiceName == NULL )
   {
-  	MSG_FATAL("***zzg OEMBTExtOPP_Register EBADPARM***", 0, 0, 0);
     return EBADPARM;
   }
   if ( pMe->state > AEEBT_OPP_STATE_INIT )
@@ -398,7 +396,7 @@ int OEMBTExtOPP_Register( IBTExtOPP*     pParent,
     pMe->supportedFormat = supportedFormat;
   }
   
-  MSG_FATAL("***zzg OEMBTExtOPP_Register  stat=%d***", stat, 0, 0);
+  MSG_FATAL("***zzg OEMBTExtOPP_Register  stat=%x***", stat, 0, 0);
   
   return OEMBTExtOPP_CheckCmdStatus( stat );
 }
@@ -2111,6 +2109,8 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
       // driver is responsible to make sure it is of a type supported by server
       bt_pf_ev_opp_srv_open_write_req_type* pEvt =
         &ev_msg_ptr->ev_msg.ev_opp_srv_open_write_req;
+
+	  MSG_FATAL("***zzg BT_EV_PF_OPP_SRV_OPEN_WRITE_REQ conn_id=%x, state=%x***", pEvt->conn_id, pMe->state, 0 );
 
       MSG_LOW( "OPPEvCb: S open wr req, id=%x st=%x", 
                pEvt->conn_id, pMe->state, 0 );

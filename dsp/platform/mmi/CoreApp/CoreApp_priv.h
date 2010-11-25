@@ -83,7 +83,6 @@
 #include "core_ui.h"
 #include "AEECard.h"
 #include "AEEDeviceNotifier.h"
-
 /*==============================================================================
                                  
                                  宏定义和常数
@@ -617,6 +616,7 @@ typedef struct _CCoreApp
 	//wangliang add!
 	byte                m_active;
 	byte                m_CurProfile;      //当前情景模式
+
 } CCoreApp;
 
 /*==============================================================================

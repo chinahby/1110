@@ -1760,7 +1760,7 @@ boolean BTApp_FTPHandleSelection( CBTApp* pMe, uint16 sel )
       }
       else
       {
-        BTApp_ShowMessage( pMe, IDS_MSG_DEREG_SVR_FIRST, NULL, 0 );
+        //BTApp_ShowMessage( pMe, IDS_MSG_DEREG_SVR_FIRST, NULL, 0 );
       }
       break;
     }

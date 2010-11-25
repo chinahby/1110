@@ -2652,7 +2652,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 pMe->m_b_set_lock = FALSE;
             }
 #endif
-
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -5124,6 +5123,12 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     boolean missed_call_icon;
     //static boolean b_flag = TRUE;
 
+	//Add By zzg 2010_11_22
+#ifdef FEATURE_APP_BLUETOOTH
+	boolean bt_status = FALSE;
+#endif
+	//Add End
+
 	/*
 	//Add for test
 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_WAP_ON);
@@ -5143,6 +5148,12 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&alertType, sizeof(alertType));//CFGI_ALERT_TYPE
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_MISSED_CALL_ICON,&missed_call_icon, sizeof(missed_call_icon));
+	
+	//Add By zzg 2010_11_22
+#ifdef FEATURE_APP_BLUETOOTH
+	ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS,&bt_status, sizeof(bt_status));
+#endif
+	//Add End
 
     if(pMe->m_pIAnn != NULL)
     {
@@ -5278,6 +5289,15 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     {
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL, ANNUN_STATE_CALL_MISSEDCALL_ON);
     }
+
+	//Add By zzg 2010_11_22
+#ifdef FEATURE_APP_BLUETOOTH
+	if((bt_status) && (pMe->m_pIAnn != NULL))
+    {
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_ON);
+    }
+#endif
+	//Add End
 }
 
 static void CoreApp_Process_Rtc_Event(CCoreApp *pMe)
