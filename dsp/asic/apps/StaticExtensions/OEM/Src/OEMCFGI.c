@@ -2708,9 +2708,10 @@ void OEM_RestoreFactorySetting( void )
 
    //Add By zzg 2010_10_22
 #ifdef FEATURE_APP_BLUETOOTH
-   oemi_cache.bt_status = 0;
+	oemi_cache.bt_status = 0;
 #endif
    //Add End
+
 #ifdef FEATURE_PLANEMODE
    oemi_cache.planeMode = OEMNV_PLANEMODE_OFF;
 #endif

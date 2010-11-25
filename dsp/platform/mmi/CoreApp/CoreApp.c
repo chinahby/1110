@@ -549,7 +549,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
 				if (TRUE == bt_status)
 				{
-					ISHELL_StartBackgroundApplet(pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP, NULL); 					
+					ISHELL_StartBackgroundApplet(pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP, "InitBT"); 					
 				}
 			}
 #endif

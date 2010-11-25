@@ -2444,7 +2444,7 @@ boolean BTApp_EnableOPP(
   boolean bOPPEnabled = FALSE;
   int result;
 
-  if ( pMe->mOPP.bServerEnable == TRUE )
+  //if ( pMe->mOPP.bServerEnable == TRUE )		//Del By zzg 2010_11_25
   {
 
 #ifdef FEATURE_BT_2_1
@@ -2474,7 +2474,7 @@ boolean BTApp_EnableOPP(
       MSG_LOW( "EnableOPP - enabling OPP", 0, 0, 0 );
       if ( (result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL, 
                                          szServerNameOPP )) != SUCCESS )
-      {
+      {		
         MSG_ERROR( "OPP_Register() failed with %x", result, 0, 0 );
         BTApp_ClearBondable( pMe ); // no need to be bondable anymore
       }
@@ -2490,6 +2490,7 @@ boolean BTApp_EnableOPP(
       }
     }
   }  
+
   return bOPPEnabled;
 }
  
