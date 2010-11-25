@@ -4867,6 +4867,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
     }
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+#if defined(FEATURE_LANG_THAI)||defined(FEATURE_LANG_CHINESE)
     //draw line
     if(pme->m_dwOemProps & OEMMP_GRAPHIC_UNDERLINE)
     {
@@ -4890,7 +4891,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
             IIMAGE_Release(underline);
         }
     }
-    
+#endif
 #endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 
    // Reset the background color - it may have changed above...
