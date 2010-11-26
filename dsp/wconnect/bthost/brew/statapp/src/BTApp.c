@@ -2461,7 +2461,7 @@ static boolean BTApp_HandleEvent
 					MSG_FATAL("***zzg EVT_APP_START_BACKGROUND ResetBT Factory***", 0, 0, 0);
 					BTApp_DisableBT(pMe);	
 				}
-			}
+			}			
 		}		
 		
 		pMe->bFirstLaunch = FALSE;
@@ -2488,8 +2488,15 @@ static boolean BTApp_HandleEvent
 		//Add By zzg 2010_11_08
     	if ((args != NULL) && (args->pszArgs != NULL))	//file send via bluetooth
     	{
-    		pMe->bStartFromOtherApp	= TRUE;		
-    		BTApp_SaveSendFilePath(pMe, args->pszArgs);				
+    		if (STRNCMP(args->pszArgs,"GetFile",7) == 0)		//Get File
+			{
+				BTApp_DisableBT(pMe);
+			}
+			else	//SendFile
+			{
+	    		pMe->bStartFromOtherApp	= TRUE;		
+	    		BTApp_SaveSendFilePath(pMe, args->pszArgs);				
+			}
     	}
     	//Add End				
 	  
@@ -11873,6 +11880,12 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
       if ( TOP_MENU == BT_APP_MENU_MAIN )
       {
         MSG_FATAL("***zzg BTApp_HandleSelection BTApp_EnableBT***",0,0,0);
+
+//Add By zzg 201011_26
+#ifdef FEATURE_BT_EXTPF_OPP
+  		pMe->mEnablingType = BTAPP_ENABLING_OPP;
+#endif 
+//Add End		
         BTApp_EnableBT( pMe );
       }
       break;

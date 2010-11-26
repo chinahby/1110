@@ -2174,6 +2174,12 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 	  
     case EVT_OPP_PUSH_REQ:
     {
+	  MSG_FATAL("***zzg BTApp_OPPHandleUserEvents EVT_OPP_PUSH_REQ***", 0, 0, 0);
+
+	  //Add By zzg 2010_11_25
+	  ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP, "GetFile");
+	  //Add End
+	  
       BTApp_OPPPull( pMe );
       break;
     }
@@ -2332,6 +2338,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 		
         BTApp_OPPPull( pMe );
       }
+
       break;
     }
     case EVT_OPP_OBJ_PUSH_FAILED:
@@ -2360,6 +2367,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
           BTApp_ShowMessage( pMe, msgID, wDefaultObjectName, 2 );
         }
       }
+	  
       break;
     }
     case EVT_OPP_OBJ_PULLED:
@@ -2404,7 +2412,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       if ( pMe->mOPP.bRegistered != TRUE  )
       {
         BTApp_ShowMessage( pMe, msgID, pMe->mOPP.wName, 2 );
-      }
+      }	  
       break;
     }
     default:
@@ -2443,6 +2451,8 @@ boolean BTApp_EnableOPP(
 {
   boolean bOPPEnabled = FALSE;
   int result;
+
+  MSG_FATAL("***zzg BTApp_EnableOPP***", 0, 0, 0);
 
   //if ( pMe->mOPP.bServerEnable == TRUE )		//Del By zzg 2010_11_25
   {
