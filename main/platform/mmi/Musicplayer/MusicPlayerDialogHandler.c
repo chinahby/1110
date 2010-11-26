@@ -513,8 +513,8 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-              MP3_Build_MainOpts_Menu(pMe,pMenuCtl);
-              return TRUE;
+            MP3_Build_MainOpts_Menu(pMe,pMenuCtl);
+            return TRUE;
             
         case EVT_DIALOG_START:
         {            
@@ -615,6 +615,20 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
                     
                 case IDS_PLAYLIST:
                     CLOSE_DIALOG(DLGRET_PLAYLIST);
+                    return TRUE;
+                    
+                case IDS_PLAYLIST_ADDMUSIC:
+                    if(pMe->m_nPlaylistMusicNum >= MUSIC_MAX_FILESNUM)
+                    { 
+                        CLOSE_DIALOG(DLGRET_ADDMUSIC_FAILED);
+                    }
+                    else
+                    {
+#ifndef WIN32
+                       CMediaGallery_RegisterCallback((PFNMGSELECTEDCB)MP3_AddMusicCB, pMe);
+                       CMediaGallery_FileExplorer(GALLERY_MUSIC_ADDLIST, NULL);
+#endif//WIN32
+                    }
                     return TRUE;
                     
                 case IDS_SET_AS_RINGTONE:
@@ -1682,17 +1696,17 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
                     return TRUE;
                     
                 case IDS_PLAYLIST_ADDMUSIC:
-                   if(pMe->m_nPlaylistMusicNum >= MUSIC_MAX_FILESNUM)
-                   { 
-                      CLOSE_DIALOG(DLGRET_ADDMUSIC_FAILED);
-                   }
-                   else
-                   {
+                    if(pMe->m_nPlaylistMusicNum >= MUSIC_MAX_FILESNUM)
+                    { 
+                        CLOSE_DIALOG(DLGRET_ADDMUSIC_FAILED);
+                    }
+                    else
+                    {
 #ifndef WIN32
                        CMediaGallery_RegisterCallback((PFNMGSELECTEDCB)MP3_AddMusicCB, pMe);
                        CMediaGallery_FileExplorer(GALLERY_MUSIC_ADDLIST, NULL);
 #endif//WIN32
-                   }
+                    }
                     return TRUE;
                     
                 case IDS_PLAYLIST_RENAME:
@@ -5379,6 +5393,7 @@ static void MP3_Build_MainOpts_Menu(CMusicPlayer *pMe,IMenuCtl *pMenuCtl)
       MP3MENU_ADDITEM(pMenuCtl,IDS_PAUSE);
     }
     MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST);
+    MP3MENU_ADDITEM(pMenuCtl,IDS_PLAYLIST_ADDMUSIC);
     MP3MENU_ADDITEM(pMenuCtl,IDS_SET_AS_RINGTONE);
     MP3MENU_ADDITEM(pMenuCtl,IDS_SETTINGS);
     if(pMe->m_bPlaying==TRUE)

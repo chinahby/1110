@@ -329,7 +329,16 @@ static NextFSMAction Handler_STATE_MAINOPTSMENU(CMusicPlayer *pMe)
             pMe->m_nCurPlaylistID = 0;
             MOVE_TO_STATE(STATE_PLAYLIST);
             break;
-
+            
+        case DLGRET_ADDMUSIC_FAILED:
+            pMe->m_eMsgType = MESSAGE_WARNNING;
+            if(SUCCESS != CMusicPlayer_ShowMsgBox(pMe, IDS_MSG_ADD_FAILED))
+            {
+                MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
+                return NFSMACTION_CONTINUE;
+            }
+            return NFSMACTION_WAIT;
+            
         case DLGRET_SETASRINGTONE:            
             MOVE_TO_STATE(STATE_SET_AS_RINGTONE);         
             break;

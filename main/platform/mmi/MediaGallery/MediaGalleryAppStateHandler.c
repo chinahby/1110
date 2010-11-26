@@ -585,11 +585,11 @@ static NextFSMAction MGStateMainMenuHandler(CMediaGalleryApp* pMe)
 				IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 			}
 			//Add End
-	  
+	        
             MGState_StartFileExplorer(pMe,
                                       MG_STMED_MASSCARD,
-                                      MG_MASSCARD_ROOTDIR,
-                                      //MG_MASSCARDMUSIC_PATH,
+                                      //MG_MASSCARD_ROOTDIR,
+                                      MG_MASSCARDMUSIC_PATH,
                                       MG_MIME_SNDBASE);
             MGMOVE_TO_STATE(pMe,STATE_MUSIC_ADD);
             break;

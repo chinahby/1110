@@ -610,28 +610,28 @@ int MGExplorer_EnumFoldersList(IFileMgr* pIFileMgr,
                                IVector* pFolderList,
                                boolean bRecursive)
 {
-   const char* pszFolder = cpszFilePath;
-   NodeName* foldername = NULL;
-   uint32 nIndex = 0;
-   uint32 nSize;
+    const char* pszFolder = cpszFilePath;
+    NodeName* foldername = NULL;
+    uint32 nIndex = 0;
+    uint32 nSize;
 #ifdef FEATURE_MG_LONGPATH
-   AEEFileInfoEx fi;
+    AEEFileInfoEx fi;
 #else
-   MGFileInfo fi;
+    MGFileInfo fi;
 #endif
 
-   if(!pIFileMgr || !cpszFilePath || !pFolderList)
-      return EBADPARM;
+    if(!pIFileMgr || !cpszFilePath || !pFolderList)
+        return EBADPARM;
 
  //  if(SUCCESS != IFILEMGR_Test(pIFileMgr, cpszFilePath))
  //     return EFAILED;
-   MEMSET(&fi, 0, sizeof(fi));
+    MEMSET(&fi, 0, sizeof(fi));
 #ifdef FEATURE_MG_LONGPATH
-   fi.nStructSize = sizeof(fi);
-   fi.nMaxFile = sizeof(foldername->m_szNodeName);
+    fi.nStructSize = sizeof(fi);
+    fi.nMaxFile = sizeof(foldername->m_szNodeName);
 #endif
 
-   MGExplorer_FreeVectorElements(pFolderList);
+    MGExplorer_FreeVectorElements(pFolderList);
 
     foldername = (NodeName*)MALLOC(sizeof(NodeName));
     if(NULL == foldername)
@@ -644,52 +644,52 @@ int MGExplorer_EnumFoldersList(IFileMgr* pIFileMgr,
     IVector_AddElement(pFolderList, (void*)foldername);
     nIndex++;
 
-   do{
-      if( SUCCESS == IFILEMGR_EnumInit(pIFileMgr, pszFolder, TRUE))
-      {
-         while(1)
-         {
-            foldername = (NodeName*)MALLOC(sizeof(NodeName));
-            if(NULL == foldername)
+    do{
+        if( SUCCESS == IFILEMGR_EnumInit(pIFileMgr, pszFolder, TRUE))
+        {
+            while(1)
             {
-               MG_FARF(ADDR, ("memory allocate failed!"));
-               return ENOMEMORY;
-            }
-            MEMSET (foldername, 0, sizeof(foldername));
+                foldername = (NodeName*)MALLOC(sizeof(NodeName));
+                if(NULL == foldername)
+                {
+                    MG_FARF(ADDR, ("memory allocate failed!"));
+                    return ENOMEMORY;
+                }
+                MEMSET (foldername, 0, sizeof(foldername));
 #ifdef FEATURE_MG_LONGPATH
-            fi.pszFile = foldername->m_szNodeName;
+                fi.pszFile = foldername->m_szNodeName;
 
-            if(TRUE == IFILEMGR_EnumNextEx(pIFileMgr, &fi))
-            {
+                if(TRUE == IFILEMGR_EnumNextEx(pIFileMgr, &fi))
+                {
 #else
-               if(TRUE == IFILEMGR_EnumNext(pIFileMgr, &fi))
-               {
-                  MEMCPY(foldername->m_szNodeName, fi.szName, sizeof(fi.szName));
+                if(TRUE == IFILEMGR_EnumNext(pIFileMgr, &fi))
+                {
+                    MEMCPY(foldername->m_szNodeName, fi.szName, sizeof(fi.szName));
 #endif
-                  MG_FARF(ADDR, ("Enum directory list, folder:%s", foldername));
-                  IVector_AddElement(pFolderList, (void*)foldername);
-               }
-               else
-               {
-                  /*Note: free it right, for it will be used by next statement, that get next folder*/
-                  FREEIF(foldername);
-                  break;
-               }
+                    MG_FARF(ADDR, ("Enum directory list, folder:%s", foldername));
+                    IVector_AddElement(pFolderList, (void*)foldername);
+                }
+                else
+                {
+                    /*Note: free it right, for it will be used by next statement, that get next folder*/
+                    FREEIF(foldername);
+                    break;
+                }
             }
-         }
+        }
 
-         nSize = IVector_Size(pFolderList);
+        nSize = IVector_Size(pFolderList);
 
-         if(nIndex < nSize)
-         {
+        if(nIndex < nSize)
+        {
             foldername = IVector_ElementAt(pFolderList, nIndex);
             pszFolder = foldername->m_szNodeName;
-         }
+        }
 
-         nIndex++;
-      }while(nIndex <= nSize && TRUE == bRecursive);
-
-   return SUCCESS;
+        nIndex++;
+    }while(nIndex <= nSize && TRUE == bRecursive);
+    
+    return SUCCESS;
 }//MGExplorer_EnumFoldersList
 
 /*===========================================================================
