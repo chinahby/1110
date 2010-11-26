@@ -49,7 +49,7 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0x9F);
     
     LCD_WRITE_CMD(0x36); //Set Scanning Direction
-    LCD_WRITE_DATA(0x68); // 0x60 For Old LCD
+    LCD_WRITE_DATA(0x60); // 0x60 For Old LCD 0x68 For New LCD
     
     LCD_WRITE_CMD(0xF2); //Enable Gamma bit
     LCD_WRITE_DATA(0x01);
