@@ -46,7 +46,10 @@
 
 #define SENDINGSMS_ANI      "fs:/image/notice/sendingsmslow.png"
 #endif
-#ifdef FEATURE_SUPPORT_ID
+#if defined(FEATURE_SUPPORT_ID)
+// 动画起点 Y 坐标
+#define SENDINGSMS_ANI_Y    10
+#elif defined(FEATURE_VERSION_HITZ181)
 // 动画起点 Y 坐标
 #define SENDINGSMS_ANI_Y    10
 #else
