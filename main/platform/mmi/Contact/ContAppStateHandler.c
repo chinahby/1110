@@ -2007,6 +2007,8 @@ static NextFSMAction Handler_STATE_FIND(CContApp *pMe)
 ==============================================================================*/
 static NextFSMAction Handler_STATE_FIND_LIST(CContApp *pMe)
 {
+	int wType = 0;
+    boolean bFlag = FALSE;
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
@@ -2056,7 +2058,109 @@ static NextFSMAction Handler_STATE_FIND_LIST(CContApp *pMe)
             
             MOVE_TO_STATE(STATE_FIND_OPTS);
             return NFSMACTION_CONTINUE;
-            
+        
+		case DLGRET_DELETE:
+					// Save the menu select
+					PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel); 
+					wType=0;
+					pMe->m_isdel = TRUE;
+					if(SUCCESS != CContApp_ShowYesNoDialog( pMe, 
+															IDS_YESNO_DELETEREC,
+															NULL,
+															-1))
+					{
+						MOVE_TO_STATE(STATE_EXIT);
+						return NFSMACTION_CONTINUE;
+					}
+					return NFSMACTION_WAIT;
+					
+					//MOVE_TO_STATE(STATE_DELETE);
+					break;
+	    case DLGRET_YES:
+            MSG_FATAL("DLGRET_YES................",0,0,0);
+            if (wType ==0)
+            {
+                if(SUCCESS == CContApp_DeleteCont(pMe, pMe->m_wEditCont))
+                {                    
+
+                    if(NULL != pMe->m_szAlpha)
+                    {
+                        // 是否是最后一条, 删除最后一条后返回选中倒数第二条，也就是上一条,主要此时IVector_Size(pMe->m_pAddList)还没有减
+                        if((pMe->m_nCurrSmartIdx + MAX_NUM_MENUPOP) == pMe->m_pSmartBufLen)
+                        {
+                            pMe->m_nCurrSmartIdx--;
+                        }
+                    }
+                    else
+                    {
+                        // 是否是最后一条, 删除最后一条后返回选中倒数第二条，也就是上一条,主要此时IVector_Size(pMe->m_pAddList)还没有减
+                        if((pMe->m_nCurrIdx + MAX_NUM_MENUPOP) == IVector_Size(pMe->m_pAddList))
+                        {
+                            //pMe->m_nCurrIdx--; 
+                            pMe->m_wMainListIdx--;
+                        }
+                    }
+                    
+                    pMe->m_bDelOk = TRUE;                    
+                    bFlag = TRUE;
+                }
+                else
+                {
+                    bFlag = FALSE;
+                }
+            }
+            else if (wType ==1)
+            {
+                if (IS_RUIM_REC(pMe->m_wEditCont) )
+                {
+                     if (SUCCESS == CContApp_CopyToPhone(pMe, pMe->m_wEditCont - CONTAPP_RUIM_START_IDX + 1))
+                    {
+                        bFlag = TRUE;
+                    }
+                    else
+                    {
+                        bFlag = FALSE;
+                    }
+                }
+                else
+                {
+                    if(SUCCESS == CContApp_CopyToRUIM(pMe, pMe->m_wEditCont))
+                    {
+                        bFlag = TRUE;                    
+                    }
+                    else
+                    {
+                        bFlag = FALSE;
+                    }                            
+                }            
+            }
+            if (TRUE == bFlag)
+            {
+                CContApp_Phonebook_Load(pMe);
+                pMe->m_eSuccessRetState = STATE_MAINLIST;
+                MOVE_TO_STATE(STATE_SUCCESS);
+            }
+            else
+            {
+                if (wType == 0)
+                {
+                    pMe->m_wErrStrID = IDS_ERR_DELETE;
+                }
+                else
+                {
+                    if(pMe->m_nCopyMoveType == SINGLECOPY)
+                    {
+                        pMe->m_wErrStrID = IDS_ERR_COPY;
+                    }
+                    else
+                    {
+                        pMe->m_wErrStrID = IDS_ERR_MOVE;
+                    }
+                }
+                MOVE_TO_STATE(STATE_ERROR);
+            }
+            //MOVE_TO_STATE(STATE_DELETE);		
+            break;
         case DLGRET_CALL:
             // store the menu select
             PUSH_LISTMENU_SEL(pMe->m_wFindListSel);
@@ -6350,7 +6454,8 @@ static NextFSMAction Handler_STATE_SAVEFLD(CContApp *pMe)
 static NextFSMAction Handler_STATE_SAVEFLD_LIST(CContApp *pMe)
 {
     int nRet;
-    
+    int wType = 0;
+    boolean bFlag = FALSE;
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
@@ -6415,7 +6520,108 @@ static NextFSMAction Handler_STATE_SAVEFLD_LIST(CContApp *pMe)
                 MOVE_TO_STATE(STATE_ERROR);
             }
             return NFSMACTION_CONTINUE;
-        
+        case DLGRET_DELETE:
+					// Save the menu select
+					PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel); 
+					wType=0;
+					pMe->m_isdel = TRUE;
+					if(SUCCESS != CContApp_ShowYesNoDialog( pMe, 
+															IDS_YESNO_DELETEREC,
+															NULL,
+															-1))
+					{
+						MOVE_TO_STATE(STATE_EXIT);
+						return NFSMACTION_CONTINUE;
+					}
+					return NFSMACTION_WAIT;
+					
+					//MOVE_TO_STATE(STATE_DELETE);
+					break;
+	    case DLGRET_YES:
+            MSG_FATAL("DLGRET_YES................",0,0,0);
+            if (wType ==0)
+            {
+                if(SUCCESS == CContApp_DeleteCont(pMe, pMe->m_wEditCont))
+                {                    
+
+                    if(NULL != pMe->m_szAlpha)
+                    {
+                        // 是否是最后一条, 删除最后一条后返回选中倒数第二条，也就是上一条,主要此时IVector_Size(pMe->m_pAddList)还没有减
+                        if((pMe->m_nCurrSmartIdx + MAX_NUM_MENUPOP) == pMe->m_pSmartBufLen)
+                        {
+                            pMe->m_nCurrSmartIdx--;
+                        }
+                    }
+                    else
+                    {
+                        // 是否是最后一条, 删除最后一条后返回选中倒数第二条，也就是上一条,主要此时IVector_Size(pMe->m_pAddList)还没有减
+                        if((pMe->m_nCurrIdx + MAX_NUM_MENUPOP) == IVector_Size(pMe->m_pAddList))
+                        {
+                            //pMe->m_nCurrIdx--; 
+                            pMe->m_wMainListIdx--;
+                        }
+                    }
+                    
+                    pMe->m_bDelOk = TRUE;                    
+                    bFlag = TRUE;
+                }
+                else
+                {
+                    bFlag = FALSE;
+                }
+            }
+            else if (wType ==1)
+            {
+                if (IS_RUIM_REC(pMe->m_wEditCont) )
+                {
+                     if (SUCCESS == CContApp_CopyToPhone(pMe, pMe->m_wEditCont - CONTAPP_RUIM_START_IDX + 1))
+                    {
+                        bFlag = TRUE;
+                    }
+                    else
+                    {
+                        bFlag = FALSE;
+                    }
+                }
+                else
+                {
+                    if(SUCCESS == CContApp_CopyToRUIM(pMe, pMe->m_wEditCont))
+                    {
+                        bFlag = TRUE;                    
+                    }
+                    else
+                    {
+                        bFlag = FALSE;
+                    }                            
+                }            
+            }
+            if (TRUE == bFlag)
+            {
+                CContApp_Phonebook_Load(pMe);
+                pMe->m_eSuccessRetState = STATE_MAINLIST;
+                MOVE_TO_STATE(STATE_SUCCESS);
+            }
+            else
+            {
+                if (wType == 0)
+                {
+                    pMe->m_wErrStrID = IDS_ERR_DELETE;
+                }
+                else
+                {
+                    if(pMe->m_nCopyMoveType == SINGLECOPY)
+                    {
+                        pMe->m_wErrStrID = IDS_ERR_COPY;
+                    }
+                    else
+                    {
+                        pMe->m_wErrStrID = IDS_ERR_MOVE;
+                    }
+                }
+                MOVE_TO_STATE(STATE_ERROR);
+            }
+            //MOVE_TO_STATE(STATE_DELETE);		
+            break;
         case DLGRET_CANCELED:
             MOVE_TO_STATE(STATE_EXIT);
             return NFSMACTION_CONTINUE;
@@ -7053,6 +7259,7 @@ static NextFSMAction Handler_STATE_SMARTCALL_VIEW(CContApp *pMe)
 // 状态 STATE_SEARCH 处理函数
 static NextFSMAction Handler_STATE_SEARCH(CContApp *pMe)
 {
+	
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
@@ -7091,7 +7298,7 @@ static NextFSMAction Handler_STATE_SEARCH(CContApp *pMe)
 
             MOVE_TO_STATE(STATE_MAINMENU);
             break;
-
+       
         case DLGRET_SEARCH_NAME:
             // Save the menu select
             PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel);
@@ -7136,6 +7343,7 @@ static NextFSMAction Handler_STATE_SEARCH(CContApp *pMe)
 ==============================================================================*/
 static NextFSMAction Handler_STATE_SEARCHNAME(CContApp *pMe)
 {
+	
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
@@ -7187,7 +7395,7 @@ static NextFSMAction Handler_STATE_SEARCHNAME(CContApp *pMe)
             FREEIF(pMe->m_szAlpha);
             MOVE_TO_STATE(STATE_FIND_LIST);
             break;
-            
+        
         case DLGRET_MSGBOX_OK:
             // ReLoad contacts
             if(SUCCESS != CContApp_LoadPhoneBook(pMe, pMe->m_nViewType))
