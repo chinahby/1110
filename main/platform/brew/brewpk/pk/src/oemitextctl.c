@@ -1788,7 +1788,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
             	IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色
             	IDISPLAY_DrawText(pme->m_pIDisplay,
                 AEE_FONT_BOLD,Shiftbuf, -1,
-                qrc.x, qrc.y,&qrc,IDF_TEXT_TRANSPARENT | IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER);
+                qrc.dx-60, qrc.y,&qrc,IDF_TEXT_TRANSPARENT);
                 IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色
             }
             #endif
