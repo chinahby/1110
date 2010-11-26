@@ -4867,7 +4867,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
     }
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
-#if defined(FEATURE_LANG_THAI)||defined(FEATURE_LANG_CHINESE)
+#if defined(FEATURE_LANG_THAI)
     //draw line
     if(pme->m_dwOemProps & OEMMP_GRAPHIC_UNDERLINE)
     {
