@@ -39,7 +39,7 @@
          OEM_DBRecordUpdate
          OEM_DBFree
 
-        Copyright ? 1999-2002 QUALCOMM Incorporated.
+        Copyright ?1999-2002 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 
@@ -48,20 +48,23 @@
 #include "OEMFeatures.h"
 
 #if defined (OEMDB)
-#include "AEE.h"
-#include "AEEStdLib.h"
-#include "AEE_OEM.h"
-#include "AEEShell.h"
 #include "OEMHeap.h"
-#include "AEEDB.h"
 #include "OEMDB.h"
+#include "OEMStdLib.h"
+#include "AEE_OEM.h"
+#include "AEE_OEMFile.h"
 #include "AEEFile.h"
 #include "AEEHeap.h"
-
+#include "AEEDB.h"
 
 //#define DBG_DB                   1
-#define OEM_IDX_EXT              ".idx"
-#define DB_COMPRESS_THRESHOLD    0     // Compress database when 5 "junk" records
+//#define OEM_IDX_EXT                 ".idx"
+#define DB_COMPRESS_PERCENT         50    // Compress database when "junk" records are 50% of good records
+#define DB_COMPRESS_COUNT           5     // Don't compress unless this many records are deleted
+#define DB_INCREASE_SIZE            16	   // Increment used for increasing size of index
+#define DB_COMPRESSION_TIME_SLICE   250   // Number of milliseconds to do data base compression in one resume
+#define NULL_REC_MAGIC_NUM          0x1a2b3c4d // for null recs > 0xffff bytes.
+#define MAX_REC_SIZE                0xffff     // maximum size of a record.
 
 #ifdef _MSC_VER 
 #pragma pack(push,1) 
@@ -72,22 +75,45 @@ typedef struct _OEMDBase   OEMDBase;
 typedef PACKED struct _oemdb_header
 {
    word      wCurRecCount;   // Current record id
-   word      wMaxRecID;      // Max. value for Record ID in this database
-   dword     dwIndexOffset;  // offset of the index region (for RO databases)
+   word      wLastAssignedRecID;      // Max. value for Record ID in this database
+   dword     dwIndexOffset;  // offset into the file of the index
 } oemdb_header;
 
+// Entry in index
+typedef struct _index_entry
+{
+   uint32     recID;     // record id
+   uint32     dwOffset;  // offset of record header in data file
+} index_entry;
 
-PACKED struct _OEMDBase 
+// Header info for index
+typedef PACKED struct _index_header
+{
+   word      recCount; // number of records in index
+   word      delCount; // number of deleted records
+} index_header;
+
+// Index (used for locating records in data file)
+typedef struct _db_index
+{
+   index_header  h;         // index header
+   index_entry   e[1];       // entries
+} db_index;
+
+struct _OEMDBase 
 {
    OEMDBase *     pNext;                    // Pointer to Next Database
    oemdb_header   h;
    int            nCacheSize;
-   int            nIdxCacheSize;
-   char           szDBName[MAX_FILE_NAME];  // name of the db
+   char           *pszFullPath;              // name of the db
    IFile*         pDBFile;                  // data file handle
-   IFile*         pIdxFile;                 // Index file handle
+   db_index*      pIndex;					// an array of offsets into data file
+   int            refCount;            // reference count for muliple instances of same file
+   AEECallback    cb;                  // Callback
+   uint32         dwOffsetFrom;        // Location to start compression from
+   uint32         dwOffsetTo;          // Location to start compression to
+   word           indexAlloc;               // number of entries allocated for index, >= record count, extras at end
 };
-
 
 typedef PACKED struct _oemdb_rec_header
 {
@@ -99,7 +125,7 @@ typedef PACKED struct _oemdb_rec_header
 #pragma pack(pop) 
 #endif
 
-typedef dword  oemdb_index;
+//typedef dword  oemdb_index;
 
 
 //=============== Function Prototypes ======================
@@ -110,17 +136,23 @@ static boolean    CreateDBContext(OEMDBase **pdb);
 static IFileMgr * GetFileMgr(void);
 static void       ReleaseFileMgr(IFileMgr *pFileMgr);
 static word       GetNewRecordID(OEMDBase *pdb);
+static AEE_DBError LoadIndex(OEMDBase *pdb);
+static void       RemoveIndexFromFile(OEMDBase *pdb);
+static int        CmpRecID(const void *p1, const void *p2);
 
 static IFile *    DB_OpenFile(IFileMgr * pfm,const char * pszFile,int nCacheSize, AEEOpenFileMode m);
 
-static void       DB_Release(OEMDBase *pdb);
-static void       DB_CheckCompress(OEMDBase *pdb, IFileMgr * pfm);
-static void       DB_PopulateIdxFile(OEMDBase *pdb); 
-static word       DB_VerifyIdxFile(OEMDBase *pdb);
-static dword      DB_GetIdxRecOffset(OEMDBase *pdb, word wRecId);
-static int        DB_AddUpdateRec(OEMCONTEXT pdb,word wRecID,const byte * pbBuf,word wBufSize,AEE_DBError*  pDBErr);
-static byte *     DB_GetRecord(OEMCONTEXT pDBContext,word wRecId,AEE_DBRecInfo*   pRecInfo,AEE_DBError* pDBErr, uint32 * pdwOffset);
-static boolean    DB_ReadRecHeader(OEMDBase * pdb, uint32 dwOffset, oemdb_rec_header * ph,AEE_DBError* pDBErr);
+static void          DB_Release(OEMDBase *pdb);
+static void          DB_CheckCompress(OEMDBase *pdb);
+static void          DB_Compress(OEMDBase *pdb);
+static AEE_DBError   DB_PopulateIdx(OEMDBase *pdb); 
+static dword         DB_GetIdxRecOffset(OEMDBase *pdb, word wRecId);
+static AEE_DBError   DB_SetIdxRecOffset(OEMDBase *pdb, word wRecId, dword offset);
+static boolean       DB_FindIdxRec(OEMDBase *pdb, word wRecId, word *pResult);
+static int           DB_AddUpdateRec(OEMCONTEXT pdb,word wRecID,const byte * pbBuf,word wBufSize,AEE_DBError*  pDBErr);
+static byte *        DB_GetRecord(OEMCONTEXT pDBContext,word wRecId,AEE_DBRecInfo*   pRecInfo,AEE_DBError* pDBErr, uint32 * pdwOffset);
+static boolean       DB_ReadRecHeader(OEMDBase * pdb, uint32 dwOffset, oemdb_rec_header * ph,AEE_DBError* pDBErr);
+static void          DB_MarkRecordDelete(OEMDBase *pdb, word  wRecId, AEE_DBError* pDBErr);
 
 //=============== End Function Prototypes ==================
 
@@ -139,7 +171,7 @@ OEM_DBOpen
    create the database.
 
    Prototype:
-   OEMCONTEXT   OEM_DBOpen(const char* szDBName, AEE_DBError* pDBErr)
+   OEMCONTEXT OEM_DBOpen(const char* szDBName, AEE_DBError* pDBErr)
 
    Parameter(s):
    szDBName: char*        Name of the database to be opened
@@ -161,39 +193,67 @@ OEM_DBOpen
    OEM_DBCreate
               
 ============================================================================*/
-OEMCONTEXT   OEM_DBOpen(const char* szDBName,AEE_DBError* pDBErr)
+OEMCONTEXT OEM_DBOpen(const char* szDBName,AEE_DBError* pDBErr)
 {
-   return(OEM_DBOpenEx(szDBName,0,pDBErr));
+   return(OEM_DBOpenEx(szDBName,SCS_DEFAULT,pDBErr));	// Open with default file caching
 }
 
-OEMCONTEXT   OEM_DBOpenEx(const char* szDBName,int nCacheSize, AEE_DBError* pDBErr)
+OEMCONTEXT OEM_DBOpenEx(const char* pszDB,int nCacheSize, AEE_DBError* pDBErr)
 {
   
    OEMDBase *     pdb = NULL; //New database context
    IFileMgr *     pfm = NULL; //File Manager Pointer
-   char           szIdxFileName[MAX_FILE_NAME]; // Name of the index file
+   AEE_DBError    error = AEE_DB_ERR_NO_ERR;
+   char *         pszFullPath;
    
    //If the name given is NULL, we just get the heck out of here
 
-   if (szDBName == NULL) {
+   if (pszDB == NULL) {
       SetDBError(pDBErr, AEE_DB_ERR_NOT_EXIST);
       return(NULL);
    }
- 
+
+   {
+      int nFullPathLen;
+
+      if (SUCCESS != AEE_ResolvePath(pszDB, 0, &nFullPathLen)) {
+         SetDBError(pDBErr, AEE_DB_ERR_OTHER_FS_ERR);
+         return(NULL);         
+      }
+
+      pszFullPath = sys_malloc(nFullPathLen);
+
+      if ((char *)0 == pszFullPath) {
+         SetDBError(pDBErr, AEE_DB_ERR_NO_MEMORY);
+         return(NULL);
+      }
+      
+      if (SUCCESS != AEE_ResolvePath(pszDB, pszFullPath, &nFullPathLen)) {
+         sys_free(pszFullPath);
+         SetDBError(pDBErr, AEE_DB_ERR_OTHER_FS_ERR);
+         return(NULL);         
+      }
+   }
+
    //Now let's check if the database is already open
-   //and if it is, get out of here
-   if (FindOpenDatabase(szDBName, (OEMCONTEXT *) &pdb)) {
-      SetDBError(pDBErr, AEE_DB_ERR_ALREADY_OPEN);
-      return(NULL);
+   //and if it is, increment reference count and we're done!
+   if (FindOpenDatabase(pszFullPath, (OEMCONTEXT *) &pdb)) {
+      pdb->refCount++;
+      sys_free(pszFullPath);
+      SetDBError(pDBErr, AEE_DB_ERR_NO_ERR);
+      return ((OEMCONTEXT) pdb);
    }
    
    
    // Now create a new DB context
 
    if (!CreateDBContext(&pdb)) {
+      sys_free(pszFullPath);
       SetDBError(pDBErr, AEE_DB_ERR_TOO_MANY_DB);
       return(NULL);
    }
+
+   pdb->pszFullPath = pszFullPath;
    
    //Create the file manager
 
@@ -205,14 +265,10 @@ OEMCONTEXT   OEM_DBOpenEx(const char* szDBName,int nCacheSize, AEE_DBError* pDBE
    }
 
    pdb->nCacheSize = nCacheSize;
-   if(nCacheSize)
-      pdb->nIdxCacheSize = SCS_MIN;
-   else
-      pdb->nIdxCacheSize = 0;
 
    // Let's open the file now.
 
-   if((pdb->pDBFile = DB_OpenFile(pfm,(const char *)szDBName,nCacheSize, _OFM_READWRITE)) == NULL) {
+   if((pdb->pDBFile = DB_OpenFile(pfm,(const char *)pszFullPath,nCacheSize, _OFM_READWRITE)) == NULL) {
       SetDBError(pDBErr, AEE_DB_ERR_NOT_EXIST);
       //Release the DB context 
       ReleaseFileMgr(pfm);
@@ -230,37 +286,16 @@ OEMCONTEXT   OEM_DBOpenEx(const char* szDBName,int nCacheSize, AEE_DBError* pDBE
       return(NULL);
    }
    
-   // Add the database name to the context structure
+   // Load index into RAM
 
-   strcpy(pdb->szDBName, szDBName);
+   error = LoadIndex(pdb);
 
-   // If this is a read-write (not read-only) database, let's create the 
-   // index file name from the database name.
-
-   if (!pdb->h.dwIndexOffset) {
-      
-      strcpy(szIdxFileName, szDBName);
-      strcat(szIdxFileName, OEM_IDX_EXT);
-
-      //Open the index file for this database. If index file is missing,
-      //we'll just create a new one.
-
-      pdb->pIdxFile = DB_OpenFile(pfm, (const char *)szIdxFileName,pdb->nIdxCacheSize,_OFM_READWRITE);
-      
-      if (pdb->pIdxFile == NULL) {
-         
-         pdb->pIdxFile = DB_OpenFile(pfm, (const char *)szIdxFileName,pdb->nIdxCacheSize, _OFM_CREATE);
-         
-         if (pdb->pIdxFile == NULL) {
-            SetDBError(pDBErr, AEE_DB_ERR_NO_FS_SPACE);
-            ReleaseFileMgr(pfm);
-            DB_Release(pdb);
-            return(NULL);
-         }
-         DB_PopulateIdxFile(pdb);
-      }
-      else 
-         DB_CheckCompress(pdb,pfm);
+   if (error)
+   {
+		SetDBError(pDBErr, error);
+        ReleaseFileMgr(pfm);
+        DB_Release(pdb);
+        return(NULL);   
    }
 
    //Set error code to success, release the file manager and return
@@ -323,7 +358,7 @@ OEM_DBCreate
 
 ============================================================================*/
 OEMCONTEXT   OEM_DBCreate(
-                       const char* szDBName, // name of the database
+                       const char* pszDB, // name of the database
                        word  wMinRecCount,    // minimum number of records
                        word  wMinRecSize,     // minimum size of each record
                        AEE_DBError* pDBErr    // error status
@@ -332,36 +367,62 @@ OEMCONTEXT   OEM_DBCreate(
    OEMDBase *     pdb = NULL; //New database context
    oemdb_header   DBHeader; //Struct into which the DB header (from file)
    IFileMgr *     pfm = NULL; //File Manager Pointer
-   char           szIdxFileName[MAX_FILE_NAME]; // Name of the index file
+   char *         pszFullPath;
    
    //If the name given is NULL, we just get the heck out of here
 
-   if (szDBName == NULL) {
+   if (pszDB == NULL) {
       SetDBError(pDBErr, AEE_DB_ERR_NOT_EXIST);
       return(NULL);
    }
 
    //If the filename is an empty string, get out
 
-   if (!strlen(szDBName)) {
+   if (!STRLEN(pszDB)) {
       SetDBError(pDBErr, AEE_DB_ERR_NOT_EXIST);
       return(NULL);
    }
    
-   
+   {
+      int nFullPathLen;
+
+      if (SUCCESS != AEE_ResolvePath(pszDB, 0, &nFullPathLen)) {
+         SetDBError(pDBErr, AEE_DB_ERR_OTHER_FS_ERR);
+         return(NULL);         
+      }
+
+      pszFullPath = sys_malloc(nFullPathLen);
+
+      if ((char *)0 == pszFullPath) {
+         SetDBError(pDBErr, AEE_DB_ERR_NO_MEMORY);
+         return(NULL);
+      }
+      
+      if (SUCCESS != AEE_ResolvePath(pszDB, pszFullPath, &nFullPathLen)) {
+         sys_free(pszFullPath);
+         SetDBError(pDBErr, AEE_DB_ERR_OTHER_FS_ERR);
+         return(NULL);         
+      }
+   }
+         
    //Now let's check if the database file already exists, and if it does,
    //return an error.
-   if (FindOpenDatabase(szDBName, (OEMCONTEXT *) &pdb)) {
+
+   if (FindOpenDatabase(pszFullPath, (OEMCONTEXT *) &pdb)) {
+      sys_free(pszFullPath);
       SetDBError(pDBErr, AEE_DB_ERR_ALREADY_OPEN);
       return(NULL);
    }
    
    // Now get a free DB context
    if (!CreateDBContext(&pdb)) {
+      sys_free(pszFullPath);
       SetDBError(pDBErr, AEE_DB_ERR_TOO_MANY_DB);
       return(NULL);
    }
    
+   pdb->pszFullPath = pszFullPath;
+
    //Create the file manager
    pfm = GetFileMgr();
    if (!pfm) {
@@ -371,7 +432,7 @@ OEMCONTEXT   OEM_DBCreate(
    }
 
    // Let's open the file now.
-   if((pdb->pDBFile = DB_OpenFile(pfm, (const char *)szDBName,pdb->nCacheSize, _OFM_CREATE)) == NULL) {
+   if((pdb->pDBFile = DB_OpenFile(pfm, (const char *)pszFullPath,pdb->nCacheSize, _OFM_CREATE)) == NULL) {
       SetDBError(pDBErr, AEE_DB_ERR_ALREADY_EXIST);
       //Release the file manager
       ReleaseFileMgr(pfm);
@@ -381,8 +442,11 @@ OEMCONTEXT   OEM_DBCreate(
    }
    
    // Populate the active database struct.
-   strcpy(pdb->szDBName, szDBName);
-   pdb->h.wCurRecCount  = DBHeader.wCurRecCount  = 0;
+   //
+   // Note: Store the full path for the code that checks for open
+   // databases...
+
+   pdb->h.wCurRecCount = 0;
    MEMSET((void *)&DBHeader,0,sizeof(DBHeader));
    
    //Write the database header into the database file. This will also 
@@ -396,21 +460,20 @@ OEMCONTEXT   OEM_DBCreate(
       return(NULL);
    }
    
-   
-   // Let's create the index file name from the database name.
-   strcpy(szIdxFileName, szDBName);
-   strcat(szIdxFileName, OEM_IDX_EXT);
-   
-   //Create an index file for this new database.
-   pdb->pIdxFile = DB_OpenFile(pfm, (const char *)szIdxFileName,pdb->nIdxCacheSize, _OFM_CREATE);
-   if (pdb->pIdxFile == NULL) {
-      SetDBError(pDBErr, AEE_DB_ERR_NO_FS_SPACE);
+   // Create index
+   pdb->pIndex = (db_index*)sys_malloc(sizeof(index_header)+DB_INCREASE_SIZE*sizeof(index_entry));
+   if (!pdb->pIndex)
+   {
+      SetDBError(pDBErr, AEE_DB_ERR_NO_MEMORY);
       //Release the file manager
       ReleaseFileMgr(pfm);
       //Release the DB context
       DB_Release(pdb);
-      return(NULL);
+      return(NULL);   
    }
+   pdb->pIndex->h.recCount = 0;
+   pdb->pIndex->h.delCount = 0;
+   pdb->indexAlloc = DB_INCREASE_SIZE;   
    
    //Set error code to success, release file manager, and return
    SetDBError(pDBErr, AEE_DB_ERR_NO_ERR);
@@ -446,31 +509,51 @@ OEM_DBDelete
    None
 
 ============================================================================*/
-void   OEM_DBDelete(const char* szDBName, AEE_DBError* pDBErr)
+void   OEM_DBDelete(const char* cpszPath, AEE_DBError* pDBErr)
 {
    OEMCONTEXT  pDBContext = NULL;
    IFileMgr *  pfm = NULL;
-   char        szIdxFileName[MAX_FILE_NAME];
+   char *      pszFullPath;
    
    //If the name given is NULL, we just get the heck out of here
-   if (szDBName == NULL) {
+   if (cpszPath == NULL || !*cpszPath) {
       SetDBError(pDBErr, AEE_DB_ERR_NOT_EXIST);
       return;
    }
 
-   //If the filename is an empty string, get out
-   if (!strlen(szDBName)) {
-      SetDBError(pDBErr, AEE_DB_ERR_NOT_EXIST);
+   {
+      int nFullPathLen;
+
+      if (SUCCESS != AEE_ResolvePath(cpszPath, 0, &nFullPathLen)) {
+         SetDBError(pDBErr, AEE_DB_ERR_OTHER_FS_ERR);
+         return;
+      }
+
+      pszFullPath = sys_malloc(nFullPathLen);
+
+      if ((char *)0 == pszFullPath) {
+         SetDBError(pDBErr, AEE_DB_ERR_NO_MEMORY);
+         return;
+      }
+      
+      if (SUCCESS != AEE_ResolvePath(cpszPath, pszFullPath, &nFullPathLen)) {
+         sys_free(pszFullPath);
+         SetDBError(pDBErr, AEE_DB_ERR_OTHER_FS_ERR);
+         return;
+      }
+   }
+
+   //First check if the database is open. If it is, we can't close it
+
+   if (FindOpenDatabase(pszFullPath, &pDBContext)) 
+   {
+      sys_free(pszFullPath);
+      SetDBError(pDBErr, AEE_DB_ERR_ALREADY_OPEN);
       return;
    }
    
-   //First check if the database is open. If it is, close it
-   //There isn't much we can do if the close wasn't successful.
-   //We'll have to delete the file anyway
+   sys_free(pszFullPath);
 
-   if (FindOpenDatabase(szDBName, &pDBContext)) 
-      OEM_DBClose(pDBContext, pDBErr);
-   
    //Create the file manager
    pfm = GetFileMgr();
    if (!pfm) {
@@ -479,16 +562,8 @@ void   OEM_DBDelete(const char* szDBName, AEE_DBError* pDBErr)
    }
 
    //Delete the database file.
-   if (IFILEMGR_Remove(pfm, szDBName) == SUCCESS){
-   
-	   strcpy(szIdxFileName, szDBName);
-	   strcat(szIdxFileName, OEM_IDX_EXT);
-   
-	   //We can delete the index file because it was already closed (if it was open before)
-	   //when we closed the database
-	   IFILEMGR_Remove(pfm, szIdxFileName);
+   if (IFILEMGR_Remove(pfm, cpszPath) == SUCCESS)
 	   SetDBError(pDBErr, AEE_DB_ERR_NO_ERR);
-   }
    else
 	   SetDBError(pDBErr, AEE_DB_ERR_OTHER_FS_ERR);
 
@@ -538,13 +613,32 @@ void   OEM_DBClose(OEMCONTEXT pDBContext, AEE_DBError*  pDBErr)
       SetDBError(pDBErr, AEE_DB_ERR_DB_NOT_OPEN);
       return;
    }
+
+   if (--pdb->refCount > 0)
+   {
+      // There are still references to this. Can't close yet.
+      SetDBError(pDBErr, AEE_DB_ERR_NO_ERR);
+      return;
+   }
+
+   if (!pdb->h.dwIndexOffset)
+   {
+      // Need to write out index array
+      if (IFILE_Seek(pdb->pDBFile, _SEEK_END, 0) == SUCCESS)	// Go to end of file
+      {
+         pdb->h.dwIndexOffset = IFILE_Seek(pdb->pDBFile, _SEEK_CURRENT, 0);	// Get offset to end of file
+         if (IFILE_Write(pdb->pDBFile,pdb->pIndex,sizeof(index_header)+pdb->pIndex->h.recCount*sizeof(index_entry)) == 0)
+            // Write error. Indicate there is no index.
+            pdb->h.dwIndexOffset = 0;
+
+         // Write the updated database header to the file. It doesn't
+         // need to be written unless index changes
+         IFILE_Seek(pdb->pDBFile, _SEEK_START, 0);
+         
+         (void)IFILE_Write(pdb->pDBFile, &pdb->h, sizeof(oemdb_header));
+      }
+   }
    
-   //Write the updated database header to the file. This way,
-   //when we open it the next time, it will be a happy file.
-   //Move to beginning of file
-   IFILE_Seek(pdb->pDBFile, _SEEK_START, 0);
-   
-   IFILE_Write(pdb->pDBFile, &pdb->h, sizeof(oemdb_header));
    
    //Clear the open database structure and free all the assoc. memory
    // and closing the database file and index file
@@ -641,18 +735,15 @@ OEM_DBRecordGet
    Return Value: 
    If successful, returns a byte* pointing to the data stored in the specified
    record. This is a copy of the actual data stored. This memory has been
-   allocated from the heap. A subsequent call to get frees this memory and
-   reallocates the requisite amount for that operation. Therefore, after each
-   get call, the caller must copy the contents of the buffer returned to their
-   own buffer and call OEM_DBFreeGetMem.
+   allocated from the heap.
    If failed, returns NULL.
 
 
    Comments:
    None
-
+   
    See Also:
-   OEM_DBFreeGetMem
+   OEM_DBFree
 
 ============================================================================*/
 byte*  OEM_DBRecordGet(
@@ -669,7 +760,7 @@ static byte * DB_GetRecord(OEMCONTEXT pDBContext,word wRecId,AEE_DBRecInfo*   pR
 {   
    oemdb_rec_header  RecHeaderBuf;
    OEMDBase  *       pdb = (OEMDBase *) pDBContext;
-   dword             dwRecOffset;
+   dword             dwRecOffset = 0;
    byte *            pRecBuf;
    
    if (pDBContext == NULL) {
@@ -682,9 +773,7 @@ static byte * DB_GetRecord(OEMCONTEXT pDBContext,word wRecId,AEE_DBRecInfo*   pR
       return(NULL);
    }    
    
-   //If the requested record ID exceeds the max record ID,
-   //there's something wrong
-   if (wRecId > pdb->h.wMaxRecID || wRecId == AEE_DB_RECID_NULL) {
+   if (wRecId == AEE_DB_RECID_NULL) {
       SetDBError(pDBErr, AEE_DB_ERR_BAD_RECID);
       return(NULL);
    }
@@ -722,21 +811,26 @@ static byte * DB_GetRecord(OEMCONTEXT pDBContext,word wRecId,AEE_DBRecInfo*   pR
    
     
    //Allocate memory for the record.
-
+   //No need to check if a record with NULL Rec ID can be found here as that condition
+   //is ruled out at the start of the function.
    if ((pRecBuf = (byte *) sys_malloc(RecHeaderBuf.wRecSize)) == NULL) {
       SetDBError(pDBErr, AEE_DB_ERR_NO_MEMORY);
       return(NULL);
    }
    
    //Read the record from the file into the allocated buffer
-
+   //No need to check if a record with NULL Rec ID can be found here as that condition
+   //is ruled out at the start of the function.
    if(IFILE_Read(pdb->pDBFile, (void *)pRecBuf, RecHeaderBuf.wRecSize) == RecHeaderBuf.wRecSize){
-      if (pRecInfo) 
-         MEMCPY(pRecInfo, (void *) &RecHeaderBuf, sizeof(AEE_DBRecInfo));
+      if (pRecInfo)  {
+         pRecInfo->wRecID = RecHeaderBuf.wRecID;
+         pRecInfo->wRecSize = RecHeaderBuf.wRecSize;
+         pRecInfo->dwLastModified = 0;
+      }
       SetDBError(pDBErr, AEE_DB_ERR_NO_ERR);
    }
    else{
-      OEM_Free(pRecBuf);
+      sys_free(pRecBuf);
       pRecBuf = NULL;
    }
    return(pRecBuf);
@@ -790,50 +884,63 @@ word  OEM_DBRecordNext(
                        )
 {
    OEMDBase    *        pdb = (OEMDBase *) pDBContext;
-   oemdb_rec_header  RecHeaderBuf;
-   word              wNextRecId;
-   dword             dwNextRecOffset;
+   word	idx,endIdx;
+   boolean wrapped;
    
    if (pDBContext == NULL) {
       SetDBError(pDBErr, AEE_DB_ERR_BAD_HANDLE);
       return(AEE_DB_RECID_NULL);
    }
-   
-   if (pdb->h.wMaxRecID == AEE_DB_RECID_NULL) {
+
+   if (!pdb->pIndex->h.recCount)
+   {
+      // No records in database
       SetDBError(pDBErr, AEE_DB_ERR_NO_RECORD);
       return(AEE_DB_RECID_NULL);
    }
+   
+   wrapped = pdb->h.wLastAssignedRecID < pdb->pIndex->e[pdb->pIndex->h.recCount-1].recID;
 
    if (wCurRecId == AEE_DB_RECID_NULL)
-      wNextRecId = 0;
+   {
+      // First record
+      if (wrapped)
+      {
+         // We have rolled over. Start past rollover mark.
+         DB_FindIdxRec(pdb, (word)(pdb->h.wLastAssignedRecID+1), &idx);
+      }
+      else
+         idx = 0;
+   }
    else
-      wNextRecId = wCurRecId + 1;
-   
-   do {
+   {
+      if (DB_FindIdxRec(pdb, wCurRecId, &idx))
+         // If found, go to next record in index
+         // If not found, already pointing to next record
+         idx++;	
 
-      //This is so that we don't go round in circles
-      if (wNextRecId > pdb->h.wMaxRecID || pdb->h.wMaxRecID == AEE_DB_RECID_NULL) {
+      endIdx = pdb->pIndex->h.recCount;
+      if (wrapped)
+      {
+         if (idx >= pdb->pIndex->h.recCount)
+            idx = 0;
+         else if (wCurRecId <= pdb->h.wLastAssignedRecID &&
+                  pdb->pIndex->e[idx].recID >  pdb->h.wLastAssignedRecID)
+         {
+            endIdx = idx;
+         }
+      }
+      
+      if (idx == endIdx)
+      {
+         // No next record
          SetDBError(pDBErr, AEE_DB_ERR_NO_RECORD);
          return(AEE_DB_RECID_NULL);
       }
-
-      // Get the offset of the next record.      
-      dwNextRecOffset = DB_GetIdxRecOffset(pdb, wNextRecId);
-      
-      // Read the next record.  If the read fails, bail out.  If it succeeds, then
-      // allow the check of the record ID as it may be a "deleted" record.
-
-      if (dwNextRecOffset != 0) {
-         if(!DB_ReadRecHeader(pdb, dwNextRecOffset, &RecHeaderBuf,NULL))
-            return(AEE_DB_RECID_NULL);
-      }
-      else 
-         RecHeaderBuf.wRecID = AEE_DB_RECID_NULL;
-      wNextRecId++;
-   } while (RecHeaderBuf.wRecID == AEE_DB_RECID_NULL);
-   
+   }
+     
    SetDBError(pDBErr, AEE_DB_ERR_NO_ERR);
-   return(RecHeaderBuf.wRecID);  
+   return((word)pdb->pIndex->e[idx].recID);  
 }
 
 /*============================================================================
@@ -877,58 +984,24 @@ void  OEM_DBRecordDelete(
                          )
 {
    OEMDBase *           pdb = (OEMDBase *) pDBContext;
-   oemdb_rec_header  RecHeaderBuf;
-   dword             dwRecOffset;
-   dword             dwDeletedRecOffset = 0;
-   
+
    if (pDBContext == NULL) {
       SetDBError(pDBErr, AEE_DB_ERR_BAD_HANDLE);
       return;
    }
 
-   //if the database is read-only, return
-   if (pdb->h.dwIndexOffset != 0) {
-      SetDBError(pDBErr, AEE_DB_ERR_NOT_ALLOWED);
+   // Modify record header marking it as deleted
+   DB_MarkRecordDelete(pdb, wRecId, pDBErr);
+   if (pDBErr && (*pDBErr != AEE_DB_ERR_NO_ERR))
       return;
-   }
 
-   //If the requested record ID exceeds the max record ID,
-   //there's something wrong
-   if (wRecId > pdb->h.wMaxRecID) {
-      SetDBError(pDBErr, AEE_DB_ERR_BAD_RECID);
-      return;
-   }
-   
-   //Get the offset of the record from the index file
-   dwRecOffset = DB_GetIdxRecOffset(pdb, wRecId);
-   if (dwRecOffset == 0) {
-      SetDBError(pDBErr, AEE_DB_ERR_BAD_RECID);
-      return;
-   }
-   
-   if(!DB_ReadRecHeader(pdb, dwRecOffset, &RecHeaderBuf,pDBErr))
-      return;
-   
-   //Verify that the index file is telling the truth. If not, return 
-   if (wRecId != RecHeaderBuf.wRecID) {
-      SetDBError(pDBErr, AEE_DB_ERR_BAD_RECID);
-      return;
-   }
-   
-   //Now delete the record by marking it as invalid. The compression will
-   //physically remove the record whenever it is run.
-   RecHeaderBuf.wRecID = AEE_DB_RECID_NULL;
-   //Decrement the number of records field
    pdb->h.wCurRecCount--;
    
-   //Now let's write the record header back.
-   dwRecOffset = DB_GetIdxRecOffset(pdb, wRecId);
-   IFILE_Seek(pdb->pDBFile, _SEEK_START, dwRecOffset);
-   IFILE_Write(pdb->pDBFile, &RecHeaderBuf, sizeof(oemdb_rec_header));
-   
-   //Fix the index file to show zero offset for deleted record
-   IFILE_Seek(pdb->pIdxFile, _SEEK_START, (sizeof(dword) * wRecId));
-   IFILE_Write(pdb->pIdxFile, &dwDeletedRecOffset, sizeof(dword));
+   //Delete the index entry
+   DB_SetIdxRecOffset(pdb, wRecId, 0);
+
+   // Time to compress?
+   DB_CheckCompress(pdb);
 
    SetDBError(pDBErr, AEE_DB_ERR_NO_ERR);
    
@@ -1035,7 +1108,7 @@ void   OEM_DBRecordUpdate(
                           AEE_DBError*   pDBErr
                           )
 {
-   DB_AddUpdateRec(pdb,wRecId,pbBuf,wBufSize,pDBErr);
+   (void)DB_AddUpdateRec(pdb,wRecId,pbBuf,wBufSize,pDBErr);
 }
                                           
 /*============================================================================
@@ -1067,11 +1140,7 @@ OEM_DBFree
    None.
 
    Comments:
-      pbyRecBuf is not used in this implementation. However, it gives
-      OEMs the flexibility to either save the pointer to the allocated
-      memory (as is done in this implementation, in the active database
-      structure), or use the user-supplied pointer (pbyRecBuf) to free
-      the associated memory.
+   None.
 
    See Also:
    None
@@ -1082,10 +1151,9 @@ void  OEM_DBFree(
                  AEE_DBError*   pDBErr
                  ) {
    
-    
+   (void) pDBContext; /* unused parameter */
    if (pbyRecBuf) {
-      OEM_Free(pbyRecBuf);
-      pbyRecBuf = NULL;
+      sys_free(pbyRecBuf);
    }
    
    SetDBError(pDBErr, AEE_DB_ERR_NO_ERR);
@@ -1095,118 +1163,13 @@ void  OEM_DBFree(
 OEM_DBMakeReadOnly
 
    Description: 
-   This function makes the specified database file read-only. The contents of the
-   index file are appended to the end of the database, and the database is marked
-   as read-only. No add/update/delete operations are subsequently allowed on the
-   database.
-
-   Prototype:
-   void  OEM_DBMakeReadOnly(
-                     const char * szDBName,
-                     AEE_DBError * pDBErr
-                   )
-
-
-   Parameter(s):
-   szDBName:      char *          Name of the database that needs to be made
-                                   read-only. 
-
-   PDBErr:         AEE_DBError *   Place holder to contain error code 
-                                   information on return. 
-                                   If NULL, no error code is returned.
-
-
-   Return Value: 
-   None.
-
-   Side Efects:
-   The specified database becomes read-only
-
-   Comments:
-   None
+   This feature is no longer supported. The index is now placed at the end of the
+   file for all databases, not just read-only ones.
 
 ============================================================================*/
 void OEM_DBMakeReadOnly(const char * szDBName, AEE_DBError * pDBErr)
 {
-   OEMCONTEXT     pDBContext = NULL;
-   OEMDBase *     pdb;
-   oemdb_header * pDBHeader;
-   dword          dwEOFPos;
-   dword          dwRecIndex;
-   IFileMgr *     pfm = NULL;
-   char           szIdxFileName[MAX_FILE_NAME];
-   boolean        bWasDatabaseOpen = TRUE;
-
-   //If the name given is NULL, we just get the heck out of here
-   if (szDBName == NULL) {
-      SetDBError(pDBErr, AEE_DB_ERR_NOT_EXIST);
-      return;
-   }
-
-   //Let's see if the database is open. If it is, get the context handle
-   // If not, we open it.
-   if (!FindOpenDatabase(szDBName, &pDBContext)) {
-      if ((pDBContext = OEM_DBOpen(szDBName, pDBErr)) == NULL)
-         return;
-      bWasDatabaseOpen = FALSE;
-   }
-
-   pdb = (OEMDBase *) pDBContext;
-   pDBHeader = &pdb->h;
-
-   //Check if the database is already read-only. If it is, just return
-   //with no error
-   if (pdb->h.dwIndexOffset != 0) {
-      SetDBError(pDBErr, AEE_DB_ERR_NO_ERR);
-      return;
-   }
-
-   //Verify that the EOF of the database file is on a 32-bit boundary.
-   //If not, return error
-   IFILE_Seek(pdb->pDBFile, _SEEK_END, 0);
-   dwEOFPos = IFILE_Seek(pdb->pDBFile, _SEEK_CURRENT, 0);
-   
-   //Note the seek pos of end of file in the oem_active_db as the
-   //index offset.
-   pdb->h.dwIndexOffset = dwEOFPos;
-
-   //Go to the beginning of the index file
-   IFILE_Seek(pdb->pIdxFile, _SEEK_START, 0);
-   // We will read one index at a time for now
-   while ((IFILE_Read(pdb->pIdxFile, (void *)&dwRecIndex, sizeof(dword))) == sizeof(dword)) {
-      
-      IFILE_Write(pdb->pDBFile, &dwRecIndex, sizeof(dword));
-   }
-
-   //Delete index file
-   IFILE_Release(pdb->pIdxFile);
-   pdb->pIdxFile = NULL;
-   
-   strcpy(szIdxFileName, pdb->szDBName);
-   strcat(szIdxFileName, OEM_IDX_EXT);
-      
-   //Get the File Manager
-   pfm = GetFileMgr();
-   if (!pfm) {
-      SetDBError(pDBErr, AEE_DB_ERR_OTHER_FS_ERR);
-      return;
-   }
-
-   //Delete the index file
-   IFILEMGR_Remove(pfm, szIdxFileName);
-   
-   //Release the File Manager
-   ReleaseFileMgr(pfm);
- 
-   //If database was open, leave it that way. Else, close it
-   if (bWasDatabaseOpen == FALSE) 
-      OEM_DBClose(pDBContext, pDBErr);
-   else {
-      //Rewrite the database header to the file. This is the earliest we can do it.
-      IFILE_Seek(pdb->pDBFile, _SEEK_END, 0);
-      IFILE_Write(pdb->pDBFile, pDBHeader, sizeof(oemdb_header));
-   }
-
+   (void) szDBName; /* unused parameter */
    SetDBError(pDBErr, AEE_DB_ERR_NO_ERR);
 }
 
@@ -1281,7 +1244,7 @@ static boolean FindOpenDatabase(const char *pszDBName, OEMCONTEXT *pDBContext)
    *pDBContext = NULL;
 
    for(pdb = gpActiveDBs; pdb; pdb = pdb->pNext) {
-      if (!strcmp(pdb->szDBName, pszDBName)) {
+      if (!STRCMP(pdb->pszFullPath, pszDBName)) {
          *pDBContext = (OEMCONTEXT) pdb;
          return(TRUE);
       }
@@ -1327,8 +1290,9 @@ static boolean CreateDBContext(OEMDBase **pdb)
       return FALSE;
 
    MEMSET((void *) hNewHandle, 0, sizeof(OEMDBase));
-   hNewHandle->h.wMaxRecID     = AEE_DB_RECID_NULL;
+   hNewHandle->h.wLastAssignedRecID     = AEE_DB_RECID_NULL;
    hNewHandle->pNext = NULL;
+   hNewHandle->refCount = 1;
 
    if (!gpActiveDBs)
       gpActiveDBs = *pdb = hNewHandle;
@@ -1371,6 +1335,9 @@ static void DB_Release(OEMDBase *pdb)
 {
    OEMDBase * pFind, * pPrev;
 
+   // Cancel the compression callback
+   CALLBACK_Cancel(&pdb->cb);
+
    // Find the entry, unlink it from the list and free it...
 
    for(pPrev = NULL,pFind = gpActiveDBs; pFind; pFind = pFind->pNext){
@@ -1384,148 +1351,262 @@ static void DB_Release(OEMDBase *pdb)
          if (pdb->pDBFile) 
             IFILE_Release(pdb->pDBFile);
    
-         if (pdb->pIdxFile) 
-            IFILE_Release(pdb->pIdxFile);
+         sys_freeobj((void **)(&pdb->pIndex));
+         sys_freeobj((void **)(&pdb->pszFullPath));
 
-         OEM_Free((void *) pdb);
+         sys_free((void *) pdb);
          return;
       }
       pPrev = pFind;
-   }
+   }   
 }
 
+/*============================================================================
+DB_MarkRecordDelete
+
+   Description: 
+   This function marks the the specified record as deleted by giving it
+   a null record id in the record header. The record will be physically
+   removed from the data base file when the file is compressed.
+
+============================================================================*/
+static void DB_MarkRecordDelete(
+                         OEMDBase *pdb,
+                         word  wRecId, 
+                         AEE_DBError* pDBErr
+                         )
+{
+   oemdb_rec_header  RecHeaderBuf;
+   dword             dwRecOffset;
+   
+   //Get the offset of the record from the index file
+   dwRecOffset = DB_GetIdxRecOffset(pdb, wRecId);
+   if (dwRecOffset == 0) {
+      SetDBError(pDBErr, AEE_DB_ERR_BAD_RECID);
+      return;
+   }
+   
+   if(!DB_ReadRecHeader(pdb, dwRecOffset, &RecHeaderBuf,pDBErr))
+      return;
+   
+   //Verify that the index file is telling the truth. If not, return 
+   if (wRecId != RecHeaderBuf.wRecID) {
+      SetDBError(pDBErr, AEE_DB_ERR_BAD_RECID);
+      return;
+   }
+   
+   //Now delete the record by marking it as invalid.
+   RecHeaderBuf.wRecID = AEE_DB_RECID_NULL; 
+   
+   //Now let's write the record header back.
+   dwRecOffset = DB_GetIdxRecOffset(pdb, wRecId);
+   if (IFILE_Seek(pdb->pDBFile, _SEEK_START, dwRecOffset)==SUCCESS)
+      if (IFILE_Write(pdb->pDBFile, &RecHeaderBuf, sizeof(oemdb_rec_header))==sizeof(oemdb_rec_header))
+      {
+         pdb->pIndex->h.delCount++;
+      }
+
+   SetDBError(pDBErr, AEE_DB_ERR_NO_ERR);
+   
+}
+                                          
 /*============================================================================
 DB_CheckCompress
 
    Description: 
-   This function compresses the specified database by removing deleted records
-   from the database file. The record IDs are also made contiguous and the
-   index file is updated accordingly.
+   This function compresses the specified database if the number of deleted
+   records reaches a certain percentage of the good records.
 
    Prototype:
    void   DB_CheckCompress(OEMDBase *pdb) 
 
    Parameter(s):
    pdb:    OEMDBase *      Pointer to active database structure
-
-
-   Return Value: 
-   None
-
-   Side Efects:
-   None
-
-   Comments:
-   None
-
 ============================================================================*/
-static void DB_CheckCompress(OEMDBase *pdb, IFileMgr * pfm)
+static void DB_CheckCompress(OEMDBase *pdb)
 {
-   IFile *           pITempFile = NULL;
-   FileInfo          DBFileInfo;
-   oemdb_header      DBHeader;
-   oemdb_rec_header  RecHeaderBuf;
-   word              wValidRecID = 0;
-   word              wMaxRecID = 0;
-   byte *            pbyTmpRecBuf;
-   char              szTemp[MAX_FILE_NAME];
-   word              wRecs;
-
-   // Retrieve the number of records (used and deleted)
-
-   wRecs = DB_VerifyIdxFile(pdb);
 
    // Only compress if necessary...
+   if(pdb->pIndex->h.delCount >= ((word)DB_COMPRESS_PERCENT*((uint32)pdb->pIndex->h.recCount)/100) &&
+	   pdb->pIndex->h.delCount >= DB_COMPRESS_COUNT &&
+      !pdb->dwOffsetFrom)
+   {
+      DB_Compress(pdb);
+   }
+}
 
-   if(wRecs >= AEE_DB_RECID_NULL || wRecs <= pdb->h.wCurRecCount || (wRecs - pdb->h.wCurRecCount) < DB_COMPRESS_THRESHOLD)
-      return;
+/*============================================================================
+DB_Compress
+
+   Description: 
+   This function compresses the specified database by removing deleted records
+   from the database file. The record IDs are also made contiguous and the
+   index is updated accordingly.
+
+   Prototype:
+   void   DB_Compress(OEMDBase *pdb) 
+
+   Parameter(s):
+   pdb:    OEMDBase *      Pointer to active database structure
+
+============================================================================*/
+static void DB_Compress(OEMDBase *pdb)
+{
+   byte *            pbyTmpRecBuf = NULL;
+   oemdb_rec_header  RecHeaderBuf, DeletedRecHeaderBuf;
+   uint32            dwTime = GETUPTIMEMS();
+   boolean           bCompressionComplete = FALSE;
+   uint32            dwDelta = 0;
 
 #if defined(DBG_DB)
-   DBGPRINTF("Compressing %s (%d vs. %d)", pdb->szDBName,wRecs,pdb->h.wCurRecCount);
+   DBGPRINTF("Compressing %s %d", pdb->pszFullPath,pdb->h.wCurRecCount);
 #endif
-  
-   //First see if there's enough room on the EFS to compress this file, since we
-   //need room to create the temporary file
-   IFILE_GetInfo(pdb->pDBFile, &DBFileInfo);
-   if ((IFILEMGR_GetFreeSpace(pfm, NULL)) < DBFileInfo.dwSize) 
-      return;
 
-   // SAS - Create a temp file with the same length name!  This
-   // will greatly speed the rename function below!!!
-
-   strcpy(szTemp,pdb->szDBName);
-   szTemp[strlen(szTemp) - 1] = '~';
-
-   if ((pITempFile = DB_OpenFile(pfm, szTemp,SCS_DEFAULT, _OFM_CREATE)) == NULL) 
-      return;
-
-   //Seek to beginning of the first record of the database file.
-   IFILE_Seek(pdb->pDBFile, _SEEK_START, sizeof(oemdb_header));
+   // Make sure we don't still have index on end of file
+   RemoveIndexFromFile(pdb);
    
-   //Leave space for header which we will update at the end of this function.
-   IFILE_Seek(pITempFile, _SEEK_START, sizeof(oemdb_header));
-
-   while(1){
-   
+   if (!pdb->dwOffsetFrom)
+      pdb->dwOffsetFrom = pdb->dwOffsetTo = sizeof(oemdb_header);
+      
+   while ((dwTime + DB_COMPRESSION_TIME_SLICE) >= GETUPTIMEMS()){
+      
+      IFILE_Seek(pdb->pDBFile, _SEEK_START, pdb->dwOffsetFrom);
       if(IFILE_Read(pdb->pDBFile, (void *)&RecHeaderBuf, sizeof(oemdb_rec_header)) != sizeof(oemdb_rec_header))
+      {
+         bCompressionComplete = TRUE;
          break;
+      }
 
       if(RecHeaderBuf.wRecID != AEE_DB_RECID_NULL) {
 
-   // Read and write a valid record...
+         // Only write record if in a different location
+         if (pdb->dwOffsetFrom != pdb->dwOffsetTo)
+         {
+            uint32 dwBuffSz = 0;
+            // Read and write a valid record...
+            
+            // Get a buffer for the record header, record data, and a following
+            // record header indicating a deleted record up to the next unmoved record
+            if ((pbyTmpRecBuf = (byte*) 
+                  sys_malloc(RecHeaderBuf.wRecSize + 2*sizeof(oemdb_rec_header) + 2*sizeof(uint32))) == NULL)
+               break;
 
-         if ((pbyTmpRecBuf = (byte *) sys_malloc(RecHeaderBuf.wRecSize)) == NULL)
-            break;
+            if(IFILE_Read(pdb->pDBFile, (void *)(pbyTmpRecBuf+sizeof(oemdb_rec_header)), 
+                  RecHeaderBuf.wRecSize) != RecHeaderBuf.wRecSize){
+               sys_free(pbyTmpRecBuf);
+               break;
+            }
 
-         if(IFILE_Read(pdb->pDBFile, (void *)pbyTmpRecBuf, RecHeaderBuf.wRecSize) != RecHeaderBuf.wRecSize){
-            OEM_Free(pbyTmpRecBuf);
-            break;
+            // Put record header before data
+            MEMCPY(pbyTmpRecBuf,(void *)&RecHeaderBuf,sizeof(oemdb_rec_header));
+               
+            // Put deleted record header after data in case system crashes during compaction
+            // This will leave a valid database file
+            DeletedRecHeaderBuf.wRecID = AEE_DB_RECID_NULL;
+            dwBuffSz = RecHeaderBuf.wRecSize + sizeof(oemdb_rec_header);
+            dwDelta = (pdb->dwOffsetFrom - pdb->dwOffsetTo) - sizeof(oemdb_rec_header);
+            
+            if (dwDelta <= MAX_REC_SIZE) {
+               DeletedRecHeaderBuf.wRecSize = (word)dwDelta;
+               MEMCPY(pbyTmpRecBuf + dwBuffSz, (void*)&DeletedRecHeaderBuf, sizeof(oemdb_rec_header));
+               dwBuffSz += sizeof(oemdb_rec_header);
+            }
+            else { /* dwDelta > MAX_REC_SIZE, store record length in payload */
+               uint32 dwMagic = (uint32) NULL_REC_MAGIC_NUM;
+               DeletedRecHeaderBuf.wRecSize = 0;
+               
+               MEMCPY(pbyTmpRecBuf + dwBuffSz,(void*)&DeletedRecHeaderBuf,sizeof(oemdb_rec_header));
+               dwBuffSz += sizeof(oemdb_rec_header);
+               MEMCPY(pbyTmpRecBuf + dwBuffSz,(void*)&dwMagic, sizeof(uint32)); // magic no.
+               dwBuffSz += sizeof(uint32);
+               MEMCPY(pbyTmpRecBuf + dwBuffSz,(void*)&dwDelta,sizeof(uint32));  // actual size of null rec.
+               dwBuffSz += sizeof(uint32);
+            }
+               
+            // Write out record
+            IFILE_Seek(pdb->pDBFile, _SEEK_START, pdb->dwOffsetTo);
+            IFILE_Write(pdb->pDBFile, pbyTmpRecBuf, dwBuffSz);
+            sys_free(pbyTmpRecBuf);
+
+            // Update Record Offset in Record Index
+            DB_SetIdxRecOffset(pdb, RecHeaderBuf.wRecID, pdb->dwOffsetTo);
          }
-
-         if(RecHeaderBuf.wRecID > wMaxRecID)
-            wMaxRecID = RecHeaderBuf.wRecID;
-
-         wValidRecID++;
-
-         IFILE_Write(pITempFile, &RecHeaderBuf, sizeof(oemdb_rec_header));
-         IFILE_Write(pITempFile, pbyTmpRecBuf, RecHeaderBuf.wRecSize);
-         OEM_Free(pbyTmpRecBuf);
+            
+         // Advance to next writing position
+         pdb->dwOffsetTo += sizeof(oemdb_rec_header) + RecHeaderBuf.wRecSize;
       }
-      else 
-         IFILE_Seek(pdb->pDBFile, _SEEK_CURRENT, RecHeaderBuf.wRecSize);   // Failed - next
+         
+      // Go to next reading position
+      pdb->dwOffsetFrom += sizeof(oemdb_rec_header);
+      
+      if ((RecHeaderBuf.wRecID != AEE_DB_RECID_NULL) || (0 != RecHeaderBuf.wRecSize)) {
+            pdb->dwOffsetFrom += RecHeaderBuf.wRecSize;
+      }
+      else { /* null rec with 0 size */
+         uint32 dwVal = 0;
+         int32 nErr;
+         nErr = IFILE_Seek(pdb->pDBFile, _SEEK_START, pdb->dwOffsetFrom);
+         if(SUCCESS == nErr) {
+            nErr = IFILE_Read(pdb->pDBFile, (void*)&dwVal, sizeof(uint32));
+            if ((dwVal == (uint32)NULL_REC_MAGIC_NUM) && (sizeof(uint32) == nErr)) {
+               dwVal = 0;
+               nErr = IFILE_Read(pdb->pDBFile, (void*)&dwVal, sizeof(uint32));
+               if (sizeof(uint32) == nErr) {
+                  pdb->dwOffsetFrom += dwVal;
+               }
+            }
+         }
+      }
    }
 
-   //Build new database header
-   DBHeader.wCurRecCount  = wValidRecID;
-   DBHeader.wMaxRecID     = wMaxRecID;
-   DBHeader.dwIndexOffset = 0;
-   
-   //Write new database header to the temp. file
-   IFILE_Seek(pITempFile, _SEEK_START, 0);
-   IFILE_Write(pITempFile, &DBHeader, sizeof(oemdb_header));  
+   if (bCompressionComplete)
+   {
+      // Set end of file
+      IFILE_Truncate(pdb->pDBFile, pdb->dwOffsetTo);
+      
+      // Reset dwOffsetFrom
+      pdb->dwOffsetFrom = 0;
 
-   //Close original database file
-   if (pdb->pDBFile) 
-      IFILE_Release(pdb->pDBFile);
-
-   //Delete original database file
-   IFILEMGR_Remove(pfm, pdb->szDBName);
-
-   //Truncate the index file
-   IFILE_Truncate(pdb->pIdxFile, 0);
-
-   // Rename the temp file to the real name!!!
-
-   IFILE_Release(pITempFile);
-
-   IFILEMGR_Rename(pfm, szTemp, pdb->szDBName);
-
-   //Open new database file
-   pdb->pDBFile = DB_OpenFile(pfm, pdb->szDBName,pdb->nCacheSize, _OFM_READWRITE);
-   
-   //Rebuild index file
-
-   DB_PopulateIdxFile(pdb);
+      DB_PopulateIdx(pdb);
+   }
+   else
+   {
+      if(pdb->dwOffsetFrom != pdb->dwOffsetTo) {
+         // Put deleted record header after data in case system crashes while we are waiting
+         // for resume. This will leave a valid database file.
+         
+         uint32 dwDelta = (pdb->dwOffsetFrom - pdb->dwOffsetTo) - sizeof(oemdb_rec_header);
+         DeletedRecHeaderBuf.wRecID = AEE_DB_RECID_NULL;
+         
+         IFILE_Seek(pdb->pDBFile, _SEEK_START, pdb->dwOffsetTo);
+         if (dwDelta <= MAX_REC_SIZE) {
+            DeletedRecHeaderBuf.wRecSize = (word)dwDelta;
+            IFILE_Write(pdb->pDBFile, (void*)&DeletedRecHeaderBuf, sizeof(oemdb_rec_header));
+         }
+         else {
+            uint32 dwMagic = (uint32) NULL_REC_MAGIC_NUM;
+            byte* pBuf = 0;
+            DeletedRecHeaderBuf.wRecSize = 0;
+            pBuf = (byte*) sys_malloc(sizeof(oemdb_rec_header) + 2*sizeof(uint32));
+            if (pBuf) {
+               MEMCPY(pBuf, (void*)&DeletedRecHeaderBuf, sizeof(oemdb_rec_header));
+               MEMCPY(pBuf + sizeof(oemdb_rec_header), (void*)&dwMagic, sizeof(uint32));
+               MEMCPY(pBuf + sizeof(oemdb_rec_header) + sizeof(uint32), (void*)&dwDelta, sizeof(uint32));
+               IFILE_Write(pdb->pDBFile, (void*)pBuf, sizeof(oemdb_rec_header) + 2*sizeof(uint32));
+               sys_free(pBuf);
+               pBuf = 0;
+            }
+         }
+      }
+      
+      // Resume Compression
+      CALLBACK_Cancel(&pdb->cb);
+      CALLBACK_Init(&pdb->cb,DB_Compress,pdb);
+      {
+         IShell* pIShell = AEE_GetShell();	      
+         ISHELL_Resume(pIShell ,&pdb->cb);
+      }
+   }
 }
 
 /*============================================================================
@@ -1582,17 +1663,12 @@ static int DB_AddUpdateRec(
    OEMDBase     *       pdb = (OEMDBase *) pDBContext;
    oemdb_rec_header  RecHeaderBuf;
    dword             dwRecPos;
-   byte              *pbyOrigRecord = NULL;
    IFileMgr *        pfm = NULL;
-   AEE_DBRecInfo     OrigRecHeader;
+   oemdb_rec_header  OrigRecHeader;
+   int addedRecord = 0;
    
    if (pDBContext == NULL) {
       SetDBError(pDBErr, AEE_DB_ERR_BAD_HANDLE);
-      return AEE_DB_RECID_NULL;
-   }
-
-   if (pdb->h.dwIndexOffset != 0) {
-      SetDBError(pDBErr, AEE_DB_ERR_NOT_ALLOWED);
       return AEE_DB_RECID_NULL;
    }
 
@@ -1615,19 +1691,10 @@ static int DB_AddUpdateRec(
       return AEE_DB_RECID_NULL;
    }
 
-   //Now let's check if there's space to write this file, and if there isn't,
-   //we have to abandon
-   if ((IFILEMGR_GetFreeSpace(pfm, NULL)) < (sizeof(oemdb_rec_header) + wBufSize)) {
-      SetDBError(pDBErr, AEE_DB_ERR_NO_FS_SPACE);
-      //Release file manager
-      ReleaseFileMgr(pfm);
-      return AEE_DB_RECID_NULL;
-   }
-   
    if (wRecID == AEE_DB_RECID_NULL) {
       //If this is the first record in the database
-      if (pdb->h.wMaxRecID == AEE_DB_RECID_NULL) 
-         RecHeaderBuf.wRecID = pdb->h.wMaxRecID = 0;
+      if (pdb->h.wLastAssignedRecID == AEE_DB_RECID_NULL) 
+         RecHeaderBuf.wRecID = pdb->h.wLastAssignedRecID = 0;
       else {
          RecHeaderBuf.wRecID = GetNewRecordID(pdb);
          if(RecHeaderBuf.wRecID == AEE_DB_RECID_NULL) {
@@ -1635,25 +1702,29 @@ static int DB_AddUpdateRec(
             return AEE_DB_RECID_NULL;
          }
       }
-      pdb->h.wCurRecCount++;
+      addedRecord = 1;
    }
    else {
-      //First check if the record is valid
-      pbyOrigRecord = DB_GetRecord(pDBContext, wRecID, &OrigRecHeader, pDBErr, &dwRecPos); 
-      if (pbyOrigRecord == NULL) {
+      // Load original record header
+      dwRecPos = DB_GetIdxRecOffset(pdb, wRecID);
+      if (!dwRecPos) {
+         //Release file manager
+         ReleaseFileMgr(pfm);
+         SetDBError(pDBErr, AEE_DB_ERR_BAD_RECID);
+         return AEE_DB_RECID_NULL;
+      }
+      if (!DB_ReadRecHeader(pdb, dwRecPos, &OrigRecHeader,pDBErr)) {
          //Release file manager
          ReleaseFileMgr(pfm);
          //The error is already set by OEM_DBRecordGet, so just return
          return AEE_DB_RECID_NULL;
       }
-      else 
-         //Free the memory allocated for the original record. We don't need it.
-         OEM_DBFree(pDBContext, pbyOrigRecord, pDBErr);
-
+  
    // SAS - See if the size of the records matches.  If so, just update it in place!
 
       RecHeaderBuf.wRecID = wRecID;
 
+      // Orig record cannot be a NULL Rec.
       if(OrigRecHeader.wRecSize == wBufSize){
          IFILE_Seek(pdb->pDBFile, _SEEK_START, dwRecPos + sizeof(oemdb_rec_header));
          IFILE_Write(pdb->pDBFile, pbBuf, wBufSize);
@@ -1666,7 +1737,27 @@ static int DB_AddUpdateRec(
    }
    
    RecHeaderBuf.wRecSize = wBufSize;
+
+   // Remove index from end of file if it's still there
+   RemoveIndexFromFile(pdb);
+
+   //Now let's check if there's space to write this file
+   if ((IFILEMGR_GetFreeSpace(pfm, NULL)) < (sizeof(oemdb_rec_header) + wBufSize)) {
+      // Insufficient file space   
+      SetDBError(pDBErr, AEE_DB_ERR_NO_FS_SPACE);
+      ReleaseFileMgr(pfm);
+      return AEE_DB_RECID_NULL;
+   }
    
+   if (addedRecord == 1) 
+   {
+       pdb->h.wCurRecCount++;
+
+       // DB header is modified. Write it.	
+       IFILE_Seek(pdb->pDBFile, _SEEK_START, 0);   
+       IFILE_Write(pdb->pDBFile, &pdb->h, sizeof(oemdb_header));
+   }
+
    //First go to end of file to add record.
    IFILE_Seek(pdb->pDBFile, _SEEK_END, 0);
    //Now determine where we are by doing a tell
@@ -1677,20 +1768,23 @@ static int DB_AddUpdateRec(
    IFILE_Write(pdb->pDBFile, &RecHeaderBuf, sizeof(oemdb_rec_header));
    IFILE_Write(pdb->pDBFile, pbBuf, wBufSize);
 
-
-   //Update the index file
    if (wRecID != AEE_DB_RECID_NULL) {
       //This is a good time to mark the old record as invalid.
-      OEM_DBRecordDelete(pDBContext, wRecID, pDBErr);
-
-      //But delete has decremented pdb->h.wCurRecCount, so we increment it
-      pdb->h.wCurRecCount++;
+      DB_MarkRecordDelete(pdb, wRecID, pDBErr);
    }
 
-   //Now let's get to the right location in the index file
-   IFILE_Seek(pdb->pIdxFile, _SEEK_START, (RecHeaderBuf.wRecID * sizeof(dword)));
-   IFILE_Write(pdb->pIdxFile, (byte *) &dwRecPos, sizeof(dword));
+   //Now let's set the right location in the index
+   if (DB_SetIdxRecOffset(pdb, RecHeaderBuf.wRecID, dwRecPos))
+   {
+      // Error adding index
+      SetDBError(pDBErr, AEE_DB_ERR_NO_MEMORY);
+      ReleaseFileMgr(pfm);
+      return AEE_DB_RECID_NULL;
+   }
    
+   // See if we need to compress the data file
+   DB_CheckCompress(pdb);
+
 aouDone:
 
    //Set error to no error and return happily    
@@ -1703,22 +1797,20 @@ aouDone:
 }
 
 /*============================================================================
-DB_PopulateIdxFile
+DB_PopulateIdx
 
    Description: 
-   This function populates the index file for an open database. For an existing
-   database, this is useful when a database is shipped without its index file,
-   since the index file can be created on the fly.
+   This function populates the index for an open database.
 
    Prototype:
-   void  DB_PopulateIdxFile(OEMDBase *pdb)
+   AEE_DBError  DB_PopulateIdx(OEMDBase *pdb)
 
    Parameter(s):
    pdb:    OEMDBase *      Pointer to active database structure
 
 
    Return Value: 
-   None
+   SUCCESS, if successful, else EFAILED.
    Side Efects:
    None
 
@@ -1726,193 +1818,125 @@ DB_PopulateIdxFile
    None
 
 ============================================================================*/
-static void  DB_PopulateIdxFile(OEMDBase *pdb)
+static AEE_DBError  DB_PopulateIdx(OEMDBase *pdb)
 {
    oemdb_rec_header    DBRecordHeader; 
-   word                wMaxRecId = 0;
    word                wRecCount  = 0;
+   word                wDelCount = 0;
    word                wTotalRecCount = 0;
    dword               dwRecOffset;
    dword               dwReadSize;
    oemdb_header        DBHeader;
-   dword               dwBadRecOffset = 0;
-   dword               dwNullRecOffset = 0;
-   word                count;
-   
+   int                 count;
+   db_index*           pIndex;
+
    //To populate the database file, we first reset the seek pointer to the
    //begninning of the file
    IFILE_Seek(pdb->pDBFile, _SEEK_START, 0);   
    
    //First read the database header. We may need to fix it too,
    //if the max record id or the current record count are out of whack.
-   IFILE_Read(pdb->pDBFile, (void *)&DBHeader, sizeof(oemdb_header));
+   count = IFILE_Read(pdb->pDBFile, (void *)&DBHeader, sizeof(oemdb_header));
+   if(count != sizeof(oemdb_header))
+      return AEE_DB_ERR_BAD_STATE;
    
+   // Allocate space for index
+   pIndex = (db_index*)sys_realloc(pdb->pIndex,sizeof(index_header)+(pdb->h.wCurRecCount + DB_INCREASE_SIZE)*sizeof(index_entry));
+   if (!pIndex)
+      return AEE_DB_ERR_NO_MEMORY;
+   pdb->pIndex = pIndex;
+   pdb->indexAlloc = pdb->h.wCurRecCount + DB_INCREASE_SIZE;
+ 
    //Do a tell to find the position of the first record
    dwRecOffset = IFILE_Seek(pdb->pDBFile, _SEEK_CURRENT, 0);
    dwReadSize = IFILE_Read(pdb->pDBFile, (void *)&DBRecordHeader, sizeof(oemdb_rec_header));
    
-   //We must first create an index file with all zero records
-   for (count = 0; count < DBHeader.wMaxRecID; count++)
-      IFILE_Write(pdb->pIdxFile, &dwNullRecOffset, sizeof(dword));
-
-
    while(dwReadSize == sizeof(oemdb_rec_header)) {
-      
       if (DBRecordHeader.wRecID != AEE_DB_RECID_NULL) {
-         IFILE_Seek(pdb->pIdxFile, _SEEK_START, (sizeof(dword) * (DBRecordHeader.wRecID)));
-         IFILE_Write(pdb->pIdxFile, &dwRecOffset, sizeof(dword));
-      
-         if (DBRecordHeader.wRecID > wMaxRecId) {
-            wMaxRecId = DBRecordHeader.wRecID;
+               
+         // Make sure we have room
+         if (wRecCount >= pdb->indexAlloc)
+         {
+            pdb->indexAlloc += DB_INCREASE_SIZE;
+            pIndex = (db_index*)sys_realloc(pdb->pIndex,sizeof(index_header)+pdb->indexAlloc*sizeof(index_entry));
+            if (!pIndex)
+               return AEE_DB_ERR_NO_MEMORY;
+            pdb->pIndex = pIndex;
          }
-              
+         
+         // Save offset in index array
+         pdb->pIndex->e[wRecCount].recID = DBRecordHeader.wRecID;
+         pdb->pIndex->e[wRecCount].dwOffset = dwRecOffset;
+      
          wRecCount++;
       }
-      else {
-         IFILE_Seek(pdb->pIdxFile, _SEEK_START, (sizeof(dword) * wTotalRecCount));
-         IFILE_Write(pdb->pIdxFile, &dwBadRecOffset, sizeof(dword));
-      }
-      
+      else
+         wDelCount++;
 
       //Now move to the end of the record.
       dwRecOffset += sizeof(oemdb_rec_header);
-      IFILE_Seek(pdb->pDBFile, _SEEK_CURRENT, DBRecordHeader.wRecSize);
-      dwRecOffset += DBRecordHeader.wRecSize;
+      
+      if ((AEE_DB_RECID_NULL == DBRecordHeader.wRecID) &&
+          (0 == DBRecordHeader.wRecSize)) {
+          uint32 dwVal = 0;
+          int32  nErr;
+          nErr = IFILE_Read(pdb->pDBFile, (void*)&dwVal, sizeof(uint32));
+          if ((dwVal == NULL_REC_MAGIC_NUM) && (sizeof(uint32) == nErr)) {
+             dwVal = 0;
+             nErr = IFILE_Read(pdb->pDBFile, (void*)&dwVal, sizeof(uint32));
+             if (sizeof(uint32) == nErr) {
+                IFILE_Seek(pdb->pDBFile, _SEEK_CURRENT, (dwVal - 8));  // as 8 bytes already read.
+                dwRecOffset += dwVal; // no need to less by 8 here.
+             }
+          }
+      }
+      else {
+         IFILE_Seek(pdb->pDBFile, _SEEK_CURRENT, DBRecordHeader.wRecSize);
+         dwRecOffset += DBRecordHeader.wRecSize;
+      }
+      
       //Read the next record header
       dwReadSize = IFILE_Read(pdb->pDBFile, (void *)&DBRecordHeader, sizeof(oemdb_rec_header));
       wTotalRecCount++;
    }
    
    //Fix the max. record id and current record countfor this database.
-   if (wTotalRecCount > 0)
-      pdb->h.wMaxRecID = wMaxRecId;
-   else
-      pdb->h.wMaxRecID = AEE_DB_RECID_NULL;
+   if (wTotalRecCount == 0)
+      pdb->h.wLastAssignedRecID = AEE_DB_RECID_NULL;
 
    pdb->h.wCurRecCount = wRecCount;
+   pdb->pIndex->h.recCount = wRecCount;
+   pdb->pIndex->h.delCount = wDelCount;
+   
+   QSORT((void*)pdb->pIndex->e,wRecCount,sizeof(index_entry),CmpRecID);
+
+   return AEE_DB_ERR_NO_ERR;
 }
 
 /*============================================================================
-DB_VerifyIdxFile
+CmpRecID
 
    Description: 
-   This function steps through all the records of the specified database, and
-   verifies that the file offsets of the records are in sync with those in the
-   index file. If not, the index file is fixed to point to the right records.
-
-   Prototype:
-   void  DB_VerifyIdxFile(OEMDBase *pdb)
-
-   Parameter(s):
-   pdb:    OEMDBase *      Pointer to active database structure
-
-
-   Return Value: 
-   If successful, returns total number of records. 
-   If read-only, returns AEE_DB_RECID_NULL
-   Side Efects:
-   None
-
-   Comments:
-   None
+   Compare function for use with qsort to sort index by record ID
 
 ============================================================================*/
-static word  DB_VerifyIdxFile(OEMDBase *pdb)
+static int CmpRecID(const void *p1, const void *p2)
 {
-   oemdb_rec_header    DBRecordHeader;
-   oemdb_header        DBHeader;
-   word                wMaxRecId = 0;
-   word                wRecCount  = 0;
-   word                wTotalRecCount = 0;
-   dword               dwRecOffset;
-   dword               dwIdxRecOffset;
-   dword               dwBadRecOffset = 0;
-   dword               dwReadSize;
-   
-   //To verify the database file, we first reset the seek pointer to the
-   //begninning of the file
-   IFILE_Seek(pdb->pDBFile, _SEEK_START, 0);
+	word recID1 = (word)((index_entry *)p1)->recID;
+	word recID2 = (word)((index_entry *)p2)->recID;
 
-   //First read the database header. We may need to fix it too,
-   //if the max record id or the current record count are out of whack.
-   IFILE_Read(pdb->pDBFile, (void *)&DBHeader, sizeof(oemdb_header));
-   
-   //If the database is read-only, return
-   if(DBHeader.dwIndexOffset != 0) 
-      return AEE_DB_RECID_NULL;
-
-   //Do a tell to find the position of the first record
-   dwRecOffset = IFILE_Seek(pdb->pDBFile, _SEEK_CURRENT, 0);
-   dwReadSize = IFILE_Read(pdb->pDBFile, (void *)&DBRecordHeader, sizeof(oemdb_rec_header));
-   
-   while(dwReadSize == sizeof(oemdb_rec_header)) {
-
-      if (DBRecordHeader.wRecID != AEE_DB_RECID_NULL) {
-         
-         //Read the offset in the index file
-         IFILE_Seek(pdb->pIdxFile, _SEEK_START, (sizeof(dword) * DBRecordHeader.wRecID));
-         IFILE_Read(pdb->pIdxFile, (void *)&dwIdxRecOffset, sizeof(dword));
-
-         if (DBRecordHeader.wRecID > wMaxRecId) {
-            wMaxRecId = DBRecordHeader.wRecID;
-         }
-         
-         wRecCount++;
-      
-         //If the offset does not match, fix it in the index file.
-         if (dwIdxRecOffset != dwRecOffset) {
-         
-            IFILE_Seek(pdb->pIdxFile, _SEEK_START, (sizeof(dword) * DBRecordHeader.wRecID));
-            IFILE_Write(pdb->pIdxFile, &dwRecOffset, sizeof(dword));
-         }
-      }
-      else {
-         IFILE_Seek(pdb->pIdxFile, _SEEK_START, (sizeof(dword) * wTotalRecCount));
-         IFILE_Read(pdb->pIdxFile, (void *)&dwIdxRecOffset, sizeof(dword));
-
-         if (dwIdxRecOffset != 0) {
-            IFILE_Seek(pdb->pIdxFile, _SEEK_START, (sizeof(dword) * wTotalRecCount));
-            IFILE_Write(pdb->pIdxFile, &dwBadRecOffset, sizeof(dword));
-         }
-      }
-      
-      
-      //Now move to the end of the record.
-      dwRecOffset += sizeof(oemdb_rec_header);
-      IFILE_Seek(pdb->pDBFile, _SEEK_CURRENT, DBRecordHeader.wRecSize);
-      dwRecOffset += DBRecordHeader.wRecSize;
-      //Read the next record header
-      dwReadSize = IFILE_Read(pdb->pDBFile, (void *)&DBRecordHeader, sizeof(oemdb_rec_header));
-      wTotalRecCount++;
-   }
-   
-   //Fix the max. record id and current record countfor this database.
-   if (wTotalRecCount > 0) {
-      //First truncate the index file if there are holes (from deleted records on the high end)
-      //This will keep the index file size in control
-      IFILE_Truncate(pdb->pIdxFile, (wMaxRecId + 1)* sizeof(dword));
-      pdb->h.wMaxRecID = wMaxRecId;
-   }
-   else 
-      pdb->h.wMaxRecID = AEE_DB_RECID_NULL;
-   
-   pdb->h.wCurRecCount = wRecCount;
-   
-
-
-   //Set the file pointer of the database file and the index file to the beginning
-   IFILE_Seek(pdb->pDBFile, _SEEK_START, 0);
-   IFILE_Seek(pdb->pIdxFile, _SEEK_START, 0);
-   
-   
-   return wTotalRecCount;
+	if (recID1 < recID2)
+		return -1;
+	if (recID1 > recID2)
+		return 1;
+	return 0;
 }
 
 /*============================================================================
 DB_GetIdxRecOffset
 
    Description: 
-   This function reads the index file to return the offset of the specified
+   This function reads the index array to return the offset of the specified
    record in the database file.
 
    Prototype:
@@ -1936,23 +1960,107 @@ DB_GetIdxRecOffset
 ============================================================================*/
 static dword DB_GetIdxRecOffset(OEMDBase *pdb, word wRecId)
 {
-   dword   dwRecOffset;
-   
-   if (wRecId > pdb->h.wMaxRecID || wRecId == AEE_DB_RECID_NULL) 
-      return 0;
+	word	idx;
+	
+	if (DB_FindIdxRec(pdb, wRecId, &idx))
+		return pdb->pIndex->e[idx].dwOffset;
+	else
+		return 0;
+}
 
-   if (pdb->h.dwIndexOffset != 0) {
-      //Go to the beginning of the index section first
-      IFILE_Seek(pdb->pDBFile, _SEEK_START, pdb->h.dwIndexOffset);
-      //Go to the beginning of the requested index
-      IFILE_Seek(pdb->pDBFile, _SEEK_CURRENT, (wRecId * sizeof(dword)));
-      IFILE_Read(pdb->pDBFile, (void *)&dwRecOffset, sizeof(dword));
-   }
-   else {
-      IFILE_Seek(pdb->pIdxFile, _SEEK_START, (wRecId * sizeof(dword)));
-      IFILE_Read(pdb->pIdxFile, (void *)&dwRecOffset, sizeof(dword));
-   }
-   return dwRecOffset;
+/*============================================================================
+DB_SetIdxRecOffset
+
+   Description: 
+   This function sets the offset of the specified
+   record in the database file in the index array.
+
+============================================================================*/
+static AEE_DBError DB_SetIdxRecOffset(OEMDBase *pdb, word wRecId, dword offset)
+{
+	word	idx;
+	boolean found = DB_FindIdxRec(pdb, wRecId, &idx);
+	
+	if (offset)
+	{
+		if (found)
+      {
+			// Modify an entry
+			pdb->pIndex->e[idx].dwOffset = offset;
+      }
+		else
+		{
+			// Add an entry
+			if (pdb->pIndex->h.recCount >= pdb->indexAlloc)
+			{
+				// Need to increase size of index
+				db_index* pIndex = (db_index*)sys_realloc(pdb->pIndex,sizeof(index_header)+(pdb->indexAlloc + DB_INCREASE_SIZE)*sizeof(index_entry));
+				if (!pIndex)
+					return AEE_DB_ERR_NO_MEMORY;
+				pdb->pIndex = pIndex;
+				pdb->indexAlloc += DB_INCREASE_SIZE;
+			}
+			idx = pdb->pIndex->h.recCount++;
+			pdb->pIndex->e[idx].dwOffset = offset;
+			pdb->pIndex->e[idx].recID = wRecId;
+			
+			// Sort new entry into its correct position
+			QSORT((void*)pdb->pIndex->e,pdb->pIndex->h.recCount,sizeof(index_entry),CmpRecID);
+		}
+	}
+	else if (found)
+	{
+		// Delete entry
+      MEMMOVE((void*)&pdb->pIndex->e[idx],(void*)&pdb->pIndex->e[idx+1],((pdb->pIndex->h.recCount-idx)-1)*sizeof(index_entry));
+		pdb->pIndex->h.recCount--;
+	}
+
+   // Index has been updated. It will need to be saved. Make sure it's removed from
+   // end of file.
+   RemoveIndexFromFile(pdb);
+   return AEE_DB_ERR_NO_ERR;
+}
+
+/*============================================================================
+DB_FindIdxRec
+
+   Description: 
+   This function searches the index for the entry with the indicated record ID.
+
+============================================================================*/
+static boolean DB_FindIdxRec(OEMDBase *pdb, word wRecId, word *pResult)
+{
+	int	low, high, mid;
+	
+	low = 0;
+	high = pdb->pIndex->h.recCount;
+	
+	if (wRecId == AEE_DB_RECID_NULL || !pdb->pIndex)
+	{
+		*pResult = high;
+		return FALSE;
+	}
+
+	// Index is sorted so use binary search.
+	while (low < high)
+	{
+		word idxRecId;
+
+		mid = low + (high-low) / 2;
+		idxRecId = (word)pdb->pIndex->e[mid].recID;
+		if (wRecId < idxRecId)
+			high = mid;
+		else if (wRecId > idxRecId)
+			low = mid + 1;
+		else
+		{
+			// Found!
+			*pResult = mid;
+			return TRUE;
+		}
+	}
+	*pResult = low;	// Return next item
+	return FALSE;
 }
 
 
@@ -1984,8 +2092,10 @@ GetFileMgr
 static IFileMgr * GetFileMgr(void)
 {
    IFileMgr *  pFileMgr = NULL;
+   IShell* pIShell = AEE_GetShell();
 
-   ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR, (void **)&pFileMgr);
+   ISHELL_CreateInstance(pIShell, AEECLSID_FILEMGR, (void **)&pFileMgr);
+
    return(pFileMgr);
 }
 
@@ -2061,32 +2171,158 @@ GetNew RecordID
 ============================================================================*/
 static word GetNewRecordID(OEMDBase *pdb) {
 
-   word count;
-   dword offset;
-
-   IFILE_Seek(pdb->pIdxFile, _SEEK_START, 0);
+   if(pdb->h.wLastAssignedRecID == AEE_DB_MAX_RECNUM)
+      // Rollover
+      pdb->h.wLastAssignedRecID = 0;
+   else
+      pdb->h.wLastAssignedRecID++;
    
-   for (count = 0; count < pdb->h.wMaxRecID; count++) {
-      IFILE_Read(pdb->pIdxFile, (void *) &offset, sizeof(dword));
-      if(!offset)
-         return count;
-   }
-   if(pdb->h.wMaxRecID == AEE_DB_MAX_RECNUM)
-      return AEE_DB_RECID_NULL;
+   if (pdb->h.wLastAssignedRecID < pdb->pIndex->e[pdb->pIndex->h.recCount-1].recID)
+   {
+      // We have rolled over. Make sure we have an unused ID.      
+      word	idx;
+      
+      if (DB_FindIdxRec(pdb, pdb->h.wLastAssignedRecID, &idx))
+      {
+         // This ID is used. Find an unused one
+         word	i;
+         
+         for(i=idx+1,pdb->h.wLastAssignedRecID++;i!=idx;i++,pdb->h.wLastAssignedRecID++)
+         {
+            if (i >= pdb->pIndex->h.recCount)
+            {
+               // End of index. End of IDs?
+               if (pdb->h.wLastAssignedRecID != AEE_DB_MAX_RECNUM)
+                  // ID is ok. Use it.
+                  break;
 
-   //pdb->h.wCurRecCount++;
-   return(++pdb->h.wMaxRecID);
+               // Wrap around index and record ID
+               pdb->h.wLastAssignedRecID = 0;
+               i = 0;
+            }
+            if (pdb->h.wLastAssignedRecID != pdb->pIndex->e[i].recID)
+               break;
+         }
+         if(i == idx)
+            // Unable to find a record ID
+            return AEE_DB_RECID_NULL;
+     }
 
+   }   
+   return(pdb->h.wLastAssignedRecID);
 }
 
-static IFile * DB_OpenFile(IFileMgr * pfm,const char * pszFile,int nCacheSize,AEEOpenFileMode m)
+static IFile * DB_OpenFile(IFileMgr * pfm,const char * pszFullPath,int nCacheSize,AEEOpenFileMode mode)
 {
-   IFile * pf;
+   IFile *     pf;
+   ACONTEXT *  pacRest;
 
-   pf = IFILEMGR_OpenFile(pfm, pszFile, m);
+   // Note - Some application may need to share the open datebase. Therefore,
+   // we set the access to root and the app context to NULL so the file
+   // will not be closed when the current app exits...
+
+   // Since we're leaving the application, we have to check access before 
+   //  calling IFileMgr (IFILEMGR_OpenFile() uses the current AppContext
+   //  on OpenFile to check, normally.
+   
+   {
+      uint32 dwRights;
+
+      // only ever called with _OFM_READWRITE or OFM_CREATE
+      dwRights = AEEFP_READ|AEEFP_WRITE;
+      
+      if (mode & _OFM_CREATE) {
+         dwRights |= AEEFP_CREATE;
+      }
+            
+      if (SUCCESS != AEE_CheckPathAccess(pszFullPath,dwRights,0)) {
+         return NULL;
+      }
+   }
+
+   pacRest = AEE_EnterAppContext(NULL);
+
+   pf = IFILEMGR_OpenFile(pfm, pszFullPath, mode);
+
+   AEE_LeaveAppContext(pacRest);
+
    if(pf && nCacheSize)
-      IFILE_SetCacheSize(pf, nCacheSize);
+      (void)IFILE_SetCacheSize(pf, nCacheSize);
+
    return(pf);
+}
+
+/*============================================================================
+LoadIndex
+
+   Description:
+	   Load index from file if exists, else build it.
+
+============================================================================*/
+static AEE_DBError LoadIndex(OEMDBase *pdb)
+{
+	if (pdb->h.dwIndexOffset)
+	{
+		// Index exists in file. Load it.
+		
+		// Start with header
+		index_header	hdr;
+		uint32 count;
+
+		if (IFILE_Seek(pdb->pDBFile, _SEEK_START, pdb->h.dwIndexOffset)!=SUCCESS)
+		   return AEE_DB_ERR_BAD_STATE;
+
+		count = IFILE_Read(pdb->pDBFile, (void*)&hdr, sizeof(hdr));
+		
+		if (count == sizeof(hdr))
+		{
+			// Got header. Now get rest.
+ 			db_index *pIndex = (db_index*)sys_realloc(pdb->pIndex,sizeof(index_header)+(hdr.recCount+DB_INCREASE_SIZE)*sizeof(index_entry));
+			if (pIndex)
+			{
+			   pdb->pIndex = pIndex;
+				count = IFILE_Read(pdb->pDBFile, (void*)pdb->pIndex->e, hdr.recCount*sizeof(index_entry));
+				
+				// Put header in index
+				pdb->pIndex->h = hdr;
+				pdb->indexAlloc = hdr.recCount+DB_INCREASE_SIZE;
+				
+				if (count == hdr.recCount*sizeof(index_entry))
+					return AEE_DB_ERR_NO_ERR;	// Success!
+			}
+			else
+				// Memory error
+				return AEE_DB_ERR_NO_MEMORY;
+		}
+	}
+
+	// Non-memory errors fall through to here to rebuild the index
+	
+	// Make sure we don't still have index on end of file
+	RemoveIndexFromFile(pdb);
+
+	// Regenerate index
+	return DB_PopulateIdx(pdb);
+}
+
+/*============================================================================
+RemoveIndexFromFile
+
+   Description:
+	   Remove index from end of file
+
+============================================================================*/
+static void RemoveIndexFromFile(OEMDBase *pdb)
+{
+	if (pdb->h.dwIndexOffset)
+	{
+		(void)IFILE_Truncate(pdb->pDBFile,pdb->h.dwIndexOffset);
+		pdb->h.dwIndexOffset = 0;
+
+		// Write DB header	
+		(void)IFILE_Seek(pdb->pDBFile, _SEEK_START, 0);   
+		(void)IFILE_Write(pdb->pDBFile, &pdb->h, sizeof(oemdb_header));
+	}
 }
 
 #endif   // AEE_OEMDB
