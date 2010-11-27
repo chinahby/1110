@@ -1301,7 +1301,7 @@ int CContApp_BuildListMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     
     ASSERT(pMe != NULL); 
     
-    FARF(ADDR, ("Build List menu %d,  %d ", pMe->m_nCurrIdx, IVector_Size(pMe->m_pAddList)));
+     MSG_FATAL("Build List menu %d,  %d ", pMe->m_nCurrIdx, IVector_Size(pMe->m_pAddList),0);
     
     if (pMenuCtl == NULL)
     {
@@ -1322,10 +1322,15 @@ int CContApp_BuildListMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         pMe->m_nCurrIdx -= nListItems;
     }//else Remain the current value
     
+    if(pMe->m_nCurrIdx >MAX_PHONEBOOK_CAPACITY)
+    {
+    	pMe->m_nCurrIdx = 0;
+    }
     // 如果当前的记录数目小于允许一次添加最大菜单数目 MAX_NUM_MENUPOP
     // 则直接添加。否则部分进行添加
     if (SUCCESS != CContApp_EnumContInit(pMe, (uint32)pMe->m_nCurrIdx))
     {
+    	
         // Add phone record to menu
         for (i=0; i<nListItems; i++)
         {
