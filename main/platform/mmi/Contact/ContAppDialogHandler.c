@@ -5105,7 +5105,11 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                     	CLOSE_DIALOG(DLGRET_CANCELED);
                     }
                     return TRUE;
-                
+                case AVK_LCTRL:   //add by yangdecai
+                	{
+                		ITEXTCTL_SetActive(pTextCtl, TRUE);
+                	}
+                    return TRUE;
                 case AVK_SEND:
                     if(IS_ZERO_REC())
                     {
