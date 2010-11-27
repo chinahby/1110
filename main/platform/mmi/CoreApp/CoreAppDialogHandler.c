@@ -2782,7 +2782,28 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             
             return TRUE;            
         }
-
+        #ifdef FEATURE_VERSION_HITZ181
+        case EVT_KEY_HELD:
+    		if(wParam == AVK_SPACE)
+            {
+            	boolean bData;
+            	#ifdef FEATURE_KEYGUARD
+        		if(!OEMKeyguard_IsEnabled())
+        		{
+        			(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                CFGI_KEY_LOCK_CHECK/*CFGI_PHONE_KEY_LOCK_CHECK*/,
+                                &bData,
+                                sizeof(bData));
+        			if(bData)
+        			{
+                        CoreApp_TimeKeyguard(pMe);
+            		}
+        		}
+				#endif	
+				return TRUE;
+            }
+        #endif
+                
         case EVT_DIALOG_END:
             // 取消相关定时器			
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
@@ -2846,6 +2867,15 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						return TRUE;
 					}
                 case AVK_UP:
+                	{
+                	    #ifdef FEATURE_VERSION_HITZ181   //add by yangdecai
+                	    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+                	    #else
+                		#if defined(FEATURE_WMS_APP)
+                    	return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+						#endif
+						#endif
+                	}
                 case AVK_MESSAGE:
 
 #if defined(FEATURE_WMS_APP)

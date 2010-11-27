@@ -788,7 +788,11 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             //#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
 			#if defined(FEATURE_TORCH_KEY_SPACE)	
 			
+                #ifdef FEATURE_VERSION_HITZ181
+                case AVK_LCTRL:
+                #else
                 case AVK_SPACE:
+                #endif
                 {
                     if ( pMe->TorchOn == FALSE )
                     {
@@ -836,6 +840,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             default:
                 break;
             }
+            #ifdef FEATURE_VERSION_HITZ181
+            return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            #endif
             break;
             
         case EVT_GSENSOR_SHAKE:
