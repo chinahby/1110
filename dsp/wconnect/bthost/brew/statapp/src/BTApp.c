@@ -2010,6 +2010,7 @@ static boolean BTApp_InitAppData(IApplet* pi)
     pMe->bSuspended       = FALSE;
 
 	pMe->bStartFromOtherApp	= FALSE;	//Add By zzg 2010_11_08
+	pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
 	
     pMe->bVocoderOn       = FALSE;
     pMe->uTopMenu         = 0;
@@ -2509,7 +2510,39 @@ static boolean BTApp_HandleEvent
     		if (STRNCMP(args->pszArgs,"GetFile",7) == 0)	//Get File
 			{
 				MSG_FATAL("***zzg GetFile***", 0, 0, 0);
-				//BTApp_DisableBT(pMe);
+
+				if ( !pMe->bSuspended )
+		        {
+		          event_processed = BTApp_Init( pMe );
+		        }
+		        if ( event_processed )
+		        {
+		          if ( pMe->mAG.bStartedVr != FALSE )
+		          {
+		            pMe->mAG.bStartedVr = FALSE;
+		            IBTEXTAG_UpdateVRState( pMe->mAG.po, FALSE );
+		            if ( pMe->mAG.callState == BTAPP_AG_CALL_STARTVR )
+		            {
+		              pMe->mAG.callState = BTAPP_AG_CALL_NONE;
+		  #ifndef FEATURE_AVS_BT_SCO_REWORK
+		              BTApp_ReleaseBTDevice( pMe, FALSE );
+		  #endif /* !FEATURE_AVS_BT_SCO_REWORK */
+		            }
+		          }
+
+				  BTApp_ShowMessage( pMe, NULL, NULL, 0 );
+		  		  		
+		          IBTEXTRM_GetHCIMode( pMe->mRM.po, &HCIMode );
+		          if ( HCIMode != AEEBT_HCIM_OFF )
+		          {
+		            BTApp_ShowMessage( pMe, IDS_MSG_HCI_ON_WARNING, NULL, 0 );
+		          }
+		        }
+				
+		        pMe->bFirstLaunch = FALSE;
+		        pMe->bSuspended = FALSE;		
+				
+		        break;
 			}
 			else											//file send via bluetooth
 			{
@@ -2583,6 +2616,7 @@ static boolean BTApp_HandleEvent
         *pb = FALSE;  /* Set the app to background app */
         pMe->bSuspended = TRUE;
 		pMe->bStartFromOtherApp = FALSE;		//Add By zzg 2010_11_08
+		pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
       }
       BTApp_OnAppStop( pMe );		
       break;
@@ -2629,8 +2663,18 @@ static boolean BTApp_HandleEvent
 #endif //FEATURE_APP_TEST_AUTOMATION
     {
       MSG_MED( "HndlEv - EVT_KEY wP=0x%x dw=0x%x", wParam, dwParam, 0 );
+
+	  //Add  By zzg 2010_11_27
+	  if (TRUE == pMe->bUpdateProgress)
+	  {
+	    MSG_FATAL("***zzg BTApp_HandleEvent EVT_KEY bUpdateProgress wParam=%x***", wParam, 0, 0);
+		return TRUE;
+	  }	  
+	  //Add End
+	  
       if ( wParam == AVK_END )
       {
+      	MSG_FATAL("***zzg BTApp_HandleEvent EVT_KEY wParam == AVK_END***", 0, 0, 0);
         return FALSE;
       }
       if ( BTApp_KeysDisabled( pMe, wParam ) )
@@ -13193,7 +13237,7 @@ static void BTApp_BuildMainMenu( CBTApp* pMe)
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_MY_INFO, 0 );
 
   //Add By zzg 2010_11_17
-  BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_BT_OPP_SETTING, 0);
+  //BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_BT_OPP_SETTING, 0);
   //Add End
 
   /*

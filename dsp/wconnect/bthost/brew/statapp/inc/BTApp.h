@@ -1920,6 +1920,7 @@ typedef struct _CBTApp
   uint16          uCurrMsgId;
   
   boolean		  bStartFromOtherApp;				//Add By zzg 2010_11_09  
+  boolean		  bUpdateProgress;					//Add By zzg 2010_11_27
   
   AECHAR*         pText1;
   AECHAR*         pText2;

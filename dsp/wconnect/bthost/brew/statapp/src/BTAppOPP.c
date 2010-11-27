@@ -2193,6 +2193,8 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
     }
     case EVT_OPP_PROG_INFO:
     {
+	  pMe->bUpdateProgress	= TRUE;	//Add By zzg 2010_11_27
+	  
       if (IBTEXTOPP_GetProgressInfo( pMe->mOPP.po, &progInfo ) == SUCCESS)
       {
         MSG_HIGH("BTAppOPP: GetProgInfo num_bytes = %d, obj_size = %d",progInfo.numBytes, progInfo.objSize, 0);
@@ -2366,6 +2368,10 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 		
         BTApp_OPPPull( pMe );
       }
+	  
+	  pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+
+	  ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );	//Add By zzg 2010_11_27
 
       break;
     }
@@ -2395,6 +2401,10 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
           BTApp_ShowMessage( pMe, msgID, wDefaultObjectName, 2 );
         }
       }
+
+	  pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+
+	  ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );	//Add By zzg 2010_11_27
 	  
       break;
     }
@@ -2421,6 +2431,11 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
           BTApp_ShowMessage( pMe, msgID, pMe->mOPP.wName, 2 );
         }
       }
+
+	  pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+
+	  ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );	//Add By zzg 2010_11_27
+	  
       break;
     }
     case EVT_OPP_OBJ_PULL_FAILED:
@@ -2441,6 +2456,10 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       {
         BTApp_ShowMessage( pMe, msgID, pMe->mOPP.wName, 2 );
       }	  
+
+	  pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+
+	  ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );	//Add By zzg 2010_11_27
       break;
     }
     default:
