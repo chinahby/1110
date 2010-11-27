@@ -1797,7 +1797,7 @@ static void CoreTask_CreateAEEInstance(void)
 #else
     (void) ISHELL_CreateInstance(pShell, AEECLSID_TELEPHONE,(void**)&g_pITelephone);
 #endif
-    
+
     // ±≥π‚¥¶¿Ì
     // Turn on the backlight immediately on startup so the
     // user can see the startup animation at night 

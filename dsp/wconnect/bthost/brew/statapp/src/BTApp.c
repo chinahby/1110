@@ -2371,7 +2371,7 @@ static boolean BTApp_HandleEvent
   switch (eCode) 
   {
 	//Add By zzg 2010_11_23
-  	case EVT_APP_START_BACKGROUND:
+  	case EVT_APP_START_BACKGROUND:	//Config蓝牙开启，COREAPP进行蓝牙初始化
 	{		
 		MSG_FATAL("***zzg BTApp_HandleEvent EVT_APP_START_BACKGROUND***", 0, 0, 0);
 		
@@ -2384,7 +2384,7 @@ static boolean BTApp_HandleEvent
 				
 				if (!pMe->bSuspended)
 				{
-					event_processed = BTApp_Init( pMe );
+					event_processed = BTApp_Init( pMe );	//Init BTApp
 				}
 
 				if (event_processed) 
@@ -2405,8 +2405,11 @@ static boolean BTApp_HandleEvent
 
 					if (BTApp_HCIModeOn(pMe) == FALSE)
 					{
-						if (BTApp_OPPInit(pMe) != FALSE)
+						if (BTApp_OPPInit(pMe) != FALSE)	//Init BTApp--->OPP	
 						{					
+							MSG_FATAL("***zzg EVT_APP_START_BACKGROUND bConnected=%d, bConnecting=%d, bRegistered=%d***", 
+							           pMe->mOPP.bConnected, pMe->mOPP.bConnecting, pMe->mOPP.bRegistered);
+							
 							//change to the server for getin file
 							if ((pMe->mOPP.bConnected == TRUE) || ((pMe->mOPP.bConnecting == TRUE)))
 							{
@@ -2414,6 +2417,10 @@ static boolean BTApp_HandleEvent
 								{
 									MSG_FATAL("***zzg IBTEXTOPP_Disconnect != SUCCESS***", 0, 0, 0);
 								}	
+								else 
+								{
+									pMe->mOPP.bConnecting = FALSE;
+								}
 							}
 							else
 							{		
@@ -2450,7 +2457,9 @@ static boolean BTApp_HandleEvent
 					
 					if ( HCIMode != AEEBT_HCIM_OFF )
 					{
-						BTApp_ShowMessage( pMe, IDS_MSG_HCI_ON_WARNING, NULL, 0 );
+						MSG_FATAL("***zzg HCIMode=%x***", HCIMode, 0, 0);
+						
+						//BTApp_ShowMessage( pMe, IDS_MSG_HCI_ON_WARNING, NULL, 0 );
 					}
 				}
 			}
@@ -2485,14 +2494,24 @@ static boolean BTApp_HandleEvent
     {
     	MSG_HIGH( "HndlEv - START/RESUME ev=%x tm=%x suspend=%x", eCode, pMe->uTopMenu, pMe->bSuspended );
 
+		if (EVT_APP_START == eCode)
+		{
+			MSG_FATAL("***zzg BTApp EVT_APP_START***",0,0,0);
+		}
+		else
+		{
+			MSG_FATAL("***zzg BTApp EVT_APP_RESUME***",0,0,0);
+		}
+
 		//Add By zzg 2010_11_08
-    	if ((args != NULL) && (args->pszArgs != NULL))	//file send via bluetooth
+    	if ((args != NULL) && (args->pszArgs != NULL))	
     	{
-    		if (STRNCMP(args->pszArgs,"GetFile",7) == 0)		//Get File
+    		if (STRNCMP(args->pszArgs,"GetFile",7) == 0)	//Get File
 			{
-				BTApp_DisableBT(pMe);
+				MSG_FATAL("***zzg GetFile***", 0, 0, 0);
+				//BTApp_DisableBT(pMe);
 			}
-			else	//SendFile
+			else											//file send via bluetooth
 			{
 	    		pMe->bStartFromOtherApp	= TRUE;		
 	    		BTApp_SaveSendFilePath(pMe, args->pszArgs);				
@@ -2533,6 +2552,7 @@ static boolean BTApp_HandleEvent
   			{
   				if (BTApp_HCIModeOn( pMe ) == FALSE)
   				{
+  					MSG_FATAL("***zzg BTApp EVT_APP_START  BT_APP_MENU_OPP_SENDFILE***",0,0,0);
   					BTApp_BuildMenu( pMe, BT_APP_MENU_OPP_SENDFILE);
   				}
   			}
@@ -2999,7 +3019,8 @@ static boolean BTApp_HandleEvent
         {
           pMe->mSD.bDiscoverable = (dwParam == AEEBT_DISCOVERABLE_MODE_NONE) ? 
                                    FALSE : TRUE;
-          BTApp_BuildMenu( pMe, TOP_MENU );
+
+		  BTApp_BuildMenu( pMe, TOP_MENU );		  
           break;
         }
         case EVT_BIP_PUT_IMAGE:
@@ -8059,8 +8080,18 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
     case BT_APP_MENU_OPP_SERVER:
     case BT_APP_MENU_OPP_CLIENT:
     case BT_APP_MENU_OPP_LIST_FILE_TYPES:
+	{
+	  if (menu == BT_APP_MENU_OPP_SENDFILE)
+	  {
+		MSG_FATAL("***zzg BTApp_BuildMenu BT_APP_MENU_OPP_SENDFILE***", 0, 0, 0);
+	  }
+	  else if (menu == BT_APP_MENU_OPP_SETTING)
+	  {
+		MSG_FATAL("***zzg BTApp_BuildMenu BT_APP_MENU_OPP_SETTING***", 0, 0, 0);
+	  }
       BTApp_OPPBuildMenu( pMe, menu );
       break;
+	}
 #endif
 #ifdef FEATURE_BT_EXTPF_FTP
     case BT_APP_MENU_FTP_TESTS:
@@ -8211,7 +8242,7 @@ DESCRIPTION
 ============================================================================= */
 boolean BTApp_BuildTopMenu( CBTApp* pMe )
 {
-  return ( BTApp_BuildMenu( pMe, TOP_MENU ) );
+  return ( BTApp_BuildMenu( pMe, TOP_MENU ) ); 
 }
 
 /* ==========================================================================
@@ -8248,7 +8279,8 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
                             AEECLSID_BLUETOOTH_APP,
                             EVT_KEY, AVK_END, 0L );
 
-		MSG_FATAL("***zzg BTApp_HandleClearKey BT_APP_MENU_MAIN bConnected=%d, bRegistered=%d***", pMe->mOPP.bConnected, pMe->mOPP.bRegistered, 0);
+		MSG_FATAL("***zzg BTApp_HandleClearKey BT_APP_MENU_MAIN bConnected=%d, bConnecting=%d, bRegistered=%d***", 
+						pMe->mOPP.bConnected, pMe->mOPP.bConnecting, pMe->mOPP.bRegistered);
 
 		//Add By zzg 2010_11_22		
 		//If client, change to server , first Disconnect
@@ -8258,6 +8290,10 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
 			{
 				MSG_FATAL("***zzg IBTEXTOPP_Disconnect != SUCCESS***", 0, 0, 0);
 			}	
+			else 
+			{
+				pMe->mOPP.bConnecting = FALSE;
+			}
 		}
 		else
 		{			
@@ -8470,15 +8506,20 @@ boolean BTApp_HandleClearKey( CBTApp* pMe )
 	{  
 		//Add By zzg 2010_11_22		
 		//If client, change to server , first Disconnect
-
-		MSG_FATAL("***zzg BT_APP_MENU_OPP_SENDFILE HandleCleartKey bConnected=%d, bRegistered=%d***", pMe->mOPP.bConnected, pMe->mOPP.bRegistered, 0);
+		MSG_FATAL("***zzg BT_APP_MENU_OPP_SENDFILE HandleCleartKey bConnected=%d, bConnecting=%d, bRegistered=%d***", 
+										pMe->mOPP.bConnected, pMe->mOPP.bConnecting, pMe->mOPP.bRegistered);
 		
 		if ((pMe->mOPP.bConnected == TRUE) || ((pMe->mOPP.bConnecting == TRUE)))
 		{
 			if (IBTEXTOPP_Disconnect( pMe->mOPP.po) != SUCCESS)
 			{
-				MSG_FATAL("***zzg IBTEXTOPP_Disconnect != SUCCESS***", 0, 0, 0);
+				MSG_FATAL("***zzg IBTEXTOPP_Disconnect != SUCCESS!***", 0, 0, 0);
 			}	
+			else 
+			{
+				MSG_FATAL("***zzg IBTEXTOPP_Disconnect == SUCCESS!***", 0, 0, 0);
+				pMe->mOPP.bConnecting = FALSE;
+			}
 		}
 		else
 		{
@@ -9867,6 +9908,17 @@ void BTApp_EnableBT( CBTApp* pMe )
     {
       if(BTApp_EnableAG(pMe, &bSettingBondable) == TRUE)
       {
+		//Add By zzg 201011_26
+		if ( TOP_MENU == BT_APP_MENU_MAIN )
+		{
+#ifdef FEATURE_BT_EXTPF_OPP
+			  if (BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable) == TRUE)
+		      {
+		        break;
+		      }
+#endif 
+		}
+		//Add End   	  
         break;
       }
     }
@@ -9879,12 +9931,9 @@ void BTApp_EnableBT( CBTApp* pMe )
     }
 #ifdef FEATURE_BT_EXTPF_OPP  
     case BTAPP_ENABLING_OPP:
-    {
-		
-		MSG_FATAL("***zzg  BTApp_EnableBT BTAPP_ENABLING_OPP***",0,0,0);
-		
-      if ( BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable) 
-                           == TRUE)
+    {		
+	  MSG_FATAL("***zzg  BTApp_EnableBT BTAPP_ENABLING_OPP***",0,0,0);		
+      if ( BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable) == TRUE)
       {
         break;
       }
@@ -11880,12 +11929,6 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
       if ( TOP_MENU == BT_APP_MENU_MAIN )
       {
         MSG_FATAL("***zzg BTApp_HandleSelection BTApp_EnableBT***",0,0,0);
-
-//Add By zzg 201011_26
-#ifdef FEATURE_BT_EXTPF_OPP
-  		pMe->mEnablingType = BTAPP_ENABLING_OPP;
-#endif 
-//Add End		
         BTApp_EnableBT( pMe );
       }
       break;
@@ -19006,6 +19049,7 @@ static void BTApp_ProcessSDNotifications(
         {
           /* menu should not be rebuild in all cases as it will effect
              automation */
+
           BTApp_BuildMenu( pMe, TOP_MENU ); 
         }
       }

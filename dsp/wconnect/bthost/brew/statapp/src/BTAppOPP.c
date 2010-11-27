@@ -878,7 +878,7 @@ void BTApp_OPPBuildSendFileClientMenu( CBTApp* pMe )
   IMENUCTL_SetBottomBarType(pMe->m_pIMenu, BTBAR_SELECT_BACK);  	//Add By zzg 2010_11_09
   
   // Activate menu
-  PUSH_MENU( BT_APP_MENU_OPP_SENDFILE );
+  PUSH_MENU( BT_APP_MENU_OPP_SENDFILE );    
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
   IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
 
@@ -1444,6 +1444,7 @@ boolean BTApp_OPPBuildMenu( CBTApp* pMe, BTAppMenuType menu )
 	{		
 		if (BTApp_OPPInit(pMe) != FALSE)
 		{
+			MSG_FATAL("***zzg BTApp_OPPBuildMenu BT_APP_MENU_OPP_SENDFILE***", 0, 0, 0);
 			BTApp_OPPBuildSendFileClientMenu(pMe);	//直接用CLIENT(如果是SERVER状态，则切换)
 			
 			//BTApp_OPPBuildSendFileMenu(pMe);
@@ -1639,6 +1640,7 @@ boolean BTApp_OPPHandleSendFileSelection( CBTApp* pMe, uint16 sel )
     }
     case IDS_OPP_CLIENT:
     {
+		MSG_FATAL("***zzg BTApp_OPPHandleSendFileSelection IDS_OPP_CLIENT***",0,0,0);
       	BTApp_OPPBuildSendFileClientMenu( pMe );		//client should change for sendfile from Tcard
       	break;
     }
@@ -2266,10 +2268,11 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 		
 		if (pMe->mOPP.bRegistered == FALSE)
 		{
-			int result;		
-			
+			int result;					
 
 			BTApp_SetBondable( pMe );
+
+			MSG_FATAL("***zzg EVT_OPP_DISCONNECTED***",0,0,0);
 
 			if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP )) != SUCCESS )
 			{
@@ -2308,6 +2311,31 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       BTApp_ClearBondable( pMe ); // no need to be bondable anymore
       BTApp_ShowMessage( pMe, IDS_MSG_CONN_FAILED, NULL, 3 );
       pMe->mOPP.bConnecting = FALSE;
+
+     //Add By zzg 2010_11_22
+     //If client, change to server , register
+     
+     if (pMe->mOPP.bRegistered == FALSE)
+     {
+	     int result;		
+	     BTApp_SetBondable( pMe );
+	     
+	     MSG_FATAL("***zzg EVT_OPP_DISCONNECTED***",0,0,0);
+	     
+	     if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP )) != SUCCESS )
+	     {
+	     	BTApp_ClearBondable( pMe ); 
+	     }
+	     else
+	     {
+	     	if (pMe->mSD.bDiscoverable == FALSE)
+	     	{
+	     		IBTEXTSD_SetDiscoverable( pMe->mSD.po, TRUE );
+	     	}		
+	     } 	 
+     }
+     //Add End
+		
       break;
     case EVT_OPP_OBJ_PUSHED:
     {
