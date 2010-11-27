@@ -4777,7 +4777,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
     {
 #ifndef FEATURE_USES_LOWMEM
 
-#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)
+#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)||defined(FEATURE_VERSION_FLEXI203P)
         MSG_FATAL("CoreApp_PlayPwrOnAni 20",0,0,0); 
         IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定开机动画的帧数
 #else
@@ -4797,7 +4797,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 
  
         // 开始播放开机动画
-#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)      
+#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)||defined(FEATURE_VERSION_FLEXI203P)      
         MSG_FATAL("CoreApp_PlayPwrOnAni 21",0,0,0);
         IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
         pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;

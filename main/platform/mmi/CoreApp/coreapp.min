@@ -33,7 +33,7 @@ CONSTFILE_FILES+=\
     poweronani.png|fs:/image/pwronoffani/poweronani.png
 else ifeq ($(USES_RESDIR), Flexi203p)    
 CONSTFILE_FILES+=\
-    poweronani.png|fs:/image/pwronoffani/poweronani.png
+    poweronani.gif|fs:/image/pwronoffani/poweronani.gif
 else ifeq ($(USES_RESDIR), Smart)
 CONSTFILE_FILES+=\
 	poweronani.png|fs:/image/pwronoffani/poweronani.png \
