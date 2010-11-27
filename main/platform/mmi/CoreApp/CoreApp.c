@@ -3317,12 +3317,16 @@ static void StereoHeadsetOn(CCoreApp * pMe)
 
 	snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MESSAGE,set_ringer_level, NULL, NULL );	
 	snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_RING,set_ringer_level, NULL, NULL );	
-
-	// midi volume
+	
 #ifdef FEATURE_MULTIMEDIA
-	snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MIDI,set_ringer_level, NULL, NULL );
-#endif
-   
+	if(!IsMp3PlayerStatusNone())  //add by miaoxiaoming
+	{
+		ISHELL_PostEvent(pMe->a.m_pIShell, AEECLSID_APP_MUSICPLAYER,EVT_HEADSET_CONNECT, 0, 0);
+	}
+#endif   
+
+
+
 	devnotify.wParam = TRUE;
 	AEE_SEND_HEADSET_EVT(&devnotify);
 } /* End HeadsetOn */
@@ -3413,11 +3417,14 @@ static void HeadsetOff(CCoreApp *pMe)
 
 	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MESSAGE,set_ringer_level, NULL, NULL );	
 	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_RING,set_ringer_level, NULL, NULL );	
-
-	// midi volume
+	
 #ifdef FEATURE_MULTIMEDIA
-	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MIDI,set_ringer_level, NULL, NULL );
+	if(!IsMp3PlayerStatusNone())  //add by miaoxiaoming
+	{
+		ISHELL_PostEvent(pMe->a.m_pIShell, AEECLSID_APP_MUSICPLAYER,EVT_HEADSET_CONNECT, 0, 0);
+	}
 #endif
+
 
 	devnotify.wParam = FALSE;
 	AEE_SEND_HEADSET_EVT(&devnotify);

@@ -902,6 +902,11 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
             CLOSE_DIALOG(DLGRET_CREATE);
             return TRUE;
 
+		case EVT_HEADSET_CONNECT:   //add by miaoxiaoming
+		case EVT_HEADSET_DISCONNECT:	
+			(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
+			break;
+
 #ifdef FEATURE_SUPPORT_BT_APP
         case AVK_BT_HEADSET_CONNECT:
              if(pMe->m_bInterruptByBT)
