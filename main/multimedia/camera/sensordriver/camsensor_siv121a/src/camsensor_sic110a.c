@@ -146,16 +146,18 @@ static boolean initialize_sic110a_registers_preview(void)
     sic110a_i2c_write_byte(0x00, 0x00); 
     sic110a_i2c_write_byte(0x04, 0x00); 
     sic110a_i2c_write_byte(0x05, 0x01); 
-    sic110a_i2c_write_byte(0x10, 0x00); 
-    sic110a_i2c_write_byte(0x11, 0x01); 
+    sic110a_i2c_write_byte(0x10, 0x05);
+	
+    sic110a_i2c_write_byte(0x11, 0x36); 
     sic110a_i2c_write_byte(0x12, 0x13); 
     
-    sic110a_i2c_write_byte(0x40, 0x80); 
-    sic110a_i2c_write_byte(0x41, 0x96); 
+    sic110a_i2c_write_byte(0x40, 0x00); 
+    sic110a_i2c_write_byte(0x41, 0x16); 
     sic110a_i2c_write_byte(0x42, 0x32); 
     sic110a_i2c_write_byte(0X43, 0X80); 
     
     //SIC110A 50Hz Setting MCLK : 12MHz
+    #if 0
     sic110a_i2c_write_byte(0x20, 0x00); //00
     sic110a_i2c_write_byte(0x21, 0x0a);//00
     sic110a_i2c_write_byte(0x22, 0x02);//00
@@ -163,10 +165,19 @@ static boolean initialize_sic110a_registers_preview(void)
     
     sic110a_i2c_write_byte(0x00, 0x01); 
     sic110a_i2c_write_byte(0x34, 0x18);//4B);
+    #else
+	sic110a_i2c_write_byte(0x20, 0x00); //00
+    sic110a_i2c_write_byte(0x21, 0x00);//00
+    sic110a_i2c_write_byte(0x22, 0x00);//00
+    sic110a_i2c_write_byte(0x23, 0x00);
+    
+    sic110a_i2c_write_byte(0x00, 0x01); 
+    sic110a_i2c_write_byte(0x34, 0x18);//4B);
+	#endif
     
     //AE Control
     sic110a_i2c_write_byte(0x10, 0x80); 
-    sic110a_i2c_write_byte(0x11, 0x03); 
+    sic110a_i2c_write_byte(0x11, 0x03);//0x03
     sic110a_i2c_write_byte(0x12, 0x80); 
     sic110a_i2c_write_byte(0x13, 0x80); 
     sic110a_i2c_write_byte(0x14, 0x75); 
@@ -234,7 +245,7 @@ static boolean initialize_sic110a_registers_preview(void)
     sic110a_i2c_write_byte(0x10, 0xEF); 
     sic110a_i2c_write_byte(0x11, 0x1D);  // PCLK, HSync, VSync (L,H,L)
 #ifdef SIC110A_OUTFORMAT_RGB565
-    sic110a_i2c_write_byte(0x12, 0x3C);
+    sic110a_i2c_write_byte(0x12, 0x0C); //0x3c
 #else
     sic110a_i2c_write_byte(0x12, 0x9D);  // YCbCr 
 #endif
@@ -371,9 +382,9 @@ static boolean initialize_sic110a_registers_preview(void)
     //sic110a_i2c_write_byte(0xA4, 0x20); 
     sic110a_i2c_write_byte(0xA0, 0x00);
     sic110a_i2c_write_byte(0xA1, 0x00); 
-    sic110a_i2c_write_byte(0xA2, 0xB0); 
+    sic110a_i2c_write_byte(0xA2, 0xb0);  //0xa0
     sic110a_i2c_write_byte(0xA3, 0x00); 
-    sic110a_i2c_write_byte(0xA4, 0x90); 
+    sic110a_i2c_write_byte(0xA4, 0x90);  //0x80
     
     //BLC value gain
     sic110a_i2c_write_byte(0xA8, 0x80); 
