@@ -2014,7 +2014,7 @@ static NextFSMAction Handler_STATE_FIND_LIST(CContApp *pMe)
 #endif
     
     FARF(STATE, ("STATE_FIND_LIST %d",pMe->m_eDlgRet));
-    
+     MSG_FATAL("Handler_STATE_FIND_LIST %d",pMe->m_eDlgRet,0,0);
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -2077,10 +2077,10 @@ static NextFSMAction Handler_STATE_FIND_LIST(CContApp *pMe)
 					//MOVE_TO_STATE(STATE_DELETE);
 					break;
 	    case DLGRET_YES:
-            MSG_FATAL("DLGRET_YES................",0,0,0);
+            MSG_FATAL("DLGRET_YES. pMe->m_wEditCont.=%d..............",pMe->m_wEditCont,0,0);
             if (wType ==0)
             {
-                if(SUCCESS == CContApp_DeleteCont(pMe, pMe->m_wEditCont))
+                if(SUCCESS == CContApp_DeleteCont(pMe, pMe->m_wSelectCont))
                 {                    
 
                     if(NULL != pMe->m_szAlpha)
