@@ -1269,6 +1269,8 @@ static void FmRadio_PowerUp(void *pme)
 
     FmRadio_CheckRefuse( pMe);
 	
+	WarT_Fm_Register();
+	
     if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_VOICE_CALL_CONNECTED)
     {
 #ifndef WIN32
