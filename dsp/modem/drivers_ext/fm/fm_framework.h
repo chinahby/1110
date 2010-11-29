@@ -40,6 +40,7 @@ typedef struct
 	uint16 (*fm_GetCurrentChannel)(void);
 }WarT_Fm_t;
 
+extern int WarT_Fm_Register(void);
 extern int WarT_Fm_Init(void);
 extern int WarT_Fm_PowerUp(void);
 extern int WarT_Fm_PowerDown(void);
