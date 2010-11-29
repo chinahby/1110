@@ -125,10 +125,10 @@
 #ifdef FEATURE_VERSION_FLEXI203
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (17)
-#define    PWRON_ANI_RATE                        (280)
+#define    PWRON_ANI_RATE                        (300)
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronani.png"
 #define    PWROFF_ANI_FRAME_COUNT                (17)
-#define    PWROFF_ANI_RATE                       (280)
+#define    PWROFF_ANI_RATE                       (300)
 #define    ANI_RATE                              (180)
 #elif defined FEATURE_VERSION_FLEXI203P  
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.gif"

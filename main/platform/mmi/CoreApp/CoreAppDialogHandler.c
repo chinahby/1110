@@ -4910,7 +4910,7 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
     {
 #ifndef FEATURE_USES_LOWMEM
 
-#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)
+#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)||defined(FEATURE_VERSION_FLEXI203P) 
         IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定关机动画的帧数
 #else
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
@@ -4925,7 +4925,7 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         IIMAGE_SetDrawSize( pMe->m_pStartupAniImg, 
                                 ImgInfo.cx/PWROFF_ANI_FRAME_COUNT, ImgInfo.cy );
 #endif
-#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)
+#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)||defined(FEATURE_VERSION_FLEXI203P) 
         IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
         pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
 #else
