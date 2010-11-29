@@ -1615,16 +1615,15 @@ static OEMConfigListType oemi_cache = {
    
 
    , MAX_FMRADIO_VOLUME/5 *3                   //CFGI_FMRADIO_VOLUME
-   ,
 #ifdef FEATURE_VERSION_HITZ181
-    {{L"88", 5}, {L"88.5", 10}, {L"89.5", 20}, {L"91", 35}, {L"91.5", 40},
+   ,{{L"88", 5}, {L"88.5", 10}, {L"89.5", 20}, {L"91", 35}, {L"91.5", 40},
     {L"93", 55}, {L"94",   65}, {L"94.5", 70}, {L"95", 75}, {L"95.5", 80},
     {L"96", 85}, {L"97.5", 100}, {L"98.5", 110}, {L"100",125}, {L"102.5",150},
     {L"103",155},{L"103.5",160},{L"105.5",180},{L"106.5",190}, {L"107.5", 200} 
     }  //CFGI_FMRADIO_CHAN_INFO
     ,20//CFGI_FMRADIO_CHAN_TOTAL
 #else   
-   {0}                                              //CFGI_FMRADIO_CHAN_INFO
+   ,{0}                                              //CFGI_FMRADIO_CHAN_INFO
    , 0                                              //CFGI_FMRADIO_CHAN_TOTAL
 #endif
    ,OEMNV_EMERGENCYNUM_TABLE_NUM                                            //CFGI_EMERGENCYNUM_TABLE
