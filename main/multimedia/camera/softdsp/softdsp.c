@@ -200,7 +200,7 @@ static void SoftDSP_Catch2x1Data(void)
 
         MSG_FATAL("SoftDSP_CatchSensorData 0x%x %d %d",pBuff,xStart,xOutEnd);
         MSG_FATAL("SoftDSP_CatchSensorData %d %d %d",g_SoftDSPInfo.bCaptureState,pixelSize,g_SoftDSPInfo.camsensor_params->camif_window_height_config.lastLine);
-        
+        INTLOCK();
         // HSYNC
         while(1)
         {
@@ -287,6 +287,7 @@ static void SoftDSP_Catch2x1Data(void)
             SoftDSP_ClockOut(xOutEnd*2);
 #endif
         }
+		INTFREE();
         
 #ifdef SOFT_MCLK
         gpio_tlmm_config(GP_PDM);
@@ -361,7 +362,7 @@ static void SoftDSP_Catch1x1Data(void)
 
         MSG_FATAL("SoftDSP_CatchSensorData 0x%x %d %d",pBuff,xStart,xOutEnd);
         MSG_FATAL("SoftDSP_CatchSensorData %d %d %d",g_SoftDSPInfo.bCaptureState,pixelSize,g_SoftDSPInfo.camsensor_params->camif_window_height_config.lastLine);
-        
+        INTLOCK();
         // HSYNC
         while(1)
         {
@@ -442,7 +443,7 @@ static void SoftDSP_Catch1x1Data(void)
             SoftDSP_ClockOut(xOutEnd);
 #endif
         }
-        
+        INTFREE();
 #ifdef SOFT_MCLK
         gpio_tlmm_config(GP_PDM);
 #endif
