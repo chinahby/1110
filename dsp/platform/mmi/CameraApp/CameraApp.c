@@ -813,7 +813,9 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             SetDeviceState(DEVICE_TYPE_CAMERA, DEVICE_CAMERA_STATE_OFF);
             if(pMe->m_bIsPreview == TRUE && pMe->m_pCamera)
             {
-                //ICAMERAEX_RegisterNotify(pMe->m_pCamera,NULL, NULL);
+                #ifndef FEATURE_DSP
+                ICAMERA_RegisterNotify(pMe->m_pCamera,NULL, NULL);
+                #endif
                 ICAMERA_Stop(pMe->m_pCamera);
             }
             (void)ICONFIG_SetItem(pMe->m_pConfig,
@@ -829,7 +831,9 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             pMe->m_bSuspending = TRUE;
             if(pMe->m_bIsPreview == TRUE && pMe->m_pCamera)
             {
+                #ifndef FEATURE_DSP
                 ICAMERA_RegisterNotify(pMe->m_pCamera,NULL, NULL);
+                #endif
                 ICAMERA_Stop(pMe->m_pCamera);
             }
             

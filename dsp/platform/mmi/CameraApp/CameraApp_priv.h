@@ -85,9 +85,11 @@
 
 #ifdef FEATURE_DSP
 #include "AEETv.h"
-#endif
 #include "AEECamera.h"
 #include "OEMCamera.h"
+#include "ICameraExt.h"
+#endif
+
 
 
 /*==============================================================================
@@ -341,11 +343,7 @@ typedef struct _CCameraApp
     OEMCAMERASIZE        m_nCameraSize;          // camera≈ƒ’’≥ﬂ¥Á
     OEMCAMERABANDING     m_nCameraBanding;       // camera bandig…Ë÷√
     OEMCAMERASTORAGE     m_nCameraStorage;       // camera≈ƒ’’¥Ê¥¢Œª÷√
-    #ifdef FEATURE_DSP
-    ICamera              *m_pCamera;
-    #else
-    ICamera                *m_pCamera;
-    #endif
+    ICamera           *m_pCamera;
     IFileMgr             *m_pFM; 
     IConfig              *m_pConfig;              // IConfig interface
     IMedia               *m_pMedia;

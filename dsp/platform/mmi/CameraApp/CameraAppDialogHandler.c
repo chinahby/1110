@@ -25,6 +25,7 @@
 #include "CameraApp_priv.h" 
 #include "MediaGallery.h"
 #include "appscommonimages.brh"
+#include "cam_IF_ait_api.h"
 
 /*==============================================================================                                 
                                  宏定义和常数
@@ -672,7 +673,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             return TRUE;
             
         case EVT_USER_REDRAW:
-            // camera preview start....
+            // camera preview start....         
             #ifndef FEATURE_DSP            
             if(pMe->m_pCamera && (!pMe->m_bIsPreview))
             {
@@ -840,7 +841,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     CameraApp_RecordSnapShot(pMe);
                     ICAMERA_Stop(pMe->m_pCamera);
                     CameraApp_SavePhoto(pMe);
-                    //DBGPRINTF("save--------------------");
+
                     CameraApp_PlayShutterSound(pMe);
                     CLOSE_DIALOG(DLGRET_PICMENU);
 					#else
@@ -975,7 +976,6 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             return TRUE;
             
         case EVT_KEY_PRESS:
-            DBGPRINTF("cfg key code ----------------%d\n", wParam);
             switch(wParam)
             {
                 case AVK_CLR:
@@ -1138,19 +1138,6 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
             return TRUE;
  
         case EVT_KEY_PRESS:
-            /*
-            DBGPRINTF("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-            switch(wParam)
-            {
-            case AVK_RIGHT:                    
-                ICAMERAEX_Stop(pMe->m_pCamera);
-                ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
-                break;
-            case AVK_LEFT:
-                ICAMERAEX_Preview(pMe->m_pCamera);
-                break;
-            default:break;
-            }*/
             return TRUE;
  
         case EVT_KEY_RELEASE:
@@ -1265,8 +1252,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                                                wstrText,
                                                sizeof(wstrText));
                 }
-                DBGPRINTF("msggggg----------------------------------%d---------%d", pMe->m_wMsgID,IDS_DONE);
-               
+          
                 switch(pMe->m_wMsgID)
                 {
                     case IDS_MSG_NOSDCARD:
@@ -1305,7 +1291,6 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             if(pMe->m_wMsgID == IDS_MSG_WAITING || pMe->m_wMsgID == IDS_DONE
                || pMe->m_wMsgID == IDS_MSG_NOSDCARD || pMe->m_wMsgID == IDS_MSG_NOMEMORY) // &&(!pMe->m_pCamera)
             {
-                DBGPRINTF("cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\n");
                CameraApp_InitCameraCheck(pMe);    
 
                 (void)ISHELL_PostEvent(pMe->m_pShell,
@@ -2791,6 +2776,7 @@ static void CameraApp_DrawMidPic(CCameraApp *pMe)
             if(pImage != NULL)
             {
                 IIMAGE_GetInfo(pImage, &myInfo);
+                DBGPRINTF("img rc-----------%d-----------%d",(pMe->m_cxWidth - myInfo.cx)/2, pMe->m_cyHeight - myInfo.cy -1);
                 IIMAGE_Draw(pImage, (pMe->m_cxWidth - myInfo.cx)/2, pMe->m_cyHeight - myInfo.cy -1 );
                 IIMAGE_Release(pImage);
                 pImage = NULL;
@@ -2927,14 +2913,15 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
         default:
             break;
     }
-    
+    #ifndef FEATURE_DSP
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEW_TYPE, CAM_PREVIEW_SNAPSHOT, 0);       
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_MULTISHOT, 1, 0);
     ICAMERA_SetQuality(pMe->m_pCamera, quality);    
     ICAMERA_SetSize(pMe->m_pCamera, &captureSize);
     ICAMERA_SetDisplaySize(pMe->m_pCamera, &displaySize);
     
-    ICAMERA_Preview(pMe->m_pCamera); 
+    ICAMERA_Preview(pMe->m_pCamera);
+    #endif
 
     pMe->m_nCameraState = CAM_PREVIEW;  
 
@@ -2965,7 +2952,7 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
     
     pMe->m_nCameraState = CAM_SAVE;
     pMe->m_bCapturePic  = TRUE;
-    //(void)ICAMERAEX_DeferEncode(pMe->m_pCamera, TRUE);
+    //(void)ICAMERA_DeferEncode(pMe->m_pCamera, TRUE);
     DBGPRINTF("name---%s---%s", pMe->m_sCaptureFileName, pMe->m_sCurrentFileName);
     
     // 拍照状态的处理
@@ -3383,7 +3370,7 @@ static void CameraApp_UpdateFrame(CCameraApp *pMe)
   if (!pMe)
     return;
   
- // (void)ICAMERAEX_GetFrame(pMe->m_pCamera, &pFrame);
+ // (void)ICAMERA_GetFrame(pMe->m_pCamera, &pFrame);
 
   if (!pFrame)
     return;
@@ -3417,7 +3404,7 @@ static int CameraApp_Update(CCameraApp *pMe)
         IDISPLAY_GetDeviceBitmap(pMe->m_pDisplay, &pbmp);           
         IBITMAP_QueryInterface(pbmp, AEECLSID_DIB, (void**)&pdib);                
         ICAMERA_UpdateScreen(pMe->m_pCamera, (uint32)pdib->pBmp);        
-       // DBGPRINTF("bmp addr:%0x--- width:%d-----height:%d------depth:%d\n", pdib->pBmp, pdib->cx, pdib->cy, pdib->nDepth);
+        DBGPRINTF("bmp addr:%0x--- width:%d-----height:%d------depth:%d\n", pdib->pBmp, pdib->cx, pdib->cy, pdib->nDepth);
         IBITMAP_Release(pbmp);  
         IDIB_Release(pdib);
     }    
