@@ -2161,6 +2161,10 @@ static NextFSMAction Handler_STATE_FIND_LIST(CContApp *pMe)
             }
             //MOVE_TO_STATE(STATE_DELETE);		
             break;
+        case DLGRET_NO:
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_NO",0,0,0);
+            MOVE_TO_STATE(STATE_FIND_LIST);
+            break;
         case DLGRET_CALL:
             // store the menu select
             PUSH_LISTMENU_SEL(pMe->m_wFindListSel);
@@ -2929,6 +2933,10 @@ static NextFSMAction Handler_STATE_GROUPVIEW_LIST(CContApp *pMe)
                 }
                 MOVE_TO_STATE(STATE_ERROR);
             }
+            break;
+        case DLGRET_NO:
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_NO",0,0,0);
+            MOVE_TO_STATE(STATE_GROUPVIEW_LIST);
             break;
         case DLGRET_CALL:
             // store the menu select
@@ -6621,6 +6629,10 @@ static NextFSMAction Handler_STATE_SAVEFLD_LIST(CContApp *pMe)
                 MOVE_TO_STATE(STATE_ERROR);
             }
             //MOVE_TO_STATE(STATE_DELETE);		
+            break;
+        case DLGRET_NO:
+            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_NO",0,0,0);
+            MOVE_TO_STATE(STATE_SAVEFLD_LIST);
             break;
         case DLGRET_CANCELED:
             MOVE_TO_STATE(STATE_EXIT);
