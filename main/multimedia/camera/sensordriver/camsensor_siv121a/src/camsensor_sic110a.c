@@ -53,9 +53,8 @@ static const char           camsensor_sic110a_sensor_suffix[]    = "SIC110A";
 ============================================================================*/
 static void    camsensor_sic110a_register(camsensor_function_table_type *camsensor_function_table_ptr);
 static void    camsensor_sic110a_setup_camctrl_tbl(camctrl_tbl_type *camctrl_tbl_ptr);
-static boolean initialize_sic110a_registers_preview(void);
-static boolean initialize_sic110a_registers_snapshot(void);
-static boolean initialize_sic110a_registers_snapshot_qtr(void);
+static boolean initialize_sic110a_registers_qtr(void);
+static boolean initialize_sic110a_registers_full(void);
 static uint16  camsensor_sic110a_get_snapshot_fps(uint16);
 static boolean sic110a_i2c_write_byte(uint8 offset, uint8 data);
 static boolean sic110a_i2c_read_byte(uint8 offset, uint8* data);
@@ -129,8 +128,8 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
     
     sic110a_i2c_read_byte(SIC110A_INFO_REG,&sensor_id);
     ERR("sensor_id 2 = %x",sensor_id,0,0);
-
-    initialize_sic110a_registers_preview();
+	
+    initialize_sic110a_registers_qtr();
     
 	/* Register function table: */
 	camsensor_sic110a_register(camsensor_function_table_ptr);
@@ -140,7 +139,7 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
 	return TRUE;
 } /* camsensor_sic110a_init */
 
-static boolean initialize_sic110a_registers_preview(void)
+static boolean initialize_sic110a_registers_qtr(void)
 {    
     //Sensor Block Setting 	###Don't Change###
     sic110a_i2c_write_byte(0x00, 0x00); 
@@ -402,33 +401,44 @@ static boolean initialize_sic110a_registers_preview(void)
 	return TRUE;
 } /* end of initialize_sic110a_registers_preview. */
 
-static boolean initialize_sic110a_registers_snapshot(void)
+static boolean initialize_sic110a_registers_full(void)
 {    
-    //Sensor Block Setting  ###Don't Change###
+    //Sensor Block Setting 	###Don't Change###
     sic110a_i2c_write_byte(0x00, 0x00); 
     sic110a_i2c_write_byte(0x04, 0x00); 
     sic110a_i2c_write_byte(0x05, 0x03); 
-    sic110a_i2c_write_byte(0x10, 0x00); 
-    sic110a_i2c_write_byte(0x11, 0x01); 
+    sic110a_i2c_write_byte(0x10, 0x05);
+	
+    sic110a_i2c_write_byte(0x11, 0x36); 
     sic110a_i2c_write_byte(0x12, 0x13); 
     
-    sic110a_i2c_write_byte(0x40, 0x80); 
-    sic110a_i2c_write_byte(0x41, 0x96); 
+    sic110a_i2c_write_byte(0x40, 0x00); 
+    sic110a_i2c_write_byte(0x41, 0x16); 
     sic110a_i2c_write_byte(0x42, 0x32); 
     sic110a_i2c_write_byte(0X43, 0X80); 
     
     //SIC110A 50Hz Setting MCLK : 12MHz
-    sic110a_i2c_write_byte(0x20, 0x00); 
-    sic110a_i2c_write_byte(0x21, 0x00);
-    sic110a_i2c_write_byte(0x22, 0x00);
+    #if 0
+    sic110a_i2c_write_byte(0x20, 0x00); //00
+    sic110a_i2c_write_byte(0x21, 0x0a);//00
+    sic110a_i2c_write_byte(0x22, 0x02);//00
     sic110a_i2c_write_byte(0x23, 0x00);
     
     sic110a_i2c_write_byte(0x00, 0x01); 
-    sic110a_i2c_write_byte(0x34, 0x4B);
+    sic110a_i2c_write_byte(0x34, 0x18);//4B);
+    #else
+	sic110a_i2c_write_byte(0x20, 0x00); //00
+    sic110a_i2c_write_byte(0x21, 0x00);//00
+    sic110a_i2c_write_byte(0x22, 0x00);//00
+    sic110a_i2c_write_byte(0x23, 0x00);
+    
+    sic110a_i2c_write_byte(0x00, 0x01); 
+    sic110a_i2c_write_byte(0x34, 0x18);//4B);
+	#endif
     
     //AE Control
     sic110a_i2c_write_byte(0x10, 0x80); 
-    sic110a_i2c_write_byte(0x11, 0x0C); 
+    sic110a_i2c_write_byte(0x11, 0x03);//0x03
     sic110a_i2c_write_byte(0x12, 0x80); 
     sic110a_i2c_write_byte(0x13, 0x80); 
     sic110a_i2c_write_byte(0x14, 0x75); 
@@ -496,7 +506,7 @@ static boolean initialize_sic110a_registers_snapshot(void)
     sic110a_i2c_write_byte(0x10, 0xEF); 
     sic110a_i2c_write_byte(0x11, 0x1D);  // PCLK, HSync, VSync (L,H,L)
 #ifdef SIC110A_OUTFORMAT_RGB565
-    sic110a_i2c_write_byte(0x12, 0x0C);
+    sic110a_i2c_write_byte(0x12, 0x0C); //0x3c
 #else
     sic110a_i2c_write_byte(0x12, 0x9D);  // YCbCr 
 #endif
@@ -631,6 +641,11 @@ static boolean initialize_sic110a_registers_snapshot(void)
     sic110a_i2c_write_byte(0xA2, 0x60); 
     sic110a_i2c_write_byte(0xA3, 0x00); 
     sic110a_i2c_write_byte(0xA4, 0x20); 
+    //sic110a_i2c_write_byte(0xA0, 0x00);
+    //sic110a_i2c_write_byte(0xA1, 0x00); 
+    //sic110a_i2c_write_byte(0xA2, 0xb0);  //0xa0
+    //sic110a_i2c_write_byte(0xA3, 0x00); 
+    //sic110a_i2c_write_byte(0xA4, 0x90);  //0x80
     
     //BLC value gain
     sic110a_i2c_write_byte(0xA8, 0x80); 
@@ -643,258 +658,10 @@ static boolean initialize_sic110a_registers_snapshot(void)
     //Sesnor On
     sic110a_i2c_write_byte(0x00, 0x00); 
     sic110a_i2c_write_byte(0x03, 0x05);
+
 	/*Customer can adjust GAMMA, MIRROR & UPSIDEDOWN here!*/
 	return TRUE;
 } /* end of initialize_sic110a_registers_snapshot. */
-
-
-static boolean initialize_sic110a_registers_snapshot_qtr(void)
-{    //Sensor Block Setting 	###Don't Change###
-    sic110a_i2c_write_byte(0x00, 0x00); 
-    sic110a_i2c_write_byte(0x04, 0x00); 
-    sic110a_i2c_write_byte(0x05, 0x01); 
-    sic110a_i2c_write_byte(0x10, 0x00); 
-    sic110a_i2c_write_byte(0x11, 0x01); 
-    sic110a_i2c_write_byte(0x12, 0x13); 
-    
-    sic110a_i2c_write_byte(0x40, 0x80); 
-    sic110a_i2c_write_byte(0x41, 0x96); 
-    sic110a_i2c_write_byte(0x42, 0x32); 
-    sic110a_i2c_write_byte(0X43, 0X80); 
-    
-    //SIC110A 50Hz Setting MCLK : 12MHz
-    sic110a_i2c_write_byte(0x20, 0x00); 
-    sic110a_i2c_write_byte(0x21, 0x00);
-    sic110a_i2c_write_byte(0x22, 0x00);
-    sic110a_i2c_write_byte(0x23, 0x00);
-    
-    sic110a_i2c_write_byte(0x00, 0x01); 
-    sic110a_i2c_write_byte(0x34, 0x4B);
-    
-    //AE Control
-    sic110a_i2c_write_byte(0x10, 0x80); 
-    sic110a_i2c_write_byte(0x11, 0x0C); 
-    sic110a_i2c_write_byte(0x12, 0x80); 
-    sic110a_i2c_write_byte(0x13, 0x80); 
-    sic110a_i2c_write_byte(0x14, 0x75); 
-    sic110a_i2c_write_byte(0x1C, 0x1A); 
-    
-    sic110a_i2c_write_byte(0x40, 0x4F); 
-    sic110a_i2c_write_byte(0x41, 0x08); 
-    
-    //AWB Control
-    sic110a_i2c_write_byte(0x00, 0x02); 
-    sic110a_i2c_write_byte(0x10, 0xD3); 
-    sic110a_i2c_write_byte(0x11, 0xC0); 
-    sic110a_i2c_write_byte(0x13, 0x80); 
-    sic110a_i2c_write_byte(0x14, 0x80); 
-    sic110a_i2c_write_byte(0x15, 0xFE); 
-    sic110a_i2c_write_byte(0x16, 0x70);	
-    sic110a_i2c_write_byte(0x17, 0xEA); 
-    sic110a_i2c_write_byte(0x18, 0x80); 
-    sic110a_i2c_write_byte(0x19, 0xA0);	
-    sic110a_i2c_write_byte(0x1A, 0x70); 
-    sic110a_i2c_write_byte(0x1B, 0xA0);	
-    sic110a_i2c_write_byte(0x1C, 0x70); 
-    sic110a_i2c_write_byte(0x1D, 0xB0); 
-    sic110a_i2c_write_byte(0x1E, 0x70); 
-    sic110a_i2c_write_byte(0x20, 0xFE); 
-    sic110a_i2c_write_byte(0x21, 0x98); 
-    sic110a_i2c_write_byte(0x22, 0x9D); 
-    sic110a_i2c_write_byte(0x23, 0x18); 
-    sic110a_i2c_write_byte(0x25, 0x20); 
-    sic110a_i2c_write_byte(0x26, 0x0F); 
-    sic110a_i2c_write_byte(0x27, 0x00); 
-    sic110a_i2c_write_byte(0x28, 0x00); 
-    sic110a_i2c_write_byte(0x29, 0xD0); 
-    sic110a_i2c_write_byte(0x2A, 0x90); 
-    sic110a_i2c_write_byte(0x30, 0x05);
-    sic110a_i2c_write_byte(0x41, 0x04); 
-    sic110a_i2c_write_byte(0x44, 0x13); 
-    sic110a_i2c_write_byte(0x45, 0x6B); 
-    sic110a_i2c_write_byte(0x46, 0xA3); 
-    
-    //RGB to YCbCr (CSC) No used
-    sic110a_i2c_write_byte(0x50, 0x33); 
-    sic110a_i2c_write_byte(0x51, 0x20); 
-    sic110a_i2c_write_byte(0x52, 0xE5); 
-    sic110a_i2c_write_byte(0x53, 0xFB); 
-    sic110a_i2c_write_byte(0x54, 0x13); 
-    sic110a_i2c_write_byte(0x55, 0x26); 
-    sic110a_i2c_write_byte(0x56, 0x07); 
-    sic110a_i2c_write_byte(0x57, 0xF5); 
-    sic110a_i2c_write_byte(0x58, 0xEA); 
-    sic110a_i2c_write_byte(0x59, 0x21); 
-    
-    //D65, D30, D20
-    sic110a_i2c_write_byte(0x63, 0x93); 
-    sic110a_i2c_write_byte(0x64, 0xBF); 
-    sic110a_i2c_write_byte(0x65, 0x93); 
-    sic110a_i2c_write_byte(0x66, 0xBF); 
-    sic110a_i2c_write_byte(0x67, 0xB0); 
-    sic110a_i2c_write_byte(0x68, 0xA0); 
-    sic110a_i2c_write_byte(0x69, 0xB0); 
-    sic110a_i2c_write_byte(0x6A, 0xA0); 
-    
-    //IDP Control
-    sic110a_i2c_write_byte(0x00, 0x03); 
-    sic110a_i2c_write_byte(0x10, 0xEF); 
-    sic110a_i2c_write_byte(0x11, 0x1D);  // PCLK, HSync, VSync (L,H,L)
-#ifdef SIC110A_OUTFORMAT_RGB565
-    sic110a_i2c_write_byte(0x12, 0x0C);
-#else
-    sic110a_i2c_write_byte(0x12, 0x9D);  // YCbCr 
-#endif
-
-    //Shading
-    sic110a_i2c_write_byte(0x27, 0x11); 
-    sic110a_i2c_write_byte(0x28, 0x11); 
-    sic110a_i2c_write_byte(0x29, 0x55); 
-    sic110a_i2c_write_byte(0x2A, 0x43); 
-    sic110a_i2c_write_byte(0x2B, 0x21); 
-    sic110a_i2c_write_byte(0x2C, 0x00); //R left # right
-    sic110a_i2c_write_byte(0x2D, 0x00); //R top # bottom 
-    sic110a_i2c_write_byte(0x2E, 0x00); //G left # right 
-    sic110a_i2c_write_byte(0x2F, 0x00); //G top # bottom 
-    sic110a_i2c_write_byte(0x30, 0x00); //B left # right 
-    sic110a_i2c_write_byte(0x31, 0x00); //B top # bottom 
-    sic110a_i2c_write_byte(0x32, 0x5B); 
-    sic110a_i2c_write_byte(0x33, 0x4B); 
-    
-    //Gamma 
-    sic110a_i2c_write_byte(0x34, 0x00); 
-    sic110a_i2c_write_byte(0x35, 0x0B); 
-    sic110a_i2c_write_byte(0x36, 0x15); 
-    sic110a_i2c_write_byte(0x37, 0x29); 
-    sic110a_i2c_write_byte(0x38, 0x4A); 
-    sic110a_i2c_write_byte(0x39, 0x66); 
-    sic110a_i2c_write_byte(0x3A, 0x7A); 
-    sic110a_i2c_write_byte(0x3B, 0x8D); 
-    sic110a_i2c_write_byte(0x3C, 0x9D); 
-    sic110a_i2c_write_byte(0x3D, 0xAA); 
-    sic110a_i2c_write_byte(0x3E, 0xB6); 
-    sic110a_i2c_write_byte(0x3F, 0xCB); 
-    sic110a_i2c_write_byte(0x40, 0xDE); 
-    sic110a_i2c_write_byte(0x41, 0xF0); 
-    sic110a_i2c_write_byte(0x42, 0xF8); 
-    sic110a_i2c_write_byte(0x43, 0xFF); 
-    
-    //DPC De-noise
-    sic110a_i2c_write_byte(0x44, 0xBB); 
-    sic110a_i2c_write_byte(0x45, 0x10); 
-    sic110a_i2c_write_byte(0x46, 0x27); 
-    sic110a_i2c_write_byte(0x47, 0x08); 
-    sic110a_i2c_write_byte(0x48, 0x08); 
-    sic110a_i2c_write_byte(0x49, 0x8F); 
-    sic110a_i2c_write_byte(0x4A, 0x33); 
-    sic110a_i2c_write_byte(0x4B, 0x30); //De-noise Start Gain 
-    sic110a_i2c_write_byte(0x4C, 0xDD); 
-    sic110a_i2c_write_byte(0x4D, 0x00); 
-    sic110a_i2c_write_byte(0x4E, 0xFF); 
-    sic110a_i2c_write_byte(0x4F, 0x04); //LPF Threshold
-    sic110a_i2c_write_byte(0x50, 0x3A); 
-    sic110a_i2c_write_byte(0x51, 0x2F); 
-    sic110a_i2c_write_byte(0x52, 0x84); 
-    sic110a_i2c_write_byte(0x53, 0x74);
-    
-    //D65 CMA
-    sic110a_i2c_write_byte(0x54, 0x3E); 
-    sic110a_i2c_write_byte(0x55, 0xC9); 
-    sic110a_i2c_write_byte(0x56, 0xF9); 
-    sic110a_i2c_write_byte(0x57, 0x13); 
-    sic110a_i2c_write_byte(0x58, 0x26); 
-    sic110a_i2c_write_byte(0x59, 0x07); 
-    sic110a_i2c_write_byte(0x5A, 0xF2); 
-    sic110a_i2c_write_byte(0x5B, 0xBC); 
-    sic110a_i2c_write_byte(0x5C, 0x52); 
-    
-    //D30 CMA
-    sic110a_i2c_write_byte(0x5D, 0x48); 
-    sic110a_i2c_write_byte(0x5E, 0xC0); 
-    sic110a_i2c_write_byte(0x5F, 0xF9); 
-    sic110a_i2c_write_byte(0x60, 0x0E); 
-    sic110a_i2c_write_byte(0x61, 0x2D); 
-    sic110a_i2c_write_byte(0x62, 0x05); 
-    sic110a_i2c_write_byte(0x63, 0xEA); 
-    sic110a_i2c_write_byte(0x64, 0xC4); 
-    sic110a_i2c_write_byte(0x65, 0x52); 
-    
-    //D20 CMA
-    sic110a_i2c_write_byte(0x66, 0x3A); 
-    sic110a_i2c_write_byte(0x67, 0xCB); 
-    sic110a_i2c_write_byte(0x68, 0xFB); 
-    sic110a_i2c_write_byte(0x69, 0x0E); 
-    sic110a_i2c_write_byte(0x6A, 0x2D); 
-    sic110a_i2c_write_byte(0x6B, 0x05); 
-    sic110a_i2c_write_byte(0x6C, 0xEA); 
-    sic110a_i2c_write_byte(0x6D, 0xC4); 
-    sic110a_i2c_write_byte(0x6E, 0x52); 
-    
-    sic110a_i2c_write_byte(0x6F, 0xC0); 
-    
-    //Edge
-    sic110a_i2c_write_byte(0x70, 0x20); //Edge type1 upper gain
-    sic110a_i2c_write_byte(0x71, 0x40); //Edge type1 down gain
-    sic110a_i2c_write_byte(0x72, 0x01); 
-    sic110a_i2c_write_byte(0x73, 0x01); 
-    sic110a_i2c_write_byte(0x74, 0x20); 
-    sic110a_i2c_write_byte(0x75, 0x20); 
-    sic110a_i2c_write_byte(0x76, 0x30); //Edge type1 Suppress start gain 
-    sic110a_i2c_write_byte(0x77, 0x10); 
-    sic110a_i2c_write_byte(0x78, 0x20); 
-    sic110a_i2c_write_byte(0x79, 0x20); //Edge type2 upper gain
-    sic110a_i2c_write_byte(0x7A, 0x40); //Edge type2 down gain 
-    sic110a_i2c_write_byte(0x7B, 0x03); 
-    sic110a_i2c_write_byte(0x7C, 0x03); 
-    sic110a_i2c_write_byte(0x7D, 0x20); 
-    sic110a_i2c_write_byte(0x7E, 0x20); 
-    sic110a_i2c_write_byte(0x7F, 0x30); //Edge type2 Suppress start gain
-    sic110a_i2c_write_byte(0x80, 0x10); 
-    sic110a_i2c_write_byte(0x81, 0x40); 
-    sic110a_i2c_write_byte(0x82, 0x7E); 
-    sic110a_i2c_write_byte(0x83, 0x10); //Flat Region Sensing Threshold
-    
-    //Saturation Gain
-    sic110a_i2c_write_byte(0x85, 0x10); 
-    sic110a_i2c_write_byte(0x86, 0x12); 
-    sic110a_i2c_write_byte(0x87, 0x12); 
-    sic110a_i2c_write_byte(0x88, 0x00); 
-    
-    sic110a_i2c_write_byte(0x8C, 0xFF); 
-    sic110a_i2c_write_byte(0x8D, 0x00); 
-    sic110a_i2c_write_byte(0x8E, 0xFF); 
-    sic110a_i2c_write_byte(0x8F, 0x00); 
-    sic110a_i2c_write_byte(0x90, 0xFF); 
-    sic110a_i2c_write_byte(0x91, 0x00); 
-    
-    sic110a_i2c_write_byte(0x92, 0x20); 
-    sic110a_i2c_write_byte(0x93, 0x48); 
-    
-    //Windowing
-    //sic110a_i2c_write_byte(0xA0, 0x14);
-    //sic110a_i2c_write_byte(0xA1, 0x00); 
-    //sic110a_i2c_write_byte(0xA2, 0x60); 
-    //sic110a_i2c_write_byte(0xA3, 0x00); 
-    //sic110a_i2c_write_byte(0xA4, 0x20); 
-    sic110a_i2c_write_byte(0xA0, 0x00);
-    sic110a_i2c_write_byte(0xA1, 0x00); 
-    sic110a_i2c_write_byte(0xA2, 0xB0); 
-    sic110a_i2c_write_byte(0xA3, 0x00); 
-    sic110a_i2c_write_byte(0xA4, 0x90); 
-    
-    //BLC value gain
-    sic110a_i2c_write_byte(0xA8, 0x80); 
-    sic110a_i2c_write_byte(0xA9, 0x80); 
-    sic110a_i2c_write_byte(0xAA, 0x80); 
-    sic110a_i2c_write_byte(0xAB, 0x80); 
-    
-    sic110a_i2c_write_byte(0xB0, 0x02); //De-noise control by Analog gain reference
-    
-    //Sesnor On
-    sic110a_i2c_write_byte(0x00, 0x00); 
-    sic110a_i2c_write_byte(0x03, 0x05);
-	return TRUE;
-} /* end of initialize_sic110a_registers_snapshot_qtr. */
 
 static boolean camsensor_sic110a_start( camsensor_static_params_type *camsensor_params)
 {
@@ -1067,7 +834,7 @@ static boolean camsensor_sic110a_snapshot_config( camsensor_static_params_type  
     	camsensor_params->camif_window_height_config.firstLine = (camsensor_params->camsensor_height-camera_dy)/2;
     	camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_dy;
         camsensor_params->pixel_clock = 1;
-        initialize_sic110a_registers_snapshot();
+        initialize_sic110a_registers_full();
     }
     else
     {
@@ -1091,7 +858,7 @@ static boolean camsensor_sic110a_snapshot_config( camsensor_static_params_type  
     	camsensor_params->camif_window_height_config.firstLine = (camsensor_params->camsensor_height-camera_dy)/2;
     	camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_dy;
         camsensor_params->pixel_clock = 2;
-        initialize_sic110a_registers_snapshot_qtr();
+        initialize_sic110a_registers_qtr();
     }
 	return TRUE;
 }
@@ -1139,31 +906,54 @@ SIDE EFFECTS
 ===========================================================================*/
 static boolean camsensor_sic110a_video_config(camsensor_static_params_type *camsensor_params)
 {
-    /* Set the current dimensions */
-    camsensor_params->camsensor_width  = \
-                camsensor_params->qtr_size_width;
-    camsensor_params->camsensor_height = \
-                camsensor_params->qtr_size_height;
+	if(camera_preview_dx > CAMSENSOR_SIC110A_QTR_SIZE_WIDTH)
+	{
+			    /* Set the current dimensions */
+	    camsensor_params->camsensor_width  = \
+	                camsensor_params->full_size_width;
+	    camsensor_params->camsensor_height = \
+	                camsensor_params->full_size_height;
 
-    /* CAMIF frame */
-    camsensor_params->camif_frame_config.pixelsPerLine = \
-                camsensor_params->qtr_size_width*2;
+	    /* CAMIF frame */
+	    camsensor_params->camif_frame_config.pixelsPerLine = \
+	                camsensor_params->full_size_width*2;
 
-    camsensor_params->camif_frame_config.linesPerFrame = \
-                camsensor_params->qtr_size_height;
-    
-    /* CAMIF Window */
-    camsensor_params->camif_window_width_config.firstPixel = camsensor_params->camsensor_width-camera_preview_dx; //°´CLK
-    camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel+(camera_preview_dx*2);
+	    camsensor_params->camif_frame_config.linesPerFrame = \
+	                camsensor_params->full_size_height;
+	    
+	    /* CAMIF Window */
+	    camsensor_params->camif_window_width_config.firstPixel = camsensor_params->camsensor_width-camera_preview_dx; //°´CLK
+	    camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel+(camera_preview_dx*2);
 
-    camsensor_params->camif_window_height_config.firstLine = (camsensor_params->camsensor_height-camera_preview_dy)/2;
-    camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_preview_dy;
-#ifdef CAMSENSOR_HIGHQUALITY_PREVIEW
-    camsensor_params->pixel_clock = 2; 
-#else
-    camsensor_params->pixel_clock = 1;
-#endif
-    initialize_sic110a_registers_preview();
+	    camsensor_params->camif_window_height_config.firstLine = (camsensor_params->camsensor_height-camera_preview_dy)/2;
+	    camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_preview_dy;
+	    camsensor_params->pixel_clock = 1;
+	    initialize_sic110a_registers_full();
+	}
+	else
+	{
+	    /* Set the current dimensions */
+	    camsensor_params->camsensor_width  = \
+	                camsensor_params->qtr_size_width;
+	    camsensor_params->camsensor_height = \
+	                camsensor_params->qtr_size_height;
+
+	    /* CAMIF frame */
+	    camsensor_params->camif_frame_config.pixelsPerLine = \
+	                camsensor_params->qtr_size_width*2;
+
+	    camsensor_params->camif_frame_config.linesPerFrame = \
+	                camsensor_params->qtr_size_height;
+	    
+	    /* CAMIF Window */
+	    camsensor_params->camif_window_width_config.firstPixel = camsensor_params->camsensor_width-camera_preview_dx; //°´CLK
+	    camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel+(camera_preview_dx*2);
+
+	    camsensor_params->camif_window_height_config.firstLine = (camsensor_params->camsensor_height-camera_preview_dy)/2;
+	    camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_preview_dy;
+	    camsensor_params->pixel_clock = 2; 
+	    initialize_sic110a_registers_qtr();
+	}
 	return TRUE;
 }
 
