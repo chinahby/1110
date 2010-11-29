@@ -2645,10 +2645,55 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.restrict_incoming = 0;
    oemi_cache.restrict_outgoing = 0;
 
-   oemi_cache.fmRadio_volume = MAX_FMRADIO_VOLUME/5*3;                                  
+   oemi_cache.fmRadio_volume = MAX_FMRADIO_VOLUME/5*3;     
+#ifdef FEATURE_VERSION_HITZ181   
+   {
+       oemi_cache.fmRadio_chan_total = 20;
+       WSTRCPY(oemi_cache.fmRadio_chan_info[0].szName ,L"88");
+       oemi_cache.fmRadio_chan_info[0].wChannel = 5;
+       WSTRCPY(oemi_cache.fmRadio_chan_info[1].szName ,L"88.5");
+       oemi_cache.fmRadio_chan_info[1].wChannel = 10;       
+       WSTRCPY(oemi_cache.fmRadio_chan_info[2].szName ,L"89.5");
+       oemi_cache.fmRadio_chan_info[2].wChannel = 20;  
+       WSTRCPY(oemi_cache.fmRadio_chan_info[3].szName ,L"91");
+       oemi_cache.fmRadio_chan_info[3].wChannel = 35; 
+       WSTRCPY(oemi_cache.fmRadio_chan_info[4].szName ,L"91.5");
+       oemi_cache.fmRadio_chan_info[4].wChannel = 40;  
+       WSTRCPY(oemi_cache.fmRadio_chan_info[5].szName ,L"93");
+       oemi_cache.fmRadio_chan_info[5].wChannel = 55;   
+       WSTRCPY(oemi_cache.fmRadio_chan_info[6].szName ,L"94");
+       oemi_cache.fmRadio_chan_info[6].wChannel = 65;    
+       WSTRCPY(oemi_cache.fmRadio_chan_info[7].szName ,L"94.5");
+       oemi_cache.fmRadio_chan_info[7].wChannel = 70;   
+       WSTRCPY(oemi_cache.fmRadio_chan_info[8].szName ,L"95");
+       oemi_cache.fmRadio_chan_info[8].wChannel = 75;  
+       WSTRCPY(oemi_cache.fmRadio_chan_info[9].szName ,L"95.5");
+       oemi_cache.fmRadio_chan_info[9].wChannel = 80;
+       WSTRCPY(oemi_cache.fmRadio_chan_info[10].szName ,L"96");
+       oemi_cache.fmRadio_chan_info[10].wChannel = 85;  
+       WSTRCPY(oemi_cache.fmRadio_chan_info[11].szName ,L"97.5");
+       oemi_cache.fmRadio_chan_info[11].wChannel = 100;
+       WSTRCPY(oemi_cache.fmRadio_chan_info[12].szName ,L"98.5");
+       oemi_cache.fmRadio_chan_info[12].wChannel = 110;   
+       WSTRCPY(oemi_cache.fmRadio_chan_info[13].szName ,L"100");
+       oemi_cache.fmRadio_chan_info[13].wChannel = 125;   
+       WSTRCPY(oemi_cache.fmRadio_chan_info[14].szName ,L"102.5");
+       oemi_cache.fmRadio_chan_info[14].wChannel = 150;
+       WSTRCPY(oemi_cache.fmRadio_chan_info[15].szName ,L"103");
+       oemi_cache.fmRadio_chan_info[15].wChannel = 155;      
+       WSTRCPY(oemi_cache.fmRadio_chan_info[16].szName ,L"103.5");
+       oemi_cache.fmRadio_chan_info[16].wChannel = 160;
+       WSTRCPY(oemi_cache.fmRadio_chan_info[17].szName ,L"105.5");
+       oemi_cache.fmRadio_chan_info[17].wChannel = 180;
+       WSTRCPY(oemi_cache.fmRadio_chan_info[18].szName ,L"106.5");
+       oemi_cache.fmRadio_chan_info[18].wChannel = 190;
+       WSTRCPY(oemi_cache.fmRadio_chan_info[19].szName ,L"107.5");
+       oemi_cache.fmRadio_chan_info[19].wChannel = 200;        
+   }
+#else
    MEMSET((void *)&oemi_cache.fmRadio_chan_info, 0, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
    oemi_cache.fmRadio_chan_total = 0;
-   
+#endif   
    oemi_cache.emerg_table.emert_size = OEMNV_EMERT_SEZE;
    oemi_cache.emerg_table.emerg_num[0].num_len = OEMNV_EMERG_NUM_LEN;
    STRCPY(oemi_cache.emerg_table.emerg_num[0].num_buf,OEMNV_EMERG_NUM_ONE);
