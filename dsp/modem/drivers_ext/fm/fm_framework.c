@@ -2,15 +2,21 @@
 
 static WarT_Fm_t g_tHeXingFm;
 
+#define USE_FM_TLG1120
+
+
+int WarT_Fm_Register(void)
+{
+#ifdef USE_FM_TLG1120
+		TLGFM_Register(&g_tHeXingFm);
+#elif defined USE_FM_RD5802
+	
+#endif
+
+}
 
 int WarT_Fm_Init(void)
 {
-#ifdef USE_FM_TLG1120
-	TLGFM_Register(&g_tHeXingFm);
-#elif defined USE_FM_RD5802
-
-#endif
-
 	return g_tHeXingFm.fm_initail();
 }
 
