@@ -2,7 +2,7 @@
 
 static void disp_ic_init(void)
 {
-#ifndef FEATURE_NEW_ROTLCD
+#ifdef FEATURE_OLD_ROTLCD
     LCD_WRITE_CMD(0x11); //Exit Sleep
     LCD_DELAY(120);
 
