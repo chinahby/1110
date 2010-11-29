@@ -2667,7 +2667,45 @@ static boolean BTApp_HandleEvent
 	  //Add  By zzg 2010_11_27
 	  if (TRUE == pMe->bUpdateProgress)
 	  {
-	    MSG_FATAL("***zzg BTApp_HandleEvent EVT_KEY bUpdateProgress wParam=%x***", wParam, 0, 0);
+		if ((AVK_CANCEL == wParam) || (AVK_CLR == wParam))
+		{		
+			IBTEXTOPP_Abort(pMe->mOPP.po);
+			
+			if ((pMe->mOPP.bConnected == TRUE) || ((pMe->mOPP.bConnecting == TRUE)))
+			{
+				if (IBTEXTOPP_Disconnect( pMe->mOPP.po) != SUCCESS)
+				{
+					MSG_FATAL("***zzg IBTEXTOPP_Disconnect != SUCCESS***", 0, 0, 0);
+				}	
+				else 
+				{
+					pMe->mOPP.bConnecting = FALSE;
+				}
+			}
+			else
+			{		
+				if (pMe->mOPP.bRegistered == FALSE)
+				{
+					int result;						
+
+					BTApp_SetBondable(pMe);
+
+					if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP )) != SUCCESS )
+					{
+						MSG_FATAL("***zzg BTApp_OPPPull OPP_Register() failed with %x***", result, 0, 0 );
+						BTApp_ClearBondable( pMe ); 
+					}
+					else
+					{	
+						if (pMe->mSD.bDiscoverable == FALSE)
+						{
+							IBTEXTSD_SetDiscoverable( pMe->mSD.po, TRUE );
+						}		
+					} 	 
+				}	
+			}
+		}
+		
 		return TRUE;
 	  }	  
 	  //Add End
@@ -2677,6 +2715,7 @@ static boolean BTApp_HandleEvent
       	MSG_FATAL("***zzg BTApp_HandleEvent EVT_KEY wParam == AVK_END***", 0, 0, 0);
         return FALSE;
       }
+	  
       if ( BTApp_KeysDisabled( pMe, wParam ) )
       {
         return TRUE;

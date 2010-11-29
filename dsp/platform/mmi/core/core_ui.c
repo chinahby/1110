@@ -1912,7 +1912,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 		//Add By zzg 2010_11_27
 		if (cls == AEECLSID_BLUETOOTH_APP)
 			{	
-				wParam = AVK_CLR;
+				wParam = AVK_CANCEL;
 				bHandle = TRUE;
 			}
 		//Add End

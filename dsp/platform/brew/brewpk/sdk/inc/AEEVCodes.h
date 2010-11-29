@@ -215,6 +215,7 @@ enum _AVKType {
    AVK_BGPLAY,
 
    AVK_WITHDRAW,
+   AVK_CANCEL,			//Add By zzg 2010_11_27
    // ·­¸Ç¡¢»¬¸Ç
    AVK_FLIP_OPEN,
    AVK_FLIP_CLOSE,
