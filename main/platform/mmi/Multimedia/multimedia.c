@@ -1000,7 +1000,7 @@ DESCRIPTION:  启动applet
 PARAMETERS:  如果APPLET 有变动，只需改动次函数
 
 =============================================================================*/
-static boolean StartApplet(Multimed *pMe, int i)
+static int StartApplet(Multimed *pMe, int i)
 {
     int Result = EUNSUPPORTED;
     switch(i)
