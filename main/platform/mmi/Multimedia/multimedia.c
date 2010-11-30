@@ -374,9 +374,6 @@ static int Multimed_New( IShell *ps, IModule *pIModule, IMultimed **ppObj)
 ==============================================================================*/
 static int CMultimed_InitAppData(Multimed *pMe)
 {
-	int i;
-	boolean iamgeflag = FALSE;
-    MSG_FATAL("CMultimed_InitAppData Start",0,0,0);
     if (NULL == pMe)
     {
         return EFAILED;
@@ -390,12 +387,12 @@ static int CMultimed_InitAppData(Multimed *pMe)
         MSG_FATAL("CMultimed_InitAppData EFAILED",0,0,0);
         return EFAILED;
     }
+    
 	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
     {
         MSG_FATAL("CMultimed_InitAppData EFAILED",0,0,0);
         return EFAILED;
     }
-    MSG_FATAL("CMultimed_InitAppData SUCCESS",0,0,0);
     return SUCCESS;
 }
 
