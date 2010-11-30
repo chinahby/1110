@@ -927,7 +927,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
                     
                     ISHELL_LoadResString( pMe->m_pShell,
                                           MULTIMEDIA_RES_FILE_LANG,
-                                          IMENUCTL_GetItemID(pMenu, i - 1)
+                                          IMENUCTL_GetItemID(pMenu, i - 1),
                                           pstr,
                                           sizeof(pstr));
                     
