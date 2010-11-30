@@ -64,6 +64,12 @@ static boolean  SecurityPassWordDlgHandler(CSecurityMenu *pMe,
                                         uint16         wParam,
                                         uint32         dwParam);
 
+// 对话框 IDD_KEY_LOCK_CHECK_DIALOG 事件处理函数
+static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
+                                        AEEEvent       eCode,
+                                        uint16         wParam,
+                                        uint32         dwParam);
+
 // 对话框 IDD_PHONE_PASSWORD_INPUT_DIALOG 事件处理函数
 static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                         AEEEvent       eCode,
@@ -297,6 +303,9 @@ boolean SecurityMenu_RouteDialogEvent(CSecurityMenu *pMe,
 
         case IDD_PHONE_PASSWORD_CHECK_DIALOG:
             return SecurityPassWordDlgHandler(pMe,eCode,wParam,dwParam);
+            
+        case IDD_KEY_LOCK_CHECK_DIALOG:
+        	return SecurityKeyLockDlgHandler(pMe,eCode,wParam,dwParam);
 
         case IDD_PHONE_PASSWORD_INPUT_DIALOG:
             return SecurityCallPassWordInputDlgHandler(pMe,eCode,wParam,dwParam);
@@ -392,6 +401,11 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                 IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PIN_SET, IDS_PIN_SET, NULL, 0);
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_APPLICATION_LOCK, IDS_APPLICATION_LOCK, NULL, 0);
+            #ifdef FEATURE_KEYGUARD
+            #ifdef FEATURE_VERSION_HITZ181
+            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AUTOKEYGUARD_TITLE, IDS_AUTOKEYGUARD_TITLE, NULL, 0);
+            #endif
+            #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PHONE_PASSWORD_CHANGE, IDS_PHONE_PASSWORD_CHANGE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_RESTORE, IDS_RESTORE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_DELETE, IDS_DELETE, NULL, 0);
@@ -449,7 +463,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                     pMe->m_lock_sel = SEC_SEL_PHONE_LOCK;
                     CLOSE_DIALOG(DLG_PHONEPASSWORD)
                     break;
-                    
+                
                 case IDS_APPLICATION_LOCK:
                     CLOSE_DIALOG(DLG_APPLICATIONLOCK)
                     break;
@@ -471,6 +485,15 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                     pMe->m_lock_sel = SEC_SEL_KEY_LOCK;
                     CLOSE_DIALOG(DLG_PHONEPASSWORD)
                     break;
+                    
+                #ifdef FEATURE_VERSION_HITZ181
+                case IDS_AUTOKEYGUARD_TITLE:
+                	{
+                		pMe->m_lock_sel = SEC_SEL_KEY_LOCK;
+                    	CLOSE_DIALOG(DLGRET_KEYLOCK)
+                	}
+                	break;
+                #endif
 #endif
                 case IDS_RECENT_CALL_LOCK:           //RECENTCALL LOCK
                     pMe->m_lock_sel = SEC_SEL_RECENTCALL_LOCK;
@@ -886,7 +909,149 @@ static boolean  SecurityPassWordDlgHandler(CSecurityMenu *pMe,
     }
     return FALSE;
 } // SecurityPassWordDlgHandler
+/*==============================================================================
+函数：
+       SecurityKeyLockDlgHandler
+说明：
+       IDD_KEY_LOCK_CHECK_DIALOG对话框事件处理函数
 
+参数：
+       pMe [in]：指向SecurityMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
+                                        AEEEvent       eCode,
+                                        uint16         wParam,
+                                        uint32         dwParam)
+{
+	 PARAM_NOT_REF(dwParam)
+
+    IMenuCtl  *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                     IDM_KEY_LOCK);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    MSG_FATAL("%x, %x ,%x,SecurityKeyLockDlgHandler",eCode,wParam,dwParam);
+    //实现菜单循环滚动功能
+    //SettingMenu_AutoScroll(pMenu,eCode,wParam);
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSECURITYMENU_RES_FILE,                                
+                        IDS_AUTOKEYGUARD_TITLE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_ON, IDS_ON, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_OFF, IDS_OFF, NULL, 0);
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            {
+                uint16    ui16_return = IDS_OFF;
+                boolean   AKG = 0;
+
+                (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                      CFGI_KEY_LOCK_CHECK,
+                                      &AKG,
+                                      sizeof(AKG));
+
+                switch (AKG)
+                {
+                    case 1:   //开
+                      ui16_return = IDS_ON;
+                      break;
+                      
+                   default:
+                    case 0: //关
+                      ui16_return = IDS_OFF;
+                      break;
+                }
+
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, ui16_return, TRUE);
+                IMENUCTL_SetSel(pMenu, ui16_return);
+
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_APP_SECURITYMENU,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            (void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            {
+                boolean AKG = 0;
+
+                switch (wParam)
+                {
+                    case IDS_ON:     //开
+                        AKG = 1;
+                        break;
+                        
+                    case IDS_OFF:     //关
+                        AKG = 0;
+                        break;
+
+                    default:
+                        ASSERT_NOT_REACHABLE;
+                }
+
+                (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                       CFGI_KEY_LOCK_CHECK,
+                                       &AKG,
+                                       sizeof(AKG));
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wParam, TRUE);
+                CLOSE_DIALOG(DLGRET_TOSHOWMSG)
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+}
 
 /*==============================================================================
 函数：

@@ -54,6 +54,9 @@ static NextFSMAction Security_StateApplicationLockHandler(CSecurityMenu *pMe);
 //状态SECURITYMENU_PHONEPASSWORD 处理函数
 static NextFSMAction Security_StatePhonePassWordHandler(CSecurityMenu *pMe);
 
+//状态SECURITYMENU_KEYLOCK处理函数
+static NextFSMAction Security_StatePhoneKeylockHandler(CSecurityMenu *pMe);
+
 //状态SECURITYMENU_PHONEPASSWORDINPUT 处理函数
 static NextFSMAction Security_StateCallPassWordInputHandler(CSecurityMenu *pMe);
 // 状态 SECURITYMENU_PINCHECK 处理函数
@@ -158,7 +161,13 @@ NextFSMAction SecurityMenu_ProcessState(CSecurityMenu *pMe)
         case SECURITYMENU_PHONEPASSWORD:
             retVal = Security_StatePhonePassWordHandler(pMe);
             break;
-
+            
+        #ifdef FEATURE_VERSION_HITZ181
+        case SECURITYMENU_KEYLOCK:
+        	retVal = Security_StatePhoneKeylockHandler(pMe);
+            break;
+        #endif
+            
         case SECURITYMENU_PHONEPASSWORDINPUT:
             retVal = Security_StateCallPassWordInputHandler(pMe);
             break;
@@ -363,6 +372,12 @@ static NextFSMAction Security_StateMainHandler(CSecurityMenu *pMe)
         case DLG_PHONEPASSWORD:
             MOVE_TO_STATE(SECURITYMENU_PHONEPASSWORD)
             return NFSMACTION_CONTINUE;
+            
+        #ifdef FEATURE_VERSION_HITZ181
+        case DLGRET_KEYLOCK:
+        	MOVE_TO_STATE(SECURITYMENU_KEYLOCK)
+            return NFSMACTION_CONTINUE;
+        #endif
 
         case DLGRET_CHANGECODE:
             MOVE_TO_STATE(SECURITYMENU_CHANGECODE)
@@ -476,6 +491,60 @@ static NextFSMAction Security_StatePhonePassWordHandler(CSecurityMenu *pMe)
     return NFSMACTION_WAIT;
 
 }
+/*==============================================================================
+函数：
+       Security_StatePhoneKeylockHandler
+说明：
+       SECURITYMENU_KEYLOCK 状态处理函数
+
+参数：
+       pMe [in]：指向SecurityMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction Security_StatePhoneKeylockHandler(CSecurityMenu *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    //SEC_ERR("StatePhonePassWordHandler", 0, 0, 0);
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SecurityMenu_ShowDialog(pMe, IDD_KEY_LOCK_CHECK_DIALOG);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:
+            if( pMe->m_lock_sel == SEC_SEL_PHONE_LOCK)
+            {
+                MOVE_TO_STATE(SECURITYMENU_MAIN)
+            }
+            else
+            {
+                MOVE_TO_STATE(SECURITYMENU_MAIN)
+            }
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_TOSHOWMSG:
+            //pMe->m_wMsgID = IDS_SAVED;
+            Security_ShowMsgBox(pMe, IDS_SAVED);
+            return NFSMACTION_WAIT; 
+
+        default:
+            break;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
 
 /*==============================================================================
 函数：

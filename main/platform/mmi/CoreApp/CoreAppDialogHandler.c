@@ -2983,7 +2983,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
-#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/			
+#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/	
+#elif defined (FEATURE_VERSION_HITZ181)
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif
@@ -4427,7 +4429,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
         DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
+                                  #ifdef FEATURE_VERSION_HITZ181
+                                  18,
+                                  #else
                                   12,
+                                  #endif
                                   &wszDate[0], -1,
                                   0, 0, &rc_date, 
                                   IDF_ALIGN_MIDDLE
@@ -4699,9 +4705,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #elif defined FEATURE_VERSION_M8
 		eBBarType = BTBAR_FACEBOOK_CHAT;
 #else										//Include IVIO
-	#if !defined (FEATURE_FLEXI_STATIC_BREW_APP)
-		eBBarType = BTBAR_MESSAGES_CONTACTS;
-	#elif defined (FEATURE_GURU)
+	#if defined (FEATURE_GURU)
 		eBBarType = BTBAR_FGURU_FPORTAL;	
     #elif defined (FEATURE_FMN2010)
         eBBarType = BTBAR_FMUSLIM_FPORTAL;
@@ -4712,7 +4716,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	#elif defined (FEATURE_VERSION_HITZ181)
 		eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
 	#else
-		eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
+		eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai
 	#endif
 #endif
 	

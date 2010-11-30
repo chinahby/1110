@@ -254,6 +254,7 @@ typedef struct _TextCtlContext {
 #endif
    IImage               *m_pImageBg;
    boolean              is_isShift;
+   boolean              is_bAlt;
    boolean              m_bCaplk;
 } TextCtlContext;
 
@@ -770,6 +771,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
       pNewContext->byMode = 0;
    }
    pNewContext->is_isShift = FALSE;
+   pNewContext->is_bAlt = FALSE;
    pNewContext->nMultitapCaps = MULTITAP_FIRST_CAP;
    pNewContext->m_bCaplk = FALSE;
 
@@ -1548,7 +1550,7 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
     
     register TextCtlContext *pContext = (TextCtlContext *) hTextCtl;
     AVKType key = (AVKType) dwKeyCode;
-    
+    MSG_FATAL("...........................1",0,0,0);
     // Press and hold the number key to get the number
 	#if 0
     if ((eCode != EVT_KEY) 
@@ -1576,7 +1578,7 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
         {
             return FALSE;
         }
-    
+        MSG_FATAL("...........................2",0,0,0);
         if (pContext->bEditable) 
         {
             switch (key) 
@@ -1741,6 +1743,7 @@ OEM_TextKeyPress_COMM:
                     {
                     	
                         boolean ans = (*sTextModes[pContext->byMode].pfn_char)(pContext,eCode, key);
+                        MSG_FATAL("...........................%d",ans,0,0);
                         if (ans)
                         {
                             OEM_TextUpdate(pContext);
@@ -4405,8 +4408,18 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 					        			    if(pContext->is_isShift)
 					                        { 
 					                            TextCtl_NoSelection(pContext);
+					                            #ifdef FEATURE_VERSION_HITZ181
+					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
+					                            #else
 					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
+					                            #endif
 					                            pContext->is_isShift = FALSE;
+					                        }
+					                        else if(pContext->is_bAlt)
+					                        {
+					                        	TextCtl_NoSelection(pContext);
+					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
+					                            pContext->is_bAlt = FALSE;
 					                        }
 					                        else
 					                        {
@@ -4431,6 +4444,12 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		            break;
 		         case AVK_SHIFT:
 		              {
+		              	 #ifdef FEATURE_VERSION_HITZ181
+		              	 if(pContext->is_bAlt)
+		              	 {
+		              	 	pContext->is_bAlt = FALSE;
+		              	 }
+		              	 #endif
 		                 if(pContext->is_isShift)
 		                 {
 		                    pContext->is_isShift = FALSE;
@@ -4441,6 +4460,24 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                 }
 		              }
 		              break;
+		        #ifdef FEATURE_VERSION_HITZ181
+		        case AVK_LCTRL:
+		        	{
+		              	 if(pContext->is_isShift)
+		              	 {
+		              	 	pContext->is_isShift = FALSE;
+		              	 }
+		                 if(pContext->is_bAlt)
+		                 {
+		                    pContext->is_bAlt = FALSE;
+		                 }
+		                 else
+		                 {
+		                    pContext->is_bAlt = TRUE;
+		                 }
+		        	}
+		        	break;
+		        #endif
 				case AVK_CAPLK:
 					{
 						pContext->m_bCaplk = !pContext->m_bCaplk;
@@ -11526,6 +11563,12 @@ boolean          OEM_TextShiftStatus(OEMCONTEXT hTextField)
 {
 	TextCtlContext *pContext = (TextCtlContext *) hTextField;
 	return pContext->is_isShift;
+}
+
+boolean          OEM_TextAltStatus(OEMCONTEXT hTextField)
+{
+	TextCtlContext *pContext = (TextCtlContext *) hTextField;
+	return pContext->is_bAlt;
 }
 
 //*****************************************************************************

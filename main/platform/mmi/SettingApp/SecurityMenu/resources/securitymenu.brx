@@ -4,6 +4,9 @@
 	<STRING Id="1001" Name="IDS_PINCHANGE_TITLE">
 		<Text>Change PIN</Text>
 	</STRING>
+	<String Id="1002" Name="IDS_AUTOKEYGUARD_TITLE">
+		<Text>Keypad lock</Text>
+	</String>
 	<STRING Id="1003" Name="IDS_DIF_PASSWORD">
 		<Text>Not matching</Text>
 	</STRING>
@@ -258,6 +261,13 @@
 	<DIALOG Id="6011" Name="IDD_ASK_PIN_DIALOG" Focus="0">
 		<Controls/>
 	</DIALOG>
+	<Dialog Id="6012" Name="IDD_KEY_LOCK_CHECK_DIALOG" Focus="0">
+		<Controls>
+			<Menu Id="7010" Name="IDM_KEY_LOCK">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
 	<DIALOG Id="6013" Name="IDD_PHONE_PASSWORD_INPUT_DIALOG" Focus="0">
 		<Controls/>
 	</DIALOG>

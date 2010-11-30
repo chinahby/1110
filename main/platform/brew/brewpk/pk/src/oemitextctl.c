@@ -173,7 +173,10 @@ OBJECT(CTextCtl)
    IImage                    *m_pImageBg;
    uint16                     m_nBgImgResID;
    char                       m_strBgImgResFile[MAX_FILE_NAME];
+   #ifdef FEATURE_VERSION_HITZ181
    boolean                    m_isshift;
+   boolean                    m_isAlt;
+   #endif
 };
 
 #define LINEHEIGHT            (pme->m_nFontHeight)
@@ -376,7 +379,10 @@ int TextCtl_New(IShell * pIShell, AEECLSID clsID, void ** ppobj)
    pme->m_SymPageNum = 0;
    pme->m_pImageBg = NULL;
    pme->m_clsMe = clsID;
+   #ifdef FEATURE_VERSION_HITZ181
    pme->m_isshift = FALSE;
+   pme->m_isAlt = FALSE;
+   #endif
 
    // Increment the reference count on the shell...
    ISHELL_AddRef(pIShell);
@@ -747,18 +753,26 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
             }  
 
 
-#if defined (FEATURE_ALL_KEY_PAD)	
+#if defined (FEATURE_ALL_KEY_PAD)
+#ifndef FEATURE_VERSION_HITZ181
 			if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
                 (wParam == AVK_LCTRL) &&
                 ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
+#else
+				if ((!pme->m_pSoftKey) && 
+                (pme->m_dwProps & TP_STARKEY_SWITCH) &&
+                (wParam == AVK_0) &&
+                ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
+
+#endif
 #else
 			if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
                 (wParam == AVK_POUND) &&
                 ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
 #endif
-            {            	
+            {       
                 if (!pme->m_bActive)
                 {
                     return FALSE;
@@ -827,11 +841,20 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 #if 1   //modi by yangdecai    //  SWITCH  INPUTMOD  EVT_RELEASE MOVE TO EVT_KEY 
 
 #if defined (FEATURE_ALL_KEY_PAD)
+#ifdef FEATURE_VERSION_HITZ181
+if ((!pme->m_pSoftKey) && 
+                (pme->m_dwProps & TP_STARKEY_SWITCH) &&
+                (wParam == AVK_0) &&
+                (shortkey == TRUE) &&
+                ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
+
+#else
 			if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
                 (wParam == AVK_LCTRL) &&
                 (shortkey == TRUE) &&
                 ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
+#endif
 #else
 			if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
@@ -1371,7 +1394,7 @@ NormalKeyEvent:
                     }
 		  }
 #endif
-				MSG_FATAL("OEM_TextKeyPress::::%x",eCode,0,0);
+				MSG_FATAL("OEM_TextKeyPress::::%x = %x",eCode,wParam,0);
                 if ( OEM_TextKeyPress(pme->m_pText,eCode,wParam,dwParam) != FALSE)
                 {
                     if (!(pme->m_dwProps & TP_NODRAW))
@@ -1434,13 +1457,17 @@ NormalKeyEvent:
 
 			if ((wParam != AVK_SYMBOL))
          	{
+         		#ifdef FEATURE_VERSION_HITZ181
          		boolean TempShift = FALSE;
+         		boolean TempAlt = FALSE;
          		MSG_FATAL("EVT_KEY_RELEASE  AVK_SHIFT",0,0,0);
          		TempShift = OEM_TextShiftStatus(pme->m_pText);
-         		if(TempShift != pme->m_isshift)
+         		TempAlt = OEM_TextAltStatus(pme->m_pText);
+         		if((TempShift != pme->m_isshift) || ((TempAlt != pme->m_isAlt)))
          		{
 					CTextCtl_Redraw((ITextCtl *)pme);
 				}
+				#endif
 			}
 #if defined (FEATURE_ALL_KEY_PAD)
 			if ((wParam == AVK_SYMBOL))/*&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))*/ //modi by yangdecai
@@ -1730,6 +1757,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
         // draw the title text
         if (pme->m_pTitle) 
         {
+        	AEETextInputMode m_Mode = CTextCtl_GetInputMode((ITextCtl *)pme, NULL); 
             qrc = pme->m_rc;
             qrc.dy = GetTitleBarHeight(pme->m_pIDisplay);//pme->m_nFontHeight;
 
@@ -1761,6 +1789,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
             IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色            
             if ((!pme->m_pSoftKey)&&(pme->m_dwProps&TP_STARKEY_SWITCH))
             {
+            	
                 // 取输入法提示文本
                 if(pme->m_wResID != 0)
                 {
@@ -1781,6 +1810,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
             }
             #ifdef FEATURE_VERSION_HITZ181
             pme->m_isshift = OEM_TextShiftStatus(pme->m_pText);
+            pme->m_isAlt   = OEM_TextAltStatus(pme->m_pText);
             if(pme->m_isshift)
             {
             	AECHAR Shiftbuf[8] = {L"Shift"};
@@ -1788,6 +1818,16 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
             	IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色
             	IDISPLAY_DrawText(pme->m_pIDisplay,
                 AEE_FONT_BOLD,Shiftbuf, -1,
+                qrc.dx-60, qrc.y,&qrc,IDF_TEXT_TRANSPARENT);
+                IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色
+            }
+            else if(pme->m_isAlt &&(m_Mode != AEE_TM_THAI_R))
+            {
+            	AECHAR Altbuf[8] = {L"Alt"};
+            	MSG_FATAL("qrc.x===%d,qrc.y====%d",qrc.x,qrc.y,0);
+            	IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色
+            	IDISPLAY_DrawText(pme->m_pIDisplay,
+                AEE_FONT_BOLD,Altbuf, -1,
                 qrc.dx-60, qrc.y,&qrc,IDF_TEXT_TRANSPARENT);
                 IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色
             }
@@ -5032,7 +5072,7 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 #ifdef FEATURE_T9_RAPID_ENGLISH
     pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_RAPID_ENGLISH;
 #endif //FEATURE_MODE_T9_RAPID_ENGLISH
-#if 1//def //FEATURE_VERSION_HITZ181
+#ifndef FEATURE_VERSION_HITZ181
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 	pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_CAP_LOWER_ENGLISH;
 #endif
@@ -5151,7 +5191,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
     int i;
     MSG_FATAL("pme->m_nCurrInputMode:::::::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
 	MSG_FATAL("pme->m_nCurrInputModeCount:::::::::::::::::::::%d",pme->m_nCurrInputModeCount,0,0);
-	#if  1//def  1//FEATURE_VERSION_HITZ181
+	#ifndef FEATURE_VERSION_HITZ181
 	if(pme->m_dwProps & TP_STARKEY_ID_SWITCH)
 	{
 		if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH || 
@@ -5212,10 +5252,6 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
 	if((pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_THAI))
 	{
 		pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH_LOW;
-	}
-	else if(pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_ENGLISH_LOW)
-	{
-		pme->m_nCurrInputMode = OEM_MODE_NUMBERS;
 	}
 	else
 	{
@@ -5290,7 +5326,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
             {
                 // if meet the end , then return the first one
                 MSG_FATAL("pme->m_nCurrInputMode::::end1:::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
-                #if 1//def 1//FEATURE_VERSION_HITZ181
+                #ifndef FEATURE_VERSION_HITZ181
                 if((pme->m_dwProps & TP_STARKEY_ID_SWITCH))
                 {
                 	;
@@ -5308,7 +5344,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
             break;
         }
     }
-    #if 0//def 0//FEATURE_VERSION_HITZ181
+    #ifdef FEATURE_VERSION_HITZ181
     ret = TRUE;
     #endif
     MSG_FATAL("pme->m_nCurrInputMode::::end:::::::::::::::::%d",pme->m_nCurrInputMode,0,0);

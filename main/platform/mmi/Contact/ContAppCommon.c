@@ -833,8 +833,26 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
         case AEE_ADDRFIELD_URL:
         case AEE_ADDRFIELD_NOTES:
         case AEE_ADDRFIELD_ADDRESS:
-            return AEE_TM_CAPLOWER;
-
+        {
+        
+        	#ifdef FEATURE_VERSION_HITZ181
+        	 boolean m_Issetmod = FALSE;
+        	(void)OEM_GetConfig(CFGI_LANGUAGE_MOD,
+	                          &m_Issetmod,
+	                          sizeof(boolean));
+	         
+	         if(m_Issetmod)
+	         {
+	         	return AEE_TM_THAI_R;
+	         }
+	         else
+	         {
+				return AEE_TM_RAPID;
+			 }
+        	#else
+            	return AEE_TM_CAPLOWER;
+        	#endif
+        }
         default:
             return AEE_TM_CAPLOWER;
     }
