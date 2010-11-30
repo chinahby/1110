@@ -100,7 +100,7 @@ static void Multimed_RunFSM(Multimed *pMe);
 
 //static void calculateScreenParameters(MainMenu *pMe);
 
-static boolean StartApplet(Multimed *pMe, int i);
+static int StartApplet(Multimed *pMe, int i);
 
 boolean Multimed_RouteDialogEvt(Multimed *pMe,
     AEEEvent    eCode,
@@ -785,11 +785,9 @@ static NextFSMAction MAINST_MULTIMED_Handler(Multimed *pMe)
     {
         // 进入主界面
         case DLGRET_CREATE:
-            {
-                  Multimed_ShowDialog(pMe, IDD_LIST_MULTIMEDIA_DIALOGS);
-
-            }
+            Multimed_ShowDialog(pMe, IDD_LIST_MULTIMEDIA_DIALOGS);
             return NFSMACTION_WAIT;
+            
         default:
             MOVE_TO_STATE(MULTIMEDIAST_EXIT)
             return NFSMACTION_CONTINUE;
@@ -904,12 +902,12 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 			#endif
             
             //IMENUCTL_SetTitle(pMenu, MULTIMEDIA_RES_FILE_LANG, IDS_MENU_LIST, NULL);                
-            IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_1, IDS_MULTIMEDIA_TITLE_1, NULL, 0);
-            IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_2, IDS_MULTIMEDIA_TITLE_2, NULL, 0);
-            IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_3, IDS_MULTIMEDIA_TITLE_3, NULL, 0);
-            IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_4, IDS_MULTIMEDIA_TITLE_4, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_CAMERA, IDS_MULTIMEDIA_CAMERA, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_FMRADIO, IDS_MULTIMEDIA_FMRADIO, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MUSICPLAYER, IDS_MULTIMEDIA_MUSICPLAYER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_RECORDER, IDS_MULTIMEDIA_RECORDER, NULL, 0);
 #ifdef FEATURE_APP_MPEG4
-			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TITLE_VIDEO, IDS_MULTIMEDIA_TITLE_VIDEO, NULL, 0);
+			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_VIDEOPLAYER, IDS_MULTIMEDIA_VIDEOPLAYER, NULL, 0);
 #endif
 
             return TRUE;
@@ -917,8 +915,8 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
         case EVT_DIALOG_START:
             {  
                 int i;
-             
-                for (i=1;i<=MAX_MATRIX_ITEMS;)
+                
+                for (i=1;i<=IMENUCTL_GetItemCount(pMenu);i++)
                 {
                     AECHAR pwsz[67] = {0};
                     AECHAR pstr[64] = {0};
@@ -928,19 +926,16 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
                     WSPRINTF(pwsz,sizeof(pwsz),wsFmt,i);
                     
                     ISHELL_LoadResString( pMe->m_pShell,
-                          MULTIMEDIA_RES_FILE_LANG,
-                          IDS_MULTIMEDIA_TITLE_1 + i - 1,
-                          pstr,
-                          sizeof(pstr));
+                                          MULTIMEDIA_RES_FILE_LANG,
+                                          IMENUCTL_GetItemID(pMenu, i - 1)
+                                          pstr,
+                                          sizeof(pstr));
                     
 
                     WSTRLCAT(pwsz,pstr,sizeof(pwsz));
-                  
-                    {
-                        IMENUCTL_SetItemText(pMenu, IDS_MULTIMEDIA_TITLE_1 + i - 1, NULL, NULL, pwsz);
-                    }
-                    i++;
+                    IMENUCTL_SetItemText(pMenu, IMENUCTL_GetItemID(pMenu, i - 1), NULL, NULL, pwsz);
                 }
+                
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
@@ -963,12 +958,16 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
                 case AVK_2:
                 case AVK_3:
                 case AVK_4:
+                case AVK_5:
+                case AVK_6:
+                case AVK_7:
+                case AVK_8:
+                case AVK_9:
                 case AVK_STAR:
-                    {
-                        int Focus = (wParam - AVK_1);
-                        StartApplet(pMe, Focus);
-                    }
+                case AVK_POUND:
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, (wParam - AVK_1)));
                     return TRUE;
+                    
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
@@ -981,20 +980,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             
         case EVT_COMMAND:
             pMe->m_MainSel = wParam;
-            switch (wParam)
-            {   
-                case IDS_MULTIMEDIA_TITLE_1:
-                case IDS_MULTIMEDIA_TITLE_2:
-                case IDS_MULTIMEDIA_TITLE_3:
-                case IDS_MULTIMEDIA_TITLE_4:
-#ifdef FEATURE_APP_MPEG4
-				case IDS_MULTIMEDIA_TITLE_VIDEO:
-#endif
-				{
-                    StartApplet(pMe, wParam - IDS_MULTIMEDIA_TITLE_1);
-                    return TRUE;
-                }
-            }
+            StartApplet(pMe, wParam);
             return TRUE;
             
         default:
@@ -1016,28 +1002,30 @@ PARAMETERS:  如果APPLET 有变动，只需改动次函数
 =============================================================================*/
 static boolean StartApplet(Multimed *pMe, int i)
 {
-    int Result = FALSE;
+    int Result = EUNSUPPORTED;
     switch(i)
     {
-        case 0:
+        case IDS_MULTIMEDIA_CAMERA:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
             break;
-        case 1:
+        case IDS_MULTIMEDIA_FMRADIO:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
             break;
-        case 2:
+        case IDS_MULTIMEDIA_MUSICPLAYER:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER);
             break;
-        case 3:
+        case IDS_MULTIMEDIA_RECORDER:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
             break;
-		case 4:
+#ifdef FEATURE_APP_MPEG4
+		case IDS_MULTIMEDIA_VIDEOPLAYER:
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_VIDEOPLAYER);
             break;
+#endif
 		default:
 			break;
         
     }
-    return TRUE;
+    return Result;
 }
 

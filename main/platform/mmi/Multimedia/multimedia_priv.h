@@ -96,27 +96,25 @@ typedef struct _Point
 typedef struct _Multimed
 {
     DECLARE_VTBL(IMultimed)
-    uint32       referenceCounter;
+    uint32          referenceCounter;
     
-    IModule     *m_pModule;
-    IDisplay    *m_pDisplay;
-    IShell      *m_pShell;
+    IModule        *m_pModule;
+    IDisplay       *m_pDisplay;
+    IShell         *m_pShell;
 
-    IDialog     *m_pActiveIDlg;
-    uint32       m_pActivedlgID;
-    uint16       m_MainSel;   //一级菜单光标
-    DLGRetValue  m_eDlgReturn;
+    IDialog        *m_pActiveIDlg;
+    uint32          m_pActivedlgID;
+    uint16          m_MainSel;   //一级菜单光标
+    DLGRetValue     m_eDlgReturn;
 
     MULTIMEDIA_STATUS_e_type  m_eAppStatus;   // Applet 当前运行状态
     
-    boolean     m_bDoNotOverwriteDlgResult; //是否不重写对话框结果    
-    MultimediaState             m_prevState;        // Applet前一状态
-    MultimediaState             m_currState;        // Applet当前状态
-    IImage      *m_pImageBg;
-    AEERect     m_rc;
+    boolean         m_bDoNotOverwriteDlgResult; //是否不重写对话框结果    
+    MultimediaState m_prevState;        // Applet前一状态
+    MultimediaState m_currState;        // Applet当前状态
+    AEERect         m_rc;
     
-    IAnnunciator                    *m_pIAnn;
-
+    IAnnunciator   *m_pIAnn;
 } Multimed;
 
 /*==============================================================================
@@ -125,19 +123,7 @@ typedef struct _Multimed
                                  
 ==============================================================================*/
 
-#define  MAX_MATRIX_ITEMS 4
-
-#define ICON_ANIMATED_FRAME     1 //焦点图片的帧数
-
-
 #define MULTIMEDIA_RES_FILE_LANG        (AEE_RES_LANGDIR MULTIMEDIA_RES_FILE)
-
-
-#define STARTARGPREFIX_VIEWPLAYER            'P'
-#define STARTARGPREFIX_VIEWDATA              'D'
-
-
-
 
 // 此宏用当前状态更新先前状态，再用nextState状态更新当前状态
 #define MOVE_TO_STATE(nextState)            \
