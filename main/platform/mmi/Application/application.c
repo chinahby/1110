@@ -103,7 +103,7 @@ static void Application_RunFSM(Application *pMe);
 
 //static void calculateScreenParameters(MainMenu *pMe);
 
-static boolean StartApplet(Application *pMe, int i);
+static int StartApplet(Application *pMe, int i);
 
 boolean Application_RouteDialogEvt(Application *pMe,
     AEEEvent    eCode,
@@ -932,97 +932,97 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			#endif
 			
 #if defined	(FEATURE_VERSION_FLEXI203) ||defined(FEATURE_VERSION_IVIO203) 
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_1, IDS_TOOLS_TITLE_1, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_2, IDS_TOOLS_TITLE_2, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_3, IDS_TOOLS_TITLE_3, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_4, IDS_TOOLS_TITLE_4, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_5, IDS_TOOLS_TITLE_5, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_TOOLS_TITLE_6, IDS_TOOLS_TITLE_6, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CONVERTER, IDS_APPLICATION_CONVERTER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_STOPWATCH, IDS_APPLICATION_STOPWATCH, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
 #elif defined (FEATURE_VERSION_SMART)
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_5, IDS_APPLICATION_TITLE_5, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_6, IDS_APPLICATION_TITLE_6, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_7, IDS_APPLICATION_TITLE_7, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_10, IDS_APPLICATION_TITLE_10, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_STOPWATCH, IDS_APPLICATION_STOPWATCH, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CONVERTER, IDS_APPLICATION_CONVERTER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_RECORDER, IDS_APPLICATION_RECORDER, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
 #elif defined (FEATURE_VERSION_HITZ181)
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_5, IDS_APPLICATION_TITLE_5, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_6, IDS_APPLICATION_TITLE_6, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_7, IDS_APPLICATION_TITLE_7, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_10, IDS_APPLICATION_TITLE_10, NULL, 0);			
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_STOPWATCH, IDS_APPLICATION_STOPWATCH, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CONVERTER, IDS_APPLICATION_CONVERTER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_RECORDER, IDS_APPLICATION_RECORDER, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);			
 #elif defined (FEATURE_VERSION_M8)			
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_5, IDS_APPLICATION_TITLE_5, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_6, IDS_APPLICATION_TITLE_6, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_7, IDS_APPLICATION_TITLE_7, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_13, IDS_APPLICATION_TITLE_13, NULL, 0);	
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_10, IDS_APPLICATION_TITLE_10, NULL, 0);	
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_STOPWATCH, IDS_APPLICATION_STOPWATCH, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CONVERTER, IDS_APPLICATION_CONVERTER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_RECORDER, IDS_APPLICATION_RECORDER, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);	
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);	
 #elif defined (FEATURE_VERSION_FLEXI021 )     
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_1, IDS_APPLICATION_TITLE_1, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_5, IDS_APPLICATION_TITLE_5, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_6, IDS_APPLICATION_TITLE_6, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_7, IDS_APPLICATION_TITLE_7, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_8, IDS_APPLICATION_TITLE_8, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_9, IDS_APPLICATION_TITLE_9, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_10, IDS_APPLICATION_TITLE_10, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_11, IDS_APPLICATION_TITLE_11, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BAM, IDS_APPLICATION_BAM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_STOPWATCH, IDS_APPLICATION_STOPWATCH, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CONVERTER, IDS_APPLICATION_CONVERTER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_RECORDER, IDS_APPLICATION_RECORDER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_GAME, IDS_APPLICATION_GAME, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CAMERA, IDS_APPLICATION_CAMERA, NULL, 0);
 #elif defined (FEATURE_VERSION_IVIO021 )     
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_1, IDS_APPLICATION_TITLE_1, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_5, IDS_APPLICATION_TITLE_5, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_6, IDS_APPLICATION_TITLE_6, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_7, IDS_APPLICATION_TITLE_7, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_8, IDS_APPLICATION_TITLE_8, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_9, IDS_APPLICATION_TITLE_9, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_10, IDS_APPLICATION_TITLE_10, NULL, 0);     
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_11, IDS_APPLICATION_TITLE_11, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BAM, IDS_APPLICATION_BAM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_STOPWATCH, IDS_APPLICATION_STOPWATCH, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CONVERTER, IDS_APPLICATION_CONVERTER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_RECORDER, IDS_APPLICATION_RECORDER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_GAME, IDS_APPLICATION_GAME, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);     
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CAMERA, IDS_APPLICATION_CAMERA, NULL, 0);
 #elif defined FEATURE_VERSION_ESIA021      
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_1, IDS_APPLICATION_TITLE_1, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_5, IDS_APPLICATION_TITLE_5, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_6, IDS_APPLICATION_TITLE_6, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_7, IDS_APPLICATION_TITLE_7, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_8, IDS_APPLICATION_TITLE_8, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_9, IDS_APPLICATION_TITLE_9, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_10, IDS_APPLICATION_TITLE_10, NULL, 0);              
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BAM, IDS_APPLICATION_BAM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_STOPWATCH, IDS_APPLICATION_STOPWATCH, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CONVERTER, IDS_APPLICATION_CONVERTER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_RECORDER, IDS_APPLICATION_RECORDER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_GAME, IDS_APPLICATION_GAME, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);              
 #else   
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_1, IDS_APPLICATION_TITLE_1, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_2, IDS_APPLICATION_TITLE_2, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_3, IDS_APPLICATION_TITLE_3, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_4, IDS_APPLICATION_TITLE_4, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_5, IDS_APPLICATION_TITLE_5, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_6, IDS_APPLICATION_TITLE_6, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_7, IDS_APPLICATION_TITLE_7, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BAM, IDS_APPLICATION_BAM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_STOPWATCH, IDS_APPLICATION_STOPWATCH, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CONVERTER, IDS_APPLICATION_CONVERTER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_RECORDER, IDS_APPLICATION_RECORDER, NULL, 0);
 
 #if defined (FEATURE_DISP_128X128)
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_8, IDS_APPLICATION_TITLE_8, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_9, IDS_APPLICATION_TITLE_9, NULL, 0);
-            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_10, IDS_APPLICATION_TITLE_10, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_SCHEDULER, IDS_APPLICATION_SCHEDULER, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_GAME, IDS_APPLICATION_GAME, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
 #endif
 
 #if defined(FEATURE_APP_CAMERA)
-		    IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_11, IDS_APPLICATION_TITLE_11, NULL, 0);	//Camera
+		    IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CAMERA, IDS_APPLICATION_CAMERA, NULL, 0);	//Camera
 #else
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_9, IDS_APPLICATION_TITLE_9, NULL, 0); 
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_GAME, IDS_APPLICATION_GAME, NULL, 0); 
 #endif
 #ifdef FEATURE_SUPPORT_WAP_APP
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_14, IDS_APPLICATION_TITLE_14, NULL, 0); 
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BROWSER, IDS_APPLICATION_BROWSER, NULL, 0); 
 #endif
 #ifdef	FEATURE_APP_BLUETOOTH  //add by yangdecai
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TITLE_15, IDS_APPLICATION_TITLE_15, NULL, 0); 
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BLUETOOTH, IDS_APPLICATION_BLUETOOTH, NULL, 0); 
 #endif
 #endif
 
@@ -1069,42 +1069,6 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
         case EVT_KEY:
             switch(wParam)
             {
-#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) 
-                case AVK_1:
-                case AVK_2:
-                case AVK_3:
-                case AVK_4:
-                case AVK_5:
-                case AVK_6:
-                case AVK_STAR:
-                case AVK_POUND:
-#elif defined  (FEATURE_VERSION_SMART)
-				case AVK_1:
-                case AVK_2:
-                case AVK_3:
-                case AVK_4:
-                case AVK_5:
-                case AVK_6:
-				case AVK_7:	
-#elif defined  (FEATURE_VERSION_HITZ181)
-				case AVK_1:
-				case AVK_2:
-				case AVK_3:
-				case AVK_4:
-				case AVK_5:
-				case AVK_6:
-				case AVK_7: 
-
-#elif defined  (FEATURE_VERSION_M8)
-				case AVK_1:
-                case AVK_2:
-                case AVK_3:
-                case AVK_4:
-                case AVK_5:
-                case AVK_6:
-				case AVK_7:	
-				case AVK_8:	
-#else
 				case AVK_1:
                 case AVK_2:
                 case AVK_3:
@@ -1116,17 +1080,9 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 				case AVK_9:		
                 case AVK_STAR:
                 case AVK_POUND:
-#endif
-
-                    {
-                        int Focus = (wParam - AVK_1);
-                        if(Focus<IMENUCTL_GetItemCount(pMenu))
-                        {
-                            StartApplet(pMe, Focus);
-                        }
-                    }
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, (wParam - AVK_1)));
                     return TRUE;
-
+                    
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
@@ -1139,58 +1095,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             
         case EVT_COMMAND:
             pMe->m_MainSel = wParam;
-#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) 
-			StartApplet(pMe, wParam - IDS_TOOLS_TITLE_1);
-#elif defined (FEATURE_VERSION_SMART)
-			switch (wParam)
-			{
-				case IDS_APPLICATION_TITLE_10:
-				{
-					StartApplet(pMe, 6);
-					break;
-				}				
-				default:
-				{
-					StartApplet(pMe, wParam - IDS_APPLICATION_TITLE_2);
-					break;
-				}
-			}
-#elif defined (FEATURE_VERSION_HITZ181)
-			switch (wParam)
-			{
-				case IDS_APPLICATION_TITLE_10:
-				{
-					StartApplet(pMe, 6);
-					break;
-				}				
-				default:
-				{
-					StartApplet(pMe, wParam - IDS_APPLICATION_TITLE_2);
-					break;
-				}
-			}			
-#elif defined (FEATURE_VERSION_M8)
-			switch (wParam)
-			{
-				case IDS_APPLICATION_TITLE_13:
-				{
-					StartApplet(pMe, 6);
-					break;
-				}
-				case IDS_APPLICATION_TITLE_10:
-				{
-					StartApplet(pMe, 7);
-					break;
-				}
-				default:
-				{
-					StartApplet(pMe, wParam - IDS_APPLICATION_TITLE_2);
-					break;
-				}
-			}			
-#else
-            StartApplet(pMe, wParam - IDS_APPLICATION_TITLE_1);
-#endif
+			StartApplet(pMe, wParam);
             return TRUE;
             
         default:
@@ -1210,326 +1115,76 @@ DESCRIPTION:  启动applet
 PARAMETERS:  如果APPLET 有变动，只需改动次函数
 
 =============================================================================*/
-static boolean StartApplet(Application *pMe, int i)
+static int StartApplet(Application *pMe, int i)
 {
-    int Result = FALSE;
-
-   	//MSG_ERROR("StartApplet:::::%d",i,0,0);
-    switch(i)
-    {
-#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203)  
-        case 0:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
-            break;
-            
-        case 1:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
-            break;
+    int Result = EUNSUPPORTED;
     
-        case 2:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
-            break;
-    
-        case 3:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
-            break;
-            
-        case 4:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
-            break;
-            
-        case 5:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
-            break;
-
-#elif defined (FEATURE_VERSION_SMART)                  
-        case 0:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
-            break;
-		}    
-        case 1:
-        {
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
-			break;
-        }
-        case 2:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
-            break;
-        }
-        case 3:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
-            break;
-        }
-        case 4:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
-            break;
-        }
-		case 5:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
-            break;
-		}   
-        case 6:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
-            break;
-        }	
-#elif defined (FEATURE_VERSION_HITZ181)                  
-				case 0:
-				{
-					Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
-					break;
-				}	 
-				case 1:
-				{
-					Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
-					break;
-				}
-				case 2:
-				{
-					Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
-					break;
-				}
-				case 3:
-				{
-					Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
-					break;
-				}
-				case 4:
-				{
-					Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
-					break;
-				}
-				case 5:
-				{
-					Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
-					break;
-				}	
-				case 6:
-				{
-					Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
-					break;
-				}
-
-#elif defined (FEATURE_VERSION_M8)              
-        case 0:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
-            break;
-		}    
-        case 1:
-        {
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
-			break;
-        }
-        case 2:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
-            break;
-        }
-        case 3:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
-            break;
-        }
-        case 4:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
-            break;
-        }
-		case 5:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
-            break;
-		}   
-		case 6:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
-            break;
-		}
-        case 7:
-        {
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
-            break;
-        }		
-#elif defined (FEATURE_VERSION_FLEXI021)  
-        case 0:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
-            break;
-            
-        case 1:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
-            break;
-
-        case 2:
-            {
-                Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
-            }
-            break;
-
-        case 3:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
-            break;
-        case 4:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
-            break;
-        case 5:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
-            break;
-        case 6:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
-            break;
-        case 7:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
-            break;
-        case 8:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
-            break;
-        case 9:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
-            break;
-		case 10:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
-          
-#elif defined (FEATURE_VERSION_IVIO021)  
-        case 0:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
-            break;
-            
-        case 1:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
-            break;
-
-        case 2:
-            {
-                Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
-            }
-            break;
-
-        case 3:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
-            break;
-        case 4:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
-            break;
-        case 5:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
-            break;
-        case 6:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
-            break;
-        case 7:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
-            break;
-        case 8:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
-            break;
-        case 9:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
-            break;     
-        case 10:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
-            break;                        
-#elif defined FEATURE_VERSION_ESIA021  
-        case 0:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
-            break;
-            
-        case 1:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
-            break;
-
-        case 2:
-            {
-                Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
-            }
-            break;
-
-        case 3:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
-            break;
-        case 4:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
-            break;
-        case 5:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
-            break;
-        case 6:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
-            break;
-        case 7:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
-            break;
-        case 8:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
-            break;
-        case 9:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
-            break;    
-#else
-		case 0:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
-            break;
-            
-        case 1:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
-            break;
-    
-        case 2:
-            {
-                Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
-            }
-            break;
-    
-        case 3:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
-            break;
-        case 4:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
-            break;
-        case 5:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
-            break;
-		case 6:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
-            break;
-        case 7:
-#if defined(FEATURE_APP_CAMERA)
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
-#else
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
-#endif			
-            break;
-        case 8:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
-            break;
-        case 9:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
-            break;
-		case 10:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
-            break;    	
+    switch(i){
+    case IDS_APPLICATION_BAM:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+        break;
+        
+    case IDS_APPLICATION_TIMER:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
+        break;
+        
+    case IDS_APPLICATION_STOPWATCH:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STOPWATCH);
+        break;
+        
+    case IDS_APPLICATION_ALARM:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
+        break;
+        
+    case IDS_APPLICATION_CONVERTER:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CONVERTER);
+        break;
+        
+    case IDS_APPLICATION_WORLDTIME:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WORLDTIME);
+        break;
+        
+    case IDS_APPLICATION_RECORDER:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_RECORDER);
+        break;
+        
+    case IDS_APPLICATION_SCHEDULER:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SCHEDULEAPP);
+        break;
+        
+    case IDS_APPLICATION_GAME:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
+        break;
+        
+    case IDS_APPLICATION_CALCULATOR:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
+        break;
+        
+    case IDS_APPLICATION_CAMERA:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_CAMERA);
+        break;
+        
+    case IDS_APPLICATION_FMRADIO:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
+        break;
 #ifdef FEATURE_SUPPORT_WAP_APP
-		case 13:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRW_APP);
-            break; 	
+    case IDS_APPLICATION_BROWSER:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRW_APP);
+        break;
 #endif
-#ifdef	FEATURE_APP_BLUETOOTH   //add by yangdecai  2010-10-23
-		case 14:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
-			MSG_FATAL("Result======================%d",Result,0,0);
-            break; 	
+#ifdef	FEATURE_APP_BLUETOOTH  //add by yangdecai
+    case IDS_APPLICATION_BLUETOOTH:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+        break;
 #endif
-#endif
-            
-        default:
-            break;
+    case IDS_APPLICATION_TV:
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_TVAPP);
+        break;
+        
+    default:
+        break;
     }
-    return TRUE;
+    return Result;
 }
 
 /*=============================================================================

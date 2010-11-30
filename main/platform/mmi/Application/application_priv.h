@@ -139,9 +139,6 @@ typedef struct _Application
 #define  MAX_MATRIX_ITEMS 7
 #endif
 
-#define ICON_ANIMATED_FRAME     1 //½¹µãÍ¼Æ¬µÄÖ¡Êý
-
-
 #define APPLICATION_RES_FILE_LANG        AEE_RES_LANGDIR APPLICATION_RES_FILE
 
 #define STARTARGPREFIX_VIEWPLAYER            'P'
