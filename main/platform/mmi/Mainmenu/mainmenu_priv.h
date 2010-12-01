@@ -45,15 +45,9 @@ typedef enum MainmenuState
 {
     MAINST_MAIN,
 
-    MAINST_GAME,
-    
-    MAINST_PLAYER,
-
-    MAINST_DATA, 
-
-    #ifdef FEATRUE_SUPPORT_G_SENSOR
+#ifdef FEATRUE_SUPPORT_G_SENSOR
     MAINST_MSGBOX,
-    #endif   
+#endif
 
     MAINST_EXIT
 
@@ -69,21 +63,11 @@ typedef enum
 typedef enum DLGRetValue
 {
     DLGRET_CREATE,
-        
-    DLGRET_GAME,
-
-    DLGRET_MEDIA,
-
-    DLGRET_MAIN,
-
-    DLGRET_DATA,
-
-    #ifdef FEATRUE_SUPPORT_G_SENSOR
+#ifdef FEATRUE_SUPPORT_G_SENSOR
     DLGRET_MSGBOX,
-    #endif
+#endif
 
     DLGRET_CANCELED
-
 }DLGRetValue;
 
 typedef enum NextFSMAction
@@ -103,28 +87,26 @@ typedef struct _Point
 typedef struct _MainMenu
 {
     DECLARE_VTBL(IMainMenu)
-    uint32       referenceCounter;
+    uint32          referenceCounter;
     
-    IModule     *m_pModule;
-    IDisplay    *m_pDisplay;
-    IShell      *m_pShell;
+    IModule        *m_pModule;
+    IDisplay       *m_pDisplay;
+    IShell         *m_pShell;
 
-    IDialog     *m_pActiveIDlg;
-    uint32       m_pActivedlgID;
-    uint16       m_MainSel;   //一级菜单光标
-    DLGRetValue  m_eDlgReturn;
+    IDialog        *m_pActiveIDlg;
+    uint32          m_pActivedlgID;
+    uint16          m_MainSel;   //一级菜单光标
+    DLGRetValue     m_eDlgReturn;
 
     MAINMENU_STATUS_e_type  m_eAppStatus;   // Applet 当前运行状态
     
-    boolean     m_bDoNotOverwriteDlgResult; //是否不重写对话框结果    
-    boolean     m_bNormalStart;
+    boolean         m_bDoNotOverwriteDlgResult; //是否不重写对话框结果    
     
-    IImage      *m_pImageBg;
-    AEERect     m_rc;
+    AEERect         m_rc;
     
-    MainmenuState             m_prevState;        // Applet前一状态
-    MainmenuState             m_currState;        // Applet当前状态
-	IAnnunciator        *m_pIAnn;
+    MainmenuState   m_prevState;        // Applet前一状态
+    MainmenuState   m_currState;        // Applet当前状态
+	IAnnunciator   *m_pIAnn;
 
 } MainMenu;
 
@@ -135,9 +117,6 @@ typedef struct _MainMenu
 ==============================================================================*/
 
 #define  MAX_MATRIX_ITEMS 9
-
-#define ICON_ANIMATED_FRAME     1 //焦点图片的帧数
-
 
 #define MAINMENU_RES_FILE_LANG        AEE_RES_LANGDIR MAINMENU_RES_FILE
 #define MAINMENU_RES_FILE_IMAGE       MAINMENUIMAGES_RES_FILE

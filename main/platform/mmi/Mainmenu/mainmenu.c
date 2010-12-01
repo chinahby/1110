@@ -73,16 +73,13 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
     uint32 dwParam
 );
 
-static int     MainMenu_MainMenuService( IMainMenu *pi, MainMenuServiceType eStype);
-
 static MainMenu gMainMenu={0};
 
 static const VTBL( IMainMenu) gMainMenuMethods =
 {
     MainMenu_AddRef,
     MainMenu_Release,
-    MainMenu_HandleEvent,
-    MainMenu_MainMenuService
+    MainMenu_HandleEvent
 };
 
 int MainMenuMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
@@ -105,7 +102,7 @@ static void MainMenu_RunFSM(MainMenu *pMe);
 
 //static void calculateScreenParameters(MainMenu *pMe);
 
-static boolean StartApplet(MainMenu *pMe, int i);
+static int StartApplet(MainMenu *pMe, int i);
 
 boolean MainMenu_RouteDialogEvt(MainMenu *pMe,
     AEEEvent    eCode,
@@ -384,7 +381,6 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     }
 
     pMe->m_MainSel  = 0;
-    pMe->m_bNormalStart = TRUE;
     
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_DISPLAY, 
             (void **) &pMe->m_pDisplay) != SUCCESS)
@@ -442,18 +438,6 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
         IANNUNCIATOR_Release(pMe->m_pIAnn);
 		pMe->m_pIAnn = NULL;
     }
-
-    //释放图片资源
-    {
-        int i;
-        
-        if (pMe->m_pImageBg !=NULL)
-        {
-            (void) IIMAGE_Release(pMe->m_pImageBg);
-            pMe->m_pImageBg = NULL;
-        }
-
-    }  
 }
 
 /*=============================================================================
@@ -606,7 +590,6 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             pMe->m_currState = MAINST_MAIN;
             pMe->m_eDlgReturn = DLGRET_CREATE;
             pMe->m_eAppStatus = MAINMENU_RUNNING;
-            pMe->m_bNormalStart = TRUE;
             if (as->pszArgs != NULL)
             {
                 switch(as->pszArgs[0])
@@ -619,7 +602,6 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
                     default:
                         break;
                 }
-                pMe->m_bNormalStart = FALSE;
             }
             MainMenu_RunFSM(pMe);
             return TRUE;
@@ -771,12 +753,9 @@ static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe)
     {
         // 进入主界面
         case DLGRET_CREATE:
-            {
-                
-                  MainMenu_ShowDialog(pMe, IDD_LIST_MENU);
-
-            }
+            MainMenu_ShowDialog(pMe, IDD_LIST_MENU);
             return NFSMACTION_WAIT;
+            
         default:
             MOVE_TO_STATE(MAINST_EXIT)
             return NFSMACTION_CONTINUE;
@@ -843,7 +822,7 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
     if (NULL != pMe->m_pDisplay)
     {
         AEEDeviceInfo di={0,};
-       (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:1", STRLEN("a:1"));
+        (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:1", STRLEN("a:1"));
         ISHELL_GetDeviceInfo(pMe->m_pShell, &di);
         pMe->m_rc.dx = di.cxScreen;
         pMe->m_rc.dy = di.cyScreen;
@@ -913,8 +892,6 @@ DESCRIPTION:   列表菜单
 PARAMETERS:
 
 =============================================================================*/
-#include "err.h"
-#include "msg.h"
 static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
     PARAM_NOT_REF(dwParam)
@@ -936,19 +913,18 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                         IDS_MENU_LIST,
                         WTitle,
                         sizeof(WTitle));
-				MSG_FATAL("WTitle = %c %c",WTitle[0],WTitle[1],0);
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);				
 				IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             }
      //       ERR("MainMenu_ListMenuHandler EVT_DIALOG_INIT",0,0,0);
             //IMENUCTL_SetTitle(pMenu, MAINMENU_RES_FILE_LANG, IDS_MENU_LIST, NULL);                
-            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_1, IDS_MAIN_MENU_TITLE_1, NULL, 0);
-            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_2, IDS_MAIN_MENU_TITLE_2, NULL, 0);
-            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_3, IDS_MAIN_MENU_TITLE_3, NULL, 0);
-            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_4, IDS_MAIN_MENU_TITLE_4, NULL, 0);
-            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_5, IDS_MAIN_MENU_TITLE_5, NULL, 0);			
-            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_6, IDS_MAIN_MENU_TITLE_6, NULL, 0);
-            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_TITLE_7, IDS_MAIN_MENU_TITLE_7, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_CONTACTS, IDS_MAIN_MENU_CONTACTS, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_RECENTCALLS, IDS_MAIN_MENU_RECENTCALLS, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_MESSAGES, IDS_MAIN_MENU_MESSAGES, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_UTK, IDS_MAIN_MENU_UTK, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_ALARM, IDS_MAIN_MENU_ALARM, NULL, 0);			
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_CALCULATOR, IDS_MAIN_MENU_CALCULATOR, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_SETTINGS, IDS_MAIN_MENU_SETTINGS, NULL, 0);
 
            // IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
@@ -956,29 +932,24 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
         case EVT_DIALOG_START:
             {  
                 int i;
-         //       ERR("MainMenu_ListMenuHandler EVT_DIALOG_START",0,0,0);
-                for (i=1;i<=MAX_MATRIX_ITEMS;)
+                uint16 wID;
+                AECHAR pwsz[67] = {0};
+                AECHAR pstr[64] = {0};
+                AECHAR wsFmt[5] = {0};
+                
+                (void)STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
+                for (i=0;i<IMENUCTL_GetItemCount(pMenu);i++)
                 {
-                    AECHAR pwsz[67] = {0};
-                    AECHAR pstr[64] = {0};
-                    AECHAR wsFmt[5] = {0};
-    
-                    (void)STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
-                    WSPRINTF(pwsz,sizeof(pwsz),wsFmt,i);
+                    wID = IMENUCTL_GetItemID(pMenu, i);
+                    WSPRINTF(pwsz,sizeof(pwsz),wsFmt,i+1);
                     
                     ISHELL_LoadResString( pMe->m_pShell,
                           MAINMENU_RES_FILE_LANG,
-                          IDS_MAIN_MENU_TITLE_1 + i - 1,
+                          wID,
                           pstr,
                           sizeof(pstr));
-                    
-
                     WSTRLCAT(pwsz,pstr,sizeof(pwsz));
-                  
-                    {
-                        IMENUCTL_SetItemText(pMenu, IDS_MAIN_MENU_TITLE_1 + i - 1, NULL, NULL, pwsz);
-                    }
-                    i++;
+                    IMENUCTL_SetItemText(pMenu, wID, NULL, NULL, pwsz);
                 }
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
@@ -1007,21 +978,20 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                 case AVK_7:
                 case AVK_8:
                 case AVK_9:
-                case AVK_STAR:
-                    {
-                        int Focus = (wParam - AVK_1);
-                        StartApplet(pMe, Focus);
-                    }
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, (wParam - AVK_1)));
                     return TRUE;
-
+                    
                 case AVK_0:
-                    StartApplet(pMe, 10);
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 10));
+                    return TRUE;
+                    
+                case AVK_STAR:
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 11));
                     return TRUE;
                     
                 case AVK_POUND:
-                    StartApplet(pMe, 11);
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 12));
                     return TRUE;
-
              
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
@@ -1035,18 +1005,7 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             
         case EVT_COMMAND:
             pMe->m_MainSel = wParam;
-            switch (wParam)
-            {   
-                case IDS_MAIN_MENU_TITLE_1:
-                case IDS_MAIN_MENU_TITLE_2:
-                case IDS_MAIN_MENU_TITLE_3:
-                case IDS_MAIN_MENU_TITLE_4:
-                case IDS_MAIN_MENU_TITLE_5:
-				case IDS_MAIN_MENU_TITLE_6:
-				case IDS_MAIN_MENU_TITLE_7:
-                    StartApplet(pMe, wParam - IDS_MAIN_MENU_TITLE_1);
-                    return TRUE;
-            }
+            StartApplet(pMe, wParam);
             return TRUE;
             
         default:
@@ -1066,12 +1025,12 @@ DESCRIPTION:  启动applet
 PARAMETERS:  如果APPLET 有变动，只需改动次函数
 
 =============================================================================*/
-static boolean StartApplet(MainMenu *pMe, int i)
+static int StartApplet(MainMenu *pMe, int i)
 {
-    int Result = FALSE;
+    int Result = EUNSUPPORTED;
     switch(i)
     {
-        case 0:
+        case IDS_MAIN_MENU_CONTACTS:
         {
             IContactApp *ca = NULL;
             if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_APP_CONTACT, (void**)&ca))
@@ -1085,85 +1044,28 @@ static boolean StartApplet(MainMenu *pMe, int i)
             }
             break;
         }
-        case 1:
+        case IDS_MAIN_MENU_RECENTCALLS:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_RECENTCALL);
             break;
-        case 2:
+        case IDS_MAIN_MENU_MESSAGES:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
             break;
-        case 3:
+        case IDS_MAIN_MENU_UTK:
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
             break;   
 
-        case 4:
+        case IDS_MAIN_MENU_ALARM:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
             break;
-		case 5:
+		case IDS_MAIN_MENU_CALCULATOR:
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
 			break;
 
-        case 6:			
+        case IDS_MAIN_MENU_SETTINGS:			
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SETTINGMENU);
             break;			
 
     }
-    return TRUE;
-}
-
-/*=============================================================================
-FUNCTION:  MainMenu_MainMenuService
-
-DESCRIPTION:  外部接口调用，快速进入到MAINMENU某一个菜单列表
-
-PARAMETERS:    
-            eStype: 启动app的方式
-
-=============================================================================*/
-
-static int  MainMenu_MainMenuService( IMainMenu *pi, MainMenuServiceType eStype)
-{
-    char  *args = NULL;
-    MainMenu *pMe = (MainMenu*)pi;
-    int    nRet;  
-
-    if (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_MAIN_MENU)
-    {
-        // applet is already running
-        return EFAILED;
-    }    
-    
-    switch (eStype)
-    {
-        case STARTMETHOD_PLAYER: 
-            args = (char *)MALLOC(sizeof(char));
-            if(args)
-            {
-                args[0] = STARTARGPREFIX_VIEWPLAYER;
-            }
-            break;
-        
-        case STARTMETHOD_DATA:
-            args = (char *)MALLOC(sizeof(char));
-            if(args)
-            {
-                args[0] = STARTARGPREFIX_VIEWDATA;
-            }
-            break;
-
-        default:
-            break;
-    }
-
-    if(args == NULL)
-    {
-        return EFAILED;
-    }
-
-    nRet = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_MAIN_MENU, args);
-        
-    FREEIF(args);
-    args = NULL;
-    
-    return nRet;    
+    return Result;
 }
 
