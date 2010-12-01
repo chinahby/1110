@@ -3692,7 +3692,11 @@ static boolean CSvcPrg_DisplayItem(CSvcPrgApp      *pMe,
       
       if (item->itemType == DT_ALPHA)
       {
+      	  #ifdef FEATURE_VERSION_HITZ181
+          (void) ITEXTCTL_SetInputMode(pt, AEE_TM_RAPID);
+          #else
           (void) ITEXTCTL_SetInputMode(pt, AEE_TM_LETTERS);
+          #endif
       }
       else
       {

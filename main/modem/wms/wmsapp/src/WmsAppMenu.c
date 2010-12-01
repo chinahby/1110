@@ -1717,7 +1717,11 @@ boolean WMSAPPMN_GetNumber(CWMSAPP *pMe)
 #endif
       }
       /* Setting the Text Input Mode to Alphabets */
+      #ifdef FEATURE_VERSION_HITZ181
+      (void)ITEXTCTL_SetInputMode (pIDestAddr, AEE_TM_RAPID);
+      #else
       (void)ITEXTCTL_SetInputMode (pIDestAddr, AEE_TM_LETTERS);
+      #endif
       break;
 
 #ifdef FEATURE_CDSMS
@@ -1727,7 +1731,11 @@ boolean WMSAPPMN_GetNumber(CWMSAPP *pMe)
       length = pMe->m_emailAddr.len;
 
       /* Setting the Text Input Mode to Alphabets */
+      #ifdef FEATURE_VERSION_HITZ181
+      (void)ITEXTCTL_SetInputMode (pIDestAddr, AEE_TM_RAPID);
+      #else
       (void)ITEXTCTL_SetInputMode (pIDestAddr, AEE_TM_LETTERS);
+      #endif
       break;
 #endif /* FEATURE_CDSMS */
     default:
@@ -7511,7 +7519,11 @@ boolean InitDestAddr(CWMSAPP *pMe, uint32 dw)
       break;
     case WMSAPP_MSG_TYPE_EMAIL:
     case WMSAPP_MSG_TYPE_NON_STD_EMAIL:
-      (void)ITEXTCTL_SetInputMode(pITextCtl, AEE_TM_LETTERS);
+    	#ifdef FEATURE_VERSION_HITZ181
+      	(void)ITEXTCTL_SetInputMode(pITextCtl, AEE_TM_RAPID);
+      	#else
+      	(void)ITEXTCTL_SetInputMode(pITextCtl, AEE_TM_LETTERS);
+      	#endif
       break;
 
     default:
@@ -15851,7 +15863,11 @@ boolean WMSAPPMN_TextSoftKeyDlgEventHandler(void *pUser, AEEEvent evt, uint16 w,
     case EVT_DIALOG_START:
       if(wDlgID == IDD_TEMPLATE_ALPHA_TAG)
       {
+      	#ifdef FEATURE_VERSION_HITZ181
+      	wMode = AEE_TM_RAPID;
+      	#else
         wMode = AEE_TM_LETTERS;
+        #endif
       }
       else if (wDlgID == IDD_VOICEMAIL_NUMBER)
       {
@@ -16186,8 +16202,11 @@ boolean WMSAPPMN_TestMenuDlgEventHandler(void *pUser, AEEEvent evt, uint16 w, ui
           {
             return FALSE;
           }
-
+		  #ifdef FEATURE_VERSION_HITZ181
+		  (void)ITEXTCTL_SetInputMode(pITextCtl, AEE_TM_RAPID);
+		  #else
           (void)ITEXTCTL_SetInputMode(pITextCtl, AEE_TM_LETTERS);
+          #endif
           (void)ITEXTCTL_SetSoftKeyMenu(pITextCtl, NULL);
           ITEXTCTL_SetActive(pITextCtl, TRUE);
           (void)ITEXTCTL_Redraw(pITextCtl);

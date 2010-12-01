@@ -4597,7 +4597,11 @@ boolean CreateGetInputDlg(CCatApp *pMe)
           /* set proprties for text control */
           ITEXTCTL_SetProperties(pIInputEdit, TP_FRAME | TP_MULTILINE );
           /* if card does not specify numbers only input */
+          #ifdef FEATURE_VERSION_HITZ181
+          (void)ITEXTCTL_SetInputMode(pIInputEdit, AEE_TM_RAPID);
+          #else
           (void)ITEXTCTL_SetInputMode(pIInputEdit, AEE_TM_LETTERS);
+          #endif
           break;
         }
         break;
@@ -4622,7 +4626,11 @@ boolean CreateGetInputDlg(CCatApp *pMe)
 
         default:
           /* if card does not specify numbers only input */
+          #ifdef FEATURE_VERSION_HITZ181
+          (void)ITEXTCTL_SetInputMode(pIInputEdit, AEE_TM_RAPID);
+          #else
           (void)ITEXTCTL_SetInputMode(pIInputEdit, AEE_TM_LETTERS);
+          #endif
           break;
         }
         /*Set max input size for control as specified by card */

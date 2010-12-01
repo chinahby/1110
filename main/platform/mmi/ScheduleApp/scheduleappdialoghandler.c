@@ -3401,8 +3401,13 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             {
                 ITEXTCTL_SetProperties( pSubject, TP_FIXOEM | TP_FIXSETRECT | TP_STARKEY_SWITCH|TP_FOCUS_NOSEL);
                 ITEXTCTL_SetProperties( pNote, TP_FIXOEM | TP_FIXSETRECT | TP_STARKEY_SWITCH);
+                #ifdef FEATURE_VERSION_HITZ181
+                (void)ITEXTCTL_SetInputMode( pNote, AEE_TM_RAPID);
+                (void)ITEXTCTL_SetInputMode( pSubject, AEE_TM_RAPID);
+                #else
                 (void)ITEXTCTL_SetInputMode( pNote, AEE_TM_LETTERS);
                 (void)ITEXTCTL_SetInputMode( pSubject, AEE_TM_LETTERS);
+                #endif
                 (void)ITEXTCTL_SetMaxSize(pSubject, MAX_INPUT_SUBJECT);
                 (void)ITEXTCTL_SetMaxSize(pNote, MAX_INPUT_LOCATION);                
             }
