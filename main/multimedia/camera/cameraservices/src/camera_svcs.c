@@ -4396,8 +4396,8 @@ static void  camera_process_softdsp_output1_msg (Camera_EndOfFrameMessageType *m
       (camera_state == CAMERA_STATE_INIT) ||
       (camera_stopping)) 
   {
-    MSG_ERROR("CAMERA_SVCS: Output1 Msg received in camera_state %d, camera_dsp_state %d. Ignoring",
-              camera_state, camera_dsp_state,0);
+    MSG_ERROR("CAMERA_SVCS: Output1 Msg received in camera_state %d. Ignoring",
+              camera_state, 0 ,0);
     return;
   }
   
@@ -4466,8 +4466,8 @@ static void camera_process_softdsp_output2_msg (Camera_EndOfFrameMessageType *ms
       (camera_state == CAMERA_STATE_INIT) ||
       (camera_stopping))
   {
-    MSG_ERROR("CAMERA_SVCS: Output2 Msg received in camera_state %d, camera_dsp_state %d. Ignoring",
-              camera_state, camera_dsp_state, 0);
+    MSG_ERROR("CAMERA_SVCS: Output2 Msg received in camera_state %d. Ignoring",
+              camera_state, 0, 0);
     return;
   }
   MSG_CAMERADEBUG("softdsp_output2_msg %d %d", camera_state, camera_camsensor_op_mode, 0);
