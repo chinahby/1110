@@ -2,7 +2,7 @@
 <BREWRes Name="game" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<String Id="1001" Name="IDS_GAME_LIST">
-		<Text>Game</Text>
+		<Text>Games</Text>
 	</String>
 	<STRING Id="1011" Name="IDS_GAME_TITLE_1">
 		<Text>Blackjack</Text>
