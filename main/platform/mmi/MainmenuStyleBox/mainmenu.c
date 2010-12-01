@@ -520,7 +520,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_USERPROFILE;
-    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_GAME;
+    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_GAMES;
 #elif defined (FEATURE_VERSION_SMART)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_SMARTWORLD;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_SMARTFRENACCESS;
@@ -558,7 +558,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_APPLICATION;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_SETTINGS;
-    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAME;
+    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_MUSICPLAYER;
 #endif
 #elif defined (FEATURE_DISP_220X176)
@@ -593,7 +593,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
     pMe->m_IconTitle[5]     = IDS_MAIN_MENU_TOOLS;
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SETTINGS;
-    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAME;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_UTK;
 #endif
 #elif defined (FEATURE_DISP_128X160)
@@ -1742,7 +1742,6 @@ static int StartApplet(MainMenu *pMe, int i)
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_SOUNDMENU);
         break;
         
-    case IDS_MAIN_MENU_GAME:
     case IDS_MAIN_MENU_GAMES:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
         break;

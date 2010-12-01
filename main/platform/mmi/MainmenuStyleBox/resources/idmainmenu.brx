@@ -37,9 +37,6 @@
 	<STRING Id="1021" Name="IDS_MAIN_MENU_USERPROFILE">
 		<Text>Profil Pengguna</Text>
 	</STRING>
-	<STRING Id="1022" Name="IDS_MAIN_MENU_GAME">
-		<Text>Permainan</Text>
-	</STRING>
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text>Menu</Text>
 	</STRING>

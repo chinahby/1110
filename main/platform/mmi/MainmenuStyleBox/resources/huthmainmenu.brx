@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="huthmainmenu" VERSION="1">
 <Strings Encoding="Unicode">
-	<String Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION" Encoding="Unicode">
+	<String Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION">
 		<Text>ตั้งค่า</Text>
 	</String>
 	<STRING Id="1011" Name="IDS_MAIN_MENU_MEDIAGALLERY">
@@ -37,9 +37,6 @@
 	<STRING Id="1021" Name="IDS_MAIN_MENU_USERPROFILE">
 		<Text>เครื่องเล่นมัลติมีเดีย</Text>
 	</STRING>
-	<STRING Id="1022" Name="IDS_MAIN_MENU_GAME">
-		<Text>ข้อมูลบริการ</Text>
-	</STRING>
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text>เมนู</Text>
 	</STRING>
@@ -68,7 +65,7 @@
 		<Text>SMS</Text>
 	</STRING>
 	<STRING Id="1068" Name="IDS_MAIN_MENU_GAMES">
-		<Text>Games</Text>
+		<Text>ข้อมูลบริการ</Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_MAIN_MENU_GALLERY">
 		<Text>Gallery</Text>

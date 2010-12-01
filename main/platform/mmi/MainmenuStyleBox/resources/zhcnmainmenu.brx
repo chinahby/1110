@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="zhcnmainmenu" VERSION="1">
 <Strings Encoding="Unicode">
-	<String Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION" Encoding="Unicode">
+	<String Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION">
 		<Text>应用</Text>
 	</String>
 	<STRING Id="1011" Name="IDS_MAIN_MENU_MEDIAGALLERY">
@@ -36,9 +36,6 @@
 	</STRING>
 	<STRING Id="1021" Name="IDS_MAIN_MENU_USERPROFILE">
 		<Text>情景模式</Text>
-	</STRING>
-	<STRING Id="1022" Name="IDS_MAIN_MENU_GAME">
-		<Text>游戏</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text>菜单</Text>
