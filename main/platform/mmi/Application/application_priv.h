@@ -44,16 +44,7 @@ typedef struct _ApplicationMod
 typedef enum ApplicationState
 {
     APPLICATIONST_MAIN,
-
-    APPLICATIONST_GAME,
-    
-    APPLICATIONST_PLAYER,
-
-    APPLICATIONST_DATA, 
- 
-
     APPLICATIONST_EXIT
-
 } ApplicationState;
 
 
@@ -67,18 +58,7 @@ typedef enum
 typedef enum DLGRetValue
 {
     DLGRET_CREATE,
-        
-    DLGRET_GAME,
-
-    DLGRET_MEDIA,
-
-    DLGRET_MAIN,
-
-    DLGRET_DATA,
-
-
     DLGRET_CANCELED
-
 }DLGRetValue;
 
 typedef enum NextFSMAction

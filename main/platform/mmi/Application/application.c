@@ -71,7 +71,6 @@ static boolean Application_HandleEvent( IApplication *pi,
     uint32 dwParam
 );
 
-static int     Application_MainMenuService( IApplication *pi, ApplicationServiceType eStype);
 
 static Application gApplication={0};
 
@@ -79,8 +78,7 @@ static const VTBL( IApplication) gApplicationMethods =
 {
     Application_AddRef,
     Application_Release,
-    Application_HandleEvent,
-    Application_MainMenuService
+    Application_HandleEvent
 };
 
 int ApplicationMod_Load( IShell *pIShell, void *ph, IModule **ppMod);
@@ -100,8 +98,6 @@ static int CApplication_InitAppData(Application *pMe);
 static void CApplication_FreeAppData(Application *pMe);
 
 static void Application_RunFSM(Application *pMe);
-
-//static void calculateScreenParameters(MainMenu *pMe);
 
 static int StartApplet(Application *pMe, int i);
 
@@ -374,8 +370,6 @@ static int Application_New( IShell *ps, IModule *pIModule, IApplication **ppObj)
 ==============================================================================*/
 static int CApplication_InitAppData(Application *pMe)
 {
-	int i;
-	boolean iamgeflag = FALSE;
     if (NULL == pMe)
     {
         return EFAILED;
@@ -394,8 +388,8 @@ static int CApplication_InitAppData(Application *pMe)
 									 AEECLSID_ANNUNCIATOR,
 									 (void **) &pMe->m_pIAnn))
 	{
-			CApplication_FreeAppData(pMe);
-			return FALSE;
+		CApplication_FreeAppData(pMe);
+		return FALSE;
 	}
     return SUCCESS;
 }
@@ -826,7 +820,6 @@ void Application_ShowDialog(Application  *pMe,  uint16 dlgResId)
         pMe->m_rc.dx = di.cxScreen;
         pMe->m_rc.dy = di.cyScreen;
         IDISPLAY_SetClipRect(pMe->m_pDisplay, &pMe->m_rc);
-        //calculateScreenParameters(pMe);
     }
     nRet = ISHELL_CreateDialog(pMe->m_pShell,APPLICATION_RES_FILE_LANG,dlgResId,NULL);
     if (nRet != SUCCESS)
@@ -1077,10 +1070,20 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                 case AVK_6:
 				case AVK_7:	
 				case AVK_8:		
-				case AVK_9:		
-                case AVK_STAR:
-                case AVK_POUND:
+				case AVK_9:
                     StartApplet(pMe, IMENUCTL_GetItemID(pMenu, (wParam - AVK_1)));
+                    return TRUE;
+                    
+                case AVK_0:
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 9));
+                    return TRUE;
+                    
+                case AVK_STAR:
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 10));
+                    return TRUE;
+                    
+                case AVK_POUND:
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 11));
                     return TRUE;
                     
                 case AVK_CLR:
@@ -1185,61 +1188,5 @@ static int StartApplet(Application *pMe, int i)
         break;
     }
     return Result;
-}
-
-/*=============================================================================
-FUNCTION:  Application_MainMenuService
-
-DESCRIPTION:  外部接口调用，快速进入到application某一个菜单列表
-
-PARAMETERS:    
-            eStype: 启动app的方式
-
-=============================================================================*/
-
-static int  Application_MainMenuService( IApplication *pi, ApplicationServiceType eStype)
-{
-    char  *args = NULL;
-    Application *pMe = (Application*)pi;
-    int    nRet;  
-
-    if (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_APPLICATION)
-    {
-        // applet is already running
-        return EFAILED;
-    }    
-    
-    switch (eStype)
-    {
-        case STARTMETHOD_PLAYER: 
-            args = (char *)MALLOC(sizeof(char));
-            if(args)
-            {
-                args[0] = STARTARGPREFIX_VIEWPLAYER;
-            }
-            break;
-        
-        case STARTMETHOD_DATA:
-            args = (char *)MALLOC(sizeof(char));
-            if(args)
-            {
-                args[0] = STARTARGPREFIX_VIEWDATA;
-            }
-            break;
-
-        default:
-            break;
-    }
-
-    if(args == NULL)
-    {
-        return EFAILED;
-    }
-
-    nRet = ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_APPLICATION, args);
-        
-    FREEIF(args);
-    args = NULL;
-    return nRet;    
 }
 

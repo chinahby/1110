@@ -98,8 +98,6 @@ static void CMultimed_FreeAppData(Multimed *pMe);
 
 static void Multimed_RunFSM(Multimed *pMe);
 
-//static void calculateScreenParameters(MainMenu *pMe);
-
 static int StartApplet(Multimed *pMe, int i);
 
 boolean Multimed_RouteDialogEvt(Multimed *pMe,
@@ -960,9 +958,19 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
                 case AVK_7:
                 case AVK_8:
                 case AVK_9:
-                case AVK_STAR:
-                case AVK_POUND:
                     StartApplet(pMe, IMENUCTL_GetItemID(pMenu, (wParam - AVK_1)));
+                    return TRUE;
+                    
+                case AVK_0:
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 9));
+                    return TRUE;
+                    
+                case AVK_STAR:
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 10));
+                    return TRUE;
+                    
+                case AVK_POUND:
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 11));
                     return TRUE;
                     
                 case AVK_CLR:

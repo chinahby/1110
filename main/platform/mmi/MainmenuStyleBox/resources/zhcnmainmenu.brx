@@ -1,203 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="zhcnmainmenu" VERSION="1">
 <Strings Encoding="Unicode">
-	<STRING Id="1005" Name="IDS_MAIN_MENU_TITLE_ESURFING">
-		<Text>天翼</Text>
+	<String Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION" Encoding="Unicode">
+		<Text>应用</Text>
+	</String>
+	<STRING Id="1011" Name="IDS_MAIN_MENU_MEDIAGALLERY">
+		<Text>多媒体中心</Text>
 	</STRING>
-	<STRING Id="1006" Name="IDS_MAIN_MENU_TITLE_CUSTSERVICE">
-		<Text>客户服务</Text>
-	</STRING>
-	<STRING Id="1011" Name="IDS_MAIN_MENU_TITLE_1">
-		<Text>键</Text>
-	</STRING>
-	<STRING Id="1012" Name="IDS_MAIN_MENU_TITLE_2">
-		<Text>多媒体文件夹</Text>
-	</STRING>
-	<STRING Id="1013" Name="IDS_MAIN_MENU_TITLE_3">
-		<Text>工具箱</Text>
-	</STRING>
-	<STRING Id="1014" Name="IDS_MAIN_MENU_TITLE_4">
-		<Text>照相机</Text>
-	</STRING>
-	<STRING Id="1015" Name="IDS_MAIN_MENU_TITLE_5">
+	<STRING Id="1012" Name="IDS_MAIN_MENU_CONTACTS">
 		<Text>电话本</Text>
 	</STRING>
-	<STRING Id="1016" Name="IDS_MAIN_MENU_TITLE_6">
-		<Text>短信息</Text>
+	<STRING Id="1013" Name="IDS_MAIN_MENU_UTK">
+		<Text>UTK</Text>
 	</STRING>
-	<STRING Id="1017" Name="IDS_MAIN_MENU_TITLE_7">
+	<STRING Id="1014" Name="IDS_MAIN_MENU_TOOLS">
+		<Text>工具</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_MAIN_MENU_RECENTCALLS">
 		<Text>通话记录</Text>
 	</STRING>
-	<STRING Id="1018" Name="IDS_MAIN_MENU_TITLE_8">
+	<STRING Id="1016" Name="IDS_MAIN_MENU_MESSAGES">
+		<Text>短信息</Text>
+	</STRING>
+	<STRING Id="1017" Name="IDS_MAIN_MENU_MULTIMEDIA">
+		<Text>多媒体</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_MAIN_MENU_APPLICATION">
+		<Text>应用</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_MAIN_MENU_SCHEDULER">
+		<Text>日程表</Text>
+	</STRING>
+	<STRING Id="1020" Name="IDS_MAIN_MENU_SETTINGS">
 		<Text>设置</Text>
 	</STRING>
-	<STRING Id="1019" Name="IDS_MAIN_MENU_TITLE_9">
-		<Text>运动</Text>
-	</STRING>
-	<STRING Id="1020" Name="IDS_MAIN_MENU_TITLE_10">
+	<STRING Id="1021" Name="IDS_MAIN_MENU_USERPROFILE">
 		<Text>情景模式</Text>
 	</STRING>
-	<STRING Id="1021" Name="IDS_MAIN_MENU_TITLE_11">
-		<Text>多媒体播放器</Text>
-	</STRING>
-	<STRING Id="1022" Name="IDS_MAIN_MENU_TITLE_12">
-		<Text>数据服务</Text>
-	</STRING>
-	<STRING Id="1031" Name="IDS_GAME_SUB_MENU_ITEM_1">
-		<Text>俄罗斯方块</Text>
-	</STRING>
-	<STRING Id="1032" Name="IDS_GAME_SUB_MENU_ITEM_2">
-		<Text>红砖袭击</Text>
-	</STRING>
-	<STRING Id="1033" Name="IDS_GAME_SUB_MENU_ITEM_3">
-		<Text>21点</Text>
+	<STRING Id="1022" Name="IDS_MAIN_MENU_GAME">
+		<Text>游戏</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text>菜单</Text>
 	</STRING>
-	<STRING Id="1040" Name="IDS_MAIN_MENU_TITLE_40">
-		<Text>多媒体中心</Text>
-	</STRING>
-	<STRING Id="1041" Name="IDS_MAIN_MENU_TITLE_41">
-		<Text>电话本</Text>
-	</STRING>
-	<STRING Id="1042" Name="IDS_MAIN_MENU_TITLE_42">
-		<Text>UTK</Text>
-	</STRING>
-	<STRING Id="1043" Name="IDS_MAIN_MENU_TITLE_43">
+	<STRING Id="1043" Name="IDS_MAIN_MENU_CALCULATOR">
 		<Text>计算器</Text>
 	</STRING>
-	<STRING Id="1044" Name="IDS_MAIN_MENU_TITLE_44">
-		<Text>最近呼叫</Text>
+	<STRING Id="1046" Name="IDS_MAIN_MENU_FMRADIO">
+		<Text>收音机</Text>
 	</STRING>
-	<STRING Id="1045" Name="IDS_MAIN_MENU_TITLE_45">
-		<Text>短信息</Text>
-	</STRING>
-	<STRING Id="1046" Name="IDS_MAIN_MENU_TITLE_46">
-		<Text>FM 广播</Text>
-	</STRING>
-	<STRING Id="1047" Name="IDS_MAIN_MENU_TITLE_47">
-		<Text>应用</Text>
-	</STRING>
-	<STRING Id="1048" Name="IDS_MAIN_MENU_TITLE_48">
-		<Text>日历</Text>
-	</STRING>
-	<String Id="1049" Name="IDS_MAIN_MENU_TITLE_49">
-		<Text>设置</Text>
-	</String>
-	<String Id="1050" Name="IDS_MAIN_MENU_TITLE_50">
-		<Text>键</Text>
-	</String>
-	<String Id="1051" Name="IDS_MAIN_MENU_TITLE_51">
+	<STRING Id="1051" Name="IDS_MAIN_MENU_MUSICPLAYER">
 		<Text>音乐播放器</Text>
-	</String>
-	<String Id="1061" Name="IDS_MAIN_MENU_TITLE_61">
+	</STRING>
+	<STRING Id="1061" Name="IDS_MAIN_MENU_SMARTWORLD">
 		<Text>Smart World</Text>
-	</String>
-	<String Id="1062" Name="IDS_MAIN_MENU_TITLE_62">
-		<Text>Smartfren Access</Text>
-	</String>
-	<String Id="1063" Name="IDS_MAIN_MENU_TITLE_63">
-		<Text>音乐播放器</Text>
-	</String>
-	<String Id="1064" Name="IDS_MAIN_MENU_TITLE_64">
-		<Text>FM 广播</Text>
-	</String>
-	<String Id="1065" Name="IDS_MAIN_MENU_TITLE_65">
-		<Text>日历</Text>
-	</String>
-	<String Id="1066" Name="IDS_MAIN_MENU_TITLE_66">
+	</STRING>
+	<STRING Id="1062" Name="IDS_MAIN_MENU_SMARTFRENACCESS">
+		<Text>SmartFren Access</Text>
+	</STRING>
+	<STRING Id="1065" Name="IDS_MAIN_MENU_CALENDAR">
+		<Text>日程表</Text>
+	</STRING>
+	<STRING Id="1066" Name="IDS_MAIN_MENU_CONTACT">
 		<Text>电话本</Text>
-	</String>
-	<String Id="1067" Name="IDS_MAIN_MENU_TITLE_67">
+	</STRING>
+	<STRING Id="1067" Name="IDS_MAIN_MENU_SMS">
 		<Text>SMS</Text>
-	</String>
-	<String Id="1068" Name="IDS_MAIN_MENU_TITLE_68">
+	</STRING>
+	<STRING Id="1068" Name="IDS_MAIN_MENU_GAMES">
 		<Text>游戏</Text>
-	</String>
-	<String Id="1069" Name="IDS_MAIN_MENU_TITLE_69">
-		<Text>最近呼叫</Text>
-	</String>
-	<String Id="1070" Name="IDS_MAIN_MENU_TITLE_70">
+	</STRING>
+	<STRING Id="1070" Name="IDS_MAIN_MENU_GALLERY">
 		<Text>管理器</Text>
-	</String>
-	<String Id="1071" Name="IDS_MAIN_MENU_TITLE_71">
-		<Text>应用</Text>
-	</String>
-	<String Id="1072" Name="IDS_MAIN_MENU_TITLE_72">
-		<Text>设置</Text>
-	</String>
-	<String Id="1081" Name="IDS_MAIN_MENU_TITLE_81">
+	</STRING>
+	<String Id="1081" Name="IDS_MAIN_MENU_BLIVE">
 		<Text>b-live</Text>
 	</String>
-	<String Id="1082" Name="IDS_MAIN_MENU_TITLE_82">
-		<Text>SmartFren Access</Text>
-	</String>
-	<String Id="1083" Name="IDS_MAIN_MENU_TITLE_83">
-		<Text>音乐播放器</Text>
-	</String>
-	<String Id="1084" Name="IDS_MAIN_MENU_TITLE_84">
-		<Text>FM 广播</Text>
-	</String>
-	<String Id="1085" Name="IDS_MAIN_MENU_TITLE_85">
+	<String Id="1085" Name="IDS_MAIN_MENU_FRENDUO">
 		<Text>Frenduo</Text>
 	</String>
-	<String Id="1086" Name="IDS_MAIN_MENU_TITLE_86">
-		<Text>电话本</Text>
-	</String>
-	<String Id="1087" Name="IDS_MAIN_MENU_TITLE_87">
-		<Text>SMS</Text>
-	</String>
-	<String Id="1088" Name="IDS_MAIN_MENU_TITLE_88">
-		<Text>游戏</Text>
-	</String>
-	<String Id="1089" Name="IDS_MAIN_MENU_TITLE_89">
-		<Text>最近呼叫</Text>
-	</String>
-	<String Id="1090" Name="IDS_MAIN_MENU_TITLE_90">
-		<Text>管理器</Text>
-	</String>
-	<String Id="1091" Name="IDS_MAIN_MENU_TITLE_91">
-		<Text>应用</Text>
-	</String>
-	<String Id="1092" Name="IDS_MAIN_MENU_TITLE_92">
-		<Text>设置</Text>
-	</String>
-	<String Id="1101" Name="IDS_MAIN_MENU_TITLE_21">
-		<Text>多媒体中心</Text>
-	</String>
-	<String Id="1102" Name="IDS_MAIN_MENU_TITLE_22">
-		<Text>电话本</Text>
-	</String>
-	<String Id="1103" Name="IDS_MAIN_MENU_TITLE_23">
-		<Text>UTK</Text>
-	</String>
-	<String Id="1104" Name="IDS_MAIN_MENU_TITLE_24">
-		<Text>FM 广播</Text>
-	</String>
-	<String Id="1105" Name="IDS_MAIN_MENU_TITLE_25">
-		<Text>短信息</Text>
-	</String>
-	<String Id="1106" Name="IDS_MAIN_MENU_TITLE_26">
-		<Text>最近呼叫</Text>
-	</String>
-	<String Id="1107" Name="IDS_MAIN_MENU_TITLE_27">
-		<Text>音乐播放器</Text>
-	</String>
-	<String Id="1108" Name="IDS_MAIN_MENU_TITLE_28">
-		<Text>设置</Text>
-	</String>
-	<String Id="1109" Name="IDS_MAIN_MENU_TITLE_29">
-		<Text>应用</Text>
-	</String>
-	<String Id="1110" Name="IDS_MAIN_MENU_TITLE_30">
-		<Text>时钟</Text>
-	</String>
-	<String Id="1111" Name="IDS_MAIN_MENU_TITLE_31">
-		<Text>日历</Text>
-	</String>
-	<String Id="1112" Name="IDS_MAIN_MENU_TITLE_32">
-		<Text>计算器</Text>
+	<String Id="1110" Name="IDS_MAIN_MENU_TIMER">
+		<Text>定时器</Text>
 	</String>
 </Strings>
 <Dialogs>
@@ -205,37 +88,5 @@
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
-	<Dialog Id="6002" Name="IDD_GAME_MENU" Focus="7002">
-		<Controls>
-			<Menu Id="7002" Name="IDC_GAME_MENU">
-				<Items/>
-			</Menu>
-		</Controls>
-	</Dialog>
-	<Dialog Id="6003" Name="IDD_LIST_MENU" Focus="7001">
-		<Controls>
-			<Menu Id="7001" Name="IDC_MENU_LIST">
-				<Items/>
-			</Menu>
-		</Controls>
-	</Dialog>
-	<Dialog Id="6004" Name="IDD_PLAYER_MENU" Focus="7003">
-		<Controls>
-			<Menu Id="7003" Name="IDC_PLAYER_MENU">
-				<Items/>
-			</Menu>
-		</Controls>
-	</Dialog>
-	<Dialog Id="6005" Name="IDD_MSGBOX_MENU" Focus="0">
-		<Controls/>
-		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
-	</Dialog>
-	<Dialog Id="6006" Name="IDD_DATA_MENU" Focus="7004">
-		<Controls>
-			<Menu Id="7004" Name="IDC_DATA_MENU">
-				<Items/>
-			</Menu>
-		</Controls>
-	</Dialog>
 </Dialogs>
 </BREWRes>

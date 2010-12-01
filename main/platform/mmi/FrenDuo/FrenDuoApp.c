@@ -354,8 +354,6 @@ static int FrenDuoApp_New( IShell *ps, IModule *pIModule, IFrenDuoApp **ppObj)
 ==============================================================================*/
 static int CFrenDuoApp_InitAppData(FrenDuoApp *pMe)
 {
-	int i;
-	boolean iamgeflag = FALSE;
     if (NULL == pMe)
     {
         return EFAILED;
@@ -620,7 +618,6 @@ void FrenDuoApp_ShowDialog(FrenDuoApp  *pMe,  uint16 dlgResId)
         pMe->m_rc.dx = di.cxScreen;
         pMe->m_rc.dy = di.cyScreen;
         IDISPLAY_SetClipRect(pMe->m_pDisplay, &pMe->m_rc);
-        //calculateScreenParameters(pMe);
     }
     nRet = ISHELL_CreateDialog(pMe->m_pShell,FRENDUO_RES_FILE_LANG,dlgResId,NULL);
     if (nRet != SUCCESS)

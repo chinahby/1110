@@ -45,10 +45,7 @@
 #endif //#if !defined( AEE_SIMULATOR)
 
 #define PARAM_NOT_REF(x)
-#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
-#define MAINMENU_SELECT 10000
-#define MAINMENU_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
-#endif//FEATURE_LCD_TOUCH_ENABLE
+
 /*==============================================================================
 
                               本地函数声明
@@ -99,8 +96,6 @@ static int CMainMenu_InitAppData(MainMenu *pMe);
 static void CMainMenu_FreeAppData(MainMenu *pMe);
 
 static void MainMenu_RunFSM(MainMenu *pMe);
-
-//static void calculateScreenParameters(MainMenu *pMe);
 
 static int StartApplet(MainMenu *pMe, int i);
 
@@ -373,8 +368,6 @@ static int MainMenu_New( IShell *ps, IModule *pIModule, IMainMenu **ppObj)
 ==============================================================================*/
 static int CMainMenu_InitAppData(MainMenu *pMe)
 {
-	int i;
-	boolean iamgeflag = FALSE;
     if (NULL == pMe)
     {
         return EFAILED;
@@ -827,7 +820,6 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
         pMe->m_rc.dx = di.cxScreen;
         pMe->m_rc.dy = di.cyScreen;
         IDISPLAY_SetClipRect(pMe->m_pDisplay, &pMe->m_rc);
-        //calculateScreenParameters(pMe);
     }
     
     nRet = ISHELL_CreateDialog(pMe->m_pShell,MAINMENU_RES_FILE_LANG,dlgResId,NULL);
@@ -982,15 +974,15 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     return TRUE;
                     
                 case AVK_0:
-                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 10));
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 9));
                     return TRUE;
                     
                 case AVK_STAR:
-                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 11));
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 10));
                     return TRUE;
                     
                 case AVK_POUND:
-                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 12));
+                    StartApplet(pMe, IMENUCTL_GetItemID(pMenu, 11));
                     return TRUE;
              
                 case AVK_CLR:

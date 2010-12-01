@@ -96,8 +96,6 @@ static void CStaticapp_FreeAppData(Staticapp *pMe);
 
 static void Staticapp_RunFSM(Staticapp *pMe);
 
-//static void calculateScreenParameters(MainMenu *pMe);
-
 static boolean StartApplet(Staticapp *pMe, int i);
 
 boolean Staticapp_RouteDialogEvt(Staticapp *pMe,
@@ -369,9 +367,6 @@ static int Staticapp_New( IShell *ps, IModule *pIModule, IStaticapp **ppObj)
 ==============================================================================*/
 static int CStaticapp_InitAppData(Staticapp *pMe)
 {
-	int i;
-	boolean iamgeflag = FALSE;
-
     if (NULL == pMe)
     {
         return EFAILED;
@@ -390,8 +385,8 @@ static int CStaticapp_InitAppData(Staticapp *pMe)
 									 AEECLSID_ANNUNCIATOR,
 									 (void **) &pMe->m_pIAnn))
 	{
-			CStaticapp_FreeAppData(pMe);
-			return FALSE;
+		CStaticapp_FreeAppData(pMe);
+		return FALSE;
 	}
     return SUCCESS;
 }
@@ -822,7 +817,6 @@ void Staticapp_ShowDialog(Staticapp  *pMe,  uint16 dlgResId)
         pMe->m_rc.dx = di.cxScreen;
         pMe->m_rc.dy = di.cyScreen;
         IDISPLAY_SetClipRect(pMe->m_pDisplay, &pMe->m_rc);
-        //calculateScreenParameters(pMe);
     }
     nRet = ISHELL_CreateDialog(pMe->m_pShell,STATICAPP_RES_FILE_LANG,dlgResId,NULL);
     if (nRet != SUCCESS)

@@ -19,58 +19,37 @@
 
 #include "mainmenu.brh"
 #include "AEEConfig.h"
-
-#ifdef FEATURE_SUPPORT_WAP_APP
-//#include "WapBrowser.bid"
-#endif
-
-#ifdef FEATRUE_SUPPORT_G_SENSOR
-#include "G_Sensor.h"
-#endif
 #include "AEEAnnunciator.h"
 
 #if defined (FEATURE_DISP_160X128)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 4
-#define MAX_TURN_NUM   12
 #elif defined (FEATURE_DISP_220X176)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 4
-#define MAX_TURN_NUM   12
 #elif defined (FEATURE_DISP_128X128)
 #define  MAX_MATRIX_ITEMS 9
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
-#define MAX_TURN_NUM   9
 #elif defined (FEATURE_DISP_128X160)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 4
 #define  MAX_MATRIX_COLS 3
-#define MAX_TURN_NUM   12
 #elif defined (FEATURE_DISP_176X220)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 4
 #define  MAX_MATRIX_COLS 3
-#define MAX_TURN_NUM   12
 #elif defined (FEATURE_DISP_240X320)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 4
 #define  MAX_MATRIX_COLS 3
-#define MAX_TURN_NUM   12
 #elif defined (FEATURE_DISP_320X240)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 4
-#define MAX_TURN_NUM   12
 #endif
-#define FEATURE_ICON_MOVE_ANIMATION
-
-#if !defined(FEATURE_CARRIER_CHINA_VERTU)
-#define FEATURE_FOCUS_ANIMATION
-#endif
-
 
 /*==============================================================================
                                  
@@ -90,19 +69,7 @@ typedef struct _MainMenuMod
 typedef enum MainmenuState
 {
     MAINST_MAIN,
-
-    MAINST_GAME,
-    
-    MAINST_PLAYER,
-
-    MAINST_DATA, 
-
-    #ifdef FEATRUE_SUPPORT_G_SENSOR
-    MAINST_MSGBOX,
-    #endif   
-
     MAINST_EXIT
-
 } MainmenuState;
 
 typedef enum
@@ -115,21 +82,7 @@ typedef enum
 typedef enum DLGRetValue
 {
     DLGRET_CREATE,
-        
-    DLGRET_GAME,
-
-    DLGRET_MEDIA,
-
-    DLGRET_MAIN,
-
-    DLGRET_DATA,
-
-    #ifdef FEATRUE_SUPPORT_G_SENSOR
-    DLGRET_MSGBOX,
-    #endif
-
     DLGRET_CANCELED
-
 }DLGRetValue;
 
 typedef enum NextFSMAction
@@ -149,60 +102,40 @@ typedef struct _Point
 typedef struct _MainMenu
 {
     DECLARE_VTBL(IMainMenu)
-    uint32       referenceCounter;
+    uint32          referenceCounter;
     
-    IModule     *m_pModule;
-    IDisplay    *m_pDisplay;
-    IShell      *m_pShell;
-    IConfig     *m_pConfig;
+    IModule        *m_pModule;
+    IDisplay       *m_pDisplay;
+    IShell         *m_pShell;
+    IConfig        *m_pConfig;
 
-    IDialog     *m_pActiveIDlg;
-    uint32       m_pActivedlgID;
-    uint16       m_MainSel;   //一级菜单光标
-    uint16       m_MenuSel;   //二级菜单光标
-    DLGRetValue  m_eDlgReturn;
+    IDialog        *m_pActiveIDlg;
+    uint32          m_pActivedlgID;
+    DLGRetValue     m_eDlgReturn;
     
-    int         m_nRow;
-    int         m_nColumn;
-#ifdef FEATURE_ICON_MOVE_ANIMATION
-    int         m_nPrevRow;
-    int         m_nPrevColumn;
-#endif
-#ifdef FEATURE_FOCUS_ANIMATION
-    int         m_nIconAniFrameIdx;            // 图标动画当前帧索引
-#endif
-
+    int             m_nRow;
+    int             m_nColumn;
+    
     MAINMENU_STATUS_e_type  m_eAppStatus;   // Applet 当前运行状态
     
-    boolean     m_bDoNotOverwriteDlgResult; //是否不重写对话框结果    
-    boolean     m_bNormalStart;
+    boolean         m_bDoNotOverwriteDlgResult; //是否不重写对话框结果    
     
-    IImage      *m_pImageBg;
-    IImage      *m_pImageIcon[MAX_MATRIX_ITEMS];
-    IImage      *m_pAnimate;
-    Point       m_Icondefault_Pt[MAX_MATRIX_ITEMS];
-    Point       m_IconFocus_Pt[MAX_MATRIX_ITEMS];
-    AEERect     m_rc;
+    IImage         *m_pImageBg;
+    IImage         *m_pImageIcon[MAX_MATRIX_ITEMS];
+    IImage         *m_pAnimate;
+    Point           m_Icondefault_Pt[MAX_MATRIX_ITEMS];
+    Point           m_IconFocus_Pt[MAX_MATRIX_ITEMS];
+    uint16          m_IconTitle[MAX_MATRIX_ITEMS];
+    AEERect         m_rc;
     
-    MainmenuState             m_prevState;        // Applet前一状态
-    MainmenuState             m_currState;        // Applet当前状态
-
-    #ifdef FEATRUE_SUPPORT_G_SENSOR
-    uint16           m_wMsgResID;
-    #endif
+    MainmenuState   m_prevState;        // Applet前一状态
+    MainmenuState   m_currState;        // Applet当前状态
     
 #ifdef FEATURE_RANDOM_MENU_COLOR
-    RGBVAL         m_nBgColor;
+    RGBVAL          m_nBgColor;
     boolean         m_nRandomMenu;
 #endif
-#ifdef FEATURE_ICON_MOVE_ANIMATION
-    IBitmap       *m_pDevImage;
-    boolean       m_bMoveing;
-#endif
-
-	IImage		*m_pImageTurn[MAX_TURN_NUM];//wlh 20090409 add
-	IAnnunciator        *m_pIAnn;
-
+	IAnnunciator   *m_pIAnn;
 } MainMenu;
 
 /*==============================================================================
@@ -252,12 +185,6 @@ typedef struct _MainMenu
 #define ICON_HEIGHT             32
 #define ICON_ANIMATED_WIDTH     40
 #define ICON_ANIMATED_HEIGHT    32
-#endif
-
-#define ICON_ANIMATED_FRAME     1 //焦点图片的帧数
-#ifdef FEATURE_ICON_MOVE_ANIMATION
-#define ICON_ANIMATED_MOVE_FRAME  3
-#define ICON_ANIMATED_MOVE_RATE    10
 #endif
 
 #define MAINMENU_RES_FILE_LANG        AEE_RES_LANGDIR MAINMENU_RES_FILE

@@ -98,8 +98,6 @@ static void CGame_FreeAppData(Game *pMe);
 
 static void Game_RunFSM(Game *pMe);
 
-//static void calculateScreenParameters(MainMenu *pMe);
-
 static boolean StartApplet(Game *pMe, int i);
 
 boolean Game_RouteDialogEvt(Game *pMe,
@@ -371,8 +369,6 @@ static int Game_New( IShell *ps, IModule *pIModule, IGame **ppObj)
 ==============================================================================*/
 static int CGame_InitAppData(Game *pMe)
 {
-	int i;
-	boolean iamgeflag = FALSE;
     if (NULL == pMe)
     {
         return EFAILED;
@@ -806,7 +802,6 @@ void Game_ShowDialog(Game  *pMe,  uint16 dlgResId)
         pMe->m_rc.dx = di.cxScreen;
         pMe->m_rc.dy = di.cyScreen;
         IDISPLAY_SetClipRect(pMe->m_pDisplay, &pMe->m_rc);
-        //calculateScreenParameters(pMe);
     }
     nRet = ISHELL_CreateDialog(pMe->m_pShell,GAME_RES_FILE_LANG,dlgResId,NULL);
     if (nRet != SUCCESS)

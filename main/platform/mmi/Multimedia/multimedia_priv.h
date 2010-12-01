@@ -45,15 +45,7 @@ typedef struct _MultimediaMod
 typedef enum MultimediaState
 {
     MULTIMEDIAST_MAIN,
-
-    MULTIMEDIAST_GAME,
-    
-    MULTIMEDIAST_PLAYER,
-
-    MULTIMEDIAST_DATA, 
-
     MULTIMEDIAST_EXIT
-
 } MultimediaState;
 
 typedef enum
@@ -66,17 +58,7 @@ typedef enum
 typedef enum DLGRetValue
 {
     DLGRET_CREATE,
-        
-    DLGRET_GAME,
-
-    DLGRET_MEDIA,
-
-    DLGRET_MAIN,
-
-    DLGRET_DATA,
-
     DLGRET_CANCELED
-
 }DLGRetValue;
 
 typedef enum NextFSMAction

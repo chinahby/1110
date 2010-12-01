@@ -45,14 +45,6 @@ typedef struct _GameMod
 typedef enum GameState
 {
     GAMEST_MAIN,
-
-    GAMEST_GAME,
-    
-    GAMEST_PLAYER,
-
-    GAMEST_DATA, 
- 
-
     GAMEST_EXIT
 
 } GameState;
@@ -68,18 +60,7 @@ typedef enum
 typedef enum DLGRetValue
 {
     DLGRET_CREATE,
-        
-    DLGRET_GAME,
-
-    DLGRET_MEDIA,
-
-    DLGRET_MAIN,
-
-    DLGRET_DATA,
-
-
     DLGRET_CANCELED
-
 }DLGRetValue;
 
 typedef enum NextFSMAction
@@ -126,9 +107,6 @@ typedef struct _Game
 ==============================================================================*/
 
 #define  MAX_MATRIX_ITEMS 3
-
-#define ICON_ANIMATED_FRAME     1 //½¹µãÍ¼Æ¬µÄÖ¡Êý
-
 
 #define GAME_RES_FILE_LANG        AEE_RES_LANGDIR GAME_RES_FILE
 

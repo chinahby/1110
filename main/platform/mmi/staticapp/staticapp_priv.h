@@ -41,18 +41,8 @@ typedef struct _StaticappMod
 typedef enum StaticappState
 {
     STATICAPPST_MAIN,
-
-    STATICAPPST_GAME,
-    
-    STATICAPPST_PLAYER,
-
-    STATICAPPST_DATA, 
- 
-
     STATICAPPST_EXIT
-
 } StaticappState;
-
 
 typedef enum
 {
@@ -64,18 +54,7 @@ typedef enum
 typedef enum DLGRetValue
 {
     DLGRET_CREATE,
-        
-    DLGRET_GAME,
-
-    DLGRET_MEDIA,
-
-    DLGRET_MAIN,
-
-    DLGRET_DATA,
-
-
     DLGRET_CANCELED
-
 }DLGRetValue;
 
 typedef enum NextFSMAction
@@ -135,8 +114,6 @@ typedef struct _Staticapp
 #elif defined(FEATURE_DISP_320X240)
 #define  MAX_MATRIX_ITEMS 7
 #endif
-#define ICON_ANIMATED_FRAME     1 //½¹µãÍ¼Æ¬µÄÖ¡Êý
-
 
 #define STATICAPP_RES_FILE_LANG        AEE_RES_LANGDIR STATICAPP_RES_FILE
 
