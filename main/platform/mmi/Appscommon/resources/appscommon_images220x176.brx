@@ -19,12 +19,6 @@
 	<Object Id="5006" Name="IDB_MODE_T9_STROKE" MimeType="image/png">
 		<File>..\images\220x176\common\IME\T9str.png</File>
 	</Object>
-	<Object Id="5007" Name="IDI_CONV_POUND" MimeType="image/png">
-		<File>..\images\220x176\common\Converter\converter_pound.png</File>
-	</Object>
-	<Object Id="5008" Name="IDI_CONV_STAR" MimeType="image/png">
-		<File>..\images\220x176\common\Converter\converter_star.png</File>
-	</Object>
 	<Object Id="5010" Name="IDI_KEY_TEST" MimeType="image/png">
 		<File>..\images\220x176\common\QuickTest\keytest.png</File>
 	</Object>
