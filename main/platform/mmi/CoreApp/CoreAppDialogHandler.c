@@ -1569,7 +1569,7 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
-                
+                #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
@@ -1580,6 +1580,18 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                     CoreDrawBottomBar(BTBAR_DELETE)
                 }
                 else
+                #else
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    CoreDrawBottomBar(BTBAR_OK_BACK)
+                }
+                else if(nLen > 0)
+                {// 删除
+                    CoreDrawBottomBar(BTBAR_SOS)
+                }
+                else
+                #endif
                 {// SOS
                     CoreDrawBottomBar(BTBAR_SOS)
                 }
@@ -1627,11 +1639,27 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                     case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8    
                     case AVK_CLR:
                         chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                         if (STRLEN(pMe->m_strPhonePWD) == 0)
                         {
                             CLOSE_DIALOG(DLGRET_EMGCALL)
                             return TRUE;
                         }
+                        #else
+                        if(dwParam == 0)
+                        {
+                        	CLOSE_DIALOG(DLGRET_EMGCALL)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (STRLEN(pMe->m_strPhonePWD) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_EMGCALL)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
                         break;
                         
                     case AVK_SELECT:
@@ -1885,7 +1913,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                                                 IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
 
-                
+                #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
@@ -1896,6 +1924,18 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                     CoreDrawBottomBar(BTBAR_DELETE)
                 }
                 else
+                #else
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    CoreDrawBottomBar(BTBAR_OK_BACK)
+                }
+                else if(nLen > 0)
+                {// 删除
+                    CoreDrawBottomBar(BTBAR_SOS)
+                }
+                else
+                #endif
                 {//SOS
                     CoreDrawBottomBar(BTBAR_SOS)
                 }
@@ -1944,6 +1984,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                     case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8    
                     case AVK_CLR:
                         chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                         if (szCode == NULL)
                         {
                             return TRUE;
@@ -1953,6 +1994,25 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                             CLOSE_DIALOG(DLGRET_EMGCALL)
                             return TRUE;
                         }
+                        #else
+                        if(dwParam == 0)
+                        {
+                        	CLOSE_DIALOG(DLGRET_EMGCALL)
+	                        return TRUE;
+                        }
+                        else
+                        {
+                        	if (szCode == NULL)
+	                        {
+	                            return TRUE;
+	                        }
+	                        if (STRLEN(szCode) == 0)
+	                        {
+	                            CLOSE_DIALOG(DLGRET_EMGCALL)
+	                            return TRUE;
+	                        }
+                        }
+                        #endif
                         break;
                         
                     case AVK_SELECT:
@@ -4759,35 +4819,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 ==============================================================================*/
 static void CoreApp_PlayPwrOnAni(CCoreApp *pMe) 
 {
-#ifdef FEATURE_VERSION_KARBONN
-	// 开始播放开机动画
-	if (pMe->m_wStartupAniTime < PWRON_ANI_FRAME_COUNT )
-	{
-    	IIMAGE_Start( pMe->m_pStartupAniImg,
-                            0,
-                            0);
-		pMe->m_wStartupAniTime = PWRON_ANI_FRAME_COUNT;
-		(void) ISHELL_SetTimer(pMe->a.m_pIShell,
-                             ANI_RATE,
-                             (PFNNOTIFY)CoreApp_PlayPwrOnAni,
-                             (void*)pMe);
-	}
-	else
-    {
-        IBACKLIGHT_Enable(pMe->m_pBacklight);
-        IALERT_StopRingerAlert(pMe->m_pAlert);
-#ifndef FEATURE_USES_LOWMEM
-        if ( NULL != pMe->m_pStartupAniImg )
-        {     
-            IIMAGE_Stop(pMe->m_pStartupAniImg);
-            IIMAGE_Release(pMe->m_pStartupAniImg);
-            pMe->m_pStartupAniImg = NULL;
-        }
-#endif
-        CLOSE_DIALOG(DLGRET_OK)
-    }
 
-#else
     AEEImageInfo  ImgInfo;  //Gets the information about an image
 
     ASSERT(pMe != NULL);
@@ -4800,10 +4832,9 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
     {
 #ifndef FEATURE_USES_LOWMEM
 
-#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)||defined(FEATURE_VERSION_FLEXI203P)
-        MSG_FATAL("CoreApp_PlayPwrOnAni 20",0,0,0); 
-        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定开机动画的帧数
-#else
+#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || \
+    defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) || \
+    defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181)
         MSG_FATAL("CoreApp_PlayPwrOnAni 10",0,0,0);
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
 
@@ -4815,20 +4846,25 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 
         // 设置要显示的图像的实际大小
         IIMAGE_SetDrawSize( pMe->m_pStartupAniImg, ImgInfo.cx/PWRON_ANI_FRAME_COUNT, ImgInfo.cy );
-#endif
-
-
- 
-        // 开始播放开机动画
-#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)||defined(FEATURE_VERSION_FLEXI203P)      
-        MSG_FATAL("CoreApp_PlayPwrOnAni 21",0,0,0);
-        IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
-        pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
 #else
+		MSG_FATAL("CoreApp_PlayPwrOnAni 20",0,0,0); 
+        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定开机动画的帧数
+#endif
+  
+#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || \
+	defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) || \
+	defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181)
+
         MSG_FATAL("CoreApp_PlayPwrOnAni 11",0,0,0);
         IIMAGE_Start( pMe->m_pStartupAniImg,
                             (pMe->m_rc.dx - ImgInfo.cx/PWRON_ANI_FRAME_COUNT)/2,
                             (pMe->m_rc.dy - ImgInfo.cy)/2 );
+#else
+		// 开始播放开机动画  
+		MSG_FATAL("CoreApp_PlayPwrOnAni 21",0,0,0);
+        IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
+        pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
+
 #endif
 
         pMe->m_wStartupAniTime++; // 滚动播放次数
@@ -4875,7 +4911,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 #endif
         CLOSE_DIALOG(DLGRET_OK)
     }
-#endif
+
 }
 
 /*==============================================================================
@@ -4893,35 +4929,6 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 ==============================================================================*/
 static void CoreApp_PlayPwrOffAni(CCoreApp *pMe) 
 {
-#ifdef FEATURE_VERSION_KARBONN
-		// 开始播放开机动画
-		if (pMe->m_wStartupAniTime < PWRON_ANI_FRAME_COUNT )
-		{
-			IIMAGE_Start( pMe->m_pStartupAniImg,
-								0,
-								0);
-			pMe->m_wStartupAniTime = PWROFF_ANI_FRAME_COUNT;
-			(void) ISHELL_SetTimer(pMe->a.m_pIShell,
-								 ANI_RATE-500,
-								 (PFNNOTIFY)CoreApp_PlayPwrOffAni,
-								 (void*)pMe);
-		}
-		else
-		{
-#ifndef FEATURE_USES_LOWMEM
-        	if ( NULL != pMe->m_pStartupAniImg )
-        	{     
-           	 	IIMAGE_Stop(pMe->m_pStartupAniImg);
-            	IIMAGE_Release(pMe->m_pStartupAniImg);
-            	pMe->m_pStartupAniImg = NULL;
-        	}
-#endif
-        	// 发送事件关闭开机动画播放对话
-        	(void)ISHELL_SendEvent( pMe->a.m_pIShell,  AEECLSID_CORE_APP, 
-                                EVT_DISPLAYDIALOGTIMEOUT,  0, 0);
-		}
-	
-#else
     AEEImageInfo  ImgInfo;  //Gets the information about an image
 
     ASSERT(pMe != NULL);
@@ -4932,10 +4939,11 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
 #endif
     {
 #ifndef FEATURE_USES_LOWMEM
+        
+#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) ||\
+	defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) ||\
+	defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181)
 
-#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)||defined(FEATURE_VERSION_FLEXI203P) 
-        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定关机动画的帧数
-#else
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
 		MSG_FATAL("CoreApp_PlayPwrOffAni pMe->m_pStartupAniImg = %x",pMe->m_pStartupAniImg,0,0);
         // 设置动画速度(毫秒)
@@ -4947,15 +4955,20 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         // 设置要显示的图像的实际大小
         IIMAGE_SetDrawSize( pMe->m_pStartupAniImg, 
                                 ImgInfo.cx/PWROFF_ANI_FRAME_COUNT, ImgInfo.cy );
-#endif
-#if defined(FEATURE_VERSION_H19C) || defined(FEATURE_VERSION_ITEL)||defined(FEATURE_VERSION_FLEXI203P) 
-        IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
-        pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
 #else
-        // 开始播放关机动画
-        IIMAGE_Start( pMe->m_pStartupAniImg, 
+		IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定关机动画的帧数
+#endif
+
+#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) ||\
+	defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) ||\
+	defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181)
+     // 开始播放关机动画
+     IIMAGE_Start( pMe->m_pStartupAniImg, 
                                 (pMe->m_rc.dx - ImgInfo.cx/PWROFF_ANI_FRAME_COUNT)/2, 
                                 (pMe->m_rc.dy - ImgInfo.cy)/2 );
+#else
+	IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
+    pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
 #endif
         pMe->m_wStartupAniTime++; // 滚动播放次数
         AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOffAni,  (void*)pMe);
@@ -4995,7 +5008,6 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         (void)ISHELL_SendEvent( pMe->a.m_pIShell,  AEECLSID_CORE_APP, 
                                 EVT_DISPLAYDIALOGTIMEOUT,  0, 0);
     }
-#endif
 
 }
 
@@ -5191,6 +5203,11 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     boolean missed_call_icon;
     //static boolean b_flag = TRUE;
 
+	//Add By zzg 2010_11_22
+#ifdef FEATURE_APP_BLUETOOTH
+	boolean bt_status = FALSE;
+#endif
+	//Add End
 	/*
 	//Add for test
 	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_WAP, ANNUN_STATE_WAP_ON);
@@ -5210,6 +5227,11 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&alertType, sizeof(alertType));//CFGI_ALERT_TYPE
     ICONFIG_GetItem(pMe->m_pConfig, CFGI_MISSED_CALL_ICON,&missed_call_icon, sizeof(missed_call_icon));
+	//Add By zzg 2010_11_22
+#ifdef FEATURE_APP_BLUETOOTH
+	ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS,&bt_status, sizeof(bt_status));
+#endif
+	//Add End
 
     if(pMe->m_pIAnn != NULL)
     {
@@ -5345,6 +5367,15 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
     {
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL, ANNUN_STATE_CALL_MISSEDCALL_ON);
     }
+
+	//Add By zzg 2010_11_22
+#ifdef FEATURE_APP_BLUETOOTH
+	if((bt_status) && (pMe->m_pIAnn != NULL))
+    {
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_ON);
+    }
+#endif
+	//Add End
 }
 
 static void CoreApp_Process_Rtc_Event(CCoreApp *pMe)

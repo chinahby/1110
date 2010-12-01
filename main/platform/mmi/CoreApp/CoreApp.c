@@ -444,6 +444,21 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bVerifying = FALSE;
     //if phone power down abnormal, we need set CFGI_FM_BACKGROUND  false to avoid show FM in idle
     ICONFIG_SetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
+	
+//Add By zzg 2010_11_25 			
+#ifdef FEATURE_APP_BLUETOOTH 
+	{
+		boolean bt_status = FALSE;
+		ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
+
+		if (TRUE == bt_status)
+		{
+			MSG_FATAL("***zzg ISHELL_StartBackgroundApplet AEECLSID_BLUETOOTH_APP***", 0, 0, 0);
+			ISHELL_StartBackgroundApplet(pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP, "InitBT");					
+		}
+	}
+#endif
+//Add End	
 
 #ifdef FEATURE_PLANEMODE
     pMe->bPlaneModeOn = FALSE;
