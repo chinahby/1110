@@ -333,7 +333,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext );
 static T9STATUS T9_CJK_CHINESE_Init(TextCtlContext *pContext);
 static void T9_CJK_CHINESE_Destroy(TextCtlContext *pContext);
 static boolean T9_CJK_CHINESE_DisplayText(TextCtlContext *pContext);
-static T9KEY T9_CJK_CHINESE_BrewKeyToT9Key(TextCtlContext *pContext,AEEEvent, AVKType cKey);
+static T9KEY T9_CJK_CHINESE_BrewKeyToT9Key(TextCtlContext *pContext, AVKType cKey);
 T9STATUS T9FARCALL T9_CJK_CHINESE_HandleRequest(T9FieldInfo *pFieldInfo, T9Request *pRequest);
 #endif // #ifdef FEATURE_T9_CHINESE
 #endif //FEATURE_T9_INPUT

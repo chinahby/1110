@@ -3637,14 +3637,12 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
         case EVT_COMMAND:
             switch (wParam)
             {
-#if 0   //add by yangdecai for inputmode
 #ifdef FEATURE_LANG_CHINESE
                 case IDS_CHINESE:       //中文
                     language = NV_LANGUAGE_CHINESE;
                     inputmode = OEM_MODE_T9_PINYIN;    
                     break;
 #endif /* FEATURE_LANG_CHINESE */
-#endif
 
 #ifdef FEATURE_LANG_TCHINESE
                 case IDS_TCHINESE:       //繁体中文
