@@ -3025,7 +3025,17 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						 return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 #endif /*FEATURE_FLEXI_STATIC_BREW_APP&&FEATURE_FPT005*/
 #else
-						 return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+						 #ifdef FEATURE_VERSION_HITZ181
+						 if(!IRUIM_IsCardConnected(pMe->m_pIRUIM))
+						 {
+						 	AECHAR m_Numcall[5] = {L"112"};
+						 	(void)MakeVoiceCall(pMe->a.m_pIShell, FALSE, (AECHAR *)m_Numcall);
+						 }
+						 else
+						 #endif
+						 {
+						 	return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+						 }
 #endif
 
                     }
@@ -4714,7 +4724,16 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 	#elif defined (FEATURE_FPT005)
 		eBBarType = BTBAR_CONTACTS_FPORTAL; //add by yangdecai
 	#elif defined (FEATURE_VERSION_HITZ181)
-		eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
+		#ifdef FEATURE_VERSION_HITZ181
+	    if(!IRUIM_IsCardConnected(pMe->m_pIRUIM))
+	    {
+			eBBarType = BTBAR_MENU_SOS; //add by yangdecai
+		}
+		else
+		#endif
+		{
+			eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
+		}
 	#else
 		eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai
 	#endif

@@ -1422,7 +1422,52 @@ void FmRadio_SaveChannelList( CFmRadio* pMe)
 	{
 		byMax = MAX_FMRADIO_STORED_CHANNEL;
 	}
-
+	#ifdef FEATURE_VERSION_HITZ181
+    if(pMe->byChannelMax <=0)   //add by yangdecai 
+    {
+    	byMax = MAX_FMRADIO_STORED_CHANNEL/2;
+    	WSTRCPY(pMe->chanInfoList[0].szName ,L"88");
+        pMe->chanInfoList[0].wChannel = 5;
+        WSTRCPY(pMe->chanInfoList[1].szName ,L"88.5");
+        pMe->chanInfoList[1].wChannel = 10;       
+        WSTRCPY(pMe->chanInfoList[2].szName ,L"89.5");
+        pMe->chanInfoList[2].wChannel = 20;  
+        WSTRCPY(pMe->chanInfoList[3].szName ,L"91");
+        pMe->chanInfoList[3].wChannel = 35; 
+        WSTRCPY(pMe->chanInfoList[4].szName ,L"91.5");
+        pMe->chanInfoList[4].wChannel = 40;  
+        WSTRCPY(pMe->chanInfoList[5].szName ,L"93");
+        pMe->chanInfoList[5].wChannel = 55;   
+        WSTRCPY(pMe->chanInfoList[6].szName ,L"94");
+        pMe->chanInfoList[6].wChannel = 65;    
+        WSTRCPY(pMe->chanInfoList[7].szName ,L"94.5");
+        pMe->chanInfoList[7].wChannel = 70;   
+        WSTRCPY(pMe->chanInfoList[8].szName ,L"95");
+        pMe->chanInfoList[8].wChannel = 75;  
+        WSTRCPY(pMe->chanInfoList[9].szName ,L"95.5");
+        pMe->chanInfoList[9].wChannel = 80;
+        WSTRCPY(pMe->chanInfoList[10].szName ,L"96");
+        pMe->chanInfoList[10].wChannel = 85;  
+        WSTRCPY(pMe->chanInfoList[11].szName ,L"97.5");
+        pMe->chanInfoList[11].wChannel = 100;
+        WSTRCPY(pMe->chanInfoList[12].szName ,L"98.5");
+        pMe->chanInfoList[12].wChannel = 110;   
+        WSTRCPY(pMe->chanInfoList[13].szName ,L"100");
+        pMe->chanInfoList[13].wChannel = 125;   
+        WSTRCPY(pMe->chanInfoList[14].szName ,L"102.5");
+        pMe->chanInfoList[14].wChannel = 150;
+        WSTRCPY(pMe->chanInfoList[15].szName ,L"103");
+        pMe->chanInfoList[15].wChannel = 155;      
+        WSTRCPY(pMe->chanInfoList[16].szName ,L"103.5");
+        pMe->chanInfoList[16].wChannel = 160;
+        WSTRCPY(pMe->chanInfoList[17].szName ,L"105.5");
+        pMe->chanInfoList[17].wChannel = 180;
+        WSTRCPY(pMe->chanInfoList[18].szName ,L"106.5");
+        pMe->chanInfoList[18].wChannel = 190;
+        WSTRCPY(pMe->chanInfoList[19].szName ,L"107.5");
+        pMe->chanInfoList[19].wChannel = 200;
+    }
+    #endif
 	(void) ICONFIG_SetItem(pMe->m_pConfig,
 						   CFGI_FMRADIO_CHAN_TOTAL,
 						   &byMax,

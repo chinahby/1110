@@ -916,8 +916,8 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
 			{
 				AECHAR WTitle[40] = {0};
 				AECHAR WTemp[20]  = {0};
-				AECHAR WTempleft[10] = {L"<<  "};
-				AECHAR WTemprigt[10] = {L"  >>"};
+				AECHAR WTempleft[10] = {L"<< "};
+				AECHAR WTemprigt[10] = {L" >>"};
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_RECENTCALLSRES_LANGFILE,                                
                         IDS_MISSED_CALLS,
@@ -1138,8 +1138,8 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
 		    {
 		  		AECHAR WTitle[40] = {0};
 				AECHAR WTemp[20]  = {0};
-				AECHAR WTempleft[10] = {L"<<      "};
-				AECHAR WTemprigt[10] = {L"      >>"};
+				AECHAR WTempleft[10] = {L"<< "};
+				AECHAR WTemprigt[10] = {L" >>"};
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_RECENTCALLSRES_LANGFILE,                                
                         pMe->selectState,

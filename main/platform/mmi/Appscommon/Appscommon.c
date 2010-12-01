@@ -412,7 +412,10 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_L = IDS_BACK;
             nResID_R = IDS_SOS;
             break;
-            
+         case BTBAR_MENU_SOS:
+         	nResID_L = IDS_MENU;
+            nResID_R = IDS_SOS;
+         	break;
          case BTBAR_STOP_BACK:
             nResID_R = IDS_BACK; 
             nResID_L = IDS_STOP;
@@ -2675,7 +2678,12 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             nResID_L = IDS_MENU;
             nResID_R = IDS_STRING_CONTACTS;
             break;
-
+            
+		case BTBAR_MENU_SOS:
+         	nResID_L = IDS_MENU;
+            nResID_R = IDS_SOS;
+         	break;
+         	
 		case BTBAR_MENU_FRENDUO:
 			nResID_L = IDS_MENU;
 			nResID_R = IDS_FRENDUO_LIST;
