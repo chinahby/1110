@@ -1212,7 +1212,7 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
-            
+            	#ifndef FEATURE_ALL_KEY_PAD
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
@@ -1223,6 +1223,18 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_DELETE)
                 }
                 else
+                #else
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                }
+                else if(nLen > 0)
+                {// 删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+                else
+                #endif
                 {// 取消
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_CANCEL)
                 }
@@ -1271,11 +1283,27 @@ static boolean  SecurityCallPassWordInputDlgHandler(CSecurityMenu *pMe,
                         
                     case AVK_CLR:           
                         chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD
                         if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
                         {
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
                         }
+                        #else
+                        if(dwParam == 0)
+                        {
+                        	CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
                         break;
                         
                     case AVK_DOWN:
@@ -1928,7 +1956,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
-            
+            	#ifndef FEATURE_ALL_KEY_PAD
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
@@ -1939,9 +1967,21 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_DELETE)
                 }
                 else
+                #else
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                }
+                else if(nLen > 0)
+                {// 删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+                else
+                #endif
                 {// 取消
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_CANCEL)
-                    }
+                }
         
                 // 更新显示
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
@@ -1987,11 +2027,27 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                         
                     case AVK_CLR:
                         chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD
                         if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
                         {
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
                         }
+                        #else
+                        if(dwParam == 0)
+                        {
+                        	CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
                         break;
                         
                     case AVK_DOWN:
@@ -2328,7 +2384,7 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
-            
+            	#ifndef FEATURE_ALL_KEY_PAD
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
@@ -2339,6 +2395,18 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_DELETE)
                 }
                 else
+                #else
+                 // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                }
+                else if(nLen > 0)
+                {// 删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+                else
+                #endif
                 {// 取消
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_CANCEL)
                 }
@@ -2387,11 +2455,27 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
                         
                     case AVK_CLR:
                         chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD
                         if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
                         {
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
                         }
+                        #else
+                        if(dwParam == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
                         break;
                         
                     case AVK_SELECT:
@@ -2671,7 +2755,7 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                                         IDF_TEXT_TRANSPARENT);
                }
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor); 
-               
+                #ifndef FEATURE_ALL_KEY_PAD
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
@@ -2682,6 +2766,18 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_DELETE)
                 }
                 else
+                #else
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                }
+                else if(nLen > 0)
+                {// 删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+                else
+                #endif
                 {// 取消
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_CANCEL)
                 }
@@ -2730,11 +2826,27 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                         
                     case AVK_CLR:
                         chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD
                         if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
                         {
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
                         }
+                        #else
+                        if(dwParam ==0)
+                        {
+	                          CLOSE_DIALOG(DLGRET_CANCELED)
+	                          return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+	                        {
+	                            CLOSE_DIALOG(DLGRET_CANCELED)
+	                            return TRUE;
+	                        }
+                        }
+                        #endif
                         break;
                         
                     case AVK_DOWN:
@@ -3002,7 +3114,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                                     NULL, 
                                     IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
-
+				#ifndef FEATURE_ALL_KEY_PAD
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
@@ -3013,6 +3125,18 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_DELETE)
                 }
                 else
+                #else
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                }
+                else if(nLen > 0)
+                {// 删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+                else
+                #endif
                 {// 取消
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_CANCEL)
                 }
@@ -3061,11 +3185,27 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                         
                     case AVK_CLR:
                         chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD
                         if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
                         {
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
                         }
+                        #else
+                        if(dwParam == 0)
+                        {
+                        	CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
                         break;
                         
                    case AVK_DOWN:
@@ -3555,6 +3695,7 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
 
                 // 绘制底条提示
+				#ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                 if (nLen > 3)
                 {// 保存-----删除
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
@@ -3564,6 +3705,17 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_DELETE)
                 }
                 else
+                #else
+                if (nLen > 3)
+                {// 保存-----删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
+                }
+                else if(nLen > 0)
+                {// 删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+                else
+                #endif
                 {// 取消
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_CANCEL)
                 }
@@ -3618,11 +3770,27 @@ static boolean  SecurityAffirmPassWordHandler(CSecurityMenu *pMe,
                         
                     case AVK_CLR:
                         chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                         if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
                         {
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
                         }
+                        #else
+                        if(dwParam == 0)
+                        {
+                        	CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
                         break;
                         
                     case AVK_SELECT:
@@ -3936,7 +4104,7 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                                     IDF_TEXT_TRANSPARENT);
                 }
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
-
+				#ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
@@ -3947,6 +4115,18 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_DELETE)
                 }
                 else
+                #else
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                }
+                else if(nLen > 0)
+                {// 删除
+                    SEC_MENU_DRAW_BOTTOMBAR(BTBAR_SOS)
+                }
+                else
+                #endif
                 {//取消
                     SEC_MENU_DRAW_BOTTOMBAR(BTBAR_SOS/*BTBAR_CANCEL*/)
                 }
@@ -3995,11 +4175,27 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                         
                     case AVK_CLR:
                         chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                         if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
                         {
                             CLOSE_DIALOG(DLGRET_EMGCALL)
                             return TRUE;
                         }
+                        #else
+                        if(dwParam == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_EMGCALL)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_EMGCALL)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
                         break;
                    case AVK_UP:
                          {
@@ -4567,6 +4763,11 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
          return;
     }
     
+//Add By zzg 2010_10_22
+#ifdef FEATURE_APP_BLUETOOTH
+	ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
+#endif
+//Add End   
     OEM_RestoreFactorySetting();
     //AEEOEM_RestoreFactorySetting(pMe->m_pOEM_TSGBridge);     
     value = 0;

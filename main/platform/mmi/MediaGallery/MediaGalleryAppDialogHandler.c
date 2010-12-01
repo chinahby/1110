@@ -6612,10 +6612,12 @@ static boolean MGAppUtil_UpdateTxtEditSoftkey(CMediaGalleryApp *pMe,
    {
       MGAppUtil_DrawSoftkey(pMe, BTBAR_BACK);
    }
+   #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
    else if (ITEXTCTL_GetCursorPos(pEditText) != TC_CURSORSTART)
    {
       MGAppUtil_DrawSoftkey(pMe, BTBAR_SAVE_DELETE);
    }
+   #endif
    else
    {
       MGAppUtil_DrawSoftkey(pMe, BTBAR_SAVE_BACK);

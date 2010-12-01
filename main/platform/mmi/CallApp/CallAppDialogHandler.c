@@ -1119,6 +1119,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
         						CMediaGallery_ClearMediaFiles(pMe);
     						}
 							#endif
+//Add By zzg 2010_10_22
+#ifdef FEATURE_APP_BLUETOOTH
+							ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
+#endif
+//Add End   
 							OEM_RestoreFactorySetting();
 							{
 								byte alertType;  
@@ -1630,11 +1635,27 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #ifdef FEATURE_EDITABLE_RECORD
                    if(pMe->m_bEditRecNumber)
                    {
+                   	   #ifndef FEATURE_ALL_KEY_PAD
                        if(len == 0)
                        {
                            CLOSE_DIALOG(DLGRET_OK)
                            return TRUE;
                        }
+                       #else
+                       if(dwParam == 0)
+                       {
+                       		CLOSE_DIALOG(DLGRET_OK)
+                            return TRUE;
+                       }
+                       else
+                       {
+                       	  if(len == 0)
+                       	  {
+                              CLOSE_DIALOG(DLGRET_OK)
+                              return TRUE;
+                          }
+                       }
+                       #endif
                    }
                    else if (len <= 1)
 #else
@@ -9183,7 +9204,11 @@ static void CallApp_Draw_NumEdit_SoftKey(CCallApp *pMe)
     BottomBar_e_Type  type = BTBAR_NONE;
     if(pMe->m_b_incall )
     {
+    	#ifndef FEATURE_ALL_KEY_PAD
         type = BTBAR_OPTION_DELETE;
+        #else
+        type = BTBAR_OPTION_BACK;
+        #endif
     }
     else
     {

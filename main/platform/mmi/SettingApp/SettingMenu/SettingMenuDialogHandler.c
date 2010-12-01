@@ -2292,7 +2292,11 @@ static boolean  HandleCallForwardInputDialogEvent(CSettingMenu *pMe,
                  ITEXTCTL_GetCursorPos(pTextCtl) != TC_CURSORSTART )
             {
                 //drawBottomBar(pMe->m_pDisplay, AEE_FONT_NORMAL,BTBAR_OK_DELETE);
+                #ifndef FEATURE_ALL_KEY_PAD
                 SETTING_MENU_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+                #else
+                SETTING_MENU_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                #endif
             }
             else
             {
@@ -2742,7 +2746,11 @@ static boolean  HandleBannerDialogEvent(CSettingMenu *pMe,
                      ITEXTCTL_GetCursorPos(pTextCtl) != TC_CURSORSTART )
                 {
                     //drawBottomBar(pMe->m_pDisplay, AEE_FONT_NORMAL,BTBAR_OK_DELETE);
+                    #ifndef FEATURE_ALL_KEY_PAD
                     SETTING_MENU_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+                    #else
+                    SETTING_MENU_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                    #endif
                 }
                 else
                 {
@@ -7011,7 +7019,7 @@ static boolean  Setting_Handle_Password(CSettingMenu *pMe,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
-        
+        		#ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
@@ -7022,6 +7030,18 @@ static boolean  Setting_Handle_Password(CSettingMenu *pMe,
                     SETTING_MENU_DRAW_BOTTOMBAR(BTBAR_DELETE)
                 }
                 else
+                #else
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    SETTING_MENU_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                }
+                else if(nLen > 0)
+                {
+                    SETTING_MENU_DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+                else
+                #endif
                 {// 确定-----取消
                     SETTING_MENU_DRAW_BOTTOMBAR(BTBAR_CANCEL)
                 }
@@ -7067,12 +7087,28 @@ static boolean  Setting_Handle_Password(CSettingMenu *pMe,
                         break;
                         
                     case AVK_CLR:
-                        chEnter = 0;    
+                        chEnter = 0;   
+                        #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                         if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
                         {
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
                         }
+                        #else
+                        if(dwParam == 0)
+                        {
+                        	CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
                         break;
                         
                     case AVK_SELECT:

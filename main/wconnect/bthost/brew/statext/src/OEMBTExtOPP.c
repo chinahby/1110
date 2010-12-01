@@ -609,7 +609,7 @@ int OEMBTExtOPP_Push(
 
 			for ( i = 0; i < ( sizeof( ObjectTypeMap ) / sizeof( AEEBTObjectTypeMap ) ); i++ )
 			{
-				  if ( STRICMP( suffix, ObjectTypeMap[ i ].pFileExt ) != 0 )
+				  if ( STRICMP( suffix, ObjectTypeMap[ i ].pFileExt ) == 0 )  //!=0??
 			      {
 			     	   pMe->pszType = ObjectTypeMap[ i ].pMIMEString;
 					   break;
@@ -1667,6 +1667,7 @@ static void OEMBTExtOPP_SrvOpenCb( OEMBTExtOPP_EvCb* pEvCb )
     AEEBTNotification*  pN    = NULL;
     OEMBTExtOPPobj_t* pMe     = OEMBTExtOPP_FindMe ( pEvCb->appId );
 
+	uint32 dwFreeSpace = 0;
     if( pMe == NULL )
     {
       MSG_ERROR( "OEMBTExtOPP_SrvOpenCb - Can't get pMe.",
@@ -1690,10 +1691,15 @@ static void OEMBTExtOPP_SrvOpenCb( OEMBTExtOPP_EvCb* pEvCb )
   pN->data.uError  = AEEBT_OPP_ERR_NONE;
 
 
+  IFILEMGR_GetFreeSpaceEx(pMe->pFileMgr, AEEFS_CARD0_DIR, NULL, &dwFreeSpace);	//Check the TCard Free Space
+
+  MSG_FATAL("***zzg OEMBTExtOPP_SrvOpenCb 2 FreeSize=%d***", dwFreeSpace, 0, 0);
+ 
   if ( (pMe->serverConnID == pEvCb->connId) &&
        (pMe->state == AEEBT_OPP_STATE_CONNECTED) &&
        (pMe->bPushAllowed != FALSE) &&
-       (IFILEMGR_GetFreeSpace( pMe->pFileMgr, NULL ) > pEvCb->objSize))
+       //(IFILEMGR_GetFreeSpace( pMe->pFileMgr, NULL ) > pEvCb->objSize))
+       (dwFreeSpace>pEvCb->objSize))	//Modify by zzg 2010_11_19
   {
     pMe->state = AEEBT_OPP_STATE_PUSH_REQ_PENDING;
     pMe->dwFileSize = pEvCb->objSize;

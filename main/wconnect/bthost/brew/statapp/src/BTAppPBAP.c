@@ -5912,7 +5912,7 @@ static boolean BTApp_PBAPHandleSelection( CBTApp* pMe, uint16 sel )
         if ( pMe->mPBAP.bSrvRegistered != FALSE )
         {
           BTApp_ClearBondable( pMe ); // no need to be bondable anymore
-          BTApp_ShowMessage( pMe, IDS_MSG_DEREG_SVR_FIRST, NULL, 3 );
+          //BTApp_ShowMessage( pMe, IDS_MSG_DEREG_SVR_FIRST, NULL, 3 );
           return key_handled; 
         }
         if ( (result = IBTEXTPBAP_RegisterClient( pMe->mPBAP.po, 

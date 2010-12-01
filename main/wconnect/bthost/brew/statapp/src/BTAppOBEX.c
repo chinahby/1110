@@ -484,8 +484,9 @@ static void BTApp_OBEXConnModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
       {
         pMe->mOBEX.bPutInProgress = FALSE;
         pMe->mOBEX.bGetInProgress = FALSE;
-        STRLCPY( pMe->mOBEX.szCurrentFolder, BTAPP_ROOT_DIR, 
-                 sizeof( pMe->mOBEX.szCurrentFolder ) );
+		
+        STRLCPY(pMe->mOBEX.szCurrentFolder, BTAPP_ROOT_DIR, sizeof( pMe->mOBEX.szCurrentFolder));
+		
         pMe->mOBEX.bConnected = TRUE;
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -553,6 +554,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
       {
         pMe->mOBEX.bPutInProgress = FALSE;
         pMe->mOBEX.bGetInProgress = FALSE;
+				
         STRLCPY( pMe->mOBEX.szCurrentFolder, BTAPP_ROOT_DIR, 
                  sizeof( pMe->mOBEX.szCurrentFolder ) );
         pMe->mOBEX.bConnected = TRUE;
@@ -1040,6 +1042,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
     case AEE_OBEX_EVT_SRV_SET_PATH_REQ:
     {
       setPathReq = pN->u.setPathReq;
+	  
       STRLCPY( szObjectName, BTAPP_ROOT_DIR, sizeof( szObjectName ) );
       if ( setPathReq.upLevel )
       {
@@ -1048,6 +1051,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
         if ( pObjName != NULL )
         {
           *pObjName = '\0';
+		  
           if (  STRCMP( szObjectName, BTAPP_ROOT_DIR ) < 0 )
           {
             MSG_ERROR( "OBXSRVEVTCB - Path cannot be set above the ROOT fldr",
@@ -1089,7 +1093,7 @@ static void BTApp_OBEXSvrModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
                      ( sizeof( szObjectName ) - STRLEN( szObjectName ) ) );
         }
         else
-        {
+        {        
           //Setting the path to ROOT Folder of the server
           STRLCPY( szObjectName, BTAPP_ROOT_DIR, sizeof( szObjectName ) );
         }
@@ -1470,7 +1474,7 @@ void BTApp_OBEXPut( CBTApp* pMe )
   char           szObjectNm[ AEEBT_MAX_FILE_NAME+1 ];
   FileInfo       fileInfo;
   int            nResult = SUCCESS;
-
+  
   STRLCPY( szObjectNm, BTAPP_ROOT_DIR, sizeof( szObjectNm ) );
   STRLCAT( szObjectNm, DIRECTORY_STR, sizeof( szObjectNm ) );
   STRLCAT( szObjectNm, OBEX_PUTFILE_NAME, sizeof( szObjectNm ) );
@@ -1519,7 +1523,7 @@ void BTApp_OBEXGet( CBTApp* pMe )
   FileInfo       fileInfo;
   int            nResult = SUCCESS;
   AEEOBEXHdrType header;
-
+  
   STRLCPY( szObjectNm, BTAPP_ROOT_DIR, sizeof( szObjectNm ) );
   STRLCAT( szObjectNm, DIRECTORY_STR, sizeof( szObjectNm ) );
   STRLCAT( szObjectNm, OBEX_GETFILE_NAME, sizeof( szObjectNm ) );
@@ -1913,7 +1917,7 @@ boolean BTApp_OBEXInit( CBTApp* pMe )
             (void **)&pMe->mOBEX.pIFileMgr ) == SUCCESS) && 
             ( ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
             AEECLSID_OBEX_NOTIFIER, uNMask) == SUCCESS ) )
-    {
+    {	  
       STRLCPY( pMe->mOBEX.szCurrentFolder, BTAPP_ROOT_DIR, 
                sizeof( pMe->mOBEX.szCurrentFolder ) );
       pMe->mOBEX.bPutInProgress = FALSE;
@@ -1921,6 +1925,7 @@ boolean BTApp_OBEXInit( CBTApp* pMe )
       pMe->mOBEX.bAuthRequested = FALSE;
       MEMSET( pMe->mOBEX.szName, 0, sizeof(pMe->mOBEX.szName) );
       init_done = TRUE;
+	  
       STRLCPY( pMe->mOBEX.szCurrentFolder, BTAPP_ROOT_DIR, 
                sizeof( pMe->mOBEX.szCurrentFolder ) );
     }

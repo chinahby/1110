@@ -720,7 +720,11 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
             if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 &&
                  ITEXTCTL_GetCursorPos(pTextCtl) != TC_CURSORSTART )
             {
+            	#ifndef FEATURE_ALL_KEY_PAD
                 DRAW_BOTTOMBAR(BTBAR_OK_DELETE);
+                #else
+                DRAW_BOTTOMBAR(BTBAR_OK_BACK);
+                #endif
             }
             else
             {

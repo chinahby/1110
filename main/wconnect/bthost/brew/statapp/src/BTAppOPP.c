@@ -154,6 +154,51 @@ static AECHAR JPEG[]        =   {'J','p','e','g',0};
 static AEEBTProgressInfo progInfo;
 
 
+
+//Add By zzg 2010_11_19
+
+enum
+{
+	OBJ_IMAGE_JPEG_TYPE= 0,	
+	OBJ_IMAGE_BMP_TYPE,
+	OBJ_IMAGE_PNG_TYPE,
+	OBJ_IMAGE_GIF_TYPE,
+	OBJ_AUDIO_MP3_TYPE,
+	OBJ_AUDIO_WAV_TYPE,
+	OBJ_AUDIO_MID_TYPE,
+	OBJ_AUDIO_MIDI_TYPE,
+	OBJ_AUDIO_WMA_TYPE,
+	OBJ_OTHER_TYPE	
+};
+
+typedef struct
+{
+  int 			type;
+  char* 		pFileExt;
+} BTObjectTypeMap;
+
+static const BTObjectTypeMap TypeMap[] =
+{	
+	{OBJ_IMAGE_JPEG_TYPE,	".jpg" },
+	{OBJ_IMAGE_JPEG_TYPE,	".jpe" },
+	{OBJ_IMAGE_JPEG_TYPE,	".jpeg" },
+	{OBJ_IMAGE_JPEG_TYPE, 	".jfif" },
+	{OBJ_IMAGE_JPEG_TYPE,	".jff" },
+	{OBJ_IMAGE_JPEG_TYPE,	".jft" },
+	{OBJ_IMAGE_BMP_TYPE,	".bmp" },
+	{OBJ_IMAGE_PNG_TYPE,	".png" },
+	{OBJ_IMAGE_GIF_TYPE,	".gif" },	
+	{OBJ_AUDIO_MP3_TYPE,	".mp3" },
+	{OBJ_AUDIO_WAV_TYPE,	".wav" },	
+	{OBJ_AUDIO_MID_TYPE,	".mid" },
+	{OBJ_AUDIO_MIDI_TYPE,	".midi" },
+	{OBJ_AUDIO_WMA_TYPE,	".wma" },	
+	{OBJ_OTHER_TYPE,		NULL }
+};
+
+//Add End
+
+
 // This will store the name of the file
 static AECHAR wDefaultObjectName[ AEEBT_MAX_FILE_NAME + 1 ];
 
@@ -432,7 +477,7 @@ void BTApp_OPPBuildSettingMenu( CBTApp* pMe )
 
   IMENUCTL_Reset( pMe->m_pIMenu );
   IMENUCTL_SetRect(pMe->m_pIMenu, &pMe->m_rect);  
- 
+
   //Add By zzg 2010_11_01
   if(pMe->m_pIAnn != NULL)
   {
@@ -478,7 +523,6 @@ void BTApp_OPPBuildSettingMenu( CBTApp* pMe )
 
 void BTApp_OPPUpdateSendingProgress( CBTApp* pMe )
 {
-	CtlAddItem  ai;  
 	AECHAR  wTempBuf[64];
 	AECHAR* pText = pMe->pText2;
 	AEERect rc;
@@ -495,7 +539,7 @@ void BTApp_OPPUpdateSendingProgress( CBTApp* pMe )
 	 
 	ISHELL_LoadResString(pMe->a.m_pIShell,
 						 BTAPP_RES_FILE,								
-						 IDS_BPP_SEND_FILE,
+						 IDS_BT_TITLE,
 						 wTempBuf,
 						 sizeof( wTempBuf ));
 
@@ -516,6 +560,8 @@ void BTApp_OPPUpdateSendingProgress( CBTApp* pMe )
     ISTATIC_SetProperties(pMe->m_pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);  
     ISTATIC_SetBackGround(pMe->m_pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); 	
 
+	MSG_FATAL("***zzg BTApp_OPPUpdateSendingProgress numBytes=%d, objSize=%d***", progInfo.numBytes, progInfo.objSize, 0);
+
 	if (progInfo.numBytes > 0)
 	{		
 		CLEAR_SCREEN();
@@ -524,7 +570,7 @@ void BTApp_OPPUpdateSendingProgress( CBTApp* pMe )
 
 		snprintf(szConBuf, 10, " %d/100 ", percent);			
 
-		ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_BPP_SEND_FILE, pMe->pText2, LONG_TEXT_BUF_LEN * sizeof(AECHAR) );
+		ISHELL_LoadResString( pMe->a.m_pIShell, BTAPP_RES_FILE, IDS_FILE_PROGRESS, pMe->pText2, LONG_TEXT_BUF_LEN * sizeof(AECHAR) );
 		len = WSTRLEN(pMe->pText2);
 		STRTOWSTR(szConBuf, &pMe->pText2[len], (LONG_TEXT_BUF_LEN-len)*sizeof(AECHAR));
 
@@ -605,6 +651,8 @@ void BTApp_OPPBuildServerMenu( CBTApp* pMe )
   }
 
   BTApp_InitAddItem( &ai );
+
+  MSG_FATAL("***zzg BTApp_OPPBuildServerMenu bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);
 
   // Add individual entries to the Menu
   if ( pMe->mOPP.bRegistered == FALSE )
@@ -733,8 +781,36 @@ void BTApp_OPPBuildSendFileClientMenu( CBTApp* pMe )
   char       szStatus[] = " -  ";
   uint8      len = 0;
 
+  int 		 result;
+  boolean 	 bRegistered = FALSE; 	  
+
+
   IMENUCTL_Reset( pMe->m_pIMenu );
   IMENUCTL_SetRect(pMe->m_pIMenu, &pMe->m_rect);  
+
+  MSG_FATAL("***zzg BTApp_OPPBuildSendFileClientMenu bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);
+  
+
+  //Add By zzg 2010_11_22
+  //If  server, change to client
+  if (pMe->mOPP.bRegistered == TRUE)
+  {
+  	if ((result = IBTEXTOPP_Deregister(pMe->mOPP.po)) != SUCCESS)
+	{
+		MSG_FATAL("***zzg IBTEXTOPP_Deregister FAILED result = %x", result, 0, 0 );        
+		//BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
+	}
+	else
+	{
+		bRegistered = pMe->mOPP.bRegistered; // backing up the value of mOPP.bRegistered
+		pMe->mOPP.bRegistered = FALSE;
+		BTApp_CheckToClearDiscoverable(pMe);
+		pMe->mOPP.bRegistered =bRegistered; 
+
+		MSG_FATAL("***zzg IBTEXTOPP_Deregister SUCCEED Deregister=%x", pMe->mOPP.bRegistered, 0, 0 );        
+	}
+  }  
+  //Add End
 
   // set the title
   if ( pMe->mOPP.bConnected != FALSE )
@@ -802,7 +878,7 @@ void BTApp_OPPBuildSendFileClientMenu( CBTApp* pMe )
   IMENUCTL_SetBottomBarType(pMe->m_pIMenu, BTBAR_SELECT_BACK);  	//Add By zzg 2010_11_09
   
   // Activate menu
-  PUSH_MENU( BT_APP_MENU_OPP_SENDFILE );
+  PUSH_MENU( BT_APP_MENU_OPP_SENDFILE );    
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
   IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
 
@@ -827,6 +903,7 @@ void BTApp_OPPSettingClientMenu( CBTApp* pMe )
 
  if ( pMe->mOPP.bConnected == FALSE )
  {
+ 	MSG_FATAL("***zzg BTApp_OPPSettingClientMenu pMe->mOPP.bConnected == FALSE***", 0, 0, 0);
 	return;
  }
 
@@ -1054,17 +1131,106 @@ void BTApp_OPPPull( CBTApp* pMe )
 
   int  vCardNameLen = sizeof( szVCardName );
 
-  if ( pMe->mOPP.bRegistered == TRUE )
+  MSG_FATAL("***zzg BTApp_OPPPull bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);
+
+  if (pMe->mOPP.bRegistered == TRUE)
   {
-    STRLCPY( szVCardName, BTAPP_ROOT_DIR, sizeof( szVCardName ) );
-    STRLCAT( szVCardName, DIRECTORY_STR, sizeof( szVCardName ) );
-    WSTRTOSTR( pMe->mOPP.wName, szName, sizeof( szName ) );
-    if ( (STRLEN( szVCardName ) + STRLEN( szName )) > AEEBT_MAX_FILE_NAME*2 )
+  	MSG_FATAL("***zzg BTApp_OPPPull bRegistered == TRUE***", 0, 0, 0);
+	
+    //STRLCPY(szVCardName, BTAPP_ROOT_DIR, sizeof(szVCardName));  
+    //STRLCAT(szVCardName, DIRECTORY_STR, sizeof(szVCardName));
+	//WSTRTOSTR(pMe->mOPP.wName, szName, sizeof(szName));
+
+    ///*
+    //Add By zzg 2010_11_19
+	if (IFILEMGR_Test(pMe->mOPP.pIFileMgr, AEEFS_CARD0_DIR)==SUCCESS)		//Have  T Card
+	{   
+		uint8 i = 0;
+		AECHAR *pExt = NULL;
+		char suffix[6] = {0};	
+		boolean bPicture = FALSE;
+		boolean bMusic = FALSE;
+
+		pExt = WSTRRCHR(pMe->mOPP.wName, L'.' );
+
+		if ( pExt != NULL )
+		{		
+			uint8 len = WSTRLEN(pExt);                         
+			MEMSET((void*)(suffix), 0x0, sizeof(suffix));                       
+			WSTRTOUTF8( (pExt), len, (uint8*)(suffix), sizeof(suffix));   
+
+			for (i = 0; i < (sizeof(TypeMap) / sizeof(BTObjectTypeMap)); i++)
+			{
+				  if (STRICMP(suffix, TypeMap[i].pFileExt) == 0)
+			      {
+					   switch(TypeMap[i].type)
+					   {
+					   	 case OBJ_IMAGE_JPEG_TYPE:
+						 case OBJ_IMAGE_BMP_TYPE:
+						 case OBJ_IMAGE_PNG_TYPE:
+						 case OBJ_IMAGE_GIF_TYPE:							
+						 {
+						 	bPicture = TRUE;
+							break;
+						 }
+						 case OBJ_AUDIO_MP3_TYPE:
+						 case OBJ_AUDIO_WAV_TYPE:
+						 case OBJ_AUDIO_MID_TYPE:
+						 case OBJ_AUDIO_MIDI_TYPE:
+						 case OBJ_AUDIO_WMA_TYPE:
+						 {
+						 	bMusic = TRUE;
+							break;
+						 }	
+						 default:
+						 {
+							break;
+						 }				
+					   }
+							
+					   break;
+			      }
+			}
+				
+		}
+
+	   
+		if (TRUE == bPicture)	//Pictures
+		{			
+			MSG_FATAL("***zzg BTApp_OPPPull TRUE == bPicture***", 0, 0, 0);
+			
+			STRLCPY(szVCardName, BTAPP_PICTURE_DIR, sizeof(szVCardName)); 
+			STRLCAT(szVCardName, DIRECTORY_STR, sizeof(szVCardName));
+			WSTRTOSTR(pMe->mOPP.wName, szName, sizeof(szName));
+		}
+		else if (TRUE == bMusic)	//Music
+		{		
+			MSG_FATAL("***zzg BTApp_OPPPull TRUE == bMusic***", 0, 0, 0);
+			
+			STRLCPY(szVCardName, BTAPP_MUSIC_DIR, sizeof(szVCardName));     	
+		    STRLCAT(szVCardName, DIRECTORY_STR, sizeof(szVCardName));
+			WSTRTOSTR(pMe->mOPP.wName, szName, sizeof(szName));
+		}
+		else	//other
+		{
+			STRLCPY(szVCardName, BTAPP_OTHER_DIR, sizeof(szVCardName));  	
+		    WSTRTOSTR(pMe->mOPP.wName, szName, sizeof(szName));
+		}
+	}
+	else
+	{	 
+		MSG_FATAL("***zzg Tcard not exist, OPPPull File Failed!***", 0, 0, 0);
+	}
+	//Add End
+	//*/
+	
+    if ((STRLEN(szVCardName) + STRLEN(szName)) > AEEBT_MAX_FILE_NAME*2)
     {
       MSG_ERROR( "File / Folder name exceeds max length", 0, 0, 0 );
       BTApp_ShowMessage( pMe, IDS_MSG_OBJ_PULL_FAILED, pMe->mOPP.wName, 3 );
       return;
     }
+	
     STRLCAT( szVCardName, szName, sizeof( szVCardName ) );
   }
   else
@@ -1075,6 +1241,7 @@ void BTApp_OPPPull( CBTApp* pMe )
                           szVCardName, 
                           &vCardNameLen );
   }
+  
   // remove object if exists
   if ( (IFILEMGR_Test( pMe->mOPP.pIFileMgr, szVCardName ) == SUCCESS) &&
        ((result = IFILEMGR_Remove( pMe->mOPP.pIFileMgr, 
@@ -1096,9 +1263,12 @@ void BTApp_OPPPull( CBTApp* pMe )
     if ( pMe->mOPP.bRegistered != TRUE ) // client?
     {
       pMe->mOPP.bObjectTransfer = TRUE;
-      ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, 
-                    FALSE ); // wait for pull confirm
+      ShowBusyIcon(pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE ); // wait for pull confirm
     }
+	else	//server
+	{
+		MSG_FATAL("***pMe->mOPP.bRegistered == TRUE***", 0, 0, 0);
+	}
   }
 }
 
@@ -1274,7 +1444,10 @@ boolean BTApp_OPPBuildMenu( CBTApp* pMe, BTAppMenuType menu )
 	{		
 		if (BTApp_OPPInit(pMe) != FALSE)
 		{
-			BTApp_OPPBuildSendFileMenu(pMe);
+			MSG_FATAL("***zzg BTApp_OPPBuildMenu BT_APP_MENU_OPP_SENDFILE***", 0, 0, 0);
+			BTApp_OPPBuildSendFileClientMenu(pMe);	//直接用CLIENT(如果是SERVER状态，则切换)
+			
+			//BTApp_OPPBuildSendFileMenu(pMe);
 		}
 		else
 		{
@@ -1391,11 +1564,11 @@ boolean BTApp_OPPHandleSelection( CBTApp* pMe, uint16 sel )
         BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
       }
       else
-      {
+      {      
         bRegistered = pMe->mOPP.bRegistered; // backing up the value of mOPP.bRegistered
         pMe->mOPP.bRegistered = FALSE;
         BTApp_CheckToClearDiscoverable( pMe );
-        pMe->mOPP.bRegistered =bRegistered;
+        pMe->mOPP.bRegistered =bRegistered;		
         BTApp_ShowBusyIcon( pMe ); // wait for command done
       }
       break;
@@ -1409,7 +1582,7 @@ boolean BTApp_OPPHandleSelection( CBTApp* pMe, uint16 sel )
       }
       else
       {
-        BTApp_ShowMessage( pMe, IDS_MSG_DEREG_SVR_FIRST, NULL, 0 );
+        //BTApp_ShowMessage( pMe, IDS_MSG_DEREG_SVR_FIRST, NULL, 0 );
       }
       break;
     }
@@ -1467,6 +1640,7 @@ boolean BTApp_OPPHandleSendFileSelection( CBTApp* pMe, uint16 sel )
     }
     case IDS_OPP_CLIENT:
     {
+		MSG_FATAL("***zzg BTApp_OPPHandleSendFileSelection IDS_OPP_CLIENT***",0,0,0);
       	BTApp_OPPBuildSendFileClientMenu( pMe );		//client should change for sendfile from Tcard
       	break;
     }
@@ -1504,7 +1678,7 @@ boolean BTApp_OPPHandleSendFileSelection( CBTApp* pMe, uint16 sel )
         bRegistered = pMe->mOPP.bRegistered; // backing up the value of mOPP.bRegistered
         pMe->mOPP.bRegistered = FALSE;
         BTApp_CheckToClearDiscoverable( pMe );
-        pMe->mOPP.bRegistered =bRegistered;
+        pMe->mOPP.bRegistered =bRegistered;		
         BTApp_ShowBusyIcon( pMe ); // wait for command done
       }
       break;
@@ -1518,30 +1692,15 @@ boolean BTApp_OPPHandleSendFileSelection( CBTApp* pMe, uint16 sel )
       }
       else
       {
-        BTApp_ShowMessage( pMe, IDS_MSG_DEREG_SVR_FIRST, NULL, 0 );
+        //BTApp_ShowMessage( pMe, IDS_MSG_DEREG_SVR_FIRST, NULL, 0 );
       }
       break;
     }
     case IDS_PUSH:
-    {
-		
-      //BTApp_BuildMenu( pMe, BT_APP_MENU_OPP_LIST_FILE_TYPES );
-
-#if 0
-	  //char *str = "fs:/card0/pictures/w.png";
-	  //BTApp_OPPPushEx(pMe, str, AEEBT_OPP_UNKNOWN_TYPE);
-	  
-	  pMe->mOPP.bExchanging = TRUE;
-      BTApp_OPPCreateVCard( pMe );
-      BTApp_OPPPushEx( pMe, DEFAULT_VCARD_NAME, AEEBT_OPP_VCARD );
-#else
-		
-	   	int i=0;
-		
-	   	BTApp_OPPPushEx(pMe, pMe->m_pfilepath, AEEBT_OPP_UNKNOWN_TYPE);	
-	   	
-#endif
-		break;
+    {		
+      //BTApp_BuildMenu( pMe, BT_APP_MENU_OPP_LIST_FILE_TYPES );		
+	  BTApp_OPPPushEx(pMe, pMe->m_pfilepath, AEEBT_OPP_UNKNOWN_TYPE);	
+	  break;
     }
 
 	/*
@@ -1610,7 +1769,8 @@ boolean BTApp_OPPHandleSettingSelection( CBTApp* pMe, uint16 sel )
       if ( (result = IBTEXTOPP_Register( pMe->mOPP.po, 
                                          AEEBT_OPP_FORMAT_ALL, 
                                          szServerNameOPP )) != SUCCESS )
-      {       		
+      {
+      
         MSG_ERROR( "OPP_Register() failed with %x", result, 0, 0 );
         BTApp_ClearBondable( pMe ); // no need to be bondable anymore
         BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3 );
@@ -1637,7 +1797,7 @@ boolean BTApp_OPPHandleSettingSelection( CBTApp* pMe, uint16 sel )
         bRegistered = pMe->mOPP.bRegistered; // backing up the value of mOPP.bRegistered
         pMe->mOPP.bRegistered = FALSE;
         BTApp_CheckToClearDiscoverable( pMe );
-        pMe->mOPP.bRegistered =bRegistered;
+        pMe->mOPP.bRegistered =bRegistered;		
         BTApp_ShowBusyIcon( pMe ); // wait for command done
       }
       break;
@@ -2013,24 +2173,31 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       IBTEXTOPP_AcceptConnection( pMe->mOPP.po, &pMe->mOPP.remoteBDAddr, 
                                   TRUE, TRUE );
       break;
+	  
     case EVT_OPP_PUSH_REQ:
     {
+	  MSG_FATAL("***zzg BTApp_OPPHandleUserEvents EVT_OPP_PUSH_REQ***", 0, 0, 0);
+
+	  //Add By zzg 2010_11_25
+	  ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP, "GetFile");
+	  //Add End
+	  
       BTApp_OPPPull( pMe );
       break;
     }
+	
     case EVT_OPP_PULL_REQ:
-    {
-	  
+    {	  
       BTApp_OPPPush( pMe, AEEBT_OPP_VCARD );	  
       break;
     }
     case EVT_OPP_PROG_INFO:
     {
+	  pMe->bUpdateProgress	= TRUE;	//Add By zzg 2010_11_27
+	  
       if (IBTEXTOPP_GetProgressInfo( pMe->mOPP.po, &progInfo ) == SUCCESS)
       {
         MSG_HIGH("BTAppOPP: GetProgInfo num_bytes = %d, obj_size = %d",progInfo.numBytes, progInfo.objSize, 0);
-		MSG_FATAL("***zzg BTAppOPP: GetProgInfo num_bytes = %d, obj_size = %d",progInfo.numBytes, progInfo.objSize, 0);
-
 		BTApp_OPPUpdateSendingProgress(pMe);		//Add By zzg 2010_11_19
 	  }
       else
@@ -2039,8 +2206,8 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       }
       break;
     }
-    case EVT_OPP_REG:
-      pMe->mOPP.bRegistered  = TRUE;
+    case EVT_OPP_REG:	   
+      pMe->mOPP.bRegistered  = TRUE;	
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
@@ -2071,8 +2238,8 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       }
       break;
     case EVT_OPP_DEREG:
-      BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_DONE, NULL, 2 );
-      pMe->mOPP.bRegistered = FALSE;
+      //BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_DONE, NULL, 2 ); //Del by zzg 2010_11_20      
+      pMe->mOPP.bRegistered = FALSE;		
       BTApp_ClearBondable( pMe ); // no need to be bondable anymore
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -2085,6 +2252,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
       break;
     case EVT_OPP_CONNECTED:
+	 
       pMe->mOPP.bConnected = TRUE;
       pMe->mOPP.bConnecting = FALSE;
       BTApp_ClearBondable( pMe ); // no need to be bondable anymore
@@ -2096,7 +2264,31 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
     case EVT_OPP_CONNECTING:
      pMe->mOPP.bConnecting = TRUE;
      break;
-    case EVT_OPP_DISCONNECTED:
+    case EVT_OPP_DISCONNECTED:	  
+		//Add By zzg 2010_11_22
+		//If client, change to server , register
+		
+		if (pMe->mOPP.bRegistered == FALSE)
+		{
+			int result;					
+
+			BTApp_SetBondable( pMe );
+
+			MSG_FATAL("***zzg EVT_OPP_DISCONNECTED***",0,0,0);
+
+			if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP )) != SUCCESS )
+			{
+				BTApp_ClearBondable( pMe ); 
+			}
+			else
+			{
+				if (pMe->mSD.bDiscoverable == FALSE)
+				{
+					IBTEXTSD_SetDiscoverable( pMe->mSD.po, TRUE );
+				}		
+			} 	 
+		}
+		//Add End
       pMe->mOPP.bConnected = FALSE;
       pMe->mOPP.bConnecting = FALSE;
       pMe->mOPP.bObjectTransfer = FALSE;
@@ -2112,6 +2304,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       {
         BTApp_BuildTopMenu( pMe ); // rebuild menu to hide 'C'
       }
+	  
       break;
     case EVT_OPP_CONN_FAILED:
 #ifdef FEATURE_APP_TEST_AUTOMATION
@@ -2120,6 +2313,31 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       BTApp_ClearBondable( pMe ); // no need to be bondable anymore
       BTApp_ShowMessage( pMe, IDS_MSG_CONN_FAILED, NULL, 3 );
       pMe->mOPP.bConnecting = FALSE;
+
+     //Add By zzg 2010_11_22
+     //If client, change to server , register
+     
+     if (pMe->mOPP.bRegistered == FALSE)
+     {
+	     int result;		
+	     BTApp_SetBondable( pMe );
+	     
+	     MSG_FATAL("***zzg EVT_OPP_DISCONNECTED***",0,0,0);
+	     
+	     if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP )) != SUCCESS )
+	     {
+	     	BTApp_ClearBondable( pMe ); 
+	     }
+	     else
+	     {
+	     	if (pMe->mSD.bDiscoverable == FALSE)
+	     	{
+	     		IBTEXTSD_SetDiscoverable( pMe->mSD.po, TRUE );
+	     	}		
+	     } 	 
+     }
+     //Add End
+		
       break;
     case EVT_OPP_OBJ_PUSHED:
     {
@@ -2141,14 +2359,20 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
         {
-          BTApp_ShowMessage( pMe, msgID, wDefaultObjectName, 2 );
+          BTApp_ShowMessage( pMe, msgID, wDefaultObjectName, 2 );		  
         }
       }
       if ( pMe->mOPP.bExchanging != FALSE )
       {
-        pMe->mOPP.bExchanging = FALSE;
+        pMe->mOPP.bExchanging = FALSE;		
+		
         BTApp_OPPPull( pMe );
       }
+	  
+	  pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+
+	  ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );	//Add By zzg 2010_11_27
+
       break;
     }
     case EVT_OPP_OBJ_PUSH_FAILED:
@@ -2167,7 +2391,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #endif //FEATURE_APP_TEST_AUTOMATION
       if ( pMe->mOPP.bExchanging != FALSE )
       {
-        pMe->mOPP.bExchanging = FALSE;
+        pMe->mOPP.bExchanging = FALSE;		
         BTApp_OPPPull( pMe );
       }
       else
@@ -2177,6 +2401,11 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
           BTApp_ShowMessage( pMe, msgID, wDefaultObjectName, 2 );
         }
       }
+
+	  pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+
+	  ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );	//Add By zzg 2010_11_27
+	  
       break;
     }
     case EVT_OPP_OBJ_PULLED:
@@ -2202,6 +2431,11 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
           BTApp_ShowMessage( pMe, msgID, pMe->mOPP.wName, 2 );
         }
       }
+
+	  pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+
+	  ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );	//Add By zzg 2010_11_27
+	  
       break;
     }
     case EVT_OPP_OBJ_PULL_FAILED:
@@ -2221,7 +2455,11 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       if ( pMe->mOPP.bRegistered != TRUE  )
       {
         BTApp_ShowMessage( pMe, msgID, pMe->mOPP.wName, 2 );
-      }
+      }	  
+
+	  pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+
+	  ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );	//Add By zzg 2010_11_27
       break;
     }
     default:
@@ -2261,7 +2499,9 @@ boolean BTApp_EnableOPP(
   boolean bOPPEnabled = FALSE;
   int result;
 
-  if ( pMe->mOPP.bServerEnable == TRUE )
+  MSG_FATAL("***zzg BTApp_EnableOPP***", 0, 0, 0);
+
+  //if ( pMe->mOPP.bServerEnable == TRUE )		//Del By zzg 2010_11_25
   {
 
 #ifdef FEATURE_BT_2_1
@@ -2291,7 +2531,7 @@ boolean BTApp_EnableOPP(
       MSG_LOW( "EnableOPP - enabling OPP", 0, 0, 0 );
       if ( (result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL, 
                                          szServerNameOPP )) != SUCCESS )
-      {
+      {		
         MSG_ERROR( "OPP_Register() failed with %x", result, 0, 0 );
         BTApp_ClearBondable( pMe ); // no need to be bondable anymore
       }
@@ -2307,6 +2547,7 @@ boolean BTApp_EnableOPP(
       }
     }
   }  
+
   return bOPPEnabled;
 }
  

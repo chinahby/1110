@@ -1589,12 +1589,14 @@ static boolean  HandleAlarmTimeMessegeDialogEvent(CClockApps *pMe,
             // 绘制底部操作提示条
 
             // 统一更新界面
+            #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
             if (WSTRLEN(ITEXTCTL_GetTextPtr(pMe->m_pText))>0)
             {
                 // Option     Delete
                 DRAW_PROMPT_BAR(BTBAR_SAVE_DELETE)
             }
             else
+            #endif
             {
                 // Option     Back
                 DRAW_PROMPT_BAR(BTBAR_SAVE_BACK)

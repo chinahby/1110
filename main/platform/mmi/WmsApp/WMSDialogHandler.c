@@ -1416,7 +1416,7 @@ static boolean  IDD_PWD_Handler(void       *pUser,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
-        
+        		#ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
@@ -1427,6 +1427,18 @@ static boolean  IDD_PWD_Handler(void       *pUser,
                     DRAW_BOTTOMBAR(BTBAR_DELETE)
                 }
                 else
+                #else
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                }
+                else if(nLen > 0)
+                {
+                    DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+                else
+                #endif
                 {// 确定-----取消
                     DRAW_BOTTOMBAR(BTBAR_CANCEL)
                 }
@@ -1474,12 +1486,28 @@ static boolean  IDD_PWD_Handler(void       *pUser,
                         break;
                         
                     case AVK_CLR:
-                        chEnter = 0;       
+                        chEnter = 0;      
+                        #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                         if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
                         {
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
                         }
+                        #else
+                        if(dwParam == 0)
+                        {
+                        	CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
                         break;
                         
                     case AVK_SELECT:
@@ -5310,7 +5338,7 @@ static boolean IDD_CALLBACKNUM_Handler(void   *pUser,
                 {
                     nLen = WSTRLEN(pwstrText);
                 }
-                
+                #ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                 if (nLen > 0)
                 {
                     if (ITEXTCTL_GetCursorPos(pTextCtl) != TC_CURSORSTART)
@@ -5325,6 +5353,7 @@ static boolean IDD_CALLBACKNUM_Handler(void   *pUser,
                     }
                 }
                 else
+                #endif
                 {
                     //            Back
                     DRAW_BOTTOMBAR(BTBAR_BACK)
@@ -7112,11 +7141,19 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                     if ((pMe->m_eCreateWMSType == SEND_MSG_RESERVE) ||
                         (pMe->m_eCreateWMSType == SEND_MSG_EDITRESERVE))
                     {
+                    	#ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                         DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
+                        #else
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                        #endif
                     }
                     else
                     {
+                    	#ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                         DRAW_BOTTOMBAR(BTBAR_SEND_EARSE);
+                        #else
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                        #endif
                     }
                 }
                 pMe->m_CurAddID = nSelID;
@@ -7269,6 +7306,8 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                     break;
                 
                 case AVK_CLR:
+                	#ifdef FEATURE_ALL_KEY_PAD   //add by yangdecai
+                	if(dwParam == 1)
                     {
                         AECHAR *pwsText = ITEXTCTL_GetTextPtr(pIText);
                         
@@ -7277,6 +7316,16 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                             return TRUE;
                         }
                     }
+                    #else
+                    {
+                        AECHAR *pwsText = ITEXTCTL_GetTextPtr(pIText);
+                        
+                        if ((pwsText == NULL) || (WSTRLEN(pwsText)>0))
+                        {
+                            return TRUE;
+                        }
+                    }
+                    #endif
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;
                    
@@ -7305,11 +7354,19 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                     if ((pMe->m_eCreateWMSType == SEND_MSG_RESERVE) ||
                         (pMe->m_eCreateWMSType == SEND_MSG_EDITRESERVE))
                     {
+                    	#ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                         DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
+                        #else
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
+                        #endif
                     }
                     else
                     {
+                    	#ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                         DRAW_BOTTOMBAR(BTBAR_SEND_EARSE)
+                        #else
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
+                        #endif
                     }
                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                 }
@@ -8250,8 +8307,13 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                     
                     if (nLen == 1)
                     {
+                    	#ifndef FEATURE_ALL_KEY_PAD
                         // Send       Earse
                         DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+                        #else
+                        // Send       Back
+                        DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                        #endif
                         IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     }
                     else if (nLen <= 0)
@@ -8490,10 +8552,14 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                             else
                             {
                                 (void)ITEXTCTL_SetText((ITextCtl *)pControl, pMe->m_msSend.m_szCallBkNum, -1);
-                                
+                                #ifndef FEATURE_ALL_KEY_PAD
                                 // 绘制底条提示
                                 // Send       Earse
                                 eBBarType = BTBAR_OK_DELETE;
+                                #else
+                                // Send       Back
+                                eBBarType = BTBAR_OK_BACK;
+                                #endif
                             }
                             
                             ITEXTCTL_SetCursorPos((ITextCtl *)pControl, TC_CURSOREND);
@@ -8662,6 +8728,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                  }                
             }
             // 绘制底部操作提示条
+            #ifdef FEATURE_ALL_KEY_PAD
+            // Option     Back
+            DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
+            #else
             {
                 AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
                 int nLen=0;
@@ -8682,6 +8752,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
                 }
             }
+            #endif
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
             return TRUE; 
             
@@ -8709,6 +8780,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             }
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
             // 绘制底部操作提示条
+            #ifdef FEATURE_ALL_KEY_PAD
+             // Option     Back
+             DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
+            #else
             {
                 AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
                 int nLen=0;
@@ -8729,6 +8804,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
                 }
             }
+            #endif
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);             
             return TRUE;
 
@@ -8753,6 +8829,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 }
                 if (nInputMode != AEE_TM_SYMBOLS && nInputMode != AEE_TM_FACE_SYMBOL)
                 {
+                	#ifdef FEATURE_ALL_KEY_PAD
+                		// Option     Back
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
+                	#else
                     if (nLen>0)
                     {
                         // Option     Delete
@@ -8763,6 +8843,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         // Option     Back
                         DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
                     }
+                    #endif
                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                 }
             }
@@ -8884,21 +8965,43 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             switch (wParam)
             {
                 case AVK_CLR:
+                    #ifdef FEATURE_ALL_KEY_PAD
+                    if(dwParam == 1)
+                    {
+                    	if (NULL != pMe->m_pMenu)
+                    	{
+                        	IMENUCTL_Release(pMe->m_pMenu);
+                        	pMe->m_pMenu = NULL;
+                        	(void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                                EVTFLG_ASYNC,
+                                                AEECLSID_WMSAPP,
+                                                EVT_USER_REDRAW,
+                                                0, 
+                                                0);
+                    	}
+                    }
+                    else
+                    {
+                    	CLOSE_DIALOG(DLGRET_CANCELED)
+                    }
+                    #else
                     if (NULL == pMe->m_pMenu)
                     {
+                       	
                         CLOSE_DIALOG(DLGRET_CANCELED)
                     }
                     else
                     {
-                        IMENUCTL_Release(pMe->m_pMenu);
-                        pMe->m_pMenu = NULL;
-                        (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                    	IMENUCTL_Release(pMe->m_pMenu);
+                       	pMe->m_pMenu = NULL;
+                       	(void) ISHELL_PostEventEx(pMe->m_pShell, 
                                                 EVTFLG_ASYNC,
                                                 AEECLSID_WMSAPP,
                                                 EVT_USER_REDRAW,
                                                 0, 
                                                 0);
                     }
+                    #endif
                     return TRUE;
    
                 case AVK_SELECT:
@@ -9491,13 +9594,14 @@ static boolean IDD_EDITTEMPLATE_Handler(void *pUser,
                 {
                     nLen = WSTRLEN(pwstrText);
                 }
-                
+                #ifndef FEATURE_ALL_KEY_PAD
                 if (nLen > 0)
                 {
                     // Save       Delete
                     DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
                 }
                 else
+                #endif
                 {
                     // Save       Back
                     DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
@@ -9540,12 +9644,14 @@ static boolean IDD_EDITTEMPLATE_Handler(void *pUser,
                 if (nInputMode != AEE_TM_SYMBOLS && nInputMode != AEE_TM_FACE_SYMBOL)
                 {
                     // 绘制底条提示
+                    #ifndef FEATURE_ALL_KEY_PAD
                     if (nLen > 0)
                     {
                         // Save     Delete
                         DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
                     }
                     else
+                    #endif
                     {
                         // Save     Back 
                         DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
@@ -9575,6 +9681,7 @@ static boolean IDD_EDITTEMPLATE_Handler(void *pUser,
                 }
             
                 // 绘制底条提示
+                #ifndef FEATURE_ALL_KEY_PAD
                 if (nLen >= 1)
                 {
                     // Save     Delete
@@ -9582,6 +9689,7 @@ static boolean IDD_EDITTEMPLATE_Handler(void *pUser,
                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                 }
                 else if (nLen <= 0)
+                #endif
                 {
                     // Save     Back 
                     DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
@@ -12578,12 +12686,14 @@ static boolean IDD_VMNUM_Handler(void   *pUser,
                 
                 if (nLen > 0)
                 {
+                	#ifndef FEATURE_ALL_KEY_PAD
                     if (ITEXTCTL_GetCursorPos(pTextCtl) != TC_CURSORSTART)
                     {
                         // Save       Delete
                         DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
                     }
                     else
+                    #endif
                     {
                         // Save       Back
                         DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)

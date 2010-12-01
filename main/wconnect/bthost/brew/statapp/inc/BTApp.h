@@ -455,6 +455,9 @@ when        who   what, where, why
 #include "Btapp.brh"
 //Add End
 
+#include "AEEConfig.h"		//Add By zzg 2010_11_23
+
+
 
 #ifdef FEATURE_BT_EXTPF_HID_HOST
 #error code not present
@@ -637,6 +640,12 @@ when        who   what, where, why
 #else
 #define BTAPP_ROOT_DIR        "btapp"
 #endif
+
+//Add By zzg 2010_11_19
+#define BTAPP_PICTURE_DIR	  AEEFS_CARD0_DIR "pictures"
+#define BTAPP_MUSIC_DIR		  AEEFS_CARD0_DIR "music"
+#define BTAPP_OTHER_DIR		  AEEFS_CARD0_DIR
+//Add End
 
 #define BTAPP_CONFIG_FILE  BTAPP_ROOT_DIR DIRECTORY_STR "btapp.cfg"
 
@@ -1748,7 +1757,7 @@ typedef enum
   BT_APP_MENU_OPP_CLIENT,
   BT_APP_MENU_OPP_LIST_FILE_TYPES,
   BT_APP_MENU_OPP_SENDFILE,					//Add By zzg 2010_11_09
-  BT_APP_MENU_OPP_SETTING,					//Add By zzg 2010_11_17
+  BT_APP_MENU_OPP_SETTING,					//Add By zzg 2010_11_17  
 #endif
 #ifdef FEATURE_BT_EXTPF_FTP
   BT_APP_MENU_FTP_TESTS         = 200,
@@ -1846,7 +1855,8 @@ typedef struct _CBTApp
   IStatic*        m_pStatic;
   ITextCtl*       m_pText;
 
-  IAnnunciator    *m_pIAnn;	//Add By zzg 2010_10_29
+  IAnnunciator    *m_pIAnn;		//Add By zzg 2010_10_29
+  IConfig         *m_pConfig;	//Add By zzg 2010_11_23 
 
   BTAppMenuType   menuStack[ MENU_STACK_DEPTH ];
   uint16          uMenuSel[ MENU_STACK_DEPTH ];
@@ -1910,6 +1920,7 @@ typedef struct _CBTApp
   uint16          uCurrMsgId;
   
   boolean		  bStartFromOtherApp;				//Add By zzg 2010_11_09  
+  boolean		  bUpdateProgress;					//Add By zzg 2010_11_27
   
   AECHAR*         pText1;
   AECHAR*         pText2;

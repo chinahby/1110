@@ -1395,6 +1395,14 @@ NormalKeyEvent:
 		  }
 #endif
 				MSG_FATAL("OEM_TextKeyPress::::%x = %x",eCode,wParam,0);
+				#ifdef FEATURE_ALL_KEY_PAD
+				if((wParam == AVK_CLR) && (dwParam == 0))
+				{
+					return FALSE;
+				}
+				else
+				#endif
+				{
                 if ( OEM_TextKeyPress(pme->m_pText,eCode,wParam,dwParam) != FALSE)
                 {
                     if (!(pme->m_dwProps & TP_NODRAW))
@@ -1410,6 +1418,7 @@ NormalKeyEvent:
                     }
                     
                     return(TRUE);
+                }
                 }
             }
             

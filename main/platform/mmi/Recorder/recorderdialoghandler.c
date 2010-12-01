@@ -2448,6 +2448,7 @@ static boolean  dialog_handler_of_state_record_list( Recorder* pme, AEEEvent evt
 #if defined( FEATURE_RECORDER_RENAME)
 			else if( subState == 10)
 			{
+				#ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
 				if( WSTRLEN( ITEXTCTL_GetTextPtr( pTextCtl)) == 0)
 				{
 					 IMENUCTL_SetBottomBarType( pMenu, BTBAR_BACK);
@@ -2456,6 +2457,9 @@ static boolean  dialog_handler_of_state_record_list( Recorder* pme, AEEEvent evt
 				{
 					IMENUCTL_SetBottomBarType( pMenu, BTBAR_SAVE_DELETE);
 				}
+				#else
+					IMENUCTL_SetBottomBarType( pMenu, BTBAR_BACK);
+				#endif
 			}
 #endif
 			else
@@ -2718,6 +2722,7 @@ __dialog_handler_of_state_record_list_rename_save__:
 				rect.dy = GetBottomBarHeight( pme->m_pDisplay);
 				rect.y  = pme->m_rc.dy - rect.dy;
 				IDISPLAY_SetClipRect( pme->m_pDisplay, &rect);
+				#ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
 				if( WSTRLEN( ITEXTCTL_GetTextPtr( pTextCtl)) == 0)
 				{
 					 drawBottomBar( BTBAR_BACK);
@@ -2726,6 +2731,9 @@ __dialog_handler_of_state_record_list_rename_save__:
 				{
 					drawBottomBar( BTBAR_SAVE_DELETE);
 				}
+				#else
+					drawBottomBar( BTBAR_BACK);
+				#endif
 				IDISPLAY_Update( pme->m_pDisplay);
 				IDISPLAY_SetClipRect( pme->m_pDisplay, &pme->m_rc);
 			}

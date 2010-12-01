@@ -4034,13 +4034,14 @@ static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
 		  
 		  return TRUE;
 	   case EVT_USER_REDRAW:
-	   		{
-
-                
-                    // Option     Delete
-                    BarParam.eBBarType = BTBAR_OK_DELETE;
-               
-
+	   		{   
+	   		    #ifndef FEATURE_ALL_KEY_PAD
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
 				DrawBottomBar(pme->m_pDisplay,&BarParam);
             	IDISPLAY_Update(pme->m_pDisplay);  
 		    }
@@ -4240,8 +4241,13 @@ static boolean CFieldDebug_NVSETTINGHandleEvent(CFieldDebug *pme,
           return TRUE;
        case EVT_USER_REDRAW:
             {              
+                #ifndef FEATURE_ALL_KEY_PAD
                 // Option     Delete
                 BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
                 DrawBottomBar(pme->m_pDisplay,&BarParam);
                 IDISPLAY_Update(pme->m_pDisplay);  
             }
@@ -4422,11 +4428,13 @@ static boolean CFieldDebug_PLATFORMIDHandleEvent(CFieldDebug *pme,
 	   case EVT_USER_REDRAW:
 	   		{
 
-                
-                    // Option     Delete
-                    BarParam.eBBarType = BTBAR_OK_DELETE;
-               
-
+                #ifndef FEATURE_ALL_KEY_PAD
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
 				DrawBottomBar(pme->m_pDisplay,&BarParam);
             	IDISPLAY_Update(pme->m_pDisplay);  
 		    }
@@ -4615,12 +4623,13 @@ SIDE EFFECTS
 			  return TRUE;
 		   case EVT_USER_REDRAW:
 	   		{
-
-                
-                    // Option     Delete
-                    BarParam.eBBarType = BTBAR_OK_DELETE;
-               
-
+                #ifndef FEATURE_ALL_KEY_PAD
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
 				DrawBottomBar(pme->m_pDisplay,&BarParam);
             	IDISPLAY_Update(pme->m_pDisplay);  
 		    }
@@ -5001,12 +5010,13 @@ static boolean CFieldDebug_PRIMARYDNSHandleEvent(CFieldDebug *pme,
   	 break;
 	 case EVT_USER_REDRAW:
 	   		{
-
-                
-                    // Option     Delete
-                    BarParam.eBBarType = BTBAR_OK_DELETE;
-               
-
+                #ifndef FEATURE_ALL_KEY_PAD
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
 				DrawBottomBar(pme->m_pDisplay,&BarParam);
             	IDISPLAY_Update(pme->m_pDisplay);  
 		    }
@@ -8480,11 +8490,13 @@ static boolean CFieldDebug_SecondaryDNSMenuHandleEvent(CFieldDebug *pme,
 		case EVT_USER_REDRAW:
 	   		{
 
-                
-                    // Option     Delete
-                    BarParam.eBBarType = BTBAR_OK_DELETE;
-               
-
+                #ifndef FEATURE_ALL_KEY_PAD
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
 				DrawBottomBar(pme->m_pDisplay,&BarParam);
             	IDISPLAY_Update(pme->m_pDisplay);  
 		    }
@@ -8584,12 +8596,13 @@ static boolean CFieldDebug_UserNameMenuHandleEvent(CFieldDebug *pme,
 		  return FALSE;
 	   case EVT_USER_REDRAW:
 	   		{
-
-                
-                    // Option     Delete
-                    BarParam.eBBarType = BTBAR_OK_DELETE;
-               
-
+                #ifndef FEATURE_ALL_KEY_PAD
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
 				DrawBottomBar(pme->m_pDisplay,&BarParam);
             	IDISPLAY_Update(pme->m_pDisplay);  
 		    }
@@ -8788,12 +8801,13 @@ static boolean CFieldDebug_UserPasswordMenuHandleEvent(CFieldDebug *pme,
 		  return TRUE;
 	   case EVT_USER_REDRAW:
 	   		{
-
-                
-                    // Option     Delete
-                    BarParam.eBBarType = BTBAR_OK_DELETE;
-               
-
+                #ifndef FEATURE_ALL_KEY_PAD
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
 				DrawBottomBar(pme->m_pDisplay,&BarParam);
             	IDISPLAY_Update(pme->m_pDisplay);  
 		    }
@@ -8934,11 +8948,13 @@ static boolean CFieldDebug_PrimaryServerMenuHandleEvent(CFieldDebug *pme,
 	    case EVT_USER_REDRAW:
 	   		{
 
-                
-                    // Option     Delete
-                    BarParam.eBBarType = BTBAR_OK_DELETE;
-               
-
+                #ifndef FEATURE_ALL_KEY_PAD
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
 				DrawBottomBar(pme->m_pDisplay,&BarParam);
             	IDISPLAY_Update(pme->m_pDisplay);  
 		    }
@@ -9080,12 +9096,13 @@ static boolean CFieldDebug_SecondaryServerMenuHandleEvent(CFieldDebug *pme,
 		  return TRUE;
 	   case EVT_USER_REDRAW:
 	   		{
-
-                
-                    // Option     Delete
-                    BarParam.eBBarType = BTBAR_OK_DELETE;
-               
-
+                #ifndef FEATURE_ALL_KEY_PAD
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
 				DrawBottomBar(pme->m_pDisplay,&BarParam);
             	IDISPLAY_Update(pme->m_pDisplay);  
 		    }
@@ -9322,11 +9339,13 @@ static boolean CFieldDebug_Enabled_Lock_HandleEvent(CFieldDebug *pme,
 		case EVT_USER_REDRAW:
 	   		{
 
-                
-                    // Option     Delete
-                    BarParam.eBBarType = BTBAR_OK_DELETE;
-               
-
+                #ifndef FEATURE_ALL_KEY_PAD
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
 				DrawBottomBar(pme->m_pDisplay,&BarParam);
             	IDISPLAY_Update(pme->m_pDisplay);  
 		    }
@@ -9590,12 +9609,13 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
         }
 		case EVT_USER_REDRAW:
 	   		{
-
-                
-                    // Option     Delete
-                    BarParam.eBBarType = BTBAR_OK_DELETE;
-               
-
+                #ifndef FEATURE_ALL_KEY_PAD
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
 				DrawBottomBar(pme->m_pDisplay,&BarParam);
             	IDISPLAY_Update(pme->m_pDisplay);  
 		    }
@@ -9857,12 +9877,13 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
         }
 		case EVT_USER_REDRAW:
 	   		{
-
-                
-                    // Option     Delete
-                    BarParam.eBBarType = BTBAR_OK_DELETE;
-               
-
+                #ifndef FEATURE_ALL_KEY_PAD
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
 				DrawBottomBar(pme->m_pDisplay,&BarParam);
             	IDISPLAY_Update(pme->m_pDisplay);  
 		    }
@@ -10121,12 +10142,13 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
         }
 		case EVT_USER_REDRAW:
 	   		{
-
-                
-                    // Option     Delete
-                    BarParam.eBBarType = BTBAR_OK_DELETE;
-               
-
+                #ifndef FEATURE_ALL_KEY_PAD
+                // Option     Delete
+                BarParam.eBBarType = BTBAR_OK_DELETE;
+                #else
+                // Option     Back
+                BarParam.eBBarType = BTBAR_OK_BACK;
+                #endif
 				DrawBottomBar(pme->m_pDisplay,&BarParam);
             	IDISPLAY_Update(pme->m_pDisplay);  
 		    }

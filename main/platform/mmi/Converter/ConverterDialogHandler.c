@@ -823,7 +823,11 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                 }
                 else
                 {
+                	#ifdef FEATURE_ALL_KEY_PAD
+                	BBarParam.eBBarType = BTBAR_BACK;
+                	#else
                     BBarParam.eBBarType = BTBAR_DELETE;
+                    #endif
                 }
             }
             DrawBottomBar(pMe->m_pDisplay, &BBarParam);
@@ -987,43 +991,61 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
 
                 case AVK_CLR:
                 {
-                    if(pMe->m_nCtlID == IDC_NUMBER1 ||pMe->m_nCtlID == IDC_NUMBER2)
-                    {
-                        Converter_GetTextToInputNum(pMe, wstrDisplay, m_inputNumber);
+                    #ifdef FEATURE_ALL_KEY_PAD
+                	if(dwParam == 1)
+                	#else
+                	if(TRUE)
+                	#endif
+                	{
+	                    if(pMe->m_nCtlID == IDC_NUMBER1 ||pMe->m_nCtlID == IDC_NUMBER2)
+	                    {
+	                        Converter_GetTextToInputNum(pMe, wstrDisplay, m_inputNumber);
+	                    }
+	                    else
+	                    {
+	                        ITEXTCTL_Reset(pMe->pNumber1);
+	                        ITEXTCTL_Reset(pMe->pNumber2);
+	                        CLOSE_DIALOG(DLGRET_CANCELED)
+	                        return TRUE;
+	                    }
+	                    
+	                    nLen = STRLEN(m_inputNumber);
+	                    if (nLen == 0 || pMe->m_nCtlID == IDC_UNIT_MENU1 ||pMe->m_nCtlID == IDC_UNIT_MENU1)
+	                    {
+	                        if(pMe->m_converterMode == CONVERTER_MODE_CURRENCY)
+	                        {
+	                            pMe->basiccoefficient = IDS_CURRENCY_IDR;
+	                        }
+	                        ITEXTCTL_Reset(pMe->pNumber1);
+	                        ITEXTCTL_Reset(pMe->pNumber2);
+	                        CLOSE_DIALOG(DLGRET_CANCELED)
+	                        return TRUE;
+	                    }
+	                    else
+	                    {
+	                        bRedraw = TRUE;
+	                        bCalc = TRUE;
+	                        chEnter = 0;
+	                        if(IS_NOT_NUMBER(m_inputNumber[0]))
+	                        {
+	                            MEMSET(m_inputNumber, 0, (MAX_INPUT_NUMBER + 3)*sizeof(char));
+	                        }
+	                        else
+	                        {
+	                            m_inputNumber[nLen - 1] = chEnter;
+	                        }
+	                    }
                     }
                     else
                     {
-                        ITEXTCTL_Reset(pMe->pNumber1);
-                        ITEXTCTL_Reset(pMe->pNumber2);
-                        CLOSE_DIALOG(DLGRET_CANCELED)
-                        return TRUE;
-                    }
-                    
-                    nLen = STRLEN(m_inputNumber);
-                    if (nLen == 0 || pMe->m_nCtlID == IDC_UNIT_MENU1 ||pMe->m_nCtlID == IDC_UNIT_MENU1)
-                    {
-                        if(pMe->m_converterMode == CONVERTER_MODE_CURRENCY)
-                        {
-                            pMe->basiccoefficient = IDS_CURRENCY_IDR;
-                        }
-                        ITEXTCTL_Reset(pMe->pNumber1);
-                        ITEXTCTL_Reset(pMe->pNumber2);
-                        CLOSE_DIALOG(DLGRET_CANCELED)
-                        return TRUE;
-                    }
-                    else
-                    {
-                        bRedraw = TRUE;
-                        bCalc = TRUE;
-                        chEnter = 0;
-                        if(IS_NOT_NUMBER(m_inputNumber[0]))
-                        {
-                            MEMSET(m_inputNumber, 0, (MAX_INPUT_NUMBER + 3)*sizeof(char));
-                        }
-                        else
-                        {
-                            m_inputNumber[nLen - 1] = chEnter;
-                        }
+	                    if(pMe->m_converterMode == CONVERTER_MODE_CURRENCY)
+	                    {
+	                          pMe->basiccoefficient = IDS_CURRENCY_IDR;
+	                    }
+	                    ITEXTCTL_Reset(pMe->pNumber1);
+	                    ITEXTCTL_Reset(pMe->pNumber2);
+	                    CLOSE_DIALOG(DLGRET_CANCELED)
+	                    return TRUE;
                     }
                 }
                     break;
@@ -1802,28 +1824,40 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                 {
                     chEnter = 0;
                     nLen = STRLEN(m_inputNumber);
-                    if (nLen == 0 ||pMe->m_nCtlID == basicCurrency ||bChangable == FALSE)
+                    #ifdef FEATURE_ALL_KEY_PAD
+                    if(dwParam ==1)
+                    #else
+                    if(TRUE)
+                    #endif
                     {
-                        CLOSE_DIALOG(DLGRET_CANCELED)
-                        return TRUE;
+	                    if (nLen == 0 ||pMe->m_nCtlID == basicCurrency ||bChangable == FALSE)
+	                    {
+	                        CLOSE_DIALOG(DLGRET_CANCELED)
+	                        return TRUE;
+	                    }
+	                    else
+	                    {
+	                        bRedraw = TRUE;
+	                        m_inputNumber[nLen -1] = chEnter;
+	                        (void) STRTOWSTR(m_inputNumber, wstrDisplay, sizeof(wstrDisplay));
+	                        if(pMe->m_nCtlID == coeffNum1)
+	                        {
+	                            ITEXTCTL_SetText(pMe->coeff1, wstrDisplay, -1);
+	                        }
+	                        if(pMe->m_nCtlID == coeffNum2)
+	                        {
+	                            ITEXTCTL_SetText(pMe->coeff2, wstrDisplay, -1);
+	                        }
+	                        if(pMe->m_nCtlID == coeffNum3)
+	                        {
+	                            ITEXTCTL_SetText(pMe->coeff3, wstrDisplay, -1);
+	                        }
+	                    }
                     }
                     else
                     {
-                        bRedraw = TRUE;
-                        m_inputNumber[nLen -1] = chEnter;
-                        (void) STRTOWSTR(m_inputNumber, wstrDisplay, sizeof(wstrDisplay));
-                        if(pMe->m_nCtlID == coeffNum1)
-                        {
-                            ITEXTCTL_SetText(pMe->coeff1, wstrDisplay, -1);
-                        }
-                        if(pMe->m_nCtlID == coeffNum2)
-                        {
-                            ITEXTCTL_SetText(pMe->coeff2, wstrDisplay, -1);
-                        }
-                        if(pMe->m_nCtlID == coeffNum3)
-                        {
-                            ITEXTCTL_SetText(pMe->coeff3, wstrDisplay, -1);
-                        }
+                    	CLOSE_DIALOG(DLGRET_CANCELED)
+                    	return TRUE;
                     }
                 }
                     break;

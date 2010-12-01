@@ -1294,10 +1294,21 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                     break;
                 case AVK_SOFT2:
                 case AVK_CLR:
-                    IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
-                    pme->m_rtype = TYPE_RETURN;
-                    ISHELL_SetTimer(pme->a.m_pIShell,50,(PFNNOTIFY)CALC_DrawImageWithOffset, pme);
-                    Calc_Backspace(pme);
+                	#ifdef FEATURE_ALL_KEY_PAD  //add by yangdecai 
+                	if(dwParam == 1)
+                	#else
+                	if(TRUE)
+                	#endif
+                	{
+                    	IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+                    	pme->m_rtype = TYPE_RETURN;
+                    	ISHELL_SetTimer(pme->a.m_pIShell,50,(PFNNOTIFY)CALC_DrawImageWithOffset, pme);
+                    	Calc_Backspace(pme);
+                    }
+                    else
+                    {
+                    	ISHELL_CloseApplet( pme->a.m_pIShell, FALSE);
+                    }
                     break;
                 case AVK_M:
                     Calc_AddChar(pme, (AECHAR)'.', TRUE);

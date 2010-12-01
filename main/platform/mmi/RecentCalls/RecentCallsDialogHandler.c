@@ -612,7 +612,7 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                                 NULL, 
                                 IDF_TEXT_TRANSPARENT);
                 (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
-            
+            	#ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
@@ -623,6 +623,18 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                     RECENTCALLS_DRAW_BOTTOMBAR(BTBAR_DELETE)
                 }
                 else
+                #else
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    RECENTCALLS_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                }
+                else if(nLen > 0)
+                {// 删除
+                    RECENTCALLS_DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+                else
+                #endif
                 {// 取消
                     RECENTCALLS_DRAW_BOTTOMBAR(BTBAR_CANCEL)
                 }
@@ -670,11 +682,27 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                         
                     case AVK_CLR:
                         chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                         if (pMe->m_pPhoneLockPassword == NULL || STRLEN(pMe->m_pPhoneLockPassword) == 0)
                         {
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
                         }
+                        #else
+                        if(dwParam == 0)
+                        {
+                        	CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_pPhoneLockPassword == NULL || STRLEN(pMe->m_pPhoneLockPassword) == 0)
+	                        {
+	                            CLOSE_DIALOG(DLGRET_CANCELED)
+	                            return TRUE;
+	                        }
+                        }
+                        #endif
                         break;
                         
                     case AVK_SELECT:

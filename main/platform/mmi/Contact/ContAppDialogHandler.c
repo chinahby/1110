@@ -3068,11 +3068,13 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                     {
                         if(pMe->m_bInsmartnofind == TRUE)
                         {
+                        	#ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                             if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                             {
                                 CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE);
                             }
                             else
+                            #endif
                             {
                                 CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);            
                             }   
@@ -3103,11 +3105,13 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                          //else
                         if(pMe->m_bInsmartnofind == TRUE)
                         {
+                        	#ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                             if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                             {
                                 CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE);
                             }
                             else
+                            #endif
                             {
                                 CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);            
                             }   
@@ -3221,7 +3225,11 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                             pMe->m_bInsmartnofind = TRUE;
                             IMENUCTL_SetActive(pMenuCtl, FALSE);
                             /*guoys add @2008.10.20 for no match dont use select*/    
-                            CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE);
+                            #ifndef FEATURE_ALL_KEY_PAD
+                 			CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE);
+                 			#else
+                 			CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);
+                 			#endif
                             CContApp_RestoreMenuRect(pMe, pMenuCtl);
                             CContApp_DisplayRightTopStr(pMe,pMenuCtl,wParam);               
                         }
@@ -3292,11 +3300,13 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                         //}
                             if(pMe->m_bInsmartnofind == TRUE)
                             {
+                            	#ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                                 if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                                 {
                                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE);
                                 }
                                 else
+                                #endif
                                 {
                                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);            
                                 }   
@@ -3586,11 +3596,13 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 }
                 if(pMe->m_bInsmartnofind == TRUE)
                 {
+                	#ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                     if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                     {
                         CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE);
                     }
                     else
+                    #endif
                     {
                         CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);            
                     }  
@@ -3710,7 +3722,11 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                     pMe->m_bInsmartnofind = TRUE;
                     IMENUCTL_SetActive(pMenuCtl, FALSE);
                     /*guoys add @2008.10.20 for no match dont use select*/    
-                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE);
+                    #ifndef FEATURE_ALL_KEY_PAD
+                 	CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE);
+                 	#else
+                 	CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);
+                 	#endif
                     // 智能查找得一条记录，通过option删除，回到这里就不用画no matches,menu redraw会覆盖掉。
                     // 改到EVT_USER_REDRAW 里画 
                     if(FALSE == pMe->m_bDelOk)
@@ -4940,7 +4956,11 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                  pMe->m_bDelOk = FALSE;
                 ITEXTCTL_SetActive(pTextCtl, TRUE);
                  CContApp_DisplayRightTopStr(pMe,pMenuCtl,0);
+                 #ifndef FEATURE_ALL_KEY_PAD
                  CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE);
+                 #else
+                 CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);
+                 #endif
             }
             else
             {
@@ -5007,7 +5027,11 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 	                    pMe->m_bInsmartnofind = TRUE;
 	                    IMENUCTL_SetActive(pMenuCtl, FALSE);							
 	                    
-	                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE);
+						#ifndef FEATURE_ALL_KEY_PAD
+						CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE);
+                 		#else
+						CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);
+                 		#endif
 	                    CContApp_RestoreMenuRect(pMe, pMenuCtl);
 	                    CContApp_DisplayRightTopStr(pMe,pMenuCtl,wParam);               
 	                }
@@ -5510,13 +5534,14 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
                         }
                     }
                 }            
-            
+                #ifndef FEATURE_ALL_KEY_PAD   //add by yagndecai
                 if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                 {
                     responseLS = TRUE;
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_DELETE);
                 }
                 else
+                #endif
                 {
                     if(AEE_ADDRFIELD_NAME == pMe->m_nFldInputID)
                     {
@@ -6006,11 +6031,13 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
             else
             {
                 //CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK);
+               #ifndef FEATURE_ALL_KEY_PAD
                if(WSTRLEN( ITEXTCTL_GetTextPtr(pTextCtl)) > 0)
                {
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE);
                }
                else
+               #endif
                {
                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK);
                }
@@ -6274,11 +6301,13 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
         {
            if(pMe->m_nInputMode == LOCAL_NUMBER_INPUT || pMe->m_nInputMode == OPT_TEXT_INPUT )
            {
+           	   #ifndef FEATURE_ALL_KEY_PAD
                if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                {
                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE);
                }
                else
+               #endif
                {
                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK);            
                }   
@@ -7596,6 +7625,9 @@ static boolean  CContApp_HandleFindDlgEvent( CContApp  *pMe,
                     return TRUE;
                 }
                 //bw:>>
+                #ifdef FEATURE_ALL_KEY_PAD
+                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK);   
+                #else
                 if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                 {
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_DELETE);        
@@ -7604,6 +7636,7 @@ static boolean  CContApp_HandleFindDlgEvent( CContApp  *pMe,
                 {
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK);                                
                 }
+                #endif
                 IDISPLAY_Update(pMe->m_pDisplay);  
             }         
             return TRUE;
@@ -9647,11 +9680,13 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
             else
             {
                 //CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK);
+               #ifndef FEATURE_ALL_KEY_PAD
                if(WSTRLEN( ITEXTCTL_GetTextPtr(pTextCtl)) > 0)
                {
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE);
                }
                else
+               #endif
                {
                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK);
                }
@@ -9930,12 +9965,14 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
             {
                 if(pMe->m_nInputMode == LOCAL_NUMBER_INPUT || pMe->m_nInputMode == OPT_TEXT_INPUT )
                {
+               	   #ifndef FEATURE_ALL_KEY_PAD
                    if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                    {
                        // Save      Delete
                        CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE);
                    }
                    else
+                   #endif
                    {
                        // Save      Back
                        CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK);            
@@ -10369,11 +10406,19 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
+                	#ifdef FEATURE_ALL_KEY_PAD
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+                    #else
+                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                    #endif
                 }
                 else if(nLen > 0)
                 {// 删除
+                	#ifdef FEATURE_ALL_KEY_PAD
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_DELETE)
+                    #else
+                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_CANCEL)
+                    #endif
                 }
                 else
                 {// 取消
@@ -10423,11 +10468,27 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
                         
                     case AVK_CLR:
                         chEnter = 0;
+                        #ifdef FEATURE_ALL_KEY_PAD  //add by yangdecai 2010-11-29
+                        if(dwParam == 0)
+                        {
+                        	CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                            	return TRUE;
+                        	}
+                        }
+                        #else
                         if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
                         {
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
                         }
+                        #endif
                         break;
                         
                     case AVK_SELECT:
@@ -11055,11 +11116,13 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
 				ITEXTCTL_SetActive(pTextCtl,TRUE);
                 ITEXTCTL_Redraw(pTextCtl);
                 //bw:>>
+                #ifndef FEATURE_ALL_KEY_PAD
                 if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                 {
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_DELETE);    
                 }
                 else
+                #endif
                 {
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);                            
                 }
@@ -12893,11 +12956,13 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
                 {
                     return TRUE;
                 }
+                #ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                 if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                 {
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_DELETE);
                 }
                 else
+                #endif
                 {
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK);            
                 }
@@ -13595,13 +13660,14 @@ static void CContApp_ShowEditItem(CContApp  *pMe, IMenuCtl  *pMenuCtl, ITextCtl 
     {
          nLen = WSTRLEN(pwstrText);
     }
-                
+    #ifndef FEATURE_ALL_KEY_PAD           
     if (nLen > 0)
     {
        // Save       Delete
        CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
     }
     else if (nLen <1)
+    #endif
     {
         // Save      Back
         CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)

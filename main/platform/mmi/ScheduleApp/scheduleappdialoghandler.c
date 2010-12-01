@@ -1221,11 +1221,19 @@ static boolean dialog_handler_of_state_pwd(CScheduleApp* pme,
                 // 绘制底条提示
                 if (nLen > 3)
                 {// 确定-----删除
+                	#ifndef FEATURE_ALL_KEY_PAD
                     drawBottomBar(BTBAR_OK_DELETE)
+                    #else
+                    drawBottomBar(BTBAR_OK_BACK)
+                    #endif
                 }
                 else if(nLen > 0)
                 {
+                	#ifndef FEATURE_ALL_KEY_PAD
                     drawBottomBar(BTBAR_DELETE)
+                    #else
+                    drawBottomBar(BTBAR_BACK)
+                    #endif
                 }
                 else
                 {// 确定-----取消
@@ -1276,11 +1284,27 @@ static boolean dialog_handler_of_state_pwd(CScheduleApp* pme,
                         
                     case AVK_CLR:
                         chEnter = 0;       
+                        #ifndef FEATURE_ALL_KEY_PAD
                         if (pme->m_strPhonePWD == NULL || STRLEN(pme->m_strPhonePWD) == 0)
                         {
                             CLOSE_DIALOG(DLGRET_CANCELED)
                             return TRUE;
                         }
+                        #else
+                        if(dwParam == 0)
+                        {
+                        	CLOSE_DIALOG(DLGRET_CANCELED)
+	                        return TRUE;
+                        }
+                        else
+                        {
+                        	if (pme->m_strPhonePWD == NULL || STRLEN(pme->m_strPhonePWD) == 0)
+	                        {
+	                            CLOSE_DIALOG(DLGRET_CANCELED)
+	                            return TRUE;
+	                        }
+                        }
+                        #endif
                         break;
                         
                     case AVK_SELECT:
@@ -3516,11 +3540,14 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
                     AECHAR *pwsText;
                     
                     pwsText = ITEXTCTL_GetTextPtr(pSubject);
-                    
+                    #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                     if ( WSTRLEN(pwsText) > 0)
                     {
                         bottomBarParms.eBBarType = BTBAR_SAVE_DELETE;
                     }
+                    #else
+                    bottomBarParms.eBBarType = BTBAR_SAVE_BACK;
+                    #endif
                 }
 
                 if( currentItem == 1)
@@ -3528,11 +3555,14 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
                     AECHAR *pwsText;
 
                     pwsText = ITEXTCTL_GetTextPtr(pNote);
-
+					#ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
                     if( WSTRLEN(pwsText) > 0)
                     {
                         bottomBarParms.eBBarType = BTBAR_SAVE_DELETE;
                     }
+                    #else
+                    bottomBarParms.eBBarType = BTBAR_SAVE_BACK;
+                    #endif
                 }
             }
             
@@ -3680,25 +3710,37 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
                     exitByUser = TRUE;
                     if(currentItem == 0 || currentItem == 1)
                     {
-                        AECHAR *pwsText = NULL;
-                        {
-                            if(currentItem == 0)
-                            {
-                                pwsText = ITEXTCTL_GetTextPtr(pSubject);
-                            }
-                            else if(currentItem == 1)
-                            {
-                                pwsText = ITEXTCTL_GetTextPtr(pNote);
-                            }
+                    	#ifndef FEATURE_ALL_KEY_PAD
+                    	if(dwParam == 1)
+                    	#endif
+                    	{
+                        	AECHAR *pwsText = NULL;
+                        	{
+                            	if(currentItem == 0)
+                            	{
+                               	 	pwsText = ITEXTCTL_GetTextPtr(pSubject);
+                            	}
+                            	else if(currentItem == 1)
+                            	{
+                            	    pwsText = ITEXTCTL_GetTextPtr(pNote);
+                            	}
+                        	}
+                        	if (WSTRLEN(pwsText)>0)
+                        	{
+                            	repaint(pme,TRUE);
+                        	}
+                        	else
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                        	}
                         }
-                        if (WSTRLEN(pwsText)>0)
-                        {
-                            repaint(pme,TRUE);
-                        }
+                        #ifndef FEATURE_ALL_KEY_PAD
                         else
                         {
-                            CLOSE_DIALOG(DLGRET_CANCELED)
+                        	CLOSE_DIALOG(DLGRET_CANCELED)
                         }
+                        #endif
+                        
                     }
                     else
                     {
@@ -3710,8 +3752,12 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
 
                     if( subState == 2)
                     {
+                    	#ifndef FEATURE_ALL_KEY_PAD
                         subState = 0;
                         repaint(pme, TRUE);
+                        #else
+                        CLOSE_DIALOG(DLGRET_CANCELED)
+                        #endif
                     }
                     else
                     {
@@ -3986,11 +4032,19 @@ static boolean  dialog_handler_of_state_inputtext( CScheduleApp* pme,
 
                 if( WSTRCMP( ITEXTCTL_GetTextPtr(pTextControl), pme->m_pszEventEditText) == 0)
                 {
+                	#ifndef FEATURE_ALL_KEY_PAD
                     bottomBarType = WSTRLEN(ITEXTCTL_GetTextPtr(pTextControl)) > 0 ? BTBAR_OK_DELETE : BTBAR_BACK;
+                    #else
+                    bottomBarType = BTBAR_BACK;
+                    #endif
                 }
                 else
                 {
+                	#ifndef FEATURE_ALL_KEY_PAD
                     bottomBarType = WSTRLEN(ITEXTCTL_GetTextPtr(pTextControl)) > 0 ? BTBAR_OK_DELETE : BTBAR_OK_BACK;
+                    #else
+                    bottomBarType = BTBAR_OK_BACK;
+                    #endif
                 }
 
                 drawBottomBar( bottomBarType);
