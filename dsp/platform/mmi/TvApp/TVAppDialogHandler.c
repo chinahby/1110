@@ -549,6 +549,7 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 						   {
 							   pMe->currentlyChannelIndex = 0;
 						   }
+                           MSG_FATAL("currentlyChannelIndex=%d----",pMe->currentlyChannelIndex,0,0);
 						   channel = pMe->pTvSetting->Bookmark[pMe->currentlyChannelIndex].channel; 
 						   if (channel != NULL)
 						   {
@@ -557,7 +558,9 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 							   pMe->pTvSetting->CurrentChannel = index;
 							   pMe->currentlyChannel = index;
 		
-						   }		
+						   }
+                            MSG_FATAL("currentlyChannel=%d----",pMe->currentlyChannel,0,0);
+                           (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
                         }
                         break;
                     case AVK_DOWN:
@@ -1304,12 +1307,13 @@ static boolean TV_BOOKMARK_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
                       pMe->pTvSetting,
                       sizeof(CFG_TvSetting));
 		  sNum=pMe->pTvSetting->ChannelCountAble;
-		   for (i = sNum ; i >= 0; i--)
+		   for (i = sNum ; i > 0; i--)
 	       {
 	         // WSTRCPY(pMe->pTvSetting->Bookmark[0].name,L"21");
-			 // WSTRCPY(pMe->pTvSetting->Bookmark[0].channel,L"21");
-	          MSG_FATAL("TV_BOOKMARK_HandleEvent--------snum=%d----------chanel=%d-------name=%s",sNum,pMe->pTvSetting->Bookmark[i].channel,pMe->pTvSetting->Bookmark[i].name);
-			  IMENUCTL_AddItem((pMenu), NULL, NULL, (int32)pMe->pTvSetting->Bookmark[i].channel, pMe->pTvSetting->Bookmark[i].name, 0);
+			 // WSTRCPY(pMe->pTvSetting->Bookmark[0].channel,L"21");(int)WSTRTOFLOAT(channel)
+	          IMENUCTL_AddItem((pMenu), NULL, NULL, (int)WSTRTOFLOAT(pMe->pTvSetting->Bookmark[i-1].channel), pMe->pTvSetting->Bookmark[i-1].name, 0);
+              MSG_FATAL("TV_BOOKMARK_HandleEvent--------snum=%d----------chanel=%d-------name=%d",sNum,(int)WSTRTOFLOAT(pMe->pTvSetting->Bookmark[i-1].channel),(int)WSTRTOFLOAT(pMe->pTvSetting->Bookmark[i-1].name));
+			  
            }
 		   (void)ICONFIG_SetItem(pMe->m_pConfig,
                                   CFGI_TV_SETCHANNL,
@@ -2696,18 +2700,47 @@ static void CTvUtil_StopSearchAnimation(CTVApp * pMe)
     int result = SUCCESS;
     int i = 0;
     int a = 0;
-    char title[3];
-    char channel[4];
+    char title[32];
+    char channel[32];
+    AECHAR Aname[32] = {0};
+    AECHAR AChannel[32] = {0};
    //CTVApp* pThis = (CTVApp*)pITvUtil->pData;
-   uint16 *ableChannelArray = IMMITv_getAbleChannelArray(pMe->pIMMITv);
+    uint16 *ableChannelArray = IMMITv_getAbleChannelArray(pMe->pIMMITv);
     int channelCount = IMMITv_getChannelCountAble(pMe->pIMMITv);
-    
+    (void)ICONFIG_GetItem(pMe->m_pConfig,
+                            CFGI_TV_SETCHANNL,
+                            (void*)pMe->pTvSetting,
+                            sizeof(CFG_TvSetting));
 
     MSG_FATAL("CTvUtil_StopSearchAnimation Start  ----channelCount=%d",channelCount,0,0);
 
     if(channelCount > 0)
     {
-   
+    {
+          int num = pMe->pTvSetting->ChannelCountAble;
+          int b = 0;
+          int nSize = 0;   
+          MSG_FATAL("CTvUtil_BookmarkOperator_RemoveAll Start",0,0,0); 
+          (void)ICONFIG_GetItem(pMe->m_pConfig,
+                                 CFGI_TV_SETCHANNL,
+                                 (void*)pMe->pTvSetting,
+                                 sizeof(CFG_TvSetting));
+          for(; b <= num; b++)
+          {
+              nSize = WSTRLEN(pMe->pTvSetting->Bookmark[b].name); 
+              MEMSET (pMe->pTvSetting->Bookmark[b].name, '\0', sizeof(AECHAR) * nSize); 
+        
+              nSize = WSTRLEN(pMe->pTvSetting->Bookmark[b].channel); 
+              MEMSET (pMe->pTvSetting->Bookmark[b].channel, '\0', sizeof(AECHAR) * nSize); 
+          }
+          pMe->pTvSetting->Bookmarktotal = 0;
+          pMe->pTvSetting->ChannelCountAble = 0;
+          (void)ICONFIG_SetItem(pMe->m_pConfig,
+                                CFGI_TV_SETCHANNL,
+                                (void*)pMe->pTvSetting,
+                                sizeof(CFG_TvSetting));
+         }
+    
         pMe->pTvSetting->ChannelCountAble = channelCount;
        
         pMe->pTvSetting->CurrentChannel = ableChannelArray[0];//自动搜索完成后，会跳到索引为0的频道来
@@ -2717,20 +2750,33 @@ static void CTvUtil_StopSearchAnimation(CTVApp * pMe)
        MSG_FATAL("search finish，have %d channel",channelCount,0,0);
         if (pMe->pIMMITv != NULL)
         {
-        MSG_FATAL("TV_PROPERTY_SOUND------------",0,0,0);
+           MSG_FATAL("TV_PROPERTY_SOUND------------",0,0,0);
            IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_SOUND, pMe->pTvSetting->SoundStep);
             //IMMIAudioDevice_GetOutputVolumn(pThis->pIMMIAudioDevice,AUDIOVOLUME_LEVEL0);
         }
         for(; i < channelCount; i++)
         {
-         MSG_FATAL("channelCount------------channelCount=%d",channelCount,0,0);
-            SPRINTF(title, "%d", i+1);
-            SPRINTF(channel, "%d",  ableChannelArray[i]);
-            WSTRCPY(pMe->pTvSetting->Bookmark[a].name,(AECHAR *)(title));
-            WSTRCPY(pMe->pTvSetting->Bookmark[a].channel,(AECHAR *)(channel));
-            MSG_FATAL("Bookmark-i=%d---------channel=%d",a,channel,0);
+            MSG_FATAL("channelCount------------channelCount=%d",channelCount,0,0);
+           // SPRINTF(title, "%d", i+1);
+           // SPRINTF(channel, "%d",  ableChannelArray[i]);
+
+            WSPRINTF(Aname,sizeof(Aname),(AECHAR*)L"%d(%d)",i+1,ableChannelArray[i]);
+            WSPRINTF(AChannel,sizeof(AChannel),(AECHAR*)L"%d",ableChannelArray[i]);
+            WSTRCPY(pMe->pTvSetting->Bookmark[a].name,Aname);
+            WSTRCPY(pMe->pTvSetting->Bookmark[a].channel,AChannel);
+            
+            //WSTRCPY(pMe->pTvSetting->Bookmark[a].name,(AECHAR *)(title));
+            //WSTRCPY(pMe->pTvSetting->Bookmark[a].channel,(AECHAR *)(channel));
+            MSG_FATAL("Bookmark-i=%d---------channel=%d",a, ableChannelArray[i],0);
             a++;
-			
+            //STRTOWSTR(emerg_tab.emerg_num[i].num_buf, wstrNum, sizeof(wstrNum));
+           
+           // int16 nTime=127;
+            
+
+               // WSTRLCPY(wFormat,L"%02d/%02d",63);
+
+            //WSPRINTF(wszDate, sizeof(wszDate), wFormat, jDate.wMonth, jDate.wDay, jDate.wYear);
         }
         (void)ICONFIG_SetItem(pMe->m_pConfig,
                             CFGI_TV_SETCHANNL,
