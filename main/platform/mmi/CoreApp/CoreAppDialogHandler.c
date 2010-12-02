@@ -3176,9 +3176,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_KEYGUARD
                     if(OEMKeyguard_IsEnabled())
                     {
+                    	#ifndef FEATURE_VERSION_HITZ181
                         OEMKeyguard_SetState(FALSE);
                         pMe->m_b_set_lock = TRUE;
                         CLOSE_DIALOG(DLGRET_EMGCALL)
+                        #endif
                     }
 #endif
                     return TRUE;
@@ -4765,7 +4767,11 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #ifdef FEATURE_KEYGUARD
     else if(OEMKeyguard_IsEnabled())
     {
-        eBBarType = BTBAR_UNLOCK_SOS;
+    	#ifndef FEATURE_VERSION_HITZ181
+    	eBBarType = BTBAR_UNLOCK_SOS;
+    	#else
+        eBBarType = BTBAR_UNLOCK;
+        #endif
     }
 #endif
     else
