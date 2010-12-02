@@ -1878,9 +1878,12 @@ void TLGAPP_InitHsyncAndVsync(void)
 
 void TLGAPP_InitRegionChannelMap(void)
 {
+
+
     gPreScanLines = gTvScanLines;
 	if (gTvStorage.mRegion < TLG_REGION_TOTAL)
 	{
+	
 		TLGAPP_SetChannelMap(
 			Region_maps[gTvStorage.mRegion],
 #ifdef TLG_1100
@@ -1896,6 +1899,7 @@ void TLGAPP_InitRegionChannelMap(void)
 #endif
 			Region_maps[gTvStorage.mRegion][0] STD_S,
 			Region_maps[gTvStorage.mRegion][0] BW_S );
+		
 
 		switch(Region_maps[gTvStorage.mRegion][0] STD_S)
 		{
@@ -2333,7 +2337,7 @@ void TLGMMI_ClearTvStorage()
 {
 	gTvStorage.mTuneMode = TLG_TUNEMD_MANUAL;
 	gTvStorage.mScrMode = TLG_SCRMD_WINDOW;
-	gTvStorage.mRegion = TLG_REGION_SHENZHEN;
+	//gTvStorage.mRegion = TLG_REGION_SHENZHEN;
 
 	gTvStorage.mCurChnIdx = 0;
 	gTvStorage.mIdxListCnt = 0;

@@ -376,7 +376,7 @@ boolean camsensor_tlg1120_init(void)
     TLGMMI_RestoreFmOption();
     TLGMMI_ClearTvStorage();
     TLGMMI_ClearFmStorage();
-    gTvStorage.mCurChnIdx = 12;
+   // gTvStorage.mCurChnIdx = 23;
 #endif
 
     TLG1120_init_host_gpio();
@@ -410,11 +410,11 @@ boolean camsensor_tlg1120_init(void)
     TLG_SetMobileVidEnhancement(tlg_i2c_addr, TLG_MVE_MANUAL, gTvOptions.mDefinition);
     TLG_SquelchEvenFrames(tlg_i2c_addr, TLG_ON);
 #endif
-	TLGAPP_SetChannel(12);
+	//TLGAPP_SetChannel(23);
 
     //ÉùÒôºÍÍ¼ÏñµÄ²âÊÔ
 	//TLGAPP_TurnOnTestPattern();
-	// TLGAPP_TurnOnTestToneMode();
+	//TLGAPP_TurnOnTestToneMode();
 	//TLG_SetAudioTestToneMode(tlg_i2c_addr, TLG_ON);
 	//TLG_SetAudioTestToneL(tlg_i2c_addr, TLG_1KHZ);
 	//TLG_SetAudioTestToneR(tlg_i2c_addr, TLG_1KHZ);
