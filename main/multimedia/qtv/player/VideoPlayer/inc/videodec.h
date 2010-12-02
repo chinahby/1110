@@ -33,18 +33,6 @@ $Change: 798168 $
                      INCLUDE FILES FOR MODULE
 
 ========================================================================== */
-
-	// debug support
-	//Set test switches here...
-	// undef these for normal mode.
- #define SHOW_FRAMES
- #define SHOW_SYNC
- #define SHOW_RENDER
- #define SHOW_TIMING
- #define SHOW_LATE
-#define SHOW_FRAME_REQUEST_COUNT
-#define SHOW_FRAME_QUEUES
-
 #ifndef _VIDEODEC_H_
 #define _VIDEODEC_H_
 
@@ -890,7 +878,7 @@ public:
   bool IsQFREActive(void)
   {
     //controls enable/disable of Qtv feature
-    return m_bEnableQFRE.bFreEnable ; 
+    return m_bEnableQFRE ; 
   }
   #endif  
   // boolean function to return broadcast lead check failures. 

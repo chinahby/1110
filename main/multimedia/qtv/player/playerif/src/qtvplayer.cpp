@@ -1368,7 +1368,6 @@ boolean QtvPlayer::IsPlayerStatusErrorCode(PlayerStatusT code)
 boolean QtvPlayer::IsPlayerStatusTrivialCode(PlayerStatusT code)
 {
   boolean ret = false;
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"IsPlayerStatusTrivialCode");
   switch (code)
   {
     /*--------------------------------------------------
@@ -1538,7 +1537,6 @@ QtvPlayer::ReturnT QtvPlayer::Init
 {
     ReturnT nReturn = QTV_RETURN_ERROR;
     QtvPlayer *player = NULL;
-	QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Init,Entrance");
     if (pHandle == NULL)
     {
       // Init called with NULL pHandle
@@ -2106,8 +2104,6 @@ QtvPlayer::ReturnT QtvPlayer::OpenURN(const char *videoURN, const char *audioURN
                                       InstanceHandleT handle,
                                       InstancePriorityT priority)
 {
-
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED,">>QtvPlayer::OpenURN(v,a,t) return %d");
 
   ReturnT nReturn = QTV_RETURN_ERROR;
   nReturn = RegisterInst (handle,priority);
@@ -4214,8 +4210,6 @@ QtvPlayer::ReturnT QtvPlayer::OpenPullBufferedStream( FetchBufferedDataSizeT,
 
   uint8 httpDataBuf[MAXIMUM_MIME_BUFFER_LENGTH];
   uint32 wHttpBufOffset = 0;
-
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,">>QtvPlayer::OpenURN:QtvRAMPlayer_Init failed..");
 
   player->CurrentMIMEType = QTV_PLAYER_MIME_TYPE;
 
@@ -6764,7 +6758,6 @@ const char *QtvPlayer::GetMIMEType(const char *file)
   const char *MIMEType = NULL;
   unsigned char buffer[MAXIMUM_MIME_BUFFER_LENGTH] = {0};
   FILE *fp = fopen(file, "r");
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Cannot log Qtv cmd %u,%u");
   if (fp)
   {
     int length = fread(buffer, 1, MAXIMUM_MIME_BUFFER_LENGTH, fp);
@@ -6810,7 +6803,6 @@ SIDE EFFECTS
 const char *QtvPlayer::GetMIMEType(unsigned char *buffer, int length)
 {
   const char *MIMEType = NULL;
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Cannot l");
   MIMEType = QtvPlayer::GetMIMEType(buffer,length,length); 
   return MIMEType;
 }

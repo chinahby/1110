@@ -2644,10 +2644,6 @@ bool QtvPlayerDispatch::RegisterContentToContMgr(const char* fileName,
   TxList<IxContentAttrDef> attrdef;
   char* mimeType = (char*)"video/mp4";
 
-  QTV_MSG_PRIO(QTVDIAG_GENERAL,
-  QTVDIAG_PRIO_HIGH,
-  "AddContentAttr Failed while adding CONTENT_ATTR_LOCAL_URL error code");
-
   //Make sure we have valid filename to register content with content manager
   if(fileName == NULL)
   {

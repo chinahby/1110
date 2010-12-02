@@ -583,7 +583,7 @@ static IBase * CMediaReal_New(IShell * ps, AEECLSID cls)
 #endif
 
    // Alloc memory for the object
-   po = (IMedia *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gMediaRealFuncs, sizeof(CMediaReal));
+   po = (IMedia *)AEE_NewClass((IBaseVtbl *)&gMediaRealFuncs, sizeof(CMediaReal));
    if (!po)
       return NULL;
 
@@ -1841,7 +1841,6 @@ void CMediaReal_CallbackNotify(AEEMediaCallback * pcb)
       /* Do not send this callback to the app as they are not registered for it */
       return;
    }
- 
    AEEMedia_CallbackNotify((AEEMedia *)pme, pcb);
 }
 
@@ -1881,7 +1880,6 @@ static void CMediaReal_SoundCB(void * pUser, AEESoundCmd eCBType, AEESoundStatus
 #else
    paLast = AEE_SetAppContext(pme->m_pReal->m_pAppContext);
 #endif
-
    AEEMedia_CallbackNotify((AEEMedia *)pme, &mcb);
 #if MIN_BREW_VERSION(3,0)
    AEE_LeaveAppContext(paLast);

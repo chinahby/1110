@@ -1247,8 +1247,6 @@ bool Mp4FragmentFile::getAccessPointSampleInfo(video_fmt_stream_info_type *p_tra
     iRewind = true;
   }
 
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "getAccesPointSampleInfo");
-
   if(iRewind)
   {
       if(p_track->fragment_number == 0)

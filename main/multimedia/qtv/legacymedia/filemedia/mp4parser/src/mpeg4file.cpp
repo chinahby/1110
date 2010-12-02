@@ -2351,7 +2351,6 @@ uint32 Mpeg4File::resetPlayback (
     *bError = TRUE;
     return 0;
   }
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "resetPlayback");
 
   //nabrol
 
@@ -5448,8 +5447,6 @@ void Mpeg4File::process_video_fmt_info(video_fmt_status_type status,
         }
       }
 #endif /* FEATURE_QTV_PDCF */
-	  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "VIDEO: p_track->type = %d", p_track->type);
-
       switch ( p_track->type )
       {
       case VIDEO_FMT_STREAM_VIDEO:

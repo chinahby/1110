@@ -237,7 +237,8 @@ typedef struct OEMMediaMPEG4Layer
   AEEPoint                  m_QtvCurrentAScale;
 #endif /* FEATURE_QTV_MDP_ASCALE || FEATURE_QTV_XSCALE_VIDEO*/
 #ifdef FEATURE_QTV_IPL_SCALING
-#error code not present
+  AEEMediaMPEG4ScalingType  m_IPLScalingFactor;
+  unsigned char *           m_pIPLScalingBuf;
 #endif /* FEATURE_QTV_IPL_SCALING */
 #if (defined (FEATURE_MP4_AAC_PLUS) || defined (PLATFORM_LTK) )
   /*! This variable is used to pass the rotation factor to the QTV IPL rotation function */
@@ -251,7 +252,7 @@ typedef struct OEMMediaMPEG4Layer
   AEETelopTextSubString     m_TelopTextSubString;
 #endif /* FEATURE_MP4_KDDI_TELOP_TEXT */
 #ifdef FEATURE_QTV_ISDB_SUBTITLES
-#error code not present
+  AEEGenericText          m_GenericText;
 #endif /* FEATURE_QTV_ISDB_SUBTITLES */
 #if defined(FEATURE_ACM) || defined (FEATURE_BMP_ACM)
   //! For delayed acquiring case when IMedia_SetMediaDataEx is called, we need to save 

@@ -1021,14 +1021,11 @@ bool qtv_conc_mgr::init_qtv_with_cm()
   memset(call_info_table_ptr, 0, sizeof(call_info_type) * CM_CALL_ID_MAX);
 
   /* Initialize Qtv as a client with CM */
-
 #ifndef PLATFORM_LTK
-  int iValueReturn = 0;
-  if ((iValueReturn = cm_client_init(CM_CLIENT_TYPE_BREW_APPS, &qtv_cm_client)) != CM_CLIENT_OK)
+  if (cm_client_init(CM_CLIENT_TYPE_BREW_APPS, &qtv_cm_client) != CM_CLIENT_OK)
   {
-  
-    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
-                 "init_qtv_with_cm: CM client initialize failed iValueReturn = %d",iValueReturn);
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+                 "init_qtv_with_cm: CM client initialize failed");
 
     status = false;
   } 

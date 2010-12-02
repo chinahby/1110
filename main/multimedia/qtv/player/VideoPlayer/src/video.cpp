@@ -649,7 +649,6 @@ bool VideoPlayer::Prep(const int playbackID, Media * pMpeg4In, bool &bError,
 {
   bError=false;
 
-  QTV_MSG(QTVDIAG_VIDEO_TASK,"VideoPlayer::Prep Enter");
   if (CanPrep(bRestart))
   {
     if (!bRestart)
@@ -690,7 +689,6 @@ bool VideoPlayer::Prep(const int playbackID, Media * pMpeg4In, bool &bError,
       Notify(IDLE, Common::VIDEO_ERROR_ABORT);
       bError=true;
     }
-	QTV_MSG(QTVDIAG_VIDEO_TASK,"VideoPlayer::Prep return true");
     return true;
   }
   else
@@ -699,7 +697,6 @@ bool VideoPlayer::Prep(const int playbackID, Media * pMpeg4In, bool &bError,
       "Cannot prep: restart = %d, state = %d",
       bRestart ? 1 : 0, state);
   }
-  QTV_MSG(QTVDIAG_VIDEO_TASK,"VideoPlayer::Prep return false");
   return false;
 }
 
@@ -2222,8 +2219,6 @@ bool VideoPlayer::DisplayFrame(
   // Default to freeing the frame in case of an early return.
   bFreeFrame = true;
 #endif /* FEATURE_QTV_MDP */
-  QTV_MSG( QTVDIAG_VIDEO_TASK, "DisplayFrame");
-
 
   /* If we are not rendering(as in case of repositioning in progress),
      just drop this frame without updating elaspe time */
@@ -2270,7 +2265,6 @@ bool VideoPlayer::DisplayFrame(
   if ( !bStopRendering )
   {
 #endif /* FEATURE_QTV_MDP */
-	
 
     bDisplayResult =
       pAVPlayer->SetFrameInfo( frame.pBuf,
@@ -2284,19 +2278,6 @@ bool VideoPlayer::DisplayFrame(
                                   frame.extFrame.numIntraMbs,
                                   frame.cwin.x2,
                                   frame.cwin.y2);
-QTV_MSG9( QTVDIAG_VIDEO_TASK, "frame: %d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
-	frame.pBuf,
-	frame.dimensions.height,
-	frame.dimensions.width,
-	nPresTime,
-	frame.extFrame.numConcealedMbs,
-	frame.frameType,
-	frame.extFrame.numIntraMbs,
-	frame.cwin.x2,
-	frame.cwin.y2);
-
-QTV_MSG3( QTVDIAG_VIDEO_TASK, "video disp f %d pres %d,bDisplayResult = %d",nPresFrame,nPresTime,bDisplayResult);
-
 #ifdef FEATURE_QTV_MDP
     // Check if we actually displayed the frame
     if(bDisplayResult != FALSE )

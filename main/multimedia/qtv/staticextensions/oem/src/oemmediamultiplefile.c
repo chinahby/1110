@@ -220,7 +220,7 @@ static IBase *OEMMediaMultipleFile_New(IShell *ps, AEECLSID cls)
    OEMMediaMultipleFile *pme;
 
    // Alloc memory for the object
-   po = (IMedia *)AEE_OEM_NEWCLASS((IBaseVtbl *)&gMediaMultipleFileFuncs, sizeof(OEMMediaMultipleFile));
+   po = (IMedia *)AEE_NewClass((IBaseVtbl *)&gMediaMultipleFileFuncs, sizeof(OEMMediaMultipleFile));
    if (!po)
       return NULL;
 
@@ -395,7 +395,7 @@ void OEMMediaMultipleFile_CallbackNotify(AEEMediaCallback * pcb)
       return;
 
    pme = (OEMMediaMultipleFile *)pcb->cmdNotify.pIMedia;
-	
+
    AEEMedia_CallbackNotify((AEEMedia *)pme, pcb);
 }
 

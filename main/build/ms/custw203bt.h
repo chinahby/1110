@@ -260,9 +260,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custui.h"
 #include "custmcs.h"
 #include "custpmic3.h"
-#ifdef USES_MP4
-#include "custmp4.h"
-#endif
 #include "custefs.h"
 //#include "custfmrds.h"
 #include "custnvm.h"

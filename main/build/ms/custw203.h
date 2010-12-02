@@ -38,17 +38,11 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_SPN_FROM_BSMCCMNC
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 #endif
-//#ifdef USES_MP4
-//#ifndef TARGSB2_H
-//   #include "targsb12864.h"
-//#endif
-//#define FEATURE_APP_MPEG4
-//#define FEATURE_AAC
-//#else
+
 #ifndef TARGSB2_H
    #include "targsbw2.h"
 #endif
-//#endif
+
 //#define FEATURE_DATA_STRIP_ATCOP 
 #define FEATURE_STD_MIDI 
 #define FEATURE_DIAG_LOWMEM 
@@ -256,9 +250,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custui.h"
 #include "custmcs.h"
 #include "custpmic3.h"
-#ifdef USES_MP4
-#include "custmp4.h"
-#endif
 #include "custefs.h"
 //#include "custfmrds.h"
 #include "custnvm.h"

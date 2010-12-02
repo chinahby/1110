@@ -85,7 +85,16 @@ and other items needed by this module.
 ** Constant / Define Declarations
 ** ----------------------------------------------------------------------- */
 
-
+// debug support
+//Set test switches here...
+// undef these for normal mode.
+// #define SHOW_FRAMES
+// #define SHOW_SYNC
+// #define SHOW_RENDER
+// #define SHOW_TIMING
+// #define SHOW_LATE
+#define SHOW_FRAME_REQUEST_COUNT
+#define SHOW_FRAME_QUEUES
 
 /* -----------------------------------------------------------------------
 ** Type Declarations
@@ -945,8 +954,6 @@ Media::CodecType audioCodec
   bool bGotVideoDimensions = false;
   VDEC_PARAMETER_DATA parm_data;
   Media* pVideoMedia;
-
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "PrepPlay()");
 
   bCannotPrep=false;
 
@@ -2937,7 +2944,6 @@ VDEC_FRAME   &frame
   bAbort = false;
   bool bDropOK;
   bool bDisplayed;
-   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "RenderVideoFrame");
 
 #ifdef FEATURE_QTV_MDP
   // Default to freeing the frame in case of an early return.
@@ -2965,7 +2971,7 @@ VDEC_FRAME   &frame
   }
 
 #ifdef SHOW_FRAMES
-  QTV_MSG2( QTVDIAG_VIDEO_TASK, "Vid Frame2 %d ts %ld l %d",nFramesProcessed,nPresentationTime/*,nLayer*/);
+  QTV_MSG3( QTVDIAG_VIDEO_TASK, "Vid Frame2 %d ts %ld l %d",nFramesProcessed,nPresentationTime,nLayer);
 #endif
 
   ////////////////////////////////////////////////
@@ -4805,7 +4811,7 @@ VDEC_FRAME * const      pFrame
 #endif
    (void)AlterOutstandingFrameCount( -1, "frame done" );
 #ifdef FEATURE_FRE
-if(m_bEnableQFRE.bFreEnable)
+if(m_bEnableQFRE)
 {
   unsigned int ofc;
   ofc = GetOutstandingFrameCount();
@@ -4850,7 +4856,6 @@ void VideoDec::HandleFrameReady( VDEC_FRAME * const pFrame )
   #ifdef FEATURE_QTV_GENERIC_BCAST_PCR
 #error code not present
   #endif
-  QTV_MSG_PRIO2(QTVDIAG_VIDEO_TASK,QTVDIAG_PRIO_DEBUG,"pFrame %d %d",pFrame->format.bbp,pFrame->format.fourcc);
   if ( !pPlayer->m_pRenderer  || !bFrameSyncToPCR)
   {
     /* Without a renderer, we've got nobody to give the frame to. Best
@@ -4866,7 +4871,6 @@ void VideoDec::HandleFrameReady( VDEC_FRAME * const pFrame )
   }
 
   // A healthy frame should be punted right to the renderer.
-  QTV_MSG_PRIO2(QTVDIAG_VIDEO_TASK,QTVDIAG_PRIO_DEBUG,"pFrame %d %d",pFrame->format.bbp,pFrame->format.fourcc);
 
   if
   (
@@ -4880,11 +4884,7 @@ void VideoDec::HandleFrameReady( VDEC_FRAME * const pFrame )
 #endif // FEATURE_QTV_VIDEO_RENDERING_QUALITY_ENABLE 
     {
       /* Render the frame, after checking for minimum required frame quality */
-	  QTV_MSG2( MSG_LEGACY_ERROR,"pFrame->format = %d,%d",pFrame->format.bbp,pFrame->format.fourcc);
       m_renderingFrames.Learn( *pFrame );
-	  //int iBuffLen = STRLEN((const char*)(pFrame->pBuf));
-	  // QTV_MSG1( MSG_LEGACY_ERROR,"pFrame->format = %d",iBuffLen);
-
       pPlayer->m_pRenderer->render( pFrame );
     }
 #ifdef FEATURE_QTV_VIDEO_RENDERING_QUALITY_ENABLE

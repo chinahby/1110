@@ -12,7 +12,7 @@ QTV_RENDERER_CPP_SOURCES=\
         video_renderer_broadcast.cpp 
                 
 
-QTV_RENDERER_OBJS :=  $(addprefix $(TARGETDIR)/, $(QTV_RENDERER_CPP_SOURCES:%.cpp=%.o)) $(QTV_RENDERER_OBJS)
+QTV_RENDERER_OBJS :=  $(addprefix $(TARGETDIR)/, $(QTV_RENDERER_CPP_SOURCES:%.cpp=%.o))
 
 
 vpath %.cpp $(QTV_RENDERER)/../src

@@ -49,5 +49,3 @@ endif
   include $(QTV_UTILS_DISPATCH)/../etc/utils_dispatch.min
   include $(MP4FILEFMT_PARSER)/../etc/mpeg4fileformat.min
   include $(QTV_UTILS_SYSTEM)/../etc/utils_system.min
-  include $(QTV_DEC_CORE)/../etc/lib_video_dec_core.min
-  include $(QTV_DEC_COMMON)/../etc/lib_video_dec_common.min

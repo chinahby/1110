@@ -212,7 +212,7 @@ static AEEStreamType OEMMediaMPEG42PV_ConvertStreamType(QtvPlayer::StreamTypeT);
 static AEEMediaPvxPlaybackControl OEMMediaMPEG42PV_ConvertPlaybackControlType(QtvPlayer::DownloadPlaybackControlT);
 #endif /* FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2 */
 #ifdef FEATURE_QTV_IPL_SCALING
-#error code not present
+static void ScaleFrame( QtvPlayer::FrameInfoT*  pFrameInfo, OEMHandle pOEM );
 #endif /* FEATURE_QTV_IPL_SCALING */
 #if (defined (FEATURE_MP4_AAC_PLUS) || defined (PLATFORM_LTK) )
 /* Qtv IPL to support color conversion & rotation */
@@ -738,7 +738,7 @@ extern "C" void QtvEngineCB(
       pOEM->m_bFrameTransformPending = FALSE;
 #endif
 #ifdef FEATURE_QTV_IPL_SCALING
-#error code not present
+      pOEM->m_IPLScalingFactor = MM_MPEG4_NO_SCALING;
 #endif /* FEATURE_QTV_IPL_SCALING */
 
 #ifdef FEATURE_MP4_AAC_PLUS
@@ -1326,8 +1326,6 @@ extern "C" void QtvEngineCB(
       break;
   }
 
-  MSG_HIGH("QTVEngineCB", 0, 0, 0);
-
   if ((MMStatus != MM_STATUS_UNKNOWN) && (cmd != 0)) //no point in queuing if no cmd
   {
     OEMMediaMPEG4_QueueCallback(pOEM->m_pCallbackData, MMStatus, cmd, subCmd, 
@@ -1495,7 +1493,6 @@ static void RTSPStatusCB(int32 statusCode, const char * statusString,
 {
   OEMHandle pOEM = OEMMediaMPEG42PV_GetOEMLayer((OEMHandle)pUserData);
 
-  MSG_LOW("FUNC : RTSPStatusCB",0,0,0);
   if (pOEM == NULL)
   {
     MSG_ERROR("RTSPStatusCB, pOEM is null.", 0, 0, 0);
@@ -1882,8 +1879,6 @@ static int QtvBitmap_New(IBitmap** ppo)
 
 extern "C" int OEMMediaMPEG42PV_Init(OEMHandle pOEM)
 {
-	MSG_ERROR("OEMMediaMPEG42PV_Init,entrance",0,0,0);
-
   QtvPlayer::ReturnT retVal;
 
 #if (defined FEATURE_QTV_QDSP_RELEASE_RESTORE && defined FEATURE_QTV_QOS_SELECTION)
@@ -1970,7 +1965,7 @@ extern "C" int OEMMediaMPEG42PV_OpenBufferURN(  unsigned char *pVideoBuf, uint32
 #endif /* FEATURE_MP4_FRAME_TRANSFORMATIONS */
 
 #ifdef FEATURE_QTV_IPL_SCALING
-#error code not present
+  pOEM->m_IPLScalingFactor = MM_MPEG4_NO_SCALING;
 #endif /* FEATURE_QTV_IPL_SCALING */
 
 #ifdef FEATURE_MP4_AAC_PLUS
@@ -2101,7 +2096,7 @@ extern "C" int OEMMediaMPEG42PV_OpenURN(char *videoFileName, char *audioFileName
 #endif /* FEATURE_MP4_FRAME_TRANSFORMATIONS */
 
 #ifdef FEATURE_QTV_IPL_SCALING
-#error code not present
+  pOEM->m_IPLScalingFactor = MM_MPEG4_NO_SCALING;
 #endif /* FEATURE_QTV_IPL_SCALING */
 
 #ifdef FEATURE_MP4_AAC_PLUS
@@ -2804,12 +2799,11 @@ extern "C" int OEMMediaMPEG42PV_GetFrame(IBitmap** ppFrame,
 
   videocodectype = OEMMediaMPEG42PV_GetVideoCodecType();
 #ifdef FEATURE_MP4_AAC_PLUS
-  audiocodectype = OEMMediaMPEG42PV_GetAudioCodecType(pOEM);
+  audiocodectype = OEMMediaMPEG42PV_GetAudioCodecType();
 
 /* Color conversion & rotation is done by Qtv IPL if MPEG4-AAC+ DSP image is downloaded 
  * i.e. qtv_cfg_enable_aacplus is TRUE 
  */
- MSG_ERROR("YY Said : audiocodectype = %d ", audiocodectype, 0, 0);
   if ( (qtv_cfg_enable_aacplus) && 
        (audiocodectype == MM_MPEG4_AAC_CODEC) && 
        ( (videocodectype == MM_MPEG4_MPEG4_CODEC) || 
@@ -2821,7 +2815,11 @@ extern "C" int OEMMediaMPEG42PV_GetFrame(IBitmap** ppFrame,
 #endif /* FEATURE_MP4_AAC_PLUS */
   {
 #ifdef FEATURE_QTV_IPL_SCALING
-#error code not present
+  // We want to scale the frame relative to the original frame, not the current one
+  if(pOEM->m_IPLScalingFactor != MM_MPEG4_NO_SCALING && !(pOEM->m_bXscaleVideo ||pOEM->m_bMDPScale))
+  {
+    ScaleFrame( &frameInfo, pOEM );
+  }
 #endif /* FEATURE_QTV_IPL_SCALING */
   }
 
@@ -3038,7 +3036,8 @@ extern "C" int OEMMediaMPEG42PV_Terminate(OEMHandle pOEM)
    * supplied data if SetTimer is called with user data other than NULL
    */
 #ifdef FEATURE_QTV_IPL_SCALING
-#error code not present
+  //Reset the scaling factor
+  pOEM->m_IPLScalingFactor = MM_MPEG4_NO_SCALING;
 #endif /* FEATURE_QTV_IPL_SCALING */
 
 #ifdef FEATURE_MP4_AAC_PLUS
@@ -3990,7 +3989,8 @@ static int OEMMediaMPEG42PV_CheckTransform(OEMRotationType rotate,
       return SUCCESS;
 #endif /* MDP_TRANSFORMATIONS || (MP4_FRAME && IPL) */
 #if defined(FEATURE_MP4_FRAME_TRANSFORMATIONS) && defined(FEATURE_QTV_IPL_SCALING)
-#error code not present
+    case OEM_1P25X_ZOOM: /* 125% */
+    case OEM_2P5X_ZOOM: /* 250% */
 #endif /* FEATURE_MP4_FRAME_TRANSFORMATIONS || FEATURE_QTV_IPL_SCALING */
 #if defined(FEATURE_QTV_MDP_ASCALE) || defined(FEATURE_QTV_XSCALE_VIDEO)
     case OEM_ASCALE:
@@ -4217,7 +4217,82 @@ extern "C" int OEMMediaMPEG42PV_ScaleVideo(AEEMediaMPEG4ScalingType ScaleFactor,
 
 #ifdef FEATURE_MP4_FRAME_TRANSFORMATIONS
 #ifdef FEATURE_QTV_IPL_SCALING /* IPL Scaling using CPU */
-#error code not present
+  unsigned int Width = MP4_MAX_DECODE_WIDTH;
+  unsigned int Height = MP4_MAX_DECODE_HEIGHT;
+
+  QtvPlayer::ClipInfoT *pClipInfo = (QtvPlayer::ClipInfoT*)pOEM->m_pClipInfo;
+  /* free any previous buffer */
+  if(pOEM->m_pIPLScalingBuf)
+  {
+    OEM_Free(pOEM->m_pIPLScalingBuf);
+    pOEM->m_pIPLScalingBuf = NULL;
+  }
+
+  if(pOEM->m_bClipInfoAvail && (pClipInfo->MediaType == QtvPlayer::MEDIA_AUDIO_ONLY))
+  {
+    /* no scaling needed for audio only clips */
+    return EFAILED;
+  }
+
+  if( pOEM->m_bClipInfoAvail && (pClipInfo->Width > 0) && (pClipInfo->Height > 0))
+  {
+    /* Our DSP takes height and width only in multiple of 16 and if video height or width is not
+       multiple of 16, DSP will round it to the next higher value. So we make
+       sure that we are allocating sufficient buffer */
+    
+    if( (pClipInfo->Height % 16) != 0)
+        Height = (( pClipInfo->Height >> 4) + 1) << 4;
+    else
+        Height = pClipInfo->Height;
+
+    if( (pClipInfo->Width % 16) != 0)
+      Width = (( pClipInfo->Width >> 4) + 1) << 4;             
+    else
+    Width = pClipInfo->Width;
+  }
+
+  switch(ScaleFactor)
+  {
+    case MM_MPEG4_2P5X_ZOOM:
+      pOEM->m_pIPLScalingBuf = (unsigned char *)OEM_Malloc( (int) (2.5 * 2.5 * Height * Width * MP4_RGB_BITS_PER_PIXEL / 8) );
+      break;
+
+    case MM_MPEG4_2X_ZOOM:
+      pOEM->m_pIPLScalingBuf = (unsigned char *)OEM_Malloc( (int) (2 * 2 * Height * Width * MP4_RGB_BITS_PER_PIXEL / 8) );
+      break;
+
+    case MM_MPEG4_1P25X_ZOOM:
+      pOEM->m_pIPLScalingBuf = (unsigned char *)OEM_Malloc( (int) (1.25 * 1.25 * Height * Width * MP4_RGB_BITS_PER_PIXEL / 8) );
+      break;
+
+    case MM_MPEG4_0P25X_SHRINK:
+      pOEM->m_pIPLScalingBuf = (unsigned char *)OEM_Malloc( (int) (0.25 * 0.25 * Height * Width * MP4_RGB_BITS_PER_PIXEL / 8) );
+      break;
+
+    case MM_MPEG4_0P75X_SHRINK:
+      pOEM->m_pIPLScalingBuf = (unsigned char *)OEM_Malloc( (int) (0.75 * 0.75 * Height * Width * MP4_RGB_BITS_PER_PIXEL / 8) );
+      break;
+
+    case MM_MPEG4_2X_SHRINK:
+      pOEM->m_pIPLScalingBuf = (unsigned char *)OEM_Malloc( (int) (0.5 * 0.5 * Height * Width * MP4_RGB_BITS_PER_PIXEL / 8) );
+      break;
+
+    case MM_MPEG4_NO_SCALING:
+      /* no buffer is needed if no scaling is requested */
+      break;
+
+    default:
+      /* refuse to apply unsupported scale factor */
+      return EBADPARM;
+  }
+  if( (pOEM->m_pIPLScalingBuf==NULL) && (ScaleFactor!=MM_MPEG4_NO_SCALING) )
+  {
+    QSR_MSG_ERROR( 1367520483ULL, "Scaling buffer allocation failed.",0,0,0);//auto-gen, to change remove 'QSR_' and first param
+    pOEM->m_IPLScalingFactor = MM_MPEG4_NO_SCALING;
+    return EFAILED;
+  }
+  pOEM->m_IPLScalingFactor = ScaleFactor;
+  return SUCCESS;
 #else /* !FEATURE_QTV_IPL_SCALING (Scaling using DSP ) */
   QtvPlayer::ScalingType type = QtvPlayer::SCALE_NONE;
 
@@ -5018,7 +5093,86 @@ int CheckDebugURLFile(char *videoFileName, char *audioFileName)
 #endif // FEATURE_MP4_ENABLE_SET_DEBUG_VARIABLES
 
 #ifdef FEATURE_QTV_IPL_SCALING
-#error code not present
+/* applys IPL software based scaling to the given frame */
+static void ScaleFrame( QtvPlayer::FrameInfoT*  pFrameInfo, OEMHandle pOEM )
+{
+  ipl_image_type ipl_image, out_ipl_image;
+
+  pOEM = OEMMediaMPEG42PV_GetOEMLayer(pOEM);
+  if(pOEM == NULL)
+  {
+    QSR_MSG_ERROR( 1917261652ULL, "ScaleFrame, pOEM is null.", 0, 0, 0);//auto-gen, to change remove 'QSR_' and first param
+    return ;
+  }
+  //Width*Height*(RedBpp+GreenBpp+BlueBpp)/8 (bytes)
+  ipl_image.dx = pFrameInfo->Width;
+  ipl_image.dy = pFrameInfo->Height;
+  ipl_image.cFormat = IPL_RGB565;
+  ipl_image.imgPtr = (unsigned char*) pFrameInfo->RGBBuffer;
+
+
+  switch( pOEM->m_IPLScalingFactor )
+  {
+    case MM_MPEG4_2P5X_ZOOM:
+      out_ipl_image.dx = (uint32)(pFrameInfo->Width * 25)/10;
+      out_ipl_image.dy = (uint32)(pFrameInfo->Height * 25)/10;
+      out_ipl_image.imgPtr = pOEM->m_pIPLScalingBuf;
+      out_ipl_image.cFormat = IPL_RGB565;
+      ipl_upsize( &ipl_image, &out_ipl_image, NULL, IPL_QUALITY_LOW );
+      break;
+
+    case MM_MPEG4_2X_ZOOM:
+      out_ipl_image.dx = (uint32)pFrameInfo->Width * 2;
+      out_ipl_image.dy = (uint32)pFrameInfo->Height * 2;
+      out_ipl_image.imgPtr = pOEM->m_pIPLScalingBuf;
+      out_ipl_image.cFormat = IPL_RGB565;
+      ipl_upsize( &ipl_image, &out_ipl_image, NULL, IPL_QUALITY_LOW );
+      break;
+
+    case MM_MPEG4_1P25X_ZOOM:
+      out_ipl_image.dx = (uint32)(pFrameInfo->Width * 125)/100;
+      out_ipl_image.dy = (uint32)(pFrameInfo->Height * 125)/100;
+      out_ipl_image.imgPtr = pOEM->m_pIPLScalingBuf;
+      out_ipl_image.cFormat = IPL_RGB565;
+      ipl_upsize( &ipl_image, &out_ipl_image, NULL, IPL_QUALITY_LOW );
+      break;
+
+    case MM_MPEG4_0P75X_SHRINK:
+      out_ipl_image.dx = (uint32)(pFrameInfo->Width * 75)/100;
+      out_ipl_image.dy = (uint32)(pFrameInfo->Height * 75)/100;
+      out_ipl_image.imgPtr = pOEM->m_pIPLScalingBuf;
+      out_ipl_image.cFormat = IPL_RGB565;
+      ipl_downsize_fast( &ipl_image, &out_ipl_image, NULL );
+      break;
+
+    case MM_MPEG4_2X_SHRINK:
+      out_ipl_image.dx = (uint32)(pFrameInfo->Width * 5)/10;
+      out_ipl_image.dy = (uint32)(pFrameInfo->Height * 5)/10;
+      out_ipl_image.imgPtr = pOEM->m_pIPLScalingBuf;
+      out_ipl_image.cFormat = IPL_RGB565;
+      ipl_downsize_fast( &ipl_image, &out_ipl_image, NULL );
+      break;
+
+    case MM_MPEG4_0P25X_SHRINK:
+      out_ipl_image.dx = (uint32)(pFrameInfo->Width * 25)/100;
+      out_ipl_image.dy = (uint32)(pFrameInfo->Height * 25)/100;
+      out_ipl_image.imgPtr = pOEM->m_pIPLScalingBuf;
+      out_ipl_image.cFormat = IPL_RGB565;
+      ipl_downsize_fast( &ipl_image, &out_ipl_image, NULL );
+      break;
+
+    default:
+      out_ipl_image.dx = pFrameInfo->Width;
+      out_ipl_image.dy = pFrameInfo->Height;
+      out_ipl_image.imgPtr = (unsigned char*) pFrameInfo->RGBBuffer;
+      break;
+  }
+
+  //Now copy it back to rectImage
+  pFrameInfo->Height = out_ipl_image.dy;
+  pFrameInfo->Width = out_ipl_image.dx;
+  pFrameInfo->RGBBuffer = out_ipl_image.imgPtr;
+}
 #endif /* FEATURE_QTV_IPL_SCALING */
 
 #if (defined (FEATURE_MP4_AAC_PLUS) || defined (PLATFORM_LTK) )
@@ -5150,8 +5304,8 @@ static void RotateColorConvert( QtvPlayer::FrameInfoT*  pFrameInfo, OEMHandle pO
   }
   
   // We want to scale the frame relative to the original frame, not the current one
-//  if (pOEM->m_IPLScalingFactor != MM_MPEG4_NO_SCALING)
-//    ScaleFrame( pFrameInfo, pOEM ); 
+  if (pOEM->m_IPLScalingFactor != MM_MPEG4_NO_SCALING)
+    ScaleFrame( pFrameInfo, pOEM ); 
 #ifdef PLATFORM_LTK
 #error code not present
 #endif /* PLATFORM_LTK */
@@ -5323,16 +5477,16 @@ extern "C" uint8 OEMMediaMPEG42PV_GetDataSize(int32 aType, uint32 *pSize)
 
     switch(aType)
     {
-      case MM_MP4_PARM_ATOM_FTYP_SIZE: //’ftyp’ atom
+      case MM_MP4_PARM_ATOM_FTYP_SIZE: //’ftyp? atom
           size = QtvPlayer::GetDataSize(QtvPlayer::DATA_ATOM_FTYP);
           break;
-      case MM_MP4_PARM_ATOM_DCMD_SIZE: //’dcmd’ atom : DRM
+      case MM_MP4_PARM_ATOM_DCMD_SIZE: //’dcmd? atom : DRM
           size = QtvPlayer::GetDataSize(QtvPlayer::DATA_ATOM_DCMD);
           break;
-      case MM_MP4_PARM_ATOM_UDTA_CPRT_SIZE: //’cprt’ atom
+      case MM_MP4_PARM_ATOM_UDTA_CPRT_SIZE: //’cprt? atom
           size = QtvPlayer::GetDataSize(QtvPlayer::DATA_ATOM_UDTA_CPRT);
           break;
-      case MM_MP4_PARM_ATOM_UDTA_AUTH_SIZE: //’auth’ atom
+      case MM_MP4_PARM_ATOM_UDTA_AUTH_SIZE: //’auth? atom
           size = QtvPlayer::GetDataSize(QtvPlayer::DATA_ATOM_UDTA_AUTH);
           break;
       case MM_MP4_PARM_ATOM_UDTA_TITL_SIZE: //'titl' atom
@@ -5353,25 +5507,25 @@ extern "C" uint8 OEMMediaMPEG42PV_GetDataSize(int32 aType, uint32 *pSize)
       case MM_MP4_PARM_TEXT_TKHD_HEIGHT_SIZE: //Text height
           size = QtvPlayer::GetDataSize(QtvPlayer::DATA_TEXT_TKHD_HEIGHT);
           break;
-      case MM_MP4_PARM_ATOM_UDTA_RTNG_SIZE: //’rtng’ atom
+      case MM_MP4_PARM_ATOM_UDTA_RTNG_SIZE: //’rtng? atom
           size = QtvPlayer::GetDataSize(QtvPlayer::DATA_ATOM_UDTA_RTNG);
           break;
-      case MM_MP4_PARM_ATOM_UDTA_PERF_SIZE: //’perf’ atom
+      case MM_MP4_PARM_ATOM_UDTA_PERF_SIZE: //’perf? atom
           size = QtvPlayer::GetDataSize(QtvPlayer::DATA_ATOM_UDTA_PERF);
           break;
-      case MM_MP4_PARM_ATOM_UDTA_CLSF_SIZE: //’clsf’ atom
+      case MM_MP4_PARM_ATOM_UDTA_CLSF_SIZE: //’clsf? atom
           size = QtvPlayer::GetDataSize(QtvPlayer::DATA_ATOM_UDTA_CLSF);
           break;
-      case MM_MP4_PARM_ATOM_UDTA_KYWD_SIZE: //’kywd’ atom
+      case MM_MP4_PARM_ATOM_UDTA_KYWD_SIZE: //’kywd? atom
           size = QtvPlayer::GetDataSize(QtvPlayer::DATA_ATOM_UDTA_KYWD);
           break;
-      case MM_MP4_PARM_ATOM_UDTA_LOCI_SIZE: //’loci’ atom
+      case MM_MP4_PARM_ATOM_UDTA_LOCI_SIZE: //’loci? atom
           size = QtvPlayer::GetDataSize(QtvPlayer::DATA_ATOM_UDTA_LOCI);
           break;
-      case MM_MP4_PARM_ATOM_UDTA_GNRE_SIZE: //’gnre’ atom
+      case MM_MP4_PARM_ATOM_UDTA_GNRE_SIZE: //’gnre? atom
           size = QtvPlayer::GetDataSize(QtvPlayer::DATA_ATOM_UDTA_GNRE);
           break;
-    case MM_MP4_PARM_ATOM_UDTA_META_SIZE: //’meta’ atom
+    case MM_MP4_PARM_ATOM_UDTA_META_SIZE: //’meta? atom
           size = QtvPlayer::GetDataSize(QtvPlayer::DATA_ATOM_UDTA_META);
           break;
 
@@ -5392,16 +5546,16 @@ extern "C" uint8 OEMMediaMPEG42PV_GetData(int32 aType, uint8 *pBuf, uint32 *pSiz
 
    switch(aType)
    {
-     case MM_MP4_PARM_ATOM_FTYP_DATA: //’ftyp’ atom
+     case MM_MP4_PARM_ATOM_FTYP_DATA: //’ftyp? atom
          size = QtvPlayer::GetData(QtvPlayer::DATA_ATOM_FTYP, pBuf, *pSize, 0);
          break;
-     case MM_MP4_PARM_ATOM_DCMD_DATA: //’dcmd’ atom : DRM
+     case MM_MP4_PARM_ATOM_DCMD_DATA: //’dcmd? atom : DRM
          size = QtvPlayer::GetData(QtvPlayer::DATA_ATOM_DCMD, pBuf, *pSize, 0);
          break;
-     case MM_MP4_PARM_ATOM_UDTA_CPRT_DATA: //’cprt’ atom
+     case MM_MP4_PARM_ATOM_UDTA_CPRT_DATA: //’cprt? atom
          size = QtvPlayer::GetData(QtvPlayer::DATA_ATOM_UDTA_CPRT, pBuf, *pSize, 0);
          break;
-     case MM_MP4_PARM_ATOM_UDTA_AUTH_DATA: //’auth’ atom
+     case MM_MP4_PARM_ATOM_UDTA_AUTH_DATA: //’auth? atom
          size = QtvPlayer::GetData(QtvPlayer::DATA_ATOM_UDTA_AUTH, pBuf, *pSize, 0);
          break;
      case MM_MP4_PARM_ATOM_UDTA_TITL_DATA: //'titl' atom
@@ -5425,25 +5579,25 @@ extern "C" uint8 OEMMediaMPEG42PV_GetData(int32 aType, uint8 *pBuf, uint32 *pSiz
      case MM_MP4_PARM_MEDIA_INFO: //Media information
          size = QtvPlayer::GetData(QtvPlayer::DATA_MEDIA_INFO, pBuf, *pSize, 0);
          break;
-     case MM_MP4_PARM_ATOM_UDTA_RTNG_DATA: //’rtng’ atom
+     case MM_MP4_PARM_ATOM_UDTA_RTNG_DATA: //’rtng? atom
          size = QtvPlayer::GetData(QtvPlayer::DATA_ATOM_UDTA_RTNG, pBuf, *pSize, 0);
          break;
-     case MM_MP4_PARM_ATOM_UDTA_PERF_DATA: //’perf’ atom
+     case MM_MP4_PARM_ATOM_UDTA_PERF_DATA: //’perf? atom
          size = QtvPlayer::GetData(QtvPlayer::DATA_ATOM_UDTA_PERF, pBuf, *pSize, 0);
          break;
-     case MM_MP4_PARM_ATOM_UDTA_GNRE_DATA: //’gnre’ atom
+     case MM_MP4_PARM_ATOM_UDTA_GNRE_DATA: //’gnre? atom
          size = QtvPlayer::GetData(QtvPlayer::DATA_ATOM_UDTA_GNRE, pBuf, *pSize, 0);
          break;
-     case MM_MP4_PARM_ATOM_UDTA_KYWD_DATA: //’kywd’ atom
+     case MM_MP4_PARM_ATOM_UDTA_KYWD_DATA: //’kywd? atom
          size = QtvPlayer::GetData(QtvPlayer::DATA_ATOM_UDTA_KYWD, pBuf, *pSize, 0);
          break;
-     case MM_MP4_PARM_ATOM_UDTA_LOCI_DATA: //’loci’ atom
+     case MM_MP4_PARM_ATOM_UDTA_LOCI_DATA: //’loci? atom
          size = QtvPlayer::GetData(QtvPlayer::DATA_ATOM_UDTA_LOCI, pBuf, *pSize, 0);
          break;
-     case MM_MP4_PARM_ATOM_UDTA_CLSF_DATA: //’clsf’ atom
+     case MM_MP4_PARM_ATOM_UDTA_CLSF_DATA: //’clsf? atom
          size = QtvPlayer::GetData(QtvPlayer::DATA_ATOM_UDTA_CLSF, pBuf, *pSize, 0);
          break;
-    case MM_MP4_PARM_ATOM_UDTA_META_DATA: //’meta’ atom
+    case MM_MP4_PARM_ATOM_UDTA_META_DATA: //’meta? atom
           size = QtvPlayer::GetData(QtvPlayer::DATA_ATOM_UDTA_META, pBuf, *pSize, 0);
           break;
    }

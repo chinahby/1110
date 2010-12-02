@@ -1,4 +1,3 @@
-#ifdef FEATURE_QTV_XSCALE_VIDEO
 #ifndef VPPXSCALAR_H
 #define VPPXSCALAR_H
 /* =======================================================================
@@ -243,4 +242,3 @@ VPP_XSCALE_ERROR vpp_xScalar_adjust_scaled_dim( uint16 reqOutputDim,
 
 
 #endif //VPPXSCALAR_H
-#endif
