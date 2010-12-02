@@ -240,7 +240,7 @@ typedef struct OEMMediaMPEG4Layer
   AEEMediaMPEG4ScalingType  m_IPLScalingFactor;
   unsigned char *           m_pIPLScalingBuf;
 #endif /* FEATURE_QTV_IPL_SCALING */
-#if (defined (FEATURE_MP4_AAC_PLUS) || defined (PLATFORM_LTK) )
+#if (defined (FEATURE_MP4_AAC_PLUS) || defined (PLATFORM_LTK) || defined(FEATURE_QTV_IPL_SCALING))
   /*! This variable is used to pass the rotation factor to the QTV IPL rotation function */
   AEEMediaMPEG4RotationType m_IPLRotationFactor; 
 #endif /* FEATURE_MP4_AAC_PLUS || PLATFORM_LTK */

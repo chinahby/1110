@@ -2709,6 +2709,144 @@ extern "C" int OEMMediaMPEG42PV_Seek(AEEMediaSeek eSeek, int32 TimeOrFrame, OEMH
   return SUCCESS;
 }
 
+#ifdef CUST_EDITION
+/* ======================================================================
+FUNCTION
+  RotateColorConvertNew
+
+DESCRIPTION
+  Sets up the input image, output image & the crop info for the QTV IPL 
+  functions to perform rotation/color conversion
+
+DEPENDENCIES
+  FEATURE_MP4_AAC_PLUS
+   
+RETURN VALUE
+  None 
+
+SIDE EFFECTS
+  None
+
+========================================================================== */
+extern "C" void RotateColorConvertNew( QtvPlayer::FrameInfoT*  pFrameInfo, OEMHandle pOEM )
+{
+  ipl_image_type in_ipl_image, out_ipl_image;
+  ipl_status_type statusCode;
+  ipl_rect_type crop_dim;
+  AEEMediaMP4CodecType videocodectype;
+  unsigned char* pTempYUVConvBuf;
+  videocodectype = OEMMediaMPEG42PV_GetVideoCodecType();
+  pTempYUVConvBuf = (uint8 *) MALLOC( pFrameInfo->Width * pFrameInfo->Height * 3/ 2 );
+  if (!pTempYUVConvBuf)
+  {
+     return;
+  }
+  else
+  {
+  	 memcpy(pTempYUVConvBuf, pFrameInfo->YUVBuffer, (pFrameInfo->Width * pFrameInfo->Height * 3/ 2));
+  }
+  
+  pOEM = OEMMediaMPEG42PV_GetOEMLayer(pOEM);
+  if(pOEM == NULL)
+  {
+    FREE(pTempYUVConvBuf);
+    return ;
+  }
+  /* Initialize the input image dimensions, color format, YUV buffer ptr */
+  in_ipl_image.dx = pFrameInfo->Width;
+  in_ipl_image.dy = pFrameInfo->Height;
+  in_ipl_image.cFormat = IPL_YCbCr420_FRAME_PK; 
+  in_ipl_image.imgPtr = (unsigned char*) pTempYUVConvBuf;
+  
+  /* Initialize the cropping params */
+  crop_dim.x = 0;
+  crop_dim.y = 0;
+
+  switch( pOEM->m_IPLRotationFactor )
+  {
+    case MM_MPEG4_NO_ROTATION:
+      crop_dim.dx = pFrameInfo->Width; 
+      crop_dim.dy = pFrameInfo->Height; 
+
+      /* Initialize the output image dimensions, color format, RGB buffer ptr */
+      out_ipl_image.dx = (uint32)(pFrameInfo->Width);
+      out_ipl_image.dy = (uint32)(pFrameInfo->Height);
+      out_ipl_image.cFormat = IPL_RGB565;
+      out_ipl_image.imgPtr = (unsigned char*)pFrameInfo->RGBBuffer;
+
+      /* Call the Qtv IPL function for color conversion */
+      statusCode = qtv_ipl_convertAndCrop_YCbCr420ToRGB(&in_ipl_image, &out_ipl_image,
+                                                        &crop_dim);
+      break;
+
+    case MM_MPEG4_90_CW_ROTATION:
+      crop_dim.dx = pFrameInfo->Height; /* Swap height & width for 90 & 270 rotation */
+      crop_dim.dy = pFrameInfo->Width;
+
+      /* Initialize the output image dimensions, color format, RGB buffer ptr */
+      out_ipl_image.dx = (uint32)(pFrameInfo->Height); /* Swap height & width for 90 & 270 rotation */
+      out_ipl_image.dy = (uint32)(pFrameInfo->Width);
+      out_ipl_image.cFormat = IPL_RGB565;
+      out_ipl_image.imgPtr = (unsigned char*)pFrameInfo->RGBBuffer;
+
+      /* Call the Qtv IPL function for color conversion & rotation */
+      statusCode = qtv_ipl_convertCropAndRot90_YCbC420ToRGB(&in_ipl_image, &out_ipl_image,
+                                                        &crop_dim);
+      break;
+
+    case MM_MPEG4_90_CCW_ROTATION:
+      crop_dim.dx = pFrameInfo->Height; /* Swap height & width for 90 & 270 rotation */ 
+      crop_dim.dy = pFrameInfo->Width; 
+
+      /* Initialize the output image dimensions, color format, RGB buffer ptr */
+      out_ipl_image.dx = (uint32)(pFrameInfo->Height); /* Swap height & width for 90 & 270 rotation */
+      out_ipl_image.dy = (uint32)(pFrameInfo->Width);
+      out_ipl_image.cFormat = IPL_RGB565;
+      out_ipl_image.imgPtr = (unsigned char*)pFrameInfo->RGBBuffer;
+
+      /* Call the Qtv IPL function for color conversion & rotation */
+      statusCode = qtv_ipl_convertCropAndRot270_YCbC420ToRGB(&in_ipl_image, &out_ipl_image,
+                                                        &crop_dim);
+      break;
+
+    case MM_MPEG4_180_ROTATION:
+      crop_dim.dx = pFrameInfo->Width; 
+      crop_dim.dy = pFrameInfo->Height; 
+
+      /* Initialize the output image dimensions, color format, RGB buffer ptr */
+      out_ipl_image.dx = (uint32)(pFrameInfo->Width);
+      out_ipl_image.dy = (uint32)(pFrameInfo->Height);
+      out_ipl_image.cFormat = IPL_RGB565;
+      out_ipl_image.imgPtr = (unsigned char*)pFrameInfo->RGBBuffer;
+
+      /* Call the Qtv IPL function for color conversion & rotation */
+      statusCode = qtv_ipl_convertCropAndRot180_YCbC420ToRGB(&in_ipl_image, &out_ipl_image,
+                                                        &crop_dim);
+      break;
+
+    default:
+      break;
+  }
+
+  /* If error display previous frame */
+  if (statusCode == IPL_FAILURE)
+  {
+  }
+  else /* Update if no error */
+  {
+    //Now copy it back to rectImage
+    pFrameInfo->Height = out_ipl_image.dy;
+    pFrameInfo->Width = out_ipl_image.dx;
+    pFrameInfo->RGBBuffer = out_ipl_image.imgPtr;
+  }
+  
+  // We want to scale the frame relative to the original frame, not the current one
+  if (pOEM->m_IPLScalingFactor != MM_MPEG4_NO_SCALING)
+    ScaleFrame( pFrameInfo, pOEM ); 
+  FREE(pTempYUVConvBuf);
+}
+#endif
+
 extern "C" int OEMMediaMPEG42PV_GetFrame(IBitmap** ppFrame,
                                          AEEMediaExtFrameInfoHeader** ppExtFrmInfo,
                                          OEMHandle pOEM)
@@ -2814,6 +2952,9 @@ extern "C" int OEMMediaMPEG42PV_GetFrame(IBitmap** ppFrame,
   } else
 #endif /* FEATURE_MP4_AAC_PLUS */
   {
+#ifdef CUST_EDITION
+  RotateColorConvertNew( &frameInfo, pOEM );
+#else
 #ifdef FEATURE_QTV_IPL_SCALING
   // We want to scale the frame relative to the original frame, not the current one
   if(pOEM->m_IPLScalingFactor != MM_MPEG4_NO_SCALING && !(pOEM->m_bXscaleVideo ||pOEM->m_bMDPScale))
@@ -2821,6 +2962,7 @@ extern "C" int OEMMediaMPEG42PV_GetFrame(IBitmap** ppFrame,
     ScaleFrame( &frameInfo, pOEM );
   }
 #endif /* FEATURE_QTV_IPL_SCALING */
+#endif
   }
 
   /* Create a new bitmap for this frame */
@@ -5101,7 +5243,6 @@ static void ScaleFrame( QtvPlayer::FrameInfoT*  pFrameInfo, OEMHandle pOEM )
   pOEM = OEMMediaMPEG42PV_GetOEMLayer(pOEM);
   if(pOEM == NULL)
   {
-    QSR_MSG_ERROR( 1917261652ULL, "ScaleFrame, pOEM is null.", 0, 0, 0);//auto-gen, to change remove 'QSR_' and first param
     return ;
   }
   //Width*Height*(RedBpp+GreenBpp+BlueBpp)/8 (bytes)
