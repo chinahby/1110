@@ -395,8 +395,8 @@ static SheftKeyItem_Own  VLCharArabicKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 
 static SheftKeyItem_Own VLCharThaiKeyItem[MAX_SHEFTKEYPAD_NUMBER] = 
 {
-	{AVK_POUND, 0xE20, {'Q'}},
-	{AVK_1, 0xE04, {'W'}},
+	{AVK_POUND, 0xE16, {'Q'}},
+	{AVK_1, 0xE15, {'W'}},
 	{AVK_2, 0xE0E, {'E'}},
 	{AVK_3, 0xE1E, {'R'}},
 	{AVK_T, 0xE02, {'T'}},
@@ -404,7 +404,7 @@ static SheftKeyItem_Own VLCharThaiKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 	{AVK_U, 0xE27, {'U'}},
 
 	{AVK_I, 0xE23, {'I'}},
-	{AVK_O, 0xE19, {'O'}},
+	{AVK_O, 0xE07, {'O'}},
 	{AVK_P, 0xE22, {'P'}},
 	{AVK_STAR, 0xE1F, {'A'}},
 	{AVK_4, 0xE2B, {'S'}},
@@ -434,8 +434,8 @@ static SheftKeyItem_Own VLCharThaiKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 
 static SheftKeyItem_Own VLCharShiftThaiKeyItem[MAX_SHEFTKEYPAD_NUMBER] = 
 {
-	{AVK_POUND, 0xE16, {'Q'}},
-	{AVK_1, 0xE15, {'W'}},
+	{AVK_POUND, 0xE20, {'Q'}},
+	{AVK_1, 0xE04, {'W'}},
 	{AVK_2, 0xE26, {'E'}},
 	{AVK_3, NULL, {'R'}},
 	{AVK_T, NULL, {'T'}},
@@ -443,7 +443,7 @@ static SheftKeyItem_Own VLCharShiftThaiKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 	{AVK_U, NULL, {'U'}},
 
 	{AVK_I, 0xE13, {'I'}},
-	{AVK_O, 0xE07, {'O'}},
+	{AVK_O, 0xE19, {'O'}},
 	{AVK_P, 0xE0D, {'P'}},
 	{AVK_STAR, 0xE24, {'A'}},
 	{AVK_4, 0xE06, {'S'}},

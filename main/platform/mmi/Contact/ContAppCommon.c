@@ -5858,8 +5858,12 @@ Numbermatch_e_Type ContApp_NumberMatch(const AECHAR * wstrNum1, const AECHAR * w
     
     nLen1 = WSTRLEN(wstrNum1cmpbuff);
     nLen2 = WSTRLEN(wstrNum2cmpbuff);
-
-    
+	//add by miaoxiaoming
+	if (nLen1 == 0||nLen2==0)
+	{
+		return eRet;
+	}
+      
     if (((nLen1 < MATCH_DIGITS_MIN) || (nLen2 < MATCH_DIGITS_MIN)) &&
         (nLen1 != nLen2))
     {// 比较号码长度不等，要求两者长度均不低于设定比较门限长度

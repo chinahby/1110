@@ -87,7 +87,7 @@
                                  类型定义
 ==============================================================================*/
 #define AEE_APPSCAMERAAPP_RES_FILE  AEE_RES_LANGDIR CAMERAAPP_RES_FILE
-
+#if defined(FEATURE_DISP_128X128)
 // camera quality
 #define CAMERA_APP_QUALITY_HIGH  33
 #define CAMERA_APP_QUALITY_MED   67
@@ -135,6 +135,157 @@
 
 #define MIN_FREE_MEMORY_CARD_SPACE   32
 #define MIN_FREE_PHONE_SPACE         1
+
+#elif defined(FEATURE_DISP_160X128)
+// camera quality
+#define CAMERA_APP_QUALITY_HIGH  33
+#define CAMERA_APP_QUALITY_MED   67
+#define CAMERA_APP_QUALITY_LOW   100
+
+// camera zoom
+#define CAMERA_APP_ZOOM_UP       1
+#define CAMERA_APP_ZOOM_DOWN     2
+
+// bar and menu position
+#define TOPBAR_ICON_Y         2
+#define TOPBAR_ICON_WIDTH     17
+#define TOPBAR_TITLE_TEXT_Y   6
+#define CFGBAR_Y              160
+#define CFGBAR_EFFECT_TEXT_Y  180
+#define SCROLLBAR_X           60
+#define SCROLLBAR_Y           160
+#define POPMENU_BOTTOM_X      60
+#define POPMENU_BOTTOM_Y      60
+#define POPMENU_WIDTH         100 //117
+
+//Add By zzg 2010_07_24
+#define CFGBAR_TEXT_X		   2
+#define CFGBAR_TEXT_Y		   18
+#define CFGBAR_TEXT_WIDTH	   80
+#define CFGBAR_TEXT_HEIGHT	   16		//NormalFont Height
+
+#define CFGBAR_ARROW_WIDTH		8
+#define CFGBAR_ARROW_HEIGHT		14
+//Add End
+
+// pop timeout
+#define TIMEOUT_MS_MSGBOX     3000
+#define TIMEOUT_MS_MSGDONE    1000
+#define TIMEOUT_MS_QUICK      300
+
+// file name lenth
+#define MIN_FILE_NAME_LEN      64
+#define MIN_PICS_NAME_LEN      128
+#define MIN_PIC_CHAR_NAME_LEN  13
+#define MIN_PIC_WCHAR_NAME_LEN 26
+#define MIN_PIC_NUMOFSUM_LEN   4  
+#define MIN_TEXT_HOTKEY_LEN    50  
+#define MIN_TEXT_RES_LEN       20
+
+#define MIN_FREE_MEMORY_CARD_SPACE   32
+#define MIN_FREE_PHONE_SPACE         1
+
+#elif defined(FEATURE_DISP_220X176)
+// camera quality
+#define CAMERA_APP_QUALITY_HIGH  33
+#define CAMERA_APP_QUALITY_MED   67
+#define CAMERA_APP_QUALITY_LOW   100
+
+// camera zoom
+#define CAMERA_APP_ZOOM_UP       1
+#define CAMERA_APP_ZOOM_DOWN     2
+
+// bar and menu position
+#define TOPBAR_ICON_Y         2
+#define TOPBAR_ICON_WIDTH     21
+#define TOPBAR_TITLE_TEXT_Y   6
+#define CFGBAR_Y              160
+#define CFGBAR_EFFECT_TEXT_Y  180
+#define SCROLLBAR_X           60
+#define SCROLLBAR_Y           160
+#define POPMENU_BOTTOM_X      60
+#define POPMENU_BOTTOM_Y      60
+#define POPMENU_WIDTH         100 //117
+
+//Add By zzg 2010_07_24
+#define CFGBAR_TEXT_X		   2
+#define CFGBAR_TEXT_Y		   21
+#define CFGBAR_TEXT_WIDTH	   80
+#define CFGBAR_TEXT_HEIGHT	   20		//NormalFont Height
+
+#define CFGBAR_ARROW_WIDTH		8
+#define CFGBAR_ARROW_HEIGHT		14
+//Add End
+
+// pop timeout
+#define TIMEOUT_MS_MSGBOX     3000
+#define TIMEOUT_MS_MSGDONE    1000
+#define TIMEOUT_MS_QUICK      300
+
+// file name lenth
+#define MIN_FILE_NAME_LEN      64
+#define MIN_PICS_NAME_LEN      128
+#define MIN_PIC_CHAR_NAME_LEN  13
+#define MIN_PIC_WCHAR_NAME_LEN 26
+#define MIN_PIC_NUMOFSUM_LEN   4  
+#define MIN_TEXT_HOTKEY_LEN    50  
+#define MIN_TEXT_RES_LEN       20
+
+#define MIN_FREE_MEMORY_CARD_SPACE   32
+#define MIN_FREE_PHONE_SPACE         1
+
+#elif defined(FEATURE_DISP_320X240)
+// camera quality
+#define CAMERA_APP_QUALITY_HIGH  33
+#define CAMERA_APP_QUALITY_MED   67
+#define CAMERA_APP_QUALITY_LOW   100
+
+// camera zoom
+#define CAMERA_APP_ZOOM_UP       1
+#define CAMERA_APP_ZOOM_DOWN     2
+
+// bar and menu position
+#define TOPBAR_ICON_Y         2
+#define TOPBAR_ICON_WIDTH     17
+#define TOPBAR_TITLE_TEXT_Y   6
+#define CFGBAR_Y              160
+#define CFGBAR_EFFECT_TEXT_Y  180
+#define SCROLLBAR_X           60
+#define SCROLLBAR_Y           160
+#define POPMENU_BOTTOM_X      60
+#define POPMENU_BOTTOM_Y      60
+#define POPMENU_WIDTH         100 //117
+
+//Add By zzg 2010_07_24
+#define CFGBAR_TEXT_X		   2
+#define CFGBAR_TEXT_Y		   18
+#define CFGBAR_TEXT_WIDTH	   80
+#define CFGBAR_TEXT_HEIGHT	   16		//NormalFont Height
+
+#define CFGBAR_ARROW_WIDTH		8
+#define CFGBAR_ARROW_HEIGHT		14
+//Add End
+
+// pop timeout
+#define TIMEOUT_MS_MSGBOX     3000
+#define TIMEOUT_MS_MSGDONE    1000
+#define TIMEOUT_MS_QUICK      300
+
+// file name lenth
+#define MIN_FILE_NAME_LEN      64
+#define MIN_PICS_NAME_LEN      128
+#define MIN_PIC_CHAR_NAME_LEN  13
+#define MIN_PIC_WCHAR_NAME_LEN 26
+#define MIN_PIC_NUMOFSUM_LEN   4  
+#define MIN_TEXT_HOTKEY_LEN    50  
+#define MIN_TEXT_RES_LEN       20
+
+#define MIN_FREE_MEMORY_CARD_SPACE   32
+#define MIN_FREE_PHONE_SPACE         1
+
+#endif
+
+
 
 // file path
 #define FS_EFS_DIRECTORY_STR       "fs:/hsmm/"

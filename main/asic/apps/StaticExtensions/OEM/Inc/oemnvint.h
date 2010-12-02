@@ -369,8 +369,10 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_SMS_VIBONLY  2
 #define   OEMNV_SMS_RINGVIB  3
 #define   OEMNV_SMS_VIBANDRINGER  4
-#ifdef FEATURE_VERSION_KARBONN
+#if defined(FEATURE_VERSION_KARBONN)
 #define   OEMNV_DEFAULTRINGER     12
+#elif defined(FEATURE_VERSION_HITZ181)
+#define   OEMNV_DEFAULTRINGER        1
 #else
 #define   OEMNV_DEFAULTRINGER        4
 #endif
