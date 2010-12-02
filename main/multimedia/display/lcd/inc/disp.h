@@ -270,8 +270,13 @@ enum
   IOCTL_DISP_ENABLE_CAPTURE_MODE,
   IOCTL_DISP_CAPTURE_SCREEN,
 #endif
+#ifdef FEATURE_MP4_DECODER
+  IOCTL_DISP_LOCK_SCR,
+  IOCTL_DISP_UPDATE_LOCK,
+#endif
   IOCTL_DISP_OFF,
   IOCTL_DISP_ON
+  
 };
 
 typedef struct
@@ -297,7 +302,15 @@ typedef struct
   LCD_TYPE dest;
 } disp_cls_type;
 
-
+#ifdef FEATURE_MP4_DECODER
+typedef struct
+{
+  word start_row;
+  word num_row;
+  word start_column;
+  word num_column;
+} disp_lock_type;
+#endif
 extern rex_crit_sect_type disp_crit_sect;
 
 //============================================================================

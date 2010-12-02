@@ -1,6 +1,6 @@
 #ifndef __DISP_DRV_H__
 #define __DISP_DRV_H__
-
+#include "customer.h"
 #include "target.h"
 #include "disp.h"         /* Bit map LCD display driver interface */
 #include "drvLib.h"
@@ -45,9 +45,12 @@
 typedef struct{
     void   (*disp_ic_init)(void);
     void   (*disp_ic_setwindow)(uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col);
-    void   (*disp_ic_bitblt)(void *src_ptr, dword copy_count);
+    void   (*disp_ic_bitblt)(const void *src_ptr, dword copy_count);
     void   (*disp_ic_set)(uint32 src, dword copy_count);
     void   (*disp_ic_sleep)(boolean bin);
+#ifdef FEATURE_MP4_DECODER
+    void   (*disp_ic_yuv420)(const byte *src_ptr, word src_w, word src_h, word dst_w, word dst_h);
+#endif
 }disp_drv_ic_type;
 
 typedef boolean (*disp_ic_install_type)(disp_drv_ic_type *pdispic);
@@ -57,13 +60,26 @@ typedef struct
     boolean     disp_initialized;
     boolean     display_on;
     boolean     disp_powered_up;
+    word        lock_row_start;
+    word        lock_row_num;
+    word        lock_col_start;
+    word        lock_col_num;
 } disp_drv_state_type;
 
+#ifdef FEATURE_MP4_DECODER
 #define DISP_IC_INIT_TBL(p) \
     p->disp_ic_init       = disp_ic_init; \
     p->disp_ic_setwindow  = disp_ic_setwindow; \
     p->disp_ic_bitblt     = disp_ic_bitblt; \
     p->disp_ic_set        = disp_ic_set; \
     p->disp_ic_sleep      = disp_ic_sleep; \
-    
+    p->disp_ic_yuv420     = disp_ic_yuv420
+#else
+#define DISP_IC_INIT_TBL(p) \
+    p->disp_ic_init       = disp_ic_init; \
+    p->disp_ic_setwindow  = disp_ic_setwindow; \
+    p->disp_ic_bitblt     = disp_ic_bitblt; \
+    p->disp_ic_set        = disp_ic_set; \
+    p->disp_ic_sleep      = disp_ic_sleep
+#endif
 #endif

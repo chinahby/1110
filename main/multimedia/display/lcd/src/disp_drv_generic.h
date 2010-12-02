@@ -506,7 +506,10 @@ static void disp_drv_update
         (!(((uint32)buf_ptr) & 0x3)))
     {
         rex_enter_crit_sect(&disp_drv_crit_sect);    
-        
+#ifdef FEATURE_MP4_DECODER
+        if(disp_drv_state.lock_row_num == 0)
+        {
+#endif
         disp_drv_ic.disp_ic_setwindow(dst_starting_row, dst_starting_column, 
                                       dst_starting_row + num_of_rows - 1,
                                       dst_starting_column + num_of_columns -1);
@@ -536,12 +539,177 @@ static void disp_drv_update
                 src_ptr += src_width;
             }
         }
-        
+#ifdef FEATURE_MP4_DECODER
+        }
+        else
+        {
+            uint32 dst_starting_row_new;
+            uint32 num_of_rows_new;
+            if(dst_starting_row < disp_drv_state.lock_row_start)
+            {
+                dst_starting_row_new = dst_starting_row;
+                num_of_rows_new = disp_drv_state.lock_row_start - dst_starting_row;
+                if ((dst_starting_row_new + num_of_rows_new) > disp_drv_info.disp_height)
+                {
+                    num_of_rows_new = disp_drv_info.disp_height - dst_starting_row_new;
+                }
+                disp_drv_ic.disp_ic_setwindow(dst_starting_row_new, dst_starting_column, 
+                              dst_starting_row_new + num_of_rows_new - 1,
+                              dst_starting_column + num_of_columns -1);
+                                      
+                src_ptr = (uint16*)buf_ptr;
+                src_ptr += src_starting_row * src_width + src_starting_column;
+
+                if((src_starting_column == 0) && (num_of_columns == src_width)) 
+                {
+                    uint32 copy_count;
+                    
+                    /* The whole row is updated, copy the whole update area */
+                    copy_count = num_of_rows_new * num_of_columns;
+                    
+                    disp_drv_ic.disp_ic_bitblt(src_ptr, copy_count);
+                } 
+                else 
+                {
+                    /* Partial row is updated, need to copy one row at a time */
+                    int16 row;
+                    uint32 copy_count;
+                    
+                    copy_count = num_of_columns;
+                    for (row = 0; row < num_of_rows_new; row++)
+                    {
+                        disp_drv_ic.disp_ic_bitblt(src_ptr, copy_count);
+                        src_ptr += src_width;
+                    }
+                }
+            }
+            
+            if(dst_starting_row + num_of_rows > (disp_drv_state.lock_row_start+disp_drv_state.lock_row_num))
+            {
+                dst_starting_row_new = (disp_drv_state.lock_row_start+disp_drv_state.lock_row_num);
+                num_of_rows_new = dst_starting_row + num_of_rows - dst_starting_row_new;
+                
+                if ((dst_starting_row_new + num_of_rows_new) > disp_drv_info.disp_height)
+                {
+                    num_of_rows_new = disp_drv_info.disp_height - dst_starting_row_new;
+                }
+                disp_drv_ic.disp_ic_setwindow(dst_starting_row_new, dst_starting_column, 
+                              dst_starting_row_new + num_of_rows_new - 1,
+                              dst_starting_column + num_of_columns -1);
+                              
+                src_ptr = (uint16*)buf_ptr;
+                src_ptr += dst_starting_row_new * src_width + src_starting_column;
+
+                if((src_starting_column == 0) && (num_of_columns == src_width)) 
+                {
+                    uint32 copy_count;
+                    
+                    /* The whole row is updated, copy the whole update area */
+                    copy_count = num_of_rows_new * num_of_columns;
+                    
+                    disp_drv_ic.disp_ic_bitblt(src_ptr, copy_count);
+                } 
+                else 
+                {
+                    /* Partial row is updated, need to copy one row at a time */
+                    int16 row;
+                    uint32 copy_count;
+                    
+                    copy_count = num_of_columns;
+                    for (row = 0; row < num_of_rows_new; row++)
+                    {
+                        disp_drv_ic.disp_ic_bitblt(src_ptr, copy_count);
+                        src_ptr += src_width;
+                    }
+                }
+            }
+        }
+#endif
         rex_leave_crit_sect(&disp_drv_crit_sect);
     }  
 } /* disp_drv_update() */
 
+#ifdef FEATURE_MP4_DECODER
+static void disp_drv_lock_screen(word start_row, word start_col, word num_row, word num_col)
+{
+    if (disp_drv_state.disp_initialized)
+    {
+        rex_enter_crit_sect(&disp_drv_crit_sect);
+        if ((start_row + num_row) > disp_drv_info.disp_height)
+        {
+            num_row = disp_drv_info.disp_height - start_row;
+        }
+        
+        if ((start_col + num_col) > disp_drv_info.disp_width)
+        {
+            num_col = disp_drv_info.disp_width - start_col;
+        }
+        
+        disp_drv_state.lock_row_start   = start_row;
+        disp_drv_state.lock_row_num     = num_row;
+        disp_drv_state.lock_col_start   = start_col;
+        disp_drv_state.lock_col_num     = num_col;
+        rex_leave_crit_sect(&disp_drv_crit_sect);
+    }
+} /* disp_drv_lock_screen() */
 
+/*===========================================================================
+
+FUNCTION      disp_drv_update_lock
+
+DESCRIPTION
+  Update LCD display with image from a buffer. The position of the image
+  sent to the display is also supplied in parameters.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  LCD is updated
+
+===========================================================================*/
+static void disp_drv_update_lock
+(
+    const void *buf_ptr,        /* Buffer pointer */
+    uint32 src_width,           /* Source image width */
+    uint32 num_of_rows,         /* Number of rows to update */
+    uint32 num_of_columns,      /* Number of columns to update */
+    uint32 dst_starting_row,    /* Device rectangle starting row */
+    uint32 dst_starting_column  /* Device rectangle starting column */
+)
+{
+    if (!buf_ptr                         || 
+        !disp_drv_state.disp_initialized ||
+        !disp_drv_state.disp_powered_up  ||
+        !disp_drv_state.display_on)
+    {
+        return;
+    }
+
+    if(disp_drv_state.lock_row_num == 0 || disp_drv_state.lock_col_num == 0)
+    {
+        return;
+    }
+    
+    /* Ensure buffer aligned and parameters valid */
+    if( (dst_starting_row    < disp_drv_info.disp_height) &&
+        (dst_starting_column < disp_drv_info.disp_width))
+    {
+        rex_enter_crit_sect(&disp_drv_crit_sect);    
+        
+        disp_drv_ic.disp_ic_setwindow(dst_starting_row, dst_starting_column, 
+                                      dst_starting_row + disp_drv_state.lock_row_num - 1,
+                                      dst_starting_column + disp_drv_state.lock_col_num -1);
+                                      
+        disp_drv_ic.disp_ic_yuv420(buf_ptr, num_of_columns, num_of_rows, disp_drv_state.lock_col_num, disp_drv_state.lock_row_num);
+        rex_leave_crit_sect(&disp_drv_crit_sect);
+    }  
+} /* disp_drv_update_lock() */
+
+#endif
 /*===========================================================================
 
 FUNCTION      disp_drv_set_contrast
@@ -587,6 +755,35 @@ static int disp_drv_ioctl ( int cmd, void *arg )
     disp_update_type *disp_update_cmd;
 
     switch (cmd) {
+#ifdef FEATURE_MP4_DECODER
+    case IOCTL_DISP_UPDATE_LOCK:
+        disp_update_cmd = (disp_update_type*)arg;
+        /* bitwise OR all int16 together. If the result is
+         * less than 0, then at least one of them is negative */
+        if((disp_update_cmd->src_width |
+            disp_update_cmd->src_starting_row |
+            disp_update_cmd->src_starting_column |
+            disp_update_cmd->num_of_rows |
+            disp_update_cmd->num_of_columns |
+            disp_update_cmd->dst_starting_row |
+            disp_update_cmd->dst_starting_column ) >= 0)
+        {
+            disp_drv_update_lock   (disp_update_cmd->buf_ptr,
+                            (uint32)disp_update_cmd->src_width,
+                            (uint32)disp_update_cmd->num_of_rows,
+                            (uint32)disp_update_cmd->num_of_columns,
+                            (uint32)disp_update_cmd->dst_starting_row,
+                            (uint32)disp_update_cmd->dst_starting_column);
+        }
+        break;
+        
+    case IOCTL_DISP_LOCK_SCR:
+        disp_drv_lock_screen(((disp_lock_type *)arg)->start_row,
+                             ((disp_lock_type *)arg)->start_column,
+                             ((disp_lock_type *)arg)->num_row,                                          
+                             ((disp_lock_type *)arg)->num_column);
+        break;
+#endif
     case IOCTL_DISP_UPDATE:
     case IOCTL_DISP_UPDATE_UNDER_ERR_FATAL:
         disp_update_cmd = (disp_update_type*)arg;

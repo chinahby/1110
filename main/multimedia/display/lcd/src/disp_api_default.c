@@ -90,7 +90,10 @@ static disp_update_type dup_arg_capture;
 #endif
 
 static disp_cls_type cls_arg;
-
+#ifdef FEATURE_MP4_DECODER
+static disp_update_type dupyuv_arg;
+static disp_lock_type lock_arg;
+#endif
 extern boolean mdp_disp_fatal_err_flag;
 #ifndef CUST_EDITION
 extern int epson_S1D19120_install(char *);
@@ -509,3 +512,51 @@ static void mdp_init(void)
 #endif /* FEATURE_SECONDARY_DISPLAY */
 }
 #endif /* FEATURE_MDP */
+
+#ifdef FEATURE_MP4_DECODER
+void disp_update_yuv420
+(
+  /* The buffer pointer point to the first byte of the whole buffer.
+  */
+  void *buf_ptr,
+  /* Source image width */
+  int16 src_width,
+  /* Number of rows to update */
+  int16 num_of_rows,
+  /* Number of columns to update */
+  int16 num_of_columns,
+  /* Device rectangle starting row */
+  int16 dst_starting_row,
+  /* Device rectangle starting column */
+  int16 dst_starting_column
+)
+{
+  dupyuv_arg.buf_ptr = buf_ptr;
+  dupyuv_arg.src_width = src_width;
+  dupyuv_arg.num_of_rows = num_of_rows;
+  dupyuv_arg.num_of_columns = num_of_columns;
+  dupyuv_arg.dst_starting_row = dst_starting_row;
+  dupyuv_arg.dst_starting_column = dst_starting_column;
+  dupyuv_arg.dest = PRIMARY_LCD_TYPE;
+  
+  drv_ioctl(fd, IOCTL_DISP_UPDATE_LOCK, (void *)&dupyuv_arg);
+}
+
+void disp_lock_screen
+(
+  word start_row,
+  word num_row,
+  word start_column,
+  word num_column
+)
+{
+  lock_arg.start_row = start_row;
+  lock_arg.num_row = num_row;
+  lock_arg.start_column = start_column;
+  lock_arg.num_column = num_column;
+  
+  drv_ioctl(fd, IOCTL_DISP_LOCK_SCR, (void *)&lock_arg);
+}
+
+#endif
+
