@@ -2087,6 +2087,18 @@ void hs_task
       (void) rex_set_timer( &hs_rpt_timer, DOG_HS_RPT_TIME );
     }
 
+	//add by miaoxiaoming
+#ifdef CUST_EDITION
+#ifdef FEATURE_ANALOG_TV
+		if ((sigs & HS_ATV_SET_CHN_SIG)!= 0) 
+		{
+			extern void hs_start_set_chn(void);
+			hs_start_set_chn();
+		}	 
+#endif
+#endif
+
+
     /* Handle the stop signal, process task stop procedures and continue
     */
     if ( sigs & TASK_STOP_SIG ) {
