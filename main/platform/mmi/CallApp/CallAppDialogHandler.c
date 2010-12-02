@@ -6967,6 +6967,8 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
 #ifdef FEATURE_IS2000_SCC_CODES
                 pMe->m_bAnswerHold = bAnswerHold;
 #endif /* FEATURE_IS2000_SCC_CODES */
+				pMe->m_bConnted = TRUE;
+
                 ICM_AnswerCall(pMe->m_pICM, pMe->m_CallsTable->call_id);
                 CLOSE_DIALOG(DLGRET_CONNECT)
                 break;
@@ -7047,6 +7049,7 @@ static void CallApp_AnswerInbandCall(CCallApp *pMe)
         pMe->m_PauseString[0] = 0;
 #ifdef FEATURE_ICM
         // Send empty flash message to answer the call
+        pMe->m_bConnted = TRUE;
         ICM_AnswerCall(pMe->m_pICM, pMe->m_CallsTable->call_id);
 #else
 		ICALLMGR_GetCall(pMe->m_pICallMgr,pMe->m_CallsTable->call_id,&pCall);
