@@ -123,8 +123,8 @@
 #endif
 #define MG_MAX_FILE_INPUTLEN        16
 #define MG_MAX_FILESIZE             (uint32)(-1)/* file size in byte*/
-#define MG_MAX_FILESPERDIR	         256/* file num in a directory*/
-#define MG_MAX_TEXT_SIZE            256
+#define MG_MAX_FILESPERDIR	         512/* file num in a directory*/
+#define MG_MAX_TEXT_SIZE            512
 #define MG_MAX_LINETEXTNUM          32
 
 /*when create music play list, the max file conunt select */
