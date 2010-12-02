@@ -295,7 +295,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAYERPICTURE_PAUSE, 0, 0);                
             } 
             VideoPlayer_RefreshPlayingTick(pMe);
-            VideoPlayer_RefreshVolBar(pMe); 
+            VideoPlayer_RefreshVolBar(pMe);
             if(pMe->m_FileToPlay != NULL) // 如果不加此判断条件，则在pMe->m_FileToPlay为NULL时，屏幕上会显示乱码
             {
                 VideoPlayer_RefreshPlayerFileName(pMe); //刷新文件名
@@ -1285,12 +1285,17 @@ void  VideoPlayer_InitVideo(CVideoPlayer  *pMe)
 
     if(pMe->m_InitFailed == SUCCESS)
     {     
+        AEERect rc;
         (void)IMEDIA_RegisterNotify((IMedia*)pMe->m_pMedia, VideoPlayer_VideoNotify, pMe);//注册底层回调 
         pMe->bCurrentTime = 0;
         pMe->bTotalTime = 0;
 		uiClsId = IMEDIA_GetTotalTime((IMedia*)pMe->m_pMedia); 
 		DBGPRINTF("(void)IMEDIA_GetTotalTime(pMe->m_pMedia); %d",uiClsId);
         (void)IMEDIA_SetVolume((IMedia*)pMe->m_pMedia, pMe->totalvolume); //设置当前音量大小
+		MEMSET(&rc,NULL,sizeof(rc));
+		rc.dx = SCR_W;
+		rc.dy = SCR_H;
+        IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia,MM_PARM_RECT,(int32)&rc,NULL);
     }    
 }
 /*=================================================================================================================
