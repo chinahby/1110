@@ -2792,6 +2792,7 @@ static boolean IDD_SETTING_Handler(void   *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+        	
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
@@ -7704,6 +7705,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
+            MSG_FATAL("IDD_SENDOPTS_Handler......................",0,0,0);
             MEMSET(wControls, 0, sizeof(wControls));
             nSelIdx = 0;
             nControls = 0;
@@ -7881,7 +7883,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 				#endif
 				}
                 
-                y = GetTitleBarHeight(pMe->m_pDisplay) + 3;
+                y = y+ 3;
 				
 #if defined(FEATURE_DISP_160X128)
                 dy = nLineHeight; // + 2; 
@@ -7905,7 +7907,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 for (i=0; i<nControls; i++, y+=dy+ygap)
                 {
                     AEERect rect;
-
+                    MSG_FATAL("y::::::::::::%d",y,0,0);
                     SETAEERECT(&rect, 2, y, SENDOPT_TITLELENGTH, dy);
                     pControl = IDIALOG_GetControl(pMe->m_pActiveIDlg, wControls[i]);
                     

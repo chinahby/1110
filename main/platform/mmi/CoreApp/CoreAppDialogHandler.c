@@ -6158,12 +6158,12 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
        int i;
        int len = sizeof(List_SP)/sizeof(ServiceProviderList);
        EmergencyNum_Table m_entable = {0};
-       char m_vmnuber[10] = {0}
+       char m_vmnuber[10] = {0};
        
        if((curr_mnc == 0) && (curr_mcc == 520))  //add by yangdecai 2010-1124
        {
        	   //Hutch
-       	   strcpy(m_vmnuber,"91122");
+       	   STRCPY(m_vmnuber,"91122");
        	   m_entable.emert_size = OEMNV_EMERT_SEZE;
        	   m_entable.emerg_num[0].num_len = OEMNV_EMERG_NUM_LEN;
        	   STRCPY(m_entable.emerg_num[0].num_buf,OEMNV_EMERG_NUM_ONE);
@@ -6177,7 +6177,7 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
        else if((curr_mnc == 2) && (curr_mcc == 520))
        {
        	   //CAT
-       	   strcpy(m_vmnuber,"91100");
+       	   STRCPY(m_vmnuber,"91100");
        	   m_entable.emert_size = OEMNV_EMERT_SEZE;
        	   m_entable.emerg_num[0].num_len = OEMNV_EMERG_NUM_LEN;
        	   STRCPY(m_entable.emerg_num[0].num_buf,OEMNV_EMERG_NUM_TWO);
