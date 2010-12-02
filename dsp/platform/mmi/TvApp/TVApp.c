@@ -528,12 +528,14 @@ static int TVApp_InitAppData(CTVApp *pMe)
     pMe->m_ePreState = STATE_NULL;
     pMe->m_nMainMenuItemSel = IDS_ITEM_TV;
     pMe->m_nSelfTimeItemSel = IDS_SELFTIME_OFF;
-    pMe->m_nTVCFG = TVCFGFIRST;
+    pMe->m_nTVCFG = TVSETChannel;
     pMe->m_sCurrentFileName[0] = '\0';
     pMe->m_sCaptureFileName[0] = '\0';
     pMe->m_bCanCapture = TRUE;
     pMe->m_dwMemTotal = 0;
     pMe->m_dwMemFree = 0;
+    pMe->m_barW=0;
+    pMe->m_barMAXW=1;
     
 
     //Video¼ÆÊ±Æ÷
@@ -579,6 +581,15 @@ MSG_FATAL("TVApp_InitAppData-----------------START",0,0,0);
 		MSG_FATAL("AEECLSID_FILEMGR-----------------%d",EFAILED,0,0);
         return EFAILED;
     }
+    
+    if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
+                                              AEECLSID_GRAPHICS, 
+                                              (void **)&pMe->pGraphics))
+      {
+          TVApp_FreeAppData(pMe);
+          MSG_FATAL("AEECLSID_GRAPHICS-----------------%d",EFAILED,0,0);
+          return EFAILED;
+      }
 
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
                                             AEECLSID_ANNUNCIATOR, 
@@ -601,7 +612,33 @@ MSG_FATAL("TVApp_InitAppData-----------------START",0,0,0);
                          &pMe->m_nBacklightVal,
                           sizeof(pMe->m_nBacklightVal));
 
- 
+#if 0
+      {
+      int num = 6;
+      	int i = 0;
+      	int nSize = 0;	 
+          MSG_FATAL("CTvUtil_BookmarkOperator_RemoveAll Start",0,0,0); 
+              (void)ICONFIG_GetItem(pMe->m_pConfig,
+                               CFGI_TV_SETCHANNL,
+                               (void*)pMe->pTvSetting,
+                               sizeof(CFG_TvSetting));
+      	for(; i < num; i++)
+      	{
+      		nSize = WSTRLEN(pMe->pTvSetting->Bookmark[i].name); 
+      		MEMSET (pMe->pTvSetting->Bookmark[i].name, '\0', sizeof(AECHAR) * nSize); 
+      
+      		nSize = WSTRLEN(pMe->pTvSetting->Bookmark[i].channel); 
+      		MEMSET (pMe->pTvSetting->Bookmark[i].channel, '\0', sizeof(AECHAR) * nSize); 
+      	}
+      	pMe->pTvSetting->Bookmarktotal = 0;
+      	pMe->pTvSetting->ChannelCountAble = 0;
+           (void)ICONFIG_SetItem(pMe->m_pConfig,
+                            CFGI_TV_SETCHANNL,
+                            (void*)pMe->pTvSetting,
+                            sizeof(CFG_TvSetting));
+                 
+        }
+#endif 
 	MSG_FATAL("TVApp_InitAppData-----------------end--%d",SUCCESS,0,0);
     return SUCCESS;
 
@@ -645,7 +682,13 @@ static void TVApp_FreeAppData(CTVApp *pMe)
         pMe->m_pDisplay = NULL;
     }
 
-    if(pMe->m_pTV)
+    if(pMe->pGraphics)
+      {
+         // IDISPLAY_Release(pMe->pGraphics);
+          pMe->pGraphics = NULL;
+      }
+
+    if(pMe->m_pTV) 
     {
         ICAMERA_Release(pMe->m_pTV);
         pMe->m_pTV = NULL;
@@ -756,7 +799,7 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
     AEEAppStart *as;    
     int  nAscent,nDescent;
 
-    MSG_FATAL("TVApp_HandleEvent-----------------------%d",eCode,0,0);
+    MSG_FATAL("TVApp_HandleEvent-----------------------0x%x",eCode,0,0);
     switch(eCode)
     {
         case EVT_APP_START:
@@ -940,7 +983,7 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
             {
                 return TRUE;
             }
-
+			MSG_FATAL("case EVT_COMMAND:  ----------------------",0,0,0);
             return TVApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
       
         case EVT_DIALOG_END:

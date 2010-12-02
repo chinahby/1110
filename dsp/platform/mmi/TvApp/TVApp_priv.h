@@ -89,6 +89,9 @@
 #include "IMMITv.h"
 //#include "TvSettingCfg.h"
 #include "CustomOEMConfigItems.h"
+#include "MMITvParm.h"
+
+
 
 /*==============================================================================
                                  类型定义
@@ -125,6 +128,8 @@
 #define CFGBAR_ARROW_WIDTH		8
 #define CFGBAR_ARROW_HEIGHT		14
 //Add End
+
+#define TVBAR_ICON_WIDTH		35
 
 // pop timeout
 #define TIMEOUT_MS_MSGBOX     3000
@@ -178,6 +183,19 @@
 #define VERTICAL_TV_WIDTH        240
 #define VERTICAL_TV_HEIGHT       192  
 
+//TV 进度条
+#define TV_SETTING_BAR_X 20
+#define TV_SETTING_BAR_Y 50
+#define TV_SETTING_BAR_H 7
+//#define TV_SETTING_BAR_W 0
+
+//TVSETTING
+#define TV_SETTING_BRIGHTNESS_MAXVALUE 15
+#define TV_SETTING_CONTRAST_MAXVALUE 15
+#define TV_SETTING_DEFINITION_MAXVALUE 63
+#define TV_SETTING_SATURATION_MAXVALUE 255
+#define TV_SETTING_SOUND_MAXVALUE 5
+
 typedef struct 
 {
 	boolean				b_IsIconHiden;
@@ -195,17 +213,6 @@ typedef struct
     TLG_REGION_CODE region;//当前设置的区域
 }MMITV_SETTINGS;
 
-#if 0
-// 画界面底部提示条宏定义
-//#define DRAW_BOTTOMBAR(x)                           \
-//{                                                   \
- //   BottomBar_Param_type BarParam;                  \
-//MEMSET(&BarParam, 0, sizeof(BarParam));         \
-//
-//    BarParam.eBBarType = x;                         \
-//    DrawBottomBar(pMe->m_pDisplay, &BarParam);      \
-//}
-#endif
 
 typedef enum
 {
@@ -307,12 +314,25 @@ typedef enum
     STATE_EXIT
 } FSMState;
 
+
 // 状态处理函数返回给状态处理主函数的值类型
 typedef enum NextFSMAction
 {
     NFSMACTION_WAIT,
     NFSMACTION_CONTINUE
 } NextFSMAction;
+
+// TV BAR设置参数列表
+typedef enum 
+{
+	TVSETChannel,
+    TVSETBrightness,
+    TVSETContrast, 
+    TVSETDefinition,
+    TVSETSaturation,
+    TVSETSound
+} TvBARSET;
+
 
 // 保存模块信息和模块引用计数的结构
 typedef struct _TVAppMod
@@ -377,6 +397,9 @@ typedef struct _CTVApp
     int                  m_cxWidth; 
     int                  m_cyHeight;  
     int                  m_nItemH;               // 文本默认字体高度
+
+    int                  m_barW;                 // TV进度条的长度
+    int                  m_barMAXW;              
         
     char                 m_sCurrentFileName[MIN_FILE_NAME_LEN];
     char                 m_sCaptureFileName[MIN_PICS_NAME_LEN];
@@ -385,7 +408,7 @@ typedef struct _CTVApp
 	ITlgAtv				*pITv;
 	IMMITv				*pIMMITv;
 	ICBMMITv			myICBMMITv;
-    TVCFG                m_nTVCFG;           // camera设置
+    TvBARSET             m_nTVCFG;           // tv设置
     TVSTATE              m_nTVState;         // TV的运行状态
     //CAMERASTATE          m_nCameraState;         // camera的运行状态
     
@@ -397,23 +420,24 @@ typedef struct _CTVApp
     OEMCAMERASTORAGE     m_nTVStorage;       // camera拍照存储位置
 
 	IImage               *m_pImage;
-	ICamera            *m_pCamera;
-    ICamera            *m_pTV;
+	ICamera              *m_pCamera;
+    ICamera              *m_pTV;
     IFileMgr             *m_pFM; 
     IConfig              *m_pConfig;              // IConfig interface
     IMedia               *m_pMedia;
     IFileMgr             *m_pFileMgr;
     IAnnunciator         *m_pIAnn;
-    boolean              m_isFormQuicktest;
+    boolean               m_isFormQuicktest;
     IBacklight           *m_pBacklight;
-    byte                 m_nBacklightVal;
+    byte                  m_nBacklightVal;
     int32                 m_sensor_model; //判断摄像头为多少像素的 add by xuhui
+     
+	AEEApplet        	  a;
+    IShell 				  *pIShell;
 
-	AEEApplet        	a;
-    IShell 				*pIShell;
-
-	CFG_TvSetting	*pTvSetting;
-	
+    CFG_TvSetting	     *pTvSetting;
+	IGraphics            *pGraphics;
+        
 	uint16   currentlyChannel; //当前正在播放的频道
     uint16   currentlyChannelIndex;//当前正在播放的频道在书签中的逻辑索引
 } CTVApp;

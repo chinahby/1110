@@ -10,6 +10,7 @@
 //        pengli        2006-04-21       Generate source file frame                                
 //-------------------------------------------------------------------------------------
 
+#include "OEMFeatures.h"
 #include "AEEStdLib.h"
 //#include "AppUtil.h"
 #include "IMMITv.h"
@@ -41,6 +42,7 @@
 //#include "CMessageBox.h"
 //#include "TvUtil_UI.h"
 #include "TVApp_priv.h"
+#include "MMITvParm.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -189,6 +191,7 @@ uint16* CMMITv_GetAbleChannelArray(IMMITv* pThis);
 
 int CMMITv_IMMITv_GetTF(IMMITv* pIMMITv);
 int CMMITv_IMMITv_GetTG(IMMITv* pIMMITv);
+int CMMITv_IMMITv_SetProperty(IMMITv* pIMMITv,TvProperty Property, TTvPropertyValue Value);
 
 
 uint32 CMMITv_IBase_AddRef(IMMITv* pIMMITv)
@@ -333,6 +336,7 @@ int CMMITv_IMMITv_AutoScanTV(IMMITv* pIMMITv)
     {
         pThis->hasChannelFinish = FALSE;
         ITV_SetChn(pThis->pITv,pThis->CurChnIdx,ATV_AUTO_SCAN);
+		MSG_FATAL("ISHELL_PostEvent---------ATV_AUTO_SCAN-----curchnidx=%d",pThis->CurChnIdx,0,0);
     }
     else
     {
@@ -340,7 +344,8 @@ int CMMITv_IMMITv_AutoScanTV(IMMITv* pIMMITv)
         pThis->hasChannelFinish = TRUE;
         pThis->CurChnIdx = 1;//表示搜台已完成,当前频道设为第一个搜到的台
         pThis->ableChannelIndex = 0;
-       // ISHELL_PostEvent(pThis->pIShell, AEECLSID_TVAPP,EVT_ATV_AUTOSCANFINISH, 0, 0);
+		MSG_FATAL("ISHELL_PostEvent---------EVT_ATV_AUTOSCANFINISH",0,0,0);
+        ISHELL_SendEvent(pThis->pIShell, AEECLSID_TVAPP,EVT_ATV_AUTOSCANFINISH, NULL, NULL);
     }
     return SUCCESS;
 }
@@ -380,7 +385,7 @@ int CMMITv_IMMITv_GetTvChannel(IMMITv* pIMMITv)
 uint8 CMMITv_IMMITv_GetChannelCountAble(IMMITv* pIMMITv)
 {
     CMMITv* pThis = (CMMITv*)pIMMITv->pData;
-    //MMI_DEBUG(ATV, ("GetChannelCountAble %d channel",pThis->CountChannel));
+    MSG_FATAL("GetChannelCountAble %d channel",pThis->CountChannel,0,0);
     return pThis->CountChannel;
 }
 
@@ -514,7 +519,7 @@ static const AEEVTBL(IMMITv) gIMMITvFuncs =
     CMMITv_IMMITv_CreateTv,
     CMMITv_IMMITv_SetDisplaySize,
 //    CMMITv_IMMITv_CancelCurJob,
-  //  CMMITv_IMMITv_SetProperty,
+    CMMITv_IMMITv_SetProperty,
   //  CMMITv_IMMITv_GetCapturedFrame,
   //  CMMITv_IMMITv_GetVideoFirstFrame,
     CMMITv_IMMITv_AutoScanTV,
@@ -669,7 +674,7 @@ static void CMMITv_AtvSetChn_CallBack(void *pUser, ATV_SetChn_Notify_t *pTvNotif
     return;
 #endif
     
- //   MMI_DEBUG(ATV,("CMMITv_AtvSetChn_CallBack Start"));
+ MSG_FATAL("CMMITv_AtvSetChn_CallBack Start",0,0,0);
     dwParam = (uint32)pTvNotify->status;
     switch (pTvNotify->status)
     {
@@ -690,15 +695,18 @@ static void CMMITv_AtvSetChn_CallBack(void *pUser, ATV_SetChn_Notify_t *pTvNotif
     }
   
     pThis->CurChnIdx++;
-   // MMI_DEBUG(ATV,("CMMITv_AtvSetChn_CallBack pThis->CurChnIdx=%d ",pThis->CurChnIdx));
-    result = ISHELL_PostEvent(pThis->pIShell, AEECLSID_TVAPP,EVT_ATV_AUTOSCAN, 0, dwParam);
+   // MMI_DEBUG(ATV,("CMMITv_AtvSetChn_CallBack pThis->CurChnIdx=%d ",pThis->CurChnIdx)); 
+   MSG_FATAL("ISHELL_SendEvent is starting---------------",0,0,0);
+    result = ISHELL_SendEvent(pThis->pIShell, AEECLSID_TVAPP,EVT_ATV_AUTOSCAN , NULL, NULL);
+	MSG_FATAL("ISHELL_SendEvent is end---------------",0,0,0);
+  // AEE_Event(EVT_ATV_AUTOSCAN,NULL,NULL);
     if (result == TRUE)
     {
-      //  MMI_DEBUG(ATV,("CMMITv_AtvSetChn_CallBack ISHELL_PostEvent success"));        
+       MSG_FATAL("CMMITv_AtvSetChn_CallBack ISHELL_PostEvent success",0,0,0);        
     }
     else
     {
-       // MMI_DEBUG(ATV,("CMMITv_AtvSetChn_CallBack ISHELL_PostEvent failed"));
+       MSG_FATAL("CMMITv_AtvSetChn_CallBack ISHELL_PostEvent failed",0,0,0);
     }
     //MMI_DEBUG(ATV,("CMMITv_AtvSetChn_CallBack End"));
 }
@@ -998,6 +1006,7 @@ int CMMITv_IMMITv_SetRegion(IMMITv* pIMMITv, TLG_REGION_CODE region)
 uint16* CMMITv_GetAbleChannelArray(IMMITv* pIMMITv)
 {
     CMMITv* pThis = (CMMITv*)pIMMITv->pData;
+    MSG_FATAL("CMMITv_GetAbleChannelArray-----------------",0,0,0);
     return pThis->ableChannelArray;
 }
 
@@ -1006,5 +1015,130 @@ int CMMITv_EnableVolPlay(IMMITv *pIMMITv,boolean  bVal)
 {
     return 0;
 }
+
+int CMMITv_IMMITv_SetProperty(IMMITv* pIMMITv,TvProperty Property, TTvPropertyValue Value)
+{
+    CMMITv* pThis = (CMMITv*)pIMMITv->pData;
+	int result = SUCCESS;
+
+#ifdef AEE_SIMULATOR
+	return result;
+#endif
+
+	if(pThis->pITv == NULL)
+	{
+		result = ENOTALLOWED;
+	}
+
+	switch(Property)
+	{
+
+		case TV_PROPERTY_DEFINITION:
+		{
+			ITV_SetDefinition(pThis->pITv, Value);
+		}
+		break;
+
+		case TV_PROPERTY_BRIGHT:
+		{
+			result = ITV_SetBrightness(pThis->pITv, Value);
+		}
+		break;
+
+		case TV_PROPERTY_CONTRAST:
+		{
+			result = ITV_SetContrast(pThis->pITv, Value);
+        }
+		break;
+
+		case TV_PROPERTY_SATURATION:
+		{
+            result = ITV_SetSaturation(pThis->pITv, Value);
+        }
+		break;
+        case TV_PROPERTY_SOUND:
+        {
+            result = ITV_SetVolume(pThis->pITv, Value);
+        }
+        break;
+
+		case TV_PROPERTY_DISPLAY1_OFFSET:
+		{
+			;//result = ITV_SetDisplay1_Offset(pThis->pITv, Value,0);
+		}
+		break;
+
+		case TV_PROPERTY_DISPLAY2_OFFSET:
+		{
+           ;// result = ITV_SetDisplay2_Offset(pThis->pITv, Value,0);
+		}
+		break;
+   #if 0     
+        case TV_PROPERTY_RESOLUTION:
+		{			
+			if(Value >= 0 && Value < MMITV_SIZE_DC_COUNT)
+			{
+
+                MSG_FATAL("TV_PROPERTY_RESOLUTION value = %d pThis->bLandscapeview = %d",Value, pThis->bLandscapeview,0);
+#ifndef AEE_SIMULATOR
+				if(pThis->pIShowFrame == NULL)
+				{
+					if(!pThis->bLandscapeview)  /*竖屏*/
+					{
+						result = MMIBitmap16_New(VERTICAL_TV_WIDTH, VERTICAL_TV_HEIGHT, NULL, (IBitmap**)&pThis->pIShowFrame);
+					}
+					else
+					{
+						result = MMIBitmap16_New(HORIZONTAL_TV_WIDTH, HORIZONTAL_TV_HEIGHT, NULL, (IBitmap**)&pThis->pIShowFrame);
+					}                   
+				}
+                MSG_FATAL("b_CamSizeHaveSet=%d",pThis->b_CamSizeHaveSet,0,0);
+                if(pThis->b_CamSizeHaveSet == FALSE&&MMI_SUCCESS(result))
+				{
+					result = ITV_SetSize(pThis->pITv, &MMITV_Resolution[Value]); 
+                    if(result == SUCCESS)
+                    {
+                        pThis->b_CamSizeHaveSet = TRUE;
+                    }
+				}			
+#endif
+			}
+			else
+			{
+				result = ECLASSNOTSUPPORT;
+			}
+		}
+		break;
+
+        case TV_PROPERTY_DIRECTION:
+        {
+            if(pThis->bLandscapeview != (boolean) Value)
+    		{
+    			pThis->bLandscapeview = (boolean) Value;
+#ifndef AEE_SIMULATOR
+    			IBASE_RELEASE_IPTR(pThis->pIShowFrame);
+    
+    			if(!pThis->bLandscapeview)
+    			{
+    				result = MMIBitmap16_New(VERTICAL_TV_WIDTH, VERTICAL_TV_HEIGHT, NULL, (IBitmap**)&pThis->pIShowFrame);
+    			}
+    			else
+    			{
+    				result = MMIBitmap16_New(HORIZONTAL_TV_WIDTH, HORIZONTAL_TV_HEIGHT, NULL, (IBitmap**)&pThis->pIShowFrame);
+    			}                    
+
+#endif                
+    		}
+        }break;
+    #endif
+		default:
+			break;
+	}
+    if(result != SUCCESS)
+    {
+        return EFAILED;
+    }
+	return result;
+} 
 
 

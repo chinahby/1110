@@ -20,7 +20,7 @@
 //#include "MMICommonMacro.h"
 //#include "AEEBitmap.h"
 #include "AEETv.h"
-//#include "MMITvParm.h"
+#include "MMITvParm.h"
 #include "AEEMediaFormats.h"
 //#include "ImageEdit_Common.h"
 //#include "MMIFeatures.h" 
@@ -167,7 +167,7 @@ typedef struct IMMITv IMMITv;
         INHERIT_IQueryInterface(iname); \
         int  (*CreateTv) (iname* p##iname, ICBMMITv *pICBMMITv,uint32 region); \
         int  (*SetDisplaySize) (iname* p##iname, AEESize *pDisplaySize); \
-        \
+        int  (*SetProperty) (iname* p##iname,TvProperty Property, TTvPropertyValue Value); \
         int  (*AutoScanTV) (iname* p##iname); \
         int  (*SetTvChannel)(iname* p##iname, uint16 Channel,boolean fast); \
         int  (*getTvChannel)(iname* p##iname);    \
@@ -202,7 +202,7 @@ struct IMMITv
 #define IMMITv_CreateTv(pThis,pICBMMITv,region)    pThis->pvt->CreateTv(pThis,pICBMMITv,region)
 #define IMMITv_SetDisplaySize(pThis,pDisplaySize)    pThis->pvt->SetDisplaySize(pThis,pDisplaySize)
 //#define IMMITv_CancelCurJob(pThis)    pThis->pvt->CancelCurJob(pThis)
-//#define IMMITv_SetProperty(pThis,Property,Value)    pThis->pvt->SetProperty(pThis,Property,Value)
+#define IMMITv_SetProperty(pThis,Property,Value)    pThis->pvt->SetProperty(pThis,Property,Value)
 //#define IMMITv_GetCapturedFrame(pThis,ppIBitmap)    pThis->pvt->GetCapturedFrame(pThis,ppIBitmap)
 //#define IMMITv_GetVideoFirstFrame(pThis,ppIBitmap)    pThis->pvt->GetVideoFirstFrame(pThis,ppIBitmap)
 #define IMMITv_AutoScanTV(pThis)   pThis->pvt->AutoScanTV(pThis)
