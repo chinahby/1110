@@ -1,4 +1,5 @@
 #include "disp_drv.h"
+#include "disp_ic_generic.h"
 
 static void disp_ic_init(void)
 {
@@ -42,7 +43,7 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0x9F);
 
     LCD_WRITE_CMD(0x36); //Set Scanning Direction
-	LCD_WRITE_DATA(0x60);  //..0x60 //..0x40 //..0x20 //..0x00 //..0x80 //0xa0 //..0xc0 //0xe0
+    LCD_WRITE_DATA(0x60);  //..0x60 //..0x40 //..0x20 //..0x00 //..0x80 //0xa0 //..0xc0 //0xe0
 
     LCD_WRITE_CMD(0xB7); //Set Source Output Direction
     LCD_WRITE_DATA(0x00);
@@ -180,82 +181,19 @@ static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row
 {
     LCD_WRITE_CMD(0x2A);
     LCD_WRITE_DATA(0x0);
-	LCD_WRITE_DATA((uint8)start_col);
+    LCD_WRITE_DATA((uint8)start_col);
     LCD_WRITE_DATA(0x0);
-	LCD_WRITE_DATA((uint8)end_col);
+    LCD_WRITE_DATA((uint8)end_col);
     
-	/* Set LCD hardware to set start address */
-	/* Transfer command to display hardware */
-	LCD_WRITE_CMD(0x2B);
+    /* Set LCD hardware to set start address */
+    /* Transfer command to display hardware */
+    LCD_WRITE_CMD(0x2B);
+    LCD_WRITE_DATA(0x0);
+    LCD_WRITE_DATA((uint8)start_row);
     LCD_WRITE_DATA(0x0);        
-	LCD_WRITE_DATA((uint8)start_row);
-    LCD_WRITE_DATA(0x0);        
-	LCD_WRITE_DATA((uint8)end_row);
-	
-	LCD_WRITE_CMD(0x2C);
-}
-
-static void disp_ic_bitblt(void *src_ptr, dword copy_count)
-{
-    register uint16 *pdata = src_ptr;
-    register uint16  data;
-    dword   mod_count;
-    uint16 *pend;
+    LCD_WRITE_DATA((uint8)end_row);
     
-    mod_count   = copy_count&0x07;
-    copy_count -= mod_count;
-    pend  = pdata + copy_count;
-    
-    while(pdata<pend)
-    {
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-    }
-    
-    while(mod_count--)
-    {
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-    }
-}
-
-static void disp_ic_set(uint32 src, dword copy_count)
-{
-    dword   mod_count;
-    
-    mod_count   = copy_count&0x07;
-    copy_count  = copy_count>>3;
-    
-    while(copy_count--)
-    {
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-    }
-    
-    while(mod_count--)
-    {
-        LCD_WRITE_DATA16(src);
-    }
+    LCD_WRITE_CMD(0x2C);
 }
 
 static void disp_ic_sleep(boolean bin)
@@ -287,13 +225,9 @@ boolean disp_ili9163c_tft177_rot(disp_drv_ic_type *pdispic)
     id3 = LCD_READ_DATA();
     id3 = LCD_READ_DATA();
     
-    //if(id1 == 0x54 && id2 == 0x80 && id3 == 0x66)
+    if(id1 == 0x54 && id2 == 0x80 && id3 == 0x66)
     {
-        pdispic->disp_ic_init       = disp_ic_init;
-        pdispic->disp_ic_setwindow  = disp_ic_setwindow;
-        pdispic->disp_ic_bitblt     = disp_ic_bitblt;
-        pdispic->disp_ic_set        = disp_ic_set;
-        pdispic->disp_ic_sleep      = disp_ic_sleep;
+        DISP_IC_INIT_TBL(pdispic);
         return TRUE;
     }
     return FALSE;

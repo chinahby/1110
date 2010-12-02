@@ -54,8 +54,16 @@ typedef boolean (*disp_ic_install_type)(disp_drv_ic_type *pdispic);
 
 typedef struct 
 {
-	boolean     disp_initialized;
-	boolean     display_on;
-	boolean     disp_powered_up;
+    boolean     disp_initialized;
+    boolean     display_on;
+    boolean     disp_powered_up;
 } disp_drv_state_type;
+
+#define DISP_IC_INIT_TBL(p) \
+    p->disp_ic_init       = disp_ic_init; \
+    p->disp_ic_setwindow  = disp_ic_setwindow; \
+    p->disp_ic_bitblt     = disp_ic_bitblt; \
+    p->disp_ic_set        = disp_ic_set; \
+    p->disp_ic_sleep      = disp_ic_sleep; \
+    
 #endif

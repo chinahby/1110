@@ -1,4 +1,5 @@
 #include "disp_drv.h"
+#include "disp_ic_generic.h"
 
 static void disp_ic_init(void)
 {
@@ -106,12 +107,12 @@ static void disp_ic_init(void)
 
 static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
 {
-	if ( (start_col < 128) && (start_row < 128) && (end_col   < 128)   && (end_row   < 128) )
+    if ( (start_col < 128) && (start_row < 128) && (end_col   < 128)   && (end_row   < 128) )
     {
-		start_col += 2;
-		start_row += 3;
-		end_col   += 2;
-		end_row   += 3;        
+        start_col += 2;
+        start_row += 3;
+        end_col   += 2;
+        end_row   += 3;        
     }
 
     LCD_WRITE_CMD(0x2A);
@@ -129,69 +130,6 @@ static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row
     LCD_WRITE_DATA((uint8)end_row);
     
     LCD_WRITE_CMD(0x2C);
-}
-
-static void disp_ic_bitblt(void *src_ptr, dword copy_count)
-{
-    register uint16 *pdata = src_ptr;
-    register uint16  data;
-    dword   mod_count;
-    uint16 *pend;
-    
-    mod_count   = copy_count&0x07;
-    copy_count -= mod_count;
-    pend  = pdata + copy_count;
-    
-    while(pdata<pend)
-    {
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-    }
-    
-    while(mod_count--)
-    {
-        data = (uint16)(*pdata++);
-        LCD_WRITE_DATA16(data);
-    }
-}
-
-static void disp_ic_set(uint32 src, dword copy_count)
-{
-    dword   mod_count;
-    
-    mod_count   = copy_count&0x07;
-    copy_count  = copy_count>>3;
-    
-    while(copy_count--)
-    {
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-        LCD_WRITE_DATA16(src);
-    }
-    
-    while(mod_count--)
-    {
-        LCD_WRITE_DATA16(src);
-    }
 }
 
 static void disp_ic_sleep(boolean bin)
@@ -224,11 +162,7 @@ boolean disp_st7735r_tft144(disp_drv_ic_type *pdispic)
     
     //if(id1 == 0x1 && id2 == 0x1 && id3 == 0x1)
     {
-        pdispic->disp_ic_init       = disp_ic_init;
-        pdispic->disp_ic_setwindow  = disp_ic_setwindow;
-        pdispic->disp_ic_bitblt     = disp_ic_bitblt;
-        pdispic->disp_ic_set        = disp_ic_set;
-        pdispic->disp_ic_sleep      = disp_ic_sleep;
+        DISP_IC_INIT_TBL(pdispic);
         return TRUE;
     }
     return FALSE;
