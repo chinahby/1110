@@ -505,9 +505,9 @@ static void  recentcalls_SendList (IRecentCalls *pi)
    char     *args;
    
    args = MALLOC(4);
-   *args = STARTARG_OUTGCALL;
+   *args = STARTARG_ALLCALL;
 
-   pMe->m_callsCategory = AEECALLHISTORY_CALL_TYPE_TO;//CALLHISTORY_OUTGOING_CATEGORY;
+   pMe->m_callsCategory = AEECALLHISTORY_CALL_TYPE_ALL;//CALLHISTORY_OUTGOING_CATEGORY;
    pMe->m_eStartMethod = STARTMETHOD_NORMAL;
 
    (void)ISHELL_StartAppletArgs(pMe->m_pShell,

@@ -1106,6 +1106,7 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                         case AEECALLHISTORY_CALL_TYPE_TO://CALLHISTORY_OUTGOING_CATEGORY:
                             ai.wImage = IDB_ORIG;
                             break;
+                       
                     }
                     					
                     bAdd = IMENUCTL_AddItemEx(pMe->pMenu, &ai);                   
