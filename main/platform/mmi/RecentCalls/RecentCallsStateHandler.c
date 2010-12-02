@@ -238,8 +238,8 @@ __stateverifypasswordhandle_passed__:
                     break;
 
                 case STARTARG_ALLCALL:
-                    pMe->m_eStartMethod = STARTMETHOD_FINDNUMBER;
-                    pMe->m_nRemainWMSNum = RecentCalls_GetRemainWMSNum(pMe);
+                    //pMe->m_eStartMethod = STARTMETHOD_FINDNUMBER;
+                    //pMe->m_nRemainWMSNum = RecentCalls_GetRemainWMSNum(pMe);
                     pMe->m_callsCategory = AEECALLHISTORY_CALL_TYPE_ALL;//CALLHISTORY_ALL_CATEGORY;
                     MOVE_TO_STATE( STATE_RECORD_LIST);
                     break;

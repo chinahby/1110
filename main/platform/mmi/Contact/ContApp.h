@@ -90,7 +90,7 @@ typedef boolean (*PFNSELECTEDCONTACTCB)(sSelectFieldListNode* pSelectFieldList);
 ////
 // All the ways that somebody can start the contacts app
 typedef enum _AppletStartMethod {
-    STARTMETHOD_NORMAL,             // ISHELL_StartApplet()
+    STARTMETHOD_NORMAL=0x01,             // ISHELL_StartApplet()
     STARTMETHOD_SAVEFIELD,          // Save number with phone edit option
     STARTMETHOD_FINDNUMBER,         // find number called by other app
     STARTMETHOD_SELECTFIELD,        // Select Field called by other app
