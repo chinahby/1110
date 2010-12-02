@@ -340,7 +340,7 @@ static int OEMTLGAtv_SetChn(OEMINSTANCE h,ATV_U16 chn,ATV_SET_CHN_TYPE_e type)
    //   unsigned long time;
    // time_secure_get_local_time_ms(&time);
    // OEMATV_PRINT("OEMTLGAtv_SetChn Enter time=%u\n",time, 0, 0);
-    OEMATV_PRINT("OEMTLGAtv_SetChn invoke",0,0,0);
+    MSG_FATAL("OEMTLGAtv_SetChn invoke",0,0,0);
 
     if (h == NULL)
     {
@@ -389,7 +389,7 @@ void hs_start_set_chn(void)
     ITlgAtv *pMe =(ITlgAtv*)g_OEMAtv.pAtv;
     ATV_SetChn_Notify_t notify;
     
-    OEMATV_PRINT("hs_start_set_chn notify chn",0,0,0);
+    MSG_FATAL("hs_start_set_chn notify chn",0, 0, 0);
     rex_clr_sigs(&hs_tcb, HS_ATV_SET_CHN_SIG);
     if (pMe == NULL)
     {
@@ -453,6 +453,7 @@ static int OEMTLGAtv_SetParam(OEMINSTANCE h,ATV_SET_PARAM_e type, int hparam, in
             ret = TLGMMI_SetRegion((TLG_REGION_CODE)hparam);
             if (ret == 0&&(pMe->pCamera!=NULL))   /*如果电视没有创建怎不能对芯片操作*/
             {
+                MSG_FATAL("------------ITV_SetRegion.ret=%d---hparam=%d--lparam%d",ret,hparam,lparam);
                 ret = TLG1120_tv_set_param(type,hparam,lparam);
             }
        }break;
@@ -502,7 +503,7 @@ static int OEMTLGAtv_Update(OEMINSTANCE h, uint32 dwParam)
         {
         	int ret = 0;
           //  SPRINTF(buf,"CRootApp_HandleUserEvent dwParam = %d\n",dwParam);
-            ret = IFILE_Write( pIFile, (void*)Tv_fbuffer, 77440);
+           // ret = IFILE_Write( pIFile, (void*)Tv_fbuffer, 77440);
 			MSG_FATAL("qqOEMTLGAtv_Update writefile ret = %d",ret ,0, 0);
         }
 #endif

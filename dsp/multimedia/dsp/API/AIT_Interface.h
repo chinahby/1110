@@ -9,7 +9,7 @@
 #elif defined (FEATURE_DISP_220X176)
 #define __MMI_MAINLCD_220X176__
 #else
-#define __MMI_MAINLCD_320X240__
+#define __MMI_MAINLCD_220X176__
 #endif
 
 
