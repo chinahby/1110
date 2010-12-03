@@ -200,7 +200,6 @@ static void disp_ic_init(void)
 
 	LCD_WRITE_CMD(0x29); //Display on
 #endif
-
 }
 
 static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
@@ -236,6 +235,23 @@ static void disp_ic_sleep(boolean bin)
     }
 }
 
+static void disp_ic_rot(uint16 degree)
+{
+    if(degree == 0)
+    {
+        LCD_WRITE_CMD(0xC5); //Set VMH[6:0] & VML[6:0] for VOMH & VCOML
+        LCD_WRITE_DATA(0x3C);
+        LCD_WRITE_DATA(0x40);
+    }
+    else
+    {
+        LCD_WRITE_CMD(0xC5); //Set VMH[6:0] & VML[6:0] for VOMH & VCOML
+        LCD_WRITE_DATA(0x2C);
+        LCD_WRITE_DATA(0x40);
+    }
+    return;
+}
+
 boolean disp_ili9163c_tft177(disp_drv_ic_type *pdispic)
 {
     uint8 id1,id2,id3;
@@ -251,7 +267,7 @@ boolean disp_ili9163c_tft177(disp_drv_ic_type *pdispic)
     id3 = LCD_READ_DATA();
     id3 = LCD_READ_DATA();
     
-    if(id1 == 0x54 && id2 == 0x80 && id3 == 0x66)
+    //if(id1 == 0x54 && id2 == 0x80 && id3 == 0x66)
     {
         DISP_IC_INIT_TBL(pdispic);
         return TRUE;

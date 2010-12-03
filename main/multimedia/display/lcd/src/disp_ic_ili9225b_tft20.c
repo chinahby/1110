@@ -20,7 +20,7 @@ static void disp_ic_init(void)
     LCD_DELAY(50); // Delay 50ms
     LCD_WRITE_CMD(0x12); LCD_WRITE_DATA16(0x1121); // Internal reference voltage= Vci;
     LCD_WRITE_CMD(0x13); LCD_WRITE_DATA16(0x0066); // Set GVDD
-    LCD_WRITE_CMD(0x14); LCD_WRITE_DATA16(0x333A); // Set VCOMH/VCOML voltage   0x3336
+    LCD_WRITE_CMD(0x14); LCD_WRITE_DATA16(0x3336); // Set VCOMH/VCOML voltage   0x3336
     //------------------------ Set GRAM area --------------------------------//
     LCD_WRITE_CMD(0x30); LCD_WRITE_DATA16(0x0000);
     LCD_WRITE_CMD(0x31); LCD_WRITE_DATA16(0x00DB);
@@ -91,6 +91,19 @@ static void disp_ic_sleep(boolean bin)
         LCD_WRITE_DATA16(0x1017); //Exit Sleep   
         LCD_DELAY(10);
     }
+}
+
+static void disp_ic_rot(uint16 degree)
+{
+    if(degree == 0)
+    {
+        LCD_WRITE_CMD(0x14); LCD_WRITE_DATA16(0x3336); // Set VCOMH/VCOML voltage   0x333A
+    }
+    else
+    {
+        LCD_WRITE_CMD(0x14); LCD_WRITE_DATA16(0x333A); // Set VCOMH/VCOML voltage   0x3336
+    }
+    return;
 }
 
 boolean disp_ili9225b_tft20(disp_drv_ic_type *pdispic)

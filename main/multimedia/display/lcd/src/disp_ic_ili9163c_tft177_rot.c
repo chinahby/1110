@@ -210,6 +210,11 @@ static void disp_ic_sleep(boolean bin)
     }
 }
 
+static void disp_ic_rot(uint16 degree)
+{
+    return;
+}
+
 boolean disp_ili9163c_tft177_rot(disp_drv_ic_type *pdispic)
 {
     uint8 id1,id2,id3;

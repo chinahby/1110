@@ -635,6 +635,19 @@ static void disp_drv_lock_screen(word start_row, word start_col, word num_row, w
     if (disp_drv_state.disp_initialized)
     {
         rex_enter_crit_sect(&disp_drv_crit_sect);
+        if(start_row == 0 && start_col ==0 && num_row == disp_drv_info.disp_width && num_col == disp_drv_info.disp_height)
+        {
+            word temp;
+            disp_drv_ic.disp_ic_rot(90);
+            temp = num_row;
+            num_row = num_col;
+            num_col = temp;
+        }
+        else
+        {
+            disp_drv_ic.disp_ic_rot(0);
+        }
+        
         if ((start_row + num_row) > disp_drv_info.disp_height)
         {
             num_row = disp_drv_info.disp_height - start_row;
@@ -643,6 +656,14 @@ static void disp_drv_lock_screen(word start_row, word start_col, word num_row, w
         if ((start_col + num_col) > disp_drv_info.disp_width)
         {
             num_col = disp_drv_info.disp_width - start_col;
+        }
+        
+        if(disp_drv_state.lock_row_start != start_row
+            ||disp_drv_state.lock_row_num != num_row
+            ||disp_drv_state.lock_col_start != start_col
+            ||disp_drv_state.lock_col_num != num_col)
+        {
+            disp_drv_clear_screen_area(start_row, start_col,start_row+num_row-1,start_col+num_col-1);
         }
         
         disp_drv_state.lock_row_start   = start_row;
@@ -674,13 +695,15 @@ SIDE EFFECTS
 static void disp_drv_update_lock
 (
     const void *buf_ptr,        /* Buffer pointer */
-    uint32 src_width,           /* Source image width */
     uint32 num_of_rows,         /* Number of rows to update */
-    uint32 num_of_columns,      /* Number of columns to update */
-    uint32 dst_starting_row,    /* Device rectangle starting row */
-    uint32 dst_starting_column  /* Device rectangle starting column */
+    uint32 num_of_columns       /* Number of columns to update */
 )
 {
+    word dst_starting_row;
+    word dst_starting_column;
+    word dst_col_num;
+    word dst_row_num;
+    
     if (!buf_ptr                         || 
         !disp_drv_state.disp_initialized ||
         !disp_drv_state.disp_powered_up  ||
@@ -688,25 +711,34 @@ static void disp_drv_update_lock
     {
         return;
     }
-
-    if(disp_drv_state.lock_row_num == 0 || disp_drv_state.lock_col_num == 0)
+    
+    if(disp_drv_state.lock_row_num == 0 || disp_drv_state.lock_col_num == 0 
+        ||num_of_rows == 0 || num_of_columns == 0)
     {
         return;
     }
     
-    /* Ensure buffer aligned and parameters valid */
-    if( (dst_starting_row    < disp_drv_info.disp_height) &&
-        (dst_starting_column < disp_drv_info.disp_width))
+    rex_enter_crit_sect(&disp_drv_crit_sect);
+    dst_col_num = (num_of_columns*disp_drv_state.lock_row_num)/num_of_rows;
+    
+    if(dst_col_num > disp_drv_state.lock_col_num)
     {
-        rex_enter_crit_sect(&disp_drv_crit_sect);    
-        
-        disp_drv_ic.disp_ic_setwindow(dst_starting_row, dst_starting_column, 
-                                      dst_starting_row + disp_drv_state.lock_row_num - 1,
-                                      dst_starting_column + disp_drv_state.lock_col_num -1);
-                                      
-        disp_drv_ic.disp_ic_yuv420(buf_ptr, num_of_columns, num_of_rows, disp_drv_state.lock_col_num, disp_drv_state.lock_row_num);
-        rex_leave_crit_sect(&disp_drv_crit_sect);
-    }  
+        dst_col_num = disp_drv_state.lock_col_num;
+        dst_row_num = (num_of_rows*disp_drv_state.lock_col_num)/num_of_columns;
+    }
+    else
+    {
+        dst_row_num = disp_drv_state.lock_row_num;
+    }
+    
+    dst_starting_row = disp_drv_state.lock_row_start + (disp_drv_state.lock_row_num-dst_row_num)/2;
+    dst_starting_column = disp_drv_state.lock_col_start + (disp_drv_state.lock_col_num-dst_col_num)/2;
+    disp_drv_ic.disp_ic_setwindow(dst_starting_row, dst_starting_column, 
+                                  dst_starting_row + dst_row_num - 1,
+                                  dst_starting_column + dst_col_num -1);
+                                  
+    disp_drv_ic.disp_ic_yuv420(buf_ptr, num_of_columns, num_of_rows, dst_col_num, dst_row_num);
+    rex_leave_crit_sect(&disp_drv_crit_sect);
 } /* disp_drv_update_lock() */
 
 #endif
@@ -760,20 +792,12 @@ static int disp_drv_ioctl ( int cmd, void *arg )
         disp_update_cmd = (disp_update_type*)arg;
         /* bitwise OR all int16 together. If the result is
          * less than 0, then at least one of them is negative */
-        if((disp_update_cmd->src_width |
-            disp_update_cmd->src_starting_row |
-            disp_update_cmd->src_starting_column |
-            disp_update_cmd->num_of_rows |
-            disp_update_cmd->num_of_columns |
-            disp_update_cmd->dst_starting_row |
-            disp_update_cmd->dst_starting_column ) >= 0)
+        if((disp_update_cmd->num_of_rows |
+            disp_update_cmd->num_of_columns) >= 0)
         {
             disp_drv_update_lock   (disp_update_cmd->buf_ptr,
-                            (uint32)disp_update_cmd->src_width,
                             (uint32)disp_update_cmd->num_of_rows,
-                            (uint32)disp_update_cmd->num_of_columns,
-                            (uint32)disp_update_cmd->dst_starting_row,
-                            (uint32)disp_update_cmd->dst_starting_column);
+                            (uint32)disp_update_cmd->num_of_columns);
         }
         break;
         

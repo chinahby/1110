@@ -48,6 +48,7 @@ typedef struct{
     void   (*disp_ic_bitblt)(const void *src_ptr, dword copy_count);
     void   (*disp_ic_set)(uint32 src, dword copy_count);
     void   (*disp_ic_sleep)(boolean bin);
+    void   (*disp_ic_rot)(uint16 degree);
 #ifdef FEATURE_MP4_DECODER
     void   (*disp_ic_yuv420)(const byte *src_ptr, word src_w, word src_h, word dst_w, word dst_h);
 #endif
@@ -73,6 +74,7 @@ typedef struct
     p->disp_ic_bitblt     = disp_ic_bitblt; \
     p->disp_ic_set        = disp_ic_set; \
     p->disp_ic_sleep      = disp_ic_sleep; \
+    p->disp_ic_rot        = disp_ic_rot; \
     p->disp_ic_yuv420     = disp_ic_yuv420
 #else
 #define DISP_IC_INIT_TBL(p) \
