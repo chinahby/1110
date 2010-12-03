@@ -42,10 +42,11 @@ void rf_error( const unsigned int line, const char *file, const char *message )/
   }
 
   #else /* RF_HAS_FATAL_ERRORS */
-  
+
+#ifndef USES_RELEASE_VERSION
   MSG_SPRINTF_2( MSG_SSID_RF, MSG_LVL_ERROR, "RF library error occurred in file %s at line %d", file, line );
   err_put_log ( line, file ); /*lint !e734*/
-
+#endif
   #endif /* RF_HAS_FATAL_ERRORS */
 }
 
