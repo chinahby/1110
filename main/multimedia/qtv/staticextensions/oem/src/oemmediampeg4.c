@@ -98,7 +98,10 @@ static OEMCriticalSection gcmCriticalSection;
 #endif
 
 int nMdpFramePendingCounter = 0;
-
+#ifdef CUST_EDITION
+extern void disp_lock_screen(word start_row,word num_row,word start_column,word num_column);
+extern void disp_update_yuv420(void * buf_ptr, int16 num_of_rows,int16 num_of_columns);
+#endif
 /*==============================================================================
 
                                MACRO DEFINITIONS
@@ -309,6 +312,9 @@ void OEMMediaMPEG4_Delete(IMedia * po, boolean bFree)
    // Free object memory
    if (bFree)
       FREE(po);
+#ifdef CUST_EDITION
+   disp_lock_screen(0,0,0,0);
+#endif
 }
 
 /*==================================================================
@@ -1058,6 +1064,9 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
                             pOEM->m_rectClip.dy );
 #endif /* !FEATURE_QTV_MDP_TRANSFORMATIONS */
          MEMCPY(&pOEM->m_rectClip, (void *)p1, sizeof(AEERect));
+#ifdef CUST_EDITION
+         disp_lock_screen(pOEM->m_rectClip.y,pOEM->m_rectClip.dy,pOEM->m_rectClip.x,pOEM->m_rectClip.dx);
+#endif
          pOEM->m_bRectClipChanged = TRUE;
          break;
 
@@ -2178,12 +2187,24 @@ void OEMMediaMPEG4_CallbackNotify(AEEMediaCallback * pcb)
         }
 
 #else
+#ifdef CUST_EDITION
+    {
+        IDIB *pDIB;
+        
+        if( SUCCESS == IBITMAP_QueryInterface(pFrame, AEECLSID_DIB, (void**)&pDIB) )
+        {
+            disp_update_yuv420(pDIB->pBmp, pDIB->cy, pDIB->cx);
+            IDIB_Release(pDIB);
+        }
+    }
+#else
         /* Display the frame at centered on the screen */
         IDISPLAY_BitBlt(pOEM->m_pIDisplay,
                         pOEM->m_rectImage.x,  pOEM->m_rectImage.y,
                         pOEM->m_rectImage.dx, pOEM->m_rectImage.dy,
                         pFrame, 0, 0, AEE_RO_COPY);
         IDISPLAY_Update(pOEM->m_pIDisplay);
+#endif
         IBITMAP_Release(pFrame);
 #endif /* FEATURE_QTV_MDP_TRANSFORMATIONS */
       } /* if( dx != 0 && dy != 0 ) */

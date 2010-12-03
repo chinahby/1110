@@ -252,7 +252,7 @@ typedef struct OEMMediaMPEG4Layer
   AEETelopTextSubString     m_TelopTextSubString;
 #endif /* FEATURE_MP4_KDDI_TELOP_TEXT */
 #ifdef FEATURE_QTV_ISDB_SUBTITLES
-  AEEGenericText          m_GenericText;
+#error code not present
 #endif /* FEATURE_QTV_ISDB_SUBTITLES */
 #if defined(FEATURE_ACM) || defined (FEATURE_BMP_ACM)
   //! For delayed acquiring case when IMedia_SetMediaDataEx is called, we need to save 
