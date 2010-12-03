@@ -832,7 +832,14 @@ static void AEEBacklight_DisableTimer(void *pUser)
     
     if (AEEBacklight_IsEnabled(pMe) || pMe->uCls == AEECLSID_BACKLIGHT_KEYPAD)
     {
-        AEEBacklight_Disable(pMe);
+        if(ISHELL_SendEvent(pMe->pIShell,ISHELL_ActiveApplet(pMe->pIShell),EVT_NO_CLOSEBACKLIGHT,0,0))
+        {
+            AEEBacklight_SetDisableTimer(pMe);
+        }
+        else
+        {
+            AEEBacklight_Disable(pMe);
+        }
     }
 }
 
@@ -863,7 +870,14 @@ static void AEEBacklight_PreDisableTimer(void *pUser)
     
     if (AEEBacklight_IsEnabled(pMe) || pMe->uCls == AEECLSID_BACKLIGHT_KEYPAD)
     {
-        AEEBacklight_PreDisable(pMe);
+        if(ISHELL_SendEvent(pMe->pIShell,ISHELL_ActiveApplet(pMe->pIShell),EVT_NO_CLOSEBACKLIGHT,0,0))
+        {
+            AEEBacklight_SetDisableTimer(pMe);
+        }
+        else
+        {
+            AEEBacklight_PreDisable(pMe);
+        }
     }
 }
 

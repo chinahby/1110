@@ -366,15 +366,11 @@ static int VideoPlayer_InitAppData(CVideoPlayer *pMe)
 	pMe->m_InitFailed   = TRUE;
    
     //创建需要的接口
-    if ((AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_BACKLIGHT,(void **)&pMe->Ibacklight))||       
-        (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_CONFIG,(void **)&pMe->m_pConfig)))
+    if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_CONFIG,(void **)&pMe->m_pConfig))
     {
         VideoPlayer_FreeAppData(pMe);                                        
         return EFAILED;                             
     }
-    
-    //获取背光灯设置
-    (void)ICONFIG_GetItem(pMe->m_pConfig,CFGI_BACK_LIGHT,&pMe->bktimer,sizeof( byte ));
     
     /* 因为848处理能力问题，如果在进入多媒体模块后不禁止按键音，则会导致较长时间的声音停顿, 
        给用户体验带来影响.这里增加进入模块时禁止按键音，退出时恢复设置*/       
@@ -416,12 +412,6 @@ static void VideoPlayer_FreeAppData(CVideoPlayer *pMe)
     //恢复按键音
     (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_BEEP_VOL,&pMe->m_CKSound,sizeof(byte));    
     
-    if(pMe->Ibacklight)
-    {
-        (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_BACK_LIGHT,&pMe->bktimer,sizeof(byte));
-        IBACKLIGHT_Release(pMe->Ibacklight);
-        pMe->Ibacklight=NULL;
-    }
     if (pMe->m_pConfig)
     {
         ICONFIG_Release(pMe->m_pConfig);

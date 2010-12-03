@@ -433,7 +433,6 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
         
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_CAMERA_MAINMENU);
 	AECHAR WTitle[40] = {0};
-    byte nBackLight;
     
     if(pMenu == NULL)
     {
@@ -524,12 +523,6 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
 #else
                     pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
 #endif
-                    nBackLight = OEMNV_BL_ALWAYS_ON;
-                    (void)ICONFIG_SetItem(pMe->m_pConfig,
-                                          CFGI_BACK_LIGHT,
-                                          &nBackLight,
-                                          sizeof(nBackLight));
-                    IBACKLIGHT_Enable(pMe->m_pBacklight);
                     CLOSE_DIALOG(DLGRET_POPMSG);
                     break;
 
@@ -651,13 +644,6 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
  			//Add End
         
             ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
-            if(pMe->m_bSuspending)
-            {
-                (void)ICONFIG_SetItem(pMe->m_pConfig,
-                                      CFGI_BACK_LIGHT,
-                                      &pMe->m_nBacklightVal,
-                                      sizeof(pMe->m_nBacklightVal));
-            }
             return TRUE;
             
         case EVT_USER_REDRAW:
@@ -739,11 +725,6 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 return FALSE;
 
             case AVK_CLR:
-                (void)ICONFIG_SetItem(pMe->m_pConfig,
-                                      CFGI_BACK_LIGHT,
-                                      &pMe->m_nBacklightVal,
-                                      sizeof(pMe->m_nBacklightVal));
-                IBACKLIGHT_Enable(pMe->m_pBacklight);
                 if(pMe->m_isFormQuicktest)
                 {
                     ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
@@ -827,7 +808,10 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     break;     
             } 
             return TRUE;
-                  
+
+        case EVT_NO_CLOSEBACKLIGHT:
+            return TRUE;
+            
         default:
             break;
     }
@@ -979,7 +963,10 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             
         case EVT_COMMAND:
             return CameraApp_RoutePopMenuCommandEvent(pMe, wParam);
-  
+            
+        case EVT_NO_CLOSEBACKLIGHT:
+            return TRUE;
+            
         default:
             break;
     }

@@ -564,17 +564,6 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
         CameraApp_FreeAppData(pMe);
         return EFAILED;
     }
-    
-    if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_BACKLIGHT, (void**)&pMe->m_pBacklight))
-    {
-        CameraApp_FreeAppData(pMe);
-        return EFAILED;
-    }
-    
-    (void)ICONFIG_GetItem(pMe->m_pConfig,
-                          CFGI_BACK_LIGHT,
-                         &pMe->m_nBacklightVal,
-                          sizeof(pMe->m_nBacklightVal));
     return SUCCESS;
 }
 
@@ -635,12 +624,6 @@ static void CameraApp_FreeAppData(CCameraApp *pMe)
     {
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn = NULL;
-    }
-    
-    if(pMe->m_pBacklight)
-    {
-        IBACKLIGHT_Release(pMe->m_pBacklight);
-        pMe->m_pBacklight = NULL;
     }
 // if SD Dev is existed, stop SD dev while exitting from Camera APP to avoid high current<43mA> consume in idle state
     // Note: if SD card detected after Creating ICamera interface, it needn't to stop sd card in this way, cause's SD won't be pushed in stack for low dev priority
@@ -813,11 +796,6 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                 ICAMERA_RegisterNotify(pMe->m_pCamera,NULL, NULL);
                 ICAMERA_Stop(pMe->m_pCamera);
             }
-            (void)ICONFIG_SetItem(pMe->m_pConfig,
-                                  CFGI_BACK_LIGHT,
-                                  &pMe->m_nBacklightVal,
-                                  sizeof(pMe->m_nBacklightVal));
-            IBACKLIGHT_Enable(pMe->m_pBacklight);
             return TRUE;
       
         case EVT_APP_SUSPEND:
@@ -863,15 +841,6 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
 			pMe->m_nLeftTime = 0;
 			
             pMe->m_rc = as->rc;
-            {
-                byte nBackLight;
-                nBackLight = OEMNV_BL_ALWAYS_ON;
-                (void)ICONFIG_SetItem(pMe->m_pConfig,
-                                      CFGI_BACK_LIGHT,
-                                      &nBackLight,
-                                      sizeof(nBackLight));
-                IBACKLIGHT_Enable(pMe->m_pBacklight);     
-            }
             CameraApp_RunFSM(pMe);
             return TRUE;
       
