@@ -909,7 +909,19 @@ void VideoPlayer_APPIsReadyTimer(void *pme)
                             0,
                             0);
 }
+
 boolean is_videoplayer_play(void)
 {
     return videoplayer_play_flag;
 }
+/*
+int GetScreenH()
+{
+  return ((CVideoPlayer *)AEE_GetAppInstance())->m_rc.dy;
+}
+int GetScreenW()
+{
+  return ((CVideoPlayer *)AEE_GetAppInstance())->m_rc.dx;
+}
+*/
+

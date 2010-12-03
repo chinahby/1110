@@ -21,7 +21,7 @@ vpath %.brx $(VIDEOPLAYER_RES)
 CONSTFILE_FILES+=\
     videoplayer.mif|fs:/mif/videoplayer.mif \
     videoplayer.bar|fs:/mod/videoplayer/en/videoplayer.bar \
-    videoplayer_images.bar|fs:/mod/videoplayer/videoplayer_images.bar
+	videoplayer_images_$(USES_LCD_SIZE).bar|fs:/mod/videoplayer/videoplayer_images.bar
 
 INC  += $(VIDEOPLAYER_INC) $(VIDEOPLAYER_RES)
 #SRC  += $(VIDEOPLAYER_SOURCES)

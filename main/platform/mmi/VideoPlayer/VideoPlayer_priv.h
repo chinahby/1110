@@ -139,12 +139,13 @@
                               }
 
 
+
 //wlh 20090420 add icon x/y
-#define SCR_W 220
-#define SCR_H 176
+#define SCR_W SCREEN_WIDTH
+#define SCR_H SCREEN_HEIGHT
 
 //Ê±¼ä
-#define VIDEOPLAYER_TIME_W 47
+#define VIDEOPLAYER_TIME_W 99//47
 #define VIDEOPLAYER_TIME_H 16
 #define VIDEOPLAYER_TIME_X ((SCR_W - VIDEOPLAYER_TIME_W)>> 1)//69
 #define VIDEOPLAYER_TIME_Y (SCR_H - VIDEOPLAYER_TIME_H)//181
