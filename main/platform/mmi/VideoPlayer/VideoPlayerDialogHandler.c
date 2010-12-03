@@ -394,6 +394,12 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
            
         case EVT_COMMAND:
             return TRUE;
+        case EVT_NO_CLOSEBACKLIGHT:
+            if(pMe->IsPlay)
+            {
+                return TRUE;
+            }
+            break;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 		case EVT_PEN_UP:
 			{

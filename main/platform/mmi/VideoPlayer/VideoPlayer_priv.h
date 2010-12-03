@@ -427,11 +427,7 @@ typedef struct _CVideoPlayer
     
     //在某些特殊情况下不允许暂停
     boolean          PauseLock;
-           
-    //背光
-    IBacklight       *Ibacklight;
-    //背光timer
-    byte             bktimer;
+    
     //键盘音量
     byte             m_KeySound;
     byte             m_CKSound;
