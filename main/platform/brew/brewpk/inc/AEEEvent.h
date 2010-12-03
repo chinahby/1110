@@ -274,10 +274,8 @@ enum
     EVT_AUTO_POWERDOWN,
     EVT_BATT_POWERDOWN,
     EVT_ALARMOFF,
-    EVT_FOCUS_SWITCH,
-#ifdef FEATURE_UTK2    
-    EVT_UTKREFRESH,    
-#endif //FEATURE_UTK2   
+    EVT_FOCUS_SWITCH,   
+    EVT_UTKREFRESH,
     EVT_RTC,
     EVT_UPDATE_ARROW_BUTTON,
     EVT_BLUETOOTH_EVENT,
@@ -288,11 +286,7 @@ enum
     EVT_PLAYNEXT,       //play next video / music file. 
                         //dwParam == (char*)pszFilename ,point to filename
     EVT_POPMSGDIALOG,  // notify pop playfailed msg when play failed 
-
-//#ifdef FEATURE_PLANEMODE
     EVT_PLANEMODEON,
-//#endif
-
     EVT_APP_DIALOG_TIMEOUT,    
     EVT_APP_INTERRUPT,
     EVT_APP_EXIT,
@@ -301,9 +295,7 @@ enum
     EVT_EDITOR_END,        // Send to the invoker APP when the END key is pressed.
 	EVT_MMS_RECEIVED,		// notify CoreApp that MMS is received.
 	EVT_SET_OPERATING_MODE,
-#ifdef FEATURE_SEAMLESS_SMS
     EVT_SEND_SEAMLESSSMS,
-#endif
     EVT_CAMERA_NOTIFY,
     EVT_CARD_STATUS,
     EVT_HEADSET_CONNECT,
