@@ -451,8 +451,13 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
 	{HS_SYMBOL_K,					AVK_SYMBOL,						AVK_METHED_HOLD, FALSE, 0},
 	{HS_LCTRL_K,					AVK_LCTRL,						AVK_METHED_HOLD, FALSE, 0},
 	#ifndef FEATURE_LANG_THAI
+	#ifdef FEATURE_NUM_KEY_MID
+	{HS_F1_K,					    AVK_MESSAGE,						    AVK_METHED_HOLD, FALSE, 1},
+	{HS_F2_K,					    AVK_MUSIC,						AVK_METHED_HOLD, FALSE, 1},
+	#else
 	{HS_F1_K,					    AVK_UP,						    AVK_METHED_HOLD, FALSE, 1},
 	{HS_F2_K,					    AVK_DOWN,						AVK_METHED_HOLD, FALSE, 1},
+	#endif
 	#else
 	{HS_F1_K,					    AVK_MESSAGE,				    AVK_METHED_HOLD, FALSE, 1},
 	{HS_F2_K,					    AVK_MUSIC,						    AVK_METHED_HOLD, FALSE, 1},

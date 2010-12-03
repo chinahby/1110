@@ -4241,6 +4241,16 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 			case AVK_9:
             case AVK_POUND:
 	        case AVK_STAR:
+	        case AVK_Q:
+            case AVK_W:
+            case AVK_E:
+            case AVK_R:
+            case AVK_A:
+            case AVK_S:
+            case AVK_D:
+            case AVK_F:
+            case AVK_X:
+            case AVK_C:
 	        case AVK_T:
 	        case AVK_Y:
 	        case AVK_U:
@@ -4333,6 +4343,17 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		        case AVK_9:
 		        case AVK_POUND:
 		        case AVK_STAR: 
+		        case AVK_Q:
+                case AVK_W:
+                case AVK_E:
+                case AVK_R:
+                case AVK_A:
+                case AVK_S:
+                case AVK_D:
+                case AVK_F:
+                case AVK_Z:
+                case AVK_X:
+                case AVK_C:
 		        case AVK_T: 
 		        case AVK_Y:
 		        case AVK_U:
@@ -4351,7 +4372,6 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		        case AVK_ENTER:
 				case AVK_SPACE:
 		        case AVK_RWD:
-		        case AVK_Z:
 	        	case AVK_MUTE:
 		            {
 		                int i = 0;
@@ -4709,6 +4729,17 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 					case AVK_9:
 					case AVK_POUND:
 					case AVK_STAR:
+					case AVK_Q:
+		            case AVK_W:
+		            case AVK_E:
+		            case AVK_R:
+		            case AVK_A:
+		            case AVK_S:
+		            case AVK_D:
+		            case AVK_F:
+		            case AVK_Z:
+		            case AVK_X:
+		            case AVK_C:
 					case AVK_T:
 					case AVK_Y:
 					case AVK_U:
@@ -4799,6 +4830,17 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 						case AVK_9:
 						case AVK_POUND:
 						case AVK_STAR: 
+						case AVK_Q:
+		                case AVK_W:
+		                case AVK_E:
+		                case AVK_R:
+		                case AVK_A:
+		                case AVK_S:
+		                case AVK_D:
+		                case AVK_F:
+		                case AVK_Z:
+		                case AVK_X:
+		                case AVK_C:
 						case AVK_T: 
 						case AVK_Y:
 						case AVK_U:
@@ -5553,6 +5595,17 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
         case AVK_9:
         case AVK_POUND:
         case AVK_STAR:
+        case AVK_Q:
+	    case AVK_W:
+	    case AVK_E:
+	    case AVK_R:
+	    case AVK_A:
+	    case AVK_S:
+	    case AVK_D:
+	    case AVK_F:
+	    case AVK_Z:
+	    case AVK_X:
+	    case AVK_C:
         case AVK_T:
         case AVK_Y:
         case AVK_U:
@@ -5568,7 +5621,6 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
         case AVK_B:
         case AVK_N:
         case AVK_M:
-        case AVK_Z:
 	    case AVK_MUTE:
             for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
             {           
@@ -5646,6 +5698,17 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	        case AVK_9:
 	        case AVK_POUND:
 	        case AVK_STAR: 
+	        case AVK_Q:
+            case AVK_W:
+            case AVK_E:
+            case AVK_R:
+            case AVK_A:
+            case AVK_S:
+            case AVK_D:
+            case AVK_F:
+            case AVK_Z:
+            case AVK_X:
+            case AVK_C:
 	        case AVK_T: 
 	        case AVK_Y:
 	        case AVK_U:
@@ -5664,7 +5727,6 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	        case AVK_ENTER:
 			case AVK_SPACE:
 	        case AVK_RWD:
-	        case AVK_Z:
 	        case AVK_MUTE:
 	            {
 	                int i = 0;
@@ -6376,6 +6438,17 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 		case AVK_9:
         case AVK_POUND:
         case AVK_STAR:
+        case AVK_Q:
+        case AVK_W:
+        case AVK_E:
+        case AVK_R:
+        case AVK_A:
+        case AVK_S:
+        case AVK_D:
+        case AVK_F:
+        case AVK_Z:
+        case AVK_X:
+        case AVK_C:
         case AVK_T:
         case AVK_Y:
         case AVK_U:
@@ -6391,7 +6464,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
         case AVK_B:
         case AVK_N:
         case AVK_M:
-        case AVK_Z:
         case AVK_MUTE:
             for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
 			{           
@@ -6469,6 +6541,17 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	        case AVK_9:
 	        case AVK_POUND:
 	        case AVK_STAR: 
+	        case AVK_Q:
+            case AVK_W:
+            case AVK_E:
+            case AVK_R:
+            case AVK_A:
+            case AVK_S:
+            case AVK_D:
+            case AVK_F:
+            case AVK_Z:
+            case AVK_X:
+            case AVK_C:
 	        case AVK_T: 
 	        case AVK_Y:
 	        case AVK_U:
@@ -6487,7 +6570,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	        case AVK_ENTER:
 			case AVK_SPACE:
 	        case AVK_RWD:
-	        case AVK_Z:
         	case AVK_MUTE:
 	            {
 	                int i = 0;
@@ -6785,6 +6867,17 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 		case AVK_9:
         case AVK_POUND:
         case AVK_STAR:
+        case AVK_Q:
+        case AVK_W:
+        case AVK_E:
+        case AVK_R:
+        case AVK_A:
+        case AVK_S:
+        case AVK_D:
+        case AVK_F:
+        case AVK_Z:
+        case AVK_X:
+        case AVK_C:
         case AVK_T:
         case AVK_Y:
         case AVK_U:
@@ -6800,7 +6893,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
         case AVK_B:
         case AVK_N:
         case AVK_M:
-        case AVK_Z:
         case AVK_MUTE:
             for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
 			{           
@@ -6878,6 +6970,17 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	        case AVK_9:
 	        case AVK_POUND:
 	        case AVK_STAR: 
+	        case AVK_Q:
+            case AVK_W:
+            case AVK_E:
+            case AVK_R:
+            case AVK_A:
+            case AVK_S:
+            case AVK_D:
+            case AVK_F:
+            case AVK_Z:
+            case AVK_X:
+            case AVK_C:
 	        case AVK_T: 
 	        case AVK_Y:
 	        case AVK_U:
@@ -6896,7 +6999,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	        case AVK_ENTER:
 			case AVK_SPACE:
 	        case AVK_RWD:
-	        case AVK_Z:
         	case AVK_MUTE:
 	            {
 	                int i = 0;
@@ -7191,6 +7293,17 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 		case AVK_9:
         case AVK_POUND:
         case AVK_STAR:
+        case AVK_Q:
+        case AVK_W:
+        case AVK_E:
+        case AVK_R:
+        case AVK_A:
+        case AVK_S:
+        case AVK_D:
+        case AVK_F:
+        case AVK_Z:
+        case AVK_X:
+        case AVK_C:
         case AVK_T:
         case AVK_Y:
         case AVK_U:
@@ -7282,6 +7395,17 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	        case AVK_9:
 	        case AVK_POUND:
 	        case AVK_STAR: 
+	        case AVK_Q:
+            case AVK_W:
+            case AVK_E:
+            case AVK_R:
+            case AVK_A:
+            case AVK_S:
+            case AVK_D:
+            case AVK_F:
+            case AVK_Z:
+            case AVK_X:
+            case AVK_C:
 	        case AVK_T: 
 	        case AVK_Y:
 	        case AVK_U:
@@ -7593,6 +7717,17 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 		case AVK_9:
         case AVK_POUND:
         case AVK_STAR:
+        case AVK_Q:
+        case AVK_W:
+        case AVK_E:
+        case AVK_R:
+        case AVK_A:
+        case AVK_S:
+        case AVK_D:
+        case AVK_F:
+        case AVK_Z:
+        case AVK_X:
+        case AVK_C:
         case AVK_T:
         case AVK_Y:
         case AVK_U:
@@ -7686,6 +7821,17 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	        case AVK_9:
 	        case AVK_POUND:
 	        case AVK_STAR: 
+	        case AVK_Q:
+            case AVK_W:
+            case AVK_E:
+            case AVK_R:
+            case AVK_A:
+            case AVK_S:
+            case AVK_D:
+            case AVK_F:
+            case AVK_Z:
+            case AVK_X:
+            case AVK_C:
 	        case AVK_T: 
 	        case AVK_Y:
 	        case AVK_U:
@@ -9936,7 +10082,17 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 			case AVK_POUND:
 	        case AVK_STAR: 
 #endif
-	        
+	        case AVK_Q:
+            case AVK_W:
+            case AVK_E:
+            case AVK_R:
+            case AVK_A:
+            case AVK_S:
+            case AVK_D:
+            case AVK_F:
+            case AVK_Z:
+            case AVK_X:
+            case AVK_C:
 	        case AVK_T: 
 	        case AVK_Y:
 	        case AVK_U:

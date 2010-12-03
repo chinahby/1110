@@ -2622,6 +2622,17 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                 case AVK_7:
                 case AVK_8:
                 case AVK_9: 
+                case AVK_Q:
+                case AVK_W:
+                case AVK_E:
+                case AVK_R:
+                case AVK_A:
+                case AVK_S:
+                case AVK_D:
+                case AVK_F:
+                case AVK_Z:
+                case AVK_X:
+                case AVK_C:
                 case AVK_T:
                 case AVK_Y:
                 case AVK_U:
@@ -2951,6 +2962,17 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                 case AVK_7:
                 case AVK_8:
                 case AVK_9: 
+                case AVK_Q:
+                case AVK_W:
+                case AVK_E:
+                case AVK_R:
+                case AVK_A:
+                case AVK_S:
+                case AVK_D:
+                case AVK_F:
+                case AVK_Z:
+                case AVK_X:
+                case AVK_C:
                 case AVK_T:
                 case AVK_Y:
                 case AVK_U:
@@ -6220,6 +6242,17 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 case AVK_8:
                 case AVK_9:
                 case AVK_T:
+                case AVK_Q:
+                case AVK_W:
+                case AVK_E:
+                case AVK_R:
+                case AVK_A:
+                case AVK_S:
+                case AVK_D:
+                case AVK_F:
+                case AVK_Z:
+                case AVK_X:
+                case AVK_C:
                 case AVK_Y:
                 case AVK_U:
                 case AVK_I:
@@ -9869,6 +9902,17 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                     case AVK_7:
                     case AVK_8:
                     case AVK_9:
+                    case AVK_Q:
+		            case AVK_W:
+		            case AVK_E:
+		            case AVK_R:
+		            case AVK_A:
+		            case AVK_S:
+		            case AVK_D:
+		            case AVK_F:
+		            case AVK_Z:
+		            case AVK_X:
+		            case AVK_C:
                     case AVK_T:
                     case AVK_Y:
                     case AVK_U:

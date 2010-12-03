@@ -396,6 +396,22 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS+1] =
 };
 #endif
 #ifndef FEATURE_LANG_THAI
+#ifdef FEATURE_NUM_KEY_MID   //add by yang decai 2010-12-03
+static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS +1] =
+{
+    /*KYPD_9            KYPD_11         KYPD_15         KYPD_17     KYPD_MEMO       GPIO_OUTPUT_41  GPIO_OUTPUT_42  GPIO_OUTPUT_34   GND*/
+    /*KEYSENSE_0_N*/
+    {HS_RIGHT_K,        HS_UP_K,        HS_INFO_K,      HS_S_K,     HS_DOWN_K,      HS_LEFT_K,      HS_SEL_K,       HS_W_K,         HS_SEND_K},
+     /*KEYSENSE_1_N*/
+    {HS_CLR_K,          HS_LCTRL_K,     HS_SYMBOL_K,    HS_F2_K,  HS_SPACE_K,       HS_Z_K,         HS_F1_K,        HS_UP_K,        HS_CAPLK_K},
+     /*KEYSENSE_2_N*/
+    {HS_ENTER_K,        HS_DOLLAR_K,    HS_M_K,         HS_0_K,     HS_9_K,         HS_8_K,         HS_7_K,         HS_X_K,         HS_SHIFT_K},
+     /*KEYSENSE_3_N*/
+    {HS_F3_K,           HS_L_K,         HS_K_K,         HS_POUND_K, HS_6_K,         HS_5_K,         HS_4_K,         HS_D_K,         HS_A_K},
+     /*KEYSENSE_4_N*/
+    {HS_P_K,            HS_O_K,         HS_I_K,         HS_STAR_K,  HS_3_K,         HS_2_K,         HS_1_K,         HS_E_K,         HS_Q_K}
+};
+#else
 static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS +1] =
 {
     /*KYPD_9            KYPD_11         KYPD_15         KYPD_17     KYPD_MEMO       GPIO_OUTPUT_41  GPIO_OUTPUT_42  GPIO_OUTPUT_34   GND*/
@@ -410,6 +426,8 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS +1] =
      /*KEYSENSE_4_N*/
     {HS_P_K,            HS_O_K,         HS_I_K,         HS_U_K,     HS_Y_K,         HS_T_K,         HS_3_K,         HS_2_K,         HS_POUND_K}
 };
+
+#endif
 #else
 static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS +1] =
 {
