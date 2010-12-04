@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+ï»¿<?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="videoplayer" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1004" Name="IDS_DELETE">
-		<Text>„h³ý</Text>
+		<Text>åˆ é™¤</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_PLAYFAILED">
-		<Text>²¥·Å³öåe</Text>
+		<Text>æ’­æ”¾å‡ºé”™</Text>
 	</STRING>
 </Strings>
 <Dialogs>
