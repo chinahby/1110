@@ -581,15 +581,24 @@ static __inline void MediaGalleryApp_ShowErrorMsgBox(CMediaGalleryApp *pMe)
 static __inline void MediaGalleryApp_ShowProgressBox(CMediaGalleryApp *pMe,
                                                       uint16 nMsgBoxID)
 {
+   uint16 iTextID = IDS_MG_PROGBARHINT;
    if(!pMe)
       return;
 
    MGAppUtil_SetMediaDlgStat(pMe, MG_DLGSTAT_PROGRESS);
    MediaGalleryApp_SetMsgBoxID(pMe, nMsgBoxID);
+   if(nMsgBoxID == MG_MSGID_BUILDVIDEOLIST)
+   	{
+   	  iTextID = IDS_MG_LOADING;
+   	}
+   	else
+   	{
+   	  iTextID = IDS_MG_PROGBARHINT;
+   	}
    MediaGalleryApp_ShowMsgBox(pMe,
          NULL,
          MGRES_LANGFILE,
-         IDS_MG_PROGBARHINT,
+         iTextID,
          MESSAGE_WAITING,
          BTBAR_NONE);
 }//MediaGalleryApp_ShowProgressBox

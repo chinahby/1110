@@ -319,6 +319,9 @@
 	<STRING Id="1105" Name="IDS_MG_LOADFAILED">
 		<Text>Gagal memuat gambar</Text>
 	</STRING>
+	<String Id="1106" Name="IDS_MG_LOADING">
+		<Text>Loading...</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">

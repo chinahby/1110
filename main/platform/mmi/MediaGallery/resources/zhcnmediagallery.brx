@@ -318,6 +318,9 @@
 	</STRING>
 	<STRING Id="1105" Name="IDS_MG_LOADFAILED">
 		<Text>装载图片失败</Text>
+	<String Id="1106" Name="IDS_MG_LOADING">
+		<Text>载入中...</Text>
+	</String>
 	</STRING>
 </Strings>
 <Dialogs>
