@@ -1,4 +1,7 @@
 #include "disp_drv.h"
+
+#define DISP_IC_WIDTH_MAX   128
+
 #include "disp_ic_generic.h"
 
 static void disp_ic_init(void)
@@ -160,7 +163,7 @@ boolean disp_st7735r_tft144(disp_drv_ic_type *pdispic)
     uint8 id1,id2,id3;
     
     LCD_WRITE_CMD(0x04);
-    LCD_READ_DATA();
+    id1=LCD_READ_DATA();
     id1=LCD_READ_DATA();
     id2=LCD_READ_DATA();
     id3=LCD_READ_DATA();
