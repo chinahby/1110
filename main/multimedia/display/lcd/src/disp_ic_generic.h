@@ -563,7 +563,7 @@ static int disp_scale_yuv420(const byte *src, uint16 src_width, uint16 src_heigh
     uint16 x,y,scale_x,scale_y,temp;
     uint32 scale;
 #ifdef DISP_YUV_MDP_FORMAT
-    const byte *CbCr_Index,*Y_Index, *CbCr_Orig,*Y_Orig;
+    const byte *CbCr_Index,*Y_Index, *CbCr_Orig,*Y_Orig,*CbCr_Temp;
 #else
     const byte *Cb_Index,*Cr_Index,*Y_Index, *Cb_Orig,*Cr_Orig,*Y_Orig;
 #endif
@@ -572,12 +572,12 @@ static int disp_scale_yuv420(const byte *src, uint16 src_width, uint16 src_heigh
     int16 CbCrLineSize;
     const uint16 *rTable,*gTable,*bTable;
     
-    CbCrLineSize = src_width/2;
-    
     Y_Orig  = src;
 #ifdef DISP_YUV_MDP_FORMAT
+    CbCrLineSize = src_width;
     CbCr_Orig = Y_Orig+src_width*src_height;
 #else
+    CbCrLineSize = src_width/2;
     Cb_Orig = Y_Orig+src_width*src_height;
     Cr_Orig = Cb_Orig+((src_width*src_height)/4);
 #endif
@@ -590,11 +590,11 @@ static int disp_scale_yuv420(const byte *src, uint16 src_width, uint16 src_heigh
     {
         scale_y = (y*scale)>>10;
         Y_Index = Y_Orig+scale_y*src_width;
+        temp = (scale_y>>1)*CbCrLineSize;
+        
 #ifdef DISP_YUV_MDP_FORMAT
-        temp = scale_y*CbCrLineSize;
         CbCr_Index = CbCr_Orig+temp;
 #else
-        temp = (scale_y>>1)*CbCrLineSize;
         Cb_Index = Cb_Orig+temp;
         Cr_Index = Cr_Orig+temp;
 #endif
@@ -607,13 +607,13 @@ static int disp_scale_yuv420(const byte *src, uint16 src_width, uint16 src_heigh
             Y1=*(Y_Index+scale_x);
             
 #ifdef DISP_YUV_MDP_FORMAT
-            CbCr_Index += scale_x;
+            CbCr_Temp = CbCr_Index+((scale_x>>1)<<1);
             
             /* U_Channel*/
-            Cr=*(CbCr_Index++);
+            Cr=*(CbCr_Temp++);
             
             /* V_Channel*/
-            Cb=*(CbCr_Index);
+            Cb=*(CbCr_Temp);
 #else
             scale_x = scale_x>>1;
 

@@ -1064,10 +1064,13 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
                             pOEM->m_rectClip.dy );
 #endif /* !FEATURE_QTV_MDP_TRANSFORMATIONS */
          MEMCPY(&pOEM->m_rectClip, (void *)p1, sizeof(AEERect));
-#ifdef CUST_EDITION
-         disp_lock_screen(pOEM->m_rectClip.y,pOEM->m_rectClip.dy,pOEM->m_rectClip.x,pOEM->m_rectClip.dx);
-#endif
          pOEM->m_bRectClipChanged = TRUE;
+#ifdef CUST_EDITION
+         if(pme->m_nState == MM_STATE_PLAY)
+         {
+            disp_lock_screen(pOEM->m_rectClip.y,pOEM->m_rectClip.dy,pOEM->m_rectClip.x,pOEM->m_rectClip.dx);
+         }
+#endif
          break;
 
       case MM_PARM_FRAME:
@@ -1575,6 +1578,10 @@ static int OEMMediaMPEG4_Play(IMedia * po)
 #error code not present
 #endif
 
+#ifdef CUST_EDITION
+   disp_lock_screen(pOEM->m_rectClip.y,pOEM->m_rectClip.dy,pOEM->m_rectClip.x,pOEM->m_rectClip.dx);
+#endif
+
    nRet = OEMMediaMPEG42PV_Play(0, pOEM);
    nMdpFramePendingCounter =0;
 #if defined (FEATURE_ACM) || defined (FEATURE_BMP_ACM)
@@ -1635,6 +1642,9 @@ static int OEMMediaMPEG4_Stop(IMedia * po)
    OEMMediaMPEG4_MDPDeregister(pOEM);
 #endif /* FEATURE_QTV_MDP_TRANSFORMATIONS */
 
+#ifdef CUST_EDITION
+   disp_lock_screen(0,0,0,0);
+#endif
    return OEMMediaMPEG42PV_Stop(pOEM);
 }
 
@@ -1724,7 +1734,9 @@ static int OEMMediaMPEG4_Pause(IMedia * po)
    }
    pOEM->m_bPausePending = TRUE;
    MSG_HIGH("OEMMediaMPEG4_Pause - Return",0,0,0);
-
+#ifdef CUST_EDITION
+   disp_lock_screen(0,0,0,0);
+#endif
    return OEMMediaMPEG42PV_Pause(pOEM);
 }
 
@@ -1785,7 +1797,9 @@ static int OEMMediaMPEG4_Resume(IMedia * po)
       startPlayPos = 0;
    }
    MSG_HIGH("OEMMediaMPEG4_Resume - Return",0,0,0);
-
+#ifdef CUST_EDITION
+   disp_lock_screen(pOEM->m_rectClip.y,pOEM->m_rectClip.dy,pOEM->m_rectClip.x,pOEM->m_rectClip.dx);
+#endif
    return OEMMediaMPEG42PV_Play(startPlayPos, pOEM);
 }
 /*==================================================================
@@ -1901,6 +1915,7 @@ void OEMMediaMPEG4_CallbackNotify(AEEMediaCallback * pcb)
         pcb->cmdNotify.nStatus == MM_STATUS_FRAME &&
         !pOEM->m_bFrameCBEnabled )
   {
+#if 1//ndef CUST_EDITION
     /* We're about to send an MM_STATUS_FRAME to the Brew app.  However, they
     * haven't enabled them, so handle it ourselves and return.
     */
@@ -1915,7 +1930,6 @@ void OEMMediaMPEG4_CallbackNotify(AEEMediaCallback * pcb)
     /*
     * IMPORTANT NOTE: You need to do IBITMAP_Release(pFrame) after you're done with pFrame.
     */
-
     if(pOEM->m_bPausePending)
     {
       /* Player is paused just release the frame sent.
@@ -1924,6 +1938,7 @@ void OEMMediaMPEG4_CallbackNotify(AEEMediaCallback * pcb)
       OEMMediaMPEG42PV_ReleaseCurrentVideoFrameBuffer(NULL);
       return;
     }
+    
     if( IMEDIA_GetFrame((IMedia *)pme, &pFrame) == SUCCESS)
     {
       MSG_HIGH("IMEDIA_GetFrame called count = %d ",no_of_getframes_called,0,0);
@@ -2220,6 +2235,7 @@ void OEMMediaMPEG4_CallbackNotify(AEEMediaCallback * pcb)
       if(pFrame != NULL)
         IBITMAP_Release(pFrame);
     }
+#endif // #ifndef CUST_EDITION
     /* Do not send this callback to the app as they are not registered for it */
     return;
   }
