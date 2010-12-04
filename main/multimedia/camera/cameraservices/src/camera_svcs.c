@@ -1112,7 +1112,7 @@ camera_ret_code_type camera_svcs_set_dimensions
   }
 
   camera_log (LOG_FUNC, (uint32)CAMERA_FUNC_SET_DIMENSIONS, 0, 0, __LINE__);
-
+#ifndef CUST_EDITION
   /* Be smart about setting dimensions.  Note that internal buffer dimensions
      during preview/capture are ALWAYS landscape: so the larger UI dimension
      is the "width" and the smaller the height */
@@ -1135,7 +1135,7 @@ camera_ret_code_type camera_svcs_set_dimensions
   {
     display_height = CAMERA_QVGA_HEIGHT;
   }
-  
+#endif
   /* Set the image size for snapshot */
   camera_dx = ui_picture_width;
   camera_dy = ui_picture_height;
