@@ -1602,7 +1602,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
 		
 #if FEATURE_DRAW_LUNAR_CALENDAR
 #if 1
-            CScheduleApp_DrawLunarStr(pme);
+           CScheduleApp_DrawLunarStr(pme);
 #else
             rc.x = 0;
             rc.y = pme->m_rc.dy - (HEIGHT_PROMPT_BAR + 14);
@@ -1787,7 +1787,7 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
                 CScheduleApp_GetChineseLunar(&pme->m_calendar);
 
                 CScheduleApp_GetLunarStr(pme);
-                CScheduleApp_DrawLunarStr(pme);
+                CScheduleApp_DrawLunarStr(pme);  //»­ÈÕÀú
                 IDISPLAY_UpdateEx( pme->m_pDisplay, FALSE);
                 //repaint(pme, TRUE);
             }
