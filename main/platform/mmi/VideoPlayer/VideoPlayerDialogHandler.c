@@ -122,6 +122,8 @@ static void DialogTimeoutCallback(void *pUser);
 
 // 获取指定视频的名字
 static int  VideoPlayer_GetFileID(CVideoPlayer *pMe);
+static boolean VideoPlayer_ChangeScrState(CVideoPlayer* pMe,boolean isLockScr);
+
 
 
 /*=================================================================================================================
@@ -338,7 +340,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
                     CLOSE_DIALOG(DLGRET_MSGBOX);
                 }
                 else if(pMe->IsPlay)
-                {                    
+                { 
                     VideoPlayer_PlayVideo(pMe);
                 }
             } 
@@ -720,6 +722,10 @@ extern /*MMD_PLYFILE*/uint32 pFileHandle;
 #endif//WIN32
 static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,uint16 wParam ,uint32 dwParam)
 {   
+    if(pMe->IsFullScreen)
+    {
+		return VideoPlayer_PlayMod(pMe,wParam);
+    }
     switch(wParam)
     {       
         //播放或暂停
@@ -842,7 +848,8 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                     if(pMe->m_pMedia)
 					{
 						IMEDIA_Stop((IMedia*)pMe->m_pMedia);
-					}
+					}			
+					VideoPlayer_ChangeScrState(pMe,FALSE);
                     SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_OFF);
                     //ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)(IMEDIA_Stop),pMe->m_pMedia);                                    
                 }
@@ -1318,18 +1325,13 @@ void  VideoPlayer_InitVideo(CVideoPlayer  *pMe)
 
     if(pMe->m_InitFailed == SUCCESS)
     {     
-        AEERect rc;
         (void)IMEDIA_RegisterNotify((IMedia*)pMe->m_pMedia, VideoPlayer_VideoNotify, pMe);//注册底层回调 
         pMe->bCurrentTime = 0;
         pMe->bTotalTime = 0;
 		uiClsId = IMEDIA_GetTotalTime((IMedia*)pMe->m_pMedia); 
 		DBGPRINTF("(void)IMEDIA_GetTotalTime(pMe->m_pMedia); %d",uiClsId);
         (void)IMEDIA_SetVolume((IMedia*)pMe->m_pMedia, pMe->totalvolume); //设置当前音量大小
-		MEMSET(&rc,NULL,sizeof(rc));
-		rc.dx = pMe->m_rc.dx;
-		rc.y = GetTitleBarHeight(pMe->m_pDisplay);
-		rc.dy = pMe->m_rc.dy - GetTitleBarHeight(pMe->m_pDisplay) -  GetBottomBarHeight(pMe->m_pDisplay);
-        IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia,MM_PARM_RECT,(int32)&rc,NULL);
+        //VideoPlayer_ChangeScrState(pMe,TRUE);
     }    
 }
 /*=================================================================================================================
@@ -1340,6 +1342,7 @@ void VideoPlayer_PlayVideo(CVideoPlayer *pMe)
     if(pMe->m_pMedia)
     {  
     	DBGPRINTF("YY Said : Play!!! ");
+		VideoPlayer_ChangeScrState(pMe,TRUE);
         pMe->m_PlayFailed = IMEDIA_Play((IMedia*)pMe->m_pMedia);//播放  
         SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_ON);
     }      
@@ -1526,7 +1529,7 @@ static  void VideoPlayer_RefreshPlayerFileName(CVideoPlayer *pMe)
     else 
     {        
         VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NAME_PART, 0, 0);  
-        SETAEERECT(&rc_name, 2,1, 172, 17);
+        SETAEERECT(&rc_name, VIDEOPLAYER_NAMEPART_X + 10,VIDEOPLAYER_NAMEPART_Y, VIDEOPLAYER_NAMEPART_W - 20, VIDEOPLAYER_NAMEPART_H);
         //写title
         DrawTextWithProfile(pMe->m_pShell, 
                             pMe->m_pDisplay, 
@@ -1551,7 +1554,11 @@ static void VideoPlayer_ShowName(CVideoPlayer *pMe)
 	if(pMe->IsFullScreen) return;
 	
     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NAME_PART, 0, 0); 
-    SETAEERECT(&rc_title, 2,1, 172, 17);
+    SETAEERECT(&rc_title, 
+		VIDEOPLAYER_NAMEPART_X + 10,
+		VIDEOPLAYER_NAMEPART_Y,
+		VIDEOPLAYER_NAMEPART_W - 20,
+		VIDEOPLAYER_NAMEPART_H);
     
     pp=&pMe->m_playname[pMe->m_np]; 
     pMe->m_np += 1;
@@ -1622,7 +1629,7 @@ static void VideoPlayer_RefreshPlayingTick(CVideoPlayer *pMe)
                         21, 
                         57, 
                         &rc_tick, 
-                        IDF_ALIGN_LEFT|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+                        IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
 }    
 
 /*=================================================================================================================
@@ -1718,11 +1725,12 @@ boolean VideoPlayer_PlayMod(CVideoPlayer *pMe, uint16 wParam)
     {
         if(!pMe->IsFullScreen)
         {
-            //if((AVK_GSENSOR_STAND != wParam) && (AVK_GSENSOR_UPEND != wParam))
+            if((AVK_GSENSOR_STAND != wParam) && (AVK_GSENSOR_UPEND != wParam))
             {    
                 //ISHELL_CancelTimer(pMe->m_pShell,NULL,pMe); 
                 pMe->IsFullScreen = TRUE;
 				IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia,MM_PARM_RECT,(int32)&pMe->m_rc,NULL);
+				VideoPlayer_ChangeScrState(pMe,TRUE);
 				// YY TODO:
                 //MMD_LCDRotate(1);
             }
@@ -1730,14 +1738,10 @@ boolean VideoPlayer_PlayMod(CVideoPlayer *pMe, uint16 wParam)
         else
         {   
             if((AVK_GSENSOR_LEFT != wParam) && (AVK_GSENSOR_RIGHT != wParam))
-            {   AEERect rc;
+            {   
                 pMe->IsFullScreen = FALSE;
                 FullScreen = FALSE;
-				MEMSET(&rc,NULL,sizeof(rc));
-		        rc.dx = pMe->m_rc.dx;
-		        rc.y = GetTitleBarHeight(pMe->m_pDisplay);
-		        rc.dy = pMe->m_rc.dy - GetTitleBarHeight(pMe->m_pDisplay) -  GetBottomBarHeight(pMe->m_pDisplay);
-				IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia,MM_PARM_RECT,(int32)&rc,NULL);
+				VideoPlayer_ChangeScrState(pMe,TRUE);
                 
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAYERPICTURE_PAUSE, 0, 0);//背景图
                 DRAW_BOTTOMBAR(BTBAR_FULLSCREEN_PAUSE_STOP);               
@@ -1969,4 +1973,29 @@ static int VideoPlayer_GetFileID(CVideoPlayer *pMe)
 }
 
 #endif
+
+boolean VideoPlayer_ChangeScrState(CVideoPlayer* pMe,boolean isLockScr)
+
+{
+  AEERect rc;
+  MEMSET(&rc,NULL,sizeof(rc));
+  if(isLockScr)
+  	{
+      if(pMe->IsFullScreen)
+      	{
+      	  rc.dx = pMe->m_rc.dx;
+		  rc.dy = pMe->m_rc.dy;
+      	}
+      else
+      	{
+      	   rc.dx = pMe->m_rc.dx;
+           rc.y = VIDEOPLAYER_NAMEPART_H;
+           rc.dy = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay);
+
+      	}
+  	}
+  return (SUCCESS == IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia,MM_PARM_RECT,(int32)&rc,NULL));
+}
+
+
 

@@ -41,7 +41,7 @@
    #endif
 #endif
 #include "videoplayer.brh"
-#include "videoplayer_images.brh"
+
 #include "AEEShell.h"
 #include "AEEModTable.h"
 #include "AEEStdLib.h"
@@ -71,6 +71,12 @@
 #include "AEEConfig.h"    
 #include "AEEBacklight.h" 
 #include "Appscommon.h"
+#if SCREEN_WIDTH == 220 && SCREEN_HEIGHT == 176
+#include "videoplayer_images_220x176.brh"
+#else
+#include "videoplayer_images_160x128.brh"
+#endif
+
 
 
 /*=================================================================================================================
@@ -143,6 +149,12 @@
 //wlh 20090420 add icon x/y
 #define SCR_W SCREEN_WIDTH
 #define SCR_H SCREEN_HEIGHT
+
+//时间
+#define VIDEOPLAYER_NAMEPART_W SCREEN_WIDTH//47
+#define VIDEOPLAYER_NAMEPART_H 34
+#define VIDEOPLAYER_NAMEPART_X 0
+#define VIDEOPLAYER_NAMEPART_Y 0
 
 //时间
 #define VIDEOPLAYER_TIME_W 99//47

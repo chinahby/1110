@@ -105,7 +105,7 @@ when       who     what, where, why
 
 
 
-#define FEATURE_QTV_MEMORY_DEBUG
+//#define FEATURE_QTV_MEMORY_DEBUG
 
 /* Enable the Sleep watchdog reporting fix */
 /*#define FEATURE_MP4_MONITOR_SLEEP_DOG_REPORT */
@@ -194,7 +194,7 @@ when       who     what, where, why
  */
 #define FEATURE_MEMUTILS_NEW_DELETE
 #define FEATURE_MEMUTILS_NEW_DELETE_HEAP_CACHE
-#define FEATURE_MEMUTILS_HEAP_CACHE_ENHANCED_DEBUGGING
+//#define FEATURE_MEMUTILS_HEAP_CACHE_ENHANCED_DEBUGGING
 
 #define FEATURE_FILE_FRAGMENTATION 
 /* Qtv 4.4 Features */
@@ -273,7 +273,7 @@ when       who     what, where, why
 #define FEATURE_QTV_STATIC_DLAGENT_TASK
 #define FEATURE_QTV_STATIC_DLDSPSVC_TASK
 #define FEATURE_QTV_DECODER_INVALIDATE_CACHE
-
+#define FEATURE_QTV_OEM_BUFFER_MGR
 //Gemsea Add
 #define FEATURE_QTV_IPL_SCALING
 #endif /* CUSTMP4_H */
