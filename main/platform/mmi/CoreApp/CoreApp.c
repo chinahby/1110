@@ -803,11 +803,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             //#if defined(FEATURE_PROJECT_W203) || defined(FEATURE_PROJECT_W204)
 			#if defined(FEATURE_TORCH_KEY_SPACE)	
 			
-                #ifdef FEATURE_VERSION_HITZ181
-                case AVK_LCTRL:
-                #else
                 case AVK_SPACE:
-                #endif
                 {
                     if ( pMe->TorchOn == FALSE )
                     {
@@ -832,6 +828,33 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 return TRUE;                
             #endif
 
+			#if defined(FEATURE_TORCH_KEY_LCTRL)	
+			
+                case AVK_LCTRL:
+                {
+                    if ( pMe->TorchOn == FALSE )
+                    {
+                        pMe->TorchOn = TRUE;
+                        if (pMe->m_pBacklight)
+                        {
+                            IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                            //IBACKLIGHT_Disable(pMe->m_pBacklight);
+                        }
+                    }
+                    else
+                    {
+                        pMe->TorchOn = FALSE;
+                        if (pMe->m_pBacklight)
+                        {                        	
+                            IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                            //IBACKLIGHT_Disable(pMe->m_pBacklight);						
+                        }
+                    }                                                   
+                    }             
+
+                return TRUE;                
+            #endif
+            
             //#if defined(FEATURE_PROJECT_W021) || defined (FEATURE_PROJECT_W021_128x160) || defined (FEATURE_PROJECT_W021_176X220) || defined (FEATURE_PROJECT_W021_240X320) || defined (FEATURE_PROJECT_W021_220X176) || defined (FEATURE_PROJECT_W021_320X240)
 			#if defined(FEATURE_TORCH_KEY_CAMERA)					
 				case AVK_CAMERA:
