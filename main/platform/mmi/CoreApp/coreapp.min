@@ -52,7 +52,7 @@ CONSTFILE_FILES+=\
 else ifeq ($(USES_RESDIR), ITEL)
 CONSTFILE_FILES+=\
 	onoff.gif|fs:/image/pwronoffani/onoff.gif 	
-else ifeq ($(USES_RESDIR), Ivio021)
+else ifeq ($(USES_RESDIR), ivio021)
 CONSTFILE_FILES+=\
 	poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \
 	poweroffani.jpg|fs:/image/pwronoffani/poweroffani.jpg		
