@@ -812,7 +812,7 @@ SIDE EFFECTS
 
 static boolean camsensor_sic110a_snapshot_config( camsensor_static_params_type  *camsensor_params)
 {
-    if(camera_dx > CAMSENSOR_SIC110A_QTR_SIZE_WIDTH)
+    if(camera_dx > CAMSENSOR_SIC110A_QTR_SIZE_WIDTH || camera_dy > CAMSENSOR_SIC110A_QTR_SIZE_HEIGHT)
     {
     	/* Set the current dimensions */
     	camsensor_params->camsensor_width  = \
@@ -906,7 +906,7 @@ SIDE EFFECTS
 ===========================================================================*/
 static boolean camsensor_sic110a_video_config(camsensor_static_params_type *camsensor_params)
 {
-	if(camera_preview_dx > CAMSENSOR_SIC110A_QTR_SIZE_WIDTH)
+	if(camera_preview_dx > CAMSENSOR_SIC110A_QTR_SIZE_WIDTH || camera_preview_dy > CAMSENSOR_SIC110A_QTR_SIZE_HEIGHT)
 	{
 			    /* Set the current dimensions */
 	    camsensor_params->camsensor_width  = \
