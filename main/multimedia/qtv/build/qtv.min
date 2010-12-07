@@ -20,7 +20,7 @@
   include $(QTV_AVIPARSER)/../etc/AviParser.min
   include $(QTV_ASFPARSER)/../etc/AsfParser.min
   include $(QTV_TEXTPLAYER)/../etc/TextPlayer.min
-  include $(BREW_DYNAMIC_EXTENSIONS)/dyn_qtv.min 
+#Gemsea Remove  include $(BREW_DYNAMIC_EXTENSIONS)/dyn_qtv.min 
   include $(QTV_STREAMDISABLE)/../etc/streamstubs.min
 ifeq ($(USES_QTVVIDEO),yes)
   include $(QTV_VIDEOPLAYER)/../etc/videoplayer.min
