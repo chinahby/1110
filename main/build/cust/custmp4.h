@@ -274,8 +274,6 @@ when       who     what, where, why
 #define FEATURE_QTV_STATIC_DLDSPSVC_TASK
 #define FEATURE_QTV_DECODER_INVALIDATE_CACHE
 #define FEATURE_QTV_OEM_BUFFER_MGR
-//Gemsea Add
-#define FEATURE_QTV_IPL_SCALING
 #endif /* CUSTMP4_H */
 
 
