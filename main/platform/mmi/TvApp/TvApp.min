@@ -25,7 +25,6 @@ CONSTFILE_FILES+=\
 	tvapp.mif|fs:/mif/tvapp.mif \
 	tvapp.bar|fs:/mod/tvapp/en/tvapp.bar \
 	tvapp_image$(USES_LCD_SIZE).bar|fs:/mod/tvapp/tvapp_image.bar \
-	shutter.mid|fs:/tvapp/shutter.mid \
 	search.gif|fs:/image/tvapp/search.gif
 	
 
