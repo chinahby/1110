@@ -14,7 +14,6 @@
 /*============================================================================
     TYPE DEFINITIONS 
 ============================================================================*/
-#define CAMSENSOR_HIGHQUALITY_PREVIEW
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_62
 #define SIC110A_OUTFORMAT_RGB565
 

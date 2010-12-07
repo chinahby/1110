@@ -29,12 +29,12 @@
 #define SIV121A_ID_REG                      (0x01)
 #define SIV121A_INFO_REG                    (0x02)
 
-#define CAMSENSOR_SIV121A_FULL_SIZE_WIDTH    676
-#define CAMSENSOR_SIV121A_FULL_SIZE_HEIGHT   558//480
+#define CAMSENSOR_SIV121A_FULL_SIZE_WIDTH    652
+#define CAMSENSOR_SIV121A_FULL_SIZE_HEIGHT   490//480
 
 #ifdef CAMSENSOR_HIGHQUALITY_PREVIEW
-#define CAMSENSOR_SIV121A_QTR_SIZE_WIDTH     676
-#define CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT    558//480
+#define CAMSENSOR_SIV121A_QTR_SIZE_WIDTH     652
+#define CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT    490//480
 #else
 #define CAMSENSOR_SIV121A_QTR_SIZE_WIDTH     320
 #define CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT    240
@@ -153,21 +153,18 @@ static boolean initialize_siv121a_registers_preview(uint16 dx, uint16 dy)
 {
     uint16 x,y;
     
-    dx *= 2;
-    dy *= 2;
-    
-    if(dx > CAMSENSOR_SIV121A_FULL_SIZE_WIDTH)
+    if(dx > CAMSENSOR_SIV121A_QTR_SIZE_WIDTH)
     {
-        dx = CAMSENSOR_SIV121A_FULL_SIZE_WIDTH;
+        dx = CAMSENSOR_SIV121A_QTR_SIZE_WIDTH;
     }
     
-    if(dy > CAMSENSOR_SIV121A_FULL_SIZE_HEIGHT)
+    if(dy > CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT)
     {
-        dy = CAMSENSOR_SIV121A_FULL_SIZE_HEIGHT;
+        dy = CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT;
     }
     
-    x = (CAMSENSOR_SIV121A_FULL_SIZE_WIDTH-dx)>>1;
-    y = (CAMSENSOR_SIV121A_FULL_SIZE_HEIGHT-dy)>>1;
+    x = (CAMSENSOR_SIV121A_QTR_SIZE_WIDTH-dx)>>1;
+    y = (CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT-dy)>>1;
     
     // SNR Block [Vendor recommended value ##Don't change##]
     siv121a_i2c_write_byte(0x00,0x00);
@@ -253,14 +250,14 @@ static boolean initialize_siv121a_registers_preview(uint16 dx, uint16 dy)
     siv121a_i2c_write_byte(0x29,0xa9);
     siv121a_i2c_write_byte(0x2A,0x8c);
 
-    siv121a_i2c_write_byte(0x30,(byte)(x>>8));
-    siv121a_i2c_write_byte(0x31,(byte)(x));
-    siv121a_i2c_write_byte(0x32,(byte)(y>>8));
-    siv121a_i2c_write_byte(0x33,(byte)(y));
-    siv121a_i2c_write_byte(0x34,(byte)(dx>>8));
-    siv121a_i2c_write_byte(0x35,(byte)(dx));
-    siv121a_i2c_write_byte(0x36,(byte)(dy>>8));
-    siv121a_i2c_write_byte(0x37,(byte)(dy));
+    siv121a_i2c_write_byte(0x30,0x00);
+    siv121a_i2c_write_byte(0x31,0x10);
+    siv121a_i2c_write_byte(0x32,0x00);
+    siv121a_i2c_write_byte(0x33,0x10);
+    siv121a_i2c_write_byte(0x34,0x02);
+    siv121a_i2c_write_byte(0x35,0x76);
+    siv121a_i2c_write_byte(0x36,0x01);
+    siv121a_i2c_write_byte(0x37,0xD6);
     siv121a_i2c_write_byte(0x40,0x01);
     siv121a_i2c_write_byte(0x41,0x04);
     siv121a_i2c_write_byte(0x42,0x08);
@@ -422,11 +419,11 @@ static boolean initialize_siv121a_registers_preview(uint16 dx, uint16 dy)
     siv121a_i2c_write_byte(0xB9,0x10); //Ilimininfo Start
     siv121a_i2c_write_byte(0xBA,0x30); //Slope
 
-    siv121a_i2c_write_byte(0xc0,0x10);//10 40 F0 QVGA WINDOW 00 A0 80 160*128
-    siv121a_i2c_write_byte(0xc1,0x00);
-    siv121a_i2c_write_byte(0xc2,0x40);
-    siv121a_i2c_write_byte(0xc3,0x00);
-    siv121a_i2c_write_byte(0xc4,0xF0);
+    siv121a_i2c_write_byte(0xc0,(byte)((x>>8)<<6)|((dx>>8)<<4)|((y>>8)<<3)|((dy>>8)<<2));//10 40 F0 QVGA WINDOW 00 A0 80 160*128
+    siv121a_i2c_write_byte(0xc1,(byte)x);
+    siv121a_i2c_write_byte(0xc2,(byte)dx);
+    siv121a_i2c_write_byte(0xc3,(byte)y);
+    siv121a_i2c_write_byte(0xc4,(byte)dy);
 
     siv121a_i2c_write_byte(0xDD,0x0F); // ENHCTRL
     siv121a_i2c_write_byte(0xDE,0xfA); // NOIZCTRL
@@ -562,15 +559,15 @@ static boolean initialize_siv121a_registers(uint16 dx, uint16 dy)
     siv121a_i2c_write_byte(0x28,0x20);
     siv121a_i2c_write_byte(0x29,0xa9);
     siv121a_i2c_write_byte(0x2A,0x8c);
-    
-    siv121a_i2c_write_byte(0x30,(byte)(x>>8));
-    siv121a_i2c_write_byte(0x31,(byte)(x));
-    siv121a_i2c_write_byte(0x32,(byte)(y>>8));
-    siv121a_i2c_write_byte(0x33,(byte)(y));
-    siv121a_i2c_write_byte(0x34,(byte)(dx>>8));
-    siv121a_i2c_write_byte(0x35,(byte)(dx));
-    siv121a_i2c_write_byte(0x36,(byte)(dy>>8));
-    siv121a_i2c_write_byte(0x37,(byte)(dy));
+
+    siv121a_i2c_write_byte(0x30,0x00);
+    siv121a_i2c_write_byte(0x31,0x10);
+    siv121a_i2c_write_byte(0x32,0x00);
+    siv121a_i2c_write_byte(0x33,0x10);
+    siv121a_i2c_write_byte(0x34,0x02);
+    siv121a_i2c_write_byte(0x35,0x76);
+    siv121a_i2c_write_byte(0x36,0x01);
+    siv121a_i2c_write_byte(0x37,0xD6);
     siv121a_i2c_write_byte(0x40,0x01);
     siv121a_i2c_write_byte(0x41,0x04);
     siv121a_i2c_write_byte(0x42,0x08);
@@ -733,11 +730,11 @@ static boolean initialize_siv121a_registers(uint16 dx, uint16 dy)
     siv121a_i2c_write_byte(0xB9,0x10); //Ilimininfo Start
     siv121a_i2c_write_byte(0xBA,0x30); //Slope
 
-    siv121a_i2c_write_byte(0xc0,0x24);
-    siv121a_i2c_write_byte(0xc1,0x00);
-    siv121a_i2c_write_byte(0xc2,0x80);
-    siv121a_i2c_write_byte(0xc3,0x00);
-    siv121a_i2c_write_byte(0xc4,0xe0);
+    siv121a_i2c_write_byte(0xc0,(byte)((x>>8)<<6)|((dx>>8)<<4)|((y>>8)<<3)|((dy>>8)<<2));//10 40 F0 QVGA WINDOW 00 A0 80 160*128
+    siv121a_i2c_write_byte(0xc1,(byte)x);
+    siv121a_i2c_write_byte(0xc2,(byte)dx);
+    siv121a_i2c_write_byte(0xc3,(byte)y);
+    siv121a_i2c_write_byte(0xc4,(byte)dy);
 
     siv121a_i2c_write_byte(0xDD,0x0F); // ENHCTRL
     siv121a_i2c_write_byte(0xDE,0xfA); // NOIZCTRL
@@ -984,23 +981,18 @@ SIDE EFFECTS
 static boolean camsensor_siv121a_video_config(camsensor_static_params_type *camsensor_params)
 {
     /* Set the current dimensions */
-    camsensor_params->camsensor_width  = \
-                camsensor_params->qtr_size_width;
-    camsensor_params->camsensor_height = \
-                camsensor_params->qtr_size_height;
+    camsensor_params->camsensor_width  = camera_preview_dx;
+    camsensor_params->camsensor_height = camera_preview_dy;
 
     /* CAMIF frame */
-    camsensor_params->camif_frame_config.pixelsPerLine = \
-                camsensor_params->qtr_size_width*2;
-
-    camsensor_params->camif_frame_config.linesPerFrame = \
-                camsensor_params->qtr_size_height;
+    camsensor_params->camif_frame_config.pixelsPerLine =camera_preview_dx*2;
+    camsensor_params->camif_frame_config.linesPerFrame =camera_preview_dy;
     
     /* CAMIF Window */
-    camsensor_params->camif_window_width_config.firstPixel = camsensor_params->camsensor_width-camera_preview_dx; //°´CLK
+    camsensor_params->camif_window_width_config.firstPixel = 0; //°´CLK
     camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel+(camera_preview_dx*2);
 
-    camsensor_params->camif_window_height_config.firstLine = (camsensor_params->camsensor_height-camera_preview_dy)/2;
+    camsensor_params->camif_window_height_config.firstLine = 0;
     camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_preview_dy;
     camsensor_params->pixel_clock = 1;
     
