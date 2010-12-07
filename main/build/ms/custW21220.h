@@ -14,8 +14,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //add by yangdecai  for tv
 #define FEATURE_ANALOG_TV
 #define USE_ANALOGTV_TLG1120
-#define FEATURE_TV
-
 #define FEATURE_APP_BLUETOOTH
 #define FEATURE_BT
 #define FEATURE_IBT
