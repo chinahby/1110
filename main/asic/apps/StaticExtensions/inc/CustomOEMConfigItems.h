@@ -218,7 +218,7 @@ typedef byte keyToneLength;
 typedef struct
 {
 	AECHAR name[MAXLEN];      //频道名，如“中央一台”之类的,名字最多为32个字符
-	uint16 channel;  //频道号，如"1、2"频道之类的 [MAXLEN]
+	AECHAR channel[MAXLEN];  //频道号，如"1、2"频道之类的 [MAXLEN]
 }TvBookmark;
 
 typedef struct
