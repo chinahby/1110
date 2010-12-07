@@ -908,6 +908,9 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #ifdef FEATURE_APP_MPEG4
 			IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_VIDEOPLAYER, IDS_MULTIMEDIA_VIDEOPLAYER, NULL, 0);
 #endif
+#ifdef FEATURE_ANALOG_TV
+            IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TV, IDS_MULTIMEDIA_TV, NULL, 0);
+#endif
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -1028,6 +1031,11 @@ static int StartApplet(Multimed *pMe, int i)
 #ifdef FEATURE_APP_MPEG4
 		case IDS_MULTIMEDIA_VIDEOPLAYER:
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_VIDEOPLAYER);
+            break;
+#endif
+#ifdef FEATURE_ANALOG_TV
+        case IDS_MULTIMEDIA_TV:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_TVAPP);
             break;
 #endif
 		default:

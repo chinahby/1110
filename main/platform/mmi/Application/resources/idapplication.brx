@@ -46,9 +46,6 @@
 	<String Id="1025" Name="IDS_APPLICATION_BLUETOOTH">
 		<Text>Bluetooth</Text>
 	</String>
-	<String Id="1023" Name="IDS_APPLICATION_TITLE_13">
-		<Text>Kalender</Text>
-	</String>
 	<String Id="1031" Name="IDS_TOOLS_LIST">
 		<Text>Alat</Text>
 	</String>

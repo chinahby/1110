@@ -46,9 +46,6 @@
 	<String Id="1025" Name="IDS_APPLICATION_BLUETOOTH">
 		<Text>Bluetooth</Text>
 	</String>
-	<String Id="1026" Name="IDS_APPLICATION_TV">
-		<Text>TV</Text>
-	</String>
 	<String Id="1031" Name="IDS_TOOLS_LIST">
 		<Text>เครื่องมือ</Text>
 	</String>

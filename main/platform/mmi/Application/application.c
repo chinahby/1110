@@ -1135,10 +1135,6 @@ static int StartApplet(Application *pMe, int i)
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
         break;
 #endif
-    case IDS_APPLICATION_TV:
-        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_TVAPP);
-        break;
-        
     default:
         break;
     }

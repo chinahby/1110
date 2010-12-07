@@ -19,6 +19,9 @@
 	<STRING Id="1015" Name="IDS_MULTIMEDIA_VIDEOPLAYER">
 		<Text>Video Player</Text>
 	</STRING>
+	<STRING Id="1016" Name="IDS_MULTIMEDIA_TV">
+		<Text>TV</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_MULTIMEDIA_DIALOGS" Focus="7001">
