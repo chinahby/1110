@@ -2707,7 +2707,15 @@ static boolean BTApp_HandleEvent
 		}
 		
 		return TRUE;
-	  }	  
+	  }	  	  
+	  else
+	  {
+		 if (AVK_CANCEL == wParam)
+		 {
+			ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );
+			return TRUE;
+		 }
+	  }
 	  //Add End
 	  
       if ( wParam == AVK_END )
