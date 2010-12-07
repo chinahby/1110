@@ -2087,7 +2087,6 @@ int CContApp_DeleteCont(CContApp *pMe, uint16 wContID)
     // 检查当前单键拨号中是否存在当前被删除的记录
     for(i=CONTCFG_ONEDIAL2; i<=CONTCFG_ONEDIAL8; i++)	////CONTCFG_ONEDIAL1
     {
-    	MSG_FATAL("CContApp_DeleteCont..................",0,0,0);
         if(SUCCESS != CContApp_GetConfig( pMe,
                                       (ContAppCFG)i,
                                       pMe->m_pOneDialBuf,
@@ -4758,17 +4757,13 @@ static boolean  CContApp_HandleYesNoDlgEvent( CContApp  *pMe,
                                               uint32     dwParam)
 {
    static IStatic *pStatic = NULL;
-   MSG_FATAL("CContApp_HandleYesNoDlgEvent.00............%x",pMe,0,0);
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-   MSG_FATAL("CContApp_HandleYesNoDlgEvent.10............",0,0,0);
 
    if (NULL == pStatic)
    {
-   		 
         AEERect rect = {0};
-        MSG_FATAL("CContApp_HandleYesNoDlgEvent.12............",0,0,0);
         if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                                  AEECLSID_STATIC,
                                                  (void **)&pStatic))
@@ -4779,13 +4774,12 @@ static boolean  CContApp_HandleYesNoDlgEvent( CContApp  *pMe,
         }        
         ISTATIC_SetRect(pStatic, &rect);  
    }
-   MSG_FATAL("CContApp_HandleYesNoDlgEvent.13............",0,0,0);
 
     if ((NULL == pStatic) ||(NULL == pMe))
     {
         return FALSE;
     }
-    MSG_FATAL("CContApp_HandleYesNoDlgEvent.14............",0,0,0);
+
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -4794,7 +4788,7 @@ static boolean  CContApp_HandleYesNoDlgEvent( CContApp  *pMe,
         }
         
         case EVT_DIALOG_START:
-            MSG_FATAL("CContApp_HandleYesNoDlgEvent.15............",0,0,0);
+            
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_APP_CONTACT,
@@ -4806,7 +4800,6 @@ static boolean  CContApp_HandleYesNoDlgEvent( CContApp  *pMe,
             //lint -fallthrough
             return TRUE;
         case EVT_USER_REDRAW:
-             MSG_FATAL("EVT_USER_REDRAW..................",0,0,0);
             // Draw prompt bar here
             {
                 PromptMsg_Param_type  Msg_Param={0};                                
@@ -4825,7 +4818,6 @@ static boolean  CContApp_HandleYesNoDlgEvent( CContApp  *pMe,
             	ISTATIC_Release(pStatic);
             	pStatic = NULL;
             }
-            MSG_FATAL("EVT_DIALOG_END....................",0,0,0);
             return TRUE;
             
         case EVT_KEY:
@@ -4833,7 +4825,6 @@ static boolean  CContApp_HandleYesNoDlgEvent( CContApp  *pMe,
             {
                 /*case AVK_INFO:*/
                 case AVK_SELECT:
-                	MSG_FATAL("AVK_SELECT...................",0,0,0);
                     // 如下代码限制在此界面的快速按键
                     (void) ISHELL_SetTimer( pMe->m_pShell, TIMEOUT_MS_QUICK,
                                             CContApp_HandleDialogTimer, pMe );
@@ -4850,7 +4841,6 @@ static boolean  CContApp_HandleYesNoDlgEvent( CContApp  *pMe,
             break;
                         
         case EVT_DISPLAYDIALOGTIMEOUT:
-            MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT...................",0,0,0);
             CLOSE_DIALOG(DLGRET_YES);
             return TRUE;
             
@@ -4892,7 +4882,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-    MSG_FATAL("CContApp_HandleListDlgEvent.......................",0,0,0);
+    
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_LIST_MENU);
     pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_LIST_TEXT);   
 
@@ -5138,14 +5128,11 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 case AVK_CLR:
                     if(dwParam ==1)
                     {
-                    	MSG_FATAL("AVK_CLR.....................",0,0,0);
                     	pMe->m_wSelectCont = IMENUCTL_GetSel(pMenuCtl);
-                    	MSG_FATAL("pMe->m_wSelectCont;;;;;;;;;;;;;%d",pMe->m_wSelectCont,0,0);
                     	CLOSE_DIALOG(DLGRET_DELETE);
                     }
                     else
                     {
-                    	MSG_FATAL("AVK_CLR.....................",0,0,0);
                     	pMe->m_wMainListSel = MENU_SELECT_NULL;
                     	pMe->m_wMainListIdx = 0;
                     	CLOSE_DIALOG(DLGRET_CANCELED);
@@ -13628,8 +13615,13 @@ static void CContApp_ShowEditItem(CContApp  *pMe, IMenuCtl  *pMenuCtl, ITextCtl 
         //{
     IMENUCTL_GetSelItemRect( pMenuCtl, &rect);
     DBGPRINTF("ItemRECT %d %d %d %d",rect.x,rect.y,rect.dx,rect.dy);
+    #ifdef FEATURE_DISP_320X240
+    rect.x  = 38;//大概的一个数字
+    rect.dx = pMe->m_rc.dx - 41;//five pixels for right edge, 
+    #else
     rect.x  = 23;//大概的一个数字
     rect.dx = pMe->m_rc.dx - 27;//five pixels for right edge, 
+    #endif
     //rect.dy -= 1;
     ITEXTCTL_SetRect( pTextCtl, &rect);
     CContApp_SetFldMaxSize(pMe,pTextCtl,pMe->m_nFldInputID);

@@ -86,7 +86,6 @@
 #else
 	#define  AEE_SCHEDULEAPP_RES_FILE (AEE_RES_LANGDIR SCHEDULEAPP_RES_FILE)
 	#define  AEE_CALENDARAPP_RES_FILE (AEE_RES_LANGDIR CALENDARAPP_RES_FILE)
-	//#define  AEE_CALENDARAPP_RES_FILE "fs:/mod/scheduleapp/en/calendarapp.bar"
 #endif
 
 #define num( wch) ((wch) - ((AECHAR)'0'))

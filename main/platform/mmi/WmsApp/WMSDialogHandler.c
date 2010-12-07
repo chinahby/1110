@@ -1677,7 +1677,6 @@ static boolean IDD_CONFIRM_Handler(void        *pUser,
     return FALSE;
 } // IDD_CONFIRM_Handler
 
-
 /*==============================================================================
 函数:
     IDD_MESSAGELIST_Handler
@@ -1983,7 +1982,6 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                         return TRUE;
                         
                     case AVK_UP:
-						
                         if (IMENUCTL_GetItemID(pMenu, 0) == 
                             IMENUCTL_GetSel(pMenu))
                         {
@@ -2027,14 +2025,12 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                         return TRUE;
                         
                     case AVK_INFO:
-                        MSG_FATAL("AVK_INFO.....................",0,0,0);
                         pMe->m_wPrevMenuSel = IMENUCTL_GetSel(pMenu);
                         pMe->m_wCurindex = pMe->m_wPrevMenuSel - MSG_CMD_BASE;
                         CLOSE_DIALOG(DLGRET_LOAD)
                         return TRUE;
                         
                     case AVK_CLR:
-                    	MSG_FATAL("dwParam = %d",dwParam,0,0);
 						if(dwParam != 1)
 						{
                         	CLOSE_DIALOG(DLGRET_CANCELED)
@@ -2415,74 +2411,71 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
             {
                 case AVK_CLR:
 					{
-						
-							WMSMessageStruct *pTep;
-							int i;
-							int max  = 1;
-							int nlen = 0;
-							int         nBranches=0;
-	    					int         nCurBranchNum=0;
-							#ifdef FEATURE_SMS_UDH
-							uint8       total_sm;   // 消息数据包总数
-							uint8       seq_num;    // 消息序号
-							#endif
-							 for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
-	    					{
-						        pTep = pMe->m_CurMsgNodesMS[i];
-						        if (pTep != NULL)
-						        {
-						            break;
-						        }
-						    }
-							if (NULL == pTep)
-	    					{// 任一非空节点没找到
-	    					    CLOSE_DIALOG(DLGRET_CANCELED)
-	        					return TRUE;
-	    					}
-	    
+						WMSMessageStruct *pTep;
+						int i;
+						int max  = 1;
+						int nlen = 0;
+						int         nBranches=0;
+    					int         nCurBranchNum=0;
+						#ifdef FEATURE_SMS_UDH
+						uint8       total_sm;   // 消息数据包总数
+						uint8       seq_num;    // 消息序号
+						#endif
+						 for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+    					{
+					        pTep = pMe->m_CurMsgNodesMS[i];
+					        if (pTep != NULL)
+					        {
+					            break;
+					        }
+					    }
+						if (NULL == pTep)
+    					{// 任一非空节点没找到
+    					    CLOSE_DIALOG(DLGRET_CANCELED)
+        					return TRUE;
+    					}
+    
 #ifdef FEATURE_SMS_UDH
-						    total_sm = pTep->total_sm;
-						    seq_num = pTep->seq_num;
-						    if (total_sm > 1)
-						    {
-						        // 计算长短信分支总数(每个分支最大含 LONGSMS_MAX_PACKAGES 个数据包)
-						        nBranches = total_sm / (LONGSMS_MAX_PACKAGES);
-						        if ((total_sm % (LONGSMS_MAX_PACKAGES)) != 0)
-						        {
-						            nBranches++;
-						        }
-						        
-						        // 确定当前处理的分支号(0,...,nBranches-1)
-						        nCurBranchNum = (seq_num - 1) / (LONGSMS_MAX_PACKAGES);
-						        if (nBranches>1)
-						        {
-						            nlen += 20;
-						            
-						            if (nCurBranchNum < (nBranches-1))
-						            {
-						                max = LONGSMS_MAX_PACKAGES;
-						            }
-						            else
-						            {
-						                max = total_sm - nCurBranchNum*LONGSMS_MAX_PACKAGES;
-						            }
-						        }
-						        else
-						        {
-						            max = total_sm;
-						        }
-						    }
+					    total_sm = pTep->total_sm;
+					    seq_num = pTep->seq_num;
+					    if (total_sm > 1)
+					    {
+					        // 计算长短信分支总数(每个分支最大含 LONGSMS_MAX_PACKAGES 个数据包)
+					        nBranches = total_sm / (LONGSMS_MAX_PACKAGES);
+					        if ((total_sm % (LONGSMS_MAX_PACKAGES)) != 0)
+					        {
+					            nBranches++;
+					        }
+					        
+					        // 确定当前处理的分支号(0,...,nBranches-1)
+					        nCurBranchNum = (seq_num - 1) / (LONGSMS_MAX_PACKAGES);
+					        if (nBranches>1)
+					        {
+					            nlen += 20;
+					            
+					            if (nCurBranchNum < (nBranches-1))
+					            {
+					                max = LONGSMS_MAX_PACKAGES;
+					            }
+					            else
+					            {
+					                max = total_sm - nCurBranchNum*LONGSMS_MAX_PACKAGES;
+					            }
+					        }
+					        else
+					        {
+					            max = total_sm;
+					        }
+					    }
 #endif   
-							for(i = 0;i<max;i++)
-							{
-								WMSMessageStruct_Reset(pMe->m_CurMsgNodesMS[i]);
-							}
-						
-	                    CLOSE_DIALOG(DLGRET_CANCELED)
-                    
-                    
+						for(i = 0;i<max;i++)
+						{
+							WMSMessageStruct_Reset(pMe->m_CurMsgNodesMS[i]);
+						}
+					}  //ADD BY YANGDECAI 2010-08-16
+                    CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
-					}
+
 				//Add By zzg 2010_09_09
 				case AVK_SEND:	
 				{
@@ -2561,7 +2554,6 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
         default:
             break;
     }
-    
 
     return FALSE;
 } // IDD_VIEWMSG_Handler
@@ -2792,7 +2784,6 @@ static boolean IDD_SETTING_Handler(void   *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-        	
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 #ifdef FEATURE_CARRIER_CHINA_VERTU
@@ -7705,7 +7696,6 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            MSG_FATAL("IDD_SENDOPTS_Handler......................",0,0,0);
             MEMSET(wControls, 0, sizeof(wControls));
             nSelIdx = 0;
             nControls = 0;
@@ -7907,7 +7897,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 for (i=0; i<nControls; i++, y+=dy+ygap)
                 {
                     AEERect rect;
-                    MSG_FATAL("y::::::::::::%d",y,0,0);
+
                     SETAEERECT(&rect, 2, y, SENDOPT_TITLELENGTH, dy);
                     pControl = IDIALOG_GetControl(pMe->m_pActiveIDlg, wControls[i]);
                     
@@ -8989,7 +8979,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     #else
                     if (NULL == pMe->m_pMenu)
                     {
-                       	
                         CLOSE_DIALOG(DLGRET_CANCELED)
                     }
                     else
@@ -11038,7 +11027,7 @@ static boolean IDD_DELETING_Handler(void        *pUser,
                         {
                             int i;
                             wms_cache_info_node  *pnode = NULL;
-                            MSG_FATAL("IWMS_MsgDelete.........0000000000",0,0,0);
+                            
                             for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
                             {
                                 if (pMe->m_CurMsgNodes[i] != NULL)
@@ -11049,7 +11038,6 @@ static boolean IDD_DELETING_Handler(void        *pUser,
                                     nRet = ENOMEMORY;
                                     do
                                     {
-                                    	MSG_FATAL("IWMS_MsgDelete.........",0,0,0);
                                         nRet = IWMS_MsgDelete(pMe->m_pwms,
                                                            pMe->m_clientId,
                                                            &pMe->m_callback,

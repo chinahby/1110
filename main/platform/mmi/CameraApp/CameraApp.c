@@ -486,12 +486,18 @@ static uint32 CameraApp_Release(ICameraApp *p)
 static int CameraApp_InitAppData(CCameraApp *pMe)
 {
     AEEDeviceInfo  di;
-          
+#ifdef FEATURE_ANALOG_TV
+    uint32 m_tv = 0;
+#endif
     if(NULL == pMe)
     {
         return EFAILED;
     }
-    
+#ifdef FEATURE_ANALOG_TV
+    (void)OEM_SetConfig( CFGI_TV_OR_CAMERA,
+	                          &m_tv,
+	                          sizeof(uint32));
+#endif
     // initial applet data
     ISHELL_GetDeviceInfo(pMe->m_pShell, &di);
     pMe->m_rc.x       = 0;
@@ -540,14 +546,16 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
         CameraApp_FreeAppData(pMe);
         return EFAILED;
     }
- 
+
+#ifndef FEATURE_DSP
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_DISPLAY,
                                             (void **)&pMe->m_pDisplay))
     {
         CameraApp_FreeAppData(pMe);
         return EFAILED;
-    } 
+    }
+#endif
     
     if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
                                             AEECLSID_FILEMGR, 
@@ -793,7 +801,9 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             SetDeviceState(DEVICE_TYPE_CAMERA, DEVICE_CAMERA_STATE_OFF);
             if(pMe->m_bIsPreview == TRUE && pMe->m_pCamera)
             {
+#ifndef FEATURE_DSP
                 ICAMERA_RegisterNotify(pMe->m_pCamera,NULL, NULL);
+#endif
                 ICAMERA_Stop(pMe->m_pCamera);
             }
             return TRUE;
@@ -804,7 +814,9 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
             pMe->m_bSuspending = TRUE;
             if(pMe->m_bIsPreview == TRUE && pMe->m_pCamera)
             {
+#ifndef FEATURE_DSP
                 ICAMERA_RegisterNotify(pMe->m_pCamera,NULL, NULL);
+#endif
                 ICAMERA_Stop(pMe->m_pCamera);
             }
             

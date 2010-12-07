@@ -128,6 +128,7 @@ when       who     what, where, why
 
 #include "sdcc_api.h"
 #include "sdcc_priv.h"
+#ifndef FEATURE_DSP
 #include "sdcc_util.h"
 #include "sdcc_mmc_util.h"
 #include "assert.h"
@@ -138,7 +139,11 @@ extern unsigned int sdio_card;
 #if defined(FEATURE_SDCC_FIX_FOR_EXTRA_10MA_ON_TCXO)                            
  #define PULL_DOWN ~GPIO_PULL_MASK | (GPIO_PULL_DOWN << GPIO_PULL_POSITION)
 #endif
-
+#else
+#include "cam_module.h"
+extern ait_sd_func AIT701_SD_Func;
+static  boolean m_binit = TRUE;
+#endif
 
 /*lint -save -e641 Suppress 'Converting enum to int' warning */
 /******************************************************************************
@@ -161,6 +166,7 @@ extern unsigned int sdio_card;
 boolean
 sdcc_open(int16 driveno)
 {
+#ifndef FEATURE_DSP
    SDCC_STATUS  rc = SDCC_NO_ERROR;
    boolean      close_drive = FALSE;
 
@@ -273,6 +279,11 @@ sdcc_open(int16 driveno)
    }
    sdcc_leave_crit_sect();
    return(rc ? FALSE : TRUE);
+#else
+   boolean bRet = TRUE;
+   
+   return bRet;
+#endif
 }/* sdcc_open */
 
 
@@ -308,6 +319,7 @@ byte      *buff,
 uint16     n_sectors
 )
 {
+#ifndef FEATURE_DSP
 #ifndef T_QSC1100
    uint8            data_ctrl   = 0;
 #endif
@@ -455,6 +467,35 @@ SDCC_READ_RETRY:
    while (0);
    sdcc_leave_crit_sect();
    return(ret_status);
+#else 
+   uint16 nRet;
+   sdcc_enter_crit_sect();
+   do
+   {
+      /******************************************************************
+      * Check the card status first to make sure that sdcc controller
+      * has been turned on properly..
+      ********************************************************************/
+      if (sdcc_pdata.card_type ==  SDCC_CARD_UNKNOWN)
+      {
+         nRet = SDCC_ERR_CARD_READY;
+         break;
+      }
+      
+      nRet = AIT701_SD_Func.ait_sd_read(s_sector,0,buff,n_sectors*sdcc_pdata.mem.block_len);
+   }while(0);
+   
+   if(nRet == 0)
+   {
+      sdcc_pdata.errno = SDCC_NO_ERROR;
+   }
+   else
+   {
+      sdcc_pdata.errno = nRet;
+   }
+   sdcc_leave_crit_sect();
+   return (nRet == 0)?TRUE:FALSE;
+#endif 
 }/* sdcc_read */
 
 /******************************************************************************
@@ -488,6 +529,7 @@ sdcc_write
    uint16     n_sectors
 )
 {
+#ifndef FEATURE_DSP
 #ifndef T_QSC1100
    uint8            data_ctrl   = 0;
 #endif
@@ -711,6 +753,35 @@ SDCC_WRITE_RETRY:
    while (0);
    sdcc_leave_crit_sect();
    return(ret_status);
+#else
+   uint16 nRet;
+   sdcc_enter_crit_sect();
+   do
+   {
+      /******************************************************************
+      * Check the card status first to make sure that sdcc controller
+      * has been turned on properly..
+      ********************************************************************/
+      if (sdcc_pdata.card_type ==  SDCC_CARD_UNKNOWN)
+      {
+         nRet = SDCC_ERR_CARD_READY;
+         break;
+      }
+      
+      nRet = AIT701_SD_Func.ait_sd_write(s_sector,0,buff,n_sectors*sdcc_pdata.mem.block_len);
+   }while(0);
+   
+   if(nRet == 0)
+   {
+      sdcc_pdata.errno = SDCC_NO_ERROR;
+   }
+   else
+   {
+      sdcc_pdata.errno = nRet;
+   }
+   sdcc_leave_crit_sect();
+   return (nRet == 0)?TRUE:FALSE;
+#endif
 }/* sdcc_write */
 
 
@@ -737,6 +808,7 @@ int16    driveno,
 uint8    what
 )
 {
+#ifndef FEATURE_DSP
    uint32 value = (uint32)SDCC_NO_ERROR;
    (void)driveno;
 
@@ -784,6 +856,45 @@ uint8    what
    }
    sdcc_leave_crit_sect();
    return value;
+#else
+   uint32 value = (uint32)SDCC_NO_ERROR;
+   (void)driveno;
+
+   if (sdcc_pdata.slot_state_changed)
+      return SDCC_CARD_UNKNOWN;
+
+   sdcc_enter_crit_sect();
+
+   switch (what)
+   {
+      case SDCC_CARD_STATE:
+         value = SDCC_NO_ERROR;
+         break;
+         
+      case SDCC_GET_TYPE:
+         value = (uint32)sdcc_pdata.card_type;
+         break;
+        
+      case SDCC_GET_ERROR:
+         value = (uint32)sdcc_pdata.errno;
+         break;
+
+      case SDCC_CARD_SIZE:
+         value = sdcc_pdata.mem.card_size;
+         break;
+
+      case SDCC_BLOCK_LEN:
+         value = sdcc_pdata.mem.block_len;;
+         break;
+
+      default:
+         DPRINTF(("Invalid request:(0x%x)?", what));
+         value = (uint32)SDCC_ERR_UNKNOWN;
+         break;
+   }
+   sdcc_leave_crit_sect();
+   return value;
+#endif
 }/* sdcc_ioctl */
 
 /******************************************************************************
@@ -846,8 +957,12 @@ boolean
 sdcc_init(void)
 {
    /* Its OK to re-initialize the sdcc critical section */
+#ifdef CUST_EDITION
+   boolean bRet = FALSE;
+#endif
    sdcc_init_crit_sect();
    sdcc_enter_crit_sect();
+#ifndef FEATURE_DSP
    do
    {
       /* The controller already turned on */
@@ -948,8 +1063,39 @@ sdcc_init(void)
       sdcc_pdata.slot_state_changed = FALSE;
    }
    while (0);
+#else
+{
+   if(m_binit)
+   {
+	   memset(&sdcc_pdata, 0, sizeof(sdcc_data_type));
+	   //sdcc_enter_crit_sect();
+	   bRet = (AIT701_SD_Func.ait_sd_init() == NULL)?FALSE:TRUE;
+	   if(bRet)
+	   {
+	   		MSG_FATAL("bRet=%d",bRet,0,0);
+	       sdcc_pdata.card_type = SDCC_CARD_SD;
+	       sdcc_pdata.mem.card_size = AIT701_SD_Func.ait_sd_get_size();
+	       sdcc_pdata.mem.block_len = 512;
+		   MSG_FATAL("AIT701_SD_Func.ait_sd_get_size()=%d",AIT701_SD_Func.ait_sd_get_size(),0,0);
+		   MSG_FATAL("sdcc_pdata.card_type=%d",sdcc_pdata.card_type,0,0);
+		   MSG_FATAL("sdcc_pdata.mem.card_size=%d",sdcc_pdata.mem.card_size,0,0);
+	   }
+	   else
+	   {
+	   	   m_binit = FALSE;
+	       memset(&sdcc_pdata, 0, sizeof(sdcc_data_type));
+	   }
+   }
+    
+   }
+   //sdcc_leave_crit_sect();
+#endif
    sdcc_leave_crit_sect();
+#ifdef CUST_EDITION
+   return (bRet);
+#else
    return(TRUE);
+#endif
 }/* sdcc_init */
 
 /******************************************************************************
@@ -970,6 +1116,7 @@ sdcc_init(void)
 boolean
 sdcc_close(int16 driveno)
 {
+#ifndef FEATURE_DSP
    (void)driveno;
    sdcc_enter_crit_sect();
    do
@@ -1037,6 +1184,9 @@ sdcc_close(int16 driveno)
    while (0);
    sdcc_leave_crit_sect();
    return TRUE;
+#else
+   return TRUE;
+#endif
 }/* sdcc_close */
 
 /*=============================================================================
@@ -1059,11 +1209,12 @@ sdcc_close(int16 driveno)
  *===========================================================================*/
 SDCC_STATUS sdcc_activity_timeout_event( int16 driveno )
 {
+#ifndef FEATURE_DSP
    if(FALSE == sdcc_bsp_slot_interrupt_exists())
       return SDCC_ERR_UNKNOWN;
 
    DPRINTF(("SDCC Activity timeout. Closing the slot.\n")); 
-
+#endif
    (void)sdcc_close(driveno);
    return SDCC_NO_ERROR;
 }

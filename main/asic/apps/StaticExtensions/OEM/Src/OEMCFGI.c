@@ -631,6 +631,11 @@ typedef struct
    char   brewsetings_secondaryserver[MAS_BREWSETINT_STRING];
    uint32 brew_dlflags;
    boolean brew_laguagefalgs;//uint16
+#ifdef FEATURE_ANALOG_TV
+   uint32 tv_or_camera;
+   CFG_TvSetting tv_set;
+#endif
+   //Add By zzg 2010_11_22
    #ifdef FEATURE_APP_BLUETOOTH
    boolean bt_status;
    #endif
@@ -1343,13 +1348,19 @@ static int OEMPriv_GetItem_CFGI_PEN_CAL(void *pBuff);
 static int OEMPriv_SetItem_CFGI_PEN_CAL(void *pBuff);
 #endif//FEATURE_TOUCHPAD
 
-
+#ifdef FEATURE_ANALOG_TV
+static int OEMPriv_GetItem_CFGI_TV_SETCHANNL(void *pBuff);
+static int OEMPriv_SetItem_CFGI_TV_SETCHANNL(void *pBuff);
+#endif
 static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void *pBuff);
 static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void *pBuff);
 
 static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void *pBuff);
 static int OEMPriv_SetItem_CFGI_BREWSET_PASSWORD(void *pBuff);
-
+#ifdef FEATURE_ANALOG_TV
+static int OEMPriv_GetItem_CFGI_TV_OR_CAMERA(void *pBuff);
+static int OEMPriv_SetItem_CFGI_TV_OR_CAMERA(void *pBuff);
+#endif
 static int OEMPriv_GetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff);
 static int OEMPriv_SetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff);
 
@@ -1716,6 +1727,10 @@ static OEMConfigListType oemi_cache = {
    ,{0}  //CFGI_BREWSET_SECONDARYSERVER
    ,0    //CFGI_DL_FLAGS
    ,FALSE    //CFGI_LANGUAGE_MOD
+#ifdef FEATURE_ANALOG_TV
+   ,0
+   ,OEMNV_TV_TvSetting // ’≤ÿº–
+#endif
    //Add By zzg 2010_11_22
    #ifdef FEATURE_APP_BLUETOOTH
    ,0 
@@ -2259,6 +2274,10 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_BREWSET_SECONDARYSERVER,sizeof(char)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_DL_FLAGS,sizeof(uint32)),
    CFGTABLEITEM(CFGI_LANGUAGE_MOD,sizeof(boolean)),
+#ifdef FEATURE_ANALOG_TV
+   CFGTABLEITEM(CFGI_TV_OR_CAMERA,sizeof(uint32)),
+   CFGTABLEITEM(CFGI_TV_SETCHANNL,sizeof(CFG_TvSetting)),
+#endif
    //Add By zzg 2010_11_22
    #ifdef FEATURE_APP_BLUETOOTH
    CFGTABLEITEM(CFGI_BT_STATUS, sizeof(boolean)),
@@ -2749,7 +2768,7 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.camera_color = OEMNV_CAMERA_COLOR_NORMAL;
    oemi_cache.video_color = OEMNV_CAMERA_COLOR_NORMAL;
    oemi_cache.video_brightness = OEMNV_CAMERA_BRIGHTNESS_LEVEL3;
-   
+
    //Add By zzg 2010_10_22
 #ifdef FEATURE_APP_BLUETOOTH
 	oemi_cache.bt_status = 0;
@@ -9540,7 +9559,6 @@ static int OEMPriv_SetItem_CFGI_PROFILE_MISSED_CALL_ALERT(void *pBuff)
    return SUCCESS;
 }
 
-
 //∂‡≤ ∞¥º¸“Ù
 static int OEMPriv_GetItem_CFGI_PROFILE_KEYSND_TYPE(void *pBuff)
 {
@@ -10151,7 +10169,6 @@ static int OEMPriv_SetItem_CFGI_AUTO_POWER_ON(void *pBuff)
     return SUCCESS;
 }
 
-
 static int OEMPriv_GetItem_CFGI_AUTO_POWER_OFF(void *pBuff) 
 {
    MEMCPY(pBuff, (void*) &oemi_cache.m_auto_poweroff, sizeof(Auto_Power_Cfg));
@@ -10545,12 +10562,27 @@ static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void *pBuff)
 	 MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_usename, sizeof(byte) * MAS_BREWSETINT_STRING);
      return SUCCESS;
 }
+
 static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void *pBuff)
 {
 	MEMCPY((void*) &oemi_cache.brewsetings_usename, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
+#ifdef FEATURE_ANALOG_TV
+static int OEMPriv_SetItem_CFGI_TV_OR_CAMERA(void *pBuff)
+{
+    MEMCPY((void*) &oemi_cache.tv_or_camera, pBuff, sizeof(uint32));
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_TV_OR_CAMERA(void *pBuff)
+{
+	 MEMCPY(pBuff, (void*) &oemi_cache.tv_or_camera, sizeof(uint32));
+     return SUCCESS;
+}
+#endif
 
 static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void *pBuff)
 {
@@ -11038,6 +11070,19 @@ static int OEMPriv_GetItem_CFGI_VIDEO_COLOR(void *pBuff)
    return SUCCESS;
 }
 
+#ifdef FEATURE_ANALOG_TV
+static int OEMPriv_GetItem_CFGI_TV_SETCHANNL(void *pBuff)
+{
+    MEMCPY(pBuff, (void*) &oemi_cache.tv_set, sizeof(CFG_TvSetting));
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_TV_SETCHANNL(void *pBuff)
+{
+    MEMCPY((void*) &oemi_cache.tv_set, pBuff, sizeof(CFG_TvSetting));
+    OEMPriv_WriteOEMConfigList();
+    return SUCCESS;
+}
+#endif
 static int OEMPriv_SetItem_CFGI_VIDEO_COLOR(void *pBuff)
 {
    if (oemi_cache.video_color != *(byte *)pBuff) {

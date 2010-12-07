@@ -30,6 +30,7 @@ Notice that changes are listed in reverse chronological order.
 
 #define FM_RADIO_SUCCESSFUL     0
 #define FM_RADIO_FAILED         1
+#ifndef FEATURE_DSP
 
 typedef enum
 {
@@ -68,5 +69,6 @@ boolean fm_radio_is_power_down( void);
 boolean fm_radio_is_tuning( void);
 word    fm_radio_get_playing_channel( void);
 void fm_mute(boolean on);
+#endif //FEATURE_DSP
 #endif //__FM_RADIO_H_
 //#define VC0848_HEADSET_PA      //PA OPTION

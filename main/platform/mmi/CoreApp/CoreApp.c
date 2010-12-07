@@ -392,8 +392,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     {
         return FALSE;
     }
-    MSG_FATAL("CoreApp_InitAppData            ::::croeapp111:::",0,0,0);
-    MSG_FATAL("IANNUNCIATOR_SetFieldIsActiveEx::::croeapp111:::",0,0,0);
+    
     IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
     CoreTask_SetPwrDnComplete(FALSE);
     
@@ -3462,7 +3461,6 @@ static void HeadsetOff(CCoreApp *pMe)
 		ISHELL_PostEvent(pMe->a.m_pIShell, AEECLSID_APP_MUSICPLAYER,EVT_HEADSET_CONNECT, 0, 0);
 	}
 #endif
-
 
 	devnotify.wParam = FALSE;
 	AEE_SEND_HEADSET_EVT(&devnotify);

@@ -405,6 +405,13 @@ ifeq ($(USES_CAMERA),yes)
 		OBJECTS2 += $(CAMSENSOR_OV7675_OBJS)
 		OBJECTS2 += $(SOFTDSP_OBJS)
 endif
+
+ifeq ($(USES_DSP),yes)
+		OBJECTS2 += $(AIT_SENSOR_OBJS)
+		OBJECTS2 += $(AIT_TV_TLG1120_OBJS)
+		OBJECTS2 += $(A8_CAMERA_OBJS)
+		OBJECTS2 += $(AIT_API_OBJS)
+endif
 #-------------------------------------------------------------------------------
 # Object List Modifiers
 #    Alter the object list based on the requested features
@@ -509,9 +516,6 @@ ifeq ($(USES_MP4),yes)
         OBJECTS += $(QTV_CONCURRENCYMGR_OBJS)
         OBJECTS += $(QTV_CONFIG_OBJS)
         OBJECTS += $(QTV_DIAG_OBJS)
-  ifneq ($(QTV_COMPILE_OBJ),yes)
-        OBJECTS += $(QTV_DEC_COMMON_OBJS)
-  endif
         OBJECTS += $(QTV_MAPICORE_OBJS)
         OBJECTS += $(QTV_ADTS_OBJS)
         OBJECTS += $(QTV_FILTER_COMMON_OBJS)

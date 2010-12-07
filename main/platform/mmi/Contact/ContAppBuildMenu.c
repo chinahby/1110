@@ -1301,7 +1301,7 @@ int CContApp_BuildListMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     
     ASSERT(pMe != NULL); 
     
-     MSG_FATAL("Build List menu %d,  %d ", pMe->m_nCurrIdx, IVector_Size(pMe->m_pAddList),0);
+    FARF(ADDR, ("Build List menu %d,  %d ", pMe->m_nCurrIdx, IVector_Size(pMe->m_pAddList)));
     
     if (pMenuCtl == NULL)
     {
@@ -1330,7 +1330,6 @@ int CContApp_BuildListMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     // 则直接添加。否则部分进行添加
     if (SUCCESS != CContApp_EnumContInit(pMe, (uint32)pMe->m_nCurrIdx))
     {
-    	
         // Add phone record to menu
         for (i=0; i<nListItems; i++)
         {

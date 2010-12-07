@@ -5208,6 +5208,7 @@ SIDE EFFECTS
 ===========================================================================*/
 void camsensor_config_sensor_gpios_clks ()
 {
+#ifndef FEATURE_DSP
 #if defined(T_QSC1100)
   CAMERA_CONFIG_GPIO (GPIO_INPUT_51);
   CAMERA_CONFIG_GPIO (GPIO_INPUT_52);
@@ -5290,6 +5291,7 @@ void camsensor_config_sensor_gpios_clks ()
   CAMERA_CLK_REGIME_ENABLE      (CLK_RGM_VIDEO_VFE_M);
   CAMERA_CLK_REGIME_ENABLE      (CLK_RGM_CAMCLK_M);
 #endif //#if defined(T_QSC1100)
+#endif //#ifndef FEATURE_DSP
 } /* camera_svcs_config_sensor_gpios_clks */
 
 /*===========================================================================
@@ -5311,6 +5313,7 @@ SIDE EFFECTS
 ===========================================================================*/
 void camsensor_unconfig_sensor_gpios_clks ()
 {
+#ifndef FEATURE_DSP
   CAMERA_CONFIG_GPIO (CAMIF_HSYNC_OUT_DISABLE);
   CAMERA_CONFIG_GPIO (CAMIF_VSYNC_OUT_DISABLE);
   CAMERA_CONFIG_GPIO (CAMIF_DATA_0_DISABLE);
@@ -5340,6 +5343,7 @@ void camsensor_unconfig_sensor_gpios_clks ()
  #endif
  
 #endif
+#endif //#ifndef FEATURE_DSP
 } /* camsensor_unconfig_sensor_gpios_clks */
 
 

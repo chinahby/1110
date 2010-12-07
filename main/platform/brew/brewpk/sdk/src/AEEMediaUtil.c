@@ -151,11 +151,8 @@ int AEEMediaUtil_CreateMedia(IShell * ps, AEEMediaData * pmd, IMedia ** ppm)
       return nRet;
 
    // Create IMedia-based object
-   DBGPRINTF("classid = %d",cls);
    if (ISHELL_CreateInstance(ps, cls, (void **)&pMedia) || !pMedia)
       return MM_ENOMEDIAMEMORY;
-
-   DBGPRINTF("pMedia = %d",pMedia);
 
    // Set the media data and put IMedia in Ready state.
    nRet = IMEDIA_SetMediaData(pMedia, pmd);

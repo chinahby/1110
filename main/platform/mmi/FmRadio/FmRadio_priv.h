@@ -63,8 +63,11 @@
 #include "AEEAnnunciator.h"
 
 #if !defined( AEE_SIMULATOR)
+#ifdef FEATURE_ANALOG_TV
+#include "fm_framework.h"
+#else
 #include "fm_radio.h"
-#include "err.h"
+#endif
 #endif //#if !defined( AEE_SIMULATOR)
 
 
@@ -459,13 +462,13 @@ typedef struct _CFmRadio
 
 #elif defined(FEATURE_DISP_320X240)
 //当前操作字符串显示y偏移
-#define FMRADIO_OPERATION_YOFFSET   	14
+#define FMRADIO_OPERATION_YOFFSET   	28
 //频率图像显示区域x偏移
-#define FMRADIO_CHANNEL_XOFFSET      	12//30//12
+#define FMRADIO_CHANNEL_XOFFSET      	24//30//12
 //频率图像显示区域y偏移
-#define FMRADIO_CHANNEL_YOFFSET      	46//52
+#define FMRADIO_CHANNEL_YOFFSET      	18//52
 //频率字符显示y偏移
-#define FMRADIO_CHANNEL_FREQ_YOFFSET 	10//97
+#define FMRADIO_CHANNEL_FREQ_YOFFSET 	18//97
 //频率指针高度
 #define FMRADIO_CURSOR_DY           	4
 //音量显示区域x偏移

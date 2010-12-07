@@ -599,7 +599,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                         OEMPriv_ResumeBREW();
                         return TRUE;
 
-                    }				
+                    }
                     else
                     {
                         if(!bDrawMessage)
@@ -864,7 +864,7 @@ SEE ALSO:
 boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
 {
     boolean bRet = FALSE;
-	
+
     if (OEMKeyguard_IsEnabled() && OEMPriv_IsPhoneIdle())
     {
         boolean bKeyPress = FALSE;
@@ -876,8 +876,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
         //    db_value.db_backlight_level = TRUE;
         //    db_put(DB_BACKLIGHT_LEVEL, &db_value);
         //}
-
-		
+        
         if(wParam == AVK_CLR)
         {
             OEMPriv_ResumeBREW();
@@ -924,7 +923,6 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
             // AEE_SetEventHandler() has been used to set a default event
             // handler.  Otherwise it will return zero.
             //
-			
             KEYGUARD_ERR("AEE_Active %x",cls,0,0);
             if ( (cls != AEECLSID_SHELL) && (cls != 0))
             {
@@ -943,7 +941,6 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
             // (the END key release event would trigger the keyguard message
             //  which would be really annoying)
             //
-
             if (bKeyPress)
             {
                 sbMessageActive = TRUE;
@@ -957,7 +954,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
         }
 
         if (sbMessageActive)
-        {			
+        {
             OEMPriv_ResetMessageTimer();
 
             // Pass the event to the keyguard event handler

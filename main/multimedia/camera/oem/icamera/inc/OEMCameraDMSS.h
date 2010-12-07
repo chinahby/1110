@@ -185,8 +185,10 @@ struct OEMCamera
    // Media data.
    AEEMediaData      m_md;
    char *            m_pszMIME;
-   char *            m_pszFile;
-
+   char *            m_pszFile; 
+#ifdef FEATURE_DSP
+   IFileMgr*         m_pFileMgr;
+#endif
    AEECLSID          m_clsVideo;
    uint32            m_dwSubVideo;
    AEECLSID          m_clsAudio;

@@ -118,7 +118,7 @@ boolean disp_ili9225b_tft20(disp_drv_ic_type *pdispic)
     id1 = LCD_READ_DATA();
     id2 = LCD_READ_DATA();
     
-    if(id1 == 0x92 && id2 == 0x25)
+    //if(id1 == 0x92 && id2 == 0x25)
     {
         DISP_IC_INIT_TBL(pdispic);
         return TRUE;

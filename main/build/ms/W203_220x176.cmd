@@ -6,13 +6,6 @@
 @set RESOURCEDIR=common
 @set MODELVERSION=none
 @set HWVERSION=W203_MB_V0.6
-rem delete some files for compile muslim or nasrani
-del %PROJECTNAME%\CoreAppDialogHandler.o
-del %PROJECTNAME%\OEMConstFiles_Dynamic.c
-del %PROJECTNAME%\OEMConstFiles_Dynamic.o
-del %PROJECTNAME%\OEMModTableExt.o
-del %PROJECTNAME%\Staticapp.o
-del %PROJECTNAME%\CoreApp.o
 
 IF "%*"=="" goto DO_COPY
 goto DO_WORK

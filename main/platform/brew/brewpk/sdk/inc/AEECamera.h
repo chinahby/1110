@@ -61,7 +61,9 @@ Qualcomm Confidential and Proprietary
 #define CAM_STATUS_SPACE_ERROR         (CAM_STATUS_BASE + 9)   // [Record] Memory unavailable to store recording, pData contains CAM_ERR_SPACE_MSG_XXX
 #define CAM_STATUS_FILE_SIZE_EXCEEDED  (CAM_STATUS_BASE + 10)  // [EncodeSnapshot/RecordMovie] Operation completed but output encoded image exceeds specified file size
 #define CAM_STATUS_IO_ERROR            (CAM_STATUS_BASE + 11)  // [EncodeSnapshot/RecordMovie] I/O Error, pData contains CAM_ERR_XXX
-
+#ifdef FEATURE_DSP
+#define CAM_STATUS_UPDATE               (CAM_STATUS_BASE + 12)  // [Preview] Ready to update histogram.
+#endif
 #define CAM_ERR_BASE                   1        // Base used by ICamera
 #define CAM_ERR_USER_BASE              0x1000   // Base for derived class
 
@@ -95,7 +97,9 @@ Qualcomm Confidential and Proprietary
 #define CAM_CMD_GETPARM             (CAM_CMD_BASE + 1) // GetParm(), nSubCmd = nParmID
 #define CAM_CMD_START               (CAM_CMD_BASE + 2) // Start(), nSubCmd = CAM_MODE_PREVIEW/CAM_MODE_SNAPSHOT/CAM_MODE_MOVIE
 #define CAM_CMD_ENCODESNAPSHOT      (CAM_CMD_BASE + 3) // EncodeSnapshot()
-
+#ifdef FEATURE_DSP
+#define CAM_MODE_UPDATE             (CAM_MODE_BASE + 4)   //update screen after ui paint
+#endif
 //
 // Camera Control Parms
 //
@@ -108,6 +112,9 @@ Qualcomm Confidential and Proprietary
 //    "Camera Control Parameters (CAM_PARM_XXX)" section under
 //    documentation (scroll down a few pages).
 //
+#ifdef FEATURE_DSP
+#define TRANS_COLOR                    0x001f
+#endif
 #define CAM_PARM_BASE               1                       // Base used by ICamera
 #define CAM_PARM_USER_BASE          0x8000                  // Base for extension
 
@@ -601,6 +608,9 @@ AEEINTERFACE(ICamera)
 #define ICAMERA_RecordSnapshot(p)               AEEGETPVTBL(p, ICamera)->Start(p, CAM_MODE_SNAPSHOT, 0)
 #define ICAMERA_RecordMovie(p)                  AEEGETPVTBL(p, ICamera)->Start(p, CAM_MODE_MOVIE,    CAM_MOVIE_NORMAL)
 #define ICAMERA_RecordMoviePostcard(p)          AEEGETPVTBL(p, ICamera)->Start(p, CAM_MODE_MOVIE,    CAM_MOVIE_POSTCARD)
+#ifdef FEATURE_DSP
+#define ICAMERA_UpdateScreen(p, dw)             AEEGETPVTBL(p, ICamera)->Start(p, CAM_MODE_UPDATE, dw)
+#endif
 #define ICAMERA_Stop(p)                         AEEGETPVTBL(p, ICamera)->Stop(p)
 #define ICAMERA_Pause(p)                        AEEGETPVTBL(p, ICamera)->Pause(p, TRUE)
 #define ICAMERA_Resume(p)                       AEEGETPVTBL(p, ICamera)->Pause(p, FALSE)

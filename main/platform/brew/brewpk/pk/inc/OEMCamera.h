@@ -106,7 +106,9 @@ extern int     OEMCamera_EncodeSnapshot(OEMINSTANCE h);
 extern void    OEMCamera_ReleaseFrame(OEMINSTANCE h);
 extern int     OEMCamera_FrameBlt(void * pDst, uint32 dwDstSize, int xDst, int yDst, int cxDst, int cyDst,
                                   void * pSrc, uint32 dwSrcSize, int xSrc, int ySrc, AEERasterOp rop);
-
+#ifdef FEATURE_DSP
+extern int     OEMCamera_Update(OEMINSTANCE h, uint32 dwParam);
+#endif
 //---------------------------------------------------------------------------
 //    User Mode AEE-OEM Function Declarations
 //---------------------------------------------------------------------------

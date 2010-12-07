@@ -845,14 +845,30 @@ NUMBERMANAGER =         $(MMIDIR)/NumberManager
 ADJUSTPENAPP =          $(MMIDIR)/AdjustPenApp
 APPLICATION   =         $(MMIDIR)/Application
 GAME     =              $(MMIDIR)/Games/game
-
+TVAPP = 		$(MMIDIR)/TvApp
 ifeq ($(USES_RESDIR),M8)
-FRENDUO  =         		$(MMIDIR)/FrenDuo
+FRENDUO  =         	$(MMIDIR)/FrenDuo
 endif
 
 MULTIMEDIA =            $(MMIDIR)/Multimedia
 STATIC_BREW_APP=        $(MMIDIR)/staticbrewapp/$(USES_LCD_SIZE)
 STATIC_APP=             $(MMIDIR)/staticapp
+
+ifeq ($(USES_DSP),yes)
+DSPROOT = $(SRCROOT)/multimedia/dsp
+AIT_INC = $(DSPROOT)/sensor
+AIT_SENSOR = $(DSPROOT)/sensor
+TV_INC = $(DSPROOT)/TV/TLG1120
+TV_TLG1120 = $(DSPROOT)/TV/TLG1120
+A8_CAMERA_INC = $(DSPROOT)/inc
+A8_CAMERA_SRC = $(DSPROOT)/camera
+AIT_API_INC = $(DSPROOT)/API
+AIT_API_SRC = $(DSPROOT)/API
+endif
+
+ifeq ($(USES_WAPBROWSER),yes)
+WAPBROWSER = $(MMIDIR)/WapBrowser
+endif
 
 #头文件的路径在这里加
 ALL_PATHS+=$(INC) $(BREW_OEM_SIM_INC) $(BREW_OEM_RESINC) $(BREW_AEE_SRC) $(BREW_STATIC_EXTENSIONS_RESINC) $(APPSCOMMON)/images/$(USES_LCD_SIZE)

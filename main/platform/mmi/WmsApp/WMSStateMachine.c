@@ -1825,7 +1825,6 @@ static NextFSMAction WMSST_DRAFT_Handler(WmsApp *pMe)
             return NFSMACTION_WAIT;
             
         case DLGRET_LOAD:
-            MSG_FATAL("DLGRET_LOAD...............",0,0,0);
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
             WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
             return NFSMACTION_WAIT;
@@ -1994,7 +1993,6 @@ static NextFSMAction WMSST_DRAFTMSGOPTS_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_DELETE:
-        
             pMe->m_eEraseWMSType = ERASE_DRAFT_ONE;
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
             return NFSMACTION_CONTINUE;
@@ -3924,7 +3922,6 @@ static NextFSMAction WMSST_DELMSGCONFIRM_Handler(WmsApp *pMe)
                         uint16  nMsgs;
                         
                         // 获取消息数
-                        MSG_FATAL("ERASE_DRAFT_ONE000000...............",0,0,0);
                         wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);
                 
                         if (nMsgs == 0)
@@ -3933,7 +3930,6 @@ static NextFSMAction WMSST_DELMSGCONFIRM_Handler(WmsApp *pMe)
                         }
                         else
                         {
-                        	MSG_FATAL("ERASE_DRAFT_ONE1111111.............nMsgs:%d",nMsgs,0,0);
                             MOVE_TO_STATE(WMSST_DRAFT)
                         }
                     }

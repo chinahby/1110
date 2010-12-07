@@ -121,6 +121,16 @@ static void mdp_init(void);
 
 void disp_init(void)
 {
+
+#ifdef FEATURE_DSP
+	gpio_tlmm_config(AIT701_RESET);
+	gpio_tlmm_config(AIT701_BYPASS);
+
+	(void)gpio_out(AIT701_BYPASS, GPIO_HIGH_VALUE);
+	(void)gpio_out(AIT701_BYPASS, GPIO_HIGH_VALUE);
+	clk_busy_wait(10*1000);
+#endif
+
 #ifndef CUST_EDITION
 	if(epson_S1D19120_install(PRIMARY_LCD_NAME) == -1)
 		return;
@@ -132,7 +142,7 @@ void disp_init(void)
 	fd = drv_open(PRIMARY_LCD_NAME);
 	drv_init(fd);
 	disp_powerup();    
-  
+
 #ifndef FEATURE_MDDI
 	lcd_info_1 = disp_get_info();
 #endif /* FEATURE_MDDI */
@@ -158,7 +168,6 @@ disp_info_type disp_get_info(void)
   drv_ioctl(fd, IOCTL_DISP_GET_INFO, (void *)&lcd_info);
     
   return lcd_info;
-  
 }
 
 void disp_powerup(void)
@@ -219,6 +228,20 @@ void disp_update
   return;
 }
 
+#ifdef FEATURE_DSP
+
+void disp_setwindows(unsigned short x,unsigned short y,unsigned short w,unsigned short h)
+{
+	dup_arg.dst_starting_row 	= x;
+	dup_arg.dst_starting_row 	= y;
+	dup_arg.num_of_rows 		= h;
+	dup_arg.num_of_columns 		= w;
+
+	drv_ioctl(fd, IOCTL_DISP_SET_WINDOWS, (void *)&dup_arg);
+	return;
+}
+
+#endif
 
 void disp_set_contrast(
   word contrast /* Contrast value to set */

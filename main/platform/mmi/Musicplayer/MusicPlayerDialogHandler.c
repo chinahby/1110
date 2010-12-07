@@ -2272,7 +2272,6 @@ static boolean MP3_CreatOrRenamelist_HandleEvent(CMusicPlayer *pMe,
                 {
                     MP3_DRAW_BOTTOMBAR(BTBAR_BACK);            
                 }
-                
 
                 IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);  
             }

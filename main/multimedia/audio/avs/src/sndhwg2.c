@@ -7022,8 +7022,11 @@ snd_status_type sndhw_i2ssbc_enable(
   )
 {
   snd_status_type    status = SND_FAILURE;
-
-  if (sndhw_codec_supports_a2dp) {
+  // Yangdecai for BT
+#if defined (FEATURE_SBC_CODEC) || defined (FEATURE_SBC_DSP_CODEC)
+  if (sndhw_codec_supports_a2dp) 
+#endif  	
+  {
 
     sndhw_i2ssbc_sample_rate = sample_rate;
 

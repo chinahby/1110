@@ -758,15 +758,7 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_TWO                    "112"
 #define OEMNV_EMERG_NUM_TRE                    "911"
 #define OEMNV_EMERG_NUM_FOR                    "999"
-
 #endif
-
-
-
-
-
-
-
 
 #define OEMNV_STEREO_HEADSET_MASK              0x00000001
 #define OEMNV_HEADSET_MASK                     0x00000002

@@ -893,8 +893,10 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
 #endif
 #if defined(FEATURE_BREW_CAMERA)
          {AEECLSID_CAMERA,             (ASCF_PRIV | ASCF_UPGRADE),0,AEECamera_Init,AEECamera_New},
+#ifndef FEATURE_DSP
 #if defined(FEATURE_CAMERA_MULTI_SENSOR)
          {AEECLSID_CAMERA2,            (ASCF_PRIV | ASCF_UPGRADE),0,AEECamera_Init,AEECamera_New},
+#endif
 #endif
 #endif
 #if defined(FEATURE_BREW_SIO)

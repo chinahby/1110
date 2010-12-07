@@ -3,6 +3,9 @@
 #include "OEMCFGI.h"
 #include "snd.h"
 #include "err.h"
+#ifdef FEATURE_DSP
+#include "fm_framework.h"
+#endif
 /******************************************************************************
  ** File Name:      fm_drv.c                                                  *
  ** Author:         Wangliang                                             	  *
@@ -475,6 +478,7 @@ int fm_seek_down(word* pChannel)
 	return FM_RADIO_SUCCESSFUL;
 }
 
+#ifndef FEATURE_DSP
 //Asynchronization Seek Function
 int fm_seek_start(boolean bIsUp, boolean bIsWrap)
 {
@@ -487,6 +491,7 @@ int fm_get_seek_status(boolean* pIsFinish, boolean* pIsBandLimit, word* pChannel
 	fm_work_status = FM_IDLE_STATUS;
 	return FM_RADIO_SUCCESSFUL;
 }
+#endif
 
 int fm_set_volume(word wVolume)
 {
@@ -537,3 +542,22 @@ void fm_mute(boolean on)
 	}
 	return;
 }
+#ifdef FEATURE_DSP
+WarT_Fm_Status_e fm_get_status(void)
+{
+	return (WarT_Fm_Status_e)fm_work_status;
+}
+
+
+void RD5802FM_Register(WarT_Fm_t *gFm)
+{
+	gFm->fm_initail = fm_radio_init;
+	gFm->fm_powerup = fm_radio_power_up;
+	gFm->fm_powerdown = fm_radio_power_down;
+	gFm->fm_set_channel = fm_tune_channel;
+	gFm->fm_setvolume = fm_set_volume;
+	gFm->fm_mute = fm_mute;
+	gFm->fm_get_status = fm_get_status;
+}
+#endif
+

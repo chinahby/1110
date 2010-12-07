@@ -1106,7 +1106,6 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                         case AEECALLHISTORY_CALL_TYPE_TO://CALLHISTORY_OUTGOING_CATEGORY:
                             ai.wImage = IDB_ORIG;
                             break;
-                       
                     }
                     					
                     bAdd = IMENUCTL_AddItemEx(pMe->pMenu, &ai);                   
@@ -1207,7 +1206,6 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                 case AVK_CLR:
                     if(dwParam == 1)
                     {
-                    	MSG_FATAL("AVK_CLR.....................",0,0,0);
                     	pMe->m_selectedItem[1] = IMENUCTL_GetSel(pMe->pMenu); 
                     	pMe->selectState = IDS_DELETE;
                			CLOSE_DIALOG(DLGRET_DELONE)
@@ -1260,10 +1258,8 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
         case EVT_KEY_PRESS:
             switch(wParam){
                 case AVK_LEFT:
-                    MSG_FATAL("AVK_LEFT.............................",0,0,0);
                     if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
                     {
-                      MSG_FATAL("AVK_LEFT.............................",0,0,0);
                       pMe->record_selected = 0; 
                       switch (pMe->m_callsCategory)
                       {

@@ -253,7 +253,9 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #if defined (FEATURE_IHDR)
 	#include "AEEHDR.h"
 #endif
-
+#ifdef FEATURE_ANALOG_TV
+#include "IMMITv.h"
+#endif
 // RDM Static Extension
 #if defined (FEATURE_IRDM)
 #error code not present
@@ -299,6 +301,9 @@ extern int FormsMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int WidgetMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 
+#ifdef	 FEATURE_APP_BLUETOOTH
+extern int BTApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
 
 #if defined FEATURE_SUPPORT_WAP_APP
 extern int EditApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
@@ -398,6 +403,10 @@ extern const AEEStaticClass gOEMOverlayClasses[];
 //#ifdef FEATURE_WMS_APP
 	extern int OEMWMS_New (IShell *piShell, AEECLSID cls, void **pp);
 //#endif
+
+#ifdef FEATURE_ANALOG_TV
+	extern int CTVAppMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+#endif
 
 #ifdef FEATURE_IWMSDIAG
 	extern int AEEWMSDIAG_New (IShell *piShell, AEECLSID cls, void **pp);
@@ -569,7 +578,10 @@ extern int CoreApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int CoreStartApp_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 #endif
-
+#ifdef FEATURE_ANALOG_TV
+extern int CMMITv_New (IShell * pIShell, AEECLSID clsid, void ** ppif);
+extern int OEMTLGAtv_New(IShell *pIShell,AEECLSID ClsID,OEMINSTANCE* ppInterface);
+#endif
 #ifdef FEATURE_APP_QUICKTEST
 extern int QuickTest_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #endif
@@ -1045,6 +1057,10 @@ static const AEEStaticMod gOEMStaticModList[] =
 	{ AEEFS_MIF_DIR"recorder.mif", Recorder_Load},
 #endif
 
+#ifdef FEATURE_ANALOG_TV
+    {AEEFS_MIF_DIR"tvapp.mif", CTVAppMod_Load}, 
+#endif
+
 #if defined(FEATURE_CONTACT_APP)
     {AEEFS_MIF_DIR"contactapp.mif", ContApp_Load},
 #endif
@@ -1097,6 +1113,10 @@ static const AEEStaticMod gOEMStaticModList[] =
 
 #if defined(FEATURE_WMS_APP)
     {AEEFS_MIF_DIR"wms.mif", WMSAPP_Load},
+#endif
+
+#if defined	(FEATURE_APP_BLUETOOTH)
+	{AEEFS_MIF_DIR"btapp.mif",  BTApp_Load},
 #endif
 
 #if defined(FEATURE_MFLO)
@@ -1285,8 +1305,10 @@ static const AEEStaticMod gOEMStaticModList[] =
       {AEEFS_MIF_DIR"apptimer.mif", AppTimerMod_Load},//wu raojin add
 #endif
 #ifndef WIN32
+#ifndef CUST_EDITION
 #if defined FEATURE_SUPPORT_BT_APP
     {AEEFS_MIF_DIR"bluetooth.mif", tBtuiApp_Load},
+#endif
 #endif
 #endif
 #if defined FEATURE_SUPPORT_BUIW
@@ -1441,6 +1463,10 @@ static const AEEStaticClass gOEMStaticClassList[] = {
 //#if defined (FEATURE_WMS_APP)
    {AEECLSID_WMS,                ASCF_PRIV,0,NULL,OEMWMS_New},
 //#endif
+#ifdef FEATURE_ANALOG_TV
+	{MMI_CLSID_IMMITV,		   ASCF_PRIV,0,NULL,CMMITv_New},
+	{AEECLSID_TLG_ATV,		  ASCF_UPGRADE, 0, NULL, OEMTLGAtv_New},
+#endif
 
 #if defined(FEATURE_IWMSDIAG) && !defined(FEATURE_MANGO_UI)
    {AEECLSID_WMSDIAG,         ASCF_PRIV,0,NULL,AEEWMSDIAG_New},

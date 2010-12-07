@@ -81,8 +81,8 @@
 #define DISP_WIDTH		  240
 #define DISP_HEIGHT 	  320
 #elif defined (FEATURE_DISP_320X240)
-#define DISP_WIDTH		  240
-#define DISP_HEIGHT 	  320
+#define DISP_WIDTH		  320
+#define DISP_HEIGHT 	  240
 #else
 #define DISP_WIDTH		  240
 #define DISP_HEIGHT 	  320

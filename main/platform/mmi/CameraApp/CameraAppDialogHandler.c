@@ -25,7 +25,9 @@
 #include "CameraApp_priv.h" 
 #include "MediaGallery.h"
 #include "appscommonimages.brh"
-
+#ifdef FEATURE_DSP
+#include "cam_IF_ait_api.h"
+#endif
 /*==============================================================================                                 
                                  宏定义和常数                                
 ==============================================================================*/
@@ -207,6 +209,10 @@ void CameraApp_InitCameraCheck(void *po);
 static void CameraApp_CreateDirectory(CCameraApp *pMe);
 static void CameraApp_UpdateFrame(CCameraApp *pMe);
 static int CameraApp_SavePhoto(CCameraApp *pMe);
+#ifdef FEATURE_DSP
+static int CameraApp_UpdateInit(CCameraApp *pMe);
+static int CameraApp_Update(CCameraApp *pMe);
+#endif
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -647,20 +653,24 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             return TRUE;
             
         case EVT_USER_REDRAW:
-            // camera preview start....
+            // camera preview start....         
+#ifndef FEATURE_DSP            
             if(pMe->m_pCamera && (!pMe->m_bIsPreview))
             {
                 CameraApp_CPreviewStart(pMe);
                 return TRUE;
-            }
-            
+            }            
             if(pMe->m_bRePreview && pMe->m_pCamera)
             {
                 CameraApp_CPreviewStart(pMe);
                 pMe->m_bRePreview = FALSE;
                 return TRUE;
+                
             }
-            
+#else
+            pMe->m_nCameraState = CAM_PREVIEW;  
+            CameraApp_UpdateInit(pMe);
+#endif
             if(pMe->m_nLeftTime)
             {
                 IImage *pImage = NULL;
@@ -684,8 +694,11 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             CameraApp_DrawBottomBarText(pMe, BTBAR_OPTION_BACK);
             
             CameraApp_DrawMidPic(pMe);
-            
+#ifdef FEATURE_DSP
+            CameraApp_Update(pMe);
+#else
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+#endif
             return TRUE;
 
         case EVT_KEY:
@@ -793,8 +806,16 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 if(nCameraSelfTime == 0)
                 {
                     pMe->m_nCameraState = CAM_CAPTURE;
+#ifdef FEATURE_DSP
+                    CameraApp_RecordSnapShot(pMe);
                     ICAMERA_Stop(pMe->m_pCamera);
-                    //CameraApp_RecordSnapShot(pMe);
+                    CameraApp_SavePhoto(pMe);
+
+                    CameraApp_PlayShutterSound(pMe);
+                    CLOSE_DIALOG(DLGRET_PICMENU);
+#else
+                    ICAMERA_Stop(pMe->m_pCamera);
+#endif
                 }
                 else
                 {
@@ -870,7 +891,9 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
 		    }
  #endif
  			//Add End
-            //ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL); 
+#ifdef FEATURE_DSP
+            ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL); 
+#endif
             return TRUE;
          
         case EVT_DIALOG_END:
@@ -893,20 +916,28 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             }
             return TRUE;
       
-        case EVT_USER_REDRAW:                         
+        case EVT_USER_REDRAW: 
+#ifndef FEATURE_DSP
 			if(pMe->m_bRePreview)
             {
                 CameraApp_CPreviewStart(pMe);
                 pMe->m_bRePreview = FALSE;
             }
-                  
+#else
+            pMe->m_nCameraState = CAM_PREVIEW; 
+            pMe->m_bRePreview = TRUE;
+            CameraApp_UpdateInit(pMe);
+#endif
             IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL);
-
             CameraApp_DrawBottomBarText(pMe, BTBAR_SELECT_BACK);
             CameraApp_DrawTopBar(pMe);   
             CameraApp_DrawCFGPromptText(pMe);                        
             
             IMENUCTL_Redraw(popMenu);
+#ifdef FEATURE_DSP
+            CameraApp_Update(pMe);
+#endif
+            
             return TRUE;
 
         case EVT_KEY:
@@ -958,12 +989,24 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             
             //左右键切换不同的设置菜单，需要重新初始化菜单项
             CameraApp_InitpopMenu(pMe, popMenu);
-
+#ifdef FEATURE_DSP
+            ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
+#endif
             return TRUE;//ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
             
-        case EVT_COMMAND:
-            return CameraApp_RoutePopMenuCommandEvent(pMe, wParam);
-            
+        case EVT_COMMAND:        
+            {
+                int n = SUCCESS;
+#ifdef FEATURE_DSP
+                CameraApp_UpdateInit(pMe);
+#endif
+                DBGPRINTF("cfg key code ----------------%d\n", wParam);
+                n = CameraApp_RoutePopMenuCommandEvent(pMe, wParam);
+#ifdef FEATURE_DSP
+                CameraApp_Update(pMe);      
+#endif
+                return n;
+            } 
         case EVT_NO_CLOSEBACKLIGHT:
             return TRUE;
             
@@ -1212,7 +1255,19 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
             }  
             
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+#ifdef FEATURE_DSP
+            if(pMe->m_wMsgID == IDS_MSG_WAITING || pMe->m_wMsgID == IDS_DONE
+               || pMe->m_wMsgID == IDS_MSG_NOSDCARD || pMe->m_wMsgID == IDS_MSG_NOMEMORY) // &&(!pMe->m_pCamera)
+            {
+               CameraApp_InitCameraCheck(pMe);    
 
+                (void)ISHELL_PostEvent(pMe->m_pShell,
+                                       AEECLSID_APP_CAMERA,
+                                       EVT_APP_DIALOG_TIMEOUT,
+                                       0,
+                                       0);
+            }
+#else
             if((pMe->m_wMsgID == IDS_MSG_WAITING) &&(!pMe->m_pCamera))
             {
                 CALLBACK_Init(&pMe->m_CallBack,
@@ -1227,6 +1282,7 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                                        0,
                                        0);
             }
+#endif
             
             return TRUE;
             
@@ -2812,14 +2868,15 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
         default:
             break;
     }
-    
+#ifndef FEATURE_DSP
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEW_TYPE, CAM_PREVIEW_SNAPSHOT, 0);       
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_MULTISHOT, 1, 0);
     ICAMERA_SetQuality(pMe->m_pCamera, quality);    
     ICAMERA_SetSize(pMe->m_pCamera, &captureSize);
     ICAMERA_SetDisplaySize(pMe->m_pCamera, &displaySize);
     
-    ICAMERA_Preview(pMe->m_pCamera); 
+    ICAMERA_Preview(pMe->m_pCamera);
+#endif
 
     pMe->m_nCameraState = CAM_PREVIEW;  
 
@@ -2850,7 +2907,9 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
     
     pMe->m_nCameraState = CAM_SAVE;
     pMe->m_bCapturePic  = TRUE;
+#ifndef FEATURE_DSP
     (void)ICAMERA_DeferEncode(pMe->m_pCamera, TRUE);
+#endif
     
     // 拍照状态的处理
     if(SUCCESS != ICAMERA_RecordSnapshot(pMe->m_pCamera))
@@ -3265,9 +3324,9 @@ static void CameraApp_UpdateFrame(CCameraApp *pMe)
 
   if (!pMe)
     return;
-  
+#ifndef FEATURE_DSP
   (void)ICAMERA_GetFrame(pMe->m_pCamera, &pFrame);
-
+#endif
   if (!pFrame)
     return;
   
@@ -3275,7 +3334,42 @@ static void CameraApp_UpdateFrame(CCameraApp *pMe)
   IDISPLAY_BitBlt(pMe->m_pDisplay, pMe->m_rc.x, pMe->m_rc.y, pMe->m_rc.dx, pMe->m_rc.dy, pFrame, 0, 0, AEE_RO_COPY);
   RELEASEIF(pFrame);
 }
+#ifdef FEATURE_DSP
+static int CameraApp_UpdateInit(CCameraApp *pMe)
+{
+    if(pMe->m_nCameraState == CAM_PREVIEW)
+    {
+        IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, TRANS_COLOR);
+        return SUCCESS;
+    }
+    else
+    {
+        return EBADSTATE;
+    }
+        
+}
 
+static int CameraApp_Update(CCameraApp *pMe)
+{
+    //DBGPRINTF("camera state--------------%d\n", pMe->m_nCameraState);
+    if(pMe->m_nCameraState == CAM_PREVIEW)
+    {
+        IBitmap* pbmp = NULL;
+        IDIB* pdib = NULL;
+        IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE); 
+        IDISPLAY_GetDeviceBitmap(pMe->m_pDisplay, &pbmp);           
+        IBITMAP_QueryInterface(pbmp, AEECLSID_DIB, (void**)&pdib);                
+        ICAMERA_UpdateScreen(pMe->m_pCamera, (uint32)pdib->pBmp);        
+        DBGPRINTF("bmp addr:%0x--- width:%d-----height:%d------depth:%d\n", pdib->pBmp, pdib->cx, pdib->cy, pdib->nDepth);
+        IBITMAP_Release(pbmp);  
+        IDIB_Release(pdib);
+    }    
+    else
+    {
+        return EBADSTATE;
+    }
+}
+#endif
 /*===========================================================================
 FUNCTION CameraApp_SavePhoto
 
@@ -3360,17 +3454,24 @@ void CameraApp_InitCameraCheck(void *po)
     }
     if(pMe->m_pCamera != NULL)
     {
+#ifndef FEATURE_DSP
         MSG_FATAL("pMe->m_pCamera != NULL",0,0,0);
         ICAMERA_GetParm(pMe->m_pCamera, CAM_PARM_SENSOR_MODEL, &(pMe->m_sensor_model), NULL);
-        MSG_FATAL("m_sensor_model=%d",pMe->m_sensor_model,0,0);            
+        MSG_FATAL("m_sensor_model=%d",pMe->m_sensor_model,0,0); 
+#endif
     }
     else
     {
         MSG_FATAL("pMe->m_pCamera == NULL",0,0,0);
     }
+    
     if(pMe->m_pCamera)
     {
-        ICAMERA_RegisterNotify(pMe->m_pCamera,(PFNCAMERANOTIFY)CameraApp_EventNotify,po);
+#ifdef FEATURE_DSP
+         ICAMERA_Preview(pMe->m_pCamera);
+#else
+         ICAMERA_RegisterNotify(pMe->m_pCamera,(PFNCAMERANOTIFY)CameraApp_EventNotify,po);
+#endif
     }
 }
 

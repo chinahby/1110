@@ -6,7 +6,7 @@
   This file contains a reference implementation of a standard AEE application
   control interfaces.
 
-        Copyright ?1999-2006 QUALCOMM Incorporated.
+        Copyright ? 1999-2006 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ============================================================================*/

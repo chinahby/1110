@@ -749,7 +749,6 @@ static void FmRadio_CheckRefuse( CFmRadio* pMe)
 #if !FEATURE_TEST_VERSION_WITHOUT_HEADSET_PRESENCE_VERIFY
     boolean             headsetPresent   = TRUE;
 #endif
-    db_items_value_type dbItemValue      = {0};
 
 #if !FEATURE_TEST_VERSION_WITHOUT_HEADSET_PRESENCE_VERIFY
     //ICONFIG_GetItem(pMe->m_pConfig, CFGI_HEADSET_PRESENT, &headsetPresent, sizeof(boolean));
@@ -840,7 +839,11 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             FmRadio_PowerUp( pMe);
 			if (HS_HEADSET_ON())
 			{
+#ifdef FEATURE_ANALOG_TV
+                WarT_Fm_Mute(FALSE);
+#else
 				fm_mute(FALSE);
+#endif
 			}	
 			//Add End
 			
@@ -878,7 +881,11 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
             	//Add By zzg 2010_07_18
 				//if (HS_HEADSET_ON())	//Del by zzg 2010_08_24
 				{
+#ifdef FEATURE_ANALOG_TV
+                    WarT_Fm_Mute(TRUE);
+#else
 					fm_mute(TRUE);
+#endif
 				}
 				
                 FmRadio_PowerDown( pMe);								
@@ -907,7 +914,11 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 			{
 				if (HS_HEADSET_ON())
 				{
+#ifdef FEATURE_ANALOG_TV
+                    WarT_Fm_Mute(TRUE);
+#else
 					fm_mute(TRUE);
+#endif
 				}			
 			}
 			//Add End
@@ -1231,7 +1242,6 @@ void Fm_Shake_Close(void)
 
 static void FmRadio_PowerDown( CFmRadio *pMe)
 {
-    boolean b_FMBackground = FALSE;
  #if FEATURE_FMRADIO_SUPPORT_BACKGROUND     
     ICONFIG_SetItem( pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
 #endif 
@@ -1247,8 +1257,11 @@ static void FmRadio_PowerDown( CFmRadio *pMe)
 	}
 	*/
 	//Del End
-	
+#ifdef FEATURE_ANALOG_TV
+    WarT_Fm_PowerDown();
+#else
     fm_radio_power_down();
+#endif
 #endif//WIN32
     Fm_Shake_Close(); 
     Fm_ResumeKeyBeepVol(pMe);
@@ -1274,7 +1287,11 @@ static void FmRadio_PowerUp(void *pme)
     if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_VOICE_CALL_CONNECTED)
     {
 #ifndef WIN32
+#ifdef FEATURE_ANALOG_TV
+        if( WarT_Fm_Get_status()==FM_POWER_UP)
+#else
         if( fm_radio_is_power_up())
+#endif
         {
             FmRadio_PowerDown( pMe);
         }
@@ -1282,26 +1299,47 @@ static void FmRadio_PowerUp(void *pme)
         return;
     }
 
-#if !defined( AEE_SIMULATOR)	
+#if !defined( AEE_SIMULATOR)
+#ifdef FEATURE_ANALOG_TV
+    if( WarT_Fm_Get_status()==FM_NOT_INIT)
+    {
+        WarT_Fm_Init();
+        ISHELL_SetTimer( pMe->m_pShell, 1000, FmRadio_PowerUp, pMe);
+        return;
+    }
+#else
     if( !fm_radio_is_inited())
     {
         fm_radio_init();
         ISHELL_SetTimer( pMe->m_pShell, 1000, FmRadio_PowerUp, pMe);
         return;
     }
+#endif
     g_m_fm_is_on = TRUE;
+#ifdef FEATURE_ANALOG_TV
+    if( WarT_Fm_Get_status()!=FM_POWER_UP)
+#else
     if( !fm_radio_is_power_up())
+#endif
     {
+#if FEATURE_FMRADIO_SUPPORT_BACKGROUND     
         boolean b_FMBackground = TRUE;
-#if FEATURE_FMRADIO_SUPPORT_BACKGROUND          
+
         ICONFIG_SetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
 #endif
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_ON/*ANNUN_STATE_ON*/);
+#ifdef FEATURE_ANALOG_TV
+        WarT_Fm_PowerUp();
+#else
         fm_radio_power_up();
+#endif
         FM_CloseKeyBeepVol(pMe);
         Fm_Shake_Open();
-
+#ifdef FEATURE_ANALOG_TV
+        if( WarT_Fm_Set_Channel((LOWEST_BAND_FREQ + CHANNEL_SPACE * pMe->cfg.channel)/100) == WART_FM_SUCCESS)
+#else
         if( fm_tune_channel((LOWEST_BAND_FREQ + CHANNEL_SPACE * pMe->cfg.channel)/100) == FM_RADIO_SUCCESSFUL)
+#endif
         {
             pMe->ledLightType = FM_RADIO_LED_LIGHT_PLAYING;
         }
@@ -1311,7 +1349,11 @@ static void FmRadio_PowerUp(void *pme)
         }
         if (HS_HEADSET_ON())
         {
+#ifdef FEATURE_ANALOG_TV
+            WarT_Fm_Set_Volume( pMe->byVolumeLevel);
+#else
             fm_set_volume( pMe->byVolumeLevel);
+#endif
         }
     }
 #endif//#if !defined( AEE_SIMULATOR)
@@ -1357,7 +1399,7 @@ boolean FmRadio_AddChanListNode( sChanInfo* pChInfo)
     return FALSE;
 }
 
-int FmRadio_GetChannelTotal()
+int FmRadio_GetChannelTotal(void)
 {
     return gFmRadio.byChannelMax;
 }

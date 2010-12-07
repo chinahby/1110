@@ -776,7 +776,6 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             POP_LISTMENU_IDX(pMe->m_wMainListIdx);
             
             // Show dialog message
-            MSG_FATAL("Handler_STATE_MAINLIST................",0,0,0);
             if(SUCCESS != CContApp_ShowDialog(pMe, IDD_LIST))
             {
                 MOVE_TO_STATE(STATE_EXIT);
@@ -798,52 +797,34 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
                 return NFSMACTION_CONTINUE;
             }
             return NFSMACTION_WAIT;
-            
-            //MOVE_TO_STATE(STATE_DELETE);
-            break;
 
         case DLGRET_YES:
             // check speed dial
             if(pMe->m_isdel)
             {
-            MSG_FATAL("DLGRET_YES...........pMe->m_wSelectCont=%d",pMe->m_wSelectCont,0,0);
-            if (wType ==0)
-            {
-                if(SUCCESS == CContApp_DeleteCont(pMe, pMe->m_wSelectCont))
-                {                    
-
-                    if(NULL != pMe->m_szAlpha)
+                if (wType ==0)
+                {
+                    if(SUCCESS == CContApp_DeleteCont(pMe, pMe->m_wSelectCont))
                     {
-                        // 是否是最后一条, 删除最后一条后返回选中倒数第二条，也就是上一条,主要此时IVector_Size(pMe->m_pAddList)还没有减
-                        if((pMe->m_nCurrSmartIdx + MAX_NUM_MENUPOP) == pMe->m_pSmartBufLen)
+                        if(NULL != pMe->m_szAlpha)
                         {
-                            pMe->m_nCurrSmartIdx--;
+                            // 是否是最后一条, 删除最后一条后返回选中倒数第二条，也就是上一条,主要此时IVector_Size(pMe->m_pAddList)还没有减
+                            if((pMe->m_nCurrSmartIdx + MAX_NUM_MENUPOP) == pMe->m_pSmartBufLen)
+                            {
+                                pMe->m_nCurrSmartIdx--;
+                            }
                         }
-                    }
-                    else
-                    {
-                        // 是否是最后一条, 删除最后一条后返回选中倒数第二条，也就是上一条,主要此时IVector_Size(pMe->m_pAddList)还没有减
-                        if((pMe->m_nCurrIdx + MAX_NUM_MENUPOP) == IVector_Size(pMe->m_pAddList))
+                        else
                         {
-                            //pMe->m_nCurrIdx--; 
-                            pMe->m_wMainListIdx--;
+                            // 是否是最后一条, 删除最后一条后返回选中倒数第二条，也就是上一条,主要此时IVector_Size(pMe->m_pAddList)还没有减
+                            if((pMe->m_nCurrIdx + MAX_NUM_MENUPOP) == IVector_Size(pMe->m_pAddList))
+                            {
+                                //pMe->m_nCurrIdx--; 
+                                pMe->m_wMainListIdx--;
+                            }
                         }
-                    }
                     
-                    pMe->m_bDelOk = TRUE;                    
-                    bFlag = TRUE;
-                }
-                else
-                {
-                    bFlag = FALSE;
-                }
-            }
-            else if (wType ==1)
-            {
-                if (IS_RUIM_REC(pMe->m_wEditCont) )
-                {
-                     if (SUCCESS == CContApp_CopyToPhone(pMe, pMe->m_wEditCont - CONTAPP_RUIM_START_IDX + 1))
-                    {
+                        pMe->m_bDelOk = TRUE;                    
                         bFlag = TRUE;
                     }
                     else
@@ -851,57 +832,69 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
                         bFlag = FALSE;
                     }
                 }
-                else
+                else if (wType ==1)
                 {
-                    if(SUCCESS == CContApp_CopyToRUIM(pMe, pMe->m_wEditCont))
+                    if (IS_RUIM_REC(pMe->m_wEditCont) )
                     {
-                        bFlag = TRUE;                    
+                         if (SUCCESS == CContApp_CopyToPhone(pMe, pMe->m_wEditCont - CONTAPP_RUIM_START_IDX + 1))
+                        {
+                            bFlag = TRUE;
+                        }
+                        else
+                        {
+                            bFlag = FALSE;
+                        }
                     }
                     else
                     {
-                        bFlag = FALSE;
-                    }                            
-                }            
-            }
-            if (TRUE == bFlag)
-            {
-                CContApp_Phonebook_Load(pMe);
-                pMe->m_eSuccessRetState = STATE_MAINLIST;
-                MOVE_TO_STATE(STATE_SUCCESS);
-            }
-            else
-            {
-                if (wType == 0)
+                        if(SUCCESS == CContApp_CopyToRUIM(pMe, pMe->m_wEditCont))
+                        {
+                            bFlag = TRUE;                    
+                        }
+                        else
+                        {
+                            bFlag = FALSE;
+                        }                            
+                    }            
+                }
+                if (TRUE == bFlag)
                 {
-                    pMe->m_wErrStrID = IDS_ERR_DELETE;
+                    CContApp_Phonebook_Load(pMe);
+                    pMe->m_eSuccessRetState = STATE_MAINLIST;
+                    MOVE_TO_STATE(STATE_SUCCESS);
                 }
                 else
                 {
-                    if(pMe->m_nCopyMoveType == SINGLECOPY)
+                    if (wType == 0)
                     {
-                        pMe->m_wErrStrID = IDS_ERR_COPY;
+                        pMe->m_wErrStrID = IDS_ERR_DELETE;
                     }
                     else
                     {
-                        pMe->m_wErrStrID = IDS_ERR_MOVE;
+                        if(pMe->m_nCopyMoveType == SINGLECOPY)
+                        {
+                            pMe->m_wErrStrID = IDS_ERR_COPY;
+                        }
+                        else
+                        {
+                            pMe->m_wErrStrID = IDS_ERR_MOVE;
+                        }
                     }
-                }
-                MOVE_TO_STATE(STATE_ERROR);
-                pMe->m_isdel = FALSE;
+                    MOVE_TO_STATE(STATE_ERROR);
+                    pMe->m_isdel = FALSE;
                 
-            }
-            //MOVE_TO_STATE(STATE_DELETE);
-            pMe->m_isdel = FALSE;
-           	MSG_FATAL(".......................................END",0,0,0);
+                }
+                //MOVE_TO_STATE(STATE_DELETE);
+                pMe->m_isdel = FALSE;
             }
             else
             {
-            MSG_FATAL("Handler_STATE_MAINLIST DLGRET_YES",0,0,0);
-            for(oneDialIndex=CONTCFG_ONEDIAL2; oneDialIndex<=CONTCFG_ONEDIAL8; oneDialIndex++)//CONTCFG_ONEDIAL1
-            {
-                if(SUCCESS != CContApp_GetConfig( pMe,
-                                          (ContAppCFG)oneDialIndex,
-                                          pMe->m_pOneDialBuf,
+                MSG_FATAL("Handler_STATE_MAINLIST DLGRET_YES",0,0,0);
+                for(oneDialIndex=CONTCFG_ONEDIAL2; oneDialIndex<=CONTCFG_ONEDIAL8; oneDialIndex++)//CONTCFG_ONEDIAL1
+                {
+                    if(SUCCESS != CContApp_GetConfig( pMe,
+                                              (ContAppCFG)oneDialIndex,
+                                              pMe->m_pOneDialBuf,
                                           sizeof(pMe->m_pOneDialBuf)))
                 {
                     continue;
@@ -924,13 +917,13 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
                 FREEIF(pMe->m_pFldInputBuf);
                 pMe->m_eSuccessRetState = STATE_EXIT;
             
-                MOVE_TO_STATE(STATE_SUCCESS);
-            }
-            else
-            {
-                pMe->m_wErrStrID = IDS_ERR_ADDFIELD;
-                MOVE_TO_STATE(STATE_ERROR);
-            }
+                    MOVE_TO_STATE(STATE_SUCCESS);
+                }
+                else
+                {
+                    pMe->m_wErrStrID = IDS_ERR_ADDFIELD;
+                    MOVE_TO_STATE(STATE_ERROR);
+                }
             }
             break;
             
@@ -1508,7 +1501,6 @@ static NextFSMAction Handler_STATE_OPTS(CContApp *pMe)
             break;  
             
         case DLGRET_YES:
-            MSG_FATAL("DLGRET_YES................",0,0,0);
             if (wType ==0)
             {
                 if(SUCCESS == CContApp_DeleteCont(pMe, pMe->m_wEditCont))
@@ -1598,7 +1590,6 @@ static NextFSMAction Handler_STATE_OPTS(CContApp *pMe)
             break;
             
        case DLGRET_ERR:
-            MSG_FATAL("DLGRET_ERR...............",0,0,0);
             MOVE_TO_STATE(STATE_ERROR);
             break;
 
@@ -2014,7 +2005,6 @@ static NextFSMAction Handler_STATE_FIND_LIST(CContApp *pMe)
 #endif
     
     FARF(STATE, ("STATE_FIND_LIST %d",pMe->m_eDlgRet));
-     MSG_FATAL("Handler_STATE_FIND_LIST %d",pMe->m_eDlgRet,0,0);
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -2060,24 +2050,21 @@ static NextFSMAction Handler_STATE_FIND_LIST(CContApp *pMe)
             return NFSMACTION_CONTINUE;
         
 		case DLGRET_DELETE:
-					// Save the menu select
-					PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel); 
-					wType=0;
-					pMe->m_isdel = TRUE;
-					if(SUCCESS != CContApp_ShowYesNoDialog( pMe, 
-															IDS_YESNO_DELETEREC,
-															NULL,
-															-1))
-					{
-						MOVE_TO_STATE(STATE_EXIT);
-						return NFSMACTION_CONTINUE;
-					}
-					return NFSMACTION_WAIT;
-					
-					//MOVE_TO_STATE(STATE_DELETE);
-					break;
+			// Save the menu select
+			PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel); 
+			wType=0;
+			pMe->m_isdel = TRUE;
+			if(SUCCESS != CContApp_ShowYesNoDialog( pMe, 
+													IDS_YESNO_DELETEREC,
+													NULL,
+													-1))
+			{
+				MOVE_TO_STATE(STATE_EXIT);
+				return NFSMACTION_CONTINUE;
+			}
+			return NFSMACTION_WAIT;
+                    
 	    case DLGRET_YES:
-            MSG_FATAL("DLGRET_YES. pMe->m_wEditCont.=%d..............",pMe->m_wEditCont,0,0);
             if (wType ==0)
             {
                 if(SUCCESS == CContApp_DeleteCont(pMe, pMe->m_wSelectCont))
@@ -2158,13 +2145,14 @@ static NextFSMAction Handler_STATE_FIND_LIST(CContApp *pMe)
                     }
                 }
                 MOVE_TO_STATE(STATE_ERROR);
-            }
-            //MOVE_TO_STATE(STATE_DELETE);		
+            }	
             break;
+            
         case DLGRET_NO:
             MSG_FATAL("Handler_STATE_MAINLIST DLGRET_NO",0,0,0);
             MOVE_TO_STATE(STATE_FIND_LIST);
             break;
+            
         case DLGRET_CALL:
             // store the menu select
             PUSH_LISTMENU_SEL(pMe->m_wFindListSel);
@@ -2849,9 +2837,7 @@ static NextFSMAction Handler_STATE_GROUPVIEW_LIST(CContApp *pMe)
                 return NFSMACTION_CONTINUE;
             }
             return NFSMACTION_WAIT;
-            
-            //MOVE_TO_STATE(STATE_DELETE);
-            break;
+            
         case DLGRET_YES:
             if (wType ==0)
             {
@@ -2934,10 +2920,12 @@ static NextFSMAction Handler_STATE_GROUPVIEW_LIST(CContApp *pMe)
                 MOVE_TO_STATE(STATE_ERROR);
             }
             break;
+            
         case DLGRET_NO:
             MSG_FATAL("Handler_STATE_MAINLIST DLGRET_NO",0,0,0);
             MOVE_TO_STATE(STATE_GROUPVIEW_LIST);
             break;
+            
         case DLGRET_CALL:
             // store the menu select
             PUSH_LISTMENU_SEL(pMe->m_wGroupViewSel);
@@ -6529,24 +6517,21 @@ static NextFSMAction Handler_STATE_SAVEFLD_LIST(CContApp *pMe)
             }
             return NFSMACTION_CONTINUE;
         case DLGRET_DELETE:
-					// Save the menu select
-					PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel); 
-					wType=0;
-					pMe->m_isdel = TRUE;
-					if(SUCCESS != CContApp_ShowYesNoDialog( pMe, 
-															IDS_YESNO_DELETEREC,
-															NULL,
-															-1))
-					{
-						MOVE_TO_STATE(STATE_EXIT);
-						return NFSMACTION_CONTINUE;
-					}
-					return NFSMACTION_WAIT;
-					
-					//MOVE_TO_STATE(STATE_DELETE);
-					break;
+			// Save the menu select
+			PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel); 
+			wType=0;
+			pMe->m_isdel = TRUE;
+			if(SUCCESS != CContApp_ShowYesNoDialog( pMe, 
+													IDS_YESNO_DELETEREC,
+													NULL,
+													-1))
+			{
+				MOVE_TO_STATE(STATE_EXIT);
+				return NFSMACTION_CONTINUE;
+			}
+			return NFSMACTION_WAIT;
+                    
 	    case DLGRET_YES:
-            MSG_FATAL("DLGRET_YES................",0,0,0);
             if (wType ==0)
             {
                 if(SUCCESS == CContApp_DeleteCont(pMe, pMe->m_wEditCont))
@@ -6627,13 +6612,14 @@ static NextFSMAction Handler_STATE_SAVEFLD_LIST(CContApp *pMe)
                     }
                 }
                 MOVE_TO_STATE(STATE_ERROR);
-            }
-            //MOVE_TO_STATE(STATE_DELETE);		
+            }	
             break;
+            
         case DLGRET_NO:
             MSG_FATAL("Handler_STATE_MAINLIST DLGRET_NO",0,0,0);
             MOVE_TO_STATE(STATE_SAVEFLD_LIST);
             break;
+            
         case DLGRET_CANCELED:
             MOVE_TO_STATE(STATE_EXIT);
             return NFSMACTION_CONTINUE;
@@ -7271,7 +7257,6 @@ static NextFSMAction Handler_STATE_SMARTCALL_VIEW(CContApp *pMe)
 // 状态 STATE_SEARCH 处理函数
 static NextFSMAction Handler_STATE_SEARCH(CContApp *pMe)
 {
-	
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
@@ -7310,7 +7295,7 @@ static NextFSMAction Handler_STATE_SEARCH(CContApp *pMe)
 
             MOVE_TO_STATE(STATE_MAINMENU);
             break;
-       
+
         case DLGRET_SEARCH_NAME:
             // Save the menu select
             PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel);
@@ -7355,7 +7340,6 @@ static NextFSMAction Handler_STATE_SEARCH(CContApp *pMe)
 ==============================================================================*/
 static NextFSMAction Handler_STATE_SEARCHNAME(CContApp *pMe)
 {
-	
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
@@ -7407,7 +7391,7 @@ static NextFSMAction Handler_STATE_SEARCHNAME(CContApp *pMe)
             FREEIF(pMe->m_szAlpha);
             MOVE_TO_STATE(STATE_FIND_LIST);
             break;
-        
+            
         case DLGRET_MSGBOX_OK:
             // ReLoad contacts
             if(SUCCESS != CContApp_LoadPhoneBook(pMe, pMe->m_nViewType))

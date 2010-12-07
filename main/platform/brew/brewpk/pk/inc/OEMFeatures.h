@@ -719,4 +719,9 @@ GENERAL DESCRIPTION:
 #ifdef CUST_EDITION
 //#define FEATURE_VIRTUALKEY
 #endif
+
+#ifdef FEATURE_ANALOG_TV
+#define FEATURE_APP_ATV
+#endif
+
 #endif   // OEMFEATURES_H

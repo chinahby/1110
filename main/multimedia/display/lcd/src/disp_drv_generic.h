@@ -22,7 +22,9 @@ static rex_crit_sect_type       disp_drv_crit_sect = {0};
 static disp_info_type           disp_drv_info = {0};
 static disp_drv_state_type      disp_drv_state = {0};
 static disp_drv_ic_type         disp_drv_ic = {0};
-
+#ifdef FEATURE_DSP
+extern boolean g_ByPassOn;
+#endif
 /*===========================================================================
 
                             FUNCTION PROTOTYPES
@@ -813,7 +815,12 @@ static int disp_drv_ioctl ( int cmd, void *arg )
         disp_update_cmd = (disp_update_type*)arg;
         /* bitwise OR all int16 together. If the result is
          * less than 0, then at least one of them is negative */
-        if((disp_update_cmd->src_width |
+    #ifdef FEATURE_DSP
+    	if( g_ByPassOn && 
+    #else
+    	if(
+    #endif
+			(disp_update_cmd->src_width |
             disp_update_cmd->src_starting_row |
             disp_update_cmd->src_starting_column |
             disp_update_cmd->num_of_rows |
@@ -866,6 +873,16 @@ static int disp_drv_ioctl ( int cmd, void *arg )
                                    ((disp_cls_type *)arg)->end_row,                                          
                                    ((disp_cls_type *)arg)->end_column);
         break;
+
+#ifdef FEATURE_DSP
+
+    case IOCTL_DISP_SET_WINDOWS:
+    	disp_update_cmd = (disp_update_type*)arg;
+		disp_drv_ic.disp_ic_setwindow((uint32)disp_update_cmd->dst_starting_row,
+                                   	(uint32)disp_update_cmd->dst_starting_column,
+                                   	(uint32)(disp_update_cmd->dst_starting_row+disp_update_cmd->num_of_rows),                                          
+                                   	(uint32)(disp_update_cmd->dst_starting_column+disp_update_cmd->num_of_columns));
+#endif
     default: 
         return -1;
     }

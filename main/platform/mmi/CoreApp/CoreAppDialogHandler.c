@@ -2720,7 +2720,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 pMe->m_b_set_lock = FALSE;
             }
 #endif
-
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -2922,7 +2921,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             	//Add End
 #endif
 				case AVK_TV:
-				
 					{
 						return TRUE;
 					}

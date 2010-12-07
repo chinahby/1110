@@ -111,4 +111,5 @@
 //Others
 #define OEMNV_PHONE_PASSWORD                        10670                       //CFGI_PHONE_PASSWORD       
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //NV_LANGUAGE_SELECTION_I
+#define OEMNV_TV_TvSetting                          {0,0,0,0,0,0,0,{{{0},{0}},{{0},{0}}},0,{0}}
 

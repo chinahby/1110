@@ -241,7 +241,11 @@ static int ICamera_RegisterNotify( ICamera         *pme,
                                    PFNCAMERANOTIFY  pfnNotify, 
                                    void            *pUser)
 {
+#ifdef FEATURE_DSP
+return SUCCESS;//OEMCameraEx_RegisterNotify(pme->m_pOEMCamera, pfnNotify, pUser);
+#else
     return OEMCamera_RegisterNotify(pme->m_pOEMCamera, pfnNotify, pUser);
+#endif
 }
 
 /*==================================================================

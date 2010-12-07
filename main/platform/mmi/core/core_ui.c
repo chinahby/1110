@@ -452,7 +452,7 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
 	{HS_LCTRL_K,					AVK_LCTRL,						AVK_METHED_HOLD, FALSE, 0},
 	#ifndef FEATURE_LANG_THAI
 	#ifdef FEATURE_NUM_KEY_MID
-	{HS_F1_K,					    AVK_MESSAGE,						    AVK_METHED_HOLD, FALSE, 1},
+	{HS_F1_K,					    AVK_MESSAGE,				    AVK_METHED_HOLD, FALSE, 1},
 	{HS_F2_K,					    AVK_MUSIC,						AVK_METHED_HOLD, FALSE, 1},
 	#else
 	{HS_F1_K,					    AVK_UP,						    AVK_METHED_HOLD, FALSE, 1},
@@ -891,7 +891,6 @@ void handle_keys(void)
     
     static int hs2vcodeidx = ARR_SIZE(hs_to_aee_tbl)-1;
     last_vcode = AEE_INVALID_CODE;
-	
 #ifdef FEATURE_KEYPAD_MULTI_KEY
     while ( (key.key_code = GetKey(&key)) != HS_NONE_K) 
 	{
@@ -904,20 +903,18 @@ void handle_keys(void)
 #endif
         if (key.key_code == HS_RELEASE_K) 
 		{
-			
 #ifdef FEATURE_KEYPAD_MULTI_KEY
             hs2vcodeidx = GetHsToVcodeIdx(key.key_parm);
 #endif
             last_vcode = hs_to_aee_tbl[hs2vcodeidx].aee_vcode;
             dwParam_code = hs_to_aee_tbl[hs2vcodeidx].dwparam;	//Add By zzg 2010_09_09
-
-			
+            
             if (last_vcode != AVK_UNDEFINED && hs_to_aee_tbl[hs2vcodeidx].bpressed)
 			{
                 hs_to_aee_tbl[hs2vcodeidx].bpressed = FALSE;
-
+				
                 if (CoreTask_HandleAEEEvt(EVT_KEY_RELEASE, last_vcode, dwParam_code))
-				{					
+				{
                     continue;
                 }
 				
@@ -926,7 +923,7 @@ void handle_keys(void)
                     StopKeyRepeat(&hs_to_aee_tbl[hs2vcodeidx]);
                 }
 				else if(hs_to_aee_tbl[hs2vcodeidx].aee_method == AVK_METHED_HOLD)
-                {                
+                {
                     StopKeyHold(&hs_to_aee_tbl[hs2vcodeidx]);
                 }
                 AEE_Event(EVT_KEY_RELEASE, last_vcode, hs_to_aee_tbl[hs2vcodeidx].dwparam);
@@ -1827,7 +1824,7 @@ static void CoreTask_CreateAEEInstance(void)
 #else
     (void) ISHELL_CreateInstance(pShell, AEECLSID_TELEPHONE,(void**)&g_pITelephone);
 #endif
-    
+
     // ±≥π‚¥¶¿Ì
     // Turn on the backlight immediately on startup so the
     // user can see the startup animation at night 
@@ -1879,7 +1876,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 	AEETCalls po;
 #endif
 
-#ifdef FEATURE_KEYGUARD	
+#ifdef FEATURE_KEYGUARD
     if (OEMKeyguard_HandleEvent(evt, wParam))
     {
         return TRUE;
