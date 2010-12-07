@@ -59,6 +59,9 @@ Local Definitions and Types
 static uint32	RDA5802_FreqToChan(uint32 frequency);
 static uint8 	RDA5802_ValidStop(int16 freq);
 static uint8 	RDA5802_GetSigLvl(int16 curf );
+#ifdef FEATURE_DSP
+void fm_mute(boolean on);
+#endif
 static uint8    fm_playing_mute = TRUE;
 /***************************************************
 RDA5802 interfaces
