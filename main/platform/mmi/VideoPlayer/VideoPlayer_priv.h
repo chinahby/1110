@@ -71,19 +71,13 @@
 #include "AEEConfig.h"    
 #include "AEEBacklight.h" 
 #include "Appscommon.h"
-#if SCREEN_WIDTH == 220 && SCREEN_HEIGHT == 176
-#include "videoplayer_images_220x176.brh"
-#else
-#include "videoplayer_images_160x128.brh"
-#endif
-
-
+#include "videoplayer_images.brh"
 
 /*=================================================================================================================
                                宏定义和常数
 =================================================================================================================*/
 #if defined( AEE_SIMULATOR)
-    #define  AEE_APPSVIDEOPLAYER_RES_FILE "fs:/mod/videoplayer/en/videoplayer.bar"
+#define  AEE_APPSVIDEOPLAYER_RES_FILE "fs:/mod/videoplayer/en/videoplayer.bar"
 #else
 #define  AEE_APPSVIDEOPLAYER_RES_FILE (AEE_RES_LANGDIR VIDEOPLAYER_RES_FILE)
 #endif 
