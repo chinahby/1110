@@ -70,6 +70,10 @@ INCLUDE FILES FOR MODULE
 #include "gpio_1100.h"
 #endif
 
+#ifdef FEATURE_DSP
+#include "clk.h"
+#endif
+
 int lcd_mddi_cur_panel = MDDI_MC4_PRIM;
 int fd = -1;
 int fd2 = -1;
@@ -121,7 +125,6 @@ static void mdp_init(void);
 
 void disp_init(void)
 {
-
 #ifdef FEATURE_DSP
 	gpio_tlmm_config(AIT701_RESET);
 	gpio_tlmm_config(AIT701_BYPASS);
