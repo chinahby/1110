@@ -483,8 +483,7 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 			 AECHAR channelStr[32];
 			// WSTRCPY(strchannel,(AECHAR *)(pMe->currentlyChannel)); (AECHAR *)pMe->currentlyChannel
 			 MSG_FATAL("EVT_USER_REDRAW--pMe->currentlyChannel=%d----------",pMe->currentlyChannel,0,0);
-			
-			 WSPRINTF(channelStr, 32*sizeof(AECHAR), L"%d", pMe->currentlyChannel);
+			 WSPRINTF(channelStr, sizeof(channelStr), (AECHAR*)L"%d", pMe->currentlyChannel);
              TV_UpdateInit(pMe);
 		     DrawTextWithProfile(pMe->m_pShell, 
                                 pMe->m_pDisplay, 
@@ -777,7 +776,7 @@ static boolean TV_DRAWTOPBAR_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 				
 	            }
 				
-			    WSPRINTF(channelStr, 32*sizeof(AECHAR), L"%d", pMe->currentlyChannel);
+			    WSPRINTF(channelStr, sizeof(channelStr), (AECHAR*)L"%d", pMe->currentlyChannel);
 				 DrawTextWithProfile(pMe->m_pShell, 
                             pMe->m_pDisplay, 
                             RGB_WHITE, 
