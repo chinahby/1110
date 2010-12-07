@@ -10,8 +10,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
-
-//add by yangdecai  for tv
 #define FEATURE_ANALOG_TV
 #define USE_ANALOGTV_TLG1120
 #define FEATURE_APP_BLUETOOTH
@@ -23,10 +21,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #define BT_QSC1110//FEATURE_BT_QSC1100
 #define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  型号
-
-//end add by yaangdecai for bt
-
-
 #define FEATURE_TORCH_KEY_SPACE		//手电筒功能按键
 #define FEATURE_GPIO_LAMP_EN_OUTPUT_32	//GPIO_OUTPUT_32
 #define FEATURE_SIM_SEL_GPIO_31_PULL_DOWN		//SIM_SEL == GPIO_OUP(31,GROUP_GPIO2_0,GPIO_PULL_DOWN)
@@ -52,7 +46,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CDSMS_CACHE_USELIST
 //#define FEATURE_SPN_FROM_BSMCCMNC
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
-
 #endif
 
 #ifndef TARGSBW2_H
@@ -67,22 +60,21 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CLKREGIM_1X_MODE 
 #define FEATURE_AUDIO_CONFIGURATION_MINIMAL 
 //Gemsea Remove #define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
-#define FEATURE_IPL_NO_CAMERA
+//#define FEATURE_IPL_NO_CAMERA
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
-#define FEATURE_LOWTIER_LOWMEM 
+//#define FEATURE_LOWTIER_LOWMEM 
 #define FEATURE_REX_IPC 
 #define FEATURE_ASYNC_DATA_NOOP 
 #define FEATURE_HS_USB_PMIC_PHY 
 #define FEATURE_HS_USB_USER_EVENT_POST 
 #define FEATURE_RRC_SIB_HEAP 
-#define FEATURE_LOW_MEMORY_USAGE 
+//#define FEATURE_LOW_MEMORY_USAGE 
 //#define FEATURE_FS_LOW_MEMORY_USAGE 
-
 //#define FEATURE_DSM_MINIMIZE 
 
-//#define FEATURE_MSG_LOW_MEMORY_USAGE 
+#define FEATURE_MSG_LOW_MEMORY_USAGE 
 #define FEATURE_SIO_NO_DEBUG_TRACE 
 #define FEATURE_DIAG_SMALL_BUFFER 
 #define FEATURE_IPC_SMALL_MEMORY_POOL 
@@ -246,9 +238,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
-//#define FEATURE_AAC
-//#define FEATURE_AAC_PLUS
-//#define FEATURE_ENHANCED_AAC_PLUS
+#define FEATURE_AAC
+#define FEATURE_AAC_PLUS
+#define FEATURE_ENHANCED_AAC_PLUS
 #endif
 #include "custqbt.h"     //for bt
 #include "custbt.h"      //for bt
@@ -259,8 +251,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custmmode.h"
 #include "custcdma.h"
 #include "custrf.h"
+#ifdef FEATURE_BT
 #include "custqbt.h"
 #include "custbt.h"
+#endif
 #include "custcdma2000.h"
 #include "custdebug.h"
 #include "custdmss.h"
@@ -271,6 +265,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custui.h"
 #include "custmcs.h"
 #include "custpmic3.h"
+#include "custmp4.h"
 #include "custefs.h"
 //#include "custfmrds.h"
 #include "custnvm.h"
