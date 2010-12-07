@@ -7743,7 +7743,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
         case AVK_B:
         case AVK_N:
         case AVK_M:
-        case AVK_Z:
         case AVK_MUTE:
             for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
 			{           
@@ -7850,7 +7849,6 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	        case AVK_ENTER:
 			case AVK_SPACE:
 	        case AVK_RWD:
-	        case AVK_Z:
         	case AVK_MUTE:
 	            {
 	                int i = 0;
