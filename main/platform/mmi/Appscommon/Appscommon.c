@@ -1739,7 +1739,10 @@ void DrawTextWithProfile(IShell* pShell,
         return;
     }
 
-
+	
+    // 设置文本描边时边的颜色，同时保存原来文本颜色值
+    oldTextClr = IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, ~ProfileColor);
+	
     // 求绘制文本时的剪切矩形
     ISHELL_GetDeviceInfo(pShell, &di);
     ClipRc.x = 0;
@@ -1880,11 +1883,8 @@ void DrawTextWithProfile(IShell* pShell,
                     NULL, 
                     dwFlags);
     }
-    
-    
-    
-    // 设置文本描边时边的颜色，同时保存原来文本颜色值
-    oldTextClr = IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, ProfileColor);
+	
+	(void)IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, ProfileColor);
     // 绘制文本
     (void) IDISPLAY_DrawText(pDisplay, 
                 Font, 
