@@ -128,9 +128,10 @@ void disp_init(void)
 #ifdef FEATURE_DSP
 	gpio_tlmm_config(AIT701_RESET);
 	gpio_tlmm_config(AIT701_BYPASS);
-
+	gpio_tlmm_config(GPIO_OUTPUT_10);
 	(void)gpio_out(AIT701_BYPASS, GPIO_HIGH_VALUE);
 	(void)gpio_out(AIT701_BYPASS, GPIO_HIGH_VALUE);
+	(void)gpio_out(GPIO_OUTPUT_10, GPIO_HIGH_VALUE);
 	clk_busy_wait(10*1000);
 #endif
 
