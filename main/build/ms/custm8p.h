@@ -13,6 +13,17 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #define FEATURE_VERSION_M8P
 
+//BT
+#define FEATURE_APP_BLUETOOTH
+#define FEATURE_BT
+#define FEATURE_IBT
+#define FEATURE_BT_QSOC_INBAND_SLEEP  
+#define FEATURE_DRM_NO_BREW 
+#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
+
+#define BT_QSC1110//FEATURE_BT_QSC1100
+#define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  型号
+
 
 //Add By zzg 2010_10_13
 #define FEATURE_DOUBLE_SHIFT_NOTEQUAL_W			//屏蔽连续两次按SHIFT键输入W
@@ -33,12 +44,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_GPIO_47_SIGNAL_EQUAL_OUTPUT_47	// GPIO_47_SIGNAL== GPIO_OUTPUT_47
 #define FEATURE_GPIO_32_SIGNAL_OUPUT_32			//GPIO_32_SIGNAL== GPIO_OUTPUT_32
 #define FEATURE_SIM_SEL_GPIO_31_PULL_DOWN		//SIM_SEL == GPIO_OUP(31,GROUP_GPIO2_0,GPIO_PULL_DOWN)
-#define FEATURE_LANG_THAI
 
 //Add End
-
-
-
 
 //#define FEATURE_SMS_UDH
 //#define FEATURE_SUPPORT_ID
@@ -255,6 +262,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ENHANCED_AAC_PLUS
 #endif
 
+#include "custqbt.h"     //for bt
+#include "custbt.h"      //for bt
 #include "custuim.h"
 #include "custcmx.h"
 #include "custavs.h"
