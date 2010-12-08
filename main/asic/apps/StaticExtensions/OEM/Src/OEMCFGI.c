@@ -1590,7 +1590,13 @@ static OEMConfigListType oemi_cache = {
    FALSE,                                           //CFGI_RECENTCALL_LOCK_CHECK
    FALSE,                                           //CFGI_SMS_LOCK_CHECK
    FALSE,                                           //CFGI_CALENDAR_LOCK_CHECK
+
+#ifdef FEATURE_VERSION_HITZ181
+   TRUE,											//CFGI_KEY_LOCK_CHECK			
+#else
    FALSE,                                           //CFGI_KEY_LOCK_CHECK
+#endif   
+
    OEMNV_LOCK_RUIM,                                 // CFGI_LOCK_RUIM,   //type = boolean
    {0,},
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH   
@@ -2482,7 +2488,13 @@ void OEM_RestoreFactorySetting( void )
 
 #ifdef CUST_EDITION
 #ifdef FEATURE_KEYGUARD	 
+
+#ifdef FEATURE_VERSION_HITZ181
+	oemi_cache.b_key_lock       =  TRUE; 
+#else
     oemi_cache.b_key_lock       =  FALSE; 
+#endif
+
 #endif
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH   
    oemi_cache.desktop_theme       = DESKTOP_THEME_DEEP_BLUE;

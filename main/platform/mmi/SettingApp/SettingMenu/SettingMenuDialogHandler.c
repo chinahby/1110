@@ -4236,6 +4236,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMe->m_pStatus, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTO_POWER_OFF_TIME, IDS_AUTO_POWER_OFF_TIME, NULL, 0);
             IMENUCTL_AddItem(pMe->m_pState, AEE_APPSSETTINGMENU_RES_FILE, IDS_ENABLE, IDS_ENABLE, NULL, 0);
             IMENUCTL_AddItem(pMe->m_pState, AEE_APPSSETTINGMENU_RES_FILE, IDS_DISABLE, IDS_DISABLE, NULL, 0);
+
             pMe->m_nCtlID = IDC_AUTO_POWER_STATUS;
             pMe->m_b_selete_Pm = FALSE;
             pMe->m_b_ampm_mode = OEMNV_TIMEFORM_24HR;
@@ -4281,8 +4282,17 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             MEMSET(wszStatus,0,sizeof(wszStatus));
 
             ITIMECTL_SetProperties(pMe->m_pTime,  TP_NO_SECONDS | TP_AUTOREDRAW);
-            IMENUCTL_SetOemProperties(pMe->m_pState, OEMMP_SWITCHNAVIGATIONKEY|OEMMP_IDF_ALIGN_CENTER);
-            IMENUCTL_SetOemProperties(pMe->m_pStatus, OEMMP_SWITCHNAVIGATIONKEY|OEMMP_IDF_ALIGN_CENTER);
+            IMENUCTL_SetOemProperties(pMe->m_pState, 
+            OEMMP_SWITCHNAVIGATIONKEY|OEMMP_IDF_ALIGN_CENTER|OEMMP_USE_MENU_STYLE);
+            IMENUCTL_SetOemProperties(pMe->m_pStatus, 
+            OEMMP_SWITCHNAVIGATIONKEY|OEMMP_IDF_ALIGN_CENTER|OEMMP_USE_MENU_STYLE);
+
+			//Add By zzg 2010_11_08
+			//IMENUCTL_SetProperties(pMe->m_pStatus, MP_WRAPSCROLL);
+            //IMENUCTL_SetOemProperties(pMe->m_pStatus, OEMMP_USE_MENU_STYLE);
+			//IMENUCTL_SetProperties(pMe->m_pState, MP_WRAPSCROLL);
+            //IMENUCTL_SetOemProperties(pMe->m_pState, OEMMP_USE_MENU_STYLE);
+			//Add End
 
             if(IMENUCTL_GetSel(pMe->m_pStatus) == IDS_AUTO_POWER_ON_TIME)
             {

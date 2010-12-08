@@ -181,6 +181,10 @@ static boolean CallApp_SaveNumber(CCallApp *pMe, PhoneSaveType saveType);
 //dialog expired callback function
 static void CallApp_HandleDialogTimer(void *pUser);
 
+//Add By zzg 2010_12_08
+static void EnableBackLight(void *pUser);
+//Add End
+
 //Answers an in-band call
 static void CallApp_AnswerInbandCall(CCallApp *pMe);
 
@@ -355,7 +359,7 @@ static boolean bDrawCursor = TRUE;
                                 0);
        //CLOSE_DIALOG(DLGRET_NUMEDIT);
     }
-
+	
     static boolean Morse_PopPrompt(CCallApp *pMe,uint16 id)
     {
 
@@ -391,6 +395,25 @@ static boolean bDrawCursor = TRUE;
             return TRUE;
     }
 #endif
+
+
+static void EnableBackLight(void *pme)
+{
+    CCallApp *pMe = (CCallApp *)pme;
+
+    if (NULL == pMe)
+    {
+        return;
+    }
+
+	MSG_FATAL("***zzg CallApp_IncomingCall EnableBackLight***", 0, 0, 0);
+	
+	ISHELL_CancelTimer(pMe->m_pShell, EnableBackLight, (void*)pMe);
+		        
+	IBACKLIGHT_Enable(pMe->m_pBacklight);
+
+	(void)ISHELL_SetTimer(pMe->m_pShell, 2000, EnableBackLight, pMe);		
+}
 
 /*==============================================================================
 º¯Êý:
@@ -4144,10 +4167,18 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 				IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,StrBuf);
 				IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
+
+#ifdef FEATURE_VERSION_HITZ181
+				MSG_FATAL("***zzg CallApp_IncomingCall EVT_DIALOG_START***", 0, 0, 0);
+
+				(void)ISHELL_SetTimer(pMe->m_pShell, 100, EnableBackLight, pMe);             					
+#else				
 	            if(pMe->m_pBacklight)
 	            {
 	                IBACKLIGHT_Enable(pMe->m_pBacklight);
 	            }
+#endif
+
 	            (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_DIALER, EVT_USER_REDRAW,  0,  0);
 #ifdef FEATURE_SUPPORT_BT_APP
 #ifdef FEATURE_ICM
@@ -4409,6 +4440,14 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 	        (void) ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CallApp_Dialer_Show_Animation,pMe);
             IALERT_StopRingerAlert(pMe->m_pAlert);
             IALERT_StopMp3Alert(pMe->m_pAlert);
+
+
+#ifdef FEATURE_VERSION_HITZ181
+			MSG_FATAL("***zzg CallApp_IncomingCall EVT_DIALOG_END***", 0, 0, 0);
+			(void)ISHELL_CancelTimer(pMe->m_pShell, EnableBackLight, pMe);
+#endif
+
+			
 #ifdef FEATURE_LED_CONTROL
             IBACKLIGHT_SigLedDisable(pMe->m_pBacklight);
 #endif

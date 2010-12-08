@@ -537,14 +537,27 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
 #else
   /* Internal CODEC - no pad values    */
   /*  rx                dtmf            pad        */
+
+#ifdef FEATURE_VERSION_HITZ181
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
   {           -1200 , VOC_VOL_SILENCE ,  0 },
   {           -900 , VOC_VOL_SILENCE ,  0 },
   {           -400 , VOC_VOL_SILENCE ,  0 },
-  {            0 , VOC_VOL_SILENCE ,  0 },
-  {            100 , VOC_VOL_SILENCE ,  0 },
-  {           200 , VOC_VOL_SILENCE ,  0 },
-  {              400 , VOC_VOL_SILENCE ,  0 }
+  {           -200 , VOC_VOL_SILENCE ,  0 },	
+  {            0 , VOC_VOL_SILENCE ,  0 },		
+  {           100 , VOC_VOL_SILENCE ,  0 },		
+  {           200 , VOC_VOL_SILENCE ,  0 }		
+#else
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {           -1200 , VOC_VOL_SILENCE ,  0 },
+  {           -900 , VOC_VOL_SILENCE ,  0 },
+  {           -400 , VOC_VOL_SILENCE ,  0 },
+  {           0 , VOC_VOL_SILENCE ,  0 },	// 0
+  {           100 , VOC_VOL_SILENCE ,  0 },		// 100
+  {           200 , VOC_VOL_SILENCE ,  0 },		// 200
+  {           400 , VOC_VOL_SILENCE ,  0 }		// 400
+#endif
+
 #endif
 };
 #elif defined(FEATURE_FFA) || defined(T_FFA)

@@ -23,7 +23,7 @@
 		<Text>ข้อความ</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_MAIN_MENU_MULTIMEDIA">
-		<Text>ข้อมูลการใช้</Text>
+		<Text>มัลติมีเดีย</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MAIN_MENU_APPLICATION">
 		<Text>ตั้งค่า</Text>
