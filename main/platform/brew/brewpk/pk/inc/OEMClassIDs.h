@@ -113,7 +113,7 @@ GENERAL DESCRIPTION:
 #define AEECLSID_APPLICATION       (AEECLSID_OEM + 0x503)   //add by yangdecai
 #define AEECLSID_GAME              (AEECLSID_OEM + 0x504)   //add by yangdecai
 
-#ifdef FEATURE_VERSION_M8
+#if defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P)
 #define AEECLSID_FRENDUO           (AEECLSID_OEM + 0x505)   //add by yangdecai
 #endif
 

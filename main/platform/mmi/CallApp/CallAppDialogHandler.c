@@ -3804,8 +3804,7 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             //}
             
         {
-#ifdef FEATURE_VERSION_M8           
-
+#if defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P)
             //M8 For Frenduo
             Dialer_call_table* callname_str = NULL;
             callname_str = &pMe->m_call_info;			

@@ -69,7 +69,7 @@ extern boolean   IsRunAsFactoryTestMode(void);
 }
 
 // 开关机动画播放时间
-#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8)
+#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P)
 #define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT))
 #define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT))
 #elif defined(FEATURE_VERSION_H19C)
@@ -2950,6 +2950,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 	#elif defined (FEATURE_VERSION_SMART)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
 	#elif defined (FEATURE_VERSION_M8)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+	#elif defined (FEATURE_VERSION_M8P)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
 	#elif defined (FEATURE_VERSION_HITZ181)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO); 
@@ -2988,6 +2990,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
 #elif defined (FEATURE_VERSION_M8)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
+#elif defined (FEATURE_VERSION_M8P)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #elif defined (FEATURE_VERSION_HITZ181)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
 #else
@@ -3041,7 +3045,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
-#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/	
+#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
+#elif defined (FEATURE_VERSION_M8P)
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+#else
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_HITZ181)
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
@@ -3054,7 +3065,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					{
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 					}
-			#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8)
+			#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P)
 				case AVK_SOFT2:
 			#else
                 case AVK_CLR:
@@ -3074,7 +3085,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						return CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_SFM);	
 #else                   
 						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 	
-#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/	
+#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
+#elif defined (FEATURE_VERSION_M8P)
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP                      
+						OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
+						return CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_SFM);	
+#else                   
+						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 	
+#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_FLEXI203)
 #if defined(FEATURE_FLEXI_STATIC_BREW_APP)&&defined(FEATURE_FPT005)
 						 OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
@@ -4778,6 +4796,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		eBBarType = BTBAR_FACEBOOK_CHAT;
 #elif defined FEATURE_VERSION_M8
 		eBBarType = BTBAR_FACEBOOK_CHAT;
+#elif defined FEATURE_VERSION_M8P
+		eBBarType = BTBAR_FACEBOOK_CHAT;
 #else										//Include IVIO
 	#if defined (FEATURE_GURU)
 		eBBarType = BTBAR_FGURU_FPORTAL;	
@@ -4836,7 +4856,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
     {
 #ifndef FEATURE_USES_LOWMEM
 
-#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || \
+#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || \
     defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) || \
     defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181)
         MSG_FATAL("CoreApp_PlayPwrOnAni 10",0,0,0);
@@ -4855,7 +4875,7 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
         IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定开机动画的帧数
 #endif
   
-#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || \
+#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || \
 	defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) || \
 	defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181)
 
@@ -4944,7 +4964,7 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
     {
 #ifndef FEATURE_USES_LOWMEM
         
-#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) ||\
+#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) ||\
 	defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) ||\
 	defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181)
 
@@ -4963,7 +4983,7 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
 		IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定关机动画的帧数
 #endif
 
-#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) ||\
+#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8) ||\
 	defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) ||\
 	defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181)
      // 开始播放关机动画

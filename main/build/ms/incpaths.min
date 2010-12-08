@@ -846,7 +846,7 @@ ADJUSTPENAPP =          $(MMIDIR)/AdjustPenApp
 APPLICATION   =         $(MMIDIR)/Application
 GAME     =              $(MMIDIR)/Games/game
 TVAPP = 		$(MMIDIR)/TvApp
-ifeq ($(USES_RESDIR),M8)
+ifeq ($(USES_FRENDUO),yes)
 FRENDUO  =         	$(MMIDIR)/FrenDuo
 endif
 
