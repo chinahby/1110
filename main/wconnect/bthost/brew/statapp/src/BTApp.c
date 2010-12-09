@@ -10313,8 +10313,11 @@ static void BTApp_DisableBT( CBTApp* pMe )
   	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_OFF);
   }
 
-  (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_BT_STATUS,&bIsBTOn,sizeof(bIsBTOn));   
-
+  if ( pMe->m_pConfig )
+  {
+  	(void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_BT_STATUS,&bIsBTOn,sizeof(bIsBTOn));   
+  }
+  
   BTApp_ShowMessage( pMe, IDS_MSG_BT_DISABLED, NULL, 5);
   //Add End
   
