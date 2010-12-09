@@ -4017,9 +4017,11 @@ if (!nvruim_lock_cache())
        break;
 
 #ifndef FEATURE_UIM_JCDMA_RUIM_SUPPORT
+#ifndef FEATURE_DISABLE_UIMPRL // Gemsea Add
     case NV_ROAMING_LIST_683_I:
       nvruim_write_sprt_status = nvruim_write_prl(nv_cmd_ptr, op_status);
       break;
+#endif
 #endif  /* FEATURE_UIM_JCDMA_RUIM_SUPPORT */
 
     case NV_ACCOLC_I:
@@ -10010,9 +10012,11 @@ if (!nvruim_lock_cache())
       break;
 
 #ifndef FEATURE_UIM_JCDMA_RUIM_SUPPORT
+#ifndef FEATURE_DISABLE_UIMPRL // Gemsea Add
     case NV_ROAMING_LIST_683_I:
       nvruim_read_support_status = nvruim_read_prl(nv_cmd_ptr, op_status);
       break;
+#endif
 #endif  /* FEATURE_UIM_JCDMA_RUIM_SUPPORT */
 
 #ifdef FEATURE_OTASP_OTAPA

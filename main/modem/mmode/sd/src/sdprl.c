@@ -4163,18 +4163,6 @@ static  void                      sdprl_acq_rec_app(
 
       for( i=0; i < acq_rec_ptr->type.cellular_cdma_cust.num_chans; i++ )
       {
-#ifdef FEATURE_PRL_CELLULARCUST2BC5
-//解决缅甸CDMA450使用的UIM卡PRL存储的是800M，这里做一个转换
-        sdsr_list_store_and_app2(
-                              list1,
-                              list2,
-                              list3,
-                              SD_MODE_CDMA_,
-                              sdss_map_band_to_band_pref(SD_BAND_BC5),
-                              acq_rec_ptr->type.cellular_cdma_cust.chan[i],
-                              NULL,
-                              sys_idx );
-#else
         sdsr_list_store_and_app2(
                               list1,
                               list2,
@@ -4184,7 +4172,6 @@ static  void                      sdprl_acq_rec_app(
                               acq_rec_ptr->type.cellular_cdma_cust.chan[i],
                               NULL,
                               sys_idx );
-#endif
       }
       break;
 
@@ -6352,15 +6339,13 @@ static  sdprl_match_e_type        sdprl_sys_match(
       if( sd_sr_ptr->sys.mode != SD_MODE_CDMA_ ) {
         return SDPRL_MATCH_SID;
       }
-      
-#ifdef FEATURE_PRL_CELLULARCUST2BC5
-//解决缅甸CDMA450使用的UIM卡PRL存储的是800M，这里做一个转换
+
       /* If band does not match, return SDPRL_MATCH_SID_MODE.
       */
       if( sd_sr_ptr->sys.band != SD_SS_BAND_PREF_CELL ) {
         return SDPRL_MATCH_SID_MODE;
       }
-#endif
+
       /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
       /* If we got here, the mode and band-class match - check for channel

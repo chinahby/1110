@@ -917,17 +917,10 @@ MMEXTN  boolean                   prl_extract_acq_rec(
                           offset,
                           FSIZ(prl_cellular_cdma_custom_type, chan));
         offset += FSIZ(prl_cellular_cdma_custom_type, chan);
-#ifdef FEATURE_PRL_CELLULARCUST2BC5
-//解决缅甸CDMA450使用的UIM卡PRL存储的是800M，这里做一个转换
-        blksys = sdprl_map_chan_to_blksys( SD_MODE_CDMA,
-                                           SD_BAND_BC5,
-                                           chan );
-#else
+
         blksys = sdprl_map_chan_to_blksys( SD_MODE_CDMA,
                                            SD_BAND_CELL,
                                            chan );
-#endif
-
         if( blksys == SD_BLKSYS_MAX )
         {
           SD_MSG_ERROR("FAILED - Invalid CDMA channel %d in Cellular Band",
@@ -3728,16 +3721,10 @@ static   prl_validation_enum_type    prl_validate_proc(
                             offset,
                             FSIZ(prl_cellular_cdma_custom_type, chan));
           offset += FSIZ(prl_cellular_cdma_custom_type, chan);
-#ifdef FEATURE_PRL_CELLULARCUST2BC5
-//解决缅甸CDMA450使用的UIM卡PRL存储的是800M，这里做一个转换
-          blksys = sdprl_map_chan_to_blksys( SD_MODE_CDMA,
-                                             SD_BAND_BC5,
-                                             chan );
-#else
+
           blksys = sdprl_map_chan_to_blksys( SD_MODE_CDMA,
                                              SD_BAND_CELL,
                                              chan );
-#endif
 
           if( blksys == SD_BLKSYS_MAX )
           {
@@ -3749,18 +3736,6 @@ static   prl_validation_enum_type    prl_validate_proc(
             /* check if we have this entry in the table, insert this, if
             ** we don't have the entry
             */
-#ifdef FEATURE_PRL_CELLULARCUST2BC5
-//解决缅甸CDMA450使用的UIM卡PRL存储的是800M，这里做一个转换
-            if( !prl_is_sys_present( SD_MODE_CDMA,
-                                     SD_BAND_BC5,
-                                     chan,
-                                     unq_sys_cnt ) )
-            {
-              unq_sys_cnt = prl_insert_sys( SD_MODE_CDMA,
-                                            SD_BAND_BC5,
-                                            chan,
-                                            unq_sys_cnt );
-#else
             if( !prl_is_sys_present( SD_MODE_CDMA,
                                      SD_BAND_CELL,
                                      chan,
@@ -3770,7 +3745,7 @@ static   prl_validation_enum_type    prl_validate_proc(
                                             SD_BAND_CELL,
                                             chan,
                                             unq_sys_cnt );
-#endif
+
               if( unq_sys_cnt >= ( PRL_TBL_MAX - PRL_DEFAULT_ENTRIES ) )
               {
                 return PRL_INVALID_UNIQUE_SYS;
