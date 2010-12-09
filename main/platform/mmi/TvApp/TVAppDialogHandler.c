@@ -514,8 +514,10 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                 default:         
                     break;  
             }
-            return TRUE;        
-             
+            return TRUE; 
+		case EVT_NO_CLOSEBACKLIGHT:
+			return TRUE;
+			
         case EVT_KEY:
             {
             switch(wParam)
@@ -563,6 +565,35 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                         }
                         break;
                     case AVK_DOWN:
+						{
+                          AECHAR* channel = NULL;
+
+                          (void)ICONFIG_GetItem(pMe->m_pConfig,
+                                                  CFGI_TV_SETCHANNL,
+                                                  pMe->pTvSetting,
+                                                  sizeof(CFG_TvSetting));
+                          
+						 if(pMe->currentlyChannelIndex > 0)
+						   {
+							   pMe->currentlyChannelIndex--;
+						   }
+						   else
+						   {
+							   pMe->currentlyChannelIndex = pMe->pTvSetting->ChannelCountAble-1;
+						   }
+                           MSG_FATAL("currentlyChannelIndex=%d----",pMe->currentlyChannelIndex,0,0);
+						   channel = pMe->pTvSetting->Bookmark[pMe->currentlyChannelIndex].channel; 
+						   if (channel != NULL)
+						   {
+							   int index = (int)WSTRTOFLOAT(channel);
+							   IMMITv_SetTvChannel(pMe->pIMMITv, index,FALSE); 
+							   pMe->pTvSetting->CurrentChannel = index;
+							   pMe->currentlyChannel = index;
+		
+						   }
+                            MSG_FATAL("currentlyChannel=%d----",pMe->currentlyChannel,0,0);
+                           (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                        }
                         break;
                     default:         
                         break; 
@@ -1221,6 +1252,9 @@ static boolean TV_AUTOSCAN_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
              MSG_FATAL("TV_AUTOSCAN_HandleEvent--------------EVT_ATV_AUTOSCANFINISH",0,0,0);
 			 CTvUtil_StopSearchAnimation(pMe);
 			 break;
+	    case EVT_NO_CLOSEBACKLIGHT:
+			return TRUE;
+			
         case EVT_KEY:
                 {
             switch(wParam)
