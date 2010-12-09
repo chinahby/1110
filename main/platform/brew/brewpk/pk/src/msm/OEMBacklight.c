@@ -870,7 +870,7 @@ static void AEEBacklight_PreDisableTimer(void *pUser)
     
     if (AEEBacklight_IsEnabled(pMe) || pMe->uCls == AEECLSID_BACKLIGHT_KEYPAD)
     {
-        if(AEE_Event(EVT_NO_CLOSEBACKLIGHT,0,0))
+        if(AEE_Event(EVT_NO_CLOSEBACKLIGHT,1,0))
         {
             AEEBacklight_SetDisableTimer(pMe);
         }
