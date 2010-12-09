@@ -181,10 +181,6 @@ static boolean CallApp_SaveNumber(CCallApp *pMe, PhoneSaveType saveType);
 //dialog expired callback function
 static void CallApp_HandleDialogTimer(void *pUser);
 
-//Add By zzg 2010_12_08
-static void EnableBackLight(void *pUser);
-//Add End
-
 //Answers an in-band call
 static void CallApp_AnswerInbandCall(CCallApp *pMe);
 
@@ -395,25 +391,6 @@ static boolean bDrawCursor = TRUE;
             return TRUE;
     }
 #endif
-
-
-static void EnableBackLight(void *pme)
-{
-    CCallApp *pMe = (CCallApp *)pme;
-
-    if (NULL == pMe)
-    {
-        return;
-    }
-
-	MSG_FATAL("***zzg CallApp_IncomingCall EnableBackLight***", 0, 0, 0);
-	
-	ISHELL_CancelTimer(pMe->m_pShell, EnableBackLight, (void*)pMe);
-		        
-	IBACKLIGHT_Enable(pMe->m_pBacklight);
-
-	(void)ISHELL_SetTimer(pMe->m_pShell, 2000, EnableBackLight, pMe);		
-}
 
 /*==============================================================================
 º¯Êý:
@@ -1734,7 +1711,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     return TRUE;
                 }
-                case AVK_ENDCALL:
+                case AVK_ENDCALL:					
                     //CALL_ERR("AVK_ENDCALL",0,0,0);
                     //if (pMe->m_lastCallState != AEECM_CALL_STATE_IDLE)
                     MSG_FATAL("CallApp_Dialer_NumEdit_DlgHandler AVK_ENDCALL",0,0,0);
@@ -1922,7 +1899,7 @@ static boolean CallApp_Show_Ip_Number_DlgHandler(CCallApp *pMe,
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
-                case AVK_ENDCALL:
+                case AVK_ENDCALL:					
                     CLOSE_DIALOG(DLGRET_BACK_TO_IDLE)
                     return TRUE;
 
@@ -2327,7 +2304,7 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
             switch ((AVKType)wParam)
             {
                 case AVK_CLR:
-                case AVK_ENDCALL:
+                case AVK_ENDCALL:					
                     CALL_ERR("AVK_ENDCALL %d", pMe->m_lastCallState,0,0);
 #ifdef FEATURE_ICM
                     ICM_EndAllCalls(pMe->m_pICM);
@@ -2953,7 +2930,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
             //for CDG test, CNAP with Forwarding
             
             CallApp_Draw_Connect_Softkey(pMe);
-            CallApp_Draw_Connect_Number_and_Name(pMe);
+            CallApp_Draw_Connect_Number_and_Name(pMe);			
             CallApp_Draw_Connect_Time(pMe);
 
 #ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
@@ -3145,7 +3122,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 					
                     //CALL_ERR("AVK_ENDCALL", 0,0,0);
                     // End call
-                    //ASSERT(AEECM_CALL_STATE_CONV == pMe->m_lastCallState);
+                    //ASSERT(AEECM_CALL_STATE_CONV == pMe->m_lastCallState);		
                     
                     pMe->m_userCanceled = TRUE;
 #ifdef FEATURE_ICM
@@ -4059,7 +4036,7 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
                         break;
 
                     case AVK_ENDCALL:
-                    case AVK_CLR:
+                    case AVK_CLR:						
                         //back to emergency mode
                         break;
 
@@ -4168,16 +4145,11 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,StrBuf);
 				IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
 
-#ifdef FEATURE_VERSION_HITZ181
-				MSG_FATAL("***zzg CallApp_IncomingCall EVT_DIALOG_START***", 0, 0, 0);
-
-				(void)ISHELL_SetTimer(pMe->m_pShell, 100, EnableBackLight, pMe);             					
-#else				
-	            if(pMe->m_pBacklight)
+			    if(pMe->m_pBacklight)
 	            {
 	                IBACKLIGHT_Enable(pMe->m_pBacklight);
 	            }
-#endif
+
 
 	            (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_DIALER, EVT_USER_REDRAW,  0,  0);
 #ifdef FEATURE_SUPPORT_BT_APP
@@ -4189,6 +4161,14 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 #endif
 	            }
             return TRUE;
+
+#ifdef FEATURE_VERSION_HITZ181
+		case EVT_NO_CLOSEBACKLIGHT:
+		{
+			//wParam 1:±³¹â°ëÁÁ, 0: ±³¹âÃð			
+			return TRUE;
+		}
+#endif			
 
         case EVT_USER_REDRAW:
         {
@@ -4440,13 +4420,6 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 	        (void) ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CallApp_Dialer_Show_Animation,pMe);
             IALERT_StopRingerAlert(pMe->m_pAlert);
             IALERT_StopMp3Alert(pMe->m_pAlert);
-
-
-#ifdef FEATURE_VERSION_HITZ181
-			MSG_FATAL("***zzg CallApp_IncomingCall EVT_DIALOG_END***", 0, 0, 0);
-			(void)ISHELL_CancelTimer(pMe->m_pShell, EnableBackLight, pMe);
-#endif
-
 			
 #ifdef FEATURE_LED_CONTROL
             IBACKLIGHT_SigLedDisable(pMe->m_pBacklight);
@@ -4537,7 +4510,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             switch ((AVKType)wParam)
             {
 
-                case AVK_ENDCALL:
+                case AVK_ENDCALL:					
                     pMe->m_userCanceled = TRUE;
 #ifdef FEATURE_ICM
                     pMe->m_lastCallState = AEECM_CALL_STATE_IDLE;
@@ -4991,7 +4964,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                     
                     return TRUE;
 
-                case AVK_ENDCALL:
+                case AVK_ENDCALL:					
                     FREEIF(pMe->m_pwstrDialStringkeep);
                     CLOSE_DIALOG(DLGRET_BACK_TO_IDLE)
                     //CALL_ERR("AVK_ENDCALL", 0,0,0);
@@ -7450,14 +7423,19 @@ static void CallApp_Draw_Connect_Time(void *pUser)
     // Position time text on first line
     bWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL,szText);
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_NORMAL,
-                                            szText,
-                                            -1,
-                                            rect.x,
-                                            rect.y,//0,
-                                            &rect,
-                                            IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
+
+	if (pMe->m_bConnted == TRUE)	//Add By zzg 2010_12_09
+    {
+	    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+	                            AEE_FONT_NORMAL,
+	                            szText,
+	                            -1,
+	                            rect.x,
+	                            rect.y,//0,
+	                            &rect,
+	                            IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
+	}
+	
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 
     // Position call timer on first line next to TIME text
@@ -7480,14 +7458,18 @@ static void CallApp_Draw_Connect_Time(void *pUser)
                                             GTS_SECS);
     
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-                                            AEE_FONT_NORMAL,
-                                            szText,
-                                            -1,
-                                            rect.x,
-                                            rect.y,//0,
-                                            &rect,
-                                            IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
+
+	if (pMe->m_bConnted == TRUE)	//Add By zzg 2010_12_09
+	{
+		(void)IDISPLAY_DrawText(pMe->m_pDisplay,
+	                            AEE_FONT_NORMAL,
+	                            szText,
+	                            -1,
+	                            rect.x,
+	                            rect.y,//0,
+	                            &rect,
+	                            IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
+	}
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 
 #else  // FEATURE_LANG_BIDI

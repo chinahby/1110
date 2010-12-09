@@ -323,6 +323,36 @@ extern IEnv *gpiRexEnv;
 #include "AEECLSID_LOGICALDISPLAYCFG.BID"
 #include "OEMClassIDs.h"
 
+
+
+//Add By zzg 2010_12_08
+#include "AEEBacklight.h"
+#include "AEEAlert.h"
+#ifdef FEATURE_KEYGUARD
+#include "OEMKeyguard.h"
+#endif
+#include "AEEConfig.h"
+#include "OEMCFGI.h"
+#include "OEMDeviceNotifier.h"
+
+#ifdef FEATRUE_AUTO_SET_NEED_NV_VALUE
+extern boolean bIsResetOemNv;
+#endif
+
+static IBacklight   *gpBacklight = NULL;
+#if defined(FEATURE_BACKLIGHT_KEYPAD)
+static IBacklight   *gpKeyBacklight = NULL;
+#endif
+static IALERT       *gpAlert = NULL;
+#ifdef FEATURE_ICM
+static ICM          *gpICM = NULL;
+#else
+static ITelephone          *g_pITelephone = NULL;
+#endif
+static boolean      m_isBacklight = FALSE;
+//Add End
+
+
 /* <EJECT> */
 /*===========================================================================
 
@@ -837,8 +867,39 @@ static void KeyHoldCB(void *pUser)
 
 	if (TRUE == (OEMKeyguard_HandleEvent(EVT_KEY_HELD, ptbl->aee_vcode)))
 	{
+		
+#ifdef FEATURE_VERSION_HITZ181
+		if (AVK_SPACE == ptbl->aee_vcode)
+		{
+		
+#if defined(FEATURE_BACKLIGHT_KEYPAD)
+	        if (gpKeyBacklight)
+			{
+	            IBACKLIGHT_Enable(gpKeyBacklight);
+	        }
+#endif
+	        if (gpBacklight)
+			{
+				if(!IBACKLIGHT_IsEnabled(gpBacklight))
+				{
+					m_isBacklight = FALSE;
+	            	IBACKLIGHT_Enable(gpBacklight);
+				}
+				else
+				{
+					m_isBacklight = TRUE;
+				}
+	        }
+	        
+	        if (gpAlert)
+			{
+	            IALERT_KeyBeep(gpAlert, (AVKType)AVK_SPACE, TRUE);
+	        }
+		
+		}
+#endif
 		return;
-	}
+	}		
 #endif
 #endif
 //Add End
@@ -855,7 +916,7 @@ static void StartKeyHold(hs_to_aee_key_type *ptbl)
 }
 
 static void StopKeyHold(hs_to_aee_key_type *ptbl)
-{
+{	
     AEE_CancelTimer(KeyHoldCB, ptbl);
 }
 
@@ -912,7 +973,7 @@ void handle_keys(void)
             if (last_vcode != AVK_UNDEFINED && hs_to_aee_tbl[hs2vcodeidx].bpressed)
 			{
                 hs_to_aee_tbl[hs2vcodeidx].bpressed = FALSE;
-				
+
                 if (CoreTask_HandleAEEEvt(EVT_KEY_RELEASE, last_vcode, dwParam_code))
 				{
                     continue;
@@ -923,7 +984,7 @@ void handle_keys(void)
                     StopKeyRepeat(&hs_to_aee_tbl[hs2vcodeidx]);
                 }
 				else if(hs_to_aee_tbl[hs2vcodeidx].aee_method == AVK_METHED_HOLD)
-                {
+                {                	
                     StopKeyHold(&hs_to_aee_tbl[hs2vcodeidx]);
                 }
                 AEE_Event(EVT_KEY_RELEASE, last_vcode, hs_to_aee_tbl[hs2vcodeidx].dwparam);
@@ -938,11 +999,11 @@ void handle_keys(void)
             if(last_vcode != AVK_UNDEFINED)
 			{	
                 CoreTask_HandleAEEEvt(EVT_KEY_PRESS, last_vcode, dwParam_code);
-				
+
                 if (CoreTask_HandleAEEEvt(EVT_KEY, last_vcode, dwParam_code))
 				{
                     continue;
-                }
+                }	
 
                 hs_to_aee_tbl[hs2vcodeidx].bpressed = TRUE;
                 (void) AEE_Event(EVT_KEY_PRESS, last_vcode, hs_to_aee_tbl[hs2vcodeidx].dwparam);
@@ -1708,6 +1769,7 @@ int oemui_is_lcd_test_state(int bb)
     return g_is_lcd_test;	
 }
 
+/*
 #include "AEEBacklight.h"
 #include "AEEAlert.h"
 #ifdef FEATURE_KEYGUARD
@@ -1732,6 +1794,8 @@ static ICM          *gpICM = NULL;
 static ITelephone          *g_pITelephone = NULL;
 #endif
 static boolean      m_isBacklight = FALSE;
+*/
+
 
 
 /*==============================================================================
@@ -1876,11 +1940,11 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 	AEETCalls po;
 #endif
 
-#ifdef FEATURE_KEYGUARD
+#ifdef FEATURE_KEYGUARD	
     if (OEMKeyguard_HandleEvent(evt, wParam))
-    {
+    {	
         return TRUE;
-    }
+    }	
 #endif
     
     // AVK_HEADSET_SWITCH means headset key press
@@ -1936,6 +2000,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 		break;
 #endif
     case AVK_END:
+				
 		//Add By zzg 2010_11_27
 		if (cls == AEECLSID_BLUETOOTH_APP)
 			{	
@@ -1943,12 +2008,15 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 				bHandle = TRUE;
 			}
 		//Add End
-        if (cls == AEECLSID_DIALER) {
+        if (cls == AEECLSID_DIALER) 
+		{
             // AVK_END 会关掉全部程序，回到待机界面，这里做转换，避免此问题
             db_items_value_type dbItemValue;
             
-            db_get(DB_IN_USE, &dbItemValue);
-            if (dbItemValue.in_use){
+            db_get(DB_IN_USE, &dbItemValue);			
+			
+            if (dbItemValue.in_use)
+			{
                 wParam = AVK_ENDCALL;
                 bHandle = TRUE;
             }
@@ -2038,7 +2106,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
     }
     
     switch(evt){
-    case EVT_KEY_PRESS:
+    case EVT_KEY_PRESS:		
 #if defined(FEATURE_BACKLIGHT_KEYPAD)
         if (gpKeyBacklight) {
             IBACKLIGHT_Enable(gpKeyBacklight);
@@ -2050,6 +2118,12 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 				//ISHELL_PostEvent(AEE_GetShell(),AEE_Active(),EVT_USER_REDRAW,0,0L);
 				m_isBacklight = FALSE;
             	IBACKLIGHT_Enable(gpBacklight);
+
+				if (wParam == AVK_ENDCALL)
+				{
+					break;	//继续传给callapp to End call.
+				}
+				
 				return TRUE;
 
 			}
@@ -2062,20 +2136,29 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
         if (gpAlert){
             IALERT_KeyBeep(gpAlert, (AVKType) wParam, TRUE);
         }
-		
         break;
         
     case EVT_KEY_RELEASE:
 #if defined(FEATURE_BACKLIGHT_KEYPAD)
-        if (gpKeyBacklight){
+        if (gpKeyBacklight)
+		{
             IBACKLIGHT_Enable(gpKeyBacklight);
         }   
 #endif
+
+#ifdef FEATURE_VERSION_HITZ181
+		if (wParam == AVK_SPACE)
+		{
+			return FALSE;
+		}
+#endif
+		
 		if(!m_isBacklight)
 		{
 			return TRUE;
 		}
-        if (gpBacklight){
+        if (gpBacklight)
+		{
             if(FALSE == IBACKLIGHT_IsEnabled(gpBacklight))
             {
                 if(oemui_is_lcd_test_state(-1) == 1){
@@ -2098,8 +2181,22 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
         if (gpAlert) {
             IALERT_KeyBeep(gpAlert, (AVKType) wParam, FALSE);
         }
+		
+		
         break;
 	case EVT_KEY:
+		
+#ifdef FEATURE_VERSION_HITZ181
+		if (wParam == AVK_SPACE)
+		{
+			return FALSE;
+		}
+#endif
+		if (wParam == AVK_ENDCALL)
+		{
+			break;	//继续传给callapp to End call.
+		}
+
 		if(!m_isBacklight)
 		{
 			return TRUE;
@@ -2109,7 +2206,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
     default:
         break;
     }
-    
+	
     if(bHandle == TRUE)
     {
         AEE_Event(evt, wParam, 0);

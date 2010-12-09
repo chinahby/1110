@@ -620,7 +620,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 //Add By zzg 2010_11_23
 #ifdef FEATURE_UNLOCK_KEY_SPACE		
 			case AVK_SPACE:
-			{
+			{			
 				return FALSE;					
 			}
 #endif
@@ -662,7 +662,8 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 					
                     sUnlockState = UNLOCKSTATE_RESET;
                     bDrawMessage = !bDrawMessage;
-				}				
+				}		
+								
 				return FALSE;
 			}
 #endif
@@ -909,7 +910,6 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
         {
             bKeyPress = TRUE;
         }
-
 
         if (sbMessageActive)
         {
