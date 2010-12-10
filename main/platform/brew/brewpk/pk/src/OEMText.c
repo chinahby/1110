@@ -5636,8 +5636,8 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                     break;
                 }
             }
-            break;
-            
+            break;	
+			
         default:
             break;
         }
@@ -5775,7 +5775,11 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 			        			    if(pContext->is_isShift)
 			                        { 
 			                            TextCtl_NoSelection(pContext);
+										#ifdef FEATURE_VERSION_HITZ181
+			                            TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
+			                            #else
 			                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
+										#endif
 
 			                        }
 			                        else

@@ -686,7 +686,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 			
 #ifdef FEATURE_VERSION_HITZ181
 			
-			if (wParam == AVK_LCTRL)
+			if ((wParam == AVK_LCTRL) || (wParam == AVK_SHIFT))
 			{
 				MSG_FATAL("***zzg CTextCtl_HandleEvent EVT_KEY_HELD AVK_SHIFT AVK_LCTRL***", 0, 0, 0);
 				
