@@ -634,7 +634,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                 	}
                      break;
-
+#ifndef FEATURE_NUM_KEY_MID
                 case AVK_0:
 					{
 	                    IImage* image	= NULL;
@@ -653,8 +653,12 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                 	}
                     break;
-
+#endif
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_W:
+#else
                 case AVK_1:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -672,8 +676,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_E:
+#else
                 case AVK_2:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -691,8 +698,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_1:
+#else
                 case AVK_3:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -710,8 +720,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_S:
+#else
                 case AVK_4:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -729,8 +742,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_D:
+#else
                 case AVK_5:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -748,8 +764,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_4:
+#else
                 case AVK_6:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -767,8 +786,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_Z:
+#else
                 case AVK_7:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -786,8 +808,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_X:
+#else
                 case AVK_8:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -805,8 +830,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_7:
+#else
                 case AVK_9:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -824,8 +852,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_A:
+#else
                 case AVK_STAR:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -843,8 +874,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_Q:
+#else
                 case AVK_POUND:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -947,13 +981,17 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_SetDrawSize(image,14, 16);
                             IIMAGE_Draw(image, 57, 0);
 #else
-							#ifndef FEATURE_VERSION_HITZ181
+#ifndef FEATURE_VERSION_HITZ181
 							if((uint32)dwParam == 1)
 							{
+#ifdef FEATURE_NUM_KEY_MID
+                                IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, 98);
+#else
 								IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, 98);
+#endif
 							}
 							else
-							#endif
+#endif
 							{
 								IIMAGE_Draw(image, 66, 0);
 								IIMAGE_Draw(image, 82, 0);
@@ -1096,7 +1134,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;                 
 #endif
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_2:
+#else
 				case AVK_T:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1110,7 +1152,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_3:
+#else
 			    case AVK_Y:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1124,7 +1170,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-			     case AVK_U:
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_STAR:
+#else
+			    case AVK_U:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1152,7 +1202,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-			      case AVK_O:
+			     case AVK_O:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1166,7 +1216,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-			      case AVK_P:
+			     case AVK_P:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1180,7 +1230,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-				 case AVK_G:
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_5:
+#else
+				case AVK_G:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1194,7 +1248,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-				 case AVK_H:
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_6:
+#else
+				case AVK_H:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1208,7 +1266,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_POUND:
+#else
 				case AVK_J:
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1222,7 +1284,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-			     case AVK_K:
+			    case AVK_K:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1236,7 +1298,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-				 case AVK_L:
+				case AVK_L:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1250,11 +1312,15 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-			      #ifdef FEATURE_VERSION_HITZ181
-			      case AVK_B:
-			      #else
-			      case AVK_V:
-			      #endif
+#ifdef FEATURE_VERSION_HITZ181
+			    case AVK_B:
+#else
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_8:
+#else
+			    case AVK_V:
+#endif
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1268,11 +1334,15 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-                 #ifdef FEATURE_VERSION_HITZ181
-                 case AVK_N:
-                 #else
-				 case AVK_B:
-				 #endif
+#ifdef FEATURE_VERSION_HITZ181
+                case AVK_N:
+#else
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_9:
+#else
+				case AVK_B:
+#endif
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1286,11 +1356,15 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-                 #ifdef FEATURE_VERSION_HITZ181
-                 case AVK_M:
-                 #else
-				 case AVK_N:
-				 #endif
+#ifdef FEATURE_VERSION_HITZ181
+                case AVK_M:
+#else
+#ifdef FEATURE_NUM_KEY_MID
+                case AVK_0:
+#else
+				case AVK_N:
+#endif
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1304,11 +1378,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-                #ifdef FEATURE_VERSION_HITZ181
+#ifdef FEATURE_VERSION_HITZ181
                 case AVK_RWD:
-                #else
+#else
 				case AVK_M:
-				#endif
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1322,11 +1396,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-                 #ifdef FEATURE_VERSION_HITZ181
+#ifdef FEATURE_VERSION_HITZ181
                  case AVK_MUTE:
-                 #else
+#else
 			     case AVK_RWD:
-			     #endif
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1354,11 +1428,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-                  #ifdef FEATURE_VERSION_HITZ181
+#ifdef FEATURE_VERSION_HITZ181
                   case AVK_Z:
-                  #else
+#else
 			      case AVK_SHIFT:
-			      #endif
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
@@ -1401,11 +1475,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                      }
 					 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                      break;
-                 #ifdef FEATURE_VERSION_HITZ181
+#ifdef FEATURE_VERSION_HITZ181
                  case AVK_SHIFT:
-                 #else
+#else
 				 case AVK_CAPLK:
-				 #endif
+#endif
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);

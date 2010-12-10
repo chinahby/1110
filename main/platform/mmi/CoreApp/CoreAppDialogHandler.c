@@ -2891,49 +2891,26 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             	case AVK_BLUETOOTH:
 					return CoreApp_LaunchApplet(pMe, AEECLSID_BLUETOOTH_APP);
 #endif
-
-#if defined(FEATURE_VERSION_C01)
                 case AVK_MUSIC:     
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
                 case AVK_FM:
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
-#else
-            	//Add By zzg 2010_10_14
-            	case AVK_MUSIC:		//现在外壳上位置相反，所以和FM区分
-            	#ifdef FEATURE_VERSION_HITZ181
-            		return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
-            	#else
-					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
-			    #endif
-				case AVK_FM:
-					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
-            	//Add End
-#endif
 				case AVK_TV:
-					{
-						return TRUE;
-					}
+				    return CoreApp_LaunchApplet(pMe, AEECLSID_TVAPP);;
                 case AVK_UP:
-                	{
-                	    #ifdef FEATURE_VERSION_HITZ181   //add by yangdecai
-                	    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
-                	    #else
-                		#if defined(FEATURE_WMS_APP)
-                    	return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
-						#endif
-						#endif
-                	}
+#ifdef FEATURE_VERSION_HITZ181   //add by yangdecai
+            	    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+#else
+                	return CoreApp_LaunchApplet(pMe, AEECLSID_MEDIAGALLERY);
+#endif
                 case AVK_MESSAGE:
-
 #if defined(FEATURE_WMS_APP)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif
-
                 case AVK_DOWN:
 				{
 //#if !defined(FEATURE_PROJECT_W022) && !defined(FEATURE_PROJECT_W021) && !defined(FEATURE_PROJECT_W021_128x160) && !defined (FEATURE_PROJECT_W021_176X220) && !defined (FEATURE_PROJECT_W021_240X320)&& !defined (FEATURE_PROJECT_W021_220X176) && !defined (FEATURE_PROJECT_W021_320X240)
-#if !defined(FEATURE_IDLE_TORCH_DOWNKEY)	
-
+#if !defined(FEATURE_IDLE_TORCH_DOWNKEY)
 	#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) 
                     return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
 	#elif defined (FEATURE_VERSION_SMART)

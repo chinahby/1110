@@ -16,8 +16,6 @@
 #define AUTO_NV_MIN_VERSION                 0x14
 #elif defined(FEATURE_VERSION_FLEXI203)
 #define AUTO_NV_MIN_VERSION                 0x13
-#elif defined(FEATURE_VERSION_OLIVE203)
-#define AUTO_NV_MIN_VERSION                 0x17
 #elif defined(FEATURE_VERSION_M8)
 #define AUTO_NV_MIN_VERSION                 0x12
 #elif defined(FEATURE_VERSION_M8P)

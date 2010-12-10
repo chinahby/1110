@@ -494,6 +494,7 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
 	#endif
 	{HS_F3_K,					    AVK_CLR,						AVK_METHED_HOLD, FALSE, 1},
 	{HS_F4_K,					    AVK_MUTE,						AVK_METHED_HOLD, FALSE, 1},
+    {HS_F5_K,					    AVK_UP,						    AVK_METHED_HOLD, FALSE, 1},
 	{HS_MUSIC_K,					AVK_MUSIC,						AVK_METHED_HOLD, FALSE, 1},
 	{HS_BLUETOOTH_K,				AVK_BLUETOOTH,					AVK_METHED_HOLD, FALSE, 1},
 #endif

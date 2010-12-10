@@ -476,7 +476,9 @@ static int AEEBacklight_Disable(IBacklight *pme)
    int nErr = SUCCESS;
    FARF(BACKLIGHT, ("==>  AEEBacklight_Disable"));
 
+   AEEBacklight_CancelPreDisableTimer(pme);
    AEEBacklight_CancelDisableTimer(pme);
+   
    switch (pme->uCls)
    {
       case AEECLSID_BACKLIGHT_DISPLAY1:
