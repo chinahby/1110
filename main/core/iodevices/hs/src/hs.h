@@ -410,6 +410,7 @@ typedef enum {            /* KEYS                                        */
   HS_TV_K          = 0xB2,
   HS_FM_K          = 0xB3,
   HS_MUSIC_K	   = 0xb4,
+  HS_BLUETOOTH_K   = 0xb5,
 #endif  
                           /* TV Key on JAFFA FFA for 6280+UBM    0xB2    */
 #ifdef FEATURE_ALL_KEY_PAD
