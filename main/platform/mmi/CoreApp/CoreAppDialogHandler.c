@@ -2903,6 +2903,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             switch (wParam)
             {
+#ifdef	FEATURE_APP_BLUETOOTH  
+            	case AVK_BLUETOOTH:
+					return CoreApp_LaunchApplet(pMe, AEECLSID_BLUETOOTH_APP);
+#endif
+
 #if defined(FEATURE_VERSION_C01)
                 case AVK_MUSIC:     
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);

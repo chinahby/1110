@@ -4222,7 +4222,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
     uint16   nBufLen   = pContext->sT9awFieldInfo.G.nBufLen;
     sFocusType sFocus = pContext->sFocus;     
     boolean bFlag = GetArrowFlagonIM();
-	MSG_FATAL("T9TextCtl_Latin_Rapid_Key::start:%d",key,0,0);
+	MSG_FATAL("T9TextCtl_Latin_Rapid_Key::start:%d eCode: %x",key,eCode,0);
 #if defined (FEATURE_ALL_KEY_PAD)
 	if(eCode == EVT_KEY_HELD)
 		{
@@ -4276,8 +4276,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
                         break;
             		}
                 }
-                break;
-                
+                break;                
 			default:
 			    break;
 			}

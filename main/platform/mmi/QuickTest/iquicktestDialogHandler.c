@@ -989,6 +989,22 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 						IIMAGE_Release( image);
 			    	}
 			    	break;
+#ifdef	FEATURE_APP_BLUETOOTH 
+				case AVK_BLUETOOTH:	//ÓÐ´ýÐÞ¸Ä£¬À¶ÑÀµÄ¼üÅÌ²âÊÔ
+			    	{
+						/*
+			    		IImage* image	= NULL;
+						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+						if( image != NULL)
+						{
+							IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, 98);
+						}
+						IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+						IIMAGE_Release( image);
+						*/
+			    	}
+			    	break;
+#endif
 			    
                 case AVK_DOWN:
                     {

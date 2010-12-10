@@ -236,6 +236,7 @@ enum _AVKType {
    AVK_FM,
    AVK_TV,
    AVK_MUSIC,
+   AVK_BLUETOOTH,		//Add By zzg 2010_12_10
 #endif /*CUST_EDITION*/   
    AVK_LAST
 };
