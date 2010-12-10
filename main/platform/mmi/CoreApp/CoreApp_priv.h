@@ -121,6 +121,9 @@
 #define    DISP_BLANK_WIDTH               (12)
 #endif
 
+#ifdef FEATURE_USES_LOWMEM
+#define    ANI_RATE                              (180)
+#else
 // 关机动画文件播放
 #ifdef FEATURE_VERSION_FLEXI203
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
@@ -129,15 +132,13 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronani.png"
 #define    PWROFF_ANI_FRAME_COUNT                (17)
 #define    PWROFF_ANI_RATE                       (300)
-#define    ANI_RATE                              (180)
 #elif defined FEATURE_VERSION_FLEXI203P  
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.gif"
-#define    PWRON_ANI_FRAME_COUNT                 (17)
-#define    PWRON_ANI_RATE                        (280)
-#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronani.gif"
-#define    PWROFF_ANI_FRAME_COUNT                (17)
-#define    PWROFF_ANI_RATE                       (280)
-#define    ANI_RATE                              (180)
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (5000)
+#define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 #elif defined FEATURE_VERSION_SMART
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (10)
@@ -145,7 +146,6 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.png"
 #define    PWROFF_ANI_FRAME_COUNT                (10)
 #define    PWROFF_ANI_RATE                       (350)
-#define    ANI_RATE                              (180)
 #elif defined FEATURE_VERSION_M8
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (10)
@@ -153,7 +153,6 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.png"
 #define    PWROFF_ANI_FRAME_COUNT                (10)
 #define    PWROFF_ANI_RATE                       (350)
-#define    ANI_RATE                              (180)
 #elif defined FEATURE_VERSION_M8P
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (10)
@@ -161,7 +160,6 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.png"
 #define    PWROFF_ANI_FRAME_COUNT                (10)
 #define    PWROFF_ANI_RATE                       (350)
-#define    ANI_RATE                              (180)
 #elif defined FEATURE_VERSION_SMARTP
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (10)
@@ -169,7 +167,6 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.png"
 #define    PWROFF_ANI_FRAME_COUNT                (10)
 #define    PWROFF_ANI_RATE                       (350)
-#define    ANI_RATE                              (180)
 #elif defined FEATURE_VERSION_M8P
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (10)
@@ -177,7 +174,6 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.png"
 #define    PWROFF_ANI_FRAME_COUNT                (10)
 #define    PWROFF_ANI_RATE                       (350)
-#define    ANI_RATE                              (180)
 #elif defined FEATURE_VERSION_FLEXI021
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
 #define    PWRON_ANI_FRAME_COUNT                 (12)
@@ -185,7 +181,6 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.jpg"
 #define    PWROFF_ANI_FRAME_COUNT                (12)
 #define    PWROFF_ANI_RATE                       (380)
-#define    ANI_RATE                              (150)
 #elif defined FEATURE_VERSION_ESIA021
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
 #define    PWRON_ANI_FRAME_COUNT                 (12)
@@ -193,7 +188,6 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.jpg"
 #define    PWROFF_ANI_FRAME_COUNT                (12)
 #define    PWROFF_ANI_RATE                       (380)
-#define    ANI_RATE                              (150)
 #elif defined FEATURE_VERSION_IVIO203
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (15)
@@ -201,7 +195,6 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronani.png"
 #define    PWROFF_ANI_FRAME_COUNT                (15)
 #define    PWROFF_ANI_RATE                       (220)
-#define    ANI_RATE                              (150)
 #elif defined FEATURE_VERSION_IVIO021
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
 #define    PWRON_ANI_FRAME_COUNT                 (12)
@@ -209,31 +202,27 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.jpg"
 #define    PWROFF_ANI_FRAME_COUNT                (12)
 #define    PWROFF_ANI_RATE                       (380)
-#define    ANI_RATE                              (150)
 #elif defined FEATURE_VERSION_H19C
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poon.gif"
-#define    PWRON_ANI_FRAME_COUNT                 (12)
-#define    PWRON_ANI_RATE                        (150)
-#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poon.gif"
-#define    PWROFF_ANI_FRAME_COUNT                (12)
-#define    PWROFF_ANI_RATE                       (380)
-#define    ANI_RATE                              (150)
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (3000)
+#define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 #elif defined FEATURE_VERSION_ITEL
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/onoff.gif"
-#define    PWRON_ANI_FRAME_COUNT                 (10)
-#define    PWRON_ANI_RATE                        (150)
-#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/onoff.gif"
-#define    PWROFF_ANI_FRAME_COUNT                (10)
-#define    PWROFF_ANI_RATE                       (380)
-#define    ANI_RATE                              (150)
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (3000)
+#define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 #elif defined FEATURE_VERSION_KARBONN     //add by yangdecai
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
-#define    PWRON_ANI_FRAME_COUNT                 (12)
-#define    PWRON_ANI_RATE                        (380)
-#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroff.gif"
-#define    PWROFF_ANI_FRAME_COUNT                (12)
-#define    PWROFF_ANI_RATE                       (380)
-#define    ANI_RATE                              (3000)
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (4500)
+#define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 #elif defined FEATURE_VERSION_C01
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
 #define    PWRON_ANI_FRAME_COUNT                 (12)
@@ -241,7 +230,6 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.jpg"
 #define    PWROFF_ANI_FRAME_COUNT                (12)
 #define    PWROFF_ANI_RATE                       (380)
-#define    ANI_RATE                              (150)
 #elif defined FEATURE_VERSION_HITZ181
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
 #define    PWRON_ANI_FRAME_COUNT                 (5)
@@ -249,25 +237,22 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.png"
 #define    PWROFF_ANI_FRAME_COUNT                (6)
 #define    PWROFF_ANI_RATE                       (660)
-#define    ANI_RATE                              (150)
 #elif defined FEATURE_VERSION_OLIVE203
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
-#define    PWRON_ANI_FRAME_COUNT                 (12)
-#define    PWRON_ANI_RATE                        (380)
-#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronoff.gif"
-#define    PWROFF_ANI_FRAME_COUNT                (12)
-#define    PWROFF_ANI_RATE                       (380)
-#define    ANI_RATE                              (150)
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (4500)
+#define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 #else
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
-#define    PWRON_ANI_FRAME_COUNT                 (12)
-#define    PWRON_ANI_RATE                        (380)
-#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronoff.gif"
-#define    PWROFF_ANI_FRAME_COUNT                (12)
-#define    PWROFF_ANI_RATE                       (380)
-#define    ANI_RATE                              (150)
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (4500)
+#define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 #endif
-
+#endif //#ifdef FEATURE_USES_LOWMEM
 
 // 下列变量为临时定义
 #define PHONEPASSWORDLENTH      OEMNV_LOCKCODE_MAXLEN

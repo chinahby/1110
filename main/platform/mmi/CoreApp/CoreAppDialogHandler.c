@@ -69,19 +69,8 @@ extern boolean   IsRunAsFactoryTestMode(void);
 }
 
 // 开关机动画播放时间
-#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P)
-#define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT))
-#define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT))
-#elif defined(FEATURE_VERSION_H19C)
-#define PWRON_ANI_TIME    3600//((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT) + 1000)
-#define PWROFF_ANI_TIME  3600//((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT) + 1000)
-#elif defined(FEATURE_VERSION_ITEL)
-#define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT))*3
-#define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT))*3
-#else
-#define PWRON_ANI_TIME    ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT) + (PWRON_ANI_RATE/2))
-#define PWROFF_ANI_TIME  ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT) + (PWRON_ANI_RATE/2))
-#endif
+#define PWRON_ANI_TIME      ((PWRON_ANI_RATE)*(PWRON_ANI_FRAME_COUNT))
+#define PWROFF_ANI_TIME     ((PWROFF_ANI_RATE)*(PWROFF_ANI_FRAME_COUNT))
 
 #if defined(FEATURE_DISP_128X128)
 #define IDLE_D_CLOCK_X 		15
@@ -2340,10 +2329,6 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
 #endif
                 (void) ISHELL_PostEvent(pMe->a.m_pIShell, AEECLSID_CORE_APP, EVT_USER_REDRAW, 0, 0);
             }
-            else
-            {
-                //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            }
             return TRUE;
 
         case EVT_USER_REDRAW:
@@ -2382,7 +2367,6 @@ static boolean  IDD_STARTUPANI_Handler(void       *pUser,
                     CLOSE_DIALOG( DLGRET_OK ); 
                 }
 #endif
-                //ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_DIALER, "S");
             }
             return TRUE; 
 
@@ -3607,7 +3591,6 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
             return TRUE;
             
         case EVT_DIALOG_START:
-            
 #ifdef FEATURE_UIALARM
             // 挂起警报器
             CoreApp_EnableShellAlarms(pMe, FALSE);
@@ -3725,20 +3708,13 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                                 IALERT_StartRingerAlert_Ex( pMe->m_pAlert, (uint32)aRing_type[Ring_Cur_Music] );
                             }
                             
-                            //pMe->m_wStartupAniTime = 0; //  控制播放次数
 #ifndef FEATURE_USES_LOWMEM
+                            pMe->m_pStartupAniImg = ISHELL_LoadImage( pMe->a.m_pIShell, PWROFF_ANI_FILE);
                             if ( NULL != pMe->m_pStartupAniImg )
 #endif
                             {     
                                 CoreApp_PlayPwrOffAni(pMe);
                             }
-                            //else
-                            //{ 
-                            //    (void)ISHELL_PostEvent( pMe->a.m_pIShell, 
-                            //                            AEECLSID_CORE_APP, 
-                            //                            EVT_DISPLAYDIALOGTIMEOUT, 
-                            //                            0, 0);
-                            //}
                         }
                         else
                         {
@@ -4860,44 +4836,22 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
 #endif
     {
 #ifndef FEATURE_USES_LOWMEM
-
-#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || \
-    defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) || \
-    defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181)
-        MSG_FATAL("CoreApp_PlayPwrOnAni 10",0,0,0);
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
 
         // 设置动画速度(毫秒)
         IIMAGE_SetAnimationRate(pMe->m_pStartupAniImg, PWRON_ANI_RATE);
+        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_PLAYTIMES, 1, 0);
 
         // 设置图像中的帧数
         IIMAGE_SetFrameCount(pMe->m_pStartupAniImg, PWRON_ANI_FRAME_COUNT);
 
         // 设置要显示的图像的实际大小
         IIMAGE_SetDrawSize( pMe->m_pStartupAniImg, ImgInfo.cx/PWRON_ANI_FRAME_COUNT, ImgInfo.cy );
-#else
-		MSG_FATAL("CoreApp_PlayPwrOnAni 20",0,0,0); 
-        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定开机动画的帧数
-#endif
-  
-#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || \
-	defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) || \
-	defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181)
-
-        MSG_FATAL("CoreApp_PlayPwrOnAni 11",0,0,0);
+        
         IIMAGE_Start( pMe->m_pStartupAniImg,
                             (pMe->m_rc.dx - ImgInfo.cx/PWRON_ANI_FRAME_COUNT)/2,
                             (pMe->m_rc.dy - ImgInfo.cy)/2 );
-#else
-		// 开始播放开机动画  
-		MSG_FATAL("CoreApp_PlayPwrOnAni 21",0,0,0);
-        IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
-        pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
-
-#endif
-
         pMe->m_wStartupAniTime++; // 滚动播放次数
-        //AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOnAni,  (void*)pMe);       
        (void) ISHELL_SetTimer(pMe->a.m_pIShell,
                              PWRON_ANI_TIME,
                              (PFNNOTIFY)CoreApp_PlayPwrOnAni,
@@ -4917,9 +4871,8 @@ static void CoreApp_PlayPwrOnAni(CCoreApp *pMe)
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
         }
         pMe->m_wStartupAniTime++; // 滚动播放次数
-        //AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOnAni,  (void*)pMe);
        (void) ISHELL_SetTimer(pMe->a.m_pIShell,
-                             ANI_RATE,
+                              ANI_RATE,
                              (PFNNOTIFY)CoreApp_PlayPwrOnAni,
                              (void*)pMe);
 #endif
@@ -4968,43 +4921,25 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
 #endif
     {
 #ifndef FEATURE_USES_LOWMEM
-        
-#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) ||\
-	defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) ||\
-	defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_VERSION_OLIVE203)
-
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
-		MSG_FATAL("CoreApp_PlayPwrOffAni pMe->m_pStartupAniImg = %x",pMe->m_pStartupAniImg,0,0);
+        
         // 设置动画速度(毫秒)
         IIMAGE_SetAnimationRate(pMe->m_pStartupAniImg, PWROFF_ANI_RATE);
-
+        IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_PLAYTIMES, 1, 0);
+        
         // 设置图像中的帧数
         IIMAGE_SetFrameCount(pMe->m_pStartupAniImg, PWROFF_ANI_FRAME_COUNT);
 
         // 设置要显示的图像的实际大小
         IIMAGE_SetDrawSize( pMe->m_pStartupAniImg, 
                                 ImgInfo.cx/PWROFF_ANI_FRAME_COUNT, ImgInfo.cy );
-#else
-		IIMAGE_SetParm(pMe->m_pStartupAniImg, IPARM_NFRAMES, PWROFF_ANI_FRAME_COUNT, 0);//指定关机动画的帧数
-#endif
-
-#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8) ||\
-	defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) ||\
-	defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_VERSION_OLIVE203)
-     // 开始播放关机动画
-     IIMAGE_Start( pMe->m_pStartupAniImg, 
-                                (pMe->m_rc.dx - ImgInfo.cx/PWROFF_ANI_FRAME_COUNT)/2, 
-                                (pMe->m_rc.dy - ImgInfo.cy)/2 );
-#else
-	IIMAGE_Start( pMe->m_pStartupAniImg,0,0);
-    pMe->m_wStartupAniTime += PWRON_ANI_FRAME_COUNT;
-#endif
+        // 开始播放关机动画
+        IIMAGE_Start(pMe->m_pStartupAniImg, 
+                    (pMe->m_rc.dx - ImgInfo.cx/PWROFF_ANI_FRAME_COUNT)/2, 
+                    (pMe->m_rc.dy - ImgInfo.cy)/2 );
+        
         pMe->m_wStartupAniTime++; // 滚动播放次数
-        AEE_SetSysTimer( PWRON_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOffAni,  (void*)pMe);
-        //(void) ISHELL_SetTimer(pMe->a.m_pIShell,
-        //                      PWROFF_ANI_TIME,
-        //                      (PFNNOTIFY)CoreApp_PlayPwrOffAni,
-        //                      (void*)pMe);
+        AEE_SetSysTimer( PWROFF_ANI_TIME,  (PFNNOTIFY)CoreApp_PlayPwrOffAni,  (void*)pMe);
 #else
         {
             #define PWROFF_STR L"Bye-Bye"
@@ -5034,10 +4969,8 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         }
 #endif
         // 发送事件关闭开机动画播放对话
-        (void)ISHELL_SendEvent( pMe->a.m_pIShell,  AEECLSID_CORE_APP, 
-                                EVT_DISPLAYDIALOGTIMEOUT,  0, 0);
+        (void)ISHELL_SendEvent( pMe->a.m_pIShell, AEECLSID_CORE_APP, EVT_DISPLAYDIALOGTIMEOUT, 0, 0);
     }
-
 }
 
 /*==============================================================================

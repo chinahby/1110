@@ -252,6 +252,7 @@ struct _COEMGIFViewer
    boolean                    bHaveDrawn;
    uint32                     dwFlags;       // behavior/compatibility flags
    IBitmapScale *             pScale;
+   int                        m_playtimes;
 };
 
 #ifdef __cplusplus

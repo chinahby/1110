@@ -36,6 +36,7 @@ Qualcomm Confidential and Proprietary
 #define IPARM_DECODER   11
 #define IPARM_SCALE     12 // p1 = scaled width, p2 = scaled height
 #define IPARM_EXTFUNC   13 // extended parameters
+#define IPARM_PLAYTIMES 14 // Animation play times Gemsea Add p1 = play times,p1 = -1 always play
 
 // structure for IPARM_EXTFUNC
 typedef struct {

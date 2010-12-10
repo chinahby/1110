@@ -386,6 +386,7 @@ static int COEMGIFViewer_New(IModule *piModule, IShell * po, AEECLSID cls, void 
       pme->m_nRate         = (int16)DEF_ANIMATION_RATE;
       pme->m_nCurFrame     = -1;
       pme->m_DecodeState   = AEE_GIF_NONE;
+      pme->m_playtimes     = -1;
 
       pme->pfnRedraw = NULL;
       pme->pRedraw = NULL;
@@ -527,13 +528,16 @@ SIDE EFFECTS
 ===========================================================================*/
 static void COEMGIFViewer_SetParm(IImage * po, int nParm, int n1, int n2)
 {
-   COEMGIFViewer * pme = (COEMGIFViewer *)po;
+    COEMGIFViewer * pme = (COEMGIFViewer *)po;
 
-   switch(nParm){
-      case IPARM_ROP:
-         if(AEE_RO_MASK != (AEERasterOp)n1)
-         pme->m_rop = (AEERasterOp)n1;
-         break;
+    switch(nParm){
+    case IPARM_PLAYTIMES: // Gemsea Add
+      pme->m_playtimes = n1;
+      break;
+    case IPARM_ROP:
+      if(AEE_RO_MASK != (AEERasterOp)n1)
+      pme->m_rop = (AEERasterOp)n1;
+      break;
 
     case IPARM_REDRAW:
       pme->pfnRedraw = (PFNNOTIFY)n1;
@@ -944,17 +948,24 @@ static void COEMGIFViewer_DrawFrame(IImage * po,int nFrame, int x, int y)
       }
    }
 
-   if((bAnimationEnd == TRUE) && (pme->pfnAnimationEnd))
+   if(bAnimationEnd == TRUE)
    {
-     PFNNOTIFY pfn = pme->pfnAnimationEnd;
-     pme->pfnAnimationEnd = NULL;
-     IIMAGE_AddRef((IImage*)pme);
-     pfn(pme->pAnimationEnd);
-     if (0 == IIMAGE_Release((IImage*)pme))
-     {
-       return;
-     }
-     pme->pfnAnimationEnd = pfn;
+        if(pme->m_playtimes>0)
+        {
+            pme->m_playtimes--;
+        }
+        if(pme->pfnAnimationEnd)
+        {
+            PFNNOTIFY pfn = pme->pfnAnimationEnd;
+            pme->pfnAnimationEnd = NULL;
+            IIMAGE_AddRef((IImage*)pme);
+            pfn(pme->pAnimationEnd);
+            if (0 == IIMAGE_Release((IImage*)pme))
+            {
+                return;
+            }
+            pme->pfnAnimationEnd = pfn;
+        }
    }
    pme->bHaveDrawn = 1;
 }
@@ -1082,7 +1093,7 @@ static void COEMGIFViewer_Animate(COEMGIFViewer * pme)
     IDISPLAY_Update(pme->m_pDisplay);
   }
 
-  if(pme->m_nFrames > 1 )
+  if(pme->m_nFrames > 1 && pme->m_playtimes != 0)
   {
      ISHELL_SetTimer(pme->m_pShell, (uint32)pme->m_nRate, (PFNNOTIFY)(COEMGIFViewer_Animate),pme);
   }
