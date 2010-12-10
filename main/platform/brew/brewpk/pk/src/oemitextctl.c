@@ -874,14 +874,14 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
       
        
         case EVT_KEY:
-			
 #if 1   //modi by yangdecai    //  SWITCH  INPUTMOD  EVT_RELEASE MOVE TO EVT_KEY 
 
 #if defined (FEATURE_ALL_KEY_PAD)
 #ifdef FEATURE_VERSION_HITZ181
 if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
-                (wParam == AVK_0) &&
+                (wParam == AVK_0) && 
+                (!OEM_TextAltStatus(pme->m_pText)) &&
                 (shortkey == TRUE) &&
                 ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
 
