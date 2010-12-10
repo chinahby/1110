@@ -342,15 +342,11 @@ static  void                      sdnv_nv_cmd(
               nv_cmd_ptr->item == NV_SCDMACH_I           ||
               nv_cmd_ptr->item == NV_JTACS_PCDMACH_I     ||
               nv_cmd_ptr->item == NV_JTACS_SCDMACH_I))
-#ifndef CUST_EDITION
                          ||
           ( ! SDSS_SUBSC_CONTAIN( subsc, SDSS_SUBSC_1X ) &&
             ! SDSS_SUBSC_CONTAIN( subsc, SDSS_SUBSC_GW ) &&
             ( nv_cmd_ptr->item == NV_SSPR_P_REV_I        ||
               nv_cmd_ptr->item == NV_ROAMING_LIST_683_I )))
-#else
-       )
-#endif
       {
 
         /*

@@ -2713,7 +2713,11 @@ nv_max_size_of_roaming_list( void ) {
       /* Return a max number here and check the size in nvruim before writing */
       return NV_ROAMING_LIST_MAX_SIZE;
       #else
+      #ifdef FEATURE_DISABLE_UIMPRL //Gemsea Add
+      return NV_ROAMING_LIST_MAX_SIZE;
+      #else
       return (word)0;
+      #endif
       #endif  /* FEATURE_RUIM_ADM_ACCESS */
     }
   #endif /*( FEATURE_UIM_RUN_TIME_ENABLE ) */
