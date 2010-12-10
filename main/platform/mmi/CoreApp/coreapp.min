@@ -79,6 +79,9 @@ else ifeq ($(USES_RESDIR), Hitz181)
 CONSTFILE_FILES+=\
 	poweronani.png|fs:/image/pwronoffani/poweronani.png \
 	poweroffani.png|fs:/image/pwronoffani/poweroffani.png
+else ifeq ($(USES_RESDIR), Olive203)
+CONSTFILE_FILES+=\
+	poweronani.gif|fs:/image/pwronoffani/poweronoff.gif
 else
 CONSTFILE_FILES+=\
 	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif

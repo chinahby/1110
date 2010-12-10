@@ -43,6 +43,16 @@ ifeq ($(USES_LOWMEM), yes)
             street_tale.mid|fs:/ringers/street_tale.mid \
             feeling_on.mid|fs:/ringers/feeling_on.mid \
             feeling_off.mid|fs:/ringers/feeling_off.mid
+    else ifeq ($(USES_RESDIR), Olive203)
+        CONSTFILE_FILES+=\
+            blue_load.mid|fs:/ringers/blue_load.mid \
+            champagne.mid|fs:/ringers/champagne.mid \
+            clock.mid|fs:/ringers/clock.mid \
+            green_line.mid|fs:/ringers/green_line.mid \
+            lucky.mid|fs:/ringers/lucky.mid \
+            street_tale.mid|fs:/ringers/street_tale.mid \
+            feeling_on.mid|fs:/ringers/feeling_on.mid \
+            feeling_off.mid|fs:/ringers/feeling_off.mid
     else ifeq  ($(USES_RESDIR), Ivio203)
         CONSTFILE_FILES+=\
             blue_load.mid|fs:/ringers/blue_load.mid \
@@ -192,7 +202,21 @@ else
                 lucky.mid|fs:/ringers/lucky.mid \
                 street_tale.mid|fs:/ringers/street_tale.mid \
                 techno_meto.mid|fs:/ringers/techno_meto.mid \
-		feeling_on.mp3|fs:/ringers/feeling_on.mp3
+				feeling_on.mp3|fs:/ringers/feeling_on.mp3
+		else ifeq ($(USES_RESDIR), Olive203)
+			CONSTFILE_FILES+=\
+                blues.mid|fs:/ringers/blues.mid \
+                blue_load.mid|fs:/ringers/blue_load.mid \
+                champagne.mid|fs:/ringers/champagne.mid \
+                clock.mid|fs:/ringers/clock.mid \
+                dance_craze.mid|fs:/ringers/dance_craze.mid \
+                green_line.mid|fs:/ringers/green_line.mid \
+                jumping.mid|fs:/ringers/jumping.mid \
+                lucky.mid|fs:/ringers/lucky.mid \
+                street_tale.mid|fs:/ringers/street_tale.mid \
+                techno_meto.mid|fs:/ringers/techno_meto.mid \
+				Olivepoweron.mid|fs:/ringers/poweron.mid \
+                Olivepoweroff.mid|fs:/ringers/poweroff.mid
         else ifeq ($(USES_RESDIR), Flexi203p)
             CONSTFILE_FILES+=\
                 blues.mid|fs:/ringers/blues.mid \
@@ -205,7 +229,7 @@ else
                 lucky.mid|fs:/ringers/lucky.mid \
                 street_tale.mid|fs:/ringers/street_tale.mid \
                 techno_meto.mid|fs:/ringers/techno_meto.mid \
-		feeling_on.mp3|fs:/ringers/feeling_on.mp3				
+				feeling_on.mp3|fs:/ringers/feeling_on.mp3				
         else ifeq  ($(USES_RESDIR), Ivio203)
             CONSTFILE_FILES+=\
                 blues.mid|fs:/ringers/blues.mid \
