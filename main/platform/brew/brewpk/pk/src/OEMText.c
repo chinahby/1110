@@ -253,7 +253,7 @@ typedef struct _TextCtlContext {
    AEERect             CursorDrawRectTimerPara;
 #endif
    IImage               *m_pImageBg;
-   boolean              is_isShift;
+   boolean              is_isShift;  
    boolean              is_bAlt;
    boolean              m_bCaplk;
 } TextCtlContext;
@@ -770,7 +770,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
       // Default mode is Multitap
       pNewContext->byMode = 0;
    }
-   pNewContext->is_isShift = FALSE;
+   pNewContext->is_isShift = FALSE;   
    pNewContext->is_bAlt = FALSE;
    pNewContext->nMultitapCaps = MULTITAP_FIRST_CAP;
    pNewContext->m_bCaplk = FALSE;
@@ -4276,7 +4276,8 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
                         break;
             		}
                 }
-                break;                
+                break;  
+
 			default:
 			    break;
 			}
@@ -4419,12 +4420,16 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 									}
 									break;
 							#endif
+							
 								default:
 									{
+										MSG_FATAL("***zzg CurrentMode=%x***",OEM_TextGetCurrentMode((OEMCONTEXT)pContext),0, 0);
+										
 					            		if (key == VLCharKeyItem[i].wParam)
 					            		{
 					            			MSG_FATAL("i:::::::::::::::::%d",i,0,0);
-					        			    if(pContext->is_isShift)
+
+											if(pContext->is_isShift)
 					                        { 
 					                            TextCtl_NoSelection(pContext);
 					                            #ifdef FEATURE_VERSION_HITZ181
@@ -4440,6 +4445,8 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
 					                            pContext->is_bAlt = FALSE;
 					                        }
+											
+											
 					                        else
 					                        {
 					                            TextCtl_NoSelection(pContext);
@@ -4452,7 +4459,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 												{
 					                            	TextCtl_AddChar(pContext,(AECHAR)(VLCharLowKeyItem[i].wp));
 												}
-					                        }
+					                        }											
 					                     }
 										break;
 									}

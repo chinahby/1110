@@ -681,8 +681,45 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
             return FALSE;
             
         case EVT_KEY_HELD:     
-            // Press and hold of keys 0 through 9 should be passed to the OEM
+            // Press and hold of keys 0 through 9 should be passed to the OEM   
             MSG_FATAL("EVT_KEY_HELD::::%x",eCode,0,0);
+			
+#ifdef FEATURE_VERSION_HITZ181
+			
+			if (wParam == AVK_LCTRL)
+			{
+				MSG_FATAL("***zzg CTextCtl_HandleEvent EVT_KEY_HELD AVK_SHIFT AVK_LCTRL***", 0, 0, 0);
+				
+				if(pme->m_dwProps & TP_STARKEY_SWITCH)
+				{
+					MSG_FATAL("***zzg CTextCtl_HandleEvent TP_STARKEY_ID_SWITCH***", 0, 0, 0);
+					
+					if(pme->m_nCurrInputMode != OEM_MODE_T9_MT_ENGLISH_UP)	//OEM_MODE_T9_MT_ENGLISH_UP
+					{
+						MSG_FATAL("***zzg CTextCtl_HandleEvent OEM_MODE_T9_RAPID_ENGLISH_UP***", 0, 0, 0);
+						
+						 pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_UP; 
+						 SetArrowFlagonIM(FALSE);
+						 ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0,0);
+						 OEM_SetInputMode(pme);
+						 return TRUE;
+						 break;
+					}
+					else
+					{
+						MSG_FATAL("***zzg CTextCtl_HandleEvent OEM_MODE_T9_RAPID_ENGLISH_LOW***", 0, 0, 0);
+						
+						pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH_LOW; 
+						SetArrowFlagonIM(FALSE);
+						ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0, 0);
+						OEM_SetInputMode(pme);
+						return TRUE;
+					}
+					
+				}
+			}
+			
+#endif
             if ( OEM_TextKeyPress(pme->m_pText,eCode,wParam,dwParam) != FALSE)
             {
                     if (!(pme->m_dwProps & TP_NODRAW))
