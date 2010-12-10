@@ -4971,7 +4971,7 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         
 #if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) ||\
 	defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) ||\
-	defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181)
+	defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_VERSION_OLIVE203)
 
         IIMAGE_GetInfo( pMe->m_pStartupAniImg, &ImgInfo );
 		MSG_FATAL("CoreApp_PlayPwrOffAni pMe->m_pStartupAniImg = %x",pMe->m_pStartupAniImg,0,0);
@@ -4990,7 +4990,7 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
 
 #if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8) ||\
 	defined(FEATURE_VERSION_FLEXI021) || defined(FEATURE_VERSION_ESIA021) || defined(FEATURE_VERSION_IVIO203) ||\
-	defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181)
+	defined(FEATURE_VERSION_IVIO021) || defined(FEATURE_VERSION_C01) || defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_VERSION_OLIVE203)
      // 开始播放关机动画
      IIMAGE_Start( pMe->m_pStartupAniImg, 
                                 (pMe->m_rc.dx - ImgInfo.cx/PWROFF_ANI_FRAME_COUNT)/2, 
