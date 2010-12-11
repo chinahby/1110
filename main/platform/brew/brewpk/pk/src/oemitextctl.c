@@ -683,7 +683,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
         case EVT_KEY_HELD:     
             // Press and hold of keys 0 through 9 should be passed to the OEM   
             MSG_FATAL("EVT_KEY_HELD::::%x",eCode,0,0);
-			
+		
 #ifdef FEATURE_VERSION_HITZ181
 			
 			if ((wParam == AVK_LCTRL) || (wParam == AVK_SHIFT))
@@ -702,12 +702,11 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 						 SetArrowFlagonIM(FALSE);
 						 ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0,0);
 						 OEM_SetInputMode(pme);
-						 return TRUE;
-						 break;
+						 return TRUE;						 
 					}
 					else
 					{
-						MSG_FATAL("***zzg CTextCtl_HandleEvent OEM_MODE_T9_RAPID_ENGLISH_LOW***", 0, 0, 0);
+						MSG_FATAL("***zzg CTextCtl_HandleEvent OEM_MODE_T9_RAPID_ENGLISH***", 0, 0, 0);
 						
 						pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH_LOW; 
 						SetArrowFlagonIM(FALSE);
@@ -720,6 +719,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 			}
 			
 #endif
+
             if ( OEM_TextKeyPress(pme->m_pText,eCode,wParam,dwParam) != FALSE)
             {
                     if (!(pme->m_dwProps & TP_NODRAW))
