@@ -288,19 +288,16 @@ WinInfoDT *A800_ChangeCameraSetting(PREVIEW_MODE mode)
 				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS\r\n");
 				Select->BufFormat = A8_YUV_422;
 				Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
-				OSDBufFormat = A8_DEPTH_8B;	
+				OSDBufFormat = A8_DEPTH_16B;	
 				break;;
 
 			case AIT_ATV_REC_NOR_MODE:
 			case AIT_ATV_REC_FULL_MODE:
 				AIT_Message_P0(" Refresh Mode :CAM_LCD_REFRESH_BYPASS\r\n");
 				Select->BufFormat = A8_DEPTH_16B;
-				Select->LcdRefreshMode = CAM_LCD_REFRESH_SCALE;
+				Select->LcdRefreshMode = CAM_LCD_REFRESH_BYPASS;
 
-				Select->BufWidth = 176;
-				Select->BufHeight = 144;
-
-				OSDBufFormat = A8_DEPTH_8B;	
+				OSDBufFormat = A8_DEPTH_16B;	
 				break;
 
 		

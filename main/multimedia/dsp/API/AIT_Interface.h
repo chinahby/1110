@@ -3,6 +3,8 @@
 #include "a8_common.h"
 #include "cam_module.h"
 #include "sys_if_ait_api.h"
+#include "mmidispsize.h"
+
 //add by yangdecai 09-24
 #if defined (FEATURE_DISP_320X240)
 #define __MMI_MAINLCD_320X240__
