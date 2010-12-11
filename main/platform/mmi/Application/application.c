@@ -1143,7 +1143,9 @@ static int StartApplet(Application *pMe, int i)
 #endif
 #ifdef	FEATURE_APP_BLUETOOTH  //add by yangdecai
     case IDS_APPLICATION_BLUETOOTH:
+		MSG_FATAL("***zzg IDS_APPLICATION_BLUETOOTH***", 0, 0, 0);
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+		MSG_FATAL("***zzg ISHELL_StartApplet BT result=%d***", Result, 0, 0);
         break;
 #endif
     default:

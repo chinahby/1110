@@ -45,6 +45,10 @@ ifeq ($(USES_CAMERA),yes)
 include $(CAMERAAPP)/CameraApp.min
 endif
 
+ifeq ($(USES_BT), yes)
+include $(BLUETOOTH)/bthoststatapp.min
+endif
+
 ifeq ($(MMI_ADD_FM),yes)
 include $(FMRADIOAPP)/FmRadio.min
 endif

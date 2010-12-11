@@ -235,7 +235,9 @@ BTHOSTSOCCFG_SRC=  $(SRCROOT)/wconnect/bthost/soccfg/src
 BTHOSTPF_SRC=      $(SRCROOT)/wconnect/bthost/pf/src
 BTHOSTPFRPC_SRC=   $(SRCROOT)/wconnect/bthost/pfrpc/src
 BTHOSTIBT_SRC=     $(SRCROOT)/wconnect/bthost/brew/ibt/src
-BTHOSTSTATAPP_SRC= $(SRCROOT)/wconnect/bthost/brew/statapp/src
+
+BTHOSTSTATAPP_SRC= $(SRCROOT)/platform/mmi/bluetooth
+
 BTHOSTSTATEXT_SRC= $(SRCROOT)/wconnect/bthost/brew/statext/src
 BTHOSTFTM_SRC=     $(SRCROOT)/wconnect/bthost/ftm/src
 
@@ -248,7 +250,9 @@ BTHOSTSOCCFG_INC=  $(SRCROOT)/wconnect/bthost/soccfg/inc
 BTHOSTPF_INC=      $(SRCROOT)/wconnect/bthost/pf/inc
 BTHOSTPFRPC_INC=   $(SRCROOT)/wconnect/bthost/pfrpc/inc
 BTHOSTIBT_INC=     $(SRCROOT)/wconnect/bthost/brew/ibt/inc
-BTHOSTSTATAPP_INC= $(SRCROOT)/wconnect/bthost/brew/statapp/inc
+
+BTHOSTSTATAPP_INC= $(SRCROOT)/platform/mmi/bluetooth
+
 BTHOSTSTATEXT_INC= $(SRCROOT)/wconnect/bthost/brew/statext/inc
 BTHOSTFTM_INC=     $(SRCROOT)/wconnect/bthost/ftm/inc
 
@@ -807,7 +811,7 @@ CALLAPP=                $(MMIDIR)/CallApp
 WMSAPP=                 $(MMIDIR)/WmsApp
 CONTAPP=                $(MMIDIR)/Contact
 RECENTCALLS=            $(MMIDIR)/RecentCalls
-BLUETOOTH=              $(MMIDIR)/Bluetooth
+BLUETOOTH=              $(MMIDIR)/BlueTooth
 CALCAPP=                $(MMIDIR)/CalcApp
 CAMERAAPP=              $(MMIDIR)/CameraApp
 CLOCKAPP=               $(MMIDIR)/ClockApp
@@ -847,7 +851,7 @@ APPLICATION   =         $(MMIDIR)/Application
 GAME     =              $(MMIDIR)/Games/game
 TVAPP = 		$(MMIDIR)/TvApp
 ifeq ($(USES_FRENDUO),yes)
-FRENDUO  =         	$(MMIDIR)/FrenDuo
+FRENDUO  =         		$(MMIDIR)/FrenDuo
 endif
 
 MULTIMEDIA =            $(MMIDIR)/Multimedia
