@@ -25,7 +25,7 @@
 
 //#include "motorola_E1_1.h"
 
-extern kal_uint32 LCD_GetCurrentTiming(void);
+extern uint32 LCD_GetCurrentTiming(void);
 extern void disp_update
 (
   /* The buffer pointer point to the first byte of the whole buffer.

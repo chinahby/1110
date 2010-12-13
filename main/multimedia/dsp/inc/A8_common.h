@@ -23,17 +23,6 @@ typedef int                 		s_int;
 typedef short               	s_short;
 typedef char                	s_char;
 
-typedef unsigned char kal_uint8;
-typedef unsigned short kal_uint16;
-typedef unsigned int kal_uint32;
-typedef char kal_int8;
-
-
-typedef enum 
-{
-  KAL_FALSE,
-  KAL_TRUE
-} kal_bool;
 
 
 #ifndef TRUE

@@ -16,9 +16,9 @@ boolean g_ByPassOn = TRUE;
 unsigned char AIT_sleep_enable=1;
 
 const unsigned short ait_sleep_checktime = AIT_SLEEP_CHECKTIME;
-const kal_uint32 CS_AitBypass   = ((0x01<<30)|(0x01<<26)|(0x03<<8)|0x10);
-const kal_uint32 CS_AitActiveWithoutPll = ((0x01<<30)|(0x01<<26)|(0x09<<8)|0x09);
-const kal_uint32 CS_AitActiveWithPll   =((0x01<<30)|(0x01<<26)|(0x09<<8)|0x09);
+const uint32 CS_AitBypass   = ((0x01<<30)|(0x01<<26)|(0x03<<8)|0x10);
+const uint32 CS_AitActiveWithoutPll = ((0x01<<30)|(0x01<<26)|(0x09<<8)|0x09);
+const uint32 CS_AitActiveWithPll   =((0x01<<30)|(0x01<<26)|(0x09<<8)|0x09);
 unsigned short gA8MainLCDWidth = A8_MAIN_LCD_WIDTH;
 unsigned short gA8MainLCDHeight = A8_MAIN_LCD_HEIGHT;
 
@@ -270,17 +270,17 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 		AIT_ATV_PREV_NOR_MODE,
 		CAM_ROTATE_NORMAL,
 		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},
-		{0,0,0,0},
+		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},
 		{0,0,0,0},
 		{0,0,0,0}
 	},
 	{
 		AIT_ATV_PREV_FULL_MODE,
-		CAM_ROTATE_90,
+		CAM_ROTATE_NORMAL,
 		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},
-		{0,0,0,0},
-		{0,0,0,0},
-		{0,0,0,0}
+		{0,0,40,40},
+		{40,80,240,120},
+		{0,220,320,20}
 	},
 #if AIT_VIDEO_PHONE_SUPPORT	
 	{
@@ -617,24 +617,24 @@ void AIT_ext_Set_EMIMode(eEMI_MODE mode)
 }
 
 
-void EINT_Set_Polarity(kal_uint8 eintno, kal_bool ACT_Polarity)
+void EINT_Set_Polarity(uint8 eintno, boolean ACT_Polarity)
 {
 	//Set interrupt polarity
 }
 
-void EINT_UnMask(kal_uint8 eintno)
+void EINT_UnMask(uint8 eintno)
 {
 	//External interrupt enable
-	gpio_tlmm_config(GPIO_INPUT_41);
+	//gpio_tlmm_config(GPIO_INPUT_41);
 }
 
-void EINT_Mask(kal_uint8 eintno)
+void EINT_Mask(uint8 eintno)
 {
 	//External interrupt disable
 }
 
 
-kal_bool ait_is_active_cam(void)
+uint8 ait_is_active_cam(void)
 {
 	return 0;
 }
