@@ -381,7 +381,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 //#ifndef USES_DS_1536 //注释掉是为了解决1900M搜不到网的问题
 #ifdef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
-   #undef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
+//Gemsea Modify For CDMA450   #undef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
 #endif
 //#endif
 #ifdef FEATURE_SC2X_HAS_UART1
@@ -392,7 +392,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 //#ifndef USES_DS_1536//注释掉是为了解决1900M搜不到网的问题
 #ifdef FEATURE_UNIFORM_SCAN_OOS
-   #undef FEATURE_UNIFORM_SCAN_OOS
+//Gemsea Modify For CDMA450   #undef FEATURE_UNIFORM_SCAN_OOS
 #endif
 //#endif
 
