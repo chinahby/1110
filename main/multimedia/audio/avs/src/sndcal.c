@@ -552,17 +552,17 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
 #endif
 #else
 VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
-#if 0
+#if 1
   /* Internal CODEC - no pad values    */
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
-  {           -1800 , VOC_VOL_SILENCE ,  0 },
-  {           -1500 , VOC_VOL_SILENCE ,  0 },
+  {           -1600 , VOC_VOL_SILENCE ,  0 },
   {           -1200 , VOC_VOL_SILENCE ,  0 },
-  {            -900 , VOC_VOL_SILENCE ,  0 },
-  {            -600 , VOC_VOL_SILENCE ,  0 },
-  {            -300 , VOC_VOL_SILENCE ,  0 },
-  {               0 , VOC_VOL_SILENCE ,  0 }
+  {           -900 , VOC_VOL_SILENCE ,  0 },
+  {            -700 , VOC_VOL_SILENCE ,  0 },
+  {            -400 , VOC_VOL_SILENCE ,  0 },
+  {            -200 , VOC_VOL_SILENCE ,  0 },
+  {               100 , VOC_VOL_SILENCE ,  0 }
 #else
   /* Internal CODEC - no pad values    */
   /*  rx                dtmf            pad        */
