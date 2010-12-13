@@ -9,6 +9,8 @@
 #include "snddev.h"
 #include "snd.h"
 #include "OEMClassIDs.h"
+#include "cam_module.h"
+
 #ifdef USE_ANALOGTV_TLG1120
 
 
@@ -23,8 +25,7 @@
 //#include "time_secure.h"
 
 static struct TlgAtv_ScanInfo g_OEMAtv;
-static uint16 Tv_fbuffer[220*176] = {0};  //后续这里需要修改
-
+uint16 Tv_fbuffer[A8_MAIN_LCD_WIDTH*A8_MAIN_LCD_HEIGHT] = {0};
 
 static const AEEVTBL(ITlgAtv) gMMITlgAtvfuncs=
 {
@@ -49,7 +50,7 @@ void OEMTLGAtv_Init(void)
 {
    // Empty now
 }
-#undef WRITE_LOG_TO_FILE
+#undef WRITE_LOG_TO_FILE  //undef
 #ifdef WRITE_LOG_TO_FILE
 #include "AEEFile.h"
 #include "mediagallery.h"
@@ -483,27 +484,15 @@ static int OEMTLGAtv_GetParam(OEMINSTANCE h,ATV_GET_PARAM_e type, void * hparam,
 
 static int OEMTLGAtv_Update(OEMINSTANCE h, uint32 dwParam)
 {
-
-
-	//OEMCamera * pme = (OEMCamera *)h;
-    uint16* pbmp = (uint16*)dwParam;
-	int i;
-	//MEMSET(Tv_fbuffer, 0x0, 320*240);
-	#if 0
-	MSG_FATAL("OEMTLGAtv_Update--------------------------start",0,0,0);
-	for(i=0;i<220*176;i++)
-	{
-		Tv_fbuffer[i] = 0x001f;
-	}
-	#endif
-    MEMCPY(Tv_fbuffer, pbmp, 220*176*2); //77440 = sizeof(g_fbuffer)
-    AIT701_cam_update_osd(Tv_fbuffer,0,0,220,176);
+	uint16* pbmp = (uint16*)dwParam;
+    MEMCPY(Tv_fbuffer, pbmp, sizeof(Tv_fbuffer));
+    AIT701_cam_update_osd(Tv_fbuffer,0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT);
 	/*write file*/
 #ifdef WRITE_LOG_TO_FILE 
         {
         	int ret = 0;
           //  SPRINTF(buf,"CRootApp_HandleUserEvent dwParam = %d\n",dwParam);
-           // ret = IFILE_Write( pIFile, (void*)Tv_fbuffer, 77440);
+            ret = IFILE_Write( pIFile, (void*)Tv_fbuffer, sizeof(Tv_fbuffer));
 			MSG_FATAL("qqOEMTLGAtv_Update writefile ret = %d",ret ,0, 0);
         }
 #endif
