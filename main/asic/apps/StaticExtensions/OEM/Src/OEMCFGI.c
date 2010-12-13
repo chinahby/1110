@@ -635,10 +635,11 @@ typedef struct
    uint32 tv_or_camera;
    CFG_TvSetting tv_set;
 #endif
+
    //Add By zzg 2010_11_22
-   #ifdef FEATURE_APP_BLUETOOTH
+#ifdef FEATURE_APP_BLUETOOTH
    boolean bt_status;
-   #endif
+#endif
    
    //Add End
    #ifdef FEATURE_LONG_NETLOCK

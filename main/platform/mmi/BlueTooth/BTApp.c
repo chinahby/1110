@@ -1178,9 +1178,7 @@ int AEEClsCreateInstance( AEECLSID ClsId, IShell* pIShell, IModule* po, void** p
   int     result  = EFAILED;
 
   *ppObj = NULL;
-
-  MSG_FATAL("***zzg AEEClsCreateInstance 1***", 0, 0, 0);
-
+ 
 #ifdef BT_SWDEV_BT_DISABLED_NV
   {
     nv_item_type  nvi;
@@ -1195,9 +1193,7 @@ int AEEClsCreateInstance( AEECLSID ClsId, IShell* pIShell, IModule* po, void** p
 #endif /* BT_SWDEV_BT_DISABLED_NV */
 
   if ( ClsId == AEECLSID_BLUETOOTH_APP )
-  {
-  	MSG_FATAL("***zzg AEEClsCreateInstance 2***", 0, 0, 0);
-	
+  {	
     created = AEEApplet_New( sizeof(CBTApp), 
                              ClsId, 
                              pIShell,
@@ -1205,25 +1201,17 @@ int AEEClsCreateInstance( AEECLSID ClsId, IShell* pIShell, IModule* po, void** p
                              (IApplet**) ppObj,
                              (AEEHANDLER) BTApp_HandleEvent,
                              (PFNFREEAPPDATA) BTApp_FreeAppData);
-
-	MSG_FATAL("***zzg AEEClsCreateInstance 3 created=%d***", created, 0, 0);
-
     if(created)
     {
       if( BTApp_InitAppData( (IApplet*)*ppObj ) )
-      {
-      	MSG_FATAL("***zzg AEEClsCreateInstance 4***", 0, 0, 0);
-      	
+      {            	
         pTheBTApp = (CBTApp*)*ppObj;
 
         //Data initialized successfully
         result = AEE_SUCCESS;
       }
       else
-      {
-
-		MSG_FATAL("***zzg AEEClsCreateInstance 5***", 0, 0, 0);
-		
+      {		
         //Release the applet. This will free the memory allocated for the applet
         IAPPLET_Release( ((IApplet*)*ppObj) );
       }
@@ -1251,16 +1239,14 @@ static const AEEAppInfo gaiBt =
 
 int BTApp_Load(IShell *ps, void *pHelpers, IModule **pMod)
 {
-  int result;
-  MSG_FATAL("***zzg BTApp_Load***", 0, 0, 0);
+  int result;  
   result = AEEStaticMod_New((int16)(sizeof(AEEMod)),
                             ps,
                             pHelpers,
                             pMod,
                             BTApp_CreateInstance,
                             NULL);
-
-  MSG_FATAL("***zzg BTApp_Load AEEStaticMod_New result=%d***", result, 0, 0);
+  
   return result;
 }
 
@@ -1932,7 +1918,7 @@ static boolean BTApp_InitAppData(IApplet* pi)
   {
 
 #if 0   
-    if( IFILEMGR_Test( pIFileMgr, AEE_APPSBTAPP_RES_FILE ) == SUCCESS )
+    if( IFILEMGR_Test( pIFileMgr, BTAPP_RES_FILE ) == SUCCESS )
     {
       success = TRUE;
     }
@@ -2399,7 +2385,8 @@ static boolean BTApp_HandleEvent
 		if ((args != NULL) && (args->pszArgs != NULL))	
 		{
 			//从COREAPP发过来的CONFIG配置里蓝牙开启状态的初始化
-			if (STRNCMP(args->pszArgs,"InitBT",6) == 0) 
+			//if (STRNCMP(args->pszArgs,"InitBT",6) == 0) 
+			if (0)
 			{
 				MSG_FATAL("***zzg EVT_APP_START_BACKGROUND InitBT from the CoreApp***", 0, 0, 0);
 				
@@ -2785,15 +2772,11 @@ static boolean BTApp_HandleEvent
     {
       AEENotify* pN = (AEENotify*) dwParam;
       AEEEvent  evt = GET_NOTIFIER_VAL(pN->dwMask);
-
-	  MSG_FATAL("***zzg BTApp.c EVT_NOTIFY***", 0, 0, 0);
 	  
       //MSG_MED( "HndlEv - NOTIFY cls=%x m=%x ev=%d", 
       //          pN->cls, GET_NOTIFIER_MASK(pN->dwMask), evt );
       if ( pN->cls == AEECLSID_BLUETOOTH_NOTIFIER )
       {
-      	MSG_FATAL("***zzg BTApp EVT_NOTIFY dwMask=%x***", GET_NOTIFIER_MASK(pN->dwMask), 0, 0);
-			
         switch ( GET_NOTIFIER_MASK(pN->dwMask) )
         {
           case NMASK_BT_AG:
@@ -2927,7 +2910,8 @@ static boolean BTApp_HandleEvent
 #ifdef FEATURE_BT_EXTPF_SAP
 #error code not present
 #endif
-#ifdef FEATURE_UIONE_HDK
+
+#ifndef FEATURE_UIONE_HDK	//Modify by zzg 2010_12_13
       else if (  pN->cls == AEECLSID_SHELL )
       {
         switch ( GET_NOTIFIER_MASK(pN->dwMask) )
@@ -2936,12 +2920,92 @@ static boolean BTApp_HandleEvent
             // starting for the first time on power up
             MSG_HIGH( "HndlEv - START", 0, 0, 0 );
             event_processed = BTApp_StartBT( pMe ); 
+
+			//Add By zzg 2010_12_13
+			if (event_processed) 
+			{
+				if (pMe->mAG.bStartedVr != FALSE)
+				{
+					pMe->mAG.bStartedVr = FALSE;
+					IBTEXTAG_UpdateVRState( pMe->mAG.po, FALSE );
+					
+					if ( pMe->mAG.callState == BTAPP_AG_CALL_STARTVR )
+					{
+						pMe->mAG.callState = BTAPP_AG_CALL_NONE;
+#ifndef FEATURE_AVS_BT_SCO_REWORK
+						BTApp_ReleaseBTDevice( pMe, FALSE );
+#endif 
+					}
+				}
+
+				if (BTApp_HCIModeOn(pMe) == FALSE)
+				{
+					if (BTApp_OPPInit(pMe) != FALSE)	//Init BTApp--->OPP	
+					{					
+						MSG_FATAL("***zzg EVT_APP_START_BACKGROUND bConnected=%d, bConnecting=%d, bRegistered=%d***", 
+						           pMe->mOPP.bConnected, pMe->mOPP.bConnecting, pMe->mOPP.bRegistered);
+						
+						//change to the server for getin file
+						if ((pMe->mOPP.bConnected == TRUE) || ((pMe->mOPP.bConnecting == TRUE)))
+						{
+							if (IBTEXTOPP_Disconnect( pMe->mOPP.po) != SUCCESS)
+							{
+								MSG_FATAL("***zzg IBTEXTOPP_Disconnect != SUCCESS***", 0, 0, 0);
+							}	
+							else 
+							{
+								pMe->mOPP.bConnecting = FALSE;
+							}
+						}
+						else
+						{		
+							if (pMe->mOPP.bRegistered == FALSE)
+							{
+								int result;						
+
+								BTApp_SetBondable(pMe);
+
+								if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP )) != SUCCESS )
+								{
+									MSG_FATAL("***zzg BTApp_OPPPull OPP_Register() failed with %x***", result, 0, 0 );
+									BTApp_ClearBondable( pMe ); 
+								}
+								else
+								{					
+									if (pMe->mSD.bDiscoverable == FALSE)
+									{
+										IBTEXTSD_SetDiscoverable( pMe->mSD.po, TRUE );
+									}		
+								} 	 
+							}	
+						}
+						
+					}
+					else
+					{
+						MSG_ERROR( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
+						BTApp_OPPCleanup( pMe );				
+					}
+				}
+
+				IBTEXTRM_GetHCIMode( pMe->mRM.po, &HCIMode );
+				
+				if ( HCIMode != AEEBT_HCIM_OFF )
+				{
+					MSG_FATAL("***zzg HCIMode=%x***", HCIMode, 0, 0);
+					
+					//BTApp_ShowMessage( pMe, IDS_MSG_HCI_ON_WARNING, NULL, 0 );
+				}
+			}
+			//Add End
+			
             break;
           default:
             return FALSE;
         }
       }
 #endif
+
 #ifdef FEATURE_BT_EXTPF_HID_HOST
 #error code not present
 #endif

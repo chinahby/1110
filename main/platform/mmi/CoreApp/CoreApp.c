@@ -445,7 +445,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     ICONFIG_SetItem(pMe->m_pConfig, CFGI_FM_BACKGROUND, &b_FMBackground, sizeof(b_FMBackground));
 	
 //Add By zzg 2010_11_25 			
-#ifdef FEATURE_APP_BLUETOOTH 
+#ifndef FEATURE_APP_BLUETOOTH 
 	{
 		boolean bt_status = FALSE;
 		ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
