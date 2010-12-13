@@ -83,10 +83,11 @@ when         who            what, where, why
 #define TIMER_SCREEN_XOFFSET   36
 
 #elif defined(FEATURE_DISP_320X240)
-#define TIMER_SCREEN_WIDTH     100
-#define TIMER_IMAGE_WIDTH      140
-#define TIMER_SCREEN_YOFFSET   61
-#define TIMER_SCREEN_XOFFSET   60
+#define TIMER_SCREEN_WIDTH    84
+#define TIMER_IMAGE_WIDTH      200
+#define TIMER_SCREEN_YOFFSET 61
+#define TIMER_SCREEN_XOFFSET 60
+
 
 #else
 #define TIMER_SCREEN_WIDTH     60
