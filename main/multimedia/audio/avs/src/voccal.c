@@ -10450,18 +10450,16 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
 #ifdef CUST_EDITION
-  0x956F,                        /* Tx Voice Volume         */
-  0x2000,                        /* Tx DTMF gain            */
-  0x956F,                        /* CODEC Tx gain           */
-  0x71CF,                        /* CODEC Rx gain           */
+  0x5000,                        /* Tx Voice Volume         */
+  0x1000,                        /* Tx DTMF gain            */
+  0x4000,                        /* CODEC Tx gain           */
+  0x5000,                        /* CODEC Rx gain           */
 #else
   0x4000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
   0x1FD9,                        /* CODEC Tx gain           */
   0x4000,                        /* CODEC Rx gain           */
 #endif
-  
-
   0x2013,                        /* CODEC sidetone gain     */
 #ifdef MSMAUD_PCM_DC_OFFSET
   0xFF18,                        /* CODEC Rx left chan offset */
@@ -11070,10 +11068,10 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal_wb = {
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
 #ifdef CUST_EDITION
-  0x956F,						 /* Tx Voice Volume 		*/
-  0x2000,						 /* Tx DTMF gain			*/
-  0x956F,						 /* CODEC Tx gain			*/
-  0x71CF,						 /* CODEC Rx gain			*/
+  0x6000,						 /* Tx Voice Volume 		*/
+  0x1000,						 /* Tx DTMF gain			*/
+  0x4000,						 /* CODEC Tx gain			*/
+  0x5000,						 /* CODEC Rx gain			*/
 #else
   0x4000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
@@ -11689,18 +11687,17 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal = {
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
 #ifdef CUST_EDITION
-  0x956F,						 /* Tx Voice Volume 		*/
-  0x2000, 					   /* Tx DTMF gain			  */
-  0x956F, 					   /* CODEC Tx gain 		  */
-  0x71CF, 					   /* CODEC Rx gain 		  */
-  0x800,                         /* CODEC sidetone gain     */
+  0x6000,						 /* Tx Voice Volume 		*/
+  0x1000,						 /* Tx DTMF gain			*/
+  0x4000,						 /* CODEC Tx gain			*/
+  0x5000,						 /* CODEC Rx gain			*/
 #else
   0x4000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
   0x1FD9,                        /* CODEC Tx gain           */
   0x4000,                        /* CODEC Rx gain           */
-  0x400,                         /* CODEC sidetone gain     */
 #endif
+  0x400,                         /* CODEC sidetone gain     */
 #ifdef MSMAUD_PCM_DC_OFFSET
   0xFF18,                        /* CODEC Rx left chan offset */
   0xFEEA,                        /* CODEC Rx right chan offset */
@@ -12184,10 +12181,17 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal_wb = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
+#ifdef CUST_EDITION
+  0x6000,                        /* Tx Voice Volume         */
+  0x1000,                        /* Tx DTMF gain            */
+  0x4000,                        /* CODEC Tx gain           */
+  0x5000,                        /* CODEC Rx gain           */
+#else
   0x4000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
   0x1FD9,                        /* CODEC Tx gain           */
   0x4000,                        /* CODEC Rx gain           */
+#endif
   0x400,                         /* CODEC sidetone gain     */
 #ifdef MSMAUD_PCM_DC_OFFSET
   0xFF18,                        /* CODEC Rx left chan offset */
@@ -12676,10 +12680,17 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
+#ifdef CUST_EDITION
+  0x6000,                        /* Tx Voice Volume         */
+  0x1000,                        /* Tx DTMF gain            */
+  0x4000,                        /* CODEC Tx gain           */
+  0x5000,                        /* CODEC Rx gain           */
+#else
   0x4000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
   0x1FD9,                        /* CODEC Tx gain           */
   0x4000,                        /* CODEC Rx gain           */
+#endif
   0x400,                         /* CODEC sidetone gain     */
 #ifdef MSMAUD_PCM_DC_OFFSET
   0xFF18,                        /* CODEC Rx left chan offset */
@@ -13164,10 +13175,17 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal_wb = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
+#ifdef CUST_EDITION
+  0x6000,                        /* Tx Voice Volume         */
+  0x1000,                        /* Tx DTMF gain            */
+  0x4000,                        /* CODEC Tx gain           */
+  0x5000,                        /* CODEC Rx gain           */
+#else
   0x4000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
   0x1FD9,                        /* CODEC Tx gain           */
   0x4000,                        /* CODEC Rx gain           */
+#endif
   0x400,                         /* CODEC sidetone gain     */
 #ifdef MSMAUD_PCM_DC_OFFSET
   0xFF18,                        /* CODEC Rx left chan offset */
@@ -13656,10 +13674,10 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_1_cal  = {
   VOC_EC_HEADSET,                /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
 #ifdef CUST_EDITION
-  0x9A67,                        /* Tx Voice Volume         */
-  0x2000,                        /* Tx DTMF gain            */
-  0x7F8B,                        /* CODEC Tx gain           */
-  0x8000,                        /* CODEC Rx gain           */
+  0x6000,						 /* Tx Voice Volume 		*/
+  0x1000,						 /* Tx DTMF gain			*/
+  0x6000,						 /* CODEC Tx gain			*/
+  0x5000,						 /* CODEC Rx gain			*/
 #else
   0x5A67,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
@@ -14270,19 +14288,17 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_1_cal_wb  = {
   VOC_EC_HEADSET,                /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
 #ifdef CUST_EDITION
-  0x9A67,						 /* Tx Voice Volume 		*/
-  0x2000,						 /* Tx DTMF gain			*/
-  0x7F8B,						 /* CODEC Tx gain			*/
-  0x8000,						 /* CODEC Rx gain			*/
-  0x400,                        /* CODEC sidetone gain     */
+  0x6000,						 /* Tx Voice Volume 		*/
+  0x1000,						 /* Tx DTMF gain			*/
+  0x5000,						 /* CODEC Tx gain			*/
+  0x5000,						 /* CODEC Rx gain			*/
 #else
   0x4000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
   0x2CFC,                        /* CODEC Tx gain           */
   0x4000,                        /* CODEC Rx gain           */
-  0x0000,                        /* CODEC sidetone gain     */
 #endif
-  
+  0x0000,                        /* CODEC sidetone gain     */
 #ifdef MSMAUD_PCM_DC_OFFSET
   0xFF18,                        /* CODEC Rx left chan offset */
   0xFEEA,                        /* CODEC Rx right chan offset */
@@ -15042,18 +15058,17 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal = {
   #endif /* FEATURE_AVS_NEXTGEN_EC */
   VOC_NS_ON,                       /* Noise suppressor enable */
 #ifdef CUST_EDITION
-  0x9000,                          /* Tx Voice Volume         */
-  0x2000,                          /* Tx DTMF gain            */
-  0x7F8B,                          /* CODEC Tx gain           */
-  0x8000,                          /* CODEC Rx gain           */
-  0x400,                          /* CODEC sidetone gain     */
+  0x6000,						   /* Tx Voice Volume 		*/
+  0x1000,						   /* Tx DTMF gain			*/
+  0x6000,						   /* CODEC Tx gain			*/
+  0x5000,						   /* CODEC Rx gain			*/
 #else
   0x4000,                          /* Tx Voice Volume         */
   0x1000,                          /* Tx DTMF gain            */
   0x3F8B,                          /* CODEC Tx gain           */
   0x4000,                          /* CODEC Rx gain           */
-  0x0000,                          /* CODEC sidetone gain     */
 #endif
+  0x0000,                          /* CODEC sidetone gain     */
 #ifdef MSMAUD_PCM_DC_OFFSET
   0xFF18,                        /* CODEC Rx left chan offset */
   0xFEEA,                        /* CODEC Rx right chan offset */
@@ -15609,18 +15624,17 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal_wb = {
   #endif /* FEATURE_AVS_NEXTGEN_EC */
   VOC_NS_ON,                       /* Noise suppressor enable */
 #ifdef CUST_EDITION  
-  0x9000,                          /* Tx Voice Volume         */
-  0x2000,                          /* Tx DTMF gain            */
-  0x8000,                          /* CODEC Tx gain           */
-  0x8000,                          /* CODEC Rx gain           */
-  0x400,                          /* CODEC sidetone gain     */
+  0x6000,						   /* Tx Voice Volume 		*/
+  0x1000,						   /* Tx DTMF gain			*/
+  0x6000,						   /* CODEC Tx gain			*/
+  0x5000,						   /* CODEC Rx gain			*/
 #else
   0x4000,                          /* Tx Voice Volume         */
   0x1000,                          /* Tx DTMF gain            */
   0x4000,                          /* CODEC Tx gain           */
   0x4000,                          /* CODEC Rx gain           */
-  0x0000,                          /* CODEC sidetone gain     */
 #endif
+  0x0000,                          /* CODEC sidetone gain     */
 #ifdef MSMAUD_PCM_DC_OFFSET
   0xFF18,                        /* CODEC Rx left chan offset */
   0xFEEA,                        /* CODEC Rx right chan offset */
