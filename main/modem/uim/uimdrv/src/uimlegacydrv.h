@@ -837,10 +837,17 @@ LOCAL int uim_tcxo_vote = 0;
     (void)gpio_out(GPIO_OUTPUT_10, GPIO_HIGH_VALUE)
     /* For QSC60X5, when UIM is powered up, pull low the UIM_PWR_DIS line
        (GPIO_OUTPUT_10) connected to gate of the power enable FET */
+#ifndef FEATURE_DSP
   #define UIM_POWER_ON()                                                \
     (void)gpio_out(GPIO_OUTPUT_10, GPIO_LOW_VALUE);                     \
     (void)pm_vreg_control( PM_ON_CMD, PM_VREG_RUIM_M );                 \
     UIM_CONFIG_UIM_LINES();
+#else
+	#define UIM_POWER_ON()                                                \
+    (void)gpio_out(GPIO_OUTPUT_10, GPIO_HIGH_VALUE);                     \
+    (void)pm_vreg_control( PM_ON_CMD, PM_VREG_RUIM_M );                 \
+    UIM_CONFIG_UIM_LINES();
+#endif
 #elif !defined(T_QSC6270)
 #ifdef FEATURE_UIM_CONTROL_FET_FOR_VREG_RUIM
 #error code not present
