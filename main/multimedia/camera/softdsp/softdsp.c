@@ -58,8 +58,10 @@ static void SoftDSP_FrameISR(void)
 {
     if(g_SoftDSPInfo.msgcb)
     {
+#ifndef FEATURE_DSP
 #ifdef SOFT_MCLK
         gpio_tlmm_config(GPIO_OUTPUT_10);
+#endif
 #endif
         g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_START_OF_FRAME].responseMsg = CAMSOFTDSP_MSG_START_OF_FRAME;
         g_SoftDSPInfo.msgcb(&g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_START_OF_FRAME]);
@@ -298,11 +300,11 @@ static void SoftDSP_Catch2x1Data(void)
 #endif
         }
 		INTFREE();
-        
+#ifndef FEATURE_DSP        
 #ifdef SOFT_MCLK
         gpio_tlmm_config(GP_PDM);
 #endif
-
+#endif
         if(g_SoftDSPInfo.bCaptureState)
         {
             // 发送通知
@@ -331,8 +333,10 @@ static void SoftDSP_Catch2x1Data(void)
     }
     else
     {
+#ifndef FEATURE_DSP
 #ifdef SOFT_MCLK
         gpio_tlmm_config(GP_PDM);
+#endif
 #endif
     }
 }
@@ -462,10 +466,11 @@ static void SoftDSP_Catch1x1Data(void)
 #endif
         }
         INTFREE();
+#ifndef FEATURE_DSP
 #ifdef SOFT_MCLK
         gpio_tlmm_config(GP_PDM);
 #endif
-        
+#endif        
         if(g_SoftDSPInfo.bCaptureState)
         {
             // 发送通知
@@ -494,8 +499,10 @@ static void SoftDSP_Catch1x1Data(void)
     }
     else
     {
+#ifndef FEATURE_DSP
 #ifdef SOFT_MCLK
         gpio_tlmm_config(GP_PDM);
+#endif
 #endif
     }
 }

@@ -4023,10 +4023,11 @@ SIDE EFFECTS
 #if defined(T_QSC1100)
 void camsensor_unconfig_camclk_po(void)
 {
+#ifndef FEATURE_DSP
     /* GPIO - 10 */
     CAMERA_CONFIG_GPIO (GPIO_OUTPUT_10); // GP_PDM
     gpio_out(GPIO_OUTPUT_10,0);
-    
+#endif
     /* Set new PDM0 value */
     HWIO_PDM0_CTL_OUT((0  & HWIO_PDM0_CTL_PDM0_DAT_BMSK) << HWIO_PDM0_CTL_PDM0_DAT_SHFT);
     
