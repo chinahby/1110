@@ -607,15 +607,15 @@ when         who            what, where, why
 //显示数字宽度
 #define CALC_NUMBER_WIDTH             9
 //显示数字高度
-#define CALC_NUMBER_HEIGHT            18
+#define CALC_NUMBER_HEIGHT            24
 //显示计算区域X坐标原点
 #define CALC_VAL_RECT_X                  7
 //显示计算区域最底行Y坐标原点
-#define CALC_VAL_RECT_Y                  22
+#define CALC_VAL_RECT_Y                  32
 //显示计算区域宽度
-#define CALC_VAL_RECT_WIDTH          112
+#define CALC_VAL_RECT_WIDTH          280
 //显示单行计算区域高度
-#define CALC_VAL_RECT_HEIGHT         26
+#define CALC_VAL_RECT_HEIGHT         28
 //显示数字间间隔
 #define CALC_BETWEEN_NUM_PIXEL     1
     
@@ -690,6 +690,7 @@ when         who            what, where, why
 #define CALC_RETURN_Ys 113
 #define CALC_RETURN_Ws 47
 #define CALC_RETURN_Hs 54
+
 
 #endif
 

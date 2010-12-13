@@ -308,6 +308,37 @@
 
 #define CFGBAR_ARROW_WIDTH		8
 #define CFGBAR_ARROW_HEIGHT		14
+#elif defined(FEATURE_DISP_320X240)
+// camera quality
+#define CAMERA_APP_QUALITY_HIGH  33
+#define CAMERA_APP_QUALITY_MED   67
+#define CAMERA_APP_QUALITY_LOW   100
+
+// camera zoom
+#define CAMERA_APP_ZOOM_UP       1
+#define CAMERA_APP_ZOOM_DOWN     2
+
+// bar and menu position
+#define TOPBAR_ICON_Y         2
+#define TOPBAR_ICON_WIDTH     30
+#define TOPBAR_TITLE_TEXT_Y   6
+#define CFGBAR_Y              320
+#define CFGBAR_EFFECT_TEXT_Y  180
+#define SCROLLBAR_X           60
+#define SCROLLBAR_Y           160
+#define POPMENU_BOTTOM_X      60
+#define POPMENU_BOTTOM_Y      60
+#define POPMENU_WIDTH         200 //117
+
+//Add By zzg 2010_07_24
+#define CFGBAR_TEXT_X		   2
+#define CFGBAR_TEXT_Y		   18
+#define CFGBAR_TEXT_WIDTH	   80
+#define CFGBAR_TEXT_HEIGHT	   16		//NormalFont Height
+
+#define CFGBAR_ARROW_WIDTH		8
+#define CFGBAR_ARROW_HEIGHT		14
+//Add End
 //Add End
 #endif
 
