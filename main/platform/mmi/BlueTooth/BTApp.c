@@ -2921,6 +2921,7 @@ static boolean BTApp_HandleEvent
             MSG_HIGH( "HndlEv - START", 0, 0, 0 );
             event_processed = BTApp_StartBT( pMe ); 
 
+			///*
 			//Add By zzg 2010_12_13
 			if (event_processed) 
 			{
@@ -2998,6 +2999,7 @@ static boolean BTApp_HandleEvent
 				}
 			}
 			//Add End
+			//*/
 			
             break;
           default:
@@ -10198,7 +10200,7 @@ void BTApp_EnableBT( CBTApp* pMe )
 
   if (FALSE == pMe->bStartFromOtherApp)  
   {
-  	 BTApp_ShowMessage( pMe, IDS_MSG_BT_ENABLED, NULL, 5);
+  	 //BTApp_ShowMessage( pMe, IDS_MSG_BT_ENABLED, NULL, 5);
   }
   //Add End
   
@@ -10406,7 +10408,7 @@ static void BTApp_DisableBT( CBTApp* pMe )
   	(void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_BT_STATUS,&bIsBTOn,sizeof(bIsBTOn));   
   }
   
-  BTApp_ShowMessage( pMe, IDS_MSG_BT_DISABLED, NULL, 5);
+  //BTApp_ShowMessage( pMe, IDS_MSG_BT_DISABLED, NULL, 5);
   //Add End
   
 }
