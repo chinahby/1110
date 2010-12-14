@@ -874,7 +874,7 @@ when       who  what, where, why
 ===========================================================================*/
 
 //Add By zzg 2010_10_29
-#define BTBAR_HEIGHT	(BOTTOMBAR_HEIGHT + 7)
+#define BTBAR_HEIGHT	BOTTOMBAR_HEIGHT	//(BOTTOMBAR_HEIGHT + 7)
 //Add End
 
 //Add By zzg 2010_11_16
