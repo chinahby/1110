@@ -65,7 +65,41 @@
                                  类型定义
 ==============================================================================*/
 #define  AEE_APPSCOMMONRES_IMAGESFILE "fs:/sys/appscommonimages.bar"
+#if defined(FEATURE_DISP_160X128)
+#define SECONDE_LINE  50
+#define THRID_LINE    66
+#define FOUR_LINE     82
+#define FIVE_LINE     98
+#define LEFT_START    44
+#define RITHT_START   94
+#define RTIHT_END     116
+#define DOWN_Y        34
+#define ENDCALL_START 136
+#define ENDCALL_END   140
 
+#elif defined(FEATURE_DISP_220X176)
+#define SECONDE_LINE  68
+#define THRID_LINE    90
+#define FOUR_LINE     112
+#define FIVE_LINE     134
+#define LEFT_START    60
+#define RITHT_START   128
+#define RTIHT_END     164
+#define DOWN_Y        44
+#define ENDCALL_START 192
+#define ENDCALL_END   198
+#else
+#define SECONDE_LINE  68
+#define THRID_LINE    90
+#define FOUR_LINE     112
+#define FIVE_LINE     134
+#define LEFT_START    60
+#define RITHT_START   128
+#define RTIHT_END     164
+#define DOWN_Y        44
+#define ENDCALL_START 192
+#define ENDCALL_END   198
+#endif
 #define  AEE_QUICKTEST_RES_FILE (AEE_RES_LANGDIR QUICKTEST_RES_FILE)
 typedef void (* qdsp_cmd_isr_func_type) (void);
 
