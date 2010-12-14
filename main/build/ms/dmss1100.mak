@@ -118,7 +118,7 @@ endif
 
 ifeq ($(USES_MMI), yes)
 MODELNAME = $(BUILD)#  #Product Model english name.
-INTERVERSION  = $(DISPLAYNAME)_$(PROJECTNAME)_FM_V0.9
+INTERVERSION  = $(BASEPROJECTNAME)_$(PROJECTNAME)_$(USES_LCD_SIZE)_V1.0
 
 CUSTOMER_NAME = common# Change "common" to the customer name you will sell to
 MODEL_RF_NV = rf_$(MODELNAME)_nv.h#
