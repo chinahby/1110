@@ -199,9 +199,9 @@ const sLCD_ATTRIBUITE gsPreviewAttrib[]=
 		AIT_CAM_PREV_FULL_MODE,
 		CAM_ROTATE_NORMAL,//CAM_ROTATE_NORMAL,
 		{0,0,A8_MAIN_LCD_WIDTH,A8_MAIN_LCD_HEIGHT},
-		{0,0,320,240},
-		{0,0,0,0},
-		{0,0,0,0}
+		 {0,0,320,80},
+    	 {0,0,0,0},
+         {0,220,320,20}
 	},
 	{
 		AIT_CAM_PREV_NOR_MODE,

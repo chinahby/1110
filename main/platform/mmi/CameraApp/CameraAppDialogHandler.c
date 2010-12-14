@@ -3339,7 +3339,7 @@ static int CameraApp_UpdateInit(CCameraApp *pMe)
 {
     if(pMe->m_nCameraState == CAM_PREVIEW)
     {
-        IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, TRANS_COLOR);
+        IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, TRANS_COLOR,AEE_RO_COPY);
         return SUCCESS;
     }
     else
