@@ -4,7 +4,7 @@
 @set QUALCOMMNAME=SBNAALZ
 @set QUALCOMMNAME_BUILD=SXNAALZ
 @set RESOURCEDIR=Flexi203p
-@set MODELVERSION=none
+@set MODELVERSION=Flexi203P_CAM_FM_V1.0_20101214
 @set HWVERSION=W203_MB_V0.6
 rem delete some files for compile muslim or nasrani
 del %PROJECTNAME%\CoreAppDialogHandler.o
