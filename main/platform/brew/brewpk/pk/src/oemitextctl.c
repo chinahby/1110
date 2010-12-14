@@ -1840,6 +1840,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                 if(pme->m_wResID != 0)
                 {
                     IImage *RightTopImg; 
+                    AEEImageInfo m_Imageinfo = {0};
                     RightTopImg = NULL;   
 					MSG_FATAL("pme->m_wResID:::::::::::::::::::%d",pme->m_wResID,0,0);
                     RightTopImg = ISHELL_LoadResImage(pme->m_pIShell,
@@ -1847,7 +1848,8 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                                         pme->m_wResID);
                     if(RightTopImg != NULL)
                     {
-                        IIMAGE_Draw(RightTopImg, qrc.dx-30, qrc.y + 1);
+                    	IImage_GetInfo(RightTopImg,&m_Imageinfo);
+                        IIMAGE_Draw(RightTopImg, qrc.dx-m_Imageinfo.cx-2, qrc.y + 1);
                         IIMAGE_Release(RightTopImg);
                         RightTopImg = NULL;
                     }                    
