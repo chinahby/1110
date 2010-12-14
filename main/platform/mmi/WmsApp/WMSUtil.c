@@ -3457,7 +3457,11 @@ int GetSeamlessSMSInfo(char *szInfoEx, int nSize)
     GETJULIANDATE(0, &julian);
     
     // 格式化数据：品牌、机型、手机ESN、MDN、MIN、当前软件版本、时间
+#ifdef FEATURE_VERSION_FLEXI203P
+    STRCPY(szInfo, "IV;C-500Plus;");
+#else
     STRCPY(szInfo, "IV;C500;");
+#endif
     len = STRLEN(szInfo);
     SPRINTF(&szInfo[len],"%x", mi.dwESN);
     len += STRLEN(&szInfo[len]);

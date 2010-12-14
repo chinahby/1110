@@ -5,9 +5,13 @@
 #define CUST_EDITION
 #endif
 
-
+#define FEATURE_NET_LOCK
+#define FEATURE_LONG_NETLOCK
+#define FEATURE_SEAMLESS_SMS
+#define FEATURE_SUPPORT_ID
 #define SOFTWARE_VER04
 #define FEATURE_VERSION_FLEXI203P
+#define FEATURE_LANG_INDONESIAN   
 
 #ifndef TARGSBW2_H
    #include "targsb12864.h"

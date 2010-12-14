@@ -236,12 +236,12 @@
 #define SCROLLBAR_Y           160
 #define POPMENU_BOTTOM_X      60
 #define POPMENU_BOTTOM_Y      60
-#define POPMENU_WIDTH         100 //117
+#define POPMENU_WIDTH         117 //117
 
 //Add By zzg 2010_07_24
 #define CFGBAR_TEXT_X		   2
 #define CFGBAR_TEXT_Y		   21
-#define CFGBAR_TEXT_WIDTH	   80
+#define CFGBAR_TEXT_WIDTH	   100
 #define CFGBAR_TEXT_HEIGHT	   20		//NormalFont Height
 
 #define CFGBAR_ARROW_WIDTH		8
@@ -357,7 +357,11 @@
 #define MIN_TEXT_RES_LEN       20
 
 #define MIN_FREE_MEMORY_CARD_SPACE   32
+#ifdef FEATURE_VERSION_FLEXI203P
+#define MIN_FREE_PHONE_SPACE         512
+#else
 #define MIN_FREE_PHONE_SPACE         1
+#endif
 
 // file path
 #define FS_EFS_DIRECTORY_STR       "fs:/hsmm/"
