@@ -78,7 +78,19 @@
 #define     MAX_SPORTS_DISTANCE             5
 #define     MAX_SPORTS_TIME                 3
 
+#if defined(FEATURE_DISP_160X128)
+#define ARROW_WIDTH           8
+#define ARROW_HEIGHT          16
 
+#elif defined(FEATURE_DISP_220X176)
+#define ARROW_WIDTH           11
+#define ARROW_HEIGHT          22
+
+#else
+#define ARROW_WIDTH           8
+#define ARROW_HEIGHT          16
+
+#endif
 
 #if defined( AEE_SIMULATOR)
 	#define  AEE_SCHEDULEAPP_RES_FILE ("fs:/mod/scheduleapp/en/" SCHEDULEAPP_RES_FILE)

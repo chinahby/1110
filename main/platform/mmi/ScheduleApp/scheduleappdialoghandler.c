@@ -3602,20 +3602,20 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
                     if( i == 4 || i == 5)
                     {
                         IDISPLAY_FillRect( pme->m_pDisplay, &rc, RGB_WHITE);
-                        drawLeftRightArrows( pme, x, rc.y + (rc.dy - 8) / 2, x + width - 8, rc.y + (rc.dy - 8) / 2);
+                        drawLeftRightArrows( pme, x, rc.y + (rc.dy - ARROW_WIDTH) / 2, x + width - ARROW_WIDTH, rc.y + (rc.dy - ARROW_WIDTH) / 2);
 
-                        rc.x    += 8;
-                        rc.dx   -= 16;
+                        rc.x    += ARROW_WIDTH;
+                        rc.dx   -= ARROW_HEIGHT;
                     }
                     if(pme->m_sports)
                     { 
                         if( i == 3)
                         {
                             IDISPLAY_FillRect( pme->m_pDisplay, &rc, RGB_WHITE);
-                            drawLeftRightArrows( pme, x, rc.y + (rc.dy - 8) / 2, x + width - 8, rc.y + (rc.dy - 8) / 2);
+                            drawLeftRightArrows( pme, x, rc.y + (rc.dy - ARROW_WIDTH) / 2, x + width - ARROW_WIDTH, rc.y + (rc.dy - ARROW_WIDTH) / 2);
 
-                            rc.x += 8;
-                            rc.dx -= 16;
+                            rc.x += ARROW_WIDTH;
+                            rc.dx -= ARROW_HEIGHT;
                         }
                         
                     }
@@ -4396,10 +4396,10 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
                     if( i < 2)
                     {
                         IDISPLAY_FillRect( pme->m_pDisplay, &rc, RGB_WHITE);
-                        drawLeftRightArrows( pme, x, rc.y + (rc.dy - 8) / 2, x + width - 8, rc.y + (rc.dy - 8) / 2);
+                        drawLeftRightArrows( pme, x, rc.y + (rc.dy - ARROW_WIDTH) / 2, x + width - ARROW_WIDTH, rc.y + (rc.dy - ARROW_WIDTH) / 2);
 
-                        rc.x    += 8;
-                        rc.dx   -= 16;
+                        rc.x    += ARROW_WIDTH;
+                        rc.dx   -= ARROW_HEIGHT;
                     }
                     ICONTROL_SetRect( pControls[(i<<1)+1], &rc);
 

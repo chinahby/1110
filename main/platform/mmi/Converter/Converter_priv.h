@@ -225,9 +225,16 @@ typedef struct _CConverter
 #define MAX_DECIMAL_NUMBER (6)
 #define MAX_INT_NUMBER         (9)
 #define CONVERTER_PROMPTMSG_TIMER (3000)
-
+#if defined(FEATURE_DISP_160X128)
 #define ARROW_WIDTH             (8)
 #define ARROW_HEIGHT            (8)
+#elif defined(FEATURE_DISP_220X176)
+#define ARROW_WIDTH             (11)
+#define ARROW_HEIGHT            (8)
+#else
+#define ARROW_WIDTH             (8)
+#define ARROW_HEIGHT            (8)
+#endif
 #define CHARACTOR_PIC_WIDTH (32)
 #define RGB_ORANGE                (MAKE_RGB(0xFF,0x90,0x30))
 

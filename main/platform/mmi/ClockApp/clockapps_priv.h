@@ -118,7 +118,16 @@ void registerPowerdownAlarmclock( void);
 #define IDC_CLOCK_TIME      (2)
 #define IDC_REP_MOD_LIST    (3)
 #define IDC_CLOCK_SNOOZE    (4)
-
+#if defined(FEATURE_DISP_160X128)
+#define LEFT_ICON_WHID    8
+#define LEFT_ICON_HEIGHT  16
+#elif defined(FEATURE_DISP_220X176)
+#define LEFT_ICON_WHID    12
+#define LEFT_ICON_HEIGHT  22
+#else
+#define LEFT_ICON_WHID    8
+#define LEFT_ICON_HEIGHT  16
+#endif
 #define debug(...)
 
 // 状态移动宏：先将前一状态用当前状态更新，再将当前状态设为nextState

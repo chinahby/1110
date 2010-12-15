@@ -1255,12 +1255,14 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
 
                     SETAEERECT( &pMe->rectLine[i], x, pMe->rectLine[i].y - 2, width, pMe->rectLine[i].dy + 4);
                     IDISPLAY_FillRect( pMe->m_pDisplay, &pMe->rectLine[i], RGB_WHITE);
-
                     if( i == 0 || i == 2 || i == 3)
                     {
-                        SETAEERECT( &pMe->rectLine[i], x + 8, pMe->rectLine[i].y, width - 16, pMe->rectLine[i].dy);
+                    
+                        SETAEERECT( &pMe->rectLine[i], x + LEFT_ICON_WHID, pMe->rectLine[i].y, width - LEFT_ICON_HEIGHT, pMe->rectLine[i].dy);
                         CClockApps_Draw_Arrow( pMe, &pMe->rectLine[i]);
+                        SETAEERECT( &pMe->rectLine[i], x + LEFT_ICON_WHID-(LEFT_ICON_WHID-8), pMe->rectLine[i].y, width - LEFT_ICON_HEIGHT+(LEFT_ICON_HEIGHT-16), pMe->rectLine[i].dy);
                     }
+                    
                     ICONTROL_SetRect( pControl[i], &pMe->rectLine[i]);
                 }
             }

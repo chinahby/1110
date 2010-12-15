@@ -251,9 +251,17 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 
 #define CONTAPP_APPREADY_MS             (400)
 
-
+#if defined(FEATURE_DISP_160X128)
 #define SEARCH_INPUTBOX_GAP             (6)
 #define SEARCH_IMEICON_WIDTH            (28)
+#elif defined(FEATURE_DISP_220X176)
+#define SEARCH_INPUTBOX_GAP             (6)
+#define SEARCH_IMEICON_WIDTH            (38)
+#else
+#define SEARCH_INPUTBOX_GAP             (6)
+#define SEARCH_IMEICON_WIDTH            (28)
+
+#endif
 /*==============================================================================
                                  ∫Í∂®“Â
 ==============================================================================*/
