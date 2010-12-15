@@ -573,8 +573,6 @@ static void disp_drv_update
             {
                 if((row_start[i]|col_start[i])>=0 && col_num[i]>0 && row_num[i]>0)
                 {
-                    MSG_FATAL("disp_ic_setwindow %d %d %d",i,row_start[i],col_start[i]);
-                    MSG_FATAL("disp_ic_setwindow %d %d",row_num[i],col_num[i],0);
                     disp_drv_ic.disp_ic_setwindow(row_start[i], col_start[i], 
                                                   row_start[i] + row_num[i] - 1,
                                                   col_start[i] + col_num[i] - 1);
