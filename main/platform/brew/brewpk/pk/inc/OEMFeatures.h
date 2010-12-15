@@ -177,7 +177,7 @@ GENERAL DESCRIPTION:
 #endif
 
 #ifndef WIN32
-#ifdef FEATURE_CAMERA
+#if defined(FEATURE_CAMERA) || defined(FEATURE_DSP)
 #define FEATURE_ICAMERA    /* ICAMERA Extension */
 #define FEATURE_BREW_CAMERA
 #endif /* FEATURE_CAMERA */

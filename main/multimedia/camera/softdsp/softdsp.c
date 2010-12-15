@@ -37,7 +37,7 @@ Copyright(c) 2007 by QUALCOMM, Incorporated. All Rights Reserved.
 #define SOFTDSP_HSYNC_MASK      0x80000
 #define MATH_FACTOR_BIT         10
 #define SOFT_MCLK
-#define SOFTDSP_KICK_DOG()      HWIO_OUTM(WDOG_RESET,HWIO_FMSK(WDOG_RESET,WATCH_DOG),1)
+#define SOFTDSP_KICK_DOG()      //HWIO_OUTM(WDOG_RESET,HWIO_FMSK(WDOG_RESET,WATCH_DOG),1)
 
 struct SoftDSPInfo{
     const camsensor_static_params_type *camsensor_params;
@@ -169,23 +169,15 @@ static INLINE void SoftDSP_ClockOut(int nCount)
 }
 #endif
 
-static void SoftDSP_Catch2x1Data(void)
+static void SoftDSP_CatchPreviewData(void)
 {
     uint16 *pBuff = NULL;
     uint32  pixelSize = 0;
     CAMSoftDSP_EndOfFrameMessageType *pEofFrame;
     
-    if(g_SoftDSPInfo.bCaptureState)
-    {
-        pBuff = g_SoftDSPInfo.pCaptureBuff;
-        pixelSize = g_SoftDSPInfo.nCaptureWidth;
-        SoftDSP_DisableISR();
-    }
-    else
-    {
-        pBuff = SoftDSP_GetPreviewBuff();
-        pixelSize = g_SoftDSPInfo.nPreviewWidth;
-    }
+
+    pBuff = SoftDSP_GetPreviewBuff();
+    pixelSize = g_SoftDSPInfo.nPreviewWidth;
     
     if(pBuff)
     {
@@ -201,182 +193,8 @@ static void SoftDSP_Catch2x1Data(void)
         xStart = g_SoftDSPInfo.camsensor_params->camif_window_width_config.firstPixel;
         xOutEnd = g_SoftDSPInfo.camsensor_params->camif_frame_config.pixelsPerLine - \
                   g_SoftDSPInfo.camsensor_params->camif_window_width_config.lastPixel;
-
-        MSG_FATAL("SoftDSP_CatchSensorData 0x%x %d %d",pBuff,xStart,xOutEnd);
-        MSG_FATAL("SoftDSP_CatchSensorData %d %d %d",g_SoftDSPInfo.bCaptureState,pixelSize,g_SoftDSPInfo.camsensor_params->camif_window_height_config.lastLine);
-        INTLOCK();
-        // HSYNC
-        while(1)
-        {
-            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-            SOFTDSP_KICK_DOG();
-            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
-            if(!(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_HSYNC_MASK))
-            {
-                break;
-            }
-        }
-        SOFTDSP_KICK_DOG();
-#endif
-        pData = pBuff;
-#ifdef SOFT_MCLK
-        for(y=0;y<g_SoftDSPInfo.camsensor_params->camif_window_height_config.firstLine;y++)
-        {
-            while(1)
-            {
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-                SOFTDSP_KICK_DOG();
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
-                if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_HSYNC_MASK)
-                {
-                    break;
-                }
-            }
-            
-            while(1)
-            {
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-                SOFTDSP_KICK_DOG();
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
-                if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_PCLK_MASK)
-                {
-                    break;
-                }
-            }
-            SoftDSP_ClockOut(g_SoftDSPInfo.camsensor_params->camif_frame_config.pixelsPerLine*2);
-            SOFTDSP_KICK_DOG();
-        }
-#endif
-        for(;y<g_SoftDSPInfo.camsensor_params->camif_window_height_config.lastLine;y++)
-        {
-#ifdef SOFT_MCLK
-            while(1)
-            {
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-                SOFTDSP_KICK_DOG();
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
-                if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_HSYNC_MASK)
-                {
-                    break;
-                }
-            }
-
-            while(1)
-            {
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-                SOFTDSP_KICK_DOG();
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
-                if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_PCLK_MASK)
-                {
-                    break;
-                }
-            }
-            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
-            
-            SoftDSP_ClockOut(xStart*2);
-#endif
-            for(x=0;x<pixelSize;x++)
-            {
-#ifdef SOFT_MCLK
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
-#endif
-                data = (uint16)(inpdw(SOFTDSP_DATA_ADDR)>>10)<<8;
-#ifdef SOFT_MCLK
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
-                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
-#endif
-                data |= (uint16)(inpdw(SOFTDSP_DATA_ADDR)>>10)&0xFF;
-                *pData++=data;
-            }
-            SOFTDSP_KICK_DOG();
-#ifdef SOFT_MCLK
-            SoftDSP_ClockOut(xOutEnd*2);
-#endif
-        }
-		INTFREE();
-#ifndef FEATURE_DSP        
-#ifdef SOFT_MCLK
-        gpio_tlmm_config(GP_PDM);
-#endif
-#endif
-        if(g_SoftDSPInfo.bCaptureState)
-        {
-            // 发送通知
-            if(g_SoftDSPInfo.msgcb)
-            {
-                pEofFrame = &g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME].responsePayload.endOfFrame;
-                pEofFrame->frame_seq_num = g_SoftDSPInfo.nSeqNum++;
-                pEofFrame->pBuff         = (byte*)pBuff;
-                g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME].responseMsg = CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME;
-                g_SoftDSPInfo.msgcb(&g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME]);
-            }
-        }
-        else
-        {
-            // 发送通知
-            if(g_SoftDSPInfo.msgcb)
-            {
-                pEofFrame = &g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME].responsePayload.endOfFrame;
-                pEofFrame->frame_seq_num = g_SoftDSPInfo.nSeqNum++;
-                pEofFrame->pBuff         = (byte*)pBuff;
-                g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME].responseMsg = CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME;
-                SoftDSP_RefreshPreviewBuff();
-                g_SoftDSPInfo.msgcb(&g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME]);
-            }
-        }
-    }
-    else
-    {
-#ifndef FEATURE_DSP
-#ifdef SOFT_MCLK
-        gpio_tlmm_config(GP_PDM);
-#endif
-#endif
-    }
-}
-
-static void SoftDSP_Catch1x1Data(void)
-{
-    uint16 *pBuff = NULL;
-    uint32  pixelSize = 0;
-    CAMSoftDSP_EndOfFrameMessageType *pEofFrame;
-    
-    if(g_SoftDSPInfo.bCaptureState)
-    {
-        pBuff = g_SoftDSPInfo.pCaptureBuff;
-        pixelSize = g_SoftDSPInfo.nCaptureWidth;
-        SoftDSP_DisableISR();
-    }
-    else
-    {
-        pBuff = SoftDSP_GetPreviewBuff();
-        pixelSize = g_SoftDSPInfo.nPreviewWidth;
-    }
-    
-    if(pBuff)
-    {
-        // 从Sensor获取数据
-        int x,y;
-        register uint16 data,*pData;
-#ifdef SOFT_MCLK
-        register uint32 clkh,clkl;
-        int xStart,xOutEnd;
         
-        clkh = inpdw(HWIO_GPIO2_OUT_0_ADDR)|SOFTDSP_CLK_H;
-        clkl = inpdw(HWIO_GPIO2_OUT_0_ADDR)&SOFTDSP_CLK_MASK;
-        xStart = g_SoftDSPInfo.camsensor_params->camif_window_width_config.firstPixel;
-        xOutEnd = g_SoftDSPInfo.camsensor_params->camif_frame_config.pixelsPerLine - \
-                  g_SoftDSPInfo.camsensor_params->camif_window_width_config.lastPixel;
-
-        MSG_FATAL("SoftDSP_CatchSensorData 0x%x %d %d",pBuff,xStart,xOutEnd);
-        MSG_FATAL("SoftDSP_CatchSensorData %d %d %d",g_SoftDSPInfo.bCaptureState,pixelSize,g_SoftDSPInfo.camsensor_params->camif_window_height_config.lastLine);
-        INTLOCK();
+        //INTLOCK();
         // HSYNC
         while(1)
         {
@@ -465,36 +283,161 @@ static void SoftDSP_Catch1x1Data(void)
             SoftDSP_ClockOut(xOutEnd);
 #endif
         }
-        INTFREE();
+		//INTFREE();
+#ifndef FEATURE_DSP        
+#ifdef SOFT_MCLK
+        gpio_tlmm_config(GP_PDM);
+#endif
+#endif
+        // 发送通知
+        if(g_SoftDSPInfo.msgcb)
+        {
+            pEofFrame = &g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME].responsePayload.endOfFrame;
+            pEofFrame->frame_seq_num = g_SoftDSPInfo.nSeqNum++;
+            pEofFrame->pBuff         = (byte*)pBuff;
+            g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME].responseMsg = CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME;
+            SoftDSP_RefreshPreviewBuff();
+            g_SoftDSPInfo.msgcb(&g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME]);
+        }
+    }
+    else
+    {
+#ifndef FEATURE_DSP
+#ifdef SOFT_MCLK
+        gpio_tlmm_config(GP_PDM);
+#endif
+#endif
+    }
+}
+
+static void SoftDSP_CatchCaptureData(void)
+{
+    uint16 *pBuff = NULL;
+    uint32  pixelSize = 0;
+    CAMSoftDSP_EndOfFrameMessageType *pEofFrame;
+    
+    pBuff = g_SoftDSPInfo.pCaptureBuff;
+    pixelSize = g_SoftDSPInfo.nCaptureWidth;
+    SoftDSP_DisableISR();
+    
+    if(pBuff)
+    {
+        // 从Sensor获取数据
+        int x,y;
+        register uint16 data,*pData;
+#ifdef SOFT_MCLK
+        register uint32 clkh,clkl;
+        int xStart,xOutEnd;
+        
+        clkh = inpdw(HWIO_GPIO2_OUT_0_ADDR)|SOFTDSP_CLK_H;
+        clkl = inpdw(HWIO_GPIO2_OUT_0_ADDR)&SOFTDSP_CLK_MASK;
+        xStart = g_SoftDSPInfo.camsensor_params->camif_window_width_config.firstPixel;
+        xOutEnd = g_SoftDSPInfo.camsensor_params->camif_frame_config.pixelsPerLine - \
+                  g_SoftDSPInfo.camsensor_params->camif_window_width_config.lastPixel;
+        
+        //INTLOCK();
+        // HSYNC
+        while(1)
+        {
+            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+            SOFTDSP_KICK_DOG();
+            outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+            if(!(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_HSYNC_MASK))
+            {
+                break;
+            }
+        }
+        SOFTDSP_KICK_DOG();
+#endif
+        pData = pBuff;
+#ifdef SOFT_MCLK
+        for(y=0;y<g_SoftDSPInfo.camsensor_params->camif_window_height_config.firstLine;y++)
+        {
+            while(1)
+            {
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+                SOFTDSP_KICK_DOG();
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+                if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_HSYNC_MASK)
+                {
+                    break;
+                }
+            }
+            
+            while(1)
+            {
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+                SOFTDSP_KICK_DOG();
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+                if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_PCLK_MASK)
+                {
+                    break;
+                }
+            }
+            SoftDSP_ClockOut(g_SoftDSPInfo.camsensor_params->camif_frame_config.pixelsPerLine);
+            SOFTDSP_KICK_DOG();
+        }
+#endif
+        for(;y<g_SoftDSPInfo.camsensor_params->camif_window_height_config.lastLine;y++)
+        {
+#ifdef SOFT_MCLK
+            while(1)
+            {
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+                SOFTDSP_KICK_DOG();
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+                if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_HSYNC_MASK)
+                {
+                    break;
+                }
+            }
+
+            while(1)
+            {
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+                SOFTDSP_KICK_DOG();
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+                if(inpdw(SOFTDSP_DATA_ADDR)&SOFTDSP_PCLK_MASK)
+                {
+                    break;
+                }
+            }
+            
+            SoftDSP_ClockOut(xStart);
+#endif
+            for(x=0;x<pixelSize;x++)
+            {
+#ifdef SOFT_MCLK
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+#endif
+                data = (uint16)(inpdw(SOFTDSP_DATA_ADDR)>>10)<<8;
+#ifdef SOFT_MCLK
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkl);
+                outpdw(HWIO_GPIO2_OUT_0_ADDR, clkh);
+#endif
+                data |= (uint16)(inpdw(SOFTDSP_DATA_ADDR)>>10)&0xFF;
+                *pData++=data;
+            }
+            SOFTDSP_KICK_DOG();
+#ifdef SOFT_MCLK
+            SoftDSP_ClockOut(xOutEnd);
+#endif
+        }
+        //INTFREE();
 #ifndef FEATURE_DSP
 #ifdef SOFT_MCLK
         gpio_tlmm_config(GP_PDM);
 #endif
 #endif        
-        if(g_SoftDSPInfo.bCaptureState)
+        // 发送通知
+        if(g_SoftDSPInfo.msgcb)
         {
-            // 发送通知
-            if(g_SoftDSPInfo.msgcb)
-            {
-                pEofFrame = &g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME].responsePayload.endOfFrame;
-                pEofFrame->frame_seq_num = g_SoftDSPInfo.nSeqNum++;
-                pEofFrame->pBuff         = (byte*)pBuff;
-                g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME].responseMsg = CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME;
-                g_SoftDSPInfo.msgcb(&g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME]);
-            }
-        }
-        else
-        {
-            // 发送通知
-            if(g_SoftDSPInfo.msgcb)
-            {
-                pEofFrame = &g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME].responsePayload.endOfFrame;
-                pEofFrame->frame_seq_num = g_SoftDSPInfo.nSeqNum++;
-                pEofFrame->pBuff         = (byte*)pBuff;
-                g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME].responseMsg = CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME;
-                SoftDSP_RefreshPreviewBuff();
-                g_SoftDSPInfo.msgcb(&g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT1_END_OF_FRAME]);
-            }
+            pEofFrame = &g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME].responsePayload.endOfFrame;
+            pEofFrame->frame_seq_num = g_SoftDSPInfo.nSeqNum++;
+            pEofFrame->pBuff         = (byte*)pBuff;
+            g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME].responseMsg = CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME;
+            g_SoftDSPInfo.msgcb(&g_SoftDSPInfo.MsgRespones[CAMSOFTDSP_MSG_OUTPUT2_END_OF_FRAME]);
         }
     }
     else
@@ -599,13 +542,13 @@ int SoftDSP_HandleMSG(int msg, void *pBuff)
 {
     switch(msg){
     case CAMSOFTDSP_MSG_START_OF_FRAME:
-        if(g_SoftDSPInfo.camsensor_params->pixel_clock == 1)
+        if(g_SoftDSPInfo.bCaptureState)
         {
-            SoftDSP_Catch1x1Data();
+            SoftDSP_CatchCaptureData();
         }
         else
         {
-            SoftDSP_Catch2x1Data();
+            SoftDSP_CatchPreviewData();
         }
         break;
         

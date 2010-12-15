@@ -229,7 +229,7 @@ typedef struct _CQuickTest {
 #ifdef FEATURE_SUPPORT_BT_APP
     dilag_type m_dilag_type;
 #endif
-#ifdef FEATURE_CAMERA 
+#ifdef FEATURE_BREW_CAMERA 
     boolean m_isFormCamera;
 #endif
     uint32  m_testkeycount;

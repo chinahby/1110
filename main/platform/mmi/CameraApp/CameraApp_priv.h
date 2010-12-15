@@ -499,7 +499,9 @@ typedef struct _CCameraApp
     IDisplay             *m_pDisplay;
     IShell               *m_pShell;    
     AEERect               m_rc;
-    
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+    AEERect               m_rcPreview;
+#endif
     // 当前活动对话框IDialog接口指针
     IDialog              *m_pActiveDlg;
     

@@ -1106,6 +1106,9 @@ typedef enum
   /* RGB888, each pixel is 3 bytes. R is 8 bits, G is 8 bits,
    * B is 8 bits*/
   CAMERA_RGB888
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+  ,CAMERA_TOLCD
+#endif
 } camera_format_type;
 
 typedef enum

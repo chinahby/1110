@@ -240,6 +240,9 @@ static camera_info_type gCameraInfo;
 #ifdef  FEATURE_CAMERA_LCD_DIRECT_MODE
 static boolean bDirectMode;
 #endif
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+static boolean bDirectToLCD;
+#endif
 
 /*===========================================================================
 
@@ -941,7 +944,9 @@ Done:
   /* Default to Frame CallBack whenever you enter the Camera App */
   bDirectMode = FALSE; 
 #endif
-
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+  bDirectToLCD = FALSE;
+#endif
   OEMCamera_InitCameraRsp(pme, CAM_CMD_START);
   OEMCamera_InitCameraRsp(pme, CAM_CMD_SETPARM);
   OEMCamera_InitCameraRsp(pme, CAM_CMD_ENCODESNAPSHOT);
@@ -1732,7 +1737,27 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
       case CAM_PARM_RED_EYE_REDUCTION:
          eParm = CAMERA_PARM_RED_EYE_REDUCTION;
          break;
-
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+      case CAM_PARM_LCD_DIRECT_ACCESS:
+      {
+        if(p2 != 0)
+        {
+          AEERect *pRect = (AEERect *) p2;
+          pme->m_cxOffset       = pRect->x;
+          pme->m_cyOffset       = pRect->y;
+          pme->m_sizeDisplay.cx = pRect->dx;
+          pme->m_sizeDisplay.cy = pRect->dy;
+          bDirectToLCD= (boolean)p1;
+        }
+        else //p1 > 0 and p2 == 0
+        {
+          nRet = CAMERA_INVALID_PARM;
+        }
+      }
+      //No callback required for this SetParm.
+      nRet = OEMCamera_AEEError(nRet);
+      break;
+#endif
 #ifdef FEATURE_CAMERA_LCD_DIRECT_MODE
       //Suggest using CAM_PARM_LCD_DIRECT_ACCESS_EX to replace this
       case CAM_PARM_LCD_DIRECT_ACCESS:
@@ -4278,6 +4303,14 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
            }
            else
 #endif /* FEATURE_CAMERA_LCD_DIRECT_MODE */
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+           if(bDirectToLCD)
+           {
+             DBGPRINTF("Update TO %d %d %d %d",pme->m_cxOffset,pme->m_cyOffset,pme->m_sizeDisplay.cx,pme->m_sizeDisplay.cy);
+             camera_blt_ext((camera_frame_type *)parm4, 0, 0, 0, pme->m_cxOffset, pme->m_cyOffset, pme->m_sizeDisplay.cx, pme->m_sizeDisplay.cy, CAMERA_TOLCD);
+           }
+           else
+#endif
            {
              OEMCamera_SaveFrameInfo(pme, (camera_frame_type *)parm4);
              nStatus = CAM_STATUS_FRAME;

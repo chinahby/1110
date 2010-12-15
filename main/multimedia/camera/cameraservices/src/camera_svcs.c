@@ -1897,7 +1897,86 @@ camera_ret_code_type camera_svcs_set_exif_tag
     event_report (EVENT_CAMERA_SET_FAILED);
     return CAMERA_NOT_SUPPORTED;
 }
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+#include "disp.h"
+camera_ret_code_type camera_svcs_blt_to_lcd
+(
+  camera_frame_type *frame,
+  uint16             x,
+  uint16             y,
+  uint16             dx,
+  uint16             dy
+)
+{
+/*lint -save -e715 function param not referenced */
+  qcamrawHeaderType *header;
+  byte *bmy_addr;
+  
+  /* Do a Null Check for frame pointer */
+  if(frame->buffer!=NULL)
+  {
+     header= (qcamrawHeaderType *) frame->buffer;
+  }
+  else
+  {  
+     return CAMERA_INVALID_PARM;
+  }
+  
+  if (header->frameType == QCAMRAW_PICTURE_FRAME)
+  {
 
+    if ((*(uint32*)(frame->thumbnail_image)   != 0x4D414351) ||
+        (*(uint32*)(frame->thumbnail_image+4) != 0x20574152))
+    {
+      event_report (EVENT_CAMERA_INVALID_STATE);
+      return CAMERA_INVALID_FORMAT;
+    }
+    bmy_addr = qcamrawGetDataYPtr (frame->thumbnail_image);
+  }
+  else if ((header->frameType == QCAMRAW_PREVIEW_FRAME) &&
+           ((camera_state == CAMERA_STATE_PREVIEW) ||
+            (camera_state == CAMERA_STATE_RECORDING) ||
+            (camera_state == CAMERA_STATE_QVP_ENCODING)))
+  {
+    if ((header->buffer_index >= CAMERA_NUM_OF_PREVIEW_BUFFERS) ||
+        ((uint32)(frame->buffer) % 4 != 0) ||
+        (*(uint32*)(frame->buffer) != 0x4D414351) ||
+        (*(uint32*)(frame->buffer+4) != 0x20574152))
+    {
+      event_report (EVENT_CAMERA_INVALID_STATE);
+      return CAMERA_INVALID_FORMAT;
+    }
+    bmy_addr = qcamrawGetDataYPtr (frame->buffer);
+  }
+  else
+  {
+    event_report (EVENT_CAMERA_INVALID_STATE);
+    return CAMERA_INVALID_FORMAT;
+  }
+  
+  if(frame->format == CAMERA_RGB565)
+  {
+    disp_update(bmy_addr, dx, 0, 0, dy, dx, y, x);
+  }
+  else
+  {
+    if (header->frameType == QCAMRAW_PREVIEW_FRAME)
+    {
+       graph_queue_camera_func ((uint32)CAMERA_FUNC_RELEASE_FRAME,(void *)0, (void *)0, (uint32) header->buffer_index, 0, 0, 0);
+    }
+    return CAMERA_INVALID_FORMAT;
+  }
+  
+  if (header->frameType == QCAMRAW_PREVIEW_FRAME)
+  {
+    graph_queue_camera_func ((uint32)CAMERA_FUNC_RELEASE_FRAME,(void *)0, (void *)0, (uint32) header->buffer_index, 0, 0, 0);
+  }
+  return CAMERA_SUCCESS;
+
+/*lint -restore */
+} /* camera_svcs_blt_ex */
+
+#endif
 /*===========================================================================
 
 FUNCTION      CAMERA_BLT
@@ -1969,6 +2048,12 @@ camera_ret_code_type camera_svcs_blt_ext
   camera_format_type format
 )
 {
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+  if(format == CAMERA_TOLCD)
+  {
+    return camera_svcs_blt_to_lcd(frame, x, y, dx, dy);
+  }
+#endif
   return camera_svcs_blt_ex(frame, dst_dx, dst_dy, dst_ptr, x, y, dx, dy, format);
 }
 
@@ -2064,7 +2149,7 @@ camera_ret_code_type camera_svcs_blt_ex
     wCpyWidth  = MIN(dx,frame->dx);
     wCpyHeight = MIN(dy,frame->dy);
     nSrcPitch  = frame->dx;
-    nDstPitch  = dx;
+    nDstPitch  = dst_dx;
     pBitsDst16+= y*nDstPitch+x;
     
     for(i=0; i<wCpyHeight; i++)

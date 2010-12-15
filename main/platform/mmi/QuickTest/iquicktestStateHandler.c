@@ -86,7 +86,7 @@ static NextFSMAction QUICKTESTSTRestoreFactoryHandler(CQuickTest *pMe);
 // 状态 QUICKTESTST_EXIT 处理函数
 static NextFSMAction QUICKTESTSTExitHandler(CQuickTest *pMe);
 
-#ifdef FEATURE_CAMERA
+#ifdef FEATURE_BREW_CAMERA
 // 状态 QUICKTESTST_CAMERATEST 处理函数
 static NextFSMAction QUICKTESTSTCAMERATestHandler(CQuickTest *pMe);
 #endif
@@ -175,7 +175,7 @@ NextFSMAction QuickTest_ProcessState(CQuickTest *pMe)
         case QUICKTESTST_FMTEST:
             retVal = QUICKTESTSTFMTestHandler(pMe);
             break;
-#ifdef FEATURE_CAMERA
+#ifdef FEATURE_BREW_CAMERA
         case QUICKTESTST_CAMERATEST:
             retVal = QUICKTESTSTCAMERATestHandler(pMe);
             break;
@@ -315,7 +315,7 @@ static NextFSMAction QUICKTESTSTMainHandler(CQuickTest *pMe)
         case DLGRET_FMTEST:
             MOVE_TO_STATE(QUICKTESTST_FMTEST)
             return NFSMACTION_CONTINUE;
-#ifdef FEATURE_CAMERA
+#ifdef FEATURE_BREW_CAMERA
         case DLGRET_CAMERATEST:
             MOVE_TO_STATE(QUICKTESTST_CAMERATEST)
             return NFSMACTION_CONTINUE;            
@@ -590,7 +590,7 @@ static NextFSMAction QUICKTESTSTFMTestHandler(CQuickTest *pMe)
 
         case DLGRET_CANCELED:
             //MOVE_TO_STATE(QUICKTESTST_SDTEST)
-#ifdef FEATURE_CAMERA            
+#ifdef FEATURE_BREW_CAMERA            
             MOVE_TO_STATE(QUICKTESTST_CAMERATEST)
 #else       
             MOVE_TO_STATE(QUICKTESTST_SDTEST)
@@ -604,7 +604,7 @@ static NextFSMAction QUICKTESTSTFMTestHandler(CQuickTest *pMe)
     return NFSMACTION_WAIT;
 }//
 
-#ifdef FEATURE_CAMERA 
+#ifdef FEATURE_BREW_CAMERA 
 static NextFSMAction QUICKTESTSTCAMERATestHandler(CQuickTest *pMe)
 {
     if (NULL == pMe)

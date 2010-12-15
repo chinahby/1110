@@ -653,7 +653,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             return TRUE;
             
         case EVT_USER_REDRAW:
-            // camera preview start....         
+            // camera preview start....
 #ifndef FEATURE_DSP            
             if(pMe->m_pCamera && (!pMe->m_bIsPreview))
             {
@@ -690,14 +690,20 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     pImage = NULL;
                 }
             }
-            
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+            else
+            {
+                ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_LCD_DIRECT_ACCESS, (int32)TRUE, (int32)&(pMe->m_rcPreview));
+            }
+#endif
             CameraApp_DrawBottomBarText(pMe, BTBAR_OPTION_BACK);
             
             CameraApp_DrawMidPic(pMe);
 #ifdef FEATURE_DSP
             CameraApp_Update(pMe);
 #else
-            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            IDISPLAY_Update(pMe->m_pDisplay);
 #endif
             return TRUE;
 
@@ -705,6 +711,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             switch(wParam)
             {
                 case AVK_SELECT: 
+                    DBGPRINTF("AVK_SELECT %d",pMe->m_bCapturePic);
                     if(pMe->m_bCapturePic == FALSE)
                     {
                         CLOSE_DIALOG(DLGRET_CAMERACFG);
@@ -862,7 +869,8 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
     IMenuCtl *popMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_CAMERA_CFGMENU);    
-    
+
+    DBGPRINTF("CameraCFGHandleEvent 0x%x 0x%x %d",popMenu,eCode,wParam);
     if(popMenu == NULL)
     {
         return FALSE;
@@ -894,8 +902,11 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
 #ifdef FEATURE_DSP
             ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL); 
 #endif
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+            ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_LCD_DIRECT_ACCESS, (int32)FALSE, (int32)&(pMe->m_rcPreview));
+#endif
             return TRUE;
-         
+            
         case EVT_DIALOG_END:
         
         	//Add By zzg 2010_09_01          	
@@ -949,6 +960,9 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             {
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED);
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+                    IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, RGB_BLACK);
+#endif
                     return TRUE;
 
                 case AVK_LEFT:   
@@ -2839,17 +2853,43 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     {
         captureSize.cx = g_CameraSizeCFG[pMe->m_nCameraSize].dx;
         captureSize.cy = g_CameraSizeCFG[pMe->m_nCameraSize].dy;
+#ifndef FEATURE_CAMERA_NOFULLSCREEN
         displaySize.cx = g_CameraSizeCFG[0].dx;
         displaySize.cy = g_CameraSizeCFG[0].dy;
+#endif
     }
     else if(pMe->m_sensor_model == 10)
     {
         captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
         captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
+#ifndef FEATURE_CAMERA_NOFULLSCREEN
         displaySize.cx = g_CameraSizeCFG_10[0].dx;
-        displaySize.cy = g_CameraSizeCFG_10[0].dy;    
+        displaySize.cy = g_CameraSizeCFG_10[0].dy;
+#endif
     }
-    
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+#if defined(FEATURE_DISP_160X128)
+    displaySize.cx = 96;
+    displaySize.cy = 96;
+#elif defined(FEATURE_DISP_220X176)
+    displaySize.cx = 128;
+    displaySize.cy = 128;
+#elif defined(FEATURE_DISP_128X160)
+    displaySize.cx = 96;
+    displaySize.cy = 96; 
+#elif defined(FEATURE_DISP_176X220)
+    displaySize.cx = 128;
+    displaySize.cy = 128;
+#else
+    displaySize.cx = 96;
+    displaySize.cy = 96;
+#endif
+    pMe->m_rcPreview.x  = pMe->m_rc.x+(pMe->m_rc.dx-displaySize.cx)/2;
+    pMe->m_rcPreview.y  = pMe->m_rc.y+(pMe->m_rc.dy-displaySize.cy)/2;
+    pMe->m_rcPreview.dx = displaySize.cx;
+    pMe->m_rcPreview.dy = displaySize.cy;
+    ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_LCD_DIRECT_ACCESS, (int32)FALSE, (int32)&(pMe->m_rcPreview));
+#endif
     // set camera quality
     switch(pMe->m_nCameraQuality)
     {
@@ -3331,7 +3371,12 @@ static void CameraApp_UpdateFrame(CCameraApp *pMe)
     return;
   
   // Display the frame at center location of the screen
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+  IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, RGB_BLACK);
+  IDISPLAY_BitBlt(pMe->m_pDisplay, pMe->m_rcPreview.x, pMe->m_rcPreview.y, pMe->m_rcPreview.dx, pMe->m_rcPreview.dy, pFrame, 0, 0, AEE_RO_COPY);
+#else
   IDISPLAY_BitBlt(pMe->m_pDisplay, pMe->m_rc.x, pMe->m_rc.y, pMe->m_rc.dx, pMe->m_rc.dy, pFrame, 0, 0, AEE_RO_COPY);
+#endif
   RELEASEIF(pFrame);
 }
 #ifdef FEATURE_DSP
@@ -3485,6 +3530,9 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
     case CAM_CMD_START:
         switch (nStatus){
         case CAM_STATUS_START:
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+            IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, RGB_BLACK);
+#endif
             break;
             
         case CAM_STATUS_DONE:
