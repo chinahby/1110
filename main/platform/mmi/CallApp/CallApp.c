@@ -817,7 +817,6 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->idle_info.inLPM = FALSE;  // CALLCHECK
 
     pMe->m_userCanceled = FALSE;
-	pMe->m_bConnted = FALSE;
     pMe->m_nToneCount = 0;
     pMe->m_bShowPopMenu = FALSE;
     pMe->m_toneData = NULL;
@@ -2631,7 +2630,6 @@ static void CallApp_ProcessCallStateOTAPA(CCallApp*pMe,AEECMNotifyInfo   *pCallI
 #ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_INCOM:
             //CALL_ERR("AEECM_EVENT_CALL_INCOM",0,0,0);
-             pMe->m_bConnted = TRUE;
             ICM_AnswerCall(pMe->m_pICM, pCallInfo->event_data.call.call_id);
             break;
 
@@ -3850,7 +3848,6 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
         case AEET_EVENT_CALL_ANSWER:     /* Incoming call was answered */
 #endif
             CALL_ERR("%d AEECM_EVENT_CALL_ANSWER=+=",call_table->number.pi,0,0);
-            pMe->m_bConnted = TRUE;
             CallApp_ProcessCallStateVoiceAnswer(pMe, call_table, newState);
 #ifdef FEATURE_LED_CONTROL
             //CallApp_DisableLedSig( pMe);
@@ -3946,7 +3943,6 @@ static void CallApp_ProcessCallStateVoice(CCallApp *pMe,
 #ifdef FEATURE_ICM
         case AEECM_EVENT_CALL_LINE_CTRL: /* Originated was accepted */
             CALL_ERR("%d AEECM_EVENT_CALL_LINE_CTRL=+=",call_table->number.pi,0,0);
-            pMe->m_bConnted = TRUE;
             CallApp_ProcessCallStateVoiceAccept(pMe, call_table, newState);
             break;
 #endif
@@ -6087,7 +6083,6 @@ static void CallApp_Add_OneCall_To_History(CCallApp       *pMe,
     }
     else
     {
-    	MSG_FATAL("1....nDurationS:::%d,pMe->m_bConnted=%d",nDurationS,pMe->m_bConnted,0);
         *((uint32 *)pNewEntry->pFields[i].pData) = nDurationS;
         i++;
     }
@@ -6177,12 +6172,7 @@ static void CallApp_Add_OneCall_To_History(CCallApp       *pMe,
     }
     // 添加新记录
     (void)ICALLHISTORY_AddEntry(pCallHistory, pNewEntry);
-    if(!pMe->m_bConnted)
-    {
-    	nDurationS= 0;
-    }
     
-
     //添加通话时长到Config项
     if (nDurationS > 0)
     {

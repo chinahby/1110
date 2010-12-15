@@ -742,7 +742,6 @@ typedef struct _CCallApp
 	IVkeyCtl * m_pIVkeyCtl;
 #endif
     boolean  m_bShift;
-    boolean  m_bConnted;
 } CCallApp;
 
 /*==============================================================================

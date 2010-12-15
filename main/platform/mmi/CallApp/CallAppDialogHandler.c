@@ -1625,12 +1625,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 case AVK_CLR:
                 {
                     int len;
-                    #ifdef FEATURE_VERSION_HITZ181
                     if(dwParam == 1)
                     {
                     	MEMSET(pMe->m_DialString,0,MAX_SIZE_DIALER_TEXT);
                     }
-                    #endif
                     len = WSTRLEN(pMe->m_DialString);
 #ifdef FEATURE_EDITABLE_RECORD
                    if(pMe->m_bEditRecNumber)
@@ -4161,15 +4159,15 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 #endif
 	            }
             return TRUE;
-
-#ifdef FEATURE_VERSION_HITZ181
+            
 		case EVT_NO_CLOSEBACKLIGHT:
-		{
-			//wParam 1:±³¹â°ëÁÁ, 0: ±³¹âÃð			
-			return TRUE;
-		}
-#endif			
-
+			//wParam 1:±³¹â°ëÁÁ, 0: ±³¹âÃð	
+			if(wParam == 0)
+			{
+			    return TRUE;
+			}
+            break;
+            
         case EVT_USER_REDRAW:
         {
             //IMenuCtl *pSKMenu = NULL;
@@ -6978,8 +6976,6 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
 #ifdef FEATURE_IS2000_SCC_CODES
                 pMe->m_bAnswerHold = bAnswerHold;
 #endif /* FEATURE_IS2000_SCC_CODES */
-				pMe->m_bConnted = TRUE;
-
                 ICM_AnswerCall(pMe->m_pICM, pMe->m_CallsTable->call_id);
                 CLOSE_DIALOG(DLGRET_CONNECT)
                 break;
@@ -7060,7 +7056,6 @@ static void CallApp_AnswerInbandCall(CCallApp *pMe)
         pMe->m_PauseString[0] = 0;
 #ifdef FEATURE_ICM
         // Send empty flash message to answer the call
-        pMe->m_bConnted = TRUE;
         ICM_AnswerCall(pMe->m_pICM, pMe->m_CallsTable->call_id);
 #else
 		ICALLMGR_GetCall(pMe->m_pICallMgr,pMe->m_CallsTable->call_id,&pCall);
@@ -7423,19 +7418,16 @@ static void CallApp_Draw_Connect_Time(void *pUser)
     // Position time text on first line
     bWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL,szText);
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-
-	if (pMe->m_bConnted == TRUE)	//Add By zzg 2010_12_09
-    {
-	    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
-	                            AEE_FONT_NORMAL,
-	                            szText,
-	                            -1,
-	                            rect.x,
-	                            rect.y,//0,
-	                            &rect,
-	                            IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
-	}
-	
+    
+    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                            AEE_FONT_NORMAL,
+                            szText,
+                            -1,
+                            rect.x,
+                            rect.y,//0,
+                            &rect,
+                            IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
+        
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 
     // Position call timer on first line next to TIME text
@@ -7458,18 +7450,15 @@ static void CallApp_Draw_Connect_Time(void *pUser)
                                             GTS_SECS);
     
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, CALLAPP_TEXT_COLOR);
-
-	if (pMe->m_bConnted == TRUE)	//Add By zzg 2010_12_09
-	{
-		(void)IDISPLAY_DrawText(pMe->m_pDisplay,
-	                            AEE_FONT_NORMAL,
-	                            szText,
-	                            -1,
-	                            rect.x,
-	                            rect.y,//0,
-	                            &rect,
-	                            IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
-	}
+    
+	(void)IDISPLAY_DrawText(pMe->m_pDisplay,
+                            AEE_FONT_NORMAL,
+                            szText,
+                            -1,
+                            rect.x,
+                            rect.y,//0,
+                            &rect,
+                            IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
     IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_BLACK);
 
 #else  // FEATURE_LANG_BIDI
