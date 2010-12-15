@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="blackjack" VERSION="1">
-	<Strings Encoding="ISOLATIN1">
+	<Strings Encoding="Unicode">
 	<STRING Id="10" Name="IDC_NEW_GAME">
 		<Text>เกมส์ใหม่</Text>
 	</STRING>
