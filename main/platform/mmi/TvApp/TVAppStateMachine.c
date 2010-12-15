@@ -80,6 +80,9 @@ static NextFSMAction TVApp_StateAUTOSCANHandle(CTVApp *pMe);
 //状态 STATE_BOOKMARK 处理函数
 static NextFSMAction TVApp_StateBOOKMARKHandle(CTVApp * pMe);
 
+//状态 STATE_TVWAITING 处理函数
+static NextFSMAction TVApp_StateTVWAITINGHandle(CTVApp * pMe);
+
 //状态 STATE_EXIT 处理函数
 static NextFSMAction TVApp_StateExitHandle(CTVApp *pMe);
 
@@ -178,6 +181,9 @@ NextFSMAction TVApp_ProcessState(CTVApp *pMe)
 		case STATE_BOOKMARK:
             retVal = TVApp_StateBOOKMARKHandle(pMe);
             break;
+        case STATE_TVWAITING:
+            retVal = TVApp_StateTVWAITINGHandle(pMe);
+            break;
         case STATE_EXIT:
       
         default:
@@ -248,23 +254,23 @@ MSG_FATAL("TVApp_StateMainMenuHandle-------------------------",0,0,0);
             return NFSMACTION_WAIT;
 
         case DLGRET_PREVIEW:           
-            MOVE_TO_STATE(STATE_CPREVIEW)
+            MOVE_TO_STATE(STATE_CPREVIEW);
             return NFSMACTION_CONTINUE;
             
         case DLGRET_PICMENU:
-            MOVE_TO_STATE(STATE_CPIC)
+            MOVE_TO_STATE(STATE_CPIC);
             return NFSMACTION_CONTINUE;
                        
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(STATE_EXIT)
+            MOVE_TO_STATE(STATE_EXIT);
             return NFSMACTION_CONTINUE;
 
         case DLGRET_POPMSG:
-            MOVE_TO_STATE(STATE_CPOPMSG)
+            MOVE_TO_STATE(STATE_CPOPMSG);
             return NFSMACTION_CONTINUE;
 
 		case DLGRET_REGION:
-            MOVE_TO_STATE(STATE_REGION)
+            MOVE_TO_STATE(STATE_REGION);
             return NFSMACTION_CONTINUE;
 
 		case DLGRET_ASIA:
@@ -297,6 +303,10 @@ MSG_FATAL("TVApp_StateMainMenuHandle-------------------------",0,0,0);
 
 		case DLGRET_BOOKMARK:
             MOVE_TO_STATE(STATE_BOOKMARK);
+            return NFSMACTION_CONTINUE;
+
+         case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
             return NFSMACTION_CONTINUE;
                          
         default:
@@ -386,9 +396,13 @@ static NextFSMAction TVApp_StatePreviewHandle(CTVApp *pMe)
 		case DLGRET_BOOKMARK:
             MOVE_TO_STATE(STATE_BOOKMARK);
             return NFSMACTION_CONTINUE;
-			
+
+        case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
+            return NFSMACTION_CONTINUE;
+            
         case DLGRET_EXIT:
-            MOVE_TO_STATE(STATE_EXIT)  
+            MOVE_TO_STATE(STATE_EXIT);  
             return NFSMACTION_CONTINUE;
                         
         default:
@@ -428,19 +442,19 @@ static NextFSMAction TVApp_StateTVCFGHandle(CTVApp *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_PREVIEW:
-            MOVE_TO_STATE(STATE_CPREVIEW)
+            MOVE_TO_STATE(STATE_CPREVIEW);
             return NFSMACTION_CONTINUE;
 
         case DLGRET_POPMSG:
-            MOVE_TO_STATE(STATE_CPOPMSG)
+            MOVE_TO_STATE(STATE_CPOPMSG);
             return NFSMACTION_CONTINUE;    
 
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(STATE_CPREVIEW)
+            MOVE_TO_STATE(STATE_CPREVIEW);
             return NFSMACTION_CONTINUE;
 
 		case DLGRET_REGION:
-            MOVE_TO_STATE(STATE_REGION)
+            MOVE_TO_STATE(STATE_REGION);
             return NFSMACTION_CONTINUE;
 
 		case DLGRET_ASIA:
@@ -474,9 +488,13 @@ static NextFSMAction TVApp_StateTVCFGHandle(CTVApp *pMe)
 		case DLGRET_BOOKMARK:
             MOVE_TO_STATE(STATE_BOOKMARK);
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
+            return NFSMACTION_CONTINUE;
 			
         case DLGRET_EXIT:
-            MOVE_TO_STATE(STATE_EXIT)  
+            MOVE_TO_STATE(STATE_EXIT);  
             return NFSMACTION_CONTINUE;
                         
         default:
@@ -516,19 +534,19 @@ static NextFSMAction TVApp_StatePicHandle(CTVApp *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_PREVIEW:
-            MOVE_TO_STATE(STATE_CPREVIEW)
+            MOVE_TO_STATE(STATE_CPREVIEW);
             return NFSMACTION_CONTINUE;
 
         case DLGRET_POPMSG:
-            MOVE_TO_STATE(STATE_CPOPMSG)
+            MOVE_TO_STATE(STATE_CPOPMSG);
             return NFSMACTION_CONTINUE;
 
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(STATE_CMAINMENU)
+            MOVE_TO_STATE(STATE_CMAINMENU);
             return NFSMACTION_CONTINUE;
 
 		case DLGRET_REGION:
-            MOVE_TO_STATE(STATE_REGION)
+            MOVE_TO_STATE(STATE_REGION);
             return NFSMACTION_CONTINUE;
 
 		case DLGRET_ASIA:
@@ -562,9 +580,13 @@ static NextFSMAction TVApp_StatePicHandle(CTVApp *pMe)
 		case DLGRET_BOOKMARK:
             MOVE_TO_STATE(STATE_BOOKMARK);
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
+            return NFSMACTION_CONTINUE;
 			
         case DLGRET_EXIT:
-            MOVE_TO_STATE(STATE_EXIT)  
+            MOVE_TO_STATE(STATE_EXIT);  
             return NFSMACTION_CONTINUE;
                         
         default:
@@ -589,11 +611,11 @@ static NextFSMAction TVApp_StatePopMSGHandle(CTVApp *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_MAINMENU:
-            MOVE_TO_STATE(STATE_CMAINMENU)
+            MOVE_TO_STATE(STATE_CMAINMENU);
             return NFSMACTION_CONTINUE;
 
         case DLGRET_PREVIEW:
-            MOVE_TO_STATE(STATE_CPREVIEW)
+            MOVE_TO_STATE(STATE_CPREVIEW);
             return NFSMACTION_CONTINUE;
 
 		case DLGRET_REGION:
@@ -631,9 +653,13 @@ static NextFSMAction TVApp_StatePopMSGHandle(CTVApp *pMe)
 		case DLGRET_BOOKMARK:
             MOVE_TO_STATE(STATE_BOOKMARK);
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
+            return NFSMACTION_CONTINUE;
 			
         case DLGRET_EXIT:
-            MOVE_TO_STATE(STATE_EXIT)
+            MOVE_TO_STATE(STATE_EXIT);
             return NFSMACTION_CONTINUE;
 
         case DLGRET_CANCELED:
@@ -712,6 +738,10 @@ static NextFSMAction TVApp_StateREGIONHandle(CTVApp *pMe)
 
 		case DLGRET_BOOKMARK:
             MOVE_TO_STATE(STATE_BOOKMARK);
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
             return NFSMACTION_CONTINUE;
             
         case DLGRET_EXIT:
@@ -797,6 +827,10 @@ static NextFSMAction TVApp_StateASIAHandle(CTVApp *pMe)
 		case DLGRET_BOOKMARK:
             MOVE_TO_STATE(STATE_BOOKMARK);
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
+            return NFSMACTION_CONTINUE;
 			
         case DLGRET_EXIT:
             MOVE_TO_STATE(STATE_EXIT);
@@ -878,6 +912,10 @@ static NextFSMAction TVApp_StateLATINHandle(CTVApp *pMe)
 
 		case DLGRET_BOOKMARK:
             MOVE_TO_STATE(STATE_BOOKMARK);
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
             return NFSMACTION_CONTINUE;
 			
         case DLGRET_EXIT:
@@ -961,6 +999,10 @@ static NextFSMAction TVApp_StateEUROPEHandle(CTVApp *pMe)
 		case DLGRET_BOOKMARK:
             MOVE_TO_STATE(STATE_BOOKMARK);
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
+            return NFSMACTION_CONTINUE;
 			
         case DLGRET_EXIT:
             MOVE_TO_STATE(STATE_EXIT);
@@ -1042,6 +1084,10 @@ static NextFSMAction TVApp_StateAFRICAHandle(CTVApp *pMe)
 
 		case DLGRET_BOOKMARK:
             MOVE_TO_STATE(STATE_BOOKMARK);
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
             return NFSMACTION_CONTINUE;
 			
         case DLGRET_EXIT:
@@ -1125,6 +1171,10 @@ static NextFSMAction TVApp_StateOCEANIAHandle(CTVApp *pMe)
 		case DLGRET_BOOKMARK:
             MOVE_TO_STATE(STATE_BOOKMARK);
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
+            return NFSMACTION_CONTINUE;
 			
         case DLGRET_EXIT:
             MOVE_TO_STATE(STATE_EXIT);
@@ -1207,6 +1257,10 @@ static NextFSMAction TVApp_StateDRAWTOPBARHandle(CTVApp * pMe)
 		case DLGRET_BOOKMARK:
             MOVE_TO_STATE(STATE_BOOKMARK);
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
+            return NFSMACTION_CONTINUE;
 			
         case DLGRET_EXIT:
             MOVE_TO_STATE(STATE_EXIT);
@@ -1288,6 +1342,10 @@ static NextFSMAction TVApp_StateAUTOSCANHandle(CTVApp * pMe)
 			
 		case DLGRET_BOOKMARK:
             MOVE_TO_STATE(STATE_BOOKMARK);
+            return NFSMACTION_CONTINUE;
+
+         case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
             return NFSMACTION_CONTINUE;
 			
         case DLGRET_EXIT:
@@ -1373,6 +1431,10 @@ static NextFSMAction TVApp_StateBOOKMARKHandle(CTVApp * pMe)
 		case DLGRET_AUTOSCAN:
             MOVE_TO_STATE(STATE_AUTOSCAN);
             return NFSMACTION_CONTINUE;
+
+         case DLGRET_TVWAITING:
+            MOVE_TO_STATE(STATE_TVWAITING);
+            return NFSMACTION_CONTINUE;
 			
         case DLGRET_EXIT:
             MOVE_TO_STATE(STATE_EXIT);
@@ -1397,6 +1459,92 @@ static NextFSMAction TVApp_StateBOOKMARKHandle(CTVApp * pMe)
     return NFSMACTION_CONTINUE;
 }
 
+
+static NextFSMAction TVApp_StateTVWAITINGHandle(CTVApp * pMe)
+{    
+    if(NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            // Show dialog
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            TVApp_ShowDialog(pMe, IDD_TVWAITING);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_MAINMENU:
+            MOVE_TO_STATE(STATE_CMAINMENU);
+            return NFSMACTION_CONTINUE;
+
+		case DLGRET_POPMSG:
+			MOVE_TO_STATE(STATE_CPOPMSG);
+			return NFSMACTION_CONTINUE;
+
+        case DLGRET_PREVIEW:
+            MOVE_TO_STATE(STATE_CPREVIEW);
+            return NFSMACTION_CONTINUE;
+
+		case DLGRET_REGION:
+            MOVE_TO_STATE(STATE_REGION);
+            return NFSMACTION_CONTINUE;
+
+		case DLGRET_ASIA:
+            MOVE_TO_STATE(STATE_ASIA);
+            return NFSMACTION_CONTINUE;
+
+		case DLGRET_LATIN:
+            MOVE_TO_STATE(STATE_LATIN);
+            return NFSMACTION_CONTINUE;
+
+		case DLGRET_EUROPE:
+            MOVE_TO_STATE(STATE_EUROPE);
+            return NFSMACTION_CONTINUE;
+
+		case DLGRET_AFRICA:
+            MOVE_TO_STATE(STATE_AFRICA);
+            return NFSMACTION_CONTINUE;
+
+		case DLGRET_OCEANIA:
+            MOVE_TO_STATE(STATE_OCEANIA);
+            return NFSMACTION_CONTINUE;
+
+		case DLGRET_DRAWTOPBAR:
+            MOVE_TO_STATE(STATE_DRAWTOPBAR);
+            return NFSMACTION_CONTINUE;
+            
+		case DLGRET_AUTOSCAN:
+            MOVE_TO_STATE(STATE_AUTOSCAN);
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_BOOKMARK:
+            MOVE_TO_STATE(STATE_BOOKMARK);
+            return NFSMACTION_CONTINUE;
+			
+        case DLGRET_EXIT:
+            MOVE_TO_STATE(STATE_EXIT);
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_CANCELED:
+            if(pMe->m_ePreState == STATE_CPIC)
+            {
+                pMe->m_bRePreview =  TRUE;
+                MOVE_TO_STATE(STATE_CPREVIEW);
+            }
+            else
+            {
+                MOVE_TO_STATE(pMe->m_ePreState);
+            }
+            return NFSMACTION_CONTINUE;
+            
+        default:
+            break;
+    }
+    
+    return NFSMACTION_CONTINUE;
+}
 
 
 /*==============================================================================

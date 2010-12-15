@@ -715,7 +715,7 @@ static void CMMITv_AtvSetChn_CallBack(void *pUser, ATV_SetChn_Notify_t *pTvNotif
 static void CMMITv_ICBCamera_OnMessage(void *pUser, AEECameraNotify * pCamNotify)
 {
 	CMMITv *pThis = (CMMITv*)pUser;	
-    int result = SUCCESS;
+  //  int result = SUCCESS;
 
   //  ERR("CMMITv_ICBCamera_OnMessage  nCmd %x nStatus %x pThis->Cam_State %x", pCamNotify->nCmd,  pCamNotify->nStatus, pThis->Cam_State);
 	if (pCamNotify->nCmd == CAM_CMD_START)
@@ -849,7 +849,7 @@ static void CMMITv_ICBCamera_OnMessage(void *pUser, AEECameraNotify * pCamNotify
 static CMMITv* CMMITv_Constructor(IShell* pIShell)
 {
     CMMITv* pThis = NULL;
-    int result;
+    //int result;
 
 	MSG_FATAL("new--------------------------------1",0,0,0);
 
@@ -955,7 +955,6 @@ int CMMITv_IMMITv_GetTG(IMMITv* pIMMITv)
 int CMMITv_IMMITv_SetRegion(IMMITv* pIMMITv, TLG_REGION_CODE region)
 {
     CMMITv* pThis = (CMMITv*)pIMMITv->pData;
-    int result = SUCCESS;
     int reset = 0;
     //MMI_DEBUG(ATV,("CMMITv_IMMITv_SetRegion Start",reset));  
 #ifdef AEE_SIMULATOR

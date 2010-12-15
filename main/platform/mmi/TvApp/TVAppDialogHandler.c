@@ -83,12 +83,12 @@ static boolean TVApp_PicHandleEvent(CTVApp *pMe,
                                         uint16 wParam, 
                                         uint32 dwParam);
 
-
+#if 0
 // 设置菜单项选中图标
 static void TVApp_SetCFGMenuIcon(IMenuCtl *pm, 
                                      uint16 listId, 
                                    boolean bSel);
-
+#endif
 
 
 
@@ -144,7 +144,9 @@ static boolean TV_BOOKMARK_HandleEvent(CTVApp *pMe,
                                               AEEEvent eCode,
                                               uint16 wParam,
                                               uint32 dwParam);
+/*TVWAITING菜单事件处理函数*/
 
+static boolean TV_TVWAITING_HandleEvent(CTVApp * pMe,AEEEvent eCode,uint16 wParam,uint32 dwParam);
 
 
 //TV主菜单
@@ -153,8 +155,8 @@ static void TV_Build_MainOpts_Menu(CTVApp *pMe,IMenuCtl *pMenuCtl);
 
 
 // 快门声处理回调函数
-static void TVApp_MediaNotify(void *pUser, 
-                                  AEEMediaCmdNotify *pCmdNotify);
+//static void TVApp_MediaNotify(void *pUser, 
+//                                  AEEMediaCmdNotify *pCmdNotify);
 
 //void TVApp_AlphaDisplay(CTVApp *pMe, IMenuCtl *pMenu);
 
@@ -169,24 +171,24 @@ static void TVApp_DrawTopBar(CTVApp *pMe);
 //static void TVApp_DrawpopMenuBg(CTVApp *pMe, IMenuCtl *popMenu);
 
 // 画Bottombar上的TV/video图标函数
-static void TVApp_DrawMidPic(CTVApp *pMe);
+//static void TVApp_DrawMidPic(CTVApp *pMe);
 
 
 // 找T卡的函数
-static boolean TVApp_FindMemoryCardExist(CTVApp *pMe);
+//static boolean TVApp_FindMemoryCardExist(CTVApp *pMe);
 
 // 找Sensor的函数
 //static boolean TVApp_FindSensorExist(CTVApp *pMe);
 
 // Dialog的定时处理函数
-static void TVApp_DialogTimeout(void *pme);
+//static void TVApp_DialogTimeout(void *pme);
 
 
 // 画bottom bar上的文本函数
 static void TVApp_DrawBottomBarText(CTVApp *pMe, 
                                         BottomBar_e_Type eBarType);
 
-
+#if 0
 // 设置拍照文件名
 static boolean TVApp_SetDateForRecordFileName(CTVApp *pMe);
 
@@ -194,7 +196,7 @@ static boolean TVApp_SetDateForRecordFileName(CTVApp *pMe);
 static boolean TVApp_GetDateForRecordFileName(CTVApp *pMe,
                                                   char *pszDest, 
                                                   unsigned int fileType);
-
+#endif
 
 
 /*添加REGIONMenu主菜单*/
@@ -225,14 +227,16 @@ static void TVAPP_SET_BAR(CTVApp *pMe,uint32 bar);
 static int TV_UpdateInit(CTVApp *pMe);
 static int TV_Update(CTVApp *pMe);
 static void TV_StartPreview(CTVApp *pMe);
-static void TV_StopSearchAnimation(CTVApp *pITvUtil);
+//static void TV_StopSearchAnimation(CTVApp *pITvUtil);
 
+// Dialog的定时处理函数
+static void TvApp_DialogTimeout(void *pme);
 
 void CTvUtil_BookmarkOperator_InsertAt(CTVApp *pMe,char* in_channel, char *in_title, uint16 *out_index);
 
 void TVApp_InitTVCheck(void *po);
 
-static void TVApp_DrawImage(CTVApp *pMe, uint16 ResID, int x, int y);
+//static void TVApp_DrawImage(CTVApp *pMe, uint16 ResID, int x, int y);
 
 
 /*==============================================================================
@@ -374,6 +378,8 @@ boolean TVApp_RouteDialogEvent(CTVApp *pMe, AEEEvent eCode, uint16 wParam, uint3
 		case IDD_BOOKMARK:
 			MSG_FATAL("TV_BOOKMARK_HandleEvent-----------",0,0,0);
 		    return  TV_BOOKMARK_HandleEvent(pMe, eCode,wParam, dwParam);
+        case IDD_TVWAITING:
+            return TV_TVWAITING_HandleEvent(pMe, eCode,wParam, dwParam);
         default:
             return FALSE;
     }
@@ -404,24 +410,23 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
     PARAM_NOT_REF(dwParam)
         
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_CAMERA_MAINMENU);
-	AECHAR WTitle[40] = {0};
-    byte nBackLight;
-    
+	//AECHAR WTitle[40] = {0};
+    MSG_FATAL("TVApp_MainMenuHandleEvent Start",0,0,0);
     if(pMenu == NULL)
     {
         return FALSE;
     }
-   //MSG_FATAL("TVApp_MainMenuHandleEvent eCode=%d, wParam=%d, dwParam=%d",eCode,wParam,dwParam);
+   MSG_FATAL("TVApp_MainMenuHandleEvent eCode=%d, wParam=%d, dwParam=%d",eCode,wParam,dwParam);
     switch(eCode) 
     {
         case EVT_DIALOG_INIT:
+           MSG_FATAL("TVApp_MainMenuHandleEvent EVT_DIALOG_INIT",0,0,0);
 		   IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
-		   //MSG_FATAL("IMMITv_StartPreview----------------------EVT_DIALOG_INIT",0,0,0);
            pMe->m_bIsPreview = FALSE;
            pMe->m_nTVState = TV_START;
             
-           pMe->m_wMsgID = IDS_MSG_WAITING;
-           pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
+          // pMe->m_wMsgID = IDS_MSG_WAITING;
+          // pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
 
 		 {
 			int result = SUCCESS;
@@ -459,11 +464,11 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 
   
 		 }
-			
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);	
             return TRUE;
         	
         case EVT_DIALOG_START:
+            MSG_FATAL("TVApp_MainMenuHandleEvent EVT_DIALOG_START",0,0,0);
            if(pMe->m_pTV)
             {
                 ICAMERA_Release(pMe->m_pTV);
@@ -473,6 +478,7 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
             return TRUE;
 
         case EVT_DIALOG_END:
+            IMMITv_StopPreview(pMe->pIMMITv);
             return TRUE;
 
         case EVT_USER_REDRAW: 
@@ -497,19 +503,12 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                                IDF_TEXT_TRANSPARENT);
              TVApp_DrawBottomBarText(pMe, BTBAR_OPTION_BACK); 
 			 TV_Update(pMe);
-			}
+			} 
             return TRUE;
             
         case EVT_COMMAND:          
             switch(wParam) 
             {
-                case IDS_ITEM_TV: 
-                    CLOSE_DIALOG(DLGRET_POPMSG);
-                    break;
-                case IDS_ITEM_CAMERA_GALLERY:
-                    pMe->m_nMainMenuItemSel = IDS_ITEM_CAMERA_GALLERY;
-                    CMediaGallery_FileExplorer(GALLERY_PHOTO_BROWSE, NULL);
-                    break;
                     
                 default:         
                     break;  
@@ -608,7 +607,7 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
    
     return FALSE;
 }
-
+#if 0
 static void TV_StopSearchAnimation(CTVApp *pMe)
 {  
     int result = SUCCESS;
@@ -671,7 +670,7 @@ static void TV_StopSearchAnimation(CTVApp *pMe)
    }
 
 }
-
+#endif
 static void TV_StartPreview(CTVApp * pMe)
 {
         int result=SUCCESS;
@@ -714,8 +713,6 @@ static void TV_StartPreview(CTVApp * pMe)
 ==============================================================================*/
 static boolean TV_DRAWTOPBAR_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
-   
-    AEERect line; //AEELine
     AEERect clip;
     AEERect oldClip;
     (void)ICONFIG_GetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
@@ -748,8 +745,9 @@ static boolean TV_DRAWTOPBAR_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 				IImage *pTopBarImage2 = NULL;
 				AEEImageInfo myInfo;
 				AEERect	 rc = pMe->m_rc;
-				AECHAR channelStr[32];
-
+				AECHAR    channelStr[32];
+				AECHAR    m_barWStr[15];
+                AECHAR    strTitle[15];   
                  if(strlight)
                  {
                      IImage *IMGbarblank=NULL;
@@ -763,7 +761,7 @@ static boolean TV_DRAWTOPBAR_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                     {
             			SETAEERECT( &clip, TV_SETTING_BAR_X,TV_SETTING_BAR_Y, ((IMGbarblankInfo.cx* pMe->m_barW)/pMe->m_barMAXW),TV_SETTING_BAR_H);
                         MSG_FATAL("m_barMAXW---=%d----m_barW----=%d-------------img.cx=%d-",pMe->m_barMAXW,pMe->m_barW,IMGbarblankInfo.cx);
-                       IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);
+                        IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);
                         IDISPLAY_SetClipRect( pMe->m_pDisplay, &clip);
 
                         IIMAGE_Draw(image12, TV_SETTING_BAR_X,TV_SETTING_BAR_Y);
@@ -772,8 +770,26 @@ static boolean TV_DRAWTOPBAR_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                         IIMAGE_Release(IMGbarblank);
                         image12 = NULL;
                         IMGbarblank = NULL;
+
+    					WSPRINTF(m_barWStr, sizeof(m_barWStr), (AECHAR*)L"%d", pMe->m_barW);
+    					DrawTextWithProfile(pMe->m_pShell, 
+		    	                            pMe->m_pDisplay, 
+		    	                            RGB_WHITE, 
+		    	                            AEE_FONT_NORMAL, 
+		    	                            m_barWStr, 
+		    	                            -1, 
+		    	                            TV_SETTING_BAR_X+IMGbarblankInfo.cx, 
+		    	                            TV_SETTING_BAR_Y-5, 
+		    	                            &rc, 
+		    	                            IDF_TEXT_TRANSPARENT);
+					    (void) ISHELL_LoadResString(pMe->m_pShell,
+			                                AEE_APPSTVAPP_RES_FILE,
+			                                pMe->m_barTitle,
+			                                strTitle,
+			                                sizeof(strTitle));
+						DrawTextWithProfile(pMe->m_pShell, pMe->m_pDisplay, RGB_WHITE, AEE_FONT_NORMAL,strTitle,-1, TV_TITLE_BAR_X, TV_TITLE_BAR_Y,&rc, IDF_TEXT_TRANSPARENT);
+					   
                     } 
-                    strlight==FALSE;
                     #if 0
                      MSG_FATAL("TVSETBrightness1-------------------1",0,0,0);
                      (void)IGRAPHICS_SetFillMode(pMe->pGraphics, TRUE);
@@ -1076,40 +1092,37 @@ static void TVAPP_SET_BAR(CTVApp *pMe,uint32 wParam)
            case TVSETBrightness: 
                strlight=TRUE;
                 pMe->m_barMAXW=TV_SETTING_BRIGHTNESS_MAXVALUE;
-                 pMe->m_barW=pMe->pTvSetting->BrightnessStep;
-                // MSG_FATAL("TVSETBrightness--------m_barW=%d",pMe->m_barW,0,0);
+                pMe->m_barW=pMe->pTvSetting->BrightnessStep;
+				pMe->m_barTitle=IDS_TITLE_BRIGHTNESS; 
            break;
            case TVSETContrast: 
                strlight=TRUE;
                pMe->m_barMAXW=TV_SETTING_CONTRAST_MAXVALUE;
                 pMe->m_barW=pMe->pTvSetting->ContrastStep;
-               // MSG_FATAL("TVSETBrightness--------m_barW=%d",pMe->m_barW,0,0);
+				pMe->m_barTitle=IDS_TITLE_CONTRAST; 
            break;
            case TVSETDefinition: 
                strlight=TRUE;
                 pMe->m_barMAXW=TV_SETTING_DEFINITION_MAXVALUE;
-                //if(pMe->pTvSetting->DefinitionStep != NULL)
                 {
                  pMe->m_barW=pMe->pTvSetting->DefinitionStep;
-                // MSG_FATAL("TVSETBrightness--------m_barW=%d",pMe->m_barW,0,0); 
+				 pMe->m_barTitle=IDS_TITLE_DEFINITION; 
                 }
            break;
            case TVSETSaturation: 
                strlight=TRUE;
                 pMe->m_barMAXW=TV_SETTING_SATURATION_MAXVALUE;
-                // if(pMe->pTvSetting->SaturationStep != NULL)
                 {
                   pMe->m_barW=pMe->pTvSetting->SaturationStep;
-                 // MSG_FATAL("TVSETBrightness--------m_barW=%d",pMe->m_barW,0,0);
+                  pMe->m_barTitle=IDS_TITLE_SATURATION;
                 }
            break;
            case TVSETSound: 
                strlight=TRUE;
                 pMe->m_barMAXW=TV_SETTING_SOUND_MAXVALUE;
-                // if(pMe->pTvSetting->SoundStep != NULL)
                 {
                  pMe->m_barW=pMe->pTvSetting->SoundStep;
-                // MSG_FATAL("TVSETBrightness--------m_barW=%d",pMe->m_barW,0,0);
+				 pMe->m_barTitle=IDS_TITLE_SOUND;
                 }
            break;
            default:
@@ -1123,7 +1136,6 @@ static void TVAPP_SET_BAR(CTVApp *pMe,uint32 wParam)
 static void TVApp_DrawTopBar(CTVApp *pMe)
 {
   
-    IImage *pTopBarImage = NULL; 
     IImage *Imgtoolbar = NULL;       
     AEEImageInfo myInfo;
 	 Imgtoolbar = ISHELL_LoadResImage(pMe->m_pShell, 
@@ -1241,9 +1253,6 @@ static boolean TV_AUTOSCAN_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
         case EVT_COMMAND:          
             switch(wParam) 
             {
-               case IDS_ITEM_CAMERA_GALLERY:
-                    break;
-                    
                 default:         
                     break;   
             }
@@ -1251,6 +1260,7 @@ static boolean TV_AUTOSCAN_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
         case EVT_ATV_AUTOSCANFINISH:
              MSG_FATAL("TV_AUTOSCAN_HandleEvent--------------EVT_ATV_AUTOSCANFINISH",0,0,0);
 			 CTvUtil_StopSearchAnimation(pMe);
+             CLOSE_DIALOG(DLGRET_MAINMENU);
 			 break;
 	    case EVT_NO_CLOSEBACKLIGHT:
 			return TRUE;
@@ -1264,7 +1274,7 @@ static boolean TV_AUTOSCAN_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
                         case AVK_CLR:
                             IMMITv_StopPreview(pMe->pIMMITv);
                             CLOSE_DIALOG(DLGRET_POPMSG);
-                            return;
+                            return TRUE;
                         case AVK_LEFT:
                            // CLOSE_DIALOG(DLGRET_DRAWTOPBAR);
                             break;
@@ -1331,7 +1341,6 @@ static boolean TV_BOOKMARK_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
     {
         case EVT_DIALOG_INIT:
 		  {
-		  int result = SUCCESS;
 							  
 		   MSG_FATAL("TV_BOOKMARK_HandleEvent--------------EVT_DIALOG_INIT",0,0,0);
 		   MEMSET(pMe->pTvSetting,0,sizeof(CFG_TvSetting));
@@ -1339,7 +1348,7 @@ static boolean TV_BOOKMARK_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
                       CFGI_TV_SETCHANNL,
                       pMe->pTvSetting,
                       sizeof(CFG_TvSetting));
-		  sNum=pMe->pTvSetting->ChannelCountAble;
+		   sNum=pMe->pTvSetting->ChannelCountAble;
 		   for (i = sNum ; i > 0; i--)
 	       {
 	         // WSTRCPY(pMe->pTvSetting->Bookmark[0].name,L"21");
@@ -1402,6 +1411,7 @@ static boolean TV_BOOKMARK_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
             return TRUE;        
              
         case EVT_KEY:
+            #if 0
             if(wParam == AVK_SELECT)
             {
                 int num = 6;
@@ -1425,6 +1435,7 @@ static boolean TV_BOOKMARK_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
             // CLOSE_DIALOG(DLGRET_POPMSG);
 
 			}
+            #endif
 			if(wParam == AVK_CLR)
             {
                 IMMITv_StopPreview(pMe->pIMMITv);
@@ -1437,6 +1448,143 @@ static boolean TV_BOOKMARK_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
     return FALSE;
 }
 
+/*==============================================================================
+函数：
+       IDD_TVWAITING_HandleEvent
+说明：
+       IDD_TVWAITING对话框事件处理函数
+       
+参数：
+       pMe [in]：指向TVApp Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+       
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+       
+备注：
+       
+==============================================================================*/
+static boolean TV_TVWAITING_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+    
+    static IStatic *pStatic = NULL;       
+    pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
+    MSG_FATAL("TV_TVWAITING_HandleEvent ----- eCode=%d",eCode,0,0);
+    switch(eCode) 
+    {
+        case EVT_DIALOG_INIT:
+    	    {
+                AECHAR WTitle[40] = {0};
+                MSG_FATAL("TV_TVWAITING_HandleEvent ----- EVT_DIALOG_INIT",0,0,0);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                                            AEE_APPSTVAPP_RES_FILE,                                
+                                            IDS_ITEM_TV,
+                                            WTitle,
+                                            sizeof(WTitle));
+                
+    			
+    		    if(pMe->m_pIAnn != NULL)
+            	{
+    		    	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+    			}
+                    
+                IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
+    			IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);
+            }
+            
+            if(NULL == pStatic)
+            {
+                 AEERect rect = {0};
+                 
+                 if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                                         AEECLSID_STATIC,
+                                                         (void **)&pStatic))  
+                 {
+                     return FALSE;
+                 }
+                 
+                 ISTATIC_SetRect(pStatic, &rect);  
+            }
+            return TRUE;
+        	
+        case EVT_DIALOG_START:
+              MSG_FATAL("TV_TVWAITING_HandleEvent ----- EVT_DIALOG_START",0,0,0);
+              (void)ISHELL_SetTimer(pMe->m_pShell,
+                                      pMe->m_nMsgTimeout,
+                                      TvApp_DialogTimeout,
+                                      pMe);
+              
+            (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL); 
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            MSG_FATAL("TV_TVWAITING_HandleEvent ----- EVT_DIALOG_END",0,0,0);
+            if(pStatic != NULL)
+            {
+                ISTATIC_Release(pStatic); 
+                pStatic = NULL;
+            }
+            return TRUE;
+            
+        case EVT_USER_REDRAW:
+			if(pStatic)
+            {             
+                PromptMsg_Param_type PromptMsg={0};  
+                AECHAR  wstrText[40]={0};   
+                MSG_FATAL("TV_TVWAITING_HandleEvent ----- EVT_USER_REDRAW",0,0,0);
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                                               AEE_APPSTVAPP_RES_FILE,
+                                               IDS_MSG_WAITING,
+                                               wstrText,
+                                               sizeof(wstrText)); 
+                PromptMsg.ePMsgType = MESSAGE_WAITING;
+                PromptMsg.eBBarType = BTBAR_NONE;// BTBAR_OK_BACK;
+               
+                PromptMsg.pwszMsg = wstrText;
+                
+                DrawPromptMessage(pMe->m_pDisplay, pStatic, &PromptMsg); 
+                MSG_FATAL("TV_TVWAITING_HandleEvent ----- EVT_USER_REDRAW----end",0,0,0);
+            }
+            return TRUE;
+            
+        case EVT_APP_DIALOG_TIMEOUT:
+            MSG_FATAL("TV_TVWAITING_HandleEvent ----- EVT_APP_DIALOG_TIMEOUT",0,0,0);
+           (void)ISHELL_CancelTimer(pMe->m_pShell,
+                                     TvApp_DialogTimeout,
+                                     pMe);
+            CLOSE_DIALOG(DLGRET_MAINMENU);
+            return TRUE;
+            
+        case EVT_NO_CLOSEBACKLIGHT:
+			return TRUE;
+			
+        case EVT_COMMAND:
+            return TRUE;        
+             
+        case EVT_KEY:
+			
+            return TRUE;
+
+    }
+    return FALSE;
+}
+
+static void TvApp_DialogTimeout(void * pme)
+{
+    CTVApp *pMe = (CTVApp *)pme;
+        
+    if(NULL == pMe)
+        return;
+
+    (void)ISHELL_PostEvent(pMe->m_pShell,
+                           AEECLSID_TVAPP,
+                           EVT_APP_DIALOG_TIMEOUT,
+                           0,
+                           0);
+}
 
 /*==============================================================================
 函数：
@@ -1463,7 +1611,7 @@ static boolean TV_MainOptsMenu_HandleEvent(CTVApp *pMe,
                                             uint32 dwParam)
 {
   IMenuCtl  *pMenuCtl;
-  AECHAR WTitle[40] = {0};
+ // AECHAR WTitle[40] = {0};
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
@@ -2274,7 +2422,7 @@ static boolean TV_OCEANIAMenu_HandleEvent(CTVApp *pMe,
     return FALSE;
 }
 
-
+#if 0
 /*===========================================================================
   在指定位置画图
 ===========================================================================*/      
@@ -2308,6 +2456,7 @@ static void TVApp_DrawImage(CTVApp *pMe, uint16 ResID, int x, int y)
    }
 } 
 
+#endif
 /*==============================================================================
 函数：
        TVApp_TVCFGHandleEvent
@@ -2543,7 +2692,7 @@ static boolean TVApp_PicHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wParam, 
                     return TRUE;
             } 
             
-            pMe->m_wMsgID = IDS_DONE;
+           // pMe->m_wMsgID = IDS_DONE;
             pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
             CLOSE_DIALOG(DLGRET_POPMSG);
             return TRUE;
@@ -2677,14 +2826,6 @@ static void TV_OCEANIAMenu(CTVApp * pMe,IMenuCtl * pMenuCtl)
 
 static int TVAPP_AutoScan(CTVApp *pMe)
 {
-	int result = SUCCESS;
-    int i = 0;
-    char title[3];
-    char channel[4];
-    
-    //uint16 *ableChannelArray = IMMITv_getAbleChannelArray(pMe->pIMMITv);
-   // int channelCount = IMMITv_getChannelCountAble(pMe->pIMMITv);
-
    MSG_FATAL("TVAPP_AutoScan Start",0,0,0);
 
    IMMITv_AutoScanTV(pMe->pIMMITv);   
@@ -2733,8 +2874,8 @@ static void CTvUtil_StopSearchAnimation(CTVApp * pMe)
     int result = SUCCESS;
     int i = 0;
     int a = 0;
-    char title[32];
-    char channel[32];
+    //char title[32];
+   // char channel[32];
     AECHAR Aname[32] = {0};
     AECHAR AChannel[32] = {0};
    //CTVApp* pThis = (CTVApp*)pITvUtil->pData;
@@ -2837,7 +2978,7 @@ void CTvUtil_BookmarkOperator_InsertAt(CTVApp *pMe,char* in_channel, char *in_ti
 	pMe->pTvSetting->ChannelCountAble++;
 }
 
-
+#if 0
 
 /*==============================================================================
 函数：
@@ -2868,7 +3009,8 @@ static void TVApp_SetCFGMenuIcon(IMenuCtl *pm, uint16 listId, boolean bSel)
     }
     IMENUCTL_SetStyle(pm, NULL, NULL);
 }
-
+#endif
+#if 0
 static void TVApp_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
 {
     CTVApp *pMe = (CTVApp *)pUser;
@@ -2894,7 +3036,7 @@ static void TVApp_MediaNotify(void *pUser, AEEMediaCmdNotify *pCmdNotify)
         }
     }
 }
-
+#endif
 static void TVApp_SetPopMenuRect(CTVApp *pMe, IMenuCtl* popMenu, int menuItemSum)
 {
     AEERect mRec;
@@ -2928,11 +3070,11 @@ static void TVApp_SetPopMenuRect(CTVApp *pMe, IMenuCtl* popMenu, int menuItemSum
 
     IMENUCTL_SetRect(popMenu, &mRec);
 }
-
+#if 0
 static void TVApp_DrawMidPic(CTVApp *pMe)
 {
-    IImage *pImage = NULL;
-    AEEImageInfo myInfo;
+   // IImage *pImage = NULL;
+   // AEEImageInfo myInfo;
     
     switch(pMe->m_pActiveDlgID)
     {
@@ -2953,7 +3095,8 @@ static void TVApp_DrawMidPic(CTVApp *pMe)
             break;
     }
 }
-
+#endif
+#if 0
 static void TVApp_DialogTimeout(void *pme)
 {
     CTVApp *pMe = (CTVApp *)pme;
@@ -2967,12 +3110,13 @@ static void TVApp_DialogTimeout(void *pme)
                            0,
                            0);
 }
-
+#endif
+#if 0
 static boolean TVApp_FindMemoryCardExist(CTVApp *pMe)
 {   
     return (IFILEMGR_Test(pMe->m_pFileMgr, AEEFS_CARD0_DIR)==SUCCESS)?TRUE:FALSE;	
 }
-
+#endif
 // Draw Bottom Bar Text
 static void TVApp_DrawBottomBarText(CTVApp *pMe, BottomBar_e_Type eBarType)
 {
@@ -3083,7 +3227,7 @@ static void TVApp_DrawBottomBarText(CTVApp *pMe, BottomBar_e_Type eBarType)
     (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
 
 }
-
+#if 0
 static boolean TVApp_SetDateForRecordFileName(CTVApp *pMe)
 {
     AEEMediaData   md;
@@ -3126,7 +3270,7 @@ static boolean TVApp_GetDateForRecordFileName(CTVApp *pMe, char * pszDest, unsig
    }
    return TRUE;
 }
-
+#endif
 static void TVApp_EventNotify(CTVApp *pMe, AEECameraNotify *pcn)
 {
     if (!pMe || !pcn || !pMe->m_pTV)
@@ -3287,29 +3431,23 @@ void TVApp_AppEventNotify(CTVApp *pMe, int16 nCmd, int16 nStatus)
 
 static int TV_UpdateInit(CTVApp *pMe)
 {
-   // if(pMe->m_nCameraState == CAM_PREVIEW)
-   // {
-        IDisplay_ClearScreen(pMe->m_pDisplay);
-        
-        IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, TRANS_COLOR);
-   MSG_FATAL("TV_UpdateInit1-------x%d---------y%d",pMe->m_rc.dx,pMe->m_rc.dy,0);
-   MSG_FATAL("TV_UpdateInit2-------x%d---------y%d",pMe->m_rc.x,pMe->m_rc.y,0);
-     //   return SUCCESS;
-   // }
-   // else
-   /// {
-   //     return EBADSTATE;
-   // }
-        
+    IBitmap* pbmp = NULL;
+    IDISPLAY_GetDeviceBitmap(pMe->m_pDisplay, &pbmp);
+	if(pbmp)
+	{
+        IBITMAP_FillRect(pbmp, &pMe->m_rc, TRANS_COLOR, AEE_RO_COPY);
+		IBITMAP_Release(pbmp);  
+        MSG_FATAL("TV_UpdateInit1-------x%d---------y%d",pMe->m_rc.dx,pMe->m_rc.dy,0);
+        MSG_FATAL("TV_UpdateInit2-------x%d---------y%d",pMe->m_rc.x,pMe->m_rc.y,0);
+	}
+    return SUCCESS;
 }
 static int TV_Update(CTVApp *pMe)
 {
-    //DBGPRINTF("camera state--------------%d\n", pMe->m_nCameraState);
-   // if(pMe->m_nCameraState == CAM_PREVIEW)
-   // {
-  
+   
         IBitmap* pbmp = NULL;
         IDIB* pdib = NULL;
+        
         IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE); 
         IDISPLAY_GetDeviceBitmap(pMe->m_pDisplay, &pbmp);           
         IBITMAP_QueryInterface(pbmp, AEECLSID_DIB, (void**)&pdib);
@@ -3318,10 +3456,6 @@ static int TV_Update(CTVApp *pMe)
 		MSG_FATAL("IMMITv_updateimg--------------------------end",0,0,0);
         IBITMAP_Release(pbmp);  
         IDIB_Release(pdib);
-   // }    
-   // else
-   // {
-   //     return EBADSTATE;
-   // }
-          
+        return SUCCESS;
+    
 }

@@ -498,7 +498,7 @@ static uint32 TVApp_Release(ITVApp *p)
 static int TVApp_InitAppData(CTVApp *pMe)
 {
     AEEDeviceInfo  di;
-	int Ret = 0;
+	//int Ret = 0;
     uint32 m_tv = 1;   
     if(NULL == pMe)
     {
@@ -527,7 +527,7 @@ static int TVApp_InitAppData(CTVApp *pMe)
     pMe->m_bCapturePic = FALSE;
     pMe->m_ePreState = STATE_NULL;
     pMe->m_nMainMenuItemSel = IDS_ITEM_TV;
-    pMe->m_nSelfTimeItemSel = IDS_SELFTIME_OFF;
+    //pMe->m_nSelfTimeItemSel = IDS_SELFTIME_OFF;
     pMe->m_nTVCFG = TVSETChannel;
     pMe->m_sCurrentFileName[0] = '\0';
     pMe->m_sCaptureFileName[0] = '\0';
@@ -684,7 +684,7 @@ static void TVApp_FreeAppData(CTVApp *pMe)
 
     if(pMe->pGraphics)
       {
-         // IDISPLAY_Release(pMe->pGraphics);
+          IGRAPHICS_Release(pMe->pGraphics);
           pMe->pGraphics = NULL;
       }
 
@@ -716,6 +716,16 @@ static void TVApp_FreeAppData(CTVApp *pMe)
     {
         IBACKLIGHT_Release(pMe->m_pBacklight);
         pMe->m_pBacklight = NULL;
+    }
+    if(pMe->pIMMITv)
+    {
+        IMMITv_Release(pMe->pIMMITv);
+        pMe->pIMMITv=NULL;
+
+    }
+    if(pMe->pTvSetting )
+    {
+      FREE(pMe->pTvSetting);
     }
 // if SD Dev is existed, stop SD dev while exitting from TV APP to avoid high current<43mA> consume in idle state
     // Note: if SD card detected after Creating ITV interface, it needn't to stop sd card in this way, cause's SD won't be pushed in stack for low dev priority
@@ -838,7 +848,7 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
                 switch(nDevice)
                 {
                     case APP_MEDIA_ALLOW:
-                        pMe->m_eCurState = STATE_CMAINMENU;                               
+                        pMe->m_eCurState = STATE_TVWAITING;  //STATE_CMAINMENU                             
                         break;
 
                     case APP_MEDIA_IMPACT_BY_MP3:                    
@@ -972,7 +982,7 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
             return TRUE;
             
         case EVT_APPISREADY:
-            pMe->m_bAppIsReady = TRUE;
+            pMe->m_bAppIsReady = TRUE;  //7001
             return TRUE;
       
         case EVT_KEY_PRESS:
@@ -1065,9 +1075,3 @@ static void TVApp_APPIsReadyTimer(void *pme)
                            0,
                            0);
 }
-
-
-
-
-
-

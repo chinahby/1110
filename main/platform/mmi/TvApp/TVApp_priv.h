@@ -96,8 +96,7 @@
 /*==============================================================================
                                  类型定义
 ==============================================================================*/
-#define AEE_APPSTVAPP_RES_FILE  AEE_RES_LANGDIR TVAPP_RES_FILE
-#define SEARCH_ANI_FILE "fs:/image/tvapp/search.gif"
+//#define AEE_APPSTVAPP_RES_FILE  AEE_RES_LANGDIR TVAPP_RES_FILE
 // camera quality
 #define CAMERA_APP_QUALITY_HIGH  33
 #define CAMERA_APP_QUALITY_MED   67
@@ -183,11 +182,27 @@
 #define VERTICAL_TV_WIDTH        240
 #define VERTICAL_TV_HEIGHT       192  
 
+
+//#define TV_SETTING_BAR_W 0
+#if defined (FEATURE_DISP_220X176)
+#define TV_TITLE_BAR_X 80
+#define TV_TITLE_BAR_Y 75
+
 //TV 进度条
 #define TV_SETTING_BAR_X 20
 #define TV_SETTING_BAR_Y 50
 #define TV_SETTING_BAR_H 7
-//#define TV_SETTING_BAR_W 0
+
+#elif defined (FEATURE_DISP_320X240)
+#define TV_TITLE_BAR_X 120
+#define TV_TITLE_BAR_Y 130
+
+//TV 进度条
+#define TV_SETTING_BAR_X 70
+#define TV_SETTING_BAR_Y 100
+#define TV_SETTING_BAR_H 7
+
+#endif
 
 //TVSETTING
 #define TV_SETTING_BRIGHTNESS_MAXVALUE 15
@@ -273,15 +288,9 @@ typedef enum DLGRetValue
     DLGRET_AFRICA,
     DLGRET_OCEANIA,
     DLGRET_DRAWTOPBAR,
-    DLGRET_BAR1,
-    DLGRET_BAR2,
-    DLGRET_BAR3,
-    DLGRET_BAR4,
-    DLGRET_BAR5,
-    DLGRET_BAR6,
-    DLGRET_BAR7,
     DLGRET_AUTOSCAN,
     DLGRET_BOOKMARK,
+    DLGRET_TVWAITING,
     DLGRET_EXIT 
 } DLGRetValue;
 
@@ -302,15 +311,9 @@ typedef enum
     STATE_AFRICA,
     STATE_OCEANIA,
     STATE_DRAWTOPBAR,
-    STATE_BAR1,
-    STATE_BAR2,
-    STATE_BAR3,
-    STATE_BAR4,
-    STATE_BAR5,
-    STATE_BAR6,
-    STATE_BAR7,
     STATE_AUTOSCAN,
     STATE_BOOKMARK,
+    STATE_TVWAITING,
     STATE_EXIT
 } FSMState;
 
@@ -399,15 +402,16 @@ typedef struct _CTVApp
     int                  m_nItemH;               // 文本默认字体高度
 
     int                  m_barW;                 // TV进度条的长度
-    int                  m_barMAXW;              
-        
+    int                  m_barMAXW;              //进度条的总长度             
+    uint32               m_barTitle;             //设置的标题名
+	
     char                 m_sCurrentFileName[MIN_FILE_NAME_LEN];
     char                 m_sCaptureFileName[MIN_PICS_NAME_LEN];
     AEECallback          m_CallBack;
 
 	ITlgAtv				*pITv;
 	IMMITv				*pIMMITv;
-	ICBMMITv			myICBMMITv;
+	ICBMMITv			 myICBMMITv;
     TvBARSET             m_nTVCFG;           // tv设置
     TVSTATE              m_nTVState;         // TV的运行状态
     //CAMERASTATE          m_nCameraState;         // camera的运行状态

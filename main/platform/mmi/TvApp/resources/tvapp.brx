@@ -4,107 +4,23 @@
 	<STRING Id="1001" Name="IDS_ITEM_TV">
 		<Text>TV</Text>
 	</STRING>
-	<STRING Id="1003" Name="IDS_ITEM_CAMERA_GALLERY">
-		<Text>Photo gallery</Text>
+	<STRING Id="1002" Name="IDS_TITLE_BRIGHTNESS">
+		<Text>Brightness</Text>
 	</STRING>
-	<STRING Id="1005" Name="IDS_CFG_ENVIR">
-		<Text>Environment</Text>
+	<STRING Id="1003" Name="IDS_TITLE_CONTRAST">
+		<Text>Contrast</Text>
 	</STRING>
-	<STRING Id="1006" Name="IDS_ENVIR_MODE_AUTO">
-		<Text>Auto</Text>
+	<STRING Id="1004" Name="IDS_TITLE_DEFINITION">
+		<Text>Definition</Text>
 	</STRING>
-	<STRING Id="1007" Name="IDS_ENVIR_MODE_NIGHT">
-		<Text>Night mode</Text>
+	<STRING Id="1005" Name="IDS_TITLE_SATURATION">
+		<Text>Saturation</Text>
 	</STRING>
-	<STRING Id="1008" Name="IDS_ENVIR_MODE_CLOUDY">
-		<Text>Cloudy mode</Text>
-	</STRING>
-	<STRING Id="1009" Name="IDS_ENVIR_MODE_SUNNY">
-		<Text>Sunny mode</Text>
-	</STRING>
-	<STRING Id="1013" Name="IDS_CFG_QUALITY">
-		<Text>Quality</Text>
-	</STRING>
-	<STRING Id="1014" Name="IDS_QUALITY_HIGH">
-		<Text>High</Text>
-	</STRING>
-	<STRING Id="1015" Name="IDS_QUALITY_MED">
-		<Text>Med</Text>
-	</STRING>
-	<STRING Id="1016" Name="IDS_QUALITY_LOW">
-		<Text>Low</Text>
-	</STRING>
-	<STRING Id="1017" Name="IDS_CFG_SIZE">
-		<Text>Size</Text>
-	</STRING>
-	<STRING Id="1018" Name="IDS_CFG_TONE">
-		<Text>Shutter tone</Text>
-	</STRING>
-	<STRING Id="1019" Name="IDS_TONE_DISABLE">
-		<Text>Off</Text>
-	</STRING>
-	<STRING Id="1020" Name="IDS_TONE_ENABLE">
-		<Text>On</Text>
-	</STRING>
-	<STRING Id="1021" Name="IDS_CFG_SELFTIMER">
-		<Text>Self timer</Text>
-	</STRING>
-	<STRING Id="1022" Name="IDS_SELFTIME_OFF">
-		<Text>Off</Text>
-	</STRING>
-	<STRING Id="1023" Name="IDS_SELFTIME_SEC1">
-		<Text>5 Sec</Text>
-	</STRING>
-	<STRING Id="1024" Name="IDS_SELFTIME_SEC2">
-		<Text>10 Sec</Text>
-	</STRING>
-	<STRING Id="1025" Name="IDS_SELFTIME_SEC3">
-		<Text>15 Sec</Text>
-	</STRING>
-	<STRING Id="1026" Name="IDS_CFG_CAPMODE">
-		<Text>Capture mode</Text>
-	</STRING>
-	<STRING Id="1027" Name="IDS_CAPTURE_OFF">
-		<Text>Off</Text>
-	</STRING>
-	<STRING Id="1028" Name="IDS_CAPTURE_MODE1">
-		<Text>1 Shot</Text>
-	</STRING>
-	<STRING Id="1029" Name="IDS_CAPTURE_MODE2">
-		<Text>3 Shot</Text>
-	</STRING>
-	<STRING Id="1030" Name="IDS_CAPTURE_MODE3">
-		<Text>5 Shot</Text>
-	</STRING>
-	<STRING Id="1031" Name="IDS_CFG_BANDING">
-		<Text>Banding</Text>
-	</STRING>
-	<STRING Id="1032" Name="IDS_BANDING_MODE1">
-		<Text>50 Hz</Text>
-	</STRING>
-	<STRING Id="1033" Name="IDS_BANDING_MODE2">
-		<Text>60 Hz</Text>
-	</STRING>
-	<STRING Id="1037" Name="IDS_CFG_RESET">
-		<Text>Reset</Text>
-	</STRING>
-	<STRING Id="1058" Name="IDS_NORMAL">
-		<Text>Normal</Text>
-	</STRING>
-	<STRING Id="1064" Name="IDS_MSG_NOCAMERA">
-		<Text>No Camera</Text>
-	</STRING>
-	<STRING Id="1066" Name="IDS_MSG_NOSDCARD">
-		<Text>Insert memory card</Text>
-	</STRING>
-	<STRING Id="1068" Name="IDS_DONE">
-		<Text>Done</Text>
-	</STRING>
-	<STRING Id="1069" Name="IDS_MSG_NOMEMORY">
-		<Text>No enough memory</Text>
+	<STRING Id="1006" Name="IDS_TITLE_SOUND">
+		<Text>Sound</Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_MSG_WAITING">
-		<Text>Waiting</Text>
+		<Text>TV Waiting</Text>
 	</STRING>
 	<STRING Id="1073" Name="IDS_MSG_CAPTURE_FAILED">
 		<Text>Capture failed</Text>
@@ -406,6 +322,9 @@
 				<Items/>
 			</Menu>
 		</Controls>
+	</Dialog>
+	<Dialog Id="6016" Name="IDD_TVWAITING" Focus="0">
+		<Controls/>
 	</Dialog>
 </Dialogs>
 </BREWRes>
