@@ -224,8 +224,8 @@ static uint32 OEMTLGAtv_Release(ITlgAtv* pIAtv)
 
 static int  OEMTLGAtv_GetFrame(OEMINSTANCE  h, IBitmap ** ppFrame)
 {
-    ITlgAtv *pMe = (ITlgAtv *)h;
-    OEMCamera *pCameraMe = NULL;
+   // ITlgAtv *pMe = (ITlgAtv *)h;
+  //  OEMCamera *pCameraMe = NULL;
         
   //  OEMATV_PRINT("OEMTLGAtv_GetFrame invoke",0,0,0);
     //这里为了释放display buffer计数
@@ -501,6 +501,3 @@ static int OEMTLGAtv_Update(OEMINSTANCE h, uint32 dwParam)
 
 
 #endif
-
-
-
