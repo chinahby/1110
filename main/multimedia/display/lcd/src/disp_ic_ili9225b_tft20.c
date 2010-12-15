@@ -50,22 +50,22 @@ static void disp_ic_init(void)
 
 static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
 {
-    LCD_WRITE_CMD(0x36);
+    LCD_WRITE_CMD(0x38);
     LCD_WRITE_DATA16((uint16)end_row);
-    LCD_WRITE_CMD(0x37);
+    LCD_WRITE_CMD(0x39);
     LCD_WRITE_DATA16((uint16)start_row);
 
     /* Set LCD hardware to set start address */
     /* Transfer command to display hardware */
-    LCD_WRITE_CMD(0x38); 
+    LCD_WRITE_CMD(0x36); 
     LCD_WRITE_DATA16((uint16)end_col);
-    LCD_WRITE_CMD(0x39);
+    LCD_WRITE_CMD(0x37);
     LCD_WRITE_DATA16((uint16)start_col);
 
     LCD_WRITE_CMD(0x20);
-    LCD_WRITE_DATA16((uint16)start_row);
-    LCD_WRITE_CMD(0x21);
     LCD_WRITE_DATA16((uint16)start_col);
+    LCD_WRITE_CMD(0x21);
+    LCD_WRITE_DATA16((uint16)start_row);
     
     LCD_WRITE_CMD(0x22);
 }
