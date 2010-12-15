@@ -150,7 +150,7 @@ when       who     what, where, why
  *  \brief The maximum charging current that we are allowed to charge the
  *  Li-ion battery when the charging source is a UCP, in automatic charigng
  */
-#define AUTO_CHARGING_UCP_IMAX_MAXIMUM                     750
+#define AUTO_CHARGING_UCP_IMAX_MAXIMUM                     600
 #endif /* FEATURE_BATTERY_CHARGER_USE_NIMH */
 /*! \def AUTO_CHARGING_IMAX_MINIMUM
  *  \brief The minimum valid IMAXSEL (in milli Amp), in automatic charigng
