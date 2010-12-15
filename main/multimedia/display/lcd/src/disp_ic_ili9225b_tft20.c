@@ -96,6 +96,7 @@ static void disp_ic_sleep(boolean bin)
 
 static void disp_ic_rot(uint16 degree)
 {
+#if 0
     if(degree == 0)
     {
         LCD_WRITE_CMD(0x14); LCD_WRITE_DATA16(0x5560); // Set VCOMH/VCOML voltage   0x333A
@@ -104,6 +105,7 @@ static void disp_ic_rot(uint16 degree)
     {
         LCD_WRITE_CMD(0x14); LCD_WRITE_DATA16(0x333A); // Set VCOMH/VCOML voltage   0x3336
     }
+#endif
     return;
 }
 

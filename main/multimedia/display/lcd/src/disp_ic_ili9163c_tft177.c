@@ -240,6 +240,7 @@ static void disp_ic_sleep(boolean bin)
 
 static void disp_ic_rot(uint16 degree)
 {
+#if 0
     if(degree == 0)
     {
         LCD_WRITE_CMD(0xC5); //Set VMH[6:0] & VML[6:0] for VOMH & VCOML
@@ -252,6 +253,7 @@ static void disp_ic_rot(uint16 degree)
         LCD_WRITE_DATA(0x2C);
         LCD_WRITE_DATA(0x40);
     }
+#endif
     return;
 }
 

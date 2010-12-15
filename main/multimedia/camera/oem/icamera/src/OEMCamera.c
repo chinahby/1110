@@ -158,7 +158,9 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 #ifdef CUST_EDITION
 #include "custcamsensor.h"
 #endif
-
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+#include "disp.h"
+#endif
 #include "Camsensor.h"
 #define NUM_OF_SENSORS_ON_PHONE  2
 extern camsensor_static_params_type camsensor_static_params[NUM_OF_SENSORS_ON_PHONE];
@@ -1748,6 +1750,14 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
           pme->m_sizeDisplay.cx = pRect->dx;
           pme->m_sizeDisplay.cy = pRect->dy;
           bDirectToLCD= (boolean)p1;
+          if(bDirectToLCD)
+          {
+            disp_lock_screen(pRect->y, pRect->dy, pRect->x, pRect->dx);
+          }
+          else
+          {
+            disp_lock_screen(0, 0, 0, 0);
+          }
         }
         else //p1 > 0 and p2 == 0
         {
@@ -4306,7 +4316,7 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
 #ifdef FEATURE_CAMERA_NOFULLSCREEN
            if(bDirectToLCD)
            {
-             DBGPRINTF("Update TO %d %d %d %d",pme->m_cxOffset,pme->m_cyOffset,pme->m_sizeDisplay.cx,pme->m_sizeDisplay.cy);
+             DBGPRINTF("camera_blt_ext %d %d %d %d",pme->m_cxOffset, pme->m_cyOffset, pme->m_sizeDisplay.cx, pme->m_sizeDisplay.cy);
              camera_blt_ext((camera_frame_type *)parm4, 0, 0, 0, pme->m_cxOffset, pme->m_cyOffset, pme->m_sizeDisplay.cx, pme->m_sizeDisplay.cy, CAMERA_TOLCD);
            }
            else

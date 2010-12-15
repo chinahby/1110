@@ -94,7 +94,8 @@ static disp_update_type dup_arg_capture;
 #endif
 
 static disp_cls_type cls_arg;
-#ifdef FEATURE_MP4_DECODER
+#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
+static disp_update_type duplock_arg;
 static disp_update_type dupyuv_arg;
 static disp_lock_type lock_arg;
 #endif
@@ -540,7 +541,26 @@ static void mdp_init(void)
 }
 #endif /* FEATURE_MDP */
 
-#ifdef FEATURE_MP4_DECODER
+#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
+void disp_update_lock
+(
+  /* The buffer pointer point to the first byte of the whole buffer.
+  */
+  void *buf_ptr,
+  /* Number of rows to update */
+  int16 num_of_rows,
+  /* Number of columns to update */
+  int16 num_of_columns
+)
+{
+  duplock_arg.buf_ptr = buf_ptr;
+  duplock_arg.num_of_rows = num_of_rows;
+  duplock_arg.num_of_columns = num_of_columns;
+  duplock_arg.dest = PRIMARY_LCD_TYPE;
+  
+  drv_ioctl(fd, IOCTL_DISP_UPDATE_LOCK, (void *)&duplock_arg);
+}
+
 void disp_update_yuv420
 (
   /* The buffer pointer point to the first byte of the whole buffer.
@@ -557,7 +577,7 @@ void disp_update_yuv420
   dupyuv_arg.num_of_columns = num_of_columns;
   dupyuv_arg.dest = PRIMARY_LCD_TYPE;
   
-  drv_ioctl(fd, IOCTL_DISP_UPDATE_LOCK, (void *)&dupyuv_arg);
+  drv_ioctl(fd, IOCTL_DISP_UPDATE_LOCK_YUV, (void *)&dupyuv_arg);
 }
 
 void disp_lock_screen

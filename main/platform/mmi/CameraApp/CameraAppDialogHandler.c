@@ -648,8 +648,11 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 		    }
  #endif
  			//Add End
-        
+            
             ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+            ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_LCD_DIRECT_ACCESS, (int32)FALSE, (int32)&(pMe->m_rcPreview));
+#endif
             return TRUE;
             
         case EVT_USER_REDRAW:
@@ -902,9 +905,6 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
 #ifdef FEATURE_DSP
             ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL); 
 #endif
-#ifdef FEATURE_CAMERA_NOFULLSCREEN
-            ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_LCD_DIRECT_ACCESS, (int32)FALSE, (int32)&(pMe->m_rcPreview));
-#endif
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -925,6 +925,10 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             {
                 IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL);
             }
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+            IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, RGB_BLACK);
+            IDISPLAY_Update(pMe->m_pDisplay);
+#endif
             return TRUE;
       
         case EVT_USER_REDRAW: 
@@ -2710,7 +2714,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
                                            nResID[i]);
         if(pTopBarImage)
         {
-            IIMAGE_Draw(pTopBarImage, i*(TOPBAR_ICON_WIDTH+3), TOPBAR_ICON_Y);	// + 5
+            IIMAGE_Draw(pTopBarImage, i*(TOPBAR_ICON_WIDTH+1), TOPBAR_ICON_Y);	// + 5
             IIMAGE_Release(pTopBarImage);
             pTopBarImage = NULL;
         }
@@ -2723,7 +2727,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	    if (pCameraCFGChooseIcon)
 	    {  
 			IIMAGE_SetDrawSize(pCameraCFGChooseIcon, TOPBAR_ICON_WIDTH, CFGBAR_TEXT_HEIGHT);
-			IIMAGE_Draw(pCameraCFGChooseIcon, (3+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG), TOPBAR_ICON_Y);	//Add By zzg 2010_07_25
+			IIMAGE_Draw(pCameraCFGChooseIcon, (1+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG), TOPBAR_ICON_Y);	//Add By zzg 2010_07_25
 			
 	        IIMAGE_Release(pCameraCFGChooseIcon);
 	        pCameraCFGChooseIcon = NULL;
@@ -3532,6 +3536,7 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
         case CAM_STATUS_START:
 #ifdef FEATURE_CAMERA_NOFULLSCREEN
             IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, RGB_BLACK);
+            IDISPLAY_Update(pMe->m_pDisplay);
 #endif
             break;
             

@@ -270,8 +270,9 @@ enum
   IOCTL_DISP_ENABLE_CAPTURE_MODE,
   IOCTL_DISP_CAPTURE_SCREEN,
 #endif
-#ifdef FEATURE_MP4_DECODER
+#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
   IOCTL_DISP_LOCK_SCR,
+  IOCTL_DISP_UPDATE_LOCK_YUV,
   IOCTL_DISP_UPDATE_LOCK,
 #endif
   IOCTL_DISP_OFF,
@@ -304,7 +305,7 @@ typedef struct
   LCD_TYPE dest;
 } disp_cls_type;
 
-#ifdef FEATURE_MP4_DECODER
+#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
 typedef struct
 {
   word start_row;
@@ -781,6 +782,35 @@ void disp_capture32
 #ifdef FEATURE_TORCH_SUPPORT
 void disp_set_torch(void);
 void disp_clear_torch(void);
+#endif
+#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
+void disp_update_lock
+(
+  /* The buffer pointer point to the first byte of the whole buffer.
+  */
+  void *buf_ptr,
+  /* Number of rows to update */
+  int16 num_of_rows,
+  /* Number of columns to update */
+  int16 num_of_columns
+);
+void disp_update_yuv420
+(
+  /* The buffer pointer point to the first byte of the whole buffer.
+  */
+  void *buf_ptr,
+  /* Number of rows to update */
+  int16 num_of_rows,
+  /* Number of columns to update */
+  int16 num_of_columns
+);
+void disp_lock_screen
+(
+  word start_row,
+  word num_row,
+  word start_column,
+  word num_column
+);
 #endif
 
 #ifdef __cplusplus

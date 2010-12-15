@@ -49,7 +49,7 @@ typedef struct{
     void   (*disp_ic_set)(uint32 src, dword copy_count);
     void   (*disp_ic_sleep)(boolean bin);
     void   (*disp_ic_rot)(uint16 degree);
-#ifdef FEATURE_MP4_DECODER
+#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
     void   (*disp_ic_yuv420)(const byte *src_ptr, word src_w, word src_h, word dst_w, word dst_h);
 #endif
 }disp_drv_ic_type;
@@ -67,7 +67,7 @@ typedef struct
     word        lock_col_num;
 } disp_drv_state_type;
 
-#ifdef FEATURE_MP4_DECODER
+#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
 #define DISP_IC_INIT_TBL(p) \
     p->disp_ic_init       = disp_ic_init; \
     p->disp_ic_setwindow  = disp_ic_setwindow; \

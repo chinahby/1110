@@ -61,7 +61,7 @@ static void disp_ic_set(uint32 src, dword copy_count)
     }
 }
 
-#ifdef FEATURE_MP4_DECODER
+#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
 static const int16 Cr2R[256]=
 {
     -202, -200, -198, -197, -195, -194, -192, -191, 

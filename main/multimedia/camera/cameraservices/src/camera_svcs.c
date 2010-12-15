@@ -1956,7 +1956,8 @@ camera_ret_code_type camera_svcs_blt_to_lcd
   
   if(frame->format == CAMERA_RGB565)
   {
-    disp_update(bmy_addr, dx, 0, 0, dy, dx, y, x);
+    //disp_update(bmy_addr, dx, 0, 0, dy, dx, y, x);
+    disp_update_lock(bmy_addr, dy, dx);
   }
   else
   {
