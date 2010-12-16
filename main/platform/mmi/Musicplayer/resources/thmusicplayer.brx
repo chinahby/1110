@@ -188,7 +188,7 @@
 		<Text>รายการเพลงมาตรฐาน</Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_MSG_WAITING">
-		<Text>กำลังโหลดเพลง,กรุณารอ</Text>
+		<Text>การโหลด...</Text>
 	</STRING>
 	<STRING Id="1064" Name="IDS_RENAME_FAILED">
 		<Text>ไม่สามารถเปลี่ยนชื่อ</Text>

@@ -5405,9 +5405,9 @@ void disp_epson_S1D19120_boot_chg_splash_screen (void)
 	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 24, 24);
 #endif
 #elif defined(FEATURE_DISP_220X176)
-	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 58, 70);
+	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 48, 70);
 #elif defined(FEATURE_DISP_176X220)
-	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 70, 58);
+	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 70, 48);
 #elif defined(FEATURE_DISP_320X240)
 	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 80, 130);
 #elif defined(FEATURE_DISP_240X320)

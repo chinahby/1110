@@ -327,6 +327,23 @@ if(!(x))         \
 
 #elif defined (FEATURE_DISP_220X176)
 //wlh 20090415 add 设置ICON 坐标 
+//进度条(简单播放)
+#define SIMSCHEDULEBAR_X 5
+#define SIMSCHEDULEBAR_Y 97
+#define SIMSCHEDULEBAR_W 210
+#define SIMSCHEDULEBAR_H 4
+
+//当前播放时间（简单播放）
+#define SIMPLAYINGTICK_X ((SCREEN_WIDTH-TIME_WIDTH)/2)
+#define SIMPLAYINGTICK_Y 110
+
+//当前播放名称（简单播放）
+#define SIMMUSICNAME_X 5
+#define SIMMUSICNAME_Y 15
+#define SIMMUSICNAME_W 210
+#define SIMMUSICNAME_H 20
+
+//wlh 20090415 add 设置ICON 坐标 
 //开机动画
 #define ANI_X 0
 #define ANI_Y 0//27
@@ -336,68 +353,65 @@ if(!(x))         \
 #define ANI_NUM 5
 
 //进度条
-#define SCHEDULEBAR_X 34
-#define SCHEDULEBAR_Y 58
-#define SCHEDULEBAR_W 148 //94
-#define SCHEDULEBAR_H 7
-
-//进度条(简单播放)
-#define SIMSCHEDULEBAR_X 17
-#define SIMSCHEDULEBAR_Y 147
-#define SIMSCHEDULEBAR_W 94
-#define SIMSCHEDULEBAR_H 7
+#define SCHEDULEBAR_X 5
+#define SCHEDULEBAR_Y 87
+#define SCHEDULEBAR_W 210 //94
+#define SCHEDULEBAR_H 4
 
 //播放按钮
-#define PLAY_X 89
+#define PLAY_X 64
 #define PLAY_Y 93
-#define PLAY_W 45
-#define PLAY_H 44
+#define PLAY_W 40
+#define PLAY_H 32
 
 //前一个曲目
-#define PREVIOUSPRESS_X 58
-#define PREVIOUSPRESS_Y 98
-#define PREVIOUSPRESS_W 31
+#define PREVIOUSPRESS_X 20
+#define PREVIOUSPRESS_Y 93
+#define PREVIOUSPRESS_W 40
 #define PREVIOUSPRESS_H 32
 
 //后一个曲目
-#define NEXTPRESS_X 131
-#define NEXTPRESS_Y 98
-#define NEXTPRESS_W 31
+#define NEXTPRESS_X 107
+#define NEXTPRESS_Y 94
+#define NEXTPRESS_W 40
 #define NEXTPRESS_H 32
 
 //降低音量
-#define DECREASEVOLUMEPRESS_X 4
-#define DECREASEVOLUMEPRESS_Y 108
-#define DECREASEVOLUMEPRESS_W 23
-#define DECREASEVOLUMEPRESS_H 20
+#define DECREASEVOLUMEPRESS_X 2
+#define DECREASEVOLUMEPRESS_Y 114
+#define DECREASEVOLUMEPRESS_W 16
+#define DECREASEVOLUMEPRESS_H 14
 
 //增加音量
-#define ADDVOLUMEPRESS_X 4
-#define ADDVOLUMEPRESS_Y 60
-#define ADDVOLUMEPRESS_W 23
-#define ADDVOLUMEPRESS_H 20
+#define ADDVOLUMEPRESS_X 2
+#define ADDVOLUMEPRESS_Y 78
+#define ADDVOLUMEPRESS_W 16
+#define ADDVOLUMEPRESS_H 14
 
 //音量
-#define VOLUME_X 7
-#define VOLUME_Y 82
-#define VOLUME_W 10
-#define VOLUME_H 18
+#define VOLUME_X 173
+#define VOLUME_Y 112
+#define VOLUME_W 48
+#define VOLUME_H 20
+
+#define MUSICNAME_X 5
+#define MUSICNAME_Y 30
+#define MUSICNAME_W 210
+#define MUSICNAME_H 30
 
 //当前序号/总数量
-#define LISTINDEX_X (NEXTPRESS_X+NEXTPRESS_W+5) //5
-#define LISTINDEX_Y (NEXTPRESS_Y+(NEXTPRESS_H-TIME_HEIGHT)/2) //95
+#define LISTINDEX_X VOLUME_X//5
+#define LISTINDEX_Y 10 //95
 
 //当前歌曲的总时间
-#define TOTALTIME_X (SCHEDULEBAR_X+SCHEDULEBAR_W-TIME_WIDTH)
-#define TOTALTIME_Y (SCHEDULEBAR_Y+SCHEDULEBAR_H+4)
+#define TOTALTIME_X (SCHEDULEBAR_X+SCHEDULEBAR_W-50)
+#define TOTALTIME_Y (SCHEDULEBAR_Y-22)
 
 //当前播放时间
 #define PLAYINGTICK_X (SCHEDULEBAR_X)
-#define PLAYINGTICK_Y (SCHEDULEBAR_Y+SCHEDULEBAR_H+4)
+#define PLAYINGTICK_Y (SCHEDULEBAR_Y-22)
 
-//当前播放时间（简单播放）
-#define SIMPLAYINGTICK_X 60
-#define SIMPLAYINGTICK_Y 155
+
 
 //播放时间和总时间的宽度高度
 #define TIME_WIDTH	45
@@ -409,91 +423,6 @@ if(!(x))         \
 #define OLDPLAY_W 114
 #define OLDPLAY_H 45
 
-
-#elif defined (FEATURE_DISP_128X160)
-//wlh 20090415 add 设置ICON 坐标 
-//开机动画
-#define ANI_X 0
-#define ANI_Y 0//27
-#define ANI_W 176
-#define ANI_H 82
-//动画帧数
-#define ANI_NUM 5
-
-//进度条
-#define SCHEDULEBAR_X 9
-#define SCHEDULEBAR_Y (ADDVOLUMEPRESS_Y-10)
-#define SCHEDULEBAR_W 110
-#define SCHEDULEBAR_H 7
-
-//进度条(简单播放)
-#define SIMSCHEDULEBAR_X 17
-#define SIMSCHEDULEBAR_Y 147
-#define SIMSCHEDULEBAR_W 94
-#define SIMSCHEDULEBAR_H 7
-
-//播放按钮
-#define PLAY_X 56 //66
-#define PLAY_Y 95 //55
-#define PLAY_W 26 //45
-#define PLAY_H 26 //44
-
-//前一个曲目
-#define PREVIOUSPRESS_X 34 //37
-#define PREVIOUSPRESS_Y 98 //60
-#define PREVIOUSPRESS_W 19 //31
-#define PREVIOUSPRESS_H 20 //32
-
-//后一个曲目
-#define NEXTPRESS_X 87 //107
-#define NEXTPRESS_Y 98 //60
-#define NEXTPRESS_W 19 //31
-#define NEXTPRESS_H 20 //32
-
-//降低音量
-#define DECREASEVOLUMEPRESS_X 4
-#define DECREASEVOLUMEPRESS_Y 111
-#define DECREASEVOLUMEPRESS_W 21
-#define DECREASEVOLUMEPRESS_H 17
-
-//增加音量
-#define ADDVOLUMEPRESS_X 4
-#define ADDVOLUMEPRESS_Y 76
-#define ADDVOLUMEPRESS_W 18
-#define ADDVOLUMEPRESS_H 18
-
-//音量
-#define VOLUME_X 6
-#define VOLUME_Y 92
-#define VOLUME_W 12
-#define VOLUME_H 18
-
-//当前序号/总数量
-#define LISTINDEX_X (SCREEN_HEIGHT/2 - TIME_WIDTH)
-#define LISTINDEX_Y (SCHEDULEBAR_Y + SCHEDULEBAR_H + 5)
-
-//当前歌曲的总时间
-#define TOTALTIME_X (SCREEN_WIDTH - PLAYINGTICK_X - TIME_WIDTH)
-#define TOTALTIME_Y (SCREEN_HEIGHT/2 - 2*TIME_HEIGHT) 
-
-//当前播放时间
-#define PLAYINGTICK_X 9
-#define PLAYINGTICK_Y TOTALTIME_Y 
-
-//播放时间和总时间的宽度高度
-#define TIME_WIDTH	35
-#define TIME_HEIGHT 18
-
-
-//当前播放时间（简单播放）
-#define SIMPLAYINGTICK_X 60
-#define SIMPLAYINGTICK_Y 155
-
-//播放区域，包含前一首，播放，下一首
-#define OLDPLAY_X 30
-#define OLDPLAY_Y 68
-#define OLDPLAY_W 114
-#define OLDPLAY_H 45
 
 #elif defined (FEATURE_DISP_176X220)
 //wlh 20090415 add 设置ICON 坐标 

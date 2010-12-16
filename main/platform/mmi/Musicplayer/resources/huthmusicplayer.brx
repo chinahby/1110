@@ -181,16 +181,16 @@
 	<STRING Id="1060" Name="IDS_SORT_NONE">
 		<Text>ไม่มี</Text>
 	</STRING>
-	<STRING Id="1061" Name="IDS_PLAYMODE_REPEATONE" Encoding="Unicode">
+	<STRING Id="1061" Name="IDS_PLAYMODE_REPEATONE">
 		<Text>Repeat one</Text>
 	</STRING>
-	<STRING Id="1062" Name="IDS_DEFAULTPLAYLISTNAME" Encoding="Unicode">
+	<STRING Id="1062" Name="IDS_DEFAULTPLAYLISTNAME">
 		<Text>Default playlist</Text>
 	</STRING>
-	<STRING Id="1063" Name="IDS_MSG_WAITING" Encoding="Unicode">
-		<Text>Loading music,please wait</Text>
+	<STRING Id="1063" Name="IDS_MSG_WAITING">
+		<Text>Loading...</Text>
 	</STRING>
-	<STRING Id="1064" Name="IDS_RENAME_FAILED" Encoding="Unicode">
+	<STRING Id="1064" Name="IDS_RENAME_FAILED">
 		<Text>Can't rename</Text>
 	</STRING>
 </Strings>

@@ -2606,10 +2606,13 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
        
     case AVK_UP:
 	case AVK_O:   //add by yangdecai
+		 pMe->m_rtype = TYPE_ADDVOLUME;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
+		 #ifndef FEATURE_DISP_220X176
          MP3_DrawImage( pMe,IDI_ADDVOLUME_PRESS, ADDVOLUMEPRESS_X, ADDVOLUMEPRESS_Y);
          IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-		 pMe->m_rtype = TYPE_ADDVOLUME;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
          ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+         #endif
+         
          if(pMe->m_MusicPlayerCfg.eMusicVolume < VOLUME_FIVE)
          {
             pMe->m_MusicPlayerCfg.eMusicVolume++;
@@ -2634,10 +2637,12 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
          
     case AVK_DOWN:
 	case AVK_I:   //add by yangdecai
+		  pMe->m_rtype = TYPE_DECVOLUME;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
+		  #ifndef FEATURE_DISP_220X176
           MP3_DrawImage( pMe,IDI_DECREASEVOLUME_PRESS, DECREASEVOLUMEPRESS_X, DECREASEVOLUMEPRESS_Y);
           IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-		  pMe->m_rtype = TYPE_DECVOLUME;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
           ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+          #endif
           if(pMe->m_MusicPlayerCfg.eMusicVolume > VOLUME_OFF)
          {
            pMe->m_MusicPlayerCfg.eMusicVolume--;
@@ -2664,7 +2669,11 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         MP3_DrawImage( pMe,IDI_PREVIOUS_PRESS, PREVIOUSPRESS_X, PREVIOUSPRESS_Y);
         IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 		pMe->m_rtype = TYPE_PREVIOUS;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
+#ifndef FEATURE_DISP_220X176
         ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+#else			
+        ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+#endif		
         CMusicPlayer_PlayNext(pMe,FALSE );//播放上一首
         return TRUE;
         
@@ -2673,7 +2682,11 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         MP3_DrawImage( pMe,IDI_NEXT_PRESS,NEXTPRESS_X, NEXTPRESS_Y);
         IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 		pMe->m_rtype = TYPE_NEXT;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
+#ifndef FEATURE_DISP_220X176		
         ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+#else
+		ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
+#endif		
         pMe->m_bUserPressNext = TRUE;
         CMusicPlayer_PlayNext(pMe,TRUE);//播放下一首
         pMe->m_bUserPressNext = FALSE;
@@ -4748,6 +4761,7 @@ void CMusicPlayer_PlayingMusiclistSortBy(CMusicPlayer * pMe)
 static void MP3_RefreshVolBar(CMusicPlayer *pMe)
 {
     uint16 ResID;
+#ifndef FEATURE_DISP_220X176	
     if(pMe->m_eStartMethod != STARTMETHOD_SIMPLEPLAYER)
     {
         switch ((int)pMe->m_nCurrentVolume)
@@ -4801,6 +4815,31 @@ static void MP3_RefreshVolBar(CMusicPlayer *pMe)
                 ResID = IDI_SIMPLEVOL_THREE;            
         }
     }
+#else
+	 switch ((int)pMe->m_nCurrentVolume)
+        {
+            case VOLUME_OFF*AEE_MAX_VOLUME/5:
+                ResID = IDI_VOLUME_OFF;
+                break;
+            case VOLUME_ONE*AEE_MAX_VOLUME/5:
+                ResID = IDI_VOLUME_ONE;
+                break;
+            case VOLUME_TWO*AEE_MAX_VOLUME/5:
+                ResID = IDI_VOLUME_TWO;
+                break;
+            case VOLUME_THREE*AEE_MAX_VOLUME/5:
+                ResID = IDI_VOLUME_THREE;
+                break;
+            case VOLUME_FOUR*AEE_MAX_VOLUME/5:
+                ResID = IDI_VOLUME_FOUR;
+                break;
+            case VOLUME_FIVE*AEE_MAX_VOLUME/5:
+                ResID = IDI_VOLUME_FIVE;
+                break;
+            default :
+                ResID = IDI_VOLUME_THREE;            
+        }
+#endif
 	MP3_DrawImage( pMe, ResID, VOLUME_X, VOLUME_Y);
 
 }    
@@ -4882,7 +4921,7 @@ static void MP3_RefreshPlayingTick(CMusicPlayer *pMe)
                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
    
 }
-/*画正在播放的文件名*/
+#ifndef FEATURE_DISP_220X176
 static void MP3_DrawMusicName(CMusicPlayer *pMe ,int index)
 {
     //AEERect clip;
@@ -4911,6 +4950,50 @@ static void MP3_DrawMusicName(CMusicPlayer *pMe ,int index)
        (void)IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,oldColor);
     //}
 }
+#else
+/*画正在播放的文件名*/
+static void MP3_DrawMusicName(CMusicPlayer *pMe ,int index)
+{
+    //AEERect clip;
+    RGBVAL oldColor;
+	AEERect clip;
+
+	
+    //SETAEERECT( &clip, 12, 8,149,22);
+    if(pMe->m_eStartMethod != STARTMETHOD_SIMPLEPLAYER)
+    {
+		clip.x = MUSICNAME_X;
+		clip.y = MUSICNAME_Y;
+		clip.dx = MUSICNAME_W;
+		clip.dy = MUSICNAME_H;
+        
+		oldColor = IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,MP3NAME_COLOR);//MAKE_RGB(66,156,255));
+		MP3_drawClipRectWithOffset(pMe, IDI_MUSICPLAYER,&clip);
+    }
+    else  
+    {
+		clip.x = SIMMUSICNAME_X;
+		clip.y = SIMMUSICNAME_Y;
+		clip.dx = SIMMUSICNAME_W;
+		clip.dy = SIMMUSICNAME_H;
+		
+        oldColor = IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,RGB_WHITE);
+        MP3_drawClipRectWithOffset(pMe, IDI_SIMPLEPLAYER,&clip);
+    }
+    IDISPLAY_DrawText(pMe->m_pDisplay, 
+                       AEE_FONT_BOLD,
+                       pMe->m_pMp3FileToPlay+index, 
+                       -1, 
+                       clip.x, 
+                       clip.y, 
+                       &clip, 
+                       IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+    //if(pMe->m_eStartMethod == STARTMETHOD_SIMPLEPLAYER)
+    //{
+       (void)IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,oldColor);
+    //}
+}
+#endif
 
 /*画MP3播放器主窗口*/
 static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
@@ -5051,8 +5134,8 @@ static void MP3_DrawIndexAndTotalTime(CMusicPlayer *pMe)
                  ,pMe->m_nPlayinglistMusicNum);		
         STRTOWSTR(list_n_str,wliststr,sizeof(wliststr));	
     }
-
-    DrawTextWithProfile(pMe->m_pShell, 
+#ifndef FEATURE_DISP_220X176
+  DrawTextWithProfile(pMe->m_pShell, 
  		                pMe->m_pDisplay, 
  		                RGB_WHITE_NO_TRANS, 
  		                AEE_FONT_BOLD,
@@ -5062,8 +5145,20 @@ static void MP3_DrawIndexAndTotalTime(CMusicPlayer *pMe)
  		                LISTINDEX_Y,
  		                &clip, 
  		                IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT
+               			);  
+#else
+DrawTextWithProfile(pMe->m_pShell, 
+ 		                pMe->m_pDisplay, 
+ 		                RGB_WHITE_NO_TRANS, 
+ 		                AEE_FONT_BOLD,
+ 		                wliststr, 
+ 		                -1, 
+ 					    LISTINDEX_X, 
+ 		                LISTINDEX_Y,
+ 		                &clip, 
+ 		                IDF_ALIGN_RIGHT|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT
                			);
-	
+#endif	
 
 	//Draw TotalTime Rect 
 	SETAEERECT( &clip, TOTALTIME_X, TOTALTIME_Y, TIME_WIDTH, TIME_HEIGHT);
@@ -5134,7 +5229,9 @@ static void MP3_RefreshscheduleBar(CMusicPlayer *pMe)
 			IIMAGE_Release( image);
 			image = NULL;
 		}
+#ifndef FEATURE_DISP_220X176		
 		MP3_DrawImage(pMe,IDI_GLIDE, (SCHEDULEBAR_W*pMe->m_nCurrentTime/pMe->m_nTotalTime)+SCHEDULEBAR_X, SCHEDULEBAR_Y);
+#endif		
     }
     else
     {

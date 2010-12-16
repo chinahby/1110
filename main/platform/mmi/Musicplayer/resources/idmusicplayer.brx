@@ -188,7 +188,7 @@
 		<Text>Daftar putar standar</Text>
 	</String>
 	<String Id="1063" Name="IDS_MSG_WAITING" Encoding="Unicode">
-		<Text>Memuat musik, silakan tunggu</Text>
+		<Text>Memuat...</Text>
 	</String>
 	<String Id="1064" Name="IDS_RENAME_FAILED" Encoding="Unicode">
 		<Text>Tak dapat ubah nama</Text>

@@ -175,48 +175,40 @@
 					<Items/>
 				</Menu>
 			</Controls>
-			<Position PosX="0" PosW="176" PosY="0" PosH="178"/>
-		</DIALOG>
-		<DIALOG Id="2" Name="IDD_KEYTEST" Focus="0">
-			<Controls/>
-			<Position PosX="0" PosW="176" PosY="0" PosH="178"/>
-		</DIALOG>
-		<DIALOG Id="3" Name="IDD_YAMAHATEST" Focus="0">
-			<Controls/>
-			<Position PosX="0" PosW="176" PosY="0" PosH="178"/>
-		</DIALOG>
-		<DIALOG Id="4" Name="IDD_VIBRATETEST" Focus="0">
-			<Controls/>
-			<Position PosX="0" PosW="176" PosY="0" PosH="178"/>
-		</DIALOG>
-		<DIALOG Id="5" Name="IDD_BACKLIGHTTEST" Focus="0">
-			<Controls/>
-			<Position PosX="0" PosW="176" PosY="0" PosH="178"/>
-		</DIALOG>
-		<DIALOG Id="6" Name="IDD_LCDTEST" Focus="0">
-			<Controls/>
-		</DIALOG>
-		<DIALOG Id="7" Name="IDD_CALLTEST" Focus="0">
-			<Controls/>
-		</DIALOG>
-		<DIALOG Id="8" Name="IDD_RESTORE_FACTORY" Focus="0">
-			<Controls/>
-		</DIALOG>
-		<Dialog Id="9" Name="IDD_FMTEST" Focus="0">
-			<Controls/>
-			<Position PosX="-1" PosW="176" PosY="-1" PosH="178"/>
-		</Dialog>
-		<Dialog Id="10" Name="IDD_VERTEST" Focus="0">
-			<Controls>
-				<Static Id="7002" Name="IDC_VER_STAT">
-					<Items/></Static>
-			</Controls>
-			<Position PosX="-1" PosW="176" PosY="-1" PosH="178"/>
-		</Dialog>
-		<Dialog Id="11" Name="IDD_SDTEST" Focus="0">
-			<Controls/>
-			<Position PosX="-1" PosW="176" PosY="-1" PosH="178"/>
-		</Dialog>
+	</DIALOG>
+	<DIALOG Id="2" Name="IDD_KEYTEST" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="3" Name="IDD_YAMAHATEST" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="4" Name="IDD_VIBRATETEST" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="5" Name="IDD_BACKLIGHTTEST" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6" Name="IDD_LCDTEST" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="7" Name="IDD_CALLTEST" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="8" Name="IDD_RESTORE_FACTORY" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<Dialog Id="9" Name="IDD_FMTEST" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="10" Name="IDD_VERTEST" Focus="0">
+		<Controls>
+			<Static Id="7002" Name="IDC_VER_STAT">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="11" Name="IDD_SDTEST" Focus="0">
+		<Controls/>
+	</Dialog>
 		<Dialog Id="12" Name="IDD_FLIPTEST" Focus="0">
 			<Controls/>
 		</Dialog>

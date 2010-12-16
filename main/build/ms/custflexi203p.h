@@ -16,7 +16,6 @@
 #ifndef TARGSBW2_H
    #include "targsb12832.h"
 #endif
-
 #include "custw203.h"
 
 #ifdef CAMERA_USES_SOFTDSP

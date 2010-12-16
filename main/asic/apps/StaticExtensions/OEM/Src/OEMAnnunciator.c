@@ -2120,10 +2120,11 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
             	    AEERect bgRect;
                     int titleLen = IDISPLAY_MeasureText(pMe->m_coreObj->m_piDisplay,AEE_FONT_NORMAL, (const AECHAR*)IAnnunCoreObj->m_Title);
                     
-	            	bgRect.x = 20;
+	            	
                     bgRect.y = 0;
                     bgRect.dy = STATEBAR_HEIGHT;
 #if defined(FEATURE_DISP_128X128)
+					bgRect.x = 20;
                     if(titleLen > 88)
                     {
                         bgRect.x = 0;
@@ -2134,6 +2135,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         bgRect.dx = 88;
                     }
 #elif defined(FEATURE_DISP_160X128)
+					bgRect.x = 20;
                     if(titleLen > 120)
                     {
                         bgRect.x = 0;
@@ -2144,6 +2146,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         bgRect.dx = 120;
                     }
 #elif defined(FEATURE_DISP_220X176)
+					bgRect.x = 28;
                     if(titleLen > 180)
                     {
                         bgRect.x = 0;
@@ -2151,9 +2154,10 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     }
                     else
                     {
-                        bgRect.dx = 170;
+                        bgRect.dx = 164;
                     }					
 #elif defined(FEATURE_DISP_128X160)
+					bgRect.x = 20;
                     if(titleLen > 88)
                     {
                         bgRect.x = 0;
@@ -2164,6 +2168,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         bgRect.dx = 88;
                     }
 #elif defined(FEATURE_DISP_176X220)
+					bgRect.x = 20;
                     if(titleLen > 136)
                     {
                         bgRect.x = 0;
@@ -2174,6 +2179,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         bgRect.dx = 136;
                     }	
 #elif defined(FEATURE_DISP_240X320)
+					bgRect.x = 40;
                     if(titleLen > 200)
                     {
                         bgRect.x = 0;
@@ -2184,6 +2190,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         bgRect.dx = 200;
                     }		
 #elif defined(FEATURE_DISP_320X240)
+					bgRect.x = 40;
                     if(titleLen > 256)
                     {
                         bgRect.x = 0;

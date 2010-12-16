@@ -188,7 +188,7 @@
 		<Text>Default playlist</Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_MSG_WAITING" Encoding="Unicode">
-		<Text>Loading music,please wait</Text>
+		<Text>Loading...</Text>
 	</STRING>
 	<STRING Id="1064" Name="IDS_RENAME_FAILED" Encoding="Unicode">
 		<Text>Can't rename</Text>

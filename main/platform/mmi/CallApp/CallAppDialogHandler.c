@@ -1006,7 +1006,8 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
                         else if ((WSTRCMP(pMe->m_DialString, L"*#*#8378#1#") == 0)|| //add by yangdecai 2010-11-16
                         		 (WSTRCMP(pMe->m_DialString, L"*#37*#") == 0)||
-                        		 (WSTRCMP(pMe->m_DialString, L"*85241#") == 0))
+                        		 (WSTRCMP(pMe->m_DialString, L"*85241#") == 0)||
+                        		 (WSTRCMP(pMe->m_DialString, L"*#4224876#") == 0))
                         {
                             return CallApp_LaunchApplet(pMe, AEECLSID_QUICKTEST);
                         }
