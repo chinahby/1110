@@ -23,7 +23,10 @@
 #ifdef FEATRUE_SUPPORT_G_SENSOR
 #include "G_Sensor.h"
 #endif
+#include "AEEBacklight.h"
 
+#include "AEEConfig.h"
+#include "OEMCFGI.h"
 
 
 /*==============================================================================
@@ -44,6 +47,7 @@ typedef struct _ApplicationMod
 typedef enum ApplicationState
 {
     APPLICATIONST_MAIN,
+    APPLICATIONST_FLASHLIGHT,
     APPLICATIONST_EXIT
 } ApplicationState;
 
@@ -58,6 +62,7 @@ typedef enum
 typedef enum DLGRetValue
 {
     DLGRET_CREATE,
+    DLGRET_FLASHLITHT,
     DLGRET_CANCELED
 }DLGRetValue;
 
@@ -96,6 +101,8 @@ typedef struct _Application
     ApplicationState             m_currState;        // Applet当前状态
     AEERect     m_rc;
     IAnnunciator                    *m_pIAnn;
+    
+    IBacklight     *m_pBacklight;       //背光接口指针
 } Application;
 
 /*==============================================================================

@@ -113,11 +113,13 @@ void Application_ShowDialog(Application  *pMe,  uint16 dlgResId);
 
 // APPLICATIONST_MAIN 状态处理函数
 static NextFSMAction APPLICATIONST_MAIN_Handler(Application *pMe);
+static NextFSMAction APPLICATIONST_FLASHLIGHT_Handler(Application *pMe);
 
 
 //APPLICATIONST_EXIT  状态处理函数
 static NextFSMAction APPLICATIONST_EXIT_Handler(Application *pMe);
 static boolean  Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 
 
 
@@ -391,6 +393,11 @@ static int CApplication_InitAppData(Application *pMe)
 		CApplication_FreeAppData(pMe);
 		return FALSE;
 	}
+	 if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
+    {
+    	CApplication_FreeAppData(pMe);
+        return FALSE;
+    }
     return SUCCESS;
 }
 
@@ -428,6 +435,11 @@ static void CApplication_FreeAppData(Application *pMe)
     {
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn= NULL;
+    }
+    if(pMe->m_pBacklight)
+    {
+        IBACKLIGHT_Release(pMe->m_pBacklight);
+        pMe->m_pBacklight=NULL;
     }
 
 }
@@ -708,7 +720,8 @@ NextFSMAction Application_ProcessState(Application *pMe)
     {
         case APPLICATIONST_MAIN:
             return APPLICATIONST_MAIN_Handler(pMe);
-
+        case APPLICATIONST_FLASHLIGHT:
+        	return APPLICATIONST_FLASHLIGHT_Handler(pMe);
         case APPLICATIONST_EXIT:
             return APPLICATIONST_EXIT_Handler(pMe);            
 
@@ -751,6 +764,11 @@ static NextFSMAction APPLICATIONST_MAIN_Handler(Application *pMe)
 
             }
             return NFSMACTION_WAIT;
+        case DLGRET_FLASHLITHT:
+        	{
+        		MOVE_TO_STATE(APPLICATIONST_FLASHLIGHT)
+            	return NFSMACTION_CONTINUE;
+        	}
         default:
             MOVE_TO_STATE(APPLICATIONST_EXIT)
             return NFSMACTION_CONTINUE;
@@ -758,6 +776,30 @@ static NextFSMAction APPLICATIONST_MAIN_Handler(Application *pMe)
 }
 
 
+static NextFSMAction APPLICATIONST_FLASHLIGHT_Handler(Application *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch (pMe->m_eDlgReturn)
+    {
+        // 进入主界面
+        case DLGRET_CREATE:
+            {
+            	  MSG_FATAL("APPLICATIONST_FLASHLIGHT_Handler DLGRET_CREATE",0,0,0);
+                  Application_ShowDialog(pMe, IDD_FLASHLIGHT_SETTING);
+
+            }
+            return NFSMACTION_WAIT;
+         case DLGRET_CANCELED:         
+            MOVE_TO_STATE(APPLICATIONST_MAIN)
+            return NFSMACTION_CONTINUE;
+        default:
+            MOVE_TO_STATE(APPLICATIONST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+}
 
 
 /*==============================================================================
@@ -869,7 +911,8 @@ boolean Application_RouteDialogEvt(Application *pMe,
 
         case IDD_LIST_APPLICATION:
             return Application_ListMenuHandler(pMe, eCode, wParam, dwParam);
-
+        case IDD_FLASHLIGHT_SETTING:
+        	return Application_FlashlightMenuHandler(pMe, eCode, wParam,dwParam);
         default:
             return FALSE;
     }
@@ -945,7 +988,8 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CONVERTER, IDS_APPLICATION_CONVERTER, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
-			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);			
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);	
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_FLASHLIGHT, IDS_APPLICATION_FLASHLIGHT, NULL, 0);
 #elif defined (FEATURE_VERSION_M8)
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_STOPWATCH, IDS_APPLICATION_STOPWATCH, NULL, 0);
@@ -1074,6 +1118,117 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 }
 
 
+static boolean  Application_FlashlightMenuHandler(Application *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+	PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,IDC_FLASHLIGHT_SET);
+    AECHAR WTitle[40] = {0};
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    if(pMe->m_pIAnn != NULL)
+    {
+	    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    }
+     switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                    APPLICATION_RES_FILE_LANG,                                
+                                    IDS_APPLICATION_FLASHLIGHT,
+                                    WTitle,
+                                    sizeof(WTitle));
+
+            if(pMe->m_pIAnn != NULL)
+            {
+			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG, IDS_DIAG_AND_DATA, IDS_DIAG_AND_DATA, NULL, 0);
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG, IDS_MASS_STORAGE, IDS_MASS_STORAGE, NULL, 0);
+            return TRUE;
+        case EVT_DIALOG_START:
+            {
+            	uint16 wItemID;
+                boolean Is_on = FALSE;
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&Is_on, sizeof(Is_on));
+                if(Is_on)
+                {
+                	wItemID = IDS_DIAG_AND_DATA;
+                }
+                else
+                {
+                	wItemID = IDS_MASS_STORAGE;
+                }
+
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wItemID, TRUE);
+                IMENUCTL_SetSel(pMenu, wItemID);
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_MAIN_MENU,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            (void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                  default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            {
+                boolean bytNewData = 0;
+
+                switch (wParam)
+                {
+                    case  IDS_DIAG_AND_DATA:
+                       bytNewData = TRUE;
+                       IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                       break;
+
+                    case IDS_MASS_STORAGE:
+                       bytNewData = FALSE;
+                       IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                       break;
+
+                    default:
+                       break;
+
+                }
+                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&bytNewData, sizeof(bytNewData));
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wParam, TRUE);
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_MAIN_MENU,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+        default:
+        	break;
+	}
+}
 
 
 /*=============================================================================
@@ -1144,6 +1299,11 @@ static int StartApplet(Application *pMe, int i)
 #ifdef	FEATURE_APP_BLUETOOTH  //add by yangdecai
     case IDS_APPLICATION_BLUETOOTH:		
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);		
+        break;
+#endif
+#ifdef FEATURE_VERSION_HITZ181
+	case IDS_APPLICATION_FLASHLIGHT:		
+        CLOSE_DIALOG(DLGRET_FLASHLITHT)
         break;
 #endif
     default:

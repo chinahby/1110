@@ -640,6 +640,7 @@ typedef struct
 #ifdef FEATURE_APP_BLUETOOTH
    boolean bt_status;
 #endif
+   boolean flashlight_status;
    
    //Add End
    #ifdef FEATURE_LONG_NETLOCK
@@ -1387,8 +1388,13 @@ static int OEMPriv_SetItem_CFGI_NET_LOCK_FLAGS(void *pBuff);
 #ifdef FEATURE_APP_BLUETOOTH
 static int OEMPriv_GetItem_CFGI_BT_STATUS(void *pBuff);
 static int OEMPriv_SetItem_CFGI_BT_STATUS(void *pBuff);
+
 #endif
 //Add End
+
+
+static int OEMPriv_GetItem_CFGI_FLSHLITHG_STATUS(void *pBuff);
+static int OEMPriv_SetItem_CFGI_FLSHLITHG_STATUS(void *pBuff);
 
 static int OEMPriv_GetItem_CFGI_ALARM_FLAG(void *pBuff);
 static int OEMPriv_SetItem_CFGI_ALARM_FLAG(void *pBuff);
@@ -1742,6 +1748,7 @@ static OEMConfigListType oemi_cache = {
    #ifdef FEATURE_APP_BLUETOOTH
    ,0 
    #endif
+   ,0
    //Add End
    #ifdef FEATURE_LONG_NETLOCK
    ,0
@@ -2290,6 +2297,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_BT_STATUS, sizeof(boolean)),
    #endif   
    //Add End
+   CFGTABLEITEM(CFGI_FLSHLITHG_STATUS, sizeof(boolean)),
    #ifdef FEATURE_LONG_NETLOCK
    CFGTABLEITEM(CFGI_NET_LOCK_FLAGS,sizeof(boolean)),
    #endif
@@ -2786,6 +2794,7 @@ void OEM_RestoreFactorySetting( void )
 #ifdef FEATURE_APP_BLUETOOTH
 	oemi_cache.bt_status = 0;
 #endif
+   oemi_cache.flashlight_status = 0;
    //Add End
 #ifdef FEATURE_PLANEMODE
    oemi_cache.planeMode = OEMNV_PLANEMODE_OFF;
@@ -10701,6 +10710,17 @@ static int OEMPriv_SetItem_CFGI_BT_STATUS(void *pBuff)
 }
 #endif
 //Add End
+static int OEMPriv_GetItem_CFGI_FLSHLITHG_STATUS(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.flashlight_status, sizeof(boolean));
+	return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_FLSHLITHG_STATUS(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.flashlight_status, pBuff, sizeof(boolean));
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
 
 static int OEMPriv_GetItem_CFGI_FMRADIO_CHAN_TOTAL(void *pBuff) 
 {

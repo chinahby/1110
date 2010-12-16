@@ -875,6 +875,31 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
                 return TRUE;
             #endif
+            #ifdef FEATURE_VERSION_HITZ181
+			case AVK_SYMBOL:
+			{
+				OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&pMe->TorchOn, sizeof(pMe->TorchOn));
+				if ( pMe->TorchOn == FALSE )
+				{
+					pMe->TorchOn = TRUE;
+					if (pMe->m_pBacklight)
+					{
+						IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+					}
+				}
+				else
+				{
+					pMe->TorchOn = FALSE;
+					if (pMe->m_pBacklight)
+					{							
+						IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+					}
+				}
+				OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&pMe->TorchOn, sizeof(pMe->TorchOn));
+			}			  
+			
+			return TRUE;
+			#endif
             
                 break;
         #endif

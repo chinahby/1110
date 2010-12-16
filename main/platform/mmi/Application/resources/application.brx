@@ -4,6 +4,12 @@
 	<String Id="1001" Name="IDS_APPLICATION_LIST">
 		<Text>Application</Text>
 	</String>
+	<String Id="1002" Name="IDS_DIAG_AND_DATA">
+		<Text>On</Text>
+	</String>
+	<String Id="1003" Name="IDS_MASS_STORAGE">
+		<Text>Off</Text>
+	</String>
 	<STRING Id="1011" Name="IDS_APPLICATION_BAM">
 		<Text>BAM</Text>
 	</STRING>
@@ -46,11 +52,21 @@
 	<String Id="1025" Name="IDS_APPLICATION_BLUETOOTH">
 		<Text>Bluetooth</Text>
 	</String>
+	<String Id="1026" Name="IDS_APPLICATION_FLASHLIGHT">
+		<Text>Flashlight</Text>
+	</String>
 	<String Id="1031" Name="IDS_TOOLS_LIST">
 		<Text>Tools</Text>
 	</String>
 </Strings>
 <Dialogs>
+	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_FLASHLIGHT_SET">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
 	<Dialog Id="6003" Name="IDD_LIST_APPLICATION" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_APPLICATION_LIST">

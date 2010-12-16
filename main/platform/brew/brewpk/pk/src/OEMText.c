@@ -256,6 +256,7 @@ typedef struct _TextCtlContext {
    boolean              is_isShift;  
    boolean              is_bAlt;
    boolean              m_bCaplk;
+   boolean              m_islong;
 } TextCtlContext;
 
 typedef boolean         (*PFN_ModeCharHandler)(TextCtlContext *,AEEEvent, AVKType);
@@ -774,6 +775,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    pNewContext->is_bAlt = FALSE;
    pNewContext->nMultitapCaps = MULTITAP_FIRST_CAP;
    pNewContext->m_bCaplk = FALSE;
+   pNewContext->m_islong = FALSE;
 
    pNewContext->nLineHeight =
                      IDISPLAY_GetFontMetrics((IDisplay*)pNewContext->pIDisplay,
@@ -4278,13 +4280,16 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
                 }
                 break;  
 			case AVK_SHIFT:
+				
 			    if(!pContext->is_isShift)
 			    {
 					pContext->is_isShift = FALSE;
+					pContext->m_islong = FALSE;
 				}
 				else
 				{
 					pContext->is_isShift = TRUE;
+					pContext->m_islong = TRUE;
 				}
 				return TRUE;
 				break;
@@ -4292,10 +4297,12 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 				if(!pContext->is_bAlt)
 				{
 					pContext->is_bAlt = FALSE;
+					pContext->m_islong = FALSE;
 				}
 				else
 				{
 					pContext->is_bAlt = TRUE;
+					pContext->m_islong = TRUE;
 				}
 				return TRUE;
 				break;
@@ -4419,15 +4426,19 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 					                        { 
 					                            TextCtl_NoSelection(pContext);
 					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharShiftThaiKeyItem[i].wp));
-					                            pContext->is_isShift = FALSE;
+					                            if(!pContext->m_islong)
+					                            {
+					                            	pContext->is_isShift = FALSE;
+					                            }
 					                        }
 					                        else if(pContext->is_bAlt)
 					                        {
 					                        	TextCtl_NoSelection(pContext);
 					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
-					                            #ifndef FEATURE_VERSION_HITZ181
-					                            pContext->is_bAlt = FALSE;
-					                            #endif
+					                            if(!pContext->m_islong)
+					                            {
+					                            	pContext->is_bAlt = FALSE;
+					                            }
 					                        }
 					                        else
 					                        {
@@ -4466,17 +4477,22 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
 					                            #else
 					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
-					                            pContext->is_isShift = FALSE;
 					                            #endif
+					                            if(!pContext->m_islong)
+					                            {
+					                            	pContext->is_isShift = FALSE;
+					                            }
+					                            
 					                            
 					                        }
 					                        else if(pContext->is_bAlt)
 					                        {
 					                        	TextCtl_NoSelection(pContext);
 					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
-					                            #ifndef FEATURE_VERSION_HITZ181
-					                            pContext->is_bAlt = FALSE;
-					                            #endif
+					                            if(!pContext->m_islong)
+					                            {
+					                            	pContext->is_bAlt = FALSE;
+					                            }
 					                        }
 											
 											
@@ -4517,6 +4533,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                 {
 		                    pContext->is_isShift = TRUE;
 		                 }
+		                 pContext->m_islong = FALSE;
 		              }
 		              break;
 		        #ifdef FEATURE_VERSION_HITZ181
@@ -4534,6 +4551,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                 {
 		                    pContext->is_bAlt = TRUE;
 		                 }
+		                 pContext->m_islong = FALSE;
 		        	}
 		        	break;
 		        #endif
