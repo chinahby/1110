@@ -91,5 +91,8 @@
 	<Object Id="5030" Name="IDI_LOW">
 		<File>..\..\Appscommon\images\220x176\common\videoplayer\volume_low.png</File>
 	</Object>
+	<Object Id="5031" Name="IDI_LOGO">
+		<File>..\..\Appscommon\images\220x176\common\videoplayer\videoplayer_logo.png</File>
+	</Object>
 </Objects>
 </BREWRes>

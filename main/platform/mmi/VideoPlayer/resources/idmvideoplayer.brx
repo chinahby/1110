@@ -7,6 +7,12 @@
 	<STRING Id="1008" Name="IDS_PLAYFAILED">
 		<Text>Play Failed</Text>
 	</STRING>
+	<String Id="1012" Name="IDS_HELPTITLE">
+		<Text>HELP</Text>
+	</String>
+	<String Id="1013" Name="IDS_HELP">
+		<Text>Key Up and Down: Adjust the volume\nGallery:\nSearch videos in dirctory\nNote:\nIn full screen mode,press any key to come back</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_OPTION" Focus="7001">
