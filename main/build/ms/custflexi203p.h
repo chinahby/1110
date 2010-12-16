@@ -14,7 +14,7 @@
 #define FEATURE_LANG_INDONESIAN   
 
 #ifndef TARGSBW2_H
-   #include "targsb12864.h"
+   #include "targsb12832.h"
 #endif
 
 #include "custw203.h"
