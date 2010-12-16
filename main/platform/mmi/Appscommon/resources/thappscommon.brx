@@ -241,6 +241,9 @@
 	<String Id="1031" Name="IDS_MESSAGES">
 		<Text>ข้อความ</Text>
 	</String>
+	<String Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
+		<Text>Long Press Space Key to Unlock The Keyguard</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>เลื่อนไป</Text>
 	</STRING>

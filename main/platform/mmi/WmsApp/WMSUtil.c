@@ -898,6 +898,11 @@ void WmsApp_ConvertClientMsgToMS(wms_client_message_s_type *pClMsg,
                         i = 2;
                         buf[i] = '0';
                     }
+                    else if (STRNCMP((char *)buf, "+66", 3) == 0)
+                    {
+                        i = 2;
+                        buf[i] = '0';
+                    }
 #ifdef FEATURE_CARRIER_TAIWAN_APBW
                     // ½«"886"±ä³É"0"
                     else if (STRNCMP((char *)buf, "886", 3) == 0)
@@ -1085,6 +1090,11 @@ void WmsApp_ConvertClientMsgToMS(wms_client_message_s_type *pClMsg,
                         i = 3;
                     }
                     else if (STRNCMP((char *)buf, "+62", 3) == 0)
+                    {
+                        i = 2;
+                        buf[i] = '0';
+                    }
+                    else if (STRNCMP((char *)buf, "+66", 3) == 0)
                     {
                         i = 2;
                         buf[i] = '0';

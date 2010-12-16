@@ -4513,6 +4513,11 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
 			STRCPY(strNum,"0");
         	(void)WSTRTOSTR(&pMe->m_msSend.m_szNum[3], (strNum+1), (sizeof(strNum)-1));
     	}
+    	else if ( pMe->m_msSend.m_szNum[1] == '6' && pMe->m_msSend.m_szNum[2] == '6' )
+    	{
+			STRCPY(strNum,"0");
+        	(void)WSTRTOSTR(&pMe->m_msSend.m_szNum[3], (strNum+1), (sizeof(strNum)-1));
+    	}
         else
         {
         	STRCPY(strNum,OEM_INTERNATION_NUMBER);
