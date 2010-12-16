@@ -8334,7 +8334,6 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
             H32
             );
     n = WSTRLEN(szBuf);
-    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
     STRTOWSTR("%X", fmt_str, sizeof(fmt_str));
     WSPRINTF((szBuf + n),
             sizeof(szBuf),
