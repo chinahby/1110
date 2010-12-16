@@ -884,7 +884,7 @@ PACK(void *) nvdiag_write (
   /* MEID is supported */
   if ( eItem == NV_ESN_I || eItem == NV_MEID_I)
   {
-#if 0
+#ifndef CUST_EDITION
     ok_to_write = FALSE;    /* set default value of ok_to_write to FALSE */
 #else
     ok_to_write = TRUE; 
@@ -899,8 +899,11 @@ PACK(void *) nvdiag_write (
       nv_status = diagnv_get_meid (meid);
 
       qw_set(meid_0, 0L, 0L);   /* initialize meid_0 to a value zero */
-
+#ifndef CUST_EDITION
       if ( (nv_status == NV_DONE_S && qw_cmp(meid, meid_0) == 0) ||
+#else
+      if ( (nv_status == NV_DONE_S) ||
+#endif
             nv_status == NV_NOTACTIVE_S )
       {
         /* MEID is zero */
