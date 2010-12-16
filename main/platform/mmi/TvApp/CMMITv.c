@@ -412,6 +412,13 @@ int CMMITv_IMMITv_updateimg(IMMITv* pIMMITv,uint32 dwParam)
 	ITV_updateimg(pThis->pITv,dwParam);
 
 }
+int CMMITv_IMMITv_getChannelTotal(IMMITv* pIMMITv)
+{
+	CMMITv* pThis = (CMMITv*)pIMMITv->pData;
+	int ChannelTotal;
+    ITV_GetChnCount(pThis->pITv, &ChannelTotal);
+  return ChannelTotal;
+}
 
 int CMMITv_IMMITv_StopPreview(IMMITv* pIMMITv)
 {
@@ -527,6 +534,7 @@ static const AEEVTBL(IMMITv) gIMMITvFuncs =
     CMMITv_IMMITv_GetTvChannel,
     CMMITv_IMMITv_StartPreview,
     CMMITv_IMMITv_updateimg,
+    CMMITv_IMMITv_getChannelTotal,
     CMMITv_IMMITv_StopPreview,
  //   CMMITv_IMMITv_GetChannelTotal,
     CMMITv_IMMITv_SetRegion,

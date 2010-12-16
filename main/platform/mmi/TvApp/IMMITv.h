@@ -172,7 +172,8 @@ typedef struct IMMITv IMMITv;
         int  (*SetTvChannel)(iname* p##iname, uint16 Channel,boolean fast); \
         int  (*getTvChannel)(iname* p##iname);    \
         int  (*StartPreview)(iname* p##iname);    \
-         int  (*updateimg)(iname* p##iname,uint32 dwParam);    \
+        int  (*updateimg)(iname* p##iname,uint32 dwParam);    \
+        int  (*getChannelTotal)(iname* p##iname);    \
         int  (*StopPreview)(iname* p##iname);    \
         int  (*SetRegion)(iname* p##iname, TLG_REGION_CODE region); \
         uint8 (*getChannelCountAble)(iname* p##iname); \
@@ -210,6 +211,8 @@ struct IMMITv
 #define IMMITv_GetTvChannel(pThis)  pThis->pvt->getTvChannel(pThis)
 #define IMMITv_StartPreview(pThis)  pThis->pvt->StartPreview(pThis)
 #define IMMITv_updateimg(pThis,dw)  pThis->pvt->updateimg(pThis,dw)
+#define IMMITv_getChannelTotal(pThis)  pThis->pvt->getChannelTotal(pThis)
+
 #define IMMITv_StopPreview(pThis)   pThis->pvt->StopPreview(pThis)
 //#define IMMITv_getChannelTotal(pThis)  pThis->pvt->getChannelTotal(pThis)
 #define IMMITv_SetRegion(pThis, region) pThis->pvt->SetRegion(pThis, region) 

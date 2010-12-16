@@ -51,6 +51,7 @@
 boolean MMI_Utf8ToWstr(char* pUtf8Str, AECHAR* pUcs2Str, int Ucs2BufSize);
 boolean UTF8TOWSTR(const byte *pSrc,int nLen, AECHAR *pDst, int nSize);
 boolean strlight=FALSE;
+boolean VIEWBAR=FALSE;
 
 
 /*
@@ -221,6 +222,11 @@ static int TVAPP_AutoScan(CTVApp *pMe);
 static void CTvUtil_StopSearchAnimation(CTVApp * pMe);
 static void TVAPP_SET_BAR(CTVApp *pMe,uint32 bar);
 
+/*TV bar*/
+static void TvApp_DrawBar(void * pme);
+
+/*搜索进度条*/
+static void TvApp_DrawAUTOSCANBar(void * pme,uint16 nowchannel,uint16 AllTotal );
 
 
 /*画图处理*/
@@ -409,14 +415,9 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 {
     PARAM_NOT_REF(dwParam)
         
-    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_CAMERA_MAINMENU);
 	//AECHAR WTitle[40] = {0};
     MSG_FATAL("TVApp_MainMenuHandleEvent Start",0,0,0);
-    if(pMenu == NULL)
-    {
-        return FALSE;
-    }
-   MSG_FATAL("TVApp_MainMenuHandleEvent eCode=%d, wParam=%d, dwParam=%d",eCode,wParam,dwParam);
+    MSG_FATAL("TVApp_MainMenuHandleEvent eCode=%d, wParam=%d, dwParam=%d",eCode,wParam,dwParam);
     switch(eCode) 
     {
         case EVT_DIALOG_INIT:
@@ -424,7 +425,8 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 		   IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
            pMe->m_bIsPreview = FALSE;
            pMe->m_nTVState = TV_START;
-            
+           strlight=FALSE;
+           VIEWBAR=FALSE;
           // pMe->m_wMsgID = IDS_MSG_WAITING;
           // pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
 
@@ -454,11 +456,20 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 			}
 			MSG_FATAL("IMMITv_StartPreview----------------------will--end",0,0,0);
 
+			if(pMe->m_bAUTOSCAN)
+			{
+                 MSG_FATAL("TVApp_MainMenuHandleEvent m_bAUTOSCAN",0,0,0);
+                TVAPP_AutoScan(pMe);
+            }
+            else
+            {
+                pMe->currentlyChannel=pMe->pTvSetting->CurrentChannel;//(int)WSTRTOFLOAT(pMe->pTvSetting->Bookmark[pMe->currentlyChannel].channel);
+                MSG_FATAL("pMe->currentlyChannel=%d----------",pMe->currentlyChannel,0,0);
+                //TLGAPP_SetChannel(pMe->currentlyChannel);
+                IMMITv_SetTvChannel(pMe->pIMMITv, pMe->currentlyChannel,FALSE); 
+
+            }
 			
-			pMe->currentlyChannel=pMe->pTvSetting->CurrentChannel;//(int)WSTRTOFLOAT(pMe->pTvSetting->Bookmark[pMe->currentlyChannel].channel);
-			MSG_FATAL("pMe->currentlyChannel=%d----------",pMe->currentlyChannel,0,0);
-			//TLGAPP_SetChannel(pMe->currentlyChannel);
-            IMMITv_SetTvChannel(pMe->pIMMITv, pMe->currentlyChannel,FALSE); 
 
 			snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
 
@@ -479,19 +490,42 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 
         case EVT_DIALOG_END:
             IMMITv_StopPreview(pMe->pIMMITv);
+            VIEWBAR=FALSE;
+            strlight=FALSE;
+            pMe->m_bAUTOSTOP=FALSE;
+            pMe->m_bAUTOSCAN=FALSE;
             return TRUE;
 
         case EVT_USER_REDRAW: 
 
 			 //(void)IMENUCTL_Redraw(pMenu);
+			 
 			{
 			 AEERect	 rc = pMe->m_rc;
 			 AECHAR channelStr[32];
 			// WSTRCPY(strchannel,(AECHAR *)(pMe->currentlyChannel)); (AECHAR *)pMe->currentlyChannel
 			 MSG_FATAL("EVT_USER_REDRAW--pMe->currentlyChannel=%d----------",pMe->currentlyChannel,0,0);
-			 WSPRINTF(channelStr, sizeof(channelStr), (AECHAR*)L"%d", pMe->currentlyChannel);
              TV_UpdateInit(pMe);
-		     DrawTextWithProfile(pMe->m_pShell, 
+             if(pMe->m_bAUTOSCAN)
+             {
+                   int AllTotal;
+                   AllTotal=IMMITv_getChannelTotal(pMe->pIMMITv);
+                   //ITV_GetChnCount(pMe->pITv, &AllTotal);
+                   MSG_FATAL("TV_mainMenu_HandleEvent--------------m_bAUTOSCAN=%d",AllTotal,0,0);
+                   TvApp_DrawAUTOSCANBar(pMe,pMe->m_curChnIdx,AllTotal);
+                   IMMITv_AutoScanTV(pMe->pIMMITv); 
+              }
+             
+              if(pMe->m_bAUTOSTOP)
+              {
+                   CTvUtil_StopSearchAnimation(pMe);  
+                   pMe->m_bAUTOSTOP=FALSE;
+              }
+              
+              if((pMe->m_bAUTOSCAN==FALSE) && (pMe->m_bAUTOSTOP==FALSE))
+              {
+              WSPRINTF(channelStr, sizeof(channelStr), (AECHAR*)L"%d", pMe->currentlyChannel);
+              DrawTextWithProfile(pMe->m_pShell, 
                                 pMe->m_pDisplay, 
                                 RGB_WHITE, 
                                 AEE_FONT_NORMAL, 
@@ -501,11 +535,33 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                                 5, 
                                 &rc, 
                                IDF_TEXT_TRANSPARENT);
+             }
              TVApp_DrawBottomBarText(pMe, BTBAR_OPTION_BACK); 
+             if(VIEWBAR)
+             {
+                 TvApp_DrawBar(pMe);
+             }
+           
+               
 			 TV_Update(pMe);
 			} 
             return TRUE;
-            
+
+        case EVT_ATV_AUTOSCANFINISH:
+             MSG_FATAL("TV_mainMenu_HandleEvent--------------EVT_ATV_AUTOSCANFINISH",0,0,0);
+             pMe->m_bAUTOSTOP=TRUE;
+             pMe->m_bAUTOSCAN=FALSE;
+			 ISHELL_SendEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);
+			 return TRUE;
+
+        case  EVT_ATV_AUTOSCAN:
+               MSG_FATAL("TV_mainMenu_HandleEvent--------------EVT_ATV_AUTOSCAN",0,0,0);
+               pMe->m_bAUTOSTOP=FALSE;
+               pMe->m_bAUTOSCAN=TRUE;
+               pMe->m_curChnIdx++;
+               ISHELL_SendEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);
+    		   return TRUE;
+               
         case EVT_COMMAND:          
             switch(wParam) 
             {
@@ -523,76 +579,311 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                 {
                     case AVK_SELECT:
                         IMMITv_StopPreview(pMe->pIMMITv);
+                        VIEWBAR=FALSE;
                         CLOSE_DIALOG(DLGRET_POPMSG);//STATE_CPOPMSG
                         break;
                     case AVK_CLR:
-                        IMMITv_StopPreview(pMe->pIMMITv);
-                        CLOSE_DIALOG(DLGRET_CANCELED);
+                        if(VIEWBAR)
+                        {
+                          VIEWBAR=FALSE;
+                        }else
+                        {
+                            IMMITv_StopPreview(pMe->pIMMITv);
+                            CLOSE_DIALOG(DLGRET_CANCELED);
+                        }
+                        
                         break;
                     case AVK_LEFT:
-                        CLOSE_DIALOG(DLGRET_DRAWTOPBAR);
+                        if(VIEWBAR)
+                        {
+                             if(pMe->m_nTVCFG == TVSETChannel)
+                	            {
+                	                pMe->m_nTVCFG = TVSETSound;
+                	            }
+                	            else
+                	            {
+                	                pMe->m_nTVCFG--;
+                	            }
+                                TVAPP_SET_BAR(pMe,pMe->m_nTVCFG);
+                        }
+                        else
+                        {
+                           VIEWBAR=TRUE;
+                           //CLOSE_DIALOG(DLGRET_DRAWTOPBAR);
+                        }
+                        break;
+                    case AVK_RIGHT:
+                        if(VIEWBAR)
+                           {
+                                if(pMe->m_nTVCFG == TVSETSound)
+                     	         {
+                     				    pMe->m_nTVCFG = TVSETChannel;
+                     	          }
+                     	         else
+                     	          {
+                     	                pMe->m_nTVCFG++;
+                     	          }
+                                  TVAPP_SET_BAR(pMe,pMe->m_nTVCFG);
+                           }
+
                         break;
                     case AVK_UP:
-                        {
-                          AECHAR* channel = NULL;
-
-                          (void)ICONFIG_GetItem(pMe->m_pConfig,
-                                                  CFGI_TV_SETCHANNL,
-                                                  pMe->pTvSetting,
-                                                  sizeof(CFG_TvSetting));
-                          
-						 if(pMe->currentlyChannelIndex < pMe->pTvSetting->ChannelCountAble-1)
-						   {
-							   pMe->currentlyChannelIndex++;
-						   }
-						   else
-						   {
-							   pMe->currentlyChannelIndex = 0;
-						   }
-                           MSG_FATAL("currentlyChannelIndex=%d----",pMe->currentlyChannelIndex,0,0);
-						   channel = pMe->pTvSetting->Bookmark[pMe->currentlyChannelIndex].channel; 
-						   if (channel != NULL)
-						   {
-							   int index = (int)WSTRTOFLOAT(channel);
-							   IMMITv_SetTvChannel(pMe->pIMMITv, index,FALSE); 
-							   pMe->pTvSetting->CurrentChannel = index;
-							   pMe->currentlyChannel = index;
-		
-						   }
-                            MSG_FATAL("currentlyChannel=%d----",pMe->currentlyChannel,0,0);
-                           (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
-                        }
+                        if(VIEWBAR==FALSE)
+                           {
+                             AECHAR* channel = NULL;
+   
+                             (void)ICONFIG_GetItem(pMe->m_pConfig,
+                                                     CFGI_TV_SETCHANNL,
+                                                     pMe->pTvSetting,
+                                                     sizeof(CFG_TvSetting));
+                             
+       						 if(pMe->currentlyChannelIndex < pMe->pTvSetting->ChannelCountAble-1)
+       						   {
+       							   pMe->currentlyChannelIndex++;
+       						   }
+       						   else
+       						   {
+       							   pMe->currentlyChannelIndex = 0;
+       						   }
+                                  MSG_FATAL("currentlyChannelIndex=%d----",pMe->currentlyChannelIndex,0,0);
+       						   channel = pMe->pTvSetting->Bookmark[pMe->currentlyChannelIndex].channel; 
+       						   if (channel != NULL)
+       						   {
+       							   int index = (int)WSTRTOFLOAT(channel);
+       							   IMMITv_SetTvChannel(pMe->pIMMITv, index,FALSE); 
+       							   pMe->pTvSetting->CurrentChannel = index;
+       							   pMe->currentlyChannel = index;
+       		
+       						   }
+                               MSG_FATAL("currentlyChannel=%d----",pMe->currentlyChannel,0,0);
+                              (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                           }
+                          else
+                          {
+                            switch(pMe->m_nTVCFG)
+                 					{
+                 					case TVSETChannel:
+                 						{
+                 						   AECHAR* channel = NULL;
+                                           // strlight=FALSE;
+                 						   MSG_FATAL("ToolBar_OnKeyPress channelcount=%d",pMe->pTvSetting->ChannelCountAble ,0,0);
+                 		
+                 						   
+                 						   if(pMe->currentlyChannelIndex < pMe->pTvSetting->ChannelCountAble-1)
+                 						   {
+                 							   pMe->currentlyChannelIndex++;
+                 						   }
+                 						   else
+                 						   {
+                 							   pMe->currentlyChannelIndex = 0;
+                 						   }
+                 						   channel = pMe->pTvSetting->Bookmark[pMe->currentlyChannelIndex].channel; 
+                 						   if (channel != NULL)
+                 						   {
+                 							   int index = (int)WSTRTOFLOAT(channel);
+                 							   IMMITv_SetTvChannel(pMe->pIMMITv, index,FALSE); 
+                 							   pMe->pTvSetting->CurrentChannel = index;
+                 							   pMe->currentlyChannel = index;
+                 		
+                 						   }	
+                                            (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                 						 }
+                 					        break;
+                 					case TVSETBrightness:
+                                         MSG_FATAL("TVSETBrightness-------------------",0,0,0);
+                                        
+                                         if(pMe->pTvSetting->BrightnessStep < TV_SETTING_BRIGHTNESS_MAXVALUE)
+                                           {
+                                           
+                                            pMe->m_barW++;
+                                            pMe->pTvSetting->BrightnessStep++;
+                                            
+                                           }
+                                          IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_BRIGHT, pMe->pTvSetting->BrightnessStep);
+                                         (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                                         break;
+                                     case TVSETContrast:
+                                         MSG_FATAL("TVSETBrightness-------------------",0,0,0);
+                                        
+                                         if(pMe->pTvSetting->ContrastStep< TV_SETTING_CONTRAST_MAXVALUE)
+                                           {
+                                           
+                                            pMe->m_barW++;
+                                            pMe->pTvSetting->ContrastStep ++;
+                                            
+                                           }
+                                         IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_CONTRAST, pMe->pTvSetting->ContrastStep);
+                                         (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                                         break;
+                                      case TVSETDefinition:
+                                         MSG_FATAL("TVSETBrightness-------------------",0,0,0);
+                                        
+                                         if(pMe->pTvSetting->DefinitionStep< TV_SETTING_DEFINITION_MAXVALUE)
+                                           {
+                                          
+                                            pMe->m_barW++;
+                                            pMe->pTvSetting->DefinitionStep ++;
+                                            
+                                           }
+                                         IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_DEFINITION, pMe->pTvSetting->DefinitionStep);
+                                         (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                                         break;
+                                       case TVSETSaturation:
+                                         MSG_FATAL("TVSETBrightness-------------------",0,0,0);
+                                        
+                                         if(pMe->pTvSetting->SaturationStep< TV_SETTING_SATURATION_MAXVALUE)
+                                           {
+                                          
+                                            pMe->m_barW=pMe->m_barW+(TV_SETTING_SATURATION_MAXVALUE/50);
+                                            pMe->pTvSetting->SaturationStep = pMe->pTvSetting->SaturationStep+(TV_SETTING_SATURATION_MAXVALUE/50);
+                                            MSG_FATAL("pMe->pTvSetting->SaturationStep-------%d",pMe->m_barW,0,0);
+                                            
+                                           }
+                                         IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_SATURATION, pMe->pTvSetting->SaturationStep);
+                                         (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                                         break;
+                                     case TVSETSound:
+                                         MSG_FATAL("TVSETBrightness-------------------",0,0,0);
+                                        
+                                         if(pMe->pTvSetting->SoundStep< TV_SETTING_SOUND_MAXVALUE)
+                                           {
+                                          
+                                            pMe->m_barW++;
+                                            pMe->pTvSetting->SoundStep ++;
+                                            
+                                           }
+                                         IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_SOUND, pMe->pTvSetting->SoundStep);
+                                         (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                                         break;
+     
+                 					    default:
+                 							return TRUE; 
+                                    }
+                          }
                         break;
                     case AVK_DOWN:
-						{
-                          AECHAR* channel = NULL;
-
-                          (void)ICONFIG_GetItem(pMe->m_pConfig,
-                                                  CFGI_TV_SETCHANNL,
-                                                  pMe->pTvSetting,
-                                                  sizeof(CFG_TvSetting));
-                          
-						 if(pMe->currentlyChannelIndex > 0)
-						   {
-							   pMe->currentlyChannelIndex--;
-						   }
-						   else
-						   {
-							   pMe->currentlyChannelIndex = pMe->pTvSetting->ChannelCountAble-1;
-						   }
-                           MSG_FATAL("currentlyChannelIndex=%d----",pMe->currentlyChannelIndex,0,0);
-						   channel = pMe->pTvSetting->Bookmark[pMe->currentlyChannelIndex].channel; 
-						   if (channel != NULL)
-						   {
-							   int index = (int)WSTRTOFLOAT(channel);
-							   IMMITv_SetTvChannel(pMe->pIMMITv, index,FALSE); 
-							   pMe->pTvSetting->CurrentChannel = index;
-							   pMe->currentlyChannel = index;
-		
-						   }
-                            MSG_FATAL("currentlyChannel=%d----",pMe->currentlyChannel,0,0);
-                           (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                        if(VIEWBAR==FALSE)
+						 {
+                            AECHAR* channel = NULL;
+  
+                            (void)ICONFIG_GetItem(pMe->m_pConfig,
+                                                    CFGI_TV_SETCHANNL,
+                                                    pMe->pTvSetting,
+                                                    sizeof(CFG_TvSetting));
+                                 
+       						 if(pMe->currentlyChannelIndex > 0)
+       						   {
+       							   pMe->currentlyChannelIndex--;
+       						   }
+       						   else
+       						   {
+       							   pMe->currentlyChannelIndex = pMe->pTvSetting->ChannelCountAble-1;
+       						   }
+                                  MSG_FATAL("currentlyChannelIndex=%d----",pMe->currentlyChannelIndex,0,0);
+       						   channel = pMe->pTvSetting->Bookmark[pMe->currentlyChannelIndex].channel; 
+       						   if (channel != NULL)
+       						   {
+       							   int index = (int)WSTRTOFLOAT(channel);
+       							   IMMITv_SetTvChannel(pMe->pIMMITv, index,FALSE); 
+       							   pMe->pTvSetting->CurrentChannel = index;
+       							   pMe->currentlyChannel = index;
+       		
+       						   }
+                              MSG_FATAL("currentlyChannel=%d----",pMe->currentlyChannel,0,0);
+                             (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
                         }
+                        else
+                        {
+                           switch(pMe->m_nTVCFG)
+            					{
+            					case TVSETChannel:
+                                      {
+                    		            AECHAR* channel = NULL;
+                    					MSG_FATAL("ToolBar_OnKeyPress channelcount=%d",pMe->pTvSetting->ChannelCountAble ,0,0);
+
+                    		            
+                    		            if(pMe->currentlyChannelIndex > 0)
+                    		            {
+                    		                pMe->currentlyChannelIndex--;
+                    		            }
+                    		            else
+                    		            {
+                    		                pMe->currentlyChannelIndex = pMe->pTvSetting->ChannelCountAble;
+                    		            }
+                    		            channel = pMe->pTvSetting->Bookmark[pMe->currentlyChannelIndex].channel; 
+                    		            if (channel != NULL)
+                    		            {
+                    		                int index = (int)WSTRTOFLOAT(channel);
+                    		                IMMITv_SetTvChannel(pMe->pIMMITv, index,FALSE); 
+                    		                pMe->pTvSetting->CurrentChannel = index;
+                    		                pMe->currentlyChannel = index;
+                    				    }
+                                      }
+                                    break;
+                                case TVSETBrightness:
+                                    if(pMe->pTvSetting->BrightnessStep > 0)
+                                      {
+                                      // pMe->m_barMAXW=TV_SETTING_BRIGHTNESS_MAXVALUE;
+                                       pMe->m_barW--;
+                                       pMe->pTvSetting->BrightnessStep--;
+                                       
+                                      }
+                                    IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_BRIGHT, pMe->pTvSetting->BrightnessStep);
+                                    (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                                    break;
+                                case TVSETContrast:
+                                    MSG_FATAL("TVSETContrastdown-----------%d",pMe->m_barW,0,0);
+                                    if(pMe->pTvSetting->ContrastStep > 0)
+                                      {
+                                     // pMe->m_barMAXW=TV_SETTING_CONTRAST_MAXVALUE;
+                                       pMe->m_barW--;
+                                       pMe->pTvSetting->ContrastStep--;
+                                       
+                                      }
+                                    IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_CONTRAST, pMe->pTvSetting->ContrastStep);
+                                    (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                                    break;
+                                 case TVSETDefinition:
+                                    MSG_FATAL("TVSETDefinitiondown-----------%d",pMe->m_barW,0,0);
+                                    if(pMe->pTvSetting->DefinitionStep > 0)
+                                      {
+                                     // pMe->m_barMAXW=TV_SETTING_DEFINITION_MAXVALUE;
+                                       pMe->m_barW--;
+                                       pMe->pTvSetting->DefinitionStep--;
+                                       
+                                      }
+                                     IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_DEFINITION, pMe->pTvSetting->DefinitionStep);
+                                    (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                                    break;
+                                  case TVSETSaturation:
+                                    MSG_FATAL("TVSETSaturationdown-----------%d",pMe->m_barW,0,0);
+                                    if(pMe->pTvSetting->SaturationStep > 0)
+                                      {
+                                     // pMe->m_barMAXW=TV_SETTING_SATURATION_MAXVALUE;
+                                       pMe->m_barW=pMe->m_barW-(TV_SETTING_SATURATION_MAXVALUE/50);
+                                       pMe->pTvSetting->SaturationStep= pMe->pTvSetting->SaturationStep - (TV_SETTING_SATURATION_MAXVALUE/50);
+                                       
+                                      }
+                                    IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_SATURATION, pMe->pTvSetting->SaturationStep);
+                                    (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                                    break;
+                                case TVSETSound:
+                                    if(pMe->pTvSetting->SoundStep > 0)
+                                      {
+                                     // pMe->m_barMAXW=TV_SETTING_SOUND_MAXVALUE;
+                                       pMe->m_barW--;
+                                       pMe->pTvSetting->SoundStep--;
+                                       
+                                      }
+                                    IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_SOUND, pMe->pTvSetting->SoundStep);
+                                    (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_TV_SETCHANNL,pMe->pTvSetting,sizeof(CFG_TvSetting));
+                                    break;
+
+            					default:
+            							return TRUE; 
+                                }
+                        }
+                        
                         break;
                     default:         
                         break; 
@@ -607,6 +898,141 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
    
     return FALSE;
 }
+
+static void TvApp_DrawBar(void * pme)
+{
+    
+        CTVApp *pMe = (CTVApp *)pme;
+        IImage *pTopBarImage2 = NULL;
+        AEEImageInfo myInfo;
+        AEERect  rc = pMe->m_rc;
+        AECHAR    channelStr[32];
+        AECHAR    m_barWStr[15];
+        AECHAR    strTitle[15]; 
+        AEERect clip;
+        AEERect oldClip;
+         if(strlight)
+         {
+             IImage *IMGbarblank=NULL;
+             IImage *image12=NULL;
+             AEEImageInfo IMGbarblankInfo;
+             IMGbarblank=ISHELL_LoadResImage(pMe->m_pShell,TVAPP_IMAGE_RES_FILE,IDI_SCHEDULEBAR_BLANK);
+             IIMAGE_Draw(IMGbarblank, TV_SETTING_BAR_X, TV_SETTING_BAR_Y);
+             IIMAGE_GetInfo(IMGbarblank, &IMGbarblankInfo);
+             image12 = ISHELL_LoadResImage( pMe->m_pShell,TVAPP_IMAGE_RES_FILE,IDI_SCHEDULEBAR_FULL);
+            if( image12 != NULL)
+            {
+                SETAEERECT( &clip, TV_SETTING_BAR_X,TV_SETTING_BAR_Y, ((IMGbarblankInfo.cx* pMe->m_barW)/pMe->m_barMAXW),TV_SETTING_BAR_H);
+                MSG_FATAL("m_barMAXW---=%d----m_barW----=%d-------------img.cx=%d-",pMe->m_barMAXW,pMe->m_barW,IMGbarblankInfo.cx);
+                IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);
+                IDISPLAY_SetClipRect( pMe->m_pDisplay, &clip);
+
+                IIMAGE_Draw(image12, TV_SETTING_BAR_X,TV_SETTING_BAR_Y);
+                IDISPLAY_SetClipRect( pMe->m_pDisplay, &oldClip);
+                IIMAGE_Release(image12);
+                IIMAGE_Release(IMGbarblank);
+                image12 = NULL;
+                IMGbarblank = NULL;
+
+                WSPRINTF(m_barWStr, sizeof(m_barWStr), (AECHAR*)L"%d", pMe->m_barW);
+                DrawTextWithProfile(pMe->m_pShell, 
+                                    pMe->m_pDisplay, 
+                                    RGB_WHITE, 
+                                    AEE_FONT_NORMAL, 
+                                    m_barWStr, 
+                                    -1, 
+                                    TV_SETTING_BAR_X+IMGbarblankInfo.cx, 
+                                    TV_SETTING_BAR_Y-5, 
+                                    &rc, 
+                                    IDF_TEXT_TRANSPARENT);
+                (void) ISHELL_LoadResString(pMe->m_pShell,
+                                    AEE_APPSTVAPP_RES_FILE,
+                                    pMe->m_barTitle,
+                                    strTitle,
+                                    sizeof(strTitle));
+                DrawTextWithProfile(pMe->m_pShell, pMe->m_pDisplay, RGB_WHITE, AEE_FONT_NORMAL,strTitle,-1, TV_TITLE_BAR_X, TV_TITLE_BAR_Y,&rc, IDF_TEXT_TRANSPARENT);
+               
+            } 
+             
+         }
+           
+        pTopBarImage2 = ISHELL_LoadResImage(pMe->m_pShell, 
+                                       TVAPP_IMAGE_RES_FILE, 
+                                       IDI_PNG_TV_TOOLBAR); 
+        if(pTopBarImage2)
+        {
+        
+        
+        IIMAGE_GetInfo(pTopBarImage2, &myInfo);
+        MSG_FATAL("m_cxWidth--%d------m_cyHeight--%d-----myInfo----%d",pMe->m_cxWidth,pMe->m_cyHeight,myInfo.cy);
+        IIMAGE_Draw(pTopBarImage2, (pMe->m_cxWidth - myInfo.cx)/2, pMe->m_cyHeight-(myInfo.cy*2)-5);    
+        TVApp_DrawTopBar(pMe);
+        TVApp_DrawBottomBarText(pMe, BTBAR_SELECT_BACK);
+        IIMAGE_Release(pTopBarImage2);
+        pTopBarImage2 = NULL;
+        
+        }
+        
+        WSPRINTF(channelStr, sizeof(channelStr), (AECHAR*)L"%d", pMe->currentlyChannel);
+         DrawTextWithProfile(pMe->m_pShell, 
+                    pMe->m_pDisplay, 
+                    RGB_WHITE, 
+                    AEE_FONT_NORMAL, 
+                    channelStr, 
+                    -1, 
+                    5, 
+                    5, 
+                    &rc, 
+                   IDF_TEXT_TRANSPARENT);
+             
+}
+static void TvApp_DrawAUTOSCANBar(void * pme,uint16 nowchannel,uint16 AllTotal )
+{
+    
+        CTVApp *pMe = (CTVApp *)pme;
+        AEERect  rc = pMe->m_rc; 
+        AEERect clip;
+        AEERect oldClip;
+        IImage *IMGbarblank=NULL;
+        IImage *image12=NULL;
+        AEEImageInfo IMGbarblankInfo;
+        AECHAR channeltotal[32];
+        IMGbarblank=ISHELL_LoadResImage(pMe->m_pShell,TVAPP_IMAGE_RES_FILE,IDI_SCHEDULEBAR_BLANK);
+        IIMAGE_Draw(IMGbarblank, TV_AUTOSCAN_BAR_X, TV_AUTOSCAN_BAR_Y);
+        IIMAGE_GetInfo(IMGbarblank, &IMGbarblankInfo);
+        image12 = ISHELL_LoadResImage( pMe->m_pShell,TVAPP_IMAGE_RES_FILE,IDI_SCHEDULEBAR_FULL);
+        MSG_FATAL("AllTotal---=%d----nowchannel----=%d-------------img.cx=%d-",AllTotal,nowchannel,IMGbarblankInfo.cx);
+        
+        if( image12 != NULL)
+        {
+            SETAEERECT( &clip, TV_AUTOSCAN_BAR_X,TV_AUTOSCAN_BAR_Y, ((IMGbarblankInfo.cx* nowchannel)/AllTotal),TV_AUTOSCAN_BAR_H);
+            
+            IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);
+            IDISPLAY_SetClipRect( pMe->m_pDisplay, &clip);
+
+            IIMAGE_Draw(image12, TV_AUTOSCAN_BAR_X,TV_AUTOSCAN_BAR_Y);
+            IDISPLAY_SetClipRect( pMe->m_pDisplay, &oldClip);
+            IIMAGE_Release(image12);
+            IIMAGE_Release(IMGbarblank);
+            image12 = NULL;
+            IMGbarblank = NULL;
+
+            WSPRINTF(channeltotal, sizeof(channeltotal), (AECHAR*)L"%d", pMe->m_curChnIdx);
+     		DrawTextWithProfile(pMe->m_pShell, 
+                                     pMe->m_pDisplay, 
+                                     RGB_WHITE, 
+                                     AEE_FONT_NORMAL, 
+                                     channeltotal, 
+                                     -1, 
+                                     TV_SETTING_BAR_X+IMGbarblankInfo.cx, 
+                                     TV_AUTOSCAN_BAR_Y-10, 
+                                     &rc, 
+                                    IDF_TEXT_TRANSPARENT);
+         } 
+         
+}
+
+
 #if 0
 static void TV_StopSearchAnimation(CTVApp *pMe)
 {  
@@ -1671,12 +2097,10 @@ static boolean TV_MainOptsMenu_HandleEvent(CTVApp *pMe,
         //lint -fallthrough
         
         case EVT_USER_REDRAW:
-			//TV_UpdateInit(pMe);
 			MSG_FATAL("TV_MainOptsMenu_HandleEvent ----------------EVT_USER_REDRAW",0,0,0);
             //IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
 			
 			IMENUCTL_Redraw(pMenuCtl);
-			//TV_Update(pMe);
             return TRUE;
             
         case EVT_DIALOG_END:
@@ -1689,7 +2113,7 @@ static boolean TV_MainOptsMenu_HandleEvent(CTVApp *pMe,
             {
                 case AVK_CLR:			
 				{
-                    CLOSE_DIALOG(DLGRET_MAINMENU);
+                    CLOSE_DIALOG(DLGRET_CANCELED);//DLGRET_MAINMENU
                     return TRUE;
                 }
                 case AVK_BGPLAY:
@@ -1709,7 +2133,9 @@ static boolean TV_MainOptsMenu_HandleEvent(CTVApp *pMe,
 				break; 
 			
             case IDS_AUTO_SCAN:
-				 CLOSE_DIALOG(DLGRET_AUTOSCAN); //DLGRET_MAINMENU
+                 pMe->m_bAUTOSCAN=TRUE;
+                 pMe->m_curChnIdx=0;
+				 CLOSE_DIALOG(DLGRET_MAINMENU); //DLGRET_MAINMENU DLGRET_AUTOSCAN
                  break;	
 			case IDS_TV_FAVORITE:
 				MSG_FATAL("IDS_TV_FAVORITE-----------------------------",0,0,0);

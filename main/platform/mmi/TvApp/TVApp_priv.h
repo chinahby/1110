@@ -193,6 +193,11 @@
 #define TV_SETTING_BAR_Y 50
 #define TV_SETTING_BAR_H 7
 
+#define TV_AUTOSCAN_BAR_X 70
+#define TV_AUTOSCAN_BAR_Y 20
+#define TV_AUTOSCAN_BAR_H 20
+
+
 #elif defined (FEATURE_DISP_320X240)
 #define TV_TITLE_BAR_X 120
 #define TV_TITLE_BAR_Y 130
@@ -202,6 +207,9 @@
 #define TV_SETTING_BAR_Y 100
 #define TV_SETTING_BAR_H 7
 
+#define TV_AUTOSCAN_BAR_X 70
+#define TV_AUTOSCAN_BAR_Y 20
+#define TV_AUTOSCAN_BAR_H 20
 #endif
 
 //TVSETTING
@@ -383,7 +391,10 @@ typedef struct _CTVApp
     boolean              m_bCapturePic;          // 判断camera是否在拍照状态，用于禁止按键事件
     boolean              m_bCanCapture;          // 检测存储容量后，判断是否可以拍照
     boolean              m_bMemoryCardExist;     // 检测是否存在存储卡
-    
+    boolean              m_bAUTOSCAN;            // 检测是否搜台
+    boolean              m_bAUTOSTOP;            // 检测是否搜台
+
+    uint16               m_curChnIdx; 
     uint16               m_wMsgID;               // pop对话框，显示文本的资源ID号
     uint32               m_nMsgTimeout;           // pop对话框，自动关闭所需要的时间 
 
