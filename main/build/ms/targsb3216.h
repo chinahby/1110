@@ -1,7 +1,7 @@
-#ifndef TARGSBWW2_H
-#define TARGSBWW2_H
+#ifndef TARGSBW2_H
+#define TARGSBW2_H
 /* ========================================================================
-FILE: TARGSBWW2
+FILE: TARGSBW2
 
 Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.        
 =========================================================================== */
@@ -116,4 +116,4 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 
 
-#endif /* TARGSBWW2_H */
+#endif /* TARGSBW2_H */

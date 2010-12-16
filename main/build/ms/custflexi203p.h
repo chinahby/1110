@@ -19,5 +19,8 @@
 
 #include "custw203.h"
 
+#ifdef CAMERA_USES_SOFTDSP
+#define FEATURE_CAMERA_NOFULLSCREEN
+#endif
 #endif /* CUSTSFLEXI203NASRANI_H*/
 
