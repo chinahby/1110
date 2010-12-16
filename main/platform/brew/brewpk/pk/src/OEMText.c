@@ -4277,7 +4277,29 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
             		}
                 }
                 break;  
-
+			case AVK_SHIFT:
+			    if(!pContext->is_isShift)
+			    {
+					pContext->is_isShift = FALSE;
+				}
+				else
+				{
+					pContext->is_isShift = TRUE;
+				}
+				return TRUE;
+				break;
+			case AVK_LCTRL:
+				if(!pContext->is_bAlt)
+				{
+					pContext->is_bAlt = FALSE;
+				}
+				else
+				{
+					pContext->is_bAlt = TRUE;
+				}
+				return TRUE;
+				break;
+				
 			default:
 			    break;
 			}
@@ -4399,6 +4421,14 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharShiftThaiKeyItem[i].wp));
 					                            pContext->is_isShift = FALSE;
 					                        }
+					                        else if(pContext->is_bAlt)
+					                        {
+					                        	TextCtl_NoSelection(pContext);
+					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
+					                            #ifndef FEATURE_VERSION_HITZ181
+					                            pContext->is_bAlt = FALSE;
+					                            #endif
+					                        }
 					                        else
 					                        {
 					                            TextCtl_NoSelection(pContext);
@@ -4436,14 +4466,17 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
 					                            #else
 					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
-					                            #endif
 					                            pContext->is_isShift = FALSE;
+					                            #endif
+					                            
 					                        }
 					                        else if(pContext->is_bAlt)
 					                        {
 					                        	TextCtl_NoSelection(pContext);
 					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
+					                            #ifndef FEATURE_VERSION_HITZ181
 					                            pContext->is_bAlt = FALSE;
+					                            #endif
 					                        }
 											
 											

@@ -686,15 +686,16 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 		
 #ifdef FEATURE_VERSION_HITZ181
 			
-			if ((wParam == AVK_LCTRL) || (wParam == AVK_SHIFT))
+			if ((wParam == AVK_SHIFT))
 			{
 				MSG_FATAL("***zzg CTextCtl_HandleEvent EVT_KEY_HELD AVK_SHIFT AVK_LCTRL***", 0, 0, 0);
+				
 				
 				if(pme->m_dwProps & TP_STARKEY_SWITCH)
 				{
 					MSG_FATAL("***zzg CTextCtl_HandleEvent TP_STARKEY_ID_SWITCH***", 0, 0, 0);
 					
-					if(pme->m_nCurrInputMode != OEM_MODE_T9_MT_ENGLISH_UP)	//OEM_MODE_T9_MT_ENGLISH_UP
+					if(pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_THAI)	//OEM_MODE_T9_MT_ENGLISH_UP
 					{
 						MSG_FATAL("***zzg CTextCtl_HandleEvent OEM_MODE_T9_RAPID_ENGLISH_UP***", 0, 0, 0);
 						
@@ -704,11 +705,11 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 						 OEM_SetInputMode(pme);
 						 return TRUE;						 
 					}
-					else
+					else if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP)
 					{
 						MSG_FATAL("***zzg CTextCtl_HandleEvent OEM_MODE_T9_RAPID_ENGLISH***", 0, 0, 0);
 						
-						pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH_LOW; 
+						pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_THAI; 
 						SetArrowFlagonIM(FALSE);
 						ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0, 0);
 						OEM_SetInputMode(pme);
@@ -722,6 +723,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 
             if ( OEM_TextKeyPress(pme->m_pText,eCode,wParam,dwParam) != FALSE)
             {
+            		CTextCtl_Redraw((ITextCtl *)pme);
                     if (!(pme->m_dwProps & TP_NODRAW))
                     {
                         OEM_TextUpdate(pme->m_pText);
@@ -874,6 +876,17 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
       
        
         case EVT_KEY:
+        #ifdef FEATURE_VERSION_HITZ181
+        if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP) && (wParam == AVK_SHIFT))
+         	{
+         			pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_THAI; 
+         			SetArrowFlagonIM(FALSE);
+					ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0, 0);
+					OEM_SetInputMode(pme);
+					return TRUE;
+         	}
+         		
+         #endif
 #if 1   //modi by yangdecai    //  SWITCH  INPUTMOD  EVT_RELEASE MOVE TO EVT_KEY 
 
 #if defined (FEATURE_ALL_KEY_PAD)
@@ -1498,6 +1511,7 @@ NormalKeyEvent:
             }
             
             break;
+        	
 
         case EVT_KEY_RELEASE:  
 
@@ -1507,12 +1521,14 @@ NormalKeyEvent:
          		boolean TempShift = FALSE;
          		boolean TempAlt = FALSE;
          		MSG_FATAL("EVT_KEY_RELEASE  AVK_SHIFT",0,0,0);
+         		
          		TempShift = OEM_TextShiftStatus(pme->m_pText);
          		TempAlt = OEM_TextAltStatus(pme->m_pText);
          		if((TempShift != pme->m_isshift) || ((TempAlt != pme->m_isAlt)))
          		{
 					CTextCtl_Redraw((ITextCtl *)pme);
 				}
+				
 				#endif
 			}
 #if defined (FEATURE_ALL_KEY_PAD)
@@ -1869,7 +1885,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                 qrc.dx-60, qrc.y,&qrc,IDF_TEXT_TRANSPARENT);
                 IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色
             }
-            else if(pme->m_isAlt &&(m_Mode != AEE_TM_THAI_R))
+            else if(pme->m_isAlt )
             {
             	AECHAR Altbuf[8] = {L"Alt"};
             	MSG_FATAL("qrc.x===%d,qrc.y====%d",qrc.x,qrc.y,0);
