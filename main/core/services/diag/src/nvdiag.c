@@ -891,8 +891,9 @@ PACK(void *) nvdiag_write (
 #endif
 
     /* check if the ESN is zero */
-
+#ifndef CUST_EDITION
     if (diagnv_get_esn() == 0L)
+#endif
     {
       /* ESN is zero */
       /* check the MEID */
@@ -901,10 +902,8 @@ PACK(void *) nvdiag_write (
       qw_set(meid_0, 0L, 0L);   /* initialize meid_0 to a value zero */
 #ifndef CUST_EDITION
       if ( (nv_status == NV_DONE_S && qw_cmp(meid, meid_0) == 0) ||
-#else
-      if ( (nv_status == NV_DONE_S) ||
-#endif
             nv_status == NV_NOTACTIVE_S )
+#endif
       {
         /* MEID is zero */
         if (eItem == NV_ESN_I )
