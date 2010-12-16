@@ -8327,13 +8327,14 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
         H32 = (uint32)(meid>>32);
     }
     MSG_FATAL("CFieldDebug_DrawEsnScreen L32=%d, H32=%d", L32, H32, 0);
-    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+    STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
     WSPRINTF((szBuf + n),
             sizeof(szBuf),
             fmt_str,
             H32
             );
     n = WSTRLEN(szBuf);
+    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
     STRTOWSTR("%X", fmt_str, sizeof(fmt_str));
     WSPRINTF((szBuf + n),
             sizeof(szBuf),
