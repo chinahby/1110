@@ -10,8 +10,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
-
-//Add by zzg 2010_10_13
 #define FEATURE_APP_BLUETOOTH
 #define FEATURE_BT
 #define FEATURE_IBT
@@ -74,7 +72,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_LOW_MEMORY_USAGE 
 //#define FEATURE_FS_LOW_MEMORY_USAGE 
 //#define FEATURE_DSM_MINIMIZE 
-//#define FEATURE_MSG_LOW_MEMORY_USAGE 
+#define FEATURE_MSG_LOW_MEMORY_USAGE 
 #define FEATURE_SIO_NO_DEBUG_TRACE 
 #define FEATURE_DIAG_SMALL_BUFFER 
 #define FEATURE_IPC_SMALL_MEMORY_POOL 
@@ -238,9 +236,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
-//#define FEATURE_AAC
-//#define FEATURE_AAC_PLUS
-//#define FEATURE_ENHANCED_AAC_PLUS
+#define FEATURE_AAC
+#define FEATURE_AAC_PLUS
+#define FEATURE_ENHANCED_AAC_PLUS
 #endif
 #include "custqbt.h"     //for bt
 #include "custbt.h"      //for bt
@@ -251,6 +249,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custmmode.h"
 #include "custcdma.h"
 #include "custrf.h"
+#ifdef FEATURE_BT
+#include "custqbt.h"
+#include "custbt.h"
+#endif
 #include "custcdma2000.h"
 #include "custdebug.h"
 #include "custdmss.h"
