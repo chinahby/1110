@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="zhcnvideoplayer" VERSION="1">
 <Strings Encoding="Unicode">
+	<String Id="1001" Name="IDS_TITLE">
+		<Text>视频播放器</Text>
+	</String>
 	<STRING Id="1004" Name="IDS_DELETE">
 		<Text>删除</Text>
 	</STRING>
