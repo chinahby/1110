@@ -6,8 +6,8 @@
 
 static void disp_ic_init(void)
 {
-    LCD_WRITE_CMD(0x28); LCD_WRITE_DATA16(0x00ce);
-    LCD_DELAY(200); // Delay 150ms
+    LCD_WRITE_CMD(0x28); LCD_WRITE_DATA16(0x00CE);
+    LCD_DELAY(150); // Delay 150ms
     LCD_WRITE_CMD(0x01); LCD_WRITE_DATA16(0x031C); // set SS and NL bit
     LCD_WRITE_CMD(0x02); LCD_WRITE_DATA16(0x0100); // set 1 line inversion
     LCD_WRITE_CMD(0x03); LCD_WRITE_DATA16(0x1038); // set GRAM write direction and BGR=1.
@@ -81,18 +81,16 @@ static void disp_ic_sleep(boolean bin)
         LCD_DELAY(50);
 
         LCD_WRITE_CMD(0x10);
-        LCD_WRITE_DATA16(0x0A01); // // Enter Standby mode
-        LCD_DELAY(10);
+        LCD_WRITE_DATA16(0x0A01); // Enter Standby mode
     }
     else
     {
         LCD_WRITE_CMD(0x10);
-        LCD_WRITE_DATA16(0xa000);
+        LCD_WRITE_DATA16(0x0A00);
         LCD_DELAY(50);
 
         LCD_WRITE_CMD(0x07);
-        LCD_WRITE_DATA16(0x1017); //Exit Sleep   
-        LCD_DELAY(10);
+        LCD_WRITE_DATA16(0x1017); //Exit Sleep
     }
 }
 
