@@ -53,10 +53,10 @@
     #define SCREEN_HEIGHT           220
     #define STATEBAR_HEIGHT         22
     #define BOTTOMBAR_HEIGHT        22
-    #define TITLEBAR_HEIGHT         30
+    #define TITLEBAR_HEIGHT         22
     #define MENUITEM_HEIGHT         22
     #define SCROLLBAR_WIDTH         5
-    #define STATUSBAR_HEIGHT        14
+    #define STATUSBAR_HEIGHT        22
 #elif defined(FEATURE_DISP_128X128)
     #define SCREEN_WIDTH            128
     #define SCREEN_HEIGHT           128
@@ -81,7 +81,7 @@
     #define STATEBAR_HEIGHT         22
     #define BOTTOMBAR_HEIGHT        22
     #define TITLEBAR_HEIGHT         22
-    #define MENUITEM_HEIGHT         21
+    #define MENUITEM_HEIGHT         22
     #define SCROLLBAR_WIDTH         5
     #define STATUSBAR_HEIGHT        22	
 #elif defined(FEATURE_DISP_128X160)			//160 = statebar(16)+bottombar(16) +8*menuitem(16)
