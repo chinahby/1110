@@ -4735,7 +4735,6 @@ s_short A8L_CheckReadyForA8Command(void)
 {
 	s_int timeout = 0;
 	u_short ret= 0;
-	#if 0
 	while((((ret = GetA8DSCStatus()) & A8_DSC_READY_FOR_CMD) == 0) && (timeout < A8_CMD_READY_TIME_OUT) )
 	{
 		sys_IF_ait_delay1us(100);	// Sleep delay about 0.1ms or 1ms. Depends on BB System delay function.
@@ -4749,7 +4748,6 @@ s_short A8L_CheckReadyForA8Command(void)
 		return A8_TIMEOUT_ERROR;
 	}
 	else
-    #endif
 		return A8_NO_ERROR;
 }
 

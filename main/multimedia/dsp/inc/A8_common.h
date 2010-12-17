@@ -196,7 +196,10 @@ typedef struct
 // Other common definitions
 //===========================
 #define A8_SWITCH_PREVIEW_TIME_OUT				(500)
-#define A8_CMD_READY_TIME_OUT						(10000)
+//#define A8_CMD_READY_TIME_OUT						(10000)
+#define A8_CMD_READY_TIME_OUT						    (100)
+//modi by yangdecai  2010-12-17
+
 #define A8_SENSOR_FRAME_START_TIME_OUT	(400)
 #define A8_SENSOR_EXP_DONE_TIME_OUT			(400)
 #define A8_HOST_CMD_RG_TIME_OUT					(1000)
