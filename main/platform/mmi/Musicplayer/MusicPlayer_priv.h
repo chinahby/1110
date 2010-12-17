@@ -242,7 +242,7 @@ if(!(x))         \
 #define OLDPLAY_Y 68
 #define OLDPLAY_W 114
 #define OLDPLAY_H 45
-#if defined (FEATURE_DISP_128X160)
+#elif defined (FEATURE_DISP_128X160)
 //wlh 20090415 add 设置ICON 坐标 
 //开机动画
 #define ANI_X 0
