@@ -6,115 +6,117 @@
 
 static void disp_ic_init(void)
 {
-    LCD_WRITE_CMD(0x11);   
-    
-    LCD_DELAY(120);      
-    
-    LCD_WRITE_CMD(0xB1);   
-    LCD_WRITE_DATA(0x05); 
-    LCD_WRITE_DATA(0x3c); 
-    LCD_WRITE_DATA(0x3c); 
-    
-    LCD_WRITE_CMD(0xB2);   
-    LCD_WRITE_DATA(0x05); 
-    LCD_WRITE_DATA(0x3c); 
-    LCD_WRITE_DATA(0x3c); 
-    
-    LCD_WRITE_CMD(0xB3);   
-    LCD_WRITE_DATA(0x05); 
-    LCD_WRITE_DATA(0x3c); 
-    LCD_WRITE_DATA(0x3c); 
-    LCD_WRITE_DATA(0x05); 
-    LCD_WRITE_DATA(0x3c); 
-    LCD_WRITE_DATA(0x3c); 
-    
-    LCD_WRITE_CMD(0xB4);   
-    LCD_WRITE_DATA(0x07); 
-    
+    LCD_WRITE_CMD(0x11); //Sleep out
+    LCD_DELAY(120); //Delay 120ms
+    //------------------------------------ST7735R Frame Rate-----------------------------------------//
+    LCD_WRITE_CMD(0xB1);
+    LCD_WRITE_DATA(0x01);  //01
+    LCD_WRITE_DATA(0x2C);
+    LCD_WRITE_DATA(0x2D);
+    LCD_WRITE_CMD(0xB2);
+    LCD_WRITE_DATA(0x01);  //01
+    LCD_WRITE_DATA(0x2C);
+    LCD_WRITE_DATA(0x2D);
+    LCD_WRITE_CMD(0xB3);
+    LCD_WRITE_DATA(0x01);   //01
+    LCD_WRITE_DATA(0x2C);
+    LCD_WRITE_DATA(0x2D);
+    LCD_WRITE_DATA(0x01);
+    LCD_WRITE_DATA(0x2C);
+    LCD_WRITE_DATA(0x2D);
+    //------------------------------------End ST7735R Frame Rate-----------------------------------------//
+    LCD_WRITE_CMD(0xB4); //Column inversion
+    LCD_WRITE_DATA(0x03);  //0x07
+
+
+
     LCD_WRITE_CMD(0xB6);   //
     LCD_WRITE_DATA(0xB4); //
     LCD_WRITE_DATA(0xF0); //
-    
-    LCD_WRITE_CMD(0xC0);   
-    LCD_WRITE_DATA(0xb4); 
-    LCD_WRITE_DATA(0x14); 
-    LCD_WRITE_DATA(0x04); 
-    
-    LCD_WRITE_CMD(0xC1);   
-    LCD_WRITE_DATA(0xc0); 
-    
-    LCD_WRITE_CMD(0xC2);   
-    LCD_WRITE_DATA(0x0a); 
-    LCD_WRITE_DATA(0x00); 
-    
-    LCD_WRITE_CMD(0xC3);   
-    LCD_WRITE_DATA(0x8a); 
-    LCD_WRITE_DATA(0x2a); 
-    
-    LCD_WRITE_CMD(0xC4);   
-    LCD_WRITE_DATA(0x8a); 
-    LCD_WRITE_DATA(0xaa); 
-    
-    LCD_WRITE_CMD(0xC5);   
-    LCD_WRITE_DATA(0x00); 
-    
-    LCD_WRITE_CMD(0xE0);   
-    LCD_WRITE_DATA(0x03); 
-    LCD_WRITE_DATA(0x22); 
-    LCD_WRITE_DATA(0x0a); 
-    LCD_WRITE_DATA(0x12); 
-    LCD_WRITE_DATA(0x3a); 
-    LCD_WRITE_DATA(0x35); 
-    LCD_WRITE_DATA(0x2e); 
-    LCD_WRITE_DATA(0x31); 
-    LCD_WRITE_DATA(0x30); 
-    LCD_WRITE_DATA(0x2d); 
-    LCD_WRITE_DATA(0x34); 
-    LCD_WRITE_DATA(0x3d); 
-    LCD_WRITE_DATA(0x00); 
-    LCD_WRITE_DATA(0x00); 
-    LCD_WRITE_DATA(0x01); 
-    LCD_WRITE_DATA(0x03); 
-    
-    LCD_WRITE_CMD(0xE1);   
-    LCD_WRITE_DATA(0x03); 
-    LCD_WRITE_DATA(0x20); 
-    LCD_WRITE_DATA(0x0a); 
-    LCD_WRITE_DATA(0x12); 
-    LCD_WRITE_DATA(0x2e); 
-    LCD_WRITE_DATA(0x2a); 
-    LCD_WRITE_DATA(0x26); 
-    LCD_WRITE_DATA(0x2b); 
-    LCD_WRITE_DATA(0x2b); 
-    LCD_WRITE_DATA(0x2a); 
-    LCD_WRITE_DATA(0x32); 
-    LCD_WRITE_DATA(0x3d); 
-    LCD_WRITE_DATA(0x00); 
-    LCD_WRITE_DATA(0x01); 
-    LCD_WRITE_DATA(0x02); 
-    LCD_WRITE_DATA(0x04); 
-    
-    LCD_WRITE_CMD(0x36);   
-    LCD_WRITE_DATA(0xC0); 
-    
-    LCD_WRITE_CMD(0x2A);   
-    LCD_WRITE_DATA(0x00); 
-    LCD_WRITE_DATA(0x00); 
-    LCD_WRITE_DATA(0x00); 
-    LCD_WRITE_DATA(0x7F); 
-    
-    LCD_WRITE_CMD(0x2B);   
-    LCD_WRITE_DATA(0x00); 
-    LCD_WRITE_DATA(0x00); 
-    LCD_WRITE_DATA(0x00); 
-    LCD_WRITE_DATA(0x9F); 
-    
-    LCD_WRITE_CMD(0x21);   //for 0012  boe1.77
-    
-    LCD_WRITE_CMD(0x3A);   
-    LCD_WRITE_DATA(0x05); 
-    
-    LCD_WRITE_CMD(0x29);   
+
+    //------------------------------------ST7735R Power Sequence-----------------------------------------//
+    LCD_WRITE_CMD(0xC0);
+    LCD_WRITE_DATA(0xA2);
+    LCD_WRITE_DATA(0x02);
+    LCD_WRITE_DATA(0x84);
+    LCD_WRITE_CMD(0xC1);
+    LCD_WRITE_DATA(0xC5);
+    LCD_WRITE_CMD(0xC2);
+    LCD_WRITE_DATA(0x0A);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_CMD(0xC3);
+    LCD_WRITE_DATA(0x8A);
+    LCD_WRITE_DATA(0x2A);
+    LCD_WRITE_CMD(0xC4);
+    LCD_WRITE_DATA(0x8A);
+    LCD_WRITE_DATA(0xEE);
+    //---------------------------------End ST7735R Power Sequence-------------------------------------//
+
+
+    LCD_WRITE_CMD(0xC5); //VCOM
+    LCD_WRITE_DATA(0x0A);   //0x0E
+
+    LCD_WRITE_CMD(0x36); //MX, MY, RGB mode
+    LCD_WRITE_DATA(0xC8);
+    //------------------------------------ST7735R Gamma Sequence-----------------------------------------//
+    LCD_WRITE_CMD(0xe0);
+    LCD_WRITE_DATA(0x02);
+    LCD_WRITE_DATA(0x1c);
+    LCD_WRITE_DATA(0x07);
+    LCD_WRITE_DATA(0x12);
+    LCD_WRITE_DATA(0x37);
+    LCD_WRITE_DATA(0x32);
+    LCD_WRITE_DATA(0x29);
+    LCD_WRITE_DATA(0x2d);
+    LCD_WRITE_DATA(0x29);
+    LCD_WRITE_DATA(0x25);
+    LCD_WRITE_DATA(0x2b);
+    LCD_WRITE_DATA(0x39);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x01);
+    LCD_WRITE_DATA(0x03);
+    LCD_WRITE_DATA(0x10);
+
+    LCD_WRITE_CMD(0xe1);
+    LCD_WRITE_DATA(0x03);
+    LCD_WRITE_DATA(0x1d);
+    LCD_WRITE_DATA(0x07);
+    LCD_WRITE_DATA(0x06);
+    LCD_WRITE_DATA(0x2e);
+    LCD_WRITE_DATA(0x2c);
+    LCD_WRITE_DATA(0x29);
+    LCD_WRITE_DATA(0x2d);
+    LCD_WRITE_DATA(0x2e);
+    LCD_WRITE_DATA(0x2e);
+    LCD_WRITE_DATA(0x37);
+    LCD_WRITE_DATA(0x3f);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x02);
+    LCD_WRITE_DATA(0x10);
+    //------------------------------------End ST7735R Gamma Sequence-----------------------------------------//
+
+    LCD_WRITE_CMD(0x2a);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x7f);
+
+    LCD_WRITE_CMD(0x2b);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x00);
+    LCD_WRITE_DATA(0x9f);
+
+    LCD_WRITE_CMD(0xF0); //Enable test command
+    LCD_WRITE_DATA(0x01);
+    LCD_WRITE_CMD(0xF6); //Disable ram power save mode
+    LCD_WRITE_DATA(0x00);
+
+    LCD_WRITE_CMD(0x3A); //65k mode
+    LCD_WRITE_DATA(0x05);
+
+    LCD_WRITE_CMD(0x29); //Display on
 }
 
 static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
