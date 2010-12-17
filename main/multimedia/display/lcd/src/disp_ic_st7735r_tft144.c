@@ -162,11 +162,16 @@ boolean disp_st7735r_tft144(disp_drv_ic_type *pdispic)
 {
     uint8 id1,id2,id3;
     
-    LCD_WRITE_CMD(0x04);
-    id1=LCD_READ_DATA();
-    id1=LCD_READ_DATA();
-    id2=LCD_READ_DATA();
-    id3=LCD_READ_DATA();
+    // Read ID
+    LCD_WRITE_CMD(0xDA);
+    id1 = LCD_READ_DATA();
+    id1 = LCD_READ_DATA();
+    LCD_WRITE_CMD(0xDB);
+    id2 = LCD_READ_DATA();
+    id2 = LCD_READ_DATA();
+    LCD_WRITE_CMD(0xDC);
+    id3 = LCD_READ_DATA();
+    id3 = LCD_READ_DATA();
     
     //if(id1 == 0x1 && id2 == 0x1 && id3 == 0x1)
     {

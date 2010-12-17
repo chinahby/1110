@@ -204,7 +204,6 @@ static void disp_ic_sleep(boolean bin)
     if(bin)
     {
         LCD_WRITE_CMD(0x10); //Sleep in
-        LCD_DELAY(120);
     }
     else
     {
