@@ -124,6 +124,15 @@ static void DialogTimeoutCallback(void *pUser);
 static int  VideoPlayer_GetFileID(CVideoPlayer *pMe);
 static boolean VideoPlayer_ChangeScrState(CVideoPlayer* pMe,boolean isLockScr);
 
+void VideoPlayer_WriteTitleRes(CVideoPlayer *pMe,char* pResPath,int uResId);
+void VideoPlayer_WriteTitle(CVideoPlayer *pMe,AECHAR* pText);
+
+static void VideoPlayer_Help(CVideoPlayer* pMe);
+static boolean VideoPlayer_HelpInit(CVideoPlayer* pMe);
+static void VideoPlayer_HelpTerminate(CVideoPlayer *pMe);
+static boolean VideoPlayer_HelpHandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint16 wParam,uint32 dwParam);
+
+
 
 
 /*=================================================================================================================
@@ -253,6 +262,10 @@ boolean VideoPlayer_RouteDialogEvent( CVideoPlayer *pMe,AEEEvent eCode,uint16 wP
             return FALSE;
      }
 }
+
+
+
+
 /*=================================================================================================================
 函数：VPDVideoPlayer_HandleEvent
 
@@ -278,6 +291,14 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
     #endif
 	DBGPRINTF("eCode = %d",eCode);
 
+	if(pMe->m_pHelp != NULL)
+	{
+	   boolean nReturn = FALSE;
+	   nReturn = VideoPlayer_HelpHandleEvent(pMe,eCode,wParam,dwParam);
+
+	   if(nReturn) return TRUE;
+	}
+
     switch (eCode)
     {
         case EVT_DIALOG_INIT:        
@@ -288,6 +309,8 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
             return TRUE;
         
         case EVT_USER_REDRAW:
+			{
+#if 0			
             if(!pMe->IsPlay)
             {
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAYERPICTURE_PLAY, 0, 0);                 
@@ -296,6 +319,11 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
             {					
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAYERPICTURE_PAUSE, 0, 0);                
             } 
+#endif		
+            AEERect rc = {0,0,SCR_W,SCR_H};         
+            IDisplay_FillRect(pMe->m_pDisplay,&rc,0x0);
+			VideoPlayer_WriteTitleRes(pMe,AEE_APPSVIDEOPLAYER_RES_FILE,IDS_TITLE);
+			VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_LOGO, VIDEOPLAYER_LOGO_X, VIDEOPLAYER_LOGO_Y);
             VideoPlayer_RefreshPlayingTick(pMe);
             VideoPlayer_RefreshVolBar(pMe);
             if(pMe->m_FileToPlay != NULL) // 如果不加此判断条件，则在pMe->m_FileToPlay为NULL时，屏幕上会显示乱码
@@ -345,6 +373,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
                 }
             } 
             return TRUE;
+        	}
   
         case EVT_DIALOG_END:            
             return TRUE;
@@ -375,6 +404,11 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
                         #endif
                         CMediaGallery_FileExplorer(GALLERY_VIDEO_ADDLIST,NULL);
                         return TRUE;
+					case AVK_INFO:
+						{
+							VideoPlayer_Help(pMe);
+							return TRUE;
+						}
                 
                     case AVK_CLR:
                         CLOSE_DIALOG(DLGRET_CANCELED);
@@ -864,10 +898,17 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 {   
 				// YY TODO:
                     //MMD_LCDRotate(0);
+                    AEERect rc = {0,0,SCR_W,SCR_H};
                     pMe->IsFullScreen = FALSE;
 		            FullScreen = FALSE;
-                    
+							
+					IDisplay_FillRect(pMe->m_pDisplay,&rc,0x0);
+					VideoPlayer_WriteTitleRes(pMe,AEE_APPSVIDEOPLAYER_RES_FILE,IDS_TITLE);
+					VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_LOGO, VIDEOPLAYER_LOGO_X, VIDEOPLAYER_LOGO_Y);
+
+#if 0                    
                     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAYERPICTURE_PLAY, 0, 0);//背景图
+#endif
                     if( pMe->IsPlay)
                     { 
 #if 0                    
@@ -1319,6 +1360,7 @@ void  VideoPlayer_InitVideo(CVideoPlayer  *pMe)
     pMe->m_md.pData = (void*)pMe->m_FileToPlay;
     pMe->m_md.dwSize = 0;
 	pMe->m_pMediaUtil = 0;
+	pMe->m_pHelp = NULL;
 	//pMe->m_InitFailed = AEEMediaUtil_CreateMedia(pMe->m_pShell, &pMe->m_md, &pMe->m_pMedia);
 	pMe->m_InitFailed = AEEMediaUtil_CreateMedia(pMe->m_pShell, &pMe->m_md,&(IMedia*)pMe->m_pMedia);
     DBGPRINTF("pMe->m_InitFailed=%d",pMe->m_InitFailed);
@@ -1489,13 +1531,36 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
     //非用户手动停止
     //pMe->UserStop = FALSE;
 }
+void VideoPlayer_WriteTitle(CVideoPlayer *pMe,AECHAR* pText)
+{
+	AEERect   rc_name;
+	VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NAME_PART, 0, 0);  
+	SETAEERECT(&rc_name, VIDEOPLAYER_NAMEPART_X + 10,VIDEOPLAYER_NAMEPART_Y, VIDEOPLAYER_NAMEPART_W - 20, VIDEOPLAYER_NAMEPART_H);
+	//写title
+	DrawTextWithProfile(pMe->m_pShell, 
+					pMe->m_pDisplay, 
+					RGB_WHITE, //文本轮廓的RGBVAL颜色值,RGB_BLACK
+					AEE_FONT_BOLD,
+					pText, 
+					-1, 
+					22, 
+					22, 
+					&rc_name, 
+					IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);	
+}
+void VideoPlayer_WriteTitleRes(CVideoPlayer *pMe,char* pResPath,int uResId)
+{
+  AECHAR pText[256] = {0};
+  ISHELL_LoadResString(pMe->m_pShell,pResPath,uResId,pText,sizeof(pText));
+  VideoPlayer_WriteTitle(pMe,pText);
+}
+
 
 /*=================================================================================================================
    刷player屏的上半部分的文件名
 =================================================================================================================*/                                                                        
 static  void VideoPlayer_RefreshPlayerFileName(CVideoPlayer *pMe)
 {   
-    AEERect   rc_name;
     char      title_copy[MAX_STR_LEN];  
     AECHAR    player_title[MAX_STR_LEN];
     char      *filename=NULL; 
@@ -1528,53 +1593,25 @@ static  void VideoPlayer_RefreshPlayerFileName(CVideoPlayer *pMe)
     }
     else 
     {        
-        VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NAME_PART, 0, 0);  
-        SETAEERECT(&rc_name, VIDEOPLAYER_NAMEPART_X + 10,VIDEOPLAYER_NAMEPART_Y, VIDEOPLAYER_NAMEPART_W - 20, VIDEOPLAYER_NAMEPART_H);
-        //写title
-        DrawTextWithProfile(pMe->m_pShell, 
-                            pMe->m_pDisplay, 
-                            RGB_WHITE, //文本轮廓的RGBVAL颜色值,RGB_BLACK
-                            AEE_FONT_BOLD,
-                            player_title, 
-                            -1, 
-                            22, 
-                            22, 
-                            &rc_name, 
-                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT); 
+       VideoPlayer_WriteTitle(pMe,player_title);
+
     }
 }
 //滚动显示文件名
 static void VideoPlayer_ShowName(CVideoPlayer *pMe) 
 { 
-    AEERect  rc_title;
     int      str;
     AECHAR   *pp;   
     int      settime;
 
 	if(pMe->IsFullScreen) return;
-	
-    VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NAME_PART, 0, 0); 
-    SETAEERECT(&rc_title, 
-		VIDEOPLAYER_NAMEPART_X + 10,
-		VIDEOPLAYER_NAMEPART_Y,
-		VIDEOPLAYER_NAMEPART_W - 20,
-		VIDEOPLAYER_NAMEPART_H);
     
     pp=&pMe->m_playname[pMe->m_np]; 
     pMe->m_np += 1;
-    str=IDISPLAY_MeasureText(pMe->m_pDisplay,AEE_FONT_NORMAL,pp);   
-     
-    //写title
-    DrawTextWithProfile(pMe->m_pShell, 
-                        pMe->m_pDisplay, 
-                        RGB_WHITE, //文本轮廓的RGBVAL颜色值,RGB_BLACK
-                        AEE_FONT_BOLD,
-                        pp, 
-                        -1, 
-                        22, 
-                        22, 
-                        &rc_title, 
-                        IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+    str=IDISPLAY_MeasureText(pMe->m_pDisplay,AEE_FONT_NORMAL,pp);
+	
+	VideoPlayer_WriteTitle(pMe,pp);
+
     IDISPLAY_UpdateEx(pMe->m_pDisplay,TRUE); 
     if(str <= MAX_NAME_LEN)
     {
@@ -1710,9 +1747,7 @@ static void VideoPlayer_RefreshVolBar(CVideoPlayer *pMe)
         default :
             ResID = IDI_VOLUME2_0;            
     }
-#if 0
     VideoPlayer_DrawImage( pMe, VIDEOPLAYER_IMAGES_RES_FILE,ResID, VIDEOPLAYER_VOLUME_X, VIDEOPLAYER_VOLUME_Y);  
-#endif
 }
 
 /*=================================================================================================================
@@ -1760,6 +1795,230 @@ boolean VideoPlayer_PlayMod(CVideoPlayer *pMe, uint16 wParam)
    
     return TRUE;
 }
+
+void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
+{
+	AECHAR* pPosCur = (AECHAR*)pText;
+	uint16 textw = 0;
+	uint16 texth = 1;
+	uint16 lh = 1;
+	int    pos = 1;
+	const uint16 charw = 7,charh = 18;
+	AEERect rc = {0,0,SCR_W,SCR_H};
+	rc.dx = pMe->m_rc.dx;
+    rc.y = VIDEOPLAYER_NAMEPART_H + 5;
+    rc.dy = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay) - 5;
+
+	if(pText == NULL) return ;
+
+	IDISPLAY_FillRect(pMe->m_pDisplay,&rc,0x0);
+
+	while(*pPosCur != '\0')
+	{
+		if(*pPosCur == ' '&& pos == 1)
+		{
+			pPosCur++;
+			continue;
+		}
+		else if(*pPosCur == '\\')
+		{
+			switch(*(pPosCur + 1))
+			{
+			case 'n':
+				{
+					DrawTextWithProfile(pMe->m_pShell, 
+						pMe->m_pDisplay, 
+						RGB_WHITE, //文本轮廓的RGBVAL颜色值,RGB_BLACK
+						AEE_FONT_NORMAL,
+						pPosCur - pos + 1,
+						pos - 1, 
+						0, 
+						VIDEOPLAYER_NAMEPART_H + texth + pMe->m_pHelp->m_Posy, 
+						&rc, 
+						IDF_TEXT_TRANSPARENT);
+					texth += (lh + charh);
+					textw = charw;
+					pos = 0;
+					pPosCur++;
+					break;
+				}
+			default:
+				{
+					break;
+				}
+			}
+		}
+
+		if(textw + charw > VIDEO_TEXT_W)
+		{
+			DrawTextWithProfile(pMe->m_pShell, 
+				pMe->m_pDisplay, 
+				RGB_WHITE, //文本轮廓的RGBVAL颜色值,RGB_BLACK
+				AEE_FONT_NORMAL,
+				pPosCur - pos + 1,
+				pos,
+				0, 
+				VIDEOPLAYER_NAMEPART_H + texth + pMe->m_pHelp->m_Posy, 
+				&rc, 
+				IDF_TEXT_TRANSPARENT);
+			texth += (lh + charh);
+			textw = charw;
+			pos = 0;
+
+		}
+
+		textw += charw;
+		pPosCur++;
+		pos++;
+	}
+	DrawTextWithProfile(pMe->m_pShell, 
+		pMe->m_pDisplay, 
+		RGB_WHITE, //文本轮廓的RGBVAL颜色值,RGB_BLACK
+		AEE_FONT_NORMAL,
+		pPosCur - pos + 1,
+		pos - 1,
+		0, 
+		VIDEOPLAYER_NAMEPART_H + texth + pMe->m_pHelp->m_Posy, 
+		&rc, 
+		IDF_TEXT_TRANSPARENT);
+	*height = texth;
+}
+
+
+
+static void VideoPlayer_Help(CVideoPlayer* pMe)
+{
+  if(pMe->m_pHelp != NULL)
+  	return ;
+  
+  pMe->m_pHelp = (CHelpPtr)MALLOC(sizeof(CHelp));
+  if(pMe->m_pHelp == NULL)
+  	 return ;
+  
+  pMe->m_pHelp->pText = NULL;
+  pMe->m_pHelp->pTitle = NULL;	
+  pMe->m_pHelp->m_Posy= 0;
+  pMe->m_pHelp->m_Height = 0;
+  
+  
+  if(!VideoPlayer_HelpInit(pMe))
+  	{
+  	  SAFE_DELETE(pMe->m_pHelp);
+  	}
+}
+
+static boolean VideoPlayer_HelpInit(CVideoPlayer* pMe)
+{
+	CHelpPtr pHelp;
+	int      nReturn;
+
+    pHelp = pMe->m_pHelp;
+	
+	if(!pHelp->pTitle)
+	{
+	    pHelp->pTitle = (AECHAR*)MALLOC(VIDEOPLAYER_HELP_TITLE);
+
+		if(pHelp->pTitle == NULL)
+			return FALSE;
+		
+		nReturn = ISHELL_LoadResString(pMe->m_pShell,
+			AEE_APPSVIDEOPLAYER_RES_FILE,
+			IDS_HELPTITLE,
+			pHelp->pTitle,
+			VIDEOPLAYER_HELP_TITLE);
+		
+		if(!nReturn)
+		  SAFE_DELETE(pHelp->pTitle); 
+	}
+	if(!pHelp->pText)
+	{
+	    pHelp->pText = (AECHAR*)MALLOC(VIDEOPLAYER_HELP_TEXT);
+
+		if(pHelp->pText == NULL)
+			return FALSE;
+		
+		nReturn = ISHELL_LoadResString(pMe->m_pShell,
+			AEE_APPSVIDEOPLAYER_RES_FILE,
+			IDS_HELP,
+			pHelp->pText,
+			VIDEOPLAYER_HELP_TEXT);
+		
+		if(!nReturn)
+		{
+			SAFE_DELETE(pHelp->pTitle);
+			return FALSE;
+		}
+	}	
+	
+	return TRUE;
+
+}
+static boolean VideoPlayer_HelpHandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint16 wParam,uint32 dwParam)
+{
+  CHelpPtr pHelp = pMe->m_pHelp;
+  
+  switch(eCode)
+  	{
+  	    case EVT_KEY_HELD:
+  	    case EVT_KEY_RELEASE:
+    	case EVT_KEY_PRESS:
+			{
+				switch(wParam)
+					{
+					  case AVK_CLR:
+					  	{
+							VideoPlayer_HelpTerminate(pMe);
+							SAFE_DELETE(pMe->m_pHelp); 
+							break;
+					  	}
+					  case AVK_UP:
+					  	{
+							if((pHelp->m_Posy + VIDEO_SCROLL_SPEED) < pHelp->m_Height)
+								pHelp->m_Posy += VIDEO_SCROLL_SPEED;
+						   break;
+					  	}
+					  case AVK_DOWN:
+					  	{
+					        if(pHelp->m_Posy - VIDEO_SCROLL_SPEED > 0)
+					       	{
+					       	  pHelp->m_Posy -= VIDEO_SCROLL_SPEED;
+					       	}
+
+						   break;
+					  	}
+					  default:
+					  	{
+							return TRUE;
+					  	}
+					  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_VIDEOPLAYER,EVT_USER_REDRAW,0,0);
+					  return TRUE;
+					  
+					}
+				break;
+    		}
+		case EVT_USER_REDRAW:
+			{
+				Draw_Parser_Text(pMe,pHelp->pText,&pHelp->m_Height);
+				VideoPlayer_WriteTitle(pMe,pHelp->pTitle);
+			    DRAW_BOTTOMBAR(BTBAR_BACK);	
+				IDISPLAY_Update(pMe->m_pDisplay);
+				return TRUE;
+			}
+		default:
+			{
+				ISHELL_PostEvent(pMe->m_pShell,AEECLSID_VIDEOPLAYER,EVT_USER_REDRAW,0,0);
+				return FALSE;
+			}
+  	}
+  return TRUE;
+}
+
+static void VideoPlayer_HelpTerminate(CVideoPlayer *pMe)
+{
+  SAFE_DELETE(pMe->m_pHelp->pText);
+  SAFE_DELETE(pMe->m_pHelp->pTitle);
+}
+
 #if 0
 /*=================================================================================================================
    删除当前播放的文件
@@ -1830,9 +2089,9 @@ static void VideoPlayer_VideoNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify
                 pMe->bCurrentTime=0;
                 pMe->IsFullScreen=FALSE;                   
                 VideoPlayer_RefreshPlayingTick(pMe);
+                VideoPlayer_RefreshPlayerFileName(pMe);
                 VideoPlayer_RefreshScheduleBar(pMe);//刷新进度条
                 VideoPlayer_RefreshVolBar(pMe);// 刷新音量
-                VideoPlayer_RefreshPlayerFileName(pMe);
 #if 0
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_PLAY, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y); //"|>"
 #endif

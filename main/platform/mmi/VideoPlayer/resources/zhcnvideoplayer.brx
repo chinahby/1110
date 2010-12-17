@@ -14,7 +14,7 @@
 		<Text>帮助</Text>
 	</String>
 	<String Id="1013" Name="IDS_HELP">
-		<Text>上下键: 调整音量大小\nGallery:\n查找视频文件\n注意:\n在全屏观看时，按任意键回到一般播放状态</Text>
+		<Text>上下键: 调整音量大小。\nGallery: 查找视频文件。\n注意: 在全屏观看时，按任意键回到一般播放状态。</Text>
 	</String>
 </Strings>
 <Dialogs>

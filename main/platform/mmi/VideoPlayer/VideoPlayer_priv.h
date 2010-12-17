@@ -144,10 +144,43 @@
 #define SCR_W SCREEN_WIDTH
 #define SCR_H SCREEN_HEIGHT
 
-//时间
-#define VIDEOPLAYER_NAMEPART_W SCREEN_WIDTH//47
+#define VIDEOPLAYER_LOGO_W 90
+#define VIDEOPLAYER_LOGO_H 60
+#define VIDEOPLAYER_LOGO_X ((SCR_W - VIDEOPLAYER_LOGO_W) >> 1)
+#define VIDEOPLAYER_LOGO_Y ((SCR_H - BOTTOMBAR_HEIGHT - TITLEBAR_HEIGHT) >> 1)
+//----------------------------------------------------------
+//   右上
+//----------------------------------------------------------
+
+//降低音量
+// Unused
+#define VIDEOPLAYER_VOLUME_LOW_W 12
+#define VIDEOPLAYER_VOLUME_LOW_H 16
+#define VIDEOPLAYER_VOLUME_LOW_X (VIDEOPLAYER_TIME_X  + VIDEOPLAYER_TIME_W)
+#define VIDEOPLAYER_VOLUME_LOW_Y (SCR_H - VIDEOPLAYER_VOLUME_ADD_H)//182
+
+//音量
+#define VIDEOPLAYER_VOLUME_W (33 + 6) //YY ADD: Make is wider than itsself to keep away from right margin
+#define VIDEOPLAYER_VOLUME_H 14
+#define VIDEOPLAYER_VOLUME_X (SCR_W - VIDEOPLAYER_VOLUME_W)//129
+#define VIDEOPLAYER_VOLUME_Y (VIDEOPLAYER_VOLUME_ADD_H >> 1)//182
+
+//增加音量
+// Unused
+#define VIDEOPLAYER_VOLUME_ADD_W 12
+#define VIDEOPLAYER_VOLUME_ADD_H 16
+#define VIDEOPLAYER_VOLUME_ADD_X (VIDEOPLAYER_VOLUME_X + VIDEOPLAYER_VOLUME_W)
+#define VIDEOPLAYER_VOLUME_ADD_Y (SCR_H - VIDEOPLAYER_VOLUME_ADD_H)//182
+
+//----------------------------------------------------------
+//   上面
+//----------------------------------------------------------
+
+
+//文件名
+#define VIDEOPLAYER_NAMEPART_W (SCREEN_WIDTH - VIDEOPLAYER_VOLUME_W)//47
 #define VIDEOPLAYER_NAMEPART_H 34
-#define VIDEOPLAYER_NAMEPART_X 0
+#define VIDEOPLAYER_NAMEPART_X (VIDEOPLAYER_VOLUME_W >> 1)
 #define VIDEOPLAYER_NAMEPART_Y 0
 
 //时间
@@ -193,27 +226,6 @@
 #define VIDEOPLAYER_PLAY_X (VIDEOPLAYER_PREVIOUS_X + VIDEOPLAYER_PLAY_W)//34
 #define VIDEOPLAYER_PLAY_Y (SCR_H - VIDEOPLAYER_PLAY_H)//182
 
-//----------------------------------------------------------
-//   右下
-//----------------------------------------------------------
-
-//降低音量
-#define VIDEOPLAYER_VOLUME_LOW_W 12
-#define VIDEOPLAYER_VOLUME_LOW_H 16
-#define VIDEOPLAYER_VOLUME_LOW_X (VIDEOPLAYER_TIME_X  + VIDEOPLAYER_TIME_W)
-#define VIDEOPLAYER_VOLUME_LOW_Y (SCR_H - VIDEOPLAYER_VOLUME_ADD_H)//182
-
-//音量
-#define VIDEOPLAYER_VOLUME_W 33
-#define VIDEOPLAYER_VOLUME_H 14
-#define VIDEOPLAYER_VOLUME_X (VIDEOPLAYER_VOLUME_LOW_X + VIDEOPLAYER_VOLUME_LOW_W)//129
-#define VIDEOPLAYER_VOLUME_Y (SCR_H - VIDEOPLAYER_VOLUME_H)//182
-
-//增加音量
-#define VIDEOPLAYER_VOLUME_ADD_W 12
-#define VIDEOPLAYER_VOLUME_ADD_H 16
-#define VIDEOPLAYER_VOLUME_ADD_X (VIDEOPLAYER_VOLUME_X + VIDEOPLAYER_VOLUME_W)
-#define VIDEOPLAYER_VOLUME_ADD_Y (SCR_H - VIDEOPLAYER_VOLUME_ADD_H)//182
 
 //----------------------------------------------------------
 //   从下自上第二排
@@ -256,6 +268,13 @@
 #define VIDEOPLAYER_FULLSCREEN_X (SCR_W - VIDEOPLAYER_FULLSCREEN_W)
 #define VIDEOPLAYER_FULLSCREEN_Y 0//182
 
+#define VIDEOPLAYER_HELP_TITLE 10
+#define VIDEOPLAYER_HELP_TEXT 256
+
+#define VIDEO_TEXT_LEFT_W 20
+#define VIDEO_TEXT_W (SCR_W - VIDEO_TEXT_LEFT_W)
+#define VIDEO_SCROLL_SPEED 1
+#define SAFE_DELETE(x) if(x){FREE(x);x = NULL;}
 
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
@@ -327,6 +346,16 @@ typedef enum CVolumeLevel
     VOLUME_FOUR,
     VOLUME_FIVE
 } CVolumeLevel;
+typedef struct _Help
+{
+  AECHAR* pTitle;
+  AECHAR* pText;
+  
+  uint16 m_Posy;
+  
+  uint16 m_Height;
+} CHelp,*CHelpPtr;
+
 // VideoPlayer Applet对象结构体：
 typedef struct _CVideoPlayer
 {
@@ -446,6 +475,8 @@ typedef struct _CVideoPlayer
     //Applet是否处于活动状态
     boolean          m_bActive;    
 	VPlayerRecttype m_rtype;////wlh 20090420 add 为了区别播放区域，加音量，减音量的刷新，加了个参数
+
+	CHelpPtr         m_pHelp;
 }CVideoPlayer;
 
 /*=================================================================================================================

@@ -14,7 +14,7 @@
 		<Text>HELP</Text>
 	</String>
 	<String Id="1013" Name="IDS_HELP">
-		<Text>Key Up and Down: Adjust the volume\nGallery:\nSearch videos in dirctory\nNote:\nIn full screen mode,press any key to come back</Text>
+		<Text>Key Up and Down: Adjust the volume.\nGallery: Search videos in dirctory.\nNote: In full screen mode,press any key to come back.</Text>
 	</String>
 </Strings>
 <Dialogs>
