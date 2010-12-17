@@ -875,7 +875,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
                 return TRUE;
             #endif
-            #ifdef FEATURE_VERSION_HITZ181
+        #ifdef FEATURE_TORCH_KEY_SYMBOL
 			case AVK_SYMBOL:
 			{
 				OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&pMe->TorchOn, sizeof(pMe->TorchOn));
@@ -3748,6 +3748,9 @@ static void CoreApp_SceneMode(CCoreApp *pMe)
 static void CoreApp_ResetProfileTimer(void *pUser)
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
+	boolean Is_on =FALSE;
+	
+    OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&Is_on, sizeof(Is_on));
     if(!CoreApp_TestCard(pMe))
 	{
 		CoreApp_ResetRing(pMe);

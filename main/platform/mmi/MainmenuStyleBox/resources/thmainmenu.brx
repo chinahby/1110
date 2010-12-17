@@ -8,7 +8,7 @@
 		<Text>จัดการไฟล์</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_MAIN_MENU_CONTACTS">
-		<Text>คลังมีเดีย</Text>
+		<Text>รายชื่อ</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_MAIN_MENU_UTK">
 		<Text>เครื่องมือ</Text>
