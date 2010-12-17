@@ -13,17 +13,17 @@ static void disp_ic_init(void)
     LCD_WRITE_CMD(0x03); LCD_WRITE_DATA16(0x1030); // set GRAM write direction and BGR=1.
     LCD_WRITE_CMD(0x08); LCD_WRITE_DATA16(0x0808); // set BP and FP
     LCD_WRITE_CMD(0x0C); LCD_WRITE_DATA16(0x0000); // RGB interface setting R0Ch=0x0110 for RGB 18Bit and R0Ch=0111 for RGB16Bit
-    LCD_WRITE_CMD(0x0F); LCD_WRITE_DATA16(0x0B01); // Set frame rate
+    LCD_WRITE_CMD(0x0F); LCD_WRITE_DATA16(0x0E01); // Set frame rate
     LCD_WRITE_CMD(0x20); LCD_WRITE_DATA16(0x0000); // Set GRAM Address
     LCD_WRITE_CMD(0x21); LCD_WRITE_DATA16(0x0000); // Set GRAM Address
     //-*************Power On sequence ****************-//
     LCD_DELAY(50); // Delay 50ms
-    LCD_WRITE_CMD(0x10); LCD_WRITE_DATA16(0x0800); // Set SAP,DSTB,STB
+    LCD_WRITE_CMD(0x10); LCD_WRITE_DATA16(0x0A00); // Set SAP,DSTB,STB
     LCD_WRITE_CMD(0x11); LCD_WRITE_DATA16(0x1038); // Set APON,PON,AON,VCI1EN,VC
     LCD_DELAY(50); // Delay 50ms
     LCD_WRITE_CMD(0x12); LCD_WRITE_DATA16(0x1121); // Internal reference voltage= Vci;
-    LCD_WRITE_CMD(0x13); LCD_WRITE_DATA16(0x0066); // Set GVDD
-    LCD_WRITE_CMD(0x14); LCD_WRITE_DATA16(0x333A); // Set VCOMH/VCOML voltage   0x3336
+    LCD_WRITE_CMD(0x13); LCD_WRITE_DATA16(0x006E); // Set GVDD
+    LCD_WRITE_CMD(0x14); LCD_WRITE_DATA16(0x5560); // Set VCOMH/VCOML voltage   0x3336
     //------------------------ Set GRAM area --------------------------------//
     LCD_WRITE_CMD(0x30); LCD_WRITE_DATA16(0x0000);
     LCD_WRITE_CMD(0x31); LCD_WRITE_DATA16(0x00DB);
