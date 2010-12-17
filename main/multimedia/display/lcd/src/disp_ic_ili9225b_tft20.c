@@ -8,7 +8,7 @@ static void disp_ic_init(void)
 {
     LCD_WRITE_CMD(0x28); LCD_WRITE_DATA16(0x00CE);
     LCD_DELAY(150); // Delay 150ms
-    LCD_WRITE_CMD(0x01); LCD_WRITE_DATA16(0x031C); // set SS and NL bit
+    LCD_WRITE_CMD(0x01); LCD_WRITE_DATA16(0x011C); // set SS and NL bit
     LCD_WRITE_CMD(0x02); LCD_WRITE_DATA16(0x0100); // set 1 line inversion
     LCD_WRITE_CMD(0x03); LCD_WRITE_DATA16(0x1030); // set GRAM write direction and BGR=1.
     LCD_WRITE_CMD(0x08); LCD_WRITE_DATA16(0x0808); // set BP and FP
