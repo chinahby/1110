@@ -620,6 +620,8 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     pMe->m_eMakeListMode = MAKEMSGLIST_INIT;
     pMe->m_eInsertType = INSERT_NONE; 
     pMe->m_strPhonePWD = NULL;
+    pMe->m_bincommend = FALSE;
+    pMe->m_bwriteclr  = FALSE;
     
     // 取保存的配置信息
     WmsApp_GetPrefs(pMe);
@@ -956,12 +958,81 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             return TRUE;
 
         case EVT_APP_STOP: 
+			if(pMe->m_bincommend)
+        	{
+        		int32  nItems = 0;
+                uint16 nMsgs = 0;
+                MSG_FATAL("EVT_DIALOG_END....IDD_WRITEMSG_Handler........2",0,0,0);
+                // 释放用户数据列表
+                WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
+                
+                // 打包消息
+                WmsApp_PrepareUserDataMOList(pMe);
+                pMe->m_idxUserdata = 0;
+                
+                nItems = IVector_Size(pMe->m_pUserDataMOList);
+                
+                // 获取草稿箱消息数
+                wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);
+                
+                if ((nMsgs+nItems) <= DRAFT_MAX)
+                {// 存储空间足够，保存中断的输入到草稿箱
+                    wms_client_message_s_type *pClientMsg = NULL;
+                    int nRet;
+                    boolean Is_Notend = FALSE;
+					ICONFIG_SetItem(pMe->m_pConfig,CFGI_WMSWRITD_END_STATUS,&Is_Notend,sizeof(Is_Notend));
+                    WmsApp_FreeMultiSendList(pMe->m_pSendList);
+                    
+                    pClientMsg = WmsApp_GetClientMsgMO(pMe, FALSE);
+                    while (pClientMsg != NULL)
+                    {
+                        // Must modify message tag!
+                        pClientMsg->msg_hdr.tag = WMS_TAG_MO_DRAFT;
+                        MSG_FATAL("EVT_DIALOG_END....IDD_WRITEMSG_Handler........3",0,0,0);
+                        // 保存消息
+                        nRet = ENOMEMORY;
+                        do 
+                        {
+                            nRet = IWMS_MsgWrite(pMe->m_pwms, 
+                                                 pMe->m_clientId, 
+                                                 &pMe->m_callback,
+                                                 (void*)pMe,
+                                                 WMS_WRITE_MODE_INSERT,
+                                                 pClientMsg);
+                                                 
+#ifndef WIN32
+                            if (nRet == SUCCESS)
+                            {// 休眠10毫秒以确保有时间执行保存消息的操作
+                                MSLEEP(10);
+                            }
+#endif
+                        } while(nRet != SUCCESS);
+                                            
+                        FREE(pClientMsg);
+                        pClientMsg = WmsApp_GetClientMsgMO(pMe, FALSE);
+                    }
+                    
+                    WmsApp_FreeMultiSendList(pMe->m_pSendList);
+                    
+                    // 释放用户数据列表
+                    WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
+                    
+                    pMe->m_idxUserdata = 0;
+                }
+                else
+                {
+                    // 释放用户数据列表
+                    WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
+                }
+        	}
 			//释放查看的消息内存
+			MSG_FATAL("EVT_APP_STOP....IDD_WRITEMSG_Handler........",0,0,0);
 			WMSMessageStruct_Free(pMe);
 			//ADD BY YANGDECAI 2010-08-16
             pMe->m_bNaturalStart = TRUE;
             pMe->m_eAppStatus = WMSAPP_STOP;
     		pMe->m_bActive = TRUE;
+    		pMe->m_bincommend = FALSE;
             if(pMe->m_pImage)
             {
                 IIMAGE_Release(pMe->m_pImage);
@@ -977,11 +1048,13 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             return TRUE;
 
         case EVT_APP_SUSPEND:
+        	MSG_FATAL("EVT_APP_SUSPEND....IDD_WRITEMSG_Handler........",0,0,0);
             pMe->m_eAppStatus = WMSAPP_SUSPEND;
             pMe->m_bActive = FALSE;
             return TRUE;
     
         case EVT_APP_RESUME:
+        	MSG_FATAL("EVT_APP_RESUME....IDD_WRITEMSG_Handler........",0,0,0);
             if (dwParam == 0) 
             {
                 return FALSE;
@@ -1071,7 +1144,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             return TRUE;
             
         case EVT_DIALOG_END:
-			
+			pMe->m_bincommend = FALSE;
 			if(OEM_IME_DIALOG == wParam)
 			{
 				return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER_REDRAW,0,0);
@@ -3033,6 +3106,7 @@ void WmsApp_MsgCb(wms_msg_event_e_type       event,
 //            break;
             
         case WMS_MSG_EVENT_READ:
+            MSG_FATAL("WMS_MSG_EVENT_READ......................",0,0,0);
             evt = EVT_WMS_MSG_READ;
             break;
             
@@ -3729,6 +3803,7 @@ void WmsApp_CombinateMsg(WmsApp *pMe)
     }
     if (NULL == pTep)
     {// 任一非空节点没找到
+        MSG_FATAL("NULL    IS    pTep.......................",0,0,0);
         return;
     }
     
@@ -3805,14 +3880,16 @@ void WmsApp_CombinateMsg(WmsApp *pMe)
         (void)STRTOWSTR("(%d/%d)", wszFmt, sizeof(wszFmt));
         WSPRINTF(pMsgText, nSize, wszFmt, (nCurBranchNum+1), nBranches);
     }
-    
+    MSG_FATAL("conmm msg...........................",0,0,0);
     // 开始合并消息
     for (i=0; i<nMaxIdx; i++)
     {
         if (pMe->m_CurMsgNodesMS[i] != NULL)
         {
+        	MSG_FATAL("conmm msg...........................2",0,0,0);
             if (bFirst)
             {
+            	MSG_FATAL("conmm msg...........................3",0,0,0);
                 bFirst = FALSE;
                 MEMCPY(&pMe->m_msCur, pMe->m_CurMsgNodesMS[i], sizeof(WMSMessageStruct));
                 pMe->m_msCur.m_szMessage = pMsgText;

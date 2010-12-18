@@ -1045,7 +1045,7 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
             {
                 wms_cache_info_node  *pnode = NULL;
                 uint16 wIndex=pMe->m_wCurindex;
-                
+               
                 // 取消息 cache info 节点
                 if (wIndex>=RUIM_MSGINDEX_BASE)
                 {

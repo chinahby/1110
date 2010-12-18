@@ -2026,6 +2026,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                         
                     case AVK_INFO:
                         pMe->m_wPrevMenuSel = IMENUCTL_GetSel(pMenu);
+                       
                         pMe->m_wCurindex = pMe->m_wPrevMenuSel - MSG_CMD_BASE;
                         CLOSE_DIALOG(DLGRET_LOAD)
                         return TRUE;
@@ -8643,49 +8644,291 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+        	{
+        		boolean Is_notend = TRUE;
+	            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
 #if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
-            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL);
+	            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL);
 #else
-            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+	            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 #endif
-            SetControlRect(pMe, pIText);
-			
-            if (NULL != pMe->m_msSend.m_szMessage)
-            {
-                ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
-                (void)ITEXTCTL_SetText(pIText,pMe->m_msSend.m_szMessage,-1);
-            }
-            //bw:Maximum character SMS in create SMS 1024 wrong.<<20080801
-            pMe->m_nMOmaxChars = WmsApp_SetMaxSize(pIText);
+	            SetControlRect(pMe, pIText);
+	            ICONFIG_GetItem(pMe->m_pConfig,CFGI_WMSWRITD_END_STATUS,&Is_notend,sizeof(Is_notend));
+	            if(!Is_notend)
+	            {
+	            	uint16 m_nCount = 0;
+	            	// 读取消息
+                    // 读取消息
+    				uint16 wIndex=0;
+    				wms_cache_info_node  *pnode = NULL;
+    				int nRet,i,nCount=0;
+    				boolean bUIMSMS = FALSE;
+    				int ret = SUCCESS;
+    				
+                    pMe->m_eMBoxType = WMS_MB_DRAFT;
+                    wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &m_nCount);
+                    pMe->m_wPrevMenuSel = 5320+m_nCount;
+                    pMe->m_wCurindex = pMe->m_wPrevMenuSel - MSG_CMD_BASE;
+                    wIndex = pMe->m_wCurindex;
+    				MSG_FATAL("WmsApp_ReadMsg:::1:::::::::::::%d",wIndex,0,0);
+    				// 取消息 cache info 节点
+    				if (wIndex>=RUIM_MSGINDEX_BASE)
+    				{
+        				wIndex = wIndex - RUIM_MSGINDEX_BASE;
+        				pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_RUIM, wIndex);
+    				}
+   					 else
+    				{
+        				pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_NV_CDMA, wIndex);
+    				}
+    
+    				if (NULL == pnode)
+    				{
+    					MSG_FATAL("pnode IS NULL...........................",0,0,0);
+        				return ;
+    				}
+    
+    				// 重置当前消息列表
+    				MEMSET(pMe->m_CurMsgNodes, 0, sizeof(pMe->m_CurMsgNodes));
+    				WmsApp_FreeMsgNodeMs(pMe);
+    
+   					 pMe->m_idxCur = 0;
+					#ifdef FEATURE_SMS_UDH
+    				if (pnode->pItems != NULL)
+    				{
+        				MEMCPY(pMe->m_CurMsgNodes, pnode->pItems, sizeof(pMe->m_CurMsgNodes));
+				        for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
+				        {
+				            if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
+				            {
+				                pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
+				                break;
+				            }
+				        }
+				    }
+				    else
+#endif
+				    {
+				        pMe->m_CurMsgNodes[0] = pnode;
+				    }
+				    pMe->m_eCurStore = pnode->mem_store;
+                	// 发送读消息命令
+               		ret = IWMS_MsgRead(pMe->m_pwms,
+                                   pMe->m_clientId,
+                                   &pMe->m_callback,
+                                   (void *)pMe,
+                                   pnode->mem_store,
+                                   pnode->index);
+                    if(ret)
+                    {
+                    	return TRUE;
+                    }
+                                   /*
+                    WmsApp_CombinateMsg(pMe);
+                    MSG_FATAL("Is_notend...............................%d",nCount,0,0);
+                    if(NULL != pMe->m_msCur.m_szMessage)
+	            	{
+	            		MSG_FATAL("Is_notend...............................VIEW",0,0,0);
+	            		ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
+	                	(void)ITEXTCTL_SetText(pIText,pMe->m_msCur.m_szMessage,-1);
+	            	}
+	            	Is_notend = TRUE;
+	            	ICONFIG_SetItem(pMe->m_pConfig,CFGI_WMSWRITD_END_STATUS,&Is_notend,sizeof(Is_notend));*/
+	            }
+	            else
+	            {
+	            	if (NULL != pMe->m_msSend.m_szMessage)
+	            	{
+	                	ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
+	                	(void)ITEXTCTL_SetText(pIText,pMe->m_msSend.m_szMessage,-1);
+	            	}
+	            }
+	            
+	            //bw:Maximum character SMS in create SMS 1024 wrong.<<20080801
+	            pMe->m_nMOmaxChars = WmsApp_SetMaxSize(pIText);
 #if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
-            if (pMe->m_nMOmaxChars>MAX_UNICODMSG_PAYLOAD)
-            {
-                nInputMode = ITEXTCTL_GetInputMode (pIText, NULL);
-                
-                if (AEE_TM_THAI == nInputMode || AEE_TM_THAI_R == nInputMode)
-                {
-                    (void)ITEXTCTL_SetInputMode(pIText, AEE_TM_CAPLOWER);
-                }
-            }
+	            if (pMe->m_nMOmaxChars>MAX_UNICODMSG_PAYLOAD)
+	            {
+	                nInputMode = ITEXTCTL_GetInputMode (pIText, NULL);
+	                
+	                if (AEE_TM_THAI == nInputMode || AEE_TM_THAI_R == nInputMode)
+	                {
+	                    (void)ITEXTCTL_SetInputMode(pIText, AEE_TM_CAPLOWER);
+	                }
+	            }
 #endif
-             
-			(void)OEM_GetConfig(
-	                          CFGI_LANGUAGE_MOD,
-	                          &m_Issetmod,
-	                          sizeof(boolean));
-	         
-	         if(m_Issetmod)
-	         {
-	         	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_THAI_R);
-	         }
-	         else
-	         {
-				(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
-			 }
-            return TRUE;
-            
+	             
+				(void)OEM_GetConfig(
+		                          CFGI_LANGUAGE_MOD,
+		                          &m_Issetmod,
+		                          sizeof(boolean));
+		         
+		         if(m_Issetmod)
+		         {
+		         	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_THAI_R);
+		         }
+		         else
+		         {
+					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
+				 }
+	            return TRUE;
+            }
+        case EVT_WMS_MSG_READ:
+        	{
+        		// 读取消息
+        		wms_cache_info_node  *ptnode = NULL;
+                wms_cache_info_node  *pnode = NULL;
+                wms_memory_store_e_type mem_store;
+                wms_message_index_type  wIdx;
+                int nRet;
+                int i;
+                boolean Is_notend;
+                wms_msg_event_info_s_type *Info = (wms_msg_event_info_s_type*)dwParam;
+                MSG_FATAL("...................................200",0,0,0);
+                mem_store = Info->status_info.message.msg_hdr.mem_store;
+                wIdx = Info->status_info.message.msg_hdr.index;
+                pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
+                
+                if (NULL == pnode)
+                {
+                    CLOSE_DIALOG(DLGRET_LOADFAILED)
+                    return TRUE;
+                }
+                if ((mem_store == pnode->mem_store) && (pnode->index == wIdx))
+                {
+                    WMSMessageStruct *pTms = (WMSMessageStruct *)MALLOC(sizeof(WMSMessageStruct));
+                    
+                    // 保存读取的数据
+                    if (NULL != pTms)
+                    {
+                    	MSG_FATAL("...................................200 1",0,0,0);
+                        WmsApp_ConvertClientMsgToMS(&(Info->status_info.message), pTms);
+                        pMe->m_CurMsgNodesMS[pMe->m_idxCur] = pTms;
+                    }
+                    
+                    if ((pnode->msg_tag == WMS_TAG_MT_NOT_READ) &&
+                        (pMe->m_eOptType == OPT_VIA_VIEWMSG))
+                    {// 只有用户明确选择查看时才修改消息标记
+                        nRet = IWMS_MsgModifyTag(pMe->m_pwms,
+                                                 pMe->m_clientId,
+                                                 &pMe->m_callback,
+                                                 (void *)pMe,
+                                                 pnode->mem_store,
+                                                 pnode->index,
+                                                 WMS_TAG_MT_READ);
+                                                 
+                        if (nRet != SUCCESS)
+                        {
+                            CLOSE_DIALOG(DLGRET_LOADFAILED)
+                        }
+                        
+                        return TRUE;
+                    }
+                    
+                    pnode = NULL;
+                    
+                    pMe->m_idxCur++;
+                    for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
+                    {
+                    	MSG_FATAL("...................................201",0,0,0);
+                        if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
+                        {
+                            pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
+                            break;
+                        }
+                    }
+                    
+                    if (NULL != pnode)
+                    {// 读下一数据包
+                        // 发送读消息命令
+                        MSG_FATAL("..................................read",0,0,0);
+                        nRet = IWMS_MsgRead(pMe->m_pwms,
+                                           pMe->m_clientId,
+                                           &pMe->m_callback,
+                                           (void *)pMe,
+                                           pnode->mem_store,
+                                           pnode->index);
+                                           
+                        if (nRet != SUCCESS)
+                        {
+                            CLOSE_DIALOG(DLGRET_LOADFAILED)
+                        }
+                                           
+                        return TRUE;
+                    }
+                    else
+                    {
+                        WmsApp_CombinateMsg(pMe);
+						 if(NULL != pMe->m_msCur.m_szMessage)
+	            		{
+	            			MSG_FATAL("Is_notend...............................VIEW",0,0,0);
+	            			ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
+	                		(void)ITEXTCTL_SetText(pIText,pMe->m_msCur.m_szMessage,-1);
+	            		}
+	            	Is_notend = TRUE;
+	            	ICONFIG_SetItem(pMe->m_pConfig,CFGI_WMSWRITD_END_STATUS,&Is_notend,sizeof(Is_notend));
+                    }
+                }
+                 pMe->m_nMOmaxChars = WmsApp_SetMaxSize(pIText);
+#if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
+	            if (pMe->m_nMOmaxChars>MAX_UNICODMSG_PAYLOAD)
+	            {
+	                nInputMode = ITEXTCTL_GetInputMode (pIText, NULL);
+	                
+	                if (AEE_TM_THAI == nInputMode || AEE_TM_THAI_R == nInputMode)
+	                {
+	                    (void)ITEXTCTL_SetInputMode(pIText, AEE_TM_CAPLOWER);
+	                }
+	            }
+#endif
+	             
+				(void)OEM_GetConfig(
+		                          CFGI_LANGUAGE_MOD,
+		                          &m_Issetmod,
+		                          sizeof(boolean));
+		         
+		         if(m_Issetmod)
+		         {
+		         	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_THAI_R);
+		         }
+		         else
+		         {
+					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
+				 }
+				 
+                
+                
+                for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+                {
+                    if (pMe->m_CurMsgNodes[i] != NULL)
+                    {
+                        ptnode = pMe->m_CurMsgNodes[i];
+                        
+                        // 发布删除消息命令
+                        nRet = ENOMEMORY;
+                        do
+                        {
+                            nRet = IWMS_MsgDelete(pMe->m_pwms,
+                                               pMe->m_clientId,
+                                               &pMe->m_callback,
+                                               (void *)pMe,
+                                               ptnode->mem_store,
+                                               ptnode->index);
+                        } while(nRet != SUCCESS);
+                        pMe->m_CurMsgNodes[i] = NULL;
+                    }
+                }
+        		pMe->m_bwriteclr = FALSE;
+            	(void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+        	}
+        	return TRUE;
         case EVT_DIALOG_START:
+        	pMe->m_bwriteclr = FALSE;
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
                                     AEECLSID_WMSAPP,
@@ -8862,7 +9105,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             {
                 AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
                 int nLen=0;
-                
+                boolean Is_Notend = TRUE;
                 pMe->m_CurInputMode = ITEXTCTL_GetInputMode(pIText,NULL);
                 
                 if (NULL != pwstrText)
@@ -8871,17 +9114,19 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 }
                 
                 if (nLen>0)
-                {					
+                {			
+                	
                     pMe->m_msSend.m_szMessage = WSTRDUP(ITEXTCTL_GetTextPtr(pIText));
                     
                     if (pMe->m_eAppStatus == WMSAPP_STOP && pMe->m_eDlgReturn != DLGRET_EXIT_EDITOR)
                     {// 程序被中断退出，保存输入到草稿箱
                         int32  nItems = 0;
                         uint16 nMsgs = 0;
-                        
+                        Is_Notend = FALSE;
+                        MSG_FATAL("EVT_DIALOG_END....IDD_WRITEMSG_Handler........2",0,0,0);
                         // 释放用户数据列表
                         WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
-                        
+                        ICONFIG_SetItem(pMe->m_pConfig,CFGI_WMSWRITD_END_STATUS,&Is_Notend,sizeof(Is_Notend));
                         // 打包消息
                         WmsApp_PrepareUserDataMOList(pMe);
                         pMe->m_idxUserdata = 0;
@@ -8903,7 +9148,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             {
                                 // Must modify message tag!
                                 pClientMsg->msg_hdr.tag = WMS_TAG_MO_DRAFT;
-                                
+                               
                                 // 保存消息
                                 nRet = ENOMEMORY;
                                 do 
@@ -8940,6 +9185,14 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
                         }
                     }
+                    else
+                    {
+                    	
+                    	if(!(pMe->m_bwriteclr))
+                    	{
+                    		pMe->m_bincommend = TRUE;
+                    	}
+                    }
 					
                 }
             }			
@@ -8974,6 +9227,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     }
                     else
                     {
+                    	pMe->m_bwriteclr = TRUE;
                     	CLOSE_DIALOG(DLGRET_CANCELED)
                     }
                     #else
@@ -12931,6 +13185,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                                    (void *)pMe,
                                    pnode->mem_store,
                                    pnode->index);
+                MSG_FATAL("READ msg.........................",0,0,0);
                                    
                 if (nRet != SUCCESS)
                 {
@@ -12968,6 +13223,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
             
         case EVT_WMS_MSG_READ_TEMPLATE:
         case EVT_WMS_MSG_READ:
+            MSG_FATAL("EVT_WMS_MSG_READ.............receve",0,0,0);
             if (eCode == WMS_MSG_EVENT_READ_TEMPLATE && 
                 WMSST_TEMPLATES != pMe->m_currState)
             {
@@ -13036,6 +13292,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                     if (NULL == pMe->m_msSend.m_szMessage)
                     {
                         pMe->m_msSend.m_szMessage = wstrTemplate;
+                        MSG_FATAL("Loading....................ok1",0,0,0);
                         CLOSE_DIALOG(DLGRET_LOADOK)
                         return TRUE;
                     }
@@ -13148,6 +13405,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                     if (nCanInsert <= 0)
                     {
                         FREE(wstrTemplate);
+                        
                         CLOSE_DIALOG(DLGRET_LOADOK)
                         return TRUE;
                     }
@@ -13178,6 +13436,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                     }
                     pMe->m_msSend.m_szMessage = wstrTemplate;
                 }
+                
                 CLOSE_DIALOG(DLGRET_LOADOK)
             }
             else
@@ -13204,6 +13463,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                     // 保存读取的数据
                     if (NULL != pTms)
                     {
+                    	
                         WmsApp_ConvertClientMsgToMS(&(Info->status_info.message), pTms);
                         pMe->m_CurMsgNodesMS[pMe->m_idxCur] = pTms;
                     }
@@ -13232,6 +13492,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                     pMe->m_idxCur++;
                     for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
                     {
+                    	
                         if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
                         {
                             pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
@@ -13242,6 +13503,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                     if (NULL != pnode)
                     {// 读下一数据包
                         // 发送读消息命令
+                        
                         nRet = IWMS_MsgRead(pMe->m_pwms,
                                            pMe->m_clientId,
                                            &pMe->m_callback,
@@ -13259,7 +13521,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                     else
                     {
                         WmsApp_CombinateMsg(pMe);
-                    
+                    	
                         CLOSE_DIALOG(DLGRET_LOADOK)
                     }
                 }
@@ -13311,7 +13573,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                     else
                     {
                         WmsApp_CombinateMsg(pMe);
-                    
+                    	
                         CLOSE_DIALOG(DLGRET_LOADOK)
                     }
                 }
@@ -14441,7 +14703,7 @@ static void WmsApp_ReadMsg(void *pUser)
     boolean bUIMSMS = FALSE;
     
     wIndex = pMe->m_wCurindex;
-    
+   
     // 取消息 cache info 节点
     if (wIndex>=RUIM_MSGINDEX_BASE)
     {
@@ -14455,6 +14717,7 @@ static void WmsApp_ReadMsg(void *pUser)
     
     if (NULL == pnode)
     {
+    	
         return ;
     }
     

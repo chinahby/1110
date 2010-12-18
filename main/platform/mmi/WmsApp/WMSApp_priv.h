@@ -785,6 +785,8 @@ typedef struct WmsApp
 	boolean                         m_bisSendSecond;           //发送失败是否已经重发
 	boolean                         m_bActive;                 //add by yangdecai 2010-07-28
 	IRUIM                           *m_pIRUIM;  
+	boolean                         m_bincommend;
+	boolean                         m_bwriteclr;
 } WmsApp;
 
 /*==============================================================================
