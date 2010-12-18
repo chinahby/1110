@@ -1933,6 +1933,7 @@ typedef struct _CBTApp
 #ifdef FEATURE_BT_2_1
   boolean         bRemoteOOBRead; 
 #endif
+  boolean         bStartBTaplication;
 } CBTApp;
 
 

@@ -2473,6 +2473,7 @@ static boolean BTApp_HandleEvent
 			}
 			else if (STRNCMP(args->pszArgs,"ResetBT",7) == 0)		//Reset Factory
 			{
+				
 				if ( event_processed )
 				{
 					MSG_FATAL("***zzg EVT_APP_START_BACKGROUND ResetBT Factory***", 0, 0, 0);
@@ -2504,10 +2505,12 @@ static boolean BTApp_HandleEvent
 
 		if (EVT_APP_START == eCode)
 		{
+			pMe->bStartBTaplication = TRUE;
 			MSG_FATAL("***zzg BTApp EVT_APP_START***",0,0,0);
 		}
 		else
 		{
+			pMe->bStartBTaplication = TRUE;
 			MSG_FATAL("***zzg BTApp EVT_APP_RESUME***",0,0,0);
 		}
 
@@ -2599,6 +2602,7 @@ static boolean BTApp_HandleEvent
   		}
   		else
   		{
+  			
   			BTApp_BuildTopMenu( pMe );
   		}
   		//Add End        
@@ -3056,6 +3060,7 @@ static boolean BTApp_HandleEvent
 #ifdef FEATURE_BT_2_1
           //pMe->mRM.bBonding = FALSE;
 #endif /* FEATURE_BT_2_1 */
+		  
           BTApp_BuildMenu( pMe, BT_APP_MENU_PASSKEY );
           break;
 #ifdef FEATURE_BT_2_1
@@ -3064,6 +3069,7 @@ static boolean BTApp_HandleEvent
           {
             (void)POP_MENU();
           }
+         
           BTApp_BuildMenu( pMe, BT_APP_MENU_DISPLAY_PASSKEY );
           break;
 #endif /* FEATURE_BT_2_1 */
@@ -3079,6 +3085,7 @@ static boolean BTApp_HandleEvent
           else
 #endif //FEATURE_IOBEX
           {
+          	
             BTApp_BuildMenu( pMe, BT_APP_MENU_BROWSE_SVC_RESP );
           }
           break;
@@ -3093,11 +3100,13 @@ static boolean BTApp_HandleEvent
           }
           else
           {
+          	
             BTApp_BuildMenu( pMe, BT_APP_MENU_SEARCH_SVC_RESP );
           }
           break;
         case EVT_SPP_OPENED:
           pMe->mSPP.bDoVerify       = TRUE;
+          
           BTApp_BuildMenu( pMe, BT_APP_MENU_SPP_RESULTS );
           break;
         case EVT_SPP_OPEN_FAILED:
@@ -3106,6 +3115,7 @@ static boolean BTApp_HandleEvent
         case EVT_SPP_CONNECTED:
           pMe->mSPP.uTotalBytesRcvd = 0;
           pMe->mSPP.uTotalBytesSent = 0;
+          
           BTApp_BuildMenu( pMe, BT_APP_MENU_SPP_RESULTS );
           break;
         case EVT_SPP_CLOSED:
@@ -3139,6 +3149,7 @@ static boolean BTApp_HandleEvent
                    &pMe->mAG.bdAddr,
                    &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr ) == FALSE )
             {
+            	
               BTApp_BuildMenu( pMe, BT_APP_MENU_USE_AUDIO_DEV );
             }
             else
@@ -3180,6 +3191,7 @@ static boolean BTApp_HandleEvent
           }
           break;
         case EVT_RM_AUTH_REQ:
+        
           BTApp_BuildMenu( pMe, BT_APP_MENU_AUTHORIZE_CONN );
           break;
         case EVT_SD_DISC_SET:
@@ -3200,8 +3212,11 @@ static boolean BTApp_HandleEvent
         {
           pMe->mSD.bDiscoverable = (dwParam == AEEBT_DISCOVERABLE_MODE_NONE) ? 
                                    FALSE : TRUE;
-
-		  BTApp_BuildMenu( pMe, TOP_MENU );		  
+		  MSG_FATAL("BTApp_BuildMenu....................9",0,0,0);
+		  if(pMe->bStartBTaplication)
+		  {
+		  	BTApp_BuildMenu( pMe, TOP_MENU );		 
+		  }
           break;
         }
         case EVT_BIP_PUT_IMAGE:
@@ -5746,10 +5761,12 @@ static boolean BTApp_HandleSvrMainSec( CBTApp* pMe, uint16 key )
       switch( selection )
       {
          case IDS_STRING_SRV_PROFILE_SELECTION:
+         	
             BTApp_BuildMenu(pMe, BT_APP_MENU_SVR_SEC_TYPE );
             break;
 
         case IDS_STRING_SRV_SEC_LEVEL:
+        	
             BTApp_BuildMenu(pMe, BT_APP_MENU_SECURITY_OPTIONS );
             break;
             
@@ -5770,10 +5787,12 @@ static boolean BTApp_HandleSvrMainSec( CBTApp* pMe, uint16 key )
         switch( selection )
         {
           case IDS_STRING_SRV_PROFILE_SELECTION:
+          
             BTApp_BuildMenu(pMe, BT_APP_MENU_SVR_SEC_TYPE );
             break;
 
           case IDS_STRING_SRV_SEC_LEVEL:
+          	
             BTApp_BuildMenu(pMe, BT_APP_MENU_SECURITY_OPTIONS );
             break;
 
@@ -6918,7 +6937,7 @@ static boolean BTApp_HandleDevListMenu( CBTApp* pMe, uint16 key )
             case BT_APP_MENU_BIP_SETTINGS:
             {
               pMe->mBIP.printerBDAddr = pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr;
-
+			  
               BTApp_BuildMenu( pMe, TOP_MENU );
               break;
             }
@@ -6932,6 +6951,7 @@ static boolean BTApp_HandleDevListMenu( CBTApp* pMe, uint16 key )
             case BT_APP_MENU_BPP_SETTINGS:
             {
               pMe->mBPP.printerBDAddr = pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr;
+              
               BTApp_BuildMenu( pMe, TOP_MENU );
               break;
             }
@@ -8002,6 +8022,7 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
   switch ( menu )
   {
     case BT_APP_MENU_MAIN:
+      MSG_FATAL("BT_APP_MENU_MAIN   BTApp_BuildMainMenu",0,0,0);
 	  BTApp_BuildMainMenu( pMe );      
       break;	
     case BT_APP_MENU_SEARCH:
@@ -8423,6 +8444,7 @@ DESCRIPTION
 ============================================================================= */
 boolean BTApp_BuildTopMenu( CBTApp* pMe )
 {
+	MSG_FATAL("BTApp_BuildMenu....................19",0,0,0);
   return ( BTApp_BuildMenu( pMe, TOP_MENU ) ); 
 }
 
@@ -9770,6 +9792,7 @@ static void BTApp_ProcEvtAGDisabled( CBTApp* pMe )
    */
   if ( TOP_MENU == BT_APP_MENU_MAIN )
   {
+  	
     BTApp_BuildMenu( pMe, TOP_MENU );
   }
 }
@@ -12085,7 +12108,11 @@ static void BTApp_RadioActivityChanged( CBTApp* pMe )
   {
     if ( (TOP_MENU == BT_APP_MENU_MY_INFO) || (TOP_MENU == BT_APP_MENU_MAIN) )
     {
-      BTApp_BuildMenu( pMe, TOP_MENU );
+      MSG_FATAL("BTApp_BuildMenu....................16",0,0,0);
+      if(pMe->bStartBTaplication)
+      {
+      	BTApp_BuildMenu( pMe, TOP_MENU );
+      }
     }
   }
 }
@@ -12162,6 +12189,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
 			if ( BTApp_HCIModeOn( pMe ) == FALSE )
 			{
 				BTApp_EnableBT(pMe);
+				
 				BTApp_BuildMenu( pMe, BT_APP_MENU_OPP_SENDFILE);
 			}			
 			break;
@@ -13038,6 +13066,7 @@ static boolean BTApp_Init( CBTApp* pMe )
     pMe->mRM.bVisibilityOn       = TRUE;
     pMe->mRM.bRoleSwitchAllowed  = FALSE;
     pMe->mRM.uGetNameDevIdx      = MAX_DEVICES;
+    pMe->bStartBTaplication      = FALSE;
 #ifdef FEATURE_BT_2_1
     pMe->mRM.bMITMEnabled        = FALSE;
     pMe->mRM.bRebondOptMITMEnabled = FALSE;
@@ -18814,6 +18843,7 @@ static void BTApp_ProcessAGNotifications(
 #endif
       if ( TOP_MENU == BT_APP_MENU_MAIN )
       {
+      	MSG_FATAL("BTApp_ProcessAGNotifications  BTApp_BuildMainMenu",0,0,0);
         BTApp_BuildMainMenu( pMe );
       }
       break;
