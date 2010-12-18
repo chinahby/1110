@@ -122,6 +122,7 @@ static void disp_drv_set_backlight(byte level)
     {
         if (level!= current_level)
         {
+            pm_err_flag_type pefRet = (pm_err_flag_type)~PM_ERR_FLAG__SUCCESS;  // Assume failure
             rex_enter_crit_sect(&disp_drv_crit_sect);
 
             /* Bound given intensity */
@@ -135,26 +136,30 @@ static void disp_drv_set_backlight(byte level)
                 level = DISP_DRV_MIN_BACKLIGHT;
             }
             
+            if(level == DISP_DRV_MIN_BACKLIGHT)
             {
-                pm_err_flag_type pefRet = (pm_err_flag_type)~PM_ERR_FLAG__SUCCESS;  // Assume failure
+                // 解决2.0的屏在关机之后闪白屏的问题
+                // 背光亮度先设置成最低，然后再关闭就不会有问题了
+                (void)pm_set_led_intensity(PM_KBD_LED, 1);
+                (void)pm_set_led_intensity(PM_LCD_LED, 1);
+            }
+            
+            pefRet = pm_set_led_intensity(PM_KBD_LED, (uint8)level);
+            if (PM_ERR_FLAG__SUCCESS != pefRet)
+            {
+                MSG_FATAL("PMIC KBD backlight set failed: pefRet=%d, nLevel=%d",
+                pefRet,
+                level,
+                0);
+            }
 
-                pefRet = pm_set_led_intensity(PM_KBD_LED, (uint8)level);
-                if (PM_ERR_FLAG__SUCCESS != pefRet)
-                {
-                    MSG_FATAL("PMIC KBD backlight set failed: pefRet=%d, nLevel=%d",
-                    pefRet,
-                    level,
-                    0);
-                }
-
-                pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)level);
-                if (PM_ERR_FLAG__SUCCESS != pefRet)
-                {
-                    MSG_MED("PMIC LCD backlight set failed: pefRet=%d, nLevel=%d",
-                    pefRet,
-                    level,
-                    0);
-                }
+            pefRet = pm_set_led_intensity(PM_LCD_LED, (uint8)level);
+            if (PM_ERR_FLAG__SUCCESS != pefRet)
+            {
+                MSG_MED("PMIC LCD backlight set failed: pefRet=%d, nLevel=%d",
+                pefRet,
+                level,
+                0);
             }
             current_level = level;   
             rex_leave_crit_sect(&disp_drv_crit_sect);
