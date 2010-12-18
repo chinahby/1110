@@ -2911,7 +2911,7 @@ static boolean BTApp_HandleEvent
 #error code not present
 #endif
 
-#ifndef FEATURE_UIONE_HDK	//Modify by zzg 2010_12_13
+//#ifndef FEATURE_UIONE_HDK	//Modify by zzg 2010_12_13
       else if (  pN->cls == AEECLSID_SHELL )
       {
         switch ( GET_NOTIFIER_MASK(pN->dwMask) )
@@ -3006,7 +3006,7 @@ static boolean BTApp_HandleEvent
             return FALSE;
         }
       }
-#endif
+//#endif
 
 #ifdef FEATURE_BT_EXTPF_HID_HOST
 #error code not present
