@@ -171,7 +171,7 @@ boolean disp_st7735r_tft177(disp_drv_ic_type *pdispic)
     id3 = LCD_READ_DATA();
     id3 = LCD_READ_DATA();
     
-    //if(id1 == 0x00 && id2 == 0x00 && id3 == 0x00)
+    //if(id3 == 0x35)
     {
         DISP_IC_INIT_TBL(pdispic);
         return TRUE;
