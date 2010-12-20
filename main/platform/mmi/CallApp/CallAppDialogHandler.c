@@ -2881,7 +2881,10 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 			Dialer_call_table *str = NULL;
 			str = CallApp_Get_First_Entry_In_Call_Table(pMe);
 
-			if((WSTRNCMP(str->call_number, L"*55", 3) == 0) || (WSTRNCMP(str->call_number, L"*550", 4) == 0))
+			if (((WSTRLEN(str->call_number) == 3) && (WSTRNCMP(str->call_number, L"*55", 3) == 0))
+				||((WSTRLEN(str->call_number) == 4) && (WSTRNCMP(str->call_number, L"*550", 4) == 0)))			
+
+			//if((WSTRNCMP(str->call_number, L"*55", 3) == 0) || (WSTRNCMP(str->call_number, L"*550", 4) == 0))
 			{ 
 			  (void)ISHELL_SetTimer(pMe->m_pShell, CALL_TIMER_FRENDUO,  CallApp_SetFrenduoTimer, pMe);
 			}		 
@@ -2963,8 +2966,10 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 			{
 			    Dialer_call_table* p_temp = NULL;
                 p_temp = CallApp_Get_First_Entry_In_Call_Table(pMe);
-				
-				if((WSTRNCMP(p_temp->call_number, L"*55",3) == 0) || (WSTRNCMP(p_temp->call_number, L"*550",4) == 0))
+
+				if (((WSTRLEN(p_temp->call_number) == 3) && (WSTRNCMP(p_temp->call_number, L"*55", 3) == 0))
+					||((WSTRLEN(p_temp->call_number) == 4) && (WSTRNCMP(p_temp->call_number, L"*550", 4) == 0)))
+				//if((WSTRNCMP(p_temp->call_number, L"*55",3) == 0) || (WSTRNCMP(p_temp->call_number, L"*550",4) == 0))
 				{					
 				  	(void) ISHELL_CancelTimer(pMe->m_pShell, CallApp_SetFrenduoTimer, pMe); 
                     
@@ -3807,8 +3812,10 @@ static boolean  CallApp_Dialer_Callend_DlgHandler(CCallApp *pMe,
             //M8 For Frenduo
             Dialer_call_table* callname_str = NULL;
             callname_str = &pMe->m_call_info;			
-			
-			if((WSTRNCMP(callname_str->call_number, L"*55", 3) == 0) || (WSTRNCMP(callname_str->call_number, L"*550", 4) == 0))
+
+			if (((WSTRLEN(callname_str->call_number) == 3) && (WSTRNCMP(callname_str->call_number, L"*55", 3) == 0))
+					||((WSTRLEN(callname_str->call_number) == 4) && (WSTRNCMP(callname_str->call_number, L"*550", 4) == 0)))					
+			//if((WSTRNCMP(callname_str->call_number, L"*55", 3) == 0) || (WSTRNCMP(callname_str->call_number, L"*550", 4) == 0))
 			{ 			   
 			  //CLOSE_DIALOG(DLGRET_OK)       
 			}	
