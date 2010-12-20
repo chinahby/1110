@@ -978,7 +978,7 @@ extern int FrenDuoAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #ifdef FEATURE_APP_MULTIMEDIA
 extern int MultimedMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
-#if defined(FEATURE_FLEXI_STATIC_BREW_APP) || defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
+#if defined(FEATURE_FLEXI_STATIC_BREW_APP) || defined(FEATURE_SMARTFREN_STATIC_BREW_APP)||defined (FEATURE_VERSION_FLEXI203P)
 extern int StaticappMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 
@@ -1352,7 +1352,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 20090407 add
 	  { AEEFS_MIF_DIR"adjustpenapp.mif",AdjustPenMod_Load},
 #endif
-#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+#if defined (FEATURE_FLEXI_STATIC_BREW_APP) || defined(FEATURE_VERSION_FLEXI203P)
 	   {AEEFS_MIF_DIR"staticapp.mif",StaticappMod_Load},
 #ifdef FEATURE_NASRANI
 	   { AEEFS_MIF_DIR"nasrani.mif",NASRANI_Load},

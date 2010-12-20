@@ -111,10 +111,13 @@ void Staticapp_ShowDialog(Staticapp  *pMe,  uint16 dlgResId);
 // STATICST_MAIN 状态处理函数
 static NextFSMAction STATICAPPST_MAIN_Handler(Staticapp *pMe);
 
-
+static NextFSMAction STATICAPPST_FGAUL_Handler(Staticapp *pMe);
+static NextFSMAction STATICAPPST_APLIKASI_Handler(Staticapp *pMe);
 //STATICST_EXIT  状态处理函数
 static NextFSMAction STATICAPPST_EXIT_Handler(Staticapp *pMe);
 static boolean  Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+static boolean Staticapp_ListFGualHandler(Staticapp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
+static boolean Staticapp_ListAplikasiHandler(Staticapp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 
 
 
@@ -587,11 +590,19 @@ static boolean Staticapp_HandleEvent( IStaticapp *pi,
             }
             {
                 AECHAR WTitle[20] = {0};
+#ifdef FEATURE_VERSION_FLEXI203P
     			(void)ISHELL_LoadResString(pMe->m_pShell,
                                         STATICAPP_RES_FILE_LANG,                                
-                                        IDS_STATICAPP_LIST,
+                                        IDS_STATICAPP_FLEXIP_LIST,
                                         WTitle,
                                         sizeof(WTitle));
+#else
+    			(void)ISHELL_LoadResString(pMe->m_pShell,
+                        STATICAPP_RES_FILE_LANG,                                
+                        IDS_STATICAPP_LIST,
+                        WTitle,
+                        sizeof(WTitle));				 
+#endif
                 if(pMe->m_pIAnn != NULL)
                 {
     			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
@@ -704,10 +715,20 @@ NextFSMAction Staticapp_ProcessState(Staticapp *pMe)
     switch(pMe->m_currState)
     {
         case STATICAPPST_MAIN:
-            return STATICAPPST_MAIN_Handler(pMe);
-
+            retVal= STATICAPPST_MAIN_Handler(pMe);
+			break;
+			
         case STATICAPPST_EXIT:
-            return STATICAPPST_EXIT_Handler(pMe);            
+            retVal = STATICAPPST_EXIT_Handler(pMe);            
+			break;
+
+		case STATICAPPST_FGUAL:
+			retVal = STATICAPPST_FGAUL_Handler(pMe);
+			break;
+			
+		case STATICAPPST_APLIKASI:
+			retVal = STATICAPPST_APLIKASI_Handler(pMe);
+			break;			
 
         default:
             break;
@@ -748,6 +769,18 @@ static NextFSMAction STATICAPPST_MAIN_Handler(Staticapp *pMe)
 
             }
             return NFSMACTION_WAIT;
+
+		case DLGRET_FGUAL:
+		{
+			MOVE_TO_STATE(STATICAPPST_FGUAL)
+		}
+		return NFSMACTION_CONTINUE;
+		
+		case DLGRET_APLIKASI:
+		{
+			MOVE_TO_STATE(STATICAPPST_APLIKASI)
+		}
+		return NFSMACTION_CONTINUE;
         default:
             MOVE_TO_STATE(STATICAPPST_EXIT)
             return NFSMACTION_CONTINUE;
@@ -755,8 +788,61 @@ static NextFSMAction STATICAPPST_MAIN_Handler(Staticapp *pMe)
 }
 
 
+static NextFSMAction STATICAPPST_FGAUL_Handler(Staticapp *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
 
+    switch(pMe->m_eDlgReturn)
+    {
+        case DLGRET_CREATE:
+           // pMe->m_bNotOverwriteDlgRet = FALSE;
+			Staticapp_ShowDialog(pMe, IDD_LIST_FGUAL);
 
+            //Staticapp_ShowDialog(pMe, IDD_LIST_FGUAL);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(STATICAPPST_MAIN)
+            return NFSMACTION_CONTINUE;
+
+        default:
+            MOVE_TO_STATE(STATICAPPST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
+static NextFSMAction STATICAPPST_APLIKASI_Handler(Staticapp *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgReturn)
+    {
+        case DLGRET_CREATE:
+           // pMe->m_bNotOverwriteDlgRet = FALSE;
+			Staticapp_ShowDialog(pMe, IDD_LIST_APLIKASI);
+
+            //Staticapp_ShowDialog(pMe, IDD_LIST_FGUAL);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(STATICAPPST_MAIN)
+            return NFSMACTION_CONTINUE;
+
+        default:
+            MOVE_TO_STATE(STATICAPPST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+
+    return NFSMACTION_WAIT;
+}
 /*==============================================================================
 函数:
     STATICAPPST_EXIT_Handler
@@ -867,9 +953,15 @@ boolean Staticapp_RouteDialogEvt(Staticapp *pMe,
         case IDD_LIST_STATICAPP:
             return Staticapp_ListMenuHandler(pMe, eCode, wParam, dwParam);
 
+		case IDD_LIST_FGUAL:
+			return Staticapp_ListFGualHandler(pMe, eCode, wParam, dwParam);
+			
+		case IDD_LIST_APLIKASI:
+			return Staticapp_ListAplikasiHandler(pMe, eCode, wParam, dwParam);
         default:
             return FALSE;
     }
+	return FALSE;
 }
 
 
@@ -900,43 +992,59 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
     {
         case EVT_DIALOG_INIT:
 			
-			(void)ISHELL_LoadResString(pMe->m_pShell,
-                                    STATICAPP_RES_FILE_LANG,                                
-                                    IDS_STATICAPP_LIST,
-                                    WTitle,
-                                    sizeof(WTitle));
+#ifdef FEATURE_VERSION_FLEXI203P
+    			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                        STATICAPP_RES_FILE_LANG,                                
+                                        IDS_STATICAPP_FLEXIP_LIST,
+                                        WTitle,
+                                        sizeof(WTitle));
+#else
+    			(void)ISHELL_LoadResString(pMe->m_pShell,
+                        STATICAPP_RES_FILE_LANG,                                
+                        IDS_STATICAPP_LIST,
+                        WTitle,
+                        sizeof(WTitle));				 
+#endif
 		
             if(pMe->m_pIAnn != NULL)
             {
 			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
+#if defined(FEATURE_VERSION_FLEXI203P)
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FGUAL, IDS_STATICAPP_TITLE_FGUAL, NULL, 0);
+		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_APLIKASI, IDS_STATICAPP_TITLE_APLIKASI, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXIPORTAL, IDS_STATICAPP_TITLE_FLEXIPORTAL, NULL, 0);			
+#endif			
 		#if defined(FEATURE_FLEXI_STATIC_BREW_APP) 
+
 		#if defined (FEATURE_NASRANI) 			
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_NASRANI_TITLE_1,   IDS_NASRANI_TITLE_1, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_NASRANI_TITLE_FNASRANI,   IDS_NASRANI_TITLE_FNASRANI, NULL, 0);
 		#endif
 			
 		#if defined (FEATURE_FMN2010)
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_1, IDS_STATICAPP_TITLE_1, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FMUSLIM, IDS_STATICAPP_TITLE_FMUSLIM, NULL, 0);
 		#endif
 
         #if defined (FEATURE_CAH006) 
-		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_2, IDS_STATICAPP_TITLE_2, NULL, 0);
+		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FCHAT, IDS_STATICAPP_TITLE_FCHAT, NULL, 0);
 		#endif
 		
         #if defined (FEATURE_FPT005)
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_3, IDS_STATICAPP_TITLE_3, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FPORTAL, IDS_STATICAPP_TITLE_FPORTAL, NULL, 0);
         #endif
 		
 		#if defined (FEATURE_GURU)
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_4, IDS_STATICAPP_TITLE_4, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FGURU, IDS_STATICAPP_TITLE_FGURU, NULL, 0);
         #endif
+	
 				
         #elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)	//Add For Smart And M8        	
-        	IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_21, IDS_STATICAPP_TITLE_21, NULL, 0);
-		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_22, IDS_STATICAPP_TITLE_22, NULL, 0);
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_23, IDS_STATICAPP_TITLE_23, NULL, 0);
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_24, IDS_STATICAPP_TITLE_24, NULL, 0);
+        	IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_SMARTMESSAGE, IDS_STATICAPP_TITLE_SMARTMESSAGE, NULL, 0);
+		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FACEBOOK, IDS_STATICAPP_TITLE_FACEBOOK, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_TWITTER, IDS_STATICAPP_TITLE_TWITTER, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_MSHOP, IDS_STATICAPP_TITLE_MSHOP, NULL, 0);		
 		#endif
+		
         return TRUE;
             
         case EVT_DIALOG_START:
@@ -1006,29 +1114,245 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
             return TRUE;
             
         case EVT_COMMAND:
-            pMe->m_MainSel = wParam;
-        #if defined(FEATURE_FLEXI_STATIC_BREW_APP)
-		#if defined (FEATURE_NASRANI)
-			StartApplet(pMe, wParam - IDS_NASRANI_TITLE_1);
-		#elif defined (FEATURE_FMN2010)
-			StartApplet(pMe, wParam - IDS_STATICAPP_TITLE_1);
-		#else
-			StartApplet(pMe, wParam - IDS_STATICAPP_TITLE_2);
-		#endif  /*FEATURE_NASRANI*/
-		
-		#elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
-			//Need to change
-			StartApplet(pMe, wParam - IDS_STATICAPP_TITLE_21);
-		#endif
+            pMe->m_MainSel = wParam;			
+			StartApplet(pMe,wParam);
+			return TRUE;
+			
         default:
             break;
     }             
     return FALSE;
 }
 
+static boolean Staticapp_ListFGualHandler(Staticapp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+	PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,IDC_FGUAL_LIST);
+    AECHAR WTitle[40] = {0};
+
+		MSG_FATAL("Staticapp_ListFGualHandler eCode=%d",eCode,0,0);
+
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    if(pMe->m_pIAnn != NULL)
+    {
+	    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    }
+	MSG_FATAL("Staticapp_ListFGualHandler eCode=%d",eCode,0,0);
+	 switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			pMe->m_MainSel = 0;
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                    STATICAPP_RES_FILE_LANG,                                
+                                    IDS_STATICAPP_TITLE_FGUAL,
+                                    WTitle,
+                                    sizeof(WTitle));
+		
+            if(pMe->m_pIAnn != NULL)
+            {
+			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_GUAL, IDS_STATICAPP_TITLE_GUAL, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_MYSCHOOL, IDS_STATICAPP_TITLE_MYSCHOOL, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_BIMBEL, IDS_STATICAPP_TITLE_BIMBEL, NULL, 0);
+		
+        return TRUE;
+
+		 case EVT_DIALOG_START:
+        {  
+            int i;
+            uint16 wID;
+            AECHAR pwsz[67] = {0};
+            AECHAR pstr[64] = {0};
+            AECHAR wsFmt[5] = {0};
+            
+            (void)STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
+            for (i=0;i<IMENUCTL_GetItemCount(pMenu);i++)
+            {
+                wID = IMENUCTL_GetItemID(pMenu, i);
+                WSPRINTF(pwsz,sizeof(pwsz),wsFmt,i+1);
+                
+                ISHELL_LoadResString( pMe->m_pShell,
+                      STATICAPP_RES_FILE_LANG,
+                      wID,
+                      pstr,
+                      sizeof(pstr));
+                WSTRLCAT(pwsz,pstr,sizeof(pwsz));
+                IMENUCTL_SetItemText(pMenu, wID, NULL, NULL, pwsz);
+            }
+            
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+            IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
+            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+            IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
+            (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MAIN_MENU, EVT_USER_REDRAW,0,0);
+        }
+		 return TRUE;
 
 
+		case EVT_USER_REDRAW:
+            (void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+            
+        case EVT_DIALOG_END:
+            return TRUE;
 
+		case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_1:
+                case AVK_2:
+                case AVK_3:
+                case AVK_4:
+                //case AVK_STAR:
+                //case AVK_POUND:
+                    {
+                        int Focus = (wParam - AVK_1);
+                        if(Focus<IMENUCTL_GetItemCount(pMenu))
+                        {
+                            StartApplet(pMe, Focus);
+                        }
+                    }
+                    return TRUE;
+
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+                    
+                default:
+                    break;
+          
+            }
+            return TRUE;
+		 case EVT_COMMAND:
+            pMe->m_MainSel = wParam;			
+			return TRUE;
+			
+        default:
+            break;
+		
+	 }
+	 return FALSE;
+}
+
+static boolean Staticapp_ListAplikasiHandler(Staticapp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+	PARAM_NOT_REF(dwParam)
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,IDC_APLIKASI_LIST);
+    AECHAR WTitle[40] = {0};
+
+		MSG_FATAL("Staticapp_ListFGualHandler eCode=%d",eCode,0,0);
+
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    if(pMe->m_pIAnn != NULL)
+    {
+	    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+    }
+	MSG_FATAL("Staticapp_ListFGualHandler eCode=%d",eCode,0,0);
+	 switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			pMe->m_MainSel = 0;
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                    STATICAPP_RES_FILE_LANG,                                
+                                    IDS_STATICAPP_TITLE_APLIKASI,
+                                    WTitle,
+                                    sizeof(WTitle));
+		
+            if(pMe->m_pIAnn != NULL)
+            {
+			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+			
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_FACEBOOK, IDS_STATICAPP_TITLE_FLEXI_FACEBOOK, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_TWITTER, IDS_STATICAPP_TITLE_FLEXI_TWITTER, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXICHATING, IDS_STATICAPP_TITLE_FLEXICHATING, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FMUSIK, IDS_STATICAPP_TITLE_FMUSIK, NULL, 0);
+		
+        return TRUE;
+
+		 case EVT_DIALOG_START:
+        {  
+            int i;
+            uint16 wID;
+            AECHAR pwsz[67] = {0};
+            AECHAR pstr[64] = {0};
+            AECHAR wsFmt[5] = {0};
+            
+            (void)STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
+            for (i=0;i<IMENUCTL_GetItemCount(pMenu);i++)
+            {
+                wID = IMENUCTL_GetItemID(pMenu, i);
+                WSPRINTF(pwsz,sizeof(pwsz),wsFmt,i+1);
+                
+                ISHELL_LoadResString( pMe->m_pShell,
+                      STATICAPP_RES_FILE_LANG,
+                      wID,
+                      pstr,
+                      sizeof(pstr));
+                WSTRLCAT(pwsz,pstr,sizeof(pwsz));
+                IMENUCTL_SetItemText(pMenu, wID, NULL, NULL, pwsz);
+            }
+            
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
+            IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
+            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+            IMENUCTL_SetSel(pMenu, pMe->m_MainSel);
+            (void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MAIN_MENU, EVT_USER_REDRAW,0,0);
+        }
+		 return TRUE;
+
+
+		case EVT_USER_REDRAW:
+            (void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+            
+        case EVT_DIALOG_END:
+            return TRUE;
+
+		case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_1:
+                case AVK_2:
+                case AVK_3:
+                case AVK_4:
+                //case AVK_STAR:
+                //case AVK_POUND:
+                    {
+                        int Focus = (wParam - AVK_1);
+                        if(Focus<IMENUCTL_GetItemCount(pMenu))
+                        {
+                            StartApplet(pMe, Focus);
+                        }
+                    }
+                    return TRUE;
+
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+                    
+                default:
+                    break;
+          
+            }
+            return TRUE;
+		 case EVT_COMMAND:
+            pMe->m_MainSel = wParam;			
+			return TRUE;
+			
+        default:
+            break;
+		
+	 }
+	 return FALSE;
+}
 /*=============================================================================
 FUNCTION:  StartApplet
 
@@ -1037,89 +1361,80 @@ DESCRIPTION:  启动applet
 PARAMETERS:  如果APPLET 有变动，只需改动次函数
 
 =============================================================================*/
-static boolean StartApplet(Staticapp *pMe, int i)
+static boolean StartApplet(Staticapp *pMe, int wParam)
 {
     int Result = FALSE;
-	MSG_FATAL("AEECLSID_FLEXIGURU........................%d",i,0,0);
-   	switch(i)
-    {
-  	#if defined(FEATURE_FLEXI_STATIC_BREW_APP)     
-        case 0:
-			
-        	#if defined (FEATURE_NASRANI)			
-			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
-               Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NASRANI);			
-			#elif defined (FEATURE_FMN2010)
-			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
-               Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MUSLIM);
-		    #else
-			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
-			   Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);            
-			#endif
-			
-            break;
-  #ifdef FEATURE_NASRANI        
-        case 2:
-			
-			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);
-            break;
-			
-  #else
-  		case 1:
-			#ifdef FEATURE_FMN2010
-			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);
-            break;
-			#else
-			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);			
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FBROWSER);
-            break;
-			#endif
-  #endif
-  			
-        	
-  #ifdef FEATURE_NASRANI        
-        case 3:
-  #else
-  		case 2:
-  #endif
-  			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);			
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FBROWSER);
-            break;
-
-  #ifdef FEATURE_GURU
-		case 3:
-			MSG_FATAL("AEECLSID_FLEXIGURU........................",0,0,0);
-			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);			
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FLEXIGURU);
-			MSG_FATAL("AEECLSID_FLEXIGURU....................Result:%d",Result,0,0);
+	MSG_FATAL("StartApplet..wParam=%d......................%d",wParam,0,0);
+	switch(wParam)
+	{
+#ifdef FEATURE_VERSION_FLEXI203P 
+		case IDS_STATICAPP_TITLE_FGUAL:
+			CLOSE_DIALOG(DLGRET_FGUAL)
 			break;
-  #endif
+		case IDS_STATICAPP_TITLE_APLIKASI:
+			CLOSE_DIALOG(DLGRET_APLIKASI)
+			break;
+		case IDS_STATICAPP_TITLE_FLEXIPORTAL:
+			break;
+#endif	
+#if defined(FEATURE_FLEXI_STATIC_BREW_APP) 	
 
-  	#elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
+#if defined (FEATURE_NASRANI)			
+		case IDS_NASRANI_TITLE_FNASRANI:
+			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NASRANI);		
+			break;
+#endif	
+
+#if defined (FEATURE_FMN2010)
+		case IDS_STATICAPP_TITLE_FMUSLIM:
+			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MUSLIM);		
+#endif	
+
+#if defined (FEATURE_CAH006)
+		case IDS_STATICAPP_TITLE_FCHAT:
+			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);		
+#endif
+
+#if defined (FEATURE_FPT005)
+		case IDS_STATICAPP_TITLE_FPORTAL:
+			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FBROWSER);		
+#endif
+
+#if defined (FEATURE_GURU)
+		case IDS_STATICAPP_TITLE_FGURU:
+			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FLEXIGURU);		
+#endif
+#endif        /*FEATURE_FLEXI_STATIC_BREW_APP*/
+
+#if defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
   		//need to change
-  		case 0: 
+  		case IDS_STATICAPP_TITLE_SMARTMESSAGE: 
   			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_SFM);			
             break;            
-        case 1:
+        case IDS_STATICAPP_TITLE_FACEBOOK:
         	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_FACEBOOK);
             break;
-  		case 2:
+  		case IDS_STATICAPP_TITLE_TWITTER:
   			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_TWITTER);
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_TWITTER);
 			break;
-		case 3:
+		case IDS_STATICAPP_TITLE_MSHOP:
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_MSHOP);
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_MSHOP);
             break;
-	#endif	
-        default:
-            break;
-    }
+#endif
+			
+	}   	
 
     MSG_FATAL("Result = %d",Result,0,0);
     return TRUE;
 }
+
+

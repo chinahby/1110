@@ -38,11 +38,13 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_SPN_FROM_BSMCCMNC
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 #endif
-
+#ifdef FEATURE_VERSION_FLEXI203P
+#include "targsb12832.h"
+#else
 #ifndef TARGSB2_H
    #include "targsbw2.h"
 #endif
-
+#endif   /*FEATURE_VERSION_FLEXI203P*/
 //#define FEATURE_DATA_STRIP_ATCOP 
 #define FEATURE_STD_MIDI 
 #define FEATURE_DIAG_LOWMEM 

@@ -324,6 +324,7 @@ typedef enum BottomBar_e_Type
    BTBAR_FGURU_FPORTAL,
    BTBAR_CONTACTS_FPORTAL,   //fmuslim  ---fnasrani   
 #endif /*FEATURE_FLEXI_STATIC_BREW_APP*/
+   BTBAR_FMENU_CANTACT,
    BTBAR_OPTION,
    BTBAR_MESSAGES_CONTACTS,   // 信息-----电话本
    BTBAR_MENU_SOS,            //主菜单  -----SOS

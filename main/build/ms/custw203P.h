@@ -240,8 +240,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_AAC_PLUS
 #define FEATURE_ENHANCED_AAC_PLUS
 #endif
+#ifdef FEATURE_BT
 #include "custqbt.h"     //for bt
 #include "custbt.h"      //for bt
+#endif
 #include "custuim.h"
 #include "custcmx.h"
 #include "custavs.h"

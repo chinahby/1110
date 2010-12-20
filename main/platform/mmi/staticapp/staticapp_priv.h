@@ -41,7 +41,9 @@ typedef struct _StaticappMod
 typedef enum StaticappState
 {
     STATICAPPST_MAIN,
-    STATICAPPST_EXIT
+    STATICAPPST_EXIT,
+    STATICAPPST_APLIKASI,
+    STATICAPPST_FGUAL
 } StaticappState;
 
 typedef enum
@@ -54,14 +56,17 @@ typedef enum
 typedef enum DLGRetValue
 {
     DLGRET_CREATE,
-    DLGRET_CANCELED
+    DLGRET_CANCELED,
+    DLGRET_APLIKASI,
+    DLGRET_FGUAL
 }DLGRetValue;
 
 typedef enum NextFSMAction
 {
    NFSMACTION_WAIT,
-   NFSMACTION_CONTINUE
-   
+   NFSMACTION_CONTINUE,
+   NFSMACTION_APLIKASI,
+   NFSMACTION_FGUAL   
 } NextFSMAction;
 
 

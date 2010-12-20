@@ -2977,7 +2977,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_SELECT:
 		 		{
 				int ret = 0;
-#if defined	(FEATURE_VERSION_FLEXI203) 	
+#if defined	(FEATURE_VERSION_FLEXI203) 
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP				
 #if defined (FEATURE_NASRANI)
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
@@ -2996,6 +2996,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
                ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
+#elif defined (FEATURE_VERSION_FLEXI203P)
+        	   ret = CoreApp_LaunchApplet(pMe, AEECLSID_STATIC_APP);
 #elif defined (FEATURE_VERSION_IVIO203)
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #elif defined (FEATURE_VERSION_SMART)
@@ -4756,6 +4758,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		eBBarType = BTBAR_FACEBOOK_CHAT;
 #elif defined FEATURE_VERSION_M8P
 		eBBarType = BTBAR_FACEBOOK_CHAT;
+#elif defined FEATURE_VERSION_FLEXI203P
+		eBBarType = BTBAR_FMENU_CANTACT;
 #else										//Include IVIO
 	#if defined (FEATURE_GURU)
 		eBBarType = BTBAR_FGURU_FPORTAL;	
@@ -4775,7 +4779,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		#endif
 		{
 			eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
-		}
+		}			
 	#else
 		eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai
 	#endif
