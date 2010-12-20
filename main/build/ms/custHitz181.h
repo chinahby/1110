@@ -252,7 +252,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SDCC_CLK_CONFIG
 #define FEATURE_HS_USB_MS_FD
 #define FEATURE_AUDIO_CAMERA_CONCURRENCY // FOR MP3
-#define FEATURE_FRENDUO //Add By zzg 2010_08_23 for Frenduo
+//#define FEATURE_FRENDUO //Add By zzg 2010_08_23 for Frenduo
 //#define FEATURE_AAC
 //#define FEATURE_AAC_PLUS
 //#define FEATURE_ENHANCED_AAC_PLUS
