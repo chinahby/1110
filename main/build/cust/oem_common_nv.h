@@ -149,7 +149,7 @@
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_VIETNAMESE      //越南语
 #elif defined(FEATURE_LANG_RUSSIAN)
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_RUSSIAN         //俄文
-#elif defined(defined(FEATURE_LANG_FRENCH)
+#elif defined(FEATURE_LANG_FRENCH)
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_FRENCH          //法文
 #else
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //NV_LANGUAGE_SELECTION_I
