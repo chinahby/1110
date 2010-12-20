@@ -2339,6 +2339,7 @@ boolean VideoPlayer_ChangeScrState(CVideoPlayer* pMe,boolean isLockScr)
       	}
       else
       	{
+		   rc.x = pMe->m_rc.x;
       	   rc.dx = pMe->m_rc.dx;
            rc.y = VIDEOPLAYER_NAMEPART_H;
            rc.dy = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay);

@@ -556,19 +556,26 @@ static void disp_drv_update
             int16 col_num[4];
             int16 i;
             uint32 copy_count;
-            
+
+			//  锁定区域以上部分
             row_start[0]    = (int16)(dst_starting_row);
             row_num[0]      = (int16)(disp_drv_state.lock_row_start-row_start[0]);
             col_start[0]    = (int16)(dst_starting_column);
             col_num[0]      = (int16)(num_of_columns);
+
+			//  锁定区域以下部分
             row_start[1]    = (int16)(disp_drv_state.lock_row_start+disp_drv_state.lock_row_num);
             row_num[1]      = (int16)(dst_starting_row+num_of_rows-row_start[1]);
             col_start[1]    = (int16)(dst_starting_column);
             col_num[1]      = (int16)(num_of_columns);
+
+			//  锁定区域以左部分
             row_start[2]    = (int16)(disp_drv_state.lock_row_start);
             row_num[2]      = (int16)(disp_drv_state.lock_row_num);
             col_start[2]    = (int16)(dst_starting_column);
             col_num[2]      = (int16)(disp_drv_state.lock_col_start-col_start[2]);
+
+			//  锁定区域以右部分
             row_start[3]    = (int16)(disp_drv_state.lock_row_start);
             row_num[3]      = (int16)(disp_drv_state.lock_row_num);
             col_start[3]    = (int16)(disp_drv_state.lock_col_start+disp_drv_state.lock_col_num);
@@ -598,7 +605,7 @@ static void disp_drv_update
                         int16 row;
                         
                         copy_count = col_num[i];
-                        for (row = 0; row < row_start[i]; row++)
+                        for (row = 0; row < row_num[i]; row++)//yy fixed: for (row = 0; row < row_start[i]; row++)
                         {
                             disp_drv_ic.disp_ic_bitblt(src_ptr, copy_count);
                             src_ptr += src_width;
@@ -714,8 +721,8 @@ static void disp_drv_update_yuv
         dst_row_num = disp_drv_state.lock_row_num;
     }
     
-    dst_starting_row = disp_drv_state.lock_row_start + (disp_drv_state.lock_row_num-dst_row_num)/2;
-    dst_starting_column = disp_drv_state.lock_col_start + (disp_drv_state.lock_col_num-dst_col_num)/2;
+    dst_starting_row = disp_drv_state.lock_row_start + ((disp_drv_state.lock_row_num-dst_row_num) >> 1);
+    dst_starting_column = disp_drv_state.lock_col_start + ((disp_drv_state.lock_col_num-dst_col_num) >> 1);
     disp_drv_ic.disp_ic_setwindow(dst_starting_row, dst_starting_column, 
                                   dst_starting_row + dst_row_num - 1,
                                   dst_starting_column + dst_col_num -1);

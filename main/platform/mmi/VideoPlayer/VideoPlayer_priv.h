@@ -161,7 +161,7 @@
 #define VIDEOPLAYER_VOLUME_LOW_Y (SCR_H - VIDEOPLAYER_VOLUME_ADD_H)//182
 
 //ÒôÁ¿
-#define VIDEOPLAYER_VOLUME_W (33 + 10) //YY ADD: Make is wider than itsself to keep away from right margin
+#define VIDEOPLAYER_VOLUME_W (33 + 16) //YY ADD: Make is wider than itsself to keep away from right margin
 #define VIDEOPLAYER_VOLUME_H 14
 #define VIDEOPLAYER_VOLUME_X (SCR_W - VIDEOPLAYER_VOLUME_W)//129
 #define VIDEOPLAYER_VOLUME_Y (VIDEOPLAYER_VOLUME_ADD_H >> 1)//182
