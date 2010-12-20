@@ -124,13 +124,18 @@ static void DialogTimeoutCallback(void *pUser);
 static int  VideoPlayer_GetFileID(CVideoPlayer *pMe);
 static boolean VideoPlayer_ChangeScrState(CVideoPlayer* pMe,boolean isLockScr);
 
-void VideoPlayer_WriteTitleRes(CVideoPlayer *pMe,char* pResPath,int uResId);
-void VideoPlayer_WriteTitle(CVideoPlayer *pMe,AECHAR* pText);
+// 画标题
+static void VideoPlayer_WriteTitleRes(CVideoPlayer *pMe,char* pResPath,int uResId);
+static void VideoPlayer_WriteTitle(CVideoPlayer *pMe,AECHAR* pText);
 
+// 帮助
 static void VideoPlayer_Help(CVideoPlayer* pMe);
 static boolean VideoPlayer_HelpInit(CVideoPlayer* pMe);
 static void VideoPlayer_HelpTerminate(CVideoPlayer *pMe);
 static boolean VideoPlayer_HelpHandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint16 wParam,uint32 dwParam);
+static void VideoPlayer_DrawHelp(CVideoPlayer *pMe);
+static uint16 VideoPlayer_SearchKey(uint16 wParam);
+
 
 
 
@@ -290,7 +295,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
         ASSERT(pMe != NULL);
     #endif
 	DBGPRINTF("eCode = %d",eCode);
-
+#ifdef VIDEOPLAYER_HELP
 	if(pMe->m_pHelp != NULL)
 	{
 	   boolean nReturn = FALSE;
@@ -298,6 +303,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
 
 	   if(nReturn) return TRUE;
 	}
+#endif
 
     switch (eCode)
     {
@@ -404,12 +410,13 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
                         #endif
                         CMediaGallery_FileExplorer(GALLERY_VIDEO_ADDLIST,NULL);
                         return TRUE;
+#ifdef VIDEOPLAYER_HELP
 					case AVK_INFO:
 						{
 							VideoPlayer_Help(pMe);
 							return TRUE;
 						}
-                
+#endif
                     case AVK_CLR:
                         CLOSE_DIALOG(DLGRET_CANCELED);
                         break;
@@ -1796,29 +1803,42 @@ boolean VideoPlayer_PlayMod(CVideoPlayer *pMe, uint16 wParam)
     return TRUE;
 }
 
+/*=================================================================================================================
+  画帮助的文字
+=================================================================================================================*/
 void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 {
 	AECHAR* pPosCur = (AECHAR*)pText;
 	uint16 textw = 0;
 	uint16 texth = 1;
 	uint16 lh = 1;
-	int    pos = 1;
+	int    pos = 1,spacePos = 0;
 	const uint16 charw = 7,charh = 18;
+	
 	AEERect rc = {0,0,SCR_W,SCR_H};
-	rc.dx = pMe->m_rc.dx;
+	rc.x  = pMe->m_rc.x + 5;
+	rc.dx = pMe->m_rc.dx - 5;
     rc.y = VIDEOPLAYER_NAMEPART_H + 5;
     rc.dy = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay) - 5;
 
 	if(pText == NULL) return ;
+	if(GetLngCode() == LNG_SCHINESE)
+	{
+	  charw = charh;
+	}
 
 	IDISPLAY_FillRect(pMe->m_pDisplay,&rc,0x0);
 
 	while(*pPosCur != '\0')
 	{
-		if(*pPosCur == ' '&& pos == 1)
+		if(*pPosCur == ' ')
 		{
-			pPosCur++;
-			continue;
+		    spacePos = 0;
+			if(pos == 1)
+			{
+			  pPosCur++;
+			  continue;
+			}
 		}
 		else if(*pPosCur == '\\')
 		{
@@ -1832,7 +1852,7 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 						AEE_FONT_NORMAL,
 						pPosCur - pos + 1,
 						pos - 1, 
-						0, 
+						rc.x, 
 						VIDEOPLAYER_NAMEPART_H + texth + pMe->m_pHelp->m_Posy, 
 						&rc, 
 						IDF_TEXT_TRANSPARENT);
@@ -1851,25 +1871,44 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 
 		if(textw + charw > VIDEO_TEXT_W)
 		{
-			DrawTextWithProfile(pMe->m_pShell, 
-				pMe->m_pDisplay, 
-				RGB_WHITE, //文本轮廓的RGBVAL颜色值,RGB_BLACK
-				AEE_FONT_NORMAL,
-				pPosCur - pos + 1,
-				pos,
-				0, 
-				VIDEOPLAYER_NAMEPART_H + texth + pMe->m_pHelp->m_Posy, 
-				&rc, 
-				IDF_TEXT_TRANSPARENT);
+		   if(GetLngCode() == LNG_SCHINESE)
+		   	{
+	  			DrawTextWithProfile(pMe->m_pShell, 
+	  				pMe->m_pDisplay, 
+	  				RGB_WHITE, //文本轮廓的RGBVAL颜色值,RGB_BLACK
+	  				AEE_FONT_NORMAL,
+	  				pPosCur - pos + 1,
+	  				pos - spacePos,
+	  				rc.x, 
+	  				VIDEOPLAYER_NAMEPART_H + texth + pMe->m_pHelp->m_Posy, 
+	  				&rc, 
+	  				IDF_TEXT_TRANSPARENT);
+	  			pPosCur -= spacePos;
+		   	}else
+		   	{
+		   	    DrawTextWithProfile(pMe->m_pShell, 
+	  				pMe->m_pDisplay, 
+	  				RGB_WHITE, //文本轮廓的RGBVAL颜色值,RGB_BLACK
+	  				AEE_FONT_NORMAL,
+	  				pPosCur - pos + 1,
+	  				pos,
+	  				rc.x, 
+	  				VIDEOPLAYER_NAMEPART_H + texth + pMe->m_pHelp->m_Posy, 
+	  				&rc, 
+	  				IDF_TEXT_TRANSPARENT);
+		   	}
+			
 			texth += (lh + charh);
 			textw = charw;
 			pos = 0;
+			
 
 		}
 
 		textw += charw;
 		pPosCur++;
 		pos++;
+		spacePos++;
 	}
 	DrawTextWithProfile(pMe->m_pShell, 
 		pMe->m_pDisplay, 
@@ -1877,15 +1916,17 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 		AEE_FONT_NORMAL,
 		pPosCur - pos + 1,
 		pos - 1,
-		0, 
+		rc.x, 
 		VIDEOPLAYER_NAMEPART_H + texth + pMe->m_pHelp->m_Posy, 
 		&rc, 
 		IDF_TEXT_TRANSPARENT);
-	*height = texth;
+	*height = texth + (lh + charh);
 }
 
 
-
+/*=================================================================================================================
+  构造帮助对象
+=================================================================================================================*/
 static void VideoPlayer_Help(CVideoPlayer* pMe)
 {
   if(pMe->m_pHelp != NULL)
@@ -1899,6 +1940,7 @@ static void VideoPlayer_Help(CVideoPlayer* pMe)
   pMe->m_pHelp->pTitle = NULL;	
   pMe->m_pHelp->m_Posy= 0;
   pMe->m_pHelp->m_Height = 0;
+  pMe->m_pHelp->m_Key = 0;
   
   
   if(!VideoPlayer_HelpInit(pMe))
@@ -1948,65 +1990,109 @@ static boolean VideoPlayer_HelpInit(CVideoPlayer* pMe)
 			SAFE_DELETE(pHelp->pTitle);
 			return FALSE;
 		}
-	}	
+	}
+	VideoPlayer_DrawHelp(pMe);
 	
 	return TRUE;
 
 }
+/*=================================================================================================================
+  按键转换
+=================================================================================================================*/
+uint16 VideoPlayer_SearchKey(uint16 wParam)
+{
+	uint16 tempKey;
+	switch(wParam)
+		{
+		case AVK_CLR:
+			{
+				tempKey = KEY_CLR;
+				break;
+			}
+		case AVK_UP:
+			{
+				tempKey = KEY_UP;
+				break;
+			}
+		case AVK_DOWN:
+			{
+				tempKey = KEY_DOWN;
+			}
+		default:
+			{
+				;
+			}
+		
+		}
+	return tempKey;
+}
+/*=================================================================================================================
+  画帮助
+=================================================================================================================*/
+void VideoPlayer_DrawHelp(CVideoPlayer *pMe)
+{
+	CHelpPtr pHelp = pMe->m_pHelp;
+
+	if(pHelp->m_Key & KEY_CLR)
+		{
+		        ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)VideoPlayer_DrawHelp,pMe);
+				VideoPlayer_HelpTerminate(pMe);
+				SAFE_DELETE(pMe->m_pHelp); 
+				return;
+		}
+	else if(pHelp->m_Key & KEY_UP)
+		{
+				if((pHelp->m_Posy + VIDEO_SCROLL_SPEED) < 0)
+					pHelp->m_Posy += VIDEO_SCROLL_SPEED;
+		}
+	else if(pHelp->m_Key & KEY_DOWN)
+		{
+				if(pHelp->m_Posy + pHelp->m_Height - SCR_H + VIDEOPLAYER_NAMEPART_H + BOTTOMBAR_HEIGHT - VIDEO_SCROLL_SPEED > 0)
+				{
+				  pHelp->m_Posy -= VIDEO_SCROLL_SPEED;
+				}	
+		}
+	
+	Draw_Parser_Text(pMe,pHelp->pText,&pHelp->m_Height);
+	VideoPlayer_WriteTitle(pMe,pHelp->pTitle);
+	DRAW_BOTTOMBAR(BTBAR_BACK); 
+	IDISPLAY_Update(pMe->m_pDisplay);
+	ISHELL_SetTimer(pMe->m_pShell,100,(PFNNOTIFY)VideoPlayer_DrawHelp,pMe);
+
+}
+/*=================================================================================================================
+  消息处理函数
+=================================================================================================================*/
 static boolean VideoPlayer_HelpHandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint16 wParam,uint32 dwParam)
 {
   CHelpPtr pHelp = pMe->m_pHelp;
+  uint16 key = 0;
   
   switch(eCode)
   	{
-  	    case EVT_KEY_HELD:
+  	    //case EVT_KEY_HELD:
   	    case EVT_KEY_RELEASE:
+			{
+				key = VideoPlayer_SearchKey(wParam);
+				pHelp->m_Key &= (~key);
+				return TRUE;
+  	    	}
     	case EVT_KEY_PRESS:
 			{
-				switch(wParam)
-					{
-					  case AVK_CLR:
-					  	{
-							VideoPlayer_HelpTerminate(pMe);
-							SAFE_DELETE(pMe->m_pHelp); 
-							break;
-					  	}
-					  case AVK_UP:
-					  	{
-							if((pHelp->m_Posy + VIDEO_SCROLL_SPEED) < pHelp->m_Height)
-								pHelp->m_Posy += VIDEO_SCROLL_SPEED;
-						   break;
-					  	}
-					  case AVK_DOWN:
-					  	{
-					        if(pHelp->m_Posy - VIDEO_SCROLL_SPEED > 0)
-					       	{
-					       	  pHelp->m_Posy -= VIDEO_SCROLL_SPEED;
-					       	}
+				key = VideoPlayer_SearchKey(wParam);
+				pHelp->m_Key |= key;
+				
+			    return TRUE;
 
-						   break;
-					  	}
-					  default:
-					  	{
-							return TRUE;
-					  	}
-					  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_VIDEOPLAYER,EVT_USER_REDRAW,0,0);
-					  return TRUE;
-					  
-					}
 				break;
     		}
 		case EVT_USER_REDRAW:
 			{
-				Draw_Parser_Text(pMe,pHelp->pText,&pHelp->m_Height);
-				VideoPlayer_WriteTitle(pMe,pHelp->pTitle);
-			    DRAW_BOTTOMBAR(BTBAR_BACK);	
-				IDISPLAY_Update(pMe->m_pDisplay);
+				VideoPlayer_DrawHelp(pMe);
 				return TRUE;
 			}
 		default:
 			{
-				ISHELL_PostEvent(pMe->m_pShell,AEECLSID_VIDEOPLAYER,EVT_USER_REDRAW,0,0);
 				return FALSE;
 			}
   	}
@@ -2232,7 +2318,9 @@ static int VideoPlayer_GetFileID(CVideoPlayer *pMe)
 }
 
 #endif
-
+/*=================================================================================================================
+  屏幕切换
+=================================================================================================================*/
 boolean VideoPlayer_ChangeScrState(CVideoPlayer* pMe,boolean isLockScr)
 
 {

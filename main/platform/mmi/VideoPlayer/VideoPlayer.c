@@ -417,7 +417,12 @@ static void VideoPlayer_FreeAppData(CVideoPlayer *pMe)
         ICONFIG_Release(pMe->m_pConfig);
         pMe->m_pConfig = NULL;
     }
-
+#ifdef VIDEOPLAYER_HELP
+	//°ïÖú
+	SAFE_DELETE(pMe->m_pHelp->pText);
+    SAFE_DELETE(pMe->m_pHelp->pTitle);
+	SAFE_DELETE(pMe->m_pHelp);
+#endif
     FREEIF(pMe->m_FileToPlay);
     pMe->m_FileToPlay=NULL;      
     if(NULL != pMe->m_pImage)

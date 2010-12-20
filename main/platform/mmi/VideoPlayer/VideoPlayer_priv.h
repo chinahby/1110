@@ -273,8 +273,12 @@
 
 #define VIDEO_TEXT_LEFT_W 20
 #define VIDEO_TEXT_W (SCR_W - VIDEO_TEXT_LEFT_W)
-#define VIDEO_SCROLL_SPEED 1
+#define VIDEO_SCROLL_SPEED 2
 #define SAFE_DELETE(x) if(x){FREE(x);x = NULL;}
+#define KEY_CLR  0x1
+#define KEY_UP   0x2
+#define KEY_DOWN 0x4
+
 
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
@@ -350,6 +354,7 @@ typedef struct _Help
 {
   AECHAR* pTitle;
   AECHAR* pText;
+  uint16 m_Key;
   
   uint16 m_Posy;
   
