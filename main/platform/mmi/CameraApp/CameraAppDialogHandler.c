@@ -2767,7 +2767,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
                                            nResID[i]);
         if(pTopBarImage)
         {
-            IIMAGE_Draw(pTopBarImage, i*(TOPBAR_ICON_WIDTH+3), TOPBAR_ICON_Y);	// + 5
+            IIMAGE_Draw(pTopBarImage, i*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);	// + 5
             IIMAGE_Release(pTopBarImage);
             pTopBarImage = NULL;
         }
@@ -2780,7 +2780,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	    if (pCameraCFGChooseIcon)
 	    {  
 			IIMAGE_SetDrawSize(pCameraCFGChooseIcon, TOPBAR_ICON_WIDTH, CFGBAR_TEXT_HEIGHT);
-			IIMAGE_Draw(pCameraCFGChooseIcon, (3+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG), TOPBAR_ICON_Y);	//Add By zzg 2010_07_25
+			IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG), TOPBAR_ICON_Y);	//Add By zzg 2010_07_25
 			
 	        IIMAGE_Release(pCameraCFGChooseIcon);
 	        pCameraCFGChooseIcon = NULL;

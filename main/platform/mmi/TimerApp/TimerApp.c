@@ -73,27 +73,42 @@ when         who            what, where, why
 ===========================================================================*/
 //#define  AEE_APPTIMER_RES_FILE (AEE_RES_LANGDIR APPTIMER_RES_FILE)
 #define RUNNING_UPDATE_MSECS  100
-#define TIMER_SCREEN_HEIGHT   38
+
 
 
 #if defined(FEATURE_DISP_220X176)
+#define TIMER_SCREEN_HEIGHT    38
 #define TIMER_SCREEN_WIDTH     62
 #define TIMER_IMAGE_WIDTH      138
 #define TIMER_SCREEN_YOFFSET   36
 #define TIMER_SCREEN_XOFFSET   36
+#define TIMER_HEIGHT_N         2
 
 #elif defined(FEATURE_DISP_320X240)
+#define TIMER_SCREEN_HEIGHT   38
 #define TIMER_SCREEN_WIDTH    84
-#define TIMER_IMAGE_WIDTH      200
-#define TIMER_SCREEN_YOFFSET 48
-#define TIMER_SCREEN_XOFFSET 60
+#define TIMER_IMAGE_WIDTH     200
+#define TIMER_SCREEN_YOFFSET  48
+#define TIMER_SCREEN_XOFFSET  60
+#define TIMER_HEIGHT_N         2
 
-
-#else
+#elif defined(FEATURE_DISP_128X160)
+#define TIMER_SCREEN_HEIGHT    38
 #define TIMER_SCREEN_WIDTH     60
 #define TIMER_IMAGE_WIDTH      100
 #define TIMER_SCREEN_XOFFSET   20
 #define TIMER_SCREEN_YOFFSET   30
+#define TIMER_HEIGHT_N         3
+
+
+#else
+#define TIMER_SCREEN_HEIGHT    38
+#define TIMER_SCREEN_WIDTH     60
+#define TIMER_IMAGE_WIDTH      100
+#define TIMER_SCREEN_XOFFSET   20
+#define TIMER_SCREEN_YOFFSET   30
+#define TIMER_HEIGHT_N         2
+
 
 #endif
 /*===========================================================================
@@ -378,7 +393,7 @@ static boolean InitAppTimer(CAppTimer *pme)
 #else
         SETAEERECT( &rect, 
                             (pme->cxScreen - TIMER_IMAGE_WIDTH)/2 + TIMER_SCREEN_XOFFSET+2,
-                            MENUITEM_HEIGHT*2 +  TIMER_SCREEN_YOFFSET - 16,
+                            MENUITEM_HEIGHT*TIMER_HEIGHT_N +  TIMER_SCREEN_YOFFSET - 16,
                             TIMER_SCREEN_WIDTH,
                             0);
 #endif
@@ -1162,7 +1177,7 @@ static void AppTimer_Redraw(CAppTimer *pme)
     	#if 0
         IImage_Draw(pBgImage, (rect.dx - TIMER_IMAGE_WIDTH)/2, pme->titleBarHeight + MENUITEM_HEIGHT*2);
 		#else
-		IImage_Draw(pBgImage, (rect.dx - TIMER_IMAGE_WIDTH)/2,  MENUITEM_HEIGHT*2);
+		IImage_Draw(pBgImage, (rect.dx - TIMER_IMAGE_WIDTH)/2,  MENUITEM_HEIGHT*TIMER_HEIGHT_N);
 		#endif
         IImage_Release(pBgImage);
         pBgImage = NULL;
