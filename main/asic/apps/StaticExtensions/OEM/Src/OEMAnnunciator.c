@@ -372,6 +372,13 @@ OEMAnnun_content batt_content =
     #define TEXT_HEIGHT    10
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1
+#elif defined(FEATURE_DISP_128X160)
+	#define IMG_WIDTH      12
+    #define IMG_HEIGHT     13
+    #define LG_IMG_WIDTH   20
+    #define TEXT_HEIGHT    10
+    #define ROW1_Y           0
+    #define BETWEEN_ICON_PIXEL 0
 #elif defined(FEATURE_DISP_160X128)
     #define IMG_WIDTH      12
     #define IMG_HEIGHT     13
@@ -510,14 +517,22 @@ static OEMAnnun_data Annunciators[] =
 #else
   {ANNUN_FIELD_BLUETOOTH,       ANNUN_ICON_POSITION_7,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},
 #endif
-  {ANNUN_FIELD_ALARM,             ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
+
+#ifndef FEATURE_DISP_128X160
+  {ANNUN_FIELD_ALARM,               ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
 #ifndef FEATURE_USES_LOWMEM
   {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
 #else
   {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},
 #endif
-  {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_10,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
+  {ANNUN_FIELD_RINGTONE,            ANNUN_ICON_POSITION_10,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
   {ANNUN_FIELD_BATT,                ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+#else
+  {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
+  {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  NULL},
+  {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
+  {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+#endif
 };
 //lint +e545
 #define ANNUN_BUFFER_BITS    (10)
