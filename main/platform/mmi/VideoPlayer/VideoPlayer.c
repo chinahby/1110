@@ -419,8 +419,11 @@ static void VideoPlayer_FreeAppData(CVideoPlayer *pMe)
     }
 #ifdef VIDEOPLAYER_HELP
 	//°ïÖú
-	SAFE_DELETE(pMe->m_pHelp->pText);
-    SAFE_DELETE(pMe->m_pHelp->pTitle);
+	if(pMe->m_pHelp != NULL)
+	{
+	    SAFE_DELETE(pMe->m_pHelp->pText);
+        SAFE_DELETE(pMe->m_pHelp->pTitle);
+	}
 	SAFE_DELETE(pMe->m_pHelp);
 #endif
     FREEIF(pMe->m_FileToPlay);

@@ -330,12 +330,11 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
             IDisplay_FillRect(pMe->m_pDisplay,&rc,0x0);
 			VideoPlayer_WriteTitleRes(pMe,AEE_APPSVIDEOPLAYER_RES_FILE,IDS_TITLE);
 			VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_LOGO, VIDEOPLAYER_LOGO_X, VIDEOPLAYER_LOGO_Y);
-            VideoPlayer_RefreshPlayingTick(pMe);
-            VideoPlayer_RefreshVolBar(pMe);
             if(pMe->m_FileToPlay != NULL) // 如果不加此判断条件，则在pMe->m_FileToPlay为NULL时，屏幕上会显示乱码
             {
                 VideoPlayer_RefreshPlayerFileName(pMe); //刷新文件名
             }
+			VideoPlayer_RefreshVolBar(pMe);
             if(!pMe->IsPause && !pMe->IsPlay)                 
             {
                 if(!pMe->UserStop)
@@ -362,6 +361,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
             {
                 DRAW_BOTTOMBAR(BTBAR_FULLSCREEN_PAUSE_STOP);
             } 
+			VideoPlayer_RefreshPlayingTick(pMe);
             IDISPLAY_Update(pMe->m_pDisplay); 
             if(pMe->Is848Busy)
             {
@@ -1813,7 +1813,7 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 	uint16 texth = 1;
 	uint16 lh = 1;
 	int    pos = 1,spacePos = 0;
-	const uint16 charw = 7,charh = 18;
+	uint16 charw = 7,charh = 18;
 	
 	AEERect rc = {0,0,SCR_W,SCR_H};
 	rc.x  = pMe->m_rc.x + 5;
@@ -1853,7 +1853,7 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 						pPosCur - pos + 1,
 						pos - 1, 
 						rc.x, 
-						VIDEOPLAYER_NAMEPART_H + texth + pMe->m_pHelp->m_Posy, 
+						VIDEOPLAYER_NAMEPART_H + texth - pMe->m_pHelp->m_Posy, 
 						&rc, 
 						IDF_TEXT_TRANSPARENT);
 					texth += (lh + charh);
@@ -1871,7 +1871,7 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 
 		if(textw + charw > VIDEO_TEXT_W)
 		{
-		   if(GetLngCode() == LNG_SCHINESE)
+		   if(GetLngCode() != LNG_SCHINESE)
 		   	{
 	  			DrawTextWithProfile(pMe->m_pShell, 
 	  				pMe->m_pDisplay, 
@@ -1880,7 +1880,7 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 	  				pPosCur - pos + 1,
 	  				pos - spacePos,
 	  				rc.x, 
-	  				VIDEOPLAYER_NAMEPART_H + texth + pMe->m_pHelp->m_Posy, 
+	  				VIDEOPLAYER_NAMEPART_H + texth - pMe->m_pHelp->m_Posy, 
 	  				&rc, 
 	  				IDF_TEXT_TRANSPARENT);
 	  			pPosCur -= spacePos;
@@ -1893,7 +1893,7 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 	  				pPosCur - pos + 1,
 	  				pos,
 	  				rc.x, 
-	  				VIDEOPLAYER_NAMEPART_H + texth + pMe->m_pHelp->m_Posy, 
+	  				VIDEOPLAYER_NAMEPART_H + texth - pMe->m_pHelp->m_Posy, 
 	  				&rc, 
 	  				IDF_TEXT_TRANSPARENT);
 		   	}
@@ -1917,7 +1917,7 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 		pPosCur - pos + 1,
 		pos - 1,
 		rc.x, 
-		VIDEOPLAYER_NAMEPART_H + texth + pMe->m_pHelp->m_Posy, 
+		VIDEOPLAYER_NAMEPART_H + texth - pMe->m_pHelp->m_Posy, 
 		&rc, 
 		IDF_TEXT_TRANSPARENT);
 	*height = texth + (lh + charh);
@@ -2033,23 +2033,16 @@ void VideoPlayer_DrawHelp(CVideoPlayer *pMe)
 {
 	CHelpPtr pHelp = pMe->m_pHelp;
 
-	if(pHelp->m_Key & KEY_CLR)
+	if(pHelp->m_Key & KEY_UP)
 		{
-		        ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)VideoPlayer_DrawHelp,pMe);
-				VideoPlayer_HelpTerminate(pMe);
-				SAFE_DELETE(pMe->m_pHelp); 
-				return;
-		}
-	else if(pHelp->m_Key & KEY_UP)
-		{
-				if((pHelp->m_Posy + VIDEO_SCROLL_SPEED) < 0)
-					pHelp->m_Posy += VIDEO_SCROLL_SPEED;
+				if((pHelp->m_Posy - VIDEO_SCROLL_SPEED) >= 0)
+					pHelp->m_Posy -= VIDEO_SCROLL_SPEED;
 		}
 	else if(pHelp->m_Key & KEY_DOWN)
 		{
-				if(pHelp->m_Posy + pHelp->m_Height - SCR_H + VIDEOPLAYER_NAMEPART_H + BOTTOMBAR_HEIGHT - VIDEO_SCROLL_SPEED > 0)
+				if(pHelp->m_Posy + VIDEO_SCROLL_SPEED< pHelp->m_Height)
 				{
-				  pHelp->m_Posy -= VIDEO_SCROLL_SPEED;
+				  pHelp->m_Posy += VIDEO_SCROLL_SPEED;
 				}	
 		}
 	
@@ -2057,7 +2050,7 @@ void VideoPlayer_DrawHelp(CVideoPlayer *pMe)
 	VideoPlayer_WriteTitle(pMe,pHelp->pTitle);
 	DRAW_BOTTOMBAR(BTBAR_BACK); 
 	IDISPLAY_Update(pMe->m_pDisplay);
-	ISHELL_SetTimer(pMe->m_pShell,100,(PFNNOTIFY)VideoPlayer_DrawHelp,pMe);
+	ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)VideoPlayer_DrawHelp,pMe);
 
 }
 /*=================================================================================================================
@@ -2077,6 +2070,17 @@ static boolean VideoPlayer_HelpHandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
 				pHelp->m_Key &= (~key);
 				return TRUE;
   	    	}
+		case EVT_KEY:
+			{
+				if(wParam == AVK_CLR)
+				{
+		          ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)VideoPlayer_DrawHelp,pMe);
+				  VideoPlayer_HelpTerminate(pMe);
+				  SAFE_DELETE(pMe->m_pHelp);
+				  ISHELL_PostEvent(pMe->m_pShell, AEECLSID_VIDEOPLAYER,EVT_USER_REDRAW,  0, 0);
+				  return TRUE;
+				}
+			}
     	case EVT_KEY_PRESS:
 			{
 				key = VideoPlayer_SearchKey(wParam);
