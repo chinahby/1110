@@ -9579,6 +9579,8 @@ typedef  word  nv_language_enum_type;
   #define NV_LANGUAGE_HINDI                              ((nv_language_enum_type)13)      
    /* Use Vietnamese language    */
   #define NV_LANGUAGE_VIETNAMESE                         ((nv_language_enum_type)14)
+  /* Use RUSSIAN language    */
+  #define NV_LANGUAGE_RUSSIAN                            ((nv_language_enum_type)15)
   #endif /*CUST_EDITION*/
 
 /* Type to specify the user interface menu format */

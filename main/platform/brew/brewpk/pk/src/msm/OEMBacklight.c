@@ -235,10 +235,14 @@ static uint32 AEEBacklight_Release(IBacklight *pme)
    if (--pme->uRef) {
       return pme->uRef;
    }
-
+   
+   AEEBacklight_CancelDisableTimer(pme);
+   AEEBacklight_CancelPreDisableTimer(pme);
+#ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
+   AEEBacklight_CancelNotifyTimer(pme);
+#endif
    RELEASEIF(pme->pIShell);
    //FREEIF(pme);
-
    return 0;
 }
 

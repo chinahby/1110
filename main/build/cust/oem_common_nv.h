@@ -125,6 +125,34 @@
 #endif
 //Others
 #define OEMNV_PHONE_PASSWORD                        10670                       //CFGI_PHONE_PASSWORD       
+#ifdef FEATURE_LANG_CHINESE
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_CHINESE         //简体中文
+#elif defined(FEATURE_LANG_TCHINESE)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_TCHINESE        //繁体中文
+#elif defined(FEATURE_LANG_ITALIAN)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ITALIAN         //意大利文
+#elif defined(FEATURE_LANG_SPANISH)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_SPANISH         //西班牙文
+#elif defined(FEATURE_LANG_PORTUGUESE)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_PORTUGUESE      //葡萄牙文
+#elif defined(FEATURE_LANG_INDONESIAN)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_INDONESIAN      //印度尼西亚
+#elif defined(FEATURE_LANG_HINDI)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_HINDI           //印度语
+#elif defined(FEATURE_LANG_ARABIC)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ARABIC          //阿拉伯语
+#elif defined(FEATURE_LANG_HEBREW)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_HEBREW          //希伯来语
+#elif defined(FEATURE_LANG_THAI)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_THAI            //泰国语
+#elif defined(FEATURE_LANG_VIETNAMESE)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_VIETNAMESE      //越南语
+#elif defined(FEATURE_LANG_RUSSIAN)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_RUSSIAN         //俄文
+#elif defined(defined(FEATURE_LANG_FRENCH)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_FRENCH          //法文
+#else
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //NV_LANGUAGE_SELECTION_I
+#endif
 #define OEMNV_TV_TvSetting                          {0,0,0,0,0,0,0,{{{0},{0}},{{0},{0}}},0,{0}}
 
