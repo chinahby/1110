@@ -9437,48 +9437,18 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             return TRUE;
         }
 #endif /*FEATRUE_SET_IP_NUMBER*/
-        if ( (AVKType)wParam == AVK_STAR && WSTRLEN(pMe->m_DialString) == 1)
+        if ( (AVKType)wParam == AVK_STAR)
         {
+#ifndef FEATURE_DISP_128X160
 #ifdef FEATURE_KEYGUARD
-            pMe->m_b_set_keyguard = TRUE;
-            ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+            if(WSTRLEN(pMe->m_DialString) == 1)
+            {
+            	pMe->m_b_set_keyguard = TRUE;
+            	ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+            }
 #endif
-        }
-
-        // # key for shortcut of quiet mode
-        else if ( (AVKType)wParam == AVK_POUND && WSTRLEN(pMe->m_DialString) == 1)
-        {
-            CallApp_ShortcutQuiet( pMe );
-            ISHELL_CloseApplet(pMe->m_pShell, TRUE);
-        }
-
-        //long key "1" to call voice mail
-        else if ((AVKType)wParam == AVK_1)
-        {
-            if((pMe->m_DialString[0] == '1')&&(pMe->m_DialString[1] == '\0'))
-            {
-                CallApp_MakeVoiceMailCall(pMe);
-            }
-        }
-        else if ( ((AVKType)wParam >= AVK_2) &&((AVKType)wParam <= AVK_9))
-        {
-            uint16 wIndex;
-            MSG_FATAL("CallApp_Process_HeldKey_Event1111111111111",0,0,0);
-            // TBD - dial string format should be typedef'd
-            //if more than 2 digits then bail out because
-            // we only support from to 1 to 99
-            wIndex = (uint16)WSTRTOFLOAT(pMe->m_DialString);
-
-            if(((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) &&(wIndex!=0))
-            {
-                CallApp_MakeSpeedDialCall(pMe);
-            }
-        }
-		//Add By zzg 2010_09_10
-		else if ((AVKType)wParam == AVK_0)
-		{		   
-		    int len = 0;
-
+#else
+			int len = 0;
 		    len = WSTRLEN(pMe->m_DialString);
 		    
 		    if(pMe->m_b_incall == FALSE )
@@ -9516,8 +9486,106 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 	            //CallApp_Draw_NumEdit_SoftKey(pMe);
 	            //CallApp_Display_Number(pMe);
 			}
-	
+#endif
+        }
+
+        // # key for shortcut of quiet mode
+        else if ( (AVKType)wParam == AVK_POUND && WSTRLEN(pMe->m_DialString) == 1)
+        {
+            CallApp_ShortcutQuiet( pMe );
+            ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+        }
+
+        //long key "1" to call voice mail
+        else if ((AVKType)wParam == AVK_1)
+        {
+            if((pMe->m_DialString[0] == '1')&&(pMe->m_DialString[1] == '\0'))
+            {
+                CallApp_MakeVoiceMailCall(pMe);
+            }
+        }
+        else if ( ((AVKType)wParam >= AVK_2) &&((AVKType)wParam <= AVK_9))
+        {
+            uint16 wIndex;
+            MSG_FATAL("CallApp_Process_HeldKey_Event1111111111111",0,0,0);
+            // TBD - dial string format should be typedef'd
+            //if more than 2 digits then bail out because
+            // we only support from to 1 to 99
+            wIndex = (uint16)WSTRTOFLOAT(pMe->m_DialString);
+
+            if(((uint16)WSTRLEN(pMe->m_DialString) <= MAX_SPEEDDIAL_CHARS) &&(wIndex!=0))
+            {
+                CallApp_MakeSpeedDialCall(pMe);
+            }
+        }
+		//Add By zzg 2010_09_10
+		#ifdef FEATURE_DISP_128X160
+		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
+		{		
+		    boolean TorchOn = FALSE;
+			OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+			if (TorchOn == FALSE )
+			{
+				TorchOn = TRUE;
+				if (pMe->m_pBacklight)
+				{
+					IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+				}
+			}
+			else
+			{
+				TorchOn = FALSE;
+				if (pMe->m_pBacklight)
+				{							
+					IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+				}
+			}
+			OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+			ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+			
     	}
+    	#else
+    	else if ((AVKType)wParam == AVK_0) 
+    	{
+    		int len = 0;
+		    len = WSTRLEN(pMe->m_DialString);
+		    if(pMe->m_b_incall == FALSE )
+		    {
+		        if (len > MAX_SIZE_DIAL_STR -2)
+		        {
+		            CALL_ERR("IDLE state,m_DialString len is 32",0, 0, 0);		           
+		        }
+		    }
+		    else
+		    {
+		        if (len > MAX_SIZE_DIALER_TEXT -3)
+		        {
+		            CALL_ERR("DTMF state,m_DialString len is 128",0, 0, 0);		            
+		        }
+		    }		
+			
+			{
+				AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};
+
+				if (pMe->m_nCursorPos == 0)
+				{
+	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"+");	               
+				}
+				else
+				{
+					(void)WSTRCPY(wstrTemp, &pMe->m_DialString[len-pMe->m_nCursorPos]);
+	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], L"+");
+	                (void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], wstrTemp);
+				}								
+
+				(void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);				
+
+				//Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);            
+	            //CallApp_Draw_NumEdit_SoftKey(pMe);
+	            //CallApp_Display_Number(pMe);
+			}
+    	}
+    	#endif
 		//Add End
 
     }
