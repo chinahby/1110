@@ -1813,7 +1813,7 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 	uint16 texth = 1;
 	uint16 lh = 1;
 	int    pos = 1,spacePos = 0;
-	uint16 charw = 7,charh = 18;
+	const uint16 charw = 6,wcharw = (charw << 1) + 3,charh = 18;
 	
 	AEERect rc = {0,0,SCR_W,SCR_H};
 	rc.x  = pMe->m_rc.x + 5;
@@ -1822,15 +1822,12 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
     rc.dy = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay) - 5;
 
 	if(pText == NULL) return ;
-	if(GetLngCode() == LNG_SCHINESE)
-	{
-	  charw = charh;
-	}
 
 	IDISPLAY_FillRect(pMe->m_pDisplay,&rc,0x0);
 
 	while(*pPosCur != '\0')
 	{
+		//if(*pPosCur < 'A'&&*pPosCur > 'z')
 		if(*pPosCur == ' ')
 		{
 		    spacePos = 0;
@@ -1840,7 +1837,8 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 			  continue;
 			}
 		}
-		else if(*pPosCur == '\\')
+		
+		if(*pPosCur == '\\')
 		{
 			switch(*(pPosCur + 1))
 			{
@@ -1857,7 +1855,7 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 						&rc, 
 						IDF_TEXT_TRANSPARENT);
 					texth += (lh + charh);
-					textw = charw;
+					textw = 0;
 					pos = 0;
 					pPosCur++;
 					break;
@@ -1899,13 +1897,21 @@ void Draw_Parser_Text(CVideoPlayer* pMe,const AECHAR* pText,uint16* height)
 		   	}
 			
 			texth += (lh + charh);
-			textw = charw;
+			textw = 0;
 			pos = 0;
 			
 
 		}
 
-		textw += charw;
+        if(*pPosCur < 0xFF)
+        {
+		  textw += charw;
+        }
+		else
+		{
+		  textw += wcharw;
+		}
+		
 		pPosCur++;
 		pos++;
 		spacePos++;
