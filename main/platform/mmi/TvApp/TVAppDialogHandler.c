@@ -337,8 +337,10 @@ void TVApp_ShowDialog(CTVApp *pMe,uint16  dlgResId)
 ==============================================================================*/
 boolean TVApp_RouteDialogEvent(CTVApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {   
+    MSG_FATAL("TVApp_RouteDialogEvent",0,0,0);
     if((NULL == pMe) || (NULL == pMe->m_pActiveDlg))
     {
+        MSG_FATAL("pMe->m_pActiveDlgID---------------------------------is NULL",0,0,0);
         return FALSE;
     }
     MSG_FATAL("pMe->m_pActiveDlgID---------------------------------%d",pMe->m_pActiveDlgID,0,0);
@@ -429,7 +431,7 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
            VIEWBAR=FALSE;
           // pMe->m_wMsgID = IDS_MSG_WAITING;
           // pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
-
+          
 		 {
 			int result = SUCCESS;
 							   
@@ -469,22 +471,13 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                 IMMITv_SetTvChannel(pMe->pIMMITv, pMe->currentlyChannel,FALSE); 
 
             }
-			
-
-			snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
-
-  
 		 }
+         
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);	
             return TRUE;
         	
         case EVT_DIALOG_START:
             MSG_FATAL("TVApp_MainMenuHandleEvent EVT_DIALOG_START",0,0,0);
-           if(pMe->m_pTV)
-            {
-                ICAMERA_Release(pMe->m_pTV);
-                pMe->m_pTV = NULL;
-            }
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);            
             return TRUE;
 
@@ -498,17 +491,17 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 
         case EVT_USER_REDRAW: 
 
-			 //(void)IMENUCTL_Redraw(pMenu);
-			 
 			{
+            
 			 AEERect	 rc = pMe->m_rc;
 			 AECHAR channelStr[32];
 			// WSTRCPY(strchannel,(AECHAR *)(pMe->currentlyChannel)); (AECHAR *)pMe->currentlyChannel
 			 MSG_FATAL("EVT_USER_REDRAW--pMe->currentlyChannel=%d----------",pMe->currentlyChannel,0,0);
-             TV_UpdateInit(pMe);
+            TV_UpdateInit(pMe);
              if(pMe->m_bAUTOSCAN)
              {
                    int AllTotal;
+                   pMe->m_bAUTOSCAN=FALSE;
                    AllTotal=IMMITv_getChannelTotal(pMe->pIMMITv);
                    //ITV_GetChnCount(pMe->pITv, &AllTotal);
                    MSG_FATAL("TV_mainMenu_HandleEvent--------------m_bAUTOSCAN=%d",AllTotal,0,0);
@@ -536,6 +529,7 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                                 &rc, 
                                IDF_TEXT_TRANSPARENT);
              }
+             
              TVApp_DrawBottomBarText(pMe, BTBAR_OPTION_BACK); 
              if(VIEWBAR)
              {
@@ -545,6 +539,8 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                
 			 TV_Update(pMe);
 			} 
+            snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+            
             return TRUE;
 
         case EVT_ATV_AUTOSCANFINISH:
@@ -555,20 +551,14 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 			 return TRUE;
 
         case  EVT_ATV_AUTOSCAN:
-               MSG_FATAL("TV_mainMenu_HandleEvent--------------EVT_ATV_AUTOSCAN",0,0,0);
-               pMe->m_bAUTOSTOP=FALSE;
-               pMe->m_bAUTOSCAN=TRUE;
-               pMe->m_curChnIdx++;
-               ISHELL_SendEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);
-    		   return TRUE;
+              MSG_FATAL("TV_mainMenu_HandleEvent--------------EVT_ATV_AUTOSCAN",0,0,0);
+              pMe->m_bAUTOSTOP=FALSE;
+              pMe->m_bAUTOSCAN=TRUE;
+              pMe->m_curChnIdx++;
+              ISHELL_SendEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);
+    		  return TRUE;
                
-        case EVT_COMMAND:          
-            switch(wParam) 
-            {
-                    
-                default:         
-                    break;  
-            }
+        case EVT_COMMAND:
             return TRUE; 
 		case EVT_NO_CLOSEBACKLIGHT:
 			return TRUE;
@@ -893,9 +883,10 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                 ISHELL_SendEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);
                 return TRUE;
             }
-         
+       default:
+            break;  
     }
-   
+    MSG_FATAL("TVApp_MainMenuHandleEvent End",0,0,0);
     return FALSE;
 }
 
@@ -929,6 +920,8 @@ static void TvApp_DrawBar(void * pme)
 
                 IIMAGE_Draw(image12, TV_SETTING_BAR_X,TV_SETTING_BAR_Y);
                 IDISPLAY_SetClipRect( pMe->m_pDisplay, &oldClip);
+                MSG_FATAL("image12 address = %x", image12, 0, 0);
+                MSG_FATAL("IMGbarblank address = %x", IMGbarblank, 0, 0);
                 IIMAGE_Release(image12);
                 IIMAGE_Release(IMGbarblank);
                 image12 = NULL;
@@ -968,6 +961,7 @@ static void TvApp_DrawBar(void * pme)
         IIMAGE_Draw(pTopBarImage2, (pMe->m_cxWidth - myInfo.cx)/2, pMe->m_cyHeight-(myInfo.cy*2)-5);    
         TVApp_DrawTopBar(pMe);
         TVApp_DrawBottomBarText(pMe, BTBAR_SELECT_BACK);
+        MSG_FATAL("pTopBarImage2 address = %x", pTopBarImage2, 0, 0);
         IIMAGE_Release(pTopBarImage2);
         pTopBarImage2 = NULL;
         
@@ -1012,6 +1006,7 @@ static void TvApp_DrawAUTOSCANBar(void * pme,uint16 nowchannel,uint16 AllTotal )
 
             IIMAGE_Draw(image12, TV_AUTOSCAN_BAR_X,TV_AUTOSCAN_BAR_Y);
             IDISPLAY_SetClipRect( pMe->m_pDisplay, &oldClip);
+            MSG_FATAL("image12 address = %x", image12, 0, 0);
             IIMAGE_Release(image12);
             IIMAGE_Release(IMGbarblank);
             image12 = NULL;
@@ -1150,11 +1145,6 @@ static boolean TV_DRAWTOPBAR_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
         	
         case EVT_DIALOG_START:
 
-		if(pMe->m_pTV)
-            {
-                ICAMERA_Release(pMe->m_pTV);
-                pMe->m_pTV = NULL;
-            }
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);            
             return TRUE;
 
@@ -1576,7 +1566,7 @@ static void TVApp_DrawTopBar(CTVApp *pMe)
 	    {  
 			//IIMAGE_SetDrawSize(pCameraCFGChooseIcon, TOPBAR_ICON_WIDTH, CFGBAR_TEXT_HEIGHT);
 			IIMAGE_Draw(pTVCFGChooseIcon, TVBAR_ICON_WIDTH*(pMe->m_nTVCFG)-(pMe->m_nTVCFG+1)+(pMe->m_cxWidth - myInfo.cx)/2, pMe->m_cyHeight-(myInfo.cy*2)-5);	
-			
+			MSG_FATAL("pTVCFGChooseIcon address = %x", pTVCFGChooseIcon, 0, 0);
 	        IIMAGE_Release(pTVCFGChooseIcon);
 	        pTVCFGChooseIcon = NULL;
 	    }
@@ -1641,11 +1631,6 @@ static boolean TV_AUTOSCAN_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
             return TRUE;
         }
         case EVT_DIALOG_START:
-		    if(pMe->m_pTV)
-            {
-                ICAMERA_Release(pMe->m_pTV);
-                pMe->m_pTV = NULL;
-            }
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);            
             return TRUE;
 
@@ -1793,12 +1778,6 @@ static boolean TV_BOOKMARK_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPara
             return TRUE;
         	
         case EVT_DIALOG_START:
-
-		if(pMe->m_pTV)
-            {
-                ICAMERA_Release(pMe->m_pTV);
-                pMe->m_pTV = NULL;
-            }
             (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_TVAPP, EVT_USER_REDRAW, NULL, NULL);            
             return TRUE;
 
@@ -1950,6 +1929,7 @@ static boolean TV_TVWAITING_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPar
             MSG_FATAL("TV_TVWAITING_HandleEvent ----- EVT_DIALOG_END",0,0,0);
             if(pStatic != NULL)
             {
+                MSG_FATAL("pStatic address = %x", pStatic, 0, 0);
                 ISTATIC_Release(pStatic); 
                 pStatic = NULL;
             }
@@ -1978,10 +1958,12 @@ static boolean TV_TVWAITING_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPar
             
         case EVT_APP_DIALOG_TIMEOUT:
             MSG_FATAL("TV_TVWAITING_HandleEvent ----- EVT_APP_DIALOG_TIMEOUT",0,0,0);
+       
            (void)ISHELL_CancelTimer(pMe->m_pShell,
                                      TvApp_DialogTimeout,
                                      pMe);
             CLOSE_DIALOG(DLGRET_MAINMENU);
+           
             return TRUE;
             
         case EVT_NO_CLOSEBACKLIGHT:
@@ -1993,6 +1975,9 @@ static boolean TV_TVWAITING_HandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPar
         case EVT_KEY:
 			
             return TRUE;
+
+        default:
+            break;
 
     }
     return FALSE;
@@ -2010,6 +1995,7 @@ static void TvApp_DialogTimeout(void * pme)
                            EVT_APP_DIALOG_TIMEOUT,
                            0,
                            0);
+    
 }
 
 /*==============================================================================
@@ -2359,11 +2345,11 @@ static boolean TV_ASIAMenu_HandleEvent(CTVApp *pMe,
 		break;
     	case EVT_COMMAND:          
 	        
-	         if(((wParam-1110) > TLG_REGION_START) && ((wParam-1110) < TLG_REGION_TOTAL))
+	         if(((wParam-1111) > TLG_REGION_START) && ((wParam-1111) < TLG_REGION_TOTAL))
 	         {
 	         MSG_FATAL("------------pTvSetting.region=%d",wParam,0,0);
-		    IMMITv_SetRegion(pMe->pIMMITv, wParam-1110);  //设置区域
-		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1110);
+		    IMMITv_SetRegion(pMe->pIMMITv, wParam-1111);  //设置区域
+		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1111);
             MSG_FATAL("pMe->pTvSetting->region ::::%d",pMe->pTvSetting->region,0,0);
 			 (void)ICONFIG_SetItem(pMe->m_pConfig,
                                   CFGI_TV_SETCHANNL,
@@ -2472,11 +2458,11 @@ static boolean TV_LATINMenu_HandleEvent(CTVApp *pMe,
 		break;
         case EVT_COMMAND:          
 	        
-	         if(((wParam-1110) > TLG_REGION_START) && ((wParam-1110) < TLG_REGION_TOTAL))
+	         if(((wParam-1111) > TLG_REGION_START) && ((wParam-1111) < TLG_REGION_TOTAL))
 	         {
 	         MSG_FATAL("------------pTvSetting.region=%d",wParam,0,0);
-		    IMMITv_SetRegion(pMe->pIMMITv, wParam-1110);  //设置区域
-		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1110);
+		    IMMITv_SetRegion(pMe->pIMMITv, wParam-1111);  //设置区域
+		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1111);
             MSG_FATAL("pMe->pTvSetting->region ::::%d",pMe->pTvSetting->region,0,0);
 			 (void)ICONFIG_SetItem(pMe->m_pConfig,
                                   CFGI_TV_SETCHANNL,
@@ -2585,11 +2571,11 @@ static boolean TV_EUROPEMenu_HandleEvent(CTVApp *pMe,
 		break;
     	case EVT_COMMAND:          
         
-         if(((wParam-1110) > TLG_REGION_START) && ((wParam-1110) < TLG_REGION_TOTAL))
+         if(((wParam-1111) > TLG_REGION_START) && ((wParam-1111) < TLG_REGION_TOTAL))
          {
          MSG_FATAL("------------pTvSetting.region=%d",wParam,0,0);
-	    IMMITv_SetRegion(pMe->pIMMITv, wParam-1110);  //设置区域
-	    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1110);
+	    IMMITv_SetRegion(pMe->pIMMITv, wParam-1111);  //设置区域
+	    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1111);
         MSG_FATAL("pMe->pTvSetting->region ::::%d",pMe->pTvSetting->region,0,0);
 		 (void)ICONFIG_SetItem(pMe->m_pConfig,
                               CFGI_TV_SETCHANNL,
@@ -2698,11 +2684,11 @@ static boolean TV_AFRICAMenu_HandleEvent(CTVApp *pMe,
 		break;
     	case EVT_COMMAND:          
         
-         if(((wParam-1110) > TLG_REGION_START) && ((wParam-1110) < TLG_REGION_TOTAL))
+         if(((wParam-1111) > TLG_REGION_START) && ((wParam-1111) < TLG_REGION_TOTAL))
          {
 	         MSG_FATAL("------------pTvSetting.region=%d",wParam,0,0);
-		    IMMITv_SetRegion(pMe->pIMMITv, wParam-1110);  //设置区域
-		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1110);
+		    IMMITv_SetRegion(pMe->pIMMITv, wParam-1111);  //设置区域
+		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1111);
 	        MSG_FATAL("pMe->pTvSetting->region ::::%d",pMe->pTvSetting->region,0,0);
 			 (void)ICONFIG_SetItem(pMe->m_pConfig,
 	                              CFGI_TV_SETCHANNL,
@@ -2811,11 +2797,11 @@ static boolean TV_OCEANIAMenu_HandleEvent(CTVApp *pMe,
 		break;
     	case EVT_COMMAND:          
         
-         if(((wParam-1110) > TLG_REGION_START) && ((wParam-1110) < TLG_REGION_TOTAL))
+         if(((wParam-1111) > TLG_REGION_START) && ((wParam-1111) < TLG_REGION_TOTAL))
          {
 	         MSG_FATAL("------------pTvSetting.region=%d",wParam,0,0);
-		    IMMITv_SetRegion(pMe->pIMMITv, wParam-1110);  //设置区域
-		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1110);
+		    IMMITv_SetRegion(pMe->pIMMITv, wParam-1111);  //设置区域
+		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1111);
 	        MSG_FATAL("pMe->pTvSetting->region ::::%d",pMe->pTvSetting->region,0,0);
 			 (void)ICONFIG_SetItem(pMe->m_pConfig,
 	                              CFGI_TV_SETCHANNL,
@@ -3012,7 +2998,7 @@ static boolean TVApp_TVCFGHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wParam
 
                 case AVK_END:
                     ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
-                    ICAMERA_Stop(pMe->m_pTV);
+                  //  ICAMERA_Stop(pMe->m_pTV);
                     pMe->m_nTVState = TV_STOP;
                     return FALSE;
                     
@@ -3862,6 +3848,7 @@ static int TV_UpdateInit(CTVApp *pMe)
 	if(pbmp)
 	{
         IBITMAP_FillRect(pbmp, &pMe->m_rc, TRANS_COLOR, AEE_RO_COPY);
+        MSG_FATAL("pbmp address = %x", pbmp, 0, 0);
 		IBITMAP_Release(pbmp);  
         MSG_FATAL("TV_UpdateInit1-------x%d---------y%d",pMe->m_rc.dx,pMe->m_rc.dy,0);
         MSG_FATAL("TV_UpdateInit2-------x%d---------y%d",pMe->m_rc.x,pMe->m_rc.y,0);
@@ -3879,9 +3866,11 @@ static int TV_Update(CTVApp *pMe)
         IBITMAP_QueryInterface(pbmp, AEECLSID_DIB, (void**)&pdib);
 		MSG_FATAL("IMMITv_updateimg--------------------------start",0,0,0);
         IMMITv_updateimg(pMe->pIMMITv, (uint32)pdib->pBmp);
-		MSG_FATAL("IMMITv_updateimg--------------------------end",0,0,0);
+		
+        MSG_FATAL("pbmp address = %x", pbmp, 0, 0);
         IBITMAP_Release(pbmp);  
         IDIB_Release(pdib);
+        MSG_FATAL("IMMITv_updateimg--------------------------end",0,0,0);
         return SUCCESS;
     
 }
