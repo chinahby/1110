@@ -508,7 +508,8 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                     pMe->m_nMainMenuItemSel = IDS_ITEM_CAMERA;
 
                     pMe->m_bMemoryCardExist = CameraApp_FindMemoryCardExist(pMe);
-#if 0
+#ifdef FEATURE_VERSION_FLEXI203P
+
                     // 如果T卡不存在，defualt保存在手机里
                     if(!pMe->m_bMemoryCardExist)
                     {
@@ -525,6 +526,10 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                                               CFGI_CAMERA_SIZE,
                                               &pMe->m_nCameraSize,
                                               sizeof(pMe->m_nCameraSize)); 
+                    }
+                    else
+                    {
+                        pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
                     }
 #else
                     pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
@@ -782,7 +787,11 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     }
                     else
                     {
+                       #ifdef FEATURE_VERSION_FLEXI203P
+						pMe->m_wMsgID = IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD;
+                       #else
                         pMe->m_wMsgID = IDS_MSG_NOSDCARD;
+                       #endif
                     }
                     pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
                     ICAMERA_Stop(pMe->m_pCamera);
@@ -1184,20 +1193,6 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 {
     static IStatic *pStatic = NULL;       
     
-    if(NULL == pStatic)
-    {
-         AEERect rect = {0};
-         
-         if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
-                                                 AEECLSID_STATIC,
-                                                 (void **)&pStatic))  
-         {
-             return FALSE;
-         }
-         
-         ISTATIC_SetRect(pStatic, &rect);  
-    }
-
     switch (eCode)
     {
         case EVT_DIALOG_INIT: 
@@ -1231,7 +1226,19 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                                    EVT_USER_REDRAW,
                                    0,
                                    0);  
-   
+            if(NULL == pStatic)
+            {
+                 AEERect rect = {0};
+                 
+                 if(AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                                         AEECLSID_STATIC,
+                                                         (void **)&pStatic))  
+                 {
+                     return FALSE;
+                 }
+                 
+                 ISTATIC_SetRect(pStatic, &rect);  
+            }
             return TRUE;                                                                       
             
         case EVT_USER_REDRAW:
@@ -1263,6 +1270,9 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
                
                 switch(pMe->m_wMsgID)
                 {
+                  #ifdef FEATURE_VERSION_FLEXI203P
+					case IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD:
+                  #endif
                     case IDS_MSG_NOSDCARD:
                     case IDS_MSG_NOCAMERA:
                     case IDS_MSG_NOMEMORY:
@@ -1993,7 +2003,8 @@ static void CameraApp_InitCFGData(CCameraApp * pMe)
 #endif
         pMe->m_nCameraBanding = OEMNV_CAMERA_BANDING_50HZ;        
 
-		/*
+#ifdef FEATURE_VERSION_FLEXI203P
+
         if(CameraApp_FindMemoryCardExist(pMe))
         {
             pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
@@ -2006,14 +2017,14 @@ static void CameraApp_InitCFGData(CCameraApp * pMe)
             pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_PHONE;
             pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_DEFAULT;
         }
-        */
+#else
 
 		//手机内存小，所以固定存储位置是T卡
 		//Add By zzg 2010_07_25
 		pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
 	    pMe->m_nCameraSize = OEMNV_CAMERA_SIZE_DEFAULT;
 		//Add End
-        
+#endif        
         pMe->m_nSelfTimeItemSel = IDS_SELFTIME_OFF;
  
         (void)ICONFIG_SetItem(pMe->m_pConfig,
@@ -3441,7 +3452,7 @@ static int CameraApp_UpdateInit(CCameraApp *pMe)
 {
     if(pMe->m_nCameraState == CAM_PREVIEW)
     {
-        IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, TRANS_COLOR);
+        IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, TRANS_COLOR);//,AEE_RO_COPY
         //DrawRect(pMe->m_pDisplay, &pMe->m_rc, TRANS_COLOR,AEE_RO_COPY);
         return SUCCESS;
     }

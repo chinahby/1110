@@ -95,13 +95,16 @@
 		<Text>No Camera</Text>
 	</STRING>
 	<STRING Id="1066" Name="IDS_MSG_NOSDCARD">
-		<Text>Insert memory card</Text>
+		<Text>phone memory full</Text>
 	</STRING>
+	<STRING Id="1067" Name="IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD">
+		<Text>Phone Memory Full Please Insert SD Card</Text>
+	</STRING>	
 	<STRING Id="1068" Name="IDS_DONE">
 		<Text>Done</Text>
 	</STRING>
 	<STRING Id="1069" Name="IDS_MSG_NOMEMORY">
-		<Text>No enough memory</Text>
+		<Text>phone memory full</Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_MSG_WAITING">
 		<Text>Waiting</Text>
