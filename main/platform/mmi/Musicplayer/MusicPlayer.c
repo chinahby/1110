@@ -1622,7 +1622,7 @@ static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe)
 	
 	//Add By zzg 2010_08_17
 	uint16 count = 0;		//遍历T卡文件夹的数量
-	char  Folder[50][MUSIC_MAX_FILESNUM];		//最多允许50个T卡文件夹
+	char  Folder[50][MAX_STR_LEN];		//最多允许50个T卡文件夹
 	//Add End
     
     ASSERT(pMe != NULL); 
@@ -1804,8 +1804,8 @@ static void MP3_Build_DefaultPlaylist(CMusicPlayer *pMe)
     if (CMediaGallery_GetTflashStatus())		//有T 卡时
     {
        (void)IFILEMGR_EnumInit(pMe->m_pFileMgr, AEEFS_CARD0_DIR, TRUE); 	   
-		
-	     while (IFILEMGR_EnumNextEx(pMe->m_pFileMgr, &fi))
+		 count = 0;
+	     while ((IFILEMGR_EnumNextEx(pMe->m_pFileMgr, &fi)) &&(count<MUSIC_MAX_FILESNUM))
 	     {
 	          if (pMe->m_nPlaylistMusicNum >= MUSIC_MAX_FILESNUM)
 	          {

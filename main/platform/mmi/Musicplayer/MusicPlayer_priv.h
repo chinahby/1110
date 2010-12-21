@@ -104,7 +104,7 @@
 #define AAC_TYPE     "aac"
 #define WAV_TYPE     "wav"
 //定义的字符串数组最大长度
-#define MAX_STR_LEN            64
+#define MAX_STR_LEN            128
 
 
 //每个播放列表最多可以添加的文件数目
@@ -116,7 +116,7 @@
 //列表名称最大长度
 #define PLAYLISTNAME_MAX_LEN   MAX_STR_LEN  //因为可以最大输入16个中文字，所以转化为UTF8至少需要48个字符
 
-#define MP3_MAX_FILE_NAME      128
+#define MP3_MAX_FILE_NAME      256
 //音乐全名(包括路径)的最大长度
 #define MP3NAME_MAX_LEN   MP3_MAX_FILE_NAME+1
 
