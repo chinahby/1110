@@ -296,6 +296,7 @@ static int OEMTLGAtv_Stop(OEMINSTANCE h)
         return ret;
     }
     ret = OEMCamera_Stop(pMe->pCamera);
+    TLG1120_tv_power_down();
     OEMATV_PRINT("OEMTLGAtv_Stop  ret =%d",ret,0,0);
     return ret;
 }
