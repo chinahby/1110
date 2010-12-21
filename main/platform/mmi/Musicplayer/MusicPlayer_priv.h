@@ -435,25 +435,25 @@ if(!(x))         \
 #define ANI_NUM 5
 
 //进度条
-#define SCHEDULEBAR_X 9
-#define SCHEDULEBAR_Y (ADDVOLUMEPRESS_Y-10)
-#define SCHEDULEBAR_W 110
-#define SCHEDULEBAR_H 7
+#define SCHEDULEBAR_X 2
+#define SCHEDULEBAR_Y 50
+#define SCHEDULEBAR_W 123
+#define SCHEDULEBAR_H 3
 
 //进度条(简单播放)
-#define SIMSCHEDULEBAR_X 17
-#define SIMSCHEDULEBAR_Y 147
-#define SIMSCHEDULEBAR_W 94
-#define SIMSCHEDULEBAR_H 7
+#define SIMSCHEDULEBAR_X 2
+#define SIMSCHEDULEBAR_Y 97
+#define SIMSCHEDULEBAR_W 123
+#define SIMSCHEDULEBAR_H 3
 
 //播放按钮
-#define PLAY_X 56 //66
-#define PLAY_Y 95 //55
+#define PLAY_X 52 //66
+#define PLAY_Y 98 //55
 #define PLAY_W 26 //45
-#define PLAY_H 26 //44
+#define PLAY_H 28 //44
 
 //前一个曲目
-#define PREVIOUSPRESS_X 34 //37
+#define PREVIOUSPRESS_X 14 //37
 #define PREVIOUSPRESS_Y 98 //60
 #define PREVIOUSPRESS_W 19 //31
 #define PREVIOUSPRESS_H 20 //32
@@ -466,7 +466,7 @@ if(!(x))         \
 
 //降低音量
 #define DECREASEVOLUMEPRESS_X 4
-#define DECREASEVOLUMEPRESS_Y 111
+#define DECREASEVOLUMEPRESS_Y 40
 #define DECREASEVOLUMEPRESS_W 21
 #define DECREASEVOLUMEPRESS_H 17
 
@@ -477,22 +477,22 @@ if(!(x))         \
 #define ADDVOLUMEPRESS_H 18
 
 //音量
-#define VOLUME_X 6
-#define VOLUME_Y 92
-#define VOLUME_W 12
-#define VOLUME_H 18
+#define VOLUME_X 0
+#define VOLUME_Y 58
+#define VOLUME_W 16
+#define VOLUME_H 35
 
 //当前序号/总数量
 #define LISTINDEX_X (SCREEN_HEIGHT/2 - TIME_WIDTH)
-#define LISTINDEX_Y (SCHEDULEBAR_Y + SCHEDULEBAR_H + 5)
+#define LISTINDEX_Y (SCHEDULEBAR_Y + SCHEDULEBAR_H )
 
 //当前歌曲的总时间
-#define TOTALTIME_X (SCREEN_WIDTH - PLAYINGTICK_X - TIME_WIDTH)
-#define TOTALTIME_Y (SCREEN_HEIGHT/2 - 2*TIME_HEIGHT) 
+#define TOTALTIME_X (SCREEN_WIDTH - VOLUME_W - TIME_WIDTH-5)
+#define TOTALTIME_Y ((SCREEN_HEIGHT/2)-5) 
 
 //当前播放时间
-#define PLAYINGTICK_X 9
-#define PLAYINGTICK_Y TOTALTIME_Y 
+#define PLAYINGTICK_X 25
+#define PLAYINGTICK_Y ((SCREEN_HEIGHT/2)-5) 
 
 //播放时间和总时间的宽度高度
 #define TIME_WIDTH	35

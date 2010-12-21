@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="musicplayerimage128x160_common" VERSION="1">
+<BREWRes Name="musicplayerimage220x176_common" VERSION="1">
 <Objects MimeType="image/png">
 	<Object Id="5001" Name="IDI_MUSICPLAYER">
 		<File>..\..\Appscommon\images\128x160\common\MusicPlayer\musicPlayernew.png</File>
