@@ -2125,14 +2125,14 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
   /* Internal CODEC - no pad values    */
 #ifdef CUST_EDITION
   /*  rx				dtmf			pad 	   */
-	{ VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
-	{			 100  , 		  -1400 ,  0 },
-	{			 300  , 		  -1200 ,  0 },
-	{			 600  , 		  -1000 ,  0 },
-	{			 800  , 		  -800 ,  0 },
-	{			1000  , 		  -600 ,  0 },
-	{			1300  , 		  -400 ,  0 },
-	{			1500  , 		  -200 ,  0 }
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {		      -600  , 		    -1400 ,  0 },
+  {		      -400  , 		    -1200 ,  0 },
+  {		      -200  , 		    -1000 ,  0 },
+  {			     0  , 		     -800 ,  0 },
+  {		       200  , 		     -600 ,  0 },
+  {		       400  , 		     -400 ,  0 },
+  {		       600  , 		     -200 ,  0 }
 #else
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
