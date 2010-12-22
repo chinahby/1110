@@ -12,8 +12,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef CUST_EDITION
 
 #define FEATURE_VERSION_HITZ181
-#define FEATURE_OLD_ROTLCD
-
 //Add By zzg 2010_11_23
 #define FEATURE_UNLOCK_KEY_SPACE				//³¤°´SPACE¼ü½âËø	
 
