@@ -4767,7 +4767,7 @@ void CMusicPlayer_PlayingMusiclistSortBy(CMusicPlayer * pMe)
 static void MP3_RefreshVolBar(CMusicPlayer *pMe)
 {
     uint16 ResID;
-#if defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_160X128)
+#if defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_128X160)
 	switch ((int)pMe->m_nCurrentVolume)
         {
             case VOLUME_OFF*AEE_MAX_VOLUME/5:
@@ -4928,7 +4928,7 @@ static void MP3_RefreshPlayingTick(CMusicPlayer *pMe)
                            IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
    
 }
-#if defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_160X128)
+#if defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_128X160)
 /*画正在播放的文件名*/
 static void MP3_DrawMusicName(CMusicPlayer *pMe ,int index)
 {
@@ -5226,7 +5226,7 @@ static void MP3_RefreshscheduleBar(CMusicPlayer *pMe)
 			IIMAGE_Release( image);
 			image = NULL;
 		}
-#if defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_160X128)
+#if defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_128X160)
 #else
 		MP3_DrawImage(pMe,IDI_GLIDE, (SCHEDULEBAR_W*pMe->m_nCurrentTime/pMe->m_nTotalTime)+SCHEDULEBAR_X, SCHEDULEBAR_Y);
 #endif		
