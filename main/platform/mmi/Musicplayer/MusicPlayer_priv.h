@@ -446,6 +446,12 @@ if(!(x))         \
 #define SIMSCHEDULEBAR_W 123
 #define SIMSCHEDULEBAR_H 3
 
+//当前播放名称（简单播放）
+#define SIMMUSICNAME_X 5
+#define SIMMUSICNAME_Y 15
+#define SIMMUSICNAME_W 150
+#define SIMMUSICNAME_H 20
+
 //播放按钮
 #define PLAY_X 52 //66
 #define PLAY_Y 98 //55
@@ -481,6 +487,11 @@ if(!(x))         \
 #define VOLUME_Y 58
 #define VOLUME_W 16
 #define VOLUME_H 35
+
+#define MUSICNAME_X 5
+#define MUSICNAME_Y 30
+#define MUSICNAME_W 150
+#define MUSICNAME_H 30
 
 //当前序号/总数量
 #define LISTINDEX_X (SCREEN_HEIGHT/2 - TIME_WIDTH)
