@@ -18,7 +18,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_SNOOZETIME						//闹钟隔时再响的时间
 #define FEATURE_TORCH_KEY_SPACE					//手电筒功能按键
 #define FEATURE_MENU_FOCUS_INDEX				//MENU默认FOCUS_INDEX
-#define FEATURE_DEFAULT_RINGALERT_SOUND_LEVEL	//铃声的默认音量
 #define FEATURE_DEFAULT_KEYTONE_SOUND_LEVEL		//按键音的默认音量
 #define FEATURE_ADS_SMART_ACCOUNT				//SMART用户名、密码
 #define FEATURE_SMART_INTEL_NUM					//SMART International Number
