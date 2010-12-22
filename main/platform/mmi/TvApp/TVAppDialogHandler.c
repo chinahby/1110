@@ -490,7 +490,16 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
             pMe->m_bAUTOSCAN=FALSE;
             snd_set_device(NULL, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
             return TRUE;
-
+        case EVT_HEADSET:
+             if(HS_HEADSET_ON())
+               {
+                 snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+               }
+               else
+               {
+                 snd_set_device(SND_DEVICE_SPEAKER_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+               }
+             return TRUE;
         case EVT_USER_REDRAW: 
 
 			{
@@ -541,7 +550,15 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                
 			 TV_Update(pMe);
 			} 
-            snd_set_device(SND_DEVICE_SPEAKER_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+            if(HS_HEADSET_ON())
+            {
+                snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+            }
+            else
+            {
+                snd_set_device(SND_DEVICE_SPEAKER_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+            }
+            
             
             return TRUE;
 
