@@ -3450,9 +3450,12 @@ static void CameraApp_UpdateFrame(CCameraApp *pMe)
 #ifdef FEATURE_DSP
 static int CameraApp_UpdateInit(CCameraApp *pMe)
 {
+	IBitmap* pbmp = NULL;
+    IDISPLAY_GetDeviceBitmap(pMe->m_pDisplay, &pbmp);
     if(pMe->m_nCameraState == CAM_PREVIEW)
     {
-        IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, TRANS_COLOR);//,AEE_RO_COPY
+        IBITMAP_FillRect(pbmp, &pMe->m_rc, TRANS_COLOR,AEE_RO_COPY);//,
+        IBITMAP_Release(pbmp);  
         //DrawRect(pMe->m_pDisplay, &pMe->m_rc, TRANS_COLOR,AEE_RO_COPY);
         return SUCCESS;
     }

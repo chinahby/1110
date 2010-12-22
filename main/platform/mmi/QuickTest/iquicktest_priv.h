@@ -60,6 +60,7 @@
 //#include "AEECallList.h"
 #include "AEECallHistory.h"
 #include "appscommonimages.brh"
+#include "OEMNV.h"
 
 /*==============================================================================
                                  类型定义

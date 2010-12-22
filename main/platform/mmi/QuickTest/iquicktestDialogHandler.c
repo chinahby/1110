@@ -3003,6 +3003,9 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
         case EVT_USER_REDRAW:
             {
                 AECHAR   string[MAX_STRING_LENGTH+1];
+                #ifdef FEATURE_DUAL_UIMCARD
+                nv_item_type nvi;
+                #endif
                 (void)ISHELL_LoadResString(pMe->m_pShell,
                                            AEE_QUICKTEST_RES_FILE,
                                            IDS_RESTORE_FACTORY,
@@ -3026,7 +3029,11 @@ static boolean  QuickTest_RestoreFactory_Handler(CQuickTest *pMe,
 				ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
 #endif
 //Add End   
-                OEM_RestoreFactorySetting();                                    
+                OEM_RestoreFactorySetting();     
+                #ifdef FEATURE_DUAL_UIMCARD
+   				nvi.sim_select = 0;
+   				(void) OEMNV_Put( NV_SIM_SELECT_I, &nvi);
+				#endif
                 value = 0;
                 if (AEE_SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CALLHISTORY, (void **)&pCallHistory))
                 //if (AEE_SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CALLLIST, (void **)&m_pCallList))
