@@ -6,8 +6,9 @@
 
 static void disp_ic_init(void)
 {
+    //--------------------------------End ST7735R Reset Sequence --------------------------------------//
     LCD_WRITE_CMD(0x11); //Sleep out
-    LCD_DELAY(120); //Delay 120ms
+    LCD_DELAY (120); //Delay 120ms
     //------------------------------------ST7735R Frame Rate-----------------------------------------//
     LCD_WRITE_CMD(0xB1);
     LCD_WRITE_DATA(0x01);  //01
@@ -27,13 +28,10 @@ static void disp_ic_init(void)
     //------------------------------------End ST7735R Frame Rate-----------------------------------------//
     LCD_WRITE_CMD(0xB4); //Column inversion
     LCD_WRITE_DATA(0x03);  //0x07
-
-
-
     LCD_WRITE_CMD(0xB6);   //
     LCD_WRITE_DATA(0xB4); //
     LCD_WRITE_DATA(0xF0); //
-
+    
     //------------------------------------ST7735R Power Sequence-----------------------------------------//
     LCD_WRITE_CMD(0xC0);
     LCD_WRITE_DATA(0xA2);
@@ -51,11 +49,9 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0x8A);
     LCD_WRITE_DATA(0xEE);
     //---------------------------------End ST7735R Power Sequence-------------------------------------//
-
-
     LCD_WRITE_CMD(0xC5); //VCOM
     LCD_WRITE_DATA(0x0A);   //0x0E
-
+    
     LCD_WRITE_CMD(0x36); //MX, MY, RGB mode
     LCD_WRITE_DATA(0xC8);
     //------------------------------------ST7735R Gamma Sequence-----------------------------------------//
@@ -76,7 +72,7 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0x01);
     LCD_WRITE_DATA(0x03);
     LCD_WRITE_DATA(0x10);
-
+    
     LCD_WRITE_CMD(0xe1);
     LCD_WRITE_DATA(0x03);
     LCD_WRITE_DATA(0x1d);
@@ -95,27 +91,27 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0x02);
     LCD_WRITE_DATA(0x10);
     //------------------------------------End ST7735R Gamma Sequence-----------------------------------------//
-
+    
     LCD_WRITE_CMD(0x2a);
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x7f);
-
+    
     LCD_WRITE_CMD(0x2b);
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x9f);
-
+    
     LCD_WRITE_CMD(0xF0); //Enable test command
     LCD_WRITE_DATA(0x01);
     LCD_WRITE_CMD(0xF6); //Disable ram power save mode
     LCD_WRITE_DATA(0x00);
-
+    
     LCD_WRITE_CMD(0x3A); //65k mode
     LCD_WRITE_DATA(0x05);
-
+    
     LCD_WRITE_CMD(0x29); //Display on
 }
 
