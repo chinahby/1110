@@ -3459,6 +3459,8 @@ static void HeadsetOff(CCoreApp *pMe)
     uisnd_set_device_status(SND_DEVICE_HEADSET, UISND_DEV_UNATTACHED);	
 #ifdef FEATURE_FM_OEM
     uisnd_set_device_status(SND_DEVICE_HEADSET_FM, UISND_DEV_UNATTACHED);
+    uisnd_set_device_status(SND_DEVICE_SPEAKER_FM, UISND_DEV_UNATTACHED);
+
 #endif
     uisnd_set_device_auto(NULL,NULL);
 

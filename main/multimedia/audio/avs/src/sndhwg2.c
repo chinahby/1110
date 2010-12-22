@@ -5787,6 +5787,11 @@ void sndhw_init( void )
 #ifdef FEATURE_SPEAKER_PHONE
   (void) voc_register_codec_func( VOC_CODEC_SPEAKER, sndhw_pmic_speaker_ctl);
 #endif /* FEATURE_SPEAKER_PHONE */
+#ifdef CUST_EDITION  
+#ifdef FEATURE_FM_OEM
+(void) voc_register_codec_func( VOC_CODEC_SPEAKER_FM, sndhw_pmic_speaker_ctl);
+#endif
+#endif
 #if defined(FEATURE_AUDIO_CAL_MED_HIGH_FFA)
 #error code not present
 #else

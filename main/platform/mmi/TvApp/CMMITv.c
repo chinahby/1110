@@ -211,7 +211,7 @@ uint32 CMMITv_IBase_Release(IMMITv* pIMMITv)
     pThis->nRefs--;
     if(pThis->nRefs == 0)
     {
-        //CMMITv_Destructor(pThis);
+        CMMITv_Destructor(pThis);
 
     }
 
@@ -602,10 +602,10 @@ static void CMMITv_Destructor(CMMITv* pThis)
     {
 		ITV_RegisterNotify(pThis->pITv, NULL, pThis);
     }
-	//IBASE_RELEASE_IPTR(pThis->pITv);
+	IBASE_RELEASE_IPTR(pThis->pITv);
 
-	//IBASE_RELEASE_IPTR(pThis->pIShowFrame);
-	//MMIFree((void**)&pThis->pCurFilepath);
+	IBASE_RELEASE_IPTR(pThis->pIShowFrame);
+	FREE((void**)&pThis->pCurFilepath);
 #ifndef AEE_SIMULATOR
 	//IBASE_RELEASE_IPTR(pThis->pIBitmapConvert);
 #endif

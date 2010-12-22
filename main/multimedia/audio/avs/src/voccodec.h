@@ -115,6 +115,7 @@ typedef enum {
 #endif /* FEATURE_SPEAKER_PHONE */
 #ifdef FEATURE_FM_OEM
 	  VOC_CODEC_HEADSET_FM,
+	  VOC_CODEC_SPEAKER_FM,
 #endif
   VOC_CODEC_MAX,
   VOC_CODEC_NONE,                 /* Place Holder                     */

@@ -469,6 +469,7 @@ sint15 voc_cal_mic_gain_adjust[VOC_CODEC_MAX] =
 #endif /* FEATURE_SPEAKER_PHONE */
 #ifdef FEATURE_FM_OEM
   /* VOC_CODEC_HEADSET_FM */		,0
+  /* VOC_CODEC_SPEAKER_FM */		,0
 #endif
 };
 #endif /* FEATURE_VOC_MIC_GAIN_ADJUST */
@@ -559,6 +560,8 @@ voc_codec_class_type voc_cal_codec_class[VOC_CODEC_MAX] =
 #endif /* FEATURE_SPEAKER_PHONE */
 #ifdef FEATURE_FM_OEM
 /*  VOC_CODEC_HEADSET    */  ,VOC_CODEC_CLASS_INTERNAL
+/*  VOC_CODEC_SPEAKER    */  ,VOC_CODEC_CLASS_INTERNAL
+
 #endif
 };
 
@@ -630,6 +633,8 @@ voc_codec_vr_type voc_cal_codec_vr_types[VOC_CODEC_MAX] =
 #endif /* FEATURE_SPEAKER_PHONE */
 #ifdef FEATURE_FM_OEM
 /*  VOC_CODEC_HEADSET    */  ,VOC_CODEC_VR_TYPE_HEADSET
+/*  VOC_CODEC_SPEAKER    */  ,VOC_CODEC_VR_TYPE_CARKIT
+
 #endif
 };
 #endif /* FEATURE_PHONE_VR */
@@ -3422,6 +3427,10 @@ const voc_cal_audio_path_config_type
 							&voc_adie_codec_headset_fm_config,
 							&voc_cal_pmic_config_legacy_mic) }
     #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+
+      ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+                        &voc_adie_codec_speaker_fm_config,
+                        &voc_cal_pmic_config_legacy_mic) }
 #endif
     }
 
@@ -3646,6 +3655,9 @@ const voc_cal_audio_path_config_type
                         &voc_adie_codec_headset_fm_config,
                         &voc_cal_pmic_config_legacy_mic) }
     #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+   ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+                        &voc_adie_codec_speaker_fm_config,
+                        &voc_cal_pmic_config_legacy_mic) }
 #endif
   }
 #endif /* FEATURE_AVS_INCALL_MIXER_ADEC_PB */
@@ -3867,6 +3879,9 @@ const voc_cal_audio_path_config_type
 							&voc_adie_codec_headset_fm_config,
 							&voc_cal_pmic_config_legacy_mic) }
     #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+       ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+                            &voc_adie_codec_speaker_fm_config,
+                            &voc_cal_pmic_config_legacy_mic) }
 #endif
 
   }
@@ -4122,6 +4137,9 @@ const voc_cal_audio_path_config_type
 							&voc_adie_codec_headset_fm_config,
 							&voc_cal_pmic_config_legacy_mic) }
     #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+       ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_int0_mixer,
+                        &voc_adie_codec_speaker_fm_config,
+                        &voc_cal_pmic_config_legacy_mic) }
 #endif
 
   }
@@ -4344,6 +4362,10 @@ const voc_cal_audio_path_config_type
                         &voc_adie_codec_headset_fm_config,
                         &voc_cal_pmic_config_legacy_mic) }
     #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+
+    ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_speaker_wb,
+                        &voc_adie_codec_speaker_fm_config,
+                        &voc_cal_pmic_config_legacy_mic) }
 #endif
   }
 #endif /* FEATURE_AVS_I2SSBC */
@@ -4569,6 +4591,9 @@ const voc_cal_audio_path_config_type
 							&voc_adie_codec_headset_fm_config,
 							&voc_cal_pmic_config_legacy_mic) }
     #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
+       ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_speaker_wb,
+                            &voc_adie_codec_speaker_fm_config,
+                            &voc_cal_pmic_config_legacy_mic) }
 #endif
 
   }
@@ -18125,6 +18150,7 @@ const voc_pcm_path_cal_type
 #endif /* FEATURE_SPEAKER_PHONE */
 #ifdef FEATURE_FM_OEM  
 	  ,&voc_pcm_on_chip_1_cal
+	  ,&voc_pcm_on_chip_speaker_cal
 #endif
 
   }
@@ -18192,6 +18218,7 @@ const voc_pcm_path_cal_type
 #endif /* FEATURE_SPEAKER_PHONE */
 #ifdef FEATURE_FM_OEM  
 	 /* VOC_CODEC_HEADSET_AND_SPEAKER */,&voc_pcm_on_chip_1_cal
+	 /* VOC_CODEC_HEADSET_AND_SPEAKER */,&voc_pcm_on_chip_speaker_cal
 #endif
 
   }

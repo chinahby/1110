@@ -468,6 +468,7 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                 pMe->currentlyChannel=pMe->pTvSetting->CurrentChannel;//(int)WSTRTOFLOAT(pMe->pTvSetting->Bookmark[pMe->currentlyChannel].channel);
                 MSG_FATAL("pMe->currentlyChannel=%d----------",pMe->currentlyChannel,0,0);
                 //TLGAPP_SetChannel(pMe->currentlyChannel);
+                IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_SOUND, pMe->pTvSetting->SoundStep);
                 IMMITv_SetTvChannel(pMe->pIMMITv, pMe->currentlyChannel,FALSE); 
 
             }
@@ -487,6 +488,7 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
             strlight=FALSE;
             pMe->m_bAUTOSTOP=FALSE;
             pMe->m_bAUTOSCAN=FALSE;
+            snd_set_device(NULL, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
             return TRUE;
 
         case EVT_USER_REDRAW: 
@@ -539,7 +541,7 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                
 			 TV_Update(pMe);
 			} 
-            snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+            snd_set_device(SND_DEVICE_SPEAKER_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
             
             return TRUE;
 

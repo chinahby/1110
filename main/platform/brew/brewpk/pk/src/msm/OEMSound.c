@@ -239,6 +239,8 @@ void OEMSound_Init(void)
    gsSoundCaps.sndDevice[(int)AEE_SOUND_DEVICE_STEREO_HEADSET] = (uint16) SND_DEVICE_STEREO_HEADSET;
 #ifdef FEATURE_FM_OEM
    gsSoundCaps.sndDevice[(int)AEE_SOUND_DEVICE_HEADSET_FM] = (uint16) SND_DEVICE_HEADSET_FM;
+   gsSoundCaps.sndDevice[(int)AEE_SOUND_DEVICE_SPEAKER_FM] = (uint16) SND_DEVICE_SPEAKER_FM;
+
 #endif
 #ifdef FEATURE_USB_ISOC_AUDIO
    gsSoundCaps.sndDevice[(int)AEE_SOUND_DEVICE_USB] = (uint16) SND_DEVICE_USB;
@@ -1892,6 +1894,8 @@ static AEESoundDevice OEMSound_GetAEESndDevice(snd_device_type  e)
 #ifdef FEATURE_FM_OEM
    else if (e == (uint16) SND_DEVICE_HEADSET_FM)
       return AEE_SOUND_DEVICE_HEADSET_FM;
+   else if (e == (uint16) SND_DEVICE_SPEAKER_FM)
+      return AEE_SOUND_DEVICE_SPEAKER_FM;
 #endif
    else
       return AEE_SOUND_DEVICE_UNKNOWN;

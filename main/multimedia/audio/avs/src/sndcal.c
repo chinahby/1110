@@ -1340,6 +1340,25 @@ VOL_MEMORY  snd_cal_control_type snd_cal_headset_fm_midi_control = {
 };
 #endif
 
+VOL_MEMORY snd_gen_level_voc_type snd_cal_speaker_fm__midi_vol[] ={0};
+
+#if defined(FEATURE_AUDIO_FORMAT) || defined(FEATURE_MIDI_OUT)
+VOL_MEMORY snd_gen_voc_cal_type snd_cal_speaker_fm_midi_gains = {
+  SND_GEN_VOC,
+  5,
+  1,
+  VOC_CODEC_SPEAKER_FM,
+  100,
+  0xff,
+  snd_cal_speaker_fm__midi_vol
+};
+VOL_MEMORY snd_cal_control_type snd_cal_speaker_fm_midi_control = {
+  SND_DEVICE_SPEAKER_FM,
+  SND_GEN_VOC,
+  (snd_gen_cal_type *) &snd_cal_speaker_fm_midi_gains
+};
+#endif
+
 #endif
 
 /***************************************************************************
@@ -4453,6 +4472,20 @@ const snd_cal_control_type *snd_cal_control_data[SND_DEVICE_MAX]
 #endif
   &snd_cal_aux_control,
   &snd_cal_aux_line_in_control
+
+    ,&snd_cal_speaker_fm_midi_control,
+  &snd_cal_aux_line_in_control,
+  &snd_cal_aux_line_in_control,
+  &snd_cal_aux_line_in_control,
+#ifdef FEATURE_CLICK
+#error code not present
+#endif
+#if defined(FEATURE_AUDIO_FORMAT) || defined(FEATURE_MIDI_OUT)
+  &snd_cal_aux_line_in_control,
+#endif
+  &snd_cal_aux_control,
+  &snd_cal_aux_line_in_control
+
 #endif
   /* Device - Surf Handset */
   , &snd_cal_surf_handset_voice_control,
@@ -4842,6 +4875,20 @@ const snd_cal_control_type *snd_cal_control_data_wb[SND_DEVICE_MAX]
 #endif
 	&snd_cal_aux_control,
 	&snd_cal_aux_line_in_control
+
+  ,&snd_cal_speaker_fm_midi_control,
+  &snd_cal_aux_line_in_control,
+  &snd_cal_aux_line_in_control,
+  &snd_cal_aux_line_in_control,
+#ifdef FEATURE_CLICK
+#error code not present
+#endif
+#if defined(FEATURE_AUDIO_FORMAT) || defined(FEATURE_MIDI_OUT)
+  &snd_cal_aux_line_in_control,
+#endif
+  &snd_cal_aux_control,
+  &snd_cal_aux_line_in_control
+
 #endif
 
   /* Device - Surf Handset */
