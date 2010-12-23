@@ -44,7 +44,7 @@
 /*Macro for add an item into no icon menuctl*/
 #define TVMENU_ADDITEM(pMenu, ITEMID)            \
          IMENUCTL_AddItem((pMenu), (AEE_APPSTVAPP_RES_FILE), (ITEMID), (ITEMID), NULL, 0)
-         
+#define TV_FIRST_REGION  IDS_USA         
 
 #define MMI_SUCCESS(result) (result == SUCCESS? TRUE:FALSE)
 #define MMI_FAILURE(result) (result == SUCCESS? FALSE:TRUE)
@@ -2364,11 +2364,11 @@ static boolean TV_ASIAMenu_HandleEvent(CTVApp *pMe,
 		break;
     	case EVT_COMMAND:          
 	        
-	         if(((wParam-1111) > TLG_REGION_START) && ((wParam-1111) < TLG_REGION_TOTAL))
+	         if(((wParam-TV_FIRST_REGION) > TLG_REGION_START) && ((wParam-TV_FIRST_REGION) < TLG_REGION_TOTAL))
 	         {
 	         MSG_FATAL("------------pTvSetting.region=%d",wParam,0,0);
-		    IMMITv_SetRegion(pMe->pIMMITv, wParam-1111);  //设置区域
-		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1111);
+		    IMMITv_SetRegion(pMe->pIMMITv, wParam-TV_FIRST_REGION);  //设置区域
+		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-TV_FIRST_REGION);
             MSG_FATAL("pMe->pTvSetting->region ::::%d",pMe->pTvSetting->region,0,0);
 			 (void)ICONFIG_SetItem(pMe->m_pConfig,
                                   CFGI_TV_SETCHANNL,
@@ -2477,11 +2477,11 @@ static boolean TV_LATINMenu_HandleEvent(CTVApp *pMe,
 		break;
         case EVT_COMMAND:          
 	        
-	         if(((wParam-1111) > TLG_REGION_START) && ((wParam-1111) < TLG_REGION_TOTAL))
+	         if(((wParam-TV_FIRST_REGION) > TLG_REGION_START) && ((wParam-TV_FIRST_REGION) < TLG_REGION_TOTAL))
 	         {
 	         MSG_FATAL("------------pTvSetting.region=%d",wParam,0,0);
-		    IMMITv_SetRegion(pMe->pIMMITv, wParam-1111);  //设置区域
-		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1111);
+		    IMMITv_SetRegion(pMe->pIMMITv, wParam-TV_FIRST_REGION);  //设置区域
+		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-TV_FIRST_REGION);
             MSG_FATAL("pMe->pTvSetting->region ::::%d",pMe->pTvSetting->region,0,0);
 			 (void)ICONFIG_SetItem(pMe->m_pConfig,
                                   CFGI_TV_SETCHANNL,
@@ -2590,11 +2590,11 @@ static boolean TV_EUROPEMenu_HandleEvent(CTVApp *pMe,
 		break;
     	case EVT_COMMAND:          
         
-         if(((wParam-1111) > TLG_REGION_START) && ((wParam-1111) < TLG_REGION_TOTAL))
+         if(((wParam-TV_FIRST_REGION) > TLG_REGION_START) && ((wParam-TV_FIRST_REGION) < TLG_REGION_TOTAL))
          {
          MSG_FATAL("------------pTvSetting.region=%d",wParam,0,0);
-	    IMMITv_SetRegion(pMe->pIMMITv, wParam-1111);  //设置区域
-	    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1111);
+	    IMMITv_SetRegion(pMe->pIMMITv, wParam-TV_FIRST_REGION);  //设置区域
+	    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-TV_FIRST_REGION);
         MSG_FATAL("pMe->pTvSetting->region ::::%d",pMe->pTvSetting->region,0,0);
 		 (void)ICONFIG_SetItem(pMe->m_pConfig,
                               CFGI_TV_SETCHANNL,
@@ -2703,11 +2703,11 @@ static boolean TV_AFRICAMenu_HandleEvent(CTVApp *pMe,
 		break;
     	case EVT_COMMAND:          
         
-         if(((wParam-1111) > TLG_REGION_START) && ((wParam-1111) < TLG_REGION_TOTAL))
+         if(((wParam-TV_FIRST_REGION) > TLG_REGION_START) && ((wParam-TV_FIRST_REGION) < TLG_REGION_TOTAL))
          {
 	         MSG_FATAL("------------pTvSetting.region=%d",wParam,0,0);
-		    IMMITv_SetRegion(pMe->pIMMITv, wParam-1111);  //设置区域
-		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1111);
+		    IMMITv_SetRegion(pMe->pIMMITv, wParam-TV_FIRST_REGION);  //设置区域
+		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-TV_FIRST_REGION);
 	        MSG_FATAL("pMe->pTvSetting->region ::::%d",pMe->pTvSetting->region,0,0);
 			 (void)ICONFIG_SetItem(pMe->m_pConfig,
 	                              CFGI_TV_SETCHANNL,
@@ -2816,11 +2816,11 @@ static boolean TV_OCEANIAMenu_HandleEvent(CTVApp *pMe,
 		break;
     	case EVT_COMMAND:          
         
-         if(((wParam-1111) > TLG_REGION_START) && ((wParam-1111) < TLG_REGION_TOTAL))
+         if(((wParam-TV_FIRST_REGION) > TLG_REGION_START) && ((wParam-TV_FIRST_REGION) < TLG_REGION_TOTAL))
          {
 	         MSG_FATAL("------------pTvSetting.region=%d",wParam,0,0);
-		    IMMITv_SetRegion(pMe->pIMMITv, wParam-1111);  //设置区域
-		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-1111);
+		    IMMITv_SetRegion(pMe->pIMMITv, wParam-TV_FIRST_REGION);  //设置区域
+		    pMe->pTvSetting->region = (TLG_REGION_CODE)(wParam-TV_FIRST_REGION);
 	        MSG_FATAL("pMe->pTvSetting->region ::::%d",pMe->pTvSetting->region,0,0);
 			 (void)ICONFIG_SetItem(pMe->m_pConfig,
 	                              CFGI_TV_SETCHANNL,
