@@ -55,7 +55,7 @@ when         who            what, where, why
 #define ARROW_WIDTH             (8)
 #define ARROW_HEIGHT            (8)
 #elif defined(FEATURE_DISP_220X176)
-#define  SPACE_BETWEEN_MENU     (1)
+#define  SPACE_BETWEEN_MENU     (0) //(1)
 
 #define ARROW_WIDTH             (11)
 #define ARROW_HEIGHT            (21)
@@ -885,6 +885,7 @@ static void StopWatch_Redraw(CStopWatch *pme)
     
     // draw line
     pImage = ISHELL_LoadResImage(pme->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_UNDERLINE);
+	
     if(pImage)
     {
 #if 0    
