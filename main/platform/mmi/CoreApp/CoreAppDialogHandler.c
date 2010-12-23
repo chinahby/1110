@@ -2917,6 +2917,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
 	#elif defined (FEATURE_VERSION_M8)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+	#elif defined (FEATURE_VERSION_M8021)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 	#elif defined (FEATURE_VERSION_M8P)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
 	#elif defined (FEATURE_VERSION_HITZ181)
@@ -2955,6 +2957,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #elif defined (FEATURE_VERSION_SMART)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
 #elif defined (FEATURE_VERSION_M8)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
+#elif defined (FEATURE_VERSION_M8021)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
 #elif defined (FEATURE_VERSION_M8P)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
@@ -3007,6 +3011,13 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif /*FEATURE_SMARTFREN_STATIC_BREW_APP*/
+#elif defined (FEATURE_VERSION_M8021)
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+#else
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_M8)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
@@ -3033,7 +3044,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					{
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 					}
-			#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P)
+			#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined (FEATURE_VERSION_M8021)
 				case AVK_SOFT2:
 			#else
                 case AVK_CLR:
@@ -3047,7 +3058,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else                   
 						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);		
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/				
-#elif defined (FEATURE_VERSION_M8)
+#elif defined (FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8021)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP                      
 						OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
 						return CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_SFM);	
@@ -4755,6 +4766,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #ifdef FEATURE_VERSION_SMART					//Add By zzg 2010_07_20
 		eBBarType = BTBAR_FACEBOOK_CHAT;
 #elif defined FEATURE_VERSION_M8
+	    eBBarType = BTBAR_FACEBOOK_CHAT;
+#elif defined FEATURE_VERSION_M8021
 		eBBarType = BTBAR_FACEBOOK_CHAT;
 #elif defined FEATURE_VERSION_M8P
 		eBBarType = BTBAR_FACEBOOK_CHAT;

@@ -972,7 +972,7 @@ extern int VkeyCtl_New(IShell * pIShell, AEECLSID cls, void ** ppobj);
 #endif
 extern int GameMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 
-#if defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P)
+#if defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined (FEATURE_VERSION_M8021)
 extern int FrenDuoAppMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #endif
 #ifdef FEATURE_APP_MULTIMEDIA
@@ -1029,7 +1029,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 	{AEEFS_MIF_DIR"game.mif",GameMod_Load},
 #endif
 	
-#if defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P)
+#if defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined (FEATURE_VERSION_M8021)
 	{AEEFS_MIF_DIR"frenduo.mif",FrenDuoAppMod_Load},
 #endif
 

@@ -49,6 +49,8 @@ boolean start_security_setting_by_user;
 #define FEATURE_SET_SCENEMODE
 #elif defined FEATURE_VERSION_M8
 #define FEATURE_SET_SCENEMODE
+#elif defined FEATURE_VERSION_M8021
+#define FEATURE_SET_SCENEMODE
 #elif defined FEATURE_VERSION_M8P
 #define FEATURE_SET_SCENEMODE
 #else
@@ -759,7 +761,7 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MINUTE_ALERT, IDS_MINUTE_ALERT, NULL, 0);
 
 			//Add By zzg 2010_09_16 : smart\m8  del the auto retry..
-#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P)
+#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined(FEATURE_VERSION_M8021)
 #else
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTO_REDIAL, IDS_AUTO_REDIAL, NULL, 0);
 #endif

@@ -534,19 +534,19 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_GALLERY;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_APPLICATION;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;
-#elif defined (FEATURE_VERSION_M8)
-    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_BLIVE;
-    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_SMARTFRENACCESS;
-    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_MUSICPLAYER;
-    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_FMRADIO;
-    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_FRENDUO;
-    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_CONTACT;
-    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SMS;
-    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
-    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_RECENTCALLS;
-    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_GALLERY;
-    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_APPLICATION;
-    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;
+#elif defined (FEATURE_VERSION_M8) 
+	pMe->m_IconTitle[0] 	= IDS_MAIN_MENU_BLIVE;
+   	pMe->m_IconTitle[1]	   = IDS_MAIN_MENU_SMARTFRENACCESS;
+   	pMe->m_IconTitle[2]	   = IDS_MAIN_MENU_MUSICPLAYER;
+  	pMe->m_IconTitle[3]	   = IDS_MAIN_MENU_FMRADIO;
+   	pMe->m_IconTitle[4]	   = IDS_MAIN_MENU_FRENDUO;
+   	pMe->m_IconTitle[5]	   = IDS_MAIN_MENU_CONTACT;
+   	pMe->m_IconTitle[6]	   = IDS_MAIN_MENU_SMS;
+   	pMe->m_IconTitle[7]	   = IDS_MAIN_MENU_GAMES;
+   	pMe->m_IconTitle[8]	   = IDS_MAIN_MENU_RECENTCALLS;
+   	pMe->m_IconTitle[9]	   = IDS_MAIN_MENU_GALLERY;
+  	pMe->m_IconTitle[10]    = IDS_MAIN_MENU_APPLICATION;
+   	pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;
 #elif defined (FEATURE_VERSION_M8P)
 	pMe->m_IconTitle[0] 	= IDS_MAIN_MENU_BLIVE;
 	pMe->m_IconTitle[1] 	= IDS_MAIN_MENU_SMARTFRENACCESS;
@@ -638,6 +638,20 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_UTK;
 #endif
 #elif defined (FEATURE_DISP_128X160)
+    #if defined (FEATURE_VERSION_M8021)
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_BLIVE;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_SMARTFRENACCESS;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_MUSICPLAYER;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_FMRADIO;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_FRENDUO;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_CONTACT;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SMS;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_GALLERY;
+    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_APPLICATION;
+    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_SETTINGS;
+    #else
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
     pMe->m_IconTitle[2]     = IDS_MAIN_MENU_UTK;
@@ -650,6 +664,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_TIMER;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
+    #endif
 #elif defined (FEATURE_DISP_176X220)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
@@ -1809,7 +1824,7 @@ static int StartApplet(MainMenu *pMe, int i)
         break;
     
     case IDS_MAIN_MENU_FRENDUO:
-#if defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P)
+#if defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined (FEATURE_VERSION_M8021)
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FRENDUO);
 #endif
         break;

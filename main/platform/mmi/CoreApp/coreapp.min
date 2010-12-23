@@ -42,6 +42,10 @@ else ifeq ($(USES_RESDIR), M8)
 CONSTFILE_FILES+=\
 	poweronani.png|fs:/image/pwronoffani/poweronani.png \
 	poweroffani.png|fs:/image/pwronoffani/poweroffani.png
+else ifeq ($(USES_RESDIR), M8021)
+CONSTFILE_FILES+=\
+	poweronani.png|fs:/image/pwronoffani/poweronani.png \
+	poweroffani.png|fs:/image/pwronoffani/poweroffani.png
 else ifeq ($(USES_RESDIR), SmartP)
 CONSTFILE_FILES+=\
 	poweronani.png|fs:/image/pwronoffani/poweronani.png \
