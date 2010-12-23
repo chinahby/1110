@@ -390,6 +390,9 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined FEATURE_VERSION_M8
 #define   OEMNV_STARTUP_MUSIC 13 
 #define   OEMNV_SHUTDOWN_MUSIC 14 
+#elif defined FEATURE_VERSION_M8021
+#define   OEMNV_STARTUP_MUSIC 13 
+#define   OEMNV_SHUTDOWN_MUSIC 14 
 #elif defined FEATURE_VERSION_M8P
 #define   OEMNV_STARTUP_MUSIC 13 
 #define   OEMNV_SHUTDOWN_MUSIC 14 
@@ -729,7 +732,7 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_TWO                    "112"
 #define OEMNV_EMERG_NUM_TRE                    "911"
 #define OEMNV_EMERG_NUM_FOR                    "999"
-#elif defined(FEATURE_VERSION_M8)
+#elif defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8021)
 #define OEMNV_EMERT_SEZE                       4
 #define OEMNV_EMERG_NUM_LEN                    3
 #define OEMNV_EMERG_NUM_ONE                    "110"
