@@ -3476,6 +3476,10 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #if defined(FEATURE_LANG_INDONESIAN)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_INDONESIAN, IDS_INDONESIAN, NULL, 0);
 #endif
+#if defined(FEATURE_LANG_MYANMAR)
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MYANMAR, IDS_MYANMAR, NULL, 0);
+#endif
+
 #if defined(FEATURE_LANG_HINDI)
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_HINDI, IDS_HINDI, NULL, 0);
 #endif
