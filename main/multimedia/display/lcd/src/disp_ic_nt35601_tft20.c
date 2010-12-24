@@ -134,7 +134,7 @@ boolean disp_nt35601_tft20(disp_drv_ic_type *pdispic)
     id2 = LCD_READ_DATA();
     id3 = LCD_READ_DATA();
     
-    if(id1 == 0x01 && id2 == 0x15 && id3 == 0x00)
+    if(id1 == 0x01 && id2 == 0x15)
     {
         DISP_IC_INIT_TBL(pdispic);
         return TRUE;
