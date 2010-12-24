@@ -3597,6 +3597,7 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
     register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
     register uint32 clkm = clkh&GPIO_SDCC_DAT_MASK_I;
+    register uint32 clkn = clkl&GPIO_SDCC_DAT_MASK_I;
     register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     register byte data;
     register byte maskh = 0xF0,maskl=0x0F;
@@ -3617,9 +3618,9 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     while(len--)
     {
         data = *pdata++;
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data&maskh)<<21)|clkn);
         outpdw(pDest, ((data&maskh)<<21)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data&maskl)<<25)|clkn);
         outpdw(pDest, ((data&maskl)<<25)|clkm);
     }
 
@@ -3631,9 +3632,9 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     while(len--)
     {
         data = *pdata--;
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data&maskh)<<21)|clkn);
         outpdw(pDest, ((data&maskh)<<21)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data&maskl)<<25)|clkn);
         outpdw(pDest, ((data&maskl)<<25)|clkm);
     }
     
