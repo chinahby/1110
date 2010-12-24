@@ -3551,7 +3551,11 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
                         nSelItem = IDS_INDONESIAN;
                         break;
 #endif //FEATURE_LANG_INDONESIAN
-
+#ifdef FEATURE_LANG_MYANMAR   //add by yangdecai 2010-1224
+					case NV_LANGUAGE_MYANMAR:    //Ó¡¶ÈÄáÎ÷ÑÇ
+                        nSelItem = IDS_MYANMAR;
+                        break;
+#endif
 #ifdef FEATURE_LANG_HINDI
                     case NV_LANGUAGE_HINDI:    //Ó¡¶ÈÓï
                         nSelItem = IDS_HINDI;
@@ -3682,7 +3686,12 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
                     inputmode = OEM_MODE_T9_MT_ENGLISH; //OEM_MODE_T9_MT_INDONESIAN;                           
                     break;
 #endif /* FEATURE_LANG_INDONESIAN */
-
+#ifdef FEATURE_LANG_MYANMAR   //add by yangdecai 2010-1224
+				case IDS_MYANMAR:
+					language = NV_LANGUAGE_MYANMAR;
+                    inputmode = OEM_MODE_MYANMAR; //OEM_MODE_T9_MT_INDONESIAN;                           
+                    break;
+#endif
 #ifdef FEATURE_LANG_HINDI
                 case IDS_HINDI:    //Ó¡¶ÈÓï
                     language = NV_LANGUAGE_HINDI;

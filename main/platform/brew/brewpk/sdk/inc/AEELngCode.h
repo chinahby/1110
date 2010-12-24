@@ -360,6 +360,7 @@ See Also:
 #define LNG_MALAY             0x2020736d  // 'ms  '
 #define LNG_MALTESE           0x2020746d  // 'mt  '
 #define LNG_BURMESE           0x2020796d  // 'my  '
+#define LNG_MYANMAR           0x2061796d  // 'mya '   //add by yangdecai 20101224
 
 // LNG code starting with 'N'
 #define LNG_NAURU             0x2020616e  // 'na  '

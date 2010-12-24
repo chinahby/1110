@@ -385,6 +385,9 @@
 	<String Id="1128" Name="IDS_YES">
 		<Text>Yes</Text>
 	</String>
+	<String Id="1129" Name="IDS_MYANMAR">
+		<Text>myanmar</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">

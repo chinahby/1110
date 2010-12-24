@@ -151,6 +151,8 @@
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_RUSSIAN         //俄文
 #elif defined(FEATURE_LANG_FRENCH)
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_FRENCH          //法文
+#elif defined(FEATURE_LANG_MYANMAR)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_MYANMAR         //缅甸文
 #else
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //NV_LANGUAGE_SELECTION_I
 #endif
