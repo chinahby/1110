@@ -3315,6 +3315,7 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
     register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
     register uint32 clkl = (*pDest)&GPIO_SDCC_CLK_MASK_I, clkh = (*pDest)|GPIO_SDCC_CLK_MASK;
     register uint32 clkm = clkh&GPIO_SDCC_DAT_0_MASK_I;
+    register uint32 clkn = clkl&GPIO_SDCC_DAT_MASK_I;
     register volatile byte *pIn = (volatile byte*)GPIO_SDCC_IN_ADDR;
     register byte data;
     register uint32 mask = 0x02000000;
@@ -3335,21 +3336,21 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
     while(len--)
     {
         data = *pdata++;
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>6)<<24)|clkn);
         outpdw(pDest, ((data>>6)<<24)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>5)<<24)|clkn);
         outpdw(pDest, ((data>>5)<<24)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>4)<<24)|clkn);
         outpdw(pDest, ((data>>4)<<24)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>3)<<24)|clkn);
         outpdw(pDest, ((data>>3)<<24)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>2)<<24)|clkn);
         outpdw(pDest, ((data>>2)<<24)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<23)&mask)|clkn);
         outpdw(pDest, ((data<<23)&mask)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<24)&mask)|clkn);
         outpdw(pDest, ((data<<24)&mask)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<25)&mask)|clkn);
         outpdw(pDest, ((data<<25)&mask)|clkm);
     }
     dog_kick();
@@ -3358,21 +3359,21 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
     data = (byte)(wCRC16>>8);
     while(len--)
     {
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>6)<<24)|clkn);
         outpdw(pDest, ((data>>6)<<24)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>5)<<24)|clkn);
         outpdw(pDest, ((data>>5)<<24)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>4)<<24)|clkn);
         outpdw(pDest, ((data>>4)<<24)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>3)<<24)|clkn);
         outpdw(pDest, ((data>>3)<<24)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data>>2)<<24)|clkn);
         outpdw(pDest, ((data>>2)<<24)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<23)&mask)|clkn);
         outpdw(pDest, ((data<<23)&mask)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<24)&mask)|clkn);
         outpdw(pDest, ((data<<24)&mask)|clkm);
-        outpdw(pDest, clkl);
+        outpdw(pDest, ((data<<25)&mask)|clkn);
         outpdw(pDest, ((data<<25)&mask)|clkm);
         data = (byte)wCRC16;
     }
