@@ -65,7 +65,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_DATA_STRIP_ATCOP 
 #define FEATURE_STD_MIDI 
 #define FEATURE_DIAG_LOWMEM 
-#define FEATURE_AMR_VOCODER 
+//#define FEATURE_AMR_VOCODER 
 #define CUST_MOB_MODEL 22
 #define FEATURE_PLL_192 
 #define FEATURE_CLKREGIM_1X_MODE 
