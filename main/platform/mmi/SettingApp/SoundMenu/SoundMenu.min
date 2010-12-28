@@ -296,6 +296,20 @@ else
             tone_the.mp3|fs:/ringers/tone_the.mp3 \
             tone_four.mp3|fs:/ringers/tone_four.mp3 \
             tone_five.mp3|fs:/ringers/tone_five.mp3
+	else ifeq ($(USES_RESDIR), C306)
+        CONSTFILE_FILES+=\
+        	ring01.mp3|fs:/ringers/c360ring1.mp3 \
+            ring02.mp3|fs:/ringers/c360ring2.mp3 \
+            ring03.mp3|fs:/ringers/c360ring3.mp3 \
+            ring04.mid|fs:/ringers/blues.mid \
+            ring05.mid|fs:/ringers/blue_load.mid \
+            ring06.mid|fs:/ringers/champagne.mid \
+            ring07.mid|fs:/ringers/clock.mid \
+            ring08.mid|fs:/ringers/dance_craze.mid \
+            ring09.mid|fs:/ringers/green_line.mid \
+            ring10.mid|fs:/ringers/jumping.mid \
+            ring11.mp3|fs:/ringers/c360poweron.mp3 \
+            ring12.mp3|fs:/ringers/c360poweroff.mp3 
     else                                            
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
@@ -310,20 +324,6 @@ else
             techno_meto.mid|fs:/ringers/techno_meto.mid \
             i_mobile4.mid|fs:/ringers/i_mobile4.mid \
             i_mobile5.mid|fs:/ringers/i_mobile5.mid 
-    else ifeq ($(USES_RESDIR), C306)
-        CONSTFILE_FILES+=\
-        	ring01.mp3|fs:/ringers/c360ring1.mp3 \
-            ring02.mp3|fs:/ringers/c360ring2.mp3 \
-            ring03.mp3|fs:/ringers/c360ring3.mp3 \
-            ring04.mid|fs:/ringers/blues.mid \
-            ring05.mid|fs:/ringers/blue_load.mid \
-            ring06.mid|fs:/ringers/champagne.mid \
-            ring07.mid|fs:/ringers/clock.mid \
-            ring08.mid|fs:/ringers/dance_craze.mid \
-            ring09.mid|fs:/ringers/green_line.mid \
-            ring10.mid|fs:/ringers/jumping.mid \
-            ring11.mp3|fs:/ringers/c360poweron.mp3 \
-            ring12.mp3|fs:/ringers/c360poweroff.mp3 
     endif
 endif # ifeq ($(USES_LOWMEM), yes)
 
