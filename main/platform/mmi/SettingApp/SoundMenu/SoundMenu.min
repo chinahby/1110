@@ -298,16 +298,16 @@ else
             tone_five.mp3|fs:/ringers/tone_five.mp3
 	else ifeq ($(USES_RESDIR), C306)
         CONSTFILE_FILES+=\
-        	ring01.mp3|fs:/ringers/ring01.mp3 \
-            ring02.mp3|fs:/ringers/ring02.mp3 \
-            ring03.mp3|fs:/ringers/ring03.mp3 \
+        	ring08.mp3|fs:/ringers/ring08.mp3 \
+            ring09.mp3|fs:/ringers/ring09.mp3 \
+            ring10.mp3|fs:/ringers/ring10.mp3 \
+            ring01.mid|fs:/ringers/ring01.mid \
+            ring02.mid|fs:/ringers/ring02.mid \
+            ring03.mid|fs:/ringers/ring03.mid \
             ring04.mid|fs:/ringers/ring04.mid \
             ring05.mid|fs:/ringers/ring05.mid \
             ring06.mid|fs:/ringers/ring06.mid \
             ring07.mid|fs:/ringers/ring07.mid \
-            ring08.mid|fs:/ringers/ring08.mid \
-            ring09.mid|fs:/ringers/ring09.mid \
-            ring10.mid|fs:/ringers/ring10.mid \
             ring11.mp3|fs:/ringers/ring11.mp3 \
             ring12.mp3|fs:/ringers/ring12.mp3 
     else                                            
