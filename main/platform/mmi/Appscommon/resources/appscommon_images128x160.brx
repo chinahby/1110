@@ -136,11 +136,17 @@
 	<Object Id="5407" Name="IDB_MODE_T9_RAPID_ENGLISH">
 		<File>..\images\128x160\common\IME\ezenglish.png</File>
 	</Object>
-	<Object Id="5413" Name="IDB_MODE_T9_MT_INDONESIAN">
+	<Object Id="5408" Name="IDB_MODE_T9_MT_INDONESIAN">
 		<File>..\images\128x160\common\IME\Indo.png</File>
 	</Object>
-	<Object Id="5414" Name="IDB_MODE_T9_RAPID_INDONESIAN">
+	<Object Id="5409" Name="IDB_MODE_T9_RAPID_INDONESIAN">
 		<File>..\images\128x160\common\IME\T9In.png</File>
+	</Object>
+	<Object Id="5413" Name="IDB_MODE_T9_MT_ARABIC" MimeType="image/png">
+		<File>..\images\128x160\common\IME\Ar.png</File>
+	</Object>
+	<Object Id="5414" Name="IDB_MODE_T9_RAPID_ARABIC" MimeType="image/png">
+		<File>..\images\128x160\common\IME\T9Ar.png</File>
 	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE" MimeType="image/bmp">
 		<File>..\images\128x160\common\Message\Icon\Template.bmp</File>
@@ -259,7 +265,6 @@
 	<Object Id="6444" Name="IDI_DATE_BAR">
 		<File>..\images\128x160\common\Calendar\bar.png</File>
 	</Object>
-	
 	<Object Id="7001" Name="IDB_BATT_LOW" MimeType="image/bmp">
 		<File>..\images\128x160\common\Annunciator\batt0.bmp</File>
 	</Object>

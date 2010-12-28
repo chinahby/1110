@@ -152,10 +152,10 @@
 		<File>..\images\160x128\common\IME\upezenglish.png</File>
 	</Object>
 	<Object Id="5413" Name="IDB_MODE_T9_MT_ARABIC" MimeType="image/png">
-		<File>..\images\160x128\common\IME\Indo.png</File>
+		<File>..\images\160x128\common\IME\Ar.png</File>
 	</Object>
 	<Object Id="5414" Name="IDB_MODE_T9_RAPID_ARABIC" MimeType="image/png">
-		<File>..\images\160x128\common\IME\T9In.png</File>
+		<File>..\images\160x128\common\IME\T9Ar.png</File>
 	</Object>
 	<Object Id="5415" Name="IDB_MODE_T9_MT_THAI" MimeType="image/png">
 		<File>..\images\160x128\common\IME\thai.png</File>
