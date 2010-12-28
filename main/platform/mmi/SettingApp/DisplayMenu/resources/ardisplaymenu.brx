@@ -31,14 +31,18 @@
 	<STRING Id="1010" Name="IDS_LED_NETWORK">
 		<Text>ضبط الشبكة</Text>
 	</STRING>
-	<STRING Id="1011" Name="IDS_CONTRAST_LEVEL1">
-		<Text>مظلم جدًا</Text>
-	</STRING>
+
 	<STRING Id="1012" Name="IDS_LED_ALARM">
 		<Text>المنبه</Text>
 	</STRING>
+	<STRING Id="1013" Name="IDS_DONE">
+		<Text>Done</Text>
+	</STRING>
 	<STRING Id="1014" Name="IDS_TIME_24HR">
 		<Text>اليوم</Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_STRING_LEMON">
+		<Text>Lemon</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_STRING_STATE">
 		<Text>الحالة</Text>
@@ -82,23 +86,14 @@
 	<STRING Id="1029" Name="IDS_WALLPAPER_TITLE">
 		<Text>خلفية الشاشة</Text>
 	</STRING>
-	<STRING Id="1030" Name="IDS_CONTRAST_LEVEL2">
-		<Text>مظلم</Text>
+	<STRING Id="1030" Name="IDS_CONTRAST_LEVEL_DARK">
+		<Text>Dark</Text>
 	</STRING>
-	<STRING Id="1031" Name="IDS_CONTRAST_LEVEL3">
-		<Text>خفيف الظلمة</Text>
+	<STRING Id="1032" Name="IDS_CONTRAST_LEVEL_NORMAL">
+		<Text>Normal</Text>
 	</STRING>
-	<STRING Id="1032" Name="IDS_CONTRAST_LEVEL4">
-		<Text>عادي</Text>
-	</STRING>
-	<STRING Id="1033" Name="IDS_CONTRAST_LEVEL5">
-		<Text>سطوع  خفيف</Text>
-	</STRING>
-	<STRING Id="1034" Name="IDS_CONTRAST_LEVEL6">
-		<Text>ساطع</Text>
-	</STRING>
-	<STRING Id="1035" Name="IDS_CONTRAST_LEVEL7">
-		<Text>شديد االسطوع</Text>
+	<STRING Id="1034" Name="IDS_CONTRAST_LEVEL_BRIGHT">
+		<Text>Bright</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_DEL_ITEM_YESNO">
 		<Text>حذفه؟</Text>
@@ -145,6 +140,87 @@
 	<STRING Id="1050" Name="IDS_KEYPAD_TIME_ERR">
 		<Text>خطأ في الإدخال</Text>
 	</STRING>
+	<STRING Id="1051" Name="IDS_MENU_STYLE">
+		<Text>Menu style</Text>
+	</STRING>
+	<STRING Id="1052" Name="IDS_MENU_ICON">
+		<Text>Icon</Text>
+	</STRING>
+	<STRING Id="1053" Name="IDS_MENU_LIST">
+		<Text>List</Text>
+	</STRING>
+	<STRING Id="1054" Name="IDS_STRING_RANDOM">
+		<Text>Random</Text>
+	</STRING>
+	<STRING Id="1055" Name="IDS_STRING_NORMAL">
+		<Text>Normal</Text>
+	</STRING>
+	<STRING Id="1056" Name="IDS_CUSTOM_STYLE">
+		<Text>Custom</Text>
+	</STRING>
+	<STRING Id="1057" Name="IDS_STRING_PURPLE">
+		<Text>Purple</Text>
+	</STRING>
+	<STRING Id="1058" Name="IDS_STRING_COFFEE">
+		<Text>Coffee</Text>
+	</STRING>
+	<STRING Id="1060" Name="IDS_COLORFUL_MENU_TITLE">
+		<Text>Colorful menu</Text>
+	</STRING>
+	<STRING Id="1061" Name="IDS_PREVIEW">
+		<Text>Preview</Text>
+	</STRING>
+	<STRING Id="1062" Name="IDS_PRESET_STYLE">
+		<Text>Preset style</Text>
+	</STRING>
+	<STRING Id="1063" Name="IDS_RGB_RED">
+		<Text>Red</Text>
+	</STRING>
+	<STRING Id="1064" Name="IDS_RGB_GREEN">
+		<Text>Green</Text>
+	</STRING>
+	<STRING Id="1065" Name="IDS_RGB_BLUE">
+		<Text>Blue</Text>
+	</STRING>
+	<String Id="1070" Name="IDS_REND_MENU_TITLE">
+		<Text>Effect Setting</Text>
+	</String>
+	<String Id="1071" Name="IDS_REND_EFFECT_FADE">
+		<Text>Fade</Text>
+	</String>
+	<String Id="1072" Name="IDS_REND_EFFECT_SHOW_HORZ">
+		<Text>Horizontal Show</Text>
+	</String>
+	<String Id="1073" Name="IDS_REND_EFFECT_SHOW_VERT">
+		<Text>Vertical Show</Text>
+	</String>
+	<String Id="1074" Name="IDS_REND_EFFECT_MOVE_HORZ">
+		<Text>Horizontal Move</Text>
+	</String>
+	<String Id="1075" Name="IDS_REND_EFFECT_MOVE_VERT">
+		<Text>Vertical Show</Text>
+	</String>
+	<String Id="1076" Name="IDS_REND_EFFECT_FLY_HORZ">
+		<Text>Horizontal Fly</Text>
+	</String>
+	<String Id="1077" Name="IDS_REND_EFFECT_FLY_VERT">
+		<Text>Vertical Fly</Text>
+	</String>
+	<String Id="1078" Name="IDS_REND_EFFECT_ROTAT_HORZ">
+		<Text>Horizontal Rotation</Text>
+	</String>
+	<String Id="1079" Name="IDS_REND_EFFECT_ROTAT_VERT">
+		<Text>Vertical Rotation</Text>
+	</String>
+	<String Id="1080" Name="IDS_REND_EFFECT_BLINDS_VERT">
+		<Text>Horizontal Blind</Text>
+	</String>
+	<String Id="1081" Name="IDS_REND_EFFECT_BLINDS_INTER">
+		<Text>Intersect Blind</Text>
+	</String>
+	<String Id="1083" Name="IDS_REND_EFFECT_ONEBYONE">
+		<Text>OneByOne</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_DISPLAYMENU_MENU" Focus="7004">
@@ -156,7 +232,6 @@
 	</DIALOG>
 	<DIALOG Id="6002" Name="IDD_PICTURE_DLG" Focus="0">
 		<Controls/>
-		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6003" Name="IDD_IMGDELMSG_DLG" Focus="0">
 		<Controls/>
@@ -202,10 +277,38 @@
 			<List Id="7003" Name="IDC_KEY_PAD_STATE" Flags="2">
 				<Items/>
 			</List>
-			<Clock Id="7010" Name="IDC_CLOCK_FORM">
-				<Items/></Clock>
-			<Clock Id="7011" Name="IDC_CLOCK_TO" Flags="1">
-				<Items/></Clock>
+			<Countdown Id="7005" Name="IDC_CLOCK_FORM">
+				<Items/></Countdown>
+			<Countdown Id="7009" Name="IDC_CLOCK_TO">
+				<Items/></Countdown>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6010" Name="IDD_MENU_STYLE" Focus="7010">
+		<Controls>
+			<Menu Id="7010" Name="IDC_MENU_STYLE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6011" Name="IDD_COLORFUL_MENU" Focus="7011">
+		<Controls>
+			<Menu Id="7011" Name="IDC_COLORFUL_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6012" Name="IDD_COLOR_SETTING" Focus="0">
+		<Controls>
+			<Menu Id="7012" Name="IDC_COLOR_SETTING">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6013" Name="IDD_REND_MENU" Focus="7013">
+		<Controls>
+			<Menu Id="7013" Name="IDC_REND_MENU">
+				<Items/>
+			</Menu>
 		</Controls>
 	</Dialog>
 </Dialogs>

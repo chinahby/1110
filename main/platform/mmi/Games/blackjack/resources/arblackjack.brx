@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="arblackjack" VERSION="1">
-<Strings Encoding="ISOLATIN1">
+<Strings Encoding="Unicode">
 	<STRING Id="10" Name="IDC_NEW_GAME">
-		<Text>New</Text>
+		<Text>New Game</Text>
 	</STRING>
 	<STRING Id="11" Name="IDC_INSTRUCTIONS_OK">
 		<Text>OK</Text>

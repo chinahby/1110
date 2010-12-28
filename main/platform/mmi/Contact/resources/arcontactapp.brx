@@ -170,7 +170,7 @@
 		<Text>خطأ أثناء  نقل التسجل , يرجى تفقد السعة.</Text>
 	</STRING>
 	<STRING Id="99" Name="IDS_ERR_COPY">
-		<Text>‏‏فش�?النسخ!</Text>
+		<Text>Copy failed</Text>
 	</STRING>
 	<STRING Id="100" Name="IDS_SAVETO">
 		<Text>حفظ الموقع</Text>
@@ -244,6 +244,18 @@
 	<STRING Id="1016" Name="IDS_ADDRESS">
 		<Text>العنوان</Text>
 	</STRING>
+	<STRING Id="1017" Name="IDS_EXECUTE">
+		<Text>Execute</Text>
+	</STRING>
+	<STRING Id="1018" Name="IDS_MARK">
+		<Text>Mark</Text>
+	</STRING>
+	<STRING Id="1019" Name="IDS_UNMARK">
+		<Text>Unmark</Text>
+	</STRING>
+	<STRING Id="1020" Name="IDS_MARKALL">
+		<Text>Mark all</Text>
+	</STRING>
 	<STRING Id="1021" Name="IDS_SAVE_EMAIL">
 		<Text>سيضيع البريد الإلكتروني!</Text>
 	</STRING>
@@ -262,6 +274,9 @@
 	<STRING Id="1026" Name="IDS_FLD_SETTYPE">
 		<Text>نوع الرقم </Text>
 	</STRING>
+	<STRING Id="1027" Name="IDS_UNMARKALL">
+		<Text>Unmark all</Text>
+	</STRING>
 	<STRING Id="1028" Name="IDS_ONEDIAL">
 		<Text>تخصيص رقم</Text>
 	</STRING>
@@ -272,7 +287,7 @@
 		<Text>حفظ للهاتف</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_PASSWORD">
-		<Text>‏‏أدخ�?كلمة المرور</Text>
+		<Text>‏‏أدخ׿كلمة المرور</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_YESNO_MOVERECORD">
 		<Text>نقل؟</Text>
@@ -292,9 +307,156 @@
 	<STRING Id="1037" Name="IDS_MOVE_MULTIPE">
 		<Text>تحريك متعدد</Text>
 	</STRING>
-	<STRING Id="1038" Name="IDS_MSG_SHORTNUMBER">
+	<STRING Id="1038" Name="IDS_CONTACTS_MANAGEMENT">
+		<Text>Management</Text>
+	</STRING>
+	<STRING Id="1039" Name="IDS_MOVE_CONTACTS">
+		<Text>Move contacts</Text>
+	</STRING>
+	<STRING Id="1040" Name="IDS_COPY_CONTACTS">
+		<Text>Copy contacts</Text>
+	</STRING>
+	<STRING Id="1041" Name="IDS_DELETE_CONTACTS">
+		<Text>Delete contacts</Text>
+	</STRING>
+	<STRING Id="1042" Name="IDS_CONTACTS_MEMORY_STUTAS">
+		<Text>Memory status</Text>
+	</STRING>
+	<STRING Id="1043" Name="IDS_PHONE_TO_UIM">
+		<Text>Phone to UIM card</Text>
+	</STRING>
+	<STRING Id="1044" Name="IDS_UIM_TO_PHONE">
+		<Text>UIM card to phone</Text>
+	</STRING>
+	<STRING Id="1045" Name="IDS_UIM_CARD">
+		<Text>UIM card</Text>
+	</STRING>
+	<STRING Id="1046" Name="IDS_DELETE_ALL">
+		<Text>Delete all</Text>
+	</STRING>
+	<STRING Id="1047" Name="IDS_PHONE_CAPACITY">
+		<Text>Phone</Text>
+	</STRING>
+	<STRING Id="1048" Name="IDS_MSG_SHORTNUMBER">
 		<Text>فشلت الإضافة، يجب أن يكون الطول أكبر من 3</Text>
 	</STRING>
+	<STRING Id="1049" Name="IDS_SEND_VIA_BLUETOOTH">
+		<Text>Send via bluetooth</Text>
+	</STRING>
+	<STRING Id="1050" Name="IDS_MOVE">
+		<Text>Move</Text>
+	</STRING>
+	<STRING Id="1051" Name="IDS_ERR_LOADPICTURE">
+		<Text>Load picture failed</Text>
+	</STRING>
+	<STRING Id="1052" Name="IDS_REPLACE">
+		<Text>Replace</Text>
+	</STRING>
+	<STRING Id="1053" Name="IDS_POP_DONE">
+		<Text>Done</Text>
+	</STRING>
+	<STRING Id="1054" Name="IDS_ERR_GETCONFIG">
+		<Text>Get config failed</Text>
+	</STRING>
+	<STRING Id="1055" Name="IDS_UIMCARD">
+		<Text>UIM card</Text>
+	</STRING>
+	<STRING Id="1056" Name="IDS_PHONE_THEN_UIM">
+		<Text>Phone then UIM card</Text>
+	</STRING>
+	<STRING Id="1057" Name="IDS_UIM_THEN_PHONE">
+		<Text>UIM card then phone</Text>
+	</STRING>
+	<STRING Id="1058" Name="IDS_COPY_TOUIMCARD">
+		<Text>Copy to UIM card</Text>
+	</STRING>
+	<STRING Id="1059" Name="IDS_MOVE_TOUIMCARD">
+		<Text>Move to UIM card</Text>
+	</STRING>
+	<STRING Id="1060" Name="IDS_COPY_TOPHONE">
+		<Text>Copy to phone</Text>
+	</STRING>
+	<STRING Id="1061" Name="IDS_MOVE_TOPHONE">
+		<Text>Move to phone</Text>
+	</STRING>
+	<STRING Id="1062" Name="IDS_MSG_DELETEFAILED">
+		<Text>Fail to delete,pls check the memory</Text>
+	</STRING>
+	<STRING Id="1063" Name="IDS_DELETING">
+		<Text>Deleting...</Text>
+	</STRING>
+	<STRING Id="1064" Name="IDS_MARK_ERR">
+		<Text>Mark error</Text>
+	</STRING>
+	<STRING Id="1065" Name="IDS_FULL_UIM">
+		<Text>UIM card full</Text>
+	</STRING>
+	<STRING Id="1066" Name="IDS_FULL_PHONE">
+		<Text>Phone full</Text>
+	</STRING>
+	<STRING Id="1067" Name="IDS_BUILD_VCARD_FAIL">
+		<Text>Failed to build vcard</Text>
+	</STRING>
+	<STRING Id="1068" Name="IDS_UIMFULL_SAVETOPHONE">
+		<Text>UIM card full, save to phone</Text>
+	</STRING>
+	<STRING Id="1069" Name="IDS_PHONEFULL_SAVETOCARD">
+		<Text>Phone full, save to UIM card</Text>
+	</STRING>
+	<STRING Id="1070" Name="IDS_MEMORYFULL">
+		<Text>Memory full, please delete</Text>
+	</STRING>
+	<STRING Id="1071" Name="IDS_RETURN_ERR">
+		<Text>Return Err</Text>
+	</STRING>
+	<STRING Id="1072" Name="IDS_ERR_MOVE">
+		<Text>Move failed</Text>
+	</STRING>
+	<STRING Id="1073" Name="IDS_NUMBER_TOOLONG">
+		<Text>Number too long</Text>
+	</STRING>
+	<STRING Id="1074" Name="IDS_FULL_UIM_DONE">
+		<Text>UIM card full,%d done</Text>
+	</STRING>
+	<STRING Id="1075" Name="IDS_FULL_PHONE_DONE">
+		<Text>Phone full,%d done</Text>
+	</STRING>
+	<STRING Id="1076" Name="IDS_RECORDS_DONE">
+		<Text>%d records done</Text>
+	</STRING>
+	<STRING Id="1077" Name="IDS_SENTLIST_FULL">
+		<Text>Reach maximum contacts</Text>
+	</STRING>
+	<STRING Id="1078" Name="IDS_COPY_EXPECT">
+		<Text>%d records done,%d records fail</Text>
+	</STRING>
+	<STRING Id="1079" Name="IDS_RENAME">
+		<Text>Rename</Text>
+	</STRING>
+	<STRING Id="1080" Name="IDS_SAVE_EDIT">
+		<Text>Save edit</Text>
+	</STRING>
+	<STRING Id="1081" Name="IDS_GROUP_UIM">
+		<Text>UIM card</Text>
+	</STRING>
+	<STRING Id="1082" Name="IDS_SAME_NAME">
+		<Text>Same name,rename</Text>
+	</STRING>
+	<STRING Id="1083" Name="IDS_BT_COPYN">
+		<Text>Send via bluetooth</Text>
+	</STRING>
+	<STRING Id="1084" Name="IDS_NO_NUMBER_TO_MAKECALL">
+		<Text>No number to make call</Text>
+	</STRING>
+	<STRING Id="1085" Name="IDS_NO_SELECTION">
+		<Text>No selection</Text>
+	</STRING>
+	<String Id="1086" Name="IDS_NO_UIM_CARD">
+		<Text>No UIM card,save to phone</Text>
+	</String>
+	<String Id="1087" Name="IDS_NO_CARD">
+		<Text>No UIM card</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
@@ -308,24 +470,33 @@
 	<DIALOG Id="6003" Name="IDD_LIST" Focus="7003">
 		<Controls>
 			<Text Id="7002" Name="IDC_LIST_TEXT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/></Text>
 			<Menu Id="7003" Name="IDC_LIST_MENU">
-				<TitleID>IDS_DIRECTORTLIST</TitleID>
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6004" Name="IDD_INPUTFLD" Focus="7004">
 		<Controls>
 			<Text Id="7004" Name="IDC_INPUTFLD_TEXTCTL">
-				<TitleID>IDS_NAME</TitleID>
 				<Items/></Text>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
-	<DIALOG Id="6005" Name="IDD_ADDNEW" Focus="7047">
+	<DIALOG Id="6005" Name="IDD_ADDNEW" Focus="7041">
 		<Controls>
+			<List Id="7039" Name="IDC_ADD_GROUPLIST">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</List>
+			<Text Id="7041" Name="IDC_ADD_LOCAL_INPUT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Text>
 			<Menu Id="7047" Name="IDC_ADDNEW_MENU">
-				<TitleID>IDS_ADDNEW</TitleID>
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items>
 					<Item Id="8009" Name="IDI_ADDNEW_MENU_NAME">
 						<TextID>IDS_NAME</TextID>
@@ -363,19 +534,24 @@
 				</Items>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6006" Name="IDD_OPTS" Focus="7007">
 		<Controls>
 			<Menu Id="7007" Name="IDC_OPTS_MENU">
-				<TitleID>IDS_APPLET</TitleID>
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items>
 					<Item Id="8006" Name="IDI_OPTS_MENU_EDIT">
 					</Item>
+					<Item Id="8049" Name="IDI_OPTS_MENU_BLUETOOTH">
+					</Item>
+					<Item Id="8051" Name="IDI_OPTS_MENU_MOVE">
+					</Item>
 					<Item Id="8055" Name="IDI_OPTS_MENU_VIEW">
 					</Item>
-					<Item Id="8074" Name="IDI_OPTS_MENU_CALL">
+					<Item Id="8073" Name="IDI_OPTS_MENU_ADDNEW">
 					</Item>
-					<Item Id="8075" Name="IDI_OPTS_MENU_IPCALL">
+					<Item Id="8074" Name="IDI_OPTS_MENU_CALL">
 					</Item>
 					<Item Id="8076" Name="IDI_OPTS_MENU_SENDSMS">
 					</Item>
@@ -385,11 +561,10 @@
 					</Item>
 					<Item Id="8079" Name="IDI_OPTS_MENU_COPY">
 					</Item>
-					<Item Id="8080" Name="IDI_OPTS_MENU_SEARCHOTHERDIRECTORY">
-					</Item>
 				</Items>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6007" Name="IDD_VIEW" Focus="7008">
 		<Controls>
@@ -401,7 +576,6 @@
 	<DIALOG Id="6008" Name="IDD_FLDOPTS" Focus="7010">
 		<Controls>
 			<Menu Id="7010" Name="IDC_FLDOPTS_MENU">
-				<TitleID>IDS_APPLET</TitleID>
 				<Items>
 					<Item Id="8012" Name="IDI_FLDOPTS_MENU_EDIT">
 					</Item>
@@ -432,37 +606,14 @@
 	<DIALOG Id="6011" Name="IDD_GROUP" Focus="7013">
 		<Controls>
 			<Menu Id="7013" Name="IDC_GROUP_MENU">
-				<TitleID>IDS_INPUT_GROUP</TitleID>
-				<Items>
-					<Item Id="8027" Name="IDI_GROUP_MENU_NONE">
-						<TextID>IDS_GROUP_NONE</TextID>
-					</Item>
-					<Item Id="8028" Name="IDI_GROUP_MENU_VIP">
-						<TextID>IDS_GROUP_VIP</TextID>
-					</Item>
-					<Item Id="8029" Name="IDI_GROUP_MENU_HOME">
-						<TextID>IDS_GROUP_HOME</TextID>
-					</Item>
-					<Item Id="8030" Name="IDI_GROUP_MENU_WORK">
-						<TextID>IDS_GROUP_WORK</TextID>
-					</Item>
-					<Item Id="8031" Name="IDI_GROUP_MENU_FRIEND">
-						<TextID>IDS_GROUP_FRIEND</TextID>
-					</Item>
-					<Item Id="8032" Name="IDI_GROUP_MENU_PERSONAL">
-						<TextID>IDS_GROUP_PERSONAL</TextID>
-					</Item>
-					<Item Id="8033" Name="IDI_GROUP_MENU_BUSINESS">
-						<TextID>IDS_GROUP_BUSINESS</TextID>
-					</Item>
-				</Items>
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
 			</Menu>
 		</Controls>
 	</DIALOG>
 	<DIALOG Id="6012" Name="IDD_POSITION" Focus="7014">
 		<Controls>
 			<Menu Id="7014" Name="IDC_POSITION_MENU">
-				<TitleID>IDS_POSITION</TitleID>
 				<Items>
 					<Item Id="8008" Name="IDI_POSITION_MENU_ALL">
 						<TextID>IDS_POSITION_ALL</TextID>
@@ -483,25 +634,12 @@
 	<DIALOG Id="6013" Name="IDD_COPYMOVE" Focus="7015">
 		<Controls>
 			<Menu Id="7015" Name="IDC_COPYMOVE_MENU">
-				<TitleID>IDS_COPYMOVE</TitleID>
 				<Items>
-					<Item Id="8025" Name="IDI_COPYMOVE_MENU_COPYTORUIM">
-						<TextID>IDS_COPYTORUIM</TextID>
+					<Item Id="8025" Name="IDI_PHONE_TO_UIM">
+						<TextID>IDS_PHONE_TO_UIM</TextID>
 					</Item>
-					<Item Id="8026" Name="IDI_COPYMOVE_MENU_COPYTOPHONE">
-						<TextID>IDS_COPYTOPHONE</TextID>
-					</Item>
-					<Item Id="8034" Name="IDI_COPYMOVE_MENU_MOVETORUIM">
-						<TextID>IDS_MOVETORUIM</TextID>
-					</Item>
-					<Item Id="8035" Name="IDI_COPYMOVE_MENU_MOVETOPHONE">
-						<TextID>IDS_MOVETOPHONE</TextID>
-					</Item>
-					<Item Id="8056" Name="IDI_COPYMOVE_MENU_COPY">
-						<TextID>IDS_COPY</TextID>
-					</Item>
-					<Item Id="8092" Name="IDI_COPYMOVE_MENU_MOVE">
-						<TextID>IDS_MOVE_MULTIPE</TextID>
+					<Item Id="8026" Name="IDI_UIM_TO_PHONE">
+						<TextID>IDS_UIM_TO_PHONE</TextID>
 					</Item>
 				</Items>
 			</Menu>
@@ -510,9 +648,10 @@
 	<DIALOG Id="6014" Name="IDD_COPY" Focus="7017">
 		<Controls>
 			<Text Id="7009" Name="IDC_COPY_TEXT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/></Text>
 			<Menu Id="7017" Name="IDC_COPY_MENU">
-				<TitleID>IDS_COPY</TitleID>
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items>
 					<Item Id="8036" Name="IDI_COPY_MENU_SELECT_ALL">
 					</Item>
@@ -521,21 +660,16 @@
 				</Items>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
-	<Dialog Id="6015" Name="IDD_GROUPOPT" Focus="7019">
+	<Dialog Id="6015" Name="IDD_GROUPOPT" Focus="0">
 		<Controls>
 			<Menu Id="7019" Name="IDC_MENU_GROUPOPT">
-				<TitleID>IDS_INPUT_GROUP</TitleID>
-				<Items>
-					<Item Id="8018" Name="IDI_MENU_GROUPOPT_VIEW">
-						<TextID>IDS_VIEW</TextID>
-					</Item>
-					<Item Id="8019" Name="IDI_MENU_GROUPOPT_EDIT">
-						<TextID>IDS_EDIT</TextID>
-					</Item>
-				</Items>
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 	<DIALOG Id="6016" Name="IDD_ICON" Focus="7016">
 		<Controls>
@@ -550,7 +684,6 @@
 	<Dialog Id="6017" Name="IDD_GROUPOPT_EDIT" Focus="7022">
 		<Controls>
 			<Text Id="7022" Name="IDC_GROUPOPT_EDIT">
-				<TitleID>IDS_INPUT_GROUP</TitleID>
 				<Items/></Text>
 		</Controls>
 	</Dialog>
@@ -566,10 +699,16 @@
 			</Menu>
 		</Controls>
 	</DIALOG>
+	<Dialog Id="6019" Name="IDD_MANAGEMENT" Focus="0">
+		<Controls>
+			<Menu Id="7025" Name="IDC_MENU_CONTACTS_MANAGEMENT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
 	<DIALOG Id="6020" Name="IDD_ONEDIAL" Focus="7023">
 		<Controls>
 			<Menu Id="7023" Name="IDC_ONEDIAL_MENU">
-				<TitleID>IDS_SPEEDDIAL</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -577,13 +716,13 @@
 	<DIALOG Id="6021" Name="IDD_CAPACITY" Focus="7027">
 		<Controls>
 			<Static Id="7027" Name="IDC_CAPACITY_STATIC">
-				<TitleID>IDS_CAPACITY</TitleID>
 				<Items/></Static>
 		</Controls>
 	</DIALOG>
-	<DIALOG Id="6022" Name="IDD_EDIT" Focus="7024">
+	<DIALOG Id="6022" Name="IDD_EDIT" Focus="7030">
 		<Controls>
 			<Menu Id="7024" Name="IDC_EDIT_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items>
 					<Item Id="8081" Name="IDI_EDIT_MENU_NAME">
 						<TextID>IDS_NAME</TextID>
@@ -612,20 +751,27 @@
 					<Item Id="8089" Name="IDI_EDIT_MENU_REMARK">
 						<TextID>IDS_NOTES</TextID>
 					</Item>
-					<Item Id="8090" Name="IDI_EDIT_MENU_RINGTONE">
-						<TextID>IDS_RING</TextID>
-					</Item>
-					<Item Id="8091" Name="IDI_EDIT_MENU_GROUP">
+					<Item Id="8090" Name="IDI_EDIT_MENU_GROUP">
 						<TextID>IDS_INPUT_GROUP</TextID>
+					</Item>
+					<Item Id="8091" Name="IDI_EDIT_MENU_RINGTONE">
+						<TextID>IDS_RING</TextID>
 					</Item>
 				</Items>
 			</Menu>
+			<Text Id="7030" Name="IDC_TEXT_LOCAL_INPUT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Text>
+			<List Id="7032" Name="IDC_GROUP_LIST">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</List>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6023" Name="IDD_SETTING" Focus="7026">
 		<Controls>
 			<Menu Id="7026" Name="IDC_SETTING_MENU">
-				<TitleID>IDS_SETTING</TitleID>
 				<Items>
 					<Item Id="8042" Name="IDI_SETTING_MENU_SAVETO">
 						<TextID>IDS_SAVETO</TextID>
@@ -645,11 +791,11 @@
 	</DIALOG>
 	<DIALOG Id="6024" Name="IDD_INPUT" Focus="0">
 		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6025" Name="IDD_ONEDIALOPT" Focus="7028">
 		<Controls>
 			<Menu Id="7028" Name="IDC_ONEDIALOPT_MENU">
-				<TitleID>IDS_SPEEDDIAL</TitleID>
 				<Items>
 					<Item Id="8058" Name="IDI_ONEDIALOPT_MENU_SET">
 						<TextID>IDS_ONEDIAL_SET</TextID>
@@ -660,7 +806,15 @@
 				</Items>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
+	<Dialog Id="6026" Name="IDD_DELETE_SELECT" Focus="0">
+		<Controls>
+			<Menu Id="7029" Name="IDC_MENU_DELETE_SELECT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
 	<DIALOG Id="6027" Name="IDD_ONEDIAL_SET_NUM_SEL" Focus="7031">
 		<Controls>
 			<Menu Id="7031" Name="IDC_ONEDIAL_SET_NUM_SEL">
@@ -671,33 +825,30 @@
 	<DIALOG Id="6028" Name="IDD_SELECT" Focus="7005">
 		<Controls>
 			<Menu Id="7005" Name="IDC_SELECT_MENU">
-				<TitleID>IDS_APPLET</TitleID>
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/>
 			</Menu>
 			<Text Id="7018" Name="IDC_SELECT_TEXT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/></Text>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6029" Name="IDD_MAINMENU" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDC_MAINMENU_MENU">
-				<TitleID>IDS_APPLET</TitleID>
 				<Items>
 					<Item Id="8002" Name="IDI_MAINMENU_MENU_DIRECTORTLIST">
 					</Item>
 					<Item Id="8039" Name="IDI_MAINMENU_MENU_FIND">
 					</Item>
-					<Item Id="8049" Name="IDI_MAINMENU_MENU_DELETE">
-					</Item>
 					<Item Id="8050" Name="IDI_MAINMENU_MENU_ADDNEW">
-					</Item>
-					<Item Id="8051" Name="IDI_MAINMENU_MENU_COPY">
-					</Item>
-					<Item Id="8052" Name="IDI_MAINMENU_MENU_SETTING">
 					</Item>
 					<Item Id="8053" Name="IDI_MAINMENU_MENU_SPEEDDIAL">
 					</Item>
-					<Item Id="8054" Name="IDI_MAINMENU_MENU_CHECKCAPACITY">
+					<Item Id="8095" Name="IDI_MAINMENU_MENU_GROUP">
+					</Item>
+					<Item Id="8096" Name="IDI_MAINMENU_MENU_CONTACT_MANAGEMENT">
 					</Item>
 				</Items>
 			</Menu>
@@ -706,16 +857,42 @@
 	<DIALOG Id="6030" Name="IDD_DETAIL" Focus="7006">
 		<Controls>
 			<Menu Id="7006" Name="IDC_MENU_TITLE">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/>
 			</Menu>
-			<Static Id="7020" Name="IDC_DETAIL_STATIC">
-				<Items/></Static>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
+	<Dialog Id="6031" Name="IDD_POPNUMFLD" Focus="0">
+		<Controls>
+			<Menu Id="7033" Name="IDC_POPNUMFLD_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6032" Name="IDD_VIEW_NUMFLD" Focus="0">
+		<Controls>
+			<Menu Id="7034" Name="IDC_VIEWNUMFLD_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6033" Name="IDD_SELECTOPT" Focus="0">
+		<Controls>
+			<Menu Id="7035" Name="IDC_SELECTOPT_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
 	<DIALOG Id="6034" Name="IDD_SEARCH" Focus="7036">
 		<Controls>
 			<Menu Id="7036" Name="IDC_SEARCH_MENU">
-				<TitleID>IDS_FIND</TitleID>
 				<Items>
 					<Item Id="8001" Name="IDI_SEARCH_MENU_NAME">
 					</Item>
@@ -728,16 +905,26 @@
 	<DIALOG Id="6035" Name="IDD_SEARCHNAME" Focus="7037">
 		<Controls>
 			<Text Id="7037" Name="IDC_SEARCHNAME_TEXTCTL">
-				<TitleID>IDS_SEARCH_NAME</TitleID>
 				<Items/></Text>
 		</Controls>
 	</DIALOG>
+	<Dialog Id="6036" Name="IDD_NUMFLDVIEW" Focus="0">
+		<Controls>
+			<Menu Id="7038" Name="IDC_NUMFLDVIEW_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6037" Name="IDD_DELETING" Focus="0">
+		<Controls/>
+	</Dialog>
 	<DIALOG Id="6038" Name="IDD_DELETE" Focus="7040">
 		<Controls>
 			<Text Id="7011" Name="IDC_DELETE_TEXT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/></Text>
 			<Menu Id="7040" Name="IDC_DELETE_MENU">
-				<TitleID>IDS_DELETE</TitleID>
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items>
 					<Item Id="8004" Name="IDI_DELETE_MENU_SELECT_ALL">
 					</Item>
@@ -746,6 +933,24 @@
 				</Items>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
+	<Dialog Id="6039" Name="IDD_SELECT_RECORD" Focus="7020">
+		<Controls>
+			<Menu Id="7020" Name="IDC_SELECT_RECORD">
+				<Items/>
+			</Menu>
+			<Text Id="7042" Name="IDC_SELECT_RECORD_TEXT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6040" Name="IDD_DETAIL_MULTI" Focus="0">
+		<Controls>
+			<Menu Id="7043" Name="IDC_MENU_DETAIL_MULTI">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
 </Dialogs>
 </BREWRes>

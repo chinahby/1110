@@ -43,6 +43,9 @@
 	<STRING Id="1014" Name="IDS_AUTO_REDIAL">
 		<Text>إعادة الطلب تلقائيًا</Text>
 	</STRING>
+	<STRING Id="1015" Name="IDS_USE_BT_AG">
+		<Text>Use bluetooth headset</Text>
+	</STRING>
 	<STRING Id="1016" Name="IDS_REJECT">
 		<Text>رفض</Text>
 	</STRING>
@@ -127,19 +130,63 @@
 	<STRING Id="1043" Name="IDS_MISSED_NCALLS">
 		<Text> مكالمة %d </Text>
 	</STRING>
+	<STRING Id="1044" Name="IDS_SAVE_TO_CONT">
+		<Text>Save to contacts</Text>
+	</STRING>
+	<STRING Id="1045" Name="IDS_SEND_MESSAGE">
+		<Text>Send messages</Text>
+	</STRING>
 	<STRING Id="1046" Name="IDS_EMGNUMBER_CALL_ONLY">
 		<Text>اتصال طوارئ فقط!</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_CALL_CENTER_NUMBER">
 		<Text>Hotline number</Text>
 	</STRING>
+	<STRING Id="1048" Name="IDS_CALL">
+		<Text>Call</Text>
+	</STRING>
+	<STRING Id="1049" Name="IDS_RECORD">
+		<Text>Record</Text>
+	</STRING>
+	<STRING Id="1050" Name="IDS_REFUI_SEND">
+		<Text>Sending now</Text>
+	</STRING>
+	<STRING Id="1051" Name="IDS_USE_PHONE">
+		<Text>Use phone</Text>
+	</STRING>
+	<STRING Id="1052" Name="IDS_INVALID_LINK_NUM">
+		<Text>Invalid link number</Text>
+	</STRING>
+	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
+		<Text>Recorder on</Text>
+	</STRING>
+	<STRING Id="1101" Name="IDS_OPTION_RECORDER_OFF">
+		<Text>Recorder off</Text>
+	</STRING>
+	<STRING Id="1110" Name="IDS_RECORD_THE_OTHER_SIZE">
+		<Text>Yours</Text>
+	</STRING>
+	<STRING Id="1111" Name="IDS_RECORD_SELF">
+		<Text>Mine</Text>
+	</STRING>
+	<STRING Id="1112" Name="IDS_CONTACT">
+		<Text>Contacts</Text>
+	</STRING>
+	<STRING Id="1113" Name="IDS_SMS">
+		<Text>Messages</Text>
+	</STRING>
+	<STRING Id="1114" Name="IDS_NUM_TOO_LONG">
+		<Text>Number too long to save</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
 		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6002" Name="IDD_CALLING" Focus="0">
 		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6003" Name="IDD_CONVERSATION" Focus="7004">
 		<Controls>

@@ -10,5 +10,14 @@
 	<STRING Id="3" Name="IDS_RESET_RECORDFULL">
 		<Text>التسجيل ممتلئ، إعادة الضبط؟</Text>
 	</STRING>
+	<STRING Id="4" Name="IDS_STOPWATCH1">
+		<Text>ساعة إيقاف 1</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_STOPWATCH2">
+		<Text>ساعة إيقاف 2</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_CHANGE_CONFIRM">
+		<Text>Change to another stopwatch</Text>
+	</STRING>
 </Strings>
 </BREWRes>

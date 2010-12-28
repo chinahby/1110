@@ -94,6 +94,9 @@
 	<STRING Id="1031" Name="IDS_COLORKEYSND">
 		<Text>نغمات المفاتيح</Text>
 	</STRING>
+	<STRING Id="1032" Name="IDS_GALLERY_PROFILE">
+		<Text>Gallery</Text>
+	</STRING>
 	<STRING Id="1036" Name="IDS_SCENEMODE_TITLE">
 		<Text>الأوضاع </Text>
 	</STRING>
@@ -163,9 +166,12 @@
 	<STRING Id="1058" Name="IDS_ARABIC_RINGTONE_10">
 		<Text>الدوبيت</Text>
 	</STRING>
+	<STRING Id="1059" Name="IDS_DEFAULT">
+		<Text>Default</Text>
+	</STRING>
 </Strings>
 <Dialogs>
-	<DIALOG Id="6001" Name="IDD_SOUNDMENU_PROFILES" Focus="7009">
+	<DIALOG Id="6001" Name="IDD_SOUNDMENU_PROFILES" Focus="0">
 		<Controls>
 			<Menu Id="7009" Name="IDC_SOUNDMENU_PROFILES">
 				<Items/>
@@ -225,12 +231,8 @@
 			</Menu>
 		</Controls>
 	</DIALOG>
-	<DIALOG Id="6010" Name="IDD_VOLUME_SUB" Focus="7008">
-		<Controls>
-			<Menu Id="7008" Name="IDC_VOLUME_SUB">
-				<Items/>
-			</Menu>
-		</Controls>
+	<DIALOG Id="6010" Name="IDD_VOLUME_SUB" Focus="0">
+		<Controls/>
 	</DIALOG>
 	<DIALOG Id="6011" Name="IDD_KEYSND_MENU" Focus="7006">
 		<Controls>
@@ -245,6 +247,7 @@
 				<Items/>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 </Dialogs>
 </BREWRes>
