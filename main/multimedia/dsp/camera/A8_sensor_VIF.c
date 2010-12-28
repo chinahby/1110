@@ -32,15 +32,18 @@ u_char	gbSensorInited = 0;
 u_char	gA8I2Ctype = A8_I2C_1A1D;
 
 
-void A8L_CheckSensorFrame(u_char mode)
+u_short A8L_CheckSensorFrame(u_char mode)
 {
 	SetA8RegB(VIF_INT_ST_HOST,mode);
 	while(TimeOutWhile(!((GetA8RegB(VIF_INT_ST_HOST)&mode)==mode)));
 	if(CheckTimeOut()) {
 		AIT_Message_P2("A8L_CheckSensorFrame failed, mode=0x%x, data=0x%x \r\n", mode,GetA8RegB(VIF_INT_ST_HOST));
+        return 0xFF ;
 	}
+    else
+        return 0 ;
 
-	AIT_Message_P2("A8L_CheckSensorFrame mode=0x%x, data=0x%x \r\n", mode,GetA8RegB(VIF_INT_ST_HOST));
+	//AIT_Message_P2("A8L_CheckSensorFrame mode=0x%x, data=0x%x \r\n", mode,GetA8RegB(VIF_INT_ST_HOST));
 }
 
 

@@ -410,6 +410,9 @@ boolean camsensor_tlg1120_init(void)
     TLG_SetMobileVidEnhancement(tlg_i2c_addr, TLG_MVE_MANUAL, gTvOptions.mDefinition);
     TLG_SquelchEvenFrames(tlg_i2c_addr, TLG_ON);
 #endif
+    //TLG_SetBits(tlg_i2c_addr, 0x0000, 0x0000,8,0x0100); //pclk;
+    //TLG_SetBits(tlg_i2c_addr, 0x0000, 0x0001,9,0x0200); //Hsync,Vsync,data;
+
 	//TLGAPP_SetChannel(23);
 
     //ÉùÒôºÍÍ¼ÏñµÄ²âÊÔ

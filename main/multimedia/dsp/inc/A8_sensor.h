@@ -167,7 +167,7 @@ extern void A8L_SetSensorEnablePin(u_char level);
 extern void A8L_SetSensorResetPin(u_char level);
 extern void A8L_SetSensorIF(u_char gpio, u_char  enable);
 extern u_char A8L_CheckFrameStart(void);
-extern void A8L_CheckSensorFrame(u_char mode);
+extern u_short A8L_CheckSensorFrame(u_char mode);
 extern u_char A8L_CheckExposureDone(void);
 extern u_char A8L_SensorPowerOn(u_char on);
 extern u_char A8L_PreInit_Sensor(void);

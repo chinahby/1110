@@ -100,6 +100,7 @@ static u_short SetSensorResolution(mmp_sensor_mode sensor_mode)
             A8L_SetSensorAttr(&preview_mode);     
 			MSG_FATAL(" SetSensorResolution WIDTH=%d,HEIGHT=%d",preview_mode.image_width,preview_mode.image_height,0);
 			camsensor_tlg1120_init();
+           // sys_IF_ait_delay1ms(30);   	
             gbSensorInited = 1;
             return fRet;
 			break;	

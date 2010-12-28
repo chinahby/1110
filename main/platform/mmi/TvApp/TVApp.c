@@ -350,6 +350,9 @@ static int CTVAppMod_CreateInstance(IModule   *po,
 ==============================================================================*/
 static void CTVAppMod_FreeResources(IModule *po, IHeap  *ph, IFileMgr *pfm)
 {
+    MSG_FATAL("po address = %x", po, 0, 0);
+    MSG_FATAL("ph address = %x", ph, 0, 0);
+    MSG_FATAL("pfm address = %x", pfm, 0, 0);
     PARAM_NOT_REF(po)
     PARAM_NOT_REF(ph)
     PARAM_NOT_REF(pfm)
@@ -465,15 +468,18 @@ static uint32 TVApp_Release(ITVApp *p)
     }
  
     TVApp_FreeAppData(pMe);
- 
+    MSG_FATAL("m_pShell address = %x", pMe->m_pShell, 0, 0);
+    MSG_FATAL("m_pModule address = %x", pMe->m_pModule, 0, 0);
     (void)ISHELL_Release(pMe->m_pShell);
     (void)IMODULE_Release(pMe->m_pModule);
+    #if 0
 	if(pMe->pTvSetting)
 	{
+        MSG_FATAL("pTvSetting address = %x", pMe->pTvSetting, 0, 0);
 		FREE(pMe->pTvSetting);
 		pMe->pTvSetting = NULL;
 	}
- 
+    #endif
     // 注意:pMe是静态分配空间，因此不需要释放。FREE()
     return 0;
 }
@@ -517,13 +523,15 @@ static int TVApp_InitAppData(CTVApp *pMe)
  
     pMe->m_cxWidth    = di.cxScreen; 
     pMe->m_cyHeight   = di.cyScreen;
- 
+    
     pMe->m_bAppIsReady = FALSE;
     pMe->m_pActiveDlg = NULL;
     pMe->m_eDlgRet = DLGRET_CREATE;
     pMe->m_bNotOverwriteDlgRet = FALSE;
     pMe->m_bIsPreview = FALSE;
     pMe->m_curChnIdx=0;
+    pMe->m_bAUTOSCAN=FALSE;
+    pMe->m_bAUTOSTOP=FALSE;
     
     pMe->m_bCapturePic = FALSE;
     pMe->m_ePreState = STATE_NULL;
@@ -546,7 +554,6 @@ static int TVApp_InitAppData(CTVApp *pMe)
     pMe->m_bRePreview = FALSE;
     pMe->m_nTVState = TV_START;
 
-    pMe->m_pTV = NULL;  
     pMe->m_pMedia = NULL;
     pMe->m_isFormQuicktest = FALSE;
     pMe->m_sensor_model = -1;
@@ -673,60 +680,65 @@ static void TVApp_FreeAppData(CTVApp *pMe)
     
     if(pMe->m_pConfig)
     {
+        MSG_FATAL("m_pConfig address = %x", pMe->m_pConfig, 0, 0);
         ICONFIG_Release(pMe->m_pConfig);
         pMe->m_pConfig = NULL;
     }
      
     if(pMe->m_pDisplay)
     {
+        MSG_FATAL("m_pDisplay address = %x", pMe->m_pDisplay, 0, 0);
         IDISPLAY_Release(pMe->m_pDisplay);
         pMe->m_pDisplay = NULL;
     }
 
     if(pMe->pGraphics)
       {
+          MSG_FATAL("pGraphics address = %x", pMe->pGraphics, 0, 0);
           IGRAPHICS_Release(pMe->pGraphics);
           pMe->pGraphics = NULL;
       }
 
-    if(pMe->m_pTV) 
-    {
-        ICAMERA_Release(pMe->m_pTV);
-        pMe->m_pTV = NULL;
-    }
 
     if(pMe->m_pFileMgr)
     {
+        MSG_FATAL("m_pFileMgr address = %x", pMe->m_pFileMgr, 0, 0);
         IFILEMGR_Release(pMe->m_pFileMgr);
         pMe->m_pFileMgr = NULL;            
     }
 
     if(pMe->m_pMedia)
     {
+        MSG_FATAL("m_pMedia address = %x", pMe->m_pMedia, 0, 0);
         IMEDIA_Release(pMe->m_pMedia);
         pMe->m_pMedia = NULL;
     }
 
     if(pMe->m_pIAnn)
     {
+        MSG_FATAL("m_pIAnn address = %x", pMe->m_pIAnn, 0, 0);
         IANNUNCIATOR_Release(pMe->m_pIAnn);
         pMe->m_pIAnn = NULL;
     }
     
     if(pMe->m_pBacklight)
     {
+        MSG_FATAL("m_pBacklight address = %x", pMe->m_pBacklight, 0, 0);
         IBACKLIGHT_Release(pMe->m_pBacklight);
         pMe->m_pBacklight = NULL;
     }
     if(pMe->pIMMITv)
     {
+        MSG_FATAL("pIMMITv address = %x", pMe->pIMMITv, 0, 0);
         IMMITv_Release(pMe->pIMMITv);
         pMe->pIMMITv=NULL;
 
     }
     if(pMe->pTvSetting )
     {
+      MSG_FATAL("pTvSetting address = %x", pMe->pTvSetting, 0, 0);
       FREE(pMe->pTvSetting);
+      pMe->pTvSetting = NULL;
     }
 // if SD Dev is existed, stop SD dev while exitting from TV APP to avoid high current<43mA> consume in idle state
     // Note: if SD card detected after Creating ITV interface, it needn't to stop sd card in this way, cause's SD won't be pushed in stack for low dev priority
@@ -822,6 +834,7 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
             {
                 if(NULL != pMe->m_pDisplay)
                 {
+                    MSG_FATAL("m_pDisplay address = %x", pMe->m_pDisplay, 0, 0);
                     (void)IDISPLAY_Release(pMe->m_pDisplay);
                     pMe->m_pDisplay = NULL;
                 }
@@ -887,17 +900,19 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
             return TRUE;
       
         case EVT_APP_STOP:
+            MSG_FATAL("TVAPP-EVT_APP_STOP",0,0,0);
             if(pMe->m_pDisplay != NULL)
             {
+                MSG_FATAL("m_pDisplay address = %x", pMe->m_pDisplay, 0, 0);
                 (void)IDISPLAY_Release(pMe->m_pDisplay);
                 pMe->m_pDisplay = NULL;
             }
             pMe->m_bSuspending = TRUE; 
             SetDeviceState(DEVICE_TYPE_CAMERA, DEVICE_CAMERA_STATE_OFF);
-            if(pMe->m_bIsPreview == TRUE && pMe->m_pTV)
+            if(pMe->m_bIsPreview == TRUE && pMe->pIMMITv)
             {
                 //ICAMERAEX_RegisterNotify(pMe->m_pTV,NULL, NULL);
-                ICAMERA_Stop(pMe->m_pTV);
+              //  ICAMERA_Stop(pMe->pIMMITv);
             }
             (void)ICONFIG_SetItem(pMe->m_pConfig,
                                   CFGI_BACK_LIGHT,
@@ -907,39 +922,45 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
             return TRUE;
       
         case EVT_APP_SUSPEND:
+            MSG_FATAL("TVAPP-EVT_APP_SUSPEND",0,0,0);
             ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);// 取消所有定时器
             
             pMe->m_bSuspending = TRUE;
-            if(pMe->m_bIsPreview == TRUE && pMe->m_pTV)
+            if(pMe->m_bIsPreview == TRUE && pMe->pIMMITv)
             {
                // ICAMERAEX_RegisterNotify(pMe->m_pTV,NULL, NULL);
-                ICAMERA_Stop(pMe->m_pTV);
+              //  ICAMERA_Stop(pMe->pIMMITv);
             }
             
-            if(pMe->m_nTVState == TV_START && pMe->m_pTV)
+            if(pMe->m_nTVState == TV_START && pMe->pIMMITv)
             {
-                ICAMERA_Release(pMe->m_pTV);
-                pMe->m_pTV = NULL;
+                MSG_FATAL("m_pTV address = %x", pMe->pIMMITv, 0, 0);
+                IMMITv_Release(pMe->pIMMITv);
+                pMe->pIMMITv = NULL;
             }
             pMe->m_bIsPreview = FALSE;
             return TRUE;
             
         case EVT_ALARM:
-            if(pMe->m_nTVState == TV_START && pMe->m_pTV)
+            MSG_FATAL("TVAPP-EVT_ALARM",0,0,0);
+            if(pMe->m_nTVState == TV_START && pMe->pIMMITv)
             {
-                ICAMERA_Release(pMe->m_pTV);
-                pMe->m_pTV = NULL;
+                MSG_FATAL("m_pTV address = %x", pMe->pIMMITv, 0, 0);
+                IMMITv_Release(pMe->pIMMITv);
+                pMe->pIMMITv = NULL;
             }
             pMe->m_bIsPreview = FALSE;
             return TRUE;
             
         case EVT_APP_RESUME:
+            MSG_FATAL("TVAPP-EVT_APP_RESUME",0,0,0);
            // TVApp_InitTVCheck(pMe); 
             as = (AEEAppStart*)dwParam;
             pMe->m_bSuspending = FALSE;
       
             if(pMe->m_pDisplay != NULL)
             {
+                MSG_FATAL("m_pDisplay address = %x", pMe->m_pDisplay, 0, 0);
                 (void)IDISPLAY_Release(pMe->m_pDisplay);
                 pMe->m_pDisplay = NULL;
             }
@@ -962,12 +983,14 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
             return TRUE;
       
         case EVT_DIALOG_INIT:
+            MSG_FATAL("TVAPP-EVT_DIALOG_INIT",0,0,0);
             pMe->m_bAppIsReady = FALSE;
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;   
             return TVApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
       
         case EVT_DIALOG_START:
+            MSG_FATAL("TVAPP-EVT_DIALOG_START",0,0,0);
             (void)ISHELL_SetTimer(pMe->m_pShell,
                                   APPISREADY_TIMER,
                                   TVApp_APPIsReadyTimer,
@@ -975,15 +998,18 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
             return TVApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
             
         case EVT_USER_REDRAW:
+            MSG_FATAL("TVAPP-EVT_USER_REDRAW",0,0,0);
             (void)TVApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
             return TRUE;
             
         case EVT_CAMERA_NOTIFY:
+            MSG_FATAL("TVAPP-EVT_CAMERA_NOTIFY",0,0,0);
             TVApp_AppEventNotify(pMe, (int16)wParam, (int16)dwParam);
             return TRUE;
             
         case EVT_APPISREADY:
             pMe->m_bAppIsReady = TRUE;  //7001
+            MSG_FATAL("TVAPP-EVT_APPISREADY",0,0,0);
             return TRUE;
       
         case EVT_KEY_PRESS:
@@ -998,6 +1024,7 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
             return TVApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
       
         case EVT_DIALOG_END:
+             MSG_FATAL("TVAPP-EVT_DIALOG_END",0,0,0);
             if(wParam == 0)
             {
                 return TRUE;
@@ -1017,6 +1044,7 @@ static boolean TVApp_HandleEvent(ITVApp  *pi,
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 
 			  case EVT_USER:
+                  MSG_FATAL("TVAPP-EVT_USER",0,0,0);
 				  if(wParam == AVK_CLR)
 				  {
 					  eCode = EVT_KEY;

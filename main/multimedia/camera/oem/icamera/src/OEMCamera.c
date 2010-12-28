@@ -3286,9 +3286,23 @@ static void OEMCamera_FreeCameraRsp(CameraRsp * pRsp)
 static int OEMCamera_Preview(OEMCamera * pme, CameraRsp * pRsp)
 {
 #ifdef FEATURE_DSP
+    int ncheck;
 	ext_camera_para_struct ext_cam_para = {0};
-	AIT701_cam_preview(&ext_cam_para);	
-	return SUCCESS;
+    AIT701_cam_preview(&ext_cam_para);	
+    ncheck=AIT701_cam_check_frame(0x01);
+    #if 0
+    if(ncheck==0)
+    {
+    MSG_FATAL("OEMCamera_Preview-----ncheck=%d",ncheck,0,0);
+	
+    }
+    else
+    {
+        MSG_FATAL("OEMCamera_Preview-----ncheck=%d",ncheck,0,0);
+
+    }  
+    #endif
+    return SUCCESS;
 
 #else
    int      nRet;

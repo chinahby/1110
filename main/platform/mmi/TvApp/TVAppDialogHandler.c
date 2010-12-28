@@ -457,8 +457,9 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
 				MSG_FATAL("IMMITv_StartPreview----------------------success",0,0,0);
 			}
 			MSG_FATAL("IMMITv_StartPreview----------------------will--end",0,0,0);
-
-			if(pMe->m_bAUTOSCAN)
+            
+            IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_SOUND, pMe->pTvSetting->SoundStep);
+            if(pMe->m_bAUTOSCAN)
 			{
                  MSG_FATAL("TVApp_MainMenuHandleEvent m_bAUTOSCAN",0,0,0);
                 TVAPP_AutoScan(pMe);
@@ -468,7 +469,6 @@ static boolean TVApp_MainMenuHandleEvent(CTVApp *pMe, AEEEvent eCode, uint16 wPa
                 pMe->currentlyChannel=pMe->pTvSetting->CurrentChannel;//(int)WSTRTOFLOAT(pMe->pTvSetting->Bookmark[pMe->currentlyChannel].channel);
                 MSG_FATAL("pMe->currentlyChannel=%d----------",pMe->currentlyChannel,0,0);
                 //TLGAPP_SetChannel(pMe->currentlyChannel);
-                IMMITv_SetProperty(pMe->pIMMITv, TV_PROPERTY_SOUND, pMe->pTvSetting->SoundStep);
                 IMMITv_SetTvChannel(pMe->pIMMITv, pMe->currentlyChannel,FALSE); 
 
             }
@@ -2118,7 +2118,7 @@ static boolean TV_MainOptsMenu_HandleEvent(CTVApp *pMe,
             {
                 case AVK_CLR:			
 				{
-                    CLOSE_DIALOG(DLGRET_CANCELED);//DLGRET_MAINMENU
+                    CLOSE_DIALOG(DLGRET_MAINMENU);//DLGRET_CANCELED
                     return TRUE;
                 }
                 case AVK_BGPLAY:

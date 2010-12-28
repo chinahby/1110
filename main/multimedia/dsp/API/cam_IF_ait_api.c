@@ -714,7 +714,7 @@ A8_ERROR_MSG	cam_IF_ait_preview_config (AIT_PREVIEW_CONFIG previewConfig)
 A8_ERROR_MSG	cam_IF_ait_preview_control (bool bPreviewOn)
 {
 	extern const sPanel_Ctrl_Attrib gMainPanelControlAttrib;
-	extern void A8L_CheckSensorFrame(u_char mode);
+	extern u_short A8L_CheckSensorFrame(u_char mode);
 	u_char retVal;
 	
 	if (bPreviewOn)

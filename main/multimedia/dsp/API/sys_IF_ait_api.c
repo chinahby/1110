@@ -287,7 +287,7 @@ void sys_IF_ait_usb_power(u_char on)
  @note   indicates the current status of the session CLOSED, READY, BUSY, ¡K
  @bug	N/A.
 */ 
-void	sys_IF_ait_set_status(u_char CurStatus)
+void	sys_IF_ait_set_status(u_char CurStatus)  
 {
 	AIT_Status = CurStatus;
 }

@@ -169,7 +169,9 @@ static mmp_ret_code_type mmpfunc_cam_process(mmp_func_type func, void* client_da
 
 					MSG_FATAL("preview_src = %d",preview_src,0,0);
 					status = MMP_SUCCESS;
-					if(AIT_STATUS_CAM_READY != sys_IF_ait_get_status())
+                //    sys_IF_ait_get_status()
+				//	if(AIT_STATUS_CAM_READY != sys_IF_ait_get_status())
+				sys_IF_ait_set_status(AIT_STATUS_CAM_CLOSED) ;
 						status = cam_IF_ait_open_AIT();
 					
 					if(!status)
@@ -594,8 +596,8 @@ static mmp_ret_code_type mmpfunc_cam_process(mmp_func_type func, void* client_da
 #endif /* AIT_3GP_SUPPORT */
 			
 		 case MMPFUNC_CAM_CHK_SEN_FRAME:		
-				A8L_CheckSensorFrame(p1);
-				status = MMP_SUCCESS;
+				status =A8L_CheckSensorFrame(p1);
+				//status = MMP_SUCCESS;
 		 	break;
 		 
 	}
@@ -961,12 +963,13 @@ void AIT701_cam_preview(ext_camera_para_struct *ext_cam_para)
 			mmpfunc_process(MMPFUNC_CAM_PREVIEW_START, ext_cam_para, AIT_CAM_PREV_FULL_MODE , 0, 0, 0, 0);
 		}
 	}
-
+#if 1
 	Delayms(10);
 	disp_off();
     Delayms(1);
 	disp_on();
     Delayms(1);
+#endif
 	return;
 }
 

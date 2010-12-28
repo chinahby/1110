@@ -5715,7 +5715,7 @@ u_char A800_TransferMJPEGFrameToHost(u_char *frameBuf, u_int *frameSize)
 	return A8L_TransferMJPEGFrameToHost(frameBuf, frameSize);
 }
 #ifdef SENSOR_VIF
-extern void A8L_CheckSensorFrame(u_char mode);
+extern u_short A8L_CheckSensorFrame(u_char mode);
 #else
 extern u_char A8L_CheckSensorFrame(u_char mode);
 #endif
