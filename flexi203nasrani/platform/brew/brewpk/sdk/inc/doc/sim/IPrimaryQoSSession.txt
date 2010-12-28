@@ -1,0 +1,10 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IPrimaryQoSSession simulation
+
+IPrimaryQoSSession is simulated.
+Primary QoS is supported for UMTS only.
+==========================
+*/ 
