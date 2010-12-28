@@ -218,85 +218,87 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
 	boolean bTransparency, int *pOutWidth)
 {
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-       AleFontMetrics fm;   //metics of the entrie string
-       int kmask, j, yend, sx, xend, i, xloop;
-       byte m,n;
-       unsigned char *p;
-       word *dp,*dbase;
-       char *pfont;
-       AleGetStringFontInfo getfont_info;  //structure for retrieve font
-       word cText, cBack;
-       uint32 bmp_offset = 0;
-       AECHAR nCharsContent = 0;
-       AECHAR *pText = (AECHAR *)pcText;
-       int16 nRealSize = WSTRLEN(pcText);
-    
-       if(nRealSize > nChars)
-       {
-           nCharsContent = *(pcText + nChars - 1 + 1);
-           pText[nChars] = 0;
-       }
-       
-       /* current line being edited
-          ---------------------------------------- */
-       memset (&getfont_info, 0, sizeof (getfont_info));
-       getfont_info. CodeType = 1;  /* use Unicode */
-       getfont_info. String = (ALE_UINT16 *)pText;
-       getfont_info. FontMetrics = &fm;
-       getfont_info. FontBuffer = gFontDataBuffer;
-       getfont_info. BufferRowByteTotal = SCREENBYTEWIDTH;
-       getfont_info. BufferColumnByteTotal = SCREENHEIGHT;
-       
-       //all the remain fields are unchanged
-       AleGetStringFont (&getfont_info, gAleWorkBuffer);
-       if(nRealSize > nChars)
-       {
-            pText[nChars] = nCharsContent;
-       }
-       
-        xend = fm.horiAdvance;
-        //yend = fm. outBufHeight;
+   AleFontMetrics fm;   //metics of the entrie string
+   int kmask, j, yend, sx, xend, i, xloop;
+   byte m,n;
+   unsigned char *p;
+   word *dp,*dbase;
+   char *pfont;
+   AleGetStringFontInfo getfont_info;  //structure for retrieve font
+   word cText, cBack;
+   uint32 bmp_offset = 0;
+   AECHAR nCharsContent = 0;
+   AECHAR *pText = (AECHAR *)pcText;
+   int16 nRealSize = WSTRLEN(pcText);
+
+   if(nRealSize > nChars)
+   {
+       nCharsContent = *(pcText + nChars - 1 + 1);
+       pText[nChars] = 0;
+   }
+   
+   /* current line being edited
+      ---------------------------------------- */
+   memset (&getfont_info, 0, sizeof (getfont_info));
+   getfont_info. CodeType = 1;  /* use Unicode */
+   getfont_info. String = (ALE_UINT16 *)pText;
+   getfont_info. FontMetrics = &fm;
+   getfont_info. FontBuffer = gFontDataBuffer;
+   getfont_info. BufferRowByteTotal = SCREENBYTEWIDTH;
+   getfont_info. BufferColumnByteTotal = SCREENHEIGHT;
+   
+   //all the remain fields are unchanged
+   AleGetStringFont (&getfont_info, gAleWorkBuffer);
+   if(nRealSize > nChars)
+   {
+        pText[nChars] = nCharsContent;
+   }
+   
+    xend = fm.horiAdvance;
+    //yend = fm. outBufHeight;
 #ifdef FEATURE_ARPHIC_ARABIC_M16X16P_FONT        
-        yend = (dy > 16)?(16):(dy);
+    yend = (dy > 16)?(16):(dy);
 #else        
-        yend = (dy > 14)?(14):(dy);
+    yend = (dy > 14)?(14):(dy);
 #endif        
-        pfont = gFontDataBuffer;
-    
-        if(x < xMin)
+    pfont = gFontDataBuffer;
+
+    if(x < xMin)
+    {
+        m = (xMin - x) / 8;
+        n = (xMin - x) % 8;
+        sx = xMin;
+        if((x + xend) > xMax)
         {
-            m = (xMin - x) / 8;
-            n = (xMin - x) % 8;
-            sx = xMin;
-            if((x + xend) > xMax)
-            {
-                xloop = xMax - xMin;
-            }
-            else
-            {
-                xloop = xend - (xMin - x);
-            }
-        }
-        else if((x + xend) > xMax)
-        {
-            m = n = 0;
-            sx = x;
-            xloop = xMax - x;
+            xloop = xMax - xMin;
         }
         else
         {
-            m = n = 0;
-            sx = x;
-            xloop = xend;
+            xloop = xend - (xMin - x);
         }
+    }
+    else if((x + xend) > xMax)
+    {
+        m = n = 0;
+        sx = x;
+        xloop = xMax - x;
+    }
+    else
+    {
+        m = n = 0;
+        sx = x;
+        xloop = xend;
+    }
+
+    cText = (word)(clrText & 0xFFFF);
+    cBack = (word)(clrBack & 0xFFFF);
     
-        cText = (word)(clrText & 0xFFFF);
-        cBack = (word)(clrBack & 0xFFFF);
-        
-        bmp_offset = sy*nPitch;
-        dp = dbase = (word*)(pBmp + bmp_offset + (sx<<1));
-        
-        for ( j = 0; j < yend; j++ )
+    bmp_offset = sy*nPitch;
+    dp = dbase = (word*)(pBmp + bmp_offset + (sx<<1));
+    
+    for ( j = 0; j < yend; j++ )
+    {
+        if (bTransparency)
         {
             for ( p = (unsigned char*) (pfont + m + oy*SCREENBYTEWIDTH + j*SCREENBYTEWIDTH), 
                    dp = dbase + j*(nPitch>>1), kmask = (0x80>>n), i = 0;         i < xloop;         i++)
@@ -315,9 +317,25 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
                 }
             }
         }
-    
-        *pOutWidth = xloop;
-        return;
+        else
+        {
+            for ( p = (unsigned char*) (pfont + m +  oy*SCREENBYTEWIDTH + j*SCREENBYTEWIDTH), 
+                     dp = dbase + j*(nPitch>>1), kmask = (0x80>>n), i = 0;        i < xloop;       i++)
+            {
+                *dp++ = (*p & kmask)?(cText):(cBack);
+                
+                kmask >>= 1;
+                if ( !kmask )
+                {
+                    kmask = 0x80;
+                    p++;
+                }
+            }
+        }
+    }
+
+    *pOutWidth = xloop;
+    return;
 #else
     int xSrc, i;
     byte xWidth, xWidthOrig, xxDisp, *sp, *pFontData;
