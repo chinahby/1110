@@ -1,0 +1,6 @@
+#ifndef STATICAPP_BID
+#define STATICAPP_BID
+
+#define AEECLSID_STATICAPP        0x01006601
+
+#endif //STATICAPP_BID
