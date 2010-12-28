@@ -41,7 +41,9 @@ INCLUDE FILES FOR MODULE
 #include "AEEStatic_priv.h"
 #include "AEEModTable.h"
 #include "AEEPointerHelpers.h"
-
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+#include "nv.h"
+#endif
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 #include "Appscommon.h"
 #include "appscommonimages.brh"

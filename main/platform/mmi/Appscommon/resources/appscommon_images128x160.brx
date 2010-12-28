@@ -148,6 +148,9 @@
 	<Object Id="5414" Name="IDB_MODE_T9_RAPID_ARABIC" MimeType="image/png">
 		<File>..\images\128x160\common\IME\T9Ar.png</File>
 	</Object>
+	<Object Id="5426" Name="IDB_EDIT_UP_DOWN_BMP">
+		<File>..\images\128x160\common\IME\arrow.png</File>
+	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE" MimeType="image/bmp">
 		<File>..\images\128x160\common\Message\Icon\Template.bmp</File>
 	</Object>
