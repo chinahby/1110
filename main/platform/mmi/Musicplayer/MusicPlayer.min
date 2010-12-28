@@ -25,7 +25,7 @@ CONSTFILE_FILES+=\
 	musicplayer.bar|fs:/mod/musicplayer/en/musicplayer.bar \
 	musicplayerimage$(USES_LCD_SIZE).bar|fs:/mod/musicplayer/musicplayerimage.bar 
 	
-ifneq ($(USES_GURU),yes)
+ifneq ($(USES_RESDIR), Flexi203)
 	CONSTFILE_FILES+=\
 		Away.mp3|fs:/hsmm/music/Away.mp3
 endif		
