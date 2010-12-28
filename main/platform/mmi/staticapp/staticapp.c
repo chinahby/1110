@@ -1389,25 +1389,29 @@ static boolean StartApplet(Staticapp *pMe, int wParam)
 #if defined (FEATURE_FMN2010)
 		case IDS_STATICAPP_TITLE_FMUSLIM:
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MUSLIM);		
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MUSLIM);	
+			break;	
 #endif	
 
 #if defined (FEATURE_CAH006)
 		case IDS_STATICAPP_TITLE_FCHAT:
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);		
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);	
+			break;		
 #endif
 
 #if defined (FEATURE_FPT005)
 		case IDS_STATICAPP_TITLE_FPORTAL:
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FBROWSER);		
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FBROWSER);	
+			break;		
 #endif
 
 #if defined (FEATURE_GURU)
 		case IDS_STATICAPP_TITLE_FGURU:
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FLEXIGURU);		
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FLEXIGURU);	
+			break;		
 #endif
 #endif        /*FEATURE_FLEXI_STATIC_BREW_APP*/
 
@@ -1415,11 +1419,13 @@ static boolean StartApplet(Staticapp *pMe, int wParam)
   		//need to change
   		case IDS_STATICAPP_TITLE_SMARTMESSAGE: 
   			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_SFM);			
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_SFM);
+			break;			
             break;            
         case IDS_STATICAPP_TITLE_FACEBOOK:
         	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_FACEBOOK);
+			break;	
             break;
   		case IDS_STATICAPP_TITLE_TWITTER:
   			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_TWITTER);
@@ -1428,7 +1434,7 @@ static boolean StartApplet(Staticapp *pMe, int wParam)
 		case IDS_STATICAPP_TITLE_MSHOP:
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_MSHOP);
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_MSHOP);
-            break;
+            		break;
 #endif
 			
 	}   	

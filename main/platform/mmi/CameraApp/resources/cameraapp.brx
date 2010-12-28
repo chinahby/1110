@@ -95,7 +95,7 @@
 		<Text>No Camera</Text>
 	</String>
 	<String Id="1066" Name="IDS_MSG_NOSDCARD">
-		<Text>phone memory full</Text>
+		<Text>Insert memory card</Text>
 	</String>
 	<String Id="1067" Name="IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD">
 		<Text>Phone Memory Full Please Insert SD Card</Text>
