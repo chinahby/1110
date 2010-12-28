@@ -1,6 +1,0 @@
-#ifndef PDP_BID
-#define PDP_BID
-
-#define AEECLSID_PDP    	0x0101a0fe
-
-#endif //PDP_BID

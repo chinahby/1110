@@ -1,6 +1,0 @@
-#ifndef AEEIID_MODEL_BID
-#define AEEIID_MODEL_BID
-
-#define AEEIID_MODEL    	0x0101593a
-
-#endif //AEEIID_MODEL_BID
