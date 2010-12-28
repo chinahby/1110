@@ -27,7 +27,7 @@ CONSTFILE_FILES+=\
 	
 ifneq ($(USES_LOWMEM), yes)
 CONSTFILE_FILES+=\
-	charge.jpg|fs:/image/charge/charge.jpg
+	charge.png|fs:/image/charge/charge.png
 ifeq ($(USES_RESDIR), Flexi203)
 CONSTFILE_FILES+=\
     poweronani.png|fs:/image/pwronoffani/poweronani.png
@@ -86,6 +86,10 @@ CONSTFILE_FILES+=\
 else ifeq ($(USES_RESDIR), Olive203)
 CONSTFILE_FILES+=\
 	poweronani.gif|fs:/image/pwronoffani/poweronoff.gif
+else ifeq ($(USES_RESDIR), C306)
+CONSTFILE_FILES+=\
+	poweronani.gif|fs:/image/pwronoffani/poweronani.gif \
+	poweroffani.gif|fs:/image/pwronoffani/poweroffani.gif
 else
 CONSTFILE_FILES+=\
 	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif

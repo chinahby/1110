@@ -212,21 +212,21 @@
 #elif defined FEATURE_VERSION_H19C
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poon.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
-#define    PWRON_ANI_RATE                        (3000)
+#define    PWRON_ANI_RATE                        (5000)
 #define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 #elif defined FEATURE_VERSION_ITEL
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/onoff.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
-#define    PWRON_ANI_RATE                        (3000)
+#define    PWRON_ANI_RATE                        (5000)
 #define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 #elif defined FEATURE_VERSION_KARBONN     //add by yangdecai
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweron.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
-#define    PWRON_ANI_RATE                        (4500)
+#define    PWRON_ANI_RATE                        (5000)
 #define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
@@ -249,6 +249,13 @@
 #define    PWRON_ANI_FRAME_COUNT                 (1)
 #define    PWRON_ANI_RATE                        (5000)
 #define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
+#define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
+#define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
+#elif defined FEATURE_VERSION_C306
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.gif"
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (5000)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.gif"
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 #else
