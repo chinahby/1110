@@ -1555,87 +1555,12 @@ void SoundMenu_UpdateRingerListMenu(CSoundMenu *pMe, IMenuCtl *pMenu)
                 {
                       //mai.pText = pListItem->szName;
                     mai.wItemID = pListItem->id;
-#ifdef FEATURE_LANG_ARABIC
-              switch (mai.wItemID)
-              {
-                case 1:
-                   (void) ISHELL_LoadResString(pMe->m_pShell,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_ARABIC_RINGTONE_1,
-                                    pListItem->szName,
-                                    sizeof(pListItem->szName));
-                break;
-                case 2:
-                   (void) ISHELL_LoadResString(pMe->m_pShell,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_ARABIC_RINGTONE_2,
-                                    pListItem->szName,
-                                    sizeof(pListItem->szName));
-                break;
-                   case 3:
-                   (void) ISHELL_LoadResString(pMe->m_pShell,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_ARABIC_RINGTONE_3,
-                                    pListItem->szName,
-                                    sizeof(pListItem->szName));
-                break;
-                   case 4:
-                   (void) ISHELL_LoadResString(pMe->m_pShell,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_ARABIC_RINGTONE_4,
-                                    pListItem->szName,
-                                    sizeof(pListItem->szName));
-                break;
-                   case 5:
-                   (void) ISHELL_LoadResString(pMe->m_pShell,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_ARABIC_RINGTONE_5,
-                                    pListItem->szName,
-                                    sizeof(pListItem->szName));
-                break;
-                case 6:
-                   (void) ISHELL_LoadResString(pMe->m_pShell,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_ARABIC_RINGTONE_6,
-                                    pListItem->szName,
-                                    sizeof(pListItem->szName));
-                   break;
-                case 7:
-                   (void) ISHELL_LoadResString(pMe->m_pShell,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_ARABIC_RINGTONE_7,
-                                    pListItem->szName,
-                                    sizeof(pListItem->szName));
-                   break;
-                case 8:
-                   (void) ISHELL_LoadResString(pMe->m_pShell,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_ARABIC_RINGTONE_8,
-                                    pListItem->szName,
-                                    sizeof(pListItem->szName));
-                   break;
-                case 9:
-                   (void) ISHELL_LoadResString(pMe->m_pShell,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_ARABIC_RINGTONE_9,
-                                    pListItem->szName,
-                                    sizeof(pListItem->szName));
-                   break;
-                case 10:
-                   (void) ISHELL_LoadResString(pMe->m_pShell,
-                                    AEE_APPSSOUNDMENU_RES_FILE,
-                                    IDS_ARABIC_RINGTONE_10,
-                                    pListItem->szName,
-                                    sizeof(pListItem->szName));
-                   break;
-              }
-#endif
-                mai.pText = pListItem->szName;
+                    mai.pText = pListItem->szName;
                     // 添加带图标菜单项到菜单
                     (void)IMENUCTL_AddItemEx(pMenu, &mai);
                     //ERR("dwIndex = %d",dwIndex , 0, 0);
-                    }
                 }
+            }
         }
     }
 

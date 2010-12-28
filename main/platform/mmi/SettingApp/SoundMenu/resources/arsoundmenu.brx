@@ -136,36 +136,6 @@
 	<STRING Id="1048" Name="IDS_ALERTTYPE_VIBANDRING">
 		<Text>اهتزاز ورنين</Text>
 	</STRING>
-	<STRING Id="1049" Name="IDS_ARABIC_RINGTONE_1">
-		<Text>عديله</Text>
-	</STRING>
-	<STRING Id="1050" Name="IDS_ARABIC_RINGTONE_2">
-		<Text>أم بادر</Text>
-	</STRING>
-	<STRING Id="1051" Name="IDS_ARABIC_RINGTONE_3">
-		<Text>مني ليك سلام</Text>
-	</STRING>
-	<STRING Id="1052" Name="IDS_ARABIC_RINGTONE_4">
-		<Text>نعيم الدنيا</Text>
-	</STRING>
-	<STRING Id="1053" Name="IDS_ARABIC_RINGTONE_5">
-		<Text>إيقاع الجبل</Text>
-	</STRING>
-	<STRING Id="1054" Name="IDS_ARABIC_RINGTONE_6">
-		<Text>حبيب غاب</Text>
-	</STRING>
-	<STRING Id="1055" Name="IDS_ARABIC_RINGTONE_7">
-		<Text>وهج الدليب</Text>
-	</STRING>
-	<STRING Id="1056" Name="IDS_ARABIC_RINGTONE_8">
-		<Text>سوداني</Text>
-	</STRING>
-	<STRING Id="1057" Name="IDS_ARABIC_RINGTONE_9">
-		<Text>الجنوب</Text>
-	</STRING>
-	<STRING Id="1058" Name="IDS_ARABIC_RINGTONE_10">
-		<Text>الدوبيت</Text>
-	</STRING>
 	<STRING Id="1059" Name="IDS_DEFAULT">
 		<Text>Default</Text>
 	</STRING>

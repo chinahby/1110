@@ -136,36 +136,6 @@
 	<STRING Id="1048" Name="IDS_ALERTTYPE_VIBANDRING">
 		<Text>Getar dan dering</Text>
 	</STRING>
-	<STRING Id="1049" Name="IDS_ARABIC_RINGTONE_1">
-		<Text>Adela</Text>
-	</STRING>
-	<STRING Id="1050" Name="IDS_ARABIC_RINGTONE_2">
-		<Text>Um Bader</Text>
-	</STRING>
-	<STRING Id="1051" Name="IDS_ARABIC_RINGTONE_3">
-		<Text>Mny Leek Sallam</Text>
-	</STRING>
-	<STRING Id="1052" Name="IDS_ARABIC_RINGTONE_4">
-		<Text>Naeem Eldonya</Text>
-	</STRING>
-	<STRING Id="1053" Name="IDS_ARABIC_RINGTONE_5">
-		<Text>Egaa Elgabal</Text>
-	</STRING>
-	<STRING Id="1054" Name="IDS_ARABIC_RINGTONE_6">
-		<Text>Habeeb Gaab</Text>
-	</STRING>
-	<STRING Id="1055" Name="IDS_ARABIC_RINGTONE_7">
-		<Text>Whag Aldaleeb</Text>
-	</STRING>
-	<STRING Id="1056" Name="IDS_ARABIC_RINGTONE_8">
-		<Text>Sudani</Text>
-	</STRING>
-	<STRING Id="1057" Name="IDS_ARABIC_RINGTONE_9">
-		<Text>Aljanowb</Text>
-	</STRING>
-	<STRING Id="1058" Name="IDS_ARABIC_RINGTONE_10">
-		<Text>Aldowbeet</Text>
-	</STRING>
 	<STRING Id="1059" Name="IDS_DEFAULT">
 		<Text>Standar</Text>
 	</STRING>
