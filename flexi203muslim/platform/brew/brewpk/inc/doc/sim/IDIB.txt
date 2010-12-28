@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IDIB simulation
+
+IDIB is simulated.
+==========================
+*/ 
