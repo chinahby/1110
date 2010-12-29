@@ -2592,7 +2592,8 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 					   //(void) ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_MUSICPLAYER,EVT_USER_REDRAW,0,0);       
 					  
 						//Add By zzg 2010_08_18
-						MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);	
+						MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);
+                        MSG_FATAL("PLAY_X=%d----PLAY_Y=%d",PLAY_X,PLAY_Y,0);
 						MP3_DRAW_BOTTOMBAR(BTBAR_OPTION_STOP);            
 						IDISPLAY_Update(pMe->m_pDisplay);
 						//Add End
@@ -2607,13 +2608,13 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
     case AVK_UP:
 	case AVK_O:   //add by yangdecai
 		 pMe->m_rtype = TYPE_ADDVOLUME;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
-		 #if defined( FEATURE_DISP_220X176) || defined(FEATURE_DISP_128X160)
+		 #if defined( FEATURE_DISP_220X176) || defined(FEATURE_DISP_128X160)|| defined(FEATURE_DISP_176X220)
 		 #else
          MP3_DrawImage( pMe,IDI_ADDVOLUME_PRESS, ADDVOLUMEPRESS_X, ADDVOLUMEPRESS_Y);
          IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
          ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
          #endif
-         
+         MSG_FATAL("MP3_DrawImage ----eMusicVolume%d",pMe->m_MusicPlayerCfg.eMusicVolume,0,0);
          if(pMe->m_MusicPlayerCfg.eMusicVolume < VOLUME_FIVE)
          {
             pMe->m_MusicPlayerCfg.eMusicVolume++;
@@ -2631,15 +2632,15 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             } 
                 //重新刷新音量bar  
                 MP3_RefreshVolBar(pMe);
-                
+                MSG_FATAL("MP3_DrawImage ----eMusicVolume%d",pMe->m_MusicPlayerCfg.eMusicVolume,0,0);
          }
-        // IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh 20090415 mod true -> false
+         //IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh 20090415 mod true -> false
          return TRUE;
          
     case AVK_DOWN:
 	case AVK_I:   //add by yangdecai
 		  pMe->m_rtype = TYPE_DECVOLUME;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
-		  #if defined( FEATURE_DISP_220X176) || defined(FEATURE_DISP_128X160)
+		  #if defined( FEATURE_DISP_220X176) || defined(FEATURE_DISP_128X160) || defined(FEATURE_DISP_176X220)
 		  #else
           MP3_DrawImage( pMe,IDI_DECREASEVOLUME_PRESS, DECREASEVOLUMEPRESS_X, DECREASEVOLUMEPRESS_Y);
           IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
@@ -5033,6 +5034,7 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
 	else if (pMe->m_bPaused)
 	{
 		MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);
+        MSG_FATAL("PLAY_X=%d----PLAY_Y=%d",PLAY_X,PLAY_Y,0);  
 	}
 	// IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
 }
@@ -5050,6 +5052,7 @@ static void MP3_DrawSimplePlayerFace(CMusicPlayer *pMe)
     MP3_RefreshPlayingTick(pMe);//ok
     MP3_RefreshSimpleSchBar(pMe);
 }
+
 #ifdef FEATURE_MUSICPLAYER_LIST_INDEX_DISPLAY
 /*---------------------------------------------------------------------
 Function Name :MP3_DispListIndex

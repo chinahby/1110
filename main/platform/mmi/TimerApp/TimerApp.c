@@ -100,6 +100,13 @@ when         who            what, where, why
 #define TIMER_SCREEN_YOFFSET   30
 #define TIMER_HEIGHT_N         3
 
+#elif defined(FEATURE_DISP_176X220)
+#define TIMER_SCREEN_HEIGHT    38
+#define TIMER_SCREEN_WIDTH     60
+#define TIMER_IMAGE_WIDTH      100
+#define TIMER_SCREEN_XOFFSET   20
+#define TIMER_SCREEN_YOFFSET   30
+#define TIMER_HEIGHT_N         2
 
 #else
 #define TIMER_SCREEN_HEIGHT    38

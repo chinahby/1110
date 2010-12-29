@@ -359,9 +359,9 @@ OEMAnnun_content batt_content =
      {ANNUN_TYPE_IMAGE, 5, ANNUN_STATE_OFF, (void *)batt_image_data};
 
 #ifdef FEATURE_DISP_176X220
-    #define IMG_WIDTH      12
-    #define IMG_HEIGHT     13
-    #define LG_IMG_WIDTH 20
+    #define IMG_WIDTH      18//12
+    #define IMG_HEIGHT     18//13
+    #define LG_IMG_WIDTH   29
     #define TEXT_HEIGHT    11
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1
@@ -2184,14 +2184,14 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     }
 #elif defined(FEATURE_DISP_176X220)
 					bgRect.x = 20;
-                    if(titleLen > 136)
+                    if(titleLen > 125)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 176;
                     }
                     else
                     {
-                        bgRect.dx = 136;
+                        bgRect.dx = 125;
                     }	
 #elif defined(FEATURE_DISP_240X320)
 					bgRect.x = 40;

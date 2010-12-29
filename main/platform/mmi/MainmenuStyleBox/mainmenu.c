@@ -673,10 +673,10 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
     pMe->m_IconTitle[5]     = IDS_MAIN_MENU_RECENTCALLS;
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MUSICPLAYER;
-    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_SETTINGS;
-    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_APPLICATION;
-    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_TIMER;
-    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_SCHEDULER;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_APPLICATION;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SCHEDULER;
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_SETTINGS;
+    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_TIMER;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
 #elif defined (FEATURE_DISP_240X320)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
@@ -1522,6 +1522,7 @@ static void CalculateScreenParameters(MainMenu *pMe)
         pMe->m_IconFocus_Pt[i].y = pMe->m_Icondefault_Pt[i].y - (ICON_ANIMATED_HEIGHT- imageInfoIcon.cy)/2;
         //end added
     }
+    
 }
 
 static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)

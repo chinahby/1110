@@ -136,14 +136,14 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #define IDLE_D_CLOCK_X 		15
 #define IDLE_D_CLOCK_Y 		25
 
-#define RPLMN_X				IDLE_D_CLOCK_X
+#define RPLMN_X				5
 #define RPLMN_Y				(IDLE_D_CLOCK_Y+25)
 
-#define DATA_X				IDLE_D_CLOCK_X
-#define DATA_Y				(RPLMN_Y + 30) 
+#define DATA_X				5
+#define DATA_Y				(RPLMN_Y + 25) 
 
-#define WEEK_X               5
-#define WEEK_Y               52
+#define WEEK_X              5
+#define WEEK_Y              (DATA_Y + 25) 
 
 #elif defined(FEATURE_DISP_240X320)
 
@@ -4456,7 +4456,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   &wszDate[0], -1,
                                   0, 0, &rc_date, 
                                   IDF_ALIGN_MIDDLE
-                                  | IDF_ALIGN_LEFT
+                                  | IDF_ALIGN_RIGHT
                                   | IDF_TEXT_TRANSPARENT);
 #elif defined(FEATURE_DISP_128X128)
     {

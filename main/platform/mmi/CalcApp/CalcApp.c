@@ -433,7 +433,7 @@ when         who            what, where, why
 //显示计算区域最底行Y坐标原点
 #define CALC_VAL_RECT_Y                  22
 //显示计算区域宽度
-#define CALC_VAL_RECT_WIDTH          112
+#define CALC_VAL_RECT_WIDTH          150
 //显示单行计算区域高度
 #define CALC_VAL_RECT_HEIGHT         26
 //显示数字间间隔
