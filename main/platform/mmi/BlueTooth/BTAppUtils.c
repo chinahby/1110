@@ -1560,6 +1560,14 @@ void BTApp_ShowMessage(
   AECHAR* pText = pMe->pText2;
   AEERect rc;
 
+  //Add By zzg 2010_12_29
+  if (ISHELL_ActiveApplet(pMe->a.m_pIShell) != AEECLSID_BLUETOOTH_APP)
+  {		
+		MSG_FATAL("***zzg BTApp_ShowMessage ActiveApplet=%x***",ISHELL_ActiveApplet(pMe->a.m_pIShell), 0, 0);
+		return;
+  }
+  //Add End
+
   CLEAR_SCREEN();
 
   // get the title
@@ -1976,6 +1984,9 @@ DESCRIPTION
 ============================================================================= */
 void BTApp_SetBondable( CBTApp* pMe )
 {
+
+  MSG_FATAL("***zzg BTApp_SetBondable bBondable=%d***", pMe->mRM.bBondable, 0, 0);
+  
   if ( pMe->mRM.bBondable == FALSE )
   {
     if ( IBTEXTRM_SetBondable( pMe->mRM.po, TRUE ) != SUCCESS )

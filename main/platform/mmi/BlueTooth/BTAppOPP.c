@@ -285,6 +285,8 @@ void BTApp_ProcessOPPNotifications(
     }
     case AEEBT_OPP_EVT_OBJ_PUSHED:  // current push operation completed
     {
+	  MSG_FATAL("***zzg BTApp_ProcessOPPNotify AEEBT_OPP_EVT_OBJ_PUSHED uError=%x***", pData->uError, 0, 0);
+	  
       if ( pData->uError == AEEBT_OPP_ERR_NONE )
       {
         userEvent = EVT_OPP_OBJ_PUSHED;
@@ -298,6 +300,8 @@ void BTApp_ProcessOPPNotifications(
     }
     case AEEBT_OPP_EVT_OBJ_PULLED:  // server's default business card pulled
     {
+	  MSG_FATAL("***zzg BTApp_ProcessOPPNotify AEEBT_OPP_EVT_OBJ_PULLED uError=%x***", pData->uError, 0, 0);
+		
       if ( pData->OppObject.pszName ) 
       {
         STRTOWSTR( pData->OppObject.pszName, 
@@ -1362,6 +1366,8 @@ void BTApp_OPPPushEx( CBTApp* pMe, char* filepath, AEEBTObjectType objType )
 
   STRTOWSTR(pszName, wDefaultObjectName, sizeof(wDefaultObjectName));
 
+  MSG_FATAL("***zzg BTApp_OPPPushEx Start***", 0, 0, 0);
+
   if ( IFILEMGR_Test( pMe->mOPP.pIFileMgr, pszName ) != SUCCESS )
   {
     if ( pMe->mOPP.bRegistered != FALSE ) // server?
@@ -2167,6 +2173,8 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 {
   uint16 msgID;
 
+  MSG_FATAL("***zzg BTApp_OPPHandle dwParam=%d***", dwParam, 0, 0);
+  
   switch ( dwParam )
   {
     case EVT_OPP_CONN_REQ:
@@ -2341,6 +2349,8 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       break;
     case EVT_OPP_OBJ_PUSHED:
     {
+	  MSG_FATAL("***zzg BTApp_OPPHandle EVT_OPP_OBJ_PUSHED***", 0, 0, 0);
+	  
       if ( pMe->mOPP.bRegistered == FALSE )
       {
         msgID = IDS_MSG_OBJ_PUSHED;
@@ -2377,6 +2387,8 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
     }
     case EVT_OPP_OBJ_PUSH_FAILED:
     {
+	  MSG_FATAL("***zzg BTApp_OPPHandle EVT_OPP_OBJ_PUSH_FAILED***", 0, 0, 0);
+	  
       if ( pMe->mOPP.bRegistered == FALSE )
       {
         msgID = IDS_MSG_OBJ_PUSH_FAILED;
@@ -2410,6 +2422,8 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
     }
     case EVT_OPP_OBJ_PULLED:
     {
+	  MSG_FATAL("***zzg BTApp_OPPHandle EVT_OPP_OBJ_PULLED***", 0, 0, 0);
+		
       if ( pMe->mOPP.bRegistered == FALSE )
       {
         msgID = IDS_MSG_OBJ_PULLED;
@@ -2440,6 +2454,8 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
     }
     case EVT_OPP_OBJ_PULL_FAILED:
     {
+	  MSG_FATAL("***zzg BTApp_OPPHandle EVT_OPP_OBJ_PULL_FAILED***", 0, 0, 0);
+	  
       if ( pMe->mOPP.bRegistered == FALSE )
       {
         msgID = IDS_MSG_OBJ_PULL_FAILED;

@@ -8901,8 +8901,7 @@ LOCAL void bt_rm_check_busy_timeout
   {
     link_busy = TRUE;
   }
-  else if ( (conn_ptr->link_mode != BT_LM_ACTIVE) &&
-            (conn_ptr->link_mode_request != BT_LM_NONE) )
+  else if ( (conn_ptr->link_mode != BT_LM_ACTIVE) && (conn_ptr->link_mode_request != BT_LM_NONE) )
   {
     link_busy = TRUE;
   }
@@ -8940,6 +8939,7 @@ LOCAL void bt_rm_check_busy_timeout
 
         if ( conn_ptr->bonding_app_id != BT_APP_ID_NULL )
         {
+          MSG_FATAL("***zzg bonding_app_id=%x***", conn_ptr->bonding_app_id, 0, 0);
           bt_rm_update_conn_hc_error( conn_ptr, BT_BE_HW_FAILURE );
           bt_rm_finish_bond_attempt( conn_ptr );
         }
@@ -8986,7 +8986,7 @@ LOCAL void bt_rm_check_busy_timeout
         {
           conn_ptr->security_request = BT_SEC_NONE;
 #endif /* BT_SWDEV_2_1_SSP */
-
+         
           bt_rm_update_conn_hc_error( conn_ptr, BT_BE_HW_FAILURE );
           bt_rm_link_status_updated( conn_ptr );
         }

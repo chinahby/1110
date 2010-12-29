@@ -548,8 +548,9 @@ int OEMBTExtOPP_Push(
   fileInfoEx.pClasses = NULL;
   fileInfoEx.nClassesSize = 0;
 
-  if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
-                      (OEMINSTANCE*)&pMe ) != TRUE )
+  MSG_FATAL("***zzg OEMBTExtOPP_Push***", 0, 0, 0);
+
+  if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, (OEMINSTANCE*)&pMe ) != TRUE )
   {
     return EFAILED;
   }
@@ -666,6 +667,8 @@ int OEMBTExtOPP_Push(
   }
 
   TASKLOCK();
+
+  MSG_FATAL("***zzg OEMBTExtOpp Push bIsServer=%d, pMe->state=%d***", pMe->bIsServer, pMe->state, 0);
   
   if ( pMe->bIsServer == FALSE )
   {
@@ -679,6 +682,8 @@ int OEMBTExtOPP_Push(
       statOut = bt_cmd_pf_opp_cli_push( pMe->appId, pMe->clientConnID, 
                                         pMe->wName, pMe->pszType );
     }
+
+	MSG_FATAL("***zzg OEMBTExtOpp Push statOut=%d***", statOut, 0, 0);
   }
   else
   {
@@ -694,6 +699,8 @@ int OEMBTExtOPP_Push(
       pMe->appId, pMe->serverConnID, (bt_pf_opp_handle_type)pMe->pFile,
       NAME_ONLY( pMe->wName ), pMe->pszType, pMe->dwFileSize, statIn );
     }
+
+	MSG_FATAL("***zzg OEMBTExtOpp Push statOut=%d***", statOut, 0, 0);
   }
 
 
