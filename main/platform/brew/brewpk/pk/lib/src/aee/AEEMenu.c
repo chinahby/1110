@@ -4536,10 +4536,10 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
         {
 #ifdef CUST_EDITION
 //只是为了解决背景和前景相同颜色的一个bug，这个bug由于应用导致
-		if (pme->m_c.cSelBack == pme->m_c.cBack)
+		if (pme->m_c.cSelBack == pme->m_c.cBack||((pme->m_c.cSelBack<CLR_SYS_LAST)&&(pme->m_c.cBack<CLR_SYS_LAST)))
 		{
-			pme->m_c.cSelBack=MAKE_RGB(0xC0, 0xC0, 0xC0);
-	       }
+			pme->m_c.cSelBack=MAKE_RGB(0xff, 0x00, 0x00);
+	    }
               IDISPLAY_DrawFrame(pd, prc, ft, (bSel ? pme->m_c.cSelBack : pme->m_c.cBack));
 #else
               IDISPLAY_DrawFrame(pd, prc, ft, (bSel ? pme->m_c.cSelBack : pme->m_c.cBack));
