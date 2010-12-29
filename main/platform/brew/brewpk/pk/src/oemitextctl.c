@@ -941,7 +941,11 @@ if ((!pme->m_pSoftKey) &&
                         //goto NormalKeyEvent;                              
                         break; 
   #endif //FEATURE_T9_MT_THAI    
-  
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+					case OEM_MODE_MYANMAR:
+						OEM_TextRestart(pme->m_pText);
+						break;
+#endif
                     default:
                         break;                    
                 }  
@@ -4764,6 +4768,15 @@ static void OEM_SetInputMode(CTextCtl * pme)
 	                          sizeof(boolean));
 			break;
 #endif
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+		case OEM_MODE_MYANMAR:
+			wMode = AEE_TM_MYANMAR;   //add by yangdecai   2010-12-23
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+			(void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+			break;
+#endif
         case OEM_MODE_T9_MT_ENGLISH_UP:
             wMode = AEE_TM_LETTERS;//大写字母输入模式
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
@@ -5145,6 +5158,9 @@ static void TextCtl_SetInputList(CTextCtl *pme)
     pme->m_nCurrInputModeList[i++] = OEM_MODE_NUMBERS;  
 
 #endif // FEATURE_CARRIER_VENEZUELA_MOVILNET
+#ifdef FEATURE_MYANMAR_INPUT_MOD    //add by yangdecai 20101223
+	pme->m_nCurrInputModeList[i++] = OEM_MODE_MYANMAR;
+#endif
 
 #ifdef FEATURE_T9_PINYIN
     pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_PINYIN;
@@ -5726,6 +5742,11 @@ static int TextCtl_Oemmode_Textmode(byte oeminputmode)
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH  //add by yangdecai   2010-09-09
 		case TEXT_MODE_T9_CAP_LOWER_ENGLISH:
 			wMode = AEE_TM_CAPLOWER;
+			break;
+#endif
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+		case TEXT_MODE_MYANMAR:
+			wMode = AEE_TM_MYANMAR;   //add by yangdecai   2010-12-23
 			break;
 #endif
 

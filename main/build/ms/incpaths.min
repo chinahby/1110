@@ -791,6 +791,7 @@ GB_PATH =               $(BREW_THIRD)/GB
 ZI_PATH =               $(BREW_THIRD)/ZiCorp/v6.0
 GREYBIT_PATH =			$(BREW_THIRD)/GreyBit
 ALE_PATH =			    $(BREW_THIRD)/ALE
+MYANMAR_PATH =          $(BREW_THIRD)/myanmar
 REND_PATH =             $(BREWDIR)/pk/Rend
 BREW_OEM_SIM_INC=       $(BREWDIR)/pk/inc/sim
 BREW_OEM_RESINC=        $(BREWDIR)/pk/bin/en/256Color

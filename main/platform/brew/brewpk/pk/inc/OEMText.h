@@ -70,6 +70,9 @@ when       who     what, where, why
 
 // USE T9 input method
 #define FEATURE_T9_INPUT
+#ifdef FEATURE_LANGUAGE_MYANMAR
+#define FEATURE_MYANMAR_INPUT_MOD     //add by yangdecai 2010-12-23
+#endif
 #ifdef WIN32  //add by ydc
 #define FEATURE_LANG_ENGLISH
 #define FEATURE_TOUCHPANEL
@@ -191,7 +194,9 @@ when       who     what, where, why
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH  //add by yangdecai   2010-09-09
 #define TEXT_MODE_T9_CAP_LOWER_ENGLISH  AEE_TM_CAPLOWER
 #endif
-
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+#define TEXT_MODE_MYANMAR  AEE_TM_MYANMAR   //add by yangdecai   2010-12-23
+#endif
 #ifdef FEATURE_T9_PINYIN
 #define TEXT_MODE_T9_PINYIN        AEE_TM_PINYIN 
 #endif //FEATURE_T9_PINYIN
@@ -324,7 +329,9 @@ enum
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
 	,OEM_MODE_T9_CAP_LOWER_ENGLISH
 #endif
-
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+	,OEM_MODE_MYANMAR,
+#endif
 #ifdef FEATURE_T9_PINYIN
     ,OEM_MODE_T9_PINYIN
 #endif //FEATURE_T9_PINYIN
@@ -434,7 +441,7 @@ enum
 // Input method title
 //=============================================================================== 
 //Maximum length of the Mode string. This is used in the Menu.    
-#define MAX_MODE_STR                (15)
+#define MAX_MODE_STR                (16)
 
 #define _T9_NUMBER_MODES             (1)
 
@@ -461,7 +468,11 @@ enum
 #else // #ifdef FEATURE_T9_PINYIN
 #define _T9_PINYIN_MODE             (0)
 #endif //FEATURE_T9_PINYIN
-
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+#define _T9_MYANMAR_MODE             (1)
+#else // #ifdef FEATURE_T9_PINYIN
+#define _T9_MYANMAR_MODE             (0)
+#endif //FEATURE_T9_PINYIN
 #ifdef FEATURE_T9_STROKE
 #define _T9_STROKE_MODE             (1)
 #else // #ifdef FEATURE_T9_STROKE
@@ -603,6 +614,7 @@ enum
 #define NUM_OF_MODES            ( _T9_NUMBER_MODES \
                                 + _T9_MULTITAP_MODES \
                                 + _T9_RAPID_ENGLISH_MODE \
+                                + _T9_MYANMAR_MODE \
                                 + _T9_PINYIN_MODE \
                                 + _T9_STROKE_MODE \
                                 + _T9_ZHUYIN_MODE \
@@ -650,7 +662,9 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
    ,{'A','b','c',0}
 #endif
-
+#ifdef FEATURE_MYANMAR_INPUT_MOD      //add by yangdecai 2010-1223
+   ,{'M','Y','A','N','M','A','R',0}
+#endif
 #ifdef FEATURE_T9_PINYIN
    ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}
 #endif //FEATURE_T9_PINYIN
@@ -765,7 +779,9 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
    ,{'A','b','c',0}
 #endif
-
+#ifdef FEATURE_MYANMAR_INPUT_MOD      //add by yangdecai 2010-1223
+   ,{'M','Y','A','N','M','A','R',0}
+#endif
 #ifdef FEATURE_T9_PINYIN
    ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}
 #endif //FEATURE_T9_PINYIN
@@ -2061,6 +2077,9 @@ boolean          TSIM_ProcPenDown(OEMCONTEXT hTextCtl,
 
 boolean          OEM_TextShiftStatus(OEMCONTEXT hTextField);
 boolean          OEM_TextAltStatus(OEMCONTEXT hTextField);
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+void OEM_TextRestart(OEMCONTEXT hTextField);
+#endif
 //#endif
 
 /*========================================================================

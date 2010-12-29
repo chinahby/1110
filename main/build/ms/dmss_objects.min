@@ -610,6 +610,9 @@ endif
 
 include $(GREYBIT_PATH)/GreyBit.min
 include $(ALE_PATH)/ALE.min
+ifeq ($(USES_MYAINPUT),yes)
+include $(MYANMAR_PATH)/myainput.min
+endif
 endif
 
 

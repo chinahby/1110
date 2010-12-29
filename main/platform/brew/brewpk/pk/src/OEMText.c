@@ -76,6 +76,12 @@ when       who     what, where, why
 #include "appscommonimages.brh"
 #include "err.h"
 #include "OEMQuertkey.h"
+
+
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+#include "splime.h"
+extern const unsigned long prv_dataArray[];
+#endif
 /*===========================================================================
 
                     DEFINITIONS AND CONSTANTS
@@ -135,6 +141,19 @@ when       who     what, where, why
 #endif //AEE_SIMULATOR
 
 #endif //#ifdef FEATURE_T9_CHINESE
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+#define SELECTION_BUFFER_SIZE   (8)
+#define CAUDB_SIZE              (110)
+#define MYAKEYTYPE_NORMAL        (0)
+#define MYAKEYTYPE_SELECT        (1)
+#define MYAKEYTYPE_CONTROL       (2)
+#define MYAKEYTYPE_UNKNOWN       (6)
+#define MYA_FONT_WIDTH           (30)
+#define MAX_STROKES             (9) // (10) // the max count which display in the screen
+#define MYANMAR_FONT_HEIGHT 16
+#define MYANMAR_FONT_WIDTH  28  
+
+#endif
 #endif //#ifdef FEATURE_T9_INPUT
 
 static int snTextModeIndex = 0;
@@ -245,6 +264,13 @@ typedef struct _TextCtlContext {
    AEERect              rectChineseSyllableInput;
    AEERect              rectChineseTextInput;   
 #endif //#ifdef FEATURE_T9_CHINESE  
+#ifdef FEATURE_MYANMAR_INPUT_MOD   //add by yangdecai 2010-1224
+   short                nMSelectionSelectd; // The current myanmar which in the Selection is selected.
+   AEERect              rectMyanmarInput;
+   AEERect              rectMyanmarSyllableInput;
+   AEERect              rectMyanmarTextInput;
+   SplImeGlobals        m_date;
+#endif
 #endif //FEATURE_T9_INPUT
 
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
@@ -311,6 +337,40 @@ static void T9_AW_Init(TextCtlContext *pContext);
 static void T9_AW_Destroy(TextCtlContext *pContext);
 static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key);
 static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent, AVKType cKey);
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+
+//MYANMAR FUNCTION
+static void T9TextCtl_CJK_MYANMAR_Restart(TextCtlContext *pContext);
+static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *,AEEEvent,AVKType);
+static void T9TextCtl_CJK_MYANMAR_Exit(TextCtlContext *pContext);
+static T9STATUS T9_CJK_MYANMAR_Init(TextCtlContext *pContext);
+static void T9_CJK_MYANMAR_Destroy(TextCtlContext *pContext);
+static boolean T9_CJK_MYANMAR_DisplayText(TextCtlContext *pContext);
+static enum SplKey T9_CJK_MYANMAR_BrewKeyToT9Key(TextCtlContext *pContext, AVKType cKey);
+static void T9_CJK_MYANMAR_DrawSyllableString(TextCtlContext *pContext);
+static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext);
+
+static void T9_CJK_MYANMAR_AdjustInputInfoLocation(TextCtlContext *pContext, 
+														unsigned int *pWindX, 
+                                                    	unsigned int *pWindY,
+                                                    	unsigned int *pWindDx,
+                                                    	unsigned int *pWindDy);
+
+extern long MyGetStrWidthW(const unsigned short * string)
+{
+	int iwszlen = STRLEN((char *)string);
+	iwszlen = iwszlen*MYANMAR_FONT_WIDTH/2;
+	return iwszlen;
+	#if 0
+	iwszlen = IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                      pContext->font,
+                                                      string,
+                                                      1,
+                                                      -1,
+                                                      NULL);
+    #endif
+}
+#endif
 
 /* This is static because the only use of it is in setting a pointer.
    It is T9FARCALL because it might be called from anywhere. */
@@ -485,6 +545,25 @@ T9CCAudbInfo         *gpSimpCAUdbInfo = NULL;
 T9CCAudbInfo         *gpTradCAUdbInfo = NULL;
 extern T9STATUS T9FARCALL T9CCLoadLdb(T9CCFieldInfo *pFieldInfo, T9ChineseData T9FARDATA *pT9CCLdbHeader);
 #endif //FEATURE_T9_CHINESE
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+typedef struct MYAKeyMap_s 
+{
+       enum SplKey        SKey;
+       AVKType            cKey;
+} MYAKeyMap;
+
+MYAKeyMap MyanmarMap[] = 
+{
+    {SPKEY_1,    AVK_1},      {SPKEY_2,    AVK_2},    		{SPKEY_3,    AVK_3},
+    {SPKEY_4,    AVK_4},      {SPKEY_5,    AVK_5},    		{SPKEY_6,    AVK_6}, 
+    {SPKEY_7,    AVK_7},      {SPKEY_8,    AVK_8},    		{SPKEY_9,    AVK_9}, 
+    {SPKEY_0,    AVK_0},      {SPKEY_Star,  AVK_STAR},		{SPKEY_Sharp,AVK_POUND},
+    {SPKEY_OK,   AVK_SELECT}, {SPKEY_Back,   AVK_CLR}, 		{SPKEY_Down,   AVK_DOWN}, 
+    {SPKEY_Up,   AVK_UP},     {SPKEY_Left,   AVK_LEFT}, 	{SPKEY_Right, AVK_RIGHT}, 
+    {SPKEY_OK,   AVK_SEND},   {SPKEY_Return,    AVK_END}, 	{0,0}
+};
+
+#endif
     
     
 static ModeInfo sTextModes[NUM_OF_MODES] =
@@ -518,7 +597,13 @@ static ModeInfo sTextModes[NUM_OF_MODES] =
       T9TextCtl_Cap_Lower_Rapid_Exit ,
       {TEXT_MODE_T9_CAP_LOWER_ENGLISH, {0}}}
 #endif
-
+#ifdef FEATURE_MYANMAR_INPUT_MOD    //add by yangdecai 20101223
+	,{T9TextCtl_CJK_MYANMAR_Restart,
+      T9TextCtl_CJK_MYANMAR_Key,
+      NULL, 
+      T9TextCtl_CJK_MYANMAR_Exit ,
+      {TEXT_MODE_MYANMAR, {0}}}
+#endif
 
 #ifdef FEATURE_T9_PINYIN
    ,{T9TextCtl_CJK_CHINESE_Restart,
@@ -814,6 +899,12 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    pNewContext->rectChineseInput.y = pNewContext->rectDisplay.y + pNewContext->rectDisplay.dy;
    pNewContext->rectChineseInput.dy = 0;
 #endif //#ifdef FEATURE_T9_CHINESE
+#ifdef FEATURE_MYANMAR_INPUT_MOD   //add by yangdecai 2010-1224
+   pNewContext->rectMyanmarInput.x = pNewContext->rectDisplay.x;
+   pNewContext->rectMyanmarInput.dx = 0;
+   pNewContext->rectMyanmarInput.y = pNewContext->rectDisplay.y + pNewContext->rectDisplay.dy;
+   pNewContext->rectMyanmarInput.dy = 0;
+#endif
 
 #ifdef FEATURE_FUNCS_THEME
     {
@@ -829,6 +920,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    TextCtl_TextChanged(pNewContext);
 
    // Restart the edit if editable
+   MSG_FATAL("TextCtl_RestartEdit..........................",0,0,0);
    TextCtl_RestartEdit(pNewContext);
 
 // bw:20080925
@@ -1521,7 +1613,15 @@ void OEM_TextGetSel(OEMCONTEXT hTextCtl, int *pSelStart, int *pSelEnd)
          *pSelEnd = 0;
    }
 }
-
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+void OEM_TextRestart(OEMCONTEXT hTextField)
+{
+	register TextCtlContext *pContext = (TextCtlContext *) hTextField;
+	MSG_FATAL("OEM_TextRestart....................",0,0,0);
+    (*sTextModes[pContext->byMode].pfn_restart)(pContext);
+    pContext->sFocus = FOCUS_SELECTION;
+}
+#endif
 /*=============================================================================
 FUNCTION: OEM_TextKeyPress
 
@@ -1743,8 +1843,12 @@ OEM_TextKeyPress_COMM:
                 default:
                     if (sTextModes[pContext->byMode].pfn_char) 
                     {
-                    	
-                        boolean ans = (*sTextModes[pContext->byMode].pfn_char)(pContext,eCode, key);
+                    	boolean ans = FALSE;
+                    	#ifdef FEATURE_MYANMAR_INPUT_MOD
+                    	//(*sTextModes[pContext->byMode].pfn_restart)(pContext);
+                    	#endif
+                        ans = (*sTextModes[pContext->byMode].pfn_char)(pContext,eCode, key);
+                        MSG_FATAL("pContext->byMode......%d",pContext->byMode,0,0);
                         MSG_FATAL("...........................%d",ans,0,0);
                         if (ans)
                         {
@@ -8677,7 +8781,422 @@ static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent eCode
     return T9KEYNONE;    
 }
 #endif //#ifdef FEATURE_T9_ALPHABETIC
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+static void T9TextCtl_CJK_MYANMAR_Restart(TextCtlContext *pContext)
+{
+	T9STATUS sT9Status = T9STATERROR;  
+    // TRI Chinese input Init
+    MSG_FATAL("T9TextCtl_CJK_MYANMAR_Restart",0,0,0);
+    sT9Status = T9_CJK_MYANMAR_Init ( pContext );
+	MSG_FATAL("T9TextCtl_CJK_MYANMAR_Restart=%d",sT9Status,0,0);
+    // set rectChinese input Rect
+    pContext->rectMyanmarSyllableInput.x = pContext->rectDisplay.x;
+    pContext->rectMyanmarSyllableInput.dx = pContext->rectDisplay.dx -2;
+    pContext->rectMyanmarSyllableInput.dy = pContext->nLineHeight;    
+    pContext->rectMyanmarSyllableInput.y = pContext->rectDisplay.y + pContext->rectDisplay.dy - pContext->rectMyanmarSyllableInput.dy*2;
 
+    pContext->rectMyanmarTextInput.x = pContext->rectMyanmarSyllableInput.x;
+    pContext->rectMyanmarTextInput.dx = pContext->rectMyanmarSyllableInput.dx;
+    pContext->rectMyanmarTextInput.dy = pContext->nLineHeight;    
+    pContext->rectMyanmarTextInput.y = pContext->rectDisplay.y + pContext->rectDisplay.dy - pContext->rectMyanmarTextInput.dy;    
+
+    pContext->rectMyanmarInput.x = pContext->rectMyanmarSyllableInput.x;
+    pContext->rectMyanmarInput.dx = pContext->rectMyanmarSyllableInput.dx;
+    pContext->rectMyanmarInput.dy = pContext->rectMyanmarSyllableInput.dy + pContext->rectMyanmarTextInput.dy;    
+    pContext->rectMyanmarInput.y = pContext->rectDisplay.y + pContext->rectDisplay.dy - pContext->rectMyanmarInput.dy;            
+    
+  
+        
+    TextCtl_NoSelection(pContext);
+    TextCtl_TextChanged(pContext);
+    pContext->nMSelectionSelectd = 0;       // no default selected word   
+    pContext->sFocus = FOCUS_TEXT;
+}
+static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCode,AVKType key)
+{
+	boolean bRet = FALSE;
+    unsigned int uWordCount = 0;
+	enum SplKey mKey = 0;
+	enum SIMEReturn bResult = SMR_OK;
+	int i;
+    // discard the event that we don't handle
+    if ( key == AVK_SEND )
+    {
+        return FALSE;
+    }  
+    mKey = T9_CJK_MYANMAR_BrewKeyToT9Key (pContext, key );
+     switch ( key ) 
+    {
+        /* Assign zhuyin */
+        case AVK_1:
+        case AVK_2:
+        case AVK_3:
+        case AVK_4:
+        case AVK_5:
+        case AVK_6:        
+        case AVK_7:    
+        case AVK_8:    
+        case AVK_9:    
+        case AVK_0:     
+        case AVK_POUND:            
+        case AVK_STAR:  
+        	{
+        		if(1)
+        		{
+	        		bResult = SplImeProcessKey(mKey, SPKT_Down);
+	        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
+	        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
+	        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
+	        		pContext->m_date = g_SplImeGlobals;
+	        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
+	        		T9_CJK_MYANMAR_DisplaySelection(pContext);
+	        		return TRUE;
+        		}
+        		else
+        		{
+        			return FALSE;
+        		}
+        	}
+        	break;
+        case AVK_LEFT:
+        	{
+        		if(1)
+        		{
+	        		if(g_SplImeGlobals.outputInfo.isShowLeftArrow)
+	        		{
+		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
+		        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
+		        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
+		        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
+		        		pContext->m_date = g_SplImeGlobals;
+		        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
+		        		T9_CJK_MYANMAR_DisplaySelection(pContext);
+	        		}
+	        		return TRUE;
+	        	}
+	        	else
+	        	{
+	        		return FALSE;
+	        	}
+        	}
+        	break;
+        case AVK_RIGHT:
+        	{
+        		if(1)
+        		{
+	        		if(g_SplImeGlobals.outputInfo.isShowRightArrow)
+	        		{
+		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
+		        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
+		        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
+		        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
+		        		pContext->m_date = g_SplImeGlobals;
+		        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
+		        		T9_CJK_MYANMAR_DisplaySelection(pContext);
+	        		}
+	        		return TRUE;
+	        	}
+	        	else
+	        	{
+	        		return FALSE;
+	        	}
+        	}
+        	break;
+        case AVK_UP:
+        {
+        		if(1)
+        		{
+	        		if(g_SplImeGlobals.outputInfo.isShowUpArrow)
+	        		{
+		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
+		        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
+		        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
+		        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
+		        		pContext->m_date = g_SplImeGlobals;
+		        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
+		        		T9_CJK_MYANMAR_DisplaySelection(pContext);
+	        		}
+	        		return TRUE;
+
+	        	}
+	        	else
+	        	{
+	        		return FALSE;
+	        	}
+        	}
+        	break;
+        case AVK_DOWN:
+        	{
+        		if(1)
+        		{
+	        		if(g_SplImeGlobals.outputInfo.isShowDownArrow)
+	        		{
+		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
+		        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
+		        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
+		        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
+		        		pContext->m_date = g_SplImeGlobals;
+		        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
+		        		T9_CJK_MYANMAR_DisplaySelection(pContext);
+	        		}
+	        		return TRUE;
+	        	}
+	        	else
+	        	{
+	        		return FALSE;
+	        	}
+        	}
+        	break;
+        case AVK_CLR:
+        	{
+        		if(1)
+        		{
+	        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
+	        		bResult = SplImeProcessKey(mKey, SPKT_Down);
+	        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
+	        		if(g_SplImeGlobals.outputInfo.candidatesNum>0)
+	        		{
+	        			MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
+	        			pContext->m_date = g_SplImeGlobals;
+	        			//T9_CJK_MYANMAR_DrawSyllableString(pContext);
+	        			T9_CJK_MYANMAR_DisplaySelection(pContext);
+	        			return TRUE;
+	        		}
+	        		else
+	        		{
+	        			TextCtl_AddChar(pContext,*(AECHAR *)(g_SplImeGlobals.outputInfo.candidates[g_SplImeGlobals.outputInfo.candidateIndex]));
+	        			OEM_TextRestart(pContext);
+	        			pContext->sFocus = FOCUS_TEXT;
+	        			return TRUE;
+	        		}
+        		}
+        		else
+        		{
+        			if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+					{
+						 /* Set selection to the character before the insertion point */
+						--pContext->wSelStart;
+					}
+					else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+					{
+						return FALSE;
+					}
+										
+					/* Insert a "NUL" to just delete and insert nothing */
+					TextCtl_AddChar(pContext, 0);
+        			return TRUE;
+        		}
+        	}
+        break;
+        case AVK_INFO:
+        	{
+        		if(1)
+        		{
+	        		TextCtl_NoSelection(pContext);
+					TextCtl_AddChar(pContext,*(AECHAR *)(g_SplImeGlobals.outputInfo.candidates[g_SplImeGlobals.outputInfo.candidateIndex]));
+					OEM_TextRestart(pContext);
+					return TRUE;
+				}
+				else
+				{
+					return FALSE;
+				}
+        	}
+        	break;
+        default:
+        	break;
+    }
+	return bRet;
+}
+static void T9TextCtl_CJK_MYANMAR_Exit(TextCtlContext *pContext)
+{
+	MEMSET(&g_SplImeGlobals,0,sizeof(SplImeGlobals));
+	TextCtl_NoSelection(pContext);
+}
+static T9STATUS T9_CJK_MYANMAR_Init(TextCtlContext *pContext)
+{
+	enum SIMEReturn bResult = SMR_OK;
+	// ³õÊ¼»¯ÒýÇæ
+    g_SplImeGlobals.initData.imeData = (void*)prv_dataArray;
+    g_SplImeGlobals.uiInfo.candidateWidth = pContext->rectDisplay.dx-2;
+    g_SplImeGlobals.uiInfo.candMinSpacing = 1;
+    g_SplImeGlobals.uiInfo.fpGetStrWidthA = 0;
+    g_SplImeGlobals.uiInfo.fpGetStrWidthW = MyGetStrWidthW;
+
+    bResult = SplImeInit();
+	MSG_FATAL("SplImeInit.............bResult=%d",bResult,0,0);
+	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+static enum SplKey T9_CJK_MYANMAR_BrewKeyToT9Key(TextCtlContext *pContext, AVKType cKey)
+{
+	int i;
+	for (i = 0; MyanmarMap[i].cKey != 0; i++) 
+    {
+        if (MyanmarMap[i].cKey == cKey)
+        {
+            return MyanmarMap[i].SKey;
+        }
+    }
+    return SPKEY_NULL;
+}
+static boolean T9_CJK_MYANMAR_DisplayText(TextCtlContext *pContext)
+{
+	;
+}
+static void T9_CJK_MYANMAR_DrawSyllableString(TextCtlContext *pContext)
+{
+	;
+                
+}
+static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
+{
+	AECHAR          ch[2] = {0,0};
+    uint32          format;
+    AEERect         pRect;
+    AEERect         invertRect;
+    AEERect         pSelectRect;
+    AEERect         pAllRect;
+    unsigned int    k = 0;
+    unsigned int    iSyllableWindX = pContext->rectMyanmarSyllableInput.x;
+    unsigned int    iSyllableWindY = pContext->rectMyanmarSyllableInput.y;   
+    unsigned int    iWindX = pContext->rectMyanmarTextInput.x;
+    unsigned int    iWindY = pContext->rectMyanmarTextInput.y;   
+    unsigned int     iWindDx = pContext->rectMyanmarSyllableInput.dx;
+    unsigned int     iWindDy = pContext->rectMyanmarSyllableInput.dy ;
+    MSG_FATAL("iWindX=%d,iWindY=%d",iWindX,iWindY,0);
+    MSG_FATAL("iWindDx=%d,iWindDy=%d",iWindDx,iWindDy,0);
+    pContext->sFocus = FOCUS_SELECTION;
+    if(!((FOCUS_SELECTION == pContext->sFocus) ||
+          (FOCUS_SYLLABLE == pContext->sFocus) ||
+          (FOCUS_TEXT_PREDICTION == pContext->sFocus)))
+    {
+    	MSG_FATAL("return..................",0,0,0);
+        return;
+    }
+    T9_CJK_MYANMAR_AdjustInputInfoLocation(pContext, &iWindX, &iWindY, &iWindDx, &iWindDy);
+    
+    // setup the text Rect
+    SETAEERECT(&pRect,
+              iWindX,
+              iWindY, // at the bottom line
+              iWindDx,     
+              iWindDy);    
+    SETAEERECT(&pAllRect,
+              iWindX,
+              iSyllableWindY, // at the bottom line
+              iWindDx,     
+              (iWindDy)*2);  
+    MSG_FATAL("iWindX=%d,iWindY=%d",iWindX,iWindY,0);
+    MSG_FATAL("iWindDx=%d,iWindDy=%d",iWindDx,iWindDy,0);
+    IDISPLAY_EraseRect(pContext->pIDisplay, &pRect);
+     // blank the selection when focus on TEXT
+    if ( FOCUS_TEXT != pContext->sFocus )
+    {
+    	MSG_FATAL("return......DREAWING............",0,0,0);
+#ifdef FEATURE_FUNCS_THEME     
+        IDISPLAY_DrawRect(pContext->pIDisplay,   
+                &pRect,
+                pContext->m_themeColor,
+                RGB_WHITE,
+                IDF_RECT_FRAME);  
+#else //FEATURE_FUNCS_THEME 
+        IDISPLAY_DrawRect(pContext->pIDisplay,   
+                &pAllRect,
+                RGB_BLACK,
+                RGB_WHITE,
+                IDF_RECT_FRAME|IDF_RECT_FILL);  
+#endif //FEATURE_FUNCS_THEME 
+/*
+    	pSelectRect.y = pRect.y;
+    	pSelectRect.dy = pRect.dy;
+    	pSelectRect.x = pRect.x+2+(MYA_FONT_WIDTH)*(g_SplImeGlobals.outputInfo.candidateIndex);
+    	pSelectRect.dx = MYA_FONT_WIDTH;
+        // Point to the buffer to draw 
+        IDISPLAY_DrawRect(pContext->pIDisplay,   
+                &pSelectRect,
+                MAKE_RGBA(120,240,120,255),
+                MAKE_RGBA(120,240,120,255),
+                IDF_RECT_FRAME |IDF_RECT_FILL); 
+                */
+        /* Draw each character */
+        format = IDF_TEXT_TRANSPARENT;
+        (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
+                                   AEE_FONT_NORMAL,
+                                   g_SplImeGlobals.outputInfo.inputString,//pContext->m_date.outputInfo.candidates[k],
+                                   -1,
+                                   iSyllableWindX+2,
+                                   pRect.y-MYANMAR_FONT_HEIGHT,//SCREEN_HEIGHT - pContext->nLineHeight,
+                                   NULL,
+                                   format);
+        for (k = 0; k < pContext->m_date.outputInfo.candidatesNum; k++) 
+        {
+            format = IDF_ALIGN_NONE;
+            STRTOWSTR((char *)(pContext->m_date.outputInfo.candidates[k]),ch,sizeof(ch));
+            //ch[0] = (AECHAR)*(pContext->m_date.outputInfo.candidates[k]); // use GBcode for EVB board 
+            //WSTRCPY(ch,0xE0D7);
+            //ch[0] = 0xE0D7;
+            MSG_FATAL("ch::::::::::::::%x",*g_SplImeGlobals.outputInfo.candidates[k],0,0);
+            (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
+                                   AEE_FONT_NORMAL,
+                                   g_SplImeGlobals.outputInfo.candidates[k],//pContext->m_date.outputInfo.candidates[k],
+                                   -1,
+                                   pRect.x+2+(MYA_FONT_WIDTH)*k,
+                                   pRect.y,//SCREEN_HEIGHT - pContext->nLineHeight,
+                                   NULL,
+                                   format);
+            /* If this character is a NULL terminator, then stop drawing */
+            if ((pContext->m_date.outputInfo.candidates[k]) == NULL)  break;
+            
+        };
+        
+        
+        // draw Select Rect.
+        if (g_SplImeGlobals.outputInfo.candidateIndex>= 0 )
+        {
+            invertRect.x = pRect.x+(MYA_FONT_WIDTH)*(g_SplImeGlobals.outputInfo.candidateIndex);
+            invertRect.y = pRect.y;
+            invertRect.dx = MYANMAR_FONT_WIDTH;
+            invertRect.dy = MYANMAR_FONT_HEIGHT;
+            IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
+        }
+    } 
+    
+}
+
+static void T9_CJK_MYANMAR_AdjustInputInfoLocation(TextCtlContext *pContext, 
+														unsigned int *pWindX, 
+                                                    	unsigned int *pWindY,
+                                                    	unsigned int *pWindDx,
+                                                    	unsigned int *pWindDy)
+{
+	 if(pContext == NULL ||pWindX ==NULL ||pWindY == NULL)
+    {
+        return ;
+    }
+    
+    if(pContext->rectDisplay.dy < pContext->rectMyanmarSyllableInput.dy + pContext->rectMyanmarTextInput.dy)
+    {
+       AEEDeviceInfo DeviceInfo;    
+       OEM_GetDeviceInfo(&DeviceInfo);
+        if(pContext->rectDisplay.y +
+            pContext->rectDisplay.dy + 
+            pContext->rectMyanmarSyllableInput.dy +
+            pContext->rectMyanmarTextInput.dy +
+            GetBottomBarHeight(pContext->pIDisplay) < DeviceInfo.cyScreen)
+        {
+            *pWindY += pContext->rectDisplay.dy ;
+        }
+        else
+        {
+            *pWindY = MAX(0, (int16)(*pWindY) - pContext->rectDisplay.dy );
+        }
+
+        *pWindX =-1;
+        *pWindDx = DeviceInfo.cxScreen - 1;
+    }
+}
+
+#endif
 #ifdef FEATURE_T9_CHINESE
 /*------------------------------------------------------------------------
  *
@@ -10021,7 +10540,11 @@ static void T9_CJK_CHINESE_DisplaySyllable ( TextCtlContext *pContext )
                     T9_CJK_CHINESE_DrawStrokeString(pContext);              
                     break;
 #endif //FEATURE_T9_ZHUYIN
-
+#ifdef FEATURE_MYANMAR_INPUT_MOD    //add by yangdecai 2010-1223
+			case TEXT_MODE_MYANMAR:
+                    T9_CJK_CHINESE_DrawSyllableString(pContext);
+                    break;
+#endif
             default:             
                     break;
         }        
