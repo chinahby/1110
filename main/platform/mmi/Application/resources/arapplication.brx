@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="arapplication" VERSION="1">
+<BREWRes Name="application" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1001" Name="IDS_APPLICATION_LIST">
 		<Text>تطبيق</Text>
