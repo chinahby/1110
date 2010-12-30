@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="stringres_id" VERSION="1">
+<BREWRes Name="blackjack" VERSION="1">
 <Strings Encoding="Unicode">
     <String Id="1" Name= "IDC_NEW_GAME">
         <Text>لعبة جديدة</Text>
