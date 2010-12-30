@@ -380,12 +380,7 @@ static boolean send_keys = FALSE;
 static boolean ui_ok_to_sleep = FALSE;
 static kpd_handle_type ui_kpd_handle; /* Keypad Handle */
 static lcd_handle_type ui_lcd_handle; /* LCD handle */
-#ifdef T_QSC1100
-//this varibale is being introduced to avoid issue 154047
-//This varibale will be updated whenevr the backlight status is changed
-//and this will be used to voteforsleep iff backlight is off in CoreAppHandleSignals
-static boolean gbIsBacklightOn = FALSE;
-#endif
+
 #define UI_KEY_TYPE byte
 typedef enum {
     AVK_METHED_NONE,    // NONE
@@ -1934,6 +1929,11 @@ static void CoreTask_FreeAEEInstance(void)
 #endif
 }
 
+static boolean bSendHeadsetKeyAllowed = FALSE;
+static void HeadsetKeyAllowedCB(void *pUser)
+{
+    bSendHeadsetKeyAllowed = TRUE;
+}
 static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam)
 {
     AEECLSID cls;
@@ -1941,7 +1941,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 #ifndef FEATURE_ICM
 	AEETCalls po;
 #endif
-
+    
 #ifdef FEATURE_KEYGUARD	
     if (OEMKeyguard_HandleEvent(evt, wParam))
     {	
@@ -1950,7 +1950,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 #endif
     
     // AVK_HEADSET_SWITCH means headset key press
-    if (wParam == AVK_HEADSET_SWITCH) {
+    if (wParam == AVK_HEADSET_SWITCH && bSendHeadsetKeyAllowed) {
 #ifdef FEATURE_ICM
         if(AEECM_IS_VOICECALL_CONNECTED(gpICM)){
 #else
@@ -2051,6 +2051,16 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
                                 0,
                                 0
                                );
+            
+            if(wParam == AVK_HEADSET_DISCONNECT)
+            {
+                AEE_CancelTimer(HeadsetKeyAllowedCB, NULL);
+                bSendHeadsetKeyAllowed = FALSE;
+            }
+            else
+            {
+                AEE_SetTimer(UI_KEY_REPEAT_START_TMS, HeadsetKeyAllowedCB, NULL);
+            }
             
 #if defined(FEATURE_BACKLIGHT_KEYPAD)
             if (gpKeyBacklight) {
