@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="apptimerres" VERSION="1">
 <Strings Encoding="Unicode">
-    <String Id="1" Name= "IDS_APPTIMER_TITLE">
+	<STRING Id="2001" Name="IDS_APPTIMER_TITLE">
         <Text>الموقت</Text>
-    </String>
-
-    <String Id="2" Name= "IDS_APPTIMER_PROMPT">
-        <Text>انتهاء صلاحية الموقت</Text>
-    </String>
-
-    <String Id="3" Name= "IDS_APPTIMER_INFO">
+	</STRING>
+	<STRING Id="2002" Name="IDS_APPTIMER_PROMPT">
+		 <Text>انتهاء صلاحية الموقت</Text>
+	</STRING>
+	<STRING Id="2003" Name="IDS_APPTIMER_INFO">
         <Text>س س:د د:ث ث</Text>
-    </String>
-
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_DIALOG_6001" Focus="0">

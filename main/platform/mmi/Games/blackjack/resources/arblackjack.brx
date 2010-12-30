@@ -1,217 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="blackjack" VERSION="1">
 <Strings Encoding="Unicode">
-    <String Id="1" Name= "IDC_NEW_GAME">
+	<STRING Id="10" Name="IDC_NEW_GAME">
         <Text>لعبة جديدة</Text>
-    </String>
-
-    <String Id="2" Name= "IDC_INSTRUCTIONS_OK">
+	</STRING>
+	<STRING Id="11" Name="IDC_INSTRUCTIONS_OK">
         <Text>موافق</Text>
-    </String>
-
-    <String Id="3" Name= "IDC_NEW_GAME_SHORT_TITLE">
+	</STRING>
+	<STRING Id="12" Name="IDC_NEW_GAME_SHORT_TITLE">
         <Text>جديد</Text>
-    </String>
-
-    <String Id="4" Name= "IDC_CONTINUE_GAME">
+	</STRING>
+	<STRING Id="13" Name="IDC_CONTINUE_GAME">
         <Text>متابعة</Text>
-    </String>
-
-    <String Id="5" Name= "IDC_DEAL">
+	</STRING>
+	<STRING Id="20" Name="IDC_DEAL">
         <Text>توزيع</Text>
-    </String>
-
-    <String Id="6" Name= "IDC_CHANGE_BET">
+	</STRING>
+	<STRING Id="21" Name="IDC_CHANGE_BET">
         <Text>رهان</Text>
-    </String>
-
-    <String Id="7" Name= "IDC_HIT">
+	</STRING>
+	<STRING Id="30" Name="IDC_HIT">
         <Text>الدخول</Text>
-    </String>
-
-    <String Id="8" Name= "IDC_STAND">
+	</STRING>
+	<STRING Id="31" Name="IDC_STAND">
         <Text>اصطفاف</Text>
-    </String>
-
-    <String Id="9" Name= "IDC_DOUBLE_DOWN">
+	</STRING>
+	<STRING Id="32" Name="IDC_DOUBLE_DOWN">
         <Text>المزدوج لأسفل</Text>
-    </String>
-
-    <String Id="10" Name= "IDC_SPLIT">
+	</STRING>
+	<STRING Id="33" Name="IDC_SPLIT">
         <Text>تقسيم</Text>
-    </String>
-
-    <String Id="11" Name= "IDC_WANT_INSURANCE">
+	</STRING>
+	<STRING Id="40" Name="IDC_WANT_INSURANCE">
         <Text>نعم</Text>
-    </String>
-
-    <String Id="12" Name= "IDC_NO_INSURANCE">
+	</STRING>
+	<STRING Id="41" Name="IDC_NO_INSURANCE">
         <Text>لا</Text>
-    </String>
-
-    <String Id="13" Name= "IDS_TITLE">
+	</STRING>
+	<STRING Id="100" Name="IDS_TITLE">
         <Text>بلاك جاك</Text>
-    </String>
-
-    <String Id="14" Name= "IDS_INSTRUCTIONS">
+	</STRING>
+	<STRING Id="101" Name="IDS_INSTRUCTIONS">
         <Text>"كن أكثر قربًا من 21 من موزع الورق دون تجاوز 21. وقيم الأوراق هي: آص، 1 أو 11؛ الملك، الملكة، الولد، عشرة، 10 كل؛ أية ورقة أخرى، رقمها."</Text>
-    </String>
-
-    <String Id="15" Name= "IDS_CONTINUE_OR_NEW_TEXT">
+	</STRING>
+	<STRING Id="102" Name="IDS_CONTINUE_OR_NEW_TEXT">
         <Text>هل تريد متابعة آخر لعبة أو بدء لعبة جديدة؟</Text>
-    </String>
-
-    <String Id="16" Name= "IDS_CASH_STATUS_FORMAT">
+	</STRING>
+	<STRING Id="110" Name="IDS_CASH_STATUS_FORMAT">
         <Text>نقدي:  %d دولار أمريكي</Text>
-    </String>
-
-    <String Id="17" Name= "IDS_BET_STATUS_FORMAT">
+	</STRING>
+	<STRING Id="111" Name="IDS_BET_STATUS_FORMAT">
         <Text>رهان: %d دولار أمريكي</Text>
-    </String>
-
-    <String Id="18" Name= "IDS_HAND_VALUE_FORMAT">
+	</STRING>
+	<STRING Id="120" Name="IDS_HAND_VALUE_FORMAT">
         <Text>%d</Text>
-    </String>
-
-    <String Id="19" Name= "IDS_BLACKJACK_HAND">
+	</STRING>
+	<STRING Id="121" Name="IDS_BLACKJACK_HAND">
         <Text>بلاك جاك!</Text>
-    </String>
-
-    <String Id="20" Name= "IDS_BETWEEN_HANDS_DEFAULT_TITLE">
+	</STRING>
+	<STRING Id="130" Name="IDS_BETWEEN_HANDS_DEFAULT_TITLE">
         <Text>الحالة</Text>
-    </String>
-
-    <String Id="21" Name= "IDS_PLAYER_BUSTED_TITLE">
+	</STRING>
+	<STRING Id="131" Name="IDS_PLAYER_BUSTED_TITLE">
         <Text>أخفقت</Text>
-    </String>
-
-    <String Id="22" Name= "IDS_DEALER_BUSTED_TITLE">
+	</STRING>
+	<STRING Id="132" Name="IDS_DEALER_BUSTED_TITLE">
         <Text>أخفق موزع الورق!</Text>
-    </String>
-
-    <String Id="23" Name= "IDS_PLAYER_WON_TITLE">
+	</STRING>
+	<STRING Id="133" Name="IDS_PLAYER_WON_TITLE">
         <Text>فزت!</Text>
-    </String>
-
-    <String Id="24" Name= "IDS_DEALER_WON_TITLE">
+	</STRING>
+	<STRING Id="134" Name="IDS_DEALER_WON_TITLE">
         <Text>خسرت</Text>
-    </String>
-
-    <String Id="25" Name= "IDS_PUSH_TITLE">
+	</STRING>
+	<STRING Id="135" Name="IDS_PUSH_TITLE">
         <Text>دفع</Text>
-    </String>
-
-    <String Id="26" Name= "IDS_PLAYER_BLACKJACK_TITLE">
+	</STRING>
+	<STRING Id="136" Name="IDS_PLAYER_BLACKJACK_TITLE">
         <Text>بلاك جاك!</Text>
-    </String>
-
-    <String Id="27" Name= "IDS_DEALER_BLACKJACK_TITLE">
+	</STRING>
+	<STRING Id="137" Name="IDS_DEALER_BLACKJACK_TITLE">
         <Text>بلاك جاك الخاص بموزع الورق</Text>
-    </String>
-
-    <String Id="28" Name= "IDS_PLAYER_WINNINGS">
+	</STRING>
+	<STRING Id="140" Name="IDS_PLAYER_WINNINGS">
         <Text>يدفع موزع الورق لك %d دولار أمريكي.</Text>
-    </String>
-
-    <String Id="29" Name= "IDS_PLAYER_LOSINGS">
+	</STRING>
+	<STRING Id="141" Name="IDS_PLAYER_LOSINGS">
         <Text>يجمع موزع الورق %d دولار أمريكي.</Text>
-    </String>
-
-    <String Id="30" Name= "IDS_PUSH_NO_WINNINGS">
+	</STRING>
+	<STRING Id="142" Name="IDS_PUSH_NO_WINNINGS">
         <Text>"ليس هناك خسارة، وليس هناك فوز."</Text>
-    </String>
-
-    <String Id="31" Name= "IDS_BJ_PUSH_NO_WINNINGS">
+	</STRING>
+	<STRING Id="143" Name="IDS_BJ_PUSH_NO_WINNINGS">
         <Text>"كان لديك بلاك جاك، وكذلك موزع الورق:- (.دفع. ليس هناك خسارة، وليس هناك فوز."</Text>
-    </String>
-
-    <String Id="32" Name= "IDS_BJ_BUT_INSURANCE_NO_WINNINGS">
+	</STRING>
+	<STRING Id="144" Name="IDS_BJ_BUT_INSURANCE_NO_WINNINGS">
         <Text>"كان لدى موزع الورق بلاك جاك، ولكن اخترت التأمين. لقد حطمت رقمًا زوجيًا."</Text>
-    </String>
-
-    <String Id="33" Name= "IDS_BJ_PUSH_BUT_INSURANCE_WINNINGS">
+	</STRING>
+	<STRING Id="145" Name="IDS_BJ_PUSH_BUT_INSURANCE_WINNINGS">
         <Text>"كان لديك بلاك جاك، وكذلك كان لدى موزع الورق. يدفع موزع الورق لك %d دولار أمريكي من رهن تأمينك."</Text>
-    </String>
-
-    <String Id="34" Name= "IDS_BET_LOW_CASH_TITLE">
+	</STRING>
+	<STRING Id="150" Name="IDS_BET_LOW_CASH_TITLE">
         <Text>مبلغ نقدي منخفض</Text>
-    </String>
-
-    <String Id="35" Name= "IDS_BET_INSUFFICIENT_CASH_TITLE">
+	</STRING>
+	<STRING Id="151" Name="IDS_BET_INSUFFICIENT_CASH_TITLE">
         <Text>مبلغ نقدي غير كاف</Text>
-    </String>
-
-    <String Id="36" Name= "IDS_BET_TOO_HIGH_TITLE">
+	</STRING>
+	<STRING Id="152" Name="IDS_BET_TOO_HIGH_TITLE">
         <Text>الحد الأقصى فوق المنضدة</Text>
-    </String>
-
-    <String Id="37" Name= "IDS_BET_TOO_LOW_TITLE">
+	</STRING>
+	<STRING Id="153" Name="IDS_BET_TOO_LOW_TITLE">
         <Text>الحد الأدنى أسفل المنضدة</Text>
-    </String>
-
-    <String Id="38" Name= "IDS_BET_LOW_CASH_MSG">
+	</STRING>
+	<STRING Id="154" Name="IDS_BET_LOW_CASH_MSG">
         <Text>ليس لديك نقد كاف للمراهنة بـ %d دولار أمريكي. يتبقى لديك %d دولار أمريكي.</Text>
-    </String>
-
-    <String Id="39" Name= "IDS_BET_INSUFFICIENT_CASH_MSG">
+	</STRING>
+	<STRING Id="155" Name="IDS_BET_INSUFFICIENT_CASH_MSG">
         <Text>ليس لديك نقد كاف للحد الأدنى للمنضدة بقيمة %d دولار أمريكي. يتبقى لديك %d دولار أمريكي.</Text>
-    </String>
-
-    <String Id="40" Name= "IDS_BET_TOO_HIGH_MSG">
+	</STRING>
+	<STRING Id="156" Name="IDS_BET_TOO_HIGH_MSG">
         <Text>يتجاوز رهانك بـ %d دولار أمريكي الحد الأقصى للمنضدة البالغ %d دولار أمريكي.</Text>
-    </String>
-
-    <String Id="41" Name= "IDS_BET_TOO_LOW_MSG">
+	</STRING>
+	<STRING Id="157" Name="IDS_BET_TOO_LOW_MSG">
         <Text>يقل رهانك بـ %d دولار أمريكي عن الحد الأدنى للمنضدة البالغ %d دولار أمريكي.</Text>
-    </String>
-
-    <String Id="42" Name= "IDS_SHUFFLING_TITLE">
+	</STRING>
+	<STRING Id="160" Name="IDS_SHUFFLING_TITLE">
         <Text>خلط الأوراق</Text>
-    </String>
-
-    <String Id="43" Name= "IDS_SHUFFLING_MSG">
+	</STRING>
+	<STRING Id="161" Name="IDS_SHUFFLING_MSG">
         <Text>اقتربت نهاية الأوراق في مجموعة ورق اللعب التي تبلغ %d الخاصة بموزع الورق. حان دورك في خلط الورق.</Text>
-    </String>
-
-    <String Id="44" Name= "IDC_BET_AMOUNT_10">
+	</STRING>
+	<STRING Id="170" Name="IDC_BET_AMOUNT_10">
         <Text>10</Text>
-    </String>
-
-    <String Id="45" Name= "IDC_BET_AMOUNT_20">
+	</STRING>
+	<STRING Id="171" Name="IDC_BET_AMOUNT_20">
         <Text>20</Text>
-    </String>
-
-    <String Id="46" Name= "IDC_BET_AMOUNT_50">
+	</STRING>
+	<STRING Id="172" Name="IDC_BET_AMOUNT_50">
         <Text>50</Text>
-    </String>
-
-    <String Id="47" Name= "IDC_BET_AMOUNT_100">
+	</STRING>
+	<STRING Id="173" Name="IDC_BET_AMOUNT_100">
         <Text>100</Text>
-    </String>
-
-    <String Id="48" Name= "IDC_BET_AMOUNT_150">
+	</STRING>
+	<STRING Id="174" Name="IDC_BET_AMOUNT_150">
         <Text>150</Text>
-    </String>
-
-    <String Id="49" Name= "IDC_BET_AMOUNT_200">
+	</STRING>
+	<STRING Id="175" Name="IDC_BET_AMOUNT_200">
         <Text>200</Text>
-    </String>
-
-    <String Id="50" Name= "IDS_INSURANCE_OFFER_TITLE">
+	</STRING>
+	<STRING Id="180" Name="IDS_INSURANCE_OFFER_TITLE">
         <Text>آص خاص بموزع الورق!</Text>
-    </String>
-
-    <String Id="51" Name= "IDS_INSURANCE_OFFER_MSG">
+	</STRING>
+	<STRING Id="181" Name="IDS_INSURANCE_OFFER_MSG">
         <Text>هل تريد التأمين؟ مراهنة جانبية تبلغ %d دولار أمريكي والتي تدفع %d دولار أمريكي إذا كان لدى موزع الورق بلاك جاك.</Text>
-    </String>
-
-    <String Id="52" Name= "IDS_INSURANCE_RESULT_TITLE">
+	</STRING>
+	<STRING Id="182" Name="IDS_INSURANCE_RESULT_TITLE">
         <Text>لا يوجد بلاك جاك</Text>
-    </String>
-
-    <String Id="53" Name= "IDS_INSURANCE_RESULT_MSG">
+	</STRING>
+	<STRING Id="183" Name="IDS_INSURANCE_RESULT_MSG">
         <Text>لا يوجد بلاك جاك! لقد خسرت رهان تأمينك البالغ %d دولار أمريكي.</Text>
-    </String>
-
+	</STRING>
 </Strings>
 </BREWRes>

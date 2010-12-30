@@ -1,230 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="soundmenu" VERSION="1">
 <Strings Encoding="Unicode">
-    <String Id="1" Name= "IDS_STARTUP_RINGER">
+	<STRING Id="1001" Name="IDS_STARTUP_RINGER">
         <Text>تشغيل الرنين</Text>
-    </String>
-
-    <String Id="2" Name= "IDS_RINGER_VOLUME_TITLE">
+	</STRING>
+	<STRING Id="1002" Name="IDS_RINGER_VOLUME_TITLE">
         <Text>الرنين</Text>
-    </String>
-
-    <String Id="3" Name= "IDS_EARPIECE_VOLUME_TITLE">
+	</STRING>
+	<STRING Id="1003" Name="IDS_EARPIECE_VOLUME_TITLE">
         <Text>سماعة الرأس</Text>
-    </String>
-
-    <String Id="4" Name= "IDS_KEYBEEP_VOLUME_TITLE">
+	</STRING>
+	<STRING Id="1004" Name="IDS_KEYBEEP_VOLUME_TITLE">
         <Text>نغمة رنين لوحة المفاتيح</Text>
-    </String>
-
-    <String Id="5" Name= "IDS_CALLHINT">
+	</STRING>
+	<STRING Id="1005" Name="IDS_CALLHINT">
         <Text>وضع تنبيه المكالمة</Text>
-    </String>
-
-    <String Id="6" Name= "IDS_SMSHINT">
+	</STRING>
+	<STRING Id="1006" Name="IDS_SMSHINT">
         <Text>وضع تنبيه الرسائل النصية</Text>
-    </String>
-
-    <String Id="7" Name= "IDS_PROFILE_RESTORE">
+	</STRING>
+	<STRING Id="1007" Name="IDS_PROFILE_RESTORE">
         <Text>الوضع الافتراضي</Text>
-    </String>
-
-    <String Id="8" Name= "IDS_VOLUME_TITLE">
+	</STRING>
+	<STRING Id="1008" Name="IDS_VOLUME_TITLE">
         <Text>مستوى الصوت</Text>
-    </String>
-
-    <String Id="9" Name= "IDS_CALLRING">
+	</STRING>
+	<STRING Id="1009" Name="IDS_CALLRING">
         <Text>نغمة الرنين</Text>
-    </String>
-
-    <String Id="10" Name= "IDS_SMSRING">
+	</STRING>
+	<STRING Id="1010" Name="IDS_SMSRING">
         <Text>نغمة الرسائل النصية</Text>
-    </String>
-
-    <String Id="11" Name= "IDS_ITEM_OFF">
+	</STRING>
+	<STRING Id="1011" Name="IDS_ITEM_OFF">
         <Text>إيقاف التشغيل</Text>
-    </String>
-
-    <String Id="12" Name= "IDS_ALERTTYPE_RINGER">
+	</STRING>
+	<STRING Id="1012" Name="IDS_ALERTTYPE_RINGER">
         <Text>رنين</Text>
-    </String>
-
-    <String Id="13" Name= "IDS_ALERTTYPE_VIB">
+	</STRING>
+	<STRING Id="1013" Name="IDS_ALERTTYPE_VIB">
         <Text>اهتزاز</Text>
-    </String>
-
-    <String Id="14" Name= "IDS_SOUNDMENU_TITLE">
+	</STRING>
+	<STRING Id="1014" Name="IDS_SOUNDMENU_TITLE">
         <Text>الصوت</Text>
-    </String>
-
-    <String Id="15" Name= "IDS_SHUTDOWN_RINGER">
+	</STRING>
+	<STRING Id="1015" Name="IDS_SHUTDOWN_RINGER">
         <Text>إيقاف تشغيل الرنين</Text>
-    </String>
-
-    <String Id="16" Name= "IDS_ALARMRING">
+	</STRING>
+	<STRING Id="1016" Name="IDS_ALARMRING">
         <Text>نغمة التنبيه</Text>
-    </String>
-
-    <String Id="17" Name= "IDS_ITEM_VIBRING">
+	</STRING>
+	<STRING Id="1017" Name="IDS_ITEM_VIBRING">
         <Text>الاهتزاز أولاً ثم الرنين</Text>
-    </String>
-
-    <String Id="18" Name= "IDS_ITEM_DISABLE">
+	</STRING>
+	<STRING Id="1018" Name="IDS_ITEM_DISABLE">
         <Text>إيقاف التشغيل</Text>
-    </String>
-
-    <String Id="19" Name= "IDS_ITEM_ENABLE">
+	</STRING>
+	<STRING Id="1019" Name="IDS_ITEM_ENABLE">
         <Text>تشغيل</Text>
-    </String>
-
-    <String Id="20" Name= "IDS_ITEM_TONE">
+	</STRING>
+	<STRING Id="1020" Name="IDS_ITEM_TONE">
         <Text>النغمة</Text>
-    </String>
-
-    <String Id="21" Name= "IDS_ITEM_CLICK">
+	</STRING>
+	<STRING Id="1021" Name="IDS_ITEM_CLICK">
         <Text>النقر</Text>
-    </String>
-
-    <String Id="22" Name= "IDS_VOLUME_1">
+	</STRING>
+	<STRING Id="1022" Name="IDS_VOLUME_1">
         <Text>1</Text>
-    </String>
-
-    <String Id="23" Name= "IDS_VOLUME_0">
+	</STRING>
+	<STRING Id="1023" Name="IDS_VOLUME_0">
         <Text>إيقاف التشغيل</Text>
-    </String>
-
-    <String Id="24" Name= "IDS_MISSEDCALL_ALERT">
+	</STRING>
+	<STRING Id="1024" Name="IDS_MISSEDCALL_ALERT">
         <Text>تنبيه المكالمات التي لم يرد عليها</Text>
-    </String>
-
-    <String Id="25" Name= "IDS_WARNING_MESSEGE">
+	</STRING>
+	<STRING Id="1025" Name="IDS_WARNING_MESSEGE">
         <Text>تم</Text>
-    </String>
-
-    <String Id="26" Name= "IDS_VOLUME_2">
+	</STRING>
+	<STRING Id="1026" Name="IDS_VOLUME_2">
         <Text>2</Text>
-    </String>
-
-    <String Id="27" Name= "IDS_VOLUME_3">
+	</STRING>
+	<STRING Id="1027" Name="IDS_VOLUME_3">
         <Text>3</Text>
-    </String>
-
-    <String Id="28" Name= "IDS_VOLUME_4">
+	</STRING>
+	<STRING Id="1028" Name="IDS_VOLUME_4">
         <Text>4</Text>
-    </String>
-
-    <String Id="29" Name= "IDS_VOLUME_5">
+	</STRING>
+	<STRING Id="1029" Name="IDS_VOLUME_5">
         <Text>5</Text>
-    </String>
-
-    <String Id="30" Name= "IDS_MINUTE_ALERT">
+	</STRING>
+	<STRING Id="1030" Name="IDS_MINUTE_ALERT">
         <Text>تنبيه 50'</Text>
-    </String>
-
-    <String Id="31" Name= "IDS_COLORKEYSND">
+	</STRING>
+	<STRING Id="1031" Name="IDS_COLORKEYSND">
         <Text>نغمة لوحة المفاتيح</Text>
-    </String>
-
-    <String Id="32" Name= "IDS_GALLERY_PROFILE">
+	</STRING>
+	<STRING Id="1032" Name="IDS_GALLERY_PROFILE">
         <Text>معرض</Text>
-    </String>
-
-    <String Id="33" Name= "IDS_SCENEMODE_TITLE">
+	</STRING>
+	<STRING Id="1036" Name="IDS_SCENEMODE_TITLE">
         <Text>التشكيلات الجانبية</Text>
-    </String>
-
-    <String Id="34" Name= "IDS_NORMALMODE">
+	</STRING>
+	<STRING Id="1037" Name="IDS_NORMALMODE">
         <Text>عادي</Text>
-    </String>
-
-    <String Id="35" Name= "IDS_QUIETMODE">
+	</STRING>
+	<STRING Id="1038" Name="IDS_QUIETMODE">
         <Text>الوضع الصامت</Text>
-    </String>
-
-    <String Id="36" Name= "IDS_MEETING">
+	</STRING>
+	<STRING Id="1039" Name="IDS_MEETING">
         <Text>اجتماع</Text>
-    </String>
-
-    <String Id="37" Name= "IDS_NOISEMODE">
+	</STRING>
+	<STRING Id="1040" Name="IDS_NOISEMODE">
         <Text>بالخارج</Text>
-    </String>
-
-    <String Id="38" Name= "IDS_CARMODE">
+	</STRING>
+	<STRING Id="1041" Name="IDS_CARMODE">
         <Text>في السيارة</Text>
-    </String>
-
-    <String Id="39" Name= "IDS_ACTIVATE">
+	</STRING>
+	<STRING Id="1042" Name="IDS_ACTIVATE">
         <Text>تنشيط</Text>
-    </String>
-
-    <String Id="40" Name= "IDS_PERSONALISE">
+	</STRING>
+	<STRING Id="1043" Name="IDS_PERSONALISE">
         <Text>تحرير</Text>
-    </String>
-
-    <String Id="41" Name= "IDS_ACTIVATING">
+	</STRING>
+	<STRING Id="1044" Name="IDS_ACTIVATING">
         <Text>جاري التنشيط...</Text>
-    </String>
-
-    <String Id="42" Name= "IDS_RESTORED">
+	</STRING>
+	<STRING Id="1045" Name="IDS_RESTORED">
         <Text>جاري الاستعادة...</Text>
-    </String>
-
-    <String Id="43" Name= "IDS_KEYSND_SILENT">
+	</STRING>
+	<STRING Id="1046" Name="IDS_KEYSND_SILENT">
         <Text>الوضع الصامت</Text>
-    </String>
-
-    <String Id="44" Name= "IDS_POWERONOFF_ALERT">
+	</STRING>
+	<STRING Id="1047" Name="IDS_POWERONOFF_ALERT">
         <Text>تنبيه التشغيل/إيقاف التشغيل</Text>
-    </String>
-
-    <String Id="45" Name= "IDS_ALERTTYPE_VIBANDRING">
+	</STRING>
+	<STRING Id="1048" Name="IDS_ALERTTYPE_VIBANDRING">
         <Text>اهتزاز ثم رنين</Text>
-    </String>
-
-    <String Id="46" Name= "IDS_ARABIC_RINGTONE_1">
+	</STRING>
+	<STRING Id="1049" Name="IDS_ARABIC_RINGTONE_1">
         <Text>Adela</Text>
-    </String>
-
-    <String Id="47" Name= "IDS_ARABIC_RINGTONE_2">
+	</STRING>
+	<STRING Id="1050" Name="IDS_ARABIC_RINGTONE_2">
         <Text>Um Bader</Text>
-    </String>
-
-    <String Id="48" Name= "IDS_ARABIC_RINGTONE_3">
+	</STRING>
+	<STRING Id="1051" Name="IDS_ARABIC_RINGTONE_3">
         <Text>Mny Leek Sallam</Text>
-    </String>
-
-    <String Id="49" Name= "IDS_ARABIC_RINGTONE_4">
+	</STRING>
+	<STRING Id="1052" Name="IDS_ARABIC_RINGTONE_4">
         <Text>Naeem Eldonya</Text>
-    </String>
-
-    <String Id="50" Name= "IDS_ARABIC_RINGTONE_5">
+	</STRING>
+	<STRING Id="1053" Name="IDS_ARABIC_RINGTONE_5">
         <Text>Egaa Elgabal</Text>
-    </String>
-
-    <String Id="51" Name= "IDS_ARABIC_RINGTONE_6">
+	</STRING>
+	<STRING Id="1054" Name="IDS_ARABIC_RINGTONE_6">
         <Text>Habeeb Gaab</Text>
-    </String>
-
-    <String Id="52" Name= "IDS_ARABIC_RINGTONE_7">
+	</STRING>
+	<STRING Id="1055" Name="IDS_ARABIC_RINGTONE_7">
         <Text>Whag Aldaleeb</Text>
-    </String>
-
-    <String Id="53" Name= "IDS_ARABIC_RINGTONE_8">
+	</STRING>
+	<STRING Id="1056" Name="IDS_ARABIC_RINGTONE_8">
         <Text>سوداني</Text>
-    </String>
-
-    <String Id="54" Name= "IDS_ARABIC_RINGTONE_9">
+	</STRING>
+	<STRING Id="1057" Name="IDS_ARABIC_RINGTONE_9">
         <Text>Aljanowb</Text>
-    </String>
-
-    <String Id="55" Name= "IDS_ARABIC_RINGTONE_10">
+	</STRING>
+	<STRING Id="1058" Name="IDS_ARABIC_RINGTONE_10">
         <Text>Aldowbeet</Text>
-    </String>
-
-    <String Id="56" Name= "IDS_DEFAULT">
+	</STRING>
+	<STRING Id="1059" Name="IDS_DEFAULT">
         <Text>الوضع الافتراضي</Text>
-    </String>
-
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_SOUNDMENU_PROFILES" Focus="0">

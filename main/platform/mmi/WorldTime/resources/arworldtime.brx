@@ -105,7 +105,7 @@
         <Text>أزورس</Text>
     </String>
 
-    <String Id="27" Name= "IDS_TIME_ZONE">
+	<String Id="1001" Name="IDS_TIME_ZONE">
         <Text>المنطقة الزمنية:</Text>
     </String>
 

@@ -248,502 +248,404 @@
     <String Id="62" Name= "IDS_CDG2_FAIL1">
         <Text>عنوان وجهة غير معروفة</Text>
     </String>
-
-    <String Id="63" Name= "IDS_CDG2_FAIL97">
+	<STRING Id="63" Name="IDS_CDG2_FAIL97">
         <Text>تم رفض الإنشاء</Text>
-    </String>
-
-    <String Id="64" Name= "IDS_CDG2_FAIL100">
-        <Text>الرسائل النصية غير معتمدة</Text>
-    </String>
-
-    <String Id="65" Name= "IDS_DRAFTFULL">
-        <Text>المسودة ممتلئة</Text>
-    </String>
-
-    <String Id="66" Name= "IDS_APP_WMS">
+	</STRING>
+	<STRING Id="64" Name="IDS_CDG2_FAIL100">
+		<Text>SMS not supported</Text>
+	</STRING>
+	<STRING Id="65" Name="IDS_DRAFTFULL">
+		<Text>Draft is full</Text>
+	</STRING>
+	<STRING Id="66" Name="IDS_APP_WMS">
         <Text>الرسائل</Text>
-    </String>
-
-    <String Id="67" Name= "IDS_EMERGENCY">
+	</STRING>
+	<STRING Id="67" Name="IDS_BLANK">
         <Text>الطوارئ</Text>
-    </String>
-
-    <String Id="68" Name= "IDS_NOVALIDNUM">
+	</STRING>
+	<STRING Id="68" Name="IDS_EMERGENCY">
+		<Text>Emergency</Text>
+	</STRING>
+	<STRING Id="69" Name="IDS_NOVALIDNUM">
         <Text>لا يوجد رقم صالح</Text>
-    </String>
-
-    <String Id="69" Name= "IDS_OPTION">
+	</STRING>
+	<STRING Id="70" Name="IDS_OPTION">
         <Text>خيارات</Text>
-    </String>
-
-    <String Id="70" Name= "IDS_RECEIVER">
+	</STRING>
+	<STRING Id="71" Name="IDS_RECEIVER">
         <Text>المستلمون</Text>
-    </String>
-
-    <String Id="71" Name= "IDS_OUTBOXFULL">
+	</STRING>
+	<STRING Id="72" Name="IDS_OUTBOXFULL">
         <Text>علبة الصادر ممتلئة</Text>
-    </String>
-
-    <String Id="72" Name= "IDS_NOTREADY">
+	</STRING>
+	<STRING Id="73" Name="IDS_NOTREADY">
         <Text>"لم تكتمل التهيئة، يرجى إعادة المحاولة لاحقًا"</Text>
-    </String>
-
-    <String Id="73" Name= "IDS_DELETE_READMSG">
+	</STRING>
+	<STRING Id="74" Name="IDS_DELETE_READMSG">
         <Text>حذف الرسائل المقروءة</Text>
-    </String>
-
-    <String Id="74" Name= "IDS_SENDMSG">
+	</STRING>
+	<STRING Id="75" Name="IDS_SENDMSG">
         <Text>إرسال الرسائل</Text>
-    </String>
-
-    <String Id="75" Name= "IDS_PHONELOCKED">
+	</STRING>
+	<STRING Id="76" Name="IDS_PHONELOCKED">
         <Text>تم قفل الهاتف</Text>
-    </String>
-
-    <String Id="76" Name= "IDS_CALLREJECTSMS">
+	</STRING>
+	<STRING Id="78" Name="IDS_CALLREJECTSMS">
         <Text>الرسالة النصية الخاصة برفض المكالمات</Text>
-    </String>
-
-    <String Id="77" Name= "IDS_EDITCALLREJECTSMS">
+	</STRING>
+	<STRING Id="79" Name="IDS_EDITCALLREJECTSMS">
         <Text>تحرير الرسالة النصية الخاصة برفض المكالمات</Text>
-    </String>
-
-    <String Id="78" Name= "IDS_SAVEMSG">
+	</STRING>
+	<STRING Id="80" Name="IDS_SAVEMSG">
         <Text>حفظ الرسائل</Text>
-    </String>
-
-    <String Id="79" Name= "IDS_REPORTTITLE">
+	</STRING>
+	<STRING Id="83" Name="IDS_REPORTTITLE">
         <Text>تقرير الاستلام</Text>
-    </String>
-
-    <String Id="80" Name= "IDS_AUTODELETE">
+	</STRING>
+	<STRING Id="84" Name="IDS_AUTODELETE">
         <Text>الحذف التلقائي</Text>
-    </String>
-
-    <String Id="81" Name= "IDS_INBOXSFULL">
+	</STRING>
+	<STRING Id="86" Name="IDS_INBOXSFULL">
         <Text>الرسائل النصية ممتلئة</Text>
-    </String>
-
-    <String Id="82" Name= "IDS_RUIMALMOSTFULL">
+	</STRING>
+	<STRING Id="88" Name="IDS_RUIMALMOSTFULL">
         <Text>رسائل UIM ممتلئة تقريبًا</Text>
-    </String>
-
-    <String Id="83" Name= "IDS_PHONEALMOSTFULL">
+	</STRING>
+	<STRING Id="89" Name="IDS_PHONEALMOSTFULL">
         <Text>رسائل الهاتف ممتلئة تقريبًا</Text>
-    </String>
-
-    <String Id="84" Name= "IDS_INBOXSALMOSTFULL">
+	</STRING>
+	<STRING Id="90" Name="IDS_INBOXSALMOSTFULL">
         <Text>الرسائل النصية ممتلئة تقريبًا</Text>
-    </String>
-
-    <String Id="85" Name= "IDS_VIEW">
+	</STRING>
+	<STRING Id="92" Name="IDS_VIEW">
         <Text>عرض</Text>
-    </String>
-
-    <String Id="86" Name= "IDS_NULLTXTALERT">
+	</STRING>
+	<STRING Id="93" Name="IDS_NULLTXTALERT">
         <Text>يرجى إدخال نص</Text>
-    </String>
-
-    <String Id="87" Name= "IDS_MULTISEND">
+	</STRING>
+	<STRING Id="94" Name="IDS_MULTISEND">
         <Text>إرسال إلى عدة مستلمين</Text>
-    </String>
-
-    <String Id="88" Name= "IDS_INSERTDOMAIM">
+	</STRING>
+	<STRING Id="95" Name="IDS_INSERTDOMAIM">
         <Text>إدراج رمز النطاق</Text>
-    </String>
-
-    <String Id="89" Name= "IDS_INSERTEMOTIONSYMBOL">
-        <Text>إدراج رمز يعبر عن عاطفة</Text>
-    </String>
-
-    <String Id="90" Name= "IDS_MSGVALIDITY">
+	</STRING>
+	<STRING Id="96" Name="IDS_INSERTEMOTIONSYMBOL">
+		<Text>إدراج رمز يعبر عن عاطفة</Text>
+	</STRING>
+	<STRING Id="97" Name="IDS_MSGVALIDITY">
         <Text>صلاحية الرسائل</Text>
-    </String>
-
-    <String Id="91" Name= "IDS_MSGVALIDITY_MAX">
+	</STRING>
+	<STRING Id="98" Name="IDS_MSGVALIDITY_MAX">
         <Text>أقصى وقت</Text>
-    </String>
-
-    <String Id="92" Name= "IDS_MSGVALIDITY_1HOUR">
+	</STRING>
+	<STRING Id="99" Name="IDS_MSGVALIDITY_1HOUR">
         <Text>ساعة واحدة</Text>
-    </String>
-
-    <String Id="93" Name= "IDS_MSGVALIDITY_6HOURS">
+	</STRING>
+	<STRING Id="100" Name="IDS_MSGVALIDITY_6HOURS">
         <Text>6 ساعات</Text>
-    </String>
-
-    <String Id="94" Name= "IDS_MSGVALIDITY_24HOURS">
+	</STRING>
+	<STRING Id="101" Name="IDS_MSGVALIDITY_24HOURS">
         <Text>24 ساعة</Text>
-    </String>
-
-    <String Id="95" Name= "IDS_MSGVALIDITY_3DAYS">
+	</STRING>
+	<STRING Id="102" Name="IDS_MSGVALIDITY_3DAYS">
         <Text>3 أيام</Text>
-    </String>
-
-    <String Id="96" Name= "IDS_MSGVALIDITY_1WEEK">
+	</STRING>
+	<STRING Id="103" Name="IDS_MSGVALIDITY_1WEEK">
         <Text>أسبوع واحد</Text>
-    </String>
-
-    <String Id="97" Name= "IDS_SENDONLY">
+	</STRING>
+	<STRING Id="104" Name="IDS_SENDONLY">
         <Text>إرسال فقط</Text>
-    </String>
-
-    <String Id="98" Name= "IDS_SAVEONLY">
+	</STRING>
+	<STRING Id="105" Name="IDS_SAVEONLY">
         <Text>حفظ فقط</Text>
-    </String>
-
-    <String Id="99" Name= "IDS_SENDANDSAVE">
+	</STRING>
+	<STRING Id="106" Name="IDS_SENDANDSAVE">
         <Text>إرسال وحفظ</Text>
-    </String>
-
-    <String Id="100" Name= "IDS_CALLBACKNUM">
+	</STRING>
+	<STRING Id="107" Name="IDS_CALLBACKNUM">
         <Text>إعادة الاتصال بالرقم</Text>
-    </String>
-
-    <String Id="101" Name= "IDS_SAVEEMAIL">
+	</STRING>
+	<STRING Id="108" Name="IDS_SAVEEMAIL">
         <Text>استخراج البريد الإلكتروني</Text>
-    </String>
-
-    <String Id="102" Name= "IDS_MOVETORUIM">
+	</STRING>
+	<STRING Id="109" Name="IDS_MOVETORUIM">
         <Text>نقل إلى بطاقة UIM</Text>
-    </String>
-
-    <String Id="103" Name= "IDS_MOVETOPHONE">
+	</STRING>
+	<STRING Id="110" Name="IDS_MOVETOPHONE">
         <Text>نقل إلى الهاتف</Text>
-    </String>
-
-    <String Id="104" Name= "IDS_IPCALL">
+	</STRING>
+	<STRING Id="111" Name="IDS_IPCALL">
         <Text>اتصال IP</Text>
-    </String>
-
-    <String Id="105" Name= "IDS_VMNUM">
+	</STRING>
+	<STRING Id="112" Name="IDS_VMNUM">
         <Text>رقم البريد الصوتي</Text>
-    </String>
-
-    <String Id="106" Name= "IDS_VMNUM_WARNING">
+	</STRING>
+	<STRING Id="113" Name="IDS_VMNUM_WARNING">
         <Text>"لا يوجد رقم بريد صوتي، أضفه الآن"</Text>
-    </String>
-
-    <String Id="107" Name= "IDS_RESEND">
+	</STRING>
+	<STRING Id="114" Name="IDS_RESEND">
         <Text>إعادة الإرسال</Text>
-    </String>
-
-    <String Id="108" Name= "IDS_INSUFFICIENCY">
+	</STRING>
+	<STRING Id="115" Name="IDS_INSUFFICIENCY">
         <Text>مساحة التخزين المستهدفة غير كافية</Text>
-    </String>
-
-    <String Id="109" Name= "IDS_SURECOPY">
+	</STRING>
+	<STRING Id="116" Name="IDS_SURECOPY">
         <Text>نسخ</Text>
-    </String>
-
-    <String Id="110" Name= "IDS_SUREMOVE">
+	</STRING>
+	<STRING Id="117" Name="IDS_SUREMOVE">
         <Text>نقل</Text>
-    </String>
-
-    <String Id="111" Name= "IDS_MSGCOPYING">
+	</STRING>
+	<STRING Id="118" Name="IDS_MSGCOPYING">
         <Text>جاري نسخ الرسائل...</Text>
-    </String>
-
-    <String Id="112" Name= "IDS_MSGMOVING">
+	</STRING>
+	<STRING Id="119" Name="IDS_MSGMOVING">
         <Text>جاري نقل الرسائل...</Text>
-    </String>
-
-    <String Id="113" Name= "IDS_NOVALIDMAILADD">
+	</STRING>
+	<STRING Id="120" Name="IDS_NOVALIDMAILADD">
         <Text>لا يوجد عنوان بريد إلكتروني صالح</Text>
-    </String>
-
-    <String Id="114" Name= "IDS_SAVEURL">
+	</STRING>
+	<STRING Id="121" Name="IDS_SAVEURL">
         <Text>استخراج URL</Text>
-    </String>
-
-    <String Id="115" Name= "IDS_NOVALIDURL">
+	</STRING>
+	<STRING Id="122" Name="IDS_NOVALIDURL">
         <Text>لا يوجد URL صالح</Text>
-    </String>
-
-    <String Id="116" Name= "IDS_EXTRACTDETAIL">
+	</STRING>
+	<STRING Id="123" Name="IDS_EXTRACTDETAIL">
         <Text>استخراج التفاصيل</Text>
-    </String>
-
-    <String Id="117" Name= "IDS_OUTBOXWILLFULL">
+	</STRING>
+	<STRING Id="124" Name="IDS_OUTBOXWILLFULL">
         <Text>ستصبح علبة الصادر ممتلئة</Text>
-    </String>
-
-    <String Id="118" Name= "IDS_INBOXWILLFULL">
+	</STRING>
+	<STRING Id="125" Name="IDS_INBOXWILLFULL">
         <Text>ستصبح علبة الوارد ممتلئة</Text>
-    </String>
-
-    <String Id="119" Name= "IDS_RUIMWILLFULL">
+	</STRING>
+	<STRING Id="126" Name="IDS_RUIMWILLFULL">
         <Text>ستصبح بطاقة UIM ممتلئة</Text>
-    </String>
-
-    <String Id="120" Name= "IDS_ENABLEREPORT">
+	</STRING>
+	<STRING Id="127" Name="IDS_ENABLEREPORT">
         <Text>تشغيل</Text>
-    </String>
-
-    <String Id="121" Name= "IDS_DISABLEREPORT">
+	</STRING>
+	<STRING Id="128" Name="IDS_DISABLEREPORT">
         <Text>إيقاف التشغيل</Text>
-    </String>
-
-    <String Id="122" Name= "IDS_STOREINSUFFICIENCY">
+	</STRING>
+	<STRING Id="129" Name="IDS_STOREINSUFFICIENCY">
         <Text>مساحة التخزين غير كافية</Text>
-    </String>
-
-    <String Id="123" Name= "IDS_SENDDONE">
+	</STRING>
+	<STRING Id="130" Name="IDS_SENDDONE">
         <Text>تم الانتهاء من إرسال الرسائل ! نجح إرسال %d رسالة وفشل إرسال %d رسالة</Text>
-    </String>
+	</STRING>
 
-    <String Id="124" Name= "IDS_FAILEDRSVDMSGS">
+	<STRING Id="132" Name="IDS_RESERVEDMSGS">
         <Text>الرسائل التي فشل إرسالها</Text>
-    </String>
-
-    <String Id="125" Name= "IDS_NEWRESERVEDMSG">
+	</STRING>
+	<STRING Id="133" Name="IDS_FAILEDRSVDMSGS">
+		<Text>Failed messages</Text>
+	</STRING>
+	<STRING Id="134" Name="IDS_NEWRESERVEDMSG">
         <Text>إنشاء</Text>
-    </String>
-
-    <String Id="126" Name= "IDS_AM">
+	</STRING>
+	<STRING Id="135" Name="IDS_AM">
         <Text>ص</Text>
-    </String>
-
-    <String Id="127" Name= "IDS_PM">
+	</STRING>
+	<STRING Id="136" Name="IDS_PM">
         <Text>م</Text>
-    </String>
-
-    <String Id="128" Name= "IDS_DATE">
+	</STRING>
+	<STRING Id="137" Name="IDS_DATE">
         <Text>التاريخ</Text>
-    </String>
-
-    <String Id="129" Name= "IDS_TIME">
+	</STRING>
+	<STRING Id="138" Name="IDS_TIME">
         <Text>الوقت</Text>
-    </String>
-
-    <String Id="130" Name= "IDS_SAVE">
+	</STRING>
+	<STRING Id="139" Name="IDS_SAVE">
         <Text>حفظ</Text>
-    </String>
-
-    <String Id="131" Name= "IDS_LOADMSG">
+	</STRING>
+	<STRING Id="140" Name="IDS_LOADMSG">
         <Text>جاري تحميل الرسائل...</Text>
-    </String>
-
-    <String Id="132" Name= "IDS_TEMPLATE10">
+	</STRING>
+	<STRING Id="141" Name="IDS_TEMPLATE10">
         <Text>شكراً لك!</Text>
-    </String>
-
-    <String Id="133" Name= "IDS_PWDTIPS">
+	</STRING>
+	<STRING Id="142" Name="IDS_PWDTIPS">
         <Text>أدخل كلمة المرور</Text>
-    </String>
-
-    <String Id="134" Name= "IDS_PWDERR">
+	</STRING>
+	<STRING Id="143" Name="IDS_PWDERR">
         <Text>كلمة المرور غير صالحة</Text>
-    </String>
-
-    <String Id="135" Name= "IDS_CONTINUESENDQUERY">
+	</STRING>
+	<STRING Id="144" Name="IDS_CONTINUESENDQUERY">
         <Text>"لم يكتمل إرسال الرسائل، متابعة"</Text>
-    </String>
-
-    <String Id="136" Name= "IDS_YEARERR">
+	</STRING>
+	<STRING Id="145" Name="IDS_YEARERR">
         <Text>أدخل رقم السنة %d إلى 2099</Text>
-    </String>
-
-    <String Id="137" Name= "IDS_TIMEERR">
+	</STRING>
+	<STRING Id="146" Name="IDS_TIMEERR">
         <Text>وقت غير صالح</Text>
-    </String>
-
-    <String Id="138" Name= "IDS_ALERTTIMEOUT">
+	</STRING>
+	<STRING Id="147" Name="IDS_ALERTTIMEOUT">
         <Text>الوضع الافتراضي هو الإرسال أثناء مهلة التنبيه</Text>
-    </String>
-
-    <String Id="139" Name= "IDS_DELETEALL">
+	</STRING>
+	<STRING Id="148" Name="IDS_DELETEALL">
         <Text>حذف الكل</Text>
-    </String>
-
-    <String Id="140" Name= "IDS_INPUTNULL">
+	</STRING>
+	<STRING Id="149" Name="IDS_INPUTNULL">
         <Text>لا يمكن أن يكون المحتوى فارغًا</Text>
-    </String>
-
-    <String Id="141" Name= "IDS_SETCALLBACKNUM">
+	</STRING>
+	<STRING Id="150" Name="IDS_SETCALLBACKNUM">
         <Text>تعيين إعادة الاتصال بالرقم</Text>
-    </String>
-
-    <String Id="142" Name= "IDS_SENDMODE">
+	</STRING>
+	<STRING Id="151" Name="IDS_SENDMODE">
         <Text>وضع الإرسال</Text>
-    </String>
-
-    <String Id="143" Name= "IDS_MSGMANAGEMENT">
+	</STRING>
+	<STRING Id="152" Name="IDS_MSGMANAGEMENT">
         <Text>إدارة</Text>
-    </String>
-
-    <String Id="144" Name= "IDS_COPYINBOX">
+	</STRING>
+	<STRING Id="153" Name="IDS_COPYINBOX">
         <Text>نسخ علبة الوارد</Text>
-    </String>
-
-    <String Id="145" Name= "IDS_MOVEINBOX">
+	</STRING>
+	<STRING Id="154" Name="IDS_MOVEINBOX">
         <Text>نقل علبة الوارد</Text>
-    </String>
-
-    <String Id="146" Name= "IDS_UIMTOPHONE">
+	</STRING>
+	<STRING Id="155" Name="IDS_UIMTOPHONE">
         <Text>بطاقة UIM إلى الهاتف</Text>
-    </String>
-
-    <String Id="147" Name= "IDS_PHONETOUIM">
+	</STRING>
+	<STRING Id="156" Name="IDS_PHONETOUIM">
         <Text>الهاتف إلى بطاقة UIM</Text>
-    </String>
-
-    <String Id="148" Name= "IDS_SAVEASPRESET">
+	</STRING>
+	<STRING Id="157" Name="IDS_SAVEASPRESET">
         <Text>حفظ كتعيين مسبق</Text>
-    </String>
-
-    <String Id="149" Name= "IDS_SETTING">
+	</STRING>
+	<STRING Id="158" Name="IDS_SETTING">
         <Text>الإعدادات</Text>
-    </String>
-
-    <String Id="150" Name= "IDS_CONTACTS">
+	</STRING>
+	<STRING Id="159" Name="IDS_CONTACTS">
         <Text>جهات الاتصال</Text>
-    </String>
-
-    <String Id="151" Name= "IDS_GROUPLIST">
+	</STRING>
+	<STRING Id="160" Name="IDS_GROUPLIST">
         <Text>قائمة المجموعة</Text>
-    </String>
-
-    <String Id="152" Name= "IDS_RECENT_CALLS">
+	</STRING>
+	<STRING Id="161" Name="IDS_RECENT_CALLS">
         <Text>المكالمات الأخيرة</Text>
-    </String>
-
-    <String Id="153" Name= "IDS_LANGUAGE">
+	</STRING>
+	<STRING Id="162" Name="IDS_LANGUAGE">
         <Text>اللغة</Text>
-    </String>
-
-    <String Id="154" Name= "IDS_LANGUAGE_NOSPEC">
+	</STRING>
+	<STRING Id="163" Name="IDS_LANGUAGE_NOSPEC">
         <Text>غير محددة</Text>
-    </String>
-
-    <String Id="155" Name= "IDS_LANGUAGE_ENGLISH">
+	</STRING>
+	<STRING Id="164" Name="IDS_LANGUAGE_ENGLISH">
         <Text>الإنجليزية</Text>
-    </String>
-
-    <String Id="156" Name= "IDS_LANGUAGE_FRENCH">
+	</STRING>
+	<STRING Id="165" Name="IDS_LANGUAGE_FRENCH">
         <Text>الفرنسية</Text>
-    </String>
-
-    <String Id="157" Name= "IDS_LANGUAGE_SPANISH">
+	</STRING>
+	<STRING Id="166" Name="IDS_LANGUAGE_SPANISH">
         <Text>الإسبانية</Text>
-    </String>
-
-    <String Id="158" Name= "IDS_LANGUAGE_JAPANESE">
+	</STRING>
+	<STRING Id="167" Name="IDS_LANGUAGE_JAPANESE">
         <Text>اليابانية</Text>
-    </String>
-
-    <String Id="159" Name= "IDS_LANGUAGE_KOREAN">
+	</STRING>
+	<STRING Id="168" Name="IDS_LANGUAGE_KOREAN">
         <Text>الكورية</Text>
-    </String>
-
-    <String Id="160" Name= "IDS_LANGUAGE_CHINESE">
+	</STRING>
+	<STRING Id="169" Name="IDS_LANGUAGE_CHINESE">
         <Text>الصينية</Text>
-    </String>
-
-    <String Id="161" Name= "IDS_LANGUAGE_HEBREW">
+	</STRING>
+	<STRING Id="170" Name="IDS_LANGUAGE_HEBREW">
         <Text>العبرية</Text>
-    </String>
-
-    <String Id="162" Name= "IDS_AUTOREPLACE">
+	</STRING>
+	<STRING Id="171" Name="IDS_AUTOREPLACE">
         <Text>الاستبدال التلقائي</Text>
-    </String>
-
-    <String Id="163" Name= "IDS_VOICEMAIL_NOTI">
+	</STRING>
+	<STRING Id="172" Name="IDS_VOICEMAIL_NOTI">
         <Text>إعلام البريد الصوتي</Text>
-    </String>
-
-    <String Id="164" Name= "IDS_MOVED">
+	</STRING>
+	<STRING Id="173" Name="IDS_MOVED">
         <Text>تم نقل %d</Text>
-    </String>
-
-    <String Id="165" Name= "IDS_SAVETOCONTACT">
+	</STRING>
+	<STRING Id="174" Name="IDS_SAVETOCONTACT">
         <Text>حفظ إلى جهات الاتصال</Text>
-    </String>
-
-    <String Id="166" Name= "IDS_EXIT_EDITOR">
+	</STRING>
+	<STRING Id="175" Name="IDS_EXIT_EDITOR">
         <Text>إنهاء المحرر</Text>
-    </String>
-
-    <String Id="167" Name= "IDS_BROWSE">
+	</STRING>
+	<String Id="176" Name="IDS_BROWSE">
         <Text>استعراض</Text>
-    </String>
+	</String>
 
-    <String Id="168" Name= "IDS_FAILED_RESENDING">
+	<String Id="177" Name="IDS_FAILED_RESENDING">
         <Text>"فشل الإرسال، هل تريد إعادة الإرسال؟"</Text>
-    </String>
+	</String>
 
-    <String Id="169" Name= "IDS_NO_PHONENUMBER">
+	<String Id="178" Name="IDS_NO_PHONENUMBER">
         <Text>"رقم الهاتف فارغ، تتعذر إعادة الإرسال!"</Text>
-    </String>
+	</String>
 
-    <String Id="170" Name= "IDS_SENT">
+	<String Id="179" Name="IDS_SENT">
         <Text>تم إرسال الرسالة النصية</Text>
-    </String>
+	</String>
 
-    <String Id="171" Name= "IDS_NEWWMSTIPS">
+	<String Id="180" Name="IDS_NEWWMSTIPS">
         <Text>تم استلام %d رسالة جديدة</Text>
-    </String>
+	</String>
 
-    <String Id="172" Name= "IDS_VMAILTIPS">
+	<String Id="181" Name="IDS_VMAILTIPS">
         <Text>البريد الصوتي الجديد:%d</Text>
-    </String>
+	</String>
 
-    <String Id="173" Name= "IDS_NO_CARD">
+	<String Id="182" Name="IDS_NO_CARD">
         <Text>لا توجد بطاقة UIM</Text>
-    </String>
+	</String>
 
-    <String Id="174" Name= "IDS_ENABLE_SHORT">
+	<String Id="183" Name="IDS_ENABLE_SHORT">
         <Text>تشغيل</Text>
-    </String>
+	</String>
 
-    <String Id="175" Name= "IDS_SENDOPT_SAVEANDSEND_SHORT">
+	<String Id="184" Name="IDS_SENDOPT_SAVEANDSEND_SHORT">
         <Text>إرسال وحفظ</Text>
-    </String>
+	</String>
 
-    <String Id="176" Name= "IDS_ENABLEREPORT_SHORT">
+	<String Id="185" Name="IDS_ENABLEREPORT_SHORT">
         <Text>Hdp</Text>
-    </String>
+	</String>
 
-    <String Id="177" Name= "IDS_TEMPLATEHITZ0">
+	<String Id="1001" Name="IDS_TEMPLATEHITZ0">
         <Text>"معذرة، سأتصل بك لاحقًا"</Text>
-    </String>
+	</String>
 
-    <String Id="178" Name= "IDS_TEMPLATEHITZ1">
+	<String Id="1002" Name="IDS_TEMPLATEHITZ1">
         <Text>يرجى الاتصال بي</Text>
-    </String>
+	</String>
 
-    <String Id="179" Name= "IDS_TEMPLATEHITZ2">
+	<String Id="1003" Name="IDS_TEMPLATEHITZ2">
         <Text>"معذرة، أنا مشغول"</Text>
-    </String>
+	</String>
 
-    <String Id="180" Name= "IDS_TEMPLATEHITZ3">
+	<String Id="1004" Name="IDS_TEMPLATEHITZ3">
         <Text>سأعود حالاً</Text>
-    </String>
+	</String>
 
-    <String Id="181" Name= "IDS_TEMPLATEHITZ4">
+	<String Id="1005" Name="IDS_TEMPLATEHITZ4">
         <Text>معذرة</Text>
-    </String>
+	</String>
 
-    <String Id="182" Name= "IDS_TEMPLATEHITZ5">
+	<String Id="1006" Name="IDS_TEMPLATEHITZ5">
         <Text>شكراً لك</Text>
-    </String>
+	</String>
 
-    <String Id="183" Name= "IDS_TEMPLATEHITZ6">
+	<String Id="1007" Name="IDS_TEMPLATEHITZ6">
         <Text>كيف كان يومك؟</Text>
-    </String>
+	</String>
 
-    <String Id="184" Name= "IDS_TEMPLATEHITZ7">
+	<String Id="1008" Name="IDS_TEMPLATEHITZ7">
         <Text>لم نتقابل منذ وقت طويل</Text>
-    </String>
+	</String>
 
-    <String Id="185" Name= "IDS_TEMPLATEHITZ8">
+	<String Id="1009" Name="IDS_TEMPLATEHITZ8">
         <Text>أحبك كثيرًا</Text>
-    </String>
+	</String>
 
-    <String Id="186" Name= "IDS_TEMPLATEHITZ9">
+	<String Id="1010" Name="IDS_TEMPLATEHITZ9">
         <Text>كيف حالك؟</Text>
-    </String>
+	</String>
 
 </Strings>
 <Dialogs>

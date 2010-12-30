@@ -73,7 +73,7 @@
         <Text>بلا UTK!</Text>
     </String>
 
-    <String Id="19" Name= "IDM_OK">
+    <String Id="100" Name= "IDM_OK">
         <Text>تم</Text>
     </String>
 

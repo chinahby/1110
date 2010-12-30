@@ -1,434 +1,327 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="mediagallery" VERSION="1">
 <Strings Encoding="Unicode">
-    <String Id="1" Name= "IDS_MG_MEDIAGALLERY">
+	<STRING Id="1000" Name="IDS_MG_MEDIAGALLERY">
         <Text>معرض الوسائط</Text>
-    </String>
-
-    <String Id="2" Name= "IDS_MG_PHONEMEMORY">
+	</STRING>
+	<STRING Id="1001" Name="IDS_MG_PHONEMEMORY">
         <Text>الهاتف</Text>
-    </String>
-
-    <String Id="3" Name= "IDS_MG_CARDMEMORY">
+	</STRING>
+	<STRING Id="1002" Name="IDS_MG_CARDMEMORY">
         <Text>بطاقة الذاكرة</Text>
-    </String>
-
-    <String Id="4" Name= "IDS_MG_MEMORYSTATUS">
+	</STRING>
+	<STRING Id="1003" Name="IDS_MG_MEMORYSTATUS">
         <Text>حالة الذاكرة</Text>
-    </String>
-
-    <String Id="5" Name= "IDS_MG_PICTURES">
+	</STRING>
+	<STRING Id="1004" Name="IDS_MG_PICTURES">
         <Text>الصور</Text>
-    </String>
-
-    <String Id="6" Name= "IDS_MG_MUSIC">
+	</STRING>
+	<STRING Id="1005" Name="IDS_MG_MUSIC">
         <Text>الموسيقى</Text>
-    </String>
-
-    <String Id="7" Name= "IDS_MG_VIDEOS">
+	</STRING>
+	<STRING Id="1006" Name="IDS_MG_VIDEOS">
         <Text>الفيديو</Text>
-    </String>
-
-    <String Id="8" Name= "IDS_MG_VOICEMEMO">
+	</STRING>
+	<STRING Id="1007" Name="IDS_MG_VOICEMEMO">
         <Text>ذاكرة الفيديو</Text>
-    </String>
-
-    <String Id="9" Name= "IDS_MG_PLAY">
+	</STRING>
+	<STRING Id="1008" Name="IDS_MG_PLAY">
         <Text>تشغيل</Text>
-    </String>
-
-    <String Id="10" Name= "IDS_MG_SETAS">
+	</STRING>
+	<STRING Id="1009" Name="IDS_MG_SETAS">
         <Text>تعيين كـ</Text>
-    </String>
-
-    <String Id="11" Name= "IDS_MG_RENAME">
+	</STRING>
+	<STRING Id="1010" Name="IDS_MG_RENAME">
         <Text>إعادة التسمية</Text>
-    </String>
-
-    <String Id="12" Name= "IDS_MG_DELETE">
+	</STRING>
+	<STRING Id="1011" Name="IDS_MG_DELETE">
         <Text>حذف</Text>
-    </String>
-
-    <String Id="13" Name= "IDS_MG_DELALL">
+	</STRING>
+	<STRING Id="1012" Name="IDS_MG_DELALL">
         <Text>حذف الكل</Text>
-    </String>
-
-    <String Id="14" Name= "IDS_MG_DETAIL">
+	</STRING>
+	<STRING Id="1013" Name="IDS_MG_DETAIL">
         <Text>تفاصيل</Text>
-    </String>
-
-    <String Id="15" Name= "IDS_MG_BLUETOOTH">
+	</STRING>
+	<STRING Id="1014" Name="IDS_MG_BLUETOOTH">
         <Text>إرسال عن طريق البلوتوث</Text>
-    </String>
-
-    <String Id="16" Name= "IDS_MG_COPY">
+	</STRING>
+	<STRING Id="1015" Name="IDS_MG_COPY">
         <Text>نسخ</Text>
-    </String>
-
-    <String Id="17" Name= "IDS_MG_MOVE">
+	</STRING>
+	<STRING Id="1016" Name="IDS_MG_MOVE">
         <Text>نقل</Text>
-    </String>
-
-    <String Id="18" Name= "IDS_MG_SETWALLPAPER">
+	</STRING>
+	<STRING Id="1017" Name="IDS_MG_SETWALLPAPER">
         <Text>تعيين كخلفية للشاشة</Text>
-    </String>
-
-    <String Id="19" Name= "IDS_MG_VIEW">
+	</STRING>
+	<STRING Id="1018" Name="IDS_MG_VIEW">
         <Text>عرض</Text>
-    </String>
-
-    <String Id="20" Name= "IDS_MG_MYREC">
+	</STRING>
+	<STRING Id="1019" Name="IDS_MG_MYREC">
         <Text>المسجل الخاص بي</Text>
-    </String>
-
-    <String Id="21" Name= "IDS_MG_CALLREC">
+	</STRING>
+	<STRING Id="1020" Name="IDS_MG_CALLREC">
         <Text>مسجل المكالمات</Text>
-    </String>
-
-    <String Id="22" Name= "IDS_MG_PHONEMEMSTAT">
+	</STRING>
+	<STRING Id="1021" Name="IDS_MG_PHONEMEMSTAT">
         <Text>حالة ذاكرة الهاتف</Text>
-    </String>
-
-    <String Id="23" Name= "IDS_MG_CARDMEMSTAT">
+	</STRING>
+	<STRING Id="1022" Name="IDS_MG_CARDMEMSTAT">
         <Text>حالة ذاكرة البطاقة</Text>
-    </String>
-
-    <String Id="24" Name= "IDS_MG_TOTALMEMSTAT">
+	</STRING>
+	<STRING Id="1023" Name="IDS_MG_TOTALMEMSTAT">
         <Text>حالة إجمالي الذاكرة</Text>
-    </String>
-
-    <String Id="25" Name= "IDS_MG_SPACEUSED">
+	</STRING>
+	<STRING Id="1024" Name="IDS_MG_SPACEUSED">
         <Text>الذاكرة المستخدمة:</Text>
-    </String>
-
-    <String Id="26" Name= "IDS_MG_SPACEFREE">
+	</STRING>
+	<STRING Id="1025" Name="IDS_MG_SPACEFREE">
         <Text>الذاكرة الحرة:</Text>
-    </String>
-
-    <String Id="27" Name= "IDS_MG_SPACETOTAL">
+	</STRING>
+	<STRING Id="1026" Name="IDS_MG_SPACETOTAL">
         <Text>الإجمالي:</Text>
-    </String>
-
-    <String Id="28" Name= "IDS_MG_NOEXTCARD">
+	</STRING>
+	<STRING Id="1027" Name="IDS_MG_NOEXTCARD">
         <Text>أدخل بطاقة الذاكرة</Text>
-    </String>
-
-    <String Id="29" Name= "IDS_MG_BUILDPL">
+	</STRING>
+	<STRING Id="1028" Name="IDS_MG_BUILDPL">
         <Text>إنشاء قائمة تشغيل</Text>
-    </String>
-
-    <String Id="30" Name= "IDS_MG_CALLRINGTONE">
+	</STRING>
+	<STRING Id="1029" Name="IDS_MG_CALLRINGTONE">
         <Text>نغمة الرنين</Text>
-    </String>
-
-    <String Id="31" Name= "IDS_MG_SMSRINGTONE">
+	</STRING>
+	<STRING Id="1030" Name="IDS_MG_SMSRINGTONE">
         <Text>نغمة الرسائل النصية</Text>
-    </String>
-
-    <String Id="32" Name= "IDS_MG_ALARMRINGTONE">
+	</STRING>
+	<STRING Id="1031" Name="IDS_MG_ALARMRINGTONE">
         <Text>نغمة التنبيه</Text>
-    </String>
-
-    <String Id="33" Name= "IDS_MG_ADDMUSIC">
+	</STRING>
+	<STRING Id="1032" Name="IDS_MG_ADDMUSIC">
         <Text>إضافة مقطع صوتي</Text>
-    </String>
-
-    <String Id="34" Name= "IDS_MG_BYTE">
+	</STRING>
+	<STRING Id="1033" Name="IDS_MG_BYTE">
         <Text>بايت</Text>
-    </String>
-
-    <String Id="35" Name= "IDS_MG_KILOBYTE">
+	</STRING>
+	<STRING Id="1034" Name="IDS_MG_KILOBYTE">
         <Text>كيلوبايت</Text>
-    </String>
-
-    <String Id="36" Name= "IDS_MG_MEGABYTE">
+	</STRING>
+	<STRING Id="1035" Name="IDS_MG_MEGABYTE">
         <Text>ميجابايت</Text>
-    </String>
-
-    <String Id="37" Name= "IDS_MG_GIGABYTE">
+	</STRING>
+	<STRING Id="1036" Name="IDS_MG_GIGABYTE">
         <Text>جيجابايت</Text>
-    </String>
-
-    <String Id="38" Name= "IDS_MG_ARTIST">
+	</STRING>
+	<STRING Id="1037" Name="IDS_MG_ARTIST">
         <Text>الفنان:</Text>
-    </String>
-
-    <String Id="39" Name= "IDS_MG_TITLE">
+	</STRING>
+	<STRING Id="1038" Name="IDS_MG_TITLE">
         <Text>العنوان:</Text>
-    </String>
-
-    <String Id="40" Name= "IDS_MG_ALBUM">
+	</STRING>
+	<STRING Id="1039" Name="IDS_MG_ALBUM">
         <Text>الألبوم:</Text>
-    </String>
-
-    <String Id="41" Name= "IDS_MG_YEAR">
+	</STRING>
+	<STRING Id="1040" Name="IDS_MG_YEAR">
         <Text>السنة:</Text>
-    </String>
-
-    <String Id="42" Name= "IDS_MG_GENRE">
+	</STRING>
+	<STRING Id="1041" Name="IDS_MG_GENRE">
         <Text>الجنس:</Text>
-    </String>
-
-    <String Id="43" Name= "IDS_MG_TOTALTIME">
+	</STRING>
+	<STRING Id="1042" Name="IDS_MG_TOTALTIME">
         <Text>الوقت الكلي</Text>
-    </String>
-
-    <String Id="44" Name= "IDS_MG_BITRATE">
+	</STRING>
+	<STRING Id="1043" Name="IDS_MG_BITRATE">
         <Text>معدل البت</Text>
-    </String>
-
-    <String Id="45" Name= "IDS_MG_SAMPLERATE">
+	</STRING>
+	<STRING Id="1044" Name="IDS_MG_SAMPLERATE">
         <Text>سرعة العينة</Text>
-    </String>
-
-    <String Id="46" Name= "IDS_MG_CHANNEL">
+	</STRING>
+	<STRING Id="1045" Name="IDS_MG_CHANNEL">
         <Text>القناة</Text>
-    </String>
-
-    <String Id="47" Name= "IDS_MG_SIZE">
+	</STRING>
+	<STRING Id="1046" Name="IDS_MG_SIZE">
         <Text>الحجم:</Text>
-    </String>
-
-    <String Id="48" Name= "IDS_MG_CREATIONDATE">
+	</STRING>
+	<STRING Id="1047" Name="IDS_MG_CREATIONDATE">
         <Text>تاريخ الإنشاء: %4u.%2d.%2d</Text>
-    </String>
-
-    <String Id="49" Name= "IDS_MG_ATTRIB">
+	</STRING>
+	<STRING Id="1048" Name="IDS_MG_ATTRIB">
         <Text>السمة:</Text>
-    </String>
-
-    <String Id="50" Name= "IDS_MG_ADDVIDEO">
+	</STRING>
+	<STRING Id="1049" Name="IDS_MG_ADDVIDEO">
         <Text>إضافة فيديو</Text>
-    </String>
-
-    <String Id="51" Name= "IDS_MG_UDISK">
+	</STRING>
+	<STRING Id="1050" Name="IDS_MG_UDISK">
         <Text>وضع اتصال USB</Text>
-    </String>
-
-    <String Id="52" Name= "IDS_MG_STARTUDISK">
+	</STRING>
+	<STRING Id="1051" Name="IDS_MG_STARTUDISK">
         <Text>قرص Udisk الخاص ببدء التشغيل</Text>
-    </String>
-
-    <String Id="53" Name= "IDS_MG_FORMAT">
+	</STRING>
+	<STRING Id="1052" Name="IDS_MG_FORMAT">
         <Text>تهيئة</Text>
-    </String>
-
-    <String Id="54" Name= "IDS_MG_READONLY">
+	</STRING>
+	<STRING Id="1053" Name="IDS_MG_READONLY">
         <Text>للقراءة فقط</Text>
-    </String>
-
-    <String Id="55" Name= "IDS_MG_ARCHIVE">
+	</STRING>
+	<STRING Id="1054" Name="IDS_MG_ARCHIVE">
         <Text>أرشفة</Text>
-    </String>
-
-    <String Id="56" Name= "IDS_MG_HIDDEN">
+	</STRING>
+	<STRING Id="1055" Name="IDS_MG_HIDDEN">
         <Text>مخفي</Text>
-    </String>
-
-    <String Id="57" Name= "IDS_MG_INVALIDNAME">
+	</STRING>
+	<STRING Id="1056" Name="IDS_MG_INVALIDNAME">
         <Text>اسم غير صالح</Text>
-    </String>
-
-    <String Id="58" Name= "IDS_MG_EMPTY">
+	</STRING>
+	<STRING Id="1057" Name="IDS_MG_EMPTY">
         <Text>لا يوجد سجل</Text>
-    </String>
-
-    <String Id="59" Name= "IDS_MG_FILEOPENED">
+	</STRING>
+	<STRING Id="1058" Name="IDS_MG_FILEOPENED">
         <Text>تم فتح الملف</Text>
-    </String>
-
-    <String Id="60" Name= "IDS_MG_LISTFULL">
+	</STRING>
+	<STRING Id="1059" Name="IDS_MG_LISTFULL">
         <Text>القائمة ممتلئة</Text>
-    </String>
-
-    <String Id="61" Name= "IDS_MG_REPETITION">
+	</STRING>
+	<STRING Id="1060" Name="IDS_MG_REPETITION">
         <Text>اسم متكرر</Text>
-    </String>
-
-    <String Id="62" Name= "IDS_MG_NULLNAME">
+	</STRING>
+	<STRING Id="1061" Name="IDS_MG_NULLNAME">
         <Text>اسم خالي</Text>
-    </String>
-
-    <String Id="63" Name= "IDS_MG_PROTECT">
+	</STRING>
+	<STRING Id="1062" Name="IDS_MG_PROTECT">
         <Text>تمت حماية الملف</Text>
-    </String>
-
-    <String Id="64" Name= "IDS_MG_FOLDERNOTEMPTY">
+	</STRING>
+	<STRING Id="1063" Name="IDS_MG_FOLDERNOTEMPTY">
         <Text>المجلد غير فارغ</Text>
-    </String>
-
-    <String Id="65" Name= "IDS_MG_FILENOEXISTS">
+	</STRING>
+	<STRING Id="1064" Name="IDS_MG_FILENOEXISTS">
         <Text>الملف غير موجود</Text>
-    </String>
-
-    <String Id="66" Name= "IDS_MG_DIRNOEXISTS">
+	</STRING>
+	<STRING Id="1065" Name="IDS_MG_DIRNOEXISTS">
         <Text>المجلد غير موجود</Text>
-    </String>
-
-    <String Id="67" Name= "IDS_MG_CALLMEMO">
+	</STRING>
+	<STRING Id="1066" Name="IDS_MG_CALLMEMO">
         <Text>ذاكرة المكالمات</Text>
-    </String>
-
-    <String Id="68" Name= "IDS_MG_INSUFFICIENT">
+	</STRING>
+	<STRING Id="1067" Name="IDS_MG_INSUFFICIENT">
         <Text>مساحة التخزين غير كافية</Text>
-    </String>
-
-    <String Id="69" Name= "IDS_MG_PROGBARHINT">
+	</STRING>
+	<STRING Id="1068" Name="IDS_MG_PROGBARHINT">
         <Text>جاري الحذف...</Text>
-    </String>
-
-    <String Id="70" Name= "IDS_MG_FILEOPERR">
+	</STRING>
+	<STRING Id="1069" Name="IDS_MG_FILEOPERR">
         <Text>خطأ</Text>
-    </String>
-
-    <String Id="71" Name= "IDS_MG_OVERWRITE">
+	</STRING>
+	<STRING Id="1070" Name="IDS_MG_OVERWRITE">
         <Text>تغطية السجل الحالي</Text>
-    </String>
-
-    <String Id="72" Name= "IDS_MG_RUNUDISK">
+	</STRING>
+	<STRING Id="1071" Name="IDS_MG_RUNUDISK">
         <Text>جاري تشغيل قرص U-dsik...</Text>
-    </String>
-
-    <String Id="73" Name= "IDS_MG_STOPUDISK">
+	</STRING>
+	<STRING Id="1072" Name="IDS_MG_STOPUDISK">
         <Text>تم إيقاف قرص U-disk</Text>
-    </String>
-
-    <String Id="74" Name= "IDS_MG_UNKNOWN">
+	</STRING>
+	<STRING Id="1073" Name="IDS_MG_UNKNOWN">
         <Text>غير معروف</Text>
-    </String>
-
-    <String Id="75" Name= "IDS_MG_NOUSBCABLE">
+	</STRING>
+	<STRING Id="1074" Name="IDS_MG_NOUSBCABLE">
         <Text>الاتصال بالكمبيوتر الشخصي باستخدام كبل USB</Text>
-    </String>
-
-    <String Id="76" Name= "IDS_MG_SORT">
+	</STRING>
+	<STRING Id="1075" Name="IDS_MG_SORT">
         <Text>فرز</Text>
-    </String>
-
-    <String Id="77" Name= "IDS_MG_BYNAME">
+	</STRING>
+	<STRING Id="1076" Name="IDS_MG_BYNAME">
         <Text>فرز حسب الاسم</Text>
-    </String>
-
-    <String Id="78" Name= "IDS_MG_BYDATE">
+	</STRING>
+	<STRING Id="1077" Name="IDS_MG_BYDATE">
         <Text>فرز حسب التاريخ</Text>
-    </String>
-
-    <String Id="79" Name= "IDS_MG_BYSIZE">
+	</STRING>
+	<STRING Id="1078" Name="IDS_MG_BYSIZE">
         <Text>فرز حسب الحجم</Text>
-    </String>
-
-    <String Id="80" Name= "IDS_MG_ZOOM">
+	</STRING>
+	<STRING Id="1079" Name="IDS_MG_ZOOM">
         <Text>التكبير/التصغير</Text>
-    </String>
-
-    <String Id="81" Name= "IDS_MG_SLIDE">
+	</STRING>
+	<STRING Id="1080" Name="IDS_MG_SLIDE">
         <Text>الشريحة</Text>
-    </String>
-
-    <String Id="82" Name= "IDS_MG_BYTYPE">
+	</STRING>
+	<STRING Id="1081" Name="IDS_MG_BYTYPE">
         <Text>فرز حسب النوع</Text>
-    </String>
-
-    <String Id="83" Name= "IDS_MG_BYNULL">
+	</STRING>
+	<STRING Id="1082" Name="IDS_MG_BYNULL">
         <Text>بدون فرز</Text>
-    </String>
-
-    <String Id="84" Name= "IDS_MG_OPEN">
+	</STRING>
+	<STRING Id="1083" Name="IDS_MG_OPEN">
         <Text>فتح</Text>
-    </String>
-
-    <String Id="85" Name= "IDS_MG_WALLPAPERNOSET">
+	</STRING>
+	<STRING Id="1084" Name="IDS_MG_WALLPAPERNOSET">
         <Text>حجم الصورة كبير جدًا!</Text>
-    </String>
-
-    <String Id="86" Name= "IDS_MG_SELECTNONE">
+	</STRING>
+	<STRING Id="1085" Name="IDS_MG_SELECTNONE">
         <Text>لم يتم تحديد أي شيء</Text>
-    </String>
-
-    <String Id="87" Name= "IDS_MG_MANYFILES">
+	</STRING>
+	<STRING Id="1086" Name="IDS_MG_MANYFILES">
         <Text>"ملفات كثيرة، لم يتم إدراج بعضها في القائمة"</Text>
-    </String>
-
-    <String Id="88" Name= "IDS_MG_DEEPPATH">
+	</STRING>
+	<STRING Id="1087" Name="IDS_MG_DEEPPATH">
         <Text>المجلد عميق جدًا</Text>
-    </String>
-
-    <String Id="89" Name= "IDS_MG_FOLDERS">
+	</STRING>
+	<STRING Id="1088" Name="IDS_MG_FOLDERS">
         <Text>المجلدات</Text>
-    </String>
-
-    <String Id="90" Name= "IDS_MG_FILES">
+	</STRING>
+	<STRING Id="1089" Name="IDS_MG_FILES">
         <Text>الملفات</Text>
-    </String>
-
-    <String Id="91" Name= "IDS_MG_LOCATION">
+	</STRING>
+	<STRING Id="1090" Name="IDS_MG_LOCATION">
         <Text>الموقع</Text>
-    </String>
-
-    <String Id="92" Name= "IDS_MG_CONST">
+	</STRING>
+	<STRING Id="1091" Name="IDS_MG_CONST">
         <Text>ثابت</Text>
-    </String>
-
-    <String Id="93" Name= "IDS_MG_SYSTEM">
+	</STRING>
+	<STRING Id="1092" Name="IDS_MG_SYSTEM">
         <Text>النظام</Text>
-    </String>
-
-    <String Id="94" Name= "IDS_MG_SELECT">
+	</STRING>
+	<STRING Id="1093" Name="IDS_MG_SELECT">
         <Text>تحديد</Text>
-    </String>
-
-    <String Id="95" Name= "IDS_MG_DOWNLOAD">
+	</STRING>
+	<STRING Id="1094" Name="IDS_MG_DOWNLOAD">
         <Text>تنزيل</Text>
-    </String>
-
-    <String Id="96" Name= "IDS_MG_SELECTPATH">
+	</STRING>
+	<STRING Id="1095" Name="IDS_MG_SELECTPATH">
         <Text>تحديد مسار</Text>
-    </String>
-
-    <String Id="97" Name= "IDS_MG_LARGEFILE">
+	</STRING>
+	<STRING Id="1096" Name="IDS_MG_LARGEFILE">
         <Text>الملف كبير جدًا</Text>
-    </String>
-
-    <String Id="98" Name= "IDS_MG_PHOTOGALLERY">
+	</STRING>
+	<STRING Id="1097" Name="IDS_MG_PHOTOGALLERY">
         <Text>معرض الصور</Text>
-    </String>
-
-    <String Id="99" Name= "IDS_MG_VIDEOGALLERY">
+	</STRING>
+	<STRING Id="1098" Name="IDS_MG_VIDEOGALLERY">
         <Text>معرض الفيديو</Text>
-    </String>
-
-    <String Id="100" Name= "IDS_MG_FILENOTDEL">
+	</STRING>
+	<STRING Id="1099" Name="IDS_MG_FILENOTDEL">
         <Text>يتعذر حذف بعض الملفات</Text>
-    </String>
-
-    <String Id="101" Name= "IDS_MG_MARKALL">
+	</STRING>
+	<STRING Id="1100" Name="IDS_MG_MARKALL">
         <Text>تحديد الكل</Text>
-    </String>
-
-    <String Id="102" Name= "IDS_MG_UNMARKALL">
+	</STRING>
+	<STRING Id="1101" Name="IDS_MG_UNMARKALL">
         <Text>إلغاء تحديد الكل</Text>
-    </String>
-
-    <String Id="103" Name= "IDS_MG_MARK">
+	</STRING>
+	<STRING Id="1102" Name="IDS_MG_MARK">
         <Text>تحديد</Text>
-    </String>
-
-    <String Id="104" Name= "IDS_MG_UNMARK">
+	</STRING>
+	<STRING Id="1103" Name="IDS_MG_UNMARK">
         <Text>إلغاء التحديد</Text>
-    </String>
-
-    <String Id="105" Name= "IDS_MG_EXECUTE">
+	</STRING>
+	<STRING Id="1104" Name="IDS_MG_EXECUTE">
         <Text>تنفيذ</Text>
-    </String>
-
-    <String Id="106" Name= "IDS_MG_LOADFAILED">
+	</STRING>
+	<STRING Id="1105" Name="IDS_MG_LOADFAILED">
         <Text>فشل تحميل الصورة</Text>
-    </String>
-
-    <String Id="107" Name= "IDS_MG_LOADING">
+	</STRING>
+	<STRING Id="1106" Name="IDS_MG_LOADING">
         <Text>جاري التحميل...</Text>
-    </String>
-
+    </STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">
