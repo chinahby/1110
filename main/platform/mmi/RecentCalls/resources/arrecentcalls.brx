@@ -166,4 +166,59 @@
     </String>
 
 </Strings>
+<Dialogs>
+	<DIALOG Id="1" Name="IDD_RMAINMENU" Focus="1">
+		<Controls>
+			<Menu Id="1" Name="IDC_MAIN_CATEGORY_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="2" Name="IDD_RLISTRECORD" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_RLISTRECORD">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="3" Name="IDD_RTIME_MENU" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_RTIME_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="4" Name="IDD_RDEL_MENU" Focus="7003">
+		<Controls>
+			<Menu Id="7003" Name="IDC_RDEL_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="5" Name="IDD_RDEAL_RECORD" Focus="7004">
+		<Controls>
+			<Menu Id="7004" Name="IDC_RDEAL_RECORD">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6" Name="IDD_RWARN" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="7" Name="IDD_RTIME" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="8" Name="IDD_DETAIL" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="9" Name="IDD_VERIFY_PASSWORD" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="10" Name="IDD_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+</Dialogs>
 </BREWRes>

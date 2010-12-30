@@ -146,4 +146,61 @@
     </String>
 
 </Strings>
+<Dialogs>
+	<DIALOG Id="6001" Name="IDD_ALARMCLOCK_DLG" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_MENU_ALARMCLOCK_LIST">
+				<Items>
+					<Item Id="8001" Name="IDC_MENU_ALARMCLOCK_LIST_ITEM_1">
+						<TextID>IDS_ALARMCLOCK_1</TextID>
+					</Item>
+					<Item Id="8002" Name="IDC_MENU_ALARMCLOCK_LIST_ITEM_2">
+						<TextID>IDS_ALARMCLOCK_2</TextID>
+					</Item>
+					<Item Id="8003" Name="IDC_MENU_ALARMCLOCK_LIST_ITEM_3">
+						<TextID>IDS_ALARMCLOCK_3</TextID>
+					</Item>
+					<Item Id="8004" Name="IDC_MENU_ALARMCLOCK_LIST_ITEM_4">
+						<TextID>IDS_ALARMCLOCK_4</TextID>
+					</Item>
+					<Item Id="8005" Name="IDC_MENU_ALARMCLOCK_LIST_ITEM_5">
+						<TextID>IDS_ALARMCLOCK_5</TextID>
+					</Item>
+					<Item Id="8006" Name="IDC_MENU_ALARMCLOCK_LIST_ITEM_6">
+						<TextID>IDS_ALARMCLOCK_6</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6002" Name="IDD_ALARMCLOCK_SUB" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6003" Name="IDD_ALARMTIME_REACH" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6004" Name="IDD_ALARMCLOCK_MESSEGE" Focus="7006">
+		<Controls>
+			<Text Id="7006" Name="IDC_CLOCK_MESSEGE">
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6005" Name="IDD_ALARMCLOCK_OPTION" Focus="0">
+		<Controls>
+			<Menu Id="7001" Name="IDC_MENU_OPTION">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<Dialog Id="6006" Name="IDD_DELCONFIRM" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6007" Name="IDD_WARNING" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+</Dialogs>
 </BREWRes>

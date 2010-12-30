@@ -294,4 +294,94 @@
     </String>
 
 </Strings>
+<Dialogs>
+	<DIALOG Id="6001" Name="IDD_DISPLAYMENU_MENU" Focus="7004">
+		<Controls>
+			<Menu Id="7004" Name="IDC_DISPLAYMENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6002" Name="IDD_PICTURE_DLG" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6003" Name="IDD_IMGDELMSG_DLG" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6004" Name="IDD_SCREENSAVERTIMEOUT_DIALOG" Focus="7008">
+		<Controls>
+			<Menu Id="7008" Name="IDC_SCREENSAVER_TIMEOUT_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6005" Name="IDD_BACKLIGHTING_MENU" Focus="7006">
+		<Controls>
+			<Menu Id="7006" Name="IDC_BACKLIGHTING">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6006" Name="IDD_CONTRAST_MENU" Focus="7007">
+		<Controls>
+			<Menu Id="7007" Name="IDC_CONTRAST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6007" Name="IDD_DESKTOP_THEME" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_DESKTOP_THEME">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6008" Name="IDD_LED_CONTROL" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_LED_CONTROL">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6009" Name="IDD_KEY_PAD_CTL" Focus="7003">
+		<Controls>
+			<List Id="7003" Name="IDC_KEY_PAD_STATE" Flags="2">
+				<Items/>
+			</List>
+			<Countdown Id="7005" Name="IDC_CLOCK_FORM">
+				<Items/></Countdown>
+			<Countdown Id="7009" Name="IDC_CLOCK_TO">
+				<Items/></Countdown>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6010" Name="IDD_MENU_STYLE" Focus="7010">
+		<Controls>
+			<Menu Id="7010" Name="IDC_MENU_STYLE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6011" Name="IDD_COLORFUL_MENU" Focus="7011">
+		<Controls>
+			<Menu Id="7011" Name="IDC_COLORFUL_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6012" Name="IDD_COLOR_SETTING" Focus="0">
+		<Controls>
+			<Menu Id="7012" Name="IDC_COLOR_SETTING">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6013" Name="IDD_REND_MENU" Focus="7013">
+		<Controls>
+			<Menu Id="7013" Name="IDC_REND_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
 </BREWRes>

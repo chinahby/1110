@@ -18,4 +18,13 @@
     </String>
 
 </Strings>
+<Dialogs>
+	<Dialog Id="6003" Name="IDD_LIST_GAME" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_GAME_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+</Dialogs>
 </BREWRes>

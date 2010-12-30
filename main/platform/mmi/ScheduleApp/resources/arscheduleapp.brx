@@ -282,4 +282,126 @@
     </String>
 
 </Strings>
+<Dialogs>
+	<Dialog Id="6001" Name="IDD_PWD" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6002" Name="IDD_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_GOTODATE" Focus="0">
+		<Controls/>
+	</Dialog>
+	<DIALOG Id="6200" Name="IDD_VIEWMONTH" Focus="7004">
+		<Controls>
+			<Static Id="7003" Name="IDC_VIEWMONTH_STATIC_PROMPT">
+				<Items/></Static>
+			<DatePick Id="7004" Name="IDC_DATE_MONTHVIEW">
+				<Items/></DatePick>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6201" Name="IDD_OPTION" Focus="0">
+		<Controls>
+			<Menu Id="7002" Name="IDC_MENU_OPTION">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6202" Name="IDD_EVENT_EDIT" Focus="7802">
+		<Controls>
+			<Static Id="7801" Name="IDC_STATIC_SUBJECT">
+				<TextID>IDS_EVENT_EDIT_TITLE_SUBJECT</TextID>
+				<Items/></Static>
+			<Text Id="7802" Name="IDC_TEXT_SUBJECT">
+				<Items/></Text>
+			<Static Id="7803" Name="IDC_STATIC_NOTE">
+				<TextID>IDS_EVENT_EDIT_TITLE_NOTE</TextID>
+				<Items/></Static>
+			<Text Id="7804" Name="IDC_TEXT_NOTE">
+				<Items/></Text>
+			<Static Id="7805" Name="IDC_STATIC_START">
+				<TextID>IDS_EVENT_EDIT_TITLE_START</TextID>
+				<Items/></Static>
+			<Countdown Id="7806" Name="IDC_COUNTDOWN_START">
+				<Items/></Countdown>
+			<Static Id="7807" Name="IDC_STATIC_END">
+				<TextID>IDS_EVENT_EDIT_TITLE_DURATION</TextID>
+				<Items/></Static>
+			<Countdown Id="7808" Name="IDC_COUNTDOWN_DURATION">
+				<Items/></Countdown>
+			<Static Id="7809" Name="IDC_STATIC_ALARM">
+				<TextID>IDS_EVENT_EDIT_TITLE_ALARM</TextID>
+				<Items/></Static>
+			<List Id="7810" Name="IDC_LIST_ALARM">
+				<Items/>
+			</List>
+			<Static Id="7811" Name="IDC_STATIC_RINGTONE">
+				<TextID>IDS_EVENT_EDIT_TITLE_RINGTONE</TextID>
+				<Items/></Static>
+			<List Id="7812" Name="IDC_LIST_RINGTONE">
+				<Items/>
+			</List>
+			<Static Id="7813" Name="IDC_STATIC_SPORTS_MODE">
+				<TextID>IDS_SPORTS_MODE</TextID>
+				<Items/></Static>
+			<List Id="7814" Name="IDC_LIST_SPORTS">
+				<Items/>
+			</List>
+			<Static Id="7815" Name="IDC_STATIC_SPORT_DISTANCE">
+				<TextID>IDS_SPORTS_DISTANCE</TextID>
+				<Items/></Static>
+			<Static Id="7816" Name="IDC_STATIC_SPORT_TIME">
+				<TextID>IDS_SPORTS_TIME</TextID>
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<DIALOG Id="6203" Name="IDD_INPUTTEXT" Focus="7020">
+		<Controls>
+			<Text Id="7020" Name="IDC_TEXT_INPUT">
+				<Items/></Text>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6204" Name="IDD_VIEWDAY" Focus="7010">
+		<Controls>
+			<Static Id="7005" Name="IDC_VIEWDAY_STATIC_PROMPT">
+				<Items/></Static>
+			<Menu Id="7010" Name="IDC_MENU_SCH">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6205" Name="IDD_SETUP" Focus="7610">
+		<Controls>
+			<Static Id="7610" Name="IDC_SETUP_TITLE_REMINDER_SNOOZE">
+				<TextID>IDS_SETUP_TITLE_REMINDER_SNOOZE</TextID>
+				<Items/></Static>
+			<List Id="7611" Name="IDC_SETUP_LIST_REMINDER_SNOOZE">
+				<Items/>
+			</List>
+			<Static Id="7612" Name="IDC_SETUP_TITLE_AUTO_DELETE">
+				<TextID>IDS_SETUP_TITLE_AUTO_DELETE</TextID>
+				<Items/></Static>
+			<List Id="7613" Name="IDC_SETUP_LIST_AUTO_DELETE">
+				<Items/>
+			</List>
+			<Static Id="7614" Name="IDC_SETUP_TITLE_DAILY_START_TIME">
+				<TextID>IDS_SETUP_TITLE_DAILY_START_TIME</TextID>
+				<Items/></Static>
+			<Countdown Id="7615" Name="IDC_SETUP_COUNTDOWN_DAILY_START_TIME">
+				<Items/></Countdown>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6206" Name="IDD_SHOWALERT" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6207" Name="IDD_VIEWEVENT" Focus="7050">
+		<Controls>
+			<Static Id="7050" Name="IDC_VIEWEVENT_STATIC" Flags="262144">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+</Dialogs>
 </BREWRes>

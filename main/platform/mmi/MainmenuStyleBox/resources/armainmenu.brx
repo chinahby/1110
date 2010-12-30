@@ -106,4 +106,10 @@
     </String>
 
 </Strings>
+<Dialogs>
+	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+</Dialogs>
 </BREWRes>

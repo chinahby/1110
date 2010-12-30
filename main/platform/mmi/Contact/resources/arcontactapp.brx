@@ -610,4 +610,499 @@
     </String>
 
 </Strings>
+<Dialogs>
+	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6002" Name="IDD_YESNO" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6003" Name="IDD_LIST" Focus="7003">
+		<Controls>
+			<Text Id="7002" Name="IDC_LIST_TEXT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Text>
+			<Menu Id="7003" Name="IDC_LIST_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6004" Name="IDD_INPUTFLD" Focus="7004">
+		<Controls>
+			<Text Id="7004" Name="IDC_INPUTFLD_TEXTCTL">
+				<Items/></Text>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6005" Name="IDD_ADDNEW" Focus="7041">
+		<Controls>
+			<List Id="7039" Name="IDC_ADD_GROUPLIST">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</List>
+			<Text Id="7041" Name="IDC_ADD_LOCAL_INPUT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Text>
+			<Menu Id="7047" Name="IDC_ADDNEW_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items>
+					<Item Id="8009" Name="IDI_ADDNEW_MENU_NAME">
+						<TextID>IDS_NAME</TextID>
+					</Item>
+					<Item Id="8010" Name="IDI_ADDNEW_MENU_MOBILE">
+						<TextID>IDS_MOBILE</TextID>
+					</Item>
+					<Item Id="8011" Name="IDI_ADDNEW_MENU_HOME">
+						<TextID>IDS_HOME</TextID>
+					</Item>
+					<Item Id="8038" Name="IDI_ADDNEW_MENU_OFFICE">
+						<TextID>IDS_OFFICE</TextID>
+					</Item>
+					<Item Id="8046" Name="IDI_ADDNEW_MENU_FAX">
+						<TextID>IDS_FAX</TextID>
+					</Item>
+					<Item Id="8048" Name="IDI_ADDNEW_MENU_EMAIL">
+						<TextID>IDS_EMAIL</TextID>
+					</Item>
+					<Item Id="8057" Name="IDI_ADDNEW_MENU_ADDRESS">
+						<TextID>IDS_ADDRESS</TextID>
+					</Item>
+					<Item Id="8060" Name="IDI_ADDNEW_MENU_URL">
+						<TextID>IDS_URL</TextID>
+					</Item>
+					<Item Id="8062" Name="IDI_ADDNEW_MENU_REMARK">
+						<TextID>IDS_NOTES</TextID>
+					</Item>
+					<Item Id="8063" Name="IDI_ADDNEW_MENU_SELECTGROUP">
+						<TextID>IDS_INPUT_GROUP</TextID>
+					</Item>
+					<Item Id="8064" Name="IDI_ADDNEW_MENU_SELECTRINGTONE">
+						<TextID>IDS_RING</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6006" Name="IDD_OPTS" Focus="7007">
+		<Controls>
+			<Menu Id="7007" Name="IDC_OPTS_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items>
+					<Item Id="8006" Name="IDI_OPTS_MENU_EDIT">
+					</Item>
+					<Item Id="8049" Name="IDI_OPTS_MENU_BLUETOOTH">
+					</Item>
+					<Item Id="8051" Name="IDI_OPTS_MENU_MOVE">
+					</Item>
+					<Item Id="8055" Name="IDI_OPTS_MENU_VIEW">
+					</Item>
+					<Item Id="8073" Name="IDI_OPTS_MENU_ADDNEW">
+					</Item>
+					<Item Id="8074" Name="IDI_OPTS_MENU_CALL">
+					</Item>
+					<Item Id="8076" Name="IDI_OPTS_MENU_SENDSMS">
+					</Item>
+					<Item Id="8077" Name="IDI_OPTS_MENU_SENDDIRECTORY">
+					</Item>
+					<Item Id="8078" Name="IDI_OPTS_MENU_DELETE">
+					</Item>
+					<Item Id="8079" Name="IDI_OPTS_MENU_COPY">
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6007" Name="IDD_VIEW" Focus="7008">
+		<Controls>
+			<Menu Id="7008" Name="IDC_VIEW_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6008" Name="IDD_FLDOPTS" Focus="7010">
+		<Controls>
+			<Menu Id="7010" Name="IDC_FLDOPTS_MENU">
+				<Items>
+					<Item Id="8012" Name="IDI_FLDOPTS_MENU_EDIT">
+					</Item>
+					<Item Id="8013" Name="IDI_FLDOPTS_MENU_DELETE">
+					</Item>
+					<Item Id="8016" Name="IDI_FLDOPTS_MENU_SENDSMS">
+					</Item>
+					<Item Id="8017" Name="IDI_FLDOPTS_MENU_SETTYPE">
+					</Item>
+					<Item Id="8040" Name="IDI_FLDOPTS_MENU_COPYTORUIM">
+					</Item>
+					<Item Id="8041" Name="IDI_FLDOPTS_MENU_COPYTOPHONE">
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6009" Name="IDD_COPYING" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<DIALOG Id="6010" Name="IDD_FIND" Focus="7012">
+		<Controls>
+			<Text Id="7012" Name="IDC_FIND_TEXTCTL">
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6011" Name="IDD_GROUP" Focus="7013">
+		<Controls>
+			<Menu Id="7013" Name="IDC_GROUP_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6012" Name="IDD_POSITION" Focus="7014">
+		<Controls>
+			<Menu Id="7014" Name="IDC_POSITION_MENU">
+				<Items>
+					<Item Id="8008" Name="IDI_POSITION_MENU_ALL">
+						<TextID>IDS_POSITION_ALL</TextID>
+					</Item>
+					<Item Id="8014" Name="IDI_POSITION_MENU_PHONE">
+						<TextID>IDS_POSITION_PHONE</TextID>
+					</Item>
+					<Item Id="8015" Name="IDI_POSITION_MENU_RUIM">
+						<TextID>IDS_GROUP_NONE</TextID>
+					</Item>
+					<Item Id="8024" Name="IDI_POSITION_MENU_SELECT">
+						<TextID>IDS_POSITION_SELECT</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6013" Name="IDD_COPYMOVE" Focus="7015">
+		<Controls>
+			<Menu Id="7015" Name="IDC_COPYMOVE_MENU">
+				<Items>
+					<Item Id="8025" Name="IDI_PHONE_TO_UIM">
+						<TextID>IDS_PHONE_TO_UIM</TextID>
+					</Item>
+					<Item Id="8026" Name="IDI_UIM_TO_PHONE">
+						<TextID>IDS_UIM_TO_PHONE</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6014" Name="IDD_COPY" Focus="7017">
+		<Controls>
+			<Text Id="7009" Name="IDC_COPY_TEXT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Text>
+			<Menu Id="7017" Name="IDC_COPY_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items>
+					<Item Id="8036" Name="IDI_COPY_MENU_SELECT_ALL">
+					</Item>
+					<Item Id="8037" Name="IDI_COPY_MENU_CANCEL_ALL">
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<Dialog Id="6015" Name="IDD_GROUPOPT" Focus="0">
+		<Controls>
+			<Menu Id="7019" Name="IDC_MENU_GROUPOPT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<DIALOG Id="6016" Name="IDD_ICON" Focus="7016">
+		<Controls>
+			<Menu Id="7016" Name="IDC_ICON_MENU">
+				<Items>
+					<Item Id="8007" Name="IDI_ICON_MENU_USESYSTEM">
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6017" Name="IDD_GROUPOPT_EDIT" Focus="7022">
+		<Controls>
+			<Text Id="7022" Name="IDC_GROUPOPT_EDIT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<DIALOG Id="6018" Name="IDD_ONOFF" Focus="7021">
+		<Controls>
+			<Menu Id="7021" Name="IDC_ONOFF_MENU">
+				<Items>
+					<Item Id="8043" Name="IDI_ONOFF_MENU_ON">
+					</Item>
+					<Item Id="8044" Name="IDI_ONOFF_MENU_OFF">
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6019" Name="IDD_MANAGEMENT" Focus="0">
+		<Controls>
+			<Menu Id="7025" Name="IDC_MENU_CONTACTS_MANAGEMENT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<DIALOG Id="6020" Name="IDD_ONEDIAL" Focus="7023">
+		<Controls>
+			<Menu Id="7023" Name="IDC_ONEDIAL_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6021" Name="IDD_CAPACITY" Focus="7027">
+		<Controls>
+			<Static Id="7027" Name="IDC_CAPACITY_STATIC">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6022" Name="IDD_EDIT" Focus="7030">
+		<Controls>
+			<Menu Id="7024" Name="IDC_EDIT_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items>
+					<Item Id="8081" Name="IDI_EDIT_MENU_NAME">
+						<TextID>IDS_NAME</TextID>
+					</Item>
+					<Item Id="8082" Name="IDI_EDIT_MENU_MOBILE">
+						<TextID>IDS_MOBILE</TextID>
+					</Item>
+					<Item Id="8083" Name="IDI_EDIT_MENU_HOME">
+						<TextID>IDS_HOME</TextID>
+					</Item>
+					<Item Id="8084" Name="IDI_EDIT_MENU_OFFICE">
+						<TextID>IDS_OFFICE</TextID>
+					</Item>
+					<Item Id="8085" Name="IDI_EDIT_MENU_FAX">
+						<TextID>IDS_FAX</TextID>
+					</Item>
+					<Item Id="8086" Name="IDI_EDIT_MENU_EMAIL">
+						<TextID>IDS_EMAIL</TextID>
+					</Item>
+					<Item Id="8087" Name="IDI_EDIT_MENU_ADDRESS">
+						<TextID>IDS_ADDRESS</TextID>
+					</Item>
+					<Item Id="8088" Name="IDI_EDIT_MENU_URL">
+						<TextID>IDS_URL</TextID>
+					</Item>
+					<Item Id="8089" Name="IDI_EDIT_MENU_REMARK">
+						<TextID>IDS_NOTES</TextID>
+					</Item>
+					<Item Id="8090" Name="IDI_EDIT_MENU_GROUP">
+						<TextID>IDS_INPUT_GROUP</TextID>
+					</Item>
+					<Item Id="8091" Name="IDI_EDIT_MENU_RINGTONE">
+						<TextID>IDS_RING</TextID>
+					</Item>
+				</Items>
+			</Menu>
+			<Text Id="7030" Name="IDC_TEXT_LOCAL_INPUT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Text>
+			<List Id="7032" Name="IDC_GROUP_LIST">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</List>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6023" Name="IDD_SETTING" Focus="7026">
+		<Controls>
+			<Menu Id="7026" Name="IDC_SETTING_MENU">
+				<Items>
+					<Item Id="8042" Name="IDI_SETTING_MENU_SAVETO">
+						<TextID>IDS_SAVETO</TextID>
+					</Item>
+					<Item Id="8047" Name="IDI_SETTING_MENU_VIEWTYPE">
+						<TextID>IDS_VIEWTYPE</TextID>
+					</Item>
+					<Item Id="8093" Name="IDI_SETTING_MENU_COPYMOVE">
+						<TextID>IDS_COPYMOVE</TextID>
+					</Item>
+					<Item Id="8094" Name="IDI_SETTING_MENU_MEMORY">
+						<TextID>IDS_CHECKCAPACITY</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6024" Name="IDD_INPUT" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6025" Name="IDD_ONEDIALOPT" Focus="7028">
+		<Controls>
+			<Menu Id="7028" Name="IDC_ONEDIALOPT_MENU">
+				<Items>
+					<Item Id="8058" Name="IDI_ONEDIALOPT_MENU_SET">
+						<TextID>IDS_ONEDIAL_SET</TextID>
+					</Item>
+					<Item Id="8059" Name="IDI_ONEDIALOPT_MENU_CLR">
+						<TextID>IDS_ONEDIAL_CLR</TextID>
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<Dialog Id="6026" Name="IDD_DELETE_SELECT" Focus="0">
+		<Controls>
+			<Menu Id="7029" Name="IDC_MENU_DELETE_SELECT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<DIALOG Id="6027" Name="IDD_ONEDIAL_SET_NUM_SEL" Focus="7031">
+		<Controls>
+			<Menu Id="7031" Name="IDC_ONEDIAL_SET_NUM_SEL">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6028" Name="IDD_SELECT" Focus="7005">
+		<Controls>
+			<Menu Id="7005" Name="IDC_SELECT_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+			<Text Id="7018" Name="IDC_SELECT_TEXT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Text>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6029" Name="IDD_MAINMENU" Focus="7001">
+		<Controls>
+			<Menu Id="7001" Name="IDC_MAINMENU_MENU">
+				<Items>
+					<Item Id="8002" Name="IDI_MAINMENU_MENU_DIRECTORTLIST">
+					</Item>
+					<Item Id="8039" Name="IDI_MAINMENU_MENU_FIND">
+					</Item>
+					<Item Id="8050" Name="IDI_MAINMENU_MENU_ADDNEW">
+					</Item>
+					<Item Id="8053" Name="IDI_MAINMENU_MENU_SPEEDDIAL">
+					</Item>
+					<Item Id="8095" Name="IDI_MAINMENU_MENU_GROUP">
+					</Item>
+					<Item Id="8096" Name="IDI_MAINMENU_MENU_CONTACT_MANAGEMENT">
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6030" Name="IDD_DETAIL" Focus="7006">
+		<Controls>
+			<Menu Id="7006" Name="IDC_MENU_TITLE">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<Dialog Id="6031" Name="IDD_POPNUMFLD" Focus="0">
+		<Controls>
+			<Menu Id="7033" Name="IDC_POPNUMFLD_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6032" Name="IDD_VIEW_NUMFLD" Focus="0">
+		<Controls>
+			<Menu Id="7034" Name="IDC_VIEWNUMFLD_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6033" Name="IDD_SELECTOPT" Focus="0">
+		<Controls>
+			<Menu Id="7035" Name="IDC_SELECTOPT_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<DIALOG Id="6034" Name="IDD_SEARCH" Focus="7036">
+		<Controls>
+			<Menu Id="7036" Name="IDC_SEARCH_MENU">
+				<Items>
+					<Item Id="8001" Name="IDI_SEARCH_MENU_NAME">
+					</Item>
+					<Item Id="8003" Name="IDI_SEARCH_MENU_GROUP">
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6035" Name="IDD_SEARCHNAME" Focus="7037">
+		<Controls>
+			<Text Id="7037" Name="IDC_SEARCHNAME_TEXTCTL">
+				<Items/></Text>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="6036" Name="IDD_NUMFLDVIEW" Focus="0">
+		<Controls>
+			<Menu Id="7038" Name="IDC_NUMFLDVIEW_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6037" Name="IDD_DELETING" Focus="0">
+		<Controls/>
+	</Dialog>
+	<DIALOG Id="6038" Name="IDD_DELETE" Focus="7040">
+		<Controls>
+			<Text Id="7011" Name="IDC_DELETE_TEXT">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Text>
+			<Menu Id="7040" Name="IDC_DELETE_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items>
+					<Item Id="8004" Name="IDI_DELETE_MENU_SELECT_ALL">
+					</Item>
+					<Item Id="8005" Name="IDI_DELETE_MENU_CANCEL_ALL">
+					</Item>
+				</Items>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<Dialog Id="6039" Name="IDD_SELECT_RECORD" Focus="7020">
+		<Controls>
+			<Menu Id="7020" Name="IDC_SELECT_RECORD">
+				<Items/>
+			</Menu>
+			<Text Id="7042" Name="IDC_SELECT_RECORD_TEXT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6040" Name="IDD_DETAIL_MULTI" Focus="0">
+		<Controls>
+			<Menu Id="7043" Name="IDC_MENU_DETAIL_MULTI">
+				<Items/>
+			</Menu>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+</Dialogs>
 </BREWRes>
