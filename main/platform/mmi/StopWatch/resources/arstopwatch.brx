@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="arstopwatch" VERSION="1">
+<BREWRes Name="stringres_id" VERSION="1">
 <Strings Encoding="Unicode">
-	<STRING Id="1" Name="IDS_STOPWATCH_TITLE">
-		<Text>ساعة إيقاف</Text>
-	</STRING>
-	<STRING Id="2" Name="IDS_RESET_CONFIRM">
-		<Text>إعادة تعيين؟</Text>
-	</STRING>
-	<STRING Id="3" Name="IDS_RESET_RECORDFULL">
-		<Text>التسجيل ممتلئ، إعادة الضبط؟</Text>
-	</STRING>
-	<STRING Id="4" Name="IDS_STOPWATCH1">
-		<Text>ساعة إيقاف 1</Text>
-	</STRING>
-	<STRING Id="5" Name="IDS_STOPWATCH2">
-		<Text>ساعة إيقاف 2</Text>
-	</STRING>
-	<STRING Id="6" Name="IDS_CHANGE_CONFIRM">
-		<Text>Change to another stopwatch</Text>
-	</STRING>
+    <String Id="1" Name= "IDS_STOPWATCH_TITLE">
+        <Text>ساعة التوقيت</Text>
+    </String>
+
+    <String Id="2" Name= "IDS_RESET_CONFIRM">
+        <Text>إعادة التعيين</Text>
+    </String>
+
+    <String Id="3" Name= "IDS_RESET_RECORDFULL">
+        <Text>"السجل ممتلئ، يرجى إعادة التعيين"</Text>
+    </String>
+
+    <String Id="4" Name= "IDS_STOPWATCH1">
+        <Text>ساعة التوقيت 1</Text>
+    </String>
+
+    <String Id="5" Name= "IDS_STOPWATCH2">
+        <Text>ساعة التوقيت 2</Text>
+    </String>
+
+    <String Id="6" Name= "IDS_CHANGE_CONFIRM">
+        <Text>تغيير إلى ساعة توقيت أخرى</Text>
+    </String>
+
 </Strings>
 </BREWRes>

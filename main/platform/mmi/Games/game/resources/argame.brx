@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="game" VERSION="1">
+<BREWRes Name="stringres_id" VERSION="1">
 <Strings Encoding="Unicode">
-	<String Id="1001" Name="IDS_GAME_LIST">
-		<Text>Games</Text>
-	</String>
-	<STRING Id="1011" Name="IDS_GAME_TITLE_1">
-		<Text>Blackjack</Text>
-	</STRING>
-	<STRING Id="1012" Name="IDS_GAME_TITLE_2">
-		<Text>Brickattack</Text>
-	</STRING>
-	<STRING Id="1013" Name="IDS_GAME_TITLE_3">
-		<Text>Tetris</Text>
-	</STRING>
+    <String Id="1" Name= "IDS_GAME_LIST">
+        <Text>اللعبة</Text>
+    </String>
+
+    <String Id="2" Name= "IDS_GAME_TITLE_1">
+        <Text>بلاك جاك</Text>
+    </String>
+
+    <String Id="3" Name= "IDS_GAME_TITLE_2">
+        <Text>Brickattack</Text>
+    </String>
+
+    <String Id="4" Name= "IDS_GAME_TITLE_3">
+        <Text>تيتريس</Text>
+    </String>
+
 </Strings>
-<Dialogs>
-	<Dialog Id="6003" Name="IDD_LIST_GAME" Focus="7001">
-		<Controls>
-			<Menu Id="7001" Name="IDC_GAME_LIST">
-				<Items/>
-			</Menu>
-		</Controls>
-	</Dialog>
-</Dialogs>
 </BREWRes>

@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="application" VERSION="1">
-<Strings Encoding="ISOLATIN1">
+<BREWRes Name="arapplication" VERSION="1">
+<Strings Encoding="Unicode">
 	<String Id="1001" Name="IDS_APPLICATION_LIST">
-		<Text>Application</Text>
+		<Text>تطبيق</Text>
 	</String>
 	<String Id="1002" Name="IDS_DIAG_AND_DATA">
-		<Text>On</Text>
+		<Text>تشغيل</Text>
 	</String>
 	<String Id="1003" Name="IDS_MASS_STORAGE">
-		<Text>Off</Text>
+		<Text>إيقاف التشغيل</Text>
 	</String>
 	<STRING Id="1011" Name="IDS_APPLICATION_BAM">
 		<Text>BAM</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_APPLICATION_TIMER">
-		<Text>Timer</Text>
+		<Text>الموقت</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_APPLICATION_STOPWATCH">
-		<Text>StopWatch</Text>
+		<Text>ساعة التوقيت</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_APPLICATION_ALARM">
-		<Text>Alarm</Text>
+		<Text>التنبيه</Text>
 	</STRING>
 	<String Id="1015" Name="IDS_APPLICATION_CONVERTER">
-		<Text>Converter</Text>
+		<Text>المحول</Text>
 	</String>
 	<String Id="1016" Name="IDS_APPLICATION_WORLDTIME">
-		<Text>WorldTime</Text>
+		<Text>التوقيت العالمي</Text>
 	</String>
 	<String Id="1017" Name="IDS_APPLICATION_RECORDER">
-		<Text>Recorder</Text>
+		<Text>المسجل</Text>
 	</String>
 	<String Id="1018" Name="IDS_APPLICATION_SCHEDULER">
-		<Text>Scheduler</Text>
+		<Text>التقويم</Text>
 	</String>
 	<String Id="1019" Name="IDS_APPLICATION_GAME">
-		<Text>Game</Text>
+		<Text>الألعاب</Text>
 	</String>
 	<String Id="1020" Name="IDS_APPLICATION_CALCULATOR">
-		<Text>Calculator</Text>
+		<Text>الآلة الحاسبة</Text>
 	</String>
 	<String Id="1021" Name="IDS_APPLICATION_CAMERA">
-		<Text>Camera</Text>
+		<Text>الكاميرا</Text>
 	</String>
 	<String Id="1022" Name="IDS_APPLICATION_FMRADIO">
-		<Text>FM Radio</Text>
+		<Text>راديو FM</Text>
 	</String>
 	<String Id="1024" Name="IDS_APPLICATION_BROWSER">
-		<Text>Browser</Text>
+		<Text>المستعرض</Text>
 	</String>
 	<String Id="1025" Name="IDS_APPLICATION_BLUETOOTH">
-		<Text>Bluetooth</Text>
+		<Text>البلوتوث</Text>
 	</String>
 	<String Id="1026" Name="IDS_APPLICATION_FLASHLIGHT">
-		<Text>Flashlight</Text>
+		<Text>ضوء الفلاش</Text>
 	</String>
 	<String Id="1031" Name="IDS_TOOLS_LIST">
-		<Text>Tools</Text>
+		<Text>الأدوات</Text>
 	</String>
 </Strings>
 <Dialogs>

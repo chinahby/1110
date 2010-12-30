@@ -8,7 +8,7 @@
 		<Text>حذف</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_CANCEL">
-		<Text>إلغاء</Text>
+		<Text>رجوع</Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_SEND">
 		<Text>إرسال</Text>
@@ -32,58 +32,58 @@
 		<Text>حفظ</Text>
 	</STRING>
 	<STRING Id="11" Name="IDS_MENU">
-		<Text>قائمة</Text>
+		<Text>القائمة</Text>
 	</STRING>
 	<STRING Id="12" Name="IDS_NEXT">
-		<Text>التالي </Text>
+		<Text>التالي</Text>
 	</STRING>
 	<STRING Id="13" Name="IDS_READ">
 		<Text>قراءة</Text>
 	</STRING>
 	<STRING Id="14" Name="IDS_OPTION">
-		<Text>خيارات</Text>
+		<Text>خيار</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_SOS">
-		<Text>الطوارئ</Text>
+		<Text>نداء استغاثة</Text>
 	</STRING>
 	<STRING Id="16" Name="IDS_CLOSE">
 		<Text>إغلاق</Text>
 	</STRING>
 	<STRING Id="17" Name="IDS_RESET">
-		<Text>إعادة ضبط</Text>
+		<Text>إعادة التعيين</Text>
 	</STRING>
 	<STRING Id="18" Name="IDS_END">
 		<Text>إنهاء</Text>
 	</STRING>
 	<STRING Id="19" Name="IDS_STRING_CONTACTS">
-		<Text>الأسماء</Text>
+		<Text>جهات الاتصال</Text>
 	</STRING>
 	<STRING Id="20" Name="IDS_STRING_END_CALL">
-		<Text>إنهاء مكالمة</Text>
+		<Text>إنهاء المكالمة</Text>
 	</STRING>
 	<STRING Id="21" Name="IDS_STRING_CANCEL">
 		<Text>إلغاء</Text>
 	</STRING>
 	<STRING Id="22" Name="IDS_MSG_CONFIRM_DELETE">
-		<Text>مسح المكالمة ؟</Text>
+		<Text>حذف</Text>
 	</STRING>
 	<STRING Id="23" Name="IDS_MSG_INFORMATIVE_DELETE">
-		<Text>تم الحذف!</Text>
+		<Text>تم الحذف</Text>
 	</STRING>
 	<STRING Id="24" Name="IDS_MSG_CONFIRM_DELETEALL">
-		<Text>مسح جميع المكالمات الآن ؟</Text>
+		<Text>حذف الكل</Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_MSG_INFORMATIVE_DELETEALL">
-		<Text>تم حذف الكل!</Text>
+		<Text>تم حذف الكل</Text>
 	</STRING>
 	<STRING Id="26" Name="IDS_MSG_CONFIRM_COPY">
-		<Text>نسخ؟</Text>
+		<Text>نسخ</Text>
 	</STRING>
 	<STRING Id="27" Name="IDS_MSG_INFORMATIVE_COPYED">
-		<Text>نجح!</Text>
+		<Text>نجح</Text>
 	</STRING>
 	<STRING Id="28" Name="IDS_SETTING">
-		<Text>ضبط</Text>
+		<Text>تعيين</Text>
 	</STRING>
 	<STRING Id="29" Name="IDS_TOTODAY">
 		<Text>اليوم</Text>
@@ -95,7 +95,7 @@
 		<Text>عادي</Text>
 	</STRING>
 	<STRING Id="32" Name="IDS_INPUT_STROKE">
-		<Text>Stroke</Text>
+		<Text>ضغط المفاتيح</Text>
 	</STRING>
 	<STRING Id="33" Name="IDS_INPUT_ZHUYIN">
 		<Text>Zhuyin</Text>
@@ -104,10 +104,10 @@
 		<Text>RapidEN</Text>
 	</STRING>
 	<STRING Id="35" Name="IDS_INPUT_NUMBERS">
-		<Text>Numbers</Text>
+		<Text>الأرقام</Text>
 	</STRING>
 	<STRING Id="36" Name="IDS_MSG_KEYGUARD">
-		<Text>اضغط * لإلغاء قفل حماية المفاتيح</Text>
+		<Text>اضغط على "إلغاء القفل" ثم * </Text>
 	</STRING>
 	<STRING Id="37" Name="IDS_INPUT_RAPIDTH">
 		<Text>RapidTH</Text>
@@ -116,10 +116,10 @@
 		<Text>MultiTH</Text>
 	</STRING>
 	<STRING Id="39" Name="IDS_INPUT_MAJUSCULE">
-		<Text>ABC</Text>
+		<Text>أ ب ت</Text>
 	</STRING>
 	<STRING Id="40" Name="IDS_INPUT_SMALL_LETTER">
-		<Text>abc</Text>
+		<Text>أ ب ت</Text>
 	</STRING>
 	<STRING Id="41" Name="IDS_ANSWER">
 		<Text>رد</Text>
@@ -131,28 +131,28 @@
 		<Text>رفض</Text>
 	</STRING>
 	<STRING Id="44" Name="IDS_MUTE">
-		<Text>صامت</Text>
+		<Text>كتم الصوت</Text>
 	</STRING>
 	<STRING Id="45" Name="IDS_UNMUTE">
-		<Text>فتح الصوت </Text>
+		<Text>إلغاء كتم الصوت</Text>
 	</STRING>
 	<STRING Id="46" Name="IDS_STRING_UNLOCK">
 		<Text>إلغاء القفل</Text>
 	</STRING>
 	<STRING Id="47" Name="IDS_START">
-		<Text>بدء</Text>
+		<Text>بدء التشغيل</Text>
 	</STRING>
 	<STRING Id="48" Name="IDS_CALL">
 		<Text>اتصال</Text>
 	</STRING>
 	<STRING Id="114" Name="IDS_OPTION_FM">
-		<Text>خيارات</Text>
+		<Text>خيار</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_RECORD">
 		<Text>تسجيل</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_STOP">
-		<Text>توقف</Text>
+		<Text>إيقاف</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_APPSCOMMON_AM">
 		<Text>ص</Text>
@@ -164,67 +164,67 @@
 		<Text>استئناف</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_RETRY">
-		<Text>Retry</Text>
+		<Text>إعادة المحاولة</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_CREATE">
-		<Text>Create</Text>
+		<Text>إنشاء</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_ADD">
-		<Text>Add</Text>
+		<Text>إضافة</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_PAUSE">
-		<Text>Pause</Text>
+		<Text>إيقاف مؤقت</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_PLAY">
-		<Text>Play</Text>
+		<Text>تشغيل</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_POP_DONE">
-		<Text>Done</Text>
+		<Text>تم</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_EXCHANGE">
-		<Text>Exchg.</Text>
+		<Text>تبديل</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_JEWISH">
-		<Text>Display</Text>
+		<Text>شاشة العرض</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_HANDSFREE_ON">
-		<Text>Handsfree</Text>
+		<Text>حر اليدين</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_BLUETOOTH_ACCEPT">
-		<Text>Accept</Text>
+		<Text>قبول</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_HANDSFREE_OFF">
-		<Text>Normal</Text>
+		<Text>عادي</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_REPLAY">
-		<Text>Replay</Text>
+		<Text>إعادة التشغيل</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_UP">
-		<Text>Back</Text>
+		<Text>رجوع</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_SPORT">
-		<Text>Sports</Text>
+		<Text>رياضة</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_CONFIRM_OFF_FM">
-		<Text>Turn off FM</Text>
+		<Text>إيقاف تشغيل FM</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_CONFIRM_OFF_MP">
-		<Text>Turn off music player</Text>
+		<Text>إيقاف تشغيل مشغل الموسيقى</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_FULLSCREEN">
-		<Text>Scr.</Text>
+		<Text>الشاشة</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_GALLERY">
-		<Text>Gallery</Text>
+		<Text>المعرض</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_YES">
-		<Text>Yes</Text>
+		<Text>نعم</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_NO">
-		<Text>No</Text>
+		<Text>لا</Text>
 	</STRING>
 	<String Id="1026" Name="IDS_VIEWMORE">
-		<Text>ViewMore</Text>
+		<Text>عرض المزيد</Text>
 	</String>
 	<String Id="1027" Name="IDS_FACEBOOK">
 		<Text>Facebook</Text>
@@ -233,31 +233,31 @@
 		<Text>FrenDuo</Text>
 	</String>
 	<String Id="1029" Name="IDS_CHAT">
-		<Text>Chat</Text>
+		<Text>محادثة</Text>
 	</String>
 	<String Id="1030" Name="IDS_MORE">
-		<Text>More</Text>
+		<Text>المزيد</Text>
 	</String>
 	<String Id="1031" Name="IDS_MESSAGES">
-		<Text>Messages</Text>
+		<Text>الرسائل</Text>
 	</String>
 	<String Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
-		<Text>Long Press Space Key to Unlock The Keyguard</Text>
+		<Text>يؤدي الضغط الطويل على مفتاح المسافة إلى فتح قفل واقي المفاتيح</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
-		<Text>غفوة</Text>
+		<Text>انتظار</Text>
 	</STRING>
 	<STRING Id="2002" Name="IDS_FM_BACK">
 		<Text>رجوع</Text>
 	</STRING>
 	<STRING Id="2003" Name="IDS_MSG_KEYGUARD_UNLOCKKEY">
-		<Text>Press * to unlock keyguard</Text>
+		<Text>اضغط على * لإلغاء قفل واقي المفاتيح</Text>
 	</STRING>
 	<STRING Id="2004" Name="IDS_MODIFY">
-		<Text>Modify</Text>
+		<Text>تعديل</Text>
 	</STRING>
 	<String Id="2005" Name="IDS_VIEW">
-		<Text>View</Text>
+		<Text>عرض</Text>
 	</String>
 	<String Id="2006" Name="IDS_FMUSLIM">
 		<Text>FMuslim</Text>
