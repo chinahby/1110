@@ -562,7 +562,7 @@ void BTApp_BPPBuildSettingsMenu( CBTApp* pMe )
                      pMe->m_pIMenu, 
                      &ai, 
                      IDS_AUTHENTICATE, 
-                     pMe->mBPP.bDoAuthenticate ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mBPP.bDoAuthenticate ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   
   // Activate menu
   PUSH_MENU( BT_APP_MENU_BPP_SETTINGS );
@@ -1165,7 +1165,7 @@ static boolean BTApp_BPPHandleSelection( CBTApp* pMe, uint16 sel )
         pMe->a.m_pIDisplay, 
         pMe->m_pIMenu, 
         selection,
-        pMe->mBPP.bDoAuthenticate ? IDB_CHECK_ON : IDB_CHECK_OFF );
+        pMe->mBPP.bDoAuthenticate ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
       break;
     }
     case IDS_CONNECT:

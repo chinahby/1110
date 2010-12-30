@@ -1691,10 +1691,10 @@ void BTApp_OBEXBuildSettingsMenu( CBTApp* pMe )
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, 
     &ai, IDS_AUTHENTICATE, 
-    pMe->mOBEX.bDoAuthenticate ? IDB_CHECK_ON : IDB_CHECK_OFF );
+    pMe->mOBEX.bDoAuthenticate ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, 
     &ai, IDS_OBEX_AUTHENTICATE_WITH_USERID, 
-    pMe->mOBEX.bDoAuthWithUid ? IDB_CHECK_ON : IDB_CHECK_OFF );
+    pMe->mOBEX.bDoAuthWithUid ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   
   // Activate menu
   PUSH_MENU( BT_APP_MENU_OBEX_SETTINGS );
@@ -2045,7 +2045,7 @@ static boolean BTApp_OBEXHandleSelection( CBTApp* pMe, uint16 sel )
         pMe->a.m_pIDisplay, 
         pMe->m_pIMenu, 
         selection,
-        pMe->mOBEX.bDoAuthenticate ? IDB_CHECK_ON : IDB_CHECK_OFF );
+        pMe->mOBEX.bDoAuthenticate ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
       break;
     }
     case IDS_OBEX_AUTHENTICATE_WITH_USERID:
@@ -2058,7 +2058,7 @@ static boolean BTApp_OBEXHandleSelection( CBTApp* pMe, uint16 sel )
         pMe->a.m_pIDisplay, 
         pMe->m_pIMenu, 
         selection,
-        pMe->mOBEX.bDoAuthWithUid ? IDB_CHECK_ON : IDB_CHECK_OFF );
+        pMe->mOBEX.bDoAuthWithUid ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
       break;
     }
     case IDS_REGISTER:

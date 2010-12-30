@@ -1401,7 +1401,7 @@ void BTApp_BIPBuildSettingsMenu( CBTApp* pMe )
                      pMe->m_pIMenu, 
                      &ai, 
                      IDS_AUTHENTICATE, 
-                     pMe->mBIP.bDoAuthenticate ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mBIP.bDoAuthenticate ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   
   // Activate menu
   PUSH_MENU( BT_APP_MENU_BIP_SETTINGS );
@@ -1449,15 +1449,15 @@ void BTApp_BIPBuildEnableMenu( CBTApp* pMe )
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, 
                      IDS_BIP_REGISTER_IMAGING_RESPONDER, 
                      (pMe->mBIP.serviceSelection == AEEBT_BIP_IMAGING_RESPONDER) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, 
                      IDS_BIP_REGISTER_ARCHIVED_OBJECTS_SERVER, 
                      (pMe->mBIP.serviceSelection == AEEBT_BIP_ARCHIVED_OBJECTS) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, 
                      IDS_BIP_REGISTER_REFERENCED_OBJECTS_SERVER, 
                      (pMe->mBIP.serviceSelection == AEEBT_BIP_REFERENCED_OBJECTS) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
                      
   // Activate menu
   PUSH_MENU( BT_APP_MENU_BIP_ENABLING );
@@ -2904,7 +2904,7 @@ static boolean BTApp_BIPHandleSelection( CBTApp* pMe, uint16 sel )
         pMe->a.m_pIDisplay, 
         pMe->m_pIMenu, 
         selection,
-        pMe->mBIP.bDoAuthenticate ? IDB_CHECK_ON : IDB_CHECK_OFF );
+        pMe->mBIP.bDoAuthenticate ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
       break;
     }
     case IDS_REGISTER:

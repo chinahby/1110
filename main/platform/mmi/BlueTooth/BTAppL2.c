@@ -676,23 +676,23 @@ boolean BTApp_BuildL2TestMenu( CBTApp* pMe )
 
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SPP_DATA_SIZE_THOUSAND,
                      (pMe->mL2.uCliBytesToSend == 2000) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SPP_DATA_SIZE_MILLION,
                      (pMe->mL2.uCliBytesToSend == 2000000) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SPP_DATA_SIZE_BILLION,
                      (pMe->mL2.uCliBytesToSend == 2000000000) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SECURITY,
                      pMe->mL2.bEnableSrvSvcSec ?
-                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SDP_QUERY,
                      pMe->mL2.bDoSDP ?
-                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 
   // Activate menu
   if( TOP_MENU != BT_APP_MENU_L2_TEST )

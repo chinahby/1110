@@ -156,7 +156,7 @@ DESCRIPTION
 void BTApp_InitAddItem( CtlAddItem* pItem )
 {
   pItem->pImage       = NULL;
-  pItem->pszResImage  = AEE_APPSBTAPP_RES_FILE;
+  pItem->pszResImage  = AEE_APPSBTAPP_RES_FILE; 
   pItem->pszResText   = AEE_APPSBTAPP_RES_FILE;
   pItem->wFont        = AEE_FONT_NORMAL;
   pItem->dwData       = 0;

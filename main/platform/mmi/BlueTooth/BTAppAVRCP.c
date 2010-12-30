@@ -371,11 +371,11 @@ boolean BTApp_BuildAVRCPTestMenu( CBTApp* pMe, BTAppMenuType menu )
     {
       if( pMe->mAVRCP.evtType[i] == AEEBT_AVRCP_OP_PRESSED )
       {
-        button_op = IDB_RADIO_FILLED;
+        button_op = IDB_BT_RADIO_FILLED;
       }
       else
       {
-        button_op = IDB_RADIO_UNFILLED;
+        button_op = IDB_BT_RADIO_UNFILLED;
       }
       if( ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE,
                                 IDS_AVRCP_SELECT+pMe->mAVRCP.evtTable[i]-AEEBT_AVRCP_EVT_OP_SELECT,

@@ -4490,7 +4490,7 @@ static boolean BTApp_HandlePBAPAuthenticateMenu(CBTApp * pMe, uint16 key)
                                IMENUCTL_GetItemID( pMe->m_pIMenu, i-1 ), 
                                &ai ) != FALSE )
         {
-          if ( ai.wImage == IDB_RADIO_FILLED )
+          if ( ai.wImage == IDB_BT_RADIO_FILLED )
           {
             selection = ai.wItemID;
             break;
@@ -4538,7 +4538,7 @@ static boolean BTApp_HandlePBAPAuthenticateMenu(CBTApp * pMe, uint16 key)
       {
         BTApp_UpdateMenuItemImage( 
           pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
-          (sel == selection) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+          (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
         switch ( sel )
         {
@@ -4812,7 +4812,7 @@ static boolean BTApp_HandlePBAPSearchAttributeMenu( CBTApp* pMe, uint16 key )
                                IMENUCTL_GetItemID( pMe->m_pIMenu, i-1 ), 
                                &ai ) != FALSE )
         {
-          if ( ai.wImage == IDB_RADIO_FILLED )
+          if ( ai.wImage == IDB_BT_RADIO_FILLED )
           {
             selection = ai.wItemID;
             break;
@@ -4859,7 +4859,7 @@ static boolean BTApp_HandlePBAPSearchAttributeMenu( CBTApp* pMe, uint16 key )
       {
         BTApp_UpdateMenuItemImage( 
           pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
-          (sel == selection) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+          (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
         switch ( sel )
         {
@@ -4908,7 +4908,7 @@ static boolean BTApp_HandlePBAPSortOrderMenu( CBTApp* pMe, uint16 key )
                                IMENUCTL_GetItemID( pMe->m_pIMenu, i-1 ), 
                                &ai ) != FALSE )
         {
-          if ( ai.wImage == IDB_RADIO_FILLED )
+          if ( ai.wImage == IDB_BT_RADIO_FILLED )
           {
             selection = ai.wItemID;
             break;
@@ -4955,7 +4955,7 @@ static boolean BTApp_HandlePBAPSortOrderMenu( CBTApp* pMe, uint16 key )
       {
         BTApp_UpdateMenuItemImage( 
           pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
-          (sel == selection) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+          (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
         switch ( sel )
         {
@@ -5002,7 +5002,7 @@ static boolean BTApp_HandlePBAPvCardFormatMenu( CBTApp* pMe, uint16 key )
                                IMENUCTL_GetItemID( pMe->m_pIMenu, i-1 ), 
                                &ai ) != FALSE )
         {
-          if ( ai.wImage == IDB_RADIO_FILLED )
+          if ( ai.wImage == IDB_BT_RADIO_FILLED )
           {
             selection = ai.wItemID;
             break;
@@ -5045,11 +5045,11 @@ static boolean BTApp_HandlePBAPvCardFormatMenu( CBTApp* pMe, uint16 key )
       BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, pMe->m_pIMenu, 
         IDS_PBAP_VCARD_2_1, 
         (selection == IDS_PBAP_VCARD_2_1) ?
-        IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+        IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
       BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, pMe->m_pIMenu, 
         IDS_PBAP_VCARD_3_0, 
         (selection == IDS_PBAP_VCARD_3_0) ? 
-        IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+        IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
       ev_processed = TRUE;
       break;
     }
@@ -5078,13 +5078,13 @@ static void BTApp_PBAPBuildAuthenticateMenu( CBTApp* pMe )
   IMENUCTL_SetTitle( pMe->m_pIMenu, AEE_APPSBTAPP_RES_FILE, IDS_AUTHENTICATE, NULL );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_AUTH_NONE, 
     (pMe->mPBAP.authOptions == AEEBT_PBAP_AUTH_NONE) ?
-    IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+    IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_AUTH_PWD, 
     (pMe->mPBAP.authOptions == AEEBT_PBAP_AUTH_PIN) ? 
-    IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+    IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_AUTH_USERID_PWD, 
     (pMe->mPBAP.authOptions == AEEBT_PBAP_AUTH_USERID_AND_PIN) ? 
-    IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+    IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
   if ( pMe->mPBAP.authOptions == AEEBT_PBAP_AUTH_NONE )
   {
@@ -5252,13 +5252,13 @@ static void BTApp_PBAPBuildSearchAttributeMenu( CBTApp* pMe )
                      IDS_PBAP_SEARCH_ATTRIBUTE, NULL );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_PBAP_SEARCH_NAME, 
     (pMe->mPBAP.searchAttrib == AEEBT_PBAP_SEARCH_ATTRIBUTE_NAME) ?
-    IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+    IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_PBAP_SEARCH_NUMBER, 
     (pMe->mPBAP.searchAttrib == AEEBT_PBAP_SEARCH_ATTRIBUTE_NUMBER) ?
-    IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+    IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_PBAP_SEARCH_SOUND, 
     (pMe->mPBAP.searchAttrib == AEEBT_PBAP_SEARCH_ATTRIBUTE_SOUND) ?
-    IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+    IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
     
   if ( pMe->mPBAP.searchAttrib == AEEBT_PBAP_SEARCH_ATTRIBUTE_NAME )
   {
@@ -5301,13 +5301,13 @@ static void BTApp_PBAPBuildSortOrderMenu( CBTApp* pMe )
   IMENUCTL_SetTitle( pMe->m_pIMenu, AEE_APPSBTAPP_RES_FILE, IDS_PBAP_SORTING, NULL );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_PBAP_SORT_INDEX, 
     (pMe->mPBAP.sortOrder == AEEBT_PBAP_SORT_ORDER_INDEXED) ?
-    IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+    IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_PBAP_SORT_ALPHA, 
     (pMe->mPBAP.sortOrder == AEEBT_PBAP_SORT_ORDER_ALPHANUMERIC) ?
-    IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+    IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_PBAP_SORT_SOUND, 
     (pMe->mPBAP.sortOrder == AEEBT_PBAP_SORT_ORDER_PHONETIC) ?
-    IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+    IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
     
   if ( pMe->mPBAP.sortOrder == AEEBT_PBAP_SORT_ORDER_INDEXED )
   {
@@ -5351,10 +5351,10 @@ static void BTApp_PBAPBuildvCardFormatMenu( CBTApp* pMe )
                      NULL );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_PBAP_VCARD_2_1, 
     (pMe->mPBAP.vCardFormat == AEEBT_PBAP_FORMAT_VCARD_2_1) ?
-    IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+    IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_PBAP_VCARD_3_0, 
     (pMe->mPBAP.vCardFormat == AEEBT_PBAP_FORMAT_VCARD_3_0) ? 
-    IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+    IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
   sel = (pMe->mPBAP.vCardFormat == AEEBT_PBAP_FORMAT_VCARD_2_1) ? 
           IDS_PBAP_VCARD_2_1 : IDS_PBAP_VCARD_3_0;

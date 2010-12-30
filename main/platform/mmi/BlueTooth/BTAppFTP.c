@@ -814,13 +814,13 @@ void BTApp_FTPBuildSettingsMenu( CBTApp* pMe )
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_AUTHENTICATE, 
-                     pMe->mFTP.bDoAuthenticate ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mFTP.bDoAuthenticate ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_EFS, 
                      ( pMe->mFTP.u8StorageDevice == STORAGE_DEV_EFS ) ? 
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_MEMORY_CARD, 
                      ( pMe->mFTP.u8StorageDevice == STORAGE_DEV_MEM_CARD ) ? 
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
   // Activate menu
   PUSH_MENU( BT_APP_MENU_FTP_SETTINGS );
@@ -860,10 +860,9 @@ void BTApp_FTPBuildServerRegisterMenu( CBTApp* pMe )
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_FTP_SRV_ALLOW_BROWSE, 
-                     pMe->mFTP.reg.bBrowseAllowed ? IDB_CHECK_ON : 
-                     IDB_CHECK_OFF );
+                     pMe->mFTP.reg.bBrowseAllowed ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_FTP_SRV_READ_ONLY, 
-                     pMe->mFTP.reg.bReadOnly ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mFTP.reg.bReadOnly ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   
   // Activate menu
   PUSH_MENU( BT_APP_MENU_FTP_SRV_REGISTER );
@@ -903,10 +902,9 @@ void BTApp_FTPBuildEnableMenu( CBTApp* pMe )
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_FTP_SRV_ALLOW_BROWSE, 
-                     pMe->mFTP.reg.bBrowseAllowed ? IDB_CHECK_ON : 
-                     IDB_CHECK_OFF );
+                     pMe->mFTP.reg.bBrowseAllowed ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_FTP_SRV_READ_ONLY, 
-                     pMe->mFTP.reg.bReadOnly ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mFTP.reg.bReadOnly ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   
   // Activate menu
   PUSH_MENU( BT_APP_MENU_FTP_ENABLING );
@@ -1694,7 +1692,7 @@ boolean BTApp_FTPHandleSelection( CBTApp* pMe, uint16 sel )
       selection = IMENUCTL_GetSel( pMe->m_pIMenu );
       BTApp_UpdateMenuItemImage( 
         pMe->a.m_pIDisplay, pMe->m_pIMenu, selection,
-        pMe->mFTP.bDoAuthenticate ? IDB_CHECK_ON : IDB_CHECK_OFF );
+        pMe->mFTP.bDoAuthenticate ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
       BTApp_WriteConfigFile( pMe );
       break;
     }
@@ -1702,9 +1700,9 @@ boolean BTApp_FTPHandleSelection( CBTApp* pMe, uint16 sel )
     {
       pMe->mFTP.u8StorageDevice = STORAGE_DEV_EFS;
       BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_EFS, 
-                                 IDB_RADIO_FILLED );
+                                 IDB_BT_RADIO_FILLED );
       BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, pMe->m_pIMenu, 
-                                 IDS_MEMORY_CARD, IDB_RADIO_UNFILLED );
+                                 IDS_MEMORY_CARD, IDB_BT_RADIO_UNFILLED );
 
       STRLCPY( pMe->mFTP.szCurrentFolder, BTAPP_ROOT_DIR, 
                sizeof( pMe->mFTP.szCurrentFolder ) );
@@ -1714,9 +1712,9 @@ boolean BTApp_FTPHandleSelection( CBTApp* pMe, uint16 sel )
     {
       pMe->mFTP.u8StorageDevice = STORAGE_DEV_MEM_CARD;
       BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_EFS, 
-                                 IDB_RADIO_UNFILLED );
+                                 IDB_BT_RADIO_UNFILLED );
       BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, pMe->m_pIMenu, 
-                                 IDS_MEMORY_CARD, IDB_RADIO_FILLED );
+                                 IDS_MEMORY_CARD, IDB_BT_RADIO_FILLED );
 
       STRLCPY( pMe->mFTP.szCurrentFolder, AEEFS_CARD0_DIR, 
                sizeof( pMe->mFTP.szCurrentFolder ) );
@@ -2002,7 +2000,7 @@ static boolean BTApp_HandleFTPServerRegisterMenu( CBTApp* pMe, uint16 key )
             pMe->mFTP.reg.bBrowseAllowed ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mFTP.reg.bBrowseAllowed ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mFTP.reg.bBrowseAllowed ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }
         case IDS_FTP_SRV_READ_ONLY:
@@ -2010,7 +2008,7 @@ static boolean BTApp_HandleFTPServerRegisterMenu( CBTApp* pMe, uint16 key )
           pMe->mFTP.reg.bReadOnly = pMe->mFTP.reg.bReadOnly ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mFTP.reg.bReadOnly ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mFTP.reg.bReadOnly ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }
       }

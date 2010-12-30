@@ -4291,7 +4291,7 @@ static boolean BTApp_InitTextDlg( CBTApp* pMe, IDialog* pDlg )
     }
     else	
     {
-      AECHAR wTitle[20];
+      AECHAR wTitle[40];
       //ITEXTCTL_SetTitle( pTextCtl, AEE_APPSBTAPP_RES_FILE, stringID, NULL );
 	  ISHELL_LoadResString(pMe->a.m_pIShell,
 	                           AEE_APPSBTAPP_RES_FILE,                                
@@ -4309,8 +4309,12 @@ static boolean BTApp_InitTextDlg( CBTApp* pMe, IDialog* pDlg )
   ITEXTCTL_SetSoftKeyMenu( pTextCtl, NULL );
   //SetDefaultSoftkeyLook( pMe->a.m_pIShell, pICurrentMenu );  //Del By zzg 2010_11_01
 
-  IMENUCTL_DeleteAll( pICurrentMenu );
-  IMENUCTL_AddItem( pICurrentMenu,  APPSCOMMON_RES_FILE, IDS_OK, IDS_OK, NULL, 0); //AEE_APPSBTAPP_RES_FILE
+  IMENUCTL_DeleteAll( pICurrentMenu );       	
+  
+  //IMENUCTL_AddItem(pICurrentMenu,  APPSCOMMON_RES_FILE, IDS_OK, IDS_OK, NULL, 0); //AEE_APPSBTAPP_RES_FILE
+
+  IMENUCTL_AddItem(pICurrentMenu,  AEE_APPSBTAPP_RES_FILE, IDS_BT_YES, IDS_BT_YES, NULL, 0); //AEE_APPSBTAPP_RES_FILE
+  IMENUCTL_AddItem(pICurrentMenu,  AEE_APPSBTAPP_RES_FILE, IDS_CAN, IDS_CAN, NULL, 0); //AEE_APPSBTAPP_RES_FILE
 
   //SETAEERECT ( &rc, 10, 10, pMe->m_rect.dx-10, 30 );
   //Modify by zzg 2010_11_01
@@ -4958,6 +4962,7 @@ static boolean BTApp_TextEditHandleEvent(
         {
           MSG_MED( "TextEditHndlEv-EVT_KEY_PRESS, Neither Digit Entered or "
                    "Erased, returning FALSE ", 0, 0, 0 ); 
+		 
           return FALSE;
         }
         MSG_MED( "Before IBTEXTRM_KeypressNotification, keyPressType=%d ", 
@@ -5085,7 +5090,7 @@ static boolean BTApp_HandleVRCapableMenu( CBTApp* pMe, uint16 key )
       {
         BTApp_UpdateMenuItemImage( 
           pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
-          (sel == selection) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+          (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
         switch ( sel )
         {
@@ -5175,7 +5180,7 @@ static boolean BTApp_HandleDevTypeMenu( CBTApp* pMe, uint16 key )
       {
         BTApp_UpdateMenuItemImage( 
           pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
-          (sel == selection) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+          (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
         switch ( sel )
         {
@@ -5292,7 +5297,7 @@ static boolean BTApp_HandleIOCMenu( CBTApp* pMe, uint16 key )
       {
         BTApp_UpdateMenuItemImage( 
           pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
-          (sel == selection) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+          (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
         switch ( sel )
         {
           case IDS_IOC_YESNO:
@@ -5382,7 +5387,7 @@ static boolean BTApp_HandleServiceSecurityOptionsMenu( CBTApp* pMe, uint16 key )
       {
         BTApp_UpdateMenuItemImage( 
           pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
-          (sel == selection) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+          (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
         switch ( sel )
         {
           case IDS_SECURITY_LOW:
@@ -5526,7 +5531,7 @@ static boolean BTApp_HandleServiceSecurityOptionsMenu( CBTApp* pMe, uint16 key )
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
                                      pMe->m_pIMenu,selection,
                                        pMe->mRM.bAuthorize ? 
-                                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }
           case IDS_AUTHORIZE_FIRST:
@@ -5537,7 +5542,7 @@ static boolean BTApp_HandleServiceSecurityOptionsMenu( CBTApp* pMe, uint16 key )
             BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
                                        pMe->m_pIMenu,selection,
                                        pMe->mRM.bAuthorizeFirst ? 
-                                       IDB_CHECK_ON : IDB_CHECK_OFF );
+                                       IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
             break;
           }
         }  
@@ -5871,7 +5876,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
             pMe->mAG.bSecSelectedAll = pMe->mAG.bSecSelectedAll ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( 
               pMe->a.m_pIDisplay, pMe->m_pIMenu, selection,
-              pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );
+              pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
             selection = IDS_AUDIO_GATEWAY;
             break;
           }
@@ -5886,7 +5891,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
             pMe->mAG.bSecSelected = pMe->mAG.bSecSelected ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( 
               pMe->a.m_pIDisplay, pMe->m_pIMenu, selection,
-              pMe->mAG.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+              pMe->mAG.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
             if ( bEnableAll == TRUE )
             {
               selection = IDS_ENABLE_L2;
@@ -5898,7 +5903,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
                 pMe->mAG.bSecSelectedAll = FALSE;
                 BTApp_UpdateMenuItemImage( 
                   pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_ENABLE_ALL,
-                  pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );      
+                  pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );      
               } 
             }
             break;
@@ -5914,7 +5919,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
             pMe->mL2.bSecSelected = pMe->mL2.bSecSelected ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( 
               pMe->a.m_pIDisplay, pMe->m_pIMenu, selection,
-              pMe->mL2.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+              pMe->mL2.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
             if ( bEnableAll == TRUE )
             {
               selection = IDS_ENABLE_SPP;
@@ -5926,7 +5931,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
                 pMe->mAG.bSecSelectedAll = FALSE; 
                 BTApp_UpdateMenuItemImage( 
                   pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_ENABLE_ALL,
-                  pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );     
+                  pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );     
               } 
             }
             break;
@@ -5942,7 +5947,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
             pMe->mSPP.bSecSelected = pMe->mSPP.bSecSelected ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( 
               pMe->a.m_pIDisplay, pMe->m_pIMenu, selection,
-              pMe->mSPP.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+              pMe->mSPP.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
             if ( bEnableAll == TRUE )
             {
               selection = IDS_NETWORK_ACCESS;
@@ -5954,7 +5959,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
                 pMe->mAG.bSecSelectedAll = FALSE; 
                 BTApp_UpdateMenuItemImage( 
                   pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_ENABLE_ALL,
-                  pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );     
+                  pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );     
               } 
             }
             break;
@@ -5970,7 +5975,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
             pMe->mNA.bSecSelected = pMe->mNA.bSecSelected ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( 
               pMe->a.m_pIDisplay, pMe->m_pIMenu, selection,
-              pMe->mNA.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+              pMe->mNA.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 
             if ( bEnableAll == TRUE )
             {
@@ -6003,7 +6008,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
                 pMe->mAG.bSecSelectedAll = FALSE; 
                 BTApp_UpdateMenuItemImage( 
                   pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_ENABLE_ALL,
-                  pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );     
+                  pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );     
               } 
             }
             break;      
@@ -6020,7 +6025,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
             pMe->mOPP.bSecSelected = pMe->mOPP.bSecSelected ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mOPP.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mOPP.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
             if ( bEnableAll == TRUE )
             {
 #ifdef FEATURE_BT_EXTPF_FTP
@@ -6050,7 +6055,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
                 pMe->mAG.bSecSelectedAll = FALSE;  
                 BTApp_UpdateMenuItemImage( 
                   pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_ENABLE_ALL,
-                  pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );     
+                  pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );     
               } 
             }
             break;
@@ -6069,7 +6074,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
               pMe->mFTP.bSecSelected ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mFTP.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mFTP.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
             if ( bEnableAll == TRUE )
             {
 #ifdef FEATURE_BT_EXTPF_BIP
@@ -6097,7 +6102,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
                 pMe->mAG.bSecSelectedAll = FALSE;   
                 BTApp_UpdateMenuItemImage( 
                   pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_ENABLE_ALL,
-                  pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );     
+                  pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );     
               } 
             }
             break;
@@ -6115,7 +6120,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
             pMe->mBIP.bSecSelected = pMe->mBIP.bSecSelected ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
               pMe->m_pIMenu, selection, 
-            pMe->mBIP.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mBIP.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
             if ( bEnableAll == TRUE )
             {
 #ifdef FEATURE_BT_EXTPF_BPP
@@ -6143,7 +6148,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
                 pMe->mAG.bSecSelectedAll = FALSE;      
                 BTApp_UpdateMenuItemImage( 
                   pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_ENABLE_ALL,
-                  pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );     
+                  pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );     
               } 
             }
             break;
@@ -6160,7 +6165,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
             pMe->mBPP.bSecSelected = pMe->mBPP.bSecSelected ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
               pMe->m_pIMenu, selection, 
-            pMe->mBPP.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mBPP.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
             if ( bEnableAll == TRUE )
             {
 #ifdef FEATURE_BT_EXTPF_PBAP
@@ -6184,7 +6189,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
                 pMe->mAG.bSecSelectedAll = FALSE;    
                 BTApp_UpdateMenuItemImage( 
                   pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_ENABLE_ALL,
-                  pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );     
+                  pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );     
               } 
             }
             break;
@@ -6202,7 +6207,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
             pMe->mPBAP.bSecSelected = pMe->mPBAP.bSecSelected ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
               pMe->m_pIMenu, selection, 
-            pMe->mPBAP.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mPBAP.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
             if ( bEnableAll == TRUE )
             {
 #ifdef FEATURE_BT_EXTPF_HID_HOST
@@ -6224,7 +6229,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
                 pMe->mAG.bSecSelectedAll = FALSE;   
                 BTApp_UpdateMenuItemImage( 
                   pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_ENABLE_ALL,
-                  pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );     
+                  pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );     
               } 
             }
             break;
@@ -6245,7 +6250,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
             pMe->mOBEX.bSecSelected = pMe->mOBEX.bSecSelected ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
               pMe->m_pIMenu, selection, 
-              pMe->mOBEX.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+              pMe->mOBEX.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
             if ( bEnableAll == TRUE )
             {
 #ifdef FEATURE_BT_EXTPF_SAP
@@ -6263,7 +6268,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
                 pMe->mAG.bSecSelectedAll = FALSE;    
                 BTApp_UpdateMenuItemImage( 
                   pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_ENABLE_ALL,
-                  pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );     
+                  pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );     
               } 
             }
             break;
@@ -6284,7 +6289,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
             pMe->mA2DP.bSecSelected = pMe->mA2DP.bSecSelected ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
               pMe->m_pIMenu, selection, 
-              pMe->mA2DP.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+              pMe->mA2DP.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
             if ( bEnableAll == TRUE )
             {
               selection = IDS_ENABLE_AVRCP;
@@ -6296,7 +6301,7 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
                 pMe->mAG.bSecSelectedAll = FALSE;   
                 BTApp_UpdateMenuItemImage( 
                   pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_ENABLE_ALL,
-                  pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );     
+                  pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );     
               } 
             }
             break;
@@ -6316,13 +6321,13 @@ static boolean BTApp_HandleSvrSec( CBTApp* pMe, uint16 key )
                 pMe->mAG.bSecSelectedAll = FALSE;      
                 BTApp_UpdateMenuItemImage( 
                   pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_ENABLE_ALL,
-                  pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );     
+                  pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );     
               } 
             }
             pMe->mAVRCP.bSecSelected = pMe->mAVRCP.bSecSelected ? FALSE : TRUE;
             BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
               pMe->m_pIMenu, selection, 
-            pMe->mAVRCP.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mAVRCP.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
             break;
           }
 #endif  //FEATURE_BT_EXTPF_AV
@@ -6386,7 +6391,7 @@ static boolean BTApp_HandleBondOptionsMenu( CBTApp* pMe, uint16 key )
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay,
                                      pMe->m_pIMenu,selection,
                                      pMe->mRM.bMITMEnabled ? 
-                                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }
         case IDS_REBOND_OPT_MITM:
@@ -6399,7 +6404,7 @@ static boolean BTApp_HandleBondOptionsMenu( CBTApp* pMe, uint16 key )
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay,
                                      pMe->m_pIMenu,selection,
                                      pMe->mRM.bRebondOptMITMEnabled ? 
-                                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }
         case IDS_REBOND_OPT_BOND:
@@ -6412,7 +6417,7 @@ static boolean BTApp_HandleBondOptionsMenu( CBTApp* pMe, uint16 key )
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay,
                                      pMe->m_pIMenu,selection,
                                      pMe->mRM.bRebondOptBONDEnabled ? 
-                                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }
         default:
@@ -6622,7 +6627,7 @@ static boolean BTApp_HandleConnModeMenu( CBTApp* pMe, uint16 key )
                                IMENUCTL_GetItemID( pMe->m_pIMenu, i-1 ), 
                                &ai ) != FALSE )
         {
-          if ( ai.wImage == IDB_RADIO_FILLED )
+          if ( ai.wImage == IDB_BT_RADIO_FILLED )
           {
             selection = ai.wItemID;
             break;
@@ -6681,7 +6686,7 @@ static boolean BTApp_HandleConnModeMenu( CBTApp* pMe, uint16 key )
       {
         BTApp_UpdateMenuItemImage( 
           pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
-          (sel == selection) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+          (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
         switch ( sel )
         {
           case IDS_ACTIVE_ANY_DEVICE:
@@ -6759,7 +6764,7 @@ static boolean BTApp_HandleHSButtonHndlrMenu( CBTApp* pMe, uint16 key )
     {
       BTApp_UpdateMenuItemImage( 
         pMe->a.m_pIDisplay, pMe->m_pIMenu, selection,
-        bIgnore ? IDB_CHECK_OFF : IDB_CHECK_ON );
+        bIgnore ? IDB_BT_CHECK_OFF : IDB_BT_CHECK_ON );
       ISTATIC_Redraw( pMe->m_pStatic );
 
       ev_processed = TRUE;
@@ -7324,7 +7329,7 @@ static boolean BTApp_HandleSecurityMenu( CBTApp* pMe, uint16 key )
       {
         BTApp_UpdateMenuItemImage( 
           pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
-          (sel == selection) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+          (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
         switch ( sel )
         {
@@ -7418,7 +7423,7 @@ static boolean BTApp_HandleDiscoverableMenu( CBTApp* pMe, uint16 key )
       {
         BTApp_UpdateMenuItemImage( 
           pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
-          (sel == selection) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+          (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
         switch ( sel )
         {
           case IDS_ON_TIMED:
@@ -7495,7 +7500,7 @@ static boolean BTApp_HandleSppSettingsMenu( CBTApp* pMe, uint16 key )
       {
         BTApp_UpdateMenuItemImage( 
           pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
-          (sel == selection) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+          (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
         switch ( sel )
         {
@@ -7624,7 +7629,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
               pMe->mAG.bSelected = pMe->mAG.bSelected ? FALSE : TRUE;
               BTApp_UpdateMenuItemImage( 
                 pMe->a.m_pIDisplay, pMe->m_pIMenu, selection,
-                pMe->mAG.bSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                pMe->mAG.bSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
               break;
             }
             default:
@@ -7646,7 +7651,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
               pMe->mNA.bSelected = pMe->mNA.bSelected ? FALSE : TRUE;
               BTApp_UpdateMenuItemImage( 
                 pMe->a.m_pIDisplay, pMe->m_pIMenu, selection,
-                pMe->mNA.bSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                pMe->mNA.bSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
               break;
             default:
               ev_processed = FALSE;
@@ -7661,7 +7666,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
           pMe->mOPP.bServerEnable = pMe->mOPP.bServerEnable ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mOPP.bServerEnable ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mOPP.bServerEnable ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }
 #endif
@@ -7679,7 +7684,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
             pMe->mFTP.reg.bBrowseAllowed ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mFTP.reg.bBrowseAllowed ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mFTP.reg.bBrowseAllowed ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }
         case IDS_FTP_SRV_READ_ONLY:
@@ -7688,7 +7693,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
           pMe->mFTP.reg.bReadOnly = pMe->mFTP.reg.bReadOnly ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mFTP.reg.bReadOnly ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mFTP.reg.bReadOnly ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }
         case IDS_ENABLE_FTP:
@@ -7697,7 +7702,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
           pMe->mFTP.bServerEnable = pMe->mFTP.bServerEnable ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mFTP.bServerEnable ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mFTP.bServerEnable ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }
 #endif
@@ -7717,7 +7722,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
           {
             BTApp_UpdateMenuItemImage( 
               pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
-              (sel == selection) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+              (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
             switch ( sel )
             {
               case IDS_BIP_REGISTER_IMAGING_RESPONDER:
@@ -7770,7 +7775,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
           pMe->mBIP.bServerEnable = pMe->mBIP.bServerEnable ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mBIP.bServerEnable ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mBIP.bServerEnable ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }        
 #endif
@@ -7781,7 +7786,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
           pMe->mBPP.bServerEnable = pMe->mBPP.bServerEnable ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mBPP.bServerEnable ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mBPP.bServerEnable ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }        
 #endif
@@ -7792,7 +7797,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
           pMe->mPBAP.bServerEnable = pMe->mPBAP.bServerEnable ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mPBAP.bServerEnable ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mPBAP.bServerEnable ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }        
 #endif
@@ -7803,7 +7808,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
           pMe->mOBEX.bServerEnable = pMe->mOBEX.bServerEnable ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mOBEX.bServerEnable ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mOBEX.bServerEnable ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }        
 #endif
@@ -7817,7 +7822,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
           pMe->mA2DP.bEnableA2DP = pMe->mA2DP.bEnableA2DP ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mA2DP.bEnableA2DP ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mA2DP.bEnableA2DP ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }
         case IDS_ENABLE_AVRCP:
@@ -7826,7 +7831,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
           pMe->mAVRCP.bEnableAVRCP = pMe->mAVRCP.bEnableAVRCP ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mAVRCP.bEnableAVRCP ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mAVRCP.bEnableAVRCP ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }
 #endif  //FEATURE_BT_EXTPF_AV
@@ -7836,7 +7841,7 @@ static boolean BTApp_HandleSettingsMenu( CBTApp* pMe, uint16 key )
           pMe->mL2.bEnableL2Srv = pMe->mL2.bEnableL2Srv ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
             pMe->m_pIMenu, selection, 
-            pMe->mL2.bEnableL2Srv ? IDB_CHECK_ON : IDB_CHECK_OFF );
+            pMe->mL2.bEnableL2Srv ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
         }
 #ifdef FEATURE_BT_EXTPF_HID_HOST
@@ -7938,7 +7943,7 @@ static boolean BTApp_HandleScanParamsMenu(
       {
         BTApp_UpdateMenuItemImage( 
           pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
-          (sel == selection) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+          (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
         switch ( sel )
         {
@@ -13970,14 +13975,14 @@ static void BTApp_BuildHCIMenu( CBTApp* pMe )
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_OFF, 
                      (HCIMode == AEEBT_HCIM_OFF) ? 
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ON, 
                      (HCIMode == AEEBT_HCIM_STANDARD_HCI_VOC_ON) ? 
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 #ifdef FEATURE_FACTORY_TESTMODE
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_FTM, 
                      (HCIMode == AEEBT_HCIM_STANDARD_HCI_FTM) ? 
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 #endif
 
   // Activate menu
@@ -14090,16 +14095,16 @@ static void BTApp_BuildScanParamsSubmenu( CBTApp* pMe, BTAppMenuType menu )
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SCAN_PARAM_DEFAULT, 
                      (*pScanParam == AEEBT_RM_AVP_AUTOMATIC) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SCAN_PARAM_SMALLEST_CONN_TIME, 
                      (*pScanParam == AEEBT_RM_AVP_SMALLEST_ACT_MOST_POWER) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SCAN_PARAM_LARGER_CONN_TIME, 
                      (*pScanParam == AEEBT_RM_AVP_LARGER_ACT_LESS_POWER) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SCAN_PARAM_LARGEST_CONN_TIME, 
                      (*pScanParam == AEEBT_RM_AVP_LARGEST_ACT_LEAST_POWER) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   
   // select current setting
   switch ( *pScanParam )
@@ -14320,13 +14325,13 @@ static void BTApp_BuildSPPSettingsMenu( CBTApp* pMe )
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SPP_DATA_SIZE_THOUSAND, 
                      (pMe->mSPP.uNumDataBufs == 1) ? 
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SPP_DATA_SIZE_MILLION, 
                      (pMe->mSPP.uNumDataBufs == 1000) ? 
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SPP_DATA_SIZE_BILLION, 
                      (pMe->mSPP.uNumDataBufs == 1000*1000) ? 
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
   // select current setting
   switch ( pMe->mSPP.uNumDataBufs  )
@@ -14504,15 +14509,15 @@ static void BTApp_BuildDevTypeMenu( CBTApp* pMe )
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_HEADSET, 
                      (pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_HANDSFREE, 
                      ((pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HANDSFREE) &&
                       (pMe->mAG.bPrivateMode == FALSE)) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_HANDSFREE_PRIVATE, 
                      ((pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HANDSFREE) &&
                       (pMe->mAG.bPrivateMode != FALSE)) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   
   // select current setting
   if ( pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET )
@@ -14586,18 +14591,18 @@ static void BTApp_BuildConnModeMenu( CBTApp* pMe )
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ACTIVE_ANY_DEVICE, 
                      ((pMe->mAG.idleMode == AEEBT_AG_IDLEMODE_ACTIVE) &&
-                      bNoBDAddr) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                      bNoBDAddr) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ACTIVE, 
                      ((pMe->mAG.idleMode == AEEBT_AG_IDLEMODE_ACTIVE) &&
                       (bNoBDAddr == FALSE)) ? 
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_PASSIVE_ANY_DEVICE, 
                      ((pMe->mAG.idleMode == AEEBT_AG_IDLEMODE_PASSIVE) &&
-                      bNoBDAddr) ? IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                      bNoBDAddr) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_PASSIVE, 
                      ((pMe->mAG.idleMode == AEEBT_AG_IDLEMODE_PASSIVE) &&
                       (bNoBDAddr == FALSE))?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
   // select current setting
   sel = (pMe->mAG.idleMode == AEEBT_AG_IDLEMODE_PASSIVE) ? 
@@ -14665,7 +14670,7 @@ static void BTApp_BuildHSButtonHndlrMenu( CBTApp* pMe )
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_IGNORE, 
-                     bIgnore ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     bIgnore ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 
   // Activate menu
   PUSH_MENU( BT_APP_MENU_HS_BUTTON_HNDLR );
@@ -14911,7 +14916,7 @@ static void BTApp_BuildNASettingsMenu( CBTApp* pMe)
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_SERVICE_SECURITY, 
-                     pMe->mNA.bEnableSvcSec ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mNA.bEnableSvcSec ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   
   // Activate menu
   PUSH_MENU( BT_APP_MENU_NA_SETTINGS );
@@ -14956,33 +14961,33 @@ static void BTApp_BuildEnablingMenu( CBTApp* pMe )
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_AUDIO_GATEWAY, 
-                     pMe->mAG.bSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mAG.bSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_NETWORK_ACCESS,
-                     pMe->mNA.bSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mNA.bSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 #ifdef FEATURE_BT_EXTPF_OPP
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_OPP, 
-                     pMe->mOPP.bServerEnable ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mOPP.bServerEnable ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 #endif
 #ifdef FEATURE_BT_EXTPF_FTP
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_FTP, 
-                     pMe->mFTP.bServerEnable ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mFTP.bServerEnable ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 #endif
                      
 #ifdef FEATURE_BT_EXTPF_BIP
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_BIP, 
-                     pMe->mBIP.bServerEnable ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mBIP.bServerEnable ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 #endif
 #ifdef FEATURE_BT_EXTPF_BPP
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_BPP, 
-                     pMe->mBPP.bServerEnable ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mBPP.bServerEnable ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 #endif
 #ifdef FEATURE_BT_EXTPF_PBAP
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_PBAP, 
-                     pMe->mPBAP.bServerEnable ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mPBAP.bServerEnable ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 #endif
 #ifdef FEATURE_IOBEX
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_OBEX, 
-                     pMe->mOBEX.bServerEnable ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mOBEX.bServerEnable ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 #endif
 #ifdef FEATURE_BT_EXTPF_SAP
 #error code not present
@@ -14990,14 +14995,14 @@ static void BTApp_BuildEnablingMenu( CBTApp* pMe )
 #ifdef FEATURE_BT_EXTPF_AV
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_A2DP, 
                      pMe->mA2DP.bEnableA2DP ? 
-                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_AVRCP, 
                      pMe->mAVRCP.bEnableAVRCP ? 
-                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 #endif  //FEATURE_BT_EXTPF_AV
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_L2,
                      pMe->mL2.bEnableL2Srv ?
-                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 #ifdef FEATURE_BT_EXTPF_HID_HOST
 #error code not present
 #endif // FEATURE_BT_EXTPF_HID_HOST
@@ -15051,10 +15056,10 @@ static void BTApp_BuildDiscoverableMenu( CBTApp* pMe )
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ON_TIMED, 
                      pMe->mSD.bDiscoverable ? 
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_OFF,
                      pMe->mSD.bDiscoverable ? 
-                     IDB_RADIO_UNFILLED : IDB_RADIO_FILLED );
+                     IDB_BT_RADIO_UNFILLED : IDB_BT_RADIO_FILLED );
   
   // select current setting
   if ( pMe->mSD.bDiscoverable != FALSE )
@@ -15112,10 +15117,10 @@ static void BTApp_BuildVRCapableMenu( CBTApp* pMe )
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_BT_YES, 
                      pMe->mAG.bVREnabled ? 
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_BT_NO,
                      pMe->mAG.bVREnabled ? 
-                     IDB_RADIO_UNFILLED : IDB_RADIO_FILLED );
+                     IDB_BT_RADIO_UNFILLED : IDB_BT_RADIO_FILLED );
   
   // select current setting
   if ( pMe->mAG.bVREnabled != FALSE )
@@ -16271,13 +16276,13 @@ static void BTApp_BuildSecurityMenu(
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SECURITY_NONE, 
                      (security == AEEBT_SEC_NONE) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SECURITY_AUTH, 
                      (security == AEEBT_SEC_AUTHENTICATE) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SECURITY_AUTH_ENC, 
                      (security == AEEBT_SEC_AUTHENTICATE_AND_ENCRYPT) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   
   // select current setting
   switch ( security )
@@ -16336,11 +16341,11 @@ static void BTApp_BuildBondOptionsMenu( CBTApp* pMe )
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_MITM, 
-                     pMe->mRM.bMITMEnabled ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mRM.bMITMEnabled ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_REBOND_OPT_MITM, 
-                     pMe->mRM.bRebondOptMITMEnabled ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mRM.bRebondOptMITMEnabled ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_REBOND_OPT_BOND, 
-                     pMe->mRM.bRebondOptBONDEnabled ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mRM.bRebondOptBONDEnabled ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 
   // Activate menu
   PUSH_MENU( BT_APP_MENU_DEV_BOND_OPTIONS );
@@ -16397,7 +16402,7 @@ static boolean BTApp_HandleDbgKey( CBTApp* pMe, uint16 key )
           pMe->mRM.bDBGEnabled = pMe->mRM.bDBGEnabled ? FALSE : TRUE;
           BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, pMe->m_pIMenu,selection,
                                      pMe->mRM.bDBGEnabled ? 
-                                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           IBTEXTRM_SetSM4DebugMode( pMe->mRM.po,pMe->mRM.bDBGEnabled );
 
           break;
@@ -16862,19 +16867,23 @@ static void BTApp_BuildIOCapabilityMenu( CBTApp* pMe )
 	
   }
 
+  MSG_FATAL("***zzg ioCaptype=%d***", pMe->mRM.ioCaptype, 0, 0);
+
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_IOC_YESNO, 
                      (pMe->mRM.ioCaptype == AEEBT_RM_IOC_DISPLAY_YES_NO) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_IOC_DISPLAY_ONLY, 
                      (pMe->mRM.ioCaptype == AEEBT_RM_IOC_DISPLAY_ONLY) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_IOC_KEYBOARD_ONLY, 
                      (pMe->mRM.ioCaptype == AEEBT_RM_IOC_KEYBOARD_ONLY) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_IOC_NO, 
                      (pMe->mRM.ioCaptype == AEEBT_RM_IOC_NO_IO) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
+
+
   
   // select current setting
   switch ( pMe->mRM.ioCaptype )
@@ -16990,11 +16999,11 @@ static void BTApp_BuildSvcSecMenu( CBTApp* pMe )
   // Add individual entries to the Menu
 
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_ALL, 
-                     pMe->mAG.bSecSelectedAll ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mAG.bSecSelectedAll ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 
   //Display the menus based on the current security level
   BTApp_AddMenuItem(pMe, pMe->m_pIMenu, &ai, IDS_AUDIO_GATEWAY, 
-                    pMe->mAG.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                    pMe->mAG.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   switch( pMe->mAG.srvSecType )
   {
     case AEEBT_RM_SVC_SEC_HIGH:
@@ -17015,7 +17024,7 @@ static void BTApp_BuildSvcSecMenu( CBTApp* pMe )
   }
 
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_NETWORK_ACCESS,
-                     pMe->mNA.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mNA.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   switch(pMe->mNA.srvSecType)
   {
     case AEEBT_RM_SVC_SEC_HIGH:
@@ -17037,7 +17046,7 @@ static void BTApp_BuildSvcSecMenu( CBTApp* pMe )
 
 #ifdef FEATURE_BT_EXTPF_OPP
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_OPP, 
-                     pMe->mOPP.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mOPP.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   switch(pMe->mOPP.srvSecType)
   {
     case AEEBT_RM_SVC_SEC_HIGH:
@@ -17060,7 +17069,7 @@ static void BTApp_BuildSvcSecMenu( CBTApp* pMe )
 
 #ifdef FEATURE_BT_EXTPF_FTP
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_FTP, 
-                     pMe->mFTP.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mFTP.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   switch(pMe->mFTP.srvSecType)
   {
     case AEEBT_RM_SVC_SEC_HIGH:
@@ -17083,7 +17092,7 @@ static void BTApp_BuildSvcSecMenu( CBTApp* pMe )
 
 #ifdef FEATURE_BT_EXTPF_BIP
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_BIP, 
-                     pMe->mBIP.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mBIP.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   switch(pMe->mBIP.srvSecType)
   {
     case AEEBT_RM_SVC_SEC_HIGH:
@@ -17106,7 +17115,7 @@ static void BTApp_BuildSvcSecMenu( CBTApp* pMe )
 
 #ifdef FEATURE_BT_EXTPF_BPP
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_BPP, 
-                     pMe->mBPP.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mBPP.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   switch(pMe->mBPP.srvSecType)
   {
     case AEEBT_RM_SVC_SEC_HIGH:
@@ -17129,7 +17138,7 @@ static void BTApp_BuildSvcSecMenu( CBTApp* pMe )
 
 #ifdef FEATURE_BT_EXTPF_PBAP
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_PBAP, 
-                     pMe->mPBAP.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mPBAP.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   switch(pMe->mPBAP.srvSecType)
   {
     case AEEBT_RM_SVC_SEC_HIGH:
@@ -17156,7 +17165,7 @@ static void BTApp_BuildSvcSecMenu( CBTApp* pMe )
 #ifdef FEATURE_IOBEX
 /*
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_OBEX, 
-                     pMe->mOBEX.bSecSelected ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     pMe->mOBEX.bSecSelected ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   switch(pMe->mOBEX.srvSecType)
   {
     case AEEBT_RM_SVC_SEC_HIGH:
@@ -17182,7 +17191,7 @@ static void BTApp_BuildSvcSecMenu( CBTApp* pMe )
 #ifdef FEATURE_BT_EXTPF_AV
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_A2DP, 
                      pMe->mA2DP.bSecSelected ? 
-                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   switch(pMe->mA2DP.srvSecType)
   {
     case AEEBT_RM_SVC_SEC_HIGH:
@@ -17204,7 +17213,7 @@ static void BTApp_BuildSvcSecMenu( CBTApp* pMe )
 
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_AVRCP, 
                      pMe->mAVRCP.bSecSelected ? 
-                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   switch(pMe->mAVRCP.srvSecType)
   {
     case AEEBT_RM_SVC_SEC_HIGH:
@@ -17227,7 +17236,7 @@ static void BTApp_BuildSvcSecMenu( CBTApp* pMe )
 
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_L2,
                      pMe->mL2.bSecSelected ?
-                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   switch(pMe->mL2.srvSecType)
   {
     case AEEBT_RM_SVC_SEC_HIGH:
@@ -17249,7 +17258,7 @@ static void BTApp_BuildSvcSecMenu( CBTApp* pMe )
 
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ENABLE_SPP,
                      pMe->mSPP.bSecSelected ?
-                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   switch(pMe->mSPP.srvSecType)
   {
     case AEEBT_RM_SVC_SEC_HIGH:
@@ -17320,25 +17329,25 @@ static boolean BTApp_BuildSecurityOptionsMenu(   CBTApp* pMe   )
 
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SECURITY_LOW, 
                      (pMe->mRM.srvSecType == AEEBT_RM_SVC_SEC_LOW) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SECURITY_MED, 
                      (pMe->mRM.srvSecType == AEEBT_RM_SVC_SEC_MED) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SECURITY_HIGH, 
                      (pMe->mRM.srvSecType == AEEBT_RM_SVC_SEC_HIGH) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 #ifdef FEATURE_BT_TEST_API
 #error code not present
 #endif
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_SECURITY_NONE, 
                      (pMe->mRM.srvSecType == AEEBT_RM_SVC_SEC_NONE) ?
-                     IDB_RADIO_FILLED : IDB_RADIO_UNFILLED );
+                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_AUTHORIZE, 
                      (pMe->mRM.bAuthorize ) ?
-                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_AUTHORIZE_FIRST, 
                      (pMe->mRM.bAuthorizeFirst ) ?
-                     IDB_CHECK_ON : IDB_CHECK_OFF );
+                     IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
   
   // select current setting
   switch ( pMe->mRM.srvSecType )
@@ -17494,7 +17503,7 @@ static void BTApp_BuildDBGKeyHndlrMenu( CBTApp* pMe )
 
   // Add individual entries to the Menu
   BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_DBG_KEY, 
-                     (pMe->mRM.bDBGEnabled) ? IDB_CHECK_ON : IDB_CHECK_OFF );
+                     (pMe->mRM.bDBGEnabled) ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
 
   PUSH_MENU( BT_APP_MENU_DBG_KEY );
   
@@ -19745,7 +19754,7 @@ static void BTApp_ProcessRMNotifications(
         {
           BTApp_UpdateMenuItemImage( 
           pMe->a.m_pIDisplay, pMe->m_pIMenu, selection,
-          SecEnabled ? IDB_CHECK_ON : IDB_CHECK_OFF );
+          SecEnabled ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
         }
         
       }
