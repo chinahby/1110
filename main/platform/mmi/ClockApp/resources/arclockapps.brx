@@ -1,147 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="clockapps" VERSION="1">
 <Strings Encoding="Unicode">
-    <String Id="1" Name= "IDS_ALARMCLOCK_TITLE">
+    <String Id="1001" Name= "IDS_ALARMCLOCK_TITLE">
         <Text>التنبيه</Text>
     </String>
 
-    <String Id="2" Name= "IDS_ALARMCLOCK_1">
+    <String Id="1002" Name= "IDS_ALARMCLOCK_1">
         <Text>تنبيه 1</Text>
     </String>
 
-    <String Id="3" Name= "IDS_ALARMCLOCK_2">
+    <String Id="1003" Name= "IDS_ALARMCLOCK_2">
         <Text>تنبيه 2</Text>
     </String>
 
-    <String Id="4" Name= "IDS_ALARMCLOCK_3">
+    <String Id="1004" Name= "IDS_ALARMCLOCK_3">
         <Text>تنبيه 3</Text>
     </String>
 
-    <String Id="5" Name= "IDS_ALARMCLOCK_4">
+    <String Id="1005" Name= "IDS_ALARMCLOCK_4">
         <Text>تنبيه 4</Text>
     </String>
 
-    <String Id="6" Name= "IDS_ALARMCLOCK_5">
+    <String Id="1006" Name= "IDS_ALARMCLOCK_5">
         <Text>تنبيه 5</Text>
     </String>
 
-    <String Id="7" Name= "IDS_ALARMCLOCK_6">
+    <String Id="1007" Name= "IDS_ALARMCLOCK_6">
         <Text>تنبيه 6</Text>
     </String>
 
-    <String Id="8" Name= "IDS_STATE_OFF">
+    <String Id="1008" Name= "IDS_STATE_OFF">
         <Text>إيقاف التشغيل</Text>
     </String>
 
-    <String Id="9" Name= "IDS_STATE_ON">
+    <String Id="1009" Name= "IDS_STATE_ON">
         <Text>تشغيل</Text>
     </String>
 
-    <String Id="10" Name= "IDS_REP_MODE_0">
+    <String Id="1010" Name= "IDS_REP_MODE_0">
         <Text>كل يوم</Text>
     </String>
 
-    <String Id="11" Name= "IDS_REP_MODE_1">
+    <String Id="1011" Name= "IDS_REP_MODE_1">
         <Text>الاثنين - الجمعة</Text>
     </String>
 
-    <String Id="12" Name= "IDS_REP_MODE_2">
+    <String Id="1012" Name= "IDS_REP_MODE_2">
         <Text>الاثنين - السبت</Text>
     </String>
 
-    <String Id="13" Name= "IDS_REP_MODE_3">
+    <String Id="1013" Name= "IDS_REP_MODE_3">
         <Text>الاثنين</Text>
     </String>
 
-    <String Id="14" Name= "IDS_REP_MODE_4">
+    <String Id="1014" Name= "IDS_REP_MODE_4">
         <Text>الثلاثاء</Text>
     </String>
 
-    <String Id="15" Name= "IDS_REP_MODE_5">
+    <String Id="1015" Name= "IDS_REP_MODE_5">
         <Text>الأربعاء</Text>
     </String>
 
-    <String Id="16" Name= "IDS_REP_MODE_6">
+    <String Id="1016" Name= "IDS_REP_MODE_6">
         <Text>الخميس</Text>
     </String>
 
-    <String Id="17" Name= "IDS_REP_MODE_7">
+    <String Id="1017" Name= "IDS_REP_MODE_7">
         <Text>الجمعة</Text>
     </String>
 
-    <String Id="18" Name= "IDS_REP_MODE_8">
+    <String Id="1018" Name= "IDS_REP_MODE_8">
         <Text>السبت</Text>
     </String>
 
-    <String Id="19" Name= "IDS_REP_MODE_9">
+    <String Id="1019" Name= "IDS_REP_MODE_9">
         <Text>الأحد</Text>
     </String>
 
-    <String Id="20" Name= "IDS_CLOCK_STATE">
+    <String Id="1020" Name= "IDS_CLOCK_STATE">
         <Text>الحالة</Text>
     </String>
 
-    <String Id="21" Name= "IDS_CLOCK_TIME">
+    <String Id="1021" Name= "IDS_CLOCK_TIME">
         <Text>الوقت</Text>
     </String>
 
-    <String Id="22" Name= "IDS_REPEAT_MODE">
+    <String Id="1022" Name= "IDS_REPEAT_MODE">
         <Text>الوضع</Text>
     </String>
 
-    <String Id="23" Name= "IDS_CLOCK_SAVE_ALERT">
+    <String Id="1023" Name= "IDS_CLOCK_SAVE_ALERT">
         <Text>تم حفظ التنبيه</Text>
     </String>
 
-    <String Id="24" Name= "IDS_ANYKEY_CLOSE">
+    <String Id="1024" Name= "IDS_ANYKEY_CLOSE">
         <Text>أي مفتاح للإغلاق.</Text>
     </String>
 
-    <String Id="25" Name= "IDS_CLOCK_SNOOZE">
+    <String Id="1025" Name= "IDS_CLOCK_SNOOZE">
         <Text>انتظار</Text>
     </String>
 
-    <String Id="26" Name= "IDS_CLEAR">
+    <String Id="1026" Name= "IDS_CLEAR">
         <Text>حذف</Text>
     </String>
 
-    <String Id="27" Name= "IDS_CLEAR_ALL">
+    <String Id="1027" Name= "IDS_CLEAR_ALL">
         <Text>حذف الكل</Text>
     </String>
 
-    <String Id="28" Name= "IDS_ALARM_ON">
+    <String Id="1028" Name= "IDS_ALARM_ON">
         <Text>تشغيل</Text>
     </String>
 
-    <String Id="29" Name= "IDS_ALARM_OFF">
+    <String Id="1029" Name= "IDS_ALARM_OFF">
         <Text>إيقاف التشغيل</Text>
     </String>
 
-    <String Id="30" Name= "IDS_REP_MODE_10">
+    <String Id="1030" Name= "IDS_REP_MODE_10">
         <Text>مرة واحدة</Text>
     </String>
 
-    <String Id="31" Name= "IDS_SNOOZE_1">
+    <String Id="1031" Name= "IDS_SNOOZE_1">
         <Text>5 دقائق</Text>
     </String>
 
-    <String Id="32" Name= "IDS_SNOOZE_2">
+    <String Id="1032" Name= "IDS_SNOOZE_2">
         <Text>10 دقائق</Text>
     </String>
 
-    <String Id="33" Name= "IDS_SNOOZE_3">
+    <String Id="1033" Name= "IDS_SNOOZE_3">
         <Text>15 دقيقة</Text>
     </String>
 
-    <String Id="34" Name= "IDS_SNOOZE_OFF">
+    <String Id="1034" Name= "IDS_SNOOZE_OFF">
         <Text>إيقاف التشغيل</Text>
     </String>
 
-    <String Id="35" Name= "IDS_DELCONFIRM">
+    <String Id="1035" Name= "IDS_DELCONFIRM">
         <Text>حذف</Text>
     </String>
 
-    <String Id="36" Name= "IDS_DONE">
+    <String Id="1036" Name= "IDS_DONE">
         <Text>تم</Text>
     </String>
 
