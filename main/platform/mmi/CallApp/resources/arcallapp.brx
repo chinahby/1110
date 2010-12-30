@@ -238,4 +238,48 @@
     </String>
 
 </Strings>
+<Dialogs>
+	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6002" Name="IDD_CALLING" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<DIALOG Id="6003" Name="IDD_CONVERSATION" Focus="7004">
+		<Controls>
+			<SoftKey Id="7001" Name="IDDC_CONVERSATION_SK">
+				<Items/>
+			</SoftKey>
+			<Stopwatch Id="7004" Name="IDDC_CONVERSATION_TIMER">
+				<Items/></Stopwatch>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6004" Name="IDD_ENDCALL" Focus="7005">
+		<Controls>
+			<Countdown Id="7005" Name="IDDC_ENDCALL_TIMER">
+				<Items/></Countdown>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6005" Name="IDD_INCOMINGCALL" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6006" Name="IDD_MISSED" Focus="0">
+		<Controls/>
+	</DIALOG>
+	<DIALOG Id="6007" Name="IDD_USERCONFIRM" Focus="7006">
+		<Controls>
+			<Static Id="7006" Name="IDC_USERCONFIRM_STATIC">
+				<Items/></Static>
+		</Controls>
+	</DIALOG>
+	<DIALOG Id="6008" Name="IDD_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</DIALOG>
+	<Dialog Id="6009" Name="IDD_IP_NUMBER" Focus="0">
+		<Controls/>
+	</Dialog>
+</Dialogs>
 </BREWRes>
