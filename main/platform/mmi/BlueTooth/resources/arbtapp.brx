@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="arbtapp" VERSION="1">
+<BREWRes Name="btapp" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1" Name="IDS_BT_TITLE" >
 		<Text>البلوتوث</Text>
