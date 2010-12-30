@@ -91,6 +91,7 @@ typedef struct IANNUNCore
    boolean         m_bActive;
    boolean         m_hasTitleText;
    uint16          m_Title[ANN_TEXT_MAX_LEN+1];
+   boolean         m_btoolen;
 }IANNUNCore;
 
 struct IAnnunciator
@@ -825,6 +826,10 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
 		{
 			return;
 		}
+		if(IAnnunCoreObj->m_btoolen)
+		{
+			return;
+		}
   }
   //Add End
   
@@ -1381,6 +1386,7 @@ static IANNUNCore* OEMAnnunCore_New(IShell* piShell)
     IAnnunCoreObj->m_piDisplay = NULL;
     IAnnunCoreObj->m_pDDB = NULL;
     IAnnunCoreObj->m_piDisplay2 = NULL;
+    IAnnunCoreObj->m_btoolen    = FALSE;
 
 //
 // configuring primary LCD width
@@ -1967,6 +1973,7 @@ static int IAnnunciator_SetFieldEx(IAnnunciator * pMe, uint32 nAnnunID,
   {
     WSTRCPY ((AECHAR *) Annunciators[nAnnunID].pcontent->data, pszText);
   }
+  
   if (pszText != NULL) {
     IDISPLAY_DrawText (pMe->m_coreObj->m_piDisplay, AEE_FONT_BOLD, pszText, -1, 0, 0,
                        &Rect, IDF_ALIGN_TOP|IDF_ALIGN_LEFT|IDF_ALIGN_FILL);
@@ -2144,10 +2151,12 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 128;
+                        IAnnunCoreObj->m_btoolen = TRUE;
                     }
                     else
                     {
                         bgRect.dx = 88;
+                        IAnnunCoreObj->m_btoolen = FALSE;
                     }
 #elif defined(FEATURE_DISP_160X128)
 					bgRect.x = 20;
@@ -2155,10 +2164,12 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 160;
+                        IAnnunCoreObj->m_btoolen = TRUE;
                     }
                     else
                     {
                         bgRect.dx = 120;
+                        IAnnunCoreObj->m_btoolen = FALSE;
                     }
 #elif defined(FEATURE_DISP_220X176)
 					bgRect.x = 28;
@@ -2166,10 +2177,12 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 220;
+                        IAnnunCoreObj->m_btoolen = TRUE;
                     }
                     else
                     {
                         bgRect.dx = 164;
+                        IAnnunCoreObj->m_btoolen = FALSE;
                     }					
 #elif defined(FEATURE_DISP_128X160)
 					bgRect.x = 20;
@@ -2177,10 +2190,12 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 128;
+                        IAnnunCoreObj->m_btoolen = TRUE;
                     }
                     else
                     {
                         bgRect.dx = 88;
+                        IAnnunCoreObj->m_btoolen = FALSE;
                     }
 #elif defined(FEATURE_DISP_176X220)
 					bgRect.x = 20;
@@ -2188,10 +2203,12 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 176;
+                        IAnnunCoreObj->m_btoolen = TRUE;
                     }
                     else
                     {
                         bgRect.dx = 125;
+                        IAnnunCoreObj->m_btoolen = FALSE;
                     }	
 #elif defined(FEATURE_DISP_240X320)
 					bgRect.x = 40;
@@ -2199,10 +2216,12 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 240;
+                        IAnnunCoreObj->m_btoolen = TRUE;
                     }
                     else
                     {
                         bgRect.dx = 200;
+                        IAnnunCoreObj->m_btoolen = FALSE;
                     }		
 #elif defined(FEATURE_DISP_320X240)
 					bgRect.x = 40;
@@ -2210,15 +2229,19 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 320;
+                        IAnnunCoreObj->m_btoolen = TRUE;
                     }
                     else
                     {
                     	bgRect.x = 32;
                         bgRect.dx = 256;
+                        IAnnunCoreObj->m_btoolen = FALSE;
                     }						
 #else
                     bgRect.dx = 120;
+                    IAnnunCoreObj->m_btoolen = FALSE;
 #endif
+					
                     IDISPLAY_DrawRect(pMe->m_coreObj->m_piDisplay,
                                       &bgRect,
                                       RGB_NONE,
