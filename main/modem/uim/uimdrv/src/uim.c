@@ -5427,7 +5427,7 @@ void          (*task_wait_handler)( rex_sigs_type )
   (void) rex_clr_sigs( task_ptr, task_wait_sig );
 
   /* Check NV read status */
-#if defined(FEATURE_VERSION_M8021)
+#if defined(FEATURE_VERSION_M8021) || defined(FEATURE_VERSION_MYANMAR)
 	gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_HIGH_VALUE);
 #else
   if (nv_cmd_buf.status == NV_DONE_S)
