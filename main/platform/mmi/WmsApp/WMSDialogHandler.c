@@ -11117,7 +11117,7 @@ static boolean IDD_MEMSTATUS_Handler(void *pUser,
                                 IDF_TEXT_TRANSPARENT|IDF_ALIGN_LEFT);
                     
                     // 绘制UIM使用情况
-                    y += nLineHeight + 1;
+                    y += nLineHeight/2 + 1;
                     (void)SPRINTF(strVal, "%d/%d", 
                                   pMe->m_memruimStatuse.used_tag_slots, 
                                   pMe->m_memruimStatuse.max_slots); 
