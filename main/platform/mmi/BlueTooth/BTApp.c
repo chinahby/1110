@@ -5254,6 +5254,11 @@ static boolean BTApp_HandleIOCMenu( CBTApp* pMe, uint16 key )
       break;
     }
     case AVK_CLR:
+	{
+	  ev_processed = BTApp_HandleClearKey( pMe );
+      break;
+	}
+	case AVK_SELECT:	
     {
       switch ( selection )
       {
@@ -5290,7 +5295,7 @@ static boolean BTApp_HandleIOCMenu( CBTApp* pMe, uint16 key )
       break;
     }
 	case AVK_INFO:	//Add By zzg 2010_11_03
-    case AVK_SELECT:
+    //case AVK_SELECT:
     {
       // update menu
        while ( sel != 0 )
@@ -7370,10 +7375,15 @@ static boolean BTApp_HandleDiscoverableMenu( CBTApp* pMe, uint16 key )
   switch ( key )
   {
     case AVK_LEFT:
-    case AVK_RIGHT:
+    case AVK_RIGHT:		
       ev_processed = TRUE;
       break;
     case AVK_CLR:
+	{
+		ev_processed = BTApp_HandleClearKey(pMe);
+		break;
+	}
+	case AVK_SELECT:
       switch (selection )
       {
         case IDS_ON_TIMED:
@@ -7417,7 +7427,7 @@ static boolean BTApp_HandleDiscoverableMenu( CBTApp* pMe, uint16 key )
       }
       break;
 	case AVK_INFO:	//Add By zzg 2010_11_03    
-    case AVK_SELECT:
+    //case AVK_SELECT:
       // update menu
       while ( sel != 0 )
       {
