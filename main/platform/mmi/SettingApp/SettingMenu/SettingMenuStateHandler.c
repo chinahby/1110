@@ -81,6 +81,10 @@ static NextFSMAction SettingMenu_StateTimeHandler(CSettingMenu *pMe);
 static NextFSMAction   SettingMenu_StateSimHandler(CSettingMenu *pMe);
 static NextFSMAction   SettingMenu_StateSimChoiceHandler(CSettingMenu *pMe);
 #endif
+#ifdef FEATURE_VERSION_MYANMAR
+static NextFSMAction   SettingMenuMenu_StateSearchModeHandler(CSettingMenu *pMe);
+
+#endif
 // 状态 dateSETTING 处理函数
 static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe);
 #endif
@@ -301,6 +305,11 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
             MSG_FATAL("SettingMenu_ProcessState SETTINGMENUST_SIMSETTING_CHOICE",0,0,0);
             retVal = SettingMenu_StateSimChoiceHandler(pMe);
             break;            
+#endif
+#ifdef FEATURE_VERSION_MYANMAR
+		case SEARCHMENUST_MODE:
+			retVal = SettingMenuMenu_StateSearchModeHandler(pMe);
+			break;
 #endif
         default:
             ASSERT_NOT_REACHABLE;
@@ -586,6 +595,11 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
             MOVE_TO_STATE(SETTINGMENUST_SIMSETTING)
             return NFSMACTION_CONTINUE;
         
+#endif
+#ifdef FEATURE_VERSION_MYANMAR
+		case DLGRET_SEARCHMODE:
+			MOVE_TO_STATE(SEARCHMENUST_MODE)
+            return NFSMACTION_CONTINUE;
 #endif
 
         default:
@@ -1194,7 +1208,40 @@ static NextFSMAction   SettingMenu_StateSimHandler(CSettingMenu *pMe)
     return NFSMACTION_WAIT;
 }
 #endif
+#ifdef FEATURE_VERSION_MYANMAR
+static NextFSMAction SettingMenuMenu_StateSearchModeHandler(CSettingMenu *pMe)
+{
+	MSG_FATAL("SettingMenuMenu_StateSearchModeHandler Start",0,0,0);
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_SEARCHNET);
+            return NFSMACTION_WAIT;
 
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:            
+            MOVE_TO_STATE(SETTINGMENUST_PHONESETTING)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_WARNING:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
+#endif
 /*==============================================================================
 函数：
        StateLanguageHandler

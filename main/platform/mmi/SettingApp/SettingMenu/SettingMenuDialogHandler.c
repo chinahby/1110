@@ -43,6 +43,9 @@
 #include "MusicPlayer.h"
 #endif 
 #include "nv.h"
+#ifdef FEATURE_VERSION_MYANMAR
+
+#endif
 boolean start_security_setting_by_user;
 #ifdef FEATURE_VERSION_FLEXI203
 #elif defined FEATURE_VERSION_SMART
@@ -169,6 +172,13 @@ void HandleSimChoiceTimer(ICM *m_pICM);
 #else
 void HandleSimChoiceTimer(IPhoneCtl *m_pITelephone);
 #endif
+#endif
+#ifdef	FEATURE_VERSION_MYANMAR
+static boolean HandleSearchModeDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+    );
 #endif
 #ifdef FEATURE_KEYGUARD
 //对话框 IDD_AKG_MENU 事件处理函数
@@ -507,6 +517,10 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
             return HandleSimDialogEvent(pMe,eCode,wParam,dwParam);
         case IDD_SIMSETTING_CHOICE_DIALOG:
             return HandleSimChoiceEvent(pMe,eCode,wParam,dwParam);
+#endif
+#ifdef FEATURE_VERSION_MYANMAR
+		case IDD_SEARCHNET:
+			return HandleSearchModeDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
         default:
             return FALSE;
@@ -970,6 +984,9 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTOKEYGUARD_TITLE, IDS_AUTOKEYGUARD_TITLE, NULL, 0);
             #endif
 #endif
+#ifdef	FEATURE_VERSION_MYANMAR
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SEARCHNET_MODE, IDS_SEARCHNET_MODE, NULL, 0);
+#endif			
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 200904007 add 触摸校准
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ADJUSTSETTING, IDS_ADJUSTSETTING, NULL, 0);
 #endif //FEATURE_LCD_TOUCH_ENABLE
@@ -1062,6 +1079,11 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
                 case IDS_DATESETTING:      //日期设置
                     CLOSE_DIALOG(DLGRET_DATESETTING)
                     break;
+#endif
+#ifdef	FEATURE_VERSION_MYANMAR
+				case IDS_SEARCHNET_MODE:  //搜网设置
+					CLOSE_DIALOG(DLGRET_SEARCHMODE)
+					break;
 #endif
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 20090407 add
 				case IDS_ADJUSTSETTING:      //触摸校准设置
@@ -3125,6 +3147,183 @@ static boolean  HandleDateDialogEvent(CSettingMenu *pMe,
     }
     return FALSE;
 } // HandleDATEDialogEvent
+
+#endif
+/*==============================================================================
+函数：
+       HandleSearchModeDialogEvent
+说明：
+       IDC_MENU_SEARCHTIME 对话框事件处理函数
+
+参数：
+       pMe [in]：指向SettingMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+
+#ifdef FEATURE_VERSION_MYANMAR
+static boolean HandleSearchModeDialogEvent(CSettingMenu *pMe,
+    									AEEEvent eCode,
+    									uint16 wParam,
+    									uint32 dwParam
+    									)
+{
+    PARAM_NOT_REF(dwParam)
+    //static byte bytData = 0;
+    //static boolean isSwitch = FALSE;
+    int ret = 0;
+
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                    IDC_MENU_SEARCHTIME);
+    MSG_FATAL("%x, %x ,%x,HandleDateDialogEvent",eCode,wParam,dwParam);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        IDS_SEARCHNET_MODE,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+            }
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTO_SEARCH, IDS_AUTO_SEARCH, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SEARCH_FIVEMINTU, IDS_SEARCH_FIVEMINTU, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SEARCH_TENMIINUTES, IDS_SEARCH_TENMIINUTES, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SEARCH_TENTY, IDS_SEARCH_TENTY, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SEARCH_THIRTYMINUTE, IDS_SEARCH_THIRTYMINUTE, NULL, 0);
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            {
+                uint16 wItemID;
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+                ret =OEMNV_Get(NV_SD_CFG_ITEMS_I, (nv_item_type*) &pMe->nvsearchmode);
+                if( NV_NOTACTIVE_S != ret)
+                {
+                	MSG_FATAL("1pMe->nvsearchmode.sd_cfg_items.items[10]=%d",pMe->nvsearchmode.sd_cfg_items.items[10],0,0);
+                    switch (pMe->nvsearchmode.sd_cfg_items.items[10])
+                    {
+                         case SEARCHMODE_AOTE:
+                            wItemID = IDS_AUTO_SEARCH;
+                            break;
+
+                         case SEARCHMODE_FIVE:
+                            wItemID = IDS_SEARCH_FIVEMINTU;
+                            break;
+                         case SEARCHMODE_TEN:
+                            wItemID = IDS_SEARCH_TENMIINUTES;
+                            break;
+                         case SEARCHMODE_TUENTY:
+                            wItemID = IDS_SEARCH_TENTY;
+                            break;
+                         case SEARCHMODE_THIRTY:
+                            wItemID = IDS_SEARCH_THIRTYMINUTE;
+                            break;
+                         default:
+                         	wItemID = IDS_AUTO_SEARCH;
+                         	break;
+                    }
+                }
+                else
+                {
+                	pMe->nvsearchmode.sd_cfg_items.items[10] = 0; 
+                    wItemID = IDS_AUTO_SEARCH;
+                }
+                
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wItemID, TRUE);
+                IMENUCTL_SetSel(pMenu, wItemID);
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_APP_SETTINGMENU,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            (void)IMENUCTL_Redraw(pMenu);
+			
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                  default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            {
+            	int m_items = pMe->nvsearchmode.sd_cfg_items.items[10];
+                switch (wParam)
+                {
+                    case  IDS_AUTO_SEARCH:
+                       pMe->nvsearchmode.sd_cfg_items.items[10] = SEARCHMODE_AOTE ;
+                       break;
+                    case IDS_SEARCH_FIVEMINTU:
+                       pMe->nvsearchmode.sd_cfg_items.items[10] = SEARCHMODE_FIVE;
+                       break;
+                    case  IDS_SEARCH_TENMIINUTES:
+                       pMe->nvsearchmode.sd_cfg_items.items[10] = SEARCHMODE_TEN;
+                       break;
+                    case IDS_SEARCH_TENTY:
+                       pMe->nvsearchmode.sd_cfg_items.items[10] = SEARCHMODE_TUENTY;
+                       break;
+                    case  IDS_SEARCH_THIRTYMINUTE:
+                       pMe->nvsearchmode.sd_cfg_items.items[10] = SEARCHMODE_THIRTY;
+                       break;
+                    default:
+                       ASSERT_NOT_REACHABLE;
+
+                }
+                if ((pMe->nvsearchmode.sd_cfg_items.items[10] != m_items))
+                {
+                    MSG_FATAL("2pMe->nvsearchmode.sd_cfg_items.items[10]=%d",pMe->nvsearchmode.sd_cfg_items.items[10],0,0);		
+                    //将选中的选项标出
+                    OEMNV_Put(NV_SD_CFG_ITEMS_I, (nv_item_type*) &pMe->nvsearchmode);
+                    InitMenuIcons(pMenu);
+                    SetMenuIcon(pMenu, wParam, TRUE);
+                    (void)IMENUCTL_Redraw(pMenu);
+                     CLOSE_DIALOG(DLGRET_WARNING)
+					 break;
+                }
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+}
 
 #endif
 /*==============================================================================

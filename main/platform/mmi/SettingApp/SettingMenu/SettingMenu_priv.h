@@ -135,6 +135,9 @@ typedef enum DLGRetValue
     ,DLGRET_SIMSETTING,
     DLGRET_SIMSETTING_CHOICE
     #endif
+    #ifdef FEATURE_VERSION_MYANMAR
+    ,DLGRET_SEARCHMODE
+    #endif
 
 } DLGRet_Value_e_Type;
 
@@ -188,6 +191,9 @@ typedef enum _SettingMenuState
 #ifdef  FEATURE_DOUBLE_SIM_CARD
    ,SETTINGMENUST_SIMSETTING,
    SETTINGMENUST_SIMSETTING_CHOICE
+#endif
+#ifdef FEATURE_VERSION_MYANMAR
+   ,SEARCHMENUST_MODE
 #endif
 } SettingMenuState;
 
@@ -308,6 +314,7 @@ typedef struct _CSettingMenu
     char             *m_strPhonePWD; 
     nv_item_type    nviNewSimChoice;
     nv_item_type    nviOldSimChoice;
+    nv_item_type    nvsearchmode;
 } CSettingMenu;
 
 /*==============================================================================
@@ -316,7 +323,12 @@ typedef struct _CSettingMenu
 // 为防止用户快速按键而添加事件EVT_APPISREADY，事件由定时器
 // SettingMenu_APPIsReadyTimer发出
 #define APPISREADY_TIMER       100             
-#define EVT_APPISREADY   (EVT_USER+1)          
+#define EVT_APPISREADY   (EVT_USER+1)  
+#define SEARCHMODE_AOTE     0
+#define SEARCHMODE_FIVE     5*60
+#define SEARCHMODE_TEN      10*60
+#define SEARCHMODE_TUENTY   20*60
+#define SEARCHMODE_THIRTY   30*60
 
 // 用户重新更新界面事件
 //#define EVT_USER_REDRAW   (EVT_USER+2)

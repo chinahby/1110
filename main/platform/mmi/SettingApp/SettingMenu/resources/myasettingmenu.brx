@@ -388,6 +388,24 @@
 	<String Id="1129" Name="IDS_MYANMAR" Encoding="ISOLATIN1">
 		<Text>myanmar</Text>
 	</String>
+	<String Id="1130" Name="IDS_SEARCHNET_MODE">
+		<Text>Search mode</Text>
+	</String>
+	<String Id="1131" Name="IDS_AUTO_SEARCH">
+		<Text>Auto Search</Text>
+	</String>
+	<String Id="1132" Name="IDS_SEARCH_FIVEMINTU">
+		<Text>5 mintue</Text>
+	</String>
+	<String Id="1133" Name="IDS_SEARCH_TENMIINUTES">
+		<Text>10 minute</Text>
+	</String>
+	<String Id="1134" Name="IDS_SEARCH_TENTY">
+		<Text>20 minute</Text>
+	</String>
+	<String Id="1135" Name="IDS_SEARCH_THIRTYMINUTE">
+		<Text>30 minute</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
