@@ -4771,7 +4771,7 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_MYANMAR_INPUT_MOD
 		case OEM_MODE_MYANMAR:
 			wMode = AEE_TM_MYANMAR;   //add by yangdecai   2010-12-23
-			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+			pme->m_wResID = IDI_MODE_MYANMAR;
 			(void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
 	                          (void*)&is_Taimod,
 	                          sizeof(boolean));
