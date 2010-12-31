@@ -90,6 +90,10 @@ else ifeq ($(USES_RESDIR), C306)
 CONSTFILE_FILES+=\
 	poweronani.gif|fs:/image/pwronoffani/poweronani.gif \
 	poweroffani.gif|fs:/image/pwronoffani/poweroffani.gif
+else ifeq ($(USES_RESDIR), MYA450)
+CONSTFILE_FILES+=\
+	poweronani.gif|fs:/image/pwronoffani/poweronani.gif \
+	poweroffani.gif|fs:/image/pwronoffani/poweroffani.gif
 else
 CONSTFILE_FILES+=\
 	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif
