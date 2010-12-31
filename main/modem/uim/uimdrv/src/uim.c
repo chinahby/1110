@@ -5427,6 +5427,9 @@ void          (*task_wait_handler)( rex_sigs_type )
   (void) rex_clr_sigs( task_ptr, task_wait_sig );
 
   /* Check NV read status */
+#if defined(FEATURE_VERSION_M8021)
+	gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_HIGH_VALUE);
+#else
   if (nv_cmd_buf.status == NV_DONE_S)
   {
       if(uim_nv_data_buf.sim_select == 2 )
@@ -5442,6 +5445,9 @@ void          (*task_wait_handler)( rex_sigs_type )
   {
       gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_LOW_VALUE);
   }
+#endif
+#else
+	gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_HIGH_VALUE);
 #endif
 
 #ifdef FEATURE_UIM_UICC

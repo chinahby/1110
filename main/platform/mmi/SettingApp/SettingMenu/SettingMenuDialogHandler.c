@@ -972,7 +972,7 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_SET_BANNER
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_BANNER_TITLE, IDS_BANNER_TITLE, NULL, 0);
 #endif
-#ifdef FEATURE_DOUBLE_SIM_CARD
+#ifdef FEATURE_DUAL_UIMCARD
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE,IDS_SIM_SET,IDS_SIM_SET,NULL,0);
 #endif
 #ifdef FEATURE_TIME_DATA_SETTING
@@ -1066,7 +1066,7 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
                     CLOSE_DIALOG(DLGRET_BANNER)
                     break;
 #endif
-#ifdef FEATURE_DOUBLE_SIM_CARD
+#ifdef FEATURE_DUAL_UIMCARD
                 case IDS_SIM_SET:          //¿ª»úÑ¡¿¨
                     CLOSE_DIALOG(DLGRET_SIMSETTING)
                     break;
