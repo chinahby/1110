@@ -270,6 +270,7 @@ typedef struct _TextCtlContext {
    AEERect              rectMyanmarSyllableInput;
    AEERect              rectMyanmarTextInput;
    SplImeGlobals        m_date;
+   boolean              m_bavk_clr;
 #endif
 #endif //FEATURE_T9_INPUT
 
@@ -1620,6 +1621,7 @@ void OEM_TextRestart(OEMCONTEXT hTextField)
 	MSG_FATAL("OEM_TextRestart....................",0,0,0);
     (*sTextModes[pContext->byMode].pfn_restart)(pContext);
     pContext->sFocus = FOCUS_SELECTION;
+    pContext->m_bavk_clr = FALSE;
 }
 #endif
 /*=============================================================================
@@ -8841,8 +8843,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         case AVK_POUND:            
         case AVK_STAR:  
         	{
-        		if(1)
-        		{
+        		
 	        		bResult = SplImeProcessKey(mKey, SPKT_Down);
 	        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
 	        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
@@ -8851,17 +8852,10 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
 	        		T9_CJK_MYANMAR_DisplaySelection(pContext);
 	        		return TRUE;
-        		}
-        		else
-        		{
-        			return FALSE;
-        		}
         	}
         	break;
         case AVK_LEFT:
         	{
-        		if(1)
-        		{
 	        		if(g_SplImeGlobals.outputInfo.isShowLeftArrow)
 	        		{
 		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
@@ -8872,18 +8866,60 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 		        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
 		        		T9_CJK_MYANMAR_DisplaySelection(pContext);
 	        		}
+	        		else
+	        		{
+	        			#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+			            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
+			            {
+			                   uint16 wNewSel;
+			                   wNewSel = pContext->wSelEnd + 1;
+			                   if(OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
+			                   {
+			                       OEM_TextSetCursorPos(pContext, 0);
+			                   }
+			                   else 
+			                   {  
+			                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
+			                   }
+			            }
+#else//change by xuhui
+	//#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+			            if (OEM_TextGetCursorPos(pContext) == 0)
+			                {
+			                    OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
+			                }
+			                else
+			                {
+			                    uint16 wNewSel;
+			                    wNewSel = pContext->wSelStart;
+			                    if (wNewSel)
+			                    {
+			                        --wNewSel;
+			                    }               
+#ifdef FEATURE_LANG_THAI
+			                    {
+			                        int count=0;
+			                        count = moveleftselThaiChar(pContext->pszContents[pContext->wSelStart-2],
+			                                                    pContext->pszContents[pContext->wSelStart-1]);
+			                        if(count!= 0)
+			                        {
+			                            wNewSel = wNewSel - count;
+			                        }
+			                    }
+#endif //FEATURE_LANG_THAI                 
+			                OEM_TextSetSel(pContext, wNewSel, wNewSel);
+			                    (void) TextCtl_AutoScroll(pContext);                        
+			                }
+#endif                  //change by xuhui      
+		            }
 	        		return TRUE;
+	        	
 	        	}
-	        	else
-	        	{
-	        		return FALSE;
-	        	}
-        	}
+        
         	break;
         case AVK_RIGHT:
         	{
-        		if(1)
-        		{
+        		
 	        		if(g_SplImeGlobals.outputInfo.isShowRightArrow)
 	        		{
 		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
@@ -8894,18 +8930,59 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 		        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
 		        		T9_CJK_MYANMAR_DisplaySelection(pContext);
 	        		}
+	        		else
+	        		{
+	        			#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+		            	if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
+		                {
+		                   uint16 wNewSel;
+		                   wNewSel = pContext->wSelStart ;
+		                   if ( OEM_TextGetCursorPos(pContext) == 0 )
+		                   {
+		                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G, T9CA_FROMBEG, 0 );
+		                       //OEM_TextSetSel(pContext, 0, 0);
+		                       OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
+		                   }
+		                   else 
+		                   {  
+		                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
+		                       wNewSel --;          
+		                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
+		                   }
+		                }
+#else//change by xuhui
+//#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+		             if (OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
+		                {
+		                    OEM_TextSetCursorPos(pContext, -1);
+		                }                
+		                else
+		                {
+		                    uint16 wNewSel;
+		                    wNewSel = pContext->wSelEnd + 1;                  
+#ifdef FEATURE_LANG_THAI  
+		                    {
+		                        int count=0;
+		                        count = moverightselThaiChar(pContext->pszContents[pContext->wSelStart+2],
+		                                                     pContext->pszContents[pContext->wSelStart+1]);
+		                        if(count!= 0)
+		                        {
+		                            wNewSel = wNewSel + count;
+		                        }
+		                    }
+#endif //FEATURE_LANG_THAI                                
+		                 	OEM_TextSetSel(pContext, wNewSel, wNewSel);
+		                    (void) TextCtl_AutoScroll(pContext);                          
+		                }
+#endif                        //change by xuhui
+	        		}
 	        		return TRUE;
-	        	}
-	        	else
-	        	{
-	        		return FALSE;
-	        	}
+	        	
         	}
         	break;
         case AVK_UP:
         {
-        		if(1)
-        		{
+        		
 	        		if(g_SplImeGlobals.outputInfo.isShowUpArrow)
 	        		{
 		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
@@ -8916,20 +8993,39 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 		        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
 		        		T9_CJK_MYANMAR_DisplaySelection(pContext);
 	        		}
+	        		else
+	        		{
+	        			uint16 nLine, nCharsIn,nSel;
+		                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+
+		                // If it is on the first line, return false
+		                if(nLine == 0 || !pContext->pwLineStarts)
+		                    return FALSE;
+
+		                // Otherwise figure out how many characters from the start
+		                // of the line the cursor is and try to put the cursor in a
+		                // similar position on previous line. Or, if not enough
+		                // chars, at the end of the line
+		                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+		                if(nCharsIn + pContext->pwLineStarts[nLine-1] >=
+		                                               pContext->pwLineStarts[nLine]) 
+		                {
+		                    nSel = pContext->pwLineStarts[nLine]-1;
+		                } 
+		                else 
+		                {
+		                    nSel = nCharsIn + pContext->pwLineStarts[nLine-1];
+		                }
+		                OEM_TextSetSel(pContext, nSel,nSel);
+		                (void) TextCtl_AutoScroll(pContext);
+	        		}
 	        		return TRUE;
 
-	        	}
-	        	else
-	        	{
-	        		return FALSE;
-	        	}
         	}
         	break;
         case AVK_DOWN:
         	{
-        		if(1)
-        		{
-	        		if(g_SplImeGlobals.outputInfo.isShowDownArrow)
+        			if(g_SplImeGlobals.outputInfo.isShowDownArrow)
 	        		{
 		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
 		        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
@@ -8939,18 +9035,64 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 		        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
 		        		T9_CJK_MYANMAR_DisplaySelection(pContext);
 	        		}
+	        		else
+	        		{
+	        			
+						uint16 nLine, nCharsIn,nSel;
+						
+						if((!pContext->pwLineStarts)||(!pContext->wLines))
+							return FALSE;
+						nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+
+						// If the cursor is on the last line and the line's last
+						// character is not a LF, then FALSE is returned as nothing
+						// can be done. A LF on the end of a line does not tell the
+						// wLines member that there is another line, hence this
+						// extra check.
+						if ( nLine == (pContext->wLines-1) &&
+							pContext->pszContents[WSTRLEN(pContext->pszContents)-1] != LINEBREAK ) 
+						{
+							return FALSE;
+						}
+
+						nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+						// If the cursor is more characters in than the next line...
+						// This can happen because the LINEBREAK may be immediate, or at least < nCharsIn
+						if(nCharsIn + pContext->pwLineStarts[nLine+1] > pContext->pwLineStarts[nLine+2])
+						{
+							// If it is the last line, don't subtract the LINEBREAK from selection spot
+							if( nLine+2 == pContext->wLines )
+							{
+								nSel = pContext->pwLineStarts[nLine+2];
+							}
+							else
+							{
+								nSel = pContext->pwLineStarts[nLine+2]-1;
+							}
+						}
+						else
+						{
+							// Selection spot is number of chars into the next line
+							nSel = nCharsIn + pContext->pwLineStarts[nLine+1];
+							// If this is not the beginning of a line 
+							// and the selection point is a LINEBREAK, subtract one
+							// Otherwise the selection overshoots to the first character
+							// of the following line.
+							if( nCharsIn && nSel && pContext->pszContents[nSel-1] == LINEBREAK )
+							{
+								nSel--;
+							}
+						}
+						OEM_TextSetSel(pContext, nSel,nSel);
+						(void) TextCtl_AutoScroll(pContext);
+	        		}
 	        		return TRUE;
-	        	}
-	        	else
-	        	{
-	        		return FALSE;
-	        	}
+	        	
         	}
         	break;
         case AVK_CLR:
         	{
-        		if(1)
-        		{
+        		
 	        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
 	        		bResult = SplImeProcessKey(mKey, SPKT_Down);
 	        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
@@ -8964,42 +9106,43 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		}
 	        		else
 	        		{
-	        			TextCtl_AddChar(pContext,*(AECHAR *)(g_SplImeGlobals.outputInfo.candidates[g_SplImeGlobals.outputInfo.candidateIndex]));
-	        			OEM_TextRestart(pContext);
-	        			pContext->sFocus = FOCUS_TEXT;
-	        			return TRUE;
+	        			if(pContext->m_bavk_clr)
+	        			{
+	        				MSG_FATAL("DEL......................ture",0,0,0);
+	        				if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+				            {
+				                 /* Set selection to the character before the insertion point */
+				                 --pContext->wSelStart;
+				            }
+				            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+				            {
+				                  return FALSE;
+				            }
+				            
+				            /* Insert a "NUL" to just delete and insert nothing */
+				            TextCtl_AddChar(pContext, 0);
+	        				return TRUE;
+	        			}
+	        			else
+	        			{
+	        				TextCtl_AddChar(pContext,0);
+	        				OEM_TextRestart(pContext);
+	        				pContext->sFocus = FOCUS_TEXT;
+	        				pContext->m_bavk_clr = TRUE;
+	        				return TRUE;
+	        			}
 	        		}
-        		}
-        		else
-        		{
-        			if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
-					{
-						 /* Set selection to the character before the insertion point */
-						--pContext->wSelStart;
-					}
-					else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
-					{
-						return FALSE;
-					}
-										
-					/* Insert a "NUL" to just delete and insert nothing */
-					TextCtl_AddChar(pContext, 0);
-        			return TRUE;
-        		}
+        		
         	}
         break;
         case AVK_INFO:
         	{
-        		if(1)
+        		if(g_SplImeGlobals.outputInfo.candidatesNum>0)
         		{
 	        		TextCtl_NoSelection(pContext);
 					TextCtl_AddChar(pContext,*(AECHAR *)(g_SplImeGlobals.outputInfo.candidates[g_SplImeGlobals.outputInfo.candidateIndex]));
 					OEM_TextRestart(pContext);
 					return TRUE;
-				}
-				else
-				{
-					return FALSE;
 				}
         	}
         	break;
@@ -9084,7 +9227,7 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
     SETAEERECT(&pAllRect,
               iWindX,
               iSyllableWindY, // at the bottom line
-              iWindDx,     
+              iWindDx+2,     
               (iWindDy)*2);  
     MSG_FATAL("iWindX=%d,iWindY=%d",iWindX,iWindY,0);
     MSG_FATAL("iWindDx=%d,iWindDy=%d",iWindDx,iWindDy,0);
@@ -9128,6 +9271,10 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
                                    pRect.y-MYANMAR_FONT_HEIGHT,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    NULL,
                                    format);
+        if(pContext->m_date.outputInfo.candidatesNum>4)
+        {
+        	pContext->m_date.outputInfo.candidatesNum = 4;
+        }
         for (k = 0; k < pContext->m_date.outputInfo.candidatesNum; k++) 
         {
             format = IDF_ALIGN_NONE;
@@ -9141,7 +9288,7 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
                                    g_SplImeGlobals.outputInfo.candidates[k],//pContext->m_date.outputInfo.candidates[k],
                                    -1,
                                    pRect.x+2+(MYA_FONT_WIDTH)*k,
-                                   pRect.y,//SCREEN_HEIGHT - pContext->nLineHeight,
+                                   pRect.y-2,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    NULL,
                                    format);
             /* If this character is a NULL terminator, then stop drawing */
@@ -9153,8 +9300,8 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
         // draw Select Rect.
         if (g_SplImeGlobals.outputInfo.candidateIndex>= 0 )
         {
-            invertRect.x = pRect.x+(MYA_FONT_WIDTH)*(g_SplImeGlobals.outputInfo.candidateIndex);
-            invertRect.y = pRect.y;
+            invertRect.x = pRect.x+2+(MYA_FONT_WIDTH)*(g_SplImeGlobals.outputInfo.candidateIndex);
+            invertRect.y = pRect.y-2;
             invertRect.dx = MYANMAR_FONT_WIDTH;
             invertRect.dy = MYANMAR_FONT_HEIGHT;
             IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
