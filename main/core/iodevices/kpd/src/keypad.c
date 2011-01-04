@@ -146,9 +146,7 @@ and other items needed by this module.
   #define KEYPAD_COLUMNS          5
 
 #ifndef BUILD_BOOT_CHAIN
-
 #ifdef CUST_EDITION
-
 static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
    /* JoyStick keys [up, down, left, right] uses 2 simultaneous row inputs
     * on KEYSENSE0_N routed by SC2x FFA's Panasonic MultiFunction Switch 
@@ -183,19 +181,19 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
 
    /* KEYSENSE_0 */
    /* 1,17          1,15        1,11        1,9          1,Memo*/
-   { HS_SEND_K/*¡Ÿ ±*/,       HS_SEND_K,  HS_DOWN_K,  HS_MUSIC_K,  HS_NONE_K},
-
+   { HS_MUSIC_K,    HS_SEND_K,  HS_DOWN_K,  HS_CAMERA_K, HS_NONE_K},
+   
    /* KEYSENSE_1 */
    /* 3,17          3,15        3,11        3,9          3,Memo*/
    { HS_LEFT_K,     HS_1_K,     HS_2_K,     HS_3_K,      HS_NONE_K},
 
    /* KEYSENSE_2 */
    /* 5,17          5,15        5,11        5,9          5,Memo*/
-   { HS_INFO_K,      HS_4_K,     HS_5_K,     HS_6_K,      HS_NONE_K},
+   { HS_INFO_K,     HS_4_K,     HS_5_K,     HS_6_K,      HS_NONE_K},
 
    /* KEYSENSE_3 */
    /* 7,17          7,15        7,11        7,9          7,Memo*/
-   { HS_RIGHT_K,      HS_7_K,     HS_8_K,     HS_9_K,      HS_CLR_K},
+   { HS_RIGHT_K,    HS_7_K,     HS_8_K,     HS_9_K,      HS_CLR_K},
 
    /* KEYSENSE_4 */
    /* 9,17          9,15        9,11        9,9          9,Memo*/
@@ -450,11 +448,11 @@ static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS +1] =
     /*KEYSENSE_0_N*/
     {HS_RIGHT_K,        HS_UP_K,        HS_INFO_K,      HS_4_K,     HS_DOWN_K,      HS_LEFT_K,      HS_SEL_K,       HS_1_K,         HS_SEND_K},
      /*KEYSENSE_1_N*/
-    {HS_CLR_K,          HS_LCTRL_K,     HS_SYMBOL_K,    HS_F2_K,  HS_SPACE_K,     HS_7_K,           HS_F1_K,        HS_0_K,         HS_SHIFT_K},
+    {HS_CLR_K,          HS_LCTRL_K,     HS_SYMBOL_K,    HS_F2_K,    HS_SPACE_K,     HS_7_K,         HS_F1_K,        HS_0_K,         HS_SHIFT_K},
      /*KEYSENSE_2_N*/
     {HS_ENTER_K,        HS_F4_K,        HS_DOLLAR_K,    HS_M_K,     HS_N_K,         HS_B_K,         HS_9_K,         HS_8_K,         HS_Z_K},
      /*KEYSENSE_3_N*/
-    {HS_F3_K,          HS_L_K,         HS_K_K,         HS_J_K,     HS_H_K,         HS_G_K,         HS_6_K,         HS_5_K,         HS_STAR_K},
+    {HS_F3_K,           HS_L_K,         HS_K_K,         HS_J_K,     HS_H_K,         HS_G_K,         HS_6_K,         HS_5_K,         HS_STAR_K},
      /*KEYSENSE_4_N*/
     {HS_P_K,            HS_O_K,         HS_I_K,         HS_U_K,     HS_Y_K,         HS_T_K,         HS_3_K,         HS_2_K,         HS_POUND_K}
 };

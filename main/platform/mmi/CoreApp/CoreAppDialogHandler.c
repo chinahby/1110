@@ -2891,7 +2891,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             	case AVK_BLUETOOTH:
 					return CoreApp_LaunchApplet(pMe, AEECLSID_BLUETOOTH_APP);
 #endif
-                case AVK_MUSIC:     
+                case AVK_MUSIC:
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
                 case AVK_FM:
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
@@ -3282,14 +3282,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         //MakeVoiceCallDial(pMe->a.m_pIShell , pMe->m_wstrEnterNum);
                         return TRUE;
                     }
-                    
-// 侯春峰, 2008.03.19, 上面已经有启动收音机的代码了,如果还用这个,会造成启动两次
-#if 0
-                case AVK_LEFT:
-                {
-                    CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
-                }
-#endif
 #ifndef CUST_EDITION
                 case AVK_GSENSOR_FORWARD: 
                  {
