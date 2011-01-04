@@ -2634,7 +2634,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
                 MP3_RefreshVolBar(pMe);
                 MSG_FATAL("MP3_DrawImage ----eMusicVolume%d",pMe->m_MusicPlayerCfg.eMusicVolume,0,0);
          }
-         //IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh 20090415 mod true -> false
+         IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh 20090415 mod true -> false
          return TRUE;
          
     case AVK_DOWN:
@@ -4848,7 +4848,8 @@ static void MP3_RefreshVolBar(CMusicPlayer *pMe)
     }
 	 
 #endif
-	MP3_DrawImage( pMe, ResID, VOLUME_X, VOLUME_Y);
+   // MSG_FATAL("MP3_DrawImage---=%d", ResID,0,0);
+    MP3_DrawImage( pMe, ResID, VOLUME_X, VOLUME_Y);
 
 }    
 static void MP3_DrawImageWithOffset( CMusicPlayer *pMe)//wlh 20090415 mod 为了区别播放区域，加音量，减音量，加了个参数
