@@ -8769,7 +8769,26 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         }
 		         else
 		         {
-					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
+		         	#if defined(FEATURE_VERSION_C306)
+		         	{
+		         	nv_language_enum_type language;
+        	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+                    if(NV_LANGUAGE_ARABIC == language)
+                    {
+		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_ARABIC);
+		         	}
+		         	else
+		         	{
+		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
+		         	}
+		         	}
+		         	#else
+					#ifdef FEATURE_ALL_KEY_PAD
+        	    	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
+        	    	#else
+        	    	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
+        	    	#endif
+					#endif
 				 }
 	            return TRUE;
             }
@@ -8893,7 +8912,22 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         }
 		         else
 		         {
+					#if defined(FEATURE_VERSION_C306)
+					{
+					nv_language_enum_type language;
+        	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+                    if(NV_LANGUAGE_ARABIC == language)
+                    {
+		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_ARABIC);
+		         	}
+		         	else
+		         	{
+		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
+		         	}
+		         	}
+		         	#else
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
+					#endif
 				 }
 				 
                 

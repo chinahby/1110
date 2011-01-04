@@ -768,7 +768,7 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
         return EFAILED;
     } 
-	//ai.wText		 = IDS_INPUT_GROUP;
+
 	ai.wItemID	 = IDI_ADDNEW_MENU_SELECTGROUP;
 	ai.wImage	 = IDB_GROUP;
 				
@@ -778,7 +778,6 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 		return EFAILED;
 	}	
 
-    //ai.wText       = IDS_EMAIL;
     ai.wItemID   = IDI_ADDNEW_MENU_EMAIL;
     ai.wImage    = IDB_EMAIL;
             
@@ -788,7 +787,6 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         return EFAILED;
      }  
 
-     //ai.wText		 = IDS_ADDRESS;
 		ai.wItemID	 = IDI_ADDNEW_MENU_ADDRESS;
 		ai.wImage	 = IDB_ADDRESS;
 				
@@ -798,7 +796,6 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 			return EFAILED;
 		 } 
 
-    //ai.wText       = IDS_URL;
     ai.wItemID   = IDI_ADDNEW_MENU_URL;
     ai.wImage    = IDB_URL;
             
@@ -808,7 +805,6 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         return EFAILED;
      }  
 
-    //ai.wText       = IDS_NOTES;
     ai.wItemID   = IDI_ADDNEW_MENU_REMARK;
     ai.wImage    = IDB_NOTES;
             
@@ -817,10 +813,6 @@ int CContApp_BuildAddMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
         return EFAILED;
      }  
-
-    
-
-    //ai.wText       = IDS_RING;
     ai.wItemID   = IDI_ADDNEW_MENU_SELECTRINGTONE;
     ai.wImage    = IDB_RING;
             

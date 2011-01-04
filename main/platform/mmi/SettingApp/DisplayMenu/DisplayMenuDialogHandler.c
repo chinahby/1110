@@ -766,11 +766,7 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
             //显示墙纸或动画 
             DisplayMenu_DisplayImg(pMe, pMe->m_PICType);
 
-#if defined(FEATURE_DISP_128X160)
-            DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_OPTION_BACK);	//Add By pyg 2011_01_04	
-#else
             DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_VIEWMORE_BACK);	//Add By zzg 2010_07_23	
-#endif
             // 统一更新界面
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 

@@ -2710,7 +2710,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 			break;
             
 		case BTBAR_VIEWMORE_BACK:
-#if defined(FEATURE_DISP_128X128)
+#if defined(FEATURE_DISP_128X128) || defined(FEATURE_DISP_128X160)
             nResID_L = IDS_MORE;
 #else               
 			nResID_L = IDS_VIEWMORE;

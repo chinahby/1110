@@ -5464,7 +5464,7 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
             rc.dy = devinfo.cyScreen;
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
             ITEXTCTL_SetRect(pTextCtl, &rc);
-            
+         
             ITEXTCTL_SetProperties( pTextCtl, 
                      CContApp_GetFldInputProp(pMe,pMe->m_nFldInputID)|TP_FOCUS_NOSEL);
                      
@@ -15172,7 +15172,7 @@ static void CContApp_SetInputMode(CContApp *pMe)
         case IDI_EDIT_MENU_ADDRESS:
         case IDI_EDIT_MENU_URL:
         case IDI_EDIT_MENU_REMARK:
-            pMe->m_nInputMode = OPT_TEXT_INPUT;
+			pMe->m_nInputMode = OPT_TEXT_INPUT;
             break;
             
         case IDI_ADDNEW_MENU_MOBILE:   

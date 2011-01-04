@@ -5430,6 +5430,27 @@ void          (*task_wait_handler)( rex_sigs_type )
 #if defined(FEATURE_VERSION_M8021) || defined(FEATURE_VERSION_MYANMAR)
 	gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_HIGH_VALUE);
 #else
+#if defined(FEATURE_VERSION_C306)
+{
+  if (nv_cmd_buf.status == NV_DONE_S)
+  {
+      if(uim_nv_data_buf.sim_select == 2 )
+      {
+          gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_LOW_VALUE);
+      }
+      else
+      {
+          gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_HIGH_VALUE);
+      }
+  }
+  else
+  {
+      gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_HIGH_VALUE);
+  }
+}
+
+#else
+{
   if (nv_cmd_buf.status == NV_DONE_S)
   {
       if(uim_nv_data_buf.sim_select == 2 )
@@ -5445,6 +5466,8 @@ void          (*task_wait_handler)( rex_sigs_type )
   {
       gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_LOW_VALUE);
   }
+}
+#endif
 #endif
 #else
 	gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_HIGH_VALUE);
