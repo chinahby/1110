@@ -1155,7 +1155,7 @@ static boolean Staticapp_ListFGualHandler(Staticapp *pMe, AEEEvent eCode, uint16
             {
 			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_GUAL, IDS_STATICAPP_TITLE_GUAL, NULL, 0);
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_GAUL, IDS_STATICAPP_TITLE_GAUL, NULL, 0);
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_MYSCHOOL, IDS_STATICAPP_TITLE_MYSCHOOL, NULL, 0);
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_BIMBEL, IDS_STATICAPP_TITLE_BIMBEL, NULL, 0);
 		
@@ -1369,7 +1369,8 @@ static boolean StartApplet(Staticapp *pMe, int wParam)
 	{
 #ifdef FEATURE_VERSION_FLEXI203P 
 		case IDS_STATICAPP_TITLE_FGUAL:
-			CLOSE_DIALOG(DLGRET_FGUAL)
+			//After press menu, then Flexi Gaul just call my app No need show BimBel, other My application will call other app.
+//			CLOSE_DIALOG(DLGRET_FGUAL)
 			break;
 		case IDS_STATICAPP_TITLE_APLIKASI:
 			CLOSE_DIALOG(DLGRET_APLIKASI)
