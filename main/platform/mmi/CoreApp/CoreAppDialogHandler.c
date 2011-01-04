@@ -2895,6 +2895,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
                 case AVK_FM:
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+                case AVK_CAMERA:
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 				case AVK_TV:
 				    return CoreApp_LaunchApplet(pMe, AEECLSID_TVAPP);;
                 case AVK_UP:
