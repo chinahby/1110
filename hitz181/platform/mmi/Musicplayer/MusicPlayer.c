@@ -854,6 +854,14 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
 		case EVT_PEN_UP:
 		//case EVT_PEN_DOWN:
 #endif//FEATURE_LCD_TOUCH_ENABLE
+		case EVT_HEADSET:
+			//recorder_set_media_device_auto( &pMe->m_Media);
+			if(pMe->m_pMedia != NULL)
+			{
+			(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
+			return TRUE;
+			}
+			break;
         case EVT_KEY_PRESS:
         case EVT_KEY:
         case EVT_KEY_RELEASE:
@@ -901,11 +909,6 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
             MOVE_TO_STATE(STATE_MSG);
             CLOSE_DIALOG(DLGRET_CREATE);
             return TRUE;
-
-		case EVT_HEADSET_CONNECT:   //add by miaoxiaoming
-		case EVT_HEADSET_DISCONNECT:	
-			(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
-			break;
 
 #ifdef FEATURE_SUPPORT_BT_APP
         case AVK_BT_HEADSET_CONNECT:

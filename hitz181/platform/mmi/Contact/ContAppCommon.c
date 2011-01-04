@@ -897,7 +897,7 @@ uint32 CContApp_GetFldInputProp(CContApp *pMe, AEEAddrFieldID wFldID)
                 || (ADDOREDIT_ADD == pMe->m_nAddnewOrEdit && pMe->m_nSaveType == CONTCFG_SAVETYPE_RUIM)) 
 
             {
-                return (TP_MULTILINE | TP_FRAME | TP_FIXSETRECT | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_UNICODE_ASCII_COUNT | TP_GRAPHIC_BG);
+                return (TP_MULTILINE | TP_FRAME | TP_FIXSETRECT | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_GRAPHIC_BG);
             }
             else
             {

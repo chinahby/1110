@@ -921,6 +921,7 @@ typedef enum MP3State
    STATE_SIMPLEPLAYER,
    STATE_PEDOMETERCALLPLAYER,
    STATE_MSGFMBGPLAYPROMPT,
+   STATE_MSGLISTFULL,
    STATE_EXIT                    // State where we close the applet.
 } MP3State;
 

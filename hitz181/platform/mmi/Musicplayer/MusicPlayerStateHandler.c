@@ -81,6 +81,8 @@ static NextFSMAction Handler_STATE_MSG(CMusicPlayer *pMe);
 static NextFSMAction Handler_STATE_MSGFMBGPLAYPROMPT(CMusicPlayer *pMe);
 // 状态 STATE_EXIT 处理函数
 static NextFSMAction Handler_STATE_EXIT(CMusicPlayer *pMe);
+/*状态STATE_MSGLISTFULL处理函数*/
+static NextFSMAction Handler_STATE_MSGLISTFULL(CMusicPlayer *pMe);
 
 /*==============================================================================
                                  全局数据
@@ -110,6 +112,7 @@ static const FSMSTATE_HANDLER gFSMStateHandler[] =
     Handler_STATE_SIMPLEPLAYER,
     Handler_STATE_PEDOMETERCALLPLAYER,
     Handler_STATE_MSGFMBGPLAYPROMPT,
+    Handler_STATE_MSGLISTFULL,
     Handler_STATE_EXIT
 };
 
@@ -331,13 +334,18 @@ static NextFSMAction Handler_STATE_MAINOPTSMENU(CMusicPlayer *pMe)
             break;
             
         case DLGRET_ADDMUSIC_FAILED:
-            pMe->m_eMsgType = MESSAGE_WARNNING;
-            if(SUCCESS != CMusicPlayer_ShowMsgBox(pMe, IDS_MSG_ADD_FAILED))
-            {
-                MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
-                return NFSMACTION_CONTINUE;
-            }
-            return NFSMACTION_WAIT;
+			//pMe->m_eCurState = STATE_MSGLISTFULL;
+            MOVE_TO_STATE(STATE_MSGLISTFULL);
+            //if(SUCCESS != CMusicPlayer_ShowMsgBox(pMe, IDS_MSG_ADD_FAILED))
+            //{
+             //   MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
+             //   return NFSMACTION_CONTINUE;
+            //}
+            //MSG_FATAL("Handler_STATE_MAINOPTSMENU.........................",0,0,0);
+            //MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
+            //return NFSMACTION_CONTINUE;
+            //return NFSMACTION_WAIT;
+            break;
             
         case DLGRET_SETASRINGTONE:            
             MOVE_TO_STATE(STATE_SET_AS_RINGTONE);         
@@ -386,6 +394,39 @@ static NextFSMAction Handler_STATE_MAINOPTSMENU(CMusicPlayer *pMe)
             MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
             break;
 #endif
+        default:
+#if defined(AEE_STATIC)
+            ASSERT_NOT_REACHABLE
+#endif
+            break;
+    }
+    return NFSMACTION_CONTINUE;
+}
+static NextFSMAction Handler_STATE_MSGLISTFULL(CMusicPlayer *pMe)
+{
+	#if defined(AEE_STATIC)
+    ASSERT(pMe != NULL);
+#endif
+	MSG_FATAL("Handler_STATE_MSG.................",0,0,0);
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            // Show dialog
+            pMe->m_nMsgResID = IDS_MSG_ADD_FAILED;
+            if(SUCCESS != CMusicPlayer_ShowDialog(pMe, IDD_MSGFULL))
+            {
+                MOVE_TO_STATE(STATE_EXIT);
+                return NFSMACTION_CONTINUE;
+            }
+            
+            return NFSMACTION_WAIT;
+            
+        //Proccess yourself dialog retrn value here
+        case DLGRET_MSGBOX_OK:
+            //MOVE_TO_STATE(pMe->m_eMsgRetState);
+            MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
+            return NFSMACTION_CONTINUE;
+            
         default:
 #if defined(AEE_STATIC)
             ASSERT_NOT_REACHABLE

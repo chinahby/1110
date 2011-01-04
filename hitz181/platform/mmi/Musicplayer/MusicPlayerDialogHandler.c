@@ -116,6 +116,10 @@ static boolean  CMusicPlayer_HandleMsgBoxDlgEvent( CMusicPlayer  *pMe,
                                                     AEEEvent   eCode,
                                                     uint16     wParam,
                                                     uint32     dwParam);
+static boolean   CMusicPlayer_MsgFull_HandleEvent( CMusicPlayer  *pMe,
+                                                    AEEEvent   eCode,
+                                                    uint16     wParam,
+                                                    uint32     dwParam);
  /*处理判断提示信息*/
 static boolean  CMusicPlayer_HandleYesNoDlgEvent( CMusicPlayer  *pMe,
                                                    AEEEvent   eCode,
@@ -345,6 +349,8 @@ boolean CMusicPlayer_RouteDialogEvent(CMusicPlayer *pMe,
              return MP3_View_Opts_HandleEvent(pMe,eCode, wParam, dwParam);
         case IDD_SIMPLEPLAYER:
              return MP3_SimplePlayer_HandleEvent(pMe,eCode, wParam, dwParam);
+        case IDD_MSGFULL:
+        	 return CMusicPlayer_MsgFull_HandleEvent(pMe,eCode, wParam, dwParam);
         default:
              return FALSE;
     }
@@ -3174,6 +3180,102 @@ static boolean  CMusicPlayer_HandleMsgBoxDlgEvent( CMusicPlayer  *pMe,
         case EVT_DISPLAYDIALOGTIMEOUT:
             CLOSE_DIALOG(DLGRET_MSGBOX_OK)
             return TRUE;
+
+        default:
+            break;
+    }
+
+    return FALSE;
+}
+static boolean   CMusicPlayer_MsgFull_HandleEvent( CMusicPlayer  *pMe,
+                                                    AEEEvent   eCode,
+                                                    uint16     wParam,
+                                                    uint32     dwParam)
+{
+   static IStatic * pStatic = NULL;
+   MSG_FATAL("CMusicPlayer_HandleMsgBoxDlgEvent Start",0,0,0);
+   if (NULL == pStatic)
+   {
+        AEERect rect = {0};
+        if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                                 AEECLSID_STATIC,
+                                                 (void **)&pStatic))
+        
+        {
+            return FALSE;
+            ERR("ISHELL_CreateInstance,AEECLSID_STATIC 2",0,0,0);
+        }        
+        ISTATIC_SetRect(pStatic, &rect);  
+   }
+
+    if ((NULL == pStatic) ||(NULL == pMe))
+    {
+        return FALSE;
+    }
+    
+    switch(eCode)
+    {
+        case EVT_DIALOG_INIT:
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_APP_MUSICPLAYER,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            {
+                PromptMsg_Param_type  Msg_Param={0};
+                AECHAR  wstrText[MSGBOX_MAXTEXTLEN] = {(AECHAR)'\0'};
+                
+                // 从资源文件取消息内容
+                (void)ISHELL_LoadResString(pMe->m_pShell,
+                                MUSICPLAYER_RES_FILE_LANG,                                
+                                pMe->m_nMsgResID,
+                                wstrText,
+                                sizeof(wstrText));
+                                
+                //Msg_Param.ePMsgType = MESSAGE_INFORMATION;
+                Msg_Param.ePMsgType = pMe->m_eMsgType;
+                Msg_Param.pwszMsg = wstrText;
+                Msg_Param.eBBarType = BTBAR_NONE;
+                DrawPromptMessage(pMe->m_pDisplay, pStatic, &Msg_Param);
+                MP3_DRAW_BOTTOMBAR(BTBAR_BACK);  
+            }
+            // 更新界面
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            
+         
+            
+            return TRUE;
+
+        case EVT_DIALOG_END:   
+        	MSG_FATAL("EVT_DIALOG_END.......................",0,0,0);
+      
+  
+            // 此对话框返回值仅为 DLGRET_MSGBOX_OK ，为防止挂起 Applet 
+            // 关闭对话框回到错误状态，显示给对话框返回值赋值
+            pMe->m_eDlgRet = DLGRET_MSGBOX_OK;
+            
+            ISTATIC_Release(pStatic);
+            pStatic = NULL;
+            
+            return TRUE;
+
+           // 通过按键关闭对话框
+        case EVT_KEY:
+            //if(pMe->m_eMsgType != MESSAGE_WAITING)
+            {
+              CLOSE_DIALOG(DLGRET_MSGBOX_OK);
+            }
+            return TRUE;
+        
+       
 
         default:
             break;
