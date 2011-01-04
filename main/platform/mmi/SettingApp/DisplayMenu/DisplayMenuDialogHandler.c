@@ -763,11 +763,14 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
 
             //no need for non-bottom bar,this may case the image do not display well
 
-            //显示墙纸或动画
+            //显示墙纸或动画 
             DisplayMenu_DisplayImg(pMe, pMe->m_PICType);
 
-			DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_VIEWMORE_BACK);	//Add By zzg 2010_07_23	
-
+#if defined(FEATURE_DISP_128X160)
+            DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_OPTION_BACK);	//Add By pyg 2011_01_04	
+#else
+            DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_VIEWMORE_BACK);	//Add By zzg 2010_07_23	
+#endif
             // 统一更新界面
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 
