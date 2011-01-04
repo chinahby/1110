@@ -741,6 +741,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 		nResID_L = IDS_STRING_CONTACTS;
 		nResID_R = IDS_FPORTAL;
 		break;            
+	case BTBAR_OPTION_SAVE_BACK:
+        nResID_L = IDS_OPTION;
+        nResID_M = IDS_SAVE;
+        nResID_R = IDS_BACK;
+        break;
 #endif
 	case BTBAR_FMENU_CANTACT:
 		nResID_L = IDS_FMENU;
@@ -820,7 +825,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_M = IDS_SAVE;
             nResID_R = IDS_DEL;
             break;
-
+		case BTBAR_OPTION_SAVE_BACK:
+			nResID_L = IDS_OPTION;
+            nResID_M = IDS_SAVE;
+            nResID_R = IDS_BACK;
+            break;
             // option---½ñÌì---·µ»Ø
          case BTBAR_OPTION_TODAY_BACK:
             nResID_L = IDS_OPTION;

@@ -1626,10 +1626,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 case AVK_CLR:
                 {
                     int len;
-                    if(dwParam == 1)
-                    {
-                    	MEMSET(pMe->m_DialString,0,MAX_SIZE_DIALER_TEXT);
-                    }
+                    //if(dwParam == 1)
+                    //{
+                    //	MEMSET(pMe->m_DialString,0,MAX_SIZE_DIALER_TEXT);
+                    //}
                     len = WSTRLEN(pMe->m_DialString);
 #ifdef FEATURE_EDITABLE_RECORD
                    if(pMe->m_bEditRecNumber)
@@ -9254,7 +9254,11 @@ static void CallApp_Draw_NumEdit_SoftKey(CCallApp *pMe)
         else
 #endif/*FEATRUE_SET_IP_NUMBER*/
         {
+            #ifndef FEATURE_ALL_KEY_PAD
             type = BTBAR_OPTION_SAVE_DEL; //BTBAR_SAVE_DELETE;
+        	#else
+        	type = BTBAR_OPTION_SAVE_BACK;
+        	#endif
         }
     }
 

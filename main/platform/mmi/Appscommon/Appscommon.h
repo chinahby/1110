@@ -329,6 +329,7 @@ typedef enum BottomBar_e_Type
    BTBAR_MESSAGES_CONTACTS,   // 信息-----电话本
    BTBAR_MENU_SOS,            //主菜单  -----SOS
    BTBAR_UNLOCK,
+   BTBAR_OPTION_SAVE_BACK,
    
    BTBAR_MAX = 0xFFFF, /*For ADS compiler allocate one byte to enumerate type
                      variable by default if the max value not exceed 256*/

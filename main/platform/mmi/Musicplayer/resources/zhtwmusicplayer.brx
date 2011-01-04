@@ -261,6 +261,10 @@
 		</Controls>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
+	<Dialog Id="6012" Name="IDD_MSGFULL" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
 	<Dialog Id="6013" Name="IDD_SIMPLEPLAYER" Focus="0">
 		<Controls/>
 	</Dialog>
