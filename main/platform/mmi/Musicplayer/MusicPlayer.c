@@ -856,8 +856,11 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
 #endif//FEATURE_LCD_TOUCH_ENABLE
 		case EVT_HEADSET:
 			//recorder_set_media_device_auto( &pMe->m_Media);
+			if(pMe->m_pMedia != NULL)
+			{
 			(void)IMEDIA_SetVolume(pMe->m_pMedia,pMe->m_nCurrentVolume); 
 			return TRUE;
+			}
 			break;
         case EVT_KEY_PRESS:
         case EVT_KEY:
