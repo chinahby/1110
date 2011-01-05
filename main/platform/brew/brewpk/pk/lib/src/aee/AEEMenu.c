@@ -4607,29 +4607,72 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
     }
     else
     {
-       /*  这个if用来检测MP_BIND_ITEM_TO_NUMBER_KEY属性是否被设置，有，在菜单前面画一个内嵌序号的正方形 */
-       //下面的20 和12可能要改成公式计算
-       SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, 16, prc->dy);
-	   
-       STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
-       WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
+        /*  这个if用来检测MP_BIND_ITEM_TO_NUMBER_KEY属性是否被设置，有，在菜单前面画一个内嵌序号的正方形 */
+        
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+        if(bTitleRightAligned){
+            SETAEERECT( &rect, prc->x+prc->dx-pme->m_cyFont,prc->y + ps->yOffset, pme->m_cyFont-2, prc->dy);
+            STRTOWSTR(".%d", wszFmt, sizeof(wszFmt));
+            
+            WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
+    
+    #if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
+            if(bSel){
+                IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_WHITE);
+                IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_BLACK);//wlh mod 更改选中条的序号颜色
+            }
+            else{
+                IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_BLACK);
+                IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_WHITE);
+            }
+    #endif
+            IDISPLAY_DrawText(pd, p->nFont, wszIndex, -1, rect.x, rect.y, &rect, IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
+            
+            prc->dx -= rect.dx;
+        }
+        else{
+            SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, pme->m_cyFont, prc->dy);
+            STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
+            
+            WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
+    
+    #if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
+            if(bSel){
+                IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_WHITE);
+                IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_BLACK);//wlh mod 更改选中条的序号颜色
+            }
+            else{
+                IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_BLACK);
+                IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_WHITE);
+            }
+    #endif
+            IDISPLAY_DrawText(pd, p->nFont, wszIndex, -1, rect.x, rect.y, &rect, IDF_TEXT_TRANSPARENT);
+            
+            prc->x  += rect.dx;
+            prc->dx -= rect.dx;
+        }
+#else
+        //下面的20 和12可能要改成公式计算
+        SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, pme->m_cyFont, prc->dy);
+        STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
+        
+        WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
 
 #if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
-       if(bSel){
-          IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_WHITE);
-          IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_BLACK);//wlh mod 更改选中条的序号颜色
-	//	   IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_YELLOW_EX);
-       }
-       else{
-          IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_BLACK);
-          IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_WHITE);
-       }
+        if(bSel){
+            IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_WHITE);
+            IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_BLACK);//wlh mod 更改选中条的序号颜色
+        }
+        else{
+            IDISPLAY_SetColor(pd,CLR_USER_BACKGROUND,RGB_BLACK);
+            IDISPLAY_SetColor(pd,CLR_USER_TEXT,RGB_WHITE);
+        }
 #endif
-       IDISPLAY_DrawText(pd, p->nFont, wszIndex, -1, rect.x, rect.y, &rect, IDF_TEXT_TRANSPARENT);
-
-       prc->x  += rect.dx;
-       prc->dx -= rect.dx;
-       SETAEERECT( &rect, prc->x -(rect.dx + 1), prc->y, prc->dx + (rect.dx + 1), prc->dy);
+        IDISPLAY_DrawText(pd, p->nFont, wszIndex, -1, rect.x, rect.y, &rect, IDF_TEXT_TRANSPARENT);
+        
+        prc->x  += rect.dx;
+        prc->dx -= rect.dx;
+#endif
     }
  }
 
