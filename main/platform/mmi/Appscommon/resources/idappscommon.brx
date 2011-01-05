@@ -269,7 +269,7 @@
 		<Text>FGuru</Text>
 	</String>
 	<String Id="2010" Name="IDS_FMENU">
-		<Text>FMenu</Text>
+		<Text>Menu</Text>
 	</String>
 </Strings>
 </BREWRes>

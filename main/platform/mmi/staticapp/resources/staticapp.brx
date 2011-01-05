@@ -5,7 +5,7 @@
 		<Text>Application</Text>
 	</String>
 	<String Id="1002" Name="IDS_STATICAPP_FLEXIP_LIST">
-		<Text>FMenu</Text>
+		<Text>Menu</Text>
 	</String>
 	<String Id="1010" Name="IDS_NASRANI_TITLE_FNASRANI">
 		<Text>Fkristiani </Text>
@@ -34,39 +34,28 @@
 	<String Id="1024" Name="IDS_STATICAPP_TITLE_MSHOP">
 		<Text>M-Shop</Text>
 	</String>
-	<String Id="1025" Name="IDS_STATICAPP_TITLE_FGUAL">
-		<Text>Fgual</Text>
+	<String Id="1025" Name="IDS_STATICAPP_TITLE_FLEXI_FGAUL">
+		<Text>FGAUL</Text>
 	</String>
-	<String Id="1026" Name="IDS_STATICAPP_TITLE_APLIKASI">
-		<Text>Aplikasi</Text>
-	</String>
-	<String Id="1027" Name="IDS_STATICAPP_TITLE_FLEXIPORTAL">
-		<Text>FlexiPortal</Text>
-	</String>
-	
-	<String Id="1028" Name="IDS_STATICAPP_TITLE_GAUL">
-		<Text>Gaul</Text>
-	</String>
-
-	<String Id="1029" Name="IDS_STATICAPP_TITLE_MYSCHOOL">
-		<Text>My School</Text>
-	</String>
-	<String Id="1030" Name="IDS_STATICAPP_TITLE_BIMBEL">
-		<Text>Bimbel</Text>
-	</String>
-	
-	<String Id="1031" Name="IDS_STATICAPP_TITLE_FLEXI_FACEBOOK">
+	<String Id="1026" Name="IDS_STATICAPP_TITLE_FLEXI_FACEBOOK">
 		<Text>Facebook</Text>
 	</String>
-	<String Id="1032" Name="IDS_STATICAPP_TITLE_FLEXI_TWITTER">
+	<String Id="1027" Name="IDS_STATICAPP_TITLE_FLEXI_TWITTER">
 		<Text>Twitter</Text>
 	</String>
-	<String Id="1033" Name="IDS_STATICAPP_TITLE_FLEXICHATING">
-		<Text>FlexiChatting</Text>
+	
+	<String Id="1028" Name="IDS_STATICAPP_TITLE_FLEXI_FCHAT">
+		<Text>FChatting</Text>
 	</String>
-	<String Id="1034" Name="IDS_STATICAPP_TITLE_FMUSIK">
-		<Text>FlexiMusik</Text>
+
+	<String Id="1029" Name="IDS_STATICAPP_TITLE_FLEXI_MUSIK">
+		<Text>FMusik</Text>
 	</String>
+	<String Id="1030" Name="IDS_STATICAPP_TITLE_FLEXI_PORTAL">
+		<Text>FPortal</Text>
+	</String>
+	
+
 </Strings>
 <Dialogs>
 	<Dialog Id="6003" Name="IDD_LIST_STATICAPP" Focus="7001">
