@@ -3397,7 +3397,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 
     scratch.dx = 1;
     scratch.dy = 14; 
-    
+
     if (IntersectRect(&draw, &scratch, clipRect))
     {
         pContext->CursorDrawRectTimerPara = draw;
@@ -3626,6 +3626,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                if(pContext->dwProperties & TP_GRAPHIC_BG)
                {
                    TextCtl_DrawBackGround(pContext, &rectText);
+                
                    (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                        pContext->font,
                                        wszHide,
@@ -3637,6 +3638,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                }
                else
                {
+               		
                     (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                         pContext->font,
                                         wszHide,
@@ -3649,13 +3651,36 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
             }
          } 
          // 单行垂直方向居中对齐
-         else if (!(pContext->dwProperties & TP_MULTILINE) && 
+         else if (!(pContext->dwProperties & TP_MULTILINE) &&
                   (pContext->dwProperties & TP_FIXOEM))
          {
+         #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+          if(pContext->dwProperties & TP_GRAPHIC_BG)
+                {
+                    TextCtl_DrawBackGround(pContext, &rectText);
+                }
+                MSG_FATAL("IDISPLAY_DrawText......7",0,0,0);
+                (void) IDISPLAY_DrawText(pContext->pIDisplay,
+                                         pContext->font,
+                                         pContext->pwLineStarts[i] + pContext->pszContents,
+                                         lineChars,
+                                         rectText.x,
+                                         rectText.y/*+pContext->nFontAscent*/,
+                                         &rectText,
+                                        IDF_RECT_FILL | pContext->dwAlignFlags);
+
+                if ( NULL != pContext->m_pMyFont )
+                {
+                    LineCursor1 = pContext->wSelStart - pContext->pwLineStarts[i];
+                    IFONT_MeasureTextCursorPos(pContext->m_pMyFont, rectText.x, 
+                                                         pContext->pszContents+pContext->pwLineStarts[i], 
+                                                        lineChars, &rectText, &cursorx1, LineCursor1, pContext->dwAlignFlags);
+                }
+         #else
             if(pContext->dwProperties & TP_GRAPHIC_BG)
             {
                 TextCtl_DrawBackGround(pContext, &rectClip);
-
+			
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                       pContext->font,
                                       pContext->pwLineStarts[i] +
@@ -3668,16 +3693,18 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
             }
             else
             {
+            	
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                       pContext->font,
                                       pContext->pwLineStarts[i] +
                                       pContext->pszContents,
                                       lineChars,
                                       rectText.x,
-                                      rectText.y + pContext->nExtraPixels/*+pContext->nFontAscent*/,
+                                      rectText.y + pContext->nExtraPixels,
                                       &rectClip,
-                                      IDF_RECT_FILL/*|IDF_ALIGN_MIDDLE*/);//dwFlags);
+                                      IDF_RECT_FILL/);
             }
+            #endif
          }
          else 
          {
@@ -3686,6 +3713,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                 {
                     TextCtl_DrawBackGround(pContext, &rectText);
                 }
+                
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                          pContext->font,
                                          pContext->pwLineStarts[i] + pContext->pszContents,
@@ -3706,6 +3734,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                 if(pContext->dwProperties & TP_GRAPHIC_BG)
                 {
                     TextCtl_DrawBackGround(pContext, &rectText);
+                  
                     (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                              pContext->font,
                                              pContext->pwLineStarts[i] +
@@ -3718,6 +3747,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                 }
                 else
                 {
+                	
                     (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                              pContext->font,
                                              pContext->pwLineStarts[i] +
@@ -3746,6 +3776,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
          }
          else 
          {
+         
             if (wSelStartLine <= i && i <= wSelEndLine) 
             {
                /* Must draw some kind of selection on this line */
@@ -3756,10 +3787,12 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                                     lineChars - (pContext->wSelStart - pContext->pwLineStarts[i]));
                uint32 endAlign = ParagraphAlignment(pContext->pwLineStarts[i] + pContext->pszContents, 
                                     pContext->wSelEnd - pContext->pwLineStarts[i]);
+               
                int32 startX = (IDF_ALIGN_LEFT == startAlign)?(rectText.x):(rectText.x + (int16) rectText.dx);
                int32 endX = (wSelEndLine == wSelStartLine)
                                     ?((IDF_ALIGN_LEFT == startAlign)?(rectText.x + (int16) rectText.dx):(rectText.x))
                                     :((IDF_ALIGN_LEFT == endAlign)?(rectText.x + (int16) rectText.dx):(rectText.x));
+             
                if (wSelEndLine == i) 
                {
                   if (pContext->wSelEnd > pContext->pwLineStarts[i]) 
@@ -3845,10 +3878,11 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
 #endif               
                )
                {
-                    ;// no invert
+               		;// no invert
                }
                else
                {
+               		
                     IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
                }
             }
@@ -4009,6 +4043,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                }
                invertRect.dx = (int16)(endX - startX);
                invertRect.dy = dy;
+               
                IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
             }
          }
