@@ -3702,7 +3702,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                                       rectText.x,
                                       rectText.y + pContext->nExtraPixels,
                                       &rectClip,
-                                      IDF_RECT_FILL/);
+                                      IDF_RECT_FILL);
             }
             #endif
          }
