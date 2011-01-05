@@ -70,6 +70,8 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 #define FM_VOLUME_Y                         (SCREEN_HEIGHT - 90)
 #elif defined(FEATURE_DISP_320X240)
 #define FM_VOLUME_Y                         (SCREEN_HEIGHT - 128)
+#elif defined(FEATURE_DISP_176X220)
+#define FM_VOLUME_Y                         (SCREEN_HEIGHT - 100)
 #else
 #define FM_VOLUME_Y                         (SCREEN_HEIGHT - 68)
 #endif
