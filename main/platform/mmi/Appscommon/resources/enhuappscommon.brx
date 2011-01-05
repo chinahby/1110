@@ -5,7 +5,7 @@
 		<Text>Select</Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_DEL">
-		<Text>Delete</Text>
+		<Text>Del.</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_CANCEL">
 		<Text>Back</Text>
@@ -208,7 +208,7 @@
 	<STRING Id="1020" Name="IDS_CONFIRM_OFF_FM">
 		<Text>Turn off FM</Text>
 	</STRING>
-	<STRING Id="1021" Name="IDS_CONFIRM_OFF_MP" Encoding="Unicode">
+	<STRING Id="1021" Name="IDS_CONFIRM_OFF_MP">
 		<Text>Turn off music player</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_FULLSCREEN">
@@ -217,11 +217,29 @@
 	<STRING Id="1023" Name="IDS_GALLERY">
 		<Text>Gallery</Text>
 	</STRING>
-	<String Id="1024" Name="IDS_FRENDUO_LIST">
+	<STRING Id="1024" Name="IDS_YES">
+		<Text>Yes</Text>
+	</STRING>
+	<STRING Id="1025" Name="IDS_NO">
+		<Text>No</Text>
+	</STRING>
+	<String Id="1027" Name="IDS_FACEBOOK">
+		<Text>Facebook</Text>
+	</String>
+	<String Id="1028" Name="IDS_FRENDUO_LIST">
 		<Text>FrenDuo</Text>
 	</String>
-	<String Id="1025" Name="IDS_VIEWMORE">
-		<Text>ViewMore</Text>
+	<String Id="1029" Name="IDS_CHAT">
+		<Text>Chat</Text>
+	</String>
+	<String Id="1030" Name="IDS_MORE">
+		<Text>More</Text>
+	</String>
+	<String Id="1031" Name="IDS_MESSAGES">
+		<Text>Messages</Text>
+	</String>
+	<String Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
+		<Text>Long Press Space Key to Unlock The Keyguard</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Snooze</Text>
@@ -235,5 +253,23 @@
 	<STRING Id="2004" Name="IDS_MODIFY">
 		<Text>Modify</Text>
 	</STRING>
+	<String Id="2005" Name="IDS_VIEW">
+		<Text>View</Text>
+	</String>
+	<String Id="2006" Name="IDS_FMUSLIM">
+		<Text>FMuslim</Text>
+	</String>
+	<String Id="2007" Name="IDS_FNASRANI">
+		<Text>FKristiani </Text>
+	</String>
+	<String Id="2008" Name="IDS_FPORTAL">
+		<Text>FPortal</Text>
+	</String>
+	<String Id="2009" Name="IDS_FGURU">
+		<Text>FGuru</Text>
+	</String>
+	<String Id="2010" Name="IDS_FMENU">
+		<Text>Menu</Text>
+	</String>
 </Strings>
 </BREWRes>

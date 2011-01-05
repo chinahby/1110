@@ -215,8 +215,32 @@
 		<Text>全螢幕</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_GALLERY">
-		<Text>文件夾</Text>
+		<Text>Gallery</Text>
 	</STRING>
+	<STRING Id="1024" Name="IDS_YES">
+		<Text>是</Text>
+	</STRING>
+	<STRING Id="1025" Name="IDS_NO">
+		<Text>否</Text>
+	</STRING>
+	<String Id="1027" Name="IDS_FACEBOOK">
+		<Text>群组</Text>
+	</String>
+	<String Id="1028" Name="IDS_FRENDUO_LIST">
+		<Text>FrenDuo</Text>
+	</String>
+	<String Id="1029" Name="IDS_CHAT">
+		<Text>聊天</Text>
+	</String>
+	<String Id="1030" Name="IDS_MORE">
+		<Text>附加</Text>
+	</String>
+	<String Id="1031" Name="IDS_MESSAGES">
+		<Text>信息</Text>
+	</String>
+	<String Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
+		<Text>Long Press Space Key to Unlock The Keyguard</Text>
+	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>延時</Text>
 	</STRING>
@@ -227,7 +251,25 @@
 		<Text>按“*”鍵解鎖</Text>
 	</STRING>
 	<STRING Id="2004" Name="IDS_MODIFY">
-		<Text>Modify</Text>
+		<Text>修改</Text>
 	</STRING>
+	<String Id="2005" Name="IDS_VIEW">
+		<Text>查看</Text>
+	</String>
+	<String Id="2006" Name="IDS_FMUSLIM">
+		<Text>FGuru</Text>
+	</String>
+	<String Id="2007" Name="IDS_FNASRANI">
+		<Text>FKristiani </Text>
+	</String>
+	<String Id="2008" Name="IDS_FPORTAL">
+		<Text>FPortal</Text>
+	</String>
+	<String Id="2009" Name="IDS_FGURU">
+		<Text>FGuru</Text>
+	</String>
+	<String Id="2010" Name="IDS_FMENU">
+		<Text>Menu</Text>
+	</String>
 </Strings>
 </BREWRes>

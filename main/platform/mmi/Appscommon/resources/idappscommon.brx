@@ -223,9 +223,6 @@
 	<STRING Id="1025" Name="IDS_NO">
 		<Text>Tidak</Text>
 	</STRING>
-	<String Id="1026" Name="IDS_VIEWMORE">
-		<Text>Lihat lagi</Text>
-	</String>
 	<String Id="1027" Name="IDS_FACEBOOK">
 		<Text>Facebook</Text>
 	</String>
@@ -240,6 +237,9 @@
 	</String>
 	<String Id="1031" Name="IDS_MESSAGES">
 		<Text>Pesan</Text>
+	</String>
+	<String Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
+		<Text>Long Press Space Key to Unlock The Keyguard</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
 		<Text>Tahan</Text>
