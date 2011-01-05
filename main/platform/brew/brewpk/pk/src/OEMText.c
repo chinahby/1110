@@ -3404,6 +3404,35 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
         //memcpy((char *)&(pContext->CursorDrawRectTimerPara), (char *)&draw, sizeof(AEERect));
         TextCtl_DrawCursorTimer(pContext);
     }
+    else
+    {
+	   AEERect draw, scratch = *cursRect;
+	   MSG_FATAL("...............................2",0,0,0);
+	   scratch.x += (int16)( (uint16) scratch.dx >> 1 ) + 1;
+	   scratch.dx = 1;
+	   scratch.dy = pContext->nFontAscent + pContext->nFontDescent; 
+	   // Vertical bar
+	   // 单行垂直方向居中对齐
+	   if (IntersectRect(&draw, &scratch, clipRect))
+	   {
+	       if(!(pContext->dwProperties & TP_MULTILINE) && 
+	                         (pContext->dwProperties & TP_FIXOEM))
+	       {
+	            draw.x++;
+	            draw.y += pContext->nExtraPixels;
+	       }
+	       MSG_FATAL("draw.x=%d,draw.y=%d",draw.x,draw.y,0);
+	   	   MSG_FATAL("draw.dx=%d,draw.dy=%d",draw.dx,draw.dy,0);
+	       if(pContext->dwProperties & TP_GRAPHIC_BG)
+	       {
+	           IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_GRAPHIC_FONT_COLOR); 
+	       }
+	       else
+	       {
+	           IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_FONT_COLOR/*RGB_BLACK*/); 
+	       }
+	   }
+    }
 #else    
 
    // Draw a cursor by drawing a horizontal line at the top and bottom of cursRect,

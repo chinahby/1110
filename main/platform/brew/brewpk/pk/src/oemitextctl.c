@@ -2868,6 +2868,17 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
             case TEXT_MODE_NUMBERS:
                 pme->m_wResID = IDB_MODE_NUMBERS;
                 break;
+#ifdef FEATURE_T9_MT_ARABIC
+			case TEXT_MODE_T9_MT_ARABIC:	
+				pme->m_wResID = IDB_MODE_T9_MT_ARABIC;
+				break;
+#endif //FEATURE_T9_MT_ARABIC
+				
+#ifdef FEATURE_T9_RAPID_ARABIC
+			case TEXT_MODE_T9_RAPID_ARABIC:
+				pme->m_wResID = IDB_MODE_T9_RAPID_ARABIC;
+				break;
+#endif //FEATURE_T9_RAPID_ARABIC
 
             default:
                 break;
@@ -2883,6 +2894,7 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
         TextCtl_CheckEntryMode(pme);
     }
     
+    (void)CTextCtl_Redraw((ITextCtl *)pme);
     tmCurr = OEM_TextGetCurrentMode(pme->m_pText);
     return tmCurr;
 
