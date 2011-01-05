@@ -774,6 +774,12 @@ if(!(x))         \
 #define OLDPLAY_H 45
 #endif
 
+#define RFIMG_WIDTH 16
+#define REWIND_X    (((SCREEN_WIDTH-4)-(RFIMG_WIDTH*2))/2)
+#define REWIND_Y    (SCHEDULEBAR_Y-14)
+#define FORWARD_X   (REWIND_X+RFIMG_WIDTH+4)
+#define FORWARD_Y   REWIND_Y
+
 typedef enum MP3Recttype
 {
 	TYPE_PLAYER,//pauseÒ»Ñù

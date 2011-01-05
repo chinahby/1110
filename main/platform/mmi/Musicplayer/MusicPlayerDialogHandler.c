@@ -2741,7 +2741,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
     case AVK_POUND:
         if(pMe->m_bPlaying && pMe->m_pMedia)
         {
-            MP3_DrawImage(pMe, IDI_FORWARD_PRESS, 40,140);
+            MP3_DrawImage(pMe, IDI_FORWARD_PRESS, FORWARD_X,FORWARD_Y);
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
             ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawForwardImage, pMe);
             if((pMe->m_nTotalTime - pMe->m_nCurrentTime) < MS_FASTFORWARDREWIND_TIME/1000)
@@ -2760,7 +2760,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
     case AVK_STAR:
         if(pMe->m_bPlaying && pMe->m_pMedia)
         {
-            MP3_DrawImage(pMe, IDI_REWIND_PRESS, 3,140);
+            MP3_DrawImage(pMe, IDI_REWIND_PRESS, REWIND_X,REWIND_Y);
             IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
             ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawRewindImage, pMe);
             if(pMe->m_nCurrentTime < MS_FASTFORWARDREWIND_TIME/1000)
@@ -5139,6 +5139,8 @@ static void MP3_DrawPlayerWindows(CMusicPlayer *pMe)
 		MP3_DrawImage(pMe, IDI_PLAY, PLAY_X, PLAY_Y);
         MSG_FATAL("PLAY_X=%d----PLAY_Y=%d",PLAY_X,PLAY_Y,0);  
 	}
+    MP3_DrawRewindImage(pMe);
+    MP3_DrawForwardImage(pMe);
 	// IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);//wlh test
 }
 
@@ -5476,15 +5478,17 @@ static void MP3_ResetScroll(CMusicPlayer *pMe)
 /*画后退的图标*/
 static void MP3_DrawRewindImage(CMusicPlayer *pMe)
 {
-   MP3_DrawImage(pMe, IDI_REWIND, 3,140);
-   IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+   MP3_DrawImage(pMe, IDI_REWIND, REWIND_X,REWIND_Y);
+   //IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 }
+
 /*画快进的图标*/
 static void MP3_DrawForwardImage(CMusicPlayer *pMe)
 {
-   MP3_DrawImage(pMe, IDI_FORWARD, 40,140);
-   IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+   MP3_DrawImage(pMe, IDI_FORWARD, FORWARD_X,FORWARD_Y);
+   //IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
 }
+
 /*回调*/
 int MP3_AddMusicCB(void* pv, FileNamesBuf pBuf, uint32 nBufSize)
 {
