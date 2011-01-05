@@ -2740,23 +2740,23 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             nResID_R = IDS_BACK;
             break;
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
-		case BTBAR_FNASRANI_FPORTAL:
-	     	nResID_L = IDS_FNASRANI;
+        case BTBAR_FNASRANI_FPORTAL:
+            nResID_L = IDS_FNASRANI;
             nResID_R = IDS_FPORTAL;
             break;
-		case BTBAR_FMUSLIM_FPORTAL:
-	     	nResID_L = IDS_FMUSLIM;
+        case BTBAR_FMUSLIM_FPORTAL:
+            nResID_L = IDS_FMUSLIM;
             nResID_R = IDS_FPORTAL;
-            break;	
-		case BTBAR_FGURU_FPORTAL:
-			nResID_L = IDS_FGURU;
-			nResID_R = IDS_FPORTAL;
-		break;
-		
-		case BTBAR_CONTACTS_FPORTAL:
-		nResID_L = IDS_STRING_CONTACTS;
-		nResID_R = IDS_FPORTAL;
-		break;	         
+            break;  
+        case BTBAR_FGURU_FPORTAL:
+            nResID_L = IDS_FGURU;
+            nResID_R = IDS_FPORTAL;
+            break;
+            
+        case BTBAR_CONTACTS_FPORTAL:
+            nResID_L = IDS_STRING_CONTACTS;
+            nResID_R = IDS_FPORTAL;
+            break;
 #endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
 		case BTBAR_FMENU_CANTACT:
 			nResID_L = IDS_FMENU;
