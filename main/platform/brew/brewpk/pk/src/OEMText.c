@@ -56,6 +56,10 @@ when       who     what, where, why
 ===========================================================================*/
 
 #include "OEMFeatures.h"
+#include "AEEConfig.h"
+#include "oemcfgi.h"
+#include "nv.h"
+#include "OEMCFGI.h"
 
 #ifdef OEMTEXT
 #include "OEMText.h"
@@ -3400,6 +3404,36 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 
     if (IntersectRect(&draw, &scratch, clipRect))
     {
+    	#if defined(FEATURE_VERSION_C306)
+		{
+		   	nv_language_enum_type language;
+           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
+		      (pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC || pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
+           	{
+		    	
+		    	int temp = 0;
+		    	int Strlen = 0;
+		        int j = 0;
+           		MSG_FATAL("........draw.x-%d.1",draw.x,0,0);
+           		MSG_FATAL("pContext->wSelStart=%d",pContext->wSelStart,0,0);
+           		temp=IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                             pContext->font,
+                                             pContext->pwLineStarts[pContext->wDisplayStartLine] + pContext->pszContents,
+                                             pContext->wSelStart -
+                                             pContext->pwLineStarts[pContext->wDisplayStartLine],
+                                             -1,
+                                             NULL);
+                Strlen = IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                             pContext->font,
+                                             pContext->pwLineStarts[pContext->wDisplayStartLine] + pContext->pszContents,
+                                             -1,
+                                             -1,
+                                             NULL);
+		    	draw.x = (clipRect->x+clipRect->dx)-2-(Strlen-temp+2);
+		    }
+        }
+		#endif
         pContext->CursorDrawRectTimerPara = draw;
         //memcpy((char *)&(pContext->CursorDrawRectTimerPara), (char *)&draw, sizeof(AEERect));
         TextCtl_DrawCursorTimer(pContext);
@@ -3423,6 +3457,18 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 	       }
 	       MSG_FATAL("draw.x=%d,draw.y=%d",draw.x,draw.y,0);
 	   	   MSG_FATAL("draw.dx=%d,draw.dy=%d",draw.dx,draw.dy,0);
+	   	   #if defined(FEATURE_VERSION_C306)
+		   {
+			   	nv_language_enum_type language;
+	           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+	           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
+		          (pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC && pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
+	           	{
+			    	MSG_FATAL("...............................1",0,0,0);
+			    	draw.x = (clipRect->x+clipRect->dx)-2;
+			    }
+	       }
+		   #endif
 	       if(pContext->dwProperties & TP_GRAPHIC_BG)
 	       {
 	           IDISPLAY_FillRect(pContext->pIDisplay, &draw, TEXT_GRAPHIC_FONT_COLOR); 
@@ -3689,6 +3735,35 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                     TextCtl_DrawBackGround(pContext, &rectText);
                 }
                 MSG_FATAL("IDISPLAY_DrawText......7",0,0,0);
+                #if defined(FEATURE_VERSION_C306)
+				{
+				   	nv_language_enum_type language;
+		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+		           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
+		           	  (pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC || pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
+		           	{
+		           		int temp = 0;
+		           		int j = 0;
+		           		MSG_FATAL("pContext->wSelStart=%d",pContext->wSelStart,0,0);
+		           		temp=IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                     pContext->font,
+                                                     pContext->pwLineStarts[i] + pContext->pszContents,
+                                                     //pContext->wSelStart -
+                                                     //pContext->pwLineStarts[i],
+                                                     -1,
+                                                     -1,
+                                                     NULL);
+                       
+				    	rectText.x = rectClip.x+rectClip.dx - temp-4;
+				    	rectText.dx = temp;
+				    	if(rectText.x<rectClip.x)
+				    	{
+				    		rectText.x = rectClip.x;
+				    	}
+				    	MSG_FATAL("rectText.x=%d,temp=%d i=%d",rectText.x,temp,i);
+				    }
+		        }
+				#endif
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                          pContext->font,
                                          pContext->pwLineStarts[i] + pContext->pszContents,
@@ -3742,7 +3817,33 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                 {
                     TextCtl_DrawBackGround(pContext, &rectText);
                 }
-                
+                #if defined(FEATURE_VERSION_C306)
+				{
+				   	nv_language_enum_type language;
+		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+		           	IDISPLAY_FillRect(pContext->pIDisplay, &rectText, RGB_WHITE);
+		           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
+		           	  (pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC || pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
+		           	{
+		           		int temp = 0;
+		           		int j = 0;
+		           		temp=IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+                                                     pContext->font,
+                                                     pContext->pwLineStarts[i] + pContext->pszContents,
+                                                     -1,
+                                                     -1,
+                                                     NULL);
+                       
+				    	rectText.x = rectClip.x+rectClip.dx - temp-4;
+				    	rectText.dx = temp;
+				    	if(rectText.x<rectClip.x)
+				    	{
+				    		rectText.x = rectClip.x;
+				    	}
+				    	MSG_FATAL("rectText.x=%d,temp=%d i=%d",rectText.x,temp,i);
+				    }
+		        }
+				#endif
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                          pContext->font,
                                          pContext->pwLineStarts[i] + pContext->pszContents,
