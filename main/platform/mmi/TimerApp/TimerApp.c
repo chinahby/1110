@@ -1478,7 +1478,8 @@ static boolean CAppTimer_HandleKeyEvent(CAppTimer *pMe, uint16 wParam)
     }
     else if(pMe->m_nNumKeyCount == 1)   //小时的个位
     {
-        if(nKeyMask == 0 || nKeyMask == 1 || nKeyMask == 2 || nKeyMask == 3)
+        if(nKeyMask == 0 || nKeyMask == 1 || nKeyMask == 2 || nKeyMask == 3||nKeyMask == 4||nKeyMask == 5
+			||nKeyMask == 6||nKeyMask == 7||nKeyMask == 8||nKeyMask == 9)
         {
             pMe->m_dwHour += nKeyMask * MSSEC_PER_HOUR;
             pMe->m_dwDispTime = pMe->m_dwHour + pMe->m_dwMin  + pMe->m_dwSec;
