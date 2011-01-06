@@ -3892,7 +3892,7 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_LANG_MYANMAR   //add by yangdecai 2010-1224
 				case IDS_MYANMAR:
 					language = NV_LANGUAGE_MYANMAR;
-                    inputmode = OEM_MODE_T9_MT_ENGLISH; //OEM_MODE_T9_MT_INDONESIAN;                           
+                    inputmode = OEM_MODE_MYANMAR; //OEM_MODE_T9_MT_INDONESIAN;                           
                     break;
 #endif
 #ifdef FEATURE_LANG_HINDI

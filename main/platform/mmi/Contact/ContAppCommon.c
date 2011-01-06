@@ -874,9 +874,7 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
         	    	}
         	    	else
         	    	{
-        	    		
         	    		return AEE_TM_LETTERS;
-        	    		
         	    	}
         	    }
         	    #else

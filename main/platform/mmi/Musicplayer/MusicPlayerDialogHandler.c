@@ -5092,17 +5092,36 @@ static void MP3_DrawMusicName(CMusicPlayer *pMe ,int index)
         oldColor = IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,RGB_WHITE);
         MP3_drawClipRectWithOffset(pMe, IDI_SIMPLEPLAYER,&pMe->m_pMP3FaceRect[1]);
     }
-    IDISPLAY_DrawText(pMe->m_pDisplay, 
-                       AEE_FONT_BOLD,
-                       pMe->m_pMp3FileToPlay+index, 
-                       -1, 
-                       pMe->m_pMP3FaceRect[1].x +3, 
-                       pMe->m_pMP3FaceRect[1].y +3, 
-                       &pMe->m_pMP3FaceRect[1], 
-                       IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+    #ifdef FEATURE_VERSION_MYANMAR
+  	{
+	   AECHAR M_usicname[128] = {0};
+	   int Musicname = WSTRLEN(pMe->m_pMp3FileToPlay+index);
+	   WSTRNCOPY(M_usicname, Musicname-3, pMe->m_pMp3FileToPlay+index);
+	   (void)IDISPLAY_DrawText( pMe->m_pDisplay,
+	                              AEE_FONT_BOLD,
+	                              M_usicname, -1,
+	                              pMe->m_pMP3FaceRect[1].x +3, 
+                       			  pMe->m_pMP3FaceRect[1].y +3, 
+                       	          &pMe->m_pMP3FaceRect[1], 
+	                              IDF_ALIGN_CENTER
+	                              | IDF_ALIGN_MIDDLE 
+	                              | IDF_TEXT_TRANSPARENT);
+  	}
+  	#else
+  	{
+    		IDISPLAY_DrawText(pMe->m_pDisplay, 
+                       	AEE_FONT_BOLD,
+                       	pMe->m_pMp3FileToPlay+index, 
+                       	-1, 
+                       	pMe->m_pMP3FaceRect[1].x +3, 
+                       	pMe->m_pMP3FaceRect[1].y +3, 
+                       	&pMe->m_pMP3FaceRect[1], 
+                       	IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+   }
+   #endif
     //if(pMe->m_eStartMethod == STARTMETHOD_SIMPLEPLAYER)
     //{
-       (void)IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,oldColor);
+   (void)IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,oldColor);
     //}
 }
 
