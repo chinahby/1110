@@ -521,6 +521,19 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_USERPROFILE;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_GAMES;
+#elif defined (FEATURE_VERSION_C500BE)
+	pMe->m_IconTitle[0] 	= IDS_MAIN_MENU_MEDIAGALLERY;
+	pMe->m_IconTitle[1] 	= IDS_MAIN_MENU_CONTACTS;
+	pMe->m_IconTitle[2] 	= IDS_MAIN_MENU_UTK;
+	pMe->m_IconTitle[3] 	= IDS_MAIN_MENU_CALCULATOR;
+	pMe->m_IconTitle[4] 	= IDS_MAIN_MENU_RECENTCALLS;
+	pMe->m_IconTitle[5] 	= IDS_MAIN_MENU_MESSAGES;
+	pMe->m_IconTitle[6] 	= IDS_MAIN_MENU_MULTIMEDIA;
+	pMe->m_IconTitle[7] 	= IDS_MAIN_MENU_TOOLS;
+	pMe->m_IconTitle[8] 	= IDS_MAIN_MENU_SCHEDULER;
+	pMe->m_IconTitle[9] 	= IDS_MAIN_MENU_SETTINGS;
+	pMe->m_IconTitle[10]	= IDS_MAIN_MENU_USERPROFILE;
+	pMe->m_IconTitle[11]	= IDS_MAIN_MENU_GAMES;
 #elif defined (FEATURE_VERSION_SMART)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_SMARTWORLD;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_SMARTFRENACCESS;
@@ -1815,10 +1828,10 @@ static int StartApplet(MainMenu *pMe, int i)
     case IDS_MAIN_MENU_GAMES:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME);
         break;
-        
     case IDS_MAIN_MENU_CALCULATOR:
-        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
+		 Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
         break;
+
         
     case IDS_MAIN_MENU_FMRADIO:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);

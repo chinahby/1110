@@ -2913,7 +2913,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				{
 //#if !defined(FEATURE_PROJECT_W022) && !defined(FEATURE_PROJECT_W021) && !defined(FEATURE_PROJECT_W021_128x160) && !defined (FEATURE_PROJECT_W021_176X220) && !defined (FEATURE_PROJECT_W021_240X320)&& !defined (FEATURE_PROJECT_W021_220X176) && !defined (FEATURE_PROJECT_W021_320X240)
 #if !defined(FEATURE_IDLE_TORCH_DOWNKEY)
-	#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) 
+	#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203)||defined (FEATURE_VERSION_C500BE)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
 	#elif defined (FEATURE_VERSION_SMART)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
@@ -2954,7 +2954,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 }
                 case AVK_LEFT:
                 {
-#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) 
+#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) ||defined(FEATURE_VERSION_C500BE)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
 #elif defined (FEATURE_VERSION_SMART)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
@@ -3004,7 +3004,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_FLEXI203P)
         	   ret = CoreApp_LaunchApplet(pMe, AEECLSID_STATIC_APP);
-#elif defined (FEATURE_VERSION_IVIO203)
+#elif defined (FEATURE_VERSION_IVIO203)||defined (FEATURE_VERSION_C500BE)
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #elif defined (FEATURE_VERSION_SMART)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	

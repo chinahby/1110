@@ -202,6 +202,13 @@
 #define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronani.png"
 #define    PWROFF_ANI_FRAME_COUNT                (15)
 #define    PWROFF_ANI_RATE                       (220)
+#elif defined (FEATURE_VERSION_C500BE)
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
+#define    PWRON_ANI_FRAME_COUNT                 (15)
+#define    PWRON_ANI_RATE                        (220)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronani.png"
+#define    PWROFF_ANI_FRAME_COUNT                (15)
+#define    PWROFF_ANI_RATE                       (220)
 #elif defined FEATURE_VERSION_IVIO021
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
 #define    PWRON_ANI_FRAME_COUNT                 (12)
