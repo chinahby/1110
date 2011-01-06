@@ -8682,46 +8682,51 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
         				pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_NV_CDMA, wIndex);
     				}
     
-    				if (NULL == pnode)
+    				if (NULL != pnode)
     				{
-    					MSG_FATAL("pnode IS NULL...........................",0,0,0);
-        				return ;
-    				}
-    
-    				// 重置当前消息列表
-    				MEMSET(pMe->m_CurMsgNodes, 0, sizeof(pMe->m_CurMsgNodes));
-    				WmsApp_FreeMsgNodeMs(pMe);
-    
-   					 pMe->m_idxCur = 0;
-					#ifdef FEATURE_SMS_UDH
-    				if (pnode->pItems != NULL)
-    				{
-        				MEMCPY(pMe->m_CurMsgNodes, pnode->pItems, sizeof(pMe->m_CurMsgNodes));
-				        for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
-				        {
-				            if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
-				            {
-				                pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
-				                break;
-				            }
-				        }
-				    }
-				    else
+	    				// 重置当前消息列表
+	    				MEMSET(pMe->m_CurMsgNodes, 0, sizeof(pMe->m_CurMsgNodes));
+	    				WmsApp_FreeMsgNodeMs(pMe);
+	    
+	   					 pMe->m_idxCur = 0;
+						#ifdef FEATURE_SMS_UDH
+	    				if (pnode->pItems != NULL)
+	    				{
+	        				MEMCPY(pMe->m_CurMsgNodes, pnode->pItems, sizeof(pMe->m_CurMsgNodes));
+					        for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
+					        {
+					            if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
+					            {
+					                pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
+					                break;
+					            }
+					        }
+					    }
+					    else
 #endif
-				    {
-				        pMe->m_CurMsgNodes[0] = pnode;
-				    }
-				    pMe->m_eCurStore = pnode->mem_store;
-                	// 发送读消息命令
-               		ret = IWMS_MsgRead(pMe->m_pwms,
-                                   pMe->m_clientId,
-                                   &pMe->m_callback,
-                                   (void *)pMe,
-                                   pnode->mem_store,
-                                   pnode->index);
-                    if(ret)
+					    {
+					        pMe->m_CurMsgNodes[0] = pnode;
+					    }
+					    pMe->m_eCurStore = pnode->mem_store;
+	                	// 发送读消息命令
+	               		ret = IWMS_MsgRead(pMe->m_pwms,
+	                                   pMe->m_clientId,
+	                                   &pMe->m_callback,
+	                                   (void *)pMe,
+	                                   pnode->mem_store,
+	                                   pnode->index);
+	                    if(ret)
+	                    {
+	                    	return TRUE;
+	                    }
+                    }
+                    else
                     {
-                    	return TRUE;
+                    	if (NULL != pMe->m_msSend.m_szMessage)
+	            		{
+	                		ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
+	                		(void)ITEXTCTL_SetText(pIText,pMe->m_msSend.m_szMessage,-1);
+	            		}
                     }
                                    /*
                     WmsApp_CombinateMsg(pMe);

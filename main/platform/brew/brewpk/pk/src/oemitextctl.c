@@ -876,6 +876,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
       
        
         case EVT_KEY:
+        MSG_FATAL("EVT_KEY................1",0,0,0);
         #ifdef FEATURE_VERSION_HITZ181
         if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP) && (wParam == AVK_SHIFT))
          	{
@@ -883,6 +884,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
          			SetArrowFlagonIM(FALSE);
 					ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0, 0);
 					OEM_SetInputMode(pme);
+					MSG_FATAL("000000000000000011",0,0,0);
 					return TRUE;
          	}
          		
@@ -913,8 +915,10 @@ if ((!pme->m_pSoftKey) &&
                 ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
 #endif
             {
+            	MSG_FATAL("000000000000000012",0,0,0);
                 if (!pme->m_bActive)
                 {
+                	MSG_FATAL("000000000000000013",0,0,0);
                     return FALSE;
                 }
 				MSG_FATAL("2pme->m_nCurrInputMode===%d",pme->m_nCurrInputMode,0,0);
@@ -1005,17 +1009,19 @@ if ((!pme->m_pSoftKey) &&
              //   return FALSE;                
             //}  
             
-#endif //AEE_SIMULATOR                
+#endif //AEE_SIMULATOR   
+#ifdef FEATURE_ALL_KEY_PAD
             {
                 AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pITextCtl);
                 
                 if((pme->m_nMaxChars == WSTRLEN(pwstrText)) && (wParam >= AVK_0 && wParam <= AVK_9))
                 {
                     ISHELL_HandleEvent(pme->m_pIShell, EVT_CTL_TEXT_TEXTFULL, 0, 0);
+                    MSG_FATAL("EVT_KEY................2",0,0,0);
                     return FALSE;
                 }
             }
-
+#endif
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
             if (wParam >= AVK_0 && wParam <= AVK_9)
             {
@@ -1051,6 +1057,7 @@ if ((!pme->m_pSoftKey) &&
             // See if the Mode menu is displayed...
             if (pme->m_pModeMenu != NULL) 
             {
+            	MSG_FATAL("EVT_KEY................3",0,0,0);
                 if (IMENUCTL_HandleEvent(pme->m_pModeMenu,eCode,wParam,dwParam)) 
                 {
                     return TRUE;
@@ -5171,7 +5178,9 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 
 #endif // FEATURE_CARRIER_VENEZUELA_MOVILNET
 #ifdef FEATURE_MYANMAR_INPUT_MOD    //add by yangdecai 20101223
-	pme->m_nCurrInputModeList[i++] = OEM_MODE_MYANMAR;
+		
+		pme->m_nCurrInputModeList[i++] = OEM_MODE_MYANMAR;
+
 #endif
 
 #ifdef FEATURE_T9_PINYIN
@@ -5425,10 +5434,22 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
                 }
                 else
                 {
-                if (  i == pme->m_nCurrInputModeCount-1 )
-                    pme->m_nCurrInputMode = pme->m_nCurrInputModeList[0];
-                else
-                    pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1];     
+                	if (  i == pme->m_nCurrInputModeCount-1 )
+                	{
+                		MSG_FATAL("1111111============%d",i,0,0);
+                    	pme->m_nCurrInputMode = pme->m_nCurrInputModeList[0];
+                	}
+                	else
+                	{
+                		MSG_FATAL("222222============%d",i,0,0);
+                		#ifdef FEATURE_VERSION_MYANMAR
+                		if(!(pme->m_dwProps & TP_MULTILINE)/*&&( 2== i)*/)
+                		{
+                			pme->m_nCurrInputModeCount = 3;
+                		}
+                		#endif
+                    	pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1];   
+                    }
                 }
                 #endif
             }

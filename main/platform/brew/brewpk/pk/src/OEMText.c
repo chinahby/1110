@@ -1660,12 +1660,13 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
     AVKType key = (AVKType) dwKeyCode;
     MSG_FATAL("...........................1",0,0,0);
     // Press and hold the number key to get the number
-	#if 0
-    if ((eCode != EVT_KEY) 
-        /*&&(!(key == AVK_STAR) && (eCode == EVT_KEY_RELEASE))
-        &&(!(key == AVK_POUND) && (eCode == EVT_KEY_RELEASE))*/ //modi by yangdecai 2010-08-07
-        &&(!((key == AVK_CLR) && (eCode == EVT_KEY_HELD))))
+	#ifndef FEATURE_ALL_KEY_PAD
+    if ((eCode != EVT_KEY))
+       /* &&(!(key == AVK_STAR) && (eCode == EVT_KEY_RELEASE))
+        &&(!(key == AVK_POUND) && (eCode == EVT_KEY_RELEASE)) //modi by yangdecai 2010-08-07
+        &&(!((key == AVK_CLR) && (eCode == EVT_KEY_HELD)))*/
     {
+   		MSG_FATAL(".....................TRUE",0,0,0);
         return FALSE; // We only want key events or CLR held events
     }
 	#else
@@ -1674,6 +1675,7 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
         &&(!(key == AVK_POUND) && (eCode == EVT_KEY_RELEASE))*/ //modi by yangdecai 2010-08-07
          (eCode == EVT_KEY_PRESS))
     {
+       
         return FALSE; // We only want key events or CLR held events
     }
 	#endif
@@ -1684,6 +1686,7 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
             && ((pContext->dwProperties & TP_PASSWORD)||(pContext->dwProperties & TP_USELESS_UPDOWN)) // kai.yao add TP_USELESS_UPDOWN
             && !(pContext->dwProperties & TP_MULTILINE)) 
         {
+        	  
             return FALSE;
         }
         MSG_FATAL("...........................2",0,0,0);
@@ -1738,64 +1741,7 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
                         }
                     }
                     goto OEM_TextKeyPress_COMM;
-                        #if 0
-                        }
-                        else
-                        {
-                            if (!pContext->pwLineStarts)
-                            {
-                                goto OEM_TextKeyPress_COMM;
-                            }
-                            nLine = TextCtl_GetLine(pContext, wSelOld);
-
-                            if ((uint32)OEM_TextGetCursorPos(pContext) == nLen)
-                            {
-                                goto OEM_TextKeyPress_COMM;
-                            }
-                            // If the cursor is on the last line and the line's last character is not
-                            // a LF, then FALSE is returned as nothing can be done. A LF on the end of a line
-                            // Does not tell the wLines member that there is another line, hence this extra check.
-                            if(nLine == (pContext->wLines-1) && pContext->pszContents[nLen-1] != (AECHAR)'\n')
-                            {
-                                goto OEM_TextKeyPress_COMM;
-                            }
-                            // See how many characters into the current line the cursor is
-                            nCharsIn = wSelOld - pContext->pwLineStarts[nLine];
-                            // If the cursor is more characters in than the next line...
-                            // This can happen because the LINEBREAK may be immediate, or at least < nCharsIn
-                            if(nCharsIn + pContext->pwLineStarts[nLine+1] > pContext->pwLineStarts[nLine+2])
-                            {
-                                // If it is the last line, don't subtract the LINEBREAK from selection spot
-                                if( nLine+2 == pContext->wLines )
-                                {
-                                    nSel = pContext->pwLineStarts[nLine+2];
-                                }
-                                else
-                                {
-                                    nSel = pContext->pwLineStarts[nLine+2]-1;
-                                }
-                            }
-                            else
-                            {
-                                // Selection spot is number of chars into the next line
-                                nSel = nCharsIn + pContext->pwLineStarts[nLine+1];
-                                // If this is not the beginning of a line 
-                                // and the selection point is a LINEBREAK, subtract one
-                                // Otherwise the selection overshoots to the first character
-                                // of the following line.
-                                if( nCharsIn && nSel && pContext->pszContents[nSel-1] == LINEBREAK )
-                                {
-                                    nSel--;
-                                }
-                            }
-                        }
-                        OEM_TextSetSel(pContext, nSel,nSel);
-                        TextCtl_AutoScroll(pContext);
-                        OEM_TextUpdate(pContext);
-                        return TRUE;
-                    }
-                    goto OEM_TextKeyPress_COMM;
-                   #endif  
+                        
                     
                 case AVK_LEFT:
                     if (pContext->sFocus == FOCUS_TEXT || 
@@ -1915,7 +1861,7 @@ OEM_TextKeyPress_COMM:
             }
         }
     }
-    
+   
     return TRUE;   // handled always TRUE for now
 }
 
