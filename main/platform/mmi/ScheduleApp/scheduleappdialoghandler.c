@@ -2463,7 +2463,7 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                 nLen = WSTRLEN(pme->wstrYear);
                 (void)WSTRTOSTR(pme->wstrYear, strTep, sizeof(strTep));
                 nRet = STRTOUL(strTep, NULL, 10);
-                if (nLen == 4 && (nRet>2050 || nRet<1901))
+                if (nLen == 4 && (nRet>2050 || nRet<1980))
                 {
                     MEMSET(pme->wstrYear, 0, sizeof(pme->wstrYear));
                     SPRINTF(strTep, "%d", jtdate.wYear);
