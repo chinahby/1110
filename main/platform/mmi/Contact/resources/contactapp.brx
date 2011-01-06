@@ -13,7 +13,7 @@
 	<STRING Id="4" Name="IDS_HOME">
 		<Text>Home</Text>
 	</STRING>
-	<STRING Id="5" Name="IDS_OFFICE" >
+	<STRING Id="5" Name="IDS_OFFICE">
 		<Text>Office</Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_EMAIL">
@@ -893,6 +893,7 @@
 	<DIALOG Id="6034" Name="IDD_SEARCH" Focus="7036">
 		<Controls>
 			<Menu Id="7036" Name="IDC_SEARCH_MENU">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items>
 					<Item Id="8001" Name="IDI_SEARCH_MENU_NAME">
 					</Item>
@@ -901,12 +902,16 @@
 				</Items>
 			</Menu>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<DIALOG Id="6035" Name="IDD_SEARCHNAME" Focus="7037">
 		<Controls>
 			<Text Id="7037" Name="IDC_SEARCHNAME_TEXTCTL">
+				<TitleID>IDS_FIND</TitleID>
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 				<Items/></Text>
 		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
 	<Dialog Id="6036" Name="IDD_NUMFLDVIEW" Focus="0">
 		<Controls>
