@@ -1481,6 +1481,14 @@ static boolean CAppTimer_HandleKeyEvent(CAppTimer *pMe, uint16 wParam)
         if(nKeyMask == 0 || nKeyMask == 1 || nKeyMask == 2 || nKeyMask == 3||nKeyMask == 4||nKeyMask == 5
 			||nKeyMask == 6||nKeyMask == 7||nKeyMask == 8||nKeyMask == 9)
         {
+        	MSG_FATAL("pMe->m_dwHour===%d",pMe->m_dwHour,0,0);
+        	if(nKeyMask == 4||nKeyMask == 5||nKeyMask == 6||nKeyMask == 7||nKeyMask == 8||nKeyMask == 9)
+            {
+            	if((pMe->m_dwHour)>19*MSSEC_PER_HOUR)
+            	{
+            		return TRUE;
+            	}
+            }
             pMe->m_dwHour += nKeyMask * MSSEC_PER_HOUR;
             pMe->m_dwDispTime = pMe->m_dwHour + pMe->m_dwMin  + pMe->m_dwSec;
 
