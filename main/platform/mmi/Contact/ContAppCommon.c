@@ -849,7 +849,7 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
 				return AEE_TM_RAPID;
 			 }
         	#else
-        	    #ifdef FEATURE_VERSION_C306
+        	    #if defined(FEATURE_VERSION_C306)
         	    {
         	    	nv_language_enum_type language;
         	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
@@ -859,15 +859,32 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
         	    	}
         	    	else
         	    	{
-        	    		#ifdef FEATURE_ALL_KEY_PAD
-        	    		return AEE_TM_CAPLOWER;
-        	    		#else
+        	    		
         	    		return AEE_TM_LETTERS;
-        	    		#endif
+        	    		
+        	    	}
+        	    }
+        	    #elif defined(FEATURE_VERSION_MYANMAR)
+        	    {
+        	    	nv_language_enum_type language;
+        	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+                    if(NV_LANGUAGE_MYANMAR == language)
+                    {
+        	    		return AEE_TM_MYANMAR;
+        	    	}
+        	    	else
+        	    	{
+        	    		
+        	    		return AEE_TM_LETTERS;
+        	    		
         	    	}
         	    }
         	    #else
-            	return AEE_TM_CAPLOWER;
+            	#ifdef FEATURE_ALL_KEY_PAD
+	    		return AEE_TM_CAPLOWER;
+	    		#else
+	    		return AEE_TM_LETTERS;
+	    		#endif
             	#endif
         	#endif
         }
@@ -908,7 +925,7 @@ uint32 CContApp_GetFldInputProp(CContApp *pMe, AEEAddrFieldID wFldID)
         case AEE_ADDRFIELD_PHONE_GENERIC:
         case AEE_ADDRFIELD_LOCATION:
         case AEE_ADDRFIELD_GROUP:
-            return (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL);
+            return (TP_MULTILINE | TP_FRAME |TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL);
             
         case AEE_ADDRFIELD_NAME:
             if(IS_RUIM_REC(pMe->m_wEditCont) && (ADDOREDIT_EDIT == pMe->m_nAddnewOrEdit) 

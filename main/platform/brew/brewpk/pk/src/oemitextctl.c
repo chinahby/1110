@@ -2886,6 +2886,11 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 				pme->m_wResID = IDB_MODE_T9_RAPID_ARABIC;
 				break;
 #endif //FEATURE_T9_RAPID_ARABIC
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+			case TEXT_MODE_MYANMAR:
+				pme->m_wResID = IDI_MODE_MYANMAR;
+				break;
+#endif
 
             default:
                 break;
