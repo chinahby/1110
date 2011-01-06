@@ -103,10 +103,10 @@ when         who            what, where, why
 #elif defined(FEATURE_DISP_176X220)
 #define TIMER_SCREEN_HEIGHT    38
 #define TIMER_SCREEN_WIDTH     62
-#define TIMER_IMAGE_WIDTH      125
-#define TIMER_SCREEN_XOFFSET   36
+#define TIMER_IMAGE_WIDTH      138
+#define TIMER_SCREEN_XOFFSET   38
 #define TIMER_SCREEN_YOFFSET   36
-#define TIMER_HEIGHT_N         2
+#define TIMER_HEIGHT_N         3
 
 #else
 #define TIMER_SCREEN_HEIGHT    38

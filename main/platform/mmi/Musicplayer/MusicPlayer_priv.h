@@ -537,9 +537,9 @@ if(!(x))         \
 #define SCHEDULEBAR_H 7
 
 //进度条(简单播放)
-#define SIMSCHEDULEBAR_X 17
+#define SIMSCHEDULEBAR_X 26
 #define SIMSCHEDULEBAR_Y 145
-#define SIMSCHEDULEBAR_W 94
+#define SIMSCHEDULEBAR_W 123
 #define SIMSCHEDULEBAR_H 7
 
 //播放按钮
