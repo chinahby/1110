@@ -54,20 +54,44 @@ when       who     what, where, why
 -------------------------------------------------------------------*/
 
 #define MAX_SHEFTKEYPAD_NUMBER 40
+#define MAX_ARKEYPAD_NUMBER 10
 typedef struct _SheftKeyItem_Own  SheftKeyItem_Own;
 typedef struct _UI_character_type UI_character_type ;
+typedef struct _AR_character_type AR_character_type;
 struct _SheftKeyItem_Own
 {
 	uint16          wParam;
 	uint16          wp;
 	AECHAR          name[1];
 };
+struct _AR_character_type   //add by yangdecai
+{
+	uint16                 wParam;
+	uint16                 wp[10];
+	uint16                 wsize;
+};
+
 struct _UI_character_type
 {
 	uint16          wParam;
 	uint16          wp[8];
 	AECHAR          name[1];
 };
+#ifdef FEATURE_LANG_ARABIC
+static AR_character_type  VLARCharKeyItem[MAX_ARKEYPAD_NUMBER] =
+{
+	{AVK_2,	 {0x0628,0x062A,0x0629,0x062B,'2'},5},
+	{AVK_3,  {0x0623,0x0622,0x0627,0x06F6,0x06CC,0x06CE,'3'},7},
+	{AVK_4,  {0x0633,0x0634,0x0635,0x0636,'4'},5},
+	{AVK_5,  {0x062F,0x0630,0x0631,0x0632,'5'},5},
+	{AVK_6,  {0x062C,0x062D,0x062E,'6'},4},
+	{AVK_7,  {0x0646,0x0624,0x0665,0x0648,0x064A,'7'},6},
+	{AVK_8,  {0x0641,0x0642,0x0643,0x0644,0x0645,'8'},6},
+	{AVK_9,  {0x0637,0x0638,0x0639,0x063A,'9'},5}
+};
+
+#endif
+
 #ifdef FEATURE_LANG_THAI
 static SheftKeyItem_Own  VLCharKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 {

@@ -1869,7 +1869,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                     IImage *RightTopImg; 
                     AEEImageInfo m_Imageinfo = {0};
                     RightTopImg = NULL;   
-					MSG_FATAL("pme->m_wResID:::::::::::::::::::%d",pme->m_wResID,0,0);
+					//MSG_FATAL("1pme->m_wResID:::::::::::::::::::%d,m_Mode=%d",pme->m_wResID,m_Mode,0);
                     RightTopImg = ISHELL_LoadResImage(pme->m_pIShell,
                                         AEE_APPSCOMMONRES_IMAGESFILE,
                                         pme->m_wResID);
@@ -2875,6 +2875,7 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
             case TEXT_MODE_NUMBERS:
                 pme->m_wResID = IDB_MODE_NUMBERS;
                 break;
+				
 #ifdef FEATURE_T9_MT_ARABIC
 			case TEXT_MODE_T9_MT_ARABIC:	
 				pme->m_wResID = IDB_MODE_T9_MT_ARABIC;
@@ -2905,7 +2906,8 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
         }
         TextCtl_CheckEntryMode(pme);
     }
-    
+    // 刷新控件
+    //MSG_FATAL("3pme->m_wResID:::::::::::::::::::=%d,tmCurr=%d",pme->m_wResID,tmCurr,0);
     (void)CTextCtl_Redraw((ITextCtl *)pme);
     tmCurr = OEM_TextGetCurrentMode(pme->m_pText);
     return tmCurr;
@@ -3226,7 +3228,8 @@ static void TextCtl_CalcRects(CTextCtl * pme)
    boolean     bIntegral = (pme->m_dwProps & TP_INTEGRALHEIGHT) != 0;
    boolean     bMulti    = (pme->m_dwProps & TP_MULTILINE) != 0;
    boolean     bFixOEM   = (pme->m_dwProps & TP_FIXOEM) != 0;
-
+   //MSG_FATAL("pme->m_rc.X=%d,pme->m_rc.y=%d",pme->m_rc.x,pme->m_rc.y,0);
+   //MSG_FATAL("pme->m_rc.dX=%d,pme->m_rc.dy=%d",pme->m_rc.dx,pme->m_rc.dy,0);
    rc = pme->m_rc;
 
    if (pme->m_pTitle)
@@ -3297,6 +3300,8 @@ static void TextCtl_CalcRects(CTextCtl * pme)
       }
 
       //pme->m_pText = OEM_TextCreate(pme->m_pIShell, pme->m_pIDisplay, &rc);
+      //MSG_FATAL("rc.X=%d,rc.y=%d",rc.x,rc.y,0);
+      //MSG_FATAL("rc.dX=%d,rc.dy=%d",rc.dx,rc.dy,0);
       pme->m_pText = OEM_TextCreate(pme->m_pIShell, pme->m_pIDisplay, &rc, pme->m_clsMe);
 
       OEM_TextSetProperties(pme->m_pText, pme->m_dwProps);
@@ -5104,7 +5109,7 @@ static void OEM_SetInputMode(CTextCtl * pme)
             pme->m_wResID = IDB_MODE_NUMBERS;
             break;
         }
-
+	//MSG_FATAL("2pme->m_wResID:::::::::::::::::::%d,wMode=%d",pme->m_wResID,wMode,0);
     //设置输入法
     (void)CTextCtl_SetInputMode((ITextCtl *)pme, wMode);
     

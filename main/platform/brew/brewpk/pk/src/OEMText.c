@@ -288,6 +288,7 @@ typedef struct _TextCtlContext {
    boolean              is_bAlt;
    boolean              m_bCaplk;
    boolean              m_islong;
+   uint32               m_curpos;
 } TextCtlContext;
 
 typedef boolean         (*PFN_ModeCharHandler)(TextCtlContext *,AEEEvent, AVKType);
@@ -507,7 +508,19 @@ T9KeyMap ThaiAlphabetic2T9Map[] =
     {T9KEYNONE,   AVK_SEND}, {T9KEYNONE,    AVK_END}, {0,0}
 };
 #endif //#ifdef FEATURE_T9_ALPHABETIC
-    
+#ifdef FEATURE_LANG_ARABIC
+T9KeyMap ThaiArabic2T9Map[] = 
+{
+    {T9KEYAMBIG1,    AVK_1}, {T9KEYAMBIG2,    AVK_2}, {T9KEYAMBIG3,    AVK_3},
+    {T9KEYAMBIG4,    AVK_4}, {T9KEYAMBIG5,    AVK_5}, {T9KEYAMBIG6,    AVK_6}, 
+    {T9KEYAMBIG7,    AVK_7}, {T9KEYAMBIG8,    AVK_8}, {T9KEYAMBIG9,    AVK_9}, 
+    {T9KEYAMBIGA,    AVK_0}, {T9KEYAMBIGB,  AVK_STAR},{T9KEYAMBIGC, AVK_POUND},
+    {T9KEYNONE, AVK_SELECT}, {T9KEYCLEAR,   AVK_CLR}, {T9KEYNEXT,   AVK_DOWN}, 
+    {T9KEYPREV,     AVK_UP}, {T9KEYLEFT,   AVK_LEFT}, {T9KEYRIGHT, AVK_RIGHT},  
+    {T9KEYNONE,   AVK_SEND}, {T9KEYNONE,    AVK_END}, {0,0}
+};
+
+#endif
     
 #ifdef FEATURE_T9_CHINESE
 /* Translates Zhuyin keys to T9 key codes */
@@ -866,7 +879,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    pNewContext->nMultitapCaps = MULTITAP_FIRST_CAP;
    pNewContext->m_bCaplk = FALSE;
    pNewContext->m_islong = FALSE;
-
+   pNewContext->m_curpos = 0;  //add by yangdecai
    pNewContext->nLineHeight =
                      IDISPLAY_GetFontMetrics((IDisplay*)pNewContext->pIDisplay,
                                               AEE_FONT_NORMAL,
@@ -925,6 +938,8 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    TextCtl_TextChanged(pNewContext);
 
    // Restart the edit if editable
+   //MSG_FATAL("pNewContext->rectDisplay.X=%d,pNewContext->rectDisplay.y=%d",pNewContext->rectDisplay.x,pNewContext->rectDisplay.y,0);
+   //MSG_FATAL("pNewContext->rectDisplay.dX=%d,pNewContext->rectDisplay.dy=%d",pNewContext->rectDisplay.dx,pNewContext->rectDisplay.dy,0);
    MSG_FATAL("TextCtl_RestartEdit..........................",0,0,0);
    TextCtl_RestartEdit(pNewContext);
 
@@ -1079,7 +1094,7 @@ SEE ALSO:
 AEETextInputMode OEM_TextGetCurrentMode(OEMCONTEXT hTextCtl)
 {
    register TextCtlContext *pContext = (TextCtlContext *) hTextCtl;
-
+   //MSG_FATAL("sTextModes[pContext?pContex%d",sTextModes[pContext?pContext->byMode:0].info.wID,0,0);
    return sTextModes[pContext?pContext->byMode:0].info.wID;
 }
 
@@ -2002,7 +2017,8 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
         if (pContext->dwProperties & TP_FRAME) 
         {
             AEERect rect = pContext->rectDisplay;
-
+			//MSG_FATAL("rect.X=%d,rect.y=%d",rect.x,rect.y,0);
+			//MSG_FATAL("rect.dX=%d,rect.dy=%d",rect.dx,rect.dy,0);
             // See side effects above!
             if (pContext->dwProperties & TP_DISPLAY_COUNT) 
             {
@@ -3344,10 +3360,12 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 {
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
     AEERect draw, scratch  = *cursRect;
-
     scratch.dx = 1;
     scratch.dy = 14; 
-
+    //MSG_FATAL("scratch.x=%d,scratch.y=%d",scratch.x,scratch.y,0);
+	//MSG_FATAL("scratch.dx=%d,scratch.dy=%d",scratch.dx,scratch.dy,0);
+	//MSG_FATAL("clipRect.x=%d,clipRect.y=%d",clipRect->x,clipRect->y,0);
+	//MSG_FATAL("clipRect.dx=%d,clipRect.dy=%d",clipRect->dx,clipRect->dy,0);
     if (IntersectRect(&draw, &scratch, clipRect))
     {
     	#if defined(FEATURE_VERSION_C306)
@@ -3355,7 +3373,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 		   	nv_language_enum_type language;
            	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
            	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
-		      (pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC || pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
+		      (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
            	{
 		    	
 		    	int temp = 0;
@@ -3381,7 +3399,9 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
         }
 		#endif
         pContext->CursorDrawRectTimerPara = draw;
-        //memcpy((char *)&(pContext->CursorDrawRectTimerPara), (char *)&draw, sizeof(AEERect));
+        
+        //MSG_FATAL("2draw.x=%d,draw.y=%d",draw.x,draw.y,0);
+	   	//MSG_FATAL("2draw.dx=%d,draw.dy=%d",draw.dx,draw.dy,0);
         TextCtl_DrawCursorTimer(pContext);
     }
     else
@@ -3393,6 +3413,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 	   scratch.dy = pContext->nFontAscent + pContext->nFontDescent; 
 	   // Vertical bar
 	   // 单行垂直方向居中对齐
+	   
 	   if (IntersectRect(&draw, &scratch, clipRect))
 	   {
 	       if(!(pContext->dwProperties & TP_MULTILINE) && 
@@ -3408,7 +3429,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 			   	nv_language_enum_type language;
 	           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
 	           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
-		          (pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC && pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
+		          (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
 	           	{
 			    	MSG_FATAL("...............................1",0,0,0);
 			    	draw.x = (clipRect->x+clipRect->dx)-2;
@@ -3552,7 +3573,8 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    rectClip.y  = pContext->rectDisplay.y;
    rectClip.dx = pContext->rectDisplay.dx;
    rectClip.dy = pContext->rectDisplay.dy;
-
+   //MSG_FATAL("pContext->rectDisplay=%d,rectClip.y=%d",pContext->rectDisplay.x,pContext->rectDisplay.y,0);
+   //MSG_FATAL("pContext->rectDisplay=%d,rectClip.dy=%d",pContext->rectDisplay.dx,pContext->rectDisplay.dy,0);
    if (bFrame) {
       rectClip.x  += 1;
       rectClip.y  += 1;
@@ -3570,6 +3592,8 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
       }
    }
    rectText = rectClip;
+   //MSG_FATAL("rectClipx=%d,rectClip.y=%d",rectClip.x,rectClip.y,0);
+   //MSG_FATAL("rectClipdx=%d,rectClip.dy=%d",rectClip.dx,rectClip.dy,0);
    rectText.dy = pContext->nFontAscent + pContext->nFontDescent;
 
    rectLeading = rectText;
@@ -3647,7 +3671,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                if(pContext->dwProperties & TP_GRAPHIC_BG)
                {
                    TextCtl_DrawBackGround(pContext, &rectText);
-                
+                   //MSG_FATAL("IDISPLAY_DrawText.............1",0,0,0);
                    (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                        pContext->font,
                                        wszHide,
@@ -3659,7 +3683,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                }
                else
                {
-               		
+               		//MSG_FATAL("IDISPLAY_DrawText.............2",0,0,0);
                     (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                         pContext->font,
                                         wszHide,
@@ -3676,17 +3700,21 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                   (pContext->dwProperties & TP_FIXOEM))
          {
          #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-          if(pContext->dwProperties & TP_GRAPHIC_BG)
+          		if(pContext->dwProperties & TP_GRAPHIC_BG)
                 {
                     TextCtl_DrawBackGround(pContext, &rectText);
                 }
-                MSG_FATAL("IDISPLAY_DrawText......7",0,0,0);
+               // MSG_FATAL("rectText.x=%d,rectText.y=%d",rectText.x,rectText.y,0);
+               // MSG_FATAL("rectText.dx=%d,rectText.dy=%d",rectText.dx,rectText.dy,0);
+				//MSG_FATAL("rectClipx=%d,rectClip.y=%d",rectClip.x,rectClip.y,0);
+   				//MSG_FATAL("rectClipdx=%d,rectClip.dy=%d",rectClip.dx,rectClip.dy,0);
+               // MSG_FATAL("",0,0,0);
                 #if defined(FEATURE_VERSION_C306)
 				{
 				   	nv_language_enum_type language;
 		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
 		           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
-		           	  (pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC || pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
+		           	  (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
 		           	{
 		           		int temp = 0;
 		           		int j = 0;
@@ -3730,7 +3758,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
             if(pContext->dwProperties & TP_GRAPHIC_BG)
             {
                 TextCtl_DrawBackGround(pContext, &rectClip);
-			
+				//MSG_FATAL("IDISPLAY_DrawText.............3",0,0,0);
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                       pContext->font,
                                       pContext->pwLineStarts[i] +
@@ -3743,7 +3771,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
             }
             else
             {
-            	
+            	//MSG_FATAL("IDISPLAY_DrawText.............4",0,0,0);
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                       pContext->font,
                                       pContext->pwLineStarts[i] +
@@ -3769,7 +3797,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
 		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
 		           	IDISPLAY_FillRect(pContext->pIDisplay, &rectText, RGB_WHITE);
 		           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
-		           	  (pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC || pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
+		           	  (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
 		           	{
 		           		int temp = 0;
 		           		int j = 0;
@@ -3790,6 +3818,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
 				    }
 		        }
 				#endif
+                //MSG_FATAL("IDISPLAY_DrawText.............5",0,0,0);
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                          pContext->font,
                                          pContext->pwLineStarts[i] + pContext->pszContents,
@@ -3810,7 +3839,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                 if(pContext->dwProperties & TP_GRAPHIC_BG)
                 {
                     TextCtl_DrawBackGround(pContext, &rectText);
-                  
+                  	//MSG_FATAL("IDISPLAY_DrawText.............6",0,0,0);
                     (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                              pContext->font,
                                              pContext->pwLineStarts[i] +
@@ -3823,7 +3852,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                 }
                 else
                 {
-                	
+                	//MSG_FATAL("IDISPLAY_DrawText.............7",0,0,0);
                     (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                              pContext->font,
                                              pContext->pwLineStarts[i] +
@@ -3842,6 +3871,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
          {
             if (wSelStartLine == i && pContext->bEditable) 
             {
+              // MSG_FATAL("bCursor.......................7",0,0,0);
                cursRect.x = (int16)cursorx1;//rectText.x + (int16)(cursorx1);
                cursRect.y = rectText.y; // Would subtract 1, but vertical leading
                                         // is embedded in our fonts too
@@ -3958,7 +3988,8 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                }
                else
                {
-               		
+               		//MSG_FATAL("invertRectx=%d,invertRecty=%d",invertRect.x,invertRect.y,0);
+               		//MSG_FATAL("invertRectx=%dx,invertRecty=%dy",invertRect.dx,invertRect.dy,0);
                     IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
                }
             }
@@ -4016,7 +4047,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                // else We compromise a bit if we're at the left edge and
                //     don't move left 1 pixel since it would leave the vertical
                //     bar of the cursor outside the clipping rectangle!
-
+			  // MSG_FATAL("bCursor.......................8",0,0,0);
                cursRect.x = (int16) (cursX-2);
                cursRect.y = rectText.y; // Would subtract 1, but vertical leading
                                         // is embedded in our fonts too
@@ -4157,7 +4188,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
             // Must draw a cursor.  We can only get here if the text
             // is completely empty, so just use a nice cursor rectangle
             // at where the start of the text would be
-
+			//MSG_FATAL("bCursorrectText.x=%d,rectText.y=%d",rectText.x,rectText.y,0);
             cursRect.x = rectText.x - 2;
             cursRect.y = rectText.y;
             cursRect.dx = 5;
@@ -6296,7 +6327,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	    }   
 	}
 #else
-	ERR("T9TextCtl_MultitapKey::1",0,0,0);
+	//MSG_FATAL("T9TextCtl_MultitapKey::1",0,0,0);
     t9Key     = T9_BrewKeyToT9AlphabeticKey (pContext, eCode,key );
     
     if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
@@ -6316,7 +6347,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             return FALSE;          
         }
     }    
-    ERR("T9TextCtl_MultitapKey::2",0,0,0);
+    //MSG_FATAL("T9TextCtl_MultitapKey::2",0,0,0);
     if ( pContext->wMaxChars != 0 && 
          nBufLen >= pContext->wMaxChars &&
          (( t9Key >= T9KEYAMBIG1 && t9Key <= T9KEYAMBIGC) || T9KEYSPACE == t9Key ) )
@@ -6328,7 +6359,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             return FALSE;
         }
     }    
-    ERR("T9TextCtl_MultitapKey::3",0,0,0);
+    //MSG_FATAL("T9TextCtl_MultitapKey::3",0,0,0);
     switch ( t9Key) 
     {
         case T9KEYAMBIG1:
@@ -6343,10 +6374,12 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
         case T9KEYAMBIGA:
         case T9KEYAMBIGB: 
         case T9KEYAMBIGC: 
-            ERR("T9TextCtl_MultitapKey::4",0,0,0);
-            pContext->sFocus = FOCUS_SELECTION;              
+            //MSG_FATAL("T9TextCtl_MultitapKey::4",0,0,0);
+            pContext->sFocus = FOCUS_SELECTION;    
+            //MSG_FATAL("1pContext->uModeInfo.mtap.kLast=%d",pContext->uModeInfo.mtap.kLast,0,0);
             if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
             { 
+            	//MSG_FATAL("2pContext->uModeInfo.mtap.kLast=%d",pContext->uModeInfo.mtap.kLast,0,0);
                 T9TimeOut(&pContext->sT9awFieldInfo.G, 1);         
                 pContext->uModeInfo.mtap.nSubChar = 0;                 
             } 
@@ -6355,6 +6388,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                 // when key != kLast    
                 pContext->uModeInfo.mtap.nSubChar = 0;         
                 pContext->wSelStart = pContext->sT9awFieldInfo.G.nCursor;      
+                //MSG_FATAL("pContext->wSelStart=%d",pContext->wSelStart,0,0);
                 if (pContext->uModeInfo.mtap.kLast >= AVK_0 
                      && pContext->uModeInfo.mtap.kLast <= AVK_9 
                      //&& TEXT_MODE_MULTITAP == OEM_TextGetCurrentMode(pContext)
@@ -6373,7 +6407,41 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                    pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
                 }                                        
             } 
-            sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );              
+            
+            sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
+            #ifdef FEATURE_T9_MT_ARABIC
+            if(pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED)
+            {
+            	uint32 i,j;
+            	uint32 AVK_Size = 0;
+            	for(i = 0;i<MAX_ARKEYPAD_NUMBER;i++)
+	    		{
+            		if (key == VLARCharKeyItem[i].wParam)
+            		{
+            			AVK_Size = VLARCharKeyItem[i].wsize;
+            			//j = STRLEN(pContext->sT9awFieldInfo.G.psTxtBuf);
+            			//pContext->sT9awFieldInfo.G.psTxtBuf+(pContext->sT9awFieldInfo.G.nCursor-1) = VLARCharKeyItem[i].wp[pContext->m_curpos];
+            			pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = VLARCharKeyItem[i].wp[pContext->m_curpos];
+            			if(pContext->m_curpos<(AVK_Size-1))
+            			{
+            				pContext->m_curpos = pContext->m_curpos+1;
+            				
+            			}
+            			else
+            			{
+            				pContext->m_curpos = 0;
+            			}
+            			MSG_FATAL("pContext->m_curpos==========%d",pContext->m_curpos,0,0);
+            		}
+            	}
+            }
+            #endif
+            //MSG_FATAL("pContext->sT9awFieldInfo.G.nCursor=%d",pContext->sT9awFieldInfo.G.nCursor,0,0);
+            //MSG_FATAL("pContext->sT9awFieldInfo.G.nWordLen=%d",pContext->sT9awFieldInfo.G.nWordLen,0,0);
+           // MSG_FATAL("pContext->sT9awFieldInfo.G.nBufLen=%d",pContext->sT9awFieldInfo.G.nBufLen,0,0);
+           // MSG_FATAL("pContext->sT9awFieldInfo.G.nBufLenMax=%d",pContext->sT9awFieldInfo.G.nBufLenMax,0,0);
+           // MSG_FATAL("pContext->sT9awFieldInfo.G.psTxtBuf=%0x",*(pContext->sT9awFieldInfo.G.psTxtBuf),0,0);
+           // MSG_FATAL("pContext->sT9awFieldInfo.G.nCurSelObj=%d",pContext->sT9awFieldInfo.G.nCurSelObj,0,0);
             break;        
 
         case T9KEYLEFT:
@@ -6590,12 +6658,12 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             }
 
         default:
-            ERR("T9TextCtl_MultitapKey::11",0,0,0);
+           // MSG_FATAL("T9TextCtl_MultitapKey::11",0,0,0);
             pContext->sFocus = FOCUS_TEXT;   
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );  
             break;  
     }   
-    ERR("T9TextCtl_MultitapKey::12",0,0,0);
+   // MSG_FATAL("T9TextCtl_MultitapKey::12",0,0,0);
     pContext->uModeInfo.mtap.kLast = key;   
 
     //display strings
@@ -6613,7 +6681,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                         TextCtl_MultitapTimer,
                         pContext);  
     }
-    ERR("T9TextCtl_MultitapKey::13",0,0,0);
+   // MSG_FATAL("T9TextCtl_MultitapKey::13",0,0,0);
 #endif	
     
     return bRet;
@@ -8497,7 +8565,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
 
     nCursor = pContext->sT9awFieldInfo.G.nCursor;
     nBufLen = pContext->sT9awFieldInfo.G.nBufLen;
-
+//	MSG_FATAL("T9_AW_DisplayText........11111",0,0,0);
      if ( !pContext->wMaxChars || nBufLen <= pContext->wMaxChars ) 
      {
         // don't forget to include the
@@ -8512,7 +8580,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
            return FALSE;
         }
         pContext->pszContents = pNewContents;
-        
+     //   MSG_FATAL("T9_AW_DisplayText........11122",0,0,0);
         if((TEXT_MODE_MULTITAP == OEM_TextGetCurrentMode((OEMCONTEXT)pContext))
             &&(key >= AVK_0 && key <= AVK_9))
         {
@@ -8790,7 +8858,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
                     }
             }
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
-
+		//MSG_FATAL("T9_AW_DisplayText........11133",0,0,0);
         SymbToAECHARNCopy ( pContext->pszContents, 
                             pContext->sT9awFieldInfo.G.psTxtBuf, 
                             nBufLen );
@@ -8815,6 +8883,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
     if ( bModified ) 
     {         
         // Now re-calc and re-draw
+//        MSG_FATAL("bModified===========%d",bModified,0,0);
         TextCtl_TextChanged(pContext);
     }
     return bModified;
@@ -8860,6 +8929,32 @@ static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent eCode
             }            
             break;
 #endif //FEATURE_T9_RAPID_THAI
+#ifdef FEATURE_T9_RAPID_ARABIC
+		case TEXT_MODE_T9_RAPID_ARABIC:
+		{
+			for (i = 0; ThaiArabic2T9Map[i].cKey != 0; i++) 
+            {
+                if (ThaiArabic2T9Map[i].cKey == cKey)
+                {
+                    return ThaiArabic2T9Map[i].mKey;
+                }
+            }            
+            break;
+		}
+#endif
+#ifdef FEATURE_T9_MT_ARABIC
+		case TEXT_MODE_T9_MT_ARABIC:
+		{
+			for (i = 0; ThaiArabic2T9Map[i].cKey != 0; i++) 
+            {
+                if (ThaiArabic2T9Map[i].cKey == cKey)
+                {
+                    return ThaiArabic2T9Map[i].mKey;
+                }
+            }            
+            break;
+		}
+#endif
 
 #ifdef FEATURE_T9_MULTITAP    
         case TEXT_MODE_MULTITAP:    
@@ -11388,10 +11483,11 @@ static void TextCtl_MultitapTimer(void *pUser)
    TextCtl_NoSelection(pContext);
 
    pContext->uModeInfo.mtap.kLast = AVK_UNDEFINED;
-
+//   MSG_FATAL("TextCtl_MultitapTimer..................",0,0,0);
    if (pContext->bNeedsDraw ) {
       // Force drawing now or the selection won't be removed!
       if (pContext->bNeedsDraw) {
+      //	  MSG_FATAL("OEM_TextDraw...................",0,0,0);
          OEM_TextDraw(pContext);
       }
       IDISPLAY_Update(pContext->pIDisplay);
@@ -11417,6 +11513,7 @@ static void TextCtl_MultitapTimer(void *pUser)
    {
       pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
    }
+   pContext->m_curpos = 0;
 }
 
 /*=================================================================

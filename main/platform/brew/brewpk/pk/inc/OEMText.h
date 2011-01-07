@@ -103,7 +103,7 @@ when       who     what, where, why
 
 #ifdef FEATURE_LANG_ARABIC
 #define FEATURE_T9_MT_ARABIC
-#define FEATURE_T9_RAPID_ARABIC
+//#define FEATURE_T9_RAPID_ARABIC
 #endif //FEATURE_LANG_ARABIC
 
 #ifdef FEATURE_LANG_HEBREW
