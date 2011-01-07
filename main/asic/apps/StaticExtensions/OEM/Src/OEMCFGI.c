@@ -2820,9 +2820,9 @@ void OEM_RestoreFactorySetting( void )
    nvi_cache.ringer_level = OEMNV_VOLUME_MAX;
 
    // CFGI_EAR_VOL:
-   nvi.ear_level = OEMNV_VOLUME_MAX;
+   nvi.ear_level = OEMNV_VOLUME_HIGH;
    (void) OEMNV_Put( NV_EAR_LVL_I, &nvi );
-   nvi_cache.handset_ear_level = OEMNV_VOLUME_MAX;
+   nvi_cache.handset_ear_level = OEMNV_VOLUME_HIGH;
 
    // CFGI_BEEP_VOL:
    nvi.beep_level = OEMNV_VOLUME_LOW;
