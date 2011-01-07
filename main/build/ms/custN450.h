@@ -19,7 +19,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_GPIO_31_SIGNAL_OUPUT_31		//GPIO_31_SIGNAL == GPIO_OUTPUT_31
 //Add End
 
-#define FEATURE_SMS_UDH
+//#define FEATURE_SMS_UDH
 //#define FEATURE_SUPPORT_ID
 #define FEATURE_WMS_APP
 #define FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
