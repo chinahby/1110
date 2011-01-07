@@ -204,7 +204,7 @@ typedef enum MGDLGLevel{
 #define MG_CONVERT_SHIFTBITS      20
 #define MG_CONVERT_DATALEN        20
 #define MG_MEMUNIT_STRLENMAX      32
-#define MG_MEMSTAT_ITEMMAX        6
+#define MG_MEMSTAT_ITEMMAX        3
 
 /*unit for memory space*/
 typedef enum MG_MEMUNIT{
