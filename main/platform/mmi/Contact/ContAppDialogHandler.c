@@ -2609,7 +2609,18 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                 return TRUE;
             }
 #elif defined(FEATURE_LANG_ARABIC)   //add by yangdecai
-			ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
+			{
+				nv_language_enum_type language;
+				OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+				if(NV_LANGUAGE_ARABIC == language)
+				{
+					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
+				}
+				else
+				{
+					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
+				}
+			}
 #endif
             switch (wParam)
             {
@@ -3725,7 +3736,18 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             ITEXTCTL_SetRect(pTextCtl, &textrc);
             CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
             #if defined(FEATURE_LANG_ARABIC)   //add by yangdecai
-			ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
+            {
+				nv_language_enum_type language;
+				OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+				if(NV_LANGUAGE_ARABIC == language)
+				{
+					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
+				}
+				else
+				{
+					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
+				}
+			}
 			#endif
 #endif
             ITEXTCTL_SetMaxSize(pTextCtl, MAX_INPUT_NAME_EN); 
