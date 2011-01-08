@@ -5898,20 +5898,25 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
 
             if( wParam == AVK_SELECT || wParam == AVK_CLR)
             {
+            
 #ifdef FEATURE_SPORTS_APP
-                if(g_nCurEvtStyle == 2)
+                if(g_nCurEvtStyle == 0)
                 {
+                
+				
                     if(wParam == AVK_SELECT)
                     {
+                    
                         char     args[20] = {0};
                         //char      buf[20];
+                        DBGPRINTF("------------------>ok1",); 
                         SPRINTF(args, "%c", 
                             STARTARG_SPORT);
-        
+        				
                         //args = STRDUP(buf);
                         /*Cancel timer and StopRingAlert*/
                         ISHELL_CancelTimer( pme->m_pShell, 0, &(pme->m_CalMgr));
-                        //stopRingerAlert( &pme->m_CalMgr);
+                        stopRingerAlert( &pme->m_CalMgr);
                         
                         {
                             Appointment* pAppointment = 0;
@@ -5936,11 +5941,12 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
 
                     if( wParam == AVK_CLR)
                     {
+                    
 
                         Appointment* pAppointment = 0;
                         int          i            = 0;
                         int          end          = GET_EXPIREDAPPOINTMENT_NUMBER( &pme->m_CalMgr);
-
+						DBGPRINTF("----------------------->ok2"); 
                         for( i = 1; i <= end; i ++)
                         {
                             pAppointment = pme->m_CalMgr.m_expiredAppointment[i];
