@@ -15897,6 +15897,22 @@ boolean WMSAPPMN_TextSoftKeyDlgEventHandler(void *pUser, AEEEvent evt, uint16 w,
           wMenuCtrID = WMSAPPMN_GetDlgMenuCtlID(pMe,pIDialog);
           (void)IDIALOG_SetFocus(pIDialog, (int16)wMenuCtrID);
           return TRUE;
+		 case AVK_CAMERA:
+    	 #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+		 {
+			nv_item_type	  SimChoice;
+			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+			if(SimChoice.sim_select ==AVK_SEND_TWO)
+			{
+				if(wDlgID == IDD_VOICEMAIL_NUMBER)
+          		{
+            		(void)WMSAPPMN_CallVoiceMailNum(pMe);
+				}
+			}
+			return TRUE;
+		}
+		#endif
+		break;
 
         case AVK_SEND:
           if(wDlgID == IDD_VOICEMAIL_NUMBER)
@@ -17850,6 +17866,26 @@ boolean WMSAPPMN_ViewSMSDlgEventHandler(void *pUser, AEEEvent evt, uint16 w, uin
           }
         }
       }
+	  else if (w == AVK_CAMERA)
+	  {
+
+    	 #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+		 {
+			nv_item_type	  SimChoice;
+			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+			if(SimChoice.sim_select ==AVK_SEND_TWO)
+			{
+				 if (WMSAPPMN_CallNumber(pMe) == FALSE)
+        		{
+          			if (!pMe->m_bSuspended)
+          			{
+            			(void)WMSAPPMN_DisplayMsgDlg(pMe, 0, "Invalid Callback Number present", SELECTIONVERIFICATIONTIME);
+          			}
+        		}
+			}
+	      }
+	     #endif
+	  }
       return TRUE;
 
     case EVT_COMMAND:
@@ -18120,6 +18156,44 @@ boolean WMSAPPMN_ViewMsgInfoDlgEvtHandler(void *pUser, AEEEvent evt, uint16 w, u
           }
         }
       }
+      else if (w == AVK_CAMERA)
+      {
+	      #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+			 {
+				nv_item_type	  SimChoice;
+				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+				if(SimChoice.sim_select ==AVK_SEND_TWO)
+				{
+					if(pMe->m_modeControl == WMSAPP_MODE_CDMA)
+			        {
+			    #ifdef FEATURE_CDSMS
+			          /* Initialize other to 0 */
+			          (void)MEMSET( &pMe->m_pClient_ts->u.cdma.other, 0, sizeof(wms_other_parm_s_type) );
+
+			          if(IWMS_TsDecode( pMe->m_pwms, &(pMe->m_pClient_msg->u.cdma_message.raw_ts), pMe->m_pClient_ts) != SUCCESS)
+			          {
+			            MSG_ERROR("Decoding failed!",0,0,0);
+			          }
+			    #endif /*FEATURE_CDSMS*/
+			        }
+			        else
+			        {
+			    #ifdef FEATURE_GWSMS
+#error code not present
+			    #endif /*FEATURE_GWSMS*/
+			        }
+
+			        if (WMSAPPMN_CallNumber(pMe) == FALSE)
+			        {
+			          if (!pMe->m_bSuspended)
+			          {
+			            (void)WMSAPPMN_DisplayMsgDlg(pMe, 0, "Invalid Callback Number present", SELECTIONVERIFICATIONTIME);
+			          }
+			        }
+				}
+			}
+		  #endif
+	  }
       return TRUE;
 
     case EVT_COMMAND:
@@ -18385,6 +18459,9 @@ boolean WMSAPPMN_MsgDlgEventHandler(void *pUser, AEEEvent evt, uint16 w, uint32 
         case AVK_SELECT:
           /* send key */
         case AVK_SEND:
+        #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+        case AVK_CAMERA:
+        #endif
           /* clear key */
         case AVK_CLR:
         case AVK_MESSAGE:  /* message, menu and mute not sure..!!!! */

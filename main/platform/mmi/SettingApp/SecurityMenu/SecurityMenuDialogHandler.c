@@ -4584,7 +4584,26 @@ static boolean  SecurityEmergencyCallHandler(CSecurityMenu *pMe,
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
-  
+  				case AVK_CAMERA:
+            	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+                {
+					nv_item_type	SimChoice;
+					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					if(SimChoice.sim_select ==AVK_SEND_TWO)
+					{
+						CtlAddItem ai;
+                        uint16   wID;
+                        
+                        wID = IMENUCTL_GetSel(pMenu);
+                        if (IMENUCTL_GetItem(pMenu, wID, &ai))
+                        {
+                           (void)MakeVoiceCall(pMe->m_pShell, FALSE, (AECHAR *)ai.pText);
+                        }
+					}
+					return TRUE;
+				}
+				#endif
+				break;
                 case AVK_SEND:
                     {
                         CtlAddItem ai;

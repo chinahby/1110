@@ -811,6 +811,13 @@ typedef struct WmsApp
 #else
 #define DATA_NOT_RECEIVED    "(Data not received)"
 #endif
+#if defined(FEATURE_VERSION_C306)
+#define AVK_SEND_TWO     2
+#elif defined(FEATURE_VERSION_N450)
+#define AVK_SEND_TWO     1
+#else
+#define AVK_SEND_TWO     1
+#endif
 
 // 调用接口的目的
 #define STARTARGPREFIX_SENDTEXTMESSAGE      'S'

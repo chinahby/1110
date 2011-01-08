@@ -281,6 +281,13 @@ typedef struct _CSecurityMenu
 #define SECRUITY_MENU_SOFK_HIGHT 0
 #define FIRSR_MENU_LINE 33
 #define LAST_MENU_GAP   27
+#if defined(FEATURE_VERSION_C306)
+#define AVK_SEND_TWO     2
+#elif defined(FEATURE_VERSION_N450)
+#define AVK_SEND_TWO     1
+#else
+#define AVK_SEND_TWO     1
+#endif
 
 // Max number of attempts to enter the security code.  This
 // value is only used in the non R-UIM build or when CHV1

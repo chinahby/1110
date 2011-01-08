@@ -1403,7 +1403,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
   				case AVK_CAMERA:
-            	#if defined(FEATURE_VERSION_C306)
+            	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
             	{
 				nv_item_type	SimChoice;
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -1644,7 +1644,7 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306)
+                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -2001,7 +2001,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306)
+                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -2288,7 +2288,7 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306)
+                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -3240,7 +3240,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         return TRUE;
                     case AVK_CAMERA:
                     
-						#if defined(FEATURE_VERSION_C306)
+						#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
 						{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);

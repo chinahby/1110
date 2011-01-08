@@ -2051,6 +2051,49 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                         return TRUE;
 //miaoxiaoming add , press send key at messagelist page,then dial out  						
 #ifdef CUST_EDITION
+#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+					case AVK_CAMERA:
+			 		{
+						nv_item_type	  SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select ==AVK_SEND_TWO)
+						{
+							wms_cache_info_node *pNode;
+							AECHAR  wstrNum[MAX_PH_DIGITS+1];
+							wms_message_index_type wIndex = 0;
+							
+							if (pMe->m_eMBoxType == WMS_MB_INBOX)
+							{				
+							
+								pMe->m_wPrevMenuSel = IMENUCTL_GetSel(pMenu);
+								pMe->m_wCurindex = pMe->m_wPrevMenuSel - MSG_CMD_BASE;
+								wIndex = pMe->m_wCurindex;
+	                
+				                // 取消息 cache info 节点
+				                if (wIndex>=RUIM_MSGINDEX_BASE)
+				                {
+				                    wIndex = wIndex - RUIM_MSGINDEX_BASE;
+				                    pNode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_RUIM, wIndex);
+				                }
+				                else
+				                {
+				                    pNode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_NV_CDMA, wIndex);
+				                }
+														
+								(void)STRTOWSTR(pNode->pszNum, wstrNum, sizeof(wstrNum));
+								
+								if (WSTRLEN(wstrNum) > 0)
+			                    {
+			                        // 调用呼叫接口，本 Applet 会被挂起，返回时回到当前状态
+			                        WMSExtApp_CallPhoneNumber(pMe,wstrNum, FALSE);
+			                    }
+								return TRUE;
+							}
+							return TRUE;
+						}
+					}
+					break;
+					#endif
 					case AVK_SEND:
 					{
 						wms_cache_info_node *pNode;
@@ -2500,7 +2543,35 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
 					return TRUE;
 				}
 				//Add End
-  
+  #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+  				case AVK_CAMERA:
+  				{
+  					nv_item_type	  SimChoice;
+					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					if(SimChoice.sim_select ==AVK_SEND_TWO)
+					{
+						if (pMe->m_currState == WMSST_VIEWINBOXMSG)
+	                	{                	
+#if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET) || defined(FEATURE_CARRIER_THAILAND_HUTCH)
+		                    // 该运营商要求 CBN 优先
+		                    if (WSTRLEN(pMe->m_msCur.m_szCallBkNum) > 0)
+		                    {
+		                        // 调用呼叫接口，本 Applet 会被挂起，返回时回到当前状态
+		                        WMSExtApp_CallPhoneNumber(pMe, pMe->m_msCur.m_szCallBkNum, FALSE);
+		                    }
+		                    else 
+#endif                    
+		                    if (WSTRLEN(pMe->m_msCur.m_szNum) > 0)
+		                    {
+		                        // 调用呼叫接口，本 Applet 会被挂起，返回时回到当前状态
+		                        WMSExtApp_CallPhoneNumber(pMe, pMe->m_msCur.m_szNum, FALSE);
+		                    }
+						}
+						return TRUE;
+					}
+  				}
+  				break;
+  #endif
                 case AVK_SELECT:
                     CLOSE_DIALOG(DLGRET_OK)
                     return TRUE;
@@ -12039,7 +12110,32 @@ static boolean IDD_EXTARCTEDITEMLIST_Handler(void *pUser,
                         }
                     }
                     return TRUE;
-                    
+#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+					case AVK_CAMERA:
+					{
+						nv_item_type		SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select ==AVK_SEND_TWO)
+						{
+							if (pMe->m_ExtractType == EXTRACT_NUM)
+		                    {
+		                        int32     i;
+		                        AECHAR    *pItem = NULL;
+		                        
+		                        i = IMENUCTL_GetSel(pMenu) - MSG_CMD_BASE;
+		                        pItem = (AECHAR *)IVector_ElementAt(pMe->m_pSaveNumList, i);
+		                        if (NULL != pItem)
+		                        {
+		                            // 调用呼叫接口，本 Applet 会被挂起，返回时回到当前状态
+		                            WMSExtApp_CallPhoneNumber(pMe, pItem, FALSE);
+		                        }
+		                    }
+		                    return TRUE;
+						}
+					}
+					break;
+#endif
+
                 default:
                     break;
             }
