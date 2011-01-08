@@ -3170,35 +3170,28 @@ static INLINE void sdcc_send_cmd_bytes(byte *pdata, int len)
 {
     register volatile uint32 *pDest = (volatile uint32*)GPIO_SDCC_OUT_ADDR;
     register uint32 clkh = (GPIO_SDCC_CLK_MASK|(*pDest))&GPIO_SDCC_CMD_MASK_I;
+    register uint32 clkl = GPIO_SDCC_CLK_MASK_I&((*pDest)&GPIO_SDCC_CMD_MASK_I);
     register byte data;
     register uint32 mask = GPIO_SDCC_CMD_MASK;
     
     while(len--)
     {
         data = *pdata;
-        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
-        outpdw(pDest, ((data<<22)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<22)&mask)|clkl);
         outpdw(pDest, ((data<<22)&mask)|clkh);
-        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
-        outpdw(pDest, ((data<<23)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<23)&mask)|clkl);
         outpdw(pDest, ((data<<23)&mask)|clkh);
-        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
-        outpdw(pDest, ((data<<24)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<24)&mask)|clkl);
         outpdw(pDest, ((data<<24)&mask)|clkh);
-        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
-        outpdw(pDest, ((data<<25)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<25)&mask)|clkl);
         outpdw(pDest, ((data<<25)&mask)|clkh);
-        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
-        outpdw(pDest, ((data<<26)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<26)&mask)|clkl);
         outpdw(pDest, ((data<<26)&mask)|clkh);
-        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
-        outpdw(pDest, ((data<<27)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<27)&mask)|clkl);
         outpdw(pDest, ((data<<27)&mask)|clkh);
-        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
-        outpdw(pDest, ((data<<28)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<28)&mask)|clkl);
         outpdw(pDest, ((data<<28)&mask)|clkh);
-        outpdw(pDest, (*pDest&GPIO_SDCC_CLK_MASK_I));
-        outpdw(pDest, ((data<<29)&mask)|((*pDest)&GPIO_SDCC_CMD_MASK_I));
+        outpdw(pDest, ((data<<29)&mask)|clkl);
         outpdw(pDest, ((data<<29)&mask)|clkh);
         pdata++;
     }
