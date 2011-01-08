@@ -89,6 +89,18 @@
 #define DOWN_Y        44
 #define ENDCALL_START 192
 #define ENDCALL_END   198
+#elif defined(FEATURE_DISP_176X220)
+#define SECONDE_LINE  68
+#define THRID_LINE    90
+#define FOUR_LINE     112
+#define FIVE_LINE     168
+#define LEFT_START    60
+#define RITHT_START   128
+#define RTIHT_END     164
+#define DOWN_Y        44
+#define ENDCALL_START 192
+#define ENDCALL_END   198
+
 #else
 #define SECONDE_LINE  68
 #define THRID_LINE    90
