@@ -4743,16 +4743,18 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 					#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
 					{
 					nv_item_type	SimChoice;
+					MSG_FATAL("AVK_SEND_TWO...............1111",0,0,0);
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 					if(SimChoice.sim_select==AVK_SEND_TWO)
 					{
 						#ifdef FEATURE_ICM
 	                    AEECMCallID nCallID ;
+	                    MSG_FATAL("AVK_SEND_TWO...............2222",0,0,0);
 	                    if(pMe->m_b_press_1)
 	                    {
 	                        ICM_OriginateVoiceCall(pMe->m_pICM, L"1", &nCallID);
 	                    }
-#else
+						#else
 	                    if(pMe->m_b_press_1)
 	                    {   ICall *pCall = NULL;
 	                        ICALLMGR_OriginateVoice(pMe->m_pICallMgr,"1", (ICall **)&pCall,NULL);
@@ -4761,18 +4763,19 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 								ICALL_Release(pCall);
 							}
 	                    }
-#endif
+						#endif
 					}
 					}
 					#endif
-					break;
 				}
                 case AVK_SEND:
                 {
 #ifdef FEATURE_ICM
                     AEECMCallID nCallID ;
+                    MSG_FATAL("AVK_SEND_TWO...............33333",0,0,0);
                     if(pMe->m_b_press_1)
                     {
+                    	
                         ICM_OriginateVoiceCall(pMe->m_pICM, L"1", &nCallID);
                     }
 #else
