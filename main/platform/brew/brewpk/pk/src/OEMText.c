@@ -6410,6 +6410,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
             #ifdef FEATURE_T9_MT_ARABIC
+            pContext->uModeInfo.mtap.kLast = key; 
             if(pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED)
             {
             	uint32 i,j;
