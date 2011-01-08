@@ -3372,6 +3372,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 		{
 		   	nv_language_enum_type language;
            	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+           	MSG_FATAL("........................0=%d",pContext->byMode,0,0);
            	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
 		      (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
            	{
@@ -3428,6 +3429,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 		   {
 			   	nv_language_enum_type language;
 	           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+	           	MSG_FATAL("...............................1=%d",pContext->byMode,0,0);
 	           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
 		          (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
 	           	{
@@ -3713,6 +3715,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
 				{
 				   	nv_language_enum_type language;
 		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+		           	MSG_FATAL("IDISPLAY_DrawText..................1=%d",pContext->byMode,0,0);
 		           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
 		           	  (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
 		           	{
@@ -3796,6 +3799,9 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
 				   	nv_language_enum_type language;
 		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
 		           	IDISPLAY_FillRect(pContext->pIDisplay, &rectText, RGB_WHITE);
+		           	MSG_FATAL("IDISPLAY_DrawText..................2=%d",pContext->byMode,0,0);
+		           	MSG_FATAL("IDISPLAY_DrawText.............language=%d",language,0,0);
+		           	
 		           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
 		           	  (/*pContext->byMode != TEXT_MODE_T9_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_T9_MT_ARABIC))
 		           	{

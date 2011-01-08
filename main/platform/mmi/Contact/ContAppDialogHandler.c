@@ -2591,7 +2591,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                 //CContApp_GetRecByID(pMe, pMe->m_wSelectSmart);
             }
                                             
-#ifdef FEATURE_LANG_CHINESE
+#if defined(FEATURE_LANG_CHINESE)
             if(wParam == AVK_POUND && !IS_ZERO_REC())
             {
                 pMe->m_nCurrentInputMode++;
@@ -2608,6 +2608,8 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                 
                 return TRUE;
             }
+#elif defined(FEATURE_LANG_ARABIC)   //add by yangdecai
+			ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
 #endif
             switch (wParam)
             {
@@ -3722,6 +3724,9 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             ITEXTCTL_SetProperties(pTextCtl, TP_STARKEY_SWITCH | TP_FIXOEM|TP_FOCUS_NOSEL |TP_GRAPHIC_BG);
             ITEXTCTL_SetRect(pTextCtl, &textrc);
             CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
+            #if defined(FEATURE_LANG_ARABIC)   //add by yangdecai
+			ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
+			#endif
 #endif
             ITEXTCTL_SetMaxSize(pTextCtl, MAX_INPUT_NAME_EN); 
             
@@ -11091,10 +11096,10 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
             (void)ITEXTCTL_SetInputMode(pTextCtl,
                      CContApp_GetFldInputMode(AEE_ADDRFIELD_NAME));
                      
-            //(void)ITEXTCTL_SetTitle( pTextCtl,
-            //                         CONTAPP_RES_FILE_LANG,
-             //                        IDS_FIND,
-             //                        NULL);
+            (void)ITEXTCTL_SetTitle( pTextCtl,
+                                     CONTAPP_RES_FILE_LANG,
+                                     IDS_FIND,
+                                     NULL);
             /*
             {
                 AECHAR WTitle[40] = {0};

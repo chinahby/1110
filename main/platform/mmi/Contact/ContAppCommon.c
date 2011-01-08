@@ -855,13 +855,11 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
         	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
                     if(NV_LANGUAGE_ARABIC == language)
                     {
-        	    		return AEE_TM_ARABIC_R;
+        	    		return AEE_TM_ARABIC;
         	    	}
         	    	else
         	    	{
-        	    		
         	    		return AEE_TM_LETTERS;
-        	    		
         	    	}
         	    }
         	    #elif defined(FEATURE_VERSION_MYANMAR)
@@ -923,7 +921,7 @@ uint32 CContApp_GetFldInputProp(CContApp *pMe, AEEAddrFieldID wFldID)
         case AEE_ADDRFIELD_PHONE_GENERIC:
         case AEE_ADDRFIELD_LOCATION:
         case AEE_ADDRFIELD_GROUP:
-            return (TP_MULTILINE | TP_FRAME |TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL);
+            return (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL);
             
         case AEE_ADDRFIELD_NAME:
             if(IS_RUIM_REC(pMe->m_wEditCont) && (ADDOREDIT_EDIT == pMe->m_nAddnewOrEdit) 
