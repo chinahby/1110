@@ -953,7 +953,7 @@ extern int  ConverterMod_Load(IShell* ps, void* pHelpers, IModule** ppMod);
 #endif
 
 #ifdef FEATURE_SPORTS_APP
-extern int SportsMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
+//extern int SportsMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #endif
 
 #ifdef FEATURE_MORSE
@@ -1336,7 +1336,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #endif
 
 #ifdef FEATURE_SPORTS_APP
-{ AEEFS_MIF_DIR"sportsapp.mif",SportsMod_Load},
+//{ AEEFS_MIF_DIR"sportsapp.mif",SportsMod_Load},
 #endif
 
 #ifdef FEATURE_MORSE
