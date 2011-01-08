@@ -665,67 +665,6 @@ SDCC_WRITE_RETRY:
          rc_complete = sdcc_complete_data_xfer(SDCC_DATA_WRITE, multi_block);
       }
       
-#ifdef CUST_EDITION
-      if (multi_block && SDCC_NO_ERROR != rc)
-      {
-         // 多BLOCK写入失败，则尝试使用单BLOCK的写入方式
-         int i;
-         byte *pData = buff;
-         uint16 blksize = sdcc_getblksize(length);
-         
-         for(i=0;i<n_sectors;i++)
-         {
-            sdcc_cmd.cmd = SD_CMD24_WRITE_BLOCK;
-            /* CMD25/CMD24 */
-            sdcc_cmd.resp_type = SDCC_RESP_SHORT;
-            sdcc_cmd.prog_scan = 0;
-            if ( SDCC_CARD_SDHC == sdcc_pdata.card_type ||
-                 SDCC_CARD_MMCHC == sdcc_pdata.card_type )
-            {
-               /* in high capacity cards, the 32-bit argument of memory access */
-               /* commands uses the memory address in block address format */
-               sdcc_cmd.cmd_arg   = (s_sector+i);
-            }
-            else if(SDCC_CARD_SDIO == sdcc_pdata.card_type)
-            {
-               /* in standard capacity cards, the 32-bit argument of memory access */
-               /* commands uses the memory address in byte address format */
-               sdcc_cmd.cmd_arg   = (s_sector+i) * (sdcc_pdata.io.fn_blksz);
-            }
-            else
-            {
-               /* in standard capacity cards, the 32-bit argument of memory access */
-               /* commands uses the memory address in byte address format */
-               sdcc_cmd.cmd_arg   = (s_sector+i) * (sdcc_pdata.mem.block_len);
-            }
-
-            /* send out CMD25/CMD24 */
-            rc = sdcc_command(&sdcc_cmd);
-                  /* Turn on the DMA controller*/
-            if (rc == SDCC_NO_ERROR)
-            {
-#ifndef T_QSC1100
-               HWIO_OUT(MCI_DATA_CTL, data_ctrl);
-
-               /* process write data */
-               rc = ( TRUE == use_dma ) ? sdcc_process_interrupts(&sdcc_cmd) :
-                    sdcc_write_fifo(pData, blksize);
-#else
-               rc = sdcc_write_data(pData, blksize);
-#endif
-               /* Need to set the controller back to ready state */
-               rc_complete = sdcc_complete_data_xfer(SDCC_DATA_WRITE, FALSE);
-            }
-            
-            if ((SDCC_NO_ERROR != rc) || (SDCC_NO_ERROR != rc_complete))
-            {
-                break;
-            }
-            
-            pData += blksize;
-         }
-      }
-#endif
       /* Check for the errors */
       if ((SDCC_NO_ERROR != rc) || (SDCC_NO_ERROR != rc_complete))
       {

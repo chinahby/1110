@@ -665,6 +665,8 @@ SDCC_CARD_TYPE    sdcc_find_sdio_card( void );
 #define GPIO_SDCC_DAT_MASK      0x1E000000
 #define GPIO_SDCC_DAT_MASK_I    0xE1FFFFFF
 
+#define SDCC_SD_WAIT    16
+
 byte   CRC7    ( unsigned char * chr, int cnt );
 uint64 CRC16_4 ( unsigned char * chr, int cnt );
 static INLINE void sdcc_clock_out(int cnt);

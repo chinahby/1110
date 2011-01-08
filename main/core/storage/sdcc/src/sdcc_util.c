@@ -1085,7 +1085,6 @@ void sdcc_send_cmd(sdcc_cmd_type *sdcc_cmd)
   HWIO_OUT(MCI_CMD, command);
 #else
     // Send Command
-    boolean bSendNRC = TRUE;
     static byte cmd[20];
     register uint32 arg = sdcc_cmd->cmd_arg;
     
@@ -1096,26 +1095,26 @@ void sdcc_send_cmd(sdcc_cmd_type *sdcc_cmd)
     cmd[4] = (byte)(arg);
     cmd[5] = CRC7(cmd, 5);
     
+    gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
     sdcc_send_cmd_bytes(cmd, 6);
-    dog_kick();
+    
     // Get Respond
     sdcc_cmd->status = SDCC_NO_ERROR;
     if(sdcc_cmd->resp_type)
     {
+        gpio_tlmm_config(GPIO_SDCC_CMD_IN);
         switch(sdcc_cmd->cmd){
         case SD_ACMD51_SEND_SCR:
+            // 忽略RESPONSE
+            gpio_tlmm_config(GPIO_SDCC_CMD_IN);
+            return;
+            
         case SD_CMD17_READ_BLOCK:
         case SD_CMD18_READ_MULTIPLE_BLOCK:
             // 忽略RESPONSE
-            gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
-            return;
-
-        case SD_CMD24_WRITE_BLOCK:
-        case SD_CMD25_WRITE_MULTIPLE_BLOCK:
-            bSendNRC = FALSE;
+            sdcc_clock_out(2); // Host Control
             gpio_tlmm_config(GPIO_SDCC_CMD_IN);
-            cmd[0] = sdcc_recv_cmd_byte_wait();
-            break;
+            return;
             
         default:
             gpio_tlmm_config(GPIO_SDCC_CMD_IN);
@@ -1171,14 +1170,9 @@ void sdcc_send_cmd(sdcc_cmd_type *sdcc_cmd)
                 sdcc_cmd->status = SDCC_ERR_CMD_CRC_FAIL;
             }
         }
-        gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
     }
     
-    dog_kick();
-    if(bSendNRC)
-    {
-        sdcc_clock_out(8); // Nrc
-    }
+    sdcc_clock_out(SDCC_SD_WAIT); // Nrc
 #endif
 }/* sdcc_send_cmd */
 
@@ -1821,7 +1815,7 @@ sdcc_wait_card_ready(void)
           break;
       }
 #ifdef T_QSC1100
-      sdcc_clock_out(100);
+      sdcc_clock_out(256);
 #else
       sdcc_udelay(100);
 #endif
@@ -3322,16 +3316,10 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
     uint16 wCRC16 = crc_16_bytes(pdata, len);
     int i; //最大等待周期
     
-    // Deley 2 Cycle -- Nwr
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    
     // START Bit
-    outpdw(pDest, clkl);
+    outpdw(pDest, clkn);
     outpdw(pDest, clkm);
-    dog_kick();
+    
     // Data
     while(len--)
     {
@@ -3353,7 +3341,7 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
         outpdw(pDest, ((data<<25)&mask)|clkn);
         outpdw(pDest, ((data<<25)&mask)|clkm);
     }
-    dog_kick();
+    
     // CRC
     len = 2;
     data = (byte)(wCRC16>>8);
@@ -3419,52 +3407,37 @@ static INLINE SDCC_STATUS sdcc_send_data_bytes(byte *pdata, int len)
     outpdw(pDest, clkl);
     outpdw(pDest, clkh);
     
-    if(data != 0x2)
-    {
-        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
-        return SDCC_ERR_DATA_CRC_FAIL;
-    }
-    
     // Busy Start bit
-    i = SDCC_MIN_WAIT;
-    while(i)
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
+    if((inp(pIn) & 0x02) == 0)
     {
-        outpdw(pDest, clkl);
-        i--;
-        outpdw(pDest, clkh);
-        if(!(inp(pIn) & 0x02))
+        // Wait until write finished
+        i = SDCC_MAX_WAIT;
+        while(i)
         {
-            break;
+            outpdw(pDest, clkl);
+            i--;
+            outpdw(pDest, clkh);
+            if(inp(pIn)&0x02)
+            {
+                // Busy End bit
+                break;
+            }
         }
-    }
-    
-    if(i == 0)
-    {
-        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
-        return SDCC_NO_ERROR;
-    }
-    dog_kick();
-    // Wait until write finished
-    i = SDCC_MAX_WAIT;
-    while(i)
-    {
-        outpdw(pDest, clkl);
-        i--;
-        outpdw(pDest, clkh);
-        if(inp(pIn)&0x02)
+        
+        if(i == 0)
         {
-            // Busy End bit
-            break;
+            gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+            return SDCC_ERR_DATA_TIMEOUT;
         }
-    }
-    dog_kick();
-    if(i == 0)
-    {
-        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
-        return SDCC_ERR_DATA_TIMEOUT;
     }
     
     gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+    if(data != 0x2)
+    {
+        return SDCC_ERR_DATA_CRC_FAIL;
+    }
     return SDCC_NO_ERROR;
 }
 
@@ -3479,13 +3452,6 @@ static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *buff, int len)
     int i;
     uint16 wCRC16 = 0;
     
-
-    // Wait 2 Clock cycles
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    dog_kick();
     // START Bit
     i = SDCC_MIN_WAIT*4;
     while(i--)
@@ -3497,7 +3463,7 @@ static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *buff, int len)
             break;
         }
     }
-    dog_kick();
+    
     if(i == 0)
     {
         return SDCC_ERR_DATA_TIMEOUT;
@@ -3541,7 +3507,7 @@ static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *buff, int len)
         data |= (inp(pIn)>>1)&mask;
         *pdata++ = data;
     }
-    dog_kick();
+    
     // CRC16
     i = 2;
     while(i--)
@@ -3584,7 +3550,7 @@ static INLINE SDCC_STATUS sdcc_recv_data_bytes(byte *buff, int len)
     // END Bit, Dont care
     outpdw(pDest, clkl);
     outpdw(pDest, clkh);
-    dog_kick();
+    
     // CRC verify
     if(wCRC16 != crc_16_bytes(buff, len))
     {
@@ -3604,16 +3570,9 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     register byte maskh = 0xF0,maskl=0x0F;
     uint64 wCRC64 = CRC16_4(pdata, len);
     int i;
-
-    dog_kick();
-    // Deley 2 Cycle -- Nwr
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
     
     // START Bit
-    outpdw(pDest, clkl);
+    outpdw(pDest, clkn);
     outpdw(pDest, clkm);
     
     while(len--)
@@ -3624,8 +3583,7 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
         outpdw(pDest, ((data&maskl)<<25)|clkn);
         outpdw(pDest, ((data&maskl)<<25)|clkm);
     }
-
-    dog_kick();
+    
     // CRC
     len = 8;
     pdata = (byte *)&wCRC64;
@@ -3640,12 +3598,6 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     }
     
     // END Bit
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
-    
-    // 2 delay Cycles, HOST Control
-    outpdw(pDest, clkl);
-    outpdw(pDest, clkh);
     outpdw(pDest, clkl);
     outpdw(pDest, clkh);
     
@@ -3675,57 +3627,42 @@ static INLINE SDCC_STATUS sdcc_send_widedata_bytes(byte *pdata, int len)
     outpdw(pDest, clkl);
     outpdw(pDest, clkh);
     data |= (inp(pIn)>>1)&0x01;
-
+    
     // END Bit
     outpdw(pDest, clkl);
     outpdw(pDest, clkh);
     
-    if(data != 0x2)
-    {
-        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
-        return SDCC_ERR_DATA_CRC_FAIL;
-    }
-    
     // Busy Start bit
-    i = SDCC_MIN_WAIT;
-    while(i)
+    outpdw(pDest, clkl);
+    outpdw(pDest, clkh);
+    if((inp(pIn) & 0x02) == 0)
     {
-        outpdw(pDest, clkl);
-        i--;
-        outpdw(pDest, clkh);
-        if(!(inp(pIn) & 0x02))
+        // Wait until write finished
+        i = SDCC_MAX_WAIT;
+        while(i)
         {
-            break;
+            outpdw(pDest, clkl);
+            i--;
+            outpdw(pDest, clkh);
+            if(inp(pIn)&0x02)
+            {
+                // Busy End bit
+                break;
+            }
         }
-    }
-    
-    if(i == 0)
-    {
-        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
-        return SDCC_NO_ERROR;
-    }
-    dog_kick();
-    // Wait until write finished
-    i = SDCC_MAX_WAIT;
-    while(i)
-    {
-        outpdw(pDest, clkl);
-        i--;
-        outpdw(pDest, clkh);
-        if(inp(pIn)&0x02)
+        
+        if(i == 0)
         {
-            // Busy End bit
-            break;
+            gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+            return SDCC_ERR_DATA_TIMEOUT;
         }
-    }
-    dog_kick();
-    if(i == 0)
-    {
-        gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
-        return SDCC_ERR_DATA_TIMEOUT;
     }
     
     gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
+    if(data != 0x2)
+    {
+        return SDCC_ERR_DATA_CRC_FAIL;
+    }
     return SDCC_NO_ERROR;
 }
 
@@ -3739,8 +3676,7 @@ static INLINE SDCC_STATUS sdcc_recv_widedata_bytes(byte *buff, int len)
     register byte *pdata = buff;
     int i;
     uint64 wCRC64 = 0;
-
-    dog_kick();
+    
     // START Bit
     i = SDCC_MIN_WAIT*4;
     while(i--)
@@ -3752,7 +3688,7 @@ static INLINE SDCC_STATUS sdcc_recv_widedata_bytes(byte *buff, int len)
             break;
         }
     }
-    dog_kick();
+    
     if(i == 0)
     {
         return SDCC_ERR_DATA_TIMEOUT;
@@ -3770,7 +3706,7 @@ static INLINE SDCC_STATUS sdcc_recv_widedata_bytes(byte *buff, int len)
         data |= (inp(pIn)>>1)&maskl;
         *pdata++ = data;
     }
-    dog_kick();
+    
     i = 8;
     while(i--)
     {
@@ -3815,6 +3751,7 @@ SDCC_STATUS sdcc_write_data(byte *buff, uint16 length)
         while(length)
         {
             rc = sdcc_send_widedata_bytes(buff, blksize);
+            sdcc_clock_out(SDCC_SD_WAIT);
             length -= blksize;
             buff += blksize;
             if(rc != SDCC_NO_ERROR)
@@ -3828,6 +3765,7 @@ SDCC_STATUS sdcc_write_data(byte *buff, uint16 length)
         while(length)
         {
             rc = sdcc_send_data_bytes(buff, blksize);
+            sdcc_clock_out(SDCC_SD_WAIT);
             length -= blksize;
             buff += blksize;
             if(rc != SDCC_NO_ERROR)
@@ -3837,7 +3775,7 @@ SDCC_STATUS sdcc_write_data(byte *buff, uint16 length)
         }
     }
     
-    sdcc_clock_out(8);
+    sdcc_clock_out(SDCC_SD_WAIT);
     return rc;
 }
 
@@ -3856,7 +3794,6 @@ SDCC_STATUS sdcc_read_data(byte *buff, uint16 length)
         blksize = length;
     }
     
-    gpio_tlmm_config(GPIO_SDCC_CMD_IN);
     if(sdcc_pdata.wide_bus)
     {
         gpio_tlmm_config(GPIO_SDCC_DAT_0_IN);
@@ -3893,8 +3830,8 @@ SDCC_STATUS sdcc_read_data(byte *buff, uint16 length)
         }
         gpio_tlmm_config(GPIO_SDCC_DAT_0_OUT);
     }
-    gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
-    sdcc_clock_out(8);
+    
+    sdcc_clock_out(SDCC_SD_WAIT);
     return rc;
 }
 
