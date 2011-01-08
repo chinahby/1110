@@ -5909,9 +5909,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                     
                         char     args[20] = {0};
                         //char      buf[20];
-                        DBGPRINTF("------------------>ok1",); 
-                        SPRINTF(args, "%c", 
-                            STARTARG_SPORT);
+                        
         				
                         //args = STRDUP(buf);
                         /*Cancel timer and StopRingAlert*/
