@@ -2963,9 +2963,10 @@ void OEM_RestoreFactorySetting( void )
    nvi_cache.svc_alert = OEMNV_ALERT_ENABLE;
 
     //CFGI_LANGUAGE_SELECTION
+    
     if(nvi_cache.language != (nv_language_enum_type) OEMNV_LANGUAGE_DEFULT)
     {
-#if defined(FEATURE_PEKTEST)
+#if defined(FEATURE_PEKTEST) 
         // PEK ²âÊÔ°æÈí¼þ½«ÓïÑÔ¸ÄÎªÓ¢Óï
         nvi.language_selection = NV_LANGUAGE_ENGLISH;
         nvi_cache.language = NV_LANGUAGE_ENGLISH;
@@ -2973,7 +2974,6 @@ void OEM_RestoreFactorySetting( void )
         nvi.language_selection = (nv_language_enum_type) OEMNV_LANGUAGE_DEFULT;
         nvi_cache.language = (nv_language_enum_type) OEMNV_LANGUAGE_DEFULT;
 #endif
-
         (void) OEMNV_Put( NV_LANGUAGE_SELECTION_I, &nvi );
         (void) AEE_IssueSystemCallback(AEE_SCB_DEVICE_INFO_CHANGED);
     }

@@ -125,7 +125,9 @@
 #endif
 //Others
 #define OEMNV_PHONE_PASSWORD                        10670                       //CFGI_PHONE_PASSWORD       
-#ifdef FEATURE_LANG_CHINESE
+#if defined(FEATURE_LANG_DEFAULT_ENGLISH)
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //NV_LANGUAGE_SELECTION_I
+#elif defined(FEATURE_LANG_CHINESE)
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_CHINESE         //简体中文
 #elif defined(FEATURE_LANG_TCHINESE)
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_TCHINESE        //繁体中文

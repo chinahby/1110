@@ -29,6 +29,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_LANG_ENGLISH
 #define FEATURE_LANG_INDONESIAN //add by yangdecai 2010/06/22
 #define FEATURE_LANG_THAI
+#define FEATURE_LANG_DEFAULT_ENGLISH
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
 #undef FEATURE_LANG_CHINESE
 //#define FEATURE_NET_LOCK
@@ -44,7 +45,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
    #include "targsbw2.h"
 #endif
 
-//#define FEATURE_PEKTEST
 //#define FEATURE_DATA_STRIP_ATCOP 
 #define FEATURE_STD_MIDI 
 #define FEATURE_DIAG_LOWMEM 
