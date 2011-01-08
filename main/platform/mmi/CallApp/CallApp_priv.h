@@ -110,7 +110,13 @@
 //#include "AEEVirtualkey.h"//wlh for vkey number
 #define CALLAPP_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 #endif
-
+#if defined(FEATURE_VERSION_C306)
+#define AVK_SEND_TWO     2
+#elif defined(FEATURE_VERSION_N450)
+#define AVK_SEND_TWO     1
+#else
+#define AVK_SEND_TWO     1
+#endif
 #define  AEE_APPSCALLAPP_RES_FILE AEE_RES_LANGDIR CALLAPP_RES_FILE
 #define MAX_SIZE_GETIMSI                    20
 #define MAX_SIZE_BANNER_TEXT           20

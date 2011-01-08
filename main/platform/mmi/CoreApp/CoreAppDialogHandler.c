@@ -39,6 +39,10 @@
 #include "clockapps_images.brh"
 #include "appscommonimages.brh"
 #include "AEEGraphics.h "
+#include "AEEConfig.h"
+#include "oemcfgi.h"
+#include "nv.h"
+#include "OEMCFGI.h"
 
 #include "clockapps.brh"
 #define  CLOCK_RES_PATH ("fs:/mod/clockapps/" AEE_RES_LANGDIR CLOCKAPPS_RES_FILE)
@@ -1398,7 +1402,26 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
-  
+  				case AVK_CAMERA:
+            	#if defined(FEATURE_VERSION_C306)
+            	{
+				nv_item_type	SimChoice;
+				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+				if(SimChoice.sim_select == AVK_SEND_TWO)
+				{
+                    CtlAddItem ai;
+                    uint16   wID;
+                    
+                    wID = IMENUCTL_GetSel(pMenu);
+                    if (IMENUCTL_GetItem(pMenu, wID, &ai))
+                    {
+                       (void)MakeVoiceCall(pMe->a.m_pIShell, FALSE, (AECHAR *)ai.pText);
+                    }
+                    return TRUE;
+				}
+				}
+				#endif
+				break;
                 case AVK_SEND:
                     {
                         CtlAddItem ai;
@@ -1620,7 +1643,19 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                     case AVK_POUND:
                         chEnter = '#';
                         break;
-                        
+                    case AVK_CAMERA:
+                    	#if defined(FEATURE_VERSION_C306)
+                    	{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select ==AVK_SEND_TWO)
+						{
+							CLOSE_DIALOG(DLGRET_EMGCALL)
+                        	return TRUE;
+						}
+						}
+						#endif
+						break;
                     case AVK_SEND:
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         return TRUE;
@@ -1965,7 +2000,19 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                     case AVK_POUND:
                         chEnter = '#';
                         break;
-                        
+                    case AVK_CAMERA:
+                    	#if defined(FEATURE_VERSION_C306)
+                    	{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select ==AVK_SEND_TWO)
+						{
+							CLOSE_DIALOG(DLGRET_EMGCALL)
+                        	return TRUE;
+						}
+						}
+						#endif
+						break;
                     case AVK_SEND:
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         return TRUE;
@@ -2240,7 +2287,19 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                     case AVK_POUND:
                         chEnter = '#';
                         break;
-                        
+                    case AVK_CAMERA:
+                    	#if defined(FEATURE_VERSION_C306)
+                    	{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select ==AVK_SEND_TWO)
+						{
+							CLOSE_DIALOG(DLGRET_EMGCALL)
+                        	return TRUE;
+						}
+						}
+						#endif
+						break;
                     case AVK_SEND:
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         return TRUE;
@@ -2896,6 +2955,31 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_FM:
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
                 case AVK_CAMERA:
+                	#if defined(FEATURE_VERSION_C306)
+                	{
+					nv_item_type	SimChoice;
+					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					MSG_FATAL("NV_SIM_SELECT_I...............0000000=%d",SimChoice.sim_select,0,0);
+					if(SimChoice.sim_select ==AVK_SEND_TWO)
+					{
+						MSG_FATAL("NV_SIM_SELECT_I...............",0,0,0);
+						if (pMe->m_bAcquiredTime && !pMe->m_bemergencymode)
+                    	{
+                        	IRecentCalls  *pRecentCall = NULL;
+                        	MSG_FATAL("NV_SIM_SELECT_I...............111111",0,0,0);
+                        	if (AEE_SUCCESS == ISHELL_CreateInstance(pMe->a.m_pIShell,
+                                                                 AEECLSID_APP_RECENTCALL,
+                                                                 (void **)&pRecentCall))
+                        	{
+                            	IRecentCalls_SendList(pRecentCall);
+                            	IRecentCalls_Release(pRecentCall);
+                        	}
+                        	return TRUE;                        
+                    	}
+					}
+					return FALSE;
+					}
+					#endif
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 				case AVK_TV:
 				    return CoreApp_LaunchApplet(pMe, AEECLSID_TVAPP);;
@@ -3154,7 +3238,19 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         CLOSE_DIALOG(DLGRET_MSG)
                         //CoreApp_ShowMsgDialog(pMe,IDS_EXIT_EMERGENCY_MODE);
                         return TRUE;
-
+                    case AVK_CAMERA:
+                    
+						#if defined(FEATURE_VERSION_C306)
+						{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select ==AVK_SEND_TWO)
+						{
+							return TRUE;
+						}
+						}
+						#endif
+						break;
                     case AVK_SEND:
                     case AVK_LEFT:   
                         return TRUE;
@@ -3206,6 +3302,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         return TRUE;                        
                     }
                     break;
+                
 				case AVK_SHIFT:
 					{
 					//#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)

@@ -858,7 +858,19 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             return TRUE;
 #endif
         case EVT_KEY_RELEASE:
-
+			#if defined(FEATURE_VERSION_C306)
+            {
+				nv_item_type	SimChoice;
+				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+				if(SimChoice.sim_select==AVK_SEND_TWO)
+				{
+					if(AVK_CAMERA == (AVKType)wParam && !pMe->m_bprocess_held)
+            		{
+                		return CallApp_Process_Send_Key_Release_Event(pMe);
+            		}
+				}
+			}
+			#endif
             if(AVK_SEND == (AVKType)wParam && !pMe->m_bprocess_held)
             {
                 return CallApp_Process_Send_Key_Release_Event(pMe);
@@ -1750,6 +1762,22 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     }
                     return TRUE;
 #endif
+				case AVK_CAMERA:
+            	{
+            		#if defined(FEATURE_VERSION_C306)
+            		{
+					nv_item_type	SimChoice;
+					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					if(SimChoice.sim_select==AVK_SEND_TWO)
+					{
+            			return TRUE;
+            		}
+            		else
+            		#endif
+            		{
+            			break;
+            		}
+            	}
 
                 case AVK_SEND:
                 {
@@ -1785,12 +1813,12 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     //}
                     return TRUE;
                 }
-
                 default:
                     break;
             }
 
             break;
+            }
 
         default:
             break;
@@ -1908,10 +1936,24 @@ static boolean CallApp_Show_Ip_Number_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_KEY_PRESS:
+        	#if defined(FEATURE_VERSION_C306)
+        	{
+			nv_item_type	SimChoice;
+			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+			if(SimChoice.sim_select==AVK_SEND_TWO)
+			{
+				if(AVK_SEND == wParam || AVK_CAMERA == wParam)
+            	{
+                	return CallApp_Process_Ip_Call_Key_Press(pMe,pMenu);
+            	}
+			}
+			}
+			#endif
             if(AVK_SEND == wParam)
             {
                 return CallApp_Process_Ip_Call_Key_Press(pMe,pMenu);
             }
+            
             return FALSE;
 
         case EVT_COMMAND:
@@ -3061,7 +3103,19 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 #endif
                     return TRUE;
 
-
+				
+				case AVK_CAMERA:
+				#if defined(FEATURE_VERSION_C306)
+				{
+				nv_item_type	SimChoice;
+				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+				if(SimChoice.sim_select==AVK_SEND_TWO)
+				{
+                	return TRUE;  //make the cm 2312 disappear
+                }
+                }
+                #endif
+                break;
                 case AVK_SEND:
                     return TRUE;  //make the cm 2312 disappear
 
@@ -3073,6 +3127,29 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
         }
 #ifdef FEATURE_TCL_CDG2_TEST
         case EVT_KEY_HELD:
+        	#if defined(FEATURE_VERSION_C306)
+        	{
+			nv_item_type	SimChoice;
+			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+			if(SimChoice.sim_select==AVK_SEND_TWO)
+			{
+				
+				if(AVK_SEND == (AVKType)wParam || AVK_CAMERA== (AVKType)wParam )//CDG 3-way call need send fwi 
+            	{
+                	AEECMCallID nCallID = 0;
+#ifdef FEATURE_ICM
+                	if(CheckAEEReturnStatus(ICM_OriginateVoiceCall(pMe->m_pICM, NULL, &nCallID)) == FALSE)
+#else
+                	if(CheckAEEReturnStatus(ICM_OriginateVoiceCall(pMe->m_pITelephone, NULL, &nCallID)) == FALSE)
+#endif
+                	{
+                    	CALL_ERR("ICM_OriginateVoiceCall FAILED", 0, 0, 0);
+                    	return FALSE;
+                	}
+            	}
+			}
+			}
+			#endif
             if(AVK_SEND == (AVKType)wParam)//CDG 3-way call need send fwi 
             {
                 AEECMCallID nCallID = 0;
@@ -3086,6 +3163,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     return FALSE;
                 }
             }
+            
             break;
 #endif
         case EVT_KEY:
@@ -3140,6 +3218,46 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     // We are allowing the IPHONE notifier to move us to the
                     // next state...
                     return TRUE;
+                case AVK_CAMERA:
+                	#if defined(FEATURE_VERSION_C306)
+                	{
+					nv_item_type	SimChoice;
+					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					if(SimChoice.sim_select==AVK_SEND_TWO)
+					{
+						// Make sure aren't waiting for a hard pause to be released...
+                    
+	                    if (pMe->m_PauseString[0] != 0)
+	                    {
+	                      CallApp_SetPauseControl(pMe);
+	                        return TRUE;
+	                    }
+
+	                    // Don't send if we are PIN locked
+	                    // (ie. in an emergency call)
+	                    if (pMe->idle_info.uimLocked)
+	                    {
+	                        return TRUE;
+	                    }
+
+#ifdef FEATURE_IS2000_SCC_CODES
+	                    // Remove the 'Release Hold' softkey if necessary
+	                    if (pMe->m_bAnswerHold)
+	                    {
+	                        IMenuCtl *pSkMenu;
+
+	                        pMe->m_bAnswerHold = FALSE;
+	                        CallApp_Draw_Connect_Softkey(pMe);
+	                    }
+#endif /* FEATURE_IS2000_SCC_CODES */
+
+	                    //modify for Three-Way Calling : Hold Key not supported by MS
+	                    CallApp_Flash_Call(pMe);
+	                    return TRUE;
+					}
+					}
+					#endif
+                    break;
 
                 case AVK_SEND:
                     // Make sure aren't waiting for a hard pause to be released...
@@ -4509,10 +4627,31 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_KEY:
+        	#if defined(FEATURE_VERSION_C306)
+        	{
+			nv_item_type	SimChoice;
+			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+			if(SimChoice.sim_select==AVK_SEND_TWO)
+			{
+            	if ((AVKType)wParam!=AVK_SEND)
+            	{      
+                	pMe->m_b_press_1=FALSE ;
+            	}
+            }
+            else
+            {
+            	if ((AVKType)wParam!=AVK_SEND||(AVKType)wParam!=AVK_CAMERA)
+            	{      
+                	pMe->m_b_press_1=FALSE ;
+            	}
+            }
+            }
+            #else
             if ((AVKType)wParam!=AVK_SEND)
             {      
                 pMe->m_b_press_1=FALSE ;
             }
+            #endif
             switch ((AVKType)wParam)
             {
 
@@ -4605,7 +4744,35 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                     CallApp_IncomingCall_Dlg_Init(pMe);
                     ISHELL_PostEvent(pMe->m_pShell, AEECLSID_DIALER, EVT_USER_REDRAW,  0,  0);
                     break;
-
+				case AVK_CAMERA:
+				{
+					#if defined(FEATURE_VERSION_C306)
+					{
+					nv_item_type	SimChoice;
+					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					if(SimChoice.sim_select==AVK_SEND_TWO)
+					{
+						#ifdef FEATURE_ICM
+	                    AEECMCallID nCallID ;
+	                    if(pMe->m_b_press_1)
+	                    {
+	                        ICM_OriginateVoiceCall(pMe->m_pICM, L"1", &nCallID);
+	                    }
+#else
+	                    if(pMe->m_b_press_1)
+	                    {   ICall *pCall = NULL;
+	                        ICALLMGR_OriginateVoice(pMe->m_pICallMgr,"1", (ICall **)&pCall,NULL);
+							if (pCall != NULL)
+							{
+								ICALL_Release(pCall);
+							}
+	                    }
+#endif
+					}
+					}
+					#endif
+					break;
+				}
                 case AVK_SEND:
                 {
 #ifdef FEATURE_ICM
@@ -6963,6 +7130,87 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
                                         &bKeyguardEnabled,
                                         sizeof(bKeyguardEnabled));
     CALL_ERR("CallApp_AnswerCall CFGI %x %d",pMe->m_anykey_answer,bKeyguardEnabled,0);
+    #if defined(FEATURE_VERSION_C306)
+    {
+	nv_item_type	SimChoice;
+	OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+	if(SimChoice.sim_select==AVK_SEND_TWO)
+	{
+		 if((((wParam == AVK_SEND || wParam == AVK_CAMERA) && (pMe->m_anykey_answer & 0x4))
+        ||(eCode == EVT_FLIP && ((boolean)wParam == TRUE)  && (pMe->m_anykey_answer & 0x2))
+        ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND)|| wParam == AVK_CAMERA) && (pMe->m_anykey_answer & 0x8))
+        ||(((((AVK_FIRST < wParam && wParam <AVK_POWER ) ||(wParam == AVK_INFO)||(wParam == AVK_SHIFT)||
+        	   (wParam == AVK_ENTER)||(wParam == AVK_CAPLK)||(wParam == AVK_SYMBOL)||
+        	   (wParam == AVK_RWD)||(wParam == AVK_LCTRL)||(wParam == AVK_SPACE)||
+        	   (AVK_A <= wParam && wParam <= AVK_Z) ||(AVK_CLR < wParam && wParam <AVK_SOFT1 ))
+                 && !bKeyguardEnabled)
+                 ||(wParam == AVK_SEND || wParam == AVK_CAMERA))
+                 && (pMe->m_anykey_answer & 0x1))
+        ) ||auto_answer ||wParam == AVK_SELECT)
+    {
+#ifdef FEATURE_ICM
+        if(AEE_SUCCESS != ICM_GetCallInfo(pMe->m_pICM, pMe->m_CallsTable->call_id, &ci, sizeof(AEECMCallInfo)))
+#else
+        if(AEE_SUCCESS != ITELEPHONE_GetCallInfo(pMe->m_pITelephone, pMe->m_CallsTable->call_id, &ci, sizeof(AEETCallInfo)))
+#endif
+        {
+            return FALSE;
+        }
+
+        IALERT_StopAlerting(pMe->m_pAlert);
+        switch (ci.call_state)
+        {
+#ifdef FEATURE_ICM
+            case AEECM_CALL_STATE_INCOM:
+
+#ifdef FEATURE_IS2000_SCC_CODES
+                pMe->m_bAnswerHold = bAnswerHold;
+#endif /* FEATURE_IS2000_SCC_CODES */
+                ICM_AnswerCall(pMe->m_pICM, pMe->m_CallsTable->call_id);
+                CLOSE_DIALOG(DLGRET_CONNECT)
+                break;
+#else
+            case AEET_CALL_STATE_INCOM:
+			{
+				ICall *pCall= NULL;
+#ifdef FEATURE_IS2000_SCC_CODES
+                pMe->m_bAnswerHold = bAnswerHold;
+#endif /* FEATURE_IS2000_SCC_CODES */
+				ICALLMGR_GetCall(pMe->m_pICallMgr,pMe->m_CallsTable->call_id,&pCall);
+				if (pCall != NULL)
+				{
+					ICALL_Answer(pCall);
+					ICALL_Release(pCall);
+				} 
+
+                //ICM_AnswerCall(pMe->m_pITelephone, pMe->m_CallsTable->call_id);
+                CLOSE_DIALOG(DLGRET_CONNECT)
+            }break;
+#endif
+#ifdef FEATURE_ICM
+            case AEECM_CALL_STATE_CONV:
+#else
+            case AEET_CALL_STATE_CONV:
+#endif
+#ifdef FEATURE_IS2000_SCC_CODES
+                pMe->m_bAnswerHold = bAnswerHold;
+#endif /* FEATURE_IS2000_SCC_CODES */
+                CallApp_AnswerInbandCall(pMe);
+                CLOSE_DIALOG(DLGRET_CONNECT)
+                break;
+
+            default:
+                return FALSE;
+       }
+
+       CallApp_Change_Call_Table_Call_Start_Time(pMe,pMe->m_CallsTable->call_number);
+       CallApp_Change_Call_Table_Call_History_State(pMe,pMe->m_CallsTable->call_number,AEECALLHISTORY_CALL_TYPE_FROM/*CALLHISTORY_INCOMING*/);
+	   
+       return TRUE;
+    }
+	}
+	}
+	#endif
     if(((wParam == AVK_SEND && (pMe->m_anykey_answer & 0x4))
         ||(eCode == EVT_FLIP && ((boolean)wParam == TRUE)  && (pMe->m_anykey_answer & 0x2))
         ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND)) && (pMe->m_anykey_answer & 0x8))

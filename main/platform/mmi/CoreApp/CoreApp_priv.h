@@ -115,6 +115,13 @@
 #define    CHARGING_ANIMATE_RATE        (1000) //(500)
 
 #define    CHARGE_FULL_STATE                (4)
+#if defined(FEATURE_VERSION_C306)
+#define AVK_SEND_TWO     2
+#elif defined(FEATURE_VERSION_N450)
+#define AVK_SEND_TWO     1
+#else
+#define AVK_SEND_TWO     1
+#endif
 
 #ifdef FEATURE_APP_MUSICPLAYER
 //#define    DISP_MUSICNAME_MAX            (16)

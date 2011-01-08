@@ -222,6 +222,13 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 #define PRI_PHOTO                       (0x0C)
 #define PRI_RING                        (0x0D)
 #define PRI_DEFAULT                     (0xFF)
+#if defined(FEATURE_VERSION_C306)
+#define AVK_SEND_TWO     2
+#elif defined(FEATURE_VERSION_N450)
+#define AVK_SEND_TWO     1
+#else
+#define AVK_SEND_TWO     1
+#endif
 
 // ×Ö¶ÎÑÚÂë
 #define AEE_ADDR_KEY_LEFT (0x1)

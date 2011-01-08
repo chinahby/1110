@@ -1216,7 +1216,21 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                     	CLOSE_DIALOG(DLGRET_CANCELED)
                     }
                     break;
-                    
+                case AVK_CAMERA:
+                	#if defined(FEATURE_VERSION_C306)
+                    {
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select ==AVK_SEND_TWO)
+						{
+							if(pMe->record_count>0)
+                       			return RecentCalls_SendCall(pMe,FALSE);
+                    		else
+                        		return TRUE;
+						}
+					}
+					#endif
+					break;
                 case AVK_SEND:
                     if(pMe->record_count>0)
                        return RecentCalls_SendCall(pMe,FALSE);
@@ -1926,6 +1940,22 @@ static boolean RecentCalls_DetailEvent(CRecentCalls *pMe,
             case AVK_CLR:
                 CLOSE_DIALOG(DLGRET_CANCELED)
                 break;
+            case AVK_CAMERA:
+            	#if defined(FEATURE_VERSION_C306)
+                {
+					nv_item_type	SimChoice;
+					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					if(SimChoice.sim_select ==AVK_SEND_TWO)
+					{
+						if(pMe->record_count>0)                               
+		                   return RecentCalls_SendCall(pMe,FALSE);
+		               else
+		                    return TRUE;
+		                break;
+					}
+				}
+				#endif
+				break;
             case AVK_SEND:    
                if(pMe->record_count>0)                               
                    return RecentCalls_SendCall(pMe,FALSE);

@@ -5170,6 +5170,48 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 		ITEXTCTL_SetActive(pTextCtl, TRUE);
                 	}
                     return TRUE;
+                case AVK_CAMERA:
+                {
+                	 #if defined(FEATURE_VERSION_C306)
+                	 {
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select==AVK_SEND_TWO)
+						{
+							if(IS_ZERO_REC())
+		                    {
+		                        return TRUE;
+		                    }
+		                    pMe->m_wSelectCont = IMENUCTL_GetSel(pMenuCtl);
+		                    // store the menu select
+		                    PUSH_LISTMENU_SEL(pMe->m_wMainListSel);
+		                    
+		                    // store the menu index
+		                    PUSH_LISTMENU_IDX(pMe->m_wMainListIdx);
+		                    
+		                    // Load the current fields
+		                    if(SUCCESS != CContApp_LoadAddrFlds( pMe, 
+		                                                         pMe->m_wSelectCont,
+		                                                         SINGLE_SELECT_NUMBER))
+		                    {
+		                        pMe->m_wErrStrID = IDS_ERR_LOADFIELDS;
+		                        CLOSE_DIALOG(DLGRET_ERR);
+		                        return NFSMACTION_CONTINUE;
+		                    }
+		                    // 如果当前记录仅有一个号码则直接发起呼叫
+		                    if(1 == CContApp_GetCurrFldNum(pMe, AEE_ADDRFIELD_PHONE_GENERIC))
+		                    {
+		                        (void)CContApp_MakeCall(pMe, IDX_NUM_RUIM_FLD);
+		                        return TRUE;
+		                    }
+		                    
+		                    CLOSE_DIALOG(DLGRET_CALL);
+		                    return TRUE;
+						}
+					}
+					#endif
+                	break;
+                }
                 case AVK_SEND:
                     if(IS_ZERO_REC())
                     {
@@ -7199,7 +7241,69 @@ static boolean  CContApp_HandleViewDlgEvent( CContApp  *pMe,
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;
-                
+                case AVK_CAMERA:
+                {
+                	#if defined(FEATURE_VERSION_C306)
+                	{
+					nv_item_type	SimChoice;
+					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					if(SimChoice.sim_select ==AVK_SEND_TWO)
+					{
+						if(pMe->m_wSelectOpts != IDI_OPTS_MENU_VIEW)
+	                    {
+	                        CtlAddItem ai;
+	                        uint16   wID;
+	                            
+	                        wID = IMENUCTL_GetSel(pMenuCtl);
+	                        if (IMENUCTL_GetItem(pMenuCtl, wID, &ai))
+	                        {
+	                            switch(pMe->m_wFiledOptState) 
+	                            {
+#if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
+	                                case FIELDSENDSMS:
+	                                    // Send SMS
+	                                    (void)CContApp_SendSMS(pMe,  (AECHAR *)ai.pText, NULL);  
+	                                    break;
+	                                case FIELDSENDCONTACT:
+	                                    // Send SMS
+	                                    (void)CContApp_SendSMS(pMe,  (AECHAR *)ai.pText, pMe->m_pBuf); 
+	                                    break;
+#endif
+	                                    
+	                                case FIELDCALL:
+	                                    // Make voice call if it is number
+	                                    //(void)MakeVoiceCall(pMe->m_pShell, FALSE, (AECHAR *)ai.pText);
+	                                (void)CContApp_MakeCall(pMe, IMENUCTL_GetSel(pMenuCtl));
+	                                    break;
+#ifdef FEATRUE_SET_IP_NUMBER
+	                                case FIELDIPCALL:
+	                                {
+	                                    ICallApp         *pCallApp = NULL;
+	                                    if( SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+	                                                                            AEECLSID_DIALER,
+	                                                                            (void **)&pCallApp))
+	                                    {
+	                                        return FALSE;
+	                                    }
+	                                    ICallApp_Make_IP_Call_F(pCallApp,(AECHAR *)ai.pText);
+	                                    if (pCallApp) 
+	                                    {
+	                                        ICallApp_Release(pCallApp);
+	                                        pCallApp = NULL;
+	                                    }
+	                                }
+	                                break;
+#endif
+	                                default:
+	                                    break;
+	                            }
+	                        }
+	                    } 
+					}
+					}
+					#endif
+					return TRUE;
+                }
                 case AVK_SEND:
                 case AVK_INFO:
                 case AVK_SELECT:
@@ -9239,7 +9343,33 @@ static boolean  CContApp_HandleOneDialNumFldSelDlgEvent( CContApp  *pMe,
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;
-
+				case AVK_CAMERA:
+				{
+					#if defined(FEATURE_VERSION_C306)
+					{
+					nv_item_type	SimChoice;
+					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					if(SimChoice.sim_select ==AVK_SEND_TWO)
+					{
+						FREEIF(pMe->m_pOneDial);
+	                    pMe->m_wSelectCont = IMENUCTL_GetSel(pMenuCtl);
+	                    pMe->m_pOneDial = WSTRDUP((AECHAR *)
+	                        CContApp_GetFldBuf(pMe, pMe->m_wSelectFld));
+	                    if(WSTRLEN(pMe->m_pOneDial)<=3)
+	                    {
+	                        CLOSE_DIALOG(DLGRET_ERR);
+	                    }
+	                    else
+	                    {
+	                        (void)CContApp_MakeCall(pMe, pMe->m_wSelectFld);
+	                        //CLOSE_DIALOG(DLGRET_CALL);
+	                    }
+	                    return TRUE;
+                    }
+                    }
+                    #endif
+				}
+				break;
                 case AVK_SEND:
                     FREEIF(pMe->m_pOneDial);
                     pMe->m_wSelectCont = IMENUCTL_GetSel(pMenuCtl);
@@ -12272,6 +12402,58 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
                     //CLOSE_DIALOG(DLGRET_OK);
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;
+                case AVK_CAMERA:
+				#if defined(FEATURE_VERSION_C306)
+				{
+				nv_item_type	SimChoice;
+				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+				if(SimChoice.sim_select ==AVK_SEND_TWO)
+				{
+					AECHAR* callNum;
+                    
+                    if ( SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
+                                                           AEECLSID_DIALER,
+                                                           (void **)&pMe->m_pCallApp))
+                    {
+                        return EFAILED;
+                    }
+                    
+                    switch(IMENUCTL_GetSel(pMenuCtl))
+                    {
+                        case IDI_EDIT_MENU_MOBILE:
+                            callNum = pMe->m_pAddNewMobile;
+                            break;
+                            
+                        case IDI_EDIT_MENU_HOME:
+                            callNum = pMe->m_pAddNewHome;
+                            break;
+                            
+                        case IDI_EDIT_MENU_OFFICE:
+                            callNum = pMe->m_pAddNewOffice;
+                            break;
+                            
+                        case IDI_EDIT_MENU_FAX:
+                            callNum = pMe->m_pAddNewFax;
+                            break;
+
+                        default:
+                            return TRUE;
+                    }
+
+                    // Make a voice call
+                    ICallApp_CallNumber(pMe->m_pCallApp, (AECHAR *)callNum);
+
+                    if (pMe->m_pCallApp != NULL) 
+                    {
+                        ICallApp_Release(pMe->m_pCallApp);
+                        pMe->m_pCallApp = NULL;
+                    }     
+                    return TRUE;
+                
+				}
+				}
+				#endif
+				break;
 
                 case AVK_SEND:
                 {
@@ -14038,7 +14220,69 @@ static boolean  CContApp_HandleNunFldDlgEvent( CContApp  *pMe,
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED);
                     return TRUE;
+                case AVK_CAMERA:
                 
+                #if defined(FEATURE_VERSION_C306)
+                {
+				nv_item_type	SimChoice;
+				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+				if(SimChoice.sim_select ==AVK_SEND_TWO)
+				{
+                    if(pMe->m_wSelectOpts != IDI_OPTS_MENU_VIEW)
+                    {
+                        CtlAddItem ai;
+                        uint16   wID;
+                            
+                        wID = IMENUCTL_GetSel(pMenuCtl);
+                        if (IMENUCTL_GetItem(pMenuCtl, wID, &ai))
+                        {
+                            switch(pMe->m_wFiledOptState) 
+                            {
+#ifndef WIN32 
+                                case FIELDSENDSMS:
+                                    // Send SMS
+                                    (void)CContApp_SendSMS(pMe,  (AECHAR *)ai.pText, NULL);  
+                                    break;
+                                case FIELDSENDCONTACT:
+                                    // Send SMS
+                                    (void)CContApp_SendSMS(pMe,  (AECHAR *)ai.pText, pMe->m_pBuf); 
+                                    break;
+                                case FIELDCALL:
+                                    // Make voice call if it is number
+                                    //(void)MakeVoiceCall(pMe->m_pShell, FALSE, (AECHAR *)ai.pText);
+                                (void)CContApp_MakeCall(pMe, IMENUCTL_GetSel(pMenuCtl));
+                                    break;
+#ifdef FEATRUE_SET_IP_NUMBER
+                                case FIELDIPCALL:
+                                {
+                                    ICallApp         *pCallApp = NULL;
+                                    if( SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                                                            AEECLSID_DIALER,
+                                                                            (void **)&pCallApp))
+                                    {
+                                        return FALSE;
+                                    }
+                                    ICallApp_Make_IP_Call_F(pCallApp,(AECHAR *)ai.pText);
+                                    if (pCallApp) 
+                                    {
+                                        ICallApp_Release(pCallApp);
+                                        pCallApp = NULL;
+                                    }
+                                }
+                                break;
+#endif
+#endif//win32
+                                default:
+                                    break;
+                            }
+                        }
+                    } 
+                CLOSE_DIALOG(DLGRET_OK);
+                return TRUE;
+				}
+				}
+				#endif
+				break;
                 case AVK_SEND:
                 case AVK_INFO:
                 case AVK_SELECT:
