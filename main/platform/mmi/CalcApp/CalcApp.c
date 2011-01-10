@@ -1235,7 +1235,10 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 					//wlh 20090417 add end
                     Calc_PushVal(pme, OP_SUB);
                     break;
+#if defined(FEATURE_DISP_128X160) || defined(FEATURE_DISP_176X220)
+#else
                 case AVK_STAR:
+#endif         
                 case AVK_DOWN:
 					//wlh 20090417 add start
 					//modi ydc 20090408
@@ -1311,7 +1314,9 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                     	ISHELL_CloseApplet( pme->a.m_pIShell, FALSE);
                     }
                     break;
-                    
+#if defined(FEATURE_DISP_128X160) || defined(FEATURE_DISP_176X220)
+				case AVK_STAR:
+#endif
                 case AVK_M:
                     Calc_AddChar(pme, (AECHAR)'.', TRUE);
                     break;
