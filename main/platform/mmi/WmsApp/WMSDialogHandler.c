@@ -14691,6 +14691,7 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 		default:
             break;
 		}
+	return FALSE;
 }
 
 /*==============================================================================
