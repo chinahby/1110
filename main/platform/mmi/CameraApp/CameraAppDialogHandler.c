@@ -2946,7 +2946,7 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     displaySize.cx = 96;
     displaySize.cy = 96; 
 #elif defined(FEATURE_DISP_176X220)
-    displaySize.cx = 128;
+    displaySize.cx = 176;
     displaySize.cy = 128;
 #else
     displaySize.cx = 96;
