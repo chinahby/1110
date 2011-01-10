@@ -6410,7 +6410,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                      && MULTITAP_FIRST_CAP == pContext->nMultitapCaps
                      && !OEM_isFirstCap(pContext))
                 {
-                   #if defined(FEATURE_VERSION_C306)
+                   #if defined(FEATURE_VERSION_C306)||defined(FEAUTRE_VERSION_N450)
                    #else
                    pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
                    #endif
