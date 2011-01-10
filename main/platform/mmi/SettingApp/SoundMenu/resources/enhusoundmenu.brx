@@ -98,7 +98,7 @@
 		<Text>Gallery</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_SCENEMODE_TITLE">
-		<Text>Profiles</Text>
+		<Text>User Profile</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_NORMALMODE">
 		<Text>Normal</Text>

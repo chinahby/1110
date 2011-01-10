@@ -11,7 +11,7 @@
 		<Text>Keypad lock</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_SCENEMODE_TITLE">
-		<Text>Profiles</Text>
+		<Text>User Profile</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_PHONE_NUMBER">
 		<Text>Phone number</Text>

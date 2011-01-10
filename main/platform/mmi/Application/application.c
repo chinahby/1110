@@ -602,11 +602,20 @@ static boolean Application_HandleEvent( IApplication *pi,
             }
             {
                 AECHAR WTitle[20] = {0};
+#ifdef FEATURE_VERSION_FLEXI203P				
     			(void)ISHELL_LoadResString(pMe->m_pShell,
                                         APPLICATION_RES_FILE_LANG,                                
-                                        IDS_APPLICATION_LIST,
+                                        IDS_TOOLS_LIST,
                                         WTitle,
                                         sizeof(WTitle));
+#else
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+										APPLICATION_RES_FILE_LANG,								  
+										IDS_APPLICATION_LIST,
+										WTitle,
+										sizeof(WTitle));
+
+#endif
                 if(pMe->m_pIAnn != NULL)
                 {
     			    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
@@ -948,7 +957,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
 			#if 0
             IMENUCTL_SetTitle(pMenu, APPLICATION_RES_FILE_LANG, IDS_APPLICATION_LIST, NULL);
 			#else
-#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) ||defined(FEATURE_VERSION_C500BE)
+#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) ||defined(FEATURE_VERSION_C500BE)||defined	(FEATURE_VERSION_FLEXI203P)
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                                     APPLICATION_RES_FILE_LANG,                                
                                     IDS_TOOLS_LIST,
@@ -974,6 +983,14 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_STOPWATCH, IDS_APPLICATION_STOPWATCH, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
+#elif defined (FEATURE_VERSION_FLEXI203P)		
+            IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CONVERTER, IDS_APPLICATION_CONVERTER, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_STOPWATCH, IDS_APPLICATION_STOPWATCH, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_TIMER, IDS_APPLICATION_TIMER, NULL, 0);
+			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
 #elif defined (FEATURE_VERSION_C500BE)		
 			IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_ALARM, IDS_APPLICATION_ALARM, NULL, 0);
 			//IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CALCULATOR, IDS_APPLICATION_CALCULATOR, NULL, 0);
@@ -1038,6 +1055,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_CONVERTER, IDS_APPLICATION_CONVERTER, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_WORLDTIME, IDS_APPLICATION_WORLDTIME, NULL, 0);
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_FLASHLIGHT, IDS_APPLICATION_FLASHLIGHT, NULL, 0);
+			
 #else
 #ifdef FEATURE_APP_MANAGER
             IMENUCTL_AddItem(pMenu, APPLICATION_RES_FILE_LANG,IDS_APPLICATION_BAM, IDS_APPLICATION_BAM, NULL, 0);
