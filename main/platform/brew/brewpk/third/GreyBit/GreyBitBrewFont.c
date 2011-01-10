@@ -472,6 +472,9 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
                         sp++;
                     }  // for loop            
                     
+                    backR = CGreyBit_COLORSCHEME565_GET_R(cBack);
+                    backG = CGreyBit_COLORSCHEME565_GET_G(cBack);
+                    backB = CGreyBit_COLORSCHEME565_GET_B(cBack);
                     x1 = xxDisp+charBmp->horioff;
                     while (x1--){
                         switch(*sp){
