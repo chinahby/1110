@@ -3042,12 +3042,12 @@ static boolean  QuickTest_CallHandler(CQuickTest *pMe,
 #ifndef WIN32
             if(HS_HEADSET_ON())
             {
-                STRTOWSTR("headset loop",string,sizeof(string));
+                STRTOWSTR("echo loop",string,sizeof(string));
             }
             else
 #endif
             {
-                STRTOWSTR("HANDSET LOOP",string,sizeof(string));
+                STRTOWSTR("ECHO LOOP",string,sizeof(string));
             }
             (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                                     AEE_FONT_BOLD,
