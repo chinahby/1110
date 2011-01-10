@@ -97,6 +97,9 @@
 	<STRING Id="1066" Name="IDS_MSG_NOSDCARD">
 		<Text>ใส่การ์ดหน่วยความจำ</Text>
 	</STRING>
+	<String Id="1067" Name="IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD">
+		<Text>Phone Memory Full Please Insert SD Card</Text>
+	</String>	
 	<STRING Id="1068" Name="IDS_DONE">
 		<Text>ทำงาน</Text>
 	</STRING>

@@ -1,299 +1,301 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="tvapp" VERSION="1">
 <Strings Encoding="Unicode">
-    <String Id="1" Name= "IDS_TITLE_BRIGHTNESS">
+    <String Id="1001" Name= "IDS_TITLE_BRIGHTNESS">
         <Text>السطوع</Text>
     </String>
+	<String Id="1002" Name="IDS_TITLE_BRIGHTNESS">
+		<Text>Brightness</Text>
 
-    <String Id="2" Name= "IDS_TITLE_CONTRAST">
+    <String Id="1003" Name= "IDS_TITLE_CONTRAST">
         <Text>التباين</Text>
     </String>
 
-    <String Id="3" Name= "IDS_TITLE_DEFINITION">
+    <String Id="1004" Name= "IDS_TITLE_DEFINITION">
         <Text>الوضوح</Text>
     </String>
 
-    <String Id="4" Name= "IDS_TITLE_SATURATION">
+    <String Id="1005" Name= "IDS_TITLE_SATURATION">
         <Text>الإشباع</Text>
     </String>
 
-    <String Id="5" Name= "IDS_TITLE_SOUND">
+    <String Id="1006" Name= "IDS_TITLE_SOUND">
         <Text>الصوت</Text>
     </String>
 
-    <String Id="6" Name= "IDS_MSG_WAITING">
+    <String Id="1070" Name= "IDS_MSG_WAITING">
         <Text>انتظار التلفزيون</Text>
     </String>
 
-    <String Id="7" Name= "IDS_MSG_CAPTURE_FAILED">
+    <String Id="1073" Name= "IDS_MSG_CAPTURE_FAILED">
         <Text>فشل الالتقاط</Text>
     </String>
 
-    <String Id="8" Name= "IDS_TV_FAVORITE">
+    <String Id="1101" Name= "IDS_TV_FAVORITE">
         <Text>المفضلة</Text>
     </String>
 
-    <String Id="9" Name= "IDS_REGION">
+    <String Id="1102" Name= "IDS_REGION">
         <Text>المنطقة</Text>
     </String>
 
-    <String Id="10" Name= "IDS_AUTO_SCAN">
+    <String Id="1103" Name= "IDS_AUTO_SCAN">
         <Text>المسح التلقائي</Text>
     </String>
 
-    <String Id="11" Name= "IDS_LANDSCAPE">
+    <String Id="1104" Name= "IDS_LANDSCAPE">
         <Text>أفقي</Text>
     </String>
 
-    <String Id="12" Name= "IDS_PORTRAIT">
+    <String Id="1105" Name= "IDS_PORTRAIT">
         <Text>عمودي</Text>
     </String>
 
-    <String Id="13" Name= "IDS_ASIA">
+    <String Id="1106" Name= "IDS_ASIA">
         <Text>آسيا</Text>
     </String>
 
-    <String Id="14" Name= "IDS_LATIN">
+    <String Id="1107" Name= "IDS_LATIN">
         <Text>أمريكا اللاتينية</Text>
     </String>
 
-    <String Id="15" Name= "IDS_EUROPE">
+    <String Id="1108" Name= "IDS_EUROPE">
         <Text>أوروبا</Text>
     </String>
 
-    <String Id="16" Name= "IDS_AFRICA">
+    <String Id="1109" Name= "IDS_AFRICA">
         <Text>أفريقيا</Text>
     </String>
 
-    <String Id="17" Name= "IDS_OCEANIA">
+    <String Id="1110" Name= "IDS_OCEANIA">
         <Text>أوقيانوسيا</Text>
     </String>
 
-    <String Id="18" Name= "IDS_USA">
+    <String Id="1111" Name= "IDS_USA">
         <Text>الولايات المتحدة الأميركية</Text>
     </String>
 
-    <String Id="19" Name= "IDS_CANADA">
+    <String Id="1112" Name= "IDS_CANADA">
         <Text>كندا</Text>
     </String>
 
-    <String Id="20" Name= "IDS_KOREA">
+    <String Id="1113" Name= "IDS_KOREA">
         <Text>كوريا</Text>
     </String>
 
-    <String Id="21" Name= "IDS_TAIWAN">
+    <String Id="1114" Name= "IDS_TAIWAN">
         <Text>تايوان</Text>
     </String>
 
-    <String Id="22" Name= "IDS_MEXICO">
+    <String Id="1115" Name= "IDS_MEXICO">
         <Text>المكسيك</Text>
     </String>
 
-    <String Id="23" Name= "IDS_CHILE">
+    <String Id="1116" Name= "IDS_CHILE">
         <Text>تشيلي</Text>
     </String>
 
-    <String Id="24" Name= "IDS_VENEZUELA">
+    <String Id="1117" Name= "IDS_VENEZUELA">
         <Text>فنزويلا</Text>
     </String>
 
-    <String Id="25" Name= "IDS_PHILIPPINES">
+    <String Id="1118" Name= "IDS_PHILIPPINES">
         <Text>الفلبين</Text>
     </String>
 
-    <String Id="26" Name= "IDS_JAMAICA">
+    <String Id="1119" Name= "IDS_JAMAICA">
         <Text>جامايكا</Text>
     </String>
 
-    <String Id="27" Name= "IDS_CHINA">
+    <String Id="1120" Name= "IDS_CHINA">
         <Text>الصين</Text>
     </String>
 
-    <String Id="28" Name= "IDS_SHENZHEN">
+    <String Id="1121" Name= "IDS_SHENZHEN">
         <Text>شينتشين</Text>
     </String>
 
-    <String Id="29" Name= "IDS_VIETNAM">
+    <String Id="1122" Name= "IDS_VIETNAM">
         <Text>فيتنام</Text>
     </String>
 
-    <String Id="30" Name= "IDS_WESTERNEUROPE">
+    <String Id="1123" Name= "IDS_WESTERNEUROPE">
         <Text>أوروبا الغربية</Text>
     </String>
 
-    <String Id="31" Name= "IDS_TURKEY">
+    <String Id="1124" Name= "IDS_TURKEY">
         <Text>تركيا</Text>
     </String>
 
-    <String Id="32" Name= "IDS_UAE">
+    <String Id="1125" Name= "IDS_UAE">
         <Text>الإمارات العربية المتحدة</Text>
     </String>
 
-    <String Id="33" Name= "IDS_AFGHANISTAN">
+    <String Id="1126" Name= "IDS_AFGHANISTAN">
         <Text>أفغانستان</Text>
     </String>
 
-    <String Id="34" Name= "IDS_SINGAPORE">
+    <String Id="1127" Name= "IDS_SINGAPORE">
         <Text>سنغافورة</Text>
     </String>
 
-    <String Id="35" Name= "IDS_THAILAND">
+    <String Id="1128" Name= "IDS_THAILAND">
         <Text>تايلاند</Text>
     </String>
 
-    <String Id="36" Name= "IDS_CAMBODIA">
+    <String Id="1129" Name= "IDS_CAMBODIA">
         <Text>كمبوديا</Text>
     </String>
 
-    <String Id="37" Name= "IDS_INDONESIA">
+    <String Id="1130" Name= "IDS_INDONESIA">
         <Text>أندونسيا</Text>
     </String>
 
-    <String Id="38" Name= "IDS_MALAYSIA">
+    <String Id="1131" Name= "IDS_MALAYSIA">
         <Text>ماليزيا</Text>
     </String>
 
-    <String Id="39" Name= "IDS_LAOS">
+    <String Id="1132" Name= "IDS_LAOS">
         <Text>لاوس</Text>
     </String>
 
-    <String Id="40" Name= "IDS_PORTUGAL">
+    <String Id="1133" Name= "IDS_PORTUGAL">
         <Text>البرتغال</Text>
     </String>
 
-    <String Id="41" Name= "IDS_SWEDEN">
+    <String Id="1134" Name= "IDS_SWEDEN">
         <Text>السويد</Text>
     </String>
 
-    <String Id="42" Name= "IDS_PAKISTAN">
+    <String Id="1135" Name= "IDS_PAKISTAN">
         <Text>باكستان</Text>
     </String>
 
-    <String Id="43" Name= "IDS_SPAIN">
+    <String Id="1136" Name= "IDS_SPAIN">
         <Text>أسبانيا</Text>
     </String>
 
-    <String Id="44" Name= "IDS_JAPAN">
+    <String Id="1137" Name= "IDS_JAPAN">
         <Text>اليابان</Text>
     </String>
 
-    <String Id="45" Name= "IDS_UK">
+    <String Id="1138" Name= "IDS_UK">
         <Text>المملكة المتحدة</Text>
     </String>
 
-    <String Id="46" Name= "IDS_HONGKONG">
+    <String Id="1139" Name= "IDS_HONGKONG">
         <Text>هونج كونج</Text>
     </String>
 
-    <String Id="47" Name= "IDS_SOUTHAFRICA">
+    <String Id="1140" Name= "IDS_SOUTHAFRICA">
         <Text>جنوب أفريقيا</Text>
     </String>
 
-    <String Id="48" Name= "IDS_BRAZIL">
+    <String Id="1141" Name= "IDS_BRAZIL">
         <Text>البرازيل</Text>
     </String>
 
-    <String Id="49" Name= "IDS_ARGENTINA">
+    <String Id="1142" Name= "IDS_ARGENTINA">
         <Text>الأرجنتين</Text>
     </String>
 
-    <String Id="50" Name= "IDS_INDIA">
+    <String Id="1143" Name= "IDS_INDIA">
         <Text>الهند</Text>
     </String>
 
-    <String Id="51" Name= "IDS_BURMA">
+    <String Id="1144" Name= "IDS_BURMA">
         <Text>بورما</Text>
     </String>
 
-    <String Id="52" Name= "IDS_SUDAN">
+    <String Id="1145" Name= "IDS_SUDAN">
         <Text>السودان</Text>
     </String>
 
-    <String Id="53" Name= "IDS_YEMEN">
+    <String Id="1146" Name= "IDS_YEMEN">
         <Text>اليمن</Text>
     </String>
 
-    <String Id="54" Name= "IDS_PERU">
+    <String Id="1147" Name= "IDS_PERU">
         <Text>بيرو</Text>
     </String>
 
-    <String Id="55" Name= "IDS_BOLIVIA">
+    <String Id="1148" Name= "IDS_BOLIVIA">
         <Text>بوليفيا</Text>
     </String>
 
-    <String Id="56" Name= "IDS_ECUADOR">
+    <String Id="1149" Name= "IDS_ECUADOR">
         <Text>الإكوادور</Text>
     </String>
 
-    <String Id="57" Name= "IDS_SURINAME">
+    <String Id="1150" Name= "IDS_SURINAME">
         <Text>سورينام</Text>
     </String>
 
-    <String Id="58" Name= "IDS_AUSTRALIA">
+    <String Id="1151" Name= "IDS_AUSTRALIA">
         <Text>أستراليا</Text>
     </String>
 
-    <String Id="59" Name= "NEWZEALAND">
+    <String Id="1152" Name= "NEWZEALAND">
         <Text>نيوزيلندا</Text>
     </String>
 
-    <String Id="60" Name= "IDS_NORTHKOREA">
+    <String Id="1153" Name= "IDS_NORTHKOREA">
         <Text>كوريا الشمالية</Text>
     </String>
 
-    <String Id="61" Name= "IDS_MONGOLIA">
+    <String Id="1154" Name= "IDS_MONGOLIA">
         <Text>منغوليا</Text>
     </String>
 
-    <String Id="62" Name= "IDS_AZERBAIJAN">
+    <String Id="1155" Name= "IDS_AZERBAIJAN">
         <Text>أذربيجان</Text>
     </String>
 
-    <String Id="63" Name= "IDS_CZETH">
+    <String Id="1156" Name= "IDS_CZETH">
         <Text>جمهورية التشيك</Text>
     </String>
 
-    <String Id="64" Name= "IDS_POLAND">
+    <String Id="1157" Name= "IDS_POLAND">
         <Text>بولندا</Text>
     </String>
 
-    <String Id="65" Name= "IDS_RUSSION">
+    <String Id="1158" Name= "IDS_RUSSION">
         <Text>روسيا</Text>
     </String>
 
-    <String Id="66" Name= "IDS_UKRAINE">
+    <String Id="1159" Name= "IDS_UKRAINE">
         <Text>أوكرانيا</Text>
     </String>
 
-    <String Id="67" Name= "IDS_TUNISIA">
+    <String Id="1160" Name= "IDS_TUNISIA">
         <Text>تونس</Text>
     </String>
 
-    <String Id="68" Name= "IDS_EGYPT">
+    <String Id="1161" Name= "IDS_EGYPT">
         <Text>مصر</Text>
     </String>
 
-    <String Id="69" Name= "IDS_MOROCCO">
+    <String Id="1162" Name= "IDS_MOROCCO">
         <Text>المغرب</Text>
     </String>
 
-    <String Id="70" Name= "IDS_IRAQ">
+    <String Id="1163" Name= "IDS_IRAQ">
         <Text>العراق</Text>
     </String>
 
-    <String Id="71" Name= "IDS_SAUDIARABIA">
+    <String Id="1164" Name= "IDS_SAUDIARABIA">
         <Text>المملكة العربية السعودية</Text>
     </String>
 
-    <String Id="72" Name= "IDS_GREECE">
+    <String Id="1165" Name= "IDS_GREECE">
         <Text>اليونان</Text>
     </String>
 
-    <String Id="73" Name= "IDS_OK1">
+    <String Id="1166" Name= "IDS_OK1">
         <Text>موافق</Text>
     </String>
 
-    <String Id="74" Name= "IDS_BACK1">
+    <String Id="1167" Name= "IDS_BACK1">
         <Text>رجوع</Text>
     </String>
 

@@ -114,7 +114,6 @@
 	<DIALOG Id="6001" Name="IDD_ALARMCLOCK_DLG" Focus="7002">
 		<Controls>
 			<Menu Id="7002" Name="IDC_MENU_ALARMCLOCK_LIST">
-				<TitleID>IDS_ALARMCLOCK_TITLE</TitleID>
 				<Items>
 					<Item Id="8001" Name="IDC_MENU_ALARMCLOCK_LIST_ITEM_1">
 						<TextID>IDS_ALARMCLOCK_1</TextID>

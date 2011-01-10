@@ -97,6 +97,9 @@
 	<STRING Id="1066" Name="IDS_MSG_NOSDCARD">
 		<Text>请插入存储卡</Text>
 	</STRING>
+	<String Id="1067" Name="IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD">
+		<Text>手机内存已满请插入SD卡</Text>
+	</String>
 	<STRING Id="1068" Name="IDS_DONE">
 		<Text>完成</Text>
 	</STRING>

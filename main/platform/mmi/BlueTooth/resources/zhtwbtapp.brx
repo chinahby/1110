@@ -39,8 +39,14 @@
 	</STRING>
 	<STRING Id="13" Name="IDS_PASSIVE">
 		<Text>Passive</Text>
+	</String>
+	<STRING Id="14" Name="IDS_BT_OK">
+		<Text>OK</Text>
 	</STRING>
-	<STRING Id="16" Name="IDS_ON">
+	<STRING Id="15" Name="IDS_BT_CANCEL">
+		<Text>Cancel</Text>
+	</STRING>
+	<String Id="16" Name="IDS_ON">
 		<Text>On</Text>
 	</STRING>
 	<STRING Id="17" Name="IDS_ON_TIMED">
