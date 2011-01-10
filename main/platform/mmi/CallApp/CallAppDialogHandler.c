@@ -858,7 +858,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             return TRUE;
 #endif
         case EVT_KEY_RELEASE:
-			#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
             {
 				nv_item_type	SimChoice;
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -870,7 +870,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             		}
 				}
 			}
-			#endif
+#endif
             if(AVK_SEND == (AVKType)wParam && !pMe->m_bprocess_held)
             {
                 return CallApp_Process_Send_Key_Release_Event(pMe);
@@ -1764,8 +1764,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #endif
 				case AVK_CAMERA:
             	{
-            		#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
-            		{
+#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
 					nv_item_type	SimChoice;
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 					if(SimChoice.sim_select==AVK_SEND_TWO)
@@ -1773,7 +1772,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             			return TRUE;
             		}
             		else
-            		#endif
+#endif
             		{
             			break;
             		}
@@ -1818,7 +1817,6 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             }
 
             break;
-            }
 
         default:
             break;
@@ -1936,19 +1934,19 @@ static boolean CallApp_Show_Ip_Number_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_KEY_PRESS:
-        	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
         	{
-			nv_item_type	SimChoice;
-			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
-			if(SimChoice.sim_select==AVK_SEND_TWO)
-			{
-				if(AVK_SEND == wParam || AVK_CAMERA == wParam)
-            	{
-                	return CallApp_Process_Ip_Call_Key_Press(pMe,pMenu);
-            	}
+				nv_item_type	SimChoice;
+				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+				if(SimChoice.sim_select==AVK_SEND_TWO)
+				{
+					if(AVK_SEND == wParam || AVK_CAMERA == wParam)
+	            	{
+	                	return CallApp_Process_Ip_Call_Key_Press(pMe,pMenu);
+	            	}
+				}
 			}
-			}
-			#endif
+#endif
             if(AVK_SEND == wParam)
             {
                 return CallApp_Process_Ip_Call_Key_Press(pMe,pMenu);
@@ -3105,16 +3103,16 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
 				
 				case AVK_CAMERA:
-				#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
 				{
-				nv_item_type	SimChoice;
-				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
-				if(SimChoice.sim_select==AVK_SEND_TWO)
-				{
-                	return TRUE;  //make the cm 2312 disappear
+					nv_item_type	SimChoice;
+					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					if(SimChoice.sim_select==AVK_SEND_TWO)
+					{
+	                	return TRUE;  //make the cm 2312 disappear
+	                }
                 }
-                }
-                #endif
+#endif
                 break;
                 case AVK_SEND:
                     return TRUE;  //make the cm 2312 disappear
@@ -3127,8 +3125,8 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
         }
 #ifdef FEATURE_TCL_CDG2_TEST
         case EVT_KEY_HELD:
-        	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
-        	{
+#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+{
 			nv_item_type	SimChoice;
 			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 			if(SimChoice.sim_select==AVK_SEND_TWO)
@@ -3148,7 +3146,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 	}
             	}
 			}
-			}
+}
 			#endif
             if(AVK_SEND == (AVKType)wParam)//CDG 3-way call need send fwi 
             {
@@ -3219,8 +3217,8 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     // next state...
                     return TRUE;
                 case AVK_CAMERA:
-                	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
-                	{
+#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+{
 					nv_item_type	SimChoice;
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 					if(SimChoice.sim_select==AVK_SEND_TWO)
@@ -3255,7 +3253,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 	                    CallApp_Flash_Call(pMe);
 	                    return TRUE;
 					}
-					}
+}
 					#endif
                     break;
 
@@ -4627,8 +4625,8 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_KEY:
-        	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
-        	{
+#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+{
 			nv_item_type	SimChoice;
 			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 			if(SimChoice.sim_select==AVK_SEND_TWO)
@@ -4639,7 +4637,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 	pMe->m_b_press_1=FALSE ;
             	}
             }
-            }
+}
             #else
             if ((AVKType)wParam!=AVK_SEND)
             {      
@@ -4740,8 +4738,8 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                     break;
 				case AVK_CAMERA:
 				{
-					#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
-					{
+#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+{
 					nv_item_type	SimChoice;
 					MSG_FATAL("AVK_SEND_TWO...............1111",0,0,0);
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -4765,7 +4763,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 	                    }
 						#endif
 					}
-					}
+}
 					#endif
 				}
                 case AVK_SEND:
