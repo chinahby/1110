@@ -1776,6 +1776,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             		{
             			break;
             		}
+            		}
             	}
 
                 case AVK_SEND:
