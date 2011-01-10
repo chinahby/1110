@@ -188,7 +188,7 @@
 		<Text>شاشة العرض</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_HANDSFREE_ON">
-		<Text>حر اليدين</Text>
+		<Text>مكرفون</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_BLUETOOTH_ACCEPT">
 		<Text>قبول</Text>

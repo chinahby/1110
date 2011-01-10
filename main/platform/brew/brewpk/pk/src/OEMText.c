@@ -6416,6 +6416,9 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
             #ifdef FEATURE_T9_MT_ARABIC
+            MSG_FATAL("pContext->byMode=%d,t9Key=%d",pContext->byMode,t9Key,0);
+            if(pContext->byMode == 3)
+            {
             pContext->uModeInfo.mtap.kLast = key; 
             if(pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED)
             {
@@ -6426,8 +6429,6 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             		if (key == VLARCharKeyItem[i].wParam)
             		{
             			AVK_Size = VLARCharKeyItem[i].wsize;
-            			//j = STRLEN(pContext->sT9awFieldInfo.G.psTxtBuf);
-            			//pContext->sT9awFieldInfo.G.psTxtBuf+(pContext->sT9awFieldInfo.G.nCursor-1) = VLARCharKeyItem[i].wp[pContext->m_curpos];
             			pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = VLARCharKeyItem[i].wp[pContext->m_curpos];
             			if(pContext->m_curpos<(AVK_Size-1))
             			{
@@ -6440,7 +6441,14 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             			}
             			MSG_FATAL("pContext->m_curpos==========%d",pContext->m_curpos,0,0);
             		}
+            		else if(key == AVK_0)
+            		{
+            			//uint16 temp[2] = {' '};
+            			pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = 0x20;
+            			MSG_FATAL("=====%0x",pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart],0,0);
+            		}
             	}
+            }
             }
             #endif
             //MSG_FATAL("pContext->sT9awFieldInfo.G.nCursor=%d",pContext->sT9awFieldInfo.G.nCursor,0,0);
@@ -6657,17 +6665,20 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 
         case T9KEYNONE:
             ERR("T9TextCtl_MultitapKey::10",0,0,0);
+           
             if(FOCUS_SELECTION == pContext->sFocus)
             {
                 pContext->sFocus = FOCUS_TEXT;             
                 sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYRIGHT );
                 break;
             }
+            
 
         default:
            // MSG_FATAL("T9TextCtl_MultitapKey::11",0,0,0);
             pContext->sFocus = FOCUS_TEXT;   
-            sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key );  
+                       sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
+           
             break;  
     }   
    // MSG_FATAL("T9TextCtl_MultitapKey::12",0,0,0);
