@@ -5899,7 +5899,6 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
             if( wParam == AVK_SELECT || wParam == AVK_CLR)
             {
             
-#ifdef FEATURE_SPORTS_APP
                 if(g_nCurEvtStyle == 0)
                 {
                 
@@ -5931,9 +5930,11 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                             }
                             clearAllDoneAppointment( &pme->m_CalMgr);
                         }
+#ifdef FEATURE_SPORTS_APP                        
                         g_sport_snooze_back_flag = TRUE;
-                        
+                       
                         ISHELL_StartAppletArgs(pme->m_pShell, AEECLSID_SPORTSAPP,args);
+#endif                         
                         //FREEIF(args);
                     }
 
@@ -5955,12 +5956,15 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                         }
 
                        {
+#ifdef FEATURE_SPORTS_APP                        
                             if(g_otherappflag == FALSE)
                             {
                                 pme->m_stateToBackShowAlert = g_tempCurEvtFlag;
+                                
                                 g_gobacktosportflag = FALSE;
+
                             }
-                            
+#endif                      
                        }
                         clearAllDoneAppointment( &pme->m_CalMgr);
                     }
