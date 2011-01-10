@@ -2951,7 +2951,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_BLUETOOTH_APP);
 #endif
                 case AVK_MUSIC:
+#ifdef  FEAUTRE_VERSION_N450    //add by pyuangui
+                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);   
+#else
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+#endif    
                 case AVK_FM:
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
                 case AVK_CAMERA:
