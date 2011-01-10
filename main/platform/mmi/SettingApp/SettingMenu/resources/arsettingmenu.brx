@@ -200,7 +200,7 @@
 		<Text>Tiếng Việt</Text>
 	</STRING>
 	<STRING Id="1067" Name="IDS_ARABIC" Encoding="Unicode">
-		<Text>عربيعربي</Text>
+		<Text>عربي</Text>
 	</STRING>
 
 	<STRING Id="1068" Name="IDS_HEBREW">
