@@ -77,7 +77,7 @@
 		<Text>Frenduo</Text>
 	</String>
 	<String Id="1110" Name="IDS_MAIN_MENU_TIMER">
-		<Text>Timer</Text>
+		<Text>ตัวจับเวลา</Text>
 	</String>
 </Strings>
 <Dialogs>
