@@ -6418,6 +6418,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             } 
             
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
+            MSG_FATAL("pContext->sT9awFieldInfo.G.psTxtBuf=%0x,=%d.....",pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart],pContext->wSelStart,0);
             #ifdef FEATURE_T9_MT_ARABIC
             MSG_FATAL("pContext->byMode=%d,t9Key=%d",pContext->byMode,t9Key,0);
             if(pContext->byMode == 3)

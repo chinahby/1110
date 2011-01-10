@@ -117,7 +117,9 @@ when       who     what, where, why
 #endif //FEATURE_LANG_HINDI
 
 #ifdef FEATURE_LANG_THAI
-//#define FEATURE_T9_MT_THAI
+#ifndef FEATURE_VERSION_HITZ181
+#define FEATURE_T9_MT_THAI
+#endif
 #define FEATURE_T9_RAPID_THAI
 #endif //FEATURE_LANG_THAI
 

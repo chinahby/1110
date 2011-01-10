@@ -399,7 +399,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //Gemsea Modify For CDMA450   #undef FEATURE_UNIFORM_SCAN_OOS
 #endif
 //#endif
-
+#ifdef CAMERA_USES_SOFTDSP
+#define FEATURE_CAMERA_NOFULLSCREEN
+#endif
 
 
 #endif /* CUSTSB2_H */

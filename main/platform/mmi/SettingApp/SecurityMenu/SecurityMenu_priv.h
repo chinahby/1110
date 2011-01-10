@@ -283,8 +283,8 @@ typedef struct _CSecurityMenu
 #define LAST_MENU_GAP   27
 #if defined(FEATURE_VERSION_C306)
 #define AVK_SEND_TWO     2
-#elif defined(FEATURE_VERSION_N450)
-#define AVK_SEND_TWO     1
+#elif defined(FEAUTRE_VERSION_N450)
+#define AVK_SEND_TWO     2
 #else
 #define AVK_SEND_TWO     1
 #endif

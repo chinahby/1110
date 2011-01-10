@@ -2959,7 +2959,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_FM:
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
                 case AVK_CAMERA:
-                	#if defined(FEATURE_VERSION_C306)
+                	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
                 	{
 					nv_item_type	SimChoice;
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
