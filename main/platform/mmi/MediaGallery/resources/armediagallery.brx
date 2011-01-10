@@ -1,327 +1,327 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="mediagallery" VERSION="1">
+<BREWRes Name="armediagallery" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1000" Name="IDS_MG_MEDIAGALLERY">
-        <Text>معرض الوسائط</Text>
+		<Text>معرض الوسائط</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_MG_PHONEMEMORY">
-        <Text>الهاتف</Text>
+		<Text>الهاتف</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_MG_CARDMEMORY">
-        <Text>بطاقة الذاكرة</Text>
+		<Text>بطاقة الذاكرة</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_MG_MEMORYSTATUS">
-        <Text>حالة الذاكرة</Text>
+		<Text>حالة الذاكرة</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_MG_PICTURES">
-        <Text>الصور</Text>
+		<Text>الصور</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_MG_MUSIC">
-        <Text>الموسيقى</Text>
+		<Text>الموسيقى</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_MG_VIDEOS">
-        <Text>الفيديو</Text>
+		<Text>الفيديو</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_MG_VOICEMEMO">
-        <Text>ذاكرة الفيديو</Text>
+		<Text>ذاكرة الفيديو</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_MG_PLAY">
-        <Text>تشغيل</Text>
+		<Text>تشغيل</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_MG_SETAS">
-        <Text>تعيين كـ</Text>
+		<Text>تعيين كـ</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_MG_RENAME">
-        <Text>إعادة التسمية</Text>
+		<Text>إعادة التسمية</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_MG_DELETE">
-        <Text>حذف</Text>
+		<Text>حذف</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_MG_DELALL">
-        <Text>حذف الكل</Text>
+		<Text>حذف الكل</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_MG_DETAIL">
-        <Text>تفاصيل</Text>
+		<Text>تفاصيل</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MG_BLUETOOTH">
-        <Text>إرسال عن طريق البلوتوث</Text>
+		<Text>إرسال عن طريق البلوتوث</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_MG_COPY">
-        <Text>نسخ</Text>
+		<Text>نسخ</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_MG_MOVE">
-        <Text>نقل</Text>
+		<Text>نقل</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_MG_SETWALLPAPER">
-        <Text>تعيين كخلفية للشاشة</Text>
+		<Text>تعيين كخلفية للشاشة</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MG_VIEW">
-        <Text>عرض</Text>
+		<Text>عرض</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_MG_MYREC">
-        <Text>المسجل الخاص بي</Text>
+		<Text>المسجل الخاص بي</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_MG_CALLREC">
-        <Text>مسجل المكالمات</Text>
+		<Text>مسجل المكالمات</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_MG_PHONEMEMSTAT">
-        <Text>حالة ذاكرة الهاتف</Text>
+		<Text>حالة ذاكرة الهاتف</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_MG_CARDMEMSTAT">
-        <Text>حالة ذاكرة البطاقة</Text>
+		<Text>حالة ذاكرة البطاقة</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_MG_TOTALMEMSTAT">
-        <Text>حالة إجمالي الذاكرة</Text>
+		<Text>حالة إجمالي الذاكرة</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_MG_SPACEUSED">
-        <Text>الذاكرة المستخدمة:</Text>
+		<Text>الذاكرة المستخدمة:</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_MG_SPACEFREE">
-        <Text>الذاكرة الحرة:</Text>
+		<Text>الذاكرة الحرة:</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_MG_SPACETOTAL">
-        <Text>الإجمالي:</Text>
+		<Text>الإجمالي:</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_MG_NOEXTCARD">
-        <Text>أدخل بطاقة الذاكرة</Text>
+		<Text>أدخل بطاقة الذاكرة</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_MG_BUILDPL">
-        <Text>إنشاء قائمة تشغيل</Text>
+		<Text>إنشاء قائمة تشغيل</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_MG_CALLRINGTONE">
-        <Text>نغمة الرنين</Text>
+		<Text>نغمة الرنين</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_MG_SMSRINGTONE">
-        <Text>نغمة الرسائل النصية</Text>
+		<Text>نغمة الرسائل النصية</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_MG_ALARMRINGTONE">
-        <Text>نغمة التنبيه</Text>
+		<Text>نغمة التنبيه</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_MG_ADDMUSIC">
-        <Text>إضافة مقطع صوتي</Text>
+		<Text>إضافة مقطع صوتي</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_MG_BYTE">
-        <Text>بايت</Text>
+		<Text>بايت</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_MG_KILOBYTE">
-        <Text>كيلوبايت</Text>
+		<Text>كيلوبايت</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_MG_MEGABYTE">
-        <Text>ميجابايت</Text>
+		<Text>ميجابايت</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_MG_GIGABYTE">
-        <Text>جيجابايت</Text>
+		<Text>جيجابايت</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_MG_ARTIST">
-        <Text>الفنان:</Text>
+		<Text>الفنان:</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_MG_TITLE">
-        <Text>العنوان:</Text>
+		<Text>العنوان:</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_MG_ALBUM">
-        <Text>الألبوم:</Text>
+		<Text>الألبوم:</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_MG_YEAR">
-        <Text>السنة:</Text>
+		<Text>السنة:</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_MG_GENRE">
-        <Text>الجنس:</Text>
+		<Text>الجنس:</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_MG_TOTALTIME">
-        <Text>الوقت الكلي</Text>
+		<Text>الوقت الكلي</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_MG_BITRATE">
-        <Text>معدل البت</Text>
+		<Text>معدل البت</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_MG_SAMPLERATE">
-        <Text>سرعة العينة</Text>
+		<Text>سرعة العينة</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_MG_CHANNEL">
-        <Text>القناة</Text>
+		<Text>القناة</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_MG_SIZE">
-        <Text>الحجم:</Text>
+		<Text>الحجم:</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_MG_CREATIONDATE">
-        <Text>تاريخ الإنشاء: %4u.%2d.%2d</Text>
+		<Text>تاريخ الإنشاء: %4u.%2d.%2d</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_MG_ATTRIB">
-        <Text>السمة:</Text>
+		<Text>السمة:</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_MG_ADDVIDEO">
-        <Text>إضافة فيديو</Text>
+		<Text>إضافة فيديو</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_MG_UDISK">
-        <Text>وضع اتصال USB</Text>
+		<Text>وضع اتصال USB</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_MG_STARTUDISK">
-        <Text>قرص Udisk الخاص ببدء التشغيل</Text>
+		<Text>قرص Udisk الخاص ببدء التشغيل</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_MG_FORMAT">
-        <Text>تهيئة</Text>
+		<Text>تهيئة</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_MG_READONLY">
-        <Text>للقراءة فقط</Text>
+		<Text>للقراءة فقط</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_MG_ARCHIVE">
-        <Text>أرشفة</Text>
+		<Text>أرشفة</Text>
 	</STRING>
 	<STRING Id="1055" Name="IDS_MG_HIDDEN">
-        <Text>مخفي</Text>
+		<Text>مخفي</Text>
 	</STRING>
 	<STRING Id="1056" Name="IDS_MG_INVALIDNAME">
-        <Text>اسم غير صالح</Text>
+		<Text>اسم غير صالح</Text>
 	</STRING>
 	<STRING Id="1057" Name="IDS_MG_EMPTY">
-        <Text>لا يوجد سجل</Text>
+		<Text>لا يوجد سجل</Text>
 	</STRING>
 	<STRING Id="1058" Name="IDS_MG_FILEOPENED">
-        <Text>تم فتح الملف</Text>
+		<Text>تم فتح الملف</Text>
 	</STRING>
 	<STRING Id="1059" Name="IDS_MG_LISTFULL">
-        <Text>القائمة ممتلئة</Text>
+		<Text>القائمة ممتلئة</Text>
 	</STRING>
 	<STRING Id="1060" Name="IDS_MG_REPETITION">
-        <Text>اسم متكرر</Text>
+		<Text>اسم متكرر</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_MG_NULLNAME">
-        <Text>اسم خالي</Text>
+		<Text>اسم خالي</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_MG_PROTECT">
-        <Text>تمت حماية الملف</Text>
+		<Text>تمت حماية الملف</Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_MG_FOLDERNOTEMPTY">
-        <Text>المجلد غير فارغ</Text>
+		<Text>المجلد غير فارغ</Text>
 	</STRING>
 	<STRING Id="1064" Name="IDS_MG_FILENOEXISTS">
-        <Text>الملف غير موجود</Text>
+		<Text>الملف غير موجود</Text>
 	</STRING>
 	<STRING Id="1065" Name="IDS_MG_DIRNOEXISTS">
-        <Text>المجلد غير موجود</Text>
+		<Text>المجلد غير موجود</Text>
 	</STRING>
 	<STRING Id="1066" Name="IDS_MG_CALLMEMO">
-        <Text>ذاكرة المكالمات</Text>
+		<Text>ذاكرة المكالمات</Text>
 	</STRING>
 	<STRING Id="1067" Name="IDS_MG_INSUFFICIENT">
-        <Text>مساحة التخزين غير كافية</Text>
+		<Text>مساحة التخزين غير كافية</Text>
 	</STRING>
 	<STRING Id="1068" Name="IDS_MG_PROGBARHINT">
-        <Text>جاري الحذف...</Text>
+		<Text>جاري الحذف...</Text>
 	</STRING>
 	<STRING Id="1069" Name="IDS_MG_FILEOPERR">
-        <Text>خطأ</Text>
+		<Text>خطأ</Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_MG_OVERWRITE">
-        <Text>تغطية السجل الحالي</Text>
+		<Text>تغطية السجل الحالي</Text>
 	</STRING>
 	<STRING Id="1071" Name="IDS_MG_RUNUDISK">
-        <Text>جاري تشغيل قرص U-dsik...</Text>
+		<Text>جاري تشغيل قرص U-disk...</Text>
 	</STRING>
 	<STRING Id="1072" Name="IDS_MG_STOPUDISK">
-        <Text>تم إيقاف قرص U-disk</Text>
+		<Text>تم إيقاف قرص U-disk</Text>
 	</STRING>
 	<STRING Id="1073" Name="IDS_MG_UNKNOWN">
-        <Text>غير معروف</Text>
+		<Text>غير معروف</Text>
 	</STRING>
 	<STRING Id="1074" Name="IDS_MG_NOUSBCABLE">
-        <Text>الاتصال بالكمبيوتر الشخصي باستخدام كبل USB</Text>
+		<Text>الاتصال بالكمبيوتر الشخصي باستخدام كبل USB</Text>
 	</STRING>
 	<STRING Id="1075" Name="IDS_MG_SORT">
-        <Text>فرز</Text>
+		<Text>فرز</Text>
 	</STRING>
 	<STRING Id="1076" Name="IDS_MG_BYNAME">
-        <Text>فرز حسب الاسم</Text>
+		<Text>فرز حسب الاسم</Text>
 	</STRING>
 	<STRING Id="1077" Name="IDS_MG_BYDATE">
-        <Text>فرز حسب التاريخ</Text>
+		<Text>فرز حسب التاريخ</Text>
 	</STRING>
 	<STRING Id="1078" Name="IDS_MG_BYSIZE">
-        <Text>فرز حسب الحجم</Text>
+		<Text>فرز حسب الحجم</Text>
 	</STRING>
 	<STRING Id="1079" Name="IDS_MG_ZOOM">
-        <Text>التكبير/التصغير</Text>
+		<Text>التكبير/التصغير</Text>
 	</STRING>
 	<STRING Id="1080" Name="IDS_MG_SLIDE">
-        <Text>الشريحة</Text>
+		<Text>الشريحة</Text>
 	</STRING>
 	<STRING Id="1081" Name="IDS_MG_BYTYPE">
-        <Text>فرز حسب النوع</Text>
+		<Text>فرز حسب النوع</Text>
 	</STRING>
 	<STRING Id="1082" Name="IDS_MG_BYNULL">
-        <Text>بدون فرز</Text>
+		<Text>بدون فرز</Text>
 	</STRING>
 	<STRING Id="1083" Name="IDS_MG_OPEN">
-        <Text>فتح</Text>
+		<Text>فتح</Text>
 	</STRING>
 	<STRING Id="1084" Name="IDS_MG_WALLPAPERNOSET">
-        <Text>حجم الصورة كبير جدًا!</Text>
+		<Text>حجم الصورة كبير جدًا!</Text>
 	</STRING>
 	<STRING Id="1085" Name="IDS_MG_SELECTNONE">
-        <Text>لم يتم تحديد أي شيء</Text>
+		<Text>لم يتم تحديد أي شيء</Text>
 	</STRING>
 	<STRING Id="1086" Name="IDS_MG_MANYFILES">
-        <Text>"ملفات كثيرة، لم يتم إدراج بعضها في القائمة"</Text>
+		<Text>"ملفات كثيرة، لم يتم إدراج بعضها في القائمة"</Text>
 	</STRING>
 	<STRING Id="1087" Name="IDS_MG_DEEPPATH">
-        <Text>المجلد عميق جدًا</Text>
+		<Text>المجلد عميق جدًا</Text>
 	</STRING>
 	<STRING Id="1088" Name="IDS_MG_FOLDERS">
-        <Text>المجلدات</Text>
+		<Text>المجلدات</Text>
 	</STRING>
 	<STRING Id="1089" Name="IDS_MG_FILES">
-        <Text>الملفات</Text>
+		<Text>الملفات</Text>
 	</STRING>
 	<STRING Id="1090" Name="IDS_MG_LOCATION">
-        <Text>الموقع</Text>
+		<Text>الموقع</Text>
 	</STRING>
 	<STRING Id="1091" Name="IDS_MG_CONST">
-        <Text>ثابت</Text>
+		<Text>ثابت</Text>
 	</STRING>
 	<STRING Id="1092" Name="IDS_MG_SYSTEM">
-        <Text>النظام</Text>
+		<Text>النظام</Text>
 	</STRING>
 	<STRING Id="1093" Name="IDS_MG_SELECT">
-        <Text>تحديد</Text>
+		<Text>تحديد</Text>
 	</STRING>
 	<STRING Id="1094" Name="IDS_MG_DOWNLOAD">
-        <Text>تنزيل</Text>
+		<Text>تنزيل</Text>
 	</STRING>
 	<STRING Id="1095" Name="IDS_MG_SELECTPATH">
-        <Text>تحديد مسار</Text>
+		<Text>تحديد مسار</Text>
 	</STRING>
 	<STRING Id="1096" Name="IDS_MG_LARGEFILE">
-        <Text>الملف كبير جدًا</Text>
+		<Text>الملف كبير جدًا</Text>
 	</STRING>
 	<STRING Id="1097" Name="IDS_MG_PHOTOGALLERY">
-        <Text>معرض الصور</Text>
+		<Text>معرض الصور</Text>
 	</STRING>
 	<STRING Id="1098" Name="IDS_MG_VIDEOGALLERY">
-        <Text>معرض الفيديو</Text>
+		<Text>معرض الفيديو</Text>
 	</STRING>
 	<STRING Id="1099" Name="IDS_MG_FILENOTDEL">
-        <Text>يتعذر حذف بعض الملفات</Text>
+		<Text>يتعذر حذف بعض الملفات</Text>
 	</STRING>
 	<STRING Id="1100" Name="IDS_MG_MARKALL">
-        <Text>تحديد الكل</Text>
+		<Text>تحديد الكل</Text>
 	</STRING>
 	<STRING Id="1101" Name="IDS_MG_UNMARKALL">
-        <Text>إلغاء تحديد الكل</Text>
+		<Text>إلغاء تحديد الكل</Text>
 	</STRING>
 	<STRING Id="1102" Name="IDS_MG_MARK">
-        <Text>تحديد</Text>
+		<Text>تحديد</Text>
 	</STRING>
 	<STRING Id="1103" Name="IDS_MG_UNMARK">
-        <Text>إلغاء التحديد</Text>
+		<Text>إلغاء التحديد</Text>
 	</STRING>
 	<STRING Id="1104" Name="IDS_MG_EXECUTE">
-        <Text>تنفيذ</Text>
+		<Text>تنفيذ</Text>
 	</STRING>
 	<STRING Id="1105" Name="IDS_MG_LOADFAILED">
-        <Text>فشل تحميل الصورة</Text>
+		<Text>فشل تحميل الصورة</Text>
 	</STRING>
 	<STRING Id="1106" Name="IDS_MG_LOADING">
-        <Text>جاري التحميل...</Text>
-    </STRING>
+		<Text>جاري التحميل...</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">

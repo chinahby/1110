@@ -215,7 +215,7 @@
 		<Text>Cover existing record</Text>
 	</STRING>
 	<STRING Id="1071" Name="IDS_MG_RUNUDISK">
-		<Text>U-disk  running</Text>
+		<Text>U-disk running</Text>
 	</STRING>
 	<STRING Id="1072" Name="IDS_MG_STOPUDISK">
 		<Text>U-disk stopped</Text>
