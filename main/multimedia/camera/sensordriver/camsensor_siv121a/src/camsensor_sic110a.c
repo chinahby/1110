@@ -250,11 +250,11 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 #endif
 
     //Shading
-    sic110a_i2c_write_byte(0x27, 0x11); 
-    sic110a_i2c_write_byte(0x28, 0x11); 
-    sic110a_i2c_write_byte(0x29, 0x55); 
-    sic110a_i2c_write_byte(0x2A, 0x43); 
-    sic110a_i2c_write_byte(0x2B, 0x21); 
+    sic110a_i2c_write_byte(0x27, 0xFD); //0x11
+    sic110a_i2c_write_byte(0x28, 0xCB); //0x11
+    sic110a_i2c_write_byte(0x29, 0xA8); //0x55
+    sic110a_i2c_write_byte(0x2A, 0x64); //0x43
+    sic110a_i2c_write_byte(0x2B, 0x21); //0x21
     sic110a_i2c_write_byte(0x2C, 0x00); //R left # right
     sic110a_i2c_write_byte(0x2D, 0x00); //R top # bottom 
     sic110a_i2c_write_byte(0x2E, 0x00); //G left # right 
