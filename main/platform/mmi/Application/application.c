@@ -1352,7 +1352,7 @@ static int StartApplet(Application *pMe, int i)
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);		
         break;
 #endif
-#if defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_DISP_128X160)
+#if defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_DISP_128X160) || defined(FEAUTRE_VERSION_N450)
 	case IDS_APPLICATION_FLASHLIGHT:		
         CLOSE_DIALOG(DLGRET_FLASHLITHT)
         break;
