@@ -5355,6 +5355,7 @@ static void callbackTheNextAvailableAppointment( CCalApp* pme)
 
 static void clearAllDoneAppointment( CCalApp* pme)
 {
+	MSG_FATAL("pme->m_expiredAppointment===========%d",pme->m_expiredAppointment,0,0);
     if( pme->m_expiredAppointment)
     {
         int         j       = 0;
@@ -5363,7 +5364,7 @@ static void clearAllDoneAppointment( CCalApp* pme)
         int         num     = end;
         IDBRecord*  precord = 0;
 
-
+        MSG_FATAL("end===========%d",end,0,0);
         for( i = 1; i <= end; i ++)
         {
             if( pme->m_expiredAppointment[i]->status == DONE)
@@ -5388,7 +5389,7 @@ static void clearAllDoneAppointment( CCalApp* pme)
                                 &pme->m_expiredAppointment[i]->baseFields
                             );
                 }
-
+                MSG_FATAL("IAlarm_CancelAlarm...........................",0,0,0);
                 IAlarm_CancelAlarm( pme->m_pIAlarm,
                         AEECLSID_SCHEDULEAPP,
                         pme->m_expiredAppointment[i]->permId
@@ -5635,7 +5636,7 @@ void Cal_HandleAlarm(CScheduleApp* pme, uint16 permId)
                 {
                     pme->m_stateToBackShowAlert = pme->m_eCurState;
                 }
-
+				MSG_FATAL("CLOSE_DIALOG( DLGRET_TO_SHOWALERT)............",0,0,0);
                 CLOSE_DIALOG( DLGRET_TO_SHOWALERT)
             }
         }
@@ -5761,7 +5762,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                 Appointment* theLast      = 0;
                 IImage *AlertImage = NULL;
                 AECHAR wstrTitle[MAX_INPUT_SUBJECT] = {0};
-
+                MSG_FATAL("EVT_USER_REDRAW...end======%d",end,0,0);
 
                 for( i = 1; i <= end; i ++)
                 {
@@ -5943,9 +5944,86 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                     
 
                         Appointment* pAppointment = 0;
-                        int          i            = 0;
-                        int          end          = GET_EXPIREDAPPOINTMENT_NUMBER( &pme->m_CalMgr);
+                 
+                        //int          i            = 0;
+                        //int          end          = GET_EXPIREDAPPOINTMENT_NUMBER( &pme->m_CalMgr);
+                        if( pme->m_CalMgr.m_expiredAppointment)
+    					{
+					        int         j       = 0;
+					        int         i       = 0;
+					        int         end     = GET_EXPIREDAPPOINTMENT_NUMBER(&pme->m_CalMgr);
+					        int         num     = end;
+					        IDBRecord*  precord = 0;
+
+					        MSG_FATAL("end===========%d",end,0,0);
+					        for( i = 1; i <= end; i ++)
+					        {
+					        	MSG_FATAL("000000000000000000000000000000==%d",pme->m_CalMgr.m_expiredAppointment[i]->status,0,0);
+					            if( pme->m_CalMgr.m_expiredAppointment[i]->status == EXPIRED)
+					            {
+#if !FEATURE_ONE_DB
+					                closeDatabaseIf(&pme->m_CalMgr);
+					                openDatabaseIf( &pme->m_CalMgr,
+					                                pme->m_CalMgr.m_expiredAppointment[i]->julian.wYear,
+					                                pme->m_CalMgr.m_expiredAppointment[i]->julian.wMonth
+					                            );
+#endif
+									MSG_FATAL("11111111111111111111111111111111111",0,0,0);
+					                precord = IDATABASE_GetRecordByID(pme->m_CalMgr.m_pIDatabase, pme->m_CalMgr.m_expiredAppointment[i]->dbId);
+					                if( precord)
+					                {
+					                    pme->m_CalMgr.m_expiredAppointment[i]->baseFields.wAlarmTime = 65535;
+					                    updateDBRecord(&pme->m_CalMgr,
+					                                precord,
+					                                pme->m_CalMgr.m_expiredAppointment[i]->permId,
+					                                pme->m_CalMgr.m_expiredAppointment[i]->subject,
+					                                pme->m_CalMgr.m_expiredAppointment[i]->location,
+					                                &pme->m_CalMgr.m_expiredAppointment[i]->baseFields
+					                            );
+					                }
+					                MSG_FATAL("IAlarm_CancelAlarm...........................",0,0,0);
+					                IAlarm_CancelAlarm( pme->m_CalMgr.m_pIAlarm,
+					                        AEECLSID_SCHEDULEAPP,
+					                        pme->m_CalMgr.m_expiredAppointment[i]->permId
+					                    );
+
+
+					                FREEIF( pme->m_CalMgr.m_expiredAppointment[i]);
+					                pme->m_CalMgr.m_expiredAppointment[i] = NULL;
+
+					                num --;
+					            }
+					        }
+
+					        SET_EXPIREDAPPOINTMENT_NUMBER(&pme->m_CalMgr, num);
+					        if( num == end || num == 0)
+					        {
+					            return;
+					        }
+
+					        for( i = 1; i <= end; i ++)
+					        {
+					            if( pme->m_CalMgr.m_expiredAppointment[i] != NULL)
+					            {
+					                j = i + 1;
+
+					                for( ; j <= end; j ++)
+					                {
+					                    if( pme->m_CalMgr.m_expiredAppointment[j] != NULL)
+					                    {
+					                        pme->m_CalMgr.m_expiredAppointment[i] = pme->m_CalMgr.m_expiredAppointment[j];
+					                        pme->m_CalMgr.m_expiredAppointment[j] = NULL;
+					                    }
+					                }
+					            }
+					        }
+
+					    }
 						DBGPRINTF("----------------------->ok2"); 
+						ISHELL_CancelTimer( pme->m_pShell, 0, &(pme->m_CalMgr));
+                        stopRingerAlert( &pme->m_CalMgr);
+                        //MSG_FATAL("end       =============%d",end,0,0);
+#if  0//def //FEATURE_SPORTS_APP     
                         for( i = 1; i <= end; i ++)
                         {
                             pAppointment = pme->m_CalMgr.m_expiredAppointment[i];
@@ -5956,7 +6034,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                         }
 
                        {
-#ifdef FEATURE_SPORTS_APP                        
+                   
                             if(g_otherappflag == FALSE)
                             {
                                 pme->m_stateToBackShowAlert = g_tempCurEvtFlag;
@@ -5964,9 +6042,10 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                                 g_gobacktosportflag = FALSE;
 
                             }
+                      }
+                      clearAllDoneAppointment( &pme->m_CalMgr);
 #endif                      
-                       }
-                        clearAllDoneAppointment( &pme->m_CalMgr);
+
                     }
 					CLOSE_DIALOG( DLGRET_OK)
                 }
