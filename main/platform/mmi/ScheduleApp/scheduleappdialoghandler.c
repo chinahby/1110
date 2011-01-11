@@ -5970,7 +5970,7 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
                     }
 					CLOSE_DIALOG( DLGRET_OK)
                 }
-#endif
+
                 if((g_nCurEvtStyle == 1)&&(wParam == AVK_SELECT))
                 {
                     //if(wParam == AVK_SELECT)
