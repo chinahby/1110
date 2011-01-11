@@ -291,8 +291,15 @@ void get_call_type(
     MSG_HIGH("found emergency number, category %d",ecc_cat,0,0);
     return;
   }
+#else
+  if (OEM_IsEmergency_Number(orig_num_ptr->buf, orig_num_ptr->len))
+  {
+    *call_type_ptr = CM_CALL_TYPE_EMERGENCY;
+    *ecc_category = ecc_cat;
+    MSG_FATAL("Found emergency number %s",orig_num_ptr->buf,0,0);
+    return;
+  }
 #endif
-
 
 #ifdef FEATURE_OTASP
   /* "*228" is checked specially. */
