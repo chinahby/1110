@@ -2983,8 +2983,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					}
 					return FALSE;
 					}
+					#elif defined(FEATURE_VERSION_MYANMAR)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+					#else
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 					#endif
-                    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
+                    
 				case AVK_TV:
 				    return CoreApp_LaunchApplet(pMe, AEECLSID_TVAPP);;
                 case AVK_UP:
