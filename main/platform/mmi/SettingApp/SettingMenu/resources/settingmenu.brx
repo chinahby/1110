@@ -386,7 +386,7 @@
 		<Text>Yes</Text>
 	</String>
 	<String Id="1129" Name="IDS_MYANMAR">
-		<Text>myanmar</Text>
+		<Text>Myanmar</Text>
 	</String>
 	<String Id="1130" Name="IDS_SEARCHNET_MODE">
 		<Text>Search mode</Text>
@@ -395,16 +395,16 @@
 		<Text>Auto Search</Text>
 	</String>
 	<String Id="1132" Name="IDS_SEARCH_FIVEMINTU">
-		<Text>5 mintue</Text>
+		<Text>5 mintues</Text>
 	</String>
 	<String Id="1133" Name="IDS_SEARCH_TENMIINUTES">
-		<Text>10 minute</Text>
+		<Text>10 minutes</Text>
 	</String>
 	<String Id="1134" Name="IDS_SEARCH_TENTY">
-		<Text>20 minute</Text>
+		<Text>20 minutes</Text>
 	</String>
 	<String Id="1135" Name="IDS_SEARCH_THIRTYMINUTE">
-		<Text>30 minute</Text>
+		<Text>30 minutes</Text>
 	</String>
 </Strings>
 <Dialogs>

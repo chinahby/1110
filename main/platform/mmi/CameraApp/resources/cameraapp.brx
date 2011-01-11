@@ -104,7 +104,7 @@
 		<Text>Done</Text>
 	</String>
 	<String Id="1069" Name="IDS_MSG_NOMEMORY">
-		<Text>phone memory full</Text>
+		<Text>Phone memory full</Text>
 	</String>
 	<String Id="1070" Name="IDS_MSG_WAITING">
 		<Text>Waiting</Text>
