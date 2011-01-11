@@ -210,7 +210,20 @@ else
             feeling_off.mid|fs:/ringers/feeling_off.mid \
             street_tale.mid|fs:/ringers/street_tale.mid \
             techno_meto.mid|fs:/ringers/techno_meto.mid
-            
+      else ifeq ($(USES_RESDIR), H2021C)
+    	CONSTFILE_FILES+=\
+            i_mobile1.mid|fs:/ringers/i_mobile1.mid\
+            i_mobile2.mid|fs:/ringers/i_mobile2.mid\
+            i_mobile3.mid|fs:/ringers/i_mobile3.mid\
+            i_mobile4.mid|fs:/ringers/i_mobile4.mid\
+            i_mobile5.mid|fs:/ringers/i_mobile5.mid\
+            i_mobile6.mid|fs:/ringers/i_mobile6.mid\
+            i_mobile7.mid|fs:/ringers/i_mobile7.mid\
+            i_mobile8.mid|fs:/ringers/i_mobile8.mid\ 
+            i_mobile9.mid|fs:/ringers/i_mobile9.mid\ 
+            i_mobile10.mid|fs:/ringers/i_mobile10.mid\ 
+            i_mobile11.mid|fs:/ringers/i_mobile11.mid\ 
+            i_mobile12.mid|fs:/ringers/i_mobile12.mid    
     else                                            
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
