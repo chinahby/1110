@@ -2051,7 +2051,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
 #endif
                 {
                     // Draw the number of remaining characters.
-                    STR_TO_WSTR("%d        ", szFormat, sizeof(szFormat));
+                    STR_TO_WSTR("%d   ", szFormat, sizeof(szFormat));
                     WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, wRemainingChars);                    
 
                     /*
