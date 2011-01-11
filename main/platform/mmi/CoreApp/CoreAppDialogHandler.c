@@ -138,10 +138,10 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #elif defined(FEATURE_DISP_176X220)
 
 #define IDLE_D_CLOCK_X 		15
-#define IDLE_D_CLOCK_Y 		25
+#define IDLE_D_CLOCK_Y 		145
 
 #define RPLMN_X				5
-#define RPLMN_Y				(IDLE_D_CLOCK_Y+25)
+#define RPLMN_Y				40
 
 #define DATA_X				5
 #define DATA_Y				(RPLMN_Y + 25) 
@@ -4165,6 +4165,22 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
                                   | IDF_TEXT_TRANSPARENT);        
         MSG_FATAL("Strlen=%d, rc.x=%d", strlen, rc.x, 0);
     }
+#elif defined (FEATURE_DISP_176X220) 
+    {
+        int strlen = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
+        rc.x = (176 - strlen)/2;
+        rc.dx = strlen;
+        (void)DrawTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  AEE_FONT_NORMAL,
+                                  wszBuf, -1,
+                                  0, 0, &rc, 
+                                  IDF_ALIGN_CENTER
+                                  | IDF_ALIGN_MIDDLE 
+                                  | IDF_TEXT_TRANSPARENT);        
+        MSG_FATAL("Strlen=%d, rc.x=%d", strlen, rc.x, 0);
+     }
 #else
     // Display the string
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
@@ -4305,7 +4321,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 			   IDLE_D_CLOCK_X,
 			   IDLE_D_CLOCK_Y,
 			   pMe->m_rc.dx-2*IDLE_D_CLOCK_X, 
-			   pMe->m_nNormalFontHeight);	//26
+			   pMe->m_nLargeFontHeight);	//26
 	SETAEERECT(&rc_date, 
 			   DATA_X,
 			   DATA_Y,
@@ -4446,6 +4462,18 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              | IDF_ALIGN_LEFT
 	                              | IDF_TEXT_TRANSPARENT);
 
+#elif defined FEATURE_DISP_176X220
+	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+	                              pMe->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              33, 
+	                              wszDate, -1,
+	                              0, 0, &rc, 
+	                              IDF_ALIGN_MIDDLE
+	                              | IDF_ALIGN_CENTER
+	                              | IDF_TEXT_TRANSPARENT);
+
+
 #else	
 		//rc.y = 20;
 		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
@@ -4557,7 +4585,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   &wszDate[0], -1,
                                   0, 0, &rc_date, 
                                   IDF_ALIGN_MIDDLE
-                                  | IDF_ALIGN_RIGHT
+                                  | IDF_ALIGN_CENTER
                                   | IDF_TEXT_TRANSPARENT);
 #elif defined(FEATURE_DISP_128X128)
     {
@@ -4820,7 +4848,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               0, 0, &rc_week, 
                               IDF_ALIGN_MIDDLE
 #if defined(FEATURE_DISP_176X220)
-							  | IDF_ALIGN_RIGHT
+							  | IDF_ALIGN_CENTER
 #elif defined(FEATURE_DISP_128X128)
                               | IDF_ALIGN_RIGHT
 #elif defined(FEATURE_DISP_160X128)
