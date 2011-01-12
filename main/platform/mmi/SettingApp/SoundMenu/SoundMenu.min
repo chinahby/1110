@@ -211,19 +211,19 @@ else
             street_tale.mid|fs:/ringers/street_tale.mid \
             techno_meto.mid|fs:/ringers/techno_meto.mid
       else ifeq ($(USES_RESDIR), H2021C)
-    	CONSTFILE_FILES+=\
-            blues.mid|fs:/ringers/blues.mid \
-            blue_load.mid|fs:/ringers/blue_load.mid \
-            champagne.mid|fs:/ringers/champagne.mid \
-            clock.mid|fs:/ringers/clock.mid \
-            i_mobile1.mid|fs:/ringers/i_mobile1.mid\
-            i_mobile2.mid|fs:/ringers/i_mobile2.mid\
-            i_mobile3.mid|fs:/ringers/i_mobile3.mid\
-            i_mobile4.mid|fs:/ringers/i_mobile4.mid\
-            i_mobile5.mid|fs:/ringers/i_mobile5.mid\
-            i_mobile6.mid|fs:/ringers/i_mobile6.mid\
-            i_mobile7.mid|fs:/ringers/i_mobile7.mid\
-            i_mobile8.mid|fs:/ringers/i_mobile8.mid  
+    	  CONSTFILE_FILES+=\
+            ring01.mid|fs:/ringers/ring01.mid \
+            ring02.mid|fs:/ringers/ring02.mid \
+            ring03.mid|fs:/ringers/ring03.mid \
+            ring04.mid|fs:/ringers/ring04.mid \
+            ring05.mid|fs:/ringers/ring05.mid \
+            ring06.mid|fs:/ringers/ring06.mid \
+            ring07.mid|fs:/ringers/ring07.mid \
+            ring08.mid|fs:/ringers/ring08.mid \
+            ring09.mid|fs:/ringers/ring09.mid \
+            ring10.mid|fs:/ringers/ring10.mid \
+            ring11.mid|fs:/ringers/ring11.mid \
+            ring12.mid|fs:/ringers/ring12.mid  
     else                                            
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
