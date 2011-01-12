@@ -304,3 +304,102 @@ endif ##twitter application#
 
    
 endif
+
+
+
+ifeq ($(USES_RESDIR),Flexi203p)
+
+
+
+
+#####facebook application##########
+#todo something here   应用的名字添加
+FACEBOOK_DIRS:=$(STATIC_BREW_APP)/facebook
+FACEBOOK_HTM_DIRS:=$(STATIC_BREW_APP)/facebook/htm
+FACEBOOK_IMG_DIRS:=$(STATIC_BREW_APP)/facebook/images
+
+vpath %.mod $(FACEBOOK_DIRS)
+vpath %.fml $(FACEBOOK_DIRS)
+vpath %.htm $(FACEBOOK_HTM_DIRS)
+vpath %.bci $(FACEBOOK_IMG_DIRS)
+vpath %.png $(FACEBOOK_IMG_DIRS)
+
+
+            
+CONSTFILE_BIN_FILES += \
+    fb_load.bci|fs:/mod/fb11/images/load.bci \
+    fb_progressbar.bci|fs:/mod/fb11/images/progressbar.bci \
+    fb_header.png|fs:/mod/fb11/images/header.png \
+    fb_home_disable.png|fs:/mod/fb11/images/home_disable.png \
+    fb_home_enable.png|fs:/mod/fb11/images/home_enable.png \
+    fb_logout_disable.png|fs:/mod/fb11/images/logout_disable.png\
+    fb_logout_enable.png|fs:/mod/fb11/images/logout_enable.png \
+    fb_menu_bg.png|fs:/mod/fb11/images/menu_bg.png\
+    fb_profile_disable.png|fs:/mod/fb11/images/profile_disable.png \
+    fb_profile_enable.png|fs:/mod/fb11/images/profile_enable.png\
+    events_disable.png|fs:/mod/fb11/images/events_disable.png \
+    events_enable.png|fs:/mod/fb11/images/events_enable.png \
+    friends_disable.png|fs:/mod/fb11/images/friends_disable.png \
+    friends_enable.png|fs:/mod/fb11/images/friends_enable.png \
+    games_disable.png|fs:/mod/fb11/images/games_disable.png \
+    games_enable.png|fs:/mod/fb11/images/games_enable.png \
+    inbox_disable.png|fs:/mod/fb11/images/inbox_disable.png\
+    inbox_enable.png|fs:/mod/fb11/images/inbox_enable.png \
+    newsfeed_disable.png|fs:/mod/fb11/images/newsfeed_disable.png \
+    newsfeed_enable.png|fs:/mod/fb11/images/newsfeed_enable.png \
+    notification_disable.png|fs:/mod/fb11/images/notification_disable.png \
+    notification_enable.png|fs:/mod/fb11/images/notification_enable.png \
+    photos_disable.png|fs:/mod/fb11/images/photos_disable.png \
+    photos_enable.png|fs:/mod/fb11/images/photos_enable.png
+    
+EFSFILE_FILES += \
+    up.htm|fs:/mod/fb11/htm/up.htm
+    
+EFSFILE_FILES += \
+    fb_menu.fml|fs:/mod/fb11/menu.fml
+        
+
+CONSTFILE_FILES += \
+    fb11.mif|fs:/mif/fb11.mif \
+    fb11.mod|fs:/mod/fb11/fb11.mod
+
+
+
+#####twitter application##########
+#todo something here   应用的名字添加
+TWITTER_DIRS:=$(STATIC_BREW_APP)/twitter
+TWITTER_IMG_DIRS:=$(STATIC_BREW_APP)/twitter/images
+
+vpath %.mod $(TWITTER_DIRS)
+vpath %.fml $(TWITTER_DIRS)
+vpath %.bci  $(TWITTER_IMG_DIRS)
+vpath %.png  $(TWITTER_IMG_DIRS)
+
+CONSTFILE_BIN_FILES += \
+	  tw_load.bci|fs:/mod/twt11/images/load.bci \
+	  tw_profile_enable.png|fs:/mod/twt11/images/profile_enable.png \
+	  tw_profile_disable.png|fs:/mod/twt11/images/profile_disable.png \
+	  tw_menu_bg.png|fs:/mod/twt11/images/menu_bg.png \
+	  tw_logout_enable.png|fs:/mod/twt11/images/logout_enable.png \
+	  tw_logout_disable.png|fs:/mod/twt11/images/logout_disable.png \
+	  tw_home_enable.png|fs:/mod/twt11/images/home_enable.png \
+	  tw_home_disable.png|fs:/mod/twt11/images/home_disable.png \
+	  tw_header.png|fs:/mod/twt11/images/header.png \
+	  trending_enable.png|fs:/mod/twt11/images/trending_enable.png \
+	  trending_disable.png|fs:/mod/twt11/images/trending_disable.png \
+	  search_enable.png|fs:/mod/twt11/images/search_enable.png \
+	  search_disable.png|fs:/mod/twt11/images/search_disable.png \
+	  following_enable.png|fs:/mod/twt11/images/following_enable.png \
+	  following_disable.png|fs:/mod/twt11/images/following_disable.png \
+	  follower_enable.png|fs:/mod/twt11/images/follower_enable.png \
+	  follower_disable.png|fs:/mod/twt11/images/follower_disable.png \
+	  directmsg_enable.png|fs:/mod/twt11/images/directmsg_enable.png \
+	  directmsg_disable.png|fs:/mod/twt11/images/directmsg_disable.png
+	
+EFSFILE_FILES += \
+		tw_menu.fml|fs:/mod/twt11/menu.fml
+
+CONSTFILE_FILES += \
+    twt11.mif|fs:/mif/twt11.mif \
+    twt11.mod|fs:/mod/twt11/twt11.mod
+endif
