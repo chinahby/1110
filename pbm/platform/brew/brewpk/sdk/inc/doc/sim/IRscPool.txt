@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IRscPool simulation
+
+IRscPool is simulated.
+==========================
+*/ 
