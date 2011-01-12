@@ -49,7 +49,7 @@
 #if defined(FEATURE_SUPPORT_ID)
 // 动画起点 Y 坐标
 #define SENDINGSMS_ANI_Y    10
-#elif defined(FEATURE_VERSION_HITZ181)
+#elif defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_VERSION_C500BE)
 // 动画起点 Y 坐标
 #define SENDINGSMS_ANI_Y    10
 #else
