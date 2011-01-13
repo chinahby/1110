@@ -1,26 +1,28 @@
 #####fgen application#####################################################################################################################################################
 #todo something here   应用的名字添加
-FGEN_DIRS:=$(STATIC_BREW_APP)/fgen
+MUSIK_DIRS:=$(STATIC_BREW_APP)/musik
 #todo something here如果是这种零散的资源文件文件也需要修改，这个就具体看情况了
-vpath %.txt $(FGEN_DIRS)
-vpath %.bar $(FGEN_DIRS)
-vpath %.mod $(FGEN_DIRS)
+vpath %.txt $(MUSIK_DIRS)
+vpath %.bar $(MUSIK_DIRS)
+vpath %.mod $(MUSIK_DIRS)
 
-FGEN_CONST_FILES = fgen.bar fgen.mod
+MUSIK_CONST_FILES = fgen.bar 
 	
-FGEN_EFS_FILES =  $(notdir $(wildcard $(FGEN_DIRS)/*.txt)) 
+MUSIK_EFS_FILES =  $(notdir $(wildcard $(MUSIK_DIRS)/*.txt)) 
    
 	
 CONSTFILE_BIN_FILES += \
-    $(foreach filename, $(FGEN_CONST_FILES), $(filename)|fs:/mod/fgen/$(filename))
+    $(foreach filename, $(MUSIK_CONST_FILES), $(filename)|fs:/mod/fgen/$(filename))
     
 EFSFILE_FILES += \
-    $(foreach filename, $(FGEN_EFS_FILES), $(filename)|fs:/mod/fgen/$(filename))
+    $(foreach filename, $(MUSIK_EFS_FILES), $(filename)|fs:/mod/fgen/$(filename))
 
 CONSTFILE_FILES += \
     fgen.mif|fs:/mif/fgen.mif
     
-    
+STATIC_BREW_APP_LIB += \
+    $(MUSIK_DIRS)/fgen.o
+        
 #####facebook application##########
 #todo something here   应用的名字添加
 FACEBOOK_DIRS:=$(STATIC_BREW_APP)/facebook

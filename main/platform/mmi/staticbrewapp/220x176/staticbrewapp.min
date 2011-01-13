@@ -311,13 +311,32 @@ endif
 
 ifeq ($(USES_RESDIR),S5000)
 
-#####fgen application#####################################################################################################################################################
+
+#####musik fgen application#####################################################################################################################################################
 #todo something here   应用的名字添加
-FGEN_DIRS:=$(STATIC_BREW_APP)/fgen
+MUSIK_DIRS:=$(STATIC_BREW_APP)/musik
 #todo something here如果是这种零散的资源文件文件也需要修改，这个就具体看情况了
-vpath %.txt $(FGEN_DIRS)
-vpath %.bar $(FGEN_DIRS)
-vpath %.mod $(FGEN_DIRS)
+vpath %.txt $(MUSIK_DIRS)
+vpath %.bar $(MUSIK_DIRS)
+vpath %.mod $(MUSIK_DIRS)
+
+MUSIK_CONST_FILES = fgen.bar 
+	
+MUSIK_EFS_FILES =  $(notdir $(wildcard $(MUSIK_DIRS)/*.txt)) 
+   
+	
+CONSTFILE_BIN_FILES += \
+    $(foreach filename, $(MUSIK_CONST_FILES), $(filename)|fs:/mod/fgen/$(filename))
+    
+EFSFILE_FILES += \
+    $(foreach filename, $(MUSIK_EFS_FILES), $(filename)|fs:/mod/fgen/$(filename))
+
+CONSTFILE_FILES += \
+    fgen.mif|fs:/mif/fgen.mif
+    
+STATIC_BREW_APP_LIB += \
+    $(MUSIK_DIRS)/fgen.o
+
     
     
     
