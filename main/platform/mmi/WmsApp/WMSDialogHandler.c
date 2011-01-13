@@ -423,8 +423,9 @@ static boolean IDD_POPMSG_Handler(void *pUser,
 									 AEEEvent eCode,
 									 uint16 wParam,
 									 uint32 dwParam);  
-
-
+#ifdef FEATURE_VERSION_C306
+void Wmsap_TimeKeyout(void *pUser);
+#endif
 /*==============================================================================
 
                                  函数定义
@@ -465,6 +466,7 @@ void WmsApp_ShowDialog(WmsApp  *pMe,  uint16 dlgResId)
         ERR("Failed to create the dialog %d in the WMS applet.",dlgResId,0,0);
     }
 }
+
 
 /*==============================================================================
 函数:
@@ -974,7 +976,21 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             }
             IMENUCTL_SetSel(pMenu, pMe->m_wMainMenuSel);
             return TRUE;
-            
+            #ifdef FEATURE_VERSION_C306
+        case EVT_KEY_HELD:
+        	{
+        		if(wParam == AVK_SELECT)
+        		{
+        			pMe->m_isslectkey = TRUE;
+        			(void)ISHELL_SetTimer(pMe->m_pShell,
+                                    1*1000,
+                                    Wmsap_TimeKeyout,
+                                    pMe);
+        		}
+        		
+        	}
+        	break;
+        	#endif
         case EVT_USER_REDRAW:
             // 绘制底条提示
             // Select       Back
@@ -990,6 +1006,11 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             return TRUE;
             
         case EVT_DIALOG_END:
+        #ifdef FEATURE_VERSION_C306
+        	(void)ISHELL_CancelTimer(pMe->m_pShell,
+                                    Wmsap_TimeKeyout,
+                                    pMe);
+        #endif
             return TRUE;
 
         case EVT_KEY:
@@ -998,7 +1019,16 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
-                    
+                    #ifdef FEATURE_VERSION_C306
+                case AVK_STAR:
+                	{
+                		//ISHELL_PostEvent(p,cls,ec,wp,dw);
+        			 	(void) ISHELL_PostEvent(pMe->m_pShell,
+                                          AEECLSID_CORE_APP/*AEECLSID_CALL*/, EVT_USER, 0, 0);
+                     	ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                	}
+                	break;
+                	#endif
                 default:
                     break;
             }
@@ -14893,4 +14923,11 @@ static void WmsApp_ReadMsg(void *pUser)
         pMe->m_CurMsgNodes[0] = pnode;
     }
 }
+#ifdef FEATURE_VERSION_C306
 
+void Wmsap_TimeKeyout(void *pUser)
+{
+	WmsApp *pMe = (WmsApp *)pUser;
+	pMe->m_isslectkey = FALSE;
+}
+#endif

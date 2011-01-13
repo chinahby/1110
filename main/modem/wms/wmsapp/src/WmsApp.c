@@ -2061,7 +2061,9 @@ boolean WMSAPP_InitAppData(IApplet* po)
   pMe->m_pClient_msg      = MALLOC(sizeof(wms_client_message_s_type));
   pMe->m_pClient_ts       = MALLOC(sizeof(wms_client_ts_data_s_type));
   pMe->m_pClient_ts_mo    = MALLOC(sizeof(wms_client_ts_data_s_type));
-
+  #ifdef FEATURE_VERSION_C306
+  pMe->m_isslectkey  = FALSE;
+  #endif
   /* Initialize other to 0 */
   (void)MEMSET( &pMe->m_pClient_ts->u.cdma.other, 0, sizeof(wms_other_parm_s_type) );
 

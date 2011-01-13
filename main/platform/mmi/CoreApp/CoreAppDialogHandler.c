@@ -1407,7 +1407,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
             	{
 				nv_item_type	SimChoice;
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
-				if(SimChoice.sim_select == AVK_SEND_TWO)
+				//if(SimChoice.sim_select == AVK_SEND_TWO)
 				{
                     CtlAddItem ai;
                     uint16   wID;
@@ -2865,6 +2865,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 bImageDecoded = FALSE;
                 IImage_Notify(pWallPaper, (PFNIMAGEINFO)CoreApp_ImageNotify, pMe);
             }
+            MSG_FATAL("pMe->m_is_lockavkselect=====%d",pMe->m_is_lockavkselect,0,0);
+            #ifdef FEATURE_VERSION_C306
+            if(pMe->m_is_lockavkselect)
+            {
+            	pMe->m_is_lockavkselect = FALSE;
+            	CoreApp_TimeKeyguard(pMe);
+            }
+            #endif
 #if 0
 #if defined(FEATURE_WMS_APP)
             if (pMe->m_bsmstipscheck)
@@ -2905,7 +2913,26 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				return TRUE;
             }
         #endif
-                
+         case EVT_USER:
+        	{
+        		boolean bData;
+            	#ifdef FEATURE_KEYGUARD
+            	MSG_FATAL("EVT_USER.....................",0,0,0);
+        		if(!OEMKeyguard_IsEnabled())
+        		{
+        			(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                CFGI_KEY_LOCK_CHECK/*CFGI_PHONE_KEY_LOCK_CHECK*/,
+                                &bData,
+                                sizeof(bData));
+        			if(bData)
+        			{
+                        CoreApp_TimeKeyguard(pMe);
+            		}
+        		}
+				#endif	
+				return TRUE;
+        	}    
+        	break;
         case EVT_DIALOG_END:
             // 取消相关定时器			
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,

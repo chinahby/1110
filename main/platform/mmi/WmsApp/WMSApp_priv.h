@@ -787,6 +787,9 @@ typedef struct WmsApp
 	IRUIM                           *m_pIRUIM;  
 	boolean                         m_bincommend;
 	boolean                         m_bwriteclr;
+	#ifdef FEATURE_VERSION_C306
+	boolean                         m_isslectkey;
+	#endif
 } WmsApp;
 
 /*==============================================================================

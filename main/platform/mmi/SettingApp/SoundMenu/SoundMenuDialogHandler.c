@@ -408,7 +408,9 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
             }
             Sound_App_Add_Menu(pMenu,IDS_NORMALMODE);
             Sound_App_Add_Menu(pMenu,IDS_QUIETMODE);
+            #ifndef FEATURE_VERSION_C306
             Sound_App_Add_Menu(pMenu,IDS_MEETING);
+            #endif
             Sound_App_Add_Menu(pMenu,IDS_NOISEMODE);
 #if 0          
             Sound_App_Add_Menu(pMenu,IDS_CARMODE);
@@ -427,11 +429,12 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                 case OEMNV_PROFILE_QUIETMODE:           //安静模式
                     pMe->m_currDlgId = IDS_QUIETMODE;
                     break;
+#ifndef FEATURE_VERSION_C306
 
                 case OEMNV_PROFILE_MEETING:             //会议模式
                     pMe->m_currDlgId = IDS_MEETING;
                     break;
-
+#endif
                 case OEMNV_PROFILE_NOISEMODE:           //户外模式
                     pMe->m_currDlgId = IDS_NOISEMODE;
                     break;
@@ -490,7 +493,7 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                             pMe->m_sSubDlgId = IDS_ACTIVATING;                           
                             CLOSE_DIALOG(DLGRET_MESSAGE)
                             break;
-        
+        #ifndef FEATURE_VERSION_C306
                         case IDS_MEETING:           //会议模式
                             pMe->m_ProfileType = SET_MEETING;
                             pMe->m_CurProfile=OEMNV_PROFILE_MEETING;
@@ -498,7 +501,7 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                             pMe->m_sSubDlgId = IDS_ACTIVATING;                           
                             CLOSE_DIALOG(DLGRET_MESSAGE)
                             break;
-        
+        #endif
                         case IDS_NOISEMODE:        //户外模式
                             pMe->m_ProfileType = SET_NOISEMODE;
                             pMe->m_CurProfile=OEMNV_PROFILE_NOISEMODE;
@@ -533,13 +536,14 @@ static boolean  HandleMainDialogEvent(CSoundMenu *pMe,
                      pMe->m_CurProfile=OEMNV_PROFILE_QUIETMODE;
                      CLOSE_DIALOG(DLGRET_SCENEMODESUB)
                      break;
+#ifndef FEATURE_VERSION_C306
 
                 case IDS_MEETING:           //会议模式
                      pMe->m_ProfileType = SET_MEETING;
                      pMe->m_CurProfile=OEMNV_PROFILE_MEETING;
                      CLOSE_DIALOG(DLGRET_SCENEMODESUB)
                      break;
-
+#endif
                 case IDS_NOISEMODE:        //户外模式
                      pMe->m_ProfileType = SET_NOISEMODE;
                      pMe->m_CurProfile=OEMNV_PROFILE_NOISEMODE;
@@ -834,7 +838,7 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
 		    }
 		    #endif
             break;
-        
+        #ifndef FEATURE_VERSION_C306
         case OEMNV_PROFILE_MEETING:
 			#if 0
             (void)IMENUCTL_SetTitle(pMenu,
@@ -853,7 +857,7 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
 		    }
 		    #endif
             break;
-        
+        #endif
         case OEMNV_PROFILE_NOISEMODE:
 			#if 0
             (void)IMENUCTL_SetTitle(pMenu,
@@ -1175,6 +1179,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
             }
             Sound_App_Add_Menu(pMenu,IDS_ITEM_OFF);
             Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_RINGER);
+            #ifndef FEATURE_VERSION_C306
             Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIB);
             Sound_App_Add_Menu(pMenu,IDS_ITEM_VIBRING);
 #ifdef FEATURE_CARRIER_THAILAND_CAT
@@ -1185,6 +1190,8 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
 #else
             Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIBANDRING); 
 #endif
+			#endif
+
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -1225,6 +1232,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
                     default:
                         ui16_return = IDS_ALERTTYPE_RINGER;
                         break;
+#ifndef FEATURE_VERSION_C306
 
                     case OEMNV_SMS_VIBONLY:        //振动
                         ui16_return = IDS_ALERTTYPE_VIB;
@@ -1237,7 +1245,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
                     case OEMNV_ALERTTYPE_VIBANDRINGER:        //响铃震动
                         ui16_return = IDS_ALERTTYPE_VIBANDRING;
                         break;  
-                        
+#endif
                 }
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, ui16_return, TRUE);
@@ -1304,6 +1312,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
                 case IDS_ALERTTYPE_RINGER:   //铃声
                     alerttype[pMe->m_CurProfile] = OEMNV_SMS_RING;                   
                     break;
+#ifndef FEATURE_VERSION_C306
 
                 case IDS_ALERTTYPE_VIB:      //振动
                     alerttype[pMe->m_CurProfile] = OEMNV_SMS_VIBONLY;                   
@@ -1316,7 +1325,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
                 case IDS_ALERTTYPE_VIBANDRING:  //响铃震动
                     alerttype[pMe->m_CurProfile] = OEMNV_ALERTTYPE_VIBANDRINGER;                    
                     break;
-
+#endif
                 default:
                     ASSERT_NOT_REACHABLE;
             }
@@ -3333,11 +3342,11 @@ static void SoundMenu_SceneModeActivate(CSoundMenu *pMe)
           case OEMNV_PROFILE_QUIETMODE:           //安静模式
               IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_SILENT);
               break;
-  
+  #ifndef FEATURE_VERSION_C306
           case OEMNV_PROFILE_MEETING:             //会议模式
               IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRATOR);
               break;
-  
+  #endif
           case OEMNV_PROFILE_NOISEMODE:           //户外模式
               IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRING);
               break;

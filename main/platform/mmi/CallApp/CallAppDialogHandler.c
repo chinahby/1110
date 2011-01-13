@@ -9025,6 +9025,18 @@ static void CallApp_ShortcutQuiet(CCallApp *pMe)
                                 CFGI_PROFILE_CUR_NUMBER,
                                 &curProfile,
                                 sizeof(curProfile));
+    #if defined( FEATURE_VERSION_C306)
+    if(curProfile == OEMNV_PROFILE_QUIETMODE)
+    {
+        curProfile = OEMNV_PROFILE_NORMALMODE;
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
+    }
+    else
+    {
+        curProfile = OEMNV_PROFILE_QUIETMODE;
+        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_SILENT);
+    }
+    #else
     if(curProfile == OEMNV_PROFILE_MEETING)
     {
         curProfile = OEMNV_PROFILE_NORMALMODE;
@@ -9035,6 +9047,7 @@ static void CallApp_ShortcutQuiet(CCallApp *pMe)
         curProfile = OEMNV_PROFILE_MEETING;
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRATOR);
     }
+    #endif
     ICONFIG_SetItem(pMe->m_pConfig,
                         CFGI_PROFILE_CUR_NUMBER,
                         &curProfile,
