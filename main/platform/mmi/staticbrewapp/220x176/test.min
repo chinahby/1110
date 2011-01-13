@@ -1,4 +1,4 @@
-#####fgen application##########
+#####fgen application#####################################################################################################################################################
 #todo something here   应用的名字添加
 FGEN_DIRS:=$(STATIC_BREW_APP)/fgen
 #todo something here如果是这种零散的资源文件文件也需要修改，这个就具体看情况了
@@ -21,7 +21,6 @@ CONSTFILE_FILES += \
     fgen.mif|fs:/mif/fgen.mif
     
     
-    
 #####facebook application##########
 #todo something here   应用的名字添加
 FACEBOOK_DIRS:=$(STATIC_BREW_APP)/facebook
@@ -33,32 +32,49 @@ vpath %.fml $(FACEBOOK_DIRS)
 vpath %.htm $(FACEBOOK_HTM_DIRS)
 vpath %.bci $(FACEBOOK_IMG_DIRS)
 vpath %.png $(FACEBOOK_IMG_DIRS)
-
-FACEBOOK_EFS_FILES = \
-	$(notdir $(wildcard $(FACEBOOK_IMG_DIRS)/*.png))  \
-	$(notdir $(wildcard $(FACEBOOK_IMG_DIRS)/*.bci))  
-   
             
-#CONSTFILE_BIN_FILES += \
-#	$(foreach filename, $(FACEBOOK_CONST_FILES), $(filename)|fs:/mod/fb11/$(filename))
-	
-
+EFSFILE_FILES += \
+    fb_load.bci|fs:/mod/fb11/images/load.bci \
+    fb_progressbar.bci|fs:/mod/fb11/images/progressbar.bci \
+    fb_header.png|fs:/mod/fb11/images/header.png \
+    fb_home_disable.png|fs:/mod/fb11/images/home_disable.png \
+    fb_home_enable.png|fs:/mod/fb11/images/home_enable.png \
+    fb_logout_disable.png|fs:/mod/fb11/images/logout_disable.png\
+    fb_logout_enable.png|fs:/mod/fb11/images/logout_enable.png \
+    fb_menu_bg.png|fs:/mod/fb11/images/menu_bg.png\
+    fb_profile_disable.png|fs:/mod/fb11/images/profile_disable.png \
+    fb_profile_enable.png|fs:/mod/fb11/images/profile_enable.png\
+    events_disable.png|fs:/mod/fb11/images/events_disable.png \
+    events_enable.png|fs:/mod/fb11/images/events_enable.png \
+    friends_disable.png|fs:/mod/fb11/images/friends_disable.png \
+    friends_enable.png|fs:/mod/fb11/images/friends_enable.png \
+    games_disable.png|fs:/mod/fb11/images/games_disable.png \
+    games_enable.png|fs:/mod/fb11/images/games_enable.png \
+    inbox_disable.png|fs:/mod/fb11/images/inbox_disable.png\
+    inbox_enable.png|fs:/mod/fb11/images/inbox_enable.png \
+    newsfeed_disable.png|fs:/mod/fb11/images/newsfeed_disable.png \
+    newsfeed_enable.png|fs:/mod/fb11/images/newsfeed_enable.png \
+    notification_disable.png|fs:/mod/fb11/images/notification_disable.png \
+    notification_enable.png|fs:/mod/fb11/images/notification_enable.png \
+    photos_disable.png|fs:/mod/fb11/images/photos_disable.png \
+    photos_enable.png|fs:/mod/fb11/images/photos_enable.png
     
 EFSFILE_FILES += \
-    up.htm|fs:/mod/fb11/htm/up.htm \
-    $(foreach filename, $(FACEBOOK_EFS_FILES), $(filename)|fs:/mod/fb11/images/$(filename)) \
-    fb11_menu.fml|fs:/mod/fb11/menu.fml
+    up.htm|fs:/mod/fb11/htm/up.htm
     
-$(warning EFSFILE_FILES=$(EFSFILE_FILES))        
-
+EFSFILE_FILES += \
+    fb_menu.fml|fs:/mod/fb11/menu.fml
+        
 CONSTFILE_BIN_FILES+= \
 	fb11.mod|fs:/mod/fb11/fb11.mod
+	
 CONSTFILE_FILES += \
-    fb11.mif|fs:/mif/fb11.mif 
+    fb11.mif|fs:/mif/fb11.mif         
+
     
     
     
-#####odpmora application##########
+#####odpmora application###############################################################################################################################
 ODPMORA_DIRS:=$(STATIC_BREW_APP)/odpmora
 
 vpath %.bar $(ODPMORA_DIRS)
@@ -75,4 +91,9 @@ CONSTFILE_FILES += \
     
 STATIC_BREW_APP_LIB += \
     $(ODPMORA_DIRS)/odpmora.o
-    
+
+
+
+
+
+#####efsbrowser application###############################################################################################################################    
