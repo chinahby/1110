@@ -469,6 +469,13 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->TorchOn = FALSE;
 #endif
 
+#if defined (FEATURE_VERSION_FLEXI203P)
+{
+	extern	 void OEM_SetBAM_ADSAccount(void);
+
+	 OEM_SetBAM_ADSAccount();
+}
+#endif
 	(void)ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&pMe->m_CurProfile, sizeof(pMe->m_CurProfile));//CFGI_ALERT_TYPE
 	(void)ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CUR_NUMBER,&pMe->m_active,sizeof(pMe->m_active));
     CoreAppReadNVKeyBeepValue(pMe);

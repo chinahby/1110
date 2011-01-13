@@ -11377,6 +11377,34 @@ void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)
     (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
 #endif
 } /* OEM_SetBAM_ADSAccount */
+#elif defined (FEATURE_VERSION_FLEXI203P)
+void OEM_SetBAM_ADSAccount(void)
+{
+#ifndef WIN32
+    nv_item_type nvi;
+    char username[MAS_BREWSETINT_STRING] = {0};
+    char password[MAS_BREWSETINT_STRING] = {0};
+	MEMCPY(username,"fb",2);	
+	MEMCPY(password,"fb",2);	
+   
+    // ’À∫≈
+
+    //(void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);
+    //nvi.pap_user_id.user_id_len = STRLEN((char *)DEFAULT_BREW_USERNAME);
+    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
+    nvi.pap_user_id.user_id_len = STRLEN((char *)username);
+    (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
+
+    // ’À∫≈√‹¬Î
+
+    //(void)STRCPY((char *)nvi.pap_password.password, (char *)DEFAULT_BREW_PASSWORD);
+    //nvi.pap_password.password_len = STRLEN((char *)DEFAULT_BREW_PASSWORD);
+    (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
+    nvi.pap_password.password_len = STRLEN((char *)password);
+    (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
+#endif
+} /* OEM_SetBAM_ADSAccount */
+
 #elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
 void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)
 {
