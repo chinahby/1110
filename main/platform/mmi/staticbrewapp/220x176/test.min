@@ -1,0 +1,78 @@
+#####fgen application##########
+#todo something here   应用的名字添加
+FGEN_DIRS:=$(STATIC_BREW_APP)/fgen
+#todo something here如果是这种零散的资源文件文件也需要修改，这个就具体看情况了
+vpath %.txt $(FGEN_DIRS)
+vpath %.bar $(FGEN_DIRS)
+vpath %.mod $(FGEN_DIRS)
+
+FGEN_CONST_FILES = fgen.bar fgen.mod
+	
+FGEN_EFS_FILES =  $(notdir $(wildcard $(FGEN_DIRS)/*.txt)) 
+   
+	
+CONSTFILE_BIN_FILES += \
+    $(foreach filename, $(FGEN_CONST_FILES), $(filename)|fs:/mod/fgen/$(filename))
+    
+EFSFILE_FILES += \
+    $(foreach filename, $(FGEN_EFS_FILES), $(filename)|fs:/mod/fgen/$(filename))
+
+CONSTFILE_FILES += \
+    fgen.mif|fs:/mif/fgen.mif
+    
+    
+    
+#####facebook application##########
+#todo something here   应用的名字添加
+FACEBOOK_DIRS:=$(STATIC_BREW_APP)/facebook
+FACEBOOK_HTM_DIRS:=$(STATIC_BREW_APP)/facebook/htm
+FACEBOOK_IMG_DIRS:=$(STATIC_BREW_APP)/facebook/images
+
+vpath %.mod $(FACEBOOK_DIRS)
+vpath %.fml $(FACEBOOK_DIRS)
+vpath %.htm $(FACEBOOK_HTM_DIRS)
+vpath %.bci $(FACEBOOK_IMG_DIRS)
+vpath %.png $(FACEBOOK_IMG_DIRS)
+
+FACEBOOK_EFS_FILES = \
+	$(notdir $(wildcard $(FACEBOOK_IMG_DIRS)/*.png))  \
+	$(notdir $(wildcard $(FACEBOOK_IMG_DIRS)/*.bci))  
+   
+            
+#CONSTFILE_BIN_FILES += \
+#	$(foreach filename, $(FACEBOOK_CONST_FILES), $(filename)|fs:/mod/fb11/$(filename))
+	
+
+    
+EFSFILE_FILES += \
+    up.htm|fs:/mod/fb11/htm/up.htm \
+    $(foreach filename, $(FACEBOOK_EFS_FILES), $(filename)|fs:/mod/fb11/images/$(filename)) \
+    fb11_menu.fml|fs:/mod/fb11/menu.fml
+    
+$(warning EFSFILE_FILES=$(EFSFILE_FILES))        
+
+CONSTFILE_BIN_FILES+= \
+	fb11.mod|fs:/mod/fb11/fb11.mod
+CONSTFILE_FILES += \
+    fb11.mif|fs:/mif/fb11.mif 
+    
+    
+    
+#####odpmora application##########
+ODPMORA_DIRS:=$(STATIC_BREW_APP)/odpmora
+
+vpath %.bar $(ODPMORA_DIRS)
+vpath %.cfg $(ODPMORA_DIRS)
+vpath %.dat $(ODPMORA_DIRS)
+
+CONSTFILE_BIN_FILES += \
+    odpmora.bar|fs:/mod/odpmora/odpmora.bar \
+	odpconfig.cfg|fs:/mod/odpmora/odpconfig.cfg \
+	odphomedefault.dat|fs:/mod/odpmora/odphomedefault.dat
+
+CONSTFILE_FILES += \
+    odpmora.mif|fs:/mif/odpmora.mif
+    
+STATIC_BREW_APP_LIB += \
+    $(ODPMORA_DIRS)/odpmora.o
+    
