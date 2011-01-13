@@ -348,8 +348,11 @@ extern int Cah006_Load(IShell *ps, void * pHelpers, IModule **pMod);
 #ifdef FEATURE_GURU
 extern int GURU_Load(IShell *ps, void * pHelpers,  IModule **pMod);
 #endif
-
 #endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
+
+#ifdef FEATURE_VERSION_FLEXI203P
+extern int ODPMORA_Load(IShell *ps, void * pHelpers,  IModule **pMod);
+#endif
 
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
 extern int BSHOP_Load(IShell *ps, void * pHelpers, IModule **pMod);
@@ -1373,7 +1376,13 @@ static const AEEStaticMod gOEMStaticModList[] =
 #endif
 
 
+
 #endif	   /*FEATURE_FLEXI_STATIC_BREW_APP*/
+
+#ifdef FEATURE_VERSION_FLEXI203P
+	 { AEEFS_MIF_DIR"odpmora.mif",ODPMORA_Load},
+
+#endif
 
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
 	   { AEEFS_MIF_DIR"staticapp.mif",StaticappMod_Load},
