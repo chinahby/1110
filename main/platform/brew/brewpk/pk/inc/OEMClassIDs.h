@@ -134,6 +134,7 @@ GENERAL DESCRIPTION:
 #define AEECLSID_FGEN               0x01009279
 #define AEECLSID_EFSBROWSER         0x20000013
 #define AEECLSID_CHATTING           0x01007262
+#define AEECLSID_FACEBOOK           0x20000010
 #endif
 #endif /*CUST_EDITION*/
 /*=====================================================================

@@ -8845,7 +8845,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         }
 		         else
 		         {
-		         	#if defined(FEATURE_VERSION_C306)
+		         	#if defined(FEATURE_LANG_ARABIC)
 		         	{
 		         	nv_language_enum_type language;
         	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
@@ -8999,7 +8999,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         }
 		         else
 		         {
-					#if defined(FEATURE_VERSION_C306)
+					#if defined(FEATURE_LANG_ARABIC)
 					{
 					nv_language_enum_type language;
         	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));

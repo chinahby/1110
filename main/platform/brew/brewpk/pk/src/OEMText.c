@@ -3368,7 +3368,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 	//MSG_FATAL("clipRect.dx=%d,clipRect.dy=%d",clipRect->dx,clipRect->dy,0);
     if (IntersectRect(&draw, &scratch, clipRect))
     {
-    	#if defined(FEATURE_VERSION_C306)
+    	#if defined(FEATURE_LANG_ARABIC)
 		{
 		   	nv_language_enum_type language;
            	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
@@ -3425,7 +3425,7 @@ static void TextCtl_DrawCursor(TextCtlContext *pContext,
 	       }
 	       MSG_FATAL("draw.x=%d,draw.y=%d",draw.x,draw.y,0);
 	   	   MSG_FATAL("draw.dx=%d,draw.dy=%d",draw.dx,draw.dy,0);
-	   	   #if defined(FEATURE_VERSION_C306)
+	   	   #if defined(FEATURE_LANG_ARABIC)
 		   {
 			   	nv_language_enum_type language;
 	           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
@@ -3711,7 +3711,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
 				//MSG_FATAL("rectClipx=%d,rectClip.y=%d",rectClip.x,rectClip.y,0);
    				//MSG_FATAL("rectClipdx=%d,rectClip.dy=%d",rectClip.dx,rectClip.dy,0);
                // MSG_FATAL("",0,0,0);
-                #if defined(FEATURE_VERSION_C306)
+                #if defined(FEATURE_LANG_ARABIC)
 				{
 				   	nv_language_enum_type language;
 		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
@@ -3794,7 +3794,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                 {
                     TextCtl_DrawBackGround(pContext, &rectText);
                 }
-                #if defined(FEATURE_VERSION_C306)
+                #if defined(FEATURE_LANG_ARABIC)
 				{
 				   	nv_language_enum_type language;
 		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
