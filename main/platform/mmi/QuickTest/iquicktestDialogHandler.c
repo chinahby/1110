@@ -634,7 +634,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                         MSG_FATAL("pMe->m_testkeycount = %d", pMe->m_testkeycount,0,0);
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
                         if(pMe->m_testkeycount >=22)
-#elif defined(FEATURE_DISP_128X160)
+#elif defined(FEATURE_DISP_128X160) ||defined(FEATURE_DISP_176X220)
 						if(pMe->m_testkeycount >=22)
 #else
 						if(pMe->m_testkeycount >=45)
