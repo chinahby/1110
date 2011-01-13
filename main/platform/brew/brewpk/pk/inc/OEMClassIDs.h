@@ -124,7 +124,17 @@ GENERAL DESCRIPTION:
 #define AEECLSID_TLG_ATV          (AEECLSID_OEM +0x604)
 #define AEECLSID_BRW_APP    	    0x0104c960
 #define AEECLSID_BLUETOOTH_APP    	0x01015223
-
+#if defined(FEATURE_VERSION_FLEXI203P)
+#define AEECLSID_TWTTER             0x09090000
+#define AEECLSID_APPMORA            0x010BB705
+#define AEECLSID_FRAME              0x11111121
+#define AEECLSID_FTP005             0x19882401
+#define AEECLSID_FLEXIKOMIK         0x11111114
+#define AEECLSID_FLEXIIKLAN         0x10000000
+#define AEECLSID_FGEN               0x01009279
+#define AEECLSID_EFSBROWSER         0x20000013
+#define AEECLSID_CHATTING           0x01007262
+#endif
 #endif /*CUST_EDITION*/
 /*=====================================================================
   DATA STRUCTURE DOCUMENTATION
