@@ -307,7 +307,7 @@ endif
 
 
 
-ifeq ($(USES_RESDIR),Flexi203p)
+ifeq ($(USES_RESDIR),S5000)
 
 
 
@@ -326,7 +326,7 @@ vpath %.png $(FACEBOOK_IMG_DIRS)
 
 
             
-CONSTFILE_BIN_FILES += \
+EFSFILE_FILES += \
     fb_load.bci|fs:/mod/fb11/images/load.bci \
     fb_progressbar.bci|fs:/mod/fb11/images/progressbar.bci \
     fb_header.png|fs:/mod/fb11/images/header.png \

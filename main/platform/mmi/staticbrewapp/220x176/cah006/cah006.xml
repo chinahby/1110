@@ -1,29 +1,28 @@
 <about>
-FlexiChattinng 
+FlexiChatting 
 versi 1.1.1
 
-Adalah Aplikasi Chatting yang dapat digunakan untuk chatting dengan sesama nomor Flexi, Yahoo Messanger, dan Google Talk.
+Adalah aplikasi chatting yang dapat digunakan untuk chatting dengan sesama nomor Flexi, Yahoo Messanger, dan Google Talk.
 
 Powered by Flexi and RnD Center PT Telekomunikasi Indonesia, Tbk
 
 </about>
 <version>1.1</version>
 
-<pemberitahuan>Maaf, memori ponsel Anda sudah penuh.  Silakan hapus dulu ringtone/wallpaper (dari menu My Gallery), baru download lagi.</pemberitahuan>
 <stateui>stateui.fwm</stateui>
 <statealarm>statealarm.fwm</statealarm>
 <splash>cah_splash.png</splash>
 <header>cah_header.png</header>
 <sound>sound.png</sound>
 <vibrate>signal.png</vibrate>
-<connecting1>connecting1.bci</connecting1>
-<connecting2>connecting2.bci</connecting2>
-<connecting3>connecting3.bci</connecting3>
-<connecting4>connecting4.bci</connecting4>
-<connecting5>connecting5.bci</connecting5>
-<warning>warning.bci</warning>
-<ok>berhasil.bci</ok>
-<notification>tandatanya.bci</notification>
+<connecting1>connecting1.png</connecting1>
+<connecting2>connecting2.png</connecting2>
+<connecting3>connecting3.png</connecting3>
+<connecting4>connecting4.png</connecting4>
+<connecting5>connecting5.png</connecting5>
+<warning>warning.bmp</warning>
+<ok>berhasil.png</ok>
+<notification>tandatanya.png</notification>
 <loginbox>h_01.html</loginbox>
 <statusbox>h_02.html</statusbox>
 <addfriendbox>h_03.html</addfriendbox>
@@ -72,15 +71,11 @@ Powered by Flexi and RnD Center PT Telekomunikasi Indonesia, Tbk
 <ids_menu_8102>Invite User</ids_menu_8102>
 <ids_menu_9100>Hapus</ids_menu_9100>
 <ids_menu_10100>Aktifkan Suara & Getar</ids_menu_10100>
-<ids_menu_10101>Aktifkan Suara Saja</ids_menu_10101>
-<ids_menu_10102>Aktifkan Getar Saja</ids_menu_10102>
+<ids_menu_10101>Aktifkan Suara</ids_menu_10101>
+<ids_menu_10102>Aktifkan Getar saja</ids_menu_10102>
 <ids_menu_10103>Matikan Suara & Getar</ids_menu_10103>
-<idi_bullet>cah_bullet.bmp</idi_bullet>
+<idi_bullet>bullet.bmp</idi_bullet>
 
-<hptype>IVIO</hptype>
+<hptype>C500</hptype>
 <font_tinggi>20</font_tinggi>
-<font_lebar>80</font_lebar>
-
-<res_path></res_path>
-<res_local_path>file:///</res_local_path>
-<fwm_path></fwm_path>
+<font_lebar>88</font_lebar>
