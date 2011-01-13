@@ -1805,7 +1805,7 @@ static int StartApplet(MainMenu *pMe, int i)
         break;
         
     case IDS_MAIN_MENU_STATIC_APPLICATION:
-#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+#if defined(FEATURE_FLEXI_STATIC_BREW_APP)||defined(FEATURE_VERSION_FLEXI203P)
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STATIC_APP);
 #else
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
