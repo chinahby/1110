@@ -252,6 +252,8 @@ vpath %.rar $(MSF_DIRS)
  
 MSF_CONST_FILES = \
     $(notdir $(wildcard $(MSF_IMAGE_DIRS)/*.png))
+
+
         
 MSF_EFS_FILES = \
     $(notdir $(wildcard $(MSF_DIRS)/*.rar))
