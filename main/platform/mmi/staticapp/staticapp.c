@@ -1013,7 +1013,7 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
 			
 #if defined(FEATURE_VERSION_FLEXI203P)
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_FGAUL, IDS_STATICAPP_TITLE_FLEXI_FGAUL, NULL, 0);
-		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_MUSIK, IDS_STATICAPP_TITLE_FLEXI_MUSIK, NULL, 0);
+		    //IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_MUSIK, IDS_STATICAPP_TITLE_FLEXI_MUSIK, NULL, 0);
 		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_FACEBOOK, IDS_STATICAPP_TITLE_FLEXI_FACEBOOK, NULL, 0);
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_TWITTER, IDS_STATICAPP_TITLE_FLEXI_TWITTER, NULL, 0);			
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_FCHAT, IDS_STATICAPP_TITLE_FLEXI_FCHAT, NULL, 0);
@@ -1375,27 +1375,39 @@ static boolean StartApplet(Staticapp *pMe, int wParam)
 #ifdef FEATURE_VERSION_FLEXI203P 
 		case IDS_STATICAPP_TITLE_FLEXI_FGAUL:
 			OEM_SetBAM_ADSAccount();
-			Result = ISHELL_StartApplet(pMe->m_pShell, 0x010bb7d5);		
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMORA);		
 			
 			MSG_FATAL("testbrew..=%d......................%d",Result,0,0);
 			break;
 			//After press menu, then Flexi Gaul just call my app No need show BimBel, other My application will call other app.
 //			CLOSE_DIALOG(DLGRET_FGUAL)
 			break;
+		#if 0
 		case IDS_STATICAPP_TITLE_FLEXI_MUSIK:
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FRAME);	
+			MSG_FATAL("%%%%%%%%%%%%%==%d",Result,0,0);
+		#endif
 			break;
 		case IDS_STATICAPP_TITLE_FLEXI_FACEBOOK:
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FACEBOOK);
 			//CLOSE_DIALOG(DLGRET_APLIKASI)
 			break;
 		case IDS_STATICAPP_TITLE_FLEXI_TWITTER:
+		    MSG_FATAL("IDS_STATICAPP_TITLE_FLEXI_TWITTER",0,0,0);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_TWTTER);	
+			MSG_FATAL("%%%%%%%%%%%%%==%d",Result,0,0);
 			break;
-		case IDS_STATICAPP_TITLE_FLEXI_FCHAT:
-			//CLOSE_DIALOG(DLGRET_APLIKASI)
-			break;
-
 		case IDS_STATICAPP_TITLE_FLEXI_PORTAL:
 			//CLOSE_DIALOG(DLGRET_APLIKASI)
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FTP005);
 			break;
+		case IDS_STATICAPP_TITLE_FLEXI_FCHAT:
+			MSG_FATAL("IDS_STATICAPP_TITLE_FLEXI_FCHAT",0,0,0);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CHATTING);	
+			MSG_FATAL("%%%%%%%%%%%%%==%d",Result,0,0);
+			break;
+
+		
 
 #endif	
 
