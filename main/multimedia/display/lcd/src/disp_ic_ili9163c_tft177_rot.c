@@ -101,9 +101,10 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0x04);
     
     LCD_WRITE_CMD(0xB1);
-    LCD_WRITE_DATA(0x08);
-    LCD_WRITE_DATA(0x12);
-    
+#ifdef	FEATURE_VERSION_C500BE
+    LCD_WRITE_DATA(0x04);  //08 
+    LCD_WRITE_DATA(0x0b);  //12
+#endif    
     LCD_WRITE_CMD(0xB4);
     LCD_WRITE_DATA(0x06);
     
