@@ -309,9 +309,9 @@ endif
 
 
 
-ifeq ($(USES_RESDIR),S5000)
 
-
+USE_FGEN = no
+ifeq ($(USE_FGEN),yes)
 #####musik fgen application#####################################################################################################################################################
 #todo something here   应用的名字添加
 MUSIK_DIRS:=$(STATIC_BREW_APP)/musik
@@ -336,7 +336,7 @@ CONSTFILE_FILES += \
     
 STATIC_BREW_APP_LIB += \
     $(MUSIK_DIRS)/fgen.o
-
+endif
     
     
     
@@ -731,4 +731,3 @@ EFSFILE_FILES += \
 CONSTFILE_FILES += \
     twt11.mif|fs:/mif/twt11.mif \
     twt11.mod|fs:/mod/twt11/twt11.mod
-endif
