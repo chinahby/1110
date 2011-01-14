@@ -360,9 +360,9 @@ OEMAnnun_content batt_content =
      {ANNUN_TYPE_IMAGE, 5, ANNUN_STATE_OFF, (void *)batt_image_data};
 
 #ifdef FEATURE_DISP_176X220
-    #define IMG_WIDTH      18//12
+    #define IMG_WIDTH      16//12
     #define IMG_HEIGHT     18//13
-    #define LG_IMG_WIDTH   29
+    #define LG_IMG_WIDTH   27
     #define TEXT_HEIGHT    11
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1
@@ -520,6 +520,12 @@ static OEMAnnun_data Annunciators[] =
 #endif
 
 #ifndef FEATURE_DISP_128X160
+#if defined(FEATURE_DISP_176X220)
+    {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
+    {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
+    {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
+    {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+#else
   {ANNUN_FIELD_ALARM,               ANNUN_ICON_POSITION_8,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
 #ifndef FEATURE_USES_LOWMEM
   {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
@@ -528,12 +534,15 @@ static OEMAnnun_data Annunciators[] =
 #endif
   {ANNUN_FIELD_RINGTONE,            ANNUN_ICON_POSITION_10,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
   {ANNUN_FIELD_BATT,                ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
+
+#endif
 #else
   {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
   {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
   {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
   {ANNUN_FIELD_BATT,             ANNUN_ICON_POSITION_END, ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &batt_content}
 #endif
+
 };
 //lint +e545
 #define ANNUN_BUFFER_BITS    (10)
@@ -2199,7 +2208,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     }
 #elif defined(FEATURE_DISP_176X220)
 					bgRect.x = 20;
-                    if(titleLen > 125)
+                    if(titleLen > 130)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 176;
@@ -2207,7 +2216,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     }
                     else
                     {
-                        bgRect.dx = 125;
+                        bgRect.dx = 130;
                         IAnnunCoreObj->m_btoolen = FALSE;
                     }	
 #elif defined(FEATURE_DISP_240X320)
