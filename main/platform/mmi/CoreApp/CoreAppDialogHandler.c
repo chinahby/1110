@@ -2865,8 +2865,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 bImageDecoded = FALSE;
                 IImage_Notify(pWallPaper, (PFNIMAGEINFO)CoreApp_ImageNotify, pMe);
             }
-            MSG_FATAL("pMe->m_is_lockavkselect=====%d",pMe->m_is_lockavkselect,0,0);
             #ifdef FEATURE_VERSION_C306
+            MSG_FATAL("pMe->m_is_lockavkselect=====%d",pMe->m_is_lockavkselect,0,0);
             if(pMe->m_is_lockavkselect)
             {
             	pMe->m_is_lockavkselect = FALSE;
