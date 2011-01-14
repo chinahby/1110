@@ -1,6 +1,6 @@
 #include "disp_drv.h"
 
-#define DISP_IC_WIDTH_MAX   160
+#define DISP_IC_WIDTH_MAX   128
 
 #include "disp_ic_generic.h"
 

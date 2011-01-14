@@ -8,6 +8,7 @@ LCD_SURF_C_SOURCES= \
 	disp_drv_$(USES_LCD_SIZE).c \
 	disp_ic_ili9163c_tft177_rot.c \
 	disp_ic_ili9163c_tft177.c \
+	disp_ic_ili9163c_tft144.c \
 	disp_ic_st7735r_tft177.c \
 	disp_ic_st7735r_tft144.c \
 	disp_ic_ili9225b_tft20.c \
