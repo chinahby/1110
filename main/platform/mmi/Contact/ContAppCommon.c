@@ -1050,7 +1050,7 @@ uint16 CContApp_SetFldMaxSize(CContApp *pMe,ITextCtl *pIText,AEEAddrFieldID wFld
         (ADDOREDIT_ADD == pMe->m_nAddnewOrEdit && pMe->m_nSaveType == CONTCFG_SAVETYPE_RUIM))
         && (HaveNoneASCIIChar(pwstrText, NULL)))
     {
-        ITEXTCTL_SetMaxSize( pIText,nMaxchars/2);
+        ITEXTCTL_SetMaxSize( pIText,(nMaxchars-1)/2);
     }
     else
     {
