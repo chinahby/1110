@@ -70,9 +70,10 @@ INCLUDE FILES FOR MODULE
 #include "gpio_1100.h"
 #endif
 
-#ifdef FEATURE_DSP
+#if defined(FEATURE_DSP) || defined(FEATURE_BOOT_SPLASH_SCREEN)
 #include "clk.h"
 #endif
+
 
 int lcd_mddi_cur_panel = MDDI_MC4_PRIM;
 int fd = -1;
@@ -154,6 +155,7 @@ void disp_init(void)
 
 #ifdef FEATURE_BOOT_SPLASH_SCREEN
 	disp_epson_S1D19120_boot_chg_splash_screen();
+    clk_busy_wait(100*1000);
 #endif
 
 #ifdef FEATURE_MDP
