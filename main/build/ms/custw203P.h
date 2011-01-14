@@ -36,7 +36,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
-#undef FEATURE_LANG_CHINESE
+#define FEATURE_LANG_CHINESE
 //#define FEATURE_NET_LOCK
 //#define FEATURE_SEAMLESS_SMS
 #define FEATURE_OMH_SMS
@@ -53,7 +53,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_DATA_STRIP_ATCOP 
 #define FEATURE_STD_MIDI 
 #define FEATURE_DIAG_LOWMEM 
-//#define FEATURE_AMR_VOCODER 
+#define FEATURE_AMR_VOCODER 
 #define CUST_MOB_MODEL 22
 #define FEATURE_PLL_192 
 #define FEATURE_CLKREGIM_1X_MODE 
@@ -63,16 +63,16 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
-#define FEATURE_LOWTIER_LOWMEM 
+//#define FEATURE_LOWTIER_LOWMEM 
 #define FEATURE_REX_IPC 
 #define FEATURE_ASYNC_DATA_NOOP 
 #define FEATURE_HS_USB_PMIC_PHY 
 #define FEATURE_HS_USB_USER_EVENT_POST 
 #define FEATURE_RRC_SIB_HEAP 
-#define FEATURE_LOW_MEMORY_USAGE 
+//#define FEATURE_LOW_MEMORY_USAGE 
 //#define FEATURE_FS_LOW_MEMORY_USAGE 
 //#define FEATURE_DSM_MINIMIZE 
-//#define FEATURE_MSG_LOW_MEMORY_USAGE 
+#define FEATURE_MSG_LOW_MEMORY_USAGE 
 #define FEATURE_SIO_NO_DEBUG_TRACE 
 #define FEATURE_DIAG_SMALL_BUFFER 
 #define FEATURE_IPC_SMALL_MEMORY_POOL 
@@ -240,10 +240,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_AAC_PLUS
 #define FEATURE_ENHANCED_AAC_PLUS
 #endif
-#ifdef FEATURE_BT
-#include "custqbt.h"     //for bt
-#include "custbt.h"      //for bt
-#endif
+
 #include "custuim.h"
 #include "custcmx.h"
 #include "custavs.h"
