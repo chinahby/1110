@@ -6366,6 +6366,8 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
         }
     }    
     //MSG_FATAL("T9TextCtl_MultitapKey::3",0,0,0);
+    ISHELL_CancelTimer((IShell *) pContext->pIShell,
+                             TextCtl_MultitapTimer, pContext);
     switch ( t9Key) 
     {
         case T9KEYAMBIG1:
@@ -6381,6 +6383,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
         case T9KEYAMBIGB: 
         case T9KEYAMBIGC: 
             //MSG_FATAL("T9TextCtl_MultitapKey::4",0,0,0);
+            
             pContext->sFocus = FOCUS_SELECTION;    
             //MSG_FATAL("1pContext->uModeInfo.mtap.kLast=%d",pContext->uModeInfo.mtap.kLast,0,0);
             if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
@@ -6423,6 +6426,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             MSG_FATAL("pContext->byMode=%d,t9Key=%d",pContext->byMode,t9Key,0);
             if(pContext->byMode == 3)
             {
+            
             pContext->uModeInfo.mtap.kLast = key; 
             if(pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED)
             {
@@ -6689,7 +6693,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
     pContext->uModeInfo.mtap.kLast = key;   
 
     //display strings
-    //if ( T9STATNONE == sT9Status )
+    if ( T9STATNONE == sT9Status )
     {     
         bRet = T9_AW_DisplayText ( pContext, key);  
     }
