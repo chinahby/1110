@@ -981,6 +981,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
         	{
         		if(wParam == AVK_SELECT)
         		{
+        			MSG_FATAL("AVK_SELECT......EVT_KEY_HELD...............",0,0,0);
         			pMe->m_isslectkey = TRUE;
         			(void)ISHELL_SetTimer(pMe->m_pShell,
                                     1*1000,
@@ -1024,10 +1025,12 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 	{
                 		if(pMe->m_isslectkey)
                 		{
-                		//ISHELL_PostEvent(p,cls,ec,wp,dw);
-        			 	(void) ISHELL_PostEvent(pMe->m_pShell,
+                			MSG_FATAL("AVK_SELECT......pMe->m_isslectkey...............",0,0,0);
+                			//ISHELL_PostEvent(p,cls,ec,wp,dw);
+                			pMe->m_isslectkey = FALSE;
+        			 		(void) ISHELL_PostEvent(pMe->m_pShell,
                                           AEECLSID_CORE_APP/*AEECLSID_CALL*/, EVT_USER, 0, 0);
-                     	ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                     		ISHELL_CloseApplet(pMe->m_pShell, TRUE);
                      	}
                 	}
                 	break;
