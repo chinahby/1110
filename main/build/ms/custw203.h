@@ -39,7 +39,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 #endif
 #ifdef FEATURE_VERSION_FLEXI203P
-#include "targsb12864.h"
+#include "targsb12832.h"
 #else
 #ifndef TARGSB2_H
    #include "targsbw2.h"
