@@ -13838,7 +13838,7 @@ static void CContApp_ShowEditItem(CContApp  *pMe, IMenuCtl  *pMenuCtl, ITextCtl 
        	if(NV_LANGUAGE_ARABIC == language )
        	{
 	    	MSG_FATAL("...............................1",0,0,0);
-	    	rect.x  = 0;
+	    	rect.x  = 3;
 	    }
     }
 	#endif

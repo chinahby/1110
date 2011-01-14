@@ -6335,7 +6335,8 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 #else
 	//MSG_FATAL("T9TextCtl_MultitapKey::1",0,0,0);
     t9Key     = T9_BrewKeyToT9AlphabeticKey (pContext, eCode,key );
-    
+    ISHELL_CancelTimer((IShell *) pContext->pIShell,
+                             TextCtl_MultitapTimer, pContext);
     if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
     {
         pContext->sFocus = FOCUS_TEXT;            
@@ -6366,8 +6367,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
         }
     }    
     //MSG_FATAL("T9TextCtl_MultitapKey::3",0,0,0);
-    ISHELL_CancelTimer((IShell *) pContext->pIShell,
-                             TextCtl_MultitapTimer, pContext);
+    
     switch ( t9Key) 
     {
         case T9KEYAMBIG1:
@@ -6379,9 +6379,11 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
         case T9KEYAMBIG7:
         case T9KEYAMBIG8:
         case T9KEYAMBIG9:
+        #ifndef FEATURE_LANG_ARABIC
         case T9KEYAMBIGA:
         case T9KEYAMBIGB: 
         case T9KEYAMBIGC: 
+        #endif
             //MSG_FATAL("T9TextCtl_MultitapKey::4",0,0,0);
             
             pContext->sFocus = FOCUS_SELECTION;    
@@ -6413,10 +6415,9 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                      && MULTITAP_FIRST_CAP == pContext->nMultitapCaps
                      && !OEM_isFirstCap(pContext))
                 {
-                   #if defined(FEATURE_VERSION_C306)||defined(FEAUTRE_VERSION_N450)
-                   #else
+
                    pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
-                   #endif
+                   
                 }                                        
             } 
             
@@ -6437,7 +6438,10 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             		if (key == VLARCharKeyItem[i].wParam)
             		{
             			AVK_Size = VLARCharKeyItem[i].wsize;
-            			pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = VLARCharKeyItem[i].wp[pContext->m_curpos];
+            			if(pContext->m_curpos<AVK_Size)
+            			{
+            				pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = VLARCharKeyItem[i].wp[pContext->m_curpos];
+            			}
             			if(pContext->m_curpos<(AVK_Size-1))
             			{
             				pContext->m_curpos = pContext->m_curpos+1;
@@ -6673,7 +6677,9 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 
         case T9KEYNONE:
             ERR("T9TextCtl_MultitapKey::10",0,0,0);
-           
+            #ifdef FEATURE_VERSION_C306
+        	return TRUE;
+        	#endif
             if(FOCUS_SELECTION == pContext->sFocus)
             {
                 pContext->sFocus = FOCUS_TEXT;             
@@ -6683,6 +6689,9 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             
 
         default:
+        	#ifdef FEATURE_VERSION_C306
+        	return TRUE;
+        	#endif
            // MSG_FATAL("T9TextCtl_MultitapKey::11",0,0,0);
             pContext->sFocus = FOCUS_TEXT;   
                        sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
