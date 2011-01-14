@@ -1022,10 +1022,13 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                     #ifdef FEATURE_VERSION_C306
                 case AVK_STAR:
                 	{
+                		if(pMe->m_isslectkey)
+                		{
                 		//ISHELL_PostEvent(p,cls,ec,wp,dw);
         			 	(void) ISHELL_PostEvent(pMe->m_pShell,
                                           AEECLSID_CORE_APP/*AEECLSID_CALL*/, EVT_USER, 0, 0);
                      	ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                     	}
                 	}
                 	break;
                 	#endif
