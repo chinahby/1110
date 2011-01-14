@@ -776,7 +776,7 @@ if(!(x))         \
 
 #define RFIMG_WIDTH 16
 #define REWIND_X    (((SCREEN_WIDTH-4)-(RFIMG_WIDTH*2))/2)
-#define REWIND_Y    (SCHEDULEBAR_Y-8)
+#define REWIND_Y    (SCHEDULEBAR_Y-9)
 #define FORWARD_X   (REWIND_X+RFIMG_WIDTH+4)
 #define FORWARD_Y   REWIND_Y
 
