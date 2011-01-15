@@ -10,80 +10,92 @@ static void disp_ic_init(void)
             
     LCD_WRITE_CMD(0x11); //Exit Sleep
     LCD_DELAY(120);
-    
+
     LCD_WRITE_CMD(0x26); //Set Default Gamma
     LCD_WRITE_DATA(0x04);
-    LCD_WRITE_CMD(0xF2); //E0h & E1h Enable/Disable
-    LCD_WRITE_DATA(0x00);
-    LCD_WRITE_CMD(0xB1);//Set Frame Rate  72HZ
-    LCD_WRITE_DATA(0x0C);//DIVA = 0x0c  12   0B: 74HZ 0A:79HZ   09:85.4HZ    08:92.5HZ
-    LCD_WRITE_DATA(0x14);//VPA  = 0x14  20  
+
+    LCD_WRITE_CMD(0xEC);
+    LCD_WRITE_DATA(0x0C);
+
+    LCD_WRITE_CMD(0xB1);
+    LCD_WRITE_DATA(0x0A);
+    LCD_WRITE_DATA(0x12);
+
     LCD_WRITE_CMD(0xC0); //Set VRH1[4:0] & VC[2:0] for VCI1 & GVDD
-    LCD_WRITE_DATA(0x0C);
-    LCD_WRITE_DATA(0x05);
+    LCD_WRITE_DATA(0x08);
+    LCD_WRITE_DATA(0x00);
+
     LCD_WRITE_CMD(0xC1); //Set BT[2:0] for AVDD & VCL & VGH & VGL
-    LCD_WRITE_DATA(0x02);
-    LCD_WRITE_CMD(0xEC); 
-    LCD_WRITE_DATA(0x0C);
+    LCD_WRITE_DATA(0x05);
+
     LCD_WRITE_CMD(0xC5); //Set VMH[6:0] & VML[6:0] for VOMH & VCOML
-    LCD_WRITE_DATA(0x44);
-    LCD_WRITE_DATA(0x52);
-    LCD_WRITE_CMD(0xC7); // VCOM offset ;reduce flicker
-    LCD_WRITE_DATA(0xB9); // Debug B7-B10
-    //************* Scan direction **********//
+    LCD_WRITE_DATA(0x50);
+    LCD_WRITE_DATA(0x40);
+
+    LCD_WRITE_CMD(0xC7);
+    LCD_WRITE_DATA(0xB9);
+
+    LCD_WRITE_CMD(0x3a); //Set Color Format
+    LCD_WRITE_DATA(0x05);
+
     LCD_WRITE_CMD(0x2A); //Set Column Address
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x7F);
+
     LCD_WRITE_CMD(0x2B); //Set Page Address
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x00);
-    LCD_WRITE_DATA(0x7f);
-    LCD_WRITE_CMD(0x36); //Set Scanning Direction & BGR
+    LCD_WRITE_DATA(0x9F);
+
+    LCD_WRITE_CMD(0x36); //Set Scanning Direction
     LCD_WRITE_DATA(0xC8);
-    LCD_WRITE_CMD(0x3a); //Set Pixel
-    LCD_WRITE_DATA(0x55);
-    
-    //************* Gamma Setting **********//
+
+    LCD_WRITE_CMD(0xB7); //Set Source Output Direction
+    LCD_WRITE_DATA(0x00);
+
     LCD_WRITE_CMD(0xf2); //Enable Gamma bit
     LCD_WRITE_DATA(0x01);
+
     LCD_WRITE_CMD(0xE0);
     LCD_WRITE_DATA(0x3F);//p1
-    LCD_WRITE_DATA(0x1B);//p2
-    LCD_WRITE_DATA(0x19);//p3
-    LCD_WRITE_DATA(0x27);//p4
-    LCD_WRITE_DATA(0x1F);//p5
-    LCD_WRITE_DATA(0x0D);//p6
-    LCD_WRITE_DATA(0x45);//p7
-    LCD_WRITE_DATA(0xB8);//p8
-    LCD_WRITE_DATA(0x30);//p9
-    LCD_WRITE_DATA(0x17);//p10
-    LCD_WRITE_DATA(0x0F);//p11
-    LCD_WRITE_DATA(0x05);//p12
-    LCD_WRITE_DATA(0x13);//p13
-    LCD_WRITE_DATA(0x02);//p14
+    LCD_WRITE_DATA(0x2A);//p2
+    LCD_WRITE_DATA(0x28);//p3
+    LCD_WRITE_DATA(0x30);//p4
+    LCD_WRITE_DATA(0x28);//p5
+    LCD_WRITE_DATA(0x0C);//p6
+    LCD_WRITE_DATA(0x57);//p7
+    LCD_WRITE_DATA(0xA7);//p8
+    LCD_WRITE_DATA(0x46);//p9
+    LCD_WRITE_DATA(0x1A);//p10
+    LCD_WRITE_DATA(0x20);//p11
+    LCD_WRITE_DATA(0x12);//p12
+    LCD_WRITE_DATA(0x00);//p13
+    LCD_WRITE_DATA(0x01);//p14
     LCD_WRITE_DATA(0x00);//p15
+
     LCD_WRITE_CMD(0xE1);
     LCD_WRITE_DATA(0x00);//p1
-    LCD_WRITE_DATA(0x24);//p2
-    LCD_WRITE_DATA(0x26);//p3
-    LCD_WRITE_DATA(0x08);//p4
-    LCD_WRITE_DATA(0x10);//p5
-    LCD_WRITE_DATA(0x12);//p6
-    LCD_WRITE_DATA(0x3A);//p7
-    LCD_WRITE_DATA(0x74);//p8
-    LCD_WRITE_DATA(0x4F);//p9
-    LCD_WRITE_DATA(0x08);//p10
-    LCD_WRITE_DATA(0x20);//p11
-    LCD_WRITE_DATA(0x2A);//p12
-    LCD_WRITE_DATA(0x3C);//p13
-    LCD_WRITE_DATA(0x3D);//p14
+    LCD_WRITE_DATA(0x15);//p2
+    LCD_WRITE_DATA(0x17);//p3
+    LCD_WRITE_DATA(0x0F);//p4
+    LCD_WRITE_DATA(0x18);//p5
+    LCD_WRITE_DATA(0x13);//p6
+    LCD_WRITE_DATA(0x28);//p7
+    LCD_WRITE_DATA(0x58);//p8
+    LCD_WRITE_DATA(0x3A);//p9
+    LCD_WRITE_DATA(0x06);//p10
+    LCD_WRITE_DATA(0x1F);//p11
+    LCD_WRITE_DATA(0x2C);//p12
+    LCD_WRITE_DATA(0x3F);//p13
+    LCD_WRITE_DATA(0x3E);//p14
     LCD_WRITE_DATA(0x3F);//p15
+
     LCD_WRITE_CMD(0x29); // Display On
-    
-    LCD_WRITE_CMD(0x2C);//Memory Write
+    LCD_WRITE_CMD(0x2C);
+   
 }
 
 static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
