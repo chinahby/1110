@@ -6358,7 +6358,11 @@ static boolean IDD_SENDING_Handler(void *pUser,
                                 NULL);
                                 
                 x=0;
+                #ifdef FEATURE_VERSION_FLEXI203P
+                y=SENDINGSMS_ANI_Y*2;
+                #else
                 y=SENDINGSMS_ANI_Y;
+                #endif
                 if (pMe->m_pImage != NULL)
                 {
                     AEEImageInfo info;
@@ -13813,7 +13817,11 @@ static void WmsApp_PlaySendingAni(void *pUser)
     
     IIMAGE_SetParm(pMe->m_pImage, IPARM_NFRAMES, SENDINGSMS_ANI_N, 0);
     IIMAGE_GetInfo(pMe->m_pImage, &info);
+    #ifdef FEATURE_VERSION_FLEXI203P
+    SETAEERECT(&rect,  (pMe->m_rc.dx - info.cxFrame)/2, SENDINGSMS_ANI_Y, info.cx, info.cy+8);
+    #else
     SETAEERECT(&rect,  (pMe->m_rc.dx - info.cxFrame)/2, SENDINGSMS_ANI_Y, info.cx, info.cy);
+    #endif
     
 #ifdef FEATURE_CARRIER_CHINA_VERTU
     {
@@ -13832,6 +13840,7 @@ static void WmsApp_PlaySendingAni(void *pUser)
     //x = (pMe->m_rc.dx - info.cx/SENDINGSMS_ANI_N)/2;
     //y = SENDINGSMS_ANI_Y;
     #ifdef FEATURE_SUPPORT_ID
+    MEMSET(wszPrsend,0,sizeof(wszPrsend));
      WSPRINTF(wszPrsend,
                 sizeof(wszPrsend),
                 fmt_str,
@@ -13842,12 +13851,19 @@ static void WmsApp_PlaySendingAni(void *pUser)
                 fmt_str,
                 pMe->m_nSendItems);
 	oldColor = IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, SENDINGSMS_TEXT_COLOR);
+	#ifdef FEATURE_VERSION_FLEXI203P
     IDISPLAY_DrawText( pMe->m_pDisplay, 
+                                AEE_FONT_NORMAL, wszPrsend,
+                                -1, 0, (rect.dy-8), NULL, 
+                                IDF_TEXT_TRANSPARENT|IDF_ALIGN_CENTER);
+	#else
+	IDISPLAY_DrawText( pMe->m_pDisplay, 
                                 AEE_FONT_NORMAL, wszPrsend,
                                 -1, 0, (rect.dy), NULL, 
                                 IDF_TEXT_TRANSPARENT|IDF_ALIGN_CENTER);
+	#endif
 	IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
-     MSG_FATAL("EVT_USER_REDRAW...::::::::::::::::::::::::: WMS:%d:::%d",pMe->m_idxCurSend,pMe->m_nSendItems,0);
+     //MSG_FATAL("EVT_USER_REDRAW...::::::::::::::::::::::::: WMS:%d:::%d",pMe->m_idxCurSend,pMe->m_nSendItems,0);
 	 #endif
     (void) ISHELL_SetTimer(pMe->m_pShell,
                                             SENDINGSMS_ANI_R,
