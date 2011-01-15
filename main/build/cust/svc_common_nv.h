@@ -85,7 +85,7 @@ const nv_auto_set_type nv_auto_set_svc_list[] =
     {NV_SMS_MO_ON_ACCESS_CHANNEL_I,     {0x01}}, 
     {NV_SMS_MO_ON_TRAFFIC_CHANNEL_I,    {0x01}},
 #ifdef FEATURE_NET_LOCK
-	#if defined(FEATURE_VERSION_FLEXI203)
+	#if defined(FEATURE_VERSION_FLEXI203) || defined(FEATURE_VERSION_FLEXI203P)
     {NV_NET_LOCK_I,                     {   0x01, 0x00,
                                             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                             0xFE, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
