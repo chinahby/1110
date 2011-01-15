@@ -352,7 +352,7 @@ extern int GURU_Load(IShell *ps, void * pHelpers,  IModule **pMod);
 
 #ifdef FEATURE_VERSION_FLEXI203P
 extern int ODPMORA_Load(IShell *ps, void * pHelpers,  IModule **pMod);
-extern int FlexiMusik_Load(IShell *ps, void * pHelpers,  IModule **pMod);
+//extern int FlexiMusik_Load(IShell *ps, void * pHelpers,  IModule **pMod);
 #endif
 
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
@@ -1383,7 +1383,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #ifdef FEATURE_VERSION_FLEXI203P
 	 { AEEFS_MIF_DIR"odpmora.mif",ODPMORA_Load},
 	 
-	{ AEEFS_MIF_DIR"fgen.mif",FlexiMusik_Load},
+	//{ AEEFS_MIF_DIR"fgen.mif",FlexiMusik_Load},
 		 
 
 #endif
