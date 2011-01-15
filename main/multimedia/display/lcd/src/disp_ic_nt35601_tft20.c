@@ -3,7 +3,7 @@
 #define DISP_IC_WIDTH_MAX   220
 
 #include "disp_ic_generic.h"
-
+#define ZGD_TFT_020_T087
 static void disp_ic_init(void)
 {
     LCD_WRITE_CMD(0x01);// Software Reset
@@ -12,6 +12,7 @@ static void disp_ic_init(void)
     LCD_WRITE_CMD(0x11);//Sleep Out
     LCD_DELAY(120);
     
+#ifndef ZGD_TFT_020_T087
     LCD_WRITE_CMD(0xDE);
     LCD_WRITE_DATA(0xAA);
     LCD_WRITE_DATA(0x55);
@@ -74,6 +75,77 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0x1F);
     
     LCD_WRITE_CMD(0x29);//display on
+#else  //zgd tft-020-t087
+    LCD_WRITE_CMD(0xC0);
+    LCD_WRITE_DATA (0x03);
+    LCD_WRITE_DATA (0x00);
+
+    LCD_WRITE_CMD(0xC2);
+    LCD_WRITE_DATA (0x00);
+    LCD_WRITE_DATA (0x00);
+
+    LCD_WRITE_CMD(0xC3);
+    LCD_WRITE_DATA (0x00);
+    LCD_WRITE_DATA (0x07);
+
+    LCD_WRITE_CMD(0xC4);
+    LCD_WRITE_DATA (0x00);
+    LCD_WRITE_DATA (0x04);
+
+    LCD_WRITE_CMD(0xC5);
+    LCD_WRITE_DATA (0x40);
+    LCD_WRITE_DATA (0x4A);
+
+    LCD_WRITE_CMD(0xC7);
+    LCD_WRITE_DATA (0xC8);//0xCB 0xD4  0xC8  0xCA
+
+    LCD_WRITE_CMD(0xB1);   //Frame Rate Control (In normal mode/ Full colors)
+    LCD_WRITE_DATA (0x1A);//0x12   0x16
+    LCD_WRITE_DATA (0x0A);//0x04   0x0A
+
+    LCD_WRITE_CMD(0x3A);
+    LCD_WRITE_DATA (0x55);
+
+    LCD_WRITE_CMD(0x36);
+    LCD_WRITE_DATA (0x48);//0xA8  0x28 0xE8 
+
+    LCD_WRITE_CMD(0xC9);
+    LCD_WRITE_DATA (0x08);
+
+    LCD_WRITE_CMD(0xE0);
+    LCD_WRITE_DATA (0x60);
+    LCD_WRITE_DATA (0x76);
+    LCD_WRITE_DATA (0x25);
+    LCD_WRITE_DATA (0x07);
+    LCD_WRITE_DATA (0xA0);
+    LCD_WRITE_DATA (0x0B);
+    LCD_WRITE_DATA (0x0F);
+    LCD_WRITE_DATA (0xA0);
+    LCD_WRITE_CMD(0xE1);
+    LCD_WRITE_DATA (0x30);
+    LCD_WRITE_DATA (0x30);
+    LCD_WRITE_DATA (0x62);
+    LCD_WRITE_DATA (0x0F);
+    LCD_WRITE_DATA (0x62);
+    LCD_WRITE_DATA (0x0E);
+    LCD_WRITE_DATA (0x08);
+    LCD_WRITE_DATA (0x00);
+
+    LCD_WRITE_CMD(0x2A);
+    LCD_WRITE_DATA (0x00);
+    LCD_WRITE_DATA (0x00);
+    LCD_WRITE_DATA (0x00);
+    LCD_WRITE_DATA (0xAF);
+    LCD_WRITE_CMD(0x2B);
+    LCD_WRITE_DATA (0x00);
+    LCD_WRITE_DATA (0x00);
+    LCD_WRITE_DATA (0x00);
+    LCD_WRITE_DATA (0xDB);
+
+    LCD_WRITE_CMD(0x29);
+    LCD_WRITE_CMD(0x2c);
+
+#endif
 }
 
 static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
