@@ -324,6 +324,7 @@ static void CoreApp_Process_Rtc_Event(CCoreApp *pMe);
 
 #ifdef FEATURE_KEYGUARD
 static void CoreApp_TimeKeyguard(void *pUser);
+static void CoreApp_keypadtimer(void *pUser);
 #endif
 
 static void CoreApp_UpdateBottomBar(CCoreApp    *pMe); 
@@ -2865,14 +2866,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 bImageDecoded = FALSE;
                 IImage_Notify(pWallPaper, (PFNIMAGEINFO)CoreApp_ImageNotify, pMe);
             }
-            #ifdef FEATURE_VERSION_C306
-            MSG_FATAL("pMe->m_is_lockavkselect=====%d",pMe->m_is_lockavkselect,0,0);
-            if(pMe->m_is_lockavkselect)
-            {
-            	pMe->m_is_lockavkselect = FALSE;
-            	CoreApp_TimeKeyguard(pMe);
-            }
-            #endif
 #if 0
 #if defined(FEATURE_WMS_APP)
             if (pMe->m_bsmstipscheck)
@@ -2913,26 +2906,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				return TRUE;
             }
         #endif
-         case EVT_USER:
-        	{
-        		boolean bData;
-            	#ifdef FEATURE_KEYGUARD
-            	MSG_FATAL("EVT_USER.....................",0,0,0);
-        		if(!OEMKeyguard_IsEnabled())
-        		{
-        			(void) ICONFIG_GetItem(pMe->m_pConfig,
-                                CFGI_KEY_LOCK_CHECK/*CFGI_PHONE_KEY_LOCK_CHECK*/,
-                                &bData,
-                                sizeof(bData));
-        			if(bData)
-        			{
-                        CoreApp_TimeKeyguard(pMe);
-            		}
-        		}
-				#endif	
-				return TRUE;
-        	}    
-        	break;
+                
         case EVT_DIALOG_END:
             // 取消相关定时器			
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
@@ -3102,6 +3076,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_SELECT:
 		 		{
 				int ret = 0;
+					#ifdef FEATURE_VERSION_C306
+					AEE_SetTimer(2*1000,CoreApp_keypadtimer,pMe);
+					pMe->m_iskeypadtime = TRUE;
+					#else
 #if defined	(FEATURE_VERSION_FLEXI203) 
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP				
 #if defined (FEATURE_NASRANI)
@@ -3157,6 +3135,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#endif
 #endif
 				  return ret;
                 }
@@ -3374,6 +3353,29 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				case AVK_O:
                     {
                         ICallApp         *pCallApp = NULL;
+                        #ifdef FEATURE_VERSION_C306
+                        if(pMe->m_iskeypadtime && wParam==AVK_STAR)
+                        {
+                        	boolean bData;
+			            	#ifdef FEATURE_KEYGUARD
+			            	MSG_FATAL("EVT_USER.....................",0,0,0);
+			        		if(!OEMKeyguard_IsEnabled())
+			        		{
+			        			(void) ICONFIG_GetItem(pMe->m_pConfig,
+			                                CFGI_KEY_LOCK_CHECK/*CFGI_PHONE_KEY_LOCK_CHECK*/,
+			                                &bData,
+			                                sizeof(bData));
+			        			if(bData)
+			        			{
+			                        CoreApp_TimeKeyguard(pMe);
+			            		}
+			        		}
+							#endif	
+							AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+                        	pMe->m_iskeypadtime = FALSE;
+                        	return TRUE;
+                        }
+                        #endif
                         if ( SUCCESS != ISHELL_CreateInstance( pMe->a.m_pIShell,
                                                         AEECLSID_DIALER,
                                                         (void **)&pCallApp))
@@ -6376,4 +6378,67 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
 #endif //FEATURE_SPN_FROM_BSMCCMNC   
 #endif//WIN32
 }
-
+#ifdef FEATURE_KEYGUARD
+static void CoreApp_keypadtimer(void *pUser)
+{
+	CCoreApp *pMe = (CCoreApp *)pUser;
+	int ret = 0;
+	pMe->m_iskeypadtime = FALSE;
+	#if defined	(FEATURE_VERSION_FLEXI203) 
+#ifdef FEATURE_FLEXI_STATIC_BREW_APP				
+#if defined (FEATURE_NASRANI)
+			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+               ret=  CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
+#elif defined  (FEATURE_GURU)
+	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
+	ret=  CoreApp_LaunchApplet(pMe, AEECLSID_FLEXIGURU);
+#elif defined (FEATURE_FMN2010)
+			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
+               ret=  CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
+#elif defined (FEATURE_FPT005)
+			   ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+#else
+			   ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#endif /*FEATURE_NASRANI*/
+#else
+               ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
+#elif defined (FEATURE_VERSION_IVIO203)||defined (FEATURE_VERSION_C500BE)
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#elif defined (FEATURE_VERSION_FLEXI203P)
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#elif defined (FEATURE_VERSION_SMART)
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+#else
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#endif /*FEATURE_SMARTFREN_STATIC_BREW_APP*/
+#elif defined (FEATURE_VERSION_M8021)
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+#else
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
+#elif defined (FEATURE_VERSION_M8)
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+#else
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
+#elif defined (FEATURE_VERSION_M8P)
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+#else
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
+#elif defined (FEATURE_VERSION_HITZ181)
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#else
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#endif
+}
+#endif

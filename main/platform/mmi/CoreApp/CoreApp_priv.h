@@ -678,7 +678,7 @@ typedef struct _CCoreApp
 	byte                m_active;
 	byte                m_CurProfile;      //当前情景模式
 	#ifdef FEATURE_VERSION_C306
-	boolean             m_is_lockavkselect;
+	boolean             m_iskeypadtime;
 	#endif
 } CCoreApp;
 

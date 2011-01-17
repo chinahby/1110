@@ -402,10 +402,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     }
     pMe->bunlockuim =FALSE;
     pMe->m_nMsgID = 0;
-    MSG_FATAL("INIT....................................",0,0,0);
-    #ifdef FEATURE_VERSION_C306
-    pMe->m_is_lockavkselect = FALSE;
-    #endif
+    
     pMe->m_eCurState = COREST_INIT;
     pMe->m_eDlgRet = DLGRET_CREATE;
     
@@ -438,6 +435,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_battery_state = TRUE;
 #ifdef FEATURE_KEYGUARD
     pMe->m_b_set_lock = FALSE ;
+    pMe->m_iskeypadtime = FALSE;
 #endif
     
     pMe->m_bConfigSent  = FALSE;
@@ -784,6 +782,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                       &&pMe->m_eCurState != COREST_POWERONAPPSDATAINIT)
                     {
                         pMe->m_wStartupAniTime = 0;
+                        #ifdef FEATURE_ICM
+                		ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_OFFLINE);
+                		#endif
                         MOVE_TO_STATE(COREST_POWEROFF)
                         CLOSE_DIALOG(DLGRET_CREATE)
                     }
@@ -920,7 +921,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             #endif
             break;
-        
+            
         case EVT_GSENSOR_SHAKE:
         case EVT_KEY:
 #if MIN_BREW_VERSION(3,0)
@@ -995,7 +996,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 }
             }      
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-  
+            
 #if defined(FEATURE_WMS_APP)
         case EVT_WMS_MSG_RECEIVED_MESSAGE:
             pMe->m_bsmstipscheck = TRUE;
@@ -1161,13 +1162,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 CoreApp_Poweroff_Phone(pMe);
                 break;
             default:
-            #ifdef FEATURE_VERSION_C306
-        	{
-        		pMe->m_is_lockavkselect = TRUE;
-        		MSG_FATAL("EVT_USER.......................123",0,0,0);
-        	}
-			#endif
-            break;
+                break;
             }
             break;
         case EVT_SET_OPERATING_MODE:
