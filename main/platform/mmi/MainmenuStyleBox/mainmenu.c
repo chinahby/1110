@@ -30,7 +30,7 @@
 #include "AEEAnnunciator.h"
 #include "mainmenu.h"
 #include "mainmenu_priv.h" 
-
+#include "msg.h"
 #include "ContApp.h"
 
 #include "Appscommon.h"
@@ -624,7 +624,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MUSICPLAYER;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_APPLICATION;
-    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_TIMER;
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
 #endif
@@ -674,6 +674,19 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MUSICPLAYER;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_APPLICATION;
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_GAMES;
+    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_SCHEDULER;
+    pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
+    #elif defined (FEATURE_VERSION_C306)
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_USERPROFILE;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MUSICPLAYER;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_SETTINGS;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_APPLICATION;
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_TIMER;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
@@ -687,7 +700,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MUSICPLAYER;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_APPLICATION;
-    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_TIMER;
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
     #endif
@@ -702,7 +715,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_APPLICATION;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_SETTINGS;
-    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_TIMER;
+    pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
 #elif defined (FEATURE_DISP_240X320)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
@@ -714,7 +727,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MUSICPLAYER;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_APPLICATION;
-    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_TIMER;
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
 #elif defined (FEATURE_DISP_320X240)
@@ -727,7 +740,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[6]     = IDS_MAIN_MENU_MUSICPLAYER;
     pMe->m_IconTitle[7]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[8]     = IDS_MAIN_MENU_APPLICATION;
-    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_TIMER;
+    pMe->m_IconTitle[9]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
 #endif
@@ -1012,7 +1025,6 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
                 MainMenu_RunFSM(pMe);
             }
             return TRUE;
-            
         case EVT_KEY:
 #if MIN_BREW_VERSION(3,0)
             // do not want to handle au
