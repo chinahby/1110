@@ -584,6 +584,7 @@ typedef struct _CCameraApp
     IFileMgr             *m_pFileMgr;
     IAnnunciator         *m_pIAnn;
     boolean              m_isFormQuicktest;
+    boolean				 m_isStartFromFacebook;
     int32                 m_sensor_model; //判断摄像头为多少像素的 add by xuhui
 } CCameraApp;
 

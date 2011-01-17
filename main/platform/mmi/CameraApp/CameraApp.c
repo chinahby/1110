@@ -536,6 +536,7 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
     pMe->m_pCamera = NULL;  
     pMe->m_pMedia = NULL;
     pMe->m_isFormQuicktest = FALSE;
+    pMe->m_isStartFromFacebook = FALSE;
     pMe->m_sensor_model = -1;
     MEMSET(&pMe->m_CallBack, 0, sizeof(AEECallback));
 
@@ -738,6 +739,10 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                 if(STRCMP(as->pszArgs, "Formquicktest") == 0)
                 {
                     pMe->m_isFormQuicktest = TRUE;
+                }
+                else if( STRCMP(as->pszArgs, "facebook") == 0 )
+                {
+					pMe->m_isStartFromFacebook = TRUE;
                 }
             }
             pMe->m_rc = as->rc;

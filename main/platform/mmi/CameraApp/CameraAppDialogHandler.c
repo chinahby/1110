@@ -532,7 +532,14 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                         pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
                     }
 #else
-                    pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
+                    if ( pMe->m_isStartFromFacebook == TRUE )
+					{
+						pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_PHONE;
+					}
+					else
+					{
+                    	pMe->m_nCameraStorage = OEMNV_CAMERA_STORAGE_MEMORY_CARD;
+                    }
 #endif
                     CLOSE_DIALOG(DLGRET_POPMSG);
                     break;
@@ -781,18 +788,26 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                 
                 if(!pMe->m_bCanCapture)
                 {
-                    if(pMe->m_bMemoryCardExist)
-                    {
-                        pMe->m_wMsgID = IDS_MSG_NOMEMORY;
+                	if ( pMe->m_isStartFromFacebook == TRUE)
+                	{
+                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
                     }
                     else
                     {
-                       #ifdef FEATURE_VERSION_FLEXI203P
-						pMe->m_wMsgID = IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD;
-                       #else
-                        pMe->m_wMsgID = IDS_MSG_NOSDCARD;
-                       #endif
+						if(pMe->m_bMemoryCardExist)
+	                    {
+	                        pMe->m_wMsgID = IDS_MSG_NOMEMORY;
+	                    }
+	                    else
+	                    {
+	                    #ifdef FEATURE_VERSION_FLEXI203P
+							pMe->m_wMsgID = IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD;
+                       	#else
+                        	pMe->m_wMsgID = IDS_MSG_NOSDCARD;
+                       	#endif
+	                    }
                     }
+
                     pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
                     ICAMERA_Stop(pMe->m_pCamera);
                     pMe->m_bIsPreview = FALSE;
@@ -3004,13 +3019,20 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
     CameraApp_SetDateForRecordFileName(pMe);
    
     // copy the pic name to sFilename buffer
-    if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)
+    if ( pMe->m_isStartFromFacebook == TRUE )
     {
-        STRCPY(pMe->m_sCaptureFileName, pMe->m_sCurrentFileName+STRLEN(MG_MASSCARDPICTURE_PATH));
+		STRCPY(pMe->m_sCaptureFileName, pMe->m_sCurrentFileName+STRLEN(MG_PHONEPICTURE_PATH));
     }
     else
     {
-        STRCPY(pMe->m_sCaptureFileName, pMe->m_sCurrentFileName+STRLEN(MG_PHONEPICTURE_PATH));
+	    if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)
+	    {
+	        STRCPY(pMe->m_sCaptureFileName, pMe->m_sCurrentFileName+STRLEN(MG_MASSCARDPICTURE_PATH));
+	    }
+	    else
+	    {
+	        STRCPY(pMe->m_sCaptureFileName, pMe->m_sCurrentFileName+STRLEN(MG_PHONEPICTURE_PATH));
+	    }
     }
     
     pMe->m_nCameraState = CAM_SAVE;
@@ -3058,29 +3080,12 @@ static boolean CameraApp_FindMemoryCardExist(CCameraApp *pMe)
 // ¼ì²âÅÄÕÕ£¬ÉãÏñÊÇ·ñÓÐ×ã¹»Ê£Óà¿Õ¼äÈÝÁ¿
 static boolean CameraApp_IsEnoughfMemorySpace(CCameraApp * pMe)
 {
-    if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)
-    {
-        IFILEMGR_GetFreeSpaceEx(pMe->m_pFileMgr, 
-                                MG_MASSCARD_ROOTDIR, 
-                                &pMe->m_dwMemTotal, 
-                                &pMe->m_dwMemFree);
-
-        if((pMe->m_dwMemFree/(2*BYTE_SIZE) < MIN_FREE_MEMORY_CARD_SPACE) 
-           ||(pMe->m_dwMemFree/(2*BYTE_SIZE) == MIN_FREE_MEMORY_CARD_SPACE))
-        {               
-            return FALSE;
-        }
-        else
-        {
-            return TRUE;
-        }
-    }
-    else
-    {
-        IFILEMGR_GetFreeSpaceEx(pMe->m_pFileMgr, 
-                                MG_PHONE_ROOTDIR, 
-                                &pMe->m_dwMemTotal, 
-                                &pMe->m_dwMemFree);
+    if ( pMe->m_isStartFromFacebook == TRUE)
+	{
+		IFILEMGR_GetFreeSpaceEx(pMe->m_pFileMgr, 
+	                                MG_PHONE_ROOTDIR, 
+	                                &pMe->m_dwMemTotal, 
+	                                &pMe->m_dwMemFree);
 
         if((pMe->m_dwMemFree/(2*BYTE_SIZE) < MIN_FREE_PHONE_SPACE) 
            ||(pMe->m_dwMemFree/(2*BYTE_SIZE) == MIN_FREE_PHONE_SPACE))
@@ -3091,7 +3096,43 @@ static boolean CameraApp_IsEnoughfMemorySpace(CCameraApp * pMe)
         {
             return TRUE;
         }
+	}
+	else
+	{
+	    if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)
+	    {
+	        IFILEMGR_GetFreeSpaceEx(pMe->m_pFileMgr, 
+	                                MG_MASSCARD_ROOTDIR, 
+	                                &pMe->m_dwMemTotal, 
+	                                &pMe->m_dwMemFree);
 
+	        if((pMe->m_dwMemFree/(2*BYTE_SIZE) < MIN_FREE_MEMORY_CARD_SPACE) 
+	           ||(pMe->m_dwMemFree/(2*BYTE_SIZE) == MIN_FREE_MEMORY_CARD_SPACE))
+	        {               
+	            return FALSE;
+	        }
+	        else
+	        {
+	            return TRUE;
+	        }
+	    }
+	    else
+	    {
+	        IFILEMGR_GetFreeSpaceEx(pMe->m_pFileMgr, 
+	                                MG_PHONE_ROOTDIR, 
+	                                &pMe->m_dwMemTotal, 
+	                                &pMe->m_dwMemFree);
+
+	        if((pMe->m_dwMemFree/(2*BYTE_SIZE) < MIN_FREE_PHONE_SPACE) 
+	           ||(pMe->m_dwMemFree/(2*BYTE_SIZE) == MIN_FREE_PHONE_SPACE))
+	        {               
+	            return FALSE;
+	        }
+	        else
+	        {
+	            return TRUE;
+	        }
+	    }
     }
 }
 
