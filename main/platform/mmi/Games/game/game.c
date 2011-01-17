@@ -949,8 +949,8 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
             {
                 case AVK_1:
                 case AVK_2:
-                //case AVK_3:
-               
+                case AVK_3:
+                case AVK_4:
                     {
                         int Focus = (wParam - AVK_1);
                         StartApplet(pMe, Focus);
@@ -1007,16 +1007,20 @@ static boolean StartApplet(Game *pMe, int i)
     
     
         case 0:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRICK);
-            break;
-        case 1:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLACKJACK);
             break;
-#if 0            
-        case 2:
-            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GAME_TETRIS);
+        case 1:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRICK);
             break;
-#endif		
+           
+        case 2:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_MAGICSUSHI);
+            break;
+
+        case 3:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_BOMB);
+            break;
+		
         default:
             break;
     }
