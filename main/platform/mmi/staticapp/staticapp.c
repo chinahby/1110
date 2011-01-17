@@ -1043,10 +1043,31 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
 	
 				
         #elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)	//Add For Smart And M8        	
+
+        #ifdef FEATURE_SMARTFREN_MSF
         	IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_SMARTMESSAGE, IDS_STATICAPP_TITLE_SMARTMESSAGE, NULL, 0);
-		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FACEBOOK, IDS_STATICAPP_TITLE_FACEBOOK, NULL, 0);
+		#endif
+
+		#ifdef FEATURE_SMARTFREN_FACEBOOK
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FACEBOOK, IDS_STATICAPP_TITLE_FACEBOOK, NULL, 0);
+		#endif
+
+		#ifdef FEATURE_SMARTFREN_TWITTER
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_TWITTER, IDS_STATICAPP_TITLE_TWITTER, NULL, 0);
+		#endif
+
+		#ifdef FEATURE_SMARTFREN_BSHOP
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_MSHOP, IDS_STATICAPP_TITLE_MSHOP, NULL, 0);		
+		#endif
+
+		#ifdef FEATURE_SMARTFREN_MDIRECTORY
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_MDIRECTORY, IDS_STATICAPP_TITLE_MDIRECTORY, NULL, 0);		
+		#endif
+
+		#ifdef FEATURE_SMARTFREN_MUSICBOX
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_MUSICBOX, IDS_STATICAPP_TITLE_MUSICBOX, NULL, 0);		
+		#endif
+
 		#endif
 		
         return TRUE;
@@ -1207,21 +1228,6 @@ static boolean Staticapp_ListFGualHandler(Staticapp *pMe, AEEEvent eCode, uint16
 		case EVT_KEY:
             switch(wParam)
             {
-                case AVK_1:
-                case AVK_2:
-                case AVK_3:
-                case AVK_4:
-                //case AVK_STAR:
-                //case AVK_POUND:
-                    {
-                        int Focus = (wParam - AVK_1);
-                        if(Focus<IMENUCTL_GetItemCount(pMenu))
-                        {
-                            StartApplet(pMe, Focus);
-                        }
-                    }
-                    return TRUE;
-
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
@@ -1324,21 +1330,6 @@ static boolean Staticapp_ListAplikasiHandler(Staticapp *pMe, AEEEvent eCode, uin
 		case EVT_KEY:
             switch(wParam)
             {
-                case AVK_1:
-                case AVK_2:
-                case AVK_3:
-                case AVK_4:
-                //case AVK_STAR:
-                //case AVK_POUND:
-                    {
-                        int Focus = (wParam - AVK_1);
-                        if(Focus<IMENUCTL_GetItemCount(pMenu))
-                        {
-                            StartApplet(pMe, Focus);
-                        }
-                    }
-                    return TRUE;
-
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
@@ -1455,20 +1446,30 @@ static boolean StartApplet(Staticapp *pMe, int wParam)
   			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_SFM);
 			break;			
-            break;            
+          
         case IDS_STATICAPP_TITLE_FACEBOOK:
         	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_FACEBOOK);
 			break;	
-            break;
   		case IDS_STATICAPP_TITLE_TWITTER:
   			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_TWITTER);
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_TWITTER);
 			break;
+			
 		case IDS_STATICAPP_TITLE_MSHOP:
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_MSHOP);
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_MSHOP);
-            		break;
+            break;
+
+        case IDS_STATICAPP_TITLE_MDIRECTORY:
+			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_MDIRECTORY);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_MDIRECTORY);
+            break;
+
+        case IDS_STATICAPP_TITLE_MUSICBOX:
+			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FGEN);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_FGEN);
+            break;
 #endif
 			
 	}   	

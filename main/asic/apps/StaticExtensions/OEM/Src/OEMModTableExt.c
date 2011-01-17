@@ -1392,12 +1392,30 @@ static const AEEStaticMod gOEMStaticModList[] =
 
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
 	   { AEEFS_MIF_DIR"staticapp.mif",StaticappMod_Load},
+#ifdef FEATURE_SMARTFREN_BSHOP
 	   { AEEFS_MIF_DIR"bshop.mif",BSHOP_Load},
+#endif
+
+#ifdef FEATURE_SMARTFREN_TWITTER
 	   { AEEFS_MIF_DIR"twitter.mif",TWITTER_Load},
+#endif
+
+#ifdef FEATURE_SMARTFREN_FACEBOOK
 	   { AEEFS_MIF_DIR"facebook.mif",FACEBOOK_Load},
+#endif
+
+#ifdef FEATURE_SMARTFREN_MSF
 	   { AEEFS_MIF_DIR"msf.mif",msf_Load},
+#endif
+
+#ifdef FEATURE_SMARTFREN_MDIRECTORY
 	   { AEEFS_MIF_DIR"odpmora.mif",ODPMORA_Load},
+#endif
+
+#ifdef FEATURE_SMARTFREN_MUSICBOX
 	   { AEEFS_MIF_DIR"fgen.mif",FlexiMusik_Load},
+#endif
+
 #endif
    {NULL, NULL}
 };
