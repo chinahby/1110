@@ -48,7 +48,7 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x00);
-    LCD_WRITE_DATA(0x9F);
+    LCD_WRITE_DATA(0x7F);
 
     LCD_WRITE_CMD(0x36); //Set Scanning Direction
     LCD_WRITE_DATA(0xC8);

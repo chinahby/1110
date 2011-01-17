@@ -36,6 +36,9 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 
 extern boolean disp_st7735r_tft144(disp_drv_ic_type *pdispic);
 
+extern boolean disp_ili9163c_tft144(disp_drv_ic_type *pdispic);
+
+
 /*============================================================================
 
                            VARIABLE DECLARATION
@@ -44,7 +47,7 @@ extern boolean disp_st7735r_tft144(disp_drv_ic_type *pdispic);
 
 static disp_ic_install_type     disp_ic_install[] = 
 {
-#if 0
+#if 1
     disp_ili9163c_tft144,
 #endif
 
