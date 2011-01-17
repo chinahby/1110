@@ -237,6 +237,20 @@ else
             ring10.mid|fs:/ringers/ring10.mid \
             ring11.mid|fs:/ringers/ring11.mid \
             ring12.mid|fs:/ringers/ring12.mid  
+     else ifeq ($(USES_RESDIR), H19C)
+    	CONSTFILE_FILES+=\
+            blues.mid|fs:/ringers/blues.mid \
+            blue_load.mid|fs:/ringers/blue_load.mid \
+            champagne.mid|fs:/ringers/champagne.mid \
+            clock.mid|fs:/ringers/clock.mid \
+            dance_craze.mid|fs:/ringers/dance_craze.mid \
+            green_line.mid|fs:/ringers/green_line.mid \
+            jumping.mid|fs:/ringers/jumping.mid \
+            lucky.mid|fs:/ringers/lucky.mid \
+            feeling_on.mid|fs:/ringers/feeling_on.mid \
+            feeling_off.mid|fs:/ringers/feeling_off.mid \
+            street_tale.mid|fs:/ringers/street_tale.mid \
+            PowerONOFF.mp3|fs:/ringers/PowerONOFF.mp3
     else                                            
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
