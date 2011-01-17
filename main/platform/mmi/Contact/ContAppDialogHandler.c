@@ -6068,7 +6068,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 }
             }
 
-            //IMENUCTL_Redraw(pMenuCtl);
+            IMENUCTL_Redraw(pMenuCtl);
             CContApp_SetInputMode(pMe);
             IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectEdit);    
 						
