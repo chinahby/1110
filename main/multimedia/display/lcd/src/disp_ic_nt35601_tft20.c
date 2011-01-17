@@ -12,70 +12,8 @@ static void disp_ic_init(void)
     LCD_WRITE_CMD(0x11);//Sleep Out
     LCD_DELAY(120);
     
-#ifndef ZGD_TFT_020_T087
-    LCD_WRITE_CMD(0xDE);
-    LCD_WRITE_DATA(0xAA);
-    LCD_WRITE_DATA(0x55);
-    LCD_WRITE_DATA(0x15);
-    
-    LCD_WRITE_CMD(0xC1); 
-    LCD_WRITE_DATA(0x03);
-
-    LCD_WRITE_CMD(0xC0); 
-    LCD_WRITE_DATA(0x03);
-    LCD_WRITE_DATA(0x00);
-
-    LCD_WRITE_CMD(0xC2);
-    LCD_WRITE_DATA(0x00);
-    LCD_WRITE_DATA(0x04);
-
-    LCD_WRITE_CMD(0xC3); 
-    LCD_WRITE_DATA(0x00);
-    LCD_WRITE_DATA(0x07);
-    
-    LCD_WRITE_CMD(0xC4); 
-    LCD_WRITE_DATA(0x00);
-    LCD_WRITE_DATA(0x04);
-    
-    LCD_WRITE_CMD(0xC5);//Set Vcom  
-    LCD_WRITE_DATA(0x36);
-    LCD_WRITE_DATA(0x1C);
-    
-    LCD_WRITE_CMD(0xC7);//Set VCOM-OFFSET   
-    LCD_WRITE_DATA(0xD4);//
-    
-    LCD_WRITE_CMD(0xb1); 
-    LCD_WRITE_DATA(0x12);
-    LCD_WRITE_DATA(0x0D);
-    
-    LCD_WRITE_CMD(0x3A); 
-    LCD_WRITE_DATA(0x55);
-    
-    LCD_WRITE_CMD(0x36);//Memory data  access control
-    LCD_WRITE_DATA(0x48);//MY MX MV ML RGB MH 0 0     
-    
-    LCD_WRITE_CMD(0xE0);//E0H Set
-    LCD_WRITE_DATA(0x30);
-    LCD_WRITE_DATA(0x53);
-    LCD_WRITE_DATA(0x50);
-    LCD_WRITE_DATA(0x05);
-    LCD_WRITE_DATA(0x6B);
-    LCD_WRITE_DATA(0x03);
-    LCD_WRITE_DATA(0x04);
-    LCD_WRITE_DATA(0x95);
-    
-    LCD_WRITE_CMD(0xE1);//E1H Set
-    LCD_WRITE_DATA(0x71);
-    LCD_WRITE_DATA(0x42);
-    LCD_WRITE_DATA(0x64);
-    LCD_WRITE_DATA(0x04);
-    LCD_WRITE_DATA(0x73);
-    LCD_WRITE_DATA(0x0E);
-    LCD_WRITE_DATA(0x03);
-    LCD_WRITE_DATA(0x1F);
-    
-    LCD_WRITE_CMD(0x29);//display on
-#else  //zgd tft-020-t087
+#ifdef ZGD_TFT_020_T087
+  //zgd tft-020-t087
     LCD_WRITE_CMD(0xC0);
     LCD_WRITE_DATA (0x03);
     LCD_WRITE_DATA (0x00);
@@ -144,7 +82,69 @@ static void disp_ic_init(void)
 
     LCD_WRITE_CMD(0x29);
     LCD_WRITE_CMD(0x2c);
+#else
+   LCD_WRITE_CMD(0xDE);
+   LCD_WRITE_DATA(0xAA);
+   LCD_WRITE_DATA(0x55);
+   LCD_WRITE_DATA(0x15);
+   
+   LCD_WRITE_CMD(0xC1); 
+   LCD_WRITE_DATA(0x03);
 
+   LCD_WRITE_CMD(0xC0); 
+   LCD_WRITE_DATA(0x03);
+   LCD_WRITE_DATA(0x00);
+
+   LCD_WRITE_CMD(0xC2);
+   LCD_WRITE_DATA(0x00);
+   LCD_WRITE_DATA(0x04);
+
+   LCD_WRITE_CMD(0xC3); 
+   LCD_WRITE_DATA(0x00);
+   LCD_WRITE_DATA(0x07);
+   
+   LCD_WRITE_CMD(0xC4); 
+   LCD_WRITE_DATA(0x00);
+   LCD_WRITE_DATA(0x04);
+   
+   LCD_WRITE_CMD(0xC5);//Set Vcom  
+   LCD_WRITE_DATA(0x36);
+   LCD_WRITE_DATA(0x1C);
+   
+   LCD_WRITE_CMD(0xC7);//Set VCOM-OFFSET   
+   LCD_WRITE_DATA(0xD4);//
+   
+   LCD_WRITE_CMD(0xb1); 
+   LCD_WRITE_DATA(0x12);
+   LCD_WRITE_DATA(0x0D);
+   
+   LCD_WRITE_CMD(0x3A); 
+   LCD_WRITE_DATA(0x55);
+   
+   LCD_WRITE_CMD(0x36);//Memory data  access control
+   LCD_WRITE_DATA(0x48);//MY MX MV ML RGB MH 0 0     
+   
+   LCD_WRITE_CMD(0xE0);//E0H Set
+   LCD_WRITE_DATA(0x30);
+   LCD_WRITE_DATA(0x53);
+   LCD_WRITE_DATA(0x50);
+   LCD_WRITE_DATA(0x05);
+   LCD_WRITE_DATA(0x6B);
+   LCD_WRITE_DATA(0x03);
+   LCD_WRITE_DATA(0x04);
+   LCD_WRITE_DATA(0x95);
+   
+   LCD_WRITE_CMD(0xE1);//E1H Set
+   LCD_WRITE_DATA(0x71);
+   LCD_WRITE_DATA(0x42);
+   LCD_WRITE_DATA(0x64);
+   LCD_WRITE_DATA(0x04);
+   LCD_WRITE_DATA(0x73);
+   LCD_WRITE_DATA(0x0E);
+   LCD_WRITE_DATA(0x03);
+   LCD_WRITE_DATA(0x1F);
+   
+   LCD_WRITE_CMD(0x29);//display on
 #endif
 }
 
