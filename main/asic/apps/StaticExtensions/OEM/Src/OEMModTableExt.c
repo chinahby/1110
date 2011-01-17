@@ -360,6 +360,8 @@ extern int BSHOP_Load(IShell *ps, void * pHelpers, IModule **pMod);
 extern int TWITTER_Load(IShell *ps, void * pHelpers, IModule **pMod);
 extern int FACEBOOK_Load(IShell *ps, void * pHelpers, IModule **pMod);
 extern int msf_Load(IShell *ps, void * pHelpers, IModule **pMod);
+extern int ODPMORA_Load(IShell *ps, void * pHelpers,  IModule **pMod);
+extern int FlexiMusik_Load(IShell *ps, void * pHelpers,  IModule **pMod);
 #endif
 
 #if defined(FEATURE_STATIC_APP_J9)
@@ -1394,6 +1396,8 @@ static const AEEStaticMod gOEMStaticModList[] =
 	   { AEEFS_MIF_DIR"twitter.mif",TWITTER_Load},
 	   { AEEFS_MIF_DIR"facebook.mif",FACEBOOK_Load},
 	   { AEEFS_MIF_DIR"msf.mif",msf_Load},
+	   { AEEFS_MIF_DIR"odpmora.mif",ODPMORA_Load},
+	   { AEEFS_MIF_DIR"fgen.mif",FlexiMusik_Load},
 #endif
    {NULL, NULL}
 };

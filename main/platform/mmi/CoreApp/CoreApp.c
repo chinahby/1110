@@ -863,6 +863,31 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 return TRUE;                
             #endif
             
+            #if defined(FEATURE_TORCH_KEY_SYMBOL)	
+			
+                case AVK_SYMBOL:
+                {
+                    if ( pMe->TorchOn == FALSE )
+                    {
+                        pMe->TorchOn = TRUE;
+                        if (pMe->m_pBacklight)
+                        {
+                            IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                        }
+                    }
+                    else
+                    {
+                        pMe->TorchOn = FALSE;
+                        if (pMe->m_pBacklight)
+                        {                        	
+                            IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                        }
+                    }                                                   
+                }             
+
+                return TRUE;                
+            #endif
+            
             #if defined(FEATURE_TORCH_KEY_CAMERA)					
 				case AVK_CAMERA:
                 {

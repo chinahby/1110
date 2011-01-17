@@ -11421,14 +11421,17 @@ void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)
 		case STATIC_BREW_APP_SMARTFREN_TWITTER:
 		case STATIC_BREW_APP_SMARTFREN_SFM:
 		case STATIC_BREW_APP_SMARTFREN_MSHOP:
-//#if defined(FEATURE_PROJECT_M8)
+		case STATIC_BREW_APP_SMARTFREN_MDIRECTORY:
+		case STATIC_BREW_APP_SMARTFREN_FGEN:
 #if defined(FEATURE_ADS_M8_ACCOUNT)
 			MEMCPY(username,"m8",2);	
 			MEMCPY(password,"m8",2);	
-//#elif defined(FEATURE_PROJECT_SMART)
 #elif defined(FEATURE_ADS_SMART_ACCOUNT)
 			MEMCPY(username,"smart",5);	
 			MEMCPY(password,"smart",5);
+#else
+			MEMCPY(username,"m8",2);	
+			MEMCPY(password,"m8",2);
 #endif
 			break;
 		default:
