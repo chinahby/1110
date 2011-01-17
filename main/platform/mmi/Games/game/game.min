@@ -1,6 +1,19 @@
 ################################################################################
 # main menu gnumake variable definition
 ################################################################################
+
+ifeq ($(USES_TOMB),yes)
+Tomb=yes
+else
+Tomb=no
+endif
+
+ifeq ($(USES_MAGIC),yes)
+Magicsushi=yes
+else
+Magicsushi=no
+endif
+
 GAME_INC = $(GAME)
 GAME_RES = $(GAME)/resources
 GAME_SRC = $(GAME)
@@ -18,6 +31,35 @@ CONSTFILE_FILES+=\
 game.mif|fs:/mif/game.mif \
 game.bar|fs:/mod/game/en/game.bar
 
+ifeq ($(Tomb),yes)
+
+vpath %.mod $(GAME_SRC)/tomb 
+vpath %.bar $(GAME_SRC)/tomb
+vpath %.txt $(GAME_SRC)/tomb
+vpath %.mid $(GAME_SRC)/tomb
+
+CONSTFILE_BIN_FILES += \
+	help.txt|fs:/mod/tomb/help.txt \
+	parameter.txt|fs:/mod/tomb/parameter.txt \
+	main.mid|fs:/mod/tomb/main.mid \
+	over.mid|fs:/mod/tomb/over.mid \
+	run.mid|fs:/mod/tomb/run.mid
+	
+CONSTFILE_FILES+= tomb.mif|fs:/mif/tomb.mif
+CONSTFILE_FILES+= tomb.mod|fs:/mod/tomb/tomb.mod
+
+endif
+
+ifeq ($(Magicsushi),yes)
+
+vpath %.mod $(GAME_SRC)/magicsushi 
+vpath %.bar $(GAME_SRC)/magicsushi
+
+CONSTFILE_BIN_FILES += magicsushi.bar|fs:/mod/magicsushi/magicsushi.bar
+CONSTFILE_FILES+= magicsushi.mif|fs:/mif/magicsushi.mif
+CONSTFILE_FILES+= magicsushi.mod|fs:/mod/magicsushi/magicsushi.mod
+
+endif
 
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\

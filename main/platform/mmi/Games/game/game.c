@@ -898,8 +898,8 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
 			#endif
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_1, IDS_GAME_TITLE_1, NULL, 0);
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_2, IDS_GAME_TITLE_2, NULL, 0);
-            //IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_3, IDS_GAME_TITLE_3, NULL, 0);
-        
+            IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_3, IDS_GAME_TITLE_3, NULL, 0);
+        	IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_4, IDS_GAME_TITLE_4, NULL, 0);
 
             return TRUE;
             
@@ -973,8 +973,9 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
             {   
                 case IDS_GAME_TITLE_1:
                 case IDS_GAME_TITLE_2:
-                //case IDS_GAME_TITLE_3:
-                    StartApplet(pMe, IDS_GAME_TITLE_2 - wParam);
+                case IDS_GAME_TITLE_3:
+                case IDS_GAME_TITLE_4:
+                    StartApplet(pMe,wParam);
                     return TRUE;
             }
             return TRUE;
