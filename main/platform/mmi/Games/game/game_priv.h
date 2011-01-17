@@ -106,7 +106,7 @@ typedef struct _Game
                                  
 ==============================================================================*/
 
-#define  MAX_MATRIX_ITEMS 3
+#define  MAX_MATRIX_ITEMS 4
 
 #define GAME_RES_FILE_LANG        AEE_RES_LANGDIR GAME_RES_FILE
 

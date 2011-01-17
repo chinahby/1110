@@ -898,9 +898,13 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
 			#endif
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_1, IDS_GAME_TITLE_1, NULL, 0);
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_2, IDS_GAME_TITLE_2, NULL, 0);
+        #ifdef FEATURE_SMARTFREN_MAGIC
             IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_3, IDS_GAME_TITLE_3, NULL, 0);
-        	IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_4, IDS_GAME_TITLE_4, NULL, 0);
+        #endif
 
+        #ifdef FEATURE_SMARTFREN_TOMB
+        	IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_4, IDS_GAME_TITLE_4, NULL, 0);
+		#endif
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -975,7 +979,7 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
                 case IDS_GAME_TITLE_2:
                 case IDS_GAME_TITLE_3:
                 case IDS_GAME_TITLE_4:
-                    StartApplet(pMe,wParam);
+                    StartApplet(pMe,wParam-IDS_GAME_TITLE_1);
                     return TRUE;
             }
             return TRUE;
@@ -1004,8 +1008,6 @@ static boolean StartApplet(Game *pMe, int i)
    	//MSG_ERROR("StartApplet:::::%d",i,0,0);
     switch(i)
     {
-    
-    
         case 0:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLACKJACK);
             break;

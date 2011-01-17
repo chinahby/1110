@@ -11,7 +11,10 @@
 		<Text>Brickattack</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_GAME_TITLE_3">
-		<Text>Tetris</Text>
+		<Text>Sang Petualang</Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_GAME_TITLE_4">
+		<Text>Buah Pintar</Text>
 	</STRING>
 </Strings>
 <Dialogs>
