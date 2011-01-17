@@ -868,6 +868,11 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 #if 0                
                     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAY, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y); //将中间图标刷新为三角形的小图标      
 #endif
+                    AEERect rc = {0,0,SCR_W,SCR_H};         
+                    IDisplay_FillRect(pMe->m_pDisplay,&rc,0x0);
+                    VideoPlayer_WriteTitleRes(pMe,AEE_APPSVIDEOPLAYER_RES_FILE,IDS_TITLE);
+                    VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_LOGO, VIDEOPLAYER_LOGO_X, VIDEOPLAYER_LOGO_Y);
+
 					pMe->m_rtype = TYPE_PLAYER;
                     if(pMe->m_IsPlaynext)
                     {
@@ -890,7 +895,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 					{
 						IMEDIA_Stop((IMedia*)pMe->m_pMedia);
 					}			
-					VideoPlayer_ChangeScrState(pMe,FALSE);
+					//VideoPlayer_ChangeScrState(pMe,FALSE);
                     SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_OFF);
                     //ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)(IMEDIA_Stop),pMe->m_pMedia);                                    
                 }
@@ -1542,7 +1547,7 @@ void VideoPlayer_WriteTitle(CVideoPlayer *pMe,AECHAR* pText)
 {
 	AEERect   rc_name;
 	VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NAME_PART, 0, 0);  
-	SETAEERECT(&rc_name, VIDEOPLAYER_NAMEPART_X + 10,VIDEOPLAYER_NAMEPART_Y, VIDEOPLAYER_NAMEPART_W - 20, VIDEOPLAYER_NAMEPART_H);
+	SETAEERECT(&rc_name, VIDEOPLAYER_NAMEPART_X + 20,VIDEOPLAYER_NAMEPART_Y, VIDEOPLAYER_NAMEPART_W - 40, VIDEOPLAYER_NAMEPART_H);
 	//写title
 	DrawTextWithProfile(pMe->m_pShell, 
 					pMe->m_pDisplay, 
@@ -1771,7 +1776,7 @@ boolean VideoPlayer_PlayMod(CVideoPlayer *pMe, uint16 wParam)
             {    
                 //ISHELL_CancelTimer(pMe->m_pShell,NULL,pMe); 
                 pMe->IsFullScreen = TRUE;
-				IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia,MM_PARM_RECT,(int32)&pMe->m_rc,NULL);
+				//IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia,MM_PARM_RECT,(int32)&pMe->m_rc,NULL);
 				VideoPlayer_ChangeScrState(pMe,TRUE);
 				// YY TODO:
                 //MMD_LCDRotate(1);
