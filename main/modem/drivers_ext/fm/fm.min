@@ -2,9 +2,13 @@
 # FM (FM Radio Service)
 #-------------------------------------------------------------------------------
 
+ifeq ($(USES_DR5802E),yes)
 FM_SOURCES=\
         fm_rd5802.c
-	
+else
+FM_SOURCES=\
+        fm_rd5802H.c
+endif
 ifeq ($(USES_DSP),yes)
 FM_SOURCES+=\
         fm_framework.c
