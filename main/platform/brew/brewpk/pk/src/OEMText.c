@@ -11043,6 +11043,12 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
       TextCtl_AddChar(pContext,(AECHAR) ( ( (int)key - (int)AVK_0 ) + '0'));
       return TRUE;
    }
+   else if(key == AVK_0)
+   {
+   		TextCtl_NoSelection(pContext);
+   		TextCtl_AddChar(pContext,(AECHAR) ('0'));
+   		return TRUE;
+   }
    else
    {   
 	    switch (key)
