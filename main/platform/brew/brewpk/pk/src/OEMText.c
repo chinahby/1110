@@ -1673,7 +1673,20 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
     
     register TextCtlContext *pContext = (TextCtlContext *) hTextCtl;
     AVKType key = (AVKType) dwKeyCode;
-    MSG_FATAL("...........................1",0,0,0);
+
+	//DBGPRINT("-------------->");
+    MSG_FATAL("----------->1-->%d--->%d",eCode,dwKeyCode,0);
+	if(eCode == EVT_KEY_HELD && dwKeyCode == AVK_CLR)
+	{
+		MSG_FATAL("...........................ACL",0,0,0);
+		//T9_AW_Init ( pContext );
+		MEMSET((void *)pContext->pszContents,0,STRLEN((void *)pContext->pszContents));
+		MEMSET(&pContext->sT9awFieldInfo,0,sizeof(T9AWFieldInfo));
+		pContext->wSelStart = 0;
+		pContext->wSelEnd = 0;
+		OEM_TextUpdate(pContext);
+		return TRUE;
+	}
     // Press and hold the number key to get the number
 	#ifndef FEATURE_ALL_KEY_PAD
     if ((eCode != EVT_KEY))
