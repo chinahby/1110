@@ -38,13 +38,11 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_SPN_FROM_BSMCCMNC
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
 #endif
-#ifdef FEATURE_VERSION_FLEXI203P
-#include "targsb12832.h"
-#else
+
 #ifndef TARGSB2_H
    #include "targsbw2.h"
 #endif
-#endif   /*FEATURE_VERSION_FLEXI203P*/
+
 //#define FEATURE_DATA_STRIP_ATCOP 
 #define FEATURE_STD_MIDI 
 #define FEATURE_DIAG_LOWMEM 
@@ -58,7 +56,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
-//#define FEATURE_LOWTIER_LOWMEM 	//Del By zzg 2010_12_24
+#define FEATURE_LOWTIER_LOWMEM
 #define FEATURE_REX_IPC 
 #define FEATURE_ASYNC_DATA_NOOP 
 #define FEATURE_HS_USB_PMIC_PHY 
@@ -66,7 +64,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_RRC_SIB_HEAP 
 #define FEATURE_LOW_MEMORY_USAGE 
 //#define FEATURE_FS_LOW_MEMORY_USAGE 
-//#define FEATURE_DSM_MINIMIZE 		//Del By zzg 2010_12_24
+#define FEATURE_DSM_MINIMIZE
 #define FEATURE_MSG_LOW_MEMORY_USAGE 
 #define FEATURE_SIO_NO_DEBUG_TRACE 
 #define FEATURE_DIAG_SMALL_BUFFER 
