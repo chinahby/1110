@@ -5015,6 +5015,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 
 		            
 		        case AVK_CLR:
+		        	T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYCLEAR);
 		            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
 		            {
 		                 /* Set selection to the character before the insertion point */
@@ -6325,6 +6326,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 
 	            
 	        case AVK_CLR:
+	        	T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYCLEAR);
 	            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
 	            {
 	                 /* Set selection to the character before the insertion point */
@@ -7223,6 +7225,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 
 	            
 	        case AVK_CLR:
+	        	T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYCLEAR);
 	            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
 	            {
 	                 /* Set selection to the character before the insertion point */
