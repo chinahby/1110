@@ -680,7 +680,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     #elif defined (FEATURE_VERSION_C306)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
-    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_USERPROFILE;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_UTK;
     pMe->m_IconTitle[3]     = IDS_MAIN_MENU_MULTIMEDIA;
     pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
     pMe->m_IconTitle[5]     = IDS_MAIN_MENU_RECENTCALLS;
