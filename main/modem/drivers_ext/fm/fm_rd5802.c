@@ -59,6 +59,8 @@ Local Definitions and Types
 static uint32	RDA5802_FreqToChan(uint32 frequency);
 static uint8 	RDA5802_ValidStop(int16 freq);
 static uint8 	RDA5802_GetSigLvl(int16 curf );
+
+
 #ifdef FEATURE_DSP
 void fm_mute(boolean on);
 #endif
@@ -85,7 +87,7 @@ uint8 RDA5802_initialization_reg[]={
 	0x04, 0x00,        
 	0x88, 0xAF, //05H: 
 	0x00, 0x00,        
-	0x46, 0xC6,        
+	0x5E, 0xC6,        
 	0x50, 0x96,        
 	0x00, 0x00,        
 	0x40, 0x00, //0AH: 
@@ -111,8 +113,123 @@ uint8 RDA5802_initialization_reg[]={
 	0x07, 0x9B,        
 	0x4C, 0x1D,        
 	0x81, 0x11, //20H: 
-	0x45, 0x80,                    
+	0x45, 0xC0,        
 };
+#define SMIC_PATCH 0x27
+
+uint8 RDA5802E_initialization_reg[]={
+	0xC4, 0x01, //02H:
+	0x1b, 0x90,
+	0x04, 0x00,
+	0x86, 0xad, //05H://86
+	0x80, 0x00,
+	0x5F, 0x1A, //07H  change the seek time;
+	0x5e, 0xc6,
+	0x00, 0x00,
+	0x40, 0x6e, //0AH: 
+	0x2d, 0x80,
+	0x58, 0x03,
+	0x58, 0x04,
+	0x58, 0x04,
+	0x58, 0x04,
+	0x00, 0x47, //10H: 
+	0x90, 0x00,
+	0xF5, 0x87,
+	0x7F, 0x0B, //13H: reset ADC's parameters
+	0x04, 0xF1,
+	0x5E, 0xc0, //15H: 0x42, 0xc0
+	0x41, 0xe0,
+	0x50, 0x6f,
+	0x55, 0x92,
+	0x00, 0x7d,
+	0x10, 0xC0, //1AH
+	0x07, 0x80,
+	0x41, 0x1d, //1CH,
+	0x40, 0x06,
+	0x1f, 0x9B,
+	0x4c, 0x2b, //1FH. 
+	0x81, 0x10, //20H: 
+	0x45, 0xa0, // 21H
+	0x19, 0x3F, //22H: change AFC threshold
+	0xaf, 0x40, 
+	0x06, 0x81,
+	0x1b, 0x2a, //25H
+	0x0D, 0x04, //26H, shutdown Rssi_autodown function
+	0x80, 0x9F, //0x80, 0x2F, 
+	0x17, 0x8A,
+	0xD3, 0x49,
+	0x11, 0x42,
+	0xA0, 0xC4, //2BH
+	0x3E, 0xBB,
+	0x00, 0x00,
+	0x58, 0x04,
+	0x58, 0x04, //2FH
+	0x58, 0x04,
+	0x00, 0x74,
+	0x3D, 0x00,
+	0x03, 0x0C,
+	0x2F, 0x68,
+	0x38, 0x77, //35H
+};
+
+uint8 RDA5802H_initialization_reg[]={
+	0xc4, 0x01, //02h:         bit10 ???? ????1.8v samsung flash
+	0x00, 0x00,
+	0x04, 0x00,
+	0x86, 0xEd, //05h://86    
+	0x40,0x00,
+	0x5f,0xc6,
+	0x00,0x00,
+	0x00,0x00,
+	0x00,0x00,  //0x0ah
+	0x00,0x00,
+	0x00,0x00,
+	0x00,0x00,
+	0x00,0x00,
+	0x00,0x00,
+	0x00,0x06,  //0x10h
+	0x00,0x19,// //0x00,0x09,//0830
+	0x2a,0x11,
+	0x00,0x2e,
+	0x2a,0x30,
+	0xb8,0x3c,  //0x15h
+	0x90,0x00,
+	0x2a,0x91,
+	0x84,0x12,
+	0x00,0xa8,
+	0xc4,0x00,  //0x1ah
+	0xe0,0x00,
+	0x30,0x1d,//0x24,0x9d,1ch
+	0x81,0x6a,
+	0x46,0x08,
+	0x00,0x86,  //0x1fh
+	0x06,0x61,// 0x16,0x61, 20h
+	0x00,0x00,
+	0x10,0x9e,
+	0x24,0xc9,//   0x24,0x47,//0830//23h
+	0x04,0x08,//0830
+	0x06,0x08,  //0x06,0x08,//0830  //0x25h
+	0xe1,0x05,
+	0x3b,0x6c,
+	0x2b,0xec,
+	0x09,0x0f,
+	0x34,0x14,  //0x2ah
+	0x14,0x50,
+	0x09,0x6d,
+	0x2d,0x96,
+	0x01,0xda,
+	0x2a,0x7b,
+	0x08,0x21,   //0x30h
+	0x13,0xd5,
+	0x48,0x91,
+	0x00,0xbc,
+	0x08,0x96,//0830  0x34h
+	0x15,0x3c,
+	0x0b,0x80,
+	0x25,0xc7,
+	0x00,0x00,
+};
+
 
 static uint8 OperationRDAFM_2w(FM_I2C_COMM_TYPE operation, uint8 *data, uint8 numBytes)
 {
@@ -211,6 +328,8 @@ int fm_radio_init(void)
 {
 	uint8 error_ind = 0;
 	uint8 RDA5802_REG[]={0x00,0x02};
+	uint8 RDAFM_reg_data[10]={0};
+	uint16 cChipID;	
 	
 	MSG_FATAL("fm_radio_init!!!",0,0,0);
 #if (defined(T_QSC1100) || defined(T_QSC1110))
@@ -223,12 +342,110 @@ int fm_radio_init(void)
 	// - enable platform here
 #endif
 
-	fm_playing_mute = TRUE;
-	error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
-	clk_busy_wait(20*1000);			//Must Delay 10ms
 	
-	error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_initialization_reg[0], sizeof(RDA5802_initialization_reg));
-	clk_busy_wait(50*1000);
+
+	RDA5802_REG[0]=0x00;
+	RDA5802_REG[1]=0x02;	
+	error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
+	clk_busy_wait(20*1000);
+		
+	OperationRDAFM_2w(FM_I2C_READ,&(RDAFM_reg_data[0]), 10);
+	cChipID=(RDAFM_reg_data[8]*0x100)+ RDAFM_reg_data[9];
+
+	MSG_FATAL("cChipID = 0x%x",cChipID,0,0);
+	
+	fm_playing_mute = TRUE;
+	if ( 0x5804==cChipID )
+	{
+		RDA5802_REG[0]=0xC0;
+		RDA5802_REG[1]=0x01;
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
+		clk_busy_wait(10*1000);
+		RDA5802_REG[0]=0x00;
+		RDA5802_REG[1]=0x02;	
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
+		clk_busy_wait(10*1000);
+		RDA5802_REG[0]=0xC0;
+		RDA5802_REG[1]=0x01;
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
+		clk_busy_wait(10*1000);
+			
+		RDA5802_initialization_reg[0] = 0xC0;
+		RDA5802_initialization_reg[1] =	0x01;
+	
+		#if (defined(LOW_AMPLITUDE_32K_SUPPORT))
+			RDA5802_initialization_reg[0] |= 1<<2;
+			RDA5802E_initialization_reg[0] |= 1<<2;
+		#endif
+		
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802E_initialization_reg[0],sizeof(RDA5802E_initialization_reg));
+	}
+	else if ( 0x5801==cChipID )
+	{
+		RDA5802_REG[0]=0xC0;
+		RDA5802_REG[1]=0x01;
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
+		clk_busy_wait(10*1000);
+		RDA5802_REG[0]=0x00;
+		RDA5802_REG[1]=0x02;	
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
+		clk_busy_wait(10*1000);
+		RDA5802_REG[0]=0xC0;
+		RDA5802_REG[1]=0x01;
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
+		clk_busy_wait(10*1000);
+			
+		RDA5802_initialization_reg[0] = 0xC0;
+		RDA5802_initialization_reg[1] =	0x01;
+	
+		#if (defined(LOW_AMPLITUDE_32K_SUPPORT))
+			RDA5802_initialization_reg[0] |= 1<<2;
+			RDA5802H_initialization_reg[0] |= 1<<2;
+		#endif
+		
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802H_initialization_reg[0],sizeof(RDA5802H_initialization_reg));
+	}
+	else
+	{
+		cChipID=(RDAFM_reg_data[4]*0x100)+ RDAFM_reg_data[5];
+	}
+	
+	if( 0x5802==cChipID || 0x5803==cChipID )
+	{
+		if( 0x5802==cChipID )
+			RDA5802_initialization_reg[52]=SMIC_PATCH;
+			
+		RDA5802_REG[0]=0xC0;
+		RDA5802_REG[1]=0x01;
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
+		clk_busy_wait(10*1000);
+		RDA5802_REG[0]=0x00;
+		RDA5802_REG[1]=0x02;	
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
+		clk_busy_wait(10*1000);
+		RDA5802_REG[0]=0xC0;
+		RDA5802_REG[1]=0x01;
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_REG[0], 2);
+		clk_busy_wait(10*1000);
+			
+		RDA5802_initialization_reg[0] = 0xC0;
+		RDA5802_initialization_reg[1] =	0x01;
+
+/*	
+	#if (defined(LOW_AMPLITUDE_32K_SUPPORT))
+		if( 0x5802==cChipID )
+			ASSERT(0);			//can't support low amplitude 32K clock
+	else 	
+		RDA5802_initialization_reg[0] |= 1<<2;
+	#endif
+*/	
+		error_ind = OperationRDAFM_2w(FM_I2C_WRITE, (uint8 *)&RDA5802_initialization_reg[0],sizeof(RDA5802_initialization_reg));
+
+	}
+	else
+	{
+		error_ind = 1;
+	}
 	
 	fm_work_status = FM_POWER_DOWN;
 	return FM_RADIO_SUCCESSFUL;
