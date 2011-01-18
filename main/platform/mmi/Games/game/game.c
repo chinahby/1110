@@ -1002,7 +1002,7 @@ static boolean StartApplet(Game *pMe, int i)
         case IDS_GAME_TITLE_BRICK:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRICK);
             break;
-           
+           #if defined (FEATURE_SMARTFREN_STATIC_BREW_APP)
         case IDS_GAME_TITLE_MAGICSUSHI:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_MAGICSUSHI);
             break;
@@ -1010,6 +1010,7 @@ static boolean StartApplet(Game *pMe, int i)
         case IDS_GAME_TITLE_BOMB:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_BOMB);
             break;
+            #endif
 		
         default:
             break;
