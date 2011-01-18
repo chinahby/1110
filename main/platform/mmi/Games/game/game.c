@@ -896,43 +896,40 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
                 }
 		    }
 			#endif
-            IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_1, IDS_GAME_TITLE_1, NULL, 0);
-            IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_2, IDS_GAME_TITLE_2, NULL, 0);
+            IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_BLACKJACK, IDS_GAME_TITLE_BLACKJACK, NULL, 0);
+            IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_BRICK, IDS_GAME_TITLE_BRICK, NULL, 0);
         #ifdef FEATURE_SMARTFREN_MAGIC
-            IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_3, IDS_GAME_TITLE_3, NULL, 0);
+            IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_MAGICSUSHI, IDS_GAME_TITLE_MAGICSUSHI, NULL, 0);
         #endif
 
         #ifdef FEATURE_SMARTFREN_TOMB
-        	IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_4, IDS_GAME_TITLE_4, NULL, 0);
+        	IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_BOMB, IDS_GAME_TITLE_BOMB, NULL, 0);
 		#endif
             return TRUE;
             
         case EVT_DIALOG_START:
             {  
                 int i;
-                for (i=1;i<=MAX_MATRIX_ITEMS;)
+                uint16 wID;
+                AECHAR pwsz[67] = {0};
+                AECHAR pstr[64] = {0};
+                AECHAR wsFmt[5] = {0};
+
+                (void)STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
+                for (i=0;i<IMENUCTL_GetItemCount(pMenu);i++)
                 {
-                    AECHAR pwsz[67] = {0};
-                    AECHAR pstr[64] = {0};
-                    AECHAR wsFmt[5] = {0};
-    
-                    (void)STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
-                    WSPRINTF(pwsz,sizeof(pwsz),wsFmt,i);
+                    wID = IMENUCTL_GetItemID(pMenu, i);
+                    WSPRINTF(pwsz,sizeof(pwsz),wsFmt,i+1);
                     
                     ISHELL_LoadResString( pMe->m_pShell,
                           GAME_RES_FILE_LANG,
-                          IDS_GAME_TITLE_1 + i - 1,
+                          wID,
                           pstr,
                           sizeof(pstr));
-                    
-
                     WSTRLCAT(pwsz,pstr,sizeof(pwsz));
-                    ERR("Application_ListMenuHandler::%d pwsz::%s",i,pwsz,0);
-                    {
-                        IMENUCTL_SetItemText(pMenu, IDS_GAME_TITLE_1 + i - 1, NULL, NULL, pwsz);
-                    }
-                    i++;
+                    IMENUCTL_SetItemText(pMenu, wID, NULL, NULL, pwsz);
                 }
+                
                 IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
                 IMENUCTL_SetOemProperties( pMenu, OEMMP_USE_MENU_STYLE);
                 IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
@@ -951,16 +948,6 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
         case EVT_KEY:
             switch(wParam)
             {
-                case AVK_1:
-                case AVK_2:
-                case AVK_3:
-                case AVK_4:
-                    {
-                        int Focus = (wParam - AVK_1);
-                        StartApplet(pMe, Focus);
-                    }
-                    return TRUE;
-
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
@@ -975,11 +962,11 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
             pMe->m_MainSel = wParam;
             switch (wParam)
             {   
-                case IDS_GAME_TITLE_1:
-                case IDS_GAME_TITLE_2:
-                case IDS_GAME_TITLE_3:
-                case IDS_GAME_TITLE_4:
-                    StartApplet(pMe,wParam-IDS_GAME_TITLE_1);
+                case IDS_GAME_TITLE_BLACKJACK:
+                case IDS_GAME_TITLE_BRICK:
+                case IDS_GAME_TITLE_MAGICSUSHI:
+                case IDS_GAME_TITLE_BOMB:
+                    StartApplet(pMe,wParam);
                     return TRUE;
             }
             return TRUE;
@@ -1008,18 +995,19 @@ static boolean StartApplet(Game *pMe, int i)
    	//MSG_ERROR("StartApplet:::::%d",i,0,0);
     switch(i)
     {
-        case 0:
+        case IDS_GAME_TITLE_BLACKJACK:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLACKJACK);
             break;
-        case 1:
+            
+        case IDS_GAME_TITLE_BRICK:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRICK);
             break;
            
-        case 2:
+        case IDS_GAME_TITLE_MAGICSUSHI:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_MAGICSUSHI);
             break;
 
-        case 3:
+        case IDS_GAME_TITLE_BOMB:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_BOMB);
             break;
 		

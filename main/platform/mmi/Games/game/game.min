@@ -33,31 +33,31 @@ game.bar|fs:/mod/game/en/game.bar
 
 ifeq ($(Tomb),yes)
 
-vpath %.mod $(GAME_SRC)/../tomb 
-vpath %.bar $(GAME_SRC)/../tomb
-vpath %.txt $(GAME_SRC)/../tomb
-vpath %.mid $(GAME_SRC)/../tomb
+vpath %.mod $(GAME_SRC)/tomb 
+vpath %.bar $(GAME_SRC)/tomb
+vpath %.txt $(GAME_SRC)/tomb
+vpath %.mid $(GAME_SRC)/tomb
 
-CONSTFILE_BIN_FILES += \
+EFSFILE_FILES += \
 	help.txt|fs:/mod/tomb/help.txt \
 	parameter.txt|fs:/mod/tomb/parameter.txt \
 	main.mid|fs:/mod/tomb/main.mid \
 	over.mid|fs:/mod/tomb/over.mid \
 	run.mid|fs:/mod/tomb/run.mid
 	
-CONSTFILE_FILES+= tomb.mif|fs:/mif/tomb.mif
-CONSTFILE_FILES+= tomb.mod|fs:/mod/tomb/tomb.mod
+CONSTFILE_FILES += tomb.mif|fs:/mif/tomb.mif
+CONSTFILE_FILES += tomb.mod|fs:/mod/tomb/tomb.mod
 
 endif
 
 ifeq ($(Magicsushi),yes)
 
-vpath %.mod $(GAME_SRC)/../magicsushi 
-vpath %.bar $(GAME_SRC)/../magicsushi
+vpath %.mod $(GAME_SRC)/magicsushi 
+vpath %.bar $(GAME_SRC)/magicsushi
 
 CONSTFILE_BIN_FILES += magicsushi.bar|fs:/mod/magicsushi/magicsushi.bar
-CONSTFILE_FILES+= magicsushi.mif|fs:/mif/magicsushi.mif
-CONSTFILE_FILES+= magicsushi.mod|fs:/mod/magicsushi/magicsushi.mod
+CONSTFILE_FILES += magicsushi.mif|fs:/mif/magicsushi.mif
+CONSTFILE_FILES += magicsushi.mod|fs:/mod/magicsushi/magicsushi.mod
 
 endif
 
