@@ -11441,17 +11441,11 @@ void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)
 	}
 
     // ’À∫≈
-
-    //(void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);
-    //nvi.pap_user_id.user_id_len = STRLEN((char *)DEFAULT_BREW_USERNAME);
     (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
     nvi.pap_user_id.user_id_len = STRLEN((char *)username);
     (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
 
     // ’À∫≈√‹¬Î
-
-    //(void)STRCPY((char *)nvi.pap_password.password, (char *)DEFAULT_BREW_PASSWORD);
-    //nvi.pap_password.password_len = STRLEN((char *)DEFAULT_BREW_PASSWORD);
     (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
     nvi.pap_password.password_len = STRLEN((char *)password);
     (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);

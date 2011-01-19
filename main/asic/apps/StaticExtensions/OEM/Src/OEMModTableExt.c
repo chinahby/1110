@@ -362,6 +362,7 @@ extern int FACEBOOK_Load(IShell *ps, void * pHelpers, IModule **pMod);
 extern int msf_Load(IShell *ps, void * pHelpers, IModule **pMod);
 extern int ODPMORA_Load(IShell *ps, void * pHelpers,  IModule **pMod);
 extern int FlexiMusik_Load(IShell *ps, void * pHelpers,  IModule **pMod);
+extern int Tombapp_Load(IShell *pIShell, void *pHelpers, IModule **ppMod);
 #endif
 
 #if defined(FEATURE_STATIC_APP_J9)
@@ -1414,6 +1415,10 @@ static const AEEStaticMod gOEMStaticModList[] =
 
 #ifdef FEATURE_SMARTFREN_MUSICBOX
 	   { AEEFS_MIF_DIR"fgen.mif",FlexiMusik_Load},
+#endif
+
+#ifdef FEATURE_SMARTFREN_TOMB
+		{AEEFS_MIF_DIR"tomb.mif",Tombapp_Load},
 #endif
 
 #endif
