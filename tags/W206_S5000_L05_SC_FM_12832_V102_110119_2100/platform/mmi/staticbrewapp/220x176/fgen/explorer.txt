@@ -1,0 +1,2 @@
+[menu][Phone Music][karaoke]
+[menu][SD CARD][karaokecacad]

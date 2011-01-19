@@ -1,0 +1,2 @@
+[menu][Preload Song][preload]
+[lsearch][Cari berdasarkan judul lagu][Input judul lagu:][search][]

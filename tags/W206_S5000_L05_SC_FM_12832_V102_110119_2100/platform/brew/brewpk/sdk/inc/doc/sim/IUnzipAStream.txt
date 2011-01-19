@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IUnzipAStream simulation
+
+IUnzipAStream is simulated.
+==========================
+*/ 
