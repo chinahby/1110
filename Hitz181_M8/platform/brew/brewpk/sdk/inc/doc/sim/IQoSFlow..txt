@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IQoSFlow simulation
-
-IQoSFlow is simulated.
-==========================
-*/ 

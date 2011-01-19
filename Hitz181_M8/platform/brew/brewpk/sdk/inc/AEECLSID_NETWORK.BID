@@ -1,8 +1,0 @@
-#ifndef NETWORK_BID
-#define NETWORK_BID
-   
-#include "../../inc/AEENetwork.bid"
-   
-#define AEECLSID_NETWORK AEECLSID_Network
-  
-#endif //NETWORK_BID

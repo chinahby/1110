@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IModule simulation
-
-IModule is simulated.
-==========================
-*/ 

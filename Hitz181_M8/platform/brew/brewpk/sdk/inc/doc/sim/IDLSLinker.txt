@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IDLSLinker simulation
-
-IDLSLinker is not simulated.
-==========================
-*/ 

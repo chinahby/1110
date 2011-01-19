@@ -1,6 +1,0 @@
-#ifndef FLEXIGURU_BID
-#define FLEXIGURU_BID
-
-#define AEECLSID_FLEXIGURU    	0x0109a9cd
-
-#endif //FLEXIGURU_BID

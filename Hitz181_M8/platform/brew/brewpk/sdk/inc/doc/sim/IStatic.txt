@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IStatic simulation
-
-IStatic is simulated.
-==========================
-*/ 

@@ -1,6 +1,0 @@
-#ifndef VR_BID
-#define VR_BID
-
-#define AEECLSID_VR    	0x01011813
-
-#endif //VR_BID

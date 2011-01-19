@@ -1,6 +1,0 @@
-#ifndef SVCPRGAPP_BID
-#define SVCPRGAPP_BID
-
-#define AEECLSID_SVCPRGAPP    	0x0100611d
-
-#endif //SVCPRGAPP_BID

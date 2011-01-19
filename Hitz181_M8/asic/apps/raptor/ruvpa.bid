@@ -1,6 +1,0 @@
-#ifndef RUVPA_BID
-#define RUVPA_BID
-
-#define AEECLSID_RUVPA    	0x01023058
-
-#endif //RUVPA_BID

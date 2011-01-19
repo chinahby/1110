@@ -1,9 +1,0 @@
-0|1|0|Home|images/home_enable.png|images/home_disable.png|3|http://flexiportal.telkomflexi.com/fbflexi/home.php?i=__IMSI__&e=__EMAIL__&hptype=__HPTYPE__&v=21&p=idx|
-0|2|0|Profile|images/profile_enable.png|images/profile_disable.png|3|http://flexiportal.telkomflexi.com/fbflexi/home.php?i=__IMSI__&e=__EMAIL__&hptype=__HPTYPE__&v=2&p=prof|
-0|3|0|Notification|images/notification_enable.png|images/notification_disable.png|3|http://flexiportal.telkomflexi.com/fbflexi/home.php?i=__IMSI__&e=__EMAIL__&hptype=__HPTYPE__&v=21&p=ntf|
-0|4|0|Friends|images/friends_enable.png|images/friends_disable.png|3|http://flexiportal.telkomflexi.com/fbflexi/home.php?i=__IMSI__&e=__EMAIL__&hptype=__HPTYPE__&v=21&p=fri|
-0|5|0|Events|images/events_enable.png|images/events_disable.png|3|http://flexiportal.telkomflexi.com/fbflexi/home.php?i=__IMSI__&e=__EMAIL__&hptype=__HPTYPE__&v=21&p=evt|
-0|7|0|Newsfeed|images/newsfeed_enable.png|images/newsfeed_disable.png|3|http://flexiportal.telkomflexi.com/fbflexi/home.php?i=__IMSI__&e=__EMAIL__&hptype=__HPTYPE__&v=21&p=idx|
-0|8|0|Games|images/games_enable.png|images/games_disable.png|3|http://flexiportal.telkomflexi.com/fbflexi/home.php?i=__IMSI__&e=__EMAIL__&hptype=__HPTYPE__&v=21&p=games|
-0|9|0|Photos|images/photos_enable.png|images/photos_disable.png|3|http://flexiportal.telkomflexi.com/fbflexi/home.php?i=__IMSI__&e=__EMAIL__&hptype=__HPTYPE__&v=21&p=photos|
-0|10|0|Logout|images/logout_enable.png|images/logout_disable.png|3|__EXIT__|
