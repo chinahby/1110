@@ -50,7 +50,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifndef TARGSB2_H
-#include "targsb12832.h"
+#include "targsb12864.h"
 #endif
 
 //#define FEATURE_DATA_STRIP_ATCOP 
