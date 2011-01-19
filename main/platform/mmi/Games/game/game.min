@@ -46,7 +46,20 @@ EFSFILE_FILES += \
 	run.mid|fs:/mod/tomb/run.mid
 	
 CONSTFILE_FILES += tomb.mif|fs:/mif/tomb.mif
-CONSTFILE_FILES += tomb.mod|fs:/mod/tomb/tomb.mod
+
+STATIC_BREW_APP_LIB += \
+    $(GAME_SRC)/tomb/tomb.o \
+    $(GAME_SRC)/tomb/aeeapp~1.o \
+    $(GAME_SRC)/tomb/aeemod~1.o \
+    $(GAME_SRC)/tomb/common.o \
+    $(GAME_SRC)/tomb/gameover.o \
+    $(GAME_SRC)/tomb/game.o \
+    $(GAME_SRC)/tomb/helpab~1.o \
+    $(GAME_SRC)/tomb/pay.o \
+    $(GAME_SRC)/tomb/sendsms.o \
+    $(GAME_SRC)/tomb/sound.o \
+    $(GAME_SRC)/tomb/splash~1.o \
+    $(GAME_SRC)/tomb/toplist.o
 
 endif
 
