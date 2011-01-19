@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IMultipartyCall simulation
+
+IMultipartyCall is simulated.
+==========================
+*/ 
