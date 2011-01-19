@@ -1,9 +1,0 @@
-#ifndef NET_URGENT_BID
-#define NET_URGENT_BID
-   
-#include "../../inc/AEENetUrgent.bid"
-   
-#define AEECLSID_NET_URGENT AEECLSID_NetUrgent
-   
-#endif //NET_URGENT_BID
-   

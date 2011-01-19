@@ -1,7 +1,0 @@
-#ifndef BATT_BID
-#define BATT_BID
-
-#define AEECLSID_BATT    	0x0101cc97
-
-#endif //BATT_BID
-

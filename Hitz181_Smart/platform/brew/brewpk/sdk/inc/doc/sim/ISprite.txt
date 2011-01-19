@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-ISprite simulation
-
-ISprite is simulated.
-==========================
-*/ 

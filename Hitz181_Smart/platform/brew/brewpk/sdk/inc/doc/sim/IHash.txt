@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IHash simulation
-
-IHash is simulated.
-==========================
-*/ 

@@ -1,8 +1,0 @@
-// BREW installation history file.
-//
-// Note that this file is updated by all Patch and Feature Update installers 
-// that are run on top of the main Base BREW installation.
-
-
-[INSTALL]
-BASE VERSION: 3.1.5.189  DATE: 3-13-2009  TIME: 05:08:46

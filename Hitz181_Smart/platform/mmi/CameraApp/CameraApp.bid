@@ -1,6 +1,0 @@
-#ifndef CAMERAAPP_BID
-#define CAMEARAPP_BID
-
-#define AEECLSID_APP_CAMERA        0x01006125
-
-#endif //CAMERAAPP_BID
