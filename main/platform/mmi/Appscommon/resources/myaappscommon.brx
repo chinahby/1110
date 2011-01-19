@@ -8,7 +8,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_CANCEL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_SEND">
 		<Text></Text>
@@ -17,7 +17,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_BACK">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_FIND">
 		<Text></Text>
@@ -29,13 +29,13 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="10" Name="IDS_SAVE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="11" Name="IDS_MENU">
 		<Text></Text>
 	</STRING>
 	<STRING Id="12" Name="IDS_NEXT">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="13" Name="IDS_READ">
 		<Text></Text>
@@ -56,7 +56,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="19" Name="IDS_STRING_CONTACTS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="20" Name="IDS_STRING_END_CALL">
 		<Text></Text>
@@ -161,7 +161,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_RESUME">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_RETRY">
 		<Text></Text>
@@ -173,10 +173,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_PAUSE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_PLAY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_POP_DONE">
 		<Text></Text>
@@ -200,7 +200,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_UP">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_SPORT">
 		<Text></Text>
@@ -215,7 +215,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_GALLERY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_YES">
 		<Text></Text>
@@ -223,6 +223,9 @@
 	<STRING Id="1025" Name="IDS_NO">
 		<Text></Text>
 	</STRING>
+	<String Id="1026" Name="IDS_VIEWMORE">
+		<Text></Text>
+	</String>
 	<String Id="1027" Name="IDS_FACEBOOK">
 		<Text></Text>
 	</String>
@@ -233,7 +236,7 @@
 		<Text></Text>
 	</String>
 	<String Id="1030" Name="IDS_MORE">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1031" Name="IDS_MESSAGES">
 		<Text></Text>
@@ -242,16 +245,16 @@
 		<Text>Long Press Space Key to Unlock The Keyguard</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="2002" Name="IDS_FM_BACK">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="2003" Name="IDS_MSG_KEYGUARD_UNLOCKKEY">
 		<Text>*</Text>
 	</STRING>
 	<STRING Id="2004" Name="IDS_MODIFY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<String Id="2005" Name="IDS_VIEW">
 		<Text></Text>

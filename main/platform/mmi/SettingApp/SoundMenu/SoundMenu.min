@@ -206,9 +206,9 @@ else
             jumping.mid|fs:/ringers/jumping.mid \
             lucky.mid|fs:/ringers/lucky.mid \
             feeling_on.mid|fs:/ringers/feeling_on.mid \
-            feeling_off.mid|fs:/ringers/feeling_off.mid \
-            street_tale.mid|fs:/ringers/street_tale.mid \
-            techno_meto.mid|fs:/ringers/techno_meto.mid
+            m7.mp3|fs:/ringers/m7.mp3 \
+            m2.mp3|fs:/ringers/m2.mp3 \
+            m11.mp3|fs:/ringers/m11.mp3
     else ifeq ($(USES_RESDIR), N450)
     	CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \

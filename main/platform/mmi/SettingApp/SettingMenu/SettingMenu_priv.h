@@ -327,7 +327,7 @@ typedef struct _CSettingMenu
 #define SEARCHMODE_AOTE     0
 #define SEARCHMODE_FIVE     5*60
 #define SEARCHMODE_TEN      10*60
-#define SEARCHMODE_TUENTY   20*60
+#define SEARCHMODE_TUENTY   15*60
 #define SEARCHMODE_THIRTY   30*60
 
 // 用户重新更新界面事件

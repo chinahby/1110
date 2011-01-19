@@ -2,34 +2,34 @@
 <BREWRes Name="mediagallery" VERSION="1">
 <Strings Encoding="UNICODE">
 	<STRING Id="1000" Name="IDS_MG_MEDIAGALLERY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_MG_PHONEMEMORY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_MG_CARDMEMORY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_MG_MEMORYSTATUS">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_MG_PICTURES">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_MG_MUSIC">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_MG_VIDEOS">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_MG_VOICEMEMO">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_MG_PLAY">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_MG_SETAS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_MG_RENAME">
 		<Text></Text>
@@ -53,7 +53,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_MG_SETWALLPAPER">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MG_VIEW">
 		<Text></Text>
@@ -86,7 +86,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_MG_BUILDPL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_MG_CALLRINGTONE">
 		<Text></Text>
@@ -131,10 +131,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_MG_BITRATE">
-		<Text>Bit rate</Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_MG_SAMPLERATE">
-		<Text>Sample rate</Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_MG_CHANNEL">
 		<Text></Text>
@@ -152,7 +152,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_MG_UDISK">
-		<Text>USB </Text>
+		<Text>USB </Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_MG_STARTUDISK">
 		<Text>Udisk </Text>
@@ -293,10 +293,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1097" Name="IDS_MG_PHOTOGALLERY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1098" Name="IDS_MG_VIDEOGALLERY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1099" Name="IDS_MG_FILENOTDEL">
 		<Text></Text>

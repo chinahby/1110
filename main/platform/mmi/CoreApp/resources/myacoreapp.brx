@@ -2,7 +2,7 @@
 <BREWRes Name="coreapp" VERSION="1">
 <Strings Encoding="UNICODE">
 	<STRING Id="1001" Name="IDS_CORE_TITLE">
-		<Text>Core Applet</Text>
+		<Text>()Core Applet</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_NORUIM">
 		<Text></Text>

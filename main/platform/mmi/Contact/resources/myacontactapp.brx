@@ -2,7 +2,7 @@
 <BREWRes Name="contactapp" VERSION="1">
 <Strings Encoding="UNICODE">
 	<STRING Id="1" Name="IDS_APPLET">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_NAME">
 		<Text></Text>
@@ -59,7 +59,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="37" Name="IDS_GROUP_PERSONAL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="38" Name="IDS_GROUP_BUSINESS">
 		<Text></Text>
@@ -68,7 +68,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="40" Name="IDS_GROUP_WORK">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="41" Name="IDS_GROUP_VIP">
 		<Text></Text>
@@ -89,10 +89,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="50" Name="IDS_MOVETORUIM">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="51" Name="IDS_MOVETOPHONE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="54" Name="IDS_COPYING_COMPLETE">
 		<Text></Text>
@@ -107,7 +107,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="64" Name="IDS_POSITION_SELECT">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="66" Name="IDS_CAPACITY">
 		<Text></Text>
@@ -125,7 +125,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="71" Name="IDS_ERR_LOADFIELDS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="73" Name="IDS_MSG_INPUTNULL">
 		<Text></Text>
@@ -173,7 +173,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="100" Name="IDS_SAVETO">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="101" Name="IDS_VIEWTYPE">
 		<Text></Text>
@@ -206,7 +206,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_SENDDIRECTORY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_SEARCHOTHERDIRECTORY">
 		<Text></Text>
@@ -230,7 +230,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_NOT_UIMADDRINIT">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_SAVE_URL">
 		<Text></Text>
@@ -275,7 +275,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_UNMARKALL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_ONEDIAL">
 		<Text></Text>
@@ -290,7 +290,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_YESNO_MOVERECORD">
-		<Text>Move</Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_COPYONETORUIM">
 		<Text></Text>
@@ -311,13 +311,13 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_MOVE_CONTACTS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_COPY_CONTACTS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_DELETE_CONTACTS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_CONTACTS_MEMORY_STUTAS">
 		<Text></Text>
@@ -356,7 +356,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_ERR_GETCONFIG">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1055" Name="IDS_UIMCARD">
 		<Text></Text>
@@ -407,13 +407,13 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1071" Name="IDS_RETURN_ERR">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1072" Name="IDS_ERR_MOVE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1073" Name="IDS_NUMBER_TOOLONG">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1074" Name="IDS_FULL_UIM_DONE">
 		<Text>,%d </Text>
@@ -425,7 +425,7 @@
 		<Text>%d </Text>
 	</STRING>
 	<STRING Id="1077" Name="IDS_SENTLIST_FULL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1078" Name="IDS_COPY_EXPECT">
 		<Text>%d ,%d </Text>
@@ -452,7 +452,7 @@
 		<Text></Text>
 	</STRING>
 	<String Id="1086" Name="IDS_NO_UIM_CARD">
-		<Text>,</Text>
+		<Text></Text>
 	</String>
 	<String Id="1087" Name="IDS_NO_CARD">
 		<Text></Text>

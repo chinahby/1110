@@ -2621,6 +2621,8 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
 					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
 				}
 			}
+#elif defined(FEATURE_LANG_MYANMAR)
+			ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
 #endif
             switch (wParam)
             {

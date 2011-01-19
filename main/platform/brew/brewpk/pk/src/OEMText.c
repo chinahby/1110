@@ -365,7 +365,19 @@ static void T9_CJK_MYANMAR_AdjustInputInfoLocation(TextCtlContext *pContext,
 extern long MyGetStrWidthW(const unsigned short * string)
 {
 	int iwszlen = STRLEN((char *)string);
-	iwszlen = iwszlen*MYANMAR_FONT_WIDTH/2;
+	IDisplay                        *m_pDisplay;
+	 if (ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_DISPLAY, 
+            (void **) &m_pDisplay) != SUCCESS)
+    {
+    	iwszlen = iwszlen*MYANMAR_FONT_WIDTH/2;
+    	return iwszlen;
+    }
+    iwszlen = IDISPLAY_MeasureTextEx(m_pDisplay,
+                                      AEE_FONT_BOLD,
+                                      string,
+                                      1,
+                                      -1,
+                                      NULL);
 	return iwszlen;
 	#if 0
 	iwszlen = IDISPLAY_MeasureTextEx(pContext->pIDisplay,
@@ -1181,7 +1193,7 @@ void OEM_TextSetEdit(OEMCONTEXT hTextCtl,
    if (pContext) {
       unsigned char byModeIndex = FindModeIndex(pContext, wmode);
       boolean bRedraw=FALSE, bRestartEdit=FALSE, bExitEdit=FALSE;
-
+		MSG_FATAL("OEM_TextSetEdit pContext.............",0,0,0);
       if (pContext->bEditable != bIsEditable) {
          // We must redraw here after changing mode
          bRedraw=TRUE;
@@ -1206,6 +1218,7 @@ void OEM_TextSetEdit(OEMCONTEXT hTextCtl,
       pContext->bEditable = bIsEditable;
 
       if (bRestartEdit) {
+      MSG_FATAL("OEM_TextSetEdit bRestartEdit.............",0,0,0);
          TextCtl_RestartEdit(pContext);
          (void) TextCtl_AutoScroll(pContext);
       }
@@ -9079,11 +9092,13 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	enum SIMEReturn bResult = SMR_OK;
 	int i;
     // discard the event that we don't handle
+    MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................",0,0,0);
     if ( key == AVK_SEND )
     {
         return FALSE;
     }  
     mKey = T9_CJK_MYANMAR_BrewKeyToT9Key (pContext, key );
+    MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................11",0,0,0);
      switch ( key ) 
     {
         /* Assign zhuyin */
@@ -9100,8 +9115,9 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         case AVK_POUND:            
         case AVK_STAR:  
         	{
-        		
+        			MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................22",0,0,0);
 	        		bResult = SplImeProcessKey(mKey, SPKT_Down);
+	        		MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................333",0,0,0);
 	        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
 	        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
 	        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
@@ -9417,9 +9433,10 @@ static T9STATUS T9_CJK_MYANMAR_Init(TextCtlContext *pContext)
 {
 	enum SIMEReturn bResult = SMR_OK;
 	// ³õÊ¼»¯ÒýÇæ
+	
     g_SplImeGlobals.initData.imeData = (void*)prv_dataArray;
     g_SplImeGlobals.uiInfo.candidateWidth = pContext->rectDisplay.dx-2;
-    g_SplImeGlobals.uiInfo.candMinSpacing = 1;
+    g_SplImeGlobals.uiInfo.candMinSpacing = 10;
     g_SplImeGlobals.uiInfo.fpGetStrWidthA = 0;
     g_SplImeGlobals.uiInfo.fpGetStrWidthW = MyGetStrWidthW;
 
@@ -9451,6 +9468,8 @@ static void T9_CJK_MYANMAR_DrawSyllableString(TextCtlContext *pContext)
 static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
 {
 	AECHAR          ch[2] = {0,0};
+	uint32          m_Myalen = 0;
+	uint32          m_MyaFouc = 0;
     uint32          format;
     AEERect         pRect;
     AEERect         invertRect;
@@ -9528,10 +9547,7 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
                                    pRect.y-MYANMAR_FONT_HEIGHT,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    NULL,
                                    format);
-        if(pContext->m_date.outputInfo.candidatesNum>4)
-        {
-        	pContext->m_date.outputInfo.candidatesNum = 4;
-        }
+        
         for (k = 0; k < pContext->m_date.outputInfo.candidatesNum; k++) 
         {
             format = IDF_ALIGN_NONE;
@@ -9539,15 +9555,18 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
             //ch[0] = (AECHAR)*(pContext->m_date.outputInfo.candidates[k]); // use GBcode for EVB board 
             //WSTRCPY(ch,0xE0D7);
             //ch[0] = 0xE0D7;
-            MSG_FATAL("ch::::::::::::::%x",*g_SplImeGlobals.outputInfo.candidates[k],0,0);
+            
+            MSG_FATAL("ch::::::::::::::%x===%d",*g_SplImeGlobals.outputInfo.candidates[k],m_Myalen,0);
             (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                    AEE_FONT_NORMAL,
                                    g_SplImeGlobals.outputInfo.candidates[k],//pContext->m_date.outputInfo.candidates[k],
                                    -1,
-                                   pRect.x+2+(MYA_FONT_WIDTH)*k,
+                                   pRect.x+2+m_Myalen,//(MYA_FONT_WIDTH)*k,
                                    pRect.y-2,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    NULL,
                                    format);
+            m_Myalen += MyGetStrWidthW(g_SplImeGlobals.outputInfo.candidates[k]);
+            m_Myalen += g_SplImeGlobals.uiInfo.candMinSpacing;
             /* If this character is a NULL terminator, then stop drawing */
             if ((pContext->m_date.outputInfo.candidates[k]) == NULL)  break;
             
@@ -9557,9 +9576,18 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
         // draw Select Rect.
         if (g_SplImeGlobals.outputInfo.candidateIndex>= 0 )
         {
-            invertRect.x = pRect.x+2+(MYA_FONT_WIDTH)*(g_SplImeGlobals.outputInfo.candidateIndex);
+        	int i = 0;
+        	int m_curlen = 0;
+        	m_MyaFouc = 0;
+        	for(i=0;i<g_SplImeGlobals.outputInfo.candidateIndex;i++)
+        	{
+        		m_MyaFouc += MyGetStrWidthW(g_SplImeGlobals.outputInfo.candidates[i]);
+        		m_MyaFouc += g_SplImeGlobals.uiInfo.candMinSpacing;
+        	}
+        	m_curlen = MyGetStrWidthW(g_SplImeGlobals.outputInfo.candidates[(g_SplImeGlobals.outputInfo.candidateIndex)]);
+            invertRect.x = pRect.x+2+m_MyaFouc;
             invertRect.y = pRect.y-2;
-            invertRect.dx = MYANMAR_FONT_WIDTH;
+            invertRect.dx = m_curlen+2;
             invertRect.dy = MYANMAR_FONT_HEIGHT;
             IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
         }

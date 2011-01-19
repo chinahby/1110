@@ -2,16 +2,16 @@
 <BREWRes Name="recorder" VERSION="1">
 <Strings Encoding="UNICODE">
 	<STRING Id="1" Name="IDS_TITLE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_RECORDER_MEMO_RINGER_NAME">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_NEW_RECORD">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_RECORD_LIST">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_RECORD_LIST_TITLE">
 		<Text></Text>
@@ -20,7 +20,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_RECORD_LIST_OPTION_SET_AS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_RECORD_LIST_OPTION_DELETE">
 		<Text></Text>
@@ -89,7 +89,7 @@
 		<Text>...</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_RECORD_RESUME">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_RECORD_REPLAY">
 		<Text></Text>
@@ -101,7 +101,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_FORWARD_RECORD">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_RECORD_LIST_OPTION_SET_AS_RINGTONE">
 		<Text></Text>
@@ -182,7 +182,7 @@
 		<Text>...</Text>
 	</STRING>
 	<STRING Id="1205" Name="IDS_MM_STATUS_SEEK_FAIL">
-		<Text>Seek failed</Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1206" Name="IDS_MM_STATUS_PAUSE">
 		<Text></Text>
@@ -191,10 +191,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1208" Name="IDS_MM_STATUS_RESUME">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1209" Name="IDS_MM_STATUS_RESUME_FAIL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1210" Name="IDS_MM_STATUS_REPEAT">
 		<Text></Text>
@@ -206,7 +206,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1213" Name="IDS_MM_STATUS_UNKNOWN">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1214" Name="IDS_MM_STATUS_PLAYING">
 		<Text>...</Text>

@@ -2,10 +2,10 @@
 <BREWRes Name="apptimerres" VERSION="1">
 <Strings Encoding="UNICODE">
 	<STRING Id="2001" Name="IDS_APPTIMER_TITLE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="2002" Name="IDS_APPTIMER_PROMPT">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="2003" Name="IDS_APPTIMER_INFO">
 		<Text>::</Text>

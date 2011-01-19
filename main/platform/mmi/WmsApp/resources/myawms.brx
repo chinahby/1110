@@ -2,22 +2,22 @@
 <BREWRes Name="wms" VERSION="1">
 <Strings Encoding="UNICODE">
 	<STRING Id="1" Name="IDS_INBOX">
-		<Text> </Text>
+		<Text> </Text>
 	</STRING>
 	<STRING Id="2" Name="IDS_WRITEMESSAGE">
 		<Text></Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_OUTBOX">
-		<Text> </Text>
+		<Text> </Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_VOICEMAIL">
 		<Text></Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_DRAFT">
-		<Text> </Text>
+		<Text> </Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_TEMPLATES">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_MENSTATUS">
 		<Text></Text>
@@ -41,7 +41,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="14" Name="IDS_FROM">
-		<Text>:</Text>
+		<Text>:</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_REPLY">
 		<Text></Text>
@@ -50,10 +50,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="17" Name="IDS_LISTENVM">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="18" Name="IDS_SEND">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="19" Name="IDS_EDIT">
 		<Text></Text>
@@ -104,7 +104,7 @@
 		<Text>! ?</Text>
 	</STRING>
 	<STRING Id="35" Name="IDS_TEMPLATE4">
-		<Text>!?</Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="36" Name="IDS_TEMPLATE5">
 		<Text>? !</Text>
@@ -113,13 +113,13 @@
 		<Text>!</Text>
 	</STRING>
 	<STRING Id="38" Name="IDS_TEMPLATE7">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="39" Name="IDS_TEMPLATE8">
-		<Text>  !</Text>
+		<Text> !</Text>
 	</STRING>
 	<STRING Id="40" Name="IDS_TEMPLATE9">
-		<Text>I'm sorry!</Text>
+		<Text>!</Text>
 	</STRING>
 	<STRING Id="41" Name="IDS_AUTOSAVE">
 		<Text></Text>
@@ -131,7 +131,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="44" Name="IDS_STORAGE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="45" Name="IDS_NOTSAVE">
 		<Text></Text>
@@ -176,13 +176,13 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="59" Name="IDS_INSERTTEMPLATES">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="60" Name="IDS_SAVETODRAFT">
 		<Text></Text>
 	</STRING>
 	<STRING Id="61" Name="IDS_INSERTCONTACT">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="62" Name="IDS_CDG2_FAIL1">
 		<Text></Text>
@@ -215,7 +215,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="72" Name="IDS_OUTBOXFULL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="73" Name="IDS_NOTREADY">
 		<Text></Text>
@@ -245,7 +245,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="86" Name="IDS_INBOXSFULL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="88" Name="IDS_RUIMALMOSTFULL">
 		<Text></Text>
@@ -254,7 +254,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="90" Name="IDS_INBOXSALMOSTFULL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="92" Name="IDS_VIEW">
 		<Text></Text>
@@ -266,10 +266,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="95" Name="IDS_INSERTDOMAIM">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="96" Name="IDS_INSERTEMOTIONSYMBOL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="97" Name="IDS_MSGVALIDITY">
 		<Text></Text>
@@ -293,13 +293,13 @@
 		<Text>1 </Text>
 	</STRING>
 	<STRING Id="104" Name="IDS_SENDONLY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="105" Name="IDS_SAVEONLY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="106" Name="IDS_SENDANDSAVE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="107" Name="IDS_CALLBACKNUM">
 		<Text></Text>
@@ -353,10 +353,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="124" Name="IDS_OUTBOXWILLFULL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="125" Name="IDS_INBOXWILLFULL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="126" Name="IDS_RUIMWILLFULL">
 		<Text></Text>
@@ -413,7 +413,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="144" Name="IDS_CONTINUESENDQUERY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="145" Name="IDS_YEARERR">
 		<Text> %d  2099 </Text>
@@ -440,10 +440,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="153" Name="IDS_COPYINBOX">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="154" Name="IDS_MOVEINBOX">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="155" Name="IDS_UIMTOPHONE">
 		<Text></Text>
@@ -458,7 +458,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="159" Name="IDS_CONTACTS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="160" Name="IDS_GROUPLIST">
 		<Text></Text>
@@ -497,13 +497,13 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="172" Name="IDS_VOICEMAIL_NOTI">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="173" Name="IDS_MOVED">
 		<Text>%d </Text>
 	</STRING>
 	<STRING Id="174" Name="IDS_SAVETOCONTACT">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="175" Name="IDS_EXIT_EDITOR">
 		<Text></Text>
@@ -512,7 +512,7 @@
 		<Text></Text>
 	</String>
 	<String Id="177" Name="IDS_FAILED_RESENDING">
-		<Text>?</Text>
+		<Text>?</Text>
 	</String>
 	<String Id="178" Name="IDS_NO_PHONENUMBER">
 		<Text>!</Text>
@@ -521,7 +521,7 @@
 		<Text></Text>
 	</String>
 	<String Id="180" Name="IDS_NEWWMSTIPS">
-		<Text> %d </Text>
+		<Text> %d </Text>
 	</String>
 	<String Id="181" Name="IDS_VMAILTIPS">
 		<Text>:%d</Text>

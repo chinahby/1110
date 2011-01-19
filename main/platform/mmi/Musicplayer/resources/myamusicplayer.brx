@@ -17,16 +17,16 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_GALLERY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_MINIMIZE">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_PLAYLISTS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_PLAYLIST_CREATELIST">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_PLAYLIST_PLAY">
 		<Text></Text>
@@ -53,19 +53,19 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MUSICSORT">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_PLAYMODE_SINGLE">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_PLAYMODE_ORDER">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_MSG_ERR_FORMAT">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_PLAYMODE_RANDOM">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_YESNOMSG_FMBGPLAY">
 		<Text>FM</Text>
@@ -158,7 +158,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_MSG_ADD_FAILED">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_MSG_REPEAT_PLAYLISTNAME">
 		<Text></Text>

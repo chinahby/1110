@@ -59,7 +59,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_RESTRICT_OUTGOING_INTERNAL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_RESTRICT_OUTGOING_INTERNATIONAL">
 		<Text></Text>
@@ -143,7 +143,7 @@
 		<Text>:</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_MEDIALOCK">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_CALENDARLOCK">
 		<Text></Text>

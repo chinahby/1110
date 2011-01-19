@@ -2,7 +2,7 @@
 <BREWRes Name="multimedia" VERSION="1">
 <Strings Encoding="UNICODE">
 	<String Id="1001" Name="IDS_MULTIMEDIA_TITLE">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<STRING Id="1011" Name="IDS_MULTIMEDIA_TITLE_1">
 		<Text></Text>

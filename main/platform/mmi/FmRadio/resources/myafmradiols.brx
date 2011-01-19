@@ -2,13 +2,13 @@
 <BREWRes Name="fmradiols" VERSION="1">
 <Strings Encoding="UNICODE">
 	<STRING Id="1001" Name="IDS_FMRADIO_SOFTKEY_MODE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_FMRADIO_PROMPT_PLAYING">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_FMRADIO_PROMPT_TUNING">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_FMRADIO_PROMPT_SEARCHING">
 		<Text></Text>

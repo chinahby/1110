@@ -11,7 +11,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_MISSED_CALLS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_RECEIVED_CALLS">
 		<Text></Text>
@@ -74,7 +74,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="25" Name="IDS_RECENT_CALLS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="26" Name="IDS_PASSWORD">
 		<Text></Text>
@@ -92,7 +92,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_SAVETOCONTACT">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_ERR_UNKNOWN">
 		<Text></Text>
@@ -101,7 +101,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_EXECUTE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_MARK">
 		<Text></Text>

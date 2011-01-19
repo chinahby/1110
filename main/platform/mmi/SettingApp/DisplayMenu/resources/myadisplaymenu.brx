@@ -14,7 +14,7 @@
 		<Text>LED </Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_LED_SMS">
-		<Text>SMS </Text>
+		<Text> </Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_CONTRAST_TITLE">
 		<Text></Text>
@@ -50,7 +50,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_STRING_FROM">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_STRING_OFF">
 		<Text></Text>
@@ -86,16 +86,16 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_CONTRAST_LEVEL_DARK">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_CONTRAST_LEVEL_NORMAL">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_CONTRAST_LEVEL_BRIGHT">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_DEL_ITEM_YESNO">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_50S">
 		<Text>50 </Text>
@@ -143,13 +143,13 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_MENU_ICON">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_MENU_LIST">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_STRING_RANDOM">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1055" Name="IDS_STRING_NORMAL">
 		<Text></Text>
@@ -218,7 +218,7 @@
 		<Text></Text>
 	</String>
 	<String Id="1083" Name="IDS_REND_EFFECT_ONEBYONE">
-		<Text></Text>
+		<Text></Text>
 	</String>
 </Strings>
 <Dialogs>
