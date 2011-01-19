@@ -219,10 +219,10 @@ else
             green_line.mid|fs:/ringers/green_line.mid \
             jumping.mid|fs:/ringers/jumping.mid \
             lucky.mid|fs:/ringers/lucky.mid \
-            feeling_on.mid|fs:/ringers/feeling_on.mid \
-            feeling_off.mid|fs:/ringers/feeling_off.mid \
             street_tale.mid|fs:/ringers/street_tale.mid \
-            techno_meto.mid|fs:/ringers/techno_meto.mid
+            techno_meto.mid|fs:/ringers/techno_meto.mid \
+            feeling_on.mid|fs:/ringers/feeling_on.mid \
+            feeling_off.mid|fs:/ringers/feeling_off.mid
       else ifeq ($(USES_RESDIR), H2021C)
     	  CONSTFILE_FILES+=\
             ring01.mid|fs:/ringers/ring01.mid \
