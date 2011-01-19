@@ -25,6 +25,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  型号
 #define FEATURE_BT_QSOC_ALL
 
+#define FEATURE_SMARTFREN_APP_HITZ233C		//wl  2011-01-19
 
 //Add By zzg 2010_10_13
 #define FEATURE_DOUBLE_SHIFT_NOTEQUAL_W			//屏蔽连续两次按SHIFT键输入W
