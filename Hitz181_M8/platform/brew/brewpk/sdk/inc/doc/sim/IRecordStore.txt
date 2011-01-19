@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IRecordStore simulation
+
+IRecordStore is simulated.
+==========================
+*/ 

@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+ICoreNotifier simulation
+
+ICoreNotifier is simulated.
+==========================
+*/ 

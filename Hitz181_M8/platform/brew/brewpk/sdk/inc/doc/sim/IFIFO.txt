@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IFIFO simulation
+
+IFIFO is simulated.
+==========================
+*/ 
