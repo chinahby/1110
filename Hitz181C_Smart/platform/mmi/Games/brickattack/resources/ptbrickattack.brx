@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="brickattack" VERSION="1">
+	<Strings Encoding="ISOLATIN1">
+		<STRING Id="1" Name="IDC_RESUME">
+			<Text>Resume</Text>
+		</STRING>
+		<STRING Id="2" Name="IDC_NEW_GAME">
+			<Text>New</Text>
+		</STRING>
+		<STRING Id="3" Name="IDC_EXIT">
+			<Text>Exit</Text>
+		</STRING>
+		<STRING Id="5" Name="IDS_NEXT_SCREEN">
+			<Text>Nice Job!</Text>
+		</STRING>
+		<STRING Id="6" Name="IDS_PAUSED">
+			<Text>- PAUSED -</Text>
+		</STRING>
+		<STRING Id="7" Name="IDS_NEXT_BALL">
+			<Text>Try Again</Text>
+		</STRING>
+		<STRING Id="8" Name="IDS_GAME_OVER">
+			<Text>GAME OVER</Text>
+		</STRING>
+		<STRING Id="9" Name="IDS_WELCOME">
+			<Text>  Paddle Left</Text>
+		</STRING>
+		<STRING Id="10" Name="IDS_WELCOME_R">
+			<Text>  Paddle Right</Text>
+		</STRING>
+		<STRING Id="11" Name="IDS_WELCOME_P">
+			<Text>  OK/CLR Pause</Text>
+		</STRING>
+		<STRING Id="12" Name="IDS_SCORE">
+			<Text>Score = %d</Text>
+		</STRING>
+		<STRING Id="13" Name="IDS_TURNS">
+			<Text>Turns = %d</Text>
+		</STRING>
+		<STRING Id="14" Name="IDS_HI_SCORES">
+			<Text>- High Scores -</Text>
+		</STRING>
+		<STRING Id="15" Name="IDS_NUM">
+			<Text>%d</Text>
+		</STRING>
+		<STRING Id="100" Name="IDS_BRICKATTACK">
+			<Text>BRICK ATTACK</Text>
+		</STRING>
+	</Strings>
+</BREWRes>

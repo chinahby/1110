@@ -1,0 +1,10 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+ISoundPlayer simulation
+
+ISoundPlayer is simulated.
+See also: ISound
+==========================
+*/ 
