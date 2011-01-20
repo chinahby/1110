@@ -59,7 +59,8 @@ STATIC_BREW_APP_LIB += \
     $(GAME_SRC)/tomb/sendsms.o \
     $(GAME_SRC)/tomb/sound.o \
     $(GAME_SRC)/tomb/splash~1.o \
-    $(GAME_SRC)/tomb/toplist.o
+    $(GAME_SRC)/tomb/toplist.o \
+    $(GAME_SRC)/tomb/mainmenu.o
 
 endif
 

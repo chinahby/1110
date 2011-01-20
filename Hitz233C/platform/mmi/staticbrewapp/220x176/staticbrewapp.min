@@ -788,5 +788,30 @@ STATIC_BREW_APP_LIB += \
     $(STATIC_BREW_APP)/odpmora/odpmora.o    
 endif ##M-Directory application#
    
+#####Music box application##########
+ifeq ($(MUSICBOX),yes)
+#todo something here   应用的名字添加
+MUSICBOX_DIRS:=$(STATIC_BREW_APP)/fgen
+
+vpath %.bar  $(MUSICBOX_DIRS)
+vpath %.txt  $(MUSICBOX_DIRS)
+        
+MUSICBOX_EFS_FILES = \
+    $(notdir $(wildcard $(MUSICBOX_DIRS)/*.txt))
+    
+CONSTFILE_BIN_FILES += \
+	fgen.bar|fs:/mod/fgen/fgen.bar    
+
+EFSFILE_FILES += \
+    $(foreach filename, $(MUSICBOX_EFS_FILES), $(filename)|fs:/mod/fgen/$(filename))       
+
+CONSTFILE_FILES += \
+    fgen.mif|fs:/mif/fgen.mif
+    
+STATIC_BREW_APP_LIB += \
+    $(STATIC_BREW_APP)/fgen/fgen.o
+    
+endif ##Music box application#
+
 endif
 

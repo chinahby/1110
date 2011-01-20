@@ -361,7 +361,7 @@ extern int TWITTER_Load(IShell *ps, void * pHelpers, IModule **pMod);
 extern int FACEBOOK_Load(IShell *ps, void * pHelpers, IModule **pMod);
 extern int msf_Load(IShell *ps, void * pHelpers, IModule **pMod);
 extern int ODPMORA_Load(IShell *ps, void * pHelpers,  IModule **pMod);
-extern int FlexiMusik_Load(IShell *ps, void * pHelpers,  IModule **pMod);
+extern int SmartMusik_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int Tombapp_Load(IShell *pIShell, void *pHelpers, IModule **ppMod);
 #endif
 
@@ -1414,7 +1414,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #endif
 
 #ifdef FEATURE_SMARTFREN_MUSICBOX
-	   { AEEFS_MIF_DIR"fgen.mif",FlexiMusik_Load},
+	   { AEEFS_MIF_DIR"fgen.mif",SmartMusik_Load},
 #endif
 
 #ifdef FEATURE_SMARTFREN_TOMB
