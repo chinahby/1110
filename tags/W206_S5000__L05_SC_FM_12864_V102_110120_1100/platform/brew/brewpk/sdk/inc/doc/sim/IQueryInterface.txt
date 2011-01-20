@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IQueryInterface simulation
+
+IQueryInterface is simulated.
+==========================
+*/ 

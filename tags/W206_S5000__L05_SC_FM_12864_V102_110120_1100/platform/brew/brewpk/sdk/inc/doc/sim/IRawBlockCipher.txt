@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IRawBlockCipher simulation
+
+IRawBlockCipher is simulated.
+==========================
+*/ 
