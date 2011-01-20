@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IRingerMgr simulation
+
+IRingerMgr is simulated.
+==========================
+*/ 
