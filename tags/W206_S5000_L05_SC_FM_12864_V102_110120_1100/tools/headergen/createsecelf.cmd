@@ -1,0 +1,1 @@
+@createsecelf nor_files/CODE nor_files/qcsblhd_cfgdata.mbn nor_files/qcsbl.mbn nor_files/oemsbl.mbn nor_files/oemsblhd.mbn nor_files/amssboothd.mbn nor_files/amssapphd.mbn nor_files/MAIN_APP_1 nor_files/nor.mbn
