@@ -283,7 +283,7 @@ void get_call_type(
     return;
   }
 
-#ifdef FEATURE_UI_PBM
+#ifndef CUST_EDITION
   if (pbm_emergency_number_cat(orig_num_ptr->buf, orig_num_ptr->len, &ecc_cat))
   {
     *call_type_ptr = CM_CALL_TYPE_EMERGENCY;

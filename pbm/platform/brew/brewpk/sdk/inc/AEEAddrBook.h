@@ -41,20 +41,20 @@ typedef  uint16   AEEAddrFieldID;
 #ifdef CUST_EDITION	
 // 记录组群属性
 // VIP
-#define AEE_ADDR_CAT_VIP                (AEE_ADDR_CAT_USER+1)
+#define AEE_ADDR_CAT_VIP                  (AEE_ADDR_CAT_USER+1)
 
 // Family
-#define AEE_ADDR_CAT_HOME               (AEE_ADDR_CAT_USER+2)
+#define AEE_ADDR_CAT_HOME                 (AEE_ADDR_CAT_USER+2)
 
 // Colleague
-#define AEE_ADDR_CAT_WORK               (AEE_ADDR_CAT_USER+3)
+#define AEE_ADDR_CAT_WORK                 (AEE_ADDR_CAT_USER+3)
 
 // other
-#define AEE_ADDR_CAT_OTHER             (AEE_ADDR_CAT_USER+5)
+#define AEE_ADDR_CAT_OTHER                (AEE_ADDR_CAT_NONE)
 // Friends
-#define AEE_ADDR_CAT_FRIEND             (AEE_ADDR_CAT_USER+4)
+#define AEE_ADDR_CAT_FRIEND               (AEE_ADDR_CAT_USER+4)
 
-#define AEE_ADDR_CAT_UIM               (AEE_ADDR_CAT_USER+6)
+#define AEE_ADDR_CAT_UIM                  (AEE_ADDR_CAT_SIM_ADN)
 #endif /*CUST_EDITION*/
 #define  AEE_ADDR_CAT_RESERVED_SIRIUS_1   AEE_ADDR_CAT_USER
 #define  AEE_ADDR_CAT_RESERVED_SIRIUS_32  (AEE_ADDR_CAT_USER+31)
@@ -125,12 +125,7 @@ typedef  uint16   AEEAddrFieldID;
 
 #define  AEE_ADDRFIELD_UNIQUE_ID                (AEE_ADDRFIELD_NONE + 46)
 
-
 #define  AEE_ADDRFIELD_RESERVED_SIRIUS_1        (AEE_ADDRFIELD_NONE + 47)
-
-#define  AEE_ADDRFIELD_BIRTHDAY                 (AEE_ADDRFIELD_NONE + 48) 
-#define  AEE_ADDRFIELD_LOCATION                 (AEE_ADDRFIELD_NONE + 49) 
-
 #define  AEE_ADDRFIELD_RESERVED_SIRIUS_150      (AEE_ADDRFIELD_NONE + 196)
 #define  AEE_ADDRFIELD_FIELDID_PRIMARY_PHONE    (AEE_ADDRFIELD_NONE + 197)
 
@@ -155,8 +150,6 @@ typedef  uint16   AEEAddrFieldID;
 
 // User-defined FieldIDs begin here
 #define  AEE_ADDRFIELD_USER                     (AEE_ADDRFIELD_NONE + 0x8000)
-
-#define  AEE_ADDRFIELD_GROUP                    (AEE_ADDRFIELD_USER + 0) 
 
 // This value is deprecated. Use AEE_ADDRFIELD_USER instead
 #define  AEE_ADDRFIELD_USER_DEFINED             AEE_ADDRFIELD_USER_DEPRECATED
@@ -352,9 +345,9 @@ QINTERFACE(IAddrBook)
    int              (*EnumCacheInit)(IAddrBook * po,  AEEAddrCat wCategory, AEEAddrFieldID wFieldID, void *pData, uint16 wDataSize);
    int              (*EnumNextCache)(IAddrBook * po, void **ppCache);
    uint16           (*ExtractCache)(IAddrBook * po, void *pCache, AECHAR **ppName, AEEAddrCat *pCat);
-   uint16           (*GetCapacity)(IAddrBook * po);
-   int (*GetCacheinfoByNumber)(IAddrBook *po, AECHAR *pwstrNum, AEEAddCacheInfo *pCacheInfo, PFN_NUMBERMATCH pfnMactch);
-   int (*CheckSameRecord)(IAddrBook  *po, AECHAR *name, boolean *exist);
+   uint16           (*GetCapacity)(IAddrBook * po, AEEAddrCat c);
+   int              (*GetCacheinfoByNumber)(IAddrBook *po, AECHAR *pwstrNum, AEEAddCacheInfo *pCacheInfo, PFN_NUMBERMATCH pfnMactch);
+   int              (*CheckSameRecord)(IAddrBook  *po, AECHAR *name, boolean *exist);
 #endif /*CUST_EDITION*/   
 };
 
@@ -379,10 +372,11 @@ QINTERFACE(IAddrBook)
 #define IADDRBOOK_GetCategoryName(p,c,psz,pn)         GET_PVTBL(p,IAddrBook)->GetCategoryName(p,c,psz,pn)
 #define IADDRBOOK_GetFieldName(p,c,psz,pn)            GET_PVTBL(p,IAddrBook)->GetFieldName(p,c,psz,pn)
 #ifdef CUST_EDITION	
-#define IADDRBOOK_EnumCacheInit(p,cat,field,data,wLen)    GET_PVTBL(p,IAddrBook)->EnumCacheInit(p,cat,field,data,wLen)
-#define IADDRBOOK_EnumNextCache(p,pCache)                      GET_PVTBL(p,IAddrBook)->EnumNextCache(p,pCache)
-#define IADDRBOOK_ExtractCache(p,pCache,ppName,pCat)    GET_PVTBL(p,IAddrBook)->ExtractCache(p,pCache,ppName,pCat)
-#define IADDRBOOK_GetCapacity(p)                                         GET_PVTBL(p,IAddrBook)->GetCapacity(p)
+#define IADDRBOOK_EnumCacheInit(p,cat,field,data,wLen) GET_PVTBL(p,IAddrBook)->EnumCacheInit(p,cat,field,data,wLen)
+#define IADDRBOOK_EnumNextCache(p,pCache)              GET_PVTBL(p,IAddrBook)->EnumNextCache(p,pCache)
+#define IADDRBOOK_ExtractCache(p,pCache,ppName,pCat)   GET_PVTBL(p,IAddrBook)->ExtractCache(p,pCache,ppName,pCat)
+#define IADDRBOOK_GetCapacity(p)                       GET_PVTBL(p,IAddrBook)->GetCapacity(p,AEE_ADDR_CAT_NONE)
+#define IADDRBOOK_GetCapacityEx(p,c)                   GET_PVTBL(p,IAddrBook)->GetCapacity(p,c)
 #define IADDRBOOK_GetCacheinfoByNumber(p,pNum,pInfo,pfn)        \
                   GET_PVTBL(p,IAddrBook)->GetCacheinfoByNumber(p,pNum,pInfo,pfn)
                 

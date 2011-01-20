@@ -910,7 +910,7 @@ int CContApp_LoadByCondition(CContApp *pMe, uint16 wDataSize)
                     }
                     else
                     {
-                         if (Appscommon_CompareName(pCache->szName,pCache1->szName ) <= 0)
+                        if (Appscommon_CompareName(pCache->szName,pCache1->szName ) <= 0)
                         {
                             (void)IVector_InsertElementAt(pMe->m_pAddList, pCache, j);
                             k = j+1;

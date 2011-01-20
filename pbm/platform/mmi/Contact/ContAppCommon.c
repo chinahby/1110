@@ -824,7 +824,6 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
         case AEE_ADDRFIELD_PHONE_FAX:
         case AEE_ADDRFIELD_PHONE_CELL:
         case AEE_ADDRFIELD_PHONE_GENERIC:
-        case AEE_ADDRFIELD_LOCATION:
         case AEE_ADDRFIELD_GROUP:
             return AEE_TM_NUMBERS;
             
@@ -919,7 +918,6 @@ uint32 CContApp_GetFldInputProp(CContApp *pMe, AEEAddrFieldID wFldID)
         case AEE_ADDRFIELD_PHONE_FAX:
         case AEE_ADDRFIELD_PHONE_CELL:
         case AEE_ADDRFIELD_PHONE_GENERIC:
-        case AEE_ADDRFIELD_LOCATION:
         case AEE_ADDRFIELD_GROUP:
             return (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL);
             
@@ -991,7 +989,6 @@ uint16 CContApp_SetFldMaxSize(CContApp *pMe,ITextCtl *pIText,AEEAddrFieldID wFld
         case AEE_ADDRFIELD_PHONE_FAX:
         case AEE_ADDRFIELD_PHONE_CELL:
         case AEE_ADDRFIELD_PHONE_GENERIC:
-        case AEE_ADDRFIELD_LOCATION:
         case AEE_ADDRFIELD_GROUP:
             if(IS_RUIM_REC(pMe->m_wEditCont) && (ADDOREDIT_EDIT == pMe->m_nAddnewOrEdit)
                 ||(ADDOREDIT_ADD == pMe->m_nAddnewOrEdit && pMe->m_nSaveType == CONTCFG_SAVETYPE_RUIM)) 

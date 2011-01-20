@@ -76,9 +76,9 @@ QINTERFACE(IOEMAddrBook)
                                            void *pData, uint16 wDataSize);
    int     (*EnumNextCache)(void **ppCache);
    uint16  (*ExtractCache)(void *pCache, AECHAR **ppName, AEEAddrCat *pCat);
-   uint16  (*GetCapacity)(void);   
-   int (*GetCacheinfoByNumber)(AECHAR *pwstrNum, AEEAddCacheInfo *pCacheInfo, PFN_NUMBERMATCH pfnMactch);
-   int (*CheckSameRecord)(AECHAR *name, boolean* exist);
+   uint16  (*GetCapacity)(AEEAddrCat c);
+   int     (*GetCacheinfoByNumber)(AECHAR *pwstrNum, AEEAddCacheInfo *pCacheInfo, PFN_NUMBERMATCH pfnMactch);
+   int     (*CheckSameRecord)(AECHAR *name, boolean* exist);
 #endif /*CUST_EDITION*/   
 };
 
@@ -107,8 +107,8 @@ QINTERFACE(IOEMAddrBook)
                  GET_PVTBL(p,IOEMAddrBook)->EnumNextCache(pCache)
 #define IOEMADDR_ExtractCache(p,pCache,pName,pCat)      \
                  GET_PVTBL(p,IOEMAddrBook)->ExtractCache(pCache,pName,pCat)
-#define IOEMADDR_GetCapacity(p)                         \
-                 GET_PVTBL(p,IOEMAddrBook)->GetCapacity()
+#define IOEMADDR_GetCapacity(p, c)                         \
+                 GET_PVTBL(p,IOEMAddrBook)->GetCapacity(c)
 
 #define IOEMADDR_GetCacheinfoByNumber(p, pNum,pInfo,pfn)  \
                  GET_PVTBL(p,IOEMAddrBook)->GetCacheinfoByNumber(pNum,pInfo,pfn)

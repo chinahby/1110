@@ -91,7 +91,7 @@ when         who     what, where, why
 #include "AEE_OEM.h"
 #include "OEMClassIDs.h"
 #include "Appscommon.h"
-
+#include "ui.h"
 #include "appscommon.brh"
 #include "appscommonimages.brh"
 
@@ -1807,3 +1807,81 @@ boolean IsCallActive (AEETCallType calltype)
     return TRUE;
   return FALSE;
 }
+
+/*=============================================================================
+FUNCTION: ClearBlockUITask
+
+DESCRIPTION:  Clears the signal we are going to block on.
+
+PARAMETERS:
+   None
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+   None.
+
+SIDE EFFECTS:
+  None
+
+=============================================================================*/
+void ClearBlockUITask(void)
+{
+  MSG_HIGH("UI Task UI_OEM_SIG being cleared", 0, 0, 0);
+  rex_clr_sigs(&ui_tcb, UI_OEM_SIG);
+}
+
+/*=============================================================================
+FUNCTION: BlockUITask
+
+DESCRIPTION:  Blocks the UI Task until a signal is received.
+
+PARAMETERS:
+   None
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+  This function blocks the entire UI task waiting for UnBlockUITask
+  to be called.
+
+SIDE EFFECTS:
+  None
+
+=============================================================================*/
+void BlockUITask(void)
+{
+  MSG_HIGH("UI Task Waiting on UI_OEM_SIG being set", 0, 0, 0);
+
+  ui_wait (UI_OEM_SIG);
+  rex_clr_sigs(&ui_tcb, UI_OEM_SIG);
+}
+
+/*=============================================================================
+FUNCTION: UnblockUITask
+
+DESCRIPTION:  Sets the signal to free the UI task.
+
+PARAMETERS:
+   onOff - backlight setting
+
+RETURN VALUE:
+   SUCCESS - if successful
+
+COMMENTS:
+  This function will be called from another tasks context.
+  After the UI task is blocked, we need this signal to unblock it.
+
+SIDE EFFECTS:
+  None
+
+=============================================================================*/
+void UnblockUITask(void)
+{
+  MSG_HIGH("UI Task UI_OEM_SIG being set", 0, 0, 0);
+
+  rex_set_sigs(&ui_tcb, UI_OEM_SIG);
+}
+

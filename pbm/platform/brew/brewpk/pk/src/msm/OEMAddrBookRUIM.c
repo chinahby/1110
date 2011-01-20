@@ -271,7 +271,7 @@ static boolean  OEMRUIMAddr_WStrStrEx( AECHAR *pHaystack, AECHAR *pNeedle, boole
 static int      OEMRUIMAddr_EnumCacheInit( AEEAddrCat wCategory, AEEAddrFieldID wFieldID, void  *pData, uint16 wDataSize);
 static int      OEMRUIMAddr_EnumNextCache(void **ppCache);
 static uint16   OEMRUIMAddr_ExtractCache( void  *pCache,  AECHAR  **ppName,  AEEAddrCat *pCat);
-static uint16   OEMRUIMAddr_GetCapacity(void);
+static uint16   OEMRUIMAddr_GetCapacity(AEEAddrCat c);
 
 static int OEMRUIMAddr_GetCacheinfoByNumber(AECHAR *pwstrNum, 
                                             AEEAddCacheInfo *pCacheInfo,
@@ -299,9 +299,9 @@ static const VTBL(IOEMAddrBook) gsOEMRUIMAddrBookFuncs =
                                                   OEMRUIMAddr_EnumCacheInit,
                                                   OEMRUIMAddr_EnumNextCache,
                                                   OEMRUIMAddr_ExtractCache,
-                                                  OEMRUIMAddr_GetCapacity
-                                                  ,OEMRUIMAddr_GetCacheinfoByNumber
-                                                  , OEMRUIMAddr_CheckSameRecord
+                                                  OEMRUIMAddr_GetCapacity,
+                                                  OEMRUIMAddr_GetCacheinfoByNumber,
+                                                  OEMRUIMAddr_CheckSameRecord
                                                   };
 
 /*===========================================================================
@@ -2792,7 +2792,7 @@ RETURN VALUE
 SIDE EFFECTS
   none
 ===========================================================================*/
-static uint16   OEMRUIMAddr_GetCapacity(void)
+static uint16   OEMRUIMAddr_GetCapacity(AEEAddrCat c)
 {
     return gAdnMaxRec;
 }// OEMAddr_GetCapacity
@@ -3688,4 +3688,5 @@ static int OEMRUIMAddr_CheckSameRecord(AECHAR *name, boolean* exist)
 }// OEMAddr_CheckSameRecord
 
 #endif    // FEATURE_ADDRBOOK_RUIM   
+
 

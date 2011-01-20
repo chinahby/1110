@@ -143,7 +143,7 @@ static IAddrRec*        AEEAddrRecFromData(IAddrBook *, uint16 wID, AEEAddrCat c
 static int     AEEAddrBook_EnumCacheInit( IAddrBook *po, AEEAddrCat wCategory, AEEAddrFieldID wFieldID,  void *pData, uint16 wDataSize);
 static int     AEEAddrBook_EnumNextCache(IAddrBook * po, void **ppCache);
 static uint16  AEEAddrBook_ExtractCache( IAddrBook  *po, void *pCache, AECHAR **ppName, AEEAddrCat *pCat);
-static uint16  AEEAddrBook_GetCapacity(IAddrBook * po);
+static uint16  AEEAddrBook_GetCapacity(IAddrBook * po, AEEAddrCat c);
 
 static int AEEAddrBook_GetCacheinfoByNumber(IAddrBook  *po,
                                             AECHAR *pwstrNum, 
@@ -1832,11 +1832,11 @@ RETURN VALUE
 SIDE EFFECTS
   none
 ===========================================================================*/
-static uint16  AEEAddrBook_GetCapacity(IAddrBook  *po)
+static uint16  AEEAddrBook_GetCapacity(IAddrBook  *po, AEEAddrCat c)
 {
    AEEAddrBook *pme = (AEEAddrBook *)po;
    
-   return (IOEMADDR_GetCapacity(pme->m_pIOEMAddrBk));
+   return (IOEMADDR_GetCapacity(pme->m_pIOEMAddrBk, c));
 }// AEEAddrBook_ExtractCache
 
 /*==============================================================================
