@@ -1,7 +1,0 @@
-#ifndef ALARMMGR_BID
-#define ALARMMGR_BID
-
-#define AEECLSID_ALARMMGR    	0x0102f7b1
-
-#endif //ALARMMGR_BID
-

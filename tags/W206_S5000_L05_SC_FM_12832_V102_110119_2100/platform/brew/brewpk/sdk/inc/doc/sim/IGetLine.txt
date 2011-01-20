@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IGetLine simulation
-
-IGetLine is simulated.
-==========================
-*/ 

@@ -1,9 +1,0 @@
-
-# Forms extension as const files
-CONSTFILE_FILES+=\
-	forms.mif|fs:/mif/forms.mif \
-	forms.mod|fs:/mod/forms/forms.mod 
-	
-# RVCT21ARM9	
-vpath %.mif $(BUIW)
-vpath %.mod $(BUIW)/forms/mod/RVCT21_ARM9 
