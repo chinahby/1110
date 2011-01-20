@@ -40,10 +40,8 @@ $DateTime: 2006/10/25 15:10:34 $
 
 #include "AEEAddrBook.h"
 
-#ifndef CUST_EDITION
 /*lint -save -library */
 #include "uiupbm.h"
-#endif
 /*lint -restore*/
 
 /*===========================================================================
@@ -189,6 +187,12 @@ static pbm_device_type cat_to_phonebook(AEEAddrCat wCat)
   case AEE_ADDR_CAT_NONE:
   case AEE_ADDR_CAT_PERSONAL:
   case AEE_ADDR_CAT_BUSINESS:
+#ifdef CUST_EDITION
+  case AEE_ADDR_CAT_VIP:
+  case AEE_ADDR_CAT_HOME:
+  case AEE_ADDR_CAT_WORK:
+  case AEE_ADDR_CAT_FRIEND:
+#endif
     return PBM_EFS;
 
 #ifdef FEATURE_UIM

@@ -9420,7 +9420,7 @@ static boolean OEMCM_IsEmergencyNumber(const AECHAR *number, uint8 *ecc_category
     return FALSE;
 
   (void) WSTRTOSTR(number, (char *)called, sizeof(called));
-#ifdef FEATURE_UI_PBM
+#ifndef CUST_EDITION
   return pbm_emergency_number_cat(called, (uint8)STRLEN((char *)called), ecc_category);
 #else
   return OEM_IsEmergency_Number(called, STRLEN(called));

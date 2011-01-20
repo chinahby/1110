@@ -419,10 +419,8 @@ ifeq  ($(USES_ONCRPC),yes)
 endif
 include $(PARB)/parb.min
 
-ifneq ($(USES_MMI), yes)
 ifeq ($(USES_PBMTASK), yes)
   include $(PBM)/pbm.min
-endif
 endif
 
 ifeq ($(USES_PLT),yes)

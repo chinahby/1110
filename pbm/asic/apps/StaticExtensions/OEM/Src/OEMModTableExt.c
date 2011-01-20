@@ -260,12 +260,10 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #if defined (FEATURE_IRDM)
 #error code not present
 #endif
-#ifndef CUST_EDITION
 // Address Book Extension
 #if defined(FEATURE_ADDRBOOK)
 	#include "AddrBookExt.bid"
 	extern int OEMAddrBookExt_New(IShell *ps,AEECLSID cls,void ** ppo);
-#endif
 #endif
 // CDMA/GSM/WCDMA tone generation
 #ifdef FEATURE_UIONE_HDK
@@ -1633,10 +1631,8 @@ static const AEEStaticClass gOEMStaticClassList[] = {
 #if defined(FEATURE_ODM_BROWSER)
     {AEECLSID_BROWSER_MODEL, 0, 0, NULL, BrowserModel_New},
 #endif //(FEATURE_ODM_BROWSER)
-#ifndef CUST_EDITION
 #if defined(FEATURE_ADDRBOOK)
    {AEECLSID_ADDRBOOKEXT, ASCF_UPGRADE, PL_SYSTEM, NULL, OEMAddrBookExt_New},
-#endif
 #endif
 #ifdef FEATURE_UIONE_HDK
    {AEECLSID_AEESIGNALTONE, ASCF_PRIV, 0, NULL, AEESignalTone_New},

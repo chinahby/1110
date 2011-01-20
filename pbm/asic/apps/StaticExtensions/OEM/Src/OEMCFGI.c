@@ -252,6 +252,9 @@ when       who     what, where, why
 #ifdef FEATURE_RANDOM_MENU_REND
 #include "DisplayRendUtils.h"
 #endif
+#ifdef FEATURE_UI_PBM
+#include "pbmlib.h"
+#endif
 #endif // CUST_EDITION
 /*===========================================================================
 
@@ -10552,6 +10555,14 @@ boolean OEM_IsEmergency_Number(char *pNumber,int len)
             }
         }
     }
+    
+#ifdef FEATURE_UI_PBM
+    if(!is_emergency)
+    {
+        uint8 ecc_category;
+        is_emergency = pbm_emergency_number_cat((byte *)pNumber, (uint8)len, &ecc_category);
+    }
+#endif
     return is_emergency;
 }
 

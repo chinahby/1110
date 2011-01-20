@@ -75,6 +75,8 @@ SRCROOT=../..
 SRCASIC				= $(SRCROOT)/asic
 ifneq ($(USES_MMI),yes)
 SRCPLATFORM			= $(SRCROOT)/platform/3gui
+else
+SRCPLATFORM			= $(SRCROOT)/platform/mmi
 endif
 ALARMCLOCK			= $(SRCPLATFORM)/alarmclock
 include $(SRCROOT)/core/build/core_incpaths.min

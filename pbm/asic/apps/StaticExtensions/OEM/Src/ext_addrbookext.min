@@ -5,16 +5,12 @@
 # 4/07 15:38:33 $ $Author: cmedrano $
 # 
 #-------------------------------------------------------------------------------
-ifneq ($(USES_MMI),yes)
 EXT_ADDRBOOKEXT_SOURCES=\
   OEMAddrBook.c \
   OEMAddrBookExt.c \
   OEMAddrBookUtil.c \
   OEMPBM.c
-else
-EXT_ADDRBOOKEXT_SOURCES=\
-  OEMAddrBook.c
-endif
+
 EXT_ADDRBOOKEXT_OBJS :=  $(addprefix $(TARGETDIR)/, $(EXT_ADDRBOOKEXT_SOURCES:%.c=%.o))       
 $(EXT_ADDRBOOKEXT_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 
