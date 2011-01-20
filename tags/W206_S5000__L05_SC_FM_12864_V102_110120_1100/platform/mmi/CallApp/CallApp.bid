@@ -1,6 +1,0 @@
-#ifndef DIALERAPP_BID
-#define DIALERAPP_BID
-
-#define AEECLSID_DIALER    	0x0100610c
-
-#endif //DIALERAPP_BID

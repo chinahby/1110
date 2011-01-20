@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-ILicense simulation
-
-ILicense is simulated.
-==========================
-*/ 

@@ -1,7 +1,0 @@
-#ifndef TOPVISIBLEPRIV_BID
-#define TOPVISIBLEPRIV_BID
-
-#define AEECLSID_TOPVISIBLEPRIV  0x101e52f   // Top Visible SetRelinquishControl privilege
-
-#endif //TOPVISIBLEPRIV_BID
-

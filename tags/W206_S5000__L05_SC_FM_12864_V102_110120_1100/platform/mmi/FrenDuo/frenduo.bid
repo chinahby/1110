@@ -1,6 +1,0 @@
-#ifndef FRENDUO_BID
-#define FRENDUO_BID
-
-#define AEECLSID_FRENDUO        0x01006505
-
-#endif //FRENDUO_BID

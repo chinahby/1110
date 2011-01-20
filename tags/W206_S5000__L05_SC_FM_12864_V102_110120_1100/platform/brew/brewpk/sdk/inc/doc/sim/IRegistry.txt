@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IRegistry simulation
-
-IRegistry is simulated.
-==========================
-*/ 

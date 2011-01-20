@@ -1,7 +1,0 @@
-#ifndef RESPRIV_SOUND_BID
-#define RESPRIV_SOUND_BID
-
-#define AEECLSID_RESPRIV_SOUND   0x101e44a   // Sound resource privilege
-
-#endif //RESPRIV_SOUND_BID
-
