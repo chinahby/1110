@@ -1,6 +1,0 @@
-#ifndef HTMLWIDGET_BID
-#define HTMLWIDGET_BID
-
-#define AEECLSID_HTMLWIDGET    	0x0102dd32
-
-#endif //HTMLWIDGET_BID

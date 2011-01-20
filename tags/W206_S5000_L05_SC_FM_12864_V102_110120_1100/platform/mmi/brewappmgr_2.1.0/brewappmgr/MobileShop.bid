@@ -1,6 +1,0 @@
-#ifndef MSHOP_BID
-#define MSHOP_BID
-
-#define AEECLSID_MOBILESHOP_BID    	0x01010ea7
-
-#endif //MSHOP_BID

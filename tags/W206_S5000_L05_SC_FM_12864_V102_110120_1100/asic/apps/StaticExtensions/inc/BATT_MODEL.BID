@@ -1,7 +1,0 @@
-#ifndef BATT_MODEL_BID
-#define BATT_MODEL_BID
-
-#define AEECLSID_BATT_MODEL    	0x0102db60
-
-#endif //BATT_MODEL_BID
-

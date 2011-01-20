@@ -1,9 +1,0 @@
-
-# Forms extension as const files
-CONSTFILE_FILES+=\
-	forms.mif|fs:/mif/forms.mif \
-	forms.mod|fs:/mod/forms/forms.mod 
-	
-# ADS12ARM7	
-vpath %.mif $(BUIW)
-vpath %.mod $(BUIW)/forms/mod/ADS12_ARM7 

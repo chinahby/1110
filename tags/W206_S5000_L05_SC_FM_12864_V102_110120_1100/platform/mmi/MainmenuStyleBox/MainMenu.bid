@@ -1,6 +1,0 @@
-#ifndef MAIN_MENU_BID
-#define MAIN_MENU_BID
-
-#define AEECLSID_MAIN_MENU        0x0100610F
-
-#endif //MAIN_MENU_BID
