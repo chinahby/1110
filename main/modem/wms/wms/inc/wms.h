@@ -403,7 +403,7 @@ typedef enum
 
 enum { WMS_MAX_LEN                = 255 };
 
-enum { WMS_ADDRESS_MAX            = 128  };
+enum { WMS_ADDRESS_MAX            = 36  };
 enum { WMS_SUBADDRESS_MAX         = 36  };
 enum { WMS_GW_ADDRESS_MAX         = 20  };
 enum { WMS_CDMA_USER_DATA_MAX     = 229 };

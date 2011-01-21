@@ -2703,7 +2703,7 @@ static int CWmsApp_MessageService(IWmsApp *p,
     if ((NULL != toAddrStr) &&
         (WSTRLEN(toAddrStr)>0))
     {
-        (void)WSTRCPY(pMe->m_msSend.m_szNum, toAddrStr);
+        (void)WSTRNCOPY(pMe->m_msSend.m_szNum, MAX_PH_DIGITS, toAddrStr);
     }
     
     if ((NULL != pwstrText) &&
