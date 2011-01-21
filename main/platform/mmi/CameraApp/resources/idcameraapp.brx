@@ -97,6 +97,9 @@
 	<STRING Id="1066" Name="IDS_MSG_NOSDCARD">
 		<Text>Masukan Kartu Memori</Text>
 	</STRING>
+	<STRING Id="1067" Name="IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD">
+		<Text>Memory Penuh Masukan Kartu Memori</Text>
+	</STRING>	
 	<STRING Id="1068" Name="IDS_DONE">
 		<Text>Selesai</Text>
 	</STRING>
