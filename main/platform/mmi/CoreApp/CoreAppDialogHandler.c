@@ -3102,7 +3102,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #elif defined (FEATURE_VERSION_IVIO203)||defined (FEATURE_VERSION_C500BE)
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #elif defined (FEATURE_VERSION_FLEXI203P)
-				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_STATIC_APP);
 #elif defined (FEATURE_VERSION_SMART)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
@@ -3184,7 +3184,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						 return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 #endif /*FEATURE_FLEXI_STATIC_BREW_APP&&FEATURE_FPT005*/
 #elif defined (FEATURE_VERSION_FLEXI203P)
-        	   			return CoreApp_LaunchApplet(pMe, AEECLSID_STATIC_APP);
+        	   			return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 #else
 						 #ifdef FEATURE_VERSION_HITZ181
 						 if(!IRUIM_IsCardConnected(pMe->m_pIRUIM))
@@ -4934,7 +4934,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #elif defined FEATURE_VERSION_M8P
 		eBBarType = BTBAR_FACEBOOK_CHAT;
 #elif defined FEATURE_VERSION_FLEXI203P
-		eBBarType = BTBAR_MENU_FMENU;
+		eBBarType = BTBAR_MENU_CONTACTS;
 #else										//Include IVIO
 	#if defined (FEATURE_GURU)
 		eBBarType = BTBAR_FGURU_FPORTAL;	

@@ -1817,12 +1817,12 @@ static int StartApplet(MainMenu *pMe, int i)
         break;
         
     case IDS_MAIN_MENU_STATIC_APPLICATION:
-#if defined(FEATURE_FLEXI_STATIC_BREW_APP)||defined(FEATURE_VERSION_FLEXI203P)
-        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STATIC_APP);
+#if defined(FEATURE_APP_MANAGER)        
+    Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
 #else
-        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+    Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STATIC_APP);
 #endif
-        break;
+    break;
         
     case IDS_MAIN_MENU_CALENDAR:
     case IDS_MAIN_MENU_SCHEDULER:

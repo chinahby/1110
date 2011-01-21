@@ -785,6 +785,7 @@ int OEMCamera_New(AEECLSID cls, IBitmap * pFrame, uint16 wSize, OEMINSTANCE * ph
 
 	if (!ph)
 		return EBADPARM;
+    camera_init();
 
 	// Alloc memory for the object
 	pme = (OEMCamera *)MALLOC(sizeof(OEMCamera));

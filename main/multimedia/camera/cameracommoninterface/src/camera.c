@@ -138,7 +138,6 @@ SIDE EFFECTS
 void camera_init (void)
 {
   uint16 i;
-  camerai_init ();
 
   camerai_client [camerai_current_client].camera_init ();
 #ifndef CAMERA_USES_SOFTDSP

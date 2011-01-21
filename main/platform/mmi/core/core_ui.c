@@ -1971,9 +1971,9 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
     
     cls = AEE_Active();
     switch(wParam){
-#ifdef FEATURE_FLEXI_STATIC_BREW_APP
+#if defined (FEATURE_FLEXI_STATIC_BREW_APP)||defined (FEATURE_VERSION_FLEXI203P)
     case AVK_CAPLK:
-        if(cls == AEECLSID_FCHAT)
+        if(cls == 0x01007262)
         {
             return TRUE;
         }
