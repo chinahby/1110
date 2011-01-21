@@ -604,6 +604,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
             pMe->m_bSuspended = TRUE;
             pMe->m_bActive = FALSE;
+            pMe->m_pAppStart = FALSE;
             AEE_CancelTimer(CoreApp_Process_Batty_Msg_CB, (void*)pMe);
             return TRUE;
         }

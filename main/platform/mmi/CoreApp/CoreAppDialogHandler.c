@@ -5286,11 +5286,17 @@ static boolean CoreApp_LaunchApplet(CCoreApp *pMe,  AEECLSID classID)
         return FALSE;
     }
 */
+    if(pMe->m_pAppStart)
+    {
+      return FALSE;
+    }
+
     if (SUCCESS != ISHELL_StartApplet(pMe->a.m_pIShell, classID)) 
     {
         ERR("Failed to start Applet 0x%X",classID,0,0);		
         return FALSE;
     } 
+    pMe->m_pAppStart=TRUE;
 
     return TRUE;
 }

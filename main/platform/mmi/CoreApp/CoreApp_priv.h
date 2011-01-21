@@ -531,7 +531,9 @@ typedef struct _CCoreApp
 
     boolean             m_bSuspended; 
     
-    boolean            m_bActive;
+    boolean             m_bActive;
+    
+    boolean             m_pAppStart;
 #ifdef FEATURE_UIALARM
     IAlarm       *m_pAlarm;
 #endif    
@@ -673,7 +675,6 @@ typedef struct _CCoreApp
     AEECardPinCmdStatus m_sPinActionStatus;
     boolean             m_bVerifying;
 	boolean             m_isShift;
-
 	//wangliang add!
 	byte                m_active;
 	byte                m_CurProfile;      //当前情景模式
