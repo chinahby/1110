@@ -142,6 +142,9 @@
 	<String Id="1047" Name="IDS_WAITING">
 		<Text>Menunggu</Text>
 	</String>
+	<String Id="1048" Name="IDS_NOOMH_CARD" Encoding="Unicode">
+		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

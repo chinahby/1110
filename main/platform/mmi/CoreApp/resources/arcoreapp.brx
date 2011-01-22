@@ -1,147 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="coreapp" VERSION="1">
+<BREWRes Name="arcoreapp" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_CORE_TITLE">
-        <Text>التطبيق الأساسي الصغير</Text>
+		<Text>التطبيق الأساسي الصغير</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_NORUIM">
-        <Text>لا توجد بطاقة UIM</Text>
+		<Text>لا توجد بطاقة UIM</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_INVALID_PASSWORD">
-        <Text>كلمة مرور خاطئة</Text>
+		<Text>كلمة مرور خاطئة</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_INVALIDPIN">
-        <Text>رمز PIN خاطئ</Text>
+		<Text>رمز PIN خاطئ</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_UIMBLOCKED">
-        <Text>تم حظر بطاقة UIM</Text>
+		<Text>تم حظر بطاقة UIM</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_PINDIFFERENT">
-        <Text>خطأ بالإدخال</Text>
+		<Text>خطأ بالإدخال</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_INVALIDPUK">
-        <Text>رمز PUK خاطئ</Text>
+		<Text>رمز PUK خاطئ</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_UTKREFRESH">
-        <Text>تحديث بطاقة UIM...</Text>
+		<Text>تحديث بطاقة UIM...</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_FULLY_CHARGED">
-        <Text>تم الشحن بشكل كامل</Text>
+		<Text>تم الشحن بشكل كامل</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_OVERVOLTAGE">
-        <Text>إدخال الفولتية عالي جدًا</Text>
+		<Text>إدخال الفولتية عالي جدًا</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_ENTER_PIN">
-        <Text>أدخل PIN</Text>
+		<Text>أدخل PIN</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_NEWPIN">
-        <Text>أدخل PIN جديد</Text>
+		<Text>أدخل PIN جديد</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_NEWPIN_AGAIN">
-        <Text>أعد إدخال PIN</Text>
+		<Text>أعد إدخال PIN</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_ENTER_PUK">
-        <Text>أدخل PUK</Text>
+		<Text>أدخل PUK</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_AVAILCNT">
-        <Text>المحاولات المتوفرة: %d</Text>
+		<Text>المحاولات المتوفرة: %d</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_LOCKEDRUIM">
-        <Text>بطاقة UIM غير صالحة</Text>
+		<Text>بطاقة UIM غير صالحة</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_FACTORYTESTMODE">
-        <Text>اختبار المصنع</Text>
+		<Text>اختبار المصنع</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_SEARCHING">
-        <Text>جاري البحث...</Text>
+		<Text>جاري البحث...</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_MONTH_DATE">
-        <Text>%04d/%02d/%02d</Text>
+		<Text>%04d/%02d/%02d</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_TIME_TILE">
-        <Text>%02d:%02d</Text>
+		<Text>%02d:%02d</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_SERVICEREQ">
-        <Text>هناك حاجة لبرمجة الخدمة</Text>
+		<Text>هناك حاجة لبرمجة الخدمة</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_LOADING">
-        <Text>جاري التحميل...</Text>
+		<Text>جاري التحميل...</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_ENTER_PHONELOCK">
-        <Text>كلمة مرور الهاتف المحمول</Text>
+		<Text>كلمة مرور الهاتف المحمول</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_RESET_1">
-        <Text>الهاتف هو</Text>
+		<Text>الهاتف هو</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_POWEROFF_1">
-        <Text>إيقاف التشغيل</Text>
+		<Text>إيقاف التشغيل</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_RESET_2">
-        <Text>جاري إعادة التعيين...</Text>
+		<Text>جاري إعادة التعيين...</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_LOWBATTMSG_TEXT">
-        <Text>البطارية منخفضة</Text>
+		<Text>البطارية منخفضة</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_RUIM_DOOR_REMOVED">
-        <Text>تم نقل بطاقة UIM</Text>
+		<Text>تم نقل بطاقة UIM</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_EXIT_EMERGENCY_MODE">
-        <Text>"تحذير: إذا قمت باستعادة الخدمة العادية، فربما لن يتمكن المشغلون في حالات الطوارئ من الوصول إليك."</Text>
+		<Text>"تحذير: إذا قمت باستعادة الخدمة العادية، فربما لن يتمكن المشغلون في حالات الطوارئ من الوصول إليك."</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_EMERGENCY_MODE">
-        <Text>الوضع الطارئ</Text>
+		<Text>الوضع الطارئ</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_POWERALARM">
-        <Text>التنبيه</Text>
+		<Text>التنبيه</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_AUTO_POWER_OFF">
-        <Text>هل تريد إيقاف التشغيل التلقائي للهاتف</Text>
+		<Text>هل تريد إيقاف التشغيل التلقائي للهاتف</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_VMAILTIPS_FMT">
-        <Text>البريد الصوتي الجديد:%d</Text>
+		<Text>البريد الصوتي الجديد:%d</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_NEWWMSTIPS_FMT">
-        <Text>تم استلام %d رسالة جديدة</Text>
+		<Text>تم استلام %d رسالة جديدة</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_CHARGER_ON">
-        <Text>بدء الشحن</Text>
+		<Text>بدء الشحن</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_CHARGER_OFF">
-        <Text>إيقاف الشحن</Text>
+		<Text>إيقاف الشحن</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_EMERGENCY_NUMBER">
-        <Text>رقم الطوارئ</Text>
+		<Text>رقم الطوارئ</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_MCC_LOCK">
-        <Text>كلمة مرور البطاقة</Text>
+		<Text>كلمة مرور البطاقة</Text>
 	</STRING>
-	<STRING Id="1039" Name="IDS_ISRAEL_BANNER" Encoding="Unicode">
-        <Text>פלאפון</Text>
+	<STRING Id="1039" Name="IDS_ISRAEL_BANNER">
+		<Text>פלאפון</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_PLANEMODE">
-        <Text>وضع الطيران</Text>
+		<Text>وضع الطيران</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_PLANEMODE_QUERY">
-        <Text>تشغيل وضع الطيران</Text>
+		<Text>تشغيل وضع الطيران</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_ENTER_PASSWORD">
-        <Text>أدخل كلمة المرور</Text>
+		<Text>أدخل كلمة المرور</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_UNKNOWN_NETWORK">
-        <Text>شبكة غير معروفة</Text>
+		<Text>شبكة غير معروفة</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_CHINA_TELECOM">
-        <Text>China Telecom</Text>
+		<Text>China Telecom</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_HEADSET_ON">
-        <Text>إدخال سماعة الرأس</Text>
+		<Text>إدخال سماعة الرأس</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_HEADSET_OFF">
-        <Text>إخراج سماعة الرأس</Text>
+		<Text>إخراج سماعة الرأس</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_WAITING">
-        <Text>انتظار</Text>
+		<Text>انتظار</Text>
 	</STRING>
+	<String Id="1048" Name="IDS_NOOMH_CARD">
+		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

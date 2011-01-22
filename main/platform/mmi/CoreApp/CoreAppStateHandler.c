@@ -30,7 +30,7 @@
 #ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 #include "db.h"
 #endif
-
+#include "gsdi.h"
 #include "OEMRTC.h"
 //extern int charging_mark2;
 /*==============================================================================
@@ -610,7 +610,6 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-    
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -625,12 +624,12 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                 pMe->m_eUIMErrCode = UIMERR_NOUIM;
                 MOVE_TO_STATE(COREST_STARTUPANI);
                 return eRet;
-            }
-            
+            }  
             // 检查卡是否插入
             if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
             {// 插入了卡
 #if 1
+                
                 AEECardPinStatus sPinStatus;
                 MSLEEP(500);// 等待GSDI更新PIN Status，否则验证PIN之后的状态获取有问题
                 if (ICARD_GetPinStatus(pMe->m_pICard, AEECARD_PIN1, &sPinStatus) != SUCCESS)
@@ -858,7 +857,6 @@ static NextFSMAction COREST_UIMERR_Handler(CCoreApp *pMe)
         case DLGRET_ENTER:
         {
             char wPWD[10]= "*1796*08#";
-
             if (STRCMP(wPWD,pMe->m_strLockuimPWD) == 0)
             {// 密码符合
             #ifdef FEATURE_LONG_NETLOCK
@@ -1000,6 +998,14 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
             pMe->m_wStartupAniTime = 0;
             //MOVE_TO_STATE(COREST_STARTUPANI);
             {
+#ifdef FEATURE_OEMOMH                  
+                if(!gsdi_uim_omh_cap.omh_enabled)
+                {
+                    pMe->m_nMsgID = IDS_NOOMH_CARD;
+                    CoreApp_ShowDialog(pMe,IDD_MSGBOX);
+                    return NFSMACTION_WAIT;                    
+                }
+#endif                
 #ifdef FEATURE_PLANEMODE
                 byte planeModeCfg;
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -1028,6 +1034,16 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
             }
 
             return NFSMACTION_CONTINUE;
+#ifdef FEATURE_OEMOMH 
+        case DLGRET_NO:
+        case DLGRET_YES:    
+            if(!gsdi_uim_omh_cap.omh_enabled)
+            {
+                MSG_FATAL("DLGRET_YES/NO",0,0,0);
+                MOVE_TO_STATE(COREST_STANDBY);
+                return NFSMACTION_CONTINUE;            
+            }
+#endif                                
 
 #ifdef FEATURE_PLANEMODE
         case DLGRET_NO:

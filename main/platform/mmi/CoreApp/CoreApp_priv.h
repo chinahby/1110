@@ -383,7 +383,7 @@ typedef enum DLGRetValue
     DLGRET_ENTER,
     DLGRET_GS_SHAKE
 
-#ifdef FEATURE_PLANEMODE
+#if (defined(FEATURE_PLANEMODE) || defined(FEATURE_OEMOMH))
     ,DLGRET_YES
     ,DLGRET_NO
 #endif

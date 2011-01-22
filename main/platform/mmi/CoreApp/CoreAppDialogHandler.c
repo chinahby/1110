@@ -644,7 +644,11 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 case IDS_WAITING:
                     set_time = 0;
                     break;
-                    
+#ifdef FEATURE_OEMOMH
+                case IDS_NOOMH_CARD:
+                    set_time = 5000;
+                    break;
+#endif                  
                 default:
                     break;
             }
@@ -732,6 +736,13 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 return TRUE;
             }
 #endif
+#ifdef FEATURE_OEMOMH 
+            if(pMe->m_nMsgID == IDS_NOOMH_CARD)
+            {
+                return TRUE;
+            }
+#endif
+
             // 此对话框返回值仅为 DLGRET_MSGOK ，为防止挂起 Applet 
             // 关闭对话框回到错误状态，显示给对话框返回值赋值
 #ifdef FEATRUE_AUTO_POWER
@@ -826,11 +837,26 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                         return TRUE;
                     }
 #endif
+#ifdef FEATURE_OEMOMH 
+                    else if(pMe->m_nMsgID == IDS_NOOMH_CARD)
+                    {
+                        ISHELL_CancelTimer(pMe->a.m_pIShell,DialogTimeoutCallback,pMe);
+                        CLOSE_DIALOG(DLGRET_YES)
+                        return TRUE;
+                    }
+#endif
 
                 }
                 case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:    
                     (void) ISHELL_CancelTimer(pMe->a.m_pIShell,DialogTimeoutCallback,pMe);
+#ifdef FEATURE_OEMOMH 
+                    if(pMe->m_nMsgID == IDS_NOOMH_CARD)
+                    {
+                        CLOSE_DIALOG(DLGRET_NO);
+                        break;
+                    }
+#endif                    
 #ifdef FEATURE_PLANEMODE
                     if(pMe->m_nMsgID == IDS_PLANEMODE_QUERY)
                     {
@@ -873,6 +899,14 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 return TRUE;
             }
 #endif
+#ifdef FEATURE_OEMOMH 
+            if(pMe->m_nMsgID == IDS_NOOMH_CARD)
+            {
+                CLOSE_DIALOG(DLGRET_NO);
+                return TRUE;
+            }
+#endif
+
             CLOSE_DIALOG(DLGRET_MSGOK);
             return TRUE;
         }
@@ -2203,7 +2237,6 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                     case UIMERR_NOUIM:
                         nResID = IDS_NORUIM;
                         break;
-                        
                     // UIM 卡无效(原因输PUK码超过规定次数导致卡失效)
                     case UIMERR_BLOCKED:
                         nResID = IDS_UIMBLOCKED;
@@ -2311,7 +2344,7 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         return TRUE;
                         
-                    case AVK_SELECT:
+                    case AVK_SELECT:                     
                         CLOSE_DIALOG(DLGRET_ENTER)  
                         return TRUE;
                         

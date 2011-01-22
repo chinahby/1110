@@ -46,7 +46,7 @@
 #include "OEMRTC.h"
 #include "AEEDownload.h"
 #include "OEMDeviceNotifier.h"
-
+#include "gsdi.h"
 /*==============================================================================
                                  
                                  宏定义和常数
@@ -564,11 +564,10 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 				extern void EnableUIKeys (boolean flag);
             	EnableUIKeys(TRUE);
 			}
-            
             (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
                                   RESETPROFILE_TIME,
                                   CoreApp_ResetProfileTimer, 
-                                  pMe);
+                                  pMe);         
             return TRUE;
 
         case EVT_APP_STOP:
