@@ -2207,8 +2207,8 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         IAnnunCoreObj->m_btoolen = FALSE;
                     }
 #elif defined(FEATURE_DISP_176X220)
-					bgRect.x = 20;
-                    if(titleLen > 130)
+					bgRect.x = 30;
+                    if(titleLen > 116)
                     {
                         bgRect.x = 0;
                         bgRect.dx = 176;
@@ -2216,7 +2216,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                     }
                     else
                     {
-                        bgRect.dx = 130;
+                        bgRect.dx = 116;
                         IAnnunCoreObj->m_btoolen = FALSE;
                     }	
 #elif defined(FEATURE_DISP_240X320)
