@@ -3127,7 +3127,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #elif defined (FEATURE_VERSION_M8P)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+			#if defined(FEATURE_SMARTFREN_APP_HITZ233C)
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK_HITZ233C);
+			#else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+			#endif
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
@@ -3172,7 +3176,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #elif defined (FEATURE_VERSION_M8P)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP                      
 						OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
+					#if defined(FEATURE_SMARTFREN_APP_HITZ233C)
+						return CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_SFM_HITZ233C);
+					#else
 						return CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_SFM);	
+					#endif
 #else                   
 						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 	
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
