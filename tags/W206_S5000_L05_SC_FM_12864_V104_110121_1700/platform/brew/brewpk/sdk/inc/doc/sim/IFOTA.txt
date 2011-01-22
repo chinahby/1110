@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IFOTA simulation
+
+IFOTA is simulated.
+==========================
+*/ 
