@@ -1,0 +1,6 @@
+#ifndef UTK_BID
+#define UTK_BID
+
+#define AEECLSID_APP_UTK        0x01006114
+
+#endif //UTK_BID

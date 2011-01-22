@@ -1,0 +1,11 @@
+#-------------------------------------------------------------------------------
+# AUDIOSBC (Audio SBC)
+#-------------------------------------------------------------------------------
+
+AUDIOSBC_SOURCES=\
+        audiosbc.c
+
+vpath %.c $(AUDIOSBC)
+
+AUDIOSBC_OBJS :=  $(addprefix $(TARGETDIR)/, $(AUDIOSBC_SOURCES:%.c=%.o))
+
