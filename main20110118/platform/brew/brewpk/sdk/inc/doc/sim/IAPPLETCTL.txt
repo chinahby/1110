@@ -1,0 +1,9 @@
+/* 
+===========================
+Simulator Support DOCUMENTATION
+============================
+IAppletCtl simulation
+
+IAppletCtl is simumated.
+==========================  
+*/
