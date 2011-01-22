@@ -771,15 +771,12 @@ vpath %.bar  $(MDIRECTORY_DIRS)
 vpath %.dat  $(MDIRECTORY_DIRS)
 vpath %.cfg  $(MDIRECTORY_DIRS)
         
-MDIRECTORY_EFS_FILES = \
-    $(notdir $(wildcard $(MDIRECTORY_DIRS)/*.dat)) \
-    $(notdir $(wildcard $(MDIRECTORY_DIRS)/*.cfg))
-    
 CONSTFILE_BIN_FILES += \
 	odpmora.bar|fs:/mod/odpmora/odpmora.bar    
 
 EFSFILE_FILES += \
-    $(foreach filename, $(MDIRECTORY_EFS_FILES), $(filename)|fs:/mod/odpmora/$(filename))       
+    odpconfig.cfg|fs:/mod/odpmora/odpconfig.cfg \
+    odphomedefault.dat|fs:/mod/odpmora/odphomedefault.dat
 
 CONSTFILE_FILES += \
     odpmora.mif|fs:/mif/odpmora.mif
