@@ -1,8 +1,0 @@
-#ifndef AEECLSID_BCMCSDATABASE_BID
-#define AEECLSID_BCMCSDATABASE_BID
-
-#include "../../inc/AEEBCMCSDatabase.bid"
-
-#define AEECLSID_BCMCSDATABASE AEECLSID_BCMCSDatabase
-  
-#endif /* #ifndef AEECLSID_BCMCSDATABASE_BID */

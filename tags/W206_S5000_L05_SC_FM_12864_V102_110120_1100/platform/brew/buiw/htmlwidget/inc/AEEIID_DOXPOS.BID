@@ -1,6 +1,0 @@
-#ifndef DOXPOS_BID
-#define DOXPOS_BID
-
-#define AEEIID_DOXPOS    	0x0102e886
-
-#endif //DOXPOS_BID

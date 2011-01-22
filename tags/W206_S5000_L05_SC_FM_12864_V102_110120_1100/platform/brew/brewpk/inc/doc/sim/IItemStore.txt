@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IItemStore simulation
-
-IItemStore is simulated.
-==========================
-*/ 

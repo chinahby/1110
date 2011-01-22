@@ -1,6 +1,0 @@
-#ifndef SOUNDMENU_BID
-#define SOUNDMENU_BID
-
-#define AEECLSID_SOUNDMENU        0x01006109
-
-#endif //SOUNDMENU_BID
