@@ -1,7 +1,0 @@
-#ifndef CM_NOTIFIER_BID
-#define CM_NOTIFIER_BID
-
-#define AEECLSID_CM_NOTIFIER    0x01011790
-
-#endif //CM_NOTIFIER_BID
-

@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IImageCtl simulation
-
-IImageCtl is simulated.
-==========================
-*/ 

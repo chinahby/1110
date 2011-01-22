@@ -1,6 +1,0 @@
-#ifndef WMS_NOTIFIER_BID
-#define WMS_NOTIFIER_BID
-
-#define AEECLSID_WMS_NOTIFIER    	0x01011ba9
-
-#endif //WMS_NOTIFIER_BID

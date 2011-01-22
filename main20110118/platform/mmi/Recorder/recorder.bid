@@ -1,6 +1,0 @@
-#ifndef RECORDER_BID
-#define RECORDER_BID
-
-#define AEECLSID_RECORDER        0x0100612e
-
-#endif //RECORDER_BID
