@@ -6407,8 +6407,8 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
         case T9KEYAMBIG7:
         case T9KEYAMBIG8:
         case T9KEYAMBIG9:
-        #ifndef FEATURE_LANG_ARABIC
         case T9KEYAMBIGA:
+        #ifndef FEATURE_LANG_ARABIC
         case T9KEYAMBIGB: 
         case T9KEYAMBIGC: 
         #endif
