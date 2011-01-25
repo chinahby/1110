@@ -20,6 +20,8 @@
 #include "mainmenu.brh"
 #include "AEEConfig.h"
 #include "AEEAnnunciator.h"
+#include "AEEBacklight.h"
+
 
 #if defined (FEATURE_DISP_160X128)
 #define  MAX_MATRIX_ITEMS 12
@@ -136,6 +138,7 @@ typedef struct _MainMenu
     boolean         m_nRandomMenu;
 #endif
 	IAnnunciator   *m_pIAnn;
+    IBacklight     *m_pBacklight;
 } MainMenu;
 
 /*==============================================================================

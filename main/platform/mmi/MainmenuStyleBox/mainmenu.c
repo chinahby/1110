@@ -493,7 +493,12 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     {    	
         return EFAILED;
     }
-    
+
+    if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
+    {
+        return FALSE;
+    }
+     
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_DISPLAY, 
             (void **) &pMe->m_pDisplay) != SUCCESS)
     {    	
@@ -788,6 +793,11 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
 		pMe->m_pIAnn = NULL;
     }
 
+    if(pMe->m_pBacklight)
+    {
+        IBACKLIGHT_Release(pMe->m_pBacklight);
+        pMe->m_pBacklight=NULL;
+    }
     //ÊÍ·ÅÍ¼Æ¬×ÊÔ´
     {
         int i;
@@ -1351,7 +1361,35 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             }
             return TRUE;
 
-
+        case EVT_KEY_HELD:
+            
+        #if defined(FEATURE_TORCH_KEY_INFO)
+           if((AVKType)wParam == AVK_INFO)
+            {
+                boolean TorchOn = FALSE;
+                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                if (TorchOn == FALSE )
+                {
+                    TorchOn = TRUE;
+                    if (pMe->m_pBacklight)
+                    {
+                        IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                    }
+                }
+                else
+                {
+                    TorchOn = FALSE;
+                    if (pMe->m_pBacklight)
+                    {                           
+                        IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                    }
+                }
+                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+                ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
+                return TRUE;
+            }
+        #endif
+            return TRUE;
         case EVT_KEY:
             //ISHELL_CancelTimer(pMe->m_pShell, NULL, (void**)pMe);
             switch( wParam)
