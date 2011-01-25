@@ -362,7 +362,7 @@ static void T9_CJK_MYANMAR_AdjustInputInfoLocation(TextCtlContext *pContext,
                                                     	unsigned int *pWindDx,
                                                     	unsigned int *pWindDy);
 
-extern long MyGetStrWidthW(const unsigned short * string)
+extern long SplGetStrWidthW (const unsigned short * string)
 {
 	int iwszlen = STRLEN((char *)string);
 	IDisplay                        *m_pDisplay;
@@ -9097,6 +9097,8 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
     {
         return FALSE;
     }  
+	//g_SplImeGlobals.uiInfo.fpGetStrWidthA = 0;
+	//g_SplImeGlobals.uiInfo.fpGetStrWidthW = MyGetStrWidthW;
     mKey = T9_CJK_MYANMAR_BrewKeyToT9Key (pContext, key );
     MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................11",0,0,0);
      switch ( key ) 
@@ -9123,7 +9125,13 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
 	        		pContext->m_date = g_SplImeGlobals;
 	        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
+	        		if(g_SplImeGlobals.outputInfo.candidatesNum<=0)
+	        		{
+	        			return FALSE;
+	        		}
+	        			
 	        		T9_CJK_MYANMAR_DisplaySelection(pContext);
+	        			
 	        		return TRUE;
         	}
         	break;
@@ -9438,7 +9446,7 @@ static T9STATUS T9_CJK_MYANMAR_Init(TextCtlContext *pContext)
     g_SplImeGlobals.uiInfo.candidateWidth = pContext->rectDisplay.dx-2;
     g_SplImeGlobals.uiInfo.candMinSpacing = 10;
     g_SplImeGlobals.uiInfo.fpGetStrWidthA = 0;
-    g_SplImeGlobals.uiInfo.fpGetStrWidthW = MyGetStrWidthW;
+    g_SplImeGlobals.uiInfo.fpGetStrWidthW = SplGetStrWidthW ;
 
     bResult = SplImeInit();
 	MSG_FATAL("SplImeInit.............bResult=%d",bResult,0,0);
@@ -9565,7 +9573,7 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
                                    pRect.y-2,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    NULL,
                                    format);
-            m_Myalen += MyGetStrWidthW(g_SplImeGlobals.outputInfo.candidates[k]);
+            m_Myalen += SplGetStrWidthW(g_SplImeGlobals.outputInfo.candidates[k]);
             m_Myalen += g_SplImeGlobals.uiInfo.candMinSpacing;
             /* If this character is a NULL terminator, then stop drawing */
             if ((pContext->m_date.outputInfo.candidates[k]) == NULL)  break;
@@ -9581,10 +9589,10 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
         	m_MyaFouc = 0;
         	for(i=0;i<g_SplImeGlobals.outputInfo.candidateIndex;i++)
         	{
-        		m_MyaFouc += MyGetStrWidthW(g_SplImeGlobals.outputInfo.candidates[i]);
+        		m_MyaFouc += SplGetStrWidthW(g_SplImeGlobals.outputInfo.candidates[i]);
         		m_MyaFouc += g_SplImeGlobals.uiInfo.candMinSpacing;
         	}
-        	m_curlen = MyGetStrWidthW(g_SplImeGlobals.outputInfo.candidates[(g_SplImeGlobals.outputInfo.candidateIndex)]);
+        	m_curlen = SplGetStrWidthW(g_SplImeGlobals.outputInfo.candidates[(g_SplImeGlobals.outputInfo.candidateIndex)]);
             invertRect.x = pRect.x+2+m_MyaFouc;
             invertRect.y = pRect.y-2;
             invertRect.dx = m_curlen+2;

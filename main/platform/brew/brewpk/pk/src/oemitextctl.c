@@ -720,17 +720,6 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 			}
 			
 #endif
-#ifdef FEATURE_LANG_MYANMAR
-			if ((wParam == AVK_STAR))
-			{
-				if (AEE_TM_SYMBOLS != CTextCtl_GetInputMode((ITextCtl *)pme, NULL))
-            	{	            		
-					(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
-					return TRUE;
-				}
-			}
-
-#endif
 
             if ( OEM_TextKeyPress(pme->m_pText,eCode,wParam,dwParam) != FALSE)
             {
@@ -797,14 +786,10 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
              && (!pme->m_bShowSyms || !pme->m_bShowFaceSyms || !pme->m_bShowNetSyms))                  
             // 按*键切换到符号输入法
 #endif
-#ifndef FEATURE_LANG_MYANMAR
-
             {              	
                 (void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
                 return TRUE;
             }  
-#endif
-
 #if defined (FEATURE_ALL_KEY_PAD)
 #ifndef FEATURE_VERSION_HITZ181
 			if ((!pme->m_pSoftKey) && 
@@ -1560,7 +1545,6 @@ NormalKeyEvent:
 #else
 			 if ((wParam == AVK_STAR))
 #endif
-#ifndef FEATURE_LANG_MYANMAR
             {
             	//(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
             	//return TRUE;
@@ -1574,7 +1558,6 @@ NormalKeyEvent:
             	//Add End                
                 
             }
-#endif
 #ifndef FEATURE_ALL_KEY_PAD
             if ((!pme->m_pSoftKey) &&       // press the * key switch the Ab(ab,AB) and the En(en,EN) inputmethod 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&

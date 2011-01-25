@@ -3109,7 +3109,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_SELECT:
 		 		{
 				int ret = 0;
-					#ifdef FEATURE_VERSION_C306
+					#if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR)
 					AEE_SetTimer(2*1000,CoreApp_keypadtimer,pMe);
 					pMe->m_iskeypadtime = TRUE;
 					#else
@@ -3386,7 +3386,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				case AVK_O:
                     {
                         ICallApp         *pCallApp = NULL;
-                        #ifdef FEATURE_VERSION_C306
+                        #if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR)
                         if(pMe->m_iskeypadtime && wParam==AVK_STAR)
                         {
                         	boolean bData;

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="myasettingmenu" VERSION="1">
 <Strings Encoding="UNICODE">
 	<STRING Id="1001" Name="IDS_APP_TITLE">
@@ -8,7 +8,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_AUTOKEYGUARD_TITLE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_SCENEMODE_TITLE">
 		<Text></Text>
@@ -386,25 +386,25 @@
 		<Text></Text>
 	</String>
 	<String Id="1129" Name="IDS_MYANMAR" Encoding="ISOLATIN1">
-		<Text>myanmar</Text>
+		<Text></Text>
 	</String>
 	<String Id="1130" Name="IDS_SEARCHNET_MODE">
-		<Text>Search mode</Text>
+		<Text></Text>
 	</String>
 	<String Id="1131" Name="IDS_AUTO_SEARCH">
-		<Text>Auto Search</Text>
+		<Text></Text>
 	</String>
 	<String Id="1132" Name="IDS_SEARCH_FIVEMINTU">
-		<Text>5 mintue</Text>
+		<Text>5 </Text>
 	</String>
 	<String Id="1133" Name="IDS_SEARCH_TENMIINUTES">
-		<Text>10 minute</Text>
+		<Text>10 </Text>
 	</String>
 	<String Id="1134" Name="IDS_SEARCH_TENTY">
-		<Text>15 minute</Text>
+		<Text> 15 </Text>
 	</String>
 	<String Id="1135" Name="IDS_SEARCH_THIRTYMINUTE">
-		<Text>30 minute</Text>
+		<Text>30  </Text>
 	</String>
 </Strings>
 <Dialogs>

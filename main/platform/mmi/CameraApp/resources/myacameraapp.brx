@@ -1,80 +1,80 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="cameraapp" VERSION="1">
-<Strings Encoding="ISOLATIN1">
+<Strings Encoding="UNICODE">
 	<String Id="1001" Name="IDS_ITEM_CAMERA">
-		<Text>Camera</Text>
+		<Text></Text>
 	</String>
 	<String Id="1003" Name="IDS_ITEM_CAMERA_GALLERY">
-		<Text>Photo gallery</Text>
+		<Text></Text>
 	</String>
 	<String Id="1005" Name="IDS_CFG_ENVIR">
-		<Text>Environment</Text>
+		<Text></Text>
 	</String>
 	<String Id="1006" Name="IDS_ENVIR_MODE_AUTO">
-		<Text>Auto</Text>
+		<Text></Text>
 	</String>
 	<String Id="1007" Name="IDS_ENVIR_MODE_NIGHT">
-		<Text>Night mode</Text>
+		<Text></Text>
 	</String>
 	<String Id="1008" Name="IDS_ENVIR_MODE_CLOUDY">
-		<Text>Cloudy mode</Text>
+		<Text></Text>
 	</String>
 	<String Id="1009" Name="IDS_ENVIR_MODE_SUNNY">
-		<Text>Sunny mode</Text>
+		<Text></Text>
 	</String>
 	<String Id="1013" Name="IDS_CFG_QUALITY">
-		<Text>Quality</Text>
+		<Text></Text>
 	</String>
 	<String Id="1014" Name="IDS_QUALITY_HIGH">
-		<Text>High</Text>
+		<Text></Text>
 	</String>
 	<String Id="1015" Name="IDS_QUALITY_MED">
-		<Text>Med</Text>
+		<Text></Text>
 	</String>
 	<String Id="1016" Name="IDS_QUALITY_LOW">
-		<Text>Low</Text>
+		<Text></Text>
 	</String>
 	<String Id="1017" Name="IDS_CFG_SIZE">
-		<Text>Size</Text>
+		<Text></Text>
 	</String>
 	<String Id="1018" Name="IDS_CFG_TONE">
-		<Text>Shutter tone</Text>
+		<Text></Text>
 	</String>
 	<String Id="1019" Name="IDS_TONE_DISABLE">
-		<Text>Off</Text>
+		<Text></Text>
 	</String>
 	<String Id="1020" Name="IDS_TONE_ENABLE">
-		<Text>On</Text>
+		<Text></Text>
 	</String>
 	<String Id="1021" Name="IDS_CFG_SELFTIMER">
-		<Text>Self timer</Text>
+		<Text></Text>
 	</String>
 	<String Id="1022" Name="IDS_SELFTIME_OFF">
-		<Text>Off</Text>
+		<Text></Text>
 	</String>
 	<String Id="1023" Name="IDS_SELFTIME_SEC1">
-		<Text>5 Sec</Text>
+		<Text>5 </Text>
 	</String>
 	<String Id="1024" Name="IDS_SELFTIME_SEC2">
-		<Text>10 Sec</Text>
+		<Text>10 </Text>
 	</String>
 	<String Id="1025" Name="IDS_SELFTIME_SEC3">
-		<Text>15 Sec</Text>
+		<Text>15 </Text>
 	</String>
 	<String Id="1026" Name="IDS_CFG_CAPMODE">
-		<Text>Capture mode</Text>
+		<Text></Text>
 	</String>
 	<String Id="1027" Name="IDS_CAPTURE_OFF">
-		<Text>Off</Text>
+		<Text></Text>
 	</String>
 	<String Id="1028" Name="IDS_CAPTURE_MODE1">
-		<Text>1 Shot</Text>
+		<Text>1 </Text>
 	</String>
 	<String Id="1029" Name="IDS_CAPTURE_MODE2">
-		<Text>3 Shot</Text>
+		<Text>3 </Text>
 	</String>
 	<String Id="1030" Name="IDS_CAPTURE_MODE3">
-		<Text>5 Shot</Text>
+		<Text>5 </Text>
 	</String>
 	<String Id="1031" Name="IDS_CFG_BANDING">
 		<Text>Banding</Text>
@@ -86,31 +86,31 @@
 		<Text>60 Hz</Text>
 	</String>
 	<String Id="1037" Name="IDS_CFG_RESET">
-		<Text>Reset</Text>
+		<Text></Text>
 	</String>
 	<String Id="1058" Name="IDS_NORMAL">
-		<Text>Normal</Text>
+		<Text></Text>
 	</String>
 	<String Id="1064" Name="IDS_MSG_NOCAMERA">
-		<Text>No Camera</Text>
+		<Text></Text>
 	</String>
 	<String Id="1066" Name="IDS_MSG_NOSDCARD">
-		<Text>phone memory full</Text>
+		<Text></Text>
 	</String>
 	<String Id="1067" Name="IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD">
-		<Text>Phone Memory Full Please Insert SD Card</Text>
+		<Text>SD</Text>
 	</String>	
 	<String Id="1068" Name="IDS_DONE">
-		<Text>Done</Text>
+		<Text></Text>
 	</String>
 	<String Id="1069" Name="IDS_MSG_NOMEMORY">
-		<Text>phone memory full</Text>
+		<Text></Text>
 	</String>
 	<String Id="1070" Name="IDS_MSG_WAITING">
-		<Text>Waiting</Text>
+		<Text></Text>
 	</String>
 	<String Id="1073" Name="IDS_MSG_CAPTURE_FAILED">
-		<Text>Capture failed</Text>
+		<Text></Text>
 	</String>
 </Strings>
 <Dialogs>

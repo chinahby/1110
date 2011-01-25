@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="myaapplication" VERSION="1">
 <Strings Encoding="UNICODE">
 	<String Id="1001" Name="IDS_APPLICATION_LIST">
@@ -80,7 +80,7 @@
 		<Text></Text>
 	</String>
 	<String Id="1038" Name="IDS_APPLICATION_FLASHLIGHT">
-		<Text>Flashlight</Text>
+		<Text></Text>
 	</String>
 </Strings>
 <Dialogs>

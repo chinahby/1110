@@ -385,8 +385,8 @@
 	<String Id="1128" Name="IDS_YES">
 		<Text>Yes</Text>
 	</String>
-	<String Id="1129" Name="IDS_MYANMAR">
-		<Text>Myanmar</Text>
+	<String Id="1129" Name="IDS_MYANMAR" Encoding="Unicode">
+		<Text></Text>
 	</String>
 	<String Id="1130" Name="IDS_SEARCHNET_MODE">
 		<Text>Search mode</Text>

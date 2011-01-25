@@ -76,12 +76,13 @@ enum SIMEReturn
 	SMR_EngineNotInit,					///< engine not initialized
 	SMR_NoEngine,						///< no engine
 	SMR_NullEvent,						///< pointer to event is null!
-	SMR_InvalidEventType,				///< invalid event type! see \ref GBEventType
-	SMR_NullInitData,					///< pointer to init data is null when event type is GBEventType::GBET_In_Init
-	SMR_InvalidInputMode,				///< invalid input mode, see \ref GBInputMode
+	SMR_InvalidEventType,				///< invalid event type! see \ref EventType
+	SMR_NullInitData,					///< pointer to init data is null when event type is SplImeInit
+	SMR_InvalidInputMode,				///< invalid input mode, see \ref SplInputMode
 	SMR_UnsupportedLanguageType,		///< unsupported language type
-	SMR_InvalidKeyType,				    ///< invalid key type, see \ref GBKeyType
-	SMR_InvalidKey,						///< invalid key, see \ref GBKey
+	SMR_InvalidKeyType,				    ///< invalid key type, see \ref SplKeyType
+	SMR_InvalidKey,						///< invalid key, see \ref SplKey
+    SMR_InvalidParam,                   ///< 传入参数正确
 
 	SMR_NUM
 } ;
@@ -128,7 +129,7 @@ typedef struct __tag_OutputInfo
 {
 	unsigned short      *       inputString;     /**< 数字区内码串 */
 
-	unsigned short      *       candidates[10]; /**< 候选字词 */
+	unsigned short      *       candidates[20]; /**< 候选字词 */
 	unsigned short              candidatesNum;  /**< 候选的个数 */
 	unsigned short              candidateIndex; /**< 当前高亮的候选项索引 */	
 
