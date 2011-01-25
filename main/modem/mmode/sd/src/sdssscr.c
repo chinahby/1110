@@ -667,9 +667,15 @@ static const nv_sd_cfg_items_s_type sd_cfg_items_default = {
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
     #ifdef FEATURE_UNIFORM_SCAN_OOS
+    #if defined(FEAUTRE_VERSION_N450)
+    36,       /* TMR_UOOS_SLEEP */
+
+    36,        /* TMR_UOOS_SCAN  */
+    #else
     36,       /* TMR_UOOS_SLEEP */
 
     4,        /* TMR_UOOS_SCAN  */
+    #endif
     #else
     0,        /* TMR_RESERVED_1 */
 
