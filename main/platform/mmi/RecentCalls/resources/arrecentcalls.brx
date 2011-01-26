@@ -62,7 +62,7 @@
     </String>
 
     <String Id="16" Name= "IDS_DURATION">
-        <Text>المدة:</Text>
+        <Text>:المدة</Text>
     </String>
 
     <String Id="17" Name= "IDS_DELETE_OK">
@@ -110,7 +110,7 @@
     </String>
 
     <String Id="28" Name= "IDS_CALLTIME">
-        <Text>وقت المكالمة:</Text>
+        <Text>:وقت المكالمة</Text>
     </String>
 
 	<STRING Id="29" Name="IDS_LAST_CALL">
