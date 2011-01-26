@@ -2608,21 +2608,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                 
                 return TRUE;
             }
-#elif defined(FEATURE_LANG_ARABIC)   //add by yangdecai
-			{
-				nv_language_enum_type language;
-				OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
-				if(NV_LANGUAGE_ARABIC == language)
-				{
-					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
-				}
-				else
-				{
-					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
-				}
-			}
-#elif defined(FEATURE_LANG_MYANMAR)
-			ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
+
 #endif
             switch (wParam)
             {
