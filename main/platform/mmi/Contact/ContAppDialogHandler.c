@@ -2880,7 +2880,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                             {
                                 pMe->m_nCurrSmartIdx = pMe->m_pSmartBufLen - MAX_NUM_MENUPOP;
                                 (void)CContApp_BuildSmartMenu(pMe, pMenuCtl);
-                                IMENUCTL_SetSel(pMenuCtl, IMENUCTL_GetItemID( pMenuCtl, MAX_NUM_MENUPOP - 1));
+                                IMENUCTL_SetSel(pMenuCtl, IMENUCTL_GetItemID( pMenuCtl, pMe->m_pSmartBufLen-MAX_NUM_MENUPOP - 1));
                             }
                             else
                             {
