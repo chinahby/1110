@@ -289,6 +289,9 @@ typedef struct _TextCtlContext {
    boolean              m_bCaplk;
    boolean              m_islong;
    uint32               m_curpos;
+#ifdef  FEATURE_MYANMAR_INPUT_MOD
+   boolean              m_myaisnull;
+#endif
 } TextCtlContext;
 
 typedef boolean         (*PFN_ModeCharHandler)(TextCtlContext *,AEEEvent, AVKType);
@@ -923,6 +926,9 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
                   pNewContext->rectDisplay.dx,
                   pNewContext->nLineHeight);
    }
+#ifdef  FEATURE_MYANMAR_INPUT_MOD
+   pNewContext->m_myaisnull = TRUE;
+#endif
 #ifdef FEATURE_T9_CHINESE
    pNewContext->rectChineseInput.x = pNewContext->rectDisplay.x;
    pNewContext->rectChineseInput.dx = 0;
@@ -9112,8 +9118,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         case AVK_8:    
         case AVK_9:    
         case AVK_0:     
-        case AVK_POUND:            
-        case AVK_STAR:  
+        case AVK_POUND:              
         	{
         			MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................22",0,0,0);
 	        		bResult = SplImeProcessKey(mKey, SPKT_Down);
@@ -9133,6 +9138,31 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		return TRUE;
         	}
         	break;
+        case AVK_STAR:
+        	{
+        			if(g_SplImeGlobals.outputInfo.candidatesNum >0)
+        			{
+        				pContext->m_myaisnull = FALSE;
+        			}
+        			else
+        			{
+        				pContext->m_myaisnull = TRUE;
+        			}
+        			if(!pContext->m_myaisnull)
+        			{
+        				MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................22",0,0,0);
+	        			bResult = SplImeProcessKey(mKey, SPKT_Down);
+	        			MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................333",0,0,0);
+	        			MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
+	        			MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
+	        			MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
+	        			pContext->m_date = g_SplImeGlobals;
+	        			//T9_CJK_MYANMAR_DrawSyllableString(pContext);
+	        			T9_CJK_MYANMAR_DisplaySelection(pContext);
+	        			return TRUE;
+	        		}
+        	}
+        	break;
         case AVK_LEFT:
         	{
 	        		if(g_SplImeGlobals.outputInfo.isShowLeftArrow)
@@ -9147,7 +9177,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		}
 	        		else
 	        		{
-	        			#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+	        			#if 0//def //FEATURE_ARPHIC_LAYOUT_ENGINE
 			            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
 			            {
 			                   uint16 wNewSel;
@@ -9161,7 +9191,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 			                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 			                   }
 			            }
-#else//change by xuhui
+//#else//change by xuhui
 	//#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 			            if (OEM_TextGetCursorPos(pContext) == 0)
 			                {
@@ -9211,7 +9241,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		}
 	        		else
 	        		{
-	        			#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+	        			#if 0//def FEATURE_ARPHIC_LAYOUT_ENGINE
 		            	if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
 		                {
 		                   uint16 wNewSel;
@@ -9229,7 +9259,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 		                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 		                   }
 		                }
-#else//change by xuhui
+//#else//change by xuhui
 //#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 		             if (OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
 		                {
@@ -12875,6 +12905,12 @@ static int moverightselThaiChar(AECHAR nexttwoChar,AECHAR nextChar)
 
 
 #endif /*FEATURE_LANG_THAI*/
- 
+#ifdef  FEATURE_MYANMAR_INPUT_MOD
+boolean OEM_TextMyaStar(OEMCONTEXT hTextField)
+{
+ 	TextCtlContext *pContext = (TextCtlContext *) hTextField;
+	return pContext->m_myaisnull;
+}
+#endif
 #endif /* OEMTEXT */
 /*---------------------------------- eof ---------------------------------*/

@@ -84,6 +84,8 @@ struct _CWorldTime {
     IImage*  m_leftArrow;
     IImage*  m_rightArrow;
 	IAnnunciator        *m_pIAnn;
+	boolean     m_ismyatime;
+	boolean     m_isMya;
 };
 
 /*===========================================================================
@@ -244,12 +246,20 @@ static void getCursorPosX( CWorldTime* pme)
             break;
 
         default:
-            if( timeZone < 0)
-            {
-                timeZone += 25;
-            }
-            timeZone ++;
-            pme->m_xBar =(int)( (pme->m_widthBg / 24.0 * timeZone ) + 0.5);
+			if(pme->m_ismyatime ||(pme->m_isMya))
+			{
+				timeZone ++;
+				pme->m_xBar =(int)( (pme->m_widthBg / 24.0 * timeZone ) + 0.5)+3;
+			}
+			else
+			{
+	            if( timeZone < 0)
+	            {
+	                timeZone += 25;
+	            }
+	            timeZone ++;
+	            pme->m_xBar =(int)( (pme->m_widthBg / 24.0 * timeZone ) + 0.5);
+			}
             break;
     }
     pme->m_xBar  = pme->m_xBar < 0 ? 0 : pme->m_xBar;
@@ -341,17 +351,36 @@ static boolean InitWorldTime(CWorldTime *pme)
 
         for(i=0;i<=24;i++)
         {
+        	
             (void)IMENUCTL_AddItem( pme->m_pMenuCity,
                                                 WORLDTIME_RES_FILE_LANG,
                                                 IDS_CITY_0 + i,
                                                 IDS_CITY_0 + i,
                                                 NULL,
                                                 0);
+            if(i == 5)
+            {
+            	(void)IMENUCTL_AddItem( pme->m_pMenuCity,
+                                                WORLDTIME_RES_FILE_LANG,
+                                                IDS_CITY_25,
+                                                IDS_CITY_25,
+                                                NULL,
+                                                0);
+            }
         }
         IMENUCTL_SetOemProperties(pme->m_pMenuCity, OEMMP_IDF_ALIGN_CENTER);
         IMENUCTL_SetActive( pme->m_pMenuCity, TRUE);
     }
+	pme->m_ismyatime = FALSE;
+	pme->m_isMya = FALSE;
     pme->m_timeZone = get_timezone();
+	if(pme->m_timeZone == 26)
+	{
+		//pme->m_ismyatime = TRUE;
+		pme->m_isMya = TRUE;
+		pme->m_timeZone = pme->m_timeZone-20;
+		MSG_FATAL("pme->m_timeZone===000==%d",pme->m_timeZone,0,0);
+	}
     getCursorPosX( pme);
 
     return TRUE;
@@ -762,14 +791,31 @@ static void CWorldTime_DrawCityTime(CWorldTime *pme)
     int           timeZone = pme->m_timeZone;
     int           local    = get_timezone();
     AEERect   rc = {0};
-
+    if(local == 26)
+    {
+    	local = local-20;
+    }
     if( timeZone < 0)
     {
         timeZone += 25;
     }
-    IMENUCTL_SetSel(pme->m_pMenuCity,timeZone + IDS_CITY_0);
-
-    sec = GETUTCSECONDS() + (local==pme->m_timeZone?LOCALTIMEOFFSET( 0):pme->m_timeZone*3600);
+	if(pme->m_ismyatime )
+	{
+		IMENUCTL_SetSel(pme->m_pMenuCity,IDS_CITY_25);
+		sec = GETUTCSECONDS()+LOCALTIMEOFFSET( 0);
+		
+	}
+	else if(pme->m_isMya)
+	{
+	    MSG_FATAL("..........................",0,0,0);
+		IMENUCTL_SetSel(pme->m_pMenuCity,IDS_CITY_25);
+		sec = GETUTCSECONDS()+(local==pme->m_timeZone?LOCALTIMEOFFSET( 0):pme->m_timeZone*3600+1800);
+	}
+	else
+	{
+    	IMENUCTL_SetSel(pme->m_pMenuCity,timeZone + IDS_CITY_0);
+    	sec = GETUTCSECONDS() + (local==pme->m_timeZone?LOCALTIMEOFFSET( 0):pme->m_timeZone*3600);
+	}
     Calendar_FormatDateTime( sec, text, sizeof( text));
 	#if 0  //add by yangdecai
     SETAEERECT(&rc, 
@@ -819,7 +865,14 @@ static void Draw_TimeZone(CWorldTime *pme)
             text,
             sizeof(text));
 	WSTRCAT(text,L"  ");
-	WSPRINTF(Temp, sizeof(Temp), wFormat, timeZone);
+	if(pme->m_ismyatime || pme->m_isMya)
+	{
+		WSTRCPY(Temp,L"6.5");
+	}
+	else
+	{
+		WSPRINTF(Temp, sizeof(Temp), wFormat, timeZone);
+	}
 	if(timeZone>0)
 	{
 		WSTRCAT(text,L"+");
@@ -907,13 +960,35 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
     {
         AEERect         rect = {0};
         AEEImageInfo    ii   = {0};
-
+		
         IIMAGE_GetInfo( pme->m_pImageBar, &ii);
         SETAEERECT( &rect, pme->m_xBar, 0, ii.cx, ii.cy);
         ERR("ii.cy:::::%d",pme->m_yBg,0,0);
         drawImageWithOffset( pme, pme->m_pImageBg, pme->m_xBg + pme->m_xBar, pme->m_yBg, &rect);
-
-        pme->m_timeZone += left ? -1 : 1;
+        if((pme->m_isMya) && (((pme->m_timeZone == 7)&&(left))))
+        {
+        	MSG_FATAL("7pme->m_timeZone:::::::%d",pme->m_timeZone,0,0);
+        	pme->m_timeZone = pme->m_timeZone -1 ;
+        	pme->m_isMya = FALSE;
+        }
+        else if((pme->m_isMya) && ((pme->m_timeZone == 6)&& !(left)))
+        {
+        	MSG_FATAL("6pme->m_timeZone:::::::%d",pme->m_timeZone,0,0);
+        	pme->m_timeZone = pme->m_timeZone +1;
+        	pme->m_isMya = FALSE;
+        }
+        else if((pme->m_isMya) && (((pme->m_timeZone == 6)&&(left))||(((pme->m_timeZone == 7)&& !(left)))))
+        {
+        	pme->m_isMya = FALSE;
+        }
+        else if(!(pme->m_isMya)&&(((pme->m_timeZone == 7)&&(left)))||((pme->m_timeZone == 6)&& !(left)))
+        {
+        	pme->m_isMya = TRUE;
+        }
+        else
+        {
+        	pme->m_timeZone += left ? -1 : 1;
+        }
         if( pme->m_timeZone == -13)
         {
             pme->m_timeZone = 12;
@@ -922,6 +997,11 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
         {
             pme->m_timeZone = -12;
         }
+		if(pme->m_ismyatime)
+		{
+			pme->m_ismyatime = FALSE;
+		}
+		MSG_FATAL("pme->m_timeZone::::::::%d",pme->m_timeZone,0,0);
         getCursorPosX( pme);
 
         SETAEERECT( &rect, pme->m_xBg, pme->m_yBg, pme->m_widthBg, pme->m_rectScreen.dy);
@@ -1014,12 +1094,22 @@ static int get_timezone(void)
     return 8;
 #else
     boolean daylight = 0;
+	double  mytime = 0.0;
     int32   local    = LOCALTIMEOFFSET( &daylight);
     int     timezone = local / 3600;
-    if( daylight)
-    {
-        timezone --;
-    }
+	MSG_FATAL("local=========%d",local,0,0);
+	if(36*650 == local)
+	{
+		timezone =timezone+ 20;
+	}
+	else
+	{
+    	if( daylight)
+    	{
+        	timezone --;
+   		}
+	}
+	
     return timezone;
 #endif
 }

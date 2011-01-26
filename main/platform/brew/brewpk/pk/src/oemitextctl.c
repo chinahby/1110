@@ -557,6 +557,9 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 {
     CTextCtl * pme = (CTextCtl*)pITextCtl;
     uint32 mode;
+    #ifdef  FEATURE_MYANMAR_INPUT_MOD
+    boolean b_isStar = OEM_TextMyaStar(pme->m_pText);
+    #endif
 #ifdef FEATURE_LCD_TOUCH_ENABLE   //add by ydc
    //if( eCode >= EVT_PEN_UP  && eCode <= EVT_PEN_STALE_MOVE ){   modi by ydc  090520
 	if (eCode == EVT_PEN_UP){
@@ -781,6 +784,9 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 #else
 			if ( (!pme->m_pSoftKey) 
              && (pme->m_dwProps & TP_STARKEY_SWITCH) 
+#ifdef  FEATURE_MYANMAR_INPUT_MOD
+			 &&b_isStar
+#endif
              && (wParam == AVK_STAR) 
              && (!(pme->m_dwProps & TP_NOSYMBOL))
              && (!pme->m_bShowSyms || !pme->m_bShowFaceSyms || !pme->m_bShowNetSyms))                  
@@ -1543,7 +1549,12 @@ NormalKeyEvent:
 #if defined (FEATURE_ALL_KEY_PAD)
 			if ((wParam == AVK_SYMBOL))/*&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))*/ //modi by yangdecai
 #else
-			 if ((wParam == AVK_STAR))
+
+			 if ((wParam == AVK_STAR)
+#ifdef  FEATURE_MYANMAR_INPUT_MOD
+			 &&b_isStar
+#endif
+				)
 #endif
             {
             	//(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
