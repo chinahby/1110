@@ -6705,24 +6705,22 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 
         case T9KEYNONE:
             ERR("T9TextCtl_MultitapKey::10",0,0,0);
-            #ifdef FEATURE_VERSION_C306
-        	return TRUE;
-        	#endif
+            //#ifdef FEATURE_VERSION_C306
+        	//return TRUE;
+        	//#endif
             if(FOCUS_SELECTION == pContext->sFocus)
             {
                 pContext->sFocus = FOCUS_TEXT;             
                 sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, T9KEYRIGHT );
                 break;
             }
-            
-
         default:
-        	#ifdef FEATURE_VERSION_C306
-        	return TRUE;
-        	#endif
-           // MSG_FATAL("T9TextCtl_MultitapKey::11",0,0,0);
+        	//#ifdef FEATURE_VERSION_C306
+        	//return TRUE;
+        	//#endif
+            MSG_FATAL("T9TextCtl_MultitapKey::11",0,0,0);
             pContext->sFocus = FOCUS_TEXT;   
-                       sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
+            sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
            
             break;  
     }   
