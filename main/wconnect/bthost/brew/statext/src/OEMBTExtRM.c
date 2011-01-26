@@ -1209,20 +1209,21 @@ int OEMBTExtRM_DeviceEnumInit(
   {
     return EBADPARM;
   }
+  
   if ( pEnum == NULL )
-  {
+  {  
     return EBADPARM;
   }
 
   pMe->iterator.reset = TRUE;
   pMe->iterator.control = (bt_rm_iter_ctrl_enum_type)pEnum->control;
+  
   switch ( pEnum->control )
   {
     case AEEBT_RM_EC_ALL:
       break;  // no filtering
-    case AEEBT_RM_EC_MATCH_SERVICE_CLASS:
-      pMe->iterator.service_class = 
-        (bt_service_class_enum_type) pEnum->svcCls;
+    case AEEBT_RM_EC_MATCH_SERVICE_CLASS:		
+      pMe->iterator.service_class = (bt_service_class_enum_type) pEnum->svcCls;
       break;
     case AEEBT_RM_EC_MATCH_BONDED:
       pMe->iterator.bonded = pEnum->bBonded;
@@ -1246,6 +1247,7 @@ int OEMBTExtRM_DeviceEnumInit(
     default:
       return EBADPARM;
   }
+ 
   return SUCCESS;
 }
 
@@ -1372,6 +1374,8 @@ int OEMBTExtRM_GetHCIMode( IBTExtRM* pParent, AEEBTHCIMode* pHCIMode )
   bt_hci_mode_type mode = bt_cmd_dc_get_hci_mode();
   OEMBTExtRMobj_t* pMe;
 
+  MSG_FATAL("***zzg OEMBTExtRM_GetHCIMode pParent=%x***", pParent, 0, 0);
+
   if ( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                        (OEMINSTANCE*)&pMe ) != TRUE )
   {
@@ -1379,8 +1383,11 @@ int OEMBTExtRM_GetHCIMode( IBTExtRM* pParent, AEEBTHCIMode* pHCIMode )
   }
   if ( pHCIMode == NULL )
   {
+  	MSG_FATAL("***zzg OEMBTExtRM_GetHCIMode pHCIMode == NULL***", 0, 0, 0);
     return EBADPARM;
   }
+
+  MSG_FATAL("***zzg OEMBTExtRM_GetHCIMode mode = %d***", mode, 0, 0);
 
   switch ( mode )
   {
@@ -3460,6 +3467,7 @@ static void OEMBTExtRM_EventCallback(bt_ev_msg_type* bt_ev_msg_ptr)
 
     case BT_EV_RM_BOND_FAILED:
     {
+	  MSG_FATAL("***zzg BT_EV_RM_BOND_FAILED 5***", 0, 0, 0);
 	  MSG_FATAL("***zzg OEMBTExtRM BT_EV_RM_BOND_FAILED cls=%x***", pMe->cls, 0, 0);
 		
       pN->uID = AEEBT_RM_EVT_BONDED;

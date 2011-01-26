@@ -5686,6 +5686,8 @@ LOCAL void bt_rm_ev_send_bond_failed
 
   bt_ev_msg_type  ev_rm_bf;
 
+  MSG_FATAL("***zzg BT_EV_RM_BOND_FAILED 1***", 0, 0, 0);
+
   ev_rm_bf.ev_hdr.ev_type             = BT_EV_RM_BOND_FAILED;
   ev_rm_bf.ev_hdr.bt_app_id           = bt_app_id;
   ev_rm_bf.ev_msg.ev_rm_bondf.bd_addr = *bd_addr_ptr;
@@ -5726,6 +5728,9 @@ LOCAL void bt_rm_ev_send_bond_failed_all_bondable
       {
         BT_MSG_DEBUG( "BT RM: Sec cleanup: Sending bond failed BAI %x",
                       bt_rm_app[ i ].bt_app_id, 0, 0 );
+
+		MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 1***", 0, 0, 0);
+		
         bt_rm_ev_send_bond_failed(
           bt_rm_app[ i ].bt_app_id,
           &conn_ptr->dev_ptr->dev_public.bd_addr,
@@ -6771,6 +6776,8 @@ LOCAL void bt_rm_finish_bond_attempt
   /*  within bt_rm_link_sec_re_pair_started().           */
   if ( conn_ptr->bonding_app_id != BT_APP_ID_NULL )
   {
+    MSG_FATAL("***zzg bonding_key_rxd=%d authenticated=%d bond_canceling=%d***", conn_ptr->bonding_key_rxd, conn_ptr->authenticated, conn_ptr->bond_canceling);
+	
     if ( (conn_ptr->bonding_key_rxd != FALSE) &&
          (conn_ptr->authenticated   != FALSE) &&
          (conn_ptr->bond_canceling != TRUE) )
@@ -6821,6 +6828,9 @@ LOCAL void bt_rm_finish_bond_attempt
         conn_ptr->hc_error  = BT_BE_SUCCESS;
         conn_ptr->updates  &= ~BT_RM_LU_ERROR_VALID_B;
       }
+
+	  MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 2***", 0, 0, 0);
+	  
       bt_rm_ev_send_bond_failed( conn_ptr->bonding_app_id,
                                  &conn_ptr->dev_ptr->dev_public.bd_addr,
                                  conn_ptr->rm_handle, reason );
@@ -10916,6 +10926,8 @@ LOCAL void bt_rm_cmd_bond_ext
   if ( (rm_bext_ptr->cmd_hdr.cmd_status != BT_CS_GN_SUCCESS) &&
        (rm_bext_ptr->cmd_hdr.cmd_status != BT_CS_GN_RETRY_CMD_LATER) )
   {
+  	MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 3 cmd_status=%x***", rm_bext_ptr->cmd_hdr.cmd_status, 0, 0);
+	
     bt_rm_ev_send_bond_failed( rm_bext_ptr->cmd_hdr.bt_app_id,
                                &rm_bext_ptr->cmd_msg.cmd_rm_bondext.bd_addr,
                                (bt_rm_handle_type)(-1), reason );
@@ -11200,6 +11212,8 @@ LOCAL void bt_rm_cmd_authorize_rebond
   if ( (rm_areb_ptr->cmd_hdr.cmd_status != BT_CS_GN_SUCCESS) &&
        (rm_areb_ptr->cmd_hdr.cmd_status != BT_CS_GN_RETRY_CMD_LATER) )
   {
+  	MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 4 cmd_status=%x***", rm_areb_ptr->cmd_hdr.cmd_status, 0, 0);
+	
     bt_rm_ev_send_bond_failed( rm_areb_ptr->cmd_hdr.bt_app_id,
                                &rm_areb_ptr->cmd_msg.cmd_rm_areb.bd_addr,
                                (bt_rm_handle_type)(-1), reason );
@@ -13106,6 +13120,8 @@ LOCAL void bt_rm_pin_req_resp_failed
   {
     conn_ptr->pin_req_pairing_done = TRUE;
 
+	MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 5***", 0, 0, 0);
+	
     bt_rm_ev_send_bond_failed(
       conn_ptr->pin_req_resp_app_id,
       &conn_ptr->dev_ptr->dev_public.bd_addr,
@@ -21406,6 +21422,8 @@ LOCAL void bt_rm_cmd_bond
   if ( (rm_b_ptr->cmd_hdr.cmd_status != BT_CS_GN_SUCCESS) &&
        (rm_b_ptr->cmd_hdr.cmd_status != BT_CS_GN_RETRY_CMD_LATER) )
   {
+  	MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 6***", 0, 0, 0);
+	
     bt_rm_ev_send_bond_failed( rm_b_ptr->cmd_hdr.bt_app_id,
                                &rm_b_ptr->cmd_msg.cmd_rm_bond.bd_addr,
                                (bt_rm_handle_type)(-1), reason );
@@ -25576,6 +25594,8 @@ LOCAL void bt_rm_process_cmd_radio_off
       {
         rm_cmd_ptr->cmd_hdr.cmd_status = BT_CS_RM_RADIO_OFF;
 
+		MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 7***", 0, 0, 0);
+		
         bt_rm_ev_send_bond_failed( rm_cmd_ptr->cmd_hdr.bt_app_id,
                                    &rm_cmd_ptr->cmd_msg.cmd_rm_bond.bd_addr,
                                    (bt_rm_handle_type)(-1),

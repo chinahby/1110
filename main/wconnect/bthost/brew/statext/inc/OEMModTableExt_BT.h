@@ -121,14 +121,16 @@ extern int AEEBTExtICP_New(IShell* ps, AEECLSID cls, void** ppif);
 #endif
 // Bluetooth App
 #if defined(FEATURE_APP_BLUETOOTH)
-  extern int BTApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
+  //extern int BTApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
+  extern int BTAppMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif /* FEATURE_APP_BLUETOOTH */
 
 /*======================================================
  * Static mod table entry for BT App 
  *=====================================================*/
 #if defined(FEATURE_APP_BLUETOOTH)
-#  define BT_STATIC_MOD_LIST_ENTRY {AEEFS_MIF_DIR"btapp.mif", BTApp_Load},
+//#  define BT_STATIC_MOD_LIST_ENTRY {AEEFS_MIF_DIR"btapp.mif", BTApp_Load},
+#  define BT_STATIC_MOD_LIST_ENTRY {AEEFS_MIF_DIR"btapp.mif", BTAppMod_Load},
 #else
 #  define BT_STATIC_MOD_LIST_ENTRY
 #endif

@@ -1768,11 +1768,12 @@ FUNCTION:IAnnunciator_SetFieldIsActiveEx
 
 =============================================================================*/
 static int IAnnunciator_SetFieldIsActiveEx(IAnnunciator * pMe,boolean bActive)
-{
+{	
 	if (pMe == NULL) 
     {
       return EFAILED;
     }
+	
 	IAnnunCoreObj->m_bActive = bActive;
 	return SUCCESS;
 }

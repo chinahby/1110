@@ -197,8 +197,7 @@ int OEMBTDEVDB_New( BTHandle* phBT )
                                               BT_EV_GN_CMD_DONE );
 
          if ( stat == BT_CS_GN_SUCCESS )
-         {
-
+         {			
             stat = bt_cmd_ec_register_event_set( gpOEMBTDevDB->appId,
                                                  OEMBTDB_EventCallback,
                                                  BT_EC_ES_CUSTOM,
@@ -1482,6 +1481,9 @@ static void OEMBTDB_EventCallback(bt_ev_msg_type* bt_ev_msg_ptr)
          result =  AEEBT_RESULT_DEV_NOT_BONDED;
 
          MSG_ERROR( "IBT DB Bonding Failed r=0x%x", \
+                    bt_ev_msg_ptr->ev_msg.ev_rm_bondf.reason, 0, 0 );
+
+		 MSG_FATAL("***zzg IBT DB Bonding Failed r=0x%x", \
                     bt_ev_msg_ptr->ev_msg.ev_rm_bondf.reason, 0, 0 );
 
          bdAddr = bt_ev_msg_ptr->ev_msg.ev_rm_bondf.bd_addr;

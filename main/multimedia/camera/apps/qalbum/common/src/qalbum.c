@@ -286,7 +286,8 @@ INCLUDES AND VARIABLE DEFINITIONS
 #ifndef AEE_SIMULATOR
 #include "msg.h"
 #if defined(FEATURE_BT_EXTPF_BIP) || defined(FEATURE_BT_EXTPF_BPP)
-#include "BTApp.h"
+#include "BTApp_priv.h"		//"BTApp.h"
+
 #endif //defined(FEATURE_BT_EXTPF_BIP) || defined(FEATURE_BT_EXTPF_BPP)
 #endif
 
