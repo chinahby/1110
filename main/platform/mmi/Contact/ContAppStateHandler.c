@@ -225,6 +225,10 @@ static NextFSMAction Handler_STATE_DELETING(CContApp *pMe);
 // 状态 STATE_DETAIL_MULTI 处理函数
 static NextFSMAction Handler_STATE_DETAIL_MULTI(CContApp *pMe);
 
+#ifdef FEATURE_OEMOMH 
+// 状态 STATE_EMERGENCY_CALL 处理函数
+static NextFSMAction Handler_STATE_EMERGENCY_CALL(CContApp *pMe);
+#endif
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -301,7 +305,10 @@ static const FSMSTATE_HANDLER gFSMStateHandler[] =
     Handler_STATE_NUMFLDVIEW,        /*0X56 */
     Handler_STATE_DELETING,         /*0X57*/
     Handler_STATE_SELECT_RECORD,     /*0X58*/
-    Handler_STATE_DETAIL_MULTI      /* OX59 */
+    Handler_STATE_DETAIL_MULTI,      /* OX59 */
+#ifdef FEATURE_OEMOMH 
+    Handler_STATE_EMERGENCY_CALL
+#endif
 };
 
 
@@ -1746,6 +1753,16 @@ static NextFSMAction Handler_STATE_MAINMENU(CContApp *pMe)
             pMe->m_wSelectOneDial = CONTCFG_ONEDIAL2;	//CONTCFG_ONEDIAL1
             MOVE_TO_STATE(STATE_ONEDIAL);
             break;
+
+#ifdef FEATURE_OEMOMH 
+        case DLGRET_EMERGENCY_CALL:
+            // Save the menu select
+            PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel);
+            pMe->m_wSelectOneDial = CONTCFG_ONEDIAL2;   //CONTCFG_ONEDIAL1
+            MSG_FATAL("STATE_EMERGENCY_CALL",0,0,0);
+            MOVE_TO_STATE(STATE_EMERGENCY_CALL);
+            break;
+#endif
 
 #ifdef FEATURE_RUIM_PHONEBOOK
         if( IsRunAsUIMVersion() )
@@ -8844,3 +8861,83 @@ static NextFSMAction Handler_STATE_DELETING(CContApp *pMe)
     
     return NFSMACTION_CONTINUE;
 }//Handler_STATE_DELETEALL
+
+#ifdef FEATURE_OEMOMH 
+// 状态 STATE_EMERGENCY_CALL 处理函数
+static NextFSMAction Handler_STATE_EMERGENCY_CALL(CContApp *pMe)
+{
+    int nRet = SUCCESS;
+#if defined(AEE_STATIC)
+    ASSERT(pMe != NULL);
+#endif
+    
+    MSG_FATAL("STATE_EMERGENCY_CALL %d",pMe->m_eDlgRet,0,0);
+    
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+        {        
+            // Show dialog
+            if(SUCCESS != CContApp_ShowDialog( pMe, IDD_EMERGENCY_CALL))
+            {
+                MOVE_TO_STATE(STATE_EXIT);
+                MSG_FATAL("CContApp_ShowDialog FAIL",0,0,0);
+                return NFSMACTION_CONTINUE;
+            }
+
+            return NFSMACTION_WAIT;
+        }
+        
+        //Proccess yourself dialog retrn value here
+        case DLGRET_CANCELED:
+
+            {
+                FSMState retrunState;
+                retrunState = CContApp_GetReturnState(pMe);
+                MOVE_TO_STATE(retrunState);
+            }
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_SET:          
+        case DLGRET_OK:
+        {
+            FSMState retrunState;
+            retrunState = CContApp_GetReturnState(pMe);            
+            nRet = CContApp_SaveEditResult(pMe);
+            MOVE_TO_STATE(retrunState);
+            return NFSMACTION_CONTINUE;
+        }
+        break;
+
+        case DLGRET_NUM_UNAVAILD:
+            pMe->m_eMsgType = MESSAGE_WARNNING;
+            (void)CContApp_ShowMsgBox(pMe,IDS_MSG_NUM_UNAVAILD);
+            return NFSMACTION_WAIT;
+
+#if 0
+        // 不能输入点
+        case DLGRET_NUM_UNAVAILD:
+            pMe->m_eMsgType = MESSAGE_WARNNING;
+            if(SUCCESS != CContApp_ShowMsgBox(pMe, IDS_MSG_NUM_UNAVAILD))
+            {
+                MOVE_TO_STATE(STATE_EXIT);
+                return NFSMACTION_CONTINUE;
+            }
+            return NFSMACTION_WAIT;
+#endif            
+        case DLGRET_MSGBOX_OK:
+            //MOVE_TO_STATE(STATE_EDIT); 
+            break;
+
+        default:
+#if defined(AEE_STATIC)
+            ASSERT_NOT_REACHABLE
+#endif
+            break;
+    }
+    
+    return NFSMACTION_CONTINUE;
+} //  ONEDIAL
+
+#endif
+

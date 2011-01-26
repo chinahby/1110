@@ -369,7 +369,17 @@ int CContApp_BuildMainMenuMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         {
             FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
             return EFAILED;
-        }            
+        }      
+#ifdef FEATURE_OEMOMH 
+        ai.wText       = IDS_EMERGENCY_CALL;
+        ai.wItemID   = IDI_MAINMENU_MENU_EMERGENCY_CALL;
+                
+        if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+        {
+            FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
+            return EFAILED;
+        }    
+#endif
   //}
 //#endif /* FEATURE_RUIM_PHONEBOOK */    
       

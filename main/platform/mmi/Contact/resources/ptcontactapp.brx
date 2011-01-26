@@ -244,6 +244,9 @@
 	<STRING Id="1016" Name="IDS_ADDRESS">
 		<Text>Endereço</Text>
 	</STRING>
+	<String Id="1017" Name="IDS_EMERGENCY_CALL">
+		<Text>Emergency Number</Text>
+	</String>
 	<STRING Id="1021" Name="IDS_SAVE_EMAIL">
 		<Text>O e-mail poderá perder-se!</Text>
 	</STRING>
@@ -552,6 +555,21 @@
 			</Menu>
 		</Controls>
 	</DIALOG>
+	<Dialog Id="6019" Name="IDD_EMERGENCY_CALL" Focus="7025">
+		<Controls>
+			<Menu Id="7025" Name="IDC_MENU_EMERGENCY_CALL">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+			<Text Id="7029" Name="IDC_TEXT_EMERGENCY_CALL">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Text>
+			<List Id="7030" Name="IDC_GROUP_EMERGENCY_LIST">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</List>
+		</Controls>
+	</Dialog>
 	<DIALOG Id="6020" Name="IDD_ONEDIAL" Focus="7023">
 		<Controls>
 			<Menu Id="7023" Name="IDC_ONEDIAL_MENU">
@@ -664,6 +682,8 @@
 			<Menu Id="7001" Name="IDC_MAINMENU_MENU">
 				<Items>
 					<Item Id="8002" Name="IDI_MAINMENU_MENU_DIRECTORTLIST">
+					</Item>
+					<Item Id="8020" Name="IDI_MAINMENU_MENU_EMERGENCY_CALL">
 					</Item>
 					<Item Id="8039" Name="IDI_MAINMENU_MENU_FIND">
 					</Item>

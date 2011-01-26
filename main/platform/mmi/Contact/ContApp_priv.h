@@ -588,6 +588,9 @@ typedef enum _DLGRetValue
 #ifdef FEATURE_GIVEUP_EDIT
     DLGRET_GIVEUP_EDIT,
 #endif
+#ifdef FEATURE_OEMOMH 
+    DLGRET_EMERGENCY_CALL,
+#endif
 } DLGRetValue;
 
 /*----------------------状态机相关数据类型声明---------------------*/
@@ -658,7 +661,10 @@ typedef enum _FSMState
     STATE_NUMFLDVIEW,
     STATE_DELETING,
     STATE_SELECT_RECORD,
-    STATE_DETAIL_MULTI
+    STATE_DETAIL_MULTI,
+#ifdef FEATURE_OEMOMH 
+    STATE_EMERGENCY_CALL
+#endif
 } FSMState;
 
 // 状态处理函数返回给状态处理主函数的值类型

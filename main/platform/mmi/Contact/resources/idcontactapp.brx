@@ -457,6 +457,9 @@
 	<String Id="1087" Name="IDS_NO_CARD">
 		<Text>Tidak ada kartu</Text>
 	</String>
+	<String Id="1088" Name="IDS_EMERGENCY_CALL" Encoding="Unicode">
+		<Text>Emergency Number</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MSGBOX" Focus="0">
@@ -839,6 +842,8 @@
 				<Items>
 					<Item Id="8002" Name="IDI_MAINMENU_MENU_DIRECTORTLIST">
 					</Item>
+					<Item Id="8018" Name="IDI_MAINMENU_MENU_EMERGENCY_CALL">
+					</Item>
 					<Item Id="8039" Name="IDI_MAINMENU_MENU_FIND">
 					</Item>
 					<Item Id="8050" Name="IDI_MAINMENU_MENU_ADDNEW">
@@ -951,6 +956,21 @@
 			</Menu>
 		</Controls>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6041" Name="IDD_EMERGENCY_CALL" Focus="7044">
+		<Controls>
+			<Menu Id="7044" Name="IDC_MENU_EMERGENCY_CALL">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</Menu>
+			<Text Id="7045" Name="IDC_TEXT_EMERGENCY_CALL">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/></Text>
+			<List Id="7046" Name="IDC_GROUP_EMERGENCY_LIST">
+				<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+				<Items/>
+			</List>
+		</Controls>
 	</Dialog>
 </Dialogs>
 </BREWRes>
