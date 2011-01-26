@@ -3060,7 +3060,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                                    wszText,
                                    sizeof(wszText));  
    nTextWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_BOLD, wszText);
-#if defined(FEATURE_DISP_128X128)  
+#if defined(FEATURE_DISP_128X128) || defined(FEATURE_DISP_128X160)   
 (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                   AEE_FONT_BOLD,
                   wszText, 
@@ -3156,7 +3156,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                     sizeof( buffer)
                 );
     nTextWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, buffer);
-#if defined(FEATURE_DISP_128X128)    
+#if defined(FEATURE_DISP_128X128) || defined(FEATURE_DISP_128X160)     
     (void)IDISPLAY_DrawText(pMe->m_pDisplay,
                     AEE_FONT_NORMAL,
                     buffer,
@@ -3186,7 +3186,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
     // draw start time
     if( Calendar_FormatDateTime(pMe->list_record[pMe->record_selected].time_stamp, buffer, sizeof( buffer)))
     {
-#if defined(FEATURE_DISP_128X128) 
+#if defined(FEATURE_DISP_128X128) || defined(FEATURE_DISP_128X160) 
         (void)IDISPLAY_DrawText( pMe->m_pDisplay,
                       AEE_FONT_BOLD,
                       buffer,
@@ -3234,7 +3234,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
         WSPRINTF( buffer + len, sizeof( buffer) - len, format, duration % 60);
 
         //画出具体的通话时间
-#if defined(FEATURE_DISP_128X128) 
+#if defined(FEATURE_DISP_128X128) || defined(FEATURE_DISP_128X160)  
         (void)IDISPLAY_DrawText( pMe->m_pDisplay, 
                   AEE_FONT_BOLD,
                   buffer,
@@ -3396,7 +3396,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
     else
 #endif
     {
-#if defined(FEATURE_DISP_128X128)
+#if defined(FEATURE_DISP_128X128) || defined(FEATURE_DISP_128X160) 
         //画出具体的通话时间
         (void)IDISPLAY_DrawText( pMe->m_pDisplay,
                   AEE_FONT_BOLD,
