@@ -37,7 +37,8 @@ when       who  what, where, why
 #ifdef FEATURE_APP_BLUETOOTH
 #ifdef FEATURE_IOBEX
 
-#include "BTApp.h"
+#include "BTApp_priv.h"		//"BTApp.h"
+
 #include "BTAppUtils.h"
 
 #ifdef FEATURE_APP_TEST_AUTOMATION

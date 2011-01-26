@@ -97,7 +97,8 @@ when       who  what, where, why
 
 #ifdef FEATURE_APP_BLUETOOTH
 
-#include "BTApp.h"
+#include "BTApp_priv.h"		//"BTApp.h"
+
 #include "BTAppUtils.h"
 #include "btapp_res.h"
 
@@ -4537,7 +4538,7 @@ static boolean BTApp_HandlePBAPAuthenticateMenu(CBTApp * pMe, uint16 key)
       while ( sel != 0 )
       {
         BTApp_UpdateMenuItemImage( 
-          pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
+          pMe->m_pIDisplay, pMe->m_pIMenu, sel, 
           (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
         switch ( sel )
@@ -4858,7 +4859,7 @@ static boolean BTApp_HandlePBAPSearchAttributeMenu( CBTApp* pMe, uint16 key )
       while ( sel != 0 )
       {
         BTApp_UpdateMenuItemImage( 
-          pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
+          pMe->m_pIDisplay, pMe->m_pIMenu, sel, 
           (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
         switch ( sel )
@@ -4954,7 +4955,7 @@ static boolean BTApp_HandlePBAPSortOrderMenu( CBTApp* pMe, uint16 key )
       while ( sel != 0 )
       {
         BTApp_UpdateMenuItemImage( 
-          pMe->a.m_pIDisplay, pMe->m_pIMenu, sel, 
+          pMe->m_pIDisplay, pMe->m_pIMenu, sel, 
           (sel == selection) ? IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
 
         switch ( sel )
@@ -5042,11 +5043,11 @@ static boolean BTApp_HandlePBAPvCardFormatMenu( CBTApp* pMe, uint16 key )
     {
       selection = IMENUCTL_GetSel( pMe->m_pIMenu );
       // update menu
-      BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, pMe->m_pIMenu, 
+      BTApp_UpdateMenuItemImage( pMe->m_pIDisplay, pMe->m_pIMenu, 
         IDS_PBAP_VCARD_2_1, 
         (selection == IDS_PBAP_VCARD_2_1) ?
         IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
-      BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, pMe->m_pIMenu, 
+      BTApp_UpdateMenuItemImage( pMe->m_pIDisplay, pMe->m_pIMenu, 
         IDS_PBAP_VCARD_3_0, 
         (selection == IDS_PBAP_VCARD_3_0) ? 
         IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
@@ -5103,7 +5104,7 @@ static void BTApp_PBAPBuildAuthenticateMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_PBAP_AUTHENTICATE );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 
 }
 
@@ -5156,7 +5157,7 @@ static void BTApp_PBAPBuildClientBrowseMenu( CBTApp* pMe )
     PUSH_MENU( BT_APP_MENU_PBAP_CLIENT_BROWSE_MENU );
   }
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
   IMENUCTL_SetSel( pMe->m_pIMenu, MENU_SEL );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -5194,7 +5195,7 @@ static void BTApp_PBAPBuildClientDownloadSubMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_PBAP_CLIENT_DOWNLOAD_SUBMENU );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
   IMENUCTL_SetSel( pMe->m_pIMenu, MENU_SEL );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -5226,7 +5227,7 @@ static void BTApp_PBAPBuildClientDownloadMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_PBAP_CLIENT_DOWNLOAD );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
   IMENUCTL_SetSel( pMe->m_pIMenu, MENU_SEL ); 
 }
 
@@ -5277,7 +5278,7 @@ static void BTApp_PBAPBuildSearchAttributeMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_PBAP_SEARCH_ATTR );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -5326,7 +5327,7 @@ static void BTApp_PBAPBuildSortOrderMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_PBAP_SORT_ORDER );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -5363,7 +5364,7 @@ static void BTApp_PBAPBuildvCardFormatMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_PBAP_VCARD_FORMAT );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -5413,7 +5414,7 @@ void BTApp_PBAPDoClientSettingsMenu( CBTApp* pMe, int item )
   }
    
   IMENUCTL_Redraw( pMe->m_pISoftMenu );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -5442,7 +5443,7 @@ static void BTApp_PBAPBuildClientSettingsValuesMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_PBAP_CLIENT_SETTINGS_VALUES );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );  
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );  
 }
 
 /* ==========================================================================
@@ -5500,7 +5501,7 @@ static void BTApp_PBAPBuildClientSettingsMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_PBAP_CLIENT_SETTINGS );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -5526,7 +5527,7 @@ static void BTApp_PBAPBuildServerSettingsMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_PBAP_SERVER_SETTINGS );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -5546,7 +5547,7 @@ static void BTApp_PBAPBuildClientMenu(CBTApp * pMe)
   if ( pMe->mPBAP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
-    ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_PBAP_CLIENT, 
+    ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_PBAP_CLIENT, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
     len = WSTRLEN( pMe->pText2 );
 
@@ -5584,7 +5585,7 @@ static void BTApp_PBAPBuildClientMenu(CBTApp * pMe)
   // Activate menu
   PUSH_MENU( BT_APP_MENU_PBAP_CLIENT );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
   IMENUCTL_SetSel( pMe->m_pIMenu, MENU_SEL );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -5608,7 +5609,7 @@ static void BTApp_PBAPBuildServerMenu(CBTApp * pMe)
   if ( pMe->mPBAP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
-    ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_PBAP_SERVER, 
+    ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_PBAP_SERVER, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
     len = WSTRLEN( pMe->pText2 );
 
@@ -5637,7 +5638,7 @@ static void BTApp_PBAPBuildServerMenu(CBTApp * pMe)
   // Activate menu
   PUSH_MENU( BT_APP_MENU_PBAP_SERVER );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
   IMENUCTL_SetSel( pMe->m_pIMenu, MENU_SEL );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -5665,7 +5666,7 @@ void BTApp_PBAPBuildMainMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_PBAP_TESTS );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -5685,12 +5686,12 @@ void BTApp_PBAPCleanup( CBTApp* pMe )
     pMe->mPBAP.pIFileMgr = NULL;
   }
   // unregister for PBAP notification
-  ISHELL_RegisterNotify( pMe->a.m_pIShell,  
+  ISHELL_RegisterNotify( pMe->m_pShell,  
                          AEECLSID_BLUETOOTH_APP,
                          AEECLSID_BLUETOOTH_NOTIFIER, 
                          0 );
   uBTApp_NMask &= ~NMASK_BT_PBAP;
-  ISHELL_RegisterNotify( pMe->a.m_pIShell,  
+  ISHELL_RegisterNotify( pMe->m_pShell,  
                          AEECLSID_BLUETOOTH_APP,
                          AEECLSID_BLUETOOTH_NOTIFIER, 
                          uBTApp_NMask );
@@ -5707,15 +5708,15 @@ boolean BTApp_PBAPInit( CBTApp* pMe )
 
   if ( init_done == FALSE )
   {
-    if ( (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_PBAP, 
+    if ( (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BLUETOOTH_PBAP, 
                                  (void**)&pMe->mPBAP.po ) == SUCCESS) &&
-         (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_FILEMGR, 
+         (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_FILEMGR, 
                                  (void**)&pMe->mPBAP.pIFileMgr ) == SUCCESS) &&
-         (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_ADDRBOOK, 
+         (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_ADDRBOOK, 
                                  (void**)&pMe->mPBAP.pAddrbook ) == SUCCESS) &&
-         (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_CALLHISTORY, 
+         (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_CALLHISTORY, 
                                  (void**)&pMe->mPBAP.pCallHist ) == SUCCESS) &&
-         (ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+         (ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                                  AEECLSID_BLUETOOTH_NOTIFIER, 
                                  uNMask ) == SUCCESS) )
     {
@@ -5723,9 +5724,9 @@ boolean BTApp_PBAPInit( CBTApp* pMe )
       init_done = TRUE;
     }
 
-	if ( (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_CARD, 
+	if ( (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_CARD, 
 									 (void**)&pICard ) != SUCCESS ) ||
-			 (ISHELL_RegisterNotify( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP,
+			 (ISHELL_RegisterNotify( pMe->m_pShell, AEECLSID_BLUETOOTH_APP,
 									 AEECLSID_CARD_NOTIFIER, 
 									 uNMaskCard ) != SUCCESS ) )
 		{
@@ -5797,21 +5798,21 @@ boolean BTApp_PBAPBuildMenu( CBTApp* pMe, BTAppMenuType menu )
     case BT_APP_MENU_PBAP_FILTER:
     {
       PUSH_MENU( BT_APP_MENU_PBAP_FILTER );
-      built = (ISHELL_CreateDialog( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+      built = (ISHELL_CreateDialog( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                                     IDD_BT_TEXT_EDIT, NULL ) == AEE_SUCCESS );
       break;
     }
     case BT_APP_MENU_PBAP_MAX_LIST_COUNT:
     {
       PUSH_MENU( BT_APP_MENU_PBAP_MAX_LIST_COUNT );
-      built = (ISHELL_CreateDialog( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+      built = (ISHELL_CreateDialog( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                                     IDD_BT_TEXT_EDIT, NULL ) == AEE_SUCCESS );
       break;
     }
     case BT_APP_MENU_PBAP_LIST_START_OFFSET:
     {
       PUSH_MENU( BT_APP_MENU_PBAP_LIST_START_OFFSET );
-      built = (ISHELL_CreateDialog( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+      built = (ISHELL_CreateDialog( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                                     IDD_BT_TEXT_EDIT, NULL ) == AEE_SUCCESS );
       break;
     }
@@ -5828,7 +5829,7 @@ boolean BTApp_PBAPBuildMenu( CBTApp* pMe, BTAppMenuType menu )
     case BT_APP_MENU_PBAP_SEARCH_VALUE:
     {
       PUSH_MENU( BT_APP_MENU_PBAP_SEARCH_VALUE );
-      built = (ISHELL_CreateDialog( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+      built = (ISHELL_CreateDialog( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                                     IDD_BT_TEXT_EDIT, NULL ) == AEE_SUCCESS );
       break;
     }
@@ -6428,7 +6429,7 @@ void BTApp_PBAPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
            (TOP_MENU == BT_APP_MENU_PBAP_PASSWORD) )
       {
         /* this could be because of failure in authentication, end dialog */
-        if ( ISHELL_EndDialog( pMe->a.m_pIShell ) == EFAILED )
+        if ( ISHELL_EndDialog( pMe->m_pShell ) == EFAILED )
         {
           MSG_ERROR( "TextEditSave - ISHELL_EndDialog() failed", 0, 0, 0 );
         }

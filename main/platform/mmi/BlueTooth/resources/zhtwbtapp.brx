@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="btapp" VERSION="1">
 <Strings Encoding="Unicode">
-	<STRING Id="1" Name="IDS_BT_TITLE">
+	<String Id="1" Name="IDS_BT_TITLE">
 		<Text>Bluetooth</Text>
-	</STRING>
-	<STRING Id="2" Name="IDS_AUDIO_GATEWAY">
+	</String>
+	<String Id="2" Name="IDS_AUDIO_GATEWAY">
 		<Text>Audio Gateway</Text>
-	</STRING>
-	<STRING Id="3" Name="IDS_NETWORK_ACCESS">
+	</String>
+	<String Id="3" Name="IDS_NETWORK_ACCESS">
 		<Text>Network Access</Text>
-	</STRING>
-	<STRING Id="4" Name="IDS_DEVICES">
+	</String>
+	<String Id="4" Name="IDS_DEVICES">
 		<Text>Devices</Text>
-	</STRING>
-	<STRING Id="5" Name="IDS_TESTS">
+	</String>
+	<String Id="5" Name="IDS_TESTS">
 		<Text>Tests</Text>
-	</STRING>
-	<STRING Id="6" Name="IDS_MY_INFO">
+	</String>
+	<String Id="6" Name="IDS_MY_INFO">
 		<Text>My Info</Text>
-	</STRING>
-	<STRING Id="7" Name="IDS_SETTINGS">
+	</String>
+	<String Id="7" Name="IDS_SETTINGS">
 		<Text>Settings</Text>
-	</STRING>
-	<STRING Id="8" Name="IDS_ENABLING">
+	</String>
+	<String Id="8" Name="IDS_ENABLING">
 		<Text>Enabling</Text>
-	</STRING>
-	<STRING Id="9" Name="IDS_BONDABLE">
+	</String>
+	<String Id="9" Name="IDS_BONDABLE">
 		<Text>Bondable</Text>
-	</STRING>
-	<STRING Id="10" Name="IDS_BT_ON">
+	</String>
+	<String Id="10" Name="IDS_BT_ON">
 		<Text>Turn BT On</Text>
-	</STRING>
-	<STRING Id="11" Name="IDS_BT_OFF">
+	</String>
+	<String Id="11" Name="IDS_BT_OFF">
 		<Text>Turn BT Off</Text>
-	</STRING>
-	<STRING Id="12" Name="IDS_ACTIVE">
+	</String>
+	<String Id="12" Name="IDS_ACTIVE">
 		<Text>Active</Text>
-	</STRING>
-	<STRING Id="13" Name="IDS_PASSIVE">
+	</String>
+	<String Id="13" Name="IDS_PASSIVE">
 		<Text>Passive</Text>
 	</String>
 	<STRING Id="14" Name="IDS_BT_OK">
@@ -48,427 +48,439 @@
 	</STRING>
 	<String Id="16" Name="IDS_ON">
 		<Text>On</Text>
-	</STRING>
-	<STRING Id="17" Name="IDS_ON_TIMED">
+	</String>
+	<String Id="17" Name="IDS_ON_TIMED">
 		<Text>On (for 3 minutes)</Text>
-	</STRING>
-	<STRING Id="18" Name="IDS_OFF">
+	</String>
+	<String Id="18" Name="IDS_OFF">
 		<Text>Off</Text>
-	</STRING>
-	<STRING Id="19" Name="IDS_TYPE">
+	</String>
+	<String Id="19" Name="IDS_TYPE">
 		<Text>Type</Text>
-	</STRING>
-	<STRING Id="20" Name="IDS_MODE">
+	</String>
+	<String Id="20" Name="IDS_MODE">
 		<Text>Mode</Text>
-	</STRING>
-	<STRING Id="21" Name="IDS_TIME">
+	</String>
+	<String Id="21" Name="IDS_TIME">
 		<Text>Time</Text>
-	</STRING>
-	<STRING Id="22" Name="IDS_SPKR">
+	</String>
+	<String Id="22" Name="IDS_SPKR">
 		<Text>Spkr</Text>
-	</STRING>
-	<STRING Id="23" Name="IDS_MIC">
+	</String>
+	<String Id="23" Name="IDS_MIC">
 		<Text>Mic</Text>
-	</STRING>
-	<STRING Id="24" Name="IDS_CONN_MODE">
+	</String>
+	<String Id="24" Name="IDS_CONN_MODE">
 		<Text>Connection Mode</Text>
-	</STRING>
-	<STRING Id="25" Name="IDS_IDLE_TO">
+	</String>
+	<String Id="25" Name="IDS_IDLE_TO">
 		<Text>Idle Timeout</Text>
-	</STRING>
-	<STRING Id="26" Name="IDS_SPKR_VOL">
+	</String>
+	<String Id="26" Name="IDS_SPKR_VOL">
 		<Text>Speaker Volume</Text>
-	</STRING>
-	<STRING Id="27" Name="IDS_MIC_VOL">
+	</String>
+	<String Id="27" Name="IDS_MIC_VOL">
 		<Text>Microphone Volume</Text>
-	</STRING>
-	<STRING Id="28" Name="IDS_BD_ADDR">
+	</String>
+	<String Id="28" Name="IDS_BD_ADDR">
 		<Text>BD Address</Text>
-	</STRING>
-	<STRING Id="29" Name="IDS_BT_NAME">
+	</String>
+	<String Id="29" Name="IDS_BT_NAME">
 		<Text>BT Name</Text>
-	</STRING>
-	<STRING Id="30" Name="IDS_SEARCHING">
+	</String>
+	<String Id="30" Name="IDS_SEARCHING">
 		<Text>Searching...</Text>
-	</STRING>
-	<STRING Id="31" Name="IDS_NOT_AVAIL">
+	</String>
+	<String Id="31" Name="IDS_NOT_AVAIL">
 		<Text>Not Available</Text>
-	</STRING>
-	<STRING Id="32" Name="IDS_DEVICE_SEARCH">
+	</String>
+	<String Id="32" Name="IDS_DEVICE_SEARCH">
 		<Text>Device Search</Text>
-	</STRING>
-	<STRING Id="33" Name="IDS_DEVICE_ALL">
+	</String>
+	<String Id="33" Name="IDS_DEVICE_ALL">
 		<Text>All Devices</Text>
-	</STRING>
-	<STRING Id="34" Name="IDS_DEVICE_AUDIO">
+	</String>
+	<String Id="34" Name="IDS_DEVICE_AUDIO">
 		<Text>Audio Devices</Text>
-	</STRING>
-	<STRING Id="35" Name="IDS_DEVICE_NETWORK">
+	</String>
+	<String Id="35" Name="IDS_DEVICE_NETWORK">
 		<Text>Network Devices</Text>
-	</STRING>
-	<STRING Id="36" Name="IDS_BY_BD_ADDR">
+	</String>
+	<String Id="36" Name="IDS_BY_BD_ADDR">
 		<Text>By BD Address</Text>
-	</STRING>
-	<STRING Id="37" Name="IDS_ALL">
+	</String>
+	<String Id="37" Name="IDS_ALL">
 		<Text>All</Text>
-	</STRING>
-	<STRING Id="38" Name="IDS_BONDED">
+	</String>
+	<String Id="38" Name="IDS_BONDED">
 		<Text>Bonded</Text>
-	</STRING>
-	<STRING Id="39" Name="IDS_AUDIO">
+	</String>
+	<String Id="39" Name="IDS_AUDIO">
 		<Text>Audio</Text>
-	</STRING>
-	<STRING Id="40" Name="IDS_NETWORK">
+	</String>
+	<String Id="40" Name="IDS_NETWORK">
 		<Text>Network</Text>
-	</STRING>
-	<STRING Id="41" Name="IDS_REMOVE">
+	</String>
+	<String Id="41" Name="IDS_REMOVE">
 		<Text>Remove</Text>
-	</STRING>
-	<STRING Id="42" Name="IDS_BOND">
+	</String>
+	<String Id="42" Name="IDS_BOND">
 		<Text>Bond</Text>
-	</STRING>
-	<STRING Id="43" Name="IDS_UNBOND">
+	</String>
+	<String Id="43" Name="IDS_UNBOND">
 		<Text>Unbond</Text>
-	</STRING>
-	<STRING Id="44" Name="IDS_KEEP">
+	</String>
+	<String Id="44" Name="IDS_KEEP">
 		<Text>Keep</Text>
-	</STRING>
-	<STRING Id="45" Name="IDS_DISCARD">
+	</String>
+	<String Id="45" Name="IDS_DISCARD">
 		<Text>Discard</Text>
-	</STRING>
-	<STRING Id="46" Name="IDS_LIST_ALL">
+	</String>
+	<String Id="46" Name="IDS_LIST_ALL">
 		<Text>List All</Text>
-	</STRING>
-	<STRING Id="47" Name="IDS_LIST_BONDED">
+	</String>
+	<String Id="47" Name="IDS_LIST_BONDED">
 		<Text>List Bonded Devices</Text>
-	</STRING>
-	<STRING Id="48" Name="IDS_REMOVE_ALL">
+	</String>
+	<String Id="48" Name="IDS_REMOVE_ALL">
 		<Text>Remove All</Text>
-	</STRING>
-	<STRING Id="49" Name="IDS_UNBOND_ALL">
+	</String>
+	<String Id="49" Name="IDS_UNBOND_ALL">
 		<Text>Unbond All</Text>
-	</STRING>
-	<STRING Id="50" Name="IDS_EDIT_NAME">
+	</String>
+	<String Id="50" Name="IDS_EDIT_NAME">
 		<Text>Edit Name</Text>
-	</STRING>
-	<STRING Id="51" Name="IDS_PASS_KEY">
+	</String>
+	<String Id="51" Name="IDS_PASS_KEY">
 		<Text>Pass Key for %s</Text>
-	</STRING>
-	<STRING Id="52" Name="IDS_DISCOVERED_DEVICES">
+	</String>
+	<String Id="52" Name="IDS_DISCOVERED_DEVICES">
 		<Text>Discovered Devices</Text>
-	</STRING>
-	<STRING Id="53" Name="IDS_BONDED_DEVICES">
+	</String>
+	<String Id="53" Name="IDS_BONDED_DEVICES">
 		<Text>Bonded Devices</Text>
-	</STRING>
-	<STRING Id="54" Name="IDS_KNOWN_DEVICES">
+	</String>
+	<String Id="54" Name="IDS_KNOWN_DEVICES">
 		<Text>Known Devices</Text>
-	</STRING>
-	<STRING Id="55" Name="IDS_UNKNOWN">
+	</String>
+	<String Id="55" Name="IDS_UNKNOWN">
 		<Text>Unknown</Text>
-	</STRING>
-	<STRING Id="56" Name="IDS_AUDIO_TRANSFER">
+	</String>
+	<String Id="56" Name="IDS_AUDIO_TRANSFER">
 		<Text>Audio Transfer</Text>
-	</STRING>
-	<STRING Id="57" Name="IDS_DEVICE_TYPE">
+	</String>
+	<String Id="57" Name="IDS_DEVICE_TYPE">
 		<Text>Device Type</Text>
-	</STRING>
-	<STRING Id="58" Name="IDS_AUTOMATIC">
+	</String>
+	<String Id="58" Name="IDS_AUTOMATIC">
 		<Text>Automatic</Text>
-	</STRING>
-	<STRING Id="59" Name="IDS_HEADSET">
+	</String>
+	<String Id="59" Name="IDS_HEADSET">
 		<Text>Headset</Text>
-	</STRING>
-	<STRING Id="60" Name="IDS_HANDSFREE">
+	</String>
+	<String Id="60" Name="IDS_HANDSFREE">
 		<Text>Hands-Free</Text>
-	</STRING>
-	<STRING Id="61" Name="IDS_SECURITY">
+	</String>
+	<String Id="61" Name="IDS_SECURITY">
 		<Text>Security</Text>
-	</STRING>
-	<STRING Id="62" Name="IDS_SECURITY_NONE">
+	</String>
+	<String Id="62" Name="IDS_SECURITY_NONE">
 		<Text>No Security</Text>
-	</STRING>
-	<STRING Id="63" Name="IDS_SECURITY_AUTH">
+	</String>
+	<String Id="63" Name="IDS_SECURITY_AUTH">
 		<Text>Authentication</Text>
-	</STRING>
-	<STRING Id="64" Name="IDS_SECURITY_AUTH_ENC">
+	</String>
+	<String Id="64" Name="IDS_SECURITY_AUTH_ENC">
 		<Text>Authentication + Encryption</Text>
+	</String>
+	<STRING Id="65" Name="IDS_BT_YES_EX">
+		<Text>Yes</Text>
 	</STRING>
-	<STRING Id="67" Name="IDS_VR">
+	<STRING Id="66" Name="IDS_BT_NO_EX">
+		<Text>No</Text>
+	</STRING>
+	<String Id="67" Name="IDS_VR">
 		<Text>VR</Text>
-	</STRING>
-	<STRING Id="68" Name="IDS_VR_CAPABLE">
+	</String>
+	<String Id="68" Name="IDS_VR_CAPABLE">
 		<Text>VR Capable</Text>
-	</STRING>
-	<STRING Id="69" Name="IDS_CONNECT">
+	</String>
+	<String Id="69" Name="IDS_CONNECT">
 		<Text>Connect</Text>
-	</STRING>
-	<STRING Id="70" Name="IDS_DISCONNECT">
+	</String>
+	<String Id="70" Name="IDS_DISCONNECT">
 		<Text>Disconnect</Text>
+	</String>
+	<STRING Id="71" Name="IDS_BT_CLOSE">
+		<Text>Close</Text>
 	</STRING>
-	<STRING Id="72" Name="IDS_LISTENING">
+	<String Id="72" Name="IDS_LISTENING">
 		<Text>Listening</Text>
-	</STRING>
-	<STRING Id="73" Name="IDS_CONNECTING">
+	</String>
+	<String Id="73" Name="IDS_CONNECTING">
 		<Text>Connecting</Text>
-	</STRING>
-	<STRING Id="74" Name="IDS_CONNECTED">
+	</String>
+	<String Id="74" Name="IDS_CONNECTED">
 		<Text>Connected</Text>
-	</STRING>
-	<STRING Id="75" Name="IDS_DISCONNECTED">
+	</String>
+	<String Id="75" Name="IDS_DISCONNECTED">
 		<Text>Disconnected</Text>
-	</STRING>
-	<STRING Id="76" Name="IDS_OPTIONS">
+	</String>
+	<String Id="76" Name="IDS_OPTIONS">
 		<Text>Options</Text>
-	</STRING>
-	<STRING Id="77" Name="IDS_ACTIVE_ANY_DEVICE">
+	</String>
+	<String Id="77" Name="IDS_ACTIVE_ANY_DEVICE">
 		<Text>Active, Any Device</Text>
-	</STRING>
-	<STRING Id="78" Name="IDS_HCI_MODE">
+	</String>
+	<String Id="78" Name="IDS_HCI_MODE">
 		<Text>Set HCI Mode</Text>
-	</STRING>
-	<STRING Id="79" Name="IDS_USE">
+	</String>
+	<String Id="79" Name="IDS_USE">
 		<Text>Use</Text>
-	</STRING>
-	<STRING Id="80" Name="IDS_APIT">
+	</String>
+	<String Id="80" Name="IDS_APIT">
 		<Text>APIT</Text>
-	</STRING>
-	<STRING Id="81" Name="IDS_PUT">
+	</String>
+	<String Id="81" Name="IDS_PUT">
 		<Text>Put</Text>
-	</STRING>
-	<STRING Id="82" Name="IDS_GET">
+	</String>
+	<String Id="82" Name="IDS_GET">
 		<Text>Get</Text>
-	</STRING>
-	<STRING Id="83" Name="IDS_DELETE">
+	</String>
+	<String Id="83" Name="IDS_DELETE">
 		<Text>Delete</Text>
-	</STRING>
-	<STRING Id="84" Name="IDS_PUSH">
+	</String>
+	<String Id="84" Name="IDS_PUSH">
 		<Text>Push</Text>
-	</STRING>
-	<STRING Id="85" Name="IDS_PULL">
+	</String>
+	<String Id="85" Name="IDS_PULL">
 		<Text>Pull</Text>
-	</STRING>
-	<STRING Id="86" Name="IDS_REGISTER">
+	</String>
+	<String Id="86" Name="IDS_REGISTER">
 		<Text>Register</Text>
-	</STRING>
-	<STRING Id="87" Name="IDS_DEREGISTER">
+	</String>
+	<String Id="87" Name="IDS_DEREGISTER">
 		<Text>De-Register</Text>
-	</STRING>
-	<STRING Id="88" Name="IDS_DISCOVERABLE">
+	</String>
+	<String Id="88" Name="IDS_DISCOVERABLE">
 		<Text>Discoverable</Text>
-	</STRING>
-	<STRING Id="89" Name="IDS_FTM">
+	</String>
+	<String Id="89" Name="IDS_FTM">
 		<Text>FTM</Text>
-	</STRING>
-	<STRING Id="90" Name="IDS_BUSINESS_CARD_EXCHANGE">
+	</String>
+	<String Id="90" Name="IDS_BUSINESS_CARD_EXCHANGE">
 		<Text>Business Card Exchange</Text>
-	</STRING>
-	<STRING Id="91" Name="IDS_OBEX_SERVERS">
+	</String>
+	<String Id="91" Name="IDS_OBEX_SERVERS">
 		<Text>OBEX Servers</Text>
-	</STRING>
-	<STRING Id="92" Name="IDS_PUT_FOLDER">
+	</String>
+	<String Id="92" Name="IDS_PUT_FOLDER">
 		<Text>Put Folder</Text>
-	</STRING>
-	<STRING Id="93" Name="IDS_GET_FOLDER">
+	</String>
+	<String Id="93" Name="IDS_GET_FOLDER">
 		<Text>Get Folder</Text>
-	</STRING>
-	<STRING Id="94" Name="IDS_PASSWORD">
+	</String>
+	<String Id="94" Name="IDS_PASSWORD">
 		<Text>Password</Text>
-	</STRING>
-	<STRING Id="95" Name="IDS_AUTHENTICATE">
+	</String>
+	<String Id="95" Name="IDS_AUTHENTICATE">
 		<Text>Authenticate</Text>
-	</STRING>
-	<STRING Id="96" Name="IDS_SRCH_BD_ADDR">
+	</String>
+	<String Id="96" Name="IDS_SRCH_BD_ADDR">
 		<Text>Least significant digits of BD Address</Text>
-	</STRING>
-	<STRING Id="97" Name="IDS_TEST_MODE">
+	</String>
+	<String Id="97" Name="IDS_TEST_MODE">
 		<Text>Enter Test Mode</Text>
-	</STRING>
-	<STRING Id="98" Name="IDS_ENABLE_SERVICE_SECURITY">
+	</String>
+	<String Id="98" Name="IDS_ENABLE_SERVICE_SECURITY">
 		<Text>Enable Service Security</Text>
-	</STRING>
-	<STRING Id="99" Name="IDS_JOB_ID">
+	</String>
+	<String Id="99" Name="IDS_JOB_ID">
 		<Text>Job ID</Text>
-	</STRING>
-	<STRING Id="100" Name="IDS_BROWSE_SVC">
+	</String>
+	<String Id="100" Name="IDS_BROWSE_SVC">
 		<Text>Browse Service</Text>
-	</STRING>
-	<STRING Id="101" Name="IDS_SEARCH_SVC">
+	</String>
+	<String Id="101" Name="IDS_SEARCH_SVC">
 		<Text>Search Service</Text>
-	</STRING>
-	<STRING Id="102" Name="IDS_REGISTER_SVC">
+	</String>
+	<String Id="102" Name="IDS_REGISTER_SVC">
 		<Text>Register Service</Text>
-	</STRING>
-	<STRING Id="103" Name="IDS_UNREGISTER_SVC">
+	</String>
+	<String Id="103" Name="IDS_UNREGISTER_SVC">
 		<Text>Unregister Service</Text>
-	</STRING>
-	<STRING Id="106" Name="IDS_OPP">
+	</String>
+	<String Id="106" Name="IDS_OPP">
 		<Text>OPP</Text>
-	</STRING>
-	<STRING Id="107" Name="IDS_OPP_TESTS">
+	</String>
+	<String Id="107" Name="IDS_OPP_TESTS">
 		<Text>OPP Tests</Text>
-	</STRING>
-	<STRING Id="108" Name="IDS_OPP_SERVER">
+	</String>
+	<String Id="108" Name="IDS_OPP_SERVER">
 		<Text>OPP Server</Text>
-	</STRING>
-	<STRING Id="109" Name="IDS_OPP_CLIENT">
+	</String>
+	<String Id="109" Name="IDS_OPP_CLIENT">
 		<Text>OPP Client</Text>
-	</STRING>
-	<STRING Id="110" Name="IDS_FTP">
+	</String>
+	<String Id="110" Name="IDS_FTP">
 		<Text>FTP</Text>
-	</STRING>
-	<STRING Id="111" Name="IDS_FTP_TESTS">
+	</String>
+	<String Id="111" Name="IDS_FTP_TESTS">
 		<Text>FTP Tests</Text>
-	</STRING>
-	<STRING Id="112" Name="IDS_FTP_SERVER">
+	</String>
+	<String Id="112" Name="IDS_FTP_SERVER">
 		<Text>FTP Server</Text>
-	</STRING>
-	<STRING Id="113" Name="IDS_FTP_CLIENT">
+	</String>
+	<String Id="113" Name="IDS_FTP_CLIENT">
 		<Text>FTP Client</Text>
-	</STRING>
-	<STRING Id="114" Name="IDS_BROWSE_SVC_RESULTS">
+	</String>
+	<String Id="114" Name="IDS_BROWSE_SVC_RESULTS">
 		<Text>Cls/SCN/Service Name</Text>
-	</STRING>
-	<STRING Id="115" Name="IDS_SRCH_SVC_RESULTS">
+	</String>
+	<String Id="115" Name="IDS_SRCH_SVC_RESULTS">
 		<Text>Profile/Version</Text>
-	</STRING>
-	<STRING Id="116" Name="IDS_OBEX_TESTS">
+	</String>
+	<String Id="116" Name="IDS_OBEX_TESTS">
 		<Text>OBEX</Text>
-	</STRING>
-	<STRING Id="117" Name="IDS_TCS_TESTS">
+	</String>
+	<String Id="117" Name="IDS_TCS_TESTS">
 		<Text>TCS-BIN</Text>
-	</STRING>
-	<STRING Id="118" Name="IDS_CTP">
+	</String>
+	<String Id="118" Name="IDS_CTP">
 		<Text>CTP</Text>
-	</STRING>
-	<STRING Id="119" Name="IDS_ICP">
+	</String>
+	<String Id="119" Name="IDS_ICP">
 		<Text>ICP</Text>
-	</STRING>
-	<STRING Id="120" Name="IDS_CTP_TESTS">
+	</String>
+	<String Id="120" Name="IDS_CTP_TESTS">
 		<Text>CTP</Text>
-	</STRING>
-	<STRING Id="121" Name="IDS_ICP_TESTS">
+	</String>
+	<String Id="121" Name="IDS_ICP_TESTS">
 		<Text>ICP</Text>
-	</STRING>
-	<STRING Id="122" Name="IDS_CTP_EST_CALL">
+	</String>
+	<String Id="122" Name="IDS_CTP_EST_CALL">
 		<Text>Establish Call</Text>
-	</STRING>
-	<STRING Id="123" Name="IDS_ICP_EST_CALL">
+	</String>
+	<String Id="123" Name="IDS_ICP_EST_CALL">
 		<Text>Establish Call</Text>
-	</STRING>
-	<STRING Id="124" Name="IDS_CTP_MSG_EST_CALL_FAILED">
+	</String>
+	<String Id="124" Name="IDS_CTP_MSG_EST_CALL_FAILED">
 		<Text>Failed to establish CTP call!</Text>
-	</STRING>
-	<STRING Id="125" Name="IDS_ICP_MSG_EST_CALL_FAILED">
+	</String>
+	<String Id="125" Name="IDS_ICP_MSG_EST_CALL_FAILED">
 		<Text>Failed to establish ICP call!</Text>
-	</STRING>
-	<STRING Id="126" Name="IDS_MSG_TCS_CLEAR_CALL_FAILED">
+	</String>
+	<String Id="126" Name="IDS_MSG_TCS_CLEAR_CALL_FAILED">
 		<Text>ClearCall Failed!</Text>
-	</STRING>
-	<STRING Id="127" Name="IDS_ICP_CLEAR_CALL">
+	</String>
+	<String Id="127" Name="IDS_ICP_CLEAR_CALL">
 		<Text>Clear Call</Text>
-	</STRING>
-	<STRING Id="128" Name="IDS_DEVICE_TELEPHONY">
+	</String>
+	<String Id="128" Name="IDS_DEVICE_TELEPHONY">
 		<Text>Telephony Devices</Text>
-	</STRING>
-	<STRING Id="129" Name="IDS_MSG_NO_TELEPHONY_DEV">
+	</String>
+	<String Id="129" Name="IDS_MSG_NO_TELEPHONY_DEV">
 		<Text>No Telephony device in database</Text>
-	</STRING>
-	<STRING Id="130" Name="IDS_MSG_TCS_CALL_SETUP_FAILED">
+	</String>
+	<String Id="130" Name="IDS_MSG_TCS_CALL_SETUP_FAILED">
 		<Text>Call Setup Failed!</Text>
-	</STRING>
-	<STRING Id="131" Name="IDS_MSG_TCS_CALL_SETUP_SUCCESS">
+	</String>
+	<String Id="131" Name="IDS_MSG_TCS_CALL_SETUP_SUCCESS">
 		<Text>Call Setup Successful!</Text>
-	</STRING>
-	<STRING Id="132" Name="IDS_FTP_CREATE_FOLDER">
+	</String>
+	<String Id="132" Name="IDS_FTP_CREATE_FOLDER">
 		<Text>Create Folder</Text>
-	</STRING>
-	<STRING Id="133" Name="IDS_FTP_LIST_FOLDER">
+	</String>
+	<String Id="133" Name="IDS_FTP_LIST_FOLDER">
 		<Text>Remote Browsing</Text>
-	</STRING>
-	<STRING Id="134" Name="IDS_FTP_MSG_FOLDER_CREATED">
+	</String>
+	<String Id="134" Name="IDS_FTP_MSG_FOLDER_CREATED">
 		<Text>Folder creation successful</Text>
-	</STRING>
-	<STRING Id="135" Name="IDS_FTP_MSG_FOLDER_CREATION_FAILED">
+	</String>
+	<String Id="135" Name="IDS_FTP_MSG_FOLDER_CREATION_FAILED">
 		<Text>Folder creation failed</Text>
-	</STRING>
-	<STRING Id="136" Name="IDS_ENABLE">
+	</String>
+	<String Id="136" Name="IDS_ENABLE">
 		<Text>Enable</Text>
-	</STRING>
-	<STRING Id="137" Name="IDS_DISABLE">
+	</String>
+	<String Id="137" Name="IDS_DISABLE">
 		<Text>Disable</Text>
-	</STRING>
-	<STRING Id="138" Name="IDS_RADIO_ON">
+	</String>
+	<String Id="138" Name="IDS_RADIO_ON">
 		<Text>Turn Radio On</Text>
-	</STRING>
-	<STRING Id="139" Name="IDS_RADIO_OFF">
+	</String>
+	<String Id="139" Name="IDS_RADIO_OFF">
 		<Text>Turn Radio Off</Text>
-	</STRING>
-	<STRING Id="140" Name="IDS_VISIBILITY_ON">
+	</String>
+	<String Id="140" Name="IDS_VISIBILITY_ON">
 		<Text>Turn Visibility On</Text>
-	</STRING>
-	<STRING Id="141" Name="IDS_VISIBILITY_OFF">
+	</String>
+	<String Id="141" Name="IDS_VISIBILITY_OFF">
 		<Text>Turn Visibility Off</Text>
-	</STRING>
-	<STRING Id="142" Name="IDS_MASTER_CONTROL">
+	</String>
+	<String Id="142" Name="IDS_MASTER_CONTROL">
 		<Text>Master Control</Text>
-	</STRING>
-	<STRING Id="143" Name="IDS_DFLT_DIAL_STR">
+	</String>
+	<String Id="143" Name="IDS_DFLT_DIAL_STR">
 		<Text>Default Dial String</Text>
-	</STRING>
-	<STRING Id="144" Name="IDS_ALLOW_ROLE_SWITCH">
+	</String>
+	<String Id="144" Name="IDS_ALLOW_ROLE_SWITCH">
 		<Text>Allow Incoming Role Switch</Text>
-	</STRING>
-	<STRING Id="145" Name="IDS_DISALLOW_ROLE_SWITCH">
+	</String>
+	<String Id="145" Name="IDS_DISALLOW_ROLE_SWITCH">
 		<Text>Disallow Incoming Role Switch</Text>
-	</STRING>
-	<STRING Id="147" Name="IDS_FTP_SRV_ALLOW_BROWSE">
+	</String>
+	<String Id="147" Name="IDS_FTP_SRV_ALLOW_BROWSE">
 		<Text>Allow Browse</Text>
-	</STRING>
-	<STRING Id="148" Name="IDS_FTP_SRV_READ_ONLY">
+	</String>
+	<String Id="148" Name="IDS_FTP_SRV_READ_ONLY">
 		<Text>Read Only</Text>
+	</String>
+	<STRING Id="149" Name="IDS_BT_SELECT">
+		<Text>Select</Text>
 	</STRING>
-	<STRING Id="150" Name="IDS_FTP_MOVE_TO_FOLDER">
+	<String Id="150" Name="IDS_FTP_MOVE_TO_FOLDER">
 		<Text>Move to Folder</Text>
-	</STRING>
-	<STRING Id="151" Name="IDS_FTP_MOVE_TO_ROOT">
+	</String>
+	<String Id="151" Name="IDS_FTP_MOVE_TO_ROOT">
 		<Text>Move to Root</Text>
-	</STRING>
-	<STRING Id="152" Name="IDS_SPP_TESTS">
+	</String>
+	<String Id="152" Name="IDS_SPP_TESTS">
 		<Text>SPP Tests</Text>
-	</STRING>
-	<STRING Id="153" Name="IDS_SPP_SERVER">
+	</String>
+	<String Id="153" Name="IDS_SPP_SERVER">
 		<Text>SPP Server</Text>
-	</STRING>
-	<STRING Id="154" Name="IDS_SPP_CLIENT">
+	</String>
+	<String Id="154" Name="IDS_SPP_CLIENT">
 		<Text>SPP Client</Text>
-	</STRING>
-	<STRING Id="155" Name="IDS_SPP_SETTINGS">
+	</String>
+	<String Id="155" Name="IDS_SPP_SETTINGS">
 		<Text>Bytes To Send</Text>
-	</STRING>
-	<STRING Id="156" Name="IDS_SPP_DATA_SIZE_THOUSAND">
+	</String>
+	<String Id="156" Name="IDS_SPP_DATA_SIZE_THOUSAND">
 		<Text>2K</Text>
-	</STRING>
-	<STRING Id="157" Name="IDS_SPP_DATA_SIZE_MILLION">
+	</String>
+	<String Id="157" Name="IDS_SPP_DATA_SIZE_MILLION">
 		<Text>2M</Text>
-	</STRING>
-	<STRING Id="158" Name="IDS_SPP_DATA_SIZE_BILLION">
+	</String>
+	<String Id="158" Name="IDS_SPP_DATA_SIZE_BILLION">
 		<Text>2G</Text>
-	</STRING>
-	<STRING Id="159" Name="IDS_USERID">
+	</String>
+	<String Id="159" Name="IDS_USERID">
 		<Text>User ID</Text>
-	</STRING>
-	<STRING Id="160" Name="IDS_AUTH_NONE">
+	</String>
+	<String Id="160" Name="IDS_AUTH_NONE">
 		<Text>No Authentication</Text>
-	</STRING>
-	<STRING Id="161" Name="IDS_AUTH_PWD">
+	</String>
+	<String Id="161" Name="IDS_AUTH_PWD">
 		<Text>PIN Authentication</Text>
-	</STRING>
-	<STRING Id="162" Name="IDS_AUTH_USERID_PWD">
+	</String>
+	<String Id="162" Name="IDS_AUTH_USERID_PWD">
 		<Text>UserID and PIN Authentication</Text>
-	</STRING>
-	<STRING Id="163" Name="IDS_PASSIVE_ANY_DEVICE">
+	</String>
+	<String Id="163" Name="IDS_PASSIVE_ANY_DEVICE">
 		<Text>Passive, Any Device</Text>
-	</STRING>
+	</String>
 	<String Id="164" Name="IDS_LIST_CONNECTED">
 		<Text>List Connected Devices</Text>
 	</String>
@@ -481,219 +493,222 @@
 	<String Id="167" Name="IDS_CLEAR_BONDABLE">
 		<Text>Clear Bondable</Text>
 	</String>
-	<STRING Id="200" Name="IDS_SETTINGS_FTP">
+	<String Id="200" Name="IDS_SETTINGS_FTP">
 		<Text>FTP</Text>
-	</STRING>
-	<STRING Id="201" Name="IDS_SETTINGS_BIP">
+	</String>
+	<String Id="201" Name="IDS_SETTINGS_BIP">
 		<Text>BIP</Text>
-	</STRING>
-	<STRING Id="202" Name="IDS_ENABLE_OPP">
+	</String>
+	<String Id="202" Name="IDS_ENABLE_OPP">
 		<Text>OPP Server</Text>
-	</STRING>
-	<STRING Id="203" Name="IDS_ENABLE_FTP">
+	</String>
+	<String Id="203" Name="IDS_ENABLE_FTP">
 		<Text>FTP Server</Text>
-	</STRING>
-	<STRING Id="204" Name="IDS_ENABLE_BIP">
+	</String>
+	<String Id="204" Name="IDS_ENABLE_BIP">
 		<Text>BIP Server</Text>
-	</STRING>
-	<STRING Id="205" Name="IDS_ENABLE_BPP">
+	</String>
+	<String Id="205" Name="IDS_ENABLE_BPP">
 		<Text>BPP Server</Text>
-	</STRING>
-	<STRING Id="206" Name="IDS_HANDSFREE_PRIVATE">
+	</String>
+	<String Id="206" Name="IDS_HANDSFREE_PRIVATE">
 		<Text>Hands-Free-Private</Text>
-	</STRING>
-	<STRING Id="207" Name="IDS_ENABLE_VIDEO_CALL">
+	</String>
+	<String Id="207" Name="IDS_ENABLE_VIDEO_CALL">
 		<Text>Enable Video Call</Text>
-	</STRING>
-	<STRING Id="208" Name="IDS_DISABLE_VIDEO_CALL">
+	</String>
+	<String Id="208" Name="IDS_DISABLE_VIDEO_CALL">
 		<Text>Disable Video Call</Text>
-	</STRING>
-	<STRING Id="209" Name="IDS_ENABLE_SAP">
+	</String>
+	<String Id="209" Name="IDS_ENABLE_SAP">
 		<Text>SAP Server</Text>
-	</STRING>
-	<STRING Id="210" Name="IDS_ENABLE_A2DP">
+	</String>
+	<String Id="210" Name="IDS_ENABLE_A2DP">
 		<Text>Enable A2DP</Text>
-	</STRING>
-	<STRING Id="211" Name="IDS_ENABLE_AVRCP">
+	</String>
+	<String Id="211" Name="IDS_ENABLE_AVRCP">
 		<Text>Enable AVRCP</Text>
-	</STRING>
-	<STRING Id="212" Name="IDS_SWITCH_ROLE">
+	</String>
+	<String Id="212" Name="IDS_SWITCH_ROLE">
 		<Text>Do Role Switch</Text>
-	</STRING>
-	<STRING Id="213" Name="IDS_MASTER">
+	</String>
+	<String Id="213" Name="IDS_MASTER">
 		<Text>Master</Text>
-	</STRING>
-	<STRING Id="214" Name="IDS_SLAVE">
+	</String>
+	<String Id="214" Name="IDS_SLAVE">
 		<Text>Slave</Text>
-	</STRING>
-	<STRING Id="215" Name="IDS_MSG_SWITCH_ROLE_SUCCESS">
+	</String>
+	<String Id="215" Name="IDS_MSG_SWITCH_ROLE_SUCCESS">
 		<Text>Role Switch Cmd Issued Successfully</Text>
-	</STRING>
-	<STRING Id="216" Name="IDS_MSG_SWITCH_ROLE_FAILED">
+	</String>
+	<String Id="216" Name="IDS_MSG_SWITCH_ROLE_FAILED">
 		<Text>Role Switch Failed</Text>
-	</STRING>
-	<STRING Id="217" Name="IDS_MSG_SWITCH_ROLE_NOT_ALLOWED">
+	</String>
+	<String Id="217" Name="IDS_MSG_SWITCH_ROLE_NOT_ALLOWED">
 		<Text>Connected to more than one dev, Role Switch Not Allowed</Text>
-	</STRING>
-	<STRING Id="218" Name="IDS_MSG_NO_LINK_TO_SWITCH_ROLE">
+	</String>
+	<String Id="218" Name="IDS_MSG_NO_LINK_TO_SWITCH_ROLE">
 		<Text>No link to switch role</Text>
-	</STRING>
-	<STRING Id="219" Name="IDS_LABEL_DEV_ROLE">
+	</String>
+	<String Id="219" Name="IDS_LABEL_DEV_ROLE">
 		<Text>Local Dev Role: %s </Text>
-	</STRING>
-	<STRING Id="220" Name="IDS_ENABLE_PBAP">
+	</String>
+	<String Id="220" Name="IDS_ENABLE_PBAP">
 		<Text>PBAP Server</Text>
-	</STRING>
+	</String>
 	<String Id="221" Name="IDS_ENABLE_OBEX">
 		<Text>OBEX Server</Text>
 	</String>
-	<STRING Id="230" Name="IDS_PBAP">
+	<String Id="230" Name="IDS_PBAP">
 		<Text>PBAP</Text>
-	</STRING>
-	<STRING Id="231" Name="IDS_PBAP_TESTS">
+	</String>
+	<String Id="231" Name="IDS_PBAP_TESTS">
 		<Text>PBAP</Text>
-	</STRING>
-	<STRING Id="232" Name="IDS_PBAP_SERVER">
+	</String>
+	<String Id="232" Name="IDS_PBAP_SERVER">
 		<Text>PBAP Server</Text>
-	</STRING>
-	<STRING Id="233" Name="IDS_PBAP_CLIENT">
+	</String>
+	<String Id="233" Name="IDS_PBAP_CLIENT">
 		<Text>PBAP Client</Text>
-	</STRING>
-	<STRING Id="234" Name="IDS_PBAP_VCARD_FORMAT">
+	</String>
+	<String Id="234" Name="IDS_PBAP_VCARD_FORMAT">
 		<Text>Format</Text>
-	</STRING>
-	<STRING Id="235" Name="IDS_PBAP_FILTER">
+	</String>
+	<String Id="235" Name="IDS_PBAP_FILTER">
 		<Text>Filter</Text>
-	</STRING>
-	<STRING Id="236" Name="IDS_PBAP_MAX_LIST_COUNT">
+	</String>
+	<String Id="236" Name="IDS_PBAP_MAX_LIST_COUNT">
 		<Text>List Count</Text>
-	</STRING>
-	<STRING Id="237" Name="IDS_PBAP_LIST_START_OFFSET">
+	</String>
+	<String Id="237" Name="IDS_PBAP_LIST_START_OFFSET">
 		<Text>List Offset</Text>
-	</STRING>
-	<STRING Id="238" Name="IDS_PBAP_SORT_ORDER">
+	</String>
+	<String Id="238" Name="IDS_PBAP_SORT_ORDER">
 		<Text>Sorting Order</Text>
-	</STRING>
-	<STRING Id="239" Name="IDS_PBAP_SEARCH_ATTR">
+	</String>
+	<String Id="239" Name="IDS_PBAP_SEARCH_ATTR">
 		<Text>Search Atribute</Text>
-	</STRING>
-	<STRING Id="240" Name="IDS_PBAP_SEARCH_VALUE">
+	</String>
+	<String Id="240" Name="IDS_PBAP_SEARCH_VALUE">
 		<Text>Search Value</Text>
-	</STRING>
-	<STRING Id="241" Name="IDS_PBAP_VCARD_2_1">
+	</String>
+	<String Id="241" Name="IDS_PBAP_VCARD_2_1">
 		<Text>vCard 2.1</Text>
-	</STRING>
-	<STRING Id="242" Name="IDS_PBAP_VCARD_3_0">
+	</String>
+	<String Id="242" Name="IDS_PBAP_VCARD_3_0">
 		<Text>vCard 3.0</Text>
-	</STRING>
-	<STRING Id="243" Name="IDS_PBAP_SORT_INDEX">
+	</String>
+	<String Id="243" Name="IDS_PBAP_SORT_INDEX">
 		<Text>Indexed</Text>
-	</STRING>
-	<STRING Id="244" Name="IDS_PBAP_SORT_ALPHA">
+	</String>
+	<String Id="244" Name="IDS_PBAP_SORT_ALPHA">
 		<Text>Alphabetical</Text>
-	</STRING>
-	<STRING Id="245" Name="IDS_PBAP_SORT_SOUND">
+	</String>
+	<String Id="245" Name="IDS_PBAP_SORT_SOUND">
 		<Text>Phonetically</Text>
-	</STRING>
-	<STRING Id="246" Name="IDS_PBAP_SORTING">
+	</String>
+	<String Id="246" Name="IDS_PBAP_SORTING">
 		<Text>Sorting Order</Text>
-	</STRING>
-	<STRING Id="247" Name="IDS_PBAP_DOWNLOAD">
+	</String>
+	<String Id="247" Name="IDS_PBAP_DOWNLOAD">
 		<Text>Download PB Object</Text>
-	</STRING>
-	<STRING Id="248" Name="IDS_PBAP_BROWSE">
+	</String>
+	<String Id="248" Name="IDS_PBAP_BROWSE">
 		<Text>Browse PB</Text>
-	</STRING>
-	<STRING Id="249" Name="IDS_PBAP_SEARCH_ATTRIBUTE">
+	</String>
+	<String Id="249" Name="IDS_PBAP_SEARCH_ATTRIBUTE">
 		<Text>Search Attribute</Text>
-	</STRING>
-	<STRING Id="250" Name="IDS_EFS">
+	</String>
+	<String Id="250" Name="IDS_EFS">
 		<Text>Use EFS</Text>
-	</STRING>
-	<STRING Id="251" Name="IDS_MEMORY_CARD">
+	</String>
+	<String Id="251" Name="IDS_MEMORY_CARD">
 		<Text>Use SD Memory Card</Text>
-	</STRING>
-	<STRING Id="252" Name="IDS_PBAP_SEARCH_SOUND">
+	</String>
+	<String Id="252" Name="IDS_PBAP_SEARCH_SOUND">
 		<Text>Sound</Text>
-	</STRING>
-	<STRING Id="260" Name="IDS_PBAP_SEARCH_NAME">
+	</String>
+	<String Id="260" Name="IDS_PBAP_SEARCH_NAME">
 		<Text>Name</Text>
-	</STRING>
-	<STRING Id="261" Name="IDS_PBAP_SEARCH_NUMBER">
+	</String>
+	<String Id="261" Name="IDS_PBAP_SEARCH_NUMBER">
 		<Text>Number</Text>
-	</STRING>
-	<STRING Id="263" Name="IDS_PBAP_SET_CONFIG_OPTIONS">
+	</String>
+	<String Id="263" Name="IDS_PBAP_SET_CONFIG_OPTIONS">
 		<Text>Set Config Options</Text>
-	</STRING>
-	<STRING Id="264" Name="IDS_PBAP_SET_CONFIG_VALUES">
+	</String>
+	<String Id="264" Name="IDS_PBAP_SET_CONFIG_VALUES">
 		<Text>Set Config Values</Text>
-	</STRING>
-	<STRING Id="265" Name="IDS_PBAP_DW_PB">
+	</String>
+	<String Id="265" Name="IDS_PBAP_DW_PB">
 		<Text>PhoneBook</Text>
-	</STRING>
-	<STRING Id="266" Name="IDS_PBAP_DW_ICH">
+	</String>
+	<String Id="266" Name="IDS_PBAP_DW_ICH">
 		<Text>Incoming Calls</Text>
-	</STRING>
-	<STRING Id="267" Name="IDS_PBAP_DW_OCH">
+	</String>
+	<String Id="267" Name="IDS_PBAP_DW_OCH">
 		<Text>Outgoing Calls</Text>
-	</STRING>
-	<STRING Id="268" Name="IDS_PBAP_DW_MCH">
+	</String>
+	<String Id="268" Name="IDS_PBAP_DW_MCH">
 		<Text>Missed Calls</Text>
-	</STRING>
-	<STRING Id="269" Name="IDS_PBAP_DW_CCH">
+	</String>
+	<String Id="269" Name="IDS_PBAP_DW_CCH">
 		<Text>Combined Calls</Text>
-	</STRING>
-	<STRING Id="270" Name="IDS_PBAP_PHONE">
+	</String>
+	<String Id="270" Name="IDS_PBAP_PHONE">
 		<Text>Phone</Text>
-	</STRING>
-	<STRING Id="271" Name="IDS_PBAP_SIM">
+	</String>
+	<String Id="271" Name="IDS_PBAP_SIM">
 		<Text>SIM</Text>
-	</STRING>
-	<STRING Id="272" Name="IDS_PBAP_SELECT_SOURCE">
+	</String>
+	<String Id="272" Name="IDS_PBAP_SELECT_SOURCE">
 		<Text>Select PB Repository</Text>
-	</STRING>
-	<STRING Id="273" Name="IDS_PBAP_MSG_CLIENT_DOWNLOAD_FAILED">
+	</String>
+	<String Id="273" Name="IDS_PBAP_MSG_CLIENT_DOWNLOAD_FAILED">
 		<Text>Downloading PB Failed</Text>
-	</STRING>
-	<STRING Id="274" Name="IDS_PBAP_MSG_PULL_PB_DONE">
+	</String>
+	<String Id="274" Name="IDS_PBAP_MSG_PULL_PB_DONE">
 		<Text>Pull PB Success</Text>
-	</STRING>
-	<STRING Id="275" Name="IDS_PBAP_MSG_SET_PB_FAILED">
+	</String>
+	<String Id="275" Name="IDS_PBAP_MSG_SET_PB_FAILED">
 		<Text>Set PhoneBook Failed</Text>
-	</STRING>
-	<STRING Id="276" Name="IDS_PBAP_MSG_PULL_VCARD_LIST_FAIL">
+	</String>
+	<String Id="276" Name="IDS_PBAP_MSG_PULL_VCARD_LIST_FAIL">
 		<Text>Pull vCard Listing Failed</Text>
-	</STRING>
-	<STRING Id="277" Name="IDS_PBAP_MSG_PULL_VOBJ_FAILED">
+	</String>
+	<String Id="277" Name="IDS_PBAP_MSG_PULL_VOBJ_FAILED">
 		<Text>Pull vCard Entry Failed</Text>
-	</STRING>
-	<STRING Id="278" Name="IDS_PBAP_MSG_PULL_PB_FAILED">
+	</String>
+	<String Id="278" Name="IDS_PBAP_MSG_PULL_PB_FAILED">
 		<Text>Pull PB Object Failed</Text>
-	</STRING>
-	<STRING Id="279" Name="IDS_PBAP_MSG_VOBJ_PULLED">
+	</String>
+	<String Id="279" Name="IDS_PBAP_MSG_VOBJ_PULLED">
 		<Text>vCard Entry Pulled</Text>
-	</STRING>
-	<STRING Id="280" Name="IDS_PBAP_MSG_NO_OF_PB_OBJS">
+	</String>
+	<String Id="280" Name="IDS_PBAP_MSG_NO_OF_PB_OBJS">
 		<Text>No of PB Objects=%s</Text>
-	</STRING>
-	<STRING Id="281" Name="IDS_PBAP_DW_INVALID">
+	</String>
+	<String Id="281" Name="IDS_PBAP_DW_INVALID">
 		<Text>Invalid PhoneBook</Text>
-	</STRING>
-	<STRING Id="282" Name="IDS_PBAP_MSG_MAX_LIST_ZERO">
+	</String>
+	<String Id="282" Name="IDS_PBAP_MSG_MAX_LIST_ZERO">
 		<Text>List empty as MaxListCount is 0. No. of items=%s</Text>
-	</STRING>
-	<STRING Id="283" Name="IDS_PBAP_MSG_ABORT_REQ_FAIL">
+	</String>
+	<String Id="283" Name="IDS_PBAP_MSG_ABORT_REQ_FAIL">
 		<Text>Abort Failed</Text>
-	</STRING>
-	<STRING Id="284" Name="IDS_PBAP_MSG_PULL_VCARD_LIST_DONE">
+	</String>
+	<String Id="284" Name="IDS_PBAP_MSG_PULL_VCARD_LIST_DONE">
 		<Text>Pull vCard Listing Success</Text>
-	</STRING>
-	<STRING Id="500" Name="IDS_HS_BUTTON">
+	</String>
+	<String Id="500" Name="IDS_HS_BUTTON">
 		<Text>HS Button</Text>
+	</String>
+	<STRING Id="501" Name="IDS_BT_IGNORE">
+		<Text>Ignore</Text>
 	</STRING>
-	<STRING Id="502" Name="IDS_INFO_HS_BUTTON">
+	<String Id="502" Name="IDS_INFO_HS_BUTTON">
 		<Text>If a call is not present, should HS button press be ignored when received at connection time? If not, a call will be made using the Default Dial String.</Text>
-	</STRING>
+	</String>
 	<String Id="503" Name="IDS_CONFIG_SCAN_PARAMS">
 		<Text>Config Scan Param</Text>
 	</String>
@@ -913,141 +928,141 @@
 	<String Id="613" Name="IDS_HID_DEVICES">
 		<Text>HID Devices</Text>
 	</String>
-	<STRING Id="1000" Name="IDS_BIP_TESTS">
+	<String Id="1000" Name="IDS_BIP_TESTS">
 		<Text>BIP Tests</Text>
-	</STRING>
-	<STRING Id="1001" Name="IDS_BIP">
+	</String>
+	<String Id="1001" Name="IDS_BIP">
 		<Text>BIP</Text>
-	</STRING>
-	<STRING Id="1002" Name="IDS_BIP_SERVER">
+	</String>
+	<String Id="1002" Name="IDS_BIP_SERVER">
 		<Text>BIP Server</Text>
-	</STRING>
-	<STRING Id="1003" Name="IDS_BIP_CLIENT">
+	</String>
+	<String Id="1003" Name="IDS_BIP_CLIENT">
 		<Text>BIP Client</Text>
-	</STRING>
-	<STRING Id="1004" Name="IDS_BIP_CONNECT_IMAGE_PRINTING">
+	</String>
+	<String Id="1004" Name="IDS_BIP_CONNECT_IMAGE_PRINTING">
 		<Text>Advanced Image Printing</Text>
-	</STRING>
-	<STRING Id="1005" Name="IDS_BIP_CONNECT_IMAGE_PUSH">
+	</String>
+	<String Id="1005" Name="IDS_BIP_CONNECT_IMAGE_PUSH">
 		<Text>Image Push Responder</Text>
-	</STRING>
-	<STRING Id="1006" Name="IDS_BIP_CONNECT_IMAGE_PULL">
+	</String>
+	<String Id="1006" Name="IDS_BIP_CONNECT_IMAGE_PULL">
 		<Text>Image Pull Responder</Text>
-	</STRING>
-	<STRING Id="1007" Name="IDS_BIP_CONNECT_REMOTE_CAMERA">
+	</String>
+	<String Id="1007" Name="IDS_BIP_CONNECT_REMOTE_CAMERA">
 		<Text>Remote Camera</Text>
-	</STRING>
-	<STRING Id="1008" Name="IDS_BIP_CONNECT_AUTOMATIC_ARCHIVE">
+	</String>
+	<String Id="1008" Name="IDS_BIP_CONNECT_AUTOMATIC_ARCHIVE">
 		<Text>Automatic Archive</Text>
-	</STRING>
-	<STRING Id="1009" Name="IDS_BIP_CONNECT_REMOTE_DISPLAY">
+	</String>
+	<String Id="1009" Name="IDS_BIP_CONNECT_REMOTE_DISPLAY">
 		<Text>Remote Display</Text>
-	</STRING>
-	<STRING Id="1010" Name="IDS_BIP_GET_CAPABILITIES">
+	</String>
+	<String Id="1010" Name="IDS_BIP_GET_CAPABILITIES">
 		<Text>Get Capabilities</Text>
-	</STRING>
-	<STRING Id="1011" Name="IDS_BIP_PUT_IMAGE">
+	</String>
+	<String Id="1011" Name="IDS_BIP_PUT_IMAGE">
 		<Text>Put Image</Text>
-	</STRING>
-	<STRING Id="1012" Name="IDS_BIP_PUT_ATTACHMENT">
+	</String>
+	<String Id="1012" Name="IDS_BIP_PUT_ATTACHMENT">
 		<Text>Put Linked Attachment</Text>
-	</STRING>
-	<STRING Id="1013" Name="IDS_BIP_PUT_THUMBNAIL">
+	</String>
+	<String Id="1013" Name="IDS_BIP_PUT_THUMBNAIL">
 		<Text>Put Linked Thumbnail</Text>
-	</STRING>
-	<STRING Id="1014" Name="IDS_A2DP_CONTROL">
+	</String>
+	<String Id="1014" Name="IDS_A2DP_CONTROL">
 		<Text>A2DP Control</Text>
-	</STRING>
-	<STRING Id="1015" Name="IDS_A2DP_SUSPEND_ON_END">
+	</String>
+	<String Id="1015" Name="IDS_A2DP_SUSPEND_ON_END">
 		<Text>Suspend On End</Text>
-	</STRING>
-	<STRING Id="1016" Name="IDS_A2DP_CLOSE_ON_END">
+	</String>
+	<String Id="1016" Name="IDS_A2DP_CLOSE_ON_END">
 		<Text>Close On End</Text>
-	</STRING>
-	<STRING Id="1017" Name="IDS_A2DP_START_DELAY">
+	</String>
+	<String Id="1017" Name="IDS_A2DP_START_DELAY">
 		<Text>Start Delay</Text>
-	</STRING>
-	<STRING Id="1018" Name="IDS_A2DP_HONOR_IN_USE">
+	</String>
+	<String Id="1018" Name="IDS_A2DP_HONOR_IN_USE">
 		<Text>Honor In Use</Text>
-	</STRING>
-	<STRING Id="1019" Name="IDS_A2DP_IGNORE_IN_USE">
+	</String>
+	<String Id="1019" Name="IDS_A2DP_IGNORE_IN_USE">
 		<Text>Ignore In Use</Text>
-	</STRING>
-	<STRING Id="1020" Name="IDS_BIP_GET_IMAGE_LIST">
+	</String>
+	<String Id="1020" Name="IDS_BIP_GET_IMAGE_LIST">
 		<Text>Get Image List</Text>
-	</STRING>
-	<STRING Id="1021" Name="IDS_BIP_GET_IMAGE_PROPERTIES">
+	</String>
+	<String Id="1021" Name="IDS_BIP_GET_IMAGE_PROPERTIES">
 		<Text>Get Image Properties</Text>
-	</STRING>
-	<STRING Id="1022" Name="IDS_BIP_GET_IMAGE">
+	</String>
+	<String Id="1022" Name="IDS_BIP_GET_IMAGE">
 		<Text>Get Image</Text>
-	</STRING>
-	<STRING Id="1023" Name="IDS_BIP_DELETE_IMAGE">
+	</String>
+	<String Id="1023" Name="IDS_BIP_DELETE_IMAGE">
 		<Text>Delete Image</Text>
-	</STRING>
-	<STRING Id="1024" Name="IDS_BIP_GET_ATTACHMENT">
+	</String>
+	<String Id="1024" Name="IDS_BIP_GET_ATTACHMENT">
 		<Text>Get Linked Attachment</Text>
-	</STRING>
-	<STRING Id="1025" Name="IDS_BIP_GET_THUMBNAIL">
+	</String>
+	<String Id="1025" Name="IDS_BIP_GET_THUMBNAIL">
 		<Text>Get Linked Thumbnail</Text>
-	</STRING>
-	<STRING Id="1026" Name="IDS_BIP_GET_PARTIAL_IMAGE">
+	</String>
+	<String Id="1026" Name="IDS_BIP_GET_PARTIAL_IMAGE">
 		<Text>Get Partial Image</Text>
-	</STRING>
-	<STRING Id="1027" Name="IDS_BIP_GET_STATUS">
+	</String>
+	<String Id="1027" Name="IDS_BIP_GET_STATUS">
 		<Text>Get Status</Text>
-	</STRING>
-	<STRING Id="1028" Name="IDS_A2DP_RECONFIG_BY_RECONFIG">
+	</String>
+	<String Id="1028" Name="IDS_A2DP_RECONFIG_BY_RECONFIG">
 		<Text>Reconfig by Reconfig</Text>
-	</STRING>
-	<STRING Id="1029" Name="IDS_A2DP_RECONFIG_BY_CLOSE">
+	</String>
+	<String Id="1029" Name="IDS_A2DP_RECONFIG_BY_CLOSE">
 		<Text>Reconfig by Close</Text>
-	</STRING>
-	<STRING Id="1030" Name="IDS_BIP_START_PRINT">
+	</String>
+	<String Id="1030" Name="IDS_BIP_START_PRINT">
 		<Text>Start Print</Text>
-	</STRING>
-	<STRING Id="1031" Name="IDS_BIP_START_ARCHIVE">
+	</String>
+	<String Id="1031" Name="IDS_BIP_START_ARCHIVE">
 		<Text>Start Archive</Text>
-	</STRING>
-	<STRING Id="1032" Name="IDS_BIP_REMOTE_DISPLAY">
+	</String>
+	<String Id="1032" Name="IDS_BIP_REMOTE_DISPLAY">
 		<Text>Remote Display Select</Text>
-	</STRING>
-	<STRING Id="1033" Name="IDS_BIP_GET_MONITORING_IMAGE">
+	</String>
+	<String Id="1033" Name="IDS_BIP_GET_MONITORING_IMAGE">
 		<Text>Get Monitoring Image</Text>
-	</STRING>
-	<STRING Id="1034" Name="IDS_BIP_REMOTE_DISPLAY_CURRENT">
+	</String>
+	<String Id="1034" Name="IDS_BIP_REMOTE_DISPLAY_CURRENT">
 		<Text>Remote Display Current</Text>
-	</STRING>
-	<STRING Id="1035" Name="IDS_BIP_REMOTE_DISPLAY_PREV">
+	</String>
+	<String Id="1035" Name="IDS_BIP_REMOTE_DISPLAY_PREV">
 		<Text>Remote Display Previous</Text>
-	</STRING>
-	<STRING Id="1036" Name="IDS_BIP_REMOTE_DISPLAY_NEXT">
+	</String>
+	<String Id="1036" Name="IDS_BIP_REMOTE_DISPLAY_NEXT">
 		<Text>Remote Display Next</Text>
-	</STRING>
-	<STRING Id="1037" Name="IDS_A2DP_RECONFIG_BY_REPAGE">
+	</String>
+	<String Id="1037" Name="IDS_A2DP_RECONFIG_BY_REPAGE">
 		<Text>Reconfig by Repage</Text>
-	</STRING>
-	<STRING Id="1038" Name="IDS_A2DP_INCREMENT_BITRATE">
+	</String>
+	<String Id="1038" Name="IDS_A2DP_INCREMENT_BITRATE">
 		<Text>Increment Bitrate</Text>
-	</STRING>
-	<STRING Id="1039" Name="IDS_A2DP_DECREMENT_BITRATE">
+	</String>
+	<String Id="1039" Name="IDS_A2DP_DECREMENT_BITRATE">
 		<Text>Decrement Bitrate</Text>
-	</STRING>
-	<STRING Id="1040" Name="IDS_A2DP_SET_BITRATE">
+	</String>
+	<String Id="1040" Name="IDS_A2DP_SET_BITRATE">
 		<Text>Set Bitrate</Text>
-	</STRING>
-	<STRING Id="1041" Name="IDS_A2DP_AUTO_BITRATE">
+	</String>
+	<String Id="1041" Name="IDS_A2DP_AUTO_BITRATE">
 		<Text>Auto Bitrate</Text>
-	</STRING>
-	<STRING Id="1042" Name="IDS_A2DP_MSG_CTRL_CMD_FAILED">
+	</String>
+	<String Id="1042" Name="IDS_A2DP_MSG_CTRL_CMD_FAILED">
 		<Text>A2DP control command failed</Text>
-	</STRING>
-	<STRING Id="1043" Name="IDS_A2DP_CONTROL_DATA">
+	</String>
+	<String Id="1043" Name="IDS_A2DP_CONTROL_DATA">
 		<Text>Enter A2DP Control Data</Text>
-	</STRING>
-	<STRING Id="1044" Name="IDS_A2DP_MSG_CTRL_CMD_SUCCESS">
+	</String>
+	<String Id="1044" Name="IDS_A2DP_MSG_CTRL_CMD_SUCCESS">
 		<Text>A2DP control command send successfully</Text>
-	</STRING>
+	</String>
 	<String Id="1045" Name="IDS_SDP_QUERY">
 		<Text>Perform SDP Query</Text>
 	</String>
@@ -1060,54 +1075,54 @@
 	<String Id="1048" Name="IDS_ENABLE_L2">
 		<Text>Enable L2 Test Server</Text>
 	</String>
-	<STRING Id="1049" Name="IDS_BIP_TEST_PRINT">
+	<String Id="1049" Name="IDS_BIP_TEST_PRINT">
 		<Text>Test Printing</Text>
-	</STRING>
-	<STRING Id="1050" Name="IDS_BIP_MSG_PUSH_SUCCESS">
+	</String>
+	<String Id="1050" Name="IDS_BIP_MSG_PUSH_SUCCESS">
 		<Text>Successfully pushed %s </Text>
-	</STRING>
-	<STRING Id="1051" Name="IDS_BIP_MSG_PUSH_FAILED">
+	</String>
+	<String Id="1051" Name="IDS_BIP_MSG_PUSH_FAILED">
 		<Text>Failed to push %s</Text>
-	</STRING>
-	<STRING Id="1052" Name="IDS_BIP_MSG_PULL_SUCCESS">
+	</String>
+	<String Id="1052" Name="IDS_BIP_MSG_PULL_SUCCESS">
 		<Text>Successfully pulled %s</Text>
-	</STRING>
-	<STRING Id="1053" Name="IDS_BIP_MSG_PULL_FAILED">
+	</String>
+	<String Id="1053" Name="IDS_BIP_MSG_PULL_FAILED">
 		<Text>Failed to pull %s</Text>
-	</STRING>
+	</String>
 	<String Id="1054" Name="IDS_CLIENT_PSM">
 		<Text>Client PSM</Text>
 	</String>
-	<STRING Id="1055" Name="IDS_BIP_MSG_DELETE_SUCCESS">
+	<String Id="1055" Name="IDS_BIP_MSG_DELETE_SUCCESS">
 		<Text>Successfully deleted %s</Text>
-	</STRING>
-	<STRING Id="1056" Name="IDS_BIP_MSG_DELETE_FAILED">
+	</String>
+	<String Id="1056" Name="IDS_BIP_MSG_DELETE_FAILED">
 		<Text>Failed to delete %s</Text>
-	</STRING>
-	<STRING Id="1057" Name="IDS_BIP_MSG_REMOTE_DISPLAY_SUCCESS">
+	</String>
+	<String Id="1057" Name="IDS_BIP_MSG_REMOTE_DISPLAY_SUCCESS">
 		<Text>Remote display successful</Text>
-	</STRING>
-	<STRING Id="1058" Name="IDS_BIP_MSG_REMOTE_DISPLAY_FAILED">
+	</String>
+	<String Id="1058" Name="IDS_BIP_MSG_REMOTE_DISPLAY_FAILED">
 		<Text>Remote display failed</Text>
-	</STRING>
-	<STRING Id="1059" Name="IDS_BIP_MSG_START_ARCHIVE_SUCCESS">
+	</String>
+	<String Id="1059" Name="IDS_BIP_MSG_START_ARCHIVE_SUCCESS">
 		<Text>Start archive successful</Text>
-	</STRING>
-	<STRING Id="1060" Name="IDS_BIP_MSG_START_ARCHIVE_FAILED">
+	</String>
+	<String Id="1060" Name="IDS_BIP_MSG_START_ARCHIVE_FAILED">
 		<Text>Start archive failed</Text>
-	</STRING>
-	<STRING Id="1061" Name="IDS_BIP_MSG_START_PRINT_SUCCESS">
+	</String>
+	<String Id="1061" Name="IDS_BIP_MSG_START_PRINT_SUCCESS">
 		<Text>Start print successful</Text>
-	</STRING>
-	<STRING Id="1062" Name="IDS_BIP_MSG_START_PRINT_FAILED">
+	</String>
+	<String Id="1062" Name="IDS_BIP_MSG_START_PRINT_FAILED">
 		<Text>Start print failed</Text>
-	</STRING>
-	<STRING Id="1063" Name="IDS_BIP_MSG_GET_STATUS_SUCCESS">
+	</String>
+	<String Id="1063" Name="IDS_BIP_MSG_GET_STATUS_SUCCESS">
 		<Text>Get status successful</Text>
-	</STRING>
-	<STRING Id="1064" Name="IDS_BIP_MSG_GET_STATUS_FAILED">
+	</String>
+	<String Id="1064" Name="IDS_BIP_MSG_GET_STATUS_FAILED">
 		<Text>Get status failed</Text>
-	</STRING>
+	</String>
 	<String Id="1065" Name="IDS_LABEL_KBITS_PER_SEC">
 		<Text>kBits/Sec: %d</Text>
 	</String>
@@ -1123,15 +1138,15 @@
 	<String Id="1069" Name="IDS_DISCONNECT_CLIENT">
 		<Text>Disconnect Client</Text>
 	</String>
-	<STRING Id="1070" Name="IDS_BIP_REGISTER_IMAGING_RESPONDER">
+	<String Id="1070" Name="IDS_BIP_REGISTER_IMAGING_RESPONDER">
 		<Text>Imaging Responder</Text>
-	</STRING>
-	<STRING Id="1071" Name="IDS_BIP_REGISTER_REFERENCED_OBJECTS_SERVER">
+	</String>
+	<String Id="1071" Name="IDS_BIP_REGISTER_REFERENCED_OBJECTS_SERVER">
 		<Text>Referenced Object Server</Text>
-	</STRING>
-	<STRING Id="1072" Name="IDS_BIP_REGISTER_ARCHIVED_OBJECTS_SERVER">
+	</String>
+	<String Id="1072" Name="IDS_BIP_REGISTER_ARCHIVED_OBJECTS_SERVER">
 		<Text>Archived Object Server</Text>
-	</STRING>
+	</String>
 	<String Id="1073" Name="IDS_AG_CONNECTION_IN_PRGS">
 		<Text>AG Connection In Progress</Text>
 	</String>
@@ -1153,12 +1168,12 @@
 	<String Id="1079" Name="IDS_SECURITY_LOW">
 		<Text>Low Security</Text>
 	</String>
-	<STRING Id="1080" Name="IDS_BIP_CONNECT_REFERENCED_OBJECTS">
+	<String Id="1080" Name="IDS_BIP_CONNECT_REFERENCED_OBJECTS">
 		<Text>Referenced Objects Server</Text>
-	</STRING>
-	<STRING Id="1081" Name="IDS_BIP_CONNECT_ARCHIVED_OBJECTS">
+	</String>
+	<String Id="1081" Name="IDS_BIP_CONNECT_ARCHIVED_OBJECTS">
 		<Text>Archived Objects Server</Text>
-	</STRING>
+	</String>
 	<String Id="1082" Name="IDS_SECURITY_MED">
 		<Text>Medium Security</Text>
 	</String>
@@ -1183,15 +1198,15 @@
 	<String Id="1089" Name="IDS_IOCAPABILITY">
 		<Text>IO Capability</Text>
 	</String>
-	<STRING Id="1090" Name="IDS_BIP_GET_IMAGE_TOTAL">
+	<String Id="1090" Name="IDS_BIP_GET_IMAGE_TOTAL">
 		<Text>Get Image Total</Text>
-	</STRING>
-	<STRING Id="1091" Name="IDS_BIP_GET_RECENT_IMAGE_LIST">
+	</String>
+	<String Id="1091" Name="IDS_BIP_GET_RECENT_IMAGE_LIST">
 		<Text>Get Recent Image List</Text>
-	</STRING>
-	<STRING Id="1092" Name="IDS_BIP_GET_MONITORING_IMAGE_SAVE">
+	</String>
+	<String Id="1092" Name="IDS_BIP_GET_MONITORING_IMAGE_SAVE">
 		<Text>Get Monitoring Image w Save</Text>
-	</STRING>
+	</String>
 	<String Id="1093" Name="IDS_SERV_SECURITY">
 		<Text>Service Security</Text>
 	</String>
@@ -1435,267 +1450,270 @@
 	<String Id="1173" Name="IDS_REBOND_OPT_BOND">
 		<Text>Rebond Options: BOND</Text>
 	</String>
+	<String Id="1174" Name="IDS_BT_BLANK">
+		<Text> </Text>
+	</String>
 	<String Id="2001" Name="IDS_MSG_NO_CONNECTED_DEV">
 		<Text>No connected devices found in database.</Text>
 	</String>
-	<STRING Id="2003" Name="IDS_MSG_PIN_REPLY_FAILED">
+	<String Id="2003" Name="IDS_MSG_PIN_REPLY_FAILED">
 		<Text>Passkey was not accepted.</Text>
-	</STRING>
-	<STRING Id="2004" Name="IDS_MSG_BONDED">
+	</String>
+	<String Id="2004" Name="IDS_MSG_BONDED">
 		<Text>Successfully bonded to %s.</Text>
-	</STRING>
-	<STRING Id="2005" Name="IDS_MSG_BOND_FAILED">
+	</String>
+	<String Id="2005" Name="IDS_MSG_BOND_FAILED">
 		<Text>Failed to bond with %s.</Text>
-	</STRING>
-	<STRING Id="2006" Name="IDS_MSG_BT_ENABLED">
+	</String>
+	<String Id="2006" Name="IDS_MSG_BT_ENABLED">
 		<Text>BT is now enabled.</Text>
-	</STRING>
-	<STRING Id="2007" Name="IDS_MSG_BT_DISABLED">
+	</String>
+	<String Id="2007" Name="IDS_MSG_BT_DISABLED">
 		<Text>BT is now disabled.</Text>
-	</STRING>
-	<STRING Id="2008" Name="IDS_MSG_DEV_INFO_UNAVAIL">
+	</String>
+	<String Id="2008" Name="IDS_MSG_DEV_INFO_UNAVAIL">
 		<Text>Device information for %s is unavailable.</Text>
-	</STRING>
-	<STRING Id="2009" Name="IDS_MSG_BONDABLE_NOT_SET">
+	</String>
+	<String Id="2009" Name="IDS_MSG_BONDABLE_NOT_SET">
 		<Text>Failed to set bondable.</Text>
-	</STRING>
-	<STRING Id="2010" Name="IDS_MSG_BONDABLE_NOT_CLEARED">
+	</String>
+	<String Id="2010" Name="IDS_MSG_BONDABLE_NOT_CLEARED">
 		<Text>Failed to clear bondable.</Text>
-	</STRING>
-	<STRING Id="2011" Name="IDS_MSG_BONDABLE_SET">
+	</String>
+	<String Id="2011" Name="IDS_MSG_BONDABLE_SET">
 		<Text>Unit is now bondable.</Text>
-	</STRING>
-	<STRING Id="2012" Name="IDS_MSG_BONDABLE_CLEARED">
+	</String>
+	<String Id="2012" Name="IDS_MSG_BONDABLE_CLEARED">
 		<Text>Unit is no longer bondable.</Text>
-	</STRING>
-	<STRING Id="2013" Name="IDS_MSG_NO_DEV">
+	</String>
+	<String Id="2013" Name="IDS_MSG_NO_DEV">
 		<Text>Device database is empty.</Text>
-	</STRING>
-	<STRING Id="2014" Name="IDS_MSG_NO_BONDED_DEV">
+	</String>
+	<String Id="2014" Name="IDS_MSG_NO_BONDED_DEV">
 		<Text>No bonded devices found in database.</Text>
-	</STRING>
-	<STRING Id="2015" Name="IDS_MSG_AG_CONN">
+	</String>
+	<String Id="2015" Name="IDS_MSG_AG_CONN">
 		<Text>Connected to audio device "%s".</Text>
-	</STRING>
-	<STRING Id="2016" Name="IDS_MSG_AG_CONNF">
+	</String>
+	<String Id="2016" Name="IDS_MSG_AG_CONNF">
 		<Text>Failed to connect to audio device "%s".</Text>
-	</STRING>
-	<STRING Id="2017" Name="IDS_MSG_AG_DISCONN">
+	</String>
+	<String Id="2017" Name="IDS_MSG_AG_DISCONN">
 		<Text>Disconnected from audio device "%s".</Text>
-	</STRING>
-	<STRING Id="2018" Name="IDS_MSG_NA_CONN">
+	</String>
+	<String Id="2018" Name="IDS_MSG_NA_CONN">
 		<Text>Connected to network device "%s".</Text>
-	</STRING>
-	<STRING Id="2019" Name="IDS_MSG_NA_DISCONN">
+	</String>
+	<String Id="2019" Name="IDS_MSG_NA_DISCONN">
 		<Text>Disconnected from network device "%s".</Text>
-	</STRING>
-	<STRING Id="2020" Name="IDS_MSG_DEV_ADDED">
+	</String>
+	<String Id="2020" Name="IDS_MSG_DEV_ADDED">
 		<Text>Device %s added to database.</Text>
-	</STRING>
-	<STRING Id="2021" Name="IDS_MSG_DEV_ADD_FAILED">
+	</String>
+	<String Id="2021" Name="IDS_MSG_DEV_ADD_FAILED">
 		<Text>Failed to add %s to database.</Text>
-	</STRING>
-	<STRING Id="2022" Name="IDS_MSG_DEV_REM">
+	</String>
+	<String Id="2022" Name="IDS_MSG_DEV_REM">
 		<Text>Device %s removed from database.</Text>
-	</STRING>
-	<STRING Id="2023" Name="IDS_MSG_DEV_REM_FAILED">
+	</String>
+	<String Id="2023" Name="IDS_MSG_DEV_REM_FAILED">
 		<Text>Failed to remove %s from database.</Text>
-	</STRING>
-	<STRING Id="2024" Name="IDS_MSG_DEV_UNBONDED">
+	</String>
+	<String Id="2024" Name="IDS_MSG_DEV_UNBONDED">
 		<Text>Device %s unbonded.</Text>
-	</STRING>
-	<STRING Id="2025" Name="IDS_MSG_DEV_UNBOND_FAILED">
+	</String>
+	<String Id="2025" Name="IDS_MSG_DEV_UNBOND_FAILED">
 		<Text>Failed to unbond %s.</Text>
-	</STRING>
-	<STRING Id="2026" Name="IDS_MSG_SEARCHING">
+	</String>
+	<String Id="2026" Name="IDS_MSG_SEARCHING">
 		<Text>Searching for Bluetooth devices...Press CLR key to quit.</Text>
-	</STRING>
-	<STRING Id="2027" Name="IDS_MSG_NO_DEV_DISC">
+	</String>
+	<String Id="2027" Name="IDS_MSG_NO_DEV_DISC">
 		<Text>No Bluetooth devices discovered.</Text>
-	</STRING>
-	<STRING Id="2028" Name="IDS_MSG_DEV_DISC_FAILED">
+	</String>
+	<String Id="2028" Name="IDS_MSG_DEV_DISC_FAILED">
 		<Text>Device discovery failed.</Text>
-	</STRING>
-	<STRING Id="2029" Name="IDS_MSG_FEATURE_UNAVAIL">
+	</String>
+	<String Id="2029" Name="IDS_MSG_FEATURE_UNAVAIL">
 		<Text>Feature not available.</Text>
-	</STRING>
-	<STRING Id="2030" Name="IDS_MSG_END_SPP_TEST">
+	</String>
+	<String Id="2030" Name="IDS_MSG_END_SPP_TEST">
 		<Text>Press CLR key to end SPP test.</Text>
-	</STRING>
-	<STRING Id="2031" Name="IDS_MSG_SPP_OPEN_FAILED">
+	</String>
+	<String Id="2031" Name="IDS_MSG_SPP_OPEN_FAILED">
 		<Text>Could not open SPP. Error: %d.</Text>
-	</STRING>
-	<STRING Id="2032" Name="IDS_MSG_DEV_SEC_FAILED">
+	</String>
+	<String Id="2032" Name="IDS_MSG_DEV_SEC_FAILED">
 		<Text>Failed to change security for %s.</Text>
-	</STRING>
-	<STRING Id="2033" Name="IDS_MSG_SVC_BROWSE_FAILED">
+	</String>
+	<String Id="2033" Name="IDS_MSG_SVC_BROWSE_FAILED">
 		<Text>Failed to browse services of %s.</Text>
-	</STRING>
-	<STRING Id="2034" Name="IDS_MSG_SVC_SEARCH_FAILED">
+	</String>
+	<String Id="2034" Name="IDS_MSG_SVC_SEARCH_FAILED">
 		<Text>Failed to search services of %s.</Text>
-	</STRING>
-	<STRING Id="2035" Name="IDS_MSG_HCI_MODE">
+	</String>
+	<String Id="2035" Name="IDS_MSG_HCI_MODE">
 		<Text>HCI mode has been set to %s.</Text>
-	</STRING>
-	<STRING Id="2036" Name="IDS_MSG_HCI_MODE_FAILED">
+	</String>
+	<String Id="2036" Name="IDS_MSG_HCI_MODE_FAILED">
 		<Text>Failed to set HCI mode to %s.</Text>
-	</STRING>
-	<STRING Id="2037" Name="IDS_MSG_MAP_HCI_PORT_FIRST">
+	</String>
+	<String Id="2037" Name="IDS_MSG_MAP_HCI_PORT_FIRST">
 		<Text>Must map BT HCI to a valid port first.</Text>
-	</STRING>
-	<STRING Id="2038" Name="IDS_MSG_SVR_REG_DONE">
+	</String>
+	<String Id="2038" Name="IDS_MSG_SVR_REG_DONE">
 		<Text>Server registered.</Text>
-	</STRING>
-	<STRING Id="2039" Name="IDS_MSG_SVR_REG_FAILED">
+	</String>
+	<String Id="2039" Name="IDS_MSG_SVR_REG_FAILED">
 		<Text>Failed to register server.</Text>
-	</STRING>
-	<STRING Id="2040" Name="IDS_MSG_SVR_DEREG_DONE">
+	</String>
+	<String Id="2040" Name="IDS_MSG_SVR_DEREG_DONE">
 		<Text>Server deregistered.</Text>
-	</STRING>
-	<STRING Id="2041" Name="IDS_MSG_SVR_DEREG_FAILED">
+	</String>
+	<String Id="2041" Name="IDS_MSG_SVR_DEREG_FAILED">
 		<Text>Failed to deregister server.</Text>
-	</STRING>
-	<STRING Id="2042" Name="IDS_MSG_CONN_FAILED">
+	</String>
+	<String Id="2042" Name="IDS_MSG_CONN_FAILED">
 		<Text>Failed to connect to server.</Text>
-	</STRING>
-	<STRING Id="2043" Name="IDS_MSG_DISCONN_FAILED">
+	</String>
+	<String Id="2043" Name="IDS_MSG_DISCONN_FAILED">
 		<Text>Failed to disconnect from server.</Text>
-	</STRING>
-	<STRING Id="2044" Name="IDS_MSG_OBJ_PUSHED">
+	</String>
+	<String Id="2044" Name="IDS_MSG_OBJ_PUSHED">
 		<Text>%s pushed to server.</Text>
-	</STRING>
-	<STRING Id="2045" Name="IDS_MSG_OBJ_PUSH_FAILED">
+	</String>
+	<String Id="2045" Name="IDS_MSG_OBJ_PUSH_FAILED">
 		<Text>Failed to push %s to server.</Text>
-	</STRING>
-	<STRING Id="2046" Name="IDS_MSG_OBJ_SENT">
+	</String>
+	<String Id="2046" Name="IDS_MSG_OBJ_SENT">
 		<Text>%s pulled by client.</Text>
-	</STRING>
-	<STRING Id="2047" Name="IDS_MSG_OBJ_PULLED">
+	</String>
+	<String Id="2047" Name="IDS_MSG_OBJ_PULLED">
 		<Text>%s pulled from server.</Text>
-	</STRING>
-	<STRING Id="2048" Name="IDS_MSG_OBJ_PULL_FAILED">
+	</String>
+	<String Id="2048" Name="IDS_MSG_OBJ_PULL_FAILED">
 		<Text>Failed to pull %s from server.</Text>
-	</STRING>
-	<STRING Id="2049" Name="IDS_MSG_OBJ_RCVD">
+	</String>
+	<String Id="2049" Name="IDS_MSG_OBJ_RCVD">
 		<Text>%s pushed by client.</Text>
-	</STRING>
-	<STRING Id="2050" Name="IDS_MSG_FILE_PUT">
+	</String>
+	<String Id="2050" Name="IDS_MSG_FILE_PUT">
 		<Text>Put "%s" on server.</Text>
-	</STRING>
-	<STRING Id="2051" Name="IDS_MSG_FILE_PUT_FAILED">
+	</String>
+	<String Id="2051" Name="IDS_MSG_FILE_PUT_FAILED">
 		<Text>Failed to put "%s" on server.</Text>
-	</STRING>
-	<STRING Id="2052" Name="IDS_MSG_FILE_GOT">
+	</String>
+	<String Id="2052" Name="IDS_MSG_FILE_GOT">
 		<Text>Got "%s" from server.</Text>
-	</STRING>
-	<STRING Id="2053" Name="IDS_MSG_FILE_GET_FAILED">
+	</String>
+	<String Id="2053" Name="IDS_MSG_FILE_GET_FAILED">
 		<Text>Failed to get "%s" from server.</Text>
-	</STRING>
-	<STRING Id="2054" Name="IDS_MSG_FILE_DELETED">
+	</String>
+	<String Id="2054" Name="IDS_MSG_FILE_DELETED">
 		<Text>Deleted "%s" from server.</Text>
-	</STRING>
-	<STRING Id="2055" Name="IDS_MSG_FILE_DELETE_FAILED">
+	</String>
+	<String Id="2055" Name="IDS_MSG_FILE_DELETE_FAILED">
 		<Text>Failed to delete "%s" from server.</Text>
-	</STRING>
-	<STRING Id="2056" Name="IDS_MSG_DISCOVERABLE_NOT_SET">
+	</String>
+	<String Id="2056" Name="IDS_MSG_DISCOVERABLE_NOT_SET">
 		<Text>Failed to set discoverable.</Text>
-	</STRING>
-	<STRING Id="2057" Name="IDS_MSG_DISCOVERABLE_NOT_CLEARED">
+	</String>
+	<String Id="2057" Name="IDS_MSG_DISCOVERABLE_NOT_CLEARED">
 		<Text>Failed to clear discoverable.</Text>
-	</STRING>
-	<STRING Id="2058" Name="IDS_MSG_DISCOVERABLE_SET">
+	</String>
+	<String Id="2058" Name="IDS_MSG_DISCOVERABLE_SET">
 		<Text>Unit is now discoverable.</Text>
-	</STRING>
-	<STRING Id="2059" Name="IDS_MSG_DISCOVERABLE_CLEARED">
+	</String>
+	<String Id="2059" Name="IDS_MSG_DISCOVERABLE_CLEARED">
 		<Text>Unit is no longer discoverable.</Text>
-	</STRING>
-	<STRING Id="2060" Name="IDS_MSG_UNMAP_HCI_PORT_FIRST">
+	</String>
+	<String Id="2060" Name="IDS_MSG_UNMAP_HCI_PORT_FIRST">
 		<Text>Must map BT HCI to NULL.</Text>
-	</STRING>
-	<STRING Id="2061" Name="IDS_MSG_NA_ENABLE_FAILED">
+	</String>
+	<String Id="2061" Name="IDS_MSG_NA_ENABLE_FAILED">
 		<Text>Failed to enable BT NA.</Text>
-	</STRING>
-	<STRING Id="2062" Name="IDS_MSG_MAP_DATA_SVC_FIRST">
+	</String>
+	<String Id="2062" Name="IDS_MSG_MAP_DATA_SVC_FIRST">
 		<Text>Must map Data service to BT_NA port first.</Text>
-	</STRING>
-	<STRING Id="2063" Name="IDS_MSG_OBJ_NOT_SENT">
+	</String>
+	<String Id="2063" Name="IDS_MSG_OBJ_NOT_SENT">
 		<Text>%s unsuccessfully pulled by client.</Text>
-	</STRING>
-	<STRING Id="2064" Name="IDS_MSG_OBJ_NOT_RCVD">
+	</String>
+	<String Id="2064" Name="IDS_MSG_OBJ_NOT_RCVD">
 		<Text>%s unsuccessfully pushed by client.</Text>
-	</STRING>
-	<STRING Id="2065" Name="IDS_MSG_OBJ_NOT_FOUND">
+	</String>
+	<String Id="2065" Name="IDS_MSG_OBJ_NOT_FOUND">
 		<Text>%s not found.</Text>
-	</STRING>
-	<STRING Id="2066" Name="IDS_MSG_FOLDER_BROWSING_DONE">
+	</String>
+	<String Id="2066" Name="IDS_MSG_FOLDER_BROWSING_DONE">
 		<Text>Successfully browsed folder on %s.</Text>
-	</STRING>
-	<STRING Id="2067" Name="IDS_MSG_FOLDER_BROWSING_FAILED">
+	</String>
+	<String Id="2067" Name="IDS_MSG_FOLDER_BROWSING_FAILED">
 		<Text>Failed to browse "%s" folder.</Text>
-	</STRING>
-	<STRING Id="2068" Name="IDS_MSG_NO_OBEX_SERVERS">
+	</String>
+	<String Id="2068" Name="IDS_MSG_NO_OBEX_SERVERS">
 		<Text>No OBEX Servers in DB.</Text>
-	</STRING>
-	<STRING Id="2069" Name="IDS_MSG_DEREG_SVR_FIRST">
+	</String>
+	<String Id="2069" Name="IDS_MSG_DEREG_SVR_FIRST">
 		<Text>Must de-register server first.</Text>
-	</STRING>
-	<STRING Id="2070" Name="IDS_MSG_HCI_ON_WARNING">
+	</String>
+	<String Id="2070" Name="IDS_MSG_HCI_ON_WARNING">
 		<Text>Warning: HCI mode on!</Text>
-	</STRING>
-	<STRING Id="2071" Name="IDS_MSG_HCI_MODE_OFF_FIRST">
+	</String>
+	<String Id="2071" Name="IDS_MSG_HCI_MODE_OFF_FIRST">
 		<Text>Turn HCI mode off first.</Text>
-	</STRING>
-	<STRING Id="2072" Name="IDS_MSG_BT_ACTIVE">
+	</String>
+	<String Id="2072" Name="IDS_MSG_BT_ACTIVE">
 		<Text>Bluetooth is active.  Operation not allowed.</Text>
-	</STRING>
-	<STRING Id="2073" Name="IDS_MSG_TEST_MODE">
+	</String>
+	<String Id="2073" Name="IDS_MSG_TEST_MODE">
 		<Text>Bluetooth Test Mode is activated.  Press CLR key to exit Test Mode.</Text>
-	</STRING>
-	<STRING Id="2074" Name="IDS_MSG_TEST_MODE_NOT_ENTERED">
+	</String>
+	<String Id="2074" Name="IDS_MSG_TEST_MODE_NOT_ENTERED">
 		<Text>Failed to enter Test Mode.  Error = %d</Text>
-	</STRING>
-	<STRING Id="2075" Name="IDS_MSG_TEST_MODE_NOT_EXITED">
+	</String>
+	<String Id="2075" Name="IDS_MSG_TEST_MODE_NOT_EXITED">
 		<Text>Failed to exit Test Mode.  Error = %d</Text>
-	</STRING>
-	<STRING Id="2076" Name="IDS_MSG_MUST_SET_BONDABLE">
+	</String>
+	<String Id="2076" Name="IDS_MSG_MUST_SET_BONDABLE">
 		<Text>Turn Bondable on when about to accept connection from remote device.</Text>
-	</STRING>
-	<STRING Id="2077" Name="IDS_MSG_MUST_REENABLE_AG">
+	</String>
+	<String Id="2077" Name="IDS_MSG_MUST_REENABLE_AG">
 		<Text>Must disable, then re-enable AG to use %s as audio device.</Text>
-	</STRING>
-	<STRING Id="2078" Name="IDS_MSG_RADIO_CTRL_SUCCESS">
+	</String>
+	<String Id="2078" Name="IDS_MSG_RADIO_CTRL_SUCCESS">
 		<Text>BT Radio is now %s.</Text>
-	</STRING>
-	<STRING Id="2079" Name="IDS_MSG_RADIO_CTRL_FAILED">
+	</String>
+	<String Id="2079" Name="IDS_MSG_RADIO_CTRL_FAILED">
 		<Text>Failed to turn %s BT Radio.</Text>
-	</STRING>
-	<STRING Id="2080" Name="IDS_MSG_VISIBILITY_CTRL_SUCCESS">
+	</String>
+	<String Id="2080" Name="IDS_MSG_VISIBILITY_CTRL_SUCCESS">
 		<Text>BT Visibility is now %s.</Text>
-	</STRING>
-	<STRING Id="2081" Name="IDS_MSG_VISIBILITY_CTRL_FAILED">
+	</String>
+	<String Id="2081" Name="IDS_MSG_VISIBILITY_CTRL_FAILED">
 		<Text>Failed to turn %s BT Visibility.</Text>
-	</STRING>
-	<STRING Id="2082" Name="IDS_MSG_ROLE_SW_CTRL_SUCCESS">
+	</String>
+	<String Id="2082" Name="IDS_MSG_ROLE_SW_CTRL_SUCCESS">
 		<Text>Role Switch Control successfully changed.</Text>
-	</STRING>
-	<STRING Id="2083" Name="IDS_MSG_ROLE_SW_CTRL_FAILED">
+	</String>
+	<String Id="2083" Name="IDS_MSG_ROLE_SW_CTRL_FAILED">
 		<Text>Failed to change Role Switch Control.</Text>
-	</STRING>
-	<STRING Id="2084" Name="IDS_MSG_ABORT_FAILED">
+	</String>
+	<String Id="2084" Name="IDS_MSG_ABORT_FAILED">
 		<Text>Failed to Abort.</Text>
-	</STRING>
-	<STRING Id="2085" Name="IDS_MSG_CLI_REG_DONE">
+	</String>
+	<String Id="2085" Name="IDS_MSG_CLI_REG_DONE">
 		<Text>Client Registered</Text>
-	</STRING>
-	<STRING Id="2086" Name="IDS_MSG_CLI_REG_FAILED">
+	</String>
+	<String Id="2086" Name="IDS_MSG_CLI_REG_FAILED">
 		<Text>Client Failed to Register</Text>
-	</STRING>
-	<STRING Id="2087" Name="IDS_MSG_CLI_DEREG_DONE">
+	</String>
+	<String Id="2087" Name="IDS_MSG_CLI_DEREG_DONE">
 		<Text>Client De-registered</Text>
-	</STRING>
-	<STRING Id="2088" Name="IDS_MSG_CLI_DEREG_FAILED">
+	</String>
+	<String Id="2088" Name="IDS_MSG_CLI_DEREG_FAILED">
 		<Text>Client Failed to De-register</Text>
-	</STRING>
+	</String>
 	<String Id="2089" Name="IDS_MSG_SET_CONN_ROLE_SUCCESS">
 		<Text>Connection Role has been set successfully.</Text>
 	</String>
@@ -1729,378 +1747,378 @@
 	<String Id="2099" Name="IDS_MSG_BIP_OP_PROGRESS">
 		<Text>BIP Operation in progress. Press CLR key to abort</Text>
 	</String>
-	<STRING Id="2100" Name="IDS_PROMPT_UNBOND_ALL">
+	<String Id="2100" Name="IDS_PROMPT_UNBOND_ALL">
 		<Text>Unbond all devices?</Text>
-	</STRING>
-	<STRING Id="2101" Name="IDS_PROMPT_REMOVE_ALL">
+	</String>
+	<String Id="2101" Name="IDS_PROMPT_REMOVE_ALL">
 		<Text>Remove all devices from database?</Text>
-	</STRING>
-	<STRING Id="2102" Name="IDS_PROMPT_UNBOND_ONE">
+	</String>
+	<String Id="2102" Name="IDS_PROMPT_UNBOND_ONE">
 		<Text>Unbond %s?</Text>
-	</STRING>
-	<STRING Id="2103" Name="IDS_PROMPT_REMOVE_ONE">
+	</String>
+	<String Id="2103" Name="IDS_PROMPT_REMOVE_ONE">
 		<Text>Remove %s from database?</Text>
-	</STRING>
-	<STRING Id="2104" Name="IDS_PROMPT_USE_AUDIO_DEV">
+	</String>
+	<String Id="2104" Name="IDS_PROMPT_USE_AUDIO_DEV">
 		<Text>Use %s  as audio device?</Text>
-	</STRING>
-	<STRING Id="2105" Name="IDS_PROMPT_CONNECT">
+	</String>
+	<String Id="2105" Name="IDS_PROMPT_CONNECT">
 		<Text>Connect to %s?</Text>
-	</STRING>
-	<STRING Id="2106" Name="IDS_PROMPT_DISCONNECT">
+	</String>
+	<String Id="2106" Name="IDS_PROMPT_DISCONNECT">
 		<Text>Disconnect from %s?</Text>
-	</STRING>
-	<STRING Id="2107" Name="IDS_PROMPT_ENTER_TEST_MODE">
+	</String>
+	<String Id="2107" Name="IDS_PROMPT_ENTER_TEST_MODE">
 		<Text>Enter Test Mode?</Text>
-	</STRING>
-	<STRING Id="2108" Name="IDS_PROMPT_USE_SRVC_SECURITY">
+	</String>
+	<String Id="2108" Name="IDS_PROMPT_USE_SRVC_SECURITY">
 		<Text>Enable Service Security?</Text>
-	</STRING>
-	<STRING Id="2109" Name="IDS_PROMPT_AUTHORIZE">
+	</String>
+	<String Id="2109" Name="IDS_PROMPT_AUTHORIZE">
 		<Text>Device %s requests connection to service 0x%x.  Authorize connection?</Text>
-	</STRING>
-	<STRING Id="2110" Name="IDS_PROMPT_ACCEPT_CONN_REQ">
+	</String>
+	<String Id="2110" Name="IDS_PROMPT_ACCEPT_CONN_REQ">
 		<Text>Accept connection request from %s?</Text>
-	</STRING>
+	</String>
 	<String Id="2111" Name="IDS_PROMPT_SET_CONN_ROLE_FUTURE">
 		<Text>Set local device to be %s in future connections?</Text>
 	</String>
 	<String Id="2112" Name="IDS_PROMPT_SET_CONN_ROLE_CURRENT">
 		<Text>Set local device to be %s in current connection with %s?</Text>
 	</String>
-	<STRING Id="2200" Name="IDS_LABEL_BT_NAME">
+	<String Id="2200" Name="IDS_LABEL_BT_NAME">
 		<Text>BT Name: %s</Text>
-	</STRING>
-	<STRING Id="2201" Name="IDS_LABEL_BD_ADDR">
+	</String>
+	<String Id="2201" Name="IDS_LABEL_BD_ADDR">
 		<Text>BD Address: %s</Text>
-	</STRING>
-	<STRING Id="2202" Name="IDS_LABEL_SVC_CLS">
+	</String>
+	<String Id="2202" Name="IDS_LABEL_SVC_CLS">
 		<Text>Service Class(es): %s</Text>
-	</STRING>
-	<STRING Id="2203" Name="IDS_LABEL_LMP_FEAT">
+	</String>
+	<String Id="2203" Name="IDS_LABEL_LMP_FEAT">
 		<Text>LMP Features: %s</Text>
-	</STRING>
-	<STRING Id="2204" Name="IDS_LABEL_BONDABLE">
+	</String>
+	<String Id="2204" Name="IDS_LABEL_BONDABLE">
 		<Text>Bondable: %s</Text>
-	</STRING>
-	<STRING Id="2205" Name="IDS_LABEL_DISCOVERABLE">
+	</String>
+	<String Id="2205" Name="IDS_LABEL_DISCOVERABLE">
 		<Text>Discoverable: %s</Text>
-	</STRING>
-	<STRING Id="2206" Name="IDS_LABEL_SECURITY">
+	</String>
+	<String Id="2206" Name="IDS_LABEL_SECURITY">
 		<Text>Security: %s</Text>
-	</STRING>
-	<STRING Id="2207" Name="IDS_LABEL_OPTIONS">
+	</String>
+	<String Id="2207" Name="IDS_LABEL_OPTIONS">
 		<Text>Options for %s</Text>
-	</STRING>
-	<STRING Id="2209" Name="IDS_LABEL_PORT_STATUS">
+	</String>
+	<String Id="2209" Name="IDS_LABEL_PORT_STATUS">
 		<Text>Port status: %s</Text>
-	</STRING>
-	<STRING Id="2210" Name="IDS_LABEL_BYTES_SENT">
+	</String>
+	<String Id="2210" Name="IDS_LABEL_BYTES_SENT">
 		<Text>Bytes sent: %d</Text>
-	</STRING>
-	<STRING Id="2211" Name="IDS_LABEL_BYTES_RCVD">
+	</String>
+	<String Id="2211" Name="IDS_LABEL_BYTES_RCVD">
 		<Text>Bytes received: %d</Text>
-	</STRING>
-	<STRING Id="2212" Name="IDS_LABEL_SSP_CAPABLE">
+	</String>
+	<String Id="2212" Name="IDS_LABEL_SSP_CAPABLE">
 		<Text>SSP Capable: %s</Text>
-	</STRING>
-	<STRING Id="3001" Name="IDS_BPP">
+	</String>
+	<String Id="3001" Name="IDS_BPP">
 		<Text>BPP</Text>
-	</STRING>
-	<STRING Id="3002" Name="IDS_BPP_TESTS">
+	</String>
+	<String Id="3002" Name="IDS_BPP_TESTS">
 		<Text>BPP Sender</Text>
-	</STRING>
-	<STRING Id="3010" Name="IDS_BPP_SEND_FILE">
+	</String>
+	<String Id="3010" Name="IDS_BPP_SEND_FILE">
 		<Text>Send File</Text>
-	</STRING>
-	<STRING Id="3011" Name="IDS_BPP_SOAP_REQUEST">
+	</String>
+	<String Id="3011" Name="IDS_BPP_SOAP_REQUEST">
 		<Text>Soap Request</Text>
-	</STRING>
-	<STRING Id="3012" Name="IDS_BPP_TEST_PRINT">
+	</String>
+	<String Id="3012" Name="IDS_BPP_TEST_PRINT">
 		<Text>Test Printing</Text>
-	</STRING>
-	<STRING Id="3020" Name="IDS_BPP_MSG_SEND_FILE_SUCCESS">
+	</String>
+	<String Id="3020" Name="IDS_BPP_MSG_SEND_FILE_SUCCESS">
 		<Text>Successfully printed %s</Text>
-	</STRING>
-	<STRING Id="3021" Name="IDS_BPP_MSG_SEND_FILE_FAILED">
+	</String>
+	<String Id="3021" Name="IDS_BPP_MSG_SEND_FILE_FAILED">
 		<Text>Failed to print %s</Text>
-	</STRING>
-	<STRING Id="3022" Name="IDS_BPP_MSG_SOAP_REQ_SUCCESS">
+	</String>
+	<String Id="3022" Name="IDS_BPP_MSG_SOAP_REQ_SUCCESS">
 		<Text>Successfully sent SOAP request</Text>
-	</STRING>
-	<STRING Id="3023" Name="IDS_BPP_MSG_SOAP_REQ_FAILED">
+	</String>
+	<String Id="3023" Name="IDS_BPP_MSG_SOAP_REQ_FAILED">
 		<Text>SOAP request failed</Text>
-	</STRING>
-	<STRING Id="3100" Name="IDS_A2DP">
+	</String>
+	<String Id="3100" Name="IDS_A2DP">
 		<Text>A2DP</Text>
-	</STRING>
-	<STRING Id="3101" Name="IDS_A2DP_DISCONNECT_FAILED">
+	</String>
+	<String Id="3101" Name="IDS_A2DP_DISCONNECT_FAILED">
 		<Text>Disconnection Failed</Text>
-	</STRING>
-	<STRING Id="3200" Name="IDS_AVRCP">
+	</String>
+	<String Id="3200" Name="IDS_AVRCP">
 		<Text>AVRCP</Text>
-	</STRING>
-	<STRING Id="3201" Name="IDS_AVRCP_OP_MENU">
+	</String>
+	<String Id="3201" Name="IDS_AVRCP_OP_MENU">
 		<Text>AVRCP OP Menu</Text>
-	</STRING>
-	<STRING Id="3202" Name="IDS_AVRCP_SELECT">
+	</String>
+	<String Id="3202" Name="IDS_AVRCP_SELECT">
 		<Text>Select</Text>
-	</STRING>
-	<STRING Id="3203" Name="IDS_AVRCP_UP">
+	</String>
+	<String Id="3203" Name="IDS_AVRCP_UP">
 		<Text>Up</Text>
-	</STRING>
-	<STRING Id="3204" Name="IDS_AVRCP_DOWN">
+	</String>
+	<String Id="3204" Name="IDS_AVRCP_DOWN">
 		<Text>Down</Text>
-	</STRING>
-	<STRING Id="3205" Name="IDS_AVRCP_LEFT">
+	</String>
+	<String Id="3205" Name="IDS_AVRCP_LEFT">
 		<Text>Left</Text>
-	</STRING>
-	<STRING Id="3206" Name="IDS_AVRCP_RIGHT">
+	</String>
+	<String Id="3206" Name="IDS_AVRCP_RIGHT">
 		<Text>Right</Text>
-	</STRING>
-	<STRING Id="3207" Name="IDS_AVRCP_RIGHT_UP">
+	</String>
+	<String Id="3207" Name="IDS_AVRCP_RIGHT_UP">
 		<Text>Right Up</Text>
-	</STRING>
-	<STRING Id="3208" Name="IDS_AVRCP_RIGHT_DOWN">
+	</String>
+	<String Id="3208" Name="IDS_AVRCP_RIGHT_DOWN">
 		<Text>Right Down</Text>
-	</STRING>
-	<STRING Id="3209" Name="IDS_AVRCP_LEFT_UP">
+	</String>
+	<String Id="3209" Name="IDS_AVRCP_LEFT_UP">
 		<Text>Left Up</Text>
-	</STRING>
-	<STRING Id="3210" Name="IDS_AVRCP_LEFT_DOWN">
+	</String>
+	<String Id="3210" Name="IDS_AVRCP_LEFT_DOWN">
 		<Text>Left Down</Text>
-	</STRING>
-	<STRING Id="3211" Name="IDS_AVRCP_ROOT_MENU">
+	</String>
+	<String Id="3211" Name="IDS_AVRCP_ROOT_MENU">
 		<Text>Root Menu</Text>
-	</STRING>
-	<STRING Id="3212" Name="IDS_AVRCP_SETUP_MENU">
+	</String>
+	<String Id="3212" Name="IDS_AVRCP_SETUP_MENU">
 		<Text>Setup Menu</Text>
-	</STRING>
-	<STRING Id="3213" Name="IDS_AVRCP_CONTENTS_MENU">
+	</String>
+	<String Id="3213" Name="IDS_AVRCP_CONTENTS_MENU">
 		<Text>Contents Menu</Text>
-	</STRING>
-	<STRING Id="3214" Name="IDS_AVRCP_FAVORITE_MENU">
+	</String>
+	<String Id="3214" Name="IDS_AVRCP_FAVORITE_MENU">
 		<Text>Favorite Menu</Text>
-	</STRING>
-	<STRING Id="3215" Name="IDS_AVRCP_EXIT">
+	</String>
+	<String Id="3215" Name="IDS_AVRCP_EXIT">
 		<Text>Exit</Text>
-	</STRING>
-	<STRING Id="3216" Name="IDS_AVRCP_0">
+	</String>
+	<String Id="3216" Name="IDS_AVRCP_0">
 		<Text>0</Text>
-	</STRING>
-	<STRING Id="3217" Name="IDS_AVRCP_1">
+	</String>
+	<String Id="3217" Name="IDS_AVRCP_1">
 		<Text>1</Text>
-	</STRING>
-	<STRING Id="3218" Name="IDS_AVRCP_2">
+	</String>
+	<String Id="3218" Name="IDS_AVRCP_2">
 		<Text>2</Text>
-	</STRING>
-	<STRING Id="3219" Name="IDS_AVRCP_3">
+	</String>
+	<String Id="3219" Name="IDS_AVRCP_3">
 		<Text>3</Text>
-	</STRING>
-	<STRING Id="3220" Name="IDS_AVRCP_4">
+	</String>
+	<String Id="3220" Name="IDS_AVRCP_4">
 		<Text>4</Text>
-	</STRING>
-	<STRING Id="3221" Name="IDS_AVRCP_5">
+	</String>
+	<String Id="3221" Name="IDS_AVRCP_5">
 		<Text>5</Text>
-	</STRING>
-	<STRING Id="3222" Name="IDS_AVRCP_6">
+	</String>
+	<String Id="3222" Name="IDS_AVRCP_6">
 		<Text>6</Text>
-	</STRING>
-	<STRING Id="3223" Name="IDS_AVRCP_7">
+	</String>
+	<String Id="3223" Name="IDS_AVRCP_7">
 		<Text>7</Text>
-	</STRING>
-	<STRING Id="3224" Name="IDS_AVRCP_8">
+	</String>
+	<String Id="3224" Name="IDS_AVRCP_8">
 		<Text>8</Text>
-	</STRING>
-	<STRING Id="3225" Name="IDS_AVRCP_9">
+	</String>
+	<String Id="3225" Name="IDS_AVRCP_9">
 		<Text>9</Text>
-	</STRING>
-	<STRING Id="3226" Name="IDS_AVRCP_DOT">
+	</String>
+	<String Id="3226" Name="IDS_AVRCP_DOT">
 		<Text>Dot</Text>
-	</STRING>
-	<STRING Id="3227" Name="IDS_AVRCP_ENTER">
+	</String>
+	<String Id="3227" Name="IDS_AVRCP_ENTER">
 		<Text>Enter</Text>
-	</STRING>
-	<STRING Id="3228" Name="IDS_AVRCP_CLEAR">
+	</String>
+	<String Id="3228" Name="IDS_AVRCP_CLEAR">
 		<Text>Clear</Text>
-	</STRING>
-	<STRING Id="3229" Name="IDS_AVRCP_CHANNEL_UP">
+	</String>
+	<String Id="3229" Name="IDS_AVRCP_CHANNEL_UP">
 		<Text>Channel Up</Text>
-	</STRING>
-	<STRING Id="3230" Name="IDS_AVRCP_CHANNEL_DOWN">
+	</String>
+	<String Id="3230" Name="IDS_AVRCP_CHANNEL_DOWN">
 		<Text>Channel Down</Text>
-	</STRING>
-	<STRING Id="3231" Name="IDS_AVRCP_PREVIOUS_CHANNEL">
+	</String>
+	<String Id="3231" Name="IDS_AVRCP_PREVIOUS_CHANNEL">
 		<Text>Previous Channel</Text>
-	</STRING>
-	<STRING Id="3232" Name="IDS_AVRCP_SOUND_SELECT">
+	</String>
+	<String Id="3232" Name="IDS_AVRCP_SOUND_SELECT">
 		<Text>Sound Select</Text>
-	</STRING>
-	<STRING Id="3233" Name="IDS_AVRCP_INPUT_SELECT">
+	</String>
+	<String Id="3233" Name="IDS_AVRCP_INPUT_SELECT">
 		<Text>Input Select</Text>
-	</STRING>
-	<STRING Id="3234" Name="IDS_AVRCP_DISPLAY_INFORMATION">
+	</String>
+	<String Id="3234" Name="IDS_AVRCP_DISPLAY_INFORMATION">
 		<Text>Display Information</Text>
-	</STRING>
-	<STRING Id="3235" Name="IDS_AVRCP_HELP">
+	</String>
+	<String Id="3235" Name="IDS_AVRCP_HELP">
 		<Text>Help</Text>
-	</STRING>
-	<STRING Id="3236" Name="IDS_AVRCP_PAGE_UP">
+	</String>
+	<String Id="3236" Name="IDS_AVRCP_PAGE_UP">
 		<Text>Page Up</Text>
-	</STRING>
-	<STRING Id="3237" Name="IDS_AVRCP_PAGE_DOWN">
+	</String>
+	<String Id="3237" Name="IDS_AVRCP_PAGE_DOWN">
 		<Text>Page Down</Text>
-	</STRING>
-	<STRING Id="3238" Name="IDS_AVRCP_POWER">
+	</String>
+	<String Id="3238" Name="IDS_AVRCP_POWER">
 		<Text>Power</Text>
-	</STRING>
-	<STRING Id="3239" Name="IDS_AVRCP_VOLUME_UP">
+	</String>
+	<String Id="3239" Name="IDS_AVRCP_VOLUME_UP">
 		<Text>Volume Up</Text>
-	</STRING>
-	<STRING Id="3240" Name="IDS_AVRCP_VOLUME_DOWN">
+	</String>
+	<String Id="3240" Name="IDS_AVRCP_VOLUME_DOWN">
 		<Text>Volume Down</Text>
-	</STRING>
-	<STRING Id="3241" Name="IDS_AVRCP_MUTE">
+	</String>
+	<String Id="3241" Name="IDS_AVRCP_MUTE">
 		<Text>Mute</Text>
-	</STRING>
-	<STRING Id="3242" Name="IDS_AVRCP_PLAY">
+	</String>
+	<String Id="3242" Name="IDS_AVRCP_PLAY">
 		<Text>Play</Text>
-	</STRING>
-	<STRING Id="3243" Name="IDS_AVRCP_STOP">
+	</String>
+	<String Id="3243" Name="IDS_AVRCP_STOP">
 		<Text>Stop</Text>
-	</STRING>
-	<STRING Id="3244" Name="IDS_AVRCP_PAUSE">
+	</String>
+	<String Id="3244" Name="IDS_AVRCP_PAUSE">
 		<Text>Pause</Text>
-	</STRING>
-	<STRING Id="3245" Name="IDS_AVRCP_RECORD">
+	</String>
+	<String Id="3245" Name="IDS_AVRCP_RECORD">
 		<Text>Record</Text>
-	</STRING>
-	<STRING Id="3246" Name="IDS_AVRCP_REWIND">
+	</String>
+	<String Id="3246" Name="IDS_AVRCP_REWIND">
 		<Text>Rewind</Text>
-	</STRING>
-	<STRING Id="3247" Name="IDS_AVRCP_FAST_FORWARD">
+	</String>
+	<String Id="3247" Name="IDS_AVRCP_FAST_FORWARD">
 		<Text>Fast Forward</Text>
-	</STRING>
-	<STRING Id="3248" Name="IDS_AVRCP_EJECT">
+	</String>
+	<String Id="3248" Name="IDS_AVRCP_EJECT">
 		<Text>Eject</Text>
-	</STRING>
-	<STRING Id="3249" Name="IDS_AVRCP_FORWARD">
+	</String>
+	<String Id="3249" Name="IDS_AVRCP_FORWARD">
 		<Text>Forward</Text>
-	</STRING>
-	<STRING Id="3250" Name="IDS_AVRCP_BACKWARD">
+	</String>
+	<String Id="3250" Name="IDS_AVRCP_BACKWARD">
 		<Text>Backward</Text>
-	</STRING>
-	<STRING Id="3251" Name="IDS_AVRCP_ANGLE">
+	</String>
+	<String Id="3251" Name="IDS_AVRCP_ANGLE">
 		<Text>Angle</Text>
-	</STRING>
-	<STRING Id="3252" Name="IDS_AVRCP_SUBPICTURE">
+	</String>
+	<String Id="3252" Name="IDS_AVRCP_SUBPICTURE">
 		<Text>Subpicture</Text>
-	</STRING>
-	<STRING Id="3253" Name="IDS_AVRCP_F1">
+	</String>
+	<String Id="3253" Name="IDS_AVRCP_F1">
 		<Text>F1</Text>
-	</STRING>
-	<STRING Id="3254" Name="IDS_AVRCP_F2">
+	</String>
+	<String Id="3254" Name="IDS_AVRCP_F2">
 		<Text>F2</Text>
-	</STRING>
-	<STRING Id="3255" Name="IDS_AVRCP_F3">
+	</String>
+	<String Id="3255" Name="IDS_AVRCP_F3">
 		<Text>F3</Text>
-	</STRING>
-	<STRING Id="3256" Name="IDS_AVRCP_F4">
+	</String>
+	<String Id="3256" Name="IDS_AVRCP_F4">
 		<Text>F4</Text>
-	</STRING>
-	<STRING Id="3257" Name="IDS_AVRCP_F5">
+	</String>
+	<String Id="3257" Name="IDS_AVRCP_F5">
 		<Text>F5</Text>
-	</STRING>
-	<STRING Id="3258" Name="IDS_AVRCP_GENERIC">
+	</String>
+	<String Id="3258" Name="IDS_AVRCP_GENERIC">
 		<Text>Generic</Text>
-	</STRING>
-	<STRING Id="4000" Name="IDS_SAP_TESTS">
+	</String>
+	<String Id="4000" Name="IDS_SAP_TESTS">
 		<Text>SAP</Text>
-	</STRING>
-	<STRING Id="4001" Name="IDS_SAP_SERVER">
+	</String>
+	<String Id="4001" Name="IDS_SAP_SERVER">
 		<Text>SAP Server</Text>
-	</STRING>
-	<STRING Id="4002" Name="IDS_SAP_CLIENT">
+	</String>
+	<String Id="4002" Name="IDS_SAP_CLIENT">
 		<Text>SAP Client</Text>
-	</STRING>
-	<STRING Id="4003" Name="IDS_SAP_SIM_POWER_ON">
+	</String>
+	<String Id="4003" Name="IDS_SAP_SIM_POWER_ON">
 		<Text>SIM Power On</Text>
-	</STRING>
-	<STRING Id="4004" Name="IDS_SAP_SIM_POWER_OFF">
+	</String>
+	<String Id="4004" Name="IDS_SAP_SIM_POWER_OFF">
 		<Text>SIM Power Off</Text>
-	</STRING>
-	<STRING Id="4005" Name="IDS_SAP_SIM_RESET">
+	</String>
+	<String Id="4005" Name="IDS_SAP_SIM_RESET">
 		<Text>SIM Reset</Text>
-	</STRING>
-	<STRING Id="4006" Name="IDS_SAP_TRANSFER_ATR">
+	</String>
+	<String Id="4006" Name="IDS_SAP_TRANSFER_ATR">
 		<Text>Transfer ATR</Text>
-	</STRING>
-	<STRING Id="4007" Name="IDS_SAP_TRANSFER_APDU">
+	</String>
+	<String Id="4007" Name="IDS_SAP_TRANSFER_APDU">
 		<Text>Transfer APDU</Text>
-	</STRING>
-	<STRING Id="4008" Name="IDS_SAP_GET_CARD_READER_STATUS">
+	</String>
+	<String Id="4008" Name="IDS_SAP_GET_CARD_READER_STATUS">
 		<Text>Get Card Reader Status</Text>
-	</STRING>
-	<STRING Id="4009" Name="IDS_SAP_SRV_DISC_IMMD">
+	</String>
+	<String Id="4009" Name="IDS_SAP_SRV_DISC_IMMD">
 		<Text>SAP Server Disconnect Immediately</Text>
-	</STRING>
-	<STRING Id="4010" Name="IDS_SAP_MSG_TRANSMIT_REQ_FAILED">
+	</String>
+	<String Id="4010" Name="IDS_SAP_MSG_TRANSMIT_REQ_FAILED">
 		<Text>SIM Client failed to transmit request</Text>
-	</STRING>
-	<STRING Id="4011" Name="IDS_SAP_MSG_SRV_DISC_REQ">
+	</String>
+	<String Id="4011" Name="IDS_SAP_MSG_SRV_DISC_REQ">
 		<Text>SAP server requested a graceful disconnection</Text>
-	</STRING>
-	<STRING Id="4012" Name="IDS_SAP_MSG_SRV_DISC_IMMD">
+	</String>
+	<String Id="4012" Name="IDS_SAP_MSG_SRV_DISC_IMMD">
 		<Text>SAP Client disconnected immediately</Text>
-	</STRING>
-	<STRING Id="4013" Name="IDS_SAP_MSG_ATR_RECV">
+	</String>
+	<String Id="4013" Name="IDS_SAP_MSG_ATR_RECV">
 		<Text>ATR received from server</Text>
-	</STRING>
-	<STRING Id="4014" Name="IDS_SAP_MSG_ATR_REQ_FAILED">
+	</String>
+	<String Id="4014" Name="IDS_SAP_MSG_ATR_REQ_FAILED">
 		<Text>ATR response received with error</Text>
-	</STRING>
-	<STRING Id="4015" Name="IDS_SAP_MSG_CARD_READER_STATUS_RECV">
+	</String>
+	<String Id="4015" Name="IDS_SAP_MSG_CARD_READER_STATUS_RECV">
 		<Text>Card reader status received success</Text>
-	</STRING>
-	<STRING Id="4016" Name="IDS_SAP_MSG_CARD_READER_STATUS_FAILED">
+	</String>
+	<String Id="4016" Name="IDS_SAP_MSG_CARD_READER_STATUS_FAILED">
 		<Text>Card reader status received with error</Text>
-	</STRING>
-	<STRING Id="4017" Name="IDS_SAP_MSG_SIM_POWER_ON_SUCCESS">
+	</String>
+	<String Id="4017" Name="IDS_SAP_MSG_SIM_POWER_ON_SUCCESS">
 		<Text>SIM powered on successfully</Text>
-	</STRING>
-	<STRING Id="4018" Name="IDS_SAP_MSG_SIM_POWER_ON_FAILED">
+	</String>
+	<String Id="4018" Name="IDS_SAP_MSG_SIM_POWER_ON_FAILED">
 		<Text>SIM power on failed</Text>
-	</STRING>
-	<STRING Id="4019" Name="IDS_SAP_MSG_SIM_POWER_OFF_SUCCESS">
+	</String>
+	<String Id="4019" Name="IDS_SAP_MSG_SIM_POWER_OFF_SUCCESS">
 		<Text>SIM powered off successfully</Text>
-	</STRING>
-	<STRING Id="4020" Name="IDS_SAP_MSG_SIM_POWER_OFF_FAILED">
+	</String>
+	<String Id="4020" Name="IDS_SAP_MSG_SIM_POWER_OFF_FAILED">
 		<Text>SIM power off failed</Text>
-	</STRING>
-	<STRING Id="4021" Name="IDS_SAP_MSG_SIM_RESET_SUCCESS">
+	</String>
+	<String Id="4021" Name="IDS_SAP_MSG_SIM_RESET_SUCCESS">
 		<Text>SIM reset successfully</Text>
-	</STRING>
-	<STRING Id="4022" Name="IDS_SAP_MSG_SIM_RESET_FAILED">
+	</String>
+	<String Id="4022" Name="IDS_SAP_MSG_SIM_RESET_FAILED">
 		<Text>SIM reset failed</Text>
-	</STRING>
-	<STRING Id="4023" Name="IDS_SAP_APDU_CMD_DATA">
+	</String>
+	<String Id="4023" Name="IDS_SAP_APDU_CMD_DATA">
 		<Text>SAP APDU Command Data</Text>
-	</STRING>
-	<STRING Id="4024" Name="IDS_SAP_MSG_TX_APDU_SUCCESS">
+	</String>
+	<String Id="4024" Name="IDS_SAP_MSG_TX_APDU_SUCCESS">
 		<Text>Successfully TX and RX APDU</Text>
-	</STRING>
-	<STRING Id="4025" Name="IDS_SAP_MSG_TX_APDU_FAILED">
+	</String>
+	<String Id="4025" Name="IDS_SAP_MSG_TX_APDU_FAILED">
 		<Text>Failed transmitting APDU</Text>
-	</STRING>
-	<STRING Id="4026" Name="IDS_SAP_MSG_SIM_STATUS_CHANGED">
+	</String>
+	<String Id="4026" Name="IDS_SAP_MSG_SIM_STATUS_CHANGED">
 		<Text>Server reports SIM status has changed</Text>
-	</STRING>
-	<STRING Id="4027" Name="IDS_SAP_MIN_PACKET_SIZE">
+	</String>
+	<String Id="4027" Name="IDS_SAP_MIN_PACKET_SIZE">
 		<Text>Set Minimum SAP Frame Size</Text>
-	</STRING>
-	<STRING Id="4028" Name="IDS_SAP_MAX_PACKET_SIZE">
+	</String>
+	<String Id="4028" Name="IDS_SAP_MAX_PACKET_SIZE">
 		<Text>Set Maximum SAP Frame Size</Text>
-	</STRING>
+	</String>
 	<String Id="4040" Name="IDS_OBEX">
 		<Text>OBEXAPP</Text>
 	</String>
@@ -2187,6 +2205,18 @@
 	</String>
 </Strings>
 <Objects MimeType="image/bmp">
+	<Object Id="5001" Name="IDB_BT_CHECK_ON">
+		<Hex>424D060500000000000036040000280000000D0000000D0000000100080000000000D0000000C40E0000C40E0000000000000000000000000000000080000080000000808000800000008000800080800000C0C0C000C0DCC000F0CAA6000020400000206000002080000020A0000020C0000020E00000400000004020000040400000406000004080000040A0000040C0000040E00000600000006020000060400000606000006080000060A0000060C0000060E00000800000008020000080400000806000008080000080A0000080C0000080E00000A0000000A0200000A0400000A0600000A0800000A0A00000A0C00000A0E00000C0000000C0200000C0400000C0600000C0800000C0A00000C0C00000C0E00000E0000000E0200000E0400000E0600000E0800000E0A00000E0C00000E0E00040000000400020004000400040006000400080004000A0004000C0004000E00040200000402020004020400040206000402080004020A0004020C0004020E00040400000404020004040400040406000404080004040A0004040C0004040E00040600000406020004060400040606000406080004060A0004060C0004060E00040800000408020004080400040806000408080004080A0004080C0004080E00040A0000040A0200040A0400040A0600040A0800040A0A00040A0C00040A0E00040C0000040C0200040C0400040C0600040C0800040C0A00040C0C00040C0E00040E0000040E0200040E0400040E0600040E0800040E0A00040E0C00040E0E00080000000800020008000400080006000800080008000A0008000C0008000E00080200000802020008020400080206000802080008020A0008020C0008020E00080400000804020008040400080406000804080008040A0008040C0008040E00080600000806020008060400080606000806080008060A0008060C0008060E00080800000808020008080400080806000808080008080A0008080C0008080E00080A0000080A0200080A0400080A0600080A0800080A0A00080A0C00080A0E00080C0000080C0200080C0400080C0600080C0800080C0A00080C0C00080C0E00080E0000080E0200080E0400080E0600080E0800080E0A00080E0C00080E0E000C0000000C0002000C0004000C0006000C0008000C000A000C000C000C000E000C0200000C0202000C0204000C0206000C0208000C020A000C020C000C020E000C0400000C0402000C0404000C0406000C0408000C040A000C040C000C040E000C0600000C0602000C0604000C0606000C0608000C060A000C060C000C060E000C0800000C0802000C0804000C0806000C0808000C080A000C080C000C080E000C0A00000C0A02000C0A04000C0A06000C0A08000C0A0A000C0A0C000C0A0E000C0C00000C0C02000C0C04000C0C06000C0C08000C0C0A000F0FBFF00A4A0A000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FDFDFDFDFDFDFDFDFDFDFDFDFD000000FDA4A4A4A4A4A4A4A4A4A4A4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFF00FFFFFFFFFFA4FD000000FDA4FFFF000000FFFFFFFFA4FD000000FDA4FF0000000000FFFFFFA4FD000000FDA4FF0000FF000000FFFFA4FD000000FDA4FF00FFFFFF000000FFA4FD000000FDA4FFFFFFFFFFFF0000FFA4FD000000FDA4FFFFFFFFFFFFFF00FFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4A4A4A4A4A4A4A4A4A4A4FD000000FDFDFDFDFDFDFDFDFDFDFDFDFD000000</Hex>
+	</Object>
+	<Object Id="5002" Name="IDB_BT_CHECK_OFF">
+		<Hex>424D060500000000000036040000280000000D0000000D0000000100080000000000D0000000C40E0000C40E0000000000000000000000000000000080000080000000808000800000008000800080800000C0C0C000C0DCC000F0CAA6000020400000206000002080000020A0000020C0000020E00000400000004020000040400000406000004080000040A0000040C0000040E00000600000006020000060400000606000006080000060A0000060C0000060E00000800000008020000080400000806000008080000080A0000080C0000080E00000A0000000A0200000A0400000A0600000A0800000A0A00000A0C00000A0E00000C0000000C0200000C0400000C0600000C0800000C0A00000C0C00000C0E00000E0000000E0200000E0400000E0600000E0800000E0A00000E0C00000E0E00040000000400020004000400040006000400080004000A0004000C0004000E00040200000402020004020400040206000402080004020A0004020C0004020E00040400000404020004040400040406000404080004040A0004040C0004040E00040600000406020004060400040606000406080004060A0004060C0004060E00040800000408020004080400040806000408080004080A0004080C0004080E00040A0000040A0200040A0400040A0600040A0800040A0A00040A0C00040A0E00040C0000040C0200040C0400040C0600040C0800040C0A00040C0C00040C0E00040E0000040E0200040E0400040E0600040E0800040E0A00040E0C00040E0E00080000000800020008000400080006000800080008000A0008000C0008000E00080200000802020008020400080206000802080008020A0008020C0008020E00080400000804020008040400080406000804080008040A0008040C0008040E00080600000806020008060400080606000806080008060A0008060C0008060E00080800000808020008080400080806000808080008080A0008080C0008080E00080A0000080A0200080A0400080A0600080A0800080A0A00080A0C00080A0E00080C0000080C0200080C0400080C0600080C0800080C0A00080C0C00080C0E00080E0000080E0200080E0400080E0600080E0800080E0A00080E0C00080E0E000C0000000C0002000C0004000C0006000C0008000C000A000C000C000C000E000C0200000C0202000C0204000C0206000C0208000C020A000C020C000C020E000C0400000C0402000C0404000C0406000C0408000C040A000C040C000C040E000C0600000C0602000C0604000C0606000C0608000C060A000C060C000C060E000C0800000C0802000C0804000C0806000C0808000C080A000C080C000C080E000C0A00000C0A02000C0A04000C0A06000C0A08000C0A0A000C0A0C000C0A0E000C0C00000C0C02000C0C04000C0C06000C0C08000C0C0A000F0FBFF00A4A0A000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FDFDFDFDFDFDFDFDFDFDFDFDFD000000FDA4A4A4A4A4A4A4A4A4A4A4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4FFFFFFFFFFFFFFFFFFA4FD000000FDA4A4A4A4A4A4A4A4A4A4A4FD000000FDFDFDFDFDFDFDFDFDFDFDFDFD000000</Hex>
+	</Object>
+	<Object Id="5003" Name="IDB_BT_RADIO_FILLED">
+		<Hex>424D380100000000000056000000280000000E0000000E000000010008000000000000000000120B0000120B0000080000000800000000000000FFFFFF00FF00FF0099999900666666005C5C5C0033333300FFFFFF000202020205050505050505020202726902020203030303030303050502026E6502020303010101010103030505026F6E0203030101010101010103030505000003030101010000000001010303051200030501010406060600000101030500010305010104060606060001010305657303050101040606060600010103056C6F03050101040406060606010103056C6F03050501010404040401010103056C6F03030505010101010101010303026C6F020303050501010101010303020252630202030305050505050303020202647302020203030303030303020202026E750000</Hex>
+	</Object>
+	<Object Id="5004" Name="IDB_BT_RADIO_UNFILLED">
+		<Hex>424D30010000000000004E000000280000000E0000000E000000010008000000000000000000120B0000120B0000060000000600000000000000FFFFFF00FF00FF00999999005C5C5C00FFFFFF000202020204040404040404020202726902020203030303030303040402026E6502020303010101010103030404026F6E0203030101010101010103030404000003030101010101010101010303041200030401010101010101010101030400010304010101010101010101010304657303040101010101010101010103046C6F03040101010101010101010103046C6F03040401010101010101010103046C6F03030404010101010101010303026C6F020303040401010101010303020252630202030304040404040303020202647302020203030303030303020202026E750000</Hex>
+	</Object>
 	<Object Id="5005" Name="IDB_UP_DOWN">
 		<Hex>424dc60400000000000036040000280000000c0000000c000000010008000000000090000000c40e0000c40e0000000000000000000000000000000080000080000000808000800000008000800080800000c0c0c000c0dcc000f0caa6000020400000206000002080000020a0000020c0000020e00000400000004020000040400000406000004080000040a0000040c0000040e00000600000006020000060400000606000006080000060a0000060c0000060e00000800000008020000080400000806000008080000080a0000080c0000080e00000a0000000a0200000a0400000a0600000a0800000a0a00000a0c00000a0e00000c0000000c0200000c0400000c0600000c0800000c0a00000c0c00000c0e00000e0000000e0200000e0400000e0600000e0800000e0a00000e0c00000e0e00040000000400020004000400040006000400080004000a0004000c0004000e00040200000402020004020400040206000402080004020a0004020c0004020e00040400000404020004040400040406000404080004040a0004040c0004040e00040600000406020004060400040606000406080004060a0004060c0004060e00040800000408020004080400040806000408080004080a0004080c0004080e00040a0000040a0200040a0400040a0600040a0800040a0a00040a0c00040a0e00040c0000040c0200040c0400040c0600040c0800040c0a00040c0c00040c0e00040e0000040e0200040e0400040e0600040e0800040e0a00040e0c00040e0e00080000000800020008000400080006000800080008000a0008000c0008000e00080200000802020008020400080206000802080008020a0008020c0008020e00080400000804020008040400080406000804080008040a0008040c0008040e00080600000806020008060400080606000806080008060a0008060c0008060e00080800000808020008080400080806000808080008080a0008080c0008080e00080a0000080a0200080a0400080a0600080a0800080a0a00080a0c00080a0e00080c0000080c0200080c0400080c0600080c0800080c0a00080c0c00080c0e00080e0000080e0200080e0400080e0600080e0800080e0a00080e0c00080e0e000c0000000c0002000c0004000c0006000c0008000c000a000c000c000c000e000c0200000c0202000c0204000c0206000c0208000c020a000c020c000c020e000c0400000c0402000c0404000c0406000c0408000c040a000c040c000c040e000c0600000c0602000c0604000c0606000c0608000c060a000c060c000c060e000c0800000c0802000c0804000c0806000c0808000c080a000c080c000c080e000c0a00000c0a02000c0a04000c0a06000c0a08000c0a0a000c0a0c000c0a0e000c0c00000c0c02000c0c04000c0c06000c0c08000c0c0a000f0fbff00a4a0a000808080000000ff0000ff000000ffff00ff000000ff00ff00ffff0000ffffff00ff07a4a4ffffffffffa4ffffff0700a4ffffffffa400a4ffff0700a4ffffffa4000000a4ff0700a4ffff07000700a400ff0700a4ffffff070700a407ff0700a4ffffffff0700a4ffff0700a4ffffffff0700a4ffa40700a4a4ffffff0700a4ff00a400a400a4ffff0700a4ff07000000a4ffffff0700a4ffff0700a4ffffffff0700a4ffffff07ffffffffff0707a4ff</Hex>
 	</Object>
@@ -2240,7 +2270,7 @@
 	</Object>
 </Objects>
 <Dialogs>
-	<Dialog Id="6001" Name="IDD_BT_TEXT_EDIT" Focus="7001">
+	<Dialog Id="6001" Name="IDD_BT_TEXT_EDIT" Focus="7003">
 		<Controls>
 			<Text Id="7001" Name="IDC_TEXT_VALUE">
 				<Items/></Text>
@@ -2254,9 +2284,196 @@
 					</Item>
 				</Items>
 			</SoftKey>
-			<Menu Id="7003" Name="IDC_MENU_7003">
+			<Menu Id="7003" Name="IDC_BT_TEXT_EDIT">
 				<Items/>
 			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6002" Name="IDD_BT_MAINMENU" Focus="7004">
+		<Controls>
+			<Menu Id="7004" Name="IDC_BT_MAINMENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6003" Name="IDD_DEVICE_SEARCH" Focus="7022">
+		<Controls>
+			<Static Id="7022" Name="IDC_DEVICE_SEARCH">
+				<Items/></Static>
+			<Menu Id="7030" Name="IDC_MENU_BT_DEVICE_SEARCH">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6004" Name="IDD_SEARCH_RESULT" Focus="7006">
+		<Controls>
+			<Menu Id="7006" Name="IDC_SEARCH_RESULT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6005" Name="IDD_BOND_LIST" Focus="7007">
+		<Controls>
+			<Menu Id="7007" Name="IDC_BOND_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6006" Name="IDD_ALL_LIST" Focus="7008">
+		<Controls>
+			<Menu Id="7008" Name="IDC_ALL_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6007" Name="IDD_CONNECT_LIST" Focus="7009">
+		<Controls>
+			<Menu Id="7009" Name="IDC_CONNECT_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6008" Name="IDD_MYINFO" Focus="7012">
+		<Controls>
+			<Menu Id="7010" Name="IDC_MYINFO">
+				<Items/>
+			</Menu>
+			<Static Id="7012" Name="IDC_MYINFO_STATIC">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6009" Name="IDD_DEVICE_LIST" Focus="7011">
+		<Controls>
+			<Menu Id="7011" Name="IDC_DEVICE_LIST">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6010" Name="IDD_MYINFO_OPITION" Focus="7013">
+		<Controls>
+			<Menu Id="7013" Name="IDC_MYINFO_OPITION">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6011" Name="IDD_BT_EDITNAME" Focus="7014">
+		<Controls>
+			<Text Id="7014" Name="IDC_BT_EDITNAME">
+				<TitleID>IDS_BT_BLANK</TitleID>
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6012" Name="IDD_BT_EDIT_SHORTNAME" Focus="7016">
+		<Controls>
+			<Text Id="7016" Name="IDC_BT_EDIT_SHORTNAME">
+				<TitleID>IDS_BT_BLANK</TitleID>
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6013" Name="IDD_BT_EDIT_MANU_DATA" Focus="7017">
+		<Controls>
+			<Text Id="7017" Name="IDC_BT_EDIT_MANU_DATA">
+				<TitleID>IDS_BT_BLANK</TitleID>
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6014" Name="IDD_BT_SECURITY" Focus="7018">
+		<Controls>
+			<Menu Id="7018" Name="IDC_BT_SECURITY">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6015" Name="IDD_BT_DISCOVERABLE" Focus="7019">
+		<Controls>
+			<Menu Id="7019" Name="IDC_BT_DISCOVERABLE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6016" Name="IDD_BT_IO_CAPABILITY" Focus="7020">
+		<Controls>
+			<Menu Id="7020" Name="IDC_IO_CAPABILITY">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6017" Name="IDD_BT_DEBUG_KEY" Focus="7021">
+		<Controls>
+			<Menu Id="7021" Name="IDC_BT_DEBUG_KEY">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6018" Name="IDD_BT_MSGBOX" Focus="7015">
+		<Controls>
+			<Static Id="7015" Name="IDC_BT_MSGBOX">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6019" Name="IDD_BT_DEVICE_INFO" Focus="7023">
+		<Controls>
+			<Menu Id="7005" Name="IDC_BT_DEVICE_INFO">
+				<Items/>
+			</Menu>
+			<Static Id="7023" Name="IDC_STATIC_BT_DEVICE_INFO">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6020" Name="IDD_BT_DEVICE_INFO_OPITION" Focus="7024">
+		<Controls>
+			<Menu Id="7024" Name="IDC_BT_DEVICE_INFO_OPITION">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6021" Name="IDD_BT_PROMPT" Focus="7027">
+		<Controls>
+			<Menu Id="7026" Name="IDC_BT_PROMPT">
+				<Items/>
+			</Menu>
+			<Static Id="7027" Name="IDC_BT_PROMPT_STATIC">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6022" Name="IDD_BT_EDIT" Focus="7028">
+		<Controls>
+			<Text Id="7028" Name="IDC_BT_EDIT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6023" Name="IDD_BT_BOND_OPITION" Focus="7025">
+		<Controls>
+			<Menu Id="7025" Name="IDC_BT_BOND_OPITION">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6024" Name="IDD_BT_OPITION" Focus="7029">
+		<Controls>
+			<Menu Id="7029" Name="IDC_BT_OPITION">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6025" Name="IDD_BT_SEND_FILE" Focus="7031">
+		<Controls>
+			<Menu Id="7031" Name="IDC_BT_SEND_FILE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6026" Name="IDD_BT_OBEX_LIST_SERVERS" Focus="7032">
+		<Controls>
+			<Menu Id="7032" Name="IDC_BT_OBEX_LIST_SERVERS">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6027" Name="IDD_BT_FILE_PROGRESS" Focus="7033">
+		<Controls>
+			<Static Id="7033" Name="IDC_BT_FILE_PROGRESS">
+				<Items/></Static>
 		</Controls>
 	</Dialog>
 </Dialogs>

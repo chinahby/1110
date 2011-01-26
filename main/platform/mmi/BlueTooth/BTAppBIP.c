@@ -119,7 +119,9 @@ when       who  what, where, why
 
 #ifdef FEATURE_APP_BLUETOOTH
 
-#include "BTApp.h"
+#include "BTApp_priv.h"		//"BTApp.h"
+
+
 #include "BTAppUtils.h"
 
 #ifdef FEATURE_BT_EXTPF_BIP
@@ -886,7 +888,7 @@ void BTApp_BIPBuildMainMenu( CBTApp* pMe )
   //Add By zzg 2010_11_01
   {
 	  AECHAR WTitle[20] = {0};
-	  ISHELL_LoadResString(pMe->a.m_pIShell,
+	  ISHELL_LoadResString(pMe->m_pShell,
 		                   AEE_APPSBTAPP_RES_FILE,                                
 		                   IDS_BIP_TESTS,
 		                   WTitle,
@@ -909,7 +911,7 @@ void BTApp_BIPBuildMainMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_BIP_TESTS );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -930,7 +932,7 @@ void BTApp_BIPBuildServerMenu( CBTApp* pMe )
   if ( pMe->mBIP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
-    ISHELL_LoadResString( pMe->a.m_pIShell, 
+    ISHELL_LoadResString( pMe->m_pShell, 
                           AEE_APPSBTAPP_RES_FILE, 
                           IDS_BIP_SERVER, 
                           pMe->pText2, 
@@ -956,7 +958,7 @@ void BTApp_BIPBuildServerMenu( CBTApp* pMe )
   if ( pMe->mBIP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
-    ISHELL_LoadResString( pMe->a.m_pIShell, 
+    ISHELL_LoadResString( pMe->m_pShell, 
                           AEE_APPSBTAPP_RES_FILE, 
                           IDS_BIP_SERVER, 
                           pMe->pText2, 
@@ -975,7 +977,7 @@ void BTApp_BIPBuildServerMenu( CBTApp* pMe )
   {
     //IMENUCTL_SetTitle( pMe->m_pIMenu, AEE_APPSBTAPP_RES_FILE, IDS_BIP_SERVER, NULL );
     AECHAR WTitle[20] = {0};
-	ISHELL_LoadResString(pMe->a.m_pIShell,
+	ISHELL_LoadResString(pMe->m_pShell,
                          AEE_APPSBTAPP_RES_FILE,                                
                          IDS_BIP_SERVER,
                          WTitle,
@@ -1005,7 +1007,7 @@ void BTApp_BIPBuildServerMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_BIP_SERVER );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -1032,7 +1034,7 @@ void BTApp_BIPBuildClientSubMenu( CBTApp* pMe )
   
   {
     AECHAR WTitle[20] = {0};
-	ISHELL_LoadResString(pMe->a.m_pIShell,
+	ISHELL_LoadResString(pMe->m_pShell,
                          AEE_APPSBTAPP_RES_FILE,                                
                          IDS_BIP_CLIENT,
                          WTitle,
@@ -1192,7 +1194,7 @@ void BTApp_BIPBuildClientSubMenu( CBTApp* pMe )
   
   // Activate menu
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -1219,7 +1221,7 @@ void BTApp_BIPBuildServerSubMenu( CBTApp* pMe )
   
   {
     AECHAR WTitle[20] = {0};
-	ISHELL_LoadResString(pMe->a.m_pIShell,
+	ISHELL_LoadResString(pMe->m_pShell,
                          AEE_APPSBTAPP_RES_FILE,                                
                          IDS_BIP_SERVER,
                          WTitle,
@@ -1248,7 +1250,7 @@ void BTApp_BIPBuildServerSubMenu( CBTApp* pMe )
    
   // Activate menu
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -1269,7 +1271,7 @@ void BTApp_BIPBuildClientMenu( CBTApp* pMe )
   if ( pMe->mBIP.bConnected != FALSE && pMe->mBIP.bSecConnected == FALSE)
   {
     szStatus[ 3 ] = 'C';
-    ISHELL_LoadResString( pMe->a.m_pIShell, 
+    ISHELL_LoadResString( pMe->m_pShell, 
                           AEE_APPSBTAPP_RES_FILE, 
                           IDS_BIP_CLIENT, 
                           pMe->pText2, 
@@ -1296,7 +1298,7 @@ void BTApp_BIPBuildClientMenu( CBTApp* pMe )
   if ( pMe->mBIP.bConnected != FALSE && pMe->mBIP.bSecConnected == FALSE)
   {
     szStatus[ 3 ] = 'C';
-    ISHELL_LoadResString( pMe->a.m_pIShell, 
+    ISHELL_LoadResString( pMe->m_pShell, 
                           AEE_APPSBTAPP_RES_FILE, 
                           IDS_BIP_CLIENT, 
                           pMe->pText2, 
@@ -1315,7 +1317,7 @@ void BTApp_BIPBuildClientMenu( CBTApp* pMe )
   {
     //IMENUCTL_SetTitle( pMe->m_pIMenu, AEE_APPSBTAPP_RES_FILE, IDS_BIP_CLIENT, NULL );
     AECHAR WTitle[20] = {0};
-	ISHELL_LoadResString(pMe->a.m_pIShell,
+	ISHELL_LoadResString(pMe->m_pShell,
                          AEE_APPSBTAPP_RES_FILE,                                
                          IDS_BIP_CLIENT,
                          WTitle,
@@ -1351,7 +1353,7 @@ void BTApp_BIPBuildClientMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_BIP_CLIENT );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -1380,7 +1382,7 @@ void BTApp_BIPBuildSettingsMenu( CBTApp* pMe )
   
   {
     AECHAR WTitle[20] = {0};
-	ISHELL_LoadResString(pMe->a.m_pIShell,
+	ISHELL_LoadResString(pMe->m_pShell,
                          AEE_APPSBTAPP_RES_FILE,                                
                          IDS_SETTINGS,
                          WTitle,
@@ -1406,7 +1408,7 @@ void BTApp_BIPBuildSettingsMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_BIP_SETTINGS );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -1429,7 +1431,7 @@ void BTApp_BIPBuildEnableMenu( CBTApp* pMe )
   
   {
     AECHAR WTitle[20] = {0};
-	ISHELL_LoadResString(pMe->a.m_pIShell,
+	ISHELL_LoadResString(pMe->m_pShell,
                          AEE_APPSBTAPP_RES_FILE,                                
                          IDS_SETTINGS_BIP,
                          WTitle,
@@ -1462,7 +1464,7 @@ void BTApp_BIPBuildEnableMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_BIP_ENABLING );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );  
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );  
 }
 
 /* ==========================================================================
@@ -1482,12 +1484,12 @@ void BTApp_BIPCleanup( CBTApp* pMe )
     pMe->mBIP.pIFileMgr = NULL;
   }
   // unregister for BIP notification
-  ISHELL_RegisterNotify( pMe->a.m_pIShell,  
+  ISHELL_RegisterNotify( pMe->m_pShell,  
                          AEECLSID_BLUETOOTH_APP,
                          AEECLSID_BLUETOOTH_NOTIFIER, 
                          0 );
   uBTApp_NMask &= ~NMASK_BT_BIP;
-  ISHELL_RegisterNotify( pMe->a.m_pIShell,  
+  ISHELL_RegisterNotify( pMe->m_pShell,  
                          AEECLSID_BLUETOOTH_APP,
                          AEECLSID_BLUETOOTH_NOTIFIER, 
                          uBTApp_NMask );
@@ -2237,11 +2239,11 @@ boolean BTApp_BIPInit( CBTApp* pMe )
 
   if ( init_done == FALSE )
   {
-    if ( (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_BIP, 
+    if ( (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BLUETOOTH_BIP, 
                                  (void**)&pMe->mBIP.po ) == SUCCESS) &&
-         (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_FILEMGR, 
+         (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_FILEMGR, 
                                  (void **)&pMe->mBIP.pIFileMgr ) == SUCCESS) &&
-         (ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+         (ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                                  AEECLSID_BLUETOOTH_NOTIFIER, 
                                  uNMask ) == SUCCESS) )
     {
@@ -2878,7 +2880,7 @@ static boolean BTApp_BIPHandleSelection( CBTApp* pMe, uint16 sel )
       {
         STRLCPY( printDetails->pPrintFileName, szPIfileName, nNameLen );
         STRLCPY( printDetails->pFileDescName, szPIdescFileName, nDescLen );
-        ISHELL_PostEventEx( pMe->a.m_pIShell, EVTFLG_ASYNC, 
+        ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
                             AEECLSID_BLUETOOTH_APP,
                             EVT_USER, EVT_BIP_PUT_IMAGE, (uint32)printDetails );
       }
@@ -2901,7 +2903,7 @@ static boolean BTApp_BIPHandleSelection( CBTApp* pMe, uint16 sel )
       selection = IMENUCTL_GetSel( pMe->m_pIMenu );
 
       BTApp_UpdateMenuItemImage( 
-        pMe->a.m_pIDisplay, 
+        pMe->m_pIDisplay, 
         pMe->m_pIMenu, 
         selection,
         pMe->mBIP.bDoAuthenticate ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );

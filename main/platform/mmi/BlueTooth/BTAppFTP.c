@@ -158,7 +158,8 @@ when       who  what, where, why
 
 #ifdef FEATURE_APP_BLUETOOTH
 
-#include "BTApp.h"
+#include "BTApp_priv.h"		//"BTApp.h"
+
 #include "BTAppUtils.h"
 #include "btapp_res.h"
 
@@ -550,7 +551,7 @@ void BTApp_FTPBuildMainMenu( CBTApp* pMe )
   
   {
     AECHAR WTitle[20] = {0};
-	ISHELL_LoadResString(pMe->a.m_pIShell,
+	ISHELL_LoadResString(pMe->m_pShell,
                          AEE_APPSBTAPP_RES_FILE,                                
                          IDS_FTP_TESTS,
                          WTitle,
@@ -585,7 +586,7 @@ void BTApp_FTPBuildMainMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_FTP_TESTS );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -606,7 +607,7 @@ void BTApp_FTPBuildServerMenu( CBTApp* pMe )
   if ( pMe->mFTP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
-    ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_FTP_SERVER, 
+    ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_FTP_SERVER, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
     len = WSTRLEN( pMe->pText2 );
 
@@ -630,7 +631,7 @@ void BTApp_FTPBuildServerMenu( CBTApp* pMe )
   	if ( pMe->mFTP.bConnected != FALSE )
     {
       szStatus[ 3 ] = 'C';
-      ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_FTP_SERVER, 
+      ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_FTP_SERVER, 
                             pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
       len = WSTRLEN( pMe->pText2 );
   
@@ -646,7 +647,7 @@ void BTApp_FTPBuildServerMenu( CBTApp* pMe )
     {
       //IMENUCTL_SetTitle( pMe->m_pIMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_SERVER, NULL );
       AECHAR WTitle[20] = {0};
-      ISHELL_LoadResString(pMe->a.m_pIShell,
+      ISHELL_LoadResString(pMe->m_pShell,
                          AEE_APPSBTAPP_RES_FILE,                                
                          IDS_FTP_SERVER,
                          WTitle,
@@ -676,7 +677,7 @@ void BTApp_FTPBuildServerMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_FTP_SERVER );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -701,7 +702,7 @@ void BTApp_FTPBuildClientMenu( CBTApp* pMe )
   if ( pMe->mFTP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
-    ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_FTP_CLIENT, 
+    ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_FTP_CLIENT, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
     len = WSTRLEN( pMe->pText2 );
 
@@ -725,7 +726,7 @@ void BTApp_FTPBuildClientMenu( CBTApp* pMe )
   	if ( pMe->mFTP.bConnected != FALSE )
     {
       szStatus[ 3 ] = 'C';
-      ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_FTP_CLIENT, 
+      ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_FTP_CLIENT, 
                             pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
       len = WSTRLEN( pMe->pText2 );
   
@@ -741,7 +742,7 @@ void BTApp_FTPBuildClientMenu( CBTApp* pMe )
     {
       //IMENUCTL_SetTitle( pMe->m_pIMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_CLIENT, NULL );
       AECHAR WTitle[20] = {0};
-      ISHELL_LoadResString(pMe->a.m_pIShell,
+      ISHELL_LoadResString(pMe->m_pShell,
                          AEE_APPSBTAPP_RES_FILE,                                
                          IDS_FTP_CLIENT,
                          WTitle,
@@ -775,7 +776,7 @@ void BTApp_FTPBuildClientMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_FTP_CLIENT );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -799,7 +800,7 @@ void BTApp_FTPBuildSettingsMenu( CBTApp* pMe )
   //Add By zzg 2010_11_01
   {
 	  AECHAR WTitle[20] = {0};
-	  ISHELL_LoadResString(pMe->a.m_pIShell,
+	  ISHELL_LoadResString(pMe->m_pShell,
 		                   AEE_APPSBTAPP_RES_FILE,                                
 		                   IDS_SETTINGS,
 		                   WTitle,
@@ -825,7 +826,7 @@ void BTApp_FTPBuildSettingsMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_FTP_SETTINGS );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -843,7 +844,7 @@ void BTApp_FTPBuildServerRegisterMenu( CBTApp* pMe )
   //Add By zzg 2010_11_01
   {
 	  AECHAR WTitle[20] = {0};
-	  ISHELL_LoadResString(pMe->a.m_pIShell,
+	  ISHELL_LoadResString(pMe->m_pShell,
 		                   AEE_APPSBTAPP_RES_FILE,                                
 		                   IDS_REGISTER,
 		                   WTitle,
@@ -867,7 +868,7 @@ void BTApp_FTPBuildServerRegisterMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_FTP_SRV_REGISTER );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );  
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );  
 }
 
 /* ==========================================================================
@@ -885,7 +886,7 @@ void BTApp_FTPBuildEnableMenu( CBTApp* pMe )
   //Add By zzg 2010_11_01
   {
 	  AECHAR WTitle[20] = {0};
-	  ISHELL_LoadResString(pMe->a.m_pIShell,
+	  ISHELL_LoadResString(pMe->m_pShell,
 		                   AEE_APPSBTAPP_RES_FILE,                                
 		                   IDS_SETTINGS_FTP,
 		                   WTitle,
@@ -909,7 +910,7 @@ void BTApp_FTPBuildEnableMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_FTP_ENABLING );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );  
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );  
 }
 
 /* ==========================================================================
@@ -939,7 +940,7 @@ void BTApp_FTPLoadBrowsingMenu( CBTApp* pMe )
     //Add By zzg 2010_11_01
 	  {
 		  AECHAR WTitle[20] = {0};
-		  ISHELL_LoadResString(pMe->a.m_pIShell,
+		  ISHELL_LoadResString(pMe->m_pShell,
 			                   AEE_APPSBTAPP_RES_FILE,                                
 			                   IDS_FTP_LIST_FOLDER,
 			                   WTitle,
@@ -1000,7 +1001,7 @@ void BTApp_FTPLoadBrowsingMenu( CBTApp* pMe )
 
   // Activate the menu
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 
   if ( pMe->mFTP.bRemoteBrowsing )
   {
@@ -1024,7 +1025,7 @@ void BTApp_FTPLoadBrowsingMenu( CBTApp* pMe )
     BTApp_AddMenuItem( pMe, pMe->m_pISoftMenu, &ai, IDS_FTP_CLIENT, 0 );
 
     IMENUCTL_SetActive( pMe->m_pISoftMenu, TRUE );
-    IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+    IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
     IMENUCTL_SetSel( pMe->m_pISoftMenu, IDS_SELECT );
   }
 
@@ -1039,7 +1040,7 @@ void BTApp_FTPLoadBrowsingMenu( CBTApp* pMe )
      BusyIcon */
   if ( pMe->mFTP.bObjectTransfer )
   {
-    ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE );
+    ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, FALSE );
   }
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
@@ -1058,11 +1059,11 @@ boolean BTApp_FTPInit( CBTApp* pMe )
 
   if ( init_done == FALSE )
   {
-    if ( (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_FTP, 
+    if ( (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BLUETOOTH_FTP, 
                                  (void**)&pMe->mFTP.po ) == SUCCESS) &&
-         (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_FILEMGR, 
+         (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_FILEMGR, 
                                  (void **)&pMe->mFTP.pIFileMgr ) == SUCCESS) &&
-         (ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+         (ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                                  AEECLSID_BLUETOOTH_NOTIFIER, 
                                  uNMask ) == SUCCESS) )
     {
@@ -1100,10 +1101,10 @@ void BTApp_FTPCleanup( CBTApp* pMe )
     pMe->mFTP.pIFileMgr = NULL;
   }
   // unregister FTP notification
-  ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+  ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                          AEECLSID_BLUETOOTH_NOTIFIER, 0 );
   uBTApp_NMask &= ~NMASK_BT_FTP;
-  ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+  ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                          AEECLSID_BLUETOOTH_NOTIFIER, uBTApp_NMask );
 }
 
@@ -1555,12 +1556,12 @@ boolean BTApp_FTPBuildMenu( CBTApp* pMe, BTAppMenuType menu )
       break;
     case BT_APP_MENU_FTP_CREATE_FLDR:
       PUSH_MENU( BT_APP_MENU_FTP_CREATE_FLDR );
-      built = ( ISHELL_CreateDialog( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+      built = ( ISHELL_CreateDialog( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                                      IDD_BT_TEXT_EDIT, NULL ) == SUCCESS );
       break;
     case BT_APP_MENU_FTP_MOVE_TO_FLDR:
       PUSH_MENU( BT_APP_MENU_FTP_MOVE_TO_FLDR );
-      built = ( ISHELL_CreateDialog( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+      built = ( ISHELL_CreateDialog( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                                      IDD_BT_TEXT_EDIT, NULL ) == SUCCESS );
       break;
     default:
@@ -1691,7 +1692,7 @@ boolean BTApp_FTPHandleSelection( CBTApp* pMe, uint16 sel )
       pMe->mFTP.bDoAuthenticate = pMe->mFTP.bDoAuthenticate ? FALSE : TRUE;
       selection = IMENUCTL_GetSel( pMe->m_pIMenu );
       BTApp_UpdateMenuItemImage( 
-        pMe->a.m_pIDisplay, pMe->m_pIMenu, selection,
+        pMe->m_pIDisplay, pMe->m_pIMenu, selection,
         pMe->mFTP.bDoAuthenticate ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
       BTApp_WriteConfigFile( pMe );
       break;
@@ -1699,9 +1700,9 @@ boolean BTApp_FTPHandleSelection( CBTApp* pMe, uint16 sel )
     case IDS_EFS:
     {
       pMe->mFTP.u8StorageDevice = STORAGE_DEV_EFS;
-      BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_EFS, 
+      BTApp_UpdateMenuItemImage( pMe->m_pIDisplay, pMe->m_pIMenu, IDS_EFS, 
                                  IDB_BT_RADIO_FILLED );
-      BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, pMe->m_pIMenu, 
+      BTApp_UpdateMenuItemImage( pMe->m_pIDisplay, pMe->m_pIMenu, 
                                  IDS_MEMORY_CARD, IDB_BT_RADIO_UNFILLED );
 
       STRLCPY( pMe->mFTP.szCurrentFolder, BTAPP_ROOT_DIR, 
@@ -1711,9 +1712,9 @@ boolean BTApp_FTPHandleSelection( CBTApp* pMe, uint16 sel )
     case IDS_MEMORY_CARD:
     {
       pMe->mFTP.u8StorageDevice = STORAGE_DEV_MEM_CARD;
-      BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, pMe->m_pIMenu, IDS_EFS, 
+      BTApp_UpdateMenuItemImage( pMe->m_pIDisplay, pMe->m_pIMenu, IDS_EFS, 
                                  IDB_BT_RADIO_UNFILLED );
-      BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, pMe->m_pIMenu, 
+      BTApp_UpdateMenuItemImage( pMe->m_pIDisplay, pMe->m_pIMenu, 
                                  IDS_MEMORY_CARD, IDB_BT_RADIO_FILLED );
 
       STRLCPY( pMe->mFTP.szCurrentFolder, AEEFS_CARD0_DIR, 
@@ -1998,7 +1999,7 @@ static boolean BTApp_HandleFTPServerRegisterMenu( CBTApp* pMe, uint16 key )
         {
           pMe->mFTP.reg.bBrowseAllowed = 
             pMe->mFTP.reg.bBrowseAllowed ? FALSE : TRUE;
-          BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
+          BTApp_UpdateMenuItemImage( pMe->m_pIDisplay, 
             pMe->m_pIMenu, selection, 
             pMe->mFTP.reg.bBrowseAllowed ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
@@ -2006,7 +2007,7 @@ static boolean BTApp_HandleFTPServerRegisterMenu( CBTApp* pMe, uint16 key )
         case IDS_FTP_SRV_READ_ONLY:
         {
           pMe->mFTP.reg.bReadOnly = pMe->mFTP.reg.bReadOnly ? FALSE : TRUE;
-          BTApp_UpdateMenuItemImage( pMe->a.m_pIDisplay, 
+          BTApp_UpdateMenuItemImage( pMe->m_pIDisplay, 
             pMe->m_pIMenu, selection, 
             pMe->mFTP.reg.bReadOnly ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
           break;
@@ -2160,7 +2161,7 @@ static boolean BTApp_HandleFTPRemoteBrowsingMenu( CBTApp* pMe, uint16 key )
                          pMe->mFTP.remoteObjects[ uIndex ].szFolderFileName, 
                          sizeof( szOperand ) );
                 pMe->mFTP.bObjectTransfer = TRUE;
-                ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, 
+                ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, 
                               FALSE );
               }
               break;
@@ -2269,7 +2270,7 @@ static boolean BTApp_HandleFTPRemoteBrowsingMenu( CBTApp* pMe, uint16 key )
                        pMe->mFTP.remoteObjects[ uIndex ].szFolderFileName, 
                        sizeof( szOperand ) );
               pMe->mFTP.bObjectTransfer = TRUE;
-              ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, 
+              ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, 
                             FALSE );
             }
           }
@@ -2481,7 +2482,7 @@ static boolean BTApp_HandleFTPLocalBrowsingMenu( CBTApp* pMe, uint16 key )
           else         
           {
             pMe->mFTP.bObjectTransfer = TRUE;
-            ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, 
+            ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, 
                           FALSE );
           }
           
@@ -2565,7 +2566,7 @@ static boolean BTApp_HandleFTPLocalBrowsingMenu( CBTApp* pMe, uint16 key )
         else
         {
           pMe->mFTP.bObjectTransfer = TRUE;
-          ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, 
+          ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, 
                         FALSE );
         }
       }

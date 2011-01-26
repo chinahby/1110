@@ -892,10 +892,13 @@ static boolean  SecurityPassWordDlgHandler(CSecurityMenu *pMe,
                 (void)IMENUCTL_Redraw(pMenu);
 
             }
+
+			MSG_FATAL("***zzg SecurityPassWorldDlg ISHELL_SetTimer CSecurtyMenu_DialogTimeout 111***", 0, 0, 0);
+			
             (void) ISHELL_SetTimer(pMe->m_pShell,
-                                                750,
-                                                CSecurtyMenu_DialogTimeout,
-                                                pMe);
+                                    750,
+                                    CSecurtyMenu_DialogTimeout,
+                                    pMe);
             return TRUE;
         }
 
@@ -1595,11 +1598,16 @@ static boolean  Security_HandleMsgBoxDlgEvent(CSecurityMenu* pMe,
         }
 
         case EVT_DIALOG_START:
+			
+			MSG_FATAL("***zzg SecurityHandleMsgBoxDlg m_wMsgID=%d***", pMe->m_wMsgID, 0, 0);
+			
             if(pMe->m_wMsgID != IDS_RESTORE_CONFIRM &&
                 pMe->m_wMsgID != IDS_DELETE_CONFIRM)
             {
+            	MSG_FATAL("***zzg SecurityPassWorldDlg ISHELL_SetTimer CSecurtyMenu_DialogTimeout 222***", 0, 0, 0);
                 ISHELL_SetTimer(pMe->m_pShell,SECURITY_PROMPTMSG_TIMER,CSecurtyMenu_DialogTimeout,pMe);
             }
+			
             ISHELL_PostEvent( pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER_REDRAW,0,0);
             return TRUE;
 
@@ -1699,6 +1707,9 @@ static boolean  Security_HandleMsgBoxDlgEvent(CSecurityMenu* pMe,
 
         case EVT_DISPLAYDIALOGTIMEOUT:
             // 收到定时器函数发出关闭当前对话框的事件，关闭对话框
+        {        	
+			MSG_FATAL("***zzg Security_HandleMSGBoxDlg m_wMsgID=%d***", pMe->m_wMsgID, 0, 0);
+			
             switch(pMe->m_wMsgID)
             {
                 case IDS_SAVED:
@@ -1715,6 +1726,7 @@ static boolean  Security_HandleMsgBoxDlgEvent(CSecurityMenu* pMe,
                     break;
             }
             return TRUE;
+        }
 
         case EVT_KEY:
         {
@@ -1735,6 +1747,12 @@ static boolean  Security_HandleMsgBoxDlgEvent(CSecurityMenu* pMe,
             {
                 // 取消自动关闭对话框的定时器
                 (void)ISHELL_CancelTimer(pMe->m_pShell, NULL,  pMe);
+
+				if (pMe->m_wMsgID == IDS_RESTORING)
+	        	{
+					MSG_FATAL("***zzg Security_HandleMsgBoxDLg EVT_KEY ISHELL_CancelTimer***", 0, 0, 0);
+				}
+				
                 switch(pMe->m_wMsgID)
                 {
                     case IDS_SAVED:
@@ -3469,6 +3487,8 @@ static void CSecurtyMenu_DialogTimeout(void *pme)
 {
     CSecurityMenu *pMe = (CSecurityMenu *)pme;
 
+	MSG_FATAL("***zzg CSecurtyMenu_DialogTimeout***", 0, 0, 0);
+
     if (NULL == pMe)
     {
         return;
@@ -4784,7 +4804,8 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
     
 //Add By zzg 2010_10_22
 #ifdef FEATURE_APP_BLUETOOTH
-	ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
+	//ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");	
+	ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
 #endif
 //Add End   
     OEM_RestoreFactorySetting();

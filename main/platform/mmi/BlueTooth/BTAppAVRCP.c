@@ -49,7 +49,9 @@ when       who  what, where, why
 
 #ifdef FEATURE_APP_BLUETOOTH
 #ifdef FEATURE_BT_EXTPF_AV
-#include "BTApp.h"
+#include "BTApp_priv.h"		//"BTApp.h"
+
+
 #include "BTAppUtils.h"
 #include "BTAppAVRCP.h"
 
@@ -117,7 +119,7 @@ void BTApp_ProcessAVRCPNotifications(
 #endif //FEATURE_APP_TEST_AUTOMATION
       if( pMe->mAVRCP.bReleasing == TRUE )
       {
-        ISHELL_PostEventEx( pMe->a.m_pIShell, EVTFLG_ASYNC,
+        ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC,
                             AEECLSID_BLUETOOTH_APP,
                             EVT_USER, EVT_AVRCP_DISCONNECTED, 0L);
       }
@@ -243,7 +245,7 @@ boolean BTApp_AVRCPInit( CBTApp* pMe )
 
   if ( btapp_avrcp_init_done == FALSE )
   {
-    if ( ISHELL_RegisterNotify( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP,
+    if ( ISHELL_RegisterNotify( pMe->m_pShell, AEECLSID_BLUETOOTH_APP,
                                 AEECLSID_BLUETOOTH_NOTIFIER, 
                                 uNMask ) 
          == SUCCESS  )
@@ -284,10 +286,10 @@ void BTApp_AVRCPCleanup( CBTApp* pMe )
         pMe->mAVRCP.bEnabled   = FALSE;
         pMe->mAVRCP.bReleasing = FALSE;
 
-        ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+        ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                                AEECLSID_BLUETOOTH_NOTIFIER, 0 );
         uBTApp_NMask &= ~NMASK_BT_AVRCP;
-        ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+        ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                                AEECLSID_BLUETOOTH_NOTIFIER, uBTApp_NMask );
 
         btapp_avrcp_init_done = FALSE;
@@ -307,34 +309,33 @@ DESCRIPTION
 ============================================================================= */
 void BTApp_AVRCPDisable( CBTApp* pMe )
 {
-
-  if( ( pMe->mAVRCP.bConnected == TRUE) && ( pMe->mAVRCP.bReleasing == FALSE ) )
-  {
-    pMe->mAVRCP.bReleasing = TRUE;
-    IBTEXTAVRCP_Disconnect( pMe->mAVRCP.po );
-    BTApp_ShowBusyIcon( pMe );
-  }
-  else if( pMe->mAVRCP.bConnected == FALSE )
-  {
-    if ( pMe->mAVRCP.po != NULL )
-    {
-      if( IBTEXTAVRCP_Release( pMe->mAVRCP.po ) == SUCCESS )
-      {
-        pMe->mAVRCP.po         = NULL;
-        pMe->mAVRCP.bEnabled   = FALSE;
-        pMe->mAVRCP.bReleasing = FALSE;
-      }
-      else
-      {
-        MSG_ERROR( "AVRCP - can't unregister", 0, 0, 0 );
-      }
-    }
-  }
-  else
-  {
-    /* We can come here when there are multiple calls to  BTApp_DisableBT() */
-    MSG_HIGH( "AVRCP disconnection already in progress, Do Nothing ", 0,0,0 );
-  }
+	if ((pMe->mAVRCP.bConnected == TRUE) && (pMe->mAVRCP.bReleasing == FALSE))
+	{
+		pMe->mAVRCP.bReleasing = TRUE;
+		IBTEXTAVRCP_Disconnect(pMe->mAVRCP.po);
+		BTApp_ShowBusyIcon(pMe);
+	}
+	else if (pMe->mAVRCP.bConnected == FALSE)
+	{
+		if (pMe->mAVRCP.po != NULL)
+		{
+			if (IBTEXTAVRCP_Release(pMe->mAVRCP.po) == SUCCESS)
+			{
+				pMe->mAVRCP.po         = NULL;
+				pMe->mAVRCP.bEnabled   = FALSE;
+				pMe->mAVRCP.bReleasing = FALSE;
+			}
+			else
+			{
+				MSG_ERROR( "AVRCP - can't unregister", 0, 0, 0 );
+			}
+		}
+	}
+	else
+	{
+		/* We can come here when there are multiple calls to  BTApp_DisableBT() */
+		MSG_HIGH( "AVRCP disconnection already in progress, Do Nothing ", 0,0,0 );
+	}
 }
 
 /* ==========================================================================
@@ -377,7 +378,7 @@ boolean BTApp_BuildAVRCPTestMenu( CBTApp* pMe, BTAppMenuType menu )
       {
         button_op = IDB_BT_RADIO_UNFILLED;
       }
-      if( ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE,
+      if( ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE,
                                 IDS_AVRCP_SELECT+pMe->mAVRCP.evtTable[i]-AEEBT_AVRCP_EVT_OP_SELECT,
                                 button_name, SHORT_TEXT_BUF_LEN*sizeof(AECHAR) )
           > 0 )
@@ -434,7 +435,7 @@ boolean BTApp_BuildAVRCPTestMenu( CBTApp* pMe, BTAppMenuType menu )
     PUSH_MENU( menu );
   }
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
@@ -488,7 +489,7 @@ boolean BTApp_HandleAVRCPMainMenu( CBTApp* pMe, uint16 key )
       switch ( selection )
       {
         case IDS_ENABLE:
-          if( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_AVRCP,
+          if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BLUETOOTH_AVRCP,
                                      (void**)&pMe->mAVRCP.po )
               == SUCCESS )
           {
@@ -618,7 +619,7 @@ void BTApp_EnableAVRCP( CBTApp* pMe, boolean* pbSettingBondable )
     else if ( pMe->mAVRCP.bEnabled == FALSE )
     {
       MSG_LOW( "EnableAVRCP - enabling AVRCP", 0, 0, 0 );
-      if( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_AVRCP, 
+      if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BLUETOOTH_AVRCP, 
                                  (void**)&pMe->mAVRCP.po ) == SUCCESS )
       {
 

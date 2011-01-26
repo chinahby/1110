@@ -107,7 +107,8 @@ when        who   what, where, why
 
 #ifdef FEATURE_APP_BLUETOOTH
 
-#include "BTApp.h"
+#include "BTApp_priv.h"		//"BTApp.h"
+
 #include "BTAppUtils.h"
 #include "btapp_res.h"
 
@@ -203,7 +204,7 @@ void BTApp_AddMenuItem(
 
     len = WSTRLEN( pMe->pText1 );
 
-    ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, stringID, 
+    ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, stringID, 
                           &pMe->pText1[ len ], 
                           (LONG_TEXT_BUF_LEN-len) * sizeof(AECHAR) );
     pItem->pText = pMe->pText1;
@@ -445,7 +446,7 @@ uint16 BTApp_FormatBTName(
 {
   AECHAR wBuf1[ 16 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BT_NAME, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BT_NAME, 
                         wBuf1, sizeof( wBuf1 ) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, pwName );
   wBuf1[ 0 ] = (AECHAR)(unsigned char) ('\n');
@@ -468,7 +469,7 @@ uint16 BTApp_FormatBTShortName(
 {
   AECHAR wBuf1[ 32 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                         IDS_LABEL_BT_SHORT_NAME, 
                         wBuf1, sizeof( wBuf1 ) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, pwName );
@@ -502,10 +503,10 @@ uint16 BTApp_FormatSSPCapable(
   AECHAR wBuf1[ 16 ];
   AECHAR wBuf2[ 8 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                         IDS_LABEL_SSP_CAPABLE, wBuf1, 
                         sizeof( wBuf1 ) );
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                         bSSPCapable ? IDS_BT_YES : IDS_BT_NO, 
                         wBuf2, sizeof( wBuf2 ) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wBuf2 );
@@ -551,7 +552,7 @@ uint16 BTApp_FormatLinkKey(
   SNPRINTF ( pcStr, SHORT_TEXT_BUF_LEN* sizeof(char), 
             "{%s}", LinkKeyLookupTable[linkKeyType].LKStatus );
   
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_LINK_KEY, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_LINK_KEY, 
                         wBuf1, sizeof( wBuf1 ) );
   STRTOWSTR( pcStr, wBuf2, (SHORT_TEXT_BUF_LEN* sizeof(AECHAR)));
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wBuf2 );
@@ -579,7 +580,7 @@ uint16 BTApp_FormatLowPowerMode(
   AECHAR wBuf2[ 32 ];
   uint16 msgID;
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                         IDS_LABEL_LOW_POWER_MODE, wBuf1, 
                         sizeof( wBuf1 ) );
   switch ( pwrMode )
@@ -598,7 +599,7 @@ uint16 BTApp_FormatLowPowerMode(
       break;
   }
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, msgID, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, msgID, 
                         wBuf2, sizeof(wBuf2) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wBuf2 );
   wBuf1[ 0 ] = (AECHAR)(unsigned char) ('\n');
@@ -619,7 +620,7 @@ uint16 BTApp_FormatMaxInterval(
 {
   AECHAR wBuf1[ 128 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                         IDS_LABEL_MAX_INTERVAL, wBuf1, 
                         sizeof( wBuf1 ) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wMaxInterval );
@@ -642,7 +643,7 @@ uint16 BTApp_FormatIdleTieout(
 {
   AECHAR wBuf1[ 128 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_IDLE_TIMEOUT, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_IDLE_TIMEOUT, 
                         wBuf1, sizeof( wBuf1 ) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wIdleTimeout );
   wBuf1[ 0 ] = (AECHAR)(unsigned char) ('\n');
@@ -664,7 +665,7 @@ uint16 BTApp_FormatMaxLatency(
 {
   AECHAR wBuf1[ 128 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_MAX_LATENCY, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_MAX_LATENCY, 
                         wBuf1, sizeof( wBuf1 ) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wMaxLatency );
   wBuf1[ 0 ] = (AECHAR)(unsigned char) ('\n');
@@ -693,14 +694,14 @@ uint16 BTApp_FormatSniffParams(
   {
     case IDS_STK_APP_PARAM:
     {
-      ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+      ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                             IDS_LABEL_STICK_TO_APP, wBuf1, 
                             sizeof( wBuf1 ) );
       break;
     }
     case IDS_SNIF_INIT_ORIENTED:
     {
-      ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+      ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                             IDS_LABEL_SNIFF_INIT_ORIENTED, wBuf1, 
                             sizeof( wBuf1 ) );
       break;
@@ -735,13 +736,13 @@ uint16 BTApp_FormatOOBDataStr(
 
   if ( bOOBDataPrsent )
   {
-   ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+   ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                          IDS_MSG_OOB_DATA_PRESENT, 
                          wBuf1, sizeof( wBuf1 ) );
   }
   else
   {
-   ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE,
+   ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE,
                          IDS_MSG_OOB_DATA_NOT_PRESENT, 
                          wBuf1, sizeof( wBuf1 ) );
   }
@@ -770,7 +771,7 @@ uint16 BTApp_FormatBDAddress(
   AECHAR wBuf1[ 16 ];
   AECHAR wBuf2[ 16 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BD_ADDR, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BD_ADDR, 
                         wBuf1, sizeof( wBuf1 ) );
   BTApp_BDAddr2Wstr( wBuf2, pAddr );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wBuf2 );
@@ -794,7 +795,7 @@ uint16 BTApp_FormatSecurity(
   AECHAR wBuf2[ 32 ];
   uint16 msgID;
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_SECURITY, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_SECURITY, 
                         wBuf1, sizeof( wBuf1 ) );
   switch ( sec )
   {
@@ -812,7 +813,7 @@ uint16 BTApp_FormatSecurity(
       break;
   }
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, msgID, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, msgID, 
                         wBuf2, sizeof(wBuf2) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wBuf2 );
   wBuf1[ 0 ] = (AECHAR)(unsigned char) ('\n');
@@ -834,9 +835,9 @@ uint16 BTApp_FormatBondable(
   AECHAR wBuf1[ 16 ];
   AECHAR wBuf2[ 8 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BONDABLE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BONDABLE, 
                         wBuf1, sizeof( wBuf1 ) );
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                         bBondable ? IDS_BT_YES : IDS_BT_NO, 
                         wBuf2, sizeof( wBuf2 ) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wBuf2 );
@@ -859,9 +860,9 @@ uint16 BTApp_FormatDiscoverable(
   AECHAR wBuf1[ 32 ];
   AECHAR wBuf2[ 8 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                         IDS_LABEL_DISCOVERABLE, wBuf1, sizeof( wBuf1 ) );
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                         bDiscoverable ? IDS_BT_YES : IDS_BT_NO, 
                         wBuf2, sizeof( wBuf2 ) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wBuf2 );
@@ -884,7 +885,7 @@ uint16 BTApp_FormatSvcCls(
   AECHAR wBuf1[ 32 ];
   AECHAR wBuf2[ 16 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_SVC_CLS, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_SVC_CLS, 
                         wBuf1, sizeof( wBuf1 ) );
   BTApp_SvcCls2Wstr( wBuf2, sizeof( wBuf2 ), svcCls );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wBuf2 );
@@ -907,13 +908,13 @@ uint16 BTApp_FormatLMPFeatures(
   AECHAR wBuf1[ 32 ];
   AECHAR wBuf2[ 256 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_LMP_FEAT, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_LMP_FEAT, 
                         wBuf1, sizeof( wBuf1 ) );
   if ( (pLMPFeatures[0] == 0) && 
        (pLMPFeatures[1] == 0) && 
        (pLMPFeatures[2] == 0) )
   {
-    ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_NOT_AVAIL, 
+    ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_NOT_AVAIL, 
                           wBuf2, sizeof( wBuf2 ) );
   }
   else
@@ -1007,7 +1008,7 @@ uint16 BTApp_FormatPortStatus(
   AECHAR wBuf2[ 64 ];
   uint16 strID;
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_PORT_STATUS, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_PORT_STATUS, 
                         wBuf1, sizeof( wBuf1 ) );
 
   switch ( pMe->mSPP.status.state )
@@ -1025,7 +1026,7 @@ uint16 BTApp_FormatPortStatus(
       strID = IDS_UNKNOWN;
       break;
   }
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, strID, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, strID, 
                         wBuf2, sizeof(wBuf2) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wBuf2 );
   wBuf1[ 0 ] = (AECHAR)(unsigned char) ('\n');
@@ -1045,7 +1046,7 @@ uint16 BTApp_FormatBytesSent(
 {
   AECHAR wBuf1[ 64 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BYTES_SENT, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BYTES_SENT, 
                         wBuf1, sizeof( wBuf1 ) );
 
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, pMe->mSPP.uTotalBytesSent );
@@ -1066,7 +1067,7 @@ uint16 BTApp_FormatBytesRcvd(
 {
   AECHAR wBuf1[ 64 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BYTES_RCVD, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BYTES_RCVD, 
                         wBuf1, sizeof( wBuf1 ) );
 
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, pMe->mSPP.uTotalBytesRcvd );
@@ -1089,9 +1090,9 @@ uint16 BTApp_FormatDevRole(
   AECHAR wBuf1[ 25 ];
   AECHAR wBuf2[ 8 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_DEV_ROLE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_DEV_ROLE, 
                         wBuf1, sizeof( wBuf1 ) );
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                         bMaster ? IDS_MASTER : IDS_SLAVE, 
                         wBuf2, sizeof( wBuf2 ) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, wBuf2 );
@@ -1114,7 +1115,7 @@ uint16 BTApp_FormatManuData(
 {
   AECHAR wBuf1[ 30 ];
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                         IDS_LABEL_BT_MANU_DATA, wBuf1, 
                         sizeof( wBuf1 ) );
   WSPRINTF( pwStr, uLen*sizeof( AECHAR ), wBuf1, pwName );
@@ -1308,7 +1309,7 @@ uint16 BTApp_FormatUUID(
 
 
       // get the label
-      ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, uMsgID[ i ], 
+      ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, uMsgID[ i ], 
                             wBuf, sizeof( wBuf )  );
       j = WSTRLEN( wBuf );
       if ( (uLen < j) || (uLen-j) <= 5 )
@@ -1349,7 +1350,7 @@ uint16 BTApp_FormatPasskey(
 {
   AECHAR wBuf1[ 64 ];
   
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                         IDS_LABEL_LOCAL_PSSKEY, wBuf1, 
                         sizeof( wBuf1 ) );
   WSPRINTF( pwStr, (LONG_TEXT_BUF_LEN - uLen)*sizeof( AECHAR ), wBuf1, 
@@ -1360,7 +1361,7 @@ uint16 BTApp_FormatPasskey(
 
   uLen += WSTRLEN(pwStr);
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, 
                         IDS_LABEL_REMOTE_PSSKEY, wBuf1, 
                         sizeof( wBuf1 ) );
   WSPRINTF( (pwStr+WSTRLEN(pwStr) ), 
@@ -1527,8 +1528,10 @@ DESCRIPTION
 ============================================================================= */
 void BTApp_ShowBusyIcon( CBTApp* pMe )
 {
-  ShowBusyIcon( pMe->a.m_pIShell, 
-                pMe->a.m_pIDisplay, 
+  return;
+	
+  ShowBusyIcon( pMe->m_pShell, 
+                pMe->m_pIDisplay, 
                 &pMe->m_rect, 
                 FALSE );
   pMe->bBusyIconUp = TRUE;
@@ -1540,7 +1543,7 @@ DESCRIPTION
 ============================================================================= */
 void BTApp_MessageTimerExpired( CBTApp* pMe )
 {
-  ISHELL_PostEventEx( pMe->a.m_pIShell, EVTFLG_ASYNC, 
+  ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
                       AEECLSID_BLUETOOTH_APP,
                       EVT_USER, EVT_CLR_MSG_SCR, 0L);
 }
@@ -1549,21 +1552,46 @@ void BTApp_MessageTimerExpired( CBTApp* pMe )
 FUNCTION BTApp_ShowMessage
 DESCRIPTION
 ============================================================================= */
+
 void BTApp_ShowMessage( 
   CBTApp* pMe, 
   uint16  msgID, 
   AECHAR* wArg, 
   uint8   secondsUp // amount of time the message stays on screen, 0 = 4ever
 )
-{
-  AECHAR  wTempBuf[ 64 ];
-  AECHAR* pText = pMe->pText2;
-  AEERect rc;
+{	
+	boolean needstr = FALSE;
 
+	MEMSET(pMe->wMsgBuf, 0, WSTRLEN(pMe->wMsgBuf)*sizeof(AECHAR));
+	
+	if (wArg == NULL)
+	{
+		needstr = FALSE;
+	}
+	else
+	{
+		WSTRCPY(pMe->wMsgBuf, wArg);		
+		needstr = TRUE;
+	}
+
+	MSG_FATAL("***zzg BTApp_ShowMsg msgID=%d, WSTRLEN(wArg)=%d***", msgID, WSTRLEN(wArg), 0);
+	
+	MSG_FATAL("***zzg BTApp_ShowMsg msgID=%d, WSTRLEN(wMsgBuf)=%d***", msgID, WSTRLEN(pMe->wMsgBuf), 0);
+
+	pMe->m_msg_id = msgID;	
+	pMe->m_bNeedStr = needstr;
+
+	
+	//CLOSE_DIALOG(DLGRET_BT_MSGBOX)   
+	pMe->m_eDlgRet = DLGRET_BT_MSGBOX; 
+	(void) ISHELL_EndDialog(pMe->m_pShell); 
+   
+
+  /*
   //Add By zzg 2010_12_29
-  if (ISHELL_ActiveApplet(pMe->a.m_pIShell) != AEECLSID_BLUETOOTH_APP)
+  if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
   {		
-		MSG_FATAL("***zzg BTApp_ShowMessage ActiveApplet=%x***",ISHELL_ActiveApplet(pMe->a.m_pIShell), 0, 0);
+		MSG_FATAL("***zzg BTApp_ShowMessage ActiveApplet=%x***",ISHELL_ActiveApplet(pMe->m_pShell), 0, 0);
 		return;
   }
   //Add End
@@ -1571,7 +1599,7 @@ void BTApp_ShowMessage(
   CLEAR_SCREEN();
 
   // get the title
-  //ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_TITLE, wTempBuf, sizeof( wTempBuf ) );
+  //ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_BT_TITLE, wTempBuf, sizeof( wTempBuf ) );
 
   //Add By zzg 2010_11_01
   if(pMe->m_pIAnn != NULL)
@@ -1579,7 +1607,7 @@ void BTApp_ShowMessage(
       IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
   }  
   {   
-    	ISHELL_LoadResString(pMe->a.m_pIShell,
+    	ISHELL_LoadResString(pMe->m_pShell,
                              AEE_APPSBTAPP_RES_FILE,                                
                              IDS_BT_TITLE,
                              wTempBuf,
@@ -1600,7 +1628,7 @@ void BTApp_ShowMessage(
   else
   {
     // get the text
-    ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, msgID, 
+    ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, msgID, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN*sizeof( AECHAR ) );
     if ( wArg != NULL )
     {
@@ -1632,17 +1660,20 @@ void BTApp_ShowMessage(
   //ISTATIC_SizeToFit( pMe->m_pStatic, &rc );	//Del By zzg 2010_11_01
   
   ISTATIC_Redraw( pMe->m_pStatic );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 
   pMe->uCurrMsgId = msgID;
   pMe->bBusyIconUp = FALSE;  
 
   if ( secondsUp > 0)
   {
-    ISHELL_SetTimer( pMe->a.m_pIShell, ONE_SECOND*2, 
+    ISHELL_SetTimer( pMe->m_pShell, ONE_SECOND*2, 
                      (PFNNOTIFY) BTApp_MessageTimerExpired, pMe );
   }
+  */
 }
+
+
 
 /* ==========================================================================
 FUNCTION BTApp_ShowDevMsg
@@ -1658,12 +1689,25 @@ void BTApp_ShowDevMsg(
   AEEBTDeviceInfo dev;
   dev.bdAddr = *pAddr;
 
-  if ( (IBTEXTRM_DeviceRead( pMe->mRM.po, &dev ) != SUCCESS) ||
-       (WSTRLEN(dev.wName) == 0) )
+  if ( (IBTEXTRM_DeviceRead( pMe->mRM.po, &dev ) != SUCCESS) || (WSTRLEN(dev.wName) == 0) )
   {
     BTApp_BDAddr2Wstr( dev.wName, pAddr );
   }
-  BTApp_ShowMessage( pMe, msgID, dev.wName, secondsUp );
+
+  //BTApp_ShowMessage( pMe, msgID, dev.wName, secondsUp );
+
+	//Add By zzg 2011_01_13
+	pMe->m_msg_id = msgID;		
+	pMe->m_bNeedStr = TRUE;	
+	
+	MEMSET(pMe->wMsgBuf, 0, WSTRLEN(pMe->wMsgBuf)*sizeof(AECHAR));
+	WSTRCPY(pMe->wMsgBuf, dev.wName);	
+
+	//CLOSE_DIALOG(DLGRET_BT_MSGBOX)   
+	pMe->m_eDlgRet = DLGRET_BT_MSGBOX; 
+	(void) ISHELL_EndDialog(pMe->m_pShell); 	
+	//Add End  
+ 
 }
 
 #ifdef FEATURE_BT_EXTPF_AV
@@ -1688,8 +1732,8 @@ void BTApp_UseA2DPDevice( CBTApp* pMe )
     uisnd_force_device_autoselect();
 #endif /* UI_UISND_NO_DIRECT_STATUS_CALLS */
 
-    ISHELL_SendURL(pMe->a.m_pIShell, "soundman:unmute");
-    if ( ISHELL_SendURL( pMe->a.m_pIShell, 
+    ISHELL_SendURL(pMe->m_pShell, "soundman:unmute");
+    if ( ISHELL_SendURL( pMe->m_pShell, 
                          "soundman:select?dev=BTStereoHeadset" ) == FALSE )
     {
       uisnd_set_device_auto( NULL, NULL );
@@ -1714,7 +1758,7 @@ void BTApp_ReleaseA2DPDevice( CBTApp* pMe )
     uisnd_force_device_autoselect();
 #endif /* UI_UISND_NO_DIRECT_STATUS_CALLS */
 
-    if ( ISHELL_SendURL( pMe->a.m_pIShell, 
+    if ( ISHELL_SendURL( pMe->m_pShell, 
                          "soundman:deselect?dev=BTStereoHeadset") == FALSE )
     {
       uisnd_set_device_auto( NULL, NULL );
@@ -1770,7 +1814,7 @@ void BTApp_UseBTDevice( CBTApp* pMe, boolean bForceUnmute )
     uisnd_force_device_autoselect();
 #endif /* UI_UISND_NO_DIRECT_STATUS_CALLS */
 
-    if ( ISHELL_SendURL( pMe->a.m_pIShell, 
+    if ( ISHELL_SendURL( pMe->m_pShell, 
                          "soundman:select?dev=BTHeadset" ) == FALSE )
     {
       uisnd_set_device_auto( NULL, NULL );
@@ -1781,7 +1825,7 @@ void BTApp_UseBTDevice( CBTApp* pMe, boolean bForceUnmute )
   if ( bForceUnmute != FALSE )
   {
     MSG_MED( "UseBTDevice - forceUnmute", 0, 0, 0 );
-    if ( ISHELL_SendURL( pMe->a.m_pIShell, "soundman:unmute" ) == FALSE )
+    if ( ISHELL_SendURL( pMe->m_pShell, "soundman:unmute" ) == FALSE )
     {
       uisnd_notify_data_s_type sndInfo;
       uisnd_get_device( &sndInfo );
@@ -1818,7 +1862,7 @@ void BTApp_ReleaseBTDevice( CBTApp* pMe, boolean bForceUnmute )
     uisnd_force_device_autoselect();
 #endif /* UI_UISND_NO_DIRECT_STATUS_CALLS */
 
-    if ( ISHELL_SendURL( pMe->a.m_pIShell, 
+    if ( ISHELL_SendURL( pMe->m_pShell, 
                          "soundman:deselect?dev=BTHeadset" ) == FALSE )
     {
       uisnd_set_device_auto( NULL, NULL );
@@ -1827,7 +1871,7 @@ void BTApp_ReleaseBTDevice( CBTApp* pMe, boolean bForceUnmute )
 #ifndef FEATURE_AVS_BT_SCO_REWORK
     if ( bForceUnmute != FALSE )
     {
-      if ( ISHELL_SendURL( pMe->a.m_pIShell, "soundman:unmute" ) == FALSE )
+      if ( ISHELL_SendURL( pMe->m_pShell, "soundman:unmute" ) == FALSE )
       {
         uisnd_notify_data_s_type sndInfo;
         uisnd_get_device( &sndInfo );
@@ -2008,26 +2052,33 @@ void BTApp_ClearBondable( CBTApp* pMe )
 #ifdef FEATURE_BT_EXTPF_OPP
        && (pMe->mOPP.bRegistered == FALSE)
 #endif
+
 #ifdef FEATURE_BT_EXTPF_FTP
        && (pMe->mFTP.bRegistered == FALSE)
 #endif
+
 #ifdef FEATURE_BT_EXTPF_BIP
        && (pMe->mBIP.bRegistered == FALSE)
 #endif
+
 #ifdef FEATURE_BT_EXTPF_BPP
        && (pMe->mBPP.bRegistered == FALSE)
 #endif
+
 #ifdef FEATURE_BT_EXTPF_CTP
        && (pMe->mCTP.bRegistered == FALSE)
        && (pMe->mICP.bRegistered == FALSE)
 #endif
+
 #ifdef FEATURE_BT_EXTPF_SAP
 #error code not present
 #endif
+
 #ifdef FEATURE_BT_EXTPF_AV
        && (pMe->mA2DP.bEnabled  == FALSE)
        && (pMe->mAVRCP.bEnabled == FALSE)
 #endif
+
 #ifdef FEATURE_BT_EXTPF_PBAP
        && (pMe->mPBAP.bSrvRegistered == FALSE)
 #endif

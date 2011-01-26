@@ -451,9 +451,11 @@ when        who   what, where, why
 #include "Appscommon.h"
 #include "Appscommon.brh"
 #include "appscommonimages.brh"
-
-#include "Btapp.brh"
+#include "btapp.brh"
 //Add End
+
+#include "BTApp_priv.h"
+
 
 #include "AEEConfig.h"		//Add By zzg 2010_11_23
 
@@ -651,7 +653,6 @@ when        who   what, where, why
 
 
 #define AEE_APPSBTAPP_RES_FILE AEE_RES_LANGDIR BTAPP_RES_FILE	//Add By zzg 2010_12_10
-
 
 
 #ifdef FEATURE_BT_2_1
@@ -1847,13 +1848,30 @@ typedef enum
   BT_APP_MENU_MAX
 } BTAppMenuType;
 
+/*
 typedef struct _CBTApp
 {
+  DECLARE_VTBL(IBTApp)
+  	
   AEEApplet       a;
   IDisplay*       m_pIDisplay;
 
   AEERect         m_rect;
   uint16          m_nColorDepth;
+
+  //Add By zzg 2011_01_04
+  uint32           m_nRefs;            // 对象引用计数器
+  IModule          *m_pModule;             
+  IDialog          *m_pActiveDlg;      // 当前活动对话框ID
+  uint16           m_pActiveDlgID;     // 活动对话框关闭时的返回结果
+  DLGRet_Value_e_Type   m_eDlgRet;     // 是否不改写对话框返回结果，一般情况需要改写(FALSE)。
+  boolean          m_bNotOverwriteDlgRet;// Applet 前一状态
+  BTAppState 		m_ePreState;        // Applet 当前状态
+  BTAppState 		m_eCurState;        // Applet是否处于挂起状态
+  boolean          m_bSuspending;      // Applet是否准备好可以处理按键和命令事件。改变量主要用于快速按键引起的问题
+  boolean          m_bAppIsReady;
+  uint16           m_nSubDlgId;		    //次级菜单位置
+  //Add End
 
   IMenuCtl*       m_pIMenu;
   IMenuCtl*       m_pISoftMenu;
@@ -1937,11 +1955,9 @@ typedef struct _CBTApp
 } CBTApp;
 
 
-/* Dialog Event Handler function pointer structure */
-typedef boolean (*PFNDLGHANDLER) (void *pUser,
-                                  AEEEvent evt,
-                                  uint16 w,
-                                  uint32 dw );
+
+// Dialog Event Handler function pointer structure 
+typedef boolean (*PFNDLGHANDLER) (void *pUser,AEEEvent evt,uint16 w,uint32 dw );
 
 extern boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu );
 extern boolean BTApp_BuildTopMenu( CBTApp* pMe );
@@ -1950,8 +1966,10 @@ extern boolean BTApp_WriteConfigFile( CBTApp* pMe );
 extern boolean BTApp_AGInit( CBTApp *pMe );
 extern void    BTApp_AGDeInit( IApplet *pi  );
 extern void    BTApp_DeregisterAGNotif( CBTApp *pMe );
-extern void BTApp_EnableBT( CBTApp* pMe );
+extern void    BTApp_EnableBT( CBTApp* pMe );
 
 extern const AEEBTBDAddr NULL_BD_ADDR;
+*/
+
 #endif
 

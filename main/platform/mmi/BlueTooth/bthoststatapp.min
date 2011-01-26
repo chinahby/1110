@@ -26,7 +26,9 @@ BLUETOOTH_SOURCES=\
         BTAppOBEX.c \
         BTAppL2.c \
         BTAppHID.c \
-        BTAppIDiagUtils.c
+        BTAppIDiagUtils.c \
+        BTAppStateHandler.c \
+        BTAppDialogHandler.c
 
 
 BLUETOOTH_OBJS :=  $(addprefix $(TARGETDIR)/, $(BLUETOOTH_SOURCES:%.c=%.o))

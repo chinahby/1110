@@ -101,7 +101,8 @@ when       who  what, where, why
 
 #ifdef FEATURE_APP_BLUETOOTH
 
-#include "BTApp.h"
+#include "BTApp_priv.h"		//"BTApp.h"
+
 #include "BTAppUtils.h"
 #include "btapp_res.h"
 
@@ -211,6 +212,36 @@ extern uint32 uBTApp_NMask;
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
 
+
+void BTApp_OPPUpdateSendingProgress( CBTApp* pMe )
+{
+	MSG_FATAL("***zzg OPPUpdateSendingProgress numBytes=%d, objSize=%d***", progInfo.numBytes, progInfo.objSize, 0);
+
+	if (progInfo.numBytes > 0)
+	{		
+		pMe->m_fileprogInfo.numBytes	= progInfo.numBytes;
+		pMe->m_fileprogInfo.objSize		= progInfo.objSize;	
+	}
+
+	if (pMe->m_pActiveDlgID == IDD_BT_FILE_PROGRESS)
+	{
+		MSG_FATAL("***zzg EVT_UPDATE_PROGRESS m_pActiveDlgID == IDD_BT_FILE_PROGRESS***", 0, 0, 0);
+
+		(void) ISHELL_PostEvent(pMe->m_pShell,
+								AEECLSID_BLUETOOTH_APP,
+								EVT_USER_REDRAW,
+								0,
+								0);
+	}
+	else
+	{
+		MSG_FATAL("***zzg EVT_UPDATE_PROGRESS MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)***", 0, 0, 0);
+
+		pMe->m_eDlgRet = DLGRET_BT_FILE_PROGRESS; 
+		(void) ISHELL_EndDialog(pMe->m_pShell);				
+	}	
+}
+
 /* ==========================================================================
 FUNCTION BTApp_ProcessOPPNotifications
 DESCRIPTION
@@ -264,14 +295,21 @@ void BTApp_ProcessOPPNotifications(
       MSG_HIGH("BTAppOPP: Progress Evt: num_bytes = %d, obj_size = %d",
                pData->ProgressInfo.numBytes, pData->ProgressInfo.objSize, 0);
 
+		if (IBTEXTOPP_GetProgressInfo( pMe->mOPP.po, &progInfo ) == SUCCESS)
+		{
+			MSG_HIGH("BTAppOPP: GetProgInfo num_bytes = %d, obj_size = %d",progInfo.numBytes, progInfo.objSize, 0);
+			BTApp_OPPUpdateSendingProgress(pMe);		//Add By zzg 2010_11_19
+		}
+		else
+		{
+			MSG_ERROR("BTAppOPP: GetProgInfo failed!", 0, 0, 0);
+		}
 	  
       BTAPP_POST_USER_EVENT( OPP, EVT_OPP_PROG_INFO );
       break;
     }
     case AEEBT_OPP_EVT_PUSH_REQ:    // client pushing object to server
     {
-
-	  
       pMe->mOPP.objType = pData->OppObject.objType;
       WSTRLCPY( pMe->mOPP.wName, pData->OppObject.pwName, 
                 ARR_SIZE( pMe->mOPP.wName ) );
@@ -300,8 +338,9 @@ void BTApp_ProcessOPPNotifications(
     }
     case AEEBT_OPP_EVT_OBJ_PULLED:  // server's default business card pulled
     {
+	  
 	  MSG_FATAL("***zzg BTApp_ProcessOPPNotify AEEBT_OPP_EVT_OBJ_PULLED uError=%x***", pData->uError, 0, 0);
-		
+	  		
       if ( pData->OppObject.pszName ) 
       {
         STRTOWSTR( pData->OppObject.pszName, 
@@ -372,7 +411,7 @@ void BTApp_OPPBuildMainMenu( CBTApp* pMe )
   
   {
     AECHAR WTitle[20] = {0};
-	ISHELL_LoadResString(pMe->a.m_pIShell,
+	ISHELL_LoadResString(pMe->m_pShell,
                          AEE_APPSBTAPP_RES_FILE,                                
                          IDS_OPP_TESTS,
                          WTitle,
@@ -410,7 +449,7 @@ void BTApp_OPPBuildMainMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_OPP_TESTS );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 //Add By  zzg 2010_11_09
@@ -435,7 +474,7 @@ void BTApp_OPPBuildSendFileMenu( CBTApp* pMe )
   
   {
     AECHAR WTitle[20] = {0};
-	ISHELL_LoadResString(pMe->a.m_pIShell,
+	ISHELL_LoadResString(pMe->m_pShell,
                          AEE_APPSBTAPP_RES_FILE,                                
                          IDS_OPP,
                          WTitle,
@@ -471,7 +510,7 @@ void BTApp_OPPBuildSendFileMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_OPP_SENDFILE );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 
@@ -490,7 +529,7 @@ void BTApp_OPPBuildSettingMenu( CBTApp* pMe )
   
   {
     AECHAR WTitle[20] = {0};
-	ISHELL_LoadResString(pMe->a.m_pIShell,
+	ISHELL_LoadResString(pMe->m_pShell,
                          AEE_APPSBTAPP_RES_FILE,                                
                          IDS_OPP,
                          WTitle,
@@ -521,71 +560,8 @@ void BTApp_OPPBuildSettingMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_OPP_SETTING );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
-
-
-void BTApp_OPPUpdateSendingProgress( CBTApp* pMe )
-{
-	AECHAR  wTempBuf[64];
-	AECHAR* pText = pMe->pText2;
-	AEERect rc;
-	uint8   len = 0;
-	
-	int		percent = 0;
-	char    szConBuf[10];
-	
-	//Draw the title
-	if (pMe->m_pIAnn != NULL)
-	{
-		IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn, FALSE);
-	}  
-	 
-	ISHELL_LoadResString(pMe->a.m_pIShell,
-						 AEE_APPSBTAPP_RES_FILE,								
-						 IDS_BT_TITLE,
-						 wTempBuf,
-						 sizeof( wTempBuf ));
-
-	if (pMe->m_pIAnn != NULL)
-	{
-		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, wTempBuf);
-	}
-
-
-   // set rect for info display area
-    SETAEERECT ( &rc, pMe->m_rect.x, 
-                 pMe->m_rect.y, 
-                 pMe->m_rect.dx, 
-                 pMe->m_rect.dy);
-   
-    ISTATIC_SetRect( pMe->m_pStatic, &rc );  
-    ISTATIC_SetProperties(pMe->m_pStatic, ISTATIC_GetProperties( pMe->m_pStatic ) | ST_MIDDLETEXT );
-    ISTATIC_SetProperties(pMe->m_pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);  
-    ISTATIC_SetBackGround(pMe->m_pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); 	
-
-	MSG_FATAL("***zzg BTApp_OPPUpdateSendingProgress numBytes=%d, objSize=%d***", progInfo.numBytes, progInfo.objSize, 0);
-
-	if (progInfo.numBytes > 0)
-	{		
-		CLEAR_SCREEN();
-		
-		percent = progInfo.numBytes*100/progInfo.objSize;		
-
-		snprintf(szConBuf, 10, " %d/100 ", percent);			
-
-		ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_FILE_PROGRESS, pMe->pText2, LONG_TEXT_BUF_LEN * sizeof(AECHAR) );
-		len = WSTRLEN(pMe->pText2);
-		STRTOWSTR(szConBuf, &pMe->pText2[len], (LONG_TEXT_BUF_LEN-len)*sizeof(AECHAR));
-
-		ISTATIC_SetText( pMe->m_pStatic, NULL, pText, AEE_FONT_BOLD, AEE_FONT_NORMAL );
-
-		ISTATIC_Redraw(pMe->m_pStatic);
-		IDISPLAY_UpdateEx(pMe->a.m_pIDisplay, FALSE);					
-	}	  
-}
-
-
 
 //Add End
 
@@ -606,7 +582,7 @@ void BTApp_OPPBuildServerMenu( CBTApp* pMe )
   if ( pMe->mOPP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
-    ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_OPP_SERVER, 
+    ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_OPP_SERVER, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
     len = WSTRLEN( pMe->pText2 );
 
@@ -640,7 +616,7 @@ void BTApp_OPPBuildServerMenu( CBTApp* pMe )
 
 	{
 		AECHAR WTitle[20] = {0};
-		ISHELL_LoadResString(pMe->a.m_pIShell,
+		ISHELL_LoadResString(pMe->m_pShell,
 		                     AEE_APPSBTAPP_RES_FILE,                                
 		                     IDS_OPP_SERVER,
 		                     WTitle,
@@ -673,7 +649,7 @@ void BTApp_OPPBuildServerMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_OPP_SERVER );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
@@ -696,7 +672,7 @@ void BTApp_OPPBuildClientMenu( CBTApp* pMe )
   if ( pMe->mOPP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
-    ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_OPP_CLIENT, 
+    ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_OPP_CLIENT, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
     len = WSTRLEN( pMe->pText2 );
 
@@ -728,7 +704,7 @@ void BTApp_OPPBuildClientMenu( CBTApp* pMe )
 
 	{
 		AECHAR WTitle[20] = {0};
-		ISHELL_LoadResString(pMe->a.m_pIShell,
+		ISHELL_LoadResString(pMe->m_pShell,
 		                     AEE_APPSBTAPP_RES_FILE,                                
 		                     IDS_OPP_CLIENT,
 		                     WTitle,
@@ -762,11 +738,11 @@ void BTApp_OPPBuildClientMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_OPP_CLIENT );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 
   if( pMe->mOPP.bObjectTransfer )
   {
-    ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE );
+    ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, FALSE );
   }
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
@@ -820,7 +796,7 @@ void BTApp_OPPBuildSendFileClientMenu( CBTApp* pMe )
   if ( pMe->mOPP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
-    ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_OPP_CLIENT, 
+    ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_OPP_CLIENT, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
     len = WSTRLEN( pMe->pText2 );
 
@@ -852,7 +828,7 @@ void BTApp_OPPBuildSendFileClientMenu( CBTApp* pMe )
 
 	{
 		AECHAR WTitle[20] = {0};
-		ISHELL_LoadResString(pMe->a.m_pIShell,
+		ISHELL_LoadResString(pMe->m_pShell,
 		                     AEE_APPSBTAPP_RES_FILE,                                
 		                     IDS_OPP_CLIENT,
 		                     WTitle,
@@ -884,11 +860,11 @@ void BTApp_OPPBuildSendFileClientMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_OPP_SENDFILE );    
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 
   if( pMe->mOPP.bObjectTransfer )
   {
-    ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE );
+    ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, FALSE );
   }
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
@@ -918,7 +894,7 @@ void BTApp_OPPSettingClientMenu( CBTApp* pMe )
   if ( pMe->mOPP.bConnected != FALSE )
   {
     szStatus[ 3 ] = 'C';
-    ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_OPP_CLIENT, 
+    ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_OPP_CLIENT, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof( AECHAR ) );
     len = WSTRLEN( pMe->pText2 );
 
@@ -950,7 +926,7 @@ void BTApp_OPPSettingClientMenu( CBTApp* pMe )
 
 	{
 		AECHAR WTitle[20] = {0};
-		ISHELL_LoadResString(pMe->a.m_pIShell,
+		ISHELL_LoadResString(pMe->m_pShell,
 		                     AEE_APPSBTAPP_RES_FILE,                                
 		                     IDS_OPP_CLIENT,
 		                     WTitle,
@@ -977,11 +953,11 @@ void BTApp_OPPSettingClientMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_OPP_SETTING );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 
   if( pMe->mOPP.bObjectTransfer )
   {
-    ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE );
+    ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, FALSE );
   }
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
@@ -1029,11 +1005,11 @@ void BTApp_OPPBuildFileTypeMenu( CBTApp* pMe )
     /* Activate menu */
   PUSH_MENU( BT_APP_MENU_OPP_LIST_FILE_TYPES );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 
   if( pMe->mOPP.bObjectTransfer )
   {
-    ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE );
+    ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, FALSE );
   }
 }
 
@@ -1054,10 +1030,10 @@ void BTApp_OPPCleanup( CBTApp* pMe )
     pMe->mOPP.pIFileMgr = NULL;
   }
   // unregister OPP notification
-  ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+  ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                          AEECLSID_BLUETOOTH_NOTIFIER, 0 );
   uBTApp_NMask &= ~NMASK_BT_OPP;
-  ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+  ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                          AEECLSID_BLUETOOTH_NOTIFIER, uBTApp_NMask );
 }
 
@@ -1267,7 +1243,7 @@ void BTApp_OPPPull( CBTApp* pMe )
     if ( pMe->mOPP.bRegistered != TRUE ) // client?
     {
       pMe->mOPP.bObjectTransfer = TRUE;
-      ShowBusyIcon(pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE ); // wait for pull confirm
+      ShowBusyIcon(pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, FALSE ); // wait for pull confirm
     }
 	else	//server
 	{
@@ -1338,7 +1314,7 @@ void BTApp_OPPPush( CBTApp* pMe, AEEBTObjectType objType )
       if ( result == SUCCESS )
       {       
         pMe->mOPP.bObjectTransfer = TRUE;
-        ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, 
+        ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, 
                       FALSE );
       }
       else
@@ -1392,7 +1368,7 @@ void BTApp_OPPPushEx( CBTApp* pMe, char* filepath, AEEBTObjectType objType )
       {
         pMe->mOPP.bObjectTransfer = TRUE;
 		
-        //ShowBusyIcon( pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE );
+        //ShowBusyIcon( pMe->m_pShell, pMe->m_pIDisplay, &pMe->m_rect, FALSE );
       }
       else
       {
@@ -1416,11 +1392,11 @@ boolean BTApp_OPPInit( CBTApp* pMe )
 
   if ( init_done == FALSE )
   {
-    if ( (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_OPP, 
+    if ( (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BLUETOOTH_OPP, 
                                  (void**)&pMe->mOPP.po ) == SUCCESS) &&
-         (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_FILEMGR, 
+         (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_FILEMGR, 
                                  (void **)&pMe->mOPP.pIFileMgr ) == SUCCESS) &&
-         (ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+         (ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                                  AEECLSID_BLUETOOTH_NOTIFIER, 
                                  uNMask ) == SUCCESS) )
     {
@@ -2171,317 +2147,363 @@ DESCRIPTION
 ============================================================================= */
 void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 {
-  uint16 msgID;
+	uint16 msgID;
 
-  MSG_FATAL("***zzg BTApp_OPPHandle dwParam=%d***", dwParam, 0, 0);
-  
-  switch ( dwParam )
-  {
-    case EVT_OPP_CONN_REQ:
-      IBTEXTOPP_AcceptConnection( pMe->mOPP.po, &pMe->mOPP.remoteBDAddr, 
-                                  TRUE, TRUE );
-      break;
-	  
-    case EVT_OPP_PUSH_REQ:
-    {
-	  MSG_FATAL("***zzg BTApp_OPPHandleUserEvents EVT_OPP_PUSH_REQ***", 0, 0, 0);
+	MSG_FATAL("***zzg BTApp_OPPHandle dwParam=%d***", dwParam, 0, 0);
 
-	  //Add By zzg 2010_11_25
-	  ISHELL_StartAppletArgs(pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP, "GetFile");
-	  //Add End
-	  
-      BTApp_OPPPull( pMe );
-      break;
-    }
-	
-    case EVT_OPP_PULL_REQ:
-    {	  
-      BTApp_OPPPush( pMe, AEEBT_OPP_VCARD );	  
-      break;
-    }
-    case EVT_OPP_PROG_INFO:
-    {
-	  pMe->bUpdateProgress	= TRUE;	//Add By zzg 2010_11_27
-	  
-      if (IBTEXTOPP_GetProgressInfo( pMe->mOPP.po, &progInfo ) == SUCCESS)
-      {
-        MSG_HIGH("BTAppOPP: GetProgInfo num_bytes = %d, obj_size = %d",progInfo.numBytes, progInfo.objSize, 0);
-		BTApp_OPPUpdateSendingProgress(pMe);		//Add By zzg 2010_11_19
-	  }
-      else
-      {
-        MSG_ERROR("BTAppOPP: GetProgInfo failed!", 0, 0, 0);
-      }
-      break;
-    }
-    case EVT_OPP_REG:	   
-      pMe->mOPP.bRegistered  = TRUE;	
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-
-      if(pMe->mEnablingType != BTAPP_ENABLING_NONE)
-      {
-        pMe->mEnablingType++;       
-        //BTApp_EnableBT(pMe);	//Del By zzg 2010_11_18
-      }
-      else
-      {
-        BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_DONE, NULL, 2 );
-      }
-      break;
-    case EVT_OPP_REG_FAILED:
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION  
-      BTApp_ClearBondable( pMe ); // no need to be bondable anymore
-      if(pMe->mEnablingType != BTAPP_ENABLING_NONE)
-      {
-        pMe->mEnablingType++;       
-        BTApp_EnableBT(pMe);
-      }
-      else
-      {
-        BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3 );
-      }
-      break;
-    case EVT_OPP_DEREG:
-      //BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_DONE, NULL, 2 ); //Del by zzg 2010_11_20      
-      pMe->mOPP.bRegistered = FALSE;		
-      BTApp_ClearBondable( pMe ); // no need to be bondable anymore
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-      break;
-    case EVT_OPP_DEREG_FAILED:
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-      BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
-      break;
-    case EVT_OPP_CONNECTED:
-	 
-      pMe->mOPP.bConnected = TRUE;
-      pMe->mOPP.bConnecting = FALSE;
-      BTApp_ClearBondable( pMe ); // no need to be bondable anymore
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-      BTApp_BuildTopMenu( pMe ); // rebuild menu to show 'C'
-      break;
-    case EVT_OPP_CONNECTING:
-     pMe->mOPP.bConnecting = TRUE;
-     break;
-    case EVT_OPP_DISCONNECTED:	  
-		//Add By zzg 2010_11_22
-		//If client, change to server , register
-		
-		if (pMe->mOPP.bRegistered == FALSE)
+	switch (dwParam)
+	{
+		case EVT_OPP_CONN_REQ:
 		{
-			int result;					
+			IBTEXTOPP_AcceptConnection(pMe->mOPP.po, &pMe->mOPP.remoteBDAddr, TRUE, TRUE);
+		  	break;
+		}
 
-			BTApp_SetBondable( pMe );
+	    //Server send file to Client
+		case EVT_OPP_PUSH_REQ:
+		{
+			ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "GetFile");	//Add By zzg 2010_11_25
+			
+			BTApp_OPPPull( pMe );
+			
+			break;
+		}
 
-			MSG_FATAL("***zzg EVT_OPP_DISCONNECTED***",0,0,0);
+		case EVT_OPP_PULL_REQ:
+		{	  
+			BTApp_OPPPush(pMe, AEEBT_OPP_VCARD);	  
+			
+			break;
+		}
 
-			if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP )) != SUCCESS )
+		case EVT_OPP_PROG_INFO:
+		{
+			pMe->bUpdateProgress	= TRUE;	//Add By zzg 2010_11_27
+
+			if (IBTEXTOPP_GetProgressInfo( pMe->mOPP.po, &progInfo ) == SUCCESS)
 			{
-				BTApp_ClearBondable( pMe ); 
+				MSG_HIGH("BTAppOPP: GetProgInfo num_bytes = %d, obj_size = %d",progInfo.numBytes, progInfo.objSize, 0);				
 			}
 			else
 			{
-				if (pMe->mSD.bDiscoverable == FALSE)
-				{
-					IBTEXTSD_SetDiscoverable( pMe->mSD.po, TRUE );
-				}		
-			} 	 
+				MSG_ERROR("BTAppOPP: GetProgInfo failed!", 0, 0, 0);
+			}			
+			break;
 		}
-		//Add End
-      pMe->mOPP.bConnected = FALSE;
-      pMe->mOPP.bConnecting = FALSE;
-      pMe->mOPP.bObjectTransfer = FALSE;
+
+		case EVT_OPP_REG:	   
+		{
+			pMe->mOPP.bRegistered  = TRUE;	
+			
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+			if(pMe->mEnablingType != BTAPP_ENABLING_NONE)
+			{
+				pMe->mEnablingType++;       
+				//BTApp_EnableBT(pMe);	//Del By zzg 2010_11_18
+			}
+			else
+			{
+				BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_DONE, NULL, 2 );
+			}
+			break;
+		}
+
+		case EVT_OPP_REG_FAILED:
+		{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+			BTApp_ClearBondable( pMe ); // no need to be bondable anymore
+			
+			if (pMe->mEnablingType != BTAPP_ENABLING_NONE)
+			{
+				pMe->mEnablingType++;       
+				BTApp_EnableBT(pMe);
+			}
+			else
+			{
+				BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3 );
+			}
+			break;
+		}
+
+		case EVT_OPP_DEREG:
+		{
+			//BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_DONE, NULL, 2 ); //Del by zzg 2010_11_20      
+			pMe->mOPP.bRegistered = FALSE;		
+			BTApp_ClearBondable( pMe ); // no need to be bondable anymore
+			
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+			break;
+		}
+
+		case EVT_OPP_DEREG_FAILED:
+		{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+			BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
+			break;
+		}
+		case EVT_OPP_CONNECTED:
+		{
+			MSG_FATAL("***zzg BTApp_OppHandleUserEvent EVT_OPP_CONNECTED bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);
+
+			pMe->mOPP.bConnected = TRUE;
+			pMe->mOPP.bConnecting = FALSE;
+			BTApp_ClearBondable( pMe ); // no need to be bondable anymore
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+			//BTApp_BuildTopMenu( pMe ); // rebuild menu to show 'C'
+
+			//Add By zzg 2011_01_22
+			if (pMe->m_pActiveDlgID == IDD_BT_OBEX_LIST_SERVERS)	//When Push Files, Connect first		
+			{
+				pMe->m_eDlgRet = DLGRET_BT_SEND_FILE; 		
+				(void) ISHELL_EndDialog(pMe->m_pShell);
+			}
+			//Add End
+
+			break;
+		}
+
+		case EVT_OPP_CONNECTING:
+		{
+			pMe->mOPP.bConnecting = TRUE;
+		 	break;
+		}
+
+		case EVT_OPP_DISCONNECTED:	  
+		{
+			//Add By zzg 2010_11_22
+			//If client, change to server , register
+			if (pMe->mOPP.bRegistered == FALSE)
+			{
+				int result;					
+
+				BTApp_SetBondable( pMe );
+
+				MSG_FATAL("***zzg EVT_OPP_DISCONNECTED***",0,0,0);
+
+				if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP )) != SUCCESS)
+				{
+					BTApp_ClearBondable(pMe); 
+				}
+				else
+				{
+					if (pMe->mSD.bDiscoverable == FALSE)
+					{
+						IBTEXTSD_SetDiscoverable(pMe->mSD.po, TRUE);
+					}		
+				} 	 
+			}
+			//Add End
+			
+			pMe->mOPP.bConnected = FALSE;
+			pMe->mOPP.bConnecting = FALSE;
+			pMe->mOPP.bObjectTransfer = FALSE;
+			
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+
+			if (pMe->mOPP.bEndingTest != FALSE)
+			{
+				pMe->mOPP.bEndingTest = FALSE;
+				BTApp_HandleClearKey(pMe);
+			}
+			else
+			{
+				BTApp_BuildTopMenu(pMe); // rebuild menu to hide 'C'
+			}
+
+			break;
+		}
+
+		case EVT_OPP_CONN_FAILED:
+		{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+
+			BTApp_ClearBondable(pMe); // no need to be bondable anymore
+			BTApp_ShowMessage(pMe, IDS_MSG_CONN_FAILED, NULL, 3);
+			pMe->mOPP.bConnecting = FALSE;
+
+			//Add By zzg 2010_11_22
+			//If client, change to server , register
+			if (pMe->mOPP.bRegistered == FALSE)
+			{
+				int result;		
+				BTApp_SetBondable(pMe);
+
+				MSG_FATAL("***zzg EVT_OPP_DISCONNECTED***",0,0,0);
+
+				if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP)) != SUCCESS)
+				{
+					BTApp_ClearBondable( pMe ); 
+				}
+				else
+				{
+					if (pMe->mSD.bDiscoverable == FALSE)
+					{
+						IBTEXTSD_SetDiscoverable(pMe->mSD.po, TRUE);
+					}		
+				} 	 
+			}
+			//Add End
+
+			break;
+		}
+		case EVT_OPP_OBJ_PUSHED:
+		{
+			MSG_FATAL("***zzg BTApp_OPPHandle EVT_OPP_OBJ_PUSHED bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);
+
+			if ( pMe->mOPP.bRegistered == FALSE )
+			{
+				msgID = IDS_MSG_OBJ_PUSHED;
+				pMe->mOPP.bObjectTransfer = FALSE;
+			}
+			else
+			{
+				msgID = IDS_MSG_OBJ_SENT;
+			}
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+
+			//if ( pMe->mOPP.bRegistered != TRUE )
+			{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+				{
+					pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+					pMe->m_msg_state_id = BTAPPST_EXIT;	//Add By zzg 2011_01_22
+			
+					BTApp_ShowMessage( pMe, msgID, wDefaultObjectName, 2 );		  
+				}
+			}
+
+			if ( pMe->mOPP.bExchanging != FALSE )
+			{
+				pMe->mOPP.bExchanging = FALSE;		
+
+				BTApp_OPPPull( pMe );
+			}
+
+			//ISHELL_CloseApplet(pMe->m_pShell, FALSE );	//Add By zzg 2010_11_27
+
+			break;
+		}
+		case EVT_OPP_OBJ_PUSH_FAILED:
+		{
+			MSG_FATAL("***zzg BTApp_OPPHandle EVT_OPP_OBJ_PUSH_FAILED bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);
+
+			if ( pMe->mOPP.bRegistered == FALSE )
+			{
+				msgID = IDS_MSG_OBJ_PUSH_FAILED;
+				pMe->mOPP.bObjectTransfer = FALSE;
+			}
+			else
+			{
+				msgID = IDS_MSG_OBJ_NOT_SENT;
+			}
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
-      if ( pMe->mOPP.bEndingTest != FALSE )
-      {
-        pMe->mOPP.bEndingTest = FALSE;
-        BTApp_HandleClearKey( pMe );
-      }
-      else
-      {
-        BTApp_BuildTopMenu( pMe ); // rebuild menu to hide 'C'
-      }
-	  
-      break;
-    case EVT_OPP_CONN_FAILED:
+			if ( pMe->mOPP.bExchanging != FALSE )
+			{
+				pMe->mOPP.bExchanging = FALSE;		
+				BTApp_OPPPull( pMe );
+			}
+			else
+			{
+				//if ( pMe->mOPP.bRegistered != TRUE  )
+				{
+					pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+					pMe->m_msg_state_id = BTAPPST_EXIT;	//Add By zzg 2011_01_22
+					BTApp_ShowMessage( pMe, msgID, wDefaultObjectName, 2 );
+				}
+			}
+
+			//ISHELL_CloseApplet(pMe->m_pShell, FALSE );	//Add By zzg 2010_11_27
+
+			break;
+		}
+		case EVT_OPP_OBJ_PULLED:
+		{
+			MSG_FATAL("***zzg BTApp_OPPHandle EVT_OPP_OBJ_PULLED bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);
+
+			if ( pMe->mOPP.bRegistered == FALSE )
+			{
+				msgID = IDS_MSG_OBJ_PULLED;
+				pMe->mOPP.bObjectTransfer = FALSE;
+			}
+			else
+			{
+				msgID = IDS_MSG_OBJ_RCVD;
+			}
+			
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-      BTApp_ClearBondable( pMe ); // no need to be bondable anymore
-      BTApp_ShowMessage( pMe, IDS_MSG_CONN_FAILED, NULL, 3 );
-      pMe->mOPP.bConnecting = FALSE;
+#endif 
 
-     //Add By zzg 2010_11_22
-     //If client, change to server , register
-     
-     if (pMe->mOPP.bRegistered == FALSE)
-     {
-	     int result;		
-	     BTApp_SetBondable( pMe );
-	     
-	     MSG_FATAL("***zzg EVT_OPP_DISCONNECTED***",0,0,0);
-	     
-	     if ((result = IBTEXTOPP_Register( pMe->mOPP.po, AEEBT_OPP_FORMAT_ALL,szServerNameOPP )) != SUCCESS )
-	     {
-	     	BTApp_ClearBondable( pMe ); 
-	     }
-	     else
-	     {
-	     	if (pMe->mSD.bDiscoverable == FALSE)
-	     	{
-	     		IBTEXTSD_SetDiscoverable( pMe->mSD.po, TRUE );
-	     	}		
-	     } 	 
-     }
-     //Add End
-		
-      break;
-    case EVT_OPP_OBJ_PUSHED:
-    {
-	  MSG_FATAL("***zzg BTApp_OPPHandle EVT_OPP_OBJ_PUSHED***", 0, 0, 0);
-	  
-      if ( pMe->mOPP.bRegistered == FALSE )
-      {
-        msgID = IDS_MSG_OBJ_PUSHED;
-        pMe->mOPP.bObjectTransfer = FALSE;
-      }
-      else
-      {
-        msgID = IDS_MSG_OBJ_SENT;
-      }
+			//if ( pMe->mOPP.bRegistered != TRUE )
+			{
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-      if ( pMe->mOPP.bRegistered != TRUE )
-      {
+#endif 
+				{
+					pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+					pMe->m_msg_state_id = BTAPPST_EXIT;	//Add By zzg 2011_01_22
+					BTApp_ShowMessage( pMe, msgID, pMe->mOPP.wName, 2 );
+				}
+			}
+
+			//ISHELL_CloseApplet(pMe->m_pShell, FALSE );	//Add By zzg 2010_11_27
+
+			break;
+		}
+		case EVT_OPP_OBJ_PULL_FAILED:
+		{
+			MSG_FATAL("***zzg BTApp_OPPHandle EVT_OPP_OBJ_PULL_FAILED bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);
+
+			if ( pMe->mOPP.bRegistered == FALSE )
+			{
+				msgID = IDS_MSG_OBJ_PULL_FAILED;
+				pMe->mOPP.bObjectTransfer = FALSE;
+			}
+			else
+			{
+				msgID = IDS_MSG_OBJ_NOT_RCVD;
+			}
+			
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-        {
-          BTApp_ShowMessage( pMe, msgID, wDefaultObjectName, 2 );		  
-        }
-      }
-      if ( pMe->mOPP.bExchanging != FALSE )
-      {
-        pMe->mOPP.bExchanging = FALSE;		
-		
-        BTApp_OPPPull( pMe );
-      }
-	  
-	  pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+#endif 
 
-	  ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );	//Add By zzg 2010_11_27
+			//if ( pMe->mOPP.bRegistered != TRUE  )
+			{
+				pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+				pMe->m_msg_state_id = BTAPPST_EXIT;	//Add By zzg 2011_01_22
+				BTApp_ShowMessage( pMe, msgID, pMe->mOPP.wName, 2 );
+			}	  
 
-      break;
-    }
-    case EVT_OPP_OBJ_PUSH_FAILED:
-    {
-	  MSG_FATAL("***zzg BTApp_OPPHandle EVT_OPP_OBJ_PUSH_FAILED***", 0, 0, 0);
-	  
-      if ( pMe->mOPP.bRegistered == FALSE )
-      {
-        msgID = IDS_MSG_OBJ_PUSH_FAILED;
-        pMe->mOPP.bObjectTransfer = FALSE;
-      }
-      else
-      {
-        msgID = IDS_MSG_OBJ_NOT_SENT;
-      }
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-      if ( pMe->mOPP.bExchanging != FALSE )
-      {
-        pMe->mOPP.bExchanging = FALSE;		
-        BTApp_OPPPull( pMe );
-      }
-      else
-      {
-        if ( pMe->mOPP.bRegistered != TRUE  )
-        {
-          BTApp_ShowMessage( pMe, msgID, wDefaultObjectName, 2 );
-        }
-      }
-
-	  pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
-
-	  ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );	//Add By zzg 2010_11_27
-	  
-      break;
-    }
-    case EVT_OPP_OBJ_PULLED:
-    {
-	  MSG_FATAL("***zzg BTApp_OPPHandle EVT_OPP_OBJ_PULLED***", 0, 0, 0);
-		
-      if ( pMe->mOPP.bRegistered == FALSE )
-      {
-        msgID = IDS_MSG_OBJ_PULLED;
-        pMe->mOPP.bObjectTransfer = FALSE;
-      }
-      else
-      {
-        msgID = IDS_MSG_OBJ_RCVD;
-      }
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-      if ( pMe->mOPP.bRegistered != TRUE )
-      {
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-        {
-          BTApp_ShowMessage( pMe, msgID, pMe->mOPP.wName, 2 );
-        }
-      }
-
-	  pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
-
-	  ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );	//Add By zzg 2010_11_27
-	  
-      break;
-    }
-    case EVT_OPP_OBJ_PULL_FAILED:
-    {
-	  MSG_FATAL("***zzg BTApp_OPPHandle EVT_OPP_OBJ_PULL_FAILED***", 0, 0, 0);
-	  
-      if ( pMe->mOPP.bRegistered == FALSE )
-      {
-        msgID = IDS_MSG_OBJ_PULL_FAILED;
-        pMe->mOPP.bObjectTransfer = FALSE;
-      }
-      else
-      {
-        msgID = IDS_MSG_OBJ_NOT_RCVD;
-      }
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-      if ( pMe->mOPP.bRegistered != TRUE  )
-      {
-        BTApp_ShowMessage( pMe, msgID, pMe->mOPP.wName, 2 );
-      }	  
-
-	  pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
-
-	  ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE );	//Add By zzg 2010_11_27
-      break;
-    }
-    default:
-      MSG_ERROR(" OPP: unexpected user event %x", dwParam, 0, 0 );
-      break;
-  }
+			//ISHELL_CloseApplet(pMe->m_pShell, FALSE );	//Add By zzg 2010_11_27
+			break;
+		}
+		default:
+		{
+			MSG_ERROR(" OPP: unexpected user event %x", dwParam, 0, 0 );
+		  	break;
+		}
+	}
 }
 
 /* ==========================================================================

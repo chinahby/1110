@@ -1870,7 +1870,8 @@ static void CoreTask_CreateAEEInstance(void)
 	
 //Add By zzg 2010_10_22
 #ifdef FEATURE_APP_BLUETOOTH
-		ISHELL_StartBackgroundApplet(pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
+		//ISHELL_StartBackgroundApplet(pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
+		ISHELL_StartAppletArgs(pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");	
 #endif
 //Add End   
 
@@ -2014,12 +2015,15 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
     case AVK_END:
 				
 		//Add By zzg 2010_11_27
+		/*
 		if (cls == AEECLSID_BLUETOOTH_APP)
 			{	
 				wParam = AVK_CANCEL;
 				bHandle = TRUE;
 			}
 		//Add End
+		*/
+		
         if (cls == AEECLSID_DIALER) 
 		{
             // AVK_END 会关掉全部程序，回到待机界面，这里做转换，避免此问题

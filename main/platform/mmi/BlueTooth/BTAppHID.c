@@ -30,7 +30,8 @@ when       who  what, where, why
 #include "comdef.h"
 
 #ifdef FEATURE_APP_BLUETOOTH
-#include "BTApp.h"
+#include "BTApp_priv.h"		//"BTApp.h"
+
 #include "BTAppUtils.h"
 #include "btapp_res.h"
 

@@ -106,7 +106,9 @@ when      who  what, where, why
 
 #ifdef FEATURE_APP_BLUETOOTH
 
-#include "BTApp.h"
+#include "BTApp_priv.h"		//"BTApp.h"
+
+
 #include "BTAppUtils.h"
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
@@ -390,7 +392,7 @@ static void BTApp_BPPBuildListMimeMenu( CBTApp* pMe )
     szStatus[ 4 ] = 'R';
   }
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, 
+  ISHELL_LoadResString( pMe->m_pShell, 
                         AEE_APPSBTAPP_RES_FILE, 
                         IDS_BPP_TESTS, 
                         pMe->pText2, 
@@ -447,7 +449,7 @@ static void BTApp_BPPBuildListMimeMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_BPP_LIST_MIME );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -482,7 +484,7 @@ void BTApp_BPPBuildMainMenu( CBTApp* pMe )
     szStatus[ 4 ] = 'R';
   }
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, 
+  ISHELL_LoadResString( pMe->m_pShell, 
                         AEE_APPSBTAPP_RES_FILE, 
                         IDS_BPP_TESTS, 
                         pMe->pText2, 
@@ -534,7 +536,7 @@ void BTApp_BPPBuildMainMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_BPP_TESTS );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
@@ -567,7 +569,7 @@ void BTApp_BPPBuildSettingsMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_BPP_SETTINGS );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -600,7 +602,7 @@ void BTApp_BPPBuildTargetMenu( CBTApp* pMe )
     szStatus[ 4 ] = 'R';
   }
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, 
+  ISHELL_LoadResString( pMe->m_pShell, 
                         AEE_APPSBTAPP_RES_FILE, 
                         IDS_BPP_TESTS, 
                         pMe->pText2, 
@@ -662,7 +664,7 @@ void BTApp_BPPBuildTargetMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_BPP_LIST_TARGET );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -682,12 +684,12 @@ void BTApp_BPPCleanup( CBTApp* pMe )
     pMe->mBPP.pIFileMgr = NULL;
   }
   // unregister for BPP notification
-  ISHELL_RegisterNotify( pMe->a.m_pIShell,  
+  ISHELL_RegisterNotify( pMe->m_pShell,  
                          AEECLSID_BLUETOOTH_APP,
                          AEECLSID_BLUETOOTH_NOTIFIER, 
                          0 );
   uBTApp_NMask &= ~NMASK_BT_BPP;
-  ISHELL_RegisterNotify( pMe->a.m_pIShell,  
+  ISHELL_RegisterNotify( pMe->m_pShell,  
                          AEECLSID_BLUETOOTH_APP,
                          AEECLSID_BLUETOOTH_NOTIFIER, 
                          uBTApp_NMask );
@@ -1018,11 +1020,11 @@ boolean BTApp_BPPInit( CBTApp* pMe )
 
   if ( init_done == FALSE )
   {
-    if ( (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_BPP, 
+    if ( (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BLUETOOTH_BPP, 
                                  (void**)&pMe->mBPP.po ) == SUCCESS) &&
-         (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_FILEMGR, 
+         (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_FILEMGR, 
                                  (void **)&pMe->mBPP.pIFileMgr ) == SUCCESS) &&
-         (ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+         (ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                                  AEECLSID_BLUETOOTH_NOTIFIER, 
                                  uNMask ) == SUCCESS) )
     {
@@ -1144,7 +1146,7 @@ static boolean BTApp_BPPHandleSelection( CBTApp* pMe, uint16 sel )
       {
         STRLCPY( printDetails->pPrintFileName, sPfileName[0], nLen );
         printDetails->uMIMMediaType = AEEBT_BPP_DOC_FORMAT_XHTML_PRINT;
-        ISHELL_PostEventEx( pMe->a.m_pIShell, EVTFLG_ASYNC, 
+        ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
                             AEECLSID_BLUETOOTH_APP,
                             EVT_USER, EVT_BPP_SIMPLE_PUSH, (uint32)printDetails );
       }
@@ -1162,7 +1164,7 @@ static boolean BTApp_BPPHandleSelection( CBTApp* pMe, uint16 sel )
       selection = IMENUCTL_GetSel( pMe->m_pIMenu );
 
       BTApp_UpdateMenuItemImage( 
-        pMe->a.m_pIDisplay, 
+        pMe->m_pIDisplay, 
         pMe->m_pIMenu, 
         selection,
         pMe->mBPP.bDoAuthenticate ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );

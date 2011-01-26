@@ -58,7 +58,8 @@ when       who  what, where, why
 
 #ifdef FEATURE_APP_BLUETOOTH
 
-#include "BTApp.h"
+#include "BTApp_priv.h"		//"BTApp.h"
+
 
 #ifdef FEATURE_BT_EXTPF_AV
 #include "BTAppA2DP.h"
@@ -184,7 +185,7 @@ void BTApp_ProcessA2DPNotifications(
       BTApp_ReleaseA2DPDevice( pMe );
       if( pMe->mA2DP.bReleasing == TRUE )
       {
-        ISHELL_PostEventEx( pMe->a.m_pIShell, EVTFLG_ASYNC,
+        ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC,
                             AEECLSID_BLUETOOTH_APP,
                             EVT_USER, EVT_A2DP_DISCONNECTED, 0L);
       }
@@ -250,7 +251,7 @@ boolean BTApp_A2DPInit( CBTApp* pMe )
   {
     return TRUE;
   }
-  if ( ISHELL_RegisterNotify( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP,
+  if ( ISHELL_RegisterNotify( pMe->m_pShell, AEECLSID_BLUETOOTH_APP,
                               AEECLSID_BLUETOOTH_NOTIFIER, 
                               uNMask ) 
        == SUCCESS  )
@@ -287,10 +288,10 @@ void BTApp_A2DPCleanup( CBTApp* pMe )
     pMe->mA2DP.bReleasing = FALSE;
     
     // unregister A2DP notification
-    ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+    ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                            AEECLSID_BLUETOOTH_NOTIFIER, 0 );
     uBTApp_NMask &= ~NMASK_BT_A2DP;
-    ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+    ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                            AEECLSID_BLUETOOTH_NOTIFIER, uBTApp_NMask );
   }
 }
@@ -301,43 +302,42 @@ DESCRIPTION
 ============================================================================= */
 void BTApp_A2DPDisable( CBTApp* pMe )
 {
+	if ((pMe->mA2DP.bConnected == TRUE) && (pMe->mA2DP.bReleasing == FALSE))
+	{
+		pMe->mA2DP.bReleasing = TRUE;
+		IBTEXTA2DP_Disconnect(pMe->mA2DP.po);
+		BTApp_ShowBusyIcon(pMe);
+	}
+	else if (pMe->mA2DP.bConnected == FALSE)
+	{
+		if (pMe->mA2DP.po != NULL)
+		{
+			IBTEXTA2DP_Release(pMe->mA2DP.po);
+			pMe->mA2DP.po = NULL;
+			pMe->mA2DP.bInitialized = FALSE;
+		}
+		
+		pMe->mA2DP.bEnabled   = FALSE;
+		pMe->mA2DP.bReleasing = FALSE;
 
-  if( ( pMe->mA2DP.bConnected == TRUE) && ( pMe->mA2DP.bReleasing == FALSE ) )
-  {
-    pMe->mA2DP.bReleasing = TRUE;
-    IBTEXTA2DP_Disconnect( pMe->mA2DP.po );
-    BTApp_ShowBusyIcon( pMe );
-  }
-  else if( pMe->mA2DP.bConnected == FALSE )
-  {
-    if ( pMe->mA2DP.po != NULL )
-    {
-      IBTEXTA2DP_Release( pMe->mA2DP.po );
-      pMe->mA2DP.po = NULL;
-      pMe->mA2DP.bInitialized = FALSE;
-    }
-    pMe->mA2DP.bEnabled   = FALSE;
-    pMe->mA2DP.bReleasing = FALSE;
-    
-    /* unregister A2DP notification */
-    ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
-                           AEECLSID_BLUETOOTH_NOTIFIER, 0 );
-    uBTApp_NMask &= ~NMASK_BT_A2DP;
+		// unregister A2DP notification
+		ISHELL_RegisterNotify(pMe->m_pShell,  AEECLSID_BLUETOOTH_APP, AEECLSID_BLUETOOTH_NOTIFIER, 0);
+		uBTApp_NMask &= ~NMASK_BT_A2DP;
 
-    ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
-                           AEECLSID_BLUETOOTH_NOTIFIER, uBTApp_NMask );    
-    if ( (pMe->mAG.bInitialized != FALSE) && (pMe->mAG.bEnabled == FALSE) )
-    {
-      MSG_LOW( "A2DPDisable - Deinitializing AG as AG is not enabled", 0, 0, 0 );
-      BTApp_DeregisterAGNotif( pMe );
-      BTApp_AGDeInit( (IApplet*)pMe );
-    }
-  }
-  else
-  {
-    /* We can come here when there are multiple calls to  BTApp_DisableBT() */
-    MSG_HIGH( "A2DP disconnection already in progress, Do Nothing ", 0,0,0 );
-  }
+		ISHELL_RegisterNotify(pMe->m_pShell,  AEECLSID_BLUETOOTH_APP, AEECLSID_BLUETOOTH_NOTIFIER, uBTApp_NMask);    
+		
+		if ((pMe->mAG.bInitialized != FALSE) && (pMe->mAG.bEnabled == FALSE))
+		{
+			MSG_LOW( "A2DPDisable - Deinitializing AG as AG is not enabled", 0, 0, 0 );
+			BTApp_DeregisterAGNotif(pMe);
+			BTApp_AGDeInit((IApplet*)pMe);
+		}
+	}
+	else
+	{
+		/* We can come here when there are multiple calls to  BTApp_DisableBT() */
+		MSG_HIGH( "A2DP disconnection already in progress, Do Nothing ", 0,0,0 );
+	}
 }
 
 /* ==========================================================================
@@ -389,7 +389,7 @@ boolean BTApp_BuildA2DPControlMenu( CBTApp* pMe )
     PUSH_MENU( BT_APP_MENU_A2DP_CONTROL );
   }
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
   IMENUCTL_SetSel( pMe->m_pIMenu, MENU_SEL );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -451,7 +451,7 @@ boolean BTApp_BuildA2DPTestMenu( CBTApp* pMe )
     PUSH_MENU( BT_APP_MENU_A2DP_TEST );
   }
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
   IMENUCTL_SetSel( pMe->m_pIMenu, MENU_SEL );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
@@ -502,7 +502,7 @@ boolean BTApp_HandleA2DPTestMenu( CBTApp* pMe, uint16 key )
       {
         case IDS_ENABLE:
         {
-          if( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_A2DP,
+          if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BLUETOOTH_A2DP,
                                      (void**)&pMe->mA2DP.po ) == SUCCESS )
           {
             pMe->mA2DP.bEnabled = TRUE;
@@ -667,7 +667,7 @@ boolean BTApp_HandleA2DPControlMenu( CBTApp* pMe, uint16 key )
         {
           pMe->mA2DP.uControlEvtID = IDS_A2DP_START_DELAY;
           PUSH_MENU( BT_APP_MENU_A2DP_CONTROL_DATA );
-          ISHELL_CreateDialog( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE,
+          ISHELL_CreateDialog( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE,
                                IDD_BT_TEXT_EDIT, NULL );
           return ev_processed;
         }
@@ -718,7 +718,7 @@ boolean BTApp_HandleA2DPControlMenu( CBTApp* pMe, uint16 key )
         {
           pMe->mA2DP.uControlEvtID = IDS_A2DP_SET_BITRATE;        
           PUSH_MENU( BT_APP_MENU_A2DP_CONTROL_DATA );
-          ISHELL_CreateDialog( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE,  
+          ISHELL_CreateDialog( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE,  
                                IDD_BT_TEXT_EDIT, NULL );
           return ev_processed;
         }
@@ -787,7 +787,7 @@ void BTApp_EnableA2DP( CBTApp* pMe, boolean* pbSettingBondable )
     else if ( pMe->mA2DP.bEnabled == FALSE )
     {
       MSG_LOW( "EnableA2DP - enabling A2DP", 0, 0, 0 );
-      if( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_A2DP, 
+      if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BLUETOOTH_A2DP, 
                                  (void**)&pMe->mA2DP.po ) == SUCCESS )
       {
         pMe->mA2DP.bEnabled = TRUE;

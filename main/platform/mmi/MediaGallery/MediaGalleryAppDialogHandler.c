@@ -31,7 +31,7 @@
 
 //Add By zzg 2010_11_04
 #ifdef FEATURE_BT_SEND_FILE_ONLY
-#include "BTApp.h"
+//#include "BTApp_priv.h"		//"BTApp.h"
 #include "Btapp.brh"
 #endif
 //Add End

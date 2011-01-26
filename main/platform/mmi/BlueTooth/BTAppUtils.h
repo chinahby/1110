@@ -101,11 +101,11 @@ when        who   what, where, why
 // selected menu background color
 #define SOFT_MENU_SEL_COLOR MAKE_RGB(153, 204, 204);
 
-#define CLEAR_SCREEN() (IDISPLAY_ClearScreen( pMe->a.m_pIDisplay ))
+#define CLEAR_SCREEN() (IDISPLAY_ClearScreen( pMe->m_pIDisplay ))
 
 #define BTAPP_POST_USER_EVENT( profile, ev ) \
   MSG_MED( "ISHELL_PostEventEx profile=%d, ev=%d", EVT_##profile, ev, 0 ); \
-  ISHELL_PostEventEx( pMe->a.m_pIShell, EVTFLG_ASYNC, \
+  ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, \
                       AEECLSID_BLUETOOTH_APP,         \
                       EVT_USER, EVT_##profile, ev )
                                

@@ -27,7 +27,8 @@ when       who  what, where, why
 
 #ifdef FEATURE_APP_BLUETOOTH
 
-#include "BTApp.h"
+#include "BTApp_priv.h"		//"BTApp.h"
+
 #include "BTAppUtils.h"
 
 #ifdef FEATURE_BT_EXTPF_CTP
@@ -135,7 +136,7 @@ void BTApp_CTPBuildMainMenu( CBTApp* pMe )
     szStatus[ 4 ] = 'R';
   }
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, 
+  ISHELL_LoadResString( pMe->m_pShell, 
                         AEE_APPSBTAPP_RES_FILE, 
                         IDS_CTP_TESTS, 
                         pMe->pText2, 
@@ -174,7 +175,7 @@ void BTApp_CTPBuildMainMenu( CBTApp* pMe )
   // Activate menu
   PUSH_MENU( BT_APP_MENU_CTP_TESTS );
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
 }
 
 /* ==========================================================================
@@ -190,12 +191,12 @@ static void BTApp_CTPCleanup( CBTApp* pMe )
   }
   
   // unregister for CTP notification
-  ISHELL_RegisterNotify( pMe->a.m_pIShell,  
+  ISHELL_RegisterNotify( pMe->m_pShell,  
                          AEECLSID_BLUETOOTH_APP,
                          AEECLSID_BLUETOOTH_NOTIFIER, 
                          0 );
   uBTApp_NMask &= ~NMASK_BT_CTP;
-  ISHELL_RegisterNotify( pMe->a.m_pIShell,  
+  ISHELL_RegisterNotify( pMe->m_pShell,  
                          AEECLSID_BLUETOOTH_APP,
                          AEECLSID_BLUETOOTH_NOTIFIER, 
                          uBTApp_NMask );
@@ -238,9 +239,9 @@ static boolean BTApp_CTPInit( CBTApp* pMe )
 
   if ( init_done == FALSE )
   {
-    if ( (ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_CTP, 
+    if ( (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BLUETOOTH_CTP, 
                                  (void**)&pMe->mCTP.po ) == SUCCESS) &&
-         (ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+         (ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                                  AEECLSID_BLUETOOTH_NOTIFIER, 
                                  uNMask ) == SUCCESS) )
     {

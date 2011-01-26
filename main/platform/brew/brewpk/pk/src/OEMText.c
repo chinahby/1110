@@ -1729,13 +1729,20 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
     if (pContext) 
     {
         // Ignore Up/Down if we're not multiline
+		/*
         if ((key == AVK_UP || key == AVK_DOWN)
             && ((pContext->dwProperties & TP_PASSWORD)||(pContext->dwProperties & TP_USELESS_UPDOWN)) // kai.yao add TP_USELESS_UPDOWN
             && !(pContext->dwProperties & TP_MULTILINE)) 
         {
-        	  
-            return FALSE;
+            return FALSE;            
         }
+        */
+		//Modify by zzg 2011_01_20		
+		if ((key == AVK_UP || key == AVK_DOWN) && ((pContext->dwProperties & TP_PASSWORD)||(pContext->dwProperties & TP_USELESS_UPDOWN)))             
+        {
+            return TRUE;            
+        }
+		//Add End
         MSG_FATAL("...........................2",0,0,0);
         if (pContext->bEditable) 
         {

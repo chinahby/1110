@@ -29,7 +29,8 @@ when       who  what, where, why
 
 #ifdef FEATURE_APP_BLUETOOTH
 
-#include "BTApp.h"
+#include "BTApp_priv.h"		//"BTApp.h"
+
 #include "BTAppL2.h"
 #include "BTAppUtils.h"
 #include "AEEBTExtL2.h"
@@ -142,7 +143,7 @@ void BTApp_L2HandleDevListMenu(
 )
 {
   pMe->mL2.CliBDAddr = pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr;
-  if( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_L2,
+  if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BLUETOOTH_L2,
                              (void**)&pMe->mL2.pCliO ) == SUCCESS )
   {
     if( pMe->mL2.bDoSDP == FALSE )
@@ -285,7 +286,7 @@ void BTApp_ProcessL2Notifications(
         pMe->mL2.bCliConnected = FALSE;
         IBTEXTL2_Release( pMe->mL2.pCliO );
         pMe->mL2.pCliO = NULL;
-        ISHELL_CancelTimer( pMe->a.m_pIShell,
+        ISHELL_CancelTimer( pMe->m_pShell,
                             (PFNNOTIFY) BTApp_BuildL2ResultsMenu,
                             pMe );
         FREE( pMe->mL2.pMem );
@@ -371,7 +372,7 @@ void BTApp_L2Enable( CBTApp* pMe )
   svc_uuids.aUUID128[0]  = my_svc;
 
 
-  if( ISHELL_CreateInstance( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_L2,
+  if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BLUETOOTH_L2,
                              (void**)&pMe->mL2.pSrvO ) == SUCCESS )
   {
     pMe->mL2.bEnabled = TRUE;
@@ -401,7 +402,7 @@ boolean BTApp_L2Init( CBTApp* pMe )
 
   if ( init_done == FALSE )
   {
-    if ( ISHELL_RegisterNotify( pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP,
+    if ( ISHELL_RegisterNotify( pMe->m_pShell, AEECLSID_BLUETOOTH_APP,
                                 AEECLSID_BLUETOOTH_NOTIFIER, 
                                 uNMask ) 
          == SUCCESS  )
@@ -477,10 +478,10 @@ void BTApp_L2Cleanup( CBTApp* pMe )
     
     BTApp_L2SetSecurity( pMe, AEEBT_SEC_NONE );
 
-    ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+    ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                            AEECLSID_BLUETOOTH_NOTIFIER, 0 );
     uBTApp_NMask &= ~NMASK_BT_L2;
-    ISHELL_RegisterNotify( pMe->a.m_pIShell,  AEECLSID_BLUETOOTH_APP,
+    ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
                            AEECLSID_BLUETOOTH_NOTIFIER, uBTApp_NMask );
   }
 }
@@ -549,11 +550,11 @@ boolean BTApp_BuildL2ResultsMenu( CBTApp* pMe )
         ~ST_MIDDLETEXT & ~ST_CENTERTEXT );
 
     // get the screen title
-    ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_L2, 
+    ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_L2, 
                           pMe->pText2, SHORT_TEXT_BUF_LEN * sizeof(AECHAR) );
   }
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BYTES_SENT, 
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BYTES_SENT, 
                         wBuf1, sizeof( wBuf1 ) );
 
   WSPRINTF( &pMe->pText1[ uLen], 
@@ -565,7 +566,7 @@ boolean BTApp_BuildL2ResultsMenu( CBTApp* pMe )
   WSTRLCAT( &pMe->pText1[uLen], wBuf1, LONG_TEXT_BUF_LEN - uLen );
   uLen += WSTRLEN( pMe->pText1 );
 
-  ISHELL_LoadResString( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_KBITS_PER_SEC,
+  ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_KBITS_PER_SEC,
                         wBuf1, sizeof( wBuf1 ) );
   WSPRINTF( &pMe->pText1[ uLen], 
             LONG_TEXT_BUF_LEN - uLen,
@@ -587,7 +588,7 @@ boolean BTApp_BuildL2ResultsMenu( CBTApp* pMe )
     PUSH_MENU( BT_APP_MENU_L2_RESULTS );
   }
 
-  ISHELL_SetTimer( pMe->a.m_pIShell, 
+  ISHELL_SetTimer( pMe->m_pShell, 
                    ONE_SECOND, 
                    (PFNNOTIFY) BTApp_BuildL2ResultsMenu, pMe );
   return built;
@@ -610,7 +611,7 @@ boolean BTApp_HandleL2ResultsMenu( CBTApp* pMe, AEEEvent evt )
       {
         IBTEXTL2_Disconnect( pMe->mL2.pCliO );
       }
-      ISHELL_CancelTimer( pMe->a.m_pIShell,
+      ISHELL_CancelTimer( pMe->m_pShell,
                           (PFNNOTIFY) BTApp_BuildL2ResultsMenu,
                           pMe );
       BTApp_HandleClearKey( pMe );
@@ -700,7 +701,7 @@ boolean BTApp_BuildL2TestMenu( CBTApp* pMe )
     PUSH_MENU( BT_APP_MENU_L2_TEST );
   }
   IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->a.m_pIDisplay, FALSE );
+  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
   IMENUCTL_SetSel( pMe->m_pIMenu, MENU_SEL );
   
   return built;
@@ -791,7 +792,7 @@ boolean BTApp_HandleL2TestMenu( CBTApp* pMe, uint16 key )
           {
             PUSH_MENU( BT_APP_MENU_L2_TEST );
             pMe->mL2.uDialogType = IDS_SERVER_PSM;
-            ISHELL_CreateDialog( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE,  
+            ISHELL_CreateDialog( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE,  
                                  IDD_BT_TEXT_EDIT, NULL );
           }
           break;
@@ -800,7 +801,7 @@ boolean BTApp_HandleL2TestMenu( CBTApp* pMe, uint16 key )
           {
             PUSH_MENU( BT_APP_MENU_L2_TEST );
             pMe->mL2.uDialogType = IDS_CLIENT_PSM;
-            ISHELL_CreateDialog( pMe->a.m_pIShell, AEE_APPSBTAPP_RES_FILE,  
+            ISHELL_CreateDialog( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE,  
                                  IDD_BT_TEXT_EDIT, NULL );
           }
           break;
