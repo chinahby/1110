@@ -412,5 +412,11 @@
 	<Object Id="7043" Name="IDB_MMS_FULL">
 		<File>..\images\160x128\common\Annunciator\mms_full.bmp</File>
 	</Object>
+	<Object Id="7101" Name="IDB_MMS_ENTER" MimeType="image/png">
+		<File>..\images\160x128\common\Appscommon\Icon\enter.png</File>
+	</Object>
+	<Object Id="7102" Name="IDB_MMS_SPACE" MimeType="image/png">
+		<File>..\images\160x128\common\Appscommon\Icon\space.png</File>
+	</Object>
 </Objects>
 </BREWRes>
