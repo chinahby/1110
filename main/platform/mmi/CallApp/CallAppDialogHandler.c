@@ -9780,6 +9780,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         }
 		//Add By zzg 2010_09_10
 		#if defined(FEATURE_DISP_128X160) || defined(FEAUTRE_VERSION_N450)
+        #ifndef FEATURE_TORCH_KEY_INFO
 		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
 		{		
 		    boolean TorchOn = FALSE;
@@ -9804,6 +9805,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 			ISHELL_CloseApplet(pMe->m_pShell, TRUE);
 			
     	}
+        #endif
     	#else
     	else if ((AVKType)wParam == AVK_0) 
     	{
