@@ -3587,13 +3587,35 @@ static void TextCtl_ShowSymbolPage(CTextCtl * pme, int nDir)
            // AECHAR szbuf[2];
            // szbuf[0] = (AECHAR)0x3130;
            // szbuf[1] = (AECHAR)'\0';
-            AECHAR szbuf[] = {'E', 'n', 't', 'e', 'r', '\0'};
-            IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x+10, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
+           // AECHAR szbuf[] = {'E', 'n', 't', 'e', 'r', '\0'};
+           // IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x+10, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
+              IImage *enterImg; 
+              enterImg = NULL;   
+              enterImg = ISHELL_LoadResImage(pme->m_pIShell,
+                                  AEE_APPSCOMMONRES_IMAGESFILE,
+                                  IDB_MMS_ENTER);
+              if(enterImg != NULL)
+              {
+                  IIMAGE_Draw(enterImg, rc.x+10, y + 1);
+                  IIMAGE_Release(enterImg);
+                  enterImg = NULL;
+              } 
          }
          else if(*pszSym == ' ')
          {
-            AECHAR szbuf[] = {'S', 'P','\0'};
-            IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x+10, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);         
+            //AECHAR szbuf[] = {'S', 'P','\0'};
+            //IDISPLAY_DrawText(pd, AEE_FONT_NORMAL, szbuf, -1, rc.x+10, y, NULL,IDF_TEXT_TRANSPARENT/*0*/);
+             IImage *spaceImg; 
+              spaceImg = NULL;   
+              spaceImg = ISHELL_LoadResImage(pme->m_pIShell,
+                                  AEE_APPSCOMMONRES_IMAGESFILE,
+                                  IDB_MMS_SPACE);
+              if(spaceImg != NULL)
+              {
+                  IIMAGE_Draw(spaceImg, rc.x+10, y + 1);
+                  IIMAGE_Release(spaceImg);
+                  spaceImg = NULL;
+              } 
          }
          else
          {
