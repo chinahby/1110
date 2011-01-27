@@ -9339,7 +9339,10 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        			uint16 nLine, nCharsIn,nSel;
 		                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
 						pContext->m_Selectcandidates = FALSE;
-						T9_CJK_MYANMAR_DisplaySelection(pContext);
+						if(g_SplImeGlobals.outputInfo.candidatesNum>0)
+						{
+							T9_CJK_MYANMAR_DisplaySelection(pContext);
+						}
 		                // If it is on the first line, return false
 		                if(nLine == 0 || !pContext->pwLineStarts)
 		                    return FALSE;
@@ -9383,7 +9386,10 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 						uint16 nLine, nCharsIn,nSel;
 
 						pContext->m_Selectcandidates = TRUE;
-						T9_CJK_MYANMAR_DisplaySelection(pContext);
+						if(g_SplImeGlobals.outputInfo.candidatesNum>0)
+						{
+							T9_CJK_MYANMAR_DisplaySelection(pContext);
+						}
 						if((!pContext->pwLineStarts)||(!pContext->wLines))
 							return FALSE;
 						nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
