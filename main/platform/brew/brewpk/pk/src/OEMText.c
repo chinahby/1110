@@ -291,6 +291,8 @@ typedef struct _TextCtlContext {
    uint32               m_curpos;
 #ifdef  FEATURE_MYANMAR_INPUT_MOD
    boolean              m_myaisnull;
+   boolean              m_Selectcandidates;
+   uint16               m_poutstringlen;
 #endif
 } TextCtlContext;
 
@@ -928,6 +930,8 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    }
 #ifdef  FEATURE_MYANMAR_INPUT_MOD
    pNewContext->m_myaisnull = TRUE;
+   pNewContext->m_Selectcandidates = FALSE;
+   pNewContext->m_poutstringlen = 0;
 #endif
 #ifdef FEATURE_T9_CHINESE
    pNewContext->rectChineseInput.x = pNewContext->rectDisplay.x;
@@ -9093,6 +9097,7 @@ static void T9TextCtl_CJK_MYANMAR_Restart(TextCtlContext *pContext)
     TextCtl_NoSelection(pContext);
     TextCtl_TextChanged(pContext);
     pContext->nMSelectionSelectd = 0;       // no default selected word   
+    pContext->m_poutstringlen = 0;
     pContext->sFocus = FOCUS_TEXT;
 }
 static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCode,AVKType key)
@@ -9127,6 +9132,9 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         case AVK_0:     
         case AVK_POUND:              
         	{
+        		MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key...........%d",pContext->m_Selectcandidates,0,0);
+        		if((!pContext->m_Selectcandidates))
+        		{
         			MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................22",0,0,0);
 	        		bResult = SplImeProcessKey(mKey, SPKT_Down);
 	        		MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................333",0,0,0);
@@ -9139,10 +9147,23 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		{
 	        			return FALSE;
 	        		}
-	        			
+	        		pContext->m_poutstringlen ++;	
 	        		T9_CJK_MYANMAR_DisplaySelection(pContext);
-	        			
-	        		return TRUE;
+	        	}
+	        	else
+	        	{
+	        		int temp = key-AVK_1;
+	        		if(g_SplImeGlobals.outputInfo.candidatesNum>temp)
+        			{
+	        			TextCtl_NoSelection(pContext);
+						TextCtl_AddChar(pContext,*(AECHAR *)(g_SplImeGlobals.outputInfo.candidates[temp]));
+						OEM_TextRestart(pContext);
+						pContext->m_Selectcandidates = FALSE;
+						return TRUE;
+					}
+	        		
+	        	}
+	        	return TRUE;
         	}
         	break;
         case AVK_STAR:
@@ -9155,7 +9176,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         			{
         				pContext->m_myaisnull = TRUE;
         			}
-        			if(!pContext->m_myaisnull)
+        			if((!pContext->m_myaisnull) && (!pContext->m_Selectcandidates))
         			{
         				MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................22",0,0,0);
 	        			bResult = SplImeProcessKey(mKey, SPKT_Down);
@@ -9236,7 +9257,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         case AVK_RIGHT:
         	{
         		
-	        		if(g_SplImeGlobals.outputInfo.isShowRightArrow)
+	        		if(g_SplImeGlobals.outputInfo.isShowRightArrow && pContext->m_Selectcandidates)
 	        		{
 		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
 		        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
@@ -9299,7 +9320,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         case AVK_UP:
         {
         		
-	        		if(g_SplImeGlobals.outputInfo.isShowUpArrow)
+	        		if(g_SplImeGlobals.outputInfo.isShowUpArrow && pContext->m_Selectcandidates)
 	        		{
 		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
 		        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
@@ -9313,7 +9334,8 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		{
 	        			uint16 nLine, nCharsIn,nSel;
 		                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
-
+						pContext->m_Selectcandidates = FALSE;
+						T9_CJK_MYANMAR_DisplaySelection(pContext);
 		                // If it is on the first line, return false
 		                if(nLine == 0 || !pContext->pwLineStarts)
 		                    return FALSE;
@@ -9341,7 +9363,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         	break;
         case AVK_DOWN:
         	{
-        			if(g_SplImeGlobals.outputInfo.isShowDownArrow)
+        			if(g_SplImeGlobals.outputInfo.isShowDownArrow && pContext->m_Selectcandidates)
 	        		{
 		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
 		        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
@@ -9355,7 +9377,9 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		{
 	        			
 						uint16 nLine, nCharsIn,nSel;
-						
+
+						pContext->m_Selectcandidates = TRUE;
+						T9_CJK_MYANMAR_DisplaySelection(pContext);
 						if((!pContext->pwLineStarts)||(!pContext->wLines))
 							return FALSE;
 						nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
@@ -9408,9 +9432,11 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         	break;
         case AVK_CLR:
         	{
-        		
+        		 if(!pContext->m_Selectcandidates)
+        		 {
 	        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
 	        		bResult = SplImeProcessKey(mKey, SPKT_Down);
+	        		pContext->m_poutstringlen --;
 	        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
 	        		if(g_SplImeGlobals.outputInfo.candidatesNum>0)
 	        		{
@@ -9448,6 +9474,35 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        				return TRUE;
 	        			}
 	        		}
+	        	}
+	        	else
+	        	{
+	        		if(pContext->m_bavk_clr)
+        			{
+        				MSG_FATAL("DEL......................ture",0,0,0);
+        				if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+			            {
+			                 /* Set selection to the character before the insertion point */
+			                 --pContext->wSelStart;
+			            }
+			            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+			            {
+			                  return FALSE;
+			            }
+			            
+			            /* Insert a "NUL" to just delete and insert nothing */
+			            TextCtl_AddChar(pContext, 0);
+        				return TRUE;
+        			}
+        			else
+        			{
+        				TextCtl_AddChar(pContext,0);
+        				OEM_TextRestart(pContext);
+        				pContext->sFocus = FOCUS_TEXT;
+        				pContext->m_bavk_clr = TRUE;
+        				return TRUE;
+        			}
+	        	}
         		
         	}
         break;
@@ -9458,8 +9513,10 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		TextCtl_NoSelection(pContext);
 					TextCtl_AddChar(pContext,*(AECHAR *)(g_SplImeGlobals.outputInfo.candidates[g_SplImeGlobals.outputInfo.candidateIndex]));
 					OEM_TextRestart(pContext);
+					pContext->m_Selectcandidates = FALSE;
 					return TRUE;
 				}
+				pContext->m_Selectcandidates = FALSE;
         	}
         	break;
         default:
@@ -9582,6 +9639,9 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
                 */
         /* Draw each character */
         format = IDF_TEXT_TRANSPARENT;
+        {
+        int strsize = STRLEN((void*)g_SplImeGlobals.outputInfo.inputString);
+        MSG_FATAL("strsize======%d",strsize,0,0);
         (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                    AEE_FONT_NORMAL,
                                    g_SplImeGlobals.outputInfo.inputString,//pContext->m_date.outputInfo.candidates[k],
@@ -9590,6 +9650,7 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
                                    pRect.y-MYANMAR_FONT_HEIGHT,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    NULL,
                                    format);
+        }
         
         for (k = 0; k < pContext->m_date.outputInfo.candidatesNum; k++) 
         {
@@ -9598,18 +9659,37 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
             //ch[0] = (AECHAR)*(pContext->m_date.outputInfo.candidates[k]); // use GBcode for EVB board 
             //WSTRCPY(ch,0xE0D7);
             //ch[0] = 0xE0D7;
+            MSG_FATAL("pContext->m_Selectcandidates=====%d",pContext->m_Selectcandidates,0,0);
+            if(pContext->m_Selectcandidates)
+            {
+            	AECHAR StrNumber[4] = {0};
+            	AECHAR fmt_str[4] = {0};
+            	STRTOWSTR("%d", fmt_str, sizeof(fmt_str));
+            	WSPRINTF(StrNumber,
+                sizeof(StrNumber),
+                fmt_str,
+                (k+1));
+            	(void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
+                                   AEE_FONT_SMALL,
+                                   StrNumber,//pContext->m_date.outputInfo.candidates[k],
+                                   -1,
+                                   pRect.x+10+m_Myalen-8,//(MYA_FONT_WIDTH)*k,
+                                   pRect.y-2,//SCREEN_HEIGHT - pContext->nLineHeight,
+                                   NULL,
+                                   format);
+            }
             
             MSG_FATAL("ch::::::::::::::%x===%d",*g_SplImeGlobals.outputInfo.candidates[k],m_Myalen,0);
             (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                    AEE_FONT_NORMAL,
                                    g_SplImeGlobals.outputInfo.candidates[k],//pContext->m_date.outputInfo.candidates[k],
                                    -1,
-                                   pRect.x+2+m_Myalen,//(MYA_FONT_WIDTH)*k,
+                                   pRect.x+10+m_Myalen,//(MYA_FONT_WIDTH)*k,
                                    pRect.y-2,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    NULL,
                                    format);
             m_Myalen += SplGetStrWidthW(g_SplImeGlobals.outputInfo.candidates[k]);
-            m_Myalen += g_SplImeGlobals.uiInfo.candMinSpacing;
+            m_Myalen += g_SplImeGlobals.uiInfo.candMinSpacing-2;
             /* If this character is a NULL terminator, then stop drawing */
             if ((pContext->m_date.outputInfo.candidates[k]) == NULL)  break;
             
@@ -9625,14 +9705,37 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
         	for(i=0;i<g_SplImeGlobals.outputInfo.candidateIndex;i++)
         	{
         		m_MyaFouc += SplGetStrWidthW(g_SplImeGlobals.outputInfo.candidates[i]);
-        		m_MyaFouc += g_SplImeGlobals.uiInfo.candMinSpacing;
+        		m_MyaFouc += g_SplImeGlobals.uiInfo.candMinSpacing-2;
         	}
         	m_curlen = SplGetStrWidthW(g_SplImeGlobals.outputInfo.candidates[(g_SplImeGlobals.outputInfo.candidateIndex)]);
-            invertRect.x = pRect.x+2+m_MyaFouc;
-            invertRect.y = pRect.y-2;
-            invertRect.dx = m_curlen+2;
-            invertRect.dy = MYANMAR_FONT_HEIGHT;
-            IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
+        	if(pContext->m_Selectcandidates)
+            {
+            	invertRect.x = pRect.x+10+m_MyaFouc;
+            	invertRect.y = pRect.y-2;
+            	invertRect.dx = m_curlen;
+            	invertRect.dy = MYANMAR_FONT_HEIGHT;
+            }
+            else
+            {
+            	int len = SplGetStrWidthW(g_SplImeGlobals.outputInfo.inputString);
+            	int strsize = STRLEN((void*)g_SplImeGlobals.outputInfo.inputString);
+            	MSG_FATAL("len======1=========%d,strsize=%d",len,strsize,0);
+            	MSG_FATAL("",0,0,0);
+            	len = pContext->m_poutstringlen*7;
+            	MSG_FATAL("len======2=========%d,strsize=%d",len,strsize,0);
+            	invertRect.x = iSyllableWindX+2;
+            	invertRect.y = pRect.y-MYANMAR_FONT_HEIGHT+2;
+            	invertRect.dx = len+2;
+            	invertRect.dy = MYANMAR_FONT_HEIGHT-4;
+            }
+            if(pContext->m_Selectcandidates)
+            {
+            	IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
+            }
+            else
+            {
+            	IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
+            }
         }
     } 
     

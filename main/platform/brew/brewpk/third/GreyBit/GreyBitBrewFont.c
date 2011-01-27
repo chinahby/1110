@@ -65,10 +65,14 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #define BIGNUMBER_FONT_SIZE 48 
 #define NORMAL_FONT_SIZE    24 
 #define LARGE_FONT_SIZE     28 
+#define SMALL_FONT_SIZE     4
+
 #elif defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_176X220)
 #define BIGNUMBER_FONT_SIZE 40 
 #define NORMAL_FONT_SIZE    20 
 #define LARGE_FONT_SIZE     24 
+#define SMALL_FONT_SIZE     4
+
 #else
 #define BIGNUMBER_FONT_SIZE 32
 #if defined(FEATURE_LANG_THAI)||defined(FEATURE_LANG_MYANMAR)
@@ -77,6 +81,8 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #define NORMAL_FONT_SIZE    15
 #endif
 #define LARGE_FONT_SIZE     20
+#define SMALL_FONT_SIZE     4
+
 #endif
 
 
@@ -127,7 +133,7 @@ static IFont gFontNormal           = {&gOEMFontFuncs, 0, NORMAL_FONT_SIZE,   FAL
 static IFont gFontNormalBold       = {&gOEMFontFuncs, 0, NORMAL_FONT_SIZE,   FALSE, FALSE, NULL};
 static IFont gFontLarge            = {&gOEMFontFuncs, 0, LARGE_FONT_SIZE,    FALSE, FALSE, NULL};
 static IFont gFontBigNumber        = {&gOEMFontFuncs, 0, BIGNUMBER_FONT_SIZE,FALSE, FALSE, NULL};
-
+static IFont gFontSmall            = {&gOEMFontFuncs, 0, SMALL_FONT_SIZE,    FALSE, FALSE, NULL};
 static GBHANDLE g_pLibrary = NULL;
 static GBHANDLE g_pLoader  = NULL;
 
@@ -167,6 +173,7 @@ void GreyBitBrewFont_Done(void)
 	OEMFont_Destroy(&gFontNormalBold);
 	OEMFont_Destroy(&gFontLarge);
 	OEMFont_Destroy(&gFontBigNumber);
+	OEMFont_Destroy(&gFontSmall);
 
     if(g_pLoader){
         GreyBitType_Loader_Done(g_pLoader);
@@ -976,6 +983,9 @@ int GreyBitBrewFont_New(IShell *piShell, AEECLSID cls, void **ppif)
         break;
     case AEECLSID_FONTSYSBIGNUMBER:
         pMe = &gFontBigNumber;
+        break;
+    case AEECLAID_FONTSMALL:
+    	pMe = &gFontSmall;
         break;
     default:
         return AEE_ECLASSNOTSUPPORT;

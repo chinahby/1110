@@ -225,6 +225,9 @@ int OEMFont_GetSystemFont(AEEFont nFont, IFont **ppif)
         case AEE_FONT_USER_2:
             *ppif = &gFontLargeNum;
             break;
+        case AEE_FONT_SMALL:
+        	*ppif = &gFontSmall;
+            break;
             
         default:
             return EUNSUPPORTED;            
