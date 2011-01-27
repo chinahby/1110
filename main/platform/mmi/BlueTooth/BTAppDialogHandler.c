@@ -1654,28 +1654,44 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 						MSG_LOW("Local HC LMPVersion = %d",pMe->mRM.myInfo.uLMPVersion, 0, 0 );
 						MSG_FATAL("***zzg Local HC LMPVersion = %d***", pMe->mRM.myInfo.uLMPVersion, 0, 0);
 
-						/*
-						if (pMe->mRM.myInfo.uLMPVersion > BTAPP_BT_LMP_VER_2_0)
+						///*
+						if (pMe->mRM.myInfo.uLMPVersion > 0x03)	//BTAPP_BT_LMP_VER_2_0)
 						{
 							// Host is 2.1 enabled and Host Controller is 2.1      		  
 							BTApp_SetBondable( pMe );//ACG
 
+							BTApp_BuildBondMenu( pMe );
+
+							/*
 							pMe->mRM.bpassKeyRqst = FALSE;
 
-     						pMe->m_edit_id = IDS_PASS_KEY;
-							pMe->m_bEditNeedStr = TRUE;							
+     							pMe->m_edit_id = IDS_PASS_KEY;
+							pMe->m_bEditNeedStr = TRUE;		
+
+							pMe->m_edit_state_id = BTAPPST_DEVICEINFO;
 							CLOSE_DIALOG(DLGRET_BT_EDIT) 
+							*/	
 						}
 						else
 						{
-							// Host is 2.1 but, Host Controller is non 2.1          
+							// Host is 2.1 but, Host Controller is non 2.1         
+							if (WSTRLEN( pMe->mRM.device[ pMe->mRM.uCurDevIdx ].wName) == 0)
+							{
+								BTApp_BDAddr2Wstr(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName,&pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr);
+							}
+
+							WSTRLCPY(pMe->wEditBuf, pMe->mRM.device[pMe->mRM.uCurDevIdx].wName, ARR_SIZE(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName));
+						
 							pMe->m_edit_id = IDS_PASS_KEY;
 							pMe->m_bEditNeedStr = TRUE;
+
+							pMe->m_edit_state_id = BTAPPST_DEVICEINFO;
 							
 							CLOSE_DIALOG(DLGRET_BT_EDIT)  
 						}
-						*/
-					
+						//*/
+
+						/*
 						if (WSTRLEN( pMe->mRM.device[ pMe->mRM.uCurDevIdx ].wName) == 0)
 						{
 							BTApp_BDAddr2Wstr(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName,&pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr);
@@ -1693,6 +1709,8 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 						pMe->m_edit_state_id = BTAPPST_DEVICEINFO;
 						
 						CLOSE_DIALOG(DLGRET_BT_EDIT) 
+
+						*/
 					}
 #endif 					
 					return TRUE;

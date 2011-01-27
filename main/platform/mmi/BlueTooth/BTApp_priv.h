@@ -364,6 +364,7 @@ extern void BTApp_BuildPrompt( CBTApp* pMe, BTAppMenuType menu );
 extern boolean BTApp_DoUnbondAll( CBTApp* pMe );
 extern boolean BTApp_DoRemoveAll( CBTApp* pMe );
 extern void BTApp_DoUnbondOne( CBTApp* pMe );
+extern void BTApp_BuildBondMenu( CBTApp* pMe );
 //Add End
 
 

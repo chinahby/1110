@@ -1577,36 +1577,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
     ISHELL_GetDeviceInfo(pMe->m_pShell, &di);    
     
     switch (eCode)
-    {
-		//Add By zzg 2010_11_23
-		/*
-		case EVT_APP_START_BACKGROUND:	//Config蓝牙开启，COREAPP进行蓝牙初始化
-		{		
-			MSG_FATAL("***zzg BTApp_HandleEvent EVT_APP_START_BACKGROUND***", 0, 0, 0);
-
-			BTApp_CreateOtherApp(pMe);		
-
-			if ((args != NULL) && (args->pszArgs != NULL))	
-			{
-				//Factory Reset
-				if (STRNCMP(args->pszArgs,"ResetBT",7) == 0)		
-				{
-					if (event_processed)
-					{
-						MSG_FATAL("***zzg EVT_APP_START_BACKGROUND ResetBT Factory***", 0, 0, 0);
-						BTApp_DisableBT(pMe);	
-					}
-				}			
-			}		
-			
-			pMe->bFirstLaunch = FALSE;
-			pMe->bSuspended = FALSE;						
-
-			break;
-		}
-		*/
-		//Add End
-	
+    {	
         case EVT_APP_START:				
 		{
 			MSG_FATAL("***zzg EVT_APP_START***", 0, 0, 0);
@@ -1793,6 +1764,17 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 #endif									
 						break;
 					}
+
+					case AEEBT_RM_EVT_USER_CFM_REQUEST:
+					{						
+						MSG_FATAL("***zzg BTApp_HandleEvent EVT_APP_START AEEBT_RM_EVT_USER_CFM_REQUEST***", 0, 0, 0);	
+						
+						pMe->m_prompt_state_id = BTAPPST_MAIN;
+						BTApp_BuildPrompt(pMe , BT_APP_MENU_USER_CFM_RQST); 
+
+						pMe->m_user_wParam = 0;		
+					}
+					
 					default:
 					{
 						pMe->m_user_wParam = 0;
@@ -7931,7 +7913,7 @@ static boolean BTApp_HandleBondOptionsMenu( CBTApp* pMe, uint16 key )
 FUNCTION BTApp_BuildBondMenu
 DESCRIPTION
 ============================================================================= */
-static void BTApp_BuildBondMenu( CBTApp* pMe )
+/*static*/ void BTApp_BuildBondMenu( CBTApp* pMe )
 {
    AEEBTDeviceInfo* pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx ];
 
@@ -7939,7 +7921,7 @@ static void BTApp_BuildBondMenu( CBTApp* pMe )
    					pMe->mRM.bBonding, pDev->bSSPCapable, pMe->mRM.bpassKeyRqst);
 
 //Del By zzg 2010_12_28
-#if 0
+#if 1
    if ( pMe->mRM.bBonding && pDev->bSSPCapable && !(pMe->mRM.bpassKeyRqst) )
    {
       MSG_LOW("BuildBondMenu - MITM Enabled : %d", pMe->mRM.bMITMEnabled, 0, 0 );
@@ -7959,9 +7941,32 @@ static void BTApp_BuildBondMenu( CBTApp* pMe )
 #endif   	
 //Del End
    {
+   	 /*
      pMe->mRM.bpassKeyRqst = FALSE;
 	 PUSH_MENU( BT_APP_MENU_PASSKEY );
      ISHELL_CreateDialog( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDD_BT_TEXT_EDIT, NULL);
+     */
+     
+	if (WSTRLEN( pMe->mRM.device[ pMe->mRM.uCurDevIdx ].wName) == 0)
+	{
+		BTApp_BDAddr2Wstr(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName,&pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr);
+	}
+
+	WSTRLCPY(pMe->wEditBuf, pMe->mRM.device[pMe->mRM.uCurDevIdx].wName, ARR_SIZE(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName));
+
+	BTApp_SetBondable(pMe);//ACG
+
+	pMe->mRM.bpassKeyRqst = FALSE;
+
+	pMe->m_edit_id = IDS_PASS_KEY;
+	pMe->m_bEditNeedStr = TRUE;		
+
+	pMe->m_edit_state_id = BTAPPST_DEVICEINFO;
+
+	pMe->m_eDlgRet = DLGRET_BT_EDIT; 
+    (void) ISHELL_EndDialog(pMe->m_pShell);  
+
+	//CLOSE_DIALOG(DLGRET_BT_EDIT) 
  	
    }
 }
@@ -16927,13 +16932,7 @@ static void BTApp_BuildDeviceList( CBTApp* pMe, BTAppMenuType menu )
 
       PUSH_MENU( menu );
 
-      // set the title
-      //IMENUCTL_SetTitle( pMe->m_pIMenu, AEE_APPSBTAPP_RES_FILE, stringID, NULL );
-      if(pMe->m_pIAnn != NULL)
-	  {
-	      //MSG_FATAL("***zzg BTAppMod_Release m_nRefs=%d***", ((BTAppMod *)po)->m_nRefs, 0, 0);
-	  }  
-	  
+      // set the title      	  
 	  {
 	    AECHAR WTitle[20] = {0};
 		ISHELL_LoadResString(pMe->m_pShell,
@@ -16942,11 +16941,10 @@ static void BTApp_BuildDeviceList( CBTApp* pMe, BTAppMenuType menu )
 	                         WTitle,
 	                         sizeof(WTitle));
 	 
-	    if(pMe->m_pIAnn != NULL)
+	    if (pMe->m_pIAnn != NULL)
 		{
 		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
-		}
-		
+		}		
 	  }
 
       if ( IBTEXTRM_DeviceEnumInit( pMe->mRM.po, &enumerator ) == SUCCESS )
@@ -17042,8 +17040,6 @@ static void BTApp_BuildDeviceList( CBTApp* pMe, BTAppMenuType menu )
 //Add By zzg 2010_11_10
 static void BTApp_SaveSendFilePath(CBTApp *pMe, const char* filepath)
 {	
-	
-
 	MEMSET(pMe->m_pfilepath, 0, AEEBT_MAX_FILE_NAME*sizeof(char) );
 
 	MEMCPY(pMe->m_pfilepath, filepath, STRLEN(filepath));	
@@ -17088,13 +17084,6 @@ static void BTApp_BuildDevRespMenu( CBTApp* pMe )
   BTApp_InitAddItem( &ai );
   ai.wFont = AEE_FONT_BOLD;
 
-  // set the title
-  //IMENUCTL_SetTitle( pMe->m_pIMenu, AEE_APPSBTAPP_RES_FILE, stringID, NULL );
-  if(pMe->m_pIAnn != NULL)
-  {
-      //MSG_FATAL("***zzg BTAppMod_Release m_nRefs=%d***", ((BTAppMod *)po)->m_nRefs, 0, 0);
-  }  
-  
   {
     AECHAR WTitle[20] = {0};
 	ISHELL_LoadResString(pMe->m_pShell,
@@ -21120,9 +21109,21 @@ static void BTApp_ProcessRMNotifications(
 		pMe->mRM.bUserCfm = TRUE;
 		pMe->mRM.BondBDAddr = pData->sPasskey.bdAddr;
 
+		//Add By zzg 2011_01_27
+		if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
+		{
+			MSG_FATAL("***zzg BTApp_ProcessRMNotify  AEEBT_RM_EVT_USER_CFM_REQUEST ISHELL_ActiveApplet=%x***", ISHELL_ActiveApplet(pMe->m_pShell), 0, 0);
+			ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+
+			pMe->m_app_flag = TRUE;
+			pMe->m_user_wParam = evt;
+			break;			
+		}
+		//Add End		
+
 		pMe->m_prompt_state_id = BTAPPST_DEVICEINFO;
 		BTApp_BuildPrompt(pMe , BT_APP_MENU_USER_CFM_RQST);	  
-      break;
+		break;
     }
 #endif /* FEATURE_BT_2_1 */
     case AEEBT_RM_EVT_BONDABLE_MODE:   // response to SetBondable()

@@ -1491,44 +1491,6 @@ static NextFSMAction BTApp_StatePromptHandler(CBTApp *pMe)
 			MOVE_TO_STATE(pMe->m_prompt_state_id)	
 			return NFSMACTION_CONTINUE;
 
-			/*
-			switch(pMe->m_prompt_id)
-			{
-				case IDS_PROMPT_REMOVE_ONE:
-				{
-					MOVE_TO_STATE(BTAPPST_DEVICEINFO)	
-					return NFSMACTION_CONTINUE;;
-				}			
-
-				case IDS_PROMPT_PROCEED_BONDING:
-				{
-					MSG_FATAL("***zzg StatePromptHandler IDS_PROMPT_PROCEED_BONDING***", 0, 0, 0);
-					MOVE_TO_STATE(BTAPPST_DEVICEINFO)	//BTAPPST_MAIN ??
-					return NFSMACTION_CONTINUE;;
-				}	
-
-				case IDS_PROMPT_UNBOND_ONE:
-				{
-					MOVE_TO_STATE(BTAPPST_DEVICEINFO)	
-					return NFSMACTION_CONTINUE;;
-				}
-				
-				case IDS_PROMPT_UNBOND_ALL:
-				case IDS_PROMPT_REMOVE_ALL:
-				{
-					MOVE_TO_STATE(BTAPPST_DEVICE_LIST)	
-					return NFSMACTION_CONTINUE;;
-				}				
-				default:
-				{
-					MOVE_TO_STATE(BTAPPST_MAIN)	
-					return NFSMACTION_CONTINUE;;
-				}
-			}		
-			
-			return NFSMACTION_CONTINUE;
-			*/
-
 		case DLGRET_PROMPT:			
 			MOVE_TO_STATE(BTAPPST_PROMPT)
 			return NFSMACTION_CONTINUE;		
