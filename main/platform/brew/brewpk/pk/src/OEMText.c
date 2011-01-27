@@ -397,6 +397,8 @@ extern long SplGetStrWidthW (const unsigned short * string)
                                                       NULL);
     #endif
 }
+
+
 #endif
 
 /* This is static because the only use of it is in setting a pointer.
@@ -9139,10 +9141,14 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         		MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key...........%d",pContext->m_Selectcandidates,0,0);
         		if((!pContext->m_Selectcandidates))
         		{
-        			MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................22",0,0,0);
+        			MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key.......candidateWidth=%d",g_SplImeGlobals.uiInfo.candidateWidth,0,0);
+        			g_SplImeGlobals.uiInfo.candidateWidth = pContext->rectDisplay.dx-2;
+        			g_SplImeGlobals.uiInfo.candMinSpacing = 10;
+    				g_SplImeGlobals.uiInfo.fpGetStrWidthA = 0;
+    				g_SplImeGlobals.uiInfo.fpGetStrWidthW = SplGetStrWidthW ;
 	        		bResult = SplImeProcessKey(mKey, SPKT_Down);
 	        		MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................333",0,0,0);
-	        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
+	        		MSG_FATAL("SplImeProcessKey...%d =%d,candidateWidth=%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,g_SplImeGlobals.uiInfo.candidateWidth);
 	        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
 	        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
 	        		pContext->m_date = g_SplImeGlobals;
@@ -9510,6 +9516,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         				OEM_TextRestart(pContext);
         				pContext->sFocus = FOCUS_TEXT;
         				pContext->m_bavk_clr = TRUE;
+        				pContext->m_Selectcandidates = FALSE;
         				return TRUE;
         			}
 	        	}
@@ -9542,16 +9549,19 @@ static void T9TextCtl_CJK_MYANMAR_Exit(TextCtlContext *pContext)
 static T9STATUS T9_CJK_MYANMAR_Init(TextCtlContext *pContext)
 {
 	enum SIMEReturn bResult = SMR_OK;
+	 pContext->rectDisplay.dx = SCREEN_WIDTH;
 	// ³õÊ¼»¯ÒýÇæ
+	//SplImeDeinit(); 
 	MEMSET(&g_SplImeGlobals,0,sizeof(SplImeGlobals));
     g_SplImeGlobals.initData.imeData = (void*)prv_dataArray;
     g_SplImeGlobals.uiInfo.candidateWidth = pContext->rectDisplay.dx-2;
     g_SplImeGlobals.uiInfo.candMinSpacing = 10;
     g_SplImeGlobals.uiInfo.fpGetStrWidthA = 0;
     g_SplImeGlobals.uiInfo.fpGetStrWidthW = SplGetStrWidthW ;
+    pContext->m_poutstringlen = 0;
 
     bResult = SplImeInit();
-	MSG_FATAL("SplImeInit.............bResult=%d",bResult,0,0);
+	MSG_FATAL("SplImeInit.....bResult=%d,candidateWidth=%d",bResult,g_SplImeGlobals.uiInfo.candidateWidth,0);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 static enum SplKey T9_CJK_MYANMAR_BrewKeyToT9Key(TextCtlContext *pContext, AVKType cKey)
