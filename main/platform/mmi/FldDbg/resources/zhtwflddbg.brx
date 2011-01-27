@@ -313,6 +313,15 @@
 	<STRING Id="104" Name="IDS_HW_VERSION">
 		<Text>HW Ver: </Text>
 	</STRING>
+	<String Id="1001" Name="IDS_OMH_ESN">
+		<Text>OMH卡的ESN</Text>
+	</String>
+	<String Id="1002" Name="IDS_OMH_MEID">
+		<Text>OMH卡的MEID</Text>
+	</String>
+	<String Id="1003" Name="IDS_OMH_VERSION">
+		<Text>OMH卡的版本信息</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_TOP_DIALOG" Focus="1">
@@ -578,6 +587,24 @@
 			<SoftKey Id="7041" Name="IDC_ESN_SOFTKEY">
 				<Items/>
 			</SoftKey>
+		</Controls>
+	</Dialog>
+	<Dialog Id="31" Name="IDD_OMH_ESN_DIALOG" Focus="7036">
+		<Controls>
+			<Text Id="7036" Name="IDC_OMH_ESN_TEXT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="32" Name="IDD_OMH_MEID_DIALOG" Focus="7042">
+		<Controls>
+			<Text Id="7042" Name="IDC_OMH_MEID_TEXT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="33" Name="IDD_OMH_VERSION_DIALOG" Focus="7043">
+		<Controls>
+			<Text Id="7043" Name="IDC_OMH_VERSION_TEXT">
+				<Items/></Text>
 		</Controls>
 	</Dialog>
 </Dialogs>

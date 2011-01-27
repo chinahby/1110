@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="flddbg" VERSION="1">
+<BREWRes Name="myaflddbg" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1" Name="IDS_OPTION_TITLE">
 		<Text>Options</Text>
@@ -412,6 +412,15 @@
 	<String Id="1020" Name="IDS_NV_VALUE" Encoding="Unicode">
 		<Text>NV Value</Text>
 	</String>
+	<String Id="1021" Name="IDS_OMH_ESN" Encoding="Unicode">
+		<Text>OMH ESN</Text>
+	</String>
+	<String Id="1022" Name="IDS_OMH_MEID" Encoding="Unicode">
+		<Text>OMH MEID</Text>
+	</String>
+	<String Id="1023" Name="IDS_OMH_VERSION" Encoding="Unicode">
+		<Text>OMH Version</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_TOP_DIALOG" Focus="1">
@@ -784,6 +793,24 @@
 				<TitleID>IDS_NV_VALUE</TitleID>
 				<Items/></Static>
 			<Text Id="7056" Name="IDC_NVVALUE_TEXT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="48" Name="IDD_OMH_ESN_DIALOG" Focus="7058">
+		<Controls>
+			<Text Id="7058" Name="IDC_OMH_ESN_TEXT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="49" Name="IDD_OMH_MEID_DIALOG" Focus="7059">
+		<Controls>
+			<Text Id="7059" Name="IDC_OMH_MEID_TEXT">
+				<Items/></Text>
+		</Controls>
+	</Dialog>
+	<Dialog Id="50" Name="IDD_OMH_VERSION_DIALOG" Focus="7060">
+		<Controls>
+			<Text Id="7060" Name="IDC_OMH_VERSION_TEXT">
 				<Items/></Text>
 		</Controls>
 	</Dialog>
