@@ -369,20 +369,24 @@ static void T9_CJK_MYANMAR_AdjustInputInfoLocation(TextCtlContext *pContext,
 
 extern long SplGetStrWidthW (const unsigned short * string)
 {
-	int iwszlen = STRLEN((char *)string);
+	int iwszlen = 0;
 	IDisplay                        *m_pDisplay;
 	 if (ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_DISPLAY, 
             (void **) &m_pDisplay) != SUCCESS)
     {
+    	iwszlen = STRLEN((char *)string);
     	iwszlen = iwszlen*MYANMAR_FONT_WIDTH/2;
-    	return iwszlen;
+    	//return iwszlen;
     }
-    iwszlen = IDISPLAY_MeasureTextEx(m_pDisplay,
+    else
+    {
+    	iwszlen = IDISPLAY_MeasureTextEx(m_pDisplay,
                                       AEE_FONT_BOLD,
                                       string,
                                       1,
                                       -1,
                                       NULL);
+   }
 	return iwszlen;
 	#if 0
 	iwszlen = IDISPLAY_MeasureTextEx(pContext->pIDisplay,
