@@ -9543,7 +9543,7 @@ static T9STATUS T9_CJK_MYANMAR_Init(TextCtlContext *pContext)
 {
 	enum SIMEReturn bResult = SMR_OK;
 	// ³õÊ¼»¯ÒýÇæ
-	
+	MEMSET(&g_SplImeGlobals,0,sizeof(SplImeGlobals));
     g_SplImeGlobals.initData.imeData = (void*)prv_dataArray;
     g_SplImeGlobals.uiInfo.candidateWidth = pContext->rectDisplay.dx-2;
     g_SplImeGlobals.uiInfo.candMinSpacing = 10;
