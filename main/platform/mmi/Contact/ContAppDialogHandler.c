@@ -15684,8 +15684,11 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                                 ITEXTCTL_GetText(pTextCtl, emergency_call, 10);
                                 if(!CContApp_CheckNumber(emergency_call))
                                 {
-                                    CLOSE_DIALOG(DLGRET_NUM_UNAVAILD);
-                                    return TRUE;
+                                    if(WSTRNCMP(emergency_call, L"NONE", 4) != 0)
+                                    {
+                                        CLOSE_DIALOG(DLGRET_NUM_UNAVAILD);
+                                        return TRUE;
+                                    }
                                 }      
                                 //ITEXTCTL_SetText( pTextCtl, emergency_call, WSTRLEN(emergency_call));
                                 IMENUCTL_SetItemText(pMenu, selectEdit, NULL, 0, emergency_call);
@@ -15699,6 +15702,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                                         {
                                             MSG_FATAL("AVK_UP 1111111111111",0,0,0);
                                             ITEXTCTL_SetText( pTextCtl, (AECHAR *)ai.pText, WSTRLEN((AECHAR *)ai.pText));
+                                            DBGPRINTF("UP ai.pText s=%S", (AECHAR *)ai.pText);
                                         }
                                     }
                                     else if(selectEdit == 500)
@@ -15707,6 +15711,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                                         {
                                             MSG_FATAL("AVK_UP 2222222222222222",0,0,0);
                                             ITEXTCTL_SetText( pTextCtl, (AECHAR *)ai.pText, WSTRLEN((AECHAR *)ai.pText));
+                                            DBGPRINTF("UP ai.pText s=%S", (AECHAR *)ai.pText);
                                         }                                    
                                     }
                                 }
@@ -15718,7 +15723,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                                         if(IMENUCTL_GetItem(pMenu, selectEdit + 1, &ai))
                                         {
                                             MSG_FATAL("AVK_DOWN 33333333333333",0,0,0);
-                                            DBGPRINTF("ai.pText s=%S", (AECHAR *)ai.pText);
+                                            DBGPRINTF("UP ai.pText s=%S", (AECHAR *)ai.pText);
                                             ITEXTCTL_SetText( pTextCtl, (AECHAR *)ai.pText, WSTRLEN((AECHAR *)ai.pText));
                                         }
                                     }
@@ -15728,6 +15733,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                                         {
                                             MSG_FATAL("AVK_DOWN 44444444444444",0,0,0);
                                             ITEXTCTL_SetText( pTextCtl, (AECHAR *)ai.pText, WSTRLEN((AECHAR *)ai.pText));
+                                            DBGPRINTF("UP ai.pText s=%S", (AECHAR *)ai.pText);
                                         }                                    
                                     }                                
                                 }
