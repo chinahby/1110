@@ -4,6 +4,9 @@
 	<Object Id="5001" Name="IDI_MUSICPLAYER">
 		<File>..\..\Appscommon\images\128x160\common\MusicPlayer\musicPlayernew.png</File>
 	</Object>
+	<Object Id="5003" Name="IDI_MUSICLOG" MimeType="image/bmp">
+		<File>..\..\Appscommon\images\128x160\common\MusicPlayer\musicicon.bmp</File>
+	</Object>
 	<Object Id="5004" Name="IDI_PLAY">
 		<File>..\..\Appscommon\images\128x160\common\MusicPlayer\play.png</File>
 	</Object>
