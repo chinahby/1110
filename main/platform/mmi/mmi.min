@@ -106,8 +106,10 @@ ifeq ($(MMI_ADD_WAPBROWSER),yes)
 include $(WAPBROWSER)/WapBrowser.min
 endif
 
+ifeq ($(USES_BREW_APPMGR), yes)
 ifneq ($(USES_LOWMEM),yes)
 include $(BREW_APPMGR)/BREWAppMgr.min
+endif
 endif
 
 ifeq ($(MMI_ADD_ESURFING),yes)
