@@ -9144,8 +9144,8 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         			MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key.......candidateWidth=%d",g_SplImeGlobals.uiInfo.candidateWidth,0,0);
         			g_SplImeGlobals.uiInfo.candidateWidth = pContext->rectDisplay.dx-2;
         			g_SplImeGlobals.uiInfo.candMinSpacing = 10;
-    				g_SplImeGlobals.uiInfo.fpGetStrWidthA = 0;
-    				g_SplImeGlobals.uiInfo.fpGetStrWidthW = SplGetStrWidthW ;
+    				//g_SplImeGlobals.uiInfo.fpGetStrWidthA = 0;
+    				//g_SplImeGlobals.uiInfo.fpGetStrWidthW = SplGetStrWidthW ;
 	        		bResult = SplImeProcessKey(mKey, SPKT_Down);
 	        		MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................333",0,0,0);
 	        		MSG_FATAL("SplImeProcessKey...%d =%d,candidateWidth=%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,g_SplImeGlobals.uiInfo.candidateWidth);
@@ -9392,6 +9392,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 						uint16 nLine, nCharsIn,nSel;
 
 						pContext->m_Selectcandidates = TRUE;
+						MSG_FATAL("g_SplImeGlobals.outputInfo.candidatesNum=%d",g_SplImeGlobals.outputInfo.candidatesNum,0,0);
 						if(g_SplImeGlobals.outputInfo.candidatesNum>0)
 						{
 							T9_CJK_MYANMAR_DisplaySelection(pContext);
@@ -9697,6 +9698,7 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
                                    pRect.y-2,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    NULL,
                                    format);
+                (void) IDisplay_UpdateEx((IDisplay *)pContext->pIDisplay,TRUE);
             }
             
             MSG_FATAL("ch::::::::::::::%x===%d",*g_SplImeGlobals.outputInfo.candidates[k],m_Myalen,0);
@@ -9708,6 +9710,7 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
                                    pRect.y-2,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    NULL,
                                    format);
+            (void) IDisplay_UpdateEx((IDisplay *)pContext->pIDisplay,TRUE);
             m_Myalen += SplGetStrWidthW(g_SplImeGlobals.outputInfo.candidates[k]);
             m_Myalen += g_SplImeGlobals.uiInfo.candMinSpacing-2;
             /* If this character is a NULL terminator, then stop drawing */
@@ -9758,6 +9761,7 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
             }
         }
     } 
+    (void) IDisplay_UpdateEx((IDisplay *)pContext->pIDisplay,TRUE);
     
 }
 
