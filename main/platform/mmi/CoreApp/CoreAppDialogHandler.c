@@ -2971,11 +2971,13 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             {
                 return TRUE;
             }
+            MSG_FATAL("EVT_KEY_PRESS...........wParam=%d.....",wParam,0,0);
             //if set jpeg as wallpaper, it needs more time to finish decode. in this case
             // press other key in idle quickly while exitting from setting wallpaper, topline
             // will be overlapped with signal bar and other app's title.
             if(bImageDecoded == FALSE && pWallPaper)
             {
+            	MSG_FATAL("bImageDecoded=%d",bImageDecoded,0,0);
                 return TRUE;
             }
             switch (wParam)
@@ -2985,17 +2987,37 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_BLUETOOTH_APP);
 #endif
                 case AVK_MUSIC:
+                	if(pMe->m_iskeypadtime)
+					{
+						return TRUE;
+						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
+					}
 #ifdef  FEAUTRE_VERSION_N450    //add by pyuangui
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);   
 #else
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #endif    
                 case AVK_FM:
+                	if(pMe->m_iskeypadtime)
+					{
+						return TRUE;
+						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
+					}
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
                 case AVK_CAMERA:
+                	
                 	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
                 	{
+                	
 					nv_item_type	SimChoice;
+					if(pMe->m_iskeypadtime)
+					{
+						return TRUE;
+						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
+					}
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 					MSG_FATAL("NV_SIM_SELECT_I...............0000000=%d",SimChoice.sim_select,0,0);
 					if(SimChoice.sim_select ==AVK_SEND_TWO)
@@ -3024,19 +3046,43 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					#endif
                     
 				case AVK_TV:
+					if(pMe->m_iskeypadtime)
+					{
+						return TRUE;
+						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
+					}
 				    return CoreApp_LaunchApplet(pMe, AEECLSID_TVAPP);;
                 case AVK_UP:
+                	if(pMe->m_iskeypadtime)
+					{
+						return TRUE;
+						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
+					}
 #ifdef FEATURE_VERSION_HITZ181   //add by yangdecai
             	    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #else
                 	return CoreApp_LaunchApplet(pMe, AEECLSID_MEDIAGALLERY);
 #endif
                 case AVK_MESSAGE:
+                	if(pMe->m_iskeypadtime)
+					{
+						return TRUE;
+						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
+					}
 #if defined(FEATURE_WMS_APP)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif
                 case AVK_DOWN:
 				{
+					if(pMe->m_iskeypadtime)
+					{
+						return TRUE;
+						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+						///ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
+					}
 //#if !defined(FEATURE_PROJECT_W022) && !defined(FEATURE_PROJECT_W021) && !defined(FEATURE_PROJECT_W021_128x160) && !defined (FEATURE_PROJECT_W021_176X220) && !defined (FEATURE_PROJECT_W021_240X320)&& !defined (FEATURE_PROJECT_W021_220X176) && !defined (FEATURE_PROJECT_W021_320X240)
 #if !defined(FEATURE_IDLE_TORCH_DOWNKEY)
 	#if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203)||defined (FEATURE_VERSION_C500BE)
@@ -3080,6 +3126,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 }
                 case AVK_LEFT:
                 {
+                	if(pMe->m_iskeypadtime)
+					{
+						return TRUE;
+						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
+					}
 #if defined	(FEATURE_VERSION_FLEXI203)||defined(FEATURE_VERSION_IVIO203) ||defined(FEATURE_VERSION_C500BE)
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
 #elif defined (FEATURE_VERSION_SMART)
@@ -3100,6 +3152,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				
                 case AVK_RIGHT:
 					{
+						if(pMe->m_iskeypadtime)
+						{
+							//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+							//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
+							return TRUE;
+						}
 						#ifdef FEATURE_VERSION_HITZ181
 							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);//
 						#else
@@ -3110,8 +3168,15 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 		 		{
 				int ret = 0;
 					#if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR)
-					AEE_SetTimer(2*1000,CoreApp_keypadtimer,pMe);
-					pMe->m_iskeypadtime = TRUE;
+					if(!pMe->m_iskeypadtime)
+					{
+						
+						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
+						AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+						AEE_SetTimer(2*1000,CoreApp_keypadtimer,pMe);
+						//ISHELL_SetTimer(pMe->a.m_pIShell,2*1000,CoreApp_keypadtimer,pMe);
+						pMe->m_iskeypadtime = TRUE;
+					}
 					#else
 #if defined	(FEATURE_VERSION_FLEXI203) 
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP				
@@ -3175,6 +3240,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 
                 case AVK_INFO:
 					{
+						if(pMe->m_iskeypadtime)
+						{
+							//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+							return TRUE;
+							//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
+						}
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 					}
 			#if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined (FEATURE_VERSION_M8021)
@@ -3188,6 +3259,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					}
 					if(!OEMKeyguard_IsEnabled())
                     {
+                    	if(pMe->m_iskeypadtime)
+						{
+							//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+							//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
+							return TRUE;
+						}
 #if defined (FEATURE_VERSION_SMART)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP                   
                     	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
@@ -3387,27 +3464,36 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     {
                         ICallApp         *pCallApp = NULL;
                         #if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR)
-                        if(pMe->m_iskeypadtime && wParam==AVK_STAR)
+                        if(pMe->m_iskeypadtime)
                         {
-                        	boolean bData;
-			            	#ifdef FEATURE_KEYGUARD
-			            	MSG_FATAL("EVT_USER.....................",0,0,0);
-			        		if(!OEMKeyguard_IsEnabled())
-			        		{
-			        			(void) ICONFIG_GetItem(pMe->m_pConfig,
-			                                CFGI_KEY_LOCK_CHECK/*CFGI_PHONE_KEY_LOCK_CHECK*/,
-			                                &bData,
-			                                sizeof(bData));
-			        			if(bData)
-			        			{
-			                        CoreApp_TimeKeyguard(pMe);
-			            		}
-			        		}
-							#endif	
-							AEE_CancelTimer(CoreApp_keypadtimer,pMe);
-                        	pMe->m_iskeypadtime = FALSE;
-                        	return TRUE;
+                        	if(wParam==AVK_STAR)
+                        	{
+	                        	boolean bData;
+				            	#ifdef FEATURE_KEYGUARD
+				            	MSG_FATAL("EVT_USER.....................",0,0,0);
+				        		if(!OEMKeyguard_IsEnabled())
+				        		{
+				        			(void) ICONFIG_GetItem(pMe->m_pConfig,
+				                                CFGI_KEY_LOCK_CHECK/*CFGI_PHONE_KEY_LOCK_CHECK*/,
+				                                &bData,
+				                                sizeof(bData));
+				                    pMe->m_iskeypadtime = FALSE;
+				        			if(bData)
+				        			{
+				                        CoreApp_TimeKeyguard(pMe);
+				            		}
+				        		}
+								#endif	
+								AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+	                        	pMe->m_iskeypadtime = FALSE;
+	                        	return TRUE;
+                        	}
+                        	else
+                        	{
+                        		return TRUE;
+                        	}
                         }
+                        
                         #endif
                         if ( SUCCESS != ISHELL_CreateInstance( pMe->a.m_pIShell,
                                                         AEECLSID_DIALER,

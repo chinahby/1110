@@ -2622,6 +2622,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
             }
 
 #endif
+
             switch (wParam)
             {
                 case AVK_0:
@@ -4949,7 +4950,10 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                 pMe->m_bDelOk = FALSE;
                 pMe->m_wSelectCont = pMe->m_wDelReturnSelId;
             }
-            
+            #ifdef FEATURE_MYANMAR_INPUT_MOD
+			ITEXTCTL_SetInputMode( pTextCtl,AEE_TM_LETTERS);
+			//ITEXTCTL_SetActive(pTextCtl, FALSE);
+			#endif
             //IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);   
             // For redraw the dialog
             (void)ISHELL_PostEvent( pMe->m_pShell,
