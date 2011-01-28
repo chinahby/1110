@@ -28,6 +28,7 @@ GENERAL DESCRIPTION:
 #include "mmidispsize.h"
 #define FEATURE_GREYBIT
 #define FEATURE_BREW_3_0
+
 //
 // The following defines are used to selectively compile the OEM_XXXX.c
 // routines.  If these flags are DEFINED, then we will compile the OEM_XXXX.c
