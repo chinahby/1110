@@ -83,7 +83,7 @@
 		<Text>%02d/%02d %02d:%02d</Text>
 	</STRING>
 	<STRING Id="28" Name="IDS_CITY_25">
-		<Text>Yangon</Text>
+		<Text></Text>
 	</STRING>
 	<String Id="1001" Name="IDS_TIME_ZONE">
 		<Text>:</Text>
