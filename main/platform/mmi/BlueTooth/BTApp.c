@@ -20995,8 +20995,7 @@ static void BTApp_ProcessRMNotifications(
 #endif //FEATURE_APP_TEST_AUTOMATION
 		MSG_FATAL("***zzg BTApp RMNotify AEEBT_RM_EVT_BONDED pData->error=%d***", pData->pDevUpdateStatus->error, 0, 0);
 
-        BTApp_ShowDevMsg( pMe, IDS_MSG_BOND_FAILED, 
-                          &pData->pDevUpdateStatus->bdAddr, 0 );
+        BTApp_ShowDevMsg(pMe, IDS_MSG_BOND_FAILED, &pData->pDevUpdateStatus->bdAddr, 0);
       }
 #else
       AEEBTDeviceInfo dev;

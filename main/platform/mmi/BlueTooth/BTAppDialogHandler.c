@@ -1382,9 +1382,14 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			// BD address
 			uLen += BTApp_FormatBDAddress(pMe, &pMe->pText1[ uLen], 
 			                              LONG_TEXT_BUF_LEN - uLen, &pDev->bdAddr );
+
+			
+			MSG_FATAL("***zzg DeviceInfo mRM.uCurDevIdx=%d, security=%d***", pMe->mRM.uCurDevIdx, pDev->security, 0);
+
 			// Security Level
 			uLen += BTApp_FormatSecurity(pMe, &pMe->pText1[ uLen], 
 			                             LONG_TEXT_BUF_LEN - uLen, pDev->security );
+			
 			// Service Class
 			uLen += BTApp_FormatSvcCls(pMe, &pMe->pText1[ uLen], 
 			                           LONG_TEXT_BUF_LEN - uLen, pDev->serviceClass );
@@ -2923,7 +2928,7 @@ static boolean HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
   			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_NAME, IDS_EDIT_NAME, NULL, 0);
 			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_SHORT_NAME, IDS_EDIT_SHORT_NAME, NULL, 0);			
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_MANU_DATA, IDS_EDIT_MANU_DATA, NULL, 0);
-            IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_SECURITY, IDS_SECURITY, NULL, 0);
+            //IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_SECURITY, IDS_SECURITY, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DISCOVERABLE, IDS_DISCOVERABLE, NULL, 0);
 			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_IOCAPABILITY, IDS_IOCAPABILITY, NULL, 0);
 			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DBG_KEY, IDS_DBG_KEY, NULL, 0);

@@ -1686,20 +1686,20 @@ void BTApp_ShowDevMsg(
   uint8               secondsUp
 )
 {
-  AEEBTDeviceInfo dev;
-  dev.bdAddr = *pAddr;
+	AEEBTDeviceInfo dev;
+	dev.bdAddr = *pAddr;
 
-  if ( (IBTEXTRM_DeviceRead( pMe->mRM.po, &dev ) != SUCCESS) || (WSTRLEN(dev.wName) == 0) )
-  {
-    BTApp_BDAddr2Wstr( dev.wName, pAddr );
-  }
+	if ((IBTEXTRM_DeviceRead(pMe->mRM.po, &dev) != SUCCESS) || (WSTRLEN(dev.wName) == 0))
+	{
+		BTApp_BDAddr2Wstr(dev.wName, pAddr);
+	}
 
-  //BTApp_ShowMessage( pMe, msgID, dev.wName, secondsUp );
+	//BTApp_ShowMessage( pMe, msgID, dev.wName, secondsUp );
 
 	//Add By zzg 2011_01_13
 	pMe->m_msg_id = msgID;		
 	pMe->m_bNeedStr = TRUE;	
-	
+
 	MEMSET(pMe->wMsgBuf, 0, WSTRLEN(pMe->wMsgBuf)*sizeof(AECHAR));
 	WSTRCPY(pMe->wMsgBuf, dev.wName);	
 
