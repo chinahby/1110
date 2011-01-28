@@ -51,7 +51,7 @@ OEM_LIB_SOURCES=\
 	OEMFMRadio.c \
 	OEMFMRDS.c \
 	OEMMangoBrewStubs.c \
-
+	OEMOMH.c
 else
 ifeq ($(USES_LOWMEM),yes)
 OEM_LIB_SOURCES=\
@@ -131,7 +131,8 @@ OEM_LIB_SOURCES=\
 	OEMVocoder.c \
 	OEMFont.c \
 	OEMFontData.c \
-	OEMMangoBrewStubs.c
+	OEMMangoBrewStubs.c \
+	OEMOMH.c
 else
 OEM_LIB_SOURCES=\
 	AEEPhone.c \
@@ -225,7 +226,8 @@ OEM_LIB_SOURCES=\
 	OEMServingNetworks.c \
         OEMKeysMapping.c \
 	OEMFMRadio.c \
-	OEMFMRDS.c
+	OEMFMRDS.c \
+	OEMOMH.c
 endif
 endif
 ifeq ($(USES_UIONE),yes)

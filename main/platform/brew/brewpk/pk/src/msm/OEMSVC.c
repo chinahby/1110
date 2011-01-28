@@ -1343,6 +1343,14 @@ See Also:      None
 int OEM_SVCGetConfig(AEEConfigItem i, void * pBuff, int nSize)
 {
    IShell *pShell = AEE_GetShell();
+#ifdef FEATURE_OEMOMH
+    if (i == CFGI_DOWNLOAD || i == CFGI_SUBSCRIBERID ||
+    i == CFGI_SUBSCRIBERID_LEN)
+    {
+        if (OEMOMH_GetConfig(i, pBuff, nSize) == SUCCESS)
+            return SUCCESS;
+    }
+#endif   
    //
    // NOTE: This code should be replaced by code that stores/retrieves values in
    // NV-RAM.  You will need to add NV items for each of the items referenced here.
