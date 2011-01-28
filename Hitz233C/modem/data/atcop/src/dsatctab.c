@@ -667,6 +667,7 @@ const dsati_cmd_type dsat_ext_table [] =
     SPECIAL_NONE,    2,      &dsat_icf_val[0],  &dsat_icf_dflm[0],
     dsatparm_exec_param_cmd,            NULL },
 
+  
   { "+IFC",     EXTENDED | CONFIG | LOCAL_TEST,
     SPECIAL_NONE,    2,      &dsat_ifc_val[0],  &dsat_ifc_dflm[0],
     dsatparm_exec_param_cmd,            NULL },
@@ -710,7 +711,6 @@ const dsati_cmd_type dsat_ext_table [] =
     SPECIAL_NONE,   2,      &dsat_tst32_val[0], &dsat_tst32_dflm[0],
     dsatparm_exec_param_cmd,            NULL },
 #endif /* FEATURE_DSAT_TEST_32ARG */
-
 } ;
 
 /* Vendor specific common AT command table. */

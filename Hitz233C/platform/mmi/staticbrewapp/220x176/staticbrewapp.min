@@ -643,6 +643,17 @@ else
 TWITTER=no
 endif
 
+ifeq ($(USES_TOMB),yes)
+Tomb=yes
+else
+Tomb=no
+endif
+
+ifeq ($(USES_MAGIC),yes)
+Magicsushi=yes
+else
+Magicsushi=no
+endif
 
 #四个提供外部使用的全局量
 #应用的o文件
@@ -809,6 +820,56 @@ STATIC_BREW_APP_LIB += \
     $(STATIC_BREW_APP)/fgen/fgen.o
     
 endif ##Music box application#
+
+ifeq ($(Tomb),yes)
+
+TOMB_DIRS:=$(STATIC_BREW_APP)/tomb
+
+vpath %.mod $(TOMB_DIRS)
+vpath %.bar $(TOMB_DIRS)
+vpath %.txt $(TOMB_DIRS)
+vpath %.mid $(TOMB_DIRS)
+
+CONSTFILE_BIN_FILES += tomb.bar|fs:/mod/tomb/tomb.bar
+
+EFSFILE_FILES += \
+	help.txt|fs:/mod/tomb/help.txt \
+	parameter.txt|fs:/mod/tomb/parameter.txt \
+	main.mid|fs:/mod/tomb/main.mid \
+	over.mid|fs:/mod/tomb/over.mid \
+	run.mid|fs:/mod/tomb/run.mid
+	
+CONSTFILE_FILES += tomb.mif|fs:/mif/tomb.mif
+
+STATIC_BREW_APP_LIB += \
+    						$(STATIC_BREW_APP)/tomb/a1aeea~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1help~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1aeem~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1common.o \
+   							$(STATIC_BREW_APP)/tomb/a1game~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1game.o \
+   							$(STATIC_BREW_APP)/tomb/a1main~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1pay.o \
+    						$(STATIC_BREW_APP)/tomb/a1send~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1sound.o \
+    						$(STATIC_BREW_APP)/tomb/a1spla~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1tomb.o \
+    						$(STATIC_BREW_APP)/tomb/a1topl~1.o
+
+endif
+
+ifeq ($(Magicsushi),yes)
+
+MAGIC_DIRS:=$(STATIC_BREW_APP)/magicsushi
+
+vpath %.mod $(MAGIC_DIRS)
+vpath %.bar $(MAGIC_DIRS)
+
+CONSTFILE_BIN_FILES += magicsushi.bar|fs:/mod/magicsushi/magicsushi.bar
+CONSTFILE_FILES += magicsushi.mif|fs:/mif/magicsushi.mif
+CONSTFILE_FILES += magicsushi.mod|fs:/mod/magicsushi/magicsushi.mod
+
+endif
 
 endif
 

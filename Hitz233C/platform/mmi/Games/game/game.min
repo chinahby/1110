@@ -31,50 +31,6 @@ CONSTFILE_FILES+=\
 game.mif|fs:/mif/game.mif \
 game.bar|fs:/mod/game/en/game.bar
 
-ifeq ($(Tomb),yes)
-
-vpath %.mod $(GAME_SRC)/tomb 
-vpath %.bar $(GAME_SRC)/tomb
-vpath %.txt $(GAME_SRC)/tomb
-vpath %.mid $(GAME_SRC)/tomb
-
-EFSFILE_FILES += \
-	help.txt|fs:/mod/tomb/help.txt \
-	parameter.txt|fs:/mod/tomb/parameter.txt \
-	main.mid|fs:/mod/tomb/main.mid \
-	over.mid|fs:/mod/tomb/over.mid \
-	run.mid|fs:/mod/tomb/run.mid
-	
-CONSTFILE_FILES += tomb.mif|fs:/mif/tomb.mif
-
-STATIC_BREW_APP_LIB += \
-    $(GAME_SRC)/tomb/tomb.o \
-    $(GAME_SRC)/tomb/aeeapp~1.o \
-    $(GAME_SRC)/tomb/aeemod~1.o \
-    $(GAME_SRC)/tomb/common.o \
-    $(GAME_SRC)/tomb/gameover.o \
-    $(GAME_SRC)/tomb/game.o \
-    $(GAME_SRC)/tomb/helpab~1.o \
-    $(GAME_SRC)/tomb/pay.o \
-    $(GAME_SRC)/tomb/sendsms.o \
-    $(GAME_SRC)/tomb/sound.o \
-    $(GAME_SRC)/tomb/splash~1.o \
-    $(GAME_SRC)/tomb/toplist.o \
-    $(GAME_SRC)/tomb/mainmenu.o
-
-endif
-
-ifeq ($(Magicsushi),yes)
-
-vpath %.mod $(GAME_SRC)/magicsushi 
-vpath %.bar $(GAME_SRC)/magicsushi
-
-CONSTFILE_BIN_FILES += magicsushi.bar|fs:/mod/magicsushi/magicsushi.bar
-CONSTFILE_FILES += magicsushi.mif|fs:/mif/magicsushi.mif
-CONSTFILE_FILES += magicsushi.mod|fs:/mod/magicsushi/magicsushi.mod
-
-endif
-
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\
 $(EXTLANG1)game.bar|fs:/mod/game/$(EXTLANG1)/game.bar

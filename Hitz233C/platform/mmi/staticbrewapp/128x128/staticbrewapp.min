@@ -30,7 +30,7 @@ endif
 
 #俩个提供外部使用的全局量
 #应用的o文件
-STATIC_BREW_APP_LIB:=#
+#STATIC_BREW_APP_LIB:=#
 #应用的资源文件
 
 #####nasrani application##########
@@ -188,7 +188,7 @@ TWITTER=yes
 
 #四个提供外部使用的全局量
 #应用的o文件
-STATIC_BREW_APP_LIB:=#
+#STATIC_BREW_APP_LIB:=#
 #应用的资源文件
 
 #####bshop application##########
