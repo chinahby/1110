@@ -292,7 +292,6 @@ typedef struct _TextCtlContext {
 #ifdef  FEATURE_MYANMAR_INPUT_MOD
    boolean              m_myaisnull;
    boolean              m_Selectcandidates;
-   uint16               m_poutstringlen;
 #endif
 } TextCtlContext;
 
@@ -937,7 +936,6 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
 #ifdef  FEATURE_MYANMAR_INPUT_MOD
    pNewContext->m_myaisnull = TRUE;
    pNewContext->m_Selectcandidates = FALSE;
-   pNewContext->m_poutstringlen = 0;
 #endif
 #ifdef FEATURE_T9_CHINESE
    pNewContext->rectChineseInput.x = pNewContext->rectDisplay.x;
@@ -9103,7 +9101,6 @@ static void T9TextCtl_CJK_MYANMAR_Restart(TextCtlContext *pContext)
     TextCtl_NoSelection(pContext);
     TextCtl_TextChanged(pContext);
     pContext->nMSelectionSelectd = 0;       // no default selected word   
-    pContext->m_poutstringlen = 0;
     pContext->sFocus = FOCUS_TEXT;
 }
 static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCode,AVKType key)
@@ -9122,7 +9119,6 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	//g_SplImeGlobals.uiInfo.fpGetStrWidthA = 0;
 	//g_SplImeGlobals.uiInfo.fpGetStrWidthW = MyGetStrWidthW;
     mKey = T9_CJK_MYANMAR_BrewKeyToT9Key (pContext, key );
-    MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................11",0,0,0);
      switch ( key ) 
     {
         /* Assign zhuyin */
@@ -9141,23 +9137,15 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         		MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key...........%d",pContext->m_Selectcandidates,0,0);
         		if((!pContext->m_Selectcandidates))
         		{
-        			MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key.......candidateWidth=%d",g_SplImeGlobals.uiInfo.candidateWidth,0,0);
         			g_SplImeGlobals.uiInfo.candidateWidth = pContext->rectDisplay.dx-2;
         			g_SplImeGlobals.uiInfo.candMinSpacing = 10;
-    				//g_SplImeGlobals.uiInfo.fpGetStrWidthA = 0;
-    				//g_SplImeGlobals.uiInfo.fpGetStrWidthW = SplGetStrWidthW ;
 	        		bResult = SplImeProcessKey(mKey, SPKT_Down);
-	        		MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................333",0,0,0);
-	        		MSG_FATAL("SplImeProcessKey...%d =%d,candidateWidth=%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,g_SplImeGlobals.uiInfo.candidateWidth);
-	        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
 	        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
 	        		pContext->m_date = g_SplImeGlobals;
-	        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
 	        		if(g_SplImeGlobals.outputInfo.candidatesNum<=0)
 	        		{
 	        			return FALSE;
 	        		}
-	        		pContext->m_poutstringlen ++;	
 	        		T9_CJK_MYANMAR_DisplaySelection(pContext);
 	        	}
 	        	else
@@ -9188,14 +9176,9 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         			}
         			if((!pContext->m_myaisnull) && (!pContext->m_Selectcandidates))
         			{
-        				MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................22",0,0,0);
 	        			bResult = SplImeProcessKey(mKey, SPKT_Down);
-	        			MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key................333",0,0,0);
-	        			MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
-	        			MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
 	        			MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
 	        			pContext->m_date = g_SplImeGlobals;
-	        			//T9_CJK_MYANMAR_DrawSyllableString(pContext);
 	        			T9_CJK_MYANMAR_DisplaySelection(pContext);
 	        			return TRUE;
 	        		}
@@ -9206,11 +9189,8 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		if(g_SplImeGlobals.outputInfo.isShowLeftArrow)
 	        		{
 		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
-		        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
-		        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
 		        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
 		        		pContext->m_date = g_SplImeGlobals;
-		        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
 		        		T9_CJK_MYANMAR_DisplaySelection(pContext);
 	        		}
 	        		else
@@ -9274,7 +9254,6 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 		        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
 		        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
 		        		pContext->m_date = g_SplImeGlobals;
-		        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
 		        		T9_CJK_MYANMAR_DisplaySelection(pContext);
 	        		}
 	        		else
@@ -9333,11 +9312,8 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		if(g_SplImeGlobals.outputInfo.isShowUpArrow && pContext->m_Selectcandidates)
 	        		{
 		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
-		        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
-		        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
 		        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
 		        		pContext->m_date = g_SplImeGlobals;
-		        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
 		        		T9_CJK_MYANMAR_DisplaySelection(pContext);
 	        		}
 	        		else
@@ -9379,11 +9355,8 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         			if(g_SplImeGlobals.outputInfo.isShowDownArrow && pContext->m_Selectcandidates)
 	        		{
 		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
-		        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
-		        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
 		        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
 		        		pContext->m_date = g_SplImeGlobals;
-		        		//T9_CJK_MYANMAR_DrawSyllableString(pContext);
 		        		T9_CJK_MYANMAR_DisplaySelection(pContext);
 	        		}
 	        		else
@@ -9392,7 +9365,6 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 						uint16 nLine, nCharsIn,nSel;
 
 						pContext->m_Selectcandidates = TRUE;
-						MSG_FATAL("g_SplImeGlobals.outputInfo.candidatesNum=%d",g_SplImeGlobals.outputInfo.candidatesNum,0,0);
 						if(g_SplImeGlobals.outputInfo.candidatesNum>0)
 						{
 							T9_CJK_MYANMAR_DisplaySelection(pContext);
@@ -9453,8 +9425,6 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         		 {
 	        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
 	        		bResult = SplImeProcessKey(mKey, SPKT_Down);
-	        		pContext->m_poutstringlen --;
-	        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
 	        		if(g_SplImeGlobals.outputInfo.candidatesNum>0)
 	        		{
 	        			MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
@@ -9467,7 +9437,6 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		{
 	        			if(pContext->m_bavk_clr)
 	        			{
-	        				MSG_FATAL("DEL......................ture",0,0,0);
 	        				if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
 				            {
 				                 /* Set selection to the character before the insertion point */
@@ -9559,7 +9528,6 @@ static T9STATUS T9_CJK_MYANMAR_Init(TextCtlContext *pContext)
     g_SplImeGlobals.uiInfo.candMinSpacing = 10;
     g_SplImeGlobals.uiInfo.fpGetStrWidthA = 0;
     g_SplImeGlobals.uiInfo.fpGetStrWidthW = SplGetStrWidthW ;
-    pContext->m_poutstringlen = 0;
 
     bResult = SplImeInit();
 	MSG_FATAL("SplImeInit.....bResult=%d,candidateWidth=%d",bResult,g_SplImeGlobals.uiInfo.candidateWidth,0);
@@ -9741,11 +9709,8 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
             else
             {
             	int len = SplGetStrWidthW(g_SplImeGlobals.outputInfo.inputString);
-            	int strsize = STRLEN((void*)g_SplImeGlobals.outputInfo.inputString);
-            	MSG_FATAL("len======1=========%d,strsize=%d",len,strsize,0);
-            	MSG_FATAL("",0,0,0);
-            	len = pContext->m_poutstringlen*7;
-            	MSG_FATAL("len======2=========%d,strsize=%d",len,strsize,0);
+            	int strsize = WSTRLEN((void*)g_SplImeGlobals.outputInfo.inputString);
+            	len = strsize*7;
             	invertRect.x = iSyllableWindX+2;
             	invertRect.y = pRect.y-MYANMAR_FONT_HEIGHT+2;
             	invertRect.dx = len+2;
