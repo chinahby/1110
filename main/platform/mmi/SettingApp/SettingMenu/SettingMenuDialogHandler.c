@@ -4617,7 +4617,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             
             //开机，关机选择控件矩形
             {
-                SETAEERECT(&rc,  CONTROL_RECT_START_X+10, titleheight + lineSpace,
+                SETAEERECT(&rc,  CONTROL_RECT_START_X+10, titleheight + lineSpace-CONTROL_RECT_RESET_Y,
                                             pMe->m_rc.dx - CONTROL_RECT_START_X-20,
                                             itemheight + 8);
                 IDISPLAY_EraseRect(pMe->m_pDisplay,&rc);
@@ -4625,10 +4625,16 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             }
             
             //状态list控件矩形
-            {             
-                SETAEERECT(&rc,  CONTROL_RECT_START_X+10, titleheight + lineSpace*2 + itemheight,
-                                            pMe->m_rc.dx - CONTROL_RECT_START_X-20,
+            {   
+#ifdef FEATURE_VERSION_C306
+                SETAEERECT(&rc,  10, titleheight + lineSpace*2 + itemheight+CONTROL_RECT_RESET_Y,
+                                            pMe->m_rc.dx-20,
                                             itemheight + 8);
+#else
+                SETAEERECT(&rc,  CONTROL_RECT_START_X+10, titleheight + lineSpace*2 + itemheight+CONTROL_RECT_RESET_Y,
+                                            pMe->m_rc.dx-CONTROL_RECT_START_X-20,
+                                            itemheight + 8);
+#endif
                 IDISPLAY_EraseRect(pMe->m_pDisplay,&rc);
                 IMENUCTL_SetRect(pMe->m_pState, &rc);
             }
@@ -4636,7 +4642,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
 
             // 时间控件的矩形
             {
-                SETAEERECT(&rc,  CONTROL_RECT_START_X+10, titleheight + lineSpace*3 +itemheight*2,
+                SETAEERECT(&rc,  CONTROL_RECT_START_X+10, titleheight + lineSpace*3 +itemheight*2+CONTROL_RECT_RESET_Y,
                                                 pMe->m_rc.dx - CONTROL_RECT_START_X - 20,
                                                 itemheight + 8);
                 ITIMECTL_SetRect(pMe->m_pTime, &rc);
@@ -4689,15 +4695,22 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
                 nOldFontColor = IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
                  //功能
                 (void)IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL,
-                                      wszStatus,-1,1,2+ titleheight + lineSpace,NULL,
+                                      wszStatus,-1,1,2+ titleheight + lineSpace-CONTROL_RECT_RESET_Y,NULL,
                                       IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
+#ifdef FEATURE_VERSION_C306
                 //状态
                 (void)IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL,
-                                      wszState,-1,1,2+ titleheight + lineSpace*2 + itemheight,NULL,
-                                      IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
+                                      wszState,-1,1,2+ titleheight + lineSpace*2 + itemheight-CONTROL_RECT_RESET_Y,NULL,
+                                      IDF_ALIGN_CENTER| IDF_TEXT_TRANSPARENT);
+#else
+                //状态
+                (void)IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL,
+                                      wszState,-1,1,2+ titleheight + lineSpace*2 + itemheight-CONTROL_RECT_RESET_Y,NULL,
+                                      IDF_ALIGN_LEFT| IDF_TEXT_TRANSPARENT);    
+#endif
                 //时间
                 (void)IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL,
-                                      wszTime,-1,1,2+ titleheight + lineSpace*3 + itemheight*2,NULL,
+                                      wszTime,-1,1,2+ titleheight + lineSpace*3 + itemheight*2+CONTROL_RECT_RESET_Y,NULL,
                                       IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
                 IDISPLAY_SetColor( pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
             }
@@ -4731,15 +4744,19 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
                 if(pR_ResImg != NULL)
                 {
                     //在功能和状态模式后面画该ICON,表示上下键改变值
-                    IIMAGE_Draw(pR_ResImg, pMe->m_rc.dx - 10, titleheight+ lineSpace + 4);
-                    IIMAGE_Draw(pR_ResImg, pMe->m_rc.dx - 10, titleheight + lineSpace*2 + itemheight + 4);
+                    IIMAGE_Draw(pR_ResImg, pMe->m_rc.dx - 10, titleheight+ lineSpace + 4-CONTROL_RECT_RESET_Y);
+                    IIMAGE_Draw(pR_ResImg, pMe->m_rc.dx - 10, titleheight + lineSpace*2 + itemheight + 4+CONTROL_RECT_RESET_Y);
                 }
 
                 if(pL_ResImg != NULL)
                 {
                     //在功能和状态模式后面画该ICON,表示上下键改变值
-                    IIMAGE_Draw(pL_ResImg, CONTROL_RECT_START_X,titleheight + lineSpace + 4);
-                    IIMAGE_Draw(pL_ResImg, CONTROL_RECT_START_X,titleheight + lineSpace*2 + itemheight + 4);
+                    IIMAGE_Draw(pL_ResImg, CONTROL_RECT_START_X,titleheight + lineSpace + 4-CONTROL_RECT_RESET_Y);
+#ifdef FEATURE_VERSION_C306
+                    IIMAGE_Draw(pL_ResImg, 0,titleheight + lineSpace*2 + itemheight + 4+CONTROL_RECT_RESET_Y);
+#else
+                    IIMAGE_Draw(pL_ResImg, CONTROL_RECT_START_X,titleheight + lineSpace*2 + itemheight + 4+CONTROL_RECT_RESET_Y);
+#endif
                 }
                 IIMAGE_Release(pR_ResImg);
                 pR_ResImg = NULL;

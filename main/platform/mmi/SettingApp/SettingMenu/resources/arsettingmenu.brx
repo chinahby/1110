@@ -86,7 +86,7 @@
         <Text>الوقت</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_AUTO_POWER_STATE">
-        <Text>تشغيل/إيقاف التشغيل</Text>
+        <Text>تشغيل/إيقاف</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_IP_NUMBER_SET">
         <Text>تعيين رقم IP</Text>
@@ -292,7 +292,7 @@
         <Text>الحالة</Text>
 	</STRING>
 	<STRING Id="1097" Name="IDS_AUTO_POWER_TITLE">
-        <Text>التشغيل/إيقاف التشغيل التلقائي</Text>
+        <Text>التشغيل/الإيقاف التلقائي</Text>
 	</STRING>
 	<STRING Id="1098" Name="IDS_SHAKE_TITLE">
         <Text>Shake-shake</Text>

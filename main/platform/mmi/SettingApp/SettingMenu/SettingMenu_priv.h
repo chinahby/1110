@@ -347,6 +347,12 @@ typedef struct _CSettingMenu
 #define CONTROL_RECT_START_X    40  //闹钟设置界面的控件开始位置
 #endif
 
+#ifdef FEATURE_VERSION_C306
+#define CONTROL_RECT_RESET_Y    10  
+#else
+#define CONTROL_RECT_RESET_Y    0
+#endif
+
 #define IDC_AUTO_POWER_STATUS 1 //开机，关机功能选择项
 #define IDC_AUTO_POWER_STATE 2
 #define IDC_AUTO_POWER_TIME   3
