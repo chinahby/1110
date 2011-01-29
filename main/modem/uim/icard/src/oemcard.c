@@ -252,6 +252,9 @@ when       who     what, where, why
 09/11/02    at     Comments from code review.
 08/23/02    at     Initial release.
 =============================================================================*/
+#ifdef FEATURE_OEMOMH
+#include "OEMOMH.h"
+#endif
 
 #include "comdef.h"     // Get DMSS type declarations.
 #include "err.h"        // Error functions
@@ -2542,7 +2545,9 @@ static void OEMCard_MMGSDIEvtCb(const mmgsdi_event_data_type *event)
 
      /* set cache sim capability info */
      (void)gsdi_get_sim_capabilities(&dummy_sim_cap, 0, OEMCardGSDISimCapCB);
-
+#ifdef FEATURE_OEMOMH
+     OEMOMH_Notify2();
+#endif
      break;
    case MMGSDI_CARD_INSERTED_EVT:
    case MMGSDI_CARD_ERROR_EVT:
