@@ -94,6 +94,7 @@ static uim_rpt_type   gCallBack;
 static uim_rpt_type   gCallBackExt;
 static int            gAdnRecSize;
 static int            gAdnMaxRec=0;
+static boolean        gbReInitAddr = FALSE;
 
 OBJECT(COEMAddrBook)
 {
@@ -1926,8 +1927,12 @@ static int   InitRUIMAddrBkCache()
     }
 #else
     {
+        if(db_getuiminitmask()&INITUIMADDMASK)
+        {
+            //已经在初始化了，则从头重新开始初始化
+            gbReInitAddr = TRUE;
+        }
         db_setuiminitmask(INITUIMADDMASK);
-
         return(AEE_SUCCESS);
     }
 #endif    
@@ -3079,6 +3084,14 @@ boolean  InitRUIMAddrBkCacheCb(void)
     
 InitRUIMAddrBkCacheCb_Exit:
     i++;
+    
+    if(gbReInitAddr)
+    {
+        bInitStart = FALSE;
+        gbReInitAddr = FALSE;
+        i = 0;
+    }
+    
     if (i>gAdnMaxRec)
     {
         gpCache = gpCacheHead;

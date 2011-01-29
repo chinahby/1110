@@ -4862,7 +4862,7 @@ void wms_msg_refresh_proc(wms_cmd_type    *cmd_ptr)
     {
         // Çå³ý Cache
         int i;
-        
+        MSG_FATAL("wms_msg_refresh_proc 0x%x",db_getuiminitmask(),0,0);
         if (db_getuiminitmask() & INITUIMSMSMASK)
         {
             return;

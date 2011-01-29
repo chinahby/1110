@@ -3887,53 +3887,9 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
             // 提示文字相关代码
             {
                 AECHAR    wszMsgText[128];
-                AECHAR    wszNewLine[ ] = {(AECHAR)'\n', (AECHAR)'\0'};
-                int nLen;
                 wszMsgText[0] = 0;
                 switch (pMe->m_ePowerDownType)
-                {
-#ifdef FEATURE_UIM
-                    case POWERDOWN_RUIM_DOOR_RESET:
-                       {    
-                            // 在此播放提示音
-                            
-                            //IALERT_StartRingerAlert( pMe->m_pAlert, (uint32)aRing_type[Ring_Cur_Music] );
-                
-                            // 取"R-UIM door removed" 字符串
-                            (void) ISHELL_LoadResString( pMe->a.m_pIShell,
-                                                         AEE_COREAPPRES_LANGFILE,
-                                                         IDS_RUIM_DOOR_REMOVED,
-                                                         wszMsgText,
-                                                         sizeof(wszMsgText));
-                                
-                            // 追加两个换行符实现一个空行
-                            (void)WSTRCAT(wszMsgText, wszNewLine);
-                            (void)WSTRCAT(wszMsgText, wszNewLine);
-                
-                            nLen = WSTRLEN(wszMsgText);
-                
-                            // 取"电话正在" 字符串
-                            (void) ISHELL_LoadResString( pMe->a.m_pIShell,
-                                                         AEE_COREAPPRES_LANGFILE,
-                                                         IDS_RESET_1,
-                                                         &wszMsgText[nLen],
-                                                         (128 - nLen) * sizeof(AECHAR));
-                                
-                            // 加换行符
-                            (void)WSTRCAT(wszMsgText, wszNewLine);
-                        
-                            nLen = WSTRLEN(wszMsgText);
-                        
-                            // 取"重新设置..." 字符串
-                            (void) ISHELL_LoadResString( pMe->a.m_pIShell,
-                                                         AEE_COREAPPRES_LANGFILE,
-                                                         IDS_RESET_2,
-                                                         &wszMsgText[nLen],
-                                                         (128 - nLen) * sizeof(AECHAR));
-                        }    
-                        break;
-                       
-#endif  /* FEATURE_UIM */                              
+                {                         
                     case POWERDOWN_NORMAL:
                         if(pMe->m_wStartupAniTime == 0)
                         {  
@@ -3974,25 +3930,16 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                     
                         return TRUE;
                         
+#ifdef FEATURE_UIM
+                    case POWERDOWN_RUIM_DOOR_RESET:
+#endif  /* FEATURE_UIM */     
                     case POWERDOWN_RESET:
                         // 取"电话正在" 字符串
                         (void) ISHELL_LoadResString(pMe->a.m_pIShell,
                                 AEE_COREAPPRES_LANGFILE,
-                                IDS_RESET_1,
+                                IDS_RESET_2,
                                 wszMsgText,
                                 sizeof(wszMsgText));
-                                
-                        // 加换行符
-                        (void)WSTRCAT(wszMsgText, wszNewLine);
-                        
-                        nLen = WSTRLEN(wszMsgText);
-                        
-                        // 取"重新设置..." 字符串
-                        (void) ISHELL_LoadResString(pMe->a.m_pIShell,
-                                AEE_COREAPPRES_LANGFILE,
-                                IDS_RESET_2,
-                                &wszMsgText[nLen],
-                                (128 - nLen) * sizeof(AECHAR));
                         break;
                         
                     default:
@@ -4004,6 +3951,12 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
                                     AEE_FONT_NORMAL,
                                     wszMsgText,  -1,  0,  0,  &pMe->m_rc,
                                     IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE);
+                    // 设置自动关闭对话框的定时器
+                    (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
+                                          3000,
+                                          DialogTimeoutCallback,
+                                          pMe);
+                    
                 }
                 // 立即更新屏幕                        
                 //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
@@ -5744,11 +5697,21 @@ void CoreApp_Poweroff_Phone(void *pp)
     }
     //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
     //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+    
+    DBGPRINTF("CoreApp_Poweroff_Phone %d",pMe->m_ePowerDownType);
+    if(POWERDOWN_NORMAL != pMe->m_ePowerDownType)
+    {
+        extern void hw_reset( void );
+        hw_reset();
+    }
+    else
+    {
 #ifdef FEATURE_ICM
-    ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_PWROFF);
+        ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_PWROFF);
 #else
-    IPHONECTL_SetOperatingMode(pMe->m_pIPhoneCtl, AEET_OPRT_MODE_PWROFF);
+        IPHONECTL_SetOperatingMode(pMe->m_pIPhoneCtl, AEET_OPRT_MODE_PWROFF);
 #endif
+    }
     CoreTask_SetPwrDnComplete(TRUE);
 }
 
@@ -5814,6 +5777,7 @@ static void CoreApp_CloseRefreshDlgTimer(void *pme)
     db_get(DB_UIMSMSINIT, &db_item);
     bIninted = db_item.db_uimsmsinited;
     db_get(DB_UIMADDINIT, &db_item);
+    DBGPRINTF("CoreApp_CloseRefreshDlgTimer %d %d",bIninted,db_item.db_uimaddinited);
     bIninted = (bIninted && db_item.db_uimaddinited);
     if(!bIninted)
     {
@@ -5928,9 +5892,11 @@ static boolean  IDD_UTKREFRESH_Handler(void *pUser,
                     db_item.db_uimsmsinited = FALSE;
                     db_put(DB_UIMSMSINIT, &db_item);
 #endif
+                    DBGPRINTF("AEECLSID_WMSAPP");
                     if (ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_WMSAPP,
                             (void**)&pWmsApp) == SUCCESS)
                     {
+                        DBGPRINTF("IWmsApp_RefreshRUIMSMS");
                         IWmsApp_RefreshRUIMSMS(pWmsApp);
                         
                         IWmsApp_Release(pWmsApp);

@@ -2137,13 +2137,10 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
                         0,
                         AEE_RO_COPY);
 #endif
-
-	  if(!IAnnunCoreObj->m_bActive)
+        
+        
+	    if(!IAnnunCoreObj->m_bActive)
 		{
-		//	pBackBmp = ISHELL_LoadResImage (pMe->m_piShell,
-		//									   AEEFS_SHARED_DIR"oemannunciator.bar",
-		//									   (uint16)(IDI_BACKGROUD));
-			
             if(IAnnunCoreObj->m_hasTitleText)
             {
             	if (need_capture.b_capture != DB_CAPTURE_INIDLE)	//Add By zzg 2010_08_05
@@ -2152,7 +2149,6 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
             	    AEERect bgRect;
                     int titleLen = IDISPLAY_MeasureText(pMe->m_coreObj->m_piDisplay,AEE_FONT_NORMAL, (const AECHAR*)IAnnunCoreObj->m_Title);
                     
-	            	
                     bgRect.y = 0;
                     bgRect.dy = STATEBAR_HEIGHT;
 #if defined(FEATURE_DISP_128X128)

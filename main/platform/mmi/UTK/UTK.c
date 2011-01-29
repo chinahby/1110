@@ -310,7 +310,7 @@ static uint32  UTK_Release (IUTK *pi)
 static int UTK_InitAppData(CUTK *pMe)
 {
     AEEDeviceInfo  di;
-
+    DBGPRINTF("UTK_InitAppData");
     if (NULL  == pMe)
     {
         return EFAILED;
@@ -327,7 +327,6 @@ static int UTK_InitAppData(CUTK *pMe)
     pMe->m_bNotOverwriteDlgRet = FALSE;
     pMe->cmd_type = (uim_tk_proactive_cmd_enum_type)UIM_TK_SETUP_MENU;
     pMe->m_wSelectStore        = MENU_SELECT_NULL;    
-    pMe->m_bNormalExit = TRUE;
     
     //因为挂起可以在任何时候发生，所以默认需要挂起备份 
     pMe->InputeBackupNeeded = TRUE;
@@ -390,8 +389,10 @@ static int UTK_InitAppData(CUTK *pMe)
 #endif /* FEATURE_FUNCS_THEME */    
 	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_ANNUNCIATOR,(void **)&pMe->m_pIAnn))
     {
+        ERR("Failed to create AEECLSID_ANNUNCIATOR",0,0,0);
         return EFAILED;
     }
+    DBGPRINTF("UTK_InitAppData");
     return SUCCESS;
 }
 
@@ -543,7 +544,7 @@ static boolean UTK_HandleEvent(IUTK *pi,
     // 开机时初始化UIM UTK 功能时会收到 UIM_TK_SETUP_MENU ，此时忽略该事件
     //static boolean bIsInitUTK = TRUE;
     //ERR("UTK CODE=%x,wParam = %x",eCode,wParam,0);
-    
+    DBGPRINTF("UTK_HandleEvent 0x%x 0x%x 0x%x Start",eCode,wParam,dwParam);
     switch (eCode)
     {
         case EVT_APP_START:
@@ -563,7 +564,12 @@ static boolean UTK_HandleEvent(IUTK *pi,
                 ISHELL_GetDeviceInfo(pMe->m_pShell,&di);
                 pMe->m_rc.dy = di.cyScreen;
             }
-
+            
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE); 
+            }
+            
             pMe->m_bSuspending = FALSE; 
             // 开始UTK状态机
             UTK_RunFSM(pMe);        
@@ -584,10 +590,6 @@ static boolean UTK_HandleEvent(IUTK *pi,
             IALERT_StopSMSAlert(pMe->m_pAlert); 
             IALERT_StopMp3Alert(pMe->m_pAlert);
             pMe->m_bSuspending = TRUE;
-            if (!pMe->m_bNormalExit)
-            {// 非正常退出
-                UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_PROACTIVE_RUIM_SESSION_TERMINATED_BY_USER);
-            } 
             return TRUE;
 
         case EVT_APP_SUSPEND:
@@ -879,9 +881,46 @@ static boolean UTK_HandleEvent(IUTK *pi,
                     break;
                 
                 case UIM_TK_DISPLAY_TEXT:
-                    eTempState = UTKST_DISPLAY;
+                {
+                    Display_text *ptext = (Display_text *)MALLOC(sizeof(Display_text));
+                    eTempState = UTKST_NONE;//UTKST_DISPLAY;
+                    if (NULL != ptext)
+                    {
+                        byte *utk_ptr = UTK_GetCmddata(pMe->cmd_type);;
+                        
+                        DecodeDisplayTextData(utk_ptr, ptext); 
+                        DBGPRINTF("UIM_TK_DISPLAY_TEXT %d",ptext->text.length);
+                        if(ptext->text.length == 0)
+                        {
+                            UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_COMMAND_DATA_NOT_UNDERSTOOD_BY_TERMINAL);
+                        }
+                        else
+                        {
+                            if (ptext->cmd_describe.command_restricttag & 0x01)
+                            {
+                                // 高优先级，什么时候都显示
+                                eTempState = UTKST_DISPLAY;
+                            }
+                            else
+                            {
+                                // 正常优先级，判断是否在IDLE和UTK界面
+                                if (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_APP_UTK
+                                    ||ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
+                                {
+                                    eTempState = UTKST_DISPLAY;
+                                }
+                                else
+                                {
+                                    UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_TERMINAL_CURRENTLY_UNABLE_TO_PROCESS_COMMAND);
+                                }
+                            }
+                        }
+                        
+                        // 释放临时分配空间
+                        FREEIF(ptext);
+                    }
                     break;
-                
+                }
                 case UIM_TK_GET_INPUT:
                     eTempState = UTKST_INPUT;                                 
                     //如果是连续的两个文本框输入，不备份文本框，防止第二个文本框把第一个文本框中的内容贴出来
@@ -894,9 +933,18 @@ static boolean UTK_HandleEvent(IUTK *pi,
                 case UIM_TK_SELECT_ITEM:
                     eTempState = UTKST_LIST;
                     break;
-                
+                    
+                case UIM_TK_END_PROACTIVE_SESSION:
+                    if (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_APP_UTK)
+                    {
+                        if(pMe->m_ePreState == UTKST_INIT || pMe->m_ePreState == UTKST_NONE)
+                        {
+                            (void)ISHELL_CloseApplet(pMe->m_pShell, FALSE);
+                            break;
+                        }
+                    }
+                    //else fall through
                 case UIM_TK_SETUP_MENU:                  
-                case UIM_TK_END_PROACTIVE_SESSION:                 
                     pMe->cmd_type = UIM_TK_SETUP_MENU;
                     if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_APP_UTK)
                     {
@@ -917,8 +965,8 @@ static boolean UTK_HandleEvent(IUTK *pi,
                 
                 case UIM_TK_PROVIDE_LOCAL_INFO: 
                     UTK_GiveResponse(pMe, pMe->cmd_type, TRUE, UIM_TK_CMD_PERFORMED_SUCCESSFULLY);  
-                    break;                                 
-                                  
+                    break;
+                    
                 default:
                     break;
             }
@@ -929,8 +977,9 @@ static boolean UTK_HandleEvent(IUTK *pi,
             }
             
             // 更新当前状态
-            pMe->m_eCurState = eTempState;
-            
+            MOVE_TO_STATE(eTempState);
+
+            DBGPRINTF("EVT_RUIM_PROACTIVE %d",pMe->m_eCurState);
             // 若当前活动Applet不是本Applet，则忽略该事件，直接返回TRUE
             if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_APP_UTK)
             {

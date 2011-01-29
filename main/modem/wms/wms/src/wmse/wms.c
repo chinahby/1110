@@ -1039,6 +1039,7 @@ void wms_process_cmd
 #ifdef CUST_EDITION	
     case WMS_CMD_MSG_DELETE_BOX:
     case WMS_CMD_MSG_COPY:
+    case WMS_CMD_REFRESH_IND:
 #endif /*CUST_EDITION*/	
     case WMS_CMD_MSG_DELETE_ALL:
     case WMS_CMD_MSG_MODIFY_TAG:

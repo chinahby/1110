@@ -102,6 +102,9 @@ typedef enum {
   UIM_TK_POLLING_OFF           =   0x04,
   UIM_TK_SETUP_CALL            =   0x10,
   UIM_TK_CDMA_SEND_SHORT_MSG   =   0x13,
+#ifdef CUST_EDITION
+  UIM_TK_LAUNCH_BROWSER        =   0x15,
+#endif
   UIM_TK_PLAY_TONE             =   0x20,
   UIM_TK_DISPLAY_TEXT          =   0x21,
   UIM_TK_GET_INPUT             =   0x23,

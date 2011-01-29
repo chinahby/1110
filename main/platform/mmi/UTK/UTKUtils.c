@@ -896,11 +896,10 @@ void DecodeDisplayTextData(byte *pdata, Display_text *pText)
     
     while (pos<(pText->length+nTep))
     {
-        switch (pdata[pos])
+        switch (pdata[pos]&0x7F)
         {
             // 命令说明标识
-            case 0x01:// UIM_TK_COMMAND_DETAILS_TAG
-            case 0x81:
+            case UIM_TK_COMMAND_DETAILS_TAG:// UIM_TK_COMMAND_DETAILS_TAG
                 pText->cmd_describe.describe_id = pdata[pos];
                 pText->cmd_describe.length = pdata[pos+1];
                 pText->cmd_describe.command_num = pdata[pos+2];
@@ -910,8 +909,7 @@ void DecodeDisplayTextData(byte *pdata, Display_text *pText)
                 break;
                 
             // 设备特性标识
-            case 0x02:// UIM_TK_DEVICE_ID_TAG
-            case 0x82:
+            case UIM_TK_DEVICE_ID_TAG:// UIM_TK_DEVICE_ID_TAG
                 pText->dev_identity.speciality_id = pdata[pos];
                 pText->dev_identity.length = pdata[pos+1];
                 pText->dev_identity.source_speciality = pdata[pos+2];
@@ -920,8 +918,7 @@ void DecodeDisplayTextData(byte *pdata, Display_text *pText)
                 break;
                 
             // 正文串识
-            case 0x0D:// UIM_TK_TEXT_STRING_TAG
-            case 0x8D:
+            case UIM_TK_TEXT_STRING_TAG:// UIM_TK_TEXT_STRING_TAG
                 pText->text.text_id = pdata[pos];
                 pos++;
                 if (pdata[pos] == 0x81)
@@ -943,23 +940,35 @@ void DecodeDisplayTextData(byte *pdata, Display_text *pText)
                 break;
                 
             // 图标标识符
-            case 0x1E:// UIM_TK_ICON_ID_TAG
-            case 0x9E:
+            case UIM_TK_ICON_ID_TAG:// UIM_TK_ICON_ID_TAG
                 // 不支持，跳过
                 pos+=4;
                 break;
                 
             // 立即响应标识
-            case 0x2B:// UIM_TK_IMMEDIATE_RSP_TAG
-            case 0xAB:
+            case UIM_TK_IMMEDIATE_RSP_TAG:// UIM_TK_IMMEDIATE_RSP_TAG
                 // 不支持，跳过
                 pos+=2;
                 break;
                 
             // 持续时间标识
-            case 0x04:// UIM_TK_DURATION_TAG
-            case 0x84:
-                // 不支持，跳过
+            case UIM_TK_DURATION_TAG:// UIM_TK_DURATION_TAG
+                switch(pdata[pos+2]){
+                case 0x00://Minite
+                    pText->timems = 60*1000;
+                    break;
+                case 0x01://Seconds
+                    pText->timems = 1000;
+                    break;
+                case 0x02://10 Seconds
+                    pText->timems = 10*1000;
+                    break;
+                default:
+                    pText->timems = 60*1000;
+                    break;
+                }
+                
+                pText->timems *= pdata[pos+3];
                 pos+=4;
                 break;
                 
@@ -1021,6 +1030,8 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
     command_describe cmd_describe;
 	AECHAR wsFmt[5] = {0};
 
+    DBGPRINTF("CUTK_SetUTKMenu 0x%x",cmd_type);
+    
     if (pMe == NULL)
     {
         return 0;
@@ -1032,6 +1043,8 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
     {
         return 0;
     }
+
+    if(pMenu)
 	#if 0
     (void)IMENUCTL_SetTitle(pMenu, NULL, 0, pMe->m_wszTitle);
 	#else
@@ -1041,7 +1054,7 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
 	 }
 	#endif
     utk_ptr = UTK_GetCmddata(cmd_type);
-    ERR("miaoxiaoming: UTK_GetCmddata utk_ptr=%x",utk_ptr,0,0);
+    
     if (utk_ptr != NULL)
     {
         // 跳过主动式RUIM 命令标签
@@ -1063,12 +1076,10 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
         
         while (pos<(nLen+nTep))
         {
-            ERR("miaoxiaoming utk_ptr.value=%x",utk_ptr[pos],0,0);
-            switch (utk_ptr[pos])
+            switch (utk_ptr[pos]&0x7F)
             {
                 // 命令说明标识
-                case 0x01:// UIM_TK_COMMAND_DETAILS_TAG
-                case 0x81:
+                case UIM_TK_COMMAND_DETAILS_TAG:// UIM_TK_COMMAND_DETAILS_TAG
                     cmd_describe.describe_id = utk_ptr[pos];
                     cmd_describe.length = utk_ptr[pos+1];
                     cmd_describe.command_num = utk_ptr[pos+2];
@@ -1078,14 +1089,12 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
                     break;
                     
                 // 设备特性标识
-                case 0x02:// UIM_TK_DEVICE_ID_TAG
-                case 0x82:
+                case UIM_TK_DEVICE_ID_TAG:// UIM_TK_DEVICE_ID_TAG
                     pos+=4;
                     break;
                     
                 // 条目标识
-                case 0x0F:// UIM_TK_ITEM_TAG
-                case 0x8F:
+                case UIM_TK_ITEM_TAG:// UIM_TK_ITEM_TAG
                     // 跳过条目标识
                     pos++;
                     
@@ -1100,7 +1109,8 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
                         nValLen = utk_ptr[pos];
                         pos++;
                     }
-                    if (nValLen > 0)
+                    
+                    if (nValLen > 0 && pMenu)
                     {
                         ai.wItemID = utk_ptr[pos];
                         ai.pszResText = NULL;
@@ -1113,15 +1123,15 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
                         ai.pText = wszBuf;
                         MEMSET(wszBuf, 0, nSize);
                         DecodeAlphaString(&utk_ptr[pos+1], nValLen-1, wszBuf, 256);
+                        DBGPRINTF("UIM_TK_ITEM_TAG %S",wszBuf);
                         (void)IMENUCTL_AddItemEx(pMenu, &ai );
-                        nItemCount++;
                     }
+                    nItemCount++;
                     pos+=nValLen;
                     break;
                 
                 // Alpha标识符
-                case 0x05:// UIM_TK_ALPHA_ID_TAG
-                case 0x85:
+                case UIM_TK_ALPHA_ID_TAG:// UIM_TK_ALPHA_ID_TAG
                     // 跳过Alpha标识
                     pos++;
                     
@@ -1136,7 +1146,8 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
                         nValLen = utk_ptr[pos];
                         pos++;
                     }
-                    if (nValLen>0)
+                    
+                    if (nValLen>0 && pMenu)
                     {
                         MEMSET(wszBuf, 0, nSize);
                         DecodeAlphaString(&utk_ptr[pos], nValLen, wszBuf, 256);
@@ -1144,29 +1155,121 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
                         (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wszBuf);
 						#else
 						{
-						   IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszBuf);
+                            DBGPRINTF("UIM_TK_ALPHA_ID_TAG %S",wszBuf);
+						    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszBuf);
 						}
                         #endif
                     }
+                    
                     if (pwszTitle)
                     {
                         WSTRCPY(pwszTitle, wszBuf);
                     }
+                    
                     pos+=nValLen;
                     break;
                     
+                case UIM_TK_ITEMS_NEXT_ACTION_IND_TAG:
+                    // 跳过标识
+                    pos++;
+                    if (utk_ptr[pos] == 0x81)
+                    {
+                        nValLen = utk_ptr[pos+1];
+                        pos+=2;
+                    }
+                    else
+                    {
+                        nValLen = utk_ptr[pos];
+                        pos++;
+                    }
+                    
+                    if (nValLen>0 && pMenu)
+                    {
+                        int i;
+                        const AECHAR *pNAStr = NULL;
+                        for(i=0;i<nValLen;i++)
+                        {
+                            switch(utk_ptr[pos+i]){
+                            case UIM_TK_SETUP_CALL:
+                                pNAStr = L"(Set Up Call)";
+                                break;
+                            case UIM_TK_CDMA_SEND_SHORT_MSG:
+                                pNAStr = L"(Send SM)";
+                                break;
+                            case UIM_TK_LAUNCH_BROWSER:
+                                pNAStr = L"(Launch Browser)";
+                                break;
+                            case UIM_TK_PLAY_TONE:
+                                pNAStr = L"(Play Tone)";
+                                break;
+                            case UIM_TK_DISPLAY_TEXT:
+                                pNAStr = L"(Display Text)";
+                                break;
+                            case UIM_TK_GET_INPUT:
+                                pNAStr = L"(Get Input)";
+                                break;
+                            case UIM_TK_SELECT_ITEM:
+                                pNAStr = L"(Select Item)";
+                                break;
+                            case UIM_TK_SETUP_MENU:
+                                pNAStr = L"(Set Up Menu)";
+                                break;
+                            case UIM_TK_PROVIDE_LOCAL_INFO:
+                                pNAStr = L"(Provide Local Information)";
+                                break;
+                            default:
+                                pNAStr = NULL;
+                                break;
+                            }
+                            
+                            if(pNAStr)
+                            {
+                                ai.pText = NULL;
+                                IMENUCTL_GetItem(pMenu,IMENUCTL_GetItemID(pMenu,i),&ai);
+                                if(ai.pText)
+                                {
+                                    WSTRCPY(wszBuf,ai.pText);
+                                    WSTRCAT(wszBuf,pNAStr);
+                                }
+                                else
+                                {
+                                    WSTRCPY(wszBuf,pNAStr);
+                                }
+                                DBGPRINTF("NEXT_ACTIONTAG %d %S",i,wszBuf);
+                                IMENUCTL_SetItemText(pMenu,ai.wItemID,NULL,0,wszBuf);
+                            }
+                        }
+                    }
+                    // 跳过值部分
+                    pos+=nValLen;
+                    break;
+                case UIM_TK_ITEM_ID_TAG:
+                    // 跳过标识
+                    pos++;
+                    
+                    if (utk_ptr[pos] == 0x81)
+                    {
+                        nValLen = utk_ptr[pos+1];
+                        pos+=2;
+                    }
+                    else
+                    {
+                        nValLen = utk_ptr[pos];
+                        pos++;
+                    }
+
+                    pMe->m_wSelectStore = utk_ptr[pos];
+                        
+                    // 跳过值部分
+                    pos+=nValLen;
+                    break;
                     
                 // 条目图标标识符列表
-                case 0x1F:// 
-                case 0x9F:
-                    
+                case UIM_TK_ICON_ID_LIST_TAG:// 
                 // 图标标识符
-                case 0x1E:// UIM_TK_ICON_ID_TAG
-                case 0x9E:
-                    
+                case UIM_TK_ICON_ID_TAG:// UIM_TK_ICON_ID_TAG
                 default:
                     // 命令不支持的项
-                    ERR("---Unsupport!----",0,0,0);
                     // 跳过标识
                     pos++;
                     
@@ -1875,24 +1978,21 @@ void DecodeRefreshData(byte *pdata, RefreshCmdType *pCmd)
     
     while (pos<nTep)
     {
-        switch (pdata[pos])
+        switch (pdata[pos]&0x7F)
         {
             // 命令说明标识
-            case 0x01:// UIM_TK_COMMAND_DETAILS_TAG
-            case 0x81:
+            case UIM_TK_COMMAND_DETAILS_TAG:// UIM_TK_COMMAND_DETAILS_TAG
                 pCmd->cmd_qualifier = pdata[pos+4];
                 pos+=5;
                 break;
                 
             // 设备特性标识
-            case 0x02:// UIM_TK_DEVICE_ID_TAG
-            case 0x82:
+            case UIM_TK_DEVICE_ID_TAG:// UIM_TK_DEVICE_ID_TAG
                 pos+=4;
                 break;
                 
             // 文件列表标识
-            case 0x12:// UIM_TK_FILE_LIST_TAG
-            case 0x92:
+            case UIM_TK_FILE_LIST_TAG:// UIM_TK_FILE_LIST_TAG
                 pos++;
                 if (pdata[pos] == 0x81)
                 {
@@ -1910,10 +2010,9 @@ void DecodeRefreshData(byte *pdata, RefreshCmdType *pCmd)
                 {
                     pCmd->fileList.numBytes-=1;
                     pCmd->fileList.isValid = 1;
-                }
-                memcpy(pCmd->fileList.fileData, &pdata[pos], pCmd->fileList.numBytes);
-
-                pos+=(pCmd->fileList.numBytes+1);
+                    memcpy(pCmd->fileList.fileData, &pdata[pos], pCmd->fileList.numBytes);
+                    pos+=(pCmd->fileList.numBytes+1);
+                }  
                 break;
                 
             default:

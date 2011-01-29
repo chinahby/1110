@@ -2553,11 +2553,7 @@ void uim_tk_send_cmd_to_ui
   ui_buf_ptr->proactive_cmd.hdr.task_ptr   = NULL;
   ui_buf_ptr->proactive_cmd.hdr.sigs       = 0;
 
-  if(rsp_ptr->cmd_rsp_size > UIM_MAX_CHARS)
-  {
-    ERR_FATAL("uim_tk_send_cmd_to_ui too LONG %d %d",rsp_ptr->cmd_rsp_size,rsp_ptr->rsp,0);
-  }
-  ui_buf_ptr->proactive_cmd.num_bytes = rsp_ptr->cmd_rsp_size;
+  ui_buf_ptr->proactive_cmd.num_bytes = (byte)rsp_ptr->cmd_rsp_size;
   (void) memcpy ( ui_buf_ptr->proactive_cmd.cmd_data,
                   (void *) rsp_ptr->rsp.data, rsp_ptr->cmd_rsp_size );
 
@@ -3163,6 +3159,7 @@ void uim_tk_process_proactive_command
               if ((processed_bit_ind & UIM_TK_POLL_INTERVAL_MIN_TLVS) !=
                   (UIM_TK_POLL_INTERVAL_MIN_TLVS))
               {
+                MSG_FATAL("UIM_TK_POLL_INTERVAL 1 %d %d",duration.time_unit,duration.time_interval,0);
                 /* Did not get the necessary TLVs */
                 parsed_tlv_buf.result.result =
                   UIM_TK_ERROR_REQD_VALUES_ARE_MISSING;
@@ -3183,6 +3180,7 @@ void uim_tk_process_proactive_command
               if (comprehension_required_bit_ind &
                        ~UIM_TK_POLL_INTERVAL_ALLOWED_TLVS)
               {
+                MSG_FATAL("UIM_TK_POLL_INTERVAL 2 %d %d",duration.time_unit,duration.time_interval,0);
                 /* Got some comprehension required TLVs that don't belong */
                 parsed_tlv_buf.result.result =
                   UIM_TK_COMMAND_DATA_NOT_UNDERSTOOD_BY_TERMINAL;
@@ -3200,6 +3198,7 @@ void uim_tk_process_proactive_command
               }
               else /* Process the command */
               {
+                MSG_FATAL("UIM_TK_POLL_INTERVAL 3 %d %d",duration.time_unit,duration.time_interval,0);
                 /* Set the result to indicate we have processed the command */
                 parsed_tlv_buf.result.result =
                   UIM_TK_CMD_PERFORMED_SUCCESSFULLY;

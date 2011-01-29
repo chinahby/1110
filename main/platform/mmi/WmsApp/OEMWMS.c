@@ -2353,6 +2353,7 @@ static int OEMWMS_RefreshRUIMSMS
   st = wms_msg_refresh_ruimmsg( clientId,
                      (wms_cmd_cb_type) cmdCb->pfnNotify,
                      user_data);
+  DBGPRINTF("OEMWMS_RefreshRUIMSMS %d",st);
 #endif
   return (MapWMSStatusToBREWCode(st));
 }

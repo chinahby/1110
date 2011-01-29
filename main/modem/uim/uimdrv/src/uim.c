@@ -4824,6 +4824,7 @@ boolean uim_reqd
     new_uim_poll_time_delay = uim_proactive_time_delay;
   }
 
+  MSG_FATAL("UIM POLL TIMER %d %d %d",new_uim_poll_time_delay,uim_poll_time_delay,uim_proactive_time_delay);
   /* Determine if the poll interval has changed */
   if (new_uim_poll_time_delay != uim_poll_time_delay)
   {

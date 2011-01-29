@@ -349,7 +349,6 @@ static boolean  IDD_MAIN_Handler(CUTK *pMe,
             pMe->select_item[1]=0;
             pMe->level = 0;
             pMe->clr_back = FALSE;
-            pMe->m_bNormalExit = TRUE;
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -408,7 +407,6 @@ static boolean  IDD_MAIN_Handler(CUTK *pMe,
             pMe->select_item[0] =  IMENUCTL_GetSel(pMenu);
             pMe->m_bAppIsReady = FALSE;
             pMe->m_btCursel = (byte)wParam;
-            pMe->m_bNormalExit = FALSE;
             UTK_GiveResponse(pMe, pMe->cmd_type, TRUE, UIM_TK_CMD_PERFORMED_SUCCESSFULLY);            
             return TRUE;
             
@@ -487,6 +485,11 @@ static boolean  IDD_LIST_Handler(CUTK *pMe,
                 IMENUCTL_SetSel(pMenu,pMe->select_item[pMe->level]);
             }
             
+            pMe->m_dwTimeOut = 30000;
+            (void) ISHELL_SetTimer(pMe->m_pShell,
+                                   pMe->m_dwTimeOut,
+                                   UTKApp_DialogTimeout,
+                                   pMe);
             (void) ISHELL_PostEvent( pMe->m_pShell,
                                      AEECLSID_APP_UTK,
                                      EVT_USER_REDRAW,
@@ -509,12 +512,23 @@ static boolean  IDD_LIST_Handler(CUTK *pMe,
             {
                 pMe->m_wSelectStore = MENU_SELECT_NULL;
             }
+            (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
+            return TRUE;
+            
+        case EVT_DIALOGTIMEOUT:
+            UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_NO_RESPONSE_FROM_USER);
             return TRUE;
             
         case EVT_KEY:
             switch(wParam)
             {
-               case AVK_CLR:
+                case AVK_END:
+                    (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
+                    UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_PROACTIVE_RUIM_SESSION_TERMINATED_BY_USER);
+                    break;
+                    
+                case AVK_CLR:
+                    (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
                     pMe->select_item[pMe->level] = 0;
                     pMe->level--;
                     pMe->clr_back = TRUE;
@@ -528,6 +542,7 @@ static boolean  IDD_LIST_Handler(CUTK *pMe,
             return TRUE;
 
         case EVT_COMMAND:
+            (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
             pMe->select_item[pMe->level] =  IMENUCTL_GetSel(pMenu); 
             ERR("wParam = %d", wParam,0,0); 
             pMe->m_bAppIsReady = FALSE;
@@ -751,6 +766,10 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
         case EVT_KEY:
             switch(wParam)
             {
+                case AVK_END:
+                    UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_PROACTIVE_RUIM_SESSION_TERMINATED_BY_USER);
+                    break;
+                    
             	case AVK_INFO:
                 case AVK_SELECT:
                     {
@@ -760,7 +779,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
                         wszBuf = ITEXTCTL_GetTextPtr(pTextCtl);
                         txtLen = (byte)WSTRLEN(wszBuf);
                         
-                        if ((0 == txtLen)||(txtLen > pMe->m_TextMaxLen)||(txtLen < pMe->m_TextMinLen))
+                        if ((txtLen > pMe->m_TextMaxLen)||(txtLen < pMe->m_TextMinLen))
                         {   // 输入长度不对，提示出错
                             pMe->InputeBackupNeeded = TRUE;                              	
                             CLOSE_DIALOG(DLGRET_OK);                        	
@@ -854,7 +873,7 @@ static boolean  IDD_DISPLAY_Handler(CUTK *pMe,
                 byte   *utk_ptr; 
                 AEERect rc;
                 
-                pMe->m_dwTimeOut = 1000;
+                pMe->m_dwTimeOut = 3000;
 
                 ISTATIC_SetProperties(pStatic, 
                         ST_CENTERTEXT  | ST_MIDDLETEXT );
@@ -876,7 +895,11 @@ static boolean  IDD_DISPLAY_Handler(CUTK *pMe,
                         else
                         { //延迟后清除消息
                             pMe->m_bUserMode = FALSE;
-                            pMe->m_dwTimeOut = 1000;
+                        }
+                        
+                        if(ptext->timems != 0)
+                        {
+                            pMe->m_dwTimeOut = ptext->timems;
                         }
                         // 释放临时分配空间
                         FREEIF(ptext);
@@ -932,12 +955,18 @@ static boolean  IDD_DISPLAY_Handler(CUTK *pMe,
             else
             {
                 UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_CMD_PERFORMED_SUCCESSFULLY);
+                CLOSE_DIALOG(DLGRET_OK);
             }
             return TRUE;
         
         case EVT_KEY:
             switch(wParam)
             {
+                case AVK_END:
+                    (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
+                    UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_PROACTIVE_RUIM_SESSION_TERMINATED_BY_USER);
+                    break;
+                    
                 case AVK_CLR:
                     (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
                     pMe->m_bAppIsReady = FALSE;

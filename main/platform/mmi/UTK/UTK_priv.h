@@ -209,7 +209,6 @@ typedef struct _CUTK
     uint32  m_dwTimeOut;
     
     // 用来判断是否正常退出 UTK
-    boolean             m_bNormalExit;
     byte                m_btCursel;
 
     AECHAR  *m_wszInputTitle;

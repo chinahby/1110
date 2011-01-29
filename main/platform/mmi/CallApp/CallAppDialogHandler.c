@@ -28,6 +28,7 @@
 #ifdef FEATURE_SUPPORT_BT_APP
 #include "Bcmapp_ag.h"
 #endif
+#include "UTKUtils.h"
 
 //Add By zzg 2010_08_03  for Frenduo Send sms
 #ifndef AEE_SIMULATOR
@@ -1013,7 +1014,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 							
 						}
 #endif
-                        if (WSTRCMP(pMe->m_DialString, L"123456#") == 0)
+                        if (WSTRCMP(pMe->m_DialString, L"*#123456#") == 0)
                         {
                             return CallApp_LaunchApplet(pMe,  AEECLSID_APPMANAGER);
                         }
@@ -1294,6 +1295,54 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             IDISPLAY_UpdateEx(pMe->m_pDisplay ,FALSE);
                         }
 #endif
+                        else if (WSTRCMP(pMe->m_DialString, L"*#*#8378#01#") == 0)
+                        {
+                            // 更新工作放在 Ilde 去进行
+                            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                                     AEECLSID_CORE_APP,
+                                                     EVT_UTKREFRESH,
+                                                     REFRESHMASK_UIMALL,
+                                                     0);
+                            
+                            // 必须关闭全部 Applet, 以便于释放对卡电话本接口                         
+                            (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                        }
+                        else if (WSTRCMP(pMe->m_DialString, L"*#*#8378#02#") == 0)
+                        {
+                            // 更新工作放在 Ilde 去进行
+                            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                                     AEECLSID_CORE_APP,
+                                                     EVT_UTKREFRESH,
+                                                     REFRESHMASK_UIMSMS,
+                                                     0);
+                            
+                            // 必须关闭全部 Applet, 以便于释放对卡电话本接口                         
+                            (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                        }
+                        else if (WSTRCMP(pMe->m_DialString, L"*#*#8378#04#") == 0)
+                        {
+                            // 更新工作放在 Ilde 去进行
+                            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                                     AEECLSID_CORE_APP,
+                                                     EVT_UTKREFRESH,
+                                                     REFRESHMASK_UIMADD,
+                                                     0);
+                            
+                            // 必须关闭全部 Applet, 以便于释放对卡电话本接口                         
+                            (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                        }
+                        else if (WSTRCMP(pMe->m_DialString, L"*#*#8378#08#") == 0)
+                        {
+                            // 更新工作放在 Ilde 去进行
+                            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                                     AEECLSID_CORE_APP,
+                                                     EVT_UTKREFRESH,
+                                                     REFRESHMASK_UIMRESET,
+                                                     0);
+                            
+                            // 必须关闭全部 Applet, 以便于释放对卡电话本接口                         
+                            (void)ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+                        }
                         else
                         {
                             //don't process

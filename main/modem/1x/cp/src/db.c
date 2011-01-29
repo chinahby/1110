@@ -931,6 +931,7 @@ boolean PhoneBookCache_IsIninited(void)
 void db_setuiminitmask(byte mask)
 {
     // 如果已经在初始化状态，则不发送SIGNAL
+    MSG_FATAL("db_setuiminitmask 0x%x 0x%x",mask,db_uiminitmask,0);
     if(db_uiminitmask)
     {
         db_uiminitmask = (db_uiminitmask | mask);
@@ -948,6 +949,7 @@ byte db_getuiminitmask(void)
 // 注意此函数只能由 uim task 调用
 void db_removeuiminitmask(byte mask)
 {
+    MSG_FATAL("db_removeuiminitmask 0x%x 0x%x",mask,db_uiminitmask,0);
     db_uiminitmask = (db_uiminitmask & (~mask));
 }
 #endif /* FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK*/

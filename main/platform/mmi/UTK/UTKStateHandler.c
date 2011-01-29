@@ -302,12 +302,16 @@ static NextFSMAction UTKST_MAIN_Handler(CUTK *pMe)
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
+            if(CUTK_SetUTKMenu(pMe,NULL,NULL,pMe->cmd_type) == 0)
+            {
+                MOVE_TO_STATE(UTKST_EXIT);
+                return NFSMACTION_CONTINUE;
+            }
             pMe->m_bNotOverwriteDlgRet = FALSE;
             UTK_ShowDialog(pMe, IDD_MAIN_DIALOG);
             return NFSMACTION_WAIT;
         
         case DLGRET_CANCELED:
-            pMe->m_bNormalExit = TRUE;            
             MOVE_TO_STATE(UTKST_EXIT);
             return NFSMACTION_CONTINUE;
 
@@ -438,7 +442,19 @@ static NextFSMAction UTKST_DISPLAY_Handler(CUTK *pMe)
             pMe->m_bNotOverwriteDlgRet = FALSE;
             UTK_ShowDialog(pMe, IDD_DISPLAY_DIALOG);
             return NFSMACTION_WAIT;
-        
+
+        case DLGRET_OK:
+            if(pMe->m_ePreState == UTKST_NONE
+                ||pMe->m_ePreState == UTKST_INIT)
+            {
+                MOVE_TO_STATE(UTKST_EXIT);
+            }
+            else
+            {
+                MOVE_TO_STATE(pMe->m_ePreState);
+            }
+            return NFSMACTION_CONTINUE;
+            
         default:
             break;
     }

@@ -629,7 +629,6 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
             if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
             {// 插入了卡
 #if 1
-                
                 AEECardPinStatus sPinStatus;
                 MSLEEP(500);// 等待GSDI更新PIN Status，否则验证PIN之后的状态获取有问题
                 if (ICARD_GetPinStatus(pMe->m_pICard, AEECARD_PIN1, &sPinStatus) != SUCCESS)

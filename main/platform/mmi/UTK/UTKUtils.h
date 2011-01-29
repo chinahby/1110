@@ -176,6 +176,7 @@ typedef struct _Display_text
     command_describe    cmd_describe;
     device_identity     dev_identity;
     text_string         text;
+    dword               timems;
 } Display_text;
 
 typedef struct _Setup_Call 
