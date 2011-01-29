@@ -350,6 +350,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
     {
 FONT_NO_EXIST:
 #endif
+{
     int xSrc, i;
     byte xWidth, xWidthOrig, xxDisp, *sp, *pFontData;
     int bytes_per_row, dispWidth = 0;
@@ -548,6 +549,7 @@ FONT_NO_EXIST:
     }
  
     *pOutWidth = dispWidth;  
+}
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
     }
 #endif
