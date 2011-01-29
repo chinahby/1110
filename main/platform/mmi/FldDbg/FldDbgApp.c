@@ -125,6 +125,16 @@ when         who     what, where, why
 #include "oemnvint.h"
 #include "mobile.h"
 
+#ifdef FEATURE_OEMOMH
+#include "AEEConfig.h"
+#include "AEECardSession.h"
+#include "AEEDB.h"
+#include "AEECardSessionNotifier.h"
+#include "AEEDownload.h"
+#include "OEMCardSessionNotifier.h"
+#include "AEECARDSESSION.BID"
+#endif
+
 #if MIN_BREW_VERSION(3, 1)
 #include "AEEAppletCtl.h"
 #endif
@@ -566,7 +576,7 @@ static boolean CFieldDebug_OMH_VERSION_HandleEvent(CFieldDebug *pme,
 											   AEEEvent  eCode,
 											   uint16	 wParam,
 											   uint32	 dwParam);										   
-											   
+static void CFieldDebug_OMH_RegisterCb(CFieldDebug  *pMe);											   
 #endif											   
 
 
@@ -5680,10 +5690,11 @@ static boolean CFieldDebug_OMH_VERSION_HandleEvent(CFieldDebug *pme,
 		  case AVK_SELECT:
 		  case AVK_INFO:
             {
-               
                 AECHAR pwstrText[100] = {0};
 				char string[100+1];
 				uint32 carrID = 0;
+                int nErr;
+                ICardSession*			m_pICardSession;                
 				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
 #if 0                 
 				(void) ICONFIG_GetItem(pme->m_pIConfig,
@@ -5696,6 +5707,40 @@ static boolean CFieldDebug_OMH_VERSION_HandleEvent(CFieldDebug *pme,
 		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,99);
 				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
                 carrID= ATOI(string);
+
+                nErr = ISHELL_CreateInstance(pme->a.m_pIShell, AEECLSID_CARDSESSION, (void **)&m_pICardSession);
+                if (!nErr)
+                {
+                    AEECallback				m_cbRead; 
+                    AEECardSessionWriteTpStatus	*pWriteStatus;
+                    AEECardSessionData * pWriteData;
+                    DBGPRINTF("ISHELL_CreateInstance AEECLSID_CARDSESSION");
+                    pWriteData = (AEECardSessionData *)MALLOC(sizeof(AEECardSessionData));
+                    pWriteData->pData = (uint8 *)MALLOC(sizeof(uint8)*100);
+                    pWriteStatus = (AEECardSessionWriteTpStatus *)MALLOC(sizeof(AEECardSessionWriteTpStatus));
+                	if((NULL == pWriteData) || (NULL == pWriteData->pData))
+                	{
+                        MSG_FATAL("MALLOC failed",0,0,0);
+                	}	 
+                    else
+                    {
+                        STRCPY((char*)(pWriteData->pData), string);
+                        pWriteData->nLen = 15;
+                        CALLBACK_Init(&m_cbRead, (PFNNOTIFY)CFieldDebug_OMH_RegisterCb, (void*)pme);
+                    
+        			    nErr = ICARDSESSION_WriteTransparent(m_pICardSession,  AEECARDSESSION_CDMA_MODEL, 
+        					0, pWriteData, pWriteStatus, &m_cbRead);   
+                        if (nErr != SUCCESS)
+                        {
+                            MSG_FATAL("ICARDSESSION_WriteTransparent failed nErr=%d",nErr,0,0);
+                        }
+                        else
+                        {
+                            MSG_FATAL("ICARDSESSION_WriteTransparent SUCCESS",0,0,0);
+                            DBGPRINTF("emerg Call s=%s", (char*)(pWriteData->pData));
+                        }
+                    }
+                }                
 #if 0               
 				(void) ICONFIG_SetItem(pme->m_pIConfig,
                           CFGI_BREW_CARRIER_ID,
@@ -10824,3 +10869,9 @@ static void SetTextControlRect(CFieldDebug *pme, void  *Ctl)
                 pme->m_screen_rc.dy - GetBottomBarHeight(pme->m_pDisplay));
     ICONTROL_SetRect((IControl*)Ctl, &ctlRect);
 }
+
+static void CFieldDebug_OMH_RegisterCb(CFieldDebug  *pMe)
+{
+
+}
+

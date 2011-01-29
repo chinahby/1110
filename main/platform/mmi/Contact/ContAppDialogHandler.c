@@ -35,6 +35,7 @@
 #ifdef FEATURE_SUPPORT_VCARD
 #include "ContApp_vCard.h"
 #endif
+
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -15578,11 +15579,12 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
             AECHAR  wstrNum[MAX_EMERGENCY_NUM_LEN+1];
             EmergencyNum_Table emerg_tab;
             int   i = 0;
+            int nErr;
             MSG_FATAL("EVT_DIALOG_START",0,0,0);
             ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
             rc = pMe->m_rc;
             rc.dy = devinfo.cyScreen;
-            rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
+            rc.dy -= GetBottomBarHeight(pMe->m_pDisplay); 
 
             IMENUCTL_SetRect(pMenu, &rc);
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
@@ -15604,6 +15606,79 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                 }
                 IMENUCTL_AddItem(pMenu, NULL, NULL, 500+i, wstrNum, NULL);
             }
+           
+            {
+                IRUIM            *m_pIRUIM;
+                char  Assnum[31];
+                MEMSET(Assnum, 0x00, sizeof(Assnum));    
+#ifndef WIN32    
+                MSG_FATAL("IRUIM_Get_Ecc_Code",0,0,0);
+                if (pMe->m_pIRUIM != NULL)
+                {
+                     if(SUCCESS == IRUIM_Get_Ecc_Code(pMe->m_pIRUIM,(byte*)Assnum))
+                    {
+                        int i = 0;
+                        int j = 0;
+                        char temp[7];
+                        int len = STRLEN(Assnum);
+                        MSG_FATAL("Assnum's len = %d",len,0,0);
+                        //if the supplement service number is "**"(Wrong number), then read from config file
+                        DBGPRINTF("Assnum[0] =%c", Assnum[0]);
+                        DBGPRINTF("Assnum[1] =%c", Assnum[1]);
+                        DBGPRINTF("Assnum[2] =%c", Assnum[2]);
+                        DBGPRINTF("Assnum[3] =%c", Assnum[3]);
+                        DBGPRINTF("Assnum[4] =%c", Assnum[4]);
+                        DBGPRINTF("Assnum[5] =%c", Assnum[5]);
+                        DBGPRINTF("Assnum[6] =%c", Assnum[6]);
+                        DBGPRINTF("Assnum[7] =%c", Assnum[7]);
+                        DBGPRINTF("Assnum[8] =%c", Assnum[8]);
+                        DBGPRINTF("Assnum[9] =%c", Assnum[9]);
+                        DBGPRINTF("Assnum[10] =%c", Assnum[10]);
+                        DBGPRINTF("Assnum[11] =%c", Assnum[11]);
+                        DBGPRINTF("Assnum[12] =%c", Assnum[12]);
+                        DBGPRINTF("Assnum[13] =%c", Assnum[13]);
+                        DBGPRINTF("Assnum[14] =%c", Assnum[14]);
+                        DBGPRINTF("Assnum[15] =%c", Assnum[15]);
+                        DBGPRINTF("Assnum[16] =%c", Assnum[16]);
+                        DBGPRINTF("Assnum[17] =%c", Assnum[17]);
+                        DBGPRINTF("Assnum[18] =%c", Assnum[18]);
+                        DBGPRINTF("Assnum[19] =%c", Assnum[19]);
+                        DBGPRINTF("Assnum[20] =%c", Assnum[20]);
+                        DBGPRINTF("Assnum[21] =%c", Assnum[21]);
+                        DBGPRINTF("Assnum[22] =%c", Assnum[22]);
+                        DBGPRINTF("Assnum[23] =%c", Assnum[23]);
+                        DBGPRINTF("Assnum[24] =%c", Assnum[24]);
+                        DBGPRINTF("Assnum[25] =%c", Assnum[25]);
+                        DBGPRINTF("Assnum[26] =%c", Assnum[26]);
+                        DBGPRINTF("Assnum[27] =%c", Assnum[27]);
+                        DBGPRINTF("Assnum[28] =%c", Assnum[28]);
+                        DBGPRINTF("Assnum[29] =%c", Assnum[29]);
+                        for(; i < 30; ++i)
+                        {
+                            if((Assnum[i] >= '0') && (Assnum[i] <= '9'))
+                            {
+                                temp[j++] = Assnum[i];
+                            }
+                            else
+                            {
+                                temp[j++] = '\0';
+                                j = 0;
+                                if((temp[0] >= '0') && (temp[0] <= '9'))
+                                {
+                                    STRTOWSTR(temp, wstrNum, sizeof(wstrNum));
+                                    IMENUCTL_AddItem(pMenu, NULL, NULL, 500 + emerg_tab.emert_size +i, wstrNum, NULL);
+                                }
+                            }
+                        }
+                    }  
+                    else
+                    {
+                        MSG_FATAL("IRUIM_Get_Ecc_Code Failed",0,0,0);
+                    }
+                }
+#endif//WIN32                
+            }
+
             IMENUCTL_Redraw(pMenu);
             pMe->m_nInputMode = LOCAL_NUMBER_INPUT;
             IMENUCTL_SetSel(pMenu, 0);  
@@ -15722,8 +15797,10 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                                 else if(wParam == AVK_DOWN)
                                 {
                                     MSG_FATAL("AVK_DOWN",0,0,0);
+                                    MSG_FATAL("selectEdit=%d, menuCount=%d",selectEdit,menuCount,0);
                                     if(selectEdit < 500 + menuCount - 1)
                                     {
+                                        MSG_FATAL("AVK_DOWN sssssssssssssss",0,0,0);
                                         if(IMENUCTL_GetItem(pMenu, selectEdit + 1, &ai))
                                         {
                                             MSG_FATAL("AVK_DOWN 33333333333333",0,0,0);
@@ -15733,6 +15810,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                                     }
                                     else if(selectEdit == 500 + menuCount - 1)
                                     {
+                                        MSG_FATAL("AVK_DOWN aaaaaaaaaaaaaaaaa",0,0,0);
                                         if(IMENUCTL_GetItem(pMenu, 500, &ai))
                                         {
                                             MSG_FATAL("AVK_DOWN 44444444444444",0,0,0);

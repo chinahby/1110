@@ -70,12 +70,12 @@ typedef struct _OEMOMHConfig
 
 extern gsdi_uim_omh_cap_type gsdi_uim_omh_cap;
 
-static OEMOMHConfig omhConfig;
-static int OEMOMH_SaveInfo(void);
-static int OEMOMH_DeleteApps(void);
-static void OEMOMH_Reset(void);
-static void OEMOMH_CleanupAndReset(void);
-static int OEMOMH_ReadBREWEFs(void);
+ OEMOMHConfig omhConfig;
+ int OEMOMH_SaveInfo(void);
+ int OEMOMH_DeleteApps(void);
+ void OEMOMH_Reset(void);
+ void OEMOMH_CleanupAndReset(void);
+ int OEMOMH_ReadBREWEFs(void);
 
 
 #define OMH_DIF_USE_A_KEY		0x0001
@@ -90,12 +90,12 @@ static int OEMOMH_ReadBREWEFs(void);
 #define OMH_DIF_NO_LAUNCH_MOD_ACK_DISABLED	0x0200
 //#define OMH_DIF_SENSITIVE_SID
 uint32* cfgi_len = 0;
-static void OEMOMH_RegisterCb(OEMOMHConfig *po)
+ void OEMOMH_RegisterCb(OEMOMHConfig *po)
 {
 	DBGPRINTF("in register callback");
 	// Now client ID can be valid
 }
-static void OEMOMH_InitBREWDownload()
+ void OEMOMH_InitBREWDownload()
 {
 	IDownload *pIDownload = 0;
 	IConfig*   pConfig   = NULL;
@@ -165,7 +165,7 @@ static void OEMOMH_InitBREWDownload()
 	DBGPRINTF("<< OEMOMH_InitBREWDownload");
 }
 
-static void OEMOMH_ReadCb(OEMOMHConfig *po)
+ void OEMOMH_ReadCb(OEMOMHConfig *po)
 {
 	uint32           nCmdStatus;
 
@@ -294,7 +294,7 @@ static void OEMOMH_ReadCb(OEMOMHConfig *po)
 	DBGPRINTF("<< OEMOMH_ReadCb");
 }
 
-static void OEMOMH_CleanupAndReset()
+ void OEMOMH_CleanupAndReset()
 {
 	IFileMgr *pIFileMgr = 0;
 	AEEDownloadInfo aDefaultInfo;
@@ -320,7 +320,7 @@ static void OEMOMH_CleanupAndReset()
 	DBGPRINTF("<< OEMOMH_CleanupAndReset");
 }
 
-static int OEMOMH_ReadBREWEFs()
+ int OEMOMH_ReadBREWEFs()
 {
 	int nErr = AEE_SUCCESS;
 	omhConfig.m_bOMHCardReady = FALSE;
@@ -430,7 +430,7 @@ int OEMOMH_RmDir(const char *dirName)
 	return nErr;
 }
 
-static int OEMOMH_DeleteModule(const char * moduleId)
+ int OEMOMH_DeleteModule(const char * moduleId)
 {
 	int nErr = AEE_SUCCESS;
 	char dirName[MAX_FILE_NAME];
@@ -444,7 +444,7 @@ static int OEMOMH_DeleteModule(const char * moduleId)
 	return nErr;
 }
 
-static void OEMOMH_Reset()
+ void OEMOMH_Reset()
 {
 	DBGPRINTF("OEMOMH_Reset >>");
 	omhConfig.m_bExiting = TRUE;
@@ -546,7 +546,7 @@ int OEMOMH_DeleteApps()
 	return bReset;
 }
 
-static int OEMOMH_LoadSaved()
+ int OEMOMH_LoadSaved()
 {
 	int nErr = AEE_SUCCESS;
 	IShell *pIShell = AEE_GetShell();

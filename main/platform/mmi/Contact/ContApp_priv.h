@@ -84,6 +84,16 @@
 
 #include "AEEControls.brh"
 #include "AEERUIM.h"
+#ifdef FEATURE_OEMOMH
+#include "AEEConfig.h"
+#include "AEECardSession.h"
+#include "AEEDB.h"
+#include "AEECardSessionNotifier.h"
+#include "AEEDownload.h"
+#include "OEMCardSessionNotifier.h"
+#include "AEECARDSESSION.BID"
+#endif
+
 extern sSelectFieldInfo  curSelectFieldInfo;
 extern sSelectFieldListNode* pSelectFieldListRoot;
 extern sSelectFieldListNode* pCurSelectFieldNode;
@@ -952,6 +962,9 @@ typedef struct _CContApp
     IAnnunciator *m_pIAnn;
 	IRUIM        *m_pIRUIM;
 	boolean      m_isdel;
+#ifdef FEATURE_OEMOMH        
+   // AEECardSessionReadTpStatus	*m_pReadStatus;
+#endif
 } CContApp;
 
 /*==============================================================================

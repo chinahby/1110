@@ -8903,7 +8903,7 @@ static NextFSMAction Handler_STATE_EMERGENCY_CALL(CContApp *pMe)
         {
             FSMState retrunState;
             retrunState = CContApp_GetReturnState(pMe);            
-            nRet = CContApp_SaveEditResult(pMe);
+            //nRet = CContApp_SaveEditResult(pMe);
             MOVE_TO_STATE(retrunState);
             return NFSMACTION_CONTINUE;
         }

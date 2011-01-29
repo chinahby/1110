@@ -86,6 +86,10 @@ AEEINTERFACE(IRUIM) {
    int (*Get_Feature_Code)(IRUIM *pIRUIM,byte *Buf,int  Lable);
    int (*Read_Svc_P_Name)(IRUIM *pIRUIM,AECHAR *Buf);
 #endif /*CUST_EDITION*/   
+
+#ifdef FEATURE_OEMOMH 
+   int (*Get_Ecc_Code)(IRUIM *pIRUIM,byte *Buf);
+#endif
 };
 
 #define IRUIM_AddRef(p)                \
@@ -120,7 +124,12 @@ AEEINTERFACE(IRUIM) {
 
 #define IRUIM_Read_Svc_P_Name(p,pi)           \
                            AEEGETPVTBL((p),IRUIM)->Read_Svc_P_Name((p),(pi))
-#endif /*CUST_EDITION*/						   
+#endif /*CUST_EDITION*/		
+
+#ifdef FEATURE_OEMOMH 
+#define IRUIM_Get_Ecc_Code(p,pi)           \
+                           AEEGETPVTBL((p),IRUIM)->Get_Ecc_Code((p),(pi))
+#endif
 /* Preferred language encoding */
 #define  AEERUIM_LANG_ENCODING_OCTET            0  // Octet, unspecified:
                                                    // 8 bits/char
