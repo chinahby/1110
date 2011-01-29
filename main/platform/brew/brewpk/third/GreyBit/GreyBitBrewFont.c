@@ -260,6 +260,10 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
         }
        
         xend = fm.horiAdvance;
+        if(xend == 0)
+        {
+            goto FONT_NO_EXIST;
+        }
         //yend = fm. outBufHeight;
 #ifdef FEATURE_ARPHIC_ARABIC_M16X16P_FONT        
         yend = (dy > 16)?(16):(dy);
@@ -344,6 +348,7 @@ static void DrawChar(IFont *pMe, byte *pBmp, int nPitch, const AECHAR *pcText, i
     }
     else
     {
+FONT_NO_EXIST:
 #endif
     int xSrc, i;
     byte xWidth, xWidthOrig, xxDisp, *sp, *pFontData;
