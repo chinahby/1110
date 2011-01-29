@@ -144,7 +144,6 @@ when       who     what, where, why
 #include "dsm.h"
 #include "err.h"
 #include "tmc.h"
-
 #if defined (FEATURE_MMGSDI_GSM) || defined (FEATURE_MMGSDI_UMTS)
 #error code not present
 #endif /* FEATURE_MMGSDI_GSM && FEATURE_MMGSDI_UMTS */
@@ -167,6 +166,10 @@ when       who     what, where, why
 #if defined (FEATURE_UIM_EUIMID)
 #include "gsdi_nv.h"
 #endif /* FEATURE_UIM_EUIMID */
+
+#ifdef FEATURE_OEMOMH
+gsdi_uim_omh_cap_type gsdi_uim_omh_cap;
+#endif
 
 
 #if defined (FEATURE_MMGSDI_CDMA)
@@ -1198,6 +1201,8 @@ DEPENDENCIES
 RETURN VALUE
   Does not return.
 ===========================================================================*/
+
+
 gsdi_returns_T gsdi_cdma_proc_get_ruim_capabilities (
     gsdi_slot_id_type               slot
 )
@@ -1343,7 +1348,25 @@ gsdi_returns_T gsdi_cdma_proc_get_ruim_capabilities (
     {
         *disable_chv1_allowed = FALSE;
     }
-
+#ifdef FEATURE_OEMOMH    
+    if ( ( mmgsdi_data_buf.data_ptr[GSDI_SST_MSG_3GPD_OFFSET] & GSDI_SST_MSG_3GPD_MASK) == GSDI_SST_MSG_3GPD_MASK)
+    {
+        gsdi_uim_omh_cap.omh_enabled = TRUE;
+    }
+    else
+    {
+        gsdi_uim_omh_cap.omh_enabled = FALSE;
+    }
+    
+    if ( ( mmgsdi_data_buf.data_ptr[GSDI_SST_BREW_OFFSET] & GSDI_SST_BREW_MASK) == GSDI_SST_BREW_MASK)
+    {
+        gsdi_uim_omh_cap.brew_enabled = TRUE;
+    }
+    else
+    {
+        gsdi_uim_omh_cap.brew_enabled = FALSE;
+    }   
+#endif
     MSG_MED("GSDI gsm get sim cap proc status %d",gsdi_status,0,0);
 
     MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(mmgsdi_data_buf.data_ptr);

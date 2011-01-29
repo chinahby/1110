@@ -348,6 +348,25 @@ when       who     what, where, why
 
 #include "gsdi_exp.h"
 
+#ifdef FEATURE_OEMOMH
+#define GSDI_SST_MSG_3GPD_OFFSET 3
+#define GSDI_SST_MSG_3GPD_MASK 0x30 // 0011 0000
+#define GSDI_SST_BREW_OFFSET 5
+#define GSDI_SST_BREW_MASK 0x30 // 0011 0000
+// Add more services if needed
+typedef struct
+{
+uint16 omh_enabled:1; // 3GPD extension
+uint16 rc_enabled:1; // Root Certificates
+uint16 browser_enabled:1; // Browser
+uint16 brew_enabled:1; // BREW
+} gsdi_uim_omh_cap_type;
+#endif
+
+#ifdef FEATURE_OEMOMH
+extern gsdi_uim_omh_cap_type gsdi_uim_omh_cap;
+#endif
+
 
 #if defined (FEATURE_MMGSDI_GSM) || defined (FEATURE_MMGSDI_UMTS)
 #error code not present
