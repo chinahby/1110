@@ -1702,16 +1702,28 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
     AVKType key = (AVKType) dwKeyCode;
 
 	//DBGPRINT("-------------->");
-    MSG_FATAL("----------->1-->%d--->%d",eCode,dwKeyCode,0);
+    //MSG_FATAL("----------->1-->%d--->%d",eCode,dwKeyCode,0);
 	if(eCode == EVT_KEY_HELD && dwKeyCode == AVK_CLR)
 	{
-		MSG_FATAL("...........................ACL",0,0,0);
+		//MSG_FATAL("...........................ACL",0,0,0);
+		T9_AW_Destroy ( pContext );
+    	(void) ISHELL_CancelTimer((IShell *) pContext->pIShell,
+                            TextCtl_MultitapTimer, pContext);    
+    	TextCtl_NoSelection(pContext);
+		pContext->m_bCaplk = FALSE;
 		//T9_AW_Init ( pContext );
-		MEMSET((void *)pContext->pszContents,0,STRLEN((void *)pContext->pszContents));
-		MEMSET(&pContext->sT9awFieldInfo,0,sizeof(T9AWFieldInfo));
+		MEMSET((void *)pContext->pszContents,0,WSTRLEN((void *)pContext->pszContents));
+		//MEMSET(&pContext->sT9awFieldInfo,0,sizeof(T9AWFieldInfo));
 		pContext->wSelStart = 0;
 		pContext->wSelEnd = 0;
+		pContext->wContentsChars = 0;
+		pContext->wDisplayStartLine = 0;
+		pContext->wLines = 0;
+		TextCtl_NoSelection(pContext);
+		TextCtl_TextChanged(pContext);
 		OEM_TextUpdate(pContext);
+		//T9_AW_Init(pContext);
+		TextCtl_RestartEdit(pContext);
 		return TRUE;
 	}
     // Press and hold the number key to get the number
@@ -1721,7 +1733,7 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
         &&(!(key == AVK_POUND) && (eCode == EVT_KEY_RELEASE)) //modi by yangdecai 2010-08-07
         &&(!((key == AVK_CLR) && (eCode == EVT_KEY_HELD)))*/
     {
-   		MSG_FATAL(".....................TRUE",0,0,0);
+   		//MSG_FATAL(".....................TRUE",0,0,0);
         return FALSE; // We only want key events or CLR held events
     }
 	#else
@@ -11703,11 +11715,11 @@ static void TextCtl_MultitapTimer(void *pUser)
    TextCtl_NoSelection(pContext);
 
    pContext->uModeInfo.mtap.kLast = AVK_UNDEFINED;
-//   MSG_FATAL("TextCtl_MultitapTimer..................",0,0,0);
+   MSG_FATAL("TextCtl_MultitapTimer..................",0,0,0);
    if (pContext->bNeedsDraw ) {
       // Force drawing now or the selection won't be removed!
       if (pContext->bNeedsDraw) {
-      //	  MSG_FATAL("OEM_TextDraw...................",0,0,0);
+      	  MSG_FATAL("OEM_TextDraw...................",0,0,0);
          OEM_TextDraw(pContext);
       }
       IDISPLAY_Update(pContext->pIDisplay);
