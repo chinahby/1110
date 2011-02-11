@@ -1068,6 +1068,7 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_MUSICBOX, IDS_STATICAPP_TITLE_MUSICBOX, NULL, 0);		
 		#endif
 
+			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_MOKA, IDS_STATICAPP_TITLE_MOKA, NULL, 0);
 		#endif
 		
         return TRUE;
@@ -1475,6 +1476,12 @@ static boolean StartApplet(Staticapp *pMe, int wParam)
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FGEN);
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_FGEN);
             break;
+
+        case IDS_STATICAPP_TITLE_MOKA:
+			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_MOKA);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_MOKA_HITZ233C);
+            break;
+        	
 #endif
 			
 	}   	

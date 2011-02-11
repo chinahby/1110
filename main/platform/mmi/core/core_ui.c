@@ -2002,6 +2002,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 			|| (cls == AEECLSID_SMARTFREN_MSHOP_HITZ233C)
 			|| (cls == AEECLSID_SMARTFREN_FACEBOOK_HITZ233C)
 			|| (cls == AEECLSID_SMARTFREN_TWITTER_HITZ233C)
+			|| (cls == AEECLSID_SMARTFREN_MOKA_HITZ233C)
 			|| (cls == AEECLSID_SMARTFREN_SFM_HITZ233C))		
 		{
 			if (dwParam == 0)

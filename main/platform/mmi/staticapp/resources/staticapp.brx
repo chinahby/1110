@@ -40,6 +40,9 @@
 	<String Id="1026" Name="IDS_STATICAPP_TITLE_MUSICBOX">
 		<Text>Musicbox</Text>
 	</String>
+	<String Id="1027" Name="IDS_STATICAPP_TITLE_MOKA">
+		<Text>Moka</Text>
+	</String>
     <String Id="1050" Name="IDS_STATICAPP_TITLE_FLEXI_FGAUL">
             <Text>FGAUL</Text>
         </String>

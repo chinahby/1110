@@ -174,7 +174,6 @@ STATIC_BREW_APP_LIB += \
     $(STATIC_BREW_APP)/fpt005/fpt005.o
 endif											
 
-endif#ifeq ($(USES_FLEXI_STATICAPP),yes)
 
 ifeq ($(USES_RESDIR),S5000)
 
@@ -602,6 +601,276 @@ CONSTFILE_FILES += \
     twt11.mif|fs:/mif/twt11.mif \
     twt11.mod|fs:/mod/twt11/twt11.mod
 endif
+endif#ifeq ($(USES_FLEXI_STATICAPP),yes)
 
 
+#wangliang add for M8 and SMART
+
+ifeq ($(USES_SMARTFREN_STATICAPP),yes)
+
+ifeq ($(USES_BSHOP),yes)
+BSHOP=yes
+else
+BSHOP=no
+endif
+
+ifeq ($(USES_FACEBOOK),yes)
+FACEBOOK=yes
+else
+FACEBOOK=no
+endif
+
+ifeq ($(USES_MDIRECTORY),yes)
+MDIRECTORY=yes
+else
+MDIRECTORY=no
+endif
+
+ifeq ($(USES_MUSICBOX),yes)
+MUSICBOX=yes
+else
+MUSICBOX=no
+endif
+
+ifeq ($(USES_MSF),yes)
+MSF=yes
+else
+MSF=no
+endif
+
+ifeq ($(USES_TWITTER),yes)
+TWITTER=yes
+else
+TWITTER=no
+endif
+
+ifeq ($(USES_TOMB),yes)
+Tomb=yes
+else
+Tomb=no
+endif
+
+ifeq ($(USES_MAGIC),yes)
+Magicsushi=yes
+else
+Magicsushi=no
+endif
+
+#四个提供外部使用的全局量
+#应用的o文件
+STATIC_BREW_APP_LIB:=#
+#应用的资源文件
+
+#####bshop application##########
+ifeq ($(BSHOP),yes)
+#todo something here   应用的名字添加
+BSHOP_DIRS:=$(STATIC_BREW_APP)/m8p/bshop
+
+vpath %.bar $(BSHOP_DIRS)
+vpath %.txt $(BSHOP_DIRS) 	
+ 	
+BSHOP_EFS_FILES = \
+    $(notdir $(wildcard $(BSHOP_DIRS)/*.txt))   
+    
+CONSTFILE_BIN_FILES += \
+    bshop.bar|fs:/mod/bshop/bshop.bar
+    	    
+EFSFILE_FILES += \
+    $(foreach filename, $(BSHOP_EFS_FILES), $(filename)|fs:/mod/bshop/$(filename))
+
+CONSTFILE_FILES += \
+    bshop.mif|fs:/mif/bshop.mif
+    
+STATIC_BREW_APP_LIB += \
+    $(STATIC_BREW_APP)/bshop/bshop.o    
+endif  ##bshop application#
+
+
+#####facebook application##########
+ifeq ($(FACEBOOK),yes)
+#todo something here   应用的名字添加
+FACEBOOK_DIRS:=$(STATIC_BREW_APP)/m8p/facebook
+
+vpath %.bar $(FACEBOOK_DIRS)
+vpath %.cuk $(FACEBOOK_DIRS)
+
+FACEBOOK_EFS_FILES = \
+    $(notdir $(wildcard $(FACEBOOK_DIRS)/*.cuk))   
+            
+CONSTFILE_BIN_FILES += \
+    facebook.bar|fs:/mod/facebook/facebook.bar
+    
+EFSFILE_FILES += \
+    $(foreach filename, $(FACEBOOK_EFS_FILES), $(filename)|fs:/mod/facebook/$(filename))    
+
+CONSTFILE_FILES += \
+    m8_facebook.mif|fs:/mif/facebook.mif
+    
+STATIC_BREW_APP_LIB += \
+    $(STATIC_BREW_APP)/facebook/facebook.o    
+endif  ##facebook application#
+
+
+######msf application##########
+ifeq ($(MSF),yes)
+MSF_DIRS:=$(STATIC_BREW_APP)/m8p/msf
+MSF_IMAGE_DIRS:=$(STATIC_BREW_APP)/m8p/msf/img
+
+vpath %.bar $(MSF_DIRS)
+vpath %.png $(MSF_IMAGE_DIRS)
+vpath %.rar $(MSF_DIRS)
+ 
+MSF_CONST_FILES = \
+    $(notdir $(wildcard $(MSF_IMAGE_DIRS)/*.png))
+
+
+        
+MSF_EFS_FILES = \
+    $(notdir $(wildcard $(MSF_DIRS)/*.rar))
+    
+CONSTFILE_BIN_FILES += \
+	msf.bar|fs:/mod/msf/msf.bar \
+    $(foreach filename, $(MSF_CONST_FILES), $(filename)|fs:/mod/msf/img/$(filename))
+    
+EFSFILE_FILES += \
+    $(foreach filename, $(MSF_EFS_FILES), $(filename)|fs:/mod/msf/$(filename))      
+
+    
+CONSTFILE_FILES += \
+    msf.mif|fs:/mif/msf.mif
+    
+STATIC_BREW_APP_LIB += \
+    $(STATIC_BREW_APP)/msf/chatwin.o \
+    $(STATIC_BREW_APP)/msf/connection.o \
+    $(STATIC_BREW_APP)/msf/friendlist.o \
+    $(STATIC_BREW_APP)/msf/msf.o \
+    $(STATIC_BREW_APP)/msf/parser_msf.o \
+    $(STATIC_BREW_APP)/msf/progress.o \
+    $(STATIC_BREW_APP)/msf/util_msf.o     
+endif  ##msf application#
+
+
+#####twitter application##########
+ifeq ($(TWITTER),yes)
+#todo something here   应用的名字添加
+TWITTER_DIRS:=$(STATIC_BREW_APP)/m8p/twitter
+
+vpath %.bar $(TWITTER_DIRS)
+vpath %.m8  $(TWITTER_DIRS)
+        
+TWITTER_EFS_FILES = \
+    $(notdir $(wildcard $(TWITTER_DIRS)/*.m8))    
+    
+CONSTFILE_BIN_FILES += \
+	twitter.bar|fs:/mod/twitter/twitter.bar    
+
+EFSFILE_FILES += \
+    $(foreach filename, $(TWITTER_EFS_FILES), $(filename)|fs:/mod/twitter/$(filename))       
+
+CONSTFILE_FILES += \
+    m8_twitter.mif|fs:/mif/twitter.mif
+    
+STATIC_BREW_APP_LIB += \
+    $(STATIC_BREW_APP)/twitter/twitter.o    
+endif ##twitter application#
+
+#####M-Directory application##########
+ifeq ($(MDIRECTORY),yes)
+#todo something here   应用的名字添加
+MDIRECTORY_DIRS:=$(STATIC_BREW_APP)/m8p/odpmora
+
+vpath %.bar  $(MDIRECTORY_DIRS)
+vpath %.dat  $(MDIRECTORY_DIRS)
+vpath %.cfg  $(MDIRECTORY_DIRS)
+        
+CONSTFILE_BIN_FILES += \
+	odpmora.bar|fs:/mod/odpmora/odpmora.bar    
+
+EFSFILE_FILES += \
+    odpconfig.cfg|fs:/mod/odpmora/odpconfig.cfg \
+    odphomedefault.dat|fs:/mod/odpmora/odphomedefault.dat
+
+CONSTFILE_FILES += \
+    m8_odpmora.mif|fs:/mif/odpmora.mif
+    
+STATIC_BREW_APP_LIB += \
+    $(STATIC_BREW_APP)/odpmora/odpmora.o    
+endif ##M-Directory application#
+   
+#####Music box application##########
+ifeq ($(MUSICBOX),yes)
+#todo something here   应用的名字添加
+MUSICBOX_DIRS:=$(STATIC_BREW_APP)/m8p/fgen
+
+vpath %.bar  $(MUSICBOX_DIRS)
+vpath %.txt  $(MUSICBOX_DIRS)
+        
+MUSICBOX_EFS_FILES = \
+    $(notdir $(wildcard $(MUSICBOX_DIRS)/*.txt))
+    
+CONSTFILE_BIN_FILES += \
+	fgen.bar|fs:/mod/fgen/fgen.bar    
+
+EFSFILE_FILES += \
+    $(foreach filename, $(MUSICBOX_EFS_FILES), $(filename)|fs:/mod/fgen/$(filename))       
+
+CONSTFILE_FILES += \
+    m8_fgen.mif|fs:/mif/fgen.mif
+    
+STATIC_BREW_APP_LIB += \
+    $(STATIC_BREW_APP)/fgen/fgen.o
+    
+endif ##Music box application#
+
+ifeq ($(Tomb),yes)
+
+TOMB_DIRS:=$(STATIC_BREW_APP)/m8p/tomb
+
+vpath %.mod $(TOMB_DIRS)
+vpath %.bar $(TOMB_DIRS)
+vpath %.txt $(TOMB_DIRS)
+vpath %.mid $(TOMB_DIRS)
+
+CONSTFILE_BIN_FILES += tomb.bar|fs:/mod/tomb/tomb.bar
+
+EFSFILE_FILES += \
+	help.txt|fs:/mod/tomb/help.txt \
+	parameter.txt|fs:/mod/tomb/parameter.txt \
+	main.mid|fs:/mod/tomb/main.mid \
+	over.mid|fs:/mod/tomb/over.mid \
+	run.mid|fs:/mod/tomb/run.mid
+	
+CONSTFILE_FILES += tomb.mif|fs:/mif/tomb.mif
+
+STATIC_BREW_APP_LIB += \
+    						$(STATIC_BREW_APP)/tomb/a1aeea~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1help~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1aeem~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1common.o \
+   							$(STATIC_BREW_APP)/tomb/a1game~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1game.o \
+   							$(STATIC_BREW_APP)/tomb/a1main~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1pay.o \
+    						$(STATIC_BREW_APP)/tomb/a1send~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1sound.o \
+    						$(STATIC_BREW_APP)/tomb/a1spla~1.o \
+    						$(STATIC_BREW_APP)/tomb/a1tomb.o \
+    						$(STATIC_BREW_APP)/tomb/a1topl~1.o
+
+endif
+
+ifeq ($(Magicsushi),yes)
+
+MAGIC_DIRS:=$(STATIC_BREW_APP)/m8p/magicsushi
+
+vpath %.mod $(MAGIC_DIRS)
+vpath %.bar $(MAGIC_DIRS)
+
+CONSTFILE_BIN_FILES += magicsushi.bar|fs:/mod/magicsushi/magicsushi.bar
+CONSTFILE_FILES += magicsushi.mif|fs:/mif/magicsushi.mif
+CONSTFILE_FILES += magicsushi.mod|fs:/mod/magicsushi/magicsushi.mod
+
+endif
+
+endif
 
