@@ -682,7 +682,7 @@ CONSTFILE_FILES += \
     bshop.mif|fs:/mif/bshop.mif
     
 STATIC_BREW_APP_LIB += \
-    $(STATIC_BREW_APP)/bshop/bshop.o    
+    $(STATIC_BREW_APP)/m8p/bshop/bshop.o    
 endif  ##bshop application#
 
 
@@ -707,7 +707,7 @@ CONSTFILE_FILES += \
     m8_facebook.mif|fs:/mif/facebook.mif
     
 STATIC_BREW_APP_LIB += \
-    $(STATIC_BREW_APP)/facebook/facebook.o    
+    $(STATIC_BREW_APP)/m8p/facebook/facebook.o    
 endif  ##facebook application#
 
 
@@ -740,13 +740,13 @@ CONSTFILE_FILES += \
     msf.mif|fs:/mif/msf.mif
     
 STATIC_BREW_APP_LIB += \
-    $(STATIC_BREW_APP)/msf/chatwin.o \
-    $(STATIC_BREW_APP)/msf/connection.o \
-    $(STATIC_BREW_APP)/msf/friendlist.o \
-    $(STATIC_BREW_APP)/msf/msf.o \
-    $(STATIC_BREW_APP)/msf/parser_msf.o \
-    $(STATIC_BREW_APP)/msf/progress.o \
-    $(STATIC_BREW_APP)/msf/util_msf.o     
+    $(STATIC_BREW_APP)/m8p/msf/chatwin.o \
+    $(STATIC_BREW_APP)/m8p/msf/connection.o \
+    $(STATIC_BREW_APP)/m8p/msf/friendlist.o \
+    $(STATIC_BREW_APP)/m8p/msf/msf.o \
+    $(STATIC_BREW_APP)/m8p/msf/parser_msf.o \
+    $(STATIC_BREW_APP)/m8p/msf/progress.o \
+    $(STATIC_BREW_APP)/m8p/msf/util_msf.o     
 endif  ##msf application#
 
 
@@ -771,7 +771,7 @@ CONSTFILE_FILES += \
     m8_twitter.mif|fs:/mif/twitter.mif
     
 STATIC_BREW_APP_LIB += \
-    $(STATIC_BREW_APP)/twitter/twitter.o    
+    $(STATIC_BREW_APP)/m8p/twitter/twitter.o    
 endif ##twitter application#
 
 #####M-Directory application##########
@@ -794,7 +794,7 @@ CONSTFILE_FILES += \
     m8_odpmora.mif|fs:/mif/odpmora.mif
     
 STATIC_BREW_APP_LIB += \
-    $(STATIC_BREW_APP)/odpmora/odpmora.o    
+    $(STATIC_BREW_APP)/m8p/odpmora/odpmora.o    
 endif ##M-Directory application#
    
 #####Music box application##########
@@ -818,7 +818,7 @@ CONSTFILE_FILES += \
     m8_fgen.mif|fs:/mif/fgen.mif
     
 STATIC_BREW_APP_LIB += \
-    $(STATIC_BREW_APP)/fgen/fgen.o
+    $(STATIC_BREW_APP)/m8p/fgen/fgen.o
     
 endif ##Music box application#
 
@@ -843,19 +843,19 @@ EFSFILE_FILES += \
 CONSTFILE_FILES += tomb.mif|fs:/mif/tomb.mif
 
 STATIC_BREW_APP_LIB += \
-    						$(STATIC_BREW_APP)/tomb/a1aeea~1.o \
-    						$(STATIC_BREW_APP)/tomb/a1help~1.o \
-    						$(STATIC_BREW_APP)/tomb/a1aeem~1.o \
-    						$(STATIC_BREW_APP)/tomb/a1common.o \
-   							$(STATIC_BREW_APP)/tomb/a1game~1.o \
-    						$(STATIC_BREW_APP)/tomb/a1game.o \
-   							$(STATIC_BREW_APP)/tomb/a1main~1.o \
-    						$(STATIC_BREW_APP)/tomb/a1pay.o \
-    						$(STATIC_BREW_APP)/tomb/a1send~1.o \
-    						$(STATIC_BREW_APP)/tomb/a1sound.o \
-    						$(STATIC_BREW_APP)/tomb/a1spla~1.o \
-    						$(STATIC_BREW_APP)/tomb/a1tomb.o \
-    						$(STATIC_BREW_APP)/tomb/a1topl~1.o
+    						$(STATIC_BREW_APP)/m8p/tomb/a1aeea~1.o \
+    						$(STATIC_BREW_APP)/m8p/tomb/a1help~1.o \
+    						$(STATIC_BREW_APP)/m8p/tomb/a1aeem~1.o \
+    						$(STATIC_BREW_APP)/m8p/tomb/a1common.o \
+   							$(STATIC_BREW_APP)/m8p/tomb/a1game~1.o \
+    						$(STATIC_BREW_APP)/m8p/tomb/a1game.o \
+   							$(STATIC_BREW_APP)/m8p/tomb/a1main~1.o \
+    						$(STATIC_BREW_APP)/m8p/tomb/a1pay.o \
+    						$(STATIC_BREW_APP)/m8p/tomb/a1send~1.o \
+    						$(STATIC_BREW_APP)/m8p/tomb/a1sound.o \
+    						$(STATIC_BREW_APP)/m8p/tomb/a1spla~1.o \
+    						$(STATIC_BREW_APP)/m8p/tomb/a1tomb.o \
+    						$(STATIC_BREW_APP)/m8p/tomb/a1topl~1.o
 
 endif
 
