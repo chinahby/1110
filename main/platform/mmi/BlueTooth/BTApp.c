@@ -16584,58 +16584,54 @@ DESCRIPTION
 ============================================================================= */
 static void BTApp_BuildDiscoverableMenu( CBTApp* pMe )
 {
-  CtlAddItem ai;
-  uint16     sel = 0;
+	CtlAddItem ai;
+	uint16     sel = 0;
 
-  IMENUCTL_Reset( pMe->m_pIMenu );
+	AECHAR WTitle[20] = {0};
 
-  BTApp_InitAddItem( &ai );
+	IMENUCTL_Reset(pMe->m_pIMenu);
 
-  // set the title
-  //IMENUCTL_SetTitle( pMe->m_pIMenu, AEE_APPSBTAPP_RES_FILE, IDS_DISCOVERABLE, NULL );
-  if(pMe->m_pIAnn != NULL)
-  {
-      //MSG_FATAL("***zzg BTAppMod_Release m_nRefs=%d***", ((BTAppMod *)po)->m_nRefs, 0, 0);
-  }  
-  
-  {
-    AECHAR WTitle[20] = {0};
+	BTApp_InitAddItem(&ai);
+
+	// set the title    
 	ISHELL_LoadResString(pMe->m_pShell,
-                         AEE_APPSBTAPP_RES_FILE,                                
-                         IDS_DISCOVERABLE,
-                         WTitle,
-                         sizeof(WTitle));
- 
-    if(pMe->m_pIAnn != NULL)
+   		                 AEE_APPSBTAPP_RES_FILE,                                
+   		                 IDS_DISCOVERABLE,
+   		                 WTitle,
+   		                 sizeof(WTitle));
+
+	if (pMe->m_pIAnn != NULL)
 	{
-	    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+	}
+
+
+	// Add individual entries to the Menu
+	BTApp_AddMenuItem(pMe, pMe->m_pIMenu, &ai, 
+					  IDS_ON_TIMED, 
+	                  pMe->mSD.bDiscoverable ? 
+	                  IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED);
+	BTApp_AddMenuItem(pMe, pMe->m_pIMenu, &ai, 
+					  IDS_OFF,
+	                  pMe->mSD.bDiscoverable ? 
+	                  IDB_BT_RADIO_UNFILLED : IDB_BT_RADIO_FILLED);
+
+	// select current setting
+	if (pMe->mSD.bDiscoverable != FALSE)
+	{
+		sel = IDS_ON_TIMED;
+	}
+	else
+	{
+		sel = IDS_OFF;
 	}
 	
-  }
+	IMENUCTL_SetSel(pMe->m_pIMenu, sel);
 
-  // Add individual entries to the Menu
-  BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_ON_TIMED, 
-                     pMe->mSD.bDiscoverable ? 
-                     IDB_BT_RADIO_FILLED : IDB_BT_RADIO_UNFILLED );
-  BTApp_AddMenuItem( pMe, pMe->m_pIMenu, &ai, IDS_OFF,
-                     pMe->mSD.bDiscoverable ? 
-                     IDB_BT_RADIO_UNFILLED : IDB_BT_RADIO_FILLED );
-  
-  // select current setting
-  if ( pMe->mSD.bDiscoverable != FALSE )
-  {
-    sel = IDS_ON_TIMED;
-  }
-  else
-  {
-    sel = IDS_OFF;
-  }
-  IMENUCTL_SetSel( pMe->m_pIMenu, sel );
-
-  // Activate menu
-  PUSH_MENU( BT_APP_MENU_DISCOVERABLE );
-  IMENUCTL_SetActive( pMe->m_pIMenu, TRUE );
-  IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE );
+	// Activate menu
+	PUSH_MENU(BT_APP_MENU_DISCOVERABLE);
+	IMENUCTL_SetActive(pMe->m_pIMenu, TRUE);
+	IDISPLAY_UpdateEx(pMe->m_pIDisplay, FALSE);
 }
 
 #ifdef FEATURE_PHONE_VR

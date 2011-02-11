@@ -888,15 +888,11 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 			}
 			*/
 			MENU_SET_SEL(IMENUCTL_GetSel(pMenu));
-			numItems = IMENUCTL_GetItemCount(pMenu);
-
-
-			
+			numItems = IMENUCTL_GetItemCount(pMenu);	
 			
 			MSG_FATAL("***zzg SearchResultDlg numItems=%d, uNumRecs=%d***", numItems, pMe->mSD.uNumRecs, 0);
 			
-#ifdef FEATURE_BT_2_1   
-			
+#ifdef FEATURE_BT_2_1   			
 			for (i = numItems; i < pMe->mSD.uNumRecs; i ++)
 			{					
 				pDev = &pMe->mRM.device[ i ];
@@ -5311,10 +5307,9 @@ static boolean BTApp_ClearDiscoverableEx( CBTApp* pMe )
 
   MSG_FATAL("***zzg BTApp_ClearDiscoverableEx***", 0, 0, 0);
 
-  ISHELL_CancelTimer( pMe->m_pShell, 
-                      (PFNNOTIFY) BTApp_ClearDiscoverableEx, pMe );
+  ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY) BTApp_ClearDiscoverableEx, pMe);
 
-  if ( (result = IBTEXTSD_SetDiscoverable( pMe->mSD.po, FALSE )) != SUCCESS )
+  if ((result = IBTEXTSD_SetDiscoverable( pMe->mSD.po, FALSE )) != SUCCESS)
   {
   	 MSG_FATAL("***zzg IBTEXTSD_SetDiscoverable FALSE***", 0, 0, 0);
 	 
