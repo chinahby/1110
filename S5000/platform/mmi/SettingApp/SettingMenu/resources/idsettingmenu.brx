@@ -125,13 +125,13 @@
 		<Text>Sibuk</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_CALLFORWARD_ANYWAY">
-		<Text>Tak terjangkau</Text>
+		<Text>bagaimanapun</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_CALLFORWARD_NOANSWER">
 		<Text>Tak ada jawaban</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_CALLFORWARD_NOCONNECT">
-		<Text>Tanpa syarat</Text>
+		<Text>Tak terhubung</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_CALLFORWARD_CANCELALL">
 		<Text>Batal</Text>

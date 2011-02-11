@@ -125,13 +125,13 @@
 		<Text>Busy</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_CALLFORWARD_ANYWAY">
-		<Text>Unreachable</Text>
+		<Text>Anyway</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_CALLFORWARD_NOANSWER">
 		<Text>No answer</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_CALLFORWARD_NOCONNECT">
-		<Text>Unconditional</Text>
+		<Text>No connect</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_CALLFORWARD_CANCELALL">
 		<Text>Cancel</Text>
