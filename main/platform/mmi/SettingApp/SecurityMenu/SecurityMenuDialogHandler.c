@@ -3384,6 +3384,15 @@ static boolean SecurityMenu_ValidPIN(CSecurityMenu *pMe, char *szPIN)
         }
         else
         {
+            if(STRLEN(szPIN)>0)
+            {
+                char ch = szPIN[STRLEN(szPIN)-1];
+                if(ch<'0' || ch>'9')
+                {
+                    szPIN[STRLEN(szPIN)-1] = '\0';
+                }
+            }
+            
             //AEEOEM_VirtualPINCheck to AEEOEM_PINCheck by chengang for CR342
             bPassed = IRUIM_PINCheck(pMe->m_pIRUIM, IRUIM_CHV1, szPIN);
 
@@ -3445,12 +3454,28 @@ static boolean SecurityMenu_ModfyPIN(CSecurityMenu *pMe, char *szPIN)
         {
             if (IRUIM_CHVEnable(pMe->m_pIRUIM, NULL))
             {
+                if(STRLEN(szPIN)>0)
+                {
+                    char ch = szPIN[STRLEN(szPIN)-1];
+                    if(ch<'0' || ch>'9')
+                    {
+                        szPIN[STRLEN(szPIN)-1] = '\0';
+                    }
+                }
                 bPassed = IRUIM_PINChange(pMe->m_pIRUIM,IRUIM_CHV1,szPIN);
                 IRUIM_CHVDisable(pMe->m_pIRUIM);
             }
         }
         else
         {
+            if(STRLEN(szPIN)>0)
+            {
+                char ch = szPIN[STRLEN(szPIN)-1];
+                if(ch<'0' || ch>'9')
+                {
+                    szPIN[STRLEN(szPIN)-1] = '\0';
+                }
+            }
             bPassed = IRUIM_PINChange(pMe->m_pIRUIM,IRUIM_CHV1,szPIN);
         }
     }
@@ -4304,6 +4329,25 @@ static boolean  SecurityAskPUKPassWordHandler(CSecurityMenu *pMe,
                         {
                             AEECHVStatus  chvst;
                             (void)IRUIM_GetCHVStatus(pMe->m_pIRUIM, &chvst);
+                            
+                            if(STRLEN(pMe->m_strPUK)>0)
+                            {
+                                char ch = pMe->m_strPUK[STRLEN(pMe->m_strPUK)-1];
+                                if(ch<'0' || ch>'9')
+                                {
+                                    pMe->m_strPUK[STRLEN(pMe->m_strPUK)-1] = '\0';
+                                }
+                            }
+                              
+                            if(STRLEN(pMe->m_strPhonePWD)>0)
+                            {
+                                char ch = pMe->m_strPhonePWD[STRLEN(pMe->m_strPhonePWD)-1];
+                                if(ch<'0' || ch>'9')
+                                {
+                                    pMe->m_strPhonePWD[STRLEN(pMe->m_strPhonePWD)-1] = '\0';
+                                }
+                            }
+                            
                             if (IRUIM_UnblockCHV(pMe->m_pIRUIM,
                                                         IRUIM_CHV1,
                                                         pMe->m_strPUK,

@@ -1800,6 +1800,15 @@ static int CoreSecurity_VerifyPIN(CCoreApp * pMe, uint8 byPinID)
   pMe->m_sCallback.pfnNotify = PINVerify_cb;
   pMe->m_sCallback.pNotifyData = pMe;
 
+  if(pMe->m_sPIN.code_len>0)
+  {
+    AECHAR ch = pMe->m_sPIN.code[pMe->m_sPIN.code_len-1];
+    if(ch<'0' || ch>'9')
+    {
+        pMe->m_sPIN.code[pMe->m_sPIN.code_len-1] = '\0';
+    }
+  }
+  
   nReturnStatus = ICARD_VerifyPin(pMe->m_pICard, byPinID, &pMe->m_sPIN,
                                   &pMe->m_sPinActionStatus, &pMe->m_sCallback);
   return nReturnStatus;
@@ -1831,6 +1840,25 @@ static int CoreSecurity_VerifyPUK(CCoreApp * pMe, uint8 byPinID)
   pMe->m_sCallback.pfnCancel = NULL;
   pMe->m_sCallback.pfnNotify = PINVerify_cb;
   pMe->m_sCallback.pNotifyData = pMe;
+
+  if(pMe->m_sPIN.code_len>0)
+  {
+    AECHAR ch = pMe->m_sPIN.code[pMe->m_sPIN.code_len-1];
+    if(ch<'0' || ch>'9')
+    {
+        pMe->m_sPIN.code[pMe->m_sPIN.code_len-1] = '\0';
+    }
+  }
+  
+  if(pMe->m_sPUK.code_len>0)
+  {
+    AECHAR ch = pMe->m_sPUK.code[pMe->m_sPUK.code_len-1];
+    if(ch<'0' || ch>'9')
+    {
+        pMe->m_sPUK.code[pMe->m_sPUK.code_len-1] = '\0';
+    }
+  }
+  
   nReturnStatus = ICARD_UnblockPin(pMe->m_pICard, byPinID, &pMe->m_sPUK, &pMe->m_sPIN,
                 &pMe->m_sPinActionStatus, &pMe->m_sCallback);
 
