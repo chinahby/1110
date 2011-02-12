@@ -967,6 +967,16 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
     switch (pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
+#ifdef FEATURE_OEMOMH
+            if(!gsdi_uim_omh_cap.omh_enabled && IRUIM_IsCardConnected(pMe->m_pIRUIM))
+            {
+                pMe->m_nMsgID = IDS_NOOMH_CARD;
+                CoreApp_ShowDialog(pMe,IDD_MSGBOX);
+                return NFSMACTION_WAIT;                    
+            }
+            // Fall Through
+        case DLGRET_MSGOK:
+#endif
 #ifdef FEATURE_UTK2
             if (IsRunAsUIMVersion() && (pMe->m_eUIMErrCode == UIMERR_NONE))
             { // 系统运行于有卡版本且卡正确无误
@@ -997,14 +1007,6 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
             pMe->m_wStartupAniTime = 0;
             //MOVE_TO_STATE(COREST_STARTUPANI);
             {
-#ifdef FEATURE_OEMOMH                  
-                if(!gsdi_uim_omh_cap.omh_enabled)
-                {
-                    pMe->m_nMsgID = IDS_NOOMH_CARD;
-                    CoreApp_ShowDialog(pMe,IDD_MSGBOX);
-                    return NFSMACTION_WAIT;                    
-                }
-#endif                
 #ifdef FEATURE_PLANEMODE
                 byte planeModeCfg;
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
@@ -1032,37 +1034,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                 }
             }
 
-            return NFSMACTION_CONTINUE;
-#ifdef FEATURE_OEMOMH 
-        case DLGRET_MSGOK:
-            MSG_FATAL("DLGRET_MSGOK",0,0,0);
-#ifdef FEATURE_PLANEMODE
-            byte planeModeCfg;
-            (void) ICONFIG_GetItem(pMe->m_pConfig,
-                                   CFGI_PLANEMODE,
-                                   &planeModeCfg,
-                                   sizeof(planeModeCfg));              
-            if(OEMNV_PLANEMODE_QUERY == planeModeCfg)
-            {
-                pMe->m_nMsgID = IDS_PLANEMODE_QUERY;
-                CoreApp_ShowDialog(pMe,IDD_MSGBOX);
-                return NFSMACTION_WAIT;
-            }
-            else if(OEMNV_PLANEMODE_ON== planeModeCfg)
-            {
-                pMe->bPlaneModeOn = TRUE;
-                IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_RSSI, ANNUN_STATE_AIR_MODE_ON );
-                cm_ph_cmd_oprt_mode(NULL, NULL, CM_CLIENT_ID_ANONYMOUS, SYS_OPRT_MODE_LPM);
-                MOVE_TO_STATE(COREST_STANDBY);
-                return NFSMACTION_CONTINUE;
-            }
-            else
-#endif //FEATURE_PLANEMODE           
-            {
-                MOVE_TO_STATE(COREST_STANDBY);
-            }
-            return NFSMACTION_CONTINUE;            
-#endif                                
+            return NFSMACTION_CONTINUE;                               
 
 #ifdef FEATURE_PLANEMODE
         case DLGRET_NO:
