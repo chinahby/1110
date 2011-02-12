@@ -4435,10 +4435,15 @@ static nv_ruim_support_status nvruim_read_esn(
 
   /* If the usage indicator is NV_RUIM_USE_MEID then the pESN from 
      the handset should be returned not the pUIMID value from the card */
-
+  MSG_FATAL("nvruim_read_esn %d", nvruim_esn_usage,0,0);
+#ifdef FEATURE_OEMOMH
+  if(nvruim_esn_usage == NV_RUIM_USE_MEID || 
+     nvruim_esn_usage == NV_RUIM_USE_SF_EUIMID_ESN)
+#else
   if(nvruim_esn_usage == NV_RUIM_USE_ESN ||
      nvruim_esn_usage == NV_RUIM_USE_MEID || 
      nvruim_esn_usage == NV_RUIM_USE_SF_EUIMID_ESN)
+#endif
   {
 #ifndef FEATURE_UIM_JCDMA_RUIM_SUPPORT
     return NV_RUIM_ITEM_NOT_SUPPORTED;
@@ -4465,7 +4470,18 @@ static nv_ruim_support_status nvruim_read_esn(
   /* Setup the command structure to read the RUIM_ID EF from the RUIM */
   cmd.access_uim.num_bytes = NVRUIM_SIZE(esn.esn);
   cmd.access_uim.data_ptr  = (byte *) &(nvruim_ruim_id_cache_buf);
+#ifdef FEATURE_OEMOMH
+  if(nvruim_esn_usage == NV_RUIM_USE_ESN)
+  {
+    cmd.access_uim.item    = UIM_CDMA_ESN_ME;
+  }
+  else
+  {
+    cmd.access_uim.item    = UIM_CDMA_RUIM_ID;
+  }
+#else
   cmd.access_uim.item      = UIM_CDMA_RUIM_ID;  
+#endif
   cmd.access_uim.offset    = 1; /* EF offset  */
   
   support_status = nvruim_read_and_check_rsp(nv_cmd_ptr, RUIM_RUIM_ID_CACHE_BIT,op_status,&dummy);
