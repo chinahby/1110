@@ -1068,7 +1068,10 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_MUSICBOX, IDS_STATICAPP_TITLE_MUSICBOX, NULL, 0);		
 		#endif
 
+		#ifdef FEATURE_SMARTFREN_MOKA
 			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_MOKA, IDS_STATICAPP_TITLE_MOKA, NULL, 0);
+		#endif
+
 		#endif
 		
         return TRUE;

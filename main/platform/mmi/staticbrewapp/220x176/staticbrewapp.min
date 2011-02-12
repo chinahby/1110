@@ -656,6 +656,12 @@ else
 Magicsushi=no
 endif
 
+ifeq ($(USES_MOKA),yes)
+MOKA=yes
+else
+MOKA=no
+endif
+
 #四个提供外部使用的全局量
 #应用的o文件
 STATIC_BREW_APP_LIB:=#
@@ -869,6 +875,28 @@ vpath %.bar $(MAGIC_DIRS)
 CONSTFILE_BIN_FILES += magicsushi.bar|fs:/mod/magicsushi/magicsushi.bar
 CONSTFILE_FILES += magicsushi.mif|fs:/mif/magicsushi.mif
 CONSTFILE_FILES += magicsushi.mod|fs:/mod/magicsushi/magicsushi.mod
+
+endif
+
+ifeq ($(MOKA),yes)
+
+MOKA_DIRS:=$(STATIC_BREW_APP)/m8p/moka
+
+vpath %.bar $(MOKA_DIRS)
+vpath %.txt $(MOKA_DIRS)
+
+
+CONSTFILE_BIN_FILES += moka.bar|fs:/mod/moka/moka.bar
+
+EFSFILE_FILES += \
+	aboutmoka.txt|fs:/mod/moka/aboutmoka.txt \
+	helpmoka.txt|fs:/mod/moka/helpmoka.txt \
+	homemoka.txt|fs:/mod/moka/homemoka.txt
+	
+CONSTFILE_FILES += moka.mif|fs:/mif/moka.mif
+
+STATIC_BREW_APP_LIB += \
+					$(STATIC_BREW_APP)/m8p/moka/moka.o
 
 endif
 
