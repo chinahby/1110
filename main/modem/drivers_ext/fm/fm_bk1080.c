@@ -82,7 +82,7 @@ static uint8 Operation_Beken_FM_2w(uint8 operation, uint8 *data,uint8 start_reg,
 	fm_i2c_command.bus_id     	= I2C_BUS_HW_CTRL;
 	fm_i2c_command.slave_addr 	= FM_BK1080_I2C_ID;
 	/*lint -save -e655 */
-	fm_i2c_command.options    	= (i2c_options_type) (I2C_REG_DEV | I2C_STOP_START_BEFORE_READ);
+	fm_i2c_command.options    	= (i2c_options_type) (I2C_DFLT_ADDR_DEV | I2C_STOP_START_BEFORE_READ | I2C_DATA_REG_WRITE );
 
 	if ( operation == FM_I2C_READ )
 	{
