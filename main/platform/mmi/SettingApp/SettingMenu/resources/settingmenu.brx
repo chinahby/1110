@@ -290,7 +290,7 @@
 		<Text>Status</Text>
 	</STRING>
 	<STRING Id="1097" Name="IDS_AUTO_POWER_TITLE">
-		<Text>Auto power on/off</Text>
+		<Text>Auto power on/off </Text>
 	</STRING>
 	<STRING Id="1098" Name="IDS_SHAKE_TITLE">
 		<Text>Shake-shake</Text>
