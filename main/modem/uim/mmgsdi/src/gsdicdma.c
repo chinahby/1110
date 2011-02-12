@@ -1201,8 +1201,6 @@ DEPENDENCIES
 RETURN VALUE
   Does not return.
 ===========================================================================*/
-
-
 gsdi_returns_T gsdi_cdma_proc_get_ruim_capabilities (
     gsdi_slot_id_type               slot
 )

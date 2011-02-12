@@ -639,36 +639,10 @@ int32 uim_rxlev_count = 0;
 /* use an extra guard time of 1 etus over the default guard time of 2 etus */
 #define UIM_UART_DM_EXTRA_GUARD_TIME 1
 
-/* Work-waiting time correction for 4 byte duration is needed in the case of 
- * UART_DM as there could be 4 bytes in the unpacking buffer yet to be transmitted 
- * to the card.
- *
- * Therefore, the work-waiting time correction is:
- *      (4 byte time) + (4* guard time between bytes )
- *      = (4 * 10) + (4 * 3) = 52 ETUS
- * 
- * Please note that this delay is not applicable to legacy UARTs.
- */  
-
-#define UIM_FOUR_BYTE_TIME_DELAY 52
-
-/* Second to milliseconds macro */
-#define UIM_1SEC                 1000
-
-/* The work-waiting time correction in milliseconds */
-#define UIM_UART_DM_WAITING_TIME_CORRECTION                        \
-    (rex_timer_cnt_type) (UIM_FOUR_BYTE_TIME_DELAY *               \
-                          UIM_1SEC * crcf_values[uim_FI_current])  \
-                          / (braf_values[uim_DI_current] *         \
-                             uim_clk_freq[uim_drv_slot])
-
 #else
 
 /* use an extra guard time of 0 etus over the default guard time of 2 etus */
 #define UIM_UART_DM_EXTRA_GUARD_TIME 0
-
-/* Work-waiting time correction is not needed for legacy UARTs */
-#define UIM_UART_DM_WAITING_TIME_CORRECTION (rex_timer_cnt_type)0 
 
 #endif /* FEATURE_UIM_UART_DM */
 
@@ -1210,7 +1184,7 @@ LOCAL int num_samples_of_tx_byte[UIM_NUM_DRV_SLOTS];
 
 #if defined(FEATURE_NEW_SLEEP_API) && defined(FEATURE_UIM_USES_NEW_SLEEP_API)
 /* This variable holds the SLEEP Handle for voting */
-sleep_okts_handle uim_sleep_okts_handle = (sleep_okts_handle)0;
+sleep_okts_handle uim_sleep_okts_handle;
 #endif /* FEATURE_NEW_SLEEP_API && FEATURE_UIM_USES_NEW_SLEEP_API */
 
 /*
@@ -1349,10 +1323,6 @@ uim_drv_slot_type uim_drv_slot = UIM_DRV_SLOT2;
 boolean uim_warning1_indicator = FALSE;
 boolean uim_warning2_indicator = FALSE;
 
-#ifdef FEATURE_UIM_UART_DM
-boolean uim_is_parity_in_atr  = FALSE;
-#endif /* FEATURE_UIM_UART_DM */
-
 #ifdef FEATURE_UIM_DEBUG_LOG
 #include "ts.h"
 
@@ -1371,8 +1341,6 @@ LOCAL uim_log_char_type   uim_log_char;
 LOCAL void uim_log_put_buffer(void);
 LOCAL void uim_log_put_char(void);
 LOCAL void uim_log_put_tstamp(void);
-#endif /* FEATURE_UIM_DEBUG_LOG */
-
 LOCAL void uim_enable_rx
 (
   int rx_watermark_size,
@@ -1551,12 +1519,11 @@ LOCAL void rx_isr_rx_epilogue
   uim_drv_slot_type uim_drv_slot  /* Slot control variable */
 );
 
-LOCAL boolean uim_is_get_response_allowed
+LOCAL boolean uim_check_to_do_get_response_if_seek
 (
   void
 );
 
-#ifdef FEATURE_UIM_DEBUG_LOG
 /*===========================================================================
 
 FUNCTION UIM_LOG_PUT_BUFFER
@@ -3099,8 +3066,7 @@ void uim_dev_init
   -------------------------------------------------------------------------*/
 
   #ifdef FEATURE_UIM_UART_DM
-  /* Enable block mode for first time */
-  UIM_PRG_MR2 ( 0x3E | MSMU_MR2_ERRMODE_BLOCK);
+  UIM_PRG_MR2 ( 0x3E );
   #else
   UIM_PRG_MR2 ( (MSMU_MR2_8BPC | MSMU_MR2_2SB | MSMU_MR2_EPAR) );
   #endif /* FEATURE_UIM_UART_DM */
@@ -3726,16 +3692,8 @@ void uim_reset
 
   #ifdef FEATURE_UIM_UART_DM
 
-  if(uim_is_parity_in_atr)
-  {
-    /* enable the parity error work-around as ATR has been received once */
-    UIM_PRG_IPR(MSMU_IPR_DEF_STALE_TIMEOUT | MSMU_IPR_PAR_ERR_FIX_ENABLE);
-  }
-  else
-  {
-    /* Set the stale timeout: Do not enable the parity error workaround in hardware */
-    UIM_PRG_IPR(MSMU_IPR_DEF_STALE_TIMEOUT);
-  }
+  /* Set the stale timeout: Do not enable the parity error workaround in hardware */
+  UIM_PRG_IPR(MSMU_IPR_DEF_STALE_TIMEOUT);
 
   /* Turn OFF the ability to echo back sent bytes.
      Set SIM_CFG: MASK_RX to 1 */
@@ -3955,8 +3913,13 @@ void uim_reset
     (void)rex_set_timer(&uim_cmd_rsp_timer, 0);
   }
 #else /*not defined FEATURE_UIM_HANDLE_NO_ATR_IN_40000_CLK_CYCLES*/
-  (void)rex_set_timer(&uim_cmd_rsp_timer, ( uim_work_waiting_time[uim_drv_slot] 
-                       + UIM_UART_DM_WAITING_TIME_CORRECTION ) );
+#ifdef FEATURE_UIM_UART_DM
+  /* Set the comand response timer since we are waiting for the ATR */
+  /* Adding 5ms to the work waiting time as SW overhead */
+  (void)rex_set_timer(&uim_cmd_rsp_timer, ( uim_work_waiting_time[uim_drv_slot] + 5 ) );
+#else
+  (void)rex_set_timer(&uim_cmd_rsp_timer, uim_work_waiting_time[uim_drv_slot]);
+#endif /* FEATURE_UIM_UART_DM */
 #endif /*FEATURE_UIM_HANDLE_NO_ATR_IN_40000_CLK_CYCLES*/
 } /* end - uim_reset */
 
@@ -4852,12 +4815,8 @@ void uim_t_1_send_r_block
   byte r_block_code         /* R-block response code */
 )
 {
-  /* When BWT times-out, there is no need waiting for BGT */
-  if( uim_t_1_error_count==0 )
-  {
-    /* wait here for the BGT time */
-    rex_sleep(uim_t_1_bgt);
-  }
+  /* wait here for the BGT time */
+  rex_sleep(uim_t_1_bgt);
 
   /* Clear the UART RX FIFO by reading byte/word one by one and
      by doing a UART RX reset to clear the error flags */
@@ -4949,12 +4908,8 @@ void uim_t_1_send_s_block
   byte s_block_data_size    /* S-block data size */
 )
 {
-  /* When BWT times-out, there is no need waiting for BGT */
-  if( uim_t_1_error_count==0 )
-  {
-    /* wait here for the BGT time */
-    rex_sleep(uim_t_1_bgt);
-  }
+  /* wait here for the BGT time */
+  rex_sleep(uim_t_1_bgt);
 
   /* Clear the UART RX FIFO by reading byte/word one by one and
      by doing a UART RX reset to clear the error flags */
@@ -5403,31 +5358,6 @@ LOCAL void rx_isr_receive_atr
 
         } /* end if - check for inverse convention byte. */
 
-#ifdef FEATURE_UIM_UART_DM
-        /* Check if parity is received in ATR without any convention mismatch */
-        else if((rx_value == UIM_ATR_TS_DIRECT_CONV && 
-                  uim_convention[uim_drv_slot] == UIM_DIRECT_CONVENTION) ||
-                 (rx_value == UIM_ATR_TS_INVERSE_CONV && 
-                  uim_convention[uim_drv_slot] == UIM_INVERSE_CONVENTION))
-        {
-          if(FALSE == uim_is_parity_in_atr)
-          {
-            uim_is_parity_in_atr = TRUE;
-            uim_rx_state[uim_drv_slot] = UIM_RX_PROCESS_IDLE;
-
-            /* Set the number of bytes received to zero. */
-            resp_buf[uim_drv_slot]->cmd_rsp_size = 0;
-
-            /* Give a bad status. */
-            resp_buf[uim_drv_slot]->cmd_status = UIM_CONVENTION_ERROR;
-
-            /* Inform the UIM server that the ATR reception is finished*/
-            atr_rx_callback_func[uim_drv_slot] ();
-
-            reinit_rxinit = FALSE;
-          }
-        }
-#endif /* FEATURE_UIM_UART_DM */
       } /* end if - this is the first byte received. */
 #endif /* FEATURE_UIM_SUPPORT_INVERSE_CONVENTION */
       /* Do not process this byte. */
@@ -5705,13 +5635,7 @@ LOCAL void rx_isr_receive_atr
   {
     /* enable the parity error work-around only after the ATR is received */
     UIM_PRG_IPR(MSMU_IPR_DEF_STALE_TIMEOUT | MSMU_IPR_PAR_ERR_FIX_ENABLE);
-#ifdef FEATURE_UIM_UART_DM
-    if(uim_convention[uim_drv_slot] == UIM_DIRECT_CONVENTION)
-    {
-      /* Enable character mode */
-      UIM_PRG_MR2 ( (MSMU_MR2_8BPC | MSMU_MR2_2SB | MSMU_MR2_EPAR));
-    }
-#endif /* FEATURE_UIM_UART_DM */
+
     uim_reset_uart(uim_drv_slot);
   }
 #endif /* FEATURE_UIM_UART_DM */
@@ -6988,55 +6912,24 @@ void rx_isr_sw1_p3_bad_dm
     /* Determine if the local buffer is full */
     if (num_resp_bytes_rcvd_total[uim_drv_slot] != UIM_MAX_CHARS)
     {
-      if(uim_processing_stream_apdu())
+      /* Determine how much will fit into the buffer */
+      if ((num_resp_bytes_rcvd_total[uim_drv_slot] + sw2) > UIM_MAX_CHARS)
       {
-        /* In case of stream apdu: 
-           1. Report bad p3 status words to the clients.
-           2. Do not perform resend apdu internally.
-        */
-        /* Save the status word in case it is a true status word response */
-        resp_buf[uim_drv_slot]->sw2 = sw2;
+        sw2 = (byte)(UIM_MAX_CHARS - num_resp_bytes_rcvd_total[uim_drv_slot]);
+      } /* end if - requested size is too big for local buffer */
 
-        /* Set the number of bytes received to zero. */
-        resp_buf[uim_drv_slot]->cmd_rsp_size = 0;
-
-        /* Indicate APDU result */
-        resp_buf[uim_drv_slot]->cmd_status = UIM_DONE;
-
-        /* Call the response callback function */
-        apdu_resp_callback_func[uim_drv_slot]();
-
-#ifdef FEATURE_UIM_TOOLKIT_DOWNLOAD_ERROR
-        /* This flag is processed in the Normal end SW processing.
-           It distinguishes between data download error and all other
-           results. */
-        processing_download_error[uim_drv_slot] = FALSE;
-#endif /* FEATURE_UIM_TOOLKIT_DOWNLOAD_ERROR */
-
-        /* Change to idle */
-        uim_rx_state[uim_drv_slot] = UIM_RX_PROCESS_IDLE;
-      }
-      else
-      {
-        /* Determine how much will fit into the buffer */
-        if ((num_resp_bytes_rcvd_total[uim_drv_slot] + sw2) > UIM_MAX_CHARS)
-        {
-          sw2 = (byte)(UIM_MAX_CHARS - num_resp_bytes_rcvd_total[uim_drv_slot]);
-        } /* end if - requested size is too big for local buffer */
-
-        /* Resend the last APDU with p3 equal to SW2 */
-        cmd_req[uim_drv_slot].protocol        = uimdrv_protocol[uim_drv_slot];
-        cmd_req[uim_drv_slot].apdu_hdr        = last_sent_apdu[uim_drv_slot];
-        cmd_req[uim_drv_slot].apdu_hdr.p3     = sw2;
-        cmd_req[uim_drv_slot].instrn_case     = uim_last_instrn_case[uim_drv_slot];
-        cmd_req[uim_drv_slot].rsp_ptr         = resp_buf[uim_drv_slot];
-        cmd_req[uim_drv_slot].rpt_function    =
-          apdu_resp_callback_func[uim_drv_slot];
-        /* Wait long enough before responding to procedure byte */
-        uim_clk_busy_wait( uim_response_byte_delay );
-        /* Send the last command command */
-        uim_send_apdu ( &cmd_req[uim_drv_slot] );
-      }
+      /* Resend the last APDU with p3 equal to SW2 */
+      cmd_req[uim_drv_slot].protocol        = uimdrv_protocol[uim_drv_slot];
+      cmd_req[uim_drv_slot].apdu_hdr        = last_sent_apdu[uim_drv_slot];
+      cmd_req[uim_drv_slot].apdu_hdr.p3     = sw2;
+      cmd_req[uim_drv_slot].instrn_case     = uim_last_instrn_case[uim_drv_slot];
+      cmd_req[uim_drv_slot].rsp_ptr         = resp_buf[uim_drv_slot];
+      cmd_req[uim_drv_slot].rpt_function    =
+        apdu_resp_callback_func[uim_drv_slot];
+      /* Wait long enough before responding to procedure byte */
+      uim_clk_busy_wait( uim_response_byte_delay );
+      /* Send the last command command */
+      uim_send_apdu ( &cmd_req[uim_drv_slot] );
     }
     else /* The local buffer is full */
     {
@@ -8539,12 +8432,6 @@ LOCAL void rx_isr_proc_procedure_bytes_dm
 
                   default:
                     {
-#ifdef FEATURE_HANDLE_UNKNOWN_ACK_BYTE
-                       /* Toggle Instruction class for one more try */
-                       uim_toggle_instrn_class = !uim_toggle_instrn_class;
-                       return;
-#endif /* FEATURE_HANDLE_UNKNOWN_ACK_BYTE */
-
                       /* Indicate the task to ignore the following timeout */
                       uim_bad_status_words_error = TRUE;
 
@@ -8743,7 +8630,7 @@ LOCAL void rx_isr_proc_procedure_bytes_dm
                   uim_rx_state[uim_drv_slot] = UIM_RX_SW1_WARNINGS1;
                   if ( (uim_last_instrn_case[uim_drv_slot] == UIM_INSTRN_CASE_4 ) &&
                        (last_sent_apdu[uim_drv_slot].instrn != UIM_GENERATE_ASY_KEY_PAIR ) &&
-                       uim_is_get_response_allowed())
+                       uim_check_to_do_get_response_if_seek())
                   {
                     uim_sw1_warnings1_normal_end_occured = TRUE;
 
@@ -8772,7 +8659,7 @@ LOCAL void rx_isr_proc_procedure_bytes_dm
                    */
                   if ( (uim_last_instrn_case[uim_drv_slot] == UIM_INSTRN_CASE_4 ) &&
                        (last_sent_apdu[uim_drv_slot].instrn != UIM_GENERATE_ASY_KEY_PAIR ) &&
-                       uim_is_get_response_allowed())
+                       uim_check_to_do_get_response_if_seek())
                   {
 
                     uim_force_get_response = TRUE;
@@ -9002,9 +8889,7 @@ LOCAL void rx_isr_process_overrun_data
     rx_value = UIM_GET_RX_WORD();
     for (i = 0;i < 4; i++)
     {
-#ifdef FEATURE_UIM_DEBUG_LOG
       UIM_LOG_PUT_BYTE(UIM_LOG_RX_DATA, (byte)( (rx_value >> (i * 8)) & 0xFF) );
-#endif /* FEATURE_UIM_DEBUG_LOG */
     }
 #else
     /* Get the next received byte. */
@@ -9496,11 +9381,6 @@ LOCAL void rx_isr_proc_procedure_bytes
 
                 /* Give a bad status. */
                 resp_buf[uim_drv_slot]->cmd_status = UIM_PROBLEM;
-
-#ifdef FEATURE_HANDLE_UNKNOWN_ACK_BYTE
-                /* Toggle Instruction class for one more try */
-                uim_toggle_instrn_class = !uim_toggle_instrn_class;
-#endif /* FEATURE_HANDLE_UNKNOWN_ACK_BYTE */
 
                 return;
                 /* Should I tell the UIM server of this failure? */
@@ -10735,55 +10615,24 @@ LOCAL void rx_isr_sw1_p3_bad
     /* Determine if the local buffer is full */
     if (num_resp_bytes_rcvd_total[uim_drv_slot] != UIM_MAX_CHARS)
     {
-      if(uim_processing_stream_apdu())
+      /* Determine how much will fit into the buffer */
+      if ((num_resp_bytes_rcvd_total[uim_drv_slot] + sw2) > UIM_MAX_CHARS)
       {
-        /* In case of stream apdu: 
-           1. Report bad p3 status words to the clients.
-           2. Do not perform resend apdu internally.
-        */
-        /* Save the status word in case it is a true status word response */
-        resp_buf[uim_drv_slot]->sw2 = sw2;
+        sw2 = (byte)(UIM_MAX_CHARS - num_resp_bytes_rcvd_total[uim_drv_slot]);
+      } /* end if - requested size is too big for local buffer */
 
-        /* Set the number of bytes received to zero. */
-        resp_buf[uim_drv_slot]->cmd_rsp_size = 0;
-
-        /* Indicate APDU result */
-        resp_buf[uim_drv_slot]->cmd_status = UIM_DONE;
-
-        /* Call the response callback function */
-        apdu_resp_callback_func[uim_drv_slot]();
-
-#ifdef FEATURE_UIM_TOOLKIT_DOWNLOAD_ERROR
-        /* This flag is processed in the Normal end SW processing.
-           It distinguishes between data download error and all other
-           results. */
-        processing_download_error[uim_drv_slot] = FALSE;
-#endif /* FEATURE_UIM_TOOLKIT_DOWNLOAD_ERROR */
-
-        /* Change to idle */
-        uim_rx_state[uim_drv_slot] = UIM_RX_PROCESS_IDLE;
-      }
-      else
-      {
-        /* Determine how much will fit into the buffer */
-        if ((num_resp_bytes_rcvd_total[uim_drv_slot] + sw2) > UIM_MAX_CHARS)
-        {
-          sw2 = (byte)(UIM_MAX_CHARS - num_resp_bytes_rcvd_total[uim_drv_slot]);
-        } /* end if - requested size is too big for local buffer */
-
-        /* Resend the last APDU with p3 equal to SW2 */
-        cmd_req[uim_drv_slot].protocol        = uimdrv_protocol[uim_drv_slot];
-        cmd_req[uim_drv_slot].apdu_hdr        = last_sent_apdu[uim_drv_slot];
-        cmd_req[uim_drv_slot].apdu_hdr.p3     = sw2;
-        cmd_req[uim_drv_slot].instrn_case     = uim_last_instrn_case[uim_drv_slot];
-        cmd_req[uim_drv_slot].rsp_ptr         = resp_buf[uim_drv_slot];
-        cmd_req[uim_drv_slot].rpt_function    =
-          apdu_resp_callback_func[uim_drv_slot];
-        /* Wait long enough before responding to procedure byte */
-        uim_clk_busy_wait( uim_response_byte_delay );
-        /* Send the last command command */
-        uim_send_apdu ( &cmd_req[uim_drv_slot] );
-      }
+      /* Resend the last APDU with p3 equal to SW2 */
+      cmd_req[uim_drv_slot].protocol        = uimdrv_protocol[uim_drv_slot];
+      cmd_req[uim_drv_slot].apdu_hdr        = last_sent_apdu[uim_drv_slot];
+      cmd_req[uim_drv_slot].apdu_hdr.p3     = sw2;
+      cmd_req[uim_drv_slot].instrn_case     = uim_last_instrn_case[uim_drv_slot];
+      cmd_req[uim_drv_slot].rsp_ptr         = resp_buf[uim_drv_slot];
+      cmd_req[uim_drv_slot].rpt_function    =
+        apdu_resp_callback_func[uim_drv_slot];
+      /* Wait long enough before responding to procedure byte */
+      uim_clk_busy_wait( uim_response_byte_delay );
+      /* Send the last command command */
+      uim_send_apdu ( &cmd_req[uim_drv_slot] );
     }
     else /* The local buffer is full */
     {
@@ -12218,6 +12067,9 @@ LOCAL void rx_isr_send_prologue_dm
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
+  /* Set the ISR timer to the character waiting time */
+  uim_work_waiting_time[uim_drv_slot] = uim_t_1_cwt;
+
   /* Check if there is room in the Tx FIFO */
   if ( UIM_READ_MISR() & MSMU_ISR_TXLEV )
   {
@@ -12322,26 +12174,6 @@ LOCAL void rx_isr_recv_t_1_block
 
   /* A boolean variable to indicate if stale received */
   boolean stale_rcvd = FALSE;
-
-  /* Wait for TX_READY event to get confirmation that the epilogue 
-     bytes are sent */
-  if ( (uim_rx_sub_state == UIM_RX_WAIT_FOR_TXREADY) &&
-       (UIM_READ_MISR() & MSMU_ISR_TX_READY) )
-  {
-    /* Clear the TX_READY interrupt */
-    UIM_CLEAR_TX_READY_INT();
-
-    /* Set the ISR timer to the block waiting time */
-    uim_work_waiting_time[uim_drv_slot] = uim_t_1_bwt * uim_t_1_wtx;
-
-    /* Reset the waiting time extension */
-    uim_t_1_wtx = 1;
-
-    /* Set the sub state to PROLOGUE_ST */
-    uim_rx_sub_state = UIM_RX_T_1_RX_PROLOGUE_ST;
-
-    return;
-  }
 
   if (UIM_READ_MISR() & MSMU_IMR_RXLEV)
   {
@@ -12961,9 +12793,8 @@ LOCAL void rx_isr_send_epilogue_dm
       /* Program the stale timeout value */
       UIM_PRG_IPR(MSMU_IPR_DEF_STALE_TIMEOUT);
 
-      /* Enable the TX_READY, RXLEV, RXSTALE, RXBREAK interrupts */
-      UIM_PRG_IMR ( (MSMU_IMR_TX_READY | MSMU_IMR_RXLEV | MSMU_IMR_RXSTALE |
-                   MSMU_IMR_RXBREAK) );
+      /* Enable the RXLEV, RXSTALE and RXBREAK interrupts */
+      UIM_PRG_IMR ( ( MSMU_IMR_RXLEV | MSMU_IMR_RXSTALE | MSMU_IMR_RXBREAK) );
 
       /* Enable Stale event */
       UIM_ENABLE_RX_STALE_INT();
@@ -12971,7 +12802,7 @@ LOCAL void rx_isr_send_epilogue_dm
       /* Receive the prologue field from the card */
       num_resp_bytes_rcvd[uim_drv_slot] = 0;
       uim_rx_state[uim_drv_slot] = UIM_RX_T_1_RECV_T_1_BLOCK_DM;
-      uim_rx_sub_state = UIM_RX_WAIT_FOR_TXREADY;
+      uim_rx_sub_state = UIM_RX_T_1_RX_PROLOGUE_ST;
       /* Initialize the EDC fields */
       if (UIM_T_1_EDC_LRC == uim_t_1_edc)
       {
@@ -13358,12 +13189,6 @@ LOCAL void uim_rx_isr
    */
   if ( !UIM_IS_UIM_CLK_ON() )
   {
-    /* Enable the UART and UART_USIM clocks */
-    UIM_TCXO_MUST_BE_ON();
-    /* Reset the UART to clear the interrupt status and flush the RX/TX FIFOs */
-    uim_reset_uart (uim_drv_slot);
-    /* Disable the UART and UART_USIM clocks */
-    UIM_TCXO_CAN_BE_OFF();    
     return;
   }
 
@@ -13810,29 +13635,10 @@ LOCAL void uim_rx_isr
           break;
 
         case UIM_RX_OVERRUN:              /* Rx overrun has occured */
+        case UIM_RX_UNKNOWN_PROC_BYTE_RCVD:
           {
             /* Flush the data */
             rx_isr_process_overrun_data( uim_drv_slot );
-          }
-          break;
-
-	 case UIM_RX_UNKNOWN_PROC_BYTE_RCVD:
-          {
-#ifdef  FEATURE_UIM_HANDLE_UNKNOWN_PROC_BYTES_AS_CMD_TIMEOUT
-            MSG_HIGH("Process Unknown byte",0,0,0);
-            uim_bad_status_words_error = FALSE;
-
-            /* Reset the UART RX */
-            uim_reset_receiver();
-
-            /* set the timeout signal so that the command expiry 
-               call-back is called which sets the uim_rx_state to IDLE
-               and masks the UART interrupts */
-            (void)rex_set_timer(&uim_cmd_rsp_timer,0);
-#else /* !FEATURE_UIM_HANDLE_UNKNOWN_PROC_BYTE_AS_CMD_TIMEOUT */
-            /* Flush the data */
-            rx_isr_process_overrun_data( uim_drv_slot );
-#endif /* FEATURE_UIM_HANDLE_UNKNOWN_PROC_BYTE_AS_CMD_TIMEOUT */
           }
           break;
 
@@ -14042,7 +13848,7 @@ LOCAL void uim_rx_isr
              */
             if ( (uim_last_instrn_case[uim_drv_slot] == UIM_INSTRN_CASE_4 ) &&
                  (last_sent_apdu[uim_drv_slot].instrn != UIM_GENERATE_ASY_KEY_PAIR ) &&
-                 uim_is_get_response_allowed())
+                 uim_check_to_do_get_response_if_seek())
             {
               uim_sw1_warnings1_normal_end_occured = TRUE;
 
@@ -14072,7 +13878,7 @@ LOCAL void uim_rx_isr
              */
             if ( (uim_last_instrn_case[uim_drv_slot] == UIM_INSTRN_CASE_4 ) &&
                  (last_sent_apdu[uim_drv_slot].instrn != UIM_GENERATE_ASY_KEY_PAIR )&&
-                 uim_is_get_response_allowed())
+                 uim_check_to_do_get_response_if_seek())
             {
               uim_force_get_response = TRUE;
               uim_get_resp_sw1 = SW1_END_RESP;
@@ -14202,11 +14008,36 @@ LOCAL void uim_rx_isr
 #endif
       )
   {
-    /* Set the command response timer since we are still waiting for more
+    /* Set the comand response timer since we are still waiting for more
        bytes */
-    (void) rex_set_timer(&uim_cmd_rsp_timer, 
-                (uim_work_waiting_time[uim_drv_slot] + 
-                         UIM_UART_DM_WAITING_TIME_CORRECTION));
+#ifdef FEATURE_UIM_UART_DM
+
+    /* Enabling the work waiting fix for only T=0 protocol */
+    switch(uim_rx_state[uim_drv_slot])
+    {
+#ifdef FEATURE_UIM_T_1_SUPPORT
+      case UIM_RX_T_1_RECV_T_1_BLOCK_DM:
+      case UIM_RX_T_1_SEND_PROLOGUE_ST:
+      case UIM_RX_T_1_SEND_INFO_ST:
+      case UIM_RX_T_1_SEND_EPILOGUE_ST:
+      case UIM_RX_T_1_RX_PROLOGUE_ST:
+      case UIM_RX_T_1_RX_INFO_ST:
+      case UIM_RX_T_1_RX_EPILOGUE_ST:
+        {
+          (void) rex_set_timer(&uim_cmd_rsp_timer, 256*uim_work_waiting_time[uim_drv_slot]);
+        }
+        break;
+#endif /* FEATURE_UIM_T_1_SUPPORT */
+      default:
+        {
+          /* Adding 5ms to the work waiting time as SW overhead */
+          (void) rex_set_timer(&uim_cmd_rsp_timer, (uim_work_waiting_time[uim_drv_slot] + 5) );
+        }
+        break;
+    }
+#else
+    (void) rex_set_timer(&uim_cmd_rsp_timer, uim_work_waiting_time[uim_drv_slot]);
+#endif /* FEATURE_UIM_UART_DM */
 
 #ifdef UIM_DRIVER_TIMESTAMP
 #ifdef FEATURE_UIM_T_1_SUPPORT
@@ -14700,21 +14531,14 @@ void uim_cmd_rsp_timer_expiry_cb (unsigned long unused)
      to the previous count, then do not ignore the WWT timeout and proceed in
      powering down the SIM interface. */
 
-  if( (UIM_READ_MISR() & MSMU_IMR_RXSTALE) 
-        || (num_bytes_in_this_rx_transfer[uim_drv_slot] < uim_bytes_waiting_in_rxfifo())
+  if( (num_bytes_in_this_rx_transfer[uim_drv_slot] < uim_bytes_waiting_in_rxfifo())
         || (UIM_READ_STATUS() & MSMU_SR_RXRDY) )
   {
-#ifdef CUST_EDITION
-    num_bytes_in_this_rx_transfer[uim_drv_slot] = uim_bytes_waiting_in_rxfifo();
-#else
     num_bytes_in_this_rx_transfer[uim_drv_slot] = 0;
-#endif
 
     /* Set the command response timer since we are still waiting for more
-       bytes. */
-    (void) rex_set_timer(&uim_cmd_rsp_timer, 
-                  (uim_work_waiting_time[uim_drv_slot] + 
-                            UIM_UART_DM_WAITING_TIME_CORRECTION));
+       bytes. Adding 5ms to the work waiting time as SW overhead */
+    (void) rex_set_timer(&uim_cmd_rsp_timer, (uim_work_waiting_time[uim_drv_slot] + 5));
   }
 #else /* ! FEATURE_UIM_UART_DM */
   if ( (UIM_READ_STATUS() & MSMU_SR_RXRDY) ||
@@ -14754,29 +14578,6 @@ void uim_cmd_rsp_timer_expiry_cb (unsigned long unused)
 
   return;
 } /* uim_cmd_rsp_timer_expiry_cb */
-
-/*===========================================================================
-
-FUNCTION UIM_40K_ATR_TIMER_EXPIRY_CB
-
-DESCRIPTION
-  This procedure is registered as a call-back associated with the expiry of
-  the 40K ATR timer. This call-back is called in the context of the high 
-  priority timer task.
-
-DEPENDENCIES
-  None
-
-RETURN VALUE
-  None
-
-SIDE EFFECTS
-  Power down of the SIM interface if the command response timeout expired.
-
-===========================================================================*/
-#ifdef FEATURE_UIM_HANDLE_NO_ATR_IN_40000_CLK_CYCLES
-#error code not present
-#endif /* FEATURE_UIM_HANDLE_NO_ATR_IN_40000_CLK_CYCLES */
 
 /*===========================================================================
 
@@ -14830,7 +14631,7 @@ void uim_uimdrv_flush_uart(void)
 
 /*===========================================================================
 
-FUNCTION UIM_IS_GET_RESPONSE_ALLOWED
+FUNCTION UIM_CHECK_TO_DO_GET_RESPONSE_IF_SEEK
 
 DESCRIPTION
   This procedure determines if get response should be done or not if the last
@@ -14847,12 +14648,10 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-LOCAL boolean uim_is_get_response_allowed()
+LOCAL boolean uim_check_to_do_get_response_if_seek()
 {
   if(last_sent_apdu[uim_drv_slot].instrn == SEEK)
   {
-    /* Check if the ENS nv item is set to 1 or
-       it is a gcf iccid */
     if((TRUE == uim_nv_ens_enabled_flag) || 
         (TRUE == uim_is_test_iccid()))
     {
@@ -14868,7 +14667,7 @@ LOCAL boolean uim_is_get_response_allowed()
   {
     return TRUE; /* Not a SEEK command */
   }
-}/* uim_is_get_response_allowed */
+}/* uim_check_to_do_get_response_if_seek */
 
 
 /*===========================================================================

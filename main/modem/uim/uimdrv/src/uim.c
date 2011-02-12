@@ -7352,6 +7352,7 @@ LOCAL void uim_init( void )
   byte i; /* Index into free buffer pool */
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /* -----------------
   ** Initialize timers
   ** ----------------- */
@@ -10003,7 +10004,7 @@ void uim_cmd (
     MSG_ERROR("uim_cmd cmd_ptr is NULL",0,0,0);
     return;
   }
-  
+
   if (!UIM_IS_CMD_VALID_IN_MODE(cmd_ptr) )
   {
       UIM_ERROR_MSG("Un expected command while UIM in passive mode",0,0,0);

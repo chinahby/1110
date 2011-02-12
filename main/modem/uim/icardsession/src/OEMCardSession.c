@@ -714,7 +714,7 @@ int OEMCardSession_New(
   }
 
   /* Allocate the object */
-  pNew = (ICardSession *)(void*) (AEE_OEM_NEWCLASS((IBaseVtbl*)&gOEMCardSessionFuncs,
+  pNew = (ICardSession *)(void*) (AEE_NewClass((IBaseVtbl*)&gOEMCardSessionFuncs,
                                        sizeof(ICardSession)));
   if (NULL == pNew) {
     MSG_ERROR("Unable to alloc new ptr", 0, 0, 0);
