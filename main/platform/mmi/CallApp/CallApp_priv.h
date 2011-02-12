@@ -121,7 +121,7 @@
 #define MAX_SIZE_GETIMSI                    20
 #define MAX_SIZE_BANNER_TEXT           20
 #define MAX_SIZE_DIALER_TEXT            128
-#define MAX_SIZE_NAME_TEXT              21
+#define MAX_SIZE_NAME_TEXT              20
 #ifdef FEATURE_ICM
 #define MAX_SIZE_DIAL_STR                  AEECM_MAX_DIAL_STRING +1//33
 #else

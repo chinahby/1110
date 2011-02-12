@@ -152,9 +152,9 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 #define MAX_NUM_NOTES                   (1)
 #define MAX_NUM_OTHER                   (1)
 #if defined(FEATURE_VERSION_C306)
-#define MAX_INPUT_NAME_CARD             (20)
-#define MAX_INPUT_NAME_CN               (20)
-#define MAX_INPUT_NAME_EN               (20)
+#define MAX_INPUT_NAME_CARD             (19)
+#define MAX_INPUT_NAME_CN               (19)
+#define MAX_INPUT_NAME_EN               (19)
 #else
 #define MAX_INPUT_NAME_CARD             (14)
 #define MAX_INPUT_NAME_CN               (16)
