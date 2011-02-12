@@ -2766,9 +2766,9 @@ void OEM_RestoreFactorySetting( void )
    STRCPY(oemi_cache.emerg_table.emerg_num[1].num_buf,OEMNV_EMERG_NUM_TWO);
    oemi_cache.emerg_table.emerg_num[2].num_len = OEMNV_EMERG_NUM_LEN;
    STRCPY(oemi_cache.emerg_table.emerg_num[2].num_buf,OEMNV_EMERG_NUM_TRE);
-#ifndef FEATURE_VERSION_CITYCELL
+#if !(defined(FEATURE_VERSION_CITYCELL) || defined(FEATURE_VERSION_M8P))
    oemi_cache.emerg_table.emerg_num[3].num_len = OEMNV_EMERG_NUM_LEN;
-	STRCPY(oemi_cache.emerg_table.emerg_num[3].num_buf,OEMNV_EMERG_NUM_FOR);
+   STRCPY(oemi_cache.emerg_table.emerg_num[3].num_buf,OEMNV_EMERG_NUM_FOR);
 #endif
 #endif
    

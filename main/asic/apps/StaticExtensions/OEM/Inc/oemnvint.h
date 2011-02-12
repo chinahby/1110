@@ -712,13 +712,6 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_ONE                    "112"
 #define OEMNV_EMERG_NUM_TWO                    "113"
 #define OEMNV_EMERG_NUM_TRE                    "118"
-#elif defined(FEATURE_VERSION_M8P)
-#define OEMNV_EMERT_SEZE                       4
-#define OEMNV_EMERG_NUM_LEN                    3
-#define OEMNV_EMERG_NUM_ONE                    "110"
-#define OEMNV_EMERG_NUM_TWO                    "112"
-#define OEMNV_EMERG_NUM_TRE                    "911"
-#define OEMNV_EMERG_NUM_FOR                    "999"
 #elif defined(FEATURE_VERSION_CITYCELL)  //add by yangdecai 2010-10-06
 #define OEMNV_EMERT_SEZE                       3
 #define OEMNV_EMERG_NUM_LEN                    3
@@ -733,7 +726,7 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_TRE                    "911"
 #define OEMNV_EMERG_NUM_FOR                    "999"
 #elif defined(FEATURE_VERSION_HITZ181)  //add by yangdecai 2010-10-08
-#define OEMNV_EMERT_SEZE                       1
+#define OEMNV_EMERT_SEZE                       2
 #define OEMNV_EMERG_NUM_LEN                    3
 #define OEMNV_EMERG_NUM_ONE                    "191"
 #define OEMNV_EMERG_NUM_TWO                    "112"
