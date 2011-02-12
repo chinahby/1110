@@ -1400,7 +1400,7 @@ typedef struct bt_event_q_info_struct
 #ifdef FEATURE_MANUFACTURER_INFO /* defined for ODM builds */
   #define DEFAULT_BT_NAME         CUST_MODEL_ID
 #else
-  #define DEFAULT_BT_NAME         "BlueQ"
+  #define DEFAULT_BT_NAME         "I-mobile_233C"
 #endif
 
 typedef struct

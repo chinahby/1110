@@ -5617,14 +5617,18 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
                         }
                     }
                 }            
-                #ifndef FEATURE_ALL_KEY_PAD   //add by yagndecai
+                
                 if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                 {
                     responseLS = TRUE;
+                    #ifndef FEATURE_ALL_KEY_PAD   //add by yagndecai
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_DELETE);
+                    #else
+                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK);  
+                    #endif
                 }
                 else
-                #endif
+
                 {
                     if(AEE_ADDRFIELD_NAME == pMe->m_nFldInputID)
                     {
@@ -6096,6 +6100,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
         case EVT_USER_REDRAW:
         {
              // Restore the menu select from suspend
+             MSG_FATAL("EVT_USER_REDRAW....................",0,0,0);
             if(pMe->m_wSelectStore != MENU_SELECT_NULL)
             {
                 IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectStore);
@@ -11315,13 +11320,17 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
 				ITEXTCTL_SetActive(pTextCtl,TRUE);
                 ITEXTCTL_Redraw(pTextCtl);
                 //bw:>>
-                #ifndef FEATURE_ALL_KEY_PAD
+                
                 if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                 {
-                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_DELETE);    
+                	#ifndef FEATURE_ALL_KEY_PAD
+                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_DELETE);  
+                    #else
+                    CONTAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK); 
+                    #endif
                 }
                 else
-                #endif
+                
                 {
                     CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);                            
                 }
