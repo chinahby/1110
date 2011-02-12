@@ -822,6 +822,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                             //ISHELL_CloseApplet(pMe->a.m_pIShell, TRUE);
                             pMe->m_b_needclose_core = FALSE;
                             pMe->m_wStartupAniTime = 0;
+                            DBGPRINTF("IDS_AUTO_POWER_OFF to COREST_POWEROFF");
                             MOVE_TO_STATE(COREST_POWEROFF)
                             CLOSE_DIALOG(DLGRET_CREATE)
                             return TRUE;
@@ -841,11 +842,10 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                     else if(pMe->m_nMsgID == IDS_NOOMH_CARD)
                     {
                         ISHELL_CancelTimer(pMe->a.m_pIShell,DialogTimeoutCallback,pMe);
-                        CLOSE_DIALOG(DLGRET_YES)
+                        CLOSE_DIALOG(DLGRET_MSGOK)
                         return TRUE;
                     }
 #endif
-
                 }
                 case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:    
@@ -853,7 +853,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
 #ifdef FEATURE_OEMOMH 
                     if(pMe->m_nMsgID == IDS_NOOMH_CARD)
                     {
-                        CLOSE_DIALOG(DLGRET_NO);
+                        CLOSE_DIALOG(DLGRET_MSGOK);
                         break;
                     }
 #endif                    
@@ -886,6 +886,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                     //ISHELL_CloseApplet(pMe->a.m_pIShell, TRUE);
                     pMe->m_b_needclose_core = FALSE;
                     pMe->m_wStartupAniTime = 0;
+                    DBGPRINTF("IDS_AUTO_POWER_OFF to COREST_POWEROFF");
                     MOVE_TO_STATE(COREST_POWEROFF)
                     CLOSE_DIALOG(DLGRET_CREATE)
                     return TRUE;
@@ -902,7 +903,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
 #ifdef FEATURE_OEMOMH 
             if(pMe->m_nMsgID == IDS_NOOMH_CARD)
             {
-                CLOSE_DIALOG(DLGRET_NO);
+                CLOSE_DIALOG(DLGRET_MSGOK);
                 return TRUE;
             }
 #endif
@@ -938,12 +939,13 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
     FALSE: 传入事件被忽略。
 ==============================================================================*/
 #if defined( FEATURE_POWERDOWN_ALARM)
-static void powerdown( CCoreApp* pMe)
+static void CoreApp_AlarmPowerDown( CCoreApp* pMe)
 {
     pMe->m_ePowerDownType = POWERDOWN_NORMAL;
     if (pMe->m_eCurState != COREST_POWEROFF)
     {
         pMe->m_wStartupAniTime = 0;
+        DBGPRINTF("Alarm Process to COREST_POWEROFF");
         MOVE_TO_STATE(COREST_POWEROFF)
         CLOSE_DIALOG(DLGRET_CREATE)
     }
@@ -954,7 +956,7 @@ static void defaultProcessAlarm( void* pUser)
     extern void snoozePowerdownAlarmclock( void);
     snoozePowerdownAlarmclock();
 #endif
-    powerdown( (CCoreApp *)pUser);
+    CoreApp_AlarmPowerDown( (CCoreApp *)pUser);
 }
 
 static boolean  IDD_ALARM_Handler(void       *pUser,
@@ -1099,7 +1101,7 @@ static boolean  IDD_ALARM_Handler(void       *pUser,
             }
             else if( (wParam == AVK_CLR) || (wParam == AVK_SOFT2))	//Add By zzg 2010_09_08 for smart/m8
             {
-                powerdown( pMe);
+                CoreApp_AlarmPowerDown( pMe);
             }
         }
         return TRUE;
@@ -3977,6 +3979,7 @@ static boolean  IDD_POWERDOWN_Handler(void *pUser,
         case EVT_DISPLAYDIALOGTIMEOUT:
         {
             IALERT_StopRingerAlert(pMe->m_pAlert);
+            DBGPRINTF("EVT_DISPLAYDIALOGTIMEOUT");
             CoreApp_Poweroff_Phone(pMe);
             CLOSE_DIALOG(DLGRET_OK);
             return TRUE;

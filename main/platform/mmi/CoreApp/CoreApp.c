@@ -768,6 +768,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                         #ifdef FEATURE_ICM
                 		ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_OFFLINE);
                 		#endif
+                        DBGPRINTF("AVK_END to COREST_POWEROFF");
                         MOVE_TO_STATE(COREST_POWEROFF)
                         CLOSE_DIALOG(DLGRET_CREATE)
                     }
@@ -1167,6 +1168,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 return TRUE;
                 
             case EVT_MC_PWR_DOWN:
+                DBGPRINTF("EVT_MC_PWR_DOWN");
                 CoreApp_Poweroff_Phone(pMe);
                 break;
             default:
@@ -1727,6 +1729,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                 ISHELL_CancelTimer(pMe->a.m_pIShell, CoreApp_Draw_Charger_image, pMe);
                 //CLOSE_DIALOG(DLGRET_OK)
                 CoreApp_Process_Batty_Msg(pMe, IDS_POWEROFF_1);
+                DBGPRINTF("NMASK_BATTERY_EXTPWR_CHANGE");
                 AEE_SetSysTimer(POWER_DOWN_TIME , CoreApp_Poweroff_Phone, pMe);
                 return TRUE;
             }
@@ -1798,6 +1801,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     {
                         ISHELL_SendEvent(pMe->a.m_pIShell,AEECLSID_DIALER, EVT_BATT_POWERDOWN, 0, 0);
                         CoreApp_Process_Batty_Msg(pMe, IDS_POWEROFF_1);
+                        DBGPRINTF("AEEBATTERY_STATUS_POWERDOWN");
                         AEE_SetSysTimer(POWER_DOWN_TIME , CoreApp_Poweroff_Phone, pMe);
                         break;
                     }
