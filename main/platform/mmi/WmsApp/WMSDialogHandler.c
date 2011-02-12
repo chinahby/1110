@@ -8837,7 +8837,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 	                }
 	            }
 #endif
-	             
+
+	        #ifdef FEATURE_VERSION_M8P
+	        	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_CAPLOWER);
+	        #else
 				(void)OEM_GetConfig(
 		                          CFGI_LANGUAGE_MOD,
 		                          &m_Issetmod,
@@ -8881,6 +8884,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
         	    	#endif
 					#endif
 				 }
+			 #endif
+				
 	            return TRUE;
             }
         case EVT_WMS_MSG_READ:

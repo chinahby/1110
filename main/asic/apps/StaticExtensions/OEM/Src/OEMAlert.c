@@ -2269,6 +2269,12 @@ static void OEMALERT_StartRingerAlert(IALERT *pMe,uint32 id,ALERT_SND_TYPE type)
     if(type == ALERT_POWER_SND)
     {
         alerttype = OEMNV_ALERTTYPE_RINGER;
+    //wangliang add! 2010-09-24
+    #if (defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8)
+        || defined(FEATURE_VERSION_M8P) || defined(FEATURE_VERSION_M8))
+        pMe->m_ringCurVol = OEMSOUND_2ND_VOL;
+        pMe->m_ringEndVol = OEMSOUND_2ND_VOL;
+    #endif
     }
 #ifdef FEATURE_SMSTONETYPE_MID      
     else if(type == ALERT_SMS_SND)
