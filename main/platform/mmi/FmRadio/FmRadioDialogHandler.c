@@ -2423,7 +2423,7 @@ static void paint( CFmRadio *pMe)
 							IDS_FMRADIO_REFUSE_NO_HEADSET,
 							IDS_FMRADIO_REFUSE_HEADSET_PLUG_OUT
                         };
-
+		MSG_FATAL("!=FM_RADIO_REFUSE_REASON_NOT_REFUSE/.....",0,0,0);
         drawImage( pMe, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND, 0, 0);
         drawText( pMe,
                 FMRADIOLS_RES_FILE_LANG,
@@ -2814,31 +2814,60 @@ static void drawSoftkey( CFmRadio *pMe)
                 pMe->m_rc.dy - nFontHeight, 
                 pMe->m_rc.dx - 5, 
                 nFontHeight);
+	//MSG_FATAL("pMe->opMode=====%d",pMe->opMode,0,0);
+	if(pMe->opMode == FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST)
+	{
+		//MSG_FATAL("FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM.....",0,0,0);
+		for( i = 0; i < 3; i ++)
+	    {
 
-    for( i = 0; i < 3; i ++)
-    {
-
-        static       char*  resFile[]    = { APPSCOMMON_RES_LANG_FILE, FMRADIOLS_RES_FILE_LANG, APPSCOMMON_RES_LANG_FILE};
-        static const int16  resourceId[] = { IDS_OPTION, IDS_FMRADIO_SOFTKEY_MODE, IDS_FM_BACK}; // IDS_BACK};
-        static const uint32 alignFlag[]  = { IDF_ALIGN_LEFT, IDF_ALIGN_CENTER, IDF_ALIGN_RIGHT};
+	        static       char*  resFile[]    = { APPSCOMMON_RES_LANG_FILE, FMRADIOLS_RES_FILE_LANG, APPSCOMMON_RES_LANG_FILE};
+	        static const int16  resourceId[] = { IDS_OPTION, IDS_FMRADIO_SOFTKEY_MODE, IDS_STOP}; // IDS_BACK};
+	        static const uint32 alignFlag[]  = { IDF_ALIGN_LEFT, IDF_ALIGN_CENTER, IDF_ALIGN_RIGHT};
 
 #if (defined( FEATURE_FMRADIO_NO_MODE_SELECT) || defined( FEATURE_FMRADIO_KEY_OK_TO_MUTE))
-		if( i == 1)
-		{
-			continue;
-		}
+			if( i == 1)
+			{
+				continue;
+			}
 #endif
+			//MSG_FATAL("drawSoftkey..MIAN............",0,0,0);
+	        drawText( pMe,
+	              resFile[i],
+	              resourceId[i],
+	              &rectMask,
+	              RGB_WHITE,
+	              AEE_FONT_BOLD,
+	              IDF_TEXT_TRANSPARENT | IDF_ALIGN_MIDDLE | alignFlag[i]
+	          );
+	    }
+	}
+	else
+	{
+	    for( i = 0; i < 3; i ++)
+	    {
 
-        drawText( pMe,
-              resFile[i],
-              resourceId[i],
-              &rectMask,
-              RGB_WHITE,
-              AEE_FONT_BOLD,
-              IDF_TEXT_TRANSPARENT | IDF_ALIGN_MIDDLE | alignFlag[i]
-          );
-    }
+	        static       char*  resFile[]    = { APPSCOMMON_RES_LANG_FILE, FMRADIOLS_RES_FILE_LANG, APPSCOMMON_RES_LANG_FILE};
+	        static const int16  resourceId[] = { IDS_OPTION, IDS_FMRADIO_SOFTKEY_MODE, IDS_FM_BACK}; // IDS_BACK};
+	        static const uint32 alignFlag[]  = { IDF_ALIGN_LEFT, IDF_ALIGN_CENTER, IDF_ALIGN_RIGHT};
 
+#if (defined( FEATURE_FMRADIO_NO_MODE_SELECT) || defined( FEATURE_FMRADIO_KEY_OK_TO_MUTE))
+			if( i == 1)
+			{
+				continue;
+			}
+#endif
+			//MSG_FATAL("drawSoftkey..MIAN............",0,0,0);
+	        drawText( pMe,
+	              resFile[i],
+	              resourceId[i],
+	              &rectMask,
+	              RGB_WHITE,
+	              AEE_FONT_BOLD,
+	              IDF_TEXT_TRANSPARENT | IDF_ALIGN_MIDDLE | alignFlag[i]
+	          );
+	    }
+	}
     IDISPLAY_UpdateEx( pMe->m_pDisplay, TRUE);
 }
 
