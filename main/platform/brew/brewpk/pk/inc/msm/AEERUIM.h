@@ -89,6 +89,7 @@ AEEINTERFACE(IRUIM) {
 
 #ifdef FEATURE_OEMOMH 
    int (*Get_Ecc_Code)(IRUIM *pIRUIM,byte *Buf);
+   boolean (*WriteModel)(IRUIM *pIRUIM, byte *Buf);
 #endif
 };
 
@@ -129,6 +130,10 @@ AEEINTERFACE(IRUIM) {
 #ifdef FEATURE_OEMOMH 
 #define IRUIM_Get_Ecc_Code(p,pi)           \
                            AEEGETPVTBL((p),IRUIM)->Get_Ecc_Code((p),(pi))
+
+#define IRUIM_WriteModel(p,pi)           \
+                           AEEGETPVTBL((p),IRUIM)->WriteModel((p),(pi))
+
 #endif
 /* Preferred language encoding */
 #define  AEERUIM_LANG_ENCODING_OCTET            0  // Octet, unspecified:
