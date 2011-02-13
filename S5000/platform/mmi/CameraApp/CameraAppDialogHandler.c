@@ -771,12 +771,14 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                         pMe->m_nCameraState = CAM_STOP;
                     }                        
                     pMe->m_isFormQuicktest = FALSE;
+                    pMe->m_nLeftTime = 0;
                     ISHELL_CloseApplet(pMe->m_pShell, FALSE);
                     return TRUE;
                 }
                 if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
                 {
                     pMe->m_bIsPreview = FALSE;
+                    pMe->m_nLeftTime  = 0;
                     pMe->m_nCameraState = CAM_STOP;
                     CLOSE_DIALOG(DLGRET_CANCELED);
                 }                    
