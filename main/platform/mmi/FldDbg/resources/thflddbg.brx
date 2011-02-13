@@ -310,7 +310,7 @@
 	<STRING Id="103" Name="IDS_BACK">
 		<Text>กลับ</Text>
 	</STRING>
-	<STRING Id="104" Name="IDS_HW_VERSION">
+	<STRING Id="104" Name="IDS_HW_VERSION" Encoding="Unicode">
 		<Text>เวอร์ชั่น HW: </Text>
 	</STRING>
 	<String Id="201" Name="IDS_BREWSETTUBG_TITLE">
@@ -352,74 +352,65 @@
 	<String Id="213" Name="IDS_BREWSETSCRN">
 		<Text>BrewSetting Screen</Text>
 	</String>
-	<String Id="1001" Name="IDS_AUTH_POLICY_NONE">
+	<String Id="1001" Name="IDS_AUTH_POLICY_NONE" Encoding="Unicode">
 		<Text>None</Text>
 	</String>
-	<String Id="1002" Name="IDS_AUTH_POLICY_SID">
+	<String Id="1002" Name="IDS_AUTH_POLICY_SID" Encoding="Unicode">
 		<Text>SID</Text>
 	</String>
-	<String Id="1003" Name="IDS_AUTH_POLICY_TEXT">
+	<String Id="1003" Name="IDS_AUTH_POLICY_TEXT" Encoding="Unicode">
 		<Text>Text</Text>
 	</String>
-	<String Id="1004" Name="IDS_AUTH_POLICY_NUM">
+	<String Id="1004" Name="IDS_AUTH_POLICY_NUM" Encoding="Unicode">
 		<Text>Num</Text>
 	</String>
-	<String Id="1005" Name="IDS_PRIVACY_POLICY_BREW">
+	<String Id="1005" Name="IDS_PRIVACY_POLICY_BREW" Encoding="Unicode">
 		<Text>BREW</Text>
 	</String>
-	<String Id="1006" Name="IDS_PRIVACY_POLICY_CARRIER">
+	<String Id="1006" Name="IDS_PRIVACY_POLICY_CARRIER" Encoding="Unicode">
 		<Text>Carrier</Text>
 	</String>
-	<String Id="1007" Name="IDS_PRIVACY_POLICY_BREW_AND_CARRIER">
+	<String Id="1007" Name="IDS_PRIVACY_POLICY_BREW_AND_CARRIER" Encoding="Unicode">
 		<Text>BREW and Carrier</Text>
 	</String>
-	<String Id="1008" Name="IDS_PRIVACY_POLICY_BREW_OR_CARRIER">
+	<String Id="1008" Name="IDS_PRIVACY_POLICY_BREW_OR_CARRIER" Encoding="Unicode">
 		<Text>BREW or Carrier</Text>
 	</String>
-	<String Id="1009" Name="IDS_STRING_AUTH_POLICY">
+	<String Id="1009" Name="IDS_STRING_AUTH_POLICY" Encoding="Unicode">
 		<Text>Auth Policy</Text>
 	</String>
-	<String Id="1010" Name="IDS_STRING_PRIVACY_POLICY">
+	<String Id="1010" Name="IDS_STRING_PRIVACY_POLICY" Encoding="Unicode">
 		<Text>Privacy Policy</Text>
 	</String>
-	<String Id="1011" Name="IDS_STRING_NET_LOCK">
+	<String Id="1011" Name="IDS_STRING_NET_LOCK" Encoding="Unicode">
 		<Text>net lock</Text>
 	</String>
-	<String Id="1012" Name="IDS_STRING_NET_LOCK_FLAG">
+	<String Id="1012" Name="IDS_STRING_NET_LOCK_FLAG" Encoding="Unicode">
 		<Text>Enabled net lock</Text>
 	</String>
-	<String Id="1013" Name="IDS_STRING_NET_LOCK_MNC">
+	<String Id="1013" Name="IDS_STRING_NET_LOCK_MNC" Encoding="Unicode">
 		<Text>mnc</Text>
 	</String>
-	<String Id="1014" Name="IDS_STRING_NET_LOCK_MCC">
+	<String Id="1014" Name="IDS_STRING_NET_LOCK_MCC" Encoding="Unicode">
 		<Text>mcc</Text>
 	</String>
-	<String Id="1015" Name="IDS_STRING_NET_LOCK_SID">
+	<String Id="1015" Name="IDS_STRING_NET_LOCK_SID" Encoding="Unicode">
 		<Text>sid</Text>
 	</String>
-	<String Id="1016" Name="IDS_STRING_MEID">
+	<String Id="1016" Name="IDS_STRING_MEID" Encoding="Unicode">
 		<Text>MEID</Text>
 	</String>
 	<String Id="1017" Name="IDS_BLANK">
 		<Text>   </Text>
 	</String>
-	<String Id="1018" Name="IDS_NV_SETTING">
+	<String Id="1018" Name="IDS_NV_SETTING" Encoding="Unicode">
 		<Text>NV Setting</Text>
 	</String>
-	<String Id="1019" Name="IDS_NV_ID">
+	<String Id="1019" Name="IDS_NV_ID" Encoding="Unicode">
 		<Text>NV ID</Text>
 	</String>
-	<String Id="1020" Name="IDS_NV_VALUE">
+	<String Id="1020" Name="IDS_NV_VALUE" Encoding="Unicode">
 		<Text>NV Value</Text>
-	</String>
-	<String Id="1021" Name="IDS_OMH_ESN">
-		<Text>OMH ESN</Text>
-	</String>
-	<String Id="1022" Name="IDS_OMH_MEID">
-		<Text>OMH MEID</Text>
-	</String>
-	<String Id="1023" Name="IDS_OMH_VERSION">
-		<Text>OMH Version</Text>
 	</String>
 </Strings>
 <Dialogs>
@@ -793,24 +784,6 @@
 				<TitleID>IDS_NV_VALUE</TitleID>
 				<Items/></Static>
 			<Text Id="7056" Name="IDC_NVVALUE_TEXT">
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="48" Name="IDD_OMH_ESN_DIALOG" Focus="7058">
-		<Controls>
-			<Text Id="7058" Name="IDC_OMH_ESN_TEXT">
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="49" Name="IDD_OMH_MEID_DIALOG" Focus="0">
-		<Controls>
-			<Text Id="7059" Name="IDC_OMH_MEID_TEXT">
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="50" Name="IDD_OMH_VERSION_DIALOG" Focus="0">
-		<Controls>
-			<Text Id="7060" Name="IDC_OMH_VERSION_TEXT">
 				<Items/></Text>
 		</Controls>
 	</Dialog>
