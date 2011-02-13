@@ -4597,7 +4597,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		#ifdef FEATURE_VERSION_MYANMAR
 		{
 			int         nLineWidth = 4, nNumberWidth = 20, nNumberHeight = 40, nOffset = 5,
-	                xStartPos = 15, yStartPos = 0, nTextLen = 0;
+	                xStartPos = 5, yStartPos = 0, nTextLen = 0;
 	        AEERect rect = {0};
 	        yStartPos = (SCREEN_HEIGHT*3/5);
 			// draw hour
