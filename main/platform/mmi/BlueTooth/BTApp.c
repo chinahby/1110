@@ -1782,7 +1782,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 					}
 				}
 
-				pMe->m_app_flag == FALSE;
+				pMe->m_app_flag = FALSE;
 			}
 						
 			
@@ -2646,6 +2646,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
         return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
     }
    }
+
+	return event_processed;
 }
 
 //Add End
@@ -7915,60 +7917,55 @@ DESCRIPTION
 ============================================================================= */
 /*static*/ void BTApp_BuildBondMenu( CBTApp* pMe )
 {
-   AEEBTDeviceInfo* pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx ];
+	AEEBTDeviceInfo* pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
 
-   MSG_FATAL("***zzg BTApp_BuildBondMenu bBonding=%d, bSSPCapable=%d, bpassKeyRqst=%d***",
-   					pMe->mRM.bBonding, pDev->bSSPCapable, pMe->mRM.bpassKeyRqst);
+	MSG_FATAL("***zzg BTApp_BuildBondMenu bBonding=%d, bSSPCapable=%d, bpassKeyRqst=%d***",
+					pMe->mRM.bBonding, pDev->bSSPCapable, pMe->mRM.bpassKeyRqst);
 
-//Del By zzg 2010_12_28
+	//Del By zzg 2010_12_28
 #if 1
-   if ( pMe->mRM.bBonding && pDev->bSSPCapable && !(pMe->mRM.bpassKeyRqst) )
-   {
-      MSG_LOW("BuildBondMenu - MITM Enabled : %d", pMe->mRM.bMITMEnabled, 0, 0 );
-	  
-	  MSG_FATAL("***zzg BuildBondMenu - MITM Enabled : %d***", pMe->mRM.bMITMEnabled, 0, 0 );
-	  
-      if ( IBTEXTRM_SSPBond( pMe->mRM.po, &pDev->bdAddr, pMe->mRM.bMITMEnabled ) != SUCCESS )
-      {
-        MSG_ERROR( "TextEditSave - Bond failed", 0, 0, 0 );
-      }
-      else
-      {
-        BTApp_ShowBusyIcon( pMe );
-      }
-   }
-   else
-#endif   	
-//Del End
-   {
-   	 /*
-     pMe->mRM.bpassKeyRqst = FALSE;
-	 PUSH_MENU( BT_APP_MENU_PASSKEY );
-     ISHELL_CreateDialog( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDD_BT_TEXT_EDIT, NULL);
-     */
-     
-	if (WSTRLEN( pMe->mRM.device[ pMe->mRM.uCurDevIdx ].wName) == 0)
+	if (pMe->mRM.bBonding && pDev->bSSPCapable && !(pMe->mRM.bpassKeyRqst))
 	{
-		BTApp_BDAddr2Wstr(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName,&pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr);
+		MSG_LOW("BuildBondMenu - MITM Enabled : %d", pMe->mRM.bMITMEnabled, 0, 0);
+
+		MSG_FATAL("***zzg BuildBondMenu - MITM Enabled : %d***", pMe->mRM.bMITMEnabled, 0, 0);
+
+		if (IBTEXTRM_SSPBond( pMe->mRM.po, &pDev->bdAddr, pMe->mRM.bMITMEnabled ) != SUCCESS)
+		{
+			MSG_FATAL("***zzg BTApp_BuildBondMenu IBTEXTRM_SSPBond Failed!***", 0, 0, 0);
+			MSG_ERROR("TextEditSave - Bond failed", 0, 0, 0);
+		}
+		else
+		{
+			MSG_FATAL("***zzg BTApp_BuildBondMenu IBTEXTRM_SSPBond SUCCEED!***", 0, 0, 0);
+			BTApp_ShowBusyIcon(pMe);
+		}
 	}
+	else
+#endif   	
+	//Del End
+	{     
+		if (WSTRLEN(pMe->mRM.device[ pMe->mRM.uCurDevIdx ].wName) == 0)
+		{
+			BTApp_BDAddr2Wstr(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName,&pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr);
+		}
 
-	WSTRLCPY(pMe->wEditBuf, pMe->mRM.device[pMe->mRM.uCurDevIdx].wName, ARR_SIZE(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName));
+		WSTRLCPY(pMe->wEditBuf, pMe->mRM.device[pMe->mRM.uCurDevIdx].wName, ARR_SIZE(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName));
 
-	BTApp_SetBondable(pMe);//ACG
+		BTApp_SetBondable(pMe);//ACG
 
-	pMe->mRM.bpassKeyRqst = FALSE;
+		pMe->mRM.bpassKeyRqst = FALSE;
 
-	pMe->m_edit_id = IDS_PASS_KEY;
-	pMe->m_bEditNeedStr = TRUE;		
+		pMe->m_edit_id = IDS_PASS_KEY;
+		pMe->m_bEditNeedStr = TRUE;		
 
-	pMe->m_edit_state_id = BTAPPST_DEVICEINFO;
+		pMe->m_edit_state_id = BTAPPST_DEVICEINFO;
 
-	pMe->m_eDlgRet = DLGRET_BT_EDIT; 
-    (void) ISHELL_EndDialog(pMe->m_pShell);  
+		//CLOSE_DIALOG(DLGRET_BT_EDIT) 
+		pMe->m_eDlgRet = DLGRET_BT_EDIT; 
+		(void) ISHELL_EndDialog(pMe->m_pShell);  
 
-	//CLOSE_DIALOG(DLGRET_BT_EDIT) 
- 	
-   }
+	}
 }
 
 /* ==========================================================================
@@ -17818,6 +17815,8 @@ DESCRIPTION
 /*static*/ boolean BTApp_UserConfirm( CBTApp* pMe, boolean bConfirmed )
 {
   boolean  success = TRUE;
+
+  MSG_FATAL("***zzg BTApp_UserConfirm***", 0, 0, 0);
 
   if ( IBTEXTRM_UserConfirmationReply( pMe->mRM.po, &pMe->mRM.BondBDAddr, 
                                        bConfirmed ) != SUCCESS )

@@ -34,6 +34,12 @@
                                      (void) ISHELL_EndDialog(pMe->m_pShell);  \
                                  }
 
+//Add By zzg 2011_02_13
+#define BTAPPDLG_BT_LMP_VER_2_0          0x03 /* 2.0 controller lmp version from
+					                                           ** BT Assigned numbers
+					                                           */
+
+
 
 // 画界面底部提示条宏定义
 #define BT_DRAW_BOTTOMBAR(x)                           \
@@ -1258,7 +1264,7 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			AECHAR				WTitle[40] = {0};	
 			uint16				uLen = 0;
 			uint16				tempuValue1 = 0;    
-			CtlAddItem        	ai;			
+			//CtlAddItem        	ai;			
 			AEEBTDeviceInfo*  	pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx ];
 			
 #ifdef FEATURE_BT_2_1
@@ -1652,26 +1658,15 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 					}
 					else
 					{
-						MSG_LOW("Local HC LMPVersion = %d",pMe->mRM.myInfo.uLMPVersion, 0, 0 );
+						MSG_LOW("Local HC LMPVersion = %d",pMe->mRM.myInfo.uLMPVersion, 0, 0);
+						
 						MSG_FATAL("***zzg Local HC LMPVersion = %d***", pMe->mRM.myInfo.uLMPVersion, 0, 0);
 
-						///*
-						if (pMe->mRM.myInfo.uLMPVersion > 0x03)	//BTAPP_BT_LMP_VER_2_0)
+						if (pMe->mRM.myInfo.uLMPVersion > BTAPPDLG_BT_LMP_VER_2_0)	
 						{
 							// Host is 2.1 enabled and Host Controller is 2.1      		  
-							BTApp_SetBondable( pMe );//ACG
-
-							BTApp_BuildBondMenu( pMe );
-
-							/*
-							pMe->mRM.bpassKeyRqst = FALSE;
-
-     							pMe->m_edit_id = IDS_PASS_KEY;
-							pMe->m_bEditNeedStr = TRUE;		
-
-							pMe->m_edit_state_id = BTAPPST_DEVICEINFO;
-							CLOSE_DIALOG(DLGRET_BT_EDIT) 
-							*/	
+							BTApp_SetBondable(pMe);//ACG
+							BTApp_BuildBondMenu(pMe);
 						}
 						else
 						{
@@ -1685,33 +1680,10 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 						
 							pMe->m_edit_id = IDS_PASS_KEY;
 							pMe->m_bEditNeedStr = TRUE;
-
-							pMe->m_edit_state_id = BTAPPST_DEVICEINFO;
-							
+							pMe->m_edit_state_id = BTAPPST_DEVICEINFO;							
 							CLOSE_DIALOG(DLGRET_BT_EDIT)  
 						}
-						//*/
-
-						/*
-						if (WSTRLEN( pMe->mRM.device[ pMe->mRM.uCurDevIdx ].wName) == 0)
-						{
-							BTApp_BDAddr2Wstr(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName,&pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr);
-						}
-						
-						WSTRLCPY(pMe->wEditBuf, pMe->mRM.device[pMe->mRM.uCurDevIdx].wName, ARR_SIZE(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName));
-						
-						BTApp_SetBondable(pMe);//ACG
-
-						pMe->mRM.bpassKeyRqst = FALSE;
-
-						pMe->m_edit_id = IDS_PASS_KEY;
-						pMe->m_bEditNeedStr = TRUE;		
-
-						pMe->m_edit_state_id = BTAPPST_DEVICEINFO;
-						
-						CLOSE_DIALOG(DLGRET_BT_EDIT) 
-
-						*/
+					
 					}
 #endif 					
 					return TRUE;
@@ -1894,7 +1866,7 @@ static boolean HandleDeviceListDialogEvent(CBTApp *pMe,
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_DEVICE_LIST);
 
-	AEEBTDeviceInfo*  pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
+	//AEEBTDeviceInfo*  pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
 	
     if (pMenu == NULL)
     {
@@ -2109,7 +2081,7 @@ static boolean HandleBondListDialogEvent(CBTApp *pMe,
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BOND_LIST);
 
-	AEEBTDeviceInfo*  pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
+	//AEEBTDeviceInfo*  pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
 	
     if (pMenu == NULL)
     {
@@ -2299,7 +2271,7 @@ static boolean HandleAllListDialogEvent(CBTApp *pMe,
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_ALL_LIST);
 
-	AEEBTDeviceInfo*  pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
+	//AEEBTDeviceInfo*  pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
 	
     if (pMenu == NULL)
     {
@@ -2482,7 +2454,7 @@ static boolean HandleConnectListDialogEvent(CBTApp *pMe,
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_CONNECT_LIST);
 
-	AEEBTDeviceInfo*  pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
+	//AEEBTDeviceInfo*  pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
 	
     if (pMenu == NULL)
     {
@@ -3085,7 +3057,7 @@ static boolean  HandleEditNameDialogEvent(CBTApp *pMe,
 
 			BT_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
 			
-			IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE ); 
+			IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE); 
             return TRUE;
         }
         case EVT_DIALOG_END:
@@ -4589,12 +4561,7 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 									}
 
 									DBGPRINTF_FATAL("TextEditHndlSave-BT_APP_MENU_PASSKEY with passKey=%s",passKey); 
-									
-									MSG_FATAL("***zzg TextEditHndlSave-BT_APP_MENU_PASSKEY with passKey=%s",passKey, 0, 0); 
-									MSG_FATAL("***zzg TextEditHndlSave-BT_APP_MENU_PASSKEY with passKey=%c",passKey[0], 0, 0);
-									MSG_FATAL("***zzg TextEditHndlSave-BT_APP_MENU_PASSKEY with passKey=%d",passKey[0], 0, 0);
-									
-									
+																		
 									if (IBTEXTRM_PasskeyReply( pMe->mRM.po, &pDev->bdAddr, passKey ) != SUCCESS )
 									{
 										MSG_HIGH( "PassKey Reply- Failed", 0, 0, 0 );
@@ -4605,17 +4572,15 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 								}
 								else
 #endif /* FEATURE_BT_2_1 */
-								{
-									MSG_FATAL("***zzg TextEditHndlSave-BT_APP_MENU_PASSKEY with passKey=%s",passKey, 0, 0); 
-									MSG_FATAL("***zzg TextEditHndlSave-BT_APP_MENU_PASSKEY with passKey=%c",passKey[0], 0, 0);
-									MSG_FATAL("***zzg TextEditHndlSave-BT_APP_MENU_PASSKEY with passKey=%d",passKey[0], 0, 0);
-									
+								{									
 									if (IBTEXTRM_Bond(pMe->mRM.po, &pDev->bdAddr, pMe->mRM.wPassKey) != SUCCESS)
 									{
+										MSG_FATAL("***zzg HandleBTTextEditDlg IBTEXTRM_Bond Failed!***", 0, 0, 0);
 										MSG_ERROR( "TextEditSave - Bond failed", 0, 0, 0 );
 									}
 									else
 									{
+										MSG_FATAL("***zzg HandleBTTextEditDlg IBTEXTRM_Bond SUCCEED!***", 0, 0, 0);
 										BTApp_ShowBusyIcon( pMe );
 									}
 								}
