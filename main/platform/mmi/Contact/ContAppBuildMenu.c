@@ -1713,12 +1713,14 @@ void CContApp_ListMenuScroll( CContApp *pMe, IMenuCtl *pMenuCtl, AEEEvent  eCode
                         if (nListItems <= MAX_NUM_MENUPOP)
                         {
                             IMENUCTL_SetSel(pMenuCtl, IMENUCTL_GetItemID(pMenuCtl, (nListItems-1)));
+                            MSG_FATAL("nListItems---nListItems=%d---MAX_NUM_MENUPOP=%d",nListItems,MAX_NUM_MENUPOP,0);
                         }
                         else 
                         {
                             if(pMe->m_nCurrIdx == 0)
                             {
                                 pMe->m_nCurrIdx = nListItems - MAX_NUM_MENUPOP;
+                                MSG_FATAL("nListItems---nListItems=%d---MAX_NUM_MENUPOP=%d",nListItems,MAX_NUM_MENUPOP,0);
                                 (void)CContApp_BuildListMenu(pMe, pMenuCtl);
                                 IMENUCTL_SetSel(pMenuCtl, IMENUCTL_GetItemID( pMenuCtl, MAX_NUM_MENUPOP - 1));
                             }
@@ -1726,6 +1728,7 @@ void CContApp_ListMenuScroll( CContApp *pMe, IMenuCtl *pMenuCtl, AEEEvent  eCode
                             {
                                 pMe->m_nCurrIdx--;
                                 (void)CContApp_BuildListMenu(pMe, pMenuCtl);
+                                MSG_FATAL("nListItems---nListItems=%d---MAX_NUM_MENUPOP=%d",nListItems,MAX_NUM_MENUPOP,0);
                                 IMENUCTL_SetSel(pMenuCtl, IMENUCTL_GetItemID( pMenuCtl, 0));
                             }
                             pMe->m_wSelectCont = IMENUCTL_GetSel(pMenuCtl);

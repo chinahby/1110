@@ -2873,6 +2873,7 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                         {
                             IMENUCTL_SetSel(pMenuCtl, 
                                                 IMENUCTL_GetItemID( pMenuCtl, pMe->m_pSmartBufLen -1));
+                             MSG_FATAL("pMe->m_nCurrSmartIdx   = %d",pMe->m_nCurrSmartIdx,0,0);
                         }
                         else 
                         {             
@@ -2880,13 +2881,16 @@ static boolean CContApp_SmartMenuHandle( CContApp *pMe,
                             {
                                 pMe->m_nCurrSmartIdx = pMe->m_pSmartBufLen - MAX_NUM_MENUPOP;
                                 (void)CContApp_BuildSmartMenu(pMe, pMenuCtl);
-                                IMENUCTL_SetSel(pMenuCtl, IMENUCTL_GetItemID( pMenuCtl, pMe->m_pSmartBufLen-MAX_NUM_MENUPOP - 1));
+                                IMENUCTL_SetSel(pMenuCtl, IMENUCTL_GetItemID( pMenuCtl, MAX_NUM_MENUPOP - 1));
+                                
+                                MSG_FATAL("pMe->m_nCurrSmartIdx   = %d",pMe->m_nCurrSmartIdx,0,0);
                             }
                             else
                             {
                                 pMe->m_nCurrSmartIdx--;
                                 (void)CContApp_BuildSmartMenu(pMe, pMenuCtl);
                                 IMENUCTL_SetSel(pMenuCtl, IMENUCTL_GetItemID( pMenuCtl, 0));
+                                MSG_FATAL("pMe->m_nCurrSmartIdx   = %d",pMe->m_nCurrSmartIdx,0,0);
                             }
   
                         }
