@@ -15628,6 +15628,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                     {
                         int i = 0;
                         int j = 0;
+                        int k = 0;
                         char temp[7];
                         int len = STRLEN(Assnum);
                         MSG_FATAL("Assnum's len = %d",len,0,0);
@@ -15675,7 +15676,8 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                                 if((temp[0] >= '0') && (temp[0] <= '9'))
                                 {
                                     STRTOWSTR(temp, wstrNum, sizeof(wstrNum));
-                                    IMENUCTL_AddItem(pMenu, NULL, NULL, 500 + emerg_tab.emert_size +i, wstrNum, NULL);
+                                    IMENUCTL_AddItem(pMenu, NULL, NULL, 500 + emerg_tab.emert_size + k, wstrNum, NULL);
+                                    k++;
                                 }
                             }
                         }
@@ -15749,6 +15751,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                 case AVK_UP:
                 case AVK_DOWN:
                 {
+                    
                     MSG_FATAL("m_nInputMode=%d",pMe->m_nInputMode,0,0);                  
                     //if(OPT_TEXT_INPUT == pMe->m_nInputMode || LOCAL_NUMBER_INPUT == pMe->m_nInputMode)
                     {
