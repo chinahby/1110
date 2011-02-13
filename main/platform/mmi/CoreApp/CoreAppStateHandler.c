@@ -974,6 +974,85 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                 CoreApp_ShowDialog(pMe,IDD_MSGBOX);
                 return NFSMACTION_WAIT;                    
             }
+            else
+            {
+                if((pMe->m_pIRUIM != NULL) && (pMe->m_pConfig != NULL))
+                {
+                    int i = 0;
+                    int j = 0;
+                    AECHAR swBufTemp[61]; 
+                    char swBuf[61];
+                    char EFmodelBuf[127];
+                    char mnBuf[32] = "WaterWorld";
+                    char modelBuf[32] = "W021";
+                    int len = 0;
+                    EFmodelBuf[0] = 255;
+                    EFmodelBuf[1] = 255;    
+                    len = STRLEN(modelBuf);
+                    DBGPRINTF("modelBuf len =%d", len);
+                    DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
+                    DBGPRINTF("EFmodelBuf len =%s", STRLEN(EFmodelBuf));
+                    //Write Model Information
+                    for(i = 2; i < 35; ++i)
+                    {
+                        if(i < len + 2)
+                        {
+                            EFmodelBuf[i] = modelBuf[j++];
+                        }
+                        else
+                        {
+                            j = 0;
+                            EFmodelBuf[i] = 255;
+                        }
+                    }
+                    DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
+                    len = STRLEN(mnBuf);
+                    DBGPRINTF("mnBuf len =%d", len);
+                    DBGPRINTF("EFmodelBuf len =%s", STRLEN(EFmodelBuf));
+                    //Write Manufacturer Name
+                    for(i = 34; i < 66; ++i)
+                    {
+                        if(i < len + 34)
+                        {
+                            EFmodelBuf[i] = mnBuf[j++];
+                        }
+                        else
+                        {
+                            j = 0;
+                            EFmodelBuf[i] = 255;
+                        }
+                    }      
+                    DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
+                    len = STRLEN(EFmodelBuf);
+                    DBGPRINTF("EFmodelBuf len =%d", len);
+                    (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_BUILD_VERSION, swBufTemp, sizeof(swBufTemp));
+                    DBGPRINTF("swBufTemp =%S", swBufTemp);
+                    DBGPRINTF("swBufTemp len =%d", WSTRLEN(swBufTemp));
+                    WSTRTOSTR(swBufTemp, swBuf, sizeof(swBuf) + 1);
+                    DBGPRINTF("swBuf =%s", swBuf);
+                    len = STRLEN(swBuf);
+                    DBGPRINTF("swBuf len =%d", len);
+                    for(i = 66; i < 126; ++i)
+                    {
+                        if(i < len + 66)
+                        {
+                            EFmodelBuf[i] = swBuf[j++];
+                        }
+                        else
+                        {
+                            j = 0;
+                            EFmodelBuf[i] = 255;
+                        }                            
+                    }
+                    len = STRLEN(EFmodelBuf);
+                    DBGPRINTF("EFmodelBuf len =%d", len);                        
+                    EFmodelBuf[126] = '\0';
+                    DBGPRINTF("swBuf len =%d",STRLEN(swBuf));
+                    DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
+                    IRUIM_WriteModel(pMe->m_pIRUIM, (byte*)EFmodelBuf);  
+                }
+            }
+
             // Fall Through
         case DLGRET_MSGOK:
 #endif
