@@ -773,7 +773,7 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ANSWER_MODE, IDS_ANSWER_MODE, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_MINUTE_ALERT, IDS_MINUTE_ALERT, NULL, 0);
-
+#if 0   //删除自动重拨功能
 			//Add By zzg 2010_09_16 : smart\m8  del the auto retry..
 #if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined(FEATURE_VERSION_M8021)
 #else
@@ -781,6 +781,8 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 #endif
             
 			//Add End
+#endif
+
 #ifndef FEATURE_CARRIER_TAIWAN_APBW
 #ifdef FEATRUE_SET_IP_NUMBER
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_IP_NUMBER_SET, IDS_IP_NUMBER_SET, NULL, 0);
