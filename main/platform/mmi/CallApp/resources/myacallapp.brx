@@ -92,7 +92,7 @@
 		<Text> %s </Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_RELEASEHOLD">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_RESCUE_RUIM">
 		<Text></Text>

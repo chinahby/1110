@@ -17,7 +17,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_EMAIL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="7" Name="IDS_URL">
 		<Text></Text>
@@ -50,7 +50,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="19" Name="IDS_CHECKCAPACITY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="29" Name="IDS_FAX">
 		<Text>Fax</Text>
@@ -59,19 +59,19 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="37" Name="IDS_GROUP_PERSONAL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="38" Name="IDS_GROUP_BUSINESS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="39" Name="IDS_GROUP_HOME">
 		<Text></Text>
 	</STRING>
 	<STRING Id="40" Name="IDS_GROUP_WORK">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="41" Name="IDS_GROUP_VIP">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="42" Name="IDS_GROUP_FRIEND">
 		<Text></Text>
@@ -101,7 +101,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="60" Name="IDS_SPEEDDIAL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="63" Name="IDS_ONEDIAL_NULL">
 		<Text></Text>
@@ -110,7 +110,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="66" Name="IDS_CAPACITY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="67" Name="IDS_CAPACITY_PHONE">
 		<Text>:%d (%d)</Text>
@@ -158,7 +158,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="94" Name="IDS_MSG_COPYFAILED">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="95" Name="IDS_YESNO_COPYREC">
 		<Text></Text>
@@ -167,7 +167,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="97" Name="IDS_MSG_MOVEFAILED">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="99" Name="IDS_ERR_COPY">
 		<Text></Text>
@@ -230,13 +230,13 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_NOT_UIMADDRINIT">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_SAVE_URL">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MOVING">
-		<Text>...</Text>
+		<Text>...</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_COPYING">
 		<Text>...</Text>
@@ -278,7 +278,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_ONEDIAL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_POSITION">
 		<Text></Text>
@@ -299,7 +299,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_MSG_EMAIL_UNAVAILD">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_GROUP_NONE_STRING">
 		<Text></Text>
@@ -311,7 +311,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_MOVE_CONTACTS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_COPY_CONTACTS">
 		<Text></Text>
@@ -320,7 +320,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_CONTACTS_MEMORY_STUTAS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_PHONE_TO_UIM">
 		<Text></Text>
@@ -344,7 +344,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_MOVE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_ERR_LOADPICTURE">
 		<Text></Text>
@@ -356,7 +356,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_ERR_GETCONFIG">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1055" Name="IDS_UIMCARD">
 		<Text></Text>
@@ -380,7 +380,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_MSG_DELETEFAILED">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_DELETING">
 		<Text>...</Text>
@@ -392,7 +392,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1066" Name="IDS_FULL_PHONE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1067" Name="IDS_BUILD_VCARD_FAIL">
 		<Text>V</Text>
@@ -404,7 +404,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_MEMORYFULL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1071" Name="IDS_RETURN_ERR">
 		<Text></Text>
@@ -431,7 +431,7 @@
 		<Text>%d ,%d </Text>
 	</STRING>
 	<STRING Id="1079" Name="IDS_RENAME">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1080" Name="IDS_SAVE_EDIT">
 		<Text></Text>
@@ -440,7 +440,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1082" Name="IDS_SAME_NAME">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1083" Name="IDS_BT_COPYN">
 		<Text></Text>

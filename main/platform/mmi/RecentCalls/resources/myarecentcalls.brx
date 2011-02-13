@@ -11,7 +11,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_MISSED_CALLS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_RECEIVED_CALLS">
 		<Text></Text>
@@ -89,7 +89,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_SAVE_AS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_SAVETOCONTACT">
 		<Text></Text>

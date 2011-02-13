@@ -41,7 +41,7 @@
 		<Text>GBP</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_CURRENCY_CHF">
-		<Text>CHF</Text>
+		<Text>MMK</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_CURRENCY_SEK">
 		<Text>SEK</Text>

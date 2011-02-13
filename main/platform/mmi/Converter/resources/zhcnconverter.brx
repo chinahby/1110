@@ -41,7 +41,7 @@
 		<Text>英镑</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_CURRENCY_CHF">
-		<Text>瑞士法郎</Text>
+		<Text>缅甸币</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_CURRENCY_SEK">
 		<Text>瑞典克朗</Text>

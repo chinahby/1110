@@ -14,13 +14,13 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_MAIN_MENU_TITLE_3">
-		<Text>UTK</Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MAIN_MENU_TITLE_4">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_MAIN_MENU_TITLE_5">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_MAIN_MENU_TITLE_6">
 		<Text></Text>
@@ -32,13 +32,13 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_MAIN_MENU_TITLE_9">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_MAIN_MENU_TITLE_10">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_MAIN_MENU_TITLE_11">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_MAIN_MENU_TITLE_12">
 		<Text></Text>
@@ -50,7 +50,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_GAME_SUB_MENU_ITEM_3">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_MENU_LIST">
 		<Text></Text>
@@ -62,13 +62,13 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_MAIN_MENU_TITLE_42">
-		<Text>UTK</Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_MAIN_MENU_TITLE_43">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_MAIN_MENU_TITLE_44">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_MAIN_MENU_TITLE_45">
 		<Text></Text>
@@ -80,7 +80,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_MAIN_MENU_TITLE_48">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_MAIN_MENU_TITLE_49">
 		<Text></Text>
@@ -89,7 +89,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_MAIN_MENU_TITLE_51">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_MAIN_MENU_TITLE_61">
 		<Text></Text>
@@ -98,7 +98,7 @@
 		<Text>Smartfren Access</Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_MAIN_MENU_TITLE_63">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1064" Name="IDS_MAIN_MENU_TITLE_64">
 		<Text>FM </Text>
@@ -116,7 +116,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1069" Name="IDS_MAIN_MENU_TITLE_69">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_MAIN_MENU_TITLE_70">
 		<Text></Text>
@@ -134,7 +134,7 @@
 		<Text>SmartFren Access</Text>
 	</String>
 	<String Id="1083" Name="IDS_MAIN_MENU_TITLE_83">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1084" Name="IDS_MAIN_MENU_TITLE_84">
 		<Text>FM </Text>
@@ -152,7 +152,7 @@
 		<Text></Text>
 	</String>
 	<String Id="1089" Name="IDS_MAIN_MENU_TITLE_89">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1090" Name="IDS_MAIN_MENU_TITLE_90">
 		<Text></Text>
@@ -170,7 +170,7 @@
 		<Text></Text>
 	</String>
 	<String Id="1103" Name="IDS_MAIN_MENU_TITLE_23">
-		<Text>UTK</Text>
+		<Text></Text>
 	</String>
 	<String Id="1104" Name="IDS_MAIN_MENU_TITLE_24">
 		<Text>FM </Text>
@@ -179,10 +179,10 @@
 		<Text></Text>
 	</String>
 	<String Id="1106" Name="IDS_MAIN_MENU_TITLE_26">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1107" Name="IDS_MAIN_MENU_TITLE_27">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1108" Name="IDS_MAIN_MENU_TITLE_28">
 		<Text></Text>
@@ -194,7 +194,7 @@
 		<Text></Text>
 	</String>
 	<String Id="1111" Name="IDS_MAIN_MENU_TITLE_31">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1112" Name="IDS_MAIN_MENU_TITLE_32">
 		<Text></Text>

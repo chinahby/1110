@@ -149,7 +149,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_RECORD">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_STOP">
 		<Text></Text>
@@ -212,10 +212,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_FULLSCREEN">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_GALLERY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_YES">
 		<Text></Text>

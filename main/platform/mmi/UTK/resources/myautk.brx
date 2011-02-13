@@ -35,7 +35,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="12" Name="IDS_GENERAL_BEEP_STRING">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="13" Name="IDS_POSITIVE_ACKNOWLEDGEMENT_STRING">
 		<Text>Positive acknowledgement</Text>

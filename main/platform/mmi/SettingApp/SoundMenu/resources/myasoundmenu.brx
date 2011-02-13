@@ -5,10 +5,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_RINGER_VOLUME_TITLE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_EARPIECE_VOLUME_TITLE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_KEYBEEP_VOLUME_TITLE">
 		<Text></Text>
@@ -38,19 +38,19 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_ALERTTYPE_VIB">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_SOUNDMENU_TITLE">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_SHUTDOWN_RINGER">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_ALARMRING">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_ITEM_VIBRING">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_ITEM_DISABLE">
 		<Text></Text>
@@ -131,10 +131,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_POWERONOFF_ALERT">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_ALERTTYPE_VIBANDRING">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_ARABIC_RINGTONE_1">
 		<Text></Text>

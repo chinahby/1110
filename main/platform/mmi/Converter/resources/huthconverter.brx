@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="converter" VERSION="1">
+<BREWRes Name="huthconverter" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1000" Name="IDS_CONVERTER_TITLE">
 		<Text>การแปลงค่า</Text>
@@ -41,7 +41,7 @@
 		<Text>GBP</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_CURRENCY_CHF">
-		<Text>CHF</Text>
+		<Text>MMK</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_CURRENCY_SEK">
 		<Text>SEK</Text>

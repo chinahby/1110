@@ -44,7 +44,7 @@
 		<Text>PIN :</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_INVALIDPIN">
-		<Text>  %d </Text>
+		<Text>  %d </Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_PINBLOCKED">
 		<Text>PIN  ...</Text>

@@ -2915,7 +2915,7 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
         TextCtl_CheckEntryMode(pme);
     }
     // Ë¢ĞÂ¿Ø¼ş
-    //MSG_FATAL("3pme->m_wResID:::::::::::::::::::=%d,tmCurr=%d",pme->m_wResID,tmCurr,0);
+    MSG_FATAL("3pme->m_wResID:::::::::::::::::::=%d,tmCurr=%d",pme->m_wResID,tmCurr,0);
     (void)CTextCtl_Redraw((ITextCtl *)pme);
     tmCurr = OEM_TextGetCurrentMode(pme->m_pText);
     return tmCurr;

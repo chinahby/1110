@@ -8,10 +8,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_AUTOKEYGUARD_TITLE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_SCENEMODE_TITLE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_PHONE_NUMBER">
 		<Text></Text>
@@ -77,10 +77,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_AUTO_POWER_ON_TIME">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_AUTO_POWER_OFF_TIME">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_AUTO_POWER_TIME">
 		<Text></Text>
@@ -98,7 +98,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_ANSWER_MODE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_SHORT_AKG_TITLE">
 		<Text></Text>
@@ -107,16 +107,16 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_SEND_ANSWER">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_HEADSET_ANSWER">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_MINUTE_ALERT">
-		<Text> </Text>
+		<Text> </Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_AUTOANSWER_TITLE">
-		<Text> </Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_ANYKEY_ANSWER_TITLE">
 		<Text></Text>
@@ -164,13 +164,13 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1055" Name="IDS_NETWORKSETTING_TITLE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1056" Name="IDS_CALLFORWARD_DIVERT">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1057" Name="IDS_WARNING_MESSEGE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1058" Name="IDS_VOL_WARNING">
 		<Text></Text>
@@ -278,7 +278,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1093" Name="IDS_AUTOPOWER_WARNING">
-		<Text> / </Text>
+		<Text> / </Text>
 	</STRING>
 	<STRING Id="1094" Name="IDS_CALL_RESTRICT">
 		<Text></Text>
@@ -290,7 +290,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1097" Name="IDS_AUTO_POWER_TITLE">
-		<Text> / </Text>
+		<Text> / </Text>
 	</STRING>
 	<STRING Id="1098" Name="IDS_SHAKE_TITLE">
 		<Text></Text>

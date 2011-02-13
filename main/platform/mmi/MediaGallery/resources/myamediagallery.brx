@@ -137,7 +137,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_MG_CHANNEL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_MG_SIZE">
 		<Text>:</Text>
@@ -260,7 +260,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1086" Name="IDS_MG_MANYFILES">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1087" Name="IDS_MG_DEEPPATH">
 		<Text></Text>

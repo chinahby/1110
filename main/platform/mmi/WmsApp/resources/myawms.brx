@@ -44,10 +44,10 @@
 		<Text>:</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_REPLY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="16" Name="IDS_FORWARD">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="17" Name="IDS_LISTENVM">
 		<Text></Text>
@@ -197,7 +197,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="66" Name="IDS_APP_WMS">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="67" Name="IDS_BLANK">
 		<Text> </Text>
@@ -437,7 +437,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="152" Name="IDS_MSGMANAGEMENT">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="153" Name="IDS_COPYINBOX">
 		<Text></Text>

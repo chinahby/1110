@@ -50,7 +50,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_FACTORYTESTMODE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_SEARCHING">
 		<Text>...</Text>
@@ -101,7 +101,7 @@
 		<Text>:%d</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_NEWWMSTIPS_FMT">
-		<Text> %d </Text>
+		<Text> %d </Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_CHARGER_ON">
 		<Text></Text>
@@ -131,7 +131,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_CHINA_TELECOM">
-		<Text></Text>
+		<Text>.</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_HEADSET_ON">
 		<Text></Text>

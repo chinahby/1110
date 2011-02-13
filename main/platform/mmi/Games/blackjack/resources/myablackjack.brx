@@ -14,10 +14,10 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="20" Name="IDC_DEAL">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="21" Name="IDC_CHANGE_BET">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="30" Name="IDC_HIT">
 		<Text></Text>
@@ -38,7 +38,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="100" Name="IDS_TITLE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="101" Name="IDS_INSTRUCTIONS">
 		<Text>21  21  11110 </Text>

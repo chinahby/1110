@@ -8,7 +8,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_NEW_RECORD">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_RECORD_LIST">
 		<Text></Text>
@@ -47,7 +47,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_RECORD_OPEN_FILE_ERROR_1">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_RECORD_OPEN_FILE_ERROR_2">
 		<Text></Text>
@@ -62,7 +62,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_RECORD_OPEN_FILE_ERROR_6">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_RECORD_OPEN_FILE_ERROR_7">
 		<Text></Text>
@@ -101,7 +101,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_FORWARD_RECORD">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_RECORD_LIST_OPTION_SET_AS_RINGTONE">
 		<Text></Text>
@@ -110,7 +110,7 @@
 		<Text>...</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_RECORD_SET_AS_RINGTONE_FAILED">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_RECORD_SET_AS_ALARM_FAILED">
 		<Text></Text>
@@ -152,7 +152,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1104" Name="IDS_RECORD_MEDIA_ERROR_EITEMBUSY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1105" Name="IDS_RECORD_MEDIA_ERROR_MM_EBADMEDIADATA">
 		<Text></Text>
