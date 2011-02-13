@@ -1314,7 +1314,7 @@ int CContApp_BuildListMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
         pMe->m_nCurrIdx -= nListItems;
     }//else Remain the current value
     
-    if(pMe->m_nCurrIdx >MAX_PHONEBOOK_CAPACITY)
+    if(pMe->m_nCurrIdx >(MAX_PHONEBOOK_CAPACITY+MAX_RUIMBOOK_CAPACITY))
     {
     	pMe->m_nCurrIdx = 0;
     }
