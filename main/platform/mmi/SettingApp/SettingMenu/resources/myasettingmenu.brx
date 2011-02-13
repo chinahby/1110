@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="myasettingmenu" VERSION="1">
 <Strings Encoding="UNICODE">
 	<STRING Id="1001" Name="IDS_APP_TITLE">
@@ -401,7 +401,7 @@
 		<Text>10 </Text>
 	</String>
 	<String Id="1134" Name="IDS_SEARCH_TENTY">
-		<Text> 15 </Text>
+		<Text>15 </Text>
 	</String>
 	<String Id="1135" Name="IDS_SEARCH_THIRTYMINUTE">
 		<Text>30  </Text>
