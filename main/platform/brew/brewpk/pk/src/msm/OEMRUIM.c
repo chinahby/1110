@@ -88,6 +88,7 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
 #ifdef FEATURE_OEMOMH 
 static int OEMRUIM_Get_Ecc_Code(IRUIM *pMe,byte *Buf);
 static byte OEMRUIM_bcd_to_ascii_forOMH(byte num_digi, byte *from_ptr, byte *to_ptr);
+static boolean OEMRUIM_WriteModel(IRUIM *pMe, byte *Buf);
 #endif
 
 static const VTBL(IRUIM) gOEMRUIMFuncs = {
@@ -106,7 +107,8 @@ static const VTBL(IRUIM) gOEMRUIMFuncs = {
    OEMRUIM_Get_Feature_Code,
    OEMRUIM_Read_Svc_P_Name
 #ifdef FEATURE_OEMOMH 
-  ,OEMRUIM_Get_Ecc_Code
+  ,OEMRUIM_Get_Ecc_Code,
+  OEMRUIM_WriteModel
 #endif  
 };
 
@@ -871,6 +873,79 @@ static byte OEMRUIM_bcd_to_ascii_forOMH(byte num_digi, /* Number of dialing digi
     to_ptr[k] = '\0';
 
     return i;
+}
+
+static boolean OEMRUIM_WriteModel(IRUIM *pMe, byte *Buf)
+{
+    //byte pData[126+2];
+    int pnDataSize = 126;
+    int status = EFAILED;
+    DBGPRINTF("OEMRUIM_WriteModel start");
+    DBGPRINTF("Buf =%s", Buf);
+    if ((!pMe) || (!Buf))
+    {
+        return EFAILED;
+    }
+    // Check to see if the card is connected.
+    if (!IRUIM_IsCardConnected (pMe))
+    {
+        return EFAILED;
+    }
+    gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
+    gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+    gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
+    gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+    gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+    gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
+    gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report;
+
+    gUimCmd.access_uim.item      = UIM_CDMA_MODEL;
+    gUimCmd.access_uim.access    = UIM_WRITE_F;
+    gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+    gUimCmd.access_uim.num_bytes = 126;
+    gUimCmd.access_uim.offset    = 0;
+    gUimCmd.access_uim.data_ptr  = Buf;
+
+    // From nvruim_access():  Access an EF, do not signal any task, use no
+    // signal, no done queue, use a callback, always report status.
+
+    // Send the command to the R-UIM:
+    OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
+
+    if (   (gCallBack.rpt_type != UIM_ACCESS_R)
+        || (gCallBack.rpt_status != UIM_PASS)
+        )
+    {
+        MSG_FATAL("OEMRUIM_WriteModel EFAILED", 0, 0 ,0);
+        status = EFAILED;
+        return EFAILED;
+    }
+
+    //if (pData == NULL)
+    //{
+    //    pnDataSize = gUimCmd.access_uim.num_bytes_rsp;
+    //}
+    //else
+    //{
+    //int i=0;
+    pnDataSize = MIN(pnDataSize, gUimCmd.access_uim.num_bytes_rsp);
+    MSG_FATAL("OEMRUIM_WriteModel pnDataSize=%d", pnDataSize, 0 ,0);
+    
+    status = SUCCESS;
+    //}
+#if 0
+    //if(status == SUCCESS)
+    {
+        if(30 ==OEMRUIM_bcd_to_ascii_forOMH(30,
+                                        (byte *)&pData,
+                                        (byte *)Buf))
+        {
+            Buf[UIM_CDMA_FEATURE_CODE_NUM_DIGI]='\0';
+        }
+    }
+#endif
+    MSG_FATAL("OEMRUIM_WriteModel End", 0, 0 ,0);
+    return status;
 }
 
 #endif
