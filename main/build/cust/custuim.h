@@ -365,9 +365,13 @@ when       who     what, where, why
 #define FEATURE_UIM_RUIM_SUPPORT_SCI
 
 /* Support for ICardSession */
+<<<<<<< .mine
+#define FEATURE_ICARDSESSION
+=======
 #ifdef FEATURE_OEMOMH
 #define FEATURE_ICARDSESSION
 #endif
+>>>>>>> .r3246
 
 #ifdef T_QSC1110
 #define FEATURE_CCAT
