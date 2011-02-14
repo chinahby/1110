@@ -2180,13 +2180,17 @@ wms_cmd_err_e_type wms_msg_cdma_send_MO
         rec_ptr->retry_wait_time = 0;
         rec_ptr->large_msg = FALSE;
         
-#ifdef CUST_EDITION	      
+#ifdef CUST_EDITION	 
+#ifndef FEATURE_OEMOMH 
         if (g_mochannel == WMS_MO_ONLY_TRAFFIC)
         {
             rec_ptr->large_msg = TRUE;
         }
         else
-        rec_ptr->large_msg = FALSE;
+        {
+            rec_ptr->large_msg = FALSE;
+        }
+#endif        
         
         /* Set the Global Retry Timer */
         //wms_set_retry_timer();
@@ -2197,7 +2201,7 @@ wms_cmd_err_e_type wms_msg_cdma_send_MO
                  0,
                  FALSE,
                  rec_ptr);
-                 
+#ifndef FEATURE_OEMOMH                  
         /* Request to set up DC if call is not already active */
         if ((!dc_s_ptr->call_active) && 
             (!dc_s_ptr->bInTC) && 
@@ -2232,60 +2236,63 @@ wms_cmd_err_e_type wms_msg_cdma_send_MO
         }
         else
         {
+#endif        
 #endif /*CUST_EDITION*/		
-        if (msg_s_ptr->mo_retry_period > 0)
-        { 
+#ifndef FEATURE_OEMOMH 
+            if (msg_s_ptr->mo_retry_period > 0)
+            { 
 #ifndef CUST_EDITION
-        /* Set the Global Retry Timer */
-        wms_set_retry_timer();
+                /* Set the Global Retry Timer */
+                wms_set_retry_timer();
 #else
-        clk_dereg(&rec_ptr->clk_timer);
-        clk_reg2(&rec_ptr->clk_timer, 
-                 wms_mo_timer,
-                 CLK_MS_PER_SEC,
-                 0,
-                 FALSE,
-                 rec_ptr);
+                clk_dereg(&rec_ptr->clk_timer);
+                clk_reg2(&rec_ptr->clk_timer, 
+                         wms_mo_timer,
+                         CLK_MS_PER_SEC,
+                         0,
+                         FALSE,
+                         rec_ptr);
 #endif
-        }
+            }
 
-        /* ------------- Now send the msg out -------------- */
+            /* ------------- Now send the msg out -------------- */
 
-        st = wms_msg_cdma_send_sms_OTA( FALSE,  /* not a TL Ack msg */
-                                        rec_ptr,
-                                        ota_ptr,
-                                        & tl_ptr->address );
+            st = wms_msg_cdma_send_sms_OTA( FALSE,  /* not a TL Ack msg */
+                                            rec_ptr,
+                                            ota_ptr,
+                                            & tl_ptr->address );
 
-        if( st == WMS_OK_S )
-        {
-          MSG_HIGH("MO msg State: L2 in Progress",0,0,0);
-          rec_ptr->state = WMS_MSG_STATE_LAYER2_IN_PROGRESS;
-        }
-        else if( st == WMS_NETWORK_NOT_READY_S )
-        {
-          /* reset the interval timer if there is enough time left from the
-          ** retry period.
-          */
-          if((rec_ptr->retry_time_left - (sint31)msg_s_ptr->mo_retry_interval) > 0)
-          {
-            /* Set the retry_wait_time */
-            rec_ptr->retry_wait_time = msg_s_ptr->mo_retry_interval;
-            rec_ptr->state = WMS_MSG_STATE_QUEUED;
-          }
-          else
-          {
-            /* Declare Failure */
-            cmd_err = WMS_CMD_ERR_BUSY;
-          }
-        }
-        else
-        {
-          /* Declare Failure */
-          cmd_err = WMS_CMD_ERR_NULL_PTR;
-        }
+            if( st == WMS_OK_S )
+            {
+              MSG_HIGH("MO msg State: L2 in Progress",0,0,0);
+              rec_ptr->state = WMS_MSG_STATE_LAYER2_IN_PROGRESS;
+            }
+            else if( st == WMS_NETWORK_NOT_READY_S )
+            {
+              /* reset the interval timer if there is enough time left from the
+              ** retry period.
+              */
+              if((rec_ptr->retry_time_left - (sint31)msg_s_ptr->mo_retry_interval) > 0)
+              {
+                /* Set the retry_wait_time */
+                rec_ptr->retry_wait_time = msg_s_ptr->mo_retry_interval;
+                rec_ptr->state = WMS_MSG_STATE_QUEUED;
+              }
+              else
+              {
+                /* Declare Failure */
+                cmd_err = WMS_CMD_ERR_BUSY;
+              }
+            }
+            else
+            {
+              /* Declare Failure */
+              cmd_err = WMS_CMD_ERR_NULL_PTR;
+            }          
  #ifdef CUST_EDITION
         }
  #endif
+#endif 
       }
       else
       {
@@ -9826,7 +9833,9 @@ static boolean wms_msg_convert_address_to_plus
 
 void wms_msg_setmochannel(byte usechl)
 {
+#ifndef FEATURE_OEMOMH 
     g_mochannel = usechl;
+#endif
 }
 
 #endif /* FEATURE_CDSMS || FEATURE_GWSMS */
