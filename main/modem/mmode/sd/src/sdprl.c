@@ -2058,8 +2058,28 @@ MMEXTN  sd_blksys_e_type          sdprl_map_chan_to_blksys(
       /*lint -e787 -e788*/
       switch( band )
         {
-          case SD_BAND_BC0:   return sdprl_cdma_bc0_chan_to_blksys( chan );
-          case SD_BAND_BC1:   return sdprl_cdma_bc1_chan_to_blksys( chan );
+          case SD_BAND_BC0:   
+#ifdef FEATURE_IS683A_450M_SUPPORT 
+            if (sdss_is_flag_set(SD_SS_MAIN, SDSS_FLAG_IS683A_450M_SUPPORT)) 
+            { 
+              /* Map PCS bands to 450M (BC5)*/ 
+              return sdprl_cdma_bc5_chan_to_blksys( chan ); 
+            } 
+            else 
+#endif 
+              return sdprl_cdma_bc0_chan_to_blksys( chan );
+
+          case SD_BAND_BC1:   
+#ifdef FEATURE_IS683A_450M_SUPPORT 
+            if (sdss_is_flag_set(SD_SS_MAIN, SDSS_FLAG_IS683A_450M_SUPPORT)) 
+            { 
+              /* Map PCS bands to 450M (BC5)*/ 
+              return sdprl_cdma_bc5_chan_to_blksys( chan ); 
+            } 
+            else 
+#endif 
+              return sdprl_cdma_bc1_chan_to_blksys( chan );
+
           case SD_BAND_BC3:   return sdprl_cdma_bc3_chan_to_blksys( chan );
           case SD_BAND_BC4:   return sdprl_cdma_bc4_chan_to_blksys( chan );
           case SD_BAND_BC5:   return sdprl_cdma_bc5_chan_to_blksys( chan );
@@ -6342,10 +6362,27 @@ static  sdprl_match_e_type        sdprl_sys_match(
 
       /* If band does not match, return SDPRL_MATCH_SID_MODE.
       */
+#ifdef FEATURE_IS683A_450M_SUPPORT 
+      if (sdss_is_flag_set(SD_SS_MAIN, SDSS_FLAG_IS683A_450M_SUPPORT)) 
+      { 
+        SD_MSG_HIGH("sdprl_sys_match - Feature IS683A_450M_SUPPORT is ON. Mapping PCS -> BC5",0,0,0); 
+        if(sd_sr_ptr->sys.band != SD_SS_BAND_PREF_BC5 ) 
+        {
+            return SDPRL_MATCH_SID_MODE; 
+        } 
+      } 
+      else 
+      {
+        if( sd_sr_ptr->sys.band != SD_SS_BAND_PREF_CELL )  
+        { 
+          return SDPRL_MATCH_SID_MODE; 
+        }
+      }
+#else
       if( sd_sr_ptr->sys.band != SD_SS_BAND_PREF_CELL ) {
         return SDPRL_MATCH_SID_MODE;
       }
-
+#endif
       /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
       /* If we got here, the mode and band-class match - check for channel
@@ -6373,7 +6410,7 @@ static  sdprl_match_e_type        sdprl_sys_match(
       if( sd_sr_ptr->sys.band != SD_SS_BAND_PREF_CELL ) {
         return SDPRL_MATCH_SID_MODE;
       }
-
+      
       /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
       /* If we got here, the band-class match - check for system match.
@@ -6460,15 +6497,32 @@ static  sdprl_match_e_type        sdprl_sys_match(
       if( sd_sr_ptr->sys.mode != SD_MODE_CDMA_ ) {
         return SDPRL_MATCH_SID;
       }
-
+      
+#ifdef FEATURE_IS683A_450M_SUPPORT 
+      if (sdss_is_flag_set(SD_SS_MAIN, SDSS_FLAG_IS683A_450M_SUPPORT)) 
+      { 
+        SD_MSG_HIGH("sdprl_sys_match - Feature IS683A_450M_SUPPORT is ON. Mapping PCS -> BC5",0,0,0); 
+        if(sd_sr_ptr->sys.band != SD_SS_BAND_PREF_BC5 ) 
+        {
+            return SDPRL_MATCH_SID_MODE; 
+        } 
+      } 
+      else 
+      {
+        if( sd_sr_ptr->sys.band != SD_SS_BAND_PREF_PCS )  
+        { 
+          return SDPRL_MATCH_SID_MODE; 
+        }
+      }
+#else
       /* If band does not match, return SDPRL_MATCH_SID_MODE.
       */
       if( sd_sr_ptr->sys.band != SD_SS_BAND_PREF_PCS ) {
         return SDPRL_MATCH_SID_MODE;
       }
-
+#endif
       /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
+ 
       /* If we got here, the mode and band-class match - check for channel
       ** match. If such a match is found, return
       ** SDPRL_MATCH_SID_MODE_BAND_CHAN

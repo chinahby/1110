@@ -753,6 +753,10 @@ typedef enum {
 
                                          /* 4 */
   SDSS_FLAG_CONN_MODE_UOOS_AWAKE,     /* Connected mode UOOS awake flag */
+  
+#ifdef FEATURE_IS683A_450M_SUPPORT
+  SDSS_FLAG_IS683A_450M_SUPPORT,      /* IS683A_450M_Support Flag */ 
+#endif
 
   SDSS_FLAG_MAX                       /* Internal SD use */
 
@@ -3850,8 +3854,19 @@ extern  sd_ss_band_pref_e_type    sdss_get_supp_wcdma_band_pref(
             */
 );
 
-
-
+#ifdef FEATURE_IS683A_450M_SUPPORT
+extern boolean                   sdss_precondition_satisfied();
+extern  boolean                       sdss_is_flag_set( 
+ 
+        sd_ss_e_type                  ss, 
+            /* System selection - MAIN or HDR. 
+            */ 
+ 
+        sdss_flag_e_type flag 
+            /* SS-Preference reason combination type. 
+            */ 
+);
+#endif
 
 /* <EJECT> */
 /*===========================================================================

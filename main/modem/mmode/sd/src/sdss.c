@@ -1263,6 +1263,11 @@ typedef struct {
   byte                 gw_pwr_save_acq_stage_val;
   /* GW pwr save acq stage value.
   */
+#ifdef FEATURE_IS683A_450M_SUPPORT 
+  boolean                is_IS683A_450M_support; 
+#endif 
+  /* Flat states whether we support 450M bandclass in PRL version 683A.
+  */ 
 
 } sdss_s_type;
 
@@ -2309,7 +2314,11 @@ SIDE EFFECTS
   None.
 
 ===========================================================================*/
+#ifdef FEATURE_IS683A_450M_SUPPORT
+MMEXTN  boolean                       sdss_is_flag_set(
+#else
 static  boolean                       sdss_is_flag_set(
+#endif
 
         sd_ss_e_type                  ss,
             /* System selection - MAIN or HDR.
@@ -2348,6 +2357,11 @@ static  boolean                       sdss_is_flag_set(
 
     case SDSS_FLAG_CONN_MODE_UOOS_AWAKE:
       return ss_ptr->is_conn_uoos_awake;
+      
+#ifdef FEATURE_IS683A_450M_SUPPORT
+    case SDSS_FLAG_IS683A_450M_SUPPORT: 
+      return ss_ptr->is_IS683A_450M_support; 
+#endif
 
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -6622,7 +6636,13 @@ static  void                      sdss_set_flag(
       ss_ptr->is_conn_uoos_awake = set_val;
       break;
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
+    
+#ifdef FEATURE_IS683A_450M_SUPPORT
+    case SDSS_FLAG_IS683A_450M_SUPPORT: 
+      ss_ptr->is_IS683A_450M_support = set_val; 
+      break; 
+#endif
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
     case SDSS_FLAG_NONE:
     case SDSS_FLAG_MAX:
     default:
@@ -7135,7 +7155,22 @@ MMEXTN  sd_ss_mode_pref_e_type    sdss_get_mode_capability( void )
 
   return ( mode_capability );
 }
-
+#ifdef  FEATURE_IS683A_450M_SUPPORT
+MMEXTN  boolean         sdss_precondition_satisfied( void ) 
+{ 
+  const sdss_s_type   *ss_ptr   = sdss_ptr(SD_SS_MAIN); 
+ 
+  if (((ss_ptr->band_capability & SD_SS_BAND_PREF_BC5) != 0) && 
+     ((ss_ptr->band_capability & SD_SS_BAND_PREF_BC1) == 0 || (ss_ptr->band_capability & SD_SS_BAND_PREF_BC0) == 0))  
+  { 
+    return TRUE; 
+  } 
+  else 
+  { 
+    return FALSE; 
+  } 
+}
+#endif
 /* <EJECT> */
 /*===========================================================================
 
@@ -7785,10 +7820,24 @@ MMEXTN  sd_ss_band_pref_e_type    sdss_map_band_to_band_pref(
     /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -- -*/
 
     case SD_BAND_BC0:
+#ifdef  FEATURE_IS683A_450M_SUPPORT 
+      if( sdss_is_flag_set(SD_SS_MAIN, SDSS_FLAG_IS683A_450M_SUPPORT ))  
+      {
+        band_pref = SD_SS_BAND_PREF_BC5; 
+      }
+      else 
+#endif
       band_pref = SD_SS_BAND_PREF_BC0;
       break;
 
     case SD_BAND_BC1:
+#ifdef  FEATURE_IS683A_450M_SUPPORT 
+      if( sdss_is_flag_set(SD_SS_MAIN, SDSS_FLAG_IS683A_450M_SUPPORT ))  
+      {
+        band_pref = SD_SS_BAND_PREF_BC5; 
+      }
+      else
+#endif
       band_pref = SD_SS_BAND_PREF_BC1;
       break;
 
@@ -21616,6 +21665,22 @@ static  void                    sdss_init(
 
   /* Filter out the bands without the available modes. */
   ss_ptr->band_capability = sdss_get_supp_mode_band_pref(ss_ptr->mode_capability, ss_ptr->band_capability);
+  
+#ifdef FEATURE_IS683A_450M_SUPPORT 
+    //check if the hardware capability is allow 450M and don't support 1900 PCS 
+  if (((ss_ptr->band_capability & SD_SS_BAND_PREF_BC5) != 0) && 
+   ((ss_ptr->band_capability & SD_SS_BAND_PREF_BC1) == 0 || (ss_ptr->band_capability & SD_SS_BAND_PREF_BC0) == 0))  
+  { 
+    //enable the flag 
+    sdss_set_flag2(SD_SS_MAIN, SDSS_FLAG_IS683A_450M_SUPPORT, TRUE); 
+  } 
+  else 
+  { 
+    //disable the flag 
+    sdss_set_flag2(SD_SS_MAIN, SDSS_FLAG_IS683A_450M_SUPPORT, FALSE); 
+       
+  } 
+#endif
 
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
