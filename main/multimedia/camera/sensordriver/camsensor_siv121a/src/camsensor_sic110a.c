@@ -150,6 +150,8 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
     
     x = (CAMSENSOR_SIC110A_FULL_SIZE_WIDTH-dx)>>1;
     y = (CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-dy)>>1;
+
+    dy = CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-y;
     
     //Sensor Block Setting  ###Don't Change###
     sic110a_i2c_write_byte(0x00, 0x00); 

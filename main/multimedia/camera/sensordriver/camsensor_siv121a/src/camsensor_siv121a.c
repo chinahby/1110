@@ -166,6 +166,8 @@ static boolean initialize_siv121a_registers_preview(uint16 dx, uint16 dy)
     x = (CAMSENSOR_SIV121A_QTR_SIZE_WIDTH-dx)>>1;
     y = (CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT-dy)>>1;
     
+    dy = CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT-y;
+    
     // SNR Block [Vendor recommended value ##Don't change##]
     siv121a_i2c_write_byte(0x00,0x00);
     siv121a_i2c_write_byte(0x03,0x04); //0x04
@@ -475,6 +477,8 @@ static boolean initialize_siv121a_registers(uint16 dx, uint16 dy)
     
     x = (CAMSENSOR_SIV121A_FULL_SIZE_WIDTH-dx)>>1;
     y = (CAMSENSOR_SIV121A_FULL_SIZE_HEIGHT-dy)>>1;
+
+    dy = CAMSENSOR_SIV121A_FULL_SIZE_HEIGHT-y;
     
     // SNR Block [Vendor recommended value ##Don't change##]
     siv121a_i2c_write_byte(0x00,0x00);
