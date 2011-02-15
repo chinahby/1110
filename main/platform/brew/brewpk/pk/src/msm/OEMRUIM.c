@@ -1228,12 +1228,19 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
                     }
                     else
                     {
+                        // without BOM
                         for(k=0;k<i-3;k++)
                         {
                             tempbuf[k]=Inputbuf[k+3];
                             //ERR("tempbuf[%d] = %x",k,tempbuf[k],0);
                         }
-                        OEMRUIM_ExchangeByte(tempbuf,k);
+                        if(!((Inputbuf[2]&0xFF == 0x01) && (Inputbuf[3]&0xFF == 0x00)))
+                        {
+                            //第三位为01表示是英文
+                            //第四位接着为00表示大端
+                            OEMRUIM_ExchangeByte(tempbuf,k);
+                        }                        
+                        //OEMRUIM_ExchangeByte(tempbuf,k);
                     }
                     
                     //DBGPRINTF("tempbuf2 = %S",tempbuf);
