@@ -1182,7 +1182,18 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
             {
                 if(Inputbuf[i]==0xFF)
                 {
-                    break;
+                    //当FF后面或前面不是跟的FE组成一个大小端判断串时，就表示这是一个无效字符
+                    if(i > 3)
+                    {
+                        if(!((Inputbuf[i-1]==0xFE) || (Inputbuf[i+1]==0xFE)))
+                        {
+                            break;
+                        }
+                    }
+                    else if(Inputbuf[i+1] != 0xFE)
+                    {
+                        break;
+                    }                    
                 }
             }
             ERR("number len = %d Inputbuf[1]= %x",i,Inputbuf[1],0);
@@ -1200,12 +1211,31 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
                     break;
 
                 case  AEERUIM_LANG_ENCODING_UNICODE:                   //UNICODE编码
-                    for(k=0;k<i-3;k++)
+                    if(((Inputbuf[3]&0xFF == 0xFE) || (Inputbuf[3]&0xFF == 0xFF)) &&
+                        ((Inputbuf[4]&0xFF == 0xFE) || (Inputbuf[4]&0xFF == 0xFF))
+                      )
                     {
-                        tempbuf[k]=Inputbuf[k+3];
-                        //ERR("tempbuf[%d] = %x",k,tempbuf[k],0);
+                        //为TRUE则表示是BOM，要去掉前面5个标志位
+                        for(k=0;k<i-5;k++)
+                        {
+                            tempbuf[k]=Inputbuf[k+5];
+                            //ERR("tempbuf[%d] = %x",k,tempbuf[k],0);
+                        }        
+                        if((Inputbuf[3]&0xFF == 0xFE) && (Inputbuf[4]&0xFF == 0xFF))//(big endian 00-54 with BOM)
+                        {
+                            OEMRUIM_ExchangeByte(tempbuf,k);
+                        }
                     }
-                    OEMRUIM_ExchangeByte(tempbuf,k);
+                    else
+                    {
+                        for(k=0;k<i-3;k++)
+                        {
+                            tempbuf[k]=Inputbuf[k+3];
+                            //ERR("tempbuf[%d] = %x",k,tempbuf[k],0);
+                        }
+                        OEMRUIM_ExchangeByte(tempbuf,k);
+                    }
+                    
                     //DBGPRINTF("tempbuf2 = %S",tempbuf);
                     tempbuf[k++]='\0';
                     tempbuf[k]='\0';
