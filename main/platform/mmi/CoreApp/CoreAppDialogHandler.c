@@ -4617,6 +4617,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, RGB_WHITE);
 	    	rect.x += nNumberWidth + nOffset;
 	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_WHITE);
+	    	
 	    	IDISPLAY_Update(pMe->m_pDisplay);
     	}
 		#else

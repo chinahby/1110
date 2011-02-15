@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="cameraapp" VERSION="1">
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="myacameraapp" VERSION="1">
 <Strings Encoding="UNICODE">
 	<String Id="1001" Name="IDS_ITEM_CAMERA">
 		<Text></Text>
@@ -14,31 +14,31 @@
 		<Text></Text>
 	</String>
 	<String Id="1007" Name="IDS_ENVIR_MODE_NIGHT">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1008" Name="IDS_ENVIR_MODE_CLOUDY">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1009" Name="IDS_ENVIR_MODE_SUNNY">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1013" Name="IDS_CFG_QUALITY">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1014" Name="IDS_QUALITY_HIGH">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1015" Name="IDS_QUALITY_MED">
 		<Text></Text>
 	</String>
 	<String Id="1016" Name="IDS_QUALITY_LOW">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1017" Name="IDS_CFG_SIZE">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1018" Name="IDS_CFG_TONE">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1019" Name="IDS_TONE_DISABLE">
 		<Text></Text>
@@ -47,7 +47,7 @@
 		<Text></Text>
 	</String>
 	<String Id="1021" Name="IDS_CFG_SELFTIMER">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1022" Name="IDS_SELFTIME_OFF">
 		<Text></Text>
@@ -56,7 +56,7 @@
 		<Text>5 </Text>
 	</String>
 	<String Id="1024" Name="IDS_SELFTIME_SEC2">
-		<Text>10 </Text>
+		<Text>10 </Text>
 	</String>
 	<String Id="1025" Name="IDS_SELFTIME_SEC3">
 		<Text>15 </Text>
@@ -77,7 +77,7 @@
 		<Text>5 </Text>
 	</String>
 	<String Id="1031" Name="IDS_CFG_BANDING">
-		<Text>Banding</Text>
+		<Text></Text>
 	</String>
 	<String Id="1032" Name="IDS_BANDING_MODE1">
 		<Text>50 Hz</Text>
@@ -86,7 +86,7 @@
 		<Text>60 Hz</Text>
 	</String>
 	<String Id="1037" Name="IDS_CFG_RESET">
-		<Text></Text>
+		<Text></Text>
 	</String>
 	<String Id="1058" Name="IDS_NORMAL">
 		<Text></Text>
@@ -99,7 +99,7 @@
 	</String>
 	<String Id="1067" Name="IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD">
 		<Text>SD</Text>
-	</String>	
+	</String>
 	<String Id="1068" Name="IDS_DONE">
 		<Text></Text>
 	</String>

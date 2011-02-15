@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="AEEControls" VERSION="1">
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="OEMAEEControls" VERSION="1">
 <Strings Encoding="ISOLATIN1">
 	<STRING Id="1" Name="AEE_IDS_JANUARY">
 		<Text>January</Text>
@@ -158,6 +158,4 @@
 		<Text>Domain</Text>
 	</STRING>
 </Strings>
-<Dialogs>
-</Dialogs>
 </BREWRes>

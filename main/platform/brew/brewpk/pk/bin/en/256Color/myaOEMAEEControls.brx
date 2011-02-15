@@ -1,11 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="AEEControls" VERSION="1">
-<Strings Encoding="UNICODE">
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="myaOEMAEEControls" VERSION="1">
+<Strings Encoding="Unicode">
 	<STRING Id="1" Name="AEE_IDS_JANUARY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="2" Name="AEE_IDS_FEBRUARY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="3" Name="AEE_IDS_MARCH">
 		<Text></Text>
@@ -14,13 +14,13 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="5" Name="AEE_IDS_MAY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="6" Name="AEE_IDS_JUNE">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="7" Name="AEE_IDS_JULY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="8" Name="AEE_IDS_AUGUST">
 		<Text></Text>
@@ -32,25 +32,25 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="11" Name="AEE_IDS_NOVEMBER">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="12" Name="AEE_IDS_DECEMBER">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="13" Name="AEE_IDS_SUNDAY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="14" Name="AEE_IDS_MONDAY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="15" Name="AEE_IDS_TUESDAY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="16" Name="AEE_IDS_WEDNESDAY">
 		<Text></Text>
 	</STRING>
 	<STRING Id="17" Name="AEE_IDS_THURSDAY">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="18" Name="AEE_IDS_FRIDAY">
 		<Text></Text>
@@ -62,7 +62,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="21" Name="AEE_IDS_PM">
-		<Text></Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="22" Name="AEE_IDS_NO_FLOAT">
 		<Text>- No Float -</Text>
@@ -158,6 +158,4 @@
 		<Text>Domain</Text>
 	</STRING>
 </Strings>
-<Dialogs>
-</Dialogs>
 </BREWRes>
