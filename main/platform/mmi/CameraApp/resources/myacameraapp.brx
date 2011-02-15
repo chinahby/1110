@@ -56,7 +56,7 @@
 		<Text>5 </Text>
 	</String>
 	<String Id="1024" Name="IDS_SELFTIME_SEC2">
-		<Text>10 </Text>
+		<Text>10</Text>
 	</String>
 	<String Id="1025" Name="IDS_SELFTIME_SEC3">
 		<Text>15 </Text>

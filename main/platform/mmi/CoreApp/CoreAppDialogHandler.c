@@ -4344,6 +4344,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 {
     AECHAR      wszDate[64]= {0};
     AECHAR      wFormat[64]= {0};
+    AECHAR      wszDatemat[4] = {0};
     JulianType  jDate;
     AEERect     rc;
     AEERect     rc_date;
@@ -4506,6 +4507,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     // 格式化时间字符串并绘制
     wFormat[0] = 0;
     wszDate[0] = 0;
+    
     (void) ISHELL_LoadResString(pMe->a.m_pIShell,
                                 AEE_COREAPPRES_LANGFILE,
                                 IDS_TIME_TILE,
@@ -4524,12 +4526,18 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
         len = WSTRLEN(wszDate);
         if(jDate.wHour >= 12)
         {
+        	   wszDatemat[0] = (AECHAR)'P';
+        	   wszDatemat[1] = (AECHAR)'M';
+        	   wszDatemat[2] = 0;
             wszDate[len] = (AECHAR)'P';
             wszDate[len+1] = (AECHAR)'M';
             wszDate[len+2] = 0;
         }
         else
         {
+        	   wszDatemat[0] = (AECHAR)'A';
+        	   wszDatemat[1] = (AECHAR)'M';
+        	   wszDatemat[2] = 0;
             wszDate[len] = (AECHAR)'A';
             wszDate[len+1] = (AECHAR)'M';
             wszDate[len+2] = 0;
@@ -4597,10 +4605,14 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 		#ifdef FEATURE_VERSION_MYANMAR
 		{
 			int         nLineWidth = 4, nNumberWidth = 20, nNumberHeight = 40, nOffset = 5,
-	                xStartPos = 5, yStartPos = 0, nTextLen = 0;
+	                xStartPos = 0, yStartPos = 0, nTextLen = 0;
 	        AEERect rect = {0};
 	        yStartPos = (SCREEN_HEIGHT*3/5);
 			// draw hour
+			if (bTFmt != OEMNV_TIMEFORM_AMPM)
+			{
+				xStartPos = 5;
+			}
 	    	SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
 	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wHour/10), nLineWidth, &rect, RGB_WHITE);
 	    	rect.x += nNumberWidth + nOffset;
@@ -4617,7 +4629,17 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, RGB_WHITE);
 	    	rect.x += nNumberWidth + nOffset;
 	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_WHITE);
-	    	
+	    	rect.x += nNumberWidth + nOffset;
+	     rect.y = rect.y +12;
+	    	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+	                              pMe->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              18, 
+	                              wszDatemat, -1,
+	                              0, 0, &rect, 
+	                              IDF_ALIGN_MIDDLE
+	                              | IDF_ALIGN_LEFT
+	                              | IDF_TEXT_TRANSPARENT);
 	    	IDISPLAY_Update(pMe->m_pDisplay);
     	}
 		#else
