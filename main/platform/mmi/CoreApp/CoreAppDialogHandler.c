@@ -4608,7 +4608,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                xStartPos = 0, yStartPos = 0, nTextLen = 0;
 	        AEERect rect = {0};
 	        uint16    wHour,len; 
-	        yStartPos = (SCREEN_HEIGHT*3/5);
+	        yStartPos = (SCREEN_HEIGHT*2/5)+10;
 			// draw hour
 			if (bTFmt != OEMNV_TIMEFORM_AMPM)
 			{
@@ -4632,7 +4632,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	   		 // draw colon
 	    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset), yStartPos + nNumberHeight/2 - nLineWidth, nLineWidth, nLineWidth);
 	    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_WHITE);
-	    	rect.y = yStartPos + nNumberHeight*4/5 - nLineWidth;
+	    	rect.y = yStartPos + nNumberHeight*3/5 +10 - nLineWidth;
 	    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_WHITE);
 	    
 	   		// draw minute
