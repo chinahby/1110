@@ -385,7 +385,7 @@
 	<String Id="1128" Name="IDS_YES">
 		<Text></Text>
 	</String>
-	<String Id="1129" Name="IDS_MYANMAR" Encoding="ISOLATIN1">
+	<String Id="1129" Name="IDS_MYANMAR">
 		<Text></Text>
 	</String>
 	<String Id="1130" Name="IDS_SEARCHNET_MODE">
