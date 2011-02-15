@@ -4607,16 +4607,27 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 			int         nLineWidth = 4, nNumberWidth = 20, nNumberHeight = 40, nOffset = 5,
 	                xStartPos = 0, yStartPos = 0, nTextLen = 0;
 	        AEERect rect = {0};
+	        uint16    wHour,len; 
 	        yStartPos = (SCREEN_HEIGHT*3/5);
 			// draw hour
 			if (bTFmt != OEMNV_TIMEFORM_AMPM)
 			{
+       			wHour = jDate.wHour;
+				xStartPos = 10;
+			}
+			else
+			{
 				xStartPos = 5;
+				wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
+       			if(jDate.wHour == 0)
+        			{
+            			wHour = 12;
+       			}
 			}
 	    	SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
-	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wHour/10), nLineWidth, &rect, RGB_WHITE);
+	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, RGB_WHITE);
 	    	rect.x += nNumberWidth + nOffset;
-	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wHour%10), nLineWidth, &rect, RGB_WHITE);
+	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, RGB_WHITE);
 
 	   		 // draw colon
 	    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset), yStartPos + nNumberHeight/2 - nLineWidth, nLineWidth, nLineWidth);
@@ -4629,7 +4640,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, RGB_WHITE);
 	    	rect.x += nNumberWidth + nOffset;
 	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_WHITE);
-	    	rect.x += nNumberWidth + nOffset;
+	    	rect.x += nNumberWidth;
 	     rect.y = rect.y +12;
 	    	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
