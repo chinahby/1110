@@ -5493,7 +5493,20 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
                 			pme->m_nCurrInputModeCount = 3;
                 		}
                 		#endif
-                    	pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1];   
+                    	 
+                    	#ifdef FEATURE_VERSION_MYANMAR
+                    	pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1]; 
+                		if(!(pme->m_dwProps & TP_MULTILINE)/*&&( 2== i)*/)
+                		{
+                			
+                			if(pme->m_nCurrInputMode == OEM_MODE_MYANMAR)
+                			{
+                				pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH;
+                			}
+                		}
+                		#else
+                		pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1];
+                		#endif
                     }
                 }
                 #endif
