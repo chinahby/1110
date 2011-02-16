@@ -11286,7 +11286,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	    {   
 #if !defined (FEATURE_ALL_KEY_PAD)
 	        case AVK_STAR:
-	          //TextCtl_AddChar(pContext, (AECHAR) '*');
+	          TextCtl_AddChar(pContext, (AECHAR) '*');
 	          return TRUE;            
 
 	        case AVK_POUND:

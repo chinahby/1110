@@ -1561,13 +1561,14 @@ NormalKeyEvent:
             	//return TRUE;
 								
             	//Add By zzg 2010_08_14	防止重复载入SYMBOL输入法            	
-            	if (AEE_TM_SYMBOLS != CTextCtl_GetInputMode((ITextCtl *)pme, NULL))
-            	{	            		
+            	if (AEE_TM_SYMBOLS != CTextCtl_GetInputMode((ITextCtl *)pme, NULL)
+                    && AEE_TM_NUMBERS!= CTextCtl_GetInputMode((ITextCtl *)pme, NULL)
+                    && (!(pme->m_dwProps & TP_NOSYMBOL)))
+            	{
 					(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
 					return TRUE;
 				}
-            	//Add End                
-                
+            	//Add End
             }
 #ifndef FEATURE_ALL_KEY_PAD
             if ((!pme->m_pSoftKey) &&       // press the * key switch the Ab(ab,AB) and the En(en,EN) inputmethod 

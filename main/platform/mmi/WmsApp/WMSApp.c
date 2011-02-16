@@ -4581,40 +4581,20 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     
     // ½ÓÊÕµØÖ·
     MEMSET(strNum, 0, sizeof(strNum));
-//#if defined(FEATURE_PROJECT_SMART) ||defined(FEATURE_PROJECT_M8)
-#if defined (FEATURE_WMS_PLUS_HANDLE)
-    if(pMe->m_msSend.m_szNum[0] == '+')
-    {
-    	if ( pMe->m_msSend.m_szNum[1] == '6' && pMe->m_msSend.m_szNum[2] == '2' )
-    	{
-			STRCPY(strNum,"0");
-        	(void)WSTRTOSTR(&pMe->m_msSend.m_szNum[3], (strNum+1), (sizeof(strNum)-1));
-    	}
-    	else if ( pMe->m_msSend.m_szNum[1] == '6' && pMe->m_msSend.m_szNum[2] == '6' )
-    	{
-			STRCPY(strNum,"0");
-        	(void)WSTRTOSTR(&pMe->m_msSend.m_szNum[3], (strNum+1), (sizeof(strNum)-1));
-    	}
-        else
-        {
-        	STRCPY(strNum,OEM_INTERNATION_NUMBER);
-        	(void)WSTRTOSTR(&pMe->m_msSend.m_szNum[1], (strNum+STRLEN(OEM_INTERNATION_NUMBER)), (sizeof(strNum)-STRLEN(OEM_INTERNATION_NUMBER)));
-    	}
-    }
-    else
-#endif
+
     (void)WSTRTOSTR(pMe->m_msSend.m_szNum, strNum, sizeof(strNum));
     if (strNum[0] == '+')
     {
         pCltMsg->u.cdma_message.address.number_of_digits = IWMS_TsAsciiToDtmf(pMe->m_pwms, &strNum[1], pCltMsg->u.cdma_message.address.digits);
+        pCltMsg->u.cdma_message.address.number_type = WMS_NUMBER_INTERNATIONAL;
     }
     else
     {
         pCltMsg->u.cdma_message.address.number_of_digits = IWMS_TsAsciiToDtmf(pMe->m_pwms, strNum, pCltMsg->u.cdma_message.address.digits);
+        pCltMsg->u.cdma_message.address.number_type = WMS_NUMBER_UNKNOWN;
     }
     pCltMsg->u.cdma_message.address.digit_mode = WMS_DIGIT_MODE_4_BIT;
     pCltMsg->u.cdma_message.address.number_mode = WMS_NUMBER_MODE_NONE_DATA_NETWORK;
-    pCltMsg->u.cdma_message.address.number_type = WMS_NUMBER_UNKNOWN;
     pCltMsg->u.cdma_message.address.number_plan = WMS_NUMBER_PLAN_TELEPHONY;
     
     pCltMsg->u.cdma_message.is_tl_ack_requested = TRUE;

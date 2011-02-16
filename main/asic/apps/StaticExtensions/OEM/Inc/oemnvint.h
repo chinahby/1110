@@ -853,19 +853,6 @@ typedef PACKED struct _ringID
 #endif //FEATURE_SHORT_CODE_NAM_COUNT
 #define OEM_INIFILE    "oem.ini"
 #define OEM_BAKFILE   "oem.bak"
-#if defined (FEATURE_CARRIER_THAILAND_HUTCH)
-#define OEM_INTERNATION_NUMBER "001"
-#else
-//#if defined(FEATURE_PROJECT_SMART)
-#if defined(FEATURE_SMART_INTEL_NUM)
-#define OEM_INTERNATION_NUMBER "01033"
-//#elif defined(FEATURE_PROJECT_M8)
-#elif defined(FEATURE_M8_INTEL_NUM)
-#define OEM_INTERNATION_NUMBER "01068"
-#else
-#define OEM_INTERNATION_NUMBER "00"
-#endif
-#endif
 #define   OEMNV_MENU_STYLE_ICON    0
 #define   OEMNV_MENU_STYLE_LIST     1
 
