@@ -9152,6 +9152,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         			g_SplImeGlobals.uiInfo.candidateWidth = pContext->rectDisplay.dx-2;
         			g_SplImeGlobals.uiInfo.candMinSpacing = 10;
 	        		bResult = SplImeProcessKey(mKey, SPKT_Down);
+	        		MSG_FATAL("T9TextCtl_CJK_MYANMAR_Key....candidateIndex.=%d",g_SplImeGlobals.outputInfo.candidateIndex,0,0);
 	        		MEMSET(&pContext->m_date,0,sizeof(SplImeGlobals));
 	        		pContext->m_date = g_SplImeGlobals;
 	        		if(g_SplImeGlobals.outputInfo.candidatesNum<=0)
@@ -9272,6 +9273,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
         		
 	        		if(g_SplImeGlobals.outputInfo.isShowRightArrow && pContext->m_Selectcandidates)
 	        		{
+	        			MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
 		        		bResult = SplImeProcessKey(mKey, SPKT_Down);
 		        		MSG_FATAL("SplImeProcessKey.................%d =%d",mKey,g_SplImeGlobals.outputInfo.candidatesNum,0);
 		        		MSG_FATAL("SplImeProcessKey...bResult.%d,candidateIndex=%d",bResult,g_SplImeGlobals.outputInfo.candidateIndex,0);
@@ -9388,6 +9390,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 						uint16 nLine, nCharsIn,nSel;
 
 						pContext->m_Selectcandidates = TRUE;
+						bResult = SplImeProcessKey(SPKEY_Right, SPKT_Down);
 						if(g_SplImeGlobals.outputInfo.candidatesNum>0)
 						{
 							T9_CJK_MYANMAR_DisplaySelection(pContext);
