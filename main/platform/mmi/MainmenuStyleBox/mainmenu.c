@@ -1519,11 +1519,11 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     StartApplet(pMe, pMe->m_IconTitle[wParam - AVK_1]);
                     return TRUE;
                     
-                case AVK_0:
+                case AVK_STAR:
                     StartApplet(pMe, pMe->m_IconTitle[9]);
                     return TRUE;
 
-                case AVK_STAR:
+                case AVK_0:
                     StartApplet(pMe, pMe->m_IconTitle[10]);
                     return TRUE;
                     
