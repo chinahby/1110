@@ -960,33 +960,61 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
     {
         AEERect         rect = {0};
         AEEImageInfo    ii   = {0};
-		
+		#ifdef FEATURE_VERSION_MYANMAR
+		if((pme->m_isMya) && (pme->m_timeZone == 6))
+		{
+			pme->m_timeZone = 5;
+		}
+		#endif
         IIMAGE_GetInfo( pme->m_pImageBar, &ii);
         SETAEERECT( &rect, pme->m_xBar, 0, ii.cx, ii.cy);
-        ERR("ii.cy:::::%d",pme->m_yBg,0,0);
+        MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
         drawImageWithOffset( pme, pme->m_pImageBg, pme->m_xBg + pme->m_xBar, pme->m_yBg, &rect);
         if((pme->m_isMya) && (((pme->m_timeZone == 7)&&(left))))
         {
         	MSG_FATAL("7pme->m_timeZone:::::::%d",pme->m_timeZone,0,0);
+        	#ifdef FEATURE_VERSION_MYANMAR
+        	pme->m_timeZone = pme->m_timeZone -2 ;
+        	#else
         	pme->m_timeZone = pme->m_timeZone -1 ;
+        	#endif
         	pme->m_isMya = FALSE;
         }
+        #ifdef FEATURE_VERSION_MYANMAR
+        else if((pme->m_isMya) && ((pme->m_timeZone == 5)&& !(left)))
+        #else
         else if((pme->m_isMya) && ((pme->m_timeZone == 6)&& !(left)))
+        #endif
         {
         	MSG_FATAL("6pme->m_timeZone:::::::%d",pme->m_timeZone,0,0);
+        	#ifdef FEATURE_VERSION_MYANMAR
+        	pme->m_timeZone = pme->m_timeZone +2;
+        	#else
         	pme->m_timeZone = pme->m_timeZone +1;
+        	#endif
         	pme->m_isMya = FALSE;
         }
+        #ifdef FEATURE_VERSION_MYANMAR
+        else if((pme->m_isMya) && (((pme->m_timeZone == 5)&&(left))||(((pme->m_timeZone == 7)&& !(left)))))
+        #else
         else if((pme->m_isMya) && (((pme->m_timeZone == 6)&&(left))||(((pme->m_timeZone == 7)&& !(left)))))
+        #endif
         {
+        	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
         	pme->m_isMya = FALSE;
         }
+        #ifdef FEATURE_VERSION_MYANMAR
+        else if(!(pme->m_isMya)&&(((pme->m_timeZone == 7)&&(left)))||((pme->m_timeZone == 5)&& !(left)))
+        #else
         else if(!(pme->m_isMya)&&(((pme->m_timeZone == 7)&&(left)))||((pme->m_timeZone == 6)&& !(left)))
+        #endif
         {
+        	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
         	pme->m_isMya = TRUE;
         }
         else
         {
+        	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
         	pme->m_timeZone += left ? -1 : 1;
         }
         if( pme->m_timeZone == -13)
