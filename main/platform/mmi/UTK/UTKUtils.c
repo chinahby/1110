@@ -319,6 +319,7 @@ void UTK_GiveResponse(CUTK * pMe,
     }
     ERR("%02x   %02x", eCmd, cmd_details_tlv.cmd_type, 0);
     uim_power_control( UIM_PROACTIVE_UIM, TRUE);
+    MSG_FATAL("eCmd = %X",eCmd,0,0); 
     switch(eCmd)
     {// 需要特别处理的响应在此处理，处理后应立即返回
         case UIM_TK_SETUP_MENU:
@@ -1045,7 +1046,7 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
     }
 
     if(pMenu)
-	#if 0
+	#ifdef FEATURE_OEMOMH 
     (void)IMENUCTL_SetTitle(pMenu, NULL, 0, pMe->m_wszTitle);
 	#else
 	 {
@@ -1151,7 +1152,7 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
                     {
                         MEMSET(wszBuf, 0, nSize);
                         DecodeAlphaString(&utk_ptr[pos], nValLen, wszBuf, 256);
-						#if 0
+						#ifdef FEATURE_OEMOMH 
                         (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wszBuf);
 						#else
 						{

@@ -446,7 +446,7 @@ static boolean  IDD_LIST_Handler(CUTK *pMe,
     PARAM_NOT_REF(dwParam)
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_LIST_MENU);
-    MSG_FATAL("IDD_LIST_Handler Start",0,0,0);
+    MSG_FATAL("IDD_LIST_Handler Start eCode=%d, wParam=%d",eCode,wParam,0);
     if (pMenu == NULL)
     {
         return FALSE;
@@ -516,7 +516,15 @@ static boolean  IDD_LIST_Handler(CUTK *pMe,
             return TRUE;
             
         case EVT_DIALOGTIMEOUT:
+            MSG_FATAL("EVT_DIALOGTIMEOUT",0,0,0); 
             UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_NO_RESPONSE_FROM_USER);
+            return TRUE;
+
+        case EVT_KEY_PRESS:
+            if(wParam == AVK_END)
+            {
+                UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_PROACTIVE_RUIM_SESSION_TERMINATED_BY_USER);
+            }
             return TRUE;
             
         case EVT_KEY:
@@ -542,13 +550,18 @@ static boolean  IDD_LIST_Handler(CUTK *pMe,
             return TRUE;
 
         case EVT_COMMAND:
+        {
+            CtlAddItem ai;
             (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
             pMe->select_item[pMe->level] =  IMENUCTL_GetSel(pMenu); 
+            IMENUCTL_GetItem(pMenu, IMENUCTL_GetSel(pMenu), &ai);
+            IMENUCTL_SetTitle(pMenu, NULL, 0, (AECHAR *)ai.pText);
             ERR("wParam = %d", wParam,0,0); 
             pMe->m_bAppIsReady = FALSE;
             pMe->m_btCursel = (byte)wParam;
             UTK_GiveResponse(pMe, pMe->cmd_type, TRUE, UIM_TK_CMD_PERFORMED_SUCCESSFULLY);
             return TRUE;
+        }
             
         default:
             break;
@@ -591,7 +604,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
 
     ITextCtl *pTextCtl = (ITextCtl *)IDIALOG_GetControl(pMe->m_pActiveDlg,
                         IDC_INPUT_TEXT);                        
-    MSG_FATAL("IDD_INPUT_Handler Start",0,0,0);                 
+    MSG_FATAL("IDD_INPUT_Handler Start eCode=%d, wParam=%d",eCode,wParam,0);                 
     if ((NULL == pTextCtl) || (NULL == pMe))
     {
         return FALSE;
@@ -707,12 +720,21 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
                 pMe->m_TextQS = pgetinput->cmd_describe.command_restricttag;
             
                 FREEIF(pgetinput);  
-                          
+                pMe->m_dwTimeOut = 5000;
+                (void) ISHELL_SetTimer(pMe->m_pShell,
+                         pMe->m_dwTimeOut,
+                         UTKApp_DialogTimeout,
+                         pMe);                          
                 (void) ISHELL_PostEvent( pMe->m_pShell,
                             AEECLSID_APP_UTK,
                             EVT_USER_REDRAW,
                             0,  0);
             }              
+            return TRUE;
+
+        case EVT_DIALOGTIMEOUT:
+            MSG_FATAL("EVT_DIALOGTIMEOUT",0,0,0); 
+            UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_NO_RESPONSE_FROM_USER);
             return TRUE;
 
         case EVT_USER_REDRAW:
@@ -754,6 +776,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
             return TRUE;
 
         case EVT_DIALOG_END:
+            (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
             MEMSET(pMe->bInputeBackup, 0, (MAX_STR_ACHARS+2) * sizeof(AECHAR));//Gemsea040719 add            
             if(TRUE == pMe->InputeBackupNeeded)
             {
@@ -763,10 +786,20 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
             pMe->InputeBackupNeeded = TRUE;
             return TRUE;
 
+        case EVT_KEY_PRESS:
+            (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
+            if(wParam == AVK_END)
+            {
+                MSG_FATAL("IDD_INPUT_Handler AVK_END1",0,0,0);  
+                UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_PROACTIVE_RUIM_SESSION_TERMINATED_BY_USER);
+            }
+            return TRUE;
         case EVT_KEY:
+            (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
             switch(wParam)
             {
                 case AVK_END:
+                    MSG_FATAL("IDD_INPUT_Handler AVK_END2",0,0,0);  
                     UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_PROACTIVE_RUIM_SESSION_TERMINATED_BY_USER);
                     break;
                     
