@@ -991,7 +991,16 @@ static boolean  IDD_DISPLAY_Handler(CUTK *pMe,
                 CLOSE_DIALOG(DLGRET_OK);
             }
             return TRUE;
-        
+
+        case EVT_KEY_PRESS:
+            if(wParam == AVK_END)
+            {
+                (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
+                UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_PROACTIVE_RUIM_SESSION_TERMINATED_BY_USER);
+                break;
+            }
+            return TRUE;
+            
         case EVT_KEY:
             switch(wParam)
             {
