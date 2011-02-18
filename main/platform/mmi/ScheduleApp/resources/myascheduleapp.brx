@@ -59,7 +59,7 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_EVENT_EDIT_TITLE_SUBJECT">
-		<Text></Text>
+		<Text>  </Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_EVENT_EDIT_TITLE_NOTE">
 		<Text></Text>

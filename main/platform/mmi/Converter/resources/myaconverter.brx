@@ -41,13 +41,13 @@
 		<Text></Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_CURRENCY_CHF">
-		<Text></Text>
-	</STRING>
-	<STRING Id="1014" Name="IDS_CURRENCY_THI">	Thiland                   = 1 US$ 
-		<Text></Text>
-	</STRING>
-	<STRING Id="1015" Name="IDS_CURRENCY_MYN">	Myanmar Money 900-1000 = 1 US$
 		<Text></Text>
+	</STRING>
+	<STRING Id="1014" Name="IDS_CURRENCY_SEK">
+		<Text></Text>
+	</STRING>
+	<STRING Id="1015" Name="IDS_CURRENCY_DKK">
+		<Text></Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_CURRENCY_NOK">
 		<Text></Text>
