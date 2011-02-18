@@ -1035,10 +1035,15 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                     return TRUE;
 
                 case AVK_END:
-                    ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
-                    ICAMERA_Stop(pMe->m_pCamera);
-                    pMe->m_nCameraState = CAM_STOP;
-                    return FALSE;
+                	MSG_FATAL("AVK_END...................",0,0,0);
+                	ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+                	if(pMe->m_nCameraState == CAM_PREVIEW)
+                	{
+                    	ICAMERA_Stop(pMe->m_pCamera);
+                    	pMe->m_nCameraState = CAM_STOP;
+                	}
+                	MSG_FATAL("AVK_END...................2",0,0,0);
+                return FALSE;
                     
                 default:
                     return TRUE;
@@ -1501,9 +1506,10 @@ static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, uint16 wParam
    
             case CAMERACFGSELFTIME:
                 return CameraApp_PopMenu_SelfTimeCommandHandleEvent(pMe, wParam);
-   
+   #if 0
             case CAMERACFGBANDING:
                 return CameraApp_PopMenu_BandingCommandHandleEvent(pMe, wParam);
+                #endif
                 
             case CAMERACFGRESET:
                 return CameraApp_PopMenu_ResetCFGCommandHandleEvent(pMe, wParam);
@@ -1975,12 +1981,12 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe, IMenuCtl *popMenu)
             	MSG_FATAL("CAMERACFGSELFTIME",0,0,0);
                 CameraApp_PopMenu_SelfTimeInit(pMe, popMenu);
                 break;
-   
+   #if 0
             case CAMERACFGBANDING:
             	MSG_FATAL("CAMERACFGBANDING",0,0,0);
                 CameraApp_PopMenu_BandingInit(pMe, popMenu);
                 break;
-                
+#endif
             case CAMERACFGRESET:
             	MSG_FATAL("CAMERACFGRESET",0,0,0);
                 CameraApp_PopMenu_ResetCFGInit(pMe, popMenu);
@@ -2765,7 +2771,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
         nResID[CAMERACFGSELFTIME] = IDI_SELFTIME_OFF;
         break;
     }
-    
+    #if 0
     // banding cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_BANDING,
@@ -2785,7 +2791,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
         nResID[CAMERACFGBANDING] = IDI_BANDING_50;
         break;
     }
-    
+    #endif
     nResID[CAMERACFGRESET] = IDI_RESET;
     
     for(i = 0; i < CAMERACFGMAX; i++)
@@ -2871,11 +2877,11 @@ static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
             case CAMERACFGSELFTIME:
                 nResID = IDS_CFG_SELFTIMER;
                 break;
-                
+           #if 0     
             case CAMERACFGBANDING:
                 nResID = IDS_CFG_BANDING;
                 break;
-
+#endif
             case CAMERACFGRESET:
                 nResID = IDS_CFG_RESET;
                 break;
