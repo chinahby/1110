@@ -867,7 +867,11 @@ static void Draw_TimeZone(CWorldTime *pme)
 	WSTRCAT(text,L"  ");
 	if(pme->m_ismyatime || pme->m_isMya)
 	{
+	#ifdef FEATURE_VERSION_MYANMAR
+		WSTRCPY(Temp,L"6");
+	#else
 		WSTRCPY(Temp,L"6.5");
+	#endif
 	}
 	else
 	{
