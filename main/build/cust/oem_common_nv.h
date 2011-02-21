@@ -146,7 +146,11 @@
 #elif defined(FEATURE_LANG_HEBREW)
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_HEBREW          //希伯来语
 #elif defined(FEATURE_LANG_THAI)
+#ifdef FEATURE_USES_LOWMEM
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH            //泰国语
+#else
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_THAI            //泰国语
+#endif
 #elif defined(FEATURE_LANG_VIETNAMESE)
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_VIETNAMESE      //越南语
 #elif defined(FEATURE_LANG_RUSSIAN)
