@@ -2081,9 +2081,9 @@ int CContApp_DeleteCont(CContApp *pMe, uint16 wContID)
     szTmp[0] = 0;
     szDelTmp[0] = 0;
     pDelContInfo.pName = szDelTmp;
-    pDelContInfo.wNameLen = MAX_INPUT_NAME_CN+1;
+    pDelContInfo.wNameLen = MAX_INPUT_NAME_CN; 
     pContInfo.pName = szTmp;
-    pContInfo.wNameLen = MAX_INPUT_NAME_CN+1;
+    pContInfo.wNameLen = MAX_INPUT_NAME_CN;
 
     wRecID = CContApp_ContToRawID(pMe, wContID);
 
@@ -2108,7 +2108,7 @@ int CContApp_DeleteCont(CContApp *pMe, uint16 wContID)
             MSG_FATAL("Get Config Failed~",0,0,0);
             continue;
         }
-        
+         MSG_FATAL("Deletecont--------------1",0,0,0);
         if(SUCCESS != CContApp_GetNameByNum(pMe, 
                                  pMe->m_pOneDialBuf, 
                                  &pContInfo))
@@ -2116,7 +2116,8 @@ int CContApp_DeleteCont(CContApp *pMe, uint16 wContID)
             MSG_FATAL("Get Name Failed~",0,0,0);
             continue;
         }
-
+         MSG_FATAL("Deletecont--------------2",0,0,0);
+      
         // 存在单键拨号则清除单键拨号
         if(WSTRCMP(pDelContInfo.pName, pContInfo.pName) == 0)
         {
@@ -2128,14 +2129,14 @@ int CContApp_DeleteCont(CContApp *pMe, uint16 wContID)
                                       pMe->m_pOneDialBuf,
                                       sizeof(pMe->m_pOneDialBuf));
         }
+        
     }
 
     //Remove the record from the database
     if(SUCCESS != IADDRREC_RemoveRec(pMe->m_pCurrRec))
     {
         return EFAILED;
-    }
-    
+    } 
     // IADDRREC_RemoveRec()将会释放pMe->m_pCurrRec
     // 因此，这里就不应再次释放了
     //IADDRREC_Release(pMe->m_pCurrRec);

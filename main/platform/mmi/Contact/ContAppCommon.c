@@ -2730,11 +2730,14 @@ int CContApp_GetNameByNum( CContApp   *pMe,
     if (NULL != pUseinfo)
     {
         CContApp_GetRingtone(pAddr, pContInfo->ringName, pUseinfo->wRecID);
-        
+        // MSG_FATAL("pContInfo->ringName=%d",sizeof(pContInfo->ringName),0,0); 
+         
         if (NULL != pUseinfo->szName)
         {
+            
             if (pContInfo->wNameLen > WSTRLEN(pUseinfo->szName))
             {
+                //MSG_FATAL("pContInfo->wNameLen=%d--pUseinfo->szName=%d",pContInfo->wNameLen,WSTRLEN(pUseinfo->szName),0); 
                 (void)WSTRCPY(pContInfo->pName, pUseinfo->szName);
             }
         }
