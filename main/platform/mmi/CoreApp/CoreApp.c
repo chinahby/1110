@@ -453,7 +453,13 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->TorchOn = FALSE;
 #endif
 
-#if defined (FEATURE_VERSION_FLEXI203P)
+#ifdef FEATURE_OEMOMH
+{
+	extern	 void OEM_SetBAM_ADSAccount(void);
+
+	OEM_SetBAM_ADSAccount();
+}
+#elif defined (FEATURE_VERSION_FLEXI203P)
 {
 	extern	 void OEM_SetBAM_ADSAccount(void);
 

@@ -1395,35 +1395,55 @@ static boolean StartApplet(Staticapp *pMe, int wParam)
 
 #if defined (FEATURE_NASRANI)			
 		case IDS_NASRANI_TITLE_FNASRANI:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else            
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_NASRANI);		
 			break;
 #endif	
 
 #if defined (FEATURE_FMN2010)
 		case IDS_STATICAPP_TITLE_FMUSLIM:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MUSLIM);	
 			break;	
 #endif	
 
 #if defined (FEATURE_CAH006)
 		case IDS_STATICAPP_TITLE_FCHAT:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FCHAT);	
 			break;		
 #endif
 
 #if defined (FEATURE_FPT005)
 		case IDS_STATICAPP_TITLE_FPORTAL:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FBROWSER);	
 			break;		
 #endif
 
 #if defined (FEATURE_GURU)
 		case IDS_STATICAPP_TITLE_FGURU:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FLEXIGURU);	
 			break;		
 #endif
@@ -1433,55 +1453,99 @@ static boolean StartApplet(Staticapp *pMe, int wParam)
   		//need to change
   	#if defined(FEATURE_SMARTFREN_APP_HITZ233C)
   		case IDS_STATICAPP_TITLE_SMARTMESSAGE: 
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
   			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_SFM_HITZ233C);
 			break;			
           
         case IDS_STATICAPP_TITLE_FACEBOOK:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
         	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_FACEBOOK_HITZ233C);
 			break;	
   		case IDS_STATICAPP_TITLE_TWITTER:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
   			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_TWITTER);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_TWITTER_HITZ233C);
 			break;
 			
 		case IDS_STATICAPP_TITLE_MSHOP:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_MSHOP);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_MSHOP_HITZ233C);
             break;
   	#else
   		case IDS_STATICAPP_TITLE_SMARTMESSAGE: 
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
   			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_SFM);
 			break;			
           
         case IDS_STATICAPP_TITLE_FACEBOOK:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
         	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_FACEBOOK);
 			break;	
   		case IDS_STATICAPP_TITLE_TWITTER:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
   			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_TWITTER);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_TWITTER);
 			break;
 			
 		case IDS_STATICAPP_TITLE_MSHOP:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_MSHOP);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_MSHOP);
             break;
 	#endif
         case IDS_STATICAPP_TITLE_MDIRECTORY:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_MDIRECTORY);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_MDIRECTORY);
             break;
 
         case IDS_STATICAPP_TITLE_MUSICBOX:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FGEN);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_FGEN);
             break;
 
         case IDS_STATICAPP_TITLE_MOKA:
+#ifdef FEATURE_OEMOMH
+            OEM_SetBAM_ADSAccount();
+#else               
 			OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_MOKA);
+#endif
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_SMARTFREN_MOKA_HITZ233C);
             break;
         	

@@ -3187,13 +3187,25 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #if defined	(FEATURE_VERSION_FLEXI203) 
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP				
 #if defined (FEATURE_NASRANI)
+#ifdef FEATURE_OEMOMH
+               OEM_SetBAM_ADSAccount();
+#else
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+#endif
                ret=  CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
 #elif defined  (FEATURE_GURU)
+#ifdef FEATURE_OEMOMH
+    OEM_SetBAM_ADSAccount();
+#else
 	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
+#endif
 	ret=  CoreApp_LaunchApplet(pMe, AEECLSID_FLEXIGURU);
 #elif defined (FEATURE_FMN2010)
+#ifdef FEATURE_OEMOMH
+               OEM_SetBAM_ADSAccount();
+#else
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
+#endif
                ret=  CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
 #elif defined (FEATURE_FPT005)
 			   ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
@@ -3209,28 +3221,44 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_STATIC_APP);
 #elif defined (FEATURE_VERSION_SMART)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+#ifdef FEATURE_OEMOMH
+                OEM_SetBAM_ADSAccount();
+#else
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+#endif
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif /*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_M8021)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+#ifdef FEATURE_OEMOMH
+                OEM_SetBAM_ADSAccount();
+#else
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+#endif
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_M8)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+#ifdef FEATURE_OEMOMH
+                OEM_SetBAM_ADSAccount();
+#else
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+#endif
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_M8P)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+#ifdef FEATURE_OEMOMH
+                OEM_SetBAM_ADSAccount();
+#else
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+#endif
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
@@ -3272,29 +3300,45 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							return TRUE;
 						}
 #if defined (FEATURE_VERSION_SMART)
-#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP                   
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP    
+#ifdef FEATURE_OEMOMH
+                        OEM_SetBAM_ADSAccount();
+#else
                     	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
+#endif
 						return CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_SFM); 
 #else                   
 						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);		
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/				
 #elif defined (FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8021)
-#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP                      
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP   
+#ifdef FEATURE_OEMOMH
+                        OEM_SetBAM_ADSAccount();
+#else
 						OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
+#endif
 						return CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_SFM);	
 #else                   
 						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 	
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_M8P)
-#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP                      
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP   
+#ifdef FEATURE_OEMOMH
+                        OEM_SetBAM_ADSAccount();
+#else
 						OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
+#endif
 						return CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_SFM);	
 #else                   
 						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 	
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_FLEXI203)
 #if defined(FEATURE_FLEXI_STATIC_BREW_APP)&&defined(FEATURE_FPT005)
+#ifdef FEATURE_OEMOMH
+                         OEM_SetBAM_ADSAccount();
+#else
 						 OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_PORTAL);
+#endif
 						 return CoreApp_LaunchApplet(pMe, AEECLSID_FBROWSER);
 #else
 						 return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
@@ -6569,13 +6613,25 @@ static void CoreApp_keypadtimer(void *pUser)
 	#if defined	(FEATURE_VERSION_FLEXI203) 
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP				
 #if defined (FEATURE_NASRANI)
+#ifdef FEATURE_OEMOMH
+               OEM_SetBAM_ADSAccount();
+#else
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+#endif
                ret=  CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
 #elif defined  (FEATURE_GURU)
+#ifdef FEATURE_OEMOMH
+    OEM_SetBAM_ADSAccount();
+#else
 	OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
+#endif
 	ret=  CoreApp_LaunchApplet(pMe, AEECLSID_FLEXIGURU);
 #elif defined (FEATURE_FMN2010)
+#ifdef FEATURE_OEMOMH
+               OEM_SetBAM_ADSAccount();
+#else
 			   OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
+#endif
                ret=  CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
 #elif defined (FEATURE_FPT005)
 			   ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
@@ -6591,28 +6647,44 @@ static void CoreApp_keypadtimer(void *pUser)
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined (FEATURE_VERSION_SMART)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+#ifdef FEATURE_OEMOMH
+                OEM_SetBAM_ADSAccount();
+#else
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+#endif
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif /*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_M8021)
-#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+#ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
+#ifdef FEATURE_OEMOMH
+                OEM_SetBAM_ADSAccount();
+#else
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+#endif
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_M8)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+#ifdef FEATURE_OEMOMH
+                OEM_SetBAM_ADSAccount();
+#else
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+#endif
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_M8P)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
+#ifdef FEATURE_OEMOMH
+                OEM_SetBAM_ADSAccount();
+#else
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+#endif
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);

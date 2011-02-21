@@ -1336,7 +1336,11 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
          pme->m_bHasStarted = TRUE;
          
          {
-#if defined(FEATURE_FLEXI_STATIC_BREW_APP)
+#ifdef FEATURE_OEMOMH
+            extern void OEM_SetBAM_ADSAccount(void);
+
+            OEM_SetBAM_ADSAccount();
+#elif defined(FEATURE_FLEXI_STATIC_BREW_APP)
             extern void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp);
             
             OEM_SetBAM_ADSAccount(STATIC_BREW_APP_DEFAULT);
