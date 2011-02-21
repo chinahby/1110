@@ -149,6 +149,7 @@ when       who     what, where, why
 #include "AEEShell.h"
 #include "AEE_OEM.h"
 #include "AEEStdLib.h"
+#include "OEMSVC.h"
 #if defined(FEATURE_BMP)
 #include "AEEDownloadInfo.h"
 #include "AEEFS.h"
@@ -11335,7 +11336,38 @@ static int OEMPriv_SetItem_CFGI_CALLFORWARD_CNIR_DISABLE(void *pBuff)
     NV 的相关配置只起临时作用。不同应用的账号信息可能不一样。使用时需自行配置。
     本函数仅供 BREW App Manager 使用。
 ==============================================================================*/
-#if defined(FEATURE_FLEXI_STATIC_BREW_APP)
+#if defined(FEATURE_OEMOMH)
+void OEM_SetBAM_ADSAccount(void)
+{
+#ifndef WIN32
+    nv_item_type nvi;
+    PppAccounts Account;
+    char username[PPP_MAX_USER_ID_LEN] = {0};
+    char password[PPP_MAX_PASSWD_LEN] = {0};
+    OEM_GetPppAccounts(&Account, DS_BREW_TYPE);
+
+	MEMCPY(username, Account.user_id_info, STRLEN(Account.user_id_info));	
+	MEMCPY(password, Account.passwd_info, STRLEN(Account.passwd_info));	
+
+    // 账号
+
+    //(void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);
+    //nvi.pap_user_id.user_id_len = STRLEN((char *)DEFAULT_BREW_USERNAME);
+    (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
+    nvi.pap_user_id.user_id_len = STRLEN((char *)username);
+    (void)OEMNV_Put(NV_PPP_USER_ID_I, &nvi);
+
+    // 账号密码
+
+    //(void)STRCPY((char *)nvi.pap_password.password, (char *)DEFAULT_BREW_PASSWORD);
+    //nvi.pap_password.password_len = STRLEN((char *)DEFAULT_BREW_PASSWORD);
+    (void)STRCPY((char *)nvi.pap_password.password, (char *)password);
+    nvi.pap_password.password_len = STRLEN((char *)password);
+    (void)OEMNV_Put(NV_PPP_PASSWORD_I, &nvi);
+#endif
+} /* OEM_SetBAM_ADSAccount */
+
+#elif defined(FEATURE_FLEXI_STATIC_BREW_APP)
 void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)
 {
 #ifndef WIN32
