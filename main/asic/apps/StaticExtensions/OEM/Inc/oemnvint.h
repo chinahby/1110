@@ -386,8 +386,13 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 11
 #else
+#ifdef FEATURE_USES_LOWMEM
+#define   OEMNV_STARTUP_MUSIC 4
+#define   OEMNV_SHUTDOWN_MUSIC 5
+#else
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 12
+#endif
 #endif
 
 //开关机铃声提示

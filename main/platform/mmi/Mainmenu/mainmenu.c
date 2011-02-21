@@ -915,7 +915,7 @@ static boolean MainMenu_ListMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_MESSAGES, IDS_MAIN_MENU_MESSAGES, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_UTK, IDS_MAIN_MENU_UTK, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_ALARM, IDS_MAIN_MENU_ALARM, NULL, 0);			
-            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_CALCULATOR, IDS_MAIN_MENU_CALCULATOR, NULL, 0);
+            IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_FM, IDS_MAIN_MENU_FM, NULL, 0);
             IMENUCTL_AddItem(pMenu, MAINMENU_RES_FILE_LANG,IDS_MAIN_MENU_SETTINGS, IDS_MAIN_MENU_SETTINGS, NULL, 0);
 
            // IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
@@ -1046,8 +1046,8 @@ static int StartApplet(MainMenu *pMe, int i)
         case IDS_MAIN_MENU_ALARM:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ALARMCLOCK);
             break;
-		case IDS_MAIN_MENU_CALCULATOR:
-			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CALCAPP);
+		case IDS_MAIN_MENU_FM:
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_FMRADIO);
 			break;
 
         case IDS_MAIN_MENU_SETTINGS:			

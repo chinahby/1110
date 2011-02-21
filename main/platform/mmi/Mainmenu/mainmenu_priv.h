@@ -45,6 +45,11 @@ typedef enum MainmenuState
 {
     MAINST_MAIN,
 
+    MAINST_GAME,
+    
+    MAINST_PLAYER,
+
+    MAINST_DATA, 
 #ifdef FEATRUE_SUPPORT_G_SENSOR
     MAINST_MSGBOX,
 #endif
@@ -63,6 +68,14 @@ typedef enum
 typedef enum DLGRetValue
 {
     DLGRET_CREATE,
+        
+    DLGRET_GAME,
+
+    DLGRET_MEDIA,
+
+    DLGRET_MAIN,
+
+    DLGRET_DATA,
 #ifdef FEATRUE_SUPPORT_G_SENSOR
     DLGRET_MSGBOX,
 #endif
@@ -117,6 +130,7 @@ typedef struct _MainMenu
 ==============================================================================*/
 
 #define  MAX_MATRIX_ITEMS 9
+#define ICON_ANIMATED_FRAME     1 //½¹µãÍ¼Æ¬µÄÖ¡Êý
 
 #define MAINMENU_RES_FILE_LANG        AEE_RES_LANGDIR MAINMENU_RES_FILE
 #define MAINMENU_RES_FILE_IMAGE       MAINMENUIMAGES_RES_FILE

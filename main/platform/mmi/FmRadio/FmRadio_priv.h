@@ -61,6 +61,7 @@
 #include "OEMSMS.h"
 #include "AEEText.h"
 #include "AEEAnnunciator.h"
+#include "AEETelephone.h"
 
 #if !defined( AEE_SIMULATOR)
 #ifdef FEATURE_ANALOG_TV

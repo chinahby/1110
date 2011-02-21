@@ -27,6 +27,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_RUIM_PHONEBOOK
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
+#define FEATURE_LANG_THAI
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
 #undef FEATURE_LANG_CHINESE
 //#define FEATURE_NET_LOCK
@@ -217,10 +218,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef CUST_EDITION
 #define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
-#ifndef FEATURE_USES_LOWMEM
+//#ifndef FEATURE_USES_LOWMEM
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
-#endif
+//#endif
 
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
 

@@ -130,6 +130,12 @@
 
 #ifdef FEATURE_USES_LOWMEM
 #define    ANI_RATE                              (180)
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.jpg"
+#define    PWRON_ANI_FRAME_COUNT                 (12)
+#define    PWRON_ANI_RATE                        (380)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.jpg"
+#define    PWROFF_ANI_FRAME_COUNT                (12)
+#define    PWROFF_ANI_RATE                       (380)
 #else
 // 关机动画文件播放
 #ifdef FEATURE_VERSION_FLEXI203

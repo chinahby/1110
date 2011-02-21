@@ -198,6 +198,9 @@ IFont gFont12Normal = {&gOEMFontFuncs, AEE_FONT_USER_1, CH_USER1_HEIGHT};
 // User2 is large number font. Only support the dial number
 IFont gFontLargeNum = {&gOEMFontFuncs, AEE_FONT_USER_2, BIG_NUM_HEIGHT};
 
+
+IFont gFontSmall = {&gOEMFontFuncs, AEE_FONT_SMALL, CH_NORMAL_HEIGHT};
+
 //
 //---------------------   OEM Font implement  -----------------------
 //

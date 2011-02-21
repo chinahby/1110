@@ -316,9 +316,9 @@ ifeq ($(USES_EGL),yes)
   include $(OGLES_OEM_SRC)/ogles_oem.min
 endif
 
-ifneq ($(USES_LOWMEM),yes)
+#ifneq ($(USES_LOWMEM),yes)
 include $(FM_INC)/fm.min
-endif
+#endif
 
 include $(EFUSE)/efuse.min
 include $(EFS)/efs.min

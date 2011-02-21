@@ -2194,6 +2194,8 @@ static void paint( CFmRadio *pMe)
     //drawLedLight( pMe);
     drawChannelIndicator( pMe);
     //drawVolumeIndicator( pMe);
+    //pMe->opMode         = FM_RADIO_OPMODE_PLAY;
+	//pMe->refuseReason   = FM_RADIO_REFUSE_REASON_NOT_REFUSE;
 	if( pMe->refuseReason == FM_RADIO_REFUSE_REASON_NOT_REFUSE)	//Add By zzg 2010_07_14
     {
     	drawSoftkey( pMe);
