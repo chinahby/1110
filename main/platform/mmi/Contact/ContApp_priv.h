@@ -962,6 +962,9 @@ typedef struct _CContApp
     IAnnunciator *m_pIAnn;
 	IRUIM        *m_pIRUIM;
 	boolean      m_isdel;
+#ifdef FEATURE_RUIM_PHONEBOOK
+    boolean      m_bADNRUIMSupport;
+#endif
 #ifdef FEATURE_OEMOMH        
    // AEECardSessionReadTpStatus	*m_pReadStatus;
 #endif
@@ -1522,6 +1525,7 @@ SIDE EFFECTS:
 SEE ALSO:
 =============================================================================*/
 int CContApp_CopyField(CContApp *pMe, uint16 wContID, uint16 wFldIdx);
+extern boolean OEM_IsCDMASVCSupport(uim_cdma_svc_table_enum_type eType);
 #endif /* FEATURE_RUIM_PHONEBOOK */
 
 /*==============================================================================

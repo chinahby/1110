@@ -75,6 +75,7 @@ uint16  AT_OEMRUIM_phonebook_max_recs(void);
 
 extern rex_tcb_type ds_tcb;
 
+extern boolean OEM_IsCDMASVCSupport(uim_cdma_svc_table_enum_type eType);
 
 /************************************************************************
  ** I N T E R F A C E   F U N C T I O N   D E F I N I T I O N S
@@ -3713,7 +3714,12 @@ int OEMRUIMAddr_ReadADNByID(uint16 wRecID, AECHAR **ppName, AECHAR **ppNumber)
    AEEAddrField  *pItems = NULL;
    int            nItemCount = 0;
    int            i;
-    
+
+   if(!OEM_IsCDMASVCSupport(UIM_CDMA_SVC_ADN))
+   {
+      return EFAILED;
+   }
+   
    pBuf = MALLOC(gAdnRecSize);
    if (!pBuf) {
       return ENOMEMORY;

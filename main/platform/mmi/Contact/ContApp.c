@@ -106,7 +106,7 @@ static int      CContApp_Start(CContApp *pMe);
 static void     CContApp_AppIsReadyCB(void *pUser);
 static int      CContApp_ReadCFG( IFileMgr *pFileMgr, ContAppCFGCache *pCFGCache);
 static int      CContApp_WriteCFG( IFileMgr *pFileMgr,  ContAppCFGCache *pCFGCache);
-static void     CContApp_CFGCacheInit(ContAppCFGCache *pCFGCache);
+static void     CContApp_CFGCacheInit(CContApp *pMe, ContAppCFGCache *pCFGCache);
 static char     *CContApp_BuildStartArgs( AppletStartMethod method,
                                           void             *saveType,
                                           void             *arg);
@@ -994,7 +994,8 @@ static int CContApp_Start(CContApp *pMe)
 
 //guoys modified for PR 4.2.1 begin
 #ifdef FEATURE_RUIM_PHONEBOOK
-    if (IsRunAsUIMVersion())
+    pMe->m_bADNRUIMSupport = OEM_IsCDMASVCSupport(UIM_CDMA_SVC_ADN);
+    if (IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
     {
         (void)CContApp_GetConfig( pMe, CONTCFG_SAVETYPE, &pMe->m_nSaveType, sizeof(byte));
     }
@@ -1027,7 +1028,7 @@ static int CContApp_Start(CContApp *pMe)
     pMe->m_nInputModeTable[1] = AEE_TM_NUMBERS;
     pMe->m_nCurrentInputMode = 0;
 #endif
-    CContApp_CFGCacheInit(&pMe->m_sCFGCache);
+    CContApp_CFGCacheInit(pMe, &pMe->m_sCFGCache);
 	
     // Read the config file
     (void)CContApp_ReadCFG(pMe->m_pFileMgr, &pMe->m_sCFGCache);
@@ -1224,18 +1225,20 @@ static int CContApp_WriteCFG(IFileMgr *pFileMgr, ContAppCFGCache *pCFGCache)
 ±¸×¢:
        
 ==============================================================================*/
-static void CContApp_CFGCacheInit(ContAppCFGCache *pCFGCache)
+static void CContApp_CFGCacheInit(CContApp *pMe, ContAppCFGCache *pCFGCache)
 {
     ASSERT(pCFGCache != NULL);
     
     pCFGCache->wPassWord[0] = DEFAULT_PASSWORD;
     pCFGCache->bLocked      = FALSE;
     pCFGCache->nViewType    = CONTCFG_VIEWTYPE_ALL;
-    if (IsRunAsUIMVersion())
+#ifdef FEATURE_RUIM_PHONEBOOK
+    if (IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
     {
         pCFGCache->nSaveType    = CONTCFG_SAVETYPE_SELECT;
     }
     else
+#endif
     {
         pCFGCache->nSaveType    =     CONTCFG_SAVETYPE_PHONE;
     }
@@ -2447,7 +2450,7 @@ static int IContApp_NumberLookup( IContApp   *pi,
                                   AECHAR     *pNumber,
                                   ContInfo   *pContInfo)
 {
-    PARAM_NOT_REF(pi)
+    CContApp *pMe = (CContApp*)pi;
     IAddrBook  *pAddr = NULL;
     AEEAddCacheInfo info = {0};
     AEEAddCacheInfo *pUseinfo = NULL;
@@ -2489,17 +2492,16 @@ static int IContApp_NumberLookup( IContApp   *pi,
     if (nRet != SUCCESS)
     {
 #ifdef FEATURE_RUIM_PHONEBOOK
-        if (IsRunAsUIMVersion())
+        if (IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
         {
             bNeedSearchUIM = TRUE;
         }
 #endif
-        
     }
 #ifdef FEATURE_RUIM_PHONEBOOK
     else if ((info.szNumber != NULL) &&
              (ContApp_NumberMatch(info.szNumber, pNumber, NULL) != NUMBERMATCH_EQUAL) &&
-             IsRunAsUIMVersion())
+             IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
     {
         pUseinfo = &info;
         bNeedSearchUIM = TRUE;
@@ -3141,7 +3143,7 @@ static int CContApp_GetOneDial( CContApp   *pMe,
     // Get the config data
     if(pMe->m_pFileMgr)
     {
-        CContApp_CFGCacheInit(&pMe->m_sCFGCache);
+        CContApp_CFGCacheInit(pMe, &pMe->m_sCFGCache);
         // Read the config file
         (void)CContApp_ReadCFG(pMe->m_pFileMgr, &pMe->m_sCFGCache);
         // Get config
@@ -3213,7 +3215,7 @@ static int CContApp_GetSmartDial( CContApp   *pMe,
     // Get the config data
     if(pMe->m_pFileMgr)
     {
-        CContApp_CFGCacheInit(&pMe->m_sCFGCache);
+        CContApp_CFGCacheInit(pMe, &pMe->m_sCFGCache);
         // Read the config file
         (void)CContApp_ReadCFG(pMe->m_pFileMgr, &pMe->m_sCFGCache);
     }
@@ -3231,7 +3233,7 @@ static int CContApp_GetSmartDial( CContApp   *pMe,
     }
     
 #ifdef FEATURE_RUIM_PHONEBOOK
-    if( IsRunAsUIMVersion() )
+    if( IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
     {
         // Create IAddrbokk instance for Ruim
         if ( SUCCESS != ISHELL_CreateInstance( (AEE_GetShell()),

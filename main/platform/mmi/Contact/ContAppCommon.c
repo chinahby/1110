@@ -2122,7 +2122,7 @@ int CContApp_SetCapacityStatic(CContApp *pMe, IStatic *pStatic)
                                  sizeof(pMe->m_szFmtBuf));
 
 #ifdef FEATURE_RUIM_PHONEBOOK
-    if( IsRunAsUIMVersion() )
+    if( IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport )
     {
         // 生成提示字符串
         WSPRINTF( temp,
@@ -2632,7 +2632,7 @@ int CContApp_GetNameByNum( CContApp   *pMe,
     if (nRet != SUCCESS)
     {
 #ifdef FEATURE_RUIM_PHONEBOOK
-        if (IsRunAsUIMVersion())
+        if (IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
         {
             bNeedSearchUIM = TRUE;
         }
@@ -2642,7 +2642,7 @@ int CContApp_GetNameByNum( CContApp   *pMe,
 #ifdef FEATURE_RUIM_PHONEBOOK
     else if ((info.szNumber != NULL) &&
              (ContApp_NumberMatch(info.szNumber, pNumber, NULL) != NUMBERMATCH_EQUAL) &&
-             IsRunAsUIMVersion())
+             IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
     {
         pUseinfo = &info;
         bNeedSearchUIM = TRUE;

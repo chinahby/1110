@@ -807,7 +807,7 @@ int CContApp_LoadPhoneBook(CContApp *pMe, byte nViewType)
 #ifdef FEATURE_RUIM_PHONEBOOK
         case CONTCFG_VIEWTYPE_RUIM:
             MSG_FATAL("Load Phone book CONTCFG_VIEWTYPE_RUIM", 0,0,0);
-            if (IsRunAsUIMVersion())
+            if (IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
             {
                 // Save search data
                 pMe->m_wFindCat   = AEE_ADDR_CAT_NONE;
@@ -868,7 +868,7 @@ int CContApp_LoadByCondition(CContApp *pMe, uint16 wDataSize)
     nCapacity = (uint32)IADDRBOOK_GetNumRecs(pMe->m_pAddrPhone);
     pAddrBook[0] = pMe->m_pAddrPhone;
 #ifdef FEATURE_RUIM_PHONEBOOK
-    if (IsRunAsUIMVersion())
+    if (IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
     {
         nCapacity += (uint32)IADDRBOOK_GetNumRecs(pMe->m_pAddrRUIM);
         pAddrBook[1] = pMe->m_pAddrRUIM;
@@ -1074,7 +1074,7 @@ int CContApp_LoadByCat(CContApp *pMe, AEEAddrCat wCategory)
     FARF(ADDR, ("Load Phone book by cat %x", wCategory));
 
 #ifdef FEATURE_RUIM_PHONEBOOK
-    if( IsRunAsUIMVersion() )
+    if( IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport )
     {
         if(AEE_ADDR_CAT_UIM == wCategory)
         {
@@ -1101,7 +1101,7 @@ int CContApp_LoadByCat(CContApp *pMe, AEEAddrCat wCategory)
 #ifdef FEATURE_RUIM_PHONEBOOK
     else
     {
-        if( IsRunAsUIMVersion() )
+        if( IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport )
         {
             // Save search data
             pMe->m_wFindCat   = AEE_ADDR_CAT_NONE;
@@ -1870,7 +1870,7 @@ int CContApp_SetCat(CContApp *pMe, uint16 wContID, AEEAddrCat wCat)
     ASSERT(pMe != NULL);
 
 #ifdef FEATURE_RUIM_PHONEBOOK
-    if(IsRunAsUIMVersion())
+    if(IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
     {
         // RUIM card not support this
         if(IS_RUIM_REC(wContID))
@@ -1935,7 +1935,7 @@ AEEAddrCat CContApp_GetCat(CContApp *pMe, uint16 wContID)
     ASSERT(pMe != NULL);
 
 #ifdef FEATURE_RUIM_PHONEBOOK
-    if( IsRunAsUIMVersion() )
+    if( IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport )
     {
         // RUIM card not support this
         if(IS_RUIM_REC(wContID))

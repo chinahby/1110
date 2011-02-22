@@ -671,7 +671,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
         {
             if(pMe->m_nMsgID == IDS_CORE_DISPADN)
             {
-                ISTATIC_SetProperties(pStatic, ST_CENTERTEXT | ST_MIDDLETEXT | ST_UNDERLINE);
+                ISTATIC_SetProperties(pStatic, ST_CENTERTEXT | ST_MIDDLETEXT |ST_UNDERLINE);
                 ISTATIC_SetText(pStatic,pMe->m_pADNName,pMe->m_pADNNumber,AEE_FONT_NORMAL,AEE_FONT_NORMAL);
                 ISTATIC_Redraw(pStatic);
                 FREEIF(pMe->m_pADNName);

@@ -181,8 +181,7 @@ int CContApp_BuildOptsMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
 #endif            
 
 #ifdef FEATURE_RUIM_PHONEBOOK
-
-            if(IsRunAsUIMVersion())
+            if(IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
             {
                 if(IS_RUIM_REC(pMe->m_wSelectCont))
                 {
@@ -515,7 +514,7 @@ int CContApp_BuildManagementMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     //ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
 
 #ifdef FEATURE_RUIM_PHONEBOOK
-    if( IsRunAsUIMVersion() )
+    if( IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport )
     {
         ai.wText       = IDS_MOVE_CONTACTS;
         ai.wItemID   = IDS_MOVE_CONTACTS;
@@ -562,7 +561,7 @@ int CContApp_BuildManagementMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
      }   
 
 #ifdef FEATURE_RUIM_PHONEBOOK
-    if( IsRunAsUIMVersion() )
+    if( IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport )
     {
         ai.wText       = IDS_SAVETO;
         ai.wItemID   = IDS_SAVETO;
@@ -653,7 +652,7 @@ int CContApp_BuildDeleteSelectMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     }   
 
 #ifdef FEATURE_RUIM_PHONEBOOK
-    if( IsRunAsUIMVersion() )
+    if( IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport )
     {
         ai.wText       = IDS_UIM_CARD;
         ai.wItemID   = IDS_UIM_CARD;
@@ -2932,7 +2931,7 @@ int CContApp_BuildGroupMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
     }  
 
 #ifdef FEATURE_RUIM_PHONEBOOK
-    if(IsRunAsUIMVersion())
+    if(IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
     {
         ai.pText = NULL;
         ai.wText       = IDS_GROUP_UIM;

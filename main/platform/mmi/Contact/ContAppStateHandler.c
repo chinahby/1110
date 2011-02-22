@@ -521,7 +521,7 @@ static NextFSMAction Handler_STATE_LOAD(CContApp *pMe)
             //guoys comment 2008.10.22 for fix save number cant list when max record
            // pMe->m_nViewType = CONTCFG_VIEWTYPE_NONE;
 #ifdef FEATURE_RUIM_PHONEBOOK
-            if( IsRunAsUIMVersion() )
+            if( IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport )
             {
                 MSG_FATAL("Handler_STATE_LOAD IsRunAsUIMVersion()",0,0,0);
                 //guoys modified for PR4.2.1 begin
@@ -1194,7 +1194,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             
         //dialog addnew will be delete, addnew and edit will deal together.
 #ifdef FEATURE_RUIM_PHONEBOOK
-            if(IsRunAsUIMVersion())
+            if(IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
             {
                 (void)CContApp_GetConfig(pMe, 
                                           CONTCFG_SAVETYPE,
@@ -1387,7 +1387,7 @@ static NextFSMAction Handler_STATE_OPTS(CContApp *pMe)
             // Save the menu select
             PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel);
 #ifdef FEATURE_RUIM_PHONEBOOK
-            if(IsRunAsUIMVersion())
+            if(IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
             {
                 (void)CContApp_GetConfig(pMe, 
                                           CONTCFG_SAVETYPE,
@@ -1709,7 +1709,7 @@ static NextFSMAction Handler_STATE_MAINMENU(CContApp *pMe)
             pMe->m_eListFrom = LISTFROMNONE;
             //dialog addnew will be delete, addnew and edit will deal together.
 #ifdef FEATURE_RUIM_PHONEBOOK
-            if(IsRunAsUIMVersion())
+            if(IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
             {
                 (void)CContApp_GetConfig(pMe, 
                                           CONTCFG_SAVETYPE,
@@ -1765,7 +1765,7 @@ static NextFSMAction Handler_STATE_MAINMENU(CContApp *pMe)
 #endif
 
 #ifdef FEATURE_RUIM_PHONEBOOK
-        if( IsRunAsUIMVersion() )
+        if( IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport )
         {
             case DLGRET_CONTACTS_MANAGEMENT:
                 // Save the menu select
@@ -2372,7 +2372,7 @@ static NextFSMAction Handler_STATE_FIND_OPTS(CContApp *pMe)
             // Save the menu select
             PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel);
 #ifdef FEATURE_RUIM_PHONEBOOK
-            if(IsRunAsUIMVersion())
+            if(IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
             {
                 (void)CContApp_GetConfig(pMe, 
                                           CONTCFG_SAVETYPE,
@@ -3166,7 +3166,7 @@ static NextFSMAction Handler_STATE_GROUPVIEW_OPTS(CContApp *pMe)
             // Save the menu select
             PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel);
 #ifdef FEATURE_RUIM_PHONEBOOK
-            if(IsRunAsUIMVersion())
+            if(IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
             {
                 (void)CContApp_GetConfig(pMe, 
                                           CONTCFG_SAVETYPE,
@@ -3558,7 +3558,7 @@ static NextFSMAction Handler_STATE_ADDNEW(CContApp *pMe)
         case DLGRET_CREATE:
         {            
 #ifdef FEATURE_RUIM_PHONEBOOK
-            if(IsRunAsUIMVersion())
+            if(IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
             {
                 if(IS_MAX_REC(pMe->m_pAddrRUIM) && IS_MAX_REC(pMe->m_pAddrPhone))
                 {

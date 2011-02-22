@@ -6682,7 +6682,7 @@ static int CScheduleApp_WriteCFG(IFileMgr *pFileMgr, CalCfg *pCFGCache)
 
 /*==============================================================================
 函数:
-       CContApp_CFGCacheInit
+       CScheduleApp_CFGCacheInit
 
 说明:
        初始化配置项Cache
