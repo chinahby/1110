@@ -974,8 +974,8 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                     char mnBuf[32] = "WaterWorld";
                     char modelBuf[32] = "W021";
                     int len = 0;
-                    EFmodelBuf[0] = 255;
-                    EFmodelBuf[1] = 255;    
+                    EFmodelBuf[0] = 0x01; //01
+                    EFmodelBuf[1] = 0x00; //00   
                     len = STRLEN(modelBuf);
                     DBGPRINTF("modelBuf len =%d", len);
                     DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
