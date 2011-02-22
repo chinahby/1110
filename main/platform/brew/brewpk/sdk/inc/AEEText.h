@@ -31,12 +31,15 @@ typedef struct _ITextCtl ITextCtl;
 
 #define TP_FRAME           0x00010000
 #define TP_MULTILINE       0x00020000
+#define TP_BT_PROPERTY     0x00040000
+
 //#define TP_              0x00040000  // Placeholder: Future Property Here
 #define TP_RAPID_MODE      0x00080000  // Supports Rapid Entry and uses as default
 #define TP_NODRAW          0x00100000  // Disables all drawing by the control
 #define TP_NOUPDATE        0x00200000  // Disables wasteful IDISPLAY_Update calls
 #define TP_PASSWORD        0x00400000  // Displays ***, manages correct buffer chars
 #define TP_INTEGRALHEIGHT  0x00800000
+
 #define TP_FIXSETRECT      0x80000000  // Actual height more closely represents requested height.
 #define TP_FIXOEM          0x40000000  // Fixes control content bugs related to OEM implementation
 #define TP_FOCUS_NOSEL     0x20000000  // Act like TextCtl 1, do not alter selection on activation
