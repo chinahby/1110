@@ -2758,7 +2758,7 @@ void uim_tk_process_proactive_command
   uint32 processed_bit_ind = 0;
   /* This holds the TLVs that have comprehension required */
   uint32 comprehension_required_bit_ind = 0;
-
+  
   /* Verify the command is a proactive command */
   parse_ber_tlv_return_buf =
     uim_tk_parse_ber_tlv (rsp_ptr->rsp.data, rsp_ptr->cmd_rsp_size);
@@ -3065,6 +3065,7 @@ void uim_tk_process_proactive_command
     }
     else /* The message is valid */
     {
+      MSG_FATAL("uim_tk_process_proactive_command %d",cmd_details.cmd_type,0,0);
       /* Process the proactive command */
       switch (cmd_details.cmd_type)
       {
@@ -3152,6 +3153,7 @@ void uim_tk_process_proactive_command
             /* Start the Terminal Response */
             uim_cmd_ptr = start_terminal_response_buffer
               (&packed_offset, &parsed_tlv_buf, &cmd_details);
+            MSG_FATAL("UIM_TK_POLL_INTERVAL 0",0,0,0);
             /* Make sure there was a UIM buffer available. */
             if (uim_cmd_ptr != NULL)
             {
