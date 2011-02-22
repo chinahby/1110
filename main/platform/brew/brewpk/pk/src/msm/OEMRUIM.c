@@ -480,6 +480,47 @@ static boolean OEMRUIM_CHVEnable(IRUIM *pMe, const char *pPin)
    return FALSE;
 }
 
+boolean OEM_IsCDMASVCSupport(uim_cdma_svc_table_enum_type eType)
+{
+    byte uim_cdma_svc_table_buffer[UIM_CDMA_SVC_TABLE_SIZE];
+    uim_svc_table_return_type svc;            /* service allocated and activated*/
+	
+	MSG_FATAL("OEM_IsCDMASVCSupport %d",eType,0,0);
+    gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
+    gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+    gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
+    gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+    gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+    gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
+    gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report;
+
+    gUimCmd.access_uim.item      = UIM_CDMA_CDMA_SVC_TABLE;
+    gUimCmd.access_uim.access    = UIM_READ_F;
+    gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+    gUimCmd.access_uim.num_bytes = UIM_CDMA_SVC_TABLE_SIZE;
+    gUimCmd.access_uim.offset    = 0;
+    gUimCmd.access_uim.data_ptr  = uim_cdma_svc_table_buffer;
+
+    // From nvruim_access():  Access an EF, do not signal any task, use no
+    // signal, no done queue, use a callback, always report status.
+
+    // Send the command to the R-UIM:
+    OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
+    
+    if ((gCallBack.rpt_type == UIM_ACCESS_R) &&
+        (gCallBack.rpt_status == UIM_PASS))
+    {
+        /* Check to see if UIM is Pro-Active */
+        svc = uim_return_cdma_svc_availabililty ( eType, uim_cdma_svc_table_buffer);
+        MSG_FATAL("OEM_IsCDMASVCSupport %d %d",svc.allocated,svc.activated,0);
+        if(!svc.allocated || !svc.activated)
+        {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
 /*===========================================================================
 
 FUNCTION OEMRUIM_CHVDisable
@@ -496,7 +537,12 @@ static int OEMRUIM_CHVDisable(IRUIM *pMe)
    if (!IRUIM_IsCardConnected (pMe)) {
       return EFAILED;
    }
-
+   
+   if(!OEM_IsCDMASVCSupport(UIM_CDMA_SVC_CHV_DISABLE))
+   {
+      return EFAILED;
+   }
+   
    // Create & send the command.
    gUimCmd.disable_chv.hdr.command            = UIM_DISABLE_CHV_F;
    gUimCmd.disable_chv.hdr.cmd_hdr.task_ptr   = NULL;
@@ -1286,5 +1332,4 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
     }
     return;
 }
-
 #endif    // FEATURE_IRUIM

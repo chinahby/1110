@@ -3700,5 +3700,71 @@ static int OEMRUIMAddr_CheckSameRecord(AECHAR *name, boolean* exist)
     return EFAILED;
 }// OEMAddr_CheckSameRecord
 
+/*===========================================================================
+
+FUNCTION OEMRUIMAddr_ReadADNByID()
+
+===========================================================================*/
+int OEMRUIMAddr_ReadADNByID(uint16 wRecID, AECHAR **ppName, AECHAR **ppNumber)
+{
+   byte *         pBuf;
+   AEE_DBRecInfo  dbRecInfo;
+   int            nRet;
+   AEEAddrField  *pItems = NULL;
+   int            nItemCount = 0;
+   int            i;
+    
+   pBuf = MALLOC(gAdnRecSize);
+   if (!pBuf) {
+      return ENOMEMORY;
+   }
+   nRet = read_adn_rec(pBuf, wRecID, gAdnRecSize, &dbRecInfo);
+   if (nRet != AEE_SUCCESS) {
+      FREE (pBuf);
+      return EFAILED;
+   }
+
+   *ppName = NULL;
+   *ppNumber = NULL;
+   
+   //Parse the buffer into individual address items
+   nRet = RawDataToAddress(pBuf, dbRecInfo.wRecSize, NULL, &pItems, &nItemCount, NULL);
+   
+   FREE(pBuf);
+   for(i=0;i<nItemCount;i++)
+   {
+      if(pItems[i].fID == AEE_ADDRFIELD_NAME)
+      {
+         if(*ppName)
+         {
+            FREE(*ppName);
+         }
+         *ppName = pItems[i].pBuffer;
+      }
+      else if(pItems[i].fID == AEE_ADDRFIELD_PHONE_GENERIC)
+      {
+         if(*ppNumber)
+         {
+            FREE(*ppNumber);
+         }
+         *ppNumber = pItems[i].pBuffer;
+      }
+      else
+      {
+         if(pItems[i].pBuffer)
+         {
+            FREE(pItems[i].pBuffer);
+         }
+      }
+   }
+   
+   if(pItems)
+   {
+      FREE(pItems);
+      pItems = NULL;
+   }
+   return(nRet);
+}
+
 #endif    // FEATURE_ADDRBOOK_RUIM   
 

@@ -741,19 +741,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                     pMe->m_sPIN.code_len = WSTRLEN(pMe->m_wPIN);
                     if(SUCCESS != CoreSecurity_VerifyPIN(pMe, AEECARD_PIN1))
                     {
-                        AEECHVStatus  chvst;
-                        
-                        (void)IRUIM_GetCHVStatus(pMe->m_pIRUIM, &chvst);
-                        if (chvst.chv1CountRemain > 0)
-                        {
-                            // 输入错误,验证失败
-                            CoreApp_ShowMsgDialog(pMe, IDS_INVALIDPIN);
-                        }
-                        else
-                        {
-                            // 输入错误,卡被锁
-                            CoreApp_ShowMsgDialog(pMe, IDS_UIMBLOCKED);
-                        }
+                        CoreApp_ShowMsgDialog(pMe, IDS_INVALIDPIN);
                         return NFSMACTION_WAIT;
                     }
                     else
@@ -1549,6 +1537,15 @@ static NextFSMAction COREST_NOTICE_Handler(CCoreApp *pMe)
         return NFSMACTION_WAIT;
     }
     
+    switch (pMe->m_eDlgRet){
+    case DLGRET_CREATE:
+        CoreApp_ShowDialog(pMe, IDD_MSGBOX);
+        return NFSMACTION_WAIT;
+        
+    case DLGRET_MSGOK:
+        MOVE_TO_STATE(COREST_STANDBY)
+        return NFSMACTION_CONTINUE;
+    }
     return NFSMACTION_WAIT;
 } // COREST_NOTICE_Handler
 
@@ -1934,5 +1931,171 @@ static int CoreSecurity_VerifyPUK(CCoreApp * pMe, uint8 byPinID)
                 &pMe->m_sPinActionStatus, &pMe->m_sCallback);
 
   return nReturnStatus;
+}
+
+/*===========================================================================
+FUNCTION CoreSecurity_ChangePIN
+
+DESCRIPTION
+
+  This function sets the callback function pointer for verify pin and
+  call the corresponding ICARD_ChangePin function
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  SUCCESS/EFAILED/EUNSUPPORT
+
+SIDE EFFECTS
+  None.
+===========================================================================*/
+int CCoreApp_ChangePIN(CCoreApp *pMe, uint8 byPinID, AECHAR *pOldPIN, AECHAR *pNewPIN)
+{
+    int nReturnStatus = SUCCESS;
+  
+    if(!pNewPIN || !pOldPIN)
+    {
+        return EBADPARM;
+    }
+
+    DBGPRINTF("CoreApp_ChangePIN %S %S",pOldPIN,pNewPIN);
+  
+    WSTRCPY(pMe->m_wPIN,pNewPIN);
+    pMe->m_sPIN.code = pMe->m_wPIN;
+    pMe->m_sPIN.code_len = WSTRLEN(pMe->m_wPIN);
+  
+    WSTRCPY(pMe->m_wPIN2,pOldPIN);
+    pMe->m_sPIN2.code = pMe->m_wPIN2;
+    pMe->m_sPIN2.code_len = WSTRLEN(pMe->m_wPIN2);
+  
+    /* Populate the m_sCallback structure */
+    pMe->m_sCallback.pfnCancel = NULL;
+    pMe->m_sCallback.pfnNotify = PINVerify_cb;
+    pMe->m_sCallback.pNotifyData = pMe;
+    
+    if(pMe->m_sPIN.code_len>0)
+    {
+        AECHAR ch = pMe->m_sPIN.code[pMe->m_sPIN.code_len-1];
+        if(ch<'0' || ch>'9')
+        {
+            pMe->m_sPIN.code[pMe->m_sPIN.code_len-1] = '\0';
+        }
+    }
+
+    if(pMe->m_sPIN2.code_len>0)
+    {
+        AECHAR ch = pMe->m_sPIN2.code[pMe->m_sPIN2.code_len-1];
+        if(ch<'0' || ch>'9')
+        {
+            pMe->m_sPIN2.code[pMe->m_sPIN2.code_len-1] = '\0';
+        }
+    }
+  
+    nReturnStatus = ICARD_ChangePin(pMe->m_pICard, byPinID, &pMe->m_sPIN2, &pMe->m_sPIN,
+                                  &pMe->m_sPinActionStatus, &pMe->m_sCallback);
+    if(SUCCESS != nReturnStatus)
+    {
+        // 输入错误,验证失败
+        pMe->m_nMsgID = IDS_INVALIDPIN;
+        
+        // 先改变当前状态
+        MOVE_TO_STATE(COREST_NOTICE)
+        
+        // 再以 DLGRET_CREATE 关闭当前对话框
+        CLOSE_DIALOG(DLGRET_CREATE) 
+    }
+    else
+    {
+        pMe->m_bVerifying = TRUE;
+        pMe->m_nMsgID = IDS_WAITING;
+        
+        // 先改变当前状态
+        MOVE_TO_STATE(COREST_NOTICE)
+        
+        // 再以 DLGRET_CREATE 关闭当前对话框
+        CLOSE_DIALOG(DLGRET_CREATE) 
+    }
+    return nReturnStatus;
+}
+
+/*===========================================================================
+FUNCTION CoreSecurity_UnblockPIN
+
+DESCRIPTION
+
+  This function sets the callback function pointer for verify puk and
+  call the corresponding ICARD_UnblockPin function
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  SUCCESS/EFAILED/EUNSUPPORT
+
+SIDE EFFECTS
+  None.
+===========================================================================*/
+int CCoreApp_UnblockPIN(CCoreApp *pMe, uint8 byPinID, AECHAR *pPUK, AECHAR *pPIN)
+{
+    int nReturnStatus = SUCCESS;
+    if(!pPUK || !pPIN)
+    {
+        return EBADPARM;
+    }
+  
+    DBGPRINTF("CoreApp_UnblockPIN %S %S",pPUK,pPIN);
+  
+    WSTRCPY(pMe->m_wPIN,pPIN);
+    pMe->m_sPIN.code = pMe->m_wPIN;
+    pMe->m_sPIN.code_len = WSTRLEN(pMe->m_wPIN);
+    WSTRCPY(pMe->m_wPUK,pPUK);
+    pMe->m_sPUK.code = pMe->m_wPUK;
+    pMe->m_sPUK.code_len = WSTRLEN(pMe->m_wPUK);
+  
+    nReturnStatus = CoreSecurity_VerifyPUK(pMe, byPinID);
+    if(SUCCESS != nReturnStatus)
+    {
+        // 输入错误,验证失败
+        pMe->m_nMsgID = IDS_INVALIDPUK;
+        
+        // 先改变当前状态
+        MOVE_TO_STATE(COREST_NOTICE)
+        
+        // 再以 DLGRET_CREATE 关闭当前对话框
+        CLOSE_DIALOG(DLGRET_CREATE) 
+    }
+    else
+    {
+        pMe->m_bVerifying = TRUE;
+        pMe->m_nMsgID = IDS_WAITING;
+        
+        // 先改变当前状态
+        MOVE_TO_STATE(COREST_NOTICE)
+        
+        // 再以 DLGRET_CREATE 关闭当前对话框
+        CLOSE_DIALOG(DLGRET_CREATE) 
+    }
+    return nReturnStatus;
+}
+
+extern int OEMRUIMAddr_ReadADNByID(uint16 wRecID, AECHAR **ppName, AECHAR **ppNumber);
+int CCoreApp_DisplayADN(CCoreApp *pMe, uint16 wRecID)
+{
+    int nReturnStatus = OEMRUIMAddr_ReadADNByID(wRecID, &pMe->m_pADNName, &pMe->m_pADNNumber);
+    if(nReturnStatus == SUCCESS)
+    {
+        ISHELL_CloseApplet(pMe->a.m_pIShell, TRUE);
+        
+        // 输入错误,验证失败
+        pMe->m_nMsgID = IDS_CORE_DISPADN;
+        
+        // 先改变当前状态
+        MOVE_TO_STATE(COREST_NOTICE)
+        
+        // 再以 DLGRET_CREATE 关闭当前对话框
+        CLOSE_DIALOG(DLGRET_CREATE) 
+    }
+    return nReturnStatus;
 }
 

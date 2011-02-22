@@ -644,7 +644,8 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                 case 0xFFFF:
                     set_time = 3000;
                     break;
-
+                    
+                case IDS_CORE_DISPADN:
                 case IDS_WAITING:
                     set_time = 0;
                     break;
@@ -668,7 +669,16 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
 
         case EVT_USER_REDRAW:
         {
-            if(pMe->m_nMsgID !=IDS_EXIT_EMERGENCY_MODE)
+            if(pMe->m_nMsgID == IDS_CORE_DISPADN)
+            {
+                ISTATIC_SetProperties(pStatic, ST_CENTERTEXT | ST_MIDDLETEXT | ST_UNDERLINE);
+                ISTATIC_SetText(pStatic,pMe->m_pADNName,pMe->m_pADNNumber,AEE_FONT_NORMAL,AEE_FONT_NORMAL);
+                ISTATIC_Redraw(pStatic);
+                FREEIF(pMe->m_pADNName);
+                FREEIF(pMe->m_pADNNumber);
+                COREAPP_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+            }
+            else if(pMe->m_nMsgID !=IDS_EXIT_EMERGENCY_MODE)
             {
                 PromptMsg_Param_type m_PromptMsg;
                 MEMSET(&m_PromptMsg,0,sizeof(PromptMsg_Param_type));
@@ -917,7 +927,45 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
         }
         
         case EVT_CARD_STATUS:
-            CLOSE_DIALOG(DLGRET_MSGOK);
+            if(pMe->m_sPinActionStatus.nCmdStatus == SUCCESS)
+            {
+                pMe->m_nMsgID = IDS_MSG_OK;
+            }
+            else
+            {
+                // Section 27.16 of 3GPP 51.0.10
+                if(pMe->m_sPinActionStatus.sStatus.sw1 == 0x92 && pMe->m_sPinActionStatus.sStatus.sw2 == 0x40)
+                {
+                    pMe->m_nMsgID = IDS_MSG_MEMISSUE;
+                }
+                else if(pMe->m_sPinActionStatus.sStatus.sw1 == 0x98 && pMe->m_sPinActionStatus.sStatus.sw2 == 0x04)
+                {
+                    pMe->m_nMsgID = IDS_MSG_SECISSUE;
+                }
+                else if(pMe->m_sPinActionStatus.sStatus.sw1 == 0x98 && pMe->m_sPinActionStatus.sStatus.sw2 == 0x40)
+                {
+                    pMe->m_nMsgID = IDS_UIMBLOCKED;
+                }
+                else if(pMe->m_sPinActionStatus.sStatus.sw1 == 0x6F)
+                {
+                    pMe->m_nMsgID = IDS_MSG_TECHISSUE;
+                }
+                else
+                {
+                    if(pMe->m_eRUIMSCode == ENTERPIN_ONLY)
+                    {
+                        pMe->m_nMsgID = IDS_INVALIDPIN;
+                    }
+                    else
+                    {
+                        pMe->m_nMsgID = IDS_INVALIDPUK;
+                    }
+                }
+            }
+            
+            // 启动发送关闭对话框事件的定时器
+            ISHELL_SetTimer(pMe->a.m_pIShell, 3000, DialogTimeoutCallback, pMe);
+            ISHELL_PostEvent(pMe->a.m_pIShell, AEECLSID_CORE_APP, EVT_USER_REDRAW, 0, 0);
             return TRUE;
             
         default:
@@ -2151,9 +2199,6 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
             }
             return TRUE;
             
-        case EVT_CARD_STATUS:
-            CLOSE_DIALOG(DLGRET_MSGOK);
-            return TRUE;
         default:
             break;
     }

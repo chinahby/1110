@@ -295,6 +295,7 @@
 #endif
 #endif //#ifdef FEATURE_USES_LOWMEM
 
+#define IDS_CORE_DISPADN        0xFFFE
 // 下列变量为临时定义
 #define PHONEPASSWORDLENTH      OEMNV_LOCKCODE_MAXLEN
 #define LOCKUIMPASSWORDLENTH      OEMNV_LOCKUIM_MAXLEN
@@ -580,6 +581,7 @@ typedef struct _CCoreApp
     char                m_strPIN2[PINCODE_LENGTH + 1];
     char                m_strPUK[PUKCODE_LENGTH + 1];
     AECHAR              m_wPIN[PINCODE_LENGTH + 1];
+    AECHAR              m_wPIN2[PINCODE_LENGTH + 1];
     AECHAR              m_wPUK[PUKCODE_LENGTH + 1];
     
     // 消息文本字符串在资源文件中的 ID
@@ -681,6 +683,7 @@ typedef struct _CCoreApp
     **********************************/
     AEECallback         m_sCallback;
     AEECardPinCode      m_sPIN;
+    AEECardPinCode      m_sPIN2;
     AEECardPinCode      m_sPUK;
     AEECardPinCmdStatus m_sPinActionStatus;
     boolean             m_bVerifying;
@@ -691,6 +694,8 @@ typedef struct _CCoreApp
 	#ifdef FEATURE_KEYGUARD
 	boolean             m_iskeypadtime;
 	#endif
+    AECHAR             *m_pADNName;
+    AECHAR             *m_pADNNumber;
 } CCoreApp;
 
 /*==============================================================================

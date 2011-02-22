@@ -145,6 +145,21 @@
 	<String Id="1048" Name="IDS_NOOMH_CARD" Encoding="Unicode">
 		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
 	</String>
+	<String Id="1049" Name="IDS_MSG_OK">
+		<Text>OK</Text>
+	</String>
+	<String Id="1050" Name="IDS_MSG_TECHISSUE">
+		<Text>Technical problem</Text>
+	</String>
+	<String Id="1051" Name="IDS_MSG_MEMISSUE">
+		<Text>Memory problem</Text>
+	</String>
+	<String Id="1052" Name="IDS_MSG_SECISSUE">
+		<Text>Access security policy not fulfilled or secret code rejected</Text>
+	</String>
+	<String Id="1053" Name="IDS_MSG_ACCEPTED">
+		<Text>The new PIN is accepted</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
@@ -173,6 +188,7 @@
 	<DIALOG Id="6007" Name="IDD_EMERGENCYNUMLIST" Focus="7005">
 		<Controls>
 			<Menu Id="7005" Name="IDC_EMERGENCYNUM">
+				<TitleID>IDS_EMERGENCY_NUMBER</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>

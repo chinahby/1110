@@ -302,6 +302,8 @@ static void CallApp_Draw_Cursor(CCallApp* pMe, AEERect *pRect);
 // 设置光标闪烁
 static void CallApp_Set_Cursor_Blink(void* pUser);
 #endif
+static void CallApp_ProcessUIMMMIStr(CCallApp* pMe, AECHAR *pStr);
+
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -1345,7 +1347,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
                         else
                         {
-                            //don't process
+                            CallApp_ProcessUIMMMIStr(pMe, pMe->m_DialString);
                         }
                         break;
 
@@ -10923,4 +10925,201 @@ static void CallApp_Set_Cursor_Blink(void* pUser)
     ISHELL_SetTimer(pMe->m_pShell, 600, CallApp_Set_Cursor_Blink, (void*)pMe);
 }
 #endif
+
+#include "AEECard.h"
+extern int CoreApp_ChangePIN(IShell *pShell, uint8 byPinID, AECHAR *pOldPIN, AECHAR *pNewPIN);
+extern int CoreApp_UnblockPIN(IShell *pShell, uint8 byPinID, AECHAR *pPUK, AECHAR *pPIN);
+extern int CoreApp_DisplayADN(IShell *pShell, uint16 wRecID);
+static void CallApp_ProcessUIMMMIStr(CCallApp* pMe, AECHAR *pStr)
+{
+    int nStrlen = WSTRLEN(pStr);
+    int i,j;
+    AECHAR wStr1[UIM_MAX_CHV_DIGITS + 1];
+    AECHAR wStr2[UIM_MAX_CHV_DIGITS + 1];
+    AECHAR wStr3[UIM_MAX_CHV_DIGITS + 1];
+
+    MEMSET(wStr1, 0, sizeof(wStr1));
+    MEMSET(wStr2, 0, sizeof(wStr2));
+    MEMSET(wStr3, 0, sizeof(wStr3));
+    
+    DBGPRINTF("ProcessUIMMMIStr %S %d",pStr,nStrlen);
+    if(WSTRNCMP(pStr, L"**04*", 5) == 0 && nStrlen >= 20) // LenMIN=5+OldPinMin(4+'*')+NewPinMin(4+'*')+NewPinMin(4+'#') change pin1
+    {
+        for(i=5,j=0;i<nStrlen;i++,j++)
+        {
+            if(pStr[i] == '*')
+            {
+                i++;
+                break;
+            }
+            wStr1[j] = pStr[i];
+        }
+        
+        for(j=0;i<nStrlen;i++,j++)
+        {
+            if(pStr[i] == '*')
+            {
+                i++;
+                break;
+            }
+            wStr2[j] = pStr[i];
+        }
+        
+        for(j=0;i<nStrlen;i++,j++)
+        {
+            if(pStr[i] == '#')
+            {
+                break;
+            }
+            wStr3[j] = pStr[i];
+        }
+        
+        if(WSTRCMP(wStr2, wStr3) != 0 || WSTRLEN(wStr1) == 0 || WSTRLEN(wStr2) == 0)
+        {
+            return;
+        }
+        
+        CoreApp_ChangePIN(pMe->m_pShell, AEECARD_PIN1, wStr1, wStr2);
+        ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+    }
+    else if(WSTRNCMP(pStr, L"**042*", 6) == 0 && nStrlen >= 21)// LenMIN=6+OldPinMin(4+'*')+NewPinMin(4+'*')+NewPinMin(4+'#') change pin2
+    {
+        for(i=6,j=0;i<nStrlen;i++,j++)
+        {
+            if(pStr[i] == '*')
+            {
+                i++;
+                break;
+            }
+            wStr1[j] = pStr[i];
+        }
+        
+        for(j=0;i<nStrlen;i++,j++)
+        {
+            if(pStr[i] == '*')
+            {
+                i++;
+                break;
+            }
+            wStr2[j] = pStr[i];
+        }
+        
+        for(j=0;i<nStrlen;i++,j++)
+        {
+            if(pStr[i] == '#')
+            {
+                break;
+            }
+            wStr3[j] = pStr[i];
+        }
+
+        if(WSTRCMP(wStr2, wStr3) != 0 || WSTRLEN(wStr1) == 0 || WSTRLEN(wStr2) == 0)
+        {
+            return;
+        }
+        
+        CoreApp_ChangePIN(pMe->m_pShell, AEECARD_PIN2, wStr1, wStr2);
+        ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+    }
+    else if(WSTRNCMP(pStr, L"**05*", 5) == 0 && nStrlen >= 20)// LenMIN=5+PUKMIN(4+'*')+NewPinMin(4+'*')+NewPinMin(4+'#') unblock pin1
+    {
+        for(i=5,j=0;i<nStrlen;i++,j++)
+        {
+            if(pStr[i] == '*')
+            {
+                i++;
+                break;
+            }
+            wStr1[j] = pStr[i];
+        }
+        
+        for(j=0;i<nStrlen;i++,j++)
+        {
+            if(pStr[i] == '*')
+            {
+                i++;
+                break;
+            }
+            wStr2[j] = pStr[i];
+        }
+        
+        for(j=0;i<nStrlen;i++,j++)
+        {
+            if(pStr[i] == '#')
+            {
+                break;
+            }
+            wStr3[j] = pStr[i];
+        }
+
+        if(WSTRCMP(wStr2, wStr3) != 0 || WSTRLEN(wStr1) == 0 || WSTRLEN(wStr2) == 0)
+        {
+            return;
+        }
+        
+        CoreApp_UnblockPIN(pMe->m_pShell, AEECARD_PIN1, wStr1, wStr2);
+        ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+    }
+    else if(WSTRNCMP(pStr, L"**052*", 6) == 0 && nStrlen >= 21)// LenMIN=6+PUKMIN(4+'*')+NewPinMin(4+'*')+NewPinMin(4+'#') unblock pin2
+    {
+        for(i=6,j=0;i<nStrlen;i++,j++)
+        {
+            if(pStr[i] == '*')
+            {
+                i++;
+                break;
+            }
+            wStr1[j] = pStr[i];
+        }
+        
+        for(j=0;i<nStrlen;i++,j++)
+        {
+            if(pStr[i] == '*')
+            {
+                i++;
+                break;
+            }
+            wStr2[j] = pStr[i];
+        }
+        
+        for(j=0;i<nStrlen;i++,j++)
+        {
+            if(pStr[i] == '#')
+            {
+                i++;
+                break;
+            }
+            wStr3[j] = pStr[i];
+        }
+
+        if(WSTRCMP(wStr2, wStr3) != 0 || WSTRLEN(wStr1) == 0 || WSTRLEN(wStr2) == 0)
+        {
+            return;
+        }
+        
+        CoreApp_UnblockPIN(pMe->m_pShell, AEECARD_PIN2, wStr1, wStr2);
+        ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+    }
+    else if(nStrlen <= 4) // MaxID(3+'#') Read ADN
+    {
+        uint16 wRecID;
+        for(i=0;i<nStrlen;i++)
+        {
+            if(pStr[i] == '#')
+            {
+                break;
+            }
+            wStr1[i] = pStr[i];
+        }
+        
+        if(WSTRLEN(wStr1) == 0)
+        {
+            return;
+        }
+        
+        WSTRTOSTR(wStr1, (char *)wStr2, sizeof(wStr2));
+        wRecID = (uint16)ATOI((char *)wStr2);
+        CoreApp_DisplayADN(pMe->m_pShell, wRecID);
+    }
+}
 

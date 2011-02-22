@@ -120,6 +120,10 @@ static void CoreApp_ResetProfileTimer(void *pUser);
 static boolean CoreApp_TestCard(CCoreApp *pMe);
 static void    CoreApp_ResetRing(CCoreApp *pMe);
 //add by yangdecai end
+extern int CCoreApp_ChangePIN(CCoreApp *pMe, uint8 byPinID, AECHAR *pOldPIN, AECHAR *pNewPIN);
+extern int CCoreApp_UnblockPIN(CCoreApp *pMe, uint8 byPinID, AECHAR *pPUK, AECHAR *pPIN);
+extern int CCoreApp_DisplayADN(CCoreApp *pMe, uint16 wRecID);
+
 /*==============================================================================
 
                                  函数定义
@@ -152,6 +156,46 @@ boolean CoreApp_IsIdle(void)
     return FALSE;
 }
 
+static AECHAR g_UIMPINSTR1[UIM_MAX_CHV_DIGITS + 1];
+static AECHAR g_UIMPINSTR2[UIM_MAX_CHV_DIGITS + 1];
+
+int CoreApp_DisplayADN(IShell *pShell, uint16 wRecID)
+{
+    if(!pShell)
+    {
+        return EBADPARM;
+    }
+    
+    DBGPRINTF("CoreApp_DisplayADN %d",wRecID);
+    return ISHELL_PostEventEx(pShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_DISPLAYADN, wRecID, 0);
+}
+
+int CoreApp_ChangePIN(IShell *pShell, uint8 byPinID, AECHAR *pOldPIN, AECHAR *pNewPIN)
+{
+    if(!pShell || !pOldPIN || !pNewPIN)
+    {
+        return EBADPARM;
+    }
+    
+    WSTRCPY(g_UIMPINSTR1, pOldPIN);
+    WSTRCPY(g_UIMPINSTR2, pNewPIN);
+    DBGPRINTF("CoreApp_ChangePIN %S %S",pOldPIN,pNewPIN);
+    return ISHELL_PostEventEx(pShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_CHANGEPIN, byPinID, 0);
+}
+
+int CoreApp_UnblockPIN(IShell *pShell, uint8 byPinID, AECHAR *pPUK, AECHAR *pPIN)
+{
+    if(!pShell || !pPUK || !pPIN)
+    {
+        return EBADPARM;
+    }
+    
+    WSTRCPY(g_UIMPINSTR1, pPUK);
+    WSTRCPY(g_UIMPINSTR2, pPIN);
+    DBGPRINTF("CoreApp_UnblockPIN %S %S",pPUK,pPIN);
+    return ISHELL_PostEventEx(pShell, EVTFLG_ASYNC, AEECLSID_CORE_APP, EVT_UNBLOCKPIN, byPinID, 0);
+}
+
 /*==============================================================================
 函数:
     CoreApp_FreeAppData
@@ -172,6 +216,8 @@ void CoreApp_FreeAppData(IApplet* po)
 {
     CCoreApp *pMe = (CCoreApp*)po;
 
+    FREEIF(pMe->m_pADNName);
+    FREEIF(pMe->m_pADNNumber);
     if (pMe->m_pIAnn) 
     { 
         IANNUNCIATOR_Release(pMe->m_pIAnn);
@@ -452,7 +498,8 @@ boolean CoreApp_InitAppData(IApplet* po)
 #ifdef FEATURE_TORCH_SUPPORT
     pMe->TorchOn = FALSE;
 #endif
-
+    pMe->m_pADNName = NULL;
+    pMe->m_pADNNumber = NULL;
 #ifdef FEATURE_OEMOMH
 {
 	extern	 void OEM_SetBAM_ADSAccount(void);
@@ -655,6 +702,18 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
         case EVT_USER_REDRAW:
             (void) CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            return TRUE;
+            
+        case EVT_DISPLAYADN:
+            (void)CCoreApp_DisplayADN(pMe, wParam);
+            return TRUE;
+            
+        case EVT_CHANGEPIN:
+            (void)CCoreApp_ChangePIN(pMe, wParam, g_UIMPINSTR1, g_UIMPINSTR2);
+            return TRUE;
+            
+        case EVT_UNBLOCKPIN:
+            (void)CCoreApp_UnblockPIN(pMe, wParam, g_UIMPINSTR1, g_UIMPINSTR2);
             return TRUE;
             
         case EVT_CARD_STATUS:
