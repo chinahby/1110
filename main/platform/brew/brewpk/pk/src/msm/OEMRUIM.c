@@ -1155,7 +1155,7 @@ static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
     int    pnDataSize = UIM_CDMA_HOME_SERVICE_SIZE;
     byte pData[UIM_CDMA_HOME_SERVICE_SIZE+2];
     int    status = EFAILED;
-    ERR("OEMRUIM_Read_Svc_P_Name",0,0,0);
+    MSG_FATAL("OEMRUIM_Read_Svc_P_Name",0,0,0);   
     // Check to see if the card is connected.
     if (!IRUIM_IsCardConnected (pMe))
     {
@@ -1186,7 +1186,7 @@ static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
     {
         status = EFAILED;
     }
-    else
+    else     
     {
         /*int i;
         for(i=0;i<pnDataSize;i++)
@@ -1204,7 +1204,7 @@ static void OEMRUIM_ExchangeByte(byte *Inputbuf,int size)
 {
     int h=0;
     byte tempbuf;
-
+    MSG_FATAL("OEMRUIM_ExchangeByte Start", 0, 0, 0);
     while(h<size)
     {
         tempbuf=Inputbuf[h];
@@ -1212,6 +1212,7 @@ static void OEMRUIM_ExchangeByte(byte *Inputbuf,int size)
         Inputbuf[h+1]=tempbuf;
         h=h+2;
     }
+    MSG_FATAL("OEMRUIM_ExchangeByte End", 0, 0, 0);
     return;
 }
 
@@ -1222,6 +1223,7 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
     int k;
     int m =0;
     byte tempbuf[(UIM_CDMA_HOME_SERVICE_SIZE+1)*sizeof(AECHAR)]={(byte)'\0'};
+    MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_Spn Start", 0, 0, 0);
     if((Inputbuf[0]&0x01==0x01)&&(Inputbuf[0]!=0xFF))//TOBUF中的第一位如果是1,则显示运营商名称
     {
             for( i=3;i<Endpoint;i++)//I-3+1 表示TOBUF中的有效字符数目
@@ -1242,7 +1244,7 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
                     }                    
                 }
             }
-            ERR("number len = %d Inputbuf[1]= %x",i,Inputbuf[1],0);
+            MSG_FATAL("number len = %d Inputbuf[1]= %x",i,Inputbuf[1],0);
             switch(Inputbuf[1]&0x1F)
             {
                 case AEERUIM_LANG_ENCODING_7BIT:                  //acsii编码
@@ -1257,17 +1259,18 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
                     break;
 
                 case  AEERUIM_LANG_ENCODING_UNICODE:                   //UNICODE编码
-                    if(((Inputbuf[3]&0xFF == 0xFE) || (Inputbuf[3]&0xFF == 0xFF)) &&
-                        ((Inputbuf[4]&0xFF == 0xFE) || (Inputbuf[4]&0xFF == 0xFF))
+                    if(((Inputbuf[3] == 0xFE) || (Inputbuf[3] == 0xFF)) &&
+                        ((Inputbuf[4] == 0xFE) || (Inputbuf[4] == 0xFF))
                       )
                     {
+                        MSG_FATAL("AEERUIM_LANG_ENCODING_UNICODE BOM", 0, 0, 0);
                         //为TRUE则表示是BOM，要去掉前面5个标志位
                         for(k=0;k<i-5;k++)
                         {
                             tempbuf[k]=Inputbuf[k+5];
                             //ERR("tempbuf[%d] = %x",k,tempbuf[k],0);
                         }        
-                        if((Inputbuf[3]&0xFF == 0xFE) && (Inputbuf[4]&0xFF == 0xFF))//(big endian 00-54 with BOM)
+                        if((Inputbuf[3] == 0xFE) && (Inputbuf[4] == 0xFF))//(big endian 00-54 with BOM)
                         {
                             OEMRUIM_ExchangeByte(tempbuf,k);
                         }
@@ -1275,15 +1278,17 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
                     else
                     {
                         // without BOM
+                        MSG_FATAL("AEERUIM_LANG_ENCODING_UNICODE without BOM", 0, 0, 0);                     
                         for(k=0;k<i-3;k++)
                         {
                             tempbuf[k]=Inputbuf[k+3];
                             //ERR("tempbuf[%d] = %x",k,tempbuf[k],0);
                         }
-                        if(!((Inputbuf[2]&0xFF == 0x01) && (Inputbuf[3]&0xFF == 0x00)))
+                        if(((Inputbuf[2] == 0x01) && (Inputbuf[3] == 0x00)))
                         {
                             //第三位为01表示是英文
                             //第四位接着为00表示大端
+                            //我们的手机是小端，大端的要交换高低位
                             OEMRUIM_ExchangeByte(tempbuf,k);
                         }                        
                         //OEMRUIM_ExchangeByte(tempbuf,k);
@@ -1326,6 +1331,7 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
     }
     else
     {
+        MSG_FATAL("Inputbuf == NULL", 0, 0, 0);
         //Inputbuf为空,表示此卡内不存储运营商名字.所以需要另外处理
         svc_p_name[0]='\0';
         svc_p_name[1]='\0';
