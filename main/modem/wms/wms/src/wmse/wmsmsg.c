@@ -6666,7 +6666,7 @@ wms_status_e_type wms_msg_cdma_deliver
   }
 #endif
 #endif //#ifdef CUST_EDITION
-//Gemsea Modify for SMS-PP #ifdef FEATURE_CCAT
+#ifdef FEATURE_UIM_TOOLKIT_UTK//Gemsea Modify for SMS-PP #ifdef FEATURE_CCAT
   if( cdma_tl.teleservice == WMS_TELESERVICE_CATPT)
   {
 //Gemsea Modify for SMS-PP #ifdef FEATURE_GSTK
@@ -6702,7 +6702,7 @@ wms_status_e_type wms_msg_cdma_deliver
     }
 //Gemsea Modify for SMS-PP #endif /* FEATURE_GSTK */
   }
-//Gemsea Modify for SMS-PP #endif /* FEATURE_CCAT */
+#endif //Gemsea Modify for SMS-PP #endif /* FEATURE_CCAT */
 
 #ifdef FEATURE_UIM_TOOLKIT_UTK
   /* The routing for UTK messages should be changed to TRANSFER_ONLY,
