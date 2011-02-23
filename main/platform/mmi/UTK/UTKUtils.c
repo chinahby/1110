@@ -309,7 +309,7 @@ void UTK_GiveResponse(CUTK * pMe,
     }
     ERR("%02x   %02x", eCmd, cmd_details_tlv.cmd_type, 0);
     uim_power_control( UIM_PROACTIVE_UIM, TRUE);
-    MSG_FATAL("eCmd = %X",eCmd,0,0); 
+    MSG_FATAL("eCmd = %X bForwad %d",eCmd,bForwad,0); 
     switch(eCmd)
     {// 需要特别处理的响应在此处理，处理后应立即返回
         case UIM_TK_SETUP_MENU:
@@ -353,9 +353,9 @@ void UTK_GiveResponse(CUTK * pMe,
                     uim_cmd_ptr->hdr.protocol = UIM_NO_SUCH_MODE;
                     uim_cmd_ptr->hdr.options = UIM_OPTION_ALWAYS_RPT;
                     
+                    MSG_FATAL("UIM_ENVELOPE_F %d",pMe->m_btCursel,0,0); 
                     /* Send the command to the R-UIM */
                     uim_cmd( uim_cmd_ptr );
-                    
                     return;
                 }
                 else /* The UIM free queue is empty */
