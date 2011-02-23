@@ -3772,5 +3772,32 @@ int OEMRUIMAddr_ReadADNByID(uint16 wRecID, AECHAR **ppName, AECHAR **ppNumber)
    return(nRet);
 }
 
+int OEMRUIMAddr_WriteADNByID(uint16 wRecID, AECHAR *pName, AECHAR *pNumber)
+{
+    int nRet;
+    uint16 wRecSize;
+    byte *pBuf;
+    AEEAddrField myItems[2];
+
+    myItems[0].fID      = AEE_ADDRFIELD_NAME;
+    myItems[0].fType    = AEEDB_FT_STRING;
+    myItems[0].pBuffer  = pName;
+    myItems[0].wDataLen = (WSTRLEN(pName)+1)* sizeof(AECHAR);
+    myItems[1].fID      = AEE_ADDRFIELD_PHONE_GENERIC;
+    myItems[1].fType    = AEEDB_FT_STRING;
+    myItems[1].pBuffer  = pNumber;
+    myItems[1].wDataLen = (WSTRLEN(pNumber)+1)* sizeof(AECHAR);
+
+    pBuf = AddressToRawData(0, myItems, 2, &nRet, &wRecSize);
+    if(!pBuf)
+    {
+        return ENOMEMORY;
+    }
+    
+    nRet = write_adn_rec(pBuf, wRecID, wRecSize);
+    FREE(pBuf);
+    return nRet;
+}
+
 #endif    // FEATURE_ADDRBOOK_RUIM   
 

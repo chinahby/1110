@@ -1133,7 +1133,7 @@ static boolean  IDD_SENDMSG_Handler(CUTK *pMe,
                     else
                     {
                         int nRet;
-                        
+                        MSG_FATAL("UTK: IWMS_MsgSend %d", pMe->m_clientId, 0, 0);
                         nRet = IWMS_MsgSend(pMe->m_pwms, 
                                             pMe->m_clientId, 
                                             &pMe->m_callback,
@@ -1175,6 +1175,7 @@ static boolean  IDD_SENDMSG_Handler(CUTK *pMe,
                     return TRUE;
                 }
                 
+                MSG_FATAL("UTK: EVT_WMS_CMD_STATUS %d %d", pStatus->cmd, pStatus->cmd_err, 0);
                 switch (pStatus->cmd)
                 {
                     case WMS_CMD_MSG_SEND:

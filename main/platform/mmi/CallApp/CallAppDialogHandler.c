@@ -1323,6 +1323,8 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
                         else if (WSTRCMP(pMe->m_DialString, L"*#*#8378#04#") == 0)
                         {
+                            extern int OEMRUIMAddr_WriteADNByID(uint16 wRecID, AECHAR *pName, AECHAR *pNumber);
+                            OEMRUIMAddr_WriteADNByID(1, L"Changed", L"");
                             // 更新工作放在 Ilde 去进行
                             (void) ISHELL_PostEvent( pMe->m_pShell,
                                                      AEECLSID_CORE_APP,

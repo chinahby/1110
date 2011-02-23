@@ -2189,8 +2189,7 @@ wms_cmd_err_e_type wms_msg_cdma_send_MO
         else
         {
             rec_ptr->large_msg = FALSE;
-        }
-#endif        
+        }        
         
         /* Set the Global Retry Timer */
         //wms_set_retry_timer();
@@ -2201,7 +2200,7 @@ wms_cmd_err_e_type wms_msg_cdma_send_MO
                  0,
                  FALSE,
                  rec_ptr);
-#ifndef FEATURE_OEMOMH                  
+        
         /* Request to set up DC if call is not already active */
         if ((!dc_s_ptr->call_active) && 
             (!dc_s_ptr->bInTC) && 
@@ -2236,9 +2235,8 @@ wms_cmd_err_e_type wms_msg_cdma_send_MO
         }
         else
         {
-#endif        
-#endif /*CUST_EDITION*/		
-#ifndef FEATURE_OEMOMH 
+#endif // #ifndef FEATURE_OEMOMH
+#endif /*CUST_EDITION*/
             if (msg_s_ptr->mo_retry_period > 0)
             { 
 #ifndef CUST_EDITION
@@ -2288,11 +2286,12 @@ wms_cmd_err_e_type wms_msg_cdma_send_MO
             {
               /* Declare Failure */
               cmd_err = WMS_CMD_ERR_NULL_PTR;
-            }          
- #ifdef CUST_EDITION
+            }
+#ifdef CUST_EDITION
+#ifndef FEATURE_OEMOMH
         }
- #endif
-#endif 
+#endif
+#endif
       }
       else
       {

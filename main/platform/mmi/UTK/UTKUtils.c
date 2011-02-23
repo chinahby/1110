@@ -1360,11 +1360,10 @@ int UTK_ProcessSendCDMASMSCmd(CUTK *pMe,
     // 开始分析各子项
     while (pos<nTep)
     {
-        switch (pdata[pos])
+        switch (pdata[pos]&0x7F)
         {
             // 命令说明标识
-            case 0x01:// UIM_TK_COMMAND_DETAILS_TAG
-            case 0x81:
+            case UIM_TK_COMMAND_DETAILS_TAG: //0x81
                 cmd_des.describe_id = pdata[pos];
                 cmd_des.length = pdata[pos+1];
                 cmd_des.command_num = pdata[pos+2];
@@ -1378,14 +1377,12 @@ int UTK_ProcessSendCDMASMSCmd(CUTK *pMe,
                 break;
                 
             // 设备特性标识
-            case 0x02:// UIM_TK_DEVICE_ID_TAG
-            case 0x82:
+            case UIM_TK_DEVICE_ID_TAG: //0x82
                 pos+=4;
                 break;
                 
             // Alpha标识符
-            case 0x05:// UIM_TK_ALPHA_ID_TAG
-            case 0x85:
+            case UIM_TK_ALPHA_ID_TAG: //0x85
                 // 跳过Alpha标识
                 pos++;
                 
@@ -1410,8 +1407,7 @@ int UTK_ProcessSendCDMASMSCmd(CUTK *pMe,
                 break;
                 
             // CDMA SMS TDPU
-            case 0x48:// UIM_TK_CDMA_SMS_TPDU_TAG
-            case 0xC8:
+            case UIM_TK_CDMA_SMS_TPDU_TAG: //0xC8
                 // 跳过标识
                 pos++;
                 
@@ -1438,7 +1434,7 @@ int UTK_ProcessSendCDMASMSCmd(CUTK *pMe,
                                         &client_message.u.cdma_message.raw_ts);
                     if (st != WMS_OK_S) 
                     {
-                        MSG_HIGH("UTK: DECODE CDMA TL FAILURE", 0, 0, 0);
+                        MSG_FATAL("UTK: DECODE CDMA TL FAILURE", 0, 0, 0);
                         return EFAILED;
                     }
                     if (cdma_tl.address.digit_mode == WMS_DIGIT_MODE_4_BIT)
@@ -1536,12 +1532,10 @@ int UTK_ProcessSendCDMASMSCmd(CUTK *pMe,
                 break;
                 
             // 地址标识
-            case 0x06:// UIM_TK_ADDRESS_TAG
-            case 0x86:
-                
+            case UIM_TK_ADDRESS_TAG: //0x86
             default:
                 // 命令不支持的项
-                ERR("---Unsupport!----",0,0,0);
+                ERR("---Unsupport!---- 0x%x",pdata[pos],0,0);
                 // 跳过标识
                 pos++;
                 
