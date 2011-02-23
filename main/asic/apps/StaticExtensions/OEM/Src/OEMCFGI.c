@@ -2584,13 +2584,13 @@ void OEM_RestoreFactorySetting( void )
    //oemi_cache.bt_scene               = OEMNV_NORMALMODE;//not use
 #ifdef FEATURE_ANIMATION_POWERUPDOWN
    //开机动画
-   MEMCPY((void*)oemi_cache.s_startupani,OEMNV_STARTUPANI, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+   MEMCPY(oemi_cache.s_startupani,OEMNV_STARTUPANI, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
    
    //关机动画
-   MEMCPY((void*)oemi_cache.s_poweroffani,OEMNV_POWEROFFANI, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
+   MEMCPY(oemi_cache.s_poweroffani,OEMNV_POWEROFFANI, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
 #endif
    //桌面墙纸
-   MEMCPY((void*)oemi_cache.s_wallpaper,OEMNV_WALLPAPER, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
+   MEMCPY(oemi_cache.s_wallpaper,OEMNV_WALLPAPER, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
 #ifdef FEATURE_SCREEN_SAVE
    //屏保类型
    MEMCPY((void*)oemi_cache.s_screensave_type,OEMNV_SCREENSAVE_TYPE, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
@@ -10343,168 +10343,168 @@ static int OEMPriv_SetItem_CFGI_EMERGENCYNUM_TABLE(void *pBuff)
 
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_ENABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.BUSY_ENABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.BUSY_ENABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_BUSY_ENABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.BUSY_ENABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.BUSY_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.BUSY_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_DISABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.BUSY_DISABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.BUSY_DISABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_BUSY_DISABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.BUSY_DISABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.BUSY_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.BUSY_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOANSWER_ENABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.NOANSWER_ENABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.NOANSWER_ENABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOANSWER_ENABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.NOANSWER_ENABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.NOANSWER_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.NOANSWER_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOANSWER_DISABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.NOANSWER_DISABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.NOANSWER_DISABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOANSWER_DISABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.NOANSWER_DISABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.NOANSWER_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.NOANSWER_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOCONNECT_ENABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.NOCONNECT_ENABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.NOCONNECT_ENABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOCONNECT_ENABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.NOCONNECT_ENABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.NOCONNECT_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.NOCONNECT_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOCONNECT_DISABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.NOCONNECT_DISABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.NOCONNECT_DISABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOCONNECT_DISABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.NOCONNECT_DISABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.NOCONNECT_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.NOCONNECT_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_ANYWAY_ENABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.ANYWAY_ENABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.ANYWAY_ENABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_ANYWAY_ENABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.ANYWAY_ENABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.ANYWAY_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.ANYWAY_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_ANYWAY_DISABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.ANYWAY_DISABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.ANYWAY_DISABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_ANYWAY_DISABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.ANYWAY_DISABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.ANYWAY_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.ANYWAY_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_DISABLE_ALL(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.DISABLE_ALL, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.DISABLE_ALL, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_DISABLE_ALL(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.DISABLE_ALL) != 0)
     {
-        STRLCPY((char*) &oemi_cache.DISABLE_ALL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.DISABLE_ALL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_WAIT_ENABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.WAIT_ENABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.WAIT_ENABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_WAIT_ENABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.WAIT_ENABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.WAIT_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.WAIT_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_WAIT_DISABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.WAIT_DISABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.WAIT_DISABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_WAIT_DISABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.WAIT_DISABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.WAIT_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.WAIT_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_VOICEMAIL_ENABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.VOICEMAIL_ENABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.VOICEMAIL_ENABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_VOICEMAIL_ENABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.VOICEMAIL_ENABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.VOICEMAIL_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.VOICEMAIL_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
@@ -10575,27 +10575,31 @@ static int OEMPriv_SetItem_CFGI_FMRADIO_VOLUME(void *pBuff)
 static int OEMPriv_GetItem_CFGI_FMRADIO_CHAN_INFO(void *pBuff) 
 {
    
-   MEMCPY(pBuff, (void*) &oemi_cache.fmRadio_chan_info, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
+   MEMCPY(pBuff, oemi_cache.fmRadio_chan_info, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_FMRADIO_CHAN_INFO(void *pBuff)
 {
-    MEMCPY((void*) &oemi_cache.fmRadio_chan_info, pBuff, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
+    MEMCPY(oemi_cache.fmRadio_chan_info, pBuff, sizeof(sChanInfo) * MAX_FMRADIO_STORED_CHANNEL);
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void *pBuff)
 {
-	 MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_usename, sizeof(byte) * MAS_BREWSETINT_STRING);
+	 MEMCPY(pBuff, oemi_cache.brewsetings_usename, sizeof(byte) * MAS_BREWSETINT_STRING);
      return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void *pBuff)
 {
-	MEMCPY((void*) &oemi_cache.brewsetings_usename, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
+    PppAccounts myAccount;
+	MEMCPY(oemi_cache.brewsetings_usename, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
     OEMPriv_WriteOEMConfigList(); 
+    MEMCPY((void*) myAccount.user_id_info, oemi_cache.brewsetings_usename, sizeof(byte) * MAS_BREWSETINT_STRING);
+    MEMCPY((void*) myAccount.passwd_info,  oemi_cache.brewsetings_password, sizeof(byte) * MAS_BREWSETINT_STRING);
+    OEM_SetPppAccounts(&myAccount, DS_BREW_TYPE);
     return SUCCESS;
 }
 #ifdef FEATURE_ANALOG_TV
@@ -10615,62 +10619,66 @@ static int OEMPriv_GetItem_CFGI_TV_OR_CAMERA(void *pBuff)
 
 static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void *pBuff)
 {
-	MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_password, sizeof(byte) * MAS_BREWSETINT_STRING);
+	MEMCPY(pBuff, oemi_cache.brewsetings_password, sizeof(byte) * MAS_BREWSETINT_STRING);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_BREWSET_PASSWORD(void *pBuff)
 {
-	MEMCPY((void*) &oemi_cache.brewsetings_password, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
-    OEMPriv_WriteOEMConfigList(); 
+    PppAccounts myAccount;
+	MEMCPY(oemi_cache.brewsetings_password, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
+    OEMPriv_WriteOEMConfigList();
+    MEMCPY((void*) myAccount.user_id_info, oemi_cache.brewsetings_usename, sizeof(byte) * MAS_BREWSETINT_STRING);
+    MEMCPY((void*) myAccount.passwd_info,  oemi_cache.brewsetings_password, sizeof(byte) * MAS_BREWSETINT_STRING);
+    OEM_SetPppAccounts(&myAccount, DS_BREW_TYPE);
     return SUCCESS;
 }
 
 
 static int OEMPriv_GetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff)
 {
-	MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_primarydns, sizeof(char) * MAS_BREWSETINT_STRING);
+	MEMCPY(pBuff, oemi_cache.brewsetings_primarydns, sizeof(char) * MAS_BREWSETINT_STRING);
 	return SUCCESS;
 
 }
 static int OEMPriv_SetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff)
 {
-	MEMCPY((void*) &oemi_cache.brewsetings_primarydns, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
+	MEMCPY(oemi_cache.brewsetings_primarydns, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_BREWSET_SECONDARYDNS(void *pBuff)
 {
-	MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_secondarydns, sizeof(char) * MAS_BREWSETINT_STRING);
+	MEMCPY(pBuff, oemi_cache.brewsetings_secondarydns, sizeof(char) * MAS_BREWSETINT_STRING);
 	return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_BREWSET_SECONDARYDNS(void *pBuff)
 {
-	MEMCPY((void*) &oemi_cache.brewsetings_secondarydns, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
+	MEMCPY(oemi_cache.brewsetings_secondarydns, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_BREWSET_PRIMARYSERVER(void *pBuff)
 {
-	MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_primaryserver, sizeof(char) * MAS_BREWSETINT_STRING);
+	MEMCPY(pBuff, oemi_cache.brewsetings_primaryserver, sizeof(char) * MAS_BREWSETINT_STRING);
 	return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_BREWSET_PRIMARYSERVER(void *pBuff)
 {
-	MEMCPY((void*) &oemi_cache.brewsetings_primaryserver, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
+	MEMCPY(oemi_cache.brewsetings_primaryserver, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
 
 static int OEMPriv_GetItem_CFGI_BREWSET_SECONDARYSERVER(void *pBuff)
 {
-	MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_secondaryserver, sizeof(char) * MAS_BREWSETINT_STRING);
+	MEMCPY(pBuff, oemi_cache.brewsetings_secondaryserver, sizeof(char) * MAS_BREWSETINT_STRING);
 	return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_BREWSET_SECONDARYSERVER(void *pBuff)
 {
-	MEMCPY((void*) &oemi_cache.brewsetings_secondaryserver, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
+	MEMCPY(oemi_cache.brewsetings_secondaryserver, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }
@@ -11194,126 +11202,126 @@ static int OEMPriv_SetItem_CFGI_MISSED_CALL_ICON(void *pBuff)
 #ifdef FEATURE_CARRIER_SUDAN_SUDATEL
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_BUSY_VOICEMAIL(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.BUSY_VOICEMAIL, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.BUSY_VOICEMAIL, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_BUSY_VOICEMAIL(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.BUSY_VOICEMAIL) != 0)
     {
-        STRLCPY((char*) &oemi_cache.BUSY_VOICEMAIL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.BUSY_VOICEMAIL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOANSWER_VOICEMAIL(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.NOANSWER_VOICEMAIL, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.NOANSWER_VOICEMAIL, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOANSWER_VOICEMAIL(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.NOANSWER_VOICEMAIL) != 0)
     {
-        STRLCPY((char*) &oemi_cache.NOANSWER_VOICEMAIL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.NOANSWER_VOICEMAIL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOCONNECT_VOICEMAIL(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.NOCONNECT_VOICEMAIL, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.NOCONNECT_VOICEMAIL, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOCONNECT_VOICEMAIL(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.NOCONNECT_VOICEMAIL) != 0)
     {
-        STRLCPY((char*) &oemi_cache.NOCONNECT_VOICEMAIL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.NOCONNECT_VOICEMAIL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_ANYWAY_VOICEMAIL(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.ANYWAY_VOICEMAIL, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.ANYWAY_VOICEMAIL, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_ANYWAY_VOICEMAIL(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.ANYWAY_VOICEMAIL) != 0)
     {
-        STRLCPY((char*) &oemi_cache.ANYWAY_VOICEMAIL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.ANYWAY_VOICEMAIL, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_WAIT_TEMP_DISABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.WAIT_TEMP_DISABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.WAIT_TEMP_DISABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_WAIT_TEMP_DISABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.WAIT_TEMP_DISABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.WAIT_TEMP_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.WAIT_TEMP_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_DND_ENABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.DND_ENABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.DND_ENABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_DND_ENABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.DND_ENABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.DND_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.DND_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_DND_DISABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.DND_DISABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.DND_DISABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_DND_DISABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.DND_DISABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.DND_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.DND_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_CNIR_ENABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.CNIR_ENABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.CNIR_ENABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_CNIR_ENABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.CNIR_ENABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.CNIR_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.CNIR_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
 static int OEMPriv_GetItem_CFGI_CALLFORWARD_CNIR_DISABLE(void *pBuff)
 {
-    MEMCPY(pBuff, (void*) &oemi_cache.CNIR_DISABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.CNIR_DISABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
 static int OEMPriv_SetItem_CFGI_CALLFORWARD_CNIR_DISABLE(void *pBuff)
 {
     if(STRCMP((char*)pBuff,(char*)oemi_cache.CNIR_DISABLE) != 0)
     {
-        STRLCPY((char*) &oemi_cache.CNIR_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.CNIR_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
@@ -11344,11 +11352,17 @@ void OEM_SetBAM_ADSAccount(void)
     PppAccounts Account;
     char username[PPP_MAX_USER_ID_LEN] = {0};
     char password[PPP_MAX_PASSWD_LEN] = {0};
-    OEM_GetPppAccounts(&Account, DS_BREW_TYPE);
-
-	MEMCPY(username, Account.user_id_info, STRLEN(Account.user_id_info));	
-	MEMCPY(password, Account.passwd_info, STRLEN(Account.passwd_info));	
-
+    if(SUCCESS == OEM_GetPppAccounts(&Account, DS_BREW_TYPE))
+    {
+    	MEMCPY(username, Account.user_id_info, STRLEN(Account.user_id_info));	
+    	MEMCPY(password, Account.passwd_info, STRLEN(Account.passwd_info));	
+    }
+    else
+    {
+        OEMPriv_GetItem_CFGI_BREWSET_USENAME((void*)username);
+        OEMPriv_GetItem_CFGI_BREWSET_PASSWORD((void*)password);
+    }
+    
     // 账号
 
     //(void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)DEFAULT_BREW_USERNAME);

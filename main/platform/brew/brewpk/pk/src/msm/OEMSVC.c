@@ -3983,7 +3983,7 @@ int OEM_SetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
 	case DS_WAP20_TYPE:
 	default:
 		{
-#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE // use CHAP but PAP,
+#ifdef FEATURE_DS_MULTIPLE_PROFILES // use CHAP but PAP,
 			
 			// Get  the PPP NAI ID to NV FOR ACTIVE PROFILE.   
 			if(NV_DONE_S != OEMNV_GetPPPItem(NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nvi))   {
@@ -4014,7 +4014,7 @@ int OEM_SetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
 															sizeof(nvi2.ds_sip_ppp_ss_info.ss),
 															pAccount->passwd_info);
 #endif				
-#else // FEATURE_DS_SIP_MULTIPLE_PROFILE
+#else // FEATURE_DS_MULTIPLE_PROFILES
 				
 			//nvi.pap_user_id.user_id_len = (byte)STRLEN(pAccount->user_id_info);
 			//STRCPY((char*)nvi.pap_user_id.user_id, pAccount->user_id_info);
@@ -4028,13 +4028,13 @@ int OEM_SetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
 															sizeof(nvi2.pap_password.password),
 															pAccount->passwd_info);
 			
-#endif   // FEATURE_DS_SIP_MULTIPLE_PROFILE
+#endif   // FEATURE_DS_MULTIPLE_PROFILES
 		}
 		break;	   
     } // switch( dsType) 
 	
 	
-#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
+#ifdef FEATURE_DS_MULTIPLE_PROFILES
 #ifndef WIN32	
 	nvi.ds_sip_nai_info.index = index;   
 	if(OEMNV_Put(NV_DS_SIP_NAI_INFO_I, &nvi) != NV_DONE_S)
@@ -4044,7 +4044,7 @@ int OEM_SetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
 	if( OEMNV_Put(NV_DS_SIP_PPP_SS_INFO_I, &nvi2) != NV_DONE_S) 
 		DBGPRINTF(";put NV_DS_SIP_PPP_SS_INFO_I failed");
 #endif	
-#else // FEATURE_DS_SIP_MULTIPLE_PROFILE
+#else // FEATURE_DS_MULTIPLE_PROFILES
 	
 	if(OEMNV_Put(NV_PPP_USER_ID_I, &nvi) != NV_DONE_S)
 		DBGPRINTF(";put NV_PPP_USER_ID_I failed");
@@ -4052,7 +4052,7 @@ int OEM_SetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
 	if( OEMNV_Put(NV_PPP_PASSWORD_I, &nvi2) != NV_DONE_S) 
 		DBGPRINTF(";put NV_PPP_PASSWORD_I failed");
 	
-#endif   // FEATURE_DS_SIP_MULTIPLE_PROFILE
+#endif   // FEATURE_DS_MULTIPLE_PROFILES
 	
 	return SUCCESS;
 } //OEM_SetPppAccounts
@@ -4069,7 +4069,7 @@ int OEM_GetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
    if(NULL == pAccount)
       return EBADPARM;
     
-#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
+#ifdef FEATURE_DS_MULTIPLE_PROFILES
    // Get  the PPP NAI ID to NV FOR ACTIVE PROFILE.   
 #ifndef WIN32
    if(NV_DONE_S != OEMNV_Get(NV_DS_SIP_ACTIVE_PROFILE_INDEX_I, &nvi ))   {
@@ -4087,21 +4087,21 @@ int OEM_GetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
    if( OEMNV_GetPPPItem(NV_DS_SIP_PPP_SS_INFO_I, &nvi2) != NV_DONE_S) 
       DBGPRINTF(";get NV_DS_SIP_PPP_SS_INFO_I failed");  
 #endif   
-#else // FEATURE_DS_SIP_MULTIPLE_PROFILE
+#else // FEATURE_DS_MULTIPLE_PROFILES
    
    if(OEMNV_GetPPPItem(NV_PPP_USER_ID_I, &nvi) != NV_DONE_S)
       DBGPRINTF(";get NV_PPP_USER_ID_I failed");
    
    if(OEMNV_GetPPPItem(NV_PPP_PASSWORD_I, &nvi2) != NV_DONE_S) 
       DBGPRINTF(";get NV_PPP_PASSWORD_I failed");   
-#endif // FEATURE_DS_SIP_MULTIPLE_PROFILE
+#endif // FEATURE_DS_MULTIPLE_PROFILES
 		
     switch(dsType)
     {
         case DS_BREW_TYPE:
         case DS_WAP20_TYPE:
         default:
-#ifdef FEATURE_DS_SIP_MULTIPLE_PROFILE
+#ifdef FEATURE_DS_MULTIPLE_PROFILES
 #ifndef WIN32
             pszUserId = (char *)nvi.ds_sip_nai_info.nai;
             TRIM_LEFT_CHAR(pszUserId, '0');
@@ -4117,7 +4117,7 @@ int OEM_GetPppAccounts(PppAccounts *pAccount, DataSvcType dsType)
             pszPassWord = (char *)nvi2.pap_password.password;
             TRIM_LEFT_CHAR(pszPassWord, '0');
 #endif
-#endif // FEATURE_DS_SIP_MULTIPLE_PROFILE
+#endif // FEATURE_DS_MULTIPLE_PROFILES
 
             str_cpy_within_buf_size(pAccount->user_id_info, PPP_MAX_USER_ID_LEN, pszUserId);
             str_cpy_within_buf_size(pAccount->passwd_info, PPP_MAX_PASSWD_LEN, pszPassWord);		
