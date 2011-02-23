@@ -771,7 +771,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         return TRUE;
                     
                      case IDS_SAVE_NEW:
-                        if(pMe->m_b_incall && WSTRLEN(pMe->m_DialString) > (MAX_SIZE_DIAL_STR- 1))
+                        if(pMe->m_b_incall && WSTRLEN(pMe->m_DialString) > (32))
                         {
                             CLOSE_DIALOG(DLGRET_NUM_TOO_LONG);
                             return TRUE;
@@ -1487,8 +1487,17 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     {
                         if((!pMe->m_bShowPopMenu) && (!pMe->m_b_incall))
                         {
-                            return CallApp_SaveNumber(pMe, SAVE_NUMBER);
-                        }
+                            //return CallApp_SaveNumber(pMe, SAVE_NUMBER);
+                            if(WSTRLEN(pMe->m_DialString) > (20))
+	                        {
+	                            CLOSE_DIALOG(DLGRET_NUM_TOO_LONG);
+	                            return TRUE;
+	                        }
+	                        else
+	                        {
+	                            return CallApp_SaveNumber(pMe, SAVE_NUMBER);
+	                        }
+	                     }
                     }
 #if defined( FEATURE_CALL_RECORDER)
                     if( pMe->m_b_incall && pMe->m_bRecorderOn)
