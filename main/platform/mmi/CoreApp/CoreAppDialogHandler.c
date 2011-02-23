@@ -3304,7 +3304,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
 #endif
-				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK_HITZ233C);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
@@ -3373,7 +3373,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
 						OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_SFM);
 #endif
-						return CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_SFM);	
+						return CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_SFM_HITZ233C);	
 #else                   
 						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 	
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
@@ -6730,7 +6730,7 @@ static void CoreApp_keypadtimer(void *pUser)
 #else
 				OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
 #endif
-				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+				ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK_HITZ233C);
 #else
 				ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/

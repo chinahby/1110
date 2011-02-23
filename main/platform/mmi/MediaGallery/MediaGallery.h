@@ -62,12 +62,22 @@
 #define MG_MASSCARD_ROOTDIR         "fs:/mmc/"
 #endif
 
+#ifdef FEATURE_VERSION_M8P
+#define MG_PICTURES_FOLDER          "Gambar"
+#define MG_MUSIC_FOLDER             "Musik"
+#define MG_VIDEOS_FOLDER            "video"
+#define MG_VOICEMEMO_FOLDER         "voicememo"
+#define MG_CALLMEMO_FOLDER          "callmemo"
+#define MG_DOWNLOAD_FOLDER          "download"
+#else
 #define MG_PICTURES_FOLDER          "pictures"
 #define MG_MUSIC_FOLDER             "music"
 #define MG_VIDEOS_FOLDER            "video"
 #define MG_VOICEMEMO_FOLDER         "voicememo"
 #define MG_CALLMEMO_FOLDER          "callmemo"
 #define MG_DOWNLOAD_FOLDER          "download"
+#endif
+
 
 #define MG_PHONEPICTURE_PATH        MG_PHONE_ROOTDIR MG_PICTURES_FOLDER  DIRECTORY_STR
 #define MG_PHONEMUSIC_PATH          MG_PHONE_ROOTDIR MG_MUSIC_FOLDER     DIRECTORY_STR

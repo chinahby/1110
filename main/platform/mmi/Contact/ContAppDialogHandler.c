@@ -4959,6 +4959,8 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             #ifdef FEATURE_MYANMAR_INPUT_MOD
 			ITEXTCTL_SetInputMode( pTextCtl,AEE_TM_LETTERS);
 			//ITEXTCTL_SetActive(pTextCtl, FALSE);
+			#else
+			ITEXTCTL_SetInputMode( pTextCtl,AEE_TM_CAPLOWER);
 			#endif
             //IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);   
             // For redraw the dialog

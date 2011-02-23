@@ -832,7 +832,6 @@ ifeq ($(Tomb),yes)
 
 TOMB_DIRS:=$(STATIC_BREW_APP)/m8p/tomb
 
-vpath %.mod $(TOMB_DIRS)
 vpath %.bar $(TOMB_DIRS)
 vpath %.txt $(TOMB_DIRS)
 vpath %.mid $(TOMB_DIRS)
