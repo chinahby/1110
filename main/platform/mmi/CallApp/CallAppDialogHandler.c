@@ -771,7 +771,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         return TRUE;
                     
                      case IDS_SAVE_NEW:
-                        if(pMe->m_b_incall && WSTRLEN(pMe->m_DialString) > (32))
+                        if(WSTRLEN(pMe->m_DialString) > (32))
                         {
                             CLOSE_DIALOG(DLGRET_NUM_TOO_LONG);
                             return TRUE;
@@ -782,7 +782,15 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
 
                       case IDS_SAVE_TO_CONT:
-                          return CallApp_SaveNumber(pMe, ADD_FIELD);
+                      	if(WSTRLEN(pMe->m_DialString) > (20))
+                        {
+                            CLOSE_DIALOG(DLGRET_NUM_TOO_LONG);
+                            return TRUE;
+                        }
+                        else
+                        {
+                            return CallApp_SaveNumber(pMe, ADD_FIELD);
+                        }
                         return TRUE;
                         
                       case IDS_SEND_MESSAGE:
@@ -1712,6 +1720,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                    	   #ifndef FEATURE_ALL_KEY_PAD
                        if(len == 0)
                        {
+                       		CallApp_Draw_NumEdit_SoftKey(pMe);
+                    		CallApp_Display_Number(pMe);
+                    		// Draw it now!
+                    		IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                            CLOSE_DIALOG(DLGRET_OK)
                            return TRUE;
                        }
@@ -1725,6 +1737,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                        {
                        	  if(len == 0)
                        	  {
+                       	  	  CallApp_Draw_NumEdit_SoftKey(pMe);
+                    		  CallApp_Display_Number(pMe);
+                    			// Draw it now!
+                    		  IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                               CLOSE_DIALOG(DLGRET_OK)
                               return TRUE;
                           }
@@ -1738,7 +1754,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     {
                        // Clearing the last digit exits the dialog
                        pMe->m_DialString[0] = 0;
-
+					   CallApp_Draw_NumEdit_SoftKey(pMe);
+              		   CallApp_Display_Number(pMe);
+              		   // Draw it now!
+              		   IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                        CLOSE_DIALOG(DLGRET_OK)
                        return TRUE;
                     }
@@ -9704,6 +9723,10 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
     {
         // Clearing the last digit exits the dialog
         pMe->m_DialString[0] = 0;
+        CallApp_Draw_NumEdit_SoftKey(pMe);
+		CallApp_Display_Number(pMe);
+		// Draw it now!
+		IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
         CLOSE_DIALOG(DLGRET_OK)
         return TRUE;
     }
