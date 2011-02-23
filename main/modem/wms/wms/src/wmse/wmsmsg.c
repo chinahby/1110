@@ -517,7 +517,7 @@ when       who     what, where, why
 #endif /* FEATURE_GWSMS_BROADCAST */
 
 #if defined(FEATURE_GWSMS_PP_DOWNLOAD) || ((defined(FEATURE_UIM_TOOLKIT_UTK) || \
-    defined(FEATURE_CCAT)) && defined(FEATURE_GSTK))
+    defined(FEATURE_CCAT)))//Gemsea Modify for SMS-PP && defined(FEATURE_GSTK))
 #include "gstki.h"
 #endif /* F_GWSMS_PP_DOWNLOAD || ((F_UIM_TOOLKIT_UTK||F_CCAT) && F_GSTK) */
 
@@ -570,7 +570,7 @@ static wms_tl_message_type               cdma_tl;
 static wms_cdma_message_s_type           cdma_cl;
 static wms_raw_ts_data_s_type            cdma_raw_bd;
 //static uint8                           nv_buf[WMS_MAX_LEN];
-#if (defined(FEATURE_UIM_TOOLKIT_UTK)||defined(FEATURE_CCAT)) && defined(FEATURE_GSTK)
+#if (defined(FEATURE_UIM_TOOLKIT_UTK)||defined(FEATURE_CCAT))//Gemsea Modify for SMS-PP && defined(FEATURE_GSTK)
 /* UTK static variables */
 static wms_OTA_message_type              cdma_OTA;
 static wms_address_s_type                pp_download_address;
@@ -591,7 +591,7 @@ static wms_client_ts_data_s_type         client_ts;
 #endif
 
 #if defined(FEATURE_GWSMS_PP_DOWNLOAD) || ((defined(FEATURE_GSTK) || \
-    defined(FEATURE_CCAT)) && defined(FEATURE_UIM_TOOLKIT_UTK))
+    defined(FEATURE_CCAT)) || defined(FEATURE_UIM_TOOLKIT_UTK))//Gemsea Modify for SMS-PP && defined(FEATURE_UIM_TOOLKIT_UTK))
 /* Toolkit static variables */
 static gstk_address_type                 gstk_address;
 static gstk_sms_tpdu_type                gstk_sms_tpdu;
@@ -718,7 +718,7 @@ wms_status_e_type wms_msg_send_gstk_evt
 #endif /* FEATURE_GSTK */
 
 #if defined(FEATURE_GWSMS_PP_DOWNLOAD) || ((defined(FEATURE_UIM_TOOLKIT_UTK) || \
-    defined(FEATURE_CCAT)) && defined(FEATURE_GSTK))
+    defined(FEATURE_CCAT))) //Gemsea Modify for SMS-PP && defined(FEATURE_GSTK))
 /*
 */
 void wms_msg_gstk_evt_cb
@@ -747,7 +747,7 @@ void wms_msg_gstk_evt_cb
         }
         else if(msg_mode == WMS_MESSAGE_MODE_CDMA)
         {
-#if (defined(FEATURE_UIM_TOOLKIT_UTK) || defined(FEATURE_CCAT)) && defined(FEATURE_GSTK)
+#if (defined(FEATURE_UIM_TOOLKIT_UTK) || defined(FEATURE_CCAT)) //Gemsea Modify for SMS-PP && defined(FEATURE_GSTK)
           client_ts.format      = WMS_FORMAT_CDMA;
           client_ts.u.cdma.mask = WMS_MASK_BD_MSG_ID;
 
@@ -6370,7 +6370,7 @@ static wms_status_e_type wms_msg_process_mt_SCPT
 } /* wms_msg_process_mt_SCPT() */
 #endif /* FEATURE_CDSMS_BROADCAST */
 
-#if (defined(FEATURE_UIM_TOOLKIT_UTK) || defined(FEATURE_CCAT)) && defined(FEATURE_GSTK)
+#if (defined(FEATURE_UIM_TOOLKIT_UTK) || defined(FEATURE_CCAT)) //Gemsea Modify for SMS-PP && defined(FEATURE_GSTK)
 wms_status_e_type wms_msg_utk_pp_download_proc
 (
   wms_cdma_message_s_type *cdma_msg,
@@ -6666,10 +6666,10 @@ wms_status_e_type wms_msg_cdma_deliver
   }
 #endif
 #endif //#ifdef CUST_EDITION
-#ifdef FEATURE_CCAT
+//Gemsea Modify for SMS-PP #ifdef FEATURE_CCAT
   if( cdma_tl.teleservice == WMS_TELESERVICE_CATPT)
   {
-#ifdef FEATURE_GSTK
+//Gemsea Modify for SMS-PP #ifdef FEATURE_GSTK
     /* Check if service is allocated and activated */
     if(gstk_is_sms_pp_supported() && (nv_rtre_control() == NV_RTRE_CONTROL_USE_RUIM))
     {
@@ -6700,9 +6700,9 @@ wms_status_e_type wms_msg_cdma_deliver
       routing_ptr->route       = WMS_ROUTE_STORE_AND_NOTIFY;
       routing_ptr->mem_store   = WMS_MEMORY_STORE_RUIM;
     }
-#endif /* FEATURE_GSTK */
+//Gemsea Modify for SMS-PP #endif /* FEATURE_GSTK */
   }
-#endif /* FEATURE_CCAT */
+//Gemsea Modify for SMS-PP #endif /* FEATURE_CCAT */
 
 #ifdef FEATURE_UIM_TOOLKIT_UTK
   /* The routing for UTK messages should be changed to TRANSFER_ONLY,

@@ -57,11 +57,15 @@ when       who     what, where, why
 #include "uim.h"
 #include "uimtk.h"
 #include "OEMClassIDs.h"
+#include "gstki.h"
+#include "wms.h"
+
 // oemui task 支持的命令名
 typedef enum 
 {
     UI_PROACTIVE_UIM_F,
     UI_WMS_INIT,
+    UI_SMS_PP_DL_F,
     UI_NUM_UI_COMMANDS,              /* End of command list (note no comma!)    */
     UI_ITEMS_ENUM_PAD = 0x7FFF
 } ui_name_type;
@@ -85,7 +89,6 @@ typedef struct
     q_type             *done_q_ptr;  /* Queue to place this cmd on when done */
 } ui_hdr_type;
 
-#ifdef FEATURE_UIM_TOOLKIT
 // UIM 原语命令类型
 typedef struct
 {
@@ -93,7 +96,15 @@ typedef struct
     uint16                     num_bytes;                 /* length */
     byte                       cmd_data[UIM_MAX_CHARS];   /* data */
 } ui_proactive_uim_cmd_type;
-#endif 
+
+typedef struct
+{
+    ui_hdr_type                hdr;                       /* header */
+    uint32                     user_data;
+    uint16                     num_bytes;                 /* length */
+    byte                       cmd_data[WMS_MAX_LEN];     /* data */
+    gstk_evt_cb_funct_type     sms_pp_dl_cb;
+} ui_sms_pp_dl_cmd_type;
 
 // ui 命令类型
 // 全部命令的联合体。命令头总是存在，它指定命令类型和属性。若命令带参数，则
@@ -101,10 +112,8 @@ typedef struct
 typedef union ui_cmd_u 
 {
     ui_hdr_type                   hdr;
-
-#ifdef FEATURE_UIM_TOOLKIT
     ui_proactive_uim_cmd_type     proactive_cmd;
-#endif
+    ui_sms_pp_dl_cmd_type         sms_pp_dl_cmd;
 } ui_cmd_type;
 
 

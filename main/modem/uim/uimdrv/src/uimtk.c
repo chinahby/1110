@@ -3439,4 +3439,145 @@ void uim_tk_process_proactive_command
     } /* end if - the parse status indicates the command is not valid */
   } /* end if - the Proactive command is a proper BER-TLV */
 } /* uim_tk_process_proactive_command */
+
+#ifndef FEATURE_GSTK
+#include "gsdi.h"
+
+/*===========================================================================
+FUNCTION gstk_is_sms_pp_supported
+
+DESCRIPTION
+  Utility function to check if SMS PP Download is allowed/supported
+
+PARAMETER
+  None
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  boolean
+
+COMMENTS
+  None
+
+SIDE EFFECTS
+  None
+
+SEE ALSO
+  None
+===========================================================================*/
+boolean gstk_is_sms_pp_supported(void)
+{
+    gsdi_svr_rsp_type                srv_available = {0};
+    
+    /* Check if SIM Service Table included SMS-PP service */
+    srv_available = gsdi_lib_is_service_available(GSDI_DATA_DL_SMSPP);
+
+    if (GSDI_SUCCESS == srv_available.gsdi_status &&
+        0 != srv_available.svr_bitmap)
+    {
+      return TRUE;
+    }
+
+    return FALSE;
+} /* gstk_is_sms_pp_supported */
+
+/*===========================================================================
+FUNCTION GSTK_SEND_ENVELOPE_SMS_PP_DL_COMMAND
+
+DESCRIPTION
+
+  Clients can call this function to send a sms pp download command to the
+  SIM/USIM.
+
+PARAMETERS
+  user_data: [Input] User data that client wants GSTK to keep track of
+  is_cdma_sms_pp: [Input] Indicates whether it is CDMA or non CDMA SMS
+                          PP download
+  gstk_address_type: [Input] Optional according to standard specification.
+                             user can use the length field to indicate
+                             whether there is an address or not
+                             (length = 0 => GSTK should not look at the
+                             address parameter in constructing the envelope
+                             command).
+                             When the length != 0, the address field should
+                             hold the RP_Originating_Address of the Service
+                             Center
+  sms_tpdu: [Input] Pointer indicating the SMS TPDU for the PP download
+                    command
+  gstk_sms_pp_dl_cb: [Input] Function pointer to which GSTK will send
+                             the card response data corresponding to the
+                             SMS PP download cmd
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  gstk_status_enum_type
+
+COMMENTS
+  This function should only be called after gstk_client_init has been called
+
+SIDE EFFECTS
+  None
+
+SEE ALSO
+  None
+===========================================================================*/
+gstk_status_enum_type gstk_send_envelope_sms_pp_dl_command (
+    uint32                         user_data,
+    boolean                        is_cdma_sms_pp,
+    const gstk_address_type       *address,
+    const gstk_sms_tpdu_type      *sms_tpdu,
+    gstk_evt_cb_funct_type         gstk_sms_pp_dl_cb )
+{
+    ui_cmd_type  *ui_buf_ptr; /* pointer to buffer for ui cmd */
+    
+    MSG_FATAL("GSTK client sms pp dl", 0, 0, 0);
+
+    /* validate call back function */
+    if (gstk_sms_pp_dl_cb == NULL || sms_tpdu == NULL) {
+      MSG_ERROR("Null Input Param", 0, 0, 0);
+      return GSTK_NULL_INPUT_PARAM;
+    }
+    if(sms_tpdu->length == 0) {
+      /* mandatory param */
+      MSG_ERROR("SMS TPDU len = 0", 0, 0, 0);
+      return GSTK_BAD_PARAM;
+    }
+    
+/* Send a msg status command to the UI task */
+#ifdef FEATURE_REX_DYNA_MEM_UI
+    ui_buf_ptr = ui_get_cmd();
+    if(ui_buf_ptr == NULL)
+    {
+        MSG_FATAL("Out of UI cmd buffer", 0,0,0);
+        return;
+    }
+#else
+    if( (ui_buf_ptr = (ui_cmd_type*) q_get( &ui_cmd_free_q )) == NULL )
+    {
+        ERR("Out of UI cmd buffer", 0,0,0);
+        return;
+    }
+    ui_buf_ptr->sms_pp_dl_cmd.hdr.done_q_ptr = &ui_cmd_free_q;;
+#endif /* FEATURE_REX_DYNA_MEM_UI */
+
+    ui_buf_ptr->sms_pp_dl_cmd.hdr.cmd        = UI_SMS_PP_DL_F;
+    ui_buf_ptr->sms_pp_dl_cmd.hdr.task_ptr   = NULL;
+    ui_buf_ptr->sms_pp_dl_cmd.hdr.sigs       = 0;
+    
+    ui_buf_ptr->sms_pp_dl_cmd.user_data      = user_data;
+    ui_buf_ptr->sms_pp_dl_cmd.sms_pp_dl_cb   = gstk_sms_pp_dl_cb;
+    ui_buf_ptr->sms_pp_dl_cmd.num_bytes      = (byte)sms_tpdu->length;
+    (void) memcpy ( ui_buf_ptr->sms_pp_dl_cmd.cmd_data,
+                  (void *) sms_tpdu->tpdu, sms_tpdu->length );
+    
+    /* send command to ui */
+    ui_cmd( ui_buf_ptr );
+    return GSTK_SUCCESS;
+} /*gstk_send_envelope_sms_pp_dl_command*/
+
+#endif
 #endif /* FEATURE_UIM_TOOLKIT_UTK */

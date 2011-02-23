@@ -97,17 +97,7 @@ byte UTK_parse_proactive_command(byte *cmd_data, byte cmd_len)
 {
     /* Offset for the different TLVs */
     byte offset = 0;  /* offset to raw data */
-#if 0
-    {
-        int i;
-        
-        for (i=0; i<cmd_len;i++)
-        {
-            ERR("%i = %02x",i, cmd_data[i],0);
-        }
-        
-    }
-#endif    
+    
     if (cmd_data[0] == UIM_TK_END_PROACTIVE_SESSION)
     {
         return cmd_data[0];
@@ -1029,7 +1019,6 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
     int pos=0;
     int nLen,nValLen,nSize,nTep;
     command_describe cmd_describe;
-	AECHAR wsFmt[5] = {0};
 
     DBGPRINTF("CUTK_SetUTKMenu 0x%x",cmd_type);
     
@@ -1046,14 +1035,17 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
     }
 
     if(pMenu)
-	#ifdef FEATURE_OEMOMH 
-    (void)IMENUCTL_SetTitle(pMenu, NULL, 0, pMe->m_wszTitle);
-	#else
-	 {
-		
-		IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_wszTitle);
-	 }
-	#endif
+    {
+        if(IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, pMe->m_wszTitle) >= SCREEN_WIDTH)
+        {
+            (void)IMENUCTL_SetTitle(pMenu, NULL, 0, pMe->m_wszTitle);
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, NULL);
+        }
+        else
+        {
+		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_wszTitle);
+	    }
+    }
     utk_ptr = UTK_GetCmddata(cmd_type);
     
     if (utk_ptr != NULL)
@@ -1152,14 +1144,16 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
                     {
                         MEMSET(wszBuf, 0, nSize);
                         DecodeAlphaString(&utk_ptr[pos], nValLen, wszBuf, 256);
-						#ifdef FEATURE_OEMOMH 
-                        (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wszBuf);
-						#else
+						if(IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszBuf) >= SCREEN_WIDTH)
+						{
+                            (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wszBuf);
+                            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,NULL);
+						}
+						else
 						{
                             DBGPRINTF("UIM_TK_ALPHA_ID_TAG %S",wszBuf);
 						    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszBuf);
 						}
-                        #endif
                     }
                     
                     if (pwszTitle)
@@ -2314,6 +2308,393 @@ void DecodePlayToneData(byte *pdata, Play_Tone *pPlayTone)
                 // 跳过值部分
                 pos+=nValLen;
                 break;
+        }
+    }
+}
+
+#include "gstk.h"
+/*===========================================================================
+FUNCTION gstk_packer_dev_id_tlv
+
+DESCRIPTION
+
+  This function populates the passed in device_id pointer
+
+PARAMETERS
+  source: [Input] Indicates source device
+  destination: [Input] Indicates target device
+  device_id: [Input/Output] Pointers to which the device id to be populated
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  gstk_status_enum_type
+
+COMMENTS
+  None
+
+SIDE EFFECTS
+  None
+
+SEE ALSO
+  None
+===========================================================================*/
+gstk_status_enum_type gstk_packer_dev_id_tlv(
+  device_identity_e                     source,
+  device_identity_e                     destination,
+  gstk_device_identities_tag_tlv_type * device_id
+)
+{
+
+    MSG_FATAL("** Packing device ID", 0, 0, 0);
+
+    if(device_id == NULL)
+    {
+       MSG_ERROR("Device Id Err: NULL", 0, 0, 0);
+       return GSTK_BAD_PARAM;
+    }
+    device_id->tag = (int)GSTK_DEVICE_IDENTITY_TAG;
+    device_id->device_tag_length = GSTK_DEVICE_IDENTITY_LEN;
+    device_id->source_device = (uint8)source;
+    device_id->target_device = (uint8)destination;
+
+    return GSTK_SUCCESS;
+} /* gstk_packer_dev_id_tlv */
+
+/*===========================================================================
+
+FUNCTION gstk_memcpy
+
+DESCRIPTION
+  gstk_memcpy first checks if the size requested does not exceed the source
+  size and that the size of the data to be copied does not exceed the
+  max data size the destination buffer can accomodate before preceeding with
+  the memcpy
+
+PARAMETERS
+  dest_ptr:   Pointer to copy data to.
+  src_ptr: Pointer to copy data from.
+  copy_size:     size of data to copy
+  dest_max_size:      size of destination buffer
+  src_max_size: size of source buffer, if 0 then no check on source size done
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  data is copied to the destination buffer.  the copy may be truncated if the
+  size of data to be copied exceeds the size of the source buffer or if the
+  size of data to be copied exceeds the size of the destination buffer.
+===========================================================================*/
+void  gstk_memcpy(
+  void *dest_ptr,
+  const void *src_ptr,
+  size_t copy_size,
+  size_t dest_max_size,
+  size_t src_max_size)
+{
+ if (dest_ptr == NULL || src_ptr == NULL) {
+   MSG_HIGH("gstk_offset_memcpy: NULL pointers passed in, cannot memcpy",0,0,0);
+   return;
+ }
+
+ /* ensure not accessing invalid mem location from source buffer */
+ if ( copy_size > src_max_size) {
+   MSG_ERROR("gstk_offset_memcpy: Trying to access data greater than size of source buffer",
+             0,0,0);
+   copy_size = src_max_size;
+ }
+
+ /* ensure not to overshoot destination buffer */
+ if (copy_size > dest_max_size) {
+   MSG_ERROR("gstk_offset_memcpy: Trying to copy data greater than size of destination buffer",
+            0,0,0);
+   copy_size = dest_max_size;
+ }
+ memcpy(dest_ptr, src_ptr, copy_size);
+} /* gstk_memcpy */
+
+/*===========================================================================
+FUNCTION gstk_packer_sms_tpdu_tlv
+
+DESCRIPTION
+
+  This function populates the passed in the sms tpdu tlv pointer
+
+PARAMETERS
+  is_cdma_tpdu: [Input] Indicates whether the tag should be CDMA or GSM/WCDMA
+                        TPDU tag
+  data: [Input] Indicates the sms tpdu
+  tpdu_tlv: [Input/Output] Pointers to which the
+                              gstk_sms_tpdu_tag_tlv_type info to be
+                              populated
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  gstk_status_enum_type
+
+COMMENTS
+  None
+
+SIDE EFFECTS
+  None
+
+SEE ALSO
+  None
+===========================================================================*/
+gstk_status_enum_type gstk_packer_sms_tpdu_tlv(
+       boolean                             is_cdma_tpdu,
+       const gstk_sms_tpdu_type            *data,
+       gstk_sms_tpdu_tag_tlv_type          *tpdu_tlv)
+{
+  MSG_FATAL("** Packing sms tpdu", 0, 0, 0);
+
+  if(data == NULL)
+  {
+     MSG_ERROR("Data Err: NULL", 0, 0, 0);
+     return GSTK_BAD_PARAM;
+  }
+
+  if(tpdu_tlv == NULL)
+  {
+     MSG_ERROR("TPDU TLV Err: NULL", 0, 0, 0);
+     return GSTK_BAD_PARAM;
+  }
+
+  if(is_cdma_tpdu) {
+#if defined(FEATURE_UIM_TOOLKIT_UTK) || defined(FEATURE_CCAT) || defined(FEATURE_CDMA_800) || defined(FEATURE_CDMA_1900)
+   tpdu_tlv->tag = (uint8)GSTK_CDMA_SMS_TPDU_TAG;
+#else
+   MSG_ERROR("cdma tpdu invalid in curr tech", 0, 0, 0);
+   return GSTK_BAD_PARAM;
+#endif /*FEATURE_UIM_TOOLKIT_UTK || FEATURE_CCAT || FEATURE_CDMA_800 || FEATURE_CDMA_1900*/
+  }
+  else
+  {
+   tpdu_tlv->tag = (int)GSTK_SMS_TPDU_TAG;
+  }
+  tpdu_tlv->length = data->length;
+
+  gstk_memcpy(tpdu_tlv->sms_tpdu, data->tpdu, data->length, 
+              GSTK_MAX_RAW_SMS_LEN, data->length);
+
+  return GSTK_SUCCESS;
+} /* gstk_packer_sms_tpdu_tlv */
+
+void UTK_parse_sms_pp_dl_command(ui_sms_pp_dl_cmd_type *cmd)
+{
+    gstk_status_enum_type                       gstk_status = GSTK_SUCCESS;
+    gstk_envelope_sms_pp_download_command_type  STK_envelope_cmd;
+    uim_cmd_type                                *uim_cmd_ptr;
+    int                                         offset = 0;
+    gstk_sms_tpdu_type                          tpdu;
+    gstk_cmd_from_card_type                     response;
+    uim_sw1_type                                response_sw1;          /* Status Word 1 */
+    uim_sw2_type                                response_sw2;          /* Status word 2 */
+  
+    if(cmd == NULL)
+    {
+        MSG_ERROR("sms_pp_cmd ERR : NULL",0,0,0);
+        return;
+    }
+
+    /* initialize STK_envelope_cmd */
+    memset(&STK_envelope_cmd, 0, sizeof(gstk_envelope_sms_pp_download_command_type));
+
+    /* Pack various TLVs */
+    STK_envelope_cmd.tag = GSTK_SMS_PP_DOWNLOAD_TAG;
+
+    /* device ID */
+    gstk_status = gstk_packer_dev_id_tlv(
+       GSTK_NETWORK_DEVICE,
+       GSTK_UICC_SIM_DEVICE,
+       &STK_envelope_cmd.device_id );
+
+    if (gstk_status != GSTK_SUCCESS) {
+        MSG_ERROR("In SMS PP: Device ID Packing Fail 0x%x", gstk_status, 0, 0);
+        return;
+    }
+
+    /* tpdu tag */
+    tpdu.length = cmd->num_bytes;
+    tpdu.tpdu   = cmd->cmd_data;
+    gstk_status = gstk_packer_sms_tpdu_tlv(
+                    TRUE,
+                    &tpdu,
+                    &STK_envelope_cmd.tpdu);
+
+    if (gstk_status != GSTK_SUCCESS) {
+        MSG_ERROR("In SMS PP: TPDU Packing Fail 0x%x", gstk_status, 0, 0);
+        return;
+    }
+
+    /* Send command to STK application on SIM */
+    /* Send Message to UIM */
+    /* get a buffer for the request */
+    if ((uim_cmd_ptr = (uim_cmd_type*) q_get( &uim_free_q )) != NULL)
+    {
+        /* Read CDMA service table */
+        
+        /* Fill up the command header info */
+        uim_cmd_ptr->hdr.command = UIM_ENVELOPE_F;
+        
+        /* Set the Protocol to CDMA */
+        uim_cmd_ptr->hdr.protocol = UIM_CDMA;
+        
+        /* Fill in the callback function */
+        uim_cmd_ptr->hdr.rpt_function = ui_ruim_report;
+        
+        /* Set the report option to always report upon completion of the cmd */
+        uim_cmd_ptr->hdr.options = UIM_OPTION_ALWAYS_RPT;
+        
+        /* The task and signal are set to NULL */
+        uim_cmd_ptr->hdr.cmd_hdr.task_ptr = NULL;
+        uim_cmd_ptr->hdr.cmd_hdr.sigs = NULL;
+
+        /* set user_data */
+        uim_cmd_ptr->hdr.user_data               = cmd->user_data;
+
+        /* initialized to 3 for value portion of the TLVs
+           i.e., the final offset will be either 0 or 1 depends
+           on whether the total length is > 0x7F or not */
+        offset = 3;
+
+        /* copy device */
+        /* No Need to check STK_envelope_cmd.device_id.device_tag_length as is
+           fixed length in packer function
+        */
+        memcpy(&(uim_cmd_ptr->envelope.data[offset]),
+                &STK_envelope_cmd.device_id,
+                (int)(STK_envelope_cmd.device_id.device_tag_length +
+                GSTK_TAG_LENGTH_LEN));
+        offset = (int)(offset + STK_envelope_cmd.device_id.device_tag_length +
+                       GSTK_TAG_LENGTH_LEN);
+
+        /* total length: + device tlv */
+        STK_envelope_cmd.length = STK_envelope_cmd.device_id.device_tag_length +
+                                  GSTK_TAG_LENGTH_LEN;
+
+        /* copy tpdu */
+        /* copy tag, length */
+        uim_cmd_ptr->envelope.data[offset++] = STK_envelope_cmd.tpdu.tag;
+        if (STK_envelope_cmd.tpdu.length > GSTK_TLV_LENGTH_1_BYTE_OFFSET_LIMIT) {
+           uim_cmd_ptr->envelope.data[offset++] = GSTK_2_BYTE_LENGTH_FIRST_VALUE;
+           STK_envelope_cmd.length++;
+        }
+        uim_cmd_ptr->envelope.data[offset++] = STK_envelope_cmd.tpdu.length;
+        
+        memcpy(&(uim_cmd_ptr->envelope.data[offset]),
+                STK_envelope_cmd.tpdu.sms_tpdu,
+                int32touint32(STK_envelope_cmd.tpdu.length));
+        
+        offset = offset + STK_envelope_cmd.tpdu.length;
+        /* total length: + tpdu tlv */
+        STK_envelope_cmd.length += STK_envelope_cmd.tpdu.length + GSTK_TAG_LENGTH_LEN;
+
+        /* populate the envelope command info */
+        if(STK_envelope_cmd.length > GSTK_TLV_LENGTH_1_BYTE_OFFSET_LIMIT) {
+           /* account for 0x80 */
+           uim_cmd_ptr->envelope.offset = 0;
+           uim_cmd_ptr->envelope.data[0] = STK_envelope_cmd.tag;
+           uim_cmd_ptr->envelope.data[1] = GSTK_2_BYTE_LENGTH_FIRST_VALUE;
+           uim_cmd_ptr->envelope.data[2] = STK_envelope_cmd.length;
+           STK_envelope_cmd.length++;
+           uim_cmd_ptr->envelope.num_bytes = STK_envelope_cmd.length + GSTK_TAG_LENGTH_LEN;
+        } else {
+           uim_cmd_ptr->envelope.offset = 1;
+           uim_cmd_ptr->envelope.data[1] = STK_envelope_cmd.tag;
+           uim_cmd_ptr->envelope.data[2] = STK_envelope_cmd.length;
+           uim_cmd_ptr->envelope.num_bytes = STK_envelope_cmd.length + GSTK_TAG_LENGTH_LEN;
+        }
+        
+        /* Clear the signal */
+        (void) rex_clr_sigs( &ui_tcb, UI_UIM_STATUS_SIG );
+
+        /* Send the command */
+        uim_cmd( uim_cmd_ptr );
+
+        /* Wait for the command to be done */
+        (void) rex_wait( UI_UIM_STATUS_SIG );
+        
+        if (ui_uim_rpt_buf.rpt_type != UIM_ENVELOPE_R) 
+        {
+            MSG_ERROR("ENVELOPE expected in CB", 0, 0, 0);
+            return;
+        }
+        
+        /* initialize response */
+        memset(&response, 0, sizeof(gstk_sms_pp_download_rsp_type)+sizeof(gstk_exp_hdr_type));
+        
+        /* build the command */
+        response.hdr_cmd.command_id = GSTK_SMS_PP_DOWNLOAD_IND_RSP;
+        response.hdr_cmd.cmd_detail_reference = 0; /* doens't matter */
+        response.hdr_cmd.user_data = ui_uim_rpt_buf.user_data;
+        
+        MSG_FATAL("GSTK recv UIM envelope rsp, 0x%x, 0x%x", ui_uim_rpt_buf.sw1, ui_uim_rpt_buf.sw2, 0);
+        
+        if(ui_uim_rpt_buf.rpt_status == UIM_FAIL)
+        {
+            MSG_ERROR("UIM Rpt Status UIM FAIL",0,0,0);
+        }
+        else
+        {
+            if(ui_uim_rpt_buf.rpt.envelope.data_length > 0) { /* reponse data present */
+                MSG_FATAL("In SMS PP: There are extra data len: 0x%x", ui_uim_rpt_buf.rpt.envelope.data_length, 0, 0);
+                response.cmd.sms_pp_download_rsp.response_data_present = TRUE;
+                response.cmd.sms_pp_download_rsp.ack.ack = ui_uim_rpt_buf.rpt.envelope.data;
+                response.cmd.sms_pp_download_rsp.ack.length = (uint8)ui_uim_rpt_buf.rpt.envelope.data_length;
+            }
+        }
+        
+        /* initialize rsp_status to FAIL */
+        response.cmd.sms_pp_download_rsp.general_resp = GSTK_ENVELOPE_CMD_FAIL;
+        
+        /* populate sw1 and sw 2 */
+        if(SW1_DLOAD_ERR == ui_uim_rpt_buf.rpt.envelope.get_resp_sw1)
+        {
+            response_sw1 = (int)ui_uim_rpt_buf.rpt.envelope.get_resp_sw1;
+            response_sw2 = (int)ui_uim_rpt_buf.rpt.envelope.get_resp_sw2;
+        }
+        else
+        {
+            response_sw1 = (int)ui_uim_rpt_buf.sw1;
+            response_sw2 = (int)ui_uim_rpt_buf.sw2;
+        }
+        
+        /* pass warning 0x62XX or 0x63XX to SMS PP DL rsp */
+        if (SW1_WARNINGS1 == ui_uim_rpt_buf.rpt.envelope.get_resp_sw1 ||
+            SW1_WARNINGS2 == ui_uim_rpt_buf.rpt.envelope.get_resp_sw1)
+        {
+            response_sw1 = (int)ui_uim_rpt_buf.rpt.envelope.get_resp_sw1;
+            response_sw2 = (int)ui_uim_rpt_buf.rpt.envelope.get_resp_sw2;
+        }
+
+        switch(response_sw1){
+        case SW1_NORMAL_END:
+            if(response_sw2 == (int)SW2_NORMAL_END)
+            {
+                response.cmd.sms_pp_download_rsp.general_resp = GSTK_ENVELOPE_CMD_SUCCESS;
+            }
+            break;
+        case SW1_BUSY:
+            if(response_sw2 == (int)SW2_NORMAL_END)
+            {
+                response.cmd.sms_pp_download_rsp.general_resp = GSTK_ENVELOPE_CMD_CARD_BUSY;
+            }
+            break;
+        default:
+            break;
+        }
+
+        if(cmd->sms_pp_dl_cb)
+        {
+            cmd->sms_pp_dl_cb(&response);
         }
     }
 }

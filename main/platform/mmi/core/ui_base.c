@@ -281,6 +281,8 @@ LOCAL rex_timer_type  ui_rpt_timer; /* Timer for kicking the watchdog. */
 #ifdef CUST_EDITION
 #ifdef FEATURE_UTK2
 static  q_type          ui_cmd_q;       // 命令队列：管理待处理命令
+extern byte UTK_parse_proactive_command(byte *cmd_data, byte cmd_len);
+extern void UTK_parse_sms_pp_dl_command(ui_sms_pp_dl_cmd_type *cmd);
 #endif /*FEATURE_UTK2*/
 #endif
 
@@ -884,6 +886,10 @@ static void oemui_handlecmd(ui_cmd_type *cmd_ptr)
     switch(cmd_ptr->hdr.cmd)
     {
 #ifdef FEATURE_UIM_TOOLKIT
+        case UI_SMS_PP_DL_F:
+            UTK_parse_sms_pp_dl_command(&cmd_ptr->sms_pp_dl_cmd);
+            break;
+            
         case UI_PROACTIVE_UIM_F:
 #ifdef FEATURE_UIM_TOOLKIT_UTK
 #ifdef FEATURE_UTK2
