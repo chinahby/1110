@@ -95,7 +95,7 @@
 		<Text>Not Available</Text>
 	</String>
 	<String Id="32" Name="IDS_DEVICE_SEARCH">
-		<Text>Device Search</Text>
+		<Text>Cari perangkat</Text>
 	</String>
 	<String Id="33" Name="IDS_DEVICE_ALL">
 		<Text>All Devices</Text>
