@@ -15624,7 +15624,6 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
             }
            
             {
-                IRUIM            *m_pIRUIM;
                 char  Assnum[31];
                 MEMSET(Assnum, 0x00, sizeof(Assnum));    
 #ifndef WIN32    

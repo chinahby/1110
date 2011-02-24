@@ -90,6 +90,7 @@ AEEINTERFACE(IRUIM) {
 #ifdef FEATURE_OEMOMH 
    int (*Get_Ecc_Code)(IRUIM *pIRUIM,byte *Buf);
    boolean (*WriteModel)(IRUIM *pIRUIM, byte *Buf);
+   int (*Get_AppLabels_Code)(IRUIM *pIRUIM,AECHAR *Buf);
 #endif
 };
 
@@ -134,6 +135,8 @@ AEEINTERFACE(IRUIM) {
 #define IRUIM_WriteModel(p,pi)           \
                            AEEGETPVTBL((p),IRUIM)->WriteModel((p),(pi))
 
+#define IRUIM_Get_AppLabels_Code(p,pi)           \
+                           AEEGETPVTBL((p),IRUIM)->Get_AppLabels_Code((p),(pi))
 #endif
 /* Preferred language encoding */
 #define  AEERUIM_LANG_ENCODING_OCTET            0  // Octet, unspecified:
