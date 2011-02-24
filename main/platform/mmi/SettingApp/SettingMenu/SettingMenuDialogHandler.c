@@ -1985,14 +1985,14 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
 
                 case CALLFORWARD_NOCONNECT: //未接通转移
                     pMe->m_nResID = IDS_CALLFORWARD_NOCONNECT;
-                    selete_item = CFGI_CALLFORWARD_NOCONNECT_ENABLE;
-                    //SettingMenu_Process_Feature_Code(pMe,CFGI_CALLFORWARD_NOCONNECT_ENABLE);
+                    selete_item = CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE;
+                    //SettingMenu_Process_Feature_Code(pMe,CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE);
                     break;
 
                 case CALLFORWARD_ANYWAY:    //无条件转移
                     pMe->m_nResID = IDS_CALLFORWARD_ANYWAY;
-                    selete_item = CFGI_CALLFORWARD_ANYWAY_ENABLE;
-                    //SettingMenu_Process_Feature_Code(pMe,CFGI_CALLFORWARD_ANYWAY_ENABLE);
+                    selete_item = CFGI_CALLFORWARD_UNREACHABLE_ENABLE;
+                    //SettingMenu_Process_Feature_Code(pMe,CFGI_CALLFORWARD_UNREACHABLE_ENABLE);
                     break;
 
                 case CALLFORWARD_WAIT:      //呼叫等待
@@ -2123,13 +2123,13 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
                                 break;
 
                             case CALLFORWARD_NOCONNECT: //未接通转移
-                                selete_item = CFGI_CALLFORWARD_NOCONNECT_DISABLE;
-                                //SettingMenu_Process_Feature_Code(pMe,CFGI_CALLFORWARD_NOCONNECT_DISABLE);
+                                selete_item = CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE;
+                                //SettingMenu_Process_Feature_Code(pMe,CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE);
                                 break;
 
                             case CALLFORWARD_ANYWAY:    //无条件转移
-                                selete_item = CFGI_CALLFORWARD_ANYWAY_DISABLE;
-                                //SettingMenu_Process_Feature_Code(pMe,CFGI_CALLFORWARD_ANYWAY_DISABLE);
+                                selete_item = CFGI_CALLFORWARD_UNREACHABLE_DISABLE;
+                                //SettingMenu_Process_Feature_Code(pMe,CFGI_CALLFORWARD_UNREACHABLE_DISABLE);
                                 break;
 
                             case CALLFORWARD_WAIT:      //呼叫等待
