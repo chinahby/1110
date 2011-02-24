@@ -59,7 +59,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_LANG_INDONESIAN //add by yangdecai 2010/06/22
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
 #undef FEATURE_LANG_CHINESE
-//#define FEATURE_NET_LOCK
+#define FEATURE_NET_LOCK
 //#define FEATURE_SEAMLESS_SMS
 #define FEATURE_OMH_SMS
 #define FEATURE_ONEMSG_USE_ONEFILE
