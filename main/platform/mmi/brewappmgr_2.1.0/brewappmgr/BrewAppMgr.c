@@ -1421,7 +1421,25 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
                 IANNUNCIATOR_Release(pIAnn);
             }
             FARF(BAM, ("APP_RESUME"));
-            
+            {
+#ifdef FEATURE_OEMOMH
+                extern void OEM_SetBAM_ADSAccount(void);
+
+                OEM_SetBAM_ADSAccount();
+#elif defined(FEATURE_FLEXI_STATIC_BREW_APP)
+                extern void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp);
+                
+                OEM_SetBAM_ADSAccount(STATIC_BREW_APP_DEFAULT);
+#elif defined(FEATURE_SMARTFREN_STATIC_BREW_APP)
+                extern void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp);
+                
+                OEM_SetBAM_ADSAccount(STATIC_BREW_APP_DEFAULT);
+#else	 
+                extern void OEM_SetBAM_ADSAccount(void);
+                
+                OEM_SetBAM_ADSAccount();
+#endif	
+            }
 #ifdef FEATURE_COREAPPUI
             // Notify CoreAppUI that BAM is starting or resuming so it can
             // do whatever it thinks needs to be done.

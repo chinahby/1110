@@ -11345,6 +11345,7 @@ static int OEMPriv_SetItem_CFGI_CALLFORWARD_CNIR_DISABLE(void *pBuff)
     本函数仅供 BREW App Manager 使用。
 ==============================================================================*/
 #if defined(FEATURE_OEMOMH)
+extern void OEMDSS_SetAppType(uint32 uAppType);
 void OEM_SetBAM_ADSAccount(void)
 {
 #ifndef WIN32
@@ -11352,6 +11353,9 @@ void OEM_SetBAM_ADSAccount(void)
     PppAccounts Account;
     char username[PPP_MAX_USER_ID_LEN] = {0};
     char password[PPP_MAX_PASSWD_LEN] = {0};
+    
+    OEMDSS_SetAppType(DS_BREW_TYPE);
+    
     if(SUCCESS == OEM_GetPppAccounts(&Account, DS_BREW_TYPE))
     {
     	MEMCPY(username, Account.user_id_info, STRLEN(Account.user_id_info));	

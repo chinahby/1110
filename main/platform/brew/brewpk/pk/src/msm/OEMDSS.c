@@ -1044,11 +1044,27 @@ ipflow_field_mask_type OEMDSS_GetAuxFlowErrMask(ip_flow_spec_type* pFlowSpec, ui
    return errorMask;
 }
 
+static uint32 g_uAppType = 0;
+void OEMDSS_SetAppType(uint32 uAppType)
+{
+    g_uAppType = uAppType;
+}
+
 void OEMDSS_SetCDMAProfileId(int nNetwork, dss_net_policy_info_type* policy_info) 
 {
 #ifdef CDMA_DATA_SESSION_PROFILE_ID_SUPPORTED
-   int cdma_profile_id = (nNetwork>>16)&0xffff;
-   policy_info->cdma.data_session_profile_id = cdma_profile_id;          
+    int cdma_profile_id = (nNetwork>>16)&0xffff;
+
+    //BREW Downloaded apps will get profile 0 here. But this global flag would have been set in BAM.
+    if((cdma_profile_id == 0) && (g_uAppType != 0))
+    {
+        policy_info->cdma.data_session_profile_id = dss_get_app_profile_id(g_uAppType);
+    }
+    else
+    {
+        policy_info->cdma.data_session_profile_id = cdma_profile_id;    
+    }
+    DBGPRINTF("OEMDSS_SetCDMAProfileId %d %d %d",g_uAppType,cdma_profile_id,policy_info->cdma.data_session_profile_id);
 #endif // CDMA_DATA_SESSION_PROFILE_ID_SUPPORTED
 }
 
