@@ -194,10 +194,10 @@
 		<Text>Authentication + Encryption</Text>
 	</String>
 	<STRING Id="65" Name="IDS_BT_YES_EX">
-		<Text>Yes</Text>
+		<Text>Ya</Text>
 	</STRING>
 	<STRING Id="66" Name="IDS_BT_NO_EX">
-		<Text>No</Text>
+		<Text>Tidak</Text>
 	</STRING>
 	<String Id="67" Name="IDS_VR">
 		<Text>VR</Text>
