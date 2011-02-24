@@ -536,7 +536,7 @@
 		<Text>Send and Save</Text>
 	</String>
 	<String Id="185" Name="IDS_ENABLEREPORT_SHORT">
-		<Text>Hdp</Text>
+		<Text>on</Text>
 	</String>
 	<String Id="1001" Name="IDS_TEMPLATEHITZ0">
 		<Text>Sorry, I'll call you back</Text>

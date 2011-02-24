@@ -125,7 +125,7 @@
 
 #ifdef FEATURE_APP_MUSICPLAYER
 //#define    DISP_MUSICNAME_MAX            (16)
-#define    DISP_BLANK_WIDTH               (12)
+#define    DISP_BLANK_WIDTH               (8)
 #endif
 
 #ifdef FEATURE_USES_LOWMEM

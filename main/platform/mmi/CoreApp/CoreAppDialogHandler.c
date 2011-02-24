@@ -1345,6 +1345,10 @@ static boolean  IDD_LPM_Handler(void       *pUser,
             switch (wParam)
             {
                 case AVK_END:
+                #ifdef FEATURE_VERSION_M8P
+                case AVK_CLR:
+                //case AVK_SOFT1:
+                #endif
                     CLOSE_DIALOG(DLGRET_OK)                  
                     return TRUE;               
                 default:
@@ -4335,6 +4339,7 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
     else
     {// 最后是正常情况下的提示
         // 获取待机问候语 
+        
         CoreApp_GetSPN(pMe);
         
         if(pMe->svc_p_name[0] != 0)
@@ -6197,6 +6202,12 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
     AEERect oldClip;
     AEERect clip;
     AECHAR bracket[2] = {(AECHAR)'[',(AECHAR)'\0'};
+    int m_musicstl = IDISPLAY_MeasureTextEx(pMe->m_pDisplay,
+                                      AEE_FONT_NORMAL,
+                                      pMe->m_pMusicName+nIdx,
+                                      -1,
+                                      -1,
+                                      NULL);;
 
     if(NULL == pMe || MP3STATUS_RUNONBACKGROUND != GetMp3PlayerStatus() || NULL == pMe->m_pMusicName)
     {
@@ -6251,7 +6262,12 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               IDF_ALIGN_LEFT
                               | IDF_ALIGN_MIDDLE 
                               | IDF_TEXT_TRANSPARENT);
-  SETAEERECT(&rect, (pMe->m_rc.dx/8 + pMe->m_nLargeFontHeight), MUSIC_START_WIDTH,(pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), pMe->m_nLargeFontHeight);
+  MSG_FATAL("m_musicstl====%d",m_musicstl,0,0);
+  if(m_musicstl>(pMe->m_rc.dx*3/4-2*DISP_BLANK_WIDTH))
+  {
+  	m_musicstl=(pMe->m_rc.dx*3/4-2*DISP_BLANK_WIDTH);
+  }
+  SETAEERECT(&rect, (pMe->m_rc.dx/8 + ((pMe->m_rc.dx*3/4)-m_musicstl)/2), MUSIC_START_WIDTH,(pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), pMe->m_nLargeFontHeight);
   MSG_FATAL("rect.x=%d,w=%d", (pMe->m_rc.dx/8 + pMe->m_nLargeFontHeight), (pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), 0);
   #ifdef FEATURE_VERSION_MYANMAR
   {

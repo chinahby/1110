@@ -81,10 +81,18 @@
 #define YESNO_TIMEOUT 6000
 
 // sendopt 前面标题栏长度
+#ifdef FEATURE_DISP_220X176
+#define SENDOPT_TITLELENGTH   85
+#else
 #define SENDOPT_TITLELENGTH   65
+#endif
 
 // sendopt 英文时标题条较长长度
+#ifdef FEATURE_DISP_220X176
+#define SENDOPT_TITLELONGER   140
+#else
 #define SENDOPT_TITLELONGER   110
+#endif
 
 // 画界面底部提示条宏定义
 #define DRAW_BOTTOMBAR(x)                           \
@@ -7367,10 +7375,12 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                     
                 // 向上滚动一屏
                 case AVK_LEFT:
+                	MSG_FATAL("AVK_LEFT..........................",0,0,0);
                     break;
                     
                 // 向下滚动一屏
                 case AVK_RIGHT:
+                	MSG_FATAL("AVK_RIGHT..........................",0,0,0);
                     break;
                 
                 case AVK_CLR:
@@ -7455,6 +7465,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
             return TRUE;
         
         case EVT_CTL_TAB:
+        	MSG_FATAL("EVT_CTL_TAB...............dwParam=%d",dwParam,0,0);
             if (pMe->m_eMakeAddListMode == MAKEADDLIST_NONE)
             {// 非群发
                 return TRUE;

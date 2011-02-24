@@ -90,8 +90,13 @@
 #define MUSICPLAYER_RES_FILE_LANG  AEE_RES_LANGDIR MUSICPLAYER_RES_FILE
 //音乐文件夹
 #define MUSICPLAYLIST_DIR      "fs:/shared/playlist"
+#ifdef FEATURE_VERSION_M8P
+#define MP3_SD_MUSIC_DIR       "fs:/card0/Musik"
+#define MP3_PHONE_MUSIC_DIR    "fs:/hsmm/Musik"
+#else
 #define MP3_SD_MUSIC_DIR       "fs:/card0/music"
 #define MP3_PHONE_MUSIC_DIR    "fs:/hsmm/music"
+#endif
 #define DEFAULT_PLAYLIST       "Default playlist"
 #define  MUSICPLAYERCFG_VERSION     (0x0010)
 //可支持的音乐文件类型
