@@ -27,7 +27,9 @@
 
 #include "AEEConfig.h"
 #include "OEMCFGI.h"
-
+#ifdef FEATURE_OEMOMH
+#include "AEERUIM.h"
+#endif
 
 /*==============================================================================
                                  
@@ -103,6 +105,9 @@ typedef struct _Application
     IAnnunciator                    *m_pIAnn;
     
     IBacklight     *m_pBacklight;       //背光接口指针
+#ifdef FEATURE_OEMOMH
+    IRUIM        *m_pIRUIM;
+#endif
 } Application;
 
 /*==============================================================================

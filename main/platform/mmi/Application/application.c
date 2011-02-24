@@ -398,6 +398,14 @@ static int CApplication_InitAppData(Application *pMe)
     	CApplication_FreeAppData(pMe);
         return FALSE;
     }
+#ifdef FEATURE_OEMOMH
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                            AEECLSID_RUIM,
+                                            (void **)&pMe->m_pIRUIM))
+	{
+		return EFAILED;
+	}     
+#endif    
     return SUCCESS;
 }
 
@@ -441,7 +449,13 @@ static void CApplication_FreeAppData(Application *pMe)
         IBACKLIGHT_Release(pMe->m_pBacklight);
         pMe->m_pBacklight=NULL;
     }
-
+#ifdef FEATURE_OEMOMH    
+	if (pMe->m_pIRUIM != NULL)
+	{
+	    IRUIM_Release(pMe->m_pIRUIM);
+	    pMe->m_pIRUIM = NULL;
+	}
+#endif
 }
 
 /*=============================================================================
@@ -1091,18 +1105,31 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                 AECHAR pwsz[67] = {0};
                 AECHAR pstr[64] = {0};
                 AECHAR wsFmt[5] = {0};
-                
+#ifdef FEATURE_OEMOMH
+                AECHAR  AppLabel[33];
+                MEMSET(AppLabel, 0x00, sizeof(AppLabel));
+#endif
+
                 (void)STRTOWSTR("%d. ",wsFmt,sizeof(wsFmt));
                 for (i=0;i<IMENUCTL_GetItemCount(pMenu);i++)
                 {
                     wID = IMENUCTL_GetItemID(pMenu, i);
                     WSPRINTF(pwsz,sizeof(pwsz),wsFmt,i+1);
-                    
+#ifdef FEATURE_OEMOMH
+                    if(wID == IDS_APPLICATION_BAM && pMe->m_pIRUIM && SUCCESS == IRUIM_Get_AppLabels_Code(pMe->m_pIRUIM,pstr))
+                    {
+                        //STRTOWSTR(AppLabel, pstr, sizeof(pstr));
+                        DBGPRINTF("Buf =%S, length=%d", pstr, WSTRLEN(pstr));
+                    }
+                    else
+#endif
+                    {
                     ISHELL_LoadResString( pMe->m_pShell,
                           APPLICATION_RES_FILE_LANG,
                           wID,
                           pstr,
                           sizeof(pstr));
+                    }
                     WSTRLCAT(pwsz,pstr,sizeof(pwsz));
                     IMENUCTL_SetItemText(pMenu, wID, NULL, NULL, pwsz);
                 }
