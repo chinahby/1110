@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="btapp" VERSION="1">
+<BREWRes Name="idbtapp" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1" Name="IDS_BT_TITLE">
 		<Text>Bluetooth</Text>
@@ -11,13 +11,13 @@
 		<Text>Network Access</Text>
 	</String>
 	<String Id="4" Name="IDS_DEVICES">
-		<Text>Devices</Text>
+		<Text>Daftar Perangkat</Text>
 	</String>
 	<String Id="5" Name="IDS_TESTS">
 		<Text>Tests</Text>
 	</String>
 	<String Id="6" Name="IDS_MY_INFO">
-		<Text>My Info</Text>
+		<Text>Informasi Perangkat</Text>
 	</String>
 	<String Id="7" Name="IDS_SETTINGS">
 		<Text>Settings</Text>
@@ -26,13 +26,13 @@
 		<Text>Enabling</Text>
 	</String>
 	<String Id="9" Name="IDS_BONDABLE">
-		<Text>Bondable</Text>
+		<Text>Dapat terpasang</Text>
 	</String>
 	<String Id="10" Name="IDS_BT_ON">
-		<Text>Turn BT On</Text>
+		<Text>Hidupkan Bluetooth</Text>
 	</String>
 	<String Id="11" Name="IDS_BT_OFF">
-		<Text>Turn BT Off</Text>
+		<Text>Matikan Bluetooth</Text>
 	</String>
 	<String Id="12" Name="IDS_ACTIVE">
 		<Text>Active</Text>
@@ -83,13 +83,13 @@
 		<Text>Microphone Volume</Text>
 	</String>
 	<String Id="28" Name="IDS_BD_ADDR">
-		<Text>BD Address</Text>
+		<Text>Alamat BD</Text>
 	</String>
 	<String Id="29" Name="IDS_BT_NAME">
-		<Text>BT Name</Text>
+		<Text>Nama BT</Text>
 	</String>
 	<String Id="30" Name="IDS_SEARCHING">
-		<Text>Searching...</Text>
+		<Text>Mencari…</Text>
 	</String>
 	<String Id="31" Name="IDS_NOT_AVAIL">
 		<Text>Not Available</Text>
@@ -125,31 +125,31 @@
 		<Text>Remove</Text>
 	</String>
 	<String Id="42" Name="IDS_BOND">
-		<Text>Bond</Text>
+		<Text>Pasang </Text>
 	</String>
 	<String Id="43" Name="IDS_UNBOND">
 		<Text>Unbond</Text>
 	</String>
 	<String Id="44" Name="IDS_KEEP">
-		<Text>Keep</Text>
+		<Text>Simpan</Text>
 	</String>
 	<String Id="45" Name="IDS_DISCARD">
-		<Text>Discard</Text>
+		<Text>Buang</Text>
 	</String>
 	<String Id="46" Name="IDS_LIST_ALL">
-		<Text>List All</Text>
+		<Text>Daftarkan Semua</Text>
 	</String>
 	<String Id="47" Name="IDS_LIST_BONDED">
-		<Text>List Bonded Devices</Text>
+		<Text>Daftar Perangkat Terpasang</Text>
 	</String>
 	<String Id="48" Name="IDS_REMOVE_ALL">
-		<Text>Remove All</Text>
+		<Text>Pindahkan Semua Perangkat</Text>
 	</String>
 	<String Id="49" Name="IDS_UNBOND_ALL">
-		<Text>Unbond All</Text>
+		<Text>Lepas Semua Perangkat</Text>
 	</String>
 	<String Id="50" Name="IDS_EDIT_NAME">
-		<Text>Edit Name</Text>
+		<Text>Ubah Nama</Text>
 	</String>
 	<String Id="51" Name="IDS_PASS_KEY">
 		<Text>Pass Key for %s</Text>
@@ -161,7 +161,7 @@
 		<Text>Bonded Devices</Text>
 	</String>
 	<String Id="54" Name="IDS_KNOWN_DEVICES">
-		<Text>Known Devices</Text>
+		<Text>Perangkat Diketahui</Text>
 	</String>
 	<String Id="55" Name="IDS_UNKNOWN">
 		<Text>Unknown</Text>
@@ -182,10 +182,10 @@
 		<Text>Hands-Free</Text>
 	</String>
 	<String Id="61" Name="IDS_SECURITY">
-		<Text>Security</Text>
+		<Text>Pengamanan</Text>
 	</String>
 	<String Id="62" Name="IDS_SECURITY_NONE">
-		<Text>No Security</Text>
+		<Text>Tdk ada pengamanan</Text>
 	</String>
 	<String Id="63" Name="IDS_SECURITY_AUTH">
 		<Text>Authentication</Text>
@@ -263,7 +263,7 @@
 		<Text>De-Register</Text>
 	</String>
 	<String Id="88" Name="IDS_DISCOVERABLE">
-		<Text>Discoverable</Text>
+		<Text>Dapat dicari</Text>
 	</String>
 	<String Id="89" Name="IDS_FTM">
 		<Text>FTM</Text>
@@ -299,10 +299,10 @@
 		<Text>Job ID</Text>
 	</String>
 	<String Id="100" Name="IDS_BROWSE_SVC">
-		<Text>Browse Service</Text>
+		<Text>Layanan Jelajah</Text>
 	</String>
 	<String Id="101" Name="IDS_SEARCH_SVC">
-		<Text>Search Service</Text>
+		<Text>Cari Layanan</Text>
 	</String>
 	<String Id="102" Name="IDS_REGISTER_SVC">
 		<Text>Register Service</Text>
@@ -338,7 +338,7 @@
 		<Text>Cls/SCN/Service Name</Text>
 	</String>
 	<String Id="115" Name="IDS_SRCH_SVC_RESULTS">
-		<Text>Profile/Version</Text>
+		<Text>Profil/Versi</Text>
 	</String>
 	<String Id="116" Name="IDS_OBEX_TESTS">
 		<Text>OBEX</Text>
@@ -482,7 +482,7 @@
 		<Text>Passive, Any Device</Text>
 	</String>
 	<String Id="164" Name="IDS_LIST_CONNECTED">
-		<Text>List Connected Devices</Text>
+		<Text>Daftar Perangkat Terhubung</Text>
 	</String>
 	<String Id="165" Name="IDS_CONNECTED_DEVICES">
 		<Text>Connected Devices</Text>
@@ -869,10 +869,10 @@
 		<Text>HID: Cur Sec=&gt;Low</Text>
 	</String>
 	<String Id="556" Name="IDS_READ_OOB">
-		<Text>Read OOB</Text>
+		<Text>Baca OOB </Text>
 	</String>
 	<String Id="557" Name="IDS_WRITE_OOB">
-		<Text>Create OOB</Text>
+		<Text>Buat OOB</Text>
 	</String>
 	<String Id="558" Name="IDS_ENABLE_SPP">
 		<Text>SPP</Text>
@@ -1151,7 +1151,7 @@
 		<Text>AG Connection In Progress</Text>
 	</String>
 	<String Id="1074" Name="IDS_BT_SHORT_NAME">
-		<Text>BT Short Name</Text>
+		<Text>Nama pendek BT</Text>
 	</String>
 	<String Id="1075" Name="IDS_IOC_YESNO">
 		<Text>IOC DisplayYes/No</Text>
@@ -1184,19 +1184,19 @@
 		<Text>MITM</Text>
 	</String>
 	<String Id="1085" Name="IDS_DBG_KEY">
-		<Text>Debug Key</Text>
+		<Text>Tombol Debug </Text>
 	</String>
 	<String Id="1086" Name="IDS_BOND_OPTIONS">
-		<Text>Bond Options</Text>
+		<Text>Pilihan Pasangan</Text>
 	</String>
 	<String Id="1087" Name="IDS_EDIT_SHORT_NAME">
-		<Text>Edit Short Name</Text>
+		<Text>Ubah Nama Pendek</Text>
 	</String>
 	<String Id="1088" Name="IDS_EDIT_MANU_DATA">
-		<Text>Edit Manu Data</Text>
+		<Text>Ubah Data Produsen</Text>
 	</String>
 	<String Id="1089" Name="IDS_IOCAPABILITY">
-		<Text>IO Capability</Text>
+		<Text>Kapasitas IO </Text>
 	</String>
 	<String Id="1090" Name="IDS_BIP_GET_IMAGE_TOTAL">
 		<Text>Get Image Total</Text>
@@ -1223,10 +1223,10 @@
 		<Text>BT Short Name: %s</Text>
 	</String>
 	<String Id="1098" Name="IDS_LABEL_LINK_KEY">
-		<Text>BT LKStatus : %s</Text>
+		<Text>Status BT LK: %s</Text>
 	</String>
 	<String Id="1099" Name="IDS_LABEL_BT_MANU_DATA">
-		<Text>BT Manufacturer Data: %s</Text>
+		<Text>Data produsen BT: %s</Text>
 	</String>
 	<String Id="1100" Name="IDS_BT_LABEL_UUID">
 		<Text>BT UUID: %s</Text>
@@ -1262,7 +1262,7 @@
 		<Text>Pairing with device %s</Text>
 	</String>
 	<String Id="1111" Name="IDS_BT_MANU_DATA">
-		<Text>BT Manufacturer Data</Text>
+		<Text>Data produsen BT</Text>
 	</String>
 	<String Id="1112" Name="IDS_MAX_LATENCY">
 		<Text>Sniff Max Latency</Text>
@@ -1454,7 +1454,7 @@
 		<Text> </Text>
 	</String>
 	<String Id="2001" Name="IDS_MSG_NO_CONNECTED_DEV">
-		<Text>No connected devices found in database.</Text>
+		<Text>Tak ada perangkat terhubung ditemukan di Database</Text>
 	</String>
 	<String Id="2003" Name="IDS_MSG_PIN_REPLY_FAILED">
 		<Text>Passkey was not accepted.</Text>
@@ -1490,7 +1490,7 @@
 		<Text>Device database is empty.</Text>
 	</String>
 	<String Id="2014" Name="IDS_MSG_NO_BONDED_DEV">
-		<Text>No bonded devices found in database.</Text>
+		<Text>Tak ada perangkat terpasang di Database</Text>
 	</String>
 	<String Id="2015" Name="IDS_MSG_AG_CONN">
 		<Text>Connected to audio device "%s".</Text>
@@ -1526,7 +1526,7 @@
 		<Text>Failed to unbond %s.</Text>
 	</String>
 	<String Id="2026" Name="IDS_MSG_SEARCHING">
-		<Text>Searching for Bluetooth devices...Press CLR key to quit.</Text>
+		<Text>Bluetooth sedang dimatikan. Hidupkan terlebih dahulu.</Text>
 	</String>
 	<String Id="2027" Name="IDS_MSG_NO_DEV_DISC">
 		<Text>No Bluetooth devices discovered.</Text>
@@ -1727,7 +1727,7 @@
 		<Text>Failed to retrieve current connection role setting.</Text>
 	</String>
 	<String Id="2093" Name="IDS_MSG_BROWSING">
-		<Text>Browsing service records on %s ... Press CLR to quit.</Text>
+		<Text>Lihat catatan  layanan untuk. Tekan tombol "Kembali" untuk berhenti.</Text>
 	</String>
 	<String Id="2094" Name="IDS_MSG_SECURITY_SAVED">
 		<Text>Security settings are saved</Text>
@@ -1742,22 +1742,22 @@
 		<Text>OOB data present</Text>
 	</String>
 	<String Id="2098" Name="IDS_MSG_OOB_DATA_CREATED">
-		<Text>Local OOB data created in EFS</Text>
+		<Text>Data OOB Lokal sudah dibuat di EFS</Text>
 	</String>
 	<String Id="2099" Name="IDS_MSG_BIP_OP_PROGRESS">
 		<Text>BIP Operation in progress. Press CLR key to abort</Text>
 	</String>
 	<String Id="2100" Name="IDS_PROMPT_UNBOND_ALL">
-		<Text>Unbond all devices?</Text>
+		<Text>Lepas semua perangkat?</Text>
 	</String>
 	<String Id="2101" Name="IDS_PROMPT_REMOVE_ALL">
-		<Text>Remove all devices from database?</Text>
+		<Text>Pindahkan semua perangkat dari Database?</Text>
 	</String>
 	<String Id="2102" Name="IDS_PROMPT_UNBOND_ONE">
 		<Text>Unbond %s?</Text>
 	</String>
 	<String Id="2103" Name="IDS_PROMPT_REMOVE_ONE">
-		<Text>Remove %s from database?</Text>
+		<Text>Pindahkan dari Database?</Text>
 	</String>
 	<String Id="2104" Name="IDS_PROMPT_USE_AUDIO_DEV">
 		<Text>Use %s  as audio device?</Text>
@@ -1787,16 +1787,16 @@
 		<Text>Set local device to be %s in current connection with %s?</Text>
 	</String>
 	<String Id="2200" Name="IDS_LABEL_BT_NAME">
-		<Text>BT Name: %s</Text>
+		<Text>Nama Bluetooth: %s</Text>
 	</String>
 	<String Id="2201" Name="IDS_LABEL_BD_ADDR">
 		<Text>BD Address: %s</Text>
 	</String>
 	<String Id="2202" Name="IDS_LABEL_SVC_CLS">
-		<Text>Service Class(es): %s</Text>
+		<Text>Kelas layanan: %s</Text>
 	</String>
 	<String Id="2203" Name="IDS_LABEL_LMP_FEAT">
-		<Text>LMP Features: %s</Text>
+		<Text>Fitur LMP: %s</Text>
 	</String>
 	<String Id="2204" Name="IDS_LABEL_BONDABLE">
 		<Text>Bondable: %s</Text>
@@ -1808,7 +1808,7 @@
 		<Text>Security: %s</Text>
 	</String>
 	<String Id="2207" Name="IDS_LABEL_OPTIONS">
-		<Text>Options for %s</Text>
+		<Text>Pilihan untuk %s</Text>
 	</String>
 	<String Id="2209" Name="IDS_LABEL_PORT_STATUS">
 		<Text>Port status: %s</Text>
@@ -1820,7 +1820,7 @@
 		<Text>Bytes received: %d</Text>
 	</String>
 	<String Id="2212" Name="IDS_LABEL_SSP_CAPABLE">
-		<Text>SSP Capable: %s</Text>
+		<Text>SSP Aktif: %s</Text>
 	</String>
 	<String Id="3001" Name="IDS_BPP">
 		<Text>BPP</Text>
@@ -2186,13 +2186,13 @@
 		<Text>The BlueTooth is closed. Open it now?</Text>
 	</String>
 	<String Id="4062" Name="IDS_BT_CLOSED">
-		<Text>The BlueTooth is closed. Please Open it first</Text>
+		<Text>Bluetooth sedang dimatikan. Hidupkan terlebih dahulu.</Text>
 	</String>
 	<String Id="4063" Name="IDS_BT_YES">
-		<Text>Yes</Text>
+		<Text>Ya</Text>
 	</String>
 	<String Id="4064" Name="IDS_BT_NO">
-		<Text>No</Text>
+		<Text>Tidak</Text>
 	</String>
 	<String Id="4065" Name="IDS_BT_OPP_SETTING">
 		<Text>Opp Setting</Text>
