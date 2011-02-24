@@ -2141,7 +2141,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
         
 	    if(!IAnnunCoreObj->m_bActive)
 		{
-            if(IAnnunCoreObj->m_hasTitleText)
+            if(IAnnunCoreObj->m_hasTitleText && IAnnunCoreObj->m_Title[0] != 0)
             {
             	if (need_capture.b_capture != DB_CAPTURE_INIDLE)	//Add By zzg 2010_08_05
             	{

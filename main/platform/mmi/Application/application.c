@@ -1299,6 +1299,10 @@ static int StartApplet(Application *pMe, int i)
     switch(i){
     case IDS_APPLICATION_BAM:
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
+        if(Result == SUCCESS && pMe->m_pIAnn != NULL)
+        {
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,NULL);
+        }
         break;
         
     case IDS_APPLICATION_TIMER:
