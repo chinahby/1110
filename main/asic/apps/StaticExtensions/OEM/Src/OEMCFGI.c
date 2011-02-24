@@ -10408,58 +10408,58 @@ static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOANSWER_DISABLE(void *pBuff)
     }
     return SUCCESS;
 }
-static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOCONNECT_ENABLE(void *pBuff)
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE(void *pBuff)
 {
-    MEMCPY(pBuff, oemi_cache.NOCONNECT_ENABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.UNCONDITIONAL_ENABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
-static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOCONNECT_ENABLE(void *pBuff)
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE(void *pBuff)
 {
-    if(STRCMP((char*)pBuff,(char*)oemi_cache.NOCONNECT_ENABLE) != 0)
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.UNCONDITIONAL_ENABLE) != 0)
     {
-        STRLCPY(oemi_cache.NOCONNECT_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.UNCONDITIONAL_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
-static int OEMPriv_GetItem_CFGI_CALLFORWARD_NOCONNECT_DISABLE(void *pBuff)
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE(void *pBuff)
 {
-    MEMCPY(pBuff, oemi_cache.NOCONNECT_DISABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.UNCONDITIONAL_DISABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
-static int OEMPriv_SetItem_CFGI_CALLFORWARD_NOCONNECT_DISABLE(void *pBuff)
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE(void *pBuff)
 {
-    if(STRCMP((char*)pBuff,(char*)oemi_cache.NOCONNECT_DISABLE) != 0)
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.UNCONDITIONAL_DISABLE) != 0)
     {
-        STRLCPY(oemi_cache.NOCONNECT_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.UNCONDITIONAL_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
-static int OEMPriv_GetItem_CFGI_CALLFORWARD_ANYWAY_ENABLE(void *pBuff)
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_UNREACHABLE_ENABLE(void *pBuff)
 {
-    MEMCPY(pBuff, oemi_cache.ANYWAY_ENABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.UNREACHABLE_ENABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
-static int OEMPriv_SetItem_CFGI_CALLFORWARD_ANYWAY_ENABLE(void *pBuff)
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_UNREACHABLE_ENABLE(void *pBuff)
 {
-    if(STRCMP((char*)pBuff,(char*)oemi_cache.ANYWAY_ENABLE) != 0)
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.UNREACHABLE_ENABLE) != 0)
     {
-        STRLCPY(oemi_cache.ANYWAY_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.UNREACHABLE_ENABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
 }
-static int OEMPriv_GetItem_CFGI_CALLFORWARD_ANYWAY_DISABLE(void *pBuff)
+static int OEMPriv_GetItem_CFGI_CALLFORWARD_UNREACHABLE_DISABLE(void *pBuff)
 {
-    MEMCPY(pBuff, oemi_cache.ANYWAY_DISABLE, FEATURE_CODE_MAX_LENTH);
+    MEMCPY(pBuff, oemi_cache.UNREACHABLE_DISABLE, FEATURE_CODE_MAX_LENTH);
     return SUCCESS;
 }
-static int OEMPriv_SetItem_CFGI_CALLFORWARD_ANYWAY_DISABLE(void *pBuff)
+static int OEMPriv_SetItem_CFGI_CALLFORWARD_UNREACHABLE_DISABLE(void *pBuff)
 {
-    if(STRCMP((char*)pBuff,(char*)oemi_cache.ANYWAY_DISABLE) != 0)
+    if(STRCMP((char*)pBuff,(char*)oemi_cache.UNREACHABLE_DISABLE) != 0)
     {
-        STRLCPY(oemi_cache.ANYWAY_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
+        STRLCPY(oemi_cache.UNREACHABLE_DISABLE, (char*)pBuff, FEATURE_CODE_MAX_LENTH);
         OEMPriv_WriteOEMConfigList();
     }
     return SUCCESS;
