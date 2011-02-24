@@ -853,6 +853,111 @@ static int OEMRUIM_Get_AppLabels_Code(IRUIM *pMe,AECHAR *Buf)
     {
         return EFAILED;
     }
+#if 0    
+    pData[0] = 0x04;
+    pData[1] = 0x01;
+    pData[2] = 0x00;
+    pData[3] = 0x07;
+    pData[4] = 0x52;
+    pData[5] = 0x65;
+    pData[6] = 0x6c;
+    pData[7] = 0x69;
+    pData[8] = 0x61;
+    pData[9] = 0x6e;
+    pData[10] = 0x63;
+    pData[11] = 0x65;
+    pData[12] = 0x20;
+    pData[13] = 0x4d;
+    pData[14] = 0x4d;
+    pData[15] = 0x53;
+    pData[16] = 0xFF;
+    pData[17] = 0xFF;
+    pData[18] = 0xFF;
+    pData[19] = 0xFF;
+    pData[20] = 0xFF;
+    pData[21] = 0xFF;
+    pData[22] = 0xFF;
+    pData[23] = 0xFF;
+    pData[24] = 0xFF;
+    pData[25] = 0xFF;
+    pData[26] = 0xFF;
+    pData[27] = 0xFF;
+    pData[28] = 0xFF;
+    pData[29] = 0xFF;
+    pData[30] = 0xFF;
+    pData[31] = 0xFF;
+    pData[32] = 0xFF;
+    pData[33] = 0xFF;
+    pData[34] = 0xFF;
+    pData[35] = 0xFF;
+    pData[36] = 0x52;
+    pData[37] = 0x65;
+    pData[38] = 0x6c;
+    pData[39] = 0x69;
+    pData[40] = 0x61;
+    pData[41] = 0x6e;
+    pData[42] = 0x63;
+    pData[43] = 0x65;
+    pData[44] = 0x20;
+    pData[45] = 0x57;
+    pData[46] = 0x65;
+    pData[47] = 0x62;
+    pData[48] = 0xFF;
+    pData[49] = 0xFF;
+    pData[50] = 0xFF;
+    pData[51] = 0xFF;
+    pData[52] = 0xFF;
+    pData[53] = 0xFF;
+    pData[54] = 0xFF;
+    pData[55] = 0xFF;
+    pData[56] = 0xFF;
+    pData[57] = 0xFF;
+    pData[58] = 0xFF;
+    pData[59] = 0xFF;
+    pData[60] = 0xFF;
+    pData[61] = 0xFF;
+    pData[62] = 0xFF;
+    pData[63] = 0xFF;
+    pData[64] = 0xFF;
+    pData[65] = 0xFF;
+    pData[66] = 0xFF;
+    pData[67] = 0xFF;
+    pData[68] = 0x51;//////////////////////////////////////////00 55 00 41 00 4C 00 43 00 4F 00 4D 00 4D 00 51 00 4C 00 41 00 42 00 40 00 31 00 32 00 33 00
+    pData[69] = 0x00;
+    pData[70] = 0x55;
+    pData[71] = 0x00;
+    pData[72] = 0x41;
+    pData[73] = 0x00;
+    pData[74] = 0x4c;
+    pData[75] = 0x00;
+    pData[76] = 0x43;
+    pData[77] = 0x00;
+    pData[78] = 0x4f;
+    pData[79] = 0x00;
+    pData[80] = 0x4d;
+    pData[81] = 0x00;
+    pData[82] = 0x4d;
+    pData[83] = 0x00;
+    pData[84] = 0x51;
+    pData[85] = 0x00;
+    pData[86] = 0x4c;
+    pData[87] = 0x00;
+    pData[88] = 0x41;
+    pData[89] = 0x00;
+    pData[90] = 0x42;
+    pData[91] = 0x00;
+    pData[92] = 0x40;
+    pData[93] = 0x00;
+    pData[94] = 0x31;
+    pData[95] = 0x00;
+    pData[96] = 0x32;
+    pData[97] = 0x00;
+    pData[98] = 0x33;
+    pData[99] = 0x00;
+    pData[100] = 0xFF;
+    pData[101] = 0xFF;
+    pData[102] = 0xFF;    
+#endif   
     // Check to see if the card is connected.
     if (!IRUIM_IsCardConnected (pMe))
     {
@@ -889,24 +994,14 @@ static int OEMRUIM_Get_AppLabels_Code(IRUIM *pMe,AECHAR *Buf)
     
     status = SUCCESS;
     //}
-    
+  
+    status = SUCCESS;
     //if(status == SUCCESS)
     {
-        if(pData[3]&0x7 == 0x7)//第三BIT为1表示有BAM Label
+        if(pData[3]&0x4 == 0x4)//第三BIT为1表示有BAM Label
         {
-#if 0            
-            int i = 68;//BAM Label从第69位开始
-            int j = 0;
-            for(; i < 100; ++i)//BAM Label最长为32位
-            {
-                if(pData[i] != 0xFF)
-                {
-                    Buf[j++] = pData[i];
-                }
-            }
-#endif           
             OEMRUIM_Conversion_Uimdata_To_AppLabel(pData, Buf, pnDataSize);
-            DBGPRINTF("Buf =%s, length=%d", Buf, WSTRLEN(Buf));
+            DBGPRINTF("Buf =%S, length=%d", Buf, WSTRLEN(Buf));
         }
     }
     MSG_FATAL("OEMRUIM_Get_AppLabels_Code End", 0, 0 ,0);
@@ -919,69 +1014,70 @@ static void OEMRUIM_Conversion_Uimdata_To_AppLabel(byte *Inputbuf,AECHAR *AppLab
     int k;
     int m =0;
     int j = 0;
-    byte tempbuf[(33)*sizeof(AECHAR)]={(byte)'\0'};
+    byte tempbuf[(UIM_CDMA_BAM_APPLABEL_SIZE+1)*sizeof(AECHAR)]={(byte)'\0'};
     MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_AppLabel Start", 0, 0, 0);
-    MSG_FATAL("number len = %d Inputbuf[1]= %x",i,Inputbuf[1],0);
+    MSG_FATAL("number len = %d Inputbuf[1]= %x",STRLEN((char*)Inputbuf),Inputbuf[1],0);
+    DBGPRINTF("Inputbuf =%s", Inputbuf);
     switch(Inputbuf[0]&0x1F)
     {
         case AEERUIM_LANG_ENCODING_7BIT:                  //acsii编码
-            for(k=68, j=0; k<100;k++)
+            for(k=UIM_CDMA_BAM_APPLABEL_OFFSET, j=0; k < (UIM_CDMA_BAM_APPLABEL_OFFSET+UIM_CDMA_BAM_APPLABEL_SIZE); k++)
             {
                 if(Inputbuf[k] != 0xFF)
                 {
                     tempbuf[j++]=Inputbuf[k];
                 }
             }
-            tempbuf[k]='\0';
-            //DBGPRINTF("tempbuf0 = %s",tempbuf);
+            tempbuf[j]='\0';
             STRTOWSTR((char *)tempbuf, AppLabel,Endpoint*sizeof(AECHAR));
-            //OEMRUIM_AnsiiToUnicodeString((AECHAR *)Inputbuf,(AECHAR *)tempbuf);
             break;
 
         case  AEERUIM_LANG_ENCODING_UNICODE:                   //UNICODE编码
-            if(((Inputbuf[68] == 0xFE) || (Inputbuf[68] == 0xFF)) &&
-                ((Inputbuf[69] == 0xFE) || (Inputbuf[69] == 0xFF))
+            if(((Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET] == 0xFE) || (Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET] == 0xFF)) &&
+                ((Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET+1] == 0xFE) || (Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET+1] == 0xFF))
               )
             {
                 MSG_FATAL("AEERUIM_LANG_ENCODING_UNICODE BOM", 0, 0, 0);
                 //为TRUE则表示是BOM，要去掉前面2个标志位
-                for(k=70, j=0;k<100;k++)
+                for(k=UIM_CDMA_BAM_APPLABEL_OFFSET+2, j=0;k<(UIM_CDMA_BAM_APPLABEL_OFFSET+UIM_CDMA_BAM_APPLABEL_SIZE);k++)
                 {
-                    if(Inputbuf[k] != 0xFF)
+                    if((Inputbuf[k] != 0xFF) && (Inputbuf[k+1] != 0xFF))
                     {
+                        tempbuf[j++]=Inputbuf[k++];
                         tempbuf[j++]=Inputbuf[k];
                     }
-                    //ERR("tempbuf[%d] = %x",k,tempbuf[k],0);
                 }        
-                if((Inputbuf[68] == 0xFE) && (Inputbuf[69] == 0xFF))//(big endian 00-54 with BOM)
+                if((Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET] == 0xFE) && (Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET+1] == 0xFF))//(big endian 00-54 with BOM)
                 {
-                    OEMRUIM_ExchangeByte(tempbuf,k);
+                    OEMRUIM_ExchangeByte(tempbuf,UIM_CDMA_BAM_APPLABEL_SIZE-2);
                 }
             }
             else
             {
                 // without BOM
                 MSG_FATAL("AEERUIM_LANG_ENCODING_UNICODE without BOM", 0, 0, 0);   
-                for(k=68, j=0; k<100;k++)
+                for(k=UIM_CDMA_BAM_APPLABEL_OFFSET, j=0; k<(UIM_CDMA_BAM_APPLABEL_OFFSET+UIM_CDMA_BAM_APPLABEL_SIZE);k++)
                 {
-                    if(Inputbuf[k] != 0xFF)
+                    if((Inputbuf[k] != 0xFF) && (Inputbuf[k+1] != 0xFF))
                     {
+                        tempbuf[j++]=Inputbuf[k++];
                         tempbuf[j++]=Inputbuf[k];
                     }
                 } 
-                if(((Inputbuf[1] == 0x01) && (Inputbuf[68] == 0x00)))
+                if(((Inputbuf[1] == 0x01) && (Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET] == 0x00)))
                 {
                     //第三位为01表示是英文
                     //AppLabel第一位接着为00表示大端
                     //我们的手机是小端，大端的要交换高低位
-                    OEMRUIM_ExchangeByte(tempbuf,k);
+                    DBGPRINTF("tempbuf =%s, tempbuf=%d, j=%d", tempbuf, STRLEN((char*)tempbuf), j);
+                    OEMRUIM_ExchangeByte(tempbuf,32);
+                    DBGPRINTF("tempbuf = %S",tempbuf);
                 }                        
                 //OEMRUIM_ExchangeByte(tempbuf,k);
             }
             
             //DBGPRINTF("tempbuf2 = %S",tempbuf);
-            tempbuf[k++]='\0';
-            tempbuf[k]='\0';
+            tempbuf[j]='\0';
             WSTRLCPY(AppLabel,(AECHAR*)tempbuf,UIM_CDMA_HOME_SERVICE_SIZE);
             break;
 
@@ -989,7 +1085,7 @@ static void OEMRUIM_Conversion_Uimdata_To_AppLabel(byte *Inputbuf,AECHAR *AppLab
         case AEERUIM_LANG_ENCODING_LATIN:
         case AEERUIM_LANG_ENCODING_OCTET:
             //DBGPRINTF("tempbuf5 = %s",tempbuf);
-            for(k=68,j=0;k<100;k++)
+            for(k=UIM_CDMA_BAM_APPLABEL_OFFSET,j=0;k<(UIM_CDMA_BAM_APPLABEL_OFFSET+UIM_CDMA_BAM_APPLABEL_SIZE);k++)
             {
                 if(Inputbuf[k] != 0xFF)
                 {
@@ -1000,15 +1096,6 @@ static void OEMRUIM_Conversion_Uimdata_To_AppLabel(byte *Inputbuf,AECHAR *AppLab
             }
             tempbuf[m]='\0';
             tempbuf[m+1]='\0';
-        #if 0
-            while(1)
-            {
-                if(tempbuf[h++]!='\0')
-                    ERR("OEMRUIM_G.I.:: temp data[%03d]:0x%02X::M=%d",h,tempbuf[h],m);
-                else
-                    break;
-            }
-        #endif
             MEMCPY(AppLabel,tempbuf,UIM_CDMA_HOME_SERVICE_SIZE*sizeof(AECHAR));
             break;
         default:

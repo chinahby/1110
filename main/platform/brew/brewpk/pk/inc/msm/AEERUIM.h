@@ -153,6 +153,11 @@ AEEINTERFACE(IRUIM) {
 #ifdef CUST_EDITION	
 #define UIM_CDMA_HOME_SERVICE_SIZE 35
 #endif /*CUST_EDITION*/
+
+#ifdef FEATURE_OEMOMH 
+#define UIM_CDMA_BAM_APPLABEL_SIZE 32
+#define UIM_CDMA_BAM_APPLABEL_OFFSET 68
+#endif
 /*=======================================================================
   INTERFACES   DOCUMENTATION
 =======================================================================
