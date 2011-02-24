@@ -6267,7 +6267,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
   {
   	m_musicstl=(pMe->m_rc.dx*3/4-2*DISP_BLANK_WIDTH);
   }
-  SETAEERECT(&rect, (pMe->m_rc.dx/8 + ((pMe->m_rc.dx*3/4)-m_musicstl)/2), MUSIC_START_WIDTH,(pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), pMe->m_nLargeFontHeight);
+  SETAEERECT(&rect, (pMe->m_rc.dx/8 + DISP_BLANK_WIDTH/*((pMe->m_rc.dx*3/4)-m_musicstl)/2*/), MUSIC_START_WIDTH,(pMe->m_rc.dx*3/4 - DISP_BLANK_WIDTH), pMe->m_nLargeFontHeight);
   MSG_FATAL("rect.x=%d,w=%d", (pMe->m_rc.dx/8 + pMe->m_nLargeFontHeight), (pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), 0);
   #ifdef FEATURE_VERSION_MYANMAR
   {
