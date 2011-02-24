@@ -11,7 +11,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #ifdef CUST_EDITION
 #define FEATURE_VERSION_MYANMAR
-#define FEATURE_DISABLE_UIMPRL
+//#define FEATURE_DISABLE_UIMPRL
+#define FEATURE_IS683A_450M_SUPPORT
 //Add by zzg 2010_10_13
 //#define FEATURE_TORCH_KEY_CAMERA			//手电筒功能按键
 //#define FEATURE_IDLE_TORCH_DOWNKEY			//idle界面的向下键对应手电筒功能
