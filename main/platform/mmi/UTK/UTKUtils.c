@@ -351,7 +351,7 @@ void UTK_GiveResponse(CUTK * pMe,
                     uim_cmd_ptr->hdr.cmd_hdr.sigs = 0;
                     uim_cmd_ptr->hdr.rpt_function = NULL;
                     uim_cmd_ptr->hdr.protocol = UIM_NO_SUCH_MODE;
-                    uim_cmd_ptr->hdr.options = UIM_OPTION_ALWAYS_RPT;
+                    uim_cmd_ptr->hdr.options = UIM_OPTION_NONE;
                     
                     MSG_FATAL("UIM_ENVELOPE_F %d",pMe->m_btCursel,0,0); 
                     /* Send the command to the R-UIM */

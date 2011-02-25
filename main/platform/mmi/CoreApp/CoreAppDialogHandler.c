@@ -2877,40 +2877,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif
                 } 
             }
-#endif            
-            // 绘制墙纸、软件提示语、运营商名称、待机问候语
-            // 以及时间、日期、星期等。由下列定时器函数启动
-#if(! defined FEATURE_CARRIER_ISRAEL_PELEPHONE) && (! defined FEATURE_LANG_HEBREW)
-            if(pMe->svc_p_name[0] == 0)
-#endif
-            {
-                if(IsRunAsUIMVersion())
-                {
-                    if(EFAILED == IRUIM_Read_Svc_P_Name(pMe->m_pIRUIM,pMe->svc_p_name))
-                    {
-                        MEMSET(pMe->svc_p_name,0,(UIM_CDMA_HOME_SERVICE_SIZE+1)*sizeof(AECHAR));
-                        ICONFIG_GetItem(pMe->m_pConfig, CFGI_BANNER, pMe->svc_p_name, (NV_MAX_LTRS+1)*sizeof(AECHAR));
-                    }
-                }
-                else
-                {
-                    MEMSET(pMe->svc_p_name,0,(UIM_CDMA_HOME_SERVICE_SIZE+1)*sizeof(AECHAR));
-                    {
-#if(defined FEATURE_CARRIER_ISRAEL_PELEPHONE) && (defined FEATURE_LANG_HEBREW)
-                        nv_language_enum_type sel = 0;
-                        ICONFIG_GetItem(pMe->m_pConfig, CFGI_LANGUAGE_SELECTION, &sel, sizeof(sel));
-                        if(sel ==  NV_LANGUAGE_HEBREW)
-                        {
-                            ISHELL_LoadResString(pMe->a.m_pIShell,AEE_COREAPPRES_LANGFILE, IDS_ISRAEL_BANNER, pMe->svc_p_name, sizeof(pMe->svc_p_name));
-                        }
-                        else
-#endif
-                        {
-                            ICONFIG_GetItem(pMe->m_pConfig, CFGI_BANNER, pMe->svc_p_name, (NV_MAX_LTRS+1)*sizeof(AECHAR));
-                        }
-                    }
-                }
-            }
+#endif      
             CoreApp_UpdateIdleTimer(pMe);			
 			
 #ifdef FEATURE_KEYGUARD
@@ -2954,23 +2921,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 bImageDecoded = FALSE;
                 IImage_Notify(pWallPaper, (PFNIMAGEINFO)CoreApp_ImageNotify, pMe);
             }
-#if 0
-#if defined(FEATURE_WMS_APP)
-            if (pMe->m_bsmstipscheck)
-            {
-                uint16  nNewsVmail=0, nNewsSMS=0;
-                // 获取消息数
-                wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
-                wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNewsSMS, NULL, NULL);
-                
-                if (nNewsVmail>0 || nNewsSMS>0)
-                {
-                    CLOSE_DIALOG(DLGRET_SMSTIPS)
-                }
-            }
-#endif    
-#endif
-            
             return TRUE;            
         }
         #ifdef FEATURE_VERSION_HITZ181
@@ -4249,17 +4199,10 @@ static void CoreApp_SearchingTimer(void *pUser)
 static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
 {
     AEERect   rc;
-    AECHAR    *wszBuf = NULL;
-    int32     nSize;
+    AECHAR    wszBuf[UIM_CDMA_HOME_SERVICE_SIZE+1] = {0};
+    int32     nSize = sizeof(wszBuf);
     //AEECMSSInfo  *pssinfo = NULL;
     boolean   bSetsearchingTimer = FALSE;
-    
-    nSize = 32 * sizeof(AECHAR);
-    wszBuf = (AECHAR *)MALLOC(nSize);
-    if (NULL == wszBuf)
-    {
-        return;
-    }
     
     // 先取消相关定时器
     (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
@@ -4268,7 +4211,6 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
 
     // Determine displaying rectangle     
 	SETAEERECT(&rc, RPLMN_X, RPLMN_Y, pMe->m_rc.dx-2*RPLMN_X, pMe->m_nLargeFontHeight);
-    wszBuf[0] = 0;
     
 #ifdef FEATURE_PLANEMODE    
     if(pMe->m_SYS_MODE_NO_SRV || pMe->bPlaneModeOn == TRUE)
@@ -4320,34 +4262,38 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
                                     wszBuf,
                                     nSize);
     }
-    else if (IsRunAsFactoryTestMode())
-    {// 其次是厂测模式提示
-    	#if 0
-        (void) ISHELL_LoadResString(pMe->a.m_pIShell,
-                                    AEE_COREAPPRES_LANGFILE,
-                                    IDS_FACTORYTESTMODE,
-                                    wszBuf,
-                                    nSize);
-		#endif
-		(void) ISHELL_LoadResString(pMe->a.m_pIShell,
-                                    AEE_COREAPPRES_LANGFILE,
-                                    IDS_NORUIM,
-                                    wszBuf,
-                                    nSize);
-		
-    }
     else
     {// 最后是正常情况下的提示
         // 获取待机问候语 
-        
         CoreApp_GetSPN(pMe);
         
         if(pMe->svc_p_name[0] != 0)
         {
-            WSTRLCPY(wszBuf,pMe->svc_p_name,32);
+            WSTRCPY(wszBuf,pMe->svc_p_name);
+        }
+        else if (IsRunAsFactoryTestMode())
+        {
+            bSetsearchingTimer = TRUE;
+            if (IRUIM_IsCardConnected(pMe->m_pIRUIM))
+            {
+                (void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                            AEE_COREAPPRES_LANGFILE,
+                                            IDS_FACTORYTESTMODE,
+                                            wszBuf,
+                                            nSize);
+            }
+            else
+            {
+        		(void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                            AEE_COREAPPRES_LANGFILE,
+                                            IDS_NORUIM,
+                                            wszBuf,
+                                            nSize);
+            }
         }
         else
         {
+            bSetsearchingTimer = TRUE;
 #ifdef WIN32
             STRTOWSTR("WIN32BUILD", wszBuf, nSize);
 #else
@@ -4412,10 +4358,6 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
                               CoreApp_SearchingTimer,
                               pMe);
     }
-    
-    // 释放动态分配的内存
-    FREEIF(wszBuf);
-    //FREE(pssinfo);
 }
 
 /*==============================================================================
@@ -6636,11 +6578,31 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
     {
         if(IsRunAsUIMVersion())
         {
-       
+            static int SPNRetry = 5;
             if(EFAILED == IRUIM_Read_Svc_P_Name(pMe->m_pIRUIM,pMe->svc_p_name))
             {
+                if(SPNRetry)
+                {
+                    SPNRetry--;
+                    if(SPNRetry)
+                    {
+                        return;
+                    }
+                }
+                
                 MEMSET(pMe->svc_p_name,0,(UIM_CDMA_HOME_SERVICE_SIZE+1)*sizeof(AECHAR));
-                ICONFIG_GetItem(pMe->m_pConfig, CFGI_BANNER, pMe->svc_p_name, (NV_MAX_LTRS+1)*sizeof(AECHAR));
+#if(defined FEATURE_CARRIER_ISRAEL_PELEPHONE) && (defined FEATURE_LANG_HEBREW)
+                nv_language_enum_type sel = 0;
+                ICONFIG_GetItem(pMe->m_pConfig, CFGI_LANGUAGE_SELECTION, &sel, sizeof(sel));
+                if(sel ==  NV_LANGUAGE_HEBREW)
+                {
+                    ISHELL_LoadResString(pMe->a.m_pIShell,AEE_COREAPPRES_LANGFILE, IDS_ISRAEL_BANNER, pMe->svc_p_name, sizeof(pMe->svc_p_name));
+                }
+                else
+#endif
+                {
+                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_BANNER, pMe->svc_p_name, (NV_MAX_LTRS+1)*sizeof(AECHAR));
+                }
             }        
         }
         else

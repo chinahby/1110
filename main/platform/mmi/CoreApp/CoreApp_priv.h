@@ -105,7 +105,7 @@
 #endif
 #define     RESETPROFILE_TIME      (1*60*1000)
 // 更新 Searching... 提示的定时器时间 (毫秒)
-#define    IDLESEARCHINTIME       (20000)
+#define    IDLESEARCHINTIME       (10000)
 
 //receive AEEBATTSTATUS_POWERDOWN ,set time to power down the phone
 #define    POWER_DOWN_TIME       (3000)
