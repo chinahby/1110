@@ -2476,5 +2476,54 @@
 				<Items/></Static>
 		</Controls>
 	</Dialog>
+	<Dialog Id="6028" Name="IDD_BT_FTP" Focus="7034">
+		<Controls>
+			<Menu Id="7034" Name="IDC_BT_FTP">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6029" Name="IDD_BT_FTP_SERVER" Focus="7035">
+		<Controls>
+			<Menu Id="7035" Name="IDC_BT_FTP_SERVER">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6030" Name="IDD_BT_FTP_CLIENT" Focus="7036">
+		<Controls>
+			<Menu Id="7036" Name="IDC_BT_FTP_CLIENT">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6031" Name="IDD_BT_FTP_SETTINGS" Focus="7037">
+		<Controls>
+			<Menu Id="7037" Name="IDC_BT_FTP_SETTINGS">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6032" Name="IDD_BT_FTP_SERVER_REGISTER" Focus="7038">
+		<Controls>
+			<Menu Id="7038" Name="IDC_BT_FTP_SERVER_REGISTER">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6033" Name="IDD_BT_FTP_BROWSE" Focus="7039">
+		<Controls>
+			<Menu Id="7039" Name="IDC_BT_FTP_BROWSE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6034" Name="IDD_BT_FTP_BROWSE_OPITION" Focus="7040">
+		<Controls>
+			<Menu Id="7040" Name="IDC_BT_FTP_BROWSE_OPITION">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>

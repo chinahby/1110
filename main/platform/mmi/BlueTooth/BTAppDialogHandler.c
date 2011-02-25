@@ -53,6 +53,19 @@
 
 char*  szOPPServerName      = "QC OPP";
 
+//Add By zzg 2011_02_18
+#define NEW_FOLDER_NAME    "newfolder"
+#define FOLDER_NAME_STR    "folder name"
+#define FILE_NAME_STR      "file name"
+#define SEARCH_CHR         '"'
+#define ROOT_FOLDER_STR    "ROOT"
+#define PARENT_FOLDER_STR  "PARENT"
+#define CURRENT_FOLDER_STR "CURRENT"
+
+static char   szOperandex[AEEBT_MAX_FILE_NAME+1];		
+//Add End
+
+
 /*==============================================================================
                                  类型定义
 ==============================================================================*/
@@ -197,6 +210,60 @@ static boolean  HandleSetDebugKeyDialogEvent(CBTApp *pMe,
     uint16 wParam,
     uint32 dwParam
 );
+
+
+// 对话框 IDD_BT_FTP 事件处理函数
+static boolean  HandleFtpDialogEvent(CBTApp *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
+// 对话框 IDD_BT_FTP_SERVER 事件处理函数
+static boolean  HandleFtpServerDialogEvent(CBTApp *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
+
+// 对话框 IDD_BT_FTP_CLIENT 事件处理函数
+static boolean  HandleFtpClientDialogEvent(CBTApp *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
+// 对话框 IDD_BT_FTP_SETTING 事件处理函数
+static boolean  HandleFtpSettingDialogEvent(CBTApp *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
+// 对话框 IDD_BT_FTP_SERVER_REGISTER 事件处理函数
+static boolean  HandleFtpServerRegisterDialogEvent(CBTApp *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
+// 对话框 IDD_BT_FTP_BROWSE 事件处理函数
+static boolean  HandleFtpBrowseDialogEvent(CBTApp *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
+// 对话框 IDD_BT_FTP_BROWSE_OPITION 事件处理函数
+static boolean  HandleFtpBrowseOpitionDialogEvent(CBTApp *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
+
+
 
 // 对话框 IDD_BT_MSGBOX 事件处理函数
 static boolean  HandleMsgBoxDialogEvent(CBTApp *pMe,
@@ -419,6 +486,34 @@ boolean BTApp_RouteDialogEvent(CBTApp *pMe,
 			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_DEBUG_KEY***", 0, 0, 0);
             return HandleSetDebugKeyDialogEvent(pMe,eCode,wParam,dwParam);
 
+		case IDD_BT_FTP:
+			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP***", 0, 0, 0);
+            return HandleFtpDialogEvent(pMe,eCode,wParam,dwParam);	
+
+		case IDD_BT_FTP_SERVER:
+			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP_SERVER***", 0, 0, 0);
+            return HandleFtpServerDialogEvent(pMe,eCode,wParam,dwParam);
+
+		case IDD_BT_FTP_CLIENT:
+			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP_CLIENT***", 0, 0, 0);
+            return HandleFtpClientDialogEvent(pMe,eCode,wParam,dwParam);
+
+		case IDD_BT_FTP_SETTINGS:
+			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP_SETTINGS***", 0, 0, 0);
+            return HandleFtpSettingDialogEvent(pMe,eCode,wParam,dwParam);	
+
+		case IDD_BT_FTP_SERVER_REGISTER:
+			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP_SERVER_REGISTER***", 0, 0, 0);
+            return HandleFtpServerRegisterDialogEvent(pMe,eCode,wParam,dwParam);
+
+		case IDD_BT_FTP_BROWSE:
+			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP_BROWSE***", 0, 0, 0);
+			return HandleFtpBrowseDialogEvent(pMe,eCode,wParam,dwParam);	
+
+		case IDD_BT_FTP_BROWSE_OPITION:
+			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP_BROWSE_OPITION***", 0, 0, 0);
+			return HandleFtpBrowseOpitionDialogEvent(pMe,eCode,wParam,dwParam);			
+
 		case IDD_BT_MSGBOX:
 			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_MSGBOX***", 0, 0, 0);
             return HandleMsgBoxDialogEvent(pMe,eCode,wParam,dwParam);	
@@ -559,7 +654,22 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DEVICE_SEARCH, IDS_DEVICE_SEARCH, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DEVICES, IDS_DEVICES, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_MY_INFO, IDS_MY_INFO, NULL, 0);
-						
+
+#if	0			
+			//IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_SETTINGS, IDS_SETTINGS, NULL, 0);
+			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP, IDS_FTP, NULL, 0);
+
+			/*		
+			if (pMe->mAG.bConnected)
+			{
+				if ((pMe->mAG.bSLCUp != FALSE) || (BTApp_CallConnected(pMe) != BT_APP_CALL_NONE))
+				{
+					IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_AUDIO_TRANSFER, IDS_AUDIO_TRANSFER, NULL, 0);					
+				}
+			}
+			*/
+#endif
+
 			MSG_FATAL("***zzg HandleMainDialogEvent EVT_USER_REDRAW***", 0, 0, 0);
             (void)IMENUCTL_Redraw(pMenu);
             return TRUE;
@@ -655,6 +765,25 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 					}						   
 				    break;
 				}	
+				case IDS_FTP:
+				{
+					if (bt_status == FALSE)					  
+					{
+						pMe->m_msg_state_id = BTAPPST_MAIN;
+						pMe->m_msg_id = IDS_BT_CLOSED;
+						pMe->m_bNeedStr = FALSE;
+						
+						CLOSE_DIALOG(DLGRET_BT_MSGBOX)
+					}
+					else
+					{
+						if (BTApp_FTPInit(pMe) != FALSE)
+						{
+							CLOSE_DIALOG(DLGRET_FTP)
+						}
+					}						   
+				    break;
+				}
 				default:
 				    ASSERT_NOT_REACHABLE;
             }
@@ -1939,7 +2068,6 @@ static boolean HandleDeviceListDialogEvent(CBTApp *pMe,
 		
         case EVT_COMMAND:           
             pMe->m_currDlgId = wParam;		
-
 			pMe->m_prompt_state_id = BTAPPST_DEVICE_LIST;
 
 			switch (wParam)
@@ -3930,10 +4058,10 @@ static boolean  HandleSetDebugKeyDialogEvent(CBTApp * pMe,
 			AECHAR		WTitle[40] = {0};		
 			
 			(void)ISHELL_LoadResString(pMe->m_pShell,
-										AEE_APPSBTAPP_RES_FILE, 							   
-										IDS_DBG_KEY,
-										WTitle,
-										sizeof(WTitle));
+									   AEE_APPSBTAPP_RES_FILE, 							   
+									   IDS_DBG_KEY,
+									   WTitle,
+									   sizeof(WTitle));
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);  	
 			
@@ -4020,6 +4148,1619 @@ static boolean  HandleSetDebugKeyDialogEvent(CBTApp * pMe,
 
 }
 
+
+static boolean  HandleFtpDialogEvent(CBTApp * pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{	 
+	PARAM_NOT_REF(dwParam)
+
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_FTP);	
+	
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+	
+    MSG_FATAL("%x, %x ,%x,HandleMyInfoOpitionDialogEvent", eCode, wParam, dwParam);   
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:			
+		{			
+			AECHAR 		WTitle[40] = {0};			
+
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+				                        AEE_APPSBTAPP_RES_FILE,                                
+				                        IDS_FTP,
+				                        WTitle,
+				                        sizeof(WTitle));
+			
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);  
+
+			if( pMe->mFTP.bRegistered == TRUE )
+			{
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_SERVER, IDS_FTP_SERVER, NULL, 0);
+			}
+			else if( pMe->mFTP.bConnected == TRUE )
+			{
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_CLIENT, IDS_FTP_CLIENT, NULL, 0);		
+			}
+			else
+			{
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_SERVER, IDS_FTP_SERVER, NULL, 0);
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_CLIENT, IDS_FTP_CLIENT, NULL, 0);		
+			}
+				
+			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_SETTINGS, IDS_SETTINGS, NULL, 0);
+
+            return TRUE;
+		}
+
+        case EVT_DIALOG_START:       
+        {
+			IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
+
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+            IMENUCTL_SetBottomBarType(pMenu,BTBAR_OK_BACK);
+
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_BLUETOOTH_APP,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+            return TRUE;
+        }
+        case EVT_USER_REDRAW:    			
+            (void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+		
+        case EVT_COMMAND:           
+            pMe->m_currDlgId = wParam;		
+			pMe->m_prompt_state_id = BTAPPST_FTP;
+
+			switch (wParam)
+            {	
+				case IDS_FTP_SERVER:
+				{	
+					CLOSE_DIALOG(DLGRET_FTP_SERVER)
+					return TRUE;
+				}	
+				case IDS_FTP_CLIENT:
+				{	
+					CLOSE_DIALOG(DLGRET_FTP_CLIENT)
+					return TRUE;
+				}
+				case IDS_SETTINGS:
+				{	
+					CLOSE_DIALOG(DLGRET_FTP_SETTING)
+					return TRUE;
+				}
+				default:
+				    ASSERT_NOT_REACHABLE;
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;	
+
+}
+
+
+static boolean  HandleFtpServerDialogEvent(CBTApp * pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{	 
+	PARAM_NOT_REF(dwParam)
+			
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_FTP_SERVER);
+		
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }	   
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:			
+		{	
+            return TRUE;
+		}
+
+        case EVT_DIALOG_START:   
+			
+            IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
+
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+            IMENUCTL_SetBottomBarType(pMenu, BTBAR_SELECT_BACK);
+
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_BLUETOOTH_APP,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:   
+		{			
+			AECHAR 		WTitle[40] = {0};
+			
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+				                        AEE_APPSBTAPP_RES_FILE,                                
+				                        IDS_FTP_SERVER,
+				                        WTitle,
+				                        sizeof(WTitle));
+
+			if (NULL == pMe->m_pIAnn)
+			{
+				MSG_FATAL("***zzg HandleFtpServerDialogEvent NULL == pMe->m_pIAnn***", 0, 0, 0);
+			}
+			
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);   
+			
+			IMENUCTL_DeleteAll(pMenu);
+
+			if (pMe->mFTP.bRegistered == FALSE)
+			{
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_REGISTER, IDS_REGISTER, NULL, 0);				
+			}
+			else
+			{
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DEREGISTER, IDS_DEREGISTER, NULL, 0);				
+			}
+  					
+            (void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+        }
+
+        case EVT_DIALOG_END:			
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:            
+            pMe->m_currDlgId = wParam;
+
+			pMe->m_msg_state_id = BTAPPST_FTP_SERVER;	//在此菜单下的所有BTMSG显示后返回到SERVER界面
+			
+            switch (wParam)
+            {
+            	case IDS_REGISTER:			
+					CLOSE_DIALOG(DLGRET_FTP_SERVER_REGISTER)
+					break;
+					
+				case IDS_DEREGISTER:	
+				{
+					boolean bRegistered = FALSE;
+					
+					if ((IBTEXTFTP_Deregister(pMe->mFTP.po)) != SUCCESS)
+					{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+
+						MSG_ERROR( "FTP_Deregister() failed with %x", result, 0, 0 );							
+						BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
+					}
+					else
+					{
+						bRegistered = pMe->mFTP.bRegistered; 
+						pMe->mFTP.bRegistered = FALSE;
+						BTApp_CheckToClearDiscoverable( pMe );
+						pMe->mFTP.bRegistered = bRegistered;
+						BTApp_ShowBusyIcon(pMe); 
+					}
+					break;
+				}					
+				default:
+				    ASSERT_NOT_REACHABLE;
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;	
+}
+
+
+static boolean  HandleFtpClientDialogEvent(CBTApp * pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{	 
+    PARAM_NOT_REF(dwParam)
+			
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_FTP_CLIENT);
+		
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }	   
+
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:			
+		{	
+            return TRUE;
+		}
+
+        case EVT_DIALOG_START:   
+		{
+            IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
+
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+            IMENUCTL_SetBottomBarType(pMenu, BTBAR_SELECT_BACK);
+
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_BLUETOOTH_APP,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+            return TRUE;
+        }
+        case EVT_USER_REDRAW:   
+		{			
+			AECHAR 		WTitle[40] = {0};
+			
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+				                        AEE_APPSBTAPP_RES_FILE,                                
+				                        IDS_FTP_CLIENT,
+				                        WTitle,
+				                        sizeof(WTitle));
+
+			if (NULL == pMe->m_pIAnn)
+			{
+				MSG_FATAL("***zzg HandleFtpClientDialogEvent NULL == pMe->m_pIAnn***", 0, 0, 0);
+			}
+			
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);   
+			
+			IMENUCTL_DeleteAll(pMenu);
+			
+			if (pMe->mFTP.bConnected == FALSE)
+			{
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_CONNECT, IDS_CONNECT, NULL, 0);				
+			}
+			else
+			{
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_PUT, IDS_PUT, NULL, 0);		
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_LIST_FOLDER, IDS_FTP_LIST_FOLDER, NULL, 0);		
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DISCONNECT, IDS_DISCONNECT, NULL, 0);		
+			}
+  					
+            (void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+        }
+
+        case EVT_DIALOG_END:			
+        {
+			return TRUE;
+        }
+
+        case EVT_KEY:
+        {
+			switch(wParam)
+            {
+                case AVK_CLR:
+                {
+					CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+                }
+
+                default:
+                {
+					break;
+                }
+            }
+            return TRUE;
+        }
+
+        case EVT_COMMAND:            
+        {
+			pMe->m_currDlgId = wParam;
+			pMe->m_msg_state_id = BTAPPST_FTP_CLIENT;	//在此菜单下的所有BTMSG显示后返回到CLIENT界面
+
+			MSG_FATAL("***zzg FtpClientDlgEvent EVT_COMMAND wParam=%d***", wParam, 0, 0);
+			
+            switch (wParam)
+            {
+            	case IDS_CONNECT:			
+				{		
+					pMe->m_obex_list_id = IDD_BT_FTP_CLIENT;
+					
+					if ( pMe->mFTP.bRegistered == FALSE )
+					{
+						CLOSE_DIALOG(DLGRET_BT_OBEX_LIST_SERVERS)
+					}
+					else
+					{
+						//BTApp_ShowMessage( pMe, IDS_MSG_DEREG_SVR_FIRST, NULL, 0 );
+					} 
+					break;
+            	}
+				case IDS_DISCONNECT:	
+				{
+					if ((IBTEXTFTP_Disconnect(pMe->mFTP.po)) != SUCCESS)
+					{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+						MSG_ERROR( "FTP_Disconnect() failed with %x", result, 0, 0 );
+						BTApp_ShowMessage( pMe, IDS_MSG_DISCONN_FAILED, NULL, 3 );
+					}
+
+					break;
+				}
+				case IDS_FTP_LIST_FOLDER:	
+				{
+					pMe->mFTP.bRemoteBrowsing = TRUE;
+
+					// Store 'ROOT' as interop device root folder name is not known
+					STRLCPY(szOperandex, ROOT_FOLDER_STR, sizeof(szOperandex));
+
+					if (BTApp_FTPListFolder(pMe) != SUCCESS)
+					{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+
+						//STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));
+						//BTApp_ShowMessage( pMe, IDS_MSG_FOLDER_BROWSING_FAILED, wBuf, 3 );
+					}
+					else
+					{
+						BTApp_ShowBusyIcon(pMe); // wait for LS done
+					}
+
+					break;
+				}		
+				case IDS_PUT:
+				{
+					pMe->mFTP.bRemoteBrowsing = FALSE;
+
+				//	else if( pMe->mFTP.u8StorageDevice == STORAGE_DEV_MEM_CARD )
+					{
+						STRLCPY(pMe->mFTP.szLocalBrowsePath, AEEFS_CARD0_DIR, sizeof(pMe->mFTP.szLocalBrowsePath));
+						STRLCPY(pMe->mFTP.szCurrentFolder, AEEFS_CARD0_DIR, sizeof(pMe->mFTP.szCurrentFolder));
+
+						// Removing the terminal '/' character as this character is added 
+						//during FTP operations. Otherwise, the path will contain "//". 
+						pMe->mFTP.szLocalBrowsePath[STRLEN(AEEFS_CARD0_DIR) - 1] = '\0';
+						pMe->mFTP.szCurrentFolder[STRLEN(AEEFS_CARD0_DIR) - 1] = '\0';
+
+						BTApp_GetNameOfLocalObjects(pMe, pMe->mFTP.szLocalBrowsePath);
+					}
+
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif
+					CLOSE_DIALOG(DLGRET_FTP_BROWSE)	
+					return TRUE;
+					
+				}
+				default:
+				{
+					ASSERT_NOT_REACHABLE;
+				}
+            }
+            return TRUE;
+        }
+        default:
+        {
+			break;
+        }
+    }
+    return FALSE;	
+}
+
+static boolean  HandleFtpSettingDialogEvent(CBTApp * pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{	 
+	PARAM_NOT_REF(dwParam)
+		
+	IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_FTP_SETTINGS);
+
+	if (pMenu == NULL)
+	{
+		return FALSE;
+	}	
+
+	switch (eCode)
+	{
+		case EVT_DIALOG_INIT:			
+		{
+			AECHAR		WTitle[40] = {0};		
+			
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+										AEE_APPSBTAPP_RES_FILE, 							   
+										IDS_SETTINGS,
+										WTitle,
+										sizeof(WTitle));
+			
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);  	
+			
+			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_AUTHENTICATE, IDS_AUTHENTICATE, NULL, 0);	
+		
+			/*	
+			//因为手机EFS有限，所以默认为MEMORY_CARD
+			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EFS, IDS_EFS, NULL, 0);		
+			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_MEMORY_CARD, IDS_MEMORY_CARD, NULL, 0);	
+			*/
+			
+			return TRUE;
+		}
+
+		case EVT_DIALOG_START:
+		{
+			//设定标题格式
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
+#endif
+            IMENUCTL_SetBottomBarType(pMenu, BTBAR_SAVE_BACK);
+		
+			SetCheckBoxItem(pMenu, IDS_AUTHENTICATE, pMe->mFTP.bDoAuthenticate ? TRUE : FALSE);
+			
+			(void) ISHELL_PostEvent( pMe->m_pShell,
+									 AEECLSID_BLUETOOTH_APP,
+									 EVT_USER_REDRAW,
+									 0,
+									 0);
+			return TRUE;
+		}
+		
+		case EVT_USER_REDRAW:		
+		{			
+			(void)IMENUCTL_Redraw(pMenu);			
+			return TRUE;
+		}
+
+		case EVT_DIALOG_END:
+		{
+			return TRUE;
+		}
+
+		case EVT_KEY_PRESS: 	  
+		{	
+			switch(wParam)
+			{
+				case AVK_SELECT:	
+				{
+					pMe->bConfigChanged = TRUE;
+
+					if (GetCheckBoxVal(pMenu, IDS_AUTHENTICATE))
+					{
+						pMe->mFTP.bDoAuthenticate = TRUE;						
+					}
+					else
+					{
+						pMe->mFTP.bDoAuthenticate = FALSE;		
+					}
+
+					BTApp_WriteConfigFile( pMe );
+					
+					CLOSE_DIALOG(DLGRET_CANCELED)
+					return TRUE;
+				}				
+				
+				case AVK_CLR:
+					CLOSE_DIALOG(DLGRET_CANCELED)
+					return TRUE;
+
+				default:
+					break;
+			}
+			
+			 return TRUE;
+		}
+		
+		default:
+			break;
+	}
+    return FALSE;	
+}
+
+
+static boolean  HandleFtpServerRegisterDialogEvent(CBTApp * pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{	 
+	PARAM_NOT_REF(dwParam)
+		
+	IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_FTP_SERVER_REGISTER);
+
+	if (pMenu == NULL)
+	{
+		return FALSE;
+	}	
+
+	switch (eCode)
+	{
+		case EVT_DIALOG_INIT:			
+		{
+			AECHAR		WTitle[40] = {0};		
+			
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+										AEE_APPSBTAPP_RES_FILE, 							   
+										IDS_REGISTER,
+										WTitle,
+										sizeof(WTitle));
+			
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);  	
+			
+			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_SRV_ALLOW_BROWSE, IDS_FTP_SRV_ALLOW_BROWSE, NULL, 0);	
+			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_SRV_READ_ONLY, IDS_FTP_SRV_READ_ONLY, NULL, 0);	
+		
+			return TRUE;
+		}
+
+		case EVT_DIALOG_START:
+		{
+			//设定标题格式
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_MULTI_SEL);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
+#endif
+            IMENUCTL_SetBottomBarType(pMenu, BTBAR_SAVE_BACK);
+		
+			SetCheckBoxItem(pMenu, IDS_FTP_SRV_ALLOW_BROWSE, pMe->mFTP.reg.bBrowseAllowed ? TRUE : FALSE);
+			SetCheckBoxItem(pMenu, IDS_FTP_SRV_READ_ONLY, pMe->mFTP.reg.bReadOnly ? TRUE : FALSE);
+
+			IMENUCTL_SetSel(pMenu, IDS_FTP_SRV_ALLOW_BROWSE);
+			
+			(void) ISHELL_PostEvent( pMe->m_pShell,
+									 AEECLSID_BLUETOOTH_APP,
+									 EVT_USER_REDRAW,
+									 0,
+									 0);
+			return TRUE;
+		}
+		
+		case EVT_USER_REDRAW:		
+		{			
+			(void)IMENUCTL_Redraw(pMenu);			
+			return TRUE;
+		}
+
+		case EVT_DIALOG_END:
+		{
+			return TRUE;
+		}
+
+		case EVT_KEY_PRESS: 	  
+		{	
+			//uint16 selection = IMENUCTL_GetSel(pMenu);
+			//MENU_SET_SEL(selection);
+			
+			switch(wParam)
+			{
+				case AVK_CLR:
+				case AVK_SELECT:	
+				{
+					if (GetCheckBoxVal(pMenu, IDS_FTP_SRV_ALLOW_BROWSE))
+					{
+						pMe->mFTP.reg.bBrowseAllowed = TRUE;						
+					}
+					else
+					{
+						pMe->mFTP.reg.bBrowseAllowed = FALSE;		
+					}				
+
+					if (GetCheckBoxVal(pMenu, IDS_FTP_SRV_READ_ONLY))
+					{
+						pMe->mFTP.reg.bReadOnly = TRUE;						
+					}
+					else
+					{
+						pMe->mFTP.reg.bReadOnly = FALSE;		
+					}
+
+					if ( pMe->mFTP.bDoAuthenticate == FALSE )
+					{
+						pMe->mFTP.reg.auth         = AEEBT_FTP_AUTH_NONE;
+					}
+					else
+					{
+						pMe->mFTP.reg.auth         = AEEBT_FTP_AUTH_PASSWORD;
+					}
+					
+					STRLCPY(pMe->mFTP.reg.szServiceName, "QC FTP", sizeof(pMe->mFTP.reg.szServiceName));
+
+					MSG_LOW("FTP_Register() - auth=%x %d %d", pMe->mFTP.reg.auth, pMe->mFTP.reg.bReadOnly, pMe->mFTP.reg.bBrowseAllowed);
+					
+					BTApp_SetBondable(pMe);
+										
+					if ((IBTEXTFTP_Register(pMe->mFTP.po, &pMe->mFTP.reg)) != SUCCESS)
+					{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif
+
+						MSG_FATAL("***zzg HandleFTPServerRegisterDlg EVT_KEY_PRESS IBTEXTFTP_Register != SUCCESS***", 0, 0, 0);
+
+						MSG_ERROR( "FTP_Register() failed with %x", result, 0, 0 );
+						BTApp_ClearBondable( pMe ); // no need to be bondable anymore
+
+						pMe->m_msg_state_id = BTAPPST_FTP_SERVER;	
+						BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3);
+					}
+					else
+					{
+						MSG_FATAL("***zzg HandleFTPServerRegisterDlg EVT_KEY_PRESS IBTEXTFTP_Register == SUCCESS***", 0, 0, 0);
+						
+						if ( pMe->mSD.bDiscoverable == FALSE )
+						{
+							IBTEXTSD_SetDiscoverable( pMe->mSD.po, TRUE );
+						}
+						
+						BTApp_ShowBusyIcon( pMe ); // wait for command done
+					}
+					
+
+					CLOSE_DIALOG(DLGRET_CANCELED)	
+					return TRUE;
+				}				
+								
+				default:
+					break;
+			}
+			
+			 return TRUE;
+		}
+		
+		default:
+			break;
+	}
+    return FALSE;	
+}
+
+
+static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)	
+{	 
+	PARAM_NOT_REF(dwParam)
+
+	IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_FTP_BROWSE);	
+	
+	if (pMenu == NULL)
+	{
+		return FALSE;
+	}
+	
+	MSG_FATAL("***zzg HandleFtpBrowseDialogEvent eCode=%x, wParam=%x, dwParam=%x",eCode,wParam,dwParam);   
+
+	switch (eCode)
+	{
+		case EVT_DIALOG_INIT:			
+		{	
+			return TRUE;
+		}
+
+		case EVT_DIALOG_START:		 
+		{			
+			CtlAddItem ai;
+			AEERect	 rc;
+			uint8 	 uNoOfItems = 0;
+			AECHAR	 wName[ AEEBT_MAX_FILE_NAME+1 ];
+
+			AECHAR	WTitle[40] = {0};						
+
+			//.......Show The Title............
+			if (pMe->mFTP.bRemoteBrowsing)
+			{
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+											AEE_APPSBTAPP_RES_FILE, 							   
+											IDS_FTP_LIST_FOLDER,
+											WTitle,
+											sizeof(WTitle));	
+
+				if (pMe->m_pIAnn != NULL)
+				{
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle); 
+				}				
+
+				uNoOfItems = pMe->mFTP.uNumOfObjInRemoteDev;
+			}
+			else
+			{
+				// Set the title for the menu
+				STRTOWSTR( "Local Browsing", wName, sizeof(wName));				
+				
+				if (pMe->m_pIAnn != NULL)
+				{
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, wName);
+				}
+
+				uNoOfItems = pMe->mFTP.uNumOfObjInLocalDev;
+			}
+			//.........Show Title End...............
+		
+
+			while (uNoOfItems > 0)
+			{
+				if (pMe->mFTP.bRemoteBrowsing)
+				{
+					STRTOWSTR(pMe->mFTP.remoteObjects[pMe->mFTP.uNumOfObjInRemoteDev-uNoOfItems].szFolderFileName, wName, sizeof(wName));
+					// Add the folder / file names as menu items
+					IMENUCTL_AddItem(pMenu, NULL, 0, pMe->mFTP.uNumOfObjInRemoteDev - uNoOfItems, wName, 0);					
+				}
+				else
+				{
+					STRTOWSTR(pMe->mFTP.localObjects[pMe->mFTP.uNumOfObjInLocalDev-uNoOfItems].szFolderFileName, wName, sizeof(wName));
+
+					// Add the folder / file names as menu items
+					IMENUCTL_AddItem(pMenu, NULL, 0, pMe->mFTP.uNumOfObjInLocalDev - uNoOfItems, wName, 0);
+				}
+
+				uNoOfItems--;
+			}
+			
+
+#ifdef FEATURE_APP_TEST_AUTOMATION
+		#error code not present
+#endif //FEATURE_APP_TEST_AUTOMATION
+
+			IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
+
+			IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+			IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+			IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+			if (pMe->mFTP.bRemoteBrowsing)
+			{
+				IMENUCTL_SetBottomBarType(pMenu, BTBAR_OPTION_BACK);
+			}
+			else
+			{
+				IMENUCTL_SetBottomBarType(pMenu, BTBAR_OK_BACK);
+			}
+
+			IMENUCTL_SetSel(pMenu,	MENU_SEL);	// highlight the selected item
+			
+			(void) ISHELL_PostEvent( pMe->m_pShell,
+									 AEECLSID_BLUETOOTH_APP,
+									 EVT_USER_REDRAW,
+									 0,
+									 0);
+			return TRUE;
+		}
+		
+		case EVT_USER_REDRAW:	 
+		{	
+			(void)IMENUCTL_Redraw(pMenu);			
+			IMENUCTL_SetActive(pMenu, TRUE);
+			IDISPLAY_UpdateEx(pMe->m_pIDisplay, FALSE); 		
+			return TRUE;
+		}
+		
+		case EVT_DIALOG_END:
+		{
+			return TRUE;
+		}
+
+		case EVT_KEY_PRESS:
+		{
+			uint8   uIndex = 0x00; 
+			boolean ev_processed = TRUE;
+			char    szName[AEEBT_MAX_FILE_NAME+1];
+			AECHAR  wName[AEEBT_MAX_FILE_NAME+1]; 
+			AECHAR  wBuf[AEEBT_MAX_FILE_NAME+1];
+			int     result=0;
+
+			MSG_FATAL("***zzg BTappFtpBrowseDlgEvt bRemoteBrowsing=%d, bObjectTransfer=%d***", 
+				       pMe->mFTP.bRemoteBrowsing, pMe->mFTP.bObjectTransfer, 0);
+				
+			if (pMe->mFTP.bRemoteBrowsing)
+			{
+				switch(wParam)
+				{
+					case AVK_SELECT:	//Opition					
+					{
+						int			count;
+						int 		curItem;
+						uint16		curItemId;
+						CtlAddItem	ai;
+
+						count = IMENUCTL_GetItemCount(pMenu);					
+
+						//Add By zzg 2011_02_21
+						if (count > 0)
+						{
+							uIndex = IMENUCTL_GetSel(pMenu);
+
+							for (curItem = 0; curItem < count; curItem ++)
+							{
+								curItemId = IMENUCTL_GetItemID(pMenu, curItem);	
+
+								if (curItemId == uIndex)
+								{
+									pMe->m_folder_index = curItem;
+								}							
+							}
+						}
+						//Add End
+						
+						CLOSE_DIALOG(DLGRET_FTP_BROWSE_OPITION)
+						return TRUE;
+					}			
+
+					case AVK_INFO:	
+					{		
+						if (IMENUCTL_GetItemCount(pMenu) > 0)					
+						{
+							uIndex = IMENUCTL_GetSel(pMenu);
+							
+							MSG_FATAL("***zzg FtpBrowseOpitionDlgEvt AVK_INFO uIndex=%d***", uIndex, 0, 0);
+							
+														
+							// Get the name of the menu item selected on the screen
+							STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName)); 
+
+							MSG_FATAL("***zzg FtpBrowseOpition uIndex=%x, szTypeOfObj=%x***", 
+										uIndex, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, 0);
+
+							// If folder,  browse the folder 
+							if (pMe->mFTP.remoteObjects[uIndex].szTypeOfObj == AEEBT_FTP_FOLDER)
+							{
+								if (IBTEXTFTP_SetPath(pMe->mFTP.po, wName, AEEBT_FTP_SET_PATH_TO_FOLDER) != SUCCESS)
+								{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+									MSG_ERROR("Set Path to folder failed", 0, 0, 0);
+									BTApp_ShowMessage(pMe, IDS_MSG_FOLDER_BROWSING_FAILED, wName, 3);
+								}
+								else
+								{
+									// Storing folder name to display it later in case of failure
+									STRLCPY(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
+									BTApp_ShowBusyIcon(pMe); // wait for connect confirm
+								}
+							}			
+							
+						}
+
+						//CLOSE_DIALOG(DLGRET_CANCELED)
+						return TRUE;
+					}
+					
+					case AVK_CLR:
+					{					
+						MSG_FATAL("***zzg FtpBrowseDlgEvt AVK_CLR bObjectTransfer=%d***", pMe->mFTP.bObjectTransfer, 0, 0);
+						
+						if (pMe->mFTP.bObjectTransfer)
+						{
+							result = IBTEXTFTP_Abort(pMe->mFTP.po);
+							if (result != SUCCESS)
+							{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+								MSG_MED("Abort failed %d", result, 0, 0);
+								BTApp_ShowMessage(pMe, IDS_MSG_ABORT_FAILED, 0, 2);
+							}
+							else
+							{
+								pMe->mFTP.bObjectTransfer = FALSE;
+								MSG_MED("Aborted", 0, 0, 0);
+							}
+						}
+						else
+						{							
+							// Tries to set server's path back to parent and list the folder 
+							// contents of parent. This is for use case scenario when the user 
+							// migrates from one browsing menu to another backwards. 
+							// There is no need to handle clear key as that will be handled as 
+							// soon as CD fails. 
+							if (IBTEXTFTP_SetPath(pMe->mFTP.po, NULL, AEEBT_FTP_SET_PATH_TO_PARENT) != SUCCESS)
+							{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 								
+								MSG_ERROR("Set Path to parent failed", 0, 0, 0);
+								MSG_FATAL("***zzg FtpBrowseDlgEvt IBTEXTFTP_SetPath Failed!***", 0, 0, 0);
+							}
+							else
+							{
+								MSG_FATAL("***zzg FtpBrowseDlgEvt IBTEXTFTP_SetPath Succeed!***", 0, 0, 0);
+								
+								// Store 'PARENT' as interop device parent folder name is not known								
+								STRLCPY(szOperandex, PARENT_FOLDER_STR, sizeof(szOperandex));
+								BTApp_ShowBusyIcon(pMe); // wait for connect confirm
+							}
+							
+						}
+							  
+						CLOSE_DIALOG(DLGRET_CANCELED)
+						return TRUE;
+						
+					}
+
+					default:
+						break;
+				}
+			}			
+			else
+			{
+				switch(wParam)
+				{
+					case AVK_SELECT:	
+					case AVK_INFO:		
+					{
+						if (IMENUCTL_GetItemCount(pMenu) > 0)
+						{
+							uIndex = IMENUCTL_GetSel(pMenu);
+							MSG_FATAL("***zzg FtpBrowseDlgEvt uIndex=%d, szTypeOfObj=%d***", uIndex, pMe->mFTP.localObjects[uIndex].szTypeOfObj, 0);
+
+							DBGPRINTF("***zzg FtpBrowseDlgEvt szFolderFileName=%s***", pMe->mFTP.localObjects[uIndex].szFolderFileName);
+														
+							STRTOWSTR(pMe->mFTP.localObjects[uIndex].szFolderFileName, wName, sizeof(wName));
+
+							if (pMe->mFTP.localObjects[uIndex].szTypeOfObj == AEEBT_FTP_FILE)
+							{
+								if (STRLEN(pMe->mFTP.szLocalBrowsePath) + STRLEN(DIRECTORY_STR) + 
+									STRLEN(pMe->mFTP.localObjects[uIndex].szFolderFileName) > 
+									AEEBT_MAX_FILE_NAME)
+								{
+									MSG_ERROR("File name exceeds max", 0, 0, 0);
+									BTApp_ShowMessage(pMe, IDS_MSG_FILE_PUT_FAILED, wName, 3);
+									ev_processed = FALSE;
+									
+									return TRUE;
+								}
+
+								STRLCPY(szName, pMe->mFTP.szLocalBrowsePath, sizeof(szName));
+								STRLCAT(szName, DIRECTORY_STR, sizeof(szName));
+								STRLCAT(szName, pMe->mFTP.localObjects[uIndex].szFolderFileName, sizeof(szName));
+								STRTOWSTR(szName, wBuf, sizeof(wBuf));
+								STRLCPY(szOperandex, pMe->mFTP.localObjects[uIndex].szFolderFileName, sizeof(szOperandex));
+
+								if ((result = IBTEXTFTP_Put(pMe->mFTP.po, pMe->mFTP.localObjects[uIndex].szTypeOfObj, wBuf, wName)) != SUCCESS)
+								{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+									MSG_MED("Put file failed. Result=%d", result, 0, 0);
+									BTApp_ShowMessage(pMe, IDS_MSG_FILE_PUT_FAILED, wName, 3);
+									ev_processed = FALSE;
+								}
+								else         
+								{
+									pMe->mFTP.bObjectTransfer = TRUE;
+									//ShowBusyIcon(pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE);
+								}
+
+								CLOSE_DIALOG(DLGRET_CANCELED)
+								return TRUE;
+							}
+
+							// Folder name having more than AEEBT_MAX_FILE_NAME characters will 
+							//not be stored at all and hence there is no need to check for it 
+							if (STRLEN(pMe->mFTP.szLocalBrowsePath) + STRLEN(DIRECTORY_STR) + 
+								STRLEN(pMe->mFTP.localObjects[uIndex].szFolderFileName) > 
+								AEEBT_MAX_FILE_NAME * 2)
+							{
+								MSG_ERROR("Folder name path exceeds max*2", 0, 0, 0);
+								BTApp_ShowMessage(pMe, IDS_MSG_FOLDER_BROWSING_FAILED, wName, 3);
+								ev_processed = FALSE;
+
+								CLOSE_DIALOG(DLGRET_CANCELED)
+								return TRUE;
+							}
+
+							STRLCAT(pMe->mFTP.szLocalBrowsePath, DIRECTORY_STR, sizeof(pMe->mFTP.szLocalBrowsePath));
+							STRLCAT(pMe->mFTP.szLocalBrowsePath, pMe->mFTP.localObjects[uIndex].szFolderFileName, sizeof(pMe->mFTP.szLocalBrowsePath));
+
+							// Local browse path is copied on to szCurrentFolder so that PUT of a
+							//local device subfolder points to the right path to read and PUT the 
+							//contents on to the server 
+							STRLCPY(pMe->mFTP.szCurrentFolder, pMe->mFTP.szLocalBrowsePath, sizeof(pMe->mFTP.szCurrentFolder));
+
+							BTApp_GetNameOfLocalObjects(pMe, pMe->mFTP.szLocalBrowsePath);
+
+							CLOSE_DIALOG(DLGRET_FTP_BROWSE)	
+							//BTApp_BuildMenu(pMe, BT_APP_MENU_FTP_BROWSING);
+
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif
+						}
+
+						return TRUE;
+					}
+
+					case AVK_RIGHT:
+					{
+						if (IMENUCTL_GetItemCount(pMenu) > 0)
+						{
+							uIndex = IMENUCTL_GetSel(pMenu);
+
+							STRTOWSTR(pMe->mFTP.localObjects[uIndex].szFolderFileName, wName, sizeof(wName));
+
+							if (STRLEN(pMe->mFTP.szLocalBrowsePath) + STRLEN(DIRECTORY_STR) + 
+								STRLEN(pMe->mFTP.localObjects[uIndex].szFolderFileName) > 
+								AEEBT_MAX_FILE_NAME)
+							{
+								MSG_ERROR( "File / Folder name exceeds max", 0, 0, 0 );
+								BTApp_ShowMessage( pMe, IDS_MSG_FILE_PUT_FAILED, wName, 3 );
+								ev_processed = FALSE;
+
+								CLOSE_DIALOG(DLGRET_CANCELED)
+								return TRUE;
+							}
+
+							STRLCPY(szName, pMe->mFTP.szLocalBrowsePath, sizeof(szName));
+							STRLCAT(szName, DIRECTORY_STR, sizeof(szName));
+							STRLCAT(szName, pMe->mFTP.localObjects[uIndex].szFolderFileName, sizeof(szName));
+							DBGPRINTF("PUT file/folder name is %s", szName);
+
+							STRTOWSTR(szName, wBuf, sizeof(wBuf));
+							STRLCPY(szOperandex, pMe->mFTP.localObjects[uIndex].szFolderFileName, sizeof(szOperandex));
+
+							if ((result = IBTEXTFTP_Put(pMe->mFTP.po, pMe->mFTP.localObjects[uIndex].szTypeOfObj, wBuf, wName)) != SUCCESS)
+							{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif
+
+								MSG_MED( "Put file/folder failed. Result=0x%d", result, 0, 0 );
+								BTApp_ShowMessage( pMe, IDS_MSG_FILE_PUT_FAILED, wName, 3 );
+								ev_processed = FALSE;
+							}
+							else
+							{
+								pMe->mFTP.bObjectTransfer = TRUE;
+								//ShowBusyIcon(pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE);
+							}
+						}
+
+						CLOSE_DIALOG(DLGRET_CANCELED)
+						return TRUE;
+					}
+					
+						
+					case AVK_CLR:
+					{
+						MSG_FATAL("***zzg FtpBrowseDlgEvt LocalBrowse AVK_CLR bObjectTransfer=%d***", pMe->mFTP.bObjectTransfer, 0, 0);
+						
+						if (pMe->mFTP.bObjectTransfer)
+						{
+							result = IBTEXTFTP_Abort(pMe->mFTP.po);
+							if (result != SUCCESS)
+							{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+								MSG_MED( "Abort failed %d", result, 0, 0 );
+								BTApp_ShowMessage(pMe, IDS_MSG_ABORT_FAILED, 0, 2);
+							}
+							else
+							{
+								pMe->mFTP.bObjectTransfer = FALSE;
+								MSG_MED("Aborted", 0, 0, 0);
+							} 
+						}
+						else
+						{
+							//Add By zzg 2011_02_24		
+							
+							char *pszTemp; 
+							char path[AEEBT_MAX_FILE_NAME * 2 + 1];
+							uint8 tmplen;
+							uint8 pathlen;
+							
+							pszTemp = STRRCHR(pMe->mFTP.szLocalBrowsePath, DIRECTORY_CHAR);
+
+							tmplen = STRLEN(pszTemp);
+							pathlen = STRLEN(pMe->mFTP.szCurrentFolder);
+
+
+							MSG_FATAL("***zzg pszTemp=%s, szCurrentFolder=%s***", pszTemp, pMe->mFTP.szCurrentFolder, 0);
+							
+							//STRLCPY(pMe->mFTP.szCurrentFolder, pszTemp, sizeof(pMe->mFTP.szCurrentFolder));
+							STRLCPY(path, pMe->mFTP.szCurrentFolder, (pathlen-tmplen)*sizeof(char));		
+							MEMSET(pMe->mFTP.szCurrentFolder, 0, sizeof(pMe->mFTP.szCurrentFolder));
+							STRLCPY(pMe->mFTP.szCurrentFolder, path, sizeof(pMe->mFTP.szCurrentFolder));								
+							
+							DBGPRINTF("***zzg pszTemp=%s, path=%s***", pszTemp, path);
+							MSG_FATAL("***zzg pszTemp=%s, szCurrentFolder=%s***", pszTemp, pMe->mFTP.szCurrentFolder, 0);
+							
+							BTApp_GetNameOfLocalObjects(pMe, pMe->mFTP.szCurrentFolder);
+
+							CLOSE_DIALOG(DLGRET_FTP_BROWSE)									
+							return TRUE;	
+							//BTApp_BuildMenu(pMe, BT_APP_MENU_FTP_BROWSING);
+							
+							//Add End
+						}
+
+						CLOSE_DIALOG(DLGRET_CANCELED)						
+						return TRUE;
+					}
+					default:
+					{
+						break;
+					}
+				}
+			}			
+			
+			return TRUE;		
+		}
+
+		default:
+		{
+			break;
+		}
+	}
+	return FALSE;
+}	
+
+static boolean HandleFtpBrowseOpitionDialogEvent(CBTApp * pMe,AEEEvent eCode,uint16 wParam,uint32 dwParam)
+{	 
+	PARAM_NOT_REF(dwParam)
+		
+	IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_FTP_BROWSE_OPITION);
+
+	if (pMenu == NULL)
+	{
+		return FALSE;
+	}	
+
+	switch (eCode)
+	{
+		case EVT_DIALOG_INIT:			
+		{
+			AECHAR		WTitle[40] = {0};		
+			
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+										AEE_APPSBTAPP_RES_FILE, 							   
+										IDS_OPTIONS,
+										WTitle,
+										sizeof(WTitle));
+			
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);  	
+
+			if (pMe->mFTP.bRemoteBrowsing)
+			{
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_BT_SELECT, IDS_BT_SELECT, NULL, 0);		
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_GET, IDS_GET, NULL, 0);		
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DELETE, IDS_DELETE, NULL, 0);	
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_CREATE_FOLDER, IDS_FTP_CREATE_FOLDER, NULL, 0);	
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_MOVE_TO_FOLDER, IDS_FTP_MOVE_TO_FOLDER, NULL, 0);	
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_MOVE_TO_ROOT, IDS_FTP_MOVE_TO_ROOT, NULL, 0);	
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_CLIENT, IDS_FTP_CLIENT, NULL, 0);	
+			}
+			
+			return TRUE;
+		}
+
+		case EVT_DIALOG_START:
+		{
+			IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
+
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+            IMENUCTL_SetBottomBarType(pMenu, BTBAR_OK_BACK);
+
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_BLUETOOTH_APP,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+            return TRUE;
+		}
+		
+		case EVT_USER_REDRAW:		
+		{			
+			(void)IMENUCTL_Redraw(pMenu);			
+			return TRUE;
+		}
+
+		case EVT_DIALOG_END:
+		{
+			return TRUE;
+		}
+
+		case EVT_KEY_PRESS: 	  
+		{	
+			switch (wParam)
+			{
+				case AVK_CLR:
+				{
+					CLOSE_DIALOG(DLGRET_CANCELED)
+					return TRUE;
+				}
+
+				default:
+				{
+					break;
+				}
+			}
+			
+			return TRUE;
+		}
+		
+		case EVT_COMMAND:	
+		{			
+			uint8   uIndex = 0x00; 
+			boolean ev_processed = TRUE;
+			AECHAR  wName[AEEBT_MAX_FILE_NAME+1];
+			AECHAR  wBuf[AEEBT_MAX_FILE_NAME+1];
+			int     result = 0;
+
+			
+			pMe->m_currDlgId = wParam;	
+			pMe->m_prompt_state_id = BTAPPST_FTP_BROWSE_OPITION;	
+			
+			switch (wParam)
+			{			
+				case IDS_BT_SELECT:
+				{
+					int			count;
+					int 		curItem;
+					uint16		curItemId;
+					CtlAddItem	ai;
+					
+					count = IMENUCTL_GetItemCount(pMenu);					
+					
+					if (IMENUCTL_GetItemCount(pMenu) > 0)					
+					{
+						MSG_FATAL("***zzg FtpBrowseOpitionDlgEvt IDS_BT_SELECT m_folder_index=%d***", pMe->m_folder_index, 0, 0);
+						
+						uIndex = pMe->m_folder_index;
+						
+						// Get the name of the menu item selected on the screen
+						STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName)); 
+
+						MSG_FATAL("***zzg FtpBrowseOpition uIndex=%x, szTypeOfObj=%x***", 
+									uIndex, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, 0);
+
+						// Check whether the selected item is a folder or file. If file, 
+						//then GET the file. If folder, then browse the folder 
+						if (pMe->mFTP.remoteObjects[uIndex].szTypeOfObj == AEEBT_FTP_FILE)
+						{
+							//if (pMe->mFTP.u8StorageDevice == STORAGE_DEV_MEM_CARD)
+							//Default Device is STORAGE_DEV_MEM_CARD
+							{
+								STRLCPY(szOperandex, AEEFS_CARD0_DIR, sizeof(szOperandex));
+							}
+
+							if ((STRLEN(szOperandex) + 
+								STRLEN(pMe->mFTP.remoteObjects[uIndex].szFolderFileName )) > 
+								AEEBT_MAX_FILE_NAME) 
+							{
+								MSG_ERROR( "File / Folder name exceeds max", 0, 0, 0 );
+								BTApp_ShowMessage( pMe, IDS_MSG_FILE_GET_FAILED, wName, 3 );
+								break;            
+							}
+
+							STRLCAT(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
+							// Remove if the file already exists
+							if (IFILEMGR_Test(pMe->mFTP.pIFileMgr, szOperandex) == SUCCESS)
+							{
+								if (IFILEMGR_Remove(pMe->mFTP.pIFileMgr, szOperandex) != SUCCESS)
+								{
+									DBGPRINTF("Could not remove the file %s", szOperandex);
+								}
+							}
+
+							STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));
+
+							if (IBTEXTFTP_Get(pMe->mFTP.po, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, wBuf, wName) != SUCCESS)
+							{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+
+								MSG_ERROR("FTP file Get failed", 0, 0, 0);
+								MSG_FATAL("***zzg FTP file Get failed***", 0, 0, 0);
+
+								BTApp_ShowMessage(pMe, IDS_MSG_FILE_GET_FAILED, wName, 3);
+							}
+							else
+							{
+								//Copying the object name just to display once GET is over
+								STRLCPY(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
+								pMe->mFTP.bObjectTransfer = TRUE;
+								//ShowBusyIcon(pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE);
+							}
+							break;
+						}			
+
+						if (IBTEXTFTP_SetPath(pMe->mFTP.po, wName, AEEBT_FTP_SET_PATH_TO_FOLDER) != SUCCESS)
+						{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+							MSG_ERROR("Set Path to folder failed", 0, 0, 0);
+							BTApp_ShowMessage(pMe, IDS_MSG_FOLDER_BROWSING_FAILED, wName, 3);
+						}
+						else
+						{
+							// Storing folder name to display it later in case of failure
+							STRLCPY(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
+							BTApp_ShowBusyIcon(pMe); // wait for connect confirm
+						}
+					}
+
+					//CLOSE_DIALOG(DLGRET_CANCELED)
+					return TRUE;
+				}					
+				case IDS_GET:						
+				{
+					if (IMENUCTL_GetItemCount(pMenu) > 0)
+					{
+						MSG_FATAL("***zzg FtpBrowseOpitionDlgEvt IDS_BT_SELECT m_folder_index=%d***", pMe->m_folder_index, 0, 0);
+						uIndex = pMe->m_folder_index;
+						
+						//uIndex = IMENUCTL_GetSel(pMe->m_pIMenu);
+						
+						// Get the name of the menu item selected on the screen
+						STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName));
+
+						//if (pMe->mFTP.u8StorageDevice == STORAGE_DEV_MEM_CARD)
+						//Default device is STORAGE_DEV_MEM_CARD
+						{
+							STRLCPY(szOperandex, AEEFS_CARD0_DIR, sizeof(szOperandex));
+						}
+
+						if ((STRLEN(szOperandex) + 
+							STRLEN(pMe->mFTP.remoteObjects[uIndex].szFolderFileName)) > 
+							AEEBT_MAX_FILE_NAME) 
+						{
+							MSG_ERROR("File / Folder name exceeds max", 0, 0, 0);
+							BTApp_ShowMessage(pMe, IDS_MSG_FILE_GET_FAILED, wName, 3);
+							break;            
+						}
+
+						STRLCAT(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
+						STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));
+						
+						DBGPRINTF("***zzg GET file/folder name is %s***", szOperandex);
+						DBGPRINTF("***zzg GET szFolderFileName name is %s***", pMe->mFTP.remoteObjects[uIndex].szFolderFileName);						
+
+						MSG_FATAL("***zzg FtpBrowseOpitionDlgEvt IDS_BT_SELECT uIndex=%d, szTypeOfObj=%d***", 
+									uIndex, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, 0);
+
+						if (pMe->mFTP.remoteObjects[uIndex].szTypeOfObj == AEEBT_FTP_FILE)
+						{
+							// Remove if the file already exists
+							if (IFILEMGR_Test(pMe->mFTP.pIFileMgr, szOperandex) == SUCCESS)
+							{
+								if (IFILEMGR_Remove(pMe->mFTP.pIFileMgr, szOperandex) != SUCCESS)
+								{
+									MSG_MED("Could not remove the file", 0, 0, 0);
+								}
+							}
+						}
+						else
+						{
+							// Remove if the folder already exists
+							if (IFILEMGR_Test(pMe->mFTP.pIFileMgr, szOperandex) == SUCCESS )
+							{
+								if (BTAppFTP_RemoveDir(pMe, szOperandex) != SUCCESS)
+								{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+
+									MSG_ERROR("Folder exists but couldn't be removed", 0, 0, 0);
+									MSG_MED("FTP Folder Get failed", 0, 0, 0);
+
+									MSG_FATAL("***zzg File / Folder name exceeds max***", 0, 0, 0);
+									
+									BTApp_ShowMessage(pMe, IDS_MSG_FILE_GET_FAILED, wName, 3);
+									break;
+								}
+							}
+						}
+
+						if (IBTEXTFTP_Get(pMe->mFTP.po, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, wBuf, wName) != SUCCESS)
+						{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+
+							MSG_ERROR("FTP File / Folder Get failed", 0, 0, 0);
+
+							MSG_FATAL("***zzg FTP File / Folder Get failed***", 0, 0, 0);
+
+							BTApp_ShowMessage(pMe, IDS_MSG_FILE_GET_FAILED, wName, 3);
+						}
+						else
+						{ 
+							// Copying th	e object name just to display once GET is over 
+							STRLCPY(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
+							pMe->mFTP.bObjectTransfer = TRUE;
+							//ShowBusyIcon(pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE);
+						}
+					}
+
+					//CLOSE_DIALOG(DLGRET_CANCELED)
+					return TRUE;		
+				}
+				case IDS_DELETE:						
+				{					
+					if (IMENUCTL_GetItemCount(pMenu) > 0)
+					{
+						MSG_FATAL("***zzg FtpBrowseOpitionDlgEvt IDS_BT_SELECT m_folder_index=%d***", pMe->m_folder_index, 0, 0);
+						uIndex = pMe->m_folder_index;
+						//uIndex = IMENUCTL_GetSel(pMenu);
+						
+						// Get the name of the menu item selected on the screen
+						STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName));
+
+						// Just storing folder name to display it later 
+						STRLCPY(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
+
+						if (IBTEXTFTP_Delete(pMe->mFTP.po, wName) != SUCCESS)
+						{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+
+							MSG_ERROR("FTP_Delete() failed", 0, 0, 0);
+							BTApp_ShowMessage(pMe, IDS_MSG_FILE_DELETE_FAILED, wName, 3);
+						}
+						else
+						{
+							BTApp_ShowBusyIcon(pMe); // wait for result
+						}
+					}
+
+					//CLOSE_DIALOG(DLGRET_CANCELED)
+					return TRUE;		
+				}
+				case IDS_FTP_CREATE_FOLDER:						
+				{
+					//Add By zzg 2011_02_23
+					pMe->m_edit_id = IDS_FTP_CREATE_FOLDER;
+					pMe->m_bEditNeedStr = FALSE;		
+
+					pMe->m_edit_state_id = BTAPPST_FTP_BROWSE;								
+
+					pMe->m_eDlgRet = DLGRET_BT_EDIT; 
+					(void) ISHELL_EndDialog(pMe->m_pShell);		
+					//Add End
+		
+					//BTApp_BuildMenu( pMe, BT_APP_MENU_FTP_CREATE_FLDR );
+					
+					return TRUE;		
+				}
+				case IDS_FTP_MOVE_TO_FOLDER:						
+				{
+					STRLCPY(szOperandex, NEW_FOLDER_NAME, sizeof(szOperandex));
+
+					//Add By zzg 2011_02_23
+					pMe->m_edit_id = IDS_FTP_MOVE_TO_FOLDER;
+					pMe->m_bEditNeedStr = FALSE;		
+
+					pMe->m_edit_state_id = BTAPPST_FTP_BROWSE;								
+
+					pMe->m_eDlgRet = DLGRET_BT_EDIT; 
+					(void) ISHELL_EndDialog(pMe->m_pShell);		
+					//Add End
+
+					
+          			//BTApp_BuildMenu(pMe, BT_APP_MENU_FTP_MOVE_TO_FLDR);
+					return TRUE;		
+				}
+				case IDS_FTP_MOVE_TO_ROOT:						
+				{
+					if (IBTEXTFTP_SetPath(pMe->mFTP.po, NULL, AEEBT_FTP_SET_PATH_TO_ROOT) != SUCCESS)
+					{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+						MSG_ERROR("Set Path to ROOT failed", 0, 0, 0);
+						CLOSE_DIALOG(DLGRET_CANCELED)	
+					}
+					else
+					{
+						//Store 'ROOT' as interop device root folder name is not known 
+						STRLCPY(szOperandex, ROOT_FOLDER_STR, sizeof(szOperandex));
+						BTApp_ShowBusyIcon(pMe); // wait for connect confirm
+					}
+					//CLOSE_DIALOG(DLGRET_CANCELED)
+					return TRUE;		
+				}
+				case IDS_FTP_CLIENT:						
+				{						
+					MSG_FATAL("***zzg FtpBrowseOpitionDlgEvt IDS_FTP_CLIENT m_pActiveDlgID=%d***", pMe->m_pActiveDlgID, 0, 0);
+					
+					//Add By zzg 2011_02_23		
+					if ((pMe->m_pActiveDlgID == IDD_BT_FTP_BROWSE)	|| (pMe->m_pActiveDlgID == IDD_BT_FTP_BROWSE_OPITION))
+					{
+						pMe->m_eDlgRet = DLGRET_FTP_CLIENT; 		
+						(void) ISHELL_EndDialog(pMe->m_pShell);
+					}		
+					else
+					{
+						CLOSE_DIALOG(DLGRET_CANCELED)
+					}
+					//Add End	
+					return TRUE;		
+				}
+				default:
+				{
+					ASSERT_NOT_REACHABLE;
+				}
+			}
+			
+			return TRUE;
+		}
+		default:
+		{
+			break;
+		}
+	}
+	return FALSE;	 
+}
+
 static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
     AEEEvent eCode,
     uint16 wParam,
@@ -4039,7 +5780,6 @@ static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
 	{
 		case EVT_DIALOG_INIT:			
 		{
-			MSG_FATAL("***zzg MsgBoxDialog EVT_DIALOG_INIT***", 0, 0, 0);
 			//IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
 			return TRUE;
 		}
@@ -4050,20 +5790,18 @@ static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
 			AECHAR		WTitle[40] = {0};		
 			
 			(void)ISHELL_LoadResString(pMe->m_pShell,
-										AEE_APPSBTAPP_RES_FILE, 							   
-										IDS_BT_TITLE,
-										WTitle,
-										sizeof(WTitle));
-
-			MSG_FATAL("***zzg MsgBoxDialog EVT_DIALOG_START***", 0, 0, 0);
+									   AEE_APPSBTAPP_RES_FILE, 							   
+									   IDS_BT_TITLE,
+									   WTitle,
+									   sizeof(WTitle));
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);  	
 
 			// set rect for info display area
-			SETAEERECT ( &rc, pMe->m_rect.x, 
-						 pMe->m_rect.y, 
-						 pMe->m_rect.dx, 
-						 pMe->m_rect.dy - BOTTOMBAR_HEIGHT); // leave room for SK menu
+			SETAEERECT(&rc, pMe->m_rect.x, 
+					   pMe->m_rect.y, 
+					   pMe->m_rect.dx, 
+					   pMe->m_rect.dy - BOTTOMBAR_HEIGHT); // leave room for SK menu
 					 
 			ISTATIC_SetRect(pStatic, &rc );
 
@@ -4105,6 +5843,7 @@ static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
 			{
 				// get the text
 				ISHELL_LoadResString(pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, pMe->m_msg_id, pMe->pText2, LONG_TEXT_BUF_LEN*sizeof(AECHAR));
+
 				if (pMe->wMsgBuf != NULL)
 				{
 					// build the message
@@ -4161,7 +5900,9 @@ static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
 		}
 		
 		default:
+		{
 			break;
+		}
 	}
 
 	return FALSE;		 
@@ -4185,32 +5926,28 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
         return FALSE;
     }
 	
-    MSG_FATAL("%x, %x ,%x,HandleProMptDialogEvent",eCode,wParam,dwParam);
-   
+    MSG_FATAL("***zzg HandleProMptDialogEvent eCode=%x, wParam=%x ,dwParam=%x***",eCode,wParam,dwParam);   
 
     switch (eCode)
     {
         case EVT_DIALOG_INIT:			
-		{
-			MSG_FATAL("***zzg HandleProMptDialogEvent EVT_DIALOG_INIT***", 0, 0, 0);
-			
+		{			
 			IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);			
             return TRUE;
 		}
 
         case EVT_DIALOG_START:   
         {		
-			AECHAR		WTitle[40] = {0};	
-
-			MSG_FATAL("***zzg HandleProMptDialogEvent EVT_DIALOG_START***", 0, 0, 0);
-			
-			(void)ISHELL_LoadResString( pMe->m_pShell,
-										AEE_APPSBTAPP_RES_FILE, 							   
-										IDS_BT_TITLE,
-										WTitle,
-										sizeof(WTitle));
-			 
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+			AECHAR		WTitle[40] = {0};				
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+									   AEE_APPSBTAPP_RES_FILE, 							   
+									   IDS_BT_TITLE,
+									   WTitle,
+									   sizeof(WTitle));
+			if (pMe->m_pIAnn != NULL) 
+			{
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+			}
 						
 			IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
 			IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
@@ -4220,17 +5957,17 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
 			IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
-			IMENUCTL_SetBottomBarType(pMenu,BTBAR_OK_BACK);
+			IMENUCTL_SetBottomBarType(pMenu, BTBAR_OK_BACK);
 
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_BLUETOOTH_APP,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);     
-						
+            (void)ISHELL_PostEvent(pMe->m_pShell,
+                                   AEECLSID_BLUETOOTH_APP,
+                                   EVT_USER_REDRAW,
+                                   0,
+                                   0);   
      
 	 		return TRUE;
 	  }
+		
 	  case EVT_USER_REDRAW:    
 	  {   
 			PromptMsg_Param_type m_PromptMsg;
@@ -4238,29 +5975,26 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 			AECHAR  wstrText[MSGBOX_MAXTEXTLEN];
 			AECHAR* pText = pMe->pText2;
 
-			(void) ISHELL_LoadResString(pMe->m_pShell,
-						  AEE_APPSBTAPP_RES_FILE,
-						  pMe->m_prompt_id,
-						  wstrText,
-						  sizeof(wstrText));
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+  									   AEE_APPSBTAPP_RES_FILE,
+  									   pMe->m_prompt_id,
+  									   wstrText,
+  									   sizeof(wstrText));
 
 			MEMSET(&m_PromptMsg, 0, sizeof(PromptMsg_Param_type));
 
 			if (pMe->m_prompt_id == 0)
 			{
-				// use the wArg as msg
-				pText = pMe->wPromptBuf;
+				pText = pMe->wPromptBuf;		// use the wArg as msg
 			}
-			else if ((pMe->m_prompt_id == IDS_PROMPT_PROCEED_BONDING)
-				     && (WSTRLEN(pMe->mRM.wSSPPassKey) != 0))
+			else if ((pMe->m_prompt_id == IDS_PROMPT_PROCEED_BONDING) && (WSTRLEN(pMe->mRM.wSSPPassKey) != 0))
 			{
 				// get the text
 				ISHELL_LoadResString(pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, pMe->m_prompt_id, pMe->pText2, SHORT_TEXT_BUF_LEN*sizeof( AECHAR ) );
 
 				if (pMe->wPromptBuf != NULL)
 				{
-					// build the message
-					//WSPRINTF( pMe->pText1, LONG_TEXT_BUF_LEN*sizeof(AECHAR), pMe->pText2, pMe->wPromptBuf);
+					// build the message					
 					WSPRINTF(pMe->pText1, LONG_TEXT_BUF_LEN*sizeof(AECHAR), pMe->pText2, pMe->wPromptBuf, pMe->mRM.wSSPPassKey);
 					pText = pMe->pText1;
 				}
@@ -4295,15 +6029,21 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 			return TRUE;
 
 		}
+	  
         case EVT_DIALOG_END:
-            return TRUE;
+        {
+			return TRUE;
+        }
 
         case EVT_KEY:
-            switch(wParam)
+        {
+			switch (wParam)
             {
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                {
+					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
+                }
 					
 				case AVK_INFO:
 				case AVK_SELECT:
@@ -4348,12 +6088,16 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 					return TRUE;
 				}
                 default:
-                    break;
+                {
+					break;
+                }
             }
             return TRUE;
-			
+        }
         default:
-            break;
+        {
+			break;
+        }
     }
     return FALSE;
 }
@@ -4366,14 +6110,13 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 {	 
 	PARAM_NOT_REF(dwParam)
 
-	ITextCtl *pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_EDIT);	
-
 #ifdef FEATURE_BT_2_1
   	AEEBTDeviceInfo* pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
   	AEEBTKeypressType keyPressType;
-  	MSG_LOW( "TextEditHndlEv - pMe->mRM.ioCaptype = %d", pMe->mRM.ioCaptype, 0, 0 );
-#endif /* FEATURE_BT_2_1 */
+  	//MSG_LOW( "TextEditHndlEv - pMe->mRM.ioCaptype = %d", pMe->mRM.ioCaptype, 0, 0 );
+#endif 
 
+	ITextCtl *pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_EDIT);	
 
 	ITEXTCTL_GetText(pIText, pMe->pText2, SHORT_TEXT_BUF_LEN );
 
@@ -4382,7 +6125,7 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
         return FALSE;
     }
 	
-    MSG_FATAL("***zzg HandleBtTextEditDialogEvent: %x, %x ,%x", eCode,wParam,dwParam);   
+    MSG_FATAL("***zzg HandleBtTextEditDialogEvent: eCode=%x, wParam=%x, dwParam=%x***", eCode,wParam,dwParam);   
 
     switch (eCode)
     {
@@ -4403,19 +6146,33 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 			SETAEERECT ( &rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx, pMe->m_rect.dy - BOTTOMBAR_HEIGHT);
 			ITEXTCTL_SetRect(pIText, &rc );
 
-			switch(pMe->m_edit_id)
+			switch (pMe->m_edit_id)
 			{
 				case IDS_PASS_KEY:
+				case IDS_FTP_CLIENT:	
+				{
 					IM = AEE_TM_NUMBERS;
 					maxLen = MAX_PASSKEY_LEN;
 					pText     = pMe->mRM.wPassKey;
-      				pText[0] = NULL; // don't remember previous pass key
-      				prop = TP_FRAME | TP_PASSWORD;
+      				pText[0] = NULL; // don't remember previous pass key					
+      				prop = TP_FRAME | TP_PASSWORD | TP_BT_PROPERTY;
 					break;
+				}
+				case IDS_FTP_MOVE_TO_FOLDER:
+				case IDS_FTP_CREATE_FOLDER:
+				{
+					prop	= TP_FRAME | TP_STARKEY_SWITCH | TP_BT_PROPERTY;
+					IM		= AEE_TM_LETTERS;					
+					maxLen	= AEEBT_MAX_FILE_NAME;
+					pText	= pMe->mFTP.wFolderName;
+					break;
+				}
 				default:
+				{
 					IM = AEE_TM_LETTERS;
 					maxLen = MAX_PASSKEY_LEN;
 					break;
+				}
 			}
 			
 			ITEXTCTL_SetProperties(pIText, prop);
@@ -4425,12 +6182,11 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 			ITEXTCTL_SetText(pIText, pText, WSTRLEN(pText));			
 			ITEXTCTL_SetInputMode(pIText, IM);			
 
-
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_BLUETOOTH_APP,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);
+            (void)ISHELL_PostEvent(pMe->m_pShell,
+                                   AEECLSID_BLUETOOTH_APP,
+                                   EVT_USER_REDRAW,
+                                   0,
+                                   0);
             return TRUE;
         }
 
@@ -4443,17 +6199,17 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 
 			if (pMe->m_edit_id == 0)
 			{
-				// use the wArg as msg
 				pText = pMe->wEditBuf;
 			}
 			else
 			{
 				// get the text
-				ISHELL_LoadResString(pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, pMe->m_edit_id, pMe->pText2, SHORT_TEXT_BUF_LEN*sizeof( AECHAR ) );
+				ISHELL_LoadResString(pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, pMe->m_edit_id, pMe->pText2, SHORT_TEXT_BUF_LEN*sizeof(AECHAR));
+
 				if (pMe->wEditBuf != NULL)
 				{
 					// build the message
-					WSPRINTF( pMe->pText1, LONG_TEXT_BUF_LEN*sizeof(AECHAR), pMe->pText2, pMe->wEditBuf);
+					WSPRINTF(pMe->pText1, LONG_TEXT_BUF_LEN*sizeof(AECHAR), pMe->pText2, pMe->wEditBuf);
 					pText = pMe->pText1;
 				}
 			}
@@ -4462,11 +6218,21 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 			{		
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, pText);	
 			}
+			else if (pMe->m_edit_id == 0)
+			{
+				(void) ISHELL_LoadResString(pMe->m_pShell,
+		                                    AEE_APPSBTAPP_RES_FILE,
+		                                    IDS_PASSWORD,		                                    
+		                                    WTitle,
+		                                    sizeof(wstrText));
+				
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
+			}
 			else
 			{
 				(void) ISHELL_LoadResString(pMe->m_pShell,
 		                                    AEE_APPSBTAPP_RES_FILE,
-		                                    pMe->m_edit_id,
+		                                    pMe->m_edit_id,		                                    
 		                                    WTitle,
 		                                    sizeof(wstrText));
 				
@@ -4482,15 +6248,19 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 			IDISPLAY_UpdateEx(pMe->m_pIDisplay, FALSE); 
             return TRUE;
         }
+		
         case EVT_DIALOG_END:
-            return TRUE;
+        {
+			return TRUE;
+        }
 
         case EVT_KEY:
-            switch(wParam)
+        {
+			switch (wParam)
             {
                 case AVK_CLR:
 				{
-					switch(pMe->m_edit_id)
+					switch (pMe->m_edit_id)
 					{
 						case IDS_PASS_KEY:
 						{
@@ -4498,17 +6268,18 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 							{
 								pMe->mRM.wPassKey[0] = NULL;
 #ifdef FEATURE_BT_2_1
-								if ((pMe->mRM.ioCaptype == AEEBT_RM_IOC_KEYBOARD_ONLY) 
-									&& (pMe->mRM.bPassKey == TRUE))
+								if ((pMe->mRM.ioCaptype == AEEBT_RM_IOC_KEYBOARD_ONLY) && (pMe->mRM.bPassKey == TRUE))
 								{
 									MSG_MED("TextEditHandleEvent - RemoteDev BDa=%2x%2x%2x",
-											pDev->bdAddr.uAddr[0], pDev->bdAddr.uAddr[1], 
-											pDev->bdAddr.uAddr[2] );
-									pMe->mRM.bPassKey = FALSE ;
+											pDev->bdAddr.uAddr[0], 
+											pDev->bdAddr.uAddr[1], 
+											pDev->bdAddr.uAddr[2]);
+									
+									pMe->mRM.bPassKey = FALSE;
 									IBTEXTRM_PasskeyReply(pMe->mRM.po, &pDev->bdAddr, "");
 								}
 								else
-#endif /* FEATURE_BT_2_1 */
+#endif 
 								{
 									IBTEXTRM_PinReply(pMe->mRM.po, &pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr, pMe->mRM.wPassKey );
 								}
@@ -4517,6 +6288,18 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 							pMe->mRM.bBonding = FALSE;					
 							break;
 						}
+
+						case IDS_FTP_MOVE_TO_FOLDER:
+						case IDS_FTP_CREATE_FOLDER:
+						case IDS_FTP_CLIENT:
+						{
+							if ( ISHELL_EndDialog(pMe->m_pShell) == EFAILED )
+					        {
+					          MSG_ERROR( "TextEditHndlEv - ISHELL_EndDialog() failed", 0, 0, 0 );
+					        }
+							break;
+						}
+						
 						default:
 						{
 							break;
@@ -4541,7 +6324,7 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 							DBGPRINTF_FATAL("TextEditHndlSave-BT_APP_MENU_PASSKEY with pMe->pText2=%s",pMe->pText2); 
 							MSG_MED( "TextEditHndlSave, pMe->mRM.bBonding=%d ", pMe->mRM.bBonding,0,0); 
 							MSG_MED( "TextEditHndlSave, pMe->mRM.ioCaptype=%d ", pMe->mRM.ioCaptype,0,0); 
-#endif /* FEATURE_BT_2_1 */
+#endif 
 							if (pMe->mRM.bBonding)
 							{
 #ifdef FEATURE_BT_2_1
@@ -4571,7 +6354,7 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 									BTApp_ShowBusyIcon( pMe );
 								}
 								else
-#endif /* FEATURE_BT_2_1 */
+#endif 
 								{									
 									if (IBTEXTRM_Bond(pMe->mRM.po, &pDev->bdAddr, pMe->mRM.wPassKey) != SUCCESS)
 									{
@@ -4618,7 +6401,7 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 									BTApp_ShowBusyIcon( pMe );
 								}
 								else
-#endif /* FEATURE_BT_2_1 */
+#endif 
 								{
 									if (IBTEXTRM_PinReply( pMe->mRM.po, &pDev->bdAddr, pMe->mRM.wPassKey) != SUCCESS)
 									{
@@ -4634,22 +6417,86 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 							
 							break;
 						}
-						default:
-							break;
-					}
 
-					MSG_FATAL("***zzg BtTextEditDlg switch end***", 0, 0, 0);
+						case IDS_FTP_CLIENT:
+						{
+							WSTRLCPY(pMe->mFTP.wPassWord, pMe->pText2, ARR_SIZE(pMe->mFTP.wPassWord));
+							
+							if (IBTEXTFTP_Authenticate(pMe->mFTP.po, &pMe->mFTP.remoteBDAddr,NULL, pMe->mFTP.wPassWord) != SUCCESS)
+							{
+								MSG_ERROR( "TextEditSave - FTP_Authenticate failed", 0, 0, 0 );
+							}
+							else
+							{
+								BTApp_ShowBusyIcon( pMe );
+							}
+							break;
+						}
+
+						case IDS_FTP_CREATE_FOLDER:
+						{
+							WSTRLCPY(pMe->mFTP.wFolderName, pMe->pText2, ARR_SIZE(pMe->mFTP.wFolderName));
+							
+							if (IBTEXTFTP_CreateFolder(pMe->mFTP.po, pMe->mFTP.wFolderName) != SUCCESS)
+							{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+								MSG_ERROR( "FTP Create Folder failed", 0, 0, 0 );
+								BTApp_ShowMessage( pMe, IDS_FTP_MSG_FOLDER_CREATION_FAILED, pMe->mFTP.wFolderName, 3);
+							}
+							else
+							{
+								BTApp_ShowBusyIcon( pMe ); /* Wait for create folder response */
+							}
+							break;
+						}
+
+						case IDS_FTP_MOVE_TO_FOLDER:
+						{
+							WSTRLCPY(pMe->mFTP.wFolderName, pMe->pText2, ARR_SIZE(pMe->mFTP.wFolderName));
+							
+							if (IBTEXTFTP_SetPath(pMe->mFTP.po, pMe->mFTP.wFolderName, AEEBT_FTP_SET_PATH_TO_FOLDER) != SUCCESS)
+							{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+								MSG_ERROR("Set Path to folder failed", 0, 0, 0);
+								BTApp_ShowMessage(pMe, IDS_MSG_FOLDER_BROWSING_FAILED, pMe->mFTP.wFolderName, 3);
+							}
+							else
+							{
+								BTApp_ShowBusyIcon(pMe); 
+							}
+							
+							break;
+						}
+						
+						default:
+						{
+							break;
+						}
+					}
+					
 					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
 				}
+				
                 default:
-                    break;
+                {
+					break;
+                }
             }
-            return TRUE;
 			
+			return TRUE;
+        }
+        		
         default:
-            break;
+        {
+			break;
+        }
     }
+	
     return FALSE;
 }	
 
@@ -4666,33 +6513,28 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
 
 	boolean 	 bRegistered = FALSE; 	  
 
-
-	MSG_FATAL("***zzg HandleSendFileDialogEvent bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);
-	
+	MSG_FATAL("***zzg HandleSendFileDialogEvent bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);	
 	
     if (pMenu == NULL)
     {
         return FALSE;
     }
 	
-    MSG_FATAL("%x, %x ,%x,HandleSendFileDialogEvent",eCode,wParam,dwParam);
-   
+    MSG_FATAL("***zzg HandleSendFileDialogEvent eCode=%x, wParam=%x, dwParam=%x***",eCode,wParam,dwParam);   
 
     switch (eCode)
     {
         case EVT_DIALOG_INIT:			
-		{
-			
+		{			
 			AECHAR 		WTitle[40] = {0};			
 
 			(void)ISHELL_LoadResString(pMe->m_pShell,
-				                        AEE_APPSBTAPP_RES_FILE,                                
-				                        IDS_OPP_CLIENT,
-				                        WTitle,
-				                        sizeof(WTitle));
+				                       AEE_APPSBTAPP_RES_FILE,                                
+				                       IDS_OPP_CLIENT,
+				                       WTitle,
+				                       sizeof(WTitle));
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);   
-
 
 			// Add individual entries to the Menu
 			if ( pMe->mOPP.bConnected == FALSE )
@@ -4710,9 +6552,9 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
 		}
 
         case EVT_DIALOG_START:
-            // 给菜单各菜单项加数字编号图标
+        {
+			// 给菜单各菜单项加数字编号图标
             //BTApp_SetItemNumIcon(pMenu);
-
 			
 			//Add By zzg 2010_11_22
 			//If  server, change to client
@@ -4743,52 +6585,68 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
-            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+            IMENUCTL_SetBottomBarType(pMenu, BTBAR_SELECT_BACK);
 
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_BLUETOOTH_APP,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                    AEECLSID_BLUETOOTH_APP,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);
             return TRUE;
+        }
 
         case EVT_USER_REDRAW:    			
-            (void)IMENUCTL_Redraw(pMenu);
+        {
+			(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
+        }
 
         case EVT_DIALOG_END:
-            return TRUE;
+        {
+			return TRUE;
+        }
 
         case EVT_KEY:
-            switch(wParam)
+        {
+			switch (wParam)
             {
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                {
+					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
+                }
 
                 default:
-                    break;
+                {
+					break;
+                }
             }
             return TRUE;
+        }
 
         case EVT_COMMAND:           
-            pMe->m_currDlgId = wParam;		
+		{
+			pMe->m_currDlgId = wParam;		
+			
             switch (wParam)
             {
             	case IDS_CONNECT:	
 				{
 					MSG_FATAL("***zzg SendFileDlg IDS_CONNECT bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);
-					if ( pMe->mOPP.bRegistered == FALSE )
+					if (pMe->mOPP.bRegistered == FALSE)
 					{
+						pMe->m_obex_list_id = IDD_BT_SEND_FILE;
 						CLOSE_DIALOG(DLGRET_BT_OBEX_LIST_SERVERS)
 					}					
                     return TRUE;
             	}
+				
 				case IDS_PUSH:
 				{
 					BTApp_OPPPushEx(pMe, pMe->m_pfilepath, AEEBT_OPP_UNKNOWN_TYPE);	
                     return TRUE;
 				}
+				
 				case IDS_DISCONNECT:	
 				{
 					if (IBTEXTOPP_Disconnect(pMe->mOPP.po) != SUCCESS)
@@ -4801,13 +6659,20 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
 					}
                     return TRUE;						
 				}
+				
 				default:
-				    ASSERT_NOT_REACHABLE;
+				{
+					ASSERT_NOT_REACHABLE;
+				}
             }
+			
             return TRUE;
+        }
 
-        default:
-            break;
+		default:
+        {
+			break;
+		}
     }
     return FALSE;
 }	
@@ -4830,7 +6695,7 @@ static boolean HandleObexListServersDialogEvent(CBTApp *pMe,
         return FALSE;
     }
 	
-    MSG_FATAL("*** zzg %x, %x ,%x,HandleObexListServersDialogEvent***",eCode,wParam,dwParam);   
+    MSG_FATAL("***zzg HandleObexListServersDialogEvent eCode=%x, wParam=%x, dwParam=%x,***",eCode,wParam,dwParam);   
 
     switch (eCode)
     {
@@ -4839,14 +6704,12 @@ static boolean HandleObexListServersDialogEvent(CBTApp *pMe,
 			AECHAR 		WTitle[40] = {0};			
 
 			(void)ISHELL_LoadResString(pMe->m_pShell,
-				                        AEE_APPSBTAPP_RES_FILE,                                
-				                        IDS_OBEX_SERVERS,
-				                        WTitle,
-				                        sizeof(WTitle));
+				                       AEE_APPSBTAPP_RES_FILE,                                
+				                       IDS_OBEX_SERVERS,
+				                       WTitle,
+				                       sizeof(WTitle));
 			
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle); 
-
-			MSG_FATAL("***zzg HandleObexListServersDialogEvent EVT_DIALOG_INIT***", 0, 0, 0);
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle); 		
 			
             return TRUE;
 		}
@@ -4863,16 +6726,12 @@ static boolean HandleObexListServersDialogEvent(CBTApp *pMe,
 #ifdef FEATURE_BT_2_1
 			AECHAR*               pwName;
 			AECHAR                wBuf[ 5 ];
-			STRTOWSTR( "...", wBuf, sizeof(wBuf) );
-#endif /* FEATURE_BT_2_1 */
-
+			STRTOWSTR("...", wBuf, sizeof(wBuf));
+#endif 
 			enumerator.control = AEEBT_RM_EC_MATCH_SERVICE_CLASS;
 			enumerator.svcCls  = AEEBT_COD_SC_OBJECT_TRANSFER;
 			stringID           = IDS_OBEX_SERVERS;
-			msgID              = IDS_MSG_NO_OBEX_SERVERS;
-		
-
-			MSG_FATAL("***zzg ObexListServers EVT_DIALOG_START***", 0, 0, 0);
+			msgID              = IDS_MSG_NO_OBEX_SERVERS;			
 
 			if (pMe->mRM.po == NULL)
 			{
@@ -4942,7 +6801,7 @@ static boolean HandleObexListServersDialogEvent(CBTApp *pMe,
 
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
-			#error code not present
+#error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
 
             IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
@@ -4964,6 +6823,7 @@ static boolean HandleObexListServersDialogEvent(CBTApp *pMe,
                                      0);
             return TRUE;
         }
+		
         case EVT_USER_REDRAW:    
 		{	
 			(void)IMENUCTL_Redraw(pMenu);
@@ -4973,41 +6833,71 @@ static boolean HandleObexListServersDialogEvent(CBTApp *pMe,
 			IDISPLAY_UpdateEx(pMe->m_pIDisplay, FALSE);			
             return TRUE;
         }
+		
         case EVT_DIALOG_END:
-            return TRUE;
+        {
+			return TRUE;
+        }
 
         case EVT_KEY_PRESS:
-            switch(wParam)
+        {
+			switch(wParam)
             {
             	case AVK_INFO:	
 				case AVK_SELECT:
 				{
-					if (IMENUCTL_GetItemCount(pMenu) > 0)
+
+					//Add By zzg 2011_02_16
+					MSG_FATAL("***zzg ObexListServerDlgHandle m_obex_list_id=%d***", pMe->m_obex_list_id, 0, 0);
+
+					if (pMe->m_obex_list_id == IDD_BT_FTP_CLIENT)					
 					{
-						pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
-						MENU_SET_SEL(pMe->mRM.uCurDevIdx);
-						
+						if (IMENUCTL_GetItemCount(pMenu) > 0)
+						{
+							pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
+							MENU_SET_SEL(pMe->mRM.uCurDevIdx);
 #ifdef FEATURE_BT_2_1
 						//Client side service security settings
-						IBTEXTRM_SetSecBySvcCls(pMe->mRM.po, AEEBT_SD_SERVICE_CLASS_OBEX_OBJECT_PUSH, pMe->mOPP.srvSecType,FALSE,FALSE);
+							IBTEXTRM_SetSecBySvcCls(pMe->mRM.po, AEEBT_SD_SERVICE_CLASS_OBEX_FILE_TRANSFER, pMe->mFTP.srvSecType,FALSE,FALSE);
 #endif 
-						BTApp_OPPConnect( pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr);  			  
-						
-						//CLOSE_DIALOG(DLGRET_DEVICEINFO)
-					}				 				  
+							BTApp_FTPConnect(pMe, &pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr);	
+						}
+					}
+					//Add End
+					else if (pMe->m_obex_list_id == IDD_BT_SEND_FILE)	
+					{
+						if (IMENUCTL_GetItemCount(pMenu) > 0)
+						{
+							pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
+							MENU_SET_SEL(pMe->mRM.uCurDevIdx);
+							
+#ifdef FEATURE_BT_2_1
+							//Client side service security settings
+							IBTEXTRM_SetSecBySvcCls(pMe->mRM.po, AEEBT_SD_SERVICE_CLASS_OBEX_OBJECT_PUSH, pMe->mOPP.srvSecType,FALSE,FALSE);
+#endif 
+							BTApp_OPPConnect( pMe, &pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr);  
+							//CLOSE_DIALOG(DLGRET_DEVICEINFO)
+						}	
+					}
+					
 					return TRUE;
             	}
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                {
+					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
-
+                }
                 default:
-                    break;
+                {
+					break;
+                }
             }
             return TRUE;        
-
+        }
         default:
-            break;
+        {
+			break;
+        }
     }
 	return FALSE;
 }	
@@ -5031,7 +6921,6 @@ static boolean HandleFileProgressDialogEvent(CBTApp *pMe,
 	{
 		case EVT_DIALOG_INIT:			
 		{
-			MSG_FATAL("***zzg FileProgressDialog EVT_DIALOG_INIT***", 0, 0, 0);
 			//IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
 			return TRUE;
 		}
@@ -5046,8 +6935,6 @@ static boolean HandleFileProgressDialogEvent(CBTApp *pMe,
 										IDS_BT_TITLE,
 										WTitle,
 										sizeof(WTitle));
-
-			MSG_FATAL("***zzg FileProgressDialog EVT_DIALOG_START***", 0, 0, 0);
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);  	
 
@@ -5173,16 +7060,13 @@ static boolean HandleFileProgressDialogEvent(CBTApp *pMe,
 		}
 		
 		default:
+		{
 			break;
+		}
 	}
 
 	return FALSE;		 
 }	
-
-
-
-
-
 
 static boolean BTApp_SaveTextEdit( CBTApp* pMe, uint16 DlgID)
 {
@@ -5191,24 +7075,24 @@ static boolean BTApp_SaveTextEdit( CBTApp* pMe, uint16 DlgID)
 		return FALSE;
 	}
 
-	switch(DlgID)
+	switch (DlgID)
 	{
 		case DLGRET_EDIT_NAME:
 		{
-			if ( WSTRCMP( pMe->mRM.myInfo.wName, pMe->pText2 ) != 0 )
+			if (WSTRCMP(pMe->mRM.myInfo.wName, pMe->pText2) != 0)
 			{
-				WSTRLCPY( pMe->mRM.myInfo.wName, pMe->pText2, ARR_SIZE(pMe->mRM.myInfo.wName) );
+				WSTRLCPY(pMe->mRM.myInfo.wName, pMe->pText2, ARR_SIZE(pMe->mRM.myInfo.wName));
 				
-				if ( IBTEXTRM_SetName(pMe->mRM.po, pMe->mRM.myInfo.wName) != SUCCESS )
+				if (IBTEXTRM_SetName(pMe->mRM.po, pMe->mRM.myInfo.wName) != SUCCESS)
 				{
-					MSG_ERROR( "TextEditSave - SetName failed", 0, 0, 0 );
+					MSG_ERROR("TextEditSave - SetName failed", 0, 0, 0);
 #ifdef FEATURE_APP_TEST_AUTOMATION
-					#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
 				}
 				else
 				{
-					BTApp_ShowBusyIcon( pMe );
+					BTApp_ShowBusyIcon(pMe);
 				}
 			}	
 			break;
@@ -5217,18 +7101,18 @@ static boolean BTApp_SaveTextEdit( CBTApp* pMe, uint16 DlgID)
 #ifdef FEATURE_BT_2_1
 		case DLGRET_EDIT_SHORTNAME:
 		{   
-			if ( WSTRCMP( pMe->mRM.myInfo.wShortName, pMe->pText2 ) != 0 )
+			if (WSTRCMP(pMe->mRM.myInfo.wShortName, pMe->pText2) != 0)
 			{
-				WSTRLCPY( pMe->mRM.myInfo.wShortName, pMe->pText2, ARR_SIZE( pMe->mRM.myInfo.wShortName ) );
+				WSTRLCPY(pMe->mRM.myInfo.wShortName, pMe->pText2, ARR_SIZE(pMe->mRM.myInfo.wShortName));
 
-				if(( WSTRLEN( pMe->mRM.myInfo.wShortName ) > AEEBT_MAX_NICKNAME_LEN ) 
-					|| IBTEXTRM_SetNickName( pMe->mRM.po, NULL, pMe->mRM.myInfo.wShortName ) != SUCCESS )
+				if((WSTRLEN( pMe->mRM.myInfo.wShortName) > AEEBT_MAX_NICKNAME_LEN) 
+					|| IBTEXTRM_SetNickName(pMe->mRM.po, NULL, pMe->mRM.myInfo.wShortName) != SUCCESS)
 				{
-				  MSG_ERROR( "TextEditSave - SetShortName failed", 0, 0, 0 );
+					MSG_ERROR( "TextEditSave - SetShortName failed", 0, 0, 0 );
 				}
 				else
 				{
-				  BTApp_ShowBusyIcon( pMe );
+					BTApp_ShowBusyIcon(pMe);
 				}
 			}     
 			break;
@@ -5236,19 +7120,19 @@ static boolean BTApp_SaveTextEdit( CBTApp* pMe, uint16 DlgID)
 
 		case DLGRET_EDIT_MANUDATA:
 		{
-			if ( WSTRCMP( pMe->mRM.wManuData, pMe->pText2 ) != 0 )
+			if (WSTRCMP(pMe->mRM.wManuData, pMe->pText2) != 0)
 			{
-				char szText[ AEEBT_MAX_EIR_MANUF_DATA_LEN + 1 ];
-				WSTRLCPY( pMe->mRM.wManuData, pMe->pText2, ARR_SIZE( pMe->mRM.wManuData ) );
-				WSTRTOSTR( pMe->mRM.wManuData, szText, sizeof(szText) );
+				char szText[AEEBT_MAX_EIR_MANUF_DATA_LEN + 1];
+				WSTRLCPY(pMe->mRM.wManuData, pMe->pText2, ARR_SIZE(pMe->mRM.wManuData));
+				WSTRTOSTR(pMe->mRM.wManuData, szText, sizeof(szText));
 				
-				if (( IBTEXTRM_SetEIRManufData( pMe->mRM.po,(uint8*)szText, STRLEN( szText ) ) != SUCCESS ) )
+				if ((IBTEXTRM_SetEIRManufData(pMe->mRM.po,(uint8*)szText, STRLEN(szText)) != SUCCESS))
 				{
 					MSG_ERROR( "TextEditSave- SetManuData failed", 0, 0, 0 );
 				}
 				else
 				{
-					BTApp_ShowBusyIcon( pMe );
+					BTApp_ShowBusyIcon(pMe);
 				} 
 			}
 			break;
@@ -5274,10 +7158,9 @@ static boolean BTApp_ClearDiscoverableEx( CBTApp* pMe )
 
   ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY) BTApp_ClearDiscoverableEx, pMe);
 
-  if ((result = IBTEXTSD_SetDiscoverable( pMe->mSD.po, FALSE )) != SUCCESS)
+  if ((result = IBTEXTSD_SetDiscoverable(pMe->mSD.po, FALSE)) != SUCCESS)
   {
-  	 MSG_FATAL("***zzg IBTEXTSD_SetDiscoverable FALSE***", 0, 0, 0);
-	 
+  	 MSG_FATAL("***zzg IBTEXTSD_SetDiscoverable FALSE***", 0, 0, 0);	 
      //BTApp_ShowMessage( pMe, IDS_MSG_DISCOVERABLE_NOT_CLEARED, NULL, 2 );
   }
   else

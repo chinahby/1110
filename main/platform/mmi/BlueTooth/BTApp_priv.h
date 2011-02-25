@@ -111,6 +111,17 @@ typedef enum DLGRetValue
 	DLGRET_SET_DISCOVERABLE,		//IDD_BT_DISCOVERABLE
 	DLGRET_SET_IOCAPABILITY,		//IDD_BT_IO_CAPABILITY
 	DLGRET_SET_DEBUGKEY,			//IDD_BT_DEBUG_KEY
+
+
+	DLGRET_FTP,						//IDD_BT_FTP
+	DLGRET_FTP_SERVER,				//IDD_BT_FTP_SERVER
+	DLGRET_FTP_CLIENT,				//IDD_BT_FTP_CLIENT
+	DLGRET_FTP_SETTING,				//IDD_BT_FTP_SETTING
+	DLGRET_FTP_SERVER_REGISTER,		//IDD_BT_FTP_SERVER_REGISTER
+	DLGRET_FTP_BROWSE,				//IDD_BT_FTP_BROWSE
+	DLGRET_FTP_BROWSE_OPITION,		//IDD_BT_FTP_BROWSE_OPITION
+
+	
 	DLGRET_BT_MSGBOX,				//IDD_BT_MSGBOX
 	DLGRET_PROMPT,            		//IDD_PROMPT_MESSEGE
 
@@ -151,6 +162,15 @@ typedef enum _BTAppState
 	BTAPPST_SET_DISCOVERABLE,
 	BTAPPST_SET_IOCAPABILITY,
 	BTAPPST_SET_DEBUGKEY,
+
+	BTAPPST_FTP,
+	BTAPPST_FTP_SERVER,
+	BTAPPST_FTP_CLIENT,
+	BTAPPST_FTP_SETTING,
+	BTAPPST_FTP_SERVER_REGISTER,
+	BTAPPST_FTP_BROWSE,
+	BTAPPST_FTP_BROWSE_OPITION,
+	
 	BTAPPST_BT_MSGBOX,
 	BTAPPST_PROMPT,
 
@@ -231,6 +251,10 @@ typedef struct _CBTApp
 
   boolean		  m_app_flag;			//标示是否当前应用时BLUETOOTHAPP
   uint16  		  m_user_wParam;		//存储EVT_USER的WPARAM
+
+  uint16		  m_folder_index;		//FTP_Browse时的文件夹INDEX
+
+  uint16		  m_obex_list_id;		
 
 
   AEEBTProgressInfo m_fileprogInfo;
@@ -365,6 +389,17 @@ extern boolean BTApp_DoUnbondAll( CBTApp* pMe );
 extern boolean BTApp_DoRemoveAll( CBTApp* pMe );
 extern void BTApp_DoUnbondOne( CBTApp* pMe );
 extern void BTApp_BuildBondMenu( CBTApp* pMe );
+//Add End
+
+//Add By zzg 2011_02_16
+extern int BTApp_FTPListFolder( CBTApp* pMe );
+extern int BTAppFTP_RemoveDir(CBTApp* pMe, char* pszDir);
+extern void BTApp_GetNameOfLocalObjects(CBTApp* pMe, char *pszDir);
+//Add End
+
+//Add By zzg 2011_02_25
+extern void bt_rm_refresh_efs_param(void);
+
 //Add End
 
 

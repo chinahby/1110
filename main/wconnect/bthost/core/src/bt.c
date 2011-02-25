@@ -1816,6 +1816,7 @@ LOCAL void bt_init_efs_params
   void
 )
 {
+  MSG_FATAL("***zzg bt_init_efs_params bt_efs_params 1***", 0, 0, 0);
 
   bt_efs_params.version          = BT_EFS_PARAMS_FILE_VER;
   bt_efs_params.ag_ad_mic_gain   = BT_AG_DEFAULT_HS_VOLUME_LEVEL;

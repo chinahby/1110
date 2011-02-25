@@ -533,6 +533,8 @@ int OEMBTExtFTP_Connect(
   boolean userId = TRUE;
   boolean accessControl = TRUE;  
 
+  MSG_FATAL("***zzg OEMBTExtFTP_Connect Start***", 0, 0, 0);
+
   if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                       (OEMINSTANCE*)&pMe ) != TRUE )
   {
@@ -546,9 +548,9 @@ int OEMBTExtFTP_Connect(
   
   /* Call the API to initiate the Client AUTH data 
    */  
-  MSG_LOW("Calling bt_obex_client_authenticate. pMe->auth = %d",
-           pMe->auth, 0, 0 );
-  if(pMe->auth)
+  MSG_LOW("Calling bt_obex_client_authenticate. pMe->auth = %d", pMe->auth, 0, 0);
+  
+  if (pMe->auth)
   {
       MSG_LOW("Call to bt_obex_client_authenticate",
                0, 0, 0 );
@@ -567,8 +569,11 @@ int OEMBTExtFTP_Connect(
       }
 
   }  
-  stat = bt_cmd_pf_ftp_cli_connect( pMe->appId, (bt_bd_addr_type*)pBDAddr,
-                                    uChannelNumber );
+  
+  stat = bt_cmd_pf_ftp_cli_connect(pMe->appId, (bt_bd_addr_type*)pBDAddr,uChannelNumber);
+
+  MSG_FATAL("***zzg OEMBTExtFTP_Connect stat=%x***", stat, 0, 0);
+  
   return OEMBTExtFTP_CheckCmdStatus( stat );
 }
 
@@ -605,6 +610,9 @@ int OEMBTExtFTP_SetPath(
   {
     return EFAILED;
   }
+
+  MSG_FATAL("***zzg FTP_SetPath flag=%d***", flag, 0, 0);
+  
   if ( (pwPathName == NULL) && (flag == AEEBT_FTP_SET_PATH_TO_FOLDER) )
   {
     return EBADPARM;
@@ -718,6 +726,8 @@ int OEMBTExtFTP_Put(
   fileInfoEx.pClasses = 0;
   fileInfoEx.nClassesSize = 0;
 
+  MSG_FATAL("***zzg OEMBTExtFTP_Put***", 0, 0, 0);
+
   if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                       (OEMINSTANCE*)&pMe ) != TRUE )
   {
@@ -828,6 +838,8 @@ int OEMBTExtFTP_Put(
     }
   }
 
+  MSG_FATAL("***zzg OEMBTExtFTP_Put stat=%x***", stat, 0, 0);
+
   return OEMBTExtFTP_CheckCmdStatus( stat );
 }
 
@@ -847,6 +859,8 @@ int OEMBTExtFTP_Get(
   IFile*              pFile = NULL;
   char                szFileName[ 2*AEEBT_MAX_FILE_NAME + 1 ];
 
+  MSG_FATAL("***zzg OEMBTExtFTP_Get 1***", 0, 0, 0);
+
   if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                       (OEMINSTANCE*)&pMe ) != TRUE )
   {
@@ -858,6 +872,8 @@ int OEMBTExtFTP_Get(
     return EBADPARM;
   }
 
+  MSG_FATAL("***zzg OEMBTExtFTP_Get 2***", 0, 0, 0);
+
   pCurAC = ENTER_APP_CONTEXT( pMe->pac );
   bFileFound = FALSE;
   AEEBT_FROM_WSTR( pwLocalName, szFileName, sizeof(szFileName) );
@@ -867,6 +883,8 @@ int OEMBTExtFTP_Get(
   }
   (void) LEAVE_APP_CONTEXT( pCurAC );
 
+  MSG_FATAL("***zzg OEMBTExtFTP_Get 3 bFileFound=%d***", bFileFound, 0, 0);
+
   if ( bFileFound != FALSE )
   {
     return EBADPARM;
@@ -874,6 +892,8 @@ int OEMBTExtFTP_Get(
 
   pMe->bytesRcvd = 0;
   pMe->bytesSent = 0;
+
+  MSG_FATAL("***zzg OEMBTExtFTP_Get 4 objType=%d, bIsServer=%d***", objType, pMe->bIsServer, 0);
 
   if ( pMe->bIsServer == FALSE )
   {
@@ -893,6 +913,8 @@ int OEMBTExtFTP_Get(
       stat = bt_cmd_pf_ftp_cli_get( pMe->appId, pMe->clientConnID,
                                     (AECHAR*)pwLocalName, 
                                     (AECHAR*)pwRemoteName );
+
+	  MSG_FATAL("***zzg OEMBTExtFTP_Get 5 stat=%x***", stat, 0, 0);
     }
     else
     {
@@ -901,6 +923,7 @@ int OEMBTExtFTP_Get(
       stat = bt_cmd_pf_ftp_cli_tree_get( pMe->appId, pMe->clientConnID,
                                          (AECHAR*)pwLocalName, 
                                          (AECHAR*)pwRemoteName );
+	  MSG_FATAL("***zzg OEMBTExtFTP_Get 6 stat=%x***", stat, 0, 0);
     }
     TASKFREE();
   }
@@ -924,6 +947,9 @@ int OEMBTExtFTP_Get(
     stat = bt_cmd_pf_ftp_srv_open_done(
       pMe->appId, pMe->serverConnID, 
       (bt_pf_ftp_handle_type) pFile, 0, BT_CS_GN_SUCCESS );
+
+	MSG_FATAL("***zzg OEMBTExtFTP_Get 7 stat=%x***", stat, 0, 0);
+	
     TASKFREE();
 
     if ( (stat != BT_CS_GN_PENDING) && (stat != BT_CS_GN_SUCCESS) )
@@ -936,6 +962,8 @@ int OEMBTExtFTP_Get(
       pMe->currReq = AEEBT_FTP_REQ_GET;
     }
   }
+
+  MSG_FATAL("***zzg OEMBTExtFTP_Get 8***", 0, 0, 0);
 
   return OEMBTExtFTP_CheckCmdStatus( stat );
 }

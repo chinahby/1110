@@ -62,6 +62,10 @@ extern void    BTApp_ProcessFTPNotifications( CBTApp* pMe, AEEEvent evt,
 extern void    BTApp_FTPConnect( CBTApp* pMe, AEEBTBDAddr* pBDAddr );
 extern void    BTApp_FTPLoadBrowsingMenu( CBTApp* pMe );
 
+//Add By zzg 2011_02_23
+extern void    BTApp_FTPUpdateSendingProgress(CBTApp* pMe);
+//Add End
+
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif /* FEATURE_APP_TEST_AUTOMATION */

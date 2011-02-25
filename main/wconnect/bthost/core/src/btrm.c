@@ -8951,6 +8951,8 @@ LOCAL void bt_rm_check_busy_timeout
         {
           MSG_FATAL("***zzg bonding_app_id=%x***", conn_ptr->bonding_app_id, 0, 0);
           bt_rm_update_conn_hc_error( conn_ptr, BT_BE_HW_FAILURE );
+
+		  MSG_FATAL("***zzg bt_rm_finish_bond_attempt 1***", 0, 0, 0);
           bt_rm_finish_bond_attempt( conn_ptr );
         }
         else if ( conn_ptr->rname_app_id != BT_APP_ID_NULL )
@@ -12373,6 +12375,7 @@ LOCAL void bt_rm_ev_hc_auth_complete
       }
 #endif /* BT_SWDEV_2_1_SSP */
 
+	  MSG_FATAL("***zzg bt_rm_finish_bond_attempt 2***", 0, 0, 0);
       bt_rm_finish_bond_attempt( conn_ptr );
 
       bt_rm_security_updated( conn_ptr );
@@ -12877,6 +12880,7 @@ LOCAL void bt_rm_remote_name_complete_processing
   if ( ( conn_ptr->bonding_app_id != BT_APP_ID_NULL ) &&
        ( conn_ptr->send_pin_req_pending == FALSE ) )
   {
+  	MSG_FATAL("***zzg bt_rm_finish_bond_attempt 3***", 0, 0, 0);
       bt_rm_finish_bond_attempt( conn_ptr );
   }
 #endif
@@ -12886,7 +12890,9 @@ LOCAL void bt_rm_remote_name_complete_processing
   {
     conn_ptr->pin_code_reply_len_bytes = 0;
     conn_ptr->pin_code_reply_neg_sent  = FALSE;
-
+	
+	MSG_FATAL("***zzg BT_EV_RM_PIN_REQUEST 1***", 0, 0, 0);
+	
     ev_rm_pcr.ev_hdr.ev_type = BT_EV_RM_PIN_REQUEST;
     ev_rm_pcr.ev_msg.ev_rm_pinrq.bd_addr =
                         conn_ptr->dev_ptr->dev_public.bd_addr;
@@ -13273,6 +13279,7 @@ LOCAL void bt_rm_conn_complete_processing
     if ( conn_ptr->rname_app_id == BT_APP_ID_NULL )
 #endif
     {
+    	MSG_FATAL("***zzg bt_rm_finish_bond_attempt 4***", 0, 0, 0);
       bt_rm_finish_bond_attempt( conn_ptr );
     }
 
@@ -13539,6 +13546,7 @@ LOCAL void bt_rm_ev_hc_conn_complete_acl
       bt_rm_finish_pending_sec_ui( conn_ptr,
                                     (BT_HCI_REASON( hc_status )) );
 
+	MSG_FATAL("***zzg bt_rm_finish_bond_attempt 5***", 0, 0, 0);
       bt_rm_finish_bond_attempt( conn_ptr );
 
       bt_rm_pin_req_resp_failed( conn_ptr,
@@ -15932,6 +15940,7 @@ LOCAL void bt_rm_ev_hc_disconnection_complete
       bt_rm_finish_pending_sec_ui( conn_ptr,
                                     (BT_HCI_REASON( hc_status )) );
 
+	MSG_FATAL("***zzg bt_rm_finish_bond_attempt 6***", 0, 0, 0);
       bt_rm_finish_bond_attempt( conn_ptr );
 
       bt_rm_pin_req_resp_failed( conn_ptr,
@@ -16931,6 +16940,8 @@ LOCAL void bt_rm_ev_hc_pin_code_request
         conn_ptr->pin_code_reply_len_bytes = 0;
         conn_ptr->pin_code_reply_neg_sent  = FALSE;
 
+		MSG_FATAL("***zzg BT_EV_RM_PIN_REQUEST 2***", 0, 0, 0);
+
         ev_rm_pcr.ev_hdr.ev_type = BT_EV_RM_PIN_REQUEST;
         ev_rm_pcr.ev_msg.ev_rm_pinrq.bd_addr = *bd_addr_ptr;
 
@@ -17046,6 +17057,8 @@ LOCAL void bt_rm_ev_hc_pin_code_request
       {
         conn_ptr->pin_code_reply_len_bytes = 0;
         conn_ptr->pin_code_reply_neg_sent  = FALSE;
+
+		MSG_FATAL("***zzg BT_EV_RM_PIN_REQUEST 3***", 0, 0, 0);
 
         ev_rm_pcr.ev_hdr.ev_type = BT_EV_RM_PIN_REQUEST;
         ev_rm_pcr.ev_msg.ev_rm_pinrq.bd_addr = *bd_addr_ptr;
@@ -18552,6 +18565,7 @@ LOCAL void bt_rm_hc_ev_qc_ext_cs_create_conn
 
         bt_rm_update_conn_hc_error( conn_ptr, (bt_error_code_type)hc_status );
 
+		MSG_FATAL("***zzg bt_rm_finish_bond_attempt 7***", 0, 0, 0);
         bt_rm_finish_bond_attempt( conn_ptr );
 
         bt_rm_init_link( conn_ptr, BT_ACL_LINK );
@@ -19126,6 +19140,7 @@ LOCAL void bt_rm_process_event
   bt_ev_msg_type*  ev_msg_ptr
 )
 {
+	MSG_FATAL("***zzg bt_rm_process_event ev_type=%x***", ev_msg_ptr->ev_hdr.ev_type, 0, 0);
 
   switch ( ev_msg_ptr->ev_hdr.ev_type )
   {
@@ -19722,6 +19737,8 @@ bt_cmd_status_type bt_cmd_rm_get_local_info
 )
 {
 
+  MSG_FATAL("***zzg bt_cmd_rm_get_local_info***", 0, 0, 0);
+  
   BT_MSG_API( "BT RM CMD RX: RM Get Loc Inf AID %x", bt_app_id, 0, 0 );
 
   TASKLOCK();
@@ -19758,12 +19775,25 @@ bt_cmd_status_type bt_cmd_rm_get_local_info
 
   }
 
+  MSG_FATAL("***zzg before bt_efs_params.bt_name=%d***", bt_efs_params.bt_name, 0, 0);
+
   if ( bt_name_str_ptr != NULL )
   {
     bt_efs_params.bt_name[ BT_MAX_NAME_LEN ] = 0;
+
+		{
+			int temp=0;
+			for (; temp<sizeof(bt_efs_params.bt_name); temp++)
+			{
+				MSG_FATAL("***zzg bt_efs_params[%d]=%c***", temp, bt_efs_params.bt_name[temp], 0);
+			}
+		}
+	
     memcpy( (void *)(bt_name_str_ptr),
             (void *)(bt_efs_params.bt_name),
             BT_MAX_NAME_LEN );
+
+	MSG_FATAL("***zzg after bt_efs_params.bt_name=%d***", bt_efs_params.bt_name, 0, 0);
   }
 
   if ( security_ptr != NULL ) //TODO
@@ -19801,6 +19831,9 @@ bt_cmd_status_type bt_cmd_rm_get_local_info_ext
 )
 {
 
+
+	MSG_FATAL("***zzg bt_cmd_rm_get_local_info_ext***", 0, 0, 0);
+	
   BT_MSG_API( "BT RM CMD RX: RM Get Loc Inf Ext AID %x", bt_app_id, 0, 0 );
 
   /* Call the Get local info function */
@@ -19842,6 +19875,8 @@ LOCAL void bt_rm_cmd_set_local_info
 {
 
   dsm_item_type*  dsm_ptr;
+
+  MSG_FATAL("***zzg bt_rm_cmd_set_local_info***", 0, 0, 0);
 
   BT_MSG_API( "BT RM CMD RX: RM Set LI C %x N %x AID %x",
               rm_sli_ptr->cmd_msg.cmd_rm_setif.cod_valid,
@@ -27034,6 +27069,142 @@ void bt_rm_nv_init
 }
 #endif /* BT_SWDEV_2_1_NV */
 #endif /* FEATURE_BT_2_1 */
+
+
+//Add By zzg 2011_02_25
+
+boolean bt_save_efs_params
+( 
+  void
+)
+{
+
+  boolean              success = FALSE;
+
+#ifdef FEATURE_EFS
+
+  boolean              write_fault = FALSE;
+  fs_open_xparms_type  fs_open_xparms;
+  fs_rsp_msg_type      fs_rsp_msg;
+  fs_handle_type       fs_handle;
+  
+  fs_open( BT_EFS_PARAMS_FILE_NAME, FS_OA_READWRITE,
+           NULL, NULL, &fs_rsp_msg );
+
+  if ( fs_rsp_msg.any.status == FS_NONEXISTENT_FILE_S )
+  {
+    BT_MSG_HIGH( "BT: Creating EFSparams file", 0, 0, 0 );
+
+    fs_open_xparms.create.cleanup_option   = FS_OC_CLOSE;
+    fs_open_xparms.create.buffering_option = FS_OB_ALLOW;
+    fs_open_xparms.create.attribute_mask   = FS_FA_UNRESTRICTED;
+
+    fs_open( BT_EFS_PARAMS_FILE_NAME, FS_OA_CREATE, 
+             &fs_open_xparms, NULL, &fs_rsp_msg );
+  }
+
+  if ( fs_rsp_msg.any.status == FS_OKAY_S )
+  {
+    fs_handle = fs_rsp_msg.open.handle;
+
+    fs_write( fs_handle, &bt_efs_params, 
+              sizeof( bt_efs_params_type ), NULL, &fs_rsp_msg );
+
+    if ( (fs_rsp_msg.any.status != FS_OKAY_S) ||
+         (fs_rsp_msg.write.count != sizeof( bt_efs_params_type )) )
+    {
+      write_fault = TRUE;
+
+      BT_ERR( "BT: EFSparams Wr S %x C %x %x",
+              fs_rsp_msg.any.status, fs_rsp_msg.write.count,
+              sizeof( bt_efs_params_type ) );
+    }
+    
+    fs_close( fs_handle, NULL, &fs_rsp_msg );
+
+    if ( fs_rsp_msg.any.status == FS_OKAY_S )
+    {
+      if ( write_fault == FALSE )
+      {
+        success = TRUE;
+      }
+    }
+    else
+    {
+      BT_ERR( "BT RM: Wr EFSparams close S %x",
+              fs_rsp_msg.any.status, 0, 0 );
+    }
+  }
+  else
+  {
+    BT_ERR( "BT: EFSparams open S %x",
+            fs_rsp_msg.any.status, 0, 0);
+  }
+
+#else /*  No EFS  */
+  
+  BT_ERR( "BT: Wr EFSparams NO EFS!", 0, 0, 0 );
+
+#endif /* FEATURE_EFS */
+
+  return ( success );
+
+}
+
+
+/*===========================================================================
+FUNCTION
+  bt_rm_refresh_efs_param
+
+DESCRIPTION
+===========================================================================*/
+void bt_rm_refresh_efs_param
+(
+  void
+)
+{
+  MSG_FATAL("***zzg bt_rm_refresh_efs_param***", 0, 0, 0);
+  
+  bt_efs_params.version          = BT_EFS_PARAMS_FILE_VER;
+  bt_efs_params.ag_ad_mic_gain   = BT_AG_DEFAULT_HS_VOLUME_LEVEL;
+  bt_efs_params.ag_ad_spkr_gain  = BT_AG_DEFAULT_HS_VOLUME_LEVEL;
+  bt_efs_params.ag_idle_mode     = BT_AGIM_DEFAULT_IDLE_MODE;
+  bt_efs_params.ag_idle_timeout  = BT_AG_DEFAULT_IDLE_TIMEOUT;
+  bt_efs_params.ag_pref_dev_type = BT_AD_HEADSET;
+
+  bt_efs_params.low_power_mode   = BT_LPM_SNIFF;
+
+  bt_efs_params.cert_mode        = FALSE;
+  bt_efs_params.park_supported   = TRUE;
+  bt_efs_params.pair_type        = BT_PAIR_COMB;
+#ifdef BT_SWDEV_2_1_SSP
+  bt_efs_params.encrypt_mode     = BT_EM_ENABLED;
+#else
+  bt_efs_params.encrypt_mode     = BT_EM_POINT_TO_POINT;
+#endif /* BT_SWDEV_2_1_SSP */
+  bt_efs_params.toggle_seqn_bit  = FALSE;
+  bt_efs_params.mode_to_start_in = BT_HCIM_OFF;
+
+  BT_STRCPY( bt_efs_params.bt_name, DEFAULT_BT_NAME, 
+             sizeof(bt_efs_params.bt_name) );
+
+#ifdef BT_SWDEV_2_1_EIR
+  /* Use the first 'n' characeters of the default name as short name */
+  BT_STRCPY( (char *)bt_efs_params.bt_short_name,
+             bt_efs_params.bt_name, 
+             (BT_MAX_EIR_NAME_LEN + 1) );
+
+  bt_efs_params.eir_manuf_data_size = 0;
+#endif /* BT_SWDEV_2_1_EIR */
+
+
+	bt_save_efs_params();
+
+}
+//Add End
+
+
+
 
 /*===========================================================================
 

@@ -92,6 +92,28 @@ static NextFSMAction BTApp_StateSetDiscoverableHandler(CBTApp *pMe);
 static NextFSMAction BTApp_StateSetIOCapabilityHandler(CBTApp *pMe);
 // 状态 BTAPPST_SET_DEBUGKEY 处理函数
 static NextFSMAction BTApp_StateSetDebugKeyHandler(CBTApp *pMe);
+
+
+
+// 状态 BTAPPST_FTP 处理函数
+static NextFSMAction BTApp_StateFtpHandler(CBTApp *pMe);
+// 状态 BTAPPST_FTP_SERVER 处理函数
+static NextFSMAction BTApp_StateFtpServerHandler(CBTApp *pMe);
+// 状态 BTAPPST_FTP_CLIENT 处理函数
+static NextFSMAction BTApp_StateFtpClientHandler(CBTApp *pMe);
+// 状态 BTAPPST_FTP_SETTING 处理函数
+static NextFSMAction BTApp_StateFtpSettingHandler(CBTApp *pMe);
+// 状态 BTAPPST_FTP_SERVER_REGISTER 处理函数
+static NextFSMAction BTApp_StateFtpServerRegisterHandler(CBTApp *pMe);
+// 状态 BTAPPST_FTP_BROWSE 处理函数
+static NextFSMAction BTApp_StateFtpBrowseHandler(CBTApp *pMe);
+// 状态 BTAPPST_FTP_BROWSE_OPITION 处理函数
+static NextFSMAction BTApp_StateFtpBrowseOpitionHandler(CBTApp *pMe);
+
+
+
+
+
 // 状态 BTAPPST_BT_MSGBOX 处理函数
 static NextFSMAction BTApp_StateMsgBoxHandler(CBTApp *pMe);
 // 状态 BTAPPST_PROMPT 处理函数
@@ -249,6 +271,34 @@ NextFSMAction BTApp_ProcessState(CBTApp *pMe)
             retVal = BTApp_StateSetDebugKeyHandler(pMe);
             break;
 
+		case BTAPPST_FTP:
+            retVal = BTApp_StateFtpHandler(pMe);
+            break;	
+
+		case BTAPPST_FTP_SERVER:
+            retVal = BTApp_StateFtpServerHandler(pMe);
+            break;	
+
+		case BTAPPST_FTP_CLIENT:
+            retVal = BTApp_StateFtpClientHandler(pMe);
+            break;	
+
+		case BTAPPST_FTP_SETTING:
+            retVal = BTApp_StateFtpSettingHandler(pMe);
+            break;	
+
+		case BTAPPST_FTP_SERVER_REGISTER:
+            retVal = BTApp_StateFtpServerRegisterHandler(pMe);
+            break;	
+
+		case BTAPPST_FTP_BROWSE:
+            retVal = BTApp_StateFtpBrowseHandler(pMe);
+            break; 		
+
+		case BTAPPST_FTP_BROWSE_OPITION:
+            retVal = BTApp_StateFtpBrowseOpitionHandler(pMe);
+            break;	
+			
 		case BTAPPST_BT_MSGBOX:
             retVal = BTApp_StateMsgBoxHandler(pMe);
             break;	
@@ -393,6 +443,10 @@ static NextFSMAction BTApp_StateMainHandler(CBTApp *pMe)
 			MSG_FATAL("***zzg BTApp_StateMainHandler DLGRET_MYINFO***", 0, 0, 0);
 			MOVE_TO_STATE(BTAPPST_MYINFO)
             return NFSMACTION_CONTINUE;
+
+		case DLGRET_FTP:
+			MOVE_TO_STATE(BTAPPST_FTP)
+            return NFSMACTION_CONTINUE;		
 
 		case DLGRET_BT_FILE_PROGRESS:
 			MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
@@ -1354,6 +1408,360 @@ static NextFSMAction BTApp_StateSetDebugKeyHandler(CBTApp *pMe)
 	return NFSMACTION_WAIT;
 }
 
+
+// 状态 BTAPPST_FTP 处理函数
+static NextFSMAction BTApp_StateFtpHandler(CBTApp *pMe)
+{
+	if (NULL == pMe)
+	{
+		return NFSMACTION_WAIT;
+	}
+
+	switch(pMe->m_eDlgRet)
+	{
+		case DLGRET_CREATE:
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FTP);
+			return NFSMACTION_WAIT;
+
+		case DLGRET_FTP_SERVER:
+			MOVE_TO_STATE(BTAPPST_FTP_SERVER)
+			return NFSMACTION_CONTINUE; 
+
+		case DLGRET_FTP_CLIENT:
+			MOVE_TO_STATE(BTAPPST_FTP_CLIENT)
+			return NFSMACTION_CONTINUE; 
+
+		case DLGRET_FTP_SETTING:
+			MOVE_TO_STATE(BTAPPST_FTP_SETTING)
+			return NFSMACTION_CONTINUE; 	
+		
+		case DLGRET_BT_MSGBOX:
+			MSG_FATAL("***zzg BTApp_StateDeviceListHandler DLGRET_BT_MSGBOX***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
+			return NFSMACTION_CONTINUE;
+
+		case DLGRET_BT_EDIT:
+			MSG_FATAL("***zzg BTApp_StateDeviceListHandler DLGRET_BT_EDIT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+			
+		case DLGRET_PROMPT:
+			MSG_FATAL("***zzg BTApp_StateDeviceListHandler DLGRET_PROMPT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_PROMPT)
+			return NFSMACTION_CONTINUE;	
+			
+		case DLGRET_CANCELED:
+			MOVE_TO_STATE(BTAPPST_MAIN)
+			return NFSMACTION_CONTINUE;
+
+		default:
+			ASSERT_NOT_REACHABLE;
+	}
+
+	return NFSMACTION_WAIT;
+}
+
+
+// 状态 BTAPPST_FTP_SERVER 处理函数
+static NextFSMAction BTApp_StateFtpServerHandler(CBTApp *pMe)
+{
+	if (NULL == pMe)
+	{
+		return NFSMACTION_WAIT;
+	}
+
+	switch(pMe->m_eDlgRet)
+	{
+		case DLGRET_CREATE:
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FTP_SERVER);
+			return NFSMACTION_WAIT;
+
+		case DLGRET_FTP_SERVER_REGISTER:
+			MOVE_TO_STATE(BTAPPST_FTP_SERVER_REGISTER)
+			return NFSMACTION_CONTINUE; 
+			
+
+		case DLGRET_BT_MSGBOX:
+			MSG_FATAL("***zzg BTApp_StateFtpServerHandler DLGRET_BT_MSGBOX***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
+			return NFSMACTION_CONTINUE;
+
+		case DLGRET_BT_EDIT:
+			MSG_FATAL("***zzg BTApp_StateFtpServerHandler DLGRET_BT_EDIT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+			
+		case DLGRET_PROMPT:
+			MSG_FATAL("***zzg BTApp_StateFtpServerHandler DLGRET_PROMPT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_PROMPT)
+			return NFSMACTION_CONTINUE;	
+			
+		case DLGRET_CANCELED:
+			MOVE_TO_STATE(BTAPPST_FTP)
+			return NFSMACTION_CONTINUE;
+
+		default:
+			ASSERT_NOT_REACHABLE;
+	}
+
+	return NFSMACTION_WAIT;
+}
+
+// 状态 BTAPPST_FTP_CLIENT处理函数
+static NextFSMAction BTApp_StateFtpClientHandler(CBTApp *pMe)
+{
+	if (NULL == pMe)
+	{
+		return NFSMACTION_WAIT;
+	}
+
+	switch(pMe->m_eDlgRet)
+	{
+		case DLGRET_CREATE:
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FTP_CLIENT);
+			return NFSMACTION_WAIT;
+
+		case DLGRET_BT_OBEX_LIST_SERVERS:			
+			MSG_FATAL("***zzg BTApp_StateFtpClientHandler DLGRET_BT_OBEX_LIST_SERVERS***", 0, 0, 0);						
+			MOVE_TO_STATE(BTAPPST_BT_OBEX_LIST_SERVERS)
+			return NFSMACTION_CONTINUE;
+
+		case DLGRET_FTP_BROWSE:			
+			MSG_FATAL("***zzg BTApp_StateFtpClientHandler DLGRET_FTP_BROWSE***", 0, 0, 0);						
+			MOVE_TO_STATE(BTAPPST_FTP_BROWSE)
+			return NFSMACTION_CONTINUE;	
+		
+		case DLGRET_BT_MSGBOX:
+			MSG_FATAL("***zzg BTApp_StateFtpClientHandler DLGRET_BT_MSGBOX***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
+			return NFSMACTION_CONTINUE;
+
+		case DLGRET_BT_EDIT:
+			MSG_FATAL("***zzg BTApp_StateFtpClientHandler DLGRET_BT_EDIT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+			
+		case DLGRET_PROMPT:
+			MSG_FATAL("***zzg BTApp_StateFtpClientHandler DLGRET_PROMPT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_PROMPT)
+			return NFSMACTION_CONTINUE;	
+			
+		case DLGRET_CANCELED:
+			MOVE_TO_STATE(BTAPPST_FTP)
+			return NFSMACTION_CONTINUE;
+
+		default:
+			ASSERT_NOT_REACHABLE;
+	}
+
+	return NFSMACTION_WAIT;
+}
+
+// 状态 BTAPPST_FTP_SETTING 处理函数
+static NextFSMAction BTApp_StateFtpSettingHandler(CBTApp *pMe)
+{
+	if (NULL == pMe)
+	{
+		return NFSMACTION_WAIT;
+	}
+
+	switch(pMe->m_eDlgRet)
+	{
+		case DLGRET_CREATE:
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FTP_SETTINGS);
+			return NFSMACTION_WAIT;
+		
+		case DLGRET_BT_MSGBOX:
+			MSG_FATAL("***zzg BTApp_StateFtpSettingHandler DLGRET_BT_MSGBOX***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
+			return NFSMACTION_CONTINUE;
+
+		case DLGRET_BT_EDIT:
+			MSG_FATAL("***zzg BTApp_StateFtpSettingHandler DLGRET_BT_EDIT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+			
+		case DLGRET_PROMPT:
+			MSG_FATAL("***zzg BTApp_StateFtpSettingHandler DLGRET_PROMPT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_PROMPT)
+			return NFSMACTION_CONTINUE;	
+			
+		case DLGRET_CANCELED:
+			MOVE_TO_STATE(BTAPPST_FTP)
+			return NFSMACTION_CONTINUE;
+
+		default:
+			ASSERT_NOT_REACHABLE;
+	}
+
+	return NFSMACTION_WAIT;
+}
+
+
+// 状态 BTAPPST_FTP_SERVER_REGISTER 处理函数
+static NextFSMAction BTApp_StateFtpServerRegisterHandler(CBTApp *pMe)
+{
+	if (NULL == pMe)
+	{
+		return NFSMACTION_WAIT;
+	}
+
+	switch(pMe->m_eDlgRet)
+	{
+		case DLGRET_CREATE:
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FTP_SERVER_REGISTER);
+			return NFSMACTION_WAIT;
+
+		case DLGRET_BT_MSGBOX:
+			MSG_FATAL("***zzg BTApp_StateFtpServerRegisterHandler DLGRET_BT_MSGBOX***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
+			return NFSMACTION_CONTINUE;
+
+		case DLGRET_BT_EDIT:
+			MSG_FATAL("***zzg BTApp_StateFtpServerRegisterHandler DLGRET_BT_EDIT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+			
+		case DLGRET_PROMPT:
+			MSG_FATAL("***zzg BTApp_StateFtpServerRegisterHandler DLGRET_PROMPT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_PROMPT)
+			return NFSMACTION_CONTINUE;	
+			
+		case DLGRET_CANCELED:
+			MOVE_TO_STATE(BTAPPST_FTP_SERVER)
+			return NFSMACTION_CONTINUE;
+
+		default:
+			ASSERT_NOT_REACHABLE;
+	}
+
+	return NFSMACTION_WAIT;
+}
+
+
+// 状态 BTAPPST_FTP_BROWSE处理函数
+static NextFSMAction BTApp_StateFtpBrowseHandler(CBTApp *pMe)
+{
+	if (NULL == pMe)
+	{
+		return NFSMACTION_WAIT;
+	}
+
+	switch(pMe->m_eDlgRet)
+	{
+		case DLGRET_CREATE:
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FTP_BROWSE);
+			return NFSMACTION_WAIT;
+
+		case DLGRET_FTP_BROWSE:				//可能出现的几级文件夹结构
+			MSG_FATAL("***zzg BTApp_StateFtpBrowseHandler DLGRET_FTP_BROWSE***", 0, 0, 0);	
+			MOVE_TO_STATE(BTAPPST_FTP_BROWSE)
+			return NFSMACTION_CONTINUE;	
+
+		case DLGRET_FTP_BROWSE_OPITION:			
+			MSG_FATAL("***zzg BTApp_StateFtpBrowseHandler DLGRET_FTP_BROWSE_OPITION***", 0, 0, 0);						
+			MOVE_TO_STATE(BTAPPST_FTP_BROWSE_OPITION)
+			return NFSMACTION_CONTINUE;				
+
+		case DLGRET_FTP_CLIENT:
+			MSG_FATAL("***zzg BTApp_StateFtpBrowseHandler DLGRET_FTP_CLIENT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_FTP_CLIENT)
+			return NFSMACTION_CONTINUE;
+
+		case DLGRET_BT_FILE_PROGRESS:
+			MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			return NFSMACTION_CONTINUE;		
+
+		case DLGRET_BT_MSGBOX:
+			MSG_FATAL("***zzg BTApp_StateFtpBrowseHandler DLGRET_BT_MSGBOX***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
+			return NFSMACTION_CONTINUE;
+
+		case DLGRET_BT_EDIT:
+			MSG_FATAL("***zzg BTApp_StateFtpBrowseHandler DLGRET_BT_EDIT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+			
+		case DLGRET_PROMPT:
+			MSG_FATAL("***zzg BTApp_StateFtpBrowseHandler DLGRET_PROMPT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_PROMPT)
+			return NFSMACTION_CONTINUE;	
+			
+		case DLGRET_CANCELED:		
+			MSG_FATAL("***zzg BTApp_StateFtpBrowseHandler DLGRET_CANCELED***", 0, 0, 0);
+			//if (pMe->mFTP.bObjectTransfer)
+			{
+				//MOVE_TO_STATE(BTAPPST_FTP_CLIENT)			
+			}
+			return NFSMACTION_CONTINUE;
+
+		default:
+			ASSERT_NOT_REACHABLE;
+	}
+
+	return NFSMACTION_WAIT;
+}
+
+
+// 状态 BTAPPST_FTP_BROWSE_OPITION处理函数
+static NextFSMAction BTApp_StateFtpBrowseOpitionHandler(CBTApp *pMe)
+{
+	if (NULL == pMe)
+	{
+		return NFSMACTION_WAIT;
+	}
+
+	switch(pMe->m_eDlgRet)
+	{
+		case DLGRET_CREATE:
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FTP_BROWSE_OPITION);
+			return NFSMACTION_WAIT;
+		
+		case DLGRET_FTP_CLIENT:
+			MSG_FATAL("***zzg BTApp_StateFtpBrowseHandler DLGRET_FTP_CLIENT***", 0, 0, 0);
+			MOVE_TO_STATE(BTAPPST_FTP_CLIENT)
+			return NFSMACTION_CONTINUE;
+
+		case DLGRET_FTP_BROWSE:
+			MOVE_TO_STATE(BTAPPST_FTP_BROWSE)
+			return NFSMACTION_CONTINUE;
+
+		case DLGRET_BT_FILE_PROGRESS:
+			MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			return NFSMACTION_CONTINUE;		
+		
+		case DLGRET_BT_MSGBOX:			
+			MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
+			return NFSMACTION_CONTINUE;
+
+		case DLGRET_BT_EDIT:			
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+			
+		case DLGRET_PROMPT:			
+			MOVE_TO_STATE(BTAPPST_PROMPT)
+			return NFSMACTION_CONTINUE;	
+			
+		case DLGRET_CANCELED:
+			MOVE_TO_STATE(BTAPPST_FTP_BROWSE)
+			return NFSMACTION_CONTINUE;
+
+		default:
+			ASSERT_NOT_REACHABLE;
+	}
+
+	return NFSMACTION_WAIT;
+}
+
+
+
 // 状态 BTAPPST_BT_MSGBOX 处理函数
 static NextFSMAction BTApp_StateMsgBoxHandler(CBTApp *pMe)
 {
@@ -1375,6 +1783,9 @@ static NextFSMAction BTApp_StateMsgBoxHandler(CBTApp *pMe)
 			MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
 			return NFSMACTION_CONTINUE;
 			
+		case DLGRET_FTP_BROWSE:
+			MOVE_TO_STATE(BTAPPST_FTP_BROWSE)
+			return NFSMACTION_CONTINUE;	
 			
 		case DLGRET_CANCELED:		
 			MSG_FATAL("***zzg BTApp_StateMsgBoxHandler DLGRET_CANCELED m_msg_id=%d***", pMe->m_msg_id, 0, 0);	

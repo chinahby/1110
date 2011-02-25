@@ -880,6 +880,7 @@ when       who  what, where, why
 //Add By zzg 2010_11_16
 boolean bIsBTOn = FALSE;
 
+
 const AEEBTBDAddr NULL_BD_ADDR = {0,0,0,0,0,0};
 CBTApp* pTheBTApp = NULL;
 uint32 uBTApp_NMask = NMASK_BT_RM  | NMASK_BT_SD | NMASK_BT_SPP |
@@ -1680,6 +1681,9 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 				else if (STRNCMP(args->pszArgs, "ResetBT", 7) == 0)	//Factory Reset					
 				{
 					MSG_FATAL("***zzg ResetBT BTApp***", 0, 0, 0);
+
+					bt_rm_refresh_efs_param();	//Add By zzg 2011_02_25					
+					
 					BTApp_DisableBT(pMe);
 					break;	
 				}			
@@ -2635,6 +2639,17 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 #error code not present
 #endif // FEATURE_APP_TEST_AUTOMATION    
 		}
+
+		//Add By zzg 2011_02_16		
+		if (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_BLUETOOTH_APP)
+		{
+			(void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_BLUETOOTH_APP,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+		}
+		//Add End
 
 		//return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 		break;
@@ -9519,10 +9534,6 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
   IDialog*  pCurrentDialog;
 
   return built;	//Add By zzg 2011_01_08
-
-
-
-  
 
   MSG_LOW( "BuildMenu - m=%d tm=%d", menu, TOP_MENU, 0 );
   MSG_FATAL("BuildMenu - m=%d tm=%d", menu, TOP_MENU, 0);

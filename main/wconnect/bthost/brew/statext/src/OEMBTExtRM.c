@@ -449,6 +449,7 @@ int OEMBTExtRM_GetLocalInfo(
   char                  bt_short_name[ BT_MAX_EIR_NAME_LEN + 1 ];
 #endif
 
+
   if ( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                        (OEMINSTANCE*)&pMe ) != TRUE )
   {
@@ -458,6 +459,8 @@ int OEMBTExtRM_GetLocalInfo(
   {
     return EBADPARM;
   }
+
+  
   /*lint -save -e613*/
 #ifdef FEATURE_BT_2_1
   bt_cmd_rm_get_local_info_ext( pMe->appId,
