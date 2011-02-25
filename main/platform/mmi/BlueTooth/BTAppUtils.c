@@ -444,7 +444,7 @@ uint16 BTApp_FormatBTName(
   uint16        uLen,
   AECHAR*       pwName )
 {
-  AECHAR wBuf1[ 16 ];
+  AECHAR wBuf1[ 24 ];	//16
 
   ISHELL_LoadResString( pMe->m_pShell, AEE_APPSBTAPP_RES_FILE, IDS_LABEL_BT_NAME, 
                         wBuf1, sizeof( wBuf1 ) );
