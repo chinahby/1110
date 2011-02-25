@@ -1,6 +1,0 @@
-#ifndef DOCMODEL_BID
-#define DOCMODEL_BID
-
-#define AEEIID_DOCMODEL    	0x0102d692
-
-#endif //DOCMODEL_BID

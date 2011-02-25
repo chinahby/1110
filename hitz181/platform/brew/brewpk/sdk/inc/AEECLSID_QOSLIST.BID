@@ -1,7 +1,0 @@
-#ifndef AEECLSID_QOSLIST_BID
-#define AEECLSID_QOSLIST_BID
-#include "../../inc/AEEQoSList.bid"
-   
-#define AEECLSID_QOSLIST AEECLSID_QoSList
-  
-#endif //AEECLSID_QOSLIST_BID

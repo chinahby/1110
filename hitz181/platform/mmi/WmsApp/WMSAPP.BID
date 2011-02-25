@@ -1,6 +1,0 @@
-#ifndef WMSAPP_BID
-#define WMSAPP_BID
-
-#define AEECLSID_WMSAPP    	0x01006116
-
-#endif //WMSAPP_BID

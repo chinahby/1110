@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IRamCache simulation
-
-IRamCache is simulated.
-==========================
-*/ 

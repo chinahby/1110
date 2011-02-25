@@ -1,6 +1,0 @@
-#ifndef NEMOBREW_BID
-#define NEMOBREW_BID
-
-#define AEECLSID_NEMOBREW        0x01007180
-
-#endif //NEMOBREW_BID

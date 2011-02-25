@@ -1,9 +1,0 @@
-/*
-===========================
-Simulator Support DOCUMENTATION
-============================
-IGraphics simulation
-
-IGraphics is simulated.
-==========================
-*/ 

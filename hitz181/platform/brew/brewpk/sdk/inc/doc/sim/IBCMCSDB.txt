@@ -1,9 +1,0 @@
-/* 
-===========================
-Simulator Support DOCUMENTATION
-============================
-IBCMCSDB simulation
-
-IBCMCSDB is simumated.
-==========================  
-*/
