@@ -809,7 +809,7 @@ void CallApp_NextTonePlay(void *pUser);
 //Increase or decreases the current call volume
 void CallApp_ChangeCallVolume(CCallApp  *pMe,  boolean      louder);
 //add by pyuangui
-void CallApp_ChangeCallVolume_AVK_RWD(CCallApp  *pMe,  boolean      louder);
+void CallApp_ChangeCallVolume_AVK_RWD(CCallApp  *pMe);
 
 
 //Answer an incoming or in-band call

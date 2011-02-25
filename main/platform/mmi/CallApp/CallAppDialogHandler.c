@@ -3200,7 +3200,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 case AVK_SEND: 
                     return TRUE;  //make the cm 2312 disappear
                 case AVK_RWD:
-                    CallApp_ChangeCallVolume_AVK_RWD(pMe, vol_add);
+                    CallApp_ChangeCallVolume_AVK_RWD(pMe);
                     
 #if !defined( FEATURE_CALL_RECORDER)
                     CallApp_RefreshVolBar(pMe);
@@ -7028,8 +7028,6 @@ DESCRIPTION: Increase or decreases the current call volume
 
 PARAMETERS:
    *pMe: CCallApp object pointer
-   louder: TRUE to increase the call volume
-           FALSE to decrease the call volume
 
 RETURN VALUE:
     None
@@ -7041,8 +7039,7 @@ SIDE EFFECTS:
 SEE ALSO:
 
 =============================================================================*/
-void CallApp_ChangeCallVolume_AVK_RWD(CCallApp  *pMe,
-                                   boolean      louder)
+void CallApp_ChangeCallVolume_AVK_RWD(CCallApp  *pMe)
 {
     if ((OEMSound_Volume_Type)pMe->m_CallVolume == OEMSOUND_5TH_VOL)
     {
