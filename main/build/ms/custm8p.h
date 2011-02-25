@@ -12,7 +12,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef CUST_EDITION
 
 #define FEATURE_VERSION_M8P
-
+#define FEATURE_CARRIER_INDONESIA
 //BT
 #define FEATURE_APP_BLUETOOTH
 #define FEATURE_BT
