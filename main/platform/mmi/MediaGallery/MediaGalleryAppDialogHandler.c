@@ -1662,7 +1662,8 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
             MG_FARF(ADDR, ("%S",szContent));
 
             WSTRCAT(pszBuffer, szContent);
-            WSTRCAT(pszBuffer, MG_DOUBLELINEBREK_WSTR);
+            //WSTRCAT(pszBuffer, MG_DOUBLELINEBREK_WSTR);
+            WSTRCAT(pszBuffer, MG_LINEBREAK_WSTR);
 
             bRet = MGAppUtil_SpaceUnitConvert(pMe->m_pShell,
                                               MemStats[nCount].m_dwUsed,
@@ -1693,7 +1694,9 @@ static boolean MediaGalleryApp_MemStatDlg_HandleEvent(CMediaGalleryApp* pMe,
                WSTRCAT(pszBuffer, szMemUnit);
             }
 
-            WSTRCAT(pszBuffer, MG_LINEBREAK_WSTR);
+            //WSTRCAT(pszBuffer, MG_LINEBREAK_WSTR);
+            WSTRCAT(pszBuffer, MG_DOUBLELINEBREK_WSTR);
+            
             MG_FARF(ADDR, ("%S",pszBuffer));
          }
 
