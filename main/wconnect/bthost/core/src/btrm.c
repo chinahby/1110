@@ -27073,72 +27073,63 @@ void bt_rm_nv_init
 
 //Add By zzg 2011_02_25
 
-boolean bt_save_efs_params
-( 
-  void
-)
+boolean bt_save_efs_params(void)
 {
 
   boolean              success = FALSE;
 
 #ifdef FEATURE_EFS
-
   boolean              write_fault = FALSE;
   fs_open_xparms_type  fs_open_xparms;
   fs_rsp_msg_type      fs_rsp_msg;
   fs_handle_type       fs_handle;
   
-  fs_open( BT_EFS_PARAMS_FILE_NAME, FS_OA_READWRITE,
-           NULL, NULL, &fs_rsp_msg );
+  fs_open(BT_EFS_PARAMS_FILE_NAME, FS_OA_READWRITE, NULL, NULL, &fs_rsp_msg);
 
-  if ( fs_rsp_msg.any.status == FS_NONEXISTENT_FILE_S )
+  if (fs_rsp_msg.any.status == FS_NONEXISTENT_FILE_S)
   {
-    BT_MSG_HIGH( "BT: Creating EFSparams file", 0, 0, 0 );
+    BT_MSG_HIGH("BT: Creating EFSparams file", 0, 0, 0);
 
     fs_open_xparms.create.cleanup_option   = FS_OC_CLOSE;
     fs_open_xparms.create.buffering_option = FS_OB_ALLOW;
     fs_open_xparms.create.attribute_mask   = FS_FA_UNRESTRICTED;
 
-    fs_open( BT_EFS_PARAMS_FILE_NAME, FS_OA_CREATE, 
-             &fs_open_xparms, NULL, &fs_rsp_msg );
+    fs_open(BT_EFS_PARAMS_FILE_NAME, FS_OA_CREATE, &fs_open_xparms, NULL, &fs_rsp_msg);
   }
 
-  if ( fs_rsp_msg.any.status == FS_OKAY_S )
+  if (fs_rsp_msg.any.status == FS_OKAY_S)
   {
     fs_handle = fs_rsp_msg.open.handle;
 
-    fs_write( fs_handle, &bt_efs_params, 
-              sizeof( bt_efs_params_type ), NULL, &fs_rsp_msg );
+    fs_write(fs_handle, &bt_efs_params, sizeof(bt_efs_params_type), NULL, &fs_rsp_msg);
 
-    if ( (fs_rsp_msg.any.status != FS_OKAY_S) ||
-         (fs_rsp_msg.write.count != sizeof( bt_efs_params_type )) )
+    if ((fs_rsp_msg.any.status != FS_OKAY_S) ||
+         (fs_rsp_msg.write.count != sizeof(bt_efs_params_type)))
     {
       write_fault = TRUE;
 
-      BT_ERR( "BT: EFSparams Wr S %x C %x %x",
+      BT_ERR("BT: EFSparams Wr S %x C %x %x",
               fs_rsp_msg.any.status, fs_rsp_msg.write.count,
-              sizeof( bt_efs_params_type ) );
+              sizeof(bt_efs_params_type));
     }
     
-    fs_close( fs_handle, NULL, &fs_rsp_msg );
+    fs_close(fs_handle, NULL, &fs_rsp_msg);
 
-    if ( fs_rsp_msg.any.status == FS_OKAY_S )
+    if (fs_rsp_msg.any.status == FS_OKAY_S)
     {
-      if ( write_fault == FALSE )
+      if (write_fault == FALSE)
       {
         success = TRUE;
       }
     }
     else
     {
-      BT_ERR( "BT RM: Wr EFSparams close S %x",
-              fs_rsp_msg.any.status, 0, 0 );
+      BT_ERR("BT RM: Wr EFSparams close S %x", fs_rsp_msg.any.status, 0, 0);
     }
   }
   else
   {
-    BT_ERR( "BT: EFSparams open S %x",
-            fs_rsp_msg.any.status, 0, 0);
+    BT_ERR("BT: EFSparams open S %x", fs_rsp_msg.any.status, 0, 0);
   }
 
 #else /*  No EFS  */
@@ -27163,40 +27154,39 @@ void bt_rm_refresh_efs_param
   void
 )
 {
-  MSG_FATAL("***zzg bt_rm_refresh_efs_param***", 0, 0, 0);
-  
-  bt_efs_params.version          = BT_EFS_PARAMS_FILE_VER;
-  bt_efs_params.ag_ad_mic_gain   = BT_AG_DEFAULT_HS_VOLUME_LEVEL;
-  bt_efs_params.ag_ad_spkr_gain  = BT_AG_DEFAULT_HS_VOLUME_LEVEL;
-  bt_efs_params.ag_idle_mode     = BT_AGIM_DEFAULT_IDLE_MODE;
-  bt_efs_params.ag_idle_timeout  = BT_AG_DEFAULT_IDLE_TIMEOUT;
-  bt_efs_params.ag_pref_dev_type = BT_AD_HEADSET;
+	MSG_FATAL("***zzg bt_rm_refresh_efs_param***", 0, 0, 0);
 
-  bt_efs_params.low_power_mode   = BT_LPM_SNIFF;
+	bt_efs_params.version          = BT_EFS_PARAMS_FILE_VER;
+	bt_efs_params.ag_ad_mic_gain   = BT_AG_DEFAULT_HS_VOLUME_LEVEL;
+	bt_efs_params.ag_ad_spkr_gain  = BT_AG_DEFAULT_HS_VOLUME_LEVEL;
+	bt_efs_params.ag_idle_mode     = BT_AGIM_DEFAULT_IDLE_MODE;
+	bt_efs_params.ag_idle_timeout  = BT_AG_DEFAULT_IDLE_TIMEOUT;
+	bt_efs_params.ag_pref_dev_type = BT_AD_HEADSET;
 
-  bt_efs_params.cert_mode        = FALSE;
-  bt_efs_params.park_supported   = TRUE;
-  bt_efs_params.pair_type        = BT_PAIR_COMB;
+	bt_efs_params.low_power_mode   = BT_LPM_SNIFF;
+
+	bt_efs_params.cert_mode        = FALSE;
+	bt_efs_params.park_supported   = TRUE;
+	bt_efs_params.pair_type        = BT_PAIR_COMB;
 #ifdef BT_SWDEV_2_1_SSP
-  bt_efs_params.encrypt_mode     = BT_EM_ENABLED;
+	bt_efs_params.encrypt_mode     = BT_EM_ENABLED;
 #else
-  bt_efs_params.encrypt_mode     = BT_EM_POINT_TO_POINT;
+	bt_efs_params.encrypt_mode     = BT_EM_POINT_TO_POINT;
 #endif /* BT_SWDEV_2_1_SSP */
-  bt_efs_params.toggle_seqn_bit  = FALSE;
-  bt_efs_params.mode_to_start_in = BT_HCIM_OFF;
+	bt_efs_params.toggle_seqn_bit  = FALSE;
+	bt_efs_params.mode_to_start_in = BT_HCIM_OFF;
 
-  BT_STRCPY( bt_efs_params.bt_name, DEFAULT_BT_NAME, 
-             sizeof(bt_efs_params.bt_name) );
+	BT_STRCPY( bt_efs_params.bt_name, DEFAULT_BT_NAME, 
+	         sizeof(bt_efs_params.bt_name) );
 
 #ifdef BT_SWDEV_2_1_EIR
-  /* Use the first 'n' characeters of the default name as short name */
-  BT_STRCPY( (char *)bt_efs_params.bt_short_name,
-             bt_efs_params.bt_name, 
-             (BT_MAX_EIR_NAME_LEN + 1) );
+	/* Use the first 'n' characeters of the default name as short name */
+	BT_STRCPY( (char *)bt_efs_params.bt_short_name,
+	         bt_efs_params.bt_name, 
+	         (BT_MAX_EIR_NAME_LEN + 1) );
 
-  bt_efs_params.eir_manuf_data_size = 0;
+	bt_efs_params.eir_manuf_data_size = 0;
 #endif /* BT_SWDEV_2_1_EIR */
-
 
 	bt_save_efs_params();
 
