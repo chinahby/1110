@@ -2734,7 +2734,7 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 
   MSG_FATAL("***zzg BTApp_FTPHandleUserEvents dwParam=%d***", dwParam, 0, 0);
 
-  pMe->m_msg_state_id = BTAPPST_FTP_BROWSE;	
+  pMe->m_msg_state_id = BTAPPST_FTP;	
 
   switch ( dwParam )
   {
@@ -2754,6 +2754,8 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       {
         BTApp_BuildMenu( pMe, TOP_MENU );
       } 
+
+	  pMe->m_msg_state_id = BTAPPST_FTP_SERVER;	
       break;
     }
     case EVT_FTP_REG_FAILED:
@@ -2772,6 +2774,8 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       {
         BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3 );
       }
+	  
+	  pMe->m_msg_state_id = BTAPPST_FTP_SERVER;		  
       break;
     }
     case EVT_FTP_DEREG:
@@ -2783,6 +2787,8 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_DONE, NULL, 2 );
       pMe->mFTP.bRegistered = FALSE;
       BTApp_ClearBondable( pMe ); // no need to be bondable anymore
+
+	  pMe->m_msg_state_id = BTAPPST_FTP_SERVER;	
       break;
     }
     case EVT_FTP_DEREG_FAILED:
@@ -2790,7 +2796,8 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif // FEATURE_APP_TEST_AUTOMATION
-
+	
+	  pMe->m_msg_state_id = BTAPPST_FTP_SERVER;
       BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
       break;
     }

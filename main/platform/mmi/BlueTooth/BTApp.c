@@ -21163,6 +21163,7 @@ static void BTApp_ProcessRMNotifications(
         BTApp_ShowMessage( pMe, IDS_MSG_PIN_REPLY_FAILED, NULL, 2 );
       }
       break;
+	  
     case AEEBT_RM_EVT_DEVICE_ADDED:    // response to DeviceAdd()
       MSG_MED( "RM - DevAdded err=%d m=%d bonding=%d", pData->pDevUpdateStatus->error, TOP_MENU, pMe->mRM.bBonding );
 
@@ -21197,8 +21198,7 @@ static void BTApp_ProcessRMNotifications(
 	  if (pMe->mRM.bBonding == FALSE)
       {
         if ( pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE )
-        {
-			
+        {			
 			msgID = IDS_MSG_DEV_ADDED;
 #ifdef FEATURE_APP_TEST_AUTOMATION
 			#error code not present
