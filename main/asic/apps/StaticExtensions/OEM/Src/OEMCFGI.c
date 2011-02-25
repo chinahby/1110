@@ -11365,7 +11365,7 @@ void OEM_SetBAM_ADSAccount(void)
     char username[PPP_MAX_USER_ID_LEN] = {0};
     char password[PPP_MAX_PASSWD_LEN] = {0};
     
-    OEMDSS_SetAppType(DS_BREW_TYPE);
+    OEMDSS_SetAppType(DA_BREW_TYPE);
     
     if(SUCCESS == OEM_GetPppAccounts(&Account, DS_BREW_TYPE))
     {

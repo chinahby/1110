@@ -145,6 +145,17 @@ int     OEM_SVCdisp_get_info2(disp_info_type *pInfo);
 #define PPP_MAX_USER_ID_LEN 127
 #define PPP_MAX_PASSWD_LEN  127
 #endif
+
+typedef enum 
+{
+    DA_NONE_TYPE = 0,
+    DA_MMS_TYPE,
+    DA_WAP_TYPE,
+    DA_BREW_TYPE,
+    DA_JAVA_TYPE,
+    DA_MAX
+} DataApplicationType;
+
 typedef struct
 {
   char  user_id_info[PPP_MAX_USER_ID_LEN];
