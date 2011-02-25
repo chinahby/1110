@@ -5774,22 +5774,22 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
                 Ruim_Register_code = DE_REGISTER_CFNA;
                 break;
 
-            case CFGI_CALLFORWARD_NOCONNECT_ENABLE:
+            case CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE:
                 Ruim_Active_code     = Active_Callforward_Default;
                 Ruim_Register_code  = REGISTER_CFD;
                 break;
 
-            case CFGI_CALLFORWARD_NOCONNECT_DISABLE:
+            case CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE:
                 Ruim_Active_code    = De_Active_Callforward_Default;
                 Ruim_Register_code = DE_REGISTER_CFD;
                 break;
 
-            case CFGI_CALLFORWARD_ANYWAY_ENABLE:
+            case CFGI_CALLFORWARD_UNREACHABLE_ENABLE:
                 Ruim_Active_code    = Active_Callforward_Unconditional;
                 Ruim_Register_code = REGISTER_CFU;
                 break;
 
-            case CFGI_CALLFORWARD_ANYWAY_DISABLE:
+            case CFGI_CALLFORWARD_UNREACHABLE_DISABLE:
                 Ruim_Active_code    = De_Active_Callforward_Unconditional;
                 Ruim_Register_code = DE_REGISTER_CFU;
                 break;
