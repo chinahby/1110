@@ -148,11 +148,11 @@ int     OEM_SVCdisp_get_info2(disp_info_type *pInfo);
 
 typedef enum 
 {
-    DA_NONE_TYPE = 0,
-    DA_MMS_TYPE,
-    DA_WAP_TYPE,
-    DA_BREW_TYPE,
-    DA_JAVA_TYPE,
+    DA_NONE_TYPE    = 0x01,
+    DA_MMS_TYPE     = 0x02,
+    DA_WAP_TYPE     = 0x04,
+    DA_BREW_TYPE    = 0x08,
+    DA_JAVA_TYPE    = 0x10,
     DA_MAX
 } DataApplicationType;
 
