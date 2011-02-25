@@ -1,0 +1,9 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+ILocalStorage simulation
+
+ILocalStorage is simulated.
+==========================
+*/ 
