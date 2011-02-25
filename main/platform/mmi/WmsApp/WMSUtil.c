@@ -3668,11 +3668,11 @@ wms_client_message_s_type *GetMOClientMsg(char *pszTonum, wms_cdma_user_data_s_t
     pCltTsData->u.cdma.mask |= WMS_MASK_BD_PRIORITY;
     
     
-    // 回复选项:
-    pCltTsData->u.cdma.reply_option.user_ack_requested = FALSE;
-    pCltTsData->u.cdma.reply_option.delivery_ack_requested = FALSE;
-    pCltTsData->u.cdma.reply_option.read_ack_requested = FALSE;
-    pCltTsData->u.cdma.mask |= WMS_MASK_BD_REPLY_OPTION;
+    // 回复选项: 没有设置则不需要带这个设置
+    //pCltTsData->u.cdma.reply_option.user_ack_requested = FALSE;
+    //pCltTsData->u.cdma.reply_option.delivery_ack_requested = FALSE;
+    //pCltTsData->u.cdma.reply_option.read_ack_requested = FALSE;
+    //pCltTsData->u.cdma.mask |= WMS_MASK_BD_REPLY_OPTION;
     
     pCltTsData->u.cdma.num_messages = 1;
     

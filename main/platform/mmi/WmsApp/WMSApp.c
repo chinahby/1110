@@ -4527,7 +4527,10 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     pCltTsData->u.cdma.reply_option.delivery_ack_requested = FALSE;
 #endif    
     pCltTsData->u.cdma.reply_option.read_ack_requested = FALSE;
-    pCltTsData->u.cdma.mask |= WMS_MASK_BD_REPLY_OPTION;
+    if(pCltTsData->u.cdma.reply_option.delivery_ack_requested)
+    {
+        pCltTsData->u.cdma.mask |= WMS_MASK_BD_REPLY_OPTION;
+    }
     
     pCltTsData->u.cdma.num_messages = 1;
     
