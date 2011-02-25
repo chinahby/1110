@@ -3197,9 +3197,17 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 }
 #endif
                 break;
-                case AVK_SEND:
+                case AVK_SEND: 
                     return TRUE;  //make the cm 2312 disappear
+                case AVK_RWD:
+                    CallApp_ChangeCallVolume_AVK_RWD(pMe, vol_add);
+                    
+#if !defined( FEATURE_CALL_RECORDER)
+                    CallApp_RefreshVolBar(pMe);
+                    IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+#endif
 
+                    return TRUE;
                 default:
                     break;
             }
@@ -7011,6 +7019,138 @@ void CallApp_ChangeCallVolume(CCallApp  *pMe,
 
     }
 }
+// add by pyuangui
+
+/*=============================================================================
+FUNCTION: CallApp_ChangeCallVolume_AVK_RWD
+
+DESCRIPTION: Increase or decreases the current call volume
+
+PARAMETERS:
+   *pMe: CCallApp object pointer
+   louder: TRUE to increase the call volume
+           FALSE to decrease the call volume
+
+RETURN VALUE:
+    None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+void CallApp_ChangeCallVolume_AVK_RWD(CCallApp  *pMe,
+                                   boolean      louder)
+{
+    if ((OEMSound_Volume_Type)pMe->m_CallVolume == OEMSOUND_5TH_VOL)
+    {
+        pMe->m_CallVolume = (byte) OEMSOUND_1ST_VOL;
+        
+    }
+
+    else
+    {
+         switch ((OEMSound_Volume_Type)pMe->m_CallVolume)
+        {
+
+            case OEMSOUND_1ST_VOL:
+                pMe->m_CallVolume = (byte) OEMSOUND_2ND_VOL;
+                break;
+
+            case OEMSOUND_2ND_VOL:
+                pMe->m_CallVolume = (byte) OEMSOUND_3RD_VOL;
+                break;
+
+            case OEMSOUND_3RD_VOL:
+                pMe->m_CallVolume = (byte) OEMSOUND_4TH_VOL;
+                break;
+
+            case OEMSOUND_4TH_VOL:
+                pMe->m_CallVolume = (byte) OEMSOUND_5TH_VOL;
+                break;
+
+            case OEMSOUND_5TH_VOL:
+                pMe->m_CallVolume = (byte) OEMSOUND_5TH_VOL;
+                break;
+
+            //case OEMSOUND_6TH_VOL:
+            //case OEMSOUND_7TH_VOL:
+            //    pMe->m_CallVolume = (byte) OEMSOUND_7TH_VOL;
+            //    break;
+
+            default:
+                pMe->m_CallVolume = (byte) OEMSOUND_AVG_VOL;
+                break;
+        }
+    }
+
+    {
+        AEESoundInfo    si;
+        boolean         headsetPresent;
+        //AEECMCallInfo *ci;
+
+        (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                                CFGI_EAR_VOL,
+                                                &pMe->m_CallVolume,
+                                                sizeof(byte));
+
+        //ICM_GetCallInfo(pMe->m_pICM, 0, ci, sizeof(AEECMCallInfo));
+        if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,
+                                                CFGI_HEADSET_PRESENT,
+                                                &headsetPresent,
+                                                sizeof(headsetPresent)))
+        {
+             headsetPresent = FALSE;
+        }
+
+        ISOUND_Get(pMe->m_pSound, &si);
+        /*HandFree > bt_ag > headset > handset*/
+        
+        if(headsetPresent)
+        {
+            si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
+        }
+        else if (pMe->m_bHandFree)
+        {
+#ifdef FEATURE_SPEAKER_PHONE
+            si.eDevice = AEE_SOUND_DEVICE_SPEAKER;
+#else
+            si.eDevice = AEE_SOUND_DEVICE_HFK;
+#endif
+        }
+#ifdef FEATURE_SUPPORT_BT_APP
+        else if(bcmapp_is_ag_connected() && pMe->m_bt_audio == SEND_BT_AUDIO)
+        {
+           bt_ui_process_vol_change(pMe->m_CallVolume);
+           si.eDevice = AEE_SOUND_DEVICE_BT_HEADSET;
+        }
+#endif
+		/*
+        else if(headsetPresent)
+        {
+            si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
+        }
+        */
+        else
+        {
+           si.eDevice = AEE_SOUND_DEVICE_HANDSET;
+        }
+
+        si.eMethod = AEE_SOUND_METHOD_VOICE;
+
+        (void) ISOUND_Set(pMe->m_pSound, &si);
+        if(pMe->m_CallVolume == OEMSOUND_MUTE_VOL)
+        {
+            pMe->m_CallVolume = OEMSOUND_1ST_VOL;
+        }
+        ISOUND_SetVolume(pMe->m_pSound,
+                                                GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
+
+    }
+}
+// add end
 
 /*=============================================================================
 FUNCTION: CallApp_HandleDialogTimer
