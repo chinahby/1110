@@ -634,6 +634,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                 if (ICARD_GetPinStatus(pMe->m_pICard, AEECARD_PIN1, &sPinStatus) != SUCCESS)
                 {// 获取状态失败
                     pMe->m_eUIMErrCode = UIMERR_BLOCKED;
+                    MSG_FATAL("COREST_UIMERR..........................1111",0,0,0);
                     MOVE_TO_STATE(COREST_UIMERR)
                 }
                 else
@@ -667,6 +668,7 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                     case AEECARD_PIN_NOT_INIT:
                     default:
                         pMe->m_eUIMErrCode = UIMERR_BLOCKED;
+                        MSG_FATAL("COREST_UIMERR..........................2222",0,0,0);
                         MOVE_TO_STATE(COREST_UIMERR)
                         break;
                     }
@@ -720,6 +722,8 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                 }
                 else
                 {
+                	MSG_FATAL("COREST_UIMERR..........................3333",0,0,0);
+                	
                     MOVE_TO_STATE(COREST_UIMERR)
                 }
             }
@@ -1165,6 +1169,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
                 {
                      // 卡不符合运营商要求，卡无效
                      pMe->m_eUIMErrCode = UIMERR_LOCKED;
+                     MSG_FATAL("COREST_UIMERR..........................4444",0,0,0);
                      MOVE_TO_STATE(COREST_UIMERR)
                      return NFSMACTION_CONTINUE;
                 }
@@ -1187,6 +1192,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
 	            {
 	            	
 	                pMe->m_eUIMErrCode = UIMERR_LOCKED;
+	                MSG_FATAL("COREST_UIMERR..........................5555",0,0,0);
 	                MOVE_TO_STATE(COREST_UIMERR)
 	                return NFSMACTION_CONTINUE;
 	            }
@@ -1213,6 +1219,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
 					if(!pMe->bunlockuim && IRUIM_IsCardConnected(pMe->m_pIRUIM) && OEM_IsNetLock())
 		            {
 		                pMe->m_eUIMErrCode = UIMERR_LOCKED;
+		                MSG_FATAL("COREST_UIMERR..........................66666",0,0,0);
 		                MOVE_TO_STATE(COREST_UIMERR)
 		                return NFSMACTION_CONTINUE;
 		            }
@@ -1222,6 +1229,7 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
             if(!pMe->bunlockuim && IRUIM_IsCardConnected(pMe->m_pIRUIM) && OEM_IsNetLock())
             {
                 pMe->m_eUIMErrCode = UIMERR_LOCKED;
+                MSG_FATAL("COREST_UIMERR..........................777777",0,0,0);
                 MOVE_TO_STATE(COREST_UIMERR)
                 return NFSMACTION_CONTINUE;
             }

@@ -492,10 +492,15 @@ struct  _CMediaGalleryApp{
 #define MG_PREFS_VER          0x0001
 #define MG_MAX_UINT16         0xFFFF
 #define MG_MAX_BYTE           0xFF
-
+#ifdef FEATURE_VERSION_M8P
+#define MG_TEST_JPEG          "fs:/image/Gambar/bca164478.jpg"
+#define MG_TEST_PNG           "fs:/image/Gambar/Background1.png"
+#define MG_TEST_BMP           "fs:/image/Gambar/MShopLogo.bmp"
+#else
 #define MG_TEST_JPEG          "fs:/image/pictures/bca164478.jpg"
 #define MG_TEST_PNG           "fs:/image/pictures/Background1.png"
 #define MG_TEST_BMP           "fs:/image/pictures/MShopLogo.bmp"
+#endif
 #define MG_TEST_MUSIC         "fs:/sounds/Sample"
 #define MG_TEST_COPYMOVEDEST  "fs:/test/dest"
 /*===========================================================================

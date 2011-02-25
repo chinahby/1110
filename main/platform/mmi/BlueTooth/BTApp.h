@@ -644,8 +644,13 @@ when        who   what, where, why
 #endif
 
 //Add By zzg 2010_11_19
+#ifdef FEATURE_VERSION_M8P
+#define BTAPP_PICTURE_DIR	  AEEFS_CARD0_DIR "Gambar"
+#define BTAPP_MUSIC_DIR		  AEEFS_CARD0_DIR "Musik"
+#else
 #define BTAPP_PICTURE_DIR	  AEEFS_CARD0_DIR "pictures"
 #define BTAPP_MUSIC_DIR		  AEEFS_CARD0_DIR "music"
+#endif
 #define BTAPP_OTHER_DIR		  AEEFS_CARD0_DIR
 //Add End
 

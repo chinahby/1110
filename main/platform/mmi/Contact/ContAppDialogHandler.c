@@ -4916,7 +4916,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-    
+    MSG_FATAL("CContApp_HandleListDlgEvent...........",0,0,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_LIST_MENU);
     pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_LIST_TEXT);   
 
@@ -9034,7 +9034,7 @@ static boolean  CContApp_HandleOneDialDlgEvent( CContApp  *pMe,
             }
             else
             {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_ADD_BACK);
+                CONTAPP_DRAW_BOTTOMBAR(BTBAR_EDIT_BACK);
             }
             IDISPLAY_Update(pMe->m_pDisplay);  
             return TRUE;
@@ -9082,7 +9082,7 @@ static boolean  CContApp_HandleOneDialDlgEvent( CContApp  *pMe,
             }
             else
             {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_ADD_BACK);
+                CONTAPP_DRAW_BOTTOMBAR(BTBAR_EDIT_BACK);
             }
             return TRUE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
@@ -11688,7 +11688,7 @@ static boolean  CContApp_HandleSelectRecordDlgEvent( CContApp  *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-    
+    MSG_FATAL("CContApp_HandleSelectRecordDlgEvent...........",0,0,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,IDC_SELECT_RECORD);
     pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_SELECT_RECORD_TEXT);   
 
@@ -11913,7 +11913,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
 #if defined(AEE_STATIC)
     ASSERT(pMe != NULL);
 #endif
-
+	 MSG_FATAL("CContApp_HandleSelectDlgEvent...........",0,0,0);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_SELECT_MENU);
     pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_SELECT_TEXT);   
 

@@ -104,7 +104,7 @@ int  WorldTimeMod_Load(IShell *ps,
 
 static boolean WorldTime_HandleEvent(CWorldTime * pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam);
 static void CWorldTime_Free(CWorldTime *pme);
-static void CWorldTime_DrawCityTime(CWorldTime *pme);
+static void CWorldTime_DrawCityTime(CWorldTime *pme,boolean left);
 static void Draw_WorldTimeContent(CWorldTime *pme);
 static void WorldTime_DrawNextCity(CWorldTime * pMe, boolean left);
 static int get_timezone(void);
@@ -784,7 +784,7 @@ SIDE EFFECTS:
 SEE ALSO:
 
 =============================================================================*/
-static void CWorldTime_DrawCityTime(CWorldTime *pme)
+static void CWorldTime_DrawCityTime(CWorldTime *pme,boolean left)
 {
     AECHAR    text[32];
     uint32      sec;
@@ -809,7 +809,14 @@ static void CWorldTime_DrawCityTime(CWorldTime *pme)
 	{
 	    MSG_FATAL("..........................",0,0,0);
 		IMENUCTL_SetSel(pme->m_pMenuCity,IDS_CITY_25);
-		sec = GETUTCSECONDS()+(local==pme->m_timeZone?LOCALTIMEOFFSET( 0):pme->m_timeZone*3600+1800);
+		if(left)
+		{
+			sec = GETUTCSECONDS()+(local==pme->m_timeZone?LOCALTIMEOFFSET( 0):pme->m_timeZone*3600-1800);
+		}
+		else
+		{
+			sec = GETUTCSECONDS()+(local==pme->m_timeZone?LOCALTIMEOFFSET( 0):pme->m_timeZone*3600+1800);
+		}
 	}
 	else
 	{
@@ -950,7 +957,7 @@ static void Draw_WorldTimeContent(CWorldTime *pme)
             BarParam.eBBarType = BTBAR_BACK;
             DrawBottomBar(pme->a.m_pIDisplay, &BarParam);
         }
-        CWorldTime_DrawCityTime(pme);
+        CWorldTime_DrawCityTime(pme,FALSE);
 		Draw_TimeZone(pme);
     }
 }
@@ -1041,7 +1048,7 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
         IIMAGE_Draw( pme->m_pImageBar, pme->m_xBg + pme->m_xBar, pme->m_yBg);
         ERR("pme->m_yBg:::::%d",pme->m_yBg,0,0);
         IDISPLAY_SetClipRect( pme->a.m_pIDisplay, &pme->m_rectScreen);
-        CWorldTime_DrawCityTime(pme);
+        CWorldTime_DrawCityTime(pme,left);
 		Draw_TimeZone(pme);
         IDISPLAY_Update(pme->a.m_pIDisplay);
     }
