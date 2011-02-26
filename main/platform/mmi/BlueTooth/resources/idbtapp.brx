@@ -20,7 +20,7 @@
 		<Text>Informasi Perangkat</Text>
 	</String>
 	<String Id="7" Name="IDS_SETTINGS">
-		<Text>Settings</Text>
+		<Text>Pengaturan</Text>
 	</String>
 	<String Id="8" Name="IDS_ENABLING">
 		<Text>Enabling</Text>
@@ -206,7 +206,7 @@
 		<Text>VR Capable</Text>
 	</String>
 	<String Id="69" Name="IDS_CONNECT">
-		<Text>Connect</Text>
+		<Text>Hubungkan</Text>
 	</String>
 	<String Id="70" Name="IDS_DISCONNECT">
 		<Text>Disconnect</Text>
@@ -284,7 +284,7 @@
 		<Text>Password</Text>
 	</String>
 	<String Id="95" Name="IDS_AUTHENTICATE">
-		<Text>Authenticate</Text>
+		<Text>Membuktikan</Text>
 	</String>
 	<String Id="96" Name="IDS_SRCH_BD_ADDR">
 		<Text>Least significant digits of BD Address</Text>
