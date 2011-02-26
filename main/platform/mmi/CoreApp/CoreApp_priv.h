@@ -696,6 +696,9 @@ typedef struct _CCoreApp
 	#endif
     AECHAR             *m_pADNName;
     AECHAR             *m_pADNNumber;
+#ifdef FEATURE_OEMOMH 
+    AEERect            timeRc;
+#endif
 } CCoreApp;
 
 /*==============================================================================

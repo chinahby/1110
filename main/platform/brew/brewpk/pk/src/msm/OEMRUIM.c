@@ -993,9 +993,6 @@ static int OEMRUIM_Get_AppLabels_Code(IRUIM *pMe,AECHAR *Buf)
     MSG_FATAL("pData length=%d", STRLEN((char*)pData), 0 ,0);
     
     status = SUCCESS;
-    //}
-  
-    status = SUCCESS;
     //if(status == SUCCESS)
     {
         if(pData[3]&0x4 == 0x4)//第三BIT为1表示有BAM Label
@@ -1003,6 +1000,10 @@ static int OEMRUIM_Get_AppLabels_Code(IRUIM *pMe,AECHAR *Buf)
             OEMRUIM_Conversion_Uimdata_To_AppLabel(pData, Buf, pnDataSize);
             DBGPRINTF("Buf =%S, length=%d", Buf, WSTRLEN(Buf));
         }
+    }
+    if(WSTRLEN(Buf) == 0)
+    {
+        status = EFAILED;
     }
     MSG_FATAL("OEMRUIM_Get_AppLabels_Code End", 0, 0 ,0);
     return status;
@@ -1416,12 +1417,50 @@ static byte OEMRUIM_bcd_to_ascii(byte num_digi, /* Number of dialing digits */
 
     return i;
 }
+//01 04 01 00 51 00 55 00 41 00 4C 00 43 00 4F 00 4D 00 4D 00 51 00 4C 00 41 00 42 00 40 00 31 00 32 00 33
 
 static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
 {
     int    pnDataSize = UIM_CDMA_HOME_SERVICE_SIZE;
     byte pData[UIM_CDMA_HOME_SERVICE_SIZE+2];
     int    status = EFAILED;
+#if 0    
+    pData[0]=0x01;
+    pData[1]=0x04;
+    pData[2]=0x01;
+    pData[3]=0x00;
+    pData[4]=0x51;
+    pData[5]=0x00;
+    pData[6]=0x55;
+    pData[7]=0x00;
+    pData[8]=0x41;
+    pData[9]=0x00;
+    pData[10]=0x4c;
+    pData[11]=0x00;
+    pData[12]=0x43;
+    pData[13]=0x00;
+    pData[14]=0x4f;
+    pData[15]=0x00;
+    pData[16]=0x4d;
+    pData[17]=0x00;
+    pData[18]=0x4d;
+    pData[19]=0x00;
+    pData[20]=0x51;
+    pData[21]=0x00;
+    pData[22]=0x4c;
+    pData[23]=0x00;
+    pData[24]=0x41;
+    pData[25]=0x00;
+    pData[26]=0x42;
+    pData[27]=0x00;
+    pData[28]=0x40;
+    pData[29]=0x00;
+    pData[30]=0x31;
+    pData[31]=0x00;
+    pData[32]=0x32;
+    pData[33]=0x00;
+    pData[34]=0x33;
+#else
     MSG_FATAL("OEMRUIM_Read_Svc_P_Name",0,0,0);   
     // Check to see if the card is connected.
     if (!IRUIM_IsCardConnected (pMe))
@@ -1453,7 +1492,8 @@ static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
     {
         status = EFAILED;
     }
-    else     
+    else  
+#endif        
     {
         /*int i;
         for(i=0;i<pnDataSize;i++)
@@ -1461,7 +1501,9 @@ static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
             ERR("OEMRUIM_G.I.:: featurecodedata[%03d]:0x%02X",i,pData[i],0);
         }*/
         status = SUCCESS;
+        DBGPRINTF("pData = %s, Length=%d",pData, STRLEN((char*)pData));
         OEMRUIM_Conversion_Uimdata_To_Spn(pData,svc_p_name,pnDataSize);//wszBuf中存放从UIM卡中读出的数?
+        DBGPRINTF("svc_p_name = %S",svc_p_name);
     }    
     return status;
 }
@@ -1515,6 +1557,7 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
             switch(Inputbuf[1]&0x1F)
             {
                 case AEERUIM_LANG_ENCODING_7BIT:                  //acsii编码
+                    MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_Spn AEERUIM_LANG_ENCODING_7BIT", 0, 0, 0);
                     for(k=0;k<i-3;k++)
                     {
                         tempbuf[k]=Inputbuf[k+3];
@@ -1571,6 +1614,7 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
                 case AEERUIM_LANG_ENCODING_LATIN:
                 case AEERUIM_LANG_ENCODING_OCTET:
                     //DBGPRINTF("tempbuf5 = %s",tempbuf);
+                    MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_Spn AEERUIM_LANG_ENCODING_7BIT", 0, 0, 0);
                     for(k=0;k<i-3;k++)
                     {
                         tempbuf[m]= Inputbuf[k+3];

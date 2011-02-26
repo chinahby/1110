@@ -1793,9 +1793,11 @@ void DrawTextWithProfile(IShell* pShell,
                     y, 
                     &rc, 
                     dwFlags);
+        MSG_FATAL("rc.dx=%d", rc.dx,0,0);
     }
     else if ( (dwFlags & IDF_ALIGN_LEFT) || (dwFlags & IDF_ALIGN_CENTER) )
     {
+        MSG_FATAL("rc.dx=%d", rc.dx,0,0);
         rc.x = ClipRc.x - 1;
         (void) IDISPLAY_DrawText(pDisplay, 
                     Font, 
@@ -1817,6 +1819,7 @@ void DrawTextWithProfile(IShell* pShell,
     }
     else
     {
+        MSG_FATAL("rc.dx=%d", rc.dx,0,0);
         (void) IDISPLAY_DrawText(pDisplay, 
                     Font, 
                     pcText, 
@@ -1857,6 +1860,7 @@ void DrawTextWithProfile(IShell* pShell,
                     y, 
                     &rc, 
                     dwFlags);
+        MSG_FATAL("rc.dx=%d", rc.dx,0,0);
     }
     else if ( (dwFlags & IDF_ALIGN_TOP) || (dwFlags & IDF_ALIGN_MIDDLE) )
     {
@@ -1878,6 +1882,7 @@ void DrawTextWithProfile(IShell* pShell,
                     y, 
                     &rc, 
                     dwFlags);
+        MSG_FATAL("rc.dx=%d", rc.dx,0,0);
     }
     else
     {
@@ -1897,6 +1902,7 @@ void DrawTextWithProfile(IShell* pShell,
                     y + 1, 
                     NULL, 
                     dwFlags);
+        MSG_FATAL("rc.dx=%d", rc.dx,0,0);
     }
 	
 	(void)IDISPLAY_SetColor(pDisplay, CLR_USER_TEXT, ProfileColor);

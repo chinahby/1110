@@ -299,7 +299,7 @@ static boolean  IDD_UTKREFRESH_Handler(void *pUser,
 
 // 更新待机界面的定时器函数。程序运行稳定后，每分钟执行一次
 static void CoreApp_UpdateIdleTimer(void *pUser);                          
-static void CoreApp_DrawBannerMessage(CCoreApp    *pMe);
+static void CoreApp_DrawBannerMessage(void    *pMe);
 
 #ifdef FEATURE_APP_MUSICPLAYER
 static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx);
@@ -2776,7 +2776,7 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
 #endif
 
         // 绘制服务提供商名和待机问候语
-        CoreApp_DrawBannerMessage(pMe);
+        CoreApp_DrawBannerMessage((void*)pMe);
     
         // 绘制当前日期、时间信息
         CoreApp_UpdateDateTime(pMe);
@@ -2914,7 +2914,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         }
 		case EVT_USER_REDRAW:     
         case EVT_UPDATEIDLE:
-        {
+        {        
             CoreApp_DrawWallPaper(pMe); // debug for wallpaper update issue
             if(pWallPaper)
             {
@@ -4196,14 +4196,20 @@ static void CoreApp_SearchingTimer(void *pUser)
     刷新显示操作由调用者根据需要执行相关操作。
     
 ==============================================================================*/
-static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
+static void CoreApp_DrawBannerMessage(void    *pUser)
 {
     AEERect   rc;
     AECHAR    wszBuf[UIM_CDMA_HOME_SERVICE_SIZE+1] = {0};
     int32     nSize = sizeof(wszBuf);
     //AEECMSSInfo  *pssinfo = NULL;
     boolean   bSetsearchingTimer = FALSE;
-    
+#ifdef FEATURE_OEMOMH    
+    boolean   hasGetSPN = FALSE;
+    STATIC uint8 step = RPLMN_X;
+    int strlen = 0;
+#endif    
+    CCoreApp  *pMe = (CCoreApp *)pUser;
+    MSG_FATAL("CoreApp_DrawBannerMessage Start",0,0,0);
     // 先取消相关定时器
     (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                               CoreApp_SearchingTimer,
@@ -4269,6 +4275,11 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
         
         if(pMe->svc_p_name[0] != 0)
         {
+#ifdef FEATURE_OEMOMH 
+            MSG_FATAL("CoreApp_DrawBannerMessage hasGetSPN = TRUE",0,0,0);
+            DBGPRINTF("svc_p_name s=%S", pMe->svc_p_name);
+            hasGetSPN = TRUE;
+#endif
             WSTRCPY(wszBuf,pMe->svc_p_name);
         }
         else if (IsRunAsFactoryTestMode())
@@ -4303,7 +4314,15 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
     }
 #ifdef FEATURE_DISP_128X128    
     {
-        int strlen = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
+        strlen = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
+#ifdef FEATURE_OEMOMH    
+        if(hasGetSPN && (strlen > 128))
+        {
+            rc.x = step - 10;
+            step -= 10;
+        }
+        else
+#endif        
         rc.x = (128 - strlen)/2;
         rc.dx = strlen;
         (void)DrawTextWithProfile(pMe->a.m_pIShell,
@@ -4319,7 +4338,15 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
     }
 #elif defined (FEATURE_DISP_176X220) 
     {
-        int strlen = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
+        strlen = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
+#ifdef FEATURE_OEMOMH    
+        if(hasGetSPN && (strlen > 176))
+        {
+            rc.x = step - 10;
+            step -= 10;
+        }
+        else
+#endif          
         rc.x = (176 - strlen)/2;
         rc.dx = strlen;
         (void)DrawTextWithProfile(pMe->a.m_pIShell,
@@ -4334,22 +4361,87 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
         MSG_FATAL("Strlen=%d, rc.x=%d", strlen, rc.x, 0);
      }
 #else
-    // Display the string
-    
-    (void)DrawTextWithProfile(pMe->a.m_pIShell,
-                              pMe->m_pDisplay,
-                              RGB_WHITE_NO_TRANS,
-                              AEE_FONT_NORMAL,
-                              wszBuf, -1,
-                              0, 0, &rc, 
-                              #ifdef FEATURE_VERSION_MYANMAR
-                              IDF_ALIGN_CENTER
-    						  #else
-                              IDF_ALIGN_RIGHT 
-                              #endif
-                              | IDF_ALIGN_MIDDLE 
-                              | IDF_TEXT_TRANSPARENT);
+    {
+        // Display the string
+        strlen = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
+#ifdef FEATURE_OEMOMH    
+        if(hasGetSPN && (strlen > SCREEN_WIDTH))
+        {
+            AECHAR    wszBuf1[16] = {0};
+            AECHAR    wszBuf2[31] = {0}; 
+            uint8 i,j;
+            uint8 BufCount = WSTRLEN(wszBuf);
+            uint8 Buf1Len = 0;
+            uint8 Buf2Len = 0;
+            for(i = 0; i < 11; ++i)
+            {
+                wszBuf1[i] = wszBuf[i];
+            }
+            wszBuf1[i++] = L'\0';
+            i--;
+            Buf1Len = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf1);
+            for(j=0; i < BufCount; ++i,++j)
+            {
+                wszBuf2[j] = wszBuf[i];
+            }
+            wszBuf2[j] = L'\0';
+            Buf2Len = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf2);
 
+            rc.dx = Buf2Len; 
+            (void)DrawTextWithProfile(pMe->a.m_pIShell,
+                                      pMe->m_pDisplay,
+                                      RGB_WHITE_NO_TRANS,
+                                      AEE_FONT_NORMAL,
+                                      wszBuf2, -1,
+                                      0, 0, &rc, 
+                          #ifdef FEATURE_OEMOMH
+                                      IDF_ALIGN_LEFT 
+                          #elif defined(FEATURE_VERSION_MYANMAR)
+                                      IDF_ALIGN_CENTER
+                          #else
+                                      IDF_ALIGN_RIGHT 
+                          #endif
+                                      | IDF_ALIGN_MIDDLE 
+                                      | IDF_TEXT_TRANSPARENT);    
+                          
+            rc.x = SCREEN_WIDTH - Buf1Len - 2;
+            rc.dx = Buf1Len; 
+            rc.y = IDLE_D_CLOCK_Y;
+            (void)DrawTextWithProfile(pMe->a.m_pIShell,
+                                      pMe->m_pDisplay,
+                                      RGB_WHITE_NO_TRANS,
+                                      AEE_FONT_NORMAL,
+                                      wszBuf1, -1,
+                                      0, 0, &rc, 
+                          #ifdef FEATURE_OEMOMH
+                                      IDF_ALIGN_LEFT 
+                          #elif defined(FEATURE_VERSION_MYANMAR)
+                                      IDF_ALIGN_CENTER
+                          #else
+                                      IDF_ALIGN_RIGHT 
+                          #endif
+                                      | IDF_ALIGN_MIDDLE 
+                                      | IDF_TEXT_TRANSPARENT);
+
+        }
+        else
+#endif      
+        (void)DrawTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  AEE_FONT_NORMAL,
+                                  wszBuf, -1,
+                                  0, 0, &rc, 
+                                  #ifdef FEATURE_OEMOMH
+                                  IDF_ALIGN_LEFT 
+                                  #elif defined(FEATURE_VERSION_MYANMAR)
+                                  IDF_ALIGN_CENTER
+        						  #else
+                                  IDF_ALIGN_RIGHT 
+                                  #endif
+                                  | IDF_ALIGN_MIDDLE 
+                                  | IDF_TEXT_TRANSPARENT);
+    }
  #endif   
     if (bSetsearchingTimer)
     {
@@ -4358,6 +4450,8 @@ static void CoreApp_DrawBannerMessage(CCoreApp    *pMe)
                               CoreApp_SearchingTimer,
                               pMe);
     }
+   
+    MSG_FATAL("CoreApp_DrawBannerMessage End",0,0,0);
 }
 
 /*==============================================================================
