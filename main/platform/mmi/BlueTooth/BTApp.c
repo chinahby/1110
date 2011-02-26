@@ -3715,9 +3715,49 @@ static void BTApp_FreeAppData(CBTApp *pMe)
 
 	//CBTApp* pMe = (CBTApp*)pi;
 
+	MSG_FATAL("***zzg BTApp_FreeAppData***", 0, 0, 0);
+
 	ISHELL_RegisterNotify(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, AEECLSID_BLUETOOTH_NOTIFIER, 0);
 
 	BTApp_AGDeInit((IApplet*)pMe);
+
+    //Add By zzg 2011_02_26 
+	if (NULL != pMe->mSD.devRec)
+	{
+		FREE(pMe->mSD.devRec);
+		pMe->mSD.devRec = NULL;
+	}
+	
+	if (NULL != pMe->mSD.browseRec)
+	{
+		FREE(pMe->mSD.browseRec);
+		pMe->mSD.browseRec = NULL;
+	}
+
+	if (NULL != pMe->mSD.svcRec)
+	{
+		FREE(pMe->mSD.svcRec);
+		pMe->mSD.svcRec = NULL;
+	}
+
+	if (NULL != pMe->mRM.device)
+	{
+		FREE( pMe->mRM.device );
+		pMe->mRM.device = NULL;
+	}
+	
+	if (NULL != pMe->mRM.devToSwitchRole)
+	{
+		FREE( pMe->mRM.devToSwitchRole );
+		pMe->mRM.devToSwitchRole = NULL;
+	}
+
+	if (NULL != pMe->mRM.linkStatus)
+	{
+		FREE( pMe->mRM.linkStatus );
+		pMe->mRM.linkStatus = NULL;
+	}
+    //Add End	
   
 	if (pMe->mNA.po != NULL)
 	{
