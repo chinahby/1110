@@ -1682,9 +1682,6 @@ void CoreTask_init( void )
    k1ExHandler_SetExceptionHandlerOf(ui_tcb.thread_id);
 #else
    (void) AEE_Init(AEE_APP_SIG);
-#ifdef FEATURE_OEMOMH
-    OEMOMH_Init();
-#endif
 #endif
     CoreTask_CreateAEEInstance();
 #if defined(FEATURE_BREWAPPCOORD)

@@ -1543,6 +1543,10 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
 #endif
                     // Reset the date, operator name
                     {
+#ifdef FEATURE_OEMOMH
+                        extern void OEMOMH_InitBREWDownload(void);
+                        OEMOMH_InitBREWDownload();
+#else
                         int nErr;
                         IDownload *pIDownload=NULL;
                         AEEMobileInfo info;
@@ -1555,6 +1559,7 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                             IDOWNLOAD_SetSubscriberID(pIDownload, info.szMobileID, STRLEN(info.szMobileID));
                             IDOWNLOAD_Release(pIDownload);
                         }
+#endif
                     }
                     return TRUE;
 

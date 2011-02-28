@@ -728,6 +728,12 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                 }
             }
             CoreApp_ProcessSubscriptionStatus(pMe);
+#ifdef FEATURE_OEMOMH
+            {
+                extern void OEMOMH_Init(void);
+                OEMOMH_Init();
+            }
+#endif
             return eRet;
             
         case DLGRET_EMGCALL:
