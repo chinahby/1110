@@ -253,6 +253,7 @@ when       who     what, where, why
 #ifdef FEATURE_RANDOM_MENU_REND
 #include "DisplayRendUtils.h"
 #endif
+#include "tcxomgr.h"
 #endif // CUST_EDITION
 /*===========================================================================
 
@@ -3021,7 +3022,10 @@ void OEM_RestoreFactorySetting( void )
 #endif
 #endif
    OEMFS_Remove( ALARM_EFS_FILE);
-
+    
+   // Reset for acquired CDMA1x network
+   tcxomgr_reset_rgs_and_temp_table(TCXOMGR_CLIENT_CDMA_1X);
+   
 #ifdef FEATURE_DUAL_UIMCARD
    //nvi.sim_select = 0;
    //(void) OEMNV_Put( NV_SIM_SELECT_I, &nvi);
