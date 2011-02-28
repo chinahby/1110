@@ -2201,7 +2201,10 @@ wms_status_e_type wms_ts_encode_CDMA_bd
         pos += parm_len; /* skip parm data */
     }
 
-    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_REPLY_OPTION)
+    if (st == WMS_OK_S && cl_bd_ptr->mask & WMS_MASK_BD_REPLY_OPTION
+        && (cl_bd_ptr->reply_option.user_ack_requested ||
+            cl_bd_ptr->reply_option.delivery_ack_requested ||
+            cl_bd_ptr->reply_option.read_ack_requested))
     {
         data[pos] = (uint8) WMS_BD_REPLY_OPTION; /* parm id */
         pos++;
