@@ -254,7 +254,6 @@ when       who     what, where, why
 #include "DisplayRendUtils.h"
 #endif
 #include "tcxomgr.h"
-#include "ui.h"
 #endif // CUST_EDITION
 /*===========================================================================
 
@@ -2401,53 +2400,6 @@ boolean OEM_IsFactoryTestMode(void)
 }
 #endif /*FEATURE_FACTORY_TESTMODE*/
 
-LOCAL   rex_sigs_type              OEMCFGI_Wait(
-
-        rex_sigs_type              mask
-            /* Mask of signals to wait on */
-)
-{
-
-  rex_sigs_type    sigs;
-      /* Signals returned by rex_wait */
-
-
-  /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /* Loop while waiting for one of the specified signals
-  ** to be set.
-  */
-  for( ;; )
-  {
-    /* Wait on specified signals, as well as,
-    ** on the watchdog signal.
-    */
-    sigs = rex_wait( mask | UI_RPT_TIMER_SIG );
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-    /* If watchdog signal is set, report back to the watchdog
-    */
-    if( sigs & UI_RPT_TIMER_SIG )
-    {
-      ui_kick_dog();
-    }
-
-    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-    /* If one or more of the specified signals is set
-    ** return now.
-    */
-    if( sigs & mask )
-    {
-      return sigs;
-    }
-
-  } /* for ( ;; ) */
-
-} /* tmc_wait */
-
-
 /*===========================================================================
 FUNCTION: OEM_RestoreFactorySetting
 
@@ -3100,8 +3052,7 @@ void OEM_RestoreFactorySetting( void )
 #endif //CUST_EDITION
 
    // Reset for acquired CDMA1x network
-   tcxomgr_reset_rgs_and_temp_table(TCXOMGR_CLIENT_CDMA_1X);
-   tcxomgr_powerdown(rex_self(), UI_NV_SIG, (void (*)( rex_sigs_type ))OEMCFGI_Wait);
+   tcxomgr_reset();
 }
 
 /*=============================================================================
