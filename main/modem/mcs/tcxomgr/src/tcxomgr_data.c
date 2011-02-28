@@ -1701,6 +1701,7 @@ void tcxomgr_reset_rgs_and_temp_table
 #ifdef CUST_EDITION
 void tcxomgr_reset(void)
 {
+#if 0
   tcxomgr.rgs.system    = TCXOMGR_CLIENT_NONE;
   (void) tcxomgr_nv_cmd( NV_WRITE_F, NV_RGS_TYPE_I );
 #ifdef FEATURE_XO
@@ -1725,6 +1726,7 @@ void tcxomgr_reset(void)
   #else
 #error code not present
   #endif
+#endif
 #endif
 }
 #endif
