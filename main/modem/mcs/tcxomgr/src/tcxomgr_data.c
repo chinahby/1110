@@ -1696,6 +1696,19 @@ void tcxomgr_reset_rgs_and_temp_table
 
   /* Restart last update time, since we just blew the table away. */
   tcxomgr.vco.last_update_secs = clk_read_secs();
-
+#ifdef CUST_EDITION
+#ifdef FEATURE_XO
+  tcxomgr.xo_trim.curr_val        = XO_TRIM_DEFAULT_VALUE;
+  tcxomgr.xo_trim.table_val       = XO_TRIM_DEFAULT_VALUE;
+  tcxomgr.xo_trim.switched        = FALSE;
+  
+  /* Attempt to write the current and table xo_trim value */
+  tcxomgr.nv.item.xo_trim_values.current = (uint8)tcxomgr.xo_trim.curr_val;
+  tcxomgr.nv.item.xo_trim_values.table   = (uint8)tcxomgr.xo_trim.table_val;
+  
+  /* send the request for the new xo_trim value to the PMIC */
+  (void) pm_xo_set_xo_trim( tcxomgr.xo_trim.curr_val );
+#endif
+#endif
 } /* tcxomgr_reset_rgs_and_temp_table */
 
