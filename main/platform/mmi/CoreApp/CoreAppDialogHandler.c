@@ -4206,8 +4206,11 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
 #ifdef FEATURE_OEMOMH    
     boolean   hasGetSPN = FALSE;
     STATIC uint8 step = RPLMN_X;
-    int strlen = 0;
+    //int str_lenth = 0;
 #endif    
+
+	int str_lenth = 0;
+
     CCoreApp  *pMe = (CCoreApp *)pUser;
     MSG_FATAL("CoreApp_DrawBannerMessage Start",0,0,0);
     // 先取消相关定时器
@@ -4314,17 +4317,17 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
     }
 #ifdef FEATURE_DISP_128X128    
     {
-        strlen = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
+        str_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
 #ifdef FEATURE_OEMOMH    
-        if(hasGetSPN && (strlen > 128))
+        if(hasGetSPN && (str_lenth > 128))
         {
             rc.x = step - 10;
             step -= 10;
         }
         else
 #endif        
-        rc.x = (128 - strlen)/2;
-        rc.dx = strlen;
+        rc.x = (128 - str_lenth)/2;
+        rc.dx = str_lenth;
         (void)DrawTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
@@ -4334,21 +4337,21 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   IDF_ALIGN_CENTER
                                   | IDF_ALIGN_MIDDLE 
                                   | IDF_TEXT_TRANSPARENT);        
-        MSG_FATAL("Strlen=%d, rc.x=%d", strlen, rc.x, 0);
+        MSG_FATAL("str_lenth=%d, rc.x=%d", str_lenth, rc.x, 0);
     }
 #elif defined (FEATURE_DISP_176X220) 
     {
-        strlen = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
+        str_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
 #ifdef FEATURE_OEMOMH    
-        if(hasGetSPN && (strlen > 176))
+        if(hasGetSPN && (str_lenth > 176))
         {
             rc.x = step - 10;
             step -= 10;
         }
         else
 #endif          
-        rc.x = (176 - strlen)/2;
-        rc.dx = strlen;
+        rc.x = (176 - str_lenth)/2;
+        rc.dx = str_lenth;
         (void)DrawTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
@@ -4358,14 +4361,14 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   IDF_ALIGN_CENTER
                                   | IDF_ALIGN_MIDDLE 
                                   | IDF_TEXT_TRANSPARENT);        
-        MSG_FATAL("Strlen=%d, rc.x=%d", strlen, rc.x, 0);
+        MSG_FATAL("str_lenth=%d, rc.x=%d", str_lenth, rc.x, 0);
      }
 #else
     {
         // Display the string
-        strlen = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
+        str_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
 #ifdef FEATURE_OEMOMH    
-        if(hasGetSPN && (strlen > SCREEN_WIDTH))
+        if(hasGetSPN && (str_lenth > SCREEN_WIDTH))
         {
             AECHAR    wszBuf1[16] = {0};
             AECHAR    wszBuf2[31] = {0}; 
@@ -4683,9 +4686,9 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	{
 #ifdef FEATURE_DISP_128X128    
     {
-       // int strlen = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszDate);
-       // rc.x = (128 - strlen)/2;
-       // rc.dx = strlen;
+       // int str_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszDate);
+       // rc.x = (128 - str_lenth)/2;
+       // rc.dx = str_lenth;
 		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
@@ -4695,7 +4698,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              IDF_ALIGN_MIDDLE
 	                              | IDF_ALIGN_CENTER
 	                              | IDF_TEXT_TRANSPARENT);  
-        MSG_FATAL("Strlen=%d, rc.x=%d", strlen, rc.x, 0);
+        MSG_FATAL("str_lenth=%d, rc.x=%d", str_lenth, rc.x, 0);
     }
 #elif defined FEATURE_DISP_220X176
 	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
@@ -4898,9 +4901,9 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   | IDF_TEXT_TRANSPARENT);
 #elif defined(FEATURE_DISP_128X128)
     {
-        int strlen = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszDate);
-        rc_date.x = (128 - strlen)/2;
-        rc_date.dx = strlen;
+        int str_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszDate);
+        rc_date.x = (128 - str_lenth)/2;
+        rc_date.dx = str_lenth;
         DrawTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
@@ -4911,7 +4914,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                   | IDF_ALIGN_CENTER
                                   | IDF_TEXT_TRANSPARENT);  
 
-        MSG_FATAL("Strlen=%d, rc_date.x=%d", strlen, rc_date.x, 0);
+        MSG_FATAL("str_lenth=%d, rc_date.x=%d", str_lenth, rc_date.x, 0);
     }
     /*    DrawTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
@@ -5022,9 +5025,9 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               | IDF_TEXT_TRANSPARENT);  
 #elif defined(FEATURE_DISP_128X128)
 {
-    int strlen = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszDate);
-    rc_date.x = (128 - strlen)/2;
-    rc_date.dx = strlen;
+    int str_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszDate);
+    rc_date.x = (128 - str_lenth)/2;
+    rc_date.dx = str_lenth;
 
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
@@ -5035,7 +5038,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               IDF_ALIGN_MIDDLE
                               | IDF_ALIGN_LEFT
                               | IDF_TEXT_TRANSPARENT);
-    MSG_FATAL("Strlen=%d, rc_date.x=%d", strlen, rc_date.x, 0);
+    MSG_FATAL("str_lenth=%d, rc_date.x=%d", str_lenth, rc_date.x, 0);
 }
 #elif defined(FEATURE_DISP_160X128)
 	(void)DrawTextWithProfile(pMe->a.m_pIShell,
@@ -5116,13 +5119,13 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     wszDate[3] = (AECHAR)'\0';
 #if defined(FEATURE_DISP_128X128)
 {
-    int strlen = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszDate);
-    //rc_week.x = (128 - strlen)/2;
-    //rc_week.dx = strlen;
+    int str_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszDate);
+    //rc_week.x = (128 - str_lenth)/2;
+    //rc_week.dx = str_lenth;
 	SETAEERECT(&rc_week, 
-		   (128 - strlen)/2,
+		   (128 - str_lenth)/2,
 		   RPLMN_Y+15,
-		   strlen, 
+		   str_lenth, 
            pMe->m_nNormalFontHeight);
 
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
@@ -5135,7 +5138,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                               | IDF_ALIGN_CENTER
                               | IDF_TEXT_TRANSPARENT);
 
-    MSG_FATAL("Strlen=%d, rc_week.x=%d", strlen, rc_week.x, 0);
+    MSG_FATAL("str_lenth=%d, rc_week.x=%d", str_lenth, rc_week.x, 0);
 }   
 #else
 	
