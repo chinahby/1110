@@ -16765,6 +16765,18 @@ DESCRIPTION
 	IDISPLAY_Backlight( pMe->m_pIDisplay, TRUE );
 
 #ifdef FEATURE_BT_2_1
+	if ( (menu == BT_APP_MENU_USER_CFM_RQST) || (menu == BT_APP_MENU_REBOND) )
+	{
+		if ( TOP_MENU == BT_APP_MENU_SPP_RESULTS )
+		{
+			ISHELL_CancelTimer(pMe->m_pShell,
+			                   (PFNNOTIFY) BTApp_BuildSppTestResults,
+			                   pMe);
+		}
+		
+		dev->bdAddr = pMe->mRM.BondBDAddr;
+	}
+	
 	IBTEXTRM_DeviceRead( pMe->mRM.po, dev );
 	
 	if ( WSTRLEN( dev->wName ) == 0 )
@@ -16893,6 +16905,8 @@ DESCRIPTION
 	WSTRCPY(pMe->wPromptBuf, wBuf);	
 				
 
+	MOVE_TO_STATE(BTAPPST_PROMPT)
+		
 	pMe->m_eDlgRet = DLGRET_PROMPT; 
     (void) ISHELL_EndDialog(pMe->m_pShell); 
   

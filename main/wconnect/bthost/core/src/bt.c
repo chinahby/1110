@@ -1483,8 +1483,34 @@ LOCAL void bt_read_my_bd_addr_from_nv
   }
   else
   {
-    const bt_bd_addr_type bd_addr = { 0x34, 0x12, 0x78, 0x56, 0xbc, 0x9a };
+    //Add By zzg 2011_02_28
+    //Read the first 32bytes of the ESN to fill the my_bd_addr.....
+  	nv_stat_enum_type status;
+	
+    bt_bd_addr_type bd_addr = {0x34, 0x12, 0x78, 0x56, 0xbc, 0x9a};
 
+	status = nvio_read_item(NV_ESN_I, 0, (byte *)&rd_bd_addr_nv_cmd.data_ptr->esn, sizeof(nv_item.esn)); 
+	
+	MSG_FATAL("***zzg nvio_read_item NV_ESN_I status=%x***", status, 0, 0);
+
+	memcpy((byte *)&bd_addr, (byte *)&nv_item.esn, sizeof(nv_item.esn));
+	//Add End
+	
+	/*
+	//Read ESN from NV (as the MY_BD_ADDR)/
+    rd_bd_addr_nv_cmd.item       = NV_ESN_I;
+    rd_bd_addr_nv_cmd.cmd        = NV_READ_F;
+    rd_bd_addr_nv_cmd.data_ptr   = &nv_item;
+    rd_bd_addr_nv_cmd.tcb_ptr    = &bt_tcb;
+    rd_bd_addr_nv_cmd.sigs       = BT_WAIT_SIG;
+    rd_bd_addr_nv_cmd.done_q_ptr = NULL;
+
+   (void) rex_clr_sigs(rex_self(), BT_WAIT_SIG);
+    nv_cmd(&rd_bd_addr_nv_cmd);
+   (void) rex_wait(BT_WAIT_SIG);
+   (void) rex_clr_sigs(rex_self(), BT_WAIT_SIG);
+    */
+       
     BT_ERR( "BT: Unable to read MY_BD_ADDR from NV", 0, 0, 0 );
     bt_cmd_dc_set_bd_addr( ( bt_bd_addr_type* ) &bd_addr );
   }
