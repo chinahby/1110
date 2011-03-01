@@ -6279,7 +6279,8 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
     SETAEERECT(&rect, pMe->m_rc.dx/8, MUSIC_START_WIDTH, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
     IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,MAKE_RGB(60, 128, 196));
      // Display the string
-    (void)DrawTextWithProfile(pMe->a.m_pIShell,
+     //dele by yangdecai 
+    /*(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
                               AEE_FONT_BOLD,
@@ -6287,12 +6288,13 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               0, 0, &rect, 
                               IDF_ALIGN_LEFT
                               | IDF_ALIGN_MIDDLE 
-                              | IDF_TEXT_TRANSPARENT);
-   bracket[0]=(AECHAR)']';
+                              | IDF_TEXT_TRANSPARENT);*/
+   //bracket[0]=(AECHAR)']';
    MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx*7/8, pMe->m_nLargeFontHeight, 0);
    SETAEERECT(&rect, pMe->m_rc.dx*7/8, MUSIC_START_WIDTH, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
     // Display the string
-   (void)DrawTextWithProfile(pMe->a.m_pIShell,
+    //dele by yangdecai
+   /*(void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
                               AEE_FONT_BOLD,
@@ -6300,13 +6302,13 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               0, 0, &rect, 
                               IDF_ALIGN_LEFT
                               | IDF_ALIGN_MIDDLE 
-                              | IDF_TEXT_TRANSPARENT);
+                              | IDF_TEXT_TRANSPARENT);*/
   MSG_FATAL("m_musicstl====%d",m_musicstl,0,0);
   if(m_musicstl>(pMe->m_rc.dx*3/4-2*DISP_BLANK_WIDTH))
   {
   	m_musicstl=(pMe->m_rc.dx*3/4-2*DISP_BLANK_WIDTH);
   }
-  SETAEERECT(&rect, (pMe->m_rc.dx/8 + DISP_BLANK_WIDTH/*((pMe->m_rc.dx*3/4)-m_musicstl)/2*/), MUSIC_START_WIDTH,(pMe->m_rc.dx*3/4 - DISP_BLANK_WIDTH), pMe->m_nLargeFontHeight);
+  SETAEERECT(&rect, (pMe->m_rc.dx/8 /*((pMe->m_rc.dx*3/4)-m_musicstl)/2*/), MUSIC_START_WIDTH,(pMe->m_rc.dx*3/4), pMe->m_nLargeFontHeight);
   MSG_FATAL("rect.x=%d,w=%d", (pMe->m_rc.dx/8 + pMe->m_nLargeFontHeight), (pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), 0);
   #ifdef FEATURE_VERSION_MYANMAR
   {
@@ -6324,15 +6326,17 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
 	                              | IDF_TEXT_TRANSPARENT);
   }
   #else
-  (void)DrawTextWithProfile(pMe->a.m_pIShell,
-                              pMe->m_pDisplay,
-                              RGB_WHITE_NO_TRANS,
-                              AEE_FONT_BOLD,
-                              pMe->m_pMusicName+nIdx, -1,
-                              0, 0, &rect, 
-                              IDF_ALIGN_CENTER
-                              | IDF_ALIGN_MIDDLE 
-                              | IDF_TEXT_TRANSPARENT);
+  {
+	  (void)DrawTextWithProfile(pMe->a.m_pIShell,
+	                              pMe->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              AEE_FONT_BOLD,
+	                              pMe->m_pMusicName+nIdx, -1,
+	                              0, 0, &rect, 
+	                              IDF_ALIGN_CENTER
+	                              | IDF_ALIGN_MIDDLE 
+	                              | IDF_TEXT_TRANSPARENT);
+  }
   #endif
   IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,CLR_SYS_TITLE_TEXT);
 }
