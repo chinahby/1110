@@ -546,7 +546,7 @@ int OEMOMH_DeleteApps()
 	return bReset;
 }
 
- int OEMOMH_LoadSaved()
+int OEMOMH_LoadSaved()
 {
 	int nErr = AEE_SUCCESS;
 	IShell *pIShell = AEE_GetShell();
@@ -561,6 +561,9 @@ int OEMOMH_DeleteApps()
 		pFile = IFILEMGR_OpenFile(pIFileMgr, OMH_DOWNLOAD_INFO_FILE, _OFM_READ);
 		if(pFile)
 		{
+#ifdef CUST_EDITION
+            OEM_GetCachedConfig(CFGI_DOWNLOAD, (void *)&omhConfig.m_tDldInfo, sizeof(AEEDownloadInfo));
+#else
 			/* Read from File to AEEDownloadInfo struct */
 			if(IFILE_Read(pFile, (void*)&omhConfig.m_tDldInfo, sizeof(AEEDownloadInfo)) != sizeof(AEEDownloadInfo))
 			{               		
@@ -568,7 +571,7 @@ int OEMOMH_DeleteApps()
 				/* Read failed for some reason. Destroy the file and re-write. */
 				IFILEMGR_Remove(pIFileMgr, OMH_DOWNLOAD_INFO_FILE);
 			}		
-
+#endif
 			if(IFILE_Read(pFile, (void*)&lenSID, sizeof(lenSID)) != sizeof(lenSID))
 			{               		
 				nErr = EFAILED;				
@@ -614,6 +617,9 @@ int OEMOMH_SaveInfo()
 		pFile = IFILEMGR_OpenFile(pIFileMgr, OMH_DOWNLOAD_INFO_FILE, _OFM_CREATE);
 		if(pFile)
 		{
+#ifdef CUST_EDITION
+            OEM_SetCachedConfig(CFGI_DOWNLOAD, (void *)&omhConfig.m_tDldInfo, sizeof(AEEDownloadInfo));
+#else
 			/* Read from File to AEEDownloadInfo struct */
 			if(IFILE_Write(pFile, (void*)&omhConfig.m_tDldInfo, sizeof(AEEDownloadInfo)) != sizeof(AEEDownloadInfo))
 			{               		
@@ -621,7 +627,7 @@ int OEMOMH_SaveInfo()
 				/* Read failed for some reason. Destroy the file and re-write. */
 				IFILEMGR_Remove(pIFileMgr, OMH_DOWNLOAD_INFO_FILE);
 			}
-
+#endif
 			if((omhConfig.m_pSID[0] != 0) && (!(omhConfig.m_tDldInfo.wFlags & DIF_MIN_FOR_SID)))
 			{
 				lenSID = STRLEN(omhConfig.m_pSID) + 1;
