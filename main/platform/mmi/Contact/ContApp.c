@@ -1028,6 +1028,7 @@ static int CContApp_Start(CContApp *pMe)
     pMe->m_nInputModeTable[1] = AEE_TM_NUMBERS;
     pMe->m_nCurrentInputMode = 0;
 #endif
+    pMe->m_boptaleadyView = FALSE;
     CContApp_CFGCacheInit(pMe, &pMe->m_sCFGCache);
 	
     // Read the config file

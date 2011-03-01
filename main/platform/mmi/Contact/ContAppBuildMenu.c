@@ -95,15 +95,17 @@ int CContApp_BuildOptsMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
         if(!IS_ZERO_REC())
         {
             // 1
-            ai.wText       = IDS_VIEW;
-            ai.wItemID   = IDI_OPTS_MENU_VIEW;
-            
-            if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+            if(!pMe->m_boptaleadyView)
             {
-                FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
-                return EFAILED;
-            }    
-
+	            ai.wText       = IDS_VIEW;
+	            ai.wItemID   = IDI_OPTS_MENU_VIEW;
+	            
+	            if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+	            {
+	                FARF(ADDR, ("Failed to Add Opts item %d", ai.wItemID));
+	                return EFAILED;
+	            }    
+			}
             // 2
             ai.wText       = IDS_EDIT;
             ai.wItemID   = IDI_OPTS_MENU_EDIT;

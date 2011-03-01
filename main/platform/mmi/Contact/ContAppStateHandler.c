@@ -1108,6 +1108,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
                         }
                         return NFSMACTION_WAIT;
                     }          
+                    pMe->m_boptaleadyView = FALSE;
                     MOVE_TO_STATE(STATE_OPTS);
                 }
                 return NFSMACTION_CONTINUE;
@@ -1130,6 +1131,7 @@ static NextFSMAction Handler_STATE_MAINLIST(CContApp *pMe)
             // Save the menu select
             PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel);
             //pMe->m_eOptsRetState = STATE_OPTS;
+            pMe->m_boptaleadyView = FALSE;
             MOVE_TO_STATE(STATE_DETAIL);
             break;  
     
@@ -4626,6 +4628,7 @@ static NextFSMAction Handler_STATE_DELETE(CContApp *pMe)
         case DLGRET_CANCELED:   
             if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
             {
+            	pMe->m_boptaleadyView = FALSE;
                 MOVE_TO_STATE(STATE_OPTS);
             }
             else
@@ -5200,6 +5203,7 @@ static NextFSMAction Handler_STATE_COPY(CContApp *pMe)
         case DLGRET_CANCELED:
             if (pMe->m_eStartMethod == STARTMETHOD_NORMAL)
             {
+            	pMe->m_boptaleadyView = FALSE;
                 MOVE_TO_STATE(STATE_OPTS);
             }
             else
@@ -7710,7 +7714,10 @@ static NextFSMAction Handler_STATE_DETAIL(CContApp *pMe)
             FREEIF(pMe->m_pAddNewName);
             MOVE_TO_STATE(pMe->m_eOptsRetState);
             break;
-
+		case DLGRET_SELECT:
+			MSG_FATAL("DLGRET_SELECT.................",0,0,0);
+            MOVE_TO_STATE(STATE_OPTS);		
+			break;
         case DLGRET_CANCELED:
             // reset the menu select
             pMe->m_wOptsStatSel = 0;

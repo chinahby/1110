@@ -965,6 +965,7 @@ typedef struct _CContApp
 #ifdef FEATURE_RUIM_PHONEBOOK
     boolean      m_bADNRUIMSupport;
 #endif
+	boolean      m_boptaleadyView;
 #ifdef FEATURE_OEMOMH        
    // AEECardSessionReadTpStatus	*m_pReadStatus;
 #endif

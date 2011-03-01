@@ -5345,6 +5345,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                     CLOSE_DIALOG(DLGRET_OK);*/
 
                     // Reset select field
+                    pMe->m_boptaleadyView = FALSE;
                     pMe->m_eOptsRetState = STATE_OPTS;
                     CLOSE_DIALOG(DLGRET_DETAIL);
                     return TRUE;
@@ -12413,21 +12414,40 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
             }
             
             // Draw prompt bar here
-            CONTAPP_DRAW_BOTTOMBAR(BTBAR_BACK);
+            CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
             IDISPLAY_Update(pMe->m_pDisplay);  
             return TRUE;
             
         case EVT_DIALOG_END:
             return TRUE;
-            
+
+        case EVT_KEY_RELEASE:
+        {
+        	 switch (wParam)
+             {
+             	case AVK_SELECT:
+                    //CLOSE_DIALOG(DLGRET_OK);
+              		MSG_FATAL("AVK_SELECT........",0,0,0);
+              		pMe->m_boptaleadyView = TRUE;
+                    CLOSE_DIALOG(DLGRET_SELECT);
+                    return TRUE;
+                default:
+                    break; 
+             }
+             break;
+        }
         case EVT_KEY:
             switch (wParam)
             {
                 //case AVK_INFO:
                 case AVK_CLR:
+                	//CLOSE_DIALOG(DLGRET_OK);
+                    CLOSE_DIALOG(DLGRET_CANCELED);
+                    return TRUE;
                 case AVK_SELECT:
                     //CLOSE_DIALOG(DLGRET_OK);
-                    CLOSE_DIALOG(DLGRET_CANCELED);
+              		MSG_FATAL("AVK_SELECT........",0,0,0);
+                    CLOSE_DIALOG(DLGRET_SELECT);
                     return TRUE;
                 case AVK_CAMERA:
 				#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
