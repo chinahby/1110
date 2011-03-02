@@ -47,7 +47,7 @@ typedef enum {
   De_Active_Callforward_Unconditional=43,//取消无条件转接
   Active_CallWaiting=45,//激活呼叫等待
   De_Active_CallWaiting=47,//取消呼叫等待
-#if defined(FEATURE_CARRIER_INDONESIA)
+#if 1//defined(FEATURE_CARRIER_INDONESIA)
    //Register Section
    REGISTER_CFB                  = 5,
    DE_REGISTER_CFB            = 9,

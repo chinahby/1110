@@ -1972,6 +1972,7 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
             switch (pMe->m_CFType)
             {
                 case CALLFORWARD_BUSY:      //ÓöÃ¦×ªÒÆ
+                    MSG_FATAL("CALLFORWARD_BUSY",0,0,0);
                     pMe->m_nResID = IDS_CALLFORWARD_BUSY;
                     selete_item = CFGI_CALLFORWARD_BUSY_ENABLE;
                     //SettingMenu_Process_Feature_Code(pMe,CFGI_CALLFORWARD_BUSY_ENABLE);
@@ -5735,7 +5736,7 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
     //uint16 Ruim_Active_code    = 0;
     //uint16 Ruim_Register_code = 0;
     //char  Assnum[18];
-    
+    MSG_FATAL("SettingMenu_Process_Feature_Code Start",0,0,0);
     if(NULL== pMe)
     {
         return;
@@ -5743,7 +5744,7 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
 
     if(IsRunAsUIMVersion())
     {
-#ifdef FEATURE_CARRIER_INDONESIA
+#if 1//def FEATURE_CARRIER_INDONESIA
         uint16 Ruim_Active_code    = 0;
         uint16 Ruim_Register_code = 0;
         char  Assnum[18];
@@ -5755,6 +5756,7 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
                 break;
 
             case CFGI_CALLFORWARD_BUSY_ENABLE:
+                MSG_FATAL("CFGI_CALLFORWARD_BUSY_ENABLE ",0,0,0);
                 Ruim_Active_code    = Active_Callforward_Busy;
                 Ruim_Register_code = REGISTER_CFB;
                 break;
@@ -5814,6 +5816,7 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
         MEMSET(Assnum, 0x00, sizeof(Assnum));
         if( SUCCESS == IRUIM_Get_Feature_Code(pMe->m_pIRUIM,(byte*)Assnum, Ruim_Active_code) )     
         {
+            MSG_FATAL("IRUIM_Get_Feature_Code == SUCCESS ",0,0,0);
             //if the supplement service number is "**"(Wrong number), then read supplement service number from RUIM Register section or config file
             if ( STRNCMP(Assnum,"**",2) )
             { 

@@ -1269,6 +1269,7 @@ static int OEMRUIM_Get_Feature_Code(IRUIM *pMe,byte *Buf,int  Lable)
     byte pData[UIM_CDMA_FEATURE_CODE_SIZE+2];
     int pnDataSize = UIM_CDMA_FEATURE_CODE_SIZE;
     int status = EFAILED;
+    MSG_FATAL("OEMRUIM_Get_Feature_Code Start",0,0,0);
     if ((!pMe) || (!Buf))
     {
         return EFAILED;
@@ -1326,6 +1327,7 @@ static int OEMRUIM_Get_Feature_Code(IRUIM *pMe,byte *Buf,int  Lable)
         {
             ERR("OEMRUIM_G.I.:: featurecodedata[%03d]:0x%02X",i,pData[i],0);
         }*/
+        DBGPRINTF("pData =%s, length=%d", (char*)pData, STRLEN((char*)pData));
         if(UIM_CDMA_FEATURE_CODE_NUM_DIGI==OEMRUIM_bcd_to_ascii(UIM_CDMA_FEATURE_CODE_NUM_DIGI,
                                         (byte *)&pData[Lable],
                                         (byte *)Buf))
@@ -1333,6 +1335,7 @@ static int OEMRUIM_Get_Feature_Code(IRUIM *pMe,byte *Buf,int  Lable)
             Buf[UIM_CDMA_FEATURE_CODE_NUM_DIGI]='\0';
         }
     }
+    MSG_FATAL("OEMRUIM_Get_Feature_Code End",0,0,0);
     return status;
 }
 
