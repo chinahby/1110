@@ -929,7 +929,13 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
         case EVT_CARD_STATUS:
             if(pMe->m_sPinActionStatus.nCmdStatus == SUCCESS)
             {
+#ifndef FEATURE_OEMOMH
+                (void) ISHELL_CancelTimer(pMe->a.m_pIShell,DialogTimeoutCallback,pMe);
+                CLOSE_DIALOG(DLGRET_MSGOK);
+                return TRUE;
+#else
                 pMe->m_nMsgID = IDS_MSG_OK;
+#endif
             }
             else
             {
@@ -964,7 +970,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
             }
             
             // 启动发送关闭对话框事件的定时器
-            ISHELL_SetTimer(pMe->a.m_pIShell, 3000, DialogTimeoutCallback, pMe);
+            ISHELL_SetTimer(pMe->a.m_pIShell, 2000, DialogTimeoutCallback, pMe);
             ISHELL_PostEvent(pMe->a.m_pIShell, AEECLSID_CORE_APP, EVT_USER_REDRAW, 0, 0);
             return TRUE;
             

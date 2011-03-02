@@ -1125,23 +1125,27 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
                         pos++;
                     }
                     
-                    if (nValLen > 0 && pMenu)
+                    if (nValLen > 0)
                     {
-                        ai.wItemID = utk_ptr[pos];
-                        ai.pszResText = NULL;
-                        ai.wText = 0;
-                        ai.pImage = NULL;
-                        ai.wImage = IDB_UTKMENU;
-                        ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
-                        ai.wFont = AEE_FONT_NORMAL;
-                        ai.dwData = 0;
-                        ai.pText = wszBuf;
-                        MEMSET(wszBuf, 0, nSize);
-                        DecodeAlphaString(&utk_ptr[pos+1], nValLen-1, wszBuf, 256);
-                        DBGPRINTF("UIM_TK_ITEM_TAG %S",wszBuf);
-                        (void)IMENUCTL_AddItemEx(pMenu, &ai );
+                        nItemCount++;
+                        if(pMenu)
+                        {
+                            ai.wItemID = utk_ptr[pos];
+                            ai.pszResText = NULL;
+                            ai.wText = 0;
+                            ai.pImage = NULL;
+                            ai.wImage = IDB_UTKMENU;
+                            ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
+                            ai.wFont = AEE_FONT_NORMAL;
+                            ai.dwData = 0;
+                            ai.pText = wszBuf;
+                            MEMSET(wszBuf, 0, nSize);
+                            DecodeAlphaString(&utk_ptr[pos+1], nValLen-1, wszBuf, 256);
+                            DBGPRINTF("UIM_TK_ITEM_TAG %S",wszBuf);
+                            (void)IMENUCTL_AddItemEx(pMenu, &ai );
+                        }
                     }
-                    nItemCount++;
+                    
                     pos+=nValLen;
                     break;
                 
@@ -1309,7 +1313,7 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
     }  
       
     FREE(wszBuf);        
-        
+    DBGPRINTF("CUTK_SetUTKMenu 0x%x %d",cmd_type,nItemCount);
     return nItemCount;
 }
 

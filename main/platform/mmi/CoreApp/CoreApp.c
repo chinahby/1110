@@ -161,7 +161,7 @@ static AECHAR g_UIMPINSTR2[UIM_MAX_CHV_DIGITS + 1];
 
 int CoreApp_DisplayADN(IShell *pShell, uint16 wRecID)
 {
-    if(!pShell)
+    if(!pShell || !OEM_IsCDMASVCSupport(UIM_CDMA_SVC_ADN))
     {
         return EBADPARM;
     }

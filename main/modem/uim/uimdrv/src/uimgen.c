@@ -7827,10 +7827,11 @@ uim_cmd_status_type uim_generic_command_response
     }
 
     uim_rpt_buf.sw1 = SW1_NORMAL_END;
-    uim_rpt_buf.sw2 = SW2_NORMAL_END;
+    // Gemsea Remove uim_rpt_buf.sw2 = SW2_NORMAL_END;
     /* If the command is completed, indicate there is a proactive command
        pending. */
     completed_status = UIM_CMD_FETCH;
+    ERR_FATAL("UIM_CMD_FETCH 0x%X",uim_rsp_buf.sw2,0,0);
 
     /* Set the protocol for the Internal FETCH command based on the last
        successful command */

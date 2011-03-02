@@ -7322,7 +7322,7 @@ rex_sigs_type *mask
   cmd_ptr->hdr.protocol = uim_dfs_1.protocol;
 #endif
 
-
+  ERR_FATAL("uim_fetch 0x%X",uim_rsp_buf.sw2,0,0);
   uim_process_command( cmd_ptr, mask );
 } /* uim_fetch */
   #endif /* FEATURE_UIM_TOOLKIT */

@@ -3037,6 +3037,7 @@ void uim_tk_process_proactive_command
     /* Build the Result TLV based on the status of the parse */
     if (proc_simple_tlv_return_buf.status != UIM_TK_MESSAGE_IS_VALID)
     {
+      MSG_FATAL("uim_tk_process_proactive_command %d",proc_simple_tlv_return_buf.status,0,0);
       /* Start the Terminal Response */
       uim_cmd_ptr = start_terminal_response_buffer
         (&packed_offset, &parsed_tlv_buf, &cmd_details);
@@ -3060,7 +3061,7 @@ void uim_tk_process_proactive_command
       }
       else /* The UIM free queue is empty */
       {
-        MSG_ERROR ("No UIM command buffers on uim_free_q",0,0,0);
+        MSG_FATAL("No UIM command buffers on uim_free_q",0,0,0);
       } /* end if - check if the UIM free queue is empty */
     }
     else /* The message is valid */
