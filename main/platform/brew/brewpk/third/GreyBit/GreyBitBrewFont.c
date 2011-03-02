@@ -380,11 +380,6 @@ FONT_NO_EXIST:
     
     for (i=0; i<nChars && pcText[i]; i++)
     {
-        if (x > xMax)
-        {
-            break;
-        }
-        
 	    ch = pcText[i];
 		if(ch < ' ') continue;
 		
@@ -401,7 +396,11 @@ FONT_NO_EXIST:
         x += charBmp->horioff;
  	    xSrc = 0;
         
-   	    if (x < xMin)
+        if (x > xMax)
+        {
+            break;
+        }
+        else if (x < xMin)
   	    {
  		    if ((x+xWidth) < xMin)
  		    {
@@ -567,7 +566,7 @@ static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nCha
     int result = SUCCESS;
     
     xMin = prcBackground->x;
-    xMax = prcBackground->x + prcBackground->dx;   //modi by yangdecai 2011-03-02
+    xMax = prcBackground->x + prcBackground->dx - 1;
     yMin = prcBackground->y;
     yMax = prcBackground->y + prcBackground->dy - 1;
  
