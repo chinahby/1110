@@ -23,6 +23,26 @@
 #include "UTK_priv.h"
 #include "OEMHeap.h"
 
+#ifdef FEATURE_DISP_176X220
+    #define LG_IMG_WIDTH   27
+#elif defined(FEATURE_DISP_128X128)
+    #define LG_IMG_WIDTH 20
+#elif defined(FEATURE_DISP_128X160)
+    #define LG_IMG_WIDTH   20
+#elif defined(FEATURE_DISP_160X128)
+    #define LG_IMG_WIDTH 20
+#elif defined(FEATURE_DISP_220X176)
+    #define LG_IMG_WIDTH   29
+#elif defined(FEATURE_DISP_128X160)
+    #define LG_IMG_WIDTH 20
+#elif defined(FEATURE_DISP_240X320)
+    #define LG_IMG_WIDTH 20
+#elif defined(FEATURE_DISP_320X240)
+    #define LG_IMG_WIDTH 	32
+#else
+    #define LG_IMG_WIDTH 20
+#endif
+
 
 /*==============================================================================
                                  宏定义和常数
@@ -1038,7 +1058,7 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
 
     if(pMenu)
     {
-        if(IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, pMe->m_wszTitle) >= SCREEN_WIDTH)
+        if(IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, pMe->m_wszTitle) >= (SCREEN_WIDTH - LG_IMG_WIDTH*2))
         {
             (void)IMENUCTL_SetTitle(pMenu, NULL, 0, pMe->m_wszTitle);
             IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, NULL);
@@ -1146,7 +1166,7 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
                     {
                         MEMSET(wszBuf, 0, nSize);
                         DecodeAlphaString(&utk_ptr[pos], nValLen, wszBuf, 256);
-						if(IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszBuf) >= SCREEN_WIDTH)
+						if(IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, wszBuf) >= (SCREEN_WIDTH - LG_IMG_WIDTH*2))
 						{
                             (void)IMENUCTL_SetTitle(pMenu, NULL, 0, wszBuf);
                             IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,NULL);
