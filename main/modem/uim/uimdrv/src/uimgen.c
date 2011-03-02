@@ -7831,7 +7831,7 @@ uim_cmd_status_type uim_generic_command_response
     /* If the command is completed, indicate there is a proactive command
        pending. */
     completed_status = UIM_CMD_FETCH;
-    ERR_FATAL("UIM_CMD_FETCH 0x%X",uim_rsp_buf.sw2,0,0);
+    MSG_FATAL("UIM_CMD_FETCH 0x%X",uim_rsp_buf.sw2,0,0);
 
     /* Set the protocol for the Internal FETCH command based on the last
        successful command */
