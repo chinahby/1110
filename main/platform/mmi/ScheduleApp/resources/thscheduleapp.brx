@@ -164,7 +164,7 @@
 		<Text>Plan detail</Text>
 	</STRING>
 	<STRING Id="2200" Name="IDS_APP">
-		<Text>ตาราง</Text>
+		<Text>ปฏิทิน</Text>
 	</STRING>
 	<STRING Id="2300" Name="IDS_INITING">
 		<Text>กำลังโหลด...</Text>
