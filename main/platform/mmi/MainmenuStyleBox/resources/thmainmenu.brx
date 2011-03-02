@@ -26,13 +26,13 @@
 		<Text>มัลติมีเดีย</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MAIN_MENU_APPLICATION">
-		<Text>ตั้งค่า</Text>
+		<Text>แอพพลิเคชั่น</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_MAIN_MENU_SCHEDULER">
-		<Text>ตาราง</Text>
+		<Text>ปฏิทิน</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_MAIN_MENU_SETTINGS">
-		<Text>รูปแบบ</Text>
+		<Text>ตั้งค่า</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_MAIN_MENU_USERPROFILE">
 		<Text>เครื่องเล่นมัลติมีเดีย</Text>

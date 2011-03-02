@@ -32,7 +32,7 @@
 		<Text>หน่วยความจำเครื่อง</Text>
 	</STRING>
 	<STRING Id="11" Name="IDS_RUIM">
-		<Text>หน่วยความจำการ์ด UIM</Text>
+		<Text>บัตร UIM</Text>
 	</STRING>
 	<STRING Id="12" Name="IDS_EMPTY">
 		<Text>ไม่มีบันทึก</Text>

@@ -98,7 +98,7 @@
 		<Text>บันทึกวิทยุ FM</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_CALL_RECORD">
-		<Text>บันทึกการโทร</Text>
+		<Text>ข้อมูลการใช้งาน</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_FORWARD_RECORD">
 		<Text>ส่งต่อบันทึก</Text>
@@ -136,7 +136,7 @@
 	<String Id="1043" Name="IDS_STORAGE_SETUP_PHONE">
 		<Text>ตัวเครื่อง</Text>
 	</String>
-	<String Id="1044" Name="IDS_STORAGE_SETUP_CARD0" Encoding="Unicode">
+	<String Id="1044" Name="IDS_STORAGE_SETUP_CARD0">
 		<Text>หน่วยความจำ</Text>
 	</String>
 	<STRING Id="1100" Name="IDS_RECORD_MEDIA_ERROR">
