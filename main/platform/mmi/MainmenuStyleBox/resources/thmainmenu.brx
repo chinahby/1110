@@ -2,7 +2,7 @@
 <BREWRes Name="thmainmenu" VERSION="1">
 <Strings Encoding="Unicode">
 	<String Id="1001" Name="IDS_MAIN_MENU_STATIC_APPLICATION">
-		<Text>ตั้งค่า</Text>
+		<Text>แอพพลิเคชั่น</Text>
 	</String>
 	<STRING Id="1011" Name="IDS_MAIN_MENU_MEDIAGALLERY">
 		<Text>จัดการไฟล์</Text>
@@ -17,7 +17,7 @@
 		<Text>กล้อง</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_MAIN_MENU_RECENTCALLS">
-		<Text>รายชื่อ</Text>
+		<Text>ข้อมูลการใช้งาน</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_MAIN_MENU_MESSAGES">
 		<Text>ข้อความ</Text>
