@@ -567,7 +567,7 @@ static int DrawTextEx(IFont *pMe, IBitmap *pDst, const AECHAR * pcText, int nCha
     int result = SUCCESS;
     
     xMin = prcBackground->x;
-    xMax = prcBackground->x + prcBackground->dx - 1;
+    xMax = prcBackground->x + prcBackground->dx;   //modi by yangdecai 2011-03-02
     yMin = prcBackground->y;
     yMax = prcBackground->y + prcBackground->dy - 1;
  
