@@ -722,7 +722,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
                 pMe->m_TextQS = pgetinput->cmd_describe.command_restricttag;
             
                 FREEIF(pgetinput);  
-                pMe->m_dwTimeOut = 5000;
+                pMe->m_dwTimeOut = 30000;
                 (void) ISHELL_SetTimer(pMe->m_pShell,
                          pMe->m_dwTimeOut,
                          UTKApp_DialogTimeout,
@@ -731,7 +731,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
                             AEECLSID_APP_UTK,
                             EVT_USER_REDRAW,
                             0,  0);
-            }              
+            }
             return TRUE;
 
         case EVT_DIALOGTIMEOUT:
@@ -789,15 +789,14 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
             return TRUE;
 
         case EVT_KEY_PRESS:
-            (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
             if(wParam == AVK_END)
             {
                 MSG_FATAL("IDD_INPUT_Handler AVK_END1",0,0,0);  
                 UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_PROACTIVE_RUIM_SESSION_TERMINATED_BY_USER);
+                (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
             }
             return TRUE;
         case EVT_KEY:
-            (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
             switch(wParam)
             {
                 case AVK_END:
