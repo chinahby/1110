@@ -640,6 +640,12 @@ static NextFSMAction Security_StatePinCheckHandler(CSecurityMenu *pMe)
             pMe->m_bIsConfirmPassword = TRUE;
             MOVE_TO_STATE(SECURITYMENU_ASKPIN)
             return NFSMACTION_CONTINUE;
+            
+        case DLGRET_RESTRICT:
+            Security_ShowMsgBox(pMe, IDS_RESTRICT);
+            return NFSMACTION_WAIT; 
+            
+        case DLGRET_OK:
         case DLGRET_CANCELED:
             MOVE_TO_STATE(SECURITYMENU_MAIN)
             return NFSMACTION_CONTINUE;

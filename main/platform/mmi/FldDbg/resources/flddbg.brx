@@ -313,89 +313,20 @@
 	<STRING Id="104" Name="IDS_HW_VERSION">
 		<Text>HW Ver: </Text>
 	</STRING>
-	<String Id="201" Name="IDS_BREWSETTUBG_TITLE">
-		<Text>Brew Settings</Text>
-	</String>
-	<String Id="202" Name="IDS_CARRIER_ID">
-		<Text>Carrier ID</Text>
-	</String>
-	<String Id="203" Name="IDS_PLATFORM_ID">
-		<Text>Platform ID</Text>
-	</String>
-	<String Id="204" Name="IDS_DLFLAGS">
-		<Text>DL Flags</Text>
-	</String>
-	<String Id="205" Name="IDS_AUTH_POLICY">
-		<Text>Auth Policy</Text>
-	</String>
-	<String Id="206" Name="IDS_PRIVACY_POLICY">
-		<Text>Privacy Policy</Text>
-	</String>
-	<String Id="207" Name="IDS_PRIMARY_DNS">
-		<Text>Primary DNS</Text>
-	</String>
-	<String Id="208" Name="IDS_SECONDARY_DNS">
-		<Text>Secondary DNS</Text>
-	</String>
-	<String Id="209" Name="IDS_USER_NAME">
-		<Text>User Name</Text>
-	</String>
-	<String Id="210" Name="IDS_USER_PASSWORD">
-		<Text>User Password</Text>
-	</String>
-	<String Id="211" Name="IDS_PRIMARY_SERVER">
-		<Text>Primary Server</Text>
-	</String>
-	<String Id="212" Name="IDS_SECONDARY_SERVER">
-		<Text>Secondary Server</Text>
-	</String>
-	<String Id="213" Name="IDS_BREWSETSCRN">
-		<Text>BrewSetting Screen</Text>
-	</String>
-	<String Id="1001" Name="IDS_AUTH_POLICY_NONE" Encoding="Unicode">
-		<Text>None</Text>
-	</String>
-	<String Id="1002" Name="IDS_AUTH_POLICY_SID" Encoding="Unicode">
-		<Text>SID</Text>
-	</String>
-	<String Id="1003" Name="IDS_AUTH_POLICY_TEXT" Encoding="Unicode">
-		<Text>Text</Text>
-	</String>
-	<String Id="1004" Name="IDS_AUTH_POLICY_NUM" Encoding="Unicode">
-		<Text>Num</Text>
-	</String>
-	<String Id="1005" Name="IDS_PRIVACY_POLICY_BREW" Encoding="Unicode">
-		<Text>BREW</Text>
-	</String>
-	<String Id="1006" Name="IDS_PRIVACY_POLICY_CARRIER" Encoding="Unicode">
-		<Text>Carrier</Text>
-	</String>
-	<String Id="1007" Name="IDS_PRIVACY_POLICY_BREW_AND_CARRIER" Encoding="Unicode">
-		<Text>BREW and Carrier</Text>
-	</String>
-	<String Id="1008" Name="IDS_PRIVACY_POLICY_BREW_OR_CARRIER" Encoding="Unicode">
-		<Text>BREW or Carrier</Text>
-	</String>
-	<String Id="1009" Name="IDS_STRING_AUTH_POLICY" Encoding="Unicode">
-		<Text>Auth Policy</Text>
-	</String>
-	<String Id="1010" Name="IDS_STRING_PRIVACY_POLICY" Encoding="Unicode">
-		<Text>Privacy Policy</Text>
-	</String>
 	<String Id="1011" Name="IDS_STRING_NET_LOCK" Encoding="Unicode">
-		<Text>net lock</Text>
+		<Text>UIM lock</Text>
 	</String>
 	<String Id="1012" Name="IDS_STRING_NET_LOCK_FLAG" Encoding="Unicode">
-		<Text>Enabled net lock</Text>
+		<Text>Enabled UIM lock</Text>
 	</String>
 	<String Id="1013" Name="IDS_STRING_NET_LOCK_MNC" Encoding="Unicode">
-		<Text>mnc</Text>
+		<Text>MNC</Text>
 	</String>
 	<String Id="1014" Name="IDS_STRING_NET_LOCK_MCC" Encoding="Unicode">
-		<Text>mcc</Text>
+		<Text>MCC</Text>
 	</String>
 	<String Id="1015" Name="IDS_STRING_NET_LOCK_SID" Encoding="Unicode">
-		<Text>sid</Text>
+		<Text>SID</Text>
 	</String>
 	<String Id="1016" Name="IDS_STRING_MEID" Encoding="Unicode">
 		<Text>MEID</Text>
@@ -654,126 +585,42 @@
 			</SoftKey>
 		</Controls>
 	</Dialog>
-	<Dialog Id="30" Name="IDD_BREWSET_DIALOG" Focus="30">
-		<Controls>
-			<Menu Id="30" Name="IDC_BREWSET_MENU" Flags="4000001">
-				<Items/>
-			</Menu>
-		</Controls>
-	</Dialog>
-	<Dialog Id="31" Name="IDD_CARRIERID_DIALOG" Focus="7036">
-		<Controls>
-			<Text Id="7036" Name="IDC_CARRIERID_TEXT">
-				<TitleID>IDS_BLANK</TitleID>
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="32" Name="IDD_PLATFORMID_DIALOG" Focus="7046">
-		<Controls>
-			<Text Id="7046" Name="IDC_PLATFORMID_TEXT">
-				<TitleID>IDS_BLANK</TitleID>
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="33" Name="IDD_DLFLAGS_DIALOG" Focus="7048">
-		<Controls>
-			<Text Id="7048" Name="IDC_DLFLAGS_TEXT">
-				<TitleID>IDS_BLANK</TitleID>
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="34" Name="IDD_AUTHPOLICY_DIALOG" Focus="7051">
-		<Controls>
-			<Menu Id="7051" Name="IDC_MENU_AUTH_POLICY">
-				<Items/>
-			</Menu>
-		</Controls>
-	</Dialog>
-	<Dialog Id="35" Name="IDD_PRIVACYPOLICY_DIALOG" Focus="7043">
-		<Controls>
-			<Menu Id="7043" Name="IDC_MENU_PRIVACY_POLICY">
-				<Items/>
-			</Menu>
-		</Controls>
-	</Dialog>
-	<Dialog Id="36" Name="IDD_PRIMARYDNS_DIALOG" Focus="7057">
-		<Controls>
-			<Text Id="7057" Name="IDC_PRIMARYDNS_TEXT">
-				<TitleID>IDS_BLANK</TitleID>
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="37" Name="IDD_SECONDARY_DNS_DIALOG" Focus="0">
-		<Controls>
-			<Text Id="7045" Name="IDC_SECONDARY_DNS_TEXT">
-				<TitleID>IDS_BLANK</TitleID>
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="38" Name="IDD_USER_NAME_DIALOG" Focus="0">
-		<Controls>
-			<Text Id="7047" Name="IDC_USER_NAME_TEXT">
-				<TitleID>IDS_BLANK</TitleID>
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="39" Name="IDD_USER_PASSWORD_DIALOG" Focus="0">
-		<Controls>
-			<Text Id="7049" Name="IDC_USER_PASSWORD_TEXT">
-				<TitleID>IDS_BLANK</TitleID>
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="40" Name="IDD_PRIMARY_SERVER_DIALOG" Focus="0">
-		<Controls>
-			<Text Id="7050" Name="IDC_PRIMARY_SERVER_TEXT">
-				<TitleID>IDS_BLANK</TitleID>
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="41" Name="IDD_SECONDARY_SERVER_DIALOG" Focus="0">
-		<Controls>
-			<Text Id="7052" Name="IDC_SECONDARY_SERVER_TEXT">
-				<TitleID>IDS_BLANK</TitleID>
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="42" Name="IDD_NET_LOCK_DIALOG" Focus="7053">
+	<Dialog Id="30" Name="IDD_NET_LOCK_DIALOG" Focus="7053">
 		<Controls>
 			<Menu Id="7053" Name="IDC_NET_LOCK_MENU">
 				<Items/>
 			</Menu>
 		</Controls>
 	</Dialog>
-	<Dialog Id="43" Name="IDD_LOCK_DIALOG" Focus="7054">
+	<Dialog Id="31" Name="IDD_LOCK_DIALOG" Focus="7054">
 		<Controls>
 			<Text Id="7054" Name="IDC_TEXT_LOCK_FLAG">
 				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
 		</Controls>
 	</Dialog>
-	<Dialog Id="44" Name="IDD_MNC_DIALOG" Focus="7064">
+	<Dialog Id="32" Name="IDD_MNC_DIALOG" Focus="7064">
 		<Controls>
 			<Text Id="7064" Name="IDC_TEXT_MNC">
 				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
 		</Controls>
 	</Dialog>
-	<Dialog Id="45" Name="IDD_MCC_DIALOG" Focus="7066">
+	<Dialog Id="33" Name="IDD_MCC_DIALOG" Focus="7066">
 		<Controls>
 			<Text Id="7066" Name="IDC_TEXT_MCC">
 				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
 		</Controls>
 	</Dialog>
-	<Dialog Id="46" Name="IDD_SID_DIALOG" Focus="7068">
+	<Dialog Id="34" Name="IDD_SID_DIALOG" Focus="7068">
 		<Controls>
 			<Text Id="7068" Name="IDC_TEXT_SID">
 				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
 		</Controls>
 	</Dialog>
-	<Dialog Id="47" Name="IDD_NVSETTING_DIALOG" Focus="7044">
+	<Dialog Id="35" Name="IDD_NVSETTING_DIALOG" Focus="7044">
 		<Controls>
 			<Static Id="7042" Name="IDC_NVID_STATIC">
 				<TitleID>IDS_NV_ID</TitleID>

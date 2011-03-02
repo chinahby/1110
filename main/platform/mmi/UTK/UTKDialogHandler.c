@@ -397,7 +397,11 @@ static boolean  IDD_MAIN_Handler(CUTK *pMe,
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)                    
                     return TRUE;
-
+#if 0
+                case AVK_1:
+                    UTK_SendSimuData();
+                    break;
+#endif
                 default:
                     break;
             }

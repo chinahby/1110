@@ -1510,7 +1510,14 @@ static boolean  SecurityPinCheckDlgHandler(CSecurityMenu *pMe,
                         //(void) AEEOEM_CHVDisable(pMe->m_pOEM_TSGBridge);
                         if (chvst.chv1_enabled)
                         {
-                            CLOSE_DIALOG(DLGRET_ISCOMFIRMPASSWORD)
+                            if(OEM_IsCDMASVCSupport(UIM_CDMA_SVC_CHV_DISABLE))
+                            {
+                                CLOSE_DIALOG(DLGRET_ISCOMFIRMPASSWORD)
+                            }
+                            else
+                            {
+                                CLOSE_DIALOG(DLGRET_RESTRICT)
+                            }
                             return TRUE;
                         }
                         else

@@ -191,7 +191,6 @@ extern DRMTestApp( IShell* pIShell );
                     DEFINITIONS AND CONSTANTS
 
 ===========================================================================*/
-#define  AEE_FLDDBG_RES_FILE (AEE_RES_LANGDIR FLDDBG_RES_FILE)
 // wParam for an EVT_COMMAND event for displaying
 // a screen during Clear EFS
 #define DISP_TIMEOUT_WPARAM      1019
@@ -209,16 +208,6 @@ extern DRMTestApp( IShell* pIShell );
 #define SETAEERECT(prc,l,t,w,h)   (prc)->x=(int16)(l),(prc)->y=(int16)(t),(prc)->dx=(int16)(w),(prc)->dy=(int16)(h)
 #endif
 
-typedef struct {
-   uint32   dwCID;         // Carrier ID
-   uint32   dwPID;         // Platform ID
-   uint8    bBKey[16];     // BKey
-   uint8    bAKey[8];      // AKey
-   char     szServer[64];  // DL Server
-   uint16   wFlags;        // DL Flags
-   uint16   wAuth;         // Auth policy
-   uint16   wPrivP;        // Privacy policy
-} OEMConfigDownloadInfo;
 #define drawBottomBar( bottomBarType)               \
 {                                                   \
     BottomBar_Param_type BarParam;                  \
@@ -283,20 +272,12 @@ dword * m_bufJPEG = NULL;
 
 enum
 {
-	SECONDARYDNS = 10,
-	USERNAME,
-	PASSWORD,
-	PROMERYSERVER,
-	SECONDSERVER,
-	NETLOCK,
+	NETLOCK = 10,
 	ENABLELOCK,
+	NVSETTING,
 	MNC,
 	MCC,
-	SID,
-	PLATFORMID,
-	DLFLAGS,
-	PRIMARYDNS,
-	CARRIERID
+	SID
 };
 
 typedef struct _CFieldDebug {
@@ -455,14 +436,6 @@ static boolean CFieldDebug_RATS_TESTHandleEvent(CFieldDebug *pme,
                                            uint16    wParam,
                                            uint32    dwParam);
 
-static boolean CFieldDebug_BREW_SETTINGSHandleEvent(CFieldDebug *pme,
-                                           AEEEvent  eCode,
-                                           uint16    wParam,
-                                           uint32    dwParam);
-static boolean CFieldDebug_BREWSETTINGSScreenHandleEvent(CFieldDebug *pme,
-                                               AEEEvent  eCode,
-                                               uint16    wParam,
-                                               uint32    dwParam);
 static void CFieldDebug_DebugScreenRefresh(CFieldDebug *pme);
 static void CFieldDebug_DrawErrorScreen(CFieldDebug * pme);
 static void CFieldDebug_DrawSMSMOSOScreen(CFieldDebug *pme);
@@ -471,51 +444,6 @@ static AECHAR* CFieldDebug_DebugScreenReadItem(CFieldDebug *pme);
 static void CFieldDebug_DrawVersionScreen(CFieldDebug *pme);
 static void CFieldDebug_ClearCallBackFn(IShell *ps);
 static boolean CFieldDebug_ClearFPLMN(CFieldDebug* pme);
-static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
-                                           AEEEvent  eCode,
-                                           uint16    wParam,
-                                           uint32    dwParam);
-static boolean CFieldDebug_PLATFORMIDHandleEvent(CFieldDebug *pme,
-                                           AEEEvent  eCode,
-                                           uint16    wParam,
-                                           uint32    dwParam);
-static boolean CFieldDebug_DLFLAGSHandleEvent(CFieldDebug *pme,
-                                           AEEEvent  eCode,
-                                           uint16    wParam,
-                                           uint32    dwParam);
-static boolean CFieldDebug_AUTHPOLICYHandleEvent(CFieldDebug *pme,
-                                           AEEEvent  eCode,
-                                           uint16    wParam,
-                                           uint32    dwParam);
-static boolean CFieldDebug_PRIVACYPOLICYHandleEvent(CFieldDebug *pme,
-                                           AEEEvent  eCode,
-                                           uint16    wParam,
-                                           uint32    dwParam);
-static boolean CFieldDebug_PRIMARYDNSHandleEvent(CFieldDebug *pme,
-                                           AEEEvent  eCode,
-                                           uint16    wParam,
-                                           uint32    dwParam);
-static boolean CFieldDebug_SecondaryDNSMenuHandleEvent(CFieldDebug *pme,
-                                               AEEEvent  eCode,
-                                               uint16    wParam,
-                                               uint32    dwParam);
-
-static boolean CFieldDebug_UserNameMenuHandleEvent(CFieldDebug *pme,
-                                               AEEEvent  eCode,
-                                               uint16    wParam,
-                                               uint32    dwParam);
-static boolean CFieldDebug_UserPasswordMenuHandleEvent(CFieldDebug *pme,
-                                               AEEEvent  eCode,
-                                               uint16    wParam,
-                                               uint32    dwParam);
-static boolean CFieldDebug_PrimaryServerMenuHandleEvent(CFieldDebug *pme,
-                                               AEEEvent  eCode,
-                                               uint16    wParam,
-                                               uint32    dwParam);
-static boolean CFieldDebug_SecondaryServerMenuHandleEvent(CFieldDebug *pme,
-                                               AEEEvent  eCode,
-                                               uint16    wParam,
-                                               uint32    dwParam);
 static boolean CFieldDebug_NET_LOCK_HandleEvent(CFieldDebug *pme,
                                            AEEEvent  eCode,
                                            uint16    wParam,
@@ -708,19 +636,7 @@ static const PFNAEEEVENT sDialogEventHandlers[] =
    (PFNAEEEVENT) CFieldDebug_RATS_TESTHandleEvent,    // IDD_RATS_TEST_DIALOG
    (PFNAEEEVENT) CFieldDebug_HDRDebugHandleEvent,     // IDD_HDR_DEBUG_INFORMATION
    (PFNAEEEVENT) CFieldDebug_VoiceDebugHandleEvent,   //IDD_VOICE_DEBUG
-   (PFNAEEEVENT) CFieldDebug_EsnMenuHandleEvent, // IDD_ESN_DIALOG   
-   (PFNAEEEVENT) CFieldDebug_BREW_SETTINGSHandleEvent,  //IDD_BREWSET_DIALOG
-   (PFNAEEEVENT) CFieldDebug_CARRIERIDHandleEvent,      //IDD_CARRIERID_DIALOG
-   (PFNAEEEVENT) CFieldDebug_PLATFORMIDHandleEvent,     //IDD_PLATFORMID_DIALOG
-   (PFNAEEEVENT) CFieldDebug_DLFLAGSHandleEvent,        //IDD_DLFLAGS_DIALOG
-   (PFNAEEEVENT) CFieldDebug_AUTHPOLICYHandleEvent,     //IDD_AUTHPOLICY_DIALOG
-   (PFNAEEEVENT) CFieldDebug_PRIVACYPOLICYHandleEvent,  //IDD_PRIVACYPOLICY_DIALOG
-   (PFNAEEEVENT) CFieldDebug_PRIMARYDNSHandleEvent,      //IDD_PRIMARYDNS_DIALOG
-   (PFNAEEEVENT) CFieldDebug_SecondaryDNSMenuHandleEvent,
-   (PFNAEEEVENT) CFieldDebug_UserNameMenuHandleEvent,
-   (PFNAEEEVENT) CFieldDebug_UserPasswordMenuHandleEvent,
-   (PFNAEEEVENT) CFieldDebug_PrimaryServerMenuHandleEvent,
-   (PFNAEEEVENT) CFieldDebug_SecondaryServerMenuHandleEvent,
+   (PFNAEEEVENT) CFieldDebug_EsnMenuHandleEvent, // IDD_ESN_DIALOG  
    (PFNAEEEVENT) CFieldDebug_NET_LOCK_HandleEvent,
    (PFNAEEEVENT) CFieldDebug_Enabled_Lock_HandleEvent,
    (PFNAEEEVENT) CFieldDebug_MNC_HandleEvent,
@@ -759,7 +675,6 @@ SIDE EFFECTS
                            void     *pHelpers,
                            IModule **pMod)
 {
-	ERR("EVT_APP_START",0,0,0);
    return AEEStaticMod_New(sizeof(AEEMod),
                            ps,
                            pHelpers,
@@ -807,7 +722,6 @@ int AEEClsCreateInstance(AEECLSID  ClsId,
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif
-   ERR("AEECLSID_FIELDDEBUGAPP START:111111111111111111111",0,0,0);
 
    if (!AEEApplet_New(sizeof(CFieldDebug),
                       ClsId,
@@ -828,14 +742,6 @@ int AEEClsCreateInstance(AEECLSID  ClsId,
                                 (void **)(&pme->m_pIConfig )) != AEE_SUCCESS) {
          break;
       }
-	   // Create IDisplay instance
-	   /*
-      if (ISHELL_CreateInstance(pIShell, AEECLSID_DISPLAY, 
-            (void **) &pme->m_pDisplay) != SUCCESS)
-      {
-          MSG_FATAL ("pMe->m_pDisplay could not be created", 0, 0, 0);
-          return EFAILED;
-      }*/
 
       /* Attempt to create the Remote API Test object.  If the creation
        * or registration for events fail, then make sure the object stays
@@ -864,7 +770,7 @@ int AEEClsCreateInstance(AEECLSID  ClsId,
 
    } while (0); /*lint !e717*/
 
-	 ERR("AEECLSID_FIELDDEBUGAPP START:0222222222222222222222",0,0,0);
+
    // we only get here if there was an error
    CFieldDebug_Free(pme);
    return EFAILED;
@@ -1004,7 +910,7 @@ void CFieldDebug_SetImage(IMenuCtl *pm, uint16 id, int status)
   (void) IMENUCTL_GetItem(pm, id, &pai);
 
   pai.pImage = NULL;
-  pai.pszResImage = AEE_FLDDBG_RES_FILE;
+  pai.pszResImage = FLDDBG_RES_FILE;
 
   switch (status)
   {
@@ -1019,37 +925,6 @@ void CFieldDebug_SetImage(IMenuCtl *pm, uint16 id, int status)
   }
   (void) IMENUCTL_SetItem(pm, id, MSIF_IMAGE, &pai);
 }
-/*==============================================================================
-函数:
-    SetControlRect
-
-说明:
-    设置控件的矩形框。
-
-参数:
-    pMe [in]:指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
-    Ctl [in]:可转换为IControl接口指针的指针。
-
-返回值:
-    无。
-
-备注:
-
-==============================================================================*/
-static void SetControlRect(CFieldDebug *pme, void  *Ctl)
-{
-    AEERect ctlRect;
-	
-    if (pme == NULL)
-    {
-        return;
-    }
-   
-    SETAEERECT(&ctlRect,  0, 0,
-                128,
-                128 - 16);
-    ICONTROL_SetRect((IControl*)Ctl, &ctlRect);
-}// SetControlRect
 
 /*===========================================================================
 
@@ -1192,7 +1067,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
     {
       AECHAR WTitle[10] = {0};
       (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-      AEE_FLDDBG_RES_FILE,                                
+      FLDDBG_RES_FILE,                                
       IDS_OPTION_TITLE,
       WTitle,
       sizeof(WTitle));
@@ -1203,14 +1078,14 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                            IDC_SYS_MENU);
       IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DEBUG_TITLE,  IDS_DEBUG_TITLE, NULL, 0);
-	  IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_BREWSETTUBG_TITLE, IDS_BREWSETTUBG_TITLE,NULL,0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_VERSION_TITLE,  IDS_VERSION_TITLE, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PROGRAM_TITLE,  IDS_PROGRAM_TITLE, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_ESN,  IDS_ESN, NULL, 0);      
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_JPEG_DECODE,  IDS_JPEG_DECODE, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_RATS_TITLE,  IDS_RATS_TITLE, NULL, 0);   
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_STRING_NET_LOCK,  IDS_STRING_NET_LOCK, NULL, 0);  
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_DEBUG_TITLE,  IDS_DEBUG_TITLE, NULL, 0);
+	  IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_NV_SETTING, IDS_NV_SETTING,NULL,0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_VERSION_TITLE,  IDS_VERSION_TITLE, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_PROGRAM_TITLE,  IDS_PROGRAM_TITLE, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_ESN,  IDS_ESN, NULL, 0);      
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_JPEG_DECODE,  IDS_JPEG_DECODE, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_RATS_TITLE,  IDS_RATS_TITLE, NULL, 0);   
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_STRING_NET_LOCK,  IDS_STRING_NET_LOCK, NULL, 0);  
       MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
       }                                     
       break;
@@ -1223,7 +1098,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
         AECHAR WTitle[40] = {0};
         MSG_FATAL("CFieldDebug_OnDialogStart 2", 0, 0, 0);
         (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE,                                
+        FLDDBG_RES_FILE,                                
         IDS_DEBUG_TITLE,
         WTitle,
         sizeof(WTitle));
@@ -1233,62 +1108,28 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
         }
       }    
       MSG_FATAL("CFieldDebug_OnDialogStart 2", 0, 0, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DBGSCRN,  IDS_DBGSCRN, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_TEST_CALL,  IDS_TEST_CALL, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_ERRORS,  IDS_ERRORS, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_CLR_ERR,  IDS_CLR_ERR, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_CLR_EFS,  IDS_CLR_EFS, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DATA_DM,  IDS_DATA_DM, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SMS_MO_SO,  IDS_SMS_MO_SO, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_VOICE_PRIVACY,  IDS_VOICE_PRIVACY, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_GIGATEST,  IDS_GIGATEST, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_AMR_PREF,  IDS_AMR_PREF, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_CONTACTIMPORT,  IDS_CONTACTIMPORT, NULL, 0); 
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_CONTACTEXPORT,  IDS_CONTACTEXPORT, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_HDR_INFO,  IDS_HDR_INFO, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_GIGATEST,  IDS_GIGATEST, NULL, 0);
-      //IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_MMC,  IDS_MMC, NULL, 0);
-      //IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_CLEAR_FPLMN,  IDS_CLEAR_FPLMN, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SECURITY_SERVICES,  IDS_SECURITY_SERVICES, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_CALTEST,  IDS_CALTEST, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_VOICE_DEBUG,  IDS_VOICE_DEBUG, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_DBGSCRN,  IDS_DBGSCRN, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_TEST_CALL,  IDS_TEST_CALL, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_ERRORS,  IDS_ERRORS, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_CLR_ERR,  IDS_CLR_ERR, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_CLR_EFS,  IDS_CLR_EFS, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_DATA_DM,  IDS_DATA_DM, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_SMS_MO_SO,  IDS_SMS_MO_SO, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_VOICE_PRIVACY,  IDS_VOICE_PRIVACY, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_GIGATEST,  IDS_GIGATEST, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_AMR_PREF,  IDS_AMR_PREF, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_CONTACTIMPORT,  IDS_CONTACTIMPORT, NULL, 0); 
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_CONTACTEXPORT,  IDS_CONTACTEXPORT, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_HDR_INFO,  IDS_HDR_INFO, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_GIGATEST,  IDS_GIGATEST, NULL, 0);
+      //IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_MMC,  IDS_MMC, NULL, 0);
+      //IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_CLEAR_FPLMN,  IDS_CLEAR_FPLMN, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_SECURITY_SERVICES,  IDS_SECURITY_SERVICES, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_CALTEST,  IDS_CALTEST, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_VOICE_DEBUG,  IDS_VOICE_DEBUG, NULL, 0);
 
       MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
 
-       }                                    
-      break;
-	case IDD_BREWSET_DIALOG:
-		{
-			MSG_FATAL ("EVT_DIALOG_START wParam == IDS_BREWSETTUBG_TITLE1111111111", 0, 0, 0);
-			pm = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
-                                             IDC_BREWSET_MENU);
-      		IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
-            {
-                AECHAR WTitle[20] = {0};
-                (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-                AEE_FLDDBG_RES_FILE,                                
-                IDS_BREWSETTUBG_TITLE,
-                WTitle,
-                sizeof(WTitle));
-                if(pMe->m_pIAnn != NULL)
-                {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-                }
-            }               
-			IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_CARRIER_ID,        IDS_CARRIER_ID, NULL, 0);
-      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PLATFORM_ID,       IDS_PLATFORM_ID, NULL, 0);
-      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DLFLAGS,           IDS_DLFLAGS, NULL, 0);
-      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_AUTH_POLICY,       IDS_AUTH_POLICY, NULL, 0);
-			IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PRIVACY_POLICY,    IDS_PRIVACY_POLICY, NULL, 0);
-      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PRIMARY_DNS,       IDS_PRIMARY_DNS, NULL, 0);
-      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SECONDARY_DNS,     IDS_SECONDARY_DNS, NULL, 0);
-      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_USER_NAME,         IDS_USER_NAME, NULL, 0);
-      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_USER_PASSWORD,     IDS_USER_PASSWORD, NULL, 0);
-      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_PRIMARY_SERVER,    IDS_PRIMARY_SERVER, NULL, 0);
-      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SECONDARY_SERVER,  IDS_SECONDARY_SERVER, NULL, 0);
-            IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_NV_SETTING,        IDS_NV_SETTING, NULL, 0);
-			MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
-			MSG_FATAL ("EVT_DIALOG_START wParam == IDS_BREWSETTUBG_TITLE222222222", 0, 0, 0);
        }                                    
       break;
 	case IDD_NET_LOCK_DIALOG:
@@ -1300,7 +1141,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
             {
                 AECHAR WTitle[10] = {0};
                 (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-                AEE_FLDDBG_RES_FILE,                                
+                FLDDBG_RES_FILE,                                
                 IDS_STRING_NET_LOCK,
                 WTitle,
                 sizeof(WTitle));
@@ -1309,10 +1150,10 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
                     IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
                 }
             }     
-			IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_FLAG,  IDS_STRING_NET_LOCK_FLAG, NULL, 0);
-      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_MNC,   IDS_STRING_NET_LOCK_MNC, NULL, 0);
-      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_MCC,   IDS_STRING_NET_LOCK_MCC, NULL, 0);
-      		IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_SID,   IDS_STRING_NET_LOCK_SID, NULL, 0);
+			IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_FLAG,  IDS_STRING_NET_LOCK_FLAG, NULL, 0);
+      		IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_MNC,   IDS_STRING_NET_LOCK_MNC, NULL, 0);
+      		IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_MCC,   IDS_STRING_NET_LOCK_MCC, NULL, 0);
+      		IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_STRING_NET_LOCK_SID,   IDS_STRING_NET_LOCK_SID, NULL, 0);
 			MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
 			MSG_FATAL ("EVT_DIALOG_START wParam == IDD_NET_LOCK_DIALOG222222222", 0, 0, 0);
        }                                    
@@ -1322,8 +1163,8 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
 	    
        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                            IDC_VER_SOFTKEY);
-     // IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);       
+     // IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);       
 
       
        }
@@ -1340,7 +1181,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
           {
             AECHAR WTitle[5] = {0};
             (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-            AEE_FLDDBG_RES_FILE,                                
+            FLDDBG_RES_FILE,                                
             IDS_ESN,
             WTitle,
             sizeof(WTitle));
@@ -1350,130 +1191,16 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
             }
           }           
        }
-      break; 
-
-	
-	
-	case IDD_AUTHPOLICY_DIALOG:
-	  {
-          uint16 auth_policy = 0;
-          MSG_FATAL("CFieldDebug_OnDialogStart case IDD_AUTHPOLICY_DIALOG 1", 0, 0, 0);
-          pm = (IMenuCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_MENU_AUTH_POLICY); 
-          if (pm == NULL)
-          {
-              break;
-          }          
-          IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
-          {
-              AECHAR WTitle[20] = {0};
-              (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-              AEE_FLDDBG_RES_FILE,                                
-              IDS_AUTH_POLICY,
-              WTitle,
-              sizeof(WTitle));
-              if(pMe->m_pIAnn != NULL)
-              {
-                  IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-              }
-          }     
-          IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_AUTH_POLICY_NONE, IDS_AUTH_POLICY_NONE, NULL, 0);
-          IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_AUTH_POLICY_SID, IDS_AUTH_POLICY_SID, NULL, 0);
-          IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_AUTH_POLICY_TEXT, IDS_AUTH_POLICY_TEXT, NULL, 0);
-          IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_AUTH_POLICY_NUM , IDS_AUTH_POLICY_NUM , NULL, 0);
-          (void) ICONFIG_GetItem(pMe->m_pIConfig,
-                                CFGI_BREW_AUTH,
-                                &auth_policy,
-                                sizeof(uint16));
-          MSG_FATAL("CFieldDebug_OnDialogStart auth_policy=%d", auth_policy, 0, 0);
-          switch (auth_policy) 
-          {
-              case 0:
-                IMENUCTL_SetFocus(pm, IDS_AUTH_POLICY_NONE);
-                break;
-              case 1:
-                IMENUCTL_SetFocus(pm, IDS_AUTH_POLICY_SID); 
-                break;
-              case 2:
-                IMENUCTL_SetFocus(pm, IDS_AUTH_POLICY_TEXT); 
-                break;  
-              case 3:
-                IMENUCTL_SetFocus(pm, IDS_AUTH_POLICY_NUM); 
-                break;  
-              default:
-                IMENUCTL_SetFocus(pm, IDS_AUTH_POLICY_NONE); 
-                break;                 
-          }
-          MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
-	  }
-	   break;
-	case IDD_PRIVACYPOLICY_DIALOG:
-	  {
-            uint16 privacy_policy = 0;
-            MSG_FATAL("CFieldDebug_OnDialogStart case IDD_PRIVACYPOLICY_DIALOG 1", 0, 0, 0);
-            pm = (IMenuCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_MENU_PRIVACY_POLICY); 
-            if (pm == NULL)
-            {
-                break;
-            }          
-            IMENUCTL_SetProperties(pm, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
-            {
-                AECHAR WTitle[30] = {0};
-                (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-                AEE_FLDDBG_RES_FILE,                                
-                IDS_PRIVACY_POLICY,
-                WTitle,
-                sizeof(WTitle));
-                if(pMe->m_pIAnn != NULL)
-                {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-                }
-            }     
-            IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_PRIVACY_POLICY_BREW, IDS_PRIVACY_POLICY_BREW, NULL, 0);
-            IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_PRIVACY_POLICY_CARRIER, IDS_PRIVACY_POLICY_CARRIER, NULL, 0);
-            IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_PRIVACY_POLICY_BREW_AND_CARRIER, IDS_PRIVACY_POLICY_BREW_AND_CARRIER, NULL, 0);
-            IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE,IDS_PRIVACY_POLICY_BREW_OR_CARRIER , IDS_PRIVACY_POLICY_BREW_OR_CARRIER , NULL, 0);
-            (void) ICONFIG_GetItem(pMe->m_pIConfig,
-                                  CFGI_BREW_PRIVP,
-                                  &privacy_policy,
-                                  sizeof(uint16));
-            MSG_FATAL("CFieldDebug_OnDialogStart auth_policy=%d", privacy_policy, 0, 0);
-            switch (privacy_policy) 
-            {
-                case 0:
-                  IMENUCTL_SetFocus(pm, IDS_PRIVACY_POLICY_BREW);
-                  break;
-                case 1:
-                  IMENUCTL_SetFocus(pm, IDS_PRIVACY_POLICY_CARRIER); 
-                  break;
-                case 2:
-                  IMENUCTL_SetFocus(pm, IDS_PRIVACY_POLICY_BREW_AND_CARRIER); 
-                  break;  
-                case 3:
-                  IMENUCTL_SetFocus(pm, IDS_PRIVACY_POLICY_BREW_OR_CARRIER); 
-                  break;  
-                default: 
-                  IMENUCTL_SetFocus(pm, IDS_PRIVACY_POLICY_BREW); 
-                  break;                 
-            }
-            MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
-        }
-	  break;
-	  
-
-	       
-
-	
-
-	      
-	
+      break;
+      
     case IDD_DEBUG_SCREEN_DIALOG:
     	{		
 		
 			
       psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                            IDC_DBSCR_SOFTKEY);
-     // IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
+     // IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
     
       }
       break;
@@ -1486,7 +1213,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
         AECHAR WTitle[20] = {0};
         MSG_FATAL("CFieldDebug_OnDialogStart 3", 0, 0, 0);
         (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE,                                
+        FLDDBG_RES_FILE,                                
         IDS_VPN3_START,
         WTitle,
         sizeof(WTitle));
@@ -1495,10 +1222,10 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
             IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
         }
       }       
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_TCALL_N_13K,  IDS_TCALL_N_13K, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_TCALL_N_8K,  IDS_TCALL_N_8K, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_TCALL_13K_LOOP,  IDS_TCALL_13K_LOOP, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_TCALL_8K_LOOP,  IDS_TCALL_8K_LOOP, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_TCALL_N_13K,  IDS_TCALL_N_13K, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_TCALL_N_8K,  IDS_TCALL_N_8K, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_TCALL_13K_LOOP,  IDS_TCALL_13K_LOOP, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_TCALL_8K_LOOP,  IDS_TCALL_8K_LOOP, NULL, 0);
 	  
        MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
       }
@@ -1509,8 +1236,8 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
 			
       psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                            IDC_ERROR_SOFTKEY);
-      //IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);  
+      //IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);  
      
       }
       break;
@@ -1518,8 +1245,8 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
     	{
       psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                            IDC_CLRERR_SOFTKEY);
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_NO_TXT,  IDS_NO_TXT, NULL, 0);
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_YES_TXT,  IDS_YES_TXT, NULL, 0);
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_NO_TXT,  IDS_NO_TXT, NULL, 0);
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_YES_TXT,  IDS_YES_TXT, NULL, 0);
       }
       break;
     case IDD_CLEAR_EFS_DIALOG:
@@ -1529,7 +1256,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       {
         AECHAR WTitle[20] = {0};
         (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE,                                
+        FLDDBG_RES_FILE,                                
         IDS_CLEAR_EFS,
         WTitle,
         sizeof(WTitle));
@@ -1538,8 +1265,8 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
             IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
         }
       }            
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_DEL,  IDS_DEL, NULL, 0);
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_DEL,  IDS_DEL, NULL, 0);
       }                                     
       break;
     case IDD_DM_DIALOG:
@@ -1551,7 +1278,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
         AECHAR WTitle[20] = {0};
         MSG_FATAL("CFieldDebug_OnDialogStart 4", 0, 0, 0);
         (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE,                                
+        FLDDBG_RES_FILE,                                
         IDS_DATA_DM,
         WTitle,
         sizeof(WTitle));
@@ -1560,15 +1287,15 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
             IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
         }
       }        
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DIAG,  IDS_DIAG, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DATA_19200,  IDS_DATA_19200, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DATA_38400,  IDS_DATA_38400, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DATA_57600,  IDS_DATA_57600, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_DATA_115200,  IDS_DATA_115200, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_DIAG,  IDS_DIAG, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_DATA_19200,  IDS_DATA_19200, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_DATA_38400,  IDS_DATA_38400, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_DATA_57600,  IDS_DATA_57600, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_DATA_115200,  IDS_DATA_115200, NULL, 0);
       psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                             IDC_SOFTKEY_DM);
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
       }                                     
       break;
     case IDD_SMS_MO_SO_DIALOG:
@@ -1580,7 +1307,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
         AECHAR WTitle[20] = {0};
         MSG_FATAL("CFieldDebug_OnDialogStart 5", 0, 0, 0);
         (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE,                                
+        FLDDBG_RES_FILE,                                
         IDS_SET_SMSMO_SO,
         WTitle,
         sizeof(WTitle));
@@ -1589,12 +1316,12 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
             IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
         }
       }         
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SMSMO_SO_6,  IDS_SMSMO_SO_6, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SMSMO_SO_14,  IDS_SMSMO_SO_14, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_SMSMO_SO_6,  IDS_SMSMO_SO_6, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_SMSMO_SO_14,  IDS_SMSMO_SO_14, NULL, 0);
       psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                             IDC_SOFTKEY_SMS_MO_SO);
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
       }
       break;
     case IDD_VOICE_PRIVACY_DIALOG:
@@ -1606,7 +1333,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
         AECHAR WTitle[30] = {0};
         MSG_FATAL("CFieldDebug_OnDialogStart 6", 0, 0, 0);
         (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE,                                
+        FLDDBG_RES_FILE,                                
         IDS_VOICE_PRIVACY,
         WTitle,
         sizeof(WTitle));
@@ -1615,12 +1342,12 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
             IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
         }
       }        
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_VP_STANDARD,  IDS_VP_STANDARD, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_VP_ENHANCED,  IDS_VP_ENHANCED, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_VP_STANDARD,  IDS_VP_STANDARD, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_VP_ENHANCED,  IDS_VP_ENHANCED, NULL, 0);
        psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                             IDC_SOFTKEY_VOICE_PRIVACY);
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
       }
       break;
 
@@ -1633,7 +1360,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
         AECHAR WTitle[10] = {0};
         MSG_FATAL("CFieldDebug_OnDialogStart 7", 0, 0, 0);
         (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE,                                
+        FLDDBG_RES_FILE,                                
         IDS_MMC,
         WTitle,
         sizeof(WTitle));
@@ -1642,8 +1369,8 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
             IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
         }
       }        
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_MMC_DOWNLOAD,  IDS_MMC_DOWNLOAD, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_MMC_FORMAT,  IDS_MMC_FORMAT, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_MMC_DOWNLOAD,  IDS_MMC_DOWNLOAD, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_MMC_FORMAT,  IDS_MMC_FORMAT, NULL, 0);
 
        MENU_SETBOTTOMBAR(pm,BTBAR_OK_CANCEL); 
     
@@ -1658,7 +1385,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
         AECHAR WTitle[30] = {0};
         MSG_FATAL("CFieldDebug_OnDialogStart 8", 0, 0, 0);
         (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE,                                
+        FLDDBG_RES_FILE,                                
         IDS_MMC_DOWNLOAD,
         WTitle,
         sizeof(WTitle));
@@ -1667,8 +1394,8 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
             IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
         }
       }         
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
       break;
     case IDD_MMC_FORMAT_DIALOG:
 		
@@ -1676,8 +1403,8 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                             IDC_SOFTKEY_FORMAT);
 	  	
-    // IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
-     IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_BACK,  IDS_BACK, NULL, 0);
+    // IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
+     IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_BACK,  IDS_BACK, NULL, 0);
      
       break;
 
@@ -1690,7 +1417,7 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
         AECHAR WTitle[40] = {0};
         MSG_FATAL("CFieldDebug_OnDialogStart 9", 0, 0, 0);
         (void)ISHELL_LoadResString(pMe->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE,                                
+        FLDDBG_RES_FILE,                                
         IDS_RATS_TITLE,
         WTitle,
         sizeof(WTitle));
@@ -1699,21 +1426,21 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
             IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
         }
       }         
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_CLIENT_UP,  IDS_CLIENT_UP, NULL, 0);
-      IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SERVER_UP,  IDS_SERVER_UP, NULL, 0);                                      
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_CLIENT_UP,  IDS_CLIENT_UP, NULL, 0);
+      IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_SERVER_UP,  IDS_SERVER_UP, NULL, 0);                                      
       psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                             IDC_RATS_SOFTKEY);
       IMENUCTL_SetProperties(psk, MP_UNDERLINE_TITLE|MP_WRAPSCROLL);
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_SET_IP,  IDS_SET_IP, NULL, 0);
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_RUN_TESTS,  IDS_RUN_TESTS, NULL, 0);                                      
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_SET_IP,  IDS_SET_IP, NULL, 0);
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_RUN_TESTS,  IDS_RUN_TESTS, NULL, 0);                                      
        }
       break;
 
     case IDD_RATS_IP_DIALOG:
       psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                             IDC_RATS_IP_SOFTKEY);
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
-      IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_OK,  IDS_OK, NULL, 0);    
+      IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_CANCEL,  IDS_CANCEL, NULL, 0);
       break;
 
     case IDD_RATS_TEST_DIALOG:
@@ -1727,7 +1454,6 @@ static boolean CFieldDebug_OnDialogStart(CFieldDebug  *pMe,
       MSG_FATAL ("Unhandled dialog %d", wParam, 0,0);
       return FALSE;
   }
-  MSG_FATAL("CFieldDebug_OnDialogStart End", 0, 0, 0);
   return TRUE;
 }
 
@@ -1757,7 +1483,7 @@ static boolean CFieldDebug_MoveToDialog(CFieldDebug *pme, uint16 id)
    (void) ISHELL_EndDialog(pme->a.m_pIShell);
 
    ret = ISHELL_CreateDialog(pme->a.m_pIShell,
-                           AEE_FLDDBG_RES_FILE,
+                           FLDDBG_RES_FILE,
                            id,
                            NULL);
    if (ret != AEE_SUCCESS) {
@@ -2216,7 +1942,7 @@ static void CFieldDebug_DebugScreenRefresh( CFieldDebug *pme )
    // Set the values of the title and text strings for this control
    
    (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                                        AEE_FLDDBG_RES_FILE,
+                                        FLDDBG_RES_FILE,
                                         IDS_DBGSCRN,
                                         sTitle,
                                         sizeof(sTitle));
@@ -2310,71 +2036,7 @@ static boolean CFieldDebug_DebugScreenHandleEvent(CFieldDebug * pme,
    }
    return FALSE;
 }
-/*===========================================================================
-FUNCTION CFieldDebug_BREWSETTINGSScreenHandleEvent
 
-DESCRIPTION
-  Event handler for the the brew settings screen dialog
-
-DEPENDENCIES
-  none
-
-RETURN VALUE
-  none
-
-SIDE EFFECTS
-  none 
-/===========================================================================*/
-static boolean CFieldDebug_BREWSETTINGSScreenHandleEvent(CFieldDebug *pme,
-                                               AEEEvent  eCode,
-                                               uint16    wParam,
-                                               uint32    dwParam)
-{
-	PARAM_NOT_REF(dwParam)
-	
-	   switch (eCode) {
-	   case EVT_COMMAND:
-		  if (wParam == IDS_OK) {
-			if(pme->bEndKeyProcess == FALSE)
-			{
-			  (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			}
-			return TRUE;
-		  }
-		  return FALSE;
-	
-	   case EVT_KEY:
-		  switch (wParam) {
-		  case AVK_CLR:
-			 if(pme->bEndKeyProcess == FALSE)
-			 {
-			   (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 }
-			 //Other wise ignore the clear key so that the dialog is not ended.
-			 return TRUE;
-	
-		  default:
-			 break;
-		  }
-		  return FALSE;
-	
-	   case EVT_DIALOG_START:
-		 CFieldDebug_OnDialogStart (pme, wParam, dwParam);
-		 CFieldDebug_DebugScreenRefresh(pme);
-		 return TRUE;
-	
-	   case EVT_DIALOG_END:
-		  (void) ISHELL_CancelTimer(pme->a.m_pIShell,
-									(PFNNOTIFY) CFieldDebug_DebugScreenRefresh,
-									pme);
-		  return TRUE;
-	
-	   default:
-		  break;
-	   }
-	   return FALSE;
-
-}
 
 
 /*===========================================================================
@@ -2641,7 +2303,7 @@ static boolean CFieldDebug_ClearErrorsHandleEvent(CFieldDebug * pme,
       if (wParam == IDS_YES_TXT) {
          // Show Message - Clearing. . .
          (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                                     AEE_FLDDBG_RES_FILE,
+                                     FLDDBG_RES_FILE,
                                      IDS_CLEARING_TXT,
                                      szBuf,
                                      sizeof(szBuf));
@@ -2735,7 +2397,7 @@ static boolean CFieldDebug_ClearEFSHandleEvent(CFieldDebug * pme,
       if (wParam == IDS_OK) {
          // Show Message - Clearing. . .
          (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                                     AEE_FLDDBG_RES_FILE,
+                                     FLDDBG_RES_FILE,
                                      IDS_CLEARING_TXT,
                                      szBuf,
                                      sizeof(szBuf));
@@ -3266,7 +2928,7 @@ static boolean CFieldDebug_MMCDownloadHandleEvent(CFieldDebug * pme,
             {
               pme->m_dlgID = IDD_TOP_DIALOG;
               ISHELL_CreateDialog(pme->a.m_pIShell,
-                              AEE_FLDDBG_RES_FILE,
+                              FLDDBG_RES_FILE,
                               pme->m_dlgID,
                               NULL);
               return TRUE;
@@ -3285,7 +2947,7 @@ static boolean CFieldDebug_MMCDownloadHandleEvent(CFieldDebug * pme,
           MSG_FATAL("RDM status error", 0, 0, 0);
           ISHELL_EndDialog(pme->a.m_pIShell);
           ISHELL_CreateDialog(pme->a.m_pIShell,
-            AEE_FLDDBG_RES_FILE, IDD_ERROR_DIALOG, NULL);
+            FLDDBG_RES_FILE, IDD_ERROR_DIALOG, NULL);
         }
         return TRUE;
 
@@ -3365,22 +3027,22 @@ static boolean CFieldDebug_MMCFormatHandleEvent(CFieldDebug * pMe,
       pDlg = ISHELL_GetActiveDialog(pMe->a.m_pIShell);
       pStatic = (IStatic *) IDIALOG_GetControl (pDlg, IDC_STATIC_MMC_FORMAT);
       ISTATIC_SetProperties(pStatic, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE);
-      ISHELL_LoadResString (pMe->a.m_pIShell, AEE_FLDDBG_RES_FILE, IDS_MMC_FORMAT, buf1,
+      ISHELL_LoadResString (pMe->a.m_pIShell, FLDDBG_RES_FILE, IDS_MMC_FORMAT, buf1,
                             sizeof(AECHAR)*ARR_SIZE(buf1));
-      ISHELL_LoadResString (pMe->a.m_pIShell, AEE_FLDDBG_RES_FILE, IDS_FORMATTING, buf2,
+      ISHELL_LoadResString (pMe->a.m_pIShell, FLDDBG_RES_FILE, IDS_FORMATTING, buf2,
                             sizeof(AECHAR)*ARR_SIZE(buf2));
       ISTATIC_SetText (pStatic, NULL, buf2, AEE_FONT_NORMAL, AEE_FONT_NORMAL);
       fs_format ("mmc1", NULL, &rsp);
       if (rsp.format.status == FS_OKAY_S) {
-        ISHELL_LoadResString (pMe->a.m_pIShell, AEE_FLDDBG_RES_FILE, IDS_SUCCESSFUL, buf2,
+        ISHELL_LoadResString (pMe->a.m_pIShell, FLDDBG_RES_FILE, IDS_SUCCESSFUL, buf2,
                             sizeof(AECHAR)*ARR_SIZE(buf2));
       }
       else if (rsp.format.status == FS_NO_MEDIA_S) {
-        ISHELL_LoadResString (pMe->a.m_pIShell, AEE_FLDDBG_RES_FILE, IDS_NO_CARD, buf2,
+        ISHELL_LoadResString (pMe->a.m_pIShell, FLDDBG_RES_FILE, IDS_NO_CARD, buf2,
                             sizeof(AECHAR)*ARR_SIZE(buf2));
       }
       else {
-       ISHELL_LoadResString (pMe->a.m_pIShell, AEE_FLDDBG_RES_FILE, IDS_FAILED, buf2,
+       ISHELL_LoadResString (pMe->a.m_pIShell, FLDDBG_RES_FILE, IDS_FAILED, buf2,
                             sizeof(AECHAR)*ARR_SIZE(buf2));
       }
       if(pMe->m_pIAnn != NULL)
@@ -3570,7 +3232,7 @@ static boolean CFieldDebug_DebugMenuHandleEvent(CFieldDebug  *pme,
 
       case IDS_SECURITY_SERVICES:
         return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell,
-            AEE_FLDDBG_RES_FILE, IDD_SECURITY_SERVICES, NULL));
+            FLDDBG_RES_FILE, IDD_SECURITY_SERVICES, NULL));
       case IDS_MMC:
 	  {
             IMenuCtl *ctl;
@@ -3588,14 +3250,14 @@ static boolean CFieldDebug_DebugMenuHandleEvent(CFieldDebug  *pme,
         {
           // Wait for callbacks to be called.
           return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell,
-            AEE_FLDDBG_RES_FILE, IDD_WAIT_FPLMN_CLEAR_DIALOG, NULL));
+            FLDDBG_RES_FILE, IDD_WAIT_FPLMN_CLEAR_DIALOG, NULL));
         }
         else
         {
           //Display error-message
           pme->m_wStatusResID = IDS_ERROR;
           return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell,
-            AEE_FLDDBG_RES_FILE, IDD_ERROR_DIALOG, NULL));
+            FLDDBG_RES_FILE, IDD_ERROR_DIALOG, NULL));
         }
 
 #if defined(FEATURE_GSM) || defined (FEATURE_WCDMA)
@@ -3669,393 +3331,6 @@ static boolean CFieldDebug_DebugMenuHandleEvent(CFieldDebug  *pme,
    }
    return FALSE;
 }
-/*===========================================================================
-
-FUNCTION CFieldDebug_BREW_SETTINGSHandleEvent
-
-DESCRIPTION
-  Handle the key/command event for the BREW SETTING menu.
-
-DEPENDENCIES
-  None.
-
-RETURN VALUE
-  None.
-
-SIDE EFFECTS
-  None.
-
-===========================================================================*/
-static boolean CFieldDebug_BREW_SETTINGSHandleEvent(CFieldDebug *pme,
-                                           AEEEvent  eCode,
-                                           uint16    wParam,
-                                           uint32    dwParam)
-{
-	switch (eCode) {
-   case EVT_COMMAND:
-      switch (wParam) {
-	  	
-		case IDS_CARRIER_ID:
-		{
-            IMenuCtl *ctl;
-            IDialog *dlg;
-
-            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
-            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
-         }
-		  MSG_FATAL ("IDS_CARRIER_ID wParam == IDS_CARRIER_ID111111111111", 0, 0, 0);
-         (void) CFieldDebug_MoveToDialog(pme, IDD_CARRIERID_DIALOG);
-				 return TRUE;
-		
-		case IDS_PLATFORM_ID:
-		{
-            IMenuCtl *ctl;
-            IDialog *dlg;
-
-            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
-            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
-         }
-         (void) CFieldDebug_MoveToDialog(pme, IDD_PLATFORMID_DIALOG);								
-				 return TRUE;
-		case IDS_DLFLAGS:
-		{
-            IMenuCtl *ctl;
-            IDialog *dlg;
-
-            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
-            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
-         }
-         (void) CFieldDebug_MoveToDialog(pme, IDD_DLFLAGS_DIALOG);									
-				 return TRUE;
-		
-		case IDS_AUTH_POLICY:
-		{
-            IMenuCtl *ctl;
-            IDialog *dlg;
-
-            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
-            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
-         }
-         (void) CFieldDebug_MoveToDialog(pme, IDD_AUTHPOLICY_DIALOG);									
-				 return TRUE;
-		case IDS_PRIVACY_POLICY:
-		{
-            IMenuCtl *ctl;
-            IDialog *dlg;
-
-            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
-            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
-         }
-         (void) CFieldDebug_MoveToDialog(pme, IDD_PRIVACYPOLICY_DIALOG);	
-		 return TRUE;
-		case IDS_PRIMARY_DNS:
-		{
-            IMenuCtl *ctl;
-            IDialog *dlg;
-
-            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
-            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
-         }
-         (void) CFieldDebug_MoveToDialog(pme, IDD_PRIMARYDNS_DIALOG);								
-		return TRUE;
-		
-		case IDS_SECONDARY_DNS:
-        {
-            IMenuCtl *ctl;
-            IDialog *dlg;
-        
-            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
-            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
-         }
-         (void) CFieldDebug_MoveToDialog(pme, IDD_SECONDARY_DNS_DIALOG);   
-
-				 return TRUE;
-		case IDS_USER_NAME:
-        {
-            IMenuCtl *ctl;
-            IDialog *dlg;
-        
-            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
-            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
-         }
-          MSG_FATAL ("IDS_USER_NAME wParam == IDS_CARRIER_ID111111111111", 0, 0, 0);
-         (void) CFieldDebug_MoveToDialog(pme, IDD_USER_NAME_DIALOG);
-                 return TRUE;
-                 
-
-		case IDS_USER_PASSWORD:
-        {
-            IMenuCtl *ctl;
-            IDialog *dlg;
-        
-            dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-            ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
-            pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
-         }
-          MSG_FATAL ("IDS_USER_PASSWORD wParam == IDS_CARRIER_ID111111111111", 0, 0, 0);
-         (void) CFieldDebug_MoveToDialog(pme, IDD_USER_PASSWORD_DIALOG);
-                 return TRUE;
-
-		case IDS_PRIMARY_SERVER:
-            {
-                IMenuCtl *ctl;
-                IDialog *dlg;
-            
-                dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-                ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
-                pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
-             }
-              MSG_FATAL ("IDS_PRIMARY_SERVER wParam == IDS_CARRIER_ID111111111111", 0, 0, 0);
-             (void) CFieldDebug_MoveToDialog(pme, IDD_PRIMARY_SERVER_DIALOG);
-                     return TRUE;
-		
-		case IDS_SECONDARY_SERVER:
-            {
-                IMenuCtl *ctl;
-                IDialog *dlg;
-            
-                dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-                ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
-                pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
-             }
-              MSG_FATAL ("IDS_SECONDARY_SERVER wParam == IDS_CARRIER_ID111111111111", 0, 0, 0);
-             (void) CFieldDebug_MoveToDialog(pme, IDD_SECONDARY_SERVER_DIALOG);
-                     return TRUE;
-     case IDS_NV_SETTING:
-     {
-         IMenuCtl *ctl;
-         IDialog *dlg;
-     
-         dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-         ctl = (IMenuCtl *) IDIALOG_GetControl(dlg, IDC_BREWSET_MENU);
-         pme->m_debugmenu_sel = IMENUCTL_GetSel(ctl);
-      }
-       MSG_FATAL ("IDS_NV_SETTING wParam == IDS_NV_SETTING", 0, 0, 0);
-      (void) CFieldDebug_MoveToDialog(pme, IDD_NVSETTING_DIALOG);
-              return TRUE;
-
-		default:
-			break;
-      	}
-	  	break;
-	  case EVT_KEY:
-      switch (wParam) {
-      case AVK_CLR:
-    //     pme->m_debugmenu_sel = IDS_CARRIER_ID;
-         (void) CFieldDebug_MoveToDialog(pme, IDD_TOP_DIALOG);
-         return TRUE;
-
-      default:
-         break;
-      }
-      break;
-	 case EVT_DIALOG_START:
-	  MSG_FATAL ("EVT_DIALOG_START wParam == IDS_BREWSETTUBG_TITLE", 0, 0, 0);
-      CFieldDebug_OnDialogStart (pme, wParam, dwParam);
-      return TRUE;
-   case EVT_DIALOG_END:
-      return TRUE;
-
-   default:
-      break;
-   }
-   return FALSE;
-}
-/*===========================================================================
-
-FUNCTION CFieldDebug_CARRIERIDHandleEvent
-
-DESCRIPTION
-  Handle the key/command event for the CARRIERID.
-
-DEPENDENCIES
-  None.
-
-RETURN VALUE
-  None.
-
-SIDE EFFECTS
-  None.
-
-===========================================================================*/
-static boolean CFieldDebug_CARRIERIDHandleEvent(CFieldDebug *pme,
-											   AEEEvent  eCode,
-											   uint16	 wParam,
-											   uint32	 dwParam)
-{
-	   ITextCtl *pIText = NULL; 
-	   IDialog * p_diag = NULL;
-	   //IMenuCtl *psk = NULL;
-	   BottomBar_Param_type BarParam={0};//yangdecai
-	   PARAM_NOT_REF(dwParam)
-	   
-	   MSG_FATAL("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
-	   switch (eCode) {
-	
-	   case EVT_COMMAND:
-		  if (wParam == IDS_DONE_SK) {
-			 (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 return TRUE;
-		  }
-		  if(wParam == IDS_OK)
-		  {
-		  		AECHAR pwstrText[100] = {0};
-				char string[100+1];
-				uint32 carrID = 0;
-				//OEMConfigDownloadInfo DownLoadInfo = {0};
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-				(void) ICONFIG_GetItem(pme->m_pIConfig,
-                          CFGI_BREW_CARRIER_ID,
-                          &carrID,
-                          sizeof(uint32));
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_CARRIERID_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,99);
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-                carrID= ATOI(string);
-				(void) ICONFIG_SetItem(pme->m_pIConfig,
-                          CFGI_BREW_CARRIER_ID,
-                          &carrID,
-                          sizeof(uint32));
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE;    
-		  }
-		  if(wParam == IDS_CANCEL)
-		  {
-		  	(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE; 
-		  }
-		  
-		  return FALSE;
-	
-	   case EVT_KEY:
-		  switch (wParam) {
-	
-		  case AVK_CLR:
-
-			 //if (pme->m_dlgID == IDD_BREWSET_DIALOG)
-			 {
-				(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 }
-			 return TRUE;
-		  case AVK_SELECT:
-		  case AVK_INFO:
-            {
-                AECHAR pwstrText[100] = {0};
-				char string[100+1];
-				uint32 carrID = 0;
-				//OEMConfigDownloadInfo DownLoadInfo = {0};
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-				(void) ICONFIG_GetItem(pme->m_pIConfig,
-                          CFGI_BREW_CARRIER_ID,
-                          &carrID,
-                          sizeof(uint32));
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_CARRIERID_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,99);
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-                carrID= ATOI(string);
-				(void) ICONFIG_SetItem(pme->m_pIConfig,
-                          CFGI_BREW_CARRIER_ID,
-                          &carrID,
-                          sizeof(uint32));
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE;     
-		     }
-		     break;
-		  default:
-			 break;
-		  }
-		  return FALSE;
-	
-	   case EVT_DIALOG_START:
-	   		{
-			  	char szBuf[64] = {0};
-			  	//AEERect temp = {0};
-			    int n = 0;
-			    uint32 carrID = 0;
-			    //dword date = 0;
-			    //int i, j, count;
-			    //AECHAR  sTitle[64] = {0}; 
-			    //int ret = 0;
-                AECHAR string[64]={0};
-				//OEMConfigDownloadInfo DownLoadInfo = {0};
-				pme->m_CurrId =(uint32)CARRIERID;
-				pme->m_pActiveIDlg = (IDialog*)dwParam;
-			  	(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
-				pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_CARRIERID_TEXT);
-				/*(void) OEM_GetConfig(//pme->m_pIConfig,
-			                          CFGI_DOWNLOAD,
-			                          &DownLoadInfo,
-			                          sizeof(OEMConfigDownloadInfo));*/
-			    (void) ICONFIG_GetItem(pme->m_pIConfig,
-			                          CFGI_BREW_CARRIER_ID,
-			                          &carrID,
-			                          sizeof(uint32));
-                SPRINTF(szBuf,"%d\0", carrID);
-                STRTOWSTR(szBuf, string, 64); 
-                n = WSTRLEN(string);
-				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
-				SetTextControlRect(pme,pIText);
-				if (NULL != szBuf)
-			    {
-			            ITEXTCTL_SetMaxSize ( pIText, 100);
-    				//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_CARRIER_ID,0);
-                    {
-                        AECHAR WTitle[20] = {0};
-                        (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                        AEE_FLDDBG_RES_FILE,                                
-                        IDS_CARRIER_ID,
-                        WTitle,
-                        sizeof(WTitle));
-                        if(pme->m_pIAnn != NULL)
-                        {
-                            IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
-                        }
-                    }                           
-			            (void)ITEXTCTL_SetText(pIText,string,-1);
-						ITEXTCTL_SetCursorPos(pIText, n+1);
-			    }  
-				(void) ISHELL_PostEventEx(pme->a.m_pIShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_FIELDDEBUGAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-	   	}
-		  
-		  return TRUE;
-	   case EVT_USER_REDRAW:
-	   		{   
-	   		    #ifndef FEATURE_ALL_KEY_PAD
-                // Option     Delete
-                BarParam.eBBarType = BTBAR_OK_DELETE;
-                #else
-                // Option     Back
-                BarParam.eBBarType = BTBAR_OK_BACK;
-                #endif
-				DrawBottomBar(pme->m_pDisplay,&BarParam);
-            	IDISPLAY_Update(pme->m_pDisplay);  
-		    }
-	        break;
-	   case EVT_DIALOG_END:
-		  return TRUE;
-	
-	   default:
-		  break;
-	   }
-	   MSG_FATAL("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
-	   return FALSE;
-
-}
 
 static boolean CFieldDebug_NVSETTINGHandleEvent(CFieldDebug *pme,
                                                AEEEvent  eCode,
@@ -4114,7 +3389,7 @@ static boolean CFieldDebug_NVSETTINGHandleEvent(CFieldDebug *pme,
           switch (wParam) {
     
           case AVK_CLR:
-             (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
+             (void) CFieldDebug_MoveToDialog(pme, IDD_TOP_DIALOG);
              return TRUE;       
           case AVK_SELECT:
           case AVK_INFO:
@@ -4159,7 +3434,7 @@ static boolean CFieldDebug_NVSETTINGHandleEvent(CFieldDebug *pme,
                           (void*)NvValue, /* data ptr */
                           nvim_op_get_size((nv_items_enum_type)ID));  // data count 这里可以通过nvim_op_get_size来测试NV项的大小                
                 MSG_FATAL("nvio_write_item status=%d",status,0,0);
-                (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
+                (void) CFieldDebug_MoveToDialog(pme, IDD_TOP_DIALOG);
                 return TRUE;        
              }
              break;
@@ -4172,10 +3447,7 @@ static boolean CFieldDebug_NVSETTINGHandleEvent(CFieldDebug *pme,
        case EVT_DIALOG_START:
             {
                 char szBuf[64] = {0};
-                int n = 0;
-                uint32 carrID = 0;
-                AECHAR string[64]={0};
-                pme->m_CurrId =(uint32)CARRIERID;
+                pme->m_CurrId =(uint32)NVSETTING;
                 pme->m_pActiveIDlg = (IDialog*)dwParam;
                 (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
                 pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_NVID_TEXT);
@@ -4219,7 +3491,7 @@ static boolean CFieldDebug_NVSETTINGHandleEvent(CFieldDebug *pme,
                     {
                         AECHAR WTitle[20] = {0};
                         (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                        AEE_FLDDBG_RES_FILE,                                
+                        FLDDBG_RES_FILE,                                
                         IDS_NV_SETTING,
                         WTitle,
                         sizeof(WTitle));
@@ -4264,778 +3536,6 @@ static boolean CFieldDebug_NVSETTINGHandleEvent(CFieldDebug *pme,
 }
 
 /*===========================================================================
-	
-FUNCTION CFieldDebug_PLATFORMIDHandleEvent
-
-DESCRIPTION
-  Handle the key/command event for the PLATFORMID.
-
-DEPENDENCIES
-  None.
-
-RETURN VALUE
-  None.
-
-SIDE EFFECTS
-  None.
-
-===========================================================================*/
-
-static boolean CFieldDebug_PLATFORMIDHandleEvent(CFieldDebug *pme,
-										   AEEEvent  eCode,
-										   uint16	 wParam,
-										   uint32	 dwParam)
-{
-	   ITextCtl *pIText = NULL; 
-	   IDialog * p_diag = NULL;
-	   //IMenuCtl *psk = NULL;
-	   BottomBar_Param_type BarParam={0};//yangdecai
-	   PARAM_NOT_REF(dwParam)
-	   MSG_FATAL("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
-	   switch (eCode) {
-	
-	   case EVT_COMMAND:
-		  if (wParam == IDS_DONE_SK) {
-			 (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 return TRUE;
-		  }
-		  if(wParam == IDS_OK)
-		  {
-		  		AECHAR pwstrText[100] = {0};
-				char string[100+1];
-				uint32 platformID = 0;
-				//OEMConfigDownloadInfo DownLoadInfo = {0};
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-				/*
-				(void) ICONFIG_GetItem(pme->m_pIConfig,
-                          CFGI_DOWNLOAD,
-                          &DownLoadInfo,
-                          sizeof(OEMConfigDownloadInfo));*/
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_PLATFORMID_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,99);
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-                platformID= ATOI(string);
-				(void) ICONFIG_SetItem(pme->m_pIConfig,
-                          CFGI_BREW_PLATFORM_ID,
-                          &platformID,
-                          sizeof(uint32));
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE;    
-		  }
-		  if(wParam == IDS_CANCEL)
-		  {
-		  	(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE; 
-		  }
-		  return FALSE;
-	
-	   case EVT_KEY:
-		  switch (wParam) {
-	
-		  case AVK_CLR:
-
-			 //if (pme->m_dlgID == IDD_BREWSET_DIALOG)
-			 {
-				(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 }
-			 
-			 return TRUE;
-		  case AVK_SELECT:
-		  case AVK_INFO:
-		     {
-				AECHAR pwstrText[100] = {0};
-				char string[100+1];
-				uint32 platformID = 0;
-				//OEMConfigDownloadInfo DownLoadInfo = {0};
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-				/*
-				(void) ICONFIG_GetItem(pme->m_pIConfig,
-                          CFGI_DOWNLOAD,
-                          &DownLoadInfo,
-                          sizeof(OEMConfigDownloadInfo));*/
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_PLATFORMID_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,99);
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-                platformID= ATOI(string);
-				(void) ICONFIG_SetItem(pme->m_pIConfig,
-                          CFGI_BREW_PLATFORM_ID,
-                          &platformID,
-                          sizeof(uint32));
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE; 	   
-		     }
-		     break;
-		  default:
-			 break;
-		  }
-		  return FALSE;
-	
-	   case EVT_DIALOG_START:
-	   	{
-		   	 
-		   	char szBuf[64] = {0};
-		  	//AEERect temp = {0};
-		    int n = 0;
-		    uint32 PlatformID = 0;
-		    //dword date = 0;
-		    //int i, j, count;
-		    //AECHAR  sTitle[64] = {0}; 
-		    //int ret = 0;
-            AECHAR string[64]={0};
-			//OEMConfigDownloadInfo DownLoadInfo = {0};
-			pme->m_CurrId =(uint32)PLATFORMID;
-			pme->m_pActiveIDlg = (IDialog*)dwParam;
-		  	//(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
-			pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_PLATFORMID_TEXT);
-			(void) ICONFIG_GetItem(pme->m_pIConfig,
-		                          CFGI_BREW_PLATFORM_ID,
-		                          &PlatformID,
-		                          sizeof(uint32));
-            SPRINTF(szBuf,"%d\0", PlatformID);
-            STRTOWSTR(szBuf, string, 64); 
-            n = WSTRLEN(string);
-			ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
-			SetTextControlRect(pme,pIText);
-			if (NULL != szBuf)
-		    {
-		            ITEXTCTL_SetMaxSize ( pIText, 100);
-					//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_PLATFORM_ID,0);
-                    {
-                        AECHAR WTitle[20] = {0};
-                        (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                        AEE_FLDDBG_RES_FILE,                                
-                        IDS_PLATFORM_ID,
-                        WTitle,
-                        sizeof(WTitle));
-                        if(pme->m_pIAnn != NULL)
-                        {
-                            IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
-                        }
-                    }     					
-		            (void)ITEXTCTL_SetText(pIText,string,-1);
-					ITEXTCTL_SetCursorPos(pIText, n+1);
-		    }  
-			(void) ISHELL_PostEventEx(pme->a.m_pIShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_FIELDDEBUGAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-		  }  
-		  return TRUE;
-	   case EVT_USER_REDRAW:
-	   		{
-
-                #ifndef FEATURE_ALL_KEY_PAD
-                // Option     Delete
-                BarParam.eBBarType = BTBAR_OK_DELETE;
-                #else
-                // Option     Back
-                BarParam.eBBarType = BTBAR_OK_BACK;
-                #endif
-				DrawBottomBar(pme->m_pDisplay,&BarParam);
-            	IDISPLAY_Update(pme->m_pDisplay);  
-		    }
-	        break;
-	   case EVT_DIALOG_END:
-		  return TRUE;
-	
-	   default:
-		  break;
-	   }
-	   MSG_FATAL("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
-	   return FALSE;
-
-}
-/*===========================================================================
-
-FUNCTION CFieldDebug_DLFLAGSHandleEvent
-
-DESCRIPTION
-  Handle the key/command event for the DLFLAGS.
-
-DEPENDENCIES
-  None.
-
-RETURN VALUE
-  None.
-
-SIDE EFFECTS
-  None.
-
-===========================================================================*/
-	static boolean CFieldDebug_DLFLAGSHandleEvent(CFieldDebug *pme,
-											   AEEEvent  eCode,
-											   uint16	 wParam,
-											   uint32	 dwParam)
-{
-		   ITextCtl *pIText = NULL; 
-	       IDialog * p_diag = NULL;
-	       //IMenuCtl *psk = NULL;
-		   BottomBar_Param_type BarParam={0};//yangdecai
-	 	   PARAM_NOT_REF(dwParam)
-		   
-		   MSG_FATAL("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
-		   switch (eCode) {
-		
-		   case EVT_COMMAND:
-			  if (wParam == IDS_DONE_SK) {
-				 (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-				 return TRUE;
-			  }
-			  if(wParam == IDS_OK)
-			  {
-			  		AECHAR pwstrText[100] = {0};
-					char string[100+1];
-					uint32 DLFlags = 0;
-					//OEMConfigDownloadInfo DownLoadInfo = {0};
-					p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-					
-					//(void) ICONFIG_GetItem(pme->m_pIConfig,
-					//(void)OEM_GET
-	                 //        CFGI_DL_FLAGS,
-	                  //        &DLFlags,
-	                  //        sizeof(uint32));
-					pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_DLFLAGS_TEXT);
-					ITEXTCTL_SetActive(pIText,TRUE);
-			  	    (void)ITEXTCTL_GetText(pIText,pwstrText,99);
-					(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-	                DLFlags = ATOI(string);
-					
-					//(void) ICONFIG_SetItem(pme->m_pIConfig,
-					(void)OEM_SetConfig(
-	                          CFGI_DL_FLAGS,
-	                          &DLFlags,
-	                          sizeof(uint32));
-				    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-	                return TRUE;    
-			  }
-			  if(wParam == IDS_CANCEL)
-			  {
-			  	(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-	                return TRUE; 
-			  }
-			  return FALSE;
-		
-		   case EVT_KEY:
-			  switch (wParam) {
-		
-			  case AVK_CLR:
-
-				 //if (pme->m_dlgID == IDD_BREWSET_DIALOG)
-				 {
-					(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-				 }
-				 return TRUE;
-			  case AVK_SELECT:
-			  case AVK_INFO:
-				 {
-					
-					AECHAR pwstrText[100] = {0};
-					char string[100+1];
-					uint32 DLFlags = 0;
-					//OEMConfigDownloadInfo DownLoadInfo = {0};
-					p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-					
-					//(void) ICONFIG_GetItem(pme->m_pIConfig,
-					//(void)OEM_GET
-	                 //        CFGI_DL_FLAGS,
-	                  //        &DLFlags,
-	                  //        sizeof(uint32));
-					pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_DLFLAGS_TEXT);
-					ITEXTCTL_SetActive(pIText,TRUE);
-			  	    (void)ITEXTCTL_GetText(pIText,pwstrText,99);
-					(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-	                DLFlags = ATOI(string);
-					
-					//(void) ICONFIG_SetItem(pme->m_pIConfig,
-					(void)OEM_SetConfig(
-	                          CFGI_DL_FLAGS,
-	                          &DLFlags,
-	                          sizeof(uint32));
-				    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-	                return TRUE;    	
-				 }
-				 break;
-			  default:
-				 break;
-			  }
-			  return FALSE;
-		
-		   case EVT_DIALOG_START:
-			  {
-			   char szBuf[64] = {0};
-			   int n = 0;
-			   uint32 DLFlags = 0;
-			   //dword date = 0;
-			   //AECHAR fmt_str[64] = {0};
-			   //int i, j, count;
-			   AECHAR  string[64] = {0}; 
-			   //int ret = 0;
-			   
-			  // OEMConfigDownloadInfo DownLoadInfo = {0};
-			   pme->m_CurrId =(uint32)DLFLAGS;
-			   pme->m_pActiveIDlg = (IDialog*)dwParam;
-			  //(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
-			   pIText = (ITextCtl*)IDIALOG_GetControl(pme->m_pActiveIDlg, IDC_DLFLAGS_TEXT);
-			   SetControlRect(pme, pIText);
-			   MSG_FATAL("EVT_DIALOG_START::::::::::::::::::::::!1111111111",0,0,0);
-			   
-			   //(void) ICONFIG_GetItem(pme->m_pIConfig,
-			   (void)OEM_GetConfig(
-									 CFGI_DL_FLAGS,
-									 &DLFlags,
-									 sizeof(uint32));
-			   MSG_FATAL("EVT_DIALOG_START::::::::::::::::::::::222222222222222",0,0,0);
-			  SPRINTF(szBuf,"%d\0", DLFlags);
-              STRTOWSTR(szBuf, string, 64); 
-              n = WSTRLEN(string);
-			  ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
-				SetTextControlRect(pme,pIText);
-			   if (NULL != szBuf)
-			   {
-					   ITEXTCTL_SetMaxSize ( pIText, 100);
-					   //(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_DLFLAGS,NULL);
-                       {
-                           AECHAR WTitle[20] = {0};
-                           (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                           AEE_FLDDBG_RES_FILE,                                
-                           IDS_DLFLAGS,
-                           WTitle,
-                           sizeof(WTitle));
-                           if(pme->m_pIAnn != NULL)
-                           {
-                               IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
-                           }
-                       }     
-					   (void)ITEXTCTL_SetText(pIText,string,-1);
-					   ITEXTCTL_SetCursorPos(pIText, n+1);
-			   }	
-			   (void) ISHELL_PostEventEx(pme->a.m_pIShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_FIELDDEBUGAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-		   	}
-			  return TRUE;
-		   case EVT_USER_REDRAW:
-	   		{
-                #ifndef FEATURE_ALL_KEY_PAD
-                // Option     Delete
-                BarParam.eBBarType = BTBAR_OK_DELETE;
-                #else
-                // Option     Back
-                BarParam.eBBarType = BTBAR_OK_BACK;
-                #endif
-				DrawBottomBar(pme->m_pDisplay,&BarParam);
-            	IDISPLAY_Update(pme->m_pDisplay);  
-		    }
-	        break;
-		   case EVT_DIALOG_END:
-			  return TRUE;
-		
-		   default:
-			  break;
-		   }
-		   MSG_FATAL("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
-		   return FALSE;
-
-}
-/*===========================================================================
-
-FUNCTION CFieldDebug_AUTHPOLICYHandleEvent
-
-DESCRIPTION
-  Handle the key/command event for the AUTHPOLICY
-
-DEPENDENCIES
-  None.
-
-RETURN VALUE
-  None.
-
-SIDE EFFECTS
-  None.
-
-===========================================================================*/
-static boolean CFieldDebug_AUTHPOLICYHandleEvent(CFieldDebug *pme,
-											   AEEEvent  eCode,
-											   uint16	 wParam,
-											   uint32	 dwParam)
-
-{
-			   //ITextCtl *pIText = NULL; 
-	   		   //IDialog * p_diag = NULL;
-	   		   //IMenuCtl *psk = NULL;
-    PARAM_NOT_REF(wParam)
-    uint16 auth_policy = 0;
-    MSG_FATAL("CFieldDebug_AUTHPOLICYHandleEvent Start", 0, 0, 0);
-   switch (eCode) {
-   case EVT_COMMAND:
-   {   
-      switch (wParam)
-      {   
-           case IDS_AUTH_POLICY_NONE:
-           {
-               MSG_FATAL("CFieldDebug_AUTHPOLICYHandleEvent IDS_AUTH_POLICY_NONE",0,0,0);  
-               auth_policy = 0;
-                
-			   (void) ICONFIG_SetItem(pme->m_pIConfig, CFGI_BREW_AUTH, &auth_policy, sizeof(uint16));                        
-               break;
-           }                  
-           case IDS_AUTH_POLICY_SID:
-           {
-               MSG_FATAL("CFieldDebug_AUTHPOLICYHandleEvent IDS_AUTH_POLICY_SID",0,0,0);   
-               auth_policy = 1;
-               
-			   (void) ICONFIG_SetItem(pme->m_pIConfig, CFGI_BREW_AUTH, &auth_policy, sizeof(uint16));                        
-               break;
-           }
-           case IDS_AUTH_POLICY_TEXT:
-           {
-               MSG_FATAL("CFieldDebug_AUTHPOLICYHandleEvent IDS_AUTH_POLICY_TEXT",0,0,0);   
-               auth_policy = 2;
-               
-			   (void) ICONFIG_SetItem(pme->m_pIConfig, CFGI_BREW_AUTH, &auth_policy, sizeof(uint16));                        
-               break;
-           }
-           case IDS_AUTH_POLICY_NUM:
-           {
-               MSG_FATAL("CFieldDebug_AUTHPOLICYHandleEvent IDS_AUTH_POLICY_NUM",0,0,0);    
-               auth_policy = 3;
-               
-			   (void) ICONFIG_SetItem(pme->m_pIConfig, CFGI_BREW_AUTH, &auth_policy, sizeof(uint16));                        
-               break;
-           }  
-           default:
-             break;
-       }
-       MSG_FATAL("CFieldDebug_AUTHPOLICYHandleEvent 2", 0, 0, 0);
-       (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-       return TRUE;
-   }
-
-   case EVT_KEY:
-      MSG_FATAL("CFieldDebug_AUTHPOLICYHandleEvent 3 case EVT_KEY", 0, 0, 0);
-	  switch (wParam) 
-      {
-		  case AVK_CLR:
-		      (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			  return TRUE;
-		  case AVK_SELECT:
-		  case AVK_INFO:
-			 {
-				
-				return TRUE;	
-			 }
-			 break;
-		  default:
-			 break;
-	  }
-	  return TRUE;
-
-   case EVT_DIALOG_START:
-	 {
-          MSG_FATAL("CFieldDebug_AUTHPOLICYHandleEvent EVT_DIALOG_START", 0, 0, 0);
-          (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
-          MSG_FATAL("CFieldDebug_AUTHPOLICYHandleEvent 0", 0, 0, 0);
-   	}
-	  return TRUE;
-
-   case EVT_DIALOG_END:
-	  return TRUE;
-
-   default:
-	  break;
-   }
-   MSG_FATAL("CFieldDebug_AUTHPOLICYHandleEvent End", 0, 0, 0);
-   return TRUE;
-
-}
-/*===========================================================================
-
-FUNCTION CFieldDebug_PRIVACYPOLICYHandleEvent
-
-DESCRIPTION
-  Handle the key/command event for the PRIVACYPOLICY
-
-DEPENDENCIES
-  None.
-
-RETURN VALUE
-  None.
-
-SIDE EFFECTS
-  None.
-
-===========================================================================*/
-static boolean CFieldDebug_PRIVACYPOLICYHandleEvent(CFieldDebug *pme,
-											   AEEEvent  eCode,
-											   uint16	 wParam,
-											   uint32	 dwParam)
-{
-	   //ITextCtl *pIText = NULL; 
-	   //IDialog * p_diag = NULL;
-	   //IMenuCtl *psk = NULL;
-     PARAM_NOT_REF(wParam)
-     uint16 auth_policy = 0;
-     MSG_FATAL("CFieldDebug_PRIVACYPOLICYHandleEvent Start", 0, 0, 0);
-    switch (eCode) {
-    case EVT_COMMAND:
-    {   
-       switch (wParam)
-       {   
-            case IDS_PRIVACY_POLICY_BREW:
-            {
-                MSG_FATAL("CFieldDebug_PRIVACYPOLICYHandleEvent IDS_PRIVACY_POLICY_BREW",0,0,0);  
-                auth_policy = 0;
-                 
-                (void) ICONFIG_SetItem(pme->m_pIConfig, CFGI_BREW_PRIVP, &auth_policy, sizeof(uint16));                        
-                break;
-            }                  
-            case IDS_PRIVACY_POLICY_CARRIER:
-            {
-                MSG_FATAL("CFieldDebug_PRIVACYPOLICYHandleEvent IDS_PRIVACY_POLICY_CARRIER",0,0,0);   
-                auth_policy = 1;
-                
-                (void) ICONFIG_SetItem(pme->m_pIConfig, CFGI_BREW_PRIVP, &auth_policy, sizeof(uint16));                        
-                break;
-            }
-            case IDS_PRIVACY_POLICY_BREW_AND_CARRIER:
-            {
-                MSG_FATAL("CFieldDebug_PRIVACYPOLICYHandleEvent IDS_PRIVACY_POLICY_BREW_AND_CARRIER",0,0,0);   
-                auth_policy = 2;
-                
-                (void) ICONFIG_SetItem(pme->m_pIConfig, CFGI_BREW_PRIVP, &auth_policy, sizeof(uint16));                        
-                break;
-            }
-            case IDS_PRIVACY_POLICY_BREW_OR_CARRIER:
-            {
-                MSG_FATAL("CFieldDebug_PRIVACYPOLICYHandleEvent IDS_PRIVACY_POLICY_BREW_OR_CARRIER",0,0,0);    
-                auth_policy = 3;
-                
-                (void) ICONFIG_SetItem(pme->m_pIConfig, CFGI_BREW_PRIVP, &auth_policy, sizeof(uint16));                        
-                break;
-            }  
-            default:
-              break;
-        }
-        MSG_FATAL("CFieldDebug_PRIVACYPOLICYHandleEvent 2", 0, 0, 0);
-        (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-        return TRUE;
-    }
-    
-    case EVT_KEY:
-       MSG_FATAL("CFieldDebug_PRIVACYPOLICYHandleEvent 3 case EVT_KEY", 0, 0, 0);
-       switch (wParam) 
-       {
-           case AVK_CLR:
-               (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-               return TRUE;
-           case AVK_SELECT:
-           case AVK_INFO:
-              {
-                 
-                 return TRUE;    
-              }
-              break;
-           default:
-              break;
-       }
-       return TRUE;
-    
-    case EVT_DIALOG_START:
-      {
-           MSG_FATAL("CFieldDebug_PRIVACYPOLICYHandleEvent EVT_DIALOG_START", 0, 0, 0);
-           (void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
-           MSG_FATAL("CFieldDebug_PRIVACYPOLICYHandleEvent", 0, 0, 0);
-     }
-       return TRUE;
-    
-    case EVT_DIALOG_END:
-       return TRUE;
-    
-    default:
-       break;
-    }
-    MSG_FATAL("CFieldDebug_PRIVACYPOLICYHandleEvent End", 0, 0, 0);
-    return TRUE;
-
-}
-/*===========================================================================
-
-FUNCTION CFieldDebug_PRIMARYDNSHandleEvent
-
-DESCRIPTION
-  Handle the key/command event for the PRIMARYDNS menu.
-
-DEPENDENCIES
-  None.
-
-RETURN VALUE
-  None.
-
-SIDE EFFECTS
-  None.
-
-===========================================================================*/
-static boolean CFieldDebug_PRIMARYDNSHandleEvent(CFieldDebug *pme,
-											   AEEEvent  eCode,
-											   uint16	 wParam,
-											   uint32	 dwParam)
-{
-     //IShell *shell_ptr = AEE_GetShell();
-	 ITextCtl *pIText = NULL; 
-	 IDialog * p_diag = NULL;
-	 //IMenuCtl *psk = NULL;
-	 BottomBar_Param_type BarParam={0};//yangdecai
-	 PARAM_NOT_REF(dwParam)  
-     MSG_FATAL("CFieldDebug_CARRIERIDHandleEvent Start", 0, 0, 0);
-     switch (eCode) {
-  
-     case EVT_COMMAND:
-  	  if (wParam == IDS_DONE_SK) {
-  		 (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-  		 return TRUE;
-  	  }
-	  if(wParam == IDS_OK)
-	  {
-	  		AECHAR pwstrText[100] = {0};
-			char string[64];
-			p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-
-			pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_PRIMARYDNS_TEXT);
-			ITEXTCTL_SetActive(pIText,TRUE);
-	  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
-			(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-			(void) OEM_SetConfig(
-                      CFGI_BREWSET_PRIMARYDNS,
-                      (void*)string,
-                      sizeof(string));
-		    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-            return TRUE;    
-	  }
-	  if(wParam == IDS_CANCEL)
-	  {
-	  	(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-            return TRUE; 
-	  }
-  	  return FALSE;
-  
-     case EVT_KEY:
-  	  switch (wParam) {
-  
-  	  case AVK_CLR:
-
-  		 //if (pme->m_dlgID == IDD_BREWSET_DIALOG)
-  		 {
-  			(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-  		 }
-  		 return TRUE;
-  	  case AVK_SELECT:
-  	  case AVK_INFO:
-  		 {
-  			AECHAR pwstrText[100] = {0};
-			char string[64];
-			p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-
-			pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_PRIMARYDNS_TEXT);
-			ITEXTCTL_SetActive(pIText,TRUE);
-	  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
-			(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-			(void) OEM_SetConfig(
-                      CFGI_BREWSET_PRIMARYDNS,
-                      (void*)string,
-                      sizeof(string));
-		    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-            return TRUE;	
-  		 }
-  		 break;
-  	  default:
-  		 break;
-  	  }
-  	  return FALSE;
-     
-  
-     case EVT_DIALOG_START:
-  	  {
-			byte fig_username[64] = {0};
-		  	AECHAR szBuf[64] = {0};
-		    int n = 0;
-			pme->m_CurrId =(uint32)PRIMARYDNS;
-			pme->m_pActiveIDlg = (IDialog*)dwParam;
-		  	//(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
-			pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_PRIMARYDNS_TEXT);
-			(void) OEM_GetConfig(
-		                          CFGI_BREWSET_PRIMARYDNS,
-		                          (void*)fig_username,
-		                          sizeof(fig_username));
-			STRTOWSTR((void*)fig_username,szBuf,64);
-		    n = WSTRLEN(szBuf);
-		    szBuf[n++] = (AECHAR) '\0';
-			ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
-			SetTextControlRect(pme,pIText);
-			if (NULL != szBuf)
-		    {
-		            ITEXTCTL_SetMaxSize ( pIText, 100);
-					//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_PRIMARY_DNS,0);
-                    {
-                        AECHAR WTitle[20] = {0};
-                        (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                        AEE_FLDDBG_RES_FILE,                                
-                        IDS_PRIMARY_DNS,
-                        WTitle,
-                        sizeof(WTitle));
-                        if(pme->m_pIAnn != NULL)
-                        {
-                            IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
-                        }
-                    }     
-		            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
-					ITEXTCTL_SetCursorPos(pIText, n+1);
-		    }  
-			(void) ISHELL_PostEventEx(pme->a.m_pIShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_FIELDDEBUGAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-	   	}
-  	  return TRUE;
-	  
-    
-  	 break;
-	 case EVT_USER_REDRAW:
-	   		{
-                #ifndef FEATURE_ALL_KEY_PAD
-                // Option     Delete
-                BarParam.eBBarType = BTBAR_OK_DELETE;
-                #else
-                // Option     Back
-                BarParam.eBBarType = BTBAR_OK_BACK;
-                #endif
-				DrawBottomBar(pme->m_pDisplay,&BarParam);
-            	IDISPLAY_Update(pme->m_pDisplay);  
-		    }
-	        break;
-     case EVT_DIALOG_END:
-  	  return TRUE;
-  
-     default:
-  	  break;
-     }
-     MSG_FATAL("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
-     return FALSE;
-
-
-}
-
-
-
-/*===========================================================================
 
 FUNCTION CFieldDebug_TopMenuHandleEvent
 
@@ -5076,10 +3576,10 @@ static boolean CFieldDebug_TopMenuHandleEvent(CFieldDebug * pme,
          return TRUE;
       }
 
-	  if (wParam == IDS_BREWSETTUBG_TITLE)     //ADD BY YANGDECAI
+	  if (wParam == IDS_NV_SETTING)     //ADD BY YANGDECAI
 	  {
-	  	 MSG_FATAL ("CFieldDebug_TopMenuHandleEvent wParam == IDS_BREWSETTUBG_TITLE", 0, 0, 0);
-	  	(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);//进入BREWSETING 菜单
+	  	 MSG_FATAL ("CFieldDebug_TopMenuHandleEvent wParam == IDS_NV_SETTING", 0, 0, 0);
+	  	(void) CFieldDebug_MoveToDialog(pme, IDD_NVSETTING_DIALOG);//进入BREWSETING 菜单
          return TRUE;
 	  }
       if (wParam == IDS_VERSION_TITLE)
@@ -5110,7 +3610,7 @@ static boolean CFieldDebug_TopMenuHandleEvent(CFieldDebug * pme,
       {
     #ifdef FEATURE_JPEG_DECODER
         ISHELL_EndDialog(pme->a.m_pIShell); //End current dialog.
-        ISHELL_CreateDialog(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE, IDD_JPEG_DECODE, NULL); //Show JPEG dialog.
+        ISHELL_CreateDialog(pme->a.m_pIShell, FLDDBG_RES_FILE, IDD_JPEG_DECODE, NULL); //Show JPEG dialog.
     #endif /* FEATURE_JPEG_DECODER */
         return TRUE;
       }
@@ -5300,13 +3800,13 @@ void CFieldDebug_RATS_SetControlText(CFieldDebug *pme,
   static AECHAR ip_address_str[MAX_IP_SIZE+1]; /* IP string */
 
   /* Get the SERVER string. */
-  (void) ISHELL_LoadResString(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE, title_id,
+  (void) ISHELL_LoadResString(pme->a.m_pIShell, FLDDBG_RES_FILE, title_id,
                               title_string, sizeof(title_string));
 
   if ((ip_address != 0) && (ip_address != 0xFFFFFFFF))
   {
     /* Get the string introducing the IP address */
-    (void) ISHELL_LoadResString(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE, IDS_LOCAL_IP,
+    (void) ISHELL_LoadResString(pme->a.m_pIShell, FLDDBG_RES_FILE, IDS_LOCAL_IP,
                                 spacer_string, sizeof(spacer_string));
 
     /* Get the IP address itself. */
@@ -5322,7 +3822,7 @@ void CFieldDebug_RATS_SetControlText(CFieldDebug *pme,
   }
 
   /* We have a string now, associate that with the item. */
-  IMENUCTL_SetItemText(pm, control_id, AEE_FLDDBG_RES_FILE, 0, title_string);
+  IMENUCTL_SetItemText(pm, control_id, FLDDBG_RES_FILE, 0, title_string);
 }
 
 /*===========================================================================
@@ -5500,12 +4000,12 @@ static boolean CFieldDebug_RATSHandleEvent(CFieldDebug * pme,
         if (ip_address != 0)
         {
           /* Get the CLIENT string. */
-          (void) ISHELL_LoadResString(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE,
+          (void) ISHELL_LoadResString(pme->a.m_pIShell, FLDDBG_RES_FILE,
                                       IDS_CLIENT_UP, res_string,
                                       sizeof(res_string));
 
           /* Add the client menu item to the default string. */
-          (void) IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_CLIENT_UP,
+          (void) IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_CLIENT_UP,
                                   IDC_RATS_CLIENT, res_string, IDC_RATS_CLIENT);
 
           /* Set the CLIENT string to a specific value for the state. */
@@ -5519,12 +4019,12 @@ static boolean CFieldDebug_RATSHandleEvent(CFieldDebug * pme,
         }
 
         /* Get the SERVER string. */
-        (void) ISHELL_LoadResString(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE,
+        (void) ISHELL_LoadResString(pme->a.m_pIShell, FLDDBG_RES_FILE,
                                     IDS_SERVER_UP, res_string,
                                     sizeof(res_string));
 
         /* Add the SERVER menu item. */
-        (void) IMENUCTL_AddItem(pm, AEE_FLDDBG_RES_FILE, IDS_SERVER_UP,
+        (void) IMENUCTL_AddItem(pm, FLDDBG_RES_FILE, IDS_SERVER_UP,
                                 IDC_RATS_SERVER, res_string, IDC_RATS_SERVER);
 
         /* Set the SERVER string to a context specific value. */
@@ -5671,7 +4171,7 @@ static boolean CFieldDebug_RATS_TESTHandleEvent(CFieldDebug * pme,
           {
             AECHAR WTitle[40] = {0};
             (void)ISHELL_LoadResString(pme->a.m_pIShell,
-            AEE_FLDDBG_RES_FILE,                                
+            FLDDBG_RES_FILE,                                
             IDS_ENTER_TEST,
             WTitle,
             sizeof(WTitle));
@@ -5875,7 +4375,7 @@ static boolean CFieldDebug_IPHandleEvent(CFieldDebug * pme,
           {
             AECHAR WTitle[40] = {0};
             (void)ISHELL_LoadResString(pme->a.m_pIShell,
-            AEE_FLDDBG_RES_FILE,                                
+            FLDDBG_RES_FILE,                                
             IDS_SET_IP,
             WTitle,
             sizeof(WTitle));
@@ -5899,13 +4399,13 @@ static boolean CFieldDebug_IPHandleEvent(CFieldDebug * pme,
         psk = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                               IDC_RATS_IP_SOFTKEY);
         (void) IMENUCTL_DeleteAll(psk);
-        (void) ISHELL_LoadResString(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE, IDS_OK,
+        (void) ISHELL_LoadResString(pme->a.m_pIShell, FLDDBG_RES_FILE, IDS_OK,
                                     res_string, sizeof(res_string));
-        (void) IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_OK, IDS_OK,
+        (void) IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_OK, IDS_OK,
                                 res_string, IDS_OK);
-        (void) ISHELL_LoadResString(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE,
+        (void) ISHELL_LoadResString(pme->a.m_pIShell, FLDDBG_RES_FILE,
                                     IDS_CANCEL, res_string, sizeof(res_string));
-        (void) IMENUCTL_AddItem(psk, AEE_FLDDBG_RES_FILE, IDS_CANCEL,
+        (void) IMENUCTL_AddItem(psk, FLDDBG_RES_FILE, IDS_CANCEL,
                             IDS_CANCEL, res_string, IDS_CANCEL);
       }
       return TRUE;
@@ -6074,7 +4574,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
        }
             
        if (ISHELL_CreateDialog(ps,
-                               AEE_FLDDBG_RES_FILE,
+                               FLDDBG_RES_FILE,
                                pme->m_dlgID,
                                NULL) != AEE_SUCCESS) {
           MSG_FATAL("Can't Create Top Dialog", 0, 0, 0 );
@@ -6111,7 +4611,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
             MSG_FATAL("pMe->a.m_pIShell == NULL", 0, 0, 0);
         }
         (void)ISHELL_LoadResString(pme->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE,                                
+        FLDDBG_RES_FILE,                                
         IDS_OPTION_TITLE,
         WTitle,
         sizeof(WTitle));
@@ -6129,7 +4629,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
 
    case EVT_APP_RESUME:
     pme->m_bSuspended = FALSE;
-    if (ISHELL_CreateDialog(ps, AEE_FLDDBG_RES_FILE, pme->m_dlgID, NULL) !=
+    if (ISHELL_CreateDialog(ps, FLDDBG_RES_FILE, pme->m_dlgID, NULL) !=
         AEE_SUCCESS) {
        MSG_FATAL("Can't Create Top Dialog", 0, 0, 0 );
     }
@@ -6215,7 +4715,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
           //Wrong response..display error message
            MSG_FATAL("Failed in EVT_SIM_WRITTEN_FINAL", 0, 0, 0);
            FREEIF(pGSDIConf);
-           return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE,
+           return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell, FLDDBG_RES_FILE,
              IDD_ERROR_DIALOG, NULL));
          }
        }
@@ -6268,7 +4768,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
              ISHELL_EndDialog(pme->a.m_pIShell);
            }
            FREEIF(pGSDIConf);
-           return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE,
+           return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell, FLDDBG_RES_FILE,
              IDD_ERROR_DIALOG, NULL));
          }
        }
@@ -6354,7 +4854,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
              ISHELL_EndDialog(pme->a.m_pIShell);
            }
            FREEIF(pGSDIConf);
-           return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE,
+           return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell, FLDDBG_RES_FILE,
              IDD_ERROR_DIALOG, NULL));
 
          }
@@ -6437,7 +4937,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
           if (wParam == AVK_CLR)
           {
             IDISPLAY_ClearScreen(pme->a.m_pIDisplay);
-            ISHELL_CreateDialog(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE, IDD_JPEG_DECODE, NULL);
+            ISHELL_CreateDialog(pme->a.m_pIShell, FLDDBG_RES_FILE, IDD_JPEG_DECODE, NULL);
           }
           else if (wParam == AVK_LEFT)
             {
@@ -6551,7 +5051,7 @@ static void CFieldDebug_DrawErrorScreen(CFieldDebug * pme)
    ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE);
    // Set the values of the title and text strings for this control
    (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                                        AEE_FLDDBG_RES_FILE,
+                                        FLDDBG_RES_FILE,
                                         IDS_ERRORS,
                                         sTitle,
                                         sizeof(sTitle));
@@ -6601,16 +5101,17 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     AECHAR fmt_str[20];
     int i, j, count;
     AECHAR  sTitle[20]; 
+#ifndef CUST_EDITION
     byte b=0;
     int temp_cont=0;
     char temp_str[160]={0};
-	
+#endif
     MEMSET (sTitle, 0, sizeof(sTitle));
 
     (void)MEMSET( szBuf,(AECHAR) 0, sizeof(szBuf));
     
     (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                               AEE_FLDDBG_RES_FILE,
+                               FLDDBG_RES_FILE,
                                IDS_SW_VERSION,
                                szBuf,
                                sizeof(szBuf));
@@ -6632,7 +5133,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     n = WSTRLEN(szBuf);// update current Info. len
 
     (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                                AEE_FLDDBG_RES_FILE,
+                                FLDDBG_RES_FILE,
                                 IDS_HW_VERSION,
                                 (szBuf + n),
                                 sizeof(szBuf));
@@ -6646,7 +5147,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     szBuf[n++] = (AECHAR) '\n';
     
    (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                               AEE_FLDDBG_RES_FILE,
+                               FLDDBG_RES_FILE,
                                IDS_MODEL,
                                (szBuf + n),
                                sizeof(szBuf));
@@ -6660,7 +5161,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
    szBuf[n++] = (AECHAR) '\n';
       
     (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                               AEE_FLDDBG_RES_FILE,
+                               FLDDBG_RES_FILE,
                                IDS_ESN,
                                (szBuf + n),
                                sizeof(szBuf));
@@ -6738,7 +5239,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
 
 #ifdef FEATURE_RF_ZIF
    (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                               AEE_FLDDBG_RES_FILE,
+                               FLDDBG_RES_FILE,
                                IDS_RFCAL_VER,
                                (szBuf + n),
                                sizeof(szBuf));
@@ -6755,7 +5256,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
    szBuf[n++] = (AECHAR) '\n'; 
 
    (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                               AEE_FLDDBG_RES_FILE,
+                               FLDDBG_RES_FILE,
                                IDS_RFCAL_DATE,
                                (szBuf + n),
                                sizeof(szBuf));
@@ -6870,7 +5371,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
    // Set the values of the title and text strings for this control
     ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE);
    (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                                        AEE_FLDDBG_RES_FILE,
+                                        FLDDBG_RES_FILE,
                                         IDS_VERSION_TITLE,
                                         sTitle,
                                         sizeof(sTitle));
@@ -7015,7 +5516,7 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
           {
             AECHAR WTitle[30] = {0};
             (void)ISHELL_LoadResString(pme->a.m_pIShell,
-            AEE_FLDDBG_RES_FILE,                                
+            FLDDBG_RES_FILE,                                
             IDS_SECURITY_TESTS,
             WTitle,
             sizeof(WTitle));
@@ -7024,10 +5525,10 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
                 IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
             }
           }           
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SSL_TEST,  IDS_SSL_TEST, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SEC_TESTS,  IDS_SEC_TESTS, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_DRM_TESTS,  IDS_DRM_TESTS, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_VPN_TESTS,  IDS_VPN_TESTS, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_SSL_TEST,  IDS_SSL_TEST, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_SEC_TESTS,  IDS_SEC_TESTS, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_DRM_TESTS,  IDS_DRM_TESTS, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_VPN_TESTS,  IDS_VPN_TESTS, NULL, 0);
         }
         break;
 
@@ -7039,7 +5540,7 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
           {
             AECHAR WTitle[30] = {0};
             (void)ISHELL_LoadResString(pme->a.m_pIShell,
-            AEE_FLDDBG_RES_FILE,                                
+            FLDDBG_RES_FILE,                                
             IDS_SSL_TEST,
             WTitle,
             sizeof(WTitle));
@@ -7048,10 +5549,10 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
                 IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
             }
           }           
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SSL_HTTP,  IDS_SSL_HTTP, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SSL_FUNCT,  IDS_SSL_FUNCT, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SSL_MULTI,  IDS_SSL_MULTI, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SSL_LONG,  IDS_SSL_LONG, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_SSL_HTTP,  IDS_SSL_HTTP, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_SSL_FUNCT,  IDS_SSL_FUNCT, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_SSL_MULTI,  IDS_SSL_MULTI, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_SSL_LONG,  IDS_SSL_LONG, NULL, 0);
         }
         break;
 
@@ -7063,7 +5564,7 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
           {
             AECHAR WTitle[20] = {0};
             (void)ISHELL_LoadResString(pme->a.m_pIShell,
-            AEE_FLDDBG_RES_FILE,                                
+            FLDDBG_RES_FILE,                                
             IDS_SEC_TESTS,
             WTitle,
             sizeof(WTitle));
@@ -7072,11 +5573,11 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
                 IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
             }
           }           
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SECAPI_PKX,  IDS_SECAPI_PKX, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SECAPI_ENC,  IDS_SECAPI_ENC, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SECAPI_HSH,  IDS_SECAPI_HSH, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SEC_CRYPTO,  IDS_SEC_CRYPTO, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_SEC_CUSTOM,  IDS_SEC_CUSTOM, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_SECAPI_PKX,  IDS_SECAPI_PKX, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_SECAPI_ENC,  IDS_SECAPI_ENC, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_SECAPI_HSH,  IDS_SECAPI_HSH, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_SEC_CRYPTO,  IDS_SEC_CRYPTO, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_SEC_CUSTOM,  IDS_SEC_CUSTOM, NULL, 0);
         }
         break;
 
@@ -7088,7 +5589,7 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
           {
             AECHAR WTitle[20] = {0};
             (void)ISHELL_LoadResString(pme->a.m_pIShell,
-            AEE_FLDDBG_RES_FILE,                                
+            FLDDBG_RES_FILE,                                
             IDS_DRM_TESTS,
             WTitle,
             sizeof(WTitle));
@@ -7097,11 +5598,11 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
                 IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
             }
           }           
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_DRM_ADD_RO,  IDS_DRM_ADD_RO, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_DRM_READ_RO,  IDS_DRM_READ_RO, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_DRM_USE_RO,  IDS_DRM_USE_RO, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_DRM_DEL_ARO,  IDS_DRM_DEL_ARO, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_DRM_DEL_RO,  IDS_DRM_DEL_RO, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_DRM_ADD_RO,  IDS_DRM_ADD_RO, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_DRM_READ_RO,  IDS_DRM_READ_RO, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_DRM_USE_RO,  IDS_DRM_USE_RO, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_DRM_DEL_ARO,  IDS_DRM_DEL_ARO, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_DRM_DEL_RO,  IDS_DRM_DEL_RO, NULL, 0);
         }
         break;
       case IDD_VPN_TEST:
@@ -7109,10 +5610,10 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
         wMenuID = IDC_VPN_TEST;
         pIMenuCtl = (IMenuCtl *) IDIALOG_GetControl((IDialog *) dwParam,
                                                    wMenuID);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_VPN1_START,  IDS_VPN1_START, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_VPN2_START,  IDS_VPN2_START, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_VPN3_START,  IDS_VPN3_START, NULL, 0);
-        IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_VPN_STOP,  IDS_VPN_STOP, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_VPN1_START,  IDS_VPN1_START, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_VPN2_START,  IDS_VPN2_START, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_VPN3_START,  IDS_VPN3_START, NULL, 0);
+        IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_VPN_STOP,  IDS_VPN_STOP, NULL, 0);
         }
         break;
       }
@@ -7137,7 +5638,6 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
         IMENUCTL_DeleteItem(pIMenuCtl, IDS_VPN_TESTS);
 #endif
       }
-//      SetDefaultMenuLook(pme->a.m_pIShell, pIMenuCtl);
     }
     return TRUE;
 
@@ -7154,16 +5654,16 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
     {
     case IDS_SSL_TEST:
       return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE, IDD_SSL_TEST, NULL));
+        FLDDBG_RES_FILE, IDD_SSL_TEST, NULL));
 
     case IDS_SEC_TESTS:
       return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE, IDD_SEC_TEST, NULL));
+        FLDDBG_RES_FILE, IDD_SEC_TEST, NULL));
 
 #ifdef FEATURE_SEC_DRM
     case IDS_DRM_TESTS:
       return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE, IDD_DRM_TEST, NULL));
+        FLDDBG_RES_FILE, IDD_DRM_TEST, NULL));
 
     case IDS_DRM_ADD_RO:
       DRMTestApp( pme->a.m_pIShell );
@@ -7177,7 +5677,7 @@ static boolean CFieldDebug_SecServicesHandleEvent(CFieldDebug *pme,
 
     case IDS_VPN_TESTS:
       return CheckAEEReturnStatus(ISHELL_CreateDialog(pme->a.m_pIShell,
-        AEE_FLDDBG_RES_FILE, IDD_VPN_TEST, NULL));
+        FLDDBG_RES_FILE, IDD_VPN_TEST, NULL));
 
 #ifdef FEATURE_SEC_IPSEC_VPN_CLNT
     case IDS_VPN1_START:
@@ -7480,7 +5980,7 @@ void EndErrorMessageDlg(void *pUser)
   {
     pme->m_dlgID = IDD_MMC_DIALOG;//MMC download 返回的对话框
     ISHELL_CreateDialog(pIShell,
-                    AEE_FLDDBG_RES_FILE,
+                    FLDDBG_RES_FILE,
                     pme->m_dlgID,
                     NULL);
     return;
@@ -7662,7 +6162,7 @@ void CFieldDebug_InitMMCDownload(void *pUser)
     //End the current dialog and create the error dialog.
     ISHELL_EndDialog(pme->a.m_pIShell);
     ISHELL_CreateDialog(pme->a.m_pIShell,
-            AEE_FLDDBG_RES_FILE, IDD_ERROR_DIALOG, NULL);
+            FLDDBG_RES_FILE, IDD_ERROR_DIALOG, NULL);
     return;
   }
 
@@ -7680,7 +6180,7 @@ void CFieldDebug_InitMMCDownload(void *pUser)
     //End the current dialog and create the error dialog.
     ISHELL_EndDialog(pme->a.m_pIShell);
     ISHELL_CreateDialog(pme->a.m_pIShell,
-            AEE_FLDDBG_RES_FILE, IDD_ERROR_DIALOG, NULL);
+            FLDDBG_RES_FILE, IDD_ERROR_DIALOG, NULL);
     return;
   }
 
@@ -7737,8 +6237,7 @@ void CFieldDebug_MMCDownload(void *pUser)
         IMenuCtl *pIMenuCtl = (IMenuCtl*) IDIALOG_GetControl(pIDialog, IDC_SK_MMC_DOWNLOAD);
         if(pIMenuCtl != NULL)
         {
-          IMENUCTL_AddItem(pIMenuCtl, AEE_FLDDBG_RES_FILE, IDS_QUIT, IDS_QUIT, NULL, 0);
-      //  SetDefaultMenuLook(pme->a.m_pIShell, pIMenuCtl);
+          IMENUCTL_AddItem(pIMenuCtl, FLDDBG_RES_FILE, IDS_QUIT, IDS_QUIT, NULL, 0);
           IMENUCTL_Redraw(pIMenuCtl);
         }
 
@@ -7827,7 +6326,7 @@ static boolean CFieldDebug_JPEGDecodeHandleEvent(CFieldDebug *pme,
           if (!pme->m_bDisplayImage)
           {
              ISHELL_EndDialog(pme->a.m_pIShell); //End JPEG Decode Dialog.
-             ISHELL_CreateDialog(pme->a.m_pIShell, AEE_FLDDBG_RES_FILE, IDD_TOP_DIALOG, NULL);
+             ISHELL_CreateDialog(pme->a.m_pIShell, FLDDBG_RES_FILE, IDD_TOP_DIALOG, NULL);
           }
           if (pme->m_bDisplayImage)
              pme->m_bDisplayImage = FALSE;
@@ -7940,12 +6439,12 @@ static void InitJPEGFileList(CFieldDebug * pme)
        {
          IMENUCTL_DeleteAll(pIJPEGFileListMenuCtl);
 		 #if 0
-         IMENUCTL_SetTitle(pIJPEGFileListMenuCtl, AEE_FLDDBG_RES_FILE, IDS_CHOOSE_FILE, NULL);
+         IMENUCTL_SetTitle(pIJPEGFileListMenuCtl, FLDDBG_RES_FILE, IDS_CHOOSE_FILE, NULL);
 		 #else
 		{
 				AECHAR WTitle[40] = {0};
 			(void)ISHELL_LoadResString(pme->a.m_pIShell,
-		            AEE_FLDDBG_RES_FILE,                                
+		            FLDDBG_RES_FILE,                                
 		            IDS_CHOOSE_FILE,
 		            WTitle,
 		            sizeof(WTitle));
@@ -7964,10 +6463,10 @@ static void InitJPEGFileList(CFieldDebug * pme)
             szBuf = CFieldDebug_GetFileName(fi.szName);
             STRTOWSTR(szBuf, fileNameBuf, sizeof(fileNameBuf));
 
-            IMENUCTL_AddItem(pIJPEGFileListMenuCtl, AEE_FLDDBG_RES_FILE, 0, wItemID, fileNameBuf, 0);
+            IMENUCTL_AddItem(pIJPEGFileListMenuCtl, FLDDBG_RES_FILE, 0, wItemID, fileNameBuf, 0);
             wItemID++;
          } //while
-         RELEASEIF(pIFileMgr);
+         IFILEMGR_Release(pIFileMgr);
      } //if
    } //if wDlgId
 }
@@ -8275,7 +6774,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
 
     (void)MEMSET( szBuf,(AECHAR) 0, sizeof(szBuf));    
     ret = ISHELL_LoadResString(pme->a.m_pIShell,
-                               AEE_FLDDBG_RES_FILE,
+                               FLDDBG_RES_FILE,
                                IDS_ESN,
                                (szBuf + n),
                                sizeof(szBuf));
@@ -8314,7 +6813,7 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
     (void) ISHELL_LoadResString(pme->a.m_pIShell,
-                               AEE_FLDDBG_RES_FILE,
+                               FLDDBG_RES_FILE,
                                IDS_STRING_MEID,
                                (szBuf + n),
                                sizeof(szBuf));
@@ -8370,763 +6869,6 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
    
    (void) ISTATIC_Redraw(p_stk);
    MSG_FATAL("CFieldDebug_DrawEsnScreen End", 0, 0, 0);
-}
-
-
-static boolean CFieldDebug_SecondaryDNSMenuHandleEvent(CFieldDebug *pme,
-											   AEEEvent  eCode,
-											   uint16	 wParam,
-											   uint32	 dwParam)
-{
-	   ITextCtl *pIText = NULL; 
-	   IDialog * p_diag = NULL;
-	   //IMenuCtl *psk = NULL;
-	   BottomBar_Param_type BarParam={0};//yangdecai
-	   PARAM_NOT_REF(dwParam)
-	   
-	   MSG_FATAL("CFieldDebug_SecondaryDNSMenuHandleEvent Start", 0, 0, 0);
-	   switch (eCode) {
-	
-	   case EVT_COMMAND:
-		  if (wParam == IDS_DONE_SK) {
-			 (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 return TRUE;
-		  }
-		  if(wParam == IDS_OK)
-		  {
-		  		AECHAR pwstrText[64] = {0};
-				char string[64] = {0};
-				//OEMConfigDownloadInfo DownLoadInfo = {0};
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-				
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_SECONDARY_DNS_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-				(void) OEM_SetConfig(
-                          CFGI_BREWSET_SECONDARYDNS,
-                          (void*)string,
-                          sizeof(string));
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE;    
-		  }
-		  if(wParam == IDS_CANCEL)
-		  {
-		  	(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE; 
-		  }
-		  return FALSE;
-	
-	   case EVT_KEY:
-		  switch (wParam) {
-	
-		  case AVK_CLR:
-
-			 //if (pme->m_dlgID == IDD_BREWSET_DIALOG)
-			 {
-				(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 }
-			 return TRUE;
-		  case AVK_SELECT:
-		  case AVK_INFO:
-		     {
-                AECHAR pwstrText[64] = {0};
-				char string[64] = {0};
-				//OEMConfigDownloadInfo DownLoadInfo = {0};
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-				
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_SECONDARY_DNS_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-				(void) OEM_SetConfig(
-                          CFGI_BREWSET_SECONDARYDNS,
-                          (void*)string,
-                          sizeof(string));
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE;    
-		     }
-		     break;
-		  default:
-			 break;
-		  }
-		  return FALSE;
-	
-	   case EVT_DIALOG_START:
-	   		{
-			  	AECHAR szBuf[64] = {0};
-				byte secondarydns[64] = {0};
-			    int n = 0;
-				pme->m_CurrId =(uint32)SECONDARYDNS;
-				pme->m_pActiveIDlg = (IDialog*)dwParam;
-			  	//(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
-				pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_SECONDARY_DNS_TEXT);
-				(void) OEM_GetConfig(
-			                          CFGI_BREWSET_SECONDARYDNS,
-			                          (void*)secondarydns,
-			                          sizeof(secondarydns));
-				STRTOWSTR((void*)secondarydns,szBuf,64);
-			    n = WSTRLEN(szBuf);
-			    szBuf[n++] = (AECHAR) '\0';
-				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
-				SetTextControlRect(pme,pIText);
-				if (NULL != szBuf)
-			    {
-		            ITEXTCTL_SetMaxSize ( pIText, 65);
-					//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_SECONDARY_DNS,0);
-                    {
-                        AECHAR WTitle[30] = {0};
-                        (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                        AEE_FLDDBG_RES_FILE,                                
-                        IDS_SECONDARY_DNS,
-                        WTitle,
-                        sizeof(WTitle));
-                        if(pme->m_pIAnn != NULL)
-                        {
-                            IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
-                        }
-                    }     
-		            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
-					ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
-					ITEXTCTL_SetCursorPos(pIText, n+1);
-			    }  	
-				(void) ISHELL_PostEventEx(pme->a.m_pIShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_FIELDDEBUGAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-	   	  }
-		  return TRUE;
-		case EVT_USER_REDRAW:
-	   		{
-
-                #ifndef FEATURE_ALL_KEY_PAD
-                // Option     Delete
-                BarParam.eBBarType = BTBAR_OK_DELETE;
-                #else
-                // Option     Back
-                BarParam.eBBarType = BTBAR_OK_BACK;
-                #endif
-				DrawBottomBar(pme->m_pDisplay,&BarParam);
-            	IDISPLAY_Update(pme->m_pDisplay);  
-		    }
-	        break;
-	   case EVT_DIALOG_END:
-		  return TRUE;
-	
-	   default:
-		  break;
-	   }
-	   MSG_FATAL("CFieldDebug_SecondaryDNSMenuHandleEvent End", 0, 0, 0);
-	   return FALSE;
-
-}
-
-static boolean CFieldDebug_UserNameMenuHandleEvent(CFieldDebug *pme,
-											   AEEEvent  eCode,
-											   uint16	 wParam,
-											   uint32	 dwParam)
-{
-	   ITextCtl *pIText = NULL; 
-	   IDialog * p_diag = NULL;
-	   //IMenuCtl *psk = NULL;
-	   BottomBar_Param_type BarParam={0};//yangdecai
-	   PARAM_NOT_REF(dwParam)
-	   
-	   MSG_FATAL("CFieldDebug_UserNameMenuHandleEvent Start", 0, 0, 0);
-	   switch (eCode) {
-	
-	   case EVT_COMMAND:
-		  if (wParam == IDS_DONE_SK) {
-			 (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 return TRUE;
-		  }
-		  if(wParam == IDS_OK)
-		  {
-		  		AECHAR pwstrText[100] = {0};
-				char string[64];
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_USER_NAME_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-				(void) OEM_SetConfig(
-                          CFGI_BREWSET_USENAME,
-                          (void*)string,
-                          sizeof(string));
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE;    
-		  }
-		  if(wParam == IDS_CANCEL)
-		  {
-		  	(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE; 
-		  }
-		  return FALSE;
-	
-	   case EVT_KEY:
-		  switch (wParam) {
-	
-		  case AVK_CLR:
-#ifdef FEATURE_CARRIER_CHINA_TELCOM 
-			 if (pme->m_dlgID == IDD_USER_NAME_DIALOG)
-			 {
-				//ISHELL_CloseApplet(pme->a.m_pIShell, FALSE); // This return the EditNum dialog
-				ISHELL_CloseApplet(pme->a.m_pIShell, TRUE); // This return the Idle dialog
-			 }
-#endif
-			 //if (pme->m_dlgID == IDD_BREWSET_DIALOG)
-			 //{
-				(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 //}
-			 return TRUE;
-		  case AVK_SELECT:
-		  case AVK_INFO:
-		     {
-			 	AECHAR pwstrText[100] = {0};
-				char string[64];
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_USER_NAME_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-				(void) OEM_SetConfig(
-                          CFGI_BREWSET_USENAME,
-                          (void*)string,
-                          sizeof(string));
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE;  
-		     }
-		     break;
-		  default:
-			 break;
-		  }
-		  return FALSE;
-	   case EVT_USER_REDRAW:
-	   		{
-                #ifndef FEATURE_ALL_KEY_PAD
-                // Option     Delete
-                BarParam.eBBarType = BTBAR_OK_DELETE;
-                #else
-                // Option     Back
-                BarParam.eBBarType = BTBAR_OK_BACK;
-                #endif
-				DrawBottomBar(pme->m_pDisplay,&BarParam);
-            	IDISPLAY_Update(pme->m_pDisplay);  
-		    }
-	        break;
-	
-	   case EVT_DIALOG_START:
-	   		{
-				byte fig_username[64] = {0};
-			  	AECHAR szBuf[64] = {0};
-			    int n = 0;
-				pme->m_pActiveIDlg = (IDialog*)dwParam;
-				pme->m_CurrId =(uint32)USERNAME ;
-			  	(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
-				pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_USER_NAME_TEXT);
-				(void) OEM_GetConfig(
-			                          CFGI_BREWSET_USENAME,
-			                          (void*)fig_username,
-			                          sizeof(fig_username));
-				STRTOWSTR((void*)fig_username,szBuf,64);
-			    n = WSTRLEN(szBuf);
-			    szBuf[n++] = (AECHAR) '\0';
-				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
-				SetTextControlRect(pme,pIText);
-				if (NULL != szBuf)
-			    {
-			            ITEXTCTL_SetMaxSize ( pIText, 64);
-						//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_USER_NAME,0);
-                        {
-                            AECHAR WTitle[20] = {0};
-                            (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                            AEE_FLDDBG_RES_FILE,                                
-                            IDS_USER_NAME,
-                            WTitle,
-                            sizeof(WTitle));
-                            if(pme->m_pIAnn != NULL)
-                            {
-                                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
-                            }
-                        }     
-			            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
-						ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
-						ITEXTCTL_SetCursorPos(pIText, n+1);
-			    }  
-				
-				(void) ISHELL_PostEventEx(pme->a.m_pIShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_FIELDDEBUGAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-				
-	   	}
-		  
-		  return TRUE;
-	
-	   case EVT_DIALOG_END:
-		  return TRUE;
-	
-	   default:
-		  break;
-	   }
-	   MSG_FATAL("CFieldDebug_UserNameMenuHandleEvent End", 0, 0, 0);
-	   return FALSE;
-
-}
-
-static boolean CFieldDebug_UserPasswordMenuHandleEvent(CFieldDebug *pme,
-											   AEEEvent  eCode,
-											   uint16	 wParam,
-											   uint32	 dwParam)
-{
-	   ITextCtl *pIText = NULL; 
-	   IDialog * p_diag = NULL;
-	   //IMenuCtl *psk = NULL;
-	   BottomBar_Param_type BarParam={0};//yangdecai
-	   PARAM_NOT_REF(dwParam)
-	   
-	   MSG_FATAL("CFieldDebug_UserPasswordMenuHandleEvent Start", 0, 0, 0);
-	   switch (eCode) {
-	
-	   case EVT_COMMAND:
-		  if (wParam == IDS_DONE_SK) {
-			 (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 return TRUE;
-		  }
-		  if(wParam == IDS_OK)
-		  {
-		  		AECHAR pwstrText[100] = {0};
-				char string[64] = {0};
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_USER_PASSWORD_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-				(void) OEM_SetConfig(
-                          CFGI_BREWSET_PASSWORD,
-                          (void*)string,
-                          sizeof(string));
-
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE;    
-		  }
-		  if(wParam == IDS_CANCEL)
-		  {
-		  	(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE; 
-		  }
-		  return FALSE;
-	
-	   case EVT_KEY:
-		  switch (wParam) {
-	
-		  case AVK_CLR:
-#ifdef FEATURE_CARRIER_CHINA_TELCOM 
-			 if (pme->m_dlgID == IDD_USER_PASSWORD_DIALOG)
-			 {
-				//ISHELL_CloseApplet(pme->a.m_pIShell, FALSE); // This return the EditNum dialog
-				ISHELL_CloseApplet(pme->a.m_pIShell, TRUE); // This return the Idle dialog
-			 }
-#endif
-			 //if (pme->m_dlgID == IDD_BREWSET_DIALOG)
-			 //{
-				(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 //}
-			 return TRUE;
-		  case AVK_SELECT:
-		  case AVK_INFO:
-		     {
-			 	
-                AECHAR pwstrText[100] = {0};
-				char string[64] = {0};
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_USER_PASSWORD_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-				(void) OEM_SetConfig(
-                          CFGI_BREWSET_PASSWORD,
-                          (void*)string,
-                          sizeof(string));
-
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE;    
-		     }
-		     break;
-		  default:
-			 break;
-		  }
-		  return FALSE;
-	
-	   case EVT_DIALOG_START:
-	   		{
-				byte Fig_Password[64] = {0};
-			  	AECHAR szBuf[64] = {0};
-			    int n = 0;
-				pme->m_CurrId =(uint32)PASSWORD;
-			  	(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
-				pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_USER_PASSWORD_TEXT);
-				(void) OEM_GetConfig(
-			                          CFGI_BREWSET_PASSWORD,
-			                          (void*)Fig_Password,
-			                          sizeof(Fig_Password));
-				STRTOWSTR((void*)Fig_Password,szBuf,64);
-			    n = WSTRLEN(szBuf);
-			    szBuf[n++] = (AECHAR) '\0';
-				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
-				SetTextControlRect(pme,pIText);
-				if (NULL != szBuf)
-			    {
-			            ITEXTCTL_SetMaxSize ( pIText, 64);
-						//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_USER_PASSWORD,0);
-                        {
-                            AECHAR WTitle[20] = {0};
-                            (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                            AEE_FLDDBG_RES_FILE,                                
-                            IDS_USER_PASSWORD,
-                            WTitle,
-                            sizeof(WTitle));
-                            if(pme->m_pIAnn != NULL)
-                            {
-                                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
-                            }
-                        }     
-			            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
-						ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
-						ITEXTCTL_SetCursorPos(pIText, n+1);
-			    }  
-				(void) ISHELL_PostEventEx(pme->a.m_pIShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_FIELDDEBUGAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-				
-	   	}
-		  return TRUE;
-	   case EVT_USER_REDRAW:
-	   		{
-                #ifndef FEATURE_ALL_KEY_PAD
-                // Option     Delete
-                BarParam.eBBarType = BTBAR_OK_DELETE;
-                #else
-                // Option     Back
-                BarParam.eBBarType = BTBAR_OK_BACK;
-                #endif
-				DrawBottomBar(pme->m_pDisplay,&BarParam);
-            	IDISPLAY_Update(pme->m_pDisplay);  
-		    }
-	        break;
-	
-	   case EVT_DIALOG_END:
-		  return TRUE;
-	
-	   default:
-		  break;
-	   }
-	   MSG_FATAL("CFieldDebug_UserPasswordMenuHandleEvent End", 0, 0, 0);
-	   return FALSE;
-
-}
-
-static boolean CFieldDebug_PrimaryServerMenuHandleEvent(CFieldDebug *pme,
-											   AEEEvent  eCode,
-											   uint16	 wParam,
-											   uint32	 dwParam)
-{
-	   ITextCtl *pIText = NULL; 
-	   IDialog * p_diag = NULL;
-	   //IMenuCtl *psk = NULL;
-	   BottomBar_Param_type BarParam={0};//yangdecai
-	   PARAM_NOT_REF(dwParam)
-	   
-	   MSG_FATAL("CFieldDebug_PrimaryServerMenuHandleEvent Start", 0, 0, 0);
-	   switch (eCode) {
-	
-	   case EVT_COMMAND:
-		  if (wParam == IDS_DONE_SK) {
-			 (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 return TRUE;
-		  }
-		  if(wParam == IDS_OK)
-		  {
-		  		AECHAR pwstrText[64] = {0};
-				char string[64];
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_PRIMARY_SERVER_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-				(void) ICONFIG_SetItem(pme->m_pIConfig,
-                          CFGI_BREWSET_PRIMARYSERVER,
-                          (void*)string,
-                          sizeof(string));
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE;    
-		  }
-		  if(wParam == IDS_CANCEL)
-		  {
-		  	(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE; 
-		  }
-		  return FALSE;
-	
-	   case EVT_KEY:
-		  switch (wParam) {
-	
-		  case AVK_CLR:
-			 //if (pme->m_dlgID == IDD_BREWSET_DIALOG)
-			 {
-				(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 }
-			 return TRUE;
-		  case AVK_SELECT:
-		  case AVK_INFO:
-		     {
-                AECHAR pwstrText[64] = {0};
-				char string[64];
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_PRIMARY_SERVER_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));
-				(void) ICONFIG_SetItem(pme->m_pIConfig,
-                          CFGI_BREWSET_PRIMARYSERVER,
-                          (void*)string,
-                          sizeof(string));
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE;   
-		     }
-		     break;
-		  default:
-			 break;
-		  }
-		  return FALSE;
-	
-	   case EVT_DIALOG_START:
-	   		{
-				byte primaryserver[64] = {0};
-			  	AECHAR szBuf[64] = {0};
-			    int n = 0;  
-				pme->m_CurrId =(uint32)PROMERYSERVER;
-				pme->m_pActiveIDlg = (IDialog*)dwParam;
-			  	//(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
-				pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_PRIMARY_SERVER_TEXT);
-				(void) ICONFIG_GetItem(pme->m_pIConfig,
-			                          CFGI_BREWSET_PRIMARYSERVER,
-			                          (void*)primaryserver,
-			                          sizeof(primaryserver));
-				STRTOWSTR((void*)primaryserver,szBuf,64);
-			    n = WSTRLEN(szBuf);
-			    szBuf[n++] = (AECHAR) '\0';
-				
-				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
-				SetTextControlRect(pme,pIText);
-				if (NULL != szBuf)
-			    {
-			            ITEXTCTL_SetMaxSize ( pIText, 64);
-						//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_PRIMARY_SERVER,0);
-                        {
-                            AECHAR WTitle[20] = {0};
-                            (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                            AEE_FLDDBG_RES_FILE,                                
-                            IDS_PRIMARY_SERVER,
-                            WTitle,
-                            sizeof(WTitle));
-                            if(pme->m_pIAnn != NULL)
-                            {
-                                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
-                            }
-                        }     
-			            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
-						ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
-						ITEXTCTL_SetCursorPos(pIText, n+1);
-			    }  
-				(void) ISHELL_PostEventEx(pme->a.m_pIShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_FIELDDEBUGAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-	   	  }
-		  return TRUE;
-	    case EVT_USER_REDRAW:
-	   		{
-
-                #ifndef FEATURE_ALL_KEY_PAD
-                // Option     Delete
-                BarParam.eBBarType = BTBAR_OK_DELETE;
-                #else
-                // Option     Back
-                BarParam.eBBarType = BTBAR_OK_BACK;
-                #endif
-				DrawBottomBar(pme->m_pDisplay,&BarParam);
-            	IDISPLAY_Update(pme->m_pDisplay);  
-		    }
-	        break;
-	   case EVT_DIALOG_END:
-		  return TRUE;
-	
-	   default:
-		  break;
-	   }
-	   MSG_FATAL("CFieldDebug_PrimaryServerMenuHandleEvent End", 0, 0, 0);
-	   return FALSE;
-
-}
-
-static boolean CFieldDebug_SecondaryServerMenuHandleEvent(CFieldDebug *pme,
-											   AEEEvent  eCode,
-											   uint16	 wParam,
-											   uint32	 dwParam)
-{
-	   ITextCtl *pIText = NULL; 
-	   IDialog * p_diag = NULL;
-	   //IMenuCtl *psk = NULL;
-	   BottomBar_Param_type BarParam={0};//yangdecai
-	   PARAM_NOT_REF(dwParam)
-	   
-	   MSG_FATAL("CFieldDebug_SecondaryServerMenuHandleEvent Start", 0, 0, 0);
-	   switch (eCode) {
-	
-	   case EVT_COMMAND:
-		  if (wParam == IDS_DONE_SK) {
-			 (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 return TRUE;
-		  }
-		  if(wParam == IDS_OK)
-		  {
-		  		AECHAR pwstrText[64] = {0};
-				char string[64] = {0};
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_SECONDARY_SERVER_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
-
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));;
-				
-				(void) OEM_SetConfig(
-                          CFGI_BREWSET_SECONDARYSERVER,
-                          (void*)string,
-                          sizeof(string));
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE;    
-		  }
-		  if(wParam == IDS_CANCEL)
-		  {
-		  	(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE; 
-		  }
-		  return FALSE;
-	
-	   case EVT_KEY:
-		  switch (wParam) {
-	
-		  case AVK_CLR:
-			 //if (pme->m_dlgID == IDD_BREWSET_DIALOG)
-			 {
-				(void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-			 }
-			 return TRUE;
-		  case AVK_SELECT:
-		  case AVK_INFO:
-		     {
-                AECHAR pwstrText[64] = {0};
-				char string[64] = {0};
-				p_diag = ISHELL_GetActiveDialog(pme->a.m_pIShell);
-				pIText = (ITextCtl*)IDIALOG_GetControl(p_diag, IDC_SECONDARY_SERVER_TEXT);
-				ITEXTCTL_SetActive(pIText,TRUE);
-		  	    (void)ITEXTCTL_GetText(pIText,pwstrText,64);
-
-				(void) WSTRTOSTR(pwstrText, string, sizeof(string));;
-				
-				(void) OEM_SetConfig(
-                          CFGI_BREWSET_SECONDARYSERVER,
-                          (void*)string,
-                          sizeof(string));
-			    (void) CFieldDebug_MoveToDialog(pme, IDD_BREWSET_DIALOG);
-                return TRUE;    
-		     }
-		     break;
-		  default:
-			 break;
-		  }
-		  return FALSE;
-	
-	   case EVT_DIALOG_START:
-	   		{
-				byte secondaryserver[64] = {0};
-			  	AECHAR szBuf[64] = {0};
-			    int n = 0;
-				pme->m_CurrId =(uint32)SECONDSERVER;
-				pme->m_pActiveIDlg = (IDialog*)dwParam;
-			  	//(void) CFieldDebug_OnDialogStart (pme, wParam, dwParam);
-				pIText = (ITextCtl*)IDIALOG_GetControl((IDialog *) dwParam, IDC_SECONDARY_SERVER_TEXT);
-				(void) OEM_GetConfig(
-			                          CFGI_BREWSET_SECONDARYSERVER,
-			                          &secondaryserver,
-			                          sizeof(secondaryserver));
-				STRTOWSTR((void*)secondaryserver,szBuf,64);
-			    n = WSTRLEN(szBuf);
-			    szBuf[n++] = (AECHAR) '\0';
-				ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
-				SetTextControlRect(pme,pIText);
-				if (NULL != szBuf)
-			    {
-			            ITEXTCTL_SetMaxSize (pIText, 64);
-						//(void)ITEXTCTL_SetTitle(pIText,AEE_FLDDBG_RES_FILE,IDS_SECONDARY_SERVER,0);
-                        {
-                            AECHAR WTitle[25] = {0};
-                            (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                            AEE_FLDDBG_RES_FILE,                                
-                            IDS_SECONDARY_SERVER,
-                            WTitle,
-                            sizeof(WTitle));
-                            if(pme->m_pIAnn != NULL)
-                            {
-                                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,WTitle);
-                            }
-                        }     
-			            (void)ITEXTCTL_SetText(pIText,szBuf,-1);
-						ITEXTCTL_SetInputMode(pIText,AEE_TM_RAPID);
-						ITEXTCTL_SetCursorPos(pIText, n+1);
-			    }  
-				(void) ISHELL_PostEventEx(pme->a.m_pIShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_FIELDDEBUGAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-	   	  }
-		  return TRUE;
-	   case EVT_USER_REDRAW:
-	   		{
-                #ifndef FEATURE_ALL_KEY_PAD
-                // Option     Delete
-                BarParam.eBBarType = BTBAR_OK_DELETE;
-                #else
-                // Option     Back
-                BarParam.eBBarType = BTBAR_OK_BACK;
-                #endif
-				DrawBottomBar(pme->m_pDisplay,&BarParam);
-            	IDISPLAY_Update(pme->m_pDisplay);  
-		    }
-	        break;
-	   case EVT_DIALOG_END:
-		  return TRUE;
-	
-	   default:
-		  break;
-	   }
-	   MSG_FATAL("CFieldDebug_SecondaryServerMenuHandleEvent End", 0, 0, 0);
-	   return FALSE;
-
 }
 
 static boolean CFieldDebug_NET_LOCK_HandleEvent(CFieldDebug *pme,
@@ -9325,7 +7067,7 @@ static boolean CFieldDebug_Enabled_Lock_HandleEvent(CFieldDebug *pme,
                 {
                     AECHAR WTitle[30] = {0};
                     (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                    AEE_FLDDBG_RES_FILE,                                
+                    FLDDBG_RES_FILE,                                
                     IDS_STRING_NET_LOCK_FLAG,
                     WTitle,
                     sizeof(WTitle));
@@ -9601,7 +7343,7 @@ static boolean CFieldDebug_MNC_HandleEvent(CFieldDebug *pme,
             {
                 AECHAR WTitle[5] = {0};
                 (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                AEE_FLDDBG_RES_FILE,                                
+                FLDDBG_RES_FILE,                                
                 IDS_STRING_NET_LOCK_MNC,
                 WTitle,
                 sizeof(WTitle));
@@ -9869,7 +7611,7 @@ static boolean CFieldDebug_MCC_HandleEvent(CFieldDebug *pme,
             {
                 AECHAR WTitle[5] = {0};
                 (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                AEE_FLDDBG_RES_FILE,                                
+                FLDDBG_RES_FILE,                                
                 IDS_STRING_NET_LOCK_MCC,
                 WTitle,
                 sizeof(WTitle));
@@ -10134,7 +7876,7 @@ static boolean CFieldDebug_SID_HandleEvent(CFieldDebug *pme,
             {
                 AECHAR WTitle[5] = {0};
                 (void)ISHELL_LoadResString(pme->a.m_pIShell,
-                AEE_FLDDBG_RES_FILE,                                
+                FLDDBG_RES_FILE,                                
                 IDS_STRING_NET_LOCK_SID,
                 WTitle,
                 sizeof(WTitle));
@@ -10182,21 +7924,9 @@ static	boolean CFieldDebug_RouteDialogEvt(CFieldDebug *pMe,
 {
 	switch(pMe->m_CurrId)
 		{
-			case SECONDARYDNS:
-				CFieldDebug_SecondaryDNSMenuHandleEvent(pMe,eCode,wParam,dwParam);
-				break;
-			case USERNAME:
-				CFieldDebug_UserNameMenuHandleEvent(pMe,eCode,wParam,dwParam);
-				break;
-			case PASSWORD:
-				CFieldDebug_UserPasswordMenuHandleEvent(pMe,eCode,wParam,dwParam);
-				break;
-			case PROMERYSERVER:
-				CFieldDebug_PrimaryServerMenuHandleEvent(pMe,eCode,wParam,dwParam);
-				break;
-			case SECONDSERVER:
-				CFieldDebug_SecondaryServerMenuHandleEvent(pMe,eCode,wParam,dwParam);
-				break;
+            case NVSETTING:
+                CFieldDebug_NVSETTINGHandleEvent(pMe,eCode,wParam,dwParam);
+                break;
 			case NETLOCK:
 				CFieldDebug_NET_LOCK_HandleEvent(pMe,eCode,wParam,dwParam);
 				break;
@@ -10211,18 +7941,6 @@ static	boolean CFieldDebug_RouteDialogEvt(CFieldDebug *pMe,
 				break;
 			case SID:
 				CFieldDebug_SID_HandleEvent(pMe,eCode,wParam,dwParam);
-				break;
-			case PLATFORMID:
-				CFieldDebug_PLATFORMIDHandleEvent(pMe,eCode,wParam,dwParam);
-				break;
-			case DLFLAGS:
-				CFieldDebug_DLFLAGSHandleEvent(pMe,eCode,wParam,dwParam);
-				break;
-			case PRIMARYDNS:
-				CFieldDebug_PRIMARYDNSHandleEvent(pMe,eCode,wParam,dwParam);
-				break;
-			case CARRIERID:
-				CFieldDebug_CARRIERIDHandleEvent(pMe,eCode,wParam,dwParam);
 				break;
 			default:
 				break;

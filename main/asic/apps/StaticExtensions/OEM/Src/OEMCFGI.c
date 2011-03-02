@@ -627,11 +627,6 @@ typedef struct
    
    byte   brewsetings_usename[MAS_BREWSETINT_STRING];
    byte   brewsetings_password[MAS_BREWSETINT_STRING];
-   char   brewsetings_primarydns[MAS_BREWSETINT_STRING];
-   char   brewsetings_secondarydns[MAS_BREWSETINT_STRING];
-   char   brewsetings_primaryserver[MAS_BREWSETINT_STRING];
-   char   brewsetings_secondaryserver[MAS_BREWSETINT_STRING];
-   uint32 brew_dlflags;
    boolean brew_laguagefalgs;//uint16
 #ifdef FEATURE_ANALOG_TV
    uint32 tv_or_camera;
@@ -741,13 +736,6 @@ typedef struct
   nv_auto_redial_type auto_redial;     /*CFGI_AUTO_REDIAL*/
 
   keyToneLength key_tone_length;       /* CFGI_KEYTONE_LENGTH*/
-  dword brew_carrier_id;                            /* CFGI_BREW_CARRIER_ID     */
-  byte brew_bkey[NV_BREW_BKEY_SIZ];                 /* CFGI_BREW_BKEY           */
-  dword brew_auth_policy;                           /* CFGI_BREW_AUTH_POLICY    */
-  dword brew_privacy_policy;                        /* CFGI_BREW_PRIVACY_POLICY */
-  byte brew_subscriber_id[NV_BREW_SID_SIZ];         /* CFGI_BREW_SUBSCRIBER_ID  */
-  dword brew_platform_id;                           /* CFGI_BREW_PLATFORM_ID  */
-  word brew_download_flags;                         /* Flgs                     */
 #endif //#ifdef CUST_EDITION
 } NVConfigListType;
 
@@ -1006,8 +994,14 @@ static int OEMPriv_GetItem_CFGI_DEBUG_ERRLOG(void *pBuff);
 static int OEMPriv_GetItem_CFGI_DEBUG_LNA_STATE(void *pBuff);
 static int OEMPriv_GetItem_CFGI_DEBUG_PA_STATE(void *pBuff);
 static int OEMPriv_GetItem_CFGI_DEBUG_RATCHET_STATE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void* pBuff);
+static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void* pBuff);
+static int OEMPriv_SetItem_CFGI_BREWSET_PASSWORD(void* pBuff);
+static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void* pBuff);
 static int OEMPriv_SetItem_CFGI_LANGUAGE_MOD(void *pBuff);
 static int OEMPriv_GetItem_CFGI_LANGUAGE_MOD(void *pBuff);
+
+
 
 #if defined(FEATURE_WCDMA)
 #error code not present
@@ -1357,29 +1351,11 @@ static int OEMPriv_SetItem_CFGI_PEN_CAL(void *pBuff);
 static int OEMPriv_GetItem_CFGI_TV_SETCHANNL(void *pBuff);
 static int OEMPriv_SetItem_CFGI_TV_SETCHANNL(void *pBuff);
 #endif
-static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void *pBuff);
-static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void *pBuff);
 
-static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void *pBuff);
-static int OEMPriv_SetItem_CFGI_BREWSET_PASSWORD(void *pBuff);
 #ifdef FEATURE_ANALOG_TV
 static int OEMPriv_GetItem_CFGI_TV_OR_CAMERA(void *pBuff);
 static int OEMPriv_SetItem_CFGI_TV_OR_CAMERA(void *pBuff);
 #endif
-static int OEMPriv_GetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff);
-static int OEMPriv_SetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff);
-
-static int OEMPriv_GetItem_CFGI_BREWSET_SECONDARYDNS(void *pBuff);
-static int OEMPriv_SetItem_CFGI_BREWSET_SECONDARYDNS(void *pBuff);
-
-static int OEMPriv_GetItem_CFGI_BREWSET_PRIMARYSERVER(void *pBuff);
-static int OEMPriv_SetItem_CFGI_BREWSET_PRIMARYSERVER(void *pBuff);
-
-static int OEMPriv_GetItem_CFGI_BREWSET_SECONDARYSERVER(void *pBuff);
-static int OEMPriv_SetItem_CFGI_BREWSET_SECONDARYSERVER(void *pBuff);
-
-static int OEMPriv_GetItem_CFGI_DL_FLAGS(void *pBuff);
-static int OEMPriv_SetItem_CFGI_DL_FLAGS(void *pBuff);
 
 #ifdef FEATURE_LONG_NETLOCK
 static int OEMPriv_GetItem_CFGI_NET_LOCK_FLAGS(void *pBuff);
@@ -1739,11 +1715,6 @@ static OEMConfigListType oemi_cache = {
 #endif //CUST_EDITION
    ,{0}  //CFGI_BREWSET_USENAME
    ,{0}  //CFGI_BREWSET_PASSWORD
-   ,{0}  //CFGI_BREWSET_PRIMARYDNS
-   ,{0}  //CFGI_BREWSET_SECONDARYDNS
-   ,{0}  //CFGI_BREWSET_PRIMARYSERVER
-   ,{0}  //CFGI_BREWSET_SECONDARYSERVER
-   ,0    //CFGI_DL_FLAGS
    ,FALSE    //CFGI_LANGUAGE_MOD
 #ifdef FEATURE_ANALOG_TV
    ,0
@@ -1985,23 +1956,6 @@ static ConfigItemTableEntry const customItemTable[] =
    CFGTABLEITEM(CFGI_DISABLE_IN_CALL_DISP, sizeof(boolean)),
    CFGTABLEITEM(CFGI_DISABLE_BG_IMAGE, sizeof(boolean)),
    CFGTABLEITEM(CFGI_MANUAL_PLMN_SEL_ALLOWED, sizeof(boolean)),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_USERNAME),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_PASSWORD),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_CARRIER_ID),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_AUTH_POLICY),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_PRIVACY_POLICY),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_SUBSCRIBER_ID),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_PLATFORM_ID),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_TESTOPT),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_USEAKEY),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_AUTOUPGRADE_FLG),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_USEMINFORSID_FLG),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_PREPAY_FLG),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_NOAUTOACK_FLG),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_SIDENCODE_FLG),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_SIDVALIDATAALL_FLG),
-   CFGTABLEITEM_EMPTY(CFGI_BREW_IDS_RUIMDELETE_FLG),
-
 };
 
 ////
@@ -2288,11 +2242,6 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #endif//FEATURE_TOUCHPAD
    CFGTABLEITEM(CFGI_BREWSET_USENAME,sizeof(byte)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_BREWSET_PASSWORD,sizeof(byte)*MAS_BREWSETINT_STRING),
-   CFGTABLEITEM(CFGI_BREWSET_PRIMARYDNS,sizeof(char)*MAS_BREWSETINT_STRING),
-   CFGTABLEITEM(CFGI_BREWSET_SECONDARYDNS,sizeof(char)*MAS_BREWSETINT_STRING),
-   CFGTABLEITEM(CFGI_BREWSET_PRIMARYSERVER,sizeof(char)*MAS_BREWSETINT_STRING),
-   CFGTABLEITEM(CFGI_BREWSET_SECONDARYSERVER,sizeof(char)*MAS_BREWSETINT_STRING),
-   CFGTABLEITEM(CFGI_DL_FLAGS,sizeof(uint32)),
    CFGTABLEITEM(CFGI_LANGUAGE_MOD,sizeof(boolean)),
 #ifdef FEATURE_ANALOG_TV
    CFGTABLEITEM(CFGI_TV_OR_CAMERA,sizeof(uint32)),
@@ -4455,35 +4404,6 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
         }
         return AEE_SUCCESS;
 #endif // CUST_EDITION
-   case CFGI_BREW_CARRIER_ID:
-   {
-      nv_item_type nvi;
-        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID",0,0,0);
-      if (OEMNV_Get(NV_BREW_CARRIER_ID_I, &nvi) != NV_DONE_S)
-      {
-         ERR("OEM_GetCachedConfig: OEMNV_Get failed",0,0,0);
-         return EFAILED;
-      }
-
-      *(dword *)pBuff  = nvi.brew_carrier_id;
-        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID %d",nvi.brew_carrier_id,0,0);
-      return SUCCESS;
-   }
-   case CFGI_BREW_PLATFORM_ID:
-   {
-      nv_item_type nvi;
-        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID",0,0,0);
-      if (OEMNV_Get(NV_BREW_PLATFORM_ID_I, &nvi) != NV_DONE_S)
-      {
-         ERR("OEM_GetCachedConfig: OEMNV_Get failed",0,0,0);
-         return EFAILED;
-      }
-
-      *(dword *)pBuff  = nvi.brew_platform_id;
-        ERR("OEM_GetCachedConfig: CFGI_BREW_CARRIER_ID %d",nvi.brew_platform_id,0,0);
-      return SUCCESS;
-   }
-
     case CFGI_NET_LOCK_SID:
     {
         nv_item_type nvi;
@@ -5375,266 +5295,6 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 #else
 #endif
       return AEE_SUCCESS;
-   case CFGI_BREW_USERNAME:
-      {
-         if ((!pBuff) || WSTRLEN((AECHAR *)pBuff) > BREW_USERNAME_LEN)
-         {
-            return EFAILED;
-         }
-
-         (void)WSTRTOSTR((AECHAR *)pBuff, (char*)oemi_cache.brewsetings_usename, sizeof(oemi_cache.brewsetings_usename));
-         OEMPriv_WriteOEMConfigList();
-      }
-      return AEE_SUCCESS;
-      
-   case CFGI_BREW_PASSWORD:
-      {
-         if ((!pBuff) || WSTRLEN((AECHAR *)pBuff) > BREW_PASSWORD_LEN)
-         {
-            return EFAILED;
-         }
-         oemi_cache.brewsetings_password[0] = 0;
-         (void)WSTRTOSTR((AECHAR *)pBuff, (char*)oemi_cache.brewsetings_password, sizeof(oemi_cache.brewsetings_password));
-         OEMPriv_WriteOEMConfigList();
-      }
-      return AEE_SUCCESS;
- 
-   case CFGI_BREW_CARRIER_ID:
-      {
-         if ((!pBuff) || nSize != sizeof(dword))
-         {
-            return EFAILED;
-         }
-#ifndef WIN32         
-         nvi.brew_carrier_id = *((dword *)pBuff);
-         
-         if (OEMNV_Put(NV_BREW_CARRIER_ID_I, &nvi) != NV_DONE_S)
-         {
-            DBGPRINTF(";put NVI_BREW_CARRIER_ID_I failed");
-            return EFAILED;
-         }
-         nvi_cache.brew_carrier_id = nvi.brew_carrier_id;
-#endif
-      }
-      return AEE_SUCCESS;
-
-   case CFGI_BREW_AUTH_POLICY:
-      {
-         if ((!pBuff) || nSize != sizeof(uint8))
-         {
-            return EFAILED;
-         }
-#ifndef WIN32         
-         nvi.brew_auth_policy = *(uint8 *)pBuff;
-         
-         if (OEMNV_Put(NV_BREW_AUTH_POLICY_I, &nvi) != NV_DONE_S)
-         {
-            DBGPRINTF(";put NVI_BREW_AUTH_POLICY_I failed");
-            return EFAILED;
-         }
-         nvi_cache.brew_auth_policy = nvi.brew_auth_policy;
-#endif
-      }
-      return AEE_SUCCESS;
-    
-   case CFGI_BREW_PRIVACY_POLICY:
-      {
-         if ((!pBuff) || nSize != sizeof(uint8))
-         {
-            return EFAILED;
-         }
- #ifndef WIN32        
-         nvi.brew_privacy_policy = *(uint8 *)pBuff;
-         
-         if (OEMNV_Put(NV_BREW_PRIVACY_POLICY_I, &nvi) != NV_DONE_S)
-         {
-            DBGPRINTF(";put NVI_BREW_PRIVACY_POLICY_I failed");
-            return EFAILED;
-         }
-         nvi_cache.brew_privacy_policy = nvi.brew_privacy_policy;
-#endif
-      }
-      return AEE_SUCCESS;
-    
-   case CFGI_BREW_SUBSCRIBER_ID:
-      {
-         int k;
-         AECHAR *pWStr = (AECHAR *)pBuff;
-         
-         if ((!pWStr) || WSTRLEN(pWStr) >= NV_BREW_SID_SIZ)
-         {
-            return EFAILED;
-         }
-#ifndef WIN32         
-         for (k=0; k<WSTRLEN(pWStr); k++)
-         {
-            nvi.brew_subscriber_id[k] = (byte)pWStr[k];
-         }
-         nvi.brew_subscriber_id[k] = 0;
-         
-         if (OEMNV_Put(NV_BREW_SUBSCRIBER_ID_I, &nvi) != NV_DONE_S)
-         {
-            DBGPRINTF(";put CFGI_BREW_SUBSCRIBER_ID failed");
-            return EFAILED;
-         }
-         (void)STRCPY((char *)nvi_cache.brew_subscriber_id, (char *)nvi.brew_subscriber_id);
-#endif
-      }
-      return AEE_SUCCESS;
-      
-   case CFGI_BREW_PLATFORM_ID:
-      {
-         if ((!pBuff) || nSize != sizeof(dword))
-         {
-            return EFAILED;
-         }
-#ifndef WIN32         
-         nvi.brew_platform_id = *(dword *)pBuff;
-         
-         if (OEMNV_Put(NV_BREW_PLATFORM_ID_I, &nvi) != NV_DONE_S)
-         {
-            DBGPRINTF(";put NV_BREW_PLATFORM_ID_I failed");
-            return EFAILED;
-         }
-         nvi_cache.brew_platform_id = nvi.brew_platform_id;
-#endif
-      }
-      return AEE_SUCCESS;
-      
-   case CFGI_BREW_TESTOPT:              // DIF_TEST_ALLOWED  
-   case CFGI_BREW_USEAKEY:              // DIF_USE_A_KEY
-   case CFGI_BREW_AUTOUPGRADE_FLG:      // DIF_AUTO_UPGRADE 
-   case CFGI_BREW_USEMINFORSID_FLG:     // DIF_MIN_FOR_SID
-   case CFGI_BREW_PREPAY_FLG:           // DIF_PREPAY
-   case CFGI_BREW_NOAUTOACK_FLG:        // DIF_NO_AUTO_ACK
-   case CFGI_BREW_SIDENCODE_FLG:        // DIF_SID_ENCODE
-   case CFGI_BREW_SIDVALIDATAALL_FLG:   // DIF_SID_VALIDATE_ALL
-   case CFGI_BREW_IDS_RUIMDELETE_FLG:   // DIF_RUIM_DEL_OVERRIDE
-      {
-         if ((!pBuff) || nSize != sizeof(boolean))
-         {
-            return EFAILED;
-         }
-#ifndef WIN32         
-         if (OEMNV_Get(NV_BREW_DOWNLOAD_FLAGS_I, &nvi) != NV_DONE_S)
-         {
-            DBGPRINTF(";put NV_BREW_DOWNLOAD_FLAGS_I failed");
-            nvi.brew_download_flags = 0;
-         }
-         switch (i)
-         {
-            case CFGI_BREW_TESTOPT:             // DIF_TEST_ALLOWED  
-                if (*(boolean *)pBuff)
-                {
-                    nvi.brew_download_flags |= DIF_TEST_ALLOWED;
-                }
-                else
-                {
-                    nvi.brew_download_flags &= ~DIF_TEST_ALLOWED;
-                }
-                break;
-                
-            case CFGI_BREW_USEAKEY:              // DIF_USE_A_KEY
-                if (*(boolean *)pBuff)
-                {
-                    nvi.brew_download_flags |= DIF_USE_A_KEY;
-                }
-                else
-                {
-                    nvi.brew_download_flags &= ~DIF_USE_A_KEY;
-                }
-                break;
-            
-            case CFGI_BREW_AUTOUPGRADE_FLG:      // DIF_AUTO_UPGRADE 
-                if (*(boolean *)pBuff)
-                {
-                    nvi.brew_download_flags |= DIF_AUTO_UPGRADE;
-                }
-                else
-                {
-                    nvi.brew_download_flags &= ~DIF_AUTO_UPGRADE;
-                }
-                break;
-                
-            case CFGI_BREW_USEMINFORSID_FLG:     // DIF_MIN_FOR_SID
-                if (*(boolean *)pBuff)
-                {
-                    nvi.brew_download_flags |= DIF_MIN_FOR_SID;
-                }
-                else
-                {
-                    nvi.brew_download_flags &= ~DIF_MIN_FOR_SID;
-                }
-                break;
-                
-            case CFGI_BREW_PREPAY_FLG:           // DIF_PREPAY
-                if (*(boolean *)pBuff)
-                {
-                    nvi.brew_download_flags |= DIF_PREPAY;
-                }
-                else
-                {
-                    nvi.brew_download_flags &= ~DIF_PREPAY;
-                }
-                break;
-                
-            case CFGI_BREW_NOAUTOACK_FLG:        // DIF_NO_AUTO_ACK
-                if (*(boolean *)pBuff)
-                {
-                    nvi.brew_download_flags |= DIF_NO_AUTO_ACK;
-                }
-                else
-                {
-                    nvi.brew_download_flags &= ~DIF_NO_AUTO_ACK;
-                }
-                break;
-                
-            case CFGI_BREW_SIDENCODE_FLG:        // DIF_SID_ENCODE
-                if (*(boolean *)pBuff)
-                {
-                    nvi.brew_download_flags |= DIF_SID_ENCODE;
-                }
-                else
-                {
-                    nvi.brew_download_flags &= ~DIF_SID_ENCODE;
-                }
-                break;
-                
-            case CFGI_BREW_SIDVALIDATAALL_FLG:   // DIF_SID_VALIDATE_ALL
-                if (*(boolean *)pBuff)
-                {
-                    nvi.brew_download_flags |= DIF_SID_VALIDATE_ALL;
-                }
-                else
-                {
-                    nvi.brew_download_flags &= ~DIF_SID_VALIDATE_ALL;
-                }
-                break;
-                
-            case CFGI_BREW_IDS_RUIMDELETE_FLG:   // DIF_RUIM_DEL_OVERRIDE
-                if (*(boolean *)pBuff)
-                {
-                    nvi.brew_download_flags |= DIF_RUIM_DEL_OVERRIDE;
-                }
-                else
-                {
-                    nvi.brew_download_flags &= ~DIF_RUIM_DEL_OVERRIDE;
-                }
-                break;
-                
-            default:
-                break;
-				    }
-
-         if (OEMNV_Put(NV_BREW_DOWNLOAD_FLAGS_I, &nvi) != NV_DONE_S)
-         {
-            DBGPRINTF(";put NVI_BREW_DOWNLOAD_FLAGS_I failed");
-            return EFAILED;
-         }
-         nvi_cache.brew_download_flags = nvi.brew_download_flags;
-#endif
-	}
-	return AEE_SUCCESS;
 #endif //#ifdef CUST_EDITION
 
     case CFGI_NET_LOCK_ENABLED:
@@ -10190,6 +9850,7 @@ static int OEMPriv_SetItem_CFGI_WMS_MO_CHANNEL_SELECT(void *pBuff)
     if (oemi_cache.wms_mochannel != *(byte *)pBuff) 
     {
         oemi_cache.wms_mochannel = *(byte *)pBuff;
+        wms_msg_setmochannel(oemi_cache.wms_mochannel);
         OEMPriv_WriteOEMConfigList();
     }
     
@@ -10598,22 +10259,6 @@ static int OEMPriv_SetItem_CFGI_FMRADIO_CHAN_INFO(void *pBuff)
     return SUCCESS;
 }
 
-static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void *pBuff)
-{
-	 MEMCPY(pBuff, oemi_cache.brewsetings_usename, sizeof(byte) * MAS_BREWSETINT_STRING);
-     return SUCCESS;
-}
-
-static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void *pBuff)
-{
-    PppAccounts myAccount;
-	MEMCPY(oemi_cache.brewsetings_usename, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
-    OEMPriv_WriteOEMConfigList(); 
-    MEMCPY((void*) myAccount.user_id_info, oemi_cache.brewsetings_usename, sizeof(byte) * MAS_BREWSETINT_STRING);
-    MEMCPY((void*) myAccount.passwd_info,  oemi_cache.brewsetings_password, sizeof(byte) * MAS_BREWSETINT_STRING);
-    OEM_SetPppAccounts(&myAccount, DS_BREW_TYPE);
-    return SUCCESS;
-}
 #ifdef FEATURE_ANALOG_TV
 static int OEMPriv_SetItem_CFGI_TV_OR_CAMERA(void *pBuff)
 {
@@ -10628,84 +10273,6 @@ static int OEMPriv_GetItem_CFGI_TV_OR_CAMERA(void *pBuff)
      return SUCCESS;
 }
 #endif
-
-static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void *pBuff)
-{
-	MEMCPY(pBuff, oemi_cache.brewsetings_password, sizeof(byte) * MAS_BREWSETINT_STRING);
-    return SUCCESS;
-}
-static int OEMPriv_SetItem_CFGI_BREWSET_PASSWORD(void *pBuff)
-{
-    PppAccounts myAccount;
-	MEMCPY(oemi_cache.brewsetings_password, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
-    OEMPriv_WriteOEMConfigList();
-    MEMCPY((void*) myAccount.user_id_info, oemi_cache.brewsetings_usename, sizeof(byte) * MAS_BREWSETINT_STRING);
-    MEMCPY((void*) myAccount.passwd_info,  oemi_cache.brewsetings_password, sizeof(byte) * MAS_BREWSETINT_STRING);
-    OEM_SetPppAccounts(&myAccount, DS_BREW_TYPE);
-    return SUCCESS;
-}
-
-
-static int OEMPriv_GetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff)
-{
-	MEMCPY(pBuff, oemi_cache.brewsetings_primarydns, sizeof(char) * MAS_BREWSETINT_STRING);
-	return SUCCESS;
-
-}
-static int OEMPriv_SetItem_CFGI_BREWSET_PRIMARYDNS(void *pBuff)
-{
-	MEMCPY(oemi_cache.brewsetings_primarydns, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
-    OEMPriv_WriteOEMConfigList(); 
-    return SUCCESS;
-}
-
-static int OEMPriv_GetItem_CFGI_BREWSET_SECONDARYDNS(void *pBuff)
-{
-	MEMCPY(pBuff, oemi_cache.brewsetings_secondarydns, sizeof(char) * MAS_BREWSETINT_STRING);
-	return SUCCESS;
-}
-static int OEMPriv_SetItem_CFGI_BREWSET_SECONDARYDNS(void *pBuff)
-{
-	MEMCPY(oemi_cache.brewsetings_secondarydns, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
-    OEMPriv_WriteOEMConfigList(); 
-    return SUCCESS;
-}
-
-static int OEMPriv_GetItem_CFGI_BREWSET_PRIMARYSERVER(void *pBuff)
-{
-	MEMCPY(pBuff, oemi_cache.brewsetings_primaryserver, sizeof(char) * MAS_BREWSETINT_STRING);
-	return SUCCESS;
-}
-static int OEMPriv_SetItem_CFGI_BREWSET_PRIMARYSERVER(void *pBuff)
-{
-	MEMCPY(oemi_cache.brewsetings_primaryserver, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
-    OEMPriv_WriteOEMConfigList(); 
-    return SUCCESS;
-}
-
-static int OEMPriv_GetItem_CFGI_BREWSET_SECONDARYSERVER(void *pBuff)
-{
-	MEMCPY(pBuff, oemi_cache.brewsetings_secondaryserver, sizeof(char) * MAS_BREWSETINT_STRING);
-	return SUCCESS;
-}
-static int OEMPriv_SetItem_CFGI_BREWSET_SECONDARYSERVER(void *pBuff)
-{
-	MEMCPY(oemi_cache.brewsetings_secondaryserver, pBuff, sizeof(char) * MAS_BREWSETINT_STRING);
-    OEMPriv_WriteOEMConfigList(); 
-    return SUCCESS;
-}
-
-static int OEMPriv_GetItem_CFGI_DL_FLAGS(void *pBuff)
-{
-	MEMCPY(pBuff, (void*) &oemi_cache.brew_dlflags, sizeof(uint32));
-	return SUCCESS;
-}
-static int OEMPriv_SetItem_CFGI_DL_FLAGS(void *pBuff)
-{
-	MEMCPY((void*) &oemi_cache.brew_dlflags, pBuff, sizeof(uint32));
-    OEMPriv_WriteOEMConfigList(); 
-    return SUCCESS;
-}
 #ifdef FEATURE_LONG_NETLOCK
 static int OEMPriv_GetItem_CFGI_NET_LOCK_FLAGS(void *pBuff)
 {
@@ -10842,6 +10409,32 @@ static int OEMPriv_SetItem_CFGI_FM_BACKGROUND(void *pBuff)
     OEMPriv_WriteOEMConfigList();
     return SUCCESS;
 }
+static int OEMPriv_GetItem_CFGI_BREWSET_USENAME(void *pBuff)
+{
+	 MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_usename, sizeof(byte) * MAS_BREWSETINT_STRING);
+     return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_BREWSET_USENAME(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.brewsetings_usename, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.brewsetings_password, sizeof(byte) * MAS_BREWSETINT_STRING);
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_BREWSET_PASSWORD(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.brewsetings_password, pBuff, sizeof(byte) * MAS_BREWSETINT_STRING);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+
 static int OEMPriv_SetItem_CFGI_LANGUAGE_MOD(void *pBuff)
 {
 	memcpy((void *)&oemi_cache.brew_laguagefalgs,pBuff,sizeof(boolean));

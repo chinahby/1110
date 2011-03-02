@@ -104,6 +104,7 @@ byte UTK_parse_proactive_command(byte *cmd_data, byte cmd_len)
     }
     // 分析 BER-TLV 以确定 TLV 是否有效
     parse_ber_status = uim_tk_parse_ber_tlv (cmd_data, cmd_len);
+    MSG_FATAL("UTK_parse_proactive_command %d 0x%X %d",parse_ber_status.status, parse_ber_status.tag, cmd_len);
     if ((parse_ber_status.status == UIM_TK_MESSAGE_IS_VALID) &&
         (parse_ber_status.tag == UIM_TK_PROACTIVE_SIM_COMMAND_TAG))
     {
@@ -113,7 +114,7 @@ byte UTK_parse_proactive_command(byte *cmd_data, byte cmd_len)
         offset+= parse_tlv_status.tlv_size;
         
         cmd_details_tlv = parsed_tlv_buf.cmd_details;
-
+        MSG_FATAL("UTK_parse_proactive_command %d",cmd_details_tlv.cmd_type, 0, 0);
         switch (cmd_details_tlv.cmd_type)
         {
             case UIM_TK_SETUP_MENU:
@@ -307,9 +308,9 @@ void UTK_GiveResponse(CUTK * pMe,
     {
         ShowBusyIcon(pMe->m_pShell, pMe->m_pDisplay, &pMe->m_rc,FALSE);
     }
-    ERR("%02x   %02x", eCmd, cmd_details_tlv.cmd_type, 0);
+    
     uim_power_control( UIM_PROACTIVE_UIM, TRUE);
-    MSG_FATAL("eCmd = %X bForwad %d",eCmd,bForwad,0); 
+    MSG_FATAL("eCmd = %X bForwad %d Result 0x%X",eCmd,bForwad,eResult); 
     switch(eCmd)
     {// 需要特别处理的响应在此处理，处理后应立即返回
         case UIM_TK_SETUP_MENU:
@@ -360,7 +361,7 @@ void UTK_GiveResponse(CUTK * pMe,
                 }
                 else /* The UIM free queue is empty */
                 {
-                    MSG_ERROR ("No UIM command buffers on uim_free_q",0,0,0);
+                    MSG_FATAL ("No UIM command buffers on uim_free_q",0,0,0);
                 } /* end if - check if the UIM free queue is empty */
                 
                 return;
@@ -531,7 +532,7 @@ void UTK_GiveResponse(CUTK * pMe,
                 }
                 else /* The UIM free queue is empty */
                 {
-                    MSG_ERROR ("No UIM command buffers on uim_free_q",0,0,0);
+                    MSG_FATAL ("No UIM command buffers on uim_free_q",0,0,0);
                 } /* end if - check if the UIM free queue is empty */
                 
                 return;
@@ -554,7 +555,8 @@ static void send_UTK_simple_resp(uim_tk_general_result_type result_type)
 {
     uim_cmd_type *uim_cmd_ptr;
     byte packed_offset;              /* Pointer to offset for packing */
-    
+
+    MSG_FATAL("send_UTK_simple_resp 0x%X",result_type, 0, 0);
     uim_cmd_ptr = start_terminal_response_buffer(&packed_offset, 
                             &parsed_tlv_buf, &cmd_details_tlv);
                             
@@ -664,7 +666,7 @@ void UTK_SendTerminalProfile (void)
             (ui_uim_rpt_buf.rpt_status == UIM_PASS))
         {
         	
-            ERR("UTK_SendTerminalProfile 2",0,0,0);
+            MSG_FATAL("UTK_SendTerminalProfile 2",0,0,0);
             /* Check to see if UIM is Pro-Active */
             svc = uim_return_cdma_svc_availabililty ( UIM_CDMA_SVC_PROACTIVE_UIM,
             uim_cdma_svc_table_buffer);
@@ -965,7 +967,7 @@ void DecodeDisplayTextData(byte *pdata, Display_text *pText)
                 
             default:
                 // 命令不支持的项
-                ERR("---Unsupport!----",0,0,0);
+                MSG_FATAL("---Unsupport!---- 0x%x",pdata[pos],0,0);
                 // 跳过标识
                 pos++;
                 
@@ -1765,7 +1767,7 @@ int UTK_DecodeSetupCallCmdData(byte *pdata, Setup_Call *pstCall)
                 
             default:
                 // 命令不支持的项
-                ERR("---Unsupport!----",0,0,0);
+                MSG_FATAL("---Unsupport!---- 0x%x",pdata[pos],0,0);
                 // 跳过标识
                 pos++;
                 
@@ -2006,7 +2008,7 @@ void DecodeRefreshData(byte *pdata, RefreshCmdType *pCmd)
                 
             default:
                 // 命令不支持的项
-                ERR("---Unsupport!----",0,0,0);
+                MSG_FATAL("---Unsupport!---- 0x%x",pdata[pos],0,0);
                 // 跳过标识
                 pos++;
                 
@@ -2086,7 +2088,7 @@ void UTKApp_LocalInformation(CUTK *pMe,Local_Information *pLocalInformation)
 
             default:
                 // 命令不支持的项
-                ERR("---Unsupport!----",0,0,0);
+                MSG_FATAL("---Unsupport!---- 0x%x",pdata[pos],0,0);
                 // 跳过标识
                 pos++;
                 
@@ -2290,7 +2292,7 @@ void DecodePlayToneData(byte *pdata, Play_Tone *pPlayTone)
                 
             default:
                 // 命令不支持的项
-                ERR("---Unsupport!----",0,0,0);
+                MSG_FATAL("---Unsupport!---- 0x%x",pdata[pos],0,0);
                 // 跳过标识
                 pos++;
                 
@@ -2351,7 +2353,7 @@ gstk_status_enum_type gstk_packer_dev_id_tlv(
 
     if(device_id == NULL)
     {
-       MSG_ERROR("Device Id Err: NULL", 0, 0, 0);
+       MSG_FATAL("Device Id Err: NULL", 0, 0, 0);
        return GSTK_BAD_PARAM;
     }
     device_id->tag = (int)GSTK_DEVICE_IDENTITY_TAG;
@@ -2398,20 +2400,20 @@ void  gstk_memcpy(
   size_t src_max_size)
 {
  if (dest_ptr == NULL || src_ptr == NULL) {
-   MSG_HIGH("gstk_offset_memcpy: NULL pointers passed in, cannot memcpy",0,0,0);
+   MSG_FATAL("gstk_offset_memcpy: NULL pointers passed in, cannot memcpy",0,0,0);
    return;
  }
 
  /* ensure not accessing invalid mem location from source buffer */
  if ( copy_size > src_max_size) {
-   MSG_ERROR("gstk_offset_memcpy: Trying to access data greater than size of source buffer",
+   MSG_FATAL("gstk_offset_memcpy: Trying to access data greater than size of source buffer",
              0,0,0);
    copy_size = src_max_size;
  }
 
  /* ensure not to overshoot destination buffer */
  if (copy_size > dest_max_size) {
-   MSG_ERROR("gstk_offset_memcpy: Trying to copy data greater than size of destination buffer",
+   MSG_FATAL("gstk_offset_memcpy: Trying to copy data greater than size of destination buffer",
             0,0,0);
    copy_size = dest_max_size;
  }
@@ -2457,13 +2459,13 @@ gstk_status_enum_type gstk_packer_sms_tpdu_tlv(
 
   if(data == NULL)
   {
-     MSG_ERROR("Data Err: NULL", 0, 0, 0);
+     MSG_FATAL("Data Err: NULL", 0, 0, 0);
      return GSTK_BAD_PARAM;
   }
 
   if(tpdu_tlv == NULL)
   {
-     MSG_ERROR("TPDU TLV Err: NULL", 0, 0, 0);
+     MSG_FATAL("TPDU TLV Err: NULL", 0, 0, 0);
      return GSTK_BAD_PARAM;
   }
 
@@ -2471,7 +2473,7 @@ gstk_status_enum_type gstk_packer_sms_tpdu_tlv(
 #if defined(FEATURE_UIM_TOOLKIT_UTK) || defined(FEATURE_CCAT) || defined(FEATURE_CDMA_800) || defined(FEATURE_CDMA_1900)
    tpdu_tlv->tag = (uint8)GSTK_CDMA_SMS_TPDU_TAG;
 #else
-   MSG_ERROR("cdma tpdu invalid in curr tech", 0, 0, 0);
+   MSG_FATAL("cdma tpdu invalid in curr tech", 0, 0, 0);
    return GSTK_BAD_PARAM;
 #endif /*FEATURE_UIM_TOOLKIT_UTK || FEATURE_CCAT || FEATURE_CDMA_800 || FEATURE_CDMA_1900*/
   }
@@ -2500,7 +2502,7 @@ void UTK_parse_sms_pp_dl_command(ui_sms_pp_dl_cmd_type *cmd)
   
     if(cmd == NULL)
     {
-        MSG_ERROR("sms_pp_cmd ERR : NULL",0,0,0);
+        MSG_FATAL("sms_pp_cmd ERR : NULL",0,0,0);
         return;
     }
 
@@ -2517,7 +2519,7 @@ void UTK_parse_sms_pp_dl_command(ui_sms_pp_dl_cmd_type *cmd)
        &STK_envelope_cmd.device_id );
 
     if (gstk_status != GSTK_SUCCESS) {
-        MSG_ERROR("In SMS PP: Device ID Packing Fail 0x%x", gstk_status, 0, 0);
+        MSG_FATAL("In SMS PP: Device ID Packing Fail 0x%x", gstk_status, 0, 0);
         return;
     }
 
@@ -2530,7 +2532,7 @@ void UTK_parse_sms_pp_dl_command(ui_sms_pp_dl_cmd_type *cmd)
                     &STK_envelope_cmd.tpdu);
 
     if (gstk_status != GSTK_SUCCESS) {
-        MSG_ERROR("In SMS PP: TPDU Packing Fail 0x%x", gstk_status, 0, 0);
+        MSG_FATAL("In SMS PP: TPDU Packing Fail 0x%x", gstk_status, 0, 0);
         return;
     }
 
@@ -2624,7 +2626,7 @@ void UTK_parse_sms_pp_dl_command(ui_sms_pp_dl_cmd_type *cmd)
         
         if (ui_uim_rpt_buf.rpt_type != UIM_ENVELOPE_R) 
         {
-            MSG_ERROR("ENVELOPE expected in CB", 0, 0, 0);
+            MSG_FATAL("ENVELOPE expected in CB", 0, 0, 0);
             return;
         }
         
@@ -2640,7 +2642,7 @@ void UTK_parse_sms_pp_dl_command(ui_sms_pp_dl_cmd_type *cmd)
         
         if(ui_uim_rpt_buf.rpt_status == UIM_FAIL)
         {
-            MSG_ERROR("UIM Rpt Status UIM FAIL",0,0,0);
+            MSG_FATAL("UIM Rpt Status UIM FAIL",0,0,0);
         }
         else
         {
@@ -2698,4 +2700,37 @@ void UTK_parse_sms_pp_dl_command(ui_sms_pp_dl_cmd_type *cmd)
         }
     }
 }
+
+void UTK_SendSimuData(const byte *pBuf, int nSize)
+{
+  ui_cmd_type  *ui_buf_ptr; /* pointer to buffer for ui cmd */
+
+/* Send a msg status command to the UI task */
+#ifdef FEATURE_REX_DYNA_MEM_UI
+  ui_buf_ptr = ui_get_cmd();
+  if(ui_buf_ptr == NULL)
+  {
+    MSG_FATAL("Out of UI cmd buffer", 0,0,0);
+    return;
+  }
+#else
+  if( (ui_buf_ptr = (ui_cmd_type*) q_get( &ui_cmd_free_q )) == NULL )
+  {
+    ERR("Out of UI cmd buffer", 0,0,0);
+    return;
+  }
+  ui_buf_ptr->proactive_cmd.hdr.done_q_ptr = &ui_cmd_free_q;;
+#endif /* FEATURE_REX_DYNA_MEM_UI */
+
+  ui_buf_ptr->proactive_cmd.hdr.cmd        = UI_PROACTIVE_UIM_F;
+  ui_buf_ptr->proactive_cmd.hdr.task_ptr   = NULL;
+  ui_buf_ptr->proactive_cmd.hdr.sigs       = 0;
+
+  ui_buf_ptr->proactive_cmd.num_bytes = (byte)nSize;
+  (void) memcpy ( ui_buf_ptr->proactive_cmd.cmd_data,
+                  (const void *) pBuf, nSize);
+
+  /* send command to ui */
+  ui_cmd( ui_buf_ptr );
+} /* proactive_cmd_report */
 

@@ -443,5 +443,5 @@ void DecodePlayToneData(byte *pdata, Play_Tone *pPlayTone);
 
 ==============================================================================*/
 void DecodeRefreshData(byte *pdata, RefreshCmdType *pCmd);
-
+void UTK_SendSimuData(const byte *pBuf, int nSize);
 #endif //_UTKUTILS_H
