@@ -87,7 +87,7 @@ typedef struct _IMenuCtl      IMenuCtl;
 #ifdef CUST_EDITION	
 #define ICONMENU_FIX_ITEMMAX    30
 
-#define MAX_MENU_ITEMS			20		//Add By zzg 2011_03_03
+#define MENU_ITEM_MAX			20		//Add By zzg 2011_03_03
 #endif /*CUST_EDITION*/
 
 typedef struct

@@ -2479,8 +2479,9 @@ static void IMenuCtl_GetSelItemRect(IMenuCtl *po, AEERect * prc)
         prc->dx -= item->cxImage + 4;
         
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+		 //pme->m_nItems <= 10
          if( !pme->userSetStyle && 
-             ( (IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= 10) ||
+             ( (IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= MENU_ITEM_MAX) ||
                IS_MULTI_SEL( pme)
              )
          )
@@ -3945,8 +3946,9 @@ static void Menu_DrawNewSelectItem(CMenuCtl * pme, int nIdx,int nIdxSel)
       
 // add these @08.01.16
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+      //pme->m_nItems <= 10		
       if( !pme->userSetStyle && 
-          ( (IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= 10) ||
+          ( (IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= MENU_ITEM_MAX) ||
             IS_MULTI_SEL( pme)
           )
       )
@@ -4308,7 +4310,7 @@ static boolean Menu_Draw(CMenuCtl * pme)
 		 //Modify by zzg 2011_03_02	 	
          if( !pme->userSetStyle && 
              IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) &&
-             pme->m_nItems <= MAX_MENU_ITEMS
+             pme->m_nItems <= MENU_ITEM_MAX
          )
          
          {
@@ -4568,11 +4570,11 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #endif
 
     // add these @08.01.15
-
+    
 	//pme->m_nItems <= 10	
 	//Modify by zzg 2011_03_02
     if( !pme->userSetStyle && 
-        ((IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= MAX_MENU_ITEMS) || bMulti)
+        ((IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= MENU_ITEM_MAX) || bMulti)
     )
     {
     if( bMulti)
@@ -5108,8 +5110,9 @@ static boolean Menu_ItemScrolls(CMenuCtl * pme, CMenuItem *pi, int nIdx)
    
 // add these @08.01.15
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+   //pme->m_nItems <= 10    
    if( !pme->userSetStyle && 
-        ( (IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= 10) ||
+        ( (IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= MENU_ITEM_MAX) ||
           IS_MULTI_SEL( pme)
         )
     )
@@ -5119,7 +5122,8 @@ static boolean Menu_ItemScrolls(CMenuCtl * pme, CMenuItem *pi, int nIdx)
 
    if( !pme->userSetStyle && (IS_PROP_SET( pme->m_dwProps, MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT) ) )
     {
-        cxMax -= (10 + MENU_IMAGE_PAD);//10 should be cx of picture check_yes.bmp 
+    	//10 + MENU_IMAGE_PA
+        cxMax -= (MENU_ITEM_MAX + MENU_IMAGE_PAD);//10 should be cx of picture check_yes.bmp 
     }
 
 #endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE) 
