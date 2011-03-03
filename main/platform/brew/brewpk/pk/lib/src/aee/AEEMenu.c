@@ -4298,22 +4298,29 @@ static boolean Menu_Draw(CMenuCtl * pme)
 
    p = GetItemByIdx(pme->m_pItemList, pme->m_nScrollItem);
         
-   for (i = pme->m_nScrollItem; p && i < pme->m_nScrollItem + pme->m_nPageItems; i++, p = p->pNext) {
-
+   for (i = pme->m_nScrollItem; p && i < pme->m_nScrollItem + pme->m_nPageItems; i++, p = p->pNext) 
+   {
       SETAEERECT(&qrc, x, y, cxMenuItem, cyMenuItem);
         
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
+		 //pme->m_nItems <= 10
+
+		 //Modify by zzg 2011_03_02	 	
          if( !pme->userSetStyle && 
              IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) &&
-             pme->m_nItems <= 10
+             pme->m_nItems <= MAX_MENU_ITEMS
          )
+         
          {
-             pme->theDrawnItem   = ( i + 1);
+             pme->theDrawnItem   = ( i + 1);			 
          }
+
 #endif//#if defined( FEATURE_CUSTOMIZED_MENU_STYLE) 
          
       bSel = (boolean)(pme->m_bActive && i == pme->m_nSelect);
-      if(IS_CALENDAR_VIEW(pme)){
+
+	  if (IS_CALENDAR_VIEW(pme))
+	  {
          p->cyImage  = cyMenuItem = GetItemHeight(p, &cyLeft, (uint16)cyFont);
          p->y        = y;
          
@@ -4327,9 +4334,13 @@ static boolean Menu_Draw(CMenuCtl * pme)
       else
       {  
          if (IS_ITEM_OD(p))
-            Menu_DrawODItem(pme, p, &qrc, bSel);
+         {
+         	Menu_DrawODItem(pme, p, &qrc, bSel);
+         }
          else
-            Menu_DrawItem(pme, p, &qrc, bSel, 0);
+         {
+         	Menu_DrawItem(pme, p, &qrc, bSel, 0);
+         }
       }
       y += cyMenuItem;
       pme->m_nVisibleItems++;
@@ -4449,19 +4460,21 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
    boolean              bTitleRightAligned = FALSE;
    AEERect              rcText;
    uint32               dwItemTextAlignment;
-   AECHAR               wszIndex[5];
-   AECHAR               wszFmt[4];
+   AECHAR               wszIndex[5];	//7
+   AECHAR               wszFmt[4];		//6//
    //Theme_Param_type     themeParms;
    AEERect              rect; 
    //IImage*              checkBox; 
    AEEImageInfo         imageInfo   = {0}; 
    //IImage*              underline;
    int                  menuwidth, xMenu;
+
    
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
     AEEDeviceInfo DeviceInfo;
     
     ISHELL_GetDeviceInfo(pme->m_pIShell, &DeviceInfo);
+	
     if((LNG_HEBREW == DeviceInfo.dwLang) || (LNG_ARABIC == DeviceInfo.dwLang))
     {
         bTitleRightAligned = TRUE;
@@ -4473,7 +4486,8 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #else
 
    // icons are drawn according to the alignment of the menu title ...
-   if (pme->m_pTitle) {
+   if (pme->m_pTitle) 
+   {
       bTitleRightAligned = (ParagraphAlignment(pme->m_pTitle, WSTRLEN(pme->m_pTitle))) == IDF_ALIGN_RIGHT;
    }
 #endif   
@@ -4485,7 +4499,8 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 
    // If item is selected and m_bAutoScroll is set, update position to start drawing
    // text from
-   if(bSel && pme->m_bAutoScroll){
+   if (bSel && pme->m_bAutoScroll)
+   {
       MEMCPY(&pme->m_rcAutoScroll, prc, sizeof(AEERect));
    }
 
@@ -4493,14 +4508,18 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
    // is a tabbed-dialog, the "masked" pixels will draw with the CLR_USER_BACKGROUND
    // color.  This means we must preserve it below...
 
-   if(!b3State){
+   if (!b3State)
+   {
       AEEFrameType   ft;
       // If it is not multi, go with regular behavior
       // Otherwise, if it has focus but is not sel draw a box
       // OR draw the frame type given as select/not select
-      if( !bMulti )
-         ft = ps->ft;
-      else{
+      if (!bMulti)
+      {  
+      	ft = ps->ft;
+      }
+      else
+	  {
          //if( bSel && !p->bIsSel )
            // ft = AEE_FT_BOX;
          //else
@@ -4511,7 +4530,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #if !defined( FEATURE_CUSTOMIZED_MENU_STYLE)
        if(!IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL))
        {
-               IDISPLAY_DrawFrame(pd, prc, ft, (bSel ? pme->m_c.cSelBack : pme->m_c.cBack));
+           IDISPLAY_DrawFrame(pd, prc, ft, (bSel ? pme->m_c.cSelBack : pme->m_c.cBack));
        }
 #else //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 
@@ -4549,8 +4568,11 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #endif
 
     // add these @08.01.15
+
+	//pme->m_nItems <= 10	
+	//Modify by zzg 2011_03_02
     if( !pme->userSetStyle && 
-        ( (IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= 10) || bMulti)
+        ((IS_PROP_SET( pme->m_dwProps, MP_BIND_ITEM_TO_NUMBER_KEY) && pme->m_nItems <= MAX_MENU_ITEMS) || bMulti)
     )
     {
     if( bMulti)
@@ -4612,7 +4634,8 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
         if(bTitleRightAligned){
             SETAEERECT( &rect, prc->x+prc->dx-pme->m_cyFont,prc->y + ps->yOffset, pme->m_cyFont-2, prc->dy);
-            STRTOWSTR(".%d", wszFmt, sizeof(wszFmt));
+			
+			STRTOWSTR(".%d", wszFmt, sizeof(wszFmt));
             
             WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
     
@@ -4632,8 +4655,9 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
         }
         else{
             SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, pme->m_cyFont, prc->dy);
-            STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
-            
+			
+            STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));	
+			            
             WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
     
     #if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
@@ -4654,8 +4678,9 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 #else
         //下面的20 和12可能要改成公式计算
         SETAEERECT( &rect, ps->xOffset/*prc->x*/,prc->y + ps->yOffset, pme->m_cyFont, prc->dy);
-        STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));
-        
+
+        STRTOWSTR("%d.", wszFmt, sizeof(wszFmt));				
+		
         WSPRINTF(wszIndex,sizeof(wszIndex),wszFmt,pme->theDrawnItem);
 
 #if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
