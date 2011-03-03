@@ -1318,7 +1318,7 @@ boolean ui_check_provisioning(void)
         break;
     }
   }
-  ERR_FATAL("ui_init_provisioning has not run within %d seconds.",sleep_time / 1000,0,0);
+  MSG_FATAL("ui_init_provisioning has not run within %d seconds.",sleep_time / 1000,0,0);
   return FALSE;
 }
 

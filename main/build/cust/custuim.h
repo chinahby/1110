@@ -279,10 +279,10 @@ when       who     what, where, why
 /* Allows for Softkey UI to Register for Card Events */
 #define FEATURE_UI_GSDI_REGISTER_CALLBACK
 #endif
-#ifndef CUST_EDITION
+
 /* Allows for Card OEM Layer (ICARD) to Regiser for Card Events */
 #define FEATURE_ICARD_GSDI_REGISTER_CALLBACK
-#endif
+
 /*---------------------------------------------------------------------------
                             Debug Features
 ---------------------------------------------------------------------------*/
@@ -305,7 +305,7 @@ when       who     what, where, why
 /* Debug feature to flip the byte ordering of ESN in RUN CAVE command specific
    to the R-UIM module */
 #undef FEATURE_RUIM_DEBUG_CAVE_ESN
-
+#ifndef CUST_EDITION
 /* Debug feature to log the APDU transactions
 */
 #define FEATURE_UIM_DEBUG_LOG
@@ -313,7 +313,7 @@ when       who     what, where, why
 /* Debug feature for UI menu item to enable/disable UIM clock
 */
 #define FEATURE_UIM_DEBUG_CLOCK_TOGGLE
-
+#endif
 /* Debug feature to test proactive command CDMA Send SMS
 */
 #ifdef FEATURE_UIM_TOOLKIT
