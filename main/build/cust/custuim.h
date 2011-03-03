@@ -279,10 +279,10 @@ when       who     what, where, why
 /* Allows for Softkey UI to Register for Card Events */
 #define FEATURE_UI_GSDI_REGISTER_CALLBACK
 #endif
-
+#ifndef CUST_EDITION
 /* Allows for Card OEM Layer (ICARD) to Regiser for Card Events */
 #define FEATURE_ICARD_GSDI_REGISTER_CALLBACK
-
+#endif
 /*---------------------------------------------------------------------------
                             Debug Features
 ---------------------------------------------------------------------------*/
