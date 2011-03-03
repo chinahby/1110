@@ -5651,7 +5651,11 @@ void          (*task_wait_handler)( rex_sigs_type )
     /* If the NV read status is a failure, then the SW workaround for
        the GCF 27.11.1.5 testcase doesn't execute. */
     MSG_HIGH( "Bad NV read status %d", nv_cmd_buf.status, 0, 0 );
+#ifdef FEATURE_OEMOMH
+    uim_par_err_workaround = TRUE;
+#else
     uim_par_err_workaround = FALSE;
+#endif
   }
   else
   {
