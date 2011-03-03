@@ -142,7 +142,11 @@
 #elif defined(FEATURE_LANG_HINDI)
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_HINDI           //”°∂»”Ô
 #elif defined(FEATURE_LANG_ARABIC)
+#ifdef FEATURE_VERSION_N021
+#define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //NV_LANGUAGE_SELECTION_I
+#else
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ARABIC          //∞¢¿≠≤Æ”Ô
+#endif
 #elif defined(FEATURE_LANG_HEBREW)
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_HEBREW          //œ£≤Æ¿¥”Ô
 #elif defined(FEATURE_LANG_THAI)

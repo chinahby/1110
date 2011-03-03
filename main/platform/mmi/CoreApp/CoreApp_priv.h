@@ -117,7 +117,7 @@
 #define    CHARGE_FULL_STATE                (4)
 #if defined(FEATURE_VERSION_C306)
 #define AVK_SEND_TWO     2
-#elif defined(FEAUTRE_VERSION_N450)
+#elif defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
 #define AVK_SEND_TWO     2
 #else
 #define AVK_SEND_TWO     1
@@ -288,8 +288,8 @@
 #elif defined FEATURE_VERSION_N021
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
-#define    PWRON_ANI_RATE                        (5000)
-#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronoff.gif"
+#define    PWRON_ANI_RATE                        (4000)
+#define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 

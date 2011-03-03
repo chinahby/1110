@@ -1047,8 +1047,22 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
                 return TRUE;
             }
 #endif
-            return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);   
-
+            return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);  
+#ifdef FEATURE_VERSION_N021
+		case EVT_KEY_HELD:
+			{
+				if(wParam == AVK_INFO)
+				{
+					(void) ISHELL_PostEvent(pMe->m_pShell,
+                                        AEECLSID_CORE_APP,
+                                        EVT_USER,
+                                        1,
+                                        0);
+                    ISHELL_CloseApplet(pMe->m_pShell,TRUE);
+				}
+			}
+			break;
+#endif
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:

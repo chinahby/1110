@@ -722,9 +722,11 @@ static NextFSMAction COREST_VERIFYUIM_Handler(CCoreApp *pMe)
                 }
                 else
                 {
-                	MSG_FATAL("COREST_UIMERR..........................3333",0,0,0);
-                	
+                	#ifdef   FEATURE_VERSION_N021
+                	  MOVE_TO_STATE(COREST_STARTUPANI);
+                	#else 
                     MOVE_TO_STATE(COREST_UIMERR)
+                  #endif
                 }
             }
             CoreApp_ProcessSubscriptionStatus(pMe);

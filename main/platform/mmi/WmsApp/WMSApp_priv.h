@@ -813,7 +813,7 @@ typedef struct WmsApp
 #endif
 #if defined(FEATURE_VERSION_C306)
 #define AVK_SEND_TWO     2
-#elif defined(FEAUTRE_VERSION_N450)
+#elif defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
 #define AVK_SEND_TWO     2
 #else
 #define AVK_SEND_TWO     1

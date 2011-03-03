@@ -1213,6 +1213,29 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 CoreApp_Poweroff_Phone(pMe);
                 break;
             default:
+            #ifdef FEATURE_VERSION_N021
+            	if(wParam==1)
+            	{
+            		OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&pMe->TorchOn, sizeof(pMe->TorchOn));
+					if ( pMe->TorchOn == FALSE )
+					{
+						pMe->TorchOn = TRUE;
+						if (pMe->m_pBacklight)
+						{
+							IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+						}
+					}
+					else
+					{
+						pMe->TorchOn = FALSE;
+						if (pMe->m_pBacklight)
+						{							
+							IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+						}
+					}
+					OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&pMe->TorchOn, sizeof(pMe->TorchOn));
+            	}
+            	#endif
                 break;
             }
             break;

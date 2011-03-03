@@ -2059,7 +2059,7 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                         return TRUE;
 //miaoxiaoming add , press send key at messagelist page,then dial out  						
 #ifdef CUST_EDITION
-#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
 					case AVK_CAMERA:
 			 		{
 						nv_item_type	  SimChoice;
@@ -2551,7 +2551,7 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
 					return TRUE;
 				}
 				//Add End
-  #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+  #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
   				case AVK_CAMERA:
   				{
   					nv_item_type	  SimChoice;
@@ -12130,7 +12130,7 @@ static boolean IDD_EXTARCTEDITEMLIST_Handler(void *pUser,
                         }
                     }
                     return TRUE;
-#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
 					case AVK_CAMERA:
 					{
 						nv_item_type		SimChoice;
