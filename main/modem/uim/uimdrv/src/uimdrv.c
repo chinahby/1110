@@ -8887,10 +8887,12 @@ LOCAL void rx_isr_process_overrun_data
 #ifdef FEATURE_UIM_UART_DM
      /* do not care about how many bytes in the word are, just flush them*/
     rx_value = UIM_GET_RX_WORD();
+#ifdef FEATURE_UIM_DEBUG_LOG
     for (i = 0;i < 4; i++)
     {
       UIM_LOG_PUT_BYTE(UIM_LOG_RX_DATA, (byte)( (rx_value >> (i * 8)) & 0xFF) );
     }
+#endif
 #else
     /* Get the next received byte. */
     rx_value = UIM_GET_RX_BYTE();
