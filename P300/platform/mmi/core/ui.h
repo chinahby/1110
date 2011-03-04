@@ -58,10 +58,6 @@ when       who     what, where, why
 #include "OEMClassIDs.h"
 #include "gstki.h"
 #include "wms.h"
-
-#ifdef FEATURE_UIM_TOOLKIT
-
-
 // oemui task 支持的命令名
 typedef enum 
 {
@@ -90,7 +86,6 @@ typedef struct
     ui_status_type     status;       /* Completion code status */
     q_type             *done_q_ptr;  /* Queue to place this cmd on when done */
 } ui_hdr_type;
-
 // UIM 原语命令类型
 typedef struct
 {
@@ -108,6 +103,10 @@ typedef struct
     gstk_evt_cb_funct_type     sms_pp_dl_cb;
 } ui_sms_pp_dl_cmd_type;
 
+
+#ifdef FEATURE_UIM_TOOLKIT
+
+#endif
 // ui 命令类型
 // 全部命令的联合体。命令头总是存在，它指定命令类型和属性。若命令带参数，则
 // 参数紧随联合体命令头后
@@ -117,10 +116,8 @@ typedef union ui_cmd_u
     ui_proactive_uim_cmd_type     proactive_cmd;
     ui_sms_pp_dl_cmd_type         sms_pp_dl_cmd;
 } ui_cmd_type;
-
-
 extern ui_cmd_type* ui_get_cmd(void);
-#endif
+
 #endif
 
 /* Signals for the UI task */

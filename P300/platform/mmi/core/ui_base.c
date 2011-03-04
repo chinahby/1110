@@ -280,7 +280,6 @@ LOCAL rex_timer_type  ui_rpt_timer; /* Timer for kicking the watchdog. */
 
 #ifdef CUST_EDITION
 static  q_type          ui_cmd_q;       // 命令队列：管理待处理命令
-
 #ifdef FEATURE_UTK2
 extern byte UTK_parse_proactive_command(byte *cmd_data, byte cmd_len);
 extern void UTK_parse_sms_pp_dl_command(ui_sms_pp_dl_cmd_type *cmd);
@@ -707,9 +706,11 @@ void ui_answer_call ()
 #endif
 
 #ifdef CUST_EDITION
-#ifdef FEATURE_UIM_TOOLKIT
-#ifdef FEATURE_UTK2
+void ui_cmd(ui_cmd_type *cmd_ptr);
 static boolean g_bCanProactiveHandle = FALSE;
+
+#ifdef FEATURE_UTK2
+
 
 void ui_enable_proactive(boolean bEnable)
 {
@@ -886,6 +887,10 @@ static void oemui_handlecmd(ui_cmd_type *cmd_ptr)
     switch(cmd_ptr->hdr.cmd)
     {
 #ifdef FEATURE_UIM_TOOLKIT
+        case UI_SMS_PP_DL_F:
+            UTK_parse_sms_pp_dl_command(&cmd_ptr->sms_pp_dl_cmd);
+            break;
+            
         case UI_PROACTIVE_UIM_F:
 #ifdef FEATURE_UIM_TOOLKIT_UTK
 #ifdef FEATURE_UTK2
@@ -944,13 +949,12 @@ static void process_command_sig(void)
     // 处理命令队列中的命令直到队列为空
     while ((cmd_ptr = (ui_cmd_type *) q_get(&ui_cmd_q)) != NULL)
     {
-    #ifdef FEATURE_UTK2
         // 实际处理命令
         if(g_bCanProactiveHandle)
         {
             oemui_handlecmd(cmd_ptr);
         }
-        #endif
+        
         ctask_ptr = cmd_ptr->hdr.task_ptr;
         csigs = cmd_ptr->hdr.sigs;
         
@@ -969,7 +973,6 @@ static void process_command_sig(void)
         }
     }
 }
-#endif
 #endif
 
   /*===========================================================================

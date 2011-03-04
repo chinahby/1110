@@ -183,12 +183,12 @@ when       who     what, where, why
 ---------------------------------------------------------------------------*/
 //#ifndef FEATURE_UIM_QSC1100_LOW_MEMORY
   /* Adds support for the basic toolkit features */
-  #ifndef  FEATURE_USES_LOWMEM
+//#ifndef  FEATURE_USES_LOWMEM
   #define FEATURE_UIM_TOOLKIT
 
   /* This configures the Application toolkit for the Unicom Toolkit design */
  #define FEATURE_UIM_TOOLKIT_UTK
- #endif
+ //#endif
 //#endif /* FEATURE_UIM_QSC1100_LOW_MEMORY */
 
 #ifdef FEATURE_UIM_TOOLKIT

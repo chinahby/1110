@@ -372,12 +372,12 @@ void wms_init
   rex_init_crit_sect(&sms_card_refresh_crit_sect);
   
 #ifdef CUST_EDITION
-#ifdef FEATURE_UIM_TOOLKIT
+//#ifdef FEATURE_UIM_TOOLKIT
 {
   extern void wms_init_ui_cmd();
   wms_init_ui_cmd();
 }
-#endif
+//#endif
 #endif
   /* Initialize the objects
   */
