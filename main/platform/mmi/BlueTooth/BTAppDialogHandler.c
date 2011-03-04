@@ -836,7 +836,10 @@ static boolean HandleDeviceSearchDialogEvent(CBTApp *pMe,
 
 			//BTApp_DoDeviceSearch(pMe, AEEBT_COD_SC_ALL, NULL);	
 			pMe->mSD.uNumRecs = 0;
-			MEMSET( pMe->mSD.devRec, 0, (sizeof(AEEBTDeviceRecord)*MAX_DEVICES) );
+			MEMSET( pMe->mSD.devRec, 0, (sizeof(AEEBTDeviceRecord)*MAX_DEVICES));
+
+			MSG_FATAL("***zzg IBTEXTSD_DiscoverDevices Start***", 0, 0, 0);
+			
 			success = (IBTEXTSD_DiscoverDevices(pMe->mSD.po, AEEBT_COD_SC_ALL, NULL, pMe->mSD.devRec, MAX_DEVICES ) == SUCCESS);
 
 			if (success)
@@ -998,17 +1001,10 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
 			}
 
-			MSG_FATAL("***zzg HandleSearchResultDialogEvent EVT_USER_REDRAW***", 0, 0, 0);
-
-			//IMENUCTL_Reset(pMenu);
-			//IMENUCTL_SetRect(pMenu, &pMe->m_rect); 
-			//MEMSET(pMe->mRM.device, 0, (sizeof(AEEBTDeviceInfo)*MAX_DEVICES));
-
 			BTApp_InitAddItem( &ai );
 			ai.wFont = AEE_FONT_BOLD;			
 
 			pMe->uCurrMsgId = 0;
-
 
 			/*
 			if ( pMe->mSD.bDiscovering == FALSE )
@@ -1022,6 +1018,7 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 				numItems = IMENUCTL_GetItemCount(pMenu);
 			}
 			*/
+			
 			MENU_SET_SEL(IMENUCTL_GetSel(pMenu));
 			numItems = IMENUCTL_GetItemCount(pMenu);	
 			
@@ -1030,23 +1027,36 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 #ifdef FEATURE_BT_2_1   			
 			for (i = numItems; i < pMe->mSD.uNumRecs; i ++)
 			{					
-				pDev = &pMe->mRM.device[ i ];
-				pDev->bdAddr = pMe->mSD.devRec[ i ].bdAddr;
+				pDev = &pMe->mRM.device[i];
+				pDev->bdAddr = pMe->mSD.devRec[i].bdAddr;
 				pwName = pDev->wName;
 				result = EFAILED;
 				len    = 0;
 				
 				MSG_MED( "BldDevRespMenu - pDev->uValue1 = %d", pDev->uValue1, 0, 0);
 				tempuValue1 = 0;
+
+				MSG_FATAL("***zzg SearchResultDlg uValue1=%d***", pDev->uValue1, 0, 0);
 				
 				if ((pMe->mSD.bDiscovering == FALSE) && (pDev->uValue1 != 0))
 				{
 					// save the value of get name status
 					tempuValue1 = pDev->uValue1;
-					MSG_MED( "BldDevRespMenu - tempuValue1 = %d", tempuValue1, 0, 0);
+					MSG_MED("BldDevRespMenu - tempuValue1 = %d", tempuValue1, 0, 0);
 				}
 
-				result = IBTEXTRM_DeviceRead( pMe->mRM.po, pDev );
+				result = IBTEXTRM_DeviceRead(pMe->mRM.po, pDev);
+
+				{
+					char btname[AEEBT_MAX_DEVICENAME_LEN+1];
+  					char btnickname[AEEBT_MAX_NICKNAME_LEN+1];
+
+					WSTRTOSTR (pDev->wName, btname, sizeof(char)*(AEEBT_MAX_DEVICENAME_LEN+1));	
+					WSTRTOSTR (pDev->wNickName, btnickname, sizeof(char)*(AEEBT_MAX_NICKNAME_LEN+1));	
+
+					DBGPRINTF("***zzg SrhRltDlgEvt 1 btname=%s,***", btname);
+					DBGPRINTF("***zzg SrhRltDlgEvt 1 btnickname=%s***", btnickname);
+				}
 				
 				MSG_FATAL("***zzg IBTEXTRM_DeviceRead result=%d***", result, 0, 0);
 				
@@ -1062,11 +1072,12 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 					MSG_MED( "BldDevRespMenu - restored pDev->uValue1 = %d", pDev->uValue1, 0, 0);
 				}
 
-				len = WSTRLEN( pDev->wName );
+				len = WSTRLEN(pDev->wName);
+								
 				bEIRReqName = TRUE;
 				
-				if ( (pDev->EIRData.uFlags & AEEBT_EIR_DATA_RCVD_B) &&
-					 (pDev->EIRData.uFlags & AEEBT_EIR_NAME_CMPLT_B) )
+				if ((pDev->EIRData.uFlags & AEEBT_EIR_DATA_RCVD_B) 
+					 && (pDev->EIRData.uFlags & AEEBT_EIR_NAME_CMPLT_B))
 				{
 					// check if short name is already available from EIR data
 					bEIRReqName = FALSE;
@@ -1083,9 +1094,23 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 						nameReqIssued = TRUE;
 						MSG_MED( "BldDevRespMenu - requesting name for index=%d", i, 0, 0 );
 
-						if (IBTEXTSD_GetDeviceName(pMe->mSD.po, &pDev->bdAddr, pDev->wName, ARR_SIZE( pDev->wName ) ) == SUCCESS )
+						MSG_FATAL("***zzg SrhRltDlgEvt IBTEXTSD_GetDeviceName***", 0, 0, 0);
+
+						if (IBTEXTSD_GetDeviceName(pMe->mSD.po, &pDev->bdAddr, pDev->wName, ARR_SIZE(pDev->wName)) == SUCCESS)
 						{
 							pMe->mRM.uGetNameDevIdx = i;
+						}
+
+						{
+							char btname[AEEBT_MAX_DEVICENAME_LEN+1];
+		  					char btnickname[AEEBT_MAX_NICKNAME_LEN+1];
+
+							WSTRTOSTR (pDev->wName, btname, sizeof(char)*(AEEBT_MAX_DEVICENAME_LEN+1));	
+							WSTRTOSTR (pDev->wNickName, btnickname, sizeof(char)*(AEEBT_MAX_NICKNAME_LEN+1));	
+
+							DBGPRINTF("***zzg SrhRltDlgEvt 2 btname=%s***", btname);
+							DBGPRINTF("***zzg SrhRltDlgEvt 2 btnickname=%s***", btnickname);
+
 						}
 					}
 				}
@@ -1153,7 +1178,7 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 				else
 				{
 					WSTRLCPY( pwName, pMapDev->wName, AEEBT_MAX_DEVICENAME_LEN);
-					
+
 					// check if this is a short name and append "..."
 					if ((pMapDev->EIRData.uFlags & AEEBT_EIR_DATA_RCVD_B) && 
 						(!(pMapDev->EIRData.uFlags & AEEBT_EIR_NAME_CMPLT_B)))
@@ -1161,6 +1186,7 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 						MSG_MED( "BldDevRespMenu - short name for DevIndex=%d", pMe->mRM.uDevToDspIdxMap[MapIndex], 0, 0 );
 						WSTRLCAT( pwName, wBuf, AEEBT_MAX_DEVICENAME_LEN );
 					}
+					
 				}
 				
 				if (IMENUCTL_AddItem(pMenu, NULL, 0, MapIndex, pwName, 0) == FALSE)
@@ -1394,7 +1420,7 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			uint16				uLen = 0;
 			uint16				tempuValue1 = 0;    
 			//CtlAddItem        	ai;			
-			AEEBTDeviceInfo*  	pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx ];
+			AEEBTDeviceInfo*  	pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
 			
 #ifdef FEATURE_BT_2_1
 			uint8 				maxManuDataLen = AEEBT_MAX_EIR_MANUF_DATA_LEN;
@@ -1403,8 +1429,6 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			AECHAR            	wManuData[ AEEBT_MAX_EIR_MANUF_DATA_LEN + 1 ] = {0};
 			int               	i;
 #endif 			
-
-			
 
 			(void)ISHELL_LoadResString( pMe->m_pShell,
 										AEE_APPSBTAPP_RES_FILE, 							   
@@ -1421,42 +1445,93 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			          
 			ISTATIC_SetRect(pStatic, &rc);
 
-			ISTATIC_SetProperties(pStatic, ISTATIC_GetProperties(pStatic)& ~ST_MIDDLETEXT & ~ST_CENTERTEXT );    			   
+			ISTATIC_SetProperties(pStatic, ISTATIC_GetProperties(pStatic)& ~ST_MIDDLETEXT & ~ST_CENTERTEXT);    			   
 			ISTATIC_SetProperties(pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);  
 			ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND); 
 
 			// save the value of get name status
 			tempuValue1 = pDev->uValue1;
+
+			MSG_FATAL("***zzg DeviceInfo tempuValue1=%d***", tempuValue1, 0, 0);
 			
 			MSG_MED( "BTApp_BuildDevInfo - tempuValue1 = %d", tempuValue1, 0, 0);
 
-			IBTEXTRM_DeviceRead( pMe->mRM.po, pDev );			
+			IBTEXTRM_DeviceRead(pMe->mRM.po, pDev);	
+
+			MSG_FATAL("***zzg DeviceInfo 1 WSTRLEN(pDev->wName)=%d***", WSTRLEN(pDev->wName), 0, 0);
+			
+
+			if (WSTRLEN(pDev->wName) > 0)
+			{
+				int temp;
+				char btname[AEEBT_MAX_DEVICENAME_LEN+1];
+				char btnickname[AEEBT_MAX_NICKNAME_LEN+1];
+
+				WSTRTOSTR (pDev->wName, btname, sizeof(char)*(AEEBT_MAX_DEVICENAME_LEN+1));	
+				WSTRTOSTR (pDev->wNickName, btnickname, sizeof(char)*(AEEBT_MAX_NICKNAME_LEN+1));	
+
+				DBGPRINTF("***zzg DeviceInfoDlgEvt 1 btname=%s***", btname);
+				DBGPRINTF("***zzg DeviceInfoDlgEvt 1 btnickname=%s***", btnickname);
+
+				for (temp=0; temp<STRLEN(btname); temp++)
+				{
+					DBGPRINTF("***zzg DeviceInfoDlgEvt 1 btname[%d]=%c***", temp, btname[temp]);
+				}
+			}
+			
 
 			// restore the value of get name status      
-			pDev->uValue1 = tempuValue1;
+			pDev->uValue1 = tempuValue1;			
 
+			
 			if (pDev->uValue1 == 0)
 			{
 			  // BT name or Short Name
-			  if ((WSTRLEN( pDev->wName ) == 0) && (pMe->mRM.uGetNameDevIdx == MAX_DEVICES))
-			  {
-			    if (IBTEXTSD_GetDeviceName( pMe->mSD.po, &pDev->bdAddr,
-			                                 pDev->wName, 
-			                                 ARR_SIZE( pDev->wName ) ) == SUCCESS )
+			  if ((WSTRLEN(pDev->wName) == 0) && (pMe->mRM.uGetNameDevIdx == MAX_DEVICES))
+			  {			  
+			  	MSG_FATAL("***zzg DeviceInfoDlgEvt IBTEXTSD_GetDeviceName***", 0, 0, 0);
+				
+			    if (IBTEXTSD_GetDeviceName(pMe->mSD.po, &pDev->bdAddr,
+			                                pDev->wName, 
+			                                ARR_SIZE(pDev->wName)) == SUCCESS)
 			    {
 			      pMe->mRM.uGetNameDevIdx = pMe->mRM.uCurDevIdx;
 			    }
+
+
+				MSG_FATAL("***zzg DeviceInfo 2 WSTRLEN(pDev->wName)=%d***", WSTRLEN(pDev->wName), 0, 0);
+
+				if (WSTRLEN(pDev->wName) > 0)
+				{
+					int temp;
+					char btname[AEEBT_MAX_DEVICENAME_LEN+1];
+					char btnickname[AEEBT_MAX_NICKNAME_LEN+1];
+
+					WSTRTOSTR (pDev->wName, btname, sizeof(char)*(AEEBT_MAX_DEVICENAME_LEN+1));	
+					WSTRTOSTR (pDev->wNickName, btnickname, sizeof(char)*(AEEBT_MAX_NICKNAME_LEN+1));	
+
+					DBGPRINTF("***zzg DeviceInfoDlgEvt 2 btname=%s***", btname);
+					DBGPRINTF("***zzg DeviceInfoDlgEvt 2 btnickname=%s***", btnickname);
+
+					for (temp=0; temp<STRLEN(btname); temp++)
+					{
+						DBGPRINTF("***zzg DeviceInfoDlgEvt 2 btname[%d]=%c***", temp, btname[temp]);
+					}
+
+				}
 			  }
 			  else if (WSTRLEN( pDev->wName ) == 0)
 			  {
 			    // schedule to get name when current get name session is done        
 				//ISHELL_SetTimer( pMe->a.m_pIShell, 500,(PFNNOTIFY) BTApp_RefreshDevInfo, pMe );
+				ISHELL_SetTimer(pMe->m_pShell, 500,(PFNNOTIFY) BTApp_UpdateDeviceInfo, pMe);				
 			  }
 			}
 			else
 			{
 			  pDev->uValue1 = 0;
 			}
+			
 			
 #ifdef FEATURE_BT_2_1
 			// manufacturer data
@@ -1480,17 +1555,20 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 				}
 			}
 			
-			if ((pDev->EIRData.uFlags & AEEBT_EIR_DATA_RCVD_B) && 
-			     (!(pDev->EIRData.uFlags & AEEBT_EIR_NAME_CMPLT_B)))
+			MSG_FATAL("***zzg DeviceInfoDlg pDev->EIRData.uFlags=%x***", pDev->EIRData.uFlags, 0, 0);
+			
+			if ((pDev->EIRData.uFlags & AEEBT_EIR_DATA_RCVD_B) && (!(pDev->EIRData.uFlags & AEEBT_EIR_NAME_CMPLT_B)))
 			{
 				uLen += BTApp_FormatBTShortName( pMe, &pMe->pText1[ uLen], 
-			                          			 LONG_TEXT_BUF_LEN - uLen, pDev->wName, FALSE );
+			                          			 LONG_TEXT_BUF_LEN - uLen, 
+			                          			 pDev->wName, FALSE );
+
 			}
 			else
 			{
 				uLen += BTApp_FormatBTName( pMe, &pMe->pText1[ uLen], 
 			                                LONG_TEXT_BUF_LEN - uLen, 
-			                                pDev->wName ); 
+			                                pDev->wName); 				
 			}
 #else
 			uLen += BTApp_FormatBTName( pMe, &pMe->pText1[ uLen], 
@@ -2874,17 +2952,18 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 				uLen += BTApp_FormatBTName( pMe, &pMe->pText1[ uLen], 
 											LONG_TEXT_BUF_LEN - uLen, 
 											pMe->mRM.myInfo.wName );
+
 #ifdef FEATURE_BT_2_1
 				// BT ShortName
 				if ( WSTRCMP (pMe->mRM.myInfo.wName , pMe->mRM.myInfo.wShortName ) == 0 )
 				{
-				  bNameSame = TRUE;
+				  	bNameSame = TRUE;
 				} 
 				uLen += BTApp_FormatBTShortName( pMe, &pMe->pText1[ uLen], 
 												 LONG_TEXT_BUF_LEN - uLen, 
 												 pMe->mRM.myInfo.wShortName,
 												 bNameSame ); 
-#endif /* FEATURE_BT_2_1 */
+#endif 
 				// BD address
 				uLen += BTApp_FormatBDAddress( pMe, &pMe->pText1[ uLen], 
 											   LONG_TEXT_BUF_LEN - uLen, 
@@ -3026,8 +3105,8 @@ static boolean HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_EDIT_MANU_DATA, IDS_EDIT_MANU_DATA, NULL, 0);
             //IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_SECURITY, IDS_SECURITY, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DISCOVERABLE, IDS_DISCOVERABLE, NULL, 0);
-			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_IOCAPABILITY, IDS_IOCAPABILITY, NULL, 0);
-			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DBG_KEY, IDS_DBG_KEY, NULL, 0);
+			//IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_IOCAPABILITY, IDS_IOCAPABILITY, NULL, 0);
+			//IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DBG_KEY, IDS_DBG_KEY, NULL, 0);
 			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_WRITE_OOB, IDS_WRITE_OOB, NULL, 0);
 
             return TRUE;
@@ -3656,13 +3735,13 @@ static boolean  HandleSetDiscoverableDialogEvent(CBTApp *pMe,
 				
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);   
 	  
-				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_ON_TIMED, IDS_ON_TIMED, NULL, 0);
+				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_ON, IDS_ON, NULL, 0);//IDS_ON_TIMED
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_OFF, IDS_OFF, NULL, 0); 	
 
 
 				if ( pMe->mSD.bDiscoverable != FALSE )
 				{
-					sel = IDS_ON_TIMED;
+					sel = IDS_ON;	//IDS_ON_TIMED
 				}
 				else
 				{
@@ -3728,7 +3807,7 @@ static boolean  HandleSetDiscoverableDialogEvent(CBTApp *pMe,
 								{
 									switch (curItemId)
 									{
-										case IDS_ON_TIMED:
+										case IDS_ON:	//IDS_ON_TIMED
 											discoverable = TRUE;
 											break;
 											
@@ -3779,13 +3858,13 @@ static boolean  HandleSetDiscoverableDialogEvent(CBTApp *pMe,
 						
 						switch ( selection )
 						{
-							case IDS_ON_TIMED:
-								SetMenuIcon(pMenu, IDS_ON_TIMED, TRUE); 
+							case IDS_ON:	//IDS_ON_TIMED
+								SetMenuIcon(pMenu, IDS_ON, TRUE); 	//IDS_ON_TIMED
 								SetMenuIcon(pMenu, IDS_OFF, FALSE); 								
 								break;
 							case IDS_OFF:
 								SetMenuIcon(pMenu, IDS_OFF, TRUE); 
-								SetMenuIcon(pMenu, IDS_ON_TIMED, FALSE); 					
+								SetMenuIcon(pMenu, IDS_ON, FALSE); 	//IDS_ON_TIMED					
 								break;							
 							default:
 								break;
@@ -4517,8 +4596,43 @@ static boolean  HandleFtpClientDialogEvent(CBTApp * pMe,
 					pMe->m_obex_list_id = IDD_BT_FTP_CLIENT;
 					
 					if ( pMe->mFTP.bRegistered == FALSE )
-					{
-						CLOSE_DIALOG(DLGRET_BT_OBEX_LIST_SERVERS)
+					{						
+						AEEBTDeviceEnumerator enumerator;
+						uint8				  i;						
+						AEEBTDeviceInfo*	  pDev;						
+
+						enumerator.control = AEEBT_RM_EC_MATCH_SERVICE_CLASS;
+						enumerator.svcCls  = AEEBT_COD_SC_OBJECT_TRANSFER;
+							
+			
+						if (pMe->mRM.po == NULL)
+						{
+							MSG_FATAL("***zzg ObexListServers pMe->mRM.po == NULL***", 0, 0, 0);
+						}
+						else
+						{				
+							if (IBTEXTRM_DeviceEnumInit(pMe->mRM.po, &enumerator) == SUCCESS)
+							{		
+								i	 = 0;
+								pDev = &pMe->mRM.device[i];
+			
+								while ((IBTEXTRM_DeviceEnumNext( pMe->mRM.po, pDev ) == SUCCESS) 
+										&& pDev->bValid && (i < MAX_DEVICES))
+								{
+									pDev = &pMe->mRM.device[ ++i ];
+								}
+							}
+						}
+
+						if (i > 0)
+						{
+							CLOSE_DIALOG(DLGRET_BT_OBEX_LIST_SERVERS)
+						}
+						else
+						{
+							BTApp_ShowMessage( pMe, IDS_MSG_NO_OBEX_SERVERS, NULL, 0 );
+						}					
+						
 					}
 					else
 					{
@@ -5973,7 +6087,7 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 			PromptMsg_Param_type m_PromptMsg;
 			AECHAR   wszMsg[64] = {0};
 			AECHAR  wstrText[MSGBOX_MAXTEXTLEN];
-			AECHAR* pText = pMe->pText2;
+			AECHAR* pText = pMe->pText2;			
 
 			(void)ISHELL_LoadResString(pMe->m_pShell,
   									   AEE_APPSBTAPP_RES_FILE,
@@ -5982,7 +6096,7 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
   									   sizeof(wstrText));
 
 			MEMSET(&m_PromptMsg, 0, sizeof(PromptMsg_Param_type));
-
+		
 			if (pMe->m_prompt_id == 0)
 			{
 				pText = pMe->wPromptBuf;		// use the wArg as msg
@@ -6142,6 +6256,8 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 			uint16    maxLen;
 			AECHAR*   pText;
 			uint32    prop;
+
+			IDISPLAY_Backlight(pMe->m_pIDisplay, TRUE);
 			
 			SETAEERECT ( &rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx, pMe->m_rect.dy - BOTTOMBAR_HEIGHT);
 			ITEXTCTL_SetRect(pIText, &rc );
@@ -6363,6 +6479,16 @@ static boolean HandleBtTextEditDialogEvent(CBTApp *pMe,
 									}
 									else
 									{
+										//Modify by zzg 2011_03_04
+										//Showbusyicon............
+										ShowBusyIcon(pMe->m_pShell, 
+										             pMe->m_pIDisplay, 
+										             &pMe->m_rect, 
+										             FALSE);
+										
+										pMe->bBusyIconUp = TRUE;
+										//Add End
+										
 										MSG_FATAL("***zzg HandleBTTextEditDlg IBTEXTRM_Bond SUCCEED!***", 0, 0, 0);
 										BTApp_ShowBusyIcon( pMe );
 									}
@@ -6938,6 +7064,8 @@ static boolean HandleFileProgressDialogEvent(CBTApp *pMe,
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);  	
 
+			IDISPLAY_Backlight(pMe->m_pIDisplay, TRUE);
+
 			// set rect for info display area
 			SETAEERECT ( &rc, pMe->m_rect.x, 
 						 pMe->m_rect.y, 
@@ -7092,7 +7220,9 @@ static boolean BTApp_SaveTextEdit( CBTApp* pMe, uint16 DlgID)
 				}
 				else
 				{
-					BTApp_ShowBusyIcon(pMe);
+						BTApp_ShowBusyIcon(pMe);
+					
+					//BTApp_ShowBusyIcon(pMe);
 				}
 			}	
 			break;

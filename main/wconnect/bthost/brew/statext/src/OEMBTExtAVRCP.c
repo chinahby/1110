@@ -372,7 +372,7 @@ static uint16 OEMBTExtAVRCP_MapErrorCode( uint16 reason )
       case BT_BE_PAGE_TIMEOUT:
       case BT_BE_CMD_DISALLOWED:
       case BT_BE_AUTHENTICATION_FAILURE:
-	  		MSG_FATAL("***zzg BT_BE_AUTHENTICATION_FAILURE 3***", 0, 0, 0);
+	  		MSG_FATAL("***zzg BT_BE_AUTHENTICATION_FAILURE 4 result=%x***", result, 0, 0);
            reason = result;
            break;
       default:

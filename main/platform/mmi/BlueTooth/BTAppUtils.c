@@ -1562,6 +1562,25 @@ void BTApp_ShowMessage(
 {	
 	boolean needstr = FALSE;
 
+	/*
+	//Add By zzg 2011_03_04
+	if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
+	{		
+		MSG_FATAL("***zzg BTApp_ShowMessage ISHELL_ActiveApplet=%x***", ISHELL_ActiveApplet(pMe->m_pShell), 0, 0);
+		ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+
+		pMe->m_msg_id = msgID;	
+		pMe->m_bNeedStr = needstr;
+
+		pMe->m_app_flag = TRUE;
+		pMe->m_user_wParam = msgID;
+		return;			
+	}
+	//Add End
+	*/
+
+	IDISPLAY_Backlight( pMe->m_pIDisplay, TRUE );
+
 	MEMSET(pMe->wMsgBuf, 0, WSTRLEN(pMe->wMsgBuf)*sizeof(AECHAR));
 	
 	if (wArg == NULL)
@@ -1573,6 +1592,7 @@ void BTApp_ShowMessage(
 		WSTRCPY(pMe->wMsgBuf, wArg);		
 		needstr = TRUE;
 	}
+
 
 	MSG_FATAL("***zzg BTApp_ShowMsg msgID=%d, WSTRLEN(wArg)=%d***", msgID, WSTRLEN(wArg), 0);
 	
@@ -1688,6 +1708,8 @@ void BTApp_ShowDevMsg(
 {
 	AEEBTDeviceInfo dev;
 	dev.bdAddr = *pAddr;
+
+	IDISPLAY_Backlight(pMe->m_pIDisplay, TRUE);
 
 	if ((IBTEXTRM_DeviceRead(pMe->mRM.po, &dev) != SUCCESS) || (WSTRLEN(dev.wName) == 0))
 	{

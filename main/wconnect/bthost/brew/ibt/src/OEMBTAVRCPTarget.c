@@ -125,7 +125,7 @@ static uint32 OEMBTAVRCP_MapErrorCode( uint32 reason )
       case BT_BE_PAGE_TIMEOUT:
       case BT_BE_CMD_DISALLOWED:
       case BT_BE_AUTHENTICATION_FAILURE:
-	  	MSG_FATAL("***zzg BT_BE_AUTHENTICATION_FAILURE 2***", 0, 0, 0);
+	  	MSG_FATAL("***zzg BT_BE_AUTHENTICATION_FAILURE 3 result=%x***", result, 0, 0);
         reason = result;
         break;
       default:

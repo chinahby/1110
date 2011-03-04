@@ -2821,6 +2821,7 @@ static void OEMBTSPP_EvConfigChange( bt_ev_msg_type* bt_ev_ptr )
             else
             {
                // copy the actul configuration 
+               MSG_FATAL("***zzg AEEBT_RESULT_NEGOTIATION_FAILURE 1***", 0, 0, 0);
                *pMe->pResult = AEEBT_RESULT_NEGOTIATION_FAILURE;
                *pMe->pConfig = pMe->config;
             }
@@ -4536,6 +4537,7 @@ static BTResult OEMBTSPP_ConvertBTReason( bt_event_reason_type bt_reason )
    case BT_EVR_SPP_SDP_TIMEOUT:
       return AEEBT_RESULT_REMOTE_TIMEOUT;
    case BT_EVR_RC_SETUP_NEGOTIATIONS_FAILED: 
+   	  MSG_FATAL("***zzg AEEBT_RESULT_NEGOTIATION_FAILURE 2***", 0, 0, 0);
       return AEEBT_RESULT_NEGOTIATION_FAILURE;
 
    case  BT_EVR_SPP_BAD_SERVER_CHANNEL:

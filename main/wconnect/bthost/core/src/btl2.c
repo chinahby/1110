@@ -1119,6 +1119,7 @@ bt_rm_disc_reason_type bt_l2_convert_disconn_reason_to_rm
       rm_reason = BT_RMDR_USER_ENDED;
       break;
     case BT_EVR_L2_AUTHENTICATION_FAILED:
+		MSG_FATAL("***zzg BT_RMDR_AUTH_FAILED 1***", 0, 0, 0);
         rm_reason = BT_RMDR_AUTH_FAILED;
         break; 
     default:
@@ -5696,6 +5697,7 @@ LOCAL void bt_l2_ev_rm_l2cap_psm_sec_result
                                        pkt_ptr, cdb_ptr, FALSE );
           }
 
+		  MSG_FATAL("***zzg BT_EVR_L2_AUTHENTICATION_FAILED 1***", 0, 0, 0);
           bt_l2_conn_db[ci ].disconn_reason = BT_EVR_L2_AUTHENTICATION_FAILED ;
           
           /* Get ACL link status */
@@ -5707,7 +5709,10 @@ LOCAL void bt_l2_ev_rm_l2cap_psm_sec_result
           {
                 bt_l2_conn_db[ ci ].state          = BT_L2_ACL_LINK_CONNECTED;
                 /* Set timer to disconnect ACL */
+
+				MSG_FATAL("***zzg BT_EVR_L2_AUTHENTICATION_FAILED 2***", 0, 0, 0);				
                 bt_l2_conn_db[ ci ].disconn_reason = BT_EVR_L2_AUTHENTICATION_FAILED;
+				
                 (void)rex_set_timer( &bt_l2_conn_db[ ci ].acl_link_sec_fail_dis_timer,
                                         BT_L2_ACL_LINK_SEC_FAIL_DIS_TIME );
           }
@@ -5715,6 +5720,7 @@ LOCAL void bt_l2_ev_rm_l2cap_psm_sec_result
           {
               /* Security Failed but Encryption is enabled, go through normal way 
                  of disconnect */
+                 MSG_FATAL("***zzg BT_EVR_L2_AUTHENTICATION_FAILED 3***", 0, 0, 0);
               bt_l2_close_l2_connection(
                 &bt_l2_conn_db[ci], BT_EVR_L2_AUTHENTICATION_FAILED );
           }
@@ -5746,12 +5752,16 @@ LOCAL void bt_l2_ev_rm_l2cap_psm_sec_result
           ev_l2_conn.ev_msg.ev_l2_conn_failed.reason =
           BT_EVR_L2_AUTHENTICATION_FAILED;
 
+		  MSG_FATAL("***zzg BT_EVR_L2_AUTHENTICATION_FAILED 4***", 0, 0, 0);
+
           BT_MSG_API( "BT L2 EV TX: Conn Failed lcid:%x rcid:%x %x",
                                   cdb_ptr->local_cid, cdb_ptr->remote_cid,
                                   BT_EV_L2_CONNECTION_FAILED );
           bt_ec_send_event( &ev_l2_conn );
 
           /* Connection refused;  tear down the ACL link if necessary.*/
+
+		  MSG_FATAL("***zzg BT_EVR_L2_AUTHENTICATION_FAILED 5***", 0, 0, 0);
           bt_l2_close_l2_connection(
             cdb_ptr, BT_EVR_L2_AUTHENTICATION_FAILED );
         }

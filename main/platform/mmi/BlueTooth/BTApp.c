@@ -1776,8 +1776,30 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 						pMe->m_prompt_state_id = BTAPPST_MAIN;
 						BTApp_BuildPrompt(pMe , BT_APP_MENU_USER_CFM_RQST); 
 
-						pMe->m_user_wParam = 0;		
+						pMe->m_user_wParam = 0;	
+						
+						break;
 					}
+
+
+					/*
+					case IDS_MSG_BOND_FAILED:
+					{
+						IDISPLAY_Backlight( pMe->m_pIDisplay, TRUE);
+						
+						//CLOSE_DIALOG(DLGRET_BT_MSGBOX)   
+						//pMe->m_eDlgRet = DLGRET_BT_MSGBOX; 
+						//(void) ISHELL_EndDialog(pMe->m_pShell); 
+
+						MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
+
+						pMe->m_user_wParam = 0;		
+
+						break;
+   
+					}
+					*/
+				
 					
 					default:
 					{
@@ -7992,6 +8014,16 @@ DESCRIPTION
 		}
 		else
 		{
+			//Modify by zzg 2011_03_04
+			//Showbusyicon............
+			ShowBusyIcon(pMe->m_pShell, 
+			             pMe->m_pIDisplay, 
+			             &pMe->m_rect, 
+			             FALSE);
+			
+			pMe->bBusyIconUp = TRUE;
+			//Add End
+										
 			MSG_FATAL("***zzg BTApp_BuildBondMenu IBTEXTRM_SSPBond SUCCEED!***", 0, 0, 0);
 			BTApp_ShowBusyIcon(pMe);
 		}
@@ -9572,6 +9604,8 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
   boolean built = TRUE;
   AEEBTDeviceInfo* pDev;
   IDialog*  pCurrentDialog;
+
+  IDISPLAY_Backlight( pMe->m_pIDisplay, TRUE );
 
   return built;	//Add By zzg 2011_01_08
 
@@ -17407,6 +17441,17 @@ static void BTApp_RefreshDevInfo( CBTApp* pMe )
   }
 }
 
+//Add By zzg 2011_03_02
+void BTApp_UpdateDeviceInfo(CBTApp* pMe)
+{
+	(void) ISHELL_PostEvent( pMe->m_pShell,
+                             AEECLSID_BLUETOOTH_APP,
+                             EVT_USER_REDRAW,
+                             0,
+ 							 0);
+}
+//Add End
+
 /* ==========================================================================
 FUNCTION BTApp_BuildDevInfo
 DESCRIPTION
@@ -20664,6 +20709,7 @@ static void BTApp_ProcessSDNotifications(
       pMe->mSD.uNumRecs = pData->uNumDevicesDiscovered;
 	  
       //if ( (pMe->mSD.uNumRecs == 1) || (TOP_MENU == BT_APP_MENU_DEV_RESP) )
+      // Find the first Device, create the dlg of searchresult......
       if (pMe->mSD.uNumRecs == 1) 
       {
       	//CLOSE_DIALOG(DLGRET_SRHRESULT)
@@ -20675,6 +20721,7 @@ static void BTApp_ProcessSDNotifications(
 	  //Add By zzg 2011_01_11
 	  else
 	  {
+	    //find more Device, Update the dlg of searchresult............
 	  	MSG_FATAL("***zzg EVT_USER_REDRAW 111 AEEBT_SD_EVT_DEVICE_DISCOVERY_RESP uNumRecs=%d***", pMe->mSD.uNumRecs, 0 , 0);
 		(void) ISHELL_PostEvent( pMe->m_pShell,
                                  AEECLSID_BLUETOOTH_APP,
@@ -20839,8 +20886,9 @@ static void BTApp_ProcessSDNotifications(
         pMe->mRM.uGetNameDevIdx = MAX_DEVICES;
         pDev->uValue1 = UD1_GET_NAME_SUCCESS;
 
-        ISHELL_CancelTimer( pMe->m_pShell, 
-                              (PFNNOTIFY) BTApp_RefreshDevInfo, pMe );
+        //ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY) BTApp_RefreshDevInfo, pMe);
+        ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)BTApp_UpdateDeviceInfo, pMe);
+        
 
 		/*
 		if ( (TOP_MENU == BT_APP_MENU_DEV_RESP) || 
@@ -20876,8 +20924,8 @@ static void BTApp_ProcessSDNotifications(
         pMe->mRM.uGetNameDevIdx = MAX_DEVICES;
         pDev->uValue1 = UD1_GET_NAME_FAILED;
 
-        ISHELL_CancelTimer( pMe->m_pShell, 
-                            (PFNNOTIFY) BTApp_RefreshDevInfo, pMe );
+        //ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY) BTApp_RefreshDevInfo, pMe);
+		ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)BTApp_UpdateDeviceInfo, pMe);
 
 		/*
         if ( (TOP_MENU == BT_APP_MENU_DEV_RESP) || 
@@ -20997,7 +21045,7 @@ static void BTApp_ProcessRMNotifications(
     case AEEBT_RM_EVT_PASSKEY_REPLIED:
     {
 	  MSG_FATAL("***zzg BTApp RMNotify AEEBT_RM_EVT_PASSKEY_REPLIED pData->uError=%d***", pData->uError, 0, 0);
-		
+
       pMe->mRM.bPassKey = FALSE ;
       if (pData->uError !=  AEEBT_RM_ERR_NONE)
       {
@@ -21028,6 +21076,7 @@ static void BTApp_ProcessRMNotifications(
       break;
     case AEEBT_RM_EVT_BONDED:          // when bonding completed
     {
+	
 #ifndef FEATURE_BT_2_1
       AEEBTDeviceInfo* pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx ];
       MSG_MED( "RM - Bonded err=%d", pData->pDevUpdateStatus->error, 0, 0 );
@@ -21146,7 +21195,7 @@ static void BTApp_ProcessRMNotifications(
     }
 #endif /* FEATURE_BT_2_1 */
     case AEEBT_RM_EVT_UNBONDED:        // response to Unbond()
-    {
+    {		
       MSG_MED( "RM - Unbonded err=%d", pData->pDevUpdateStatus->error, 0, 0 );
       if ( pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE )
       {
@@ -21167,18 +21216,6 @@ static void BTApp_ProcessRMNotifications(
 		STRTOWSTR(pData->sPasskey.passkey, pMe->mRM.wSSPPassKey, AEEBT_SSP_PASSKEY_LEN*sizeof(AECHAR));
 		pMe->mRM.bUserCfm = TRUE;
 		pMe->mRM.BondBDAddr = pData->sPasskey.bdAddr;
-
-		//Add By zzg 2011_01_27
-		if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
-		{
-			MSG_FATAL("***zzg BTApp_ProcessRMNotify  AEEBT_RM_EVT_USER_CFM_REQUEST ISHELL_ActiveApplet=%x***", ISHELL_ActiveApplet(pMe->m_pShell), 0, 0);
-			ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
-
-			pMe->m_app_flag = TRUE;
-			pMe->m_user_wParam = evt;
-			break;			
-		}
-		//Add End		
 
 		pMe->m_prompt_state_id = BTAPPST_DEVICEINFO;
 		BTApp_BuildPrompt(pMe , BT_APP_MENU_USER_CFM_RQST);	  

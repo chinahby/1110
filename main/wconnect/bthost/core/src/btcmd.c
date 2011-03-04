@@ -4618,6 +4618,7 @@ bt_cmd_status_type bt_cmd_rm_set_local_info_ext
     }
 
     /* Short Name */
+
     if ( bt_short_name_str_ptr != NULL )
     {
       cmd_ptr->cmd_msg.cmd_rm_setif_ext.bt_short_name_valid = TRUE;
@@ -4629,6 +4630,9 @@ bt_cmd_status_type bt_cmd_rm_set_local_info_ext
     {
       cmd_ptr->cmd_msg.cmd_rm_setif_ext.bt_short_name_valid = FALSE;
     }
+	
+
+	
 
     cmd_status = bt_cmd( cmd_ptr );
   }

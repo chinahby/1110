@@ -1185,8 +1185,25 @@ int OEMBTExtRM_DeviceRead(
   device.bd_addr = *((bt_bd_addr_type*) &pDevice->bdAddr);
   pDevice->uNumSvcs = AEEBT_MAX_NUM_OF_SRV_REC;
   pDevice->bValid   = FALSE;
-  stat = bt_cmd_rm_device_read( pMe->appId, &device, &pDevice->uNumSvcs,
-                                svcs );
+
+  {
+	  char btname[AEEBT_MAX_DEVICENAME_LEN+1];
+	  char btnickname[AEEBT_MAX_NICKNAME_LEN+1];
+	  
+	  WSTRTOSTR (pDevice->wName, btname, sizeof(char)*(AEEBT_MAX_DEVICENAME_LEN+1));	
+	  WSTRTOSTR (pDevice->wNickName, btnickname, sizeof(char)*(AEEBT_MAX_NICKNAME_LEN+1));	
+	  
+	  DBGPRINTF("***zzg OEMBTExtRM_DeviceRead before btname=%s***", btname);
+	  DBGPRINTF("***zzg OEMBTExtRM_DeviceRead before btnickname=%s***", btnickname);
+  }
+  
+  stat = bt_cmd_rm_device_read(pMe->appId, &device, &pDevice->uNumSvcs, svcs);
+
+  {
+	  DBGPRINTF("***zzg OEMBTExtRM_DeviceRead after name_str=%s***", (char *)(&device)->name_str);
+	  DBGPRINTF("***zzg OEMBTExtRM_DeviceRead after nick_name_str=%s***", (char *)(&device)->nick_name_str);
+  }
+  
   if ( stat == BT_CS_GN_SUCCESS )
   {
     OEMBTExtRM_Core2BrewDev( &device, pDevice, svcs, pMe->cls );

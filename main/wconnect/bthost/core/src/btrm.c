@@ -4008,16 +4008,27 @@ LOCAL bt_rm_device_type* bt_rm_get_device
   bt_rm_device_type*  dev_ptr = NULL;
   bt_rm_device_type*  alt_dev_ptr = NULL;
 
-  for ( i = 0; i < BT_RM_MAX_DEVICES; i++ )
+  for (i = 0; i < BT_RM_MAX_DEVICES; i++)
   {
-    if ( BT_BD_ADDRS_EQUAL(
-           &bt_rm_device[ i ].dev_public.bd_addr,
-           bd_addr_ptr ) != FALSE )
+    if (BT_BD_ADDRS_EQUAL(
+           &bt_rm_device[i].dev_public.bd_addr,
+           bd_addr_ptr) != FALSE)
     {
-      dev_ptr = &bt_rm_device[ i ];
+      dev_ptr = &bt_rm_device[i];
       break;
     }
+  }  
+
+  {
+  	  MSG_FATAL("***zzg bt_rm_get_device 1 i=%d***", i, 0, 0);
+
+	  MSG_FATAL("***zzg bt_rm_get_device 1 bt_rm_device_name_str=%s***", bt_rm_device[i].dev_public.name_str, 0, 0);
+	  MSG_FATAL("***zzg bt_rm_get_device 1 bt_rm_device_nick_name_str=%s***", bt_rm_device[i].dev_public.nick_name_str, 0, 0);
+	  
+	  MSG_FATAL("***zzg bt_rm_get_device 1 name_str=%s***", (void*)dev_ptr->dev_public.name_str, 0, 0);
+	  MSG_FATAL("***zzg bt_rm_get_device 1 nick_name_str=%s***", (void*)dev_ptr->dev_public.nick_name_str, 0, 0);
   }
+  
 
   if ( (dev_ptr == NULL) && (entry_required != FALSE) )
   {
@@ -4038,14 +4049,29 @@ LOCAL bt_rm_device_type* bt_rm_get_device
       }
     }
 
+  {
+  	  MSG_FATAL("***zzg bt_rm_get_device 2 i=%d***", i, 0, 0);		
+	  MSG_FATAL("***zzg bt_rm_get_device 2 name_str=%s***", (void*)dev_ptr->dev_public.name_str, 0, 0);
+	  MSG_FATAL("***zzg bt_rm_get_device 2 nick_name_str=%s***", (void*)dev_ptr->dev_public.nick_name_str, 0, 0);
+  }
+
     if ( dev_ptr == NULL )
     {
+      MSG_FATAL("***zzg bt_rm_get_device dev_ptr == NULL***", 0, 0, 0);	
+	  
       dev_ptr = alt_dev_ptr;
     }
 
     if ( dev_ptr != NULL )
     {
+      MSG_FATAL("***zzg bt_rm_get_device dev_ptr != NULL***", 0, 0, 0);		
+	  
       bt_rm_init_device( dev_ptr );
+
+	  {
+		  MSG_FATAL("***zzg bt_rm_get_device 3 name_str=%s***", (void*)dev_ptr->dev_public.name_str, 0, 0);
+		  MSG_FATAL("***zzg bt_rm_get_device 3 nick_name_str=%s***", (void*)dev_ptr->dev_public.nick_name_str, 0, 0);
+	  }
 
       dev_ptr->dev_public.bd_addr = *bd_addr_ptr;
     }
@@ -5760,6 +5786,8 @@ LOCAL void bt_rm_update_device_name
   uint8    i = 0;
   boolean  name_different = FALSE;
 
+  MSG_FATAL("***zzg bt_rm_update_device_name***", 0, 0, 0);
+
   while ( (i < BT_SD_MAX_DEVICE_NAME_LEN) &&
           (name_different == FALSE) )
   {
@@ -6088,10 +6116,13 @@ void bt_rm_parse_eir
           break;
         }
 
+		MSG_FATAL("***zzg bt_rm_parse_eir eir_data_type=%x, eir_data_type_len=%d***", eir_data_type, eir_data_type_len, 0);
+
         if( eir_data_type == BT_EIR_TYPE_LOCAL_NAME_COMPLETE )
         {
           SETBIT( dev_ptr->dev_public.eir_data.eir_flag, BT_EIR_NAME_CMPLT_B );
         }
+				
         if( eir_data_type_len <= BT_SD_MAX_DEVICE_NAME_LEN )
         {
           memcpy( (void *)dev_ptr->dev_public.name_str,
@@ -6102,12 +6133,22 @@ void bt_rm_parse_eir
         else
         {
           /* Name longer than we can accept - just copy what we can*/
-          memcpy( (void *)dev_ptr->dev_public.name_str,
+          memcpy((void *)dev_ptr->dev_public.name_str,
                   (void *)&eir_data[index],
                   BT_SD_MAX_DEVICE_NAME_LEN-1 );
           dev_ptr->dev_public.name_str[ BT_SD_MAX_DEVICE_NAME_LEN ] = '\0';
           CLRBIT( dev_ptr->dev_public.eir_data.eir_flag, BT_EIR_NAME_CMPLT_B );
         }
+			
+
+		{
+			int temp;
+			for (temp=0; temp<eir_data_type_len; temp++)
+			{
+				MSG_FATAL("***zzg bt_rm_parse_eir after memcpy name_str[%d]=%c***", temp, (void *)dev_ptr->dev_public.name_str[temp], 0);
+			}
+		}
+				
         BT_MSG_DEBUG( "BT RM: Par EIR - Name: %x" ,eir_data_type_len, 0, 0 );
         break;
 
@@ -6314,11 +6355,29 @@ void bt_rm_update_eir
 #endif
 
   /* Local Name */
+
+  
   data_type = ( bt_rm_device_eir.is_name_complete ?
                 BT_EIR_TYPE_LOCAL_NAME_COMPLETE : BT_EIR_TYPE_LOCAL_NAME_SHORTENED );
+
   index += bt_rm_append_eir_data( &eir_packet[index], (BT_MAX_EIR_LEN - index),
                                   data_type, strlen( bt_efs_params.bt_short_name ),
                                   (uint8 *)bt_efs_params.bt_short_name );
+
+  
+
+  /*
+  //Modify by zzg 2011_03_02
+  data_type = BT_EIR_TYPE_LOCAL_NAME_COMPLETE;
+
+  index += bt_rm_append_eir_data( &eir_packet[index], (BT_MAX_EIR_LEN - index),
+                                  data_type, strlen( bt_efs_params.bt_name ),
+                                  (uint8 *)bt_efs_params.bt_name );
+   */                               
+
+  //Modify End
+
+  MSG_FATAL("***zzg 2 bt_efs_params.bt_short_name=%s***", bt_efs_params.bt_short_name, 0, 0);
 
   /* Manufacturer Specific Data */
   index += bt_rm_append_eir_data( &eir_packet[index], (BT_MAX_EIR_HCI_LEN - index),
@@ -6417,6 +6476,8 @@ void bt_rm_update_eir_short_name
                (char *)short_name,
                (BT_MAX_EIR_NAME_LEN + 1) );
   }
+
+  MSG_FATAL("***zzg 3 short_name=%s, bt_efs_params.bt_short_name=%s***", short_name, bt_efs_params.bt_short_name, 0);
 
   if( !BT_STRCMP( bt_efs_params.bt_name, bt_efs_params.bt_short_name ) )
   {
@@ -9665,6 +9726,8 @@ LOCAL void bt_rm_init_hc_sec_settings_acl
     conn_ptr->encrypt_mode = BT_EM_DISABLED;
   }
 
+  MSG_FATAL("***zzg authenticated 1***", 0, 0, 0);
+  
   conn_ptr->authenticated  = FALSE;
   conn_ptr->encrypt_enable = BT_ENCRYPT_ENABLE_OFF;
 
@@ -10896,6 +10959,7 @@ LOCAL void bt_rm_cmd_bond_ext
       {
         conn_ptr->bonding_app_id  = rm_bext_ptr->cmd_hdr.bt_app_id;
         conn_ptr->bonding_pin     = rm_bext_ptr->cmd_msg.cmd_rm_bondext.pin;
+		MSG_FATAL("***zzg bonding_key_rxd 1***", 0, 0, 0);
         conn_ptr->bonding_key_rxd = FALSE;
         conn_ptr->mitm_protection_reqd = rm_bext_ptr->cmd_msg.cmd_rm_bondext.mitm_protection_reqd;
         conn_ptr->dedicated_bonding = TRUE;
@@ -10912,6 +10976,7 @@ LOCAL void bt_rm_cmd_bond_ext
     {
       conn_ptr->bonding_app_id  = rm_bext_ptr->cmd_hdr.bt_app_id;
       conn_ptr->bonding_pin     = rm_bext_ptr->cmd_msg.cmd_rm_bondext.pin;
+	  MSG_FATAL("***zzg bonding_key_rxd 2***", 0, 0, 0);
       conn_ptr->bonding_key_rxd = FALSE;
       conn_ptr->mitm_protection_reqd = rm_bext_ptr->cmd_msg.cmd_rm_bondext.mitm_protection_reqd;
 
@@ -11140,6 +11205,7 @@ LOCAL void bt_rm_cmd_authorize_rebond
         {
           conn_ptr->authorized_rebond = TRUE;
           /* Send HCI_IO_capability_request{_negative}_reply */
+		  MSG_FATAL("***zzg bonding_key_rxd 3***", 0, 0, 0);
           conn_ptr->bonding_key_rxd = FALSE;
 
           switch ( rm_areb_ptr->cmd_msg.cmd_rm_areb.bond_req )
@@ -11480,6 +11546,7 @@ LOCAL boolean bt_rm_unbond_performed
       }
       case BT_BE_AUTHENTICATION_FAILURE:
       {
+	  	MSG_FATAL("***zzg BT_BE_AUTHENTICATION_FAILURE 1***", 0, 0, 0);
         {
            /* Authentiction fails, it means either Pairing or
             * authentication or change of link key failed (SRES did not match)
@@ -11504,6 +11571,8 @@ LOCAL boolean bt_rm_unbond_performed
       }
       case BT_BE_AUTHENTICATION_FAILURE:
       {
+	  	MSG_FATAL("***zzg BT_BE_AUTHENTICATION_FAILURE 2***", 0, 0, 0);
+		
          /* Authentiction fails, it means either Pairing or
           * authentication or change of link key failed (SRES did not match)
           * Do not start repairing in this case.
@@ -12254,6 +12323,8 @@ LOCAL void bt_rm_ev_hc_auth_complete
   BT_MSG_API( "BT RM EV RX: HC AuthC S %x H %x",
               hc_status, hc_handle, 0 );
 
+  MSG_FATAL("***zzg bt_rm_ev_hc_auth_complete hc_status=%x***", hc_status, 0, 0);
+
   if ( (conn_ptr = bt_rm_get_acl_conn_hc_handle( hc_handle )) != NULL )
   {
     /* If the authentication was not initiated via RM bond api, 
@@ -12314,8 +12385,12 @@ LOCAL void bt_rm_ev_hc_auth_complete
       conn_ptr->rebond_req_pending = FALSE;
       conn_ptr->authorized_rebond  = FALSE;
 
+      MSG_FATAL("***zzg hc_status=%x***", hc_status, 0, 0);
+	  
       if ( hc_status != BT_BE_SUCCESS )
       {
+        MSG_FATAL("***zzg authenticated 2***", 0, 0, 0);
+		
         conn_ptr->authenticated = FALSE;
         conn_ptr->enh_enc_state = BT_RM_ENH_ENC_OK;
         BT_MSG_DEBUG( "BT RM: Auth failed S %x H %x",
@@ -12324,6 +12399,8 @@ LOCAL void bt_rm_ev_hc_auth_complete
       }
       else
       {
+      	MSG_FATAL("***zzg authenticated 3***", 0, 0, 0);
+		
         conn_ptr->authenticated = TRUE;
         if((conn_ptr->enh_enc_state == BT_RM_ENH_ENC_AUTHENTICATING) &&
            (conn_ptr->encrypt_enable!=TRUE))
@@ -12348,12 +12425,14 @@ LOCAL void bt_rm_ev_hc_auth_complete
 #else
       if ( hc_status != BT_BE_SUCCESS )
       {
+        MSG_FATAL("***zzg authenticated 4***", 0, 0, 0);
         conn_ptr->authenticated = FALSE;
         BT_MSG_DEBUG( "BT RM: Auth failed S %x H %x",
                       hc_status, hc_handle, 0 );
       }
       else
       {
+        MSG_FATAL("***zzg authenticated 5***", 0, 0, 0);
         conn_ptr->authenticated = TRUE;
       }
 
@@ -13236,16 +13315,19 @@ LOCAL void bt_rm_conn_complete_processing
 
         if ( conn_ptr->hc_auth_enable == BT_HC_AUTH_DISABLED )
         {
+          MSG_FATAL("***zzg authenticated 6***", 0, 0, 0);
           conn_ptr->authenticated = FALSE;
         }
         else
         {
+          MSG_FATAL("***zzg authenticated 7***", 0, 0, 0);
           conn_ptr->authenticated = TRUE;
         }
       }
       else
       {
         conn_ptr->encrypt_enable = BT_ENCRYPT_ENABLE_ON;
+		MSG_FATAL("***zzg authenticated 8***", 0, 0, 0);
         conn_ptr->authenticated  = TRUE;
 #if ( defined ( FEATURE_BT_QSOC ) && defined ( FEATURE_BT_EXTPF_SAP ) )
 #error code not present
@@ -14610,6 +14692,7 @@ LOCAL void bt_rm_ev_hc_sp_complete
         ( conn_ptr->dev_ptr->bonded_link_key == TRUE ))
     {
       /* Authentication complete will not be received later. Cleanup now */
+	  MSG_FATAL("***zzg authenticated 9***", 0, 0, 0);
       conn_ptr->authenticated = FALSE;
       conn_ptr->enh_enc_state = BT_RM_ENH_ENC_OK;
       BT_MSG_DEBUG( "BT RM: Auth failed S %x", hc_status, 0, 0 );
@@ -16155,6 +16238,7 @@ LOCAL void bt_rm_ev_hc_encryption_change
       else
       {
 #ifdef BT_SWDEV_2_1_SSP
+		MSG_FATAL("***zzg authenticated 10***", 0, 0, 0);
         conn_ptr->authenticated = TRUE;
 #endif /* BT_SWDEV_2_1_SSP */
         conn_ptr->enh_enc_state = BT_RM_ENH_ENC_OK;
@@ -17244,6 +17328,8 @@ LOCAL void bt_rm_ev_hc_link_key_notification
   BT_MSG_HIGH( "BT RM: SSP Link Key Notif LKT %x",
                ev_msg_ptr->ev_msg.ev_hc_keynt.key_type_key, 0,0);
 
+  MSG_FATAL("***zzg bt_rm_ev_hc_link_key_notification start***", 0, 0, 0);
+
   if ( (status = bt_rm_get_conn_bd_addr(
                    TRUE,   /*  Connection must exist.           */
                    FALSE,  /*  Connection need not be settled.  */
@@ -17252,6 +17338,7 @@ LOCAL void bt_rm_ev_hc_link_key_notification
   {
 
 #ifdef BT_SWDEV_2_1_SSP
+	MSG_FATAL("***zzg authenticated 11***", 0, 0, 0);
     conn_ptr->authenticated = TRUE;
     conn_ptr->new_link_key = TRUE;
     conn_ptr->update_link_key_request = FALSE;
@@ -17383,6 +17470,7 @@ LOCAL void bt_rm_ev_hc_link_key_notification
 
       if ( conn_ptr->bonding_app_id != BT_APP_ID_NULL )
       {
+        MSG_FATAL("***zzg bonding_key_rxd 4***", 0, 0, 0);
         conn_ptr->bonding_key_rxd = TRUE;
 
         bt_rm_reset_idle_timeout( conn_ptr );
@@ -17403,9 +17491,10 @@ LOCAL void bt_rm_ev_hc_link_key_notification
   }
   else
   {
+    MSG_FATAL("***zzg bt_rm_ev_hc_link_key_notification bt_rm_get_conn_bd_addr Failed***", 0, 0, 0);
+    
     BT_ERR( "BT RM: Bad LK Notif St %x", status, 0, 0 );
-    BT_BDA( ERR, "BT RM: Bad LK Notif",
-            &ev_msg_ptr->ev_msg.ev_hc_keynt.bd_addr );
+    BT_BDA( ERR, "BT RM: Bad LK Notif", &ev_msg_ptr->ev_msg.ev_hc_keynt.bd_addr );
   }
 
 }
@@ -19737,8 +19826,6 @@ bt_cmd_status_type bt_cmd_rm_get_local_info
 )
 {
 
-  MSG_FATAL("***zzg bt_cmd_rm_get_local_info***", 0, 0, 0);
-  
   BT_MSG_API( "BT RM CMD RX: RM Get Loc Inf AID %x", bt_app_id, 0, 0 );
 
   TASKLOCK();
@@ -19775,19 +19862,9 @@ bt_cmd_status_type bt_cmd_rm_get_local_info
 
   }
 
-  MSG_FATAL("***zzg before bt_efs_params.bt_name=%d***", bt_efs_params.bt_name, 0, 0);
-
   if ( bt_name_str_ptr != NULL )
   {
     bt_efs_params.bt_name[ BT_MAX_NAME_LEN ] = 0;
-
-		{
-			int temp=0;
-			for (; temp<sizeof(bt_efs_params.bt_name); temp++)
-			{
-				MSG_FATAL("***zzg bt_efs_params[%d]=%c***", temp, bt_efs_params.bt_name[temp], 0);
-			}
-		}
 	
     memcpy( (void *)(bt_name_str_ptr),
             (void *)(bt_efs_params.bt_name),
@@ -19830,9 +19907,6 @@ bt_cmd_status_type bt_cmd_rm_get_local_info_ext
   char*                  bt_short_name_str_ptr
 )
 {
-
-
-	MSG_FATAL("***zzg bt_cmd_rm_get_local_info_ext***", 0, 0, 0);
 	
   BT_MSG_API( "BT RM CMD RX: RM Get Loc Inf Ext AID %x", bt_app_id, 0, 0 );
 
@@ -19849,6 +19923,9 @@ bt_cmd_status_type bt_cmd_rm_get_local_info_ext
     BT_STRCPY( (char *)bt_short_name_str_ptr,
                (char *)bt_efs_params.bt_short_name,
                (BT_MAX_EIR_NAME_LEN + 1) );
+
+	MSG_FATAL("***zzg 4 bt_efs_params.bt_short_name=%s***", bt_efs_params.bt_short_name, 0, 0);
+	
   }
 
   TASKFREE();
@@ -21425,6 +21502,7 @@ LOCAL void bt_rm_cmd_bond
         {
           conn_ptr->bonding_app_id  = rm_b_ptr->cmd_hdr.bt_app_id;
           conn_ptr->bonding_pin     = rm_b_ptr->cmd_msg.cmd_rm_bond.pin;
+		  MSG_FATAL("***zzg bonding_key_rxd 5***", 0, 0, 0);
           conn_ptr->bonding_key_rxd = FALSE;
 
           bt_rm_create_connection_acl( conn_ptr );
@@ -21438,6 +21516,7 @@ LOCAL void bt_rm_cmd_bond
       {
         conn_ptr->bonding_app_id  = rm_b_ptr->cmd_hdr.bt_app_id;
         conn_ptr->bonding_pin     = rm_b_ptr->cmd_msg.cmd_rm_bond.pin;
+		MSG_FATAL("***zzg bonding_key_rxd 6***", 0, 0, 0);
         conn_ptr->bonding_key_rxd = FALSE;
 
         BT_MSG_API( "BT RM CMD TX: HC Auth Req H %x",
@@ -27181,9 +27260,13 @@ void bt_rm_refresh_efs_param
 
 #ifdef BT_SWDEV_2_1_EIR
 	/* Use the first 'n' characeters of the default name as short name */
+
+    
 	BT_STRCPY( (char *)bt_efs_params.bt_short_name,
 	         bt_efs_params.bt_name, 
 	         (BT_MAX_EIR_NAME_LEN + 1) );
+
+	MSG_FATAL("***zzg 5 bt_efs_params.bt_short_name=%s***", bt_efs_params.bt_short_name, 0, 0);
 
 	bt_efs_params.eir_manuf_data_size = 0;
 #endif /* BT_SWDEV_2_1_EIR */

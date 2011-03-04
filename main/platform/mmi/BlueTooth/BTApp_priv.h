@@ -399,8 +399,12 @@ extern void BTApp_GetNameOfLocalObjects(CBTApp* pMe, char *pszDir);
 
 //Add By zzg 2011_02_25
 extern void bt_rm_refresh_efs_param(void);
-
 //Add End
+
+//Add By zzg 2011_03_02
+extern void BTApp_UpdateDeviceInfo(CBTApp* pMe);
+//Add End
+
 
 
 extern const AEEBTBDAddr NULL_BD_ADDR;

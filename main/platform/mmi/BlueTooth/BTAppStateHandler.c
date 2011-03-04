@@ -1786,6 +1786,10 @@ static NextFSMAction BTApp_StateMsgBoxHandler(CBTApp *pMe)
 		case DLGRET_FTP_BROWSE:
 			MOVE_TO_STATE(BTAPPST_FTP_BROWSE)
 			return NFSMACTION_CONTINUE;	
+
+		case DLGRET_SRHRESULT:
+			MOVE_TO_STATE(BTAPPST_SRHRESULT)
+			return NFSMACTION_CONTINUE;	
 			
 		case DLGRET_CANCELED:		
 			MSG_FATAL("***zzg BTApp_StateMsgBoxHandler DLGRET_CANCELED m_msg_id=%d***", pMe->m_msg_id, 0, 0);	
@@ -1796,7 +1800,15 @@ static NextFSMAction BTApp_StateMsgBoxHandler(CBTApp *pMe)
 				pMe->m_msg_state_id = pMe->m_prompt_state_id;
 			}				
 
-			MOVE_TO_STATE(pMe->m_msg_state_id)	
+			if (pMe->m_msg_state_id == 0)
+			{
+				MOVE_TO_STATE(BTAPPST_MAIN)
+			}
+			else
+			{
+				MOVE_TO_STATE(pMe->m_msg_state_id)
+			}
+				
 			return NFSMACTION_CONTINUE;
 
 			
