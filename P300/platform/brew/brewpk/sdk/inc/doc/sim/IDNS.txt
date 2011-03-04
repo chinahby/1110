@@ -1,0 +1,12 @@
+/*
+===========================
+Simulator Support DOCUMENTATION
+============================
+IDNS simulation
+
+IDNS is simulated.
+
+DNS server settings can be specified in Tools->Settings box.
+
+==========================
+*/ 

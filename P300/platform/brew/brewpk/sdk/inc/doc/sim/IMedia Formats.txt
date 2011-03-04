@@ -1,0 +1,12 @@
+
+/* 
+===========================
+Simulator Support DOCUMENTATION
+============================
+IMediaFormats simulation
+
+IMediaFormats is simulated.
+See Also:
+IMedia simulation
+==========================  
+*/

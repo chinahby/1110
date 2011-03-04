@@ -1,0 +1,6 @@
+#ifndef WORLDTIME_BID
+#define WORLDTIME_BID
+
+#define AEECLSID_WORLDTIME        0x01006117
+
+#endif //WORLDTIME_BID
