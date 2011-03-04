@@ -36,7 +36,9 @@
 #endif
 #include "OEMFeatures.h"
 #include "AEE.h"
+#ifdef FEATURE_APP_UTK
 #include "utk.brh"
+#endif 
 #include "AEEShell.h"
 #include "AEEModTable.h"
 #include "AEEStdLib.h"

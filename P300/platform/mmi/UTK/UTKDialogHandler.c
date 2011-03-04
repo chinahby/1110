@@ -27,6 +27,7 @@
 #include "OEMText.h" 
 //#include "uasms.h"
 #include "UTKUtils.h"
+#ifdef FEATURE_APP_UTK
 
 /*==============================================================================
                                  宏定义和常数
@@ -2057,3 +2058,4 @@ static void UTKApp_NotifyMp3PlayerCB(CUTK *pMe)
     UTKApp_NotifyMp3Player(pMe,FALSE);
     MSG_FATAL("UTKApp_NotifyMp3PlayerCB End",0,0,0); 
 }
+#endif

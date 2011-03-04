@@ -24,6 +24,7 @@
 ==============================================================================*/
 #include "UTK_priv.h"
 #include "UTKUtils.h"
+#ifdef FEATURE_APP_UTK
 
 /*==============================================================================
                                  宏定义和常数
@@ -650,4 +651,4 @@ static NextFSMAction UTKST_POPMSG_Handler(CUTK *pMe)
     
     return NFSMACTION_CONTINUE;
 } // UTKST_MSG_Handler
-
+#endif

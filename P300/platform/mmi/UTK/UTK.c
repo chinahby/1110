@@ -25,7 +25,7 @@
 #include "UTK_priv.h"
 //#include "AEEPrompt.h"
 #include "UTKUtils.h"
-
+#ifdef FEATURE_APP_UTK
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -1545,4 +1545,4 @@ void UTK_ProcessStatus(CUTK *pMe, wms_submit_report_info_s_type *pRptInfo)
                                  0);
     }
 }
-
+#endif
