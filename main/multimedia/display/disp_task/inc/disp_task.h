@@ -47,7 +47,9 @@ when       who     what, where, why
 #include "timetick.h"
 #include "task.h"
 #include "mdp_buffers.h"
-
+#ifdef CUST_EDITION
+#include "disp_options.h"
+#endif
 /*---------------------------------------------------------------------------
 ** DISP General Defines
 ---------------------------------------------------------------------------*/
@@ -115,9 +117,13 @@ when       who     what, where, why
 #ifdef T_MSM7500 /* 7500 SURF */
 #error code not present
 #else
+#ifdef CUST_EDITION
+  #define DISP_TASK_BUF_WIDTH  DISP_WIDTH
+  #define DISP_TASK_BUF_HEIGHT DISP_HEIGHT
+#else
   #define DISP_TASK_BUF_WIDTH 240
   #define DISP_TASK_BUF_HEIGHT 320
-
+#endif
   /* Short term solution to ensure sufficient heap at boot up for display needs.
   ** Proper fix involves ensuring BREW heap is available before display is initialized. */
   #if defined(T_QSC60X5) && !defined(FEATURE_TMD_20_QVGA)

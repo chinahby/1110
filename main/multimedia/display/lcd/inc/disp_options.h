@@ -61,6 +61,7 @@
 /* Display width and height in number of pixels */
 
 #ifdef CUST_EDITION
+#include "mmidispsize.h"
 
 #if defined (FEATURE_DISP_128X128)
 #define DISP_WIDTH		 128

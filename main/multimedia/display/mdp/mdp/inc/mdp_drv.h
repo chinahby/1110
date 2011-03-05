@@ -121,6 +121,9 @@ when      who    what, where, why
 #define MDP_MDDI_SCR_SIZE            MDP_EPSON_QCIF_SCR_SIZE
 #define MDP_EP_OP_QCIFP_PRI_SCR_SIZE MDP_EPSON_QCIF_SCR_SIZE
 #define MDP_EP_OP_QCIFP_SEC_SCR_SIZE MDP_EPSON_QCIF_SCR_SIZE
+#ifdef CUST_EDITION
+#define MDP_LCD_SCR_SIZE             MDP_EPSON_QCIF_SCR_SIZE
+#endif
 
 #define MDP_EPSON_QCIF_SCR_LEN 32
 #define MDP_EPSON_QVGA_SCR_LEN 32
@@ -128,6 +131,9 @@ when      who    what, where, why
 #define MDP_MDDI_SCR_LEN 32
 #define MDP_EP_OP_QCIFP_PRI_SCR_LEN 32
 #define MDP_EP_OP_QCIFP_SEC_SCR_LEN 32
+#ifdef CUST_EDITION
+#define MDP_LCD_SCR_LEN 32
+#endif
 
 #define MDP_GFX_SCR_LEN 64
 #define MDP_GOG_SCR_LEN 64
@@ -151,11 +157,15 @@ enum
   MDP_GOG_SCR,
   MDP_VDO_SCR,
   MDP_GOV_SCR,
+#ifdef CUST_EDITION
+  MDP_LCD_SCR,
+#else
   MDP_EPSON_QCIF_SCR,
   MDP_EPSON_QVGA_SCR,
   MDP_TMD_QVGA_SCR,
   MDP_EP_OP_QCIFP_PRI_SCR,
   MDP_EP_OP_QCIFP_SEC_SCR,
+#endif
 #ifdef FEATURE_MDDI
 #error code not present
 #endif /* FEATURE_MDDI */
@@ -224,11 +234,15 @@ typedef struct mdpScrCnt_
   uint32 gog_scr_cnt;
   uint32 vdo_scr_cnt;
   uint32 gov_scr_cnt;
+#ifdef CUST_EDITION
+  uint32 lcd_scr_cnt;
+#else
   uint32 epson_qcif_scr_cnt;
   uint32 epson_qvga_scr_cnt;
   uint32 tmd_qvga_scr_cnt;
   uint32 ep_op_qcifp_pri_scr_cnt;
   uint32 ep_op_qcifp_sec_scr_cnt;
+#endif
 #ifdef FEATURE_MDDI
 #error code not present
 #endif /* FEATURE_MDDI */
