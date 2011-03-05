@@ -223,8 +223,8 @@ else
             techno_meto.mid|fs:/ringers/techno_meto.mid \
             feeling_on.mid|fs:/ringers/feeling_on.mid \
             feeling_off.mid|fs:/ringers/feeling_off.mid
-      else ifeq ($(USES_RESDIR), H2021C)
-    	  CONSTFILE_FILES+=\
+    else ifeq ($(USES_RESDIR), H2021C)
+    	CONSTFILE_FILES+=\
             ring01.mid|fs:/ringers/ring01.mid \
             ring02.mid|fs:/ringers/ring02.mid \
             ring03.mid|fs:/ringers/ring03.mid \
@@ -237,7 +237,7 @@ else
             ring10.mid|fs:/ringers/ring10.mid \
             ring11.mid|fs:/ringers/ring11.mid \
             ring12.mid|fs:/ringers/ring12.mid  
-     else ifeq ($(USES_RESDIR), H19C)
+    else ifeq ($(USES_RESDIR), H19C)
     	CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
             blue_load.mid|fs:/ringers/blue_load.mid \
@@ -251,8 +251,8 @@ else
             feeling_off.mid|fs:/ringers/feeling_off.mid \
             street_tale.mid|fs:/ringers/street_tale.mid \
             PowerONOFF.mp3|fs:/ringers/PowerONOFF.mp3
-      else ifeq($(USES_RESDIR), N021)
-            CONSTFILE_FILES+=\
+    else ifeq ($(USES_RESDIR), N021)
+        CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
             blue_load.mid|fs:/ringers/blue_load.mid \
             champagne.mid|fs:/ringers/champagne.mid \
@@ -265,7 +265,7 @@ else
             techno_meto.mid|fs:/ringers/techno_meto.mid \
             feeling_on.mid|fs:/ringers/feeling_on.mid \
             feeling_off.mid|fs:/ringers/feeling_off.mid 
-    else                                            
+    else
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
             blue_load.mid|fs:/ringers/blue_load.mid \
