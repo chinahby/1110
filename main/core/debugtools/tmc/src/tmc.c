@@ -6123,7 +6123,6 @@ LOCAL   void                       tmc_define_tasks( void )
 
   #endif /* FEATURE_UIM */
   #endif /* FEATURE_BRINGUP_DIAG_ONLY */
-  
 
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -8213,7 +8212,6 @@ LOCAL   void                       tmc_define_tasks( void )
     (void) tmc_wait(TMC_ACK_SIG);
     (void) rex_clr_sigs(rex_self(), TMC_ACK_SIG);
   #endif /*FEATURE_QTV_STATIC_DLDSPSVC_TASK*/
-  
   /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 } /* tmc_define_tasks(void) */
 

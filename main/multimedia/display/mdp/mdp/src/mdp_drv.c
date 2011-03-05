@@ -21,10 +21,13 @@
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/multimedia/display/mdp1/mdp/main/latest/src/mdp_drv.c#16 $ $DateTime: 2009/03/17 08:26:09 $ $Author: gauravs $
+  $Header: //source/qcom/qct/multimedia/display/mdp1/mdp/main/latest/src/mdp_drv.c#20 $ $DateTime: 2009/04/28 02:06:06 $ $Author: gauravs $
 
 when      who     what, where, why
 --------  -----   ----------------------------------------------------------
+04/28/09  gs     Adding changes to avoid rex_wait when MDPOP_VSYNC_OFF is enabled 
+04/22/09  gs     Adding support for MDPOP_VSYNC_OFF and changes to avoid waiting in mdp_start_script when MDP_SYS_VSYNC_OFF is enabled.
+04/17/09  gs      MDP H/W Vsync support
 03/17/09  gs      Adding support for 24BPP output support
 11/07/08  gs      Adding WQVGA Display support
 10/01/08  rk      Fixed bug when MDP writes odd number of RGB565 pixels to memory.
@@ -234,7 +237,9 @@ INCLUDE FILES FOR MODULE
 
   static void mdp_hclk_active(void);
   static void mdp_hclk_not_active(void);
+#ifdef MDP_SW_VSYNC
   static uint32  mdp_get_vsync_wait_time(MDP_CWIN cwin);
+#endif
   static void mdp_config_vsync(uint32 hclk);
 
   #ifdef FEATURE_MDDI
@@ -307,6 +312,10 @@ INCLUDE FILES FOR MODULE
   // When enter Wscale no stretch, the HW requires a reset the first time only.
   static boolean resetMdpForWscaleNoStretch = TRUE;
   #endif
+
+#ifdef MDP_HW_VSYNC 
+static void mdp_modify_vsync_script(MDP_CWIN cwin); 
+#endif
 
 /***************/
 /* DEBUG FLAGS */
@@ -440,6 +449,11 @@ static MDP_CCS_TYPE mdp_default_ccs =
   0xEEB, //11
 };
 
+#ifdef CUST_EDITION
+extern uint8 disp_drv_mdp_getformat(void);
+extern uint16 disp_drv_mdp_getscr(uint32 **ppscr);
+extern void disp_drv_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col);
+#else
 
 // LCD address must be 4-bytes aligned 
   #if (DISP_CMD_PORT1%4) || (DISP_DATA_PORT1%4)
@@ -632,6 +646,7 @@ __align(16) uint32 MDP_DISP_TMD_QVGA_SCR[MDP_TMD_QVGA_SCR_SIZE][MDP_TMD_QVGA_SCR
 
   RETURN            //19
 };
+#endif // CUST_EDITION
 
 // MDDI LCD Script
   #ifdef __GNUC__
@@ -1356,12 +1371,23 @@ void mdp_start_script(uint32 *scrPtr,
   MDP_DISP_POWERON_SCR[5] = (uint32)scrPtr;
   scrPtr = &MDP_DISP_POWERON_SCR[0];
 
-  // Calculate vsync wait time if enabled and asked for...
-  if ((mdp_vsync_enabled == TRUE) && /* Global flag */
-      (destDev == PRIMARY_LCD_TYPE)) /* MDP only has one vsync, use for PRIM */
+// Calculate vsync wait time if enabled and asked for...
+// Add vsync script if enable and asked for...
+  if ((addVsyncScript == TRUE) &&    /* Do vsync for this update? */
+      (mdp_vsync_enabled == TRUE) && /* Global flag */
+    (destDev == PRIMARY_LCD_TYPE)) /* MDP only has one vsync, use for PRIM */
   {
+  
     // Modify the vsync script for this update
+    #ifdef MDP_HW_VSYNC
+    mdp_modify_vsync_script(vsyncCwin);
+     // Link the script in...
+    MDP_DISP_VSYNC_SCR[5] = (uint32)scrPtr;
+    scrPtr = &MDP_DISP_VSYNC_SCR[0];
+    #elif defined(MDP_SW_VSYNC) 	
     wait_time = mdp_get_vsync_wait_time(vsyncCwin);
+    #endif
+	
   }
 
 #ifdef FEATURE_MDDI
@@ -1388,8 +1414,10 @@ void mdp_start_script(uint32 *scrPtr,
      // write 0 to MDP_TEST_EXPORT_MISR
      outpw(MDP_DBGBUS_TEST_EXPORT_MISR, 0);
   }
+#ifdef MDP_SW_VSYNC
 
-  if(mdp_vsync_enabled == TRUE)
+  if ((addVsyncScript == TRUE) &&    /* Do vsync for this update? */
+      (mdp_vsync_enabled == TRUE)) /* Global flag */	
   {
      int dog_autokick;
 
@@ -1418,7 +1446,7 @@ void mdp_start_script(uint32 *scrPtr,
 	 }
 
   }
- 
+ #endif
      mdp_tcb_ptr = rex_self();
      rex_def_timer(&mdp_rex_timer, mdp_tcb_ptr, mdp_task_wait_sig);
      /* expires in 100 msec */
@@ -1676,12 +1704,15 @@ void mdp_scrlist_init()
   mdp_scr_give[MDP_GOG_SCR] = 0;
   mdp_scr_give[MDP_VDO_SCR] = 0;
   mdp_scr_give[MDP_GOV_SCR] = 0;
+#ifdef CUST_EDITION
+  mdp_scr_give[MDP_LCD_SCR] = 0;
+#else
   mdp_scr_give[MDP_EPSON_QCIF_SCR] = 0;
   mdp_scr_give[MDP_EPSON_QVGA_SCR] = 0;
   mdp_scr_give[MDP_TMD_QVGA_SCR] = 0;
   mdp_scr_give[MDP_EP_OP_QCIFP_PRI_SCR] = 0;
   mdp_scr_give[MDP_EP_OP_QCIFP_SEC_SCR] = 0;
-
+#endif
 #ifdef FEATURE_MDDI
 #error code not present
 #endif /* FEATURE_MDDI */
@@ -1690,16 +1721,32 @@ void mdp_scrlist_init()
   mdp_scr_lock[MDP_GOG_SCR] = MDP_GOG_SCR_SIZE-1;
   mdp_scr_lock[MDP_VDO_SCR] = MDP_VDO_SCR_SIZE-1;
   mdp_scr_lock[MDP_GOV_SCR] = MDP_GOV_SCR_SIZE-1;
+#ifdef CUST_EDITION
+  mdp_scr_lock[MDP_LCD_SCR] = MDP_LCD_SCR_SIZE-1;
+#else
   mdp_scr_lock[MDP_EPSON_QCIF_SCR] = MDP_EPSON_QCIF_SCR_SIZE-1;
   mdp_scr_lock[MDP_EPSON_QVGA_SCR] = MDP_EPSON_QVGA_SCR_SIZE-1;
   mdp_scr_lock[MDP_TMD_QVGA_SCR] = MDP_TMD_QVGA_SCR_SIZE-1;
   mdp_scr_lock[MDP_EP_OP_QCIFP_PRI_SCR] = MDP_EP_OP_QCIFP_PRI_SCR_SIZE-1;
   mdp_scr_lock[MDP_EP_OP_QCIFP_SEC_SCR] = MDP_EP_OP_QCIFP_SEC_SCR_SIZE-1;
-
+#endif
 #ifdef FEATURE_MDDI
 #error code not present
 #endif /* FEATURE_MDDI */
 
+#ifdef CUST_EDITION
+{
+  uint32 *pScr;
+  (void)disp_drv_mdp_getscr(&pScr);
+  for (j=1;j<MDP_LCD_SCR_SIZE;j++)
+  {
+    for (i=0;i<MDP_LCD_SCR_LEN;i++)
+    {
+      pScr[j*MDP_LCD_SCR_LEN+i] = pScr[i];
+    }
+  }
+}
+#else
   for (j=1;j<MDP_EPSON_QCIF_SCR_SIZE;j++)
   {
     for (i=0;i<MDP_EPSON_QCIF_SCR_LEN;i++)
@@ -1739,6 +1786,7 @@ void mdp_scrlist_init()
       MDP_DISP_EP_OP_QCIFP_SEC_SCR[j][i] = MDP_DISP_EP_OP_QCIFP_SEC_SCR[0][i];
     }
   }
+#endif
 
 #ifdef FEATURE_MDDI
 #error code not present
@@ -1831,6 +1879,12 @@ uint32 * mdp_scr_get(int q)
       max_q_size = MDP_GOV_SCR_SIZE;
       break;
 
+#ifdef CUST_EDITION
+    case MDP_LCD_SCR:
+      max_q_size = disp_drv_mdp_getscr(&scrPtr);
+      scrPtr = scrPtr+(mdp_scr_give[q]*MDP_LCD_SCR_LEN);
+      break;
+#else
     case MDP_EPSON_QCIF_SCR:
       scrPtr = &MDP_DISP_EPSON_QCIF_SCR[mdp_scr_give[q]][0];
       max_q_size = MDP_EPSON_QCIF_SCR_SIZE;
@@ -1855,7 +1909,7 @@ uint32 * mdp_scr_get(int q)
       scrPtr = &MDP_DISP_EP_OP_QCIFP_SEC_SCR[mdp_scr_give[q]][0];
       max_q_size = MDP_EP_OP_QCIFP_SEC_SCR_SIZE;
       break;
-
+#endif
 #ifdef FEATURE_MDDI
 #error code not present
 #endif /* FEATURE_MDDI */
@@ -1895,11 +1949,15 @@ void mdp_reset_scrcnt(MDP_SCRCNT *msc)
   msc->gog_scr_cnt = 0;
   msc->vdo_scr_cnt = 0;
   msc->gov_scr_cnt = 0;
+#ifdef CUST_EDITION 
+  msc->lcd_scr_cnt = 0;
+#else
   msc->epson_qcif_scr_cnt = 0;
   msc->epson_qvga_scr_cnt = 0;
   msc->tmd_qvga_scr_cnt = 0;
   msc->ep_op_qcifp_pri_scr_cnt = 0;
   msc->ep_op_qcifp_sec_scr_cnt = 0;
+#endif
 #ifdef FEATURE_MDDI
 #error code not present
 #endif /* FEATURE_MDDI */
@@ -1959,6 +2017,15 @@ void mdp_scr_free(MDP_SCRCNT *msc)
     }
   }
 
+#ifdef CUST_EDITION
+  for (i=0;i< msc->lcd_scr_cnt;i++)
+  {
+    if (++mdp_scr_lock[MDP_LCD_SCR] >= MDP_LCD_SCR_SIZE)
+    {
+      mdp_scr_lock[MDP_LCD_SCR]  = 0;
+    }
+  }
+#else
   for (i=0;i< msc->epson_qcif_scr_cnt;i++)
   {
     if (++mdp_scr_lock[MDP_EPSON_QCIF_SCR] >= MDP_EPSON_QCIF_SCR_SIZE)
@@ -1999,7 +2066,7 @@ void mdp_scr_free(MDP_SCRCNT *msc)
       mdp_scr_lock[MDP_EP_OP_QCIFP_SEC_SCR]  = 0;
     }
   }
-
+#endif
 #ifdef FEATURE_MDDI
 #error code not present
 #endif /* FEATURE_MDDI */
@@ -4734,7 +4801,7 @@ int mdp_disp_gfx_sub( LCD_TYPE destDev,
       scrPtr[22] = WAIT_JOB_DONE;
       break;
 
-
+#ifndef CUST_EDITION
     case EP_OP_QCIFP_PRI:
       if ((lcdScrPtr = mdp_scr_get(MDP_EP_OP_QCIFP_PRI_SCR)) == NULL)
         return MDP_FAIL;
@@ -4850,7 +4917,23 @@ int mdp_disp_gfx_sub( LCD_TYPE destDev,
       lcdScrPtr[17] = SEND_LCD_DATA(DISP_QVGA_18BPP(DISP_QVGA_VAL_IF(dst_start_addr & 0x10000, DISP_QVGA_BITMASK_AD16) | DISP_QVGA_VAL_IF(dst_start_addr & 0x08000, DISP_QVGA_BITMASK_AD15) | DISP_QVGA_VAL_IF(dst_start_addr & 0x04000, DISP_QVGA_BITMASK_AD14) | DISP_QVGA_VAL_IF(dst_start_addr & 0x02000, DISP_QVGA_BITMASK_AD13) | DISP_QVGA_VAL_IF(dst_start_addr & 0x01000, DISP_QVGA_BITMASK_AD12) | DISP_QVGA_VAL_IF(dst_start_addr & 0x00800, DISP_QVGA_BITMASK_AD11) | DISP_QVGA_VAL_IF(dst_start_addr & 0x00400, DISP_QVGA_BITMASK_AD10) | DISP_QVGA_VAL_IF(dst_start_addr & 0x00200, DISP_QVGA_BITMASK_AD9)  | DISP_QVGA_VAL_IF(dst_start_addr & 0x00100, DISP_QVGA_BITMASK_AD8)));
       */
       break;
+#else
 
+    case MDP_LCD:
+      if ((lcdScrPtr = mdp_scr_get(MDP_LCD_SCR)) == NULL)
+        return MDP_FAIL;
+      mdpScrCnt->lcd_scr_cnt++;
+      
+      scrPtr[7] = SET_LCD_FORMAT(0, disp_drv_mdp_getformat());
+      scrPtr[14] = SUBROUTINE;
+      scrPtr[15] = (uint32) lcdScrPtr;
+
+      scrPtr[18] = NOP;
+      scrPtr[22] = WAIT_JOB_DONE;
+      
+      disp_drv_mdp_scrupdate(lcdScrPtr, lcd_row_start, lcd_col_start, lcd_row_end, lcd_col_end);
+      break;
+#endif
 
 #ifdef FEATURE_MDDI
 #error code not present
@@ -5167,7 +5250,7 @@ int mdp_disp_vdo_sub( LCD_TYPE destDev,
       scrPtr[39] = WAIT_JOB_DONE;
       break;
 
-
+#ifndef CUST_EDITION
     case EP_OP_QCIFP_PRI:
       if ((lcdScrPtr = mdp_scr_get(MDP_EP_OP_QCIFP_PRI_SCR)) == NULL)
         return MDP_FAIL;
@@ -5282,7 +5365,22 @@ int mdp_disp_vdo_sub( LCD_TYPE destDev,
       lcdScrPtr[17] = SEND_LCD_DATA(DISP_QVGA_18BPP(DISP_QVGA_VAL_IF(dst_start_addr & 0x10000, DISP_QVGA_BITMASK_AD16) | DISP_QVGA_VAL_IF(dst_start_addr & 0x08000, DISP_QVGA_BITMASK_AD15) | DISP_QVGA_VAL_IF(dst_start_addr & 0x04000, DISP_QVGA_BITMASK_AD14) | DISP_QVGA_VAL_IF(dst_start_addr & 0x02000, DISP_QVGA_BITMASK_AD13) | DISP_QVGA_VAL_IF(dst_start_addr & 0x01000, DISP_QVGA_BITMASK_AD12) | DISP_QVGA_VAL_IF(dst_start_addr & 0x00800, DISP_QVGA_BITMASK_AD11) | DISP_QVGA_VAL_IF(dst_start_addr & 0x00400, DISP_QVGA_BITMASK_AD10) | DISP_QVGA_VAL_IF(dst_start_addr & 0x00200, DISP_QVGA_BITMASK_AD9)  | DISP_QVGA_VAL_IF(dst_start_addr & 0x00100, DISP_QVGA_BITMASK_AD8)));
       */
       break;
+#else
+    case MDP_LCD:
+      if ((lcdScrPtr = mdp_scr_get(MDP_LCD_SCR)) == NULL)
+        return MDP_FAIL;
+      mdpScrCnt->lcd_scr_cnt++;
+      
+      scrPtr[23] = SET_LCD_FORMAT(0, disp_drv_mdp_getformat());
+      scrPtr[30] = SUBROUTINE;
+      scrPtr[31] = (uint32) lcdScrPtr;
 
+      scrPtr[37] = NOP;
+      scrPtr[39] = WAIT_JOB_DONE;
+      
+      disp_drv_mdp_scrupdate(lcdScrPtr, lcd_row_start, lcd_col_start, lcd_row_end, lcd_col_end);
+      break;
+#endif
 #ifdef FEATURE_MDDI
 #error code not present
 #endif /* FEATURE_MDDI */
@@ -5834,7 +5932,7 @@ int mdp_disp_gov_sub( LCD_TYPE destDev,
       scrPtr[43] = WAIT_JOB_DONE;
       break;
 
-
+#ifndef CUST_EDITION
     case EP_OP_QCIFP_PRI:
       if ((lcdScrPtr = mdp_scr_get(MDP_EP_OP_QCIFP_PRI_SCR)) == NULL)
         return MDP_FAIL;
@@ -5941,6 +6039,22 @@ int mdp_disp_gov_sub( LCD_TYPE destDev,
       lcdScrPtr[15] = SEND_LCD_DATA(DISP_QVGA_18BPP(lcd_col_start + tmd20qvga_panel_offset));
       lcdScrPtr[17] = SEND_LCD_DATA(DISP_QVGA_18BPP(lcd_row_start));
       break;
+#else
+    case MDP_LCD:
+      if ((lcdScrPtr = mdp_scr_get(MDP_LCD_SCR)) == NULL)
+        return MDP_FAIL;
+      mdpScrCnt->lcd_scr_cnt++;
+      
+      scrPtr[28] = SET_LCD_FORMAT(0, disp_drv_mdp_getformat());
+      scrPtr[30] = SUBROUTINE;
+      scrPtr[31] = (uint32) lcdScrPtr;
+
+      scrPtr[41] = NOP;
+      scrPtr[43] = WAIT_JOB_DONE;
+
+      disp_drv_mdp_scrupdate(lcdScrPtr, lcd_row_start, lcd_col_start, lcd_row_end, lcd_col_end);
+      break;
+#endif
 
 #ifdef FEATURE_MDDI
 #error code not present
@@ -6436,7 +6550,7 @@ int mdp_disp_gog_sub( LCD_TYPE destDev,
       scrPtr[28] = WAIT_JOB_DONE;
       break;
 
-
+#ifndef CUST_EDITION
     case EP_OP_QCIFP_PRI:
       if ((lcdScrPtr = mdp_scr_get(MDP_EP_OP_QCIFP_PRI_SCR)) == NULL)
         return MDP_FAIL;
@@ -6544,8 +6658,24 @@ int mdp_disp_gog_sub( LCD_TYPE destDev,
       lcdScrPtr[17] = SEND_LCD_DATA(DISP_QVGA_18BPP(lcd_row_start));
 
       break;
+#else
 
+    case MDP_LCD:
+      if ((lcdScrPtr = mdp_scr_get(MDP_LCD_SCR)) == NULL)
+        return MDP_FAIL;
+      mdpScrCnt->lcd_scr_cnt++;
+      
+      scrPtr[10] = SET_LCD_FORMAT(0, disp_drv_mdp_getformat());
+      scrPtr[14] = SUBROUTINE;
+      scrPtr[15] = (uint32) lcdScrPtr;
 
+      scrPtr[23] = NOP;
+      scrPtr[28] = WAIT_JOB_DONE;
+
+      disp_drv_mdp_scrupdate(lcdScrPtr, lcd_row_start, lcd_col_start, lcd_row_end, lcd_col_end);
+      break;
+
+#endif
 #ifdef FEATURE_MDDI
 #error code not present
 #endif /* FEATURE_MDDI */
@@ -6705,8 +6835,13 @@ void mdp_hw_init(void)
   CIP_INTR_EN;  /* enabling command in process interrupt */
 
   default_hclk = clk_regime_msm_get_clk_freq_khz(CLK_RGM_HCLK_M) * 1000;
-
+#ifndef MDP_SYS_VSYNC_OFF 
   mdp_config_vsync(default_hclk);  
+ 
+#ifdef MDP_HW_VSYNC
+  gpio_tlmm_config(MDP_HW_VSYNC_SIGNAL);
+#endif  
+#endif
 }
 
 /*===========================================================================
@@ -7020,9 +7155,9 @@ int mdp_drv_init(void)
 #ifndef FEATURE_MDDI 
   mdp_ebi_rows_per_refresh = LCD_DISPLAY_LINES; /**mapping mddi and ebi parameters. this keeps the get_lcd_line_counter algo unchanged.**/
   mdp_ebi_rows_per_second = LCD_REFRESH_EBI * LCD_DISPLAY_LINES;
-
+  #ifdef MDP_SW_VSYNC  
   gpio_tlmm_config(MDP_GPIO_BLANKING_SIGNAL_INPUT); //configure gpio as input signal
-  
+  #endif
 #else /*FEATURE_MDDI*/
 #error code not present
 #endif /* FEATURE_MDDI */
@@ -7238,13 +7373,15 @@ int mdp_drv_init(void)
 #endif /* FEATURE_CLKREGIM_DEVMAN */
 
 #ifndef FEATURE_MDDI
-
+#ifdef MDP_SW_VSYNC  
 (void) gpio_int_set_detect(MDP_GPIO_BLANKING_SIGNAL, DETECT_LEVEL);
-
+#endif
 #endif /*FEATURE_MDDI*/
   mdp_vsync_resync_time= VSYNC_RESYNC_TIME_IN_MS;
   mdp_drv_initialized = TRUE;
+  #ifndef MDP_SYS_VSYNC_OFF
   mdp_vsync_enabled = TRUE;
+  #endif
   }
   return MDP_SUCCESSFUL;
 }
@@ -7395,7 +7532,7 @@ uint32 mdp_get_lcd_line_counter()
 
 #endif /*FEATURE_MDDI*/
 
-
+#ifdef MDP_SW_VSYNC
 /*===========================================================================
 
 FUNCTION mdp_get_vsync_wait_time()
@@ -7601,8 +7738,84 @@ static uint32 mdp_get_vsync_wait_time(MDP_CWIN cwin)
 
 
 #endif /****#ifndef FEATURE_MDDI****/
+#endif /*MDP_SW_VSYNC*/
+#ifdef MDP_HW_VSYNC
+/*===========================================================================
 
+FUNCTION mdp_modify_vsync_script()
 
+DESCRIPTION
+  Modify the vsync script for the next update.  This should consist of 
+  determining to values to start before/after.
+
+DEPENDENCIES
+  Directly access the global variable MDP_DISP_VSYNC_SCR.
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+static void mdp_modify_vsync_script(MDP_CWIN cwin)
+{
+  int upper_boundary, lower_boundary, vsync_cnt;
+  boolean outside_threshold;
+
+  upper_boundary = cwin.y1;
+
+  // upper_boundary needs to be at least PLH-1 
+  // in order to satisfy WAIT_LINE_GTE(upper_boundary)
+  if (upper_boundary < (_primary_lcd.disp_height - 1))
+  {
+    lower_boundary = upper_boundary - _primary_lcd.disp_height + 2;
+    lower_boundary = (lower_boundary >= 0)? 
+                     lower_boundary:_primary_lcd.disp_height + lower_boundary;
+
+    vsync_cnt = HWIO_MDP_SYNC_STATUS_INM(HWIO_MDP_SYNC_STATUS_LINE_COUNT_BMSK);
+
+    if (lower_boundary <= upper_boundary)
+    {
+      outside_threshold = 
+      ((vsync_cnt > upper_boundary) || (vsync_cnt < lower_boundary));
+    }
+    else
+    {
+      outside_threshold = 
+      ((vsync_cnt > upper_boundary) && (vsync_cnt < lower_boundary));
+    }
+
+    if (outside_threshold)
+    {
+      MDP_DISP_VSYNC_SCR[2] = NOP;      
+      MDP_DISP_VSYNC_SCR[3] = NOP;                            
+    }
+    else
+    {
+
+      if ((cwin.x2-cwin.x1+1) >= (_primary_lcd.disp_height/2))
+      {
+        if (lower_boundary <= upper_boundary)
+        {
+          MDP_DISP_VSYNC_SCR[2] = WAIT_LINE_GTE(upper_boundary);
+          MDP_DISP_VSYNC_SCR[3] = NOP;                              
+        }
+        else
+        {
+          MDP_DISP_VSYNC_SCR[2] = WAIT_LINE_LT(upper_boundary+1);
+          MDP_DISP_VSYNC_SCR[3] = WAIT_LINE_GTE(upper_boundary+1);            
+        }          
+      }
+      else
+      {
+        MDP_DISP_VSYNC_SCR[2] = WAIT_LINE_LT(upper_boundary+1);
+        MDP_DISP_VSYNC_SCR[3] = NOP;
+      }
+    }
+  }  // if (upper_boundary < (_primary_lcd.disp_height - 1))
+}  // mdp_modify_vsync_script(void)
+#endif
 /*===========================================================================
 
 FUNCTION mdp_set_ccs()

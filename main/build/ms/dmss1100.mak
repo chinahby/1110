@@ -634,7 +634,7 @@ ifeq ($(USES_REND),yes)
 endif
 
 ifeq ($(USES_KEYGUARD),yes)
-				OBJECTS += $(KEYGUARD_OBJS)
+	OBJECTS += $(KEYGUARD_OBJS)
 endif
 
 ifeq ($(USES_BREW_AEE_SRC),yes)

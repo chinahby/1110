@@ -59,7 +59,7 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
 {
    if(SDCC_BSP_VDD_ON == state)
    {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
       // ULC uses LCD_DRV_N to gate power to SDCC slot on Kip B0
       if ( qsc11x0_hw_rev.pmic_hw_version >= 3)
       {
@@ -92,7 +92,7 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
    }
    else if (SDCC_BSP_VDD_OFF == state)
    {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
       if ( qsc11x0_hw_rev.pmic_hw_version >= 3)
       {
          (void) pm_set_led_intensity(PM_LCD_LED, 0);

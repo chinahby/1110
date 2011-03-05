@@ -61,7 +61,7 @@ when      who        what, where, why
 #define QVGA_HEIGHT 320
 
 /* Max allowed display resolution */
-#define MAX_WB_WIDTH QVGA_WIDTH
+#define MAX_WB_WIDTH QVGA_HEIGHT
 #define MAX_WB_HEIGHT QVGA_HEIGHT
 
 /*=============================================================================

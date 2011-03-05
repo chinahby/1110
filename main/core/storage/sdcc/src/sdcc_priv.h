@@ -81,7 +81,7 @@ when         who     what, where, why
 /*************************************************************/
 /*                     DEFINES                               */
 /*************************************************************/
-#ifndef T_QSC1100
+#ifdef T_QSC1110
 #define SDCC_RETRY_CNT              1
 #else
 #define SDCC_RETRY_CNT              3
@@ -535,17 +535,17 @@ typedef struct {
     SDCC_HOST_STATE     host_state;
     uint16              rca[2];
     SDCC_STATUS         errno;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
     boolean             enable_dma;
 #else
     boolean             wide_bus;
 #endif
     uint32              block_mode;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
     rex_tcb_type       *sdcc_tcb;
 #endif
     uint32              status;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
     rex_timer_type      sdcc_dma_timer;
 #endif
     sdcc_mem_type       mem;
@@ -649,7 +649,7 @@ SDCC_STATUS       sdcc_process_interrupts(sdcc_cmd_type *sdcc_cmd);
 SDCC_STATUS       sdcc_poll_dma(void);
 uint32            sdcc_blk_in_bits(uint32 size);
 SDCC_CARD_TYPE    sdcc_find_sdio_card( void );
-#ifdef T_QSC1100
+#ifndef T_QSC1110
 #define GPIO_SDCC_OUT_ADDR      (HWIO_GPIO_OUT_0_ADDR)
 #define GPIO_SDCC_IN_ADDR       (HWIO_GPIO_IN_0_ADDR+3)
 #define GPIO_SDCC_OUT_MASK      0x3F000000

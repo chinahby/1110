@@ -55,9 +55,9 @@ when       who     what, where, why
 
 #ifndef 
 #ifdef FEATURE_JPEG_DECODER
+
 /* MSM6550/6275/6800 use decoder rev2 */
 #define FEATURE_JPEG_DECODER_REV2
-
 #endif
 
 

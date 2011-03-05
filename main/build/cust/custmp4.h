@@ -219,16 +219,16 @@ when       who     what, where, why
 #ifdef FEATURE_VIDEO_PLAYER_INTERFACE_REV_C
  #define FEATURE_VIDEO_PLAYER_INTERFACE_REV_C1
 #endif
-
+#ifdef T_QSC1110
 /* Enable MDP support */
-//#define FEATURE_QTV_MDP
+#define FEATURE_QTV_MDP
 
 /* Enable MDP transformations */
-//#define FEATURE_QTV_MDP_TRANSFORMATIONS
+#define FEATURE_QTV_MDP_TRANSFORMATIONS
 
 /* Ascaling */
-//#define FEATURE_QTV_MDP_ASCALE
-
+#define FEATURE_QTV_MDP_ASCALE
+#endif
 #if (defined T_QSC6065) || (defined T_QSC6075) || (defined T_QSC6085) || (defined T_QSC1100) 
 #ifdef BOOT_MODE_NAND
 
@@ -273,7 +273,7 @@ when       who     what, where, why
 #define FEATURE_QTV_STATIC_DLAGENT_TASK
 #define FEATURE_QTV_STATIC_DLDSPSVC_TASK
 #define FEATURE_QTV_DECODER_INVALIDATE_CACHE
-// YY Modify: #define FEATURE_QTV_OEM_BUFFER_MGR
+
 #endif /* CUSTMP4_H */
 
 

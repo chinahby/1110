@@ -271,9 +271,11 @@ enum
   IOCTL_DISP_CAPTURE_SCREEN,
 #endif
 #if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
+#ifndef T_QSC1110
   IOCTL_DISP_LOCK_SCR,
   IOCTL_DISP_UPDATE_LOCK_YUV,
   IOCTL_DISP_UPDATE_LOCK,
+#endif
 #endif
   IOCTL_DISP_OFF,
   IOCTL_DISP_ON
@@ -306,6 +308,7 @@ typedef struct
 } disp_cls_type;
 
 #if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
+#ifndef T_QSC1110
 typedef struct
 {
   word start_row;
@@ -313,6 +316,7 @@ typedef struct
   word start_column;
   word num_column;
 } disp_lock_type;
+#endif
 #endif
 extern rex_crit_sect_type disp_crit_sect;
 
@@ -784,6 +788,7 @@ void disp_set_torch(void);
 void disp_clear_torch(void);
 #endif
 #if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
+#ifndef T_QSC1110
 void disp_update_lock
 (
   /* The buffer pointer point to the first byte of the whole buffer.
@@ -811,6 +816,7 @@ void disp_lock_screen
   word start_column,
   word num_column
 );
+#endif
 #endif
 
 #ifdef __cplusplus

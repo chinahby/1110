@@ -43,14 +43,21 @@
 
 ============================================================================*/
 typedef struct{
+    boolean disp_w_h_swap;
     void   (*disp_ic_init)(void);
     void   (*disp_ic_setwindow)(uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col);
     void   (*disp_ic_bitblt)(const void *src_ptr, dword copy_count);
     void   (*disp_ic_set)(uint32 src, dword copy_count);
     void   (*disp_ic_sleep)(boolean bin);
     void   (*disp_ic_rot)(uint16 degree);
-#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
+#ifdef FEATURE_MDP
+    uint8  (*disp_ic_mdp_getformat)(void);
+    uint16 (*disp_ic_mdp_getscr)(uint32 **ppscr);
+    void   (*disp_ic_mdp_scrupdate)(uint32 *scr, uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col);
+#endif
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN))
     void   (*disp_ic_yuv420)(const byte *src_ptr, word src_w, word src_h, word dst_w, word dst_h);
+#endif
 #endif
 }disp_drv_ic_type;
 
@@ -61,27 +68,44 @@ typedef struct
     boolean     disp_initialized;
     boolean     display_on;
     boolean     disp_powered_up;
+#ifndef T_QSC1110
     word        lock_row_start;
     word        lock_row_num;
     word        lock_col_start;
     word        lock_col_num;
+#endif
 } disp_drv_state_type;
 
-#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
+#ifdef FEATURE_MDP
 #define DISP_IC_INIT_TBL(p) \
-    p->disp_ic_init       = disp_ic_init; \
-    p->disp_ic_setwindow  = disp_ic_setwindow; \
-    p->disp_ic_bitblt     = disp_ic_bitblt; \
-    p->disp_ic_set        = disp_ic_set; \
-    p->disp_ic_sleep      = disp_ic_sleep; \
-    p->disp_ic_rot        = disp_ic_rot; \
-    p->disp_ic_yuv420     = disp_ic_yuv420
+    p->disp_w_h_swap        = FALSE; \
+    p->disp_ic_init         = disp_ic_init; \
+    p->disp_ic_setwindow    = disp_ic_setwindow; \
+    p->disp_ic_bitblt       = disp_ic_bitblt; \
+    p->disp_ic_set          = disp_ic_set; \
+    p->disp_ic_sleep        = disp_ic_sleep; \
+    p->disp_ic_rot          = disp_ic_rot; \
+    p->disp_ic_mdp_getformat= disp_ic_mdp_getformat; \
+    p->disp_ic_mdp_getscr   = disp_ic_mdp_getscr; \
+    p->disp_ic_mdp_scrupdate= disp_ic_mdp_scrupdate
+#elif (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
+#define DISP_IC_INIT_TBL(p) \
+    p->disp_w_h_swap        = FALSE; \
+    p->disp_ic_init         = disp_ic_init; \
+    p->disp_ic_setwindow    = disp_ic_setwindow; \
+    p->disp_ic_bitblt       = disp_ic_bitblt; \
+    p->disp_ic_set          = disp_ic_set; \
+    p->disp_ic_sleep        = disp_ic_sleep; \
+    p->disp_ic_rot          = disp_ic_rot; \
+    p->disp_ic_yuv420       = disp_ic_yuv420
 #else
 #define DISP_IC_INIT_TBL(p) \
-    p->disp_ic_init       = disp_ic_init; \
-    p->disp_ic_setwindow  = disp_ic_setwindow; \
-    p->disp_ic_bitblt     = disp_ic_bitblt; \
-    p->disp_ic_set        = disp_ic_set; \
-    p->disp_ic_sleep      = disp_ic_sleep
+    p->disp_w_h_swap        = FALSE; \
+    p->disp_ic_init         = disp_ic_init; \
+    p->disp_ic_setwindow    = disp_ic_setwindow; \
+    p->disp_ic_bitblt       = disp_ic_bitblt; \
+    p->disp_ic_set          = disp_ic_set; \
+    p->disp_ic_sleep        = disp_ic_sleep; \
+    p->disp_ic_rot          = disp_ic_rot
 #endif
 #endif

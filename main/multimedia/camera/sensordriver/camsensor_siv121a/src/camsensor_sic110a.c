@@ -15,8 +15,9 @@
     TYPE DEFINITIONS 
 ============================================================================*/
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_62
+#ifndef T_QSC1110
 #define SIC110A_OUTFORMAT_RGB565
-
+#endif
 // sensor's chip ID and version
 #define SIC110A_SENSOR_ID                   (0x0D)
 #define SIC110A_SENSOR_VERSION              (0x02)
@@ -41,7 +42,7 @@
     LOCAL Variables 
 ============================================================================*/
 static camera_effect_type   camsensor_sic110a_effect             = CAMERA_EFFECT_OFF;
-static char                 camsensor_sic110a_sensor_name[32]    = "SIC110A 0.3MP RGB565\0\0\0\0\0\0\0";
+static char                 camsensor_sic110a_sensor_name[32]    = "SIC110A 0.1MP RGB565\0\0\0\0\0\0\0";
 static const char           camsensor_sic110a_sensor_suffix[]    = "SIC110A";
 
 /*============================================================================
@@ -136,6 +137,7 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
 
 static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 {
+#ifndef T_QSC1110
     uint16 x,y;
     
     if(dx > CAMSENSOR_SIC110A_FULL_SIZE_WIDTH)
@@ -152,7 +154,7 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
     y = (CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-dy)>>1;
 
     dy = CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-y;
-    
+#endif
     //Sensor Block Setting  ###Don't Change###
     sic110a_i2c_write_byte(0x00, 0x00); 
     sic110a_i2c_write_byte(0x04, 0x00); 
@@ -374,19 +376,20 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
     
     sic110a_i2c_write_byte(0x92, 0x20); 
     sic110a_i2c_write_byte(0x93, 0x48); 
-    
+#ifndef T_QSC1110
     //Windowing
     sic110a_i2c_write_byte(0xA0, (byte)((x>>8)<<6)|((dx>>8)<<4)|((y>>8)<<3)|((dy>>8)<<2));
     sic110a_i2c_write_byte(0xA1, (byte)x); 
     sic110a_i2c_write_byte(0xA2, (byte)dx); 
     sic110a_i2c_write_byte(0xA3, (byte)y); 
     sic110a_i2c_write_byte(0xA4, (byte)dy); 
-    //sic110a_i2c_write_byte(0xA0, 0x00);
-    //sic110a_i2c_write_byte(0xA1, 0x00); 
-    //sic110a_i2c_write_byte(0xA2, 0xb0);  //0xa0
-    //sic110a_i2c_write_byte(0xA3, 0x00); 
-    //sic110a_i2c_write_byte(0xA4, 0x90);  //0x80
-    
+#else
+    sic110a_i2c_write_byte(0xA0, 0x00);
+    sic110a_i2c_write_byte(0xA1, 0x00); 
+    sic110a_i2c_write_byte(0xA2, 0xb0);  //0xa0
+    sic110a_i2c_write_byte(0xA3, 0x00); 
+    sic110a_i2c_write_byte(0xA4, 0x90);  //0x80
+#endif
     //BLC value gain
     sic110a_i2c_write_byte(0xA8, 0x80); 
     sic110a_i2c_write_byte(0xA9, 0x80); 

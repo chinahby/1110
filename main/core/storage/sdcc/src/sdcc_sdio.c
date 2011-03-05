@@ -158,7 +158,7 @@ sdcc_find_sdio_card( void )
   sdcc_config_clk(SDCC_IDENTIFICATION_MODE,
                   SDCC_CARD_UNKNOWN);
   
-#ifndef T_QSC1100
+#ifdef T_QSC1110
   if(sdio_card == SDIO_ATHEROS_MANFID)
   {
     sdcc_mdelay(SDCC_SDIO_WAIT_ATHEROS_CARD_RAMP_UP_TIME_MS);
@@ -242,7 +242,7 @@ sdcc_find_sdio_card( void )
   }
   return card_type;
 }/* sdcc_find_sdio_card */
-#ifndef T_QSC1100
+#ifdef T_QSC1110
 /******************************************************************************
 * Name: sdio_pre_init
 *

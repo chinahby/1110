@@ -549,6 +549,7 @@ typedef union {
 ** MISC defines
 ** ----------------------------------------------------------------------- */
 #define EXCEPTION_DISPLAY_HOLD_SEC 4
+
 extern void dload_entry( void );
 void boot_record_err_fatal_info(
   word       line,

@@ -100,10 +100,10 @@ when       who     what, where, why
 #if defined FEATURE_WHITE_LED_FLASH || defined FEATURE_STROBE_FLASH
 #define ANY_FLASH
 #endif /* FEATURE_WHITE_LED_FLASH || FEATURE_STROBE_FLASH */
-
+#ifdef T_QSC1110
 /* 5x5 ASF */
 //#define FEATURE_CAMERA_5x5_ASF
-
+#endif
 /* Bayer Vignette Correction */
 //#define FEATURE_CAMERA_BVCM
 
@@ -148,26 +148,26 @@ when       who     what, where, why
 
 /* 6260, 6255A, 6245, SC2X does not have MDDI */
 #define CAMERA_NO_MDDI
-
+#ifdef T_QSC1110
 /* Enable Best Shot Feature */
-//#define FEATURE_CAMERA_BESTSHOT_MODE
+#define FEATURE_CAMERA_BESTSHOT_MODE
 
 /* Enabling UI support for Hand Jitter */
-//#define FEATURE_CAMERA_HJR
+#define FEATURE_CAMERA_HJR
 
 /*Added support for DCVS for SC2X*/
-//#define FEATURE_CAMERA_REGISTER_CLOCK_RESOURCE_III
+#define FEATURE_CAMERA_REGISTER_CLOCK_RESOURCE_III
 
-//#define FEATURE_CAMERA_LCD_DIRECT_MODE
+#define FEATURE_CAMERA_LCD_DIRECT_MODE
 /*MDP Related */
 #ifdef FEATURE_CAMERA_LCD_DIRECT_MODE
   #ifndef FEATURE_MDP
     #undef FEATURE_CAMERA_LCD_DIRECT_MODE
   #endif /* FEATURE_MDP */
 #endif /* FEATURE_CAMERA_LCD_DIRECT_MODE */
-//#define FEATURE_CAMERA_YCBCR_ONLY
+#define FEATURE_CAMERA_YCBCR_ONLY
 
-#ifndef CUST_EDITION
+
 #define FEATURE_CAMERA_MOBICAT
 #define FEATURE_CAMERA_MOBICAT_CAMERA_CONFIG_H
 #endif
@@ -184,10 +184,12 @@ when       who     what, where, why
 #define CAMERA_USES_LIBSTD
 /* SC2X related */
 //#define CAMERA_USE_PMIC_TO_POWER_SENSOR
-//#define FEATURE_CAMERA_VFE_SNAPSHOT_YCBCR420
+#ifdef T_QSC1110
+#define FEATURE_CAMERA_VFE_SNAPSHOT_YCBCR420
+#endif
 //#define CAMERA_USES_CAMIF_PAD
 //#define CAMERA_THUMBNAIL_SIZE_QCIF
-#ifndef T_QSC1100
+#ifdef T_QSC1110
 #define FEATURE_CAMERA_USE_STANDALONE_DOWNSIZER
 #define FEATURE_CAMIF_INTERNAL_TEST
 #define FEATURE_CAMERA_ENCODE_YCBCR

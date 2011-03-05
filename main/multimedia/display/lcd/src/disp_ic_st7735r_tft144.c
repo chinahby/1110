@@ -4,6 +4,81 @@
 
 #include "disp_ic_generic.h"
 
+#ifdef FEATURE_MDP
+#include "mdp_drv.h"
+#include "mdp_hw.h"
+
+//For lcd QVGA ST7735R driver
+#define DISP_LCD_18BPP(x)                 ((uint16)(x))
+#define DISP_LCD_HORZ_RAM_ADDR_POS_1_ADDR 0x2A // Register to set col start
+#define DISP_LCD_VERT_RAM_ADDR_POS_1_ADDR 0x2B // Register to set row start
+#define DISP_LCD_CMD_RAMWR                0x2C // RAM Data Write
+
+#ifdef __GNUC__
+static uint32 MDP_DISP_SCR_ST7735R[MDP_LCD_SCR_SIZE][MDP_LCD_SCR_LEN]
+__attribute__ ((aligned (16))) =
+#else
+__align(16) static uint32 MDP_DISP_SCR_ST7735R[MDP_LCD_SCR_SIZE][MDP_LCD_SCR_LEN] =
+#endif
+{
+    NOP,               //0
+    NOP,               //1
+    SET_LCD_CNTL_ADDR, //2 set LCD command port address
+    DISP_CMD_PORT2,    //3
+    
+    SET_LCD_DATA_ADDR, //4 set LCD data port address
+    DISP_DATA_PORT2,   //5
+    
+    SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_HORZ_RAM_ADDR_POS_1_ADDR)),//6
+    NULL,              //7
+    NULL,              //8
+    NULL,              //9
+    NULL,              //10
+    SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_VERT_RAM_ADDR_POS_1_ADDR)),//11
+    NULL,              //12
+    NULL,              //13
+    NULL,              //14
+    NULL,              //15
+    SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_CMD_RAMWR)),//16
+    
+    RETURN            //17
+};
+
+static uint8 disp_ic_mdp_getformat(void)
+{
+    return 8; //8 16BPP 0 //18BPP
+}
+
+static uint16 disp_ic_mdp_getscr(uint32 **ppscr)
+{
+    if(ppscr)    
+    {
+        *ppscr = &MDP_DISP_SCR_ST7735R[0][0];
+    }
+    return MDP_LCD_SCR_SIZE;
+}
+
+static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
+{
+    if ( (start_col < 128) && (start_row < 128) && (end_col   < 128)   && (end_row   < 128) )
+    {
+        start_col += 2;
+        start_row += 3;
+        end_col   += 2;
+        end_row   += 3;        
+    }
+    
+    scr[7] = SEND_LCD_DATA(DISP_LCD_18BPP((start_col)>>8));
+    scr[8] = SEND_LCD_DATA(DISP_LCD_18BPP(start_col));
+    scr[9] = SEND_LCD_DATA(DISP_LCD_18BPP((end_col)>>8));
+    scr[10] = SEND_LCD_DATA(DISP_LCD_18BPP(end_col));
+    scr[12] = SEND_LCD_DATA(DISP_LCD_18BPP((start_row)>>8));
+    scr[13] = SEND_LCD_DATA(DISP_LCD_18BPP(start_row));
+    scr[14] = SEND_LCD_DATA(DISP_LCD_18BPP((end_row)>>8));
+    scr[15] = SEND_LCD_DATA(DISP_LCD_18BPP(end_row));
+}
+#endif
+
 static void disp_ic_init(void)
 {
     //--------------------------------End ST7715R Reset Sequence --------------------------------------//

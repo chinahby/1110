@@ -48,8 +48,9 @@
 #include "vfe.h"
 #include "camsensor.h"
 #include "sleep.h"
+#ifdef CAMERA_USES_SOFTDSP
 #include "softdsp.h"
-
+#endif
 /*============================================================================
 *                         STRUCTURE DEFINITIONS
 ============================================================================*/

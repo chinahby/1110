@@ -4,6 +4,78 @@
 
 #include "disp_ic_generic.h"
 
+#ifdef FEATURE_MDP
+#include "mdp_drv.h"
+#include "mdp_hw.h"
+
+//For lcd QVGA ILI9225 driver
+#define DISP_LCD_18BPP(x)                 ((uint16)(x))
+#define DISP_LCD_HORZ_RAM_ADDR_POS_1_ADDR 0x36 // Register to set col start
+#define DISP_LCD_HORZ_RAM_ADDR_POS_2_ADDR 0x37 // Register to set col end
+#define DISP_LCD_VERT_RAM_ADDR_POS_1_ADDR 0x38 // Register to set row start
+#define DISP_LCD_VERT_RAM_ADDR_POS_2_ADDR 0x39 // Register to set row end
+#define DISP_LCD_RAM_ADDR_SET_1_ADDR      0x20 // Start address - col
+#define DISP_LCD_RAM_ADDR_SET_2_ADDR      0x21 // Start address - row
+#define DISP_LCD_CMD_RAMWR                0x22 // RAM Data Write
+
+#ifdef __GNUC__
+static uint32 MDP_DISP_SCR_ILI9225[MDP_LCD_SCR_SIZE][MDP_LCD_SCR_LEN]
+__attribute__ ((aligned (16))) =
+#else
+__align(16) static uint32 MDP_DISP_SCR_ILI9225[MDP_LCD_SCR_SIZE][MDP_LCD_SCR_LEN] =
+#endif
+{
+  NOP,               //0
+  NOP,               //1
+  SET_LCD_CNTL_ADDR, //2 set LCD command port address
+  DISP_CMD_PORT2,    //3
+
+  SET_LCD_DATA_ADDR, //4 set LCD data port address
+  DISP_DATA_PORT2,   //5
+
+  SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_HORZ_RAM_ADDR_POS_1_ADDR)),//6
+  NULL,             //7
+  SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_HORZ_RAM_ADDR_POS_2_ADDR)),//8
+  NULL,             //9
+  SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_VERT_RAM_ADDR_POS_1_ADDR)),//10
+  NULL,             //11
+  SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_VERT_RAM_ADDR_POS_2_ADDR)),//12
+  NULL,             //13
+  SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_RAM_ADDR_SET_1_ADDR)),//14
+  NULL,             //15
+  SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_RAM_ADDR_SET_2_ADDR)),//16
+  NULL,             //17
+  SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_CMD_RAMWR)),//18
+
+  RETURN            //19
+};
+
+static uint8 disp_ic_mdp_getformat(void)
+{
+    return 8; //8 16BPP 0 //18BPP
+}
+
+static uint16 disp_ic_mdp_getscr(uint32 **ppscr)
+{
+    if(ppscr)    
+    {
+        *ppscr = &MDP_DISP_SCR_ILI9225[0][0];
+    }
+    return MDP_LCD_SCR_SIZE;
+}
+
+static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
+{
+    scr[7] = SEND_LCD_DATA(DISP_LCD_18BPP(end_col));
+    scr[9] = SEND_LCD_DATA(DISP_LCD_18BPP(start_col));
+    scr[11] = SEND_LCD_DATA(DISP_LCD_18BPP(end_row));
+    scr[13] = SEND_LCD_DATA(DISP_LCD_18BPP(start_row));
+    
+    scr[15] = SEND_LCD_DATA(DISP_LCD_18BPP(start_col));
+    scr[17] = SEND_LCD_DATA(DISP_LCD_18BPP(start_row));
+}
+#endif
+
 static void disp_ic_init(void)
 {
     LCD_WRITE_CMD(0x28); LCD_WRITE_DATA16(0x00CE);

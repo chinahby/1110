@@ -2858,7 +2858,7 @@ SIDE EFFECTS
 
 ===========================================================================*/
 #if defined (T_MSM6275) || defined (T_MSM6800)
-#if defined(T_QSC1100)
+#ifndef T_QSC1110
 uint32 camsensor_config_camclk_po (uint32 freq)
 {
   /* GPIO - 10 */
@@ -2950,7 +2950,7 @@ uint32 camsensor_config_camclk_po (uint32 freq)
   /* Return the average frequency */
   return avg_camclk_freq;
 } /* camsensor_config_camclk_po */
-#endif // T_QSC1100
+#endif //#ifndef T_QSC1110
 #else  /* MSM6550 */
 
 /*===========================================================================
@@ -4020,7 +4020,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-#if defined(T_QSC1100)
+#ifndef T_QSC1110
 void camsensor_unconfig_camclk_po(void)
 {
 #ifndef FEATURE_DSP
@@ -5210,7 +5210,7 @@ SIDE EFFECTS
 void camsensor_config_sensor_gpios_clks ()
 {
 #ifndef FEATURE_DSP
-#if defined(T_QSC1100)
+#ifndef T_QSC1110
   CAMERA_CONFIG_GPIO (GPIO_INPUT_51);
   CAMERA_CONFIG_GPIO (GPIO_INPUT_52);
   CAMERA_CONFIG_GPIO (GPIO_INPUT_42);
@@ -5325,7 +5325,7 @@ void camsensor_unconfig_sensor_gpios_clks ()
   CAMERA_CONFIG_GPIO (CAMIF_DATA_5_DISABLE);
   CAMERA_CONFIG_GPIO (CAMIF_DATA_6_DISABLE);
   CAMERA_CONFIG_GPIO (CAMIF_DATA_7_DISABLE);
-#if !defined(T_QSC1100)
+#ifdef T_QSC1110
  #ifndef CAMERA_8_BIT_INTERFACE
   CAMERA_CONFIG_GPIO (CAMIF_DATA_8_DISABLE);
   CAMERA_CONFIG_GPIO (CAMIF_DATA_9_DISABLE);

@@ -358,6 +358,22 @@ static int disp_drv_powerdown(void)
     return 0;
 } /* disp_drv_powerdown() */
 
+#ifdef FEATURE_MDP
+uint8 disp_drv_mdp_getformat(void)
+{
+    return disp_drv_ic.disp_ic_mdp_getformat();
+}
+
+uint16 disp_drv_mdp_getscr(uint32 **ppscr)
+{
+    return disp_drv_ic.disp_ic_mdp_getscr(ppscr);
+}
+
+void disp_drv_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
+{
+    disp_drv_ic.disp_ic_mdp_scrupdate(scr, start_row, start_col, end_row, end_col);
+}
+#endif
 
 /*===========================================================================
 
@@ -398,7 +414,7 @@ int disp_drv_init(void)
     disp_drv_info.backlight_min      = DISP_DRV_MIN_BACKLIGHT;
     disp_drv_info.backlight_max      = DISP_DRV_MAX_BACKLIGHT;
     disp_drv_info.backlight_default  = DISP_DRV_DEFAULT_BACKLIGHT;
-    disp_drv_info.lcd_type           = ZGD_TFT128X160;
+    disp_drv_info.lcd_type           = MDP_LCD;
     disp_drv_info.phys_width         = DISP_DRV_WIDTH;    
     disp_drv_info.phys_height        = DISP_DRV_HEIGHT; 
 
@@ -421,6 +437,14 @@ int disp_drv_init(void)
         
         i++;
     }while(1);
+    
+    if(disp_drv_ic.disp_w_h_swap)
+    {
+        disp_drv_info.disp_width         = DISP_DRV_HEIGHT;
+        disp_drv_info.disp_height        = DISP_DRV_WIDTH;
+        disp_drv_info.phys_width         = DISP_DRV_HEIGHT;    
+        disp_drv_info.phys_height        = DISP_DRV_WIDTH; 
+    }
     
     disp_drv_powerup();
     
@@ -513,7 +537,7 @@ static void disp_drv_update
         (!(((uint32)buf_ptr) & 0x3)))
     {
         rex_enter_crit_sect(&disp_drv_crit_sect);    
-#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
         if(disp_drv_state.lock_row_num == 0 || disp_drv_state.lock_col_num == 0)
         {
 #endif
@@ -546,7 +570,7 @@ static void disp_drv_update
                 src_ptr += src_width;
             }
         }
-#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
         }
         else
         {
@@ -619,7 +643,7 @@ static void disp_drv_update
     }  
 } /* disp_drv_update() */
 
-#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
 static void disp_drv_lock_screen(word start_row, word start_col, word num_row, word num_col)
 {
     if (disp_drv_state.disp_initialized)
@@ -844,7 +868,7 @@ static int disp_drv_ioctl ( int cmd, void *arg )
     disp_update_type *disp_update_cmd;
 
     switch (cmd) {
-#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
     case IOCTL_DISP_UPDATE_LOCK:
         disp_update_cmd = (disp_update_type*)arg;
         /* bitwise OR all int16 together. If the result is

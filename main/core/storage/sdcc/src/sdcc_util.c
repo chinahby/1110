@@ -178,7 +178,7 @@ sdcc_data_type sdcc_pdata;
 static sleep_okts_handle sdcc_sleep_okts_handle;
 static boolean sleep_handle_register=FALSE;
 #endif
-#ifndef T_QSC1100
+#ifdef T_QSC1110
 /* Use for the generic signal */
 static uint32 sdcc_sigs =0;
 #endif
@@ -216,7 +216,7 @@ static void sdcc_decode_hc_csd(const uint32 *data, sdcc_csd_type *csd);
 ******************************************************************************/
 void sdcc_timer_cb(unsigned long sdcc_pdata_cb)
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    sdcc_data_type *sdcc_pdata = (sdcc_data_type *)sdcc_pdata_cb;
    sdcc_sigs |= SDCC_TIMER_TIMEOUT_SIG_VAL;
    (void) rex_set_sigs(sdcc_pdata->sdcc_tcb, SDCC_RW_COMPLETE_SIG);
@@ -326,7 +326,7 @@ sdcc_blk_in_bits(uint32 size)
 SDCC_STATUS
 sdcc_cmd_send_verify( void )
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
   uint32 t      = 0;
   uint32 status = 0;
 
@@ -395,7 +395,7 @@ sdcc_cmd_send_verify( void )
 void
 sdcc_config_dma( void )
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
   HWIO_OUTM(MCI_DMA_CONFIG,
             HWIO_FMSK(MCI_DMA_CONFIG, ENDIAN_CHANGE) |
             HWIO_FMSK(MCI_DMA_CONFIG, ENDIAN_CHANGE),
@@ -423,7 +423,7 @@ sdcc_config_clk
   SDCC_CARD_TYPE   card_type
 )
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
 #ifdef FEATURE_SDCC_WLAN_CONFIG_API
   uint32 clk=0;
 #endif
@@ -558,7 +558,7 @@ sdcc_config_clk
   }
 
 #endif
-#endif //#ifndef T_QSC1100
+#endif //#ifdef T_QSC1110
 
 #ifdef  FEATURE_SDCC_VOTE_AGAINST_SLEEP
   /* Get the sleep handle for to vote against sleep */
@@ -636,7 +636,7 @@ sdcc_config_rca( void )
 SDCC_STATUS
 sdcc_get_resp(sdcc_cmd_type *sdcc_cmd)
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
   uint32        count  = 0;
   uint32        i;
   uint32       *resp = NULL;
@@ -648,7 +648,7 @@ sdcc_get_resp(sdcc_cmd_type *sdcc_cmd)
   /* loading command responses */    
   if (sdcc_cmd->resp_type)
   {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
     count = ( SDCC_RESP_LONG == sdcc_cmd->resp_type ) ? 4 : 1;
     resp  = sdcc_cmd->resp;
     
@@ -693,7 +693,7 @@ sdcc_get_resp(sdcc_cmd_type *sdcc_cmd)
 SDCC_STATUS
 sdcc_poll_status(sdcc_cmd_type *sdcc_cmd)
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
   uint32        i      = 0;
   uint32        status = 0;
   SDCC_STATUS   rc     = SDCC_ERR_UNKNOWN;
@@ -789,7 +789,7 @@ sdcc_poll_status(sdcc_cmd_type *sdcc_cmd)
 SDCC_STATUS
 sdcc_poll_dma( void )
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
   SDCC_STATUS      rc = SDCC_ERR_UNKNOWN;
   volatile uint32  status;
   int              t = 0;
@@ -859,7 +859,7 @@ sdcc_setup_data_xfer
   /* set data timeout */
   timeout = (SDCC_DATA_READ == direction) ? MCI_READ_TIMEOUT :
                                             MCI_WRITE_TIMEOUT;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
 #ifdef FEATURE_6275_COMPILE
     HWIO_OUT(MCI_DATA_TIMER, clk_hclk_freq_khz * timeout );
 #else    
@@ -875,18 +875,18 @@ sdcc_setup_data_xfer
   if(SDCC_SDIO_BYTE_MODE == sdcc_pdata.block_mode ||
      SDCC_MEM_BYTE_MODE == sdcc_pdata.block_mode)
   {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
     sdcc_pdata.enable_dma = FALSE;
 #endif
     /* set data length */
     data_length = units;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
     HWIO_OUT(MCI_DATA_LENGTH, data_length);
 #endif
   }
   else
   {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
     sdcc_pdata.enable_dma = TRUE;
 #endif
     if(SDCC_CARD_SDIO == sdcc_pdata.card_type)
@@ -901,7 +901,7 @@ sdcc_setup_data_xfer
     
     /* set data length */
     data_length = units * blksz;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
     HWIO_OUT(MCI_DATA_LENGTH, data_length);
 
 // Targets such as ULC have data cache-enabled MMU. The data 
@@ -919,7 +919,7 @@ sdcc_setup_data_xfer
 #endif
      /* only set TCXO to high if data_length is non-zero */
      sdcc_set_tcxo_clk(TRUE);
-#ifndef T_QSC1100
+#ifdef T_QSC1110
      /************************************************************************
       *
       *       Setup the TCB for rex signal
@@ -985,7 +985,7 @@ sdcc_command(sdcc_cmd_type   *sdcc_cmd)
        finished sending command */
   if( SD_CMD0_GO_IDLE_STATE == sdcc_cmd->cmd )
   {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
     rc =  sdcc_cmd_send_verify();
 #else
     rc = sdcc_cmd->status;
@@ -1014,7 +1014,7 @@ sdcc_command(sdcc_cmd_type   *sdcc_cmd)
       rc = sdcc_get_resp(sdcc_cmd);
     }
   }
-#ifndef T_QSC1100
+#ifdef T_QSC1110
   /***********************************************************************
    *
    *     wait for the device is done
@@ -1046,7 +1046,7 @@ sdcc_command(sdcc_cmd_type   *sdcc_cmd)
 ****************************************************************************/
 void sdcc_send_cmd(sdcc_cmd_type *sdcc_cmd)
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
   uint32   command  = 0;
  
   
@@ -1231,7 +1231,7 @@ SDCC_CARD_STATUS sdcc_send_status( void )
 ****************************************************************************/
 SDCC_STATUS sdcc_wait_prog_done( void )
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
   uint32               t      = 0;
 #endif
   volatile uint32      status = 0;
@@ -1239,7 +1239,7 @@ SDCC_STATUS sdcc_wait_prog_done( void )
   SDCC_CARD_STATUS     card_status = SDCC_CARD_IGNORE;
 
   /*--------------------------------------------------------------------*/
-#ifndef T_QSC1100
+#ifdef T_QSC1110
   while (t++ < SDCC_PROG_DONE_MAX  )
   {
     status = HWIO_IN(MCI_STATUS);
@@ -1321,7 +1321,7 @@ sdcc_find_card( void )
    /* lower the clock to < 400KHz for card identification */
    sdcc_config_clk(SDCC_IDENTIFICATION_MODE, SDCC_CARD_UNKNOWN);
    
-#ifdef T_QSC1100
+#ifndef T_QSC1110
    // output 74 clock
    sdcc_clock_out_slow(100);
 #endif
@@ -1331,8 +1331,9 @@ sdcc_find_card( void )
    sdcc_cmd.cmd_arg   = MCI_ARGU_NULL;
    sdcc_cmd.resp_type = SDCC_RESP_NONE;
    sdcc_cmd.prog_scan = 0;
+
    (void)sdcc_command(&sdcc_cmd);
-   
+
    /* card may not be in sync, make sure CMD8 response is received */
    for ( i = 0; i < SDCC_CMD8_RETRIES; i++ )
    {
@@ -1490,7 +1491,7 @@ sdcc_find_card( void )
 SDCC_STATUS
 sdcc_process_interrupts( sdcc_cmd_type *sdcc_cmd)
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    rex_sigs_type      sigs;
    SDCC_STATUS        rc = SDCC_NO_ERROR;
    rex_timer_type    *sdcc_timer_ptr;
@@ -1618,7 +1619,7 @@ sdcc_process_interrupts( sdcc_cmd_type *sdcc_cmd)
 void
 sdcc_enable_int( uint32 int_mask )
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
   uint32  reg_value = 0;
 
   /*
@@ -1669,7 +1670,7 @@ sdcc_enable_int( uint32 int_mask )
 void
 sdcc_disable_int( uint32 int_mask )
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    uint32  reg_value = 0;
 
    if(MCI_INT_MASK_SDIO_INTR == int_mask)
@@ -1719,7 +1720,7 @@ sdcc_disable_int( uint32 int_mask )
 void
 sdcc_isr(void)
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
   uint32 status;
      
   /*---------------------------------------------------------------------------*/
@@ -1771,7 +1772,7 @@ sdcc_isr(void)
 
 void sdio_isr()
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    uint32 status;
    status = HWIO_IN(MCI_STATUS);
    if(status & HWIO_MCI_STATUS_SDIO_INTR_BMSK)
@@ -1814,7 +1815,7 @@ sdcc_wait_card_ready(void)
           rc = SDCC_NO_ERROR;
           break;
       }
-#ifdef T_QSC1100
+#ifndef T_QSC1110
       sdcc_clock_out(256);
 #else
       sdcc_udelay(100);
@@ -2247,7 +2248,7 @@ SDCC_STATUS sdcc_read_fifo
    uint16     length
 )
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    volatile uint32 status = 0;
    SDCC_STATUS rc = SDCC_NO_ERROR;
    uint32 data_size = (uint32)length;
@@ -2401,7 +2402,7 @@ SDCC_STATUS sdcc_write_fifo
   uint16    length
 )
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
   volatile uint32  status;
   SDCC_STATUS      rc        = SDCC_NO_ERROR;
   uint32           i         = 0;
@@ -2591,14 +2592,14 @@ sdcc_do_transfer
    uint16             xfer_size
 )
 {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    uint8            data_ctrl = 0;
    uint32           blk_in_bits = 0;
 #endif
    SDCC_STATUS      status     = SDCC_NO_ERROR;
    SDCC_STATUS      status_complete = SDCC_NO_ERROR;
    uint16           length     = 0;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    boolean          use_dma    = FALSE;
 #endif
    uint32           isave      = 0;
@@ -2625,7 +2626,7 @@ sdcc_do_transfer
       return SDCC_ERR_UNKNOWN;
    }
 
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    if ( SDCC_MEM_BLK_MODE == sdcc_pdata.block_mode &&
         xfer_size > SDCC_MAX_NO_BLOCKS )
    {
@@ -2660,7 +2661,7 @@ sdcc_do_transfer
    data_ctrl |= SDCC_MCI_DIRECTION(xfer_flags);
 #endif
    INTLOCK_SAV(isave);
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    /* This register needs to be done before sending the command */
    /* on reads and after on writes. */
    if (SDCC_IS_READ_TRANSFER(xfer_flags))
@@ -2678,7 +2679,7 @@ sdcc_do_transfer
    {
       status = sdcc_command(xfer_cmd_ptr);
    }
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    /* This register needs to be done before sending the command */
    /* on reads and after on writes. */
    if (SDCC_IS_WRITE_TRANSFER(xfer_flags))
@@ -2692,7 +2693,7 @@ sdcc_do_transfer
    /* by reading or writing the FIFO registers directly */
    if (status == SDCC_NO_ERROR)
    {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
       if (use_dma)
       {
          status = sdcc_process_interrupts(xfer_cmd_ptr /*don't care*/);
@@ -2702,7 +2703,7 @@ sdcc_do_transfer
       {
          if (SDCC_IS_READ_TRANSFER(xfer_flags))
          {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
             status = sdcc_read_fifo(buff, length);
 #else
             status = sdcc_read_data(buff, length);
@@ -2710,7 +2711,7 @@ sdcc_do_transfer
          }
          else
          {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
             status = sdcc_write_fifo(buff, length);
 #else
             status = sdcc_write_data(buff, length);
@@ -3032,7 +3033,7 @@ boolean sdcc_silent_reinit()
 }
 /*lint -restore */
 
-#ifdef T_QSC1100
+#ifndef T_QSC1110
 #include "crc.h"
 
 #define SDCC_MIN_WAIT   1024

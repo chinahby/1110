@@ -193,7 +193,7 @@ sdcc_open(int16 driveno)
          rc = SDCC_NO_ERROR;
          break;
       }
-#ifndef T_QSC1100
+#ifdef T_QSC1110
       /* enable the clock for the SD mode*/
       HWIO_OUTM(MCI_CLK,
                 HWIO_FMSK(MCI_CLK, ENABLE)| HWIO_FMSK(MCI_CLK, PWRSAVE),
@@ -231,7 +231,7 @@ sdcc_open(int16 driveno)
  
       /* re-program the clock for data transfer */
       sdcc_config_clk(SDCC_DATA_TRANSFER_MODE, sdcc_pdata.card_type);
-#ifndef T_QSC1100
+#ifdef T_QSC1110
       HWIO_OUTM(MCI_CLK,
                 HWIO_FMSK(MCI_CLK, FLOW_ENA),
                 MCI_CLK_SET_FLOW);
@@ -252,7 +252,7 @@ sdcc_open(int16 driveno)
           close_drive = TRUE;
           break;
       }
-#ifndef T_QSC1100
+#ifdef T_QSC1110
       /* Enable the DMA interrupt */
       sdcc_enable_int(MCI_INT_MASK_DMA_DONE |
                       MCI_INT_MASK_PROG_DONE); 
@@ -320,7 +320,7 @@ uint16     n_sectors
 )
 {
 #ifndef FEATURE_DSP
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    uint8            data_ctrl   = 0;
 #endif
    sdcc_cmd_type    sdcc_cmd;
@@ -328,12 +328,12 @@ uint16     n_sectors
    SDCC_STATUS      rc_complete = SDCC_NO_ERROR;
    uint32           length      = 0;
    boolean          multi_block = FALSE;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    boolean          use_dma     = FALSE;
 #endif
    boolean          ret_status  = FALSE;
    uint8            sdcc_read_retry_cnt =0;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    uint32           blk_in_bits = 0;
 #endif
    (void)driveno;
@@ -374,7 +374,7 @@ SDCC_READ_RETRY:
          break;
       }
 
-#ifndef T_QSC1100
+#ifdef T_QSC1110
       /* turn on DMA only if the passed in address is dword aligned */
       if ((sdcc_pdata.enable_dma) && IS_ALIGNED(buff) && (n_sectors <= SDCC_MAX_NO_BLOCKS))
       {
@@ -427,7 +427,7 @@ SDCC_READ_RETRY:
       /* Wait for the sdcc read read */
       if (rc == SDCC_NO_ERROR)
       {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
          HWIO_OUT(MCI_DATA_CTL, data_ctrl);
 
          /* process read data */
@@ -530,20 +530,20 @@ sdcc_write
 )
 {
 #ifndef FEATURE_DSP
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    uint8            data_ctrl   = 0;
 #endif
    sdcc_cmd_type    sdcc_cmd;
    SDCC_STATUS      rc          = SDCC_NO_ERROR;
    SDCC_STATUS      rc_complete = SDCC_NO_ERROR;
    uint32           length      = 0;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    boolean          use_dma     = FALSE;
 #endif
    boolean          multi_block = FALSE;
    boolean          ret_status  = FALSE;
    uint8            sdcc_write_retry_cnt = 0;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
    uint32           blk_in_bits = 0;
 #endif
    (void)driveno;
@@ -623,7 +623,7 @@ SDCC_WRITE_RETRY:
 
       /* send out CMD25/CMD24 */
       rc = sdcc_command(&sdcc_cmd);
-#ifndef T_QSC1100
+#ifdef T_QSC1110
       /* not to turn on DMA in R1_V1 */
 #ifdef T_MSM6550
       if (!(HW_MSM6550_HAS_R1_V1))
@@ -652,7 +652,7 @@ SDCC_WRITE_RETRY:
       /* Turn on the DMA controller*/
       if (rc == SDCC_NO_ERROR)
       {
-#ifndef T_QSC1100
+#ifdef T_QSC1110
          HWIO_OUT(MCI_DATA_CTL, data_ctrl);
 
          /* process write data */
@@ -912,7 +912,7 @@ sdcc_init(void)
       sdcc_pdata.curr_sd_drv = 0;
       /* Turn on the SDCC clock */
       sdcc_config_clk(SDCC_INIT_MODE, SDCC_CARD_UNKNOWN);
-#ifndef T_QSC1100
+#ifdef T_QSC1110
       /* Re-configure the GPIO pins for SDCC */
 #ifdef FEATURE_6275_COMPILE
       gpio_config(SDCC_CLK);
@@ -947,17 +947,17 @@ sdcc_init(void)
          sdcc_pdata.rca[0] = 0;
          sdcc_pdata.rca[1] = 0;
          sdcc_pdata.errno = 0;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
          sdcc_pdata.enable_dma = 0;
 #else
          sdcc_pdata.wide_bus = 0;
 #endif
          sdcc_pdata.block_mode = 0;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
          sdcc_pdata.sdcc_tcb = 0;
 #endif
          sdcc_pdata.status = 0;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
          memset(&(sdcc_pdata.sdcc_dma_timer),0,sizeof(rex_timer_type));
 #endif
          memset(&(sdcc_pdata.mem),0,sizeof(sdcc_mem_type));
@@ -978,7 +978,7 @@ sdcc_init(void)
 
       /* configure the controller */
       sdcc_pdata.host_state  = SDCC_HOST_IDENT;
-#ifndef T_QSC1100
+#ifdef T_QSC1110
       if (sdio_card == SDIO_ATHEROS_MANFID)
       {
          sdcc_pdata.enable_dma  = 0;
@@ -989,7 +989,7 @@ sdcc_init(void)
       }
 #endif
       
-#ifndef T_QSC1100
+#ifdef T_QSC1110
       /* set the power mode to 'power on' */
       HWIO_OUTM(MCI_POWER,
                 HWIO_FMSK(MCI_POWER, CONTROL),
@@ -1069,7 +1069,7 @@ sdcc_close(int16 driveno)
          /* CMD7: de-select the card */
          (void) sdcc_select_card(0, FALSE);
       }
-#ifndef T_QSC1100
+#ifdef T_QSC1110
       /* turn off the controller CLK */
       HWIO_OUTM(MCI_POWER,
                 HWIO_FMSK(MCI_POWER, CONTROL),
@@ -1111,7 +1111,7 @@ sdcc_close(int16 driveno)
                 HWIO_FMSK(MCI_CLK, FLOW_ENA)|HWIO_FMSK(MCI_CLK, WIDEBUS),
                 MCI_POWER_CTRL_OFF); 
 #endif    
-#ifndef T_QSC1100
+#ifdef T_QSC1110
       /* disable the clock regime */
       CLK_REGIME_DISABLE(CLK_RGM_SDCC_MCLK_M);
       CLK_REGIME_DISABLE(CLK_RGM_SDCC_HCLK_M);

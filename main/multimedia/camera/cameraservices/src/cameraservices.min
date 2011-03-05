@@ -1,10 +1,13 @@
 #-------------------------------------------------------------------------------
 # CAMERASERVICES
 #-------------------------------------------------------------------------------
-
+ifneq ($(USES_QSC1110),yes)
+CAMERASERVICES_SOURCES=\
+        camera_svcs_softdsp.c
+else
 CAMERASERVICES_SOURCES=\
         camera_svcs.c
-      
+endif
         
        
 
