@@ -235,6 +235,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_ENHANCED_AAC_PLUS
 #endif
 
+#ifdef USES_CAMERA
+#include "custcamera.h"
+#define FEATURE_PNG_ENCODER
+#endif
 #include "custuim.h"
 #include "custcmx.h"
 #include "custavs.h"
@@ -261,10 +265,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_DRV_SDCC
 #include "Custsdcc.h"
 #endif
-#ifdef USES_CAMERA
-#include "custcamera.h"
-#define FEATURE_PNG_ENCODER
-#endif
+
 #ifndef USES_DS_1536
 #ifdef FEATURE_DS_MOBILE_IP
    #undef FEATURE_DS_MOBILE_IP

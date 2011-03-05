@@ -62,7 +62,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CLKREGIM_2X_MODE 
 #define FEATURE_AUDIO_CONFIGURATION_MINIMAL 
 //Gemsea Remove #define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
-#define FEATURE_IPL_NO_CAMERA
+//#define FEATURE_IPL_NO_CAMERA
+#define FEATURE_IIPL
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
 //#define FEATURE_AUDIO_EQUALIZER 
@@ -257,6 +258,13 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ENHANCED_AAC_PLUS
 #endif
 
+#ifdef USES_CAMERA
+#include "custcamera.h"
+//#include "custcamcorder.h"
+#include "custjpeg.h"
+//#define FEATURE_PNG_ENCODER
+#endif
+
 #include "custdisplay.h"
 #include "custuim.h"
 #include "custcmx.h"
@@ -289,12 +297,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_DRV_SDCC
 #include "Custsdcc.h"
 #endif
-#ifdef USES_CAMERA
-#include "custcamera.h"
-//#include "custcamcorder.h"
-//#include "custjpeg.h"
-#define FEATURE_PNG_ENCODER
-#endif
+
 
 #ifdef FEATURE_MEDIAPLAYER_TEST_AUTOMATION
    #undef FEATURE_MEDIAPLAYER_TEST_AUTOMATION
@@ -310,6 +313,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 #ifdef FEATURE_SAF
    #undef FEATURE_SAF
+#endif
+#ifdef FEATURE_JPEG_ENCODER
+   #undef FEATURE_PNG_ENCODER
 #endif
 #ifdef FEATURE_PNG_DECODER
    #undef FEATURE_PNG_DECODER
