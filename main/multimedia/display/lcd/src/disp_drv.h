@@ -55,9 +55,8 @@ typedef struct{
     uint16 (*disp_ic_mdp_getscr)(uint32 **ppscr);
     void   (*disp_ic_mdp_scrupdate)(uint32 *scr, uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col);
 #endif
-#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN))
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
     void   (*disp_ic_yuv420)(const byte *src_ptr, word src_w, word src_h, word dst_w, word dst_h);
-#endif
 #endif
 }disp_drv_ic_type;
 
@@ -68,7 +67,7 @@ typedef struct
     boolean     disp_initialized;
     boolean     display_on;
     boolean     disp_powered_up;
-#ifndef T_QSC1110
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
     word        lock_row_start;
     word        lock_row_num;
     word        lock_col_start;

@@ -2308,7 +2308,7 @@ boolean uim_process_generic_command
 
     case UIM_INTERNAL_POLL_F:           /* Internal command to Poll */
       {
-        MSG_MED( "Received internal Poll command ", 0, 0, 0 );
+        MSG_FATAL( "Received internal Poll command ", 0, 0, 0 );
         /* Build the Internal Poll list of states. */
         uim_generic_states[0] = UIM_STATUS_ST;
         uim_generic_states[1] = UIM_DONE_ST;
@@ -5839,7 +5839,7 @@ void uim_generic_command
         uim_req_buf_ptr->rsp_ptr = uim_rsp_buf_ptr;
 
         uim_req_buf_ptr->rpt_function = uim_command_response_callback;
-
+        MSG_FATAL( "UIM_STATUS_ST", 0, 0, 0);
         uim_send_command(uim_req_buf_ptr );
 
       }
@@ -9744,7 +9744,7 @@ uim_cmd_status_type uim_generic_command_response
               return(UIM_POLL_ERROR);
             }
 #else
-            MSG_ERROR("Polling failed while uim_mode is %d, ignoring",
+            MSG_FATAL("Polling failed while uim_mode is %d, ignoring",
                       uim_mode,0,0);
             /* Internal poll command failed for some odd reason
              * let us continue instead of comparing data with the

@@ -66,6 +66,7 @@
 // physical lcd type
 typedef enum
 {
+#ifndef CUST_EDITION
   TMD_QVGA,              /* EBI2 TMD QVGA LCD */
   EPSON_QCIF,            /* EBI2 EPSON QCIF LCD */
   EPSON_QVGA,            /* EBI2 EPSON QVGA LCD */
@@ -76,6 +77,9 @@ typedef enum
   TM_SCTN128,
   ZGD_TFT128X160,
   ZGD_TFT220X176,
+#else
+  MDP_LCD,
+#endif
 //do not change the order of the following enum types
 //
   MEM_WR,                /* WR Memory, must be MAX_LCD_NUM - 1 */
@@ -270,12 +274,10 @@ enum
   IOCTL_DISP_ENABLE_CAPTURE_MODE,
   IOCTL_DISP_CAPTURE_SCREEN,
 #endif
-#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
-#ifndef T_QSC1110
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
   IOCTL_DISP_LOCK_SCR,
   IOCTL_DISP_UPDATE_LOCK_YUV,
   IOCTL_DISP_UPDATE_LOCK,
-#endif
 #endif
   IOCTL_DISP_OFF,
   IOCTL_DISP_ON
@@ -307,8 +309,7 @@ typedef struct
   LCD_TYPE dest;
 } disp_cls_type;
 
-#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
-#ifndef T_QSC1110
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
 typedef struct
 {
   word start_row;
@@ -316,7 +317,6 @@ typedef struct
   word start_column;
   word num_column;
 } disp_lock_type;
-#endif
 #endif
 extern rex_crit_sect_type disp_crit_sect;
 
@@ -787,8 +787,7 @@ void disp_capture32
 void disp_set_torch(void);
 void disp_clear_torch(void);
 #endif
-#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
-#ifndef T_QSC1110
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
 void disp_update_lock
 (
   /* The buffer pointer point to the first byte of the whole buffer.
@@ -816,7 +815,6 @@ void disp_lock_screen
   word start_column,
   word num_column
 );
-#endif
 #endif
 
 #ifdef __cplusplus

@@ -74,8 +74,9 @@ INCLUDE FILES FOR MODULE
 #include "clk.h"
 #endif
 
-
+#ifndef CUST_EDITION
 int lcd_mddi_cur_panel = MDDI_MC4_PRIM;
+#endif
 int fd = -1;
 int fd2 = -1;
 
@@ -95,12 +96,10 @@ static disp_update_type dup_arg_capture;
 #endif
 
 static disp_cls_type cls_arg;
-#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
-#ifndef T_QSC1110
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
 static disp_update_type duplock_arg;
 static disp_update_type dupyuv_arg;
 static disp_lock_type lock_arg;
-#endif
 #endif
 extern boolean mdp_disp_fatal_err_flag;
 #ifndef CUST_EDITION
@@ -545,8 +544,7 @@ static void mdp_init(void)
 }
 #endif /* FEATURE_MDP */
 
-#if defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)
-#ifndef T_QSC1110
+#if (defined(FEATURE_MP4_DECODER) || defined(FEATURE_CAMERA_NOFULLSCREEN)) && !defined(T_QSC1110)
 void disp_update_lock
 (
   /* The buffer pointer point to the first byte of the whole buffer.
@@ -600,6 +598,5 @@ void disp_lock_screen
   
   drv_ioctl(fd, IOCTL_DISP_LOCK_SCR, (void *)&lock_arg);
 }
-#endif
 #endif
 

@@ -38,10 +38,11 @@ when       who     what, where, why
 06/01/05   drl     Enable FEATURE_VIDEO_ENCODE_RAW
 05/25/05   drl     Creation
 ===========================================================================*/
-
+#ifndef USES_MMI
 /* Enable the video encoder application.
 */
 #define FEATURE_APP_QCAMCORDER
+#endif
 /* Enable video encoding.
 */
 #define FEATURE_VIDEO_ENCODE

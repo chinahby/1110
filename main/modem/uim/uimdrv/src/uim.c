@@ -1355,6 +1355,7 @@ SIDE EFFECTS
 ===========================================================================*/
 void uim_set_poll_timer(rex_timer_cnt_type  time)
 {
+  MSG_FATAL("uim_set_poll_timer 0x%X",time,0,0);
   /* Stop the poll timer if the timer value is UIM_MAX_POLL_DURATION */
   if (time == UIM_MAX_POLL_DURATION)
   {    
@@ -1401,6 +1402,7 @@ SIDE EFFECTS
 ===========================================================================*/
 LOCAL void uim_clear_poll_timer( void )
 {
+  MSG_FATAL("uim_clear_poll_timer",0,0,0);
   /* Clear the regular timer. */
   (void) rex_clr_timer(&uim_no_wake_up_poll_timer);
 #if defined(FEATURE_USE_TIME_VU)
@@ -2879,6 +2881,7 @@ void uim_card_swap_detected(uim_slot_type            slot,
     gsdi_command_ptr.status = GSDI_UIM_CARD_REMOVED;
     /* Poll the card */
     uim_poll_pending = TRUE;
+    MSG_FATAL("uim_poll_pending == TRUE",0,0,0);
     break;
     case UIM_CARD_INSERTED:
     gsdi_command_ptr.status = GSDI_UIM_CARD_INSERTED;
@@ -6339,7 +6342,7 @@ rex_sigs_type *mask
 
   /* Clear the flag */
   uim_poll_pending = FALSE;
-
+  MSG_FATAL("uim_poll_pending == FALSE",0,0,0);
   /* Process the command */
   uim_process_command(cmd_ptr, mask);
 
@@ -8747,6 +8750,7 @@ dword dummy
 
       /* Set the internal flag as poll pending */
       uim_poll_pending = TRUE;
+      MSG_FATAL("UIM_POLL_TIMER_SIG",0,0,0);
     }
 
 #ifdef FEATURE_UIM_USB_UICC
@@ -9808,7 +9812,7 @@ dword dummy
           /* Reset the flag */
           uim_poll_pending = FALSE;
 
-          MSG_MED( "Protocol un-known in passive mode re-set poll timer", 0, 0, 0);
+          MSG_FATAL( "Protocol un-known in passive mode re-set poll timer", 0, 0, 0);
         }
         else if (uim_temp_status == UIM_INITIALIZED_S)
         {
@@ -9853,7 +9857,7 @@ dword dummy
             /* Reset the flag */
             uim_poll_pending = FALSE;
 
-            MSG_MED( "Setting UIM Poll timer for non pro-active scenario", 0, 0, 0);
+            MSG_FATAL( "Setting UIM Poll timer for non pro-active scenario", 0, 0, 0);
           }
         } /* status is CLK_OFF_S */
         else if (uim_temp_status == UIM_ERR_S)
@@ -9868,12 +9872,12 @@ dword dummy
 
           uim_poll_pending = FALSE;
 
-          MSG_MED( "Clearing poll_pending flag as polling slot is invalid", 0, 0, 0);
+          MSG_FATAL( "Clearing poll_pending flag as polling slot is invalid", 0, 0, 0);
         }
       }
       else
       {
-        MSG_MED( "Not processing the pending poll as cmd is in progress", 0, 0, 0);
+        MSG_FATAL( "Not processing the pending poll as cmd is in progress", 0, 0, 0);
       }
     } /* uim_poll_pending */
 
