@@ -10225,8 +10225,7 @@ boolean OEM_IsEmergency_Number(char *pNumber,int len)
             {
                 if(STRNCMP(pNumber,oemi_cache.emerg_table.emerg_num[i].num_buf,oemi_cache.emerg_table.emerg_num[i].num_len) == 0)
                 {
-                    is_emergency = TRUE;
-                    return is_emergency;
+                    return TRUE;
                 }
             }
         }
@@ -10280,8 +10279,7 @@ boolean OEM_IsEmergency_Number(char *pNumber,int len)
                                     	    IRUIM_Release(pIRUIM);
                                     	    pIRUIM = NULL;
                                     	}                                             
-                                        is_emergency = TRUE;
-                                        return is_emergency;
+                                        return TRUE;
                                     }
                                 }
                             }
