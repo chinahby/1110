@@ -49,9 +49,9 @@
 #include "OEMConfig.h" 
 #include "OEMCFGI.h"
 #endif
-#ifdef FEATURE_MDP
-#error code not present
-#endif
+//#ifdef FEATURE_MDP
+//#error code not present
+//#endif
 #ifdef FEATRUE_SET_ANN_FULL_SCREEN
 #define ANN_BLINK_TIME 1000/*320*/
 #else
@@ -64,9 +64,9 @@
 #define AEEFS_SHARED_DIR
 #endif
 
-#ifdef FEATURE_MDP
-#error code not present
-#endif
+//#ifdef FEATURE_MDP
+//#error code not present
+//#endif
 
 #define ANN_TEXT_MAX_LEN    64
 
@@ -586,9 +586,9 @@ SIDE EFFECTS
   none
 ===========================================================================*/
 
-#ifdef FEATURE_MDP
-#error code not present
-#endif
+//#ifdef FEATURE_MDP
+//#error code not present
+//#endif
 
 //lint -save -esym(715, src_width)
 //lint -save -esym(715, src_starting_row)
@@ -608,7 +608,7 @@ static void annun_disp_update(
   if (dib_ptr == pMe->m_coreObj->m_pDDB)
   {
     // We're updating the primary display
-#ifdef FEATURE_MDP
+#if 0//def FEATURE_MDP
 #error code not present
 #else
     if(pMe->m_coreObj->m_bAnnunciatorOn)
@@ -1361,7 +1361,7 @@ static IANNUNCore* OEMAnnunCore_New(IShell* piShell)
 {
   IBitmap *pDevBmp=NULL;
   IBitmap *pBmp =NULL;
-#ifndef FEATURE_MDP
+#if 1//ndef FEATURE_MDP
   IBitmapCtl *pBitmapCtl;
 #endif
   AEERect Rect;
@@ -1424,7 +1424,7 @@ static IANNUNCore* OEMAnnunCore_New(IShell* piShell)
       return NULL;
     }
 
-#ifndef FEATURE_MDP
+#if 1//ndef FEATURE_MDP
     if(SUCCESS == IBITMAP_QueryInterface(pDevBmp, AEECLSID_BITMAPCTL, (void **) &pBitmapCtl))
     {
       IBITMAPCTL_Enable(pBitmapCtl, TRUE);
@@ -2027,7 +2027,7 @@ SIDE EFFECTS
 static int IAnnunciator_Redraw(IAnnunciator *pMe)
 {
    boolean         bIsBmpInvalidated = FALSE;   // Primary bmp invalidated?
-#ifndef FEATURE_MDP
+#if 1//ndef FEATURE_MDP
    IBitmap        *pBmp;                        // BMP for primary display
    AEEBitmapInfo   sBmpInfo;                    // Bmp info struct
    AEERect         sBmpRect;                    // Rectangle to invalidate
@@ -2059,7 +2059,7 @@ static int IAnnunciator_Redraw(IAnnunciator *pMe)
 #endif // MIN_BREW_VERSION(3, 0)
    if(pMe->m_coreObj->m_bAnnunciatorOn)
    {
-#ifdef FEATURE_MDP
+#if 0//def FEATURE_MDP
 #error code not present
 #else
 
@@ -2331,7 +2331,7 @@ See Also:
 static int IAnnunciator_EnableAnnunciatorBar(IAnnunciator * pMe, AEECLSID clsid, boolean bOn)
 {
   boolean bLastState;
-#ifdef FEATURE_MDP
+#if 0//def FEATURE_MDP
 #error code not present
 #endif /* FEATURE_MDP */
 
@@ -2350,7 +2350,7 @@ static int IAnnunciator_EnableAnnunciatorBar(IAnnunciator * pMe, AEECLSID clsid,
      case AEECLSID_DISPLAY1:
         bLastState = pMe->m_coreObj->m_bAnnunciatorOn;
         pMe->m_coreObj->m_bAnnunciatorOn = bOn;
-#ifdef FEATURE_MDP
+#if 0//def FEATURE_MDP
 #error code not present
 #endif /* FEATURE_MDP */
         break;
@@ -2361,7 +2361,7 @@ static int IAnnunciator_EnableAnnunciatorBar(IAnnunciator * pMe, AEECLSID clsid,
 
   if(bOn != bLastState)
   {
-#ifdef FEATURE_MDP
+#if 0//def FEATURE_MDP
 #error code not present
 #endif /* FEATURE_MDP */
 
@@ -2377,7 +2377,7 @@ static int IAnnunciator_EnableAnnunciatorBar(IAnnunciator * pMe, AEECLSID clsid,
 static int IAnnunciator_EnableAnnunciatorBarEx(IAnnunciator * pMe, AEECLSID clsid, boolean bOn, boolean bForceRearaw)
 {
     boolean bLastState;
-#ifdef FEATURE_MDP
+#if 0//def FEATURE_MDP
     #error code not present
 #endif /* FEATURE_MDP */
 
@@ -2396,7 +2396,7 @@ static int IAnnunciator_EnableAnnunciatorBarEx(IAnnunciator * pMe, AEECLSID clsi
         case AEECLSID_DISPLAY1:
             bLastState = pMe->m_coreObj->m_bAnnunciatorOn;
             pMe->m_coreObj->m_bAnnunciatorOn = bOn;
-#ifdef FEATURE_MDP
+#if 0//def FEATURE_MDP
 #error code not present
 #endif /* FEATURE_MDP */
             break;
@@ -2407,7 +2407,7 @@ static int IAnnunciator_EnableAnnunciatorBarEx(IAnnunciator * pMe, AEECLSID clsi
 
     if ((bOn != bLastState) || bForceRearaw)
     {
-#ifdef FEATURE_MDP
+#if 0//def FEATURE_MDP
 #error code not present
 #endif /* FEATURE_MDP */
         

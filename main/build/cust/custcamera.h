@@ -167,9 +167,10 @@ when       who     what, where, why
 #endif /* FEATURE_CAMERA_LCD_DIRECT_MODE */
 #define FEATURE_CAMERA_YCBCR_ONLY
 
-
+#ifndef CUST_EDITION
 #define FEATURE_CAMERA_MOBICAT
 #define FEATURE_CAMERA_MOBICAT_CAMERA_CONFIG_H
+#endif
 #endif
 
 #ifdef FEATURE_CAMERA_YCBCR_ONLY

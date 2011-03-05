@@ -1485,7 +1485,9 @@ static const AEEStaticClass gOEMStaticClassList[] = {
 
 #if defined(FEATURE_IIPL)
    {AEECLSID_IPL,                   ASCF_PRIV,0,NULL,OEMIPL_New},
+#ifndef CUST_EDITION
    {AEECLSID_BitmapFX,                   ASCF_PRIV,0,NULL,OEMBitmapFX_New},
+#endif
 #endif
 
 #if defined(FEATURE_ICM)
