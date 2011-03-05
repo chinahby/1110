@@ -8897,14 +8897,8 @@ static NextFSMAction Handler_STATE_EMERGENCY_CALL(CContApp *pMe)
         
         //Proccess yourself dialog retrn value here
         case DLGRET_CANCELED:
-
-            {
-                FSMState retrunState;
-                retrunState = CContApp_GetReturnState(pMe);
-                MOVE_TO_STATE(retrunState);
-            }
-            return NFSMACTION_CONTINUE;
-
+            MOVE_TO_STATE(STATE_MAINMENU);
+            
         case DLGRET_SET:          
         case DLGRET_OK:
         {

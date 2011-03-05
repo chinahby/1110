@@ -6932,7 +6932,10 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
     
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                               IDC_MAINMENU_MENU);
-    
+    if(pMenuCtl == NULL)
+    {
+        return FALSE;
+    }
     MENU_AUTO_SCROLL(pMenuCtl, eCode, wParam);
     switch (eCode)
     {
@@ -13892,7 +13895,7 @@ static void CContApp_ShowEditItem(CContApp  *pMe, IMenuCtl  *pMenuCtl, ITextCtl 
 #ifdef FEATURE_OEMOMH 
     if(pMe->m_pActiveDlgID == IDD_EMERGENCY_CALL)
     {
-        rect.x = 0;
+        IMENUCTL_GetSelItemRect( pMenuCtl, &rect);
     }
 #endif                
     //rect.dy -= 1;
@@ -15948,7 +15951,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                     uint16 selectEdit = IMENUCTL_GetSel(pMenu); 
                     m_entable.emert_size = OEMNV_EMERT_SEZE;
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_EMERGENCYNUM_TABLE, (void*)&m_entable, sizeof(EmergencyNum_Table));
-                    MSG_FATAL("selectEdit=%d",selectEdit,0,0);
+                    MSG_FATAL("AVK_SELECT Start, selectEdit=%d",selectEdit,0,0);
                     ITEXTCTL_GetText(pTextCtl, emergency_call, 10);
                     if(!CContApp_CheckNumber(emergency_call))
                     {
@@ -15976,6 +15979,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                                        sizeof(EmergencyNum_Table));      
                     
                     CLOSE_DIALOG(DLGRET_CANCELED);
+                    MSG_FATAL("AVK_SELECT End",0,0,0);
                 }
                 return TRUE;
                 
