@@ -222,6 +222,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
 //#endif
+#define FEATURE_HFAT
 
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
 
