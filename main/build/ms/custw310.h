@@ -308,9 +308,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_AUDFMT_EVB
    #undef FEATURE_AUDFMT_EVB
 #endif
-#ifdef FEATURE_MMOVERLAY
-   #undef FEATURE_MMOVERLAY
-#endif
 #ifdef FEATURE_SAF
    #undef FEATURE_SAF
 #endif
