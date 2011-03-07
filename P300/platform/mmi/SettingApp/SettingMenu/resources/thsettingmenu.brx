@@ -11,7 +11,7 @@
 		<Text>ล็อคปุ่มอัตโนมัติ</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_SCENEMODE_TITLE">
-		<Text>ตั้งค่า</Text>
+		<Text>รูปแบบ</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_PHONE_NUMBER">
 		<Text>หมายเลขเครื่อง</Text>

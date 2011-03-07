@@ -5,13 +5,13 @@
 		<Text>Power on ringtone</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_RINGER_VOLUME_TITLE">
-		<Text>Ring</Text>
+		<Text>Ringtone</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_EARPIECE_VOLUME_TITLE">
 		<Text>Headset</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_KEYBEEP_VOLUME_TITLE">
-		<Text>Keypad ringtone</Text>
+		<Text>Key tone</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_CALLHINT">
 		<Text>Call alert mode</Text>
@@ -50,7 +50,7 @@
 		<Text>Alarm tone</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_ITEM_VIBRING">
-		<Text>Vibrate first then ring</Text>
+		<Text>Vibrate then ring</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_ITEM_DISABLE">
 		<Text>Off</Text>
@@ -98,7 +98,7 @@
 		<Text>Gallery</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_SCENEMODE_TITLE">
-		<Text>User Profile</Text>
+		<Text>Profile</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_NORMALMODE">
 		<Text>Normal</Text>

@@ -32,7 +32,7 @@
 		<Text>ตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="11" Name="IDS_RUIM">
-		<Text>บัตร UIM</Text>
+		<Text>การ์ด UIM</Text>
 	</STRING>
 	<STRING Id="12" Name="IDS_EMPTY">
 		<Text>ไม่มีบันทึก</Text>
@@ -449,7 +449,7 @@
 		<Text>การ์ด UIM ไปยังตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="156" Name="IDS_PHONETOUIM">
-		<Text>ตัวเครื่องไปยังการ์ด UIM</Text>
+		<Text>ตัวเครื่องไปการ์ด UIM</Text>
 	</STRING>
 	<STRING Id="157" Name="IDS_SAVEASPRESET">
 		<Text>บันทึกเป็นข้อความสำเร็จรูป</Text>

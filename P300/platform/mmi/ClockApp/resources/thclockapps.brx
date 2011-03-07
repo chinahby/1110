@@ -5,22 +5,22 @@
 		<Text>นาฬิกาปลุก</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_ALARMCLOCK_1">
-        <Text>นาฬิกาปลุก1</Text>
+		<Text>นาฬิกาปลุก1</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_ALARMCLOCK_2">
-        <Text>นาฬิกาปลุก2</Text>
+		<Text>นาฬิกาปลุก2</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_ALARMCLOCK_3">
-        <Text>นาฬิกาปลุก3</Text>
+		<Text>นาฬิกาปลุก3</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_ALARMCLOCK_4">
-        <Text>นาฬิกาปลุก4</Text>
+		<Text>นาฬิกาปลุก4</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_ALARMCLOCK_5">
-        <Text>นาฬิกาปลุก5</Text>
+		<Text>นาฬิกาปลุก5</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_ALARMCLOCK_6">
-        <Text>นาฬิกาปลุก6</Text>
+		<Text>นาฬิกาปลุก6</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_STATE_OFF">
 		<Text>ปิด</Text>
@@ -38,25 +38,25 @@
 		<Text>จ.-ส.</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_REP_MODE_3">
-        <Text>จันทร์</Text>
+		<Text>จันทร์</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_REP_MODE_4">
-        <Text>อังคาร</Text>
+		<Text>อังคาร</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_REP_MODE_5">
-        <Text>พุธ</Text>
+		<Text>พุธ</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_REP_MODE_6">
-        <Text>พฤหัสบดี</Text>
+		<Text>พฤหัสบดี</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_REP_MODE_7">
-        <Text>ศุกร์</Text>
+		<Text>ศุกร์</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_REP_MODE_8">
-        <Text>เสาร์</Text>
+		<Text>เสาร์</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_REP_MODE_9">
-        <Text>อาทิตย์</Text>
+		<Text>อาทิตย์</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_CLOCK_STATE">
 		<Text>สถานะ</Text>
@@ -68,13 +68,13 @@
 		<Text>โหมด</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_CLOCK_SAVE_ALERT">
-        <Text>บันทึกนาฬิกาปลุก</Text>
+		<Text>บันทึกนาฬิกาปลุก</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_ANYKEY_CLOSE">
-        <Text>ปุ่มใดก็ได้เพื่อปิด</Text>
+		<Text>ปุ่มใดก็ได้เพื่อปิด</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_CLOCK_SNOOZE">
-        <Text>เลื่อนปลุก</Text>
+		<Text>เลื่อนปลุก</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_CLEAR">
 		<Text>ลบ</Text>
@@ -107,7 +107,7 @@
 		<Text>ลบ</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_DONE">
-        <Text>เรียบร้อย</Text>
+		<Text>เรียบร้อย</Text>
 	</STRING>
 </Strings>
 <Dialogs>

@@ -8,13 +8,13 @@
 		<Text>ชื่อ</Text>
 	</STRING>
 	<STRING Id="3" Name="IDS_MOBILE">
-        <Text>มือถือ</Text>
+		<Text>มือถือ</Text>
 	</STRING>
 	<STRING Id="4" Name="IDS_HOME">
 		<Text>เบอร์บ้าน</Text>
 	</STRING>
 	<STRING Id="5" Name="IDS_OFFICE">
-        <Text>ออฟฟิศ</Text>
+		<Text>ออฟฟิศ</Text>
 	</STRING>
 	<STRING Id="6" Name="IDS_EMAIL">
 		<Text>อีเมล์</Text>
@@ -50,7 +50,7 @@
 		<Text>คัดลอก</Text>
 	</STRING>
 	<STRING Id="19" Name="IDS_CHECKCAPACITY">
-		<Text>สถานะหน่วยความจำ</Text>
+		<Text>หน่วยความจำ</Text>
 	</STRING>
 	<STRING Id="29" Name="IDS_FAX">
 		<Text>แฟกซ์</Text>
@@ -59,7 +59,7 @@
 		<Text>ไม่พบ</Text>
 	</STRING>
 	<STRING Id="37" Name="IDS_GROUP_PERSONAL">
-        <Text>เพื่อนร่วมห้อง</Text>
+		<Text>เพื่อนร่วมห้อง</Text>
 	</STRING>
 	<STRING Id="38" Name="IDS_GROUP_BUSINESS">
 		<Text>ธุรกิจ</Text>
@@ -68,10 +68,10 @@
 		<Text>ครอบครัว</Text>
 	</STRING>
 	<STRING Id="40" Name="IDS_GROUP_WORK">
-        <Text>เพื่อนร่วมงาน</Text>
+		<Text>เพื่อนร่วมงาน</Text>
 	</STRING>
 	<STRING Id="41" Name="IDS_GROUP_VIP">
-        <Text>วีไอพี</Text>
+		<Text>วีไอพี</Text>
 	</STRING>
 	<STRING Id="42" Name="IDS_GROUP_FRIEND">
 		<Text>เพื่อน</Text>
@@ -80,28 +80,28 @@
 		<Text>การ์ด UIM</Text>
 	</STRING>
 	<STRING Id="47" Name="IDS_POSITION_ALL">
-        <Text>ตัวเครื่องและการ์ด UIM</Text>
+		<Text>ตัวเครื่องและการ์ด UIM</Text>
 	</STRING>
 	<STRING Id="48" Name="IDS_COPYTORUIM">
-        <Text>คัดลอกทั้งหมดลงการ์ด UIM</Text>
+		<Text>คัดลอกทั้งหมดลงการ์ด UIM</Text>
 	</STRING>
 	<STRING Id="49" Name="IDS_COPYTOPHONE">
-        <Text>คัดลอกทั้งหมดลงตัวเครื่อง</Text>
+		<Text>คัดลอกทั้งหมดลงตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="50" Name="IDS_MOVETORUIM">
-        <Text>ย้ายทั้งหมดลงการ์ด UIM</Text>
+		<Text>ย้ายทั้งหมดลงการ์ด UIM</Text>
 	</STRING>
 	<STRING Id="51" Name="IDS_MOVETOPHONE">
-        <Text>ย้ายทั้งหมดลงตัวเครื่อง</Text>
+		<Text>ย้ายทั้งหมดลงตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="54" Name="IDS_COPYING_COMPLETE">
-        <Text>คัดลอกเรียบร้อย</Text>
+		<Text>คัดลอกเรียบร้อย</Text>
 	</STRING>
 	<STRING Id="56" Name="IDS_RING">
-        <Text>ริงโทน</Text>
+		<Text>ริงโทน</Text>
 	</STRING>
 	<STRING Id="60" Name="IDS_SPEEDDIAL">
-        <Text>โทรด่วน</Text>
+		<Text>โทรด่วน</Text>
 	</STRING>
 	<STRING Id="63" Name="IDS_ONEDIAL_NULL">
 		<Text>ไม่มี</Text>
@@ -110,25 +110,25 @@
 		<Text>เลือกเมื่อบันทึก</Text>
 	</STRING>
 	<STRING Id="66" Name="IDS_CAPACITY">
-        <Text>สถานะหน่วยความจำ</Text>
+		<Text>สถานะหน่วยความจำ</Text>
 	</STRING>
 	<STRING Id="67" Name="IDS_CAPACITY_PHONE">
-        <Text>ตัวเครื่อง:%d (%d)</Text>
+		<Text>ตัวเครื่อง:%d (%d)</Text>
 	</STRING>
 	<STRING Id="68" Name="IDS_CAPACITY_RUIM">
-        <Text>การ์ดUIM:%d (%d)</Text>
+		<Text>การ์ดUIM:%d (%d)</Text>
 	</STRING>
 	<STRING Id="69" Name="IDS_ERR_LOAD">
-        <Text>เริ่มใช้งาน กรุณา รอสักครู่...</Text>
+		<Text>เริ่มใช้งาน กรุณา รอสักครู่...</Text>
 	</STRING>
 	<STRING Id="70" Name="IDS_ERR_UNKNOWN">
-        <Text>ไม่สามารถใช้งานได้ ลองอีกครั้ง</Text>
+		<Text>ไม่สามารถใช้งานได้ ลองอีกครั้ง</Text>
 	</STRING>
 	<STRING Id="71" Name="IDS_ERR_LOADFIELDS">
-        <Text>ไม่สามารถใช้งานได้ ลองอีกครั้ง</Text>
+		<Text>ไม่สามารถใช้งานได้ ลองอีกครั้ง</Text>
 	</STRING>
 	<STRING Id="73" Name="IDS_MSG_INPUTNULL">
-        <Text>ไม่บันทึก</Text>
+		<Text>ไม่บันทึก</Text>
 	</STRING>
 	<STRING Id="74" Name="IDS_YESNO_DELETEREC">
 		<Text>ลบ</Text>
@@ -140,25 +140,25 @@
 		<Text>ลบล้มเหลว</Text>
 	</STRING>
 	<STRING Id="78" Name="IDS_MSG_MAX_RUIM">
-        <Text>ความจำการ์ด UIM เต็ม</Text>
+		<Text>ความจำการ์ด UIM เต็ม</Text>
 	</STRING>
 	<STRING Id="79" Name="IDS_MSG_MAX_PHONE">
-        <Text>ความจำตัวเครื่องเต็ม</Text>
+		<Text>ความจำตัวเครื่องเต็ม</Text>
 	</STRING>
 	<STRING Id="80" Name="IDS_ERR_CREATEREC">
-        <Text>ไม่รู้จักการขัดข้องนี้ กรุณาลองอีกครั้งหลังจากออก</Text>
+		<Text>ไม่รู้จักการขัดข้องนี้ กรุณาลองอีกครั้งหลังจากออก</Text>
 	</STRING>
 	<STRING Id="91" Name="IDS_SUCCESS">
-        <Text>เรียบร้อย</Text>
+		<Text>เรียบร้อย</Text>
 	</STRING>
 	<STRING Id="92" Name="IDS_ERR_ADDFIELD">
-        <Text>ไม่รู้จักการขัดข้องนี้ กรุณาลองอีกครั้งหลังจากออก</Text>
+		<Text>ไม่รู้จักการขัดข้องนี้ กรุณาลองอีกครั้งหลังจากออก</Text>
 	</STRING>
 	<STRING Id="93" Name="IDS_MSG_MAXFIELDS">
-        <Text>ไม่สำเร็จ เกินเวลาที่กำหนด</Text>
+		<Text>ไม่สำเร็จ เกินเวลาที่กำหนด</Text>
 	</STRING>
 	<STRING Id="94" Name="IDS_MSG_COPYFAILED">
-        <Text>คัดลอกล้มเหลว กรุณาตรวจสอบหน่วยความจำ</Text>
+		<Text>คัดลอกล้มเหลว กรุณาตรวจสอบหน่วยความจำ</Text>
 	</STRING>
 	<STRING Id="95" Name="IDS_YESNO_COPYREC">
 		<Text>คัดลอก</Text>
@@ -167,37 +167,37 @@
 		<Text>ย้าย</Text>
 	</STRING>
 	<STRING Id="97" Name="IDS_MSG_MOVEFAILED">
-        <Text>ขัดข้อง กรุณาตรวจสอบหน่วยความจำ</Text>
+		<Text>ขัดข้อง กรุณาตรวจสอบหน่วยความจำ</Text>
 	</STRING>
 	<STRING Id="99" Name="IDS_ERR_COPY">
 		<Text>คัดลอกล้มเหลว</Text>
 	</STRING>
 	<STRING Id="100" Name="IDS_SAVETO">
-        <Text>พื้นที่สำหรับบันทึก</Text>
+		<Text>พื้นที่สำหรับบันทึก</Text>
 	</STRING>
 	<STRING Id="101" Name="IDS_VIEWTYPE">
-        <Text>โหมดการดู</Text>
+		<Text>โหมดการดู</Text>
 	</STRING>
 	<STRING Id="113" Name="IDS_MSG_NORECORD">
-        <Text>ไม่มีบันทึกที่ใช้</Text>
+		<Text>ไม่มีบันทึกที่ใช้</Text>
 	</STRING>
 	<STRING Id="114" Name="IDS_MSG_EXIST">
-        <Text>มีคอนเท้นต์นี้แล้ว</Text>
+		<Text>มีคอนเท้นต์นี้แล้ว</Text>
 	</STRING>
 	<STRING Id="116" Name="IDS_ONEDIAL_SET">
-        <Text>เพิ่ม</Text>
+		<Text>เพิ่ม</Text>
 	</STRING>
 	<STRING Id="117" Name="IDS_ONEDIAL_CLR">
-        <Text>ลบ</Text>
+		<Text>ลบ</Text>
 	</STRING>
 	<STRING Id="118" Name="IDS_YESNO_CLRONEDIAL">
-        <Text>ลบ</Text>
+		<Text>ลบ</Text>
 	</STRING>
 	<STRING Id="120" Name="IDS_MSG_NONECOPY">
-        <Text>ไม่ได้คัดลอก</Text>
+		<Text>ไม่ได้คัดลอก</Text>
 	</STRING>
 	<STRING Id="1001" Name="IDS_CALL">
-        <Text>โทร</Text>
+		<Text>โทร</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_IPCALL">
 		<Text>โทร IP</Text>
@@ -212,16 +212,16 @@
 		<Text>ค้นหา</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_DIRECTORTLIST">
-        <Text>ชื่อ</Text>
+		<Text>ชื่อ</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_SEARCH_NAME">
-        <Text>ค้นหาด้วยชื่อ</Text>
+		<Text>ค้นหาด้วยชื่อ</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_EMPTY">
 		<Text>ไม่มีบันทึก</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_SEARCH_GROUP">
-        <Text>ค้นหาด้วยกลุ่ม</Text>
+		<Text>ค้นหาด้วยกลุ่ม</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_NEEDNAME">
 		<Text>ใส่ชื่อ</Text>
@@ -230,88 +230,88 @@
 		<Text>กลุ่ม</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_NOT_UIMADDRINIT">
-        <Text>เริ่มไม่สำเร็จ กรุณาลองอีกครั้ง</Text>
+		<Text>เริ่มไม่สำเร็จ กรุณาลองอีกครั้ง</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_SAVE_URL">
-        <Text>URL อาจหาย</Text>
+		<Text>URL อาจหาย</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_MOVING">
 		<Text>กำลังย้าย...</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_COPYING">
-        <Text>กำลังคัดลอก...</Text>
+		<Text>กำลังคัดลอก...</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_ADDRESS">
-        <Text>ที่อยู่</Text>
+		<Text>ที่อยู่</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_EXECUTE">
 		<Text>ทำการ</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_MARK">
-        <Text>เลือก</Text>
+		<Text>เลือก</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_UNMARK">
-        <Text>ไม่เลือก</Text>
+		<Text>ไม่เลือก</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_MARKALL">
-        <Text>เลือกทั้งหมด</Text>
+		<Text>เลือกทั้งหมด</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_SAVE_EMAIL">
-        <Text>อีเมลล์อาจหาย</Text>
+		<Text>อีเมลล์อาจหาย</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_NEEDNUMBER">
-        <Text>ใส่เบอร์</Text>
+		<Text>ใส่เบอร์</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_MSG_MAXCOPY">
-        <Text>คัดลอกล้มเหลว เกินจำนวนสูงสุด</Text>
+		<Text>คัดลอกล้มเหลว เกินจำนวนสูงสุด</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_MSG_NUM_UNAVAILD">
-        <Text>กรุณาใช้0-9 และ*#+P สำหรับใส่</Text>
+		<Text>กรุณาใช้0-9 และ*#+P สำหรับใส่</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_MSG_PSWERR">
-        <Text>รหัสผ่านผิด</Text>
+		<Text>รหัสผ่านผิด</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_FLD_SETTYPE">
-        <Text>พิมพ์เบอร์</Text>
+		<Text>พิมพ์เบอร์</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_UNMARKALL">
-        <Text>ไม่เลือกทั้งหมด</Text>
+		<Text>ไม่เลือกทั้งหมด</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_ONEDIAL">
-        <Text>โทรด่วน</Text>
+		<Text>โทรด่วน</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_POSITION">
-        <Text>บันทึกลง</Text>
+		<Text>บันทึกลง</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_POSITION_PHONE">
-        <Text>ตัวเครื่อง</Text>
+		<Text>ตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_PASSWORD">
 		<Text>ใส่รหัส</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_YESNO_MOVERECORD">
-        <Text>ย้าย</Text>
+		<Text>ย้าย</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_COPYONETORUIM">
-        <Text>คัดลอกลงการ์ดUIM</Text>
+		<Text>คัดลอกลงการ์ดUIM</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_COPYONETOPNONE">
-        <Text>คัดลอกลงตัวเครื่อง</Text>
+		<Text>คัดลอกลงตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_MSG_EMAIL_UNAVAILD">
-        <Text>อีเมลล์ผิด</Text>
+		<Text>อีเมลล์ผิด</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_GROUP_NONE_STRING">
 		<Text>ไม่มีกลุ่ม</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_MOVE_MULTIPE">
-        <Text>ย้ายหลายรายการ</Text>
+		<Text>ย้ายหลายรายการ</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_CONTACTS_MANAGEMENT">
-        <Text>จัดการ</Text>
+		<Text>จัดการ</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_MOVE_CONTACTS">
-        <Text>ย้ายรายชื่อ</Text>
+		<Text>ย้ายรายชื่อ</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_COPY_CONTACTS">
 		<Text>คัดลอกรายชื่อ</Text>
@@ -323,115 +323,115 @@
 		<Text>สถานะหน่วยความจำ</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_PHONE_TO_UIM">
-        <Text>ตัวเครื่องลงซิมการ์ด</Text>
+		<Text>ตัวเครื่องลงซิมการ์ด</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_UIM_TO_PHONE">
-        <Text>การ์ด UIM ไปตัวเครื่อง</Text>
+		<Text>การ์ด UIM ไปตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_UIM_CARD">
-        <Text>การ์ด UIM</Text>
+		<Text>การ์ด UIM</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_DELETE_ALL">
-        <Text>ลบทั้งหมด</Text>
+		<Text>ลบทั้งหมด</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_PHONE_CAPACITY">
-        <Text>ตัวเครื่อง</Text>
+		<Text>ตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_MSG_SHORTNUMBER">
-        <Text>เพิ่มล้มเหลว ความยาวควรมากกว่า 3</Text>
+		<Text>เพิ่มล้มเหลว ความยาวควรมากกว่า 3</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_SEND_VIA_BLUETOOTH">
-        <Text>ส่งผ่านบูลทูธ</Text>
+		<Text>ส่งผ่านบูลทูธ</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_MOVE">
-        <Text>ย้าย</Text>
+		<Text>ย้าย</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_ERR_LOADPICTURE">
-        <Text>โหลดภาพล้มเหลว</Text>
+		<Text>โหลดภาพล้มเหลว</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_REPLACE">
-        <Text>แทนที่</Text>
+		<Text>แทนที่</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_POP_DONE">
-        <Text>เรียบร้อย</Text>
+		<Text>เรียบร้อย</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_ERR_GETCONFIG">
-        <Text>รับการตั้งค่าล้มเหลว</Text>
+		<Text>รับการตั้งค่าล้มเหลว</Text>
 	</STRING>
 	<STRING Id="1055" Name="IDS_UIMCARD">
 		<Text>การ์ด UIM</Text>
 	</STRING>
 	<STRING Id="1056" Name="IDS_PHONE_THEN_UIM">
-        <Text>ตัวเครื่องแล้วการ์ด UIM</Text>
+		<Text>ตัวเครื่องแล้วการ์ด UIM</Text>
 	</STRING>
 	<STRING Id="1057" Name="IDS_UIM_THEN_PHONE">
-        <Text>การ์ด UIM แล้วตัวเครื่อง</Text>
+		<Text>การ์ด UIM แล้วตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="1058" Name="IDS_COPY_TOUIMCARD">
-        <Text>คัดลอกลงการ์ด UIM</Text>
+		<Text>คัดลอกลงการ์ด UIM</Text>
 	</STRING>
 	<STRING Id="1059" Name="IDS_MOVE_TOUIMCARD">
-        <Text>ย้ายลงการ์ด UIM</Text>
+		<Text>ย้ายลงการ์ด UIM</Text>
 	</STRING>
 	<STRING Id="1060" Name="IDS_COPY_TOPHONE">
-        <Text>คัดลอกลงตัวเครื่อง</Text>
+		<Text>คัดลอกลงตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_MOVE_TOPHONE">
-        <Text>ย้ายลงตัวเครื่อง</Text>
+		<Text>ย้ายลงตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_MSG_DELETEFAILED">
-        <Text>ลบล้มเหลว ตรวจสอบหน่วยความจำ</Text>
+		<Text>ลบล้มเหลว ตรวจสอบหน่วยความจำ</Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_DELETING">
-        <Text>กำลังลบ...</Text>
+		<Text>กำลังลบ...</Text>
 	</STRING>
 	<STRING Id="1064" Name="IDS_MARK_ERR">
-        <Text>ขัดข้อง</Text>
+		<Text>ขัดข้อง</Text>
 	</STRING>
 	<STRING Id="1065" Name="IDS_FULL_UIM">
-        <Text>การ์ด UIM เต็ม</Text>
+		<Text>การ์ด UIM เต็ม</Text>
 	</STRING>
 	<STRING Id="1066" Name="IDS_FULL_PHONE">
-        <Text>ตัวเครื่องเต็ม</Text>
+		<Text>ตัวเครื่องเต็ม</Text>
 	</STRING>
 	<STRING Id="1067" Name="IDS_BUILD_VCARD_FAIL">
-        <Text>สร้างนามบัตรล้มเหลว</Text>
+		<Text>สร้างนามบัตรล้มเหลว</Text>
 	</STRING>
 	<STRING Id="1068" Name="IDS_UIMFULL_SAVETOPHONE">
-        <Text>การ์ด UIM เต็ม บันทึกลงตัวเครื่อง</Text>
+		<Text>การ์ด UIM เต็ม บันทึกลงตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="1069" Name="IDS_PHONEFULL_SAVETOCARD">
-        <Text>ตัวเครื่องเต็ม บันทึกลงการ์ด UIM</Text>
+		<Text>ตัวเครื่องเต็ม บันทึกลงการ์ด UIM</Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_MEMORYFULL">
-        <Text>ความจำเต็ม กรุณาลบ</Text>
+		<Text>ความจำเต็ม กรุณาลบ</Text>
 	</STRING>
 	<STRING Id="1071" Name="IDS_RETURN_ERR">
 		<Text>กลับไป Err</Text>
 	</STRING>
 	<STRING Id="1072" Name="IDS_ERR_MOVE">
-        <Text>ย้ายล้มเหลว</Text>
+		<Text>ย้ายล้มเหลว</Text>
 	</STRING>
 	<STRING Id="1073" Name="IDS_NUMBER_TOOLONG">
-        <Text>เบอร์ยาวเกินไป</Text>
+		<Text>เบอร์ยาวเกินไป</Text>
 	</STRING>
 	<STRING Id="1074" Name="IDS_FULL_UIM_DONE">
-        <Text>"การ์ด UIM เต็ม ,%d เรียบร้อย"</Text>
+		<Text>"การ์ด UIM เต็ม ,%d เรียบร้อย"</Text>
 	</STRING>
 	<STRING Id="1075" Name="IDS_FULL_PHONE_DONE">
-        <Text>"ตัวเครื่องเต็ม ,%d เรียบร้อย"</Text>
+		<Text>"ตัวเครื่องเต็ม ,%d เรียบร้อย"</Text>
 	</STRING>
 	<STRING Id="1076" Name="IDS_RECORDS_DONE">
-        <Text>%d บันทึกเรียบร้อยแล้ว</Text>
+		<Text>%d บันทึกเรียบร้อยแล้ว</Text>
 	</STRING>
 	<STRING Id="1077" Name="IDS_SENTLIST_FULL">
-        <Text>ถึงรายชื่อที่กำหนด</Text>
+		<Text>ถึงรายชื่อที่กำหนด</Text>
 	</STRING>
 	<STRING Id="1078" Name="IDS_COPY_EXPECT">
-        <Text>"%d บันทึกแล้ว,%d บันทึกล้มเหลว"</Text>
+		<Text>"%d บันทึกแล้ว,%d บันทึกล้มเหลว"</Text>
 	</STRING>
 	<STRING Id="1079" Name="IDS_RENAME">
-        <Text>เปลี่ยนชื่อ</Text>
+		<Text>เปลี่ยนชื่อ</Text>
 	</STRING>
 	<STRING Id="1080" Name="IDS_SAVE_EDIT">
 		<Text>บันทึกแก้ไข</Text>
