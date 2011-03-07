@@ -169,6 +169,15 @@
 	<STRING Id="1059" Name="IDS_DEFAULT">
 		<Text>Default</Text>
 	</STRING>
+	<STRING Id="1060" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
+		<Text>FM Play mode</Text>
+	</STRING>
+	<STRING Id="1061" Name="IDS_FMRADIO_PLAY_HANDSET">
+		<Text>Handset</Text>
+	</STRING>
+	<STRING Id="1062" Name="IDS_RADIO_PLAY_SPEAKER">
+		<Text>Speaker</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_SOUNDMENU_PROFILES" Focus="0">
@@ -249,5 +258,12 @@
 		</Controls>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
+	<Dialog Id="6013" Name="IDD_FM_MENU" Focus="7002">
+		<Controls>
+			<Menu Id="7002" Name="IDC_MENU_FM">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>

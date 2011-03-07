@@ -109,6 +109,15 @@ static boolean  HandleOtherSelDialogEvent(CSoundMenu *pMe,
     uint32 dwParam
 );
 
+// 对话框 IDD_FMMODE_MENU 事件处理函数
+static boolean  HandleFMModeDialogEvent(CSoundMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
+
+
 //#ifdef KEYSND_ZY
 //// 对话框 IDD_KEYSND_MENU 事件处理函数
 static boolean  HandleKeySndMenuDialogEvent(CSoundMenu *pMe,
@@ -321,7 +330,8 @@ boolean SoundMenu_RouteDialogEvent(CSoundMenu *pMe,
         case IDD_OTHERSEL_MENU:
             return HandleOtherSelDialogEvent(pMe,eCode,wParam,dwParam);
 
-
+		case IDD_FM_MENU:
+			return HandleFMModeDialogEvent(pMe,eCode,wParam,dwParam);
         case IDD_VOLUME_SUB:
             return HandleVolumeSubDialogEvent(pMe,eCode,wParam,dwParam);
 
@@ -924,6 +934,7 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
             Sound_App_Add_Menu(pMenu,IDS_STARTUP_RINGER);
             Sound_App_Add_Menu(pMenu,IDS_SHUTDOWN_RINGER);
             Sound_App_Add_Menu(pMenu,IDS_POWERONOFF_ALERT);
+            Sound_App_Add_Menu(pMenu,IDS_FMRADIO_OPTION_MENU_PLAY_MODLE);
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -1111,6 +1122,9 @@ static boolean  HandleSoundMenuProfilesDialogEvent(CSoundMenu *pMe,
                     pMe->m_OtherVolType = SET_POWERONOFFALERT;
                     CLOSE_DIALOG(DLGRET_OTHERSEL)
                     break;
+                case IDS_FMRADIO_OPTION_MENU_PLAY_MODLE: //FM播放模式
+                	CLOSE_DIALOG(DLGRET_FMMODE)
+                	break;
 
                 //case IDS_HEADSET_AUTOANSWER_TITLE:      //自动接听
                 //    CLOSE_DIALOG(DLGRET_AUTOANSWERSUB)
@@ -2245,7 +2259,139 @@ static boolean  HandleVolumeDialogEvent(CSoundMenu *pMe,
     }
     return FALSE;
 } // HandleVolumeDialogEvent
+/*==============================================================================
+函数：
+       HandleFMModeDialogEvent
+说明：
+       IDD_FMMODE_MENU对话框事件处理函数
 
+参数：
+       pMe [in]：指向SoundMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+
+static boolean  HandleFMModeDialogEvent(CSoundMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+	PARAM_NOT_REF(dwParam)
+
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                    IDC_MENU_FM);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            Sound_App_Add_Menu(pMenu,IDS_FMRADIO_PLAY_HANDSET);
+            Sound_App_Add_Menu(pMenu,IDS_RADIO_PLAY_SPEAKER);
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            {
+                boolean FMPlaymode = FALSE;
+                uint16 ui16_return = IDS_FMRADIO_PLAY_HANDSET;
+               	OEM_GetConfig(CFGI_FM_PLAY_MODE,&FMPlaymode, sizeof(FMPlaymode));
+               	if(FMPlaymode)
+               	{
+               		ui16_return = IDS_RADIO_PLAY_SPEAKER;
+               	}
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, ui16_return, TRUE);
+                IMENUCTL_SetSel(pMenu, ui16_return);
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetOemProperties( pMenu , OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+                #if 0
+                (void)IMENUCTL_SetTitle(pMenu,
+                                        AEE_APPSSOUNDMENU_RES_FILE,
+                                        pMe->m_wResID,
+                                        NULL);
+				#else
+			    {
+			  		AECHAR WTitle[40] = {0};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+	                        AEE_APPSSOUNDMENU_RES_FILE,                                
+	                        pMe->m_wResID,
+	                        WTitle,
+	                        sizeof(WTitle));
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			    }
+			    #endif
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_APP_SOUNDMENU,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            (void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            {
+                
+                boolean FMPlaymode = FALSE;
+
+                switch (wParam)
+                {
+                    case IDS_FMRADIO_PLAY_HANDSET:      //关
+                         FMPlaymode = FALSE;
+                         break;
+
+                    case IDS_RADIO_PLAY_SPEAKER:      //开
+                         FMPlaymode = TRUE;
+                         break;
+
+                    default:
+                        ASSERT_NOT_REACHABLE;
+                }
+                OEM_SetConfig(CFGI_FM_PLAY_MODE,&FMPlaymode, sizeof(FMPlaymode));
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wParam, TRUE);
+                CLOSE_DIALOG(DLGRET_MESSAGE)
+
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+}
 
 /*==============================================================================
 函数：

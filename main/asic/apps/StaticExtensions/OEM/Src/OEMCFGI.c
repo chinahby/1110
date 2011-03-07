@@ -644,6 +644,7 @@ typedef struct
 #endif
    boolean flashlight_status;
    boolean wmswriteend_status;
+   boolean FMPlayMode_status;
    
    //Add End
    #ifdef FEATURE_LONG_NETLOCK
@@ -1005,7 +1006,8 @@ static int OEMPriv_SetItem_CFGI_BREWSET_PASSWORD(void* pBuff);
 static int OEMPriv_GetItem_CFGI_BREWSET_PASSWORD(void* pBuff);
 static int OEMPriv_SetItem_CFGI_LANGUAGE_MOD(void *pBuff);
 static int OEMPriv_GetItem_CFGI_LANGUAGE_MOD(void *pBuff);
-
+static int OEMPriv_GetItem_CFGI_FM_PLAY_MODE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_FM_PLAY_MODE(void *pBuff);
 
 
 #if defined(FEATURE_WCDMA)
@@ -1731,6 +1733,7 @@ static OEMConfigListType oemi_cache = {
    #endif
    ,0
    ,1
+   ,0
    //Add End
    #ifdef FEATURE_LONG_NETLOCK
    ,0
@@ -2259,6 +2262,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    //Add End
    CFGTABLEITEM(CFGI_FLSHLITHG_STATUS, sizeof(boolean)),
    CFGTABLEITEM(CFGI_WMSWRITD_END_STATUS,sizeof(boolean)),
+   CFGTABLEITEM(CFGI_FM_PLAY_MODE,sizeof(boolean)),
    #ifdef FEATURE_LONG_NETLOCK
    CFGTABLEITEM(CFGI_NET_LOCK_FLAGS,sizeof(boolean)),
    #endif
@@ -2767,6 +2771,7 @@ void OEM_RestoreFactorySetting( void )
 #endif
    oemi_cache.flashlight_status = 0;
    oemi_cache.wmswriteend_status = 1;
+   oemi_cache.FMPlayMode_status = 0;
    //Add End
 #ifdef FEATURE_PLANEMODE
    oemi_cache.planeMode = OEMNV_PLANEMODE_OFF;
@@ -10383,6 +10388,17 @@ static int OEMPriv_GetItem_CFGI_FLSHLITHG_STATUS(void *pBuff)
 static int OEMPriv_SetItem_CFGI_FLSHLITHG_STATUS(void *pBuff)
 {
 	MEMCPY((void*) &oemi_cache.flashlight_status, pBuff, sizeof(boolean));
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_FM_PLAY_MODE(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.FMPlayMode_status, sizeof(boolean));
+	return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_FM_PLAY_MODE(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.FMPlayMode_status, pBuff, sizeof(boolean));
     OEMPriv_WriteOEMConfigList(); 
     return SUCCESS;
 }

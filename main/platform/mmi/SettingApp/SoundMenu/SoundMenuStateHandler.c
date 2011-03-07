@@ -62,6 +62,8 @@ static NextFSMAction Sound_StateVolumeHandler(CSoundMenu *pMe);
 
 static NextFSMAction Sound_StateOtherSelHandler(CSoundMenu *pMe);
 
+static NextFSMAction Sound_StateFMmodeHandler(CSoundMenu *pMe);
+
 // 状态 SOUNDMENUST_VOLUMESUB 处理函数
 static NextFSMAction Sound_StateVolumeSubHandler(CSoundMenu *pMe);
 
@@ -169,6 +171,9 @@ NextFSMAction SoundMenu_ProcessState(CSoundMenu *pMe)
         case SOUNDMENUST_OTHERSEL:
             retVal = Sound_StateOtherSelHandler(pMe);
             break;
+        case SOUNDMENUST_FMMODE:
+        	retVal = Sound_StateFMmodeHandler(pMe);
+        	break;
 #if 0
         case SOUNDMENUST_AUTOANSWERSUB:
             retVal = Sound_StateAutoAnswerSubHandler(pMe);
@@ -475,7 +480,9 @@ static NextFSMAction Sound_StateSoundMenuHandler(CSoundMenu *pMe)
         case DLGRET_OTHERSEL:
             MOVE_TO_STATE(SOUNDMENUST_OTHERSEL)
             return NFSMACTION_CONTINUE;
-
+        case DLGRET_FMMODE:
+        	MOVE_TO_STATE(SOUNDMENUST_FMMODE)
+            return NFSMACTION_CONTINUE;
         //case DLGRET_AUTOANSWERSUB:
         //    MOVE_TO_STATE(SOUNDMENUST_AUTOANSWERSUB)
         //    return NFSMACTION_CONTINUE;
@@ -713,6 +720,36 @@ static NextFSMAction Sound_StateVolumeHandler(CSoundMenu *pMe)
     return NFSMACTION_WAIT;
 } // StateVolumeHandler
 
+static NextFSMAction Sound_StateFMmodeHandler(CSoundMenu *pMe)
+{
+	 if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SoundMenu_ShowDialog(pMe, IDD_FM_MENU);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_MESSAGE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SoundMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_OK:
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SOUNDMENUST_SOUNDMENU)
+            return NFSMACTION_CONTINUE;
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
 
 /*==============================================================================
 函数：
