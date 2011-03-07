@@ -140,13 +140,13 @@
 		<Text>Standar</Text>
 	</STRING>
 	<STRING Id="1060" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
-		<Text>Play mode</Text>
+		<Text>FM mode Putar Ulang</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_FMRADIO_PLAY_HANDSET">
 		<Text>Handset</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_RADIO_PLAY_SPEAKER">
-		<Text>Speaker</Text>
+		<Text>Pembicara</Text>
 	</STRING>
 </Strings>
 <Dialogs>
