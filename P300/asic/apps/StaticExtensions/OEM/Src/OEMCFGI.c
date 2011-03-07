@@ -1596,9 +1596,13 @@ static OEMConfigListType oemi_cache = {
    OEMNV_SCREENSAVE_TYPE,                           //CFGI_SCREENSAVE_TYPE
 #endif
    WMS_PRIORITY_NORMAL,                             //CFGI_WMS_PRIORITY
+   #ifdef 	FEATURE_USES_LOWMEM											
+   SENDOPT_SAVE,									 //CFGI_WMS_SENDMODE
+   #else
    SENDOPT_SAVEANDSEND,                             //CFGI_WMS_SENDMODE
+   #endif
    WMS_MEMORY_STORE_NV_CDMA,                        //CFGI_WMS_STORETYPE
-   TRUE                                            //CFGI_WMS_DELIVERYREPORTS
+   FALSE                                            //CFGI_WMS_DELIVERYREPORTS
 #ifdef FEATURE_AUTOREPLACE
    ,FALSE                                           //CFGI_WMS_AUTOREPLACE
 #endif
@@ -2544,6 +2548,7 @@ void OEM_RestoreFactorySetting( void )
    //∆¡±£¿‡–Õ
    MEMCPY((void*)oemi_cache.s_screensave_type,OEMNV_SCREENSAVE_TYPE, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
 #endif
+   oemi_cache.wms_sendmode = SENDOPT_SAVE;
    oemi_cache.wms_priority        = WMS_PRIORITY_NORMAL; 
    oemi_cache.wms_storetype       = WMS_MEMORY_STORE_NV_CDMA; 
    oemi_cache.wms_delivereports   = FALSE; 

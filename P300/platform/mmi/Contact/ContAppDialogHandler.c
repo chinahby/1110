@@ -4960,7 +4960,11 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 			ITEXTCTL_SetInputMode( pTextCtl,AEE_TM_LETTERS);
 			//ITEXTCTL_SetActive(pTextCtl, FALSE);
 			#else
-			ITEXTCTL_SetInputMode( pTextCtl,AEE_TM_CAPLOWER);
+			#ifndef FEATURE_USES_LOWMEM
+			ITEXTCTL_SetInputMode( pTextCtl,AEE_TM_LETTERS);
+			#else
+			ITEXTCTL_SetInputMode( pTextCtl,AEE_TM_LETTERS);
+			#endif
 			#endif
             //IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);   
             // For redraw the dialog

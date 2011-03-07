@@ -585,7 +585,9 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_PHONEBOOK_LOCK, IDS_PHONEBOOK_LOCK, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_RECENT_CALL_LOCK, IDS_RECENT_CALL_LOCK, NULL, 0);
             //IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_MEDIALOCK, IDS_MEDIALOCK, NULL, 0);
+            #ifndef FEATURE_USES_LOWMEM
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_CALENDARLOCK, IDS_CALENDARLOCK, NULL, 0);
+            #endif
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -616,11 +618,13 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
                 SetCheckBoxItem(pMenu, IDS_MEDIALOCK, bData);
 
             }
+            #ifndef FEATURE_USES_LOWMEM
             //检查calendar 锁状态
             {
                 (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_CALENDAR_LOCK_CHECK, &bData, sizeof(bData));
                 SetCheckBoxItem(pMenu, IDS_CALENDARLOCK, bData);
             }
+            #endif
             IMENUCTL_SetSel(pMenu, IDS_SMS_LOCK);
             (void) ISHELL_PostEvent(pMe->m_pShell,
                                             AEECLSID_APP_SECURITYMENU,
@@ -665,10 +669,11 @@ static boolean  SecurityApplicationLockDlgHandler(CSecurityMenu *pMe,
                     // 保存近期通话锁状态
                     bData = GetCheckBoxVal(pMenu, IDS_RECENT_CALL_LOCK);
                     (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_RECENTCALL_LOCK_CHECK,&bData,sizeof(bData));
-                    
+                    #ifndef FEATURE_USES_LOWMEM
                     // 保存日程表锁状态
                     bData = GetCheckBoxVal(pMenu, IDS_CALENDARLOCK);
                     (void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_CALENDAR_LOCK_CHECK,&bData,sizeof(bData));
+                    #endif
                     
                     CLOSE_DIALOG(DLGRET_TOSHOWMSG)
                     break;

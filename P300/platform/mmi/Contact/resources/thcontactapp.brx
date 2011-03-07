@@ -80,16 +80,16 @@
 		<Text>การ์ด UIM</Text>
 	</STRING>
 	<STRING Id="47" Name="IDS_POSITION_ALL">
-		<Text>ตัวเครื่องและการ์ด UIM</Text>
+		<Text>ตัวเครื่องและการ์ดUIM</Text>
 	</STRING>
 	<STRING Id="48" Name="IDS_COPYTORUIM">
-		<Text>คัดลอกทั้งหมดลงการ์ด UIM</Text>
+		<Text>คัดลอกทั้งหมดลงการ์ดUIM</Text>
 	</STRING>
 	<STRING Id="49" Name="IDS_COPYTOPHONE">
 		<Text>คัดลอกทั้งหมดลงตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="50" Name="IDS_MOVETORUIM">
-		<Text>ย้ายทั้งหมดลงการ์ด UIM</Text>
+		<Text>ย้ายทั้งหมดลงการ์ดUIM</Text>
 	</STRING>
 	<STRING Id="51" Name="IDS_MOVETOPHONE">
 		<Text>ย้ายทั้งหมดลงตัวเครื่อง</Text>
@@ -110,7 +110,7 @@
 		<Text>เลือกเมื่อบันทึก</Text>
 	</STRING>
 	<STRING Id="66" Name="IDS_CAPACITY">
-		<Text>สถานะหน่วยความจำ</Text>
+		<Text>หน่วยความจำ</Text>
 	</STRING>
 	<STRING Id="67" Name="IDS_CAPACITY_PHONE">
 		<Text>ตัวเครื่อง:%d (%d)</Text>
@@ -320,10 +320,10 @@
 		<Text>ลบรายชื่อ </Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_CONTACTS_MEMORY_STUTAS">
-		<Text>สถานะหน่วยความจำ</Text>
+		<Text>หน่วยความจำ</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_PHONE_TO_UIM">
-		<Text>ตัวเครื่องลงซิมการ์ด</Text>
+		<Text>ตัวเครื่องไปการ์ด UIM</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_UIM_TO_PHONE">
 		<Text>การ์ด UIM ไปตัวเครื่อง</Text>
@@ -362,16 +362,16 @@
 		<Text>การ์ด UIM</Text>
 	</STRING>
 	<STRING Id="1056" Name="IDS_PHONE_THEN_UIM">
-		<Text>ตัวเครื่องแล้วการ์ด UIM</Text>
+		<Text>ตัวเครื่องแล้วการ์ดUIM</Text>
 	</STRING>
 	<STRING Id="1057" Name="IDS_UIM_THEN_PHONE">
 		<Text>การ์ด UIM แล้วตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="1058" Name="IDS_COPY_TOUIMCARD">
-		<Text>คัดลอกลงการ์ด UIM</Text>
+		<Text>คัดลอกลงการ์ดUIM</Text>
 	</STRING>
 	<STRING Id="1059" Name="IDS_MOVE_TOUIMCARD">
-		<Text>ย้ายลงการ์ด UIM</Text>
+		<Text>ย้ายลงการ์ดUIM</Text>
 	</STRING>
 	<STRING Id="1060" Name="IDS_COPY_TOPHONE">
 		<Text>คัดลอกลงตัวเครื่อง</Text>
@@ -401,7 +401,7 @@
 		<Text>การ์ด UIM เต็ม บันทึกลงตัวเครื่อง</Text>
 	</STRING>
 	<STRING Id="1069" Name="IDS_PHONEFULL_SAVETOCARD">
-		<Text>ตัวเครื่องเต็ม บันทึกลงการ์ด UIM</Text>
+		<Text>ตัวเครื่องเต็ม บันทึกลงการ์ดUIM</Text>
 	</STRING>
 	<STRING Id="1070" Name="IDS_MEMORYFULL">
 		<Text>ความจำเต็ม กรุณาลบ</Text>

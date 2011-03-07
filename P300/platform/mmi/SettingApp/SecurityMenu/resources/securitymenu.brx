@@ -107,7 +107,7 @@
 		<Text>Contacts</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_RECENT_CALL_LOCK">
-		<Text>Recent calls</Text>
+		<Text>Call Record</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_SMS_LOCK">
 		<Text>Messages</Text>

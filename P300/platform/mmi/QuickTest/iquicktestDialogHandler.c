@@ -1096,6 +1096,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 						IIMAGE_Release( image);
 			    	}
 			    	break;
+			    #ifndef FEATURE_USES_LOWMEM
 			    case AVK_MUSIC:
 			    	{
 			    		IImage* image	= NULL;
@@ -1123,6 +1124,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 			        IIMAGE_Release( image);
 			    	}
 			    	break;
+			    #endif
 #ifdef	FEATURE_APP_BLUETOOTH 
 				case AVK_BLUETOOTH:	//ÓÐ´ýÐÞ¸Ä£¬À¶ÑÀµÄ¼üÅÌ²âÊÔ
 			    	{
@@ -1235,6 +1237,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128) || defined(FEATURE_DISP_176X220)
+#ifndef FEATURE_USES_LOWMEM
                 case AVK_CAMERA:
                     {
                         IImage* image   = NULL;
@@ -1255,7 +1258,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     }
                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break; 
+#endif
 #elif defined(FEATURE_DISP_128X160)
+#ifndef FEATURE_USES_LOWMEM
 case AVK_CAMERA:
                     {
                         IImage* image   = NULL;
@@ -1270,6 +1275,7 @@ case AVK_CAMERA:
                     }
                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break; 
+ #endif
 
 #endif
 #ifdef FEATURE_NUM_KEY_MID

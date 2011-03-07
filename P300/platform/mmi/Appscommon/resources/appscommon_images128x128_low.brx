@@ -112,12 +112,6 @@
 	<Object Id="5415" Name="IDB_MODE_T9_MT_THAI" MimeType="image/png">
 		<File>..\images\128x128\common\IME\thai.png</File>
 	</Object>
-	<Object Id="5416" Name="IDB_MODE_T9_RAPID_THAI" MimeType="image/png">
-		<File>..\images\128x128\common\IME\T9th.png</File>
-	</Object>
-	<Object Id="5426" Name="IDB_EDIT_UP_DOWN_BMP" MimeType="image/png">
-		<File>..\images\128x128\common\IME\arrow.png</File>
-	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE">
 		<File>..\images\128x128\common\Message\Icon\Template.bmp</File>
 	</Object>
@@ -262,6 +256,9 @@
 	<Object Id="7019" Name="IDB_ALARM">
 		<File>..\images\128x128\common\Annunciator\alarm.bmp</File>
 	</Object>
+	<Object Id="7020" Name="IDB_FM_RADIO">
+		<File>..\images\128x128\common\Annunciator\fm_radio.bmp</File>
+	</Object>
 	<Object Id="7021" Name="IDB_HEADSET">
 		<File>..\images\128x128\common\Annunciator\headset.bmp</File>
 	</Object>
@@ -282,9 +279,6 @@
 	</Object>
 	<Object Id="7027" Name="IDB_LOCKSTATUS">
 		<File>..\images\128x128\common\Annunciator\lock_status.bmp</File>
-	</Object>
-	<Object Id="7033" Name="IDB_AIR_MODE">
-		<File>..\images\128x128\common\Annunciator\airplane_mode.bmp</File>
 	</Object>
 	<Object Id="7035" Name="IDB_LOADSPEAKER">
 		<File>..\images\128x128\common\Annunciator\loadspeaker.bmp</File>

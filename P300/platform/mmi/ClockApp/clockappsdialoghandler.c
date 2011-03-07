@@ -1220,7 +1220,7 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                         );
 				#endif
 
-                IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, label[i],-1, pMe->rectLine[i].x, pMe->rectLine[i].y, 0, IDF_TEXT_TRANSPARENT);
+                IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL, label[i],-1, pMe->rectLine[i].x, pMe->rectLine[i].y, NULL, IDF_TEXT_TRANSPARENT);
             }
 
             for( i = 0; i < 4; i ++)

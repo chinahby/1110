@@ -246,9 +246,7 @@ static OEMState_data sms_image_data[]=
 /*FMRadio/Headset*/
 static OEMState_data fmradio_image_data[]=
 {
-#ifndef FEATURE_USES_LOWMEM
-    {ANNUN_STATE_FMRADIO_ON, IDB_FM_RADIO, NULL},
-#endif
+    {ANNUN_STATE_HEADSET_ON, IDB_FM_RADIO, NULL},
     {ANNUN_STATE_HEADSET_ON, IDB_HEADSET, NULL}
 };
 #ifndef FEATURE_USES_LOWMEM
@@ -333,7 +331,7 @@ OEMAnnun_content fmradio_content =
 #ifndef FEATURE_USES_LOWMEM
      {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)fmradio_image_data};
 #else
-     {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)fmradio_image_data};
+     {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)fmradio_image_data};
 #endif
 /*ANNUN_FIELD_BLUETOOTH*/
 #ifndef FEATURE_USES_LOWMEM
@@ -367,9 +365,9 @@ OEMAnnun_content batt_content =
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1
 #elif defined(FEATURE_DISP_128X128)
-    #define IMG_WIDTH      10
+    #define IMG_WIDTH      12
     #define IMG_HEIGHT     13
-    #define LG_IMG_WIDTH 20
+    #define LG_IMG_WIDTH   20
     #define TEXT_HEIGHT    10
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1
@@ -383,7 +381,7 @@ OEMAnnun_content batt_content =
 #elif defined(FEATURE_DISP_160X128)
     #define IMG_WIDTH      12
     #define IMG_HEIGHT     13
-    #define LG_IMG_WIDTH 20
+    #define LG_IMG_WIDTH   20
     #define TEXT_HEIGHT    10
     #define ROW1_Y           0
     #define BETWEEN_ICON_PIXEL 1    
@@ -418,7 +416,7 @@ OEMAnnun_content batt_content =
 #else
 /* Standard image fields are 10 x 10 (pixels)    */
 /* while large image fields are 20 x 10 (pixels) */
-    #define IMG_WIDTH      10
+    #define IMG_WIDTH      12
     #define IMG_HEIGHT     13
     #define LG_IMG_WIDTH 20
     #define TEXT_HEIGHT    11
