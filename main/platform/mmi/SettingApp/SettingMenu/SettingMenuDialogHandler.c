@@ -3922,7 +3922,11 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_LANG_THAI
                 case IDS_THAI:    //Ì©¹úÓï
                     language = NV_LANGUAGE_THAI;
-                    inputmode = OEM_MODE_T9_RAPID_THAI;                           
+                    #ifdef FEATURE_VERSION_C01
+                    inputmode = OEM_MODE_T9_MT_THAI;   
+                    #else
+                    inputmode = OEM_MODE_RAPID_MT_THAI;
+                    #endif
                     break;
 #endif /*FEATURE_LANG_THAI*/
 

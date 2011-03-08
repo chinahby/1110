@@ -1743,7 +1743,7 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
+                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)||defined(FEATURE_VERSION_C01)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -2100,7 +2100,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
+                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)||defined(FEATURE_VERSION_C01)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -2383,7 +2383,7 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
+                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)||defined(FEATURE_VERSION_C01)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -3019,7 +3019,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
                 case AVK_CAMERA:
                 	
-                	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+                	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)
                 	{
                 	
 					nv_item_type	SimChoice;
