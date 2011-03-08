@@ -221,7 +221,10 @@ sdcc_boot_init(void)
 /* Certain Low-Tier builds do not support SDCC and hence compiling
    out the SDCC_BOOT_INIT for such builds */
 #if defined(FEATURE_BUILD_MMC)
+#if defined(T_QSC1100) || defined(T_QSC1110)
+#else
    sdcc_boot_pmic_init();
+#endif
    sdcc_boot_gpio_init();
    sdcc_boot_clk_init();
 

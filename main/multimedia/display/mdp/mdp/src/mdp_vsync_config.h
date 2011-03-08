@@ -36,7 +36,14 @@
 //Vsync Config
 /////////////////////////////////////////////////////////////////////
 
-
+#ifdef CUST_EDITION
+#include "disp_options.h"
+#define  MDP_WRITE_FASTER_VSYNC_OFFSET 35  
+#define  MDP_WRITE_SLOWER_VSYNC_OFFSET 45
+#define  MDP_ROWS_PER_SECOND_OFFSET 35
+#define  LCD_DISPLAY_LINES DISP_HEIGHT 
+#define  LCD_REFRESH_EBI  60
+#else
 #if (defined(T_QSC60X5) && !defined(FEATURE_TMD_20_QVGA)) 
   #define MDP_WRITE_FASTER_VSYNC_OFFSET   124
   #define MDP_WRITE_SLOWER_VSYNC_OFFSET   32
@@ -57,7 +64,7 @@
   #define  MDP_ROWS_PER_SECOND_OFFSET 35
   #define LCD_DISPLAY_LINES 320 
 #endif /*(defined(T_QSC60X5) && !defined(FEATURE_TMD_20_QVGA))*/
-
+#endif
 #define VSYNC_RESYNC_TIME_IN_MS   100 /*how often the MDP syncs with the LCD read pointer - 100ms*/
 
 

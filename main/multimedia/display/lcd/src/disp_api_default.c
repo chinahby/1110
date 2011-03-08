@@ -144,6 +144,7 @@ void disp_init(void)
 #else
     if(disp_drv_install(PRIMARY_LCD_NAME) == -1)
         return;
+    mdp_disp_fatal_err_flag = TRUE;
 #endif
 
 	fd = drv_open(PRIMARY_LCD_NAME);
@@ -159,12 +160,13 @@ void disp_init(void)
     clk_busy_wait(100*1000);
 #endif
 
-#ifdef FEATURE_MDP
-	mdp_init();
-#endif
-
 #ifdef CUST_EDITION
     disp_set_backlight(LCD_BACKLIGHT_LVL_2);
+    mdp_disp_fatal_err_flag = FALSE;
+#endif
+
+#ifdef FEATURE_MDP
+	mdp_init();
 #endif
 }
 
@@ -271,6 +273,10 @@ void disp_clear_whole_screen(void)
 
   if (!mdp_disp_fatal_err_flag)
     drv_ioctl(mdp_fd, IOCTL_DISP_CLEAR_WHOLE_SCREEN,(void *)dest);
+#ifdef CUST_EDITION
+  else
+    drv_ioctl(fd, IOCTL_DISP_CLEAR_WHOLE_SCREEN, NULL);
+#endif
 #else
   drv_ioctl(fd, IOCTL_DISP_CLEAR_WHOLE_SCREEN, NULL);
 #endif
@@ -293,6 +299,10 @@ void disp_clear_screen_area
 #ifdef FEATURE_MDP
   if (!mdp_disp_fatal_err_flag)
     drv_ioctl(mdp_fd, IOCTL_DISP_CLEAR_SCREEN_AREA, (void *)&cls_arg);
+#ifdef CUST_EDITION
+  else
+    drv_ioctl(fd, IOCTL_DISP_CLEAR_SCREEN_AREA, (void *)&cls_arg);
+#endif
 #else
   drv_ioctl(fd, IOCTL_DISP_CLEAR_SCREEN_AREA, (void *)&cls_arg);
 #endif
@@ -535,9 +545,9 @@ static void mdp_init(void)
 
   mdp_set_lcd_size(PRIMARY_LCD_TYPE, lcd_info_1.lcd_type, 
                    lcd_info_1.disp_width, lcd_info_1.disp_height);
-
+#ifndef CUST_EDITION
   drv_ioctl(mdp_fd, IOCTL_DISP_CLEAR_WHOLE_SCREEN, (void *)PRIMARY_LCD_TYPE);
-  
+#endif
 #ifdef FEATURE_SECONDARY_DISPLAY
 #error code not present
 #endif /* FEATURE_SECONDARY_DISPLAY */

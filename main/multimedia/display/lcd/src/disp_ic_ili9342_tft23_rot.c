@@ -24,25 +24,29 @@ __align(16) static uint32 MDP_DISP_SCR_ILI9342[MDP_LCD_SCR_SIZE][MDP_LCD_SCR_LEN
     NOP,               //0
     NOP,               //1
     SET_LCD_CNTL_ADDR, //2 set LCD command port address
-    DISP_CMD_PORT2,    //3
+    LCD_CMD_WH,    //3
     
     SET_LCD_DATA_ADDR, //4 set LCD data port address
-    DISP_DATA_PORT2,   //5
+    LCD_DATA_WH,   //5
     
     SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_HORZ_RAM_ADDR_POS_1_ADDR)),//6
     NULL,              //7
     NULL,              //8
-    SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_VERT_RAM_ADDR_POS_1_ADDR)),//9
+    NULL,              //9
     NULL,              //10
-    NULL,              //11
-    SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_CMD_RAMWR)),//12
+    SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_VERT_RAM_ADDR_POS_1_ADDR)),//11
+    NULL,              //12
+    NULL,              //13
+    NULL,              //14
+    NULL,              //15
+    SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_CMD_RAMWR)),//16
     
-    RETURN            //13
+    RETURN            //17
 };
 
 static uint8 disp_ic_mdp_getformat(void)
 {
-    return 8; //8 16BPP 0 //18BPP
+    return LCD_16BPP_88_II; //8 16BPP 0 //18BPP
 }
 
 static uint16 disp_ic_mdp_getscr(uint32 **ppscr)
@@ -56,10 +60,14 @@ static uint16 disp_ic_mdp_getscr(uint32 **ppscr)
 
 static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_col, uint32 end_row, uint32 end_col)
 {
-    scr[7] = SEND_LCD_DATA(DISP_LCD_18BPP(start_col));
-    scr[8] = SEND_LCD_DATA(DISP_LCD_18BPP(end_col));
-    scr[10] = SEND_LCD_DATA(DISP_LCD_18BPP(start_row));
-    scr[11] = SEND_LCD_DATA(DISP_LCD_18BPP(end_row));
+    scr[7] = SEND_LCD_DATA(DISP_LCD_18BPP(start_col>>8));
+    scr[8] = SEND_LCD_DATA(DISP_LCD_18BPP(start_col));
+    scr[9] = SEND_LCD_DATA(DISP_LCD_18BPP(end_col>>8));
+    scr[10] = SEND_LCD_DATA(DISP_LCD_18BPP(end_col));
+    scr[12] = SEND_LCD_DATA(DISP_LCD_18BPP(start_row>>8));
+    scr[13] = SEND_LCD_DATA(DISP_LCD_18BPP(start_row));
+    scr[14] = SEND_LCD_DATA(DISP_LCD_18BPP(end_row>>8));
+    scr[15] = SEND_LCD_DATA(DISP_LCD_18BPP(end_row));
 }
 #endif
 

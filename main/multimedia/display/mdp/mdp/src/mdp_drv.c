@@ -6779,7 +6779,7 @@ SIDE EFFECTS
 ===========================================================================*/
 void mdp_set_vsync(void)
 {
-#ifdef MDP_SW_VSYNC  
+#ifdef MDP_HW_VSYNC  
 #ifdef FEATURE_MDDI
 #error code not present
 #else /* FEATURE_MDDI */
@@ -7155,7 +7155,7 @@ int mdp_drv_init(void)
 #ifndef FEATURE_MDDI 
   mdp_ebi_rows_per_refresh = LCD_DISPLAY_LINES; /**mapping mddi and ebi parameters. this keeps the get_lcd_line_counter algo unchanged.**/
   mdp_ebi_rows_per_second = LCD_REFRESH_EBI * LCD_DISPLAY_LINES;
-  #ifdef MDP_SW_VSYNC  
+  #ifdef MDP_HW_VSYNC  
   gpio_tlmm_config(MDP_GPIO_BLANKING_SIGNAL_INPUT); //configure gpio as input signal
   #endif
 #else /*FEATURE_MDDI*/
@@ -7373,7 +7373,7 @@ int mdp_drv_init(void)
 #endif /* FEATURE_CLKREGIM_DEVMAN */
 
 #ifndef FEATURE_MDDI
-#ifdef MDP_SW_VSYNC  
+#ifdef MDP_HW_VSYNC  
 (void) gpio_int_set_detect(MDP_GPIO_BLANKING_SIGNAL, DETECT_LEVEL);
 #endif
 #endif /*FEATURE_MDDI*/

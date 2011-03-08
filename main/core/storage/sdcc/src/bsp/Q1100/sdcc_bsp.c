@@ -60,6 +60,7 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
    if(SDCC_BSP_VDD_ON == state)
    {
 #ifdef T_QSC1110
+#ifndef CUST_EDITION
       // ULC uses LCD_DRV_N to gate power to SDCC slot on Kip B0
       if ( qsc11x0_hw_rev.pmic_hw_version >= 3)
       {
@@ -73,6 +74,7 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
                                             PM_MPP__DLOGIC__LVL_MSMP,
                                             PM_MPP__DLOGIC_OUT__CTRL_LOW);
       }
+#endif
 #else
       gpio_tlmm_config(GPIO_SDCC_CLK);
       gpio_tlmm_config(GPIO_SDCC_CMD_OUT);
@@ -93,6 +95,7 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
    else if (SDCC_BSP_VDD_OFF == state)
    {
 #ifdef T_QSC1110
+#ifndef CUST_EDITION
       if ( qsc11x0_hw_rev.pmic_hw_version >= 3)
       {
          (void) pm_set_led_intensity(PM_LCD_LED, 0);
@@ -103,7 +106,7 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
                                       PM_MPP__I_SINK__LEVEL_15mA,
                                       PM_MPP__I_SINK__SWITCH_DIS);
       }
-
+#endif
       /*Configure all SDCC GPIOs as input to avoid current drain*/
       gpio_tlmm_config(GPIO_INPUT_24);
       gpio_tlmm_config(GPIO_INPUT_29);

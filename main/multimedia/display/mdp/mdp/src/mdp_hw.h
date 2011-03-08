@@ -50,7 +50,6 @@
 /////////////////////////////////////////////////////////////////////
 //Vsync Config
 /////////////////////////////////////////////////////////////////////
-
 #define MDP_SW_VSYNC              // SW will reset MDP Vsync counter
 //or #define MDP_HW_VSYNC if you have HW VSYNC line
 //or #define MDP_SYS_VSYNC_OFF to disable VSYNC permanently 

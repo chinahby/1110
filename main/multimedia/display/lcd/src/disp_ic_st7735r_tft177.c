@@ -24,10 +24,10 @@ __align(16) static uint32 MDP_DISP_SCR_ST7735R[MDP_LCD_SCR_SIZE][MDP_LCD_SCR_LEN
     NOP,               //0
     NOP,               //1
     SET_LCD_CNTL_ADDR, //2 set LCD command port address
-    DISP_CMD_PORT2,    //3
+    LCD_CMD_WH,    //3
     
     SET_LCD_DATA_ADDR, //4 set LCD data port address
-    DISP_DATA_PORT2,   //5
+    LCD_DATA_WH,   //5
     
     SEND_LCD_CNTL(DISP_LCD_18BPP(DISP_LCD_HORZ_RAM_ADDR_POS_1_ADDR)),//6
     NULL,              //7
