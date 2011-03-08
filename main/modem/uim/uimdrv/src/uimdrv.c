@@ -8089,11 +8089,7 @@ LOCAL void rx_isr_proc_procedure_bytes_dm
            bytes are received with parity error. Therefore, the workaround for
            just GCF 27.11.1.5 testcase basically ignores the bytes with parity
            error as the UART_DM captures them in the RX FIFO. */
-#ifdef FEATURE_OEMOMH
-        if (TRUE == uim_par_err_workaround && (uart_status & MSMU_SR_PF_ERR))
-#else
         if (TRUE == uim_par_err_workaround)
-#endif
         {
           /* Ignore 1st, 4th, 7th,..., bytes following the pattern */
           if(uim_gcf_byte_count % 3 == 0)
