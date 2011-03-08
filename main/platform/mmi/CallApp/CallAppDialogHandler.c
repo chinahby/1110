@@ -3215,8 +3215,31 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
             break;
         }
-#ifdef FEATURE_TCL_CDG2_TEST
+
         case EVT_KEY_HELD:
+            switch ((AVKType)wParam)
+            {
+             case AVK_RWD:
+                  ISHELL_PostEvent( pMe->m_pShell, AEECLSID_DIALER,EVT_USER_REDRAW,0,0 );
+ 
+                  if (HS_HEADSET_ON())
+                  {
+                      pMe->m_userCanceled = TRUE;
+ #ifdef FEATURE_ICM
+                      ICM_EndAllCalls(pMe->m_pICM);
+ #else
+                      ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
+ #endif
+                  }
+                  else
+                  {
+                      pMe->m_bHandFree = !pMe->m_bHandFree;
+                      CallApp_SetupCallAudio(pMe);
+                  }
+                  return TRUE;  //make the dialog can't closed by avk_clr.
+            }
+                  
+#ifdef FEATURE_TCL_CDG2_TEST
 #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
 {
 			nv_item_type	SimChoice;
@@ -3253,9 +3276,9 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     return FALSE;
                 }
             }
-            
+#endif           
             break;
-#endif
+
         case EVT_KEY:
             if ( pMe->m_bShowPopMenu && (AVK_LEFT != wParam) && (AVK_RIGHT!= wParam))
             {
