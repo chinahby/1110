@@ -117,10 +117,12 @@ when       who     what, where, why
 #endif //FEATURE_LANG_HINDI
 
 #ifdef FEATURE_LANG_THAI
-#ifndef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_VERSION_C01)
 #define FEATURE_T9_MT_THAI
-#endif
+#else
+#define FEATURE_T9_MT_THAI
 #define FEATURE_T9_RAPID_THAI
+#endif
 #endif //FEATURE_LANG_THAI
 
 #ifdef FEATURE_LANG_SPANISH
@@ -895,7 +897,7 @@ static const AECHAR sszSymbolListTH[] =
 	0xE30,0xE31,0xE32,0xE33,0xE34,0xE35,
 	0xE36,0xE37,0xE38,0xE39,0xE40,0xE41,
 	0xE42,0xE43,0xE44,0xE4C,0xE47,0xE48,
-	0xE49,0xE4A,0xE48,0xE2F,0xE46,0
+	0xE49,0xE4A,0xE4B,0xE2F,0xE46,0
 		
 };
 #endif

@@ -5184,7 +5184,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                     return TRUE;
                 case AVK_CAMERA:
                 {
-                	 #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)||defined(FEATURE_VERSION_C01)
+                	 #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
                 	 {
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -9372,7 +9372,7 @@ static boolean  CContApp_HandleOneDialNumFldSelDlgEvent( CContApp  *pMe,
                     return TRUE;
 				case AVK_CAMERA:
 				{
-					#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)||defined(FEATURE_VERSION_C01)
+					#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
 					{
 					nv_item_type	SimChoice;
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -12453,7 +12453,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
                     CLOSE_DIALOG(DLGRET_SELECT);
                     return TRUE;
                 case AVK_CAMERA:
-				#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)||defined(FEATURE_VERSION_C01)
+				#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
 				{
 				nv_item_type	SimChoice;
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -14301,7 +14301,7 @@ static boolean  CContApp_HandleNunFldDlgEvent( CContApp  *pMe,
                     return TRUE;
                 case AVK_CAMERA:
                 
-                #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)||defined(FEATURE_VERSION_C01)
+                #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
                 {
 				nv_item_type	SimChoice;
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);

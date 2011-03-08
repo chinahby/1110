@@ -737,6 +737,7 @@ void fm_mute(boolean on)
         {
 			snd_set_device(SND_DEVICE_HEADSET_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
 		}
+		
 	}
 	return;
 }

@@ -1743,7 +1743,7 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)||defined(FEATURE_VERSION_C01)
+                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -2100,7 +2100,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)||defined(FEATURE_VERSION_C01)
+                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -2383,7 +2383,7 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)||defined(FEATURE_VERSION_C01)
+                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -3031,7 +3031,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					}
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 					MSG_FATAL("NV_SIM_SELECT_I...............0000000=%d",SimChoice.sim_select,0,0);
-					if(SimChoice.sim_select ==AVK_SEND_TWO)
+					if(SimChoice.sim_select ==AVK_SEND_TWO*2)
 					{
 						MSG_FATAL("NV_SIM_SELECT_I...............",0,0,0);
 						if (pMe->m_bAcquiredTime && !pMe->m_bemergencymode)

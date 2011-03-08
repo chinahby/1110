@@ -177,6 +177,10 @@ OBJECT(CTextCtl)
    boolean                    m_isshift;
    boolean                    m_isAlt;
    #endif
+   #ifdef FEATURE_VERSION_C01
+   boolean                    m_isAvk1;
+   //boolean                    m_isSymbol;
+   #endif
 };
 
 #define LINEHEIGHT            (pme->m_nFontHeight)
@@ -429,6 +433,10 @@ int TextCtl_New(IShell * pIShell, AEECLSID clsID, void ** ppobj)
    pme->m_quickheldkey = FALSE; 
    pme->m_quickkeyeCode = EVT_KEY;
 #endif //'#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+#ifdef FEATURE_VERSION_C01
+   pme->m_isAvk1 = FALSE;
+   //pme->m_isSymbol = FALSE;
+#endif
    pme->m_nBgImgResID = 0;
    MEMSET(pme->m_strBgImgResFile, 0, sizeof(pme->m_strBgImgResFile)); 
 
@@ -787,12 +795,26 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 #ifdef  FEATURE_MYANMAR_INPUT_MOD
 			 &&b_isStar
 #endif
-             && (wParam == AVK_STAR) 
+             && (wParam == AVK_STAR 
+             #ifdef FEATURE_VERSION_C01
+             || (wParam == AVK_1 && pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI)
+             #endif
+             ) 
              && (!(pme->m_dwProps & TP_NOSYMBOL))
              && (!pme->m_bShowSyms || !pme->m_bShowFaceSyms || !pme->m_bShowNetSyms))                  
             // 按*键切换到符号输入法
 #endif
             {              	
+            	#ifdef FEATURE_VERSION_C01
+				if(wParam == AVK_1)
+				{
+					pme->m_isAvk1 = TRUE;
+				}
+				else
+				{
+					pme->m_isAvk1 = FALSE;
+				}
+				#endif
                 (void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
                 return TRUE;
             }  
@@ -1215,7 +1237,77 @@ if ((!pme->m_pSoftKey) &&
 
                 }
                 return(TRUE);
-            }    
+            }
+            else
+            {
+#if defined (FEATURE_ALL_KEY_PAD)
+							if ((wParam == AVK_SYMBOL))/*&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))*/ //modi by yangdecai
+#else
+				
+							 if ((wParam == AVK_STAR 
+			 #ifdef FEATURE_VERSION_C01
+			|| ((wParam == AVK_1) && (pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI) &&(!pme->m_bShowSyms))
+			 #endif
+							 )
+#ifdef  FEATURE_MYANMAR_INPUT_MOD
+							 &&b_isStar
+#endif
+								)
+#endif
+							{
+								//(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
+								//return TRUE;
+				#ifdef FEATURE_VERSION_C01
+								if(wParam == AVK_1)
+								{
+									   pme->m_isAvk1 = TRUE;
+									   //pme->m_isSymbol = TRUE;
+								}
+								
+								else
+								{
+									pme->m_isAvk1 = FALSE;
+								}
+				#endif
+				
+								//Add By zzg 2010_08_14 防止重复载入SYMBOL输入法				
+								if (AEE_TM_SYMBOLS != CTextCtl_GetInputMode((ITextCtl *)pme, NULL))
+								{						
+									(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
+									return TRUE;
+								}
+								//Add End				 
+								
+							}
+/*
+#ifdef FEATURE_VERSION_C01
+
+			 if ((wParam == AVK_1) && (pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI) &&(!pme->m_bShowSyms))
+            {
+            	//(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
+            	//return TRUE;
+				#ifdef FEATURE_VERSION_C01
+				if(wParam == AVK_1)
+				{
+					   pme->m_isAvk1 = TRUE;
+					   //pme->m_isSymbol = TRUE;
+				}
+				else
+				{
+					pme->m_isAvk1 = FALSE;
+				}
+				#endif
+
+            	//Add By zzg 2010_08_14	防止重复载入SYMBOL输入法            	
+            	if (AEE_TM_SYMBOLS != CTextCtl_GetInputMode((ITextCtl *)pme, NULL))
+            	{	            		
+					(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
+					return TRUE;
+				}
+            	//Add End                
+ #endif
+            }*/
+            }
             // If they pressed the select key, activate the menu and deactivate us...Before processing the
             //AVK_SELECT key ourselves, give it to the OEMs and see if they want to handle it. This is
             //specifically for multibyte character sets (Japanes) where pressing the SELECT key after
@@ -5338,6 +5430,9 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
     int i;
     MSG_FATAL("pme->m_nCurrInputMode:::::::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
 	MSG_FATAL("pme->m_nCurrInputModeCount:::::::::::::::::::::%d",pme->m_nCurrInputModeCount,0,0);
+	#ifdef FEATURE_VERSION_C01
+	pme->m_isAvk1 = FALSE;
+	#endif
 	#ifndef FEATURE_VERSION_HITZ181
 	if(pme->m_dwProps & TP_STARKEY_ID_SWITCH)
 	{
@@ -5740,7 +5835,11 @@ uint16 OEM_TextQuerySymbols(CTextCtl *pme,AECHAR *pszOut, uint16 size)
    MSG_FATAL("pme->m_nCurrInputMode=%d",pme->m_nCurrInputMode,0,0);
 
 #ifdef FEATURE_LANG_THAI
+#ifdef FEATURE_VERSION_C01
+					if ((pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI) && !pme->m_isAvk1)
+#else
                     if ((pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_THAI))
+#endif
                     {
 							if (!pszOut || size < (sizeof(sszSymbolListTH)/sizeof(sszSymbolListTH[0])))
       								return(0);

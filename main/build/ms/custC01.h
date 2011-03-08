@@ -9,20 +9,21 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define CUST_EDITION
 #endif
 #define FEATURE_VERSION_C01
-#define FEATURE_SUPPORT_ID
-#define FEATURE_SEAMLESS_SMS
+//#define FEATURE_SUPPORT_ID
+//#define FEATURE_SEAMLESS_SMS
+#define FEATURE_SPN_FROM_BSMCCMNC
 
 #ifndef SOFTWARE_VER04
-#define FEATURE_AAC
-#define FEATURE_AAC_PLUS
-#define FEATURE_ENHANCED_AAC_PLUS
+//#define FEATURE_AAC
+//#define FEATURE_AAC_PLUS
+//#define FEATURE_ENHANCED_AAC_PLUS
 #endif
 
 //#define FEATURE_NET_LOCK
 //#define FEATURE_SEAMLESS_SMS
 //#define FEATURE_SUPPORT_ID
 
-#define FEATURE_LANG_INDONESIAN
+#define FEATURE_LANG_THAI       //add by yangdecai 2010-11-03 Ã©π˙”Ô—‘
 #include "custw021.h"
 
 #endif /* CUSTSB2_H */

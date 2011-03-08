@@ -6399,6 +6399,12 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	}
 #else
 	//MSG_FATAL("T9TextCtl_MultitapKey::1",0,0,0);
+	#ifdef FEATURE_VERSION_C01
+	if(key == AVK_1 && pContext->byMode == TEXT_MODE_T9_MT_THAI)
+	{
+		return FALSE;
+	}
+	#endif
     t9Key     = T9_BrewKeyToT9AlphabeticKey (pContext, eCode,key );
     ISHELL_CancelTimer((IShell *) pContext->pIShell,
                              TextCtl_MultitapTimer, pContext);
@@ -11848,6 +11854,7 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
                 {
                     if(' ' != pContext->pszContents[pContext->wSelStart-2-j])
                     {
+                    	 bRet = TRUE;
                          break;
                     }
                 }
@@ -11884,6 +11891,7 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
                 {
                     if(' ' != pContext->pszContents[pContext->wSelStart-1-j])
                     {
+                    	 bRet = TRUE;
                          break;
                     }
                 }

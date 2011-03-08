@@ -826,7 +826,11 @@ typedef PACKED struct _ringID
 #endif//WIN32
 
 #if defined FEATURE_LANG_THAI 
+#ifdef FEATURE_VERSION_C01
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_THAI
+#else
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_RAPID_THAI
+#endif
 #elif defined FEATURE_LANG_TCHINESE
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_ZHUYIN
 #elif defined FEATURE_LANG_SPANISH
