@@ -5,28 +5,28 @@
 		<Text>Bluetooth</Text>
 	</String>
 	<String Id="2" Name="IDS_AUDIO_GATEWAY">
-		<Text>Audio Gateway</Text>
+		<Text>Gateway Audio</Text>
 	</String>
 	<String Id="3" Name="IDS_NETWORK_ACCESS">
-		<Text>Network Access</Text>
+		<Text>Akses Jaringan</Text>
 	</String>
 	<String Id="4" Name="IDS_DEVICES">
-		<Text>Daftar Perangkat</Text>
+		<Text>Perangkat</Text>
 	</String>
 	<String Id="5" Name="IDS_TESTS">
-		<Text>Tests</Text>
+		<Text>Pengujian</Text>
 	</String>
 	<String Id="6" Name="IDS_MY_INFO">
-		<Text>Informasi Perangkat</Text>
+		<Text>Info Saya</Text>
 	</String>
 	<String Id="7" Name="IDS_SETTINGS">
 		<Text>Pengaturan</Text>
 	</String>
 	<String Id="8" Name="IDS_ENABLING">
-		<Text>Enabling</Text>
+		<Text>Pengaktifan</Text>
 	</String>
 	<String Id="9" Name="IDS_BONDABLE">
-		<Text>Dapat terpasang</Text>
+		<Text>Bisa diikat</Text>
 	</String>
 	<String Id="10" Name="IDS_BT_ON">
 		<Text>Hidupkan Bluetooth</Text>
@@ -35,52 +35,52 @@
 		<Text>Matikan Bluetooth</Text>
 	</String>
 	<String Id="12" Name="IDS_ACTIVE">
-		<Text>Active</Text>
+		<Text>Aktif</Text>
 	</String>
 	<String Id="13" Name="IDS_PASSIVE">
-		<Text>Passive</Text>
+		<Text>Pasif</Text>
 	</String>
 	<STRING Id="14" Name="IDS_BT_OK">
 		<Text>OK</Text>
 	</STRING>
 	<STRING Id="15" Name="IDS_BT_CANCEL">
-		<Text>Cancel</Text>
+		<Text>Batalkan</Text>
 	</STRING>
 	<String Id="16" Name="IDS_ON">
-		<Text>On</Text>
+		<Text>Hidup</Text>
 	</String>
 	<String Id="17" Name="IDS_ON_TIMED">
-		<Text>On (for 3 minutes)</Text>
+		<Text>Hidup (selama 3 menit)</Text>
 	</String>
 	<String Id="18" Name="IDS_OFF">
-		<Text>Off</Text>
+		<Text>Mati</Text>
 	</String>
 	<String Id="19" Name="IDS_TYPE">
-		<Text>Type</Text>
+		<Text>Tipe</Text>
 	</String>
 	<String Id="20" Name="IDS_MODE">
 		<Text>Mode</Text>
 	</String>
 	<String Id="21" Name="IDS_TIME">
-		<Text>Time</Text>
+		<Text>Waktu</Text>
 	</String>
 	<String Id="22" Name="IDS_SPKR">
 		<Text>Spkr</Text>
 	</String>
 	<String Id="23" Name="IDS_MIC">
-		<Text>Mic</Text>
+		<Text>Mik</Text>
 	</String>
 	<String Id="24" Name="IDS_CONN_MODE">
-		<Text>Connection Mode</Text>
+		<Text>Mode Hubungan</Text>
 	</String>
 	<String Id="25" Name="IDS_IDLE_TO">
-		<Text>Idle Timeout</Text>
+		<Text>Waktu habis Siaga</Text>
 	</String>
 	<String Id="26" Name="IDS_SPKR_VOL">
-		<Text>Speaker Volume</Text>
+		<Text>Volume Speaker</Text>
 	</String>
 	<String Id="27" Name="IDS_MIC_VOL">
-		<Text>Microphone Volume</Text>
+		<Text>Volume Mikrofon</Text>
 	</String>
 	<String Id="28" Name="IDS_BD_ADDR">
 		<Text>Alamat BD</Text>
@@ -89,46 +89,46 @@
 		<Text>Nama BT</Text>
 	</String>
 	<String Id="30" Name="IDS_SEARCHING">
-		<Text>Mencari…</Text>
+		<Text>Mencari...</Text>
 	</String>
 	<String Id="31" Name="IDS_NOT_AVAIL">
-		<Text>Not Available</Text>
+		<Text>Tidak Tersedia</Text>
 	</String>
 	<String Id="32" Name="IDS_DEVICE_SEARCH">
-		<Text>Cari perangkat</Text>
+		<Text>Pencarian Perangkat</Text>
 	</String>
 	<String Id="33" Name="IDS_DEVICE_ALL">
-		<Text>All Devices</Text>
+		<Text>Semua Perangkat</Text>
 	</String>
 	<String Id="34" Name="IDS_DEVICE_AUDIO">
-		<Text>Audio Devices</Text>
+		<Text>Perangkat Audio</Text>
 	</String>
 	<String Id="35" Name="IDS_DEVICE_NETWORK">
-		<Text>Network Devices</Text>
+		<Text>Perangkat Jaringan</Text>
 	</String>
 	<String Id="36" Name="IDS_BY_BD_ADDR">
-		<Text>By BD Address</Text>
+		<Text>Berdasarkan Alamat BD</Text>
 	</String>
 	<String Id="37" Name="IDS_ALL">
-		<Text>All</Text>
+		<Text>Semua</Text>
 	</String>
 	<String Id="38" Name="IDS_BONDED">
-		<Text>Bonded</Text>
+		<Text>Terikat</Text>
 	</String>
 	<String Id="39" Name="IDS_AUDIO">
 		<Text>Audio</Text>
 	</String>
 	<String Id="40" Name="IDS_NETWORK">
-		<Text>Network</Text>
+		<Text>Jaringan</Text>
 	</String>
 	<String Id="41" Name="IDS_REMOVE">
-		<Text>Remove</Text>
+		<Text>Hapus</Text>
 	</String>
 	<String Id="42" Name="IDS_BOND">
-		<Text>Pasang </Text>
+		<Text>Ikat</Text>
 	</String>
 	<String Id="43" Name="IDS_UNBOND">
-		<Text>Unbond</Text>
+		<Text>Lepas</Text>
 	</String>
 	<String Id="44" Name="IDS_KEEP">
 		<Text>Simpan</Text>
@@ -137,43 +137,43 @@
 		<Text>Buang</Text>
 	</String>
 	<String Id="46" Name="IDS_LIST_ALL">
-		<Text>Daftarkan Semua</Text>
+		<Text>Tampilkan Semua</Text>
 	</String>
 	<String Id="47" Name="IDS_LIST_BONDED">
-		<Text>Daftar Perangkat Terpasang</Text>
+		<Text>Tampilkan Perangkat yang Terikat</Text>
 	</String>
 	<String Id="48" Name="IDS_REMOVE_ALL">
-		<Text>Pindahkan Semua Perangkat</Text>
+		<Text>Hapus Semua</Text>
 	</String>
 	<String Id="49" Name="IDS_UNBOND_ALL">
-		<Text>Lepas Semua Perangkat</Text>
+		<Text>Lepas Semua</Text>
 	</String>
 	<String Id="50" Name="IDS_EDIT_NAME">
-		<Text>Ubah Nama</Text>
+		<Text>Sunting Nama</Text>
 	</String>
 	<String Id="51" Name="IDS_PASS_KEY">
-		<Text>Pass Key for %s</Text>
+		<Text>Kunci Sandi untuk %s</Text>
 	</String>
 	<String Id="52" Name="IDS_DISCOVERED_DEVICES">
-		<Text>Discovered Devices</Text>
+		<Text>Perangkat yang Ditemukan</Text>
 	</String>
 	<String Id="53" Name="IDS_BONDED_DEVICES">
-		<Text>Bonded Devices</Text>
+		<Text>Perangkat yang Terikat</Text>
 	</String>
 	<String Id="54" Name="IDS_KNOWN_DEVICES">
-		<Text>Perangkat Diketahui</Text>
+		<Text>Perangkat yang Diketahui</Text>
 	</String>
 	<String Id="55" Name="IDS_UNKNOWN">
-		<Text>Unknown</Text>
+		<Text>Tidak diketahui</Text>
 	</String>
 	<String Id="56" Name="IDS_AUDIO_TRANSFER">
-		<Text>Audio Transfer</Text>
+		<Text>Pemindahan Audio</Text>
 	</String>
 	<String Id="57" Name="IDS_DEVICE_TYPE">
-		<Text>Device Type</Text>
+		<Text>Tipe Perangkat</Text>
 	</String>
 	<String Id="58" Name="IDS_AUTOMATIC">
-		<Text>Automatic</Text>
+		<Text>Otomatis</Text>
 	</String>
 	<String Id="59" Name="IDS_HEADSET">
 		<Text>Headset</Text>
@@ -185,13 +185,13 @@
 		<Text>Pengamanan</Text>
 	</String>
 	<String Id="62" Name="IDS_SECURITY_NONE">
-		<Text>Tdk ada pengamanan</Text>
+		<Text>Tidak Ada Pengamanan</Text>
 	</String>
 	<String Id="63" Name="IDS_SECURITY_AUTH">
-		<Text>Authentication</Text>
+		<Text>Otentifikasi</Text>
 	</String>
 	<String Id="64" Name="IDS_SECURITY_AUTH_ENC">
-		<Text>Authentication + Encryption</Text>
+		<Text>Otentifikasi + Enkripsi</Text>
 	</String>
 	<STRING Id="65" Name="IDS_BT_YES_EX">
 		<Text>Ya</Text>
@@ -203,139 +203,139 @@
 		<Text>VR</Text>
 	</String>
 	<String Id="68" Name="IDS_VR_CAPABLE">
-		<Text>VR Capable</Text>
+		<Text>Bisa VR</Text>
 	</String>
 	<String Id="69" Name="IDS_CONNECT">
 		<Text>Hubungkan</Text>
 	</String>
 	<String Id="70" Name="IDS_DISCONNECT">
-		<Text>Disconnect</Text>
+		<Text>Putuskan</Text>
 	</String>
 	<STRING Id="71" Name="IDS_BT_CLOSE">
-		<Text>Close</Text>
+		<Text>Tutup</Text>
 	</STRING>
 	<String Id="72" Name="IDS_LISTENING">
-		<Text>Listening</Text>
+		<Text>Mendengar</Text>
 	</String>
 	<String Id="73" Name="IDS_CONNECTING">
-		<Text>Connecting</Text>
+		<Text>Menghubungkan</Text>
 	</String>
 	<String Id="74" Name="IDS_CONNECTED">
-		<Text>Connected</Text>
+		<Text>Terhubung</Text>
 	</String>
 	<String Id="75" Name="IDS_DISCONNECTED">
-		<Text>Disconnected</Text>
+		<Text>Terputus</Text>
 	</String>
 	<String Id="76" Name="IDS_OPTIONS">
-		<Text>Options</Text>
+		<Text>Pilihan</Text>
 	</String>
 	<String Id="77" Name="IDS_ACTIVE_ANY_DEVICE">
-		<Text>Active, Any Device</Text>
+		<Text>Aktif, Perangkat Apapun</Text>
 	</String>
 	<String Id="78" Name="IDS_HCI_MODE">
-		<Text>Set HCI Mode</Text>
+		<Text>Atur Mode HCI</Text>
 	</String>
 	<String Id="79" Name="IDS_USE">
-		<Text>Use</Text>
+		<Text>Gunakan</Text>
 	</String>
 	<String Id="80" Name="IDS_APIT">
 		<Text>APIT</Text>
 	</String>
 	<String Id="81" Name="IDS_PUT">
-		<Text>Put</Text>
+		<Text>Tempatkan</Text>
 	</String>
 	<String Id="82" Name="IDS_GET">
-		<Text>Get</Text>
+		<Text>Ambil</Text>
 	</String>
 	<String Id="83" Name="IDS_DELETE">
-		<Text>Delete</Text>
+		<Text>Hapus</Text>
 	</String>
 	<String Id="84" Name="IDS_PUSH">
-		<Text>Push</Text>
+		<Text>Tekan</Text>
 	</String>
 	<String Id="85" Name="IDS_PULL">
-		<Text>Pull</Text>
+		<Text>Tarik</Text>
 	</String>
 	<String Id="86" Name="IDS_REGISTER">
-		<Text>Register</Text>
+		<Text>Daftarkan</Text>
 	</String>
 	<String Id="87" Name="IDS_DEREGISTER">
-		<Text>De-Register</Text>
+		<Text>Hapus Pendaftaran</Text>
 	</String>
 	<String Id="88" Name="IDS_DISCOVERABLE">
-		<Text>Dapat dicari</Text>
+		<Text>Bisa ditemukan</Text>
 	</String>
 	<String Id="89" Name="IDS_FTM">
 		<Text>FTM</Text>
 	</String>
 	<String Id="90" Name="IDS_BUSINESS_CARD_EXCHANGE">
-		<Text>Business Card Exchange</Text>
+		<Text>Pertukaran Kartu Nama</Text>
 	</String>
 	<String Id="91" Name="IDS_OBEX_SERVERS">
-		<Text>OBEX Servers</Text>
+		<Text>Server OBEX</Text>
 	</String>
 	<String Id="92" Name="IDS_PUT_FOLDER">
-		<Text>Put Folder</Text>
+		<Text>Tempatkan Folder</Text>
 	</String>
 	<String Id="93" Name="IDS_GET_FOLDER">
-		<Text>Get Folder</Text>
+		<Text>Ambil Folder</Text>
 	</String>
 	<String Id="94" Name="IDS_PASSWORD">
-		<Text>Password</Text>
+		<Text>Sandi</Text>
 	</String>
 	<String Id="95" Name="IDS_AUTHENTICATE">
-		<Text>Membuktikan</Text>
+		<Text>Otentifikasikan</Text>
 	</String>
 	<String Id="96" Name="IDS_SRCH_BD_ADDR">
-		<Text>Least significant digits of BD Address</Text>
+		<Text>Minimal digit Alamat BD yang penting</Text>
 	</String>
 	<String Id="97" Name="IDS_TEST_MODE">
-		<Text>Enter Test Mode</Text>
+		<Text>Masuk ke Mode Pengujian</Text>
 	</String>
 	<String Id="98" Name="IDS_ENABLE_SERVICE_SECURITY">
-		<Text>Enable Service Security</Text>
+		<Text>Aktifkan Pengamanan Pelayanan</Text>
 	</String>
 	<String Id="99" Name="IDS_JOB_ID">
-		<Text>Job ID</Text>
+		<Text>ID Kerja</Text>
 	</String>
 	<String Id="100" Name="IDS_BROWSE_SVC">
-		<Text>Layanan Jelajah</Text>
+		<Text>Jelajahi Layanan</Text>
 	</String>
 	<String Id="101" Name="IDS_SEARCH_SVC">
 		<Text>Cari Layanan</Text>
 	</String>
 	<String Id="102" Name="IDS_REGISTER_SVC">
-		<Text>Register Service</Text>
+		<Text>Daftarkan Layanan</Text>
 	</String>
 	<String Id="103" Name="IDS_UNREGISTER_SVC">
-		<Text>Unregister Service</Text>
+		<Text>Hapus Pendaftaran Layanan</Text>
 	</String>
 	<String Id="106" Name="IDS_OPP">
 		<Text>OPP</Text>
 	</String>
 	<String Id="107" Name="IDS_OPP_TESTS">
-		<Text>OPP Tests</Text>
+		<Text>Pengujian OPP</Text>
 	</String>
 	<String Id="108" Name="IDS_OPP_SERVER">
-		<Text>OPP Server</Text>
+		<Text>Server OPP</Text>
 	</String>
 	<String Id="109" Name="IDS_OPP_CLIENT">
-		<Text>OPP Client</Text>
+		<Text>Klien OPP</Text>
 	</String>
 	<String Id="110" Name="IDS_FTP">
 		<Text>FTP</Text>
 	</String>
 	<String Id="111" Name="IDS_FTP_TESTS">
-		<Text>FTP Tests</Text>
+		<Text>Pengujian FTP</Text>
 	</String>
 	<String Id="112" Name="IDS_FTP_SERVER">
-		<Text>FTP Server</Text>
+		<Text>Server FTP</Text>
 	</String>
 	<String Id="113" Name="IDS_FTP_CLIENT">
-		<Text>FTP Client</Text>
+		<Text>Klien FTP</Text>
 	</String>
 	<String Id="114" Name="IDS_BROWSE_SVC_RESULTS">
-		<Text>Cls/SCN/Service Name</Text>
+		<Text>Nama Cls/SCN/Layanan</Text>
 	</String>
 	<String Id="115" Name="IDS_SRCH_SVC_RESULTS">
 		<Text>Profil/Versi</Text>
@@ -359,103 +359,103 @@
 		<Text>ICP</Text>
 	</String>
 	<String Id="122" Name="IDS_CTP_EST_CALL">
-		<Text>Establish Call</Text>
+		<Text>Buat Panggilan</Text>
 	</String>
 	<String Id="123" Name="IDS_ICP_EST_CALL">
-		<Text>Establish Call</Text>
+		<Text>Buat Panggilan</Text>
 	</String>
 	<String Id="124" Name="IDS_CTP_MSG_EST_CALL_FAILED">
-		<Text>Failed to establish CTP call!</Text>
+		<Text>Gagal membuat panggilan CTP!</Text>
 	</String>
 	<String Id="125" Name="IDS_ICP_MSG_EST_CALL_FAILED">
-		<Text>Failed to establish ICP call!</Text>
+		<Text>Gagal membuat panggilan ICP!</Text>
 	</String>
 	<String Id="126" Name="IDS_MSG_TCS_CLEAR_CALL_FAILED">
-		<Text>ClearCall Failed!</Text>
+		<Text>Gagal HapusPanggilan!</Text>
 	</String>
 	<String Id="127" Name="IDS_ICP_CLEAR_CALL">
-		<Text>Clear Call</Text>
+		<Text>Hapus Panggilan</Text>
 	</String>
 	<String Id="128" Name="IDS_DEVICE_TELEPHONY">
-		<Text>Telephony Devices</Text>
+		<Text>Perangkat Telefoni</Text>
 	</String>
 	<String Id="129" Name="IDS_MSG_NO_TELEPHONY_DEV">
-		<Text>No Telephony device in database</Text>
+		<Text>Tidak ada perangkat Telefoni dalam database</Text>
 	</String>
 	<String Id="130" Name="IDS_MSG_TCS_CALL_SETUP_FAILED">
-		<Text>Call Setup Failed!</Text>
+		<Text>Gagal Mengatur Panggilan!</Text>
 	</String>
 	<String Id="131" Name="IDS_MSG_TCS_CALL_SETUP_SUCCESS">
-		<Text>Call Setup Successful!</Text>
+		<Text>Berhasil Mengatur Panggilan!</Text>
 	</String>
 	<String Id="132" Name="IDS_FTP_CREATE_FOLDER">
-		<Text>Create Folder</Text>
+		<Text>Buat Folder</Text>
 	</String>
 	<String Id="133" Name="IDS_FTP_LIST_FOLDER">
-		<Text>Remote Browsing</Text>
+		<Text>Penjelajahan Jarak Jauh</Text>
 	</String>
 	<String Id="134" Name="IDS_FTP_MSG_FOLDER_CREATED">
-		<Text>Folder creation successful</Text>
+		<Text>Berhasil membuat folder</Text>
 	</String>
 	<String Id="135" Name="IDS_FTP_MSG_FOLDER_CREATION_FAILED">
-		<Text>Folder creation failed</Text>
+		<Text>Gagal membuat folder</Text>
 	</String>
 	<String Id="136" Name="IDS_ENABLE">
-		<Text>Enable</Text>
+		<Text>Aktifkan</Text>
 	</String>
 	<String Id="137" Name="IDS_DISABLE">
-		<Text>Disable</Text>
+		<Text>Nonaktifkan</Text>
 	</String>
 	<String Id="138" Name="IDS_RADIO_ON">
-		<Text>Turn Radio On</Text>
+		<Text>Hidupkan Radio</Text>
 	</String>
 	<String Id="139" Name="IDS_RADIO_OFF">
-		<Text>Turn Radio Off</Text>
+		<Text>Matikan Radio</Text>
 	</String>
 	<String Id="140" Name="IDS_VISIBILITY_ON">
-		<Text>Turn Visibility On</Text>
+		<Text>Aktifkan Visibilitas</Text>
 	</String>
 	<String Id="141" Name="IDS_VISIBILITY_OFF">
-		<Text>Turn Visibility Off</Text>
+		<Text>Nonaktifkan Visibilitas</Text>
 	</String>
 	<String Id="142" Name="IDS_MASTER_CONTROL">
-		<Text>Master Control</Text>
+		<Text>Kontrol Utama</Text>
 	</String>
 	<String Id="143" Name="IDS_DFLT_DIAL_STR">
-		<Text>Default Dial String</Text>
+		<Text>Syarat Panggilan Standar</Text>
 	</String>
 	<String Id="144" Name="IDS_ALLOW_ROLE_SWITCH">
-		<Text>Allow Incoming Role Switch</Text>
+		<Text>Izinkan Pengalihan Role Masuk</Text>
 	</String>
 	<String Id="145" Name="IDS_DISALLOW_ROLE_SWITCH">
-		<Text>Disallow Incoming Role Switch</Text>
+		<Text>Larang Pengalihan Role Masuk</Text>
 	</String>
 	<String Id="147" Name="IDS_FTP_SRV_ALLOW_BROWSE">
-		<Text>Allow Browse</Text>
+		<Text>Izinkan penjelajahan</Text>
 	</String>
 	<String Id="148" Name="IDS_FTP_SRV_READ_ONLY">
-		<Text>Read Only</Text>
+		<Text>Hanya Baca</Text>
 	</String>
 	<STRING Id="149" Name="IDS_BT_SELECT">
-		<Text>Select</Text>
+		<Text>Pilih</Text>
 	</STRING>
 	<String Id="150" Name="IDS_FTP_MOVE_TO_FOLDER">
-		<Text>Move to Folder</Text>
+		<Text>Pindahkan ke Folder</Text>
 	</String>
 	<String Id="151" Name="IDS_FTP_MOVE_TO_ROOT">
-		<Text>Move to Root</Text>
+		<Text>PIndahkan ke Root</Text>
 	</String>
 	<String Id="152" Name="IDS_SPP_TESTS">
-		<Text>SPP Tests</Text>
+		<Text>Pengujian SPP</Text>
 	</String>
 	<String Id="153" Name="IDS_SPP_SERVER">
-		<Text>SPP Server</Text>
+		<Text>Server SPP</Text>
 	</String>
 	<String Id="154" Name="IDS_SPP_CLIENT">
-		<Text>SPP Client</Text>
+		<Text>Klien SPP</Text>
 	</String>
 	<String Id="155" Name="IDS_SPP_SETTINGS">
-		<Text>Bytes To Send</Text>
+		<Text>Byte yang Dikirim</Text>
 	</String>
 	<String Id="156" Name="IDS_SPP_DATA_SIZE_THOUSAND">
 		<Text>2K</Text>
@@ -467,31 +467,31 @@
 		<Text>2G</Text>
 	</String>
 	<String Id="159" Name="IDS_USERID">
-		<Text>User ID</Text>
+		<Text>ID Pengguna</Text>
 	</String>
 	<String Id="160" Name="IDS_AUTH_NONE">
-		<Text>No Authentication</Text>
+		<Text>Tidak Ada Otentifikasi</Text>
 	</String>
 	<String Id="161" Name="IDS_AUTH_PWD">
-		<Text>PIN Authentication</Text>
+		<Text>Otentifikasi PIN</Text>
 	</String>
 	<String Id="162" Name="IDS_AUTH_USERID_PWD">
-		<Text>UserID and PIN Authentication</Text>
+		<Text>ID Pengguna dan Otentifikasi PIN</Text>
 	</String>
 	<String Id="163" Name="IDS_PASSIVE_ANY_DEVICE">
-		<Text>Passive, Any Device</Text>
+		<Text>Pasif, Perangkat Apapun</Text>
 	</String>
 	<String Id="164" Name="IDS_LIST_CONNECTED">
-		<Text>Daftar Perangkat Terhubung</Text>
+		<Text>Tampilkan Perangkat yang Terhubung</Text>
 	</String>
 	<String Id="165" Name="IDS_CONNECTED_DEVICES">
-		<Text>Connected Devices</Text>
+		<Text>Perangkat yang Terhubung</Text>
 	</String>
 	<String Id="166" Name="IDS_SET_BONDABLE">
-		<Text>Set Bondable</Text>
+		<Text>Atur ke Bisa Diikat</Text>
 	</String>
 	<String Id="167" Name="IDS_CLEAR_BONDABLE">
-		<Text>Clear Bondable</Text>
+		<Text>Hapus Bisa Diikat</Text>
 	</String>
 	<String Id="200" Name="IDS_SETTINGS_FTP">
 		<Text>FTP</Text>
@@ -500,64 +500,64 @@
 		<Text>BIP</Text>
 	</String>
 	<String Id="202" Name="IDS_ENABLE_OPP">
-		<Text>OPP Server</Text>
+		<Text>Server OPP</Text>
 	</String>
 	<String Id="203" Name="IDS_ENABLE_FTP">
-		<Text>FTP Server</Text>
+		<Text>Server FTP</Text>
 	</String>
 	<String Id="204" Name="IDS_ENABLE_BIP">
-		<Text>BIP Server</Text>
+		<Text>Server BIP</Text>
 	</String>
 	<String Id="205" Name="IDS_ENABLE_BPP">
-		<Text>BPP Server</Text>
+		<Text>Server BPP</Text>
 	</String>
 	<String Id="206" Name="IDS_HANDSFREE_PRIVATE">
-		<Text>Hands-Free-Private</Text>
+		<Text>Hands-Free-Pribadi</Text>
 	</String>
 	<String Id="207" Name="IDS_ENABLE_VIDEO_CALL">
-		<Text>Enable Video Call</Text>
+		<Text>Aktifkan Panggilan Video</Text>
 	</String>
 	<String Id="208" Name="IDS_DISABLE_VIDEO_CALL">
-		<Text>Disable Video Call</Text>
+		<Text>Nonaktifkan Panggilan Video</Text>
 	</String>
 	<String Id="209" Name="IDS_ENABLE_SAP">
-		<Text>SAP Server</Text>
+		<Text>Server SAP</Text>
 	</String>
 	<String Id="210" Name="IDS_ENABLE_A2DP">
-		<Text>Enable A2DP</Text>
+		<Text>Aktifkan A2DP</Text>
 	</String>
 	<String Id="211" Name="IDS_ENABLE_AVRCP">
-		<Text>Enable AVRCP</Text>
+		<Text>Aktifkan AVRCP</Text>
 	</String>
 	<String Id="212" Name="IDS_SWITCH_ROLE">
-		<Text>Do Role Switch</Text>
+		<Text>Lakukan Pengalihan Role</Text>
 	</String>
 	<String Id="213" Name="IDS_MASTER">
-		<Text>Master</Text>
+		<Text>Utama</Text>
 	</String>
 	<String Id="214" Name="IDS_SLAVE">
-		<Text>Slave</Text>
+		<Text>Tambahan</Text>
 	</String>
 	<String Id="215" Name="IDS_MSG_SWITCH_ROLE_SUCCESS">
-		<Text>Role Switch Cmd Issued Successfully</Text>
+		<Text>Perintah Pengalihan Role Berhasil Dikeluarkan</Text>
 	</String>
 	<String Id="216" Name="IDS_MSG_SWITCH_ROLE_FAILED">
-		<Text>Role Switch Failed</Text>
+		<Text>Pengalihan Role Gagal</Text>
 	</String>
 	<String Id="217" Name="IDS_MSG_SWITCH_ROLE_NOT_ALLOWED">
-		<Text>Connected to more than one dev, Role Switch Not Allowed</Text>
+		<Text>Terhubung ke lebih dari satu perangkat, Pengalihan Role Tidak Diizinkan</Text>
 	</String>
 	<String Id="218" Name="IDS_MSG_NO_LINK_TO_SWITCH_ROLE">
-		<Text>No link to switch role</Text>
+		<Text>Tidak ada tautan untuk mengalihkan role</Text>
 	</String>
 	<String Id="219" Name="IDS_LABEL_DEV_ROLE">
-		<Text>Local Dev Role: %s </Text>
+		<Text>Role Perangkat Lokal: %s</Text>
 	</String>
 	<String Id="220" Name="IDS_ENABLE_PBAP">
-		<Text>PBAP Server</Text>
+		<Text>Server PBAP</Text>
 	</String>
 	<String Id="221" Name="IDS_ENABLE_OBEX">
-		<Text>OBEX Server</Text>
+		<Text>Server OBEX</Text>
 	</String>
 	<String Id="230" Name="IDS_PBAP">
 		<Text>PBAP</Text>
@@ -566,31 +566,31 @@
 		<Text>PBAP</Text>
 	</String>
 	<String Id="232" Name="IDS_PBAP_SERVER">
-		<Text>PBAP Server</Text>
+		<Text>Server PBAP</Text>
 	</String>
 	<String Id="233" Name="IDS_PBAP_CLIENT">
-		<Text>PBAP Client</Text>
+		<Text>Klien PBAP</Text>
 	</String>
 	<String Id="234" Name="IDS_PBAP_VCARD_FORMAT">
 		<Text>Format</Text>
 	</String>
 	<String Id="235" Name="IDS_PBAP_FILTER">
-		<Text>Filter</Text>
+		<Text>Saringan</Text>
 	</String>
 	<String Id="236" Name="IDS_PBAP_MAX_LIST_COUNT">
-		<Text>List Count</Text>
+		<Text>Tampilkan Hitungan</Text>
 	</String>
 	<String Id="237" Name="IDS_PBAP_LIST_START_OFFSET">
-		<Text>List Offset</Text>
+		<Text>Tampilkan Ofset</Text>
 	</String>
 	<String Id="238" Name="IDS_PBAP_SORT_ORDER">
-		<Text>Sorting Order</Text>
+		<Text>Susunan Pengurutan</Text>
 	</String>
 	<String Id="239" Name="IDS_PBAP_SEARCH_ATTR">
-		<Text>Search Atribute</Text>
+		<Text>Cari Atribut</Text>
 	</String>
 	<String Id="240" Name="IDS_PBAP_SEARCH_VALUE">
-		<Text>Search Value</Text>
+		<Text>Cari Nilai</Text>
 	</String>
 	<String Id="241" Name="IDS_PBAP_VCARD_2_1">
 		<Text>vCard 2.1</Text>
@@ -599,277 +599,277 @@
 		<Text>vCard 3.0</Text>
 	</String>
 	<String Id="243" Name="IDS_PBAP_SORT_INDEX">
-		<Text>Indexed</Text>
+		<Text>Tersusun</Text>
 	</String>
 	<String Id="244" Name="IDS_PBAP_SORT_ALPHA">
-		<Text>Alphabetical</Text>
+		<Text>Secara abjad</Text>
 	</String>
 	<String Id="245" Name="IDS_PBAP_SORT_SOUND">
-		<Text>Phonetically</Text>
+		<Text>Secara fonetis</Text>
 	</String>
 	<String Id="246" Name="IDS_PBAP_SORTING">
-		<Text>Sorting Order</Text>
+		<Text>Susunan Pengurutan</Text>
 	</String>
 	<String Id="247" Name="IDS_PBAP_DOWNLOAD">
-		<Text>Download PB Object</Text>
+		<Text>Unduh Objek PB</Text>
 	</String>
 	<String Id="248" Name="IDS_PBAP_BROWSE">
-		<Text>Browse PB</Text>
+		<Text>Jelajahi PB</Text>
 	</String>
 	<String Id="249" Name="IDS_PBAP_SEARCH_ATTRIBUTE">
-		<Text>Search Attribute</Text>
+		<Text>Cari Atribut</Text>
 	</String>
 	<String Id="250" Name="IDS_EFS">
-		<Text>Use EFS</Text>
+		<Text>Gunakan EFS</Text>
 	</String>
 	<String Id="251" Name="IDS_MEMORY_CARD">
-		<Text>Use SD Memory Card</Text>
+		<Text>Gunakan Kartu Memori SD</Text>
 	</String>
 	<String Id="252" Name="IDS_PBAP_SEARCH_SOUND">
-		<Text>Sound</Text>
+		<Text>Suara</Text>
 	</String>
 	<String Id="260" Name="IDS_PBAP_SEARCH_NAME">
-		<Text>Name</Text>
+		<Text>Nama</Text>
 	</String>
 	<String Id="261" Name="IDS_PBAP_SEARCH_NUMBER">
-		<Text>Number</Text>
+		<Text>Nomor</Text>
 	</String>
 	<String Id="263" Name="IDS_PBAP_SET_CONFIG_OPTIONS">
-		<Text>Set Config Options</Text>
+		<Text>Atur Pilihan Konfigurasi</Text>
 	</String>
 	<String Id="264" Name="IDS_PBAP_SET_CONFIG_VALUES">
-		<Text>Set Config Values</Text>
+		<Text>Atur Nilai Konfigurasi</Text>
 	</String>
 	<String Id="265" Name="IDS_PBAP_DW_PB">
-		<Text>PhoneBook</Text>
+		<Text>Buku Telepon</Text>
 	</String>
 	<String Id="266" Name="IDS_PBAP_DW_ICH">
-		<Text>Incoming Calls</Text>
+		<Text>Panggilan Masuk</Text>
 	</String>
 	<String Id="267" Name="IDS_PBAP_DW_OCH">
-		<Text>Outgoing Calls</Text>
+		<Text>Panggilan Keluar</Text>
 	</String>
 	<String Id="268" Name="IDS_PBAP_DW_MCH">
-		<Text>Missed Calls</Text>
+		<Text>Panggilan Tidak Dijawab</Text>
 	</String>
 	<String Id="269" Name="IDS_PBAP_DW_CCH">
-		<Text>Combined Calls</Text>
+		<Text>Panggilan Dikombinasikan</Text>
 	</String>
 	<String Id="270" Name="IDS_PBAP_PHONE">
-		<Text>Phone</Text>
+		<Text>Telepon</Text>
 	</String>
 	<String Id="271" Name="IDS_PBAP_SIM">
 		<Text>SIM</Text>
 	</String>
 	<String Id="272" Name="IDS_PBAP_SELECT_SOURCE">
-		<Text>Select PB Repository</Text>
+		<Text>Pilih Tempat PB</Text>
 	</String>
 	<String Id="273" Name="IDS_PBAP_MSG_CLIENT_DOWNLOAD_FAILED">
-		<Text>Downloading PB Failed</Text>
+		<Text>Gagal Mengunduh PB</Text>
 	</String>
 	<String Id="274" Name="IDS_PBAP_MSG_PULL_PB_DONE">
-		<Text>Pull PB Success</Text>
+		<Text>Berhasil Menarik PB</Text>
 	</String>
 	<String Id="275" Name="IDS_PBAP_MSG_SET_PB_FAILED">
-		<Text>Set PhoneBook Failed</Text>
+		<Text>Gagal Mengatur Buku Telepon</Text>
 	</String>
 	<String Id="276" Name="IDS_PBAP_MSG_PULL_VCARD_LIST_FAIL">
-		<Text>Pull vCard Listing Failed</Text>
+		<Text>Gagal Menarik Daftar vCard</Text>
 	</String>
 	<String Id="277" Name="IDS_PBAP_MSG_PULL_VOBJ_FAILED">
-		<Text>Pull vCard Entry Failed</Text>
+		<Text>Gagal Menarik Entri vCard</Text>
 	</String>
 	<String Id="278" Name="IDS_PBAP_MSG_PULL_PB_FAILED">
-		<Text>Pull PB Object Failed</Text>
+		<Text>Gagal Menarik Objek PB</Text>
 	</String>
 	<String Id="279" Name="IDS_PBAP_MSG_VOBJ_PULLED">
-		<Text>vCard Entry Pulled</Text>
+		<Text>Entri vCard Ditarik</Text>
 	</String>
 	<String Id="280" Name="IDS_PBAP_MSG_NO_OF_PB_OBJS">
-		<Text>No of PB Objects=%s</Text>
+		<Text>Jumlah Objek PB=%s</Text>
 	</String>
 	<String Id="281" Name="IDS_PBAP_DW_INVALID">
-		<Text>Invalid PhoneBook</Text>
+		<Text>Buku Telepon Tidak Sah</Text>
 	</String>
 	<String Id="282" Name="IDS_PBAP_MSG_MAX_LIST_ZERO">
-		<Text>List empty as MaxListCount is 0. No. of items=%s</Text>
+		<Text>Tampilkan yang kosong sebagai TampilkanHitunganMaks adalah 0. Jumlah item =%s</Text>
 	</String>
 	<String Id="283" Name="IDS_PBAP_MSG_ABORT_REQ_FAIL">
-		<Text>Abort Failed</Text>
+		<Text>Gagal Dibatalkan</Text>
 	</String>
 	<String Id="284" Name="IDS_PBAP_MSG_PULL_VCARD_LIST_DONE">
-		<Text>Pull vCard Listing Success</Text>
+		<Text>Berhasil Menarik Daftar vCard</Text>
 	</String>
 	<String Id="500" Name="IDS_HS_BUTTON">
-		<Text>HS Button</Text>
+		<Text>Tombol HS</Text>
 	</String>
 	<STRING Id="501" Name="IDS_BT_IGNORE">
-		<Text>Ignore</Text>
+		<Text>Abaikan</Text>
 	</STRING>
 	<String Id="502" Name="IDS_INFO_HS_BUTTON">
-		<Text>If a call is not present, should HS button press be ignored when received at connection time? If not, a call will be made using the Default Dial String.</Text>
+		<Text>Jika tidak ada panggilan, haruskah penekanan tombol HS diabaikan saat diterima pada waktu koneksi? Jika tidak, panggilan akan dibuat menggunakan Syarat Panggilan Standar.</Text>
 	</String>
 	<String Id="503" Name="IDS_CONFIG_SCAN_PARAMS">
-		<Text>Config Scan Param</Text>
+		<Text>Konfigurasikan Parameter Pemindaian</Text>
 	</String>
 	<String Id="504" Name="IDS_PAGE_SCAN">
-		<Text>Page Scan</Text>
+		<Text>Pemindaian Halaman</Text>
 	</String>
 	<String Id="505" Name="IDS_INQ_SCAN">
-		<Text>Inquiry Scan</Text>
+		<Text>Pemindaian Inkuiri</Text>
 	</String>
 	<String Id="506" Name="IDS_SCAN_PARAM_DEFAULT">
-		<Text>Default</Text>
+		<Text>Standar</Text>
 	</String>
 	<String Id="507" Name="IDS_SCAN_PARAM_INTERLACE_128">
-		<Text>Interlace, 1.28s</Text>
+		<Text>Selang-seling, 1,28d</Text>
 	</String>
 	<String Id="508" Name="IDS_SCAN_PARAM_INTERLACE_256">
-		<Text>Interlace, 2.56s</Text>
+		<Text>Selang-seling, 2,56d</Text>
 	</String>
 	<String Id="509" Name="IDS_SCAN_PARAM_STD_128">
-		<Text>Std, 1.28s</Text>
+		<Text>Std, 1,28d</Text>
 	</String>
 	<String Id="510" Name="IDS_SCAN_PARAM_SMALLEST_CONN_TIME">
-		<Text>Smallest Connection Time</Text>
+		<Text>Waktu Koneksi Terkecil</Text>
 	</String>
 	<String Id="511" Name="IDS_SCAN_PARAM_LARGER_CONN_TIME">
-		<Text>Larger Connection Time</Text>
+		<Text>Waktu Koneksi Lebih Besar</Text>
 	</String>
 	<String Id="512" Name="IDS_SCAN_PARAM_LARGEST_CONN_TIME">
-		<Text>Largest Connection Time</Text>
+		<Text>Waktu Koneksi Terbesar</Text>
 	</String>
 	<String Id="513" Name="IDS_SET_CONN_ROLE">
-		<Text>Set Connection Role</Text>
+		<Text>Atur Role Koneksi</Text>
 	</String>
 	<String Id="514" Name="IDS_ACCEPT_CONN_ROLE">
-		<Text>Preferred Accept Connection Role</Text>
+		<Text>Terima Role Koneksi Dipilih</Text>
 	</String>
 	<String Id="515" Name="IDS_STRING_SRV_PROFILE_SELECTION">
-		<Text>Profile selection</Text>
+		<Text>Pemilihan profil</Text>
 	</String>
 	<String Id="516" Name="IDS_STRING_SRV_SEC_LEVEL">
-		<Text>Security level</Text>
+		<Text>Tingkat pengamanan</Text>
 	</String>
 	<String Id="517" Name="IDS_AUDIO_GATEWAY_SEC_HIGH">
-		<Text>Audio Gateway: Cur Sec=&gt;High</Text>
+		<Text>Gateway Audio: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="518" Name="IDS_AUDIO_GATEWAY_SEC_MED">
-		<Text>Audio Gateway: Cur Sec=&gt;Med</Text>
+		<Text>Gateway Audio: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="519" Name="IDS_AUDIO_GATEWAY_SEC_LOW">
-		<Text>Audio Gateway: Cur Sec=&gt;Low</Text>
+		<Text>Gateway Audio: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="520" Name="IDS_NETWORK_ACCESS_SEC_HIGH">
-		<Text>Network Access: Cur Sec=&gt;High</Text>
+		<Text>Akses Jaringan: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="521" Name="IDS_NETWORK_ACCESS_SEC_MED">
-		<Text>Network Access: Cur Sec=&gt;Med</Text>
+		<Text>Akses Jaringan: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="522" Name="IDS_NETWORK_ACCESS_SEC_LOW">
-		<Text>Network Access: Cur Sec=&gt;Low</Text>
+		<Text>Akses Jaringan: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="523" Name="IDS_ENABLE_OPP_SEC_HIGH">
-		<Text>OPP: Cur Sec=&gt;High</Text>
+		<Text>OPP: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="524" Name="IDS_ENABLE_OPP_SEC_MED">
-		<Text>OPP: Cur Sec=&gt;Med</Text>
+		<Text>OPP: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="525" Name="IDS_ENABLE_OPP_SEC_LOW">
-		<Text>OPP: Cur Sec=&gt;Low</Text>
+		<Text>OPP: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="526" Name="IDS_ENABLE_FTP_SEC_HIGH">
-		<Text>FTP: Cur Sec=&gt;High</Text>
+		<Text>FTP: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="527" Name="IDS_ENABLE_FTP_SEC_MED">
-		<Text>FTP: Cur Sec=&gt;Med</Text>
+		<Text>FTP: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="528" Name="IDS_ENABLE_FTP_SEC_LOW">
-		<Text>FTP: Cur Sec=&gt;Low</Text>
+		<Text>FTP: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="529" Name="IDS_ENABLE_BIP_SEC_HIGH">
-		<Text>BIP: Cur Sec=&gt;High</Text>
+		<Text>BIP: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="530" Name="IDS_ENABLE_BIP_SEC_MED">
-		<Text>BIP: Cur Sec=&gt;Med</Text>
+		<Text>BIP: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="531" Name="IDS_ENABLE_BIP_SEC_LOW">
-		<Text>BIP: Cur Sec=&gt;Low</Text>
+		<Text>BIP: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="532" Name="IDS_ENABLE_BPP_SEC_HIGH">
-		<Text>BPP: Cur Sec=&gt;High</Text>
+		<Text>BPP: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="533" Name="IDS_ENABLE_BPP_SEC_MED">
-		<Text>BPP: Cur Sec=&gt;Med</Text>
+		<Text>BPP: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="534" Name="IDS_ENABLE_BPP_SEC_LOW">
-		<Text>BPP: Cur Sec=&gt;Low</Text>
+		<Text>BPP: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="535" Name="IDS_ENABLE_PBAP_SEC_HIGH">
-		<Text>PBAP: Cur Sec=&gt;High</Text>
+		<Text>PBAP: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="536" Name="IDS_ENABLE_PBAP_SEC_MED">
-		<Text>PBAP: Cur Sec=&gt;Med</Text>
+		<Text>PBAP: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="537" Name="IDS_ENABLE_PBAP_SEC_LOW">
-		<Text>PBAP: Cur Sec=&gt;Low</Text>
+		<Text>PBAP: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="538" Name="IDS_ENABLE_OBEX_SEC_HIGH">
-		<Text>OBEX: Cur Sec=&gt;High</Text>
+		<Text>OBEX: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="539" Name="IDS_ENABLE_OBEX_SEC_MED">
-		<Text>OBEX: Cur Sec=&gt;Med</Text>
+		<Text>OBEX: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="540" Name="IDS_ENABLE_OBEX_SEC_LOW">
-		<Text>OBEX: Cur Sec=&gt;Low</Text>
+		<Text>OBEX: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="541" Name="IDS_ENABLE_SAP_SEC_HIGH">
-		<Text>SAP: Cur Sec=&gt;High</Text>
+		<Text>SAP: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="542" Name="IDS_ENABLE_SAP_SEC_MED">
-		<Text>SAP: Cur Sec=&gt;Med</Text>
+		<Text>SAP: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="543" Name="IDS_ENABLE_SAP_SEC_LOW">
-		<Text>SAP: Cur Sec=&gt;Low</Text>
+		<Text>SAP: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="544" Name="IDS_ENABLE_A2DP_SEC_HIGH">
-		<Text>A2DP: Cur Sec=&gt;High</Text>
+		<Text>A2DP: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="545" Name="IDS_ENABLE_A2DP_SEC_MED">
-		<Text>A2DP: Cur Sec=&gt;Med</Text>
+		<Text>A2DP: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="546" Name="IDS_ENABLE_A2DP_SEC_LOW">
-		<Text>A2DP: Cur Sec=&gt;Low</Text>
+		<Text>A2DP: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="547" Name="IDS_ENABLE_AVRCP_SEC_HIGH">
-		<Text>AVRCP: Cur Sec=&gt;High</Text>
+		<Text>AVRCP: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="548" Name="IDS_ENABLE_AVRCP_SEC_MED">
-		<Text>AVRCP: Cur Sec=&gt;Med</Text>
+		<Text>AVRCP: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="549" Name="IDS_ENABLE_AVRCP_SEC_LOW">
-		<Text>AVRCP: Cur Sec=&gt;Low</Text>
+		<Text>AVRCP: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="550" Name="IDS_ENABLE_L2_SEC_HIGH">
-		<Text>L2: Cur Sec=&gt;High</Text>
+		<Text>L2: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="551" Name="IDS_ENABLE_L2_SEC_MED">
-		<Text>L2: Cur Sec=&gt;Med</Text>
+		<Text>L2: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="552" Name="IDS_ENABLE_L2_SEC_LOW">
-		<Text>L2: Cur Sec=&gt;Low</Text>
+		<Text>L2: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="553" Name="IDS_ENABLE_HID_SEC_HIGH">
-		<Text>HID: Cur Sec=&gt;High</Text>
+		<Text>HID: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="554" Name="IDS_ENABLE_HID_SEC_MED">
-		<Text>HID: Cur Sec=&gt;Med</Text>
+		<Text>HID: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="555" Name="IDS_ENABLE_HID_SEC_LOW">
-		<Text>HID: Cur Sec=&gt;Low</Text>
+		<Text>HID: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="556" Name="IDS_READ_OOB">
-		<Text>Baca OOB </Text>
+		<Text>Baca OOB</Text>
 	</String>
 	<String Id="557" Name="IDS_WRITE_OOB">
 		<Text>Buat OOB</Text>
@@ -878,361 +878,361 @@
 		<Text>SPP</Text>
 	</String>
 	<String Id="559" Name="IDS_ENABLE_SPP_SEC_HIGH">
-		<Text>SPP: Cur Sec=&gt;High</Text>
+		<Text>SPP: Pilihan Saat Ini=&gt;Tinggi</Text>
 	</String>
 	<String Id="560" Name="IDS_ENABLE_SPP_SEC_MED">
-		<Text>SPP: Cur Sec=&gt;Med</Text>
+		<Text>SPP: Pilihan Saat Ini=&gt;Sedang</Text>
 	</String>
 	<String Id="561" Name="IDS_ENABLE_SPP_SEC_LOW">
-		<Text>SPP: Cur Sec=&gt;Low</Text>
+		<Text>SPP: Pilihan Saat Ini=&gt;Rendah</Text>
 	</String>
 	<String Id="600" Name="IDS_HID">
 		<Text>HID</Text>
 	</String>
 	<String Id="601" Name="IDS_HID_EVT_VIEW">
-		<Text>Event View</Text>
+		<Text>Tampilan Peristiwa</Text>
 	</String>
 	<String Id="602" Name="IDS_HID_SET_REPORT">
-		<Text>Set Report</Text>
+		<Text>Atur Laporan</Text>
 	</String>
 	<String Id="603" Name="IDS_HID_GET_REPORT">
-		<Text>Get Report</Text>
+		<Text>Ambil Laporan</Text>
 	</String>
 	<String Id="604" Name="IDS_HID_OPERATIONS">
-		<Text>HID Operations</Text>
+		<Text>Operasi HID</Text>
 	</String>
 	<String Id="605" Name="IDS_HID_CERTIFICATION">
-		<Text>Certification</Text>
+		<Text>Sertifikasi</Text>
 	</String>
 	<String Id="606" Name="IDS_HID_SET_IDLE">
-		<Text>Set Idle</Text>
+		<Text>Atur Siaga</Text>
 	</String>
 	<String Id="607" Name="IDS_HID_GET_IDLE">
-		<Text>Get Idle</Text>
+		<Text>Ambil Siaga</Text>
 	</String>
 	<String Id="608" Name="IDS_HID_SET_PROTOCOL">
-		<Text>Set Protocol</Text>
+		<Text>Atur Protokol</Text>
 	</String>
 	<String Id="609" Name="IDS_HID_GET_PROTOCOL">
-		<Text>Get Protocol</Text>
+		<Text>Ambil Protokol</Text>
 	</String>
 	<String Id="610" Name="IDS_HID_UNPLUG_VC">
-		<Text>Unplug Virtual Cable</Text>
+		<Text>Cabut Kabel Maya</Text>
 	</String>
 	<String Id="611" Name="IDS_HID_ENABLE_BOOT_MODE">
-		<Text>Enable Boot Mode</Text>
+		<Text>Aktifkan Mode Boot</Text>
 	</String>
 	<String Id="612" Name="IDS_HID_IDLE_RATE">
-		<Text>Idle Rate</Text>
+		<Text>Laju Siaga</Text>
 	</String>
 	<String Id="613" Name="IDS_HID_DEVICES">
-		<Text>HID Devices</Text>
+		<Text>Perangkat HID</Text>
 	</String>
 	<String Id="1000" Name="IDS_BIP_TESTS">
-		<Text>BIP Tests</Text>
+		<Text>Pengujian BIP</Text>
 	</String>
 	<String Id="1001" Name="IDS_BIP">
 		<Text>BIP</Text>
 	</String>
 	<String Id="1002" Name="IDS_BIP_SERVER">
-		<Text>BIP Server</Text>
+		<Text>Server BIP</Text>
 	</String>
 	<String Id="1003" Name="IDS_BIP_CLIENT">
-		<Text>BIP Client</Text>
+		<Text>Klien BIP</Text>
 	</String>
 	<String Id="1004" Name="IDS_BIP_CONNECT_IMAGE_PRINTING">
-		<Text>Advanced Image Printing</Text>
+		<Text>Pencetakan Gambar Tingkat Lanjut</Text>
 	</String>
 	<String Id="1005" Name="IDS_BIP_CONNECT_IMAGE_PUSH">
-		<Text>Image Push Responder</Text>
+		<Text>Perespons Dorong Gambar</Text>
 	</String>
 	<String Id="1006" Name="IDS_BIP_CONNECT_IMAGE_PULL">
-		<Text>Image Pull Responder</Text>
+		<Text>Perespons Tarik Gambar</Text>
 	</String>
 	<String Id="1007" Name="IDS_BIP_CONNECT_REMOTE_CAMERA">
-		<Text>Remote Camera</Text>
+		<Text>Kamera Jarak Jauh</Text>
 	</String>
 	<String Id="1008" Name="IDS_BIP_CONNECT_AUTOMATIC_ARCHIVE">
-		<Text>Automatic Archive</Text>
+		<Text>Arsipkan Otomatis</Text>
 	</String>
 	<String Id="1009" Name="IDS_BIP_CONNECT_REMOTE_DISPLAY">
-		<Text>Remote Display</Text>
+		<Text>Tampilan Jarak Jauh</Text>
 	</String>
 	<String Id="1010" Name="IDS_BIP_GET_CAPABILITIES">
-		<Text>Get Capabilities</Text>
+		<Text>Ambil Kapabilitas</Text>
 	</String>
 	<String Id="1011" Name="IDS_BIP_PUT_IMAGE">
-		<Text>Put Image</Text>
+		<Text>Tempatkan Gambar</Text>
 	</String>
 	<String Id="1012" Name="IDS_BIP_PUT_ATTACHMENT">
-		<Text>Put Linked Attachment</Text>
+		<Text>Tempatkan Lampiran Tertaut</Text>
 	</String>
 	<String Id="1013" Name="IDS_BIP_PUT_THUMBNAIL">
-		<Text>Put Linked Thumbnail</Text>
+		<Text>Tempatkan Keluku Tertaut</Text>
 	</String>
 	<String Id="1014" Name="IDS_A2DP_CONTROL">
-		<Text>A2DP Control</Text>
+		<Text>Kontrol A2DP</Text>
 	</String>
 	<String Id="1015" Name="IDS_A2DP_SUSPEND_ON_END">
-		<Text>Suspend On End</Text>
+		<Text>Tunda di Akhir</Text>
 	</String>
 	<String Id="1016" Name="IDS_A2DP_CLOSE_ON_END">
-		<Text>Close On End</Text>
+		<Text>Tutup di Akhir</Text>
 	</String>
 	<String Id="1017" Name="IDS_A2DP_START_DELAY">
-		<Text>Start Delay</Text>
+		<Text>Tunda Mulai</Text>
 	</String>
 	<String Id="1018" Name="IDS_A2DP_HONOR_IN_USE">
-		<Text>Honor In Use</Text>
+		<Text>Terima Sedang Digunakan</Text>
 	</String>
 	<String Id="1019" Name="IDS_A2DP_IGNORE_IN_USE">
-		<Text>Ignore In Use</Text>
+		<Text>Abaikan Sedang Digunakan</Text>
 	</String>
 	<String Id="1020" Name="IDS_BIP_GET_IMAGE_LIST">
-		<Text>Get Image List</Text>
+		<Text>Ambil Daftar Gambar</Text>
 	</String>
 	<String Id="1021" Name="IDS_BIP_GET_IMAGE_PROPERTIES">
-		<Text>Get Image Properties</Text>
+		<Text>Ambil Properti Gambar</Text>
 	</String>
 	<String Id="1022" Name="IDS_BIP_GET_IMAGE">
-		<Text>Get Image</Text>
+		<Text>Ambil Gambar</Text>
 	</String>
 	<String Id="1023" Name="IDS_BIP_DELETE_IMAGE">
-		<Text>Delete Image</Text>
+		<Text>Hapus Gambar</Text>
 	</String>
 	<String Id="1024" Name="IDS_BIP_GET_ATTACHMENT">
-		<Text>Get Linked Attachment</Text>
+		<Text>Ambil Lampiran Tertaut</Text>
 	</String>
 	<String Id="1025" Name="IDS_BIP_GET_THUMBNAIL">
-		<Text>Get Linked Thumbnail</Text>
+		<Text>Ambil Keluku Tertaut</Text>
 	</String>
 	<String Id="1026" Name="IDS_BIP_GET_PARTIAL_IMAGE">
-		<Text>Get Partial Image</Text>
+		<Text>Ambil Gambar Sebagian</Text>
 	</String>
 	<String Id="1027" Name="IDS_BIP_GET_STATUS">
-		<Text>Get Status</Text>
+		<Text>Ambil Status</Text>
 	</String>
 	<String Id="1028" Name="IDS_A2DP_RECONFIG_BY_RECONFIG">
-		<Text>Reconfig by Reconfig</Text>
+		<Text>Konfigurasikan Ulang dengan Konfigurasi Ulang</Text>
 	</String>
 	<String Id="1029" Name="IDS_A2DP_RECONFIG_BY_CLOSE">
-		<Text>Reconfig by Close</Text>
+		<Text>Konfigurasi Ulang dengan Tutup</Text>
 	</String>
 	<String Id="1030" Name="IDS_BIP_START_PRINT">
-		<Text>Start Print</Text>
+		<Text>Mulai Cetak</Text>
 	</String>
 	<String Id="1031" Name="IDS_BIP_START_ARCHIVE">
-		<Text>Start Archive</Text>
+		<Text>Mulai Arsipkan</Text>
 	</String>
 	<String Id="1032" Name="IDS_BIP_REMOTE_DISPLAY">
-		<Text>Remote Display Select</Text>
+		<Text>Pilih Tampilan Jarak Jauh</Text>
 	</String>
 	<String Id="1033" Name="IDS_BIP_GET_MONITORING_IMAGE">
-		<Text>Get Monitoring Image</Text>
+		<Text>Ambil Gambar Pemantauan</Text>
 	</String>
 	<String Id="1034" Name="IDS_BIP_REMOTE_DISPLAY_CURRENT">
-		<Text>Remote Display Current</Text>
+		<Text>Tampilan Jarak Jauh Saat Ini</Text>
 	</String>
 	<String Id="1035" Name="IDS_BIP_REMOTE_DISPLAY_PREV">
-		<Text>Remote Display Previous</Text>
+		<Text>Tampilan Jarak Jauh Sebelumnya</Text>
 	</String>
 	<String Id="1036" Name="IDS_BIP_REMOTE_DISPLAY_NEXT">
-		<Text>Remote Display Next</Text>
+		<Text>Tampilan Jarak Jauh Berikutnya</Text>
 	</String>
 	<String Id="1037" Name="IDS_A2DP_RECONFIG_BY_REPAGE">
-		<Text>Reconfig by Repage</Text>
+		<Text>Konfigurasikan Ulang dengan Halamankan Ulang</Text>
 	</String>
 	<String Id="1038" Name="IDS_A2DP_INCREMENT_BITRATE">
-		<Text>Increment Bitrate</Text>
+		<Text>Laju bit inkremen</Text>
 	</String>
 	<String Id="1039" Name="IDS_A2DP_DECREMENT_BITRATE">
-		<Text>Decrement Bitrate</Text>
+		<Text>Laju bit dekremen</Text>
 	</String>
 	<String Id="1040" Name="IDS_A2DP_SET_BITRATE">
-		<Text>Set Bitrate</Text>
+		<Text>Atur laju bit</Text>
 	</String>
 	<String Id="1041" Name="IDS_A2DP_AUTO_BITRATE">
-		<Text>Auto Bitrate</Text>
+		<Text>Laju bit otomatis</Text>
 	</String>
 	<String Id="1042" Name="IDS_A2DP_MSG_CTRL_CMD_FAILED">
-		<Text>A2DP control command failed</Text>
+		<Text>Perintah kontrol A2DP gagal</Text>
 	</String>
 	<String Id="1043" Name="IDS_A2DP_CONTROL_DATA">
-		<Text>Enter A2DP Control Data</Text>
+		<Text>Masukkan Data Kontrol A2DP</Text>
 	</String>
 	<String Id="1044" Name="IDS_A2DP_MSG_CTRL_CMD_SUCCESS">
-		<Text>A2DP control command send successfully</Text>
+		<Text>Berhasil mengirimkan perintah kontrol A2DP</Text>
 	</String>
 	<String Id="1045" Name="IDS_SDP_QUERY">
-		<Text>Perform SDP Query</Text>
+		<Text>Lakukan Pencarian SDP</Text>
 	</String>
 	<String Id="1046" Name="IDS_SERVER_PSM">
-		<Text>Server PSM</Text>
+		<Text>PSM Server</Text>
 	</String>
 	<String Id="1047" Name="IDS_L2">
-		<Text>L2 Experimental Tests</Text>
+		<Text>Uji Coba L2</Text>
 	</String>
 	<String Id="1048" Name="IDS_ENABLE_L2">
-		<Text>Enable L2 Test Server</Text>
+		<Text>Aktifkan Uji Coba L2</Text>
 	</String>
 	<String Id="1049" Name="IDS_BIP_TEST_PRINT">
-		<Text>Test Printing</Text>
+		<Text>Pencetakan Pengujian</Text>
 	</String>
 	<String Id="1050" Name="IDS_BIP_MSG_PUSH_SUCCESS">
-		<Text>Successfully pushed %s </Text>
+		<Text>%s gagal didorong </Text>
 	</String>
 	<String Id="1051" Name="IDS_BIP_MSG_PUSH_FAILED">
-		<Text>Failed to push %s</Text>
+		<Text>Gagal mendorong %s</Text>
 	</String>
 	<String Id="1052" Name="IDS_BIP_MSG_PULL_SUCCESS">
-		<Text>Successfully pulled %s</Text>
+		<Text>%s berhasil ditarik</Text>
 	</String>
 	<String Id="1053" Name="IDS_BIP_MSG_PULL_FAILED">
-		<Text>Failed to pull %s</Text>
+		<Text>Gagal menarik %s</Text>
 	</String>
 	<String Id="1054" Name="IDS_CLIENT_PSM">
-		<Text>Client PSM</Text>
+		<Text>PSM Klien</Text>
 	</String>
 	<String Id="1055" Name="IDS_BIP_MSG_DELETE_SUCCESS">
-		<Text>Successfully deleted %s</Text>
+		<Text>%s berhasil dihapus</Text>
 	</String>
 	<String Id="1056" Name="IDS_BIP_MSG_DELETE_FAILED">
-		<Text>Failed to delete %s</Text>
+		<Text>Gagal menghapus %s</Text>
 	</String>
 	<String Id="1057" Name="IDS_BIP_MSG_REMOTE_DISPLAY_SUCCESS">
-		<Text>Remote display successful</Text>
+		<Text>Tampilan jarak jauh berhasil</Text>
 	</String>
 	<String Id="1058" Name="IDS_BIP_MSG_REMOTE_DISPLAY_FAILED">
-		<Text>Remote display failed</Text>
+		<Text>Tampilan jarak jauh gagal</Text>
 	</String>
 	<String Id="1059" Name="IDS_BIP_MSG_START_ARCHIVE_SUCCESS">
-		<Text>Start archive successful</Text>
+		<Text>Mulai arsipkan berhasil</Text>
 	</String>
 	<String Id="1060" Name="IDS_BIP_MSG_START_ARCHIVE_FAILED">
-		<Text>Start archive failed</Text>
+		<Text>Mulai arsipkan gagal</Text>
 	</String>
 	<String Id="1061" Name="IDS_BIP_MSG_START_PRINT_SUCCESS">
-		<Text>Start print successful</Text>
+		<Text>Mulai cetak berhasil</Text>
 	</String>
 	<String Id="1062" Name="IDS_BIP_MSG_START_PRINT_FAILED">
-		<Text>Start print failed</Text>
+		<Text>Mulai cetak gagal</Text>
 	</String>
 	<String Id="1063" Name="IDS_BIP_MSG_GET_STATUS_SUCCESS">
-		<Text>Get status successful</Text>
+		<Text>Ambil status berhasil</Text>
 	</String>
 	<String Id="1064" Name="IDS_BIP_MSG_GET_STATUS_FAILED">
-		<Text>Get status failed</Text>
+		<Text>Ambil status gagal</Text>
 	</String>
 	<String Id="1065" Name="IDS_LABEL_KBITS_PER_SEC">
-		<Text>kBits/Sec: %d</Text>
+		<Text>kBit/Det: %d</Text>
 	</String>
 	<String Id="1066" Name="IDS_ENABLE_SERVER">
-		<Text>Enable Server</Text>
+		<Text>Aktifkan Server</Text>
 	</String>
 	<String Id="1067" Name="IDS_DISABLE_SERVER">
-		<Text>Disable Server</Text>
+		<Text>Nonaktifkan Server</Text>
 	</String>
 	<String Id="1068" Name="IDS_CONNECT_CLIENT">
-		<Text>Connect Client</Text>
+		<Text>Hubungkan Klien</Text>
 	</String>
 	<String Id="1069" Name="IDS_DISCONNECT_CLIENT">
-		<Text>Disconnect Client</Text>
+		<Text>Putuskan Klien</Text>
 	</String>
 	<String Id="1070" Name="IDS_BIP_REGISTER_IMAGING_RESPONDER">
-		<Text>Imaging Responder</Text>
+		<Text>Perespons Pencitraan</Text>
 	</String>
 	<String Id="1071" Name="IDS_BIP_REGISTER_REFERENCED_OBJECTS_SERVER">
-		<Text>Referenced Object Server</Text>
+		<Text>Server Objek Tereferensikan</Text>
 	</String>
 	<String Id="1072" Name="IDS_BIP_REGISTER_ARCHIVED_OBJECTS_SERVER">
-		<Text>Archived Object Server</Text>
+		<Text>Server Objek Terarsip</Text>
 	</String>
 	<String Id="1073" Name="IDS_AG_CONNECTION_IN_PRGS">
-		<Text>AG Connection In Progress</Text>
+		<Text>Koneksi AG Sedang Berlangsung</Text>
 	</String>
 	<String Id="1074" Name="IDS_BT_SHORT_NAME">
-		<Text>Nama pendek BT</Text>
+		<Text>Nama Singkat BT</Text>
 	</String>
 	<String Id="1075" Name="IDS_IOC_YESNO">
-		<Text>IOC DisplayYes/No</Text>
+		<Text>Tampilan IOC Ya/Tidak</Text>
 	</String>
 	<String Id="1076" Name="IDS_IOC_DISPLAY_ONLY">
-		<Text>IOC DisplayOnly</Text>
+		<Text>Hanya Tampilan IOC</Text>
 	</String>
 	<String Id="1077" Name="IDS_IOC_KEYBOARD_ONLY">
-		<Text>IOC KeyboardOnly</Text>
+		<Text>Hanya Papan Tombol IOC</Text>
 	</String>
 	<String Id="1078" Name="IDS_IOC_NO">
-		<Text>IOC NoIO</Text>
+		<Text>Tidak Ada IO IOC</Text>
 	</String>
 	<String Id="1079" Name="IDS_SECURITY_LOW">
-		<Text>Low Security</Text>
+		<Text>Pengamanan Rendah</Text>
 	</String>
 	<String Id="1080" Name="IDS_BIP_CONNECT_REFERENCED_OBJECTS">
-		<Text>Referenced Objects Server</Text>
+		<Text>Server Objek-Objek Tereferensikan</Text>
 	</String>
 	<String Id="1081" Name="IDS_BIP_CONNECT_ARCHIVED_OBJECTS">
-		<Text>Archived Objects Server</Text>
+		<Text>Server Objek-Objek Terarsip</Text>
 	</String>
 	<String Id="1082" Name="IDS_SECURITY_MED">
-		<Text>Medium Security</Text>
+		<Text>Pengamanan Sedang</Text>
 	</String>
 	<String Id="1083" Name="IDS_SECURITY_HIGH">
-		<Text>High Security</Text>
+		<Text>Pengamanan Tinggi</Text>
 	</String>
 	<String Id="1084" Name="IDS_MITM">
 		<Text>MITM</Text>
 	</String>
 	<String Id="1085" Name="IDS_DBG_KEY">
-		<Text>Tombol Debug </Text>
+		<Text>Tombol Debug</Text>
 	</String>
 	<String Id="1086" Name="IDS_BOND_OPTIONS">
-		<Text>Pilihan Pasangan</Text>
+		<Text>Pilihan Ikatan</Text>
 	</String>
 	<String Id="1087" Name="IDS_EDIT_SHORT_NAME">
-		<Text>Ubah Nama Pendek</Text>
+		<Text>Sunting Nama Singkat</Text>
 	</String>
 	<String Id="1088" Name="IDS_EDIT_MANU_DATA">
-		<Text>Ubah Data Produsen</Text>
+		<Text>Sunting Data Pabrikan</Text>
 	</String>
 	<String Id="1089" Name="IDS_IOCAPABILITY">
-		<Text>Kapasitas IO </Text>
+		<Text>Kapabilitas IO</Text>
 	</String>
 	<String Id="1090" Name="IDS_BIP_GET_IMAGE_TOTAL">
-		<Text>Get Image Total</Text>
+		<Text>Ambil Gambar Total</Text>
 	</String>
 	<String Id="1091" Name="IDS_BIP_GET_RECENT_IMAGE_LIST">
-		<Text>Get Recent Image List</Text>
+		<Text>Ambil Daftar Gambar Terakhir</Text>
 	</String>
 	<String Id="1092" Name="IDS_BIP_GET_MONITORING_IMAGE_SAVE">
-		<Text>Get Monitoring Image w Save</Text>
+		<Text>Ambil Gambar Pemantauan Tanpa Simpan</Text>
 	</String>
 	<String Id="1093" Name="IDS_SERV_SECURITY">
-		<Text>Service Security</Text>
+		<Text>Pengamanan Layanan</Text>
 	</String>
 	<String Id="1094" Name="IDS_PROMPT_REBOND">
-		<Text>Rebond with device %s?</Text>
+		<Text>Ikat ulang dengan perangkat %s?</Text>
 	</String>
 	<String Id="1095" Name="IDS_PROMPT_PROCEED_BONDING">
-		<Text>Proceed bonding with device %s passkey %s?</Text>
+		<Text>Lakukan ikatan dengan perangkat %s kunci sandi %s?</Text>
 	</String>
 	<String Id="1096" Name="IDS_AUTO_GENERATED_PASSKEY">
-		<Text>AutoGenerated PassKey</Text>
+		<Text>Kunci Sandi yang Otomatis Dibuat</Text>
 	</String>
 	<String Id="1097" Name="IDS_LABEL_BT_SHORT_NAME">
-		<Text>BT Short Name: %s</Text>
+		<Text>Nama Singkat BT: %s</Text>
 	</String>
 	<String Id="1098" Name="IDS_LABEL_LINK_KEY">
-		<Text>Status BT LK: %s</Text>
+		<Text>LKStatus BT : %s</Text>
 	</String>
 	<String Id="1099" Name="IDS_LABEL_BT_MANU_DATA">
-		<Text>Data produsen BT: %s</Text>
+		<Text>Data Pabrikan BT: %s</Text>
 	</String>
 	<String Id="1100" Name="IDS_BT_LABEL_UUID">
-		<Text>BT UUID: %s</Text>
+		<Text>UUID BT: %s</Text>
 	</String>
 	<String Id="1101" Name="IDS_MSG_USER_CFM_FAILED">
-		<Text>User Confirmation has Failed</Text>
+		<Text>Konfirmasi Pengguna Telah Gagal</Text>
 	</String>
 	<String Id="1102" Name="IDS_BT_LABEL_UUID16">
 		<Text>UUID16: </Text>
@@ -1244,664 +1244,664 @@
 		<Text>UUID128: </Text>
 	</String>
 	<String Id="1105" Name="IDS_LABEL_LOCAL_PSSKEY">
-		<Text>Local PassKey: %s</Text>
+		<Text>Kunci Sandi Lokal: %s</Text>
 	</String>
 	<String Id="1106" Name="IDS_LABEL_REMOTE_PSSKEY">
-		<Text>Remote PassKey: %s</Text>
+		<Text>Kunci Sandi Jarak Jauh: %s</Text>
 	</String>
 	<String Id="1107" Name="IDS_MAX_INTERVAL">
-		<Text>Sniff Max Interval</Text>
+		<Text>Rentang Maks Penyadapan</Text>
 	</String>
 	<String Id="1108" Name="IDS_IDLE_TIMEOUT">
-		<Text>Sniff Idle Timeout</Text>
+		<Text>Habis Waktu Siaga Penyadapan</Text>
 	</String>
 	<String Id="1109" Name="IDS_NO_PASSKEY_PROCEED_BONDING">
-		<Text>Proceed bonding with device %s?</Text>
+		<Text>Lakukan ikatan dengan perangkat %s?</Text>
 	</String>
 	<String Id="1110" Name="IDS_DISPLAY_PSSKEY">
-		<Text>Pairing with device %s</Text>
+		<Text>Menghubungkan dengan perangkat %s</Text>
 	</String>
 	<String Id="1111" Name="IDS_BT_MANU_DATA">
-		<Text>Data produsen BT</Text>
+		<Text>Data Pabrikan BT</Text>
 	</String>
 	<String Id="1112" Name="IDS_MAX_LATENCY">
-		<Text>Sniff Max Latency</Text>
+		<Text>Kelatenan Maks Penyadapan</Text>
 	</String>
 	<String Id="1113" Name="IDS_LPM_ACTIVE">
-		<Text>Sniff Low Power Mode Active</Text>
+		<Text>Mode Daya Rendah Penyadapan Aktif</Text>
 	</String>
 	<String Id="1114" Name="IDS_LMP_SNIFF">
-		<Text>Sniff Low Power Mode Sniff</Text>
+		<Text>Penyadapan Mode Daya Rendah Penyadapan</Text>
 	</String>
 	<String Id="1115" Name="IDS_LPM_SNIFF_LCK">
-		<Text>Sniff Low Power Mode Lock</Text>
+		<Text>Kunci Mode Daya Rendah Penyadapan </Text>
 	</String>
 	<String Id="1116" Name="IDS_STK_APP_PARAM">
-		<Text>Sniff Stick App Param</Text>
+		<Text>Parameter Aplikasi Stik Penyadapan</Text>
 	</String>
 	<String Id="1117" Name="IDS_SNIF_INIT_ORIENTED">
-		<Text>Sniff Initiator Oriented</Text>
+		<Text>Berorientasi Inisiator Penyadapan</Text>
 	</String>
 	<String Id="1118" Name="IDS_LOW_PWR_MODE">
-		<Text>Sniff Low Power Mode</Text>
+		<Text>Mode Daya Rendah Penyadapan </Text>
 	</String>
 	<String Id="1119" Name="IDS_CONFIG_SNIF_PARAMS">
-		<Text>Configure Sniff Params</Text>
+		<Text>Konfigurasikan Parameter Penyadapan</Text>
 	</String>
 	<String Id="1120" Name="IDS_SNIF_PARAM_SETTINGS">
-		<Text>Sniff Param Settings</Text>
+		<Text>Pengaturan Parameter Penyadapan</Text>
 	</String>
 	<String Id="1121" Name="IDS_LABEL_LOW_POWER_MODE">
-		<Text>Sniff Low Power mode: %s</Text>
+		<Text>Mode Daya Rendah Penyadapan: %s</Text>
 	</String>
 	<String Id="1122" Name="IDS_LABEL_MAX_INTERVAL">
-		<Text>Sniff Max interval :%s</Text>
+		<Text>Rentang Maks Penyadapan :%s</Text>
 	</String>
 	<String Id="1123" Name="IDS_LABEL_IDLE_TIMEOUT">
-		<Text>Sniff Idle TimeOut: %s</Text>
+		<Text>Habis Waktu Siaga Penyadapan: %s</Text>
 	</String>
 	<String Id="1124" Name="IDS_LABEL_MAX_LATENCY">
-		<Text>Sniff Max Latency : %s</Text>
+		<Text>Kelatenan Maks Penyadapan : %s</Text>
 	</String>
 	<String Id="1125" Name="IDS_LABEL_STICK_TO_APP">
-		<Text>Sniff Stick to App params: %s</Text>
+		<Text>Stik Penyadapan ke paramater Aplikasi: %s</Text>
 	</String>
 	<String Id="1126" Name="IDS_LABEL_SNIFF_INIT_ORIENTED">
-		<Text>Sniff Initiator Oriented:  %s</Text>
+		<Text>Berorientasi Inisiator Penyadapan:  %s</Text>
 	</String>
 	<String Id="1127" Name="IDS_CHNG_LOW_PWR_MODE">
-		<Text>Lo Pwr</Text>
+		<Text>Daya Rendah</Text>
 	</String>
 	<String Id="1128" Name="IDS_CHNG_MAX_INTERVAL">
-		<Text>Max Intrvl</Text>
+		<Text>Rentang Maks</Text>
 	</String>
 	<String Id="1129" Name="IDS_CHNG_IDLE_TIMEOUT">
-		<Text>Idle TO</Text>
+		<Text>Siaga Habis Waktu </Text>
 	</String>
 	<String Id="1130" Name="IDS_CHNG_MAX_LATENCY">
-		<Text>Latency</Text>
+		<Text>Kelatenan</Text>
 	</String>
 	<String Id="1131" Name="IDS_CHNG_SNIF_PARAM_SETTINGS">
-		<Text>Sniff Param</Text>
+		<Text>Parameter Penyadapan</Text>
 	</String>
 	<String Id="1132" Name="IDS_CONFIG_SNIFF_PROFILES">
-		<Text>Sniff Profiles Menu</Text>
+		<Text>Menu Profil Penyadapan</Text>
 	</String>
 	<String Id="1133" Name="IDS_PROFILE1">
-		<Text>Profile-1</Text>
+		<Text>Profil-1</Text>
 	</String>
 	<String Id="1134" Name="IDS_PROFILE2">
-		<Text>Profile-2</Text>
+		<Text>Profil-2</Text>
 	</String>
 	<String Id="1135" Name="IDS_PROFILE3">
-		<Text>Profile-3</Text>
+		<Text>Profil-3</Text>
 	</String>
 	<String Id="1136" Name="IDS_ENABLE_HID">
-		<Text>HID Host</Text>
+		<Text>Host HID</Text>
 	</String>
 	<String Id="1137" Name="IDS_AUTHORIZE">
-		<Text>Authorize</Text>
+		<Text>Otorisasikan</Text>
 	</String>
 	<String Id="1138" Name="IDS_AUTHORIZE_FIRST">
-		<Text>AuthFirst</Text>
+		<Text>OtorisasikanDulu</Text>
 	</String>
 	<String Id="1139" Name="IDS_ENABLE_ALL">
-		<Text>EnableAll</Text>
+		<Text>AktifkanSemua</Text>
 	</String>
 	<String Id="1140" Name="IDS_GO">
-		<Text>Go</Text>
+		<Text>Jalankan</Text>
 	</String>
 	<String Id="1141" Name="IDS_CAN">
-		<Text>Cancel</Text>
+		<Text>Batalkan</Text>
 	</String>
 	<String Id="1142" Name="IDS_HID_HOST_CAPS_LOCK">
 		<Text>CAPS LOCK</Text>
 	</String>
 	<String Id="1143" Name="IDS_HID_SET_LED_OFF">
-		<Text>Set LED OFF</Text>
+		<Text>Atur LED MATI</Text>
 	</String>
 	<String Id="1144" Name="IDS_MSG_HID_SEND_REPORT_FAIL">
-		<Text>SEND_REPORT Failed</Text>
+		<Text>KIRIM_LAPORAN Gagal</Text>
 	</String>
 	<String Id="1145" Name="IDS_MSG_HID_SEND_REPORT_SUCCESS">
-		<Text>SEND_REPORT Successful</Text>
+		<Text>KIRIM_LAPORAN Berhasil</Text>
 	</String>
 	<String Id="1146" Name="IDS_HID_HOST_NUM_LOCK">
 		<Text>NUM LOCK</Text>
 	</String>
 	<String Id="1147" Name="IDS_HID_SET_LED_ON">
-		<Text>Set LED ON</Text>
+		<Text>Atur LED NYALA</Text>
 	</String>
 	<String Id="1148" Name="IDS_HID_SET_REPORT_INTERRUPT_SMALL">
-		<Text>Small (Interrupt)</Text>
+		<Text>Kecil (Putuskan)</Text>
 	</String>
 	<String Id="1149" Name="IDS_HID_HOST_SCROLL_LOCK">
 		<Text>SCROLL LOCK</Text>
 	</String>
 	<String Id="1150" Name="IDS_HID_SET_REPORT_INTERRUPT_LARGE">
-		<Text>Large (Interrupt)</Text>
+		<Text>Besar (Putuskan)</Text>
 	</String>
 	<String Id="1151" Name="IDS_HID_CONTROL_SMALL">
-		<Text>Small (Control)</Text>
+		<Text>Kecil (Kontrol)</Text>
 	</String>
 	<String Id="1152" Name="IDS_HID_SET_REPORT_CONTROL_LARGE">
-		<Text>Large (Control)</Text>
+		<Text>Besar (Kontrol)</Text>
 	</String>
 	<String Id="1153" Name="IDS_HID_SET_REPORT_CONTROL_SMALL">
-		<Text>Small (Control)</Text>
+		<Text>Kecil (Kontrol)</Text>
 	</String>
 	<String Id="1154" Name="IDS_HID_GET_REPORT_SMALL">
-		<Text>Small</Text>
+		<Text>Kecil</Text>
 	</String>
 	<String Id="1155" Name="IDS_HID_GET_REPORT_LARGE">
-		<Text>Large</Text>
+		<Text>Besar</Text>
 	</String>
 	<String Id="1156" Name="IDS_MSG_HID_GET_REPORT_SUCCESS">
-		<Text>GET_REPORT Successful</Text>
+		<Text>AMBIL_LAPORAN Berhasil</Text>
 	</String>
 	<String Id="1157" Name="IDS_MSG_HID_GET_REPORT_FAIL">
-		<Text>GET_REPORT Failed</Text>
+		<Text>AMBIL_LAPORAN Gagal</Text>
 	</String>
 	<String Id="1158" Name="IDS_SECURITY_SPECIAL">
-		<Text>Special (MITM_NO_BONDING)</Text>
+		<Text>Khusus (MITM_TIDAK_ADA_IKATAN)</Text>
 	</String>
 	<String Id="1159" Name="IDS_AUDIO_GATEWAY_SEC_SPECIAL">
-		<Text>Audio Gateway: Cur Sec=&gt;Special</Text>
+		<Text>Gateway Audio: Pilihan Saat Ini=&gt;Khusus</Text>
 	</String>
 	<String Id="1160" Name="IDS_NETWORK_ACCESS_SEC_SPECIAL">
-		<Text>Network Access: Cur Sec=&gt;Special</Text>
+		<Text>Akses Jaringan: Pilihan Saat Ini=&gt;Khusus</Text>
 	</String>
 	<String Id="1161" Name="IDS_ENABLE_OPP_SEC_SPECIAL">
-		<Text>OPP: Cur Sec=&gt;Special</Text>
+		<Text>OPP: Pilihan Saat Ini=&gt;Khusus</Text>
 	</String>
 	<String Id="1162" Name="IDS_ENABLE_FTP_SEC_SPECIAL">
-		<Text>FTP: Cur Sec=&gt;Special</Text>
+		<Text>FTP: Pilihan Saat Ini=&gt;Khusus</Text>
 	</String>
 	<String Id="1163" Name="IDS_ENABLE_BIP_SEC_SPECIAL">
-		<Text>BIP: Cur Sec=&gt;Special</Text>
+		<Text>BIP: Pilihan Saat Ini=&gt;Khusus</Text>
 	</String>
 	<String Id="1164" Name="IDS_ENABLE_BPP_SEC_SPECIAL">
-		<Text>BPP: Cur Sec=&gt;Special</Text>
+		<Text>BPP: Pilihan Saat Ini=&gt;Khusus</Text>
 	</String>
 	<String Id="1165" Name="IDS_ENABLE_PBAP_SEC_SPECIAL">
-		<Text>PBAP: Cur Sec=&gt;Special</Text>
+		<Text>PBAP: Pilihan Saat Ini=&gt;Khusus</Text>
 	</String>
 	<String Id="1166" Name="IDS_ENABLE_HID_SEC_SPECIAL">
-		<Text>HID: Cur Sec=&gt;Special</Text>
+		<Text>HID: Pilihan Saat Ini=&gt;Khusus</Text>
 	</String>
 	<String Id="1167" Name="IDS_ENABLE_SAP_SEC_SPECIAL">
-		<Text>SAP: Cur Sec=&gt;Special</Text>
+		<Text>SAP: Pilihan Saat Ini=&gt;Khusus</Text>
 	</String>
 	<String Id="1168" Name="IDS_ENABLE_A2DP_SEC_SPECIAL">
-		<Text>A2DP: Cur Sec=&gt;Special</Text>
+		<Text>A2DP: Pilihan Saat Ini=&gt;Khusus</Text>
 	</String>
 	<String Id="1169" Name="IDS_ENABLE_AVRCP_SEC_SPECIAL">
-		<Text>AVRCP: Cur Sec=&gt;Special</Text>
+		<Text>AVRCP: Pilihan Saat Ini=&gt;Khusus</Text>
 	</String>
 	<String Id="1170" Name="IDS_ENABLE_L2_SEC_SPECIAL">
-		<Text>L2: Cur Sec=&gt;Special</Text>
+		<Text>L2: Pilihan Saat Ini=&gt;Khusus</Text>
 	</String>
 	<String Id="1171" Name="IDS_ENABLE_SPP_SEC_SPECIAL">
-		<Text>SPP: Cur Sec=&gt;Special</Text>
+		<Text>SPP: Pilihan Saat Ini=&gt;Khusus</Text>
 	</String>
 	<String Id="1172" Name="IDS_REBOND_OPT_MITM">
-		<Text>Rebond Options: MITM</Text>
+		<Text>Pilihan Ikat Ulang: MITM</Text>
 	</String>
 	<String Id="1173" Name="IDS_REBOND_OPT_BOND">
-		<Text>Rebond Options: BOND</Text>
+		<Text>Pilihan Ikat Ulang: IKAT</Text>
 	</String>
 	<String Id="1174" Name="IDS_BT_BLANK">
 		<Text> </Text>
 	</String>
 	<String Id="2001" Name="IDS_MSG_NO_CONNECTED_DEV">
-		<Text>Tak ada perangkat terhubung ditemukan di Database</Text>
+		<Text>Tidak ditemukan perangkat yang terhubung dalam database.</Text>
 	</String>
 	<String Id="2003" Name="IDS_MSG_PIN_REPLY_FAILED">
-		<Text>Passkey was not accepted.</Text>
+		<Text>Kunci sandi tidak diterima.</Text>
 	</String>
 	<String Id="2004" Name="IDS_MSG_BONDED">
-		<Text>Successfully bonded to %s.</Text>
+		<Text>Berhasil terikat ke %s.</Text>
 	</String>
 	<String Id="2005" Name="IDS_MSG_BOND_FAILED">
-		<Text>Failed to bond with %s.</Text>
+		<Text>Gagal terikat dengan %s.</Text>
 	</String>
 	<String Id="2006" Name="IDS_MSG_BT_ENABLED">
-		<Text>BT is now enabled.</Text>
+		<Text>BT kini diaktifkan.</Text>
 	</String>
 	<String Id="2007" Name="IDS_MSG_BT_DISABLED">
-		<Text>BT is now disabled.</Text>
+		<Text>BT kini dinonaktifkan.</Text>
 	</String>
 	<String Id="2008" Name="IDS_MSG_DEV_INFO_UNAVAIL">
-		<Text>Device information for %s is unavailable.</Text>
+		<Text>Informasi perangkat untuk %s tidak tersedia.</Text>
 	</String>
 	<String Id="2009" Name="IDS_MSG_BONDABLE_NOT_SET">
-		<Text>Failed to set bondable.</Text>
+		<Text>Gagal mengatur ke bisa diikat.</Text>
 	</String>
 	<String Id="2010" Name="IDS_MSG_BONDABLE_NOT_CLEARED">
-		<Text>Failed to clear bondable.</Text>
+		<Text>Gagal menghapus bisa diikat.</Text>
 	</String>
 	<String Id="2011" Name="IDS_MSG_BONDABLE_SET">
-		<Text>Unit is now bondable.</Text>
+		<Text>Perangkat kini bisa diikat.</Text>
 	</String>
 	<String Id="2012" Name="IDS_MSG_BONDABLE_CLEARED">
-		<Text>Unit is no longer bondable.</Text>
+		<Text>Perangkat tidak lagi bisa diikat.</Text>
 	</String>
 	<String Id="2013" Name="IDS_MSG_NO_DEV">
-		<Text>Device database is empty.</Text>
+		<Text>Database perangkat kosong.</Text>
 	</String>
 	<String Id="2014" Name="IDS_MSG_NO_BONDED_DEV">
-		<Text>Tak ada perangkat terpasang di Database</Text>
+		<Text>Tidak ditemukan perangkat yang terikat dalam database.</Text>
 	</String>
 	<String Id="2015" Name="IDS_MSG_AG_CONN">
-		<Text>Connected to audio device "%s".</Text>
+		<Text>Terhubung ke perangkat audio "%s".</Text>
 	</String>
 	<String Id="2016" Name="IDS_MSG_AG_CONNF">
-		<Text>Failed to connect to audio device "%s".</Text>
+		<Text>Gagal terhubung ke perangkat audio "%s".</Text>
 	</String>
 	<String Id="2017" Name="IDS_MSG_AG_DISCONN">
-		<Text>Disconnected from audio device "%s".</Text>
+		<Text>Terputus dari perangkat audio "%s".</Text>
 	</String>
 	<String Id="2018" Name="IDS_MSG_NA_CONN">
-		<Text>Connected to network device "%s".</Text>
+		<Text>Terhubung ke perangkat jaringan "%s".</Text>
 	</String>
 	<String Id="2019" Name="IDS_MSG_NA_DISCONN">
-		<Text>Disconnected from network device "%s".</Text>
+		<Text>Terputus dari perangkat jaringan "%s".</Text>
 	</String>
 	<String Id="2020" Name="IDS_MSG_DEV_ADDED">
-		<Text>Device %s added to database.</Text>
+		<Text>Perangkat %s ditambahkan ke database.</Text>
 	</String>
 	<String Id="2021" Name="IDS_MSG_DEV_ADD_FAILED">
-		<Text>Failed to add %s to database.</Text>
+		<Text>Gagal menambahkan %s ke server.</Text>
 	</String>
 	<String Id="2022" Name="IDS_MSG_DEV_REM">
-		<Text>Device %s removed from database.</Text>
+		<Text>Perangkat %s dihapus dari database.</Text>
 	</String>
 	<String Id="2023" Name="IDS_MSG_DEV_REM_FAILED">
-		<Text>Failed to remove %s from database.</Text>
+		<Text>Gagal menghapus %s dari database.</Text>
 	</String>
 	<String Id="2024" Name="IDS_MSG_DEV_UNBONDED">
-		<Text>Device %s unbonded.</Text>
+		<Text>Perangkat %s dilepas.</Text>
 	</String>
 	<String Id="2025" Name="IDS_MSG_DEV_UNBOND_FAILED">
-		<Text>Failed to unbond %s.</Text>
+		<Text>Gagal melepas %s.</Text>
 	</String>
 	<String Id="2026" Name="IDS_MSG_SEARCHING">
-		<Text>Bluetooth sedang dimatikan. Hidupkan terlebih dahulu.</Text>
+		<Text>Mencari perangkat Bluetooth...Tekan tombol CLR untuk berhenti.</Text>
 	</String>
 	<String Id="2027" Name="IDS_MSG_NO_DEV_DISC">
-		<Text>No Bluetooth devices discovered.</Text>
+		<Text>Tidak ada perangkat Bluetooth yang ditemukan.</Text>
 	</String>
 	<String Id="2028" Name="IDS_MSG_DEV_DISC_FAILED">
-		<Text>Device discovery failed.</Text>
+		<Text>Gagal menemukan perangkat.</Text>
 	</String>
 	<String Id="2029" Name="IDS_MSG_FEATURE_UNAVAIL">
-		<Text>Feature not available.</Text>
+		<Text>Fitur tidak tersedia.</Text>
 	</String>
 	<String Id="2030" Name="IDS_MSG_END_SPP_TEST">
-		<Text>Press CLR key to end SPP test.</Text>
+		<Text>Tekan tombol CLR untuk mengakhiri dari Pengujian SPP.</Text>
 	</String>
 	<String Id="2031" Name="IDS_MSG_SPP_OPEN_FAILED">
-		<Text>Could not open SPP. Error: %d.</Text>
+		<Text>Tidak bisa membuka SPP. Kesalahan: %d</Text>
 	</String>
 	<String Id="2032" Name="IDS_MSG_DEV_SEC_FAILED">
-		<Text>Failed to change security for %s.</Text>
+		<Text>Gagal mengubah pengamanan untuk %s.</Text>
 	</String>
 	<String Id="2033" Name="IDS_MSG_SVC_BROWSE_FAILED">
-		<Text>Failed to browse services of %s.</Text>
+		<Text>Gagal menjelajah layanan %s.</Text>
 	</String>
 	<String Id="2034" Name="IDS_MSG_SVC_SEARCH_FAILED">
-		<Text>Failed to search services of %s.</Text>
+		<Text>Gagal mencari layanan %s.</Text>
 	</String>
 	<String Id="2035" Name="IDS_MSG_HCI_MODE">
-		<Text>HCI mode has been set to %s.</Text>
+		<Text>Mode HCI telah diubah ke %s.</Text>
 	</String>
 	<String Id="2036" Name="IDS_MSG_HCI_MODE_FAILED">
-		<Text>Failed to set HCI mode to %s.</Text>
+		<Text>Gagal mengatur mode HCI ke %s.</Text>
 	</String>
 	<String Id="2037" Name="IDS_MSG_MAP_HCI_PORT_FIRST">
-		<Text>Must map BT HCI to a valid port first.</Text>
+		<Text>Harus memetakan HCI BT ke port yang sah terlebih dahulu.</Text>
 	</String>
 	<String Id="2038" Name="IDS_MSG_SVR_REG_DONE">
-		<Text>Server registered.</Text>
+		<Text>Server terdaftar.</Text>
 	</String>
 	<String Id="2039" Name="IDS_MSG_SVR_REG_FAILED">
-		<Text>Failed to register server.</Text>
+		<Text>Gagal mendaftarkan server.</Text>
 	</String>
 	<String Id="2040" Name="IDS_MSG_SVR_DEREG_DONE">
-		<Text>Server deregistered.</Text>
+		<Text>Server dihapus.</Text>
 	</String>
 	<String Id="2041" Name="IDS_MSG_SVR_DEREG_FAILED">
-		<Text>Failed to deregister server.</Text>
+		<Text>Gagal menghapus server.</Text>
 	</String>
 	<String Id="2042" Name="IDS_MSG_CONN_FAILED">
-		<Text>Failed to connect to server.</Text>
+		<Text>Gagal terhubung ke server.</Text>
 	</String>
 	<String Id="2043" Name="IDS_MSG_DISCONN_FAILED">
-		<Text>Failed to disconnect from server.</Text>
+		<Text>Gagal terputus dari server.</Text>
 	</String>
 	<String Id="2044" Name="IDS_MSG_OBJ_PUSHED">
-		<Text>%s pushed to server.</Text>
+		<Text>%s didorong ke server.</Text>
 	</String>
 	<String Id="2045" Name="IDS_MSG_OBJ_PUSH_FAILED">
-		<Text>Failed to push %s to server.</Text>
+		<Text>Gagal mendorong %s ke server.</Text>
 	</String>
 	<String Id="2046" Name="IDS_MSG_OBJ_SENT">
-		<Text>%s pulled by client.</Text>
+		<Text>%s ditarik oleh klien.</Text>
 	</String>
 	<String Id="2047" Name="IDS_MSG_OBJ_PULLED">
-		<Text>%s pulled from server.</Text>
+		<Text>%s ditarik dari server.</Text>
 	</String>
 	<String Id="2048" Name="IDS_MSG_OBJ_PULL_FAILED">
-		<Text>Failed to pull %s from server.</Text>
+		<Text>Gagal menarik %s dari server.</Text>
 	</String>
 	<String Id="2049" Name="IDS_MSG_OBJ_RCVD">
-		<Text>%s pushed by client.</Text>
+		<Text>%s ditarik oleh klien.</Text>
 	</String>
 	<String Id="2050" Name="IDS_MSG_FILE_PUT">
-		<Text>Put "%s" on server.</Text>
+		<Text>"%s" ditempatkan di server.</Text>
 	</String>
 	<String Id="2051" Name="IDS_MSG_FILE_PUT_FAILED">
-		<Text>Failed to put "%s" on server.</Text>
+		<Text>Gagal menempatkan "%s" di server.</Text>
 	</String>
 	<String Id="2052" Name="IDS_MSG_FILE_GOT">
-		<Text>Got "%s" from server.</Text>
+		<Text>"%s" diambil dari server.</Text>
 	</String>
 	<String Id="2053" Name="IDS_MSG_FILE_GET_FAILED">
-		<Text>Failed to get "%s" from server.</Text>
+		<Text>Gagal mengambil "%s" dari server.</Text>
 	</String>
 	<String Id="2054" Name="IDS_MSG_FILE_DELETED">
-		<Text>Deleted "%s" from server.</Text>
+		<Text>"%s" dihapus dari server.</Text>
 	</String>
 	<String Id="2055" Name="IDS_MSG_FILE_DELETE_FAILED">
-		<Text>Failed to delete "%s" from server.</Text>
+		<Text>Gagal menghapus "%s" dari server.</Text>
 	</String>
 	<String Id="2056" Name="IDS_MSG_DISCOVERABLE_NOT_SET">
-		<Text>Failed to set discoverable.</Text>
+		<Text>Gagal mengatur ke bisa ditemukan.</Text>
 	</String>
 	<String Id="2057" Name="IDS_MSG_DISCOVERABLE_NOT_CLEARED">
-		<Text>Failed to clear discoverable.</Text>
+		<Text>Gagal menghapus bisa ditemukan.</Text>
 	</String>
 	<String Id="2058" Name="IDS_MSG_DISCOVERABLE_SET">
-		<Text>Unit is now discoverable.</Text>
+		<Text>Perangkat kini bisa ditemukan.</Text>
 	</String>
 	<String Id="2059" Name="IDS_MSG_DISCOVERABLE_CLEARED">
-		<Text>Unit is no longer discoverable.</Text>
+		<Text>Perangkat tidak lagi bisa ditemukan.</Text>
 	</String>
 	<String Id="2060" Name="IDS_MSG_UNMAP_HCI_PORT_FIRST">
-		<Text>Must map BT HCI to NULL.</Text>
+		<Text>Harus memetakan HCI BT ke NOL.</Text>
 	</String>
 	<String Id="2061" Name="IDS_MSG_NA_ENABLE_FAILED">
-		<Text>Failed to enable BT NA.</Text>
+		<Text>Gagal mengaktifkan BT NA.</Text>
 	</String>
 	<String Id="2062" Name="IDS_MSG_MAP_DATA_SVC_FIRST">
-		<Text>Must map Data service to BT_NA port first.</Text>
+		<Text>Harus memetakan Layanan data ke BT_NA terlebih dahulu</Text>
 	</String>
 	<String Id="2063" Name="IDS_MSG_OBJ_NOT_SENT">
-		<Text>%s unsuccessfully pulled by client.</Text>
+		<Text>%s tidak berhasil ditarik oleh klien.</Text>
 	</String>
 	<String Id="2064" Name="IDS_MSG_OBJ_NOT_RCVD">
-		<Text>%s unsuccessfully pushed by client.</Text>
+		<Text>%s tidak berhasil didorong oleh klien.</Text>
 	</String>
 	<String Id="2065" Name="IDS_MSG_OBJ_NOT_FOUND">
-		<Text>%s not found.</Text>
+		<Text>%s tidak ditemukan.</Text>
 	</String>
 	<String Id="2066" Name="IDS_MSG_FOLDER_BROWSING_DONE">
-		<Text>Successfully browsed folder on %s.</Text>
+		<Text>Folder yang berhasil dijelajahi di %s.</Text>
 	</String>
 	<String Id="2067" Name="IDS_MSG_FOLDER_BROWSING_FAILED">
-		<Text>Failed to browse "%s" folder.</Text>
+		<Text>Gagal menjelajah folder "%s".</Text>
 	</String>
 	<String Id="2068" Name="IDS_MSG_NO_OBEX_SERVERS">
-		<Text>No OBEX Servers in DB.</Text>
+		<Text>Tidak ada Server OBEX dalam DB.</Text>
 	</String>
 	<String Id="2069" Name="IDS_MSG_DEREG_SVR_FIRST">
-		<Text>Must de-register server first.</Text>
+		<Text>Harus menghapus pendaftaran server terlebih dahulu.</Text>
 	</String>
 	<String Id="2070" Name="IDS_MSG_HCI_ON_WARNING">
-		<Text>Warning: HCI mode on!</Text>
+		<Text>Peringatan: Mode HCI aktif!</Text>
 	</String>
 	<String Id="2071" Name="IDS_MSG_HCI_MODE_OFF_FIRST">
-		<Text>Turn HCI mode off first.</Text>
+		<Text>Nonaktifkan mode HCI terlebih dahulu.</Text>
 	</String>
 	<String Id="2072" Name="IDS_MSG_BT_ACTIVE">
-		<Text>Bluetooth is active.  Operation not allowed.</Text>
+		<Text>Bluetooth aktif.  Operasi tidak diizinkan.</Text>
 	</String>
 	<String Id="2073" Name="IDS_MSG_TEST_MODE">
-		<Text>Bluetooth Test Mode is activated.  Press CLR key to exit Test Mode.</Text>
+		<Text>Mode Pengujian Bluetooth diaktifkan.  Tekan tombol CLR untuk keluar dari Mode Pengujian.</Text>
 	</String>
 	<String Id="2074" Name="IDS_MSG_TEST_MODE_NOT_ENTERED">
-		<Text>Failed to enter Test Mode.  Error = %d</Text>
+		<Text>Gagal masuk ke Mode Pengujian.  Kesalahan = %d</Text>
 	</String>
 	<String Id="2075" Name="IDS_MSG_TEST_MODE_NOT_EXITED">
-		<Text>Failed to exit Test Mode.  Error = %d</Text>
+		<Text>Gagal keluar dari Mode Pengujian.  Kesalahan = %d</Text>
 	</String>
 	<String Id="2076" Name="IDS_MSG_MUST_SET_BONDABLE">
-		<Text>Turn Bondable on when about to accept connection from remote device.</Text>
+		<Text>Aktifkan Bisa-Diikat tanpa menerima koneksi dari perangkat jarak jauh.</Text>
 	</String>
 	<String Id="2077" Name="IDS_MSG_MUST_REENABLE_AG">
-		<Text>Must disable, then re-enable AG to use %s as audio device.</Text>
+		<Text>Harus nonaktifkan, lalu aktifkan ulang AG untuk menggunakan %s sebagai perangkat audio.</Text>
 	</String>
 	<String Id="2078" Name="IDS_MSG_RADIO_CTRL_SUCCESS">
-		<Text>BT Radio is now %s.</Text>
+		<Text>Radio BT kini %s.</Text>
 	</String>
 	<String Id="2079" Name="IDS_MSG_RADIO_CTRL_FAILED">
-		<Text>Failed to turn %s BT Radio.</Text>
+		<Text>Gagal menjadikan Radio BT %s.</Text>
 	</String>
 	<String Id="2080" Name="IDS_MSG_VISIBILITY_CTRL_SUCCESS">
-		<Text>BT Visibility is now %s.</Text>
+		<Text>Visibilitas BT kini %s.</Text>
 	</String>
 	<String Id="2081" Name="IDS_MSG_VISIBILITY_CTRL_FAILED">
-		<Text>Failed to turn %s BT Visibility.</Text>
+		<Text>Gagal menjadikan Visibilitas BT %s.</Text>
 	</String>
 	<String Id="2082" Name="IDS_MSG_ROLE_SW_CTRL_SUCCESS">
-		<Text>Role Switch Control successfully changed.</Text>
+		<Text>Kontrol Pengalihan Role berhasil diubah.</Text>
 	</String>
 	<String Id="2083" Name="IDS_MSG_ROLE_SW_CTRL_FAILED">
-		<Text>Failed to change Role Switch Control.</Text>
+		<Text>Gagal mengubah Kontrol Pengalihan Role.</Text>
 	</String>
 	<String Id="2084" Name="IDS_MSG_ABORT_FAILED">
-		<Text>Failed to Abort.</Text>
+		<Text>Gagal Membatalkan.</Text>
 	</String>
 	<String Id="2085" Name="IDS_MSG_CLI_REG_DONE">
-		<Text>Client Registered</Text>
+		<Text>Klien Terdaftar</Text>
 	</String>
 	<String Id="2086" Name="IDS_MSG_CLI_REG_FAILED">
-		<Text>Client Failed to Register</Text>
+		<Text>Klien Gagal didaftarkan</Text>
 	</String>
 	<String Id="2087" Name="IDS_MSG_CLI_DEREG_DONE">
-		<Text>Client De-registered</Text>
+		<Text>Klien dihapus pendaftarannya</Text>
 	</String>
 	<String Id="2088" Name="IDS_MSG_CLI_DEREG_FAILED">
-		<Text>Client Failed to De-register</Text>
+		<Text>Klien Gagal dihapus pendaftarannya</Text>
 	</String>
 	<String Id="2089" Name="IDS_MSG_SET_CONN_ROLE_SUCCESS">
-		<Text>Connection Role has been set successfully.</Text>
+		<Text>Role Koneksi berhasil diatur.</Text>
 	</String>
 	<String Id="2090" Name="IDS_MSG_SET_CONN_ROLE_FAILED">
-		<Text>Connection Role has failed to set.</Text>
+		<Text>Role Koneksi gagal diatur.</Text>
 	</String>
 	<String Id="2091" Name="IDS_MSG_SET_CONN_ROLE_NOT_ALLOWED">
-		<Text>Multiple connections exist.  Connection Role setting now allowed.</Text>
+		<Text>Ada banyak koneksi.  Pengaturan Role Koneksi kini diizinkan.</Text>
 	</String>
 	<String Id="2092" Name="IDS_MSG_GET_CONN_ROLE_FAILED">
-		<Text>Failed to retrieve current connection role setting.</Text>
+		<Text>Gagal mendapatkan pengaturan role koneksi saat ini.</Text>
 	</String>
 	<String Id="2093" Name="IDS_MSG_BROWSING">
-		<Text>Lihat catatan  layanan untuk. Tekan tombol "Kembali" untuk berhenti.</Text>
+		<Text>Menjelajah catatan layanan pada %s ... Tekan CLR untuk berhenti.</Text>
 	</String>
 	<String Id="2094" Name="IDS_MSG_SECURITY_SAVED">
-		<Text>Security settings are saved</Text>
+		<Text>Pengaturan pengamanan disimpan</Text>
 	</String>
 	<String Id="2095" Name="IDS_MSG_SECURITY_NOT_SAVED">
-		<Text>No security settings are saved</Text>
+		<Text>Tidak ada pengaturan pengamanan disimpan</Text>
 	</String>
 	<String Id="2096" Name="IDS_MSG_OOB_DATA_NOT_PRESENT">
-		<Text>OOB data not present</Text>
+		<Text>Data OOB tidak ada</Text>
 	</String>
 	<String Id="2097" Name="IDS_MSG_OOB_DATA_PRESENT">
-		<Text>OOB data present</Text>
+		<Text>Data OOB ada</Text>
 	</String>
 	<String Id="2098" Name="IDS_MSG_OOB_DATA_CREATED">
-		<Text>Data OOB Lokal sudah dibuat di EFS</Text>
+		<Text>Data OOB lokal dibuat di EFS</Text>
 	</String>
 	<String Id="2099" Name="IDS_MSG_BIP_OP_PROGRESS">
-		<Text>BIP Operation in progress. Press CLR key to abort</Text>
+		<Text>Operasi BIP sedang berlangsung. Tekan tombol CLR untuk membatalkan</Text>
 	</String>
 	<String Id="2100" Name="IDS_PROMPT_UNBOND_ALL">
 		<Text>Lepas semua perangkat?</Text>
 	</String>
 	<String Id="2101" Name="IDS_PROMPT_REMOVE_ALL">
-		<Text>Pindahkan semua perangkat dari Database?</Text>
+		<Text>Hapus semua perangkat dari database?</Text>
 	</String>
 	<String Id="2102" Name="IDS_PROMPT_UNBOND_ONE">
-		<Text>Unbond %s?</Text>
+		<Text>Lepas %s?</Text>
 	</String>
 	<String Id="2103" Name="IDS_PROMPT_REMOVE_ONE">
-		<Text>Pindahkan dari Database?</Text>
+		<Text>Hapus %s dari database?</Text>
 	</String>
 	<String Id="2104" Name="IDS_PROMPT_USE_AUDIO_DEV">
-		<Text>Use %s  as audio device?</Text>
+		<Text>Gunakan %s sebagai perangkat audio?</Text>
 	</String>
 	<String Id="2105" Name="IDS_PROMPT_CONNECT">
-		<Text>Connect to %s?</Text>
+		<Text>Hubungkan ke %s?</Text>
 	</String>
 	<String Id="2106" Name="IDS_PROMPT_DISCONNECT">
-		<Text>Disconnect from %s?</Text>
+		<Text>Putuskan dari %s?</Text>
 	</String>
 	<String Id="2107" Name="IDS_PROMPT_ENTER_TEST_MODE">
-		<Text>Enter Test Mode?</Text>
+		<Text>Masuk ke Mode Pengujian?</Text>
 	</String>
 	<String Id="2108" Name="IDS_PROMPT_USE_SRVC_SECURITY">
-		<Text>Enable Service Security?</Text>
+		<Text>Aktifkan Pengamanan Pelayanan?</Text>
 	</String>
 	<String Id="2109" Name="IDS_PROMPT_AUTHORIZE">
-		<Text>Device %s requests connection to service 0x%x.  Authorize connection?</Text>
+		<Text>Perangkat %s meminta koneksi ke layanan 0x%x. Otorisasikan koneksi?</Text>
 	</String>
 	<String Id="2110" Name="IDS_PROMPT_ACCEPT_CONN_REQ">
-		<Text>Accept connection request from %s?</Text>
+		<Text>Terima permintaan koneksi dari %s?</Text>
 	</String>
 	<String Id="2111" Name="IDS_PROMPT_SET_CONN_ROLE_FUTURE">
-		<Text>Set local device to be %s in future connections?</Text>
+		<Text>Atur perangkat lokal menjadi %s di koneksi berikutnya?</Text>
 	</String>
 	<String Id="2112" Name="IDS_PROMPT_SET_CONN_ROLE_CURRENT">
-		<Text>Set local device to be %s in current connection with %s?</Text>
+		<Text>Atur perangkat lokal menjadi %s di koneksi saat ini dengan %s?</Text>
 	</String>
 	<String Id="2200" Name="IDS_LABEL_BT_NAME">
-		<Text>Nama Bluetooth: %s</Text>
+		<Text>Nama BT: %s</Text>
 	</String>
 	<String Id="2201" Name="IDS_LABEL_BD_ADDR">
-		<Text>BD Address: %s</Text>
+		<Text>Alamat BD: %s</Text>
 	</String>
 	<String Id="2202" Name="IDS_LABEL_SVC_CLS">
-		<Text>Kelas layanan: %s</Text>
+		<Text>Kelas(-kelas) Layanan: %s</Text>
 	</String>
 	<String Id="2203" Name="IDS_LABEL_LMP_FEAT">
 		<Text>Fitur LMP: %s</Text>
 	</String>
 	<String Id="2204" Name="IDS_LABEL_BONDABLE">
-		<Text>Bondable: %s</Text>
+		<Text>Bisa diikat: %s</Text>
 	</String>
 	<String Id="2205" Name="IDS_LABEL_DISCOVERABLE">
-		<Text>Discoverable: %s</Text>
+		<Text>Bisa ditemukan: %s</Text>
 	</String>
 	<String Id="2206" Name="IDS_LABEL_SECURITY">
-		<Text>Security: %s</Text>
+		<Text>Pengamanan: %s</Text>
 	</String>
 	<String Id="2207" Name="IDS_LABEL_OPTIONS">
 		<Text>Pilihan untuk %s</Text>
 	</String>
 	<String Id="2209" Name="IDS_LABEL_PORT_STATUS">
-		<Text>Port status: %s</Text>
+		<Text>Status port: %s</Text>
 	</String>
 	<String Id="2210" Name="IDS_LABEL_BYTES_SENT">
-		<Text>Bytes sent: %d</Text>
+		<Text>Byte terkirim: %d</Text>
 	</String>
 	<String Id="2211" Name="IDS_LABEL_BYTES_RCVD">
-		<Text>Bytes received: %d</Text>
+		<Text>Byte diterima: %d</Text>
 	</String>
 	<String Id="2212" Name="IDS_LABEL_SSP_CAPABLE">
-		<Text>SSP Aktif: %s</Text>
+		<Text>Bisa SSP: %s</Text>
 	</String>
 	<String Id="3001" Name="IDS_BPP">
 		<Text>BPP</Text>
 	</String>
 	<String Id="3002" Name="IDS_BPP_TESTS">
-		<Text>BPP Sender</Text>
+		<Text>Pengirim BPP</Text>
 	</String>
 	<String Id="3010" Name="IDS_BPP_SEND_FILE">
-		<Text>Send File</Text>
+		<Text>Kirim File</Text>
 	</String>
 	<String Id="3011" Name="IDS_BPP_SOAP_REQUEST">
-		<Text>Soap Request</Text>
+		<Text>Permintaan Soap</Text>
 	</String>
 	<String Id="3012" Name="IDS_BPP_TEST_PRINT">
-		<Text>Test Printing</Text>
+		<Text>Pencetakan Pengujian</Text>
 	</String>
 	<String Id="3020" Name="IDS_BPP_MSG_SEND_FILE_SUCCESS">
-		<Text>Successfully printed %s</Text>
+		<Text>%s berhasil dicetak</Text>
 	</String>
 	<String Id="3021" Name="IDS_BPP_MSG_SEND_FILE_FAILED">
-		<Text>Failed to print %s</Text>
+		<Text>Gagal mencetak %s</Text>
 	</String>
 	<String Id="3022" Name="IDS_BPP_MSG_SOAP_REQ_SUCCESS">
-		<Text>Successfully sent SOAP request</Text>
+		<Text>Berhasil mengirim permintaan SOAP</Text>
 	</String>
 	<String Id="3023" Name="IDS_BPP_MSG_SOAP_REQ_FAILED">
-		<Text>SOAP request failed</Text>
+		<Text>Permintaan SOAP gagal</Text>
 	</String>
 	<String Id="3100" Name="IDS_A2DP">
 		<Text>A2DP</Text>
 	</String>
 	<String Id="3101" Name="IDS_A2DP_DISCONNECT_FAILED">
-		<Text>Disconnection Failed</Text>
+		<Text>Pemutusan Gagal</Text>
 	</String>
 	<String Id="3200" Name="IDS_AVRCP">
 		<Text>AVRCP</Text>
 	</String>
 	<String Id="3201" Name="IDS_AVRCP_OP_MENU">
-		<Text>AVRCP OP Menu</Text>
+		<Text>Menu OP AVRCP</Text>
 	</String>
 	<String Id="3202" Name="IDS_AVRCP_SELECT">
-		<Text>Select</Text>
+		<Text>Pilih</Text>
 	</String>
 	<String Id="3203" Name="IDS_AVRCP_UP">
-		<Text>Up</Text>
+		<Text>Naik</Text>
 	</String>
 	<String Id="3204" Name="IDS_AVRCP_DOWN">
-		<Text>Down</Text>
+		<Text>Turun</Text>
 	</String>
 	<String Id="3205" Name="IDS_AVRCP_LEFT">
-		<Text>Left</Text>
+		<Text>Kiri</Text>
 	</String>
 	<String Id="3206" Name="IDS_AVRCP_RIGHT">
-		<Text>Right</Text>
+		<Text>Kanan</Text>
 	</String>
 	<String Id="3207" Name="IDS_AVRCP_RIGHT_UP">
-		<Text>Right Up</Text>
+		<Text>Kanan Atas</Text>
 	</String>
 	<String Id="3208" Name="IDS_AVRCP_RIGHT_DOWN">
-		<Text>Right Down</Text>
+		<Text>Kanan Bawah</Text>
 	</String>
 	<String Id="3209" Name="IDS_AVRCP_LEFT_UP">
-		<Text>Left Up</Text>
+		<Text>Kiri Atas</Text>
 	</String>
 	<String Id="3210" Name="IDS_AVRCP_LEFT_DOWN">
-		<Text>Left Down</Text>
+		<Text>Kiri Bawah</Text>
 	</String>
 	<String Id="3211" Name="IDS_AVRCP_ROOT_MENU">
-		<Text>Root Menu</Text>
+		<Text>Menu Root</Text>
 	</String>
 	<String Id="3212" Name="IDS_AVRCP_SETUP_MENU">
-		<Text>Setup Menu</Text>
+		<Text>Menu Pengaturan</Text>
 	</String>
 	<String Id="3213" Name="IDS_AVRCP_CONTENTS_MENU">
-		<Text>Contents Menu</Text>
+		<Text>Menu Konten</Text>
 	</String>
 	<String Id="3214" Name="IDS_AVRCP_FAVORITE_MENU">
-		<Text>Favorite Menu</Text>
+		<Text>Menu Kesukaan</Text>
 	</String>
 	<String Id="3215" Name="IDS_AVRCP_EXIT">
-		<Text>Exit</Text>
+		<Text>Keluar</Text>
 	</String>
 	<String Id="3216" Name="IDS_AVRCP_0">
 		<Text>0</Text>
@@ -1934,85 +1934,85 @@
 		<Text>9</Text>
 	</String>
 	<String Id="3226" Name="IDS_AVRCP_DOT">
-		<Text>Dot</Text>
+		<Text>Titik</Text>
 	</String>
 	<String Id="3227" Name="IDS_AVRCP_ENTER">
-		<Text>Enter</Text>
+		<Text>Masuk</Text>
 	</String>
 	<String Id="3228" Name="IDS_AVRCP_CLEAR">
-		<Text>Clear</Text>
+		<Text>Hapus</Text>
 	</String>
 	<String Id="3229" Name="IDS_AVRCP_CHANNEL_UP">
-		<Text>Channel Up</Text>
+		<Text>Saluran Naik</Text>
 	</String>
 	<String Id="3230" Name="IDS_AVRCP_CHANNEL_DOWN">
-		<Text>Channel Down</Text>
+		<Text>Saluran Turun</Text>
 	</String>
 	<String Id="3231" Name="IDS_AVRCP_PREVIOUS_CHANNEL">
-		<Text>Previous Channel</Text>
+		<Text>Saluran Sebelumnya</Text>
 	</String>
 	<String Id="3232" Name="IDS_AVRCP_SOUND_SELECT">
-		<Text>Sound Select</Text>
+		<Text>Pilih Suara</Text>
 	</String>
 	<String Id="3233" Name="IDS_AVRCP_INPUT_SELECT">
-		<Text>Input Select</Text>
+		<Text>Pilih Masukan</Text>
 	</String>
 	<String Id="3234" Name="IDS_AVRCP_DISPLAY_INFORMATION">
-		<Text>Display Information</Text>
+		<Text>Informasi Tampilan</Text>
 	</String>
 	<String Id="3235" Name="IDS_AVRCP_HELP">
-		<Text>Help</Text>
+		<Text>Bantuan</Text>
 	</String>
 	<String Id="3236" Name="IDS_AVRCP_PAGE_UP">
-		<Text>Page Up</Text>
+		<Text>Halaman Naik</Text>
 	</String>
 	<String Id="3237" Name="IDS_AVRCP_PAGE_DOWN">
-		<Text>Page Down</Text>
+		<Text>Halaman Turun</Text>
 	</String>
 	<String Id="3238" Name="IDS_AVRCP_POWER">
-		<Text>Power</Text>
+		<Text>Daya</Text>
 	</String>
 	<String Id="3239" Name="IDS_AVRCP_VOLUME_UP">
-		<Text>Volume Up</Text>
+		<Text>Volume Naik</Text>
 	</String>
 	<String Id="3240" Name="IDS_AVRCP_VOLUME_DOWN">
-		<Text>Volume Down</Text>
+		<Text>Volume Turun</Text>
 	</String>
 	<String Id="3241" Name="IDS_AVRCP_MUTE">
-		<Text>Mute</Text>
+		<Text>Bisukan</Text>
 	</String>
 	<String Id="3242" Name="IDS_AVRCP_PLAY">
-		<Text>Play</Text>
+		<Text>Putar</Text>
 	</String>
 	<String Id="3243" Name="IDS_AVRCP_STOP">
-		<Text>Stop</Text>
+		<Text>Berhenti</Text>
 	</String>
 	<String Id="3244" Name="IDS_AVRCP_PAUSE">
-		<Text>Pause</Text>
+		<Text>Jeda</Text>
 	</String>
 	<String Id="3245" Name="IDS_AVRCP_RECORD">
-		<Text>Record</Text>
+		<Text>Rekam</Text>
 	</String>
 	<String Id="3246" Name="IDS_AVRCP_REWIND">
-		<Text>Rewind</Text>
+		<Text>Putar Balik</Text>
 	</String>
 	<String Id="3247" Name="IDS_AVRCP_FAST_FORWARD">
-		<Text>Fast Forward</Text>
+		<Text>Maju Cepat</Text>
 	</String>
 	<String Id="3248" Name="IDS_AVRCP_EJECT">
-		<Text>Eject</Text>
+		<Text>Keluarkan</Text>
 	</String>
 	<String Id="3249" Name="IDS_AVRCP_FORWARD">
-		<Text>Forward</Text>
+		<Text>Maju</Text>
 	</String>
 	<String Id="3250" Name="IDS_AVRCP_BACKWARD">
-		<Text>Backward</Text>
+		<Text>Mundur</Text>
 	</String>
 	<String Id="3251" Name="IDS_AVRCP_ANGLE">
-		<Text>Angle</Text>
+		<Text>Sudut</Text>
 	</String>
 	<String Id="3252" Name="IDS_AVRCP_SUBPICTURE">
-		<Text>Subpicture</Text>
+		<Text>Sub-gambar</Text>
 	</String>
 	<String Id="3253" Name="IDS_AVRCP_F1">
 		<Text>F1</Text>
@@ -2030,163 +2030,163 @@
 		<Text>F5</Text>
 	</String>
 	<String Id="3258" Name="IDS_AVRCP_GENERIC">
-		<Text>Generic</Text>
+		<Text>Generik</Text>
 	</String>
 	<String Id="4000" Name="IDS_SAP_TESTS">
 		<Text>SAP</Text>
 	</String>
 	<String Id="4001" Name="IDS_SAP_SERVER">
-		<Text>SAP Server</Text>
+		<Text>Server SAP</Text>
 	</String>
 	<String Id="4002" Name="IDS_SAP_CLIENT">
-		<Text>SAP Client</Text>
+		<Text>Klien SAP</Text>
 	</String>
 	<String Id="4003" Name="IDS_SAP_SIM_POWER_ON">
-		<Text>SIM Power On</Text>
+		<Text>Hidupkan SIM</Text>
 	</String>
 	<String Id="4004" Name="IDS_SAP_SIM_POWER_OFF">
-		<Text>SIM Power Off</Text>
+		<Text>Matikan SIM</Text>
 	</String>
 	<String Id="4005" Name="IDS_SAP_SIM_RESET">
-		<Text>SIM Reset</Text>
+		<Text>Setel Ulang SIM</Text>
 	</String>
 	<String Id="4006" Name="IDS_SAP_TRANSFER_ATR">
-		<Text>Transfer ATR</Text>
+		<Text>Pindahkan ATR</Text>
 	</String>
 	<String Id="4007" Name="IDS_SAP_TRANSFER_APDU">
-		<Text>Transfer APDU</Text>
+		<Text>Pindahkan APDU</Text>
 	</String>
 	<String Id="4008" Name="IDS_SAP_GET_CARD_READER_STATUS">
-		<Text>Get Card Reader Status</Text>
+		<Text>Ambil Status Pembaca Kartu Memori</Text>
 	</String>
 	<String Id="4009" Name="IDS_SAP_SRV_DISC_IMMD">
-		<Text>SAP Server Disconnect Immediately</Text>
+		<Text>Putuskan Sever SAP Segera</Text>
 	</String>
 	<String Id="4010" Name="IDS_SAP_MSG_TRANSMIT_REQ_FAILED">
-		<Text>SIM Client failed to transmit request</Text>
+		<Text>Klien SIM gagal mengirimkan permintaan</Text>
 	</String>
 	<String Id="4011" Name="IDS_SAP_MSG_SRV_DISC_REQ">
-		<Text>SAP server requested a graceful disconnection</Text>
+		<Text>Server SAP meminta pemutusan dengan baik</Text>
 	</String>
 	<String Id="4012" Name="IDS_SAP_MSG_SRV_DISC_IMMD">
-		<Text>SAP Client disconnected immediately</Text>
+		<Text>Klien SAP terputus tiba-tiba</Text>
 	</String>
 	<String Id="4013" Name="IDS_SAP_MSG_ATR_RECV">
-		<Text>ATR received from server</Text>
+		<Text>ATR diterima dari server</Text>
 	</String>
 	<String Id="4014" Name="IDS_SAP_MSG_ATR_REQ_FAILED">
-		<Text>ATR response received with error</Text>
+		<Text>Respons ATR diterima dengan kesalahan</Text>
 	</String>
 	<String Id="4015" Name="IDS_SAP_MSG_CARD_READER_STATUS_RECV">
-		<Text>Card reader status received success</Text>
+		<Text>Status pembaca kartu memori berhasil diterima</Text>
 	</String>
 	<String Id="4016" Name="IDS_SAP_MSG_CARD_READER_STATUS_FAILED">
-		<Text>Card reader status received with error</Text>
+		<Text>Status pembaca kartu memori diterima dengan kesalahan</Text>
 	</String>
 	<String Id="4017" Name="IDS_SAP_MSG_SIM_POWER_ON_SUCCESS">
-		<Text>SIM powered on successfully</Text>
+		<Text>SIM berhasil dihidupkan</Text>
 	</String>
 	<String Id="4018" Name="IDS_SAP_MSG_SIM_POWER_ON_FAILED">
-		<Text>SIM power on failed</Text>
+		<Text>Gagal menghidupkan SIM</Text>
 	</String>
 	<String Id="4019" Name="IDS_SAP_MSG_SIM_POWER_OFF_SUCCESS">
-		<Text>SIM powered off successfully</Text>
+		<Text>SIM berhasil dimatikan</Text>
 	</String>
 	<String Id="4020" Name="IDS_SAP_MSG_SIM_POWER_OFF_FAILED">
-		<Text>SIM power off failed</Text>
+		<Text>Gagal mematikan SIM</Text>
 	</String>
 	<String Id="4021" Name="IDS_SAP_MSG_SIM_RESET_SUCCESS">
-		<Text>SIM reset successfully</Text>
+		<Text>SIM berhasil disetel ulang</Text>
 	</String>
 	<String Id="4022" Name="IDS_SAP_MSG_SIM_RESET_FAILED">
-		<Text>SIM reset failed</Text>
+		<Text>Gagal menyetel ulang SIM</Text>
 	</String>
 	<String Id="4023" Name="IDS_SAP_APDU_CMD_DATA">
-		<Text>SAP APDU Command Data</Text>
+		<Text>Data Perintah APDU SAP</Text>
 	</String>
 	<String Id="4024" Name="IDS_SAP_MSG_TX_APDU_SUCCESS">
-		<Text>Successfully TX and RX APDU</Text>
+		<Text>APDU TX dan RX berhasil</Text>
 	</String>
 	<String Id="4025" Name="IDS_SAP_MSG_TX_APDU_FAILED">
-		<Text>Failed transmitting APDU</Text>
+		<Text>Gagal mengirimkan APDU</Text>
 	</String>
 	<String Id="4026" Name="IDS_SAP_MSG_SIM_STATUS_CHANGED">
-		<Text>Server reports SIM status has changed</Text>
+		<Text>Server melaporkan status SIM telah berubah</Text>
 	</String>
 	<String Id="4027" Name="IDS_SAP_MIN_PACKET_SIZE">
-		<Text>Set Minimum SAP Frame Size</Text>
+		<Text>Atur Ukuran Minimum Bingkai SAP</Text>
 	</String>
 	<String Id="4028" Name="IDS_SAP_MAX_PACKET_SIZE">
-		<Text>Set Maximum SAP Frame Size</Text>
+		<Text>Atur Ukuran Maksimum Bingkai SAP</Text>
 	</String>
 	<String Id="4040" Name="IDS_OBEX">
 		<Text>OBEXAPP</Text>
 	</String>
 	<String Id="4041" Name="IDS_OBEX_SERVER">
-		<Text>OBEX Server</Text>
+		<Text>Server OBEX</Text>
 	</String>
 	<String Id="4042" Name="IDS_OBEX_CLIENT">
-		<Text>OBEX Client</Text>
+		<Text>Klien OBEX</Text>
 	</String>
 	<String Id="4043" Name="IDS_OBEX_FORCE_DISCONNECT">
-		<Text>Force Disconnect</Text>
+		<Text>Putuskan Paksa</Text>
 	</String>
 	<String Id="4044" Name="IDS_OBEX_APP_TESTS">
-		<Text>OBEX Tests</Text>
+		<Text>Pengujian OBEX</Text>
 	</String>
 	<String Id="4045" Name="IDS_OBEX_SETPATH">
-		<Text>Set Path</Text>
+		<Text>Atur Jalur</Text>
 	</String>
 	<String Id="4046" Name="IDS_OBEX_MSG_SERVICE_NOT_FOUND">
-		<Text>OBEX Service not found</Text>
+		<Text>Layanan OBEX tidak ditemukan</Text>
 	</String>
 	<String Id="4047" Name="IDS_OBEX_AUTHENTICATE_WITH_USERID">
-		<Text>Authenticate with UID</Text>
+		<Text>Otentifikasikan dengan UID</Text>
 	</String>
 	<String Id="4048" Name="IDS_OBEX_MSG_SETPATH_FAILED">
-		<Text>Setpath Failed</Text>
+		<Text>Gagal mengatur jalur</Text>
 	</String>
 	<String Id="4049" Name="IDS_OBEX_MSG_SETPATH_SUCCESS">
-		<Text>Setpath Success</Text>
+		<Text>Berhasil mengatur jalur</Text>
 	</String>
 	<String Id="4050" Name="IDS_MSG_HID_CONN_FAIL">
-		<Text>Connection to HID device failed</Text>
+		<Text>Koneksi ke perangkat HID gagal</Text>
 	</String>
 	<String Id="4051" Name="IDS_MSG_HID_DCN_FAIL">
-		<Text>Disconnection from HID device failed</Text>
+		<Text>Pemutusan dari perangkat HID gagal</Text>
 	</String>
 	<String Id="4052" Name="IDS_MSG_NO_HID_DEVICES">
-		<Text>No HID Devices found</Text>
+		<Text>Tidak ada Perangkat HID ditemukan</Text>
 	</String>
 	<String Id="4053" Name="IDS_MSG_HID_SET_IDLE_SUCCESS">
-		<Text>SET_IDLE successful</Text>
+		<Text>ATUR_SIAGA berhasil</Text>
 	</String>
 	<String Id="4054" Name="IDS_MSG_HID_SET_IDLE_FAIL">
-		<Text>SET_IDLE failed</Text>
+		<Text>ATUR_SIAGA gagal</Text>
 	</String>
 	<String Id="4055" Name="IDS_MSG_HID_GET_IDLE_SUCCESS">
-		<Text>GET_IDLE successful %s</Text>
+		<Text>AMBIL_SIAGA %s berhasil</Text>
 	</String>
 	<String Id="4056" Name="IDS_MSG_HID_GET_IDLE_FAIL">
-		<Text>GET_IDLE failed</Text>
+		<Text>AMBIL_SIAGA gagal</Text>
 	</String>
 	<String Id="4057" Name="IDS_MSG_HID_SET_PROTOCOL_SUCCESS">
-		<Text>SET_PROTOCOL successful</Text>
+		<Text>ATUR_PROTOKOL berhasil</Text>
 	</String>
 	<String Id="4058" Name="IDS_MSG_HID_SET_PROTOCOL_FAIL">
-		<Text>SET_PROTOCOL failed</Text>
+		<Text>AMBIL_PROTOKOL gagal</Text>
 	</String>
 	<String Id="4059" Name="IDS_MSG_HID_GET_PROTOCOL_SUCCESS">
-		<Text>GET_PROTOCOL successful %s</Text>
+		<Text>AMBIL_PROTOKOL %s berhasil</Text>
 	</String>
 	<String Id="4060" Name="IDS_MSG_HID_GET_PROTOCOL_FAIL">
-		<Text>GET_PROTOCOL failed</Text>
+		<Text>AMBIL_PROTOKOL gagal</Text>
 	</String>
 	<String Id="4061" Name="IDS_OPEN_BT">
-		<Text>The BlueTooth is closed. Open it now?</Text>
+		<Text>BlueTooth ditutup. Buka sekarang?</Text>
 	</String>
 	<String Id="4062" Name="IDS_BT_CLOSED">
-		<Text>Bluetooth sedang dimatikan. Hidupkan terlebih dahulu.</Text>
+		<Text>BlueTooth ditutup. Harap Buka terlebih dahulu</Text>
 	</String>
 	<String Id="4063" Name="IDS_BT_YES">
 		<Text>Ya</Text>
@@ -2195,13 +2195,13 @@
 		<Text>Tidak</Text>
 	</String>
 	<String Id="4065" Name="IDS_BT_OPP_SETTING">
-		<Text>Opp Setting</Text>
+		<Text>Pengaturan Opp</Text>
 	</String>
 	<String Id="4066" Name="IDS_INSERT_TCARD">
-		<Text>No Memory, Pls Insert the TCard!</Text>
+		<Text>Tidak Ada Memori, Harap Masukkan TCard!</Text>
 	</String>
 	<String Id="4067" Name="IDS_FILE_PROGRESS">
-		<Text>File Transmission Progress: </Text>
+		<Text>Progres Pengiriman File: </Text>
 	</String>
 </Strings>
 <Objects MimeType="image/bmp">
