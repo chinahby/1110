@@ -32,6 +32,9 @@
 #endif
 #include "gsdi.h"
 #include "OEMRTC.h"
+#ifdef FEATURE_OEMOMH
+#include "mobile.h"             // for ver_modelname
+#endif
 //extern int charging_mark2;
 /*==============================================================================
 
@@ -977,12 +980,11 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                     AECHAR swBufTemp[61]; 
                     char swBuf[61];
                     char EFmodelBuf[127];
-                    char mnBuf[32] = "WaterWorld";
-                    char modelBuf[32] = "W021";
+                    static const char mnBuf[] = "WaterWorld";
                     int len = 0;
                     EFmodelBuf[0] = 0x01; //01
                     EFmodelBuf[1] = 0x00; //00   
-                    len = STRLEN(modelBuf);
+                    len = STRLEN(ver_modelname);
                     DBGPRINTF("modelBuf len =%d", len);
                     DBGPRINTF("EFmodelBuf =%s", EFmodelBuf);
                     DBGPRINTF("EFmodelBuf len =%s", STRLEN(EFmodelBuf));
@@ -991,7 +993,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
                     {
                         if(i < len + 2)
                         {
-                            EFmodelBuf[i] = modelBuf[j++];
+                            EFmodelBuf[i] = ver_modelname[j++];
                         }
                         else
                         {

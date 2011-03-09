@@ -500,13 +500,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 #endif
     pMe->m_pADNName = NULL;
     pMe->m_pADNNumber = NULL;
-#ifdef FEATURE_OEMOMH
-{
-	extern	 void OEM_SetBAM_ADSAccount(void);
-
-	OEM_SetBAM_ADSAccount();
-}
-#elif defined (FEATURE_VERSION_FLEXI203P)
+#if defined (FEATURE_VERSION_FLEXI203P)
 {
 	extern	 void OEM_SetBAM_ADSAccount(void);
 
