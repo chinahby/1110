@@ -368,11 +368,11 @@ when       who     what, where, why
 #ifdef FEATURE_OEMOMH
 #define FEATURE_ICARDSESSION
 #endif
-
+#ifndef CUST_EDITION
 #ifdef T_QSC1110
 #define FEATURE_CCAT
 #endif /* T_QSC1110 */
-
+#endif
 /* Please leave the definition below as is at the end of the file
    as it depends on another feature being defined */
 #if defined(FEATURE_UIM_SUPPORT_3GPD)
