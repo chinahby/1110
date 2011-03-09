@@ -265,8 +265,8 @@ else
             techno_meto.mid|fs:/ringers/techno_meto.mid \
             feeling_on.mid|fs:/ringers/feeling_on.mid \
             feeling_off.mid|fs:/ringers/feeling_off.mid 
-     else ifeq($(USES_RESDIR), C01)
-             CONSTFILE_FILES+=\
+    else ifeq ($(USES_RESDIR), C01)
+        CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
             blue_load.mid|fs:/ringers/blue_load.mid \
             champagne.mid|fs:/ringers/champagne.mid \
