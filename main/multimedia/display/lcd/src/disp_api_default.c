@@ -144,7 +144,9 @@ void disp_init(void)
 #else
     if(disp_drv_install(PRIMARY_LCD_NAME) == -1)
         return;
+#ifdef FEATURE_MDP
     mdp_disp_fatal_err_flag = TRUE;
+#endif
 #endif
 
 	fd = drv_open(PRIMARY_LCD_NAME);
@@ -162,7 +164,9 @@ void disp_init(void)
 
 #ifdef CUST_EDITION
     disp_set_backlight(LCD_BACKLIGHT_LVL_2);
+#ifdef FEATURE_MDP
     mdp_disp_fatal_err_flag = FALSE;
+#endif
 #endif
 
 #ifdef FEATURE_MDP
