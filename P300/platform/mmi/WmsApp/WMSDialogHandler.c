@@ -13952,8 +13952,10 @@ static boolean IDD_MANAGEMENT_Handler(void   *pUser,
             MENU_ADDITEM(pMenu, IDS_DELETEMSGS);
             if (IsRunAsUIMVersion())
             {
+            	#ifndef FEATURE_USES_LOWMEM 
                 MENU_ADDITEM(pMenu, IDS_COPYINBOX);
                 MENU_ADDITEM(pMenu, IDS_MOVEINBOX);
+                #endif
 #ifdef FEATURE_CDSMS_RUIM
                 MENU_ADDITEM(pMenu, IDS_STORAGE);
 #endif       
@@ -14023,6 +14025,7 @@ static boolean IDD_MANAGEMENT_Handler(void   *pUser,
                 case IDS_DELETEMSGS:
                     CLOSE_DIALOG(DLGRET_DELETEMSGS)
                     return TRUE;
+#ifndef FEATURE_USES_LOWMEM 
 
                 // 拷贝收件箱信息
                 case IDS_COPYINBOX:
@@ -14033,7 +14036,7 @@ static boolean IDD_MANAGEMENT_Handler(void   *pUser,
                 case IDS_MOVEINBOX:
                     CLOSE_DIALOG(DLGRET_MOVEINBOX)
                     return TRUE; 
-
+#endif
 #ifdef FEATURE_CDSMS_RUIM
                 // 存储设备使用设置
                 case IDS_STORAGE:

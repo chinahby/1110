@@ -56,9 +56,12 @@
 #else
 #ifdef FEATURE_SUPPORT_ID
 #define  WMS_MSG_MAXCHARS       1537
+#else 
+#ifdef FEATURE_USES_LOWMEM
+#define  WMS_MSG_MAXCHARS       512
 #else
 #define  WMS_MSG_MAXCHARS       1024
-
+#endif
 #endif
 #endif
 

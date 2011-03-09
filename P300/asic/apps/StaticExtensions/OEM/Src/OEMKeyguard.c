@@ -581,8 +581,11 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                         sUnlockState = UNLOCKSTATE_RESET;
                     }
                     break;
-
+#ifndef FEATURE_USES_LOWMEM
                 case AVK_STAR:
+#else
+				case AVK_POUND:
+#endif
                     if (UNLOCKSTATE_1PRESSED == sUnlockState)
                     {
                         sUnlockState = UNLOCKSTATE_RESET;

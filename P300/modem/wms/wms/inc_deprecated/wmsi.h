@@ -205,7 +205,47 @@ enum { WMS_MAX_RAM_MESSAGES = 50 };
 enum { WMS_MAX_RAM_STATUS_REPORTS = 10 };
 
 #ifdef CUST_EDITION
-//  以前是提前5条提示，现在是提前10条提示 
+//  以前是提前5条提示，现在是提前10条提示
+#ifdef FEATURE_USES_LOWMEM
+#ifdef FEATURE_ONEMSG_USE_ONEFILE
+enum 
+{ 
+    IN_WATERMARK = 190,
+    IN_MAX = 100
+};
+enum 
+{ 
+    OUT_WATERMARK = 90,
+    OUT_MAX = 50
+};
+enum { MAX_OEMTEMPLATES = 10};// OEM 消息常用语条数
+enum { PHRASE_MAX = 20 };
+enum { DRAFT_MAX = 30 };
+enum { BC_MAX = 30 };
+enum { RESERVE_MAX = 20 };
+enum { WMS_MAX_NV_CDMA_MESSAGES     = (1+IN_MAX+OUT_MAX+PHRASE_MAX+DRAFT_MAX+BC_MAX+RESERVE_MAX) };
+enum 
+{ 
+    VOICE_INDEX    = 0,                         // 语音短信索引值
+    IN_START       = 1,                         // 收件信息索引开始值
+    IN_END         = IN_MAX,                    // 收件信息索引结束值
+    OUT_START      ,                            // 发件信息索引开始值
+    OUT_END        = (IN_END+OUT_MAX),          // 发件信息索引结束值
+    PHRASE_START   ,                            // 常用语信息索引开始值
+    PHRASE_END     = (OUT_END+PHRASE_MAX),      // 常用语信息索引结束值
+    DRAFT_START    ,                            // 草稿信息索引开始值
+    DRAFT_END      = (PHRASE_END+DRAFT_MAX),    // 草稿信息索引结束值
+    BC_START       ,                            // 广播信息索引开始值
+    BC_END         = (DRAFT_END+BC_MAX),        // 广播信息索引结束值
+    RESERVE_START  ,                            // 预约信息索引开始值
+    RESERVE_END    = (BC_END+RESERVE_MAX),      // 预约信息索引结束值
+};
+    
+#else
+enum { WMS_MAX_NV_CDMA_MESSAGES = 99 }; /* slots 0..98 */
+#endif
+
+#else
 #ifdef FEATURE_ONEMSG_USE_ONEFILE
 enum 
 { 
@@ -242,6 +282,7 @@ enum
     
 #else
 enum { WMS_MAX_NV_CDMA_MESSAGES = 99 }; /* slots 0..98 */
+#endif
 #endif
 #endif /*CUST_EDITION*/
 

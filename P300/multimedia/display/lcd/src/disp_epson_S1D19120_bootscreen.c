@@ -6433,10 +6433,12 @@ void disp_epson_S1D19120_boot_chg_splash_screen (void)
 #endif
 	
 #elif defined(FEATURE_DISP_128X128)
+#ifndef FEATURE_USES_LOWMEM 
 #if defined(FEATURE_VERSION_H19C)
     disp_update(phone_charging_data, 128, 0, 0, 128, 128, 0, 0);
 #else
 	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 24, 24);
+#endif
 #endif
 #elif defined(FEATURE_DISP_220X176)
 	disp_update(phone_charging_data, 80, 0, 0, 80, 80, 48, 70);

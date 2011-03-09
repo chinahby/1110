@@ -133,7 +133,11 @@ static boolean              gbNameSearch;     // Flag to indicate if its a name-
 
 
 #define NUMBER_SEPARATOR    ((AECHAR)',')
+#ifdef FEATURE_USES_LOWMEM
 #define OEMPHONEBOOK_CAPACITY  500 
+#else
+#define OEMPHONEBOOK_CAPACITY  500 
+#endif
 #define OEMADDR_MINCMPNUM      (6)
 // Global varibles used in the cache search
 static AEEAddrCat       gCacheSearchCat;      // AddressCategory to search on

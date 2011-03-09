@@ -2476,6 +2476,17 @@ void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unl
 #ifdef FEATURE_UNLOCK_KEY_SPACE
 	m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_SPACE;
 #else
+#ifdef FEATURE_USES_LOWMEM
+	if(TRUE == unlockkey)
+	{
+	    m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_UNLOCKKEY_LOW;
+	}
+	else
+	{
+	    m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_LOW;        
+	}
+
+#else
 	if(TRUE == unlockkey)
 	{
 	    m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_UNLOCKKEY;
@@ -2484,6 +2495,7 @@ void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unl
 	{
 	    m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD;        
 	}
+#endif
 #endif
 //Add End
 

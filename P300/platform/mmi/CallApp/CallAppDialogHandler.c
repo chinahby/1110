@@ -3304,6 +3304,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     //ASSERT(AEECM_CALL_STATE_CONV == pMe->m_lastCallState);		
                     
                     pMe->m_userCanceled = TRUE;
+                    
 #ifdef FEATURE_ICM
                     ICM_EndAllCalls(pMe->m_pICM);
 #else
@@ -7410,7 +7411,10 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
         	   (wParam == AVK_ENTER)||(wParam == AVK_CAPLK)||(wParam == AVK_SYMBOL)||
         	   (wParam == AVK_RWD)||(wParam == AVK_LCTRL)||(wParam == AVK_SPACE)||
         	   (AVK_A <= wParam && wParam <= AVK_Z) ||(AVK_CLR < wParam && wParam <AVK_SOFT1 ))
-                 && !bKeyguardEnabled)
+        	   #ifndef FEATURE_USES_LOWMEM
+                 && !bKeyguardEnabled
+               #endif 
+                 )
                  ||(wParam == AVK_SEND || wParam == AVK_CAMERA || wParam == AVK_MUSIC))
                  && (pMe->m_anykey_answer & 0x1))
         ) ||auto_answer ||wParam == AVK_SELECT)
@@ -9902,7 +9906,11 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             return TRUE;
         }
 #endif /*FEATRUE_SET_IP_NUMBER*/
+#ifdef FEATURE_USES_LOWMEM
+		if ( (AVKType)wParam == AVK_POUND)
+#else
         if ( (AVKType)wParam == AVK_STAR)
+#endif
         {
 #ifndef FEATURE_DISP_128X160
 #ifdef FEATURE_KEYGUARD
@@ -9955,7 +9963,11 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         }
 
         // # key for shortcut of quiet mode
+        #ifdef FEATURE_USES_LOWMEM
+        else if ( (AVKType)wParam == AVK_STAR && WSTRLEN(pMe->m_DialString) == 1)
+        #else
         else if ( (AVKType)wParam == AVK_POUND && WSTRLEN(pMe->m_DialString) == 1)
+        #endif
         {
             CallApp_ShortcutQuiet( pMe );
             ISHELL_CloseApplet(pMe->m_pShell, TRUE);
