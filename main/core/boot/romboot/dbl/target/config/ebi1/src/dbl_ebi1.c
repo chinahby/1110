@@ -494,6 +494,23 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_Intel_W18_48MHZ[] =
   {END_OF_CFG_DATA,  0x00000000,                    0x00000000    }
 };
 
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_Intel_M58_48MHZ[] =
+{
+  /* Changed this values as per VI team */
+
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | ( 0x000029c3 << 1 )),  0x60    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | ( 0x000029c3 << 1 )),  0x03    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | ( 0x000029C3 << 1 )),  0xFF    },
+  
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x13400              },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x1011034            },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000    }
+};
 
 const static dbl_parser_cfg_data_item_type ebi1_cfg_data_Intel_M18_96MHZ[] =
 {
@@ -1329,6 +1346,7 @@ dbl_nor_device *dev = dbl_nor_device_probe();
 	  if ((dev == &K5N5629ABM)|| (dev == &K5N6433ABM) || (dev == &K5N6433ATM) || (dev == &K5N2833ATB) || (dev == &K5N2833ABB))
 	  	{
 			dbl_parse_cfg_data(ebi1_cfg_data_ebi1_default);
+#if 0
 		if( configured_clk_speed->ebi1 == 48 )
 		  {
 			dbl_parse_cfg_data(ebi1_samsung_cfg_data_PSRAM_CS1_48MHZ);
@@ -1345,6 +1363,7 @@ dbl_nor_device *dev = dbl_nor_device_probe();
 		  {
 			DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
 		  }
+#endif
 	  	}
 
   	else
@@ -1472,11 +1491,14 @@ else if (dev == &K5N5629ABM)
       DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
     }
   }
-else if (dev == &Intel_64W18_ADMux || dev == &M36W0R5040U6ZS)
+  else if (dev == &Intel_64W18_ADMux)
   {
      dbl_parse_cfg_data(ebi1_cfg_data_Intel_W18_48MHZ);
-	 	
-  }  
+  }
+  else if(dev == &M36W0R5040U6ZS)
+  {
+     dbl_parse_cfg_data(ebi1_cfg_data_Intel_M58_48MHZ);
+  }
   else if (dev == &K5N6433ABM || dev == &K5N6433ATM)
   {
     dbl_parse_cfg_data(ebi1_cfg_data_K5N6433ABM_48MHZ);
@@ -1490,7 +1512,7 @@ else if (dev == &Intel_64W18_ADMux || dev == &M36W0R5040U6ZS)
     DBL_ERR_FATAL( DBL_ERR_NOR_DETECTION_FAILED );
   }
 #else
-  dbl_parse_cfg_data(ebi1_cfg_data_Intel_W18_48MHZ);
+  dbl_parse_cfg_data(ebi1_cfg_data_Intel_M58_48MHZ);
 #endif
 }
 
