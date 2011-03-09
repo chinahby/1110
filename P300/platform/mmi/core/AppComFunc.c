@@ -1782,7 +1782,7 @@ boolean IsCallActive (AEETCallType calltype)
   if (!pIShell)
     return FALSE;
 //#ifndef FEATURE_MANGO_BREW
-#ifndef FEATURE_USES_LOWMEM
+#ifdef FEATURE_ICM
   {
      ICM *pICM=NULL;
      ISHELL_CreateInstance(pIShell, AEECLSID_CM, (void **) &pICM);

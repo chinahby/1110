@@ -514,9 +514,9 @@ GENERAL DESCRIPTION:
 
 #if !defined( AEE_SIMULATOR)
     #define FEATURE_APP_DIALER
-#ifndef FEATURE_USES_LOWMEM	
+//#ifndef FEATURE_USES_LOWMEM	
     #define FEATURE_ICM
-#endif	
+//#endif	
     #undef FEATURE_APP_RECENTCALLS
     #define FEATURE_CALLLIST
 #endif

@@ -20,9 +20,7 @@ USES_QALBUM    = yes
 endif
 USES_VRE       = yes
 USES_PE        = yes
-ifneq ($(USES_LOWMEM),yes)
 USES_ICM       = yes
-endif
 USES_GPS       = yes
 USES_IWMSDIAG  = yes
 USES_PBMTASK   = yes
