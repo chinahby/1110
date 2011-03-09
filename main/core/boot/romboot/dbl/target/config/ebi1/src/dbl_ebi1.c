@@ -498,9 +498,9 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_Intel_M58_48MHZ[] =
 {
   /* Changed this values as per VI team */
 
-  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | ( 0x000029c3 << 1 )),  0x60    },
-  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | ( 0x000029c3 << 1 )),  0x03    },
-  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | ( 0x000029C3 << 1 )),  0xFF    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | ( 0x000021c3 << 1 )),  0x60    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | ( 0x000021c3 << 1 )),  0x03    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | ( 0x000021C3 << 1 )),  0xFF    },
   
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x13400              },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x1011034            },
