@@ -587,7 +587,7 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_48MHZ
   {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
-  {WRITE_16_BIT,     0x9FFFFFE,               0x89803    },
+  {WRITE_16_BIT,     0x9FFFFFE,               0x8980F    },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
   
   {READ_16_BIT,      0x9FFFFFE,               0x0        },
@@ -720,7 +720,7 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_64MHZ
   {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
-  {WRITE_16_BIT,     0x9FFFFFE,               0x89803    },
+  {WRITE_16_BIT,     0x9FFFFFE,               0x8980F    },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
   
   {READ_16_BIT,      0x9FFFFFE,               0x0        },
@@ -857,7 +857,7 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_96MHZ
   {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
-  {WRITE_16_BIT,     0x9FFFFFE,               0x89803    },
+  {WRITE_16_BIT,     0x9FFFFFE,               0x8980F    },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
   
   {READ_16_BIT,      0x9FFFFFE,               0x0        },
