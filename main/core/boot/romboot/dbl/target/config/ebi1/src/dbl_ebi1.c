@@ -578,6 +578,30 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_48MHZ
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0031003C  },
 #else
+  {READ_16_BIT,      0x9FFFFFE,               0x0       },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x89803    },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+  
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+  
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x00010020  },
 #endif
@@ -687,6 +711,30 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_64MHZ
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x002200    },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0031003C  },
 #else
+  {READ_16_BIT,      0x9FFFFFE,               0x0       },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x89803    },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+  
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+  
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x00010020  },
 #endif
@@ -800,6 +848,30 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_96MHZ
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0031003C  },
 #else
+  {READ_16_BIT,      0x9FFFFFE,               0x0       },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x89803    },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+  
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+
+  {READ_16_BIT,      0x9FFFFFE,               0x0        },
+  {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
+  
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x00010020  },
 #endif
