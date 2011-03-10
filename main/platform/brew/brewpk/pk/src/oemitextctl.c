@@ -173,7 +173,7 @@ OBJECT(CTextCtl)
    IImage                    *m_pImageBg;
    uint16                     m_nBgImgResID;
    char                       m_strBgImgResFile[MAX_FILE_NAME];
-   #ifdef FEATURE_VERSION_HITZ181
+   #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
    boolean                    m_isshift;
    boolean                    m_isAlt;
    #endif
@@ -383,7 +383,7 @@ int TextCtl_New(IShell * pIShell, AEECLSID clsID, void ** ppobj)
    pme->m_SymPageNum = 0;
    pme->m_pImageBg = NULL;
    pme->m_clsMe = clsID;
-   #ifdef FEATURE_VERSION_HITZ181
+   #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
    pme->m_isshift = FALSE;
    pme->m_isAlt = FALSE;
    #endif
@@ -695,8 +695,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
             // Press and hold of keys 0 through 9 should be passed to the OEM   
             MSG_FATAL("EVT_KEY_HELD::::%x",eCode,0,0);
 		
-#ifdef FEATURE_VERSION_HITZ181
-			
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 			if ((wParam == AVK_SHIFT))
 			{
 				MSG_FATAL("***zzg CTextCtl_HandleEvent EVT_KEY_HELD AVK_SHIFT AVK_LCTRL***", 0, 0, 0);
@@ -706,7 +705,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 				{
 					MSG_FATAL("***zzg CTextCtl_HandleEvent TP_STARKEY_ID_SWITCH***", 0, 0, 0);
 					
-					if(pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_THAI)	//OEM_MODE_T9_MT_ENGLISH_UP
+					if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI)	//OEM_MODE_T9_MT_ENGLISH_UP
 					{
 						MSG_FATAL("***zzg CTextCtl_HandleEvent OEM_MODE_T9_RAPID_ENGLISH_UP***", 0, 0, 0);
 						
@@ -720,7 +719,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 					{
 						MSG_FATAL("***zzg CTextCtl_HandleEvent OEM_MODE_T9_RAPID_ENGLISH***", 0, 0, 0);
 						
-						pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_THAI; 
+						pme->m_nCurrInputMode = OEM_MODE_T9_MT_THAI; 
 						SetArrowFlagonIM(FALSE);
 						ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0, 0);
 						OEM_SetInputMode(pme);
@@ -819,16 +818,16 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
                 return TRUE;
             }  
 #if defined (FEATURE_ALL_KEY_PAD)
-#ifndef FEATURE_VERSION_HITZ181
-			if ((!pme->m_pSoftKey) && 
-                (pme->m_dwProps & TP_STARKEY_SWITCH) &&
-                (wParam == AVK_LCTRL) &&
-                ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
-#else
-				if ((!pme->m_pSoftKey) && 
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+            if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
                 (wParam == AVK_0) &&
                 ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))
+#else
+			if ((!pme->m_pSoftKey) && 
+                (pme->m_dwProps & TP_STARKEY_SWITCH) &&
+                (wParam == AVK_LCTRL) &&
+                ((!pme->m_bShowSyms)&&(!pme->m_bShowFaceSyms)&&(!pme->m_bShowNetSyms)))		
 
 #endif
 #else
@@ -903,10 +902,10 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
        
         case EVT_KEY:
         MSG_FATAL("EVT_KEY................1",0,0,0);
-        #ifdef FEATURE_VERSION_HITZ181
+        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
         if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP) && (wParam == AVK_SHIFT))
          	{
-         			pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_THAI; 
+         			pme->m_nCurrInputMode = OEM_MODE_T9_MT_THAI; 
          			SetArrowFlagonIM(FALSE);
 					ISHELL_HandleEvent(pme->m_pIShell, EVT_UPDATE_ARROW_BUTTON, 0, 0);
 					OEM_SetInputMode(pme);
@@ -918,7 +917,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
 #if 1   //modi by yangdecai    //  SWITCH  INPUTMOD  EVT_RELEASE MOVE TO EVT_KEY 
 
 #if defined (FEATURE_ALL_KEY_PAD)
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 if ((!pme->m_pSoftKey) && 
                 (pme->m_dwProps & TP_STARKEY_SWITCH) &&
                 (wParam == AVK_0) && 
@@ -1624,7 +1623,7 @@ NormalKeyEvent:
 
 			if ((wParam != AVK_SYMBOL))
          	{
-         		#ifdef FEATURE_VERSION_HITZ181
+         		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
          		boolean TempShift = FALSE;
          		boolean TempAlt = FALSE;
          		MSG_FATAL("EVT_KEY_RELEASE  AVK_SHIFT",0,0,0);
@@ -1984,7 +1983,7 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                 }
                 IDISPLAY_Update(pme->m_pIDisplay);
             }
-            #ifdef FEATURE_VERSION_HITZ181
+            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
             pme->m_isshift = OEM_TextShiftStatus(pme->m_pText);
             pme->m_isAlt   = OEM_TextAltStatus(pme->m_pText);
             if(pme->m_isshift)
@@ -5306,7 +5305,8 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 #ifdef FEATURE_T9_RAPID_ENGLISH
     pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_RAPID_ENGLISH;
 #endif //FEATURE_MODE_T9_RAPID_ENGLISH
-#ifndef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+#else
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 	pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_CAP_LOWER_ENGLISH;
 #endif
@@ -5433,7 +5433,16 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
 	#ifdef FEATURE_VERSION_C01
 	pme->m_isAvk1 = FALSE;
 	#endif
-	#ifndef FEATURE_VERSION_HITZ181
+	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+	if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI))
+	{
+		pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH_LOW;
+	}
+	else
+	{
+		pme->m_nCurrInputMode = OEM_MODE_T9_MT_THAI;
+	}
+	#else
 	if(pme->m_dwProps & TP_STARKEY_ID_SWITCH)
 	{
 		if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH || 
@@ -5490,16 +5499,6 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
         pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_FRENCH;
     }
 #endif
-#else
-	if((pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_THAI))
-	{
-		pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH_LOW;
-	}
-	else
-	{
-		pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_THAI;
-	}
-	
 #endif
     for (i=0; i<pme->m_nCurrInputModeCount; i++)
     {
@@ -5568,7 +5567,8 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
             {
                 // if meet the end , then return the first one
                 MSG_FATAL("pme->m_nCurrInputMode::::end1:::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
-                #ifndef FEATURE_VERSION_HITZ181
+                #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+                #else
                 if((pme->m_dwProps & TP_STARKEY_ID_SWITCH))
                 {
                 	;
@@ -5611,7 +5611,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
             break;
         }
     }
-    #ifdef FEATURE_VERSION_HITZ181
+    #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
     ret = TRUE;
     #endif
     MSG_FATAL("pme->m_nCurrInputMode::::end:::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
@@ -5837,6 +5837,8 @@ uint16 OEM_TextQuerySymbols(CTextCtl *pme,AECHAR *pszOut, uint16 size)
 #ifdef FEATURE_LANG_THAI
 #ifdef FEATURE_VERSION_C01
 					if ((pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI) && !pme->m_isAvk1)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+					if ((pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI))
 #else
                     if ((pme->m_nCurrInputMode == OEM_MODE_T9_RAPID_THAI))
 #endif

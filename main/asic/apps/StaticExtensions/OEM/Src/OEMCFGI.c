@@ -1586,7 +1586,7 @@ static OEMConfigListType oemi_cache = {
    FALSE,                                           //CFGI_SMS_LOCK_CHECK
    FALSE,                                           //CFGI_CALENDAR_LOCK_CHECK
 
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
    TRUE,											//CFGI_KEY_LOCK_CHECK			
 #else
    FALSE,                                           //CFGI_KEY_LOCK_CHECK
@@ -1636,7 +1636,7 @@ static OEMConfigListType oemi_cache = {
    
 
    , MAX_FMRADIO_VOLUME/5 *3                   //CFGI_FMRADIO_VOLUME
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
    ,{{L"88", 5}, {L"88.5", 10}, {L"89.5", 20}, {L"91", 35}, {L"91.5", 40},
     {L"93", 55}, {L"94",   65}, {L"94.5", 70}, {L"95", 75}, {L"95.5", 80},
     {L"96", 85}, {L"97.5", 100}, {L"98.5", 110}, {L"100",125}, {L"102.5",150},
@@ -2462,7 +2462,7 @@ void OEM_RestoreFactorySetting( void )
 #ifdef CUST_EDITION
 #ifdef FEATURE_KEYGUARD	 
 
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 	oemi_cache.b_key_lock       =  TRUE; 
 #else
     oemi_cache.b_key_lock       =  FALSE; 
@@ -2669,7 +2669,7 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.restrict_outgoing = 0;
 
    oemi_cache.fmRadio_volume = MAX_FMRADIO_VOLUME/5*3;     
-#ifdef FEATURE_VERSION_HITZ181   
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) 
    {
        oemi_cache.fmRadio_chan_total = 20;
        WSTRCPY(oemi_cache.fmRadio_chan_info[0].szName ,L"88");
@@ -2720,7 +2720,8 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.emerg_table.emert_size = OEMNV_EMERT_SEZE;
    oemi_cache.emerg_table.emerg_num[0].num_len = OEMNV_EMERG_NUM_LEN;
    STRCPY(oemi_cache.emerg_table.emerg_num[0].num_buf,OEMNV_EMERG_NUM_ONE);
-#ifndef FEATURE_VERSION_HITZ181 
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+#else
    oemi_cache.emerg_table.emerg_num[1].num_len = OEMNV_EMERG_NUM_LEN;
    STRCPY(oemi_cache.emerg_table.emerg_num[1].num_buf,OEMNV_EMERG_NUM_TWO);
    oemi_cache.emerg_table.emerg_num[2].num_len = OEMNV_EMERG_NUM_LEN;

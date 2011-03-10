@@ -4790,7 +4790,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 											if(pContext->is_isShift)
 					                        { 
 					                            TextCtl_NoSelection(pContext);
-					                            #ifdef FEATURE_VERSION_HITZ181
+					                            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
 					                            #else
 					                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
@@ -4836,7 +4836,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		            break;
 		         case AVK_SHIFT:
 		              {
-		              	 #ifdef FEATURE_VERSION_HITZ181
+		              	 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 		              	 if(pContext->is_bAlt)
 		              	 {
 		              	 	pContext->is_bAlt = FALSE;
@@ -4853,7 +4853,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                 pContext->m_islong = FALSE;
 		              }
 		              break;
-		        #ifdef FEATURE_VERSION_HITZ181
+		        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 		        case AVK_LCTRL:
 		        	{
 		              	 if(pContext->is_isShift)
@@ -6144,7 +6144,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 			        			    if(pContext->is_isShift)
 			                        { 
 			                            TextCtl_NoSelection(pContext);
-										#ifdef FEATURE_VERSION_HITZ181
+										#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 			                            TextCtl_AddChar(pContext,(AECHAR)(VLCharCapKeyItem[i].wp));
 			                            #else
 			                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));

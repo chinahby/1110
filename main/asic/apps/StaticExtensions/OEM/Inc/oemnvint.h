@@ -343,7 +343,7 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_SMS_VIBANDRINGER    4
 #if defined(FEATURE_VERSION_KARBONN)
 #define   OEMNV_DEFAULTRINGER       12
-#elif defined(FEATURE_VERSION_HITZ181)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 #define   OEMNV_DEFAULTRINGER       1
 #elif defined(FEATURE_VERSION_C306)
 #define   OEMNV_DEFAULTRINGER       4
@@ -382,7 +382,7 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined FEATURE_VERSION_C01
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 12
-#elif defined FEATURE_VERSION_HITZ181
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 11
 #else
@@ -730,7 +730,7 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_TWO                    "112"
 #define OEMNV_EMERG_NUM_TRE                    "911"
 #define OEMNV_EMERG_NUM_FOR                    "999"
-#elif defined(FEATURE_VERSION_HITZ181)  //add by yangdecai 2010-10-08
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)  //add by yangdecai 2010-10-08
 #define OEMNV_EMERT_SEZE                       2
 #define OEMNV_EMERG_NUM_LEN                    3
 #define OEMNV_EMERG_NUM_ONE                    "191"
@@ -826,7 +826,7 @@ typedef PACKED struct _ringID
 #endif//WIN32
 
 #if defined FEATURE_LANG_THAI 
-#ifdef FEATURE_VERSION_C01
+#if defined( FEATURE_VERSION_C01)||defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_THAI
 #else
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_RAPID_THAI

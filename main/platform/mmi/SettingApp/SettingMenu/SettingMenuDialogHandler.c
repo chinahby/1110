@@ -982,7 +982,8 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_DATESETTING, IDS_DATESETTING, NULL, 0);
 #endif
 #ifdef FEATURE_KEYGUARD
-	        #ifndef FEATURE_VERSION_HITZ181
+	        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+	        #else
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AUTOKEYGUARD_TITLE, IDS_AUTOKEYGUARD_TITLE, NULL, 0);
             #endif
 #endif
@@ -3922,10 +3923,10 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_LANG_THAI
                 case IDS_THAI:    //Ì©¹úÓï
                     language = NV_LANGUAGE_THAI;
-                    #ifdef FEATURE_VERSION_C01
-                    inputmode = OEM_MODE_T9_MT_THAI;   
+                    #ifdef FEATURE_T9_RAPID_THAI
+                    inputmode = OEM_MODE_RAPID_MT_THAI;   
                     #else
-                    inputmode = OEM_MODE_RAPID_MT_THAI;
+                    inputmode = OEM_MODE_T9_MT_THAI;
                     #endif
                     break;
 #endif /*FEATURE_LANG_THAI*/
