@@ -5471,7 +5471,7 @@ void          (*task_wait_handler)( rex_sigs_type )
 #endif
 #endif
 #else
-	gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_LOW_VALUE);
+	gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_HIGH_VALUE);
 #endif
 
 #ifdef FEATURE_UIM_UICC
