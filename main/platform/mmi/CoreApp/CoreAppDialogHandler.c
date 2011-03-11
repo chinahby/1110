@@ -1502,7 +1502,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
   				case AVK_CAMERA:
-            	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+            	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)
             	{
 				nv_item_type	SimChoice;
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -1743,7 +1743,7 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
+                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -2100,7 +2100,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
+                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -2383,7 +2383,7 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
+                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -3019,7 +3019,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
                 case AVK_CAMERA:
                 	
-                	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)
+                	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C01)
                 	{
                 	
 					nv_item_type	SimChoice;
@@ -3031,7 +3031,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					}
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 					MSG_FATAL("NV_SIM_SELECT_I...............0000000=%d",SimChoice.sim_select,0,0);
-					if(SimChoice.sim_select ==AVK_SEND_TWO*2)
+					if(SimChoice.sim_select ==AVK_SEND_TWO)
 					{
 						MSG_FATAL("NV_SIM_SELECT_I...............",0,0,0);
 						if (pMe->m_bAcquiredTime && !pMe->m_bemergencymode)
@@ -3375,7 +3375,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         return TRUE;
                     case AVK_CAMERA:
                     
-						#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)
+						#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)
 						{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -4172,9 +4172,29 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
 #endif    
 
 	int str_lenth = 0;
+	int str2_lenth = 0;
 
     CCoreApp  *pMe = (CCoreApp *)pUser;
+    nv_item_type	SimChoice;
+    AECHAR wszBufncard1[UIM_CDMA_HOME_SERVICE_SIZE+1] = {0};
+    AECHAR wszBufncard2[UIM_CDMA_HOME_SERVICE_SIZE+1] = {0};
+    
     MSG_FATAL("CoreApp_DrawBannerMessage Start",0,0,0);
+	OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+
+		(void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                        AEE_COREAPPRES_LANGFILE,
+                                        IDS_NO_USIM_CARDTWO,
+                                        wszBufncard2,
+                                        sizeof(wszBufncard2));
+	
+		(void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                        AEE_COREAPPRES_LANGFILE,
+                                        IDS_NO_USIM_CARDONE,
+                                        wszBufncard1,
+                                        sizeof(wszBufncard1));
+
+    
     // 先取消相关定时器
     (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
                               CoreApp_SearchingTimer,
@@ -4329,6 +4349,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
     {
         // Display the string
         str_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBuf);
+        //str2_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszBufncard);
 #ifdef FEATURE_OEMOMH    
         if(hasGetSPN && (str_lenth > SCREEN_WIDTH))
         {
@@ -4391,6 +4412,47 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
         }
         else
 #endif      
+		#ifdef FEATURE_DOUBLE_SIM_CARD
+		if(SimChoice.sim_select == AVK_SEND_TWO)
+		{
+			 AEERect  Temprc = rc;
+			 Temprc.y = Temprc.y - 16;
+			(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  AEE_FONT_NORMAL,
+                                  wszBufncard1, -1,
+                                  0, 0, &Temprc, 
+                                  #ifdef FEATURE_OEMOMH
+                                  IDF_ALIGN_LEFT 
+                                  #elif defined(FEATURE_VERSION_MYANMAR)
+                                  IDF_ALIGN_CENTER
+        						  #else
+                                  IDF_ALIGN_RIGHT 
+                                  #endif
+                                  | IDF_ALIGN_MIDDLE 
+                                  | IDF_TEXT_TRANSPARENT);
+		}
+		else
+		{
+			(void)DrawTextWithProfile(pMe->a.m_pIShell,
+                                  pMe->m_pDisplay,
+                                  RGB_WHITE_NO_TRANS,
+                                  AEE_FONT_NORMAL,
+                                  wszBufncard2, -1,
+                                  0, 0, &rc, 
+                                  #ifdef FEATURE_OEMOMH
+                                  IDF_ALIGN_LEFT 
+                                  #elif defined(FEATURE_VERSION_MYANMAR)
+                                  IDF_ALIGN_CENTER
+        						  #else
+                                  IDF_ALIGN_RIGHT 
+                                  #endif
+                                  | IDF_ALIGN_MIDDLE 
+                                  | IDF_TEXT_TRANSPARENT);
+			rc.y = rc.y - 16;
+		}
+		#endif
         (void)DrawTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,

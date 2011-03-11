@@ -15898,7 +15898,7 @@ boolean WMSAPPMN_TextSoftKeyDlgEventHandler(void *pUser, AEEEvent evt, uint16 w,
           (void)IDIALOG_SetFocus(pIDialog, (int16)wMenuCtrID);
           return TRUE;
 		 case AVK_CAMERA:
-    	 #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
+    	 #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
 		 {
 			nv_item_type	  SimChoice;
 			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -17869,7 +17869,7 @@ boolean WMSAPPMN_ViewSMSDlgEventHandler(void *pUser, AEEEvent evt, uint16 w, uin
 	  else if (w == AVK_CAMERA)
 	  {
 
-    	 #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
+    	 #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
 		 {
 			nv_item_type	  SimChoice;
 			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -18158,7 +18158,7 @@ boolean WMSAPPMN_ViewMsgInfoDlgEvtHandler(void *pUser, AEEEvent evt, uint16 w, u
       }
       else if (w == AVK_CAMERA)
       {
-	      #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
+	      #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
 			 {
 				nv_item_type	  SimChoice;
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -18459,7 +18459,7 @@ boolean WMSAPPMN_MsgDlgEventHandler(void *pUser, AEEEvent evt, uint16 w, uint32 
         case AVK_SELECT:
           /* send key */
         case AVK_SEND:
-        #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)
+        #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
         case AVK_CAMERA:
         #endif
           /* clear key */
