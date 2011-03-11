@@ -201,9 +201,9 @@ typedef struct {
  /*RSSI/Airplane Mode*/
  static OEMState_data rssi_image_data[]=
 {
-#ifndef FEATURE_USES_LOWMEM
+//#ifndef FEATURE_USES_LOWMEM
   {ANNUN_STATE_AIR_MODE_ON, IDB_AIR_MODE, NULL},
-#endif
+//#endif
   {ANNUN_STATE_RSSI_NO_SERV, IDB_NO_SERVICE, NULL},
   {ANNUN_STATE_RSSI_0, IDB_RSSI0, NULL},
   {ANNUN_STATE_RSSI_1, IDB_RSSI1, NULL},
@@ -305,11 +305,11 @@ static OEMState_data batt_image_data[]=
  /*fields that locate at the same place are merged, and use the states ID to dicide which icon to display*/
  /*ANNUN_FIELD_RSSI*/
 OEMAnnun_content rssi_content =
-#ifndef FEATURE_USES_LOWMEM
+//#ifndef FEATURE_USES_LOWMEM
      {ANNUN_TYPE_IMAGE, 7, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
-#else
-     {ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
-#endif
+//#else
+     //{ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
+//#endif
 /*ANNUN_FIELD_WAP*/
 OEMAnnun_content wap_content =
 #ifndef FEATURE_USES_LOWMEM
