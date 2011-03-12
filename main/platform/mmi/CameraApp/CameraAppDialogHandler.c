@@ -244,7 +244,7 @@ static const CCameraSize g_CameraSizeCFG[] =
     {128,160,L"128*160"}, // FULL Screen
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA
-    {480,640,L"480*640"}, // VGA    
+    //{480,640,L"480*640"}, // VGA    
 #elif defined(FEATURE_DISP_176X220)
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA
