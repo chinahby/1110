@@ -2,7 +2,7 @@
 <BREWRes Name="fmradioln320x240_common" VERSION="1">
 <Objects MimeType="image/png">
 	<Object Id="5001" Name="IDI_BG">
-		<File>..\..\Appscommon\images\320x240\common\fmradio\bg.png</File>
+		<File>..\..\Appscommon\images\320x240\common\fmradio\playbg.png</File>
 	</Object>
 	<Object Id="5002" Name="IDI_FM_SIMPLEVOL_OFF">
 		<File>..\..\Appscommon\images\320x240\common\Fmradio\simvolume0.PNG</File>
@@ -21,6 +21,9 @@
 	</Object>
 	<Object Id="5007" Name="IDI_FM_SIMPLEVOL_FIVE">
 		<File>..\..\Appscommon\images\320x240\common\Fmradio\simvolume5.PNG</File>
+	</Object>
+	<Object Id="5008" Name="IDI_FM_STOPBG">
+		<File>..\..\Appscommon\images\320x240\common\fmradio\stopbg.png</File>
 	</Object>
 </Objects>
 <Dialogs>
