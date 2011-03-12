@@ -3251,13 +3251,26 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 
                 case AVK_INFO:
 					{
-						if(pMe->m_iskeypadtime)
+#ifdef FEATURE_VERSION_C01	
+                     if(!pMe->m_iskeypadtime)
+        			   {
+    					   AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+    					   AEE_SetTimer(500,CoreApp_keypadtimer,pMe);
+    					   pMe->m_iskeypadtime = TRUE;
+        			   }
+                    
+						return TRUE;                    
+#else
+                       if(pMe->m_iskeypadtime)
 						{
 							//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
 							return TRUE;
 							//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 						}
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#endif	
+
+						
 					}
 #if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined (FEATURE_VERSION_M8021)
 				case AVK_SOFT2:
@@ -3474,7 +3487,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				case AVK_O:
                     {
                         ICallApp         *pCallApp = NULL;
-                        #if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR)
+                        #if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C01)
                         if(pMe->m_iskeypadtime)
                         {
                         	if(wParam==AVK_STAR)
@@ -6811,6 +6824,9 @@ static void CoreApp_keypadtimer(void *pUser)
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_HITZ181)
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#elif defined (FEATURE_VERSION_C01)
+	ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+
 #else
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif
