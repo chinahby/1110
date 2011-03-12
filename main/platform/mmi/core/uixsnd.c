@@ -2693,13 +2693,26 @@ void uisnd_vibrate(uint16 wDuration,
        snd_cb_func_ptr_type callback_ptr,
        const void *client_data)
 {
+  #ifndef FEATURE_VERSION_C306   //add by yangdecai 20110312
   uisnd_vibrate_cmd(TRUE);
   clk_reg( &uisnd_vibrator_clk,
             uisnd_vibrator_cb,
             wDuration,
             0,
             FALSE );
-
+           
+            
+  #else 
+  snd_freq_tone_start(SND_DEVICE_CURRENT,
+  					  SND_METHOD_RING,
+  					  175,
+  					  175,
+  					  (uint16)(1000),
+  					  (snd_apath_type)(SND_APATH_LOCAL),
+                  	  callback_ptr,
+                  	  client_data
+  					 );
+  #endif
   vibrator_on = TRUE;
 }
 
@@ -2771,6 +2784,8 @@ void uisnd_vibrate(uint16 wDuration,
                   callback_ptr,
                   client_data
                 );
+  MSG_FATAL("uisnd_vibrate................................",0,0,0);
+  
 #else /* FEATURE_AUDIO_FORMAT */
   MSG_HIGH("Sound Suppressed due to no FEATURE_AUDIO_FORMAT", 0, 0, 0);
 #endif /* FEATURE_AUDIO_FORMAT */
