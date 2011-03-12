@@ -520,6 +520,7 @@ static int FmRadio_InitAppData(CFmRadio *pMe)
     pMe->m_eDlgRet              = DLGRET_CREATE;
     pMe->m_bNotOverwriteDlgRet  = FALSE;
     pMe->startFromBackground    = FALSE;
+    pMe->fmVolumeStop = TRUE;
     pMe->m_pVolumeImage = NULL;
     //初始化必要的数据
     FmRadio_InitFmRadioResource( pMe);

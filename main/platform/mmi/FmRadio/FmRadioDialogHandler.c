@@ -483,7 +483,40 @@ static void tuneVolumeByLeftRightArrowKey( CFmRadio* pMe)
 		x = 0;
 	}
 }
+static void tuneVolumeStop(CFmRadio* pMe)
+{
+    byte newvolumeLevel=0; 
+    if(pMe->fmVolumeStop)
+    {
+       // pMe->byVolumeLevel = 0;
+#if !defined( AEE_SIMULATOR)
+        if (HS_HEADSET_ON())
+        {
+            fm_set_volume( newvolumeLevel);
+            pMe->fmVolumeStop=FALSE;
+        }
+#endif
+    }
+    else
+    {
+        (void) ICONFIG_GetItem(pMe->m_pConfig,
+						   CFGI_FMRADIO_VOLUME,
+						   &pMe->byVolumeLevel,
+						   sizeof(byte));
+        
+        newvolumeLevel = pMe->byVolumeLevel;
+#if !defined( AEE_SIMULATOR)
+        if (HS_HEADSET_ON())
+        {
+            fm_set_volume(newvolumeLevel);
+            pMe->fmVolumeStop=TRUE;
+        }
+#endif
 
+    }
+
+
+}
 static void tuneVolumeByLeftRightArrowKeyCloseCb( CFmRadio* pMe)
 {
 	pMe->tuneVolumeByLeftRightArrowKey = FALSE;
@@ -785,6 +818,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
         }
         return TRUE;
 
+        
 #if defined( AEE_SIMULATOR)
         case AVK_SELECT:
 #else
@@ -799,6 +833,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 				pMe->tuneVolumeByLeftRightArrowKey = TRUE;
 				ISHELL_SetTimer( pMe->m_pShell, 3000, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
 				tuneVolumeByLeftRightArrowKey( pMe);
+                tuneVolumeStop(pMe);
 #elif defined( FEATURE_FMRADIO_KEY_OK_TO_MUTE)
                 FMRadioMute( pMe);
 #else
@@ -846,11 +881,10 @@ __handleKeyEvent_input_channel_done__:
 				ITEXTCTL_SetActive( pMe->pText, FALSE);
 				moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
 			}
+          
 #endif
-
             return TRUE;
         }
-
         case AVK_CLR:
         case AVK_SOFT2:
         {			
@@ -975,6 +1009,7 @@ __handleKeyEvent_input_channel_done__:
 				if( pMe->tuneVolumeByLeftRightArrowKey)
 				{
 					ISHELL_CancelTimer( pMe->m_pShell, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
+                    pMe->fmVolumeStop=TRUE;
 					changeVolume( pMe, key);
 					ISHELL_SetTimer( pMe->m_pShell, 3000, (PFNNOTIFY)tuneVolumeByLeftRightArrowKeyCloseCb, pMe);
 				}
@@ -2590,8 +2625,15 @@ static void repaint( CFmRadio *pMe, boolean immediately)
 }
 
 static void drawBg( CFmRadio *pMe)
-{	
-    drawImage( pMe, FMRADIOLN_RES_FILE, IDI_BG, 0, 0);
+{	if(pMe->fmVolumeStop)
+     {
+         drawImage( pMe, FMRADIOLN_RES_FILE, IDI_BG, 0, 0);
+     }
+     else
+     {
+         drawImage( pMe, FMRADIOLN_RES_FILE, IDI_FM_STOPBG, 0, 0);
+     }
+    
 }
 
 static void drawOperationPrompt( CFmRadio *pMe, int16 resId, RGBVAL color)

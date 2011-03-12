@@ -284,6 +284,7 @@ typedef struct _CFmRadio
     boolean             startFromBackground;
     boolean             channelListIsEmptyHasPrompted;
     boolean             channelListIsEmpty;
+    boolean             fmVolumeStop;
     int                 demitintColor;
     int                 channelListMenuSelectedItemId;
     int                 channelListMenuSelectedItemIndex;
