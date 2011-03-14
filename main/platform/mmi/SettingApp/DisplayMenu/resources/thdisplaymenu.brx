@@ -89,10 +89,10 @@
 		<Text>มืด</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_CONTRAST_LEVEL_NORMAL">
-		<Text>Normal</Text>
+		<Text>ปกติ</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_CONTRAST_LEVEL_BRIGHT">
-		<Text>Bright</Text>
+		<Text>สดใส</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_DEL_ITEM_YESNO">
 		<Text>ลบ</Text>
@@ -185,13 +185,13 @@
 		<Text>ตั้งค่าเอฟเฟ็ค</Text>
 	</String>
 	<String Id="1071" Name="IDS_REND_EFFECT_FADE">
-		<Text>Fade</Text>
+		<Text>จางหาย</Text>
 	</String>
 	<String Id="1072" Name="IDS_REND_EFFECT_SHOW_HORZ">
-		<Text>Horizontal Show</Text>
+		<Text>แสดงแนวนอน</Text>
 	</String>
 	<String Id="1073" Name="IDS_REND_EFFECT_SHOW_VERT">
-		<Text>Vertical Show</Text>
+		<Text>แสดงแนวตั้ง</Text>
 	</String>
 	<String Id="1074" Name="IDS_REND_EFFECT_MOVE_HORZ">
 		<Text>ย้ายแนวนอน</Text>
@@ -200,22 +200,22 @@
 		<Text>แสดงแนวตั้ง</Text>
 	</String>
 	<String Id="1076" Name="IDS_REND_EFFECT_FLY_HORZ">
-		<Text>Horizontal Fly</Text>
+		<Text>บินแนวนอน</Text>
 	</String>
 	<String Id="1077" Name="IDS_REND_EFFECT_FLY_VERT">
-		<Text>Vertical Fly</Text>
+		<Text>ถลกหนังแนวตั้ง</Text>
 	</String>
 	<String Id="1078" Name="IDS_REND_EFFECT_ROTAT_HORZ">
-		<Text>Horizontal Rotation</Text>
+		<Text>หมุนแนวนอน</Text>
 	</String>
 	<String Id="1079" Name="IDS_REND_EFFECT_ROTAT_VERT">
-		<Text>Vertical Rotation</Text>
+		<Text>หมุนแนวตั้ง</Text>
 	</String>
 	<String Id="1080" Name="IDS_REND_EFFECT_BLINDS_VERT">
-		<Text>Horizontal Blind</Text>
+		<Text>ปิดตาแนวนอน</Text>
 	</String>
 	<String Id="1081" Name="IDS_REND_EFFECT_BLINDS_INTER">
-		<Text>Intersect Blind</Text>
+		<Text>ขวางการปิดตา</Text>
 	</String>
 	<String Id="1083" Name="IDS_REND_EFFECT_ONEBYONE">
 		<Text>ทีละหนึ่ง</Text>
