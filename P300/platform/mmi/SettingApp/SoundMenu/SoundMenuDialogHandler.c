@@ -1431,6 +1431,7 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
             if (pMe->m_RingerType == SET_RINGER)
             {
                 ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CALL_RINGER,(void*)pMe->m_RingerID,sizeof(pMe->m_RingerID));
+                //ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CALL_RINGER,pMe->m_RingID,sizeof(pMe->m_RingID));
                 if (pMe->m_RingerID[pMe->m_CurProfile].ringType == OEMNV_MP3_RINGER)
                 {
                     pMe->m_RingID[pMe->m_CurProfile] = DOWNLOAD_MENU;
@@ -1439,7 +1440,17 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                 }
                 else //if(pMe->m_RingerID[pMe->m_CurProfile].midID == 0)
                 {
-                    pMe->m_RingID[pMe->m_CurProfile] = pMe->m_RingerID[pMe->m_CurProfile].midID;
+                	if (pMe->m_RingerID[pMe->m_CurProfile].midID == 0)
+                	{
+                		pMe->m_RingID[pMe->m_CurProfile] = OEMNV_STARTUP_MUSIC; //OEMNV_ALARM_RINGER;
+                    	ICONFIG_SetItem(pMe->m_pConfig,CFGI_PROFILE_CALL_RINGER,pMe->m_RingID,sizeof(pMe->m_RingID));
+                    	IMENUCTL_SetSel(pMenu,IDS_QUIETMODE);
+                    	pMe->m_lastRingerPlayed = IDS_QUIETMODE;
+                	}
+                	else
+                	{
+                    	pMe->m_RingID[pMe->m_CurProfile] = pMe->m_RingerID[pMe->m_CurProfile].midID;
+                    }
                 }
             }
             else if(pMe->m_RingerType == SET_ALARMRING)
@@ -1532,8 +1543,10 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                 }
 
             }
-
-            pMe->m_lastRingerPlayed = pMe->m_RingID[pMe->m_CurProfile];
+			if (pMe->m_RingID[pMe->m_CurProfile] != 0)
+			{
+            	pMe->m_lastRingerPlayed = pMe->m_RingID[pMe->m_CurProfile];
+            }
             pMe->m_eMakeListMode = MAKELIST_INIT;
             return TRUE;
         }
@@ -1827,6 +1840,14 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                     //Set for ALERT
                     //ICONFIG_SetItem(pMe->m_pConfig,CFGI_RINGER_TYPE,&m_ringer_type,sizeof(m_ringer_type));
                 }
+                 else
+                {
+                	 ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_CALL_RINGER,(void*)nNewConfigRinger,sizeof(nNewConfigRinger));
+                    nNewConfigRinger[pMe->m_CurProfile].midID = (uint16)(0);
+                    nNewConfigRinger[pMe->m_CurProfile].ringType = OEMNV_MID_RINGER;
+                    
+                    ICONFIG_SetItem(pMe->m_pConfig,CFGI_PROFILE_CALL_RINGER,(void*)nNewConfigRinger,sizeof(nNewConfigRinger));
+                }
                 
             }
             else if(pMe->m_RingerType == SET_ALARMRING)       //ÄÖÖÓÁåÉù
@@ -1848,6 +1869,12 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                     nNewConfigRing[pMe->m_CurProfile] = (uint16)(wParam);
                     ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_STARTUP_MUSIC,nNewConfigRing,sizeof(nNewConfigRing));
                 }
+                 else
+                {
+                	 ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_STARTUP_MUSIC,nNewConfigRing,sizeof(nNewConfigRing));
+                    nNewConfigRing[pMe->m_CurProfile] = (uint16)(0);
+                    ICONFIG_SetItem(pMe->m_pConfig,CFGI_PROFILE_STARTUP_MUSIC,nNewConfigRing,sizeof(nNewConfigRing));
+                }
                 
 
             }
@@ -1857,6 +1884,12 @@ static boolean  HandleRingerDialogEvent(CSoundMenu *pMe,
                 {
                     ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_SHUTDOWN_MUSIC,nNewConfigRing,sizeof(nNewConfigRing));
                     nNewConfigRing[pMe->m_CurProfile] = (uint16)(wParam);
+                    ICONFIG_SetItem(pMe->m_pConfig,CFGI_PROFILE_SHUTDOWN_MUSIC,nNewConfigRing,sizeof(nNewConfigRing));
+                }
+                else
+                {
+                	 ICONFIG_GetItem(pMe->m_pConfig,CFGI_PROFILE_SHUTDOWN_MUSIC,nNewConfigRing,sizeof(nNewConfigRing));
+                    nNewConfigRing[pMe->m_CurProfile] = (uint16)(0);
                     ICONFIG_SetItem(pMe->m_pConfig,CFGI_PROFILE_SHUTDOWN_MUSIC,nNewConfigRing,sizeof(nNewConfigRing));
                 }
                 

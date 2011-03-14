@@ -502,7 +502,7 @@ static int FmRadio_InitAppData(CFmRadio *pMe)
         (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, (void **)&pMe->m_pIAnn))
 #if !defined( AEE_SIMULATOR)
         ||
-        #ifdef FEATURE_USES_LOWMEM
+        #ifndef FEATURE_ICM
         ISHELL_RegisterNotify( pMe->m_pShell, AEECLSID_APP_FMRADIO, AEECLSID_PHONENOTIFIER, AEET_NMASK_VOICE_CALL | AEET_NMASK_OTHER_CALL | AEET_NMASK_TEST_CALL) != SUCCESS
         #else
         ISHELL_RegisterNotify( pMe->m_pShell, AEECLSID_APP_FMRADIO, AEECLSID_CM_NOTIFIER, NMASK_CM_VOICE_CALL | NMASK_CM_OTHER_CALL | NMASK_CM_TEST_CALL) != SUCCESS

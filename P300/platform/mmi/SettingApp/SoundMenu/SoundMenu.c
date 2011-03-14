@@ -1525,14 +1525,15 @@ void SoundMenu_UpdateRingerListMenu(CSoundMenu *pMe, IMenuCtl *pMenu)
         IMENUCTL_AddItem(pMenu, AEE_APPSSOUNDMENU_RES_FILE, IDS_GALLERY_PROFILE, DOWNLOAD_MENU, NULL, 0);
         #endif
     }
-    if(pMe->m_RingerType == SET_ALARMRING || pMe->m_RingerType == SET_RINGER 
+    if(pMe->m_RingerType == SET_ALARMRING 
     #ifdef FEATURE_USES_LOWMEM
-       ||pMe->m_RingerType == SET_STARTUP   || pMe->m_RingerType == SET_SHUTDOWN
+    || pMe->m_RingerType == SET_RINGER 
+    || pMe->m_RingerType == SET_STARTUP   || pMe->m_RingerType == SET_SHUTDOWN
     #endif
       )
     {
     	#ifdef FEATURE_USES_LOWMEM
-    	IMENUCTL_AddItem(pMenu, AEE_APPSSOUNDMENU_RES_FILE, IDS_QUIETMODE, DOWNLOAD_MENU, NULL, 0);
+    	IMENUCTL_AddItem(pMenu, AEE_APPSSOUNDMENU_RES_FILE, IDS_QUIETMODE, IDS_QUIETMODE, NULL, 0);
     	#else
         IMENUCTL_AddItem(pMenu, AEE_APPSSOUNDMENU_RES_FILE, IDS_GALLERY_PROFILE, DOWNLOAD_MENU, NULL, 0);
         #endif
