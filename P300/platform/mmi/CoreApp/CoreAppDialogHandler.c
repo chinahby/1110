@@ -3821,33 +3821,38 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
             return TRUE;
   
         case EVT_KEY:
-            switch(wParam)
-            {
-            	case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
-                case AVK_CLR:
-                case AVK_END:
+        #ifdef FEATURE_KEYGUARD
+        	if(!OEMKeyguard_IsEnabled())
+        #endif
+        	{
+	            switch(wParam)
+	            {
+	            	case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
+	                case AVK_CLR:
+	                case AVK_END:
 #ifdef FEATURE_SMSTONETYPE_MID 
-                // 通知收音机关闭声音
-                    IALERT_StopSMSAlert(pMe->m_pAlert);
+	                // 通知收音机关闭声音
+	                    IALERT_StopSMSAlert(pMe->m_pAlert);
 #endif //#if defined FEATURE_SMSTONETYPE_MID		    
-                    IALERT_StopMp3Alert(pMe->m_pAlert);
-                    pMe->m_bsmstipscheck = FALSE;
-                    CLOSE_DIALOG(DLGRET_SMSTIPS_OK)
-                    return TRUE;
+	                    IALERT_StopMp3Alert(pMe->m_pAlert);
+	                    pMe->m_bsmstipscheck = FALSE;
+	                    CLOSE_DIALOG(DLGRET_SMSTIPS_OK)
+	                    return TRUE;
 
-                case AVK_SELECT:
+	                case AVK_SELECT:
 #ifdef FEATURE_SMSTONETYPE_MID                        
-                    IALERT_StopSMSAlert(pMe->m_pAlert);
+	                    IALERT_StopSMSAlert(pMe->m_pAlert);
 #endif //#if defined FEATURE_SMSTONETYPE_MID		    
-                    IALERT_StopMp3Alert(pMe->m_pAlert);
-                    pMe->m_bsmstipscheck = FALSE;
-                    CLOSE_DIALOG(DLGRET_VIEWSMS)
-                    return TRUE;
-  
-                default:
-                    break;
+	                    IALERT_StopMp3Alert(pMe->m_pAlert);
+	                    pMe->m_bsmstipscheck = FALSE;
+	                    CLOSE_DIALOG(DLGRET_VIEWSMS)
+	                    return TRUE;
+	  
+	                default:
+	                    break;
+	            }
+	            break;
             }
-            break;
 
         default:
             break;
