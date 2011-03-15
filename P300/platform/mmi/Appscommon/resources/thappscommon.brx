@@ -223,7 +223,7 @@
 	<STRING Id="1025" Name="IDS_NO">
 		<Text>ยกเลิก</Text>
 	</STRING>
-	<String Id="1026" Name="IDS_MSG_KEYGUARD_LOW" Encoding="ISOLATIN1">
+	<String Id="1026" Name="IDS_MSG_KEYGUARD_LOW">
 		<Text>กดปุ่ม # เพื่อปลดล็อค</Text>
 	</String>
 	<String Id="1027" Name="IDS_FACEBOOK">
@@ -244,7 +244,7 @@
 	<String Id="1032" Name="IDS_MSG_KEYGUARD_SPACE">
 		<Text>Long Press Space Key to Unlock The Keyguard</Text>
 	</String>
-	<String Id="1033" Name="IDS_MSG_KEYGUARD_UNLOCKKEY_LOW" Encoding="ISOLATIN1">
+	<String Id="1033" Name="IDS_MSG_KEYGUARD_UNLOCKKEY_LOW">
 		<Text>กดปุ่ม # เพื่อปลดล็อค</Text>
 	</String>
 	<STRING Id="2001" Name="IDS_SNOOZE">
