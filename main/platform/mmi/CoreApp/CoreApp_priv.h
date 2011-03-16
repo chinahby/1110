@@ -304,6 +304,42 @@
 #endif //#ifdef FEATURE_USES_LOWMEM
 
 #define IDS_CORE_DISPADN        0xFFFE
+#ifdef FEATURE_USES_BLACKBERRY
+#define    IDLE_BLACKBERRY_ITEMMAX                 6
+#ifdef FEATURE_DISP_160X128
+#define    IDLE_BLACKBERRY_DRAWDX                  32
+#define    IDLE_BLACKBERRY_DRAWDY                  32
+#define    IDLE_BLACKBERRY_1                       "fs:/image/BlackBerry/messages.png"
+#define    IDLE_BLACKBERRY_SEL_1                   "fs:/image/BlackBerry/messages_sel.png"
+#define    IDLE_BLACKBERRY_2                       "fs:/image/BlackBerry/contact.png"
+#define    IDLE_BLACKBERRY_SEL_2                   "fs:/image/BlackBerry/contact_sel.png"
+#define    IDLE_BLACKBERRY_3                       "fs:/image/BlackBerry/alarm.png"
+#define    IDLE_BLACKBERRY_SEL_3                   "fs:/image/BlackBerry/alarm_sel.png"
+#define    IDLE_BLACKBERRY_4                       "fs:/image/BlackBerry/calendar.png"
+#define    IDLE_BLACKBERRY_SEL_4                   "fs:/image/BlackBerry/calendar_sel.png"
+#define    IDLE_BLACKBERRY_5                       "fs:/image/BlackBerry/mediaplayer.png"
+#define    IDLE_BLACKBERRY_SEL_5                   "fs:/image/BlackBerry/mediaplayer_sel.png"
+#define    IDLE_BLACKBERRY_6                       "fs:/image/BlackBerry/fmradio.png"
+#define    IDLE_BLACKBERRY_SEL_6                   "fs:/image/BlackBerry/fmradio_sel.png"
+
+#else
+#define    IDLE_BLACKBERRY_DRAWDX                  32
+#define    IDLE_BLACKBERRY_DRAWDY                  32
+#define    IDLE_BLACKBERRY_1                       "fs:/image/BlackBerry/messages.png"
+#define    IDLE_BLACKBERRY_SEL_1                   "fs:/image/BlackBerry/messages_sel.png"
+#define    IDLE_BLACKBERRY_2                       "fs:/image/BlackBerry/contact.png"
+#define    IDLE_BLACKBERRY_SEL_2                   "fs:/image/BlackBerry/contact_sel.png"
+#define    IDLE_BLACKBERRY_3                       "fs:/image/BlackBerry/alarm.png"
+#define    IDLE_BLACKBERRY_SEL_3                   "fs:/image/BlackBerry/alarm_sel.png"
+#define    IDLE_BLACKBERRY_4                       "fs:/image/BlackBerry/calendar.png"
+#define    IDLE_BLACKBERRY_SEL_4                   "fs:/image/BlackBerry/calendar_sel.png"
+#define    IDLE_BLACKBERRY_5                       "fs:/image/BlackBerry/mediaplayer.png"
+#define    IDLE_BLACKBERRY_SEL_5                   "fs:/image/BlackBerry/mediaplayer_sel.png"
+#define    IDLE_BLACKBERRY_6                       "fs:/image/BlackBerry/fmradio.png"
+#define    IDLE_BLACKBERRY_SEL_6                   "fs:/image/BlackBerry/fmradio_sel.png"
+
+#endif
+#endif
 // 下列变量为临时定义
 #define PHONEPASSWORDLENTH      OEMNV_LOCKCODE_MAXLEN
 #define LOCKUIMPASSWORDLENTH      OEMNV_LOCKUIM_MAXLEN
@@ -319,8 +355,14 @@
 #define MUSIC_WIDTH            (SCREEN_HEIGHT-42) //88
 #define MUSIC_START_WIDTH      (SCREEN_HEIGHT-40) //90
 #else
+#ifdef FEATURE_USES_BLACKBERRY
+#define MUSIC_WIDTH            (SCREEN_HEIGHT-82) //78
+#define MUSIC_START_WIDTH      (SCREEN_HEIGHT-80) //80
+#else
 #define MUSIC_WIDTH            (SCREEN_HEIGHT-52) //78
 #define MUSIC_START_WIDTH      (SCREEN_HEIGHT-50) //80
+
+#endif
 #endif
 
 #ifdef FEATURE_SPN_FROM_BSMCCMNC
@@ -696,6 +738,12 @@ typedef struct _CCoreApp
     AEECardPinCmdStatus m_sPinActionStatus;
     boolean             m_bVerifying;
 	boolean             m_isShift;
+	#ifdef FEATURE_USES_BLACKBERRY
+	uint8               m_CurMainItems;    //当前主菜单ITEMS
+	IImage              *m_pImageIcon[IDLE_BLACKBERRY_ITEMMAX];
+	IImage              *m_pImageSelIcon[IDLE_BLACKBERRY_ITEMMAX];
+	
+	#endif
 	//wangliang add!
 	byte                m_active;
 	byte                m_CurProfile;      //当前情景模式

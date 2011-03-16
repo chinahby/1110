@@ -20,6 +20,7 @@ vpath %.brx $(COREAPP_RES)
 vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
 vpath %.jpg $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
 vpath %.gif $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
+vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/common/BlackBerry
 
 CONSTFILE_FILES+=\
 	coreapp.mif|fs:/mif/coreapp.mif \
@@ -107,6 +108,26 @@ CONSTFILE_FILES+=\
     #poweroffani.jpg|fs:/image/pwronoffani/poweroffani.jpg
 endif
 endif #ifeq ($(USES_LOWMEM), yes)
+ifeq ($(USES_BLACKBERRY),yes)
+	CONSTFILE_FILES+=\
+		messages.png|fs:/image/BlackBerry/messages.png \
+		messages_sel.png|fs:/image/BlackBerry/messages_sel.png \
+		contact.png|fs:/image/BlackBerry/contact.png \
+		contact_sel.png|fs:/image/BlackBerry/contact_sel.png \
+		alarm.png|fs:/image/BlackBerry/alarm.png \
+		alarm_sel.png|fs:/image/BlackBerry/alarm_sel.png \
+		calendar.png|fs:/image/BlackBerry/calendar.png \
+		calendar_sel.png|fs:/image/BlackBerry/calendar_sel.png \
+		mediaplayer.png|fs:/image/BlackBerry/mediaplayer.png \
+		mediaplayer_sel.png|fs:/image/BlackBerry/mediaplayer_sel.png \
+		fmradio.png|fs:/image/BlackBerry/fmradio.png \
+		fmradio_sel.png|fs:/image/BlackBerry/fmradio_sel.png
+		#PR_BG.png|fs:/image/BlackBerry/PR_BG.png \
+		#PR_NM.png|fs:/image/BlackBerry/PR_NM.png \
+		#PR_SL.png|fs:/image/BlackBerry/PR_SL.png \
+		#PR_MT.png|fs:/image/BlackBerry/PR_MT.png \
+		#PR_OT.png|fs:/image/BlackBerry/PR_OT.png
+endif
 
 # 加入另外一种语言资源文件
 ifneq ($(EXTLANG1),NO)

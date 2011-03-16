@@ -215,7 +215,7 @@ int CoreApp_UnblockPIN(IShell *pShell, uint8 byPinID, AECHAR *pPUK, AECHAR *pPIN
 void CoreApp_FreeAppData(IApplet* po)
 {
     CCoreApp *pMe = (CCoreApp*)po;
-
+	int i=0;
     FREEIF(pMe->m_pADNName);
     FREEIF(pMe->m_pADNNumber);
     if (pMe->m_pIAnn) 
@@ -345,6 +345,21 @@ void CoreApp_FreeAppData(IApplet* po)
 	    extern void DisplayRend_Done(void);
 	    DisplayRend_Done();
 	}
+#endif
+#ifdef	FEATURE_USES_BLACKBERRY
+	 for(i=0;i<IDLE_BLACKBERRY_ITEMMAX;i++)
+        {
+            if(pMe->m_pImageIcon[i] != NULL)
+            {
+                (void)IIMAGE_Release(pMe->m_pImageIcon[i]);
+                pMe->m_pImageIcon[i] = NULL;
+            }
+            if(pMe->m_pImageSelIcon[i] != NULL)
+            {
+                (void)IIMAGE_Release(pMe->m_pImageSelIcon[i]);
+                pMe->m_pImageSelIcon[i] = NULL;
+            }
+        }
 #endif
 } /* End CoreApp_FreeAppData */
 
@@ -497,6 +512,19 @@ boolean CoreApp_InitAppData(IApplet* po)
 
 #ifdef FEATURE_TORCH_SUPPORT
     pMe->TorchOn = FALSE;
+#endif
+#ifdef FEATURE_USES_BLACKBERRY
+	pMe->m_CurMainItems = 0;    //当前主菜单ITEMS
+	pMe->m_pImageSelIcon[1] = NULL;
+	pMe->m_pImageSelIcon[2] = NULL;
+	pMe->m_pImageSelIcon[3] = NULL;
+	pMe->m_pImageSelIcon[4] = NULL;
+	pMe->m_pImageSelIcon[5] = NULL;
+	pMe->m_pImageIcon[1] = NULL;
+	pMe->m_pImageIcon[2] = NULL;
+	pMe->m_pImageIcon[3] = NULL;
+	pMe->m_pImageIcon[4] = NULL;
+	pMe->m_pImageIcon[5] = NULL;
 #endif
     pMe->m_pADNName = NULL;
     pMe->m_pADNNumber = NULL;

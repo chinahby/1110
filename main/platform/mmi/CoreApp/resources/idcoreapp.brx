@@ -160,6 +160,24 @@
 	<String Id="1053" Name="IDS_MSG_ACCEPTED">
 		<Text>The new PIN is accepted</Text>
 	</String>
+	<String Id="1056" Name="IDS_STR_BLACKBERRY_ONE">
+		<Text>Pesan</Text>
+	</String>
+	<String Id="1057" Name="IDS_STR_BLACKBERRY_TWO">
+		<Text>Kontak</Text>
+	</String>
+	<String Id="1058" Name="IDS_STR_BLACKBERRY_TRE">
+		<Text>Alarm</Text>
+	</String>
+	<String Id="1059" Name="IDS_STR_BLACKBERRY_FUR">
+		<Text>Kalkulator</Text>
+	</String>
+	<String Id="1060" Name="IDS_STR_BLACKBERRY_FIV">
+		<Text>Pemutar Musik</Text>
+	</String>
+	<String Id="1061" Name="IDS_STR_BLACKBERRY_SIX">
+		<Text>Radio FM</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

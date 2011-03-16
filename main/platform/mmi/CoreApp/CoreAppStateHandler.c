@@ -1220,6 +1220,9 @@ static NextFSMAction COREST_STARTUPANI_Handler(CCoreApp *pMe)
             {
             	if ( nviOldSimChoice.sim_select != OEMNV_SIMFORM_TWO )
                 {
+                	int i = (int)OEM_IsNetLock();
+                	MSG_FATAL("pMe->bunlockuim--=============%d,i=%d",pMe->bunlockuim,i,0);
+                	
 					if(!pMe->bunlockuim && IRUIM_IsCardConnected(pMe->m_pIRUIM) && OEM_IsNetLock())
 		            {
 		                pMe->m_eUIMErrCode = UIMERR_LOCKED;

@@ -321,6 +321,11 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe);
 //绘制墙纸
 static void CoreApp_DrawWallPaper(CCoreApp *pMe);
 
+#ifdef FEATURE_USES_BLACKBERRY
+//绘制黑莓IDLE
+static void CoreApp_DrawBlackBerry_IDLE(CCoreApp *pMe);
+static void CoreApp_InitdataBlackBerry(CCoreApp *pMe);
+#endif
 static boolean CoreApp_LaunchApplet(CCoreApp *pMe,  AEECLSID   classID);
 
 //static void CoreApp_UpdateAnnunciator(CCoreApp *pMe);
@@ -2786,7 +2791,12 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
     
         // 绘制当前日期、时间信息
         CoreApp_UpdateDateTime(pMe);
+        #ifndef FEATURE_USES_BLACKBERRY
         CoreApp_UpdateBottomBar(pMe);//didn't display the sos and key lock icon at the same time
+        #else
+        MSG_FATAL("CoreApp_DrawBlackBerry_IDLE...........", 0, 0,0);
+        CoreApp_DrawBlackBerry_IDLE(pMe);
+        #endif
         CoreApp_UpdateAnnunciator(pMe);  //解决背景播放换歌或按AVK_END键状态栏图标闪烁问题
                                          // 故把该句提到IDISPLAY_UpdateEx之前
     }   
@@ -2864,6 +2874,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
         {
 #ifdef FEATRUE_SUPPORT_G_SENSOR
             dword shake;
+#endif
+			#ifdef FEATURE_USES_BLACKBERRY
+            CoreApp_InitdataBlackBerry(pMe);
 #endif
 #ifndef CUST_EDITION
             if(!((MMI_GSENSOR_SHAKE_OPEN == mmi_g_sensor_state) 
@@ -3065,6 +3078,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					}
 				    return CoreApp_LaunchApplet(pMe, AEECLSID_TVAPP);;
                 case AVK_UP:
+                #ifdef FEATURE_USES_BLACKBERRY
+                	return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);
+                #else
                 	if(pMe->m_iskeypadtime)
 					{
 						return TRUE;
@@ -3076,6 +3092,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
                 	return CoreApp_LaunchApplet(pMe, AEECLSID_MEDIAGALLERY);
 #endif
+				#endif
                 case AVK_MESSAGE:
                 	if(pMe->m_iskeypadtime)
 					{
@@ -3088,6 +3105,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif
                 case AVK_DOWN:
 				{
+					#ifdef FEATURE_USES_BLACKBERRY
+                	return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SOUNDMENU);
+                	#else
 					if(pMe->m_iskeypadtime)
 					{
 						return TRUE;
@@ -3134,9 +3154,21 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 
                     return TRUE;
 #endif
+#endif
                 }
                 case AVK_LEFT:
                 {
+#ifdef FEATURE_USES_BLACKBERRY
+					if(pMe->m_CurMainItems>0)
+					{
+						pMe->m_CurMainItems --;
+					}
+					else
+					{
+						pMe->m_CurMainItems = 5;
+					}
+            		CoreApp_DrawBlackBerry_IDLE(pMe);
+#else
                 	if(pMe->m_iskeypadtime)
 					{
 						return TRUE;
@@ -3159,10 +3191,22 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
 #endif					                    
+#endif
                 }
-				
+				break;
                 case AVK_RIGHT:
 					{
+						#ifdef FEATURE_USES_BLACKBERRY
+							if(pMe->m_CurMainItems<(IDLE_BLACKBERRY_ITEMMAX-1))
+							{
+								pMe->m_CurMainItems ++;
+							}
+							else
+							{
+								pMe->m_CurMainItems = 0;
+							}
+		            		CoreApp_DrawBlackBerry_IDLE(pMe);
+						#else
 						if(pMe->m_iskeypadtime)
 						{
 							//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
@@ -3173,11 +3217,16 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);//
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
+							#endif
 						#endif
 					}
+					break;
                 case AVK_SELECT:
 		 		{
 				    int ret = 0;
+				    #ifdef FEATURE_USES_BLACKBERRY
+				    ret = CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+				    #else
 #if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR)
 					if(!pMe->m_iskeypadtime)
 					{
@@ -3246,11 +3295,48 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif
 #endif
+#endif
 				    return ret;
                 }
 
                 case AVK_INFO:
 					{
+#ifdef FEATURE_USES_BLACKBERRY
+						switch (pMe->m_CurMainItems)
+						{
+							case 0:
+								{
+									return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+								}
+								break;
+							case 1:
+								{
+									return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+								}
+								break;
+							case 2:
+								{
+									return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
+								}
+								break;
+							case 3:
+								{
+									return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
+								}
+								break;
+							case 4:
+								{
+									return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+								}
+								break;
+							case 5:
+								{
+									return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
+								}
+								break;
+						}
+						
+#else
 #ifdef FEATURE_VERSION_C01	
                      if(!pMe->m_iskeypadtime)
         			   {
@@ -3270,8 +3356,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #endif	
 
-						
+#endif
 					}
+					break;
 #if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined (FEATURE_VERSION_M8021)
 				case AVK_SOFT2:
 #else
@@ -5461,6 +5548,123 @@ static void CoreApp_PlayPwrOffAni(CCoreApp *pMe)
         (void)ISHELL_SendEvent( pMe->a.m_pIShell, AEECLSID_CORE_APP, EVT_DISPLAYDIALOGTIMEOUT, 0, 0);
     }
 }
+#ifdef FEATURE_USES_BLACKBERRY
+/*==============================================================================
+函数      :  CoreApp_DrawBlackBerry_IDLE
+
+说明      :  函数用于绘制黑莓IDLE, 绘制黑莓IDLE 后不会进行LCD的刷新,
+                  LCD的刷新由调用者管理。
+
+参数      :  pMe [In]: 指向Idle Applet对象结构的指针,该结构包含小程序的特定信息.
+       
+返回值 : 无。
+
+备注     :  WHEN                    WHO                WHAT                     WHY
+           2008-02-20              Yangdecai                 V1.6                    New Dev, for Wallpaper
+==============================================================================*/
+
+static void CoreApp_DrawBlackBerry_IDLE(CCoreApp *pMe)
+{
+	AEEImageInfo   ImgInfo;
+	AEERect oldClip;
+    AEERect clip;
+    AECHAR        szBlackBerryName[AEE_MAX_FILE_NAME] = {0};
+    //char               szNewBlackBerryName[AEE_MAX_FILE_NAME/*FILESPECLEN*/];
+    int i = 0;
+    uint8 Draw_x = 0;
+    uint8 Draw_y = SCREEN_HEIGHT - IDLE_BLACKBERRY_DRAWDY;
+    uint16 Resid = IDS_STR_BLACKBERRY_ONE +(pMe->m_CurMainItems);
+     //int                    nX = 0,  nY = 0;
+    if ( (NULL == pMe) || (IDD_IDLE != pMe->m_wActiveDlgID) )
+    {
+        return;
+    }
+    if(pWallPaper != NULL)
+    {
+    	AEEImageInfo m_ImageInfo;
+		IImage_GetInfo(pWallPaper,&m_ImageInfo);
+		MSG_FATAL("m_ImageInfo.cx=%d, m_ImageInfo.cy=%d", m_ImageInfo.cx, m_ImageInfo.cy, 0);
+        SETAEERECT(&clip, 0, Draw_y-20, SCREEN_WIDTH, IDLE_BLACKBERRY_DRAWDY+20); 
+        IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);
+        IDISPLAY_SetClipRect( pMe->m_pDisplay, &clip);
+        MSG_FATAL("clip.x=%d, clip.y=%d,pMe->m_rc.dx=%d", clip.x, clip.y, pMe->m_rc.dx);
+        IIMAGE_SetOffset( pWallPaper, ( m_ImageInfo.cx -  SCREEN_WIDTH)/2,(Draw_y-20)-( pMe->m_rc.dy - m_ImageInfo.cy)/2);
+        //IIMAGE_SetOffset( pWallPaper, 0,MUSIC_WIDTH);
+        MSG_FATAL("clip.dx=%d, clip.dy=%d", clip.dx, clip.dy, 0);
+		MSG_FATAL("pMe->m_rc.dy=%d", pMe->m_rc.dy,0,0);
+        IIMAGE_SetDrawSize( pWallPaper, clip.dx,clip.dy);
+        IIMAGE_Draw( pWallPaper, 0,Draw_y-20);
+        IDISPLAY_SetClipRect( pMe->m_pDisplay,&oldClip);
+        IIMAGE_SetOffset( pWallPaper, 0,0);
+        //IIMAGE_SetDrawSize( pWallPaper, pMe->m_rc.dx,pMe->m_rc.dy);
+        IIMAGE_SetDrawSize( pWallPaper, m_ImageInfo.cx,m_ImageInfo.cy);
+        
+		
+    }
+    MEMSET( &ImgInfo, 0x00, sizeof(ImgInfo) );
+    MSG_FATAL("CoreApp_DrawBlackBerry_IDLE..................2",0,0,0);
+	for(i=0;i<IDLE_BLACKBERRY_ITEMMAX;i++)
+	{
+ 		IImage_GetInfo(pMe->m_pImageSelIcon[i],&ImgInfo);
+		if(pMe->m_CurMainItems == i)
+		{
+			IIMAGE_Draw(pMe->m_pImageSelIcon[i],
+	                    Draw_x, 
+	                    Draw_y);
+		}
+		else
+		{
+    		IIMAGE_Draw(pMe->m_pImageIcon[i],
+	                    Draw_x, 
+	                    Draw_y);
+    	}
+        Draw_x = Draw_x+ ImgInfo.cx;
+    }
+    ISHELL_LoadResString(pMe->a.m_pIShell, 
+                                            AEE_COREAPPRES_LANGFILE,
+                                            Resid,
+                                            szBlackBerryName,
+                                            AEE_MAX_FILE_NAME);
+    MSG_FATAL("CoreApp_DrawBlackBerry_IDLE..................",0,0,0);
+    /*
+    	IDISPLAY_DrawText(pMe->m_pDisplay, 
+                        AEE_FONT_BOLD, 
+                        szBlackBerryName,
+                        -1, 
+                        0, 
+                        Draw_y - 20, 
+                        NULL, 
+                        IDF_ALIGN_CENTER|IDF_TEXT_TRANSPARENT);
+                        */
+                                          
+     (void)DrawTextWithProfile(pMe->a.m_pIShell,
+	                              pMe->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              AEE_FONT_BOLD,
+	                              szBlackBerryName, -1,
+	                              0, Draw_y - 20,NULL, 
+	                              IDF_ALIGN_CENTER
+	                              | IDF_TEXT_TRANSPARENT);
+    IDisplay_Update(pMe->m_pDisplay);
+}
+static void CoreApp_InitdataBlackBerry(CCoreApp *pMe)
+{
+    MSG_FATAL("CoreApp_InitdataBlackBerry..................",0,0,0);
+	pMe->m_pImageIcon[0]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_1);
+	pMe->m_pImageSelIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_1);
+	pMe->m_pImageIcon[1]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_2);
+	pMe->m_pImageSelIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_2);
+	pMe->m_pImageIcon[2]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_3);
+	pMe->m_pImageSelIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_3);
+	pMe->m_pImageIcon[3]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_4);
+	pMe->m_pImageSelIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_4);
+	pMe->m_pImageIcon[4]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_5);
+	pMe->m_pImageSelIcon[4] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_5);
+	pMe->m_pImageIcon[5]    = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_6);
+	pMe->m_pImageSelIcon[5] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_6);
+}
+
+#endif
 
 /*==============================================================================
 函数      :  CoreApp_DrawWallPaper
@@ -6312,8 +6516,8 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
         
 		
     }
-    MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx/8, pMe->m_nLargeFontHeight, 0);
-    SETAEERECT(&rect, pMe->m_rc.dx/8, MUSIC_START_WIDTH, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
+    MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx/6, pMe->m_nLargeFontHeight, 0);
+    SETAEERECT(&rect, pMe->m_rc.dx/6, MUSIC_START_WIDTH, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
     IDISPLAY_SetColor(pMe->m_pDisplay,CLR_USER_TEXT,MAKE_RGB(60, 128, 196));
      // Display the string
      //dele by yangdecai 
@@ -6327,8 +6531,8 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               | IDF_ALIGN_MIDDLE 
                               | IDF_TEXT_TRANSPARENT);*/
    //bracket[0]=(AECHAR)']';
-   MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx*7/8, pMe->m_nLargeFontHeight, 0);
-   SETAEERECT(&rect, pMe->m_rc.dx*7/8, MUSIC_START_WIDTH, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
+   MSG_FATAL("rect.x=%d,w=%d", pMe->m_rc.dx*5/6, pMe->m_nLargeFontHeight, 0);
+   SETAEERECT(&rect, pMe->m_rc.dx*5/6, MUSIC_START_WIDTH, pMe->m_nLargeFontHeight, pMe->m_nLargeFontHeight);
     // Display the string
     //dele by yangdecai
    /*(void)DrawTextWithProfile(pMe->a.m_pIShell,
@@ -6341,12 +6545,12 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
                               | IDF_ALIGN_MIDDLE 
                               | IDF_TEXT_TRANSPARENT);*/
   MSG_FATAL("m_musicstl====%d",m_musicstl,0,0);
-  if(m_musicstl>(pMe->m_rc.dx*3/4-2*DISP_BLANK_WIDTH))
+  if(m_musicstl>(pMe->m_rc.dx*2/3-2*DISP_BLANK_WIDTH))
   {
-  	m_musicstl=(pMe->m_rc.dx*3/4-2*DISP_BLANK_WIDTH);
+  	m_musicstl=(pMe->m_rc.dx*2/3-2*DISP_BLANK_WIDTH);
   }
-  SETAEERECT(&rect, (pMe->m_rc.dx/8 /*((pMe->m_rc.dx*3/4)-m_musicstl)/2*/), MUSIC_START_WIDTH,(pMe->m_rc.dx*3/4), pMe->m_nLargeFontHeight);
-  MSG_FATAL("rect.x=%d,w=%d", (pMe->m_rc.dx/8 + pMe->m_nLargeFontHeight), (pMe->m_rc.dx*3/4 - 2*DISP_BLANK_WIDTH), 0);
+  SETAEERECT(&rect, (pMe->m_rc.dx/6 /*((pMe->m_rc.dx*3/4)-m_musicstl)/2*/), MUSIC_START_WIDTH,(pMe->m_rc.dx*2/3), pMe->m_nLargeFontHeight);
+  MSG_FATAL("rect.x=%d,w=%d", (pMe->m_rc.dx/6 + pMe->m_nLargeFontHeight), (pMe->m_rc.dx*2/3 - 2*DISP_BLANK_WIDTH), 0);
   #ifdef FEATURE_VERSION_MYANMAR
   {
 	  AECHAR M_usicname[128] = {0};
