@@ -2838,7 +2838,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 	//int i;
     CCoreApp *pMe = (CCoreApp *)pUser;
 #ifdef FEATURE_KEYGUARD	 
-    boolean  bData;
+    byte  bData;
 #endif
     if (NULL == pMe)
     {
@@ -2914,12 +2914,35 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 if ((ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)&&
                                     (pMe->m_wActiveDlgID == IDD_IDLE))
                 {
-                    (void)ISHELL_SetTimer(pMe->a.m_pIShell,
+                	switch(bData)
+                	{
+                		case 1:
+                		{
+                    		(void)ISHELL_SetTimer(pMe->a.m_pIShell,
                                     30*1000,
                                     CoreApp_TimeKeyguard,
                                     pMe);
+                        }
+                        break;
+                        case 2:
+                		{
+                    		(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+                                    120*1000,
+                                    CoreApp_TimeKeyguard,
+                                    pMe);
+                        }
+                        break;
+                        case 3:
+                		{
+                    		(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+                                    300*1000,
+                                    CoreApp_TimeKeyguard,
+                                    pMe);
+                        }
+                        break;
                     }
-                }
+                 }
+            }
             }
 #endif		
 #ifdef CUST_EDITION    

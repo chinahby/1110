@@ -961,14 +961,16 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
                         sizeof(WTitle));
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
-            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_ON, IDS_ON, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AKG_30SEC, IDS_AKG_30SEC, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AKG_2MIN, IDS_AKG_2MIN, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AKG_5MIN, IDS_AKG_5MIN, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_OFF, IDS_OFF, NULL, 0);
             return TRUE;
 
         case EVT_DIALOG_START:
             {
                 uint16    ui16_return = IDS_OFF;
-                boolean   AKG = 0;
+                byte   AKG = 0;
 
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
                                       CFGI_KEY_LOCK_CHECK,
@@ -977,10 +979,15 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
 
                 switch (AKG)
                 {
-                    case 1:   //开
-                      ui16_return = IDS_ON;
+                    case 1:   //30秒
+                      ui16_return = IDS_AKG_30SEC;
                       break;
-                      
+                    case 2:    // 两分钟
+                      ui16_return = IDS_AKG_2MIN;
+                      break;
+                    case 3:    // 五分钟
+                      ui16_return = IDS_AKG_5MIN;
+                      break;
                    default:
                     case 0: //关
                       ui16_return = IDS_OFF;
@@ -1024,14 +1031,19 @@ static boolean   SecurityKeyLockDlgHandler(CSecurityMenu *pMe,
 
         case EVT_COMMAND:
             {
-                boolean AKG = 0;
+                byte AKG = 0;
 
                 switch (wParam)
                 {
-                    case IDS_ON:     //开
+                    case IDS_AKG_30SEC:     //30miao
                         AKG = 1;
                         break;
-                        
+                    case IDS_AKG_2MIN:     // 2minute
+                        AKG = 2;
+                        break;
+                    case IDS_AKG_5MIN:     //5minute
+                        AKG = 3;
+                        break;
                     case IDS_OFF:     //关
                         AKG = 0;
                         break;
