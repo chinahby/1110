@@ -6413,7 +6413,13 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
     if(pMe->m_pBigNumFont && pMe->m_pCurrNumFont == NULL)
     {
         pMe->m_pCurrNumFont = pMe->m_pBigNumFont;
-        pMe->m_nCurrNumHeight = pMe->m_large_Num_Height;
+        MSG_FATAL(" pMe->m_large_Num_Height=%d", pMe->m_large_Num_Height,0,0);
+        #ifdef FEATURE_VERSION_C306
+        pMe->m_nCurrNumHeight =30;// pMe->m_large_Num_Height;
+        #else
+        pMe->m_nCurrNumHeight =pMe->m_large_Num_Height;
+        #endif
+        
         nLineMax    = dialerRect.dy/pMe->m_nCurrNumHeight;
         pMe->m_nCurrLineSpace = (dialerRect.dy - pMe->m_nCurrNumHeight*nLineMax)/(nLineMax-1);
         nLine = 0;
