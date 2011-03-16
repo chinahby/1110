@@ -74,7 +74,12 @@ static int OEMFont_MeasureTextCursorPos(IFont *pMe, int x, const AECHAR *pcText,
 #define SMALL_FONT_SIZE     4
 
 #else
+#if defined(FEATURE_VERSION_C306)
+#define BIGNUMBER_FONT_SIZE 42
+#else
 #define BIGNUMBER_FONT_SIZE 32
+#endif
+
 #if defined(FEATURE_LANG_THAI)||defined(FEATURE_LANG_MYANMAR)
 #define NORMAL_FONT_SIZE    16
 #else
