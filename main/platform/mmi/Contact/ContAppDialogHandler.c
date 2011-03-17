@@ -11268,8 +11268,8 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
             rc = pMe->m_rc;
             rc.dy = devinfo.cyScreen;
             rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
-           // ITEXTCTL_SetProperties(pTextCtl, TP_MULTILINE | TP_FRAME | TP_FIXSETRECT | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_GRAPHIC_BG|TP_FOCUS_NOSEL);
-            ITEXTCTL_SetProperties(pTextCtl, TP_GRAPHIC_BG | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+            ITEXTCTL_SetProperties(pTextCtl, TP_MULTILINE | TP_FRAME | TP_FIXSETRECT | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_GRAPHIC_BG|TP_FOCUS_NOSEL);
+           // ITEXTCTL_SetProperties(pTextCtl, TP_GRAPHIC_BG | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
             ITEXTCTL_SetRect(pTextCtl, &rc);
                      
             (void)ITEXTCTL_SetInputMode(pTextCtl,
