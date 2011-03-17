@@ -417,7 +417,7 @@ enum { WMS_GW_USER_DATA_MAX     = 160 };
 #else
 
 // 255->500 值需大于 WMS_MAX_NV_CDMA_MESSAGES 
-enum { WMS_MESSAGE_LIST_MAX     = 500 };
+enum { WMS_MESSAGE_LIST_MAX     = 300 };
 #endif /* FEATURE_SMS_500_MESSAGES */
 #endif /*CUST_EDITION*/
 

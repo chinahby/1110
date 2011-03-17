@@ -3653,6 +3653,7 @@ void Appscommon_ResetBackground(IDisplay *pDisplay, IImage *BgImage, RGBVAL BgCo
         IDisplay_SetClipRect(pDisplay, rect);
         IImage_Draw(BgImage, x, y);
         IDisplay_SetClipRect(pDisplay, &oldClip);
+        IDisplay_FillRect(pDisplay, rect, BgColor);
     }
     else
     {
