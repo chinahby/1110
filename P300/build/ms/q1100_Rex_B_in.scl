@@ -42,8 +42,8 @@ MSM_NOTPAGED +0
   AMSS_IMEM_VEC_TBL  0x58000000  0x17FFF
   {
     boot_vectors.o (Int_Vect)
-    GreyBit*.o(+RO)
     GlobalIMEM.o(+ZI)
+    *_nzi.o (+ZI)
   }
 }
 
@@ -180,7 +180,6 @@ DATA_NOTUSED_NOTPAGED +0x0
 
   UNINIT_RAM +0x0
   {
-    *_nzi.o (+ZI)
     GlobalData.o(+ZI)
   }
 }

@@ -14371,7 +14371,9 @@ static boolean IDD_SELECTFROMOPT_Handler(void   *pUser,
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_CONTACTS);
             MENU_ADDITEM(pMenu, IDS_GROUPLIST);
+            #if 0
             MENU_ADDITEM(pMenu, IDS_RECENT_CALLS);
+            #endif
             
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetPopMenuRect(pMenu);

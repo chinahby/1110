@@ -22,7 +22,6 @@ WMSE_SOURCES= wms.c \
               wmscm_gw.c \
               wmsdbg.c \
               wmsdc.c \
-              wmsdiag.c \
               wmsmsg.c \
               wmsnv.c \
               wmsruim.c \

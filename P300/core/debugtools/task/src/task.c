@@ -255,7 +255,9 @@ rex_stack_word_type sbcenc_stack [SBCENC_STACK_SIZ];/* Stack for SBCENC task. */
 ---------------------------------------------------------------------------*/
 
 rex_tcb_type        nv_tcb;                      /* TCB for NV task.       */
+#ifndef CUST_EDITION
 rex_stack_word_type nv_stack [NV_STACK_SIZ];     /* Stack for NV task.     */
+#endif
 
 /*---------------------------------------------------------------------------
 
@@ -478,7 +480,9 @@ rex_stack_word_type ui_stack [UI_STACK_SIZ];     /* Stack for UI Task.     */
 
 #if defined(FEATURE_CDSMS) || defined(FEATURE_GWSMS)
 rex_tcb_type        wms_tcb;                     /* TCB for WMS task.  */
+#ifndef CUST_EDITION
 rex_stack_word_type wms_stack [WMS_STACK_SIZ]; /* Stack for WMS Task.*/
+#endif
 #endif /* FEATURE_CDSMS || FEATURE_GWSMS */
 
 /*---------------------------------------------------------------------------

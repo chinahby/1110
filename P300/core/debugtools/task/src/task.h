@@ -1652,7 +1652,7 @@ extern rex_tcb_type           dbgr_tcb;
  #define  UI_STACK_SIZ   ((1024 * 64)/sizeof(rex_stack_word_type))
 #else
 #ifdef CUST_EDITION
- #define  UI_STACK_SIZ   (8192*4*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
+ #define  UI_STACK_SIZ   (8192*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
 #else
  #define  UI_STACK_SIZ   (8192*STACK_SIZ_FACTOR/sizeof(rex_stack_word_type))
 #endif
@@ -1660,6 +1660,9 @@ extern rex_tcb_type           dbgr_tcb;
 
 extern rex_stack_word_type    ui_stack[ ];
 extern rex_tcb_type           ui_tcb;
+extern rex_stack_word_type    nv_stack[ ];
+extern rex_stack_word_type    wms_stack [];
+
 
 
 #if defined(FEATURE_TIMER_TASK)

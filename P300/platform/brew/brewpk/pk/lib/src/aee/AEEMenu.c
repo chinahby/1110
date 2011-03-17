@@ -4028,7 +4028,7 @@ Local Method - Draws a standard menu
 static void Menu_DrawSelectBar( CMenuCtl *pme, AEERect *prc, AEEFrameType ft)
 {
     AEERect oldClip;
-
+#ifndef FEATURE_USES_LOWMEM
     if (pme->m_dwOemProps & OEMMP_NODRAWSELECTBAR)
     {
         return;
@@ -4085,7 +4085,15 @@ static void Menu_DrawSelectBar( CMenuCtl *pme, AEERect *prc, AEEFrameType ft)
     
         IDISPLAY_SetClipRect( pme->m_pIDisplay, &oldClip);
     }
+    #else
+	//IDISPLAY_GetClipRect( pme->m_pIDisplay, &oldClip);
+    //IDISPLAY_SetClipRect( pme->m_pIDisplay, prc);
+    IDisplay_FillRect(pme->m_pIDisplay,prc,RGB_WHITE);
+	
+    //IDISPLAY_SetClipRect( pme->m_pIDisplay, &oldClip);
+    #endif
 }
+
 
 #endif //#if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 
@@ -4152,6 +4160,7 @@ static boolean Menu_Draw(CMenuCtl * pme)
         if(pme->m_dwOemProps & OEMMP_GRAPHIC_BG)
         {
             Menu_DrawBackGround(pme, &pme->m_rc);
+              
         }
         else
         {
@@ -4552,6 +4561,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
        if(pme->m_dwOemProps & OEMMP_GRAPHIC_BG)
        {
            Menu_DrawBackGround(pme, prc);
+           //IDISPLAY_FillRect( pd, prc, CLR_USER_BACKGROUND); 
        }
        else if(!IS_PROP_SET( pme->m_dwProps, MP_TRANSPARENT_UNSEL))
         {
@@ -8363,6 +8373,7 @@ Draw menu background image
 ======================================================================*/
 static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
 {
+	AEERect oldClip = {0};
 #ifdef FEATURE_RANDOM_MENU_COLOR
 	#if 0
     if(pme->m_nRandomMenu != 0)
@@ -8380,6 +8391,7 @@ static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
     #endif
 #endif 
     {
+    #ifndef FEATURE_USES_LOWMEM
        if(pme->m_pBgImage == NULL)
        {
             if(STRLEN(pme->strBgImgResFile) != 0 && pme->nBgImgResID != 0)
@@ -8396,6 +8408,16 @@ static void Menu_DrawBackGround(CMenuCtl * pme, AEERect *pRect)
             }
        }
        Appscommon_ResetBackground(pme->m_pIDisplay, pme->m_pBgImage, pme->m_c.cBack, pRect, 0, 0);
+    #else
+    {
+    	
+        IDisplay_GetClipRect(pme->m_pIDisplay, &oldClip);
+        IDisplay_SetClipRect(pme->m_pIDisplay, pRect);
+        IDISPLAY_FillRect( pme->m_pIDisplay, &pme->m_rc, CLR_USER_BACKGROUND);
+        IDisplay_SetClipRect(pme->m_pIDisplay, &oldClip);
+        IDisplay_FillRect(pme->m_pIDisplay, pRect, pme->m_c.cBack);
+    }
+    #endif
     }
 }
 #ifdef FEATURE_MENUTITLE_AUTOSCROLL

@@ -398,7 +398,9 @@ void wms_init
   wms_ts_init();
 
 #ifdef FEATURE_WMS_DIAG
+#if 0
   wmsdiag_init();
+  #endif
 #endif /* FEATURE_WMS_DIAG */
   /* SIM & RUIM init will be done after full service is started */
 
