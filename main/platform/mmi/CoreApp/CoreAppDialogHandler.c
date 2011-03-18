@@ -3364,7 +3364,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                      if(!pMe->m_iskeypadtime)
         			   {
     					   AEE_CancelTimer(CoreApp_keypadtimer,pMe);
-    					   AEE_SetTimer(500,CoreApp_keypadtimer,pMe);
+    					   AEE_SetTimer(1000,CoreApp_keypadtimer,pMe);
     					   pMe->m_iskeypadtime = TRUE;
         			   }
                     
