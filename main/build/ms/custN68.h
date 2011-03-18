@@ -10,6 +10,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
+#define FEATURE_VERSION_N68
 #define FEATURE_VERSION_MYANMAR
 //#define FEATURE_DISABLE_UIMPRL
 #define FEATURE_IS683A_450M_SUPPORT
