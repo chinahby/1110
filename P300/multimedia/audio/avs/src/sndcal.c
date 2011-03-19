@@ -2123,16 +2123,16 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
 VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
   /* Internal CODEC - no pad values    */
-#ifdef CUST_EDITION
+#if 0 //def CUST_EDITION
   /*  rx				dtmf			pad 	   */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
-  {		      -800  , 		    -1400 ,  0 },
-  {		      -600  , 		    -1200 ,  0 },
-  {		      -400  , 		    -1000 ,  0 },
-  {			  -200  , 		     -800 ,  0 },
-  {		         0  , 		     -600 ,  0 },
-  {		       200  , 		     -400 ,  0 },
-  {		       400  , 		     -200 ,  0 }
+  {		      -1000  , 		    -1400 ,  0 },
+  {		      -800  , 		    -1200 ,  0 },
+  {		      -600  , 		    -1000 ,  0 },
+  {			  -400  , 		     -800 ,  0 },
+  {		      -200  , 		     -600 ,  0 },
+  {		         0  , 		     -400 ,  0 },
+  {		       200  , 		     -200 ,  0 }
 #else
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },

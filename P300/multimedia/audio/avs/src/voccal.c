@@ -11589,7 +11589,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal = {
   VOC_NS_ON,                     /* Noise suppressor enable */
   0x656F,                        /* Tx Voice Volume        */
   0x1000,                        /* Tx DTMF gain            */
-  0x5A67,                        /* CODEC Tx Gain           */
+  0x3000,                        /* CODEC Tx Gain           */
   0x4000,                        /* CODEC Rx gain           */
   0x400,                         /* CODEC sidetone gain     */
 #ifdef MSMAUD_PCM_DC_OFFSET
