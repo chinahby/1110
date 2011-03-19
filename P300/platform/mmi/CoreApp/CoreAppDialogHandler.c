@@ -2929,26 +2929,50 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             return TRUE;            
         }
-        #ifdef FEATURE_VERSION_HITZ181
+        
         case EVT_KEY_HELD:
-    		if(wParam == AVK_SPACE)
-            {
-            	boolean bData;
-            	#ifdef FEATURE_KEYGUARD
-        		if(!OEMKeyguard_IsEnabled())
-        		{
-        			(void) ICONFIG_GetItem(pMe->m_pConfig,
-                                CFGI_KEY_LOCK_CHECK/*CFGI_PHONE_KEY_LOCK_CHECK*/,
-                                &bData,
-                                sizeof(bData));
-        			if(bData)
-        			{
-                        CoreApp_TimeKeyguard(pMe);
-            		}
-        		}
+        #if defined(FEATURE_VERSION_HITZ181)
+			if(wParam == AVK_SPACE)
+	        {
+	        	boolean bData;
+	        	#ifdef FEATURE_KEYGUARD
+	    		if(!OEMKeyguard_IsEnabled())
+	    		{
+	    			(void) ICONFIG_GetItem(pMe->m_pConfig,
+	                            CFGI_KEY_LOCK_CHECK/*CFGI_PHONE_KEY_LOCK_CHECK*/,
+	                            &bData,
+	                            sizeof(bData));
+	    			if(bData)
+	    			{
+	                    CoreApp_TimeKeyguard(pMe);
+	        		}
+	    		}
 				#endif	
 				return TRUE;
-            }
+	        }
+         #elif defined(FEATURE_USES_LOWMEM)
+            if(wParam == AVK_DOWN)
+            {
+        		MSG_FATAL("in turnOnTorch",0,0,0);
+                if ( pMe->TorchOn == FALSE )
+                {
+                    pMe->TorchOn = TRUE;
+                    if (pMe->m_pBacklight)
+                    {
+                        IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+                        //IBACKLIGHT_Disable(pMe->m_pBacklight);
+                    }
+                }
+                else
+                {
+                    pMe->TorchOn = FALSE;
+                    if (pMe->m_pBacklight)
+                    {
+                        IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+                        //IBACKLIGHT_Disable(pMe->m_pBacklight);
+                    }
+                }
+           }
         #endif
                 
         case EVT_DIALOG_END:
