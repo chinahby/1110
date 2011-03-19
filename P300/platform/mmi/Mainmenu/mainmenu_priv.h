@@ -23,6 +23,8 @@
 #ifdef FEATRUE_SUPPORT_G_SENSOR
 #include "G_Sensor.h"
 #endif
+#include "AEEBacklight.h"
+#include "AEEConfig.h"
 
 
 
