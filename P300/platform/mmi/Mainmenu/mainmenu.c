@@ -387,7 +387,10 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     {    	
         return EFAILED;
     }
-
+	if( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BACKLIGHT, (void **)&pMe->m_pBacklight)!=AEE_SUCCESS)
+    {
+        return FALSE;
+    }
 	if (pMe->m_pIAnn != NULL)
 	{
 		IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
@@ -425,7 +428,11 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
         (void) IDISPLAY_Release(pMe->m_pDisplay);
         pMe->m_pDisplay = NULL;
     }
-	
+	if(pMe->m_pBacklight)
+    {
+        IBACKLIGHT_Release(pMe->m_pBacklight);
+        pMe->m_pBacklight=NULL;
+    }
 	if (pMe->m_pIAnn)
     {
         IANNUNCIATOR_Release(pMe->m_pIAnn);
@@ -654,7 +661,36 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
                 MainMenu_RunFSM(pMe);
             }
             return TRUE;
-            
+        case EVT_KEY_HELD:
+        	{
+        		#ifdef FEATURE_USES_LOWMEM
+	        	if((AVKType)wParam == AVK_INFO)
+	            {
+	                boolean TorchOn = FALSE;
+	                OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+	                if (TorchOn == FALSE )
+	                {
+	                    TorchOn = TRUE;
+	                    if (pMe->m_pBacklight)
+	                    {
+	                        IBACKLIGHT_TurnOnTorch(pMe->m_pBacklight);
+	                    }
+	                }
+	                else
+	                {
+	                    TorchOn = FALSE;
+	                    if (pMe->m_pBacklight)
+	                    {                           
+	                        IBACKLIGHT_TurnOffTorch(pMe->m_pBacklight);
+	                    }
+	                }
+	                OEM_SetConfig(CFGI_FLSHLITHG_STATUS,&TorchOn, sizeof(TorchOn));
+	                ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
+	                return TRUE;
+	            }
+	            #endif
+        	}
+        	return TRUE;
         case EVT_KEY:
 #if MIN_BREW_VERSION(3,0)
             // do not want to handle au
