@@ -422,10 +422,10 @@ static hs_to_aee_key_type hs_to_aee_tbl[] =
 	{HS_CLR_K,                      AVK_CLR,                        AVK_METHED_HOLD, FALSE, 0},
     {HS_SEL_K,                      AVK_SELECT,                     AVK_METHED_HOLD, FALSE, 0},
 
-    {HS_UP_K,                       AVK_UP,                         AVK_METHED_REPT, FALSE, 0},
-    {HS_DOWN_K,                     AVK_DOWN,                       AVK_METHED_REPT, FALSE, 0},
-    {HS_LEFT_K,                     AVK_LEFT,                       AVK_METHED_REPT, FALSE, 0},
-    {HS_RIGHT_K,                    AVK_RIGHT,                      AVK_METHED_REPT, FALSE, 0},
+    {HS_UP_K,                       AVK_UP,                         AVK_METHED_HOLD, FALSE, 0},
+    {HS_DOWN_K,                     AVK_DOWN,                       AVK_METHED_HOLD, FALSE, 0},
+    {HS_LEFT_K,                     AVK_LEFT,                       AVK_METHED_HOLD, FALSE, 0},
+    {HS_RIGHT_K,                    AVK_RIGHT,                      AVK_METHED_HOLD, FALSE, 0},
     {HS_VOL_DOWN_K,                 AVK_VOLUME_DOWN,                AVK_METHED_REPT, FALSE, 0},
     {HS_VOL_UP_K,                   AVK_VOLUME_UP,                  AVK_METHED_REPT, FALSE, 0},
     
