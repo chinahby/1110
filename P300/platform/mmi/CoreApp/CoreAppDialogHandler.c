@@ -2972,6 +2972,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         //IBACKLIGHT_Disable(pMe->m_pBacklight);
                     }
                 }
+                return TRUE;
            }
         #endif
                 
