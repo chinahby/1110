@@ -3112,6 +3112,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif
                 case AVK_DOWN:
 				{
+				#ifndef FEATURE_USES_LOWMEM
 					if(pMe->m_iskeypadtime)
 					{
 						return TRUE;
@@ -3158,6 +3159,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 
                     return TRUE;
 #endif
+#endif
+				return TRUE;
                 }
                 case AVK_LEFT:
                 {
