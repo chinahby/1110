@@ -89,7 +89,7 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #elif defined(FEATURE_DISP_160X128)
 
 #define IDLE_D_CLOCK_X 		5
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 #define IDLE_D_CLOCK_Y 		SCREEN_HEIGHT - BOTTOMBAR_HEIGHT - 15
 #else
 #define IDLE_D_CLOCK_Y 		25
@@ -99,7 +99,7 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #define RPLMN_Y				20
 
 #define DATA_X				5
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 #define DATA_Y				SCREEN_HEIGHT - BOTTOMBAR_HEIGHT - 15
 #else
 #define DATA_Y				36
@@ -2965,7 +2965,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             return TRUE;            
         }
-        #ifdef FEATURE_VERSION_HITZ181
+        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
         case EVT_KEY_HELD:
     		if(wParam == AVK_SPACE)
             {
@@ -2985,8 +2985,101 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				#endif	
 				return TRUE;
             }
+      	 #if defined(FEATURE_VERSION_MTM)
+	     if(wParam == AVK_SHIFT)
+            {
+            	byte     curProfile;
+			    byte     byte_return[PROFILENUMBER];
+			    byte     new_return;
+
+			    (void) ICONFIG_GetItem(pMe->m_pConfig,
+			                                CFGI_PROFILE_CUR_NUMBER,
+			                                &curProfile,
+			                                sizeof(curProfile));
+			    #if defined( FEATURE_VERSION_C306)
+			    if(curProfile == OEMNV_PROFILE_QUIETMODE)
+			    {
+			        curProfile = OEMNV_PROFILE_NORMALMODE;
+			        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
+			    }
+			    else
+			    {
+			        curProfile = OEMNV_PROFILE_QUIETMODE;
+			        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_SILENT);
+			    }
+			    #else
+			    if(curProfile == OEMNV_PROFILE_MEETING)
+			    {
+			        curProfile = OEMNV_PROFILE_NORMALMODE;
+			        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
+			    }
+			    else
+			    {
+			        curProfile = OEMNV_PROFILE_MEETING;
+			        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRATOR);
+			    }
+			    #endif
+			    ICONFIG_SetItem(pMe->m_pConfig,
+			                        CFGI_PROFILE_CUR_NUMBER,
+			                        &curProfile,
+			                        sizeof(curProfile));
+
+			    // 修改当前 响闹 模式
+			    (void) ICONFIG_GetItem(pMe->m_pConfig,
+			                                CFGI_PROFILE_ALERT_TYPE,
+			                                byte_return,
+			                                sizeof(byte_return)); 
+			    
+			    new_return = byte_return[curProfile];
+			    
+			    (void)ICONFIG_SetItem(pMe->m_pConfig,
+			                                CFGI_ALERT_TYPE,
+			                                &new_return,
+			                                sizeof(new_return));    
+
+			    // 修改短信提示方式
+			    (void) ICONFIG_GetItem(pMe->m_pConfig,
+			                                CFGI_PROFILE_SMS_RINGER,
+			                                byte_return,
+			                                sizeof(byte_return));   
+
+			    new_return = byte_return[curProfile];
+
+			    (void)ICONFIG_SetItem(pMe->m_pConfig,
+			                                CFGI_SMS_RINGER,
+			                                &new_return,
+			                                sizeof(new_return));   
+
+
+			    // 修改按键音
+			    (void) ICONFIG_GetItem(pMe->m_pConfig,
+			                                CFGI_PROFILE_BEEP_VOL,
+			                                byte_return,
+			                                sizeof(byte_return)); 
+
+			    new_return = byte_return[curProfile];
+
+			    (void)ICONFIG_SetItem(pMe->m_pConfig,
+			                                CFGI_BEEP_VOL,
+			                                &new_return,
+			                                sizeof(new_return));       
+
+			    // 修改未接来电提示音
+			    (void) ICONFIG_GetItem(pMe->m_pConfig,
+			                                CFGI_PROFILE_MISSED_CALL_ALERT,
+			                                byte_return,
+			                                sizeof(byte_return));
+
+			    new_return = byte_return[curProfile];
+
+			    (void)ICONFIG_SetItem(pMe->m_pConfig,
+			                                CFGI_MISSED_CALL_ALERT,
+			                                &new_return,
+			                                sizeof(new_return));     
+            	return TRUE;
+            }
         #endif
-                
+        #endif    
         case EVT_DIALOG_END:
             // 取消相关定时器			
             (void) ISHELL_CancelTimer(pMe->a.m_pIShell,
@@ -3110,7 +3203,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
 						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 					}
-#ifdef FEATURE_VERSION_HITZ181   //add by yangdecai
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)   //add by yangdecai
             	    return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #else
                 	return CoreApp_LaunchApplet(pMe, AEECLSID_MEDIAGALLERY);
@@ -3149,7 +3242,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 	#elif defined (FEATURE_VERSION_M8P)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
-	#elif defined (FEATURE_VERSION_HITZ181)
+	#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO); 
 	#else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
@@ -3208,7 +3301,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER); 
 #elif defined (FEATURE_VERSION_M8P)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
-#elif defined (FEATURE_VERSION_HITZ181)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
 #else
 					
@@ -3236,7 +3329,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 							return TRUE;
 						}
-						#ifdef FEATURE_VERSION_HITZ181
+						#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);//
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
@@ -4535,6 +4628,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
         }
         else
 #endif      
+		#ifdef FEATURE_VERSION_CO1
 		#ifdef FEATURE_DOUBLE_SIM_CARD
 		if(SimChoice.sim_select == AVK_SEND_TWO)
 		{
@@ -4575,6 +4669,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                   | IDF_TEXT_TRANSPARENT);
 			rc.y = rc.y - 16;
 		}
+		#endif
 		#endif
         (void)DrawTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
@@ -5076,7 +5171,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
         DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
                                   pMe->m_pDisplay,
                                   RGB_WHITE_NO_TRANS,
-                                  #ifdef FEATURE_VERSION_HITZ181
+                                  #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                                   18,
                                   #else
                                   12,
@@ -5359,7 +5454,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #ifdef FEATURE_KEYGUARD
     else if(OEMKeyguard_IsEnabled())
     {
-    	#ifndef FEATURE_VERSION_HITZ181
+    	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
     	eBBarType = BTBAR_UNLOCK_SOS;
     	#else
         eBBarType = BTBAR_UNLOCK;
@@ -5387,8 +5482,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		eBBarType = BTBAR_FNASRANI_FPORTAL;
 	#elif defined (FEATURE_FPT005)
 		eBBarType = BTBAR_CONTACTS_FPORTAL; //add by yangdecai
-	#elif defined (FEATURE_VERSION_HITZ181)
-		#ifdef FEATURE_VERSION_HITZ181
+	#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 	    if(!IRUIM_IsCardConnected(pMe->m_pIRUIM))
 	    {
 			eBBarType = BTBAR_MENU_SOS; //add by yangdecai
@@ -7049,7 +7144,7 @@ static void CoreApp_keypadtimer(void *pUser)
 #else
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
-#elif defined (FEATURE_VERSION_HITZ181)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined (FEATURE_VERSION_C01)
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
