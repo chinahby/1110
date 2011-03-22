@@ -9243,18 +9243,6 @@ static void CallApp_ShortcutQuiet(CCallApp *pMe)
                                 CFGI_PROFILE_CUR_NUMBER,
                                 &curProfile,
                                 sizeof(curProfile));
-    #if defined( FEATURE_VERSION_C306)
-    if(curProfile == OEMNV_PROFILE_QUIETMODE)
-    {
-        curProfile = OEMNV_PROFILE_NORMALMODE;
-        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
-    }
-    else
-    {
-        curProfile = OEMNV_PROFILE_QUIETMODE;
-        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_SILENT);
-    }
-    #else
     if(curProfile == OEMNV_PROFILE_MEETING)
     {
         curProfile = OEMNV_PROFILE_NORMALMODE;
@@ -9265,7 +9253,6 @@ static void CallApp_ShortcutQuiet(CCallApp *pMe)
         curProfile = OEMNV_PROFILE_MEETING;
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRATOR);
     }
-    #endif
     ICONFIG_SetItem(pMe->m_pConfig,
                         CFGI_PROFILE_CUR_NUMBER,
                         &curProfile,
@@ -9296,7 +9283,18 @@ static void CallApp_ShortcutQuiet(CCallApp *pMe)
                                 CFGI_SMS_RINGER,
                                 &new_return,
                                 sizeof(new_return));   
-
+    //修改来电话声音
+     (void) ICONFIG_GetItem(pMe->m_pConfig,
+                           CFGI_PROFILE_CALL_RINGER,
+                           byte_return,
+                           sizeof(byte_return));
+                           
+    new_return = byte_return[curProfile];
+    
+    (void)ICONFIG_SetItem(pMe->m_pConfig,
+                               CFGI_PROFILE_CALL_RINGER,
+                               &new_return,
+                               sizeof(new_return));
 
     // 修改按键音
     (void) ICONFIG_GetItem(pMe->m_pConfig,
