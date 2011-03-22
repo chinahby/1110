@@ -2265,7 +2265,7 @@ static void OEMALERT_StartRingerAlert(IALERT *pMe,uint32 id,ALERT_SND_TYPE type)
         pMe->m_ringEndVol = pMe->m_ringCurVol;
     }
     /*Only play for power on off snd*/     
-    pMe->m_snd_type = type;
+    type = pMe->m_snd_type;
     if(type == ALERT_POWER_SND)
     {
         alerttype = OEMNV_ALERTTYPE_RINGER;
