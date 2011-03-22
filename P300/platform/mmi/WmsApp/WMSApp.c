@@ -1436,10 +1436,16 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 	                        WmsApp_PlaySMSAlert(pMe, TRUE);
 	        				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
 	        				{
-	            					(void) ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
-									MOVE_TO_STATE(WMSST_WMSNEW)
-									pMe->m_eDlgReturn = DLGRET_CREATE;
-									CWmsApp_RunFSM(pMe);
+	            					//(void) ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+									//MOVE_TO_STATE(WMSST_WMSNEW)
+									//pMe->m_eDlgReturn = DLGRET_CREATE;
+									//CWmsApp_RunFSM(pMe);
+									 // 通知 CoreApp 需要进行短信提示
+	                				(void)ISHELL_PostEvent(pMe->m_pShell,
+	                                         AEECLSID_CORE_APP, 
+	                                         EVT_WMS_MSG_RECEIVED_MESSAGE,
+	                                         0, 
+	                                         0);
 									
 	        				}
 	        				else
