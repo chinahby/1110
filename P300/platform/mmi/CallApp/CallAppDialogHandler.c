@@ -179,6 +179,8 @@ static void CallApp_DrawDialerString(CCallApp *pMe,AECHAR const *dialStr);
 #endif
 //Converts  AVKType to the ASCII equivalent
 static char CallApp_AVKType2ASCII(AVKType key);
+static void CallApp_keypadtimer(void *pUser);
+static AECHAR CallApp_AVKSTAR_2ASCII(CCallApp *pMe);
 
 //Determines the current DTMF tone length
 static const DTMFToneDuration *CallApp_GetDTMFDuration(CCallApp *pMe);
@@ -1592,8 +1594,8 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         CALL_ERR("OK,it is repeat,don't process it ",0,0,0);
                         return TRUE;
                     }
-
                     szStr[0] = CallApp_AVKType2ASCII((AVKType)wParam);
+                   
 					if(pMe->m_bShift && (wParam == AVK_1))
 					{
 						szStr[0] = 'w';
@@ -5113,9 +5115,7 @@ static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
             {
                 //IIMAGE_SetParm(pMe->m_pConvImage, IPARM_ROP, AEE_RO_TRANSPARENT, 0); 
                 IIMAGE_Draw(pMe->m_pConvImage, CALL_TEXT_X, CALL_FIRST_LINE_Y);
-                //IIMAGE_Release(pImage);
-                //pImage = NULL;
-                //CALL_ERR("Draw Missed call image",0,0,0);
+                
             }
 #endif
         	//Secend line
@@ -6492,6 +6492,27 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
     }
 }
 #endif //#ifdef FEATURE_LARGE_DIALING_DIGITS
+static void CallApp_keypadtimer(void *pUser)
+{
+	CCallApp *pMe = (CCallApp *)pUser;
+	pMe->m_curpros = 0;
+	pMe->b_multenter = FALSE;
+}
+static AECHAR CallApp_AVKSTAR_2ASCII(CCallApp *pMe)
+{
+	if(pMe->m_curpros == 0)
+	{
+		return L'*';
+	}
+	if(pMe->m_curpros == 1)
+	{
+		return L'p';
+	}
+	if(pMe->m_curpros == 2)
+	{
+		return L'W';
+	}
+}
 
 /*=============================================================================
 FUNCTION: CallApp_AVKType2ASCII
@@ -10229,6 +10250,88 @@ if(wp == AVK_POUND)
 
 if(wp == AVK_STAR)
     {
+    #ifndef FEATURE_ALL_KEY_PAD
+       {
+       		AECHAR szStr;
+       		int len=0;
+       		len = WSTRLEN(pMe->m_DialString);
+        	AEE_CancelTimer(CallApp_keypadtimer,pMe);
+        	szStr = CallApp_AVKSTAR_2ASCII(pMe);
+        	if(pMe->m_curpros>0 ||(pMe->m_curpros==0 && pMe->b_multenter))
+        	{
+        		
+        		AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};
+        		AECHAR tempwStr = 0;
+       		    if (pMe->m_nCursorPos == 0)
+				{
+        			//(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPoS], &szStr);	    
+        			if(pMe->m_curpros == 0)
+					{
+						//return L'*';
+						WSTRCPY(&pMe->m_DialString[len-1], L"*");
+					}
+					if(pMe->m_curpros == 1)
+					{
+						//return L'p';
+						WSTRCPY(&pMe->m_DialString[len-1], L"p");
+					}
+					if(pMe->m_curpros == 2)
+					{
+						//return L'W';
+						WSTRCPY(&pMe->m_DialString[len-1], L"w");
+					}
+				}
+				else
+				{
+					//(void)WSTRCPY(wstrTemp, &pMe->m_DialString[len-pMe->m_nCursorPos]);
+        			//(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos-1], &szStr);
+        			//(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], wstrTemp);
+        			if(pMe->m_curpros == 0)
+					{
+						//return L'*';
+						//WSTRCPY(&pMe->m_DialString[len-1], L"*");
+						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'*';
+					}
+					if(pMe->m_curpros == 1)
+					{
+						//return L'p';
+						//WSTRCPY(&pMe->m_DialString[len-1], L"p");
+						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'p';
+					}
+					if(pMe->m_curpros == 2)
+					{
+						//return L'W';
+						//WSTRCPY(&pMe->m_DialString[len-1], L"w");
+						pMe->m_DialString[len-pMe->m_nCursorPos-1] = L'w';
+					}
+				}	
+        	}
+        	else
+        	{
+        		AECHAR wstrTemp[MAX_SIZE_DIALER_TEXT] = {0};
+        		if (pMe->m_nCursorPos == 0)
+				{
+        			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], L"*");	               
+				}
+				else
+				{
+					(void)WSTRCPY(wstrTemp, &pMe->m_DialString[len-pMe->m_nCursorPos]);
+        			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos], L"*");
+        			(void)WSTRCPY(&pMe->m_DialString[len-pMe->m_nCursorPos+1], wstrTemp);
+				}
+        	}
+        	if(pMe->m_curpros<2)
+        	{
+        		pMe->m_curpros ++;
+        	}
+        	else
+        	{
+        		pMe->m_curpros = 0;
+        	}
+        	pMe->b_multenter = TRUE;
+        	AEE_SetTimer(1000,CallApp_keypadtimer,pMe);
+        }
+        #else
         if((pMe->m_btime_out % MAX_COUNT_TO_CHANGE ) == 0)//need change
         {
             if((pMe->m_return_value == RETURN_ZERO)&&(pMe->m_btime_out!=0))
@@ -10294,6 +10397,7 @@ if(wp == AVK_STAR)
             }
         }
         pMe->m_btime_out ++;
+        #endif
     }
 }
 

@@ -872,6 +872,8 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_msg_text_id = 0;
     pMe->m_b_from_numedit = TRUE;
     pMe->m_b_draw_dot = TRUE;
+    pMe->m_curpros = 0;
+    pMe->b_multenter = FALSE;
 #ifdef FEATRUE_AUTO_POWER
     pMe->m_b_powerdown = FALSE;
 #endif

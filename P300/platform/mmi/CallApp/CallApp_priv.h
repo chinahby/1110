@@ -670,6 +670,8 @@ typedef struct _CCallApp
 	IVkeyCtl * m_pIVkeyCtl;
 #endif
     boolean  m_bShift;
+    uint16   m_curpros;
+    boolean  b_multenter;
 } CCallApp;
 
 /*==============================================================================
