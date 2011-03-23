@@ -2703,15 +2703,17 @@ void uisnd_vibrate(uint16 wDuration,
            
             
   #else 
+
   snd_freq_tone_start(SND_DEVICE_CURRENT,
-  					  SND_METHOD_RING,
-  					  175,
-  					  175,
-  					  (uint16)(1000),
-  					  (snd_apath_type)(SND_APATH_LOCAL),
-                  	  callback_ptr,
-                  	  client_data
-  					 );
+				   SND_METHOD_RING,
+				   175,
+				   175,
+				   (uint16)(1000),
+				   (snd_apath_type)(SND_APATH_LOCAL),
+				   callback_ptr,
+				   client_data
+				  );
+  					 
   #endif
   vibrator_on = TRUE;
 }

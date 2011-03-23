@@ -2744,9 +2744,57 @@ static void OEMALERT_HandleRingerAlertTimer(void *pUser)
         
         case OEMNV_ALERTTYPE_VIB:
             // Alternate between vibrating and not
-            vib = !vib;
-            if( vib == TRUE ) 
+            //vib = !vib;
+            //if( vib == TRUE ) 
             {
+            	#ifdef FEATURE_VERSION_C306
+            	OEMSound_Volume_Type     m_ringCurVol = OEMSOUND_4TH_VOL;
+            	AEESoundInfo         si; 
+			    OEMSound_Volume_Type vol;
+			    
+			    MEMSET(&si, 0, sizeof(si));
+			    vol = m_ringCurVol;
+			    if (OEMSOUND_ESCALATING_VOL == vol) 
+			    {
+			        vol = OEMSOUND_AVG_VOL;
+			    }
+			    
+			    si.eDevice = AEE_SOUND_DEVICE_HANDSET;
+			    si.eMethod = AEE_SOUND_METHOD_MIDI; 
+			    (void) ISOUND_Set(pMe->m_pSound, &si);
+			    ISOUND_SetVolume(pMe->m_pSound,
+			                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+			    
+			    si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
+			    si.eMethod = AEE_SOUND_METHOD_MIDI;
+			    (void) ISOUND_Set(pMe->m_pSound, &si);
+			    ISOUND_SetVolume(pMe->m_pSound,
+			                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+			    
+			    si.eDevice = AEE_SOUND_DEVICE_HANDSET;
+			    si.eMethod = AEE_SOUND_METHOD_RING;
+			    (void) ISOUND_Set(pMe->m_pSound, &si);
+			    ISOUND_SetVolume(pMe->m_pSound,
+			                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+			    
+			    si.eDevice = AEE_SOUND_DEVICE_HANDSET;
+			    si.eMethod = AEE_SOUND_METHOD_VOICE;
+			    (void) ISOUND_Set(pMe->m_pSound, &si);
+			    ISOUND_SetVolume(pMe->m_pSound,
+			                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+			    
+			    si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
+			    si.eMethod = AEE_SOUND_METHOD_VOICE;
+			    (void) ISOUND_Set(pMe->m_pSound, &si);
+			    ISOUND_SetVolume(pMe->m_pSound,
+			                    GET_ISOUND_VOL_LEVEL((uint8) vol));
+			    
+			    si.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;
+			    si.eMethod = AEE_SOUND_METHOD_RING;
+			    (void) ISOUND_Set(pMe->m_pSound, &si);
+			    ISOUND_SetVolume(pMe->m_pSound,
+			                    GET_ISOUND_VOL_LEVEL((uint8) vol));  
+                #endif
                 ISOUND_Vibrate(pMe->m_pSound,TIME_MS_RINGERVIBRATE_DURATION);
             }
             break;
