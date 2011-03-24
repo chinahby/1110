@@ -1662,6 +1662,7 @@ extern rex_stack_word_type    ui_stack[ ];
 extern rex_tcb_type           ui_tcb;
 extern rex_stack_word_type    nv_stack[ ];
 extern rex_stack_word_type    wms_stack [];
+extern rex_stack_word_type    cm_stack [];     /* Stack for CM Task.     */
 
 
 

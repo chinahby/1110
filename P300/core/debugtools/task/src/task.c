@@ -379,7 +379,9 @@ rex_stack_word_type qdiag_stack [QDIAG_STACK_SIZ]; /* Stack for QDIAG Task. */
 
 #ifdef FEATURE_CM
 rex_tcb_type        cm_tcb;                      /* TCB for CM task.       */
+#ifndef FEATURE_USES_LOWMEM
 rex_stack_word_type cm_stack [CM_STACK_SIZ];     /* Stack for CM Task.     */
+#endif
 #endif /* FEATURE_CM */
 
 #ifdef FEATURE_BT
