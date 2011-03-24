@@ -15915,6 +15915,16 @@ boolean WMSAPPMN_TextSoftKeyDlgEventHandler(void *pUser, AEEEvent evt, uint16 w,
 		break;
 
         case AVK_SEND:
+        #if defined(FEATURE_VERSION_C01) 
+		{
+			nv_item_type	SimChoice;
+			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+			if(SimChoice.sim_select==AVK_SEND_TWO)
+			{
+				return TRUE;
+			}
+		}
+		#endif
           if(wDlgID == IDD_VOICEMAIL_NUMBER)
           {
             (void)WMSAPPMN_CallVoiceMailNum(pMe);
@@ -17858,6 +17868,16 @@ boolean WMSAPPMN_ViewSMSDlgEventHandler(void *pUser, AEEEvent evt, uint16 w, uin
       }
       else if (w == AVK_SEND)
       {
+      	#if defined(FEATURE_VERSION_C01) 
+		{
+			nv_item_type	SimChoice;
+			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+			if(SimChoice.sim_select==AVK_SEND_TWO)
+			{
+				return TRUE;
+			}
+		}
+		#endif
         if (WMSAPPMN_CallNumber(pMe) == FALSE)
         {
           if (!pMe->m_bSuspended)
@@ -18129,6 +18149,16 @@ boolean WMSAPPMN_ViewMsgInfoDlgEvtHandler(void *pUser, AEEEvent evt, uint16 w, u
       }
       else if (w == AVK_SEND)
       {
+      	#if defined(FEATURE_VERSION_C01) 
+		{
+			nv_item_type	SimChoice;
+			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+			if(SimChoice.sim_select==AVK_SEND_TWO)
+			{
+				return TRUE;
+			}
+		}
+		#endif
         if(pMe->m_modeControl == WMSAPP_MODE_CDMA)
         {
     #ifdef FEATURE_CDSMS
@@ -18471,6 +18501,16 @@ boolean WMSAPPMN_MsgDlgEventHandler(void *pUser, AEEEvent evt, uint16 w, uint32 
           ** the timer if this action is taken before the timer is being
           ** triggered.
           */
+           #if defined(FEATURE_VERSION_C01) 
+			{
+				nv_item_type	SimChoice;
+				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+				if(SimChoice.sim_select==AVK_SEND_TWO && w == AVK_SEND)
+				{
+					return TRUE;
+				}
+			}
+			#endif
           (void)ISHELL_CancelTimer(pMe->a.m_pIShell, (PFNNOTIFY) WMSAPPMN_EndDlg, pMe);
           (void)WMSAPPMN_EndDlg(pMe);
           return TRUE;

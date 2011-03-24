@@ -1530,7 +1530,16 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                     {
                         CtlAddItem ai;
                         uint16   wID;
-                        
+                        #if defined(FEATURE_VERSION_C01) 
+						{
+							nv_item_type	SimChoice;
+							OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+							if(SimChoice.sim_select==AVK_SEND_TWO)
+							{
+								return TRUE;
+							}
+						}
+						#endif
                         wID = IMENUCTL_GetSel(pMenu);
                         if (IMENUCTL_GetItem(pMenu, wID, &ai))
                         {
@@ -1761,6 +1770,16 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
 						#endif
 						break;
                     case AVK_SEND:
+                    	#if defined(FEATURE_VERSION_C01) 
+						{
+							nv_item_type	SimChoice;
+							OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+							if(SimChoice.sim_select==AVK_SEND_TWO)
+							{
+								return TRUE;
+							}
+						}
+						#endif
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         return TRUE;
 
@@ -2118,6 +2137,16 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
 						#endif
 						break;
                     case AVK_SEND:
+	                    #if defined(FEATURE_VERSION_C01) 
+						{
+							nv_item_type	SimChoice;
+							OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+							if(SimChoice.sim_select==AVK_SEND_TWO)
+							{
+								return TRUE;
+							}
+						}
+						#endif
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         return TRUE;
 
@@ -2401,6 +2430,16 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
 						#endif
 						break;
                     case AVK_SEND:
+	                    #if defined(FEATURE_VERSION_C01) 
+						{
+							nv_item_type	SimChoice;
+							OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+							if(SimChoice.sim_select==AVK_SEND_TWO)
+							{
+								return TRUE;
+							}
+						}
+						#endif
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         return TRUE;
 
@@ -3640,6 +3679,16 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return TRUE;
                  // ÖØ²¦
                 case AVK_SEND:
+                	  #if defined(FEATURE_VERSION_C01) 
+					{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select==AVK_SEND_TWO)
+						{
+							return TRUE;
+						}
+					}
+					#endif
                     if (pMe->m_bAcquiredTime && !pMe->m_bemergencymode)
                     {
                         IRecentCalls  *pRecentCall = NULL;
@@ -4628,7 +4677,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
         }
         else
 #endif      
-		#ifdef FEATURE_VERSION_CO1
+		#ifdef FEATURE_VERSION_C01
 		#ifdef FEATURE_DOUBLE_SIM_CARD
 		if(SimChoice.sim_select == AVK_SEND_TWO)
 		{
@@ -5016,7 +5065,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	    	rect.x += nNumberWidth + nOffset;
 	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_WHITE);
 	    	rect.x += nNumberWidth;
-	     rect.y = rect.y +12;
+	     	rect.y = rect.y +12;
 	    	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
@@ -5029,6 +5078,10 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	    	IDISPLAY_Update(pMe->m_pDisplay);
     	}
 		#else
+		#if defined(FEATURE_VERSION_C01)
+		rc.y = rc.y-14;
+		rc.x = rc.x-2;
+		#endif
 		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
@@ -5038,6 +5091,10 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              IDF_ALIGN_MIDDLE
 	                              | IDF_ALIGN_LEFT
 	                              | IDF_TEXT_TRANSPARENT);
+	    #if defined(FEATURE_VERSION_C01)
+	    rc.y = rc.y+14;
+	    rc.x = rc.x+2;
+		#endif
 	    #endif
         //IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 #endif        

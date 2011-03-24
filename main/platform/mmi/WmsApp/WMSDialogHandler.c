@@ -2107,7 +2107,16 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
 						wms_cache_info_node *pNode;
 						AECHAR  wstrNum[MAX_PH_DIGITS+1];
 						wms_message_index_type wIndex = 0;
-						
+						#if defined(FEATURE_VERSION_C01) 
+						{
+							nv_item_type	SimChoice;
+							OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+							if(SimChoice.sim_select==AVK_SEND_TWO)
+							{
+								return TRUE;
+							}
+						}
+						#endif
 						if (pMe->m_eMBoxType == WMS_MB_INBOX)
 						{				
 						
@@ -2531,6 +2540,16 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
 				//Add By zzg 2010_09_09
 				case AVK_SEND:	
 				{
+					#if defined(FEATURE_VERSION_C01) 
+					{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select==AVK_SEND_TWO)
+						{
+							return TRUE;
+						}
+					}
+					#endif
 					if (pMe->m_currState == WMSST_VIEWINBOXMSG)
                 	{                	
 #if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET) || defined(FEATURE_CARRIER_THAILAND_HUTCH)
@@ -12116,6 +12135,16 @@ static boolean IDD_EXTARCTEDITEMLIST_Handler(void *pUser,
                     return TRUE;
                     
                 case AVK_SEND:
+                	#if defined(FEATURE_VERSION_C01) 
+					{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select==AVK_SEND_TWO)
+						{
+							return TRUE;
+						}
+					}
+					#endif
                     if (pMe->m_ExtractType == EXTRACT_NUM)
                     {
                         int32     i;

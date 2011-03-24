@@ -517,7 +517,7 @@ typedef struct
    boolean       b_recentcall_lock;            //CFGI_RECENTCALL_LOCK_CHECK
    boolean       b_sms_lock;                   //CFGI_SMS_LOCK_CHECK
    boolean       b_calendar_lock;              //CFGI_CALENDAR_LOCK_CHECK
-   boolean       b_key_lock;                    //CFGI_KEY_LOCK_CHECK
+   byte          b_key_lock;                    //CFGI_KEY_LOCK_CHECK
    boolean       lock_ruim;  
    AEEConfigSIDNIDPairType lock_mccmnc[OEMNV_LOCK_MCCMNC_ARRSIZE];  
    byte          desktop_theme;                //CFGI_DESKTOP_THEME
@@ -1586,10 +1586,10 @@ static OEMConfigListType oemi_cache = {
    FALSE,                                           //CFGI_SMS_LOCK_CHECK
    FALSE,                                           //CFGI_CALENDAR_LOCK_CHECK
 
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
-   TRUE,											//CFGI_KEY_LOCK_CHECK			
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)
+   1,											//CFGI_KEY_LOCK_CHECK			
 #else
-   FALSE,                                           //CFGI_KEY_LOCK_CHECK
+   0,                                           //CFGI_KEY_LOCK_CHECK
 #endif   
 
    OEMNV_LOCK_RUIM,                                 // CFGI_LOCK_RUIM,   //type = boolean
@@ -2167,7 +2167,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_RECENTCALL_LOCK_CHECK, sizeof(boolean)),//type = boolena
    CFGTABLEITEM(CFGI_SMS_LOCK_CHECK, sizeof(boolean)),       //type = boolena
    CFGTABLEITEM(CFGI_CALENDAR_LOCK_CHECK, sizeof(boolean)),  //type = boolean
-   CFGTABLEITEM(CFGI_KEY_LOCK_CHECK, sizeof(boolean)),       //type = boolena
+   CFGTABLEITEM(CFGI_KEY_LOCK_CHECK, sizeof(byte)),       //type = byte
    CFGTABLEITEM(CFGI_LOCK_RUIM,  sizeof(boolean)),            //type = boolean
    CFGTABLEITEM(CFGI_LOCK_MCCMNC_LIST,  sizeof(oemi_cache.lock_mccmnc)), 
    
@@ -2462,10 +2462,10 @@ void OEM_RestoreFactorySetting( void )
 #ifdef CUST_EDITION
 #ifdef FEATURE_KEYGUARD	 
 
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
-	oemi_cache.b_key_lock       =  TRUE; 
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)
+	oemi_cache.b_key_lock       =  1; 
 #else
-    oemi_cache.b_key_lock       =  FALSE; 
+    oemi_cache.b_key_lock       =  0; 
 #endif
 
 #endif

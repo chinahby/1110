@@ -5229,6 +5229,16 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                     {
                         return TRUE;
                     }
+                    #if defined(FEATURE_VERSION_C01) 
+					{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select==AVK_SEND_TWO)
+						{
+							return TRUE;
+						}
+					}
+					#endif
                     pMe->m_wSelectCont = IMENUCTL_GetSel(pMenuCtl);
                     // store the menu select
                     PUSH_LISTMENU_SEL(pMe->m_wMainListSel);
@@ -7335,6 +7345,16 @@ static boolean  CContApp_HandleViewDlgEvent( CContApp  *pMe,
                 case AVK_INFO:
                 case AVK_SELECT:
                     {
+                    #if defined(FEATURE_VERSION_C01) 
+					{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select==AVK_SEND_TWO && wParam == AVK_SEND)
+						{
+							break;
+						}
+					}
+					#endif
                     if(pMe->m_wSelectOpts != IDI_OPTS_MENU_VIEW)
                     {
                         CtlAddItem ai;
@@ -9398,6 +9418,16 @@ static boolean  CContApp_HandleOneDialNumFldSelDlgEvent( CContApp  *pMe,
 				}
 				break;
                 case AVK_SEND:
+                	#if defined(FEATURE_VERSION_C01) 
+					{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select==AVK_SEND_TWO)
+						{
+							return TRUE;
+						}
+					}
+					#endif
                     FREEIF(pMe->m_pOneDial);
                     pMe->m_wSelectCont = IMENUCTL_GetSel(pMenuCtl);
                     pMe->m_pOneDial = WSTRDUP((AECHAR *)
@@ -12544,7 +12574,16 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
                 case AVK_SEND:
                 {
                     AECHAR* callNum;
-                    
+                    #if defined(FEATURE_VERSION_C01) 
+					{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select==AVK_SEND_TWO)
+						{
+							return TRUE;
+						}
+					}
+					#endif
                     if ( SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
                                                            AEECLSID_DIALER,
                                                            (void **)&pMe->m_pCallApp))
@@ -14402,6 +14441,16 @@ static boolean  CContApp_HandleNunFldDlgEvent( CContApp  *pMe,
                 case AVK_INFO:
                 case AVK_SELECT:
                     {
+                    #if defined(FEATURE_VERSION_C01) 
+					{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select==AVK_SEND_TWO)
+						{
+							break;
+						}
+					}
+					#endif
                     if(pMe->m_wSelectOpts != IDI_OPTS_MENU_VIEW)
                     {
                         CtlAddItem ai;
@@ -16043,7 +16092,16 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                     {
                         CtlAddItem ai;
                         uint16   wID;
-                        
+                        #if defined(FEATURE_VERSION_C01) 
+						{
+							nv_item_type	SimChoice;
+							OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+							if(SimChoice.sim_select==AVK_SEND_TWO)
+							{
+								return TRUE;
+							}
+						}
+						#endif
                         wID = IMENUCTL_GetSel(pMenu);
                         if (IMENUCTL_GetItem(pMenu, wID, &ai))
                         {

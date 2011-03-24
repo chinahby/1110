@@ -1232,6 +1232,16 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
 					#endif
 					break;
                 case AVK_SEND:
+                	#if defined(FEATURE_VERSION_C01) 
+					{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select==AVK_SEND_TWO)
+						{
+							return TRUE;
+						}
+					}
+					#endif
                     if(pMe->record_count>0)
                        return RecentCalls_SendCall(pMe,FALSE);
                     else
@@ -1956,7 +1966,17 @@ static boolean RecentCalls_DetailEvent(CRecentCalls *pMe,
 				}
 				#endif
 				break;
-            case AVK_SEND:    
+            case AVK_SEND:  
+            	#if defined(FEATURE_VERSION_C01) 
+				{
+					nv_item_type	SimChoice;
+					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					if(SimChoice.sim_select==AVK_SEND_TWO)
+					{
+						return TRUE;
+					}
+				}
+				#endif
                if(pMe->record_count>0)                               
                    return RecentCalls_SendCall(pMe,FALSE);
                else

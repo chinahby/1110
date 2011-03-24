@@ -4691,7 +4691,16 @@ static boolean  SecurityEmergencyCallHandler(CSecurityMenu *pMe,
                     {
                         CtlAddItem ai;
                         uint16   wID;
-                        
+                        #if defined(FEATURE_VERSION_C01) 
+						{
+							nv_item_type	SimChoice;
+							OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+							if(SimChoice.sim_select==AVK_SEND_TWO)
+							{
+								return TRUE;
+							}
+						}
+						#endif
                         wID = IMENUCTL_GetSel(pMenu);
                         if (IMENUCTL_GetItem(pMenu, wID, &ai))
                         {
