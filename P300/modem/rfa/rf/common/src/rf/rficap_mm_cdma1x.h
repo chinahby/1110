@@ -706,7 +706,7 @@ when       who     what, where, why
 */
 #ifdef T_QSC1100
 #define RF_HAS_BC0_NV_TABLE    /* US CELL        */
-#define RF_HAS_BC1_NV_TABLE    /* US PCS         */
+#undef RF_HAS_BC1_NV_TABLE    /* US PCS         */
 #else
 #define RF_HAS_BC0_NV_TABLE    /* US CELL        */
 #define RF_HAS_BC1_NV_TABLE    /* US PCS         */
@@ -935,8 +935,8 @@ when       who     what, where, why
 /* Supported/Tested Band Classes */
 #define RF_HAS_COMMON_NV_TABLE /* COMMON NV      */
 #define RF_HAS_BC0_NV_TABLE    /* US CELL        */
-#define RF_HAS_BC1_NV_TABLE    /* US PCS         */
-#define RF_HAS_BC5_NV_TABLE
+#undef RF_HAS_BC1_NV_TABLE    /* US PCS         */
+#undef RF_HAS_BC5_NV_TABLE
 
 /* Uunsupported BC */
 #undef RF_HAS_BC3_NV_TABLE

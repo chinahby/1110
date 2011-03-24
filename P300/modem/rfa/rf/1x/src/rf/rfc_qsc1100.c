@@ -619,7 +619,9 @@ PM_VREG_RFA2_ID
     /* 1xEV-DO PA Bypass with 0dB power hysteresis needs 5ms of timer hysteresis */
     /* The hardware resolution for the 1x PA timer is 1024 chips (833us) */
     rfnv_cdma1x_bc0_tbl.rfnv_1xEV_DO_pa_r_timer = 6; //5/.833
+    #ifndef FEATURE_USES_LOWMEM
     rfnv_cdma1x_bc1_tbl.rfnv_1xEV_DO_pa_r_timer = 6; //5/.833
+    #endif
     //#else
     //rfnv_cdma1x_bc0_tbl.rfnv_1x_pa_r_timer = 0; //40/1.25
     //rfnv_cdma1x_bc1_tbl.rfnv_1x_pa_r_timer = 0; //40/1.25
