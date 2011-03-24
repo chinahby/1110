@@ -2265,7 +2265,7 @@ static void OEMALERT_StartRingerAlert(IALERT *pMe,uint32 id,ALERT_SND_TYPE type)
         pMe->m_ringEndVol = pMe->m_ringCurVol;
     }
     /*Only play for power on off snd*/     
-    type = pMe->m_snd_type;
+    pMe->m_snd_type = type ;
     if(type == ALERT_POWER_SND)
     {
         alerttype = OEMNV_ALERTTYPE_RINGER;
@@ -2434,7 +2434,7 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
     ISHELL_CancelTimer(pMe->m_pIShell, OEMALERT_HandleStopMp3Timer, pMe);
     
     IBACKLIGHT_Enable(pMe->m_pBacklight);
-    pMe->m_snd_type = type;
+    pMe->m_snd_type =type;
     pMe->m_mp3Ring = TRUE;
     
     if(pMe->m_pMedia) 

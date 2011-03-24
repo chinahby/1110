@@ -10651,14 +10651,14 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
         ICONFIG_GetItem(pMe->m_pConfig, CFGI_PROFILE_CALL_RINGER, (void*)ringid, sizeof(ringid));
         if(ringid[profilenum].ringType == OEMNV_MID_RINGER)
         {
-            IALERT_StartRingerAlert_Ex(pMe->m_pAlert,(uint32)midID);
+            IALERT_StartRingerAlert(pMe->m_pAlert,(uint32)midID);
         }
         else if(ringid[profilenum].ringType == OEMNV_MP3_RINGER)
         {
             if ((IALERT_StartMp3Alert(pMe->m_pAlert, ringid[profilenum].szMusicname,ALERT_NORMAL_SND) != SUCCESS))
             {
                 MSG_ERROR("play mp3 player faile, to play mid alert.......",0,0,0);
-                IALERT_StartRingerAlert_Ex(pMe->m_pAlert, (uint32)midID);
+                IALERT_StartRingerAlert(pMe->m_pAlert, (uint32)midID);
             }
         } 
     }        
