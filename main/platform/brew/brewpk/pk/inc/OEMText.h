@@ -95,7 +95,7 @@ when       who     what, where, why
 #define FEATURE_T9_MT_ENGLISH
 #define FEATURE_T9_RAPID_ENGLISH
 
-#if defined (FEATURE_ALL_KEY_PAD)
+#if defined (FEATURE_ALL_KEY_PAD)|| defined(FEATURE_VERSION_C01)
 #define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #endif
 
@@ -322,6 +322,9 @@ enum
     OEM_MODE_T9_MT_ENGLISH 
     ,OEM_MODE_T9_MT_ENGLISH_LOW
     ,OEM_MODE_T9_MT_ENGLISH_UP
+    #ifdef FEATURE_VERSION_C01
+    ,OEM_MODE_T9_MT_CAP_LOWER
+    #endif
 #endif //FEATURE_T9_MT_ENGLISH
 
 #ifdef FEATURE_T9_RAPID_ENGLISH

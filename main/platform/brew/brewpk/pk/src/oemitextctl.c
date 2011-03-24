@@ -2943,7 +2943,11 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH  //add by yangdecai 2010-0909
 			case TEXT_MODE_T9_CAP_LOWER_ENGLISH:
 				{
+					#ifdef FEATURE_ALL_KEY_PAD
 					pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+					#else
+					pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+					#endif
 				}
 				break;
 #endif
@@ -4889,7 +4893,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
-            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);     
+			#ifdef FEATURE_VERSION_C01
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP); 
+            #else
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP); 
+            #endif
             (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
 	                          (void*)&is_Taimod,
 	                          sizeof(boolean));
@@ -4911,12 +4919,20 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH  //add by yangdecai 2010-0909
 		case OEM_MODE_T9_CAP_LOWER_ENGLISH:
 			MSG_FATAL("OEM_MODE_T9_CAP_LOWER_ENGLISH:::::::::::::::::::::::::::::",0,0,0);
-			wMode = AEE_TM_CAPLOWER;//´óÐ¡Ð´×ÖÄ¸ÊäÈëÄ£Ê½
+			#ifndef  FEATURE_ALL_KEY_PAD
+			wMode = AEE_TM_CAPLOWER;//Ð¡Ð´×ÖÄ¸ÊäÈëÄ£Ê½
+			OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+	        #else
+			wMode = AEE_TM_CAPLOWER;//´óÐ¡Ð´×ÖÄ¸ÊäÈëÄ£Ê
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+			#endif
+			
 			//OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);  
 			(void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
 	                          (void*)&is_Taimod,
 	                          sizeof(boolean));
+	        
 			break;
 #endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD
@@ -5309,9 +5325,11 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 #else
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 	pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_CAP_LOWER_ENGLISH;
+	#ifdef FEATURE_VERSION_C01
+	OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+	#endif
 #endif
 #endif
-
     pme->m_nCurrInputModeList[i++] = OEM_MODE_NUMBERS;  
 
 #endif // FEATURE_CARRIER_VENEZUELA_MOVILNET
@@ -5452,6 +5470,9 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
             {
             	#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
                 	pme->m_nCurrInputMode = OEM_MODE_T9_CAP_LOWER_ENGLISH;
+                	#ifdef FEATURE_VERSION_C01
+                	OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+                	#endif
                 #endif
             }
             else
@@ -5473,8 +5494,12 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
 	if(pme->m_nCurrInputMode == OEM_MODE_T9_CAP_LOWER_ENGLISH)
 	{
 		pme->m_nCurrInputMode = OEM_MODE_T9_CAP_LOWER_ENGLISH;
+		#ifdef FEATURE_VERSION_C01
+		OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+		#endif
 	}
 #endif
+
 #ifdef FEATURE_T9_MT_SPANISH
     if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_SPANISH_LOW) || (pme->m_nCurrInputMode == OEM_MODE_T9_MT_SPANISH_UP))
     {

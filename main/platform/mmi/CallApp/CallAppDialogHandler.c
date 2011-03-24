@@ -882,6 +882,16 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 				}
 			}
 #endif
+#if defined(FEATURE_VERSION_C01) 
+			{
+				nv_item_type	SimChoice;
+				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+				if(SimChoice.sim_select==AVK_SEND_TWO && AVK_SEND == (AVKType)wParam )
+				{
+					return TRUE;
+				}
+			}
+#endif
             if(AVK_SEND == (AVKType)wParam && !pMe->m_bprocess_held)
             {
             	MSG_FATAL("AVK_SEND....................................",0,0,0);
@@ -2024,10 +2034,24 @@ static boolean CallApp_Show_Ip_Number_DlgHandler(CCallApp *pMe,
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 				if(SimChoice.sim_select==AVK_SEND_TWO)
 				{
-					if(AVK_SEND == wParam || AVK_CAMERA == wParam)
+					#if defined(FEATURE_VERSION_C01)
+					if(AVK_CAMERA == wParam)
+					#else
+					if(AVK_CAMERA == wParam || AVK_SEND == wParam)
+					#endif
 	            	{
 	                	return CallApp_Process_Ip_Call_Key_Press(pMe,pMenu);
 	            	}
+				}
+			}
+#endif
+#if defined(FEATURE_VERSION_C01) 
+			{
+				nv_item_type	SimChoice;
+				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+				if(SimChoice.sim_select==AVK_SEND_TWO && AVK_SEND == wParam)
+				{
+					return TRUE;
 				}
 			}
 #endif
@@ -2035,7 +2059,7 @@ static boolean CallApp_Show_Ip_Number_DlgHandler(CCallApp *pMe,
             {
                 return CallApp_Process_Ip_Call_Key_Press(pMe,pMenu);
             }
-            
+
             return FALSE;
 
         case EVT_COMMAND:
@@ -3246,8 +3270,11 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 			if(SimChoice.sim_select==AVK_SEND_TWO)
 			{
-				
-				if(AVK_SEND == (AVKType)wParam || AVK_CAMERA== (AVKType)wParam )//CDG 3-way call need send fwi 
+				#ifdef FEATURE_VERSION_C01
+				if( AVK_CAMERA== (AVKType)wParam )//CDG 3-way call need send fwi 
+				#else
+				if( AVK_CAMERA== (AVKType)wParam || AVK_SEND == (AVKType)wParam)//CDG 3-way call need send fwi 
+				#endif
             	{
                 	AEECMCallID nCallID = 0;
 #ifdef FEATURE_ICM
@@ -3263,6 +3290,16 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 			}
 }
 			#endif
+#if defined(FEATURE_VERSION_C01) 
+			{
+				nv_item_type	SimChoice;
+				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+				if(SimChoice.sim_select==AVK_SEND_TWO && AVK_SEND == (AVKType)wParam)
+				{
+					return FALSE;
+				}
+			}
+#endif
             if(AVK_SEND == (AVKType)wParam)//CDG 3-way call need send fwi 
             {
                 AEECMCallID nCallID = 0;
@@ -3276,6 +3313,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     return FALSE;
                 }
             }
+
 #endif           
             break;
 
@@ -3374,7 +3412,16 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
                 case AVK_SEND:
                     // Make sure aren't waiting for a hard pause to be released...
-                    
+                    #if defined(FEATURE_VERSION_C01) 
+					{
+						nv_item_type	SimChoice;
+						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+						if(SimChoice.sim_select==AVK_SEND_TWO)
+						{
+							 return TRUE;
+						}
+					}
+					#endif
                     if (pMe->m_PauseString[0] != 0)
                     {
                       CallApp_SetPauseControl(pMe);
@@ -4746,19 +4793,31 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 			if(SimChoice.sim_select==AVK_SEND_TWO)
 			{
-            
-            	if ((AVKType)wParam!=AVK_SEND||(AVKType)wParam!=AVK_CAMERA)
+            	#ifdef FEATURE_VERSION_C01
+            	if ((AVKType)wParam!=AVK_CAMERA)
+            	#else
+            	if ((AVKType)wParam!=AVK_CAMERA || (AVKType)wParam !=AVK_SEND)
+            	#endif
             	{      
                 	pMe->m_b_press_1=FALSE ;
             	}
             }
 }
-            #else
-            if ((AVKType)wParam!=AVK_SEND)
-            {      
-                pMe->m_b_press_1=FALSE ;
-            }
             #endif
+            #if defined(FEATURE_VERSION_C01) 
+			{
+				nv_item_type	SimChoice;
+				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+				if(SimChoice.sim_select==AVK_SEND_TWO)
+				{
+					if ((AVKType)wParam !=AVK_SEND)
+    				{      
+        				pMe->m_b_press_1=FALSE ;
+    				}
+				}
+    		}
+            #endif
+            
             switch ((AVKType)wParam)
             {
 
@@ -4885,6 +4944,16 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 {
 #ifdef FEATURE_ICM
                     AEECMCallID nCallID ;
+                    #if defined(FEATURE_VERSION_C01) 
+					{
+					nv_item_type	SimChoice;
+					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
+					if(SimChoice.sim_select==AVK_SEND_TWO)
+					{
+						break;
+					}
+					}
+					#endif
                     MSG_FATAL("AVK_SEND_TWO...............33333",0,0,0);
                     if(pMe->m_b_press_1)
                     {
@@ -7358,7 +7427,10 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
         	   (wParam == AVK_RWD)||(wParam == AVK_LCTRL)||(wParam == AVK_SPACE)||
         	   (AVK_A <= wParam && wParam <= AVK_Z) ||(AVK_CLR < wParam && wParam <AVK_SOFT1 ))
                  && !bKeyguardEnabled)
-                 ||(wParam == AVK_SEND || wParam == AVK_CAMERA || wParam == AVK_MUSIC))
+                 #ifndef FEATURE_VERSION_C01
+                 ||(wParam == AVK_SEND
+                 #endif
+                 ||(wParam == AVK_CAMERA || wParam == AVK_MUSIC))
                  && (pMe->m_anykey_answer & 0x1))
         ) ||auto_answer ||wParam == AVK_SELECT)
     {
