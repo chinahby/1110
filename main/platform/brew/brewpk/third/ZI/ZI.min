@@ -1,0 +1,38 @@
+#-------------------------------------------------------------------------------
+# ZI input
+#-------------------------------------------------------------------------------
+ZI_INC = $(ZI_PATH)/adaptation/include
+ZI_PRO_INC = $(ZI_PATH)/project/HEXING53_09A_GEMINI/v7_official/inc
+ZI_SRC = $(ZI_PATH)/adaptation/src
+ZI_LIB = $(ZI_PATH)/project/HEXING53_09A_GEMINI/v7_official/lib
+
+#ZI_SOURCES = ZiEngine.c \
+             ZiLCEngine.c
+
+#ZI_OBJS :=  $(addprefix $(TARGETDIR)/, $(ZI_SOURCES:%.c=%.o))
+#$(ZI_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+
+vpath %.c $(ZI_SRC)
+
+ifeq ($(USE_ZI_SUPPORT_HE_AR),yes)
+ZILIBS :=\
+	$(T9_LIB)/T9_Core_730_ADS__t9rel_AC_1.o \
+	$(T9_LIB)/alearab.o \
+	$(T9_LIB)/alebidi.o \
+	$(T9_LIB)/alehebr.o \
+	$(T9_LIB)/alelib.o \
+	$(T9_LIB)/alemain.o \
+	$(T9_LIB)/alethai.o \
+	$(T9_LIB)/rbmpapi.o
+else
+ZILIBS :=\
+	$(ZI_LIB)/zi8clib.a \
+	$(ZI_LIB)/zishape.a
+endif
+
+INC  += $(ZI_INC)
+INC  += $(ZI_PRO_INC)
+#SRC  += $(ZI_SOURCES)
+#OBJECTS+=$(ZI_OBJS)
+THIRD_PARTY_LIBS += $(ZILIBS)
