@@ -3748,15 +3748,15 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
     	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
                 if(NV_LANGUAGE_ARABIC == language)
                 {
-    	    		return AEE_TM_ARABIC;
+    	    		ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
     	    	}
     	    	else if(NV_LANGUAGE_THAI== language)
     	    	{
-    	    		return AEE_TM_THAI;
+    	    		(void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_THAI);
     	    	}
     	    	else
     	    	{
-    	    		return AEE_TM_LETTERS;
+    	    		ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
     	    	}
     	    }
 			#endif
