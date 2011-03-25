@@ -989,7 +989,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             default:
                 break;
             }
-            #ifdef FEATURE_VERSION_HITZ181
+            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             #endif
             break;

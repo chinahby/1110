@@ -10066,7 +10066,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         }
 
         // # key for shortcut of quiet mode
-        else if ( (AVKType)wParam == AVK_POUND && WSTRLEN(pMe->m_DialString) == 1)
+        else if ( ((AVKType)wParam == AVK_POUND ) && WSTRLEN(pMe->m_DialString) == 1)
         {
             CallApp_ShortcutQuiet( pMe );
             ISHELL_CloseApplet(pMe->m_pShell, TRUE);

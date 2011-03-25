@@ -89,7 +89,7 @@
 #define OEMNV_CALLFORWARD_VOICEMAIL_ENABLE          "0"                         //CFGI_CALLFORWARD_VOICEMAIL_ENABLE 
 #define OEMNV_VOICEMAIL_NUMBER                      L"0"                         //NV_SMS_VM_NUMBER_I 
 
-#elif defined(FEATURE_VERSION_HITZ181)  //add by yangdecai 2010-10-08
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)  //add by yangdecai 2010-10-08
 //Operator parameters
 #define OEMNV_EMERGENCYNUM_TABLE_NUM                {{{"191",3},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0},{"",0}},1} //CFGI_EMERGENCYNUM_TABLE
 #define OEMNV_CALLFORWARD_BUSY_ENABLE               "*90"                       //CFGI_CALLFORWARD_BUSY_ENABLE

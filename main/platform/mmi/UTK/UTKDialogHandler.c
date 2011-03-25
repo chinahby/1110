@@ -678,7 +678,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
                 {
                     if (pgetinput->cmd_describe.command_restricttag & UIM_TK_GETINPUT_NUM_ALPHA)
                     { // 0 = 仅数字 (0 9， *， #， 和 +)；1 = 字母表集
-                    	#if defined(FEATURE_VERSION_HITZ181)
+                    	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                     	(void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_RAPID);
 						#elif defined(FEATURE_VERSION_M8P)
 						(void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_CAPLOWER);

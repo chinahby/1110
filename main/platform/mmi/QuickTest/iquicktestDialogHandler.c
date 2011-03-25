@@ -1450,7 +1450,7 @@ case AVK_CAMERA:
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181) ||defined(FEATURE_VERSION_MTM)
 			    case AVK_B:
 #else
 #ifdef FEATURE_NUM_KEY_MID
@@ -1472,7 +1472,7 @@ case AVK_CAMERA:
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181) ||defined(FEATURE_VERSION_MTM)
                 case AVK_N:
 #else
 #ifdef FEATURE_NUM_KEY_MID
@@ -1494,7 +1494,7 @@ case AVK_CAMERA:
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181) ||defined(FEATURE_VERSION_MTM)
                 case AVK_M:
 #else
 #ifdef FEATURE_NUM_KEY_MID
@@ -1516,7 +1516,7 @@ case AVK_CAMERA:
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181) ||defined(FEATURE_VERSION_MTM)
                 case AVK_RWD:
 #else
 				case AVK_M:
@@ -1534,7 +1534,7 @@ case AVK_CAMERA:
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181) ||defined(FEATURE_VERSION_MTM)
                  case AVK_MUTE:
 #else
 			     case AVK_RWD:
@@ -1566,7 +1566,7 @@ case AVK_CAMERA:
                     }
 					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                     break;
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_VERSION_MTM)
                   case AVK_Z:
 #else
 			      case AVK_SHIFT:
@@ -1613,7 +1613,7 @@ case AVK_CAMERA:
                      }
 					 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                      break;
-#ifdef FEATURE_VERSION_HITZ181
+#if defined( FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                  case AVK_SHIFT:
 #else
 				 case AVK_CAPLK:

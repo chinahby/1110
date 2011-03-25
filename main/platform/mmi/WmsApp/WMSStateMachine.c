@@ -2383,82 +2383,83 @@ static NextFSMAction WMSST_EDITTEMPLATE_Handler(WmsApp *pMe)
                     {// ÄÚÖÃ³£ÓÃÓï
                         switch (pMe->m_wCurTemplate)
                         {
-							#ifndef FEATURE_VERSION_HITZ181
-                            case IDS_TEMPLATE1:
-                            #else
+							//#ifndef FEATURE_VERSION_HITZ181
+							#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                             case IDS_TEMPLATEHITZ0:
+                            #else
+                            case IDS_TEMPLATE1:
                             #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START;
                                 break;
                                 
-                            #ifndef FEATURE_VERSION_HITZ181
-                            case IDS_TEMPLATE2:
-                            #else
+                            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                             case IDS_TEMPLATEHITZ1:
+                            #else
+                            case IDS_TEMPLATE2:
                             #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+1;
                                 break;
                                 
-                            #ifndef FEATURE_VERSION_HITZ181
-                            case IDS_TEMPLATE3:
-                            #else
+                            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                             case IDS_TEMPLATEHITZ2:
+                            #else
+                            case IDS_TEMPLATE3:
                             #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+2;
                                 break;
                                 
-                            #ifndef FEATURE_VERSION_HITZ181
-                            case IDS_TEMPLATE4:
-                            #else
+                            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                             case IDS_TEMPLATEHITZ3:
+                            #else
+                            case IDS_TEMPLATE4:
                             #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+3;
                                 break;
                                 
-                            #ifndef FEATURE_VERSION_HITZ181
-                            case IDS_TEMPLATE5:
-                            #else
+                            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                             case IDS_TEMPLATEHITZ4:
+                            #else
+                            case IDS_TEMPLATE5:
                             #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+4;
                                 break;
                                 
-                            #ifndef FEATURE_VERSION_HITZ181
-                            case IDS_TEMPLATE6:
-                            #else
+                            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                             case IDS_TEMPLATEHITZ5:
+                            #else
+                            case IDS_TEMPLATE6:
                             #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+5;
                                 break;
                                 
-                            #ifndef FEATURE_VERSION_HITZ181
-                            case IDS_TEMPLATE7:
-                            #else
+                            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                             case IDS_TEMPLATEHITZ6:
+                            #else
+                            case IDS_TEMPLATE7:
                             #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+6;
                                 break;
                                 
-                            #ifndef FEATURE_VERSION_HITZ181
-                            case IDS_TEMPLATE8:
-                            #else
+                            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                             case IDS_TEMPLATEHITZ7:
+                            #else
+                            case IDS_TEMPLATE8:
                             #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+7;
                                 break;
                                 
-                            #ifndef FEATURE_VERSION_HITZ181
-                            case IDS_TEMPLATE9:
-                            #else
+                            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                             case IDS_TEMPLATEHITZ8:
+                            #else
+                            case IDS_TEMPLATE9:
                             #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+8;
                                 break;
                                 
-                            #ifndef FEATURE_VERSION_HITZ181
-                            case IDS_TEMPLATE10:
-                            #else
+                            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                             case IDS_TEMPLATEHITZ9:
+                            #else
+                            case IDS_TEMPLATE10:
                             #endif
                                 pMe->m_pCurCltPhrase->msg_hdr.index = PHRASE_START+9;
                                 break;
@@ -2952,10 +2953,10 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
         case DLGRET_INSERTTEMPLATES:
             pMe->m_eInsertType = INSERT_EDITWMS;
             pMe->m_bTextFullAlert = FALSE;
-            #ifndef FEATURE_VERSION_HITZ181
-            pMe->m_wCurTemplate = IDS_TEMPLATE1;
-            #else
+            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
             pMe->m_wCurTemplate = IDS_TEMPLATEHITZ0;
+            #else
+            pMe->m_wCurTemplate = IDS_TEMPLATE1;
             #endif
             MOVE_TO_STATE(WMSST_TEMPLATES)
             return NFSMACTION_CONTINUE;
@@ -4038,10 +4039,10 @@ static NextFSMAction WMSST_DELMSGCONFIRM_Handler(WmsApp *pMe)
                     break;
                     
                 case ERASE_TEMPLATE_ONE: 
-                    #ifndef FEATURE_VERSION_HITZ181
-            		pMe->m_wCurTemplate = IDS_TEMPLATE1;
-            		#else
+                    #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
             		pMe->m_wCurTemplate = IDS_TEMPLATEHITZ0;
+            		#else
+            		pMe->m_wCurTemplate = IDS_TEMPLATE1;
             		#endif
                     MOVE_TO_STATE(WMSST_TEMPLATES)
                     break;

@@ -1471,7 +1471,7 @@ void FmRadio_SaveChannelList( CFmRadio* pMe)
 	{
 		byMax = MAX_FMRADIO_STORED_CHANNEL;
 	}
-	#ifdef FEATURE_VERSION_HITZ181
+	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
     if(pMe->byChannelMax <=0)   //add by yangdecai 
     {
     	byMax = MAX_FMRADIO_STORED_CHANNEL/2;

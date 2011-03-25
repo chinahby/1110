@@ -3755,6 +3755,19 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
 					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
 				}
 			}
+			#elif  defined(FEATURE_VERSION_MTM)
+			{
+         	nv_language_enum_type language;
+	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+            if(NV_LANGUAGE_THAI == language)
+            {
+         		(void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_THAI);
+         	}
+         	else
+         	{
+         		(void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_LETTERS);
+         	}
+         	}
 			#endif
 #endif
             ITEXTCTL_SetMaxSize(pTextCtl, MAX_INPUT_NAME_EN); 

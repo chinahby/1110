@@ -73,7 +73,7 @@ static void disp_ic_mdp_scrupdate(uint32 *scr, uint32 start_row, uint32 start_co
 
 static void disp_ic_init(void)
 {
-#ifdef FEATURE_OLD_ROTLCD
+#if 1
     LCD_WRITE_CMD(0x11); //Exit Sleep
     LCD_DELAY(120);
 

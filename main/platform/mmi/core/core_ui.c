@@ -868,7 +868,7 @@ static void KeyHoldCB(void *pUser)
 	if (TRUE == (OEMKeyguard_HandleEvent(EVT_KEY_HELD, ptbl->aee_vcode)))
 	{
 		
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 		if (AVK_SPACE == ptbl->aee_vcode)
 		{
 		
@@ -2173,7 +2173,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
         }   
 #endif
 
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 		if (wParam == AVK_SPACE)
 		{
 			return FALSE;
@@ -2213,7 +2213,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
         break;
 	case EVT_KEY:
 		
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 		if (wParam == AVK_SPACE)
 		{
 			return FALSE;

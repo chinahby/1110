@@ -20,7 +20,7 @@
 #define AUTO_NV_MIN_VERSION                 0x12
 #elif defined(FEATURE_VERSION_M8P)
 #define AUTO_NV_MIN_VERSION                 0x16
-#elif defined(FEATURE_VERSION_HITZ181)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 #define AUTO_NV_MIN_VERSION                 0x15
 #elif defined(FEATURE_VERSION_M8021)
 #define AUTO_NV_MIN_VERSION                 0x17

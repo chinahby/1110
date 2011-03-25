@@ -3401,7 +3401,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             {
                 ITEXTCTL_SetProperties( pSubject, TP_FIXOEM | TP_FIXSETRECT | TP_STARKEY_SWITCH|TP_FOCUS_NOSEL);
                 ITEXTCTL_SetProperties( pNote, TP_FIXOEM | TP_FIXSETRECT | TP_STARKEY_SWITCH);
-                #ifdef FEATURE_VERSION_HITZ181
+                #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                 (void)ITEXTCTL_SetInputMode( pNote, AEE_TM_RAPID);
                 (void)ITEXTCTL_SetInputMode( pSubject, AEE_TM_RAPID);
                 #else

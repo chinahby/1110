@@ -49,7 +49,7 @@
 #if defined(FEATURE_SUPPORT_ID)
 // 动画起点 Y 坐标
 #define SENDINGSMS_ANI_Y    10
-#elif defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_VERSION_C500BE)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) || defined(FEATURE_VERSION_C500BE)
 // 动画起点 Y 坐标
 #define SENDINGSMS_ANI_Y    10
 #else
@@ -8896,11 +8896,24 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         	}
 		         	}
 		         	#elif defined(FEATURE_VERSION_MYANMAR)
+		         	{
 		         	nv_language_enum_type language;
         	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
                     if(NV_LANGUAGE_MYANMAR == language)
                     {
 		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_MYANMAR);
+		         	}
+		         	else
+		         	{
+		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
+		         	}
+		         	}
+		         	#elif  defined(FEATURE_VERSION_MTM)
+		         	nv_language_enum_type language;
+        	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+                    if(NV_LANGUAGE_THAI == language)
+                    {
+		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_THAI);
 		         	}
 		         	else
 		         	{
@@ -9050,6 +9063,17 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         	{
 		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
 		         	}
+		         	}
+		         	#elif  defined(FEATURE_VERSION_MTM)
+		         	nv_language_enum_type language;
+        	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+                    if(NV_LANGUAGE_THAI == language)
+                    {
+		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_THAI);
+		         	}
+		         	else
+		         	{
+		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
 		         	}
 		         	#else
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
@@ -9776,19 +9800,7 @@ static boolean IDD_TEMPLATES_Handler(void   *pUser,
                 CtlAddItem  ai;
                 uint16  i;
                 wms_cache_info_node  *pnode = NULL;
-                #ifndef FEATURE_VERSION_HITZ181
-                uint16  nCmdID[PHRASE_MAX] = {IDS_TEMPLATE1,
-                                              IDS_TEMPLATE2,
-                                              IDS_TEMPLATE3,
-                                              IDS_TEMPLATE4,
-                                              IDS_TEMPLATE5,
-                                              IDS_TEMPLATE6,
-                                              IDS_TEMPLATE7,
-                                              IDS_TEMPLATE8,
-                                              IDS_TEMPLATE9,
-                                              IDS_TEMPLATE10,
-                                              0};
-                #else
+                #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                 uint16  nCmdID[PHRASE_MAX] = {IDS_TEMPLATEHITZ0,
                                               IDS_TEMPLATEHITZ1,
                                               IDS_TEMPLATEHITZ2,
@@ -9799,6 +9811,19 @@ static boolean IDD_TEMPLATES_Handler(void   *pUser,
                                               IDS_TEMPLATEHITZ7,
                                               IDS_TEMPLATEHITZ8,
                                               IDS_TEMPLATEHITZ9,
+                                              0};
+                #else
+                
+               uint16  nCmdID[PHRASE_MAX] = {IDS_TEMPLATE1,
+                                              IDS_TEMPLATE2,
+                                              IDS_TEMPLATE3,
+                                              IDS_TEMPLATE4,
+                                              IDS_TEMPLATE5,
+                                              IDS_TEMPLATE6,
+                                              IDS_TEMPLATE7,
+                                              IDS_TEMPLATE8,
+                                              IDS_TEMPLATE9,
+                                              IDS_TEMPLATE10,
                                               0};
                 #endif
                 wms_cacheinfolist_enumbegin(WMS_MB_TEMPLATE);

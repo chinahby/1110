@@ -402,7 +402,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_APPLICATION_LOCK, IDS_APPLICATION_LOCK, NULL, 0);
             #ifdef FEATURE_KEYGUARD
-            #ifdef FEATURE_VERSION_HITZ181
+            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
             IMENUCTL_AddItem(pMenu, AEE_APPSSECURITYMENU_RES_FILE, IDS_AUTOKEYGUARD_TITLE, IDS_AUTOKEYGUARD_TITLE, NULL, 0);
             #endif
             #endif
@@ -486,7 +486,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                     CLOSE_DIALOG(DLG_PHONEPASSWORD)
                     break;
                     
-                #ifdef FEATURE_VERSION_HITZ181
+                #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                 case IDS_AUTOKEYGUARD_TITLE:
                 	{
                 		pMe->m_lock_sel = SEC_SEL_KEY_LOCK;

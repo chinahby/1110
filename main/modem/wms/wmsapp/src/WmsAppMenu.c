@@ -1717,7 +1717,7 @@ boolean WMSAPPMN_GetNumber(CWMSAPP *pMe)
 #endif
       }
       /* Setting the Text Input Mode to Alphabets */
-      #ifdef FEATURE_VERSION_HITZ181
+      #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
       (void)ITEXTCTL_SetInputMode (pIDestAddr, AEE_TM_RAPID);
       #else
       (void)ITEXTCTL_SetInputMode (pIDestAddr, AEE_TM_LETTERS);
@@ -1731,7 +1731,7 @@ boolean WMSAPPMN_GetNumber(CWMSAPP *pMe)
       length = pMe->m_emailAddr.len;
 
       /* Setting the Text Input Mode to Alphabets */
-      #ifdef FEATURE_VERSION_HITZ181
+      #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
       (void)ITEXTCTL_SetInputMode (pIDestAddr, AEE_TM_RAPID);
       #else
       (void)ITEXTCTL_SetInputMode (pIDestAddr, AEE_TM_LETTERS);
@@ -7519,7 +7519,7 @@ boolean InitDestAddr(CWMSAPP *pMe, uint32 dw)
       break;
     case WMSAPP_MSG_TYPE_EMAIL:
     case WMSAPP_MSG_TYPE_NON_STD_EMAIL:
-    	#ifdef FEATURE_VERSION_HITZ181
+    	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
       	(void)ITEXTCTL_SetInputMode(pITextCtl, AEE_TM_RAPID);
       	#else
       	(void)ITEXTCTL_SetInputMode(pITextCtl, AEE_TM_LETTERS);
@@ -15863,7 +15863,7 @@ boolean WMSAPPMN_TextSoftKeyDlgEventHandler(void *pUser, AEEEvent evt, uint16 w,
     case EVT_DIALOG_START:
       if(wDlgID == IDD_TEMPLATE_ALPHA_TAG)
       {
-      	#ifdef FEATURE_VERSION_HITZ181
+      	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
       	wMode = AEE_TM_RAPID;
       	#else
         wMode = AEE_TM_LETTERS;
@@ -16228,7 +16228,7 @@ boolean WMSAPPMN_TestMenuDlgEventHandler(void *pUser, AEEEvent evt, uint16 w, ui
           {
             return FALSE;
           }
-		  #ifdef FEATURE_VERSION_HITZ181
+		  #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 		  (void)ITEXTCTL_SetInputMode(pITextCtl, AEE_TM_RAPID);
 		  #else
           (void)ITEXTCTL_SetInputMode(pITextCtl, AEE_TM_LETTERS);

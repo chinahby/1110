@@ -834,7 +834,7 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
         case AEE_ADDRFIELD_NOTES:
         case AEE_ADDRFIELD_ADDRESS:
         {
-        	#ifdef FEATURE_VERSION_HITZ181
+        	#if defined(FEATURE_VERSION_HITZ181)
         	 boolean m_Issetmod = FALSE;
         	(void)OEM_GetConfig(CFGI_LANGUAGE_MOD,
 	                          &m_Issetmod,
@@ -875,12 +875,25 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
         	    		return AEE_TM_LETTERS;
         	    	}
         	    }
+        	    #elif  defined(FEATURE_VERSION_MTM)
+        	    {
+	         	nv_language_enum_type language;
+    	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+                if(NV_LANGUAGE_THAI == language)
+                {
+	         		return AEE_TM_THAI;
+	         	}
+	         	else
+	         	{
+	         		return AEE_TM_LETTERS;
+	         	}
+	         	}
         	    #else
-            	#ifdef FEATURE_ALL_KEY_PAD
-	    		return AEE_TM_CAPLOWER;
-	    		#else
-	    		return AEE_TM_LETTERS;
-	    		#endif
+	            	#ifdef FEATURE_ALL_KEY_PAD
+		    		return AEE_TM_CAPLOWER;
+		    		#else
+		    		return AEE_TM_LETTERS;
+		    		#endif
             	#endif
         	#endif
         }

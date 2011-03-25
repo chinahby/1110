@@ -117,7 +117,7 @@ when       who     what, where, why
 #endif //FEATURE_LANG_HINDI
 
 #ifdef FEATURE_LANG_THAI
-#if defined(FEATURE_VERSION_HITZ181) || defined(FEATURE_VERSION_C01)
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) || defined(FEATURE_VERSION_C01)
 #define FEATURE_T9_MT_THAI
 #else
 #define FEATURE_T9_MT_THAI

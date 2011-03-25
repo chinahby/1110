@@ -4551,7 +4551,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
                {
                   pme->m_dlgID = IDD_VERSION_DIALOG;
                }
-#elif defined (FEATURE_VERSION_HITZ181)
+#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 			   if(STRNCMP(args->pszArgs,"*#888#",6) == 0)   //add by yangdecai  2010-11-16
                {
                   pme->m_dlgID = IDD_VERSION_DIALOG;

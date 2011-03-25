@@ -341,7 +341,7 @@ typedef struct _CSettingMenu
 #define MSSEC_PER_HOUR          3600000//(60*60*1000)  //一小时内的毫秒数
 #define MSSEC_PER_MIN           (60*1000)     //一分钟内的毫秒数
 
-#ifdef FEATURE_VERSION_HITZ181
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 #define CONTROL_RECT_START_X    45  //闹钟设置界面的控件开始位置
 #else
 #define CONTROL_RECT_START_X    40  //闹钟设置界面的控件开始位置
