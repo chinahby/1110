@@ -8650,9 +8650,11 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
         }
         pContext->pszContents = pNewContents;
      //   MSG_FATAL("T9_AW_DisplayText........11122",0,0,0);
-        if((TEXT_MODE_MULTITAP == OEM_TextGetCurrentMode((OEMCONTEXT)pContext) ||
-             TEXT_MODE_T9_CAP_LOWER_ENGLISH == OEM_TextGetCurrentMode((OEMCONTEXT)pContext))
-            &&(key >= AVK_0 && key <= AVK_9))
+        if((TEXT_MODE_MULTITAP == OEM_TextGetCurrentMode((OEMCONTEXT)pContext) 
+#ifdef FEATURE_T9_CAP_LOWER_ENGLISH
+        ||TEXT_MODE_T9_CAP_LOWER_ENGLISH == OEM_TextGetCurrentMode((OEMCONTEXT)pContext)
+#endif
+             )&&(key >= AVK_0 && key <= AVK_9))
         {
             if(pContext->dwProperties & TP_STARKEY_SWITCH)  // 字母输入法下按*键进行切换
             {
