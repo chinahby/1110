@@ -3742,32 +3742,23 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
             ITEXTCTL_SetProperties(pTextCtl, TP_STARKEY_SWITCH | TP_FIXOEM|TP_FOCUS_NOSEL |TP_GRAPHIC_BG);
             ITEXTCTL_SetRect(pTextCtl, &textrc);
             CContApp_DrawIMEIcon(pTextCtl, pMe->m_pDisplay);
-            #if defined(FEATURE_LANG_ARABIC)   //add by yangdecai
-            {
-				nv_language_enum_type language;
-				OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
-				if(NV_LANGUAGE_ARABIC == language)
-				{
-					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
-				}
-				else
-				{
-					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
-				}
-			}
-			#elif  defined(FEATURE_VERSION_MTM)
-			{
-         	nv_language_enum_type language;
-	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
-            if(NV_LANGUAGE_THAI == language)
-            {
-         		(void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_THAI);
-         	}
-         	else
-         	{
-         		(void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_LETTERS);
-         	}
-         	}
+            #if defined(FEATURE_LANG_ARABIC) ||defined(FEATURE_LANG_THAI)
+    	    {
+    	    	nv_language_enum_type language;
+    	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+                if(NV_LANGUAGE_ARABIC == language)
+                {
+    	    		return AEE_TM_ARABIC;
+    	    	}
+    	    	else if(NV_LANGUAGE_THAI== language)
+    	    	{
+    	    		return AEE_TM_THAI;
+    	    	}
+    	    	else
+    	    	{
+    	    		return AEE_TM_LETTERS;
+    	    	}
+    	    }
 			#endif
 #endif
             ITEXTCTL_SetMaxSize(pTextCtl, MAX_INPUT_NAME_EN); 
@@ -4971,9 +4962,27 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
             }
             #ifdef FEATURE_MYANMAR_INPUT_MOD
 			ITEXTCTL_SetInputMode( pTextCtl,AEE_TM_LETTERS);
-			//ITEXTCTL_SetActive(pTextCtl, FALSE);
+			ITEXTCTL_SetActive(pTextCtl, FALSE);
 			#else
-			ITEXTCTL_SetInputMode( pTextCtl,AEE_TM_CAPLOWER);
+			#if defined(FEATURE_LANG_ARABIC) ||defined(FEATURE_LANG_THAI)  //add by yangdecai
+            {
+				nv_language_enum_type language;
+				OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+				if(NV_LANGUAGE_ARABIC == language)
+				{
+					MSG_FATAL("seting........................AEE_TM_ARABIC",0,0,0);
+					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
+				}
+				else if(NV_LANGUAGE_THAI == language)
+				{
+					(void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_THAI);
+				}
+				else
+				{
+					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_CAPLOWER);
+				}
+         	}
+			#endif
 			#endif
             //IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);   
             // For redraw the dialog

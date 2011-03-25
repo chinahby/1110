@@ -849,13 +849,17 @@ AEETextInputMode CContApp_GetFldInputMode(AEEAddrFieldID wFldID)
 				return AEE_TM_RAPID;
 			 }
         	#else
-        	    #if defined(FEATURE_VERSION_C306)
+        	    #if defined(FEATURE_LANG_ARABIC) ||defined(FEATURE_LANG_THAI)
         	    {
         	    	nv_language_enum_type language;
         	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
                     if(NV_LANGUAGE_ARABIC == language)
                     {
         	    		return AEE_TM_ARABIC;
+        	    	}
+        	    	else if(NV_LANGUAGE_THAI== language)
+        	    	{
+        	    		return AEE_TM_THAI;
         	    	}
         	    	else
         	    	{

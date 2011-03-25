@@ -8882,19 +8882,23 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         }
 		         else
 		         {
-		         	#if defined(FEATURE_LANG_ARABIC)
-		         	{
-		         	nv_language_enum_type language;
-        	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
-                    if(NV_LANGUAGE_ARABIC == language)
-                    {
-		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_ARABIC);
-		         	}
-		         	else
-		         	{
-		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
-		         	}
-		         	}
+		         	#if defined(FEATURE_LANG_ARABIC) ||defined(FEATURE_LANG_THAI)
+        	    	{
+	        	    	nv_language_enum_type language;
+	        	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+	                    if(NV_LANGUAGE_ARABIC == language)
+	                    {
+	        	    		return AEE_TM_ARABIC;
+	        	    	}
+	        	    	else if(NV_LANGUAGE_THAI== language)
+	        	    	{
+	        	    		return AEE_TM_THAI;
+	        	    	}
+	        	    	else
+	        	    	{
+	        	    		return AEE_TM_LETTERS;
+	        	    	}
+        	    	}
 		         	#elif defined(FEATURE_VERSION_MYANMAR)
 		         	{
 		         	nv_language_enum_type language;
@@ -8908,17 +8912,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
 		         	}
 		         	}
-		         	#elif  defined(FEATURE_VERSION_MTM)
-		         	nv_language_enum_type language;
-        	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
-                    if(NV_LANGUAGE_THAI == language)
-                    {
-		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_THAI);
-		         	}
-		         	else
-		         	{
-		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
-		         	}
+		         	
 		         	#else
 					#ifdef FEATURE_ALL_KEY_PAD
         	    	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
@@ -9051,30 +9045,23 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         }
 		         else
 		         {
-					#if defined(FEATURE_LANG_ARABIC)
-					{
-					nv_language_enum_type language;
-        	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
-                    if(NV_LANGUAGE_ARABIC == language)
-                    {
-		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_ARABIC);
-		         	}
-		         	else
-		         	{
-		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
-		         	}
-		         	}
-		         	#elif  defined(FEATURE_VERSION_MTM)
-		         	nv_language_enum_type language;
-        	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
-                    if(NV_LANGUAGE_THAI == language)
-                    {
-		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_THAI);
-		         	}
-		         	else
-		         	{
-		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
-		         	}
+					#if defined(FEATURE_LANG_ARABIC) ||defined(FEATURE_LANG_THAI)
+        	    	{
+	        	    	nv_language_enum_type language;
+	        	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+	                    if(NV_LANGUAGE_ARABIC == language)
+	                    {
+	        	    		return AEE_TM_ARABIC;
+	        	    	}
+	        	    	else if(NV_LANGUAGE_THAI== language)
+	        	    	{
+	        	    		return AEE_TM_THAI;
+	        	    	}
+	        	    	else
+	        	    	{
+	        	    		return AEE_TM_LETTERS;
+	        	    	}
+        	    	}
 		         	#else
 					(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);
 					#endif

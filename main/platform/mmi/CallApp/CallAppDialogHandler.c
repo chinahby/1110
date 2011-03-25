@@ -7455,7 +7455,7 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
                  #endif
                  ||(wParam == AVK_CAMERA || wParam == AVK_MUSIC))
                  && (pMe->m_anykey_answer & 0x1))
-        ) ||auto_answer ||wParam == AVK_SELECT)
+        ) ||auto_answer ||wParam == AVK_SELECT))
     {
 #ifdef FEATURE_ICM
         if(AEE_SUCCESS != ICM_GetCallInfo(pMe->m_pICM, pMe->m_CallsTable->call_id, &ci, sizeof(AEECMCallInfo)))
