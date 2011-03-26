@@ -3748,7 +3748,7 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
     	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
                 if(NV_LANGUAGE_ARABIC == language)
                 {
-    	    		ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
+    	    		(void)ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
     	    	}
     	    	else if(NV_LANGUAGE_THAI== language)
     	    	{
@@ -3756,9 +3756,11 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
     	    	}
     	    	else
     	    	{
-    	    		ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
+    	    		(void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_LETTERS);
     	    	}
     	    }
+    	    #else
+	         		(void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_LETTERS);
 			#endif
 #endif
             ITEXTCTL_SetMaxSize(pTextCtl, MAX_INPUT_NAME_EN); 
@@ -4971,7 +4973,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 				if(NV_LANGUAGE_ARABIC == language)
 				{
 					MSG_FATAL("seting........................AEE_TM_ARABIC",0,0,0);
-					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
+					(void)ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_ARABIC);
 				}
 				else if(NV_LANGUAGE_THAI == language)
 				{
@@ -4979,9 +4981,11 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 				}
 				else
 				{
-					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
+					(void)ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
 				}
          	}
+         	#else
+         	(void)ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
 			#endif
 			#endif
             //IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);   
