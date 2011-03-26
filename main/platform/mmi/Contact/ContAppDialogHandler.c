@@ -4979,7 +4979,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 				}
 				else
 				{
-					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_CAPLOWER);
+					ITEXTCTL_SetInputMode( pTextCtl, AEE_TM_LETTERS);
 				}
          	}
 			#endif
