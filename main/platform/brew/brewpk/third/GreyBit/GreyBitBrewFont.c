@@ -446,9 +446,9 @@ FONT_NO_EXIST:
                         backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
                         backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
                         backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
-                        backR = (((foreR - backR) * (*sp))/256) + backR;
-                        backG = (((foreG - backG) * (*sp))/256) + backG;
-                        backB = (((foreB - backB) * (*sp))/256) + backB;
+                        backR = (((foreR - backR) * (*sp)) >> 8) + backR;
+                        backG = (((foreG - backG) * (*sp)) >> 8) + backG;
+                        backB = (((foreB - backB) * (*sp)) >> 8) + backB;
                         *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
                         break;
                     }
@@ -479,9 +479,9 @@ FONT_NO_EXIST:
                             backR = CGreyBit_COLORSCHEME565_GET_R(*dp);
                             backG = CGreyBit_COLORSCHEME565_GET_G(*dp);
                             backB = CGreyBit_COLORSCHEME565_GET_B(*dp);
-                            backR = (((foreR - backR) * (*sp))/256) + backR;
-                            backG = (((foreG - backG) * (*sp))/256) + backG;
-                            backB = (((foreB - backB) * (*sp))/256) + backB;
+                            backR = (((foreR - backR) * (*sp)) >> 8) + backR;
+                            backG = (((foreG - backG) * (*sp)) >> 8) + backG;
+                            backB = (((foreB - backB) * (*sp)) >> 8) + backB;
                             *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(backR, backG, backB);
                             break;
                         }
@@ -502,9 +502,9 @@ FONT_NO_EXIST:
                             *dp = cText;
                             break;
                         default:
-                            foreR = ((diffR * (*sp))/256) + backR;
-                            foreG = ((diffG * (*sp))/256) + backG;
-                            foreB = ((diffB * (*sp))/256) + backB;
+                            foreR = ((diffR * (*sp)) >> 8) + backR;
+                            foreG = ((diffG * (*sp)) >> 8) + backG;
+                            foreB = ((diffB * (*sp)) >> 8) + backB;
                             *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
                             break;
                         }
@@ -532,9 +532,9 @@ FONT_NO_EXIST:
                             *dp = cText;
                             break;
                         default:
-                            foreR = ((diffR * (*sp))/256) + backR;
-                            foreG = ((diffG * (*sp))/256) + backG;
-                            foreB = ((diffB * (*sp))/256) + backB;
+                            foreR = ((diffR * (*sp)) >> 8) + backR;
+                            foreG = ((diffG * (*sp)) >> 8) + backG;
+                            foreB = ((diffB * (*sp)) >> 8) + backB;
                             *dp = (unsigned short)CGreyBit_COLORSCHEME565_GET_RGB(foreR, foreG, foreB);
                             break;
                         }
