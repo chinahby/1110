@@ -7451,9 +7451,9 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
         	   (AVK_A <= wParam && wParam <= AVK_Z) ||(AVK_CLR < wParam && wParam <AVK_SOFT1 ))
                  && !bKeyguardEnabled)
                  #ifndef FEATURE_VERSION_C01
-                 ||(wParam == AVK_SEND
+                 ||(wParam == AVK_SEND)
                  #endif
-                 ||(wParam == AVK_CAMERA || wParam == AVK_MUSIC))
+                 ||((wParam == AVK_CAMERA || wParam == AVK_MUSIC))
                  && (pMe->m_anykey_answer & 0x1))
         ) ||auto_answer ||wParam == AVK_SELECT))
     {
