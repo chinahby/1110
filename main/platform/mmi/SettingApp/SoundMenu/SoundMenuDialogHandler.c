@@ -1184,6 +1184,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
             Sound_App_Add_Menu(pMenu,IDS_ITEM_OFF);
             Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_RINGER);
             Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIB);
+            #ifndef FEATURE_VERSION_C306
             Sound_App_Add_Menu(pMenu,IDS_ITEM_VIBRING);
 #ifdef FEATURE_CARRIER_THAILAND_CAT
             if(SET_CALLHINT == pMe->m_HintType)
@@ -1193,6 +1194,7 @@ static boolean  HandleHintDialogEvent(CSoundMenu *pMe,
 #else
             Sound_App_Add_Menu(pMenu,IDS_ALERTTYPE_VIBANDRING); 
 #endif
+			#endif
 
             return TRUE;
 
