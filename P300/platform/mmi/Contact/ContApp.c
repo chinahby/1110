@@ -2466,6 +2466,9 @@ static int IContApp_NumberLookup( IContApp   *pi,
     {
         return EFAILED;
     }
+    #ifndef FEATURE_OEMOMH
+    pMe->m_bADNRUIMSupport = TRUE;
+    #endif
     if (WSTRLEN(pNumber) <= 1)
     {
         // 小于3位的号码不查找
