@@ -3206,6 +3206,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_SELECT:
 		 		{
 				int ret = 0;
+				    if(!OEMKeyguard_IsEnabled())
+                    {
 					#if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR)
 					if(!pMe->m_iskeypadtime)
 					{
@@ -3303,7 +3305,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif
 #endif
 				  return ret;
+}
                 }
+			break;
 
                 case AVK_INFO:
 					{
@@ -3479,7 +3483,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             {
             	case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:
-#ifdef FEATURE_KEYGUARD
+
+                    return TRUE;
+
+                case AVK_SELECT:
+                    //return   CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
+                    #ifdef FEATURE_KEYGUARD
                     if(OEMKeyguard_IsEnabled())
                     {
                     	#ifndef FEATURE_VERSION_HITZ181
@@ -3489,10 +3498,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         #endif
                     }
 #endif
-                    return TRUE;
-
-                case AVK_SELECT:
-                    //return   CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
                     return TRUE;
                  // ÖØ²¦
                 case AVK_SEND:
