@@ -1561,7 +1561,9 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 						{
 						//#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
 						#if defined(FEATURE_DOUBLE_SHIFT_NOTEQUAL_W)
+							
 							pMe->m_bShift = FALSE;
+							
 						#else
 							if(pMe->m_bShift)
 							{
@@ -10328,7 +10330,7 @@ if(wp == AVK_POUND)
 
 if(wp == AVK_STAR)
     {
-    #ifndef FEATURE_ALL_KEY_PAD
+    #if 1//ndef FEATURE_ALL_KEY_PAD
        {
        		AECHAR szStr;
        		int len=0;

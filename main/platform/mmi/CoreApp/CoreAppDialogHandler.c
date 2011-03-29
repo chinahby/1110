@@ -5539,8 +5539,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 		eBBarType = BTBAR_FNASRANI_FPORTAL;
 	#elif defined (FEATURE_FPT005)
 		eBBarType = BTBAR_CONTACTS_FPORTAL; //add by yangdecai
-	#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
-		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+	#elif defined(FEATURE_VERSION_HITZ181)
+		#if defined(FEATURE_VERSION_HITZ181)
 	    if(!IRUIM_IsCardConnected(pMe->m_pIRUIM))
 	    {
 			eBBarType = BTBAR_MENU_SOS; //add by yangdecai
