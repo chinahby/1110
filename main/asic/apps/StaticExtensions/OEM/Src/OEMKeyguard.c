@@ -563,7 +563,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 
 //Add By zzg 2010_11_23
 #ifndef FEATURE_UNLOCK_KEY_SPACE		
-                case AVK_SELECT:
+                case AVK_CLR:
                     bDrawMessage = TRUE;
                     if (UNLOCKSTATE_RESET == sUnlockState)
                     {
@@ -880,7 +880,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
         //    db_put(DB_BACKLIGHT_LEVEL, &db_value);
         //}
         
-        if(wParam == AVK_CLR)
+        if(wParam == AVK_SELECT)
         {
             OEMPriv_ResumeBREW();
             return FALSE;            
@@ -895,7 +895,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
             }            
         }
         
-        if(wParam== AVK_CLR ||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
+        if(wParam== AVK_SELECT||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
         {        
             return FALSE;
         }

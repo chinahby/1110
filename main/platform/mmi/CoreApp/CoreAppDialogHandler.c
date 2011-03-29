@@ -3379,6 +3379,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 case AVK_SELECT:
 		 		{
 				    int ret = 0;
+				    if(!OEMKeyguard_IsEnabled())
+                    {
 				    #ifdef FEATURE_USES_BLACKBERRY
 				    ret = CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 				    #else
@@ -3451,7 +3453,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif
 #endif
 #endif
-				    return ret;
+return ret;
+
+}
+				    break;
                 }
 
                 case AVK_INFO:
@@ -3662,19 +3667,21 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             {
             	case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:
-#ifdef FEATURE_KEYGUARD
+
+                    return TRUE;
+
+                case AVK_SELECT:
+                #ifdef FEATURE_KEYGUARD
                     if(OEMKeyguard_IsEnabled())
                     {
+                    	MSG_FATAL("DLGRET_EMGCALL...................................777",0,0,0);
                     	#ifndef FEATURE_VERSION_HITZ181
                         OEMKeyguard_SetState(FALSE);
                         pMe->m_b_set_lock = TRUE;
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         #endif
                     }
-#endif
-                    return TRUE;
-
-                case AVK_SELECT:
+				#endif
                     //return   CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
                     return TRUE;
                  // ÖØ²¦

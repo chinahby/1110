@@ -686,11 +686,11 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             break;
 
          case BTBAR_UNLOCK_SOS:
-            nResID_L = IDS_STRING_UNLOCK;
-            nResID_R = IDS_SOS;
+            nResID_R = IDS_STRING_UNLOCK;
+            nResID_L = IDS_SOS;
             break;
 		case BTBAR_UNLOCK:
-			nResID_L = IDS_STRING_UNLOCK;
+			nResID_R = IDS_STRING_UNLOCK;
 			break;
 #ifdef FEATURE_SPORTS_APP
          case BTBAR_PAUSE_STOP:
@@ -2724,11 +2724,11 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 			break;
             
         case BTBAR_UNLOCK_SOS:
-            nResID_L = IDS_STRING_UNLOCK;
-            nResID_R = IDS_SOS;
+            nResID_R = IDS_STRING_UNLOCK;
+            nResID_L = IDS_SOS;
             break;
 		case BTBAR_UNLOCK:
-			nResID_L = IDS_STRING_UNLOCK;
+			nResID_R = IDS_STRING_UNLOCK;
 			break;
         case BTBAR_BACK:
             nResID_R = IDS_BACK;
@@ -2745,6 +2745,11 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
                
 		case BTBAR_OPTION:
 			nResID_L = IDS_OPTION;
+            break;
+        // Ñ¡Ôñ-----·µ»Ø
+         case BTBAR_SELECT_BACK:
+            nResID_L = IDS_OK;	//SELECT;
+            nResID_R = IDS_BACK;
             break;
             
         case BTBAR_SAVE_BACK:
