@@ -77,10 +77,10 @@
 		<Text>87.5-108MHz</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_FMRADIO_SPEAKER">
-		<Text>Speaker</Text>
+		<Text>ผู้บรรยาย</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_FMRADIO_HEADSET">
-		<Text>Headset</Text>
+		<Text>ชุดหูฟัง</Text>
 	</STRING>
 </Strings>
 </BREWRes>
