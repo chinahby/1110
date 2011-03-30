@@ -444,17 +444,17 @@ int fm_get_seek_status(boolean* pIsFinish, boolean* pIsBandLimit, word* pChannel
 	return FM_RADIO_SUCCESSFUL;
 }
 
-int fm_set_volume(word wVolume)
+int fm_set_volume(word wVolume,boolean speaker)
 {
 	uint8 level = (uint8)wVolume;
 	if((wVolume == 0) && (fm_playing_mute == FALSE))
     {
-        fm_mute(TRUE);
+        fm_mute(TRUE,speaker);
         return FM_RADIO_SUCCESSFUL;
     }
     else if((wVolume > 0) && (fm_playing_mute == TRUE))
     {
-        fm_mute(FALSE);
+        fm_mute(FALSE,speaker);
     }
 	if(fm_work_status != FM_IDLE_STATUS)
     {
@@ -472,7 +472,7 @@ int fm_set_volume(word wVolume)
 #include "uixsnd.h"
 #include "Hs_mb6550.h"
 
-void fm_mute(boolean on)
+void fm_mute(boolean on,boolean speaker)
 {	
 	if ( ( on == TRUE) && (fm_playing_mute == FALSE) )
 	{
@@ -489,7 +489,7 @@ void fm_mute(boolean on)
 		OEM_GetConfig(CFGI_FM_PLAY_MODE,&FMPlaymode, sizeof(FMPlaymode));
 		fm_playing_mute = FALSE;
         snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-        if(FMPlaymode)
+        if(FMPlaymode || speaker)
         {
         	snd_set_device(SND_DEVICE_SPEAKER_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
         }

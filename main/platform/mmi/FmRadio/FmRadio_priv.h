@@ -48,6 +48,7 @@
 #include "AEEModGen.h"
 #include "AEEAppGen.h"
 #include "FmRadio.h"
+#include "snd.h"
 #ifndef WIN32
 #include "db.h"
 #else
@@ -285,6 +286,7 @@ typedef struct _CFmRadio
     boolean             channelListIsEmptyHasPrompted;
     boolean             channelListIsEmpty;
     boolean             fmVolumeStop;
+    boolean             fmSpeaker;
     int                 demitintColor;
     int                 channelListMenuSelectedItemId;
     int                 channelListMenuSelectedItemIndex;

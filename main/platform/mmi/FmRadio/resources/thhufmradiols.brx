@@ -70,5 +70,11 @@
 	<STRING Id="1023" Name="IDS_FMRADIO_CHANNEL_NODE_HAS_EXISTED">
 		<Text>สถานีนี้มีอยู่แล้ว!</Text>
 	</STRING>
+		<STRING Id="1026" Name="IDS_FMRADIO_SPEAKER">
+		<Text>Speaker</Text>
+	</STRING>
+	<STRING Id="1027" Name="IDS_FMRADIO_HEADSET">
+		<Text>Headset</Text>
+	</STRING>
 </Strings>
 </BREWRes>

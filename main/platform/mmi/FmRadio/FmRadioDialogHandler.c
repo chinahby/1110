@@ -29,6 +29,7 @@
 #include "appscommonimages.brh"
 #include "fmradiols.brh"
 #include "Hs_mb6550.h"
+#include "snddev.h"
 /*==============================================================================
                                  宏定义和常数
 ==============================================================================*/
@@ -492,7 +493,7 @@ static void tuneVolumeStop(CFmRadio* pMe)
 #if !defined( AEE_SIMULATOR)
         if (HS_HEADSET_ON())
         {
-            fm_set_volume( newvolumeLevel);
+            fm_set_volume( newvolumeLevel,pMe->fmSpeaker);
             pMe->fmVolumeStop=FALSE;
         }
 #endif
@@ -508,7 +509,7 @@ static void tuneVolumeStop(CFmRadio* pMe)
 #if !defined( AEE_SIMULATOR)
         if (HS_HEADSET_ON())
         {
-            fm_set_volume(newvolumeLevel);
+            fm_set_volume(newvolumeLevel,pMe->fmSpeaker);
             pMe->fmVolumeStop=TRUE;
         }
 #endif
@@ -786,7 +787,7 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 #ifdef FEATURE_ANALOG_TV
                     WarT_Fm_Mute(FALSE);
 #else
-			        fm_mute(FALSE);
+			        fm_mute(FALSE,pMe->fmSpeaker);
 #endif
 			    }
 				ISHELL_CancelTimer( pMe->m_pShell, refreshChannelListCB, (void*)pMe);
@@ -915,7 +916,7 @@ __handleKeyEvent_input_channel_done__:
 #ifdef FEATURE_ANALOG_TV
                     WarT_Fm_Mute(FALSE);
 #else
-			        fm_mute(FALSE);
+			     fm_mute(FALSE,pMe->fmSpeaker);
 #endif
 			    }
 				ISHELL_CancelTimer( pMe->m_pShell, refreshChannelListCB, (void*)pMe);
@@ -1118,6 +1119,36 @@ static boolean handleCommandEvent( CFmRadio *pMe, uint16 itemId)
                             0,                                      
                             NULL,
                             -1);
+    }
+    else if(itemId == IDS_FMRADIO_SPEAKER)
+    {
+       pMe->fmSpeaker=TRUE;
+       hideMenu( pMe);
+       moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
+           
+       pMe->byVolumeLevel=0;
+       fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
+       (void) ICONFIG_GetItem(pMe->m_pConfig,
+						   CFGI_FMRADIO_VOLUME,
+						   &pMe->byVolumeLevel,
+						   sizeof(byte));
+       fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
+
+    }
+    else if(itemId == IDS_FMRADIO_HEADSET)
+    {
+       pMe->fmSpeaker=FALSE;
+       hideMenu( pMe);
+       moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
+           
+       pMe->byVolumeLevel=0;
+       fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
+       (void) ICONFIG_GetItem(pMe->m_pConfig,
+						   CFGI_FMRADIO_VOLUME,
+						   &pMe->byVolumeLevel,
+						   sizeof(byte));
+       fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
+
     }
 	else if( itemId == IDS_FMRADIO_DELETE_ALL)
 	{
@@ -1361,7 +1392,7 @@ static void changeVolume( CFmRadio *pMe, uint16 keyCode)
 #ifdef FEATURE_ANALOG_TV
         WarT_Fm_Set_Volume( pMe->byVolumeLevel);
 #else
-        fm_set_volume( pMe->byVolumeLevel);
+        fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
 #endif
     }
 #endif//#if !defined( AEE_SIMULATOR)
@@ -1531,6 +1562,7 @@ static void popOptionMenu( CFmRadio *pMe)
 						IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH,
 						IDS_FMRADIO_OPTION_MENU_LIST,
 						IDS_SAVE,
+                        IDS_FMRADIO_SPEAKER,
 	#endif
 	#if FEATURE_FMRADIO_SUPPORT_BACKGROUND
 						IDS_FMRADIO_OPTION_MENU_PLAY_ON_BACKGROUND
@@ -1539,9 +1571,9 @@ static void popOptionMenu( CFmRadio *pMe)
 
 #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 #if FEATURE_FMRADIO_SUPPORT_BACKGROUND
-	for( i = 0; i < 4; i ++)
+	for( i = 0; i < 5; i ++)
 #else
-	for( i = 0; i < 3; i ++)
+	for( i = 0; i < 4; i ++)
 #endif
 	{
 
@@ -1551,12 +1583,26 @@ static void popOptionMenu( CFmRadio *pMe)
 			continue;
 		}
 #endif
-
+        if(pMe->fmSpeaker && resId[i]==IDS_FMRADIO_SPEAKER)
+        {
+          resId[i]=IDS_FMRADIO_HEADSET;
+        }
 		IMENUCTL_AddItem( pMe->m_pMenu, resFile[i], resId[i], resId[i], 0, 0);
 	}
 #else
 	IMENUCTL_AddItem( pMe->m_pMenu, resFile[0], resId[0], resId[0], 0, 0);
 #endif
+
+/*    if(pMe->fmSpeaker)
+    {
+        IMENUCTL_DeleteItem(pMe->m_pMenu,IDS_FMRADIO_SPEAKER);  
+
+    }
+    else
+    {
+        IMENUCTL_DeleteItem(pMe->m_pMenu,IDS_FMRADIO_HEADSET);
+    }
+*/
 	repaint( pMe, TRUE);
     pMe->opMode = FM_RADIO_OPMODE_OPTION_SELECTION;
     setOptionMenuProperties( pMe);
@@ -1630,7 +1676,7 @@ static void refreshChannelList( CFmRadio *pMe, boolean begin)
 #ifdef FEATURE_ANALOG_TV
         WarT_Fm_Mute(TRUE);//add by xuhui
 #else
-        fm_mute(TRUE);//add by xuhui
+        fm_mute(TRUE,pMe->fmSpeaker);//add by xuhui
 #endif
     }
     pMe->ledLightType = FM_RADIO_LED_LIGHT_SEARCHING;
@@ -1754,7 +1800,7 @@ static void refreshChannelListCB( void *pme)
 #ifdef FEATURE_ANALOG_TV
             WarT_Fm_Mute(FALSE);//add by xuhui
 #else
-            fm_mute(FALSE);//add by xuhui
+            fm_mute(FALSE,pMe->fmSpeaker);//add by xuhui
 #endif
         }
         //OK, Search Band Completed, tune back to pCurChanNode

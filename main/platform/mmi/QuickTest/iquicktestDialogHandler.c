@@ -2301,7 +2301,7 @@ static boolean  QuickTest_FMTestHandler(CQuickTest *pMe,
 #ifdef FEATURE_ANALOG_TV
                     WarT_Fm_Mute(TRUE);
 #else
-            		fm_mute(TRUE);
+            		fm_mute(TRUE,FALSE);
 #endif
             	}
 #ifdef FEATURE_ANALOG_TV
@@ -3666,9 +3666,9 @@ static void quicktest_fm_power_up( void* pme)
     }
 	if (HS_HEADSET_ON())
 	{
-		fm_mute(FALSE);
+		fm_mute(FALSE,FALSE);
 	}		    
-    fm_set_volume(7);
+    fm_set_volume(7,FALSE);
 #endif
 #endif
     quicktest_fm_set_channel_to( pMe, convertChannelValueFromText( defaultChannel));

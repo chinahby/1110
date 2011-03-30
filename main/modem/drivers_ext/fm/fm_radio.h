@@ -61,14 +61,14 @@ int fm_seek_down(word* pChannel);
 int fm_seek_start(boolean bIsUp, boolean bIsWrap);
 int fm_get_seek_status(boolean* pIsFinish, boolean* pIsBandLimit, word* pChannel);
 
-int fm_set_volume(word wVolume);
+int fm_set_volume(word wVolume,boolean speaker);
 
 boolean fm_radio_is_inited( void);
 boolean fm_radio_is_power_up( void);
 boolean fm_radio_is_power_down( void);
 boolean fm_radio_is_tuning( void);
 word    fm_radio_get_playing_channel( void);
-void fm_mute(boolean on);
+void fm_mute(boolean on,boolean speaker);
 #endif //FEATURE_DSP
 #endif //__FM_RADIO_H_
 //#define VC0848_HEADSET_PA      //PA OPTION

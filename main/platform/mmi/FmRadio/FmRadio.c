@@ -521,6 +521,7 @@ static int FmRadio_InitAppData(CFmRadio *pMe)
     pMe->m_bNotOverwriteDlgRet  = FALSE;
     pMe->startFromBackground    = FALSE;
     pMe->fmVolumeStop = TRUE;
+    pMe->fmSpeaker=FALSE;
     pMe->m_pVolumeImage = NULL;
     //初始化必要的数据
     FmRadio_InitFmRadioResource( pMe);
@@ -849,7 +850,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 #ifdef FEATURE_ANALOG_TV
                 WarT_Fm_Mute(FALSE);
 #else
-				fm_mute(FALSE);
+				fm_mute(FALSE,pMe->fmSpeaker);
 #endif
 			}	
 			//Add End
@@ -891,7 +892,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 #ifdef FEATURE_ANALOG_TV
                     WarT_Fm_Mute(TRUE);
 #else
-					fm_mute(TRUE);
+					fm_mute(TRUE,pMe->fmSpeaker);
 #endif
 				}
 				
@@ -924,7 +925,7 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 #ifdef FEATURE_ANALOG_TV
                     WarT_Fm_Mute(TRUE);
 #else
-					fm_mute(TRUE);
+					fm_mute(TRUE,pMe->fmSpeaker);
 #endif
 				}			
 			}
@@ -1359,7 +1360,7 @@ static void FmRadio_PowerUp(void *pme)
 #ifdef FEATURE_ANALOG_TV
             WarT_Fm_Set_Volume( pMe->byVolumeLevel);
 #else
-            fm_set_volume( pMe->byVolumeLevel);
+            fm_set_volume( pMe->byVolumeLevel,pMe->fmSpeaker);
 #endif
         }
     }
