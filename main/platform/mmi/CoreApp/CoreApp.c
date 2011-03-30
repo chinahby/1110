@@ -526,6 +526,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 	pMe->m_pImageIcon[4] = NULL;
 	pMe->m_pImageIcon[5] = NULL;
 #endif
+	pMe->m_IsSametime = FALSE;
     pMe->m_pADNName = NULL;
     pMe->m_pADNNumber = NULL;
 #if defined (FEATURE_VERSION_FLEXI203P)

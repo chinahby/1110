@@ -335,6 +335,7 @@ static void CoreApp_Process_Rtc_Event(CCoreApp *pMe);
 static void CoreApp_TimeKeyguard(void *pUser);
 static void CoreApp_keypadtimer(void *pUser);
 #endif
+static void CoreApp_Issametimer(void *pUser);
 
 static void CoreApp_UpdateBottomBar(CCoreApp    *pMe); 
 
@@ -1495,16 +1496,24 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
             {
                 pMe->m_eDlgRet = DLGRET_CANCELED;
             }
+            AEE_CancelTimer(CoreApp_Issametimer,pMe);
+    		AEE_SetTimer(2000,CoreApp_Issametimer,pMe);
             return TRUE;
-
+        MSG_FATAL("IDD_EMERGENCYNUMLIST_Handler EVT_KEY...........eCode=%d",eCode,0,0);
+        case EVT_KEY_RELEASE:
+        case EVT_KEY_PRESS:
+        	return TRUE;
         case EVT_KEY:
             switch (wParam)
             {
                 case AVK_END:
-
                 case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                	if(!pMe->m_IsSametime)
+                	{
+                    	pMe->m_IsSametime = TRUE;
+                    	CLOSE_DIALOG(DLGRET_CANCELED)
+                    }
                     return TRUE;
   				case AVK_CAMERA:
             	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)
@@ -1530,6 +1539,14 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                     {
                         CtlAddItem ai;
                         uint16   wID;
+                        if(!pMe->m_IsSametime)
+                	    {
+                	    	pMe->m_IsSametime = TRUE;
+                	    }
+                	    else
+                	    {
+                	    	return TRUE;
+                	    }
                         #if defined(FEATURE_VERSION_C01) 
 						{
 							nv_item_type	SimChoice;
@@ -3524,12 +3541,13 @@ return ret;
 #else
                 case AVK_CLR:
 #endif
-					if (dwParam == 1)
-					{
-						return TRUE;
-					}
 					if(!OEMKeyguard_IsEnabled())
                     {
+                    	MSG_FATAL("DLGRET_EMGCALL...................................4444",0,0,0);
+						if (dwParam == 1)
+						{
+							return TRUE;
+						}
                     	if(pMe->m_iskeypadtime)
 						{
 							//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
@@ -3672,6 +3690,12 @@ return ret;
 
                 case AVK_SELECT:
                 #ifdef FEATURE_KEYGUARD
+                 if(pMe->m_IsSametime)
+				    {
+				    	return TRUE;
+				    }
+				    else
+				    {
                     if(OEMKeyguard_IsEnabled())
                     {
                     	MSG_FATAL("DLGRET_EMGCALL...................................777",0,0,0);
@@ -3680,6 +3704,7 @@ return ret;
                         pMe->m_b_set_lock = TRUE;
                         CLOSE_DIALOG(DLGRET_EMGCALL)
                         #endif
+                    }
                     }
 				#endif
                     //return   CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
@@ -7151,6 +7176,13 @@ static void CoreApp_GetSPN(CCoreApp *pMe)
 #endif //FEATURE_SPN_FROM_BSMCCMNC   
 #endif//WIN32
 }
+static void CoreApp_Issametimer(void *pUser)
+{
+	CCoreApp	*pMe = (CCoreApp *)pUser;
+	pMe->m_IsSametime = FALSE;
+	
+}
+
 #ifdef FEATURE_KEYGUARD
 static void CoreApp_keypadtimer(void *pUser)
 {
