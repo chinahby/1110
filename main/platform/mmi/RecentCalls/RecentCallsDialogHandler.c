@@ -1154,6 +1154,15 @@ static boolean RecentCalls_ListRecordEvent(CRecentCalls *pMe,
                     break;
                     
                 case AEECALLHISTORY_CALL_TYPE_ALL://CALLHISTORY_ALL_CATEGORY:
+                	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_MISSEDCALL*/,ANNUN_STATE_CALL_MISSEDCALL_OFF/*ANNUN_STATE_OFF*/);
+					{
+                        boolean missed_call_icon;
+                        missed_call_icon = FALSE;
+                        (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                           CFGI_MISSED_CALL_ICON,
+                                           &missed_call_icon,
+                                           sizeof(missed_call_icon));  
+                    }
                     pMe->selectState = IDS_RECENT_CALLS;
                     break;
             }
