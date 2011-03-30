@@ -1118,7 +1118,7 @@ static boolean Application_ListMenuHandler(Application *pMe, AEEEvent eCode, uin
                     wID = IMENUCTL_GetItemID(pMenu, i);
                     WSPRINTF(pwsz,sizeof(pwsz),wsFmt,i+1);
 #ifdef FEATURE_OEMOMH
-                    if(wID == IDS_APPLICATION_BAM && pMe->m_pIRUIM && SUCCESS == IRUIM_Get_AppLabels_Code(pMe->m_pIRUIM,pstr))
+                    if(wID == IDS_APPLICATION_BAM && pMe->m_pIRUIM && SUCCESS == IRUIM_Get_AppLabels_Code(pMe->m_pIRUIM,RUIM_APPLABEL_BREW,pstr))
                     {
                         //STRTOWSTR(AppLabel, pstr, sizeof(pstr));
                         DBGPRINTF("Buf =%S, length=%d", pstr, WSTRLEN(pstr));

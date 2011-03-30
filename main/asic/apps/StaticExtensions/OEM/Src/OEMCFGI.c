@@ -10238,12 +10238,7 @@ boolean OEM_IsEmergency_Number(char *pNumber,int len)
 #ifdef FEATURE_OEMOMH         
         { 
         	IRUIM        *pIRUIM;
-            char  Assnum[31];
             IShell *pIShell = AEE_GetShell();
-            int i = 0;
-            int j = 0;
-            int k = 0;
-            char temp[7];
             MSG_FATAL("OEM_IsEmergency_Number 1111",0,0,0);         
             if(NULL == pIShell)
             {
@@ -10254,50 +10249,35 @@ boolean OEM_IsEmergency_Number(char *pNumber,int len)
         		return is_emergency;
         	}     
             
-#ifndef WIN32    
+#ifndef WIN32
             MSG_FATAL("IRUIM_Get_Ecc_Code len=%d",len,0,0);
             if (pIRUIM != NULL)
             {
-                 MEMSET(Assnum, 0x00, sizeof(Assnum));  
-                 if(SUCCESS == IRUIM_Get_Ecc_Code(pIRUIM,(byte*)Assnum))
-                 {
-                    MSG_FATAL("OEM_IsEmergency_Number 2222",0,0,0);
-                    for(; i < 30; ++i)
+                byte  Assnum[RUIM_ECC_NUMBER][RUIM_ECC_MAXSIZE+1];
+                int   nNum;
+                MEMSET(Assnum, 0x00, sizeof(Assnum));  
+                MSG_FATAL("IRUIM_Get_Ecc_Code",0,0,0);
+                
+                if(SUCCESS == IRUIM_Get_Ecc_Code(pIRUIM,&Assnum[0][0],&nNum,RUIM_ECC_MAXSIZE+1))
+                {
+                    int   i;
+                    byte *temp;
+                    
+                    MSG_FATAL("Assnum's nNum = %d",nNum,0,0);
+                    for(i=0;i<nNum;i++)
                     {
-                        if((Assnum[i] >= '0') && (Assnum[i] <= '9'))
+                        temp = &Assnum[i][0];
+                        MSG_FATAL("OEM_IsEmergency_Number %s %s",temp,pNumber,0);
+                        if(STRNCMP(pNumber,(char *)temp,len) == 0)
                         {
-                            temp[j++] = Assnum[i];
+                            IRUIM_Release(pIRUIM);
+                        	pIRUIM = NULL;
+                            return TRUE;
                         }
-                        else
-                        {
-                            temp[j] = '\0';
-                            
-                            if((temp[0] >= '0') && (temp[0] <= '9'))
-                            {
-                                DBGPRINTF("j=%d, temp=%s, pNumber=%s", j, temp, pNumber);
-                                if(len == j)
-                                {
-                                    if(STRNCMP(pNumber,temp,len) == 0)
-                                    {
-                                        MSG_FATAL("OEM_IsEmergency_Number 33333",0,0,0);
-                                    	if (pIRUIM != NULL)
-                                    	{
-                                    	    IRUIM_Release(pIRUIM);
-                                    	    pIRUIM = NULL;
-                                    	}                                             
-                                        return TRUE;
-                                    }
-                                }
-                            }
-                            j = 0;
-                        }
-                    }  
-                 }
-            	if (pIRUIM != NULL)
-            	{
-            	    IRUIM_Release(pIRUIM);
-            	    pIRUIM = NULL;
-            	}                 
+                    }
+                }
+        	    IRUIM_Release(pIRUIM);
+        	    pIRUIM = NULL;              
             }
 #endif                
         }

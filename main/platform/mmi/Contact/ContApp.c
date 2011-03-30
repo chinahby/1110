@@ -496,6 +496,7 @@ static int CContApp_InitAppData(CContApp *pMe)
     }
 
 #ifdef FEATURE_RUIM_PHONEBOOK
+    pMe->m_bADNRUIMSupport = OEM_IsCDMASVCSupport(UIM_CDMA_SVC_ADN);
     if( IsRunAsUIMVersion() )
     {    // Create IAddrbokk instance for RUIM
         if ( SUCCESS != ISHELL_CreateInstance( pMe->m_pShell,
@@ -994,7 +995,6 @@ static int CContApp_Start(CContApp *pMe)
 
 //guoys modified for PR 4.2.1 begin
 #ifdef FEATURE_RUIM_PHONEBOOK
-    pMe->m_bADNRUIMSupport = OEM_IsCDMASVCSupport(UIM_CDMA_SVC_ADN);
     if (IsRunAsUIMVersion() && pMe->m_bADNRUIMSupport)
     {
         (void)CContApp_GetConfig( pMe, CONTCFG_SAVETYPE, &pMe->m_nSaveType, sizeof(byte));

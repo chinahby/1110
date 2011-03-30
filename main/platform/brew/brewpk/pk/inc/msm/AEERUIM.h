@@ -67,6 +67,20 @@ typedef enum {
 } OEMRUIM_PreferCallState;
 #endif /*CUST_EDITION*/
 
+#ifdef FEATURE_OEMOMH
+#define RUIN_APPLABEL_SIZE      32
+// 下面的顺序不能修改，符合CS0023规范
+#define RUIM_APPLABEL_MMS       0
+#define RUIM_APPLABEL_BROWSER   1
+#define RUIM_APPLABEL_BREW      2
+#define RUIM_APPLABEL_JVM       3
+#define RUIM_APPLABEL_NUM       4
+
+#define RUIM_ECC_NUMBER         5
+#define RUIM_ECC_BCDSIZE        3
+#define RUIM_ECC_MAXSIZE        6
+#endif
+
 typedef struct IRUIM IRUIM;
 
 AEEINTERFACE(IRUIM) {
@@ -83,14 +97,14 @@ AEEINTERFACE(IRUIM) {
    int (*GetPrefLang)(IRUIM *pIRUIM, int *pLang, int *pEncoding);
    int (*GetId)(IRUIM *pIRUIM, char *pId, int *pnLen);
 #ifdef CUST_EDITION	   
-   int (*Get_Feature_Code)(IRUIM *pIRUIM,byte *Buf,int  Lable);
+   int (*Get_Feature_Code)(IRUIM *pIRUIM,byte *Buf,int Lable);
    int (*Read_Svc_P_Name)(IRUIM *pIRUIM,AECHAR *Buf);
 #endif /*CUST_EDITION*/   
 
 #ifdef FEATURE_OEMOMH 
-   int (*Get_Ecc_Code)(IRUIM *pIRUIM,byte *Buf);
+   int (*Get_Ecc_Code)(IRUIM *pIRUIM,byte *pBuf,int *pnNum,int step);
    boolean (*WriteModel)(IRUIM *pIRUIM, byte *Buf);
-   int (*Get_AppLabels_Code)(IRUIM *pIRUIM,AECHAR *Buf);
+   int (*Get_AppLabels_Code)(IRUIM *pIRUIM,int nID, AECHAR *Buf);
 #endif
 };
 
@@ -129,14 +143,14 @@ AEEINTERFACE(IRUIM) {
 #endif /*CUST_EDITION*/		
 
 #ifdef FEATURE_OEMOMH 
-#define IRUIM_Get_Ecc_Code(p,pi)           \
-                           AEEGETPVTBL((p),IRUIM)->Get_Ecc_Code((p),(pi))
+#define IRUIM_Get_Ecc_Code(p,pp,n,s)           \
+                           AEEGETPVTBL((p),IRUIM)->Get_Ecc_Code((p),(pp),(n),(s))
 
 #define IRUIM_WriteModel(p,pi)           \
                            AEEGETPVTBL((p),IRUIM)->WriteModel((p),(pi))
 
-#define IRUIM_Get_AppLabels_Code(p,pi)           \
-                           AEEGETPVTBL((p),IRUIM)->Get_AppLabels_Code((p),(pi))
+#define IRUIM_Get_AppLabels_Code(p,id,pi)           \
+                           AEEGETPVTBL((p),IRUIM)->Get_AppLabels_Code((p),(id),(pi))
 #endif
 /* Preferred language encoding */
 #define  AEERUIM_LANG_ENCODING_OCTET            0  // Octet, unspecified:
@@ -154,10 +168,6 @@ AEEINTERFACE(IRUIM) {
 #define UIM_CDMA_HOME_SERVICE_SIZE 35
 #endif /*CUST_EDITION*/
 
-#ifdef FEATURE_OEMOMH 
-#define UIM_CDMA_BAM_APPLABEL_SIZE 32
-#define UIM_CDMA_BAM_APPLABEL_OFFSET 68
-#endif
 /*=======================================================================
   INTERFACES   DOCUMENTATION
 =======================================================================

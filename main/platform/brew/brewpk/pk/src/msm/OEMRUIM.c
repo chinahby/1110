@@ -46,6 +46,7 @@ GENERAL DESCRIPTION:
 #define BAD_PIN_CHAR 0xff
 #define UIM_CDMA_FEATURE_CODE_SIZE 50
 #define UIM_CDMA_FEATURE_CODE_NUM_DIGI 2*2
+
 struct IRUIM
 {
    IRUIMVtbl  *pvt;
@@ -89,11 +90,10 @@ static void OEMRUIM_ExchangeByte(byte *Inputbuf,int size);
 static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,int Endpoint);
 
 #ifdef FEATURE_OEMOMH 
-static int OEMRUIM_Get_Ecc_Code(IRUIM *pMe,byte *Buf);
+static int OEMRUIM_Get_Ecc_Code(IRUIM *pMe,byte *pBuf,int *pnNum,int step);
 static byte OEMRUIM_bcd_to_ascii_forOMH(byte num_digi, byte *from_ptr, byte *to_ptr);
 static boolean OEMRUIM_WriteModel(IRUIM *pMe, byte *Buf);
-static int OEMRUIM_Get_AppLabels_Code(IRUIM *pMe,AECHAR *Buf);
-static void OEMRUIM_Conversion_Uimdata_To_AppLabel(byte *Inputbuf,AECHAR *AppLabel,int Endpoint);
+static int OEMRUIM_Get_AppLabels_Code(IRUIM *pMe,int nId, AECHAR *Buf);
 #endif
 
 static const VTBL(IRUIM) gOEMRUIMFuncs = {
@@ -136,6 +136,14 @@ static char           gVirtualPin[2][UIM_MAX_CHV_DIGITS] = {
                                                    BAD_PIN_CHAR, BAD_PIN_CHAR}};
 static uim_cmd_type   gUimCmd;
 static uim_rpt_type   gCallBack;
+#ifdef FEATURE_OEMOMH 
+static char        gECC[RUIM_ECC_NUMBER][RUIM_ECC_MAXSIZE];
+static int         gECCNum = 0;
+static boolean     gbECCInited = FALSE;
+static AECHAR      gAppLabels[RUIM_APPLABEL_NUM][RUIN_APPLABEL_SIZE+1];
+static boolean     gbAppLabelsInited = FALSE;
+static uint16      gwAppLabelsInd;
+#endif
 
 /*===========================================================================
 
@@ -170,7 +178,7 @@ int OEMRUIM_New(IShell *pIShell, AEECLSID cls, void **ppif)
    pMe->m_pIShell = pIShell;
    pMe->m_cls = cls;
    pMe->m_uRefs = 1;
-
+   
    *ppif = pMe;
    return AEE_SUCCESS;
 }
@@ -780,14 +788,111 @@ static void OEMRUIM_send_uim_cmd_and_wait (uim_cmd_type *uim_cmd_ptr)
    (void) rex_wait( UI_RUIM_SIG);
 }
 
-#ifdef FEATURE_OEMOMH 
-static int OEMRUIM_Get_Ecc_Code(IRUIM *pMe,byte *Buf)
+static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, byte ecd_ind, byte lng_ind, AECHAR *AppLabel,int Endpoint)
 {
-    byte pData[15+2];
-    int pnDataSize = 15;
+    int i=0;
+    int wStrLen = MIN(RUIN_APPLABEL_SIZE, Endpoint);
+    boolean bBigEndian = FALSE;
+    
+    MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_WStr Start", 0, 0, 0);
+    if(!AppLabel || !Inputbuf)
+    {
+        return;
+    }
+    
+    switch(ecd_ind){
+    case  AEERUIM_LANG_ENCODING_UNICODE:                   //UNICODE编码
+        wStrLen = wStrLen/2;
+        if((Inputbuf[0] == 0xFF) && (Inputbuf[1] == 0xFE))//(Little endian 00-54 with BOM)
+        {
+            // Remove BOM
+            wStrLen-=1;
+            Inputbuf+=2;
+            bBigEndian = FALSE;
+        }
+        else if((Inputbuf[0] == 0xFE) && (Inputbuf[1] == 0xFF)) // Big Endian
+        {
+            // Remove BOM
+            wStrLen-=1;
+            Inputbuf+=2;
+            bBigEndian = TRUE;
+        }
+        else
+        {
+            // without BOM
+            if(((lng_ind == 0x01) && (Inputbuf[0] == 0x00)))
+            {
+                //lng_ind为01表示是英文
+                //AppLabel第一位接着为00表示大端
+                //我们的手机是小端，大端的要交换高低位
+                bBigEndian = TRUE;
+            }
+            else
+            {
+                bBigEndian = FALSE;
+            }
+        }
+
+        if(bBigEndian)
+        {
+            for(i=0; i<wStrLen; i++)
+            {
+                if(Inputbuf[i] != 0xFF && Inputbuf[i+1] != 0xFF)
+                {
+                    AppLabel[i]=(AECHAR)(Inputbuf[i]<<8)|Inputbuf[i+1];
+                }
+                else
+                {
+                    break;
+                }
+            }
+            AppLabel[i]='\0';
+        }
+        else
+        {
+            for(i=0; i<wStrLen; i++)
+            {
+                if(Inputbuf[i] != 0xFF && Inputbuf[i+1] != 0xFF)
+                {
+                    AppLabel[i]=(AECHAR)(Inputbuf[i+1]<<8)|Inputbuf[i];
+                }
+                else
+                {
+                    break;
+                }
+            }
+            AppLabel[i]='\0';
+        }
+        break;
+        
+    case AEERUIM_LANG_ENCODING_7BIT:                  //acsii编码
+    case AEERUIM_LANG_ENCODING_LATINHEBREW:
+    case AEERUIM_LANG_ENCODING_LATIN:
+    case AEERUIM_LANG_ENCODING_OCTET:
+    default:
+        for(i=0; i<wStrLen; i++)
+        {
+            if(Inputbuf[i] != 0xFF)
+            {
+                AppLabel[i]=(AECHAR)Inputbuf[i];
+            }
+            else
+            {
+                AppLabel[i]='\0';
+                break;
+            }
+        }
+        break;
+    }
+}
+
+#ifdef FEATURE_OEMOMH 
+static int OEMRUIM_Get_Ecc_Code(IRUIM *pMe,byte *pOutBuf,int *pnNum, int step)
+{
+    int i;
     int status = EFAILED;
     DBGPRINTF("OEMRUIM_Get_Ecc_Code start");
-    if ((!pMe) || (!Buf))
+    if ((!pMe) || (!pOutBuf))
     {
         return EFAILED;
     }
@@ -796,326 +901,163 @@ static int OEMRUIM_Get_Ecc_Code(IRUIM *pMe,byte *Buf)
     {
         return EFAILED;
     }
-    gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
-    gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
-    gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
-    gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
-    gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
-    gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
-    gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report;
 
-    gUimCmd.access_uim.item      = UIM_CDMA_ECC;
-    gUimCmd.access_uim.access    = UIM_READ_F;
-    gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
-    gUimCmd.access_uim.num_bytes = 15;
-    gUimCmd.access_uim.offset    = 0;
-    gUimCmd.access_uim.data_ptr  = pData;
-
-    // From nvruim_access():  Access an EF, do not signal any task, use no
-    // signal, no done queue, use a callback, always report status.
-
-    // Send the command to the R-UIM:
-    OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
-
-    if (   (gCallBack.rpt_type != UIM_ACCESS_R)
-        || (gCallBack.rpt_status != UIM_PASS)
-        )
+    if(!gbECCInited)
     {
-        MSG_FATAL("OEMRUIM_Get_Ecc_Code EFAILED", 0, 0 ,0);
-        status = EFAILED;
-        return EFAILED;
-    }
+        byte pData[RUIM_ECC_NUMBER*RUIM_ECC_BCDSIZE];
+        int  nDataSize = RUIM_ECC_NUMBER*RUIM_ECC_BCDSIZE;
+        byte *pBuf = pData;
+        
+        gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
+        gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+        gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
+        gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+        gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+        gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
+        gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report;
 
-    //if (pData == NULL)
-    //{
-    //    pnDataSize = gUimCmd.access_uim.num_bytes_rsp;
-    //}
-    //else
-    //{
-    //int i=0;
-    pnDataSize = MIN(pnDataSize, gUimCmd.access_uim.num_bytes_rsp);
-    MSG_FATAL("OEMRUIM_Get_Ecc_Code pnDataSize=%d", pnDataSize, 0 ,0);
-    
-    status = SUCCESS;
-    //}
+        gUimCmd.access_uim.item      = UIM_CDMA_ECC;
+        gUimCmd.access_uim.access    = UIM_READ_F;
+        gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+        gUimCmd.access_uim.num_bytes = RUIM_ECC_NUMBER*RUIM_ECC_BCDSIZE;
+        gUimCmd.access_uim.offset    = 0;
+        gUimCmd.access_uim.data_ptr  = pData;
 
-    //if(status == SUCCESS)
-    {
-        if(30 ==OEMRUIM_bcd_to_ascii_forOMH(30,
-                                        (byte *)&pData,
-                                        (byte *)Buf))
+        // From nvruim_access():  Access an EF, do not signal any task, use no
+        // signal, no done queue, use a callback, always report status.
+
+        // Send the command to the R-UIM:
+        OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
+
+        if (   (gCallBack.rpt_type != UIM_ACCESS_R)
+            || (gCallBack.rpt_status != UIM_PASS)
+            )
         {
-            Buf[UIM_CDMA_FEATURE_CODE_NUM_DIGI]='\0';
+            MSG_FATAL("OEMRUIM_Get_Ecc_Code EFAILED", 0, 0 ,0);
+            status = EFAILED;
+            return EFAILED;
+        }
+
+        gbECCInited = TRUE;
+        
+        nDataSize = MIN(nDataSize, gUimCmd.access_uim.num_bytes_rsp);
+        MSG_FATAL("OEMRUIM_Get_Ecc_Code pnDataSize=%d", nDataSize, 0 ,0);
+        gECCNum = 0;
+        for(i=0;i<RUIM_ECC_NUMBER;i++)
+        {
+            if(nDataSize <= 0)
+            {
+                break;
+            }
+            
+            OEMRUIM_bcd_to_ascii_forOMH(RUIM_ECC_MAXSIZE,
+                                        (byte *)pBuf,
+                                        (byte *)&gECC[i][0]);
+            gECCNum++;
+            pBuf += RUIM_ECC_BCDSIZE;
+            nDataSize -= RUIM_ECC_BCDSIZE;
         }
     }
+    
+    for(i=0;i<gECCNum;i++)
+    {
+        MEMCPY(pOutBuf,&gECC[i][0],RUIM_ECC_MAXSIZE);
+        pOutBuf += step;
+    }
+    
+    if(pnNum)
+    {
+        *pnNum = gECCNum;
+    }
     MSG_FATAL("OEMRUIM_Get_Ecc_Code End", 0, 0 ,0);
-    return status;
+    return SUCCESS;
 }
 
-static int OEMRUIM_Get_AppLabels_Code(IRUIM *pMe,AECHAR *Buf)
+static int OEMRUIM_Get_AppLabels_Code(IRUIM *pMe,int nId, AECHAR *Buf)
 {
-    byte pData[140];
-    int pnDataSize = 32;
-    int status = EFAILED;
+    int  status = EFAILED;
     DBGPRINTF("OEMRUIM_Get_AppLabels_Code start");
     if ((!pMe) || (!Buf))
     {
         return EFAILED;
     }
-#if 0    
-    pData[0] = 0x04;
-    pData[1] = 0x01;
-    pData[2] = 0x00;
-    pData[3] = 0x07;
-    pData[4] = 0x52;
-    pData[5] = 0x65;
-    pData[6] = 0x6c;
-    pData[7] = 0x69;
-    pData[8] = 0x61;
-    pData[9] = 0x6e;
-    pData[10] = 0x63;
-    pData[11] = 0x65;
-    pData[12] = 0x20;
-    pData[13] = 0x4d;
-    pData[14] = 0x4d;
-    pData[15] = 0x53;
-    pData[16] = 0xFF;
-    pData[17] = 0xFF;
-    pData[18] = 0xFF;
-    pData[19] = 0xFF;
-    pData[20] = 0xFF;
-    pData[21] = 0xFF;
-    pData[22] = 0xFF;
-    pData[23] = 0xFF;
-    pData[24] = 0xFF;
-    pData[25] = 0xFF;
-    pData[26] = 0xFF;
-    pData[27] = 0xFF;
-    pData[28] = 0xFF;
-    pData[29] = 0xFF;
-    pData[30] = 0xFF;
-    pData[31] = 0xFF;
-    pData[32] = 0xFF;
-    pData[33] = 0xFF;
-    pData[34] = 0xFF;
-    pData[35] = 0xFF;
-    pData[36] = 0x52;
-    pData[37] = 0x65;
-    pData[38] = 0x6c;
-    pData[39] = 0x69;
-    pData[40] = 0x61;
-    pData[41] = 0x6e;
-    pData[42] = 0x63;
-    pData[43] = 0x65;
-    pData[44] = 0x20;
-    pData[45] = 0x57;
-    pData[46] = 0x65;
-    pData[47] = 0x62;
-    pData[48] = 0xFF;
-    pData[49] = 0xFF;
-    pData[50] = 0xFF;
-    pData[51] = 0xFF;
-    pData[52] = 0xFF;
-    pData[53] = 0xFF;
-    pData[54] = 0xFF;
-    pData[55] = 0xFF;
-    pData[56] = 0xFF;
-    pData[57] = 0xFF;
-    pData[58] = 0xFF;
-    pData[59] = 0xFF;
-    pData[60] = 0xFF;
-    pData[61] = 0xFF;
-    pData[62] = 0xFF;
-    pData[63] = 0xFF;
-    pData[64] = 0xFF;
-    pData[65] = 0xFF;
-    pData[66] = 0xFF;
-    pData[67] = 0xFF;
-    pData[68] = 0x51;//////////////////////////////////////////00 55 00 41 00 4C 00 43 00 4F 00 4D 00 4D 00 51 00 4C 00 41 00 42 00 40 00 31 00 32 00 33 00
-    pData[69] = 0x00;
-    pData[70] = 0x55;
-    pData[71] = 0x00;
-    pData[72] = 0x41;
-    pData[73] = 0x00;
-    pData[74] = 0x4c;
-    pData[75] = 0x00;
-    pData[76] = 0x43;
-    pData[77] = 0x00;
-    pData[78] = 0x4f;
-    pData[79] = 0x00;
-    pData[80] = 0x4d;
-    pData[81] = 0x00;
-    pData[82] = 0x4d;
-    pData[83] = 0x00;
-    pData[84] = 0x51;
-    pData[85] = 0x00;
-    pData[86] = 0x4c;
-    pData[87] = 0x00;
-    pData[88] = 0x41;
-    pData[89] = 0x00;
-    pData[90] = 0x42;
-    pData[91] = 0x00;
-    pData[92] = 0x40;
-    pData[93] = 0x00;
-    pData[94] = 0x31;
-    pData[95] = 0x00;
-    pData[96] = 0x32;
-    pData[97] = 0x00;
-    pData[98] = 0x33;
-    pData[99] = 0x00;
-    pData[100] = 0xFF;
-    pData[101] = 0xFF;
-    pData[102] = 0xFF;    
-#endif   
+    
     // Check to see if the card is connected.
     if (!IRUIM_IsCardConnected (pMe))
     {
         return EFAILED;
     }
-    gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
-    gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
-    gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
-    gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
-    gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
-    gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
-    gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report;
-
-    gUimCmd.access_uim.item      = UIM_CDMA_APP_LABELS;
-    gUimCmd.access_uim.access    = UIM_READ_F;
-    gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
-    gUimCmd.access_uim.num_bytes = 132;
-    gUimCmd.access_uim.offset    = 0;
-    gUimCmd.access_uim.data_ptr  = pData;
     
-    OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
+    if(!gbAppLabelsInited)
+    {
+        byte pData[RUIN_APPLABEL_SIZE*RUIM_APPLABEL_NUM+4];
+        int  nDataSize = RUIN_APPLABEL_SIZE*RUIM_APPLABEL_NUM+4;
+        byte encoding_ind;
+        byte lang_ind;
+        byte *pBuf = pData;
+        
+        gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
+        gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+        gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
+        gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+        gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+        gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
+        gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report;
 
-    if (   (gCallBack.rpt_type != UIM_ACCESS_R)
-        || (gCallBack.rpt_status != UIM_PASS)
-        )
-    {
-        MSG_FATAL("OEMRUIM_Get_AppLabels_Code EFAILED", 0, 0 ,0);
-        status = EFAILED;
-        return EFAILED;
-    }
-    pnDataSize = MIN(pnDataSize, gUimCmd.access_uim.num_bytes_rsp);
-    MSG_FATAL("OEMRUIM_Get_AppLabels_Code pnDataSize=%d", pnDataSize, 0 ,0);
-    MSG_FATAL("pData length=%d", STRLEN((char*)pData), 0 ,0);
-    
-    status = SUCCESS;
-    //if(status == SUCCESS)
-    {
-        if(pData[3]&0x4 == 0x4)//第三BIT为1表示有BAM Label
+        gUimCmd.access_uim.item      = UIM_CDMA_APP_LABELS;
+        gUimCmd.access_uim.access    = UIM_READ_F;
+        gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+        gUimCmd.access_uim.num_bytes = nDataSize;
+        gUimCmd.access_uim.offset    = 0;
+        gUimCmd.access_uim.data_ptr  = pData;
+        
+        OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
+
+        if (   (gCallBack.rpt_type != UIM_ACCESS_R)
+            || (gCallBack.rpt_status != UIM_PASS)
+            )
         {
-            OEMRUIM_Conversion_Uimdata_To_AppLabel(pData, Buf, pnDataSize);
-            DBGPRINTF("Buf =%S, length=%d", Buf, WSTRLEN(Buf));
+            MSG_FATAL("OEMRUIM_Get_AppLabels_Code EFAILED", 0, 0 ,0);
+            status = EFAILED;
+            return EFAILED;
         }
+        
+        nDataSize = MIN(nDataSize, gUimCmd.access_uim.num_bytes_rsp);
+        MSG_FATAL("OEMRUIM_Get_AppLabels_Code nDataSize=%d", nDataSize, 0 ,0);
+        MSG_FATAL("pData length=%d", STRLEN((char*)pData), 0 ,0);
+        gbAppLabelsInited = TRUE;
+        gwAppLabelsInd = 0;
+        if(nDataSize > 4) // 最小要大于Header
+        {
+            int nIdx = 0;
+            encoding_ind = pBuf[0]&0x1F;
+            lang_ind = pBuf[1];
+            gwAppLabelsInd = (pBuf[2]<<8)|pBuf[3];
+            pBuf += 4;
+            nDataSize -= 4;
+            while(nDataSize > 0 && nIdx<RUIM_APPLABEL_NUM)
+            {
+                if(gwAppLabelsInd&(0x1<<nIdx))
+                {
+                    OEMRUIM_Conversion_Uimdata_To_WStr(pBuf,encoding_ind,lang_ind,&gAppLabels[nIdx][0],RUIN_APPLABEL_SIZE);
+                }
+                nDataSize-=RUIN_APPLABEL_SIZE;
+                pBuf += RUIN_APPLABEL_SIZE;
+                nIdx++;
+            }
+        }
+        
     }
-    if(WSTRLEN(Buf) == 0)
+    
+    if(gwAppLabelsInd&(0x1<<nId))
     {
-        status = EFAILED;
+        WSTRCPY(Buf,&gAppLabels[nId][0]);
+        status = SUCCESS;
     }
-    MSG_FATAL("OEMRUIM_Get_AppLabels_Code End", 0, 0 ,0);
+    
+    MSG_FATAL("OEMRUIM_Get_AppLabels_Code=%S End", Buf, 0 ,0);
     return status;
 }
-
-static void OEMRUIM_Conversion_Uimdata_To_AppLabel(byte *Inputbuf,AECHAR *AppLabel,int Endpoint)
-{
-    int i=0;
-    int k;
-    int m =0;
-    int j = 0;
-    byte tempbuf[(UIM_CDMA_BAM_APPLABEL_SIZE+1)*sizeof(AECHAR)]={(byte)'\0'};
-    MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_AppLabel Start", 0, 0, 0);
-    MSG_FATAL("number len = %d Inputbuf[1]= %x",STRLEN((char*)Inputbuf),Inputbuf[1],0);
-    DBGPRINTF("Inputbuf =%s", Inputbuf);
-    switch(Inputbuf[0]&0x1F)
-    {
-        case AEERUIM_LANG_ENCODING_7BIT:                  //acsii编码
-            for(k=UIM_CDMA_BAM_APPLABEL_OFFSET, j=0; k < (UIM_CDMA_BAM_APPLABEL_OFFSET+UIM_CDMA_BAM_APPLABEL_SIZE); k++)
-            {
-                if(Inputbuf[k] != 0xFF)
-                {
-                    tempbuf[j++]=Inputbuf[k];
-                }
-            }
-            tempbuf[j]='\0';
-            STRTOWSTR((char *)tempbuf, AppLabel,Endpoint*sizeof(AECHAR));
-            break;
-
-        case  AEERUIM_LANG_ENCODING_UNICODE:                   //UNICODE编码
-            if(((Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET] == 0xFE) || (Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET] == 0xFF)) &&
-                ((Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET+1] == 0xFE) || (Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET+1] == 0xFF))
-              )
-            {
-                MSG_FATAL("AEERUIM_LANG_ENCODING_UNICODE BOM", 0, 0, 0);
-                //为TRUE则表示是BOM，要去掉前面2个标志位
-                for(k=UIM_CDMA_BAM_APPLABEL_OFFSET+2, j=0;k<(UIM_CDMA_BAM_APPLABEL_OFFSET+UIM_CDMA_BAM_APPLABEL_SIZE);k++)
-                {
-                    if((Inputbuf[k] != 0xFF) && (Inputbuf[k+1] != 0xFF))
-                    {
-                        tempbuf[j++]=Inputbuf[k++];
-                        tempbuf[j++]=Inputbuf[k];
-                    }
-                }        
-                if((Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET] == 0xFE) && (Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET+1] == 0xFF))//(big endian 00-54 with BOM)
-                {
-                    OEMRUIM_ExchangeByte(tempbuf,UIM_CDMA_BAM_APPLABEL_SIZE-2);
-                }
-            }
-            else
-            {
-                // without BOM
-                MSG_FATAL("AEERUIM_LANG_ENCODING_UNICODE without BOM", 0, 0, 0);   
-                for(k=UIM_CDMA_BAM_APPLABEL_OFFSET, j=0; k<(UIM_CDMA_BAM_APPLABEL_OFFSET+UIM_CDMA_BAM_APPLABEL_SIZE);k++)
-                {
-                    if((Inputbuf[k] != 0xFF) && (Inputbuf[k+1] != 0xFF))
-                    {
-                        tempbuf[j++]=Inputbuf[k++];
-                        tempbuf[j++]=Inputbuf[k];
-                    }
-                } 
-                if(((Inputbuf[1] == 0x01) && (Inputbuf[UIM_CDMA_BAM_APPLABEL_OFFSET] == 0x00)))
-                {
-                    //第三位为01表示是英文
-                    //AppLabel第一位接着为00表示大端
-                    //我们的手机是小端，大端的要交换高低位
-                    DBGPRINTF("tempbuf =%s, tempbuf=%d, j=%d", tempbuf, STRLEN((char*)tempbuf), j);
-                    OEMRUIM_ExchangeByte(tempbuf,32);
-                    DBGPRINTF("tempbuf = %S",tempbuf);
-                }                        
-                //OEMRUIM_ExchangeByte(tempbuf,k);
-            }
-            
-            //DBGPRINTF("tempbuf2 = %S",tempbuf);
-            tempbuf[j]='\0';
-            WSTRLCPY(AppLabel,(AECHAR*)tempbuf,UIM_CDMA_HOME_SERVICE_SIZE);
-            break;
-
-        case AEERUIM_LANG_ENCODING_LATINHEBREW:
-        case AEERUIM_LANG_ENCODING_LATIN:
-        case AEERUIM_LANG_ENCODING_OCTET:
-            //DBGPRINTF("tempbuf5 = %s",tempbuf);
-            for(k=UIM_CDMA_BAM_APPLABEL_OFFSET,j=0;k<(UIM_CDMA_BAM_APPLABEL_OFFSET+UIM_CDMA_BAM_APPLABEL_SIZE);k++)
-            {
-                if(Inputbuf[k] != 0xFF)
-                {
-                    tempbuf[m]= Inputbuf[k];
-                }
-                tempbuf[m+1] =0x00;// '0' -30;
-                m = m+2;
-            }
-            tempbuf[m]='\0';
-            tempbuf[m+1]='\0';
-            MEMCPY(AppLabel,tempbuf,UIM_CDMA_HOME_SERVICE_SIZE*sizeof(AECHAR));
-            break;
-        default:
-            //ERR("tempbuf6 ",0,0,0);
-            break;
-
-    }
-    return;
-}
-
 
 static byte OEMRUIM_bcd_to_ascii_forOMH(byte num_digi, /* Number of dialing digits */
                                  byte *from_ptr,/* Convert from */
@@ -1123,19 +1065,41 @@ static byte OEMRUIM_bcd_to_ascii_forOMH(byte num_digi, /* Number of dialing digi
 {
     byte lower_nibble, upper_nibble;
     byte i = 0;
-    byte  k=num_digi;
+    
     while (i < num_digi )
     {
         if(*from_ptr==0xFF)
         {
-            to_ptr++;
-            from_ptr++;
-            //num_digi=num_digi-2;
-            i=i+2;
-            k--;
+            *to_ptr = 0;
+            break;
         }
         else
         {
+            upper_nibble = (*from_ptr & 0xF0) >> 4;
+            switch (upper_nibble)
+            {
+                case 0x00:
+                case 0x01:
+                case 0x02:
+                case 0x03:
+                case 0x04:
+                case 0x05:
+                case 0x06:
+                case 0x07:
+                case 0x08:
+                case 0x09:
+                    /* Digits 0 - 9 */
+                    *to_ptr = upper_nibble + '0';
+                    break;
+                case 0x0F:
+                    *to_ptr = 0;
+                    break;
+                default:
+                    /* Impossible to come here */
+                    break;
+            } /* switch upper_nibble */
+            i++;
+            to_ptr++;
             lower_nibble = *from_ptr & 0x0F;
             switch (lower_nibble)
             {
@@ -1155,7 +1119,7 @@ static byte OEMRUIM_bcd_to_ascii_forOMH(byte num_digi, /* Number of dialing digi
 
 
                 case 0x0F:
-                    *to_ptr = '*';
+                    *to_ptr = 0;
                     break;
 
                 default:
@@ -1164,43 +1128,16 @@ static byte OEMRUIM_bcd_to_ascii_forOMH(byte num_digi, /* Number of dialing digi
             }
             i++;
             to_ptr++;
-
-            upper_nibble = (*from_ptr & 0xF0) >> 4;
-            switch (upper_nibble)
-            {
-                case 0x00:
-                case 0x01:
-                case 0x02:
-                case 0x03:
-                case 0x04:
-                case 0x05:
-                case 0x06:
-                case 0x07:
-                case 0x08:
-                case 0x09:
-                    /* Digits 0 - 9 */
-                    *to_ptr = upper_nibble + '0';
-                    break;
-                case 0x0F:
-                    *to_ptr = '*';
-                    break;
-                default:
-                    /* Impossible to come here */
-                    break;
-            } /* switch upper_nibble */
-            i++;
-            to_ptr++;
             from_ptr++;
         }
     } /* for */
-    to_ptr[k] = '\0';
 
     return i;
+
 }
 
 static boolean OEMRUIM_WriteModel(IRUIM *pMe, byte *Buf)
 {
-    //byte pData[126+2];
     int pnDataSize = 126;
     int status = EFAILED;
     DBGPRINTF("OEMRUIM_WriteModel start");
@@ -1243,30 +1180,10 @@ static boolean OEMRUIM_WriteModel(IRUIM *pMe, byte *Buf)
         status = EFAILED;
         return EFAILED;
     }
-
-    //if (pData == NULL)
-    //{
-    //    pnDataSize = gUimCmd.access_uim.num_bytes_rsp;
-    //}
-    //else
-    //{
-    //int i=0;
     pnDataSize = MIN(pnDataSize, gUimCmd.access_uim.num_bytes_rsp);
     MSG_FATAL("OEMRUIM_WriteModel pnDataSize=%d", pnDataSize, 0 ,0);
     
     status = SUCCESS;
-    //}
-#if 0
-    //if(status == SUCCESS)
-    {
-        if(30 ==OEMRUIM_bcd_to_ascii_forOMH(30,
-                                        (byte *)&pData,
-                                        (byte *)Buf))
-        {
-            Buf[UIM_CDMA_FEATURE_CODE_NUM_DIGI]='\0';
-        }
-    }
-#endif
     MSG_FATAL("OEMRUIM_WriteModel End", 0, 0 ,0);
     return status;
 }
@@ -1507,11 +1424,6 @@ static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
     else  
 #endif        
     {
-        /*int i;
-        for(i=0;i<pnDataSize;i++)
-        {
-            ERR("OEMRUIM_G.I.:: featurecodedata[%03d]:0x%02X",i,pData[i],0);
-        }*/
         status = SUCCESS;
         DBGPRINTF("pData = %s, Length=%d",pData, STRLEN((char*)pData));
         OEMRUIM_Conversion_Uimdata_To_Spn(pData,svc_p_name,pnDataSize);//wszBuf中存放从UIM卡中读出的数?
@@ -1520,137 +1432,13 @@ static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
     return status;
 }
 
-//对于UNICODE 编码的字符串交换高低字节
-static void OEMRUIM_ExchangeByte(byte *Inputbuf,int size)
-{
-    int h=0;
-    byte tempbuf;
-    MSG_FATAL("OEMRUIM_ExchangeByte Start", 0, 0, 0);
-    while(h<size)
-    {
-        tempbuf=Inputbuf[h];
-        Inputbuf[h]=Inputbuf[h+1];
-        Inputbuf[h+1]=tempbuf;
-        h=h+2;
-    }
-    MSG_FATAL("OEMRUIM_ExchangeByte End", 0, 0, 0);
-    return;
-}
-
 //Endpoint must is 35 ,when  parsing the home service name
 static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,int Endpoint)
 {
-    int i=0;
-    int k;
-    int m =0;
-    byte tempbuf[(UIM_CDMA_HOME_SERVICE_SIZE+1)*sizeof(AECHAR)]={(byte)'\0'};
-    MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_Spn Start", 0, 0, 0);
     if((Inputbuf[0]&0x01==0x01)&&(Inputbuf[0]!=0xFF))//TOBUF中的第一位如果是1,则显示运营商名称
     {
-            for( i=3;i<Endpoint;i++)//I-3+1 表示TOBUF中的有效字符数目
-            {
-                if(Inputbuf[i]==0xFF)
-                {
-                    //当FF后面或前面不是跟的FE组成一个大小端判断串时，就表示这是一个无效字符
-                    if(i > 3)
-                    {
-                        if(!((Inputbuf[i-1]==0xFE) || (Inputbuf[i+1]==0xFE)))
-                        {
-                            break;
-                        }
-                    }
-                    else if(Inputbuf[i+1] != 0xFE)
-                    {
-                        break;
-                    }                    
-                }
-            }
-            MSG_FATAL("number len = %d Inputbuf[1]= %x",i,Inputbuf[1],0);
-            switch(Inputbuf[1]&0x1F)
-            {
-                case AEERUIM_LANG_ENCODING_7BIT:                  //acsii编码
-                    MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_Spn AEERUIM_LANG_ENCODING_7BIT", 0, 0, 0);
-                    for(k=0;k<i-3;k++)
-                    {
-                        tempbuf[k]=Inputbuf[k+3];
-                    }
-                    tempbuf[k]='\0';
-                    //DBGPRINTF("tempbuf0 = %s",tempbuf);
-                    STRTOWSTR((char *)tempbuf, svc_p_name,Endpoint*sizeof(AECHAR));
-                    //OEMRUIM_AnsiiToUnicodeString((AECHAR *)Inputbuf,(AECHAR *)tempbuf);
-                    break;
-
-                case  AEERUIM_LANG_ENCODING_UNICODE:                   //UNICODE编码
-                    if(((Inputbuf[3] == 0xFE) || (Inputbuf[3] == 0xFF)) &&
-                        ((Inputbuf[4] == 0xFE) || (Inputbuf[4] == 0xFF))
-                      )
-                    {
-                        MSG_FATAL("AEERUIM_LANG_ENCODING_UNICODE BOM", 0, 0, 0);
-                        //为TRUE则表示是BOM，要去掉前面5个标志位
-                        for(k=0;k<i-5;k++)
-                        {
-                            tempbuf[k]=Inputbuf[k+5];
-                            //ERR("tempbuf[%d] = %x",k,tempbuf[k],0);
-                        }        
-                        if((Inputbuf[3] == 0xFE) && (Inputbuf[4] == 0xFF))//(big endian 00-54 with BOM)
-                        {
-                            OEMRUIM_ExchangeByte(tempbuf,k);
-                        }
-                    }
-                    else
-                    {
-                        // without BOM
-                        MSG_FATAL("AEERUIM_LANG_ENCODING_UNICODE without BOM", 0, 0, 0);                     
-                        for(k=0;k<i-3;k++)
-                        {
-                            tempbuf[k]=Inputbuf[k+3];
-                            //ERR("tempbuf[%d] = %x",k,tempbuf[k],0);
-                        }
-                        if(((Inputbuf[2] == 0x01) && (Inputbuf[3] == 0x00)))
-                        {
-                            //第三位为01表示是英文
-                            //第四位接着为00表示大端
-                            //我们的手机是小端，大端的要交换高低位
-                            OEMRUIM_ExchangeByte(tempbuf,k);
-                        }                        
-                        //OEMRUIM_ExchangeByte(tempbuf,k);
-                    }
-                    
-                    //DBGPRINTF("tempbuf2 = %S",tempbuf);
-                    tempbuf[k++]='\0';
-                    tempbuf[k]='\0';
-                    WSTRLCPY(svc_p_name,(AECHAR*)tempbuf,UIM_CDMA_HOME_SERVICE_SIZE);
-                    break;
-
-                case AEERUIM_LANG_ENCODING_LATINHEBREW:
-                case AEERUIM_LANG_ENCODING_LATIN:
-                case AEERUIM_LANG_ENCODING_OCTET:
-                    //DBGPRINTF("tempbuf5 = %s",tempbuf);
-                    MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_Spn AEERUIM_LANG_ENCODING_7BIT", 0, 0, 0);
-                    for(k=0;k<i-3;k++)
-                    {
-                        tempbuf[m]= Inputbuf[k+3];
-                        tempbuf[m+1] =0x00;// '0' -30;
-                        m = m+2;
-                    }
-                    tempbuf[m]='\0';
-                    tempbuf[m+1]='\0';
-                    #if 0
-                    while(1)
-                    {
-                        if(tempbuf[h++]!='\0')
-                            ERR("OEMRUIM_G.I.:: temp data[%03d]:0x%02X::M=%d",h,tempbuf[h],m);
-                        else
-                            break;
-                    }
-                    #endif
-                    MEMCPY(svc_p_name,tempbuf,UIM_CDMA_HOME_SERVICE_SIZE*sizeof(AECHAR));
-                    break;
-                default:
-                    //ERR("tempbuf6 ",0,0,0);
-                    break;
-
-            }
+        MSG_FATAL("number Inputbuf[1]= %x %x",Inputbuf[1],Inputbuf[2],0);
+        OEMRUIM_Conversion_Uimdata_To_WStr((Inputbuf+3),Inputbuf[1]&0x1F,Inputbuf[2],svc_p_name,Endpoint);
     }
     else
     {
@@ -1659,6 +1447,5 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
         svc_p_name[0]='\0';
         svc_p_name[1]='\0';
     }
-    return;
 }
 #endif    // FEATURE_IRUIM
