@@ -788,10 +788,10 @@ static void OEMRUIM_send_uim_cmd_and_wait (uim_cmd_type *uim_cmd_ptr)
    (void) rex_wait( UI_RUIM_SIG);
 }
 
-static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, byte ecd_ind, byte lng_ind, AECHAR *AppLabel,int Endpoint)
+static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, byte ecd_ind, byte lng_ind, AECHAR *AppLabel,int Endpoint)
 {
     int i=0;
-    int wStrLen = MIN(RUIN_APPLABEL_SIZE, Endpoint);
+    int wStrLen = MIN(nInputSize, Endpoint);
     boolean bBigEndian = FALSE;
     
     MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_WStr Start", 0, 0, 0);
@@ -1039,7 +1039,7 @@ static int OEMRUIM_Get_AppLabels_Code(IRUIM *pMe,int nId, AECHAR *Buf)
             {
                 if(gwAppLabelsInd&(0x1<<nIdx))
                 {
-                    OEMRUIM_Conversion_Uimdata_To_WStr(pBuf,encoding_ind,lang_ind,&gAppLabels[nIdx][0],RUIN_APPLABEL_SIZE);
+                    OEMRUIM_Conversion_Uimdata_To_WStr(pBuf,RUIN_APPLABEL_SIZE,encoding_ind,lang_ind,&gAppLabels[nIdx][0],RUIN_APPLABEL_SIZE);
                 }
                 nDataSize-=RUIN_APPLABEL_SIZE;
                 pBuf += RUIN_APPLABEL_SIZE;
@@ -1438,7 +1438,7 @@ static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,
     if((Inputbuf[0]&0x01==0x01)&&(Inputbuf[0]!=0xFF))//TOBUF中的第一位如果是1,则显示运营商名称
     {
         MSG_FATAL("number Inputbuf[1]= %x %x",Inputbuf[1],Inputbuf[2],0);
-        OEMRUIM_Conversion_Uimdata_To_WStr((Inputbuf+3),Inputbuf[1]&0x1F,Inputbuf[2],svc_p_name,Endpoint);
+        OEMRUIM_Conversion_Uimdata_To_WStr((Inputbuf+3),UIM_CDMA_HOME_SERVICE_SIZE,Inputbuf[1]&0x1F,Inputbuf[2],svc_p_name,Endpoint);
     }
     else
     {
