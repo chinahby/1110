@@ -161,7 +161,7 @@
 		<Text>Preset messages full</Text>
 	</STRING>
 	<STRING Id="54" Name="IDS_SAVED">
-		<Text>Done</Text>
+		<Text>Saved</Text>
 	</STRING>
 	<STRING Id="55" Name="IDS_TEXTFULL">
 		<Text>Text is full</Text>

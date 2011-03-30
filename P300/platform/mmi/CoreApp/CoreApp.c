@@ -498,6 +498,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 #ifdef FEATURE_TORCH_SUPPORT
     pMe->TorchOn = FALSE;
 #endif
+	pMe->m_IsSametime = FALSE;
     pMe->m_pADNName = NULL;
     pMe->m_pADNNumber = NULL;
 #ifdef FEATURE_OEMOMH

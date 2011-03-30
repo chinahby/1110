@@ -161,7 +161,7 @@
 		<Text>ข้อความ Preset เต็ม</Text>
 	</STRING>
 	<STRING Id="54" Name="IDS_SAVED">
-		<Text>เรียบร้อย</Text>
+		<Text>บันทึก</Text>
 	</STRING>
 	<STRING Id="55" Name="IDS_TEXTFULL">
 		<Text>ข้อความเต็ม</Text>

@@ -697,6 +697,7 @@ typedef struct _CCoreApp
 	#ifdef FEATURE_KEYGUARD
 	boolean             m_iskeypadtime;
 	#endif
+	boolean             m_IsSametime;
     AECHAR             *m_pADNName;
     AECHAR             *m_pADNNumber;
 #ifdef FEATURE_OEMOMH 
