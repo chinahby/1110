@@ -820,16 +820,17 @@ static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, b
         else
         {
             // without BOM
-            if(((lng_ind == 0x01) && (Inputbuf[0] == 0x00)))
+            if(((lng_ind == 0x01) && (Inputbuf[0] != 0x00)))
+            {
+                bBigEndian = FALSE;
+            }
+            else
             {
                 //lng_ind为01表示是英文
                 //AppLabel第一位接着为00表示大端
                 //我们的手机是小端，大端的要交换高低位
+                //默认RUIM卡应该是bigendian
                 bBigEndian = TRUE;
-            }
-            else
-            {
-                bBigEndian = FALSE;
             }
         }
 
