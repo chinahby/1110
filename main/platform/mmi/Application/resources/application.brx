@@ -58,6 +58,12 @@
 	<String Id="1031" Name="IDS_TOOLS_LIST">
 		<Text>Tools</Text>
 	</String>
+	<String Id="1032" Name="IDS_STR_TRUNONTORCH">
+		<Text>TurnOn Torch</Text>
+	</String>
+	<String Id="1033" Name="IDS_STR_TRUNOFFFTORCH">
+		<Text>TurnOff Torch</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_FLASHLIGHT_SETTING" Focus="7002">
@@ -66,6 +72,10 @@
 				<Items/>
 			</Menu>
 		</Controls>
+	</Dialog>
+	<Dialog Id="6002" Name="IDD_MSGBOX" Focus="0">
+		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 	<Dialog Id="6003" Name="IDD_LIST_APPLICATION" Focus="7001">
 		<Controls>
