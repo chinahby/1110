@@ -10229,7 +10229,7 @@ boolean OEM_IsEmergency_Number(char *pNumber,int len)
             //DBGPRINTF("%s %d OEM_IsEmergency_Number1",oemi_cache.emerg_table.emerg_num[i].num_buf,oemi_cache.emerg_table.emerg_num[i].num_len);
             if(len == oemi_cache.emerg_table.emerg_num[i].num_len)
             {
-                if(STRNCMP(pNumber,oemi_cache.emerg_table.emerg_num[i].num_buf,oemi_cache.emerg_table.emerg_num[i].num_len) == 0)
+                if(STRCMP(pNumber,oemi_cache.emerg_table.emerg_num[i].num_buf) == 0)
                 {
                     return TRUE;
                 }
@@ -10268,7 +10268,7 @@ boolean OEM_IsEmergency_Number(char *pNumber,int len)
                     {
                         temp = &Assnum[i][0];
                         MSG_FATAL("OEM_IsEmergency_Number %s %s",temp,pNumber,0);
-                        if(STRNCMP(pNumber,(char *)temp,len) == 0)
+                        if(STRCMP(pNumber,(char *)temp) == 0)
                         {
                             IRUIM_Release(pIRUIM);
                         	pIRUIM = NULL;

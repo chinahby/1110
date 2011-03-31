@@ -908,6 +908,7 @@ static int OEMRUIM_Get_Ecc_Code(IRUIM *pMe,byte *pOutBuf,int *pnNum, int step)
         byte pData[RUIM_ECC_NUMBER*RUIM_ECC_BCDSIZE];
         int  nDataSize = RUIM_ECC_NUMBER*RUIM_ECC_BCDSIZE;
         byte *pBuf = pData;
+        byte nLen;
         
         gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
         gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
@@ -950,11 +951,12 @@ static int OEMRUIM_Get_Ecc_Code(IRUIM *pMe,byte *pOutBuf,int *pnNum, int step)
             {
                 break;
             }
-            
-            OEMRUIM_bcd_to_ascii_forOMH(RUIM_ECC_MAXSIZE,
-                                        (byte *)pBuf,
-                                        (byte *)&gECC[i][0]);
-            gECCNum++;
+            MSG_FATAL("OEMRUIM_Get_Ecc_Code 0x%x 0x%x 0x%x", pBuf[0], pBuf[1] ,pBuf[2]);
+            nLen = OEMRUIM_bcd_to_ascii_forOMH(RUIM_ECC_MAXSIZE,
+                                               (byte *)pBuf,
+                                               (byte *)&gECC[gECCNum][0]);
+            MSG_FATAL("OEMRUIM_Get_Ecc_Code 0x%x 0x%x 0x%x", gECC[gECCNum][0], gECC[gECCNum][1] ,gECC[gECCNum][2]);
+            if(nLen) gECCNum++;
             pBuf += RUIM_ECC_BCDSIZE;
             nDataSize -= RUIM_ECC_BCDSIZE;
         }
@@ -970,7 +972,7 @@ static int OEMRUIM_Get_Ecc_Code(IRUIM *pMe,byte *pOutBuf,int *pnNum, int step)
     {
         *pnNum = gECCNum;
     }
-    MSG_FATAL("OEMRUIM_Get_Ecc_Code End", 0, 0 ,0);
+    MSG_FATAL("OEMRUIM_Get_Ecc_Code %d End", gECCNum, 0 ,0);
     return SUCCESS;
 }
 
@@ -1076,32 +1078,12 @@ static byte OEMRUIM_bcd_to_ascii_forOMH(byte num_digi, /* Number of dialing digi
         }
         else
         {
-            upper_nibble = (*from_ptr & 0xF0) >> 4;
-            switch (upper_nibble)
-            {
-                case 0x00:
-                case 0x01:
-                case 0x02:
-                case 0x03:
-                case 0x04:
-                case 0x05:
-                case 0x06:
-                case 0x07:
-                case 0x08:
-                case 0x09:
-                    /* Digits 0 - 9 */
-                    *to_ptr = upper_nibble + '0';
-                    break;
-                case 0x0F:
-                    *to_ptr = 0;
-                    break;
-                default:
-                    /* Impossible to come here */
-                    break;
-            } /* switch upper_nibble */
-            i++;
-            to_ptr++;
             lower_nibble = *from_ptr & 0x0F;
+            if(lower_nibble == 0x0F)
+            {
+                *to_ptr = 0;
+                break;
+            }
             switch (lower_nibble)
             {
                 case 0x00:
@@ -1117,16 +1099,38 @@ static byte OEMRUIM_bcd_to_ascii_forOMH(byte num_digi, /* Number of dialing digi
                     /* Digits 0 - 9 */
                     *to_ptr = lower_nibble + '0';
                     break;
-
-
-                case 0x0F:
-                    *to_ptr = 0;
-                    break;
-
+                    
                 default:
                     /* Impossible to come here */
                     break;
             }
+            i++;
+            to_ptr++;
+            upper_nibble = (*from_ptr & 0xF0) >> 4;
+            if(upper_nibble == 0x0F)
+            {
+                *to_ptr = 0;
+                break;
+            }
+            switch (upper_nibble)
+            {
+                case 0x00:
+                case 0x01:
+                case 0x02:
+                case 0x03:
+                case 0x04:
+                case 0x05:
+                case 0x06:
+                case 0x07:
+                case 0x08:
+                case 0x09:
+                    /* Digits 0 - 9 */
+                    *to_ptr = upper_nibble + '0';
+                    break;
+                default:
+                    /* Impossible to come here */
+                    break;
+            } /* switch upper_nibble */
             i++;
             to_ptr++;
             from_ptr++;
