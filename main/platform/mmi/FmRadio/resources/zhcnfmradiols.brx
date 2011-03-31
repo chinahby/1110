@@ -76,5 +76,11 @@
 	<STRING Id="1025" Name="IDS_FMRADIO_FREQ_INPUT">
 		<Text>87.5-108MHz</Text>
 	</STRING>
+	<STRING Id="1026" Name="IDS_FMRADIO_SPEAKER">
+		<Text>扬声器</Text>
+	</STRING>
+	<STRING Id="1027" Name="IDS_FMRADIO_HEADSET">
+		<Text>耳机</Text>
+	</STRING>
 </Strings>
 </BREWRes>
