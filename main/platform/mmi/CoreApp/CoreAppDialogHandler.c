@@ -4550,21 +4550,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                     wszBuf,
                                     nSize);
     }
-    else
-    {// 最后是正常情况下的提示
-        // 获取待机问候语 
-        CoreApp_GetSPN(pMe);
-        
-        if(pMe->svc_p_name[0] != 0)
-        {
-#ifdef FEATURE_OEMOMH 
-            MSG_FATAL("CoreApp_DrawBannerMessage hasGetSPN = TRUE",0,0,0);
-            DBGPRINTF("svc_p_name s=%S", pMe->svc_p_name);
-            hasGetSPN = TRUE;
-#endif
-            WSTRCPY(wszBuf,pMe->svc_p_name);
-        }
-        else if (IsRunAsFactoryTestMode())
+    else if (IsRunAsFactoryTestMode())
         {
             bSetsearchingTimer = TRUE;
             if (IRUIM_IsCardConnected(pMe->m_pIRUIM))
@@ -4583,6 +4569,20 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                             wszBuf,
                                             nSize);
             }
+    }
+    else
+    {// 最后是正常情况下的提示
+        // 获取待机问候语 
+        CoreApp_GetSPN(pMe);
+        
+        if(pMe->svc_p_name[0] != 0)
+        {
+#ifdef FEATURE_OEMOMH 
+            MSG_FATAL("CoreApp_DrawBannerMessage hasGetSPN = TRUE",0,0,0);
+            DBGPRINTF("svc_p_name s=%S", pMe->svc_p_name);
+            hasGetSPN = TRUE;
+#endif
+            WSTRCPY(wszBuf,pMe->svc_p_name);
         }
         else
         {
