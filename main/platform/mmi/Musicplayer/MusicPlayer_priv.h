@@ -175,15 +175,15 @@ if(!(x))         \
 #define ANI_NUM 5
 
 //进度条
-#define SCHEDULEBAR_X 27
+#define SCHEDULEBAR_X 5
 #define SCHEDULEBAR_Y 43
-#define SCHEDULEBAR_W 125 //94
+#define SCHEDULEBAR_W 153 //94
 #define SCHEDULEBAR_H 7
 
 //进度条(简单播放)
-#define SIMSCHEDULEBAR_X 17
-#define SIMSCHEDULEBAR_Y 147
-#define SIMSCHEDULEBAR_W 94
+#define SIMSCHEDULEBAR_X 5
+#define SIMSCHEDULEBAR_Y 94
+#define SIMSCHEDULEBAR_W 145
 #define SIMSCHEDULEBAR_H 7
 
 //播放按钮

@@ -2680,7 +2680,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 		pMe->m_rtype = TYPE_PREVIOUS;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
 #if defined( FEATURE_DISP_220X176) 
 		ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
-#elif defined(FEATURE_DISP_128X160)
+#elif defined(FEATURE_DISP_128X160) || defined(FEATURE_DISP_160X128)
         ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
 #else			
         ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
@@ -2695,7 +2695,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
 		pMe->m_rtype = TYPE_NEXT;//wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
 #if defined(FEATURE_DISP_220X176)		
         ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
-#elif defined(FEATURE_DISP_128X160)	
+#elif defined(FEATURE_DISP_128X160)	|| defined(FEATURE_DISP_160X128)
 		ISHELL_SetTimer(pMe->m_pShell,1500,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
 #else
 		ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)MP3_DrawImageWithOffset, pMe);
@@ -5353,7 +5353,7 @@ static void MP3_RefreshscheduleBar(CMusicPlayer *pMe)
 			IIMAGE_Release( image);
 			image = NULL;
 		}
-#if defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_128X160)
+#if defined(FEATURE_DISP_220X176) || defined(FEATURE_DISP_128X160)|| defined(FEATURE_DISP_160X128)
 #else
 		MP3_DrawImage(pMe,IDI_GLIDE, (SCHEDULEBAR_W*pMe->m_nCurrentTime/pMe->m_nTotalTime)+SCHEDULEBAR_X, SCHEDULEBAR_Y);
 #endif		
