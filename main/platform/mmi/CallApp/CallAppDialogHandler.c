@@ -7426,6 +7426,7 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
     AEETCallInfo ci;
 #endif
     boolean bKeyguardEnabled = FALSE;
+    nv_item_type	SimChoice;
     CALL_FUN_START("CallApp_AnswerCall %x %x %d", eCode, wParam, auto_answer);
 
     if(pMe->m_CallsTable == NULL)
@@ -7439,26 +7440,24 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
                                         sizeof(bKeyguardEnabled));
     CALL_ERR("CallApp_AnswerCall CFGI %x %d",pMe->m_anykey_answer,bKeyguardEnabled,0);
     #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
-    {
-	nv_item_type	SimChoice;
 	OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 	if(SimChoice.sim_select==AVK_SEND_TWO)
 	{
-		 if((((wParam == AVK_SEND || wParam == AVK_CAMERA || wParam == AVK_MUSIC) && (pMe->m_anykey_answer & 0x4))
+		 if((((wParam == AVK_SEND|| wParam == AVK_CAMERA || wParam == AVK_MUSIC) && (pMe->m_anykey_answer & 0x4))
         ||(eCode == EVT_FLIP && ((boolean)wParam == TRUE)  && (pMe->m_anykey_answer & 0x2))
-        ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND)|| (wParam == AVK_CAMERA) || (wParam == AVK_MUSIC)) && (pMe->m_anykey_answer & 0x8))
+        ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND )|| (wParam == AVK_CAMERA) || (wParam == AVK_MUSIC)) && (pMe->m_anykey_answer & 0x8))
         ||(((((AVK_FIRST < wParam && wParam <AVK_POWER ) ||(wParam == AVK_INFO)||(wParam == AVK_SHIFT)||
         	   (wParam == AVK_ENTER)||(wParam == AVK_CAPLK)||(wParam == AVK_SYMBOL)||
         	   (wParam == AVK_RWD)||(wParam == AVK_LCTRL)||(wParam == AVK_SPACE)||
         	   (AVK_A <= wParam && wParam <= AVK_Z) ||(AVK_CLR < wParam && wParam <AVK_SOFT1 ))
-                 && !bKeyguardEnabled)
+                 && !bKeyguardEnabled)||(
                  #ifndef FEATURE_VERSION_C01
-                 ||(wParam == AVK_SEND)
+                 wParam == AVK_SEND ||
                  #endif
-                 ||((wParam == AVK_CAMERA || wParam == AVK_MUSIC))
+                 wParam == AVK_CAMERA || wParam == AVK_MUSIC))
                  && (pMe->m_anykey_answer & 0x1))
-        ) ||auto_answer ||wParam == AVK_SELECT))
-    {
+        ) ||auto_answer ||wParam == AVK_SELECT)
+    	{
 #ifdef FEATURE_ICM
         if(AEE_SUCCESS != ICM_GetCallInfo(pMe->m_pICM, pMe->m_CallsTable->call_id, &ci, sizeof(AEECMCallInfo)))
 #else
@@ -7513,15 +7512,14 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
             default:
                 return FALSE;
        }
-
        CallApp_Change_Call_Table_Call_Start_Time(pMe,pMe->m_CallsTable->call_number);
        CallApp_Change_Call_Table_Call_History_State(pMe,pMe->m_CallsTable->call_number,AEECALLHISTORY_CALL_TYPE_FROM/*CALLHISTORY_INCOMING*/);
-	   
        return TRUE;
-    }
+    	}
 	}
-	}
+	else
 	#endif
+	{
     if((((wParam == AVK_SEND|| wParam == AVK_CAMERA || wParam == AVK_MUSIC) && (pMe->m_anykey_answer & 0x4))
         ||(eCode == EVT_FLIP && ((boolean)wParam == TRUE)  && (pMe->m_anykey_answer & 0x2))
         ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND )|| (wParam == AVK_CAMERA) || (wParam == AVK_MUSIC)) && (pMe->m_anykey_answer & 0x8))
@@ -7594,6 +7592,8 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
 	   
        return TRUE;
     }
+    }
+    //#endif
     return FALSE;
 }
 
