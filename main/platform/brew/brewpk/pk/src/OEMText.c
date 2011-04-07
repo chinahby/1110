@@ -2153,6 +2153,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                 {
                     AEERect rc;
                     AEERect oldrc;
+                    AEERect bgrc;
                     TitleBar_Param_type TitleBar;
                     static int m_nPixels = 0;
                     int  nBarH = GetTitleBarHeight((IDisplay *)pContext->pIDisplay);
@@ -2179,7 +2180,24 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                                     50,
                                     nBarH);  
                     }
-
+                    if(pContext->dwProperties & TP_DISPLAY_SMSCOUNT)
+                	{
+                		SETAEERECT(&bgrc,
+                                    rect.x,
+                                    rect.y-nBarH,
+                                    50,
+                                    nBarH); 
+						IDISPLAY_DrawRect(pContext->pIDisplay,&bgrc,RGB_BLACK,RGB_BLACK,IDF_RECT_FILL);
+					}
+					else
+					{
+						SETAEERECT(&bgrc,
+                                    rect.x,
+                                    rect.y-nBarH,
+                                    30,
+                                    nBarH); 
+						IDISPLAY_DrawRect(pContext->pIDisplay,&bgrc,RGB_BLACK,RGB_BLACK,IDF_RECT_FILL);
+					}
                     IDISPLAY_SetClipRect(pContext->pIDisplay, &rc);
                     MEMSET(&TitleBar, 0, sizeof(TitleBar_Param_type));
                     TitleBar.prc = &rc;
@@ -3140,6 +3158,7 @@ static void TextCtl_DrawScrollBar(TextCtlContext *pContext)
 
    AEERect aRect,
            scratchRect;
+   AEERect scrollRect;
    int32   wBlackPixels;
    int32   wTopWhitePixels;
    int32   wBottomWhitePixels;
@@ -3179,7 +3198,7 @@ static void TextCtl_DrawScrollBar(TextCtlContext *pContext)
    }
 
    // Now calculate the length of the black portion of the scroll bar
-   if (pContext->wLines > pContext->nDisplayLines) {
+   if (pContext->wLines >= pContext->nDisplayLines) {
       int32 wWhitePixels;
       int16 wLinesOffScreen;
 
@@ -3232,7 +3251,11 @@ static void TextCtl_DrawScrollBar(TextCtlContext *pContext)
 
    // Frame the outer area of the scroll bar
    IDISPLAY_FrameRect((IDisplay *)pContext->pIDisplay, &aRect);
-
+   scrollRect = aRect;
+   scrollRect.y = scrollRect.y -2;
+   scrollRect.dx = scrollRect.dx+4;
+   scrollRect.dy = scrollRect.dy +2;
+   IDISPLAY_FillRect(pContext->pIDisplay, &scrollRect, MAKE_RGB(0,0,0));
    // Now adjust aRect for just the inside of the scroll bar
    ++aRect.x;
 #ifdef FEATURE_SCROLLBAR_USE_STYLE
@@ -3275,6 +3298,10 @@ static void TextCtl_DrawScrollBar(TextCtlContext *pContext)
       
 #ifdef FEATURE_SCROLLBAR_USE_STYLE
       IDISPLAY_FillRect(pContext->pIDisplay, &aRect, MAKE_RGB(0xDE, 0xDE, 0xDE));
+      scrollRect = aRect;
+      scrollRect.y = aRect.dy+aRect.y-3;
+      scrollRect.dy = 3;
+      IDISPLAY_FillRect(pContext->pIDisplay, &scrollRect, MAKE_RGB(0, 0, 0));
 #else
       IDISPLAY_FillRect(pContext->pIDisplay, &aRect, RGB_WHITE);
 #endif
@@ -12977,7 +13004,7 @@ static boolean TextCtl_IsInRange(int16 xpos, int16 ypos, CoordiRange* range)
 static boolean isThaiCnsntChar(AECHAR inputChar)
 {
     //分布在按键2~9上
-    if( ( inputChar >= 0x0e01 ) && ( inputChar <= 0x0e2e ) )
+    if( ( inputChar >= 0x0e01 ) && ( inputChar <= 0x0e4e ) )
         return TRUE;
     else
         return FALSE;
