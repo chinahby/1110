@@ -538,6 +538,12 @@
 	<String Id="185" Name="IDS_ENABLEREPORT_SHORT">
 		<Text>Hdp</Text>
 	</String>
+	<String Id="1011" Name="IDS_MSGVALIDITY_IMMEDIATE">
+		<Text>Immediate</Text>
+	</String>
+	<String Id="1012" Name="IDS_STR_FLASHSMS">
+		<Text>Flash sms</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
@@ -861,6 +867,13 @@
 	</Dialog>
 	<Dialog Id="6046" Name="IDD_NOPOPMSG" Focus="0">
 		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6047" Name="IDD_FLASHSMS" Focus="7039">
+		<Controls>
+			<Static Id="7039" Name="IDC_STATIC_FLASHSMS">
+				<Items/></Static>
+		</Controls>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 </Dialogs>
