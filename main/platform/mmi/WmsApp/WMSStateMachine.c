@@ -220,6 +220,7 @@ static NextFSMAction WMSST_RESENDCONFIRM_Handler(WmsApp *pMe);
 //WMSST_WMSNEW状态处理函数add by yangdecai
 static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe);
 static NextFSMAction WMSST_WMSPOP_Hander(WmsApp *pMe);
+static NextFSMAction WMSST_FLASHSMS_Hander(WmsApp *pMe);
 
 /*==============================================================================
 
@@ -450,7 +451,8 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
 
 	    case WMSST_WMSNEW:
 			return WMSST_WMSNEW_Hander(pMe);
-
+		case WMSST_FLASHSMS:
+			return WMSST_FLASHSMS_Hander(pMe);
 		case WMSST_POPMSG:
 			return WMSST_WMSPOP_Hander(pMe);
             
@@ -6186,6 +6188,31 @@ static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
             
         case DLGGET_SMSNEW_OK:
+			
+            //MOVE_TO_STATE(COREST_STANDBY)
+            return NFSMACTION_CONTINUE;
+        
+        default:
+            break;
+    }
+    MSG_FATAL("COREST_SMSTIP_Handler End",0,0,0);
+    return NFSMACTION_WAIT;
+}
+//WMSST_FLASHSMS状态处理函数add by yangdecai
+static NextFSMAction WMSST_FLASHSMS_Hander(WmsApp *pMe)
+{
+	if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    MSG_FATAL("WMSST_FLASHSMS_Hander Start",0,0,0);
+	switch (pMe->m_eDlgReturn)
+    {
+        case DLGRET_CREATE:
+            WmsApp_ShowDialog(pMe, IDD_FLASHSMS);
+            return NFSMACTION_WAIT;
+
+        case DLGGET_FLASHSMS_END:
 			
             //MOVE_TO_STATE(COREST_STANDBY)
             return NFSMACTION_CONTINUE;

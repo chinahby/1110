@@ -72,6 +72,8 @@
 #define MAX_EMAILADD_LEN               64       // 电子邮件地址最大允许长度
 #define MAX_URL_LEN                    256      // URL最大允许长度
 
+#define WMSAPP_RELATIVE_VALIDITY_IMMEDIATE          246
+
 // 每条用户定制消息模板最大允许字符数
 #define  MAX_TEMPLATECHARS      70
 

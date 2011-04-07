@@ -622,7 +622,9 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     pMe->m_strPhonePWD = NULL;
     pMe->m_bincommend = FALSE;
     pMe->m_bwriteclr  = FALSE;
-    
+    #ifdef FEATURE_FLASH_SMS
+	pMe->m_bflash_sms = FALSE;              //add by yangdecai 2011-04-01
+	#endif
     // 取保存的配置信息
     WmsApp_GetPrefs(pMe);
     if (pMe->m_cfg.nInitIndictor != WMS_CFG_VERSION) // 当前版本未初始化
@@ -841,6 +843,60 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
 	}
     WMSAPPU_SYSFREE(pMe->m_msSend.m_szMessage);
 }
+#ifdef FEATURE_CDSMS
+/*=========================================================================
+FUNCTION
+  WMSAPP_CheckCDMAFlashSMSMessage
+
+DESCRIPTION
+  Check if a CDMA message is a Flash SMS Message.
+  This is a Synchronous function call.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  TRUE:  Is Flash SMS Message
+  FALSE: Is Flash SMS Message
+
+SIDE EFFECTS
+  None
+
+=========================================================================*/
+static boolean WMSAPP_CheckCDMAFlashSMSMessage
+(
+  const wms_client_bd_s_type *pClientBD
+)
+{
+  boolean ret_value = FALSE;
+  int temp = wms_ts_encode_relative_time(&pClientBD->validity_relative);
+  MSG_MED("Function WMSAPP_CheckCDMAFlashSMSMessage entered", 0, 0, 0);
+
+  if (NULL == pClientBD)
+  {
+    MSG_ERROR("Null Parameter Passed in WMSAPP_CheckCDMAFlashSMSMessage", 0, 0, 0);
+    return ret_value;
+  }
+  MSG_FATAL("temp================%d",temp,0,0);
+  MSG_FATAL("pClientBD->display_mode========%d",pClientBD->display_mode,0,0);
+  if((pClientBD->mask & WMS_MASK_BD_VALID_REL)
+     && (WMSAPP_RELATIVE_VALIDITY_IMMEDIATE == 
+         wms_ts_encode_relative_time(&pClientBD->validity_relative)))
+  {
+    ret_value = TRUE;
+  }
+  else if ( (pClientBD->mask & WMS_MASK_BD_DISPLAY_MODE)
+            && (WMS_DISPLAY_MODE_IMMEDIATE == pClientBD->display_mode) )
+  {
+    ret_value = TRUE;
+  }
+
+  MSG_FATAL("Function WMSAPP_CheckCDMAFlashSMSMessage result = %d", ret_value, 0, 0);
+  return ret_value;
+
+}
+
+#endif
 
 /*==============================================================================
 函数:
@@ -1296,6 +1352,23 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                              
                 if (nRet == SUCCESS)
                 {
+                	#ifdef FEATURE_CDSMS
+                	// Check for Flash SMS Message
+                	boolean  i = WMSAPP_CheckCDMAFlashSMSMessage(&pMe->m_CltTsdata.u.cdma);
+                	MSG_FATAL("i=======================%d",i,0,0);
+                	if (WMSAPP_CheckCDMAFlashSMSMessage(&pMe->m_CltTsdata.u.cdma) == TRUE)
+                	{
+                  		
+                  		#ifdef FEATURE_FLASH_SMS
+						pMe->m_bflash_sms = TRUE;              //add by yangdecai 2011-04-01
+						#else
+						/* Drop this Message since it is not supported */
+                  		MSG_HIGH("CDMA Flash SMS Message Recieved and Dropped", 0, 0, 0);
+                  		WMSAPPU_FREE(dwParam);
+                  		return TRUE;
+						#endif
+                	}
+                	#endif
                     if (pMe->m_CltTsdata.u.cdma.message_id.udh_present)
                     {
                         uint8 i=0;
@@ -1419,15 +1492,35 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 	                    {                                        
 	                        // 语音提示用户有消息
 	                        WmsApp_PlaySMSAlert(pMe, TRUE);
-	        				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
-	        				{
-	            					(void) ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
-									MOVE_TO_STATE(WMSST_WMSNEW)
+	                        #ifdef FEATURE_FLASH_SMS
+	                        if(pMe->m_bflash_sms)
+	                        {
+	                        	if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
+		        				{
+		        					(void) ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+									MOVE_TO_STATE(WMSST_FLASHSMS)
 									pMe->m_eDlgReturn = DLGRET_CREATE;
 									CWmsApp_RunFSM(pMe);
-									 
-									
-	        				}
+		        				}
+		        				else
+		        				{
+		        					CLOSE_DIALOG(DLGRET_FLASHSMS)
+		        					//(void) ISHELL_EndDialog(pMe->m_pShell);
+		        					//MOVE_TO_STATE(WMSST_FLASHSMS)
+									//pMe->m_eDlgReturn = DLGRET_CREATE;
+		        				}
+	                        }
+	                        else
+	                        #endif
+	                        {
+		        				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
+		        				{
+		            					(void) ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+										MOVE_TO_STATE(WMSST_WMSNEW)
+										pMe->m_eDlgReturn = DLGRET_CREATE;
+										CWmsApp_RunFSM(pMe);
+										
+		        				}
 	        				else
 	        				{
 	        				
@@ -1447,7 +1540,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 	                                         EVT_WMS_MSG_RECEIVED_MESSAGE,
 	                                         0, 
 	                                         0);
-											
+									}
 								}
 	        				 }
 	                    }

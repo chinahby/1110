@@ -145,6 +145,7 @@ static void WmsApp_ReadMsg(void *pUser);
 //static void WmsApp_StopSendingAni(WmsApp *pMe);
 
 static AECHAR * FormatMessageForDisplay(WmsApp  *pMe, WMSMessageStruct *pMessage);
+static AECHAR * FormatFlashSMSForDisplay(WmsApp  *pMe, WMSMessageStruct *pMessage);
 
 static void DialogTimeoutCallback(void *pUser);
 static void WMSApp_DialogTimeout(void *pme);
@@ -432,6 +433,11 @@ static boolean IDD_POPMSG_Handler(void *pUser,
 									 uint16 wParam,
 									 uint32 dwParam);  
 
+//对话框IDD_FLASHSMS事件处理函数
+static boolean IDD_FLASHSMS_Handler(void *pUser,
+									 AEEEvent eCode,
+									 uint16 wParam,
+									 uint32 dwParam);  
 
 /*==============================================================================
 
@@ -719,6 +725,10 @@ void WmsApp_SetDialogHandler(WmsApp *pMe)
 		case IDD_WMSNEWMSG:
             INIT_STATIC
 			pMe->m_pDialogHandler = IDD_WMSNEWMSG_Handler;
+			break;
+		case IDD_FLASHSMS:
+			INIT_STATIC
+			pMe->m_pDialogHandler = IDD_FLASHSMS_Handler;
 			break;
 		case IDD_NOPOPMSG:
 			INIT_STATIC
@@ -2377,6 +2387,7 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
                         {
 							wms_cache_info_node  *pnode = NULL;
 				            uint16 wIndex=pMe->m_wCurindex;
+				            MSG_FATAL("wIndex=============EVT_WMS_MSG_RECEIVED_MESSAGE===========%d",wIndex,0,0);
 				            //释放查看的消息内存
 							WMSMessageStruct_Free(pMe);
 							//ADD BY YANGDECAI 2010-08-16
@@ -6034,7 +6045,9 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
             MENU_ADDITEM(pMenu, IDS_MSGVALIDITY_24HOURS);
             MENU_ADDITEM(pMenu, IDS_MSGVALIDITY_3DAYS);
             MENU_ADDITEM(pMenu, IDS_MSGVALIDITY_1WEEK);
-            
+#ifdef FEATURE_FLASH_SMS
+            MENU_ADDITEM(pMenu, IDS_MSGVALIDITY_IMMEDIATE);
+#endif
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -6080,7 +6093,11 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
                     case OEMNV_SMS_VALIDITYPERIOD_1WEEK://1 week
                         nSelID = IDS_MSGVALIDITY_1WEEK;
                         break;
-                        
+                    #ifdef FEATURE_FLASH_SMS
+					case OEMNV_SMS_VALIDITYPERIOD_IMMEDIATE:
+						nSelID = IDS_MSGVALIDITY_IMMEDIATE;
+						break;
+					#endif
                     default:
                         nSelID = IDS_MSGVALIDITY_MAX;
                         break;
@@ -6150,7 +6167,11 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
                     case IDS_MSGVALIDITY_1WEEK://1 week
                         btValidity = OEMNV_SMS_VALIDITYPERIOD_1WEEK;
                         break;
-                        
+                    #ifdef FEATURE_FLASH_SMS
+					case IDS_MSGVALIDITY_IMMEDIATE:
+						btValidity = OEMNV_SMS_VALIDITYPERIOD_IMMEDIATE;
+						break;
+					#endif
                     default:
                         return TRUE;
                 }
@@ -6504,6 +6525,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 }
             
                 SETAEERECT(&rc,  0, y, pMe->m_rc.dx, pMe->m_rc.dy-y);
+                MSG_FATAL("pMe->m_SendStatus==================%d",pMe->m_SendStatus,0,0);
                 if (pMe->m_SendStatus == WMS_RPT_OK)
                 {
                     nResID = IDS_MSGSENT;
@@ -12459,20 +12481,24 @@ static AECHAR  * FormatMessageForDisplay(WmsApp *pMe, WMSMessageStruct *pMessage
 
     if ((NULL == pMe) || (NULL == pMessage))
     {
+    	MSG_FATAL("pMe IS NULL.....pMessage IS NULL ",0,0,0);
         return NULL;
     }
     
     // 先处理消息接收或发送人信息部份
+
     switch (pMe->m_currState)
     {
         case WMSST_VIEWOUTBOXMSG:
         case WMSST_VIEWRESERVEDMSG:
+        
             // 发送至:
             nHeaderResID = IDS_TO;
             break;
             
         case WMSST_VIEWINBOXMSG:
         case WMSST_VIEWVOICEMAIL:
+        
             // 来自:
             nHeaderResID = IDS_FROM;
             break;
@@ -12480,7 +12506,8 @@ static AECHAR  * FormatMessageForDisplay(WmsApp *pMe, WMSMessageStruct *pMessage
         default:
             break;
     }
-    
+   
+    MSG_FATAL("nHeaderResID==========================%d ",nHeaderResID,0,0);
     if (nHeaderResID != 0)
     {   // 带标题
         AECHAR  wszTitle[MAX_TITLE_LEN]={0};
@@ -12519,6 +12546,7 @@ static AECHAR  * FormatMessageForDisplay(WmsApp *pMe, WMSMessageStruct *pMessage
         
         // 准备 wstrAddFld 
         nLenNum = WSTRLEN(pMessage->m_szNum);
+        MSG_FATAL("nLenNum===================%d",nLenNum,0,0);
         if (nLenNum>0)
         {
             wszTitle[0] = 0;
@@ -12779,6 +12807,279 @@ FMTMSG_ERR:
     return wstrRet;
 } // FormatMessageForDisplay
 
+/*==============================================================================
+函数:
+    FormatFlashSMSForDisplay
+
+说明:
+    将给定消息格式化已显示给用户。
+
+参数:
+    pMe [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+    pMessage [in]: 给定消息。
+
+返回值:
+    指向格式化后的文本字符串。
+
+备注:
+    返回的字符串所用空间属于动态分配，需调用者释放。
+        
+==============================================================================*/
+static AECHAR  * FormatFlashSMSForDisplay(WmsApp *pMe, WMSMessageStruct *pMessage)
+{
+    uint16    nHeaderResID = 0;
+    int32     dwSize,dwTotalLen = 0;
+    int       nLen = 0;
+    
+    AECHAR    *wstrPriFld = NULL;      // 消息优先级部份
+    AECHAR    *wstrContentFld = NULL;  // 消息正文部份
+    AECHAR    *wstrOptCall = NULL;     // 语音邮件听取选项
+    AECHAR    *wstrOptDel = NULL;      // 语音邮件删除选项
+    AECHAR    *wstrAddFld = NULL;      // 消息接收或发送人信息部份
+    AECHAR    *wstrDtFld = NULL;       // 消息时间戳部份
+    AECHAR    *wstrRet = NULL;         // 格式化后消息数据
+    
+    AECHAR    wszNewLine[] = {(AECHAR)'\n', 0};
+    AECHAR    wstrFmt[32] = {0};
+    AECHAR    wstrSpace[2] = {L"  "};
+
+    if ((NULL == pMe) || (NULL == pMessage))
+    {
+    	MSG_FATAL("pMe IS NULL.....pMessage IS NULL ",0,0,0);
+        return NULL;
+    }
+    
+    // 先处理消息接收或发送人信息部份
+
+    nHeaderResID = IDS_FROM;
+
+    MSG_FATAL("nHeaderResID==========================%d ",nHeaderResID,0,0);
+    if (nHeaderResID != 0)
+    {   // 带标题
+        AECHAR  wszTitle[MAX_TITLE_LEN]={0};
+        AECHAR  wszName[MAX_TITLE_LEN]={0};
+        int     nLenNum  = 0;
+        int     nName  = 0;
+
+        // 准备 wstrAddFld 
+        nLenNum = WSTRLEN(pMessage->m_szNum);
+        MSG_FATAL("nLenNum===================%d",nLenNum,0,0);
+        if (nLenNum>0)
+        {
+            wszTitle[0] = 0;
+            (void) ISHELL_LoadResString(pMe->m_pShell,
+                                        AEE_WMSAPPRES_LANGFILE,
+                                        nHeaderResID,
+                                        wszTitle,
+                                        sizeof(wszTitle));
+            
+            // 从电话本中取人名
+            WMSUtil_GetContactName(pMe, 
+                                   pMessage->m_szNum, 
+                                   wszName, 
+                                   MAX_TITLE_LEN); 
+            
+            wstrFmt[0] = 0;
+            nName = WSTRLEN(wszName);
+            if (nName > 0)
+            {
+                // 发送至/来自：\n 号码 \n 人名 \n\n
+                (void)STRTOWSTR("%s\n%s\n", wstrFmt, sizeof(wstrFmt));
+            }
+            else
+            {
+                // 发送至/来自：\n 号码\n\n
+                (void)STRTOWSTR("%s\n", wstrFmt, sizeof(wstrFmt));
+            }
+            dwSize = (WSTRLEN(wstrFmt) + nName + WSTRLEN(wszTitle) + nLenNum + 1) * sizeof(AECHAR);
+            
+            wstrAddFld = (AECHAR *)MALLOC(dwSize);
+            if (NULL == wstrAddFld)
+            {
+                ERR("MALLOC Failed!",0,0,0);
+                goto FMTMSG_ERR;
+            }
+            
+            if (nName > 0)
+            {
+                // 发送至/来自：\n 号码 \n 人名 \n\n
+                WSPRINTF(wstrAddFld, dwSize, wstrFmt, pMessage->m_szNum, wszName);
+            }
+            else
+            {
+                // 发送至/来自：\n 号码\n\n
+                WSPRINTF(wstrAddFld, dwSize, wstrFmt, pMessage->m_szNum);
+            }
+        }
+        
+        // 准备回叫号码段
+        nLenNum = WSTRLEN(pMessage->m_szCallBkNum);
+        if (nLenNum)
+        {
+            int nTepLen = WSTRLEN(wstrAddFld);
+            
+            wszTitle[0] = 0;
+            wszName[0] = 0;
+            (void) ISHELL_LoadResString(pMe->m_pShell,
+                                        AEE_WMSAPPRES_LANGFILE,
+                                        IDS_CALLBACKNUM,
+                                        wszTitle,
+                                        sizeof(wszTitle));
+            
+            // 从电话本中取人名
+            WMSUtil_GetContactName(pMe, 
+                                   pMessage->m_szCallBkNum, 
+                                   wszName, 
+                                   MAX_TITLE_LEN); 
+            
+            wstrFmt[0] = 0;
+            nName = WSTRLEN(wszName);
+            if (nName > 0)
+            {
+                // 回叫号码：\n 号码 \n 人名 \n\n
+                (void)STRTOWSTR("%s:\n%s\n", wstrFmt, sizeof(wstrFmt));
+            }
+            else
+            {
+                // 回叫号码：\n 号码\n\n
+                (void)STRTOWSTR("%s:\n%s\n", wstrFmt, sizeof(wstrFmt));
+            }
+            dwSize = (WSTRLEN(wstrFmt) + nName + WSTRLEN(wszTitle) + nLenNum + nTepLen + 1) * sizeof(AECHAR);
+            
+            wstrAddFld = (AECHAR *)REALLOC((void *)wstrAddFld, dwSize);
+            if (NULL == wstrAddFld)
+            {
+                ERR("MALLOC Failed!",0,0,0);
+                goto FMTMSG_ERR;
+            }
+            
+            if (nName > 0)
+            {
+                // 回叫号码：\n 号码 \n 人名 \n\n
+                WSPRINTF(&wstrAddFld[nTepLen], dwSize, wstrFmt, pMessage->m_szCallBkNum, wszName);
+            }
+            else
+            {
+                // 回叫号码：\n 号码\n\n
+                WSPRINTF(&wstrAddFld[nTepLen], dwSize, wstrFmt, pMessage->m_szCallBkNum);
+            }
+        }
+        dwTotalLen += WSTRLEN(wstrAddFld);
+    }
+    
+    // 消息时间日期部份
+    // 准备 wstrDtFld
+    if (pMessage->m_dwTime > 0)
+    {
+        AECHAR  wstrDT[MAX_TITLE_LEN]={0};
+        WMSUtil_SecsToDateString(pMe, pMessage->m_dwTime, wstrDT, sizeof(wstrDT));
+        wstrDtFld = WSTRDUP(wstrDT);
+        
+        if (NULL == wstrDtFld)
+        {
+            ERR("MALLOC Failed!",0,0,0);
+            goto FMTMSG_ERR;
+        }
+
+        dwTotalLen += WSTRLEN(wstrDtFld);
+    }
+    
+    if (NULL != pMessage->m_szMessage)
+    {
+        wstrContentFld = WSTRDUP(pMessage->m_szMessage);
+        if (NULL == wstrContentFld)
+        {
+            ERR("MALLOC Failed!",0,0,0);
+            goto FMTMSG_ERR;
+        }
+        dwTotalLen += (WSTRLEN(wstrContentFld)+WSTRLEN(wszNewLine)*2);
+    }
+    
+    // 准备最终输出部份
+    dwTotalLen++;
+    dwSize = dwTotalLen * sizeof(AECHAR);
+
+    wstrRet = (AECHAR *)MALLOC(dwSize);
+    if (NULL == wstrRet)
+    {
+        ERR("MALLOC Failed!",0,0,0);
+        goto FMTMSG_ERR;
+    }
+    
+    nLen = 0;
+    if (wstrPriFld)
+    {
+        (void)WSTRCPY(&wstrRet[nLen], wstrPriFld);
+        
+        nLen = WSTRLEN(wstrRet);
+    }
+    if (wstrAddFld)
+    {
+        (void)WSTRCPY(&wstrRet[nLen], wstrAddFld);
+        nLen = WSTRLEN(wstrRet);
+
+    }
+    if (wstrDtFld)
+    {
+        (void)WSTRCPY(&wstrRet[nLen], wstrDtFld);
+        nLen = WSTRLEN(wstrRet);
+        
+        (void)WSTRCPY(&wstrRet[nLen], wszNewLine);
+        nLen = WSTRLEN(wstrRet);
+    }
+    if (wstrContentFld)
+    {
+        (void)WSTRCPY(&wstrRet[nLen], wstrContentFld);
+        nLen = WSTRLEN(wstrRet);
+        
+		/*
+        (void)WSTRCPY(&wstrRet[nLen], wszNewLine);
+        nLen = WSTRLEN(wstrRet);
+        
+        (void)WSTRCPY(&wstrRet[nLen], wszNewLine);
+        nLen = WSTRLEN(wstrRet);
+        */
+    }
+    /*
+    if (wstrOptCall)
+    {
+        (void)WSTRCPY(&wstrRet[nLen], wstrOptCall);
+        
+        nLen = WSTRLEN(wstrRet);
+    }
+    
+    
+    if (wstrOptDel)
+    {
+        (void)WSTRCPY(&wstrRet[nLen], wstrOptDel);
+        
+        nLen = WSTRLEN(wstrRet);
+    }
+    
+    if (wstrAddFld)
+    {
+        (void)WSTRCPY(&wstrRet[nLen], wstrAddFld);
+        
+        nLen = WSTRLEN(wstrRet);
+    }
+    
+    if (wstrDtFld)
+    {
+        (void)WSTRCPY(&wstrRet[nLen], wstrDtFld);
+        
+        nLen = WSTRLEN(wstrRet);
+    }
+    */
+FMTMSG_ERR:
+    FREEIF(wstrPriFld);
+    FREEIF(wstrContentFld);
+    FREEIF(wstrAddFld);
+    FREEIF(wstrDtFld);
+    FREEIF(wstrOptCall);
+    FREEIF(wstrOptDel);
+    
+    return wstrRet;
+} // FormatMessageForDisplay
 
 /*==============================================================================
 函数:
@@ -13306,7 +13607,7 @@ static boolean IDD_LOADINGMSG_Handler(void   *pUser,
                 boolean bUIMSMS = FALSE;
                 
                 wIndex = pMe->m_wCurindex;
-                
+                MSG_FATAL("EVT_USER_REDRAW,read......",0,0,0);
                 // 取消息 cache info 节点
                 if (wIndex>=RUIM_MSGINDEX_BASE)
                 {
@@ -14758,6 +15059,410 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
                     		return TRUE;
 						}
   						break;
+                	default:
+                    	break;
+				}
+			}
+			break;
+		default:
+            break;
+		}
+	return FALSE;
+}
+/*==============================================================================
+函数:
+    IDD_FLASHSMS_Handler
+
+说明:
+    WMSApp 对话框 IDD_FLASHSMS 事件处理函数。
+
+参数:
+    pMe [in]:       指向WMSApp Applet对象结构的指针。该结构包含小程序的特定信息。
+    eCode [in]:     事件代码。
+    wParam:         事件参数
+    dwParam [in]:   与wParam关联的数据。
+
+返回值:
+    TRUE:  传入事件得到处理。
+    FALSE: 传入事件没被处理。
+
+备注:
+
+==============================================================================*/
+
+static boolean IDD_FLASHSMS_Handler(void *pUser,
+									 AEEEvent eCode,
+									 uint16 wParam,
+									 uint32 dwParam)
+{
+	static IStatic * pStatic = NULL;
+    //static IBitmap * pDevBmp = NULL;
+    WmsApp *pMe = (WmsApp *)pUser;
+    MSG_FATAL("%x %x %x IDD_WMSTIPS_Handler",eCode,wParam,dwParam);
+    pStatic = (IStatic*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_STATIC_FLASHSMS);
+	if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    
+    if (NULL == pStatic)
+    {
+        return FALSE;
+    }
+	switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            {
+                AEERect rc;
+                if (pMe == NULL)
+                {
+                    return TRUE;
+                }
+				SETAEERECT(&rc,  0, pMe->m_rc.y ,
+                            pMe->m_rc.dx,
+                            pMe->m_rc.dy - BOTTOMBAR_HEIGHT);
+                ISTATIC_SetRect(pStatic, &rc);
+            }
+            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+            // 设置静态文本控件属性
+            ISTATIC_SetProperties(pStatic, ST_CENTERTITLE | ST_NOSCROLL | ST_DISPLATSMS | ST_GRAPHIC_BG);
+            return TRUE;
+		case EVT_WMS_MSG_READ:
+            {
+            wms_cache_info_node  *pnode = NULL;
+            wms_memory_store_e_type mem_store;
+            wms_message_index_type  wIdx;
+            int nRet;
+            wms_cache_info_list   *pList = NULL;
+            wms_msg_event_info_s_type *Info = (wms_msg_event_info_s_type*)dwParam;
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            pList = wms_get_cacheinfolist(pMe->m_eMBoxType);
+            if (NULL != pList)
+            {
+                
+                pMe->m_wCurindex = pList->nBranches;
+                
+            }
+            MSG_FATAL("EVT_WMS_MSG_READ....IDD_FLASHSMS_Handler.........receve",0,0,0);
+            mem_store = Info->status_info.message.msg_hdr.mem_store;
+            wIdx = Info->status_info.message.msg_hdr.index;
+            MSG_FATAL("pMe->m_idxCur===========%d,pMe->m_wCurindex=%d",pMe->m_idxCur,pMe->m_wCurindex,0);
+            pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_NV_CDMA, (pMe->m_wCurindex));//pMe->m_CurMsgNodes[pMe->m_idxCur];
+            
+            if (NULL == pnode)
+            {
+            	MSG_FATAL("read SUCCESS................................2",0,0,0);
+            	(void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+                return TRUE;
+            }
+             MSG_FATAL("read SUCCESS................................3",0,0,0);
+            if ((mem_store == pnode->mem_store) && (pnode->index == wIdx))
+            {
+                WMSMessageStruct *pTms = (WMSMessageStruct *)MALLOC(sizeof(WMSMessageStruct));
+                
+                // 保存读取的数据
+                if (NULL != pTms)
+                {
+                    WmsApp_ConvertClientMsgToMS(&(Info->status_info.message), pTms);
+                    pMe->m_CurMsgNodesMS[pMe->m_idxCur] = pTms;
+                }
+                
+                
+                pnode = NULL;
+                pMe->m_idxCur++;
+                for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
+                {
+                	
+                    if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
+                    {
+                        pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
+                        break;
+                    }
+                }
+                 MSG_FATAL("read SUCCESS................................4",0,0,0);
+                if (NULL != pnode)
+                {// 读下一数据包
+                    // 发送读消息命令
+                    
+                    nRet = IWMS_MsgRead(pMe->m_pwms,
+                                       pMe->m_clientId,
+                                       &pMe->m_callback,
+                                       (void *)pMe,
+                                       pnode->mem_store,
+                                       pnode->index);
+                                       
+                    if (nRet != SUCCESS)
+                    {
+                        CLOSE_DIALOG(DLGRET_LOADFAILED)
+                    }
+                                       
+                    return TRUE;
+                }
+                else
+                {
+                    WmsApp_CombinateMsg(pMe);
+                    MSG_FATAL("read SUCCESS................................5",0,0,0);
+                    (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+                }
+            }
+            return TRUE;
+            }
+            break;
+        case EVT_DIALOG_START:
+          {
+        	 uint16 wIndex=0;
+             wms_cache_info_node  *pnode = NULL;
+             int nRet,i,nCount=0;
+             boolean bUIMSMS = FALSE;
+             wms_cache_info_list   *pList = NULL;
+            
+             pMe->m_eMBoxType = WMS_MB_INBOX;
+             pList = wms_get_cacheinfolist(pMe->m_eMBoxType);
+             if (NULL != pList)
+             {
+                pMe->m_wCurindex = pList->nBranches;
+             }
+        	 wIndex = pMe->m_wCurindex;
+             MSG_FATAL("EVT_DIALOG_INIT...wIndex=%d,pMe->m_eMBoxType=%d",wIndex,pMe->m_eMBoxType,0);
+             // 取消息 cache info 节点
+             if (wIndex>=RUIM_MSGINDEX_BASE)
+             {
+                 wIndex = wIndex - RUIM_MSGINDEX_BASE;
+                 pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_RUIM, wIndex);
+             }
+             else
+             {
+                 pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_NV_CDMA, wIndex);
+             }
+             MSG_FATAL("EVT_USER_REDRAW,......,EVT_DIALOG_INIT...1...",0,0,0);
+             if (NULL == pnode)
+             {
+             	MSG_FATAL("EVT_USER_REDRAW,......,EVT_DIALOG_INIT...2...",0,0,0);
+                 CLOSE_DIALOG(DLGRET_LOADFAILED)
+                 return TRUE;
+             }
+             MSG_FATAL("EVT_USER_REDRAW,......,EVT_DIALOG_INIT...3...",0,0,0);
+             // 重置当前消息列表
+             MEMSET(pMe->m_CurMsgNodes, 0, sizeof(pMe->m_CurMsgNodes));
+             WmsApp_FreeMsgNodeMs(pMe);
+             
+             pMe->m_idxCur = 0;
+ #ifdef FEATURE_SMS_UDH
+             if (pnode->pItems != NULL)
+             {
+                 MEMCPY(pMe->m_CurMsgNodes, pnode->pItems, sizeof(pMe->m_CurMsgNodes));
+                 MSG_FATAL("pnode->pItems is  NULL",0,0,0);
+                 for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
+                 {
+                     if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
+                     {
+                         pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
+                         break;
+                     }
+                 }
+             }
+             else
+ #endif
+             {
+             	MSG_FATAL("pnode->pItems is not NULL",0,0,0);
+                 pMe->m_CurMsgNodes[0] = pnode;
+             }
+            
+             pMe->m_eCurStore = pnode->mem_store;
+             MSG_FATAL("EVT_USER_REDRAW,......,EVT_DIALOG_INIT...4...",0,0,0);
+             // 发送读消息命令
+             nRet = IWMS_MsgRead(pMe->m_pwms,
+                                pMe->m_clientId,
+                                &pMe->m_callback,
+                                (void *)pMe,
+                                pnode->mem_store,
+                                pnode->index);
+             MSG_FATAL("READ msg.........................",0,0,0);
+            return TRUE;
+		}
+        case EVT_USER_REDRAW:
+            {
+            	
+                AECHAR *pFormatedText = NULL;
+                AECHAR wszTitle[32] = {0};
+                uint16 nTitleID=0;
+                TitleBar_Param_type     TBarParam = {0};
+                nTitleID = IDS_STR_FLASHSMS;
+                MSG_FATAL("IDD_FLASHSMS_Handler EVT_USER_REDRAW...",0,0,0);
+                if (nTitleID != 0)
+                {
+                    (void) ISHELL_LoadResString(pMe->m_pShell,
+                            AEE_WMSAPPRES_LANGFILE,
+                            nTitleID,
+                            wszTitle,
+                            sizeof(wszTitle));
+                }
+
+                TBarParam.pwszTitle = wszTitle;
+				#if 0
+                TBarParam.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+                DrawTitleBar(pMe->m_pDisplay, &TBarParam);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+				#endif
+
+                MEMSET(wszTitle, 0, sizeof(wszTitle));
+
+                // 格式化消息便于阅读
+                if ((pMe->m_currState == WMSST_VIEWTEMPLATE) &&
+                    (pMe->m_msSend.m_szMessage != NULL))
+                {
+                	MSG_FATAL("pFormatedText........................0000000",0,0,0);
+                    pFormatedText = FormatFlashSMSForDisplay(pMe, &pMe->m_msSend);
+                }
+                else
+                {
+                	MSG_FATAL("pFormatedText........................00000001",0,0,0);
+                    pFormatedText = FormatFlashSMSForDisplay(pMe, &pMe->m_msCur);
+                }
+                MSG_FATAL("pFormatedText........................11111",0,0,0);
+                if (NULL != pFormatedText)
+                {
+                    // 设置静态控件文本
+                    MSG_FATAL("pFormatedText........................IS NOT NULL",0,0,0);
+                    (void)ISTATIC_SetText(pStatic,
+                            WSTRLEN(wszTitle)>0 ? wszTitle : NULL,
+                            pFormatedText,
+                            AEE_FONT_BOLD,
+                            AEE_FONT_NORMAL);
+                    
+                    // 释放格式化消息时动态分配的空间
+                    FREE(pFormatedText);
+            	}
+            
+	            ISTATIC_SetActive(pStatic, TRUE);
+	            (void) ISTATIC_Redraw(pStatic);
+	            
+	            // 绘制底条提示
+	            // Option       Back
+	            DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
+        	 	WmsApp_UpdateAnnunciators(pMe);
+	            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+			}
+			break;
+		case EVT_DIALOG_END:
+			{
+				
+	            ISTATIC_Release(pStatic);
+	            pStatic = NULL;
+	            if(pMe->m_pIAnn != NULL)
+	            {
+	                IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
+	            }
+	            return TRUE;
+			}
+			break;
+		case EVT_WMS_MSG_DELETE:
+        case EVT_WMS_MSG_DELETE_BOX:
+        	{
+        		MSG_FATAL("EVT_WMS_MSG_DELETE..................",0,0,0);
+        		CLOSE_DIALOG(DLGGET_FLASHSMS_END)
+        		return TRUE;
+        	}
+        	break;
+		case EVT_KEY:
+			{
+				switch(wParam)
+            	{
+					case AVK_CLR:
+		            case AVK_END:
+						{
+							int i;
+							int nRet=EFAILED;
+                            wms_cache_info_node  *pnode = NULL;
+                            wms_cache_info_list   *pList = NULL;
+    			            pMe->m_eMBoxType = WMS_MB_INBOX;
+    			            pList = wms_get_cacheinfolist(pMe->m_eMBoxType);
+    			            if (NULL != pList)
+    			            {
+    			                pMe->m_wCurindex = pList->nBranches;
+    			            }
+                            pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_NV_CDMA, (pMe->m_wCurindex));
+                             #ifdef FEATURE_SMS_UDH
+  			             	if (pnode->pItems != NULL)
+  			             	{
+  			                 	MEMCPY(pMe->m_CurMsgNodes, pnode->pItems, sizeof(pMe->m_CurMsgNodes));
+  			                 	MSG_FATAL("pnode->pItems is  NULL",0,0,0);
+  			                 	for (; pMe->m_idxCur<LONGSMS_MAX_PACKAGES; pMe->m_idxCur++)
+  			                 	{
+  			                     	if (pMe->m_CurMsgNodes[pMe->m_idxCur] != NULL)
+  			                     	{
+  			                         	pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
+  			                         	break;
+  			                     	}
+  			                 	}
+  			             	}
+  			             	else
+  			 				#endif
+  			             	{
+  			             		MSG_FATAL("pnode->pItems is not NULL",0,0,0);
+  			                 	pMe->m_CurMsgNodes[0] = pnode;
+             				}
+                            for (i=0; i<LONGSMS_MAX_PACKAGES; i++)
+                            {
+                                if (pMe->m_CurMsgNodes[i] != NULL)
+                                {
+                                    pnode = pMe->m_CurMsgNodes[i];
+                                    
+                                    // 发布删除消息命令
+                                    nRet = ENOMEMORY;
+                                    do
+                                    {
+                                        nRet = IWMS_MsgDelete(pMe->m_pwms,
+                                                           pMe->m_clientId,
+                                                           &pMe->m_callback,
+                                                           (void *)pMe,
+                                                           pnode->mem_store,
+                                                           pnode->index);
+                                         MSG_FATAL("DELEING...................",0,0,0);
+                                    } while(nRet != SUCCESS);
+                                    pMe->m_CurMsgNodes[i] = NULL;
+                                }
+                            }
+							
+                    		return TRUE;
+						}
+						break;
+					case AVK_SELECT:
+						{
+							uint16 wIndex=0;
+ 			             	wms_cache_info_node  *pnode = NULL;
+ 			             	int nRet,i,nCount=0;
+ 			             	wms_cache_info_list   *pList = NULL;
+				            pMe->m_eMBoxType = WMS_MB_INBOX;
+				            pList = wms_get_cacheinfolist(pMe->m_eMBoxType);
+				            if (NULL != pList)
+				            {
+				               pMe->m_wCurindex = pList->nBranches;
+				            }
+				        	wIndex = pMe->m_wCurindex;
+				        	pnode = wms_cacheinfolist_getnode(pMe->m_eMBoxType, WMS_MEMORY_STORE_NV_CDMA, (pMe->m_wCurindex));
+ 			             	nRet = IWMS_MsgModifyTag(pMe->m_pwms,
+ 			                                         pMe->m_clientId,
+ 			                                         &pMe->m_callback,
+ 			                                         (void *)pMe,
+ 			                                         pnode->mem_store,
+ 			                                         pnode->index,
+ 			                                         WMS_TAG_MT_READ); 
+							CLOSE_DIALOG(DLGGET_FLASHSMS_END)
+        					return TRUE;
+						}
+						break;
                 	default:
                     	break;
 				}

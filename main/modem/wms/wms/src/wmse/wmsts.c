@@ -3028,7 +3028,7 @@ void wms_ts_decode_relative_time
 )
 {
   uint32                  i;
-
+  MSG_FATAL("v=========wms_ts_decode_relative_time============%d",v,0,0);
   if (timestamp != NULL)
   {
     wms_ts_init();
@@ -3054,6 +3054,12 @@ void wms_ts_decode_relative_time
       timestamp->month    = (uint8)wms_ts_int_to_bcd((uint8)(i/30));
       timestamp->day      = (uint8)wms_ts_int_to_bcd((uint8)(i % 30));
     }
+    #ifdef FEATURE_FLASH_SMS
+    else if(v == 246)
+    {
+    	timestamp->minute = 1;
+    }
+    #endif
     else
     {
       i = ( v - 192 ) * 7; /* days */
@@ -3083,7 +3089,8 @@ uint8 wms_ts_encode_relative_time
   uint32    i;
   uint8     v = 0, j;
   /* round up to the next time unit boundary*/
-
+  MSG_FATAL("v=========wms_ts_encode_relative_time============%d",v,0,0);
+  MSG_FATAL("timestamp=====minute=%d,hour=%d,day=%d",timestamp->minute,timestamp->hour,timestamp->day);
   if (timestamp != NULL)
   {
     wms_ts_init();
@@ -3142,12 +3149,19 @@ uint8 wms_ts_encode_relative_time
         /* 144 - 167: 12 hours + ( (TP-VP - 143) * 30 minutes ) */
         v = (uint8) ( ( i - ((12 * 60) + 29) ) / 30 + 143 );
       }
+      #ifdef FEATURE_FLASH_SMS
+      else if(i ==1)
+      {
+      	v = 246;//246;
+      }
+      #endif
       else
       {
         /* 0 - 143: (TP-VP + 1) * 5 minutes */
         v = (uint8) ( ( i + 4 ) / 5 - 1 );
       }
     }
+    MSG_FATAL("v=========wms_ts_decode_relative_time============%d",v,0,0);
     rex_leave_crit_sect(&encode_decode_data_crit_sect);
   }
   else

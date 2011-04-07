@@ -502,6 +502,9 @@ typedef enum WMSAPPState
 	WMSST_WMSNEW,
 	//用于弹出消息add by yangdecai
 	WMSST_POPMSG,
+
+	//用于显示FLASH SMS消息
+	WMSST_FLASHSMS,
     
     // 退出短信应用
     WMSST_EXIT
@@ -628,6 +631,8 @@ typedef enum DLGRetValue
    ,DLGRET_SMSNEW      //add by yangdecai  2010-07-28
    ,DLGRET_SMSVIEWS
    ,DLGGET_SMSNEW_OK
+   ,DLGRET_FLASHSMS
+   ,DLGGET_FLASHSMS_END
 } DLGRetValue;
 
 
@@ -787,6 +792,9 @@ typedef struct WmsApp
 	IRUIM                           *m_pIRUIM;  
 	boolean                         m_bincommend;
 	boolean                         m_bwriteclr;
+	#ifdef FEATURE_FLASH_SMS
+	boolean                         m_bflash_sms;              //add by yangdecai 2011-04-01
+	#endif
 } WmsApp;
 
 /*==============================================================================
