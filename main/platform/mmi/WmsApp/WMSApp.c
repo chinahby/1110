@@ -1425,6 +1425,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 									MOVE_TO_STATE(WMSST_WMSNEW)
 									pMe->m_eDlgReturn = DLGRET_CREATE;
 									CWmsApp_RunFSM(pMe);
+									 
 									
 	        				}
 	        				else

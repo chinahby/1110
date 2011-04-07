@@ -72,8 +72,11 @@
 #ifdef FEATURE_DRAW_LUNAR_CALENDAR
 #define     LUNAR_RECT_HEIGHT              14
 #endif
-
+#if defined(FEATURE_DISP_128X160) || defined(FEATURE_DISP_128X128)
+#define     MAX_INPUT_SUBJECT               14
+#else
 #define     MAX_INPUT_SUBJECT               20
+#endif
 #define     MAX_INPUT_LOCATION              128
 #define     MAX_SPORTS_DISTANCE             5
 #define     MAX_SPORTS_TIME                 3

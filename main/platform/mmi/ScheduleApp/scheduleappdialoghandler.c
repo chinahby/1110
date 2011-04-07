@@ -3399,11 +3399,31 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
 
             if(!pme->m_sports)
             {
-                ITEXTCTL_SetProperties( pSubject, TP_FIXOEM | TP_FIXSETRECT | TP_STARKEY_SWITCH|TP_FOCUS_NOSEL);
-                ITEXTCTL_SetProperties( pNote, TP_FIXOEM | TP_FIXSETRECT | TP_STARKEY_SWITCH);
+                ITEXTCTL_SetProperties( pSubject, TP_FIXOEM | TP_FIXSETRECT /*| TP_STARKEY_SWITCH*/|TP_FOCUS_NOSEL|TP_MULTILINE);
+                ITEXTCTL_SetProperties( pNote, TP_FIXOEM | TP_FIXSETRECT /*| TP_STARKEY_SWITCH*/|TP_MULTILINE);
                 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                 (void)ITEXTCTL_SetInputMode( pNote, AEE_TM_RAPID);
                 (void)ITEXTCTL_SetInputMode( pSubject, AEE_TM_RAPID);
+                #elif defined(FEATURE_VERSION_C306)
+                {
+                	nv_language_enum_type language;
+	        	    OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+	                if(NV_LANGUAGE_ARABIC == language)
+	                {
+	        	    	(void)ITEXTCTL_SetInputMode( pNote, AEE_TM_ARABIC);
+                		(void)ITEXTCTL_SetInputMode( pSubject, AEE_TM_ARABIC);
+	        	    }
+	        	    else if(NV_LANGUAGE_THAI== language)
+	        	    {
+	        	    	(void)ITEXTCTL_SetInputMode( pNote, AEE_TM_THAI);
+                		(void)ITEXTCTL_SetInputMode( pSubject, AEE_TM_THAI);
+	        	    }
+	        	    else
+	        	    {
+	        	    	(void)ITEXTCTL_SetInputMode( pNote, AEE_TM_LETTERS);
+                		(void)ITEXTCTL_SetInputMode( pSubject, AEE_TM_LETTERS);
+	        	    }
+                }
                 #else
                 (void)ITEXTCTL_SetInputMode( pNote, AEE_TM_LETTERS);
                 (void)ITEXTCTL_SetInputMode( pSubject, AEE_TM_LETTERS);
@@ -3535,7 +3555,21 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             }
             else
             {
+            	AECHAR *pwsText;
+                    
+                pwsText = ITEXTCTL_GetTextPtr(pSubject);
+                #ifndef FEATURE_ALL_KEY_PAD    //add by yangdecai 
+                if( WSTRLEN(pwsText) > 0)
+                {
+                    bottomBarParms.eBBarType = BTBAR_SAVE_DELETE;
+                }
+                else
+                {
+                	bottomBarParms.eBBarType = BTBAR_SAVE_BACK;
+                }
+                #else
                 bottomBarParms.eBBarType = BTBAR_SAVE_BACK;
+                #endif
             }
 
             if(pme->m_sports)
@@ -3697,7 +3731,25 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
             IDISPLAY_UpdateEx( pme->m_pDisplay, FALSE);
         }
         return TRUE;
-
+		case EVT_KEY_RELEASE:
+			{
+				switch( wParam)
+            	{
+					case AVK_0:  //ADD BY yangdecai 2011-04-06
+	                case AVK_1:
+	                case AVK_2:
+	                case AVK_3:
+	                case AVK_4:
+	                case AVK_5:
+	                case AVK_6:
+	                case AVK_7:
+	                case AVK_8:
+	                case AVK_9:
+	                	return TRUE;
+	                	break;
+                }
+                return FALSE;
+			}
         case EVT_KEY:
         {
 
@@ -3773,10 +3825,22 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
                 break;
                 case AVK_SELECT:
                 case AVK_INFO:
+                case AVK_0:  //ADD BY yangdecai 2011-04-06
+                case AVK_1:
+                case AVK_2:
+                case AVK_3:
+                case AVK_4:
+                case AVK_5:
+                case AVK_6:
+                case AVK_7:
+                case AVK_8:
+                case AVK_9:
 #if defined( AEE_SIMULATOR)
                 if( subState == 0 && wParam == AVK_SELECT && (currentItem == 0 || currentItem == 1))
 #else
-                if( subState == 0 && wParam == AVK_INFO && (currentItem == 0 || currentItem == 1))
+                if( subState == 0 && (wParam == AVK_INFO ||wParam == AVK_0 ||wParam == AVK_1 ||wParam == AVK_2
+                	||wParam == AVK_3 || wParam == AVK_4 ||wParam == AVK_5 ||wParam == AVK_6 ||wParam == AVK_7 
+                	||wParam == AVK_8 || wParam == AVK_9) && (currentItem == 0 || currentItem == 1))
 #endif
                 {
                     if(pme->m_sports)
@@ -3917,6 +3981,16 @@ _scheduleapp_event_edit_save_:
                 break;
                 case AVK_SELECT:
                 case AVK_INFO:
+                case AVK_0:  //ADD BY yangdecai 2011-04-06
+                case AVK_1:
+                case AVK_2:
+                case AVK_3:
+                case AVK_4:
+                case AVK_5:
+                case AVK_6:
+                case AVK_7:
+                case AVK_8:
+                case AVK_9:
                 if(pme->m_sports)
                 {
                     if(currentItem == 2 && wParam == AVK_INFO)
@@ -5818,9 +5892,17 @@ static boolean  dialog_handler_of_state_showalert( CScheduleApp* pme,
 
                         length = WSTRLEN(AlertText);
                         AlertText[length++] = ':';
+                        //AlertText[length++] = '\n';
+                        //WSTRNCOPY(d,dlen,s)
                         WSTRCPY(AlertText + length, theLast->subject);
                         IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
                                                             AlertText,
+                                                            -1,
+                                                            rc.x, rc.y, &rc,
+                                                            IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);
+					   rc.y = rc.y + TITLEBAR_HEIGHT;
+                       IDISPLAY_DrawText(pme->m_pDisplay, AEE_FONT_NORMAL,
+                                                            theLast->subject,
                                                             -1,
                                                             rc.x, rc.y, &rc,
                                                             IDF_TEXT_TRANSPARENT | IDF_ALIGN_LEFT | IDF_ALIGN_MIDDLE);
