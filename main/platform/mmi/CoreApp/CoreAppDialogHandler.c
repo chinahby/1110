@@ -4551,7 +4551,7 @@ static void CoreApp_DrawBannerMessage(void    *pUser)
                                     nSize);
     }
     else if (IsRunAsFactoryTestMode())
-        {
+    {
             bSetsearchingTimer = TRUE;
             if (IRUIM_IsCardConnected(pMe->m_pIRUIM))
             {
