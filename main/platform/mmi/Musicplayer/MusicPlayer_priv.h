@@ -177,7 +177,7 @@ if(!(x))         \
 //进度条
 #define SCHEDULEBAR_X 5
 #define SCHEDULEBAR_Y 43
-#define SCHEDULEBAR_W 153 //94
+#define SCHEDULEBAR_W 150 //94
 #define SCHEDULEBAR_H 7
 
 //进度条(简单播放)

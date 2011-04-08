@@ -5337,7 +5337,7 @@ static void MP3_RefreshscheduleBar(CMusicPlayer *pMe)
 	}
 	else
 	{
-		SETAEERECT( &clip1, SCHEDULEBAR_X, SCHEDULEBAR_Y,1,SCHEDULEBAR_H);
+		//SETAEERECT( &clip1, SCHEDULEBAR_X, SCHEDULEBAR_Y,1,SCHEDULEBAR_H);//dele by yangdecai 20110408
 	}
      if(pMe->m_nTotalTime!=0)
     {
