@@ -592,6 +592,10 @@ typedef PACKED struct _Key_pad_Cfg
 // Retry Interval
 #define OEMNV_SMS_RETRY_INTERVAL             5
 // messages validity period - relative
+//add by yangdecai for flash sms
+#ifdef FEATURE_FLASH_SMS
+#define OEMNV_SMS_VALIDITYPERIOD_IMMEDIATE  246
+#endif
 #define OEMNV_SMS_VALIDITYPERIOD_MAX        245 
 #define OEMNV_SMS_VALIDITYPERIOD_1OUR       11 
 #define OEMNV_SMS_VALIDITYPERIOD_6OURS      71 
