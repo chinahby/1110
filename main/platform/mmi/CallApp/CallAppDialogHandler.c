@@ -7443,7 +7443,7 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
 	OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 	if(SimChoice.sim_select==AVK_SEND_TWO)
 	{
-		 if((((wParam == AVK_SEND|| wParam == AVK_CAMERA || wParam == AVK_MUSIC) && (pMe->m_anykey_answer & 0x4))
+		 if((((wParam == AVK_SEND|| wParam == AVK_CAMERA) && (pMe->m_anykey_answer & 0x4))
         ||(eCode == EVT_FLIP && ((boolean)wParam == TRUE)  && (pMe->m_anykey_answer & 0x2))
         ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND )|| (wParam == AVK_CAMERA) || (wParam == AVK_MUSIC)) && (pMe->m_anykey_answer & 0x8))
         ||(((((AVK_FIRST < wParam && wParam <AVK_POWER ) ||(wParam == AVK_INFO)||(wParam == AVK_SHIFT)||
@@ -7520,7 +7520,7 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
 	else
 	#endif
 	{
-    if((((wParam == AVK_SEND|| wParam == AVK_CAMERA || wParam == AVK_MUSIC) && (pMe->m_anykey_answer & 0x4))
+    if((((wParam == AVK_SEND|| wParam == AVK_CAMERA) && (pMe->m_anykey_answer & 0x4))
         ||(eCode == EVT_FLIP && ((boolean)wParam == TRUE)  && (pMe->m_anykey_answer & 0x2))
         ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND )|| (wParam == AVK_CAMERA) || (wParam == AVK_MUSIC)) && (pMe->m_anykey_answer & 0x8))
         ||(((((AVK_FIRST < wParam && wParam <AVK_POWER ) ||(wParam == AVK_INFO)||(wParam == AVK_SHIFT)||
