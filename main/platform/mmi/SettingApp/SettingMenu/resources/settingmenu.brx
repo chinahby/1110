@@ -406,6 +406,15 @@
 	<String Id="1135" Name="IDS_SEARCH_THIRTYMINUTE">
 		<Text>30 minutes</Text>
 	</String>
+	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
+		<Text>Ringtones mode</Text>
+	</STRING>
+	<STRING Id="1137" Name="IDS_FMRADIO_PLAY_HANDSET">
+		<Text>Handset</Text>
+	</STRING>
+	<STRING Id="1138" Name="IDS_RADIO_PLAY_SPEAKER">
+		<Text>Speaker</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -615,6 +624,13 @@
 	<Dialog Id="6033" Name="IDD_SEARCHNET" Focus="7028">
 		<Controls>
 			<Menu Id="7028" Name="IDC_MENU_SEARCHTIME">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6034" Name="IDD_FM_MENU" Focus="0">
+		<Controls>
+			<Menu Id="7029" Name="IDC_MENU_FM">
 				<Items/>
 			</Menu>
 		</Controls>

@@ -62,6 +62,9 @@ static NextFSMAction SettingMenu_StateDivertHandler(CSettingMenu *pMe);
 // 状态 SETTINGMENUST_CALLFORWARDSEL 处理函数
 static NextFSMAction SettingMenu_StateCallForwardSelHandler(CSettingMenu *pMe);
 
+static NextFSMAction SettingMenuMenu_StateFMmodeHandler(CSettingMenu *pMe);
+
+
 // 状态 SETTINGMENUST_CALLFORWARDINPUT 处理函数
 static NextFSMAction SettingMenu_StateCallForwardInputHandler(CSettingMenu *pMe);
 #ifdef FEATURE_KEYGUARD
@@ -311,6 +314,10 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
 			retVal = SettingMenuMenu_StateSearchModeHandler(pMe);
 			break;
 #endif
+         case SETTINGMENUST_FMMODE:
+        	retVal = SettingMenuMenu_StateFMmodeHandler(pMe);
+        	break;
+            
         default:
             ASSERT_NOT_REACHABLE;
     }
@@ -509,6 +516,11 @@ static NextFSMAction SettingMenu_StateCallSettingHandler(CSettingMenu *pMe)
         case DLGRET_CANCELED:
             MOVE_TO_STATE(SETTINGMENUST_MAIN)
             return NFSMACTION_CONTINUE;
+            
+         case DLGRET_FMMODE:
+            MOVE_TO_STATE(SETTINGMENUST_FMMODE)
+            return NFSMACTION_CONTINUE;
+            
 #ifdef FEATRUE_SET_IP_NUMBER
         case DLGRET_IP_NUMBER_SET:
             MOVE_TO_STATE(SETTINGMENUST_IP_NUMBER_SET)
@@ -1242,6 +1254,39 @@ static NextFSMAction SettingMenuMenu_StateSearchModeHandler(CSettingMenu *pMe)
 }
 
 #endif
+
+static NextFSMAction SettingMenuMenu_StateFMmodeHandler(CSettingMenu *pMe)
+{
+	 if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_FM_MENU);
+            return NFSMACTION_WAIT;
+
+       // case DLGRET_MESSAGE:
+       //     pMe->m_bNotOverwriteDlgRet = FALSE;
+       //     SoundMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+       //     return NFSMACTION_WAIT;
+
+        case DLGRET_OK:
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(SETTINGMENUST_PHONESETTING)
+            return NFSMACTION_CONTINUE;
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
+
+
 /*==============================================================================
 函数：
        StateLanguageHandler

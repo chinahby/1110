@@ -300,6 +300,13 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
     uint32 dwParam
 );
 
+static boolean  HandleFMModeDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
+
 static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_code);
 
 #ifdef FEATRUE_SET_IP_NUMBER
@@ -321,6 +328,7 @@ static boolean  HandleAutoAnswerSubDialogEvent(CSettingMenu *pMe,
     uint16 wParam,
     uint32 dwParam
 );
+static void Sound_App_Add_Menu(IMenuCtl *pMenu,uint16 id);
 
 
 /*==============================================================================
@@ -502,6 +510,9 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 
         case IDD_ANSWER_MODE:
             return Handle_ANSWER_MODE_DialogEveng(pMe,eCode,wParam,dwParam);
+
+        case IDD_FM_MENU:
+			return HandleFMModeDialogEvent(pMe,eCode,wParam,dwParam);
 
 #ifdef FEATRUE_SET_IP_NUMBER
         case IDD_IP_NUMBER_SET:
@@ -795,6 +806,7 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
 #endif //#if defined FEATURE_CARRIER_THAILAND_HUTCH  
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_CALL_RESTRICT, IDS_CALL_RESTRICT, NULL, 0);            
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_VOICE_PRIVACY, IDS_VOICE_PRIVACY, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_FMRADIO_OPTION_MENU_PLAY_MODLE, IDS_FMRADIO_OPTION_MENU_PLAY_MODLE, NULL, 0);
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -900,6 +912,9 @@ static boolean  HandleCallSettingDialogEvent(CSettingMenu *pMe,
                 case IDS_CALL_RESTRICT:
                     CLOSE_DIALOG(DLGRET_PASSWORD)
                     break;
+                case IDS_FMRADIO_OPTION_MENU_PLAY_MODLE: //FM播放模式
+                	CLOSE_DIALOG(DLGRET_FMMODE)
+                	break;
 
                 default:
                     ASSERT_NOT_REACHABLE;
@@ -5866,6 +5881,146 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
     return;
 }
 
+static void Sound_App_Add_Menu(IMenuCtl *pMenu,uint16 id)
+{
+    IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, id, id, NULL, 0);
+}
+
+
+/*==============================================================================
+函数：
+       HandleFMModeDialogEvent
+说明：
+       IDD_FMMODE_MENU对话框事件处理函数
+
+参数：
+       pMe [in]：指向SoundMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+
+static boolean  HandleFMModeDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+)
+{
+	PARAM_NOT_REF(dwParam)
+
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                    IDC_MENU_FM);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            Sound_App_Add_Menu(pMenu,IDS_FMRADIO_PLAY_HANDSET);
+            Sound_App_Add_Menu(pMenu,IDS_RADIO_PLAY_SPEAKER);
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            {
+                boolean FMPlaymode = FALSE;
+                uint16 ui16_return = IDS_FMRADIO_PLAY_HANDSET;
+               	OEM_GetConfig(CFGI_FM_PLAY_MODE,&FMPlaymode, sizeof(FMPlaymode));
+               	if(FMPlaymode)
+               	{
+               		ui16_return = IDS_RADIO_PLAY_SPEAKER;
+               	}
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, ui16_return, TRUE);
+                IMENUCTL_SetSel(pMenu, ui16_return);
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetOemProperties( pMenu , OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+                #if 0
+                (void)IMENUCTL_SetTitle(pMenu,
+                                        AEE_APPSSOUNDMENU_RES_FILE,
+                                        pMe->m_wResID,
+                                        NULL);
+				#else
+			    {
+			  	   /*	AECHAR WTitle[40] = {0};
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+	                        AEE_APPSSETTINGMENU_RES_FILE,                                
+	                        pMe->m_wResID,
+	                        WTitle,
+	                        sizeof(WTitle));
+					IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+                    */
+			    }
+			    #endif
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_APP_SOUNDMENU,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            (void)IMENUCTL_Redraw(pMenu);
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            {
+                
+                boolean FMPlaymode = FALSE;
+
+                switch (wParam)
+                {
+                    case IDS_FMRADIO_PLAY_HANDSET:      //关
+                         FMPlaymode = FALSE;
+                         break;
+
+                    case IDS_RADIO_PLAY_SPEAKER:      //开
+                         FMPlaymode = TRUE;
+                         break;
+
+                    default:
+                        ASSERT_NOT_REACHABLE;
+                }
+                OEM_SetConfig(CFGI_FM_PLAY_MODE,&FMPlaymode, sizeof(FMPlaymode));
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wParam, TRUE);
+                CLOSE_DIALOG(DLGRET_OK)
+
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+}
 
 
 #ifdef FEATRUE_SET_IP_NUMBER
