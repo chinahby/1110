@@ -646,7 +646,6 @@
 	<String Id="1010" Name="IDS_TEMPLATEHITZ9">
         <Text>كيف حالك؟</Text>
 	</String>
-	</String>
 	<String Id="1012" Name="IDS_STR_FLASHSMS">
 		<Text>Flash sms</Text>
 	</String>
