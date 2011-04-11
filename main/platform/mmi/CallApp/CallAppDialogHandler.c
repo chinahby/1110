@@ -4422,12 +4422,23 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             {
             	//add by yangdecai 2010-08-04
             	AECHAR StrBuf[20] = {0};
-				
+				boolean RingtonesPlaymode =FALSE;
+               // boolean headsetPresent =FALSE;
 				(void) ISHELL_LoadResString(pMe->m_pShell,
                                             AEE_APPSCALLAPP_RES_FILE,
                                             IDS_INCOMINGCALL_TEXT,//incoming call
                                             StrBuf,
                                             sizeof(StrBuf));
+              //  if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,CFGI_HEADSET_PRESENT,&headsetPresent,sizeof(headsetPresent)))
+              //  {
+              //      headsetPresent = FALSE;
+              //  }
+                OEM_GetConfig(CFGI_FM_PLAY_MODE,&RingtonesPlaymode, sizeof(RingtonesPlaymode));
+                if(RingtonesPlaymode ) //&& HS_HEADSET_ON()
+                {
+                  snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+                }
+
 	            CallApp_IncomingCall_Dlg_Init(pMe);
 				IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, TRUE);
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,StrBuf);
@@ -5559,7 +5570,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 	//Add By zzg 2010_09_16 : headset > anyother
 	if (headsetPresent)
     {
-         soundStuff.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;            
+      soundStuff.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; //AEE_SOUND_DEVICE_HEADSET;   
     }
 	//Add End
     else if(pMe->m_bHandFree)
@@ -5585,7 +5596,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
     */
     else
     {
-        soundStuff.eDevice = AEE_SOUND_DEVICE_HANDSET;
+        soundStuff.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET;
     }
 
 #ifdef FEATURE_SUPPORT_BT_APP
