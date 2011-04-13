@@ -410,10 +410,10 @@
 		<Text>Ringtones mode</Text>
 	</STRING>
 	<STRING Id="1137" Name="IDS_FMRADIO_PLAY_HANDSET">
-		<Text>Handset</Text>
+		<Text>Headset</Text>
 	</STRING>
 	<STRING Id="1138" Name="IDS_RADIO_PLAY_SPEAKER">
-		<Text>Speaker</Text>
+		<Text>Handset</Text>
 	</STRING>
 </Strings>
 <Dialogs>
