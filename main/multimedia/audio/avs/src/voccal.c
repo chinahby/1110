@@ -10497,10 +10497,10 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
 #ifdef CUST_EDITION
-  0x5000,                        /* Tx Voice Volume         */
-  0x1000,                        /* Tx DTMF gain            */
-  0x5000,                        /* CODEC Tx gain           */
-  0x5000,                        /* CODEC Rx gain           */
+  0x956F,                        /* Tx Voice Volume          */
+  0x2000,                        /* Tx DTMF gain            */
+  0x7000,                        /* CODEC Tx gain           */
+  0x6000,                        /* CODEC Rx gain           */
 #else
   0x4000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
