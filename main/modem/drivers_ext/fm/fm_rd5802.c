@@ -725,11 +725,9 @@ void fm_mute(boolean on,boolean speaker)
 	}
 	else if ( ( on == FALSE) && (fm_playing_mute == TRUE) )
 	{
-		boolean FMPlaymode =FALSE;
-		OEM_GetConfig(CFGI_FM_PLAY_MODE,&FMPlaymode, sizeof(FMPlaymode));
-		fm_playing_mute = FALSE;
+		
         snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
-        if(FMPlaymode || speaker)
+        if(speaker)
         {
         	snd_set_device(SND_DEVICE_SPEAKER_FM, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
         }
