@@ -84,7 +84,7 @@ when       who     what, where, why
 #define BRICKATTACK_RES_FILE_LANGUAGE   ( AEE_RES_LANGDIR BRICKATTACK_RES_FILE)
 #endif
 
-#define MAX_MENU_ITEMS        3
+#define MAX_MENU_ITEMS_BR        3
 #define MAX_WELCOME_STRINGS   3
 #define PADDLE_IDX         0
 #define BLOCK_IDX          1
@@ -896,7 +896,7 @@ static void Brick_Stop(CBrickAttackApp *pme,
    boolean     bWelcome;
    AECHAR      ch;
 
-   uint16      wButtons[MAX_MENU_ITEMS + 1];
+   uint16      wButtons[MAX_MENU_ITEMS_BR + 1];
 
    AEERect   rc;
 // AEEPromptInfo bi;
@@ -926,7 +926,7 @@ static void Brick_Stop(CBrickAttackApp *pme,
 
    i = (pme->m_st.nState == BO_STOPPED ? 1 : 0);
 
-   for (nIdx = 0; i < MAX_MENU_ITEMS; i++, nIdx++) {
+   for (nIdx = 0; i < MAX_MENU_ITEMS_BR; i++, nIdx++) {
 
    (void) IMENUCTL_AddItem(pme->m_pISoftkey,
                            BRICKATTACK_RES_FILE_LANGUAGE,
