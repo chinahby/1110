@@ -485,7 +485,7 @@ void fm_mute(boolean on,boolean speaker)
 	}
 	else if ( ( on == FALSE) && (fm_playing_mute == TRUE) )
 	{
-		
+		fm_playing_mute = FALSE;
         snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_MUTED, SND_MUTE_MUTED, NULL, NULL);	
         if(speaker)
         {
