@@ -5596,7 +5596,7 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
     */
     else
     {
-        soundStuff.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET;
+        soundStuff.eDevice = AEE_SOUND_DEVICE_HANDSET;
     }
 
 #ifdef FEATURE_SUPPORT_BT_APP

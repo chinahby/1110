@@ -328,7 +328,6 @@ static boolean  HandleAutoAnswerSubDialogEvent(CSettingMenu *pMe,
     uint16 wParam,
     uint32 dwParam
 );
-static void Sound_App_Add_Menu(IMenuCtl *pMenu,uint16 id);
 
 
 /*==============================================================================
@@ -5914,9 +5913,9 @@ static boolean  HandleFMModeDialogEvent(CSettingMenu *pMe,
 )
 {
 	PARAM_NOT_REF(dwParam)
-
-    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
-                                                    IDC_MENU_FM);
+    
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,  IDC_MENU_FM);
+    MSG_FATAL("HandleFMModeDialogEventeCode=%d,wParam=%d",eCode,wParam,0);                                      
     if (pMenu == NULL)
     {
         return FALSE;
@@ -5924,8 +5923,9 @@ static boolean  HandleFMModeDialogEvent(CSettingMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            Sound_App_Add_Menu(pMenu,IDS_FMRADIO_PLAY_HANDSET);
-            Sound_App_Add_Menu(pMenu,IDS_RADIO_PLAY_SPEAKER);
+            pMe->m_bAppIsReady = TRUE;
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_FMRADIO_PLAY_HANDSET, IDS_FMRADIO_PLAY_HANDSET, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_RADIO_PLAY_SPEAKER, IDS_RADIO_PLAY_SPEAKER, NULL, 0);
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -6011,7 +6011,7 @@ static boolean  HandleFMModeDialogEvent(CSettingMenu *pMe,
                 OEM_SetConfig(CFGI_FM_PLAY_MODE,&FMPlaymode, sizeof(FMPlaymode));
                 InitMenuIcons(pMenu);
                 SetMenuIcon(pMenu, wParam, TRUE);
-                CLOSE_DIALOG(DLGRET_OK)
+                CLOSE_DIALOG(DLGRET_WARNING)
 
             }
             return TRUE;

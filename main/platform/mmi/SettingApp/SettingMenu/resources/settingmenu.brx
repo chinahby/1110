@@ -628,7 +628,7 @@
 			</Menu>
 		</Controls>
 	</Dialog>
-	<Dialog Id="6034" Name="IDD_FM_MENU" Focus="0">
+	<Dialog Id="6034" Name="IDD_FM_MENU" Focus="7029">
 		<Controls>
 			<Menu Id="7029" Name="IDC_MENU_FM">
 				<Items/>

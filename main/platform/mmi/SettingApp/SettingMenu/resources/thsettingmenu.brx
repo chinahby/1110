@@ -385,6 +385,15 @@
 	<String Id="1128" Name="IDS_YES">
 		<Text>ตกลง</Text>
 	</String>
+	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
+		<Text>โหมดเสียงเรียกเข้า</Text>
+	</STRING>
+	<STRING Id="1137" Name="IDS_FMRADIO_PLAY_HANDSET">
+		<Text>ชุดหูฟัง</Text>
+	</STRING>
+	<STRING Id="1138" Name="IDS_RADIO_PLAY_SPEAKER">
+		<Text>เครื่องโทรศัพท์</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -589,6 +598,13 @@
 			<Static Id="7027" Name="IDC_SIMSETTING_CHOICE_STATIC">
 				<TextID>IDS_SIMSETTING_CHOICE_STRING</TextID>
 				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6034" Name="IDD_FM_MENU" Focus="7029">
+		<Controls>
+			<Menu Id="7029" Name="IDC_MENU_FM">
+				<Items/>
+			</Menu>
 		</Controls>
 	</Dialog>
 </Dialogs>

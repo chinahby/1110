@@ -1274,11 +1274,19 @@ static NextFSMAction SettingMenuMenu_StateFMmodeHandler(CSettingMenu *pMe)
        //     SoundMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
        //     return NFSMACTION_WAIT;
 
-        case DLGRET_OK:
+        
         case DLGRET_CANCELED:
-            MOVE_TO_STATE(SETTINGMENUST_PHONESETTING)
+        case DLGRET_WARNING:
+        	pMe->m_bAppIsReady = FALSE;
+            MOVE_TO_STATE(SETTINGMENUST_CALLSETTING)
             return NFSMACTION_CONTINUE;
-
+            /*
+		case DLGRET_WARNING:
+			pMe->m_bAppIsReady = FALSE;
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);*/
+            //return NFSMACTION_WAIT;
         default:
             ASSERT_NOT_REACHABLE;
     }
