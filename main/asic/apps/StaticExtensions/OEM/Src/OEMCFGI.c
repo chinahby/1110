@@ -1733,7 +1733,7 @@ static OEMConfigListType oemi_cache = {
    #endif
    ,0
    ,1
-   ,0
+   ,1
    //Add End
    #ifdef FEATURE_LONG_NETLOCK
    ,0
@@ -2772,7 +2772,7 @@ void OEM_RestoreFactorySetting( void )
 #endif
    oemi_cache.flashlight_status = 0;
    oemi_cache.wmswriteend_status = 1;
-   oemi_cache.FMPlayMode_status = 0;
+   oemi_cache.FMPlayMode_status = 1;
    //Add End
 #ifdef FEATURE_PLANEMODE
    oemi_cache.planeMode = OEMNV_PLANEMODE_OFF;
