@@ -406,6 +406,27 @@
 	<String Id="1135" Name="IDS_SEARCH_THIRTYMINUTE">
 		<Text>30  </Text>
 	</String>
+	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
+		<Text>Ringtones mode</Text>
+	</STRING>
+	<STRING Id="1137" Name="IDS_FMRADIO_PLAY_HANDSET">
+		<Text>Handset</Text>
+	</STRING>
+	<STRING Id="1138" Name="IDS_RADIO_PLAY_SPEAKER">
+		<Text>Speaker</Text>
+	</STRING>
+	<String Id="1139" Name="IDS_IDLE_DATETIME_MOCD" Encoding="ISOLATIN1">
+		<Text>Timefont format</Text>
+	</String>
+	<String Id="1140" Name="IDS_FONT_BIG" Encoding="ISOLATIN1">
+		<Text>Big</Text>
+	</String>
+	<String Id="1141" Name="IDS_FONT_MIEDIUM" Encoding="ISOLATIN1">
+		<Text>Medium</Text>
+	</String>
+	<String Id="1142" Name="IDS_FONT_SMALL" Encoding="ISOLATIN1">
+		<Text>Small</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -615,6 +636,20 @@
 	<Dialog Id="6033" Name="IDD_SEARCHNET" Focus="7028">
 		<Controls>
 			<Menu Id="7028" Name="IDC_MENU_SEARCHTIME">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6034" Name="IDD_FM_MENU" Focus="7029">
+		<Controls>
+			<Menu Id="7029" Name="IDC_MENU_FM">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6035" Name="IDD_TIME_FONTMODE" Focus="7030">
+		<Controls>
+			<Menu Id="7030" Name="IDC_MENU_TIMEFONTMODE">
 				<Items/>
 			</Menu>
 		</Controls>

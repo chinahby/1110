@@ -179,6 +179,11 @@ static boolean HandleSearchModeDialogEvent(CSettingMenu *pMe,
     uint16 wParam,
     uint32 dwParam
     );
+static boolean HandleTimeFontModeDialogEvent(CSettingMenu *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+    ); 
 #endif
 #ifdef FEATURE_KEYGUARD
 //对话框 IDD_AKG_MENU 事件处理函数
@@ -531,6 +536,8 @@ boolean SettingMenu_RouteDialogEvent(CSettingMenu *pMe,
 #ifdef FEATURE_VERSION_MYANMAR
 		case IDD_SEARCHNET:
 			return HandleSearchModeDialogEvent(pMe,eCode,wParam,dwParam);
+		case IDD_TIME_FONTMODE:
+			return HandleTimeFontModeDialogEvent(pMe,eCode,wParam,dwParam);
 #endif
         default:
             return FALSE;
@@ -1005,6 +1012,7 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 #endif
 #ifdef	FEATURE_VERSION_MYANMAR
 			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_SEARCHNET_MODE, IDS_SEARCHNET_MODE, NULL, 0);
+			IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_IDLE_DATETIME_MOCD, IDS_IDLE_DATETIME_MOCD, NULL, 0);
 #endif			
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 200904007 add 触摸校准
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_ADJUSTSETTING, IDS_ADJUSTSETTING, NULL, 0);
@@ -1102,6 +1110,9 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 #ifdef	FEATURE_VERSION_MYANMAR
 				case IDS_SEARCHNET_MODE:  //搜网设置
 					CLOSE_DIALOG(DLGRET_SEARCHMODE)
+					break;
+				case IDS_IDLE_DATETIME_MOCD:   //待机界面时间大小设置
+					CLOSE_DIALOG(DLGRET_TIMEFONTMODE)
 					break;
 #endif
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 20090407 add
@@ -3349,6 +3360,138 @@ static boolean HandleSearchModeDialogEvent(CSettingMenu *pMe,
                      CLOSE_DIALOG(DLGRET_WARNING)
 					 break;
                 }
+            }
+            return TRUE;
+
+        default:
+            break;
+    }
+    return FALSE;
+}
+static boolean HandleTimeFontModeDialogEvent(CSettingMenu *pMe,
+    											AEEEvent eCode,
+    											uint16 wParam,
+    											uint32 dwParam)
+{
+    PARAM_NOT_REF(dwParam)
+    //static byte bytData = 0;
+    //static boolean isSwitch = FALSE;
+    int ret = 0;
+
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
+                                                    IDC_MENU_TIMEFONTMODE);
+    MSG_FATAL("%x, %x ,%x,HandleTimeFontModeDialogEvent",eCode,wParam,dwParam);
+    if (pMenu == NULL)
+    {
+        return FALSE;
+    }
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+			//add by yangdecai
+			{
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        AEE_APPSSETTINGMENU_RES_FILE,                                
+                        IDS_IDLE_DATETIME_MOCD,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
+            }
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_FONT_BIG, IDS_FONT_BIG, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_FONT_MIEDIUM, IDS_FONT_MIEDIUM, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_FONT_SMALL, IDS_FONT_SMALL, NULL, 0);
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            {
+                uint16 wItemID;
+                byte nSelItem = 0;
+                IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+                IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+                IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+                
+                
+                (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                       CFGI_IDLE_DATETIME_MODE,
+                                       &nSelItem,
+                                       sizeof(nSelItem));
+                switch (nSelItem)
+                {
+                     case TIMEFONTMODE_BIG:
+                        wItemID = IDS_FONT_BIG;
+                        break;
+                     case TIMEFONTMODE_MEDIUM:
+                        wItemID = IDS_FONT_MIEDIUM;
+                        break;
+                     case TIMEFONTMODE_SMALL:
+                        wItemID = IDS_FONT_SMALL;
+                        break;
+                     default:
+                     	wItemID = IDS_FONT_BIG;
+                     	break;
+                }
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wItemID, TRUE);
+                IMENUCTL_SetSel(pMenu, wItemID);
+                (void) ISHELL_PostEvent( pMe->m_pShell,
+                                         AEECLSID_APP_SETTINGMENU,
+                                         EVT_USER_REDRAW,
+                                         0,
+                                         0);
+            }
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            (void)IMENUCTL_Redraw(pMenu);
+			
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_KEY:
+            switch(wParam)
+            {
+                case AVK_CLR:
+                    CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+
+                  default:
+                    break;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            {
+            	byte nSelItem = 0;
+                switch (wParam)
+                {
+                    case  IDS_FONT_BIG:
+                       nSelItem = TIMEFONTMODE_BIG ;
+                       break;
+                    case IDS_FONT_MIEDIUM:
+                       nSelItem = TIMEFONTMODE_MEDIUM;
+                       break;
+                    case  IDS_FONT_SMALL:
+                       nSelItem = TIMEFONTMODE_SMALL;
+                       break;
+                    default:
+                       ASSERT_NOT_REACHABLE;
+
+                }
+                (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                       CFGI_IDLE_DATETIME_MODE,
+                                       &nSelItem,
+                                       sizeof(nSelItem));
+                InitMenuIcons(pMenu);
+                SetMenuIcon(pMenu, wParam, TRUE);
+                (void)IMENUCTL_Redraw(pMenu);
+                CLOSE_DIALOG(DLGRET_WARNING)
+				break;
             }
             return TRUE;
 

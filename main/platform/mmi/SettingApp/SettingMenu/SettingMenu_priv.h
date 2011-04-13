@@ -138,6 +138,7 @@ typedef enum DLGRetValue
     #endif
     #ifdef FEATURE_VERSION_MYANMAR
     ,DLGRET_SEARCHMODE
+    ,DLGRET_TIMEFONTMODE
     #endif
 
 } DLGRet_Value_e_Type;
@@ -196,6 +197,7 @@ typedef enum _SettingMenuState
 #endif
 #ifdef FEATURE_VERSION_MYANMAR
    ,SEARCHMENUST_MODE
+   ,TIMEFONTMENUST_MODE
 #endif
 } SettingMenuState;
 
@@ -331,6 +333,9 @@ typedef struct _CSettingMenu
 #define SEARCHMODE_TEN      10*60
 #define SEARCHMODE_TUENTY   15*60
 #define SEARCHMODE_THIRTY   30*60
+#define TIMEFONTMODE_BIG    1
+#define TIMEFONTMODE_MEDIUM 2
+#define TIMEFONTMODE_SMALL  3
 
 // 用户重新更新界面事件
 //#define EVT_USER_REDRAW   (EVT_USER+2)

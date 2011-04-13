@@ -5064,49 +5064,109 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                xStartPos = 0, yStartPos = 0, nTextLen = 0;
 	        AEERect rect = {0};
 	        uint16    wHour,len; 
+	        byte Timefontmode = 0;
+	        boolean bMode = TRUE;
 	        yStartPos = (SCREEN_HEIGHT*2/5)+10;
 			// draw hour
-			if (bTFmt != OEMNV_TIMEFORM_AMPM)
-			{
-       			wHour = jDate.wHour;
-				xStartPos = 10;
-			}
-			else
-			{
-				xStartPos = 5;
-				wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
-       			if(jDate.wHour == 0)
-        			{
-            			wHour = 12;
-       			}
-			}
-	    	SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
-	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, RGB_WHITE);
-	    	rect.x += nNumberWidth + nOffset;
-	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, RGB_WHITE);
+			(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                       CFGI_IDLE_DATETIME_MODE,
+                                       &Timefontmode,
+                                       sizeof(Timefontmode));
+            switch(Timefontmode)
+            {
+            	case 1:
+            		nLineWidth = 4;
+            		nNumberWidth = 20;
+            		nNumberHeight = 40;
+            		nOffset = 5;
+            		if (bTFmt != OEMNV_TIMEFORM_AMPM)
+					{
+		       			wHour = jDate.wHour;
+						xStartPos = 10;
+					}
+					else
+					{
+						xStartPos = 5;
+						wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
+		       			if(jDate.wHour == 0)
+		        			{
+		            			wHour = 12;
+		       			}
+					}
+            		break;
+            	case 2:
+            		xStartPos = 50;
+            		yStartPos = (SCREEN_HEIGHT*2/5)+20;
+            		nLineWidth = 4;
+            		nNumberWidth = 15;
+            		nNumberHeight = 30;
+            		nOffset = 5;
+            		if (bTFmt != OEMNV_TIMEFORM_AMPM)
+					{
+		       			wHour = jDate.wHour;
+						xStartPos = 25;
+					}
+					else
+					{
+						xStartPos = 20;
+						wHour = jDate.wHour > 12 ? (jDate.wHour - 12) : jDate.wHour;
+		       			if(jDate.wHour == 0)
+		        			{
+		            			wHour = 12;
+		       			}
+					}
+            		break;
+            	case 3:
+            		bMode = FALSE;
+            		break;
+            	default:
+            		break;
+            }
+            if(bMode)
+            {
+				
+		    	SETAEERECT(&rect, xStartPos, yStartPos, nNumberWidth, nNumberHeight);
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour/10), nLineWidth, &rect, RGB_WHITE);
+		    	rect.x += nNumberWidth + nOffset;
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (wHour%10), nLineWidth, &rect, RGB_WHITE);
 
-	   		 // draw colon
-	    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset), yStartPos + nNumberHeight/2 - nLineWidth, nLineWidth, nLineWidth);
-	    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_WHITE);
-	    	rect.y = yStartPos + nNumberHeight*3/5 +10 - nLineWidth;
-	    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_WHITE);
-	    
-	   		// draw minute
-	    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset) + nLineWidth + nOffset, yStartPos, nNumberWidth, nNumberHeight);
-	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, RGB_WHITE);
-	    	rect.x += nNumberWidth + nOffset;
-	    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_WHITE);
-	    	rect.x += nNumberWidth;
-	     	rect.y = rect.y +12;
-	    	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+		   		 // draw colon
+		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset), yStartPos + nNumberHeight/2 - nLineWidth, nLineWidth, nLineWidth);
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_WHITE);
+		    	rect.y = yStartPos + nNumberHeight*3/5 +10 - nLineWidth;
+		    	IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_WHITE);
+		    
+		   		// draw minute
+		    	SETAEERECT(&rect, xStartPos + 2*(nNumberWidth + nOffset) + nLineWidth + nOffset, yStartPos, nNumberWidth, nNumberHeight);
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute/10), nLineWidth, &rect, RGB_WHITE);
+		    	rect.x += nNumberWidth + nOffset;
+		    	Appscommon_DrawDigitalNumber(pMe->m_pDisplay, (jDate.wMinute%10), nLineWidth, &rect, RGB_WHITE);
+		    	rect.x += nNumberWidth;
+		     	rect.y = rect.y +12;
+		    	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+		                              pMe->m_pDisplay,
+		                              RGB_WHITE_NO_TRANS,
+		                              18, 
+		                              wszDatemat, -1,
+		                              0, 0, &rect, 
+		                              IDF_ALIGN_MIDDLE
+		                              | IDF_ALIGN_LEFT
+		                              | IDF_TEXT_TRANSPARENT);
+	        }
+	        else
+	        {
+	        	rc.y = rc.y+60;
+	        	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
 	                              18, 
-	                              wszDatemat, -1,
-	                              0, 0, &rect, 
+	                              wszDate, -1,
+	                              0, 0, &rc, 
 	                              IDF_ALIGN_MIDDLE
-	                              | IDF_ALIGN_LEFT
+	                              | IDF_ALIGN_CENTER
 	                              | IDF_TEXT_TRANSPARENT);
+	           rc.y = rc.y-60;
+	        }
 	    	IDISPLAY_Update(pMe->m_pDisplay);
     	}
 		#else

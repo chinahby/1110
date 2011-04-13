@@ -415,6 +415,18 @@
 	<STRING Id="1138" Name="IDS_RADIO_PLAY_SPEAKER">
 		<Text>Handset</Text>
 	</STRING>
+	<String Id="1139" Name="IDS_IDLE_DATETIME_MOCD">
+		<Text>Timefont format</Text>
+	</String>
+	<String Id="1140" Name="IDS_FONT_BIG">
+		<Text>Big</Text>
+	</String>
+	<String Id="1141" Name="IDS_FONT_MIEDIUM">
+		<Text>Medium</Text>
+	</String>
+	<String Id="1142" Name="IDS_FONT_SMALL">
+		<Text>Small</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="7001">
@@ -631,6 +643,13 @@
 	<Dialog Id="6034" Name="IDD_FM_MENU" Focus="7029">
 		<Controls>
 			<Menu Id="7029" Name="IDC_MENU_FM">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6035" Name="IDD_TIME_FONTMODE" Focus="7030">
+		<Controls>
+			<Menu Id="7030" Name="IDC_MENU_TIMEFONTMODE">
 				<Items/>
 			</Menu>
 		</Controls>

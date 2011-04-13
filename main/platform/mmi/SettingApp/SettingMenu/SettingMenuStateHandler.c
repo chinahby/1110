@@ -86,7 +86,7 @@ static NextFSMAction   SettingMenu_StateSimChoiceHandler(CSettingMenu *pMe);
 #endif
 #ifdef FEATURE_VERSION_MYANMAR
 static NextFSMAction   SettingMenuMenu_StateSearchModeHandler(CSettingMenu *pMe);
-
+static NextFSMAction   SettingMenuMenu_StateTimeFontModeHandler(CSettingMenu *pMe);
 #endif
 // ×´Ì¬ dateSETTING ´¦Àíº¯Êý
 static NextFSMAction SettingMenu_StateDateHandler(CSettingMenu *pMe);
@@ -312,6 +312,9 @@ NextFSMAction SettingMenu_ProcessState(CSettingMenu *pMe)
 #ifdef FEATURE_VERSION_MYANMAR
 		case SEARCHMENUST_MODE:
 			retVal = SettingMenuMenu_StateSearchModeHandler(pMe);
+			break;
+		case TIMEFONTMENUST_MODE:
+			retVal = SettingMenuMenu_StateTimeFontModeHandler(pMe);
 			break;
 #endif
          case SETTINGMENUST_FMMODE:
@@ -612,6 +615,9 @@ static NextFSMAction SettingMenu_StatePhoneSettingHandler(CSettingMenu *pMe)
 		case DLGRET_SEARCHMODE:
 			MOVE_TO_STATE(SEARCHMENUST_MODE)
             return NFSMACTION_CONTINUE;
+        case DLGRET_TIMEFONTMODE:
+        	MOVE_TO_STATE(TIMEFONTMENUST_MODE)
+        	return NFSMACTION_CONTINUE;
 #endif
 
         default:
@@ -1252,7 +1258,37 @@ static NextFSMAction SettingMenuMenu_StateSearchModeHandler(CSettingMenu *pMe)
 
     return NFSMACTION_WAIT;
 }
+static NextFSMAction   SettingMenuMenu_StateTimeFontModeHandler(CSettingMenu *pMe)
+{
+	MSG_FATAL("SettingMenuMenu_StateTimeFontModeHandler Start",0,0,0);
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            SettingMenu_ShowDialog(pMe, IDD_TIME_FONTMODE);
+            return NFSMACTION_WAIT;
 
+        case DLGRET_CANCELED:
+        case DLGRET_MSGBOX_OK:            
+            MOVE_TO_STATE(SETTINGMENUST_PHONESETTING)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_WARNING:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_msg_id = IDS_DONE;
+            SettingMenu_ShowDialog(pMe, IDD_WARNING_MESSEGE);
+            return NFSMACTION_WAIT;
+
+        default:
+            ASSERT_NOT_REACHABLE;
+    }
+
+    return NFSMACTION_WAIT;
+}
 #endif
 
 static NextFSMAction SettingMenuMenu_StateFMmodeHandler(CSettingMenu *pMe)
