@@ -18,8 +18,11 @@
 #include "aeefile.h"
 #include "MediaGallery.h"
 
-
+#if defined(FEATURE_LANG_THAI)
+#define RECORDER_FILE_NAME_LENGHT	12
+#else
 #define RECORDER_FILE_NAME_LENGHT	16
+#endif
 //#define RECORDER_MEMO_SAVE_DIR_INTERNAL 		"fs:/mymemos/"
 //#define RECORDER_MEMO_SAVE_DIR_CARD0			(AEEFS_CARD0_DIR "mymemos/")
 #define RECORDER_MEMO_SAVE_DIR_INTERNAL MG_PHONECALLMEMO_PATH

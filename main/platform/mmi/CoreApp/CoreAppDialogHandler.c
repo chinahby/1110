@@ -3041,7 +3041,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				#endif	
 				return TRUE;
             }
-      	 #if defined(FEATURE_VERSION_MTM)
+      	 #if defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_HITZ181)
 	     if(wParam == AVK_SHIFT)
             {
             	byte     curProfile;

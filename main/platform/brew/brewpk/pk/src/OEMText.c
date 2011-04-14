@@ -2099,7 +2099,11 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     szsmscount = 1;
                     szsmscount = WMSUtil_CalculateMessagesCount(pszText, NULL, NULL);
                     // Draw the number of remaining characters.
+                    #ifdef FEATURE_DISP_160X128
+                    STR_TO_WSTR("%d/%d     ", szFormat, sizeof(szFormat));
+                    #else
                     STR_TO_WSTR("%d/%d   ", szFormat, sizeof(szFormat));
+                    #endif
                     WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, wRemainingChars, szsmscount);                    
 
                     /*
@@ -2114,7 +2118,11 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
 #endif
                 {
                     // Draw the number of remaining characters.
+                    #ifdef FEATURE_DISP_160X128
+                    STR_TO_WSTR("%d     ", szFormat, sizeof(szFormat));
+                    #else
                     STR_TO_WSTR("%d   ", szFormat, sizeof(szFormat));
+                    #endif
                     WSPRINTF(szRemainingCount, sizeof(szRemainingCount), szFormat, wRemainingChars);                    
 
                     /*
