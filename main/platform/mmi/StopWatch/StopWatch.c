@@ -534,7 +534,9 @@ static boolean StopWatch_HandleEvent(CStopWatch *pme, AEEEvent eCode, uint16 wPa
 
         case EVT_APP_NO_SLEEP:
             return TRUE;
-
+		case EVT_KEY_PRESS:
+		case EVT_KEY_RELEASE:
+			return TRUE;
         case EVT_KEY:
             switch(wParam)
             {
@@ -703,6 +705,7 @@ static boolean StopWatch_HandleEvent(CStopWatch *pme, AEEEvent eCode, uint16 wPa
                     }
                     StopWatch_Redraw( pme);
                 }
+                	return TRUE;
                     break;
                     
                 case AVK_LEFT:
