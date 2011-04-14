@@ -1753,6 +1753,16 @@ __dialog_handler_of_state_record_pause_resume__:
 					}
 				}
 				break;
+				case AVK_I:
+				case AVK_O:
+				{
+					if( pme->m_Media.m_eState == MEDIA_STATE_PLAYING || pme->m_Media.m_eState == MEDIA_STATE_RECORDING)
+					{
+						recorder_set_media_volume( &pme->m_Media, pme->m_Media.m_nVolume + ( wParam == AVK_I ? -20 : 20));
+						repaint( TRUE);
+					}
+				}
+				break;
 				case AVK_LEFT:
 				case AVK_RIGHT:
 				{
