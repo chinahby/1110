@@ -243,6 +243,13 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp* pMe,
                                       AEEEvent eCode,
                                       uint16 wParam,
                                       uint32 dwParam);
+static boolean MGAppPopupMenu_OnSavetoplaylist(CMediaGalleryApp* pMe,
+                                      			AEEEvent eCode,
+                                      			uint16 wParam,
+                                      			uint32 dwParam);
+static int MGAppUtil_BuildPlaylist(CMediaGalleryApp *pMe,IMenuCtl *pMenuCtl);
+static int MGAppUtil_WriteMusiclist(CMediaGalleryApp *pMe , char *curFileName);
+static int MGAppUtil_ReadMusiclist(CMediaGalleryApp *pMe , char *curFileName,boolean isPlaying);
 static boolean MGAppPopupMenu_OnDetail(CMediaGalleryApp* pMe,
                                        AEEEvent eCode,
                                        uint16 wParam,
@@ -368,7 +375,9 @@ boolean MediaGalleryApp_RouteDialogEvent(CMediaGalleryApp* pMe,
       case IDD_MG_SETAS:
          fcnPtr = MGAppPopupMenu_OnSetAs;
          break;
-
+	  case IDD_MG_SAVETOPLAYLIST:
+	  	 fcnPtr = MGAppPopupMenu_OnSavetoplaylist;
+	  	 break;
       case IDD_MG_DETAIL:
          fcnPtr = MGAppPopupMenu_OnDetail;
          break;
@@ -2383,7 +2392,9 @@ static boolean MediaGalleryApp_OnPopupMenuCommand(CMediaGalleryApp* pMe,
    case IDS_MG_SETAS:
       MGCLOSE_DIALOG(MGDLGRET_SETAS);
       break;
-
+   case IDS_MSG_SAVEPLAYLIST:
+   	  MGCLOSE_DIALOG(MGDLGRET_SAVETOPLAYLIST);
+   	  break;
    case IDS_MG_RENAME:
       MediaGalleryApp_SetOps(pMe, MG_OPS_MEDIAMENU, MG_OP_RENAME);
       MGCLOSE_DIALOG(MGDLGRET_RENAME);
@@ -3403,6 +3414,121 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
    return FALSE;
 }//MGAppPopupMenu_OnSetAs
 
+static boolean MGAppPopupMenu_OnSavetoplaylist(CMediaGalleryApp* pMe,
+                                      			AEEEvent eCode,
+                                      			uint16 wParam,
+                                      			uint32 dwParam)
+{
+	IMenuCtl* pMenuCtl;
+    MediaDlgStat eDlgStat;
+	MGFileInfo *pCurNode;
+	 if(!pMe)
+    {
+       return FALSE;
+    }
+   	pCurNode = MediaGalleryApp_GetCurrentNode(pMe);
+
+    pMenuCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_MENU_PLAYLIST);
+
+    if(NULL == pMenuCtl)
+      return FALSE;
+    MSG_FATAL("MGAppPopupMenu_OnSavetoplaylisteCode=%d,wParam=%d",eCode,wParam,0);
+    switch(eCode)
+   {
+      case EVT_DIALOG_INIT:
+         return TRUE;
+
+      case EVT_DIALOG_START:
+         {
+            
+            MGFileInfo *pSelData = NULL;
+            byte CurProfileNum;
+            MGAppUtil_SetMenuCtlRectProp(pMe,
+                                         MP_UNDERLINE_TITLE | MP_WRAPSCROLL,
+                                         pMenuCtl); 
+            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
+            {
+				AECHAR WTitle[40] = {0};
+				(void)ISHELL_LoadResString(pMe->m_pShell,
+                        MGRES_LANGFILE,                                
+                        IDS_MSG_SAVEPLAYLIST,
+                        WTitle,
+                        sizeof(WTitle));
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+            }
+            pMe->m_nSelNum = 0;
+            
+            MGAppUtil_BuildPlaylist(pMe,pMenuCtl);
+            IMENUCTL_SetBottomBarType(pMenuCtl, BTBAR_SAVE_BACK);
+            //MGAppUtil_DrawSoftkey(pMe,BTBAR_SAVE_BACK);
+            IDISPLAY_Update(pMe->m_pDisplay);
+            ISHELL_PostEvent(pMe->m_pShell,
+                             AEECLSID_MEDIAGALLERY,
+                             EVT_USER_REDRAW, 0, 0);
+            return TRUE;
+         }
+
+      case EVT_DIALOG_END:
+      {
+         if(TRUE == pMe->m_bSuspending)
+         {
+         }
+         return TRUE;
+      }
+      case EVT_USER_REDRAW:
+         {
+         	//IMENUCTL_Redraw(pMenuCtl);
+         	IDISPLAY_Update(pMe->m_pDisplay);
+            return TRUE;
+         }
+      case EVT_KEY_PRESS:
+      case EVT_KEY_RELEASE:
+      	   return TRUE;
+      	   break;
+      case EVT_COMMAND:
+      	   {
+      	   	  int i = wParam;
+      	   	  int result = EFAILED;
+      	   	  pMe->m_nPlaylistMusicNum = 0;
+  	  		  result = MGAppUtil_ReadMusiclist(pMe,pMe->m_Playlist[i].pPlaylistName,FALSE);
+  	  		  if(pMe->m_nPlaylistMusicNum<50)
+  	  		  {
+  	  		  	  int spareNum=0;
+  	  		  	  spareNum = 50 - pMe->m_nPlaylistMusicNum;
+	  	  		  pMe->m_Musiclist[pMe->m_nPlaylistMusicNum].pMusicName[0]=(pMe->m_nPlaylistMusicNum+48);
+	  	  		  STRLCPY(pMe->m_Musiclist[pMe->m_nPlaylistMusicNum].pMusicName+1,
+                  pCurNode->szName,256 * sizeof(char));
+	  	  		  MGAppUtil_WriteMusiclist(pMe,pMe->m_Playlist[i].pPlaylistName);
+	  	  		  MediaGalleryApp_ShowPromptMsgBox(pMe,
+			                                       IDS_ADD_SUCCESS,
+			                                       MESSAGE_INFORMATION,
+			                                       BTBAR_BACK);
+  	  		  }
+  	  		  else
+  	  		  {
+  	  		  	  MediaGalleryApp_ShowPromptMsgBox(pMe,
+			                                       IDS_PLAYLIST_FULL,
+			                                       MESSAGE_INFORMATION,
+			                                       BTBAR_BACK);
+  	  		  }
+			 
+      	   }
+      case EVT_KEY:
+      	switch(wParam)
+      	{
+      		case AVK_CLR:
+      			MGCLOSE_DIALOG(MGDLGRET_CANCELED);
+      			return TRUE;
+      			break;
+      		default:
+      			break;
+      	}
+      	break;
+      default:
+      	break;
+    }
+    return FALSE;
+}
 
 /*===========================================================================
  * FUNCTION: MGAppPopupMenu_OnRename
@@ -6152,6 +6278,7 @@ static int MGAppUtil_BuildPopupMenuItems(CMediaGalleryApp* pMe,
       {
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_PLAY);
          MGMENU_ADDITEM(*ppPopupMenu, IDS_MG_SETAS);
+         MGMENU_ADDITEM(*ppPopupMenu, IDS_MSG_SAVEPLAYLIST);
       }
       else if(MG_BETWEEN(eMimeBase, MG_MIME_VIDEOBASE, MG_MIME_VIDEOMAX))
       {
@@ -9563,5 +9690,271 @@ static void MGAppUtil_StartUDisk(void *po)
    }
 
 }//MGAppUtil_StartUDisk
+static int MGAppUtil_BuildPlaylist(CMediaGalleryApp *pMe,IMenuCtl *pMenuCtl)
+{
+	AEEFileInfoEx  fi;
+	FileName szFileName;
+	//AEEFileInfoEx  fiex;
+	uint32	fitime[10];//用来保存播放列表文件的时间信息
+	int i,j;
+	uint32	temp;
+	char fileName[128];
+	CtlAddItem ai;
+	
+	ASSERT(pMe != NULL); 
+	if(pMenuCtl == NULL||pMe->m_pFileMgr==NULL)
+	{
+	 return EBADPARM;
+	}
+	(void)IMENUCTL_DeleteAll(pMenuCtl);
+	if (SUCCESS != IFILEMGR_Test(pMe->m_pFileMgr, MUSICPLAYLIST_DIR))
+	{
+	 (void)IFILEMGR_MkDir(pMe->m_pFileMgr, MUSICPLAYLIST_DIR);
+	}
+
+	//枚举playlist文件夹	
+	(void)IFILEMGR_EnumInit(pMe->m_pFileMgr, MUSICPLAYLIST_DIR, FALSE);
+	MEMSET(&ai,0,sizeof(ai));
+	if(pMe->m_pBuffer)
+	{
+	 FREEIF(pMe->m_pBuffer);
+	}
+	pMe->m_pBuffer = (AECHAR*)MALLOC(128 * sizeof(AECHAR)); 
+
+	if(NULL == pMe->m_pBuffer)
+	{
+	 return ENOMEMORY;
+	}
+
+	pMe->m_nPlaylistNum=0;
+	for(i=0;i<10;i++)
+	{
+		MEMSET(pMe->m_Playlist[i].pPlaylistName, 0,128*sizeof(char));
+	}
+	// 填充fi结构体
+   MEMSET(&fi, 0, sizeof(fi));
+   fi.nStructSize = sizeof(fi);
+   fi.pszFile = szFileName.m_szFileName;
+   fi.nMaxFile = sizeof(szFileName.m_szFileName);	
+	//scan playlist文件夹下每一个文件并添加IMENUCTL项  
+   while (IFILEMGR_EnumNextEx(pMe->m_pFileMgr, &fi))
+   {
+		char *			  psz = NULL;
+		char *			  pf = NULL;
+		//由于IFILEMGR_EnumNext函数在处理时并没有给dwCreationDate赋值所以要重新获取一遍
+		//IFILEMGR_GetInfoEx(pMe->m_pFileMgr, fi.pszFile, &fi);
+
+		fitime[pMe->m_nPlaylistNum]= fi.dwCreationDate;
+		psz = STRRCHR(fi.pszFile, '.');
+
+		if (NULL == psz)
+		{
+		  continue; 
+		}
+			
+		pf = STRRCHR(fi.pszFile, '/');
+		if (NULL == pf)
+		{
+		  continue;
+		}  
+		pf++;
+
+		if(psz > pf)
+		{
+		 STRCPY(pMe->m_Playlist[pMe->m_nPlaylistNum].pPlaylistName, pf);
+		 pMe->m_Playlist[pMe->m_nPlaylistNum].pPlaylistName[psz-pf ] = '\0';
+		} 
+
+		pMe->m_nPlaylistNum++; 
+		if(pMe->m_nPlaylistNum >= 10)
+		{
+			break;
+		}
+   }
+   // if(pMe->m_nPlaylistNum==0)
+	//{
+	//	 IMENUCTL_AddItem(pMenuCtl, MUSICPLAYER_RES_FILE_LANG, IDS_PLAYLIST_NULL, IDS_PLAYLIST_NULL, NULL, 0);
+	   //IMENUCTL_SetActive(pMenuCtl, FALSE);
+	//}
+	//else //由于文件枚举的时候是根据文件名来排序枚举的所以在这里根据文件创建时间来排序
+	if(pMe->m_nPlaylistNum > 0)
+	{
+	 for(i=0;i<pMe->m_nPlaylistNum;i++)
+	 { 
+		for(j=i+1;j<pMe->m_nPlaylistNum;j++)
+		{
+		 if(fitime[i]>fitime[j])
+		 {
+		   temp=fitime[i];
+		   fitime[i]=fitime[j];
+		   fitime[j]=temp;
+		  (void)STRCPY(fileName,pMe->m_Playlist[i].pPlaylistName);
+		  (void)STRCPY(pMe->m_Playlist[i].pPlaylistName,pMe->m_Playlist[j].pPlaylistName);
+		  (void)STRCPY(pMe->m_Playlist[j].pPlaylistName,fileName);
+		 }
+		}
+	 }
+	 for(i=0;i<pMe->m_nPlaylistNum;i++)
+	 {	  
+		ai.pszResImage =AEE_APPSCOMMONRES_IMAGESFILE;
+		ai.wImage = IDI_PLAYLISTMG;
+	   
+	   if(STRCMP(DEFAULT_PLAYLIST,pMe->m_Playlist[i].pPlaylistName)== 0)
+	   {
+		  (void)ISHELL_LoadResString(pMe->m_pShell,
+								MGRES_LANGFILE,								  
+								IDS_DEFAULTPLAYLISTNAME,
+								pMe->m_pBuffer,
+								128 * sizeof(AECHAR));
+	   }
+	   else
+	   {
+		   (void)UTF8TOWSTR((const byte *)pMe->m_Playlist[i].pPlaylistName,
+							 STRLEN(pMe->m_Playlist[i].pPlaylistName),
+							 pMe->m_pBuffer,
+							 128 * sizeof(AECHAR));
+	   }
+	   ai.pText = pMe->m_pBuffer;
+	   ai.wItemID = i;
+		if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+		{
+		 return EFAILED;
+		}
+	   MEMSET(pMe->m_pBuffer,0,128 * sizeof(AECHAR));
+	}
+   }
+	FREEIF(pMe->m_pBuffer);
+	return SUCCESS;
+}
+/*==============================================================================
+函数： MGAppUtil_WriteMusiclist
+
+说明：
+       用来写入指定播放列表里面的所有音乐名称
+
+参数：
+      pMe:MGAppUtil *类型指针
+      curfileName:不包含路径和后缀的文件名
+
+返回值：
+    SUCCESS:读取成功
+    EFAILED:读取失败
+
+备注：:
+        无
+        
+==============================================================================*/
+int MGAppUtil_WriteMusiclist(CMediaGalleryApp *pMe , char *curFileName)
+{
+    IFile  *pFile;
+    char fileName[256];
+    if(pMe==NULL||fileName==NULL)
+    {
+    	return EFAILED;
+    }
+    (void)STRCPY(fileName,MUSICPLAYLIST_DIR);
+    (void)STRCAT(fileName,"/");
+    (void)STRCAT(fileName,curFileName);
+    (void)STRCAT(fileName,".txt");
+
+    pFile = IFILEMGR_OpenFile(pMe->m_pFileMgr, fileName, _OFM_READWRITE);
+    if(pFile == NULL)
+    {
+        ERR("FILE IS NULL",0,0,0);
+        // 尚未创建，使用默认值
+        return EFAILED;
+    } //else 打开文件继续执行
+
+    // 从文件开头写入数据
+    if(SUCCESS != IFILE_Seek(pFile, _SEEK_START, 0))
+    {
+        (void)IFILE_Release(pFile);
+        pFile = NULL;
+        return EFAILED;
+    }
+    (void) IFILE_Write(pFile, pMe->m_Musiclist, sizeof(pMe->m_Musiclist));
+    (void)IFILE_Release(pFile);
+    pFile = NULL;
+    return SUCCESS;
+}
+/*==============================================================================
+函数： MGAppUtil_ReadMusiclist
+
+说明：
+      用来读取指定播放列表里面的所有音乐名称
+
+参数：
+      pMe:MGAppUtil *类型指针
+      curfileName:不包含路径和后缀的文件名
+      isPlaying:TRUE:把从文件中读取的数据放到pMe->m_PlayingMusiclist中
+                FALSE:把从文件中读取的数据存放到pMe->m_Musiclist中
+
+返回值：
+    SUCCESS:读取成功
+    EFAILED:读取失败
+
+备注：:
+        无
+        
+==============================================================================*/
+static	int MGAppUtil_ReadMusiclist(CMediaGalleryApp *pMe , char *curFileName,boolean isPlaying)
+{
+    IFile  *pFile;
+    int i = 0;
+    char fileName[256];
+    if(pMe==NULL||curFileName==NULL)
+    {
+    	MSG_FATAL("curFileName IS NULL",0,0,0);
+     	return EFAILED;
+    }
+    (void)STRCPY(fileName,MUSICPLAYLIST_DIR);
+    (void)STRCAT(fileName,"/");
+    (void)STRCAT(fileName,curFileName);
+    (void)STRCAT(fileName,".txt");
+    pFile = IFILEMGR_OpenFile(pMe->m_pFileMgr, fileName, _OFM_READ);
+    if(pFile == NULL)
+    {
+        MSG_FATAL("FILE IS NULL",0,0,0);
+        // 尚未创建，使用默认值
+        return EFAILED;
+    } //else 打开文件继续执行
+
+    // 从文件开始读取数据
+    if(SUCCESS != IFILE_Seek(pFile, _SEEK_START, 0))
+    {
+    	MSG_FATAL("IFILE_Read...FAILED...2222222",0,0,0);
+        (void)IFILE_Release(pFile);
+        pFile = NULL;
+        return EFAILED;
+    }
+    i = IFILE_Read(pFile, pMe->m_Musiclist, sizeof(pMe->m_Musiclist));
+    MSG_FATAL("i==================%d",i,0,0);
+    if(i==0)
+    {
+      MSG_FATAL("IFILE_Read...FAILED...333333",0,0,0);
+      pMe->m_nPlaylistMusicNum = 0;
+      (void)IFILE_Release(pFile);
+      pFile = NULL;
+      return SUCCESS;
+    }
+    else
+    {
+    	for(i=0;i<50;i++)
+    	{
+        	if(pMe->m_Musiclist[i].pMusicName[0]!='\0')
+        	{  
+         		//   IFILEMGR_GetInfo(pMe->m_pFileMgr,pMe->m_Musiclist[i].pMusicName +1, &fi);
+         		//   fitime[pMe->m_nPlaylistMusicNum]=fi.dwCreationDate;
+          		//  fisize[pMe->m_nPlaylistMusicNum]=fi.dwSize;
+            	pMe->m_nPlaylistMusicNum++;
+        	}
+    	}
+    	MSG_FATAL("pMe->m_nPlaylistMusicNum====%d",pMe->m_nPlaylistMusicNum,0,0);
+    }
+   
+    (void)IFILE_Release(pFile);
+    pFile = NULL;
+    return SUCCESS;
+}
 
 /* ===================== End of File ===================================== */

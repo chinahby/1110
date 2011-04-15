@@ -319,6 +319,18 @@
 	<STRING Id="1105" Name="IDS_MG_LOADFAILED">
 		<Text></Text>
 	</STRING>
+	<String Id="1107" Name="IDS_MSG_SAVEPLAYLIST">
+		<Text>Add to playlist</Text>
+	</String>
+	<String Id="1108" Name="IDS_DEFAULTPLAYLISTNAME">
+		<Text>Default playlist</Text>
+	</String>
+	<String Id="1109" Name="IDS_PLAYLIST_FULL">
+		<Text>Playlist full!</Text>
+	</String>
+	<String Id="1110" Name="IDS_ADD_SUCCESS">
+		<Text>Add music success</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">
@@ -357,6 +369,14 @@
 	</Dialog>
 	<Dialog Id="6006" Name="IDD_MG_SELECTPATH" Focus="0">
 		<Controls/>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+	<Dialog Id="6007" Name="IDD_MG_SAVETOPLAYLIST" Focus="7005">
+		<Controls>
+			<Menu Id="7005" Name="IDC_MENU_PLAYLIST">
+				<Items/>
+			</Menu>
+		</Controls>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
 	<Dialog Id="6010" Name="IDD_MG_MSGBOX" Focus="0">

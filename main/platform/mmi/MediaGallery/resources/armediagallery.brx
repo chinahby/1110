@@ -322,6 +322,18 @@
 	<STRING Id="1106" Name="IDS_MG_LOADING">
 		<Text>جاري التحميل...</Text>
 	</STRING>
+	<String Id="1107" Name="IDS_MSG_SAVEPLAYLIST">
+		<Text>Add to playlist</Text>
+	</String>
+	<String Id="1108" Name="IDS_DEFAULTPLAYLISTNAME">
+		<Text>Default playlist</Text>
+	</String>
+	<String Id="1109" Name="IDS_PLAYLIST_FULL">
+		<Text>Playlist full!</Text>
+	</String>
+	<String Id="1110" Name="IDS_ADD_SUCCESS">
+		<Text>Add music success</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">

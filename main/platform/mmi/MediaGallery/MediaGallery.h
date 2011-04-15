@@ -61,6 +61,8 @@
 #else
 #define MG_MASSCARD_ROOTDIR         "fs:/mmc/"
 #endif
+#define MUSICPLAYLIST_DIR      "fs:/shared/playlist"
+#define DEFAULT_PLAYLIST       "Default playlist"
 
 #ifdef FEATURE_VERSION_M8P
 #define MG_PICTURES_FOLDER          "Gambar"

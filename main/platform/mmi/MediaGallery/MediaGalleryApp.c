@@ -1302,6 +1302,7 @@ int CMediaGallery_DelFileInfoRecord(IDatabase *cpFilesDB)
  */
 static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
 {
+   int i=0;
    if(!pMe)
    {
       return EFAILED;
@@ -1387,6 +1388,10 @@ static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
    }
 #endif
    //yuezhen.li end
+   for(i=0;i<50;i++)
+   {
+     MEMSET(pMe->m_Musiclist[i].pMusicName,0,257*sizeof(char));
+   }
    IDisplay_GetClipRect(pMe->m_pDisplay, &pMe->m_ClipRect);
    CMediaGallery_GetAppPref(pMe);
    MediaGalleryApp_RegisterBatteryNotify(pMe);

@@ -56,6 +56,7 @@ static NextFSMAction MGStateExitHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateImageViewerHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateRenameHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateSetAsHandler(CMediaGalleryApp* pMe);
+static NextFSMAction MGStateSavetoplaylistHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateDetailHandler(CMediaGalleryApp* pMe);
 static NextFSMAction MGStateSortHandler(CMediaGalleryApp *pMe);
 static NextFSMAction MGStateSelectPathHandler(CMediaGalleryApp* pMe);
@@ -158,7 +159,9 @@ NextFSMAction MediaGalleryApp_ProcessState(CMediaGalleryApp* pMe)
          case STATE_SETAS:
             fcnPtr = MGStateSetAsHandler;
             break;
-
+		 case STATE_SAVETOPLAYLIST:
+		 	fcnPtr = MGStateSavetoplaylistHandler;
+		 	break;
          case STATE_RENAME:
             fcnPtr = MGStateRenameHandler;
             break;
@@ -1041,6 +1044,39 @@ static NextFSMAction MGStateMediaMenuHandler(CMediaGalleryApp* pMe)
 
    return NFSMACTION_CONTINUE;
 }//MGStateSetAsHandler
+/*===========================================================================
+ * FUNCTION:
+ *
+ * DESCRIPTION:
+ *
+ * PARAMETERS:
+ *
+ * ==========================================================================
+ */
+static NextFSMAction MGStateSavetoplaylistHandler(CMediaGalleryApp* pMe)
+{
+	if(!pMe)
+      return NFSMACTION_WAIT;
+
+   switch(pMe->m_eDlgRet)
+   {
+      case MGDLGRET_CREATE:
+         if(SUCCESS != MediaGalleryApp_ShowDialog(pMe, IDD_MG_SAVETOPLAYLIST))
+         {
+             return MGState_ExitOperateDialog(pMe);
+         }
+         return NFSMACTION_WAIT;
+
+      case MGDLGRET_CANCELED:
+          return MGState_ExitOperateDialog(pMe);
+
+      default:
+         MGMOVE_TO_STATE(pMe,STATE_EXIT);
+         break;
+   }
+
+   return NFSMACTION_CONTINUE;
+}//MGStateSavetoplaylistHandler
 
 /*===========================================================================
  * FUNCTION:    MGStateDetailHandler
@@ -1396,7 +1432,9 @@ static NextFSMAction MGStateSoundSettingHandler(CMediaGalleryApp* pMe)
       case MGDLGRET_SETAS:
          MGMOVE_TO_STATE(pMe,STATE_SETAS);
          break;
-
+	  case MGDLGRET_SAVETOPLAYLIST:
+	     MGMOVE_TO_STATE(pMe,STATE_SAVETOPLAYLIST);
+	  	 break;
       case MGDLGRET_RENAME:
          MGMOVE_TO_STATE(pMe,STATE_RENAME);
          break;

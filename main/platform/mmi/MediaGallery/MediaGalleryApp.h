@@ -114,6 +114,7 @@ typedef enum _MGAppState
    STATE_VIDEO_ADD,
    STATE_IMAGE_SETTING,
    STATE_MUSIC_SETTING,
+   STATE_SAVETOPLAYLIST,
    STATE_MAX            //maximum state.
 } MGAppState;
 
@@ -167,7 +168,7 @@ typedef enum _MGDLGRetValue
 
    MGDLGRET_FILEADD_FINISH,
    MGDLGRET_SETTING_SELECT,
-
+   MGDLGRET_SAVETOPLAYLIST,
    MGDLGRET_MAX
 } MGDLGRetValue;
 
@@ -333,6 +334,17 @@ typedef struct _CMGFileCopy
    uint32 m_dwCopyCount;  /*need copy count in byte, in actually it is the source
                            *file size, add this field for overwrite */
 }CMGFileCopy;
+typedef struct _CPlaylist
+{
+  char  pPlaylistName[128];//用来存储不包括路径名和扩展名的播放列表文件名
+}CPlaylist;
+typedef struct _FileName{
+   char m_szFileName[128];
+}FileName;
+typedef struct _CMusiclist
+{
+  char pMusicName[257];//用来存储包括路径名和扩展名的音乐文件名
+}CMusiclist;
 
 /*MediaGallery Applet object structure*/
 struct  _CMediaGalleryApp{
@@ -387,7 +399,12 @@ struct  _CMediaGalleryApp{
    IMenuCtl          *m_pMenuPopup;/*menu cnotrol for pop up menu*/
    IMenuCtl          *m_pMediaMenu;/*menu control for list variou media file*/
    IFileMgr          *m_pFileMgr;/*file manager interface*/
-
+   AECHAR            *m_pBuffer;
+   //用于保存播放列表
+   CPlaylist         m_Playlist[10];
+   CMusiclist  		 m_Musiclist[50];
+   uint8             m_nPlaylistNum;
+   uint8             m_nPlaylistMusicNum;
    CFSExplorer       m_Explorer; /*struct for enumerate files & folders*/
    ExplorerPara      *m_pExpPara;
 
