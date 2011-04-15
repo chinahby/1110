@@ -25,6 +25,9 @@
 	<Object Id="5008" Name="IDI_MM_BACKGROUND">
 		<File>..\images\128x160\common\Appscommon\Menu\background\MM_BG.bmp</File>
 	</Object>
+	<Object Id="5009" Name="IDI_PLAYLISTMG">
+		<File>..\images\128x160\common\mediagallery\playlistplaying.bmp</File>
+	</Object>
 	<Object Id="5010" Name="IDI_KEY_TEST" MimeType="image/png">
 		<File>..\images\128x160\common\QuickTest\keytest.png</File>
 	</Object>
