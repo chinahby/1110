@@ -10108,7 +10108,7 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
             }
         }
 		//Add By zzg 2010_09_10
-		#if defined(FEAUTRE_VERSION_N450)
+		#if defined(FEAUTRE_VERSION_N450) || defined(FEATURE_VERSION_C306)
         #ifndef FEATURE_TORCH_KEY_INFO
 		else if (((AVKType)wParam == AVK_0) && (WSTRLEN(pMe->m_DialString) == 1))
 		{		
