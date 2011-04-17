@@ -1,398 +1,413 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="settingmenu" VERSION="1">
+<BREWRes Name="arsettingmenu" VERSION="1">
 <Strings Encoding="Unicode">
 	<STRING Id="1001" Name="IDS_APP_TITLE">
-        <Text>الإعدادات</Text>
+		<Text>الإعدادات</Text>
 	</STRING>
 	<STRING Id="1002" Name="IDS_CALLFORWARD_START">
-        <Text>تنشيط</Text>
+		<Text>تنشيط</Text>
 	</STRING>
 	<STRING Id="1003" Name="IDS_AUTOKEYGUARD_TITLE">
-        <Text>قفل لوحة المفاتيح</Text>
+		<Text>قفل لوحة المفاتيح</Text>
 	</STRING>
 	<STRING Id="1004" Name="IDS_SCENEMODE_TITLE">
-        <Text>التشكيلات الجانبية</Text>
+		<Text>التشكيلات الجانبية</Text>
 	</STRING>
 	<STRING Id="1005" Name="IDS_PHONE_NUMBER">
-        <Text>رقم الهاتف</Text>
+		<Text>رقم الهاتف</Text>
 	</STRING>
 	<STRING Id="1006" Name="IDS_NET_SEL">
-        <Text>الشبكة</Text>
+		<Text>الشبكة</Text>
 	</STRING>
 	<STRING Id="1007" Name="IDS_OFF">
-        <Text>إيقاف التشغيل</Text>
+		<Text>إيقاف التشغيل</Text>
 	</STRING>
 	<STRING Id="1008" Name="IDS_AKG_30SEC">
-        <Text>30 ثانية</Text>
+		<Text>30 ثانية</Text>
 	</STRING>
 	<STRING Id="1009" Name="IDS_AKG_2MIN">
-        <Text>2 دقيقة</Text>
+		<Text>2 دقيقة</Text>
 	</STRING>
 	<STRING Id="1010" Name="IDS_AKG_5MIN">
-        <Text>5 دقائق</Text>
+		<Text>5 دقائق</Text>
 	</STRING>
 	<STRING Id="1011" Name="IDS_NET_A">
-        <Text>أ فقط</Text>
+		<Text>أ فقط</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_NET_B">
-        <Text>ب فقط</Text>
+		<Text>ب فقط</Text>
 	</STRING>
 	<STRING Id="1013" Name="IDS_NET_HOME">
-        <Text>منزلية فقط</Text>
+		<Text>منزلية فقط</Text>
 	</STRING>
 	<STRING Id="1014" Name="IDS_NET_STANDARD">
-        <Text>تفضيل المنزلية</Text>
+		<Text>تفضيل المنزلية</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_DATESETTING">
-        <Text>تنسيق التاريخ</Text>
+		<Text>تنسيق التاريخ</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_SOUND_TITLE">
-        <Text>الصوت</Text>
+		<Text>الصوت</Text>
 	</STRING>
 	<STRING Id="1017" Name="IDS_DISPLAY_TITLE">
-        <Text>شاشة العرض</Text>
+		<Text>شاشة العرض</Text>
 	</STRING>
 	<STRING Id="1018" Name="IDS_YMD">
-        <Text>س س/ش ش/ي ي</Text>
+		<Text>س س/ش ش/ي ي</Text>
 	</STRING>
 	<STRING Id="1019" Name="IDS_SECURITY_TITLE">
-        <Text>الأمان</Text>
+		<Text>الأمان</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_DMY">
-        <Text>ي ي/ش ش/س س</Text>
+		<Text>ي ي/ش ش/س س</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_MDY">
-        <Text>ش ش/ي ي/س س</Text>
+		<Text>ش ش/ي ي/س س</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_TIMESETTING">
-        <Text>تنسيق الوقت</Text>
+		<Text>تنسيق الوقت</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_AMPM">
-        <Text>12 ساعة</Text>
+		<Text>12 ساعة</Text>
 	</STRING>
 	<STRING Id="1024" Name="IDS_DAY">
-        <Text>24 ساعة</Text>
+		<Text>24 ساعة</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_VOICE_PRIVACY">
-        <Text>خصوصية الصوت</Text>
+		<Text>خصوصية الصوت</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_AUTO_POWER_ON_TIME">
-        <Text>تشغيل</Text>
+		<Text>تشغيل</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_AUTO_POWER_OFF_TIME">
-        <Text>إيقاف التشغيل</Text>
+		<Text>إيقاف التشغيل</Text>
 	</STRING>
 	<STRING Id="1028" Name="IDS_AUTO_POWER_TIME">
-        <Text>الوقت</Text>
+		<Text>الوقت</Text>
 	</STRING>
 	<STRING Id="1029" Name="IDS_AUTO_POWER_STATE">
-        <Text>تشغيل/إيقاف</Text>
+		<Text>تشغيل/إيقاف</Text>
 	</STRING>
 	<STRING Id="1030" Name="IDS_IP_NUMBER_SET">
-        <Text>تعيين رقم IP</Text>
+		<Text>تعيين رقم IP</Text>
 	</STRING>
 	<STRING Id="1031" Name="IDS_ENABLE">
-        <Text>تشغيل</Text>
+		<Text>تشغيل</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_DISABLE">
-        <Text>إيقاف التشغيل</Text>
+		<Text>إيقاف التشغيل</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_ANSWER_MODE">
-        <Text>وضع الرد</Text>
+		<Text>وضع الرد</Text>
 	</STRING>
 	<STRING Id="1034" Name="IDS_SHORT_AKG_TITLE">
-        <Text>واقي المفاتيح</Text>
+		<Text>واقي المفاتيح</Text>
 	</STRING>
 	<STRING Id="1035" Name="IDS_COVER_ANSWER">
-        <Text>انعكاس</Text>
+		<Text>انعكاس</Text>
 	</STRING>
 	<STRING Id="1036" Name="IDS_SEND_ANSWER">
-        <Text>مفتاح الإرسال</Text>
+		<Text>مفتاح الإرسال</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_HEADSET_ANSWER">
-        <Text>سماعة الرأس</Text>
+		<Text>سماعة الرأس</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_MINUTE_ALERT">
-        <Text>إصدار صوت تنبيه حسب الدقائق</Text>
+		<Text>إصدار صوت تنبيه حسب الدقائق</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_AUTOANSWER_TITLE">
-        <Text>التشغيل التلقائي لسماعة الرأس</Text>
+		<Text>التشغيل التلقائي لسماعة الرأس</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_ANYKEY_ANSWER_TITLE">
-        <Text>أي مفتاح</Text>
+		<Text>أي مفتاح</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_CALLFORWARD_BUSY">
-        <Text>مشغول</Text>
+		<Text>مشغول</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_CALLFORWARD_ANYWAY">
-        <Text>لا يمكن الوصول إليه</Text>
+		<Text>لا يمكن الوصول إليه</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_CALLFORWARD_NOANSWER">
-        <Text>بلا رد</Text>
+		<Text>بلا رد</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_CALLFORWARD_NOCONNECT">
-        <Text>غير مشروط</Text>
+		<Text>غير مشروط</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_CALLFORWARD_CANCELALL">
-        <Text>إلغاء</Text>
+		<Text>إلغاء</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_LANGUAGE">
-        <Text>اللغة</Text>
+		<Text>اللغة</Text>
 	</STRING>
-	<STRING Id="1047" Name="IDS_CHINESE" Encoding="Unicode">
-        <Text>الصينية</Text>
+	<STRING Id="1047" Name="IDS_CHINESE">
+		<Text>الصينية</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_ENGLISH">
-        <Text>الإنجليزية</Text>
+		<Text>الإنجليزية</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_AUTO_REDIAL">
-        <Text>إعادة المحاولة تلقائيًا</Text>
+		<Text>إعادة المحاولة تلقائيًا</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_CALLFORWARD_INPUT">
-        <Text>إدخال رقم</Text>
+		<Text>إدخال رقم</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_CALLFORWARD_CANCEL">
-        <Text>إلغاء</Text>
+		<Text>إلغاء</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_CALLFORWARD_WAIT">
-        <Text>انتظار المكالمات</Text>
+		<Text>انتظار المكالمات</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_CALLSETTING_TITLE">
-        <Text>إعدادات المكالمات</Text>
+		<Text>إعدادات المكالمات</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_PHONESETTING_TITLE">
-        <Text>إعدادات الهاتف</Text>
+		<Text>إعدادات الهاتف</Text>
 	</STRING>
 	<STRING Id="1055" Name="IDS_NETWORKSETTING_TITLE">
-        <Text>توفير الخدمات</Text>
+		<Text>توفير الخدمات</Text>
 	</STRING>
 	<STRING Id="1056" Name="IDS_CALLFORWARD_DIVERT">
-        <Text>إعادة توجيه المكالمة</Text>
+		<Text>إعادة توجيه المكالمة</Text>
 	</STRING>
 	<STRING Id="1057" Name="IDS_WARNING_MESSEGE">
-        <Text>كلمة غير كافية</Text>
+		<Text>كلمة غير كافية</Text>
 	</STRING>
 	<STRING Id="1058" Name="IDS_VOL_WARNING">
-        <Text>إطلاق الصوت</Text>
+		<Text>إطلاق الصوت</Text>
 	</STRING>
 	<STRING Id="1059" Name="IDS_ITALIAN">
-        <Text>الإيطالية</Text>
+		<Text>الإيطالية</Text>
 	</STRING>
-	<STRING Id="1060" Name="IDS_SPANISH" Encoding="Unicode">
-        <Text>الإسبانية</Text>
+	<STRING Id="1060" Name="IDS_SPANISH">
+		<Text>الإسبانية</Text>
 	</STRING>
-	<STRING Id="1061" Name="IDS_PORTUGUESE" Encoding="Unicode">
+	<STRING Id="1061" Name="IDS_PORTUGUESE">
 		<Text>Português</Text>
 	</STRING>
 	<STRING Id="1062" Name="IDS_STATUS">
-        <Text>الحالة</Text>
+		<Text>الحالة</Text>
 	</STRING>
 	<STRING Id="1063" Name="IDS_BANNER_TITLE">
-        <Text>شعار</Text>
+		<Text>شعار</Text>
 	</STRING>
 	<STRING Id="1064" Name="IDS_INDONESIAN">
-        <Text>الإندونيسية</Text>
+		<Text>الإندونيسية</Text>
 	</STRING>
 	<STRING Id="1065" Name="IDS_HINDI">
-        <Text>الهندية</Text>
+		<Text>الهندية</Text>
 	</STRING>
-	<STRING Id="1066" Name="IDS_VIETNAMESE" Encoding="Unicode">
+	<STRING Id="1066" Name="IDS_VIETNAMESE">
 		<Text>Tiếng Việt</Text>
 	</STRING>
-	<STRING Id="1067" Name="IDS_ARABIC" Encoding="Unicode">
+	<STRING Id="1067" Name="IDS_ARABIC">
 		<Text>عربي</Text>
 	</STRING>
-
 	<STRING Id="1068" Name="IDS_HEBREW">
-        <Text>العبرية</Text>
+		<Text>العبرية</Text>
 	</STRING>
-	<STRING Id="1069" Name="IDS_THAI" Encoding="Unicode">
+	<STRING Id="1069" Name="IDS_THAI">
 		<Text>ภาษาไทย</Text>
 	</STRING>
-	<STRING Id="1070" Name="IDS_TCHINESE" Encoding="Unicode">
+	<STRING Id="1070" Name="IDS_TCHINESE">
 		<Text>繁體中文</Text>
 	</STRING>
-
 	<STRING Id="1071" Name="IDS_RUSSIAN">
-        <Text>الروسية</Text>
+		<Text>الروسية</Text>
 	</STRING>
 	<STRING Id="1072" Name="IDS_ADD_NEW_ITEM">
-        <Text>إضافة</Text>
+		<Text>إضافة</Text>
 	</STRING>
 	<STRING Id="1073" Name="IDS_SET_DELETE">
-        <Text>حذف</Text>
+		<Text>حذف</Text>
 	</STRING>
 	<STRING Id="1074" Name="IDS_SET_EDIT">
-        <Text>تحرير</Text>
+		<Text>تحرير</Text>
 	</STRING>
 	<STRING Id="1075" Name="IDS_SET_IP_CALL_OPTION">
-        <Text>خيار اتصال IP</Text>
+		<Text>خيار اتصال IP</Text>
 	</STRING>
 	<STRING Id="1076" Name="IDS_AM_PM_SET">
-        <Text>تعيين وقت</Text>
+		<Text>تعيين وقت</Text>
 	</STRING>
 	<STRING Id="1077" Name="IDS_SETMENU_AM">
-        <Text>ص</Text>
+		<Text>ص</Text>
 	</STRING>
 	<STRING Id="1078" Name="IDS_SETMENU_PM">
-        <Text>م</Text>
+		<Text>م</Text>
 	</STRING>
 	<STRING Id="1079" Name="IDS_NOT_GET_FEATURE_CODE">
-        <Text>لم يتم جلب رمز الميزة</Text>
+		<Text>لم يتم جلب رمز الميزة</Text>
 	</STRING>
 	<STRING Id="1080" Name="IDS_KEYTONE_LENGTH">
-        <Text>نغمة DTMF</Text>
+		<Text>نغمة DTMF</Text>
 	</STRING>
 	<STRING Id="1081" Name="IDS_KEYTONE_LONG">
-        <Text>نغمة مفتاح طويلة</Text>
+		<Text>نغمة مفتاح طويلة</Text>
 	</STRING>
 	<STRING Id="1082" Name="IDS_KEYTONE_NORMAL">
-        <Text>نغمة مفتاح عادية</Text>
+		<Text>نغمة مفتاح عادية</Text>
 	</STRING>
 	<STRING Id="1083" Name="IDS_AUTOANSWER_5SEC">
-        <Text>5 ثواني</Text>
+		<Text>5 ثواني</Text>
 	</STRING>
 	<STRING Id="1084" Name="IDS_AUTOANSWER_10SEC">
-        <Text>10 ثواني</Text>
+		<Text>10 ثواني</Text>
 	</STRING>
 	<STRING Id="1085" Name="IDS_LOCALNET">
-        <Text>الشبكة المحلية</Text>
+		<Text>الشبكة المحلية</Text>
 	</STRING>
 	<STRING Id="1086" Name="IDS_AUTONET">
-        <Text>الشبكة التلقائية</Text>
+		<Text>الشبكة التلقائية</Text>
 	</STRING>
 	<STRING Id="1087" Name="IDS_OPEN_ROAM">
-        <Text>فتح التجوال</Text>
+		<Text>فتح التجوال</Text>
 	</STRING>
 	<STRING Id="1088" Name="IDS_CLOSE_ROAM">
-        <Text>إغلاق التجوال</Text>
+		<Text>إغلاق التجوال</Text>
 	</STRING>
 	<STRING Id="1089" Name="IDS_SET_SUCESS">
-        <Text>تم بنجاح</Text>
+		<Text>تم بنجاح</Text>
 	</STRING>
 	<STRING Id="1090" Name="IDS_RESET_PHONE">
-        <Text>إعادة تعيين الهاتف</Text>
+		<Text>إعادة تعيين الهاتف</Text>
 	</STRING>
 	<STRING Id="1091" Name="IDS_SET_POUND">
-        <Text>تعيين #</Text>
+		<Text>تعيين #</Text>
 	</STRING>
 	<STRING Id="1092" Name="IDS_SET_DEFAULT">
-        <Text>تعيين الافتراضي</Text>
+		<Text>تعيين الافتراضي</Text>
 	</STRING>
 	<STRING Id="1093" Name="IDS_AUTOPOWER_WARNING">
-        <Text>التماثل التلقائي لوقت التشغيل/إيقاف التشغيل</Text>
+		<Text>التماثل التلقائي لوقت التشغيل/إيقاف التشغيل</Text>
 	</STRING>
 	<STRING Id="1094" Name="IDS_CALL_RESTRICT">
-        <Text>تقييد المكالمة</Text>
+		<Text>تقييد المكالمة</Text>
 	</STRING>
 	<STRING Id="1095" Name="IDS_PLANE_MODE">
-        <Text>وضع الطيران</Text>
+		<Text>وضع الطيران</Text>
 	</STRING>
 	<STRING Id="1096" Name="IDS_AUTOPOWER_STATUS">
-        <Text>الحالة</Text>
+		<Text>الحالة</Text>
 	</STRING>
 	<STRING Id="1097" Name="IDS_AUTO_POWER_TITLE">
-        <Text>التشغيل/الإيقاف التلقائي</Text>
+		<Text>التشغيل/الإيقاف التلقائي</Text>
 	</STRING>
 	<STRING Id="1098" Name="IDS_SHAKE_TITLE">
-        <Text>Shake-shake</Text>
+		<Text>Shake-shake</Text>
 	</STRING>
 	<STRING Id="1099" Name="IDS_MUSIC">
-        <Text>الموسيقى</Text>
+		<Text>الموسيقى</Text>
 	</STRING>
 	<STRING Id="1100" Name="IDS_FM_RADIO">
-        <Text>راديو FM</Text>
+		<Text>راديو FM</Text>
 	</STRING>
 	<STRING Id="1101" Name="IDS_WALLPAPER">
-        <Text>شاشة الخلفية</Text>
+		<Text>شاشة الخلفية</Text>
 	</STRING>
 	<STRING Id="1102" Name="IDS_SNOOZE_ALARM">
-        <Text>انتظار التنبيه</Text>
+		<Text>انتظار التنبيه</Text>
 	</STRING>
 	<STRING Id="1103" Name="IDS_VIDEO">
-        <Text>الفيديو</Text>
+		<Text>الفيديو</Text>
 	</STRING>
 	<STRING Id="1104" Name="IDS_ON">
-        <Text>تشغيل</Text>
+		<Text>تشغيل</Text>
 	</STRING>
 	<STRING Id="1105" Name="IDS_INVALID">
-        <Text>كلمة المرور غير صالحة</Text>
+		<Text>كلمة المرور غير صالحة</Text>
 	</STRING>
 	<STRING Id="1106" Name="IDS_RESTRICT_OUTGOING_ALL">
-        <Text>الكل</Text>
+		<Text>الكل</Text>
 	</STRING>
 	<STRING Id="1107" Name="IDS_RESTRICT_OUTGOING_INTERNATIONAL">
-        <Text>دولية</Text>
+		<Text>دولية</Text>
 	</STRING>
 	<STRING Id="1108" Name="IDS_RESTRICT_OUTGOING_OUTCONTACT">
-        <Text>خارج نطاق جهات الاتصال</Text>
+		<Text>خارج نطاق جهات الاتصال</Text>
 	</STRING>
 	<STRING Id="1109" Name="IDS_RESTRICT_OUTGOING_OFF">
-        <Text>إيقاف التشغيل</Text>
+		<Text>إيقاف التشغيل</Text>
 	</STRING>
 	<STRING Id="1110" Name="IDS_RESTRICT_INCOMING_ALL">
-        <Text>الكل</Text>
+		<Text>الكل</Text>
 	</STRING>
 	<STRING Id="1111" Name="IDS_RESTRICT_INCOMING_OUTCONTACT">
-        <Text>خارج نطاق جهات الاتصال</Text>
+		<Text>خارج نطاق جهات الاتصال</Text>
 	</STRING>
 	<STRING Id="1112" Name="IDS_RESTRICT_INCOMING_OFF">
-        <Text>إيقاف التشغيل</Text>
+		<Text>إيقاف التشغيل</Text>
 	</STRING>
 	<STRING Id="1113" Name="IDS_RESTRICT_OUTGOING">
-        <Text>تقييد المكالمات الصادرة</Text>
+		<Text>تقييد المكالمات الصادرة</Text>
 	</STRING>
 	<STRING Id="1114" Name="IDS_RESTRICT_INCOMING">
-        <Text>تقييد المكالمات المستلمة</Text>
+		<Text>تقييد المكالمات المستلمة</Text>
 	</STRING>
 	<STRING Id="1115" Name="IDS_PASSWORD">
-        <Text>أدخل كلمة المرور</Text>
+		<Text>أدخل كلمة المرور</Text>
 	</STRING>
 	<STRING Id="1116" Name="IDS_DONE">
-        <Text>تم</Text>
+		<Text>تم</Text>
 	</STRING>
 	<STRING Id="1117" Name="IDS_PROCCESS">
-        <Text>مقياس الخطوات قيد المعالجة</Text>
+		<Text>مقياس الخطوات قيد المعالجة</Text>
 	</STRING>
 	<STRING Id="1118" Name="IDS_USB_FUNCTION">
-        <Text>وضع بيانات USB</Text>
+		<Text>وضع بيانات USB</Text>
 	</STRING>
 	<STRING Id="1119" Name="IDS_QUERY_PLANEMODE">
-        <Text>استعلام عند بدء التشغيل</Text>
+		<Text>استعلام عند بدء التشغيل</Text>
 	</STRING>
 	<STRING Id="1120" Name="IDS_DIAG_AND_DATA">
-        <Text>تشغيل</Text>
+		<Text>تشغيل</Text>
 	</STRING>
 	<STRING Id="1121" Name="IDS_MASS_STORAGE">
-        <Text>إيقاف التشغيل</Text>
+		<Text>إيقاف التشغيل</Text>
 	</STRING>
 	<String Id="1122" Name="IDS_ADJUSTSETTING">
-        <Text>معايرة الشاشة</Text>
+		<Text>معايرة الشاشة</Text>
 	</String>
 	<String Id="1123" Name="IDS_SIM_SET">
-        <Text>إعدادات UIM</Text>
+		<Text>إعدادات UIM</Text>
 	</String>
 	<String Id="1124" Name="IDS_SIM_ONE">
-        <Text>UIM1</Text>
+		<Text>UIM1</Text>
 	</String>
-
 	<String Id="1125" Name="IDS_SIM_TWO">
-        <Text>UIM2</Text>
+		<Text>UIM2</Text>
 	</String>
-
 	<String Id="1126" Name="IDS_SIMSETTING_CHOICE_STRING">
-        <Text>هل أنت متأكد؟</Text>
+		<Text>هل أنت متأكد؟</Text>
 	</String>
-
 	<String Id="1127" Name="IDS_CANCEL">
-        <Text>إلغاء</Text>
+		<Text>إلغاء</Text>
 	</String>
-
 	<String Id="1128" Name="IDS_YES">
-        <Text>نعم</Text>
+		<Text>نعم</Text>
 	</String>
 	<String Id="1129" Name="IDS_MYANMAR">
 		<Text>myanmar</Text>
+	</String>
+	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
+		<Text>وضع نغمات</Text>
+	</STRING>
+	<STRING Id="1137" Name="IDS_FMRADIO_PLAY_HANDSET">
+		<Text>سماعة الرأس</Text>
+	</STRING>
+	<STRING Id="1138" Name="IDS_RADIO_PLAY_SPEAKER">
+		<Text>سماعة الهاتف</Text>
+	</STRING>
+	<String Id="1139" Name="IDS_IDLE_DATETIME_MOCD">
+		<Text>Timefont تنسيق</Text>
+	</String>
+	<String Id="1140" Name="IDS_FONT_BIG">
+		<Text>كبير</Text>
+	</String>
+	<String Id="1141" Name="IDS_FONT_MIEDIUM">
+		<Text>المتوسطة</Text>
+	</String>
+	<String Id="1142" Name="IDS_FONT_SMALL">
+		<Text>الصغيرة</Text>
 	</String>
 </Strings>
 <Dialogs>
@@ -598,6 +613,27 @@
 			<Static Id="7027" Name="IDC_SIMSETTING_CHOICE_STATIC">
 				<TextID>IDS_SIMSETTING_CHOICE_STRING</TextID>
 				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6033" Name="IDD_SEARCHNET" Focus="7028">
+		<Controls>
+			<Menu Id="7028" Name="IDC_MENU_SEARCHTIME">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6034" Name="IDD_FM_MENU" Focus="7029">
+		<Controls>
+			<Menu Id="7029" Name="IDC_MENU_FM">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6035" Name="IDD_TIME_FONTMODE" Focus="7030">
+		<Controls>
+			<Menu Id="7030" Name="IDC_MENU_TIMEFONTMODE">
+				<Items/>
+			</Menu>
 		</Controls>
 	</Dialog>
 </Dialogs>
