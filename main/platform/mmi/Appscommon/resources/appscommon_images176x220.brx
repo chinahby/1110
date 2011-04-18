@@ -19,6 +19,9 @@
 	<Object Id="5006" Name="IDB_MODE_T9_STROKE" MimeType="image/png">
 		<File>..\images\176x220\common\IME\T9str.png</File>
 	</Object>
+	<Object Id="5009" Name="IDI_PLAYLISTMG">
+		<File>..\images\176x220\common\mediagallery\playlistplaying.bmp</File>
+	</Object>
 	<Object Id="5010" Name="IDI_KEY_TEST" MimeType="image/png">
 		<File>..\images\176x220\common\QuickTest\keytest.png</File>
 	</Object>
