@@ -181,6 +181,19 @@ else
             tone_the.mp3|fs:/ringers/tone_the.mp3 \
             tone_four.mp3|fs:/ringers/tone_four.mp3 \
             tone_five.mp3|fs:/ringers/tone_five.mp3
+    else ifeq ($(USES_RESDIR),MTM)
+        CONSTFILE_FILES+=\
+            i_mobile1.mid|fs:/ringers/i_mobile1.mid \
+            i_mobile2.mid|fs:/ringers/i_mobile2.mid \
+            i_mobile3.mid|fs:/ringers/i_mobile3.mid \
+            i_mobile4.mid|fs:/ringers/i_mobile4.mid \
+            i_mobile5.mid|fs:/ringers/i_mobile5.mid \
+            tone_six.mid|fs:/ringers/tone_six.mid \
+            tone_one.mp3|fs:/ringers/tone_one.mp3 \
+            tone_two.mp3|fs:/ringers/tone_two.mp3 \
+            tone_the.mp3|fs:/ringers/tone_the.mp3 \
+            tone_four.mp3|fs:/ringers/tone_four.mp3 \
+            poweronoff.mp3|fs:/ringers/poweronoff.mp3
 	else ifeq ($(USES_RESDIR), C306)
         CONSTFILE_FILES+=\
         	ring08.mp3|fs:/ringers/ring08.mp3 \
