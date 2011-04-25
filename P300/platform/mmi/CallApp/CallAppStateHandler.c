@@ -657,6 +657,9 @@ static NextFSMAction STATE_NUMBER_FROM_COREHandler(CCallApp *pMe)
         case DLGRET_NUM_TOO_LONG:
             CallApp_ShowMsgBox(pMe, IDS_NUM_TOO_LONG);
             return NFSMACTION_WAIT;
+        case DLGRET_ESN_MEID:
+        	CallApp_ShowDialog(pMe, IDD_ESN_MEID);
+            return NFSMACTION_WAIT;
 #ifdef FEATURE_SUPPORT_WAP_APP
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
         case DLGRET_INVALID_LINK_NUM:
@@ -892,6 +895,9 @@ static NextFSMAction STATE_CONV_DIALERHandler(CCallApp *pMe)
 
         case DLGRET_NUM_TOO_LONG:
             CallApp_ShowMsgBox(pMe, IDS_NUM_TOO_LONG);
+            return NFSMACTION_WAIT;
+        case DLGRET_ESN_MEID:
+        	CallApp_ShowDialog(pMe, IDD_ESN_MEID);
             return NFSMACTION_WAIT;
         default:
             break;
@@ -1548,7 +1554,10 @@ static NextFSMAction STATE_EDIT_REC_NUMBERHandler(CCallApp *pMe)
             pMe->m_DialString[0] = 0;
             CallApp_ShowMsgBox(pMe, IDS_INVALIDEMGNUM);
             return NFSMACTION_WAIT;
-
+        case DLGRET_ESN_MEID:
+        	pMe->m_bNotOverwriteDlgRet = FALSE;
+        	CallApp_ShowDialog(pMe, IDD_ESN_MEID);
+            return NFSMACTION_WAIT;
         default:
             MOVE_TO_STATE(STATE_EXIT)
             return NFSMACTION_CONTINUE;

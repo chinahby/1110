@@ -157,6 +157,12 @@
 	<STRING Id="1052" Name="IDS_INVALID_LINK_NUM">
 		<Text>Invalid link number</Text>
 	</STRING>
+	<String Id="1053" Name="IDS_ESN">
+		<Text>ESN:</Text>
+	</String>
+	<String Id="1054" Name="IDS_STRING_MEID">
+		<Text>MEID:</Text>
+	</String>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>Recorder on</Text>
 	</STRING>
@@ -221,6 +227,12 @@
 	</DIALOG>
 	<Dialog Id="6009" Name="IDD_IP_NUMBER" Focus="0">
 		<Controls/>
+	</Dialog>
+	<Dialog Id="6010" Name="IDD_ESN_MEID" Focus="7002">
+		<Controls>
+			<Static Id="7002" Name="IDC_STATIC_ESNMEID">
+				<Items/></Static>
+		</Controls>
 	</Dialog>
 </Dialogs>
 </BREWRes>

@@ -114,7 +114,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                                         AEEEvent   eCode,
                                         uint16     wParam,
                                         uint32     dwParam);
-
+static boolean CallApp_Esn_Meid_DlgHandler(CCallApp *pMe,
+                                        AEEEvent   eCode,
+                                        uint16     wParam,
+                                        uint32     dwParam);
 // 对话框 IDD_CALLING 事件处理函数
 static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
                                         AEEEvent   eCode,
@@ -492,6 +495,8 @@ boolean CallApp_RouteDialogEvent(CCallApp *pMe,
     {
         case IDD_NUMEDIT:
             return CallApp_Dialer_NumEdit_DlgHandler(pMe,eCode,wParam,dwParam);
+        case IDD_ESN_MEID:
+        	return CallApp_Esn_Meid_DlgHandler(pMe,eCode,wParam,dwParam);
 
         case IDD_CALLING:
             return CallApp_Dialer_Calling_DlgHandler(pMe,eCode,wParam,dwParam);
@@ -523,6 +528,180 @@ boolean CallApp_RouteDialogEvent(CCallApp *pMe,
             return FALSE;
     }
 }
+/*==============================================================================
+函数：
+       CallApp_Esn_Meid_DlgHandler
+说明：
+       IDD_DIALER 对话框事件处理函数
+
+参数：
+       pMe [in]：指向CallApp Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+==============================================================================*/
+
+static boolean CallApp_Esn_Meid_DlgHandler(CCallApp *pMe,
+                                        AEEEvent   eCode,
+                                        uint16     wParam,
+                                        uint32     dwParam)
+{
+	//PARAM_NOT_REF(dwParam)
+
+   MSG_FATAL("CFieldDebug_EsnMenuHandleEvent Start=%d", eCode, 0, 0);
+   switch (eCode) {
+
+  
+	case EVT_DIALOG_INIT:
+		{
+			return TRUE;
+		}
+   case EVT_DIALOG_START:
+	   {
+	   		AECHAR szBuf[64];
+		    IDialog *p_dlg;
+		    IStatic *p_stk;
+		    int n = 0;
+		    uint32 esn;
+		    //dword date = 0;
+		    AECHAR fmt_str[20];
+		    //int i, j, count;
+		    AECHAR  sTitle[45]; 
+		    int ret = 0;
+		    uint64 meid = 0;
+		    uint32 H32,L32;
+		    MSG_FATAL("CFieldDebug_DrawEsnScreen Start00", 0, 0, 0);
+
+			MSG_FATAL("CFieldDebug_DrawEsnScreen Start", 0, 0, 0);
+		    MEMSET (sTitle, 0, sizeof(sTitle));
+
+		    (void)MEMSET( szBuf,(AECHAR) 0, sizeof(szBuf));    
+		    ret = ISHELL_LoadResString(pMe->m_pShell,
+		                               AEE_APPSCALLAPP_RES_FILE,
+		                               IDS_ESN,
+		                               (szBuf + n),
+		                               sizeof(szBuf));
+		    MSG_FATAL("CFieldDebug_DrawEsnScreen 1 ret=%d", ret, 0, 0);
+		    n = WSTRLEN(szBuf);
+		    szBuf[n++] = (AECHAR) '\n';
+		    
+		    //(void) ICONFIG_GetItem(pme->m_pIConfig,
+		    //                      CFGI_ESN,
+		    //                      &esn,
+		    //                      sizeof(esn));//插了卡时，从卡中读取
+			{
+				extern int OEM_ReadESN(uint32 *pESN);
+		    	OEM_ReadESN(&esn);//永远从NV中读取
+			}
+		    STRTOWSTR("%u %u", fmt_str, sizeof(fmt_str));
+		    
+		 #if 0
+		    WSPRINTF((szBuf + n),
+		            sizeof(szBuf),
+		            fmt_str,
+		            ((esn & 0xFF000000) >> 24),
+		            (esn & 0x00FFFFFF));
+		    
+		    n = WSTRLEN(szBuf);
+		    szBuf[n++] = (AECHAR) '\n';
+#endif
+
+		    //Display ESN with hexadecimal
+		    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+		    WSPRINTF((szBuf + n),
+		            sizeof(szBuf),
+		            fmt_str,
+		            esn);
+		   
+		    n = WSTRLEN(szBuf);
+		    szBuf[n++] = (AECHAR) '\n';
+		    (void) ISHELL_LoadResString(pMe->m_pShell,
+		                               AEE_APPSCALLAPP_RES_FILE,
+		                               IDS_STRING_MEID,
+		                               (szBuf + n),
+		                               sizeof(szBuf));
+		    n = WSTRLEN(szBuf);
+		    szBuf[n++] = (AECHAR) '\n';
+		    {
+		    	extern int OEM_ReadMEID(uint64 *meid);
+		    	OEM_ReadMEID(&meid);
+		        L32 = (uint32)meid;
+		        H32 = (uint32)(meid>>32);
+		    }
+		    MSG_FATAL("CFieldDebug_DrawEsnScreen L32=%d, H32=%d", L32, H32, 0);
+		    if(meid == 0)
+		    {
+		        STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+		        WSPRINTF((szBuf + n),
+		                sizeof(szBuf),
+		                fmt_str,
+		                H32
+		                );    
+		    }
+		    else
+		    {
+		        STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+		        WSPRINTF((szBuf + n),
+		                sizeof(szBuf),
+		                fmt_str,
+		                H32
+		                );
+		        n = WSTRLEN(szBuf);
+		        STRTOWSTR("%X", fmt_str, sizeof(fmt_str));
+		        WSPRINTF((szBuf + n),
+		                sizeof(szBuf),
+		                fmt_str,
+		                L32
+		                );
+		    }
+		  
+		   p_dlg = ISHELL_GetActiveDialog(pMe->m_pShell);
+		   p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_STATIC_ESNMEID);
+
+		   if(p_stk == NULL)
+		   {
+		       MSG_FATAL("CFieldDebug_DrawEsnScreen 2 p_stk == NULL", 0, 0, 0);
+		   }
+		   // Set the values of the title and text strings for this control
+		    ISTATIC_SetProperties(p_stk, ST_UNDERLINE|ST_NOSCROLL|ST_CENTERTITLE);
+		   (void) ISTATIC_SetText(p_stk,
+		                          NULL,
+		                          szBuf,
+		                          AEE_FONT_NORMAL,
+		                          AEE_FONT_NORMAL);
+		   
+		   (void) ISTATIC_Redraw(p_stk);
+		   MSG_FATAL("CFieldDebug_DrawEsnScreen End", 0, 0, 0);
+		   return TRUE;
+	}
+   case EVT_DIALOG_END:
+      return TRUE;
+   case EVT_KEY:
+ 	   switch (wParam) {
+   
+ 	   case AVK_CLR:
+   
+ 		  return TRUE;
+   
+ 	   default:
+ 		  break;
+ 	   }
+ 	   return FALSE;
+
+   default:
+      break;
+   }
+   MSG_FATAL("CFieldDebug_EsnMenuHandleEvent End", 0, 0, 0);
+   return FALSE;
+}
+
 /*==============================================================================
 函数：
        CallAppDialerDlgHandler
@@ -1007,7 +1186,13 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         if (WSTRCMP(pMe->m_DialString, L"*#06#") == 0)
                         {
                             //return CallApp_LaunchApplet(pMe,  AEECLSID_FIELDDEBUGAPP);
-                            ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#06#");
+                            //#ifndef FEATURE_USES_LOWMEM
+                            //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#06#");
+                            //#else
+                            {
+                            	CLOSE_DIALOG(DLGRET_ESN_MEID);
+                            }
+                            //#endif
                             return TRUE;
                         }
                         if ((WSTRCMP(pMe->m_DialString, L"*#*#8378#0#") == 0)||

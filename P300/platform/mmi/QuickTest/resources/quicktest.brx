@@ -235,6 +235,9 @@
 	<String Id="1023" Name="IDS_AVK_P">
 		<Text>P key</Text>
 	</String>
+	<String Id="1024" Name="IDS_MEID">
+		<Text>MEID</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_MAINMENU" Focus="7001">

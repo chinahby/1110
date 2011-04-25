@@ -2606,7 +2606,8 @@ static boolean  QuickTest_VERTestHandler(CQuickTest *pMe,
                         int n = 0;
                         uint32 esn;
                         AECHAR fmt_str[20];
-
+						uint64 meid = 0;
+    					uint32 H32,L32;
                         (void)MEMSET( szBuf,(AECHAR) 0, sizeof(szBuf));
 
                         (void) ISHELL_LoadResString(pMe->m_pShell,
@@ -2670,6 +2671,46 @@ static boolean  QuickTest_VERTestHandler(CQuickTest *pMe,
 
                             n = WSTRLEN(szBuf);
                             szBuf[n++] = (AECHAR) '\n';
+                            n = WSTRLEN(szBuf);
+                            (void) ISHELL_LoadResString(pMe->m_pShell,
+                                                       AEE_QUICKTEST_RES_FILE,
+                                                       IDS_MEID,
+                                                       (szBuf + n),
+                                                       sizeof(szBuf));
+                            n = WSTRLEN(szBuf);
+                            szBuf[n++] = (AECHAR)'\n';
+						    {
+						    	extern int OEM_ReadMEID(uint64 *meid);
+						    	OEM_ReadMEID(&meid);
+						        L32 = (uint32)meid;
+						        H32 = (uint32)(meid>>32);
+						    }
+						    MSG_FATAL("CFieldDebug_DrawEsnScreen L32=%d, H32=%d", L32, H32, 0);
+						    if(meid == 0)
+						    {
+						        STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+						        WSPRINTF((szBuf + n),
+						                sizeof(szBuf),
+						                fmt_str,
+						                H32
+						                );    
+						    }
+						    else
+						    {
+						        STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+						        WSPRINTF((szBuf + n),
+						                sizeof(szBuf),
+						                fmt_str,
+						                H32
+						                );
+						        n = WSTRLEN(szBuf);
+						        STRTOWSTR("%X", fmt_str, sizeof(fmt_str));
+						        WSPRINTF((szBuf + n),
+						                sizeof(szBuf),
+						                fmt_str,
+						                L32
+						                );
+						    }
                         }
                         p_dlg = ISHELL_GetActiveDialog(pMe->m_pShell);
                         p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_VER_STAT);
