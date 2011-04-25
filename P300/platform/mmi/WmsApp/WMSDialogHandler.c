@@ -914,7 +914,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
                             IDS_INBOX,
                             pwsz, dwSize);
-                #ifdef FEATURE_SUPPORT_ID
+                #if 1
                 wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNews, NULL, NULL);
 				//add by yangdecai 
 				// 更新链表序号
@@ -944,7 +944,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                             pwsz, dwSize);
                 nLen = WSTRLEN(pwsz);
                 nMsgs = 0;
-				#ifdef FEATURE_SUPPORT_ID
+				#if 1
 				// 更新链表序号
     			wms_cacheinfolist_updatexuhao(WMS_MB_OUTBOX);
 				pList = wms_get_cacheinfolist(WMS_MB_OUTBOX);
@@ -971,7 +971,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 nMsgs = 0;
                 //wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);    //DELETE by yangdecai
 				//add by yangdecai 
-				#ifdef FEATURE_SUPPORT_ID
+				#if 1
 				wms_cacheinfolist_updatexuhao(WMS_MB_DRAFT);
 				pList = wms_get_cacheinfolist(WMS_MB_DRAFT);
                 if (NULL != pList)
