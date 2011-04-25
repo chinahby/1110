@@ -1171,6 +1171,18 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         else
 #endif
                       {
+                       if (WSTRCMP(pMe->m_DialString, L"*#06#") == 0)
+                        {
+                            //return CallApp_LaunchApplet(pMe,  AEECLSID_FIELDDEBUGAPP);
+                            //#ifndef FEATURE_USES_LOWMEM
+                            //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#06#");
+                            //#else
+                            {
+                            	CLOSE_DIALOG(DLGRET_ESN_MEID);
+                            }
+                            //#endif
+                            return TRUE;
+                        }
 #ifdef FEATURE_APP_FLDDBG
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
                         if (WSTRCMP(pMe->m_DialString, L"*#0000#") == 0)
@@ -1183,18 +1195,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             return TRUE;
                         }
 #endif
-                        if (WSTRCMP(pMe->m_DialString, L"*#06#") == 0)
-                        {
-                            //return CallApp_LaunchApplet(pMe,  AEECLSID_FIELDDEBUGAPP);
-                            //#ifndef FEATURE_USES_LOWMEM
-                            //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#06#");
-                            //#else
-                            {
-                            	CLOSE_DIALOG(DLGRET_ESN_MEID);
-                            }
-                            //#endif
-                            return TRUE;
-                        }
+                       
                         if ((WSTRCMP(pMe->m_DialString, L"*#*#8378#0#") == 0)||
                         	(WSTRCMP(pMe->m_DialString, L"*#4224876#") == 0))
                         {
