@@ -5101,6 +5101,8 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     AECHAR fmt_str[20];
     int i, j, count;
     AECHAR  sTitle[20]; 
+    JulianType  jDate;
+    uint32         dwSeconds;
 #ifndef CUST_EDITION
     byte b=0;
     int temp_cont=0;
@@ -5263,21 +5265,38 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
 
    n = WSTRLEN(szBuf);
    szBuf[n++] = (AECHAR) '\n';
-
+   date = 0;
    (void) ICONFIG_GetItem(pme->m_pIConfig,
                           CFGI_RFCAL_DATE,
                           &date,
                           sizeof(date));
-
-   STRTOWSTR("%08x", fmt_str, sizeof(fmt_str));
-
+   dwSeconds = GETTIMESECONDS();
+   MSG_FATAL("date===========%d,dwSeconds=%d",date,dwSeconds,0);
+   GetJulianDate(date, &jDate);	
+   MSG_FATAL("jDate.wDay=%d,jDate.wMonth=%d,jDate.wYear=%d",jDate.wDay,jDate.wMonth,jDate.wYear);
+   STRTOWSTR("%02x", fmt_str, sizeof(fmt_str));
    WSPRINTF((szBuf + n),
             sizeof(szBuf),
             fmt_str,
-            date);
-
+            jDate.wDay);
+   //n = WSTRLEN(szBuf);  
+   //szBuf[n++] = (AECHAR) '-'; 
+   n = WSTRLEN(szBuf);  
+   STRTOWSTR("%02x", fmt_str, sizeof(fmt_str));
+   WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            jDate.wMonth);
+   //n = WSTRLEN(szBuf);  
+   //szBuf[n++] = (AECHAR) '-'; 
+   n = WSTRLEN(szBuf); 
+   STRTOWSTR("%04d", fmt_str, sizeof(fmt_str));
+   WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            jDate.wYear);
+   n = WSTRLEN(szBuf); 
    // prepare the date format
-   n = WSTRLEN(szBuf);
    for (i = n - 1, j = n + 1, count = 0;
        count < 4;
        count++) {
@@ -5291,7 +5310,6 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
    }
 
    szBuf[j] = (AECHAR) '-';
-   
    n = WSTRLEN(szBuf);
    szBuf[n++] = (AECHAR) '\n';
 #endif   
