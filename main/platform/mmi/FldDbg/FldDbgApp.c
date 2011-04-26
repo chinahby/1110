@@ -124,6 +124,7 @@ when         who     what, where, why
 #include "err.h"
 #include "oemnvint.h"
 #include "mobile.h"
+#include "nv.h"
 
 #if MIN_BREW_VERSION(3, 1)
 #include "AEEAppletCtl.h"
@@ -5270,6 +5271,32 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
                           CFGI_RFCAL_DATE,
                           &date,
                           sizeof(date));
+   #if 1
+   STRTOWSTR("%08x", fmt_str, sizeof(fmt_str));
+   WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            date);
+
+   // prepare the date format
+   n = WSTRLEN(szBuf);
+   for (i = n - 1, j = n + 1, count = 0;
+       count < 2;
+       count++) {
+      szBuf[j--] = szBuf[i--];
+   }
+
+   szBuf[j--] = (AECHAR) '-';
+
+   for (count = 0; count < 2; count++) {
+      szBuf[j--] = szBuf[i--];
+   }
+
+   szBuf[j] = (AECHAR) '-';
+   
+   n = WSTRLEN(szBuf);
+   szBuf[n++] = (AECHAR) '\n';
+   #else
    dwSeconds = GETTIMESECONDS();
    MSG_FATAL("date===========%d,dwSeconds=%d",date,dwSeconds,0);
    GetJulianDate(date, &jDate);	
@@ -5312,6 +5339,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
    szBuf[j] = (AECHAR) '-';
    n = WSTRLEN(szBuf);
    szBuf[n++] = (AECHAR) '\n';
+   #endif
 #endif   
 
 //HW
