@@ -568,6 +568,11 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
     #ifdef  FEATURE_MYANMAR_INPUT_MOD
     boolean b_isStar = OEM_TextMyaStar(pme->m_pText);
     #endif
+    if(wParam ==AVK_DEL)
+    {
+        wParam =AVK_CLR;
+        dwParam = 1;
+    }
 #ifdef FEATURE_LCD_TOUCH_ENABLE   //add by ydc
    //if( eCode >= EVT_PEN_UP  && eCode <= EVT_PEN_STALE_MOVE ){   modi by ydc  090520
 	if (eCode == EVT_PEN_UP){
