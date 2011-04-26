@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="mediagallery" VERSION="1">
+<BREWRes Name="myamediagallery" VERSION="1">
 <Strings Encoding="UNICODE">
 	<STRING Id="1000" Name="IDS_MG_MEDIAGALLERY">
 		<Text></Text>
@@ -320,16 +320,16 @@
 		<Text></Text>
 	</STRING>
 	<String Id="1107" Name="IDS_MSG_SAVEPLAYLIST">
-		<Text>Add to playlist</Text>
+		<Text></Text>
 	</String>
 	<String Id="1108" Name="IDS_DEFAULTPLAYLISTNAME">
-		<Text>Default playlist</Text>
+		<Text></Text>
 	</String>
 	<String Id="1109" Name="IDS_PLAYLIST_FULL">
-		<Text>Playlist full!</Text>
+		<Text></Text>
 	</String>
 	<String Id="1110" Name="IDS_ADD_SUCCESS">
-		<Text>Add music success</Text>
+		<Text></Text>
 	</String>
 </Strings>
 <Dialogs>

@@ -407,25 +407,25 @@
 		<Text>30  </Text>
 	</String>
 	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
-		<Text>Ringtones mode</Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1137" Name="IDS_FMRADIO_PLAY_HANDSET">
-		<Text>Handset</Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="1138" Name="IDS_RADIO_PLAY_SPEAKER">
-		<Text>Speaker</Text>
+		<Text></Text>
 	</STRING>
-	<String Id="1139" Name="IDS_IDLE_DATETIME_MOCD" Encoding="ISOLATIN1">
-		<Text>Timefont format</Text>
+	<String Id="1139" Name="IDS_IDLE_DATETIME_MOCD">
+		<Text></Text>
 	</String>
-	<String Id="1140" Name="IDS_FONT_BIG" Encoding="ISOLATIN1">
-		<Text>Big</Text>
+	<String Id="1140" Name="IDS_FONT_BIG">
+		<Text></Text>
 	</String>
-	<String Id="1141" Name="IDS_FONT_MIEDIUM" Encoding="ISOLATIN1">
-		<Text>Medium</Text>
+	<String Id="1141" Name="IDS_FONT_MIEDIUM">
+		<Text></Text>
 	</String>
-	<String Id="1142" Name="IDS_FONT_SMALL" Encoding="ISOLATIN1">
-		<Text>Small</Text>
+	<String Id="1142" Name="IDS_FONT_SMALL">
+		<Text></Text>
 	</String>
 </Strings>
 <Dialogs>
