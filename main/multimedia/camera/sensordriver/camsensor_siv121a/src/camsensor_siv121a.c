@@ -15,7 +15,12 @@
     TYPE DEFINITIONS 
 ============================================================================*/
 //#define CAMSENSOR_HIGHQUALITY_PREVIEW
+#if defined(FEATURE_VERSION_W516)
+#define CAMSENSOR_SIV121A_RESET_PIN         GPIO_OUTPUT_53
+#else
 #define CAMSENSOR_SIV121A_RESET_PIN         GPIO_OUTPUT_62
+#endif
+
 #define SIV121A_OUTFORMAT_RGB565
 
 // sensor's chip ID and version

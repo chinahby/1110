@@ -14,7 +14,11 @@
 /*============================================================================
     TYPE DEFINITIONS 
 ============================================================================*/
+#if defined(FEATURE_VERSION_W516)
+#define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_53
+#else
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_62
+#endif
 #ifndef T_QSC1110
 #define SIC110A_OUTFORMAT_RGB565
 #endif
