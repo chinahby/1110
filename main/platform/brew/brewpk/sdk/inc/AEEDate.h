@@ -81,8 +81,11 @@ typedef struct
 #define DFMT_INT_YYYY_MM_DD      0x0000000a     // "2001.6.1"
 
 #define DFMT_FORMAT_MASK         0x0000000F
-
+#ifdef FEATURE_VERSION_N68
+#define ABBREV_LEN   -1
+#else
 #define ABBREV_LEN   3
+#endif
 
 //---------------------------------------------------------------------
 // Global Constant Declarations

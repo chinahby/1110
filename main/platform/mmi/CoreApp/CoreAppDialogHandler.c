@@ -5506,8 +5506,22 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
                                 nWeekResID,
                                 wszDate,
                                 sizeof(wszDate));
-    
+#ifndef FEATURE_VERSION_N68
     wszDate[3] = (AECHAR)'\0';
+#else
+    {
+    		nv_language_enum_type language;
+		(void) ICONFIG_GetItem(pMe->m_pConfig,
+                                       CFGI_LANGUAGE_SELECTION,
+                                       &language,
+                                       sizeof(language));
+
+        if ( language != NV_LANGUAGE_MYANMAR )
+        {
+        		wszDate[3] = (AECHAR)'\0';
+        }
+    }
+#endif
 #if defined(FEATURE_DISP_128X128)
 {
     int str_lenth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, (const AECHAR *)wszDate);
@@ -5533,7 +5547,13 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 }   
 #else
 	
-
+#ifdef FEATURE_VERSION_N68
+     {
+     	//int wszDatelen = WSTRLEN(wszDate);
+     	//wszDatelen = wszDatelen+1;
+     	//wszDate[wszDatelen] = (AECHAR)'\0';
+     }
+#else
 	if ( nWeekResID == AEE_IDS_SUNDAY )
 	{
 		nv_language_enum_type language;
@@ -5555,7 +5575,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     {
 		wszDate[3] = (AECHAR)'\0';
     }
-	
+#endif
     (void)DrawTextWithProfile(pMe->a.m_pIShell,
                               pMe->m_pDisplay,
                               RGB_WHITE_NO_TRANS,
