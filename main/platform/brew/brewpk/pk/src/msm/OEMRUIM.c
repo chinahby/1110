@@ -802,18 +802,18 @@ static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, b
     
     switch(ecd_ind){
     case  AEERUIM_LANG_ENCODING_UNICODE:                   //UNICODE编码
-        wStrLen = wStrLen/2;
+       // wStrLen = wStrLen/2;
         if((Inputbuf[0] == 0xFF) && (Inputbuf[1] == 0xFE))//(Little endian 00-54 with BOM)
         {
             // Remove BOM
-            wStrLen-=1;
+           // wStrLen-=1;
             Inputbuf+=2;
             bBigEndian = FALSE;
         }
         else if((Inputbuf[0] == 0xFE) && (Inputbuf[1] == 0xFF)) // Big Endian
         {
             // Remove BOM
-            wStrLen-=1;
+           // wStrLen-=1;
             Inputbuf+=2;
             bBigEndian = TRUE;
         }
@@ -836,6 +836,7 @@ static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, b
 
         if(bBigEndian)
         {
+            MSG_FATAL("is BigEndian wStrLen=%d", wStrLen, 0, 0);
             for(i=0; i<wStrLen; i++)
             {
                 if(Inputbuf[i] != 0xFF && Inputbuf[i+1] != 0xFF)
@@ -847,10 +848,12 @@ static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, b
                     break;
                 }
             }
+            MSG_FATAL("is BigEndian i=%d", i, 0, 0);
             AppLabel[i]='\0';
         }
         else
         {
+            MSG_FATAL("not BigEndian wStrLen=%d", wStrLen, 0, 0);
             for(i=0; i<wStrLen; i++)
             {
                 if(Inputbuf[i] != 0xFF && Inputbuf[i+1] != 0xFF)
@@ -863,6 +866,7 @@ static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, b
                 }
             }
             AppLabel[i]='\0';
+            MSG_FATAL("is not BigEndian i=%d", i, 0, 0);
         }
         break;
         
@@ -1351,7 +1355,6 @@ static byte OEMRUIM_bcd_to_ascii(byte num_digi, /* Number of dialing digits */
 
     return i;
 }
-//01 04 01 00 51 00 55 00 41 00 4C 00 43 00 4F 00 4D 00 4D 00 51 00 4C 00 41 00 42 00 40 00 31 00 32 00 33
 
 static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
 {
@@ -1362,38 +1365,38 @@ static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
     pData[0]=0x01;
     pData[1]=0x04;
     pData[2]=0x01;
-    pData[3]=0x00;
-    pData[4]=0x51;
+    pData[3]=0xfe;
+    pData[4]=0xff;
     pData[5]=0x00;
-    pData[6]=0x55;
+    pData[6]=0x51;
     pData[7]=0x00;
-    pData[8]=0x41;
+    pData[8]=0x55;
     pData[9]=0x00;
-    pData[10]=0x4c;
+    pData[10]=0x41;
     pData[11]=0x00;
-    pData[12]=0x43;
+    pData[12]=0x4c;
     pData[13]=0x00;
-    pData[14]=0x4f;
+    pData[14]=0x43;
     pData[15]=0x00;
-    pData[16]=0x4d;
+    pData[16]=0x4f;
     pData[17]=0x00;
     pData[18]=0x4d;
     pData[19]=0x00;
-    pData[20]=0x51;
+    pData[20]=0x4d;
     pData[21]=0x00;
-    pData[22]=0x4c;
+    pData[22]=0x51;
     pData[23]=0x00;
-    pData[24]=0x41;
+    pData[24]=0x4c;
     pData[25]=0x00;
-    pData[26]=0x42;
+    pData[26]=0x41;
     pData[27]=0x00;
-    pData[28]=0x40;
+    pData[28]=0x42;
     pData[29]=0x00;
-    pData[30]=0x31;
+    pData[30]=0x40;
     pData[31]=0x00;
-    pData[32]=0x32;
+    pData[32]=0x31;
     pData[33]=0x00;
-    pData[34]=0x33;
+    pData[34]=0x32;
 #else
     MSG_FATAL("OEMRUIM_Read_Svc_P_Name",0,0,0);   
     // Check to see if the card is connected.
@@ -1430,9 +1433,9 @@ static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
 #endif        
     {
         status = SUCCESS;
-        DBGPRINTF("pData = %s, Length=%d",pData, STRLEN((char*)pData));
+        DBGPRINTF("hahahaha pData = %s, Length=%d",pData, STRLEN((char*)pData));
         OEMRUIM_Conversion_Uimdata_To_Spn(pData,svc_p_name,pnDataSize);//wszBuf中存放从UIM卡中读出的数?
-        DBGPRINTF("svc_p_name = %S",svc_p_name);
+        DBGPRINTF("svc_p_name = %S, Length=%d",svc_p_name, WSTRLEN(svc_p_name));
     }    
     return status;
 }
