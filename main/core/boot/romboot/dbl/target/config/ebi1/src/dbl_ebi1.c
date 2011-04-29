@@ -127,6 +127,26 @@ dbl_nor_device K5N5629ABM =
   2,                                 /* # of codes to match */
   {0x00EC, 0x2601}                   /* Manufacture codes. */
 };
+dbl_nor_device K5N5629ATC = 
+{
+  "SAMSUNG K5N5629ATC",
+  2,                                 /* # of codes to match */
+  {0x00EC, 0x2208}                   /* Manufacture codes. */
+};
+
+dbl_nor_device K5N5629ABC = 
+{
+  "SAMSUNG K5N5629ABC",
+  2,                                 /* # of codes to match */
+  {0x00EC, 0x2209}                   /* Manufacture codes. */
+};
+
+dbl_nor_device K5N5629AUC = 
+{
+  "SAMSUNG K5N5629AUC",
+  2,                                 /* # of codes to match */
+  {0x00EC, 0x3018}                   /* Manufacture codes. */
+};
 
 dbl_nor_device Intel_64W18_ADMux =
 {
@@ -198,6 +218,9 @@ const dbl_nor_device *(samsung_parts[]) = {
   &K5N6433ATM,
   &K5N2833ATB,
   &K5N2833ABB,
+  &K5N5629ATC,
+  &K5N5629ABC,
+  &K5N5629AUC,
   NULL
 };
 
@@ -334,6 +357,56 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ABM_96MHZ[] =
   {END_OF_CFG_DATA,  0x00000000,                    0x00000000    },
 };
 
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ATC_48MHZ[] =
+{
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xAA    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x001A2AAA),  0xC0    },
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x013400             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01011034           },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000    },
+};
+
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ATC_64MHZ[] =
+{
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xAA    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x001A3AAA),  0xC0    },
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x013400             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01011034           },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000    },
+};
+
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ATC_96MHZ[] =
+{
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xAA    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x001A6AAA),  0xC0    },
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x013400             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01011034           },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000    },
+};
 
 const static dbl_parser_cfg_data_item_type ebi1_cfg_data_S29WSP_48MHZ[] =
 {
@@ -550,7 +623,7 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_ebi1_default[] =
 
 const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_48MHZ[] = 
 {
-#if 0
+#if 0//defined(T_QSC1110)
   {READ_16_BIT,      0x9FFFFFE,               0x0       },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
@@ -659,7 +732,7 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_48MHZ
 #endif
 const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_64MHZ[] =
 {
-#if 0
+#if 0//defined(T_QSC1110)
   {READ_16_BIT,      0x9FFFFFE,               0x0       },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
@@ -690,10 +763,7 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_64MHZ
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x00010020  },
 #endif
-/*
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0031003C  },
-*/
+
   /*-----------------------------------------------------------------------
                             End of Configuration
   -----------------------------------------------------------------------*/   
@@ -772,7 +842,7 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_64MHZ
 
 const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_96MHZ[] =
 {
-#if 0
+#if 0//defined(T_QSC1110)
   {READ_16_BIT,      0x9FFFFFE,               0x0       },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
@@ -1338,56 +1408,52 @@ void dbl_ebi1_data_psram_configure
   const boot_clk_speed_type *configured_clk_speed
 )
 {
-
-dbl_nor_device *dev = dbl_nor_device_probe();
+    dbl_nor_device *dev = dbl_nor_device_probe();
 	
-	  DBL_VERIFY(dev != NULL, DBL_ERR_NOR_DETECTION_FAILED );
+	DBL_VERIFY(dev != NULL, DBL_ERR_NOR_DETECTION_FAILED );
 #ifndef FEATURE_USES_LOWMEM
-	  if ((dev == &K5N5629ABM)|| (dev == &K5N6433ABM) || (dev == &K5N6433ATM) || (dev == &K5N2833ATB) || (dev == &K5N2833ABB))
-	  	{
-			dbl_parse_cfg_data(ebi1_cfg_data_ebi1_default);
-		if( configured_clk_speed->ebi1 == 48 )
-		  {
-			dbl_parse_cfg_data(ebi1_samsung_cfg_data_PSRAM_CS1_48MHZ);
-		  }
-		  else if( configured_clk_speed->ebi1 == 64 )
-		  {
-			dbl_parse_cfg_data(ebi1_samsung_cfg_data_PSRAM_CS1_64MHZ);
-		  }
-		  else if( configured_clk_speed->ebi1 == 96 )
-		  {
-			dbl_parse_cfg_data(ebi1_samsung_cfg_data_PSRAM_CS1_96MHZ);
-		  }
-		  else
-		  {
-			DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
-		  }
-	  	}
-
+	if ((dev == &K5N6433ABM) || (dev == &K5N6433ATM) || (dev == &K5N2833ATB) || (dev == &K5N2833ABB) || (dev == &K5N5629ABM))//|| (dev == &K5N5629ATC) || (dev == &K5N5629ABC) || (dev == &K5N5629AUC))
+	{
+		dbl_parse_cfg_data(ebi1_cfg_data_ebi1_default);
+        if( configured_clk_speed->ebi1 == 48 )
+        {
+            dbl_parse_cfg_data(ebi1_samsung_cfg_data_PSRAM_CS1_48MHZ);
+        }
+        else if( configured_clk_speed->ebi1 == 64 )
+        {
+            dbl_parse_cfg_data(ebi1_samsung_cfg_data_PSRAM_CS1_64MHZ);
+        }
+        else if( configured_clk_speed->ebi1 == 96 )
+        {
+            dbl_parse_cfg_data(ebi1_samsung_cfg_data_PSRAM_CS1_96MHZ);
+        }
+        else
+        {
+            DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
+        }
+	}
   	else
 #endif
-	  	{
-	
-                if( configured_clk_speed->ebi1 == 48 )
-                {
-                       dbl_parse_cfg_data(ebi1_cfg_data_PSRAM_CS1_48MHZ);
-                }
+	{
+        if( configured_clk_speed->ebi1 == 48 )
+        {
+            dbl_parse_cfg_data(ebi1_cfg_data_PSRAM_CS1_48MHZ);
+        }
 #ifndef FEATURE_USES_LOWMEM
-                 else if( configured_clk_speed->ebi1 == 64 )
-                {
-                       dbl_parse_cfg_data(ebi1_cfg_data_PSRAM_CS1_64MHZ);
-                }
-               else if( configured_clk_speed->ebi1 == 96 )
-                {
-                       dbl_parse_cfg_data(ebi1_cfg_data_PSRAM_CS1_96MHZ);
-                }	
-               else
-                {
-                       DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
-                }
+        else if( configured_clk_speed->ebi1 == 64 )
+        {
+            dbl_parse_cfg_data(ebi1_cfg_data_PSRAM_CS1_64MHZ);
+        }
+        else if( configured_clk_speed->ebi1 == 96 )
+        {
+            dbl_parse_cfg_data(ebi1_cfg_data_PSRAM_CS1_96MHZ);
+        }	
+        else
+        {
+            DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
+        }
 #endif
-		}
-
+    }
 }
 
 /*===========================================================================
@@ -1470,7 +1536,7 @@ void dbl_ebi1_nor_configure
       DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
     }
   } 
-else if (dev == &K5N5629ABM)
+  else if ((dev == &K5N5629ABM))
   {
     if( configured_clk_speed->ebi1 == 48 )
     {
@@ -1483,6 +1549,25 @@ else if (dev == &K5N5629ABM)
     else if( configured_clk_speed->ebi1 == 96 )
     {
       dbl_parse_cfg_data(ebi1_cfg_data_K5N5629ABM_96MHZ);
+    }
+    else
+    {
+      DBL_ERR_FATAL(DBL_ERR_EBI1_CFG_FAILED);
+    }
+  }
+  else if ((dev == &K5N5629ATC) || (dev == &K5N5629ABC) || (dev == &K5N5629AUC))
+  {
+    if( configured_clk_speed->ebi1 == 48 )
+    {
+      dbl_parse_cfg_data(ebi1_cfg_data_K5N5629ATC_48MHZ);
+    }
+	else if(configured_clk_speed->ebi1 == 64 )
+	{
+	  dbl_parse_cfg_data(ebi1_cfg_data_K5N5629ATC_64MHZ);
+	}
+    else if( configured_clk_speed->ebi1 == 96 )
+    {
+      dbl_parse_cfg_data(ebi1_cfg_data_K5N5629ATC_96MHZ);
     }
     else
     {

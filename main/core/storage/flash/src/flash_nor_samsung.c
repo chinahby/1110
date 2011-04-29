@@ -154,7 +154,112 @@ flash_geometry_info K5N5629ABM_geometry =
     { 227,  16,  242,  0},
     { 243,  16,  258,  0},
 }
-};  /*lint !e785*/
+};
+
+flash_geometry_info K5N5629ABC_geometry =
+{
+  FLASH_SAMSUNG_FAMILY,
+  FLASH_SIZE_32MB,
+  FLASH_XIFACE_16,
+  FLASH_WBUF_64,  
+  2,
+  {
+    {4, 32768},
+    {255, 131072},
+    {0,      0},
+    {0,      0},
+  },  /*lint !e785*/
+  259,
+  16,
+  {
+    { 0,    19,  18,  0},
+    { 19,   16,  34,  0},
+    { 35,   16,  50,  0},
+    { 51,   16,  66,  0},
+    { 67,   16,  82,  0},
+    { 83,   16,  98,  0},
+    { 99,   16,  114,  0},
+    { 115,  16,  130,  0},
+    { 131,  16,  146,  0},
+    { 147,  16,  162,  0},
+    { 163,  16,  178,  0},
+    { 179,  16,  194,  0},
+    { 195,  16,  210,  0},
+    { 211,  16,  226,  0},
+    { 227,  16,  242,  0},
+    { 243,  16,  258,  0},
+}
+};
+
+flash_geometry_info K5N5629ATC_geometry =
+{
+  FLASH_SAMSUNG_FAMILY,
+  FLASH_SIZE_32MB,
+  FLASH_XIFACE_16,
+  FLASH_WBUF_64,  
+  2,
+  {
+    {255, 131072},
+    {4, 32768},
+    {0,      0},
+    {0,      0},
+  },  /*lint !e785*/
+  259,
+  16,
+  {
+    { 0,    16,  15,   0},
+    { 16,   16,  31,   0},
+    { 32,   16,  47,   0},
+    { 48,   16,  63,   0},
+    { 64,   16,  79,   0},
+    { 80,   16,  95,   0},
+    { 96,   16,  111,  0},
+    { 112,  16,  127,  0},
+    { 128,  16,  143,  0},
+    { 144,  16,  159,  0},
+    { 160,  16,  175,  0},
+    { 176,  16,  191,  0},
+    { 192,  16,  207,  0},
+    { 208,  16,  223,  0},
+    { 224,  16,  239,  0},
+    { 240,  19,  258,  0},
+}
+};
+
+flash_geometry_info K5N5629AUC_geometry =
+{
+  FLASH_SAMSUNG_FAMILY,
+  FLASH_SIZE_32MB,
+  FLASH_XIFACE_16,
+  FLASH_WBUF_64,  
+  1,
+  {
+    {256, 131072},
+    {0,      0},
+    {0,      0},
+    {0,      0},
+  },  /*lint !e785*/
+  256,
+  16,
+  {
+    { 0,    16,  15,   0},
+    { 16,   16,  31,   0},
+    { 32,   16,  47,   0},
+    { 48,   16,  63,   0},
+    { 64,   16,  79,   0},
+    { 80,   16,  95,   0},
+    { 96,   16,  111,  0},
+    { 112,  16,  127,  0},
+    { 128,  16,  143,  0},
+    { 144,  16,  159,  0},
+    { 160,  16,  175,  0},
+    { 176,  16,  191,  0},
+    { 192,  16,  207,  0},
+    { 208,  16,  223,  0},
+    { 224,  16,  239,  0},
+    { 240,  16,  255,  0},
+}
+};
 
 flash_geometry_info K5N5666ATM_geometry =
 {
@@ -348,20 +453,49 @@ flashi_nor_device K5N5629ABM =
   &flash_samsung_op_functions
 };
   
-flashi_nor_device K5N5666ATM =
+flashi_nor_device K5N5629ATC=
 {
-  "SAMSUNG K5N5666ATM",
+  "SAMSUNG K5N5629ATC",
   2,                            /* # of codes to match */
   {0x00EC, 0x2208, 0, 0},       /* Manufacture codes. */
-                                /* 2208H(Top Boot), 2209H(Bottom Boot)*/
   0,                         
-  FS_DEVICE_WRITES_PAIRED_BITS, /* for MLC device */
+  FS_DEVICE_WRITES_SIMPLE,      /* for SLC device */
   0x0,                          /* Device base address */
   0,                            /* Page Size */
   /* Use CFI to initialize flash geometry */
   INIT_USING_CFI_AT_RUNTIME,
-  &K5N5666ATM_geometry,
-  &flash_samsung_op_functions
+  &K5N5629ATC_geometry,
+  &flash_samsung_op_word_write_functions
+};
+
+flashi_nor_device K5N5629ABC=
+{
+  "SAMSUNG K5N5629ABC",
+  2,                            /* # of codes to match */
+  {0x00EC, 0x2209, 0, 0},       /* Manufacture codes. */
+  0,                         
+  FS_DEVICE_WRITES_SIMPLE,      /* for SLC device */
+  0x0,                          /* Device base address */
+  0,                            /* Page Size */
+  /* Use CFI to initialize flash geometry */
+  INIT_USING_CFI_AT_RUNTIME,
+  &K5N5629ABC_geometry,
+  &flash_samsung_op_word_write_functions
+};
+
+flashi_nor_device K5N5629AUC=
+{
+  "SAMSUNG K5N5629AUC",
+  2,                            /* # of codes to match */
+  {0x00EC, 0x3018, 0, 0},       /* Manufacture codes. */
+  0,                         
+  FS_DEVICE_WRITES_SIMPLE,      /* for SLC device */
+  0x0,                          /* Device base address */
+  0,                            /* Page Size */
+  /* Use CFI to initialize flash geometry */
+  INIT_USING_CFI_AT_RUNTIME,
+  &K5N5629ATC_geometry,
+  &flash_samsung_op_word_write_functions
 };
 
 flashi_nor_device K5N6433ABM =
@@ -1524,7 +1658,7 @@ fsi_samsung_fast_byte_write (byte *buffer,
           if ((tmp & FLASH_STATUS_DQ5) != 0)
           {
             tmp = *wptr;
-            /* DQ7 should be rechecked even if DQ5 = “1” because DQ7 
+            /* DQ7 should be rechecked even if DQ5 = ??because DQ7 
                may change simultaneously with DQ5. Refer flowchart on page 26 of 
                Samsung data sheet (K5N5629ABM-AD11, Rev 0.0)*/
             if ((tmp & FLASH_STATUS_DQ7) != (value & FLASH_STATUS_DQ7))

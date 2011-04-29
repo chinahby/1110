@@ -68,6 +68,9 @@ const flashi_nor_device *(samsung_parts[]) = {
   &K5N6433ATM,  /* 64 Mbit Samsung NOR  */
   &K5N2833ATB,  /* 128 Mbit Samsung NOR  */
   &K5N2833ABB,  /* 128 Mbit Samsung NOR  */
+  &K5N5629ATC,  /* 256 Mbit Sansung NOR  */
+  &K5N5629ABC,  /* 256 Mbit Sansung NOR  */
+  &K5N5629AUC,  /* 256 Mbit Sansung NOR  */
   NULL
 };
 
