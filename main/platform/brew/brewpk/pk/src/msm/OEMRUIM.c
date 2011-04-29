@@ -802,6 +802,7 @@ static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, b
     
     switch(ecd_ind){
     case  AEERUIM_LANG_ENCODING_UNICODE:                   //UNICODE±àÂë
+        MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_WStr 1", 0, 0, 0);
        // wStrLen = wStrLen/2;
         if((Inputbuf[0] == 0xFF) && (Inputbuf[1] == 0xFE))//(Little endian 00-54 with BOM)
         {
@@ -833,7 +834,7 @@ static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, b
                 bBigEndian = TRUE;
             }
         }
-
+        MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_WStr 2", 0, 0, 0);
         if(bBigEndian)
         {
             MSG_FATAL("is BigEndian wStrLen=%d", wStrLen, 0, 0);
@@ -875,6 +876,7 @@ static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, b
     case AEERUIM_LANG_ENCODING_LATIN:
     case AEERUIM_LANG_ENCODING_OCTET:
     default:
+        MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_WStr 3 wStrLen=%d", wStrLen, 0, 0);
         for(i=0; i<wStrLen; i++)
         {
             if(Inputbuf[i] != 0xFF)
@@ -988,13 +990,13 @@ static int OEMRUIM_Get_AppLabels_Code(IRUIM *pMe,int nId, AECHAR *Buf)
     {
         return EFAILED;
     }
-    
+    DBGPRINTF("OEMRUIM_Get_AppLabels_Code 1");
     // Check to see if the card is connected.
     if (!IRUIM_IsCardConnected (pMe))
     {
         return EFAILED;
     }
-    
+    DBGPRINTF("OEMRUIM_Get_AppLabels_Code 2");
     if(!gbAppLabelsInited)
     {
         byte pData[RUIN_APPLABEL_SIZE*RUIM_APPLABEL_NUM+4];
@@ -1002,7 +1004,7 @@ static int OEMRUIM_Get_AppLabels_Code(IRUIM *pMe,int nId, AECHAR *Buf)
         byte encoding_ind;
         byte lang_ind;
         byte *pBuf = pData;
-        
+        DBGPRINTF("OEMRUIM_Get_AppLabels_Code 3");
         gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
         gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
         gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
@@ -1059,10 +1061,17 @@ static int OEMRUIM_Get_AppLabels_Code(IRUIM *pMe,int nId, AECHAR *Buf)
     if(gwAppLabelsInd&(0x1<<nId))
     {
         WSTRCPY(Buf,&gAppLabels[nId][0]);
-        status = SUCCESS;
+        if(WSTRLEN(Buf) == 0)
+        {
+           status = EFAILED; 
+        }
+        else
+        {
+            status = SUCCESS;
+        }
     }
     
-    MSG_FATAL("OEMRUIM_Get_AppLabels_Code=%S End", Buf, 0 ,0);
+    MSG_FATAL("OEMRUIM_Get_AppLabels_Code len=%d End", WSTRLEN(Buf), 0 ,0);
     return status;
 }
 
