@@ -100,7 +100,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_OSBL_SURF 
 #define BOOT_MODE_NOR 
 #define T_PSRAM_IS_BURST_TYPE 
-#define T_SRAM_SIZE 0x800000
+#define T_SRAM_SIZE 0x1000000
 #define SCL_APP_RAM_BASE 0x08000000
 #define SCL_FRAME_BUF_BASE +0x0
 #define SCL_DYNA_LOAD_APPS_BASE +0x0
