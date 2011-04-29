@@ -2945,7 +2945,7 @@ void camera_svcs_init(void)
   clk_def (&camera_terminate_clk);
   clk_def (&camera_service_unavailable_clk);
 
-
+#ifndef CUST_EDITION
   /* The following sequence gets the camera initialized and then
    * put in power down mode. We cannot leave camera in power up state
    * until used.
@@ -2994,6 +2994,7 @@ void camera_svcs_init(void)
   camsensor_power_down();
   camsensor_power_off ();
   }
+#endif
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
   camera_asi = 0; /* select the primary sensor */
 #endif /* FEATURE_CAMERA_MULTI_SENSOR */
