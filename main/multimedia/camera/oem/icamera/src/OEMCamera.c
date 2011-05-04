@@ -944,10 +944,10 @@ Done:
 
 #ifdef FEATURE_CAMERA_LCD_DIRECT_MODE
   /* Default to Frame CallBack whenever you enter the Camera App */
-  bDirectMode = FALSE; 
+  bDirectMode = TRUE; 
 #endif
 #ifdef FEATURE_CAMERA_NOFULLSCREEN
-  bDirectToLCD = FALSE;
+  bDirectToLCD = TRUE;
 #endif
   OEMCamera_InitCameraRsp(pme, CAM_CMD_START);
   OEMCamera_InitCameraRsp(pme, CAM_CMD_SETPARM);

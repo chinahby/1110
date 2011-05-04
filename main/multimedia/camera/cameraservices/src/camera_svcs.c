@@ -2945,7 +2945,7 @@ void camera_svcs_init(void)
   clk_def (&camera_terminate_clk);
   clk_def (&camera_service_unavailable_clk);
 
-#ifndef CUST_EDITION
+#ifdef CUST_EDITION
   /* The following sequence gets the camera initialized and then
    * put in power down mode. We cannot leave camera in power up state
    * until used.

@@ -15,13 +15,13 @@
     TYPE DEFINITIONS 
 ============================================================================*/
 //#define CAMSENSOR_HIGHQUALITY_PREVIEW
-#if defined(FEATURE_VERSION_W516)
-#define CAMSENSOR_SIV121A_RESET_PIN         GPIO_OUTPUT_53
+#if 1//defined(FEATURE_VERSION_W516)
+#define CAMSENSOR_SIV121A_RESET_PIN         GPIO_OUTPUT_10
 #else
 #define CAMSENSOR_SIV121A_RESET_PIN         GPIO_OUTPUT_62
 #endif
 
-#define SIV121A_OUTFORMAT_RGB565
+//#define SIV121A_OUTFORMAT_RGB565
 
 // sensor's chip ID and version
 #define SIV121A_SENSOR_ID                   (0x92)
@@ -94,11 +94,11 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
 {
     uint8   sensor_id;
     
-    ERR("camsensor_siv121a_init!",0,0,0);
+    MSG_FATAL("camsensor_siv121a_init!",0,0,0);
     
     /* Input MCLK = 24MHz */
     camsensor_camclk_po_hz = 2400000;
-    camsensor_camclk_po_hz = camsensor_config_camclk_po(camsensor_camclk_po_hz);
+    //camsensor_camclk_po_hz = camsensor_config_camclk_po(camsensor_camclk_po_hz);
     
     /* Preview must aways be se to quater size */
     camsensor_preview_resolution  = CAMSENSOR_QTR_SIZE;
@@ -112,25 +112,29 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
     camsensor_i2c_command.options    = (i2c_options_type) (I2C_REG_DEV | I2C_START_BEFORE_READ); 
 
     CAMERA_CONFIG_GPIO(CAMSENSOR_SIV121A_RESET_PIN);
-    gpio_out(CAMSENSOR_SIV121A_RESET_PIN,0);
-    camera_timed_wait(10);
+    
     gpio_out(CAMSENSOR_SIV121A_RESET_PIN,1);
+    clk_busy_wait(2*1000);
+    gpio_out(CAMSENSOR_SIV121A_RESET_PIN,0);
+    clk_busy_wait(100*1000);
+    gpio_out(CAMSENSOR_SIV121A_RESET_PIN,1);
+    clk_busy_wait(2*1000);
     
     // Reset Sensor
-    camera_timed_wait(10);  //ovt
+    //camera_timed_wait(10);  //ovt
     if( !siv121a_i2c_write_byte(0x00,0x00))
     {
-        ERR("Block Select Error!",0,0,0);
+        MSG_FATAL("Block Select Error!",0,0,0);
         return FALSE;
     }
     
     if( !siv121a_i2c_read_byte(SIV121A_ID_REG,&sensor_id)) 
     {
-        ERR("read sensor_id failed!",0,0,0);
+        MSG_FATAL("read sensor_id failed!",0,0,0);
         return FALSE;
     }
     
-    ERR("sensor_id 1 = %x",sensor_id,0,0);
+    MSG_FATAL("sensor_id 1 = %x",sensor_id,0,0);
     
     /* Check if it matches it with the value in Datasheet */
     if ( sensor_id != SIV121A_SENSOR_ID)
@@ -139,7 +143,7 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
     }
     
     siv121a_i2c_read_byte(SIV121A_INFO_REG,&sensor_id);
-    ERR("sensor_id 2 = %x",sensor_id,0,0);
+    MSG_FATAL("sensor_id 2 = %x",sensor_id,0,0);
 #ifdef CAMSENSOR_HIGHQUALITY_PREVIEW
     initialize_siv121a_registers(CAMSENSOR_SIV121A_QTR_SIZE_WIDTH, CAMSENSOR_SIV121A_QTR_SIZE_HEIGHT);
 #else
@@ -300,7 +304,7 @@ static boolean initialize_siv121a_registers_preview(uint16 dx, uint16 dy)
 #ifdef SIV121A_OUTFORMAT_RGB565
     siv121a_i2c_write_byte(0x12,0x0B);
 #else
-    siv121a_i2c_write_byte(0x12,0xAD); // Y,Cb,Cr order sequence
+    siv121a_i2c_write_byte(0x12,0x9D); // Y,Cb,Cr order sequence
 #endif
     // DPCNR
     siv121a_i2c_write_byte(0x17,0x98);
@@ -612,7 +616,7 @@ static boolean initialize_siv121a_registers(uint16 dx, uint16 dy)
 #ifdef SIV121A_OUTFORMAT_RGB565
     siv121a_i2c_write_byte(0x12,0x0B);
 #else
-    siv121a_i2c_write_byte(0x12,0xAD); // Y,Cb,Cr order sequence
+    siv121a_i2c_write_byte(0x12,0x9D); // Y,Cb,Cr order sequence
 #endif
     
     // DPCNR
@@ -798,6 +802,7 @@ static boolean camsensor_siv121a_start( camsensor_static_params_type *camsensor_
     /* CCD or CMOS */
     camsensor_params->sensor_type   = CAMSENSOR_CMOS;
 
+	camsensor_params->format = CAMIF_YCbCr_Cb_Y_Cr_Y;
     /* BAYER or YCbCr */
     camsensor_params->output_format = CAMSENSOR_YCBCR;
 
@@ -989,6 +994,10 @@ SIDE EFFECTS
 ===========================================================================*/
 static boolean camsensor_siv121a_video_config(camsensor_static_params_type *camsensor_params)
 {
+
+	/* Sensor output data format */
+	camsensor_params->discardFirstFrame = TRUE;
+	camsensor_params->format = CAMIF_YCbCr_Cb_Y_Cr_Y;
     /* Set the current dimensions */
     camsensor_params->camsensor_width  = camera_preview_dx;
     camsensor_params->camsensor_height = camera_preview_dy;
