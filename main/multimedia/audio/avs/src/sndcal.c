@@ -523,7 +523,7 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
 #elif defined(MSMAUD_QSC60X5_AUDIO_CAL) || \
       defined(MSMAUD_QSC1110_AUDIO_CAL)
 VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
-#ifdef CUST_EDITION
+#if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   /* Internal CODEC - no pad values    */
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
@@ -1022,7 +1022,7 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_headset_voice_vol[] = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
 VOL_MEMORY snd_gen_level_voc_type snd_cal_headset_voice_vol[] = {
   /* Internal CODEC - no pad values    */
-#ifdef CUST_EDITION
+#if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
   {          -1400  ,           -3000 ,  0 },
@@ -2123,7 +2123,7 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
 VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
   /* Internal CODEC - no pad values    */
-#ifdef CUST_EDITION
+#if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   /*  rx				dtmf			pad 	   */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
   {		      -800  , 		    -1400 ,  0 },

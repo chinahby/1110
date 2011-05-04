@@ -10496,7 +10496,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
-#ifdef CUST_EDITION
+#if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   0x956F,                        /* Tx Voice Volume          */
   0x2000,                        /* Tx DTMF gain            */
   0x7000,                        /* CODEC Tx gain           */
@@ -11114,7 +11114,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_cal_wb = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
-#ifdef CUST_EDITION
+#if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   0x5000,						 /* Tx Voice Volume 		*/
   0x1000,						 /* Tx DTMF gain			*/
   0x5000,						 /* CODEC Tx gain			*/
@@ -11733,7 +11733,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
-#ifdef CUST_EDITION
+#if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   0x5000,						 /* Tx Voice Volume 		*/
   0x1000,						 /* Tx DTMF gain			*/
   0x5000,						 /* CODEC Tx gain			*/
@@ -12228,7 +12228,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_off_chip_dual_mic_cal_wb = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
-#ifdef CUST_EDITION
+#if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   0x5000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
   0x5000,                        /* CODEC Tx gain           */
@@ -12727,7 +12727,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
-#ifdef CUST_EDITION
+#if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   0x5000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
   0x5000,                        /* CODEC Tx gain           */
@@ -13222,7 +13222,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_0_dual_mic_cal_wb = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
   VOC_EC_ESEC,                   /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
-#ifdef CUST_EDITION
+#if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   0x5000,                        /* Tx Voice Volume         */
   0x1000,                        /* Tx DTMF gain            */
   0x5000,                        /* CODEC Tx gain           */
@@ -13720,7 +13720,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_1_cal  = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)	
   VOC_EC_HEADSET,                /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
-#ifdef CUST_EDITION
+#if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   0x5000,						 /* Tx Voice Volume 		*/
   0x1000,						 /* Tx DTMF gain			*/
   0x5000,						 /* CODEC Tx gain			*/
@@ -14334,7 +14334,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_1_cal_wb  = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
   VOC_EC_HEADSET,                /* Echo Canceller mode     */
   VOC_NS_ON,                     /* Noise suppressor enable */
-#ifdef CUST_EDITION
+#if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   0x5000,						 /* Tx Voice Volume 		*/
   0x1000,						 /* Tx DTMF gain			*/
   0x5000,						 /* CODEC Tx gain			*/
@@ -15104,7 +15104,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal = {
     VOC_EC_AEC,                    /* Echo Canceller mode     */
   #endif /* FEATURE_AVS_NEXTGEN_EC */
   VOC_NS_ON,                       /* Noise suppressor enable */
-#ifdef CUST_EDITION
+#if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   0x5000,						   /* Tx Voice Volume 		*/
   0x1000,						   /* Tx DTMF gain			*/
   0x5000,						   /* CODEC Tx gain			*/
@@ -15670,7 +15670,7 @@ CAL_MEMORY voc_pcm_path_cal_type voc_pcm_on_chip_speaker_cal_wb = {
     VOC_EC_AEC,                    /* Echo Canceller mode     */
   #endif /* FEATURE_AVS_NEXTGEN_EC */
   VOC_NS_ON,                       /* Noise suppressor enable */
-#ifdef CUST_EDITION  
+#if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   0x5000,						   /* Tx Voice Volume 		*/
   0x1000,						   /* Tx DTMF gain			*/
   0x5000,						   /* CODEC Tx gain			*/
