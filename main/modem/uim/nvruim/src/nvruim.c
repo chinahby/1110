@@ -416,6 +416,9 @@ byte    nvruim_bcsms_table_num_entries;
 #define NVRUIM_SMSCAP_SIZE                  4
 #define NVRUIM_SMSCAP_ON_ACCESS_CH_MASK     0x01
 #define NVRUIM_SMSCAP_ON_TRAFFIC_CH_MASK    0x02
+#ifdef FEATURE_OEMOMH
+#define NVRUIM_SMSCAP_STD_EMS_MASK          0x04
+#endif
 LOCAL byte  nvruim_bcsms_table_ef_buf[NVRUIM_MAX_BCSMS_TABLE_ENTRY_SIZE];
 LOCAL byte  nvruim_bcsms_parm_ef_buf[NVRUIM_BCSMS_PARM_SIZE];
 LOCAL byte  nvruim_smscap_ef_buf[NVRUIM_SMSCAP_SIZE];
@@ -12105,3 +12108,18 @@ boolean nvruim_data_3gpd_ext_support( void
 
 
 #endif /*FEATURE_NV_RUIM*/
+
+#ifdef FEATURE_OEMOMH
+boolean nvruim_sms_ems_support(void)
+{
+    if(nvruim_smscap_svc)
+    {
+        if((nvruim_smscap_ef_buf[2]&NVRUIM_SMSCAP_STD_EMS_MASK) == 0)
+        {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+#endif
+

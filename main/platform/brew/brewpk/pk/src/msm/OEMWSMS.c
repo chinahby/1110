@@ -1792,6 +1792,8 @@ boolean OEMWMS_CopyMessage
 #else                     
                      ts =  WMS_TELESERVICE_WAP;
 #endif
+#else
+                     ts =  WMS_TELESERVICE_WAP;
 #endif /*CUST_EDITION*/
                      break;
                   }

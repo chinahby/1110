@@ -3627,9 +3627,9 @@ static void WmsApp_Init(WmsApp *pMe)
                                            NULL,
                                            WMSAPP_AUTO_DISCONNECT_TIME);
     }
-    
+#ifndef FEATURE_OEMOMH
     (void)IWMS_MsgSetRetryPeriod(pMe->m_pwms, pMe->m_clientId, WMS_MAX_RETRY_PERIOD);
-    
+#endif
     pMe->m_bCdmaWmsReady = TRUE;
 
     pMe->m_pImage = NULL;
@@ -4159,6 +4159,10 @@ static IVector * WmsApp_GetUserDataMOList(void)
 备注:
     本应用发出长短信串接方式固定使用 concat_8
 ==============================================================================*/
+#ifdef FEATURE_OEMOMH
+extern boolean nvruim_sms_ems_support(void);
+#endif
+
 void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
 {
     int i;
@@ -4172,7 +4176,9 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
     int32 nSize;
     wms_user_data_encoding_e_type      encoding;
     wms_cdma_user_data_s_type          *pUserdata = NULL;
-    
+#ifdef FEATURE_OEMOMH
+    boolean bSupportEMS = nvruim_sms_ems_support();
+#endif
     // 释放消息用户数据链表
     WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
     
@@ -4254,6 +4260,13 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
         else
         {
 #ifdef FEATURE_SMS_UDH
+#ifdef FEATURE_OEMOMH
+            if(!bSupportEMS)
+            {
+                nMaxItemChars = nMaxChars_UNICODE;
+            }
+            else
+#endif
             nMaxItemChars = (nMaxChars_UNICODE-3);
 #else
             nMaxItemChars = nMaxChars_UNICODE;
@@ -4269,6 +4282,13 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
         else
         {
 #ifdef FEATURE_SMS_UDH
+#ifdef FEATURE_OEMOMH
+            if(!bSupportEMS)
+            {
+                nMaxItemChars = nMaxChars_ASCII;
+            }
+            else
+#endif
             nMaxItemChars = (nMaxChars_ASCII-7);
 #else
             nMaxItemChars = nMaxChars_ASCII;
@@ -4277,18 +4297,25 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
     }
     else
     {        
-#ifdef FEATURE_SMS_UDH
         if (nLen <= MAX_OCTETMSG_PAYLOAD)
         {
             nMaxItemChars = MAX_OCTETMSG_PAYLOAD;
         }
         else
         {
+#ifdef FEATURE_SMS_UDH
+#ifdef FEATURE_OEMOMH
+            if(!bSupportEMS)
+            {
+                nMaxItemChars = MAX_OCTETMSG_PAYLOAD;
+            }
+            else
+#endif
             nMaxItemChars = MAX_OCTETMSG_PAYLOAD-6;
-        }
 #else
-        nMaxItemChars = MAX_OCTETMSG_PAYLOAD;
-#endif            
+            nMaxItemChars = MAX_OCTETMSG_PAYLOAD;
+#endif 
+        }           
     }
     
     nItems = nLen / nMaxItemChars;
@@ -4313,6 +4340,13 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
         MEMSET(pUserdata, 0, nSize);
         pUserdata->encoding = encoding;
 #ifdef FEATURE_SMS_UDH
+#ifdef FEATURE_OEMOMH
+        if(!bSupportEMS)
+        {
+            // Nothing TODO
+        }
+        else
+#endif
         if (nItems>1)
         {
             pUserdata->num_headers = 1;
