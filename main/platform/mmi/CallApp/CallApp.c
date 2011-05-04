@@ -279,7 +279,10 @@ static const VTBL(ICallApp) gCallAppMethods =
 #endif
 };
 
-//#define CDG_TEMP_TEST
+#ifdef FEATURE_OEMOMH
+#include "Gsdi.h"
+#define CDG_TEMP_TEST
+#endif
 static call_start_info_type call_start_info_call;
 /*----------------------模块相关函数定义---------------------*/
 
@@ -2708,7 +2711,18 @@ static void CallApp_ProcessCallStateDATA(CCallApp                 *pMe,
                     }
                 }
                 break;
-
+#ifdef FEATURE_OEMOMH
+#ifdef FEATURE_ICM
+            case AEECM_EVENT_CALL_ORIG:
+#else
+            case AEET_EVENT_CALL_ORIG:
+#endif
+                if(!gsdi_uim_omh_cap.omh_enabled)
+                {
+                    *newState = STATE_NONOMH;
+                }
+                break;
+#endif
             default:
                 break;
         }

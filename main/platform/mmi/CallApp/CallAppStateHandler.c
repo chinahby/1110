@@ -87,6 +87,10 @@ static NextFSMAction STATE_IP_Number_Set_Mode(CCallApp *pMe);
 #ifdef FEATURE_EDITABLE_RECORD
 static NextFSMAction STATE_EDIT_REC_NUMBERHandler(CCallApp *pMe);
 #endif
+#ifdef FEATURE_OEMOMH
+static NextFSMAction STATE_NONOMHHandler(CCallApp *pMe);
+#endif
+
 // Autoanswer timer callback
 //static void CallApp_HandleAutoAnswerTimer(void *pUser);
 
@@ -194,6 +198,11 @@ NextFSMAction CallApp_ProcessState(CCallApp *pMe)
 #ifdef FEATURE_EDITABLE_RECORD
         case STATE_EDIT_REC_NUMBER:
             retVal = STATE_EDIT_REC_NUMBERHandler(pMe);
+            break;
+#endif
+#ifdef FEATURE_OEMOMH
+        case STATE_NONOMH:
+            retVal = STATE_NONOMHHandler(pMe);
             break;
 #endif
         case STATE_EXIT:
@@ -1558,3 +1567,45 @@ static NextFSMAction STATE_EDIT_REC_NUMBERHandler(CCallApp *pMe)
 }
 #endif
 
+#ifdef FEATURE_OEMOMH
+/*==============================================================================
+函数：
+       STATE_NONOMHHandler
+说明：
+       STATE_NONOMH 状态处理函数
+
+参数：
+       pMe [in]：指向CallApp Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction STATE_NONOMHHandler(CCallApp *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            CallApp_ShowMsgBox(pMe, IDS_NOOMH_CARD);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_OK:
+            MOVE_TO_STATE(STATE_EXIT)
+            return NFSMACTION_CONTINUE;
+
+        default:
+            break;
+    }
+
+    return NFSMACTION_WAIT;
+} // STATE_NONOMHHandler
+#endif

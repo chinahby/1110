@@ -358,6 +358,9 @@ typedef enum _CallAppState
 #ifdef FEATURE_EDITABLE_RECORD
    STATE_EDIT_REC_NUMBER,
 #endif
+#ifdef FEATURE_OEMOMH
+   STATE_NONOMH,
+#endif
    STATE_EXIT             /*13d*/
 
 } CallAppState;

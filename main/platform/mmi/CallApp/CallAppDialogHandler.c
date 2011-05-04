@@ -4213,7 +4213,7 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
             return TRUE;
 
         case EVT_DIALOG_START:
-            if(pMe->m_msg_text_id != IDS_INVALIDEMGNUM)
+            if(pMe->m_msg_text_id != IDS_INVALIDEMGNUM && pMe->m_msg_text_id != IDS_NOOMH_CARD)
             {
                 ISHELL_SetTimer(pMe->m_pShell, TIMEOUT_MS_INVALIDEMGNUMDIALOG_TIMER,
                                        CallApp_HandleDialogTimer, pMe);

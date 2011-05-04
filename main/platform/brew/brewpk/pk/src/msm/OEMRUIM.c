@@ -791,7 +791,7 @@ static void OEMRUIM_send_uim_cmd_and_wait (uim_cmd_type *uim_cmd_ptr)
 static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, byte ecd_ind, byte lng_ind, AECHAR *AppLabel,int Endpoint)
 {
     int i=0;
-    int wStrLen = MIN(nInputSize, Endpoint);
+    int wStrLen;
     boolean bBigEndian = FALSE;
     
     MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_WStr Start", 0, 0, 0);
@@ -802,19 +802,19 @@ static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, b
     
     switch(ecd_ind){
     case  AEERUIM_LANG_ENCODING_UNICODE:                   //UNICODE±àÂë
-        MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_WStr 1", 0, 0, 0);
-       // wStrLen = wStrLen/2;
+        wStrLen = MIN(nInputSize/2, Endpoint);
+        MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_WStr 1 wStrLen=%d", wStrLen, 0, 0);
         if((Inputbuf[0] == 0xFF) && (Inputbuf[1] == 0xFE))//(Little endian 00-54 with BOM)
         {
             // Remove BOM
-           // wStrLen-=1;
+            wStrLen-=1;
             Inputbuf+=2;
             bBigEndian = FALSE;
         }
         else if((Inputbuf[0] == 0xFE) && (Inputbuf[1] == 0xFF)) // Big Endian
         {
             // Remove BOM
-           // wStrLen-=1;
+            wStrLen-=1;
             Inputbuf+=2;
             bBigEndian = TRUE;
         }
@@ -842,7 +842,7 @@ static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, b
             {
                 if(Inputbuf[i] != 0xFF && Inputbuf[i+1] != 0xFF)
                 {
-                    AppLabel[i]=(AECHAR)(Inputbuf[i]<<8)|Inputbuf[i+1];
+                    AppLabel[i]=(AECHAR)(Inputbuf[2*i]<<8)|Inputbuf[(2*i)+1];
                 }
                 else
                 {
@@ -859,7 +859,7 @@ static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, b
             {
                 if(Inputbuf[i] != 0xFF && Inputbuf[i+1] != 0xFF)
                 {
-                    AppLabel[i]=(AECHAR)(Inputbuf[i+1]<<8)|Inputbuf[i];
+                    AppLabel[i]=(AECHAR)(Inputbuf[(2*i)+1]<<8)|Inputbuf[2*i];
                 }
                 else
                 {
@@ -876,6 +876,7 @@ static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, b
     case AEERUIM_LANG_ENCODING_LATIN:
     case AEERUIM_LANG_ENCODING_OCTET:
     default:
+        wStrLen = MIN(nInputSize, Endpoint);
         MSG_FATAL("OEMRUIM_Conversion_Uimdata_To_WStr 3 wStrLen=%d", wStrLen, 0, 0);
         for(i=0; i<wStrLen; i++)
         {

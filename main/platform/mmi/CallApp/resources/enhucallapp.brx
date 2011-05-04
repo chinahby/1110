@@ -178,6 +178,9 @@
 	<STRING Id="1114" Name="IDS_NUM_TOO_LONG">
 		<Text>Number too long to save</Text>
 	</STRING>
+	<STRING Id="1115" Name="IDS_NOOMH_CARD">
+		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">
