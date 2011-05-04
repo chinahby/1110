@@ -1588,11 +1588,15 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                 case AEET_EVENT_PH_NAM_SEL:
 #endif
                     // Reset the date, operator name
-                    {
 #ifdef FEATURE_OEMOMH
+                    if(OEM_IsCDMASVCSupport(UIM_CDMA_SVC_BREW))
+                    {
                         extern void OEMOMH_InitBREWDownload(void);
                         OEMOMH_InitBREWDownload();
-#else
+                    }
+                    else
+#endif
+                    {
                         int nErr;
                         IDownload *pIDownload=NULL;
                         AEEMobileInfo info;
@@ -1605,7 +1609,6 @@ static boolean CoreApp_HandleCMNotify(CCoreApp * pMe, AEENotify *pNotify)
                             IDOWNLOAD_SetSubscriberID(pIDownload, info.szMobileID, STRLEN(info.szMobileID));
                             IDOWNLOAD_Release(pIDownload);
                         }
-#endif
                     }
                     return TRUE;
 
