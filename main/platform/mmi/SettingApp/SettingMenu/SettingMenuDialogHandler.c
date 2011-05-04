@@ -5910,10 +5910,7 @@ static boolean Handle_ANSWER_MODE_DialogEveng(CSettingMenu *pMe,
 
 static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_code)
 {
-    //uint16 Ruim_Active_code    = 0;
-    //uint16 Ruim_Register_code = 0;
-    //char  Assnum[18];
-    MSG_FATAL("SettingMenu_Process_Feature_Code Start",0,0,0);
+    MSG_FATAL("SettingMenu_Process_Feature_Code Start %d",feature_code,0,0);
     if(NULL== pMe)
     {
         return;
@@ -5921,7 +5918,6 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
 
     if(IsRunAsUIMVersion())
     {
-#if 1//def FEATURE_CARRIER_INDONESIA
         uint16 Ruim_Active_code    = 0;
         uint16 Ruim_Register_code = 0;
         char  Assnum[18];
@@ -5988,39 +5984,24 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
                 Ruim_Register_code = De_Active_Callforward_Unconditional;
                 break;
         }
-
+        
         //Read supplement service number from RUIM Active section, if read fail or the number is wrong, then from RUIM Register section or config file
         MEMSET(Assnum, 0x00, sizeof(Assnum));
         if( SUCCESS == IRUIM_Get_Feature_Code(pMe->m_pIRUIM,(byte*)Assnum, Ruim_Active_code) )     
         {
-            MSG_FATAL("IRUIM_Get_Feature_Code == SUCCESS ",0,0,0);
+            MSG_FATAL("IRUIM_Get_Feature_Code == %d %s ",Ruim_Active_code,Assnum,0);
             //if the supplement service number is "**"(Wrong number), then read supplement service number from RUIM Register section or config file
-            if ( STRNCMP(Assnum,"**",2) )
-            { 
+            if ( STRNCMP(Assnum,"**",2) && STRNCMP(Assnum,"0000",4))
+            {
                 MEMCPY(pMe->m_callnumber, Assnum, sizeof(Assnum));
                 return;
             }
         }
-
-        //Read supplement service number from RUIM Register section,if read fail or the number is wrong, then renad from config file
-        MEMSET(Assnum, 0x00, sizeof(Assnum));
-        if(SUCCESS == IRUIM_Get_Feature_Code(pMe->m_pIRUIM,(byte*)Assnum,  Ruim_Register_code))
-        {
-            //if the supplement service number is "**"(Wrong number), then read from config file
-            if ( STRNCMP(Assnum,"**",2) )
-            { 
-                MEMCPY(pMe->m_callnumber, Assnum, sizeof(Assnum));
-                return;
-            }
-        }   
-#endif
-
     }
-
-    //Read supplement service number from Config
-    ICONFIG_GetItem(pMe->m_pConfig, feature_code, pMe->m_callnumber, FEATURE_CODE_MAX_LENTH);   
     
-    return;
+    //Read supplement service number from Config
+    ICONFIG_GetItem(pMe->m_pConfig, feature_code, pMe->m_callnumber, FEATURE_CODE_MAX_LENTH);
+    MSG_FATAL("ICONFIG_GetItem == %d %s ",feature_code,pMe->m_callnumber,0);
 }
 
 static void Sound_App_Add_Menu(IMenuCtl *pMenu,uint16 id)
