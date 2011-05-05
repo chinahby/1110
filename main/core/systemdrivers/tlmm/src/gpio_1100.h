@@ -870,7 +870,7 @@ void gpio_restore_gpios_after_uim_sleep( void );
 
 #endif
 
-#define CAMIF_EN_N  CAMIF_DISABLE
+#define CAMIF_EN_N  GPIO_OUTPUT_41
 #define CAMCLK_PO  CAMIF_MCLK
 #define CAMCLK_PO_OFF GPIO_INPUT_53
 
