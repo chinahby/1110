@@ -15,8 +15,12 @@
     TYPE DEFINITIONS 
 ============================================================================*/
 //#define CAMSENSOR_HIGHQUALITY_PREVIEW
-#if 1//defined(FEATURE_VERSION_W516)
+#if defined(FEATURE_VERSION_W516) || defined(FEATURE_VERSION_W208)
+#ifdef T_QSC1110
 #define CAMSENSOR_SIV121A_RESET_PIN         GPIO_OUTPUT_10
+#else
+#define CAMSENSOR_SIV121A_RESET_PIN         GPIO_OUTPUT_53
+#endif
 #else
 #define CAMSENSOR_SIV121A_RESET_PIN         GPIO_OUTPUT_62
 #endif
