@@ -466,7 +466,15 @@ void UTK_APPIsReadyTimer(void *pme);
 void UTK_GiveResponse(CUTK * pMe, 
                       uim_tk_proactive_cmd_enum_type eCmd,
                       boolean  bForwad, 
-                      uim_tk_general_result_type eResult);
+                      uim_tk_general_result_type eResult
+                      );
+
+void UTK_GiveResponseEx(CUTK * pMe, 
+                        uim_tk_proactive_cmd_enum_type eCmd,
+                        boolean  bForwad, 
+                        uim_tk_general_result_type eResult,
+                        byte addinfo
+                        );
 
 /*==============================================================================
 º¯Êý: 

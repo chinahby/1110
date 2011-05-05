@@ -260,7 +260,7 @@ typedef struct _RefreshCmdType {
     
     
 ==============================================================================*/
-byte UTK_parse_proactive_command(byte *cmd_data, byte cmd_len);
+byte UTK_parse_proactive_command(byte *cmd_data, word cmd_len);
 
 /*==============================================================================
 º¯Êý: 

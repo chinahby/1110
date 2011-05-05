@@ -82,7 +82,7 @@ static  byte        utk_info_buf[UIM_MAX_CHARS];
 /*==============================================================================
                                  函数声明
 ==============================================================================*/
-static void send_UTK_simple_resp(uim_tk_general_result_type result_type);
+static void send_UTK_simple_resp(uim_tk_general_result_type result_type,byte addinfo);
 
 extern uim_cmd_type *start_terminal_response_buffer(
   byte *packed_offset,              /* Pointer to offset for packing */
@@ -113,7 +113,7 @@ extern void proactive_cmd_response(uim_cmd_type *cmd_ptr);
     
     
 ==============================================================================*/
-byte UTK_parse_proactive_command(byte *cmd_data, byte cmd_len)
+byte UTK_parse_proactive_command(byte *cmd_data, word cmd_len)
 {
     /* Offset for the different TLVs */
     byte offset = 0;  /* offset to raw data */
@@ -140,7 +140,7 @@ byte UTK_parse_proactive_command(byte *cmd_data, byte cmd_len)
             case UIM_TK_SETUP_MENU:
                 memcpy(setup_info_buf, cmd_data, cmd_len);
                 setup_info_buf[0] = cmd_details_tlv.cmd_type;
-                send_UTK_simple_resp(UIM_TK_CMD_PERFORMED_SUCCESSFULLY);
+                send_UTK_simple_resp(UIM_TK_CMD_PERFORMED_SUCCESSFULLY,0);
                 break;
                 
             case UIM_TK_SELECT_ITEM:
@@ -156,7 +156,7 @@ byte UTK_parse_proactive_command(byte *cmd_data, byte cmd_len)
                 break;
         }
     }
-
+    
     return cmd_details_tlv.cmd_type;
 }
 
@@ -320,6 +320,17 @@ void UTK_GiveResponse(CUTK * pMe,
                       uim_tk_proactive_cmd_enum_type eCmd,
                       boolean  bForwad, 
                       uim_tk_general_result_type eResult)
+{
+    UTK_GiveResponseEx(pMe,eCmd,bForwad,eResult,0);
+}
+
+void UTK_GiveResponseEx(CUTK * pMe, 
+                        uim_tk_proactive_cmd_enum_type eCmd,
+                        boolean  bForwad, 
+                        uim_tk_general_result_type eResult,
+                        byte addinfo
+                        )
+
 {
     uim_cmd_type *uim_cmd_ptr=NULL;
     byte packed_offset;
@@ -560,7 +571,7 @@ void UTK_GiveResponse(CUTK * pMe,
             break;
             
         case UIM_TK_END_PROACTIVE_SESSION:
-            send_UTK_simple_resp(eResult);
+            send_UTK_simple_resp(eResult,0);
             return;
             
         default:
@@ -568,10 +579,10 @@ void UTK_GiveResponse(CUTK * pMe,
     }
     
     // 简单通用响应
-    send_UTK_simple_resp(eResult);
+    send_UTK_simple_resp(eResult,addinfo);
 }
 
-static void send_UTK_simple_resp(uim_tk_general_result_type result_type) 
+static void send_UTK_simple_resp(uim_tk_general_result_type result_type, byte addinfo) 
 {
     uim_cmd_type *uim_cmd_ptr;
     byte packed_offset;              /* Pointer to offset for packing */
@@ -585,7 +596,11 @@ static void send_UTK_simple_resp(uim_tk_general_result_type result_type)
     {
         /* Set the result to indicate we do not understand the command */
         parsed_tlv_buf.result.result = result_type;
-        
+        if(addinfo)
+        {
+            parsed_tlv_buf.result.num_bytes = 1;
+            parsed_tlv_buf.result.data[0] = addinfo;
+        }
         /* Pack the result in the Terminal Response */
         parse_tlv_status = uim_tk_pack_simple_tlv(uim_cmd_ptr->terminal_response.data, 
                                 packed_offset, &parsed_tlv_buf);

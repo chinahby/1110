@@ -397,11 +397,11 @@ static boolean  IDD_MAIN_Handler(CUTK *pMe,
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)                    
                     return TRUE;
-#if 0
+#if 1
                 case AVK_1:
                 {
                     //69 74 68 20 74 68 65 20 6D 65 6E 75
-                    byte buf[256] = {0xD0, 0x81, 0xFC, 0x81, 0x03, 0x01, 0x25, 0x00, 0x82, 0x02, 0x81, 0x82,
+                    byte buf[256] =  {0xD0, 0x81, 0xFC, 0x81, 0x03, 0x01, 0x25, 0x00, 0x82, 0x02, 0x81, 0x82,
                                       0x85, 0x81, 0xEC, 0x54, 0x68, 0x65, 0x20, 0x53, 0x49, 0x4D, 0x20, 0x73,
                                       0x68, 0x61, 0x6C, 0x6C, 0x20, 0x73, 0x75, 0x70, 0x70, 0x6C, 0x79, 0x20,
                                       0x61, 0x20, 0x73, 0x65, 0x74, 0x20, 0x6F, 0x66, 0x20, 0x6D, 0x65, 0x6E,
@@ -425,9 +425,9 @@ static boolean  IDD_MAIN_Handler(CUTK *pMe,
                                       0x02, 0x01, 0x59,
                                      };
 
-                    UTK_SendSimuData(buf, 255);                
-                }
+                    UTK_SendSimuData(buf, 255);
                     break;
+                }
 #endif
                 default:
                     break;
@@ -653,7 +653,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
                 byte   *utk_ptr;
                 AECHAR temptitle[2]={' ', '\0'};
                 Get_input *pgetinput = (Get_input *)MALLOC(sizeof(Get_input));
-                uint32  dwPro = TP_FRAME | TP_MULTILINE | TP_FIXSETRECT | TP_DISPLAY_COUNT | TP_STARKEY_SWITCH;    
+                uint32  dwPro = TP_FRAME | TP_MULTILINE | TP_FIXSETRECT | TP_DISPLAY_COUNT;    
                 
                 if (NULL == pgetinput)
                 {
@@ -678,6 +678,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
                 {
                     if (pgetinput->cmd_describe.command_restricttag & UIM_TK_GETINPUT_NUM_ALPHA)
                     { // 0 = 仅数字 (0 9， *， #， 和 +)；1 = 字母表集
+                        dwPro |= TP_STARKEY_SWITCH;
                     	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                     	(void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_RAPID);
 						#elif defined(FEATURE_VERSION_M8P)
@@ -690,11 +691,12 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
                     {
                         (void)ITEXTCTL_SetInputMode(pTextCtl, AEE_TM_NUMBERS);             	
                     }                     
-                }                    
+                }
+                
                 if (pgetinput->cmd_describe.command_restricttag & UIM_TK_GETINPUT_DISPLAY_TEXT)
                 { // 0 = 终端可在显示器上回应用户；1 = 不以任何方式显示用户输入
                     dwPro |= (TP_PASSWORD | TP_HIDEMODETITLE) ;
-                }                 
+                }
                 ITEXTCTL_SetProperties(pTextCtl, dwPro|TP_FOCUS_NOSEL);            
 
                //set input title

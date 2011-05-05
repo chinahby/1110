@@ -281,7 +281,7 @@ LOCAL rex_timer_type  ui_rpt_timer; /* Timer for kicking the watchdog. */
 #ifdef CUST_EDITION
 #ifdef FEATURE_UTK2
 static  q_type          ui_cmd_q;       // 命令队列：管理待处理命令
-extern byte UTK_parse_proactive_command(byte *cmd_data, byte cmd_len);
+extern byte UTK_parse_proactive_command(byte *cmd_data, word cmd_len);
 extern void UTK_parse_sms_pp_dl_command(ui_sms_pp_dl_cmd_type *cmd);
 #endif /*FEATURE_UTK2*/
 #endif

@@ -4528,6 +4528,9 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     wms_cdma_user_data_s_type *pUserdata = NULL;
 #ifdef FEATURE_SMS_UDH
     boolean udh_present = FALSE;
+#ifdef FEATURE_OEMOMH
+    boolean bSupportEMS = nvruim_sms_ems_support();
+#endif
 #endif
     char  strNum[MAX_PH_DIGITS+20];
     
@@ -4537,6 +4540,10 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     }
     dwCount = IVector_Size(pMe->m_pUserDataMOList);
 #ifdef FEATURE_SMS_UDH
+#ifdef FEATURE_OEMOMH
+    if(bSupportEMS)
+    {
+#endif
     if ((dwCount>1) && (pMe->m_idxUserdata == 0))
     {// 设置长短信的消息参考号
         int  i;
@@ -4558,8 +4565,11 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     {
         udh_present = TRUE;
     }
+#ifdef FEATURE_OEMOMH
+    }
+#endif
 #endif 
-   
+    
     if (pMe->m_idxUserdata >= dwCount)
     {
         return NULL;

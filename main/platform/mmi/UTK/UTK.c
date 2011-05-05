@@ -911,7 +911,7 @@ static boolean UTK_HandleEvent(IUTK *pi,
                                 }
                                 else
                                 {
-                                    UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_TERMINAL_CURRENTLY_UNABLE_TO_PROCESS_COMMAND);
+                                    UTK_GiveResponseEx(pMe, pMe->cmd_type, FALSE, UIM_TK_TERMINAL_CURRENTLY_UNABLE_TO_PROCESS_COMMAND,UIM_TK_SCREEN_IS_BUSY);
                                 }
                             }
                         }
