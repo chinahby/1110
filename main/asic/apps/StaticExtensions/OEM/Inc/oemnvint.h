@@ -739,6 +739,13 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_LEN                    3
 #define OEMNV_EMERG_NUM_ONE                    "191"
 #define OEMNV_EMERG_NUM_TWO                    "112"
+#elif defined(FEATURE_VERSION_W515V3)
+#define OEMNV_EMERT_SEZE                       4
+#define OEMNV_EMERG_NUM_LEN                    3
+#define OEMNV_EMERG_NUM_ONE                    "100"
+#define OEMNV_EMERG_NUM_TWO                    "101"
+#define OEMNV_EMERG_NUM_TRE                    "102"
+#define OEMNV_EMERG_NUM_FOR                    "103"
 #else
 #define OEMNV_EMERT_SEZE                       4
 #define OEMNV_EMERG_NUM_LEN                    3
