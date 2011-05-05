@@ -751,7 +751,9 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
             //no need for non-bottom bar,this may case the image do not display well
             //DISP_ERR("EVT_USER_REDRAW",0,0,0);
             	{
-            
+            AECHAR    lBuf[20] ={0};
+            AECHAR    rBuf[20] ={0};
+            AEERect clip;
             if(pMe->m_CurPaper == NULL)
             {
                 DISP_ERR("no pMe->m_CurPaper, so cann't show picture",0,0,0);
@@ -765,6 +767,11 @@ static boolean  HandlePictureDialogEvent(CDisplayMenu *pMe,
 
             //显示墙纸或动画 
             DisplayMenu_DisplayImg(pMe, pMe->m_PICType);
+            WSTRCAT(lBuf, L"<");
+            WSTRCAT(rBuf, L">");
+            SETAEERECT( &clip, pMe->m_rc.x, (pMe->m_rc.dy/2)-10, pMe->m_rc.dx, pMe->m_rc.dy/2);
+            DrawTextWithProfile(pMe->m_pShell, pMe->m_pDisplay, RGB_WHITE_NO_TRANS, AEE_FONT_LARGE, lBuf,-1,clip.x,clip.y,&clip, IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
+            DrawTextWithProfile(pMe->m_pShell, pMe->m_pDisplay, RGB_WHITE_NO_TRANS, AEE_FONT_LARGE, rBuf,-1,clip.x,clip.y,&clip,IDF_ALIGN_RIGHT|IDF_TEXT_TRANSPARENT);          
 
             DrawBottomBar_Ex(pMe->m_pShell,pMe->m_pDisplay, BTBAR_VIEWMORE_BACK);	//Add By zzg 2010_07_23	
             // 统一更新界面

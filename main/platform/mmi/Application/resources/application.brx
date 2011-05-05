@@ -11,7 +11,7 @@
 		<Text>Off</Text>
 	</String>
 	<STRING Id="1011" Name="IDS_APPLICATION_BAM">
-		<Text>BAM</Text>
+		<Text>BREW</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_APPLICATION_TIMER">
 		<Text>Timer</Text>
