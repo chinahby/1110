@@ -466,14 +466,14 @@ if(!(x))         \
 //前一个曲目
 #define PREVIOUSPRESS_X 14 //37
 #define PREVIOUSPRESS_Y 98 //60
-#define PREVIOUSPRESS_W 19 //31
-#define PREVIOUSPRESS_H 20 //32
+#define PREVIOUSPRESS_W 26 //31
+#define PREVIOUSPRESS_H 28 //32
 
 //后一个曲目
 #define NEXTPRESS_X 87 //107
 #define NEXTPRESS_Y 98 //60
-#define NEXTPRESS_W 19 //31
-#define NEXTPRESS_H 20 //32
+#define NEXTPRESS_W 26 //31
+#define NEXTPRESS_H 28 //32
 
 //降低音量
 #define DECREASEVOLUMEPRESS_X 4
