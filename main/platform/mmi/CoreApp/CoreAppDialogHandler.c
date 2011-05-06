@@ -3408,7 +3408,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						
 						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 						AEE_CancelTimer(CoreApp_keypadtimer,pMe);
-						AEE_SetTimer(1000,CoreApp_keypadtimer,pMe);
+						AEE_SetTimer(2*1000,CoreApp_keypadtimer,pMe);
 						//ISHELL_SetTimer(pMe->a.m_pIShell,2*1000,CoreApp_keypadtimer,pMe);
 						pMe->m_iskeypadtime = TRUE;
 					}
