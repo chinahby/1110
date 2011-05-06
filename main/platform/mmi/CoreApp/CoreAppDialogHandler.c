@@ -3041,6 +3041,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				#endif	
 				return TRUE;
             }
+            
       	 #if defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_HITZ181)
 	     if(wParam == AVK_SHIFT)
             {
@@ -3401,13 +3402,13 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				    #ifdef FEATURE_USES_BLACKBERRY
 				    ret = CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 				    #else
-#if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR)
+#if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR) ||defined( FEATURE_VERSION_W515V3)
 					if(!pMe->m_iskeypadtime)
 					{
 						
 						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 						AEE_CancelTimer(CoreApp_keypadtimer,pMe);
-						AEE_SetTimer(2*1000,CoreApp_keypadtimer,pMe);
+						AEE_SetTimer(1000,CoreApp_keypadtimer,pMe);
 						//ISHELL_SetTimer(pMe->a.m_pIShell,2*1000,CoreApp_keypadtimer,pMe);
 						pMe->m_iskeypadtime = TRUE;
 					}
@@ -3466,8 +3467,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #elif defined (FEATURE_VERSION_HITZ181)
 				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
-				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
-#endif
+#endif				 //   ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif
 #endif
 return ret;
@@ -3771,7 +3771,7 @@ return ret;
 				case AVK_O:
                     {
                         ICallApp         *pCallApp = NULL;
-                        #if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C01)
+                        #if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C01) || defined( FEATURE_VERSION_W515V3)
                         if(pMe->m_iskeypadtime)
                         {
                         	if(wParam==AVK_STAR)
@@ -5663,7 +5663,11 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 			eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
 		}			
 	#else
-		eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai
+        #if defined(FEATURE_VERSION_W515V3)
+           eBBarType = BTBAR_MENU_CONTACTS;
+        #else
+		   eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS
+		#endif
 	#endif
 #endif
 	
@@ -7324,7 +7328,8 @@ static void CoreApp_keypadtimer(void *pUser)
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined (FEATURE_VERSION_C01)
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
-
+#elif defined (FEATURE_VERSION_W515V3)
+	ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif
