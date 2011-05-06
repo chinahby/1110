@@ -642,7 +642,7 @@ static NextFSMAction Security_StatePinCheckHandler(CSecurityMenu *pMe)
             return NFSMACTION_CONTINUE;
             
         case DLGRET_RESTRICT:
-            Security_ShowMsgBox(pMe, IDS_RESTRICT);
+            Security_ShowMsgBox(pMe, IDS_NOTALLOW);
             return NFSMACTION_WAIT; 
             
         case DLGRET_OK:

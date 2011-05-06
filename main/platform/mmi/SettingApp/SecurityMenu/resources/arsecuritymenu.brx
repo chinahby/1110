@@ -5,9 +5,8 @@
         <Text>تغيير PIN</Text>
 	</STRING>
 	<String Id="1002" Name="IDS_AUTOKEYGUARD_TITLE">
-        <Text>قفل لوحة المفاتيح</Text>
-    </String>
-
+        	<Text>قفل لوحة المفاتيح</Text>
+    	</String>
 	<STRING Id="1003" Name="IDS_DIF_PASSWORD">
         <Text>غير متطابقة</Text>
 	</STRING>
@@ -49,6 +48,9 @@
 	</STRING>
 	<String Id="1016" Name="IDS_AKG_5MIN">
 		<Text>5 Min</Text>
+	</String>
+	<String Id="1017" Name="IDS_NOTALLOW">
+		<Text>Not Allowed!</Text>
 	</String>
 	<STRING Id="1018" Name="IDS_NEWPIN">
         <Text>أدخل رمز PIN جديد:</Text>

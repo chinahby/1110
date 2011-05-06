@@ -4,15 +4,15 @@
 	<STRING Id="1001" Name="IDS_PINCHANGE_TITLE">
 		<Text>เปลี่ยน PIN</Text>
 	</STRING>
-	<STRING Id="1002" Name="IDS_INPUT_SECOND">
-		<Text>ใส่อีกครั้ง:</Text>
-	</STRING>
+	<String Id="1002" Name="IDS_AUTOKEYGUARD_TITLE">
+		<Text>Keypad lock</Text>
+	</String>
 	<STRING Id="1003" Name="IDS_DIF_PASSWORD">
 		<Text>ไม่ถูกต้อง</Text>
 	</STRING>
-	<STRING Id="1004" Name="IDS_INPUTPIN_SECOND">
-		<Text>ใส่อีกครั้ง:</Text>
-	</STRING>
+	<String Id="1004" Name="IDS_AKG_30SEC">
+		<Text>30 Sec</Text>
+	</String>
 	<STRING Id="1005" Name="IDS_PHONE_PASSWORD_INPUT_TITLE">
 		<Text>รหัสใหม่:</Text>
 	</STRING>
@@ -34,29 +34,26 @@
 	<STRING Id="1011" Name="IDS_RESTRICT">
 		<Text>จำกัดการโทร</Text>
 	</STRING>
-	<STRING Id="1012" Name="IDS_RESTRICT_INCOMING">
+	<STRING Id="1012" Name="IDS_INCOMING">
 		<Text>สายโทรเข้า</Text>
 	</STRING>
-	<STRING Id="1013" Name="IDS_RESTRICT_INCOMING_ALL">
-		<Text>ทั้งหมด</Text>
-	</STRING>
-	<STRING Id="1014" Name="IDS_RESTRICT_INCOMING_OFF">
+	<String Id="1013" Name="IDS_AKG_2MIN">
+		<Text>2 Min</Text>
+	</String>
+	<STRING Id="1014" Name="IDS_OFF">
 		<Text>ปิด</Text>
 	</STRING>
-	<STRING Id="1015" Name="IDS_RESTRICT_INCOMING_OUTCONTACT">
+	<STRING Id="1015" Name="IDS_RESTRICT_OUTCONTACT">
 		<Text>นอกรายชื่อ</Text>
 	</STRING>
-	<STRING Id="1016" Name="IDS_PINLOCK_ON">
-		<Text>เปิด</Text>
-	</STRING>
-	<STRING Id="1017" Name="IDS_PINLOCK_OFF">
-		<Text>ปิด</Text>
-	</STRING>
+	<String Id="1016" Name="IDS_AKG_5MIN">
+		<Text>5 Min</Text>
+	</String>
+	<String Id="1017" Name="IDS_NOTALLOW">
+		<Text>Not Allowed!</Text>
+	</String>
 	<STRING Id="1018" Name="IDS_NEWPIN">
 		<Text>ใส่ PIN ใหม่:</Text>
-	</STRING>
-	<STRING Id="1019" Name="IDS_RESTRICT_INCOMING_TITLE">
-		<Text>สายโทรเข้า</Text>
 	</STRING>
 	<STRING Id="1020" Name="IDS_ENTERPIN">
 		<Text>ใส่ PIN:</Text>
@@ -73,7 +70,7 @@
 	<STRING Id="1024" Name="IDS_RESTRICT_OUTGOING">
 		<Text>สายโทรออก</Text>
 	</STRING>
-	<STRING Id="1025" Name="IDS_RESTRICT_OUTGOING_ALL">
+	<STRING Id="1025" Name="IDS_ALL">
 		<Text>ทั้งหมด</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_RESTRICT_OUTGOING_INTERNAL">
@@ -82,20 +79,8 @@
 	<STRING Id="1027" Name="IDS_RESTRICT_OUTGOING_INTERNATIONAL">
 		<Text>ต่างประเทศ</Text>
 	</STRING>
-	<STRING Id="1028" Name="IDS_RESTRICT_OUTGOING_OFF">
-		<Text>ปิด</Text>
-	</STRING>
-	<STRING Id="1029" Name="IDS_RESTRICT_OUTGOING_OUTCONTACT">
-		<Text>ออกจากรายชื่อ</Text>
-	</STRING>
-	<STRING Id="1030" Name="IDS_RESTRICT_OUTGOING_TITLE">
-		<Text>สายโทรออก</Text>
-	</STRING>
 	<STRING Id="1031" Name="IDS_RESTRICT_TITLE">
 		<Text>จำกัด</Text>
-	</STRING>
-	<STRING Id="1032" Name="IDS_CALLFORWARD_RESTRICT">
-		<Text>จำกัดการโทร</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_PHONE_LOCK">
 		<Text>ล็อคโทรศัพท์</Text>
@@ -103,23 +88,14 @@
 	<STRING Id="1034" Name="IDS_PIN_SET">
 		<Text>ตั้งค่า PIN</Text>
 	</STRING>
-	<STRING Id="1035" Name="IDS_PHONE_PASSWORD_CHECK">
-		<Text>ใช้รหัสโทรศัพท์</Text>
-	</STRING>
 	<STRING Id="1036" Name="IDS_PHONE_PASSWORD_CHANGE">
 		<Text>เปลี่ยนรหัส</Text>
 	</STRING>
-	<STRING Id="1037" Name="IDS_PHONE_PASSWORD_CHECK_ON">
+	<STRING Id="1037" Name="IDS_ON">
 		<Text>เปิด</Text>
-	</STRING>
-	<STRING Id="1038" Name="IDS_PHONE_PASSWORD_CHECK_OFF">
-		<Text>ปิด</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_PIN_CHECK">
 		<Text>ใช้งาน PIN</Text>
-	</STRING>
-	<STRING Id="1040" Name="IDS_PIN_CHANGE">
-		<Text>เปลี่ยน PIN</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_RESTORE_OK">
 		<Text>ตกลง</Text>
@@ -129,9 +105,6 @@
 	</STRING>
 	<STRING Id="1043" Name="IDS_PHONE_PASSWORD_CHECK_TITLE">
 		<Text>ใช้รหัสโทรศัพท์</Text>
-	</STRING>
-	<STRING Id="1044" Name="IDS_PIN_SETTING_TITLE">
-		<Text>ตั้งค่า PIN</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_PHONE_PW_NEW">
 		<Text>ใส่รหัสใหม่</Text>
@@ -163,15 +136,77 @@
 	<STRING Id="1054" Name="IDS_SECURITY">
 		<Text>ใส่รหัส</Text>
 	</STRING>
-	<String Id="1055" Name="IDS_KEY_LOCK">
+	<STRING Id="1055" Name="IDS_KEY_LOCK">
 		<Text>Key Lock</Text>
-	</String>
+	</STRING>
+	<STRING Id="1056" Name="IDS_PHONE_CODE">
+		<Text>Phone code</Text>
+	</STRING>
+	<STRING Id="1057" Name="IDS_APPLICATION_LOCK">
+		<Text>Application lock</Text>
+	</STRING>
+	<STRING Id="1058" Name="IDS_PIN_CODE">
+		<Text>PIN</Text>
+	</STRING>
+	<STRING Id="1059" Name="IDS_OLD_CODE">
+		<Text>Old code:</Text>
+	</STRING>
+	<STRING Id="1060" Name="IDS_NEW_CODE">
+		<Text>New code:</Text>
+	</STRING>
+	<STRING Id="1061" Name="IDS_CONFIRM">
+		<Text>Confirm:</Text>
+	</STRING>
+	<STRING Id="1062" Name="IDS_MEDIALOCK">
+		<Text>Media gallery</Text>
+	</STRING>
+	<STRING Id="1063" Name="IDS_CALENDARLOCK">
+		<Text>Calendar</Text>
+	</STRING>
+	<STRING Id="1064" Name="IDS_SAVED">
+		<Text>Done</Text>
+	</STRING>
+	<STRING Id="1065" Name="IDS_RESTORE_CONFIRM">
+		<Text>Reset</Text>
+	</STRING>
+	<STRING Id="1066" Name="IDS_DELETE">
+		<Text>Delete all entries</Text>
+	</STRING>
+	<STRING Id="1067" Name="IDS_DELETE_CONFIRM">
+		<Text>Delete</Text>
+	</STRING>
+	<STRING Id="1068" Name="IDS_DELETING">
+		<Text>Deleting...</Text>
+	</STRING>
+	<STRING Id="1069" Name="IDS_PUK_TITLE">
+		<Text>PUK code</Text>
+	</STRING>
+	<STRING Id="1070" Name="IDS_ENTER_PUK">
+		<Text>Enter PUK code</Text>
+	</STRING>
+	<STRING Id="1071" Name="IDS_UIMBLOCKED">
+		<Text>UIM card blocked</Text>
+	</STRING>
+	<STRING Id="1072" Name="IDS_EMERGENCY_NUMBER">
+		<Text>Emergency number</Text>
+	</STRING>
+	<STRING Id="1073" Name="IDS_INVALIDPUK">
+		<Text>PUK code error. %d attempt(s) left</Text>
+	</STRING>
+	<STRING Id="1074" Name="IDS_PUK_CORRECT">
+		<Text>PUK code is correct</Text>
+	</STRING>
+	<STRING Id="1075" Name="IDS_DIF_PIN">
+		<Text>Invalid PIN code, enter it again</Text>
+	</STRING>
+	<STRING Id="1076" Name="IDS_PIN_FAILED">
+		<Text>Invalid code, enter PUK code</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_PHONELOCK_DIALOG" Focus="7001">
 		<Controls>
 			<Menu Id="7001" Name="IDM_PHONELOCK">
-				<TitleID>IDS_PHONE_LOCK</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -179,7 +214,6 @@
 	<DIALOG Id="6002" Name="IDD_PHONE_PASSWORD_CHECK_DIALOG" Focus="7002">
 		<Controls>
 			<Menu Id="7002" Name="IDM_PHONE_PASSWORD_CHECK">
-				<TitleID>IDS_PHONE_PASSWORD_CHECK</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -187,7 +221,6 @@
 	<DIALOG Id="6003" Name="IDD_PIN_SETTING_DIALOG" Focus="1234">
 		<Controls>
 			<Menu Id="1234" Name="IDM_PIN_SETTING">
-				<TitleID>IDS_PIN_SETTING_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -195,7 +228,6 @@
 	<DIALOG Id="6004" Name="IDD_RESTRICT_MENU" Focus="7004">
 		<Controls>
 			<Menu Id="7004" Name="IDC_RESTRICT">
-				<TitleID>IDS_RESTRICT</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -203,7 +235,6 @@
 	<DIALOG Id="6005" Name="IDD_RESTRICT_OUTGOING_MENU" Focus="7007">
 		<Controls>
 			<Menu Id="7007" Name="IDC_RESTRICT_OUTGOING">
-				<TitleID>IDS_RESTRICT_OUTGOING_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -211,7 +242,6 @@
 	<DIALOG Id="6006" Name="IDD_RESTRICT_INCOMING_MENU" Focus="7008">
 		<Controls>
 			<Menu Id="7008" Name="IDC_RESTRICT_INCOMING">
-				<TitleID>IDS_RESTRICT_INCOMING_TITLE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
@@ -219,23 +249,20 @@
 	<DIALOG Id="6007" Name="IDD_RESTORE_MENU" Focus="7009">
 		<Controls>
 			<Menu Id="7009" Name="IDC_RESTORE">
-				<TitleID>IDS_RESTORE</TitleID>
 				<Items/>
 			</Menu>
 		</Controls>
 	</DIALOG>
 	<DIALOG Id="6008" Name="IDD_PIN_CHECK_DIALOG" Focus="1">
 		<Controls>
-			<Menu Id="1" Name="IDD_MENU_PINLOCK" Flags="00000000">
-				<TitleID>IDS_PIN_CHECK</TitleID>
+			<Menu Id="1" Name="IDD_MENU_PINLOCK">
 				<Items/>
 			</Menu>
 		</Controls>
 	</DIALOG>
 	<DIALOG Id="6009" Name="IDD_MAIN_DIALOG" Focus="8">
 		<Controls>
-			<Menu Id="8" Name="IDC_SECURITY_MENU" Flags="00000001">
-				<TitleID>IDS_SECURITY_TITLE</TitleID>
+			<Menu Id="8" Name="IDC_SECURITY_MENU" Flags="1">
 				<Items/>
 			</Menu>
 		</Controls>
@@ -246,10 +273,13 @@
 	<DIALOG Id="6011" Name="IDD_ASK_PIN_DIALOG" Focus="0">
 		<Controls/>
 	</DIALOG>
-	<DIALOG Id="6012" Name="IDD_MESSAGE_DIALOG" Focus="0">
-		<Controls/>
-		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
-	</DIALOG>
+	<Dialog Id="6012" Name="IDD_KEY_LOCK_CHECK_DIALOG" Focus="0">
+		<Controls>
+			<Menu Id="7010" Name="IDM_KEY_LOCK">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
 	<DIALOG Id="6013" Name="IDD_PHONE_PASSWORD_INPUT_DIALOG" Focus="0">
 		<Controls/>
 	</DIALOG>
@@ -263,5 +293,39 @@
 	<DIALOG Id="6016" Name="IDD_ASK_PASSWORD_DIALOG" Focus="0">
 		<Controls/>
 	</DIALOG>
+	<Dialog Id="6017" Name="IDD_CHANGE_CODE" Focus="7003">
+		<Controls>
+			<Menu Id="7003" Name="IDC_CHANGECODE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6018" Name="IDD_APPLICATIONLOCK_DIALOG" Focus="7011">
+		<Controls>
+			<Menu Id="7011" Name="IDC_APPLICATIONLOCK">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6019" Name="IDD_ASK_CALL_PASSWORD_DIALOG" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6020" Name="IDD_PUK_DIALOG" Focus="0">
+		<Controls/>
+	</Dialog>
+	<Dialog Id="6021" Name="IDD_UIMERR_DIALOG" Focus="0">
+		<Controls>
+			<Menu Id="7005" Name="IDC_UIMERR_STATIC">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6022" Name="IDD_EMGCALL_DIALOG" Focus="0">
+		<Controls>
+			<Menu Id="7006" Name="IDC_EMGCALL_DIALOG">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>

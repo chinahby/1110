@@ -49,6 +49,9 @@
 	<String Id="1016" Name="IDS_AKG_5MIN">
 		<Text>5 นาที</Text>
 	</String>
+	<String Id="1017" Name="IDS_NOTALLOW">
+		<Text>Not Allowed!</Text>
+	</String>
 	<STRING Id="1018" Name="IDS_NEWPIN">
 		<Text>รหัสใหม่:</Text>
 	</STRING>

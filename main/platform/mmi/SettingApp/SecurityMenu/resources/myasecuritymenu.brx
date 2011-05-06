@@ -4,9 +4,15 @@
 	<STRING Id="1001" Name="IDS_PINCHANGE_TITLE">
 		<Text>PIN </Text>
 	</STRING>
+	<String Id="1002" Name="IDS_AUTOKEYGUARD_TITLE">
+		<Text>Keypad lock</Text>
+	</String>
 	<STRING Id="1003" Name="IDS_DIF_PASSWORD">
 		<Text></Text>
 	</STRING>
+	<String Id="1004" Name="IDS_AKG_30SEC">
+		<Text>30 Sec</Text>
+	</String>
 	<STRING Id="1005" Name="IDS_PHONE_PASSWORD_INPUT_TITLE">
 		<Text>codes </Text>
 	</STRING>
@@ -31,12 +37,21 @@
 	<STRING Id="1012" Name="IDS_INCOMING">
 		<Text></Text>
 	</STRING>
+	<String Id="1013" Name="IDS_AKG_2MIN">
+		<Text>2 Min</Text>
+	</String>
 	<STRING Id="1014" Name="IDS_OFF">
 		<Text></Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_RESTRICT_OUTCONTACT">
 		<Text></Text>
 	</STRING>
+	<String Id="1016" Name="IDS_AKG_5MIN">
+		<Text>5 Min</Text>
+	</String>
+	<String Id="1017" Name="IDS_NOTALLOW">
+		<Text>Not Allowed!</Text>
+	</String>
 	<STRING Id="1018" Name="IDS_NEWPIN">
 		<Text>PIN code :</Text>
 	</STRING>
@@ -258,6 +273,13 @@
 	<DIALOG Id="6011" Name="IDD_ASK_PIN_DIALOG" Focus="0">
 		<Controls/>
 	</DIALOG>
+	<Dialog Id="6012" Name="IDD_KEY_LOCK_CHECK_DIALOG" Focus="0">
+		<Controls>
+			<Menu Id="7010" Name="IDM_KEY_LOCK">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>
 	<DIALOG Id="6013" Name="IDD_PHONE_PASSWORD_INPUT_DIALOG" Focus="0">
 		<Controls/>
 	</DIALOG>

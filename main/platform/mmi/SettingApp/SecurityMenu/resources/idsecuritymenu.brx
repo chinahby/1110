@@ -4,6 +4,9 @@
 	<STRING Id="1001" Name="IDS_PINCHANGE_TITLE">
 		<Text>Ubah PIN</Text>
 	</STRING>
+	<String Id="1002" Name="IDS_AUTOKEYGUARD_TITLE">
+		<Text>Keypad lock</Text>
+	</String>
 	<STRING Id="1003" Name="IDS_DIF_PASSWORD">
 		<Text>Tidak cocok</Text>
 	</STRING>
@@ -45,6 +48,9 @@
 	</STRING>
 	<String Id="1016" Name="IDS_AKG_5MIN">
 		<Text>5 Min</Text>
+	</String>
+	<String Id="1017" Name="IDS_NOTALLOW">
+		<Text>Not Allowed!</Text>
 	</String>
 	<STRING Id="1018" Name="IDS_NEWPIN">
 		<Text>Masukkan kode PIN baru:</Text>
