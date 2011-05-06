@@ -2770,7 +2770,15 @@ void wms_nv_init_nvruim
     }
   }
   MSG_HIGH("Retry Period = %d s", msg_s_ptr->mo_retry_period, 0, 0);
-
+#ifdef FEATURE_CDSMS 
+  
+  /* Read Access or Traffic Channel from RUIM card */
+  wms_nv_read_cdma_channel_setting();
+  
+  /* Read Service Option Setting from card */
+  wms_nv_read_cdma_service_option();
+  
+#endif /* FEATURE_CDSMS */
 } /* wms_nv_init_nvruim() */
 #endif /* FEATURE_OMH_SMS */
 

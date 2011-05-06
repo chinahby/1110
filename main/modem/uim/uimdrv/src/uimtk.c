@@ -689,7 +689,11 @@ uim_tk_proc_simple_tlv_return_type uim_tk_parse_simple_tlv_from_ber_tlv
 
   /* Check if the offset is within the VALUE field.  Allow for the tag,
      length and value fields of the simple TLV. */
+#ifdef CUST_EDITION
+  if ((offset + 2) <= ber_tlv_size) //最小的Item可以是2个字节
+#else
   if ((offset + 3) <= ber_tlv_size)
+#endif
   {
     /* Parse the simple tlv */
     return_buf = uim_tk_parse_simple_tlv ((tlv_buff + length_size + 1),
@@ -1017,6 +1021,15 @@ uim_tk_proc_simple_tlv_return_type uim_tk_parse_simple_tlv
     case UIM_TK_ITEM_TAG:
       {
         /* Parse the Value field */
+#ifdef CUST_EDITION
+        if (return_buf.tlv_size == 0)
+        {
+            parsed_tlv_buff->item.item_id = 0;
+            parsed_tlv_buff->item.num_bytes = 0;
+            return_buf.status = UIM_TK_MESSAGE_IS_VALID;
+            break;
+        }
+#endif
         parsed_tlv_buff->item.item_id =
           tlv_buff[offset + length_size + 1];
         parsed_tlv_buff->item.num_bytes = return_buf.tlv_size - 1;
@@ -2554,6 +2567,7 @@ void uim_tk_send_cmd_to_ui
   ui_buf_ptr->proactive_cmd.hdr.sigs       = 0;
 
   ui_buf_ptr->proactive_cmd.num_bytes = (uint16)rsp_ptr->cmd_rsp_size;
+  MSG_FATAL("uim_tk_send_cmd_to_ui %d", rsp_ptr->cmd_rsp_size,0,0);
   (void) memcpy ( ui_buf_ptr->proactive_cmd.cmd_data,
                   (void *) rsp_ptr->rsp.data, rsp_ptr->cmd_rsp_size );
 
@@ -3263,7 +3277,10 @@ void uim_tk_process_proactive_command
                   parsed_tlv_buf.duration.time_unit = UIM_MIN_TIME_UNIT;
                   parsed_tlv_buf.duration.time_interval = UIM_MIN_TIME_INTERVAL;
                 } /* end if - Polling duration is less than 1 sec. */
-
+                
+#ifdef FEATURE_OEMOMH
+                uim_proactive_time_delay -= 2000; // 减掉2S以符合OMH的时间要求，否则会比要求的时间慢
+#endif
                 /* Build the Duration TLV */
                 parsed_tlv_buf.hdr.comprehension_required = TRUE;
                 parsed_tlv_buf.hdr.tag = UIM_TK_DURATION_TAG;
