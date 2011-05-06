@@ -1136,6 +1136,7 @@ static boolean  IDD_SENDMSG_Handler(CUTK *pMe,
                 nRetrys = 0;
                 (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
                 (void)UTK_ProcessSendCDMASMSCmd(pMe, &pCltMsg, wszInfo, 64);
+#ifndef FEATURE_OEMOMH
                 if (WSTRLEN(wszInfo)==0)
                 {
                     (void)ISHELL_LoadResString(pMe->m_pShell,
@@ -1144,7 +1145,7 @@ static boolean  IDD_SENDMSG_Handler(CUTK *pMe,
                             wszInfo,
                             sizeof(wszInfo));
                 }
-                
+#endif
                 if (NULL == pCltMsg)
                 {
                     bSetTimer = TRUE;

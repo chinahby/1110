@@ -292,7 +292,7 @@ typedef enum BottomBar_e_Type
    BTBAR_SPORT_STOP,
    BTBAR_VIEW_SNOOZE,
    BTBAR_VIEW_STOP,
-
+   BTBAR_YES_NO,
 
    /*******************start BTBAR_TRI_MASK*****************************/
    BTBAR_CANCEL_RESUME_NULL = 0x4000 + 1,

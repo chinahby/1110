@@ -5451,7 +5451,7 @@ static boolean  IDD_USERCONFIRM_Handler(CCallApp *pMe,
         case EVT_USER_REDRAW:
             // Draw prompt bar here
             //DrawBottomBar(pMe->m_pShell,  pMe->m_pDisplay, &pMe->m_rc, BTBAR_OK_BACK);
-            REFUI_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+            REFUI_DRAW_BOTTOMBAR(BTBAR_YES_NO)
             (void)ISTATIC_Redraw(pStatic);
             return TRUE;
 

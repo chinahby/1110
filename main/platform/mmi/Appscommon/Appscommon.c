@@ -719,40 +719,43 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_R = IDS_STOP;
             break;
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP
-	case BTBAR_FNASRANI_FPORTAL:
-		nResID_L = IDS_FNASRANI;
-		nResID_R = IDS_FPORTAL;
-		break;
+    	case BTBAR_FNASRANI_FPORTAL:
+    		nResID_L = IDS_FNASRANI;
+    		nResID_R = IDS_FPORTAL;
+    		break;
 
-	case BTBAR_FMUSLIM_FPORTAL:
-		nResID_L = IDS_FMUSLIM;
-		nResID_R = IDS_FPORTAL;
-		break;
+    	case BTBAR_FMUSLIM_FPORTAL:
+    		nResID_L = IDS_FMUSLIM;
+    		nResID_R = IDS_FPORTAL;
+    		break;
 
-	case BTBAR_FGURU_FPORTAL:
-		nResID_L = IDS_FGURU;
-		nResID_R = IDS_FPORTAL;
-		break;
-		
-	case BTBAR_CONTACTS_FPORTAL:
-		nResID_L = IDS_STRING_CONTACTS;
-		nResID_R = IDS_FPORTAL;
-		break;            
-	case BTBAR_OPTION_SAVE_BACK:
-        nResID_L = IDS_OPTION;
-        nResID_M = IDS_SAVE;
-        nResID_R = IDS_BACK;
-        break;
+    	case BTBAR_FGURU_FPORTAL:
+    		nResID_L = IDS_FGURU;
+    		nResID_R = IDS_FPORTAL;
+    		break;
+    		
+    	case BTBAR_CONTACTS_FPORTAL:
+    		nResID_L = IDS_STRING_CONTACTS;
+    		nResID_R = IDS_FPORTAL;
+    		break;            
+    	case BTBAR_OPTION_SAVE_BACK:
+            nResID_L = IDS_OPTION;
+            nResID_M = IDS_SAVE;
+            nResID_R = IDS_BACK;
+            break;
 #endif
-	case BTBAR_FMENU_CANTACT:
-		nResID_L = IDS_FMENU;
-		nResID_R = IDS_STRING_CONTACTS;
-		break; 
-	case BTBAR_MENU_FMENU:
-		nResID_L = IDS_MENU;
-		nResID_R = IDS_FMENU;
-		break;
-		
+    	case BTBAR_FMENU_CANTACT:
+    		nResID_L = IDS_FMENU;
+    		nResID_R = IDS_STRING_CONTACTS;
+    		break; 
+    	case BTBAR_MENU_FMENU:
+    		nResID_L = IDS_MENU;
+    		nResID_R = IDS_FMENU;
+    		break;
+		case BTBAR_YES_NO:
+            nResID_L = IDS_YES;
+            nResID_R = IDS_NO;
+            break;
          default:
             break;
       }
@@ -907,7 +910,6 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_L = IDS_YES;
             nResID_M = IDS_NO;
             nResID_R = IDS_CANCEL;
-            
          default:
             break;
       }

@@ -744,11 +744,14 @@ void UTK_SendTerminalProfile (void)
 
                     uim_cmd_ptr->terminal_profile.data[1]  |= UIM_TK_B2_COMMAND_RESULT;
                     uim_cmd_ptr->terminal_profile.data[2]  |=
-                        ( UIM_TK_B3_DISPLAY_TEXT | UIM_TK_B3_GET_INKEY | UIM_TK_B3_GET_INPUT | UIM_TK_B3_MORE_TIME);
+                        ( UIM_TK_B3_DISPLAY_TEXT | UIM_TK_B3_GET_INKEY | UIM_TK_B3_GET_INPUT | UIM_TK_B3_MORE_TIME | UIM_TK_B3_POLL_INTERVAL | UIM_TK_B3_POLLING_OFF | UIM_TK_B3_REFRESH);
                         
                     uim_cmd_ptr->terminal_profile.data[3]  |=
-                    ( UIM_TK_B4_SELECT_ITEM | UIM_TK_B4_SETUP_CALL | UIM_TK_B4_SEND_SHORT_MSG | UIM_TK_B4_SETUP_MENU);
+                    ( UIM_TK_B4_SELECT_ITEM | UIM_TK_B4_SETUP_CALL | UIM_TK_B4_SEND_SHORT_MSG | UIM_TK_B4_SETUP_MENU | UIM_TK_B4_PROVIDE_LOCAL_INFO_NMR);
                     uim_cmd_ptr->terminal_profile.data[4]  |=  UIM_TK_B5_SETUP_EVENT_LIST;
+                    uim_cmd_ptr->terminal_profile.data[8]  |=  
+                        (UIM_TK_B9_DISPLAY_TEXT | UIM_TK_B9_PROVIDE_LOCAL_INFO_ACC_TECH | UIM_TK_B9_PROVIDE_LOCAL_INFO_LANG | UIM_TK_B9_PROVIDE_LOCAL_INFO_TIMING | UIM_TK_B9_PROVIDE_LOCAL_INFO_NMR);
+                    uim_cmd_ptr->terminal_profile.data[9]  |=  (UIM_TK_B10_SOFT_KEYS_SELECT_ITEM | UIM_TK_B10_SOFT_KEYS_SETUP_MENU);
                     uim_cmd_ptr->terminal_profile.data[19] |=
                         ( UIM_TK_B20_CDMA_SEND_SMS | UIM_TK_B20_CDMA_SMS_PP_DOWNLOAD );
                     

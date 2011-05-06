@@ -3495,9 +3495,10 @@ boolean gstk_is_sms_pp_supported(void)
     if (GSDI_SUCCESS == srv_available.gsdi_status &&
         0 != srv_available.svr_bitmap)
     {
+      MSG_FATAL("gstk_is_sms_pp_supported TRUE",0,0,0);
       return TRUE;
     }
-
+    MSG_FATAL("gstk_is_sms_pp_supported FALSE",0,0,0);
     return FALSE;
 } /* gstk_is_sms_pp_supported */
 

@@ -6666,10 +6666,10 @@ wms_status_e_type wms_msg_cdma_deliver
   }
 #endif
 #endif //#ifdef CUST_EDITION
-#ifdef FEATURE_UIM_TOOLKIT_UTK//Gemsea Modify for SMS-PP #ifdef FEATURE_CCAT
+#ifdef FEATURE_CCAT
   if( cdma_tl.teleservice == WMS_TELESERVICE_CATPT)
   {
-//Gemsea Modify for SMS-PP #ifdef FEATURE_GSTK
+#ifdef FEATURE_GSTK
     /* Check if service is allocated and activated */
     if(gstk_is_sms_pp_supported() && (nv_rtre_control() == NV_RTRE_CONTROL_USE_RUIM))
     {
@@ -6700,9 +6700,9 @@ wms_status_e_type wms_msg_cdma_deliver
       routing_ptr->route       = WMS_ROUTE_STORE_AND_NOTIFY;
       routing_ptr->mem_store   = WMS_MEMORY_STORE_RUIM;
     }
-//Gemsea Modify for SMS-PP #endif /* FEATURE_GSTK */
+#endif /* FEATURE_GSTK */
   }
-#endif //Gemsea Modify for SMS-PP #endif /* FEATURE_CCAT */
+#endif /* FEATURE_CCAT */
 
 #ifdef FEATURE_UIM_TOOLKIT_UTK
   /* The routing for UTK messages should be changed to TRANSFER_ONLY,
@@ -6728,7 +6728,7 @@ wms_status_e_type wms_msg_cdma_deliver
     if( cdma_tl.cl_bd.download_mode == WMS_DOWNLOAD_MODE_PP_VAS ||
         cdma_tl.cl_bd.download_mode == WMS_DOWNLOAD_MODE_PP_PRL )
     {
-#ifndef FEATURE_GSTK
+#if 0//Gemsea Modify For SMS-DOWNLOAD ndef FEATURE_GSTK
       /* The UI client will send down the envelope command to the card */
       routing_ptr->route     = WMS_ROUTE_TRANSFER_ONLY;
       routing_ptr->mem_store = WMS_MEMORY_STORE_NONE;
