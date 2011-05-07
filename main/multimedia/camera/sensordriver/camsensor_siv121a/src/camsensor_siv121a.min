@@ -5,9 +5,16 @@
 # tabs or spaces are used to indent. For consistency, please use spaces whenever
 # possible.
 #-------------------------------------------------------------------------------
+
+ifeq ($(USES_QSC1110), yes)
 CAMSENSOR_SIV121A_SOURCES = \
- camsensor_siv121a.c \
- camsensor_sic110a.c
+	camsensor_siv121a_yuv.c \
+	camsensor_sic110a.c
+else
+CAMSENSOR_SIV121A_SOURCES = \
+	camsensor_siv121a.c \
+	camsensor_sic110a.c
+endif
 
 vpath %.c $(CAMSENSOR_SIV121A)  
 

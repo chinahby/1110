@@ -4,6 +4,17 @@
 #
 #-------------------------------------------------------------------------------
 
+ifeq ($(USES_QSC1110), yes)
+AEE_SOURCES=\
+	AEEAddrBook.c \
+	AEEMenu.c \
+	AEESound.c\
+	AEETime.c \
+	AEEDialog.c \
+	AEEStatic.c \
+	AEEDate.c \
+	AEEAlarm.c
+else
 AEE_SOURCES=\
 	AEEAddrBook.c \
 	AEEMenu.c \
@@ -14,7 +25,7 @@ AEE_SOURCES=\
 	AEEDate.c \
 	AEECamera.c \
 	AEEAlarm.c 
-	
+endif
     
 ifeq ($(USES_BREW_SMS),yes)
 AEE_SOURCES+=\

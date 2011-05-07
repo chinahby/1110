@@ -1802,9 +1802,15 @@ uint16               camera_dy = 0;
 static uint32               resize_factor = 0;
 
 /* Can be overwritten by custcamera.h if defined there */
-#ifndef CAMERA_PREVIEW_ROTATION
-#define CAMERA_PREVIEW_ROTATION 90
-#endif /* nCAMERA_PREVIEW_ROTATION */
+#ifdef T_QSC1110
+	#ifndef CAMERA_PREVIEW_ROTATION
+		#define CAMERA_PREVIEW_ROTATION 0
+	#endif /* nCAMERA_PREVIEW_ROTATION */
+#else
+	#ifndef CAMERA_PREVIEW_ROTATION
+		#define CAMERA_PREVIEW_ROTATION 90
+	#endif /* nCAMERA_PREVIEW_ROTATION */
+#endif
 static uint16  camera_default_preview_rotation;
 #if defined(FEATURE_CAMERA_LCD_DIRECT_MODE) || !defined(FEATURE_MDP)
 static ipl_rotate90_type camera_default_preview_rotation_ipl;
@@ -2096,7 +2102,11 @@ static camera_format_type camera_preview_format = CAMERA_YCBCR_4_2_0;
  * allow to specify different formats for output1 and output2.
  */
 static camera_format_type camera_snapshot_format = CAMERA_H2V2;
+#ifdef T_QSC1110
+static JPEGENC_OrientType camera_jpeg_encode_rotation_format = JPEGENC_NO_ROT;
+#else
 static JPEGENC_OrientType camera_jpeg_encode_rotation_format = JPEGENC_CCLK270;
+#endif
 
 static int dsp_camif_error_count = 0;
 

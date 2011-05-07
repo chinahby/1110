@@ -381,7 +381,11 @@
 #endif
 
 #ifdef USE_CAMSENSOR_SIV121A
+#ifdef T_QSC1110
+#include "camsensor_SIV121A_yuv.h"
+#else
 #include "camsensor_siv121a.h"
+#endif
 #endif
 
 #ifdef USE_CAMSENSOR_SIC110A

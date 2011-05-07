@@ -159,7 +159,7 @@ ifeq ($(USES_CAMERA), yes)
   include $(QCAMCOMMON)/qcamcommon.min
   include $(CAMSENSOR_SIV121A)/camsensor_siv121a.min
   include $(CAMSENSOR_OV7675)/camsensor_ov7675.min
-ifeq ($(USES_DSP), yes)
+ifneq ($(USES_QSC1110), yes)
   include $(SOFTDSP)/softdsp.min
 endif
 ifneq ($(USES_MANGO_UI),yes)
