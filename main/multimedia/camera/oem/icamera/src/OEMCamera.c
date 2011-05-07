@@ -944,10 +944,10 @@ Done:
 
 #ifdef FEATURE_CAMERA_LCD_DIRECT_MODE
   /* Default to Frame CallBack whenever you enter the Camera App */
-  bDirectMode = TRUE; 
+  bDirectMode = FALSE; 
 #endif
 #ifdef FEATURE_CAMERA_NOFULLSCREEN
-  bDirectToLCD = TRUE;
+  bDirectToLCD = FALSE;
 #endif
   OEMCamera_InitCameraRsp(pme, CAM_CMD_START);
   OEMCamera_InitCameraRsp(pme, CAM_CMD_SETPARM);
@@ -1772,18 +1772,10 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
       //Suggest using CAM_PARM_LCD_DIRECT_ACCESS_EX to replace this
       case CAM_PARM_LCD_DIRECT_ACCESS:
       {
-        if(p1 == 0 )
         {
-          //Turn off direct mode
-          nRet = camera_set_lcd_direct_mode(0, 0, 0, 0, 0);
-          if (nRet == CAMERA_SUCCESS)
-            bDirectMode = FALSE;
-        }
-        else if(p2 != 0)
-        {
-          AEESize *pSize = (AEESize *) p2;
-          pme->m_sizeDisplay.cx = pSize->cx;
-          pme->m_sizeDisplay.cy = pSize->cy;
+          //AEESize *pSize = (AEESize *) p2;
+          pme->m_sizeDisplay.cx = 220;
+          pme->m_sizeDisplay.cy = 176;
           /* If Direct Mode is enabled then default the
            * Display to be Primary LCD , MDP Layer 0 [ BGL ] -> 0x10
            * Do this since we only get AEESize in p2 -> x = 0, y = 0
@@ -1793,11 +1785,6 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
                                             pme->m_sizeDisplay.cy);
           if (nRet == CAMERA_SUCCESS)
             bDirectMode = TRUE;
-        }
-        else //p1 > 0 and p2 == 0
-        {
-          nRet = CAMERA_INVALID_PARM;
-        }
       }
       //No callback required for this SetParm.
       nRet = OEMCamera_AEEError(nRet);
