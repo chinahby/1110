@@ -12,7 +12,7 @@ PUBLIC CLASSES:  Not Applicable
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 
-        Copyright © 1999-2007 QUALCOMM Incorporated.
+        Copyright ?1999-2007 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ===========================================================================*/
@@ -1772,10 +1772,18 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
       //Suggest using CAM_PARM_LCD_DIRECT_ACCESS_EX to replace this
       case CAM_PARM_LCD_DIRECT_ACCESS:
       {
+        if(p1 == 0 )
         {
-          //AEESize *pSize = (AEESize *) p2;
-          pme->m_sizeDisplay.cx = 220;
-          pme->m_sizeDisplay.cy = 176;
+          //Turn off direct mode
+          nRet = camera_set_lcd_direct_mode(0, 0, 0, 0, 0);
+          if (nRet == CAMERA_SUCCESS)
+            bDirectMode = FALSE;
+        }
+        else if(p2 != 0)
+        {
+          AEESize *pSize = (AEESize *) p2;
+          pme->m_sizeDisplay.cx = pSize->cx;
+          pme->m_sizeDisplay.cy = pSize->cy;
           /* If Direct Mode is enabled then default the
            * Display to be Primary LCD , MDP Layer 0 [ BGL ] -> 0x10
            * Do this since we only get AEESize in p2 -> x = 0, y = 0
@@ -1785,6 +1793,11 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
                                             pme->m_sizeDisplay.cy);
           if (nRet == CAMERA_SUCCESS)
             bDirectMode = TRUE;
+        }
+        else //p1 > 0 and p2 == 0
+        {
+          nRet = CAMERA_INVALID_PARM;
+        }
       }
       //No callback required for this SetParm.
       nRet = OEMCamera_AEEError(nRet);
