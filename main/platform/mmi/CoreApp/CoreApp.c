@@ -853,9 +853,11 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                       &&pMe->m_eCurState != COREST_POWERONAPPSDATAINIT)
                     {
                         pMe->m_wStartupAniTime = 0;
+                        #ifndef FEATURE_OEMOMH
                         #ifdef FEATURE_ICM
                 		ICM_SetOperatingMode(pMe->m_pCM, AEECM_OPRT_MODE_OFFLINE);
                 		#endif
+                        #endif
                         DBGPRINTF("AVK_END to COREST_POWEROFF");
                         MOVE_TO_STATE(COREST_POWEROFF)
                         CLOSE_DIALOG(DLGRET_CREATE)
