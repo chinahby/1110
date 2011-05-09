@@ -15697,7 +15697,8 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
     IMenuCtl *pMenu = NULL;
     ITextCtl *pTextCtl = NULL;
     IMenuCtl *pGroupList = NULL; 
-    uint32 dwMask;
+    uint32    dwMask;
+    static int nEmgRUIMIdx;
     if (NULL == pMe)
     {
         return FALSE;
@@ -15740,7 +15741,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY | OEMMP_USE_MENU_STYLE);
             ICONFIG_GetItem(pMe->m_pConfig, CFGI_EMERGENCYNUM_TABLE, (void*)&emerg_tab, sizeof(EmergencyNum_Table));
-
+            nEmgRUIMIdx = -1;
             for(i=0; i<emerg_tab.emert_size; i++)
             {
                 wstrNum[0] = 0;
@@ -15754,9 +15755,10 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                     wstrNum[3]=L'E';
                     wstrNum[4]=L'\0';
                 }
-                IMENUCTL_AddItem(pMenu, NULL, NULL, 500+i, wstrNum, NULL);
+                IMENUCTL_AddItem(pMenu, NULL, NULL, i, wstrNum, NULL);
             }
-           
+
+            // ADD RUIM Number
             {
                 byte  Assnum[RUIM_ECC_NUMBER][RUIM_ECC_MAXSIZE+1];
                 int   nNum;
@@ -15770,7 +15772,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                         int i;
                         int k = 0;
                         byte *temp;
-                        
+                        nEmgRUIMIdx = emerg_tab.emert_size;
                         MSG_FATAL("Assnum's nNum = %d",nNum,0,0);
                         for(i=0;i<nNum;i++)
                         {
@@ -15778,7 +15780,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                             if(STRLEN((char *)temp)>0)
                             {
                                 STRTOWSTR((char *)temp, wstrNum, sizeof(wstrNum));
-                                IMENUCTL_AddItem(pMenu, NULL, NULL, 500 + emerg_tab.emert_size + k, wstrNum, NULL);
+                                IMENUCTL_AddItem(pMenu, NULL, NULL, emerg_tab.emert_size + k, wstrNum, NULL);
                                 k++;
                             }
                         }
@@ -15786,255 +15788,144 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                 }
 #endif//WIN32                
             }
-
+            
             IMENUCTL_Redraw(pMenu);
-            pMe->m_nInputMode = LOCAL_NUMBER_INPUT;
-            IMENUCTL_SetSel(pMenu, 0);  
-
-            CContApp_ShowEditItem(pMe, pMenu, pTextCtl);
+            
+            if(emerg_tab.emert_size>0)
             {
-                AECHAR emergency_call[10] = {0};
+                AECHAR emergency_call[MAX_EMERGENCY_NUM_LEN+1] = {0};
+                pMe->m_nInputMode = LOCAL_NUMBER_INPUT;
+                pMe->m_wSelectEdit = 0;
+                pMe->m_nFldInputID = AEE_ADDRFIELD_PHONE_GENERIC;
+                CContApp_ShowEditItem(pMe, pMenu, pTextCtl);
                 STRTOWSTR(emerg_tab.emerg_num[0].num_buf, wstrNum, sizeof(wstrNum));
                 ITEXTCTL_SetText( pTextCtl, wstrNum, WSTRLEN(wstrNum));
-            }            
+            }
+            else
+            {
+                pMe->m_nFldInputID = AEE_ADDRFIELD_NONE;
+            }
             IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
-            MSG_FATAL("11111111111111111",0,0,0);
+            
             // For redraw the dialog
             ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER_REDRAW, 0,0);
             return TRUE;
         }
         case EVT_USER_REDRAW:
         {
-            uint16 selectEdit = IMENUCTL_GetSel(pMenu); 
-            IMENUCTL_SetSel(pMenu, selectEdit);
+            IMENUCTL_SetSel(pMenu, IMENUCTL_GetSel(pMenu));
             (void)IMENUCTL_Redraw(pMenu);
+            
+            if(nEmgRUIMIdx>=0 && IMENUCTL_GetSel(pMenu)>=nEmgRUIMIdx)
+            {
+                CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
+                pMe->m_nFldInputID = AEE_ADDRFIELD_NONE;
+                return TRUE;
+            }
+            
             CContApp_ShowEditItem(pMe, pMenu, pTextCtl);
+            ITEXTCTL_SetMaxSize( pTextCtl,MAX_EMERGENCY_NUM_LEN-1);
             ITEXTCTL_SetActive(pTextCtl, TRUE);
-            IDISPLAY_Update(pMe->m_pDisplay);  
+            IDISPLAY_Update(pMe->m_pDisplay);
             return TRUE;
         }
 
         case EVT_DIALOG_END:
-        {
-             // Store the menu select if applet is suspended.
-            if(pMe->m_bSuspending)
-            {
-                // 中断处理
-                if( LOCAL_NUMBER_INPUT == pMe->m_nInputMode )
-                {
-                    //CContApp_SaveLocal_Input(pMe, pTextCtl);
-                }
-            }
-            pMe->m_bInputNotComplete = FALSE;
-        }
-        return TRUE;
+            return TRUE;
 
+        case EVT_CTL_SEL_CHANGED:
+        {
+            CtlAddItem ai;
             
-        case EVT_CTL_SEL_CHANGED : 
-            if(EDIT_GROUP == pMe->m_nInputMode)
+            if(nEmgRUIMIdx>=0 && IMENUCTL_GetSel(pMenu)>=nEmgRUIMIdx)
             {
+                CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
+                pMe->m_nFldInputID = AEE_ADDRFIELD_NONE;
                 return TRUE;
-            }            
+            }
+            
             pMe->m_nInputMode = LOCAL_NUMBER_INPUT;
             pMe->m_wSelectEdit = wParam;
             pMe->m_nFldInputID = AEE_ADDRFIELD_PHONE_GENERIC;
             CContApp_ShowEditItem(pMe, pMenu, pTextCtl);
+            ITEXTCTL_SetMaxSize( pTextCtl,MAX_EMERGENCY_NUM_LEN-1);
+            if(IMENUCTL_GetItem(pMenu, wParam, &ai))
+            {
+                DBGPRINTF("UP ai.pText %d s=%S", wParam, (AECHAR *)ai.pText);
+                ITEXTCTL_SetText( pTextCtl, (AECHAR *)ai.pText, WSTRLEN((AECHAR *)ai.pText));
+            }
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);        
             return TRUE;
+        }
 
         case EVT_KEY_PRESS:
-            switch(wParam)
+            switch (wParam)
             {
                 case AVK_UP:
                 case AVK_DOWN:
-                {
-                    
-                    MSG_FATAL("m_nInputMode=%d",pMe->m_nInputMode,0,0);                  
-                    //if(OPT_TEXT_INPUT == pMe->m_nInputMode || LOCAL_NUMBER_INPUT == pMe->m_nInputMode)
+                    if(pMe->m_nFldInputID != AEE_ADDRFIELD_NONE)
                     {
-                        //if(TRUE == CContApp_SaveLocal_Input(pMe, pTextCtl))
+                        AECHAR emergency_call[MAX_EMERGENCY_NUM_LEN+1] = {0};
+                        
+                        ITEXTCTL_GetText(pTextCtl, emergency_call, MAX_EMERGENCY_NUM_LEN);
+                        if(!CContApp_CheckNumber(emergency_call))
                         {
-                            MSG_FATAL("CContApp_SaveLocal_Input=TRUE",0,0,0);
-                           // itemTextBuf = pMe->m_pFldInputBuf;
-                            if (AEE_ADDRFIELD_NONE != pMe->m_nFldInputID)
-                            {
-                           		IMENUCTL_SetActive(pMenu, TRUE);
-                            	IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_MENU_EMERGENCY_CALL);                            
-                                //CContApp_SetRecByFLDID(pMe, pMe->m_nFldInputID);
-                            } 
-#ifdef FEATURE_OEMOMH 
-                            {
-                                CtlAddItem ai;
-                                AECHAR emergency_call[10] = {0};
-                                uint16 selectEdit = IMENUCTL_GetSel(pMenu); 
-                                int menuCount = IMENUCTL_GetItemCount(pMenu); 
-                                MSG_FATAL("selectEdit=%d, menuCount=%d",selectEdit,menuCount,0);
-                                ITEXTCTL_GetText(pTextCtl, emergency_call, 10);
-                                if(!CContApp_CheckNumber(emergency_call))
-                                {
-                                    if(WSTRNCMP(emergency_call, L"NONE", 4) != 0)
-                                    {
-                                        CLOSE_DIALOG(DLGRET_NUM_UNAVAILD);
-                                        return TRUE;
-                                    }
-                                }      
-                                //ITEXTCTL_SetText( pTextCtl, emergency_call, WSTRLEN(emergency_call));
-                                IMENUCTL_SetItemText(pMenu, selectEdit, NULL, 0, emergency_call);
-
-                                if(wParam == AVK_UP)
-                                {
-                                    MSG_FATAL("AVK_UP",0,0,0);
-                                    if(selectEdit > 500)
-                                    {
-                                        if(IMENUCTL_GetItem(pMenu, selectEdit - 1, &ai))
-                                        {
-                                            MSG_FATAL("AVK_UP 1111111111111",0,0,0);
-                                            ITEXTCTL_SetText( pTextCtl, (AECHAR *)ai.pText, WSTRLEN((AECHAR *)ai.pText));
-                                            DBGPRINTF("UP ai.pText s=%S", (AECHAR *)ai.pText);
-                                        }
-                                    }
-                                    else if(selectEdit == 500)
-                                    {
-                                        if(IMENUCTL_GetItem(pMenu, 500 + menuCount - 1, &ai))
-                                        {
-                                            MSG_FATAL("AVK_UP 2222222222222222",0,0,0);
-                                            ITEXTCTL_SetText( pTextCtl, (AECHAR *)ai.pText, WSTRLEN((AECHAR *)ai.pText));
-                                            DBGPRINTF("UP ai.pText s=%S", (AECHAR *)ai.pText);
-                                        }                                    
-                                    }
-                                }
-                                else if(wParam == AVK_DOWN)
-                                {
-                                    MSG_FATAL("AVK_DOWN",0,0,0);
-                                    MSG_FATAL("selectEdit=%d, menuCount=%d",selectEdit,menuCount,0);
-                                    if(selectEdit < 500 + menuCount - 1)
-                                    {
-                                        MSG_FATAL("AVK_DOWN sssssssssssssss",0,0,0);
-                                        if(IMENUCTL_GetItem(pMenu, selectEdit + 1, &ai))
-                                        {
-                                            MSG_FATAL("AVK_DOWN 33333333333333",0,0,0);
-                                            DBGPRINTF("UP ai.pText s=%S", (AECHAR *)ai.pText);
-                                            ITEXTCTL_SetText( pTextCtl, (AECHAR *)ai.pText, WSTRLEN((AECHAR *)ai.pText));
-                                        }
-                                    }
-                                    else if(selectEdit == 500 + menuCount - 1)
-                                    {
-                                        MSG_FATAL("AVK_DOWN aaaaaaaaaaaaaaaaa",0,0,0);
-                                        if(IMENUCTL_GetItem(pMenu, 500, &ai))
-                                        {
-                                            MSG_FATAL("AVK_DOWN 44444444444444",0,0,0);
-                                            ITEXTCTL_SetText( pTextCtl, (AECHAR *)ai.pText, WSTRLEN((AECHAR *)ai.pText));
-                                            DBGPRINTF("UP ai.pText s=%S", (AECHAR *)ai.pText);
-                                        }                                    
-                                    }                                
-                                }
-                                MSG_FATAL("ai.pText=%S",ai.pText,0,0);
-                            }
-#endif                               
-                            //CContApp_SetMenuItemText(pMe, pMenu, pMe->m_wSelectEdit);
+                            CLOSE_DIALOG(DLGRET_NUM_UNAVAILD);
+                            return TRUE;
                         }
                         
+                        DBGPRINTF("emergency_call=%S", emergency_call);
+                        IMENUCTL_SetItemText(pMenu, IMENUCTL_GetSel(pMenu), NULL, 0, emergency_call);
                         ITEXTCTL_SetActive(pTextCtl, FALSE);
                         IMENUCTL_SetActive(pMenu, TRUE);
-                        IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_MENU_EMERGENCY_CALL);
-                    }
-                }
-                return TRUE;
-                
-                case AVK_0:
-                case AVK_1:
-                case AVK_2:
-                case AVK_3:
-                case AVK_4:
-                case AVK_5:
-                case AVK_6:
-                case AVK_7:
-                case AVK_8:
-                case AVK_9:
-                case AVK_T:
-                case AVK_Q:
-                case AVK_W:
-                case AVK_E:
-                case AVK_R:
-                case AVK_A:
-                case AVK_S:
-                case AVK_D:
-                case AVK_F:
-                case AVK_Z:
-                case AVK_X:
-                case AVK_C:
-                case AVK_Y:
-                case AVK_U:
-                case AVK_I:
-                case AVK_O:
-                case AVK_P:
-                case AVK_G:
-                case AVK_H:
-                case AVK_J:
-                case AVK_K:
-                case AVK_L:
-                case AVK_V:
-                case AVK_B:
-                case AVK_N:
-                case AVK_M:
-                case AVK_STAR:
-                case AVK_POUND:
-                {
-                    if(OPT_TEXT_INPUT != pMe->m_nInputMode)
-                    {
                         return TRUE;
                     }
-                    
-                    //CContApp_SaveLocal_Input(pMe, pTextCtl);// 本地是可以先删除一些字符后，在按任意键进去编辑的
-                    CLOSE_DIALOG(DLGRET_EDIT);
-                }
-                return TRUE;
-
+                    break;
                 default:
                     break;
             }
-            return TRUE;
-
+            break;
+            
         case EVT_KEY:
             switch (wParam)
             {
                 case AVK_END:
-
+                
                 //case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:
-                    pMe->m_nGroupCat = AEE_ADDR_CAT_OTHER;
                     pMe->m_nFldInputID = AEE_ADDRFIELD_NONE;
-                    pMe->m_wSelectEdit = 500;
+                    pMe->m_wSelectEdit = 0;
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
-
+                    
                 case AVK_INFO:
                 case AVK_SELECT:
                 {                          
                     CtlAddItem ai;
                     int i;
-                    char m_vmnuber[10] = {0};
+                    char m_vmnuber[MAX_EMERGENCY_NUM_LEN] = {0};
                     EmergencyNum_Table m_entable;
-                    AECHAR emergency_call[10] = {0};
+                    AECHAR emergency_call[MAX_EMERGENCY_NUM_LEN+1] = {0};
                     uint16 selectEdit = IMENUCTL_GetSel(pMenu); 
                     m_entable.emert_size = OEMNV_EMERT_SEZE;
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_EMERGENCYNUM_TABLE, (void*)&m_entable, sizeof(EmergencyNum_Table));
                     MSG_FATAL("AVK_SELECT Start, selectEdit=%d",selectEdit,0,0);
-                    ITEXTCTL_GetText(pTextCtl, emergency_call, 10);
+                    ITEXTCTL_GetText(pTextCtl, emergency_call, MAX_EMERGENCY_NUM_LEN);
                     if(!CContApp_CheckNumber(emergency_call))
                     {
                         CLOSE_DIALOG(DLGRET_NUM_UNAVAILD);
                         return TRUE;
-                    }                       
+                    }
+                    
                     DBGPRINTF("emergency_call=%S", emergency_call);
                     IMENUCTL_SetItemText(pMenu, selectEdit, NULL, 0, emergency_call);                    
                     for(i=0; i<m_entable.emert_size; i++)
                     {
-                        if(IMENUCTL_GetItem(pMenu, 500 + i, &ai))
+                        if(IMENUCTL_GetItem(pMenu, i, &ai))
                         {
                            	m_entable.emerg_num[i].num_len = WSTRLEN((AECHAR *)ai.pText);    
                             MSG_FATAL("num_len=%d",m_entable.emerg_num[i].num_len,0,0);
-                            WSTRTOSTR((AECHAR *)ai.pText, m_vmnuber, 10);
+                            WSTRTOSTR((AECHAR *)ai.pText, m_vmnuber, MAX_EMERGENCY_NUM_LEN);
                             DBGPRINTF("m_vmnuber s=%s", m_vmnuber);
                             DBGPRINTF("ai.pText s=%S", (AECHAR *)ai.pText);
                             MSG_FATAL("m_vmnuber d= %d",ATOI(m_vmnuber),0,0);
@@ -16042,6 +15933,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                             DBGPRINTF("num_buf s=%s", m_entable.emerg_num[i].num_buf);
                         }
                     }
+                    
                     (void)OEM_SetConfig(CFGI_EMERGENCYNUM_TABLE,
                                        (void*)&m_entable,
                                        sizeof(EmergencyNum_Table));      
@@ -16054,10 +15946,6 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
   				case AVK_CAMERA:
             	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)
             	{
-				nv_item_type	SimChoice;
-				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
-				//if(SimChoice.sim_select == AVK_SEND_TWO)
-				{
                     CtlAddItem ai;
                     uint16   wID;
                     
@@ -16067,7 +15955,6 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                        (void)MakeVoiceCall(pMe->m_pShell, FALSE, (AECHAR *)ai.pText);
                     }
                     return TRUE;
-				}
 				}
 				#endif
 				break;
@@ -16105,25 +15992,6 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
             }
             return TRUE;
             
-        case EVT_KEY_RELEASE:
-        {
-           if(pMe->m_nInputMode == LOCAL_NUMBER_INPUT || pMe->m_nInputMode == OPT_TEXT_INPUT )
-           {
-       #ifndef FEATURE_ALL_KEY_PAD
-               if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
-               {
-                   //CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE);
-               }
-               else
-       #endif
-               {
-                   //CONTAPP_DRAW_BOTTOMBAR(BTBAR_SAVE_BACK);            
-               }   
-               IDISPLAY_Update(pMe->m_pDisplay);  
-           }
-        }
-        return TRUE;
-
         case EVT_COMMAND:
             {
                 
@@ -16135,155 +16003,11 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
             }
             CLOSE_DIALOG(DLGRET_OK);
             return TRUE;
-
+            
         default:
-            CLOSE_DIALOG(DLGRET_OK);
             break;
     }
 
     return FALSE;
 } // IDD_EMERGENCYNUMLIST_Handler
-#if 0
-static boolean  CContApp_HandleEmergencyCallDlgEvent( CContApp  *pMe,
-                                                AEEEvent   eCode,
-                                                uint16     wParam,
-                                                uint32     dwParam)
-{
-    IMenuCtl *pMenuCtl;
-    
-#if defined(AEE_STATIC)
-    ASSERT(pMe != NULL);
-#endif
-    
-    pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
-                                              IDC_MENU_EMERGENCY_CALL);
-                                              
-    MENU_AUTO_SCROLL(pMenuCtl, eCode, wParam);
-    switch (eCode)
-    {
-        case EVT_DIALOG_INIT:
-            return TRUE;
-            
-        case EVT_DIALOG_START:
-        {
-            AEERect rc={0};
-            AEEDeviceInfo devinfo={0};
-            
-            ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
-            rc = pMe->m_rc;
-            rc.dy = devinfo.cyScreen;
-            rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);
-
-            IMENUCTL_SetRect(pMenuCtl, &rc);
-            MSG_FATAL("EVT_DIALOG_START",0,0,0);
-            
-            // list the one dial menu
-            (void)CContApp_BuildOneDialMenu(pMe, pMenuCtl);
-            IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL);
-            IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_USE_MENU_STYLE|OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
-            //MENU_SET_COMICON(pMenuCtl);
-            {
-                AECHAR WTitle[40] = {0};
-                //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
-                (void)ISHELL_LoadResString(pMe->m_pShell,
-                CONTAPP_RES_FILE_LANG,                                
-                IDS_EMERGENCY_CALL,
-                WTitle,
-                sizeof(WTitle));
-                if(pMe->m_pIAnn != NULL)
-                {
-                    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
-                }
-            }
-
-
-            // For redraw the dialog
-            (void)ISHELL_PostEvent( pMe->m_pShell,
-                                    AEECLSID_APP_CONTACT,
-                                    EVT_USER_REDRAW,
-                                    0,
-                                    0);
-            return  TRUE;                        
-        }
-        
-        // Note: Fall through to the EVT_USER_REDRAW
-        //lint -fallthrough
-        
-        case EVT_USER_REDRAW:
-            // Restore the menu select from suspend
-            if(pMe->m_wSelectStore != MENU_SELECT_NULL)
-            {
-                IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectStore);
-            }
-            else
-            {
-                IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectOneDial);
-            }
-            
-            // Draw prompt bar here
-            if( TRUE == CContApp_OnedialExit(pMe))
-            {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
-            }
-            else
-            {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_ADD_BACK);
-            }
-            IDISPLAY_Update(pMe->m_pDisplay);  
-            return TRUE;
-            
-        case EVT_DIALOG_END:
-            // Store the menu select if applet is suspended.
-            if(pMe->m_bSuspending)
-            {
-                pMe->m_wSelectStore = IMENUCTL_GetSel(pMenuCtl);
-            }
-            else
-            {
-                pMe->m_wSelectStore = MENU_SELECT_NULL;
-            }
-            return TRUE;
-            
-        case EVT_KEY:
-            switch (wParam)
-            {
-                case AVK_CLR:
-                    pMe->m_wSelectOneDial = CONTCFG_ONEDIAL2;//CONTCFG_ONEDIAL1
-                    CLOSE_DIALOG(DLGRET_CANCELED);
-                    return TRUE;
-                case AVK_INFO:
-                    CLOSE_DIALOG(DLGRET_SET);
-                    break;
-                    
-                default:
-                    break;
-                    
-            }
-            break;
-            
-        case EVT_COMMAND:
-            pMe->m_wSelectOneDial = wParam;
-            CLOSE_DIALOG(DLGRET_OK);
-            return TRUE;
-
-        case EVT_CTL_SEL_CHANGED:
-            pMe->m_wSelectOneDial = wParam;
-            // Draw prompt bar here
-            if( TRUE == CContApp_OnedialExit(pMe))
-            {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
-            }
-            else
-            {
-                CONTAPP_DRAW_BOTTOMBAR(BTBAR_ADD_BACK);
-            }
-            return TRUE;
-        default:
-            break;
-            
-    }
-    
-    return FALSE;
-} // CContApp_HandleOneDialDlgEvent
-#endif
 #endif

@@ -2392,31 +2392,9 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
     
     if(type == ALERT_SMS_SND)
     {
-#ifdef FEATURE_ICM
-        uint16 num;
-        
-        num = ICM_GetActiveCallIDs(pMe->m_pICM, 
-                                   (AEECM_CALL_TYPE_VOICE | AEECM_CALL_TYPE_EMERGENCY), 
-                                   (AEECM_CALL_STATE_ORIG | AEECM_CALL_STATE_INCOM | 
-                                    AEECM_CALL_STATE_CONV | AEECM_CALL_STATE_ONHOLD | 
-                                    AEECM_CALL_STATE_DORMANT),
-                                   NULL, 
-                                   0);     
-        if(num >0)
-#else
-        AEETCalls po;
-		if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
-		{
-		    return FALSE;
-		}
-        
-        if(po.dwCount>0)
-#endif
+        if(OEMALERT_InCall(pMe))
         {
-            ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
-            IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON | ANNUN_STATE_BLINK);
-            IANNUNCIATOR_SetUnblinkTimer(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_OFF, 5000);            
-            return SUCCESS;            
+            return EFAILED;            
         }
         
         if(AEECLSID_LAUNCHER != ISHELL_ActiveApplet(pMe->m_pIShell))
@@ -3044,48 +3022,26 @@ SEE ALSO:
 
 static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
 {  
-#ifdef FEATURE_ICM
-    uint16          num = 0;    
 #if !defined(FEATURE_SMSTONETYPE_MID)
     byte sms_size = 1;
 #endif
     MSG_FATAL("OEMALERT_StartSMSAlert Start",0,0,0);
-    num = ICM_GetActiveCallIDs(pMe->m_pICM, 
-                               (AEECM_CALL_TYPE_VOICE | AEECM_CALL_TYPE_EMERGENCY), 
-                               (AEECM_CALL_STATE_ORIG | AEECM_CALL_STATE_INCOM | 
-                                AEECM_CALL_STATE_CONV | AEECM_CALL_STATE_ONHOLD | 
-                                AEECM_CALL_STATE_DORMANT),
-                               NULL, 
-                               0);
-
+    
     OEMALERT_GetRingerVol(pMe);
     //判断当前是不是来电响铃状态
-    if (num > 0)
-#else
-	AEETCalls po;
-#if !defined(FEATURE_SMSTONETYPE_MID)
-    byte sms_size = 1;
-#endif
-    MSG_FATAL("OEMALERT_StartSMSAlert Start",0,0,0);
-	if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
-	{
-		return ;
-	}
-
-
-    OEMALERT_GetRingerVol(pMe);
-    //判断当前是不是来电响铃状态
-    if (po.dwCount> 0)
-#endif
+    if (OEMALERT_InCall(pMe))
     {
         if(OEMSOUND_MUTE_VOL != pMe->m_ringCurVol)
         {
-//            OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
-//                                    SND_METHOD_VOICE,
-//                                    (int) SND_ABRV_ALERT,
-//                                    SND_PRIO_MED,
-//                                    SND_APATH_LOCAL,
-//                                    NULL);
+            IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON | ANNUN_STATE_BLINK);
+            IANNUNCIATOR_SetUnblinkTimer(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_OFF, 5000);
+            IBACKLIGHT_Enable(pMe->m_pBacklight);
+            OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
+                                    SND_METHOD_VOICE,
+                                    SND_ABRV_ALERT,
+                                    SND_PRIO_MED,
+                                    SND_APATH_LOCAL,
+                                    NULL);
             ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
         }
         return;

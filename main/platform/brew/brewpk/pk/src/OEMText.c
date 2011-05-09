@@ -1728,7 +1728,7 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
 	}
     // Press and hold the number key to get the number
 	#ifndef FEATURE_ALL_KEY_PAD
-    if ((eCode != EVT_KEY))
+    if ((eCode != EVT_KEY) && !(eCode == EVT_KEY_HELD && dwKeyCode == AVK_0))
        /* &&(!(key == AVK_STAR) && (eCode == EVT_KEY_RELEASE))
         &&(!(key == AVK_POUND) && (eCode == EVT_KEY_RELEASE)) //modi by yangdecai 2010-08-07
         &&(!((key == AVK_CLR) && (eCode == EVT_KEY_HELD)))*/
@@ -11288,8 +11288,27 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
    }
    else if(key == AVK_0)
    {
-   		TextCtl_NoSelection(pContext);
-   		TextCtl_AddChar(pContext,(AECHAR) ('0'));
+#ifdef FEATURE_OEMOMH
+        MSG_FATAL("KEY 0 bHold %d",(eCode == EVT_KEY_HELD)?TRUE:FALSE,0,0);
+        if(eCode == EVT_KEY_HELD)
+        {
+            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+            {
+                 /* Set selection to the character before the insertion point */
+                 --pContext->wSelStart;
+            }
+            
+            /* Insert a "NUL" to just delete and insert nothing */
+            TextCtl_AddChar(pContext, 0);
+            TextCtl_NoSelection(pContext);
+   		    TextCtl_AddChar(pContext,(AECHAR) ('+'));
+        }
+        else
+#endif
+        {
+   		    TextCtl_NoSelection(pContext);
+   		    TextCtl_AddChar(pContext,(AECHAR) ('0'));
+        }
    		return TRUE;
    }
    else

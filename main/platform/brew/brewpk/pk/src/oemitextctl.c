@@ -1202,7 +1202,8 @@ if ((!pme->m_pSoftKey) &&
 
                 }
                 return(TRUE);
-            }            
+            }
+            
             // See if we have the symbols showing...
             if ( pme->m_bShowNetSyms )
             {
@@ -1245,44 +1246,40 @@ if ((!pme->m_pSoftKey) &&
             else
             {
 #if defined (FEATURE_ALL_KEY_PAD)
-							if ((wParam == AVK_SYMBOL))/*&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))*/ //modi by yangdecai
+				if ((wParam == AVK_SYMBOL))/*&&((pme->m_nCurrInputMode == OEM_MODE_T9_PINYIN)||(pme->m_nCurrInputMode == OEM_MODE_T9_STROKE))*/ //modi by yangdecai
 #else
-				
-							 if ((wParam == AVK_STAR 
-			 #ifdef FEATURE_VERSION_C01
-			|| ((wParam == AVK_1) && (pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI) &&(!pme->m_bShowSyms))
-			 #endif
-							 )
+	
+				if ((wParam == AVK_STAR 
+#ifdef FEATURE_VERSION_C01
+                || ((wParam == AVK_1) && (pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI) &&(!pme->m_bShowSyms))
+#endif
+				)
 #ifdef  FEATURE_MYANMAR_INPUT_MOD
-							 &&b_isStar
+				&&b_isStar
 #endif
-								)
+                && (pme->m_dwProps & TP_STARKEY_SWITCH)
+			    )
 #endif
-							{
-								//(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
-								//return TRUE;
-				#ifdef FEATURE_VERSION_C01
-								if(wParam == AVK_1)
-								{
-									   pme->m_isAvk1 = TRUE;
-									   //pme->m_isSymbol = TRUE;
-								}
-								
-								else
-								{
-									pme->m_isAvk1 = FALSE;
-								}
-				#endif
-				
-								//Add By zzg 2010_08_14 防止重复载入SYMBOL输入法				
-								if (AEE_TM_SYMBOLS != CTextCtl_GetInputMode((ITextCtl *)pme, NULL))
-								{						
-									(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
-									return TRUE;
-								}
-								//Add End				 
-								
-							}
+				{
+#ifdef FEATURE_VERSION_C01
+					if(wParam == AVK_1)
+					{
+						pme->m_isAvk1 = TRUE;
+					}
+					else
+					{
+						pme->m_isAvk1 = FALSE;
+					}
+#endif
+					//Add By zzg 2010_08_14 防止重复载入SYMBOL输入法				
+					if (AEE_TM_SYMBOLS != CTextCtl_GetInputMode((ITextCtl *)pme, NULL)
+                        && (!(pme->m_dwProps & TP_NOSYMBOL)))
+					{						
+						(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
+						return TRUE;
+					}
+					//Add End
+				}
 /*
 #ifdef FEATURE_VERSION_C01
 
@@ -1650,7 +1647,8 @@ NormalKeyEvent:
 #ifdef  FEATURE_MYANMAR_INPUT_MOD
 			 &&b_isStar
 #endif
-				)
+             && (pme->m_dwProps & TP_STARKEY_SWITCH) 
+		    )
 #endif
             {
             	//(void)CTextCtl_SetInputMode((ITextCtl *)pme, AEE_TM_SYMBOLS);
