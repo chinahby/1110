@@ -130,9 +130,6 @@ typedef enum {
   DB_SLEEP_ACTIVE,         /* Is sleep occurring?                          */
   DB_ACQ_MODE,             /* Type of CDMA acquisition desired             */
   DB_13K_VOC_AVAILABLE,    /* Vocoder 13k availability flag                */
-  #ifdef CUST_EDITION  
-  DB_VOICE_PRIVACY,        /* Voice Privacy                                */
-  #endif /*CUST_EDITION*/
   DB_BS_P_REV,             /* Base Station's protocol revision level       */
   DB_VOICE_AS_DATA,        /* Answer next call as data                     */
   #ifdef FEATURE_GPSONE
