@@ -2173,36 +2173,6 @@ static boolean  CallApp_Dialer_Calling_DlgHandler(CCallApp *pMe,
 
         case EVT_DIALOG_START:
         {
-#ifdef FEATURE_ICM
-            byte/*AEECMPrivacyPref*/ privacy_pref = AEECM_PRIVACY_PREF_NONE;
-
-            //CallApp_Set_Db_In_Idle(TRUE);
-            
-            (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY,&privacy_pref,sizeof(byte));
-            CALL_ERR("privacy_pref = %d",privacy_pref,0,0);
-            if((AEECMPrivacyPref)privacy_pref == AEECM_PRIVACY_PREF_ENHANCED )
-            {
-                ICM_SetPrivacyPref(pMe->m_pICM,(AEECMPrivacyPref)privacy_pref);
-                //pMe->m_bIsPrivacy = TRUE;
-            }
-#else
-            byte/*AEECMPrivacyPref*/ privacy_pref = AEET_PRIVACY_PREF_NONE;
-
-            //CallApp_Set_Db_In_Idle(TRUE);
-            
-            (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_VOICEPRIVACY,&privacy_pref,sizeof(byte));
-            CALL_ERR("privacy_pref = %d",privacy_pref,0,0);
-            if((AEETPrivacyPref)privacy_pref == AEET_PRIVACY_PREF_ENHANCED )
-            {
-                IPHONECTL_SetVoicePrivacy(pMe->m_pIPhoneCtl,(AEETPrivacyPref)privacy_pref);
-                //pMe->m_bIsPrivacy = TRUE;
-            }
-#endif
-            //else if ((AEECMPrivacyPref)privacy_pref == AEECM_PRIVACY_PREF_STANDARD)
-            //{
-            //    pMe->m_bIsPrivacy =  FALSE;
-            //}
-            
             ISHELL_PostEvent(pMe->m_pShell, AEECLSID_DIALER, EVT_USER_REDRAW, 0,0);
 #ifdef FEATURE_SUPPORT_BT_APP
 #ifdef FEATURE_ICM

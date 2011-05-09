@@ -2927,11 +2927,8 @@ void OEM_RestoreFactorySetting( void )
    nvi.nitz_nw_info_mnc = nvi_cache.mnc = 0;
    (void) OEMNV_Put( NV_NITZ_NW_INFO_MNC_I, &nvi);
 #endif 
-#ifdef CUST_EDITION
-   nvi.voice_priv = 0;
-#else
-   nvi.voice_priv = VOICEPRIVACY_STD;
-#endif
+   
+   nvi.voice_priv = CM_PRIVACY_PREF_STANDARD;//VOICEPRIVACY_STD;
    (void) OEMNV_Put( NV_VOICE_PRIV_I, &nvi);
    nvi_cache.voice_priv = nvi.voice_priv;  
 #ifdef CUST_EDITION
@@ -3419,11 +3416,7 @@ void OEM_InitPreference(void)
   
 #endif 
   if( OEMNV_Get( NV_VOICE_PRIV_I, &nvi) != NV_DONE_S){
-#ifdef CUST_EDITION
-     nvi.voice_priv = 0;
-#else
-     nvi.voice_priv = VOICEPRIVACY_STD;
-#endif
+     nvi.voice_priv = CM_PRIVACY_PREF_STANDARD;//VOICEPRIVACY_STD;
     (void) OEMNV_Put( NV_VOICE_PRIV_I, &nvi);
   }
   nvi_cache.voice_priv = nvi.voice_priv;
@@ -7216,23 +7209,9 @@ static int OEMPriv_GetItem_CFGI_RFCAL_VERSION(void *pBuff)
 
 static int OEMPriv_GetItem_CFGI_DEBUG_ECIO(void *pBuff)
 {
-#if (defined (FEATURE_CDMA_800) || defined (FEATURE_CDMA_1900))&& defined(FEATURE_RF_ZIF)  
-#ifndef WIN32
- db_items_value_type dbi;
-
-  db_get(DB_CDMA_ECIO, &dbi); 
-    *(byte*)pBuff =  dbi.cdma_ecio;
-#ifdef FEATURE_OEM_DEBUG
-  MSG_ERROR("cdma_ecio = %d,%d", *(byte*)pBuff,dbi.cdma_ecio,0);
-#endif
-#endif
-   return SUCCESS;
-#else
    *(byte *)pBuff = (byte) 0;
    return EUNSUPPORTED;
-#endif
 }
-
 
 static int OEMPriv_GetItem_CFGI_RFCAL_DATE(void *pBuff)
 {

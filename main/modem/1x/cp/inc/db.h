@@ -116,14 +116,8 @@ typedef enum {
   DB_DAYLT,                /* Daylight savings time indicator              */
   DB_DMSS_STATE,           /* DMSS System State                            */
   DB_POWER,                /* Current mobile output power level            */
-#ifdef CUST_EDITION    
-  DB_PRIVACY_MODE,         /* Current privacy mode                         */
-#endif /*CUST_EDITION*/
   DB_RSSI,                 /* Current FM RSSI level                        */
   DB_CDMA_RSSI,            /* Current CDMA RSSI level                      */
-#ifdef CUST_EDITION  
-  DB_CDMA_ECIO,
-#endif /*CUST_EDITION*/
   DB_BATTERY_LEVEL,        /* Current Battery level                        */
   DB_TEMPERATURE,          /* Current Temperature                          */
   DB_RF_MODE,              /* Current RF mode (analog, CDMA, PCN)          */
@@ -145,16 +139,12 @@ typedef enum {
 #error code not present
 #endif /* FEATURE_GPSONE */
 #ifdef CUST_EDITION  
-  DB_LCD, 
 #ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
   DB_UIMINIT_MASK,         /* 卡上数据初始化掩码，由UI设置, UIM 负责清除   */
   DB_UIMSMSINIT,           /* 卡上短信是否初始化完毕                       */
   DB_UIMADDINIT,           /* 卡上电话本是否初始化完毕                     */
 #endif
-  DB_PWKCLEARED,           /* 开机按键是否清除                             */
-  DB_POWERONCHK,           /* 开机检查是否通过                             */
   DB_POWERUPTYPE,          /* 开机方式                                     */
-  DB_REFRESHING,
   DB_CAPTURE_WALLPER,
 #endif /*CUST_EDITION*/
   DB_LAST_ITEM             /* Internal Use Only                            */
@@ -172,15 +162,6 @@ typedef enum
     DB_POWERUP_BYRTCTIMER,
     DB_POWERUP_BYRESET
 } db_powerup_type;
-
-/*type for DB_LCD 
-only use LCM_TDT150T6G090_3 and LCM_BYD4305Y in cs01*/
- typedef enum 
- {
-       LCM_BYD4227P,
-       LCM_CT020TN06,              //176 x 220, TFT
-       other_lcd
- } db_lcd_type;
 #endif /*CUST_EDITION*/
 /*
 ** Type for DB_ROAM item
@@ -299,14 +280,8 @@ typedef union {
   boolean               daylt;
   db_dmss_state_type    dmss_state;
   byte                  power;
-#ifdef CUST_EDITION  
-  boolean               privacy_mode;
-#endif /*CUST_EDITION*/	  
   word                  rssi;
   word                  cdma_rssi;
-#ifdef CUST_EDITION    
-  byte                  cdma_ecio;
-#endif /*CUST_EDITION*/  
   word                  battery_level;
   word                  temperature;
   db_rf_mode_type       rf_mode;
@@ -319,16 +294,11 @@ typedef union {
   db_sleep_active_type  sleep_active;
   db_acq_mode_type      acq_mode;
   boolean               voc13k_available;
-#ifdef CUST_EDITION    
-  boolean               voice_privacy;
-#endif /*CUST_EDITION*/  
   byte                  bs_p_rev;
   db_voice_as_data_type voice_as_data;
-  db_lcd_type db_lcd;
-  
 #ifdef FEATURE_GPSONE
 #error code not present
-#endif /* FEATURE_GPSONE */
+#endif
 #ifdef CUST_EDITION  
 #ifdef FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
   byte                  db_uiminitmask;
@@ -336,14 +306,10 @@ typedef union {
   boolean               db_uimaddinited;
   boolean               db_uimsmsadd_init_done;
 #endif
-  boolean               db_pwkcleared;
-  boolean               db_poweronchk;
   db_powerup_type       db_poweruptype;
-  boolean               bRefreshing;
-  db_capture_type  b_capture;
+  db_capture_type       b_capture;
 #endif /*CUST_EDITION*/
 } db_items_value_type;
-
 
 #ifdef FEATURE_HTORPC_METACOMMENTS
 /*~ CASE DB_IN_USE            db_items_value_type.in_use */

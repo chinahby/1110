@@ -1739,13 +1739,7 @@ static NextFSMAction COREST_UTKREFRESH_Handler(CCoreApp *pMe)
                 MOVE_TO_STATE(COREST_POWEROFF)
                 return NFSMACTION_CONTINUE;
             }
-            else
-            {
-                db_items_value_type  db_value;
-                
-                db_value.bRefreshing = TRUE;
-                db_put(DB_REFRESHING, &db_value);
-            }
+            
             pMe->m_nMsgID = IDS_UTKREFRESH;
                 
             CoreApp_ShowDialog(pMe, IDD_UTKREFRESH);
@@ -1753,12 +1747,6 @@ static NextFSMAction COREST_UTKREFRESH_Handler(CCoreApp *pMe)
             
         case DLGRET_MSGOK:
         default:
-            {
-                db_items_value_type  db_value;
-                
-                db_value.bRefreshing = FALSE;
-                db_put(DB_REFRESHING, &db_value);
-            }
             MOVE_TO_STATE(COREST_STANDBY)
     }
     MSG_FATAL("COREST_UTKREFRESH_Handler End",0,0,0);

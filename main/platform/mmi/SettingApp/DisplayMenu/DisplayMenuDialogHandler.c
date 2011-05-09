@@ -406,7 +406,6 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-        {
 			//add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
@@ -418,27 +417,16 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
 #ifdef FEATURE_MENU_STYLE
-           IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_MENU_STYLE, IDS_MENU_STYLE, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_MENU_STYLE, IDS_MENU_STYLE, NULL, 0);
 #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_WALLPAPER_TITLE, IDS_WALLPAPER_TITLE, NULL, 0);
 #ifdef FEATURE_SCREEN_SAVE
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_SCREENSAVETIMEOUT, IDS_SCREENSAVETIMEOUT, NULL, 0);
 #endif
-            {
-                db_lcd_type lcdType;
-                db_items_value_type dbValue;
-                db_get( DB_LCD, &dbValue);
-
-                lcdType = dbValue.db_lcd;
-                {
-                    IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_BACKLIGHT_TITLE, IDS_BACKLIGHT_TITLE, NULL, 0);
-                }
-                IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_BACKLIGHTING_TITLE, IDS_BACKLIGHTING_TITLE, NULL, 0);
-                if( lcdType == LCM_BYD4227P)
-                {
-                    IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_TITLE, IDS_CONTRAST_TITLE, NULL, 0);
-                }
-            }
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_BACKLIGHT_TITLE, IDS_BACKLIGHT_TITLE, NULL, 0);
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_BACKLIGHTING_TITLE, IDS_BACKLIGHTING_TITLE, NULL, 0);
+            //IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CONTRAST_TITLE, IDS_CONTRAST_TITLE, NULL, 0);
+            
 #ifdef FEATURE_LED_CONTROL
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_LED_CONTROL, IDS_LED_CONTROL, NULL, 0);
 #endif
@@ -454,7 +442,6 @@ static boolean  HandleMainDialogEvent(CDisplayMenu *pMe,
 #ifdef FEATRUE_KEY_PAD_CTL
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_CLOSE_KEY_PAD, IDS_CLOSE_KEY_PAD, NULL, 0);
 #endif
-        }  
 #ifdef FEATURE_RANDOM_MENU_COLOR
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_COLORFUL_MENU_TITLE, IDS_COLORFUL_MENU_TITLE, NULL, 0);
 #endif
