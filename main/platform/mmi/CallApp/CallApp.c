@@ -1154,7 +1154,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 #ifdef FEATRUE_SET_IP_NUMBER
             pMe->m_b_ip_call[0] = 0;
 #endif
-
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, NULL);
             CallApp_SetupCallAudio(pMe);
             // ¿ªÊ¼CallApp×´Ì¬»ú
             
@@ -1381,7 +1381,8 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             pMe->m_pDisplay = as->pDisplay;
 
             ASSERT(pMe->m_pDisplay != NULL);
-
+            
+            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, NULL);
             (void) IDISPLAY_AddRef(pMe->m_pDisplay);
             //pMe->m_rc = as->rc;
             CallApp_SetupCallAudio(pMe);
