@@ -5020,8 +5020,7 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              0, 0, &rc, 
 	                              IDF_ALIGN_MIDDLE
 	                              | IDF_ALIGN_CENTER
-	                              | IDF_TEXT_TRANSPARENT);  
-        MSG_FATAL("str_lenth=%d, rc.x=%d", str_lenth, rc.x, 0);
+	                              | IDF_TEXT_TRANSPARENT); 
     }
 #elif defined FEATURE_DISP_220X176
 	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
