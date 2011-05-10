@@ -98,7 +98,7 @@
 		<Text> </Text>
 	</STRING>
 	<STRING Id="33" Name="AEE_IDS_MODE_SYMBOLS">
-		<Text> </Text>
+		<Text></Text>
 	</STRING>
 	<STRING Id="34" Name="AEE_IDS_SYMS">
 		<Text>-.&amp;'()_!?*#%":+&lt;&gt;=¿¡»«/\@,~{}$[]^;</Text>
