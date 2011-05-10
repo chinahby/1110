@@ -265,7 +265,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "Custsdcc.h"
 #endif
 
-#ifndef USES_DS_1536
+#if 0//ndef USES_DS_1536
 #ifdef FEATURE_DS_MOBILE_IP
    #undef FEATURE_DS_MOBILE_IP
 #endif

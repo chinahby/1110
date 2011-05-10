@@ -86,7 +86,6 @@ static byte OEMRUIM_bcd_to_ascii(byte num_digi, /* Number of dialing digits */
                                  byte *to_ptr   /* Convert to */);
 
 static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name);
-static void OEMRUIM_ExchangeByte(byte *Inputbuf,int size);
 static void OEMRUIM_Conversion_Uimdata_To_Spn(byte *Inputbuf,AECHAR *svc_p_name,int Endpoint);
 
 #ifdef FEATURE_OEMOMH 
@@ -497,44 +496,40 @@ static boolean OEMRUIM_CHVEnable(IRUIM *pMe, const char *pPin)
 boolean OEM_IsCDMASVCSupport(uim_cdma_svc_table_enum_type eType)
 {
 #ifdef FEATURE_OEMOMH 
-    extern gsdi_uim_omh_cap_type gsdi_uim_omh_cap;
-    if(gsdi_uim_omh_cap.omh_enabled)
+    byte uim_cdma_svc_table_buffer[UIM_CDMA_SVC_TABLE_SIZE];
+    uim_svc_table_return_type svc;            /* service allocated and activated*/
+	
+	MSG_FATAL("OEM_IsCDMASVCSupport %d",eType,0,0);
+    gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
+    gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+    gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
+    gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+    gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+    gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
+    gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report;
+
+    gUimCmd.access_uim.item      = UIM_CDMA_CDMA_SVC_TABLE;
+    gUimCmd.access_uim.access    = UIM_READ_F;
+    gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+    gUimCmd.access_uim.num_bytes = UIM_CDMA_SVC_TABLE_SIZE;
+    gUimCmd.access_uim.offset    = 0;
+    gUimCmd.access_uim.data_ptr  = uim_cdma_svc_table_buffer;
+
+    // From nvruim_access():  Access an EF, do not signal any task, use no
+    // signal, no done queue, use a callback, always report status.
+
+    // Send the command to the R-UIM:
+    OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
+    
+    if ((gCallBack.rpt_type == UIM_ACCESS_R) &&
+        (gCallBack.rpt_status == UIM_PASS))
     {
-        byte uim_cdma_svc_table_buffer[UIM_CDMA_SVC_TABLE_SIZE];
-        uim_svc_table_return_type svc;            /* service allocated and activated*/
-    	
-    	MSG_FATAL("OEM_IsCDMASVCSupport %d",eType,0,0);
-        gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
-        gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
-        gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
-        gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
-        gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
-        gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
-        gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report;
-
-        gUimCmd.access_uim.item      = UIM_CDMA_CDMA_SVC_TABLE;
-        gUimCmd.access_uim.access    = UIM_READ_F;
-        gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
-        gUimCmd.access_uim.num_bytes = UIM_CDMA_SVC_TABLE_SIZE;
-        gUimCmd.access_uim.offset    = 0;
-        gUimCmd.access_uim.data_ptr  = uim_cdma_svc_table_buffer;
-
-        // From nvruim_access():  Access an EF, do not signal any task, use no
-        // signal, no done queue, use a callback, always report status.
-
-        // Send the command to the R-UIM:
-        OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
-        
-        if ((gCallBack.rpt_type == UIM_ACCESS_R) &&
-            (gCallBack.rpt_status == UIM_PASS))
+        /* Check to see if UIM is Pro-Active */
+        svc = uim_return_cdma_svc_availabililty ( eType, uim_cdma_svc_table_buffer);
+        MSG_FATAL("OEM_IsCDMASVCSupport %d %d",svc.allocated,svc.activated,0);
+        if(!svc.allocated || !svc.activated)
         {
-            /* Check to see if UIM is Pro-Active */
-            svc = uim_return_cdma_svc_availabililty ( eType, uim_cdma_svc_table_buffer);
-            MSG_FATAL("OEM_IsCDMASVCSupport %d %d",svc.allocated,svc.activated,0);
-            if(!svc.allocated || !svc.activated)
-            {
-                return FALSE;
-            }
+            return FALSE;
         }
     }
 #endif
@@ -898,24 +893,31 @@ static void OEMRUIM_Conversion_Uimdata_To_WStr(byte *Inputbuf, int nInputSize, b
 static int OEMRUIM_Get_Ecc_Code(IRUIM *pMe,byte *pOutBuf,int *pnNum, int step)
 {
     int i;
-    int status = EFAILED;
     DBGPRINTF("OEMRUIM_Get_Ecc_Code start");
     if ((!pMe) || (!pOutBuf))
     {
         return EFAILED;
     }
+    
     // Check to see if the card is connected.
     if (!IRUIM_IsCardConnected (pMe))
     {
         return EFAILED;
     }
-
+    
     if(!gbECCInited)
     {
         byte pData[RUIM_ECC_NUMBER*RUIM_ECC_BCDSIZE];
         int  nDataSize = RUIM_ECC_NUMBER*RUIM_ECC_BCDSIZE;
         byte *pBuf = pData;
         byte nLen;
+        
+        if(rex_self() != &ui_tcb)
+        {
+            return EFAILED;
+        }
+        
+        gbECCInited = TRUE;
         
         gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
         gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
@@ -942,12 +944,9 @@ static int OEMRUIM_Get_Ecc_Code(IRUIM *pMe,byte *pOutBuf,int *pnNum, int step)
             || (gCallBack.rpt_status != UIM_PASS)
             )
         {
-            MSG_FATAL("OEMRUIM_Get_Ecc_Code EFAILED", 0, 0 ,0);
-            status = EFAILED;
+            MSG_FATAL("OEMRUIM_Get_Ecc_Code EFAILED %d %d", gCallBack.rpt_type, gCallBack.rpt_status ,0);
             return EFAILED;
         }
-
-        gbECCInited = TRUE;
         
         nDataSize = MIN(nDataSize, gUimCmd.access_uim.num_bytes_rsp);
         MSG_FATAL("OEMRUIM_Get_Ecc_Code pnDataSize=%d", nDataSize, 0 ,0);
@@ -1028,7 +1027,6 @@ static int OEMRUIM_Get_AppLabels_Code(IRUIM *pMe,int nId, AECHAR *Buf)
             )
         {
             MSG_FATAL("OEMRUIM_Get_AppLabels_Code EFAILED", 0, 0 ,0);
-            status = EFAILED;
             return EFAILED;
         }
         
@@ -1213,7 +1211,6 @@ static int OEMRUIM_Get_Feature_Code(IRUIM *pMe,byte *Buf,int  Lable)
 {
     byte pData[UIM_CDMA_FEATURE_CODE_SIZE+2];
     int pnDataSize = UIM_CDMA_FEATURE_CODE_SIZE;
-    int status = EFAILED;
     MSG_FATAL("OEMRUIM_Get_Feature_Code Start",0,0,0);
     if ((!pMe) || (!Buf))
     {
@@ -1249,7 +1246,6 @@ static int OEMRUIM_Get_Feature_Code(IRUIM *pMe,byte *Buf,int  Lable)
         || (gCallBack.rpt_status != UIM_PASS)
         )
     {
-        status = EFAILED;
         return EFAILED;
     }
 
@@ -1262,7 +1258,7 @@ static int OEMRUIM_Get_Feature_Code(IRUIM *pMe,byte *Buf,int  Lable)
         Buf[UIM_CDMA_FEATURE_CODE_NUM_DIGI]='\0';
     }
     MSG_FATAL("OEMRUIM_Get_Feature_Code %s End",Buf,0,0);
-    return status;
+    return SUCCESS;
 }
 
 static byte OEMRUIM_bcd_to_ascii(byte num_digi, /* Number of dialing digits */

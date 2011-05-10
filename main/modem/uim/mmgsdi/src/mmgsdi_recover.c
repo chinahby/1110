@@ -214,6 +214,10 @@ static mmgsdi_return_enum_type mmgsdi_store_esn_synch(
   // UIM Task的状态，而UIM要从Recovery状态恢复还必须等MMGSDI的通知，这样形成了信号
   // 死锁
   nv_return_staus = tmc_get_stored_meid_me((qword *)&meid_nv_data);
+  if(nv_return_staus != NV_DONE_S)
+  {
+    nv_return_staus = gsdi_get_nv(NV_MEID_ME_I, (nv_item_type *) &meid_nv_data);
+  }
 #else
   nv_return_staus = gsdi_get_nv(NV_MEID_ME_I, (nv_item_type *) &meid_nv_data);
 #endif

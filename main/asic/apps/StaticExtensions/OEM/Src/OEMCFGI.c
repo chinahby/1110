@@ -10199,13 +10199,8 @@ static int OEMPriv_SetItem_CFGI_INPUTMODE(void *pBuff)
 boolean OEM_IsEmergency_Number(char *pNumber,int len)
 {
     boolean is_emergency = FALSE;
-    int i =0;
-    //DBGPRINTF("%s OEM_IsEmergency_Number",pNumber);
-    if(oemi_cache.emerg_table.emert_size == 0)
-    {
-        //DBGPRINTF("emerg_table size is 0");
-        return FALSE;
-    }
+    int i;
+    
     MSG_FATAL("OEM_IsEmergency_Number Start",0,0,0);
     if(pNumber)
     {
@@ -10224,7 +10219,7 @@ boolean OEM_IsEmergency_Number(char *pNumber,int len)
         { 
         	IRUIM        *pIRUIM;
             IShell *pIShell = AEE_GetShell();
-            MSG_FATAL("OEM_IsEmergency_Number 1111",0,0,0);         
+            MSG_FATAL("OEM_IsEmergency_Number %s",pNumber,0,0);
             if(NULL == pIShell)
             {
                 return is_emergency;
