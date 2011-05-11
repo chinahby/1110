@@ -3632,7 +3632,7 @@ wms_cmd_err_e_type wms_msg_do_write
           (msg_ptr->msg_hdr.tag == WMS_TAG_RESERVE) ||
           (msg_ptr->msg_hdr.tag == WMS_TAG_RSVFAILED))
       {// 此类消息不允许写入卡
-        MSG_ERROR("Invalid Tag %d in wms_msg_do_write", msg_ptr->msg_hdr.tag, 0, 0);
+        MSG_FATAL("Invalid Tag %d in wms_msg_do_write", msg_ptr->msg_hdr.tag, 0, 0);
         return WMS_CMD_ERR_MSG_TAG;
       }
 #endif /*CUST_EDITION*/
@@ -3754,25 +3754,12 @@ wms_cmd_err_e_type wms_msg_do_write
 	          {
 #ifdef CUST_EDITION
 #if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
-#ifdef FEATURE_OEMOMH
-                  MSG_FATAL("Notify Client %d",cdma_tl.teleservice,0,0);
-                  if(cdma_tl.teleservice != WMS_TELESERVICE_CATPT)
-                  {
-                  /* Add new Message Information Cache */
-	              wms_cfg_update_msg_info_cache(msg_ptr->msg_hdr.tag,
-	                                  WMS_MEMORY_STORE_RUIM,
-	                                  i,
-	                                  ruim_data,
-	                                  (uint8)cfg_s_ptr->ruim_sms_rec_len);
-                  }
-#else
 	              /* Add new Message Information Cache */
 	              wms_cfg_update_msg_info_cache(msg_ptr->msg_hdr.tag,
 	                                  WMS_MEMORY_STORE_RUIM,
 	                                  i,
 	                                  ruim_data,
 	                                  (uint8)cfg_s_ptr->ruim_sms_rec_len);
-#endif
 #endif            
 #endif // #ifdef CUST_EDITION
 	            /* RUIM write was successful, update message list
@@ -4097,7 +4084,7 @@ void wms_msg_write_proc
   {
     cmd_err = WMS_CMD_ERR_MSG_TAG;
     wms_client_cmd_status( cmd_ptr, cmd_err );
-    MSG_ERROR("Invalid Tag %d in wms_msg_write_proc", cmd_ptr->cmd.msg_write.message.msg_hdr.tag, 0, 0);
+    MSG_FATAL("Invalid Tag %d in wms_msg_write_proc", cmd_ptr->cmd.msg_write.message.msg_hdr.tag, 0, 0);
     return;
   }
 
@@ -6992,7 +6979,13 @@ wms_status_e_type wms_msg_cdma_deliver
       ** The Ack will be sent after this function is called.
       */
       cmd_err = wms_msg_do_write( write_mode, msg_ptr );
-      MSG_HIGH("Writing msg result: %d", cmd_err,0,0);
+      MSG_FATAL("Writing msg result: %d %d", cmd_err,cdma_tl.teleservice,0);
+#ifdef FEATURE_OEMOMH
+      if( cdma_tl.teleservice == WMS_TELESERVICE_CATPT)
+      {
+        routing_ptr->route = WMS_ROUTE_DISCARD; // 不发送通知
+      }
+#endif
       break;
 
     default:
