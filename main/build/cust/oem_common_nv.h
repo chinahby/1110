@@ -124,7 +124,11 @@
 #define OEMNV_VOICEMAIL_NUMBER                      L"0"                         //NV_SMS_VM_NUMBER_I  
 #endif
 //Others
-#define OEMNV_PHONE_PASSWORD                        10670                       //CFGI_PHONE_PASSWORD       
+#if defined(FEATURE_VERSION_W515V3)
+#define OEMNV_PHONE_PASSWORD                        11005                       //CFGI_PHONE_PASSWORD
+#else
+#define OEMNV_PHONE_PASSWORD                        10670                    //10670                       //CFGI_PHONE_PASSWORD
+#endif
 #if defined(FEATURE_LANG_DEFAULT_ENGLISH)
 #define OEMNV_LANGUAGE_DEFULT                       NV_LANGUAGE_ENGLISH         //NV_LANGUAGE_SELECTION_I
 #elif defined(FEATURE_LANG_CHINESE)
