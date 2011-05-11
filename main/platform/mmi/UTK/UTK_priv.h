@@ -216,6 +216,7 @@ typedef struct _CUTK
     UTKState   m_eMsgRetState;
     uint32     m_MsgTimeout;
     uint16     m_wMsgID;        // message resource ID
+    uint16     m_wTitleIndex;
     IPhone     *m_pIPhone;      // Phone interface   
     AECHAR     *m_wszInputText;
     int        m_TextMaxLen;
@@ -223,7 +224,7 @@ typedef struct _CUTK
     byte       m_TextQS;  // Command Qualifier  
     uint16     m_PlaytoneMsgID; 
     byte       m_PlaytoneToneID;
-    
+    boolean    m_bSendingSMSBG;
     IWMS       *m_pwms;  
     wms_client_id_type m_clientId;  
     AEECallback m_callback;  // ÃüÁî»Øµ÷

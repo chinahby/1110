@@ -3399,84 +3399,83 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				    int ret = 0;
 				    if(!OEMKeyguard_IsEnabled())
                     {
-				    #ifdef FEATURE_USES_BLACKBERRY
-				    ret = CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
-				    #else
+    				    #ifdef FEATURE_USES_BLACKBERRY
+    				    ret = CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+    				    #else
 #if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR) ||defined( FEATURE_VERSION_W515V3)
-					if(!pMe->m_iskeypadtime)
-					{
-						
-						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
-						AEE_CancelTimer(CoreApp_keypadtimer,pMe);
-						AEE_SetTimer(2*1000,CoreApp_keypadtimer,pMe);
-						//ISHELL_SetTimer(pMe->a.m_pIShell,2*1000,CoreApp_keypadtimer,pMe);
-						pMe->m_iskeypadtime = TRUE;
-					}
+    					if(!pMe->m_iskeypadtime)
+    					{
+    						
+    						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
+    						AEE_CancelTimer(CoreApp_keypadtimer,pMe);
+    						AEE_SetTimer(2*1000,CoreApp_keypadtimer,pMe);
+    						//ISHELL_SetTimer(pMe->a.m_pIShell,2*1000,CoreApp_keypadtimer,pMe);
+    						pMe->m_iskeypadtime = TRUE;
+    					}
 #else
 #if defined	(FEATURE_VERSION_FLEXI203) 
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP				
 #if defined (FEATURE_NASRANI)
-    			    OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
-                    ret=  CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
+        			    OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_NASRANI);
+                        ret=  CoreApp_LaunchApplet(pMe, AEECLSID_NASRANI);
 #elif defined  (FEATURE_GURU)
-                    OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
-                    ret=  CoreApp_LaunchApplet(pMe, AEECLSID_FLEXIGURU);
+                        OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
+                        ret=  CoreApp_LaunchApplet(pMe, AEECLSID_FLEXIGURU);
 #elif defined (FEATURE_FMN2010)
-			        OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
-                    ret=  CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
+    			        OEM_SetBAM_ADSAccount(STATIC_BREW_APP_FLEXI_MUSLIM);
+                        ret=  CoreApp_LaunchApplet(pMe, AEECLSID_MUSLIM);
 #elif defined (FEATURE_FPT005)
-			        ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+    			        ret= CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 #else
-			        ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+    			        ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif /*FEATURE_NASRANI*/
 #else
-                    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+                        ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_IVIO203)||defined (FEATURE_VERSION_C500BE)
-				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+    				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #elif defined (FEATURE_VERSION_FLEXI203P)
-				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_STATIC_APP);
+    				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_STATIC_APP);
 #elif defined (FEATURE_VERSION_SMART)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
-				    OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
-				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+    				    OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+    				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
-				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+    				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif /*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_M8021)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
-				    OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
-				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+    				    OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+    				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
-				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+    				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_M8)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
-				    OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
-				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
+    				    OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+    				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK);
 #else
-				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+    				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_M8P)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP	
-				    OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
-				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK_HITZ233C);
+    				    OEM_SetBAM_ADSAccount(STATIC_BREW_APP_SMARTFREN_FACEBOOK);
+    				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_SMARTFREN_FACEBOOK_HITZ233C);
 #else
-				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+    				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
 #elif defined (FEATURE_VERSION_HITZ181)
-				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+    				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
-                    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+                        ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif				    
 #endif
 #endif
-return ret;
-
-}
+                        return ret;
+                    }
 				    break;
                 }
-
+                
                 case AVK_INFO:
 					{
 #ifdef FEATURE_USES_BLACKBERRY

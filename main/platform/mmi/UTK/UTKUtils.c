@@ -1367,7 +1367,7 @@ int UTK_ProcessSendCDMASMSCmd(CUTK *pMe,
     command_describe  cmd_des;
     boolean           bNeedPacking = FALSE;
     
-    if ((NULL == pMe) || (NULL == wszAlpha) || (NULL == pCltMsg))
+    if ((NULL == pMe) || (NULL == wszAlpha))
     {
         return EFAILED;
     }
@@ -1459,6 +1459,8 @@ int UTK_ProcessSendCDMASMSCmd(CUTK *pMe,
                     nValLen = pdata[pos];
                     pos++;
                 }
+                
+                if(pCltMsg)
                 {
                     wms_status_e_type st;
                     int i;
@@ -1486,8 +1488,9 @@ int UTK_ProcessSendCDMASMSCmd(CUTK *pMe,
                         }
                     }
                     wms_ts_convert_tl2cl(&cdma_tl, &client_message.u.cdma_message);
-                    
+
                     *pCltMsg = &client_message;
+                    
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
                     // 检查消息是否是注册信息，若是，按联通要求不发送
                     if (cdma_tl.mask & WMS_MASK_TL_BEARER_DATA)

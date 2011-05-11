@@ -701,6 +701,7 @@ static boolean UTK_HandleEvent(IUTK *pi,
         case EVT_RUIM_PROACTIVE:
             old_cmd_type = pMe->cmd_type;
             pMe->cmd_type = (uim_tk_proactive_cmd_enum_type)wParam;
+            DBGPRINTF("EVT_RUIM_PROACTIVE cmd %d",pMe->cmd_type);
             switch (pMe->cmd_type)
             {
                 case UIM_TK_REFRESH:
@@ -959,9 +960,43 @@ static boolean UTK_HandleEvent(IUTK *pi,
                     break;
                 
                 case UIM_TK_CDMA_SEND_SHORT_MSG:
-                    ERR("UIM_TK_CDMA_SEND_SHORT_MSG",0,0,0);
+                {
+#ifdef FEATURE_OEMOMH
+                    AECHAR   wszInfo[64]={0};
+                    wms_client_message_s_type * pCltMsg = NULL;
+
+                    if(pMe->m_bSendingSMSBG)
+                    {
+                        UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_TERMINAL_CURRENTLY_UNABLE_TO_PROCESS_COMMAND);
+                        return TRUE;
+                    }
+                    
+                    UTK_ProcessSendCDMASMSCmd(pMe, &pCltMsg, wszInfo, 64);
+                    if(WSTRLEN(wszInfo) == 0)
+                    {
+                        int nRet;
+                        MSG_FATAL("UTK: IWMS_MsgSend %d", pMe->m_clientId, 0, 0);
+                        nRet = IWMS_MsgSend(pMe->m_pwms, 
+                                            pMe->m_clientId, 
+                                            &pMe->m_callback,
+                                            (void*)pMe,
+                                            WMS_SEND_MODE_CLIENT_MESSAGE,
+                                            pCltMsg);
+                                            
+                        if (nRet != SUCCESS)
+                        {
+                            UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_NETWORK_CURRENTLY_UNABLE_TO_PROCESS_COMMAND);
+                        }
+                        else
+                        {
+                            pMe->m_bSendingSMSBG = TRUE;
+                        }
+                    }
+                    else
+#endif
                     eTempState = UTKST_SENDMSG;
                     break;
+                }
                 
                 case UIM_TK_PROVIDE_LOCAL_INFO: 
                     UTK_GiveResponse(pMe, pMe->cmd_type, TRUE, UIM_TK_CMD_PERFORMED_SUCCESSFULLY);  
@@ -1002,6 +1037,33 @@ static boolean UTK_HandleEvent(IUTK *pi,
             return TRUE;
             
         case EVT_WMS_CMD_STATUS:
+#ifdef FEATURE_OEMOMH
+            if(pMe->m_bSendingSMSBG)
+            {
+                wmsutk_cmd_status_type  *pStatus = (wmsutk_cmd_status_type *)dwParam;
+                
+                if (NULL == pStatus)
+                {
+                    return TRUE;
+                }
+                
+                MSG_FATAL("UTK: EVT_WMS_CMD_STATUS %d %d", pStatus->cmd, pStatus->cmd_err, 0);
+                switch (pStatus->cmd)
+                {
+                    case WMS_CMD_MSG_SEND:
+                        if (WMS_CMD_ERR_NONE != pStatus->cmd_err)
+                        {// ·¢ËÍÏûÏ¢Ê§°Ü
+                            UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_NETWORK_CURRENTLY_UNABLE_TO_PROCESS_COMMAND);
+                            pMe->m_bSendingSMSBG = FALSE;
+                        }
+                        break;
+                    
+                    default:
+                        break;
+                }
+            }
+            else
+#endif
             (void)UTK_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             FREEIF(dwParam);
 
@@ -1533,7 +1595,21 @@ void UTK_ProcessStatus(CUTK *pMe, wms_submit_report_info_s_type *pRptInfo)
     }
     
     ERR("pRptInfo->report_status = %d", pRptInfo->report_status, 0, 0);
-    
+#ifdef FEATURE_OEMOMH
+    if(pMe->m_bSendingSMSBG)
+    {
+        pMe->m_bSendingSMSBG = FALSE;
+        if (pMe->m_SendStatus == WMS_RPT_OK)
+        {
+            UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_CMD_PERFORMED_SUCCESSFULLY);
+        }
+        else
+        {
+            UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_NETWORK_CURRENTLY_UNABLE_TO_PROCESS_COMMAND);
+        }
+        return;
+    }
+#endif
     if ((pMe->m_pActiveDlgID == IDD_SENDMSG_DIALOG) &&
         (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_APP_UTK))
     {
