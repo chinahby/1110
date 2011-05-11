@@ -3754,12 +3754,25 @@ wms_cmd_err_e_type wms_msg_do_write
 	          {
 #ifdef CUST_EDITION
 #if defined(FEATURE_CDSMS_CACHE) || defined(FEATURE_CDSMS_CACHE_USELIST)
+#ifdef FEATURE_OEMOMH
+                  MSG_FATAL("Notify Client %d",cdma_tl.teleservice,0,0);
+                  if(cdma_tl.teleservice != WMS_TELESERVICE_CATPT)
+                  {
+                  /* Add new Message Information Cache */
+	              wms_cfg_update_msg_info_cache(msg_ptr->msg_hdr.tag,
+	                                  WMS_MEMORY_STORE_RUIM,
+	                                  i,
+	                                  ruim_data,
+	                                  (uint8)cfg_s_ptr->ruim_sms_rec_len);
+                  }
+#else
 	              /* Add new Message Information Cache */
 	              wms_cfg_update_msg_info_cache(msg_ptr->msg_hdr.tag,
 	                                  WMS_MEMORY_STORE_RUIM,
 	                                  i,
 	                                  ruim_data,
 	                                  (uint8)cfg_s_ptr->ruim_sms_rec_len);
+#endif
 #endif            
 #endif // #ifdef CUST_EDITION
 	            /* RUIM write was successful, update message list
@@ -6666,10 +6679,10 @@ wms_status_e_type wms_msg_cdma_deliver
   }
 #endif
 #endif //#ifdef CUST_EDITION
-#ifdef FEATURE_CCAT
+#ifdef CUST_EDITION//def FEATURE_CCAT
   if( cdma_tl.teleservice == WMS_TELESERVICE_CATPT)
   {
-#ifdef FEATURE_GSTK
+#ifdef CUST_EDITION//def FEATURE_CCAT
     /* Check if service is allocated and activated */
     if(gstk_is_sms_pp_supported() && (nv_rtre_control() == NV_RTRE_CONTROL_USE_RUIM))
     {
@@ -6704,6 +6717,7 @@ wms_status_e_type wms_msg_cdma_deliver
   }
 #endif /* FEATURE_CCAT */
 
+#ifndef CUST_EDITION
 #ifdef FEATURE_UIM_TOOLKIT_UTK
   /* The routing for UTK messages should be changed to TRANSFER_ONLY,
   ** so that the application needs to ack it later.
@@ -6728,7 +6742,7 @@ wms_status_e_type wms_msg_cdma_deliver
     if( cdma_tl.cl_bd.download_mode == WMS_DOWNLOAD_MODE_PP_VAS ||
         cdma_tl.cl_bd.download_mode == WMS_DOWNLOAD_MODE_PP_PRL )
     {
-#if 0//Gemsea Modify For SMS-DOWNLOAD ndef FEATURE_GSTK
+#ifndef FEATURE_GSTK
       /* The UI client will send down the envelope command to the card */
       routing_ptr->route     = WMS_ROUTE_TRANSFER_ONLY;
       routing_ptr->mem_store = WMS_MEMORY_STORE_NONE;
@@ -6779,6 +6793,7 @@ wms_status_e_type wms_msg_cdma_deliver
   }
   else
 #endif /* FEATURE_UIM_TOOLKIT_UTK */
+#endif //#ifndef CUST_EDITION
 
 #ifdef FEATURE_GSM1x
 #error code not present
