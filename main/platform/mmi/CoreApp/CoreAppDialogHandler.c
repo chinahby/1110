@@ -3467,7 +3467,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #elif defined (FEATURE_VERSION_HITZ181)
 				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
-#endif				 //   ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+                    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+#endif				    
 #endif
 #endif
 return ret;
