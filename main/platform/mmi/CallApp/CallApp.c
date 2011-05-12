@@ -754,6 +754,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
                                              NMASK_CM_VOICE_CALL
                                              | NMASK_CM_OTHER_CALL
                                              | NMASK_CM_TEST_CALL
+                                             | NMASK_CM_DATA_CALL
                                              ))
     {
         return EFAILED;
@@ -763,8 +764,9 @@ static int CallApp_InitAppData(CCallApp *pMe)
                                              AEECLSID_DIALER,
                                              AEECLSID_PHONENOTIFIER,
                                              AEET_NMASK_VOICE_CALL
-                                             |AEET_NMASK_OTHER_CALL
+                                             | AEET_NMASK_OTHER_CALL
                                              | AEET_NMASK_TEST_CALL
+                                             | AEET_NMASK_DATA_CALL
                                              ))
     {
         return EFAILED;
@@ -1866,37 +1868,21 @@ static boolean CallApp_Notify(void *pUser, AEEEvent eCode,
                 case NMASK_CM_VOICE_CALL:
                 case NMASK_CM_TEST_CALL:
                 case NMASK_CM_OTHER_CALL:
+#ifdef FEATURE_OEMOMH
+                case NMASK_CM_DATA_CALL:
+#endif
 #else
                 case AEET_NMASK_VOICE_CALL:
                 case AEET_NMASK_TEST_CALL:
                 case AEET_NMASK_OTHER_CALL:
+#ifdef FEATURE_OEMOMH
+                case AEET_NMASK_DATA_CALL:
+#endif
 #endif
                     //CALL_ERR("NMASK_CM_VOICE_CALL %x",EventInfo->event,0,0);
                     CallApp_Handle_Call_StateChange(pMe, EventInfo);
                     return TRUE;
-#if 1  /*move process DATA CALL in CallApp_Handle_Call_StateChange*/
-#ifdef FEATURE_ICM
-                case NMASK_CM_DATA_CALL:
-#else
-                case AEET_NMASK_DATA_CALL:
-#endif
-                    CALL_ERR("NMASK_CM_DATA_CALL %x",EventInfo->event,0,0);
-                    clsid =  ISHELL_ActiveApplet(pMe->m_pShell);
-
-                    if (clsid!=AEECLSID_CORE_APP && clsid!=AEECLSID_DIALER/*AEECLSID_CALL*/)//how to use?
-                    {
-                        return FALSE;
-                    }
-#ifdef FEATURE_ICM
-                    if((EventInfo->event == AEECM_EVENT_CALL_END)&&(pMe->m_makeCallAfterOTAPA == TRUE))
-#else
-                    if((EventInfo->event == AEET_EVENT_CALL_END)&&(pMe->m_makeCallAfterOTAPA == TRUE))
-#endif
-                    {
-                        CallApp_MakeCall(pMe);
-                    }
-                    return TRUE;
-#endif
+                    
                 //case NMASK_CM_PHONE:
                 //    CALL_ERR("NMASK_CM_PHONE %x",EventInfo->event,0,0);
                 //    if (pMe->idle_info.inLPM)
@@ -2368,8 +2354,7 @@ static void CallApp_Handle_Call_StateChange(CCallApp *pMe,
 #endif
             //CALL_ERR("AEECM_CALL_TYPE_CS_DATA",0,0,0);
             CallApp_ProcessCallStateDATA(pMe, p_Call_Info, &newState);
-            //else fallthrough
-            /*lint -fallthrough*/
+            break;
 #endif
 #ifdef FEATURE_ICM
         case AEECM_CALL_TYPE_TEST:
@@ -2536,29 +2521,25 @@ static void CallApp_Handle_Call_StateChange(CCallApp *pMe,
             {
                 int ret;
                 CALL_ERR("StartIncomingCall: %d,%d,%d",  newState,pMe->m_eCurState,pMe->m_nStartCallType);
-#ifdef FEATURE_ICM
-                if (p_cm_call_info->call_type == AEECM_CALL_TYPE_CS_DATA)
-#else
-                if (p_cm_call_info->call_type == AEET_CALL_TYPE_CS_DATA)
-#endif
-                {
-                    pMe->m_nStartCallType = START_DATA_CALLING;
-                }
 
-                else if (newState == STATE_ENDCALL)
+                if (newState == STATE_ENDCALL)
                 {
                     pMe->m_nStartCallType = START_END_CALL;
                 }
-
                 else if(newState == STATE_CALLING)/*add for dial form QXDM*/
                 {
                     pMe->m_nStartCallType = START_WITH_ARGS;
                 }
-                
                 else if (newState == STATE_INCOMINGCALL)
                 {
                     pMe->m_nStartCallType = START_INCOMING_CALL;
                 }
+#ifdef FEATURE_OEMOMH
+                else if(newState == STATE_NONOMH)
+                {
+                    pMe->m_nStartCallType = START_NONOMH;
+                }
+#endif
                 //in some case ,if we press end key in incoming dialog,dialer app been stop,in AEECM_EVENT_CALL_END,we may set new state to STATE_MISSEDCALL,in this case ,we return
                 else
                 {

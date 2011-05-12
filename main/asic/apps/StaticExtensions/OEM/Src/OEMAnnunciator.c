@@ -92,7 +92,6 @@ typedef struct IANNUNCore
    boolean         m_hasTitleText;
    uint16          m_Title[ANN_TEXT_MAX_LEN+1];
    boolean         m_btoolen;
-   boolean         m_bForceRedraw;
 }IANNUNCore;
 
 struct IAnnunciator
@@ -1618,7 +1617,6 @@ int OEMAnnunciator_New(IShell *piShell, AEECLSID clsid, void **pp)
     return EFAILED;
   }
   pMe->m_pac = AEE_GetAppContext();
-  pMe->m_coreObj->m_bForceRedraw = TRUE;
   
     CALLBACK_Init(&pMe->m_cbSysObj, OEM_FreeAnnunciator, pMe);
     AEE_LinkSysObject(&pMe->m_cbSysObj);
@@ -2360,16 +2358,13 @@ static int IAnnunciator_EnableAnnunciatorBar(IAnnunciator * pMe, AEECLSID clsid,
      default:
         return ECLASSNOTSUPPORT;
   }
-
-  if(bOn != bLastState || pMe->m_coreObj->m_bForceRedraw)
+#ifndef FEATURE_OEMOMH
+  if(bOn != bLastState)
+#endif
   {
 #if 0//def FEATURE_MDP
 #error code not present
 #endif /* FEATURE_MDP */
-     if(pMe->m_coreObj->m_bForceRedraw)
-     {
-        pMe->m_coreObj->m_bForceRedraw = FALSE;
-     }
      
      if(bOn)
      {

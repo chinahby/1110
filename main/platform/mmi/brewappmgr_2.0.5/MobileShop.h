@@ -156,6 +156,7 @@ struct _MShop
 #ifdef CUST_EDITION
    uint16            m_menuSelItem[4];             // hou.chunfeng adds it @07.11.12
    AEERect           m_backupSoftkeyRect;            // hou.chunfeng adds it @07.11.12
+   DownloadStatus    m_CurrStatus;
 #endif
 };
 

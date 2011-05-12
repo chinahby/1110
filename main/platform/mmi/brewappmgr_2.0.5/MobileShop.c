@@ -225,6 +225,12 @@ static void MShop_Free(MShop * pme)
 
    // Free Logo
    FreeObj((void **)&pme->m_pMShopLogo);
+#ifdef CUST_EDITION
+   if(pme->m_CurrStatus.pszText)
+   {
+      FREE(pme->m_CurrStatus.pszText);
+   }
+#endif
 }
 
 /*===========================================================================
@@ -342,6 +348,9 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
       case EVT_APP_START:
       {
          AEEAppStart * pStartArgs = (AEEAppStart*)dwParam;
+#ifdef CUST_EDITION
+         IDISPLAY_ClearScreen(pme->a.m_pIDisplay);
+#endif
          if (pStartArgs && !pStartArgs->pszArgs)
             return FALSE;
          return TRUE;
@@ -483,6 +492,24 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
       // Key Events
       case EVT_KEY:
          return MShop_ProcessKeyEvent(pme, wParam, dwParam); 
+#ifdef CUST_EDITION
+      case EVT_APP_SUSPEND:
+         return TRUE;
+      case EVT_APP_RESUME:
+         if(pme->m_bDownloading)
+         {
+#ifdef CUST_EDITION
+            IDISPLAY_ClearScreen(pme->a.m_pIDisplay);
+#endif
+            pme->m_bDownloading = FALSE;
+            MShop_Status(pme, &pme->m_CurrStatus);
+         }
+         else
+         {
+            MShop_SetState(pme, pme->m_wState);
+         }
+         return TRUE;
+#endif
    }
    return(FALSE);
 }
@@ -2185,6 +2212,18 @@ static boolean MShop_Status(MShop * pme,DownloadStatus * ps)
 
    if(!ps)
       return(FALSE);
+   
+#ifdef CUST_EDITION
+   if(pme->m_CurrStatus.pszText)
+   {
+      FREE(pme->m_CurrStatus.pszText);
+   }
+   MEMCPY(&pme->m_CurrStatus,ps,sizeof(pme->m_CurrStatus));
+   if(ps->pszText)
+   {
+      pme->m_CurrStatus.pszText = WSTRDUP(ps->pszText);
+   }
+#endif
 
    switch(ps->evt){  
       case DEVT_AI_ASK:          // Auto-Install Notification (pszText != NULL)

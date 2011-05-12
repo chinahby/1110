@@ -4304,6 +4304,24 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
 
                 }
             }
+            else if(pMe->m_msg_text_id == IDS_NOOMH_CARD)
+            {
+                switch (wParam)
+                {
+                    case AVK_SELECT:
+                    case AVK_ENDCALL:
+                    case AVK_CLR:
+                    case AVK_INFO:
+                        pMe->m_bCloseAllApplet = FALSE;
+                        CLOSE_DIALOG(DLGRET_OK)
+                        return TRUE;
+                        
+                    default:
+                        //not process the another event key
+                        return TRUE;
+
+                }
+            }
         case EVT_DISPLAYDIALOGTIMEOUT:
             pMe->m_bCloseAllApplet = FALSE;
             CLOSE_DIALOG(DLGRET_OK)

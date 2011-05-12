@@ -36,7 +36,9 @@ typedef enum {
    START_END_CALL,            // when received END_CALL during not active
    START_WITH_ARGS,         // for dial, start call
    START_INCOMING_ANSWERED,  // NIGps answerd call, will receive ANSWER and CONNECT event
-   START_DATA_CALLING,
+#ifdef FEATURE_OEMOMH
+   START_NONOMH,
+#endif
    START_MAX
 } start_call_type;
 

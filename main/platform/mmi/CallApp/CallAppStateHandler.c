@@ -286,7 +286,7 @@ static NextFSMAction STATE_INITHandler(CCallApp *pMe)
     // Setup the current audio path (maybe the headset is already plugged in)
     //CallApp_SetupCallAudio(pMe);
 
-    if (pMe->m_nStartCallType == START_DATA_CALLING || pMe->m_nStartCallType == START_WITH_ARGS)
+    if (pMe->m_nStartCallType == START_WITH_ARGS)
     {
         pMe->m_bCloseAllApplet = FALSE;
         MOVE_TO_STATE(STATE_CALLING)
@@ -320,6 +320,14 @@ static NextFSMAction STATE_INITHandler(CCallApp *pMe)
         MOVE_TO_STATE(STATE_CONVERSATION)
         return NFSMACTION_CONTINUE;
     }
+#ifdef FEATURE_OEMOMH
+    else if(pMe->m_nStartCallType == START_NONOMH)
+    {
+        pMe->m_bCloseAllApplet = FALSE;
+        MOVE_TO_STATE(STATE_NONOMH)
+        return NFSMACTION_CONTINUE;
+    }
+#endif
     else
     {
         if( (pMe->AppStart->pszArgs[0] == 'S')||(pMe->AppStart->pszArgs[0] == 's') )//This is form Coreapp to start the dialer app in phone start
