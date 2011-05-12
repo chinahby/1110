@@ -1211,7 +1211,7 @@ static int OEMRUIM_Get_Feature_Code(IRUIM *pMe,byte *Buf,int  Lable)
 {
     byte pData[UIM_CDMA_FEATURE_CODE_SIZE+2];
     int pnDataSize = UIM_CDMA_FEATURE_CODE_SIZE;
-    MSG_FATAL("OEMRUIM_Get_Feature_Code Start",0,0,0);
+    MSG_FATAL("OEMRUIM_Get_Feature_Code Start %d",Lable,0,0);
     if ((!pMe) || (!Buf))
     {
         return EFAILED;
