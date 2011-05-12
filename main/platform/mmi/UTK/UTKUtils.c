@@ -1048,7 +1048,6 @@ void DecodeDisplayTextData(byte *pdata, Display_text *pText)
     本函数只处理 Setup Menu 和 Select Item 命令的菜单的初始化。
 ==============================================================================*/
 int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu, 
-    AECHAR *pwszTitle, 
     uim_tk_proactive_cmd_enum_type cmd_type
 )
 {
@@ -1059,13 +1058,13 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
     int pos=0;
     int nLen,nValLen,nSize,nTep;
     command_describe cmd_describe;
-
-    DBGPRINTF("CUTK_SetUTKMenu 0x%x",cmd_type);
     
     if (pMe == NULL)
     {
         return 0;
     }
+
+    DBGPRINTF("CUTK_SetUTKMenu 0x%x",cmd_type);
     
     nSize = 256 * sizeof(AECHAR);
     wszBuf = MALLOC(nSize);
@@ -1073,19 +1072,7 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
     {
         return 0;
     }
-
-    if(pMenu)
-    {
-        if(IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, pMe->m_wszTitle) >= (SCREEN_WIDTH - LG_IMG_WIDTH*2))
-        {
-            (void)IMENUCTL_SetTitle(pMenu, NULL, 0, pMe->m_wszTitle);
-            IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, NULL);
-        }
-        else
-        {
-		    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,pMe->m_wszTitle);
-	    }
-    }
+    
     utk_ptr = UTK_GetCmddata(cmd_type);
     
     if (utk_ptr != NULL)
@@ -1198,11 +1185,6 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
                             DBGPRINTF("UIM_TK_ALPHA_ID_TAG %S",wszBuf);
 						    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszBuf);
 						}
-                    }
-                    
-                    if (pwszTitle)
-                    {
-                        WSTRCPY(pwszTitle, wszBuf);
                     }
                     
                     pos+=nValLen;
@@ -1329,7 +1311,7 @@ int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu,
             }
         }
     }  
-      
+    
     FREE(wszBuf);        
     DBGPRINTF("CUTK_SetUTKMenu 0x%x %d",cmd_type,nItemCount);
     return nItemCount;

@@ -303,7 +303,7 @@ static NextFSMAction UTKST_MAIN_Handler(CUTK *pMe)
     {
         case DLGRET_CREATE:
             DBGPRINTF("UTKST_MAIN_Handler %d",pMe->m_ePreState);
-            if(pMe->m_ePreState >= UTKST_MAIN && CUTK_SetUTKMenu(pMe,NULL,NULL,pMe->cmd_type) == 0)
+            if(pMe->m_ePreState >= UTKST_MAIN && CUTK_SetUTKMenu(pMe,NULL,pMe->cmd_type) == 0)
             {
                 MOVE_TO_STATE(UTKST_EXIT);
                 return NFSMACTION_CONTINUE;

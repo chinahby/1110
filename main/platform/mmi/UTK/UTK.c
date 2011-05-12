@@ -616,9 +616,9 @@ static boolean UTK_HandleEvent(IUTK *pi,
                 ISHELL_GetDeviceInfo(pMe->m_pShell,&di);
                 pMe->m_rc.dy = di.cyScreen;
             }
-            ERR("start EVT_APP_RESUME-UTK_RunFSM",0,0,0);   
+            MSG_FATAL("start EVT_APP_RESUME-UTK_RunFSM",0,0,0);   
             UTK_RunFSM(pMe);
-            ERR("end EVT_APP_RESUME-UTK_RunFSM",0,0,0);             
+            MSG_FATAL("end EVT_APP_RESUME-UTK_RunFSM",0,0,0);             
             return TRUE;
 
         case EVT_DIALOG_INIT:
@@ -631,7 +631,7 @@ static boolean UTK_HandleEvent(IUTK *pi,
                     CLR_USER_BACKGROUND, RGB_WHITE);
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
-            ERR("start UTK_RouteDialogEvent",0,0,0);   
+            MSG_FATAL("EVT_DIALOG_INIT 0x%x %d",pMe->m_pActiveDlg, pMe->m_pActiveDlgID, 0);
             return UTK_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
@@ -682,6 +682,7 @@ static boolean UTK_HandleEvent(IUTK *pi,
                 return TRUE;
             }
             (void) UTK_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            MSG_FATAL("EVT_DIALOG_END 0x%x %d",pMe->m_pActiveDlg, pMe->m_pActiveDlgID, 0);
             pMe->m_pActiveDlg = NULL; 
             pMe->m_bAppIsReady = FALSE;
 

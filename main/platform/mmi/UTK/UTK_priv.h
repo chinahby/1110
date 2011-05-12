@@ -171,8 +171,6 @@ typedef struct _CUTK
 #ifdef FEATURE_UIM_TOOLKIT_UTK
     uim_tk_proactive_cmd_enum_type   cmd_type;
 #endif
-    AECHAR            m_wszTitle[MAX_TITLE_CHARS];
-
     boolean          m_bUserMode;
     int          m_nInputMode;
 
@@ -240,8 +238,6 @@ typedef struct _CUTK
 #define UTK_RES_FILE_LANG      (AEE_RES_LANGDIR UTK_RES_FILE)
 
 #define UTK_DATA_OFF                    2
-#define MAX_MENU_ITEM                   32
-
 #define MAX_STR_CHARS                   256
 
 #define ALPHA_8BITS                     0x04
@@ -498,7 +494,6 @@ void UTK_GiveResponseEx(CUTK * pMe,
     本函数只处理 Setup Menu 和 Select Item 命令的菜单的初始化。
 ==============================================================================*/
 int CUTK_SetUTKMenu(CUTK *pMe, IMenuCtl *pMenu, 
-    AECHAR *pwszTitle, 
     uim_tk_proactive_cmd_enum_type cmd_type
 );
 

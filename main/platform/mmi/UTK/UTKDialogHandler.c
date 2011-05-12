@@ -179,17 +179,17 @@ boolean UTK_RouteDialogEvent(CUTK *pMe,
     uint32 dwParam
 )
 {
-    MSG_FATAL("UTK_RouteDialogEvent Start",0,0,0);
     if (NULL == pMe)
     {
         return FALSE;
     }
-
+    
+    MSG_FATAL("UTK_RouteDialogEvent Start 0x%x %d",pMe->m_pActiveDlg,pMe->m_pActiveDlgID,0);
     if (NULL == pMe->m_pActiveDlg)
     {
         return FALSE;
     }
-
+    
     switch (pMe->m_pActiveDlgID)
     {
 #ifdef FEATURE_CARRIER_CHINA_TELCOM        
@@ -335,9 +335,8 @@ static boolean  IDD_MAIN_Handler(CUTK *pMe,
 {
     PARAM_NOT_REF(dwParam)
 
-    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
-                                        IDC_MAIN_MENU);
-    MSG_FATAL("IDD_MAIN_Handler Start",0,0,0);
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_MAIN_MENU);
+    MSG_FATAL("IDD_MAIN_Handler Start 0x%x 0x%x 0x%x",eCode,wParam,dwParam);
     if (pMenu == NULL)
     {
         return FALSE;
@@ -353,7 +352,7 @@ static boolean  IDD_MAIN_Handler(CUTK *pMe,
             return TRUE;
             
         case EVT_DIALOG_START:
-            (void) CUTK_SetUTKMenu(pMe, pMenu, pMe->m_wszTitle, UIM_TK_SETUP_MENU);
+            (void) CUTK_SetUTKMenu(pMe, pMenu, UIM_TK_SETUP_MENU);
             
             // Restore the menu select from suspend
             if(pMe->m_wSelectStore != MENU_SELECT_NULL)
@@ -537,7 +536,7 @@ static boolean  IDD_LIST_Handler(CUTK *pMe,
             return TRUE;
             
         case EVT_DIALOG_START:
-            if(!CUTK_SetUTKMenu(pMe, pMenu, NULL, pMe->cmd_type))
+            if(!CUTK_SetUTKMenu(pMe, pMenu, pMe->cmd_type))
             {
                pMe->clr_back = TRUE;
                UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_BWARD_MOVE_IN_PROACTIVE_RUIM_SESSION_REQ_BY_USER);
@@ -670,8 +669,7 @@ static boolean  IDD_INPUT_Handler(CUTK *pMe,
     
     PARAM_NOT_REF(dwParam)
 
-    ITextCtl *pTextCtl = (ITextCtl *)IDIALOG_GetControl(pMe->m_pActiveDlg,
-                        IDC_INPUT_TEXT);                        
+    ITextCtl *pTextCtl = (ITextCtl *)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_INPUT_TEXT);                        
     MSG_FATAL("IDD_INPUT_Handler Start eCode=%d, wParam=%d",eCode,wParam,0);                 
     if ((NULL == pTextCtl) || (NULL == pMe))
     {
@@ -985,8 +983,7 @@ static boolean  IDD_DISPLAY_Handler(CUTK *pMe,
     PARAM_NOT_REF(wParam)
     PARAM_NOT_REF(dwParam)
 
-    IStatic * pStatic = (IStatic *)IDIALOG_GetControl(pMe->m_pActiveDlg,
-                                        IDC_DISPLAY_STATIC);
+    IStatic * pStatic = (IStatic *)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_DISPLAY_STATIC);
     MSG_FATAL("IDD_DISPLAY_Handler Start",0,0,0); 
     if (pStatic == NULL)
     {
@@ -1414,8 +1411,7 @@ static boolean  IDD_PLAYTONE_Handler(CUTK *pMe,
     {
         return FALSE;
     }         	                     	
-    pStatic = (IStatic *)IDIALOG_GetControl(pMe->m_pActiveDlg,
-                                        IDC_PLAYTONE_STATIC);
+    pStatic = (IStatic *)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_PLAYTONE_STATIC);
     if (pStatic == NULL)
     {
         return FALSE;
@@ -1627,8 +1623,7 @@ static boolean  IDD_MSGBOX_Handler( CUTK *pMe,
     ASSERT(pMe != NULL);
 #endif
     MSG_FATAL("IDD_MSGBOX_Handler Start",0,0,0);  
-    pStatic = (IStatic*)IDIALOG_GetControl( pMe->m_pActiveDlg,
-                                            IDC_MSGBOX_STATIC);
+    pStatic = (IStatic*)IDIALOG_GetControl( pMe->m_pActiveDlg, IDC_MSGBOX_STATIC);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
