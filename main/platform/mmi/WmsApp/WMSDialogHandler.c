@@ -437,7 +437,7 @@ static boolean IDD_POPMSG_Handler(void *pUser,
 static boolean IDD_FLASHSMS_Handler(void *pUser,
 									 AEEEvent eCode,
 									 uint16 wParam,
-									 uint32 dwParam);  
+									 uint32 dwParam);
 
 /*==============================================================================
 
@@ -4633,6 +4633,7 @@ static boolean IDD_PRIORITY_Handler(void *pUser,
     return FALSE;
 } // IDD_PRIORITY_Handler
 
+
 /*==============================================================================
 º¯Êý:
     IDD_SENDMODE_Handler
@@ -4668,6 +4669,7 @@ static boolean IDD_SENDMODE_Handler(void *pUser,
     }
 
     pMenu = (IMenuCtl* )IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_SENDMODE_MENU);
+      
     if (pMenu == NULL)
     {
         return FALSE;
@@ -8025,16 +8027,26 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                 for (i=0; i<nControls; i++, y+=dy+ygap)
                 {
                     AEERect rect;
-
-                    SETAEERECT(&rect, 2, y, SENDOPT_TITLELENGTH, dy);
+                    int ry=0;
+                    if(i<2)
+                    {
+                        y=y+dy+ygap;
+                        ry=y-dy-ygap;
+                    }
+                    else
+                    {
+                        ry=y;
+                    }
+                    
+                    SETAEERECT(&rect, 2, ry, pMe->m_rc.dx- 2, dy);
                     pControl = IDIALOG_GetControl(pMe->m_pActiveIDlg, wControls[i]);
                     
                     if (NULL == pControl)
                     {
                         continue;
                     }
-                    
-                    SETAEERECT(&rc, SENDOPT_TITLELENGTH, y, pMe->m_rc.dx-SENDOPT_TITLELENGTH - 2, dy);  //SETAEERECT(&rc, 2, y, pMe->m_rc.dx-4, dy);
+                     //-SENDOPT_TITLELENGTH 
+                    SETAEERECT(&rc, 2, y, pMe->m_rc.dx- 2, dy);  //SETAEERECT(&rc, 2, y, pMe->m_rc.dx-4, dy);
 
                     if((wControls[i] == IDC_MENU_CBNUM || wControls[i] == IDC_MENU_RPT))
                     {
@@ -8076,7 +8088,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                         IDISPLAY_DrawText(pMe->m_pDisplay, 
                                         AEE_FONT_NORMAL, 
                                         wstrText[i], 
-                                        -1, 2, y, 
+                                        -1, 2, ry, 
                                         &rect, 
                                         IDF_TEXT_TRANSPARENT);
 
@@ -8111,7 +8123,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
                             IMENUCTL_SetColors((IMenuCtl *)pControl, &color);
                             
                             MENU_SETBOTTOMBAR((IMenuCtl *)pControl, BTBAR_NONE);
-                            
+
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SENDONLY);
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SAVEONLY);
                             MENU_ADDITEM((IMenuCtl *)pControl, IDS_SENDOPT_SAVEANDSEND_SHORT);
