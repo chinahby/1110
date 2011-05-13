@@ -5918,7 +5918,9 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
     {
         return;
     }
-
+    
+    pMe->m_callnumber[0]= 0;
+    
     if(IsRunAsUIMVersion())
     {
         uint16 Ruim_Active_code    = 0;
@@ -6001,9 +6003,10 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
             }
         }
     }
-    
+#ifndef FEATURE_OEMOMH
     //Read supplement service number from Config
     ICONFIG_GetItem(pMe->m_pConfig, feature_code, pMe->m_callnumber, FEATURE_CODE_MAX_LENTH);
+#endif
     MSG_FATAL("ICONFIG_GetItem == %d %s ",feature_code,pMe->m_callnumber,0);
 }
 
