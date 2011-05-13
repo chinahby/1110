@@ -829,7 +829,7 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
   }
 
   //Add By zzg 2010_07_23
-  if (ISHELL_ActiveApplet(pMe->m_piShell) != AEECLSID_CORE_APP)
+  if(IAnnunCoreObj->m_hasTitleText && IAnnunCoreObj->m_Title[0] != 0)
   {
 		if ((nAnnunID > ANNUN_FIELD_RSSI) && (nAnnunID < ANNUN_FIELD_BATT))
 		{

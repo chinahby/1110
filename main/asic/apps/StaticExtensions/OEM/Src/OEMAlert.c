@@ -2403,8 +2403,6 @@ static int OEMALERT_StartMp3Alert(IALERT * pMe, char *id, ALERT_SND_TYPE type)
                 gCurStatus.m_bplaying)
             {
                 ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
-                IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON | ANNUN_STATE_BLINK);
-                IANNUNCIATOR_SetUnblinkTimer(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_OFF, 5000);
                 return SUCCESS;
             }
         }     
@@ -3022,19 +3020,24 @@ SEE ALSO:
 
 static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
 {  
-#if !defined(FEATURE_SMSTONETYPE_MID)
     byte sms_size = 1;
-#endif
+    
     MSG_FATAL("OEMALERT_StartSMSAlert Start",0,0,0);
     
+    //dsp的能力不够强,需要留出stop的时间
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                            CFGI_SMS_RINGER,
+                            &sms_size,
+                            sizeof(sms_size));
+    
     OEMALERT_GetRingerVol(pMe);
+    MSG_FATAL("sms_size=%d, m_ringCurVol=%d",sms_size, pMe->m_ringCurVol,0);
+    
     //判断当前是不是来电响铃状态
     if (OEMALERT_InCall(pMe))
     {
         if(OEMSOUND_MUTE_VOL != pMe->m_ringCurVol)
         {
-            IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON | ANNUN_STATE_BLINK);
-            IANNUNCIATOR_SetUnblinkTimer(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_OFF, 5000);
             IBACKLIGHT_Enable(pMe->m_pBacklight);
             OEMSOUND_Sound_Id_Start(SND_DEVICE_CURRENT,
                                     SND_METHOD_VOICE,
@@ -3042,7 +3045,10 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
                                     SND_PRIO_MED,
                                     SND_APATH_LOCAL,
                                     NULL);
-            ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
+            if(OEMNV_SMS_RING != sms_size)
+            {
+                ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
+            }
         }
         return;
     } 
@@ -3059,8 +3065,6 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
             //gCurStatus.m_bplaying = FALSE;
             //gCurStatus.m_pCurRingerMgr = NULL;
             ISOUND_Vibrate(pMe->m_pSound,TIME_MS_SMSVIBRATE_DURATION); 
-            IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON | ANNUN_STATE_BLINK);
-            IANNUNCIATOR_SetUnblinkTimer(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_OFF, 5000);
             return;
         }
         else
@@ -3073,12 +3077,6 @@ static void OEMALERT_StartSMSAlert (IALERT *pMe, int ring_id)
     OEMALERT_StartRingerAlert(pMe,ring_id,ALERT_SMS_SND);
 #else 
 
-    //dsp的能力不够强,需要留出stop的时间
-    (void) ICONFIG_GetItem(pMe->m_pConfig,
-                            CFGI_SMS_RINGER,
-                            &sms_size,
-                            sizeof(sms_size));
-    MSG_FATAL("sms_size=%d, m_ringCurVol=%d",sms_size, pMe->m_ringCurVol,0);
     if(OEMNV_SMS_RING == sms_size)  
     {
         if(pMe->m_ringCurVol != OEMSOUND_MUTE_VOL)

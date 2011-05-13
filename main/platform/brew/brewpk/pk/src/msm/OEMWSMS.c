@@ -3412,10 +3412,12 @@ static wms_teleservice_e_type OEMWMS_DetermineGSMMessageType
    if (bUDHPresent) 
    {
       int i;
-
+#ifdef FEATURE_OEMOMH
+      ts = WMS_TELESERVICE_CMT_95;
+#else
       // Initialize with EMS teleservice ID
       ts = WMS_TELESERVICE_WEMT;
-
+#endif
       for(i = 0; i < puserdata->num_headers; i++) 
       {
          if ((puserdata->headers[i].header_id == WMS_UDH_SPECIAL_SM) &&

@@ -12109,17 +12109,3 @@ boolean nvruim_data_3gpd_ext_support( void
 
 #endif /*FEATURE_NV_RUIM*/
 
-#ifdef FEATURE_OEMOMH
-boolean nvruim_sms_ems_support(void)
-{
-    if(nvruim_smscap_svc)
-    {
-        if((nvruim_smscap_ef_buf[2]&NVRUIM_SMSCAP_STD_EMS_MASK) == 0)
-        {
-            return FALSE;
-        }
-    }
-    return TRUE;
-}
-#endif
-

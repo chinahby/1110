@@ -26,85 +26,6 @@
 #include "WMSUtil.h"          // Applet工具模块头文件
 #include "OEMClassIDs.h"
 
-#ifdef WIN32
-void wms_cacheinfolist_getcounts(wms_box_e_type box, 
-                                 uint16 *pNew, 
-                                 uint16 *pOnUIM,
-                                 uint16 *pTotal)
-{
-	return;
-}
-void wms_cacheinfolist_enumbegin(wms_box_e_type ebox)
-{
-	return;
-}
-wms_cache_info_node *wms_cacheinfolist_enumnext(wms_box_e_type ebox)
-{
-	return NULL;
-}
-void wms_cacheinfolist_enumtoxuhao(wms_box_e_type ebox, int xuhao)
-{
-	return;
-}
-wms_cache_info_list * wms_get_cacheinfolist(wms_box_e_type ebox)
-{
-	return NULL;
-}
-uint8 wms_ts_pack_ascii
-(
-  const char        * ascii_ptr,       /* IN */
-  uint8              * data,            /* OUT */
-  uint8              * data_len_ptr,    /* OUT */
-  uint8              * padding_bits_ptr /* OUT */
-)
-{
-	return 0;
-}
-void wms_ts_decode_relative_time
-(
-  uint8                     v,
-  wms_timestamp_s_type    * timestamp
-)
-{
-	return;
-}
-wms_status_e_type wms_ts_decode
-(
-  const wms_raw_ts_data_s_type            * raw_ts_data_ptr,
-  wms_client_ts_data_s_type               * client_ts_data_ptr
-)
-{
-	return 0;
-}
-uint8 wms_ts_dtmf2ascii
-(
-  uint8            len,
-  const uint8      *dtmf,
-  uint8            *ascii
-)
-{
-	return 0;
-}
-uint8 wms_ts_unpack_ascii
-(
-  const wms_cdma_user_data_s_type    *ud,        /* IN */
-  uint8    buf_len,                /* IN */
-  uint8    *buf                    /* OUT */
-)
-{
-	return 0;
-}
-wms_cache_info_node *wms_cacheinfolist_getnode(wms_box_e_type  eBox,
-                                               wms_memory_store_e_type mem_store, 
-                                               uint16 index)
-{
-	return NULL;
-}
-void wms_cacheinfolist_updatexuhao(wms_box_e_type ebox)
-{
-	return;
-}
-#endif
 /*==============================================================================
                                  
                                  宏定义和常数
@@ -1455,7 +1376,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 #ifndef FEATURE_ICM
 					AEETCalls po;
 #endif
-                    
+#ifndef FEATURE_OEMOMH
                     if (info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_VMN_95 ||
                         info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_MWI)
                     {
@@ -1467,6 +1388,9 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                             bSendEvt = FALSE;
                         }
                     }
+#else
+                    WmsApp_PlaySMSAlert(pMe, TRUE);
+#endif //#ifndef FEATURE_OEMOMH
 					//add by yangdecai   09-26
 #ifdef FEATURE_ICM
 					num = ICM_GetActiveCallIDs(pMe->m_pICM, 
@@ -1489,9 +1413,11 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 #endif
 					{
 	                    if (bSendEvt)
-	                    {                                        
+	                    {
+#ifndef FEATURE_OEMOMH
 	                        // 语音提示用户有消息
 	                        WmsApp_PlaySMSAlert(pMe, TRUE);
+#endif
 	                        #ifdef FEATURE_FLASH_SMS
 	                        if(pMe->m_bflash_sms)
 	                        {
@@ -4159,10 +4085,6 @@ static IVector * WmsApp_GetUserDataMOList(void)
 备注:
     本应用发出长短信串接方式固定使用 concat_8
 ==============================================================================*/
-#ifdef FEATURE_OEMOMH
-extern boolean nvruim_sms_ems_support(void);
-#endif
-
 void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
 {
     int i;
@@ -4176,9 +4098,7 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
     int32 nSize;
     wms_user_data_encoding_e_type      encoding;
     wms_cdma_user_data_s_type          *pUserdata = NULL;
-#ifdef FEATURE_OEMOMH
-    boolean bSupportEMS = nvruim_sms_ems_support();
-#endif
+
     // 释放消息用户数据链表
     WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
     
@@ -4260,13 +4180,6 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
         else
         {
 #ifdef FEATURE_SMS_UDH
-#ifdef FEATURE_OEMOMH
-            if(!bSupportEMS)
-            {
-                nMaxItemChars = nMaxChars_UNICODE;
-            }
-            else
-#endif
             nMaxItemChars = (nMaxChars_UNICODE-3);
 #else
             nMaxItemChars = nMaxChars_UNICODE;
@@ -4282,13 +4195,6 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
         else
         {
 #ifdef FEATURE_SMS_UDH
-#ifdef FEATURE_OEMOMH
-            if(!bSupportEMS)
-            {
-                nMaxItemChars = nMaxChars_ASCII;
-            }
-            else
-#endif
             nMaxItemChars = (nMaxChars_ASCII-7);
 #else
             nMaxItemChars = nMaxChars_ASCII;
@@ -4304,13 +4210,6 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
         else
         {
 #ifdef FEATURE_SMS_UDH
-#ifdef FEATURE_OEMOMH
-            if(!bSupportEMS)
-            {
-                nMaxItemChars = MAX_OCTETMSG_PAYLOAD;
-            }
-            else
-#endif
             nMaxItemChars = MAX_OCTETMSG_PAYLOAD-6;
 #else
             nMaxItemChars = MAX_OCTETMSG_PAYLOAD;
@@ -4340,13 +4239,6 @@ void WmsApp_PrepareUserDataMOList(WmsApp *pMe)
         MEMSET(pUserdata, 0, nSize);
         pUserdata->encoding = encoding;
 #ifdef FEATURE_SMS_UDH
-#ifdef FEATURE_OEMOMH
-        if(!bSupportEMS)
-        {
-            // Nothing TODO
-        }
-        else
-#endif
         if (nItems>1)
         {
             pUserdata->num_headers = 1;
@@ -4528,9 +4420,6 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     wms_cdma_user_data_s_type *pUserdata = NULL;
 #ifdef FEATURE_SMS_UDH
     boolean udh_present = FALSE;
-#ifdef FEATURE_OEMOMH
-    boolean bSupportEMS = nvruim_sms_ems_support();
-#endif
 #endif
     char  strNum[MAX_PH_DIGITS+20];
     
@@ -4540,10 +4429,6 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     }
     dwCount = IVector_Size(pMe->m_pUserDataMOList);
 #ifdef FEATURE_SMS_UDH
-#ifdef FEATURE_OEMOMH
-    if(bSupportEMS)
-    {
-#endif
     if ((dwCount>1) && (pMe->m_idxUserdata == 0))
     {// 设置长短信的消息参考号
         int  i;
@@ -4565,9 +4450,6 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
     {
         udh_present = TRUE;
     }
-#ifdef FEATURE_OEMOMH
-    }
-#endif
 #endif 
     
     if (pMe->m_idxUserdata >= dwCount)
