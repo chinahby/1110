@@ -1724,10 +1724,15 @@ int UTK_DecodeSetupCallCmdData(byte *pdata, Setup_Call *pstCall)
                 }
                 
                 // Ìø¹ý TONNPI
+                j=0;
+                if(((pdata[pos]&0x70)>>4) == 0x01) //TON == International Number
+                {
+                    pstCall->wszDialNum[j] = (AECHAR)'+';
+                    j++;
+                }
                 pos++;
                 
                 // ½âÎöºÅÂë
-                j=0;
                 for (i=0; (i<nValLen-1) && (j<sizeof(pstCall->wszDialNum)/sizeof(AECHAR)); i++)
                 {
                     low = ((pdata[pos+i] & 0x0F) + '0');
@@ -1751,7 +1756,7 @@ int UTK_DecodeSetupCallCmdData(byte *pdata, Setup_Call *pstCall)
                     }
                     else if('0'+0x0C==low)
                     {
-                        pstCall->wszDialNum[j] = (AECHAR)'+';
+                        pstCall->wszDialNum[j] = (AECHAR)'P';
                         j++;
                     }
                     else
@@ -1776,7 +1781,7 @@ int UTK_DecodeSetupCallCmdData(byte *pdata, Setup_Call *pstCall)
                     }
                     else if('0'+0x0C==hig)
                     {
-                        pstCall->wszDialNum[j] = (AECHAR)'+';
+                        pstCall->wszDialNum[j] = (AECHAR)'P';
                         j++;
                     }
                     else

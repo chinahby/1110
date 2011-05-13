@@ -94,6 +94,9 @@
 #ifdef FEATURE_UTK2
 #include "UTKUtils.h"
 #endif
+#ifdef FEATURE_OEMOMH 
+#include "AEERUIM.h"
+#endif
 #include "Appscommon.h"
 #include "AppComFunc.h"
 #include "AEECallHistory.h"
@@ -469,7 +472,7 @@ typedef struct _CCallApp
     ISound                 *m_pSound;      // Sound interface
     IALERT                 *m_pAlert;      // IAlert interface
     IConfig                *m_pConfig;     // IConfig interface
-    //IStatic                *m_IStatic;       // Used in the IDD_SILENCED& IDD_MSGBOX dialog
+    IRUIM                  *m_pIRUIM;
 #ifdef FEATURE_ICM
     ICM                    *m_pICM;                         // instance of ICM
 #else

@@ -663,6 +663,14 @@ static int CallApp_InitAppData(CCallApp *pMe)
     {
         return EFAILED;
     }
+#ifdef FEATURE_OEMOMH
+    if(ISHELL_CreateInstance(pMe->m_pShell,
+                                            AEECLSID_RUIM,
+                                            (void **) &pMe->m_pIRUIM) != SUCCESS)
+    {
+        return EFAILED;
+    }
+#endif
 #ifdef FEATURE_ICM
     if(ISHELL_CreateInstance(pMe->m_pShell,
                                             AEECLSID_CM,
@@ -953,7 +961,14 @@ static void CallApp_FreeAppData(CCallApp *pMe)
         ICONFIG_Release(pMe->m_pConfig);
         pMe->m_pConfig = NULL;
     }
-
+#ifdef FEATURE_OEMOMH
+    // ÊÍ·Å IRUIM ½Ó¿Ú
+    if (pMe->m_pIRUIM != NULL)
+    {
+        IRUIM_Release(pMe->m_pIRUIM);
+        pMe->m_pIRUIM = NULL;
+    }
+#endif
 #ifdef FEATURE_ICM
     if(pMe->m_pICM != NULL)
     {

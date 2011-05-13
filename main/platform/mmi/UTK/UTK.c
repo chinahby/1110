@@ -856,6 +856,7 @@ static boolean UTK_HandleEvent(IUTK *pi,
                         
                         MEMSET(pstCall, 0, sizeof(Setup_Call));
                         (void)UTK_DecodeSetupCallCmdData(pdata, pstCall);
+                        DBGPRINTF("UIM_TK_SETUP_CALL %S",pstCall->wszDialNum);
 #ifdef FEATURE_ICM
                         if ((AEECM_IS_VOICECALL_PRESENT(pMe->m_pCM))  &&
 #else

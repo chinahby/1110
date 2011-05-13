@@ -464,6 +464,17 @@ static boolean  IDD_MAIN_Handler(CUTK *pMe,
                     UTK_SendSimuData(buf, 180);
                     break;
                 }
+                case AVK_4:
+                {
+                    //69 74 68 20 74 68 65 20 6D 65 6E 75
+                    byte buf[256]={ 0xD0, 0x1E, 0x81, 0x03, 0x01, 0x10, 0x00, 0x82, 0x02, 0x81, 0x83, 0x85,
+                                    0x08, 0x4E, 0x6F, 0x74, 0x20, 0x62, 0x75, 0x73, 0x79, 0x86, 0x09, 0x91,
+                                    0x10, 0x32, 0x04, 0x21, 0x43, 0x65, 0x1C, 0x2C, 0x00
+                                   };
+
+                    UTK_SendSimuData(buf, 32);
+                    break;
+                }    
 #endif
                 default:
                     break;

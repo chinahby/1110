@@ -496,11 +496,10 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
       case EVT_APP_SUSPEND:
          return TRUE;
       case EVT_APP_RESUME:
+         IDISPLAY_SetClipRect(pme->a.m_pIDisplay, NULL);
+         IDISPLAY_ClearScreen(pme->a.m_pIDisplay);
          if(pme->m_bDownloading)
          {
-#ifdef CUST_EDITION
-            IDISPLAY_ClearScreen(pme->a.m_pIDisplay);
-#endif
             pme->m_bDownloading = FALSE;
             MShop_Status(pme, &pme->m_CurrStatus);
          }
@@ -508,6 +507,7 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
          {
             MShop_SetState(pme, pme->m_wState);
          }
+         IDISPLAY_Update(pme->a.m_pIDisplay);
          return TRUE;
 #endif
    }
