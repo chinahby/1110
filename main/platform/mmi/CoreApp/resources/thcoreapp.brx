@@ -166,6 +166,9 @@
 	<String Id="1055" Name="IDS_NO_USIM_CARDTWO">
 		<Text>ไม่มีการ์ด UIM 2</Text>
 	</String>
+	<String Id="1062" Name="IDS_BATTERY_FULLY_CHARGE">
+		<Text>Battery is full already</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

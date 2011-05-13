@@ -1865,6 +1865,10 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
 #ifdef FEATURE_APP_MEDIAGALLERY
                     MediaGallery_SetUSBCableConnect(pMe->m_bExtPwrState);
 #endif
+#ifdef FEATURE_VERSION_W515V3
+                     pMe->m_nMsgID = IDS_BATTERY_FULLY_CHARGE;
+                     CLOSE_DIALOG(DLGRET_BATT_INFO)
+#endif
                     break;
                 }
 

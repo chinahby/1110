@@ -178,6 +178,9 @@
 	<String Id="1061" Name="IDS_STR_BLACKBERRY_SIX">
 		<Text>Radio FM</Text>
 	</String>
+	<String Id="1062" Name="IDS_BATTERY_FULLY_CHARGE">
+		<Text>Battery is full already</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

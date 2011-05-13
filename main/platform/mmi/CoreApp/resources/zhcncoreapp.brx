@@ -160,6 +160,9 @@
 	<String Id="1053" Name="IDS_MSG_ACCEPTED">
 		<Text>The new PIN is accepted</Text>
 	</String>
+	<String Id="1062" Name="IDS_BATTERY_FULLY_CHARGE">
+		<Text>Battery is full already</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">
