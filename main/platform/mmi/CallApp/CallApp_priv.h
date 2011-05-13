@@ -608,6 +608,7 @@ typedef struct _CCallApp
     boolean                    m_bShowPopMenu;//indicate current focus is pop_menu
     IMenuCtl                  *m_pMenu;          // pop menu
     boolean                    m_bHandFree;    //设置声音是否从扬声器发出
+    byte                       m_Profile;
 
 #ifdef FEATURE_UTK2
     boolean                    m_bEndcurcallForUTKCall;

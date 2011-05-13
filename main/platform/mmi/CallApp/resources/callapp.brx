@@ -157,6 +157,12 @@
 	<STRING Id="1052" Name="IDS_INVALID_LINK_NUM">
 		<Text>Invalid link number</Text>
 	</STRING>
+	<STRING Id="1053" Name="IDS_MSG_CURPROFILE_MEETING">
+		<Text>Meeting now</Text>
+	</STRING>
+	<STRING Id="1054" Name="IDS_MSG_CURPROFILE_NORMALMODE">
+		<Text>Normalmode now</Text>
+	</STRING>
 	<STRING Id="1100" Name="IDS_OPTION_RECORDER_ON">
 		<Text>Recorder on</Text>
 	</STRING>

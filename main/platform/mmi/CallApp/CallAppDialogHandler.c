@@ -9308,11 +9308,13 @@ static void CallApp_ShortcutQuiet(CCallApp *pMe)
     if(curProfile == OEMNV_PROFILE_MEETING)
     {
         curProfile = OEMNV_PROFILE_NORMALMODE;
+        pMe->m_Profile=OEMNV_PROFILE_NORMALMODE;
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
     }
     else
     {
         curProfile = OEMNV_PROFILE_MEETING;
+        pMe->m_Profile=OEMNV_PROFILE_MEETING;
         IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRATOR);
     }
     ICONFIG_SetItem(pMe->m_pConfig,
@@ -10036,7 +10038,17 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         else if ( ((AVKType)wParam == AVK_POUND ) && WSTRLEN(pMe->m_DialString) == 1)
         {
             CallApp_ShortcutQuiet( pMe );
-            ISHELL_CloseApplet(pMe->m_pShell, TRUE);
+            if(pMe->m_Profile == OEMNV_PROFILE_NORMALMODE)
+            {
+                pMe->m_msg_text_id = IDS_MSG_CURPROFILE_NORMALMODE;
+            }
+            else
+            {
+                pMe->m_msg_text_id = IDS_MSG_CURPROFILE_MEETING;
+            }
+            CLOSE_DIALOG(DLGRET_MSGBOX);
+            // clk_busy_wait(1000*10000);
+            //ISHELL_CloseApplet(pMe->m_pShell, TRUE);
         }
 
         //long key "1" to call voice mail
