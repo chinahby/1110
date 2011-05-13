@@ -23,7 +23,7 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #include "Appscommon.h"
 #endif
 
-#define FARF_BAM     0 
+#define FARF_BAM     1 
 #define FARF(x, p)   if (1 == FARF_##x) DBGPRINTF p
 
 //
@@ -3421,7 +3421,9 @@ boolean AppMgr_LaunchCurrentApplet(AppMgr* pme,  boolean bForceRun)
             break;
       }
    }
-
+   
+   FARF(BAM, ("AppMgr_LaunchCurrentApplet %d 0x%x",bReturn,cls));
+   
    if (bReturn != SUCCESS)      
       AppMgr_HandleLaunchError(pme, cls, bReturn);
 

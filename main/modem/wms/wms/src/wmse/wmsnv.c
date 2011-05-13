@@ -3496,6 +3496,50 @@ void wms_nv_read_cdma_service_option(void)
   MSG_HIGH("Service Option = %d ",dc_s_ptr->default_so_from_nv,0,0); 
 }
 
+#ifdef FEATURE_OEMOMH
+#include "gsdi.h"
+/*===========================================================================
+FUNCTION gstk_is_sms_pp_supported
+
+DESCRIPTION
+  Utility function to check if SMS PP Download is allowed/supported
+
+PARAMETER
+  None
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  boolean
+
+COMMENTS
+  None
+
+SIDE EFFECTS
+  None
+
+SEE ALSO
+  None
+===========================================================================*/
+boolean wms_is_sms_supported(void)
+{
+    gsdi_svr_rsp_type                srv_available = {0};
+    
+    /* Check if SIM Service Table included SMS-PP service */
+    srv_available = gsdi_lib_is_service_available(GSDI_SMS);
+
+    if (GSDI_SUCCESS == srv_available.gsdi_status &&
+        0 != srv_available.svr_bitmap)
+    {
+      MSG_FATAL("wms_is_sms_supported TRUE",0,0,0);
+      return TRUE;
+    }
+    MSG_FATAL("wms_is_sms_supported FALSE",0,0,0);
+    return FALSE;
+} /* gstk_is_sms_pp_supported */
+#endif
+
 /*===========================================================================
 FUNCTION wms_nv_read_cdma_channel_setting
 
@@ -3510,6 +3554,15 @@ RETURN VALUE
 void wms_nv_read_cdma_channel_setting(void)
 {
    nv_item_type nvi;
+   
+#ifdef FEATURE_OEMOMH
+   if(!wms_is_sms_supported())
+   {
+      dc_s_ptr->is_access_channel_enabled  = 1;
+      dc_s_ptr->is_traffic_channel_enabled = 1;
+      return;
+   }
+#endif
 
    if(NV_DONE_S == wms_nv_read_wait(NV_SMS_MO_ON_ACCESS_CHANNEL_I, &nvi))
    {
@@ -3564,7 +3617,7 @@ void wms_nv_read_cdma_channel_setting(void)
 
       MSG_HIGH("Traffic Channel = %d ",dc_s_ptr->is_traffic_channel_enabled,0,0);
    }
-
+   
    MSG_HIGH("Access Channel = %d & Traffic Channel = %d ",dc_s_ptr->is_access_channel_enabled,
                                                           dc_s_ptr->is_traffic_channel_enabled,0);
 }
