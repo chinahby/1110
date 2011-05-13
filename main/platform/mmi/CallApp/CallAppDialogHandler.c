@@ -425,20 +425,10 @@ void CallApp_ShowDialog(CCallApp *pMe,uint16  dlgResId)
     {
         // Looks like there is one dialog already opened.
         // Flag an error an return without doing anything.
-#ifdef FEATURE_TCL_CDG2_TEST
-        uint16 id = 0;
-        id = IDIALOG_GetID(ISHELL_GetActiveDialog(pMe->m_pShell));
-        CALL_ERR("%d Trying to create a dialog without closing the previous one",id,0,0);
-        if(id!= 0)
-        {
-            return;
-        }
-#else
         CALL_ERR("Trying to create a dialog without closing the previous one",0,0,0);
         return;
-#endif
     }
-
+    
     nRet = ISHELL_CreateDialog(pMe->m_pShell,AEE_APPSCALLAPP_RES_FILE,dlgResId,NULL);
 
     if (nRet != SUCCESS)
@@ -3215,66 +3205,27 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
         }
 
         case EVT_KEY_HELD:
-            switch ((AVKType)wParam)
-            {
-             case AVK_RWD:
-                  ISHELL_PostEvent( pMe->m_pShell, AEECLSID_DIALER,EVT_USER_REDRAW,0,0 );
+            switch ((AVKType)wParam){
+            case AVK_RWD:
+                ISHELL_PostEvent( pMe->m_pShell, AEECLSID_DIALER,EVT_USER_REDRAW,0,0 );
  
-                  if (HS_HEADSET_ON())
-                  {
-                      pMe->m_userCanceled = TRUE;
+                if (HS_HEADSET_ON())
+                {
+                    pMe->m_userCanceled = TRUE;
  #ifdef FEATURE_ICM
-                      ICM_EndAllCalls(pMe->m_pICM);
+                    ICM_EndAllCalls(pMe->m_pICM);
  #else
-                      ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
+                    ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
  #endif
-                  }
-                  else
-                  {
-                      pMe->m_bHandFree = !pMe->m_bHandFree;
-                      CallApp_SetupCallAudio(pMe);
-                  }
-                  return TRUE;  //make the dialog can't closed by avk_clr.
-            }
-                  
-#ifdef FEATURE_TCL_CDG2_TEST
-#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
-{
-			nv_item_type	SimChoice;
-			OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
-			if(SimChoice.sim_select==AVK_SEND_TWO)
-			{
-				#ifdef FEATURE_VERSION_C01
-				if( AVK_CAMERA== (AVKType)wParam )//CDG 3-way call need send fwi 
-				#else
-				if( AVK_CAMERA== (AVKType)wParam || AVK_SEND == (AVKType)wParam)//CDG 3-way call need send fwi 
-				#endif
-            	{
-                	AEECMCallID nCallID = 0;
-#ifdef FEATURE_ICM
-                	if(CheckAEEReturnStatus(ICM_OriginateVoiceCall(pMe->m_pICM, NULL, &nCallID)) == FALSE)
-#else
-                	if(CheckAEEReturnStatus(ICM_OriginateVoiceCall(pMe->m_pITelephone, NULL, &nCallID)) == FALSE)
-#endif
-                	{
-                    	CALL_ERR("ICM_OriginateVoiceCall FAILED", 0, 0, 0);
-                    	return FALSE;
-                	}
-            	}
-			}
-}
-			#endif
-#if defined(FEATURE_VERSION_C01) 
-			{
-				nv_item_type	SimChoice;
-				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
-				if(SimChoice.sim_select==AVK_SEND_TWO && AVK_SEND == (AVKType)wParam)
-				{
-					return FALSE;
-				}
-			}
-#endif
-            if(AVK_SEND == (AVKType)wParam)//CDG 3-way call need send fwi 
+                }
+                else
+                {
+                    pMe->m_bHandFree = !pMe->m_bHandFree;
+                    CallApp_SetupCallAudio(pMe);
+                }
+                return TRUE;  //make the dialog can't closed by avk_clr.
+                
+            case AVK_SEND://CDG 3-way call need send fwi 
             {
                 AEECMCallID nCallID = 0;
 #ifdef FEATURE_ICM
@@ -3286,9 +3237,11 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     CALL_ERR("ICM_OriginateVoiceCall FAILED", 0, 0, 0);
                     return FALSE;
                 }
+                return TRUE;
             }
-
-#endif           
+            default:
+                break;
+            }      
             break;
 
         case EVT_KEY:
@@ -3343,9 +3296,9 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     // We are allowing the IPHONE notifier to move us to the
                     // next state...
                     return TRUE;
-                case AVK_CAMERA:
 #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
-{
+                case AVK_CAMERA:
+                {
 					nv_item_type	SimChoice;
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
 					if(SimChoice.sim_select==AVK_SEND_TWO)
@@ -3369,8 +3322,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 	                    // Remove the 'Release Hold' softkey if necessary
 	                    if (pMe->m_bAnswerHold)
 	                    {
-	                        IMenuCtl *pSkMenu;
-
 	                        pMe->m_bAnswerHold = FALSE;
 	                        CallApp_Draw_Connect_Softkey(pMe);
 	                    }
@@ -3380,9 +3331,9 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 	                    CallApp_Flash_Call(pMe);
 	                    return TRUE;
 					}
-}
-					#endif
                     break;
+                }
+#endif
 
                 case AVK_SEND:
                     // Make sure aren't waiting for a hard pause to be released...
@@ -3413,8 +3364,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     // Remove the 'Release Hold' softkey if necessary
                     if (pMe->m_bAnswerHold)
                     {
-                        IMenuCtl *pSkMenu;
-
                         pMe->m_bAnswerHold = FALSE;
                         CallApp_Draw_Connect_Softkey(pMe);
                     }
@@ -7713,7 +7662,7 @@ static void CallApp_Build_NumEdit_Option_Menu(CCallApp *pMe,IMenuCtl   *pMenuCtl
         if ((pMe->m_PauseString[0] == 0)
             || (pMe->idle_info.uimLocked == TRUE)
 #ifdef FEATURE_IS2000_SCC_CODES
-            || (pMe->m_bAnswerHold = FALSE)
+            || (pMe->m_bAnswerHold == FALSE)
 #endif  //FEATURE_IS2000_SCC_CODES
             )
         {
@@ -7854,7 +7803,7 @@ static void CallApp_Build_Connect_Option_Menu(CCallApp *pMe)
     if ((pMe->m_PauseString[0] == 0)
         || (pMe->idle_info.uimLocked == TRUE)
 #ifdef FEATURE_IS2000_SCC_CODES
-        || (pMe->m_bAnswerHold = FALSE)
+        || (pMe->m_bAnswerHold == FALSE)
 #endif  //FEATURE_IS2000_SCC_CODES
         )
     {
