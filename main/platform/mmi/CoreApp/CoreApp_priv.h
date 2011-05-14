@@ -623,6 +623,8 @@ typedef struct _CCoreApp
     boolean             m_bActive;
     
     boolean             m_pAppStart;
+
+    boolean             m_bBatteryActive;
 #ifdef FEATURE_UIALARM
     IAlarm       *m_pAlarm;
 #endif    

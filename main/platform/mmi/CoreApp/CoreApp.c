@@ -410,6 +410,7 @@ boolean CoreApp_InitAppData(IApplet* po)
 
     pMe->m_bSuspended = FALSE;
     pMe->m_bChargFull = FALSE;
+    pMe->m_bBatteryActive=FALSE;
     
     if (SUCCESS != ISHELL_CreateInstance(pMe->a.m_pIShell,
                                          AEECLSID_CARD,
@@ -1866,8 +1867,12 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     MediaGallery_SetUSBCableConnect(pMe->m_bExtPwrState);
 #endif
 #ifdef FEATURE_VERSION_W515V3
+                  if(pMe->m_bBatteryActive)
+                  {
+                     pMe->m_bBatteryActive=FALSE;
                      pMe->m_nMsgID = IDS_BATTERY_FULLY_CHARGE;
                      CLOSE_DIALOG(DLGRET_BATT_INFO)
+                  }
 #endif
                     break;
                 }
