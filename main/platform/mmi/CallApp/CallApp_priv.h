@@ -472,7 +472,9 @@ typedef struct _CCallApp
     ISound                 *m_pSound;      // Sound interface
     IALERT                 *m_pAlert;      // IAlert interface
     IConfig                *m_pConfig;     // IConfig interface
+    #ifdef FEATURE_OEMOMH
     IRUIM                  *m_pIRUIM;
+    #endif
 #ifdef FEATURE_ICM
     ICM                    *m_pICM;                         // instance of ICM
 #else
