@@ -112,6 +112,15 @@
 	<STRING Id="1073" Name="IDS_MSG_CAPTURE_FAILED">
 		<Text>Capture failed</Text>
 	</STRING>
+	<String Id="1074" Name="IDS_CAMERA_PHOTO_MODE">
+		<Text>Photo Path</Text>
+	</String>
+	<String Id="1075" Name="IDS_CAMERA_PHOTO_PHONE">
+		<Text>Phone</Text>
+	</String>
+	<String Id="1076" Name="IDS_CAMERA_PHOTO_TFCARD">
+		<Text>memory card</Text>
+	</String>	
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_CMAINMENU" Focus="7001">
@@ -135,6 +144,13 @@
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
+	<Dialog Id="6005" Name="IDD_CAMERA_PHOTO_MODE" Focus="7004">
+		<Controls>
+			<Menu Id="7004" Name="IDC_PHOTOMODE">
+				<Items/>
+			</Menu>
+		</Controls>
+	</Dialog>	
 	<Dialog Id="6008" Name="IDD_CVIDEOCFG" Focus="7003">
 		<Controls>
 			<Menu Id="7003" Name="IDC_VIDEO_CFGMENU">
