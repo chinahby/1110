@@ -646,6 +646,7 @@ typedef struct
    boolean wmswriteend_status;
    boolean FMPlayMode_status;
    byte    Idle_datetime_mode;   //add by yangceai 2011-04-13
+   boolean    Camera_Photo_mode;   // add by pyuangui 20110516
    //Add End
    #ifdef FEATURE_LONG_NETLOCK
    boolean netlock_flg;
@@ -1010,6 +1011,8 @@ static int OEMPriv_GetItem_CFGI_FM_PLAY_MODE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_FM_PLAY_MODE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_IDLE_DATETIME_MODE(void *pBuff);
 static int OEMPriv_GetItem_CFGI_IDLE_DATETIME_MODE(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CAMERA_PHOTO_MODE(void *pBuff);
+static int OEMPriv_GetItem_CFGI_CAMERA_PHOTO_MODE(void *pBuff);
 
 
 
@@ -1738,6 +1741,7 @@ static OEMConfigListType oemi_cache = {
    ,1
    ,1
    ,1
+   ,1
    //Add End
    #ifdef FEATURE_LONG_NETLOCK
    ,0
@@ -2268,6 +2272,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_WMSWRITD_END_STATUS,sizeof(boolean)),
    CFGTABLEITEM(CFGI_FM_PLAY_MODE,sizeof(boolean)),
    CFGTABLEITEM(CFGI_IDLE_DATETIME_MODE,sizeof(byte)),  //ADD BY YANGDECAI 2011-04-13
+   CFGTABLEITEM(CFGI_CAMERA_PHOTO_MODE,sizeof(byte)),
    #ifdef FEATURE_LONG_NETLOCK
    CFGTABLEITEM(CFGI_NET_LOCK_FLAGS,sizeof(boolean)),
    #endif
@@ -2779,6 +2784,7 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.wmswriteend_status = 1;
    oemi_cache.FMPlayMode_status = 1;
    oemi_cache.Idle_datetime_mode = 1;
+   oemi_cache.Camera_Photo_mode =1;
    //Add End
 #ifdef FEATURE_PLANEMODE
    oemi_cache.planeMode = OEMNV_PLANEMODE_OFF;
@@ -10491,6 +10497,17 @@ static int OEMPriv_SetItem_CFGI_IDLE_DATETIME_MODE(void *pBuff)
 static int OEMPriv_GetItem_CFGI_IDLE_DATETIME_MODE(void *pBuff)
 {
 	MEMCPY(pBuff, (void*) &oemi_cache.Idle_datetime_mode, sizeof(byte));
+    return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CAMERA_PHOTO_MODE(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.Camera_Photo_mode, pBuff, sizeof(byte));
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_CAMERA_PHOTO_MODE(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.Camera_Photo_mode, sizeof(byte));
     return SUCCESS;
 }
 

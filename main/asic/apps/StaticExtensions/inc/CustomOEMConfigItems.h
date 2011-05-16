@@ -440,6 +440,7 @@ enum{
     CFGI_WMSWRITD_END_STATUS,
     CFGI_FM_PLAY_MODE,
     CFGI_IDLE_DATETIME_MODE,  //add yangdecai 2011-04-13
+    CFGI_CAMERA_PHOTO_MODE,   //add pyuangui 20110516
 	//Add End
 	
 #ifdef FEATURE_LONG_NETLOCK
