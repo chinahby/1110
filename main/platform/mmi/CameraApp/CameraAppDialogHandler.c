@@ -40,6 +40,11 @@ static boolean  CameraApp_MainMenuHandleEvent(CCameraApp *pMe,
                                               AEEEvent eCode, 
                                               uint16 wParam, 
                                               uint32 dwParam);
+// 对话框IDD_CAMERA_PHOTO_MODE事件处理函数
+static boolean  CameraApp_CameraPhotoModeHandleEvent(CCameraApp *pMe, 
+                                              AEEEvent eCode, 
+                                              uint16 wParam, 
+                                              uint32 dwParam);
 
 // 对话框IDD_CPREVIEW事件处理函数
 static boolean  CameraApp_PreviewHandleEvent(CCameraApp *pMe, 
@@ -408,6 +413,9 @@ boolean CameraApp_RouteDialogEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wPara
 
         case IDD_POPMSG:
             return CameraApp_PopMSGHandleEvent(pMe, eCode, wParam, dwParam);
+
+        case IDD_CAMERA_PHOTO_MODE:
+            return CameraApp_CameraPhotoModeHandleEvent(pMe,eCode,wParam,dwParam);
                            
         default:
             return FALSE;
@@ -475,7 +483,9 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             // 初始化菜单项
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA, IDS_ITEM_CAMERA, NULL, NULL);
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA_GALLERY, IDS_ITEM_CAMERA_GALLERY, NULL, NULL);
-            
+            #ifdef FEATURE_VERSION_W515V3
+            IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_CAMERA_PHOTO_MODE, IDS_CAMERA_PHOTO_MODE, NULL, NULL);
+            #endif
             IMENUCTL_SetSel(pMenu, pMe->m_nMainMenuItemSel);
             IMENUCTL_SetBottomBarType(pMenu, BTBAR_SELECT_BACK);
             
@@ -502,6 +512,13 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             switch(wParam) 
             {
                 case IDS_ITEM_CAMERA: 
+#ifdef FEATURE_VERSION_W515V3
+                    {
+                      boolean cameraphotopath = FALSE;
+                      OEM_GetConfig(CFGI_CAMERA_PHOTO_MODE,&cameraphotopath, sizeof(cameraphotopath));
+                      pMe->m_isStartFromFacebook = cameraphotopath;
+                    } 
+#endif
                     // set the annunciator disable
                     IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
                     
@@ -548,6 +565,14 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                     pMe->m_nMainMenuItemSel = IDS_ITEM_CAMERA_GALLERY;
                     CMediaGallery_FileExplorer(GALLERY_PHOTO_BROWSE, NULL);
                     break;
+#ifdef FEATURE_VERSION_W515V3                   
+                case IDS_CAMERA_PHOTO_MODE:
+                    pMe->m_nMainMenuItemSel = IDS_CAMERA_PHOTO_MODE;
+                    MSG_FATAL("IDS_CAMERA_PHOTO_MODE-------------",0,0,0);
+                    CLOSE_DIALOG(DLGRET_CAMERAPHOTOMODE);
+                    break;
+#endif
+
                     
                 default:         
                     break;  
@@ -558,6 +583,128 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             if(wParam == AVK_CLR)
             {
                 CLOSE_DIALOG(DLGRET_CANCELED);
+            }
+            return TRUE;
+   
+        default:
+            break;
+    }
+    return FALSE;
+}
+
+/*==============================================================================
+函数：
+       CameraApp_MainMenuHandleEvent
+说明：
+       IDD_CameraPhotoMode对话框事件处理函数
+       
+参数：
+       pMe [in]：指向CameraApp Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+       
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+       
+备注：
+       
+==============================================================================*/
+static boolean CameraApp_CameraPhotoModeHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
+{
+      
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_PHOTOMODE);
+	AECHAR WTitle[40] = {0};  
+    if(pMenu == NULL)
+    {
+        return FALSE;
+    }
+   
+    switch(eCode) 
+    {
+        case EVT_DIALOG_INIT:
+            
+			(void)ISHELL_LoadResString(pMe->m_pShell,
+                                AEE_APPSCAMERAAPP_RES_FILE,                                
+                                IDS_CAMERA_PHOTO_MODE,
+                                WTitle,
+                                sizeof(WTitle));
+			if(pMe->m_pIAnn != NULL)
+        	{
+		    	IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+			}
+                
+            IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL); 
+
+            IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);
+
+            // 设置菜单属性
+           // IMENUCTL_SetProperties(pMenu, MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+           // IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+            
+            // 初始化菜单项
+            IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_CAMERA_PHOTO_PHONE, IDS_CAMERA_PHOTO_PHONE, NULL, NULL);
+            IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_CAMERA_PHOTO_TFCARD, IDS_CAMERA_PHOTO_TFCARD, NULL, NULL);
+            
+           // IMENUCTL_SetSel(pMenu, pMe->m_nMainMenuItemSel);
+            IMENUCTL_SetBottomBarType(pMenu, BTBAR_SELECT_BACK);
+            
+            return TRUE;
+     
+        case EVT_DIALOG_START:
+            {
+              boolean cameraphotopath = FALSE;
+              uint16 ui16_return = IDS_CAMERA_PHOTO_TFCARD;
+              OEM_GetConfig(CFGI_CAMERA_PHOTO_MODE,&cameraphotopath, sizeof(cameraphotopath));
+             	if(cameraphotopath)
+             	{
+             		ui16_return = IDS_CAMERA_PHOTO_PHONE;
+             	}
+              InitMenuIcons(pMenu);
+              SetMenuIcon(pMenu, ui16_return, TRUE);
+              IMENUCTL_SetSel(pMenu, ui16_return);
+              IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_TEXT_ALIGN_LEFT_ICON_ALIGN_RIGHT);
+              IMENUCTL_SetOemProperties( pMenu , OEMMP_USE_MENU_STYLE);
+              (void)ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);            
+           }
+            return TRUE;
+
+        case EVT_DIALOG_END:
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            (void)IMENUCTL_Redraw(pMenu);
+      
+            return TRUE;
+            
+        case EVT_COMMAND: 
+            {
+                boolean cameraphotopath = FALSE;
+                switch(wParam) 
+                {
+                    case IDS_CAMERA_PHOTO_PHONE:
+                        pMe->m_nMainMenuItemSel = IDS_CAMERA_PHOTO_PHONE;
+                        cameraphotopath=TRUE;
+                        break;
+                    case IDS_CAMERA_PHOTO_TFCARD:
+                        pMe->m_nMainMenuItemSel = IDS_CAMERA_PHOTO_TFCARD;
+                        cameraphotopath=FALSE;
+                        break;
+
+                        
+                    default:         
+                        break;  
+                }
+                OEM_SetConfig(CFGI_CAMERA_PHOTO_MODE,&cameraphotopath, sizeof(cameraphotopath));
+                CLOSE_DIALOG(DLGRET_MAINMENU);
+            }
+            return TRUE;        
+             
+        case EVT_KEY:
+            if(wParam == AVK_CLR)
+            {
+                CLOSE_DIALOG(DLGRET_MAINMENU);
             }
             return TRUE;
    

@@ -53,6 +53,10 @@ static NextFSMAction CameraApp_StatePicHandle(CCameraApp *pMe);
 //状态 STATE_CPOPMSG 处理函数
 static NextFSMAction CameraApp_StatePopMSGHandle(CCameraApp *pMe);
 
+//状态 STATE_CAMERAPHOTOMODE 处理函数
+static NextFSMAction CameraApp_StateCameraphotomode(CCameraApp *pMe);
+
+
 //状态 STATE_EXIT 处理函数
 static NextFSMAction CameraApp_StateExitHandle(CCameraApp *pMe);
 
@@ -119,6 +123,10 @@ NextFSMAction CameraApp_ProcessState(CCameraApp *pMe)
             
         case STATE_CPOPMSG:
             retVal = CameraApp_StatePopMSGHandle(pMe);
+            break;
+
+        case STATE_CAMERAPHOTOMODE:
+            retVal = CameraApp_StateCameraphotomode(pMe);
             break;
                        
         case STATE_EXIT:
@@ -204,6 +212,10 @@ static NextFSMAction CameraApp_StateMainMenuHandle(CCameraApp *pMe)
         case DLGRET_POPMSG:
             MOVE_TO_STATE(STATE_CPOPMSG)
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_CAMERAPHOTOMODE:
+            MOVE_TO_STATE(STATE_CAMERAPHOTOMODE)
+            return NFSMACTION_CONTINUE;
                           
         default:
             break;
@@ -256,6 +268,10 @@ static NextFSMAction CameraApp_StatePreviewHandle(CCameraApp *pMe)
         case DLGRET_POPMSG:
             MOVE_TO_STATE(STATE_CPOPMSG)
             return NFSMACTION_CONTINUE;
+            
+         case DLGRET_CAMERAPHOTOMODE:
+            MOVE_TO_STATE(STATE_CAMERAPHOTOMODE)
+            return NFSMACTION_CONTINUE;
         
         case DLGRET_EXIT:
             MOVE_TO_STATE(STATE_EXIT)  
@@ -303,7 +319,11 @@ static NextFSMAction CameraApp_StateCameraCFGHandle(CCameraApp *pMe)
 
         case DLGRET_POPMSG:
             MOVE_TO_STATE(STATE_CPOPMSG)
-            return NFSMACTION_CONTINUE;    
+            return NFSMACTION_CONTINUE;
+            
+         case DLGRET_CAMERAPHOTOMODE:
+            MOVE_TO_STATE(STATE_CAMERAPHOTOMODE)
+            return NFSMACTION_CONTINUE;
 
         case DLGRET_CANCELED:
             MOVE_TO_STATE(STATE_CPREVIEW)
@@ -356,6 +376,10 @@ static NextFSMAction CameraApp_StatePicHandle(CCameraApp *pMe)
         case DLGRET_POPMSG:
             MOVE_TO_STATE(STATE_CPOPMSG)
             return NFSMACTION_CONTINUE;
+            
+        case DLGRET_CAMERAPHOTOMODE:
+            MOVE_TO_STATE(STATE_CAMERAPHOTOMODE)
+            return NFSMACTION_CONTINUE;
 
         case DLGRET_CANCELED:
             MOVE_TO_STATE(STATE_CMAINMENU)
@@ -393,6 +417,10 @@ static NextFSMAction CameraApp_StatePopMSGHandle(CCameraApp *pMe)
         case DLGRET_PREVIEW:
             MOVE_TO_STATE(STATE_CPREVIEW);
             return NFSMACTION_CONTINUE;
+
+        case DLGRET_CAMERAPHOTOMODE:
+            MOVE_TO_STATE(STATE_CAMERAPHOTOMODE);
+            return NFSMACTION_CONTINUE;
             
         case DLGRET_EXIT:
             MOVE_TO_STATE(STATE_EXIT);
@@ -416,6 +444,58 @@ static NextFSMAction CameraApp_StatePopMSGHandle(CCameraApp *pMe)
     
     return NFSMACTION_CONTINUE;
 } 
+
+static NextFSMAction CameraApp_StateCameraphotomode(CCameraApp *pMe)
+{    
+    if(NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+     MSG_FATAL("IDS_CAMERA_PHOTO_MODE-state------------",0,0,0);
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+            // Show dialog
+            pMe->m_bNotOverwriteDlgRet = FALSE;
+            CameraApp_ShowDialog(pMe, IDD_CAMERA_PHOTO_MODE);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_MAINMENU:
+            MOVE_TO_STATE(STATE_CMAINMENU);
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_PREVIEW:
+            MOVE_TO_STATE(STATE_CPREVIEW);
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_POPMSG:
+            MOVE_TO_STATE(STATE_CPREVIEW);
+            return NFSMACTION_CONTINUE;
+
+            
+        case DLGRET_EXIT:
+            MOVE_TO_STATE(STATE_EXIT);
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_CANCELED:
+            if(pMe->m_ePreState == STATE_CPIC)
+            {
+                pMe->m_bRePreview =  TRUE;
+                MOVE_TO_STATE(STATE_CPREVIEW);
+            }
+            else
+            {
+                MOVE_TO_STATE(pMe->m_ePreState);
+            }
+            return NFSMACTION_CONTINUE;
+            
+        default:
+            break;
+    }
+    
+    return NFSMACTION_CONTINUE;
+}
+
 
 /*==============================================================================
 函数：
