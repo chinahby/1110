@@ -483,7 +483,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             // 初始化菜单项
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA, IDS_ITEM_CAMERA, NULL, NULL);
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_ITEM_CAMERA_GALLERY, IDS_ITEM_CAMERA_GALLERY, NULL, NULL);
-            #ifdef FEATURE_VERSION_W515V3
+            #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
             IMENUCTL_AddItem(pMenu, AEE_APPSCAMERAAPP_RES_FILE, IDS_CAMERA_PHOTO_MODE, IDS_CAMERA_PHOTO_MODE, NULL, NULL);
             #endif
             IMENUCTL_SetSel(pMenu, pMe->m_nMainMenuItemSel);
@@ -512,7 +512,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
             switch(wParam) 
             {
                 case IDS_ITEM_CAMERA: 
-#ifdef FEATURE_VERSION_W515V3
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
                     {
                       boolean cameraphotopath = FALSE;
                       OEM_GetConfig(CFGI_CAMERA_PHOTO_MODE,&cameraphotopath, sizeof(cameraphotopath));
@@ -565,7 +565,7 @@ static boolean CameraApp_MainMenuHandleEvent(CCameraApp *pMe, AEEEvent eCode, ui
                     pMe->m_nMainMenuItemSel = IDS_ITEM_CAMERA_GALLERY;
                     CMediaGallery_FileExplorer(GALLERY_PHOTO_BROWSE, NULL);
                     break;
-#ifdef FEATURE_VERSION_W515V3                   
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)                 
                 case IDS_CAMERA_PHOTO_MODE:
                     pMe->m_nMainMenuItemSel = IDS_CAMERA_PHOTO_MODE;
                     MSG_FATAL("IDS_CAMERA_PHOTO_MODE-------------",0,0,0);

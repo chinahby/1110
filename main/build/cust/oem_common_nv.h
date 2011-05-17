@@ -124,7 +124,7 @@
 #define OEMNV_VOICEMAIL_NUMBER                      L"0"                         //NV_SMS_VM_NUMBER_I  
 #endif
 //Others
-#if defined(FEATURE_VERSION_W515V3)
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
 #define OEMNV_PHONE_PASSWORD                        11005                       //CFGI_PHONE_PASSWORD
 #else
 #define OEMNV_PHONE_PASSWORD                        10670                    //10670                       //CFGI_PHONE_PASSWORD

@@ -187,6 +187,9 @@
 	<String Id="1062" Name="IDS_BATTERY_FULLY_CHARGE">
 		<Text>Battery is full already</Text>
 	</String>
+	<String Id="1063" Name="IDS_USERPROFILE_MODE">
+		<Text>User profile mode changed</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

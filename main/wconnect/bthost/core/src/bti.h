@@ -1400,7 +1400,11 @@ typedef struct bt_event_q_info_struct
 #ifdef FEATURE_MANUFACTURER_INFO /* defined for ODM builds */
   #define DEFAULT_BT_NAME         CUST_MODEL_ID
 #else
+#ifdef FEATURE_VERSION_S1000T
+  #define DEFAULT_BT_NAME         "V3 Dew"
+#else
   #define DEFAULT_BT_NAME         "Hitz 233C"
+#endif
 #endif
 
 typedef struct

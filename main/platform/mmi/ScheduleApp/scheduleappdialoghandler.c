@@ -2528,13 +2528,43 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                 RGBVAL  clrFrame = FRAME_COLOR; 
                 RGBVAL  clrFill = RGB_WHITE;
                 RGBVAL  clrNosel = BK_COLOR;
-
-                //SETAEERECT(&rc_year, x, y, FontHeight*2, FontHeight);
-                //SETAEERECT(&rc_month, x + FontHeight * 3, y, FontHeight, FontHeight);
-                //SETAEERECT(&rc_day, x + FontHeight * 5, y, FontHeight, FontHeight);
-                SETAEERECT(&rc_day, x, y, FontHeight, FontHeight);
-                SETAEERECT(&rc_month, x + FontHeight * 2, y, FontHeight, FontHeight);
-                SETAEERECT(&rc_year, x + FontHeight * 4, y, FontHeight*2, FontHeight);                
+                uint16 dateFormatType = 0;
+				OEM_GetConfig( CFGI_DATE_FORMAT, &dateFormatType, sizeof( byte));
+				switch(dateFormatType)
+				{
+					case OEMNV_DATEFORM_DMY:
+						{
+	                	//SETAEERECT(&rc_year, x, y, FontHeight*2, FontHeight);
+	                	//SETAEERECT(&rc_month, x + FontHeight * 3, y, FontHeight, FontHeight);
+	                	//SETAEERECT(&rc_day, x + FontHeight * 5, y, FontHeight, FontHeight);
+	                	SETAEERECT(&rc_day, x, y, FontHeight, FontHeight);
+	                	SETAEERECT(&rc_month, x + FontHeight * 2, y, FontHeight, FontHeight);
+	                	SETAEERECT(&rc_year, x + FontHeight * 4, y, FontHeight*2, FontHeight);    
+	                	}
+	                	break;
+	                case OEMNV_DATEFORM_MDY:
+						{
+	                	//SETAEERECT(&rc_year, x, y, FontHeight*2, FontHeight);
+	                	//SETAEERECT(&rc_month, x + FontHeight * 3, y, FontHeight, FontHeight);
+	                	//SETAEERECT(&rc_day, x + FontHeight * 5, y, FontHeight, FontHeight);
+	                	SETAEERECT(&rc_month, x, y, FontHeight, FontHeight);
+	                	SETAEERECT(&rc_day, x + FontHeight * 2, y, FontHeight, FontHeight);
+	                	SETAEERECT(&rc_year, x + FontHeight * 4, y, FontHeight*2, FontHeight);    
+	                	}
+	                	break;
+	                case OEMNV_DATEFORM_YMD:
+						{
+	                	//SETAEERECT(&rc_year, x, y, FontHeight*2, FontHeight);
+	                	//SETAEERECT(&rc_month, x + FontHeight * 3, y, FontHeight, FontHeight);
+	                	//SETAEERECT(&rc_day, x + FontHeight * 5, y, FontHeight, FontHeight);
+	                	SETAEERECT(&rc_year, x, y, FontHeight*2, FontHeight);
+	                	SETAEERECT(&rc_month, x + FontHeight * 3, y, FontHeight, FontHeight);
+	                	SETAEERECT(&rc_day, x + FontHeight * 5, y, FontHeight, FontHeight);    
+	                	}
+	                	break;
+	                default:
+	                    break;
+                }
 
                 //year
                 if (pme->curSel == DATE_SEL_YEAR)
@@ -2690,40 +2720,129 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                     return TRUE;
 
                 case AVK_LEFT:
-                    
-                    if(pme->curSel == DATE_SEL_YEAR)
-                    {
-                        pme->curSel = DATE_SEL_MONTH;//DATE_SEL_DAY;
-                    }
-                    else if(pme->curSel == DATE_SEL_DAY)
-                    {
-                        pme->curSel = DATE_SEL_YEAR;//DATE_SEL_MONTH;
-                    }
-                    else if(pme->curSel == DATE_SEL_MONTH)
-                    {
-                        pme->curSel = DATE_SEL_DAY;//DATE_SEL_YEAR;
-                    }
+                	{
+	                    uint16 dateFormatType = 0;
+						OEM_GetConfig( CFGI_DATE_FORMAT, &dateFormatType, sizeof( byte));
+						switch(dateFormatType)
+						{
+						case OEMNV_DATEFORM_DMY:
+						{
+		                    if(pme->curSel == DATE_SEL_YEAR)
+		                    {
+		                        pme->curSel = DATE_SEL_MONTH;//DATE_SEL_DAY;
+		                    }
+		                    else if(pme->curSel == DATE_SEL_DAY)
+		                    {
+		                        pme->curSel = DATE_SEL_YEAR;//DATE_SEL_MONTH;
+		                    }
+		                    else if(pme->curSel == DATE_SEL_MONTH)
+		                    {
+		                        pme->curSel = DATE_SEL_DAY;//DATE_SEL_YEAR;
+		                    }
+	                    }
+	                    break;
+	                    case OEMNV_DATEFORM_MDY:
+						{
+		                    if(pme->curSel == DATE_SEL_YEAR)
+		                    {
+		                        pme->curSel = DATE_SEL_DAY;//DATE_SEL_DAY;
+		                    }
+		                    else if(pme->curSel == DATE_SEL_DAY)
+		                    {
+		                        pme->curSel = DATE_SEL_MONTH;//DATE_SEL_MONTH;
+		                    }
+		                    else if(pme->curSel == DATE_SEL_MONTH)
+		                    {
+		                        pme->curSel = DATE_SEL_YEAR;//DATE_SEL_YEAR;
+		                    }
+	                    }
+	                    break;
+	                    case OEMNV_DATEFORM_YMD:
+						{
+		                    if(pme->curSel == DATE_SEL_YEAR)
+		                    {
+		                        pme->curSel = DATE_SEL_DAY;//DATE_SEL_DAY;
+		                    }
+		                    else if(pme->curSel == DATE_SEL_DAY)
+		                    {
+		                        pme->curSel = DATE_SEL_MONTH;//DATE_SEL_MONTH;
+		                    }
+		                    else if(pme->curSel == DATE_SEL_MONTH)
+		                    {
+		                        pme->curSel = DATE_SEL_YEAR;//DATE_SEL_YEAR;
+		                    }
+	                    }
+	                    break;
+	                    default:
+	                    break;
+	                    }
                     (void) ISHELL_PostEvent(pme->m_pShell,
                                             AEECLSID_SCHEDULEAPP,
                                             EVT_USER_REDRAW,
                                             NULL,
                                             TRUE);
-                    
+                    }
                     return TRUE;
 
                 case AVK_RIGHT:
+
+                    {
+                    	uint16 dateFormatType = 0;
+						OEM_GetConfig( CFGI_DATE_FORMAT, &dateFormatType, sizeof( byte));
+						switch(dateFormatType)
+						{
+						case OEMNV_DATEFORM_DMY:
+						{
+		                    if(pme->curSel == DATE_SEL_DAY)
+		                    {
+		                        pme->curSel = DATE_SEL_MONTH;//DATE_SEL_YEAR;
+		                    }
+		                    else if(pme->curSel == DATE_SEL_YEAR)
+		                    {
+		                        pme->curSel = DATE_SEL_DAY;//DATE_SEL_MONTH;
+		                    }
+		                    else if(pme->curSel == DATE_SEL_MONTH)
+		                    {
+		                        pme->curSel = DATE_SEL_YEAR;//DATE_SEL_DAY;
+                    		}
+	                    }
+	                    break;
+	                    case OEMNV_DATEFORM_MDY:
+						{
+		                    if(pme->curSel == DATE_SEL_YEAR)
+		                    {
+		                        pme->curSel = DATE_SEL_MONTH;//DATE_SEL_DAY;
+		                    }
+		                    else if(pme->curSel == DATE_SEL_DAY)
+		                    {
+		                        pme->curSel = DATE_SEL_YEAR;//DATE_SEL_MONTH;
+		                    }
+		                    else if(pme->curSel == DATE_SEL_MONTH)
+		                    {
+		                        pme->curSel = DATE_SEL_DAY;//DATE_SEL_YEAR;
+		                    }
+	                    }
+	                    break;
+	                    case OEMNV_DATEFORM_YMD:
+						{
+		                    if(pme->curSel == DATE_SEL_YEAR)
+		                    {
+		                        pme->curSel = DATE_SEL_MONTH;//DATE_SEL_DAY;
+		                    }
+		                    else if(pme->curSel == DATE_SEL_DAY)
+		                    {
+		                        pme->curSel = DATE_SEL_YEAR;//DATE_SEL_MONTH;
+		                    }
+		                    else if(pme->curSel == DATE_SEL_MONTH)
+		                    {
+		                        pme->curSel = DATE_SEL_DAY;//DATE_SEL_YEAR;
+		                    }
+	                    }
+	                    break;
+	                    default:
+	                    break;
+	                    }
                     
-                    if(pme->curSel == DATE_SEL_DAY)
-                    {
-                        pme->curSel = DATE_SEL_MONTH;//DATE_SEL_YEAR;
-                    }
-                    else if(pme->curSel == DATE_SEL_YEAR)
-                    {
-                        pme->curSel = DATE_SEL_DAY;//DATE_SEL_MONTH;
-                    }
-                    else if(pme->curSel == DATE_SEL_MONTH)
-                    {
-                        pme->curSel = DATE_SEL_YEAR;//DATE_SEL_DAY;
                     }
                     (void) ISHELL_PostEvent(pme->m_pShell,
                                             AEECLSID_SCHEDULEAPP,

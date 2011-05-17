@@ -898,6 +898,11 @@ void WmsApp_ConvertClientMsgToMS(wms_client_message_s_type *pClMsg,
                         i = 2;
                         buf[i] = '0';
                     }
+                    // È¥µô "+91"
+                    else if (STRNCMP((char *)buf, "+91", 3) == 0)
+                    {
+                        i = 3;
+                    }
                     else if (STRNCMP((char *)buf, "+66", 3) == 0)
                     {
                         i = 2;
@@ -1086,6 +1091,11 @@ void WmsApp_ConvertClientMsgToMS(wms_client_message_s_type *pClMsg,
                 {
                     // È¥µô "+86"
                     if (STRNCMP((char *)buf, "+86", 3) == 0)
+                    {
+                        i = 3;
+                    }
+                    // È¥µô "+91"
+                    else if (STRNCMP((char *)buf, "+91", 3) == 0)
                     {
                         i = 3;
                     }

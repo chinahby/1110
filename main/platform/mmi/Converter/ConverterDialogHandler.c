@@ -972,7 +972,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                 {
                     if(pMe->m_converterMode == CONVERTER_MODE_CURRENCY)
                     {
-                        /*if(pMe->m_nCtlID == IDC_NUMBER1 || pMe->m_nCtlID == IDC_UNIT_MENU1)
+                        if(pMe->m_nCtlID == IDC_NUMBER1 || pMe->m_nCtlID == IDC_UNIT_MENU1)
                         {
                             pMe->basiccoefficient = IMENUCTL_GetSel(pMe->pUnitMenu1);
                         }
@@ -980,7 +980,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                         {
                             pMe->basiccoefficient = IMENUCTL_GetSel(pMe->pUnitMenu2);
                         }
-                        CLOSE_DIALOG(DLGRET_CHANGECURRENCY)*/
+                        CLOSE_DIALOG(DLGRET_CHANGECURRENCY)
                         return TRUE;
                     }
                     else

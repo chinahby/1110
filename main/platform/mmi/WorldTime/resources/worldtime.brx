@@ -85,6 +85,9 @@
 	<STRING Id="28" Name="IDS_CITY_25">
 		<Text>Yangon</Text>
 	</STRING>
+	<String Id="29" Name="IDS_CITY_26">
+		<Text>NEW DELHI</Text>
+	</String>
 	<String Id="1001" Name="IDS_TIME_ZONE">
 		<Text>Time zone:</Text>
 	</String>

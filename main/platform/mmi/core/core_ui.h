@@ -50,6 +50,7 @@ when       who     what, where, why
 
 #define EVT_UI_EXIT                 1150
 #define EVT_MC_PWR_DOWN             1155
+#define EVT_MODE_CHANGE             1299
 
 /*===========================================================================
 FUNCTION CoreAppHandleSignals

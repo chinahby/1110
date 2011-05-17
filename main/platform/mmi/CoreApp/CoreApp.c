@@ -1238,6 +1238,13 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 DBGPRINTF("EVT_MC_PWR_DOWN");
                 CoreApp_Poweroff_Phone(pMe);
                 break;
+            case EVT_MODE_CHANGE:
+            	{
+            		MSG_FATAL("EVT_MODE_CHANGE........................",0,0,0);
+            		pMe->m_nMsgID = IDS_USERPROFILE_MODE;
+          			CLOSE_DIALOG(DLGRET_BATT_INFO)
+            	}
+            	break;
             default:
             #ifdef FEATURE_VERSION_N021
             	if(wParam==1)
@@ -1866,7 +1873,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
 #ifdef FEATURE_APP_MEDIAGALLERY
                     MediaGallery_SetUSBCableConnect(pMe->m_bExtPwrState);
 #endif
-#ifdef FEATURE_VERSION_W515V3
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
                   if(pMe->m_bBatteryActive)
                   {
                      pMe->m_bBatteryActive=FALSE;

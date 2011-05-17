@@ -2268,13 +2268,16 @@ static boolean MP3_CreatOrRenamelist_HandleEvent(CMusicPlayer *pMe,
                 {
                     return TRUE;
                 }
-                #ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
+                
                 if ( WSTRLEN(ITEXTCTL_GetTextPtr(pTextCtl)) > 0 && ITEXTCTL_GetT9End(pTextCtl) != TC_CURSORSTART )
                 {
+                	#ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                     MP3_DRAW_BOTTOMBAR(BTBAR_OK_DELETE);
+                    #else
+                    MP3_DRAW_BOTTOMBAR(BTBAR_OK_BACK);  
+                    #endif
                 }
                 else
-                #endif
                 {
                     MP3_DRAW_BOTTOMBAR(BTBAR_BACK);            
                 }

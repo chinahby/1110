@@ -7414,6 +7414,12 @@ void OEMWMS_MsgInfoCacheCbExt(const wms_client_message_s_type  *pMsg,
                         i = 3;
                         nlen -= 3;
                     }
+                    // È¥µô "+91"
+                    else if (STRNCMP((char *)buf, "+91", 3) == 0)
+                    {
+                        i = 3;
+                        nlen -= 3;
+                    }
                     else if (STRNCMP((char *)buf, "+62", 3) == 0)
                     {
                         i = 2;

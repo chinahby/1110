@@ -3021,7 +3021,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             return TRUE;            
         }
-        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_S1000T)
         case EVT_KEY_HELD:
     		if(wParam == AVK_SPACE)
             {
@@ -3044,11 +3044,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             
       	 #if defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_HITZ181)
 	     if(wParam == AVK_SHIFT)
+	     #elif defined(FEATURE_VERSION_S1000T)
+	     if(wParam == AVK_RWD)
+	     #endif
             {
             	byte     curProfile;
 			    byte     byte_return[PROFILENUMBER];
 			    byte     new_return;
-
+                MSG_FATAL("AVK_RWD/......................",0,0,0);
 			    (void) ICONFIG_GetItem(pMe->m_pConfig,
 			                                CFGI_PROFILE_CUR_NUMBER,
 			                                &curProfile,
@@ -3132,10 +3135,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			    (void)ICONFIG_SetItem(pMe->m_pConfig,
 			                                CFGI_MISSED_CALL_ALERT,
 			                                &new_return,
-			                                sizeof(new_return));     
+			                                sizeof(new_return)); 
+			    MSG_FATAL("EVT_MODE_CHANGE........................",0,0,0);
+        		pMe->m_nMsgID = IDS_USERPROFILE_MODE;
+      			CLOSE_DIALOG(DLGRET_BATT_INFO)
             	return TRUE;
             }
-        #endif
         #endif    
         case EVT_DIALOG_END:
             // 取消相关定时器			
@@ -5662,7 +5667,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 			eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
 		}			
 	#else
-        #if defined(FEATURE_VERSION_W515V3)
+        #if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_S1000T)
            eBBarType = BTBAR_MENU_CONTACTS;
         #else
 		   eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS
@@ -7327,7 +7332,7 @@ static void CoreApp_keypadtimer(void *pUser)
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #elif defined (FEATURE_VERSION_C01)
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
-#elif defined (FEATURE_VERSION_W515V3)
+#elif defined (FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
 	ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);

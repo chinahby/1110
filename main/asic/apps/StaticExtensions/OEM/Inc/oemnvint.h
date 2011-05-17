@@ -739,7 +739,7 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_LEN                    3
 #define OEMNV_EMERG_NUM_ONE                    "191"
 #define OEMNV_EMERG_NUM_TWO                    "112"
-#elif defined(FEATURE_VERSION_W515V3)
+#elif defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
 #define OEMNV_EMERT_SEZE                       4
 #define OEMNV_EMERG_NUM_LEN                    3
 #define OEMNV_EMERG_NUM_ONE                    "100"

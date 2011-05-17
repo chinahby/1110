@@ -44,6 +44,7 @@
     //#include "oemannunciator.brh" 
     #include "appscommonimages.brh" 
 #endif
+#define EVT_MODE_CHANGE             1299
 
 /*==============================================================================
                                  宏定义和常数
@@ -10037,6 +10038,8 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
         // # key for shortcut of quiet mode
         else if ( ((AVKType)wParam == AVK_POUND ) && WSTRLEN(pMe->m_DialString) == 1)
         {
+        	MSG_FATAL("POSTEVETN..................................",0,0,0);
+			//ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CORE_APP,EVT_USER,EVT_MODE_CHANGE,0);
             CallApp_ShortcutQuiet( pMe );
             if(pMe->m_Profile == OEMNV_PROFILE_NORMALMODE)
             {
