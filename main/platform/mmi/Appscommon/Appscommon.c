@@ -2473,7 +2473,11 @@ void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unl
     //SETAEERECT(&rect, 0, 16, 128, 112);
     //m_PromptMsg.prc = &rect;
 
-
+	if ( (NULL == pIDisplay) 
+        || (NULL == pStatic))
+    {
+        return;
+    } 
 //Add By zzg 2010_11_23
 #ifdef FEATURE_UNLOCK_KEY_SPACE
 	m_PromptMsg.nMsgResID = IDS_MSG_KEYGUARD_SPACE;
@@ -2521,7 +2525,11 @@ void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)
     byte      bTFmt = 0;
     uint16    nWeekResID = 0, nHour = 0;
     RGBVAL  nOldFontColor = RGB_WHITE;
-    
+
+    if (NULL == pIDisplay)
+    {
+        return;
+    } 
     ISHELL_GetDeviceInfo(pShell, &devinfo);
     //clear screen
     SETAEERECT(&rect, 0, 0, devinfo.cxScreen, devinfo.cyScreen);
@@ -3130,6 +3138,11 @@ boolean Appscommon_DrawPopUpDialogBox(IDisplay *pIDisplay, int x, int y, AECHAR 
 ==============================================================================*/
 boolean Appscommon_DrawDigitalNumber (IDisplay *pDisplay, int number, int nLineWidth, AEERect *fontRect, RGBVAL fontColor)
 {
+	if (NULL == pDisplay)
+    {
+        return;
+    } 
+    
     if(number > 9 || number < 0 || pDisplay == NULL)
     {
         return FALSE;
@@ -3438,6 +3451,11 @@ int GetSingleNumberWidth(IDisplay *pDisplay, AEEFont Font)
     AECHAR testNumber[] = {'0','\0'};
     int nNumberWidth = 0;
 
+	if (NULL == pDisplay)
+    {
+        return;
+    } 
+    
     nNumberWidth = IDISPLAY_MeasureText(pDisplay, Font, testNumber);
 
     return nNumberWidth;
