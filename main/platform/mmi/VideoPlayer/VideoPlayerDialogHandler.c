@@ -2357,14 +2357,7 @@ boolean VideoPlayer_ChangeScrState(CVideoPlayer* pMe,boolean isLockScr)
 			
 			if(result == SUCCESS || (result  == MM_PENDING))
 			{
-				result = IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia,MM_PARM_RECT,(int32)&rc,NULL);
-				
-				if(pMe->m_pDisplay != NULL)
-				{
-					IDISPLAY_ClearScreen(pMe->m_pDisplay);
-					IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_BACKGROUND, RGB_BLACK);
-					IDISPLAY_Update(pMe->m_pDisplay);
-				}								
+				result = IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia,MM_PARM_RECT,(int32)&rc,NULL);								
 			}
 		}
 		else
