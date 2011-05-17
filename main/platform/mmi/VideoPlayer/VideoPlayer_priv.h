@@ -67,6 +67,7 @@
 #include "AEEImageCtl.h" 
 
 #include "AEEMediaUtil.h"
+#include "AEEMediaMPEG4.h"
 #include "OEMFS.h"
 #include "OEMNVINT.h"
 #include "AEEConfig.h"    

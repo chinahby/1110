@@ -294,7 +294,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
     #if defined(AEE_STATIC)
         ASSERT(pMe != NULL);
     #endif
-	DBGPRINTF("eCode = %d",eCode);
+	MSG_FATAL("VPDVideoPlayer_HandleEvent eCode = 0x%x,wParam=%d,dwParam=%d",eCode,wParam,dwParam);
 #ifdef VIDEOPLAYER_HELP
 	if(pMe->m_pHelp != NULL)
 	{
@@ -1396,7 +1396,7 @@ void VideoPlayer_PlayVideo(CVideoPlayer *pMe)
     if(pMe->m_pMedia)
     {  
     	DBGPRINTF("YY Said : Play!!! ");
-		VideoPlayer_ChangeScrState(pMe,TRUE);
+    	VideoPlayer_ChangeScrState(pMe,TRUE);
         pMe->m_PlayFailed = IMEDIA_Play((IMedia*)pMe->m_pMedia);//²¥·Å  
         SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_ON);
     }      
@@ -2164,6 +2164,7 @@ static void VideoPlayer_VideoNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify
 {
     CVideoPlayer *   pMe = (CVideoPlayer *)pUser; 
 
+	MSG_FATAL("VideoPlayer_VideoNotify pCmdNotify->nStatus=%d,pCmdNotify->nCmd=%d",pCmdNotify->nStatus,pCmdNotify->nCmd,0);
     switch (pCmdNotify->nStatus)
     {   
         case MM_STATUS_SEEK_FAIL:     
@@ -2333,32 +2334,54 @@ static int VideoPlayer_GetFileID(CVideoPlayer *pMe)
 }
 
 #endif
-/*=================================================================================================================
-  ÆÁÄ»ÇÐ»»
-=================================================================================================================*/
+
+
+
 boolean VideoPlayer_ChangeScrState(CVideoPlayer* pMe,boolean isLockScr)
-
 {
-  AEERect rc;
-  MEMSET(&rc,NULL,sizeof(rc));
-  if(isLockScr)
-  	{
-      if(pMe->IsFullScreen)
-      	{
-      	  rc.dx = pMe->m_rc.dx;
-		  rc.dy = pMe->m_rc.dy;
-      	}
-      else
-      	{
-		   rc.x = pMe->m_rc.x;
-      	   rc.dx = pMe->m_rc.dx;
-           rc.y = VIDEOPLAYER_NAMEPART_H;
-           rc.dy = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay);
+	AEERect rc;
+	int result = SUCCESS;
+	boolean ret_val = FALSE;
+	MEMSET(&rc,NULL,sizeof(rc));
 
-      	}
-  	}
-  return (SUCCESS == IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia,MM_PARM_RECT,(int32)&rc,NULL));
+	if(isLockScr)
+	{
+		if(pMe->IsFullScreen)
+		{
+			rc.x = pMe->m_rc.x;
+			rc.dx = pMe->m_rc.dx;
+			rc.y =  pMe->m_rc.y;
+			rc.dy = pMe->m_rc.dy;
+			
+			result = IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia, MM_MP4_PARM_ASCALING, rc.dx, rc.dy);
+			
+			if(result == SUCCESS || (result  == MM_PENDING))
+			{
+				result = IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia,MM_PARM_RECT,(int32)&rc,NULL);
+				
+				if(pMe->m_pDisplay != NULL)
+				{
+					IDISPLAY_ClearScreen(pMe->m_pDisplay);
+					IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_BACKGROUND, RGB_BLACK);
+					IDISPLAY_Update(pMe->m_pDisplay);
+				}								
+			}
+		}
+		else
+		{
+			result = IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia, MM_MP4_PARM_SCALING, MM_MPEG4_NO_SCALING, 0);
+			
+			rc.x = pMe->m_rc.x;
+			rc.dx = pMe->m_rc.dx;
+			rc.y = VIDEOPLAYER_NAMEPART_H;
+			rc.dy = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay);
+			
+			if(result == SUCCESS || (result  == MM_PENDING))
+			{
+				result = IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia,MM_PARM_RECT,(int32)&rc,NULL);						
+			}
+		}
+	}
+	
+	return result;
 }
-
-
-
