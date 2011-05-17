@@ -935,10 +935,10 @@ static int OEMDisplayDev_Update(IDisplayDev *pMe, IBitmap *pbmSrc, AEERect *prc)
          pMe->mdpImg.mdpOp = MDPOP_QUEUE_COPY;
 
          pMe->mdpImg.width = (uint16) pDib->nPitch / (pDib->nDepth / 8);
-         MSG_FATAL("pMe->mdpImg.cwin.x1=======%d",pMe->mdpImg.cwin.x1,0,0);
-		 MSG_FATAL("pMe->mdpImg.cwin.x2=======%d",pMe->mdpImg.cwin.x2,0,0);
-		 MSG_FATAL("pMe->mdpImg.cwin.y1=======%d",pMe->mdpImg.cwin.y1,0,0);
-		 MSG_FATAL("pMe->mdpImg.cwin.y2=======%d",pMe->mdpImg.cwin.y2,0,0);
+         //MSG_FATAL("pMe->mdpImg.cwin.x1=======%d",pMe->mdpImg.cwin.x1,0,0);
+		 //MSG_FATAL("pMe->mdpImg.cwin.x2=======%d",pMe->mdpImg.cwin.x2,0,0);
+		 //MSG_FATAL("pMe->mdpImg.cwin.y1=======%d",pMe->mdpImg.cwin.y1,0,0);
+		 //MSG_FATAL("pMe->mdpImg.cwin.y2=======%d",pMe->mdpImg.cwin.y2,0,0);
 		 
          pMe->mdpOvID = mdp_register_ovimg(&pMe->mdpImg);
          if(0 == pMe->mdpOvID)
@@ -977,10 +977,10 @@ static int OEMDisplayDev_Update(IDisplayDev *pMe, IBitmap *pbmSrc, AEERect *prc)
             pMe->mdpImg.cwin.y2 = prc->y + prc->dy - 1;
             pMe->mdpImg.lcd_x = prc->x - BREW_OFFSET_X;
             pMe->mdpImg.lcd_y = prc->y - BREW_OFFSET_Y;
-            MSG_FATAL("2pMe->mdpImg.cwin.x1==%d,prc->x=%d",pMe->mdpImg.cwin.x1,prc->x,0);
-		 	MSG_FATAL("2pMe->mdpImg.cwin.x2==%d,prc->y=%d",pMe->mdpImg.cwin.x2,prc->y,0);
-		 	MSG_FATAL("2pMe->mdpImg.cwin.y1==%d,prc->dx=%d",pMe->mdpImg.cwin.y1,prc->dx,0);
-		 	MSG_FATAL("2pMe->mdpImg.cwin.y2==%d,prc->dy=%d",pMe->mdpImg.cwin.y2,prc->dy,0);
+            //MSG_FATAL("2pMe->mdpImg.cwin.x1==%d,prc->x=%d",pMe->mdpImg.cwin.x1,prc->x,0);
+		 	//MSG_FATAL("2pMe->mdpImg.cwin.x2==%d,prc->y=%d",pMe->mdpImg.cwin.x2,prc->y,0);
+		 	//MSG_FATAL("2pMe->mdpImg.cwin.y1==%d,prc->dx=%d",pMe->mdpImg.cwin.y1,prc->dx,0);
+		 	//MSG_FATAL("2pMe->mdpImg.cwin.y2==%d,prc->dy=%d",pMe->mdpImg.cwin.y2,prc->dy,0);
 		 	
 		 	
 #ifdef FEATURE_MDP2

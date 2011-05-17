@@ -1724,6 +1724,7 @@ uint32 mdp_register_ovimg(MDPIMG *mdpImg)
   if (mdp_verify_img(mdpImg) != MDP_SUCCESSFUL)
     return 0;
 
+#ifndef CUST_EDITION
 #ifdef DISP_TASK_BUFFER_SHARING
   if ((mdpImg->mdpOp&MDPOP_ASCALE) || (mdpImg->mdpOp&MDPOP_QUEUE_COPY))
   {
@@ -1759,6 +1760,7 @@ uint32 mdp_register_ovimg(MDPIMG *mdpImg)
 
     return ret;
   }
+#endif
 #endif
 
   return mdp_register_ovimg_sub(mdpImg, NULL);
