@@ -509,7 +509,18 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
                     break;
 
                 case IDS_RESTORE:              //»Ö¸´³ö³§ÉèÖÃ
+                    //SecurityMenu_ShowDialog(pMe, IDD_ASK_PASSWORD_DIALOG);
+					//ISHELL_GetActiveDialog(pMe->m_pShell);
+					//MSG_FATAL("------------>ok1",0,0,0);
+					//SecurityRestoreFactoryHandler(pMe,eCode,wParam,dwParam);
+                    //CLOSE_DIALOG(DLGRET_RESTORE)
+                    //CLOSE_DIALOG(SECURITYMENU_ASKPASSWORD)
+#ifdef      FEATURE_VERSION_W515V3            
+                    CLOSE_DIALOG(DLGRET_ARKPASSWORD)
+#else 
                     CLOSE_DIALOG(DLGRET_RESTORE)
+#endif
+					
                     break;
 
                 case IDS_DELETE:

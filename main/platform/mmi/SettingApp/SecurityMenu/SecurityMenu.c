@@ -520,7 +520,8 @@ static int SecurityMenu_InitAppData(CSecurityMenu *pMe)
     pMe->m_bIsConfirmPassword = FALSE;
     pMe->m_eRUIMSCode = ENTERPUK_STEP0;
     pMe->m_strPhonePWD = NULL;
-
+	pMe->m_currDlgId = 0;
+	pMe->m_nSubDlgId = 0;
     if (ISHELL_CreateInstance(pMe->m_pShell,
                                  AEECLSID_ANNUNCIATOR,
                                  (void **) &pMe->m_pIAnn))

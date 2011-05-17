@@ -382,6 +382,10 @@ static NextFSMAction Security_StateMainHandler(CSecurityMenu *pMe)
         case DLGRET_CHANGECODE:
             MOVE_TO_STATE(SECURITYMENU_CHANGECODE)
             return NFSMACTION_CONTINUE;
+		case DLGRET_ARKPASSWORD:
+			MOVE_TO_STATE(SECURITYMENU_ASKPASSWORD)
+			return NFSMACTION_CONTINUE;
+				
 
 
         default:
@@ -753,8 +757,24 @@ static NextFSMAction Security_StateAskPasswordHandler(CSecurityMenu *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_VALIDPINPASS:
-            MOVE_TO_STATE(SECURITYMENU_MAIN);
-            return NFSMACTION_CONTINUE;
+
+			switch(pMe->m_currDlgId)
+			{
+				case IDS_RESTORE: 
+					{
+						MOVE_TO_STATE(SECURITYMENU_RESTORE);
+					}
+				break;
+				case 0:
+//				default:
+					{
+						MOVE_TO_STATE(SECURITYMENU_MAIN);
+					}
+				break;
+			}
+            
+
+			return NFSMACTION_CONTINUE;
 
         case DLGRET_VALIDPINFAILED:
             //pMe->m_wMsgID = IDS_MSG_INPUTINVALID;
