@@ -243,11 +243,11 @@ else
             champagne.mid|fs:/ringers/champagne.mid \
             clock.mid|fs:/ringers/clock.mid \
             dance_craze.mid|fs:/ringers/dance_craze.mid \
-            green_line.mid|fs:/ringers/green_line.mid \
-            jumping.mid|fs:/ringers/jumping.mid \
-            lucky.mid|fs:/ringers/lucky.mid \
-            street_tale.mid|fs:/ringers/street_tale.mid \
-            techno_meto.mid|fs:/ringers/techno_meto.mid \
+            chacha.mid|fs:/ringers/chacha.mid \
+            classical.mid|fs:/ringers/classical.mid \
+            latin.mid|fs:/ringers/latin.mid \
+            pop.mid|fs:/ringers/pop.mid\
+            tange.mid|fs:/ringers/tange.mid \
             feeling_on.mid|fs:/ringers/feeling_on.mid \
             feeling_off.mid|fs:/ringers/feeling_off.mid
     else ifeq ($(USES_RESDIR), H2021C)
