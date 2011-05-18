@@ -134,6 +134,8 @@ typedef enum _MGDLGRetValue
    MGDLGRET_UDISKSTOP,
    MGDLGRET_NOEXTCARD,    //prompt that there are no SD / MMC insert into handset
    MGDLGRET_NOUSBCABLE,   //prompt that there are no USB cable connect
+   MGDLGRET_USBConnect,
+   MGDLGRET_USBNotConnect,
    MGDLGRET_NOFILES,      //there is no record or no file
    MGDLGRET_DIRNOTEMPTY,  //the directory is empty
    MGDLGRET_BGPLAYPROMPT, //When mp3 player OR fm play on the background.
@@ -358,7 +360,9 @@ struct  _CMediaGalleryApp{
    AEERect           m_rc;
    AEERect           m_ClipRect;
    boolean           m_bSuspending;/*True if EVT_APP_SUSPEND as been received*/
-
+   boolean           m_USBConnect;
+   boolean           m_STOPUSB;
+     
    MGStartMode       m_StartMode;
 
    /* Overwrite the dialog result? general is FALSE, need overwrite*/

@@ -308,6 +308,8 @@ static int MGAppUtil_DoCopyFile(CMediaGalleryApp *pMe);
 static int MGAppUtil_HandleOperateFileError(CMediaGalleryApp* pMe,
                                             IFileMgr *pFileMgr);
 static void MGAppUtil_StartUDisk(void *po);
+static void CheckUSBCableConnect_HandleDialogTimer(void *pUser);
+
 
 /*===========================================================================
  *                      Public Function Definitions
@@ -864,7 +866,23 @@ static boolean MediaGalleryApp_MsgBoxDlg_HandleEvent(CMediaGalleryApp* pMe,
          default:
             break;
          }
-         MGCLOSE_DIALOG(eMsgRet);
+         if(pMe->m_USBConnect)
+         {
+             MGCLOSE_DIALOG(MGDLGRET_UDISK);
+         }
+         else
+         {
+            if(pMe->m_STOPUSB)
+            {
+               MGCLOSE_DIALOG(MGDLGRET_CANCELED);
+            }
+            else
+            {
+                MGCLOSE_DIALOG(eMsgRet);
+            }
+             
+         }
+         
          return TRUE;
       }
 
@@ -1811,7 +1829,6 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
       MG_FARF(ADDR, ("U Disk dialog encounter NULL!"));
       return FALSE;
    }
-
    pText = (IStatic *)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_MG_UDISKRUN);
 
    if(!pText)
@@ -1866,8 +1883,11 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
          ISTATIC_SetText(pText, NULL, szBuffer,
                AEE_FONT_NORMAL, AEE_FONT_NORMAL);
 
-         CALLBACK_Cancel(&pMe->m_CallBack);
+         CALLBACK_Cancel(&pMe->m_CallBack);  
          CALLBACK_Init(&pMe->m_CallBack, MGAppUtil_StartUDisk, (void *)pMe);
+#ifdef FEATURE_VERSION_W515V3
+         ISHELL_SetTimer(pMe->m_pShell,2000,CheckUSBCableConnect_HandleDialogTimer,pMe);
+#endif
          pMe->m_nCallbackDoFor = MG_CBT_STARTUDISK;
          ISHELL_PostEvent(pMe->m_pShell, AEECLSID_MEDIAGALLERY,
                EVT_USER_REDRAW, 0, 0);
@@ -1876,13 +1896,12 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
       }
 
       case EVT_USER_REDRAW:
-      {
-         MGAppUtil_DrawSoftkey(pMe, BTBAR_STOP);
-         IDISPLAY_Update(pMe->m_pDisplay);
-
+      { 
+          MGAppUtil_DrawSoftkey(pMe, BTBAR_STOP);
+          IDISPLAY_Update(pMe->m_pDisplay);
+        
          return TRUE;
       }
-
       case EVT_DIALOG_END:
          //if we are suspending (EVT_APP_SUSPEND is sent before
          //EVT_DIALOG_END). Handle suspend for current status.
@@ -1891,9 +1910,9 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
          {
             ;
          }
-
+      pMe->m_USBConnect = FALSE;
+      ISHELL_CancelTimer(pMe->m_pShell, CheckUSBCableConnect_HandleDialogTimer, pMe);
       CALLBACK_Cancel(&pMe->m_CallBack);
-
       /*if applet is suspended, do not stop UDisk, if we check
        * pMe->m_bSuspending,  press AVK_END will not stop udisk*/
       if(/*FALSE == pMe->m_bSuspending &&*/
@@ -1917,6 +1936,11 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
                //MGCLOSE_DIALOG(MGDLGRET_CANCELED);
                if( TRUE == MediaGallery_CheckUdiskStat())
                {
+                #ifdef FEATURE_VERSION_W515V3
+                  pMe->m_USBConnect = FALSE;
+                  pMe->m_STOPUSB = TRUE;
+                  ISHELL_CancelTimer(pMe->m_pShell, CheckUSBCableConnect_HandleDialogTimer, pMe);
+                #endif
                   MGCLOSE_DIALOG(MGDLGRET_UDISKSTOP);
                }
 
@@ -1954,6 +1978,41 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
 
    return FALSE;
 }//MediaGalleryApp_UDiskDlg_HandleEvent
+
+static void CheckUSBCableConnect_HandleDialogTimer(void *pUser)
+{
+    CMediaGalleryApp *pMe = (CMediaGalleryApp *)pUser;
+
+    if((pMe->m_pActiveDlg == NULL)||(pMe == NULL))
+    {
+        return;
+    }
+  #if 1
+    if(MediaGallery_CheckUSBCableConnect())  
+    {
+       if(pMe->m_USBConnect ==FALSE)
+       {                                       
+          pMe->m_USBConnect=TRUE;
+          MGCLOSE_DIALOG(MGDLGRET_USBConnect);
+          
+       }
+       
+
+    }
+    else
+    {
+       if(pMe->m_USBConnect ==TRUE)
+       {                                
+         pMe->m_USBConnect=FALSE;
+         MGCLOSE_DIALOG(MGDLGRET_USBNotConnect);
+          
+       }
+    }
+ #endif
+ ISHELL_SetTimer(pMe->m_pShell,2000,CheckUSBCableConnect_HandleDialogTimer,pMe);
+// ISHELL_PostEvent(pMe->m_pShell,AEECLSID_MEDIAGALLERY,EVT_USER_REDRAW,0,0);
+}
+
 /*===========================================================================
  * FUNCTION:MediaGalleryApp_MediaMenuDlg_HandleEvent
  * DESCRIPTION: browse various media files and do various operation
@@ -9668,7 +9727,7 @@ static void MGAppUtil_StartUDisk(void *po)
       MG_FARF(ADDR, ("MGAppUtil_StartUDisk bad parameter!!!"));
       return;
    }
-   
+   MSG_FATAL("MGAppUtil_StartUDisk---------1",0,0,0);
    bRet = MediaGallery_StartUDisk(pMe);
 
    if(FALSE == bRet)
@@ -9688,6 +9747,8 @@ static void MGAppUtil_StartUDisk(void *po)
          MGCLOSE_DIALOG(MGDLGRET_CANCELED);
       }
    }
+
+   MSG_FATAL("MGAppUtil_StartUDisk---------bRet =%d",bRet ,0,0);
 
 }//MGAppUtil_StartUDisk
 static int MGAppUtil_BuildPlaylist(CMediaGalleryApp *pMe,IMenuCtl *pMenuCtl)

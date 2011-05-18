@@ -1320,7 +1320,10 @@ static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
    pMe->m_eMsgBoxType = MESSAGE_NONE;
    pMe->m_eMsgBoxBottomBar = BTBAR_NONE;
    pMe->m_pszMsgBoxResFile = NULL;
+   pMe->m_USBConnect = FALSE;
+   pMe->m_STOPUSB = FALSE;
 
+   
    pMe->m_nCallbackDoFor = MG_CBT_NULL;
    pMe->m_nEnumeResult = MG_ENUM_UNKNOWN;
    pMe->m_StoreMedium = MG_STMED_ALL;
@@ -2325,7 +2328,6 @@ boolean MediaGallery_StartUDisk(CMediaGalleryApp *pMe)
             break;
         }
     }
-    
     gbUDiskOn = bRet;
 #endif	
     return bRet;

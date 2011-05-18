@@ -397,6 +397,22 @@ static NextFSMAction MGStateMainMenuHandler(CMediaGalleryApp* pMe)
                BTBAR_NONE);
          return NFSMACTION_WAIT;
 
+      case MGDLGRET_USBConnect:
+         MediaGalleryApp_ShowMsgBoxDlg(pMe,
+               MGRES_LANGFILE,
+               IDS_USB_CONNECTED,
+               MESSAGE_INFORMATION,
+               BTBAR_NONE);
+         return NFSMACTION_WAIT;
+
+      case MGDLGRET_USBNotConnect:
+         MediaGalleryApp_ShowMsgBoxDlg(pMe,
+               MGRES_LANGFILE,
+               IDS_USB_NOT_CONNECTED,
+               MESSAGE_INFORMATION,
+               BTBAR_NONE);
+         return NFSMACTION_WAIT;
+
       case MGDLGRET_BGPLAYPROMPT:
          {
             uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
@@ -836,7 +852,7 @@ static NextFSMAction MGStateUDiskStateHandler(CMediaGalleryApp* pMe)
 
       case MGDLGRET_UDISKSTOP:
          MediaGalleryApp_ShowMsgBoxDlg(pMe,MGRES_LANGFILE,IDS_MG_STOPUDISK,
-                                       MESSAGE_INFORMATIVE,
+                                       MESSAGE_INFORMATION,
                                        BTBAR_OK);
          return NFSMACTION_WAIT;
 
@@ -846,6 +862,22 @@ static NextFSMAction MGStateUDiskStateHandler(CMediaGalleryApp* pMe)
                                        MESSAGE_INFORMATION,
                                        BTBAR_BACK);
          return NFSMACTION_WAIT;
+
+      case MGDLGRET_USBConnect:
+         MediaGalleryApp_ShowMsgBoxDlg(pMe,
+               MGRES_LANGFILE,
+               IDS_USB_CONNECTED,
+               MESSAGE_INFORMATION,
+               BTBAR_NONE);
+         return NFSMACTION_WAIT;
+
+      case MGDLGRET_USBNotConnect:
+         MediaGalleryApp_ShowMsgBoxDlg(pMe,
+               MGRES_LANGFILE,
+               IDS_USB_NOT_CONNECTED,
+               MESSAGE_INFORMATION,
+               BTBAR_NONE);
+         return NFSMACTION_WAIT;         
 
       case MGDLGRET_NOUSBCABLE:
          /*no USB cable connect*/
@@ -1196,6 +1228,22 @@ static NextFSMAction MGStateSelectPathHandler(CMediaGalleryApp* pMe)
                                        BTBAR_NONE);
          return NFSMACTION_WAIT;
 
+      case MGDLGRET_USBConnect:
+         MediaGalleryApp_ShowMsgBoxDlg(pMe,
+               MGRES_LANGFILE,
+              IDS_USB_CONNECTED,
+               MESSAGE_INFORMATION,
+               BTBAR_NONE);
+         return NFSMACTION_WAIT;
+
+      case MGDLGRET_USBNotConnect:
+         MediaGalleryApp_ShowMsgBoxDlg(pMe,
+               MGRES_LANGFILE,
+               IDS_USB_NOT_CONNECTED,
+               MESSAGE_INFORMATION,
+               BTBAR_NONE);
+         return NFSMACTION_WAIT;         
+
       default:
          return NFSMACTION_WAIT;
    }
@@ -1301,6 +1349,22 @@ static NextFSMAction MGStateVideoAddHandler(CMediaGalleryApp* pMe)
                BTBAR_NONE);
          return NFSMACTION_WAIT;
 #endif
+
+      case MGDLGRET_USBConnect:
+         MediaGalleryApp_ShowMsgBoxDlg(pMe,
+               MGRES_LANGFILE,
+               IDS_USB_CONNECTED,
+               MESSAGE_INFORMATION,
+               BTBAR_NONE);
+         return NFSMACTION_WAIT;
+         
+      case MGDLGRET_USBNotConnect:
+         MediaGalleryApp_ShowMsgBoxDlg(pMe,
+               MGRES_LANGFILE,
+               IDS_USB_NOT_CONNECTED,
+               MESSAGE_INFORMATION,
+               BTBAR_NONE);
+         return NFSMACTION_WAIT;         
 
       case MGDLGRET_NOFILES:
          MediaGalleryApp_ShowMsgBoxDlg(pMe, MGRES_LANGFILE,IDS_MG_EMPTY,

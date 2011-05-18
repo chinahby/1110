@@ -334,6 +334,12 @@
 	<String Id="1110" Name="IDS_ADD_SUCCESS">
 		<Text>Add music success</Text>
 	</String>
+	<String Id="1111" Name="IDS_USB_CONNECTED">
+		<Text>USB Connected</Text>
+	</String>
+		<String Id="1112" Name="IDS_USB_NOT_CONNECTED">
+		<Text>USB not Connected</Text>
+	</String>	
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">
