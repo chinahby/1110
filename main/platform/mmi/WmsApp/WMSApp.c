@@ -1376,8 +1376,9 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 #ifndef FEATURE_ICM
 					AEETCalls po;
 #endif
-#ifndef FEATURE_OEMOMH
+
                     if (info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_VMN_95 ||
+                        info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_IS91_VOICE_MAIL ||
                         info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_MWI)
                     {
                         uint16 nVmNews = 0;
@@ -1388,7 +1389,8 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                             bSendEvt = FALSE;
                         }
                     }
-#else
+                    
+#ifdef FEATURE_OEMOMH
                     WmsApp_PlaySMSAlert(pMe, TRUE);
 #endif //#ifndef FEATURE_OEMOMH
 					//add by yangdecai   09-26
@@ -1449,8 +1451,6 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 		        				}
 	        				else
 	        				{
-	        				
-
 							    if(pMe->m_currState != WMSST_INBOXES && pMe->m_currState != WMSST_VIEWINBOXMSG
 								   && pMe->m_currState !=	WMSST_INBOXMSGOPTS && pMe->m_currState !=	WMSST_WRITEMSG
 								   && pMe->m_currState != WMSST_SENDING)
@@ -5014,7 +5014,8 @@ void WmsApp_UpdateAnnunciators(WmsApp * pMe)
                                  (void*)pMe,
                                  (rt.route == WMS_ROUTE_TRANSFER_ONLY ? TRUE : FALSE));
     }
-    
+
+    MSG_FATAL("WmsApp_UpdateAnnunciators %d %d %d",smsiconstatus[0],smsiconstatus[1],smsiconstatus[2]);
     if (smsiconstatus[0])
     {
         IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS/*ANNUN_FIELD_SMSMEMORYFULL*/, ANNUN_STATE_SMS_MAILFULL_ON/*ANNUN_STATE_ON*/ | ANNUN_STATE_BLINK);

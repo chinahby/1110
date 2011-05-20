@@ -4011,7 +4011,7 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
                 // 获取消息数
                 wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
                 wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNewsSMS, NULL, NULL);
-
+                MSG_FATAL("IDD_WMSTIPS_Handler %d %d",nNewsVmail,nNewsSMS,0);
                 if (nNewsVmail > 0)
                 {
                     // 从资源文件取消息内容

@@ -3228,16 +3228,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 
             case AVK_SEND://CDG 3-way call need send fwi 
             {
-                AEECMCallID nCallID = 0;
-#ifdef FEATURE_ICM
-                if(CheckAEEReturnStatus(ICM_OriginateVoiceCall(pMe->m_pICM, NULL, &nCallID)) == FALSE)
-#else
-                if(CheckAEEReturnStatus(ICM_OriginateVoiceCall(pMe->m_pITelephone, NULL, &nCallID)) == FALSE)
-#endif
-                {
-                    CALL_ERR("ICM_OriginateVoiceCall FAILED", 0, 0, 0);
-                    return FALSE;
-                }
+                CallApp_Flash_Call(pMe);
                 return TRUE;
             }
             default:
@@ -3350,7 +3341,7 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 					#endif
                     if (pMe->m_PauseString[0] != 0)
                     {
-                      CallApp_SetPauseControl(pMe);
+                        CallApp_SetPauseControl(pMe);
                         return TRUE;
                     }
 
@@ -9394,11 +9385,12 @@ static void CallApp_Flash_Call(CCallApp *pMe)
 	ICall *pCall = NULL;
 #endif
     CALL_FUN_START("CallApp_Flash_Call %d", pMe->m_Is3Way, 0, 0);
-
+#ifndef FEATURE_OEMOMH
     if(!pMe->m_Is3Way)
     {
         return;
     }
+#endif
 #ifdef FEATURE_ICM
     if(CheckAEEReturnStatus(ICM_OriginateVoiceCall(pMe->m_pICM, NULL, &nCallID)) == FALSE)
 #else

@@ -215,10 +215,14 @@ struct
 
 #if defined( FEATURE_UIM_RUN_TIME_ENABLE )
 /* Run Time R-UIM Enable control.  Default: do not use the R-UIM */
+#ifdef FEATURE_OEMOMH
+nv_rtre_control_type nv_rtre_control_value = NV_RTRE_CONTROL_NO_RUIM;
+#else
 #ifdef FEATURE_RTRE_DEFAULT_IS_NV
 nv_rtre_control_type nv_rtre_control_value = NV_RTRE_CONTROL_NO_RUIM;
 #else
 nv_rtre_control_type nv_rtre_control_value = NV_RTRE_CONTROL_USE_RUIM;
+#endif
 #endif
 /* Run Time R-UIM Enable polling control.  Default:  do not poll */
 nv_rtre_polling_control_type nv_rtre_polling_control_value = 

@@ -1488,7 +1488,7 @@ static int OEMCM_OriginateCall(ICM *pMe, AEECMCallType call_type,
     if (number_length > sizeof(called_number.buf))
       return EBADPARM;
   }
-
+  MSG_FATAL("OEMCM_OriginateCall %d %d",flash,flash_call_id,0);
   if (flash) {
     /* Handle flash */
 
@@ -9551,7 +9551,7 @@ static int OEMCM_SendFlash_Int( const char *called, cm_call_id_type flash_call_i
   sups_params.call_id = flash_call_id;
   (void) MEMCPY(&sups_params.sups_number, &called_number,
                 sizeof(cm_num_s_type));
-
+  MSG_FATAL("OEMCM_SendFlash_Int",0,0,0);
   if (!cm_mm_call_cmd_sups(OEMCM_DMSSCallErrCB, event_cb, gCMID,
                            CM_CALL_SUPS_TYPE_SIMPLE_FLASH,
                            &sups_params)) {

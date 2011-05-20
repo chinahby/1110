@@ -3036,7 +3036,7 @@ LOCAL   void                       tmc_store_esn_me (
 
 #ifdef CUST_EDITION
 #ifdef FEATURE_UIM_EUIMID
-LOCAL void tmc_store_meid_me (qword meid_me, int status)
+EXTERN void tmc_store_meid_me (qword meid_me, int status)
 {
   qw_equ(tmc_data.meid_me, meid_me);
   tmc_data.meid_st = status;
