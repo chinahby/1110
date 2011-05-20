@@ -221,6 +221,7 @@ static mmgsdi_return_enum_type mmgsdi_store_esn_synch(
 #else
   nv_return_staus = gsdi_get_nv(NV_MEID_ME_I, (nv_item_type *) &meid_nv_data);
 #endif
+  
   if (nv_return_staus == NV_DONE_S && gsdi_is_meid_svc_activated(gsdi_slot)) 
   {  
     uim_cmd_ptr->hdr.command  = UIM_STORE_ESN_MEID_ME_F;
@@ -241,7 +242,8 @@ static mmgsdi_return_enum_type mmgsdi_store_esn_synch(
     uim_cmd_ptr->store_esn.esn = 1111;
 #endif /* FEATURE_VIRTUAL_SIM */
   }
-
+  
+  MSG_FATAL("mmgsdi_store_esn_synch 0x%x 0x%x",uim_cmd_ptr->store_esn.len_and_usage,uim_cmd_ptr->store_esn.esn,0);
   /* Send the command to UIM synchronously.  If recovery is in progress,
    * the appropriate uim api would be used
    */

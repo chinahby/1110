@@ -5369,14 +5369,18 @@ boolean CallApp_Add_Number_To_Call_Table(CCallApp *pMe,AECHAR *number,
         allow_add = TRUE;
         if(len == 0)
         {
-            WSTRLCPY(m_call_number,L"No number",AEECM_MAX_DIGITS_LENGTH);
+            (void) ISHELL_LoadResString(pMe->m_pShell,
+                                        AEE_APPSCALLAPP_RES_FILE,
+                                        IDS_NO_NUMBER,
+                                        m_call_number/*m_call_name*/,
+                                        AEECM_MAX_DIGITS_LENGTH/*MAX_SIZE_NAME_TEXT*/);
         }
         else
         {
             WSTRLCPY(m_call_number,number,AEECM_MAX_DIGITS_LENGTH);
         }
     }
-
+    
     switch (type)
     {
         case PI_RESTRICTED: // restricted
@@ -5532,14 +5536,14 @@ boolean CallApp_Modify_Number_To_Call_Table(CCallApp *pMe,AECHAR *number,
     AECHAR    ringer[MAX_FILE_NAME] = {0};
     CALL_FUN_START("%d type= %d CallApp_Modify_Number_To_Call_Table",pMe->m_CallsTable_Count,type,0);
 
-    if(WSTRLEN(number) == 0)
+    if(WSTRLEN(number) == 0 && call_type == PI_ALLOWED)
     {
         CALL_ERR("No number, Not allow Modify call table",0,0,0);
         return FALSE;
     }
     else
     {
-        if(pMe->m_b_is_PI_ALLOWED == PI_ALLOWED)
+        if(call_type == PI_ALLOWED)
         {
             (void)CallApp_NumberLookup(pMe, number, m_call_name,MAX_SIZE_NAME_TEXT, ringer,  NULL);
         }

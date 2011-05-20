@@ -8038,24 +8038,20 @@ static void CallApp_Draw_Connect_Time(void *pUser)
     rect.y = 2000;
     ITIMECTL_SetRect(pTimerCtl,&rect);//to hide the timectl
     IDISPLAY_Update(pMe->m_pDisplay);
+    
 #ifdef FEATURE_OEMOMH
-{
-    uint32 DeltaS = (uint32)(ISHELL_GetUpTimeMS(pMe->m_pShell) -  temp->start_time)/1000;
-    if(DeltaS && (DeltaS%30 == 0))
+    if (!IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
     {
-        if (!IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
-        {
-            MSG_FATAL("IRUIM_IsCardConnected FALSE %d",DeltaS,0,0);
-            pMe->m_userCanceled = TRUE;
+        MSG_FATAL("IRUIM_IsCardConnected FALSE",0,0,0);
+        pMe->m_userCanceled = TRUE;
 #ifdef FEATURE_ICM
-            ICM_EndAllCalls(pMe->m_pICM);
+        ICM_EndAllCalls(pMe->m_pICM);
 #else
-            ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
+        ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
 #endif
-        }
     }
-}
 #endif
+    
 #ifdef FEATURE_SUB_LCD
     {
         CallApp_DispalySub_Image(pMe);

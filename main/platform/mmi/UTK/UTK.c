@@ -25,6 +25,7 @@
 #include "UTK_priv.h"
 //#include "AEEPrompt.h"
 #include "UTKUtils.h"
+#include "OEMHeap.h"
 
 /*==============================================================================
                                  宏定义和常数
@@ -991,6 +992,7 @@ static boolean UTK_HandleEvent(IUTK *pi,
                         }
                         else
                         {
+                            UTK_AddRef(pi);
                             pMe->m_bSendingSMSBG = TRUE;
                         }
                     }
@@ -1057,6 +1059,7 @@ static boolean UTK_HandleEvent(IUTK *pi,
                         {// 发送消息失败
                             UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_NETWORK_CURRENTLY_UNABLE_TO_PROCESS_COMMAND);
                             pMe->m_bSendingSMSBG = FALSE;
+                            UTK_Release(pi);
                         }
                         break;
                     
@@ -1077,7 +1080,7 @@ static boolean UTK_HandleEvent(IUTK *pi,
             {
                 UTK_ProcessStatus(pMe, &((wms_msg_event_info_s_type *)dwParam)->submit_report_info);
             }
-            FREEIF((wms_msg_event_info_s_type*)dwParam);
+            sys_free((wms_msg_event_info_s_type*)dwParam);
             return TRUE;
             
         default:
@@ -1475,7 +1478,7 @@ void UTK_MsgCb(wms_msg_event_e_type       event,
         return;
     }
     
-    pInfobuf = MALLOC(sizeof(wms_msg_event_info_s_type));
+    pInfobuf = sys_malloc(sizeof(wms_msg_event_info_s_type));
     if (pInfobuf == NULL)
     {
         MSG_ERROR("WMSAPP: msg_event_buf = NULL",0,0,0);
@@ -1525,13 +1528,13 @@ void UTK_MsgCb(wms_msg_event_e_type       event,
                         
         if (btRet == FALSE)
         {
-            FREEIF(pInfobuf);
+            sys_free(pInfobuf);
             MSG_HIGH("Event  %x could not be posted!", evt,0,0);
         }
     }
     else
     {
-        FREEIF(pInfobuf);
+        sys_free(pInfobuf);
     }
 } // UTK_MsgCb() 
 
@@ -1609,6 +1612,7 @@ void UTK_ProcessStatus(CUTK *pMe, wms_submit_report_info_s_type *pRptInfo)
         {
             UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_NETWORK_CURRENTLY_UNABLE_TO_PROCESS_COMMAND);
         }
+        UTK_Release((IUTK *)pMe);
         return;
     }
 #endif
