@@ -3566,7 +3566,7 @@ gsdi_returns_T gsdi_uim_server_store_esn (
 
     return gsdi_status;
 } /* gsdi_uim_server_store_esn */
-
+#ifndef CUST_EDITION
 #if defined (FEATURE_UIM_TOOLKIT_UTK) && !defined (FEATURE_GSTK)
 /*===========================================================================
 FUNCTION GSDI_UIM_SERVER_TERMINAL_PROFILE
@@ -3684,6 +3684,7 @@ gsdi_returns_T gsdi_uim_server_terminal_profile (
 
 } /* gsdi_uim_server_gsm_write */
 #endif /* FEATURE_UIM_TOOLKIT */
+#endif //#ifndef CUST_EDITION
 #endif /* FEATURE_MMGSDI_CDMA */
 
 /*===========================================================================

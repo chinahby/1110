@@ -755,6 +755,11 @@ void UTK_SendTerminalProfile (void)
                     uim_cmd_ptr->terminal_profile.data[19] |=
                         ( UIM_TK_B20_CDMA_SEND_SMS | UIM_TK_B20_CDMA_SMS_PP_DOWNLOAD );
                     
+                    for(i=0; i<UIM_TK_TERMINAL_PROFILE_DATA_LENGTH; i++)
+                    {
+            			MSG_FATAL("uim_cmd_ptr->terminal_profile.data[%d] = 0x%x",i,uim_cmd_ptr->terminal_profile.data[i],0);
+                    }
+                    
                     /* Clear the signal */
                     (void) rex_clr_sigs( &ui_tcb, UI_UIM_STATUS_SIG );
                     

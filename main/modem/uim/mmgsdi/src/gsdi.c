@@ -12658,6 +12658,7 @@ gsdi_returns_T gsdi_icc_cdma_post_pin1_init (
       diag_otasp_update();
 #endif /* FEATURE_OTASP || FEATURE_UIM_RUIM */
       MMGSDIUTIL_TMC_MEM_FREE_NULL_OK(mmgsdi_init_data->data_ptr);
+#ifndef CUST_EDITION
 #if defined (FEATURE_UIM_TOOLKIT_UTK) && !defined (FEATURE_GSTK)
       /* Need to execute the Toolkit Download */
       /* Read CDMA Service Table */
@@ -12682,6 +12683,7 @@ gsdi_returns_T gsdi_icc_cdma_post_pin1_init (
         }
       }
 #endif /*FEATURE_UIM_TOOLKIT_UTK && !FEATURE_GSTK */
+#endif
     }
 #ifdef FEATURE_UIM_RUIM_W_GSM_ACCESS
 #error code not present
