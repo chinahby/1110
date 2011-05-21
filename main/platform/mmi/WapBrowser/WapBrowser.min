@@ -1,0 +1,28 @@
+#-------------------------------------------------------------------------------
+# WapBrowser
+#-------------------------------------------------------------------------------
+#msg  ±‡“ÎWapBrowser£¨«Îµ»¥˝£°
+WAPBROWSER_INC = $(WAPBROWSER)/inc
+WAPBROWSER_RES = $(WAPBROWSER)/resources
+WAPBROWSER_SRC = $(WAPBROWSER)
+WAPBROWSER_LIB = $(WAPBROWSER)/lib
+
+vpath %.c $(WAPBROWSER_SRC)	
+vpath %.brx $(WAPBROWSER_RES)
+
+WAPBROWSERAPP_SOURCES=\
+	     WapBrowser.c
+CONSTFILE_FILES+=\
+	wapbrowser.mif|fs:/mif/wapbrowser.mif \
+	wapbrowser.bar|fs:/mod/wapbrowser/en/wapbrowser.bar 
+	
+WAPBROWSER_OBJS :=  $(addprefix $(TARGETDIR)/, $(WAPBROWSERAPP_SOURCES:%.c=%.o))
+
+WAPBROWSER_LIBS := $(WAPBROWSER_LIB)/nf3_core.lib
+
+INC  += $(WAPBROWSER_INC)
+INC  += $(WAPBROWSER)
+#SRC  += 
+OBJECTS+=$(WAPBROWSER_OBJS)
+THIRD_PARTY_LIBS += $(WAPBROWSER_LIBS)
+

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="wapbrowser" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<String Id="1001" Name="IDS_STRING_BROWSER">
+		<Text>Browser</Text>
+	</String>
+</Strings>
+</BREWRes>
