@@ -15,7 +15,10 @@ vpath %.bar $(APPLICATION_RES)
 vpath %.brx $(APPLICATION_RES)
 
 CONSTFILE_FILES+=\
-application.mif|fs:/mif/application.mif \
+	application.mif|fs:/mif/application.mif \
+	datafolder.mif|fs:/mif/datafolder.mif \
+	netfront3.mif|fs:/mif/netfront3.mif \
+	simpleime.mif|fs:/mif/simpleime.mif \
 application.bar|fs:/mod/application/en/application.bar
 
 

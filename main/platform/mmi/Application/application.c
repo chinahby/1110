@@ -1379,8 +1379,20 @@ static int StartApplet(Application *pMe, int i)
         break;
 #ifdef FEATURE_SUPPORT_WAP_APP
     case IDS_APPLICATION_BROWSER:
-        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRW_APP);
+    {
+    	char	buf[12];
+    	MSG_FATAL("AEECLSID_BRW_APP...........START",0,0,0);
+    	start_info.appid_fx = APP_ORIGINATOR_BROWSER;
+        start_info.subtype_keycode = APP_BROWSER_START_MAINMENU;
+        start_info.par_keychar = 0;
+        //start_info.fInfo.url_info.title = "163";
+        //start_info.fInfo.url_info.url = "http://www.163.com";
+        SPRINTF(buf, "%p", &start_info);
+		Result = ISHELL_StartAppletArgs(pMe->m_pShell,AEECLSID_NF3,buf);
+        //Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRW_APP);
+        MSG_FATAL("AEECLSID_BRW_APP...........Result=%d",Result,0,0);
         break;
+    }
 #endif
 #ifdef	FEATURE_APP_BLUETOOTH  //add by yangdecai
     case IDS_APPLICATION_BLUETOOTH:		

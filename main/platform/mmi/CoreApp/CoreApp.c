@@ -71,7 +71,9 @@ CCoreApp *g_pCoreApp = NULL;
 ==============================================================================*/
 
 #ifdef FEATURE_SUPPORT_WAP_APP
+#if 0
 boolean PushMod_StartPush(IShell *ps);
+#endif
 #endif
 
 static void CoreApp_RunFSM(CCoreApp *pMe);
@@ -2356,7 +2358,9 @@ static void CoreApp_PoweronStartApps(CCoreApp *pMe)
     }
     
 #ifdef FEATURE_SUPPORT_WAP_APP
+#if 0
     PushMod_StartPush(pMe->a.m_pIShell);
+#endif
 #endif
 
 #ifdef FEATURE_KEYGUARD

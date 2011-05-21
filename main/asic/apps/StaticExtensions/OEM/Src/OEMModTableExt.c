@@ -248,6 +248,9 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #include "mtph.bid"
 #include "mcs.bid"
 #endif /* FEATURE_STATIC_MTP */
+#ifdef FEATURE_SUPPORT_WAP_APP
+#include"nf3static.h"
+#endif
 
 // HDR Static Extension
 #if defined (FEATURE_IHDR)
@@ -307,6 +310,7 @@ extern int BTAppMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 
 #if defined FEATURE_SUPPORT_WAP_APP
+#if 0
 extern int EditApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int EditExt_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int OEMExtFor3Part_Load(IShell *ps, void * pHelpers, IModule ** pMod);
@@ -318,6 +322,7 @@ extern int AEESecMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 extern int AEEWapMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 extern int AEEWecscMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 extern int AEEPushMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
+#endif
 #endif
 
 #if defined(FEATURE_IYCBCR)
@@ -416,7 +421,8 @@ extern const AEEStaticClass gOEMOverlayClasses[];
 #ifdef FEATURE_ANALOG_TV
 	extern int CTVAppMod_Load(IShell *pIShell,void *ph,IModule **ppMod);
 #endif
-
+#ifdef FEATURE_WAPBROWSER_APP
+#endif
 #ifdef FEATURE_IWMSDIAG
 	extern int AEEWMSDIAG_New (IShell *piShell, AEECLSID cls, void **pp);
 	extern int AEEWMSDIAGNotifier_New (IShell *piShell, AEECLSID cls, void **pp);
@@ -958,6 +964,9 @@ extern int  VideoPlayerMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #if defined(FEATURE_APP_TIMERAPP)
 extern int AppTimerMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
+#if defined(FEATURE_VERSION_S106)
+//extern int CNetFront3_Load(IShell *ps, void *pHelpers, IModule **pMod);
+#endif
 
 #if defined(FEATURE_CONVERTER)
 extern int  ConverterMod_Load(IShell* ps, void* pHelpers, IModule** ppMod);
@@ -1073,7 +1082,9 @@ static const AEEStaticMod gOEMStaticModList[] =
 #ifdef FEATURE_ANALOG_TV
     {AEEFS_MIF_DIR"tvapp.mif", CTVAppMod_Load}, 
 #endif
-
+#ifdef FEATURE_WAPBROWSER_APP
+	//{AEEFS_MIF_DIR"wapbrowser.mif",CWapBrowserAppMod_Load},
+#endif
 #if defined(FEATURE_CONTACT_APP)
     {AEEFS_MIF_DIR"contactapp.mif", ContApp_Load},
 #endif
@@ -1314,6 +1325,9 @@ static const AEEStaticMod gOEMStaticModList[] =
 #if defined(FEATURE_VIDEOPLAYER)
     {AEEFS_MIF_DIR"videoplayer.mif", VideoPlayerMod_Load},
 #endif
+#if defined(FEATURE_VERSION_S106)
+    {AEEFS_MIF_DIR"netfront3.mif", CNetFront3_Load},
+#endif
 
 #if defined(FEATURE_APP_TIMERAPP)
       {AEEFS_MIF_DIR"apptimer.mif", AppTimerMod_Load},//wu raojin add
@@ -1332,6 +1346,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 
 
 #if defined FEATURE_SUPPORT_WAP_APP
+#if 0
     {AEEFS_MIF_DIR"editapplet.mif", EditApp_Load},
     {AEEFS_MIF_DIR"editextension.mif", EditExt_Load},
     {AEEFS_MIF_DIR"oemextfor3part.mif", OEMExtFor3Part_Load},
@@ -1343,6 +1358,7 @@ static const AEEStaticMod gOEMStaticModList[] =
     {AEEFS_MIF_DIR"wap.mif", AEEWapMod_Load},
     {AEEFS_MIF_DIR"wecsc.mif", AEEWecscMod_Load},
     {AEEFS_MIF_DIR"pushe.mif", AEEPushMod_Load},
+#endif
 #endif
 
 #if defined(FEATURE_CONVERTER)
