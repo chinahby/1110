@@ -1207,18 +1207,20 @@ static boolean OEMRUIM_WriteModel(IRUIM *pMe, byte *Buf)
 
 #endif
 
-static int OEMRUIM_Get_Feature_Code(IRUIM *pMe,byte *Buf,int  Lable)
+static int OEMRUIM_Get_Feature_Code(IRUIM *pMe,byte *Buf,int Lable)
 {
     byte pData[UIM_CDMA_FEATURE_CODE_SIZE+2];
     int pnDataSize = UIM_CDMA_FEATURE_CODE_SIZE;
     MSG_FATAL("OEMRUIM_Get_Feature_Code Start %d",Lable,0,0);
     if ((!pMe) || (!Buf))
     {
+        MSG_FATAL("OEMRUIM_Get_Feature_Code %x %x",pMe,Buf,0);
         return EFAILED;
     }
     // Check to see if the card is connected.
     if (!IRUIM_IsCardConnected (pMe))
     {
+        MSG_FATAL("OEMRUIM_Get_Feature_Code NO CARD",0,0,0);
         return EFAILED;
     }
     gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
@@ -1246,18 +1248,18 @@ static int OEMRUIM_Get_Feature_Code(IRUIM *pMe,byte *Buf,int  Lable)
         || (gCallBack.rpt_status != UIM_PASS)
         )
     {
+        MSG_FATAL("OEMRUIM_Get_Feature_Code %d %d",gCallBack.rpt_status,gCallBack.rpt_type,0);
         return EFAILED;
     }
 
     pnDataSize = MIN(pnDataSize, gUimCmd.access_uim.num_bytes_rsp);
-    
     if(UIM_CDMA_FEATURE_CODE_NUM_DIGI==OEMRUIM_bcd_to_ascii(UIM_CDMA_FEATURE_CODE_NUM_DIGI,
                                     (byte *)&pData[Lable],
                                     (byte *)Buf))
     {
         Buf[UIM_CDMA_FEATURE_CODE_NUM_DIGI]='\0';
     }
-    MSG_FATAL("OEMRUIM_Get_Feature_Code %s End",Buf,0,0);
+    MSG_FATAL("OEMRUIM_Get_Feature_Code %d %d END",pnDataSize,Lable,0);
     return SUCCESS;
 }
 
@@ -1268,7 +1270,6 @@ static byte OEMRUIM_bcd_to_ascii(byte num_digi, /* Number of dialing digits */
     byte lower_nibble, upper_nibble;
     byte i = 0;
     byte  k=num_digi;
-
     while (i < num_digi )
     {
         if(*from_ptr==0xFF)
@@ -1339,7 +1340,6 @@ static byte OEMRUIM_bcd_to_ascii(byte num_digi, /* Number of dialing digits */
         }
     } /* for */
     to_ptr[k] = '\0';
-
     return i;
 }
 
