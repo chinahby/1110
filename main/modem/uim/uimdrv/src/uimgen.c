@@ -3062,7 +3062,7 @@ boolean uim_process_generic_command
 
     case UIM_ENVELOPE_F:                /* Send an envelope command */
       {
-        MSG_MED( "Received Envelope command ", 0, 0, 0 );
+        MSG_FATAL( "Received Envelope command ", 0, 0, 0 );
 
         /* Build the Envelope list of states. */
         uim_generic_states[0] = UIM_ENVELOPE_ST;
@@ -3074,7 +3074,7 @@ boolean uim_process_generic_command
 
     case UIM_INTERNAL_FETCH_F:          /* Fetch a proactive command */
       {
-        MSG_MED( "Received Internal Fetch command ", 0, 0, 0 );
+        MSG_FATAL( "Received Internal Fetch command ", 0, 0, 0 );
 
         /* Build the Fetch list of states. */
         uim_generic_states[0] = UIM_FETCH_ST;
@@ -4628,7 +4628,7 @@ void uim_process_generic_response
 
           /* Report to requesting task */
           (*(cmd_ptr->hdr.rpt_function))( &uim_rpt_buf );
-          MSG_MED( "Reporting result for Envelope", 0, 0, 0 );
+          MSG_FATAL( "Reporting result for Envelope", 0, 0, 0 );
         } /* end if - is the report function defined. */
       } /* end case - UIM_ENVELOPE_F */
       break;
@@ -7590,7 +7590,7 @@ void uim_generic_command
 
   } /* end of main switch */
 
-  MSG_LOW("UIM state in uim_command %ld",*uim_generic_state_ptr, 0,0);
+  MSG_FATAL("UIM state in uim_command %ld",*uim_generic_state_ptr, 0,0);
 
 } /* uim_generic_command */
 
@@ -7715,9 +7715,9 @@ uim_cmd_status_type uim_generic_command_response
     ERR_FATAL("uim_generic_command_response cmd is NULL",0,0,0);
   }
 
-  MSG_HIGH("SW1 0x%x,SW2 0x%x, status %d",
+  MSG_FATAL("SW1 0x%x,SW2 0x%x, status %d",
            rsp_ptr->sw1, rsp_ptr->sw2, rsp_ptr->cmd_status);
-  MSG_HIGH("generic_state %d, uim_reselect_mf %d",
+  MSG_FATAL("generic_state %d, uim_reselect_mf %d",
            *(uim_generic_state_ptr), uim_reselect_mf,0);
 
   if ((*uim_generic_state_ptr != UIM_POWER_UP_ST) &&
@@ -7806,6 +7806,7 @@ uim_cmd_status_type uim_generic_command_response
   }
 
 #ifdef FEATURE_UIM_TOOLKIT
+  MSG_FATAL("FEATURE_UIM_TOOLKIT %d",uim_mode,0,0);
   /* Change fetch responses to normal end responses only if we are not in
    * passive mode.  In passive mode, it is the client's responsibility
    * to do a fetch based on the status words reported
@@ -7827,7 +7828,7 @@ uim_cmd_status_type uim_generic_command_response
     }
 
     uim_rpt_buf.sw1 = SW1_NORMAL_END;
-    // Gemsea Remove uim_rpt_buf.sw2 = SW2_NORMAL_END;
+    uim_rpt_buf.sw2 = SW2_NORMAL_END;
     /* If the command is completed, indicate there is a proactive command
        pending. */
     completed_status = UIM_CMD_FETCH;

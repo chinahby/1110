@@ -5929,70 +5929,80 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
         switch(feature_code)
         {
             case CFGI_CALLFORWARD_DISABLE_ALL:
-                Ruim_Active_code    = De_Active_Callforward_Unconditional;
-                Ruim_Register_code = DE_REGISTER_CFU;
+                Ruim_Active_code    = DE_ACTIVE_CFU;
+                Ruim_Register_code  = DE_REGISTER_CFU;
                 break;
 
             case CFGI_CALLFORWARD_BUSY_ENABLE:
-                MSG_FATAL("CFGI_CALLFORWARD_BUSY_ENABLE ",0,0,0);
-                Ruim_Active_code    = Active_Callforward_Busy;
-                Ruim_Register_code = REGISTER_CFB;
+                Ruim_Active_code    = ACTIVE_CFB;
+                Ruim_Register_code  = REGISTER_CFB;
                 break;
 
             case CFGI_CALLFORWARD_BUSY_DISABLE:
-                Ruim_Active_code    = De_Active_Callforward_Busy;
-                Ruim_Register_code = DE_REGISTER_CFB;
+                Ruim_Active_code    = DE_ACTIVE_CFB;
+                Ruim_Register_code  = DE_REGISTER_CFB;
                 break;
 
             case CFGI_CALLFORWARD_NOANSWER_ENABLE:
-                Ruim_Active_code    = Active_Callforward_No_Answer;
-                Ruim_Register_code = REGISTER_CFNA;
+                Ruim_Active_code    = ACTIVE_CFNA;
+                Ruim_Register_code  = REGISTER_CFNA;
                 break;
 
             case CFGI_CALLFORWARD_NOANSWER_DISABLE:
-                Ruim_Active_code    = De_Active_Callforward_No_Answer;
-                Ruim_Register_code = DE_REGISTER_CFNA;
+                Ruim_Active_code    = DE_ACTIVE_CFNA;
+                Ruim_Register_code  = DE_REGISTER_CFNA;
                 break;
-
+                
             case CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE:
-                Ruim_Active_code     = Active_Callforward_Default;
-                Ruim_Register_code  = REGISTER_CFD;
+                Ruim_Active_code    = ACTIVE_CFU;
+                Ruim_Register_code  = REGISTER_CFU;
                 break;
 
             case CFGI_CALLFORWARD_UNCONDITIONAL_DISABLE:
-                Ruim_Active_code    = De_Active_Callforward_Default;
-                Ruim_Register_code = DE_REGISTER_CFD;
+                Ruim_Active_code    = DE_ACTIVE_CFU;
+                Ruim_Register_code  = DE_REGISTER_CFU;
                 break;
 
             case CFGI_CALLFORWARD_UNREACHABLE_ENABLE:
-                Ruim_Active_code    = Active_Callforward_Unconditional;
-                Ruim_Register_code = REGISTER_CFU;
+                Ruim_Active_code    = ACTIVE_CFD;
+                Ruim_Register_code  = REGISTER_CFD;
                 break;
 
             case CFGI_CALLFORWARD_UNREACHABLE_DISABLE:
-                Ruim_Active_code    = De_Active_Callforward_Unconditional;
-                Ruim_Register_code = DE_REGISTER_CFU;
+                Ruim_Active_code    = DE_ACTIVE_CFD;
+                Ruim_Register_code  = DE_REGISTER_CFD;
                 break;
 
             case CFGI_CALLFORWARD_WAIT_ENABLE:
-                Ruim_Active_code     = Active_CallWaiting;
-                Ruim_Register_code  = Active_CallWaiting;
+                Ruim_Active_code     = ACTIVE_CALLWAITING;
+                Ruim_Register_code   = ACTIVE_CALLWAITING;
                 break;
 
             case CFGI_CALLFORWARD_WAIT_DISABLE:
-                Ruim_Active_code    = De_Active_CallWaiting;
-                Ruim_Register_code = De_Active_CallWaiting;              
+                Ruim_Active_code    = DE_ACTIVE_CALLWAITING;
+                Ruim_Register_code  = DE_ACTIVE_CALLWAITING;              
                 break;
 
             default:
-                Ruim_Active_code    = De_Active_Callforward_Unconditional;
-                Ruim_Register_code = De_Active_Callforward_Unconditional;
+                Ruim_Active_code    = DE_ACTIVE_CFU;
+                Ruim_Register_code  = DE_REGISTER_CFU;
                 break;
         }
         
         //Read supplement service number from RUIM Active section, if read fail or the number is wrong, then from RUIM Register section or config file
         MEMSET(Assnum, 0x00, sizeof(Assnum));
         if( SUCCESS == IRUIM_Get_Feature_Code(pMe->m_pIRUIM,(byte*)Assnum, Ruim_Active_code) )     
+        {
+            MSG_FATAL("IRUIM_Get_Feature_Code == %d %d",Ruim_Active_code,STRLEN(Assnum),0);
+            //if the supplement service number is "**"(Wrong number), then read supplement service number from RUIM Register section or config file
+            if ( STRNCMP(Assnum,"**",2) && STRNCMP(Assnum,"0000",4))
+            {
+                MEMCPY(pMe->m_callnumber, Assnum, sizeof(Assnum));
+                return;
+            }
+        }
+        
+        if( SUCCESS == IRUIM_Get_Feature_Code(pMe->m_pIRUIM,(byte*)Assnum, Ruim_Register_code))
         {
             MSG_FATAL("IRUIM_Get_Feature_Code == %d %d",Ruim_Active_code,STRLEN(Assnum),0);
             //if the supplement service number is "**"(Wrong number), then read supplement service number from RUIM Register section or config file

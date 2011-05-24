@@ -474,7 +474,13 @@ static boolean  IDD_MAIN_Handler(CUTK *pMe,
 
                     UTK_SendSimuData(buf, 32);
                     break;
-                }    
+                }  
+                case AVK_5:
+                {
+                    extern void UTK_SendSimuPPDL(void);
+                    UTK_SendSimuPPDL();
+                    break;
+                }
 #endif
                 default:
                     break;

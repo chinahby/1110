@@ -36,35 +36,36 @@ typedef enum {
 } AEECHVType;
 
 #ifdef CUST_EDITION	
-typedef enum {
-  Active_Callforward_Busy = 11,//激活忙转接
-  De_Active_Callforward_Busy=13,//取消忙转接
-  Active_Callforward_Default=21,//激活未接通转接
-  De_Active_Callforward_Default=23,//取消未接通转接
-  Active_Callforward_No_Answer=31,//激活无应答转接
-  De_Active_Callforward_No_Answer=33,//取消无应答转接
-  Active_Callforward_Unconditional=41,//激活无条件转接
-  De_Active_Callforward_Unconditional=43,//取消无条件转接
-  Active_CallWaiting=45,//激活呼叫等待
-  De_Active_CallWaiting=47,//取消呼叫等待
-#if 1//defined(FEATURE_CARRIER_INDONESIA)
+enum {
    //Register Section
-   REGISTER_CFB                  = 5,
-   DE_REGISTER_CFB            = 9,
+   REGISTER_CFB                 = 5,
+   REGISTER_CFB_TO_VM           = 7,
+   DE_REGISTER_CFB              = 9,
+   ACTIVE_CFB                   = 11,
+   DE_ACTIVE_CFB                = 13,
    
-   REGISTER_CFD                  = 15,
-   REGISTER_CFD_TO_VM     = 17,
-   DE_REGISTER_CFD            = 19,
+   REGISTER_CFD                 = 15,
+   REGISTER_CFD_TO_VM           = 17,
+   DE_REGISTER_CFD              = 19,
+   ACTIVE_CFD                   = 21,
+   DE_ACTIVE_CFD                = 23,
 
    REGISTER_CFNA                = 25,
-   REGISTER_CFNA_TO_VM   = 27,
-   DE_REGISTER_CFNA          = 29,
+   REGISTER_CFNA_TO_VM          = 27,
+   DE_REGISTER_CFNA             = 29,
+   ACTIVE_CFNA                  = 31,
+   DE_ACTIVE_CFNA               = 33,
 
-   REGISTER_CFU                  = 35,
-   REGISTER_CFU_TO_VM     = 37,
-   DE_REGISTER_CFU            = 39,
-#endif  
-} OEMRUIM_PreferCallState;
+   REGISTER_CFU                 = 35,
+   REGISTER_CFU_TO_VM           = 37,
+   DE_REGISTER_CFU              = 39,
+   ACTIVE_CFU                   = 41,
+   DE_ACTIVE_CFU                = 43,
+
+   ACTIVE_CALLWAITING           = 45,
+   DE_ACTIVE_CALLWAITING        = 47,
+   MAX_REQUEST_LEN              = 49
+};
 #endif /*CUST_EDITION*/
 
 #ifdef FEATURE_OEMOMH

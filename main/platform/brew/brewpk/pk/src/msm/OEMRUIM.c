@@ -44,7 +44,7 @@ GENERAL DESCRIPTION:
 #endif
 
 #define BAD_PIN_CHAR 0xff
-#define UIM_CDMA_FEATURE_CODE_SIZE 50
+#define UIM_CDMA_FEATURE_CODE_SIZE MAX_REQUEST_LEN
 #define UIM_CDMA_FEATURE_CODE_NUM_DIGI 2*2
 
 struct IRUIM
@@ -143,6 +143,8 @@ static AECHAR      gAppLabels[RUIM_APPLABEL_NUM][RUIN_APPLABEL_SIZE+1];
 static boolean     gbAppLabelsInited = FALSE;
 static uint16      gwAppLabelsInd;
 #endif
+static boolean     gbFeatureCodeInited = FALSE;
+static byte        gFeatureCode[UIM_CDMA_FEATURE_CODE_SIZE];
 
 /*===========================================================================
 
@@ -1217,48 +1219,62 @@ static int OEMRUIM_Get_Feature_Code(IRUIM *pMe,byte *Buf,int Lable)
         MSG_FATAL("OEMRUIM_Get_Feature_Code %x %x",pMe,Buf,0);
         return EFAILED;
     }
-    // Check to see if the card is connected.
-    if (!IRUIM_IsCardConnected (pMe))
+
+    if(!gbFeatureCodeInited)
     {
-        MSG_FATAL("OEMRUIM_Get_Feature_Code NO CARD",0,0,0);
-        return EFAILED;
+        // Check to see if the card is connected.
+        if (!IRUIM_IsCardConnected (pMe))
+        {
+            MSG_FATAL("OEMRUIM_Get_Feature_Code NO CARD",0,0,0);
+            return EFAILED;
+        }
+        gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
+        gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
+        gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
+        gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
+        gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
+        gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
+        gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report;
+
+        gUimCmd.access_uim.item      = UIM_CDMA_SUP_SVCS_FEATURE_CODE_TABLE;
+        gUimCmd.access_uim.access    = UIM_READ_F;
+        gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
+        gUimCmd.access_uim.num_bytes = UIM_CDMA_FEATURE_CODE_SIZE;
+        gUimCmd.access_uim.offset    = 0;
+        gUimCmd.access_uim.data_ptr  = pData;
+
+        // From nvruim_access():  Access an EF, do not signal any task, use no
+        // signal, no done queue, use a callback, always report status.
+
+        // Send the command to the R-UIM:
+        OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
+
+        if (   (gCallBack.rpt_type != UIM_ACCESS_R)
+            || (gCallBack.rpt_status != UIM_PASS)
+            )
+        {
+            MSG_FATAL("OEMRUIM_Get_Feature_Code %d %d",gCallBack.rpt_status,gCallBack.rpt_type,0);
+            return EFAILED;
+        }
+
+        pnDataSize = MIN(pnDataSize, gUimCmd.access_uim.num_bytes_rsp);
+        MEMCPY(gFeatureCode,pData,pnDataSize);
+        gbFeatureCodeInited = TRUE;
     }
-    gUimCmd.access_uim.hdr.command            = UIM_ACCESS_F;
-    gUimCmd.access_uim.hdr.cmd_hdr.task_ptr   = NULL;
-    gUimCmd.access_uim.hdr.cmd_hdr.sigs       = 0;
-    gUimCmd.access_uim.hdr.cmd_hdr.done_q_ptr = NULL;
-    gUimCmd.access_uim.hdr.options            = UIM_OPTION_ALWAYS_RPT;
-    gUimCmd.access_uim.hdr.protocol           = UIM_CDMA;
-    gUimCmd.access_uim.hdr.rpt_function       = OEMRUIM_report;
-
-    gUimCmd.access_uim.item      = UIM_CDMA_SUP_SVCS_FEATURE_CODE_TABLE;
-    gUimCmd.access_uim.access    = UIM_READ_F;
-    gUimCmd.access_uim.rec_mode  = UIM_ABSOLUTE;
-    gUimCmd.access_uim.num_bytes = UIM_CDMA_FEATURE_CODE_SIZE;
-    gUimCmd.access_uim.offset    = 0;
-    gUimCmd.access_uim.data_ptr  = pData;
-
-    // From nvruim_access():  Access an EF, do not signal any task, use no
-    // signal, no done queue, use a callback, always report status.
-
-    // Send the command to the R-UIM:
-    OEMRUIM_send_uim_cmd_and_wait (&gUimCmd);
-
-    if (   (gCallBack.rpt_type != UIM_ACCESS_R)
-        || (gCallBack.rpt_status != UIM_PASS)
-        )
+    else
     {
-        MSG_FATAL("OEMRUIM_Get_Feature_Code %d %d",gCallBack.rpt_status,gCallBack.rpt_type,0);
-        return EFAILED;
+        pnDataSize = UIM_CDMA_FEATURE_CODE_SIZE;
+        MEMCPY(pData,gFeatureCode,pnDataSize);
     }
-
-    pnDataSize = MIN(pnDataSize, gUimCmd.access_uim.num_bytes_rsp);
+    
+    MSG_FATAL("OEMRUIM_Get_Feature_Code 0x%x 0x%x",pData[Lable],pData[Lable+1],0);
     if(UIM_CDMA_FEATURE_CODE_NUM_DIGI==OEMRUIM_bcd_to_ascii(UIM_CDMA_FEATURE_CODE_NUM_DIGI,
                                     (byte *)&pData[Lable],
                                     (byte *)Buf))
     {
         Buf[UIM_CDMA_FEATURE_CODE_NUM_DIGI]='\0';
     }
+    
     MSG_FATAL("OEMRUIM_Get_Feature_Code %d %d END",pnDataSize,Lable,0);
     return SUCCESS;
 }
@@ -1348,43 +1364,7 @@ static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
     int    pnDataSize = UIM_CDMA_HOME_SERVICE_SIZE;
     byte pData[UIM_CDMA_HOME_SERVICE_SIZE+2];
     int    status = EFAILED;
-#if 0    
-    pData[0]=0x01;
-    pData[1]=0x04;
-    pData[2]=0x01;
-    pData[3]=0xfe;
-    pData[4]=0xff;
-    pData[5]=0x00;
-    pData[6]=0x51;
-    pData[7]=0x00;
-    pData[8]=0x55;
-    pData[9]=0x00;
-    pData[10]=0x41;
-    pData[11]=0x00;
-    pData[12]=0x4c;
-    pData[13]=0x00;
-    pData[14]=0x43;
-    pData[15]=0x00;
-    pData[16]=0x4f;
-    pData[17]=0x00;
-    pData[18]=0x4d;
-    pData[19]=0x00;
-    pData[20]=0x4d;
-    pData[21]=0x00;
-    pData[22]=0x51;
-    pData[23]=0x00;
-    pData[24]=0x4c;
-    pData[25]=0x00;
-    pData[26]=0x41;
-    pData[27]=0x00;
-    pData[28]=0x42;
-    pData[29]=0x00;
-    pData[30]=0x40;
-    pData[31]=0x00;
-    pData[32]=0x31;
-    pData[33]=0x00;
-    pData[34]=0x32;
-#else
+    
     MSG_FATAL("OEMRUIM_Read_Svc_P_Name",0,0,0);   
     // Check to see if the card is connected.
     if (!IRUIM_IsCardConnected (pMe))
@@ -1416,8 +1396,7 @@ static int OEMRUIM_Read_Svc_P_Name(IRUIM *pMe , AECHAR *svc_p_name)
     {
         status = EFAILED;
     }
-    else  
-#endif        
+    else      
     {
         status = SUCCESS;
         DBGPRINTF("hahahaha pData = %s, Length=%d",pData, STRLEN((char*)pData));

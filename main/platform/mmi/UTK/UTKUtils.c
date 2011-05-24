@@ -2771,3 +2771,140 @@ void UTK_SendSimuData(const byte *pBuf, int nSize)
   ui_cmd( ui_buf_ptr );
 } /* proactive_cmd_report */
 
+static const byte g_PPDLData[] = {
+    0xd1,0x81,0x8b,0x02,0x02,0x83,0x81,0x48,0x81,0x84,0x00,0x00,
+    0x02,0x10,0x07,0x02,0x05,0x41,0xc4,0x8d,0x15,0x9c,0x08,0x76,
+    0x03,0x06,0x08,0x0a,0x03,0x12,0x23,0x12,0x00,0x03,0x10,0x01,
+    0x40,0x0f,0x01,0xf0,0x01,0x64,0x03,0x10,0x13,0x80,0x00,0x02,
+    0xe8,0x68,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x60,0x05,0x05,0x20,0x00,0x00,0x11,0xf8,0x05,0x05,0x20,
+    0x00,0x00,0x13,0xf9,0x2d,0x05,0x20,0x00,0x00,0x13,0x7a,0x0d,
+    0x01,0x00,0x00,0x70,0x41,0xa1,0xa1,0xa1,0xa1,0xa1,0xa1,0xa1,
+    0xa5,0x06,0xb0,0x00,0x01,0x18,0x08,0x00,0x02,0x8b,0xab,0x0b,
+    0x63,0x1b,0x7b,0x6b,0x69,0x02,0x7a,0x6a,0x41,0x01,0x9f,0xff,
+    0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
+    0xff,0xff,0xff,0xff,0xfd,0x05,0x51,0x80,0x00,0x00
+};
+
+void UTK_SendSimuPPDL(void)
+{
+    uim_cmd_type                                *uim_cmd_ptr;
+    int                                         offset = 0;
+    gstk_sms_tpdu_type                          tpdu;
+    gstk_cmd_from_card_type                     response;
+    uim_sw1_type                                response_sw1;          /* Status Word 1 */
+    uim_sw2_type                                response_sw2;          /* Status word 2 */
+    
+    /* Send command to STK application on SIM */
+    /* Send Message to UIM */
+    /* get a buffer for the request */
+    if ((uim_cmd_ptr = (uim_cmd_type*) q_get( &uim_free_q )) != NULL)
+    {
+        /* Read CDMA service table */
+        
+        /* Fill up the command header info */
+        uim_cmd_ptr->hdr.command = UIM_ENVELOPE_F;
+        
+        /* Set the Protocol to CDMA */
+        uim_cmd_ptr->hdr.protocol = UIM_CDMA;
+        
+        /* Fill in the callback function */
+        uim_cmd_ptr->hdr.rpt_function = ui_ruim_report;
+        
+        /* Set the report option to always report upon completion of the cmd */
+        uim_cmd_ptr->hdr.options = UIM_OPTION_ALWAYS_RPT;
+        
+        /* The task and signal are set to NULL */
+        uim_cmd_ptr->hdr.cmd_hdr.task_ptr = NULL;
+        uim_cmd_ptr->hdr.cmd_hdr.sigs = NULL;
+        
+        /* set user_data */
+        uim_cmd_ptr->hdr.user_data               = 0;
+        
+        uim_cmd_ptr->envelope.offset = (g_PPDLData[0]==0)?1:0;
+        uim_cmd_ptr->envelope.num_bytes = sizeof(g_PPDLData);
+        MEMCPY(uim_cmd_ptr->envelope.data,g_PPDLData,sizeof(g_PPDLData));
+
+        MSG_FATAL("UTK_SendSimuPPDL %d %d", uim_cmd_ptr->envelope.offset, uim_cmd_ptr->envelope.num_bytes, 0);
+        /* Clear the signal */
+        (void) rex_clr_sigs( &ui_tcb, UI_UIM_STATUS_SIG );
+
+        /* Send the command */
+        uim_cmd( uim_cmd_ptr );
+
+        /* Wait for the command to be done */
+        (void) rex_wait( UI_UIM_STATUS_SIG );
+        
+        if (ui_uim_rpt_buf.rpt_type != UIM_ENVELOPE_R) 
+        {
+            MSG_FATAL("ENVELOPE expected in CB", 0, 0, 0);
+            return;
+        }
+        
+        /* initialize response */
+        memset(&response, 0, sizeof(gstk_sms_pp_download_rsp_type)+sizeof(gstk_exp_hdr_type));
+        
+        /* build the command */
+        response.hdr_cmd.command_id = GSTK_SMS_PP_DOWNLOAD_IND_RSP;
+        response.hdr_cmd.cmd_detail_reference = 0; /* doens't matter */
+        response.hdr_cmd.user_data = ui_uim_rpt_buf.user_data;
+        
+        MSG_FATAL("GSTK recv UIM envelope rsp, 0x%x, 0x%x", ui_uim_rpt_buf.sw1, ui_uim_rpt_buf.sw2, 0);
+        
+        if(ui_uim_rpt_buf.rpt_status == UIM_FAIL)
+        {
+            MSG_FATAL("UIM Rpt Status UIM FAIL",0,0,0);
+        }
+        else
+        {
+            if(ui_uim_rpt_buf.rpt.envelope.data_length > 0) { /* reponse data present */
+                MSG_FATAL("In SMS PP: There are extra data len: 0x%x", ui_uim_rpt_buf.rpt.envelope.data_length, 0, 0);
+                response.cmd.sms_pp_download_rsp.response_data_present = TRUE;
+                response.cmd.sms_pp_download_rsp.ack.ack = ui_uim_rpt_buf.rpt.envelope.data;
+                response.cmd.sms_pp_download_rsp.ack.length = (uint8)ui_uim_rpt_buf.rpt.envelope.data_length;
+            }
+        }
+        
+        /* initialize rsp_status to FAIL */
+        response.cmd.sms_pp_download_rsp.general_resp = GSTK_ENVELOPE_CMD_FAIL;
+        
+        /* populate sw1 and sw 2 */
+        if(SW1_DLOAD_ERR == ui_uim_rpt_buf.rpt.envelope.get_resp_sw1)
+        {
+            response_sw1 = (int)ui_uim_rpt_buf.rpt.envelope.get_resp_sw1;
+            response_sw2 = (int)ui_uim_rpt_buf.rpt.envelope.get_resp_sw2;
+        }
+        else
+        {
+            response_sw1 = (int)ui_uim_rpt_buf.sw1;
+            response_sw2 = (int)ui_uim_rpt_buf.sw2;
+        }
+        
+        /* pass warning 0x62XX or 0x63XX to SMS PP DL rsp */
+        if (SW1_WARNINGS1 == ui_uim_rpt_buf.rpt.envelope.get_resp_sw1 ||
+            SW1_WARNINGS2 == ui_uim_rpt_buf.rpt.envelope.get_resp_sw1)
+        {
+            response_sw1 = (int)ui_uim_rpt_buf.rpt.envelope.get_resp_sw1;
+            response_sw2 = (int)ui_uim_rpt_buf.rpt.envelope.get_resp_sw2;
+        }
+
+        switch(response_sw1){
+        case SW1_NORMAL_END:
+            if(response_sw2 == (int)SW2_NORMAL_END)
+            {
+                response.cmd.sms_pp_download_rsp.general_resp = GSTK_ENVELOPE_CMD_SUCCESS;
+            }
+            break;
+        case SW1_BUSY:
+            if(response_sw2 == (int)SW2_NORMAL_END)
+            {
+                response.cmd.sms_pp_download_rsp.general_resp = GSTK_ENVELOPE_CMD_CARD_BUSY;
+            }
+            break;
+        default:
+            break;
+        }
+        MSG_FATAL("UTK_SendSimuPPDL 0x%x, 0x%x, 0x%x", response.cmd.sms_pp_download_rsp.general_resp, response_sw1, response_sw2);
+    }
+} /* proactive_cmd_report */
+

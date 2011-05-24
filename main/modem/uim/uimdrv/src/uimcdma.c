@@ -2154,7 +2154,7 @@ uim_cmd_status_type uim_cdma_command_response
   if (SW1_END_FETCH == uim_rpt_buf.sw1)
   {
     uim_rpt_buf.sw1 = SW1_NORMAL_END;
-    // Gemsea Remove uim_rpt_buf.sw2 = SW2_NORMAL_END;
+    uim_rpt_buf.sw2 = SW2_NORMAL_END;
     /* If the command is completed, indicate there is a proactive command
        pending. */
     completed_status = UIM_CMD_FETCH;
