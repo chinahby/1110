@@ -122,7 +122,7 @@ QINTERFACE(IWmsApp)
     int (*DeleteAllNvCdmaSms)(IWmsApp *p);
 };
 
-
+extern uint16 gwWmsVMailNtf;
 
 /*==============================================================================
 

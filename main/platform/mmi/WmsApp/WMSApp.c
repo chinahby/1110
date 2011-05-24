@@ -158,6 +158,7 @@ static const VTBL(IModule) gModFuncs =
 
 // 只允许一个 WmsApp 实例。每次创建 WMS Applet 时，返回同一结构指针给 BREW 层。
 static WmsApp gWmsApp={0};
+uint16 gwWmsVMailNtf = 0;
 
 static const VTBL(IWmsApp) gWmsAppMethods =
 {
@@ -1376,7 +1377,14 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 #ifndef FEATURE_ICM
 					AEETCalls po;
 #endif
-
+#ifdef FEATURE_OEMOMH
+                    if (info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_VMN_95 ||
+                        info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_IS91_VOICE_MAIL ||
+                        info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_MWI)
+                    {
+                        gwWmsVMailNtf++;
+                    } 
+#else
                     if (info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_VMN_95 ||
                         info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_IS91_VOICE_MAIL ||
                         info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_MWI)
@@ -1389,6 +1397,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                             bSendEvt = FALSE;
                         }
                     }
+#endif
                     
 #ifdef FEATURE_OEMOMH
                     WmsApp_PlaySMSAlert(pMe, TRUE);
@@ -1447,28 +1456,27 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 										MOVE_TO_STATE(WMSST_WMSNEW)
 										pMe->m_eDlgReturn = DLGRET_CREATE;
 										CWmsApp_RunFSM(pMe);
-										
 		        				}
-	        				else
-	        				{
-							    if(pMe->m_currState != WMSST_INBOXES && pMe->m_currState != WMSST_VIEWINBOXMSG
-								   && pMe->m_currState !=	WMSST_INBOXMSGOPTS && pMe->m_currState !=	WMSST_WRITEMSG
-								   && pMe->m_currState != WMSST_SENDING)
-							    {
-							    	CLOSE_DIALOG(DLGRET_INBOXES)
-							    }
-							
-								else
-								{
-	                			    // 通知 CoreApp 需要进行短信提示
-	                				(void)ISHELL_PostEvent(pMe->m_pShell,
-	                                         AEECLSID_CORE_APP, 
-	                                         EVT_WMS_MSG_RECEIVED_MESSAGE,
-	                                         0, 
-	                                         0);
+	        				    else
+	        				    {
+    							    if(pMe->m_currState != WMSST_INBOXES && pMe->m_currState != WMSST_VIEWINBOXMSG
+    								   && pMe->m_currState !=	WMSST_INBOXMSGOPTS && pMe->m_currState !=	WMSST_WRITEMSG
+    								   && pMe->m_currState != WMSST_SENDING)
+    							    {
+    							    	CLOSE_DIALOG(DLGRET_INBOXES)
+    							    }
+    							
+    								else
+    								{
+    	                			    // 通知 CoreApp 需要进行短信提示
+    	                				(void)ISHELL_PostEvent(pMe->m_pShell,
+    	                                         AEECLSID_CORE_APP, 
+    	                                         EVT_WMS_MSG_RECEIVED_MESSAGE,
+    	                                         0, 
+    	                                         0);
 									}
 								}
-	        				 }
+	        				}
 	                    }
 	                    
 	                    (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
@@ -4917,7 +4925,7 @@ void WmsApp_UpdateAnnunciators(WmsApp * pMe)
 #if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
     if (nVmMsgs)
 #else
-    if (nVmNews)
+    if (nVmNews || gwWmsVMailNtf>0)
 #endif        
     {
         smsiconstatus[1] = TRUE;
@@ -5018,27 +5026,19 @@ void WmsApp_UpdateAnnunciators(WmsApp * pMe)
     MSG_FATAL("WmsApp_UpdateAnnunciators %d %d %d",smsiconstatus[0],smsiconstatus[1],smsiconstatus[2]);
     if (smsiconstatus[0])
     {
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS/*ANNUN_FIELD_SMSMEMORYFULL*/, ANNUN_STATE_SMS_MAILFULL_ON/*ANNUN_STATE_ON*/ | ANNUN_STATE_BLINK);
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS/*ANNUN_FIELD_VMAIL*/, ANNUN_STATE_SMS_VMAIL_OFF/*ANNUN_STATE_OFF*/);
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_OFF/*ANNUN_STATE_OFF*/);
+        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_MAILFULL_ON|ANNUN_STATE_BLINK);
     }
     else if (smsiconstatus[1])
     {
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS/*ANNUN_FIELD_VMAIL*/, ANNUN_STATE_SMS_VMAIL_ON/*ANNUN_STATE_ON*/);
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS/*ANNUN_FIELD_SMSMEMORYFULL*/, ANNUN_STATE_SMS_MAILFULL_OFF/*ANNUN_STATE_OFF*/);
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_OFF/*ANNUN_STATE_OFF*/);
+        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_VMAIL_ON);
     }
     else if (smsiconstatus[2])
     {
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON/*ANNUN_STATE_ON*/);
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS/*ANNUN_FIELD_SMSMEMORYFULL*/, ANNUN_STATE_SMS_MAILFULL_OFF/*ANNUN_STATE_OFF*/);
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS/*ANNUN_FIELD_VMAIL*/, ANNUN_STATE_SMS_VMAIL_OFF/*ANNUN_STATE_OFF*/);
+        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_ON);
     }
     else
     {
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS/*ANNUN_FIELD_SMSMEMORYFULL*/, ANNUN_STATE_SMS_MAILFULL_OFF/*ANNUN_STATE_OFF*/);
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS/*ANNUN_FIELD_VMAIL*/, ANNUN_STATE_SMS_VMAIL_OFF/*ANNUN_STATE_OFF*/);
-        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_SMS_SMAIL_OFF/*ANNUN_STATE_OFF*/);
+        IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_SMS, ANNUN_STATE_OFF);
     }
 }
 

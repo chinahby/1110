@@ -7661,6 +7661,7 @@ void OEMWMS_MsgInfoCacheCbExt(const wms_client_message_s_type  *pMsg,
             {
                 plist->nAll = nVMAll;
                 plist->nNews = nVMNew;
+                MSG_FATAL("WMS_MB_VOICEMAIL %d %d",nVMAll,nVMNew,0);
             }
         }
         rex_leave_crit_sect(&wms_cache_info_crit_sect);
@@ -8036,6 +8037,7 @@ void wms_cacheinfolist_getcounts(wms_box_e_type box,
         if (box == WMS_MB_VOICEMAIL)
         {
             *pTotal = plist->nAll;
+            MSG_FATAL("WMS_MB_VOICEMAIL %d %d",*pTotal,*pNew,0);
         }
         else
         {

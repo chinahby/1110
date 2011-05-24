@@ -1502,7 +1502,7 @@ static NextFSMAction COREST_SMSTIP_Handler(CCoreApp *pMe)
                     uint16  nNewsVmail=0;
                     
                     wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
-                    if (nNewsVmail)
+                    if (nNewsVmail>0 || gwWmsVMailNtf>0)
                     {
                         IWmsApp_ViewVMail(pWmsApp);
                     }

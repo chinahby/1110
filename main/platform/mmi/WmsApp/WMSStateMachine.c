@@ -1545,6 +1545,7 @@ static NextFSMAction WMSST_VOICEMAIL_Handler(WmsApp *pMe)
     switch (pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
+            gwWmsVMailNtf = 0;
             pMe->m_eMBoxType = WMS_MB_VOICEMAIL;
             MEMSET(pMe->m_msSend.m_szNum, 0, sizeof(pMe->m_msSend.m_szNum));
             {
@@ -3787,7 +3788,7 @@ static NextFSMAction WMSST_DELETEMSGS_Handler(WmsApp *pMe)
                 wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nDraftMsgs);
                 wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, NULL, NULL, &nVoice);
                 wms_cacheinfolist_getcounts(WMS_MB_RESERVE, NULL, NULL, &nReserveMsgs);
-                
+                gwWmsVMailNtf = 0;
                 if ((nInMsgs+nOutMsgs+nDraftMsgs+nVoice+nReserveMsgs) == 0)
                 {
                     pMe->m_ePMsgType = MESSAGE_WARNNING;
@@ -6163,26 +6164,44 @@ static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_SMSVIEWS:
-
             {// 调用短信接口进行查看操作
             	//modi by yangdecai 09-25
 				boolean  bsmslock = FALSE;
+                uint16  nNewsVmail=0;
+                
     			MSG_FATAL("COREST_SMSTIP_Handler Start DLGRET_SMSVIEWS",0,0,0);
     			(void) ICONFIG_GetItem(pMe->m_pConfig,
                            CFGI_SMS_LOCK_CHECK,
                            &bsmslock,
                            sizeof(bsmslock));
+                    
+                wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
+                
 				if (bsmslock)
                 {
                     pMe->m_currState = WMSST_CHKPWD;
-                    pMe->m_stchkpwdbk = WMSST_INBOXES;
+                    if (nNewsVmail>0 || gwWmsVMailNtf>0)
+                    {
+                        pMe->m_stchkpwdbk = WMSST_VOICEMAIL;
+                    }
+                    else
+                    {
+                        pMe->m_stchkpwdbk = WMSST_INBOXES;
+                    }
 					pMe->m_eDlgReturn = DLGRET_CREATE;
 					MOVE_TO_STATE(WMSST_CHKPWD)
             	}
 				else
 				{
             		pMe->m_eDlgReturn = DLGRET_CREATE;
-                	MOVE_TO_STATE(WMSST_INBOXES)
+                    if (nNewsVmail>0 || gwWmsVMailNtf>0)
+                    {
+                        MOVE_TO_STATE(WMSST_VOICEMAIL)
+                    }
+                    else
+                    {
+                	    MOVE_TO_STATE(WMSST_INBOXES)
+                    }
 				}
             }
             return NFSMACTION_CONTINUE;

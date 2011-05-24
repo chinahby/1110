@@ -12683,7 +12683,7 @@ static AECHAR  * FormatMessageForDisplay(WmsApp *pMe, WMSMessageStruct *pMessage
     if (pMe->m_eMBoxType == WMS_MB_VOICEMAIL)
     { // 语音通知消息显示内容与一般短信不同
         AECHAR wstrMsg[64] = {0};
-        
+
         wstrFmt[0] = 0;
         (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
                     IDS_VOICEMAIL_FMT,
@@ -14952,10 +14952,6 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 	switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            if(pMe->m_pIAnn != NULL)
-            {
-                IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,TRUE);
-            }
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -14981,7 +14977,7 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
                 // 获取消息数
                 wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
                 wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNewsSMS, NULL, NULL);
-				if (nNewsVmail > 0)
+				if (nNewsVmail > 0 || gwWmsVMailNtf>0)
                 {
                     // 从资源文件取消息内容
                     (void)ISHELL_LoadResString(pMe->m_pShell,
@@ -15045,10 +15041,6 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 	            }
 	            ISTATIC_Release(pStatic);
 	            pStatic = NULL;
-	            if(pMe->m_pIAnn != NULL)
-	            {
-	                IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
-	            }
 	            return TRUE;
 			}
 			break;
@@ -15372,10 +15364,6 @@ static boolean IDD_FLASHSMS_Handler(void *pUser,
 				
 	            ISTATIC_Release(pStatic);
 	            pStatic = NULL;
-	            if(pMe->m_pIAnn != NULL)
-	            {
-	                IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
-	            }
 	            return TRUE;
 			}
 			break;

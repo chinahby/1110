@@ -1089,14 +1089,14 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 
                 if (pMe->m_wActiveDlgID == IDD_IDLE)
                 {
-                    if (nNewsVmail>0 || nNewsSMS>0)
+                    if (nNewsVmail>0 || nNewsSMS>0 || gwWmsVMailNtf>0)
                     {
                         CLOSE_DIALOG(DLGRET_SMSTIPS)
                     }
                 }
                 else if (pMe->m_wActiveDlgID == IDD_WMSTIPS)
                 {// 重新创建对话框,更新显示
-                    if (nNewsVmail>0 || nNewsSMS>0)
+                    if (nNewsVmail>0 || nNewsSMS>0 || gwWmsVMailNtf>0)
                     {
                         CLOSE_DIALOG(DLGRET_CREATE)
                     }

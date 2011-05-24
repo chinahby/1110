@@ -814,86 +814,86 @@ SIDE EFFECTS
 ===========================================================================*/
 static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
 {
-  OEMState_data* data_ptr;
-  int nWidth, nHeight;
-  IBitmap *pBmp = NULL;
-  IImage  *pBackBmp = NULL;
-  int i,j;
-  uint32 nFirstState = GetAnnunFirstState(nState);
-  if ((pMe == NULL))
-    return EFAILED;
+    OEMState_data* data_ptr;
+    int nWidth, nHeight;
+    IBitmap *pBmp = NULL;
+    IImage  *pBackBmp = NULL;
+    int i,j;
+    boolean bUpdate = TRUE;
+    uint32 nFirstState = GetAnnunFirstState(nState);
+    if ((pMe == NULL))
+        return EFAILED;
 
-  if(NULL == pMe->m_coreObj)
-  {
-    return EFAILED;
-  }
+    if(NULL == pMe->m_coreObj)
+    {
+        return EFAILED;
+    }
 
-  //Add By zzg 2010_07_23
-  if(IAnnunCoreObj->m_hasTitleText && IAnnunCoreObj->m_Title[0] != 0)
-  {
+    //Add By zzg 2010_07_23
+    if(IAnnunCoreObj->m_hasTitleText && IAnnunCoreObj->m_Title[0] != 0)
+    {
 		if ((nAnnunID > ANNUN_FIELD_RSSI) && (nAnnunID < ANNUN_FIELD_BATT))
 		{
-			return;
+			bUpdate = FALSE;
 		}
 		if(IAnnunCoreObj->m_btoolen)
 		{
-			return;
+			bUpdate = FALSE;
 		}
-  }
-  //Add End
+    }
+    //Add End
   
-  if ((pMe->m_coreObj->m_piDisplay == NULL) || (pMe->m_piShell == NULL) ||
+    if ((pMe->m_coreObj->m_piDisplay == NULL) || (pMe->m_piShell == NULL) ||
       (pMe->m_coreObj->m_pDDB == NULL))
-    return EFAILED;
+        return EFAILED;
 
-  if (nFirstState == 0) //nState
-  {
-    // Shouldn't be here
-    return EFAILED;
-  }
-  //no need to clear battery field
-  else if((nAnnunID != ANNUN_FIELD_BATT) &&
-            (nFirstState != GetAnnunFirstState(Annunciators[nAnnunID].pcontent->nCurrState)))
-  {//if state changed to another one, field needed to be cleared before drawing a new one
-    ClearField(pMe, nAnnunID);
-  }
+    if (nFirstState == 0) //nState
+    {
+        // Shouldn't be here
+        return EFAILED;
+    }
+    //no need to clear battery field
+    //else if((nAnnunID != ANNUN_FIELD_BATT) &&
+    //        (nFirstState != GetAnnunFirstState(Annunciators[nAnnunID].pcontent->nCurrState)))
+    {//if state changed to another one, field needed to be cleared before drawing a new one
+        ClearField(pMe, nAnnunID);
+    }
   
-  nWidth = (int)Annunciators[nAnnunID].width;
-  nHeight = (int)Annunciators[nAnnunID].height;
+    nWidth = (int)Annunciators[nAnnunID].width;
+    nHeight = (int)Annunciators[nAnnunID].height;
  
-  if (!pMe->m_coreObj->cached) 
-  {
-    // Cache all the bitmaps 
-    for (i=0; i < (int)ARR_SIZE(Annunciators); i++) 
-	{
-      if (Annunciators[i].pcontent->nFieldType == ANNUN_TYPE_IMAGE) 
-	  {	  	
-        data_ptr = (OEMState_data *) Annunciators[i].pcontent->data;
-        for (j=0; j < (int)Annunciators[i].pcontent->nMaxStates; j++) 
-		{
-			//Modify by zzg 2010_10_12
-			//AEEFS_SHARED_DIR"oemannunciator.bar", 
-			// AEEFS_SYS_DIR"appscommonimages.bar",
-          data_ptr->pBmp = ISHELL_LoadResBitmap (pMe->m_piShell,                                         
+    if (!pMe->m_coreObj->cached) 
+    {
+        // Cache all the bitmaps 
+        for (i=0; i < (int)ARR_SIZE(Annunciators); i++) 
+	    {
+            if (Annunciators[i].pcontent->nFieldType == ANNUN_TYPE_IMAGE) 
+	        {	  	
+                data_ptr = (OEMState_data *) Annunciators[i].pcontent->data;
+                for (j=0; j < (int)Annunciators[i].pcontent->nMaxStates; j++) 
+		        {
+			        //Modify by zzg 2010_10_12
+			        //AEEFS_SHARED_DIR"oemannunciator.bar", 
+			        // AEEFS_SYS_DIR"appscommonimages.bar",
+                    data_ptr->pBmp = ISHELL_LoadResBitmap (pMe->m_piShell,                                         
                                          AEE_APPSCOMMONRES_IMAGESFILE,
                                          (uint16)(data_ptr->nImageResID));
-          data_ptr++;
+                    data_ptr++;
+                }
+            }
         }
-      }
+        pMe->m_coreObj->cached = TRUE;
     }
-    pMe->m_coreObj->cached = TRUE;
-  }
 
-  data_ptr = (OEMState_data *) Annunciators[nAnnunID].pcontent->data;
+    data_ptr = (OEMState_data *) Annunciators[nAnnunID].pcontent->data;
   
-  //pBmp = data_ptr[nState-1].pBmp;
-  pBmp = data_ptr[nFirstState-1].pBmp;
+    //pBmp = data_ptr[nState-1].pBmp;
+     pBmp = data_ptr[nFirstState-1].pBmp;
   
-  if (pBmp == NULL) 
-  {
-    return EFAILED;
-  }
-  //DBGPRINTF("IAnnunCoreObj->m_bActive::::::%d",IAnnunCoreObj->m_bActive);
+    if (pBmp == NULL) 
+    {
+        return EFAILED;
+    }
   
 	// First update the primary display
 	IDISPLAY_SetDestination (pMe->m_coreObj->m_piDisplay, IDIB_TO_IBITMAP(pMe->m_coreObj->m_pDDB));
@@ -902,8 +902,11 @@ static int DrawImageField (IAnnunciator *pMe, uint32 nAnnunID, uint32 nState)
            (int)Annunciators[nAnnunID].y_pos,
            nWidth, nHeight, pBmp, 0, 0, AEE_RO_COPY);
 	IDISPLAY_SetDestination(pMe->m_coreObj->m_piDisplay, NULL); // restore the destination 
-	
-	annun_disp_update (pMe, pMe->m_coreObj->m_pDDB, nAnnunID);	
+
+    if(bUpdate)
+    {
+	    annun_disp_update (pMe, pMe->m_coreObj->m_pDDB, nAnnunID);
+    }
   	return SUCCESS;
 }
 
@@ -1835,6 +1838,7 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
 {
   PACONTEXT pac;
   uint32 nStateRank = GetAnnunStateRank(nState);
+  MSG_FATAL("IAnnunciator_SetField %d 0x%x",nAnnunID,nState,0);
   if (nAnnunID >= ARR_SIZE(Annunciators))
     return EFAILED;
   if (Annunciators[nAnnunID].pcontent->nFieldType != ANNUN_TYPE_IMAGE)
@@ -1865,7 +1869,7 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
   if (pMe == NULL) {
     return EFAILED;
   }
-  ClearField(pMe, nAnnunID);//只会清除对应ID的那一块区域rect，不会影响其他的状态栏图标
+  
   /* Run in the system context */
 #if MIN_BREW_VERSION(3, 0)
   pac = AEE_EnterAppContext(NULL);
