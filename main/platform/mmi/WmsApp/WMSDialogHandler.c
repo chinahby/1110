@@ -14952,6 +14952,10 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 	switch (eCode)
     {
         case EVT_DIALOG_INIT:
+            if(pMe->m_pIAnn != NULL)
+            {
+                IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,NULL);
+            }
             return TRUE;
 
         case EVT_DIALOG_START:
