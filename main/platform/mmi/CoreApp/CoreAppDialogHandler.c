@@ -3374,6 +3374,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				break;
                 case AVK_RIGHT:
 					{
+                        //extern void wms_msg_cdma_mt_MWI(byte  msg_count);
+                        //wms_msg_cdma_mt_MWI(0);
+                        //return TRUE;
 						#ifdef FEATURE_USES_BLACKBERRY
 							if(pMe->m_CurMainItems<(IDLE_BLACKBERRY_ITEMMAX-1))
 							{
@@ -4012,7 +4015,7 @@ static boolean IDD_WMSTIPS_Handler(void        *pUser,
                 wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
                 wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNewsSMS, NULL, NULL);
                 MSG_FATAL("IDD_WMSTIPS_Handler %d %d",nNewsVmail,nNewsSMS,0);
-                if (nNewsVmail > 0 || gwWmsVMailNtf>0)
+                if (gbWmsVMailNtf && !(gbWmsLastNtfIsSMS && gbWmsSMSNtf))
                 {
                     // 从资源文件取消息内容
                     (void)ISHELL_LoadResString(pMe->a.m_pIShell,

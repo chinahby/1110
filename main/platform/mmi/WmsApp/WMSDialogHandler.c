@@ -14929,7 +14929,7 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 	static IStatic * pStatic = NULL;
     static IBitmap * pDevBmp = NULL;
     WmsApp *pMe = (WmsApp *)pUser;
-    MSG_FATAL("%x %x %x IDD_WMSTIPS_Handler",eCode,wParam,dwParam);
+    MSG_FATAL("%x %x %x IDD_WMSNEWMSG_Handler",eCode,wParam,dwParam);
 	if (NULL == pMe)
     {
         return FALSE;
@@ -14981,7 +14981,7 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
                 // 获取消息数
                 wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
                 wms_cacheinfolist_getcounts(WMS_MB_INBOX, &nNewsSMS, NULL, NULL);
-				if (nNewsVmail > 0 || gwWmsVMailNtf>0)
+				if (gbWmsVMailNtf && !(gbWmsLastNtfIsSMS && gbWmsSMSNtf))
                 {
                     // 从资源文件取消息内容
                     (void)ISHELL_LoadResString(pMe->m_pShell,
@@ -15061,8 +15061,6 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 						break;
 					case AVK_SELECT:
 						{
-                    	    IWmsApp *pWmsApp=NULL;
-							pMe->m_currState = WMSST_WMSNEW;
 							CLOSE_DIALOG(DLGRET_SMSVIEWS)
                     		return TRUE;
 						}

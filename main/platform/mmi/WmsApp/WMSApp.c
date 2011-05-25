@@ -158,7 +158,9 @@ static const VTBL(IModule) gModFuncs =
 
 // 只允许一个 WmsApp 实例。每次创建 WMS Applet 时，返回同一结构指针给 BREW 层。
 static WmsApp gWmsApp={0};
-uint16 gwWmsVMailNtf = 0;
+boolean gbWmsVMailNtf = FALSE;
+boolean gbWmsSMSNtf   = FALSE;
+boolean gbWmsLastNtfIsSMS = FALSE;
 
 static const VTBL(IWmsApp) gWmsAppMethods =
 {
@@ -853,6 +855,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
     switch (eCode)
     {
         case EVT_APP_START:
+            MSG_FATAL("EVT_APP_START %x %d",dwParam,pMe->m_currState,0);
             // 此事件dwParam为指针，不应为0
             if (dwParam == 0) 
             {
@@ -869,8 +872,15 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 ISHELL_GetDeviceInfo(pMe->m_pShell,&di);
                 pMe->m_rc.dy = di.cyScreen;
             }
-            
-            pMe->m_currState = WMSST_MAIN;
+
+            if(as && STRCMP(as->pszArgs,"NEWSMS") == 0)
+            {
+                pMe->m_currState = WMSST_WMSNEW;
+            }
+            else
+            {
+                pMe->m_currState = WMSST_MAIN;
+            }
             pMe->m_eDlgReturn = DLGRET_CREATE;
             pMe->m_bNaturalStart = TRUE;
 			pMe->m_bActive = TRUE;
@@ -931,6 +941,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                     pMe->m_stchkpwdbk = WMSST_MAIN;                    
                 }
             }
+            MSG_FATAL("EVT_APP_START %d",pMe->m_currState,0,0);
             // 开始跑WMS状态机
             CWmsApp_RunFSM(pMe);
             return TRUE;
@@ -1123,6 +1134,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             
         case EVT_DIALOG_END:
 			pMe->m_bincommend = FALSE;
+            MSG_FATAL("EVT_DIALOG_END %d %d %d",wParam,pMe->m_eAppStatus,pMe->m_currState);
 			if(OEM_IME_DIALOG == wParam)
 			{
 				return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER_REDRAW,0,0);
@@ -1373,35 +1385,10 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 
                 if (info->mt_message_info.route == WMS_ROUTE_STORE_AND_NOTIFY)
                 {
-                    boolean bSendEvt = TRUE;
 #ifndef FEATURE_ICM
 					AEETCalls po;
 #endif
-#ifdef FEATURE_OEMOMH
-                    if (info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_VMN_95 ||
-                        info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_IS91_VOICE_MAIL ||
-                        info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_MWI)
-                    {
-                        gwWmsVMailNtf++;
-                    } 
-#else
-                    if (info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_VMN_95 ||
-                        info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_IS91_VOICE_MAIL ||
-                        info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_MWI)
-                    {
-                        uint16 nVmNews = 0;
-                        
-                        wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nVmNews, NULL, NULL);
-                        if (nVmNews == 0)
-                        {
-                            bSendEvt = FALSE;
-                        }
-                    }
-#endif
-                    
-#ifdef FEATURE_OEMOMH
                     WmsApp_PlaySMSAlert(pMe, TRUE);
-#endif //#ifndef FEATURE_OEMOMH
 					//add by yangdecai   09-26
 #ifdef FEATURE_ICM
 					num = ICM_GetActiveCallIDs(pMe->m_pICM, 
@@ -1423,61 +1410,69 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 					if(po.dwCount==0)
 #endif
 					{
-	                    if (bSendEvt)
-	                    {
-#ifndef FEATURE_OEMOMH
-	                        // 语音提示用户有消息
-	                        WmsApp_PlaySMSAlert(pMe, TRUE);
-#endif
-	                        #ifdef FEATURE_FLASH_SMS
-	                        if(pMe->m_bflash_sms)
-	                        {
-	                        	if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
-		        				{
-		        					(void) ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
-									MOVE_TO_STATE(WMSST_FLASHSMS)
-									pMe->m_eDlgReturn = DLGRET_CREATE;
-									CWmsApp_RunFSM(pMe);
-		        				}
-		        				else
-		        				{
-		        					CLOSE_DIALOG(DLGRET_FLASHSMS)
-		        					//(void) ISHELL_EndDialog(pMe->m_pShell);
-		        					//MOVE_TO_STATE(WMSST_FLASHSMS)
-									//pMe->m_eDlgReturn = DLGRET_CREATE;
-		        				}
-	                        }
-	                        else
-	                        #endif
-	                        {
-		        				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
-		        				{
-		            					(void) ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
-										MOVE_TO_STATE(WMSST_WMSNEW)
-										pMe->m_eDlgReturn = DLGRET_CREATE;
-										CWmsApp_RunFSM(pMe);
-		        				}
-	        				    else
-	        				    {
-    							    if(pMe->m_currState != WMSST_INBOXES && pMe->m_currState != WMSST_VIEWINBOXMSG
-    								   && pMe->m_currState !=	WMSST_INBOXMSGOPTS && pMe->m_currState !=	WMSST_WRITEMSG
-    								   && pMe->m_currState != WMSST_SENDING)
-    							    {
-    							    	CLOSE_DIALOG(DLGRET_INBOXES)
-    							    }
-    							
-    								else
-    								{
-    	                			    // 通知 CoreApp 需要进行短信提示
-    	                				(void)ISHELL_PostEvent(pMe->m_pShell,
-    	                                         AEECLSID_CORE_APP, 
-    	                                         EVT_WMS_MSG_RECEIVED_MESSAGE,
-    	                                         0, 
-    	                                         0);
-									}
-								}
+                        MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT %d %d %d",gbWmsVMailNtf,gbWmsSMSNtf,gbWmsLastNtfIsSMS);
+                        if (info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_VMN_95 ||
+                            info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_IS91_VOICE_MAIL ||
+                            info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_MWI)
+                        {
+                            gbWmsVMailNtf = TRUE;
+                            gbWmsLastNtfIsSMS = FALSE;
+                        }
+                        else
+                        {
+                            gbWmsSMSNtf = TRUE;
+                            gbWmsLastNtfIsSMS = TRUE;
+                        }
+                        
+                        #ifdef FEATURE_FLASH_SMS
+                        if(pMe->m_bflash_sms)
+                        {
+                        	if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
+	        				{
+	        					(void) ISHELL_StartApplet(pMe->m_pShell, AEECLSID_WMSAPP);
+								MOVE_TO_STATE(WMSST_FLASHSMS)
+								pMe->m_eDlgReturn = DLGRET_CREATE;
+								CWmsApp_RunFSM(pMe);
 	        				}
-	                    }
+	        				else
+	        				{
+	        					CLOSE_DIALOG(DLGRET_FLASHSMS)
+	        					//(void) ISHELL_EndDialog(pMe->m_pShell);
+	        					//MOVE_TO_STATE(WMSST_FLASHSMS)
+								//pMe->m_eDlgReturn = DLGRET_CREATE;
+	        				}
+                        }
+                        else
+                        #endif
+                        {
+	        				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
+	        				{
+	            				(void) ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_WMSAPP, "NEWSMS");
+	        				}
+                            else if(pMe->m_currState == WMSST_WMSNEW)
+                            {
+                                CLOSE_DIALOG(DLGRET_CREATE)
+                            }
+        				    else
+        				    {
+							    if(pMe->m_currState != WMSST_INBOXES && pMe->m_currState != WMSST_VIEWINBOXMSG
+								   && pMe->m_currState !=	WMSST_INBOXMSGOPTS && pMe->m_currState !=	WMSST_WRITEMSG
+								   && pMe->m_currState != WMSST_SENDING)
+							    {
+							    	CLOSE_DIALOG(DLGRET_INBOXES)
+							    }
+							
+								else
+								{
+	                			    // 通知 CoreApp 需要进行短信提示
+	                				(void)ISHELL_PostEvent(pMe->m_pShell,
+	                                         AEECLSID_CORE_APP, 
+	                                         EVT_WMS_MSG_RECEIVED_MESSAGE,
+	                                         0, 
+	                                         0);
+								}
+							}
+        				}
 	                    
 	                    (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
 					}
@@ -4925,7 +4920,7 @@ void WmsApp_UpdateAnnunciators(WmsApp * pMe)
 #if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
     if (nVmMsgs)
 #else
-    if (nVmNews || gwWmsVMailNtf>0)
+    if (nVmNews || gbWmsVMailNtf)
 #endif        
     {
         smsiconstatus[1] = TRUE;

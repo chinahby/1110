@@ -1499,16 +1499,16 @@ static NextFSMAction COREST_SMSTIP_Handler(CCoreApp *pMe)
                 if (ISHELL_CreateInstance(pMe->a.m_pIShell, AEECLSID_WMSAPP,
                         (void**)&pWmsApp) == SUCCESS)
                 {
-                    uint16  nNewsVmail=0;
-                    
-                    wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
-                    if (nNewsVmail>0 || gwWmsVMailNtf>0)
+                    MSG_FATAL("COREST_SMSTIP_Handler %d %d %d",gbWmsVMailNtf,gbWmsSMSNtf,gbWmsLastNtfIsSMS);
+                    if (gbWmsVMailNtf && !(gbWmsLastNtfIsSMS && gbWmsSMSNtf))
                     {
                         IWmsApp_ViewVMail(pWmsApp);
+                        gbWmsVMailNtf = FALSE;
                     }
                     else
                     {
                         IWmsApp_ShowMessageList(pWmsApp);
+                        gbWmsSMSNtf = FALSE;
                     }
                     
                     IWmsApp_Release(pWmsApp);
@@ -1518,6 +1518,15 @@ static NextFSMAction COREST_SMSTIP_Handler(CCoreApp *pMe)
             return NFSMACTION_CONTINUE;
             
         case DLGRET_SMSTIPS_OK:
+            MSG_FATAL("COREST_SMSTIP_Handler %d %d %d",gbWmsVMailNtf,gbWmsSMSNtf,gbWmsLastNtfIsSMS);
+            if (gbWmsVMailNtf && !(gbWmsLastNtfIsSMS && gbWmsSMSNtf))
+            {
+                gbWmsVMailNtf = FALSE;
+            }
+            else
+            {
+                gbWmsSMSNtf = FALSE;
+            }
             MOVE_TO_STATE(COREST_STANDBY)
             return NFSMACTION_CONTINUE;
         

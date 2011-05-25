@@ -629,7 +629,17 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             (void)ISHELL_SetTimer(pMe->a.m_pIShell, 
                                   RESETPROFILE_TIME,
                                   CoreApp_ResetProfileTimer, 
-                                  pMe);         
+                                  pMe);
+            MSG_FATAL("EVT_APP_RESUME %d %d %d",gbWmsVMailNtf,gbWmsSMSNtf,gbWmsLastNtfIsSMS);
+            if(gbWmsVMailNtf || gbWmsSMSNtf)
+            {
+                // 通知 CoreApp 需要进行短信提示
+    			(void)ISHELL_PostEvent(pMe->a.m_pIShell,
+                         AEECLSID_CORE_APP, 
+                         EVT_WMS_MSG_RECEIVED_MESSAGE,
+                         0, 
+                         0);
+            }
             return TRUE;
 
         case EVT_APP_STOP:
@@ -710,6 +720,16 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
             // 跑状态机
             CoreApp_RunFSM(pMe);
+            MSG_FATAL("EVT_APP_RESUME %d %d %d",gbWmsVMailNtf,gbWmsSMSNtf,gbWmsLastNtfIsSMS);
+            if(gbWmsVMailNtf || gbWmsSMSNtf)
+            {
+                // 通知 CoreApp 需要进行短信提示
+    			(void)ISHELL_PostEvent(pMe->a.m_pIShell,
+                         AEECLSID_CORE_APP, 
+                         EVT_WMS_MSG_RECEIVED_MESSAGE,
+                         0, 
+                         0);
+            }
             return TRUE;
         }
 
@@ -1089,14 +1109,14 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 
                 if (pMe->m_wActiveDlgID == IDD_IDLE)
                 {
-                    if (nNewsVmail>0 || nNewsSMS>0 || gwWmsVMailNtf>0)
+                    if (nNewsVmail>0 || nNewsSMS>0 || gbWmsVMailNtf)
                     {
                         CLOSE_DIALOG(DLGRET_SMSTIPS)
                     }
                 }
                 else if (pMe->m_wActiveDlgID == IDD_WMSTIPS)
                 {// 重新创建对话框,更新显示
-                    if (nNewsVmail>0 || nNewsSMS>0 || gwWmsVMailNtf>0)
+                    if (nNewsVmail>0 || nNewsSMS>0 || gbWmsVMailNtf)
                     {
                         CLOSE_DIALOG(DLGRET_CREATE)
                     }

@@ -1545,7 +1545,7 @@ static NextFSMAction WMSST_VOICEMAIL_Handler(WmsApp *pMe)
     switch (pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
-            gwWmsVMailNtf = 0;
+            WmsApp_UpdateAnnunciators(pMe);
             pMe->m_eMBoxType = WMS_MB_VOICEMAIL;
             MEMSET(pMe->m_msSend.m_szNum, 0, sizeof(pMe->m_msSend.m_szNum));
             {
@@ -3788,7 +3788,6 @@ static NextFSMAction WMSST_DELETEMSGS_Handler(WmsApp *pMe)
                 wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nDraftMsgs);
                 wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, NULL, NULL, &nVoice);
                 wms_cacheinfolist_getcounts(WMS_MB_RESERVE, NULL, NULL, &nReserveMsgs);
-                gwWmsVMailNtf = 0;
                 if ((nInMsgs+nOutMsgs+nDraftMsgs+nVoice+nReserveMsgs) == 0)
                 {
                     pMe->m_ePMsgType = MESSAGE_WARNNING;
@@ -6156,7 +6155,7 @@ static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-    MSG_FATAL("COREST_SMSTIP_Handler Start",0,0,0);
+    MSG_FATAL("WMSST_WMSNEW_Hander Start",0,0,0);
 	switch (pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
@@ -6167,26 +6166,25 @@ static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe)
             {// 调用短信接口进行查看操作
             	//modi by yangdecai 09-25
 				boolean  bsmslock = FALSE;
-                uint16  nNewsVmail=0;
                 
-    			MSG_FATAL("COREST_SMSTIP_Handler Start DLGRET_SMSVIEWS",0,0,0);
+    			MSG_FATAL("WMSST_WMSNEW_Hander %d %d %d",gbWmsVMailNtf,gbWmsSMSNtf,gbWmsLastNtfIsSMS);
     			(void) ICONFIG_GetItem(pMe->m_pConfig,
                            CFGI_SMS_LOCK_CHECK,
                            &bsmslock,
                            sizeof(bsmslock));
-                    
-                wms_cacheinfolist_getcounts(WMS_MB_VOICEMAIL, &nNewsVmail, NULL, NULL);
                 
 				if (bsmslock)
                 {
                     pMe->m_currState = WMSST_CHKPWD;
-                    if (nNewsVmail>0 || gwWmsVMailNtf>0)
+                    if (gbWmsVMailNtf && !(gbWmsLastNtfIsSMS && gbWmsSMSNtf))
                     {
                         pMe->m_stchkpwdbk = WMSST_VOICEMAIL;
+                        gbWmsVMailNtf = FALSE;
                     }
                     else
                     {
                         pMe->m_stchkpwdbk = WMSST_INBOXES;
+                        gbWmsSMSNtf = FALSE;
                     }
 					pMe->m_eDlgReturn = DLGRET_CREATE;
 					MOVE_TO_STATE(WMSST_CHKPWD)
@@ -6194,27 +6192,35 @@ static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe)
 				else
 				{
             		pMe->m_eDlgReturn = DLGRET_CREATE;
-                    if (nNewsVmail>0 || gwWmsVMailNtf>0)
+                    if (gbWmsVMailNtf && !(gbWmsLastNtfIsSMS && gbWmsSMSNtf))
                     {
                         MOVE_TO_STATE(WMSST_VOICEMAIL)
+                        gbWmsVMailNtf = FALSE;
                     }
                     else
                     {
                 	    MOVE_TO_STATE(WMSST_INBOXES)
+                        gbWmsSMSNtf = FALSE;
                     }
 				}
             }
             return NFSMACTION_CONTINUE;
-            
-        case DLGGET_SMSNEW_OK:
-			
-            //MOVE_TO_STATE(COREST_STANDBY)
-            return NFSMACTION_CONTINUE;
-        
+
         default:
-            break;
+        case DLGGET_SMSNEW_OK:
+            MSG_FATAL("WMSST_WMSNEW_Hander %d %d %d",gbWmsVMailNtf,gbWmsSMSNtf,gbWmsLastNtfIsSMS);
+            if (gbWmsVMailNtf && !(gbWmsLastNtfIsSMS && gbWmsSMSNtf))
+            {
+                gbWmsVMailNtf = FALSE;
+            }
+            else
+            {
+                gbWmsSMSNtf = FALSE;
+            }
+            MOVE_TO_STATE(WMSST_EXIT)
+            return NFSMACTION_CONTINUE;
     }
-    MSG_FATAL("COREST_SMSTIP_Handler End",0,0,0);
+    MSG_FATAL("WMSST_WMSNEW_Hander End",0,0,0);
     return NFSMACTION_WAIT;
 }
 //WMSST_FLASHSMS状态处理函数add by yangdecai
@@ -6290,6 +6296,7 @@ static NextFSMAction WMSST_WMSPOP_Hander(WmsApp * pMe)
 ==============================================================================*/
 static NextFSMAction WMSST_EXIT_Handler(WmsApp *pMe)
 {
+    MSG_FATAL("WMSST_EXIT_Handler %d",pMe->m_currState,0,0);
     // 在这里作必要的变量重置工作
     WmsApp_MemberReset(pMe);
     
