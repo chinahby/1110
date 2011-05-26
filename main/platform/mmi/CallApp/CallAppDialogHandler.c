@@ -3366,10 +3366,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     return TRUE;
 
                 case AVK_0:
-#ifdef DISPLAY_TEST
-                    EmulateDisplayRec();
-                    break;
-#endif
                 case AVK_1:
                 case AVK_2:
                 case AVK_3:
@@ -3421,7 +3417,6 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     //    CallApp_BurstDTMF(pMe,w_str,1);
                     //}
                     CallApp_Send_DTMF(pMe , w_str);
-                    CLOSE_DIALOG(DLGRET_CONV_DIAL)
                     return TRUE;
                 }
 
@@ -3463,7 +3458,51 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     break;
             }
             break;
+        case EVT_KEY_RELEASE:
+            switch(wParam){
+            case AVK_0:
+            case AVK_1:
+            case AVK_2:
+            case AVK_3:
+            case AVK_4:
+            case AVK_5:
+            case AVK_6:
+            case AVK_7:
+            case AVK_8:
+            case AVK_9:
+            case AVK_STAR:
+            case AVK_POUND:
+            {
+                MSG_FATAL("AVK_1-AVK_9 %d %d", pMe->idle_info.uimLocked, pMe->m_PauseString[0], 0);
+                // Don't start the incall dialer if we are PIN locked
+                // (ie. in an emergency call)
+                if (pMe->idle_info.uimLocked)
+                {
+                    return TRUE;
+                }
 
+                // Make sure aren't waiting for a hard pause to be released...
+                if (pMe->m_PauseString[0] != 0)
+                {
+                    return TRUE;
+                }
+                
+                if (OEMNV_KEYTONE_LONG == pMe->m_dtmf_length)
+                {
+#ifdef FEATURE_ICM
+                    CallApp_Stop_ContDTMF(pMe->m_pICM);
+#else
+                    CallApp_Stop_ContDTMF(pMe);
+#endif
+                }
+                CLOSE_DIALOG(DLGRET_CONV_DIAL)
+                return TRUE;
+            }
+            default:
+                break;
+            }
+            break;
+            
         case EVT_COMMAND:
             pMe->m_bShowPopMenu = FALSE;
             IMENUCTL_SetActive ( pMe->m_pMenu, FALSE );
