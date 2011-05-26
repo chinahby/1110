@@ -2017,13 +2017,13 @@ static boolean  HandleCallForwardSelDialogEvent(CSettingMenu *pMe,
 
                 case CALLFORWARD_NOCONNECT: //未接通转移
                     pMe->m_nResID = IDS_CALLFORWARD_NOCONNECT;
-                    selete_item = CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE;
+                    selete_item = CFGI_CALLFORWARD_UNREACHABLE_ENABLE;
                     //SettingMenu_Process_Feature_Code(pMe,CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE);
                     break;
 
                 case CALLFORWARD_ANYWAY:    //无条件转移
                     pMe->m_nResID = IDS_CALLFORWARD_ANYWAY;
-                    selete_item = CFGI_CALLFORWARD_UNREACHABLE_ENABLE;
+                    selete_item = CFGI_CALLFORWARD_UNCONDITIONAL_ENABLE;
                     //SettingMenu_Process_Feature_Code(pMe,CFGI_CALLFORWARD_UNREACHABLE_ENABLE);
                     break;
 
