@@ -6014,9 +6014,10 @@ static void SettingMenu_Process_Feature_Code(CSettingMenu *pMe,uint16 feature_co
         }
         MSG_FATAL("IRUIM_Get_Feature_Code == %d %d",feature_code,STRLEN(pMe->m_callnumber),0);
     }
-    
+#ifndef FEATURE_OEMOMH
     //Read supplement service number from Config
     ICONFIG_GetItem(pMe->m_pConfig, feature_code, pMe->m_callnumber, FEATURE_CODE_MAX_LENTH);
+#endif
 }
 
 static void Sound_App_Add_Menu(IMenuCtl *pMenu,uint16 id)
