@@ -1607,6 +1607,7 @@ static NextFSMAction STATE_NONOMHHandler(CCallApp *pMe)
             return NFSMACTION_WAIT;
             
         case DLGRET_OK:
+            ISHELL_StartApplet(pMe->m_pShell, pMe->m_clsOMHApplet);
             MOVE_TO_STATE(STATE_EXIT)
             return NFSMACTION_CONTINUE;
 

@@ -678,9 +678,12 @@ typedef struct _CCallApp
 #ifdef WIN32//wlh for VKey_Number
 	IVkeyCtl * m_pIVkeyCtl;
 #endif
-    boolean  m_bShift;
     uint16   m_curpros;
+    boolean  m_bShift;
     boolean  b_multenter;
+#ifdef FEATURE_OEMOMH
+    AEECLSID  m_clsOMHApplet;
+#endif
 } CCallApp;
 
 /*==============================================================================

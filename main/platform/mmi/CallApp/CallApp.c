@@ -1655,11 +1655,26 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 				}
 				return CallApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 			}
-#endif		
+#endif
+#ifdef FEATURE_OEMOMH
+        case EVT_OMH_PROMPT:
+            if(!gsdi_uim_omh_cap.omh_enabled)
+            {
+                if (!pMe->m_running)
+                {
+                    pMe->m_nStartCallType = START_NONOMH;
+                    pMe->m_clsOMHApplet   = dwParam;
+                    ISHELL_StartApplet(pMe->m_pShell, AEECLSID_DIALER/*AEECLSID_CALL*/);
+                    return TRUE;
+                }
+            }
+            break;
+#endif
         default:
             // 将接收到的事件路由至当前活动的对话框事件处理函数。
             return CallApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
     }
+    return FALSE;
 }
 
 
@@ -2708,18 +2723,7 @@ static void CallApp_ProcessCallStateDATA(CCallApp                 *pMe,
                     }
                 }
                 break;
-#ifdef FEATURE_OEMOMH
-#ifdef FEATURE_ICM
-            case AEECM_EVENT_CALL_ORIG:
-#else
-            case AEET_EVENT_CALL_ORIG:
-#endif
-                if(!gsdi_uim_omh_cap.omh_enabled)
-                {
-                    *newState = STATE_NONOMH;
-                }
-                break;
-#endif
+                
             default:
                 break;
         }
