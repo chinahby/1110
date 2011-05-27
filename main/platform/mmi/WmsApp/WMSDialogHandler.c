@@ -15048,7 +15048,7 @@ static boolean	IDD_WMSNEWMSG_Handler(void *pUser,
 	            return TRUE;
 			}
 			break;
-		case EVT_KEY:
+		case EVT_KEY_PRESS:
 			{
 				switch(wParam)
             	{

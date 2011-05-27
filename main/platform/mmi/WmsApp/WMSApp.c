@@ -1410,20 +1410,6 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 					if(po.dwCount==0)
 #endif
 					{
-                        MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT %d %d %d",gbWmsVMailNtf,gbWmsSMSNtf,gbWmsLastNtfIsSMS);
-                        if (info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_VMN_95 ||
-                            info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_IS91_VOICE_MAIL ||
-                            info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_MWI)
-                        {
-                            gbWmsVMailNtf = TRUE;
-                            gbWmsLastNtfIsSMS = FALSE;
-                        }
-                        else
-                        {
-                            gbWmsSMSNtf = TRUE;
-                            gbWmsLastNtfIsSMS = TRUE;
-                        }
-                        
                         #ifdef FEATURE_FLASH_SMS
                         if(pMe->m_bflash_sms)
                         {
@@ -1445,6 +1431,20 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                         else
                         #endif
                         {
+                            MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT %d %d %d",gbWmsVMailNtf,gbWmsSMSNtf,gbWmsLastNtfIsSMS);
+                            if (info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_VMN_95 ||
+                                info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_IS91_VOICE_MAIL ||
+                                info->mt_message_info.message.u.cdma_message.teleservice == WMS_TELESERVICE_MWI)
+                            {
+                                gbWmsVMailNtf = TRUE;
+                                gbWmsLastNtfIsSMS = FALSE;
+                            }
+                            else
+                            {
+                                gbWmsSMSNtf = TRUE;
+                                gbWmsLastNtfIsSMS = TRUE;
+                            }
+                            
 	        				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
 	        				{
 	            				(void) ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_WMSAPP, "NEWSMS");
@@ -1460,8 +1460,8 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 								   && pMe->m_currState != WMSST_SENDING)
 							    {
 							    	CLOSE_DIALOG(DLGRET_INBOXES)
+                                    gbWmsSMSNtf = FALSE;
 							    }
-							
 								else
 								{
 	                			    // 通知 CoreApp 需要进行短信提示
