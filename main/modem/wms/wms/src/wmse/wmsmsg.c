@@ -759,7 +759,7 @@ void wms_msg_gstk_evt_cb
           if( gstk_ptr->cmd.sms_pp_download_rsp.general_resp ==
               GSTK_ENVELOPE_CMD_SUCCESS )
           {
-            MSG_HIGH("PP Download via Envelope was successful",0,0,0);
+            MSG_FATAL("PP Download via Envelope was successful",0,0,0);
             /* No response codes required */
           }
           else
@@ -3704,8 +3704,6 @@ wms_cmd_err_e_type wms_msg_do_write
 	          }
 	          else
 	          {
-	          	
-	          	
 	            if((client_ts.u.cdma.mask & WMS_MASK_BD_DISPLAY_MODE) &&
 	               (client_ts.u.cdma.display_mode == WMS_DISPLAY_MODE_RESERVED) &&
 	               (client_ts.u.cdma.download_mode == WMS_DOWNLOAD_MODE_UPDATE_PRL)&&
@@ -3714,6 +3712,7 @@ wms_cmd_err_e_type wms_msg_do_write
 	              /* This message contains a PRL Update, set the appropriate flag
 	              ** when doing the write.
 	              */
+	              MSG_FATAL("WMS_DOWNLOAD_MODE_UPDATE_PRL %d",i,0,0);
 	              if(!(wms_ruim_write_sms(i, ruim_data, TRUE)))
 	              {
 	                cmd_err = WMS_CMD_ERR_MSG_RUIM_WRITE;
@@ -6667,6 +6666,7 @@ wms_status_e_type wms_msg_cdma_deliver
 #endif
 #endif //#ifdef CUST_EDITION
 #ifdef CUST_EDITION//def FEATURE_CCAT
+  MSG_FATAL("cdma_tl.teleservice %d %d %d",cdma_tl.teleservice,gstk_is_sms_pp_supported(),nv_rtre_control());
   if( cdma_tl.teleservice == WMS_TELESERVICE_CATPT)
   {
 #ifdef CUST_EDITION//def FEATURE_CCAT
@@ -6704,11 +6704,11 @@ wms_status_e_type wms_msg_cdma_deliver
   }
 #endif /* FEATURE_CCAT */
 
-#ifndef CUST_EDITION
 #ifdef FEATURE_UIM_TOOLKIT_UTK
   /* The routing for UTK messages should be changed to TRANSFER_ONLY,
   ** so that the application needs to ack it later.
   */
+  MSG_FATAL("cdma_tl.cl_bd.mask 0x%x 0x%x 0x%x",cdma_tl.cl_bd.mask,cdma_tl.cl_bd.display_mode,cdma_tl.cl_bd.download_mode);
   if( ( cdma_tl.cl_bd.mask & WMS_MASK_BD_DISPLAY_MODE ) &&
       ( cdma_tl.cl_bd.display_mode == WMS_DISPLAY_MODE_RESERVED ) )
   {
@@ -6729,7 +6729,7 @@ wms_status_e_type wms_msg_cdma_deliver
     if( cdma_tl.cl_bd.download_mode == WMS_DOWNLOAD_MODE_PP_VAS ||
         cdma_tl.cl_bd.download_mode == WMS_DOWNLOAD_MODE_PP_PRL )
     {
-#ifndef FEATURE_GSTK
+#ifndef CUST_EDITION//ndef FEATURE_GSTK
       /* The UI client will send down the envelope command to the card */
       routing_ptr->route     = WMS_ROUTE_TRANSFER_ONLY;
       routing_ptr->mem_store = WMS_MEMORY_STORE_NONE;
@@ -6780,7 +6780,6 @@ wms_status_e_type wms_msg_cdma_deliver
   }
   else
 #endif /* FEATURE_UIM_TOOLKIT_UTK */
-#endif //#ifndef CUST_EDITION
 
 #ifdef FEATURE_GSM1x
 #error code not present
