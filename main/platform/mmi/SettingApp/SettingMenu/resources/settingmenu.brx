@@ -236,7 +236,7 @@
 		<Text>PM</Text>
 	</STRING>
 	<STRING Id="1079" Name="IDS_NOT_GET_FEATURE_CODE">
-		<Text>Feature code disabled</Text>
+		<Text>Feature code unavailable</Text>
 	</STRING>
 	<STRING Id="1080" Name="IDS_KEYTONE_LENGTH">
 		<Text>DTMF Tone</Text>
