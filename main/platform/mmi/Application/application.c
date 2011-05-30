@@ -1327,13 +1327,6 @@ static int StartApplet(Application *pMe, int i)
     
     switch(i){
     case IDS_APPLICATION_BAM:
-#ifdef FEATURE_OEMOMH
-        if(ISHELL_SendEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_OMH_PROMPT,0,AEECLSID_APPMANAGER))
-        {
-            Result = SUCCESS;
-            break;
-        }
-#endif
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
         if(Result == SUCCESS && pMe->m_pIAnn != NULL)
         {

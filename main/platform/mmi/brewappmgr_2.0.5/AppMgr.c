@@ -445,6 +445,7 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
        break;
    }
 #endif
+   FARF(BAM, ("AppMgr_HandleEvent 0x%x 0x%x 0x%x",eCode,wParam,dwParam));
    switch (eCode) 
    { 
       case EVT_NOTIFY:
@@ -460,7 +461,7 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
                      {
                         NotifyStartStatus * ps = (NotifyStartStatus *)pae->pData;
                
-                        FARF(BAM, ("Received NMASK_SHELL_START_STATUS Notification"));
+                        FARF(BAM, ("Received NMASK_SHELL_START_STATUS Notification 0x%x %d",ps->cls,ps->nErr));
 
                         if (ps->cls && ps->nErr)
                         {
@@ -468,6 +469,7 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
 
                            // Don't act if notification is for hidden app or a screen saver
                            ISHELL_QueryClass(pme->a.m_pIShell, ps->cls, &ai);
+                           FARF(BAM, ("ISHELL_QueryClass 0x%x",ai.wFlags));
 #ifdef CUST_EDITION
                            if ((ai.wFlags & AFLAG_HIDDEN) || (ai.wFlags & AFLAG_SCREENSAVER) || (ai.wFlags & AFLAG_STATIC))
 #else
@@ -746,6 +748,7 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
                return AppMgr_SetState(pme, pme->m_wState);
 
             case IDC_LAUNCHER_RUN_NOW:
+               FARF(BAM, ("IDC_LAUNCHER_RUN_NOW"));
                return AppMgr_LaunchCurrentApplet(pme, TRUE);
 
             case IDC_LAUNCHER_RESTORE:
@@ -1135,6 +1138,7 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
 
             default:
                {
+                  FARF(BAM, ("AppMgr_HandleEvent %d",wParam));
                   if(wParam >= IDC_MOVE_APP){             // Configure Move App list
                      IMENUCTL_GetItemData(pme->m_pMenu, IMENUCTL_GetSel(pme->m_pMenu), (uint32*)&pme->m_pCurrentApp);
                      pme->m_wLastState = pme->m_wState;

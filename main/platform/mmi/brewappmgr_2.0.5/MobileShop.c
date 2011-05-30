@@ -25,13 +25,14 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =====================================================*/
+#include "OEMFeatures.h"
 #include "MobileShop.h"
 #include "AppMgrSettings.h"
 #include "AEEFile.h"
-
 #ifdef CUST_EDITION
 #include "Appscommon.h"
 #include "OEMFS.h"
+
 static boolean MShop_CheckDiskSpace(void)
 {
     uint32 dwFree = 0;
@@ -509,6 +510,12 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
          }
          IDISPLAY_Update(pme->a.m_pIDisplay);
          return TRUE;
+#ifdef FEATURE_OEMOMH
+      case EVT_OMH_PROMPT:
+         //ISHELL_CloseApplet(pme->a.m_pIShell, FALSE);
+         MShop_ForceExit(pme);
+         return TRUE;
+#endif
 #endif
    }
    return(FALSE);

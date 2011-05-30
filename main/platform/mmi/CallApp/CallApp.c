@@ -1660,8 +1660,15 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
         case EVT_OMH_PROMPT:
             if(!gsdi_uim_omh_cap.omh_enabled)
             {
+                MSG_FATAL("EVT_OMH_PROMPT %d 0x%x",pMe->m_running,ISHELL_ActiveApplet(pMe->m_pShell),0);
                 if (!pMe->m_running)
                 {
+                    ISHELL_PostEvent(pMe->m_pShell,ISHELL_ActiveApplet(pMe->m_pShell),EVT_OMH_PROMPT,0,0);
+#ifdef FEATURE_ICM
+                    ICM_EndAllCalls(pMe->m_pICM);
+#else
+                    ICALLMGR_EndAllCalls(pMe->m_pICallMgr);
+#endif
                     pMe->m_nStartCallType = START_NONOMH;
                     pMe->m_clsOMHApplet   = dwParam;
                     ISHELL_StartApplet(pMe->m_pShell, AEECLSID_DIALER/*AEECLSID_CALL*/);
@@ -2723,7 +2730,14 @@ static void CallApp_ProcessCallStateDATA(CCallApp                 *pMe,
                     }
                 }
                 break;
-                
+#ifdef FEATURE_OEMOMH
+#ifdef FEATURE_ICM
+           case AEECM_EVENT_CALL_ORIG:
+#else
+           case AEET_EVENT_CALL_ORIG:
+#endif
+               ISHELL_SendEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_OMH_PROMPT,0,0);
+#endif
             default:
                 break;
         }

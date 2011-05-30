@@ -307,6 +307,9 @@ enum
     EVT_CHANGEPIN,
     EVT_UNBLOCKPIN,
     EVT_DISPLAYADN,
+#ifdef FEATURE_OEMOMH
+    EVT_OMH_PROMPT,
+#endif
     EVT_CUST_MAX
 };
 #endif /*CUST_EDITION*/
