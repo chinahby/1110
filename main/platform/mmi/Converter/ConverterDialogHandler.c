@@ -1595,13 +1595,17 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                 {
                     coefficient1 = currencymenu[0];
                     coefficient2 = currencymenu[0] + 1;
+                    #ifndef FEATURE_VERSION_S1000T
                     coefficient3 = currencymenu[0] + 2;
+                    #endif
                 }
                 else
                 {
                     coefficient1 = (uint + currencymenu[0])/2 + coeffNum1 - pMe->m_nCtlID;
                     coefficient2 = (uint + currencymenu[0])/2 + coeffNum2 - pMe->m_nCtlID;
+                    #ifndef FEATURE_VERSION_S1000T
                     coefficient3 = (uint + currencymenu[0])/2 + coeffNum3 - pMe->m_nCtlID;
+                    #endif
                 }
                 
                 source = pMe->m_CurrencyCFG.customCurrency[coefficient1 - currencymenu[0]] / pMe->m_CurrencyCFG.customCurrency[pMe->basiccoefficient - IDS_CURRENCY_EUR];
@@ -1610,9 +1614,12 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                 source = pMe->m_CurrencyCFG.customCurrency[coefficient2 - currencymenu[0]] / pMe->m_CurrencyCFG.customCurrency[pMe->basiccoefficient - IDS_CURRENCY_EUR];
                 (void)Converter_FloatToWstr(source, wstrDisplay, sizeof(wstrDisplay));
                 ITEXTCTL_SetText(pMe->coeff2, wstrDisplay, -1);
+                
+                #ifndef FEATURE_VERSION_S1000T
                 source = pMe->m_CurrencyCFG.customCurrency[coefficient3 - currencymenu[0]] / pMe->m_CurrencyCFG.customCurrency[pMe->basiccoefficient - IDS_CURRENCY_EUR];
                 (void)Converter_FloatToWstr(source, wstrDisplay, sizeof(wstrDisplay));
                 ITEXTCTL_SetText(pMe->coeff3, wstrDisplay, -1);
+                #endif
             }
             (void)IMENUCTL_Redraw(pMe->currency);
             IDISPLAY_FillRect(pMe->m_pDisplay, &rect, RGB_ORANGE);
@@ -1620,13 +1627,17 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
             {
                 ITEXTCTL_SetActive(pMe->coeff1, FALSE);
                 ITEXTCTL_SetActive(pMe->coeff2, FALSE);
+                #ifndef FEATURE_VERSION_S1000T
                 ITEXTCTL_SetActive(pMe->coeff3, FALSE);
+                #endif
             }
             else
             {
                 (void)ITEXTCTL_Redraw(pMe->coeff1);
                 (void)ITEXTCTL_Redraw(pMe->coeff2);
+                #ifndef FEATURE_VERSION_S1000T
                 (void)ITEXTCTL_Redraw(pMe->coeff3);
+                #endif
             }
             (void)IMENUCTL_Redraw(pMe->title);
             DrawBottomBar(pMe->m_pDisplay, &BBarParam);
@@ -1681,10 +1692,12 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                         {
                             ITEXTCTL_SetText(pMe->coeff2, wstrDisplay, -1);
                         }
+                        #ifndef FEATURE_VERSION_S1000T
                         if(pMe->m_nCtlID == coeffNum3)
                         {
                             ITEXTCTL_SetText(pMe->coeff3, wstrDisplay, -1);
                         }
+                        #endif
                     }
                 }
                     break;
@@ -1707,10 +1720,12 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                         {
                             ITEXTCTL_SetText(pMe->coeff2, wstrDisplay, -1);
                         }
+                        #ifndef FEATURE_VERSION_S1000T
                         if(pMe->m_nCtlID == coeffNum3)
                         {
                             ITEXTCTL_SetText(pMe->coeff3, wstrDisplay, -1);
                         }
+                        #endif
                     }
                 }
                     break;
@@ -1753,11 +1768,12 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                             {
                                 ITEXTCTL_GetText(pMe->coeff2, wstrDisplay, sizeof(wstrDisplay));
                             }
+                            #ifndef FEATURE_VERSION_S1000T
                             else
                             {
-                                ITEXTCTL_GetText(pMe->coeff3, wstrDisplay, sizeof(wstrDisplay));
+                               ITEXTCTL_GetText(pMe->coeff3, wstrDisplay, sizeof(wstrDisplay));
                             }
-
+							#endif
                             if(WSTRLEN(wstrDisplay) > 0)
                             {
                                 if(WSTRTOFLOAT(wstrDisplay) <= 0.0)
@@ -1804,11 +1820,13 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                                     ITEXTCTL_GetText(pMe->coeff2, wstrDisplay, sizeof(wstrDisplay));
                                     ITEXTCTL_SetActive(pMe->coeff2, TRUE);
                                 }
+                                #ifndef FEATURE_VERSION_S1000T
                                 else
                                 {
                                     ITEXTCTL_GetText(pMe->coeff3, wstrDisplay, sizeof(wstrDisplay));
                                     ITEXTCTL_SetActive(pMe->coeff3, TRUE);
                                 }
+                                #endif
                                 nLen = WSTRLEN(wstrDisplay);
                                 (void) WSTRTOSTR(wstrDisplay, m_inputNumber, (MAX_INPUT_NUMBER + 3)*sizeof(char));
                                 m_inputNumber[nLen] = 0;
@@ -1848,10 +1866,12 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
 	                        {
 	                            ITEXTCTL_SetText(pMe->coeff2, wstrDisplay, -1);
 	                        }
+	                        #ifndef FEATURE_VERSION_S1000T
 	                        if(pMe->m_nCtlID == coeffNum3)
 	                        {
 	                            ITEXTCTL_SetText(pMe->coeff3, wstrDisplay, -1);
 	                        }
+	                        #endif
 	                    }
                     }
                     else
@@ -1882,7 +1902,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                             ctlID += 2;
                             IMENUCTL_SetSel(pMe->currency, ctlID + 1);
                             IMENUCTL_SetSel(pMe->currency, ctlID);
-                            if(pMe->m_nCtlID <= coeffNum2)
+                            if(pMe->m_nCtlID <= coeffNum1)
                             {
                                 pMe->m_nCtlID++;
                             }
@@ -1904,7 +1924,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                     
                     if(pMe->m_nCtlID == basicCurrency)
                     {
-                        pMe->m_nCtlID = coeffNum3;
+                        pMe->m_nCtlID = coeffNum2;
                         ctlID = currencymenu[28];
                         IMENUCTL_SetSel(pMe->currency, ctlID + 1);
                         IMENUCTL_SetSel(pMe->currency, ctlID);
