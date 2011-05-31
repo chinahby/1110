@@ -964,7 +964,7 @@ extern int  VideoPlayerMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 #if defined(FEATURE_APP_TIMERAPP)
 extern int AppTimerMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
-#if defined(FEATURE_VERSION_S106)
+#if defined(FEATURE_SUPPORT_WAP_APP)
 //extern int CNetFront3_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 
@@ -1325,7 +1325,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #if defined(FEATURE_VIDEOPLAYER)
     {AEEFS_MIF_DIR"videoplayer.mif", VideoPlayerMod_Load},
 #endif
-#if defined(FEATURE_VERSION_S106)
+#if defined(FEATURE_SUPPORT_WAP_APP)
     {AEEFS_MIF_DIR"netfront3.mif", CNetFront3_Load},
 #endif
 
