@@ -12,6 +12,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_S106
 #define FEATURE_VERSION_S1000T
 #ifdef CUST_EDITION
+#define FEATURE_OEMOMH
 #define FEATURE_APP_BLUETOOTH
 #define FEATURE_BT
 #define FEATURE_IBT
@@ -275,6 +276,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custui.h"
 #include "custmcs.h"
 #include "custpmic3.h"
+#include "custmp4.h"
 #include "custefs.h"
 //#include "custfmrds.h"
 #include "custnvm.h"

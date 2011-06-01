@@ -267,6 +267,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custui.h"
 #include "custmcs.h"
 #include "custpmic3.h"
+#include "custmp4.h"
 #include "custefs.h"
 //#include "custfmrds.h"
 #include "custnvm.h"
