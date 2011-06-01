@@ -1885,7 +1885,8 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
 
          CALLBACK_Cancel(&pMe->m_CallBack);  
          CALLBACK_Init(&pMe->m_CallBack, MGAppUtil_StartUDisk, (void *)pMe);
-#ifdef FEATURE_VERSION_W515V3
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) 
+
          ISHELL_SetTimer(pMe->m_pShell,2000,CheckUSBCableConnect_HandleDialogTimer,pMe);
 #endif
          pMe->m_nCallbackDoFor = MG_CBT_STARTUDISK;
@@ -1936,7 +1937,7 @@ static boolean MediaGalleryApp_UDiskDlg_HandleEvent(CMediaGalleryApp* pMe,
                //MGCLOSE_DIALOG(MGDLGRET_CANCELED);
                if( TRUE == MediaGallery_CheckUdiskStat())
                {
-                #ifdef FEATURE_VERSION_W515V3
+                #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T) 
                   pMe->m_USBConnect = FALSE;
                   pMe->m_STOPUSB = TRUE;
                   ISHELL_CancelTimer(pMe->m_pShell, CheckUSBCableConnect_HandleDialogTimer, pMe);
