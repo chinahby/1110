@@ -397,7 +397,7 @@ static boolean  IDD_MAIN_Handler(CUTK *pMe,
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)                    
                     return TRUE;
-#ifdef FEATURE_OEMOMH
+#if 0//def FEATURE_OEMOMH
                 case AVK_1:
                 {
                     //69 74 68 20 74 68 65 20 6D 65 6E 75

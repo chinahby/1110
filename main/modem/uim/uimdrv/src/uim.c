@@ -2976,7 +2976,12 @@ uim_StopDriverTimeStamp();
     (void) rex_set_sigs( &uim_tcb, UIM_EFSLOG_PURGE_SIG );
   }
 #endif /* FEATURE_UIM_LOG_TO_EFS */
-
+#ifdef FEATURE_OEMOMH
+{
+  extern void uim_send_err_to_ui(uim_status_type uim_status_param);
+  uim_send_err_to_ui(uim_status_param);
+}
+#endif
 #ifdef FEATURE_UIM_CARD_ERR_UIM_LDO_PUP
 #error code not present
 #endif /* FEATURE_UIM_CARD_ERR_UIM_LDO_PUP */
@@ -9190,11 +9195,13 @@ dword dummy
       if (UIM_T_1_PROTOCOL == uim_current_protocol)
       {
         /* Process the card response for the T=1 protocol */
+        MSG_FATAL("UIM_T_1_PROTOCOL",0,0,0);
         cmd_ptr = uim_process_t_1_block( uim_rsp_buf_ptr, cmd_ptr, &i_mask);
       }
       else
 #endif /* FEATURE_UIM_T_1_SUPPORT */
       {
+        MSG_FATAL("uim_process_card_response",0,0,0);
         cmd_ptr = uim_process_card_response( cmd_ptr, &i_mask );
 
 #ifndef FEATURE_UIM_SUPPORT_DUAL_SLOTS

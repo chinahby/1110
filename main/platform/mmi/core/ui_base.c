@@ -792,6 +792,56 @@ void wms_init_ui_cmd(void)
     rex_wait(UI_OEM_SIG);
 }
 
+/*===========================================================================
+
+FUNCTION uim_send_err_to_ui                         INTERNAL FUNCTION
+
+DESCRIPTION
+  Send this uim error command to UI for processing.
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  The UI is given the proactive command to process.
+
+===========================================================================*/
+void uim_send_err_to_ui
+(
+  uim_status_type uim_status_param
+)
+{
+  ui_cmd_type  *ui_buf_ptr; /* pointer to buffer for ui cmd */
+
+/* Send a msg status command to the UI task */
+#ifdef FEATURE_REX_DYNA_MEM_UI
+  ui_buf_ptr = ui_get_cmd();
+  if(ui_buf_ptr == NULL)
+  {
+    MSG_FATAL("Out of UI cmd buffer", 0,0,0);
+    return;
+  }
+#else
+  if( (ui_buf_ptr = (ui_cmd_type*) q_get( &ui_cmd_free_q )) == NULL )
+  {
+    ERR("Out of UI cmd buffer", 0,0,0);
+    return;
+  }
+  ui_buf_ptr->proactive_cmd.hdr.done_q_ptr = &ui_cmd_free_q;;
+#endif /* FEATURE_REX_DYNA_MEM_UI */
+
+  ui_buf_ptr->uim_err_cmd.hdr.cmd        = UI_UIM_ERR_F;
+  ui_buf_ptr->uim_err_cmd.hdr.task_ptr   = NULL;
+  ui_buf_ptr->uim_err_cmd.hdr.sigs       = 0;
+  ui_buf_ptr->uim_err_cmd.uim_status     = uim_status_param;
+  MSG_FATAL("uim_send_err_to_ui %d", uim_status_param,0,0);
+  /* send command to ui */
+  ui_cmd( ui_buf_ptr );
+} /* uim_send_err_to_ui */
+
 /*==============================================================================
 º¯Êý: 
     ui_get_cmd
@@ -917,6 +967,16 @@ static void oemui_handlecmd(ui_cmd_type *cmd_ptr)
         case UI_WMS_INIT:
             // Nothing Todo
             break;
+            
+        case UI_UIM_ERR_F:
+            MSG_FATAL("UI_UIM_ERR_F %d",cmd_ptr->uim_err_cmd.uim_status,0,0);
+            if(UIM_POLL_ERR_S == cmd_ptr->uim_err_cmd.uim_status)
+            {
+                extern void CoreTask_HandleUIMErr(void);
+                CoreTask_HandleUIMErr();
+            }
+            break;
+            
         default:
             ERR( "ui command 0X%x is ignored!", cmd_ptr->hdr.cmd, 0, 0 );
             break;

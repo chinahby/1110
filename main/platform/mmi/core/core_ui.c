@@ -2243,3 +2243,16 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
     }
     return bHandle;
 }
+
+void CoreTask_HandleUIMErr(void)
+{
+#ifdef FEATURE_ICM
+    if (NULL == gpICM)
+    {
+        return;
+    }
+    MSG_FATAL("CoreTask_HandleUIMErr",0,0,0);
+    ICM_EndAllCalls(gpICM);
+#endif
+}
+

@@ -66,6 +66,7 @@ typedef enum
     UI_PROACTIVE_UIM_F,
     UI_WMS_INIT,
     UI_SMS_PP_DL_F,
+    UI_UIM_ERR_F,
     UI_NUM_UI_COMMANDS,              /* End of command list (note no comma!)    */
     UI_ITEMS_ENUM_PAD = 0x7FFF
 } ui_name_type;
@@ -106,6 +107,12 @@ typedef struct
     gstk_evt_cb_funct_type     sms_pp_dl_cb;
 } ui_sms_pp_dl_cmd_type;
 
+typedef struct
+{
+    ui_hdr_type                hdr;                       /* header */
+    uim_status_type            uim_status;
+} ui_uim_err_cmd_type;
+
 // ui 命令类型
 // 全部命令的联合体。命令头总是存在，它指定命令类型和属性。若命令带参数，则
 // 参数紧随联合体命令头后
@@ -114,6 +121,7 @@ typedef union ui_cmd_u
     ui_hdr_type                   hdr;
     ui_proactive_uim_cmd_type     proactive_cmd;
     ui_sms_pp_dl_cmd_type         sms_pp_dl_cmd;
+    ui_uim_err_cmd_type           uim_err_cmd;
 } ui_cmd_type;
 
 

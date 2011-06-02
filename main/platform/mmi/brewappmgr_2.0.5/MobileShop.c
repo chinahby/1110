@@ -37,7 +37,7 @@ static boolean MShop_CheckDiskSpace(void)
 {
     uint32 dwFree = 0;
     int nRet = OEMFS_GetFreeSpaceEx(AEEFS_ROOT_DIR, NULL, &dwFree);
-    
+    DBGPRINTF("MShop_CheckDiskSpace %d %d",nRet,dwFree);
     if(nRet == SUCCESS)
     {
         return (dwFree >= 20480); //20k
@@ -284,6 +284,8 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
    default:
        break;
    }
+
+   DBGPRINTF("MShop_HandleEvent 0x%x 0x%x 0x%x",eCode,wParam,dwParam);
    if((eCode == EVT_DIALOG_END) && (wParam == OEM_IME_DIALOG))
    {
        IDISPLAY_ClearScreen(pme->a.m_pIDisplay);
@@ -425,6 +427,7 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
                {                  
                   if (pme->m_wState == ST_PURCHASE)
                   {
+                     DBGPRINTF("MShop_HandleEvent IDC_OK");
                      MShop_ForceExit(pme);
                      return TRUE;
                   }
@@ -458,6 +461,7 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
             case IDC_NO:
                if (pme->m_wState == ST_PURCHASE)
                {
+                  DBGPRINTF("MShop_HandleEvent IDC_NO");
                   MShop_ForceExit(pme);
                   return TRUE;
                }
@@ -513,6 +517,7 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
 #ifdef FEATURE_OEMOMH
       case EVT_OMH_PROMPT:
          //ISHELL_CloseApplet(pme->a.m_pIShell, FALSE);
+         DBGPRINTF("MShop_HandleEvent EVT_OMH_PROMPT");
          MShop_ForceExit(pme);
          return TRUE;
 #endif
@@ -615,6 +620,7 @@ static boolean MShop_ProcessKeyEvent(MShop* pme, uint16 wParam, uint32 dwParam)
             case ST_IN_PROGRESS:
                pme->m_wState = pme->m_wLastState;
                if ((ST_PURCHASE == pme->m_wState) && (100 == pme->m_wPct)) {
+                  DBGPRINTF("MShop_ProcessKeyEvent ST_IN_PROGRESS");
                   MShop_ForceExit(pme);
                   return TRUE;
                }
@@ -625,6 +631,7 @@ static boolean MShop_ProcessKeyEvent(MShop* pme, uint16 wParam, uint32 dwParam)
             case ST_APP_OPTIONS:
                if (pme->m_nCatIdx < 0)
                {
+                  DBGPRINTF("MShop_ProcessKeyEvent ST_APP_OPTIONS");
                   MShop_ForceExit(pme);
                   return TRUE;
                }
@@ -632,6 +639,7 @@ static boolean MShop_ProcessKeyEvent(MShop* pme, uint16 wParam, uint32 dwParam)
                   return MShop_SetState(pme, PREV_ENTRY);
 
             case ST_PURCHASE:
+               DBGPRINTF("MShop_ProcessKeyEvent ST_PURCHASE");
                MShop_ForceExit(pme);
                return TRUE;
 
@@ -689,7 +697,7 @@ Sets the state machines state according to the specified value
 static boolean MShop_SetState(MShop * pme, int nState)
 {
    MShopState  * ps;
-
+   DBGPRINTF("MShop_SetState 0x%x",nState);
    if(nState == PREV_ENTRY){
       // Coming here means state is to be set to the back state
 
@@ -706,6 +714,7 @@ static boolean MShop_SetState(MShop * pme, int nState)
       // If back state of the current state is NO_ENTRY, close mobile shop with 
       // bReturnToIdle == FALSE so that any suspended applet can get active.
       if(nState == NO_ENTRY){
+         DBGPRINTF("MShop_SetState NO_ENTRY");
          MShop_ForceExit(pme);
          return(TRUE);
       }
@@ -955,7 +964,7 @@ State handler for ST_CATEGORIES and ST_APPS.
 static boolean MShop_Enum(MShop * pme)
 {
    DLITEMID id;
-
+   
    // Free EULA buffer
    FreePtr((void **)&pme->m_pszEULA);
    pme->m_bGotEULA = FALSE;
@@ -1299,22 +1308,30 @@ static boolean MShop_AppOptionsDialog(MShop * pme)
 
    // If there is no upgrade option and demo option is available, add that in menu
    if(pi->UpgradeOption.lt == LT_NONE){
-      if(pi->DemoOption.lt != LT_NONE)
+      if(pi->DemoOption.lt != LT_NONE){
         MShop_AddOptionMenuItem(pme, IDC_DEMO, pi, &pi->DemoOption.Price); 
+        DBGPRINTF("MShop_AppOptionsDialog  IDC_DEMO");
+      }
    }
 
    // If upgrade option is available, add that in menu
-   if(pi->UpgradeOption.lt != LT_NONE)
+   if(pi->UpgradeOption.lt != LT_NONE){
       MShop_AddSimpleOptionMenuItem(pme, IDC_UPGRADE, IDS_EXP_UPGRADE, &pi->UpgradeOption.Price, IDB_MS_UPGRADE);
+      DBGPRINTF("MShop_AppOptionsDialog  IDC_UPGRADE");
+   }
 
    // If subscription option is available, add that in menu
-   if(pi->SubscriptionOption.lt != LT_NONE)
+   if(pi->SubscriptionOption.lt != LT_NONE){
       MShop_AddSimpleOptionMenuItem(pme, IDC_SUBSCRIPTION, IDS_EXP_SUBSCRIPTION, &pi->SubscriptionOption.Price, IDB_MS_SUBSCRIBE);
+      DBGPRINTF("MShop_AppOptionsDialog  IDC_SUBSCRIPTION");
+   }
 
    // If purchase option is available, add all of the purchase prices in the menu
    if(pi->PurchaseOption.lt != LT_NONE){
-      for(i = 0, p = pi->PurchaseOption.pPrices; i < pi->PurchaseOption.nPrices; i++, p++)
+      for(i = 0, p = pi->PurchaseOption.pPrices; i < pi->PurchaseOption.nPrices; i++, p++){
+         DBGPRINTF("MShop_AppOptionsDialog %d",wID);
          wID = MShop_AddOptionMenuItem(pme, wID, pi, p);
+      }
    }
 
    // Add Info if information is available
@@ -1543,7 +1560,7 @@ Callback function for IDOWNLOAD_GetEULA
 static void MShop_EULACB(void * pcxt,int nErr,const AECHAR * pszMsg)
 {
    MShop *       pme = (MShop *)pcxt;
-
+   DBGPRINTF("MShop_EULACB %d",nErr);
    // Free EULA buffer
    FreePtr((void **)&pme->m_pszEULA);
 
@@ -1574,7 +1591,7 @@ State handler for ST_PURCHASE_EULA state.
 static boolean MShop_GetEULA(MShop * pme)
 {
    DLItem   * pi = pme->m_pItem;
-
+   DBGPRINTF("MShop_GetEULA %d %d %d %d",pi->bEULA,pi->currentLicense.pt,pme->m_bGotEULA,pme->m_pszEULA);
    // If there is no EULA, or valid license or we have already got EULA,
    // move to Purchase state
    if(!pi->bEULA || pi->currentLicense.pt || (pme->m_bGotEULA && !pme->m_pszEULA))
@@ -1651,6 +1668,7 @@ State handler for ST_PURCHASE state
 ===========================================================================*/
 static boolean MShop_Purchase(MShop * pme)
 {
+   DBGPRINTF("MShop_Purchase 0x%x",pme->m_pItem);
    if(pme->m_pItem){
       // Display progress graphics
       MShop_InProgress(pme);
@@ -1744,7 +1762,7 @@ static void MShop_PurchaseCB(void * pcxt,int nErr,void * pMsgArg)
 
    // Don't Show Busy
    pme->m_bShowBusy = FALSE;
-
+   DBGPRINTF("MShop_PurchaseCB %d",nErr);
    // Reset UI while setting last state as current state
    MShop_Reset(pme,TRUE);
 
@@ -1844,7 +1862,7 @@ static boolean MShop_RunApp(MShop * pme)
       else
          MShop_ClearStartArgs(pme);
    }
-
+   DBGPRINTF("MShop_RunApp");
    ISHELL_CloseApplet(pme->a.m_pIShell, FALSE);
    return(TRUE);
 }
@@ -2825,6 +2843,7 @@ static void MShop_SetServer(MShop * pme, uint16 wID)
    if(pe)
       IDOWNLOAD_SetADS(pme->m_pDownload, &pe->s); // Set Server
 
+   DBGPRINTF("MShop_SetServer");
    MShop_ForceExit(pme);
 }
 
@@ -2938,7 +2957,7 @@ static void MShop_RemoveItemInfoCB(void * pcxt, int nErr, DLEnumItem * pItem)
       MShop_Failed(pme, IDS_SUBSCRIPTION_CANCEL_LATER, 0, NULL);
       return;
    }
-
+   DBGPRINTF("MShop_RemoveItemInfoCB");
    // Exit Otherwise
    MShop_ForceExit(pme);
 }
@@ -3081,8 +3100,10 @@ static void MShop_Browse(MShop * pme, const char * url)
          bReturn = IDOWNLOAD_Delete(pme->m_pDownload, iID, TRUE);
          if (bReturn == AEE_SUCCESS)
          {
-            if(lt != PT_SUBSCRIPTION)
+            if(lt != PT_SUBSCRIPTION){
+               DBGPRINTF("MShop_Browse %d",lt);
                MShop_ForceExit(pme);
+            }
             else
             {
                // For subscription app, let's check that we can connect to the server
@@ -3092,8 +3113,10 @@ static void MShop_Browse(MShop * pme, const char * url)
          }
          else
          {
-            if (bReturn != EBADSID)
+            if (bReturn != EBADSID){
+               DBGPRINTF("MShop_Browse %d",bReturn);
                MShop_ForceExit(pme);
+            }
             else
             {
                uint16 wButtons[2];
