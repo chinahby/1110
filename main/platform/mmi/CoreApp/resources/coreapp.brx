@@ -74,7 +74,7 @@
 		<Text>Phone is</Text>
 	</STRING>
 	<STRING Id="1025" Name="IDS_POWEROFF_1">
-		<Text>Power down</Text>
+		<Text>Shuting down</Text>
 	</STRING>
 	<STRING Id="1026" Name="IDS_RESET_2">
 		<Text>Resetting...</Text>
