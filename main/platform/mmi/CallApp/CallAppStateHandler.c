@@ -73,6 +73,9 @@ static NextFSMAction STATE_MISSEDCALLHandler(CCallApp *pMe);
 // 状态 STATE_INCOMINGCALL 处理函数
 static NextFSMAction STATE_INCOMINGCALLHandler(CCallApp *pMe);
 
+// 状态 STATE_PW 处理函数
+static NextFSMAction STATE_PWHandler(CCallApp *pMe);
+
 #ifdef FEATURE_UTK2
 // 状态 STATE_CALLCONFIRM 处理函数
 static NextFSMAction STATE_CALLCONFIRM_Handler(CCallApp *pMe);
@@ -182,6 +185,10 @@ NextFSMAction CallApp_ProcessState(CCallApp *pMe)
 
         case STATE_INCOMINGCALL:
             retVal = STATE_INCOMINGCALLHandler(pMe);
+            break;
+
+        case STATE_PW:
+            retVal=STATE_PWHandler(pMe);
             break;
 
 #ifdef FEATURE_UTK2
@@ -1173,6 +1180,11 @@ static NextFSMAction STATE_INCOMINGCALLHandler(CCallApp *pMe)
                 return NFSMACTION_CONTINUE;
             }
 
+        case DLGRET_PW:
+                MOVE_TO_STATE(STATE_PW)
+                return NFSMACTION_CONTINUE;
+                   
+
         case DLGRET_BACK_TO_IDLE:
             if (NULL != pMe->m_pwstrDialStringkeep)
             {
@@ -1196,6 +1208,50 @@ static NextFSMAction STATE_INCOMINGCALLHandler(CCallApp *pMe)
 
     return NFSMACTION_WAIT;
 } // STATE_INCOMINGCALLHandler
+
+/*==============================================================================
+函数：
+       STATE_CONV_DIALERHandler
+说明：
+       STATE_CONV_DIALER 状态处理函数
+
+参数：
+       pMe [in]：指向CallApp Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+
+备注：
+
+==============================================================================*/
+static NextFSMAction STATE_PWHandler(CCallApp *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch(pMe->m_eDlgRet)
+    {
+        case DLGRET_CREATE:
+           // pMe->m_bNotOverwriteDlgRet = FALSE;
+            CallApp_ShowDialog(pMe, IDD_PWD);
+            return NFSMACTION_WAIT;
+       case DLGRET_PASS:
+            MOVE_TO_STATE(STATE_INCOMINGCALL);
+            return NFSMACTION_CONTINUE;    
+
+        case DLGRET_FAILD:
+            CallApp_ShowMsgBox(pMe, IDS_INVALID);
+            return NFSMACTION_WAIT;
+        default:
+            break;
+    }
+
+    return NFSMACTION_WAIT;
+} // STATE_CONV_DIALERHandler
+
 
 #ifdef FEATURE_UTK2
 /*==============================================================================

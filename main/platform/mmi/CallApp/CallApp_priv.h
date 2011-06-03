@@ -326,6 +326,9 @@ typedef enum DLGRetValue
    DLGRET_SEL_IP_NUMBER,
    DLGRET_EMGNUMBER_CALL_ONLY,
    DLGRET_NUM_TOO_LONG,
+   DLGRET_PW,
+   DLGRET_PASS,
+   DLGRET_FAILD,
 #ifdef FEATURE_SUPPORT_WAP_APP
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
    DLGRET_INVALID_LINK_NUM,
@@ -351,6 +354,7 @@ typedef enum _CallAppState
    STATE_ENDCALL,         /*8*/
    STATE_MISSEDCALL,      /*9*/
    STATE_INCOMINGCALL,    /*10 a*/
+   STATE_PW,
 #ifdef FEATURE_UTK2
    STATE_CALLCONFIRM,     /*11b */
 #endif
@@ -589,6 +593,7 @@ typedef struct _CCallApp
 #endif /* KEYSND_ZY */
 
     boolean                    m_bIsPrivacy;
+    boolean                    Ispwpass;
 
 #ifdef  FEATURE_PERU_VERSION
     //to save another incoming call in conversation;
@@ -681,6 +686,7 @@ typedef struct _CCallApp
     uint16   m_curpros;
     boolean  m_bShift;
     boolean  b_multenter;
+    char    *m_strPhonePWD;
 #ifdef FEATURE_OEMOMH
     AEECLSID  m_clsOMHApplet;
 #endif

@@ -193,6 +193,12 @@
 	<STRING Id="1115" Name="IDS_NOOMH_CARD">
 		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
 	</STRING>
+	<STRING Id="1116" Name="IDS_PWDTIPS">
+		<Text>Enter password</Text>
+	</STRING>
+	<STRING Id="1117" Name="IDS_INVALID">
+		<Text>Invalid password</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_NUMEDIT" Focus="0">

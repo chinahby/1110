@@ -833,6 +833,7 @@ static int CallApp_InitAppData(CCallApp *pMe)
     pMe->m_nToneCount = 0;
     pMe->m_bShowPopMenu = FALSE;
     pMe->m_toneData = NULL;
+    pMe->Ispwpass=FALSE;
 #ifdef FEATURE_EDITABLE_NUMBER
     pMe->m_nCursorPos = 0;
 #endif
@@ -954,6 +955,8 @@ static void CallApp_FreeAppData(CCallApp *pMe)
     {
         return ;
     }
+
+   FREEIF(pMe->m_strPhonePWD);
 
    // ÊÍ·Å IConfig ½Ó¿Ú
     if (pMe->m_pConfig != NULL)

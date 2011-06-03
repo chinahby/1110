@@ -143,6 +143,13 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 
 static void CallApp_IncomingCall_Dlg_Init(CCallApp *pMe);
 
+static boolean CallApp_pwd_dialog_handler(CCallApp *pMe,
+                                            AEEEvent    eCode,
+                                            uint16      wParam,
+                                            uint32      dwParam);
+
+
+
 // 对话框 IDD_MISSED 事件处理函数
 static boolean  CallApp_Missedcall_DlgHandler(CCallApp *pMe,
                                         AEEEvent   eCode,
@@ -494,6 +501,9 @@ boolean CallApp_RouteDialogEvent(CCallApp *pMe,
         case IDD_INCOMINGCALL:
             return CallApp_IncomingCall_DlgHandler(pMe,eCode,wParam,dwParam);
 
+        case IDD_PWD:
+            return CallApp_pwd_dialog_handler(pMe,eCode,wParam,dwParam);
+            
         case IDD_MISSED:
             return CallApp_Missedcall_DlgHandler(pMe,eCode,wParam,dwParam);
 
@@ -4363,9 +4373,11 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             }
             else
             {
+                           
                 pMe->m_CallMuted = TRUE;
                 Appscomm_is_incoming_state(1);
                 CallApp_Play_Incoming_Tone(pMe);
+                
 #ifdef FEATURE_LED_CONTROL
                 IBACKLIGHT_SigLedDisable(pMe->m_pBacklight);    //cancel the previous LED control
                 IBACKLIGHT_SigLedEnable( pMe->m_pBacklight, SIG_LED_INCOMING_CALL);
@@ -4682,6 +4694,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
         case EVT_DIALOG_END:
             pMe->m_b_incoming = FALSE;
             pMe->m_b_press_1=FALSE;
+            pMe->Ispwpass=FALSE;
             Appscomm_is_incoming_state(0);
             //CallApp_Set_Db_In_Idle(FALSE);
 	        (void) ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CallApp_Dialer_Show_Animation,pMe);
@@ -4732,7 +4745,19 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             //CALL_ERR("incoming EVT_FLIP %d", wParam, 0, 0);
             if(CallApp_Process_EVT_FLIP_Event(pMe,wParam) == FALSE)
             {
-                CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+#ifdef FEATURE_VERSION_S1000T
+                if(pMe->Ispwpass)
+                {
+                    CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                }
+                else
+                {
+                    CLOSE_DIALOG(DLGRET_PW);
+                }
+#else
+                     CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+#endif
+
             }
             else
             {
@@ -4747,7 +4772,19 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 case AVK_UP:
                 case AVK_DOWN:
                 {
-                    CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+#ifdef FEATURE_VERSION_S1000T
+                    if(pMe->Ispwpass)
+                    {
+                        CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                    }
+                    else
+                    {
+                        CLOSE_DIALOG(DLGRET_PW);
+                    }
+#else
+                         CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+#endif
+
                     break;
                 }
                 
@@ -4761,7 +4798,18 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             switch ((AVKType)wParam)
             {
                 case AVK_SELECT:
-                    CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                    #ifdef FEATURE_VERSION_S1000T
+                    if(pMe->Ispwpass)
+                    {
+                        CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                    }
+                    else
+                    {
+                        CLOSE_DIALOG(DLGRET_PW);
+                    }
+                    #else
+                         CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                    #endif
                     return TRUE;
 
                 default:
@@ -4956,8 +5004,20 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 }
                 case AVK_USER_HEADSET:
                 case AVK_SELECT:
-					
-                    CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+#ifdef FEATURE_VERSION_S1000T
+                    if(pMe->Ispwpass)
+                    {
+                        CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                    }
+                    else
+                    {
+                        CLOSE_DIALOG(DLGRET_PW);
+                    }
+#else
+                         CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+#endif
+
+
                     break;
 #ifdef FEATURE_CARRIER_TAIWAN_APBW
                  case AVK_1:
@@ -4975,7 +5035,19 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 case AVK_DOWN:
                 default:
                 {
-                    CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+#ifdef FEATURE_VERSION_S1000T
+                    if(pMe->Ispwpass)
+                    {
+                        CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                    }
+                    else
+                    {
+                        CLOSE_DIALOG(DLGRET_PW);
+                    }
+#else
+                         CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+#endif
+
                     break;
                 }
             }
@@ -5032,6 +5104,270 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
     }
     return FALSE;
 } // CallAppIncomingCallDlgHandler
+
+
+/*==============================================================================
+函数:
+       dialog_handler_of_state_pwd
+
+说明:
+       密码检查对话框
+
+参数:
+
+返回值:
+
+备注:
+
+==============================================================================*/
+
+static boolean CallApp_pwd_dialog_handler(CCallApp *pMe,
+                                            AEEEvent    eCode,
+                                            uint16      wParam,
+                                            uint32      dwParam)
+{
+   // PARAM_NOT_REF(dwParam)
+    //static char   *m_strPhonePWD = NULL;
+    AECHAR      wstrDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+    int             nLen = 0;
+    char        strDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+    
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            if(NULL == pMe->m_strPhonePWD)
+            {
+                pMe->m_strPhonePWD = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
+            }
+            return TRUE;
+            
+        case EVT_DIALOG_START:  
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                    AEECLSID_DIALER,
+                                    EVT_USER_REDRAW,
+                                    NULL,
+                                    NULL);
+
+            return TRUE;
+            
+        case EVT_USER_REDRAW:
+            // 绘制相关信息
+            {
+                AECHAR  text[32] = {0};
+                RGBVAL nOldFontColor;
+                TitleBar_Param_type  TitleBar_Param = {0};
+                
+                // 先清屏
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                {
+                    IImage *pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
+                    
+                    Appscommon_ResetBackground(pMe->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, &pMe->m_rc, 0, 0);
+                    if(pImageBg != NULL)
+                    {
+                        IImage_Release(pImageBg);
+                    }
+                }
+#else
+                Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+#endif
+                //IDISPLAY_FillRect  (pme->m_pDisplay,&pme->m_rc,RGB_BLACK);
+               (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                AEE_APPSCALLAPP_RES_FILE,
+                                                IDS_CALLING_DIALOG_TEXT, 
+                                                text,
+                                                sizeof(text));                  
+                // 画标题条
+                TitleBar_Param.pwszTitle = text;
+                TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+                #if 0
+                DrawTitleBar(pme->m_pDisplay, &TitleBar_Param);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
+
+               (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                AEE_APPSCALLAPP_RES_FILE,
+                                                IDS_PWDTIPS, 
+                                                text,
+                                                sizeof(text));
+                nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+                
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                    AEE_FONT_BOLD, 
+                                    text,
+                                    -1, 
+                                    5, 
+                                    MENUITEM_HEIGHT*1/2, 
+                                    NULL, 
+                                    IDF_TEXT_TRANSPARENT);
+                   
+                nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                MEMSET(strDisplay, '*', nLen);
+                strDisplay[nLen] = '|';
+                strDisplay[nLen + 1] = '\0';
+                (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                AEE_FONT_BOLD, 
+                                wstrDisplay,
+                                -1, 
+                                10, 
+                                MENUITEM_HEIGHT*3/2,
+                                NULL, 
+                                IDF_TEXT_TRANSPARENT);
+                (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+        
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    REFUI_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+                }
+                else if(nLen > 0)
+                { 
+                    REFUI_DRAW_BOTTOMBAR(BTBAR_DELETE)
+                }
+                else
+                {// 确定-----取消
+                   REFUI_DRAW_BOTTOMBAR(BTBAR_CANCEL)      
+                }
+
+                // 更新显示
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE); 
+        
+                return TRUE;
+            }
+            
+        case EVT_DIALOG_END:
+           // if(!pme->m_bSuspended)
+            {
+                FREEIF(pMe->m_strPhonePWD);
+            }
+            return TRUE;
+
+        case EVT_KEY:
+            {
+                char  chEnter = 0;
+                int   nLen = 0;
+                boolean bRedraw = FALSE;
+                
+                switch (wParam)
+                {
+                    case AVK_0:
+                    case AVK_1:
+                    case AVK_2:
+                    case AVK_3:
+                    case AVK_4:
+                    case AVK_5:
+                    case AVK_6:
+                    case AVK_7:
+                    case AVK_8:
+                    case AVK_9:
+                        chEnter = '0' + (wParam - AVK_0);
+                        break;
+
+                    case AVK_STAR:
+                        chEnter = '*';
+                        break;
+ 
+                    case AVK_POUND:
+                        chEnter = '#';
+                        break;
+                        
+                    case AVK_CLR:
+                        chEnter = 0;       
+                        #ifndef FEATURE_ALL_KEY_PAD
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        #else
+                        if(dwParam == 0)
+                        {
+                        	CLOSE_DIALOG(DLGRET_CANCELED)
+	                        return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) == 0)
+	                        {
+	                            CLOSE_DIALOG(DLGRET_CANCELED)
+	                            return TRUE;
+	                        }
+                        }
+                        #endif
+                        break;
+                        
+                    case AVK_SELECT:
+                    case AVK_INFO:
+                        if (pMe->m_strPhonePWD == NULL || STRLEN(pMe->m_strPhonePWD) < 4)
+                        {
+                            return TRUE;
+                        }
+                        else
+                        //end added
+                        {
+                            uint16 wPWD=0;
+
+                            OEM_GetConfig(CFGI_PHONE_PASSWORD, &wPWD, sizeof(wPWD));
+                        
+                            if (wPWD == EncodePWDToUint16(pMe->m_strPhonePWD))
+                            {// 密码符合
+                                pMe->Ispwpass=TRUE;
+                                CLOSE_DIALOG(DLGRET_PASS)
+                            }
+                            else
+                            {// 密码错误
+                                CLOSE_DIALOG(DLGRET_FAILD)
+                            }
+                        }
+                        return TRUE;
+                        
+                    default:
+                        return TRUE;
+                }
+                nLen = (pMe->m_strPhonePWD == NULL)?(0):(STRLEN(pMe->m_strPhonePWD));
+                if (chEnter == 0)
+                {// 删除字符
+                    if (nLen > 0)
+                    {
+                        bRedraw = TRUE;
+                        pMe->m_strPhonePWD[nLen-1] = chEnter;
+                    }
+                }
+                else if (nLen < OEMNV_LOCKCODE_MAXLEN)
+                {
+                    pMe->m_strPhonePWD[nLen] = chEnter;
+                    nLen++;
+                    pMe->m_strPhonePWD[nLen] = 0;
+                    bRedraw = TRUE;
+                }
+                
+                if (bRedraw)
+                {
+                    (void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_DIALER,
+                                            EVT_USER_REDRAW,
+                                            NULL,
+                                            NULL);
+                }
+            }
+            return TRUE;
+            
+        default:
+            break;
+    }
+    
+    return FALSE;
+
+}
+
+
 
 static void CallApp_IncomingCall_Dlg_Init(CCallApp *pMe)
 {
