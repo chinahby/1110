@@ -631,10 +631,10 @@ static ModeInfo sTextModes[NUM_OF_MODES] =
 #endif //FEATURE_T9_RAPID_ENGLISH
 
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai  2010-09-09
-	,{T9TextCtl_MultitapRestart,
-      T9TextCtl_MultitapKey,
+	,{T9TextCtl_Cap_Lower_Restart,
+      T9TextCtl_Cap_Lower_Rapid_Key,
       NULL, 
-      T9TextCtl_MultitapExit ,
+      T9TextCtl_Cap_Lower_Rapid_Exit ,
       {TEXT_MODE_T9_CAP_LOWER_ENGLISH, {0}}}
 #endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD    //add by yangdecai 20101223
@@ -4871,7 +4871,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		            break;
 		         case AVK_SHIFT:
 		              {
-		              	 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+		              	 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
 		              	 if(pContext->is_bAlt)
 		              	 {
 		              	 	pContext->is_bAlt = FALSE;
@@ -4909,7 +4909,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		        #endif
 				case AVK_CAPLK:
 					{
-						pContext->m_bCaplk = !pContext->m_bCaplk;
+						 pContext->m_bCaplk = !pContext->m_bCaplk;
 					}
 					break;
 		        case AVK_LEFT:
@@ -5310,6 +5310,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 							break;
 						 case AVK_SHIFT:
 							  {
+							  	 #ifndef FEATURE_VERSION_S1000T
 								 if(pContext->is_isShift)
 								 {
 									pContext->is_isShift = FALSE;
@@ -5318,11 +5319,12 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 								 {
 									pContext->is_isShift = TRUE;
 								 }
+								 #endif
 							  }
 							  break;
 						case AVK_CAPLK:
 							{
-								pContext->m_bCaplk = !pContext->m_bCaplk;
+								 pContext->m_bCaplk = !pContext->m_bCaplk;
 							}
 							break;
 						case AVK_LEFT:
@@ -6210,6 +6212,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	            break;
 	         case AVK_SHIFT:
 	              {
+	              	 #ifndef FEATURE_VERSION_S1000T
 	                 if(pContext->is_isShift)
 	                 {
 	                    pContext->is_isShift = FALSE;
@@ -6218,12 +6221,12 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	                 {
 	                    pContext->is_isShift = TRUE;
 	                 }
+	                 #endif
 	              }
 	              break;
 	        case AVK_CAPLK:
 	             {
-				 	
-	                pContext->m_bCaplk = !pContext->m_bCaplk;
+					 pContext->m_bCaplk = !pContext->m_bCaplk;
 	             }
 	             return TRUE;
 	             break;
@@ -7114,6 +7117,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	            break;
 	         case AVK_SHIFT:
 	              {
+	              	 #ifndef FEATURE_VERSION_S1000T
 	                 if(pContext->is_isShift)
 	                 {
 	                    pContext->is_isShift = FALSE;
@@ -7122,12 +7126,12 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                 {
 	                    pContext->is_isShift = TRUE;
 	                 }
+	                 #endif
 	              }
 	              break;
 	        case AVK_CAPLK:
 	             {
-				 	
-	                pContext->m_bCaplk = !pContext->m_bCaplk;
+					 pContext->m_bCaplk = !pContext->m_bCaplk;
 	             }
 	             return TRUE;
 	             break;
@@ -7541,6 +7545,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	            break;
 	         case AVK_SHIFT:
 	              {
+	              	  #ifndef FEATURE_VERSION_S1000T
 	                 if(pContext->is_isShift)
 	                 {
 	                    pContext->is_isShift = FALSE;
@@ -7549,12 +7554,12 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                 {
 	                    pContext->is_isShift = TRUE;
 	                 }
+	                 #endif
 	              }
 	              break;
 	        case AVK_CAPLK:
 	             {
-				 	
-	                pContext->m_bCaplk = !pContext->m_bCaplk;
+					 pContext->m_bCaplk = !pContext->m_bCaplk;
 	             }
 	             return TRUE;
 	             break;
@@ -7965,6 +7970,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	            break;
 	         case AVK_SHIFT:
 	              {
+	              	 #ifndef FEATURE_VERSION_S1000T
 	                 if(pContext->is_isShift)
 	                 {
 	                    pContext->is_isShift = FALSE;
@@ -7973,12 +7979,12 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	                 {
 	                    pContext->is_isShift = TRUE;
 	                 }
+	                 #endif
 	              }
 	              break;
 	        case AVK_CAPLK:
 	             {
-				 	
-	                pContext->m_bCaplk = !pContext->m_bCaplk;
+					 pContext->m_bCaplk = !pContext->m_bCaplk;
 	             }
 	             return TRUE;
 	             break;
@@ -12983,6 +12989,12 @@ boolean          OEM_TextAltStatus(OEMCONTEXT hTextField)
 {
 	TextCtlContext *pContext = (TextCtlContext *) hTextField;
 	return pContext->is_bAlt;
+}
+
+boolean          OEM_TextCapStatus(OEMCONTEXT hTextField)
+{
+	TextCtlContext *pContext = (TextCtlContext *) hTextField;
+	return pContext->m_bCaplk ;
 }
 
 //*****************************************************************************

@@ -253,7 +253,8 @@ static SheftKeyItem_Own  VLCharLowKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 	{AVK_MUTE,'@', {'@'}},
     {AVK_ENTER,0x000A,{0x000A}},
     
-    {AVK_SPACE,' ',{' '}}   
+    {AVK_SPACE,' ',{' '}},
+    {AVK_0,'0',{'0'}}
 };
 #else
 #ifdef FEATURE_NUM_KEY_MID
@@ -330,7 +331,8 @@ static SheftKeyItem_Own  VLCharLowKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 	{AVK_RWD, '$', {'$'}},
     {AVK_ENTER,0x000A,{0x000A}},
     
-    {AVK_SPACE,' ',{' '}}   
+    {AVK_SPACE,' ',{' '}},
+    {AVK_SPACE,'0',{'0'}}
 };
 #endif
 #endif
@@ -371,7 +373,8 @@ static SheftKeyItem_Own  VLCharCapKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 	{AVK_MUTE,'@', {'@'}},
     {AVK_ENTER,0x000A,{0x000A}},
     
-    {AVK_SPACE,' ',{' '}}  
+    {AVK_SPACE,' ',{' '}},
+    {AVK_0,'0',{'0'}}
 };
 #else
 #ifdef FEATURE_NUM_KEY_MID
@@ -449,7 +452,8 @@ static SheftKeyItem_Own  VLCharCapKeyItem[MAX_SHEFTKEYPAD_NUMBER] =
 	{AVK_RWD, '$', {'$'}},
     {AVK_ENTER,0x000A,{0x000A}},
     
-    {AVK_SPACE,' ',{' '}}  
+    {AVK_SPACE,' ',{' '}},  
+    {AVK_SPACE,'0',{'0'}} 
 };
 #endif
 #endif
