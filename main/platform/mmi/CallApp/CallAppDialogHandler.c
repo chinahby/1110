@@ -4350,6 +4350,11 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 {
 
     static byte keyBeepVolumeSetting = 0;
+    boolean bValue = FALSE;
+    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                           CFGI_PHONE_PASSWORD_CHECK,
+                           &bValue,
+                           sizeof(bValue));
 
     //IImage  *pImage = NULL;
     PARAM_NOT_REF(dwParam)
@@ -4746,13 +4751,21 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             if(CallApp_Process_EVT_FLIP_Event(pMe,wParam) == FALSE)
             {
 #ifdef FEATURE_VERSION_S1000T
-                if(pMe->Ispwpass)
+                if(pMe->Ispwpass && bValue)
                 {
                     CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
                 }
                 else
                 {
-                    CLOSE_DIALOG(DLGRET_PW);
+                    if(bValue)
+                    {
+                       CLOSE_DIALOG(DLGRET_PW); 
+                    }
+                    else
+                    {
+                       CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                    }   
+
                 }
 #else
                      CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
@@ -4773,13 +4786,21 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 case AVK_DOWN:
                 {
 #ifdef FEATURE_VERSION_S1000T
-                    if(pMe->Ispwpass)
+                    if(pMe->Ispwpass && bValue)
                     {
                         CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
                     }
                     else
                     {
-                        CLOSE_DIALOG(DLGRET_PW);
+                        if(bValue)
+                        {
+                           CLOSE_DIALOG(DLGRET_PW); 
+                        }
+                        else
+                        {
+                           CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                        }   
+
                     }
 #else
                          CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
@@ -4799,13 +4820,21 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             {
                 case AVK_SELECT:
                     #ifdef FEATURE_VERSION_S1000T
-                    if(pMe->Ispwpass)
+                    if(pMe->Ispwpass && bValue)
                     {
                         CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
                     }
                     else
                     {
-                        CLOSE_DIALOG(DLGRET_PW);
+                        if(bValue)
+                        {
+                           CLOSE_DIALOG(DLGRET_PW); 
+                        }
+                        else
+                        {
+                           CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                        }   
+
                     }
                     #else
                          CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
@@ -5005,13 +5034,21 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 case AVK_USER_HEADSET:
                 case AVK_SELECT:
 #ifdef FEATURE_VERSION_S1000T
-                    if(pMe->Ispwpass)
+                    if(pMe->Ispwpass && bValue)
                     {
                         CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
                     }
                     else
                     {
-                        CLOSE_DIALOG(DLGRET_PW);
+                        if(bValue)
+                        {
+                           CLOSE_DIALOG(DLGRET_PW); 
+                        }
+                        else
+                        {
+                           CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                        }   
+
                     }
 #else
                          CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
@@ -5036,13 +5073,20 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 default:
                 {
 #ifdef FEATURE_VERSION_S1000T
-                    if(pMe->Ispwpass)
+                    if(pMe->Ispwpass && bValue)
                     {
                         CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
                     }
                     else
                     {
-                        CLOSE_DIALOG(DLGRET_PW);
+                        if(bValue)
+                        {
+                           CLOSE_DIALOG(DLGRET_PW); 
+                        }
+                        else
+                        {
+                           CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
+                        }                       
                     }
 #else
                          CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
