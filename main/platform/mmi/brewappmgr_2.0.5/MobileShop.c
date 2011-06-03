@@ -514,7 +514,7 @@ static boolean MShop_HandleEvent(MShop * pme, AEEEvent eCode, uint16 wParam, uin
          }
          IDISPLAY_Update(pme->a.m_pIDisplay);
          return TRUE;
-#ifdef FEATURE_OEMOMH
+#if 0//def FEATURE_OEMOMH
       case EVT_OMH_PROMPT:
          //ISHELL_CloseApplet(pme->a.m_pIShell, FALSE);
          DBGPRINTF("MShop_HandleEvent EVT_OMH_PROMPT");

@@ -2226,7 +2226,12 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 		{
 			break;	//¼ÌÐø´«¸øcallapp to End call.
 		}
-
+#if 0//def FEATURE_OEMOMH
+        if (wParam == AVK_RIGHT)
+		{
+			WMSUtil_SendVMNSim();
+		}
+#endif
 		if(!m_isBacklight)
 		{
 			return TRUE;

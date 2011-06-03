@@ -1870,6 +1870,13 @@ static int StartApplet(MainMenu *pMe, int i)
         
     case IDS_MAIN_MENU_STATIC_APPLICATION:
 #if defined(FEATURE_APP_MANAGER)
+#ifdef FEATURE_OEMOMH
+        if(ISHELL_SendEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_OMH_PROMPT,0,0))
+        {
+            break;
+        }
+#endif
+
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
 #else
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STATIC_APP);
@@ -1910,6 +1917,12 @@ static int StartApplet(MainMenu *pMe, int i)
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
 		Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_STATIC_APP);
 #else
+#ifdef FEATURE_OEMOMH
+        if(ISHELL_SendEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_OMH_PROMPT,0,0))
+        {
+            break;
+        }
+#endif
         Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPMANAGER);
 #endif  
         break;

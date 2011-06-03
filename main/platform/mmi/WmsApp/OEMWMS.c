@@ -8025,6 +8025,13 @@ void wms_cacheinfolist_getcounts(wms_box_e_type box,
     if (NULL != pNew)
     {
         *pNew = plist->nNews;
+#ifdef FEATURE_OEMOMH
+        if (box == WMS_MB_VOICEMAIL)
+        {
+            *pNew = plist->nAll;
+        }
+#endif
+        MSG_FATAL("WMS_MB_VOICEMAIL New %d",*pNew,0,0);
     }
     
     if (NULL != pOnUIM)
@@ -8037,7 +8044,7 @@ void wms_cacheinfolist_getcounts(wms_box_e_type box,
         if (box == WMS_MB_VOICEMAIL)
         {
             *pTotal = plist->nAll;
-            MSG_FATAL("WMS_MB_VOICEMAIL %d %d",*pTotal,*pNew,0);
+            MSG_FATAL("WMS_MB_VOICEMAIL Total %d",*pTotal,0,0);
         }
         else
         {

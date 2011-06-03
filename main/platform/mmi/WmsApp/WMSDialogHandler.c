@@ -13332,7 +13332,7 @@ static boolean IDD_VOICEMAIL_Handler(void   *pUser,
                     WmsApp_ConvertClientMsgToMS(&(Info->status_info.message),
                                                 &(pMe->m_msCur));
                     pMe->m_msCur.mem_store = mem_store;
-                    
+                    MSG_FATAL("EVT_WMS_MSG_READ",0,0,0);
                     // 更新消息图标
                     WmsApp_UpdateAnnunciators(pMe);
                     
