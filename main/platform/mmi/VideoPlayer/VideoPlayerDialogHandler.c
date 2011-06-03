@@ -361,7 +361,7 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
             {
                 DRAW_BOTTOMBAR(BTBAR_FULLSCREEN_PAUSE_STOP);
             } 
-			VideoPlayer_RefreshPlayingTick(pMe);
+		//	VideoPlayer_RefreshPlayingTick(pMe);
             IDISPLAY_Update(pMe->m_pDisplay); 
             if(pMe->Is848Busy)
             {
@@ -883,7 +883,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                         DRAW_BOTTOMBAR(BTBAR_PLAY_BACK);
                     }                
                     pMe->bCurrentTime=0; //将当前播放时间设为0，总时间不变 
-                    VideoPlayer_RefreshPlayingTick(pMe);//刷新时间
+                   // VideoPlayer_RefreshPlayingTick(pMe);//刷新时间
                     VideoPlayer_RefreshScheduleBar(pMe);//进度条置在初始位置，不刷新文件名和其他设置
                     IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
                     
@@ -1031,7 +1031,8 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             return TRUE;     
                
         //播放上一首   
-        case AVK_LEFT:           
+        case AVK_LEFT: 
+			MSG_FATAL("-------->yes1",0,0,0);
             if(! pMe->m_IsPlaynext)
             {
                 return TRUE;
@@ -1060,6 +1061,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
        
         //播放下一首   
         case AVK_RIGHT:  
+			MSG_FATAL("-------->yes2",0,0,0);
             if(! pMe->m_IsPlaynext)
             {
                 return TRUE;
@@ -1167,6 +1169,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
         case AVK_SELECT:
             if(pMe->IsPlay)
             {
+            	MSG_FATAL("------->Fullscreen1",0,0,0);
                 FullScreen = TRUE;
                 return VideoPlayer_PlayMod(pMe,wParam);
             }
@@ -1414,8 +1417,10 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
     FileInfo  pInfo;
     
     videoID=VideoPlayer_GetFileID(pMe);
+	DBGPRINTF("videoID=%d",pMe->m_RecordCount);
     DBGPRINTF("pMe->m_RecordCount=%d",pMe->m_RecordCount);
     //video放置在指定文件夹外
+    MSG_FATAL("-------->yes3",0,0,0);
     if(videoID >= pMe->m_RecordCount)
     {  
         DBGPRINTF("videoID >= pMe->m_RecordCount");
@@ -1423,6 +1428,7 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
     }
     else
     {
+    	MSG_FATAL("-------->yes4",0,0,0);
         switch(pMe->m_RecordCount)
         {
             //文件数为0，什么都不做
@@ -1457,6 +1463,7 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
         
             //文件数大于1，播放下一首   
             default:  
+            	MSG_FATAL("-------->yes5",0,0,0);
                 if(! pMe->UserStop)
                 {
                     (void)IMEDIA_Stop((IMedia*)pMe->m_pMedia); 
@@ -1658,18 +1665,35 @@ static void VideoPlayer_RefreshPlayingTick(CVideoPlayer *pMe)
    
     //画时间显示区域
     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_TIME_PART, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y); 
+	VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_TIME_PART, VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y); 
     //tick time
     SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
 
     
     MEMSET(tick_time,0,MAX_STR_LEN);
 
-    SPRINTF(tick_time,"%02d:%02d|%02d:%02d",
-		pMe->bCurrentTime/60,pMe->bCurrentTime%60,
-		pMe->bTotalTime/60,pMe->bTotalTime%60);
+    SPRINTF(tick_time,"%02d:%02d",
+		pMe->bCurrentTime/60,pMe->bCurrentTime%60);
     
     STRTOWSTR(tick_time, Wtick_time, sizeof(Wtick_time));
     DrawTextWithProfile(pMe->m_pShell, 
+                        pMe->m_pDisplay, 
+                        RGB_WHITE, 
+                        AEE_FONT_BOLD,
+                        Wtick_time, 
+                        -1, 
+                        21, 
+                        57, 
+                        &rc_tick, 
+                        IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+
+	SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
+	MEMSET(tick_time, 0, MAX_STR_LEN);
+	MEMSET(Wtick_time, 0, sizeof(Wtick_time));
+	SPRINTF(tick_time, "%02d:%02d",
+		pMe->bTotalTime/60,pMe->bTotalTime%60);
+	STRTOWSTR(tick_time, Wtick_time, sizeof(Wtick_time));
+	DrawTextWithProfile(pMe->m_pShell, 
                         pMe->m_pDisplay, 
                         RGB_WHITE, 
                         AEE_FONT_BOLD,
@@ -1686,20 +1710,23 @@ static void VideoPlayer_RefreshPlayingTick(CVideoPlayer *pMe)
 =================================================================================================================*/
 static void VideoPlayer_RefreshScheduleBar(CVideoPlayer *pMe)
 {
-#if 0
+
     AEERect  rc;
     AEERect  Rc;
     AEERect  OldClip;
     AEERect  Clip;
     int16    ma;
-    
-    //取小图标图片
-    IImage *image =ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_GLIDER); 
+	AEEImageInfo pi;
 
+	IImage *image = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY);
+	IIMAGE_GetInfo(image, &pi);
+    //取小图标图片
+    image =ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_GLIDER); 
+	
     //画进度条
     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY, VIDEOPLAYER_SCHEDULE_X, VIDEOPLAYER_SCHEDULE_Y); 
     SETAEERECT(&rc,VIDEOPLAYER_SCHEDULE_X,VIDEOPLAYER_SCHEDULE_Y,5,5);//滑块起始位置 
-    SETAEERECT(&Rc,VIDEOPLAYER_SCHEDULE_X + VIDEOPLAYER_SCHEDULE_W,VIDEOPLAYER_SCHEDULE_Y,5,5);//滑块最终位置    
+    SETAEERECT(&Rc,pi.cx-5,VIDEOPLAYER_SCHEDULE_Y,5,5);//滑块最终位置    
     ma=Rc.x-rc.x;//滑块可以移动的长度，26个像素  
     if(pMe->bTotalTime == 0)
     {
@@ -1722,7 +1749,7 @@ static void VideoPlayer_RefreshScheduleBar(CVideoPlayer *pMe)
     IIMAGE_Draw(image,Clip.x,VIDEOPLAYER_SCHEDULE_Y);    
     IIMAGE_Release(image);
     IDISPLAY_SetClipRect(pMe->m_pDisplay, &OldClip);//recover clip rect
-#endif
+
 }
 /*=================================================================================================================
   刷新音量bar
@@ -1770,8 +1797,10 @@ boolean VideoPlayer_PlayMod(CVideoPlayer *pMe, uint16 wParam)
   
     if(pMe->IsPlay)
     {
+    	MSG_FATAL("pMe->IsFullScreen = %d",pMe->IsFullScreen,0,0);
         if(!pMe->IsFullScreen)
         {
+        	MSG_FATAL("---------->FullScreen",0,0,0);
             if((AVK_GSENSOR_STAND != wParam) && (AVK_GSENSOR_UPEND != wParam))
             {    
                 //ISHELL_CancelTimer(pMe->m_pShell,NULL,pMe); 
@@ -2305,12 +2334,13 @@ static int VideoPlayer_GetFileID(CVideoPlayer *pMe)
 		// YY TODO:
         //CMediaGallery_GetFileInfoRecord(pMe->m_pFileDB,fileID, (FileInfo)&pInfo);  
             
+       
         if(STRCMP(pInfo.szName,pMe->m_FileToPlay)== 0)
         {
             break;
         }
     }   
-
+	MSG_FATAL("------>fileID = %d" ,fileID,0,0);
     return fileID;
 
     #if 0
