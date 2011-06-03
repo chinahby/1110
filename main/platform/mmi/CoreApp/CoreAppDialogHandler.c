@@ -2851,7 +2851,14 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
         CoreApp_UpdateBottomBar(pMe);//didn't display the sos and key lock icon at the same time
         #else
         MSG_FATAL("CoreApp_DrawBlackBerry_IDLE...........", 0, 0,0);
-        CoreApp_DrawBlackBerry_IDLE(pMe);
+        if(OEMKeyguard_IsEnabled())
+        {
+        	CoreApp_UpdateBottomBar(pMe);
+        }
+        else
+        {
+        	CoreApp_DrawBlackBerry_IDLE(pMe);
+        }
         #endif
         CoreApp_UpdateAnnunciator(pMe);  //解决背景播放换歌或按AVK_END键状态栏图标闪烁问题
                                          // 故把该句提到IDISPLAY_UpdateEx之前
@@ -5630,7 +5637,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #ifdef FEATURE_KEYGUARD
     else if(OEMKeyguard_IsEnabled())
     {
-    	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+    	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
     	eBBarType = BTBAR_UNLOCK_SOS;
     	#else
         eBBarType = BTBAR_UNLOCK;

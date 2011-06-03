@@ -634,11 +634,16 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             if(gbWmsVMailNtf || gbWmsSMSNtf)
             {
                 // 通知 CoreApp 需要进行短信提示
-    			(void)ISHELL_PostEvent(pMe->a.m_pIShell,
-                         AEECLSID_CORE_APP, 
-                         EVT_WMS_MSG_RECEIVED_MESSAGE,
-                         0, 
-                         0);
+                #ifdef FEATURE_VERSION_S1000T
+			    if(ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)
+				#endif
+				{
+	    			(void)ISHELL_PostEvent(pMe->a.m_pIShell,
+	                         AEECLSID_CORE_APP, 
+	                         EVT_WMS_MSG_RECEIVED_MESSAGE,
+	                         0, 
+	                         0);
+                }
             }
             return TRUE;
 
@@ -724,11 +729,16 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             if(gbWmsVMailNtf || gbWmsSMSNtf)
             {
                 // 通知 CoreApp 需要进行短信提示
-    			(void)ISHELL_PostEvent(pMe->a.m_pIShell,
+                #ifdef FEATURE_VERSION_S1000T
+			    if(ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)
+				#endif
+				{
+    				(void)ISHELL_PostEvent(pMe->a.m_pIShell,
                          AEECLSID_CORE_APP, 
                          EVT_WMS_MSG_RECEIVED_MESSAGE,
                          0, 
                          0);
+                }
             }
             return TRUE;
         }
@@ -904,7 +914,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
                     CoreApp_SceneMode(pMe);
                     //ICONFIG_SetItem(pMe->m_pConfig, CFGI_PROFILE_CUR_NUMBER,&alertType, sizeof(alertType));
-                    //CoreApp_UpdateAnnunciator(pMe);
+                    CoreApp_UpdateAnnunciator(pMe);
                     return TRUE;
                 }
                     

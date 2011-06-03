@@ -515,7 +515,7 @@ static boolean  SecurityMainDlgHandler(CSecurityMenu *pMe,
 					//SecurityRestoreFactoryHandler(pMe,eCode,wParam,dwParam);
                     //CLOSE_DIALOG(DLGRET_RESTORE)
                     //CLOSE_DIALOG(SECURITYMENU_ASKPASSWORD)
-#ifdef      FEATURE_VERSION_W515V3            
+#if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)        
                     CLOSE_DIALOG(DLGRET_ARKPASSWORD)
 #else 
                     CLOSE_DIALOG(DLGRET_RESTORE)

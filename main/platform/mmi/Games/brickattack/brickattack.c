@@ -84,27 +84,28 @@ when       who     what, where, why
 #define BRICKATTACK_RES_FILE_LANGUAGE   ( AEE_RES_LANGDIR BRICKATTACK_RES_FILE)
 #endif
 
-#define MAX_MENU_ITEMS_BR        3
+#ifdef FEATURE_DISP_220X176
+#define MAX_MENU_ITEMS_BR     3
 #define MAX_WELCOME_STRINGS   3
-#define PADDLE_IDX         0
-#define BLOCK_IDX          1
+#define PADDLE_IDX         	  0
+#define BLOCK_IDX             1
 
-#define PADDLE_CX          20
-#define PADDLE_CY          5
-#define PADDLE_INC         4
-#define BALL_INC           2
-#define BALL_SIZE          4
-#define BALL_TIMER_RESET   500
-#define BALLS_PER_GAME     3
+#define PADDLE_CX             30
+#define PADDLE_CY             8
+#define PADDLE_INC            6
+#define BALL_INC              4
+#define BALL_SIZE             8
+#define BALL_TIMER_RESET      500
+#define BALLS_PER_GAME        3
 
-#define MAX_BLOCK_CX       20
-#define MIN_BLOCK_CX       6
-#define SCREEN_V           0
-#define SCREEN_BLOCKS      1
-#define SCREEN_HOLE        2
-#define SCREEN_MAX_TYPE    3
+#define MAX_BLOCK_CX          20
+#define MIN_BLOCK_CX          6
+#define SCREEN_V              0
+#define SCREEN_BLOCKS         1
+#define SCREEN_HOLE           2
+#define SCREEN_MAX_TYPE       3
 
-#define MIN_HITS           2
+#define MIN_HITS              2
 
 #define BLOCK_CY                 7
 #define RESERVED_PADDLE_REGION   (1 + PADDLE_CY + 10)
@@ -116,6 +117,42 @@ when       who     what, where, why
 
 #define BF_VISIBLE      0x0001
 
+
+#else
+
+#define MAX_MENU_ITEMS_BR     3
+#define MAX_WELCOME_STRINGS   3
+#define PADDLE_IDX         	  0
+#define BLOCK_IDX             1
+
+#define PADDLE_CX             20
+#define PADDLE_CY             5
+#define PADDLE_INC            4
+#define BALL_INC              2
+#define BALL_SIZE             4
+#define BALL_TIMER_RESET      500
+#define BALLS_PER_GAME        3
+
+#define MAX_BLOCK_CX          20
+#define MIN_BLOCK_CX          6
+#define SCREEN_V              0
+#define SCREEN_BLOCKS         1
+#define SCREEN_HOLE           2
+#define SCREEN_MAX_TYPE       3
+
+#define MIN_HITS              2
+
+#define BLOCK_CY                 7
+#define RESERVED_PADDLE_REGION   (1 + PADDLE_CY + 10)
+
+// Configuration stuff...
+
+#define BRICKATTACK_CFG_VERSION  0x1000
+#define MAX_CFG_SCORES        5
+
+#define BF_VISIBLE      0x0001
+
+#endif
 
 /*===========================================================================
 
