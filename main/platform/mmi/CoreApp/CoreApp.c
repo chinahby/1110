@@ -729,7 +729,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             if(gbWmsVMailNtf || gbWmsSMSNtf)
             {
                 // 通知 CoreApp 需要进行短信提示
-                #ifdef FEATURE_VERSION_S1000T
+                #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
 			    if(ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)
 				#endif
 				{

@@ -1388,7 +1388,8 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 #ifndef FEATURE_ICM
 					AEETCalls po;
 #endif
-					#ifndef FEATURE_VERSION_S1000T
+					#if defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W515V3)
+					#else
                     WmsApp_PlaySMSAlert(pMe, TRUE);
                     #endif
 					//add by yangdecai   09-26
@@ -1449,7 +1450,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                             
 	        				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
 	        				{
-	        					#ifdef FEATURE_VERSION_S1000T
+	        					#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
 	        					if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
 	        					#endif
 	        					{
@@ -1472,7 +1473,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 								else
 								{
 	                			    // 通知 CoreApp 需要进行短信提示
-	                			    #ifdef FEATURE_VERSION_S1000T
+	                			    #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
 	                			    if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
 									#endif
 	                			    {
