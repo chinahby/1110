@@ -1050,6 +1050,9 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         }
                         if(WSTRCMP(pMe->m_DialString, L"*#0000#") == 0)   //add by yangdecai 2010-11-16
                         {
+                        	#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+                        	ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#*#8378#0#");
+                        	#else
                         	nv_language_enum_type language = NV_LANGUAGE_ENGLISH;
     						byte inputmode = OEM_MODE_T9_MT_ENGLISH;
     						(void) ICONFIG_SetItem(pMe->m_pConfig,
@@ -1061,6 +1064,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                                    &inputmode,
                                    sizeof(inputmode));  
                             CLOSE_DIALOG(DLGRET_OK);
+                            #endif
                             return TRUE;
     						
                         }
