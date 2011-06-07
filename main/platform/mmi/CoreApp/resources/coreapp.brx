@@ -188,7 +188,10 @@
 		<Text>Completion of the battery</Text>
 	</String>
 	<String Id="1063" Name="IDS_USERPROFILE_MODE">
-		<Text>User profile mode changed</Text>
+		<Text>vibrate mode actived</Text>
+	</String>
+	<String Id="1064" Name="IDS_USERPROFILE_NOMAL">
+		<Text>normal mode activated</Text>
 	</String>
 </Strings>
 <Dialogs>

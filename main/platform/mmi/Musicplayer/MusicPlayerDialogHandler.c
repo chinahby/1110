@@ -2793,7 +2793,11 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
          ISHELL_CloseApplet(pMe->m_pShell, TRUE);
         }
         return TRUE;
+   #if defined(FEATURE_VERSION_S1000T)
+   case AVK_RWD:
+   #else
    case AVK_SHIFT:
+   #endif
    		{
    			if(pMe->m_isshift)
    			{

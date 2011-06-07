@@ -897,7 +897,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                     }
 
                     return TRUE;
-
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
+#else
+ 
                 case AVK_RWD:
                 {
                     // 长按切换情景模式
@@ -917,6 +919,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                     CoreApp_UpdateAnnunciator(pMe);
                     return TRUE;
                 }
+ #endif
                     
        #ifdef FEATURE_TORCH_SUPPORT
 
@@ -1025,7 +1028,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             default:
                 break;
             }
-            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             #endif
             break;

@@ -3078,11 +3078,13 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			    if(curProfile == OEMNV_PROFILE_MEETING)
 			    {
 			        curProfile = OEMNV_PROFILE_NORMALMODE;
+			        pMe->m_nMsgID = IDS_USERPROFILE_NOMAL;
 			        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_ALERT);
 			    }
 			    else
 			    {
 			        curProfile = OEMNV_PROFILE_MEETING;
+			        pMe->m_nMsgID = IDS_USERPROFILE_MODE;
 			        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_RINGTONE, ANNUN_STATE_RINGTONE_VIBRATOR);
 			    }
 			    #endif
@@ -3144,7 +3146,6 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			                                &new_return,
 			                                sizeof(new_return)); 
 			    MSG_FATAL("EVT_MODE_CHANGE........................",0,0,0);
-        		pMe->m_nMsgID = IDS_USERPROFILE_MODE;
       			CLOSE_DIALOG(DLGRET_BATT_INFO)
             	return TRUE;
             }
