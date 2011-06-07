@@ -2914,11 +2914,9 @@ static void CallApp_ProcessCallStateVoiceEnd(CCallApp               *pMe,
 #ifdef  FEATURE_PERU_VERSION
     pMe->in_convert = FALSE; //to save another incoming call in conversation;
 #endif
-    if(pMe->IsRestrictNumber != TRUE)
-    {
-        IALERT_StopAlerting(pMe->m_pAlert);
-    }
-    else
+    IALERT_StopAlerting(pMe->m_pAlert);
+    
+    if(pMe->IsRestrictNumber)
     {
          pMe->IsRestrictNumber = FALSE;
          pMe->m_b_miss_notify = FALSE;
@@ -3098,6 +3096,10 @@ static void CallApp_ProcessCallStateVoiceEnd(CCallApp               *pMe,
         case AEECM_CALL_END_REORDER:/*cdg2.6*/
             IALERT_StartAlerting(pMe->m_pAlert, AEEALERT_CALLTYPE_VOICE, call_table->call_info.other_party_no, AEECM_CDMA_TONE_REORDER);
             break;
+            
+        case AEECM_CALL_END_ALERT_STOP:
+            IALERT_StopAlerting(pMe->m_pAlert);
+            break;
 #else
         case AEET_CALL_END_INTERCEPT:/*cdg6.4*/
             IALERT_StartAlerting(pMe->m_pAlert, AEEALERT_CALLTYPE_VOICE, other_party_no, AEET_CDMA_TONE_INTERCEPT);
@@ -3105,6 +3107,10 @@ static void CallApp_ProcessCallStateVoiceEnd(CCallApp               *pMe,
 
         case AEET_CALL_END_REORDER:/*cdg2.6*/
             IALERT_StartAlerting(pMe->m_pAlert, AEEALERT_CALLTYPE_VOICE, other_party_no, AEET_CDMA_TONE_REORDER);
+            break;
+
+        case AEET_CALL_END_ALERT_STOP:
+            IALERT_StopAlerting(pMe->m_pAlert);
             break;
 #endif
         //test only
@@ -3212,7 +3218,7 @@ static void CallApp_ProcessCallStateVoice_Incoming(CCallApp      *pMe,
 #endif
         return;
     }
-    CALL_ERR("number.pi =%d number.si =%d",call_table->number.pi,call_table->number.si,0);
+    CALL_ERR("number.pi =%d %d %d",call_table->number.pi,pMe->m_b_incall,b_restict);
     (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_RESTRICT_INCOMING, &data, sizeof(byte));
     //不知道为什么要(data != OEMNV_RESTRICT_INCOMING_OUTCONTACT)这个条件
     if (b_restict  &&(data != OEMNV_RESTRICT_INCOMING_OUTCONTACT))
@@ -3232,7 +3238,7 @@ static void CallApp_ProcessCallStateVoice_Incoming(CCallApp      *pMe,
 	     	ICALLMGR_GetCall(pMe->m_pICallMgr,call_table->cd,&pCall);
 	        if (pCall != NULL)
 	    	{
-	    		ICALL_Answer(pCall);
+	    		ICALL_End(pCall);
 				ICALL_Release(pCall);
 	    	}
            // ICM_EndCall(pMe->m_pITelephone, call_table->cd);
@@ -3352,7 +3358,7 @@ static void CallApp_ProcessCallStateVoiceCallerID(CCallApp          *pMe,
      	ICALLMGR_GetCall(pMe->m_pICallMgr,call_table->cd,&pCall);
         if (pCall != NULL)
     	{
-    		ICALL_Answer(pCall);
+    		ICALL_End(pCall);
 			ICALL_Release(pCall);
     	}
 
@@ -6951,4 +6957,232 @@ boolean MakeVoiceCall(IShell *pShell, boolean bCloseAll, AECHAR *number)
       return TRUE;
 }
 
+const static AEECMNotifyInfo g_myInfo[] = 
+{
+    {
+        AEECM_EVENT_CALL_INCOM,
+        {
+            
+        }
+    },
+};
+
+typedef struct{
+    AEECMEvent              event;
+    cm_mm_call_info_s_type  myInfo;
+    int                     nWaitTimeMS;
+}CallTestDataType;
+
+extern void OEMCM_TestCallEventNotify(AEECMEvent event, cm_mm_call_info_s_type *call_info);
+static CallTestDataType *g_pTestStep = NULL;
+static int               g_nMaxSteps = 0;
+static int               g_nCurrStep = 0;
+
+void CallApp_CallTestCB(void *pUser)
+{
+    if(g_pTestStep && g_nCurrStep<g_nMaxSteps)
+    {
+        OEMCM_TestCallEventNotify(g_pTestStep[g_nCurrStep].event, &(g_pTestStep[g_nCurrStep].myInfo));
+        MSG_FATAL("CallApp_CallTestCB %d %d",g_nCurrStep,g_pTestStep[g_nCurrStep].nWaitTimeMS,0);
+        AEE_SetSysTimer(g_pTestStep[g_nCurrStep].nWaitTimeMS,CallApp_CallTestCB,NULL);
+        g_nCurrStep++;
+    }
+    else
+    {
+        if(g_pTestStep)
+        {
+            sys_free(g_pTestStep);
+        }
+        g_pTestStep = NULL;
+        g_nMaxSteps = 0;
+        g_nCurrStep = 0;
+    }
+}
+
+void CallApp_StartCallTest(void)
+{
+    CallTestDataType   *pCurr;
+    
+    AEE_CancelTimer(CallApp_CallTestCB,NULL);
+    if(g_pTestStep)
+    {
+        sys_free(g_pTestStep);
+    }
+    g_nMaxSteps = 9;
+    g_nCurrStep = 0;
+    g_pTestStep = sys_malloc(g_nMaxSteps*sizeof(CallTestDataType));
+    pCurr = g_pTestStep;
+    
+    // Init Step 1
+    pCurr->nWaitTimeMS  = 1000;
+    pCurr->event = AEECM_EVENT_CALL_INCOM;
+    pCurr->myInfo.call_id = 1;
+    STRCPY((char *)pCurr->myInfo.num.buf, "111111");
+    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
+    pCurr->myInfo.num.pi          = 0;
+    pCurr->myInfo.num.si          = 1;
+    pCurr->myInfo.call_state      = CM_CALL_STATE_INCOM;
+    pCurr->myInfo.call_type       = CM_CALL_TYPE_VOICE;
+    pCurr->myInfo.sys_mode        = SYS_SYS_MODE_CDMA;
+    pCurr->myInfo.direction       = CM_CALL_DIRECTION_MT;
+    pCurr->myInfo.signal.is_signal_info_avail   = TRUE;
+    pCurr->myInfo.signal.signal_type            = AEECM_SIGNAL_CDMA_IS54B;
+    pCurr->myInfo.signal.signal       = AEECM_CDMA_TONE_RING;
+    pCurr->myInfo.end_status                    = CM_CALL_END_ALERT_STOP;
+    pCurr++;
+    
+    // Init Step 2
+    pCurr->nWaitTimeMS  = 1000;
+    pCurr->event = AEECM_EVENT_CALL_SIGNAL;
+    pCurr->myInfo.call_id = 1;
+    STRCPY((char *)pCurr->myInfo.num.buf, "111111");
+    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
+    pCurr->myInfo.num.pi          = 0;
+    pCurr->myInfo.num.si          = 1;
+    pCurr->myInfo.call_state      = CM_CALL_STATE_INCOM;
+    pCurr->myInfo.call_type       = CM_CALL_TYPE_VOICE;
+    pCurr->myInfo.sys_mode        = SYS_SYS_MODE_CDMA;
+    pCurr->myInfo.direction       = CM_CALL_DIRECTION_MT;
+    pCurr->myInfo.signal.is_signal_info_avail   = TRUE;
+    pCurr->myInfo.signal.signal_type            = AEECM_SIGNAL_CDMA_IS54B;
+    pCurr->myInfo.signal.signal       = AEECM_CDMA_TONE_RING;
+    pCurr->myInfo.end_status                    = CM_CALL_END_ALERT_STOP;
+    pCurr++;
+
+    // Init Step 3
+    pCurr->nWaitTimeMS  = 10000;
+    pCurr->event = AEECM_EVENT_CALL_CALLER_ID;
+    pCurr->myInfo.call_id = 1;
+    STRCPY((char *)pCurr->myInfo.num.buf, "111111");
+    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
+    pCurr->myInfo.num.pi          = 0;
+    pCurr->myInfo.num.si          = 1;
+    pCurr->myInfo.call_state      = CM_CALL_STATE_INCOM;
+    pCurr->myInfo.call_type       = CM_CALL_TYPE_VOICE;
+    pCurr->myInfo.sys_mode        = SYS_SYS_MODE_CDMA;
+    pCurr->myInfo.direction       = CM_CALL_DIRECTION_MT;
+    pCurr->myInfo.signal.is_signal_info_avail   = TRUE;
+    pCurr->myInfo.signal.signal_type            = AEECM_SIGNAL_CDMA_IS54B;
+    pCurr->myInfo.signal.signal       = AEECM_CDMA_TONE_RING;
+    pCurr->myInfo.end_status                    = CM_CALL_END_ALERT_STOP;
+    pCurr++;
+
+    // Init Step 4
+    pCurr->nWaitTimeMS  = 1000;
+    pCurr->event = AEECM_EVENT_CALL_ANSWER;
+    pCurr->myInfo.call_id = 1;
+    STRCPY((char *)pCurr->myInfo.num.buf, "111111");
+    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
+    pCurr->myInfo.num.pi          = 0;
+    pCurr->myInfo.num.si          = 1;
+    pCurr->myInfo.call_state      = CM_CALL_STATE_INCOM;
+    pCurr->myInfo.call_type       = CM_CALL_TYPE_VOICE;
+    pCurr->myInfo.sys_mode        = SYS_SYS_MODE_CDMA;
+    pCurr->myInfo.direction       = CM_CALL_DIRECTION_MT;
+    pCurr->myInfo.signal.is_signal_info_avail   = TRUE;
+    pCurr->myInfo.signal.signal_type            = AEECM_SIGNAL_CDMA_IS54B;
+    pCurr->myInfo.signal.signal       = AEECM_CDMA_TONE_RING;
+    pCurr->myInfo.end_status                    = CM_CALL_END_ALERT_STOP;
+    pCurr++;
+
+    // Init Step 5
+    pCurr->nWaitTimeMS  = 1000;
+    pCurr->event = AEECM_EVENT_CALL_CONNECT;
+    pCurr->myInfo.call_id = 1;
+    STRCPY((char *)pCurr->myInfo.num.buf, "111111");
+    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
+    pCurr->myInfo.num.pi          = 0;
+    pCurr->myInfo.num.si          = 1;
+    pCurr->myInfo.call_state      = CM_CALL_STATE_INCOM;
+    pCurr->myInfo.call_type       = CM_CALL_TYPE_VOICE;
+    pCurr->myInfo.sys_mode        = SYS_SYS_MODE_CDMA;
+    pCurr->myInfo.direction       = CM_CALL_DIRECTION_MT;
+    pCurr->myInfo.signal.is_signal_info_avail   = TRUE;
+    pCurr->myInfo.signal.signal_type            = AEECM_SIGNAL_CDMA_IS54B;
+    pCurr->myInfo.signal.signal       = AEECM_CDMA_TONE_RING;
+    pCurr->myInfo.end_status                    = CM_CALL_END_ALERT_STOP;
+    pCurr++;
+
+    // Init Step 6
+    pCurr->nWaitTimeMS  = 1000;
+    pCurr->event = AEECM_EVENT_CALL_INCOM;
+    pCurr->myInfo.call_id = 2;
+    STRCPY((char *)pCurr->myInfo.num.buf, "222222");
+    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
+    pCurr->myInfo.num.pi          = 0;
+    pCurr->myInfo.num.si          = 1;
+    pCurr->myInfo.call_state      = CM_CALL_STATE_INCOM;
+    pCurr->myInfo.call_type       = CM_CALL_TYPE_VOICE;
+    pCurr->myInfo.sys_mode        = SYS_SYS_MODE_CDMA;
+    pCurr->myInfo.direction       = CM_CALL_DIRECTION_MT;
+    pCurr->myInfo.signal.is_signal_info_avail   = TRUE;
+    pCurr->myInfo.signal.signal_type            = AEECM_SIGNAL_CDMA_IS54B;
+    pCurr->myInfo.signal.signal       = AEECM_CDMA_TONE_INTERCEPT;
+    pCurr->myInfo.end_status                    = CM_CALL_END_ALERT_STOP;
+    pCurr++;
+
+    // Init Step 7
+    pCurr->nWaitTimeMS  = 1000;
+    pCurr->event = AEECM_EVENT_CALL_SIGNAL;
+    pCurr->myInfo.call_id = 2;
+    STRCPY((char *)pCurr->myInfo.num.buf, "222222");
+    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
+    pCurr->myInfo.num.pi          = 0;
+    pCurr->myInfo.num.si          = 1;
+    pCurr->myInfo.call_state      = CM_CALL_STATE_INCOM;
+    pCurr->myInfo.call_type       = CM_CALL_TYPE_VOICE;
+    pCurr->myInfo.sys_mode        = SYS_SYS_MODE_CDMA;
+    pCurr->myInfo.direction       = CM_CALL_DIRECTION_MT;
+    pCurr->myInfo.signal.is_signal_info_avail   = TRUE;
+    pCurr->myInfo.signal.signal_type            = AEECM_SIGNAL_CDMA_IS54B;
+    pCurr->myInfo.signal.signal       = AEECM_CDMA_TONE_INTERCEPT;
+    pCurr->myInfo.end_status                    = CM_CALL_END_ALERT_STOP;
+    pCurr++;
+
+    // Init Step 8
+    pCurr->nWaitTimeMS  = 10000;
+    pCurr->event = AEECM_EVENT_CALL_CALLER_ID;
+    pCurr->myInfo.call_id = 2;
+    STRCPY((char *)pCurr->myInfo.num.buf, "222222");
+    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
+    pCurr->myInfo.num.pi          = 0;
+    pCurr->myInfo.num.si          = 1;
+    pCurr->myInfo.call_state      = CM_CALL_STATE_INCOM;
+    pCurr->myInfo.call_type       = CM_CALL_TYPE_VOICE;
+    pCurr->myInfo.sys_mode        = SYS_SYS_MODE_CDMA;
+    pCurr->myInfo.direction       = CM_CALL_DIRECTION_MT;
+    pCurr->myInfo.signal.is_signal_info_avail   = TRUE;
+    pCurr->myInfo.signal.signal_type            = AEECM_SIGNAL_CDMA_IS54B;
+    pCurr->myInfo.signal.signal       = AEECM_CDMA_TONE_INTERCEPT;
+    pCurr->myInfo.end_status                    = CM_CALL_END_ALERT_STOP;
+    pCurr++;
+    
+    // Init Step 9
+    pCurr->nWaitTimeMS  = 1000;
+    pCurr->event = AEECM_EVENT_CALL_END;
+    pCurr->myInfo.call_id = 2;
+    STRCPY((char *)pCurr->myInfo.num.buf, "222222");
+    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
+    pCurr->myInfo.num.pi          = 0;
+    pCurr->myInfo.num.si          = 1;
+    pCurr->myInfo.call_state      = CM_CALL_STATE_INCOM;
+    pCurr->myInfo.call_type       = CM_CALL_TYPE_VOICE;
+    pCurr->myInfo.sys_mode        = SYS_SYS_MODE_CDMA;
+    pCurr->myInfo.direction       = CM_CALL_DIRECTION_MT;
+    pCurr->myInfo.signal.is_signal_info_avail   = TRUE;
+    pCurr->myInfo.signal.signal_type            = AEECM_SIGNAL_CDMA_IS54B;
+    pCurr->myInfo.signal.signal       = AEECM_CDMA_TONE_INTERCEPT;
+    pCurr->myInfo.end_status                    = CM_CALL_END_ALERT_STOP;
+    
+    AEE_SetSysTimer(0,CallApp_CallTestCB,NULL);
+}
 

@@ -4390,6 +4390,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             pMe->m_b_press_1=FALSE;
             //pMe->m_b_show_cdg = TRUE;
             pMe->m_b_miss_notify = TRUE;
+            CALL_ERR("EVT_DIALOG_INIT %d ",pMe->m_b_incall,0,0);
             if(pMe->m_b_incall)
             {
                 // play call waiting ring

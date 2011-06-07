@@ -14136,3 +14136,65 @@ static int OEMCM_SendMBMSCommand(ICM *pMe, AEECMMBMSCmd *pMbmsCmd)
    return EUNSUPPORTED;
 #endif //FEATURE_MBMS
 }
+
+void OEMCM_TestCallEventNotify(AEECMEvent event, cm_mm_call_info_s_type *call_info)
+{
+  PFNOEMCMCALLNOTIFY      pfnNotify = NULL;
+  uint16                  fn_index;
+
+  if (!ICMCoreObj)
+  {
+    return;
+  }
+
+  fn_index = (uint16)((int32)event & 0x00FF);
+
+  do
+  {
+  /* Find the event handler associated with this event.
+   * Event handler table is indexed by the last two nibbles of event.
+   * This is basically a huge switch case statement.
+   */
+    if (AEECM_EVENT_GROUP((uint16)event) == AEECM_CALL_GROUP)
+    {
+    /* Main call group */
+      if (fn_index >= ARR_SIZE(gCallEventHandlers))
+      {
+      MSG_ERROR("OEMCM_BREWCallEventCB: No event handler for this event (0x%X)",
+                                                              event, 0, 0);
+        break;
+    }
+    pfnNotify = gCallEventHandlers[fn_index];
+    }
+    else if (AEECM_EVENT_GROUP((uint16)event) == AEECM_INTERNAL_CALL_GROUP)
+    {
+    /* Internal call events that are not sent to the App */
+      if (fn_index >= ARR_SIZE(gCallIntEventHandlers))
+      {
+      MSG_ERROR("OEMCM_BREWCallEventCB: No event handler for this event (0x%X)",
+                                                              event, 0, 0);
+        break;
+    }
+    pfnNotify = gCallIntEventHandlers[fn_index];
+    }
+    else
+    {
+    MSG_ERROR("OEMCM_BREWCallEventCB: Unknown event (0x%X)", event, 0, 0);
+      break;
+  }
+
+
+  /* Found the event handler, now call it */
+    if (pfnNotify)
+    {
+    (*pfnNotify)(call_info, event);
+    }
+    else
+    {
+    MSG_ERROR("OEMCM_BREWCallEventCB: No event handler found for event 0x%X",
+                                                                  event, 0, 0);
+  }
+  }
+  while(0);
+}
+
