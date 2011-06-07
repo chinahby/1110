@@ -1235,16 +1235,20 @@ static NextFSMAction STATE_PWHandler(CCallApp *pMe)
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
-           // pMe->m_bNotOverwriteDlgRet = FALSE;
+            pMe->m_bNotOverwriteDlgRet = FALSE;
             CallApp_ShowDialog(pMe, IDD_PWD);
             return NFSMACTION_WAIT;
        case DLGRET_PASS:
-            MOVE_TO_STATE(STATE_INCOMINGCALL);
+            MOVE_TO_STATE(STATE_INCOMINGCALL)
             return NFSMACTION_CONTINUE;    
 
         case DLGRET_FAILD:
             CallApp_ShowMsgBox(pMe, IDS_INVALID);
             return NFSMACTION_WAIT;
+            
+        case DLGRET_OK:
+             MOVE_TO_STATE(STATE_PW)
+             return NFSMACTION_CONTINUE;
         default:
             break;
     }

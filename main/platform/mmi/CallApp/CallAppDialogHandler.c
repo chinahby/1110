@@ -4194,6 +4194,7 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
                 case IDS_INVALIDEMGNUM:
                 case IDS_INVALID_IP_NUMBER:
                 case IDS_MSG_EXCEPTIONAL_CHAR:
+                case IDS_INVALID:
 #ifdef FEATURE_SUPPORT_WAP_APP
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
                 case IDS_INVALID_LINK_NUM:
@@ -4312,6 +4313,21 @@ static boolean  CallApp_MsgBox_DlgHandler(CCallApp  *pMe,
 
                 }
             }
+            else if(pMe->m_msg_text_id == IDS_INVALID)
+            {
+                switch (wParam)
+                {
+                    case AVK_CLR:
+                        pMe->m_bCloseAllApplet = FALSE;
+                        CLOSE_DIALOG(DLGRET_OK)
+                        return TRUE;
+                        
+                    default:
+                        //not process the another event key
+                        return TRUE;
+
+                }
+            }            
         case EVT_DISPLAYDIALOGTIMEOUT:
             pMe->m_bCloseAllApplet = FALSE;
             CLOSE_DIALOG(DLGRET_OK)
@@ -5170,7 +5186,7 @@ static boolean CallApp_pwd_dialog_handler(CCallApp *pMe,
                                             uint16      wParam,
                                             uint32      dwParam)
 {
-   // PARAM_NOT_REF(dwParam)
+    PARAM_NOT_REF(dwParam)
     //static char   *m_strPhonePWD = NULL;
     AECHAR      wstrDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
     int             nLen = 0;
