@@ -4618,8 +4618,24 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 }
                 else
                 {
+                	#if defined(FEATURE_VERSION_MTM)
+                	MSG_FATAL("FEATURE_VERSION_MTM.........INCOMEING",0,0,0);
+                	if(WSTRNCMP(pMe->m_CallsTable->call_number,L"+",1)==0)
+                	{
+                		AECHAR   call_Numberbuf[AEECM_MAX_DIGITS_LENGTH] = {0};
+                        WSTRLCPY(call_Numberbuf,&pMe->m_CallsTable->call_number[1],AEECM_MAX_DIGITS_LENGTH);
+                        CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
+                                call_Numberbuf, &rect, IDF_TEXT_TRANSPARENT);
+                	}
+                	else
+                	{
+                		CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
+                                pMe->m_CallsTable->call_number, &rect, IDF_TEXT_TRANSPARENT);
+                    }
+                	#else
                     CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
                                 pMe->m_CallsTable->call_number, &rect, IDF_TEXT_TRANSPARENT);
+                    #endif
                 }
             }
 #ifndef FEATURE_USES_LOWMEM

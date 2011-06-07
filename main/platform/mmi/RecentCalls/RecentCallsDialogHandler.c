@@ -2695,7 +2695,18 @@ static void RecentCalls_GetRecord(CRecentCalls *pMe)
                     {
                         MEMSET(wstrNumber, 0, sizeof(wstrNumber));
                         (void) STRTOWSTR((char*)pEntry->pFields[nFieldNum].pData, wstrNumber, sizeof(wstrNumber));
+                        #if defined(FEATURE_VERSION_MTM)
+                        {
+                        	if(WSTRNCMP(wstrNumber,L"+",1)==0)
+                        	{
+                        		AECHAR   wstrNumberbuf[AEECALLHISTORY_MAXDIGITS] = {0};
+                        		WSTRLCAT(wstrNumberbuf,&wstrNumber[1],AEECALLHISTORY_MAXDIGITS);
+                        		WSTRLCPY(wstrNumber,wstrNumberbuf,AEECALLHISTORY_MAXDIGITS);
+                        	}
+                        }
+                        #endif
                         pMe->list_record[i].number = WSTRDUP(wstrNumber);
+                        MSG_FATAL("pMe->list_record[i].number===%s,===%d",pMe->list_record[i].number,i,0);
                     }
                 }
                 break;
