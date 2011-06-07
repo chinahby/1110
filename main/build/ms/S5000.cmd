@@ -6,6 +6,8 @@
 @set RESOURCEDIR=S5000
 @set MODELVERSION=%BASEPROJECTNAME%_%PROJECTNAME%_L05_SC_FM_12864_V102_110119_2100
 @set HWVERSION=W206_MB_V0.1
+@set MODELBUILDTIME = 07/06/2011
+
 rem delete some files for compile muslim or nasrani
 del %PROJECTNAME%\CoreAppDialogHandler.o
 del %PROJECTNAME%\OEMConstFiles_Dynamic.c

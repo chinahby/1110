@@ -295,6 +295,7 @@ enum /* OEM AEEConfigItem Values */
    CFGI_ESN,              // type=uint32 (read-only)
    CFGI_SLOTINDEX,        // type=byte
    CFGI_BUILD_VERSION,    // type=AECHAR * (ver_dir variable from mobile.h)
+   CFGI_BUILD_TIME,       // type=AECHAR * (ver_dir variable from mobile.h)
                           // read-only
    CFGI_RFCAL_VERSION,    // type=AECHAR *, len==OEMNV_RFCALVER_LEN(read-only)
    CFGI_RFCAL_DATE,       // type=dword (read-only)

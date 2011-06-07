@@ -6,6 +6,7 @@
 @set RESOURCEDIR=M8P
 @set MODELVERSION=HITZ233C_SC_FM_BT_V101_12864_20110213_1100
 @set HWVERSION=W203_MB_V0.6
+@set MODELBUILDTIME = 07/06/2011
 
 rem delete some files for compile
 del %PROJECTNAME%\CoreAppDialogHandler.o

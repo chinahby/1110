@@ -6,6 +6,7 @@
 @set RESOURCEDIR=Flexi021
 @set MODELVERSION=%PROJECTNAME%_CAM_FM_V1.0
 @set HWVERSION=W021_MB_V0.3
+@set MODELBUILDTIME = 07/06/2011
 
 rem delete some files for compile muslim or nasrani
 del %PROJECTNAME%\CoreAppDialogHandler.o

@@ -313,6 +313,9 @@
 	<STRING Id="104" Name="IDS_HW_VERSION">
 		<Text>HW Ver: </Text>
 	</STRING>
+	<String Id="1001" Name="IDS_COMPILE_TIME">
+		<Text>Compile Date:</Text>
+	</String>
 	<String Id="1011" Name="IDS_STRING_NET_LOCK" Encoding="Unicode">
 		<Text>UIM lock</Text>
 	</String>

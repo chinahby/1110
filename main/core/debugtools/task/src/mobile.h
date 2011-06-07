@@ -135,6 +135,7 @@ extern NOTICE_TYPE mob_sw_rev[];
 extern NOTICE_TYPE ver_modelname[];
 extern NOTICE_TYPE ver_modelversion[];
 extern NOTICE_TYPE ver_interversion[];
+extern NOTICE_TYPE ver_modelbuiletime[];
 #endif /*CUST_EDITION*/
 
 #ifdef FEATURE_GPSONE

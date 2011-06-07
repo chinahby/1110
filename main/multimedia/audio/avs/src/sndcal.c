@@ -1023,6 +1023,7 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_headset_voice_vol[] = {
 VOL_MEMORY snd_gen_level_voc_type snd_cal_headset_voice_vol[] = {
   /* Internal CODEC - no pad values    */
 #if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
+#ifndef FEATURE_VERSION_S1000T
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
   {          -1400  ,           -3000 ,  0 },
@@ -1032,6 +1033,17 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_headset_voice_vol[] = {
   {           -200  ,           -2200 ,  0 },
   {            100  ,           -2000 ,  0 },
   {            400  ,           -1800 ,  0 }
+#else
+/*  rx                dtmf            pad        */
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {          -1000  ,           -3000 ,  0 },
+  {           -700  ,           -2800 ,  0 },
+  {           -400  ,           -2600 ,  0 },
+  {           -200  ,           -2400 ,  0 },
+  {            100  ,           -2200 ,  0 },
+  {            500  ,           -2000 ,  0 },
+  {            800  ,           -1800 ,  0 }
+#endif
 #else
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },

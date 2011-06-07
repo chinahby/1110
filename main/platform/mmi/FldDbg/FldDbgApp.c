@@ -5129,7 +5129,8 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
 
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
-    
+
+
 #ifndef HWVERSION
     #define HWVERSION "V1.0"
 #endif
@@ -5148,6 +5149,24 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
+
+
+    n = WSTRLEN(szBuf);
+    (void) ISHELL_LoadResString(pme->a.m_pIShell,
+                               FLDDBG_RES_FILE,
+                               IDS_COMPILE_TIME,
+                               (szBuf+ n),
+                               sizeof(szBuf));
+    n = WSTRLEN(szBuf);
+    szBuf[n++] = (AECHAR) '\n'; 
+    (void) ICONFIG_GetItem(pme->m_pIConfig,
+                          CFGI_BUILD_TIME,
+                          (szBuf + n),
+                          sizeof(szBuf));
+   
+    n = WSTRLEN(szBuf);
+    szBuf[n++] = (AECHAR) '\n';
+   
     
    (void) ISHELL_LoadResString(pme->a.m_pIShell,
                                FLDDBG_RES_FILE,

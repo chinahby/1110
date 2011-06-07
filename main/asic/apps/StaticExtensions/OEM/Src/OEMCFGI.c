@@ -1925,6 +1925,7 @@ static ConfigItemTableEntry const customItemTable[] =
    CFGTABLEITEM_READONLY(CFGI_ESN,sizeof(uint32)),
    CFGTABLEITEM(CFGI_SLOTINDEX,sizeof(uint8)),
    CFGTABLEITEM_EMPTY(CFGI_BUILD_VERSION),
+   CFGTABLEITEM_EMPTY(CFGI_BUILD_TIME),
    CFGTABLEITEM_READONLY(CFGI_RFCAL_VERSION, sizeof(AECHAR) *
                                              OEMNV_RFCALVER_LEN),
    CFGTABLEITEM_READONLY(CFGI_RFCAL_DATE, sizeof(dword)),
@@ -4028,6 +4029,13 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
                   nSize);
 #endif // CUST_EDITION
       return SUCCESS;
+   case CFGI_BUILD_TIME:
+   	  {
+   	  	  STR_TO_WSTR((char *)ver_modelbuiletime,
+                  (AECHAR *) pBuff,
+                  nSize);
+   	  }
+   	  return SUCCESS;
    
 #ifdef FEATURE_FACTORY_TESTMODE
    case CFGI_FACTORY_TEST_MODE:
@@ -4917,6 +4925,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    // Service Programming
    ////////////////////////////////////////////////////////////////
    case CFGI_BUILD_VERSION:
+   case CFGI_BUILD_TIME:
       // This item is read-only
       return EBADPARM;
 

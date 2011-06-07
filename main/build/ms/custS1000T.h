@@ -13,14 +13,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_S1000T
 #ifdef CUST_EDITION
 #define FEATURE_OEMOMH
-#define FEATURE_APP_BLUETOOTH
-#define FEATURE_BT
-#define FEATURE_IBT
-#define FEATURE_BT_QSOC_INBAND_SLEEP  
-#define FEATURE_DRM_NO_BREW 
-//#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
 
-#define BT_QSC1110//FEATURE_BT_QSC1100
 #define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  型号
 #define FEATURE_TORCH_KEY_SPACE		//手电筒功能按键
 
@@ -42,6 +35,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
+#define FEATURE_ARPHIC_LAYOUT_ENGINE
 #undef FEATURE_LANG_CHINESE
 //#define FEATURE_NET_LOCK
 //#define FEATURE_SEAMLESS_SMS
@@ -257,8 +251,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_PNG_ENCODER
 #endif
 
-#include "custqbt.h"     //for bt
-#include "custbt.h"      //for bt
 #include "custuim.h"
 #include "custcmx.h"
 #include "custavs.h"
