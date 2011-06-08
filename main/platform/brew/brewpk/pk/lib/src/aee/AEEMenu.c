@@ -913,7 +913,8 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
 
    if (!pme->m_bActive && eCode != EVT_CTL_SET_TITLE && eCode != EVT_CTL_ADD_ITEM)
       return(FALSE);  // Event not handled.
-
+      
+   DBGPRINTF("IMenuCtl_HandleEvent 0x%x 0x%x 0x%x",eCode,wParam,dwParam);
    // First handle the pens, most time sensitive events we get
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
@@ -1013,6 +1014,7 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
                else
 #endif/*if defined( FEATURE_CUSTOMIZED_MENU_STYLE)*/
                {
+                  DBGPRINTF("AVK_SELECT 0x%x %d",eCode,wParam);
                   return Menu_HandleSelection(pme, pme->m_nSelect);
                }
 
@@ -1162,6 +1164,7 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
                        //IMENUCTL_SetProperties(po, MP_NO_REDRAW);
                        //IMENUCTL_SetSel( po, nItemID);
                        //IMENUCTL_SetProperties(po, oldProperties);
+                       DBGPRINTF("IMenuCtl_HandleEvent EVT_COMMAND %d 0x%x",nItemID,wParam);
                        ISHELL_HandleEvent(pme->m_pIShell, EVT_COMMAND, (uint16)nItemID, (uint32)pme);
                        //ISHELL_HandleEvent( pme->m_pIShell, EVT_KEY, AVK_SELECT, 0);
                    }
@@ -2819,7 +2822,7 @@ from a menu based upon the SELECT key being pressed.
 static void Menu_SendCommand(CMenuCtl * pme)
 {
    CMenuItem   *  pItem;
-
+   DBGPRINTF("Menu_SendCommand EVT_COMMAND");
    if((pItem = GetItemByIdx(pme->m_pItemList, pme->m_nSelect)) != NULL)
       ISHELL_HandleEvent(pme->m_pIShell, EVT_COMMAND, (uint16)pItem->nItemID, (uint32)pItem->lData);
 }
@@ -5648,6 +5651,7 @@ Local Method - Handles Selection type events for Menu. (AVK_SELECT and Pens)
 ======================================================================*/
 static boolean Menu_HandleSelection(CMenuCtl * pme, int nSelect)
 {
+   DBGPRINTF("Menu_HandleSelection %d %d %d",pme->m_bSendCmd,nSelect,pme->m_bResumeCmd);
    if (pme->m_bSendCmd) {
       CMenuItem   * pItem;
       if((pItem = GetItemByIdx(pme->m_pItemList, nSelect)) != NULL){

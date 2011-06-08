@@ -175,7 +175,7 @@ boolean GetExpireString(IShell* pIShell, const char* pResFile, uint32 dwNow, AEE
    uint16   wIDFormat;
    AECHAR   szFormat[32];
    uint32   dwExpire = 0;
-
+   DBGPRINTF("GetExpireString %d %d %d",dwNow,dwValue,lt);
    // Get current time if not specified
    if(!dwNow)
       dwNow = GET_SECONDS();
@@ -199,7 +199,7 @@ boolean GetExpireString(IShell* pIShell, const char* pResFile, uint32 dwNow, AEE
          case LT_DAYS:
          case LT_DATE:
             wIDFormat = IDS_MT_EXP_DATE; // Expires on %s
-
+            DBGPRINTF("GetExpireString %d",bAdjust);
             if(bAdjust && lt == LT_DAYS)
                dwExpire = dwNow + (dwValue * SECS_PER_DAY);
             else

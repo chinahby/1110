@@ -4742,7 +4742,8 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
 	        (void) ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CallApp_Dialer_Show_Animation,pMe);
             IALERT_StopRingerAlert(pMe->m_pAlert);
             IALERT_StopMp3Alert(pMe->m_pAlert);
-			
+			IALERT_StopAlerting(pMe->m_pAlert);
+            
 #ifdef FEATURE_LED_CONTROL
             IBACKLIGHT_SigLedDisable(pMe->m_pBacklight);
 #endif

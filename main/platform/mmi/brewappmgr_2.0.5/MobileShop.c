@@ -550,14 +550,20 @@ static boolean MShop_ProcessMenuSel(MShop* pme, uint16 wParam)
 static boolean MShop_ProcessDefaultCmd(MShop* pme, uint16 wParam, uint32 dwParam)
 {
    uint32   dwItem;
-
-   IMENUCTL_GetItemData(pme->m_pMenu, wParam, &dwItem);
 #ifdef CUST_EDITION
+   if(wParam > 0xF000)
+   {
+      DBGPRINTF("MShop_ProcessDefaultCmd %d",wParam);
+      return FALSE;
+   }
+   
    if ((pme->m_nCatIdx < 4) && (pme->m_nCatIdx >= 0)) //hou.chunfeng adds these @07.11.12
    {
       pme->m_menuSelItem[pme->m_nCatIdx] = IMENUCTL_GetSel(pme->m_pMenu);
    }
 #endif
+   IMENUCTL_GetItemData(pme->m_pMenu, wParam, &dwItem);
+   
    // Server list in "Set Server" menu
    if(wParam >= IDC_SERVER){             
       MShop_SetServer(pme, wParam);
@@ -955,6 +961,32 @@ static void MShop_VerifyCB(void * pcxt, int nErr, DLEnumItem * pe)
    }
 }
 
+#ifdef CUST_EDITION
+// TEST CODE
+static void MShop_EnumCBSIM2(void *pUser)
+{
+    MShop * pme = (MShop *)pUser;
+    MShop_EnumCB((void *)pme, SUCCESS, NULL);
+}
+
+static void MShop_EnumCBSIM(void *pUser)
+{
+    MShop * pme = (MShop *)pUser;
+    static DLItem e;
+    
+    MEMSET(&e,0,sizeof(DLEnumItem));
+    e.iID = 1;
+    e.t  = DLI_APPLET;
+    e.pszName = L"TESTAPP";
+    e.PurchaseOption.lt = LT_DAYS;
+    e.PurchaseOption.nPrices = 1;
+    e.PurchaseOption.pPrices[0].dwValue = BV_UNLIMITED;
+    e.currentLicense.lt = LT_NONE;
+    e.currentLicense.pt = PT_PURCHASE;
+    MShop_EnumCB((void *)pme, SUCCESS, (DLEnumItem *)&e);
+    ISHELL_SetTimer(pme->a.m_pIShell,0,MShop_EnumCBSIM2,pme);
+}
+#endif
 /*===========================================================================
 
 Re-display the currently enumerated directory of sub-categories and/or items.
@@ -982,7 +1014,7 @@ static boolean MShop_Enum(MShop * pme)
    }
    pme->m_nCatItems = 0;         // Reset number of category items at this level
    pme->m_bSearch = FALSE;       // Reset search
-
+#if 1 // TEST CODE
    if (pme->m_bUpgradeCheck)
       // Check for item upgrade
       IDOWNLOAD_CheckItemUpgrade(pme->m_pDownload, id, MShop_EnumCB,pme);
@@ -992,6 +1024,9 @@ static boolean MShop_Enum(MShop * pme)
    else
       // Enumerate category items using category ID
       IDOWNLOAD_Enum(pme->m_pDownload,id,MShop_EnumCB,pme);
+#else
+    ISHELL_SetTimer(pme->a.m_pIShell,0,MShop_EnumCBSIM,pme);
+#endif
    return(TRUE);
 }
 
@@ -1155,7 +1190,7 @@ static void MShop_EnumCB(void * pcxt, int nErr, DLEnumItem * pe)
       // Reset carrier message flag
       pme->m_bCarrierMessage = FALSE;
    }
-
+   DBGPRINTF("MShop_EnumCB %d",nErr);
    if(nErr){
       // We encountered an error in the enumeration.  
 
@@ -1267,7 +1302,7 @@ static void MShop_EnumCB(void * pcxt, int nErr, DLEnumItem * pe)
 #endif
    // Increment # of category items
    pme->m_nCatItems++;
-
+   DBGPRINTF("MShop_EnumCB %d %d %S",IMENUCTL_IsActive(pme->m_pMenu),ai.wItemID,ai.pText);
    if (IMENUCTL_IsActive(pme->m_pMenu) == FALSE)
    {
       AEERect rc;
@@ -1275,7 +1310,7 @@ static void MShop_EnumCB(void * pcxt, int nErr, DLEnumItem * pe)
 
       IMENUCTL_GetRect(pme->m_pMenu, &rc);
       nDraw = (pme->m_cyFont ? rc.dy/pme->m_cyFont : rc.dy/ITEM_HEIGHT);
-
+      DBGPRINTF("MShop_EnumCB %d %d %d %d",pme->m_nCatItems,nDraw,pme->m_cyFont,rc.dy);
       if (pme->m_nCatItems > nDraw)
       {        
          // Set menu active
@@ -1325,7 +1360,7 @@ static boolean MShop_AppOptionsDialog(MShop * pme)
       MShop_AddSimpleOptionMenuItem(pme, IDC_SUBSCRIPTION, IDS_EXP_SUBSCRIPTION, &pi->SubscriptionOption.Price, IDB_MS_SUBSCRIBE);
       DBGPRINTF("MShop_AppOptionsDialog  IDC_SUBSCRIPTION");
    }
-
+   DBGPRINTF("MShop_AppOptionsDialog %d %d",pi->PurchaseOption.lt,pi->PurchaseOption.nPrices);
    // If purchase option is available, add all of the purchase prices in the menu
    if(pi->PurchaseOption.lt != LT_NONE){
       for(i = 0, p = pi->PurchaseOption.pPrices; i < pi->PurchaseOption.nPrices; i++, p++){
