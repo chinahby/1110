@@ -7263,7 +7263,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                     	#ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                         DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
                         #else
-                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                        DRAW_BOTTOMBAR(BTBAR_SEND_BACK);
                         #endif
                     }
                     else
@@ -7271,7 +7271,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                     	#ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                         DRAW_BOTTOMBAR(BTBAR_SEND_EARSE);
                         #else
-                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                        DRAW_BOTTOMBAR(BTBAR_SEND_BACK);
                         #endif
                     }
                 }
@@ -7469,7 +7469,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                     nLen = WSTRLEN(pwstrText);
                 }
                 
-                if (nLen == 1)
+                if (nLen >= 1)
                 {
                     // Send       Delete
                     if ((pMe->m_eCreateWMSType == SEND_MSG_RESERVE) ||
@@ -7478,7 +7478,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                     	#ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                         DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
                         #else
-                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
+                        DRAW_BOTTOMBAR(BTBAR_SEND_BACK)
                         #endif
                     }
                     else
@@ -7486,7 +7486,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                     	#ifndef FEATURE_ALL_KEY_PAD   //add by yangdecai
                         DRAW_BOTTOMBAR(BTBAR_SEND_EARSE)
                         #else
-                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
+                        DRAW_BOTTOMBAR(BTBAR_SEND_BACK)
                         #endif
                     }
                     IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
