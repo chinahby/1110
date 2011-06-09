@@ -426,7 +426,11 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
 				   {
 					   // Option     Delete
 					   //IMENUCTL_SetBottomBarType( pMe->m_pMenu, BTBAR_SAVE_DELETE);
+					   #ifdef FEATURE_ALL_KEY_PAD
+					   DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
+					   #else
 					   DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
+					   #endif
 				   }
 				   else
 				   {
@@ -598,7 +602,11 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
                    {
                        // Option     Delete
                        //IMENUCTL_SetBottomBarType( pMe->m_pMenu, BTBAR_SAVE_DELETE);
-                       DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
+                       #ifdef FEATURE_ALL_KEY_PAD
+					   DRAW_BOTTOMBAR(BTBAR_SAVE_BACK)
+					   #else
+					   DRAW_BOTTOMBAR(BTBAR_SAVE_DELETE)
+					   #endif
                    }
                    else
                    {
@@ -2101,7 +2109,11 @@ static void showChannelEditingScreen( CFmRadio *pMe)
     }
     else if (pMe->m_channellist_bottom_type == FM_SAVE_DELETE)
     {
+    	#ifndef FEATURE_ALL_KEY_PAD
         IMENUCTL_SetBottomBarType( pMe->m_pMenu, BTBAR_SAVE_DELETE);
+        #else
+        IMENUCTL_SetBottomBarType( pMe->m_pMenu, BTBAR_SAVE_BACK);
+        #endif
     }
     else
     {

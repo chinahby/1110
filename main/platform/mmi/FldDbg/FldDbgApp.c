@@ -4547,7 +4547,7 @@ static boolean CFieldDebug_HandleEvent(CFieldDebug  *pme,
            } 
            else
            //pme->m_dlgID = IDD_TOP_DIALOG;
-#if defined (FEATURE_CARRIER_CHINA_TELCOM)
+#if defined (FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
                if(STRNCMP(args->pszArgs,"*#0000#",7) == 0)
                {
                   pme->m_dlgID = IDD_VERSION_DIALOG;
@@ -5167,7 +5167,8 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
    
-    
+    #if defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W515V3)
+    #else
    (void) ISHELL_LoadResString(pme->a.m_pIShell,
                                FLDDBG_RES_FILE,
                                IDS_MODEL,
@@ -5429,7 +5430,7 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
     szBuf[n++] = (AECHAR) '\n';
     n = WSTRLEN(szBuf);
 //SW ver
-
+	#endif
    p_dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
    p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_VER_STAT);
 

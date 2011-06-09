@@ -2794,7 +2794,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         }
         return TRUE;
    #if defined(FEATURE_VERSION_S1000T)
-   case AVK_RWD:
+   //case AVK_RWD:  //add by yangdecai 2012-06-09
    #else
    case AVK_SHIFT:
    #endif

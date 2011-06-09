@@ -1051,7 +1051,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         if(WSTRCMP(pMe->m_DialString, L"*#0000#") == 0)   //add by yangdecai 2010-11-16
                         {
                         	#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
-                        	ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#*#8378#0#");
+                        	ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#0000#");
                         	#else
                         	nv_language_enum_type language = NV_LANGUAGE_ENGLISH;
     						byte inputmode = OEM_MODE_T9_MT_ENGLISH;
@@ -3203,7 +3203,11 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                 break;
                 case AVK_SEND: 
                     return TRUE;  //make the cm 2312 disappear
+                #if defined(FEATURE_VERSION_S1000T)
+   				//case AVK_RWD:  //add by yangdecai 2012-06-09
+   				#else
                 case AVK_RWD:
+                #endif
                     CallApp_ChangeCallVolume_AVK_RWD(pMe);
                     
 #if !defined( FEATURE_CALL_RECORDER)
@@ -3221,7 +3225,11 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
 
         case EVT_KEY_HELD:
             switch ((AVKType)wParam){
+            #if defined(FEATURE_VERSION_S1000T)
+   			//case AVK_RWD:  //add by yangdecai 2012-06-09
+   			#else
             case AVK_RWD:
+            #endif
                 ISHELL_PostEvent( pMe->m_pShell, AEECLSID_DIALER,EVT_USER_REDRAW,0,0 );
  
                 if (HS_HEADSET_ON())
