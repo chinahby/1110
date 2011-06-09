@@ -170,7 +170,7 @@
 		<Text>Messages</Text>
 	</String>
 	<String Id="1057" Name="IDS_STR_BLACKBERRY_TWO">
-		<Text>Contact</Text>
+		<Text>Contacts</Text>
 	</String>
 	<String Id="1058" Name="IDS_STR_BLACKBERRY_TRE">
 		<Text>Alarm</Text>
