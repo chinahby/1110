@@ -380,7 +380,8 @@ static boolean InitWorldTime(CWorldTime *pme)
                                                 NULL,
                                                 0);
             }
-           if(i == 4)
+           #ifdef FEATURE_VERSION_W515V3
+            if(i == 4)
             {
             	(void)IMENUCTL_AddItem( pme->m_pMenuCity,
                                                 WORLDTIME_RES_FILE_LANG,
@@ -389,6 +390,7 @@ static boolean InitWorldTime(CWorldTime *pme)
                                                 NULL,
                                                 0);
             }
+           #endif
         }
         IMENUCTL_SetOemProperties(pme->m_pMenuCity, OEMMP_IDF_ALIGN_CENTER);
         IMENUCTL_SetActive( pme->m_pMenuCity, TRUE);
