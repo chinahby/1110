@@ -5565,14 +5565,14 @@ boolean CallApp_Modify_Number_To_Call_Table(CCallApp *pMe,AECHAR *number,
     AECHAR    ringer[MAX_FILE_NAME] = {0};
     CALL_FUN_START("%d type= %d CallApp_Modify_Number_To_Call_Table",pMe->m_CallsTable_Count,type,0);
 
-    if(WSTRLEN(number) == 0 && call_type == PI_ALLOWED)
+    if(WSTRLEN(number) == 0)
     {
         CALL_ERR("No number, Not allow Modify call table",0,0,0);
         return FALSE;
     }
     else
     {
-        if(call_type == PI_ALLOWED)
+        if(pMe->m_b_is_PI_ALLOWED == PI_ALLOWED)
         {
             (void)CallApp_NumberLookup(pMe, number, m_call_name,MAX_SIZE_NAME_TEXT, ringer,  NULL);
         }

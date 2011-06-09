@@ -7321,6 +7321,26 @@ boolean CallApp_NumberLookup(CCallApp     *pMe,
             IContactApp_Release(ca);
             return FALSE;
         }
+        #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+        if(pContInfo.pName == NULL &&((WSTRNICMP(Number,L"0",1)==0)||(WSTRNICMP(Number,L"+91",3)==0)))
+        {
+        	AECHAR Temp_Number[AEECM_MAX_DIGITS_LENGTH] = {0};
+        	MSG_FATAL("Temp_name...............................",0,0,0);
+        	if(WSTRNICMP(Number,L"0",1)==0)
+        	{
+        		WSTRLCPY(Temp_Number,Number+1,AEECM_MAX_DIGITS_LENGTH);
+        	}
+        	else if(WSTRNICMP(Number,L"+91",3)==0)
+        	{
+        		WSTRLCPY(Temp_Number,Number+3,AEECM_MAX_DIGITS_LENGTH);
+        	}
+        	MEMSET(Number,0,AEECM_MAX_DIGITS_LENGTH);
+        	WSTRLCPY(Number,Temp_Number,AEECM_MAX_DIGITS_LENGTH);
+        	ICONTAPP_NumberLookup(ca,
+        						  Number,
+                                  &pContInfo);
+        }
+        #endif
 #endif
         if(ringer != NULL)
         {
