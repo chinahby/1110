@@ -335,10 +335,10 @@
 		<Text>Add music success</Text>
 	</String>
 	<String Id="1111" Name="IDS_USB_CONNECTED">
-		<Text>USB Connected</Text>
+		<Text>v3 data card connected</Text>
 	</String>
 		<String Id="1112" Name="IDS_USB_NOT_CONNECTED">
-		<Text>USB not Connected</Text>
+		<Text>v3 data card not connected</Text>
 	</String>
 </Strings>
 <Dialogs>
