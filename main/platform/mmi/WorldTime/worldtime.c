@@ -86,6 +86,7 @@ struct _CWorldTime {
 	IAnnunciator        *m_pIAnn;
 	boolean     m_ismyatime;
 	boolean     m_isMya;
+    boolean     m_isIndia;
 };
 
 /*===========================================================================
@@ -220,7 +221,7 @@ SIDE EFFECTS:
 SEE ALSO:
 
 =============================================================================*/
-static void getCursorPosX( CWorldTime* pme)
+static void getCursorPosX( CWorldTime* pme,boolean left)
 {
     AEEImageInfo ii         = {0};
     int          timeZone   = pme->m_timeZone;
@@ -251,6 +252,18 @@ static void getCursorPosX( CWorldTime* pme)
 				timeZone ++;
 				pme->m_xBar =(int)( (pme->m_widthBg / 24.0 * timeZone ) + 0.5)+3;
 			}
+            else if(pme->m_isIndia)
+            {
+                timeZone ++;
+                if(left)
+                {
+                    pme->m_xBar =(int)( (pme->m_widthBg / 24.0 * timeZone ) + 0.5)-3;
+                }
+                else
+                {
+                    pme->m_xBar =(int)( (pme->m_widthBg / 24.0 * timeZone ) + 0.5)+3;
+                }
+            }
 			else
 			{
 	            if( timeZone < 0)
@@ -349,7 +362,7 @@ static boolean InitWorldTime(CWorldTime *pme)
                         pme->m_dyMenu);
         IMENUCTL_SetRect( pme->m_pMenuCity,&rc);
 
-        for(i=0;i<=24;i++)
+        for(i=0;i<=25;i++)
         {
         	
             (void)IMENUCTL_AddItem( pme->m_pMenuCity,
@@ -367,21 +380,32 @@ static boolean InitWorldTime(CWorldTime *pme)
                                                 NULL,
                                                 0);
             }
+           if(i == 4)
+            {
+            	(void)IMENUCTL_AddItem( pme->m_pMenuCity,
+                                                WORLDTIME_RES_FILE_LANG,
+                                                IDS_CITY_26,
+                                                IDS_CITY_26,
+                                                NULL,
+                                                0);
+            }
         }
         IMENUCTL_SetOemProperties(pme->m_pMenuCity, OEMMP_IDF_ALIGN_CENTER);
         IMENUCTL_SetActive( pme->m_pMenuCity, TRUE);
     }
 	pme->m_ismyatime = FALSE;
 	pme->m_isMya = FALSE;
+    pme->m_isIndia = FALSE;
     pme->m_timeZone = get_timezone();
 	if(pme->m_timeZone == 26)
 	{
 		//pme->m_ismyatime = TRUE;
 		pme->m_isMya = TRUE;
+        pme->m_isIndia = TRUE;
 		pme->m_timeZone = pme->m_timeZone-20;
 		MSG_FATAL("pme->m_timeZone===000==%d",pme->m_timeZone,0,0);
 	}
-    getCursorPosX( pme);
+    getCursorPosX( pme,FALSE);
 
     return TRUE;
 }
@@ -818,6 +842,19 @@ static void CWorldTime_DrawCityTime(CWorldTime *pme,boolean left)
 			sec = GETUTCSECONDS()+(local==pme->m_timeZone?LOCALTIMEOFFSET( 0):pme->m_timeZone*3600+1800);
 		}
 	}
+	else if(pme->m_isIndia)
+	{
+	    MSG_FATAL("..........................",0,0,0);
+		IMENUCTL_SetSel(pme->m_pMenuCity,IDS_CITY_26);
+		if(left)
+		{
+			sec = GETUTCSECONDS()+(local==pme->m_timeZone?LOCALTIMEOFFSET( 0):pme->m_timeZone*3600-1800);
+		}
+		else
+		{
+			sec = GETUTCSECONDS()+(local==pme->m_timeZone?LOCALTIMEOFFSET( 0):pme->m_timeZone*3600+1800);
+		}
+	}    
 	else
 	{
     	IMENUCTL_SetSel(pme->m_pMenuCity,timeZone + IDS_CITY_0);
@@ -880,6 +917,13 @@ static void Draw_TimeZone(CWorldTime *pme)
 		WSTRCPY(Temp,L"6.5");
 	#endif
 	}
+    #ifdef FEATURE_VERSION_W515V3
+    else if (pme->m_isIndia)
+    {
+    
+        WSTRCPY(Temp,L"5.5");
+    }
+    #endif
 	else
 	{
 		WSPRINTF(Temp, sizeof(Temp), wFormat, timeZone);
@@ -991,6 +1035,13 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
         	#endif
         	pme->m_isMya = FALSE;
         }
+        #ifdef FEATURE_VERSION_W515V3
+        else if((pme->m_isIndia) && ((pme->m_timeZone == 6)&& (left)))
+        {
+            pme->m_timeZone = pme->m_timeZone -1 ;
+            pme->m_isIndia = FALSE;
+        }
+        #endif
         #ifdef FEATURE_VERSION_MYANMAR
         else if((pme->m_isMya) && ((pme->m_timeZone == 5)&& !(left)))
         #else
@@ -1005,6 +1056,13 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
         	#endif
         	pme->m_isMya = FALSE;
         }
+        #ifdef FEATURE_VERSION_W515V3
+        else if((pme->m_isIndia) && ((pme->m_timeZone == 5)&& !(left)))
+        {
+            pme->m_timeZone = pme->m_timeZone +1 ;
+            pme->m_isIndia = FALSE;
+        }
+        #endif        
         #ifdef FEATURE_VERSION_MYANMAR
         else if((pme->m_isMya) && (((pme->m_timeZone == 5)&&(left))||(((pme->m_timeZone == 7)&& !(left)))))
         #else
@@ -1014,6 +1072,14 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
         	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
         	pme->m_isMya = FALSE;
         }
+        #ifdef FEATURE_VERSION_W515V3
+        else if((pme->m_isIndia) && (((pme->m_timeZone == 5)&&(left))||(((pme->m_timeZone == 6)&& !(left)))))
+       
+        {
+        	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
+        	pme->m_isIndia = FALSE;
+        }
+        #endif
         #ifdef FEATURE_VERSION_MYANMAR
         else if(!(pme->m_isMya)&&(((pme->m_timeZone == 7)&&(left)))||((pme->m_timeZone == 5)&& !(left)))
         #else
@@ -1023,6 +1089,13 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
         	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
         	pme->m_isMya = TRUE;
         }
+        #ifdef FEATURE_VERSION_W515V3
+        else if(!(pme->m_isIndia)&&(((pme->m_timeZone == 6)&&(left)))||((pme->m_timeZone == 5)&& !(left)))
+        {
+        	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
+        	pme->m_isIndia = TRUE;
+        }
+        #endif
         else
         {
         	MSG_FATAL("ii.cy:::::%d",pme->m_yBg,0,0);
@@ -1041,7 +1114,7 @@ static void WorldTime_DrawNextCity(CWorldTime * pme, boolean left)
 			pme->m_ismyatime = FALSE;
 		}
 		MSG_FATAL("pme->m_timeZone::::::::%d",pme->m_timeZone,0,0);
-        getCursorPosX( pme);
+        getCursorPosX( pme,left);
 
         SETAEERECT( &rect, pme->m_xBg, pme->m_yBg, pme->m_widthBg, pme->m_rectScreen.dy);
         IDISPLAY_SetClipRect( pme->a.m_pIDisplay, &rect);
