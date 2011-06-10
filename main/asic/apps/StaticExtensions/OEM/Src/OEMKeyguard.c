@@ -562,8 +562,14 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 
 
 //Add By zzg 2010_11_23
-#ifndef FEATURE_UNLOCK_KEY_SPACE		
+#ifndef FEATURE_UNLOCK_KEY_SPACE	
+#ifdef FEATURE_VERSION_W515V3
+                case AVK_SELECT:
+#else
                 case AVK_CLR:
+#endif
+                    
+                    
                     bDrawMessage = TRUE;
                     if (UNLOCKSTATE_RESET == sUnlockState)
                     {
@@ -888,8 +894,11 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
         //    db_value.db_backlight_level = TRUE;
         //    db_put(DB_BACKLIGHT_LEVEL, &db_value);
         //}
-        
+#ifdef FEATURE_VERSION_W515V3
+        if(wParam == AVK_CLR)
+#else
         if(wParam == AVK_SELECT)
+#endif            
         {
             OEMPriv_ResumeBREW();
             return FALSE;            
@@ -903,8 +912,11 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
                 return FALSE;            
             }            
         }
-        
+#ifdef FEATURE_VERSION_W515V3
+        if(wParam== AVK_CLR||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
+#else
         if(wParam== AVK_SELECT||wParam == AVK_END || wParam == AVK_POWER || wParam == AVK_HEADSET_CONNECT || wParam == AVK_HEADSET_DISCONNECT)
+#endif
         {        
             return FALSE;
         }

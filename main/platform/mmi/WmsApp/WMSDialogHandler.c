@@ -88,8 +88,11 @@
 #endif
 
 // sendopt 英文时标题条较长长度
-#ifdef FEATURE_DISP_220X176
+#if defined(FEATURE_DISP_220X176)
 #define SENDOPT_TITLELONGER   140
+#elif defined(FEATURE_DISP_128X160)
+#define SENDOPT_TITLELONGER   80
+
 #else
 #define SENDOPT_TITLELONGER   110
 #endif

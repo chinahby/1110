@@ -692,6 +692,9 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 		case BTBAR_UNLOCK:
 			nResID_R = IDS_STRING_UNLOCK;
 			break;
+        case BTBAR_LUNLOCK:
+            nResID_L = IDS_STRING_UNLOCK;
+            break;
 #ifdef FEATURE_SPORTS_APP
          case BTBAR_PAUSE_STOP:
             nResID_L = IDS_PAUSE;
@@ -2740,6 +2743,9 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 		case BTBAR_UNLOCK:
 			nResID_R = IDS_STRING_UNLOCK;
 			break;
+        case BTBAR_LUNLOCK:
+            nResID_L = IDS_STRING_UNLOCK;
+            break;
         case BTBAR_BACK:
             nResID_R = IDS_BACK;
             break;
