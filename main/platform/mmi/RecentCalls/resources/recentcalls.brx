@@ -127,6 +127,12 @@
 	<STRING Id="1013" Name="IDS_COLON">
 		<Text> : </Text>
 	</STRING>
+	<String Id="1014" Name="IDS_SECURITY_TITLE" Encoding="Unicode">
+		<Text>Security</Text>
+	</String>
+	<String Id="1015" Name="IDS_SECURITY" Encoding="Unicode">
+		<Text>Enter password:</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="1" Name="IDD_RMAINMENU" Focus="1">
@@ -182,5 +188,8 @@
 		<Controls/>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</DIALOG>
+	<Dialog Id="11" Name="IDD_ASK_PASSWORD_DIALOG" Focus="0">
+		<Controls/>
+	</Dialog>
 </Dialogs>
 </BREWRes>

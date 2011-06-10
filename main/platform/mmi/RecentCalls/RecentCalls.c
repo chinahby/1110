@@ -643,7 +643,7 @@ static int recentcalls_InitAppData(CRecentCalls *pMe)
     pMe->m_bNotOverwriteDlgRet = FALSE;
     pMe->key_enable = TRUE; 
     pMe->record_selected = 0;
-    
+    pMe->m_currDlgId = 0;
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
                                              AEECLSID_CONFIG,
                                              (void **)&pMe->m_pConfig))

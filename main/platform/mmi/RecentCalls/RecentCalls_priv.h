@@ -123,7 +123,9 @@ typedef enum DLGRetValue
    DLGRET_MSGBOX_OK,
    DLGRET_MAX_WMS_CONTACTS,
 
-   DLGRET_REFRESH
+   DLGRET_REFRESH,
+   DLGRET_VALIDPINPASS,
+   DLGRET_VALIDPINFAILED
    
 } DLGRetValue;
 
@@ -141,7 +143,8 @@ typedef enum _recentcallsState
     STATE_RTIME,
     STATE_DETAIL,
     STATE_REXIT,
-    STATE_SELECT_RETURN
+    STATE_SELECT_RETURN,
+    STATE_ASKPASSWORD
 } recentcallsState;
 
 // 状态处理函数返回给状态处理主函数的值类型
@@ -222,6 +225,7 @@ typedef struct _CRecentCalls
     char*         m_pPhoneLockPassword;
     PFNSELECTEDRECENTCALLSCB m_pSelFldCB;
     uint16           m_nRemainWMSNum;
+	uint16           m_currDlgId;
 } CRecentCalls;
 
 /*==============================================================================
@@ -244,6 +248,7 @@ typedef struct _CRecentCalls
 #define EVT_APPISREADY   (EVT_USER+1)         
 
 #define EVT_USER_CLOSEAPP (EVT_USER+13)
+#define xOffset                 (5)
 
 #define RECENTCALLS_DRAW_BOTTOMBAR(x)                           \
 {                                                   \

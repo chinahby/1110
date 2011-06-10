@@ -132,6 +132,10 @@ static boolean RecentCalls_FindSelectRecordListNode(uint16 nRecordIndex);
 #ifdef FEATURE_EDITABLE_RECORD
 static boolean RecentCalls_EditRecNumber(CRecentCalls *pMe);
 #endif
+static boolean  Recentcalls_AskpasswordEvent(CRecentCalls *pMe, 
+     AEEEvent eCode, 
+     uint16 wParam,
+     uint32 dwParam);
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -342,6 +346,8 @@ boolean recentcalls_RouteDialogEvent(CRecentCalls *pMe,
             
         case IDD_DETAIL:
             return RecentCalls_DetailEvent(pMe, eCode, wParam, dwParam);
+		case IDD_ASK_PASSWORD_DIALOG:
+			return Recentcalls_AskpasswordEvent(pMe, eCode, wParam, dwParam);
 
         default:
             return FALSE;
@@ -435,6 +441,7 @@ static boolean RecentCalls_HandleMsgBoxDlgEvent(CRecentCalls* pMe,
                         
                     case IDS_DELETE_Q:
                     case IDS_RESET_TIME_Q:
+						MSG_FATAL("--------->ok1",0,0,0);
                         Msg_Param.ePMsgType = MESSAGE_CONFIRM;
                         break;
                         
@@ -548,7 +555,7 @@ static boolean  RecentCalls_VerifyPasswordEvent(CRecentCalls *pMe,
                 AECHAR  wstrDisplay[OEMNV_LOCKCODE_MAXLEN+1] = {0};
                 char    strDisplay[OEMNV_LOCKCODE_MAXLEN+1] = {0};
                 AECHAR  text[32] = {0};
-                int xOffset = 5;
+      //          int xOffset = 5;
                 RGBVAL nOldFontColor;
                 TitleBar_Param_type  TitleBar_Param = {0};
                 
@@ -3871,7 +3878,7 @@ static boolean RecentCalls_SendSMS(CRecentCalls *pMe)
         }
         else if (pMe->selectState == IDS_SEND_CONTACT)
         {
-#ifdef FEATURE_CARRIER_THAILAND_HUTCH         
+#ifdef FEATURE_SEND_MSG         
             AECHAR wszName[MAX_STRING_LEN];
             AECHAR wszString[MAX_STRING_LEN+AEECALLHISTORY_MAXDIGITS+6];
             int number_len = 0;
@@ -4331,4 +4338,331 @@ static boolean RecentCalls_EditRecNumber(CRecentCalls *pMe)
     return bRet;
 }
 #endif
+/*==============================================================================
+函数：Recentcalls_AskpasswordEvent
 
+说明：
+       IDD_ASK_PASSWORD_DIALOG 对话框事件处理函数
+
+参数：
+       pMe [in]：指向SecurityMenu Applet对象结构的指针。该结构包含小程序的特定信息。
+       eCode [in]：事件代码。
+       wParam：事件相关数据。
+       dwParam：事件相关数据。
+
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+备注：
+
+       
+==============================================================================*/
+
+static boolean	Recentcalls_AskpasswordEvent(CRecentCalls *pMe, 
+		 AEEEvent eCode, 
+		 uint16 wParam,
+		 uint32 dwParam)
+{
+    PARAM_NOT_REF(dwParam)
+    //static char   *m_strPhonePWD = NULL;
+    AECHAR         wstrDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+    int            nLen = 0;
+    char           strDisplay[OEMNV_LOCKCODE_MAXLEN+2] = {0};
+//    SEC_ERR("%x, %x ,%x,SecurityAskPasswordDlgHandler",eCode,wParam,dwParam);
+    
+    if (NULL == pMe)
+    {
+        return FALSE;
+    }
+    
+    switch (eCode)
+    {
+        case EVT_DIALOG_INIT:
+            if(NULL == pMe->m_pPhoneLockPassword)
+            {
+                pMe->m_pPhoneLockPassword = (char *)MALLOC((OEMNV_LOCKCODE_MAXLEN + 1)* sizeof(char));
+            }
+            return TRUE;
+            
+        case EVT_DIALOG_START:
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                    AEECLSID_APP_RECENTCALL,
+                                    EVT_USER_REDRAW,
+                                    NULL,
+                                    NULL);
+            return TRUE;
+            
+        case EVT_USER_REDRAW:
+            // 绘制相关信息
+            {
+                AECHAR      text[32] = {0};
+                RGBVAL nOldFontColor;
+                TitleBar_Param_type  TitleBar_Param = {0};
+                
+                // 先清屏
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                {
+                    IImage *pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SECURITY_BACKGROUND);
+                    
+                    Appscommon_ResetBackground(pMe->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, &pMe->m_rc, 0, 0);
+                    if(pImageBg != NULL)
+                    {
+                        IImage_Release(pImageBg);
+                    }
+                }
+#else
+                Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+#endif
+                //IDISPLAY_FillRect  (pMe->m_pDisplay,&pMe->m_rc, RGB_BLACK);
+                (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                AEE_RECENTCALLSRES_LANGFILE,
+                                                IDS_SECURITY_TITLE, 
+                                                text,
+                                                sizeof(text));
+                // 画标题条
+                TitleBar_Param.pwszTitle = text;
+                TitleBar_Param.dwAlignFlags = IDF_ALIGN_MIDDLE | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
+                #if 0
+                DrawTitleBar(pMe->m_pDisplay, &TitleBar_Param);
+				#else
+				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
+				#endif
+               (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                AEE_RECENTCALLSRES_LANGFILE,
+                                                IDS_SECURITY, 
+                                                text,
+                                                sizeof(text));
+                nOldFontColor = IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                    AEE_FONT_BOLD, 
+                                    text,
+                                    -1, 
+                                    xOffset, 
+                                    MENUITEM_HEIGHT*1/2, 
+                                    NULL, 
+                                    IDF_TEXT_TRANSPARENT);
+                   
+                nLen = (pMe->m_pPhoneLockPassword == NULL)?(0):(STRLEN(pMe->m_pPhoneLockPassword)); 
+                MEMSET(strDisplay, '*', nLen);
+                strDisplay[nLen] = '|';
+                strDisplay[nLen + 1] = '\0';
+                (void) STRTOWSTR(strDisplay, wstrDisplay, sizeof(wstrDisplay));
+                IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                AEE_FONT_BOLD, 
+                                wstrDisplay,
+                                -1, 
+                                2*xOffset, 
+                                MENUITEM_HEIGHT*3/2,
+                                NULL, 
+                                IDF_TEXT_TRANSPARENT);
+                (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, nOldFontColor);
+            	#ifndef FEATURE_ALL_KEY_PAD
+                // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    RECENTCALLS_DRAW_BOTTOMBAR(BTBAR_OK_DELETE)
+                }
+                else if(nLen > 0)
+                {// 删除
+                    RECENTCALLS_DRAW_BOTTOMBAR(BTBAR_DELETE)
+                }
+                else
+                #else
+                 // 绘制底条提示
+                if (nLen > 3)
+                {// 确定-----删除
+                    RECENTCALLS_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
+                }
+                else if(nLen > 0)
+                {// 删除
+                    RECENTCALLS_DRAW_BOTTOMBAR(BTBAR_BACK)
+                }
+                else
+                #endif
+                {// 取消
+                    RECENTCALLS_DRAW_BOTTOMBAR(BTBAR_CANCEL)
+                }
+
+                // 更新显示
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE); 
+        
+                return TRUE;
+            }
+            
+        case EVT_DIALOG_END:
+            if(!pMe->m_bSuspending)
+            {
+                FREEIF(pMe->m_pPhoneLockPassword);
+            }
+            return TRUE;
+
+        case EVT_KEY:
+            {
+                char  chEnter = 0;
+                int   nLen = 0;
+                boolean bRedraw = FALSE;
+                
+                switch (wParam)
+                {
+                    case AVK_0:
+                    case AVK_1:
+                    case AVK_2:
+                    case AVK_3:
+                    case AVK_4:
+                    case AVK_5:
+                    case AVK_6:
+                    case AVK_7:
+                    case AVK_8:
+                    case AVK_9:
+                        chEnter = '0' + (wParam - AVK_0);
+                        break;
+
+                    case AVK_STAR:
+                        chEnter = '*';
+                        break;
+ 
+                    case AVK_POUND:
+                        chEnter = '#';
+                        break;
+                        
+                    case AVK_CLR:
+                        chEnter = 0;
+                        #ifndef FEATURE_ALL_KEY_PAD
+                        if (pMe->m_pPhoneLockPassword == NULL || STRLEN(pMe->m_pPhoneLockPassword) == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        #else
+                        if(dwParam == 0)
+                        {
+                            CLOSE_DIALOG(DLGRET_CANCELED)
+                            return TRUE;
+                        }
+                        else
+                        {
+                        	if (pMe->m_pPhoneLockPassword == NULL || STRLEN(pMe->m_pPhoneLockPassword) == 0)
+                        	{
+                            	CLOSE_DIALOG(DLGRET_CANCELED)
+                            	return TRUE;
+                        	}
+                        }
+                        #endif
+                        break;
+                        
+                    case AVK_SELECT:
+                    case AVK_INFO:
+                        
+                        if (pMe->m_pPhoneLockPassword == NULL || STRLEN(pMe->m_pPhoneLockPassword) < 4)
+                        {
+                            return TRUE;
+                        }
+                        else
+                        {
+                            uint16 wPWD=0;
+                            char superpass[6] = {"*#09#"};
+                            (void) ICONFIG_GetItem(pMe->m_pConfig, 
+                                                   CFGI_PHONE_PASSWORD,
+                                                   &wPWD,
+                                                   sizeof(uint16));
+#ifndef WIN32//wlh 模拟器测试用                   
+                            if (wPWD == EncodePWDToUint16(pMe->m_pPhoneLockPassword)||(0==strcmp(superpass,pMe->m_pPhoneLockPassword)))
+#else
+							if(1)
+#endif//WIN32   
+                            {
+                                // 密码符合
+                                CLOSE_DIALOG(DLGRET_VALIDPINPASS)
+                            }
+                            else
+                            {
+                                // 密码错误
+                                if(STRNCMP(pMe->m_pPhoneLockPassword,"62382",5) == 0)
+                                {
+#ifdef FEATURE_SCREEN_CAPTURE
+#ifndef WIN32
+                                    disp_set_capture ( TRUE );
+#endif//WIN32
+#endif
+                                }
+                            CLOSE_DIALOG(DLGRET_VALIDPINFAILED)//(DLGRET_OK)
+                        }
+                    }
+                    return TRUE;
+                        
+                default:
+                    return TRUE;
+                }
+                nLen = (pMe->m_pPhoneLockPassword == NULL)?(0):(STRLEN(pMe->m_pPhoneLockPassword));
+                if (chEnter == 0)
+                {
+                    // 删除字符
+                    if (nLen > 0)
+                    {
+                        bRedraw = TRUE;
+                        pMe->m_pPhoneLockPassword[nLen-1] = chEnter;
+                    }
+                }
+                else if (nLen < OEMNV_LOCKCODE_MAXLEN)
+                {
+                    pMe->m_pPhoneLockPassword[nLen] = chEnter;
+                    nLen++;
+                    pMe->m_pPhoneLockPassword[nLen] = 0;
+                    bRedraw = TRUE;
+                }
+                
+                if (bRedraw)
+                {
+                    (void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_APP_RECENTCALL,
+                                            EVT_USER_REDRAW,
+                                            NULL,
+                                            NULL);
+                }
+            }
+            return TRUE;
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_RECENTCALL,EVT_USER,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//左
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_RECENTCALL,EVT_USER,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_RECENTCALL,EVT_USER,AVK_CLR,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif//FEATURE_LCD_TOUCH_ENABLE             
+        default:
+            break;
+    }
+    
+    return FALSE;
+}

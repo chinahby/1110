@@ -72,6 +72,8 @@ static NextFSMAction stateexithandle(CRecentCalls *pMe);
 
 // 状态 STATE_SELECT_RETURN 处理函数
 static NextFSMAction Handler_STATE_SELECT_RETURN(CRecentCalls *pMe);
+//状态 STATE_ASKPASSWORD 处理函数
+static NextFSMAction State_AskPasswordHandler(CRecentCalls *pMe);
 
 /*==============================================================================
                                  全局数据
@@ -157,6 +159,8 @@ NextFSMAction recentcalls_ProcessState(CRecentCalls *pMe)
         //wuuquan.tang add for wms 20081127
         case STATE_SELECT_RETURN:
             retVal = Handler_STATE_SELECT_RETURN(pMe);
+		case STATE_ASKPASSWORD:
+			retVal = State_AskPasswordHandler(pMe);
             break;
         
         case STATE_REXIT:
@@ -673,7 +677,13 @@ static NextFSMAction statetimehandle(CRecentCalls *pMe)
             recentcalls_ShowDialog(pMe, IDD_RTIME);
             return NFSMACTION_WAIT;
         case DLGRET_TIMECLEAR:
-            MOVE_TO_STATE(STATE_RWARN)
+			MSG_FATAL("---------ok2",0,0,0);
+#if defined FEATURE_VERSION_W515       
+                    MOVE_TO_STATE(STATE_ASKPASSWORD)
+#else 
+                    MOVE_TO_STATE(STATE_RWARN)
+#endif
+            
             return NFSMACTION_CONTINUE;
         case DLGRET_CANCELED:
             MOVE_TO_STATE(STATE_RTIME_MENU)
@@ -786,4 +796,65 @@ static NextFSMAction Handler_STATE_SELECT_RETURN(CRecentCalls *pMe)
     }
     return NFSMACTION_CONTINUE;
 } // Handler_STATE_SELECT_RETURN
+/*==============================================================================
+函数：
+       State_AskPasswordHandler
+说明：
+       STATE_ASKPASSWORD 状态处理函数
+              
+参数：
+       pMe [in]：指向ContApp Applet对象结构的指针。该结构包含小程序的特定信息。
+       
+返回值：
+       NFSMACTION_CONTINUE：指示后有子状态，状态机不能停止。
+       NFSMACTION_WAIT：指示因要显示对话框界面给用户，应挂起状态机。
+       
+备注：
+       
+==============================================================================*/
+
+static NextFSMAction State_AskPasswordHandler(CRecentCalls *pMe)
+{
+		if (NULL == pMe)
+		{
+			return NFSMACTION_WAIT;
+		}
+		//SEC_ERR("StateAskPinHandler", 0, 0, 0);
+		switch(pMe->m_eDlgRet)
+		{
+			case DLGRET_CREATE:
+				pMe->m_bNotOverwriteDlgRet = FALSE;
+				recentcalls_ShowDialog(pMe, IDD_ASK_PASSWORD_DIALOG);
+				MSG_FATAL("---------->ok1",0,0,0);
+				return NFSMACTION_WAIT;
+	          
+			case DLGRET_VALIDPINPASS:
+				MSG_FATAL("---------->ok2",0,0,0);
+				MOVE_TO_STATE(STATE_RWARN);
+				return NFSMACTION_CONTINUE;
+	
+			case DLGRET_VALIDPINFAILED:
+				MSG_FATAL("---------->ok3",0,0,0);
+				//pMe->m_wMsgID = IDS_MSG_INPUTINVALID;
+				recentcalls_ShowMsgBox(pMe, IDS_MSG_INPUTINVALID);
+			//	MOVE_TO_STATE(STATE_RTIME_MENU);
+				return NFSMACTION_WAIT; 
+				
+			case DLGRET_MSGBOX_OK:
+				MSG_FATAL("---------->ok4",0,0,0);
+				MOVE_TO_STATE(STATE_RTIME_MENU);		  
+				return NFSMACTION_CONTINUE;
+	
+			case DLGRET_CANCELED:
+			MOVE_TO_STATE(STATE_RTIME_MENU)
+			return NFSMACTION_CONTINUE;
+	
+			default:
+			break;
+		}
+	
+		return NFSMACTION_WAIT;
+
+	
+}
 
