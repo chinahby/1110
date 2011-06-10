@@ -337,9 +337,12 @@
 	<String Id="1111" Name="IDS_USB_CONNECTED">
 		<Text>v3 data card connected</Text>
 	</String>
-		<String Id="1112" Name="IDS_USB_NOT_CONNECTED">
+	<String Id="1112" Name="IDS_USB_NOT_CONNECTED">
 		<Text>v3 data card not connected</Text>
 	</String>
+	<STRING Id="1113" Name="IDS_MG_STOPV3DATACARD">
+		<Text>v3 data card stopped</Text>
+	</STRING>	
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">

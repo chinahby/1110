@@ -851,9 +851,16 @@ static NextFSMAction MGStateUDiskStateHandler(CMediaGalleryApp* pMe)
          return NFSMACTION_WAIT;
 
       case MGDLGRET_UDISKSTOP:
-         MediaGalleryApp_ShowMsgBoxDlg(pMe,MGRES_LANGFILE,IDS_MG_STOPUDISK,
-                                       MESSAGE_INFORMATION,
-                                       BTBAR_OK);
+        #ifdef FEATURE_VERSION_W515V3
+        MediaGalleryApp_ShowMsgBoxDlg(pMe,MGRES_LANGFILE,IDS_MG_STOPV3DATACARD,
+                                      MESSAGE_INFORMATION,
+                                      BTBAR_OK);        
+        #else
+        MediaGalleryApp_ShowMsgBoxDlg(pMe,MGRES_LANGFILE,IDS_MG_STOPUDISK,
+                                      MESSAGE_INFORMATION,
+                                      BTBAR_OK);
+        #endif
+         
          return NFSMACTION_WAIT;
 
       case MGDLGRET_NOEXTCARD:
