@@ -678,7 +678,7 @@ static NextFSMAction statetimehandle(CRecentCalls *pMe)
             return NFSMACTION_WAIT;
         case DLGRET_TIMECLEAR:
 			MSG_FATAL("---------ok2",0,0,0);
-#if defined FEATURE_VERSION_W515       
+#if defined (FEATURE_VERSION_W515)||defined (FEATURE_VERSION_S1000T)       
                     MOVE_TO_STATE(STATE_ASKPASSWORD)
 #else 
                     MOVE_TO_STATE(STATE_RWARN)
