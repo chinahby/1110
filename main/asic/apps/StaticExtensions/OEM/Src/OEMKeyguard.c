@@ -604,7 +604,10 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     {
                         if(!bDrawMessage)
                         {
+                        	#if defined( FEATURE_VERSION_S1000T)||defined( FEATURE_VERSION_W515V3)
+                        	#else
                             OEMPriv_DrawKeyguardTime();
+                            #endif
                         }
                         else
                         {
@@ -630,7 +633,10 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                 default:
                     if(!bDrawMessage)
                     {
+                    	#if defined( FEATURE_VERSION_S1000T)||defined( FEATURE_VERSION_W515V3)
+                    	#else
                         OEMPriv_DrawKeyguardTime();
+                        #endif
                     }
                     else
                     {
@@ -653,7 +659,10 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 				{
 					if (!bDrawMessage)
                     {
+                    	#if defined( FEATURE_VERSION_S1000T)||defined( FEATURE_VERSION_W515V3)
+                    	#else
                         OEMPriv_DrawKeyguardTime();
+                        #endif
                     }
                     else
                     {
