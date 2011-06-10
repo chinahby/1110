@@ -170,7 +170,8 @@ typedef struct _CConverter
     IMenuCtl           *currency;
     ITextCtl            *coeff1;
     ITextCtl            *coeff2;
-    #ifndef FEATURE_VERSION_S1000T
+    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
+    #else
     ITextCtl            *coeff3;
     #endif
     uint16               basiccoefficient;

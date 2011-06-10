@@ -524,6 +524,18 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
       defined(MSMAUD_QSC1110_AUDIO_CAL)
 VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
 #if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
+  #ifdef FEATURE_VERSION_W516
+  /* Internal CODEC - no pad values    */
+  /*  rx                dtmf            pad        */
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {           -1400 , VOC_VOL_SILENCE ,  0 },
+  {           -1000 , VOC_VOL_SILENCE ,  0 },
+  {            -700 , VOC_VOL_SILENCE ,  0 },
+  {            -500 , VOC_VOL_SILENCE ,  0 },
+  {            -200 , VOC_VOL_SILENCE ,  0 },
+  {               0 , VOC_VOL_SILENCE ,  0 },
+  {             300 , VOC_VOL_SILENCE ,  0 }
+  #else
   /* Internal CODEC - no pad values    */
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
@@ -534,6 +546,7 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_handset_midi_vol[] = {
   {            -400 , VOC_VOL_SILENCE ,  0 },
   {            -200 , VOC_VOL_SILENCE ,  0 },
   {             100 , VOC_VOL_SILENCE ,  0 }
+  #endif
 #else
   /* Internal CODEC - no pad values    */
   /*  rx                dtmf            pad        */
@@ -2137,6 +2150,18 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
   /* Internal CODEC - no pad values    */
 #if defined(CUST_EDITION) && !defined(FEATURE_OEMOMH)
   /*  rx				dtmf			pad 	   */
+  #ifdef FEATURE_VERSION_W516
+  /* Internal CODEC - no pad values    */
+  /*  rx                dtmf            pad        */
+  { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
+  {		      -600  , 		    -1400 ,  0 },
+  {		      -400  , 		    -1200 ,  0 },
+  {		      -200  , 		    -1000 ,  0 },
+  {			     0  , 		     -800 ,  0 },
+  {		       200  , 		     -600 ,  0 },
+  {		       400  , 		     -400 ,  0 },
+  {		       600  , 		     -200 ,  0 }
+  #else
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },
   {		      -800  , 		    -1400 ,  0 },
   {		      -600  , 		    -1200 ,  0 },
@@ -2145,6 +2170,7 @@ VOL_MEMORY snd_gen_level_voc_type snd_cal_sp_voice_vol[] = {
   {		         0  , 		     -600 ,  0 },
   {		       200  , 		     -400 ,  0 },
   {		       400  , 		     -200 ,  0 }
+  #endif
 #else
   /*  rx                dtmf            pad        */
   { VOC_VOL_SILENCE , VOC_VOL_SILENCE ,  0 },

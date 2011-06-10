@@ -682,7 +682,8 @@ static int Converter_InitAppData(CConverter *pMe)
         return EFAILED;
     }
     MSG_FATAL("coeff2 address=%x",pMe->coeff2,0,0);
-    #ifndef FEATURE_VERSION_S1000T
+    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
+    #else
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, 
                                 AEECLSID_TEXTCTL, 
                                 (void **) &pMe->coeff3))
@@ -767,7 +768,8 @@ static void Converter_FreeAppData(CConverter *pMe)
         ITEXTCTL_Release(pMe->coeff2);
         pMe->coeff2 = NULL;
     }
-    #ifndef FEATURE_VERSION_S1000T
+    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
+    #else
     MSG_FATAL("coeff3 address=%x",pMe->coeff3,0,0);
     if(pMe->coeff3)
     {
@@ -947,7 +949,8 @@ static void Converter_SetMenuPosition(CConverter *pMe)
     rect.y += (2*pMe->dyMenu);    
     ITEXTCTL_SetRect(pMe->coeff2, &rect);
     
-	#ifndef FEATURE_VERSION_S1000T
+	#if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
+    #else
     rect.y += (2*pMe->dyMenu);	
     rect.y += (2*pMe->dyMenu - FRAME_SIZE);		//Add By zzg 2010_07_08
     ITEXTCTL_SetRect(pMe->coeff3, &rect);
@@ -958,14 +961,16 @@ static void Converter_SetMenuPosition(CConverter *pMe)
     ITEXTCTL_SetProperties(pMe->pNumber2, TP_FRAME|TP_FOCUS_NOSEL|TP_FIXSETRECT);	
     ITEXTCTL_SetProperties(pMe->coeff1, TP_FRAME|TP_FOCUS_NOSEL);
     ITEXTCTL_SetProperties(pMe->coeff2, TP_FRAME|TP_FOCUS_NOSEL);
-    #ifndef FEATURE_VERSION_S1000T
+    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
+    #else
     ITEXTCTL_SetProperties(pMe->coeff3, TP_FRAME|TP_FOCUS_NOSEL);
     #endif
     ITEXTCTL_SetCursorPos(pMe->pNumber1, TC_CURSOREND);
     ITEXTCTL_SetCursorPos(pMe->pNumber2, TC_CURSOREND);
     ITEXTCTL_SetCursorPos(pMe->coeff1, TC_CURSOREND);
     ITEXTCTL_SetCursorPos(pMe->coeff2, TC_CURSOREND);
-    #ifndef FEATURE_VERSION_S1000T
+    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
+    #else
     ITEXTCTL_SetCursorPos(pMe->coeff3, TC_CURSOREND);
     #endif
     IMENUCTL_SetProperties(pMe->pUnitMenu1, MP_NO_REDRAW);

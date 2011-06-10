@@ -98,7 +98,7 @@
 		<Text>oz</Text>
 	</STRING>
 	<STRING Id="1032" Name="IDS_WEIGHT_G">
-		<Text>g</Text>
+		<Text>gm</Text>
 	</STRING>
 	<STRING Id="1033" Name="IDS_WEIGHT_POUND">
 		<Text>pound</Text>

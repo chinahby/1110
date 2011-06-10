@@ -634,7 +634,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             if(gbWmsVMailNtf || gbWmsSMSNtf)
             {
                 // 通知 CoreApp 需要进行短信提示
-                #ifdef FEATURE_VERSION_S1000T
+                #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
 			    if(ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)
 				#endif
 				{
@@ -897,7 +897,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                     }
 
                     return TRUE;
-#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
 #else
  
                 case AVK_RWD:
@@ -1028,7 +1028,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             default:
                 break;
             }
-            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
+            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             #endif
             break;
