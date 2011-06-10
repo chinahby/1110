@@ -3425,10 +3425,11 @@ static void TextCtl_DrawCursorTimer(TextCtlContext *pContext)
             IDISPLAY_InvertRect(pContext->pIDisplay, drawCursor);
         }
         IDISPLAY_UpdateEx( pContext->pIDisplay, FALSE);
+        /*
         (void) ISHELL_SetTimer((IShell *) (pContext->pIShell),
                                                 TIMEOUT,
                                                 (PFNNOTIFY)TextCtl_DrawCursorTimer,
-                                                pContext);
+                                                pContext);*/
     }
 }
 #endif //FEATURE_ARPHIC_LAYOUT_ENGINE

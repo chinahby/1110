@@ -2992,11 +2992,13 @@ static void copyTextContentToVariables( CScheduleApp *pme, ITextCtl* pSubject, I
 {
     if( !ITEXTCTL_GetText( pSubject, pme->m_CalMgr.m_szEventDes, /*MAXTEXT*/sizeof(pme->m_CalMgr.m_szEventDes)))
     {
+    	MSG_FATAL("pme->m_CalMgr.m_szEventDes............",0,0,0);
         pme->m_CalMgr.m_szEventDes[0] = 0;
     }
 
     if( !ITEXTCTL_GetText( pNote, pme->m_CalMgr.m_szNote, /*MAXTEXT*/sizeof(pme->m_CalMgr.m_szNote)))
     {
+    	MSG_FATAL("pme->m_CalMgr.m_szNote................",0,0,0);
         pme->m_CalMgr.m_szNote[0] = 0;
     }
 }
@@ -3954,6 +3956,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
                 case AVK_7:
                 case AVK_8:
                 case AVK_9:
+                	MSG_FATAL("AVK_SELECT AVK_INFO AVK_0 AVK_1 AVK_2 AVK_3",0,0,0);
 #if defined( AEE_SIMULATOR)
                 if( subState == 0 && wParam == AVK_SELECT && (currentItem == 0 || currentItem == 1))
 #else
@@ -3969,6 +3972,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
                     else
                     {
                         copyTextContentToVariables( pme, pSubject, pNote);
+                        MSG_FATAL("currentItem===============================%d",currentItem,0,0);
                         pme->m_pszEventEditText = currentItem == 0 ? pme->m_CalMgr.m_szEventDes : pme->m_CalMgr.m_szNote;
                         pme->m_eventEditItem    = currentItem;
                         exitByUser = TRUE;
@@ -3976,6 +3980,7 @@ static boolean  dialog_handler_of_state_event_edit( CScheduleApp* pme,
                     }
                     return TRUE;
                 }
+                break;
 
 _scheduleapp_event_edit_save_:
                 if( subState == 0)
@@ -4056,6 +4061,7 @@ _scheduleapp_event_edit_save_:
                         }
                         OEMOS_Sleep( 200);
                         exitByUser = TRUE;
+                        MSG_FATAL("_scheduleapp_event_edit_save_.........",0,0,0);
                         CLOSE_DIALOG( DLGRET_OK)
                     }
                     else
@@ -4064,7 +4070,7 @@ _scheduleapp_event_edit_save_:
                         repaint(pme, TRUE);
                     }
                 }
-                break;
+                
             }
         }
         return TRUE;
@@ -4094,6 +4100,14 @@ _scheduleapp_event_edit_save_:
                         {
                             currentItem = (currentItem + 1) % 6;
                         }
+                        if(currentItem!=1)
+                        {
+                        	ITEXTCTL_SetActive( pSubject, FALSE);
+                        }
+                        else if(currentItem!=2)
+                        {
+                        	ITEXTCTL_SetActive( pNote, FALSE);
+                        }
                         repaint(pme, TRUE);
                     }
                 }
@@ -4116,7 +4130,7 @@ _scheduleapp_event_edit_save_:
                     {
                         repaint(pme, TRUE);
                     }
-                    else
+                    else if(wParam == AVK_SELECT)
                     {
                         repaint(pme, TRUE);
                         goto _scheduleapp_event_edit_save_;
@@ -4128,7 +4142,7 @@ _scheduleapp_event_edit_save_:
                     {
                         repaint(pme, TRUE);
                     }
-                    else if(wParam == AVK_SELECT || currentItem ==3 || currentItem == 4 || currentItem == 5)
+                    else if(wParam == AVK_SELECT /*|| currentItem ==3 || currentItem == 4 || currentItem == 5*/)
                     {
                         repaint(pme, TRUE);
                         goto _scheduleapp_event_edit_save_;
@@ -4168,7 +4182,7 @@ static boolean  dialog_handler_of_state_inputtext( CScheduleApp* pme,
             MEMSET( theText, 0, sizeof( theText));
             if( pTextControl && !pme->m_closeByPowerKey && !exitByUser)
             {
-                if( !ITEXTCTL_GetText( pTextControl, theText, MAXTEXT - 1))
+                if( !ITEXTCTL_GetText( pTextControl, theText, MAXTEXT+1))
                 {
                     theText[0] = 0;
                 }
@@ -4219,6 +4233,7 @@ static boolean  dialog_handler_of_state_inputtext( CScheduleApp* pme,
         {
             if( pTextControl)
             {
+            	MSG_FATAL("ITEXTCTL_Redraw......................................,0,0,0",0,0,0);
                 ITEXTCTL_Redraw( pTextControl);
             }
         }
@@ -4263,7 +4278,8 @@ static boolean  dialog_handler_of_state_inputtext( CScheduleApp* pme,
                     }
                     else if( pTextControl && bottomBarType != BTBAR_BACK_DELETE)
                     {
-                        ITEXTCTL_GetText( pTextControl, pme->m_pszEventEditText, /*MAXTEXT*/WSTRLEN(pme->m_pszEventEditText)*sizeof(AECHAR));
+                    	MSG_FATAL("bottomBarType != BTBAR_BACK_DELETE....................",0,0,0);
+                        ITEXTCTL_GetText( pTextControl, pme->m_pszEventEditText, MAXTEXT/*WSTRLEN(pme->m_pszEventEditText)*sizeof(AECHAR)*/);
                     }
                     exitByUser = 1;
                     CLOSE_DIALOG(DLGRET_OK)

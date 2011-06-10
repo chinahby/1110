@@ -2976,7 +2976,7 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
                 case WMSST_INBOXMSGOPTS:
                     if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
                     {
-                        MOVE_TO_STATE(WMSST_VIEWINBOXMSG)
+                        MOVE_TO_STATE(WMSST_INBOXES)
                     }
                     else
                     {
@@ -2988,7 +2988,7 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
                 case WMSST_OUTMSGOPTS:
                     if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
                     {
-                        MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG)
+                        MOVE_TO_STATE(WMSST_OUTBOX)
                     }
                     else
                     {
@@ -3001,7 +3001,7 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
                 case WMSST_DRAFTMSGOPTS:
                     if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
                     {
-                        MOVE_TO_STATE(WMSST_VIEWDRAFTMSG)
+                        MOVE_TO_STATE(WMSST_DRAFT)
                     }
                     else
                     {
