@@ -158,7 +158,7 @@
 		<Text>Invalid link number</Text>
 	</STRING>
 	<STRING Id="1053" Name="IDS_MSG_CURPROFILE_MEETING">
-		<Text>vibrate mode actived</Text>
+		<Text>vibrate mode activated</Text>
 	</STRING>
 	<STRING Id="1054" Name="IDS_MSG_CURPROFILE_NORMALMODE">
 		<Text>normal mode activated</Text>
