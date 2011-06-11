@@ -5653,10 +5653,10 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #ifdef FEATURE_KEYGUARD
     else if(OEMKeyguard_IsEnabled())
     {
-    	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) || defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
+    	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
     	eBBarType = BTBAR_UNLOCK_SOS;
-       // #elif defined(FEATURE_VERSION_W515V3)
-       // eBBarType = BTBAR_LUNLOCK;
+        #elif defined(FEATURE_VERSION_W515V3)
+        eBBarType = BTBAR_LUNLOCK;
     	#else
         eBBarType = BTBAR_UNLOCK;
         #endif

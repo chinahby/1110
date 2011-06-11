@@ -694,6 +694,7 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
 			break;
         case BTBAR_LUNLOCK:
             nResID_L = IDS_STRING_UNLOCK;
+            nResID_R = IDS_SOS;
             break;
 #ifdef FEATURE_SPORTS_APP
          case BTBAR_PAUSE_STOP:
