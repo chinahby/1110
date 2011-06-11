@@ -3702,6 +3702,21 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             	case AVK_SOFT2:		//Add By zzg 2010_09_08 for smart and m8
                 case AVK_CLR:
 
+#ifdef FEATURE_VERSION_W515V3
+                if(pMe->m_IsSametime)
+                   {
+                       return TRUE;
+                   }
+                   else
+                   {
+                   if(OEMKeyguard_IsEnabled())
+                   {
+                       OEMKeyguard_SetState(FALSE);
+                       pMe->m_b_set_lock = TRUE;
+                       CLOSE_DIALOG(DLGRET_EMGCALL)
+                   }
+                   }
+#endif
                     return TRUE;
 
                 case AVK_SELECT:
@@ -5638,10 +5653,10 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #ifdef FEATURE_KEYGUARD
     else if(OEMKeyguard_IsEnabled())
     {
-    	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
+    	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) || defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
     	eBBarType = BTBAR_UNLOCK_SOS;
-        #elif defined(FEATURE_VERSION_W515V3)
-        eBBarType = BTBAR_LUNLOCK;
+       // #elif defined(FEATURE_VERSION_W515V3)
+       // eBBarType = BTBAR_LUNLOCK;
     	#else
         eBBarType = BTBAR_UNLOCK;
         #endif
