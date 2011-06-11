@@ -2746,6 +2746,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
 			break;
         case BTBAR_LUNLOCK:
             nResID_L = IDS_STRING_UNLOCK;
+            nResID_R = IDS_SOS;
             break;
         case BTBAR_BACK:
             nResID_R = IDS_BACK;
