@@ -279,7 +279,7 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 #define SEARCH_IMEICON_WIDTH            (28)
 #elif defined(FEATURE_DISP_220X176)
 #define SEARCH_INPUTBOX_GAP             (6)
-#define SEARCH_IMEICON_WIDTH            (38)
+#define SEARCH_IMEICON_WIDTH            (40)
 #else
 #define SEARCH_INPUTBOX_GAP             (6)
 #define SEARCH_IMEICON_WIDTH            (28)

@@ -1568,7 +1568,11 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
             }
             else
             {
+            	#ifdef FEATURE_ALL_KEY_PAD
+                BBarParam.eBBarType = BTBAR_OK_BACK;
+                #else
                 BBarParam.eBBarType = BTBAR_OK_DELETE;
+                #endif
             }
             
             //更新高亮显示
@@ -1816,7 +1820,11 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                             if((ctlID - currencymenu[0])/2 + IDS_CURRENCY_EUR != pMe->basiccoefficient)
                             {
                                 BottomBar_Param_type  BBarParam ={0};
-                                BBarParam.eBBarType = BTBAR_OK_DELETE;
+                                #ifdef FEATURE_ALL_KEY_PAD
+				                BBarParam.eBBarType = BTBAR_OK_BACK;
+				                #else
+				                BBarParam.eBBarType = BTBAR_OK_DELETE;
+				                #endif
                                 bChangable = TRUE;
                                 if(pMe->m_nCtlID == coeffNum1)
                                 {
