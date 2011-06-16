@@ -15,7 +15,11 @@
     TYPE DEFINITIONS 
 ============================================================================*/
 #if defined(FEATURE_VERSION_W516)
+#ifdef T_QSC1110
+#define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_10
+#else
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_53
+#endif
 #else
 #define CAMSENSOR_SIC110A_RESET_PIN         GPIO_OUTPUT_62
 #endif
@@ -82,7 +86,7 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
 {
     uint8   sensor_id;
     
-    ERR("camsensor_sic110a_init!",0,0,0);
+    MSG_FATAL("camsensor_sic110a_init!",0,0,0);
     
     /* Input MCLK = 24MHz */
     camsensor_camclk_po_hz = 2400000;
@@ -108,17 +112,22 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
     camera_timed_wait(10);  //ovt
     if( !sic110a_i2c_write_byte(0x00,0x00))
     {
-        ERR("Block Select Error!",0,0,0);
+        MSG_FATAL("Block Select Error!",0,0,0);
         return FALSE;
     }
     
     if( !sic110a_i2c_read_byte(SIC110A_ID_REG,&sensor_id)) 
     {
-        ERR("read sensor_id failed!",0,0,0);
+        MSG_FATAL("read sensor_id failed!",0,0,0);
         return FALSE;
     }
+    if ( (sensor_id != 0x0D) )
+	{
+		MSG_FATAL("sensor_id 1......FALSE",0,0,0);
+		return FALSE;
+	} 
     
-    ERR("sensor_id 1 = %x",sensor_id,0,0);
+    MSG_FATAL("sensor_id 1 = %x",sensor_id,0,0);
     
     /* Check if it matches it with the value in Datasheet */
     if ( sensor_id != SIC110A_SENSOR_ID)
@@ -127,7 +136,13 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
     }
     
     sic110a_i2c_read_byte(SIC110A_INFO_REG,&sensor_id);
-    ERR("sensor_id 2 = %x",sensor_id,0,0);
+    MSG_FATAL("sensor_id 2 = %x",sensor_id,0,0);
+
+    if ( (sensor_id != 0x02)&&(sensor_id != 0x01))
+	{
+		MSG_FATAL("sensor_id 2 = ......FALSE",0,0,0);
+		return FALSE;
+	} 
     
     initialize_sic110a_registers(CAMSENSOR_SIC110A_FULL_SIZE_WIDTH, CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT);
     
@@ -250,7 +265,11 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
     //IDP Control
     sic110a_i2c_write_byte(0x00, 0x03); 
     sic110a_i2c_write_byte(0x10, 0xEF); 
-    sic110a_i2c_write_byte(0x11, 0x1D);  // PCLK, HSync, VSync (L,H,L)
+    #ifndef T_QSC1110
+    sic110a_i2c_write_byte(0x11, 0x1d);  // PCLK, HSync, VSync (L,H,L)
+    #else
+    sic110a_i2c_write_byte(0x11, 0x0D);  // PCLK, HSync, VSync (L,H,L)
+    #endif
 #ifdef SIC110A_OUTFORMAT_RGB565
     sic110a_i2c_write_byte(0x12, 0x0C); //0x3c
 #else
@@ -258,11 +277,18 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 #endif
 
     //Shading
-    sic110a_i2c_write_byte(0x27, 0xFD); //0x11
-    sic110a_i2c_write_byte(0x28, 0xCB); //0x11
-    sic110a_i2c_write_byte(0x29, 0xA8); //0x55
-    sic110a_i2c_write_byte(0x2A, 0x64); //0x43
-    sic110a_i2c_write_byte(0x2B, 0x21); //0x21
+    #ifndef T_QSC1110
+    sic110a_i2c_write_byte(0x27, 0xFD); //0x11 0xFD
+    sic110a_i2c_write_byte(0x28, 0xCB); //0x11 0xCB
+    sic110a_i2c_write_byte(0x29, 0xA8); //0x55 0xA8
+    sic110a_i2c_write_byte(0x2A, 0x64); //0x43 0x64
+    #else
+    sic110a_i2c_write_byte(0x27, 0x11); //0x11 0xFD
+    sic110a_i2c_write_byte(0x28, 0x11); //0x11 0xCB
+    sic110a_i2c_write_byte(0x29, 0x55); //0x55 0xA8
+    sic110a_i2c_write_byte(0x2A, 0x43); //0x43 0x64
+    #endif
+    sic110a_i2c_write_byte(0x2B, 0x21); //0x21 0x21
     sic110a_i2c_write_byte(0x2C, 0x00); //R left # right
     sic110a_i2c_write_byte(0x2D, 0x00); //R top # bottom 
     sic110a_i2c_write_byte(0x2E, 0x00); //G left # right 
@@ -388,11 +414,11 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
     sic110a_i2c_write_byte(0xA3, (byte)y); 
     sic110a_i2c_write_byte(0xA4, (byte)dy); 
 #else
-    sic110a_i2c_write_byte(0xA0, 0x00);
+    sic110a_i2c_write_byte(0xA0, 0x14);
     sic110a_i2c_write_byte(0xA1, 0x00); 
-    sic110a_i2c_write_byte(0xA2, 0xb0);  //0xa0
+    sic110a_i2c_write_byte(0xA2, 0xa0);  //0xa0
     sic110a_i2c_write_byte(0xA3, 0x00); 
-    sic110a_i2c_write_byte(0xA4, 0x90);  //0x80
+    sic110a_i2c_write_byte(0xA4, 0x80);  //0x80
 #endif
     //BLC value gain
     sic110a_i2c_write_byte(0xA8, 0x80); 
@@ -404,7 +430,11 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
     
     //Sesnor On
     sic110a_i2c_write_byte(0x00, 0x00); 
+    #ifndef T_QSC1110
     sic110a_i2c_write_byte(0x03, 0x05);
+    #else
+    sic110a_i2c_write_byte(0x03, 0xf5);
+    #endif
 
     /*Customer can adjust GAMMA, MIRROR & UPSIDEDOWN here!*/
     return TRUE;
@@ -429,7 +459,9 @@ static boolean camsensor_sic110a_start( camsensor_static_params_type *camsensor_
     //use_camsensor_siv121a = FALSE;
     /* CCD or CMOS */
     camsensor_params->sensor_type   = CAMSENSOR_CMOS;
-
+    #ifdef T_QSC1110
+	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
+	#endif
     /* BAYER or YCbCr */
     camsensor_params->output_format = CAMSENSOR_YCBCR;
 
@@ -474,7 +506,7 @@ static boolean camsensor_sic110a_start( camsensor_static_params_type *camsensor_
     camsensor_params->full_size_width  = CAMSENSOR_SIC110A_FULL_SIZE_WIDTH;
     camsensor_params->full_size_height = CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT;
     
-    camsensor_params->qtr_size_width  =  CAMSENSOR_SIC110A_FULL_SIZE_WIDTH;
+    camsensor_params->qtr_size_width  =   CAMSENSOR_SIC110A_FULL_SIZE_WIDTH;
     camsensor_params->qtr_size_height =  CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT;
     camsensor_params->pclk_invert     =  camsensor_info.pclk_invert;
     
@@ -622,21 +654,64 @@ SIDE EFFECTS
 static boolean camsensor_sic110a_video_config(camsensor_static_params_type *camsensor_params)
 {
         /* Set the current dimensions */
+
+    /* Sensor output data format */
+    #ifdef T_QSC1110
+	camsensor_params->discardFirstFrame = TRUE;
+	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
+
+	switch (camsensor_preview_resolution)
+	{
+		case CAMSENSOR_QTR_SIZE:
+			/* Set the current dimensions */
+			camsensor_params->camsensor_width = camsensor_params->qtr_size_width;
+			camsensor_params->camsensor_height = camsensor_params->qtr_size_height;
+			/* CAMIF frame */
+			camsensor_params->camif_frame_config.pixelsPerLine = camsensor_params->qtr_size_width*2;
+			camsensor_params->camif_frame_config.linesPerFrame = camsensor_params->qtr_size_height;
+			break;
+
+		case CAMSENSOR_FULL_SIZE:
+			/* Set the current dimensions */
+			camsensor_params->camsensor_width = camsensor_params->full_size_width;
+			camsensor_params->camsensor_height = camsensor_params->full_size_height;
+			/* CAMIF frame */
+			camsensor_params->camif_frame_config.pixelsPerLine = camsensor_params->full_size_width*2;
+			camsensor_params->camif_frame_config.linesPerFrame = camsensor_params->full_size_height;
+			break;
+
+		default:
+			return FALSE;
+	} /* camsensor_preview_resolution */
+
+	/* CAMIF window */
+	MSG_FATAL("camsensor_params->camsensor_width=====%d",camsensor_params->camsensor_width,0,0);
+	MSG_FATAL("camsensor_params->camsensor_height=====%d",camsensor_params->camsensor_height,0,0);
+	camsensor_params->camif_window_width_config.firstPixel = 0;
+	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel + camsensor_params->camsensor_width*2 - 1;
+	camsensor_params->camif_window_height_config.firstLine = 0;
+	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camif_window_height_config.firstLine + camsensor_params->camsensor_height*2 - 1;
+
+	//	camsensor_SIV121A_ycbcr_write_sensor (camsensor_preview_resolution);//yty add
+	camsensor_current_resolution = camsensor_preview_resolution;
+	#else
+	 /* Set the current dimensions */
     camsensor_params->camsensor_width  = camera_preview_dx;
     camsensor_params->camsensor_height = camera_preview_dy;
-    
+
     /* CAMIF frame */
-    camsensor_params->camif_frame_config.pixelsPerLine = camera_preview_dx*2;
-    camsensor_params->camif_frame_config.linesPerFrame = camera_preview_dy;
+    camsensor_params->camif_frame_config.pixelsPerLine =camera_preview_dx*2;
+    camsensor_params->camif_frame_config.linesPerFrame =camera_preview_dy;
     
     /* CAMIF Window */
     camsensor_params->camif_window_width_config.firstPixel = 0; //°´CLK
     camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel+(camera_preview_dx*2);
-    
+
     camsensor_params->camif_window_height_config.firstLine = 0;
     camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_preview_dy;
     camsensor_params->pixel_clock = 1;
     initialize_sic110a_registers(camera_preview_dx, camera_preview_dy);
+	#endif
     return TRUE;
 }
 
