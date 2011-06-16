@@ -236,7 +236,7 @@ typedef struct _CRecentCalls
 
 // 为防止用户快速按键而添加事件EVT_APPISREADY，事件由定时器
 // recentcalls_APPIsReadyTimer发出
-#if defined(FEATURE_VERSION_C306)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
 #define AVK_SEND_TWO     2
 #elif defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
 #define AVK_SEND_TWO     2

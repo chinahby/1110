@@ -282,7 +282,7 @@ typedef struct _CSecurityMenu
 #define SECRUITY_MENU_SOFK_HIGHT 0
 #define FIRSR_MENU_LINE 33
 #define LAST_MENU_GAP   27
-#if defined(FEATURE_VERSION_C306)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
 #define AVK_SEND_TWO     2
 #elif defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
 #define AVK_SEND_TWO     2

@@ -1516,7 +1516,7 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                     }
                     return TRUE;
   				case AVK_CAMERA:
-            	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)
+            	#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)
             	{
 				nv_item_type	SimChoice;
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -1774,7 +1774,7 @@ static boolean  IDD_PWDINPUT_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
+                    	#if defined(FEATURE_VERSION_C306) ||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -2141,7 +2141,7 @@ static boolean  IDD_UIMSECCODE_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
+                    	#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -2434,7 +2434,7 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                         chEnter = '#';
                         break;
                     case AVK_CAMERA:
-                    	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
+                    	#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
                     	{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -3063,7 +3063,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			                                CFGI_PROFILE_CUR_NUMBER,
 			                                &curProfile,
 			                                sizeof(curProfile));
-			    #if defined( FEATURE_VERSION_C306)
+			    #if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
 			    if(curProfile == OEMNV_PROFILE_QUIETMODE)
 			    {
 			        curProfile = OEMNV_PROFILE_NORMALMODE;
@@ -3203,7 +3203,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						//AEE_CancelTimer(CoreApp_keypadtimer,pMe);
 						//ISHELL_CancelTimer(pMe->a.m_pIShell,CoreApp_keypadtimer,pMe);
 					}
-#ifdef  FEAUTRE_VERSION_N450    //add by pyuangui
+#if defined(FEAUTRE_VERSION_N450)||defined(FEATURE_VERSION_W0216A)  //add by pyuangui
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);   
 #else
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
@@ -3218,7 +3218,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
                 case AVK_CAMERA:
                 	
-                	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C01)
+                	#if defined(FEATURE_VERSION_C306) ||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C01)
                 	{
                 	
 					nv_item_type	SimChoice;
@@ -3418,7 +3418,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     				    #ifdef FEATURE_USES_BLACKBERRY
     				    ret = CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
     				    #else
-#if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR) ||defined( FEATURE_VERSION_W515V3)
+#if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_MYANMAR) ||defined( FEATURE_VERSION_W515V3)
     					if(!pMe->m_iskeypadtime)
     					{
     						
@@ -3669,7 +3669,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                         return TRUE;
                     case AVK_CAMERA:
                     
-						#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)
+						#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)
 						{
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -3802,7 +3802,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				case AVK_O:
                     {
                         ICallApp         *pCallApp = NULL;
-                        #if defined( FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C01) || defined( FEATURE_VERSION_W515V3)
+                        #if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_MYANMAR) || defined( FEATURE_VERSION_C01) || defined( FEATURE_VERSION_W515V3)
                         if(pMe->m_iskeypadtime)
                         {
                         	if(wParam==AVK_STAR)

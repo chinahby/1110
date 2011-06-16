@@ -151,7 +151,7 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 #define MAX_NUM_BIRTHDAY                (1)
 #define MAX_NUM_NOTES                   (1)
 #define MAX_NUM_OTHER                   (1)
-#if defined(FEATURE_VERSION_C306)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
 #define MAX_INPUT_NAME_CARD             (19)
 #define MAX_INPUT_NAME_CN               (19)
 #define MAX_INPUT_NAME_EN               (19)
@@ -232,7 +232,7 @@ extern sSelectFieldListNode* pCurSelectFieldNode;
 #define PRI_PHOTO                       (0x0C)
 #define PRI_RING                        (0x0D)
 #define PRI_DEFAULT                     (0xFF)
-#if defined(FEATURE_VERSION_C306)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
 #define AVK_SEND_TWO     2
 #elif defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
 #define AVK_SEND_TWO     2

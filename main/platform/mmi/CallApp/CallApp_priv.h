@@ -113,7 +113,7 @@
 //#include "AEEVirtualkey.h"//wlh for vkey number
 #define CALLAPP_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 #endif
-#if defined(FEATURE_VERSION_C306)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
 #define AVK_SEND_TWO     2
 #elif defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
 #define AVK_SEND_TWO     2

@@ -5210,7 +5210,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
                     return TRUE;
                 case AVK_CAMERA:
                 {
-                	 #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
+                	 #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
                 	 {
 						nv_item_type	SimChoice;
 						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -7306,7 +7306,7 @@ static boolean  CContApp_HandleViewDlgEvent( CContApp  *pMe,
                     return TRUE;
                 case AVK_CAMERA:
                 {
-                	#if defined(FEATURE_VERSION_C306)|| defined(FEATURE_VERSION_C01)
+                	#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_C01)
                 	{
 					nv_item_type	SimChoice;
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -9418,7 +9418,7 @@ static boolean  CContApp_HandleOneDialNumFldSelDlgEvent( CContApp  *pMe,
                     return TRUE;
 				case AVK_CAMERA:
 				{
-					#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
+					#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
 					{
 					nv_item_type	SimChoice;
 					OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -12549,7 +12549,7 @@ static boolean  CContApp_HandleDetailDlgEvent( CContApp  *pMe,
                     CLOSE_DIALOG(DLGRET_SELECT);
                     return TRUE;
                 case AVK_CAMERA:
-				#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
+				#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
 				{
 				nv_item_type	SimChoice;
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -13986,7 +13986,7 @@ static void CContApp_ShowEditItem(CContApp  *pMe, IMenuCtl  *pMenuCtl, ITextCtl 
     rect.x  = 23;//大概的一个数字
     rect.dx = pMe->m_rc.dx - 27;//five pixels for right edge, 
     #endif
-    #if defined(FEATURE_VERSION_C306)  //add by yangdecai 2011-01-06
+    #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)//add by yangdecai 2011-01-06
 	{
 	   	nv_language_enum_type language;
        	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
@@ -14406,7 +14406,7 @@ static boolean  CContApp_HandleNunFldDlgEvent( CContApp  *pMe,
                     return TRUE;
                 case AVK_CAMERA:
                 
-                #if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
+                #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
                 {
 				nv_item_type	SimChoice;
 				OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
@@ -15948,7 +15948,7 @@ static boolean  CContApp_HandleEmergencyCallDlgEvent(CContApp  *pMe,
                 return TRUE;
                 
   				case AVK_CAMERA:
-            	#if defined(FEATURE_VERSION_C306) || defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)
+            	#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)
             	{
                     CtlAddItem ai;
                     uint16   wID;

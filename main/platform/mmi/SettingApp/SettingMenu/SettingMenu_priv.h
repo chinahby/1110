@@ -354,7 +354,7 @@ typedef struct _CSettingMenu
 #define CONTROL_RECT_START_X    40  //闹钟设置界面的控件开始位置
 #endif
 
-#ifdef FEATURE_VERSION_C306
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
 #define CONTROL_RECT_RESET_Y    10  
 #else
 #define CONTROL_RECT_RESET_Y    0

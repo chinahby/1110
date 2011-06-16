@@ -4809,7 +4809,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             
             //状态list控件矩形
             {   
-#ifdef FEATURE_VERSION_C306
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
                 SETAEERECT(&rc,  10, titleheight + lineSpace*2 + itemheight+CONTROL_RECT_RESET_Y,
                                             pMe->m_rc.dx-20,
                                             itemheight + 8);
@@ -4880,7 +4880,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
                 (void)IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL,
                                       wszStatus,-1,1,2+ titleheight + lineSpace-CONTROL_RECT_RESET_Y,NULL,
                                       IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);
-#ifdef FEATURE_VERSION_C306
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
                 //状态
                 (void)IDISPLAY_DrawText(pMe->m_pDisplay, AEE_FONT_NORMAL,
                                       wszState,-1,1,2+ titleheight + lineSpace*2 + itemheight-CONTROL_RECT_RESET_Y,NULL,
@@ -4935,7 +4935,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
                 {
                     //在功能和状态模式后面画该ICON,表示上下键改变值
                     IIMAGE_Draw(pL_ResImg, CONTROL_RECT_START_X,titleheight + lineSpace + 4-CONTROL_RECT_RESET_Y);
-#ifdef FEATURE_VERSION_C306
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
                     IIMAGE_Draw(pL_ResImg, 0,titleheight + lineSpace*2 + itemheight + 4+CONTROL_RECT_RESET_Y);
 #else
                     IIMAGE_Draw(pL_ResImg, CONTROL_RECT_START_X,titleheight + lineSpace*2 + itemheight + 4+CONTROL_RECT_RESET_Y);
