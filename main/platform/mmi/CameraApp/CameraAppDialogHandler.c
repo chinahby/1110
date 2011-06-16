@@ -3106,8 +3106,13 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
         captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
         captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
 #ifndef FEATURE_CAMERA_NOFULLSCREEN
+#ifdef T_QSC1110
         displaySize.cx = g_CameraSizeCFG_10[1].dx;
         displaySize.cy = g_CameraSizeCFG_10[1].dy;
+#else
+		displaySize.cx = g_CameraSizeCFG_10[0].dx;
+        displaySize.cy = g_CameraSizeCFG_10[0].dy;
+#endif
 #endif
     }
 #ifdef FEATURE_CAMERA_NOFULLSCREEN
@@ -3507,9 +3512,18 @@ static void CameraApp_SetCameraCaptureSize(CCameraApp *pMe, uint16 wParam)
     {
         captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
         captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
-        
+        #ifdef T_QSC1110
+        #if defined(FEATURE_DISP_128X160)
+        displaySize.cx = g_CameraSizeCFG_10[1].dx;
+        displaySize.cy = g_CameraSizeCFG_10[1].dy;
+        #else
         displaySize.cx = g_CameraSizeCFG_10[0].dx;
         displaySize.cy = g_CameraSizeCFG_10[0].dy;
+        #endif
+        #else
+        displaySize.cx = g_CameraSizeCFG_10[0].dx;
+        displaySize.cy = g_CameraSizeCFG_10[0].dy;
+        #endif
     }
 
     (void)ICONFIG_SetItem(pMe->m_pConfig,
@@ -3773,6 +3787,7 @@ void CameraApp_InitCameraCheck(void *po)
  
     if(pMe->m_pCamera == NULL)
     {
+    	MSG_FATAL("AEECLSID_CAMERA create.....m_pCamera....",0,0,0);
         ISHELL_CreateInstance(pMe->m_pShell, 
                               AEECLSID_CAMERA, 
                               (void **)&pMe->m_pCamera);

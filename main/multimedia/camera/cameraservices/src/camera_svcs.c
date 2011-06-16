@@ -2967,6 +2967,7 @@ void camera_svcs_init(void)
   for (camera_asi = 0; camera_asi < NUM_OF_SENSORS_ON_PHONE; camera_asi++)
 #endif /* FEATURE_CAMERA_MULTI_SENSOR */
   {
+  	MSG_FATAL("camera_svcs_init is ok................",0,0,0);
   camsensor_power_on  ();
   camsensor_power_up  ();
 
