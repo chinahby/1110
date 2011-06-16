@@ -9,7 +9,7 @@
 ifeq ($(USES_QSC1110), yes)
 CAMSENSOR_SIV121A_SOURCES = \
 	camsensor_siv121a_yuv.c \
-	camsensor_sic110a.c
+	camsensor_siv110a_yuv.c
 else
 CAMSENSOR_SIV121A_SOURCES = \
 	camsensor_siv121a.c \

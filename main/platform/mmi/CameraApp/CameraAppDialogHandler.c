@@ -287,7 +287,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #elif defined(FEATURE_DISP_128X160)
     {128,160,L"128*160"}, // FULL Screen
     {176,220,L"176*220"}, // QCIF
-    {320,240,L"320*240"}, // QVGA    
+    {320,240,L"240*320"}, // QVGA    
 #elif defined(FEATURE_DISP_176X220)
     //{128,160,L"128*160"}, // FULL Screen
     {176,220,L"176*220"}, // QCIF
@@ -2802,26 +2802,27 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
                           &pMe->m_nCameraEnviroment,
                           sizeof(pMe->m_nCameraEnviroment));
     
-    switch(pMe->m_nCameraEnviroment){
-    case OEMNV_CAMERA_ENVIR_AUTO:
-        nResID[CAMERACFGENVIRMENT] = IDI_ENV_AUTO;
-        break;
-        
-    case OEMNV_CAMERA_ENVIR_SUNNY:
-        nResID[CAMERACFGENVIRMENT] = IDI_ENV_SUNNY;
-        break;
+    switch(pMe->m_nCameraEnviroment)
+    {
+	    case OEMNV_CAMERA_ENVIR_AUTO:
+	        nResID[CAMERACFGENVIRMENT] = IDI_ENV_AUTO;
+	        break;
+	        
+	    case OEMNV_CAMERA_ENVIR_SUNNY:
+	        nResID[CAMERACFGENVIRMENT] = IDI_ENV_SUNNY;
+	        break;
 
-    case OEMNV_CAMERA_ENVIR_CLOUDY:
-        nResID[CAMERACFGENVIRMENT] = IDI_ENV_CLOUDY;
-        break;
+	    case OEMNV_CAMERA_ENVIR_CLOUDY:
+	        nResID[CAMERACFGENVIRMENT] = IDI_ENV_CLOUDY;
+	        break;
 
-    case OEMNV_CAMERA_ENVIR_NIGHT:
-        nResID[CAMERACFGENVIRMENT] = IDI_ENV_NIGHT;
-        break;
-        
-    default:
-        nResID[CAMERACFGENVIRMENT] = IDI_ENV_AUTO;
-        break;
+	    case OEMNV_CAMERA_ENVIR_NIGHT:
+	        nResID[CAMERACFGENVIRMENT] = IDI_ENV_NIGHT;
+	        break;
+	        
+	    default:
+	        nResID[CAMERACFGENVIRMENT] = IDI_ENV_AUTO;
+	        break;
     }
 
     // quality cfgID
@@ -2830,23 +2831,24 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
                           &pMe->m_nCameraQuality,
                           sizeof(pMe->m_nCameraQuality));
     
-    switch(pMe->m_nCameraQuality){
-    case OEMNV_CAMERA_QUALITY_HIGH:
-        nResID[CAMERACFGQUALITY] = IDI_QUALITY_HIGH;
-        break;
+    switch(pMe->m_nCameraQuality)
+    {
+	    case OEMNV_CAMERA_QUALITY_HIGH:
+	        nResID[CAMERACFGQUALITY] = IDI_QUALITY_HIGH;
+	        break;
 
-    case OEMNV_CAMERA_QUALITY_MED:
-        nResID[CAMERACFGQUALITY] = IDI_QUALITY_MED;
-        break;
+	    case OEMNV_CAMERA_QUALITY_MED:
+	        nResID[CAMERACFGQUALITY] = IDI_QUALITY_MED;
+	        break;
 
-    case OEMNV_CAMERA_QUALITY_LOW:
-        nResID[CAMERACFGQUALITY] = IDI_QUALITY_LOW;
-        break;
-        
-   default:
-        nResID[CAMERACFGQUALITY] = IDI_QUALITY_HIGH;
-        break;
-   }
+	    case OEMNV_CAMERA_QUALITY_LOW:
+	        nResID[CAMERACFGQUALITY] = IDI_QUALITY_LOW;
+	        break;
+	        
+		default:
+	        nResID[CAMERACFGQUALITY] = IDI_QUALITY_HIGH;
+	        break;
+	}
     
     // size cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
@@ -2854,26 +2856,27 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
                          &pMe->m_nCameraSize,
                           sizeof(pMe->m_nCameraSize));
 
-    switch(pMe->m_nCameraSize){
-    case OEMNV_CAMERA_SIZE_INDEX_0:
-        nResID[CAMERACFGSIZE] = IDI_SIZE_160_128;
-        break;
+    switch(pMe->m_nCameraSize)
+    {
+	    case OEMNV_CAMERA_SIZE_INDEX_0:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_160_128;
+	        break;
 
-    case OEMNV_CAMERA_SIZE_INDEX_1:
-        nResID[CAMERACFGSIZE] = IDI_SIZE_220_176;
-        break;
+	    case OEMNV_CAMERA_SIZE_INDEX_1:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_220_176;
+	        break;
 
-    case OEMNV_CAMERA_SIZE_INDEX_2:
-        nResID[CAMERACFGSIZE] = IDI_SIZE_320_240;
-        break;
+	    case OEMNV_CAMERA_SIZE_INDEX_2:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_320_240;
+	        break;
 
-    case OEMNV_CAMERA_SIZE_INDEX_3:
-        nResID[CAMERACFGSIZE] = IDI_SIZE_640_480;
-        break;
-        
-    default:
-        nResID[CAMERACFGSIZE] = IDI_SIZE_160_128;
-        break;
+	    case OEMNV_CAMERA_SIZE_INDEX_3:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_640_480;
+	        break;
+	        
+	    default:
+	        nResID[CAMERACFGSIZE] = IDI_SIZE_160_128;
+	        break;
     }
 
     // sound cfgID
@@ -2882,41 +2885,43 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
                           &pMe->m_nCameraTone,
                           sizeof(pMe->m_nCameraTone));
     
-    switch(pMe->m_nCameraTone){       
-    case OEMNV_CAMERA_SHUTTER_TONE_ENABLE:
-        nResID[CAMERACFGTONE] = IDI_TONE_ENABLE;
-        break;
+    switch(pMe->m_nCameraTone)
+    {       
+	    case OEMNV_CAMERA_SHUTTER_TONE_ENABLE:
+	        nResID[CAMERACFGTONE] = IDI_TONE_ENABLE;
+	        break;
 
-    case OEMNV_CAMERA_SHUTTER_TONE_DISABLE:
-        nResID[CAMERACFGTONE] = IDI_TONE_DISABLE;
-        break;		
-        
-    default:
-        nResID[CAMERACFGTONE] = IDI_TONE_ENABLE;
-        break;
+	    case OEMNV_CAMERA_SHUTTER_TONE_DISABLE:
+	        nResID[CAMERACFGTONE] = IDI_TONE_DISABLE;
+	        break;		
+	        
+	    default:
+	        nResID[CAMERACFGTONE] = IDI_TONE_ENABLE;
+	        break;
     }
     
     // draw selftime cfg    
-    switch(pMe->m_nSelfTimeItemSel){
-    case IDS_SELFTIME_OFF:
-        nResID[CAMERACFGSELFTIME] = IDI_SELFTIME_OFF;
-        break;
+    switch(pMe->m_nSelfTimeItemSel)
+    {
+	    case IDS_SELFTIME_OFF:
+	        nResID[CAMERACFGSELFTIME] = IDI_SELFTIME_OFF;
+	        break;
 
-    case IDS_SELFTIME_SEC1:
-        nResID[CAMERACFGSELFTIME] = IDI_SELFTIME_5;
-        break;
+	    case IDS_SELFTIME_SEC1:
+	        nResID[CAMERACFGSELFTIME] = IDI_SELFTIME_5;
+	        break;
 
-    case IDS_SELFTIME_SEC2:
-        nResID[CAMERACFGSELFTIME] = IDI_SELFTIME_10;
-        break;
+	    case IDS_SELFTIME_SEC2:
+	        nResID[CAMERACFGSELFTIME] = IDI_SELFTIME_10;
+	        break;
 
-    case IDS_SELFTIME_SEC3:
-        nResID[CAMERACFGSELFTIME] = IDI_SELFTIME_15;
-        break;
-        
-   default:
-        nResID[CAMERACFGSELFTIME] = IDI_SELFTIME_OFF;
-        break;
+	    case IDS_SELFTIME_SEC3:
+	        nResID[CAMERACFGSELFTIME] = IDI_SELFTIME_15;
+	        break;
+	        
+		default:
+	        nResID[CAMERACFGSELFTIME] = IDI_SELFTIME_OFF;
+	        break;
     }
     #if 0
     // banding cfgID
@@ -3101,8 +3106,8 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
         captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
         captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
 #ifndef FEATURE_CAMERA_NOFULLSCREEN
-        displaySize.cx = g_CameraSizeCFG_10[0].dx;
-        displaySize.cy = g_CameraSizeCFG_10[0].dy;
+        displaySize.cx = g_CameraSizeCFG_10[1].dx;
+        displaySize.cy = g_CameraSizeCFG_10[1].dy;
 #endif
     }
 #ifdef FEATURE_CAMERA_NOFULLSCREEN
@@ -3146,6 +3151,8 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
         default:
             break;
     }
+
+    MSG_FATAL("displaySize.cx=%d,displaySize.cy=%d",displaySize.cx,displaySize.cy,0);
 #ifndef FEATURE_DSP
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEW_TYPE, CAM_PREVIEW_SNAPSHOT, 0);       
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_MULTISHOT, 1, 0);
@@ -3606,6 +3613,11 @@ static void CameraApp_SetParamAfterPreview(CCameraApp *pMe)
             break;
     }
 
+	MSG_FATAL("pMe->m_sensor_model=%d",pMe->m_sensor_model,0,0);
+ 	if ( pMe->m_sensor_model == 10)
+    {
+    	ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_ROTATE_PREVIEW, 90, 0);
+    }
     ICAMERA_SetFramesPerSecond(pMe->m_pCamera, dwFPS);
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_BANDING, pMe->m_nCameraBanding, 0);
 }
