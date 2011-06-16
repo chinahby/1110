@@ -5346,7 +5346,7 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 #else //FEATURE_CARRIER_VENEZUELA_MOVILNET
 
 #ifdef FEATURE_T9_MT_ENGLISH
-#if defined(FEATURE_VERSION_C306)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
 	pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_MT_ENGLISH_LOW;
 	pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_MT_ENGLISH_UP;
 #else
