@@ -7455,8 +7455,10 @@ void disp_epson_S1D19120_boot_chg_splash_screen (void)
 #endif
 #endif
 #elif defined(FEATURE_DISP_128X160)
-#ifdef FEATURE_VERSION_H2021C
+
+#if defined(FEATURE_VERSION_H2021C)
     disp_update(phone_charging_data, 128, 0, 0, 160, 128, 0, 0);
+#elif defined(FEATURE_VERSION_N021)||defined(FEATURE_VERSION_W0216A)
 #else
     disp_update(phone_charging_data, 80, 0, 0, 80, 80, 40, 24);
 #endif
