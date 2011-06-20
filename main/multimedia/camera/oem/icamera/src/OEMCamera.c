@@ -563,7 +563,7 @@ static void pcbCameraACM(void *p)
    int retVal = 0;
    ACM_resource_state_type state= CBdata.state;
    OEMCamera *pme =  (OEMCamera *)CBdata.pdata;
-
+   MSG_FATAL("pcbCameraACM............................",0,0,0);
    //callback to release the resource
    if(pme->m_enResStateCamera == RES_STATE_ACQUIRED)
    {
@@ -615,8 +615,7 @@ static void pcbCameraACM(void *p)
    //callback when resource is ready
    if(state == ACM_RESOURCE_ACQUIRED)
    {
-     DBGPRINTF_LOW("callback when resource is ready in case of "
-                   "delayed acquire") ;
+     MSG_FATAL("callback when resource is ready in case of delayed acquire",0,0,0) ;
      pme->m_enResStateCamera = RES_STATE_ACQUIRED;
      pme->m_boCameraStoppedDueToACMRelease = FALSE;
 
@@ -627,6 +626,7 @@ static void pcbCameraACM(void *p)
        pme->m_cameraCallStartStruct.isValid = FALSE;
        if (! pme->m_cameraCallStartStruct.encodingSnapshot)
        {
+       	 MSG_FATAL("callback when resource is ready in case of delayed acquire start",0,0,0) ;
          retVal = OEMCamera_Start( (OEMINSTANCE)pme,
                                   pme->m_cameraCallStartStruct.mode,
                                   pme->m_cameraCallStartStruct.dwParam);
@@ -2327,6 +2327,10 @@ int OEMCamera_GetParm(OEMINSTANCE h, int16 nParmID, int32 * pP1, int32 * pP2)
           {
                *pP1 = 10;
           }
+          else
+          {
+          	   *pP1 = 10;
+          }
           break;
       }
         
@@ -2596,7 +2600,7 @@ int OEMCamera_Start(OEMINSTANCE h, int16 nMode, uint32 dwParam)
    #ifdef FEATURE_DSP
    	OEMCamera * pme = (OEMCamera *)h;
 	int         nRet = EFAILED;
-
+    MSG_FATAL("OEMCamera_Start.................................",0,0,0);
 	if (nMode == CAM_MODE_PREVIEW)
 	{	    
 		nRet = OEMCamera_Preview(pme,NULL);
@@ -4313,6 +4317,7 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
          goto Resume;
 
       case CAMERA_EVT_CB_FRAME:
+         MSG_FATAL("CAMERA_EVT_CB_FRAME.....................",0,0,0);
          if (func == CAMERA_FUNC_START_PREVIEW
 #if defined(FEATURE_VIDEO_ENCODE)
              || func == CAMERA_FUNC_START_RECORD
