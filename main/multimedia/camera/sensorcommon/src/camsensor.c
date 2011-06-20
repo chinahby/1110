@@ -2284,7 +2284,11 @@ else {
   /* Enable the Sensor Module */
   #ifdef GPIO_CAMIF_EN_ON_V
   CAMERA_CONFIG_GPIO(CAMIF_EN_N);
+  #if defined(FEATURE_CAMERA_SP0828)
+  gpio_out(CAMIF_EN_N, (GPIO_ValueType)GPIO_CAMIF_EN_OFF_V);
+  #else
   gpio_out(CAMIF_EN_N, (GPIO_ValueType)GPIO_CAMIF_EN_ON_V);
+  #endif
   #endif
   (void) camsensor_config_camclk_po(camsensor_camclk_po_hz);
   camera_timed_wait(13);
@@ -2395,7 +2399,11 @@ else {
 /* Disable the Sensor when not in use */
 
   #ifdef GPIO_CAMIF_EN_OFF_V
+  #if defined(FEATURE_CAMERA_SP0828)
+  gpio_out(CAMIF_EN_N, (GPIO_ValueType)GPIO_CAMIF_EN_ON_V);
+  #else
   gpio_out(CAMIF_EN_N, (GPIO_ValueType)GPIO_CAMIF_EN_OFF_V);
+  #endif
   #endif
   /* If the sensor need to be initialized next time when powered
    * on, then you need to clear camsensor_initialized */
@@ -4252,6 +4260,7 @@ boolean camsensor_init (void)
 #endif /* FEATURE_NI_GPIO */
 #endif /* FEATURE_CAMERA_MULTI_SENSOR */
   {
+  	MSG_FATAL("camsensor_id================%d",camsensor_id,0,0);
     if (camsensor_detect_table[camsensor_id])
     {
       camctrl_init_tbl();

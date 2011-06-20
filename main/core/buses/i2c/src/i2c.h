@@ -69,8 +69,11 @@ when       who     what, where, why
                         CONSTANT DEFINITIONS
 
 ===========================================================================*/
-#define I2C_HW_CTRL_SCL_FREQ_STANDARD 100  /* Standard mode, supports upto 100Kbps */ 
-
+#ifdef FEATURE_CAMERA_SP0828
+#define I2C_HW_CTRL_SCL_FREQ_STANDARD  25//100  /* Standard mode, supports upto 100Kbps */ 
+#else
+#define I2C_HW_CTRL_SCL_FREQ_STANDARD  100  /* Standard mode, supports upto 100Kbps */ 
+#endif
 #define I2C_HW_CTRL_SCL_FREQ_FAST     400  /* Fast mode, supports upto 400Kbps, our 6K MSMs only
                                               support 384Kbps
                                             */ 
