@@ -385,6 +385,9 @@
 	<String Id="1128" Name="IDS_YES">
 		<Text>ตกลง</Text>
 	</String>
+	<String Id="1129" Name="IDS_MYANMAR">
+		<Text></Text>
+	</String>
 	<STRING Id="1136" Name="IDS_FMRADIO_OPTION_MENU_PLAY_MODLE">
 		<Text>โหมดเสียงเรียกเข้า</Text>
 	</STRING>
