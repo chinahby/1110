@@ -280,7 +280,9 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #if defined(FEATURE_DISP_160X128)
     {160,128,L"160*128"}, // FULL Screen
     {220,176,L"220*176"}, // QCIF
+    #ifndef FEATURE_CAMERA_SP0828
     {320,240,L"320*240"}, // QVGA
+    #endif
 #elif defined(FEATURE_DISP_220X176)
     {220,176,L"220*176"}, // QCIF
     {320,240,L"320*240"}, // QVGA    
@@ -3123,14 +3125,11 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     displaySize.cx = 176;
     displaySize.cy = 128;
 #elif defined(FEATURE_DISP_128X160)
-    displaySize.cx = 96;
+    displaySize.cx = 128;
     displaySize.cy = 96; 
 #elif defined(FEATURE_DISP_176X220)
     displaySize.cx = 176;
     displaySize.cy = 128;
-#elif defined(FEATURE_DISP_128X160)
-	displaySize.cx = 128;
-    displaySize.cy = 96;
 #else
     displaySize.cx = 96;
     displaySize.cy = 96;
