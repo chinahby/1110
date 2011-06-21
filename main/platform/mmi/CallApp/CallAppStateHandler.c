@@ -615,6 +615,7 @@ static NextFSMAction STATE_NUMBER_FROM_COREHandler(CCallApp *pMe)
 
     pMe->m_b_incall = po.dwCount>0?TRUE:FALSE;
 #endif
+    MSG_FATAL("STATE_NUMBER_FROM_COREHandler %d",pMe->m_b_incall,0,0);
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -1105,7 +1106,12 @@ static NextFSMAction STATE_INCOMINGCALLHandler(CCallApp *pMe)
 
     pMe->m_b_incall = po.dwCount>0?TRUE:FALSE;
 #endif
-
+    MSG_FATAL("STATE_INCOMINGCALLHandler %d %d",pMe->m_b_incall,ICM_GetActiveCallIDs(pMe->m_pICM, 
+                                           (AEECM_CALL_TYPE_VOICE
+                                           |AEECM_CALL_TYPE_EMERGENCY
+                                           |AEECM_CALL_TYPE_STD_OTASP
+                                           |AEECM_CALL_TYPE_NON_STD_OTASP), 
+                                           AEECM_CALL_STATE_NONE, NULL, 0),0);
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:
@@ -1295,7 +1301,7 @@ static NextFSMAction STATE_CALLCONFIRM_Handler(CCallApp *pMe)
 	
 	pMe->m_b_incall = po.dwCount>0?TRUE:FALSE;
 #endif
-
+    MSG_FATAL("STATE_CALLCONFIRM_Handler %d",pMe->m_b_incall,0,0);
     switch(pMe->m_eDlgRet)
     {
         case DLGRET_CREATE:

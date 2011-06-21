@@ -1274,6 +1274,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             //pMe->m_b_from_another = FALSE;
             // Ensure the Ringer and Missed Call Alert are turned off.
             pMe->m_MissedCallCount = 0;
+            
 #ifdef FEATURE_SUPPORT_BT_APP
             pMe->m_bt_audio = SEND_NONE;
             pMe->m_b_add_btag_menu = FALSE;
@@ -1576,7 +1577,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 			}
 			pMe->m_b_incall = (po.dwCount>0)?TRUE:FALSE;
 #endif
-            ERR("EVT_ORIGINATE_CALL %d %d %x",pMe->m_b_incall,pMe->m_Is3Way,wParam);
+            MSG_FATAL("EVT_ORIGINATE_CALL %d %d %x",pMe->m_b_incall,pMe->m_Is3Way,wParam);
             if(wParam == 0)
             {
                 if(pMe->m_b_incall && !pMe->m_Is3Way)
@@ -2915,7 +2916,7 @@ static void CallApp_ProcessCallStateVoiceEnd(CCallApp               *pMe,
     pMe->in_convert = FALSE; //to save another incoming call in conversation;
 #endif
     IALERT_StopAlerting(pMe->m_pAlert);
-    
+
     if(pMe->IsRestrictNumber)
     {
          pMe->IsRestrictNumber = FALSE;
@@ -3158,6 +3159,7 @@ static void CallApp_ProcessCallStateVoice_Incoming(CCallApp      *pMe,
 #ifdef FEATRUE_SET_IP_NUMBER
     pMe->m_b_ip_call[0] = 0;
 #endif
+    
 #ifdef FEATURE_ICM
     pMe->m_b_incall = AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM);
     if(CallApp_IsEmergencyMode(pMe->m_pICM)
@@ -3372,21 +3374,7 @@ static void CallApp_ProcessCallStateVoiceCallerID(CCallApp          *pMe,
         {
             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_CALL/*ANNUN_FIELD_CALLFORWARD*/, ANNUN_STATE_CALL_INUSE_ON/*ANNUN_STATE_ON*/);
         }
-
-#if defined FEATURE_CARRIER_TAIWAN_APBW            //zhuweisheng2008.7.2 modify tw waiting call ms receive caller event
-#ifdef FEATURE_ICM
-        if((AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM))&&(pMe->incoming_id==FALSE)&&(WSTRNCMP(pMe->m_CallsTable->call_number, L"*",1) == 0))
-#else
-        if((AEET_IS_VOICECALL_CONNECTED(pMe->m_pITelephone))&&(pMe->incoming_id==FALSE)&&(WSTRNCMP(pMe->m_CallsTable->call_number, L"*",1) == 0))
-#endif
-        {
-            if(pMe->m_b_incoming)
-            {
-                pMe->m_b_incoming = FALSE;
-            }
-            return ;
-        }
-#endif  //FEATURE_CARRIER_TAIWAN_APBW
+        
         if(pMe->m_b_incoming)
         {
 #ifdef FEATURE_ICM
@@ -6734,7 +6722,7 @@ boolean bt_ui_process_cmcall_notify(CCallApp *pMe,uint32 event/*,void  *pCallInf
 #else
             pMe->m_b_incall = AEET_IS_VOICECALL_CONNECTED(pMe->m_pITelephone);
 #endif
-            ERR("AEECM_EVENT_CALL_CALLER_ID %d",pMe->m_b_incall,0,0);
+            MSG_FATAL("AEECM_EVENT_CALL_CALLER_ID %d",pMe->m_b_incall,0,0);
             b_incoming = TRUE;
             data.str[0]='\"';
 

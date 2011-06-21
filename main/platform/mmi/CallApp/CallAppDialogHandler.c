@@ -582,7 +582,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #ifdef FEATURE_EDITABLE_NUMBER
             pMe->m_nCursorPos = 0;
 #endif
-            
+            MSG_FATAL("CallApp_Dialer_NumEdit_DlgHandler %d",pMe->m_b_incall,0,0);
             if(!pMe->m_b_incall)
             {
 #ifdef FEATRUE_SET_IP_NUMBER
@@ -4398,7 +4398,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             pMe->m_b_press_1=FALSE;
             //pMe->m_b_show_cdg = TRUE;
             pMe->m_b_miss_notify = TRUE;
-            CALL_ERR("EVT_DIALOG_INIT %d ",pMe->m_b_incall,0,0);
+            CALL_ERR("EVT_DIALOG_INIT %d",pMe->m_b_incall,0,0);
             if(pMe->m_b_incall)
             {
                 // play call waiting ring
@@ -4745,6 +4745,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             pMe->m_b_incoming = FALSE;
             pMe->m_b_press_1=FALSE;
             pMe->Ispwpass=FALSE;
+            
             Appscomm_is_incoming_state(0);
             //CallApp_Set_Db_In_Idle(FALSE);
 	        (void) ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CallApp_Dialer_Show_Animation,pMe);
@@ -4998,7 +4999,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                         {
                             return TRUE;
                         }
-
+                        
                         if(pMe->m_CallsTable)
                         {
                             //ICM_EndCall(pMe->m_pICM,pMe->m_CallsTable->call_id);
@@ -11132,7 +11133,8 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
     IRingerMgr      *RingerMgr = NULL;
     int ringerId = AEE_RINGER_ID_NONE;
     char        filename[MAX_FILE_NAME]={0};
-
+    
+    MSG_FATAL("CallApp_Play_Incoming_Tone %d 0x%x",pMe->m_b_incall,pMe->m_CallsTable->ringer[0],0);
     if((AECHAR)'\0' != pMe->m_CallsTable->ringer[0])
     {
         if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
@@ -11194,9 +11196,10 @@ static void CallApp_Play_Incoming_Tone(CCallApp *pMe)
                 IALERT_StartRingerAlert(pMe->m_pAlert, (uint32)midID);
             }
         } 
-    }        
+    }
+    
 #if !defined( FEATURE_RECORDER)
-        CallApp_SetupCallAudio(pMe);
+    CallApp_SetupCallAudio(pMe);
 #endif
 
 }
