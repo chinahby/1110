@@ -6886,37 +6886,27 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
     {
-    	extern int OEM_ReadMEID(uint64 *meid);
-    	OEM_ReadMEID(&meid);
+    	//extern int OEM_ReadMEID(uint64 *meid);
+    	//OEM_ReadMEID(&meid);
+    	tmc_get_stored_meid_me(&meid);
         L32 = (uint32)meid;
         H32 = (uint32)(meid>>32);
     }
     MSG_FATAL("CFieldDebug_DrawEsnScreen L32=%d, H32=%d", L32, H32, 0);
-    if(meid == 0)
-    {
-        STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
-        WSPRINTF((szBuf + n),
-                sizeof(szBuf),
-                fmt_str,
-                H32
-                );    
-    }
-    else
-    {
-        STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
-        WSPRINTF((szBuf + n),
-                sizeof(szBuf),
-                fmt_str,
-                H32
-                );
-        n = WSTRLEN(szBuf);
-        STRTOWSTR("%X", fmt_str, sizeof(fmt_str));
-        WSPRINTF((szBuf + n),
-                sizeof(szBuf),
-                fmt_str,
-                L32
-                );
-    }
+    
+    STRTOWSTR("%06X", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            H32
+            );
+    n = WSTRLEN(szBuf);
+    STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
+    WSPRINTF((szBuf + n),
+            sizeof(szBuf),
+            fmt_str,
+            L32
+            );
   
    p_dlg = ISHELL_GetActiveDialog(pme->a.m_pIShell);
    p_stk = (IStatic *) IDIALOG_GetControl(p_dlg, IDC_ESN_STATIC);
