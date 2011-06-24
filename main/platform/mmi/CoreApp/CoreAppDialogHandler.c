@@ -3404,6 +3404,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						}
 						#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);//
+					    #elif defined(FEATURE_VERSION_W0216A)
+					    	return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);//
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
 							#endif
