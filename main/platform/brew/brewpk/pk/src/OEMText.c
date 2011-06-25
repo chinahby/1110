@@ -289,6 +289,7 @@ typedef struct _TextCtlContext {
    boolean              m_bCaplk;
    boolean              m_islong;
    uint32               m_curpos;
+   uint32               m_curarri;
 #ifdef  FEATURE_MYANMAR_INPUT_MOD
    boolean              m_myaisnull;
    boolean              m_Selectcandidates;
@@ -902,6 +903,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
    pNewContext->m_bCaplk = FALSE;
    pNewContext->m_islong = FALSE;
    pNewContext->m_curpos = 0;  //add by yangdecai
+   pNewContext->m_curarri = 0; //add by yangdecai
    pNewContext->nLineHeight =
                      IDISPLAY_GetFontMetrics((IDisplay*)pNewContext->pIDisplay,
                                               AEE_FONT_NORMAL,
@@ -1987,6 +1989,7 @@ void OEM_TextAddChar(OEMCONTEXT hTextCtl, AECHAR ch, boolean bOverStrike)
 
       // Restart the edit if applicable
       TextCtl_RestartEdit(pContext);
+      pContext->m_curpos = 0;
 
       // Autoscroll
       (void) TextCtl_AutoScroll(pContext);
@@ -6549,6 +6552,11 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             		if (key == VLARCharKeyItem[i].wParam)
             		{
             			AVK_Size = VLARCharKeyItem[i].wsize;
+            			if(pContext->m_curarri !=i)
+            			{
+            				pContext->m_curpos = 0;
+            			}
+            			pContext->m_curarri = i;
             			if(pContext->m_curpos<AVK_Size)
             			{
             				pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = VLARCharKeyItem[i].wp[pContext->m_curpos];
