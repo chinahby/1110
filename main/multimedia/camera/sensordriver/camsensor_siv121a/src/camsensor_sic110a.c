@@ -242,10 +242,10 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 	sic110a_i2c_write_byte(0x30,0x00);//00:²»·ÖÆµ 02:2·ÖÆµ
 	sic110a_i2c_write_byte(0x0f,0x2f);//;analog
 	sic110a_i2c_write_byte(0x10,0x2f);
-	sic110a_i2c_write_byte(0x12,0x6f);
+	//sic110a_i2c_write_byte(0x12,0x6f);
 	sic110a_i2c_write_byte(0x13,0x2f);
-	sic110a_i2c_write_byte(0x15,0x7f);
-	sic110a_i2c_write_byte(0x16,0x0f);
+	//sic110a_i2c_write_byte(0x15,0x7f);
+	//sic110a_i2c_write_byte(0x16,0x0f);
 	sic110a_i2c_write_byte(0x22,0xe0);
 	sic110a_i2c_write_byte(0x26,0x08);
 	sic110a_i2c_write_byte(0x27,0xe8);
@@ -490,6 +490,7 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 		sic110a_i2c_write_byte(0xe6,0x2c);
 
 	}
+
 #else
 	
 	//sic110a_i2c_write_byte(0x47,0x0);	   
@@ -937,6 +938,8 @@ SIDE EFFECTS
 
 static boolean camsensor_sic110a_snapshot_config( camsensor_static_params_type  *camsensor_params)
 {
+	uint16 x,y;
+    uint8 internel_resize = FALSE;
     /* Set the current dimensions */
     camsensor_params->camsensor_width  = camera_dx;
     camsensor_params->camsensor_height = camera_dy;
@@ -952,7 +955,42 @@ static boolean camsensor_sic110a_snapshot_config( camsensor_static_params_type  
     camsensor_params->camif_window_height_config.firstLine = 0;
     camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_dy;
     camsensor_params->pixel_clock = 1;
+    #ifndef FEATURE_CAMERA_SP0828
     initialize_sic110a_registers(camera_dx, camera_dy);
+    #else
+    if(camera_dx > CAMSENSOR_SIC110A_FULL_SIZE_WIDTH)
+    {
+        camera_dx = CAMSENSOR_SIC110A_FULL_SIZE_WIDTH;
+    }
+    
+    if(camera_dy > CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT)
+    {
+        camera_dy = CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT;
+    }
+    
+    x = (CAMSENSOR_SIC110A_FULL_SIZE_WIDTH-camera_dx)>>1;
+    y = (CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-camera_dy)>>1;
+    #ifndef FEATURE_CAMERA_SP0828
+    camera_dy = CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-y;
+    #else
+    if(x<60)
+	{
+		x = 60;
+	}
+	if((camera_dx<128)&&(camera_dy<228)) //sensor internel resize for inprove sharpness by xuegang  
+	{
+		camera_dx=camera_dx*1.4;
+		camera_dy=camera_dy*1.4;
+		internel_resize = TRUE;
+	}
+	#endif
+    sic110a_i2c_write_byte(0x47,(byte)((y>>8)&0xff) );		
+	sic110a_i2c_write_byte(0x48,(byte)(y&0xff) );	   
+	sic110a_i2c_write_byte(0x49,(byte)((camera_dy>>8)&0xff) ); 	 
+	sic110a_i2c_write_byte(0x4a,(byte)(camera_dy&0xff));	   
+	sic110a_i2c_write_byte(0x4b,(byte)(x&0xff) );	   
+	sic110a_i2c_write_byte(0x4c,(byte)(camera_dx&0xff));	
+	#endif
     return TRUE;
 }
 /*===========================================================================
