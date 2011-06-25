@@ -5644,14 +5644,14 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
                 	else
                 	{
                 		MSG_FATAL("222222============%d",i,0,0);
-                		#ifdef FEATURE_VERSION_MYANMAR
+                		#if defined(FEATURE_VERSION_MYANMAR)||defined(FEATURE_VERSION_MYANMAR_MTM)
                 		if(!(pme->m_dwProps & TP_MULTILINE)/*&&( 2== i)*/)
                 		{
                 			pme->m_nCurrInputModeCount = 3;
                 		}
                 		#endif
                     	 
-                    	#ifdef FEATURE_VERSION_MYANMAR
+                    	#if defined(FEATURE_VERSION_MYANMAR)||defined(FEATURE_VERSION_MYANMAR_MTM)
                     	pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1]; 
                 		if(!(pme->m_dwProps & TP_MULTILINE)/*&&( 2== i)*/)
                 		{
