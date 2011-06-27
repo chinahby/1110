@@ -3100,8 +3100,14 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
         captureSize.cx = g_CameraSizeCFG[pMe->m_nCameraSize].dx;
         captureSize.cy = g_CameraSizeCFG[pMe->m_nCameraSize].dy;
 #ifndef FEATURE_CAMERA_NOFULLSCREEN
-        displaySize.cx = g_CameraSizeCFG[0].dx;
-        displaySize.cy = g_CameraSizeCFG[0].dy;
+#ifdef T_QSC1110
+		displaySize.cx = g_CameraSizeCFG[1].dx;
+		displaySize.cy = g_CameraSizeCFG[1].dy;
+#else
+		displaySize.cx = g_CameraSizeCFG[0].dx;
+		displaySize.cy = g_CameraSizeCFG[0].dy;
+#endif
+
 #endif
     }
     else if(pMe->m_sensor_model == 10)
