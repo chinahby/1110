@@ -125,7 +125,7 @@ GENERAL DESCRIPTION:
 #define AEECLSID_VKEY_CONTROL      (AEECLSID_OEM + 0x502)   //0x01006131
 #define AEECLSID_APPLICATION       (AEECLSID_OEM + 0x503)   //add by yangdecai
 #define AEECLSID_GAME              (AEECLSID_OEM + 0x504)   //add by yangdecai
-
+//#define AEECLSID_WAPBROWSER        0x0104C960               //add by yangdecai 2011-04-11
 #if defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined (FEATURE_VERSION_M8021)
 #define AEECLSID_FRENDUO           (AEECLSID_OEM + 0x505)   //add by yangdecai
 #endif
@@ -135,7 +135,9 @@ GENERAL DESCRIPTION:
 #define AEECLSID_TVAPP            (AEECLSID_OEM + 0x602)   //add by pengyuangui  AEECLSID_Tv_APP
 #define MMI_CLSID_IMMITV          (AEECLSID_OEM + 0x603)   
 #define AEECLSID_TLG_ATV          (AEECLSID_OEM +0x604)
-#define AEECLSID_BRW_APP    	    0x0104c960
+#define AEECLSID_BRW_APP    	    0x2104c960
+#define AEECLSID_NF3				0x01007016
+
 #define AEECLSID_BLUETOOTH_APP    	0x01015223
 #define AEECLSID_NF3				0x01007016
 

@@ -10,6 +10,9 @@
 	<String Id="1003" Name="IDS_MASS_STORAGE">
 		<Text>إيقاف التشغيل</Text>
 	</String>
+	<String Id="1004" Name="IDS_APPLICATION_WAPBROWSER">
+		<Text>Browser</Text>
+	</String>
 	<STRING Id="1011" Name="IDS_APPLICATION_BAM">
 		<Text>BAM</Text>
 	</STRING>

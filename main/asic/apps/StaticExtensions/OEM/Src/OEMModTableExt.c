@@ -310,7 +310,7 @@ extern int BTAppMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 
 #if defined FEATURE_SUPPORT_WAP_APP
-#if 0
+#ifdef FEATURE_SUPPORT_WAP_APP
 extern int EditApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int EditExt_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int OEMExtFor3Part_Load(IShell *ps, void * pHelpers, IModule ** pMod);
@@ -965,7 +965,7 @@ extern int  VideoPlayerMod_Load(IShell *ps, void * pHelpers, IModule ** pMod);
 extern int AppTimerMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 #if defined(FEATURE_SUPPORT_WAP_APP)
-//extern int CNetFront3_Load(IShell *ps, void *pHelpers, IModule **pMod);
+extern int CNetFront3_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 
 #if defined(FEATURE_CONVERTER)
@@ -1346,7 +1346,6 @@ static const AEEStaticMod gOEMStaticModList[] =
 
 
 #if defined FEATURE_SUPPORT_WAP_APP
-#if 0
     {AEEFS_MIF_DIR"editapplet.mif", EditApp_Load},
     {AEEFS_MIF_DIR"editextension.mif", EditExt_Load},
     {AEEFS_MIF_DIR"oemextfor3part.mif", OEMExtFor3Part_Load},

@@ -4,6 +4,9 @@
 	<String Id="1001" Name="IDS_APPLICATION_LIST">
 		<Text>Aplikasi</Text>
 	</String>
+	<String Id="1004" Name="IDS_APPLICATION_WAPBROWSER">
+		<Text>Browser</Text>
+	</String>
 	<STRING Id="1011" Name="IDS_APPLICATION_BAM">
 		<Text>BAM</Text>
 	</STRING>
