@@ -8488,7 +8488,9 @@ void disp_epson_S1D19120_boot_chg_splash_screen (void)
 #elif defined(FEATURE_VERSION_N021)||defined(FEATURE_VERSION_W0216A)
     disp_update(phone_charging_data, 128, 0, 0, 160, 128, 0, 0);
 #else
+#ifndef FEATURE_VERSION_W515V3
     disp_update(phone_charging_data, 80, 0, 0, 80, 80, 40, 24);
+#endif
 #endif
 	
 #elif defined(FEATURE_DISP_128X128)

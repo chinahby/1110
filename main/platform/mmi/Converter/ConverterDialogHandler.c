@@ -644,6 +644,10 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
             {
                 case CONVERTER_MODE_CURRENCY:
                     {
+                    	#ifdef FEATURE_VERSION_W515V3
+                    	IMENUCTL_SetSel(pMe->pUnitMenu1, IDS_CURRENCY_USD);
+                    	IMENUCTL_SetSel(pMe->pUnitMenu2, IDS_CURRENCY_INR);
+                    	#else
                         if((pMe->basiccoefficient >= IDS_CURRENCY_EUR) && (pMe->basiccoefficient <= IDS_CURRENCY_ILS))
                         {
                             IMENUCTL_SetSel(pMe->pUnitMenu1, pMe->basiccoefficient);
@@ -653,6 +657,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                             IMENUCTL_SetSel(pMe->pUnitMenu1, IDS_CURRENCY_EUR);
                         }
                         IMENUCTL_SetSel(pMe->pUnitMenu2, IDS_CURRENCY_EUR + 1);
+                        #endif
                     }
                     break;
                     
