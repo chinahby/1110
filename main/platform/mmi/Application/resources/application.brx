@@ -58,6 +58,9 @@
 	<String Id="1026" Name="IDS_APPLICATION_FLASHLIGHT">
 		<Text>Flashlight</Text>
 	</String>
+	<String Id="1027" Name="IDS_APPLICATION_MMS">
+		<Text>Mms</Text>
+	</String>
 	<String Id="1031" Name="IDS_TOOLS_LIST">
 		<Text>Tools</Text>
 	</String>
