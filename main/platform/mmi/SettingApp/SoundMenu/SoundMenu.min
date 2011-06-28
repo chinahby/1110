@@ -87,7 +87,21 @@ else
             lucky.mid|fs:/ringers/lucky.mid \
             street_tale.mid|fs:/ringers/street_tale.mid \
             techno_meto.mid|fs:/ringers/techno_meto.mid \
-			feeling_on.mp3|fs:/ringers/feeling_on.mp3
+		   feeling_on.mp3|fs:/ringers/feeling_on.mp3
+	else ifeq ($(USES_RESDIR), verykool)
+        CONSTFILE_FILES+=\
+            clock1.mp3|fs:/ringers/clock1.mp3 \
+            clock2.mp3|fs:/ringers/clock2.mp3 \
+            clock3.mp3|fs:/ringers/clock3.mp3 \
+            ring1.mp3|fs:/ringers/ring1.mp3 \
+            ring2.mp3|fs:/ringers/ring2.mp3 \
+            ring3.mp3|fs:/ringers/ring3.mp3 \
+            ring4.mp3|fs:/ringers/ring4.mp3 \
+            ring5.mp3|fs:/ringers/ring5.mp3 \
+            blues.mid|fs:/ringers/blues.mid \
+            blue_load.mid|fs:/ringers/blue_load.mid \
+            champagne.mid|fs:/ringers/champagne.mid \
+		   feeling_on.mp3|fs:/ringers/feeling_on.mp3
     else ifeq ($(USES_RESDIR), Smart)
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
