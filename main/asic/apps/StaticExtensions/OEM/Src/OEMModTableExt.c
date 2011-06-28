@@ -323,7 +323,6 @@ extern int AEEWapMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 extern int AEEWecscMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 extern int AEEPushMod_Load(IShell *pIShell, void *ph, IModule **ppMod);
 #endif
-#endif
 
 #if defined(FEATURE_IYCBCR)
 	extern int IYCbCrFactory_New(IShell *pIShell, AEECLSID cls,void **ppo);
