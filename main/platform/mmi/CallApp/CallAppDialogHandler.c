@@ -6566,6 +6566,38 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
 #ifndef FEATURE_ICM
 		ICall *pCall = NULL;
 #endif
+		#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
+		if(WSTRNCMP(wbuf,L"+",1) == 0)
+        {
+        	if ( WSTRNCMP(wbuf,L"+62",3) == 0)
+        	{
+				AECHAR internation[MAX_SIZE_DIAL_STR] = {0};
+	            //ICONFIG_GetItem(pMe->m_pConfig, CFGI_FDN_ENABLED, &internation,sizeof(internation));
+	            STRTOWSTR("0",internation,sizeof(internation));
+	            //WSTRLCPY(internation,(AECHAR)OEM_INTERNATION_NUMBER ,MAX_SIZE_DIAL_STR);
+	            WSTRLCAT(internation, &wbuf[3] ,MAX_SIZE_DIAL_STR);
+	            WSTRLCPY(wbuf,internation,MAX_SIZE_DIAL_STR);
+        	}
+        	else if ( WSTRNCMP(wbuf,L"+66",3) == 0)
+        	{
+				AECHAR internation[MAX_SIZE_DIAL_STR] = {0};
+	            //ICONFIG_GetItem(pMe->m_pConfig, CFGI_FDN_ENABLED, &internation,sizeof(internation));
+	            STRTOWSTR("0",internation,sizeof(internation));
+	            //WSTRLCPY(internation,(AECHAR)OEM_INTERNATION_NUMBER ,MAX_SIZE_DIAL_STR);
+	            WSTRLCAT(internation, &wbuf[3] ,MAX_SIZE_DIAL_STR);
+	            WSTRLCPY(wbuf,internation,MAX_SIZE_DIAL_STR);
+        	}
+        	else
+        	{
+	            AECHAR internation[MAX_SIZE_DIAL_STR] = {0};
+	            //ICONFIG_GetItem(pMe->m_pConfig, CFGI_FDN_ENABLED, &internation,sizeof(internation));
+	            STRTOWSTR("0",internation,sizeof(internation));
+	            //WSTRLCPY(internation,(AECHAR)OEM_INTERNATION_NUMBER ,MAX_SIZE_DIAL_STR);
+	            WSTRLCAT(internation, &wbuf[1] ,MAX_SIZE_DIAL_STR);
+	            WSTRLCPY(wbuf,internation,MAX_SIZE_DIAL_STR);
+            }
+        }
+        #endif
 
         //we need save Originate call number
 #ifdef FEATURE_ICM

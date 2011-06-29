@@ -288,6 +288,7 @@ typedef struct _TextCtlContext {
    boolean              is_bAlt;
    boolean              m_bCaplk;
    boolean              m_islong;
+   boolean              m_bDigital;
    uint32               m_curpos;
    uint32               m_curarri;
 #ifdef  FEATURE_MYANMAR_INPUT_MOD
@@ -897,6 +898,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
       // Default mode is Multitap
       pNewContext->byMode = 0;
    }
+   pNewContext->m_bDigital = FALSE;
    pNewContext->is_isShift = FALSE;   
    pNewContext->is_bAlt = FALSE;
    pNewContext->nMultitapCaps = MULTITAP_FIRST_CAP;
@@ -1730,7 +1732,11 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
 	}
     // Press and hold the number key to get the number
 	#ifndef FEATURE_ALL_KEY_PAD
+	#ifndef FEATURE_VERSION_W515V3
     if ((eCode != EVT_KEY) && !(eCode == EVT_KEY_HELD && dwKeyCode == AVK_0))
+    #else
+    if ((eCode == EVT_KEY_RELEASE)||(eCode == EVT_KEY_PRESS))
+    #endif
        /* &&(!(key == AVK_STAR) && (eCode == EVT_KEY_RELEASE))
         &&(!(key == AVK_POUND) && (eCode == EVT_KEY_RELEASE)) //modi by yangdecai 2010-08-07
         &&(!((key == AVK_CLR) && (eCode == EVT_KEY_HELD)))*/
@@ -2826,6 +2832,14 @@ static void TextCtl_AddChar(TextCtlContext *pContext, AECHAR ch)
 
             // Write in the new character
             pContext->pszContents[pContext->wSelStart] = ch;
+            if(!pContext->m_bDigital)
+            {
+				pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = ch;
+            }
+            else
+            {
+            	pContext->m_bDigital = FALSE;
+            }
             ++pContext->wContentsChars;
 
             // Update the selection to be after the new character
@@ -6440,6 +6454,66 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	    }   
 	}
 #else
+	if(eCode == EVT_KEY_HELD)
+    {
+    	int i;
+        AECHAR ch = 0;
+        switch(key){
+        case AVK_0:
+        case AVK_1:
+        case AVK_2:
+        case AVK_3:
+        case AVK_4:
+        case AVK_5:
+        case AVK_6:
+        case AVK_7:
+        case AVK_8:
+        case AVK_9:
+
+            for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
+            {           
+                if (key == VLCharKeyItem[i].wParam)
+                {
+                    ch = VLCharKeyItem[i].wp;
+                    break;
+                }
+            }
+            break;	
+			
+        default:
+            break;
+        }
+        
+        if(ch != 0)
+        {
+            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+            {
+                /* Set selection to the character before the insertion point */
+                --pContext->wSelStart;
+            }
+            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+            {
+                 return FALSE;
+            }
+    
+            /* Insert a "NUL" to just delete and insert nothing */
+            TextCtl_AddChar(pContext, 0);
+            if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
+            {
+                // meet the max count of the text.
+                if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
+                {
+                    sT9Status = T9STATERROR; 
+                    return FALSE;
+                }
+            }
+            TextCtl_NoSelection(pContext);
+            TextCtl_AddChar(pContext,ch);
+            //bRet = T9_AW_DisplayText ( pContext, key);  
+            return TRUE;
+        }
+        
+    }
 	//MSG_FATAL("T9TextCtl_MultitapKey::1",0,0,0);
 	#ifdef FEATURE_VERSION_C01
 	if(key == AVK_1 && pContext->byMode == TEXT_MODE_T9_MT_THAI)
@@ -6528,7 +6602,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                      && MULTITAP_FIRST_CAP == pContext->nMultitapCaps
                      && !OEM_isFirstCap(pContext))
                 {
-                   #if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)||defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)
+                   #if defined(FEATURE_VERSION_C306)||defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_N021)|| defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W515V3)
                    #else
                    pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
                    #endif
@@ -7349,7 +7423,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	            break;  
 	    }   
 	}		
-#elif defined (FEATURE_DISP_128X160)
+#elif defined (FEATURE_DISP_176X220)
     if(eCode == EVT_KEY_HELD)
     {
         int i;
@@ -8204,6 +8278,63 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 #elif defined (FEATURE_DISP_240X320) || defined (FEATURE_DISP_320X240)
 #else
 	//MSG_FATAL("T9TextCtl_MultitapKey::1",0,0,0);
+	if(eCode == EVT_KEY_HELD)
+    {
+        int i;
+        AECHAR ch = 0;
+		switch(key){
+		case AVK_0:
+		case AVK_1:
+		case AVK_2:
+		case AVK_3:
+		case AVK_4:
+		case AVK_5:
+		case AVK_6:
+		case AVK_7:
+		case AVK_8:
+		case AVK_9:
+            for(i = 0;i<MAX_SHEFTKEYPAD_NUMBER;i++)
+			{           
+        		if (key == VLCharKeyItem[i].wParam)
+        		{
+                    ch = VLCharKeyItem[i].wp;
+                    break;
+        		}
+            }
+            break;
+            
+		default:
+		    break;
+		}
+        MSG_FATAL("T9TextCtl_Cap_Lower_Rapid_Key.........",0,0,0);
+        if(ch != 0)
+        {
+            if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+			{
+				/* Set selection to the character before the insertion point */
+				--pContext->wSelStart;
+			}
+			else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+			{
+				 return FALSE;
+			}
+	
+			/* Insert a "NUL" to just delete and insert nothing */
+			TextCtl_AddChar(pContext, 0);
+			if ( pContext->wMaxChars != 0 && nBufLen >= pContext->wMaxChars)
+			{
+				// meet the max count of the text.
+				if(nBufLen > pContext->wMaxChars || pContext->uModeInfo.mtap.kLast != key)
+				{
+					sT9Status = T9STATERROR; 
+					return FALSE;
+				}
+			}
+			TextCtl_NoSelection(pContext);
+			TextCtl_AddChar(pContext,ch);
+            return TRUE;
+        }
+    }
 	#ifdef FEATURE_VERSION_C01
 	if(key == AVK_1 && pContext->byMode == TEXT_MODE_T9_MT_THAI)
 	{
@@ -11294,7 +11425,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
    uint16   nBufLen = pContext->sT9awFieldInfo.G.nBufLen;
    boolean  bRet       = FALSE;
    T9STATUS sT9Status = T9STATERROR;  
-   
+   pContext->m_bDigital = TRUE;
    if (key >= AVK_1 && key <= AVK_9) 
    {
       TextCtl_NoSelection(pContext);

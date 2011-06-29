@@ -95,7 +95,7 @@ when       who     what, where, why
 #define FEATURE_T9_MT_ENGLISH
 #define FEATURE_T9_RAPID_ENGLISH
 
-#if defined (FEATURE_ALL_KEY_PAD)|| defined(FEATURE_VERSION_C01)
+#if defined (FEATURE_ALL_KEY_PAD)|| defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W515V3)
 #define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #endif
 
