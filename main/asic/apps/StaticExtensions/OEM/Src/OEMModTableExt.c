@@ -309,8 +309,8 @@ extern int WidgetMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int BTAppMod_Load(IShell *ps, void *pHelpers, IModule **pMod);
 #endif
 
-#if defined FEATURE_SUPPORT_WAP_APP
-#ifdef FEATURE_SUPPORT_WAP_APP
+//#if defined FEATURE_SUPPORT_WAP_APP
+#if 0//def 0
 extern int EditApp_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int EditExt_Load(IShell *ps, void *pHelpers, IModule **pMod);
 extern int OEMExtFor3Part_Load(IShell *ps, void * pHelpers, IModule ** pMod);
@@ -1344,7 +1344,7 @@ static const AEEStaticMod gOEMStaticModList[] =
 #endif
 
 
-#if defined FEATURE_SUPPORT_WAP_APP
+#if 0//defined FEATURE_SUPPORT_WAP_APP
     {AEEFS_MIF_DIR"editapplet.mif", EditApp_Load},
     {AEEFS_MIF_DIR"editextension.mif", EditExt_Load},
     {AEEFS_MIF_DIR"oemextfor3part.mif", OEMExtFor3Part_Load},
@@ -1357,7 +1357,7 @@ static const AEEStaticMod gOEMStaticModList[] =
     {AEEFS_MIF_DIR"wecsc.mif", AEEWecscMod_Load},
     {AEEFS_MIF_DIR"pushe.mif", AEEPushMod_Load},
 #endif
-#endif
+//#endif
 
 #if defined(FEATURE_CONVERTER)
          {AEEFS_MIF_DIR"converter.mif", ConverterMod_Load},
