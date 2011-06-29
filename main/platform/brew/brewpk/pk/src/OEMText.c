@@ -2832,6 +2832,7 @@ static void TextCtl_AddChar(TextCtlContext *pContext, AECHAR ch)
 
             // Write in the new character
             pContext->pszContents[pContext->wSelStart] = ch;
+            #ifndef FEATURE_ALL_KEY_PAD
             if(!pContext->m_bDigital)
             {
 				pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = ch;
@@ -2840,6 +2841,7 @@ static void TextCtl_AddChar(TextCtlContext *pContext, AECHAR ch)
             {
             	pContext->m_bDigital = FALSE;
             }
+            #endif
             ++pContext->wContentsChars;
 
             // Update the selection to be after the new character
