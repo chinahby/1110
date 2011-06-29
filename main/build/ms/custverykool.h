@@ -10,7 +10,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
-
+#define FEATURE_VERSION_VERYKOOL
 #define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  型号
 #define FEATURE_TORCH_KEY_SPACE		//手电筒功能按键
 

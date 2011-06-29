@@ -347,10 +347,16 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_DEFAULTRINGER       1
 #elif defined(FEATURE_VERSION_C306)
 #define   OEMNV_DEFAULTRINGER       4
+#elif defined(FEATURE_VERSION_VERYKOOL)
+#define   OEMNV_DEFAULTRINGER       7
 #else
 #define   OEMNV_DEFAULTRINGER       4
 #endif
+#if defined(FEATURE_VERSION_VERYKOOL)
+#define   OEMNV_ALARM_RINGER  4 
+#else
 #define   OEMNV_ALARM_RINGER  1 
+#endif
 
 #ifdef FEATURE_VERSION_FLEXI203
 #define   OEMNV_STARTUP_MUSIC 11
@@ -388,6 +394,9 @@ typedef PACKED struct _Key_pad_Cfg
 #elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 #define   OEMNV_STARTUP_MUSIC 11
 #define   OEMNV_SHUTDOWN_MUSIC 11
+#elif defined(FEATURE_VERSION_VERYKOOL)
+#define   OEMNV_STARTUP_MUSIC 12
+#define   OEMNV_SHUTDOWN_MUSIC 12
 #else
 #ifdef FEATURE_USES_LOWMEM
 #define   OEMNV_STARTUP_MUSIC 4
@@ -749,6 +758,13 @@ typedef struct _OEMErrLogType {
 #define OEMNV_EMERG_NUM_TWO                    "101"
 #define OEMNV_EMERG_NUM_TRE                    "102"
 #define OEMNV_EMERG_NUM_FOR                    "103"
+#elif defined(FEATURE_VERSION_VERYKOOL)
+#define OEMNV_EMERT_SEZE                       4
+#define OEMNV_EMERG_NUM_LEN                    3
+#define OEMNV_EMERG_NUM_ONE                    "122"
+#define OEMNV_EMERG_NUM_TWO                    "112"
+#define OEMNV_EMERG_NUM_TRE                    "911"
+#define OEMNV_EMERG_NUM_FOR                    "123"
 #else
 #define OEMNV_EMERT_SEZE                       4
 #define OEMNV_EMERG_NUM_LEN                    3

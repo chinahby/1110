@@ -5659,6 +5659,8 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
     	eBBarType = BTBAR_UNLOCK_SOS;
         #elif defined(FEATURE_VERSION_W515V3)
         eBBarType = BTBAR_LUNLOCK;
+        #elif defined(FEATURE_VERSION_VERYKOOL)
+        eBBarType = BTBAR_UNLOCK_SOS;
     	#else
         eBBarType = BTBAR_UNLOCK;
         #endif
