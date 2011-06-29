@@ -1873,9 +1873,6 @@ LOCAL void bt_init_efs_params
   BT_STRCPY( (char *)bt_efs_params.bt_short_name,
              bt_efs_params.bt_name, 
              (BT_MAX_EIR_NAME_LEN + 1) );
-
-   MSG_FATAL("***zzg 1 bt_efs_params.bt_short_name=%s***", bt_efs_params.bt_short_name, 0, 0);
-
   bt_efs_params.eir_manuf_data_size = 0;
 #endif /* BT_SWDEV_2_1_EIR */
     

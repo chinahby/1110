@@ -3135,9 +3135,7 @@ static int CContApp_GetOneDial( CContApp   *pMe,
     uint16        wIndex;
     
     wIndex = (uint16)WSTRTOFLOAT(pSpeedDial);
-    
-    MSG_FATAL("Get Onedial %s %d", pSpeedDial, wIndex,0);
-    
+        
     // No index 0 in one dial
     if(wIndex == 0)
     {

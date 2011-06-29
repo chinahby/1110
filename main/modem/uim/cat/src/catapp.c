@@ -6974,7 +6974,6 @@ boolean SelectItemEventHandler(void *pUser, AEEEvent evt, uint16 w, uint32 dw)
           case AVK_MUTE:
             return (TRUE);
           case AVK_POUND:
-          case AVK_CAMERA:
             if (pMe->term_resp_sent == FALSE &&
                 ((AEESTKSelectItemReq*)pMe->m_pProactiveCommand)->bHelpAvaliable == TRUE)
             {
@@ -8022,7 +8021,6 @@ static boolean CCatApp_HandleEvent(IApplet * pi, AEEEvent eCode,
         case AVK_SELECT:
         case AVK_STAR:
         case AVK_POUND:
-        case AVK_CAMERA:
           if (pMe->m_pISTK) {
             /* Set user activity */
              MSG_HIGH("Setting User Activity",0,0,0);

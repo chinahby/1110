@@ -2713,7 +2713,6 @@ static void RecentCalls_GetRecord(CRecentCalls *pMe)
                         }
                         #endif
                         pMe->list_record[i].number = WSTRDUP(wstrNumber);
-                        MSG_FATAL("pMe->list_record[i].number===%s,===%d",pMe->list_record[i].number,i,0);
                     }
                 }
                 break;

@@ -3032,7 +3032,6 @@ if(wParam == AVK_POUND && !IS_ZERO_REC())
                     if(NULL != pMe->m_szAlpha && WSTRLEN(pMe->m_szAlpha) > 0)
                     {
                         n_KeywordsLen = WSTRLEN(pMe->m_szAlpha);
-                        MSG_FATAL("Search text : %S", pMe->m_szAlpha,0,0);
                     }
                     else
                     {

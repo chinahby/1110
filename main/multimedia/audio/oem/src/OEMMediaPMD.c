@@ -976,7 +976,7 @@ static IBase * CMediaCMX_New(IShell * ps, AEECLSID cls, const void * pVtbl, uint
    CMediaCMX *    pme;
 
    // Alloc memory for the object
-   po = (IMedia *)AEE_OEM_NEWCLASS((IBaseVtbl *)pVtbl, dwSize);
+   po = (IMedia *)AEE_NewClass((IBaseVtbl *)pVtbl, dwSize);
    if (!po)
       return NULL;
 
@@ -1656,7 +1656,7 @@ void CMediaCMX_CallbackNotify(void * pUser)
    pme = (CMediaCMX *)mcb.cmdNotify.pIMedia;
    if (!pme)
       return;
-	
+
    AEEMedia_CallbackNotify((AEEMedia *)pme, &mcb);
 }
 
@@ -5779,7 +5779,7 @@ static void CMediaPMDMMLayer_SoundCB(void * pUser, AEESoundCmd eCBType, AEESound
       mcb.cmdNotify.pCmdData = (void *)(uint32)pData->wVolume;
       mcb.cmdNotify.dwSize = sizeof(pData->wVolume);
    }
-   
+
    AEEMedia_CallbackNotify((AEEMedia *)pme, &mcb);
 }
 

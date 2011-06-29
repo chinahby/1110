@@ -10246,7 +10246,6 @@ boolean OEM_IsEmergency_Number(char *pNumber,int len)
         { 
         	IRUIM        *pIRUIM;
             IShell *pIShell = AEE_GetShell();
-            MSG_FATAL("OEM_IsEmergency_Number %s",pNumber,0,0);
             if(NULL == pIShell)
             {
                 return is_emergency;
@@ -10274,7 +10273,6 @@ boolean OEM_IsEmergency_Number(char *pNumber,int len)
                     for(i=0;i<nNum;i++)
                     {
                         temp = &Assnum[i][0];
-                        MSG_FATAL("OEM_IsEmergency_Number %s %s",temp,pNumber,0);
                         if(STRCMP(pNumber,(char *)temp) == 0)
                         {
                             IRUIM_Release(pIRUIM);

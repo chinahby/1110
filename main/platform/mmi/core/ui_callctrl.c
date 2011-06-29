@@ -296,7 +296,6 @@ void get_call_type(
   {
     *call_type_ptr = CM_CALL_TYPE_EMERGENCY;
     *ecc_category = ecc_cat;
-    MSG_FATAL("Found emergency number %s",orig_num_ptr->buf,0,0);
     return;
   }
 #endif

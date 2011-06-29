@@ -2913,7 +2913,6 @@ static void recorder_set_as_cb( Recorder* pme)
 			{
 				ringID config[PROFILENUMBER] 	= { 0};
 			    byte profile					= 0;
-			    MSG_FATAL( ";recorder_list_set_as_ringer %s",pme->m_FileName,0,0);
 			    if( OEM_GetConfig( CFGI_PROFILE_CUR_NUMBER, &profile, sizeof( byte)) != SUCCESS)
 			    {
 			        MSG_FATAL( ";get profile setting failed",0,0,0);
@@ -2953,7 +2952,7 @@ static void recorder_set_as_cb( Recorder* pme)
 			 {
 			 	ringID config[PROFILENUMBER] 	= { 0};
 			    byte profile					= 0;
-			    MSG_FATAL( ";recorder_list_set_as_ringer %s",pme->m_FileName,0,0);
+			    
 			    if( OEM_GetConfig( CFGI_PROFILE_CUR_NUMBER, &profile, sizeof( byte)) != SUCCESS)
 			    {
 			        MSG_FATAL( ";get profile setting failed",0,0,0);
@@ -2993,7 +2992,7 @@ static void recorder_set_as_cb( Recorder* pme)
 			{
 				ringID config[PROFILENUMBER] 	= { 0};
 			    byte profile					= 0;
-			    MSG_FATAL( ";recorder_list_set_as_ringer %s",pme->m_FileName,0,0);
+			    
 			    if( OEM_GetConfig( CFGI_PROFILE_CUR_NUMBER, &profile, sizeof( byte)) != SUCCESS)
 			    {
 			        MSG_FATAL( ";get profile setting failed",0,0,0);
@@ -4054,7 +4053,7 @@ static boolean recorder_list_set_as_ringtone( Recorder* pme, AEEConfigItem confi
 #if 1
     ringID config[PROFILENUMBER] 	= { 0};
     byte profile					= 0;
-    MSG_FATAL( ";recorder_list_set_as_ringer %s",pme->m_FileName,0,0);
+    
     if( OEM_GetConfig( CFGI_PROFILE_CUR_NUMBER, &profile, sizeof( byte)) != SUCCESS)
     {
         MSG_FATAL( ";get profile setting failed",0,0,0);

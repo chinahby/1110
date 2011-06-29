@@ -719,7 +719,7 @@ int OEMCMNotifier_New(IShell *pIShell, AEECLSID cls, void **ppif)
    if (ICMNotifierObj == NULL) {
      /* Allocate the object. */
 
-     pNew = (ICMNotifier*)AEE_OEM_NEWCLASSEX((IBaseVtbl*)&gOEMCMNotifierFuncs,
+     pNew = (ICMNotifier*)AEE_NewClassEx((IBaseVtbl*)&gOEMCMNotifierFuncs,
                                          sizeof(ICMNotifier), TRUE);
 
      if (pNew == NULL)
@@ -1009,7 +1009,7 @@ int OEMCM_New(IShell *pIShell, AEECLSID cls, void **ppif)
    }
 
    // Allocate the object.
-   pNew = (ICM *) AEE_OEM_NEWCLASS((IBaseVtbl*)&gOEMCMFuncs, sizeof(ICM));
+   pNew = (ICM *) AEE_NewClass((IBaseVtbl*)&gOEMCMFuncs, sizeof(ICM));
    if (pNew == NULL)
       return ENOMEMORY;
 
@@ -2163,6 +2163,7 @@ static uint16 OEMCM_CountActiveCalls(AEECMCallType call_type,
   for (i = 0;  i < OEMCM_MAX_NUM_CALLS; ++i) {
 
     icall_state = OEMCM_GetCallState(i);
+    MSG_FATAL("OEMCM_CountActiveCalls %d 0x%x",i,icall_state,0);
     if (icall_state == AEECM_CALL_STATE_NONE ||
         icall_state == AEECM_CALL_STATE_IDLE ||
         icall_state == AEECM_CALL_STATE_ENDED ||
@@ -3247,12 +3248,10 @@ SEE ALSO:
 =============================================================================*/
 static int OEMCM_GetPhoneInfo(ICM *pMe, AEECMPhInfo *info, uint32 size)
 {
-  ICMCore *pCMCore;
   if (!pMe || !info)
     return EBADPARM;
 
-  pCMCore= pMe->m_coreObj;
-  if (pCMCore == NULL || pCMCore->m_ph_valid == FALSE) {
+  if (!pMe->m_coreObj || !pMe->m_coreObj->m_ph_valid) {
     return EFAILED;
   }
 
@@ -4900,7 +4899,7 @@ int OEMCallOpts_New (IShell *pIShell, AEECLSID cls, void **ppif)
    }
 
    // Allocate the object.
-   pNew = (ICallOpts *) AEE_OEM_NEWCLASS((IBaseVtbl*)&gOEMCallOptsFuncs,
+   pNew = (ICallOpts *) AEE_NewClass((IBaseVtbl*)&gOEMCallOptsFuncs,
                                sizeof(ICallOpts));
    if (pNew == NULL)
       return ENOMEMORY;
@@ -5240,7 +5239,7 @@ static void OEMCM_DMSSCallEventCB(cm_call_event_e_type call_event,
   AEECMEvent evt;
   AEECMCallInfo *core_call_info;
 
-  MSG_HIGH("Received Call Event 0x%X from DMSS CM", call_event, 0, 0);
+  MSG_FATAL("Received Call Event 0x%X from DMSS CM", call_event, 0, 0);
 
   if (!ICMCoreObj || !call_info_ptr) {
     MSG_ERROR("OEMCM_DMSSCallEventCB: Unexpected NULL pointer", 0, 0, 0);
@@ -5263,7 +5262,7 @@ static void OEMCM_DMSSCallEventCB(cm_call_event_e_type call_event,
   if ( evt == AEECM_EVENT_NONE)
     return;
 
-  MSG_MED("AEECMEvent is %d\n", evt, 0, 0);
+  MSG_FATAL("AEECMEvent is 0x%x\n", evt, 0, 0);
 
   event_cb = OEMCM_AllocEventCBS(ICMCoreObj, sizeof(cm_mm_call_info_s_type));
   if (!event_cb)
@@ -6026,7 +6025,7 @@ static void OEMCM_BREWCallEventCB(void *data)
     return;
   }
 
-  MSG_MED("OEMCM_BREWCallEventCB: received AEECM event 0x%X", event_cb->event,
+  MSG_FATAL("OEMCM_BREWCallEventCB: received AEECM event 0x%X", event_cb->event,
                                                           0, 0);
 
   event = event_cb->event;
@@ -7391,7 +7390,7 @@ static void OEMCM_HandleCallIncom(cm_mm_call_info_s_type *call_info, AEECMEvent 
   }
 
   (void) MEMSET(core_call_info, 0, sizeof(AEECMCallInfo));
-
+  MSG_FATAL("OEMCM_HandleCallIncom %d 0x%x",call_id,event,0);
   core_call_info->call_state = AEECM_CALL_STATE_INCOM;
   core_call_info->call_type = OEMCM_CallTypeToAEECM(call_info->call_type);
   core_call_info->direction = AEECM_CALL_DIRECTION_MT;
@@ -7492,7 +7491,7 @@ static void OEMCM_HandleCallIncomFwd(cm_mm_call_info_s_type *call_info, AEECMEve
   OEMCM_ResetPrivateCallState(call_id);
 
   (void) MEMSET(core_call_info, 0, sizeof(AEECMCallInfo));
-
+  MSG_FATAL("OEMCM_HandleCallIncomFwd %d 0x%x",call_id,event,0);
   core_call_info->call_state = AEECM_CALL_STATE_INCOM;
   core_call_info->call_type = OEMCM_CallTypeToAEECM(call_info->call_type);
   core_call_info->call_mode_info = (AEECMCallModeInfo)call_info->mode_info.info_type;

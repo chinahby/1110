@@ -760,8 +760,6 @@ static boolean bt_qsoc_detect_fw_version
     bt_qsoc.bt_qsoc_type = BT_QSOC_UNKNOWN;
   }
 
-  MSG_FATAL("BT QSOC: BTS version %s, idx %x",bts_ver, bt_qsoc.bt_qsoc_type, 0);
-
   /* NVM initalization below will need the BD Address, so read it from NV */
   bt_cmd_dc_get_bd_addr( &bd_addr ); 
 
@@ -789,7 +787,6 @@ static boolean bt_qsoc_detect_fw_version
 
   BT_MSG_HIGH( "BT QSOC START SENDING NVMs", 0, 0, 0 );
 
-	MSG_FATAL("bt_qsoc.bt_qsoc_type = %d,bt_refclock_type = %d",bt_qsoc.bt_qsoc_type,bt_refclock_type,0);
   /* if(!bt_qsoc_nvm_vs_find_file(bt_qsoc.bt_qsoc_type, &bt_qsoc_vs_nvm_cmd_tbl)) */
   if(!bt_qsoc_read_nvm_tags_from_header(bt_qsoc.bt_qsoc_type,bt_refclock_type))
   {

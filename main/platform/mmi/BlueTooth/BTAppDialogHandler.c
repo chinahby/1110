@@ -5427,9 +5427,6 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 
 							tmplen = STRLEN(pszTemp);
 							pathlen = STRLEN(pMe->mFTP.szCurrentFolder);
-
-
-							MSG_FATAL("***zzg pszTemp=%s, szCurrentFolder=%s***", pszTemp, pMe->mFTP.szCurrentFolder, 0);
 							
 							//STRLCPY(pMe->mFTP.szCurrentFolder, pszTemp, sizeof(pMe->mFTP.szCurrentFolder));
 							STRLCPY(path, pMe->mFTP.szCurrentFolder, (pathlen-tmplen)*sizeof(char));		
@@ -5437,7 +5434,6 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 							STRLCPY(pMe->mFTP.szCurrentFolder, path, sizeof(pMe->mFTP.szCurrentFolder));								
 							
 							DBGPRINTF("***zzg pszTemp=%s, path=%s***", pszTemp, path);
-							MSG_FATAL("***zzg pszTemp=%s, szCurrentFolder=%s***", pszTemp, pMe->mFTP.szCurrentFolder, 0);
 							
 							BTApp_GetNameOfLocalObjects(pMe, pMe->mFTP.szCurrentFolder);
 

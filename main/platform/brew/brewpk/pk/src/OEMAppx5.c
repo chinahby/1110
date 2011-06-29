@@ -21,7 +21,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:
    If the request must be aborted, call CALLBACK_Cancel().
    Before deleting the object, call Appx5_Dtor to clean up.
 
-         Copyright ?2000-2003 QUALCOMM Incorporated.
+         Copyright © 2000-2003 QUALCOMM Incorporated.
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
 ===========================================================================*/
@@ -369,6 +369,7 @@ static int Appx5_NetSetup(Appx5 *me)
    // get INetMgr
    nErr = ISHELL_CreateInstance(me->piShell,AEECLSID_NET,
                                 (void**)&piNet);
+
    if (SUCCESS == nErr) {
 
       me->piSock = INETMGR_OpenSocket(piNet, AEE_SOCK_STREAM);

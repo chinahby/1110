@@ -1447,7 +1447,6 @@ static boolean  IDD_EMERGENCYNUMLIST_Handler(void  *pUser,
                 {
                     wstrNum[0] = 0;
                     STRTOWSTR(emerg_tab.emerg_num[i].num_buf, wstrNum, sizeof(wstrNum));
-					MSG_FATAL("emerg_tab.emerg_num[i].num_buf::::%s",emerg_tab.emerg_num[i].num_buf,0,0);
                     IMENUCTL_AddItem(pMenu, NULL, NULL, 500+i, wstrNum, NULL);
                 }
                 //SETAEERECT(&rc,  0, 0, pMe->m_rc.dx, pMe->m_rc.dy - (BOTTOMBAR_HEIGHT + IDLE_ICON_HEIGHT));

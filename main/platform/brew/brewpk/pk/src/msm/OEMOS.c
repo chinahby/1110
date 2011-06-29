@@ -728,7 +728,7 @@ void OEMOS_DbgDump(void)
     {
         if(pNode->ptr != NULL)
         {
-            MSG_FATAL("***Dump 0x%08X %s %d",pNode->ptr,pNode->pfile,pNode->line);
+            MSG_FATAL("***Dump 0x%08X %d",pNode->ptr,pNode->line,0);
         }
         pNode++;
     }

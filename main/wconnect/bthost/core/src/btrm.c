@@ -4018,18 +4018,7 @@ LOCAL bt_rm_device_type* bt_rm_get_device
       break;
     }
   }  
-
-  {
-  	  MSG_FATAL("***zzg bt_rm_get_device 1 i=%d***", i, 0, 0);
-
-	  MSG_FATAL("***zzg bt_rm_get_device 1 bt_rm_device_name_str=%s***", bt_rm_device[i].dev_public.name_str, 0, 0);
-	  MSG_FATAL("***zzg bt_rm_get_device 1 bt_rm_device_nick_name_str=%s***", bt_rm_device[i].dev_public.nick_name_str, 0, 0);
-	  
-	  MSG_FATAL("***zzg bt_rm_get_device 1 name_str=%s***", (void*)dev_ptr->dev_public.name_str, 0, 0);
-	  MSG_FATAL("***zzg bt_rm_get_device 1 nick_name_str=%s***", (void*)dev_ptr->dev_public.nick_name_str, 0, 0);
-  }
   
-
   if ( (dev_ptr == NULL) && (entry_required != FALSE) )
   {
     for ( i = 0; i < BT_RM_MAX_DEVICES; i++ )
@@ -4050,9 +4039,7 @@ LOCAL bt_rm_device_type* bt_rm_get_device
     }
 
   {
-  	  MSG_FATAL("***zzg bt_rm_get_device 2 i=%d***", i, 0, 0);		
-	  MSG_FATAL("***zzg bt_rm_get_device 2 name_str=%s***", (void*)dev_ptr->dev_public.name_str, 0, 0);
-	  MSG_FATAL("***zzg bt_rm_get_device 2 nick_name_str=%s***", (void*)dev_ptr->dev_public.nick_name_str, 0, 0);
+  	  MSG_FATAL("***zzg bt_rm_get_device 2 i=%d***", i, 0, 0);
   }
 
     if ( dev_ptr == NULL )
@@ -4067,12 +4054,6 @@ LOCAL bt_rm_device_type* bt_rm_get_device
       MSG_FATAL("***zzg bt_rm_get_device dev_ptr != NULL***", 0, 0, 0);		
 	  
       bt_rm_init_device( dev_ptr );
-
-	  {
-		  MSG_FATAL("***zzg bt_rm_get_device 3 name_str=%s***", (void*)dev_ptr->dev_public.name_str, 0, 0);
-		  MSG_FATAL("***zzg bt_rm_get_device 3 nick_name_str=%s***", (void*)dev_ptr->dev_public.nick_name_str, 0, 0);
-	  }
-
       dev_ptr->dev_public.bd_addr = *bd_addr_ptr;
     }
     else
@@ -6376,9 +6357,6 @@ void bt_rm_update_eir
    */                               
 
   //Modify End
-
-  MSG_FATAL("***zzg 2 bt_efs_params.bt_short_name=%s***", bt_efs_params.bt_short_name, 0, 0);
-
   /* Manufacturer Specific Data */
   index += bt_rm_append_eir_data( &eir_packet[index], (BT_MAX_EIR_HCI_LEN - index),
                                   BT_EIR_TYPE_MANUF_SPECIFIC_DATA,
@@ -6476,8 +6454,6 @@ void bt_rm_update_eir_short_name
                (char *)short_name,
                (BT_MAX_EIR_NAME_LEN + 1) );
   }
-
-  MSG_FATAL("***zzg 3 short_name=%s, bt_efs_params.bt_short_name=%s***", short_name, bt_efs_params.bt_short_name, 0);
 
   if( !BT_STRCMP( bt_efs_params.bt_name, bt_efs_params.bt_short_name ) )
   {
@@ -19923,9 +19899,6 @@ bt_cmd_status_type bt_cmd_rm_get_local_info_ext
     BT_STRCPY( (char *)bt_short_name_str_ptr,
                (char *)bt_efs_params.bt_short_name,
                (BT_MAX_EIR_NAME_LEN + 1) );
-
-	MSG_FATAL("***zzg 4 bt_efs_params.bt_short_name=%s***", bt_efs_params.bt_short_name, 0, 0);
-	
   }
 
   TASKFREE();
@@ -27265,8 +27238,6 @@ void bt_rm_refresh_efs_param
 	BT_STRCPY( (char *)bt_efs_params.bt_short_name,
 	         bt_efs_params.bt_name, 
 	         (BT_MAX_EIR_NAME_LEN + 1) );
-
-	MSG_FATAL("***zzg 5 bt_efs_params.bt_short_name=%s***", bt_efs_params.bt_short_name, 0, 0);
 
 	bt_efs_params.eir_manuf_data_size = 0;
 #endif /* BT_SWDEV_2_1_EIR */

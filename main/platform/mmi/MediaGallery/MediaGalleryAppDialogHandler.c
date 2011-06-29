@@ -2285,7 +2285,6 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
       MGMimeType     eMimeBase;
 
       eMimeBase = MediaGalleryApp_GetExplorerMime(pMe);
-	  MSG_FATAL("pCurNode->szName::::::::::::::::::::::%s:::::::::",pCurNode->szName,0,0);
 	  MSG_FATAL("eMimeBase::::::::::::::::::::::%d:::::::::",eMimeBase,0,0);
       if(eMimeBase == MG_MIME_MISCELL ||
          !MG_BETWEEN(eMimeBase,MG_MIME_MISMAX,MG_MIME_MAX))
