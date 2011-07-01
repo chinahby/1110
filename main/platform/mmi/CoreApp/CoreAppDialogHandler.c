@@ -657,7 +657,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                     break;
 #ifdef FEATURE_OEMOMH
                 case IDS_NOOMH_CARD:
-                    set_time = 5000;
+                    set_time = 0;
                     break;
 #endif                  
                 default:
