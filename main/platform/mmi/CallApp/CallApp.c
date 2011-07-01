@@ -1662,7 +1662,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 #endif
 #ifdef FEATURE_OEMOMH
         case EVT_OMH_PROMPT:
-            if(!gsdi_uim_omh_cap.omh_enabled)
+            if(!gsdi_uim_omh_cap.omh_enabled && IRUIM_IsCardConnected(pMe->m_pIRUIM))
             {
                 MSG_FATAL("EVT_OMH_PROMPT %d 0x%x",pMe->m_running,ISHELL_ActiveApplet(pMe->m_pShell),0);
                 if (!pMe->m_running)

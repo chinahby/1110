@@ -968,9 +968,7 @@ static NextFSMAction COREST_POWERONSYSINIT_Handler(CCoreApp *pMe)
 #ifdef FEATURE_OEMOMH
             if(!gsdi_uim_omh_cap.omh_enabled && IRUIM_IsCardConnected(pMe->m_pIRUIM))
             {
-                pMe->m_nMsgID = IDS_NOOMH_CARD;
-                CoreApp_ShowDialog(pMe,IDD_MSGBOX);
-                return NFSMACTION_WAIT;                    
+                ISHELL_SendEvent(pMe->a.m_pIShell,AEECLSID_DIALER,EVT_OMH_PROMPT,0,0);
             }
             else
             {

@@ -142,9 +142,6 @@
 	<STRING Id="1047" Name="IDS_WAITING">
 		<Text>Waiting</Text>
 	</STRING>
-	<String Id="1048" Name="IDS_NOOMH_CARD">
-		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
-	</String>
 	<String Id="1049" Name="IDS_MSG_OK">
 		<Text>OK</Text>
 	</String>

@@ -133,18 +133,15 @@
 	<STRING Id="1044" Name="IDS_CHINA_TELECOM">
 		<Text>China Telecom</Text>
 	</STRING>
-	<String Id="1045" Name="IDS_HEADSET_ON">
-		<Text>headset plug in</Text>
-	</String>
-	<String Id="1046" Name="IDS_HEADSET_OFF">
-		<Text>headset plug out</Text>
-	</String>
-	<String Id="1047" Name="IDS_WAITING">
+	<STRING Id="1045" Name="IDS_HEADSET_ON">
+		<Text>Headset plug in</Text>
+	</STRING>
+	<STRING Id="1046" Name="IDS_HEADSET_OFF">
+		<Text>Headset plug out</Text>
+	</STRING>
+	<STRING Id="1047" Name="IDS_WAITING">
 		<Text>Waiting</Text>
-	</String>
-	<String Id="1048" Name="IDS_NOOMH_CARD">
-		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
-	</String>
+	</STRING>
 	<String Id="1049" Name="IDS_MSG_OK">
 		<Text>OK</Text>
 	</String>
@@ -159,6 +156,39 @@
 	</String>
 	<String Id="1053" Name="IDS_MSG_ACCEPTED">
 		<Text>The new PIN is accepted</Text>
+	</String>
+	<String Id="1054" Name="IDS_NO_USIM_CARDONE">
+		<Text>No UIM card 1</Text>
+	</String>
+	<String Id="1055" Name="IDS_NO_USIM_CARDTWO">
+		<Text>No UIM card 2</Text>
+	</String>
+	<String Id="1056" Name="IDS_STR_BLACKBERRY_ONE">
+		<Text>Messages</Text>
+	</String>
+	<String Id="1057" Name="IDS_STR_BLACKBERRY_TWO">
+		<Text>Contacts</Text>
+	</String>
+	<String Id="1058" Name="IDS_STR_BLACKBERRY_TRE">
+		<Text>Alarm</Text>
+	</String>
+	<String Id="1059" Name="IDS_STR_BLACKBERRY_FUR">
+		<Text>Scheduler</Text>
+	</String>
+	<String Id="1060" Name="IDS_STR_BLACKBERRY_FIV">
+		<Text>Musicplayer</Text>
+	</String>
+	<String Id="1061" Name="IDS_STR_BLACKBERRY_SIX">
+		<Text>FMRadio</Text>
+	</String>
+	<String Id="1062" Name="IDS_BATTERY_FULLY_CHARGE">
+		<Text>Completion of the battery</Text>
+	</String>
+	<String Id="1063" Name="IDS_USERPROFILE_MODE">
+		<Text>vibrate mode activated</Text>
+	</String>
+	<String Id="1064" Name="IDS_USERPROFILE_NOMAL">
+		<Text>normal mode activated</Text>
 	</String>
 </Strings>
 <Dialogs>

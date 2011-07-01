@@ -133,18 +133,15 @@
 	<STRING Id="1044" Name="IDS_CHINA_TELECOM">
 		<Text>China Telecom</Text>
 	</STRING>
-	<String Id="1045" Name="IDS_HEADSET_ON">
-		<Text>Headset Disambungkan</Text>
-	</String>
-	<String Id="1046" Name="IDS_HEADSET_OFF">
-		<Text>Headset Dilepaskan</Text>
-	</String>
-	<String Id="1047" Name="IDS_WAITING">
-		<Text>Menunggu</Text>
-	</String>
-	<String Id="1048" Name="IDS_NOOMH_CARD" Encoding="Unicode">
-		<Text>This is non-OMH Card, please upgrade to OMH R-UIM</Text>
-	</String>
+	<STRING Id="1045" Name="IDS_HEADSET_ON">
+		<Text>Headset plug in</Text>
+	</STRING>
+	<STRING Id="1046" Name="IDS_HEADSET_OFF">
+		<Text>Headset plug out</Text>
+	</STRING>
+	<STRING Id="1047" Name="IDS_WAITING">
+		<Text>Waiting</Text>
+	</STRING>
 	<String Id="1049" Name="IDS_MSG_OK">
 		<Text>OK</Text>
 	</String>
@@ -159,6 +156,12 @@
 	</String>
 	<String Id="1053" Name="IDS_MSG_ACCEPTED">
 		<Text>The new PIN is accepted</Text>
+	</String>
+	<String Id="1054" Name="IDS_NO_USIM_CARDONE">
+		<Text>No UIM card 1</Text>
+	</String>
+	<String Id="1055" Name="IDS_NO_USIM_CARDTWO">
+		<Text>No UIM card 2</Text>
 	</String>
 	<String Id="1056" Name="IDS_STR_BLACKBERRY_ONE">
 		<Text>Pesan</Text>
