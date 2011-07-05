@@ -6945,16 +6945,6 @@ boolean MakeVoiceCall(IShell *pShell, boolean bCloseAll, AECHAR *number)
       return TRUE;
 }
 
-const static AEECMNotifyInfo g_myInfo[] = 
-{
-    {
-        AEECM_EVENT_CALL_INCOM,
-        {
-            
-        }
-    },
-};
-
 typedef struct{
     AEECMEvent              event;
     cm_mm_call_info_s_type  myInfo;
@@ -7099,7 +7089,7 @@ void CallApp_StartCallTest(void)
     // Init Step 6
     pCurr->nWaitTimeMS  = 1000;
     pCurr->event = AEECM_EVENT_CALL_INCOM;
-    pCurr->myInfo.call_id = 2;
+    pCurr->myInfo.call_id = 1;
     STRCPY((char *)pCurr->myInfo.num.buf, "222222");
     pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
     pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
@@ -7118,7 +7108,7 @@ void CallApp_StartCallTest(void)
     // Init Step 7
     pCurr->nWaitTimeMS  = 1000;
     pCurr->event = AEECM_EVENT_CALL_SIGNAL;
-    pCurr->myInfo.call_id = 2;
+    pCurr->myInfo.call_id = 1;
     STRCPY((char *)pCurr->myInfo.num.buf, "222222");
     pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
     pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
@@ -7137,7 +7127,7 @@ void CallApp_StartCallTest(void)
     // Init Step 8
     pCurr->nWaitTimeMS  = 10000;
     pCurr->event = AEECM_EVENT_CALL_CALLER_ID;
-    pCurr->myInfo.call_id = 2;
+    pCurr->myInfo.call_id = 1;
     STRCPY((char *)pCurr->myInfo.num.buf, "222222");
     pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
     pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
@@ -7156,7 +7146,7 @@ void CallApp_StartCallTest(void)
     // Init Step 9
     pCurr->nWaitTimeMS  = 1000;
     pCurr->event = AEECM_EVENT_CALL_END;
-    pCurr->myInfo.call_id = 2;
+    pCurr->myInfo.call_id = 1;
     STRCPY((char *)pCurr->myInfo.num.buf, "222222");
     pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
     pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;

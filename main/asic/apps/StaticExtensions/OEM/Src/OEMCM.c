@@ -7372,7 +7372,16 @@ static void OEMCM_HandleCallIncom(cm_mm_call_info_s_type *call_info, AEECMEvent 
 
   call_id = call_info->call_id;
   core_call_info = &(ICMCoreObj->m_call_info[call_id]);
-
+#ifdef FEATURE_OEMOMH
+  // 修正Caller ID in conversation测试的问题
+  MSG_FATAL("core_call_info->call_state=0x%x",core_call_info->call_state,0,0);
+  if(core_call_info->call_state == AEECM_CALL_STATE_CONV)
+  {
+    MSG_FATAL("IGNORE INCOM EVT IN CONV",0,0,0);
+    OEMCM_FREE(notify_info);
+    return;
+  }
+#endif
   /* Update core call info */
   if (ICMCoreObj->m_state[call_id].bSetup) {
     ICMCoreObj->m_state[call_id].bSetup = FALSE;

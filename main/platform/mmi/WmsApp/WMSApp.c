@@ -4661,7 +4661,12 @@ wms_client_message_s_type *WmsApp_GetClientMsgMO(WmsApp *pMe, boolean bSend)
         pCltMsg->u.cdma_message.concat_8.seq_num = pUserdata->headers[0].u.concat_8.seq_num;
     }
 #endif    
-    
+#ifdef FEATURE_OEMOMH
+    if(udh_present)
+    {
+        pCltMsg->u.cdma_message.teleservice = WMS_TELESERVICE_WEMT;
+    }
+#endif
     // Ω” ’µÿ÷∑
     MEMSET(strNum, 0, sizeof(strNum));
 
