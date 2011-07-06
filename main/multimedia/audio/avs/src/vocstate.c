@@ -4426,7 +4426,9 @@ voc_state_return_type voc_state_voc_config (voc_capability_type so)
 #if defined(FEATURE_QTUNES) || \
     defined(FEATURE_QTUNES_AAC)
     case VOC_CAP_QTUNES:
+#ifdef FEATURE_QTUNES_AAC // Gemsea Add
     case VOC_CAP_QTUNES_AAC:
+#endif
 #ifdef FEATURE_WMA
     case VOC_CAP_QTUNES_WMA:
 #ifdef QDSP_IMAGE_WM_PRO_DEFINED
