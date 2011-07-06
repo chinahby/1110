@@ -97,9 +97,9 @@ This section contains comments describing changes made to this file.
 Notice that changes are listed in reverse chronological order.
 
 
-$Header: //depot/asic/qsc1100/drivers/clkregim/clkrgm_msm.h#28 $
-$DateTime: 2009/04/02 01:06:49 $
-$Author: bamidir $
+$Header: //depot/asic/qsc1100/drivers/clkregim/clkrgm_msm.h#29 $
+$DateTime: 2010/12/28 15:01:23 $
+$Author: kmaliped $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
@@ -156,7 +156,7 @@ and other items needed by this module.
  */
 
 /* TBP : Port this value */
-#define CLKRGM_TCXO_WARMUP_AND_SWITCH_OVERHEAD_MS  ( 10 )
+#define CLKRGM_TCXO_WARMUP_AND_SWITCH_OVERHEAD_MS  ( 15 )
 #define CLKRGM_TCXO_WARMUP_AND_SWITCH_OVERHEAD_US  (CLKRGM_TCXO_WARMUP_AND_SWITCH_OVERHEAD_MS * 1000)
 
 /* --------------------------------------------------------------------------

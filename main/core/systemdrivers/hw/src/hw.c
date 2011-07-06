@@ -45,9 +45,9 @@ type checking can be performed.
   Notice that changes are listed in reverse chronological order.
 
   $PVCSPath:  L:/src/asw/MSM6050/vcs/hw.c_v   1.6   13 Mar 2002 07:22:54   dlee  $
-  $Header: //depot/asic/qsc1100/drivers/hw/hw.c#9 $
-  $DateTime: 2009/05/21 01:41:55 $
-  $Author: ovyas $
+  $Header: //depot/asic/qsc1100/drivers/hw/hw.c#10 $
+  $DateTime: 2010/11/24 04:57:48 $
+  $Author: pramodv $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------   
@@ -337,19 +337,17 @@ void hw_power_off( void )
   INTLOCK_SAV (isave);
   /* isave not used, as interrupts are not reenabled. */
 
+#ifdef FEATURE_PMIC_WDOG
+  /* Disable watch-dog so PMIC will shut down all regulators */
+  pm_watchdog_reset_detect_switch(PM_OFF_CMD);
+#endif
+
   #if !defined (__GNUC__)
   #if defined(FEATURE_PMIC_MOMENTARY_SUDDEN_PWR_LOSS)
   /* Disable Sudden Momentary power loss driver to prevent the phone from
      automatically restarting */
   pm_smpld_switch(PM_OFF_CMD);
 
-  #endif
-  
-  // Gemsea Add For PowerDown
-  // 此处必须关掉PM的DOG，否则将导致关机变重启
-  // 原来的处理在POWERKEY的检测部分，局限性太大，因此转移到此处
-  #if defined(FEATURE_PMIC_WDOG)
-  pm_watchdog_reset_detect_switch(PM_OFF_CMD);
   #endif
   #endif
 
