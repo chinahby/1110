@@ -23,10 +23,11 @@ Copyright (c) 2007      by QUALCOMM, Incorporated.  All Rights Reserved.
 This section contains comments describing changes made to this file.
 Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/modem/rfa/pmic/device/main/latest/driver/inc/pmgen.h#10 $
+$Header: //depot/asic/msmshared/drivers/rf/branch/ULC/CR259554/pmgen.h#4 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+11/3/10    nv      Added API for Configuring minimum P_ON Time for requested Buck SMPS
 04/08/09   jtn     Added pm_tcxo2_set_drive_strength() API.  Added two new
                    drive strength levels for PMIC4
 02/24/09   APU     RPCed all audio APIs as requested by the audio-team. 
@@ -690,6 +691,34 @@ typedef enum
 }pm_smpl_timer_type;
 
 /*========================== End of SMPL type defs =======================*/
+/*========================== MINIMUM P ON TIME type definitions =======================*/
+typedef enum
+{
+   PM_MIN_P_ON_TIME_35, // Min time is 35 ns
+   PM_MIN_P_ON_TIME_46, // Min time is 46 ns
+   PM_MIN_P_ON_TIME_68, 
+   PM_MIN_P_ON_TIME_119, 
+   PM_MIN_P_ON_TIME_155, 
+   PM_MIN_P_ON_TIME_188, 
+   PM_MIN_P_ON_TIME_251, 
+   PM_MIN_P_ON_TIME_307,
+   PM_MIN_P_ON_TIME_OUT_OF_RANGE
+}pm_min_on_time_type;
+/*========================== End of MINIMUM P ON TIME type definitions =======================*/
+/*========================== BUCK SMPS TYPE  =======================*/
+typedef enum
+{
+  BUCK_SMPS_S1,     // BUCK SMPS 1
+  BUCK_SMPS_S2,
+  BUCK_SMPS_INVALID  
+}buck_smps_type;
+
+
+
+
+/*========================== End of BUCK SMPS TYPE  =======================*/
+
+
 
 /*===========================================================================
 
@@ -5115,5 +5144,52 @@ pm_err_flag_type pm_mbg_iref_enable(boolean enable);
  */
 pm_err_flag_type pm_vote_clk_32k(pm_switch_cmd_type cmd, 
                                         pm_32k_clk_app_vote_type vote);
+
+/*===========================================================================
+
+FUNCTION pm_config_buck_min_p_on_time            EXTERNAL FUNCTION
+
+DESCRIPTION
+    Configures the minimum P_ON Time for requested Buck SMPS
+    Example: For configuring minimum P_ON Time of 35 ns to BUSK SMPS S2, we should 
+             call this function as
+       pm_config_buck_min_p_on_time(BUCK_SMPS_S2, PM_MIN_P_ON_TIME_35);
+                  
+INPUT PARAMETERS  
+    Buck_smps_type (enum)
+     Valid parameters: 
+      BUCK_SMPS_S1,
+      BUCK_SMPS_S2
+    
+    pm_min_on_time_type (enum)
+      Valid parameters:
+      PM_MIN_P_ON_TIME_35 
+      PM_MIN_P_ON_TIME_46 
+      PM_MIN_P_ON_TIME_68 
+      PM_MIN_P_ON_TIME_119 
+      PM_MIN_P_ON_TIME_155 
+      PM_MIN_P_ON_TIME_188 
+      PM_MIN_P_ON_TIME_251 
+      PM_MIN_P_ON_TIME_307            
+	     
+RETURN VALUE
+  return value type: pm_err_flag_type.
+  
+  return value type: pm_err_flag_type.  
+    PM_ERR_FLAG__SBI_OPT_ERR           =   Failed to communicate with the PMIC through SBI
+    PM_ERR_FLAG__PAR1_OUT_OF_RANGE     =   Parameter 1 out of range
+    PM_ERR_FLAG__PAR2_OUT_OF_RANGE     =   Parameter 2 out of range
+    PM_ERR_FLAG__SUCCESS               =   SUCCESS 
+      
+
+DEPENDENCIES
+  Call the functions listed bellow before calling this function:
+  1) rflib_init() 
+  2) pm_init()
+
+SIDE EFFECTS
+  Interrupts are disabled while communicating with PMIC.
+===========================================================================*/
+pm_err_flag_type pm_config_buck_min_p_on_time(buck_smps_type smps, pm_min_on_time_type min_time);
 
 #endif /* PMGEN_H */
