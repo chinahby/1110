@@ -124,34 +124,34 @@ public:
 	};
 
 	//Init routine for this module.
-	static void FileUtils::Init();
+	static void Init();
 
 	//Enable/disable file cache.
-	static void FileUtils::EnableReadCache();
-	static void FileUtils::DisableReadCache();
+	static void EnableReadCache();
+	static void DisableReadCache();
 
 	//File I/O utils
-	static int FileUtils::Fseek( FILE *stream, long offset, int origin );
-	static int FileUtils::Fgetpos( FILE *stream, fpos_t *pos );
-	static int FileUtils::Fsetpos( FILE *stream, const fpos_t *pos );
-	static long FileUtils::Ftell( FILE *stream );
-	static FILE * FileUtils::Fopen( const char *filename, const char *mode );
-	static int FileUtils::Fclose( FILE *stream );
-	static size_t FileUtils::Fread( void *buffer, size_t size, size_t count, FILE *stream ) ;
-	static void FileUtils::ShowFileStats();
+	static int Fseek( FILE *stream, long offset, int origin );
+	static int Fgetpos( FILE *stream, fpos_t *pos );
+	static int Fsetpos( FILE *stream, const fpos_t *pos );
+	static long Ftell( FILE *stream );
+	static FILE * Fopen( const char *filename, const char *mode );
+	static int Fclose( FILE *stream );
+	static size_t Fread( void *buffer, size_t size, size_t count, FILE *stream ) ;
+	static void ShowFileStats();
 
 
 private:
 
 
-	static FileUtils::FilePointer * FileUtils::FindFile(FILE * fp);
-	static FileUtils::FilePointer * FileUtils::AddFile(FILE * fp);
-	static void FileUtils::RemoveFile(FILE * fp);
-	static bool FileUtils::RefillFileCache(FILE *stream);
-	static size_t FileUtils::CacheFread(void *buffer, size_t count,FILE *stream);
-	static FileCache *  FileUtils::FindFileCache(FILE *stream);
-	static VirtualFilePos *  FileUtils::FindVirtualFilePos(FILE *stream);
-	static size_t FileUtils::VirtualFread( void *buffer, size_t size, size_t count, FILE *stream ) ;
+	static FilePointer * FindFile(FILE * fp);
+	static FilePointer * AddFile(FILE * fp);
+	static void RemoveFile(FILE * fp);
+	static bool RefillFileCache(FILE *stream);
+	static size_t CacheFread(void *buffer, size_t count,FILE *stream);
+	static FileCache *  FindFileCache(FILE *stream);
+	static VirtualFilePos *  FindVirtualFilePos(FILE *stream);
+	static size_t VirtualFread( void *buffer, size_t size, size_t count, FILE *stream ) ;
 
 };	
 

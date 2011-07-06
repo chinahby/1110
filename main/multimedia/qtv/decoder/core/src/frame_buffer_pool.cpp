@@ -14,9 +14,14 @@ Copyright 2005 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/decoder/core/rel/2.0/src/frame_buffer_pool.cpp#2 $
-$DateTime: 2008/12/05 05:33:34 $
-$Change: 799225 $
+$Header: //source/qcom/qct/multimedia/qtv/decoder/core/rel/2.0/src/frame_buffer_pool.cpp#4 $
+$DateTime: 2009/05/04 03:44:08 $
+$Change: 902920 $
+
+when       who      what, where, why
+--------   ---      ---------------------------------------------------------
+04/08/09    vs      Remove the dependencies of other modules.
+--------   ---      ---------------------------------------------------------
 
 ========================================================================== */
 
@@ -25,10 +30,9 @@ $Change: 799225 $
                      INCLUDE FILES FOR MODULE
 
 ========================================================================== */
-#include "qtvInternalDefs.h"
 #include "frame_buffer_pool.h"
-#include "qtv_msg.h"
-#include "qtvsystem.h" // for QTV_Malloc and QTV_Free
+#include "vdecoder_log.h" 
+#include "vdecoder_utils.h" // for Vdec_Malloc and Vdec_Free
 #include "assert.h"    // for ASSERT
 
 /* ==========================================================================
@@ -391,8 +395,8 @@ bool FrameBufferPool::AllocateAllBuffers
   )
   {
  #ifdef FEATURE_QTV_DECODER_INVALIDATE_CACHE
-      pYUVBuf_malloc = ( void** )QTV_Malloc( numReferenceYUV_buffers * sizeof( void* ) );
-      pOutputYUVBuf_malloc  = ( void** )QTV_Malloc( numOutputYUV_buffers * sizeof( void* ) );
+      pYUVBuf_malloc = ( void** )Vdec_Malloc( numReferenceYUV_buffers * sizeof( void* ) );
+      pOutputYUVBuf_malloc  = ( void** )Vdec_Malloc( numOutputYUV_buffers * sizeof( void* ) );
       pFilteredYUVBuf_malloc =  m_buf.pFilteredYUVBuf;
       for(cnt = 0; cnt < numReferenceYUV_buffers; cnt++)
       {
@@ -411,7 +415,7 @@ bool FrameBufferPool::AllocateAllBuffers
   else
   {
     FreeAllBuffers();
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Unable to allocate buffers (out of memory)" );
+    VDEC_MSG_PRIO(VDECDIAG_GENERAL, VDECDIAG_PRIO_ERROR, "Unable to allocate buffers (out of memory)" );
     return false;
   }
 }
@@ -558,8 +562,8 @@ bool FrameBufferPool::AllocateAllBuffers
   )
   {
  #ifdef FEATURE_QTV_DECODER_INVALIDATE_CACHE
-    pYUVBuf_malloc = ( void** )QTV_Malloc( numReferenceYUV_buffers * sizeof( void* ) );
-    pOutputYUVBuf_malloc  = ( void** )QTV_Malloc( numOutputYUV_buffers * sizeof( void* ) );
+    pYUVBuf_malloc = ( void** )Vdec_Malloc( numReferenceYUV_buffers * sizeof( void* ) );
+    pOutputYUVBuf_malloc  = ( void** )Vdec_Malloc( numOutputYUV_buffers * sizeof( void* ) );
     pFilteredYUVBuf_malloc =  m_buf.pFilteredYUVBuf;
     for(cnt = 0; cnt < numReferenceYUV_buffers; cnt++)
     {
@@ -579,7 +583,7 @@ bool FrameBufferPool::AllocateAllBuffers
   else
   {
     FreeAllBuffers();
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Unable to allocate buffers (out of memory)" );
+    VDEC_MSG_PRIO(VDECDIAG_GENERAL, VDECDIAG_PRIO_ERROR, "Unable to allocate buffers (out of memory)" );
     return false;
   }
 }
@@ -638,11 +642,11 @@ bool FrameBufferPool::AllocateBufferArray
 
   if( array_out != NULL )
   {
-    QTV_Free( array_out );
+    Vdec_Free( array_out );
     array_out = NULL;
   }
 
-  array_out = ( void** )QTV_Malloc( numBuffers * sizeof( void* ) );
+  array_out = ( void** )Vdec_Malloc( numBuffers * sizeof( void* ) );
   {
     if ( array_out != NULL )
     {
@@ -703,7 +707,7 @@ void* FrameBufferPool::AllocateOneBuffer( const size_t nBytes )
       /* Buffer allocated was not bit aligned again, give up.
          Free this buffer and return NULL, the heap manager should be
          aware of this limitation and not return us a buffer of this kind. */
-      QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+      VDEC_MSG_PRIO1(VDECDIAG_GENERAL, VDECDIAG_PRIO_ERROR, 
        "Allocated buffer crosses 25bit boundary(0x%x), Change to heap alloc needed", pBuf);
       m_pfnFree( m_streamID, m_pCbData, pBuf );
       m_pfnFree( m_streamID, m_pCbData, pTempBuf );
@@ -717,6 +721,10 @@ void* FrameBufferPool::AllocateOneBuffer( const size_t nBytes )
    }        
   } 
 #endif
+  // Memset Data to NULL, So that no JUNK data is present.
+  if(pBuf){
+    memset(pBuf, 0, nBytes);
+  }
   return pBuf;
 }
 
@@ -740,12 +748,12 @@ void FrameBufferPool::FreeAllBuffers( void )
 {
 #ifdef FEATURE_QTV_DECODER_INVALIDATE_CACHE
   FreeBufferArray( pYUVBuf_malloc, m_buf.numYUVBuffers );
-  QTV_Free(m_buf.pYUVBuf);
+  Vdec_Free(m_buf.pYUVBuf);
   m_buf.pYUVBuf = NULL;
   #if defined FEATURE_VIDEO_PLAYER_INTERFACE_REV_2A || \
     defined FEATURE_VIDEO_PLAYER_INTERFACE_REV_C1
   FreeBufferArray( pOutputYUVBuf_malloc, m_buf.numOutputYUV_buffers );
-  QTV_Free(m_buf.pOutputYUVBuf);
+  Vdec_Free(m_buf.pOutputYUVBuf);
   m_buf.pOutputYUVBuf = NULL;
   #endif /* FEATURE_VIDEO_PLAYER_INTERFACE_REV_2A || 
           FEATURE_VIDEO_PLAYER_INTERFACE_REV_C1*/
@@ -807,7 +815,7 @@ void FrameBufferPool::FreeBufferArray
       m_pfnFree( m_streamID, m_pCbData, array[ i ] );
     }
 
-    QTV_Free( array );
+    Vdec_Free( array );
     array = NULL;
   }
 }

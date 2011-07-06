@@ -23,9 +23,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/zrex/main/latest/inc/zrex.h#7 $
-$DateTime: 2008/05/08 14:44:36 $
-$Change: 656482 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/zrex/main/latest/inc/zrex.h#10 $
+$DateTime: 2009/12/22 03:27:02 $
+$Change: 1121821 $
 
 ========================================================================== */
 
@@ -40,9 +40,11 @@ $Change: 656482 $
 ========================================================================== */
 #ifndef ZREX_H
 #define ZREX_H
+#ifndef FEATURE_WINCE
 #ifndef FEATURE_DS_SOCKETS_BSD
    #define FEATURE_DS_SOCKETS_BSD
 #endif
+#endif /* NOT FEATURE_WINCE */
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,7 +54,13 @@ extern "C" {
 #include "qtvInternalDefs.h"
 #include "rex.h"
 #include "queue.h"
+#ifndef FEATURE_QTV_NOSTREAM
+#ifndef FEATURE_WINCE
 #include "dsbsd.h"
+#else
+#error code not present
+#endif /* NOT FEATURE_WINCE */
+#endif
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
@@ -68,7 +76,7 @@ extern "C" {
 ** Constant / Define Declarations
 ** ----------------------------------------------------------------------- */
 #define MAX_PV_THREAD         10
-#define ZREX_INFINITE         0xFFFFFFFF
+#define ZREX_INFINITE         0xFFFFFFFFUL
 
 /* Common Signals -- can be used by any of the QTV tasks - player, streamer,
  * etc. Do not change the value of signals marked Reserved since these
@@ -292,6 +300,7 @@ typedef struct {
 #endif
 
 void zrex2rex_init(void);
+void zrex2rex_dinit(void);
 
 
 /**************************
@@ -397,6 +406,7 @@ zrex_recvfrom(
       */
 );
 
+#ifndef FEATURE_WINCE
 int
 zrex_select(
   int nfds,
@@ -415,6 +425,7 @@ zrex_select(
      /* Timeout
      */
 );
+#endif /* NOT FEATURE_WINCE */
 
 int
    /* Number of bytes sent

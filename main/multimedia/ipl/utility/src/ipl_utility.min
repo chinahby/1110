@@ -20,6 +20,7 @@ endif
 
 
 IPL_UTILITY_OBJS :=  $(addprefix $(TARGETDIR)/, $(IPL_UTILITY_SOURCES:%.c=%.o))
+
 # enable to turn on debug
 #$(IPL_UTILITY_OBJS): CFLAGS := $(CFLAGS) -g -dwarf2
 

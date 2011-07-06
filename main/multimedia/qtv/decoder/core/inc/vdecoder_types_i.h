@@ -13,10 +13,14 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/decoder/core/rel/2.0/inc/vdecoder_types_i.h#1 $
-$DateTime: 2008/11/03 04:38:22 $
-$Change: 775446 $
+$Header: //source/qcom/qct/multimedia/qtv/decoder/core/rel/2.0/inc/vdecoder_types_i.h#2 $
+$DateTime: 2009/05/04 03:44:08 $
+$Change: 902920 $
 
+when       who      what, where, why
+--------   ---      ---------------------------------------------------------
+04/08/09    vs      Remove the dependencies of other modules.
+--------   ---      ---------------------------------------------------------
 ========================================================================== */
 
 /* =======================================================================
@@ -30,12 +34,10 @@ $Change: 775446 $
 ========================================================================== */
 #include "queue.h"
 #include "assert.h"
-#include "comdef.h"
 
 extern "C"
 {
   #include "MP4_Types.h"    /* for MP4 config params */
-  #include "mp4dec_api.h"  /* for MP4 config params */
 }
 
 /* ==========================================================================

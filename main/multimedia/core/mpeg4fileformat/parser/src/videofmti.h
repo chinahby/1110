@@ -19,7 +19,7 @@ Copyright(c) 2002 by QUALCOMM, Incorporated. All Rights Reserved.
   This section contains comments describing changes made to this file.
   Notice that changes are listed in reverse chronological order.
    
-  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/parser/main/latest/src/videofmti.h#1 $
+  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/parser/main/latest/src/videofmti.h#2 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------

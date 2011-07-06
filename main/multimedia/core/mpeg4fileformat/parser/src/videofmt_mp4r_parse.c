@@ -31,7 +31,7 @@ Copyright(c) 2002-2003 by QUALCOMM, Incorporated. All Rights Reserved.
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/parser/main/latest/src/videofmt_mp4r_parse.c#11 $
+  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/parser/main/latest/src/videofmt_mp4r_parse.c#55 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
@@ -300,6 +300,17 @@ LOCAL video_fmt_consume_atom_structure_type stco =
     stco_fields                     /* point to fields of atom      */
 };
 
+/* here we are adding co64 atom parsing support. Currently
+   we don't support 64 bit filelds so we are parsing the co64 atom
+   and taking the least 32 bits as the offsets.
+*/
+static video_fmt_consume_atom_structure_type co64 =
+{
+    video_fmt_mp4r_co64_prep_dest,  /* dest_proc_func               */
+    1,                              /* field_count for stco_fields  */
+    stco_fields                     /* point to fields of atom      */
+};
+
 /* 'stsc' atom fields definitions */
 LOCAL video_fmt_atom_field_type stsc_fields[] =
 {
@@ -335,6 +346,20 @@ LOCAL video_fmt_consume_atom_structure_type stss =
     1,                              /* field_count for stss_fields  */
     stss_fields                     /* point to fields of atom      */
 };
+
+/* 'ctts' atom fields definitions */
+LOCAL video_fmt_atom_field_type ctts_fields[] =
+{
+    { 4, 4, 0}      /* entry count        */
+};
+
+LOCAL video_fmt_consume_atom_structure_type ctts =
+{
+    video_fmt_mp4r_ctts_prep_dest,  /* dest_proc_func               */
+    1,                              /* field_count for ctts_fields  */
+    ctts_fields                     /* point to fields of atom      */
+};
+
 
 /* 'stsd' atom fields definitions */
 LOCAL video_fmt_atom_field_type stsd_fields[] =
@@ -564,7 +589,7 @@ LOCAL video_fmt_consume_atom_structure_type s263 =
     s263_fields                      /* point to 's263' fields of atom         */
 };
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
 LOCAL video_fmt_atom_field_type mehd_fields[] =
 {
     { 4, 4, 0}       /* fragment_duration     */
@@ -587,16 +612,14 @@ LOCAL video_fmt_consume_atom_structure_type mfhd =
     mfhd_fields                     /* point to 'mfhd' fields       */
 };
 
-#endif
-
 /* This table organizes information about the different MP4 file atom types
 ** that are defined in the file format.
 */
 LOCAL video_fmt_mp4r_atom_info_type video_fmt_mp4r_atom_info_table [] = {
     {MOOV_TYPE /* 'moov' */, TRUE, video_fmt_mp4r_process_atom_empty, 0},
-    {MVHD_TYPE /* 'mvhd' */, FALSE, video_fmt_mp4r_parse_atom, &mvhd},
+    {MVHD_TYPE /* 'mvhd' */, FALSE, video_fmt_mp4r_process_atom_mvhd, &mvhd},
     {TRAK_TYPE /* 'trak' */, TRUE, video_fmt_mp4r_process_atom_trak, 0},
-    {TKHD_TYPE /* 'tkhd' */, TRUE, video_fmt_mp4r_parse_atom, &tkhd},
+    {TKHD_TYPE /* 'tkhd' */, TRUE, video_fmt_mp4r_process_atom_tkhd, &tkhd},
     {TREF_TYPE /* 'tref' */, TRUE, video_fmt_mp4r_process_atom_empty, 0},
     {HINT_TYPE /* 'hint' */, FALSE, video_fmt_mp4r_process_atom_tref_child, 0},
     {DPND_TYPE /* 'dpnd' */, FALSE, video_fmt_mp4r_process_atom_tref_child, 0},
@@ -604,7 +627,7 @@ LOCAL video_fmt_mp4r_atom_info_type video_fmt_mp4r_atom_info_table [] = {
     {MPOD_TYPE /* 'mpod' */, FALSE, video_fmt_mp4r_process_atom_tref_child, 0},
     {SYNC_TYPE /* 'sync' */, FALSE, video_fmt_mp4r_process_atom_tref_child, 0},
     {MDIA_TYPE /* 'mdia' */, TRUE, video_fmt_mp4r_process_atom_empty, 0},
-    {MDHD_TYPE /* 'mdhd' */, FALSE, video_fmt_mp4r_parse_atom, &mdhd},
+    {MDHD_TYPE /* 'mdhd' */, FALSE, video_fmt_mp4r_process_atom_mdhd, &mdhd},
     {HDLR_TYPE /* 'hdlr' */, FALSE, video_fmt_mp4r_process_atom_hdlr, 0},
     {MINF_TYPE /* 'minf' */, TRUE, video_fmt_mp4r_process_atom_empty, 0},
     {DINF_TYPE /* 'dinf' */, TRUE, video_fmt_mp4r_process_atom_empty, 0},
@@ -654,9 +677,11 @@ LOCAL video_fmt_mp4r_atom_info_type video_fmt_mp4r_atom_info_table [] = {
 #endif /* FEATURE_QTV_H264 */
     {BTRT_TYPE /* 'btrt' */, FALSE, video_fmt_mp4r_process_atom_btrt, 0},
     {STCO_TYPE /* 'stco' */, FALSE, video_fmt_mp4r_parse_atom, &stco},
+    {CO64_TYPE /* 'co64' */, FALSE, video_fmt_mp4r_parse_atom, &co64},
     {STSC_TYPE /* 'stsc' */, FALSE, video_fmt_mp4r_parse_atom, &stsc},
     {STSZ_TYPE /* 'stsz' */, FALSE, video_fmt_mp4r_process_atom_stsz, 0},
     {STTS_TYPE /* 'stts' */, FALSE, video_fmt_mp4r_parse_atom, &stts},
+    {CTTS_TYPE /* 'ctts' */, FALSE, video_fmt_mp4r_parse_atom, &ctts},
     {STSS_TYPE /* 'stss' */, FALSE, video_fmt_mp4r_parse_atom, &stss},
     {FREE_TYPE /* 'free' */, FALSE, video_fmt_mp4r_process_atom_skip, 0},
     {SKIP_TYPE /* 'skip' */, FALSE, video_fmt_mp4r_process_atom_skip, 0},
@@ -668,7 +693,6 @@ LOCAL video_fmt_mp4r_atom_info_type video_fmt_mp4r_atom_info_table [] = {
     {RQMT_TYPE /* 'rqmt' */, FALSE, video_fmt_mp4r_process_atom_udta_child, 0},
     {MIDI_TYPE /* 'midi' */, FALSE, video_fmt_mp4r_process_atom_udta_child, 0},
     {LINK_TYPE /* 'link' */, FALSE, video_fmt_mp4r_process_atom_udta_child, 0},
-#ifdef FEATURE_FILE_FRAGMENTATION
     {MVEX_TYPE /* 'mvex' */, TRUE, video_fmt_mp4r_process_atom_empty, 0},
     {MEHD_TYPE /* 'mehd' */, FALSE, video_fmt_mp4r_parse_atom, &mehd},
     {TREX_TYPE /* 'trex' */, FALSE, video_fmt_mp4r_process_atom_trex, 0},
@@ -678,10 +702,11 @@ LOCAL video_fmt_mp4r_atom_info_type video_fmt_mp4r_atom_info_table [] = {
     {TFHD_TYPE /* 'tfhd' */, TRUE, video_fmt_mp4r_process_atom_tfhd, 0},
     {TRUN_TYPE /* 'trun' */, FALSE, video_fmt_mp4r_process_atom_trun, 0},
     {MDAT_TYPE /* 'mdat' */, FALSE, video_fmt_mp4r_process_atom_skip, 0},
-#endif
+#ifdef FEATURE_MP4_MP3
     //Adding new atom type and handling function
     {MP3_TYPE  /* 'mp3 ' */, FALSE, video_fmt_mp4r_process_atom_mp3,0},
     {MSOU_TYPE /* 'ms u'*/ , FALSE, video_fmt_mp4r_process_atom_mp3,0}
+#endif
 };
 #define VIDEO_FMT_MP4R_ATOM_INFO_TABLE_SIZE \
     (sizeof (video_fmt_mp4r_atom_info_table) \
@@ -986,6 +1011,13 @@ LOCAL const char video_fmt_mp4r_m4a_bitstream [] =
       /* ISO/IEC 14496-3:2001(E) says "TBD in version 3" here */
     "}{}"
   "}{}"
+  "?='audio_object_type'#2#{"
+        "v11'sync_word'"
+        "}{}"
+   "?='sync_word'#2B7#{"
+        "v5'ext_audio_object_type'"
+        "v1'ps_present_flag'"
+    "}{}"
 "}"
 
 /* AudioSpecificConfig - ISO/IEC 14496-3:2001(E) */
@@ -1119,10 +1151,8 @@ void video_fmt_mp4r_open
   video_fmt_mp4r_context_type  *context;
   video_fmt_alloc_type        alloc;
   uint32                      test_word = 1;
-
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
   video_fmt_file_size         file_Size;
-#endif
+  file_Size.fileSize = 0;
 
   /* Call the callback to allocate space for the decoder context. */
   alloc.size = sizeof (video_fmt_mp4r_context_type);
@@ -1166,15 +1196,12 @@ void video_fmt_mp4r_open
   context->in_buffer_pos = 0;
   context->abs_pos = 0;
 
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
   context->size_retrieve_buffer_which = 1; /* will cause immediate switch */
                                            /* to buffer 0 on first read.  */
   context->size_retrieve_buffer_size = 0;
   context->size_retrieve_buffer_pos = 0;
   context->abs_size_retrieve_pos = 0;
-#endif /*FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
   context->mfra_present = FALSE;
   context->eof_reached = FALSE;
   memset(&context->tfra, 0x0, sizeof(video_fmt_mp4r_sample_table_type));
@@ -1189,7 +1216,6 @@ void video_fmt_mp4r_open
      If present then this points us to the start of mfro atom */
     context->abs_pos = context->file_size - 16 ;
   }
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
 
   /*Store the clients playing context*/
   context->client_playContext = playingContext;
@@ -1325,23 +1351,19 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void video_fmt_mp4r_process (void *server_data)
 {
     video_fmt_mp4r_atom_pos_type *atom_stack_top;
     boolean                      exit_loop = FALSE;
     video_fmt_mp4r_context_type  *context;
     uint32                       i;
+    uint32                       atom_size = 0;
+    uint32                       atom_type = 0;
+    uint32                       mfhd_size = 0;
+    uint32                       mfhd_type = 0;
+    uint32                       sequence_number = 0;
 
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-    uint32                       atom_size;
-    uint32                       atom_type;
-#endif /*FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
-
-#ifdef FEATURE_FILE_FRAGMENTATION
-    uint32                       mfhd_size;
-    uint32                       mfhd_type;
-    uint32                       sequence_number;
-#endif /* FEATURE_FILE_FRAGMENTATION */
 
     /* Process format services state machine. */
     context = (video_fmt_mp4r_context_type *) server_data;
@@ -1351,15 +1373,13 @@ void video_fmt_mp4r_process (void *server_data)
         {
         case VIDEO_FMT_MP4R_STATE_INIT:
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
-      if(!context->eof_reached && context->file_size && context->file_size != 0xFFFFFFFF )
+            if(!context->eof_reached && context->file_size > 16 && context->file_size != 0xFFFFFFFF)
             {
                 if(video_fmt_mp4r_check_mfra_box(context))
                 {
                     break;
                 }
             }
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
 
             /* Set up initial input buffer state. */
             context->in_buffer_which = 1;  /* will cause immediate switch */
@@ -1380,21 +1400,14 @@ void video_fmt_mp4r_process (void *server_data)
             /* Initialize other state variables. */
             context->in_sample_description_atom = FALSE;
             context->current_sequence_number = 0;
-
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
             context->get_data_src_in_mdat = FALSE;
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
 
-#if !defined(FEATURE_QTV_PSEUDO_STREAM) || !defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
             /* Start processing. */
             context->state = VIDEO_FMT_MP4R_STATE_DECODE_ATOM_HEADER;
-#endif /*!FEATURE_QTV_PSEUDO_STREAM || !FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
-#ifdef FEATURE_FILE_FRAGMENTATION
             context->current_track_id = 0;
             context->fragment_present = FALSE;
             context->trex_count = 0;
-#endif
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+
             exit_loop = TRUE;
             context->cb_info.info.num_streams
                     = context->num_streams;
@@ -1412,22 +1425,22 @@ void video_fmt_mp4r_process (void *server_data)
                     = video_fmt_mp4r_parse_fragment;
             context->cb_info.info.fragment_size_cb
                     = video_fmt_mp4r_fragment_size;
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+
+            context->cb_info.info.fragment_size_peek_cb
+                    = video_fmt_mp4r_peek_fragment_size;
+
             context->cb_info.info.abs_file_offset = 0;
             context->cb_info.info.abs_file_offset_cb
                     = video_fmt_mp4r_abs_file_offset;
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
-                    context->cb_info.info.access_point_cb
-                        = video_fmt_mp4r_find_access_point;
-#endif/*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+
+            context->cb_info.info.access_point_cb
+                    = video_fmt_mp4r_find_access_point;
 
             context->cb_info.info.server_data = context;
             context->callback_ptr (VIDEO_FMT_INIT,
                                    context->client_data,
                                    &context->cb_info,
                                    video_fmt_mp4r_end);
-#endif /*FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
             context->cb_info.info.largest_frame_size_cb
                     = video_fmt_mp4r_largest_frame_size;
 
@@ -1447,6 +1460,15 @@ void video_fmt_mp4r_process (void *server_data)
             context->cb_info.get_data.num_bytes = context->get_data_size;
             context->cb_info.get_data.callback_ptr = video_fmt_mp4r_process;
             context->cb_info.get_data.server_data = context;
+
+            /* Check if the (offset + num bytes) crosses unsigned int boundary */
+            if((0xffffffff - context->cb_info.get_data.offset ) < context->get_data_size)
+            {
+              MSG_ERROR ( "process: offset corrupt!", 0, 0, 0);
+              video_fmt_mp4r_failure (context);
+              return;
+            }
+
             context->callback_ptr (VIDEO_FMT_GET_DATA,
                                    context->client_data,
                                    &context->cb_info,
@@ -1456,8 +1478,7 @@ void video_fmt_mp4r_process (void *server_data)
             if (context->cb_info.get_data.num_bytes
                 > context->get_data_size)
             {
-                MSG_ERROR ("process: get_data overrun!",
-                           0, 0, 0);
+                MSG_ERROR ( "process: get_data overrun!",0, 0, 0);
                 video_fmt_mp4r_failure (context);
                 return;
             }
@@ -1483,7 +1504,7 @@ void video_fmt_mp4r_process (void *server_data)
             break;
 
         case VIDEO_FMT_MP4R_STATE_UPDATE_BUFFER:
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+
         case VIDEO_FMT_MP4R_STATE_UPDATE_SIZE_RETRIEVE_BUFFER:
             if(context->state == VIDEO_FMT_MP4R_STATE_UPDATE_BUFFER)
             {
@@ -1500,17 +1521,9 @@ void video_fmt_mp4r_process (void *server_data)
                 context->size_retrieve_buffer_size += context->get_data_read;
             }
 
-#else
-            /* Advance the input buffer size by the number of bytes
-            ** actually read.
-            */
-            context->in_buffer_size += context->get_data_read;
-#endif /*FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
-
             /* If not enough bytes were read, perform end of
             ** file processing.
             */
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
             if((context->get_data_needed) &&
                (context->state_next[0] == VIDEO_FMT_MP4R_STATE_INIT))
             {
@@ -1518,7 +1531,6 @@ void video_fmt_mp4r_process (void *server_data)
                 context->state = context->state_next [0];
                 break;
             }
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
 
             if (context->get_data_needed)
             {
@@ -1527,43 +1539,54 @@ void video_fmt_mp4r_process (void *server_data)
                 */
                 exit_loop = TRUE;
 
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+                /*End of file is to be detected in the state VIDEO_FMT_MP4R_STATE_PEEK_FRAGMENT_SIZE,
+                which is called at the beginning of file and at fragment boundaries.This will detect
+                end of file in fragmented files. For non-fragmented files,end of file is detected by
+                getsampleinfo returning 0 where it detects by the number of frames in main fragment.
+                */
+                if(context->expect_eof &&
+                  context->state_next[0] == VIDEO_FMT_MP4R_STATE_PEEK_FRAGMENT_SIZE)
+                {
+                    /* Construct data for movie information callback. */
+                    context->cb_info.info.num_streams
+                        = context->num_streams;
+                    context->cb_info.info.streams
+                        = context->stream_info;
+                    context->cb_info.info.file_info
+                        = context->file_level_data;
+                    context->cb_info.info.read_cb
+                        = video_fmt_mp4r_read_stream;
+                    context->cb_info.info.sample_info_cb
+                        = video_fmt_mp4r_get_sample_info;
+                    context->cb_info.info.sync_sample_cb
+                        = video_fmt_mp4r_find_sync_sample;
+                    context->cb_info.info.largest_frame_size_cb
+                        = video_fmt_mp4r_largest_frame_size;
 
-                /* If there is data still in the input buffer, or we are not
-                ** expecting an end of file here, report an unexpected end of
-                ** file. If we have already read moov|moof then ignore
-                ** this case.
-                */
-                if (((context->in_buffer_size > 0) || !context->expect_eof)
-                     && (context->state == VIDEO_FMT_MP4R_STATE_UPDATE_BUFFER)
-                     && !(context->moov_present || context->moof_present))
-                {
-                    MSG_ERROR ("process: unexpected end of data!", 0, 0, 0);
-                    video_fmt_mp4r_failure (context);
-                    return;
+                    context->cb_info.info.parse_fragment_cb
+                        = video_fmt_mp4r_parse_fragment;
+
+                    context->cb_info.info.fragment_size_cb
+                        = video_fmt_mp4r_fragment_size;
+                    context->cb_info.info.fragment_size_peek_cb
+                        = video_fmt_mp4r_peek_fragment_size;
+                    context->cb_info.info.abs_file_offset_cb
+                        = video_fmt_mp4r_abs_file_offset;
+                    context->cb_info.info.access_point_cb
+                        = video_fmt_mp4r_find_access_point;
+
+                    context->cb_info.info.server_data = context;
+                    context->callback_ptr (VIDEO_FMT_INFO,
+                        context->client_data,
+                        &context->cb_info,
+                        video_fmt_mp4r_end);
+                    context->state = VIDEO_FMT_MP4R_STATE_READY;
+                    for (i = 0; i < context->num_streams; ++i)
+                    {
+                        context->stream_state [i].state
+                            = VIDEO_FMT_MP4R_STREAM_STATE_READY;
+                    }
                 }
-                else if (((context->size_retrieve_buffer_size > 0) || !context->expect_eof)
-                          && (context->state == VIDEO_FMT_MP4R_STATE_UPDATE_SIZE_RETRIEVE_BUFFER))
-                {
-                    MSG_ERROR ("process: unexpected end of data!", 0, 0, 0);
-                    video_fmt_mp4r_failure (context);
-                    return;
-                }
-#else
-                /* If there is data still in the input buffer, or we are not
-                ** expecting an end of file here, report an unexpected end of
-                ** file. If we have already read moov|moof then ignore
-                ** this case.
-                */
-                if (((context->in_buffer_size > 0) || !context->expect_eof)
-                    && !(context->moov_present || context->moof_present))
-                {
-                    MSG_ERROR ("process: unexpected end of data!", 0, 0, 0);
-                    video_fmt_mp4r_failure (context);
-                    return;
-                }
-#endif /*FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
-                /* Otherwise, inform the client that parsing is complete. */
                 else
                 {
 
@@ -1582,45 +1605,25 @@ void video_fmt_mp4r_process (void *server_data)
                         = video_fmt_mp4r_find_sync_sample;
                     context->cb_info.info.largest_frame_size_cb
                         = video_fmt_mp4r_largest_frame_size;
-#if defined (FEATURE_FILE_FRAGMENTATION) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+
                     context->cb_info.info.parse_fragment_cb
                         = video_fmt_mp4r_parse_fragment;
-#endif  /* FEATURE_FILE_FRAGMENTATION */
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+
                     context->cb_info.info.fragment_size_cb
                         = video_fmt_mp4r_fragment_size;
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+                    context->cb_info.info.fragment_size_peek_cb
+                        = video_fmt_mp4r_peek_fragment_size;
                     context->cb_info.info.abs_file_offset_cb
                         = video_fmt_mp4r_abs_file_offset;
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-#endif /*FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
                     context->cb_info.info.access_point_cb
                         = video_fmt_mp4r_find_access_point;
-#endif/*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+
                     context->cb_info.info.server_data = context;
 
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-                    if(context->state_next[0] == VIDEO_FMT_MP4R_STATE_RETRIEVE_FRAGMENT_SIZE)
-                        context->callback_ptr (VIDEO_FMT_DATA_INCOMPLETE,
+                    context->callback_ptr (VIDEO_FMT_DATA_INCOMPLETE,
                                                context->client_data,
                                                &context->cb_info,
                                                video_fmt_mp4r_end);
-                    else
-#endif /*FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
-                    {
-                        if(!(context->moov_present || context->moof_present))
-                            context->callback_ptr (VIDEO_FMT_DATA_CORRUPT,
-                                                   context->client_data,
-                                                   &context->cb_info,
-                                                   video_fmt_mp4r_end);
-                        else
-                            context->callback_ptr (VIDEO_FMT_INFO,
-                                                   context->client_data,
-                                                   &context->cb_info,
-                                                   video_fmt_mp4r_end);
-                    }
-
                     /* Put state machine in the state where stream reads are
                     ** now allowed.
                     */
@@ -1636,47 +1639,105 @@ void video_fmt_mp4r_process (void *server_data)
             /* Otherwise, move to the next state. */
             else
             {
+              context->expect_eof = FALSE;
                 context->state = context->state_next [0];
             }
             break;
 
         case VIDEO_FMT_MP4R_STATE_DECODE_ATOM_HEADER:
-            /* Read in enough data to decode atom type. */
-            if (!video_fmt_mp4r_read_buffer (context, 8, TRUE, VIDEO_FMT_MP4R_IN_BUFFER))
+            if(context->cur_atom_size != 1)
             {
-                break;
-            }
+                /* Read in enough data to decode atom type. */
+                if (!video_fmt_mp4r_read_buffer (context, 8, FALSE, VIDEO_FMT_MP4R_IN_BUFFER))
+                {
+                    break;
+                }
+    
+                /* Push atom onto stack. */
+                ++context->atom_stack_top;
+                if (context->atom_stack_top >= VIDEO_FMT_MP4R_ATOM_STACK_DEPTH)
+                {
+                    MSG_ERROR ( "process: MP4 file atom stack overflow", 0, 0, 0);
+                    video_fmt_mp4r_failure (context);
+                    return;
+                }
+                atom_stack_top = &context->atom_stack
+                    [context->atom_stack_top - 1];
+                if (context->atom_stack_top == 1) /* only atom on stack? */
+                {
+                    atom_stack_top->atom.parent = 0;
+                }
+                else
+                {
+                    atom_stack_top->atom.parent = context->atom_stack
+                        [context->atom_stack_top - 2].atom.offset;
+                }
+    
+                /* Copy over atom size and type.  If size doesn't cover atom type,
+                ** don't decode rest of atom.
+                */
+                video_fmt_mp4r_consume_data
+                    (context,
+                     (uint8 *) &atom_stack_top->atom.size,
+                     sizeof (uint32), context->byte_swap_needed,
+                     VIDEO_FMT_MP4R_IN_BUFFER);
 
-            /* Push atom onto stack. */
-            ++context->atom_stack_top;
-            if (context->atom_stack_top >= VIDEO_FMT_MP4R_ATOM_STACK_DEPTH)
-            {
-                MSG_ERROR ("process: MP4 file atom stack overflow", 0, 0, 0);
-                video_fmt_mp4r_failure (context);
-                return;
-            }
-            atom_stack_top = &context->atom_stack
-                [context->atom_stack_top - 1];
-            if (context->atom_stack_top == 1) /* only atom on stack? */
-            {
-                atom_stack_top->atom.parent = 0;
+                /* Read atom type */
+                video_fmt_mp4r_consume_data
+                (context,
+                 (uint8 *) &atom_stack_top->atom.type,
+                 sizeof (uint32), context->byte_swap_needed,
+                 VIDEO_FMT_MP4R_IN_BUFFER);
+		 
+                 /* Store current atom size information. This is used in sample table atoms to
+                    check whether atom size and number of entries are matching or not  */
+                 context->cur_atom_size = atom_stack_top->atom.size;
             }
             else
             {
-                atom_stack_top->atom.parent = context->atom_stack
-                    [context->atom_stack_top - 2].atom.offset;
+                 /* At buffer boundaries, Parser will not execute above if condition, so updating
+                    atom_stack_top variable with top element. */
+                atom_stack_top = &context->atom_stack[context->atom_stack_top - 1];
             }
 
-            /* Copy over atom size and type.  If size doesn't cover atom type,
-            ** don't decode rest of atom.
-            */
-            video_fmt_mp4r_consume_data
-                (context,
-                 (uint8 *) &atom_stack_top->atom.size,
-                 sizeof (uint32), context->byte_swap_needed,
-                 VIDEO_FMT_MP4R_IN_BUFFER);
-            if (atom_stack_top->atom.size < 8)
+            /* If atom size is 1 byte and atom type is mdat, it is version 1 mdat type*/
+            if(atom_stack_top->atom.size == 1 && atom_stack_top->atom.type == MDAT_TYPE)
             {
+                  /* Read 8 more bytes of data to get the mdat size. */
+                  if (!video_fmt_mp4r_read_buffer (context, 8, TRUE, VIDEO_FMT_MP4R_IN_BUFFER))
+                  {
+                      break;
+                  }
+                  /* Read upper 4 bytes which should contain ZERO only */
+                  video_fmt_mp4r_consume_data
+                                             (context,
+                                              (uint8 *) &atom_stack_top->atom.size,
+                                              sizeof (uint32), context->byte_swap_needed,
+                                              VIDEO_FMT_MP4R_IN_BUFFER);
+                  if(atom_stack_top->atom.size)
+                  {
+                      MSG_ERROR ("mdat size should be less than 4GB", 0, 0, 0);
+                      video_fmt_mp4r_failure (context);
+                      return;
+                  }
+                  /* Read lower 4 bytes which contains actual mdat size */
+                  video_fmt_mp4r_consume_data
+                                             (context,
+                                              (uint8 *) &atom_stack_top->atom.size,
+                                               sizeof (uint32), context->byte_swap_needed,
+                                               VIDEO_FMT_MP4R_IN_BUFFER);
+
+                  /* Subtract 8bytes which are used to store atom size */
+                  atom_stack_top->atom.size -= 8;
+                  context->cur_atom_size = atom_stack_top->atom.size;
+              }
+
+              if (atom_stack_top->atom.size < 8)
+              {
+                /* Reset current atom size field, this is to make sure that atom size is
+                   not equal to 1.*/
+                context->cur_atom_size = 0;
+
                 /*If this is a global scope atom and we have the necessary data
                   then stop further parsing*/
                 if(!atom_stack_top->atom.parent &&
@@ -1695,22 +1756,16 @@ void video_fmt_mp4r_process (void *server_data)
                         = video_fmt_mp4r_get_sample_info;
                     context->cb_info.info.sync_sample_cb
                         = video_fmt_mp4r_find_sync_sample;
-#if defined (FEATURE_FILE_FRAGMENTATION) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
                     context->cb_info.info.parse_fragment_cb
                         = video_fmt_mp4r_parse_fragment;
-#endif
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
                     context->cb_info.info.fragment_size_cb
                         = video_fmt_mp4r_fragment_size;
-#endif
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+                    context->cb_info.info.fragment_size_peek_cb
+                        = video_fmt_mp4r_peek_fragment_size;
                     context->cb_info.info.abs_file_offset_cb
                         = video_fmt_mp4r_abs_file_offset;
-#endif
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
                     context->cb_info.info.access_point_cb
                         = video_fmt_mp4r_find_access_point;
-#endif/*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
                     context->cb_info.info.server_data = context;
 
                     context->callback_ptr (VIDEO_FMT_INFO,
@@ -1734,11 +1789,6 @@ void video_fmt_mp4r_process (void *server_data)
                 }
                 break;
             }
-            video_fmt_mp4r_consume_data
-                (context,
-                 (uint8 *) &atom_stack_top->atom.type,
-                 sizeof (uint32), context->byte_swap_needed,
-                 VIDEO_FMT_MP4R_IN_BUFFER);
 
             /* Don't count atom header in atom contents size. */
             atom_stack_top->atom.size -= sizeof (uint32) * 2;
@@ -1763,48 +1813,97 @@ void video_fmt_mp4r_process (void *server_data)
             }
             break;
 
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
         case VIDEO_FMT_MP4R_STATE_RETRIEVE_FRAGMENT_SIZE:
             if(!context->fragment_size_found)
             {
-                /* Read in enough data to decode atom type. */
-                if (!video_fmt_mp4r_read_buffer (context, 12, TRUE, VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER))
+                if(context->cur_atom_size != 1 && context->cur_atom_type != MOOF_TYPE)
                 {
-                    break;
+                    /* Read in enough data to decode atom type. */
+                    if (!video_fmt_mp4r_read_buffer (context, 8, FALSE, VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER))
+                    {
+                        break;
+                    }
+    
+                    /* Copy over atom size and type.  If size doesn't cover atom type,
+                    ** don't decode rest of atom.
+                    */
+                    video_fmt_mp4r_atom_read_size_type(context,
+                        (uint8 *) &atom_size, (uint8 *) &atom_type);
+    
+                    /* If atom size or atom type are ZERO, we has to return failure irrespective of
+                       operation mode. As per standard, ZERO size atoms are not supported even in
+                       progressive download or pseudo streaming scenarios */
+                    if (!atom_size || !atom_type)
+                    {
+                        exit_loop = TRUE;
+                        video_fmt_mp4r_failure(context);
+                        break;
+                    }
+    
+                    /* Store atom size information */
+                    context->cur_atom_size = atom_size;
+                }
+                else
+                {
+                    atom_type = context->cur_atom_type;
+                    atom_size = context->cur_atom_size;
                 }
 
-                /* Copy over atom size and type.  If size doesn't cover atom type,
-                ** don't decode rest of atom.
-                */
-                video_fmt_mp4r_atom_read_size_type(context,
-                    (uint8 *) &atom_size, (uint8 *) &atom_type);
-
-                if (!atom_size || !atom_type)
+                /* For version1 mdat atoms, size usually kept as 1 byte and actual size will be
+                   available after mdat. So, parser is using additional 8 bytes to read mdat size*/
+                if((atom_size == 1 && atom_type == MDAT_TYPE) || context->cur_atom_size == 1)
                 {
-                    exit_loop = TRUE;
-                    video_fmt_mp4r_data_incomplete (context);
-                    break;
+                    /* At buffer boundaries, atom_type may not be updated properly*/
+                    atom_type = MDAT_TYPE;
+
+                    /* Read 8 more bytes of data to get the mdat size. */
+                    if (!video_fmt_mp4r_read_buffer (context, 8, TRUE, VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER))
+                    {
+                       break;
+                    }
+                    /* Read upper 4 bytes which should contain ZERO only */
+                    video_fmt_mp4r_consume_data
+                                       (context,
+                                        (uint8 *) &atom_size,
+                                        sizeof (uint32), context->byte_swap_needed,
+                                        VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER);
+                    if(atom_size)
+                    {
+                       MSG_ERROR ("mdat size should be less than 4GB", 0, 0, 0);
+                       video_fmt_mp4r_failure (context);
+                       return;
+                   }
+                   /* Read lower 4 bytes which contains actual mdat size */
+                   video_fmt_mp4r_consume_data
+                                       (context,
+                                        (uint8 *) &atom_size,
+                                        sizeof (uint32), context->byte_swap_needed,
+                                        VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER);
+
+                    /* Subtract 8bytes which are used to store atom size */
+                    atom_size -= 8;
+                   context->cur_atom_size = atom_size;
                 }
 
                 if(context->fragment_requested == 0 && atom_type == MOOV_TYPE)
                 {
-                    if(context->mdat_present)
-                    {
-                      context->fragment_size_found = TRUE;
-                    }
-
                     context->moov_present = TRUE;
                     context->fragment_size += atom_size;
                     /*Offset for atoms that appear before MOOV*/
                     context->fragment_size = MAX(context->fragment_size,
                                                  context->abs_size_retrieve_pos + atom_size - (sizeof (uint32) * 2));
                 }
-#ifdef FEATURE_FILE_FRAGMENTATION
                 else if(atom_type == MOOF_TYPE)
                 {
+                    /* Store atom type and size information. If enough data is not available in the buffer,
+                       parser will read data again. These variables will be used to avoid the problem of parsing
+                       of parent atom field two times. */
+                    context->cur_atom_type = atom_type;
+                    context->cur_atom_size = atom_size;
+
                     //find the sequence number of the fragment.
                     /* Read in enough data to decode atom type. */
-                    if (!video_fmt_mp4r_read_buffer (context, 12, TRUE, VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER))
+                    if (!video_fmt_mp4r_read_buffer (context, 16, FALSE, VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER))
                     {
                         break;
                     }
@@ -1812,10 +1911,14 @@ void video_fmt_mp4r_process (void *server_data)
                     video_fmt_mp4r_atom_read_size_type(context,
                         (uint8 *) &mfhd_size, (uint8 *) &mfhd_type);
 
-                    if (!mfhd_size || !mfhd_type || (mfhd_type != MFHD_TYPE))
+                    /* If mfhd size or mfhd type are ZERO, we has to return failure irrespective of
+                       operation mode. As per standard, ZERO size atoms are not supported even in
+                       progressive download or pseudo streaming scenarios. mfhd size should be less than  
+                       moof size (atom_size contains this value) */ 
+                    if (!mfhd_size || !mfhd_type || (mfhd_type != MFHD_TYPE) || mfhd_size >= atom_size)
                     {
                         exit_loop = TRUE;
-                        video_fmt_mp4r_data_incomplete (context);
+                        video_fmt_mp4r_failure(context);
                         break;
                     }
 
@@ -1828,13 +1931,27 @@ void video_fmt_mp4r_process (void *server_data)
                         VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER);
 
                     if(sequence_number == context->fragment_requested)
+                    {
                         context->fragment_size = atom_size;
-
+                    }
+                    /* Added an error check if the sequence numbers of each
+                    ** movie fragment in a file does't increase in the order
+                    ** in which they occur.
+                    */
+                    else if(sequence_number > context->fragment_requested)
+                    {
+                       video_fmt_mp4r_failure (context);
+                       return;
+                     }
                     //reduce the atom_size by total size of mfhd atom as its already consumed.
                     atom_size = atom_size - sizeof(uint32) * 4;
+
+                    /* Reset variable to avoid any further problems. */
+                    context->cur_atom_type = 0;
                 }
                 else if(atom_type == MDAT_TYPE)
                 {
+                    context->mdat_size = atom_size;
                     if(context->fragment_requested == 0)
                     { //Main fragment..
                       context->mdat_present = TRUE;
@@ -1842,7 +1959,6 @@ void video_fmt_mp4r_process (void *server_data)
                       {
                         context->fragment_size_found = TRUE;
                       }
-                      context->fragment_size += atom_size;
                     }
                     else if(context->fragment_size)
                     {
@@ -1850,19 +1966,28 @@ void video_fmt_mp4r_process (void *server_data)
                       context->fragment_size += atom_size;
                     }
                 }
-#endif //FEATURE_QTV_PSEUDO_STREAM
 
-                /* Don't count atom header in atom contents size. */
-                atom_size = atom_size - sizeof (uint32) * 2;
-
-                video_fmt_mp4r_skip_data (context, atom_size,
-                                          VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER);
+                /* Don't count atom header in atom contents size. If atom size is less than 8 bytes
+                   then we dont have any data to skip in the current atom. So parser will read data
+                   after 8 bytes which are used for atom size and atom type */
+                if(atom_size >= 8)
+                {
+                    atom_size = atom_size - sizeof (uint32) * 2;
+    
+                    video_fmt_mp4r_skip_data (context, atom_size,
+                                              VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER);
+                }
+                else
+                {
+                    /* Reset current atom size which will allow parser to parse next atom */    
+                    context->cur_atom_size = 0;
+                }
             }
             else
             {
                 if(!context->moov_present && (context->fragment_requested == 0))
                 {
-                    MSG_ERROR ("VIDEO_FMT_RETRIEVE_FRAGMENT_SIZE [Main Fragment]: failed..!!", 0, 0, 0);
+                    MSG_ERROR ( "VIDEO_FMT_RETRIEVE_FRAGMENT_SIZE [Main Fragment]: failed..!!", 0, 0, 0);
                 }
                 context->moov_present = FALSE;
                 context->mdat_present = FALSE;
@@ -1886,16 +2011,14 @@ void video_fmt_mp4r_process (void *server_data)
                     = video_fmt_mp4r_parse_fragment;
                 context->cb_info.info.fragment_size_cb
                     = video_fmt_mp4r_fragment_size;
+                context->cb_info.info.fragment_size_peek_cb
+                    = video_fmt_mp4r_peek_fragment_size;
                 context->cb_info.info.largest_frame_size_cb
                     = video_fmt_mp4r_largest_frame_size;
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
                 context->cb_info.info.abs_file_offset_cb
                     = video_fmt_mp4r_abs_file_offset;
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
                     context->cb_info.info.access_point_cb
                         = video_fmt_mp4r_find_access_point;
-#endif/*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
 
                 context->cb_info.info.server_data = context;
                 context->callback_ptr (VIDEO_FMT_FRAGMENT_SIZE,
@@ -1914,7 +2037,6 @@ void video_fmt_mp4r_process (void *server_data)
                 }
             }
             break;
-#endif /*FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
 
         case VIDEO_FMT_MP4R_STATE_DECODE_EXTENDED_ATOM_HEADER:
             /* Read in enough data to decode extended atom type. */
@@ -1984,13 +2106,7 @@ void video_fmt_mp4r_process (void *server_data)
             exit_loop = TRUE;
             break;
 
-#ifdef FEATURE_FILE_FRAGMENTATION
         case VIDEO_FMT_MP4R_STATE_PROCESS_FRAGMENT:
-
-            if(video_fmt_mp4r_check_end_of_file(context))
-            {
-                break;
-            }
 
             exit_loop = TRUE;
             /* Inform the client that parsing is complete for this fragment. */
@@ -2012,18 +2128,22 @@ void video_fmt_mp4r_process (void *server_data)
                 = video_fmt_mp4r_parse_fragment;
             context->cb_info.info.largest_frame_size_cb
                 = video_fmt_mp4r_largest_frame_size;
-#ifdef FEATURE_FILE_FRAGMENTATION
             context->cb_info.info.fragment_size_cb
                     = video_fmt_mp4r_fragment_size;
-#endif
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
-                    context->cb_info.info.access_point_cb
-                        = video_fmt_mp4r_find_access_point;
-#endif/*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
-    /*Support when "mvex" atom parse when it is before the "trak" atom*/
+            context->cb_info.info.fragment_size_peek_cb
+                    = video_fmt_mp4r_peek_fragment_size;
+            context->cb_info.info.access_point_cb
+                    = video_fmt_mp4r_find_access_point;
 
             context->cb_info.info.server_data = context;
-            context->callback_ptr (VIDEO_FMT_FRAGMENT,
+            if((context->fragment_present == TRUE))
+              context->callback_ptr (VIDEO_FMT_FRAGMENT,
+                                   context->client_data,
+                                   &context->cb_info,
+                                   video_fmt_mp4r_end);
+
+            else
+              context->callback_ptr (VIDEO_FMT_INFO,
                                    context->client_data,
                                    &context->cb_info,
                                    video_fmt_mp4r_end);
@@ -2038,21 +2158,222 @@ void video_fmt_mp4r_process (void *server_data)
                     = VIDEO_FMT_MP4R_STREAM_STATE_READY;
             }
             break;
-#endif
 
+        case VIDEO_FMT_MP4R_STATE_PEEK_FRAGMENT_SIZE:
+            if(!context->fragment_size_found)
+            {
+                if(context->cur_atom_size != 1)
+                {
+                    if(context->fragment_requested==0)
+                    {
+                      context->expect_eof = FALSE;
+                    }
+                    else
+                    {
+                    context->expect_eof = TRUE;
+                    }
+                    if (!video_fmt_mp4r_read_buffer (context, 12, context->expect_eof, VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER))
+                    {
+                        break;
+                    }
+                    context->expect_eof = FALSE;
+    
+                    /* Copy over atom size and type.  If size doesn't cover atom type,
+                    ** don't decode rest of atom.
+                    */
+                    video_fmt_mp4r_atom_read_size_type(context,
+                        (uint8 *) &atom_size, (uint8 *) &atom_type);
+    
+                    /* If atom size or atom type are ZERO, we has to return failure irrespective of
+                       operation mode. As per standard, ZERO size atoms are not supported even in
+                       progressive download or pseudo streaming scenarios */
+                    if (!atom_size || !atom_type)
+                    {
+                        exit_loop = TRUE;
+                        video_fmt_mp4r_failure(context);
+                        break;
+                    }
+					
+                    /* Store atom size info in context. We use this info to check whether to parse buffer
+                       for atom size and type or to skip that section to parse mdat atom size field */
+                    context->cur_atom_size = atom_size;
+                }
+
+                /* For version1 mdat atoms, size usually kept as 1 byte and actual size will be
+                   available after mdat. So, parser is using additional 8 bytes to read mdat size*/
+                if((atom_size == 1 && atom_type == MDAT_TYPE) || context->cur_atom_size == 1)
+                {
+                    /* At buffer boundaries, atom_type may not be updated properly*/
+                    atom_type = MDAT_TYPE;
+
+                    /* Read 8 more bytes of data to get the mdat size. */
+                    if (!video_fmt_mp4r_read_buffer (context, 8, TRUE, VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER))
+                    {
+                       break;
+                    }
+                    /* Read upper 4 bytes which should contain ZERO only */
+                    video_fmt_mp4r_consume_data
+                                       (context,
+                                        (uint8 *) &atom_size,
+                                        sizeof (uint32), context->byte_swap_needed,
+                                        VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER);
+                    if(atom_size)
+                    {
+                       MSG_ERROR ("mdat size should be less than 4GB", 0, 0, 0);
+                       video_fmt_mp4r_failure (context);
+                       return;
+                   }
+                   /* Read lower 4 bytes which contains actual mdat size */
+                   video_fmt_mp4r_consume_data
+                                       (context,
+                                        (uint8 *) &atom_size,
+                                        sizeof (uint32), context->byte_swap_needed,
+                                        VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER);
+
+                    /* Subtract 8bytes which are used to store atom size */
+                    atom_size -= 8;
+
+                   context->cur_atom_size = atom_size;
+                }
+
+                if(context->fragment_requested == 0 && atom_type == MOOV_TYPE)
+                {
+                    context->moov_present = TRUE;
+                    context->fragment_size = atom_size;
+                    context->fragment_size_found = TRUE;
+                    /*Offset for atoms that appear before MOOV*/
+                    context->fragment_offset =
+                      context->abs_size_retrieve_pos - (sizeof (uint32) * 2);
+                }
+                else if(atom_type == MOOF_TYPE)
+                {
+                    //find the sequence number of the fragment.
+                    /* Read in enough data to decode atom type. */
+                    if (!video_fmt_mp4r_read_buffer (context, 12, FALSE, VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER))
+                    {
+                        break;
+                    }
+
+                    video_fmt_mp4r_atom_read_size_type(context,
+                        (uint8 *) &mfhd_size, (uint8 *) &mfhd_type);
+
+                    if (!mfhd_size || !mfhd_type || (mfhd_type != MFHD_TYPE) || mfhd_size >= atom_size)
+                    {
+                        exit_loop = TRUE;
+                        video_fmt_mp4r_failure(context);
+                        break;
+                    }
+
+                    video_fmt_mp4r_skip_data (context, sizeof(uint32), VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER);
+
+                    video_fmt_mp4r_consume_data
+                        (context,
+                        (uint8 *) &sequence_number,
+                        sizeof (uint32), context->byte_swap_needed,
+                        VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER);
+
+                    if(sequence_number == context->fragment_requested)
+                    {
+                        context->fragment_size = atom_size;
+                        context->fragment_offset =
+                          context->abs_size_retrieve_pos - (sizeof (uint32) * 4);
+                        context->fragment_size_found = TRUE;
+                    }
+                    /* Added an error check if the sequence numbers of each
+                    ** movie fragment in a file does't increase in increments of 1.
+                    */
+                    else if(sequence_number > context->fragment_requested)
+                    {
+                       video_fmt_mp4r_failure (context);
+                       return;
+                    }
+                    //reduce the atom_size by total size of mfhd atom as its already consumed.
+                    atom_size = atom_size - sizeof(uint32) * 4;
+                }
+
+                /* Don't count atom header in atom contents size. If atom size is less than 8 bytes
+                   then we dont have any data to skip in the current atom. So parser will read data
+                   after 8 bytes which are used for atom size and atom type */
+                if(atom_size > 8)
+                {
+                    atom_size = atom_size - sizeof (uint32) * 2;
+                    video_fmt_mp4r_skip_data (context, atom_size,
+                                              VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER);
+                }
+                else
+                {
+                    /* Reset current atom size field, which will allow videofmt to parse next atom */
+                    context->cur_atom_size = 0;
+                }
+            }
+            else
+            {
+                if(!context->moov_present && (context->fragment_requested == 0))
+                {
+                    MSG_ERROR ( "VIDEO_FMT_RETRIEVE_FRAGMENT_SIZE [Main Fragment]: failed..!!", 0, 0, 0);
+                }
+                context->moov_present = FALSE;
+                context->mdat_present = FALSE;
+
+                exit_loop = TRUE;
+
+                /* Construct data for movie information callback. */
+                context->cb_info.info.num_streams
+                    = context->num_streams;
+                context->cb_info.info.streams
+                    = context->stream_info;
+                context->cb_info.info.file_info
+                    = context->file_level_data;
+                context->cb_info.info.read_cb
+                    = video_fmt_mp4r_read_stream;
+                context->cb_info.info.sample_info_cb
+                    = video_fmt_mp4r_get_sample_info;
+                context->cb_info.info.sync_sample_cb
+                    = video_fmt_mp4r_find_sync_sample;
+                context->cb_info.info.parse_fragment_cb
+                    = video_fmt_mp4r_parse_fragment;
+                context->cb_info.info.fragment_size_cb
+                    = video_fmt_mp4r_fragment_size;
+                context->cb_info.info.fragment_size_peek_cb
+                    = video_fmt_mp4r_peek_fragment_size;
+                context->cb_info.info.largest_frame_size_cb
+                    = video_fmt_mp4r_largest_frame_size;
+                context->cb_info.info.abs_file_offset_cb
+                    = video_fmt_mp4r_abs_file_offset;
+                    context->cb_info.info.access_point_cb
+                        = video_fmt_mp4r_find_access_point;
+
+                context->cb_info.info.server_data = context;
+                context->callback_ptr (VIDEO_FMT_FRAGMENT_PEEK,
+                                       context->client_data,
+                                       &context->cb_info,
+                                       video_fmt_mp4r_end);
+
+                /* Put state machine in the state where stream reads are
+                ** now allowed.
+                */
+                context->state = VIDEO_FMT_MP4R_STATE_READY;
+                for (i = 0; i < context->num_streams; ++i)
+                {
+                    context->stream_state [i].state
+                        = VIDEO_FMT_MP4R_STREAM_STATE_READY;
+                }
+            }
+            break;
         case VIDEO_FMT_MP4R_STATE_INVALID:
         default:
             /* We should hopefully never reach here.  However, if we do, clean
             ** up as best we can, and exit.
             */
-            MSG_ERROR ("process: Invalid format services state", 0, 0, 0);
+            MSG_ERROR ( "process: Invalid format services state", 0, 0, 0);
             video_fmt_mp4r_failure (context);
             return;
+
         }
     }
  }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
-#if defined (FEATURE_FILE_FRAGMENTATION) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_parse_fragment
@@ -2092,9 +2413,8 @@ void video_fmt_mp4r_parse_fragment
 
     video_fmt_mp4r_process (server_data);
 }
-#endif
 
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_fragment_size
@@ -2144,7 +2464,68 @@ void video_fmt_mp4r_fragment_size
     context->mdat_present = FALSE;
     video_fmt_mp4r_process (server_data);
 }
-#endif//(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+
+/*===========================================================================
+
+FUNCTION  video_fmt_mp4r_fragment_size
+
+DESCRIPTION
+  This function is given to the client as a callback.  It is called in order
+  to request the size of the fragment (moov + mdat size or moof + mdat size)
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+void video_fmt_mp4r_peek_fragment_size
+(
+  void                        *server_data,
+  uint32                      fragment_number
+)
+{
+    video_fmt_mp4r_context_type  *context;
+
+    /* Return an error if the format services is not currently waiting in the
+    ** proper state.
+    */
+    context = (video_fmt_mp4r_context_type *) server_data;
+
+    context->size_retrieve_buffer_which = 1;  /* will cause immediate switch */
+                                           /* to buffer 0 on first read.  */
+    /* This check is to fix if we enter into buffering while parsing moov atom 
+     * we end up in not parsing the moov atom because by the time we might have 
+     * parsed the available data so we have to reset the abs_size_retrieve_pos to 0 
+    */ 
+    if(fragment_number == 0)
+    {
+      context->abs_size_retrieve_pos = 0;
+    }
+    else
+    {
+      context->abs_size_retrieve_pos = context->abs_pos;
+    }    
+    context->size_retrieve_buffer_pos = 0;
+    context->size_retrieve_buffer_size = 0;
+    context->fragment_requested = fragment_number;
+    context->fragment_size_found = FALSE;
+    context->fragment_size = 0;
+
+    //reset the ping-pong buffers used to retrieve the fragment size.
+    memset(context->size_retrieve_buffers [0],0,VIDEO_FMT_MP4R_BUFFER_SIZE);
+    memset(context->size_retrieve_buffers [1],0,VIDEO_FMT_MP4R_BUFFER_SIZE);
+
+    context->state = VIDEO_FMT_MP4R_STATE_PEEK_FRAGMENT_SIZE;
+    context->moov_present = FALSE;
+    context->mdat_present = FALSE;
+    video_fmt_mp4r_process (server_data);
+}
+
 
 /*===========================================================================
 
@@ -2175,6 +2556,7 @@ void video_fmt_mp4r_largest_frame_size
     video_fmt_mp4r_stream_type   *stream;
     video_fmt_stream_info_type  *stream_info;
     video_fmt_alloc_type          alloc_atom;
+    video_fmt_free_type           free;
     uint32 table_size;
     uint32 frame_size = 0;
     uint32 bytes_consumed = 0;
@@ -2191,7 +2573,7 @@ void video_fmt_mp4r_largest_frame_size
         stream_info->largest = 0;
         /* Allocate STSZ table size local buffer to read data */
         alloc_atom.size = stream->stsz.table_size * 4;
-		context->callback_ptr (VIDEO_FMT_ALLOC, context->client_data,
+      context->callback_ptr (VIDEO_FMT_ALLOC, context->client_data,
                                (video_fmt_status_cb_info_type *) &alloc_atom,
                                NULL );
         memset((byte *)alloc_atom.ptr, 0, alloc_atom.size);
@@ -2210,7 +2592,7 @@ void video_fmt_mp4r_largest_frame_size
         {
             /* Read each frame size one by one from the loacal buffer */
             bytes_consumed += video_fmt_consume_data(alloc_atom.ptr,
-				                                     (byte *)&frame_size,
+                                                 (byte *)&frame_size,
                                                      (int32)alloc_atom.size,
                                                      bytes_consumed,4,
                                                      context->byte_swap_needed,
@@ -2227,12 +2609,14 @@ void video_fmt_mp4r_largest_frame_size
             stream_info->bytes += frame_size;
             --table_size;
         }
+        free.ptr = alloc_atom.ptr;
+        context->callback_ptr (VIDEO_FMT_FREE, context->client_data,
+                  (video_fmt_status_cb_info_type *) &free, NULL);
     }
     /* Found the Largest */
     stream_info->largest_found = TRUE;
 }
 
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_data_incomplete
@@ -2252,7 +2636,7 @@ SIDE EFFECTS
 ===========================================================================*/
 void video_fmt_mp4r_data_incomplete (video_fmt_mp4r_context_type  *context)
 {
-	uint32                       i;
+   uint32                       i;
     context->cb_info.info.num_streams
         = context->num_streams;
     context->cb_info.info.streams
@@ -2272,18 +2656,18 @@ void video_fmt_mp4r_data_incomplete (video_fmt_mp4r_context_type  *context)
     context->cb_info.info.fragment_size_cb
         = video_fmt_mp4r_fragment_size;
 
+    context->cb_info.info.fragment_size_peek_cb
+        = video_fmt_mp4r_peek_fragment_size;
+
     context->cb_info.info.largest_frame_size_cb
         = video_fmt_mp4r_largest_frame_size;
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
     context->cb_info.info.abs_file_offset_cb
         = video_fmt_mp4r_abs_file_offset;
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
-                    context->cb_info.info.access_point_cb
-                        = video_fmt_mp4r_find_access_point;
-#endif/*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+    context->cb_info.info.access_point_cb
+         = video_fmt_mp4r_find_access_point;
+
     context->cb_info.info.server_data = context;
 
     context->callback_ptr (VIDEO_FMT_DATA_INCOMPLETE,
@@ -2291,7 +2675,7 @@ void video_fmt_mp4r_data_incomplete (video_fmt_mp4r_context_type  *context)
                            &context->cb_info,
                            video_fmt_mp4r_end);
 
-	context->state = VIDEO_FMT_MP4R_STATE_READY;
+   context->state = VIDEO_FMT_MP4R_STATE_READY;
     for (i = 0; i < context->num_streams; ++i)
     {
         context->stream_state [i].state  = VIDEO_FMT_MP4R_STREAM_STATE_READY;
@@ -2315,6 +2699,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void video_fmt_mp4r_atom_read_size_type (video_fmt_mp4r_context_type  *context,
                                          uint8                        *atom_size,
                                          uint8                        *atom_type)
@@ -2331,7 +2716,7 @@ void video_fmt_mp4r_atom_read_size_type (video_fmt_mp4r_context_type  *context,
                      sizeof (uint32), context->byte_swap_needed,
                      VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER);
 }
-#endif /*FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* <EJECT> */
 /*===========================================================================
@@ -2385,6 +2770,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void video_fmt_mp4r_decode_atom (video_fmt_mp4r_context_type  *context)
 {
     video_fmt_mp4r_atom_pos_type *atom_stack_top;
@@ -2477,13 +2863,17 @@ void video_fmt_mp4r_decode_atom (video_fmt_mp4r_context_type  *context)
     }
 
     /* Send atom hint information to client. */
-    context->cb_info.hint.stream_info = &context->stream_info [context->num_streams - 1];
+    if(context->num_streams >= 1)
+    {
+       context->cb_info.hint.stream_info = &context->stream_info [context->num_streams - 1];
+    }
     context->cb_info.hint.mp4 = &atom_stack_top->atom;
     context->callback_ptr (VIDEO_FMT_HINT,
                            context->client_data,
                            &context->cb_info,
                            video_fmt_mp4r_end);
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* <EJECT> */
 /*===========================================================================
@@ -2505,6 +2895,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void video_fmt_mp4r_finish_atom (video_fmt_mp4r_context_type  *context)
 {
     /* Pop atom off stack. */
@@ -2516,14 +2907,14 @@ void video_fmt_mp4r_finish_atom (video_fmt_mp4r_context_type  *context)
     /* If stack is empty, decode next atom at global scope. */
     if (!context->atom_stack_top)
     {
-#ifdef FEATURE_FILE_FRAGMENTATION
-        if((context->atom_stack[context->atom_stack_top].atom.type == 0x6D646174)
-            && (context->fragment_present == TRUE)) /* if atom type is 'mdat' and fragment is present*/
+
+        if(context->atom_stack[context->atom_stack_top].atom.type == MOOV_TYPE ||
+           context->atom_stack[context->atom_stack_top].atom.type == MOOF_TYPE )
+           /* if atom type is 'moov' and fragment is present*/
         {
             context->state = VIDEO_FMT_MP4R_STATE_PROCESS_FRAGMENT;
         }
         else
-#endif
         {
             context->state = VIDEO_FMT_MP4R_STATE_DECODE_ATOM_HEADER;
         }
@@ -2535,6 +2926,7 @@ void video_fmt_mp4r_finish_atom (video_fmt_mp4r_context_type  *context)
         context->state = VIDEO_FMT_MP4R_STATE_PROCESS_ATOM;
     }
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* <EJECT> */
 /*===========================================================================
@@ -2559,6 +2951,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 boolean video_fmt_mp4r_read_buffer
 (
   video_fmt_mp4r_context_type  *context,
@@ -2586,7 +2979,7 @@ boolean video_fmt_mp4r_read_buffer
                 is correct and if the destination buffer is big enough to hold
                 the data left over */
                 if (context->in_buffer_pos < VIDEO_FMT_MP4R_BUFFER_SIZE
-                    && context->in_buffer_size < VIDEO_FMT_MP4R_BUFFER_SIZE)
+                    && context->in_buffer_size <= VIDEO_FMT_MP4R_BUFFER_SIZE)
                 {
                     memcpy (&context->in_buffers [1 - context->in_buffer_which] [0],
                         &context->in_buffers [context->in_buffer_which]
@@ -2595,7 +2988,7 @@ boolean video_fmt_mp4r_read_buffer
                 }
                 else
                 {
-                       MSG_ERROR ("context->in_buffer_pos has an invalid value"
+                       MSG_ERROR ( "context->in_buffer_pos has an invalid value"
                            , 0, 0, 0);
                        video_fmt_mp4r_failure (context);
                        return FALSE;
@@ -2610,7 +3003,7 @@ boolean video_fmt_mp4r_read_buffer
         if (context->in_buffer_pos + num_bytes - context->in_buffer_size
             > VIDEO_FMT_MP4R_BUFFER_SIZE)
         {
-            MSG_ERROR ("read_buffer: in_buffer too small to "
+            MSG_ERROR ( "read_buffer: in_buffer too small to "
                        "support this read request!", 0, 0, 0);
             video_fmt_mp4r_failure (context);
             return FALSE;
@@ -2633,7 +3026,6 @@ boolean video_fmt_mp4r_read_buffer
         context->state = VIDEO_FMT_MP4R_STATE_GET_DATA;
         return FALSE;
     }
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
     else if(buffer_type == VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER)
     {
         /* If the requested number of bytes is already available, return TRUE. */
@@ -2647,10 +3039,10 @@ boolean video_fmt_mp4r_read_buffer
         */
         if (context->size_retrieve_buffer_pos + num_bytes >= VIDEO_FMT_MP4R_BUFFER_SIZE)
         {
-            if (context->size_retrieve_buffer_size > 0)
-            {
-                if (context->size_retrieve_buffer_pos < VIDEO_FMT_MP4R_BUFFER_SIZE
-                    && context->in_buffer_size < VIDEO_FMT_MP4R_BUFFER_SIZE)
+          if (context->size_retrieve_buffer_size > 0)
+          {
+           if (context->size_retrieve_buffer_pos < VIDEO_FMT_MP4R_BUFFER_SIZE
+            && context->size_retrieve_buffer_size <= VIDEO_FMT_MP4R_BUFFER_SIZE)
                 {
                    memcpy (&context->size_retrieve_buffers [1 - context->size_retrieve_buffer_which] [0],
                         &context->size_retrieve_buffers [context->size_retrieve_buffer_which]
@@ -2659,21 +3051,21 @@ boolean video_fmt_mp4r_read_buffer
                 }
                 else
                 {
-                    MSG_ERROR (" context->size_retrieve_buffer_pos contains an invalid value "
+                    MSG_ERROR ( " context->size_retrieve_buffer_pos contains an invalid value "
                        , 0, 0, 0);
                     video_fmt_mp4r_failure (context);
                     return FALSE;
                 }
-            }
-            context->size_retrieve_buffer_which = 1 - context->size_retrieve_buffer_which;
-            context->size_retrieve_buffer_pos = 0;
+        }
+          context->size_retrieve_buffer_which = 1 - context->size_retrieve_buffer_which;
+          context->size_retrieve_buffer_pos = 0;
         }
 
         /* Check to make sure we are not going to overflow the input buffer. */
         if (context->size_retrieve_buffer_pos + num_bytes - context->size_retrieve_buffer_size
             > VIDEO_FMT_MP4R_BUFFER_SIZE)
         {
-            MSG_ERROR ("read_buffer: size_retrieve_buffer too small to "
+            MSG_ERROR ( "read_buffer: size_retrieve_buffer too small to "
                        "support this read request!", 0, 0, 0);
             video_fmt_mp4r_failure (context);
             return FALSE;
@@ -2696,9 +3088,9 @@ boolean video_fmt_mp4r_read_buffer
         context->state = VIDEO_FMT_MP4R_STATE_GET_DATA;
         return FALSE;
     }
-#endif /*FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
     return FALSE;
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* <EJECT> */
 /*===========================================================================
@@ -2720,6 +3112,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void video_fmt_mp4r_consume_data
 (
   video_fmt_mp4r_context_type  *context,
@@ -2732,8 +3125,8 @@ void video_fmt_mp4r_consume_data
     uint32 index;
     if (destination == NULL)
     {
-	video_fmt_mp4r_failure(context);
-	return;
+        video_fmt_mp4r_failure(context);
+        return;
     }
     if(buffer_type == VIDEO_FMT_MP4R_IN_BUFFER)
     {
@@ -2756,7 +3149,6 @@ void video_fmt_mp4r_consume_data
         context->abs_pos += amount;
         context->in_buffer_size -= amount;
     }
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
     if(buffer_type == VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER)
     {
         if (byte_reverse)
@@ -2778,10 +3170,8 @@ void video_fmt_mp4r_consume_data
         context->abs_size_retrieve_pos += amount;
         context->size_retrieve_buffer_size -= amount;
     }
-#endif /*FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
-
-
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_peek_data
@@ -2850,6 +3240,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void video_fmt_mp4r_skip_data
 (
   video_fmt_mp4r_context_type  *context,
@@ -2874,13 +3265,13 @@ void video_fmt_mp4r_skip_data
         if((0xffffffff - amount) < context->abs_pos)
         {
             context->abs_pos = 0xffffffff;
+            video_fmt_mp4r_failure(context);
         }
         else
         {
             context->abs_pos += amount;
         }
     }
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
     else if(buffer_type == VIDEO_FMT_MP4R_SIZE_RETRIEVE_BUFFER)
     {
         /* Remove any data from the input buffer that falls in the region being
@@ -2889,12 +3280,18 @@ void video_fmt_mp4r_skip_data
         amt_discarded = MIN (context->size_retrieve_buffer_size, amount);
         context->size_retrieve_buffer_pos += amt_discarded;
         context->size_retrieve_buffer_size -= amt_discarded;
-
-        /* Advance the absolute file pointer past the amount to be skipped. */
-        context->abs_size_retrieve_pos += amount;
+        if((0xffffffff - amount) < context->abs_size_retrieve_pos)
+        {
+            context->abs_size_retrieve_pos = 0xffffffff;
+            video_fmt_mp4r_failure(context);
+        }
+        else
+        {
+            context->abs_size_retrieve_pos += amount;
+        }
     }
-#endif /*FEATURE_QTV_PSEUDO_STREAM || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /*===========================================================================
 
@@ -3031,12 +3428,11 @@ boolean video_fmt_mp4r_process_atom_empty
     context = (video_fmt_mp4r_context_type *) context_ptr;
     atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
     if(atom_stack_top->atom.type == MVEX_TYPE)
     {
         context->fragment_present = TRUE;
     }
-#endif
 
     switch (atom_stack_top->process_substate)
     {
@@ -3115,8 +3511,20 @@ boolean video_fmt_mp4r_process_atom_hdlr
     video_fmt_mp4r_context_type  *context;
     video_fmt_mp4r_atom_pos_type *atom_stack_top;
     uint32 track_handler = 0;
+    video_fmt_stream_info_type  *stream_info;
 
     context = (video_fmt_mp4r_context_type *) context_ptr;
+    if(context->num_streams > 0)
+    {
+       stream_info = &context->stream_info [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);  
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return FALSE;
+    }
     atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
 
     /* Read up to and including track type. */
@@ -3147,7 +3555,7 @@ boolean video_fmt_mp4r_process_atom_hdlr
         }
         else
         {
-            MSG_ERROR ("video_fmt_mp4r_process_atom_hdlr: Corrupt file: cannot locate 'trak' atom..!",
+            MSG_ERROR ( "video_fmt_mp4r_process_atom_hdlr: Corrupt file: cannot locate 'trak' atom..!",
                                    0, 0, 0);
             video_fmt_mp4r_failure (context);
             return TRUE;
@@ -3160,11 +3568,8 @@ boolean video_fmt_mp4r_process_atom_hdlr
     else
     {
         /*Add this track_id to the valid list if not already present*/
-        if(tkhd.fields[2].dest)
-        {
-          if(!video_fmt_mp4r_check_valid_track(*(tkhd.fields[2].dest),context))
-              context->valid_track_id[++context->valid_track_count - 1] = *(tkhd.fields[2].dest);
-        }
+        if(!video_fmt_mp4r_check_valid_track(stream_info->track_id,context))
+            context->valid_track_id[++context->valid_track_count - 1] = stream_info->track_id;
         /*Skip the rest of the atom*/
         video_fmt_mp4r_skip_data (context, atom_stack_top->atom.size - 12, VIDEO_FMT_MP4R_IN_BUFFER);
     }
@@ -3281,7 +3686,17 @@ void video_fmt_mp4r_tkhd_prep_dest (void *context_ptr)
 
   /* Verify that the atom is not missing any key data. */
   context = (video_fmt_mp4r_context_type *) context_ptr;
-  stream_info = &context->stream_info [context->num_streams - 1];
+  if(context->num_streams > 0)
+  {
+      stream_info = &context->stream_info [context->num_streams - 1];
+  }
+  else
+  {     
+    MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+    video_fmt_mp4r_failure (context);     
+    context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+    return;
+  }
 
   /* Set the destination fields before "consuming" the data */
   tkhd.fields [0].dest = (uint8 *) &stream_info->creation_time;
@@ -3330,13 +3745,23 @@ boolean video_fmt_mp4r_process_atom_tref_child
     /* Verify that the atom is not missing any key data. */
     context = (video_fmt_mp4r_context_type *) context_ptr;
     atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
-    stream_info = &context->stream_info [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+       stream_info = &context->stream_info [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);  
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return FALSE;
+    }
     stream_info->ref_track.ref_atom = atom_stack_top->atom.type;
     stream_info->ref_track.track_count = atom_stack_top->atom.size / 4;
     /* tref_child.fields[6] is hardcoded 6 element arrays */
     if(stream_info->ref_track.track_count > VIDEO_FMT_MAX_MEDIA_STREAMS)
     {
-      MSG_ERROR ("more ref tracks than supported (%d).", stream_info->ref_track.track_count, 0, 0);
+      MSG_ERROR ( "more ref tracks than supported (%d).", stream_info->ref_track.track_count, 0, 0);
       stream_info->ref_track.track_count = VIDEO_FMT_MAX_MEDIA_STREAMS;
     }
 
@@ -3349,7 +3774,7 @@ boolean video_fmt_mp4r_process_atom_tref_child
     {
       video_fmt_mp4r_consume_data(  context,
                                     (uint8 *) (stream_info->ref_track.track_id+i),
-	                            sizeof (uint32),
+                               sizeof (uint32),
                                     context->byte_swap_needed,
                                     VIDEO_FMT_MP4R_IN_BUFFER );
     }
@@ -3388,7 +3813,17 @@ void video_fmt_mp4r_mdhd_prep_dest (void *context_ptr)
     context = (video_fmt_mp4r_context_type *) context_ptr;
     /* atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
     stream = &context->stream_state [context->num_streams - 1]; */
-    stream_info = &context->stream_info [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+       stream_info = &context->stream_info [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);  
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
 
     /* Set the destination fields before "consuming" the data */
     mdhd.fields [0].dest = (uint8 *) &stream_info->media_timescale;
@@ -3427,7 +3862,17 @@ void video_fmt_mp4r_damr_prep_dest (void *context_ptr)
     context = (video_fmt_mp4r_context_type *) context_ptr;
     /* atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
     stream = &context->stream_state [context->num_streams - 1]; */
-    stream_info = &context->stream_info [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+       stream_info = &context->stream_info [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
 
     /* Stream is either AMR-NB or AMR-WB depending on parent atom type. */
     stream_info->type = VIDEO_FMT_STREAM_AUDIO;
@@ -3487,7 +3932,17 @@ void video_fmt_mp4r_dawp_prep_dest (void *context_ptr)
     atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
     stream = &context->stream_state [context->num_streams - 1];
     */
-    stream_info = &context->stream_info [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+       stream_info = &context->stream_info [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);     
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
 
     stream_info->type = VIDEO_FMT_STREAM_AUDIO;
     stream_info->subinfo.audio.format = VIDEO_FMT_STREAM_AUDIO_AMR_WB_PLUS;
@@ -3535,8 +3990,17 @@ void video_fmt_mp4r_devc_prep_dest (void *context_ptr)
     atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
     stream = &context->stream_state [context->num_streams - 1];
     */
-
-    stream_info = &context->stream_info [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+       stream_info = &context->stream_info [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
 
     stream_info->type = VIDEO_FMT_STREAM_AUDIO;
     stream_info->subinfo.audio.format = VIDEO_FMT_STREAM_AUDIO_EVRC;
@@ -3582,8 +4046,17 @@ void video_fmt_mp4r_decb_prep_dest (void *context_ptr)
     atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
     stream = &context->stream_state [context->num_streams - 1];
     */
-
-    stream_info = &context->stream_info [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+       stream_info = &context->stream_info [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);     
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
 
     stream_info->type = VIDEO_FMT_STREAM_AUDIO;
     stream_info->subinfo.audio.format = VIDEO_FMT_STREAM_AUDIO_EVRC_B;
@@ -3629,8 +4102,17 @@ void video_fmt_mp4r_decw_prep_dest (void *context_ptr)
     atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
     stream = &context->stream_state [context->num_streams - 1];
     */
-
-    stream_info = &context->stream_info [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+       stream_info = &context->stream_info [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);  
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
 
     stream_info->type = VIDEO_FMT_STREAM_AUDIO;
     stream_info->subinfo.audio.format = VIDEO_FMT_STREAM_AUDIO_EVRC_WB;
@@ -3676,7 +4158,17 @@ void video_fmt_mp4r_dqcp_prep_dest (void *context_ptr)
     atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
     stream = &context->stream_state [context->num_streams - 1];
     */
-    stream_info = &context->stream_info [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+       stream_info = &context->stream_info [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);     
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
 
     stream_info->type = VIDEO_FMT_STREAM_AUDIO;
     stream_info->subinfo.audio.format = VIDEO_FMT_STREAM_AUDIO_PUREVOICE;
@@ -3714,8 +4206,17 @@ void video_fmt_mp4r_s263_prep_dest (void *context_ptr)
 
     /* Verify that the atom is not missing any key data. */
     context = (video_fmt_mp4r_context_type *) context_ptr;
-    stream_info = &context->stream_info [context->num_streams - 1];
-
+    if(context->num_streams > 0)
+    {
+       stream_info = &context->stream_info [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
     /* Set the destination fields before "consuming" the data */
     s263.fields [0].dest = (uint8 *) &stream_info->subinfo.video.width;
     s263.fields [1].dest = (uint8 *) &stream_info->subinfo.video.height;
@@ -3745,7 +4246,17 @@ void video_fmt_mp4r_d263_prep_dest (void *context_ptr)
 
     /* Mark stream as H.263 format. */
     context = (video_fmt_mp4r_context_type *) context_ptr;
-    stream_info = &context->stream_info [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+      stream_info = &context->stream_info [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
     stream_info->type = VIDEO_FMT_STREAM_VIDEO;
     stream_info->subinfo.video.format = VIDEO_FMT_STREAM_VIDEO_H263;
 
@@ -3961,7 +4472,21 @@ void video_fmt_mp4r_stco_prep_dest (void *context_ptr)
     /* Verify that the atom is not missing any key data. */
     context = (video_fmt_mp4r_context_type *) context_ptr;
     /* atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];*/
-    stream = &context->stream_state [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+       stream = &context->stream_state [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);    
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
+    if(context->cur_atom_size >= 8)
+    {
+       stream->stco.atom_size = context->cur_atom_size - 8;
+    }
 
     /* Set the destination fields before "consuming" the data */
     stco.fields [0].dest = (uint8 *) &stream->stco.table_size;
@@ -3970,6 +4495,63 @@ void video_fmt_mp4r_stco_prep_dest (void *context_ptr)
     stream->stco.file_offset = context->abs_pos + stco.fields [0].offset
         + stco.fields [0].size;
 }
+
+
+/* <EJECT> */
+/*===========================================================================
+
+FUNCTION  video_fmt_mp4r_c064_prep_dest
+
+DESCRIPTION
+  This function prepares the destination fields where information
+  from the 'co64' atom is to be stored.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  none
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+void video_fmt_mp4r_co64_prep_dest (void *context_ptr)
+{
+    video_fmt_mp4r_context_type  *context;
+    /* video_fmt_mp4r_atom_pos_type *atom_stack_top; */
+    video_fmt_mp4r_stream_type   *stream;
+
+    /* Verify that the atom is not missing any key data. */
+    context = (video_fmt_mp4r_context_type *) context_ptr;
+    /* atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];*/
+    if(context->num_streams > 0)
+    {
+       stream = &context->stream_state [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);     
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
+    if(context->cur_atom_size >= 8)
+    {
+       stream->stco.atom_size = context->cur_atom_size - 8;
+    }
+
+    /* Set the destination fields before "consuming" the data */
+    /* we don't have 64 bit support we are using stco table to compute the chunk offset */
+    co64.fields [0].dest = (uint8 *) &stream->stco.table_size;
+
+    /* Record offset of table in stream state. */
+    stream->stco.file_offset = context->abs_pos + stco.fields [0].offset
+        + stco.fields [0].size;
+    /* This flag is to use the correct 32 bit offset from the stco table */
+    stream->co64_present = TRUE;
+}
+
 
 /* <EJECT> */
 /*===========================================================================
@@ -3999,7 +4581,21 @@ void video_fmt_mp4r_stsc_prep_dest (void *context_ptr)
     /* Verify that the atom is not missing any key data. */
     context = (video_fmt_mp4r_context_type *) context_ptr;
     /* atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];*/
-    stream = &context->stream_state [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+        stream = &context->stream_state [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);     
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
+    if(context->cur_atom_size >= 8)
+    {
+       stream->stsc.atom_size = context->cur_atom_size - 8;
+    }
 
     /* Set the destination fields before "consuming" the data */
     stsc.fields [0].dest = (uint8 *)&stream->stsc.table_size;
@@ -4037,7 +4633,21 @@ void video_fmt_mp4r_stts_prep_dest (void *context_ptr)
     /* Verify that the atom is not missing any key data. */
     context = (video_fmt_mp4r_context_type *) context_ptr;
     /* atom_stack_top = &context->atom_stack [context->atom_stack_top - 1]; */
-    stream = &context->stream_state [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+       stream = &context->stream_state [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);  
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
+    if(context->cur_atom_size >= 8)
+    {
+       stream->stts.atom_size = context->cur_atom_size - 8;
+    }
 
     /* Set the destination fields before "consuming" the data */
     stts.fields [0].dest = (uint8 *) &stream->stts.table_size;
@@ -4045,6 +4655,58 @@ void video_fmt_mp4r_stts_prep_dest (void *context_ptr)
     /* Record offset of table in stream state. */
     stream->stts.file_offset = context->abs_pos + stts.fields [0].offset
         + stts.fields [0].size;
+}
+
+/* <EJECT> */
+/*===========================================================================
+
+FUNCTION  video_fmt_mp4r_ctts_prep_dest
+
+DESCRIPTION
+  This function prepares the destination fields where information
+  from the 'ctts' atom is to be stored.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  none
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+void video_fmt_mp4r_ctts_prep_dest (void *context_ptr)
+{
+    video_fmt_mp4r_context_type  *context;
+    /* video_fmt_mp4r_atom_pos_type *atom_stack_top;*/
+    video_fmt_mp4r_stream_type   *stream;
+
+    /* Verify that the atom is not missing any key data. */
+    context = (video_fmt_mp4r_context_type *) context_ptr;
+    /* atom_stack_top = &context->atom_stack [context->atom_stack_top - 1]; */
+    if(context->num_streams > 0)
+    {
+       stream = &context->stream_state [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context); 
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
+    if(context->cur_atom_size >= 8)
+    {
+       stream->ctts.atom_size = context->cur_atom_size - 8;
+    }
+
+    /* Set the destination fields before "consuming" the data */
+    ctts.fields [0].dest = (uint8 *) &stream->ctts.table_size;
+
+    /* Record offset of table in stream state. */
+    stream->ctts.file_offset = context->abs_pos + ctts.fields [0].offset
+        + ctts.fields [0].size;
 }
 
 /* <EJECT> */
@@ -4075,7 +4737,21 @@ void video_fmt_mp4r_stss_prep_dest (void *context_ptr)
     /* Verify that the atom is not missing any key data. */
     context = (video_fmt_mp4r_context_type *) context_ptr;
     /* atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];*/
-    stream = &context->stream_state [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+       stream = &context->stream_state [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);    
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
+    if(context->cur_atom_size >= 8)
+    {
+       stream->stss.atom_size = context->cur_atom_size - 8;
+    }
 
     /* Set the destination fields before "consuming" the data */
     stss.fields [0].dest = (uint8 *) &stream->stss.table_size;
@@ -4112,13 +4788,23 @@ void video_fmt_mp4r_stsd_prep_dest (void *context_ptr)
     /* Verify that the atom is not missing any key data. */
     context = (video_fmt_mp4r_context_type *) context_ptr;
     /* atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];*/
-    stream = &context->stream_state [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+       stream = &context->stream_state [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context); 
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return;
+    }
 
     /* Set the destination fields before "consuming" the data */
     stsd.fields[0].dest = (uint8 *)&stream->stsd_entry_count;
 }
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_mehd_prep_dest
@@ -4280,11 +4966,11 @@ boolean video_fmt_mp4r_process_atom_tfhd
             if((&context->stream_info[index] != NULL) &&
                (&context->stream_state[index] != NULL) )
 
-	    {
+       {
                context->stream_info[index].fragment_number = context->current_sequence_number;
-	    }
+       }
 
-	}
+   }
     }
     else
     {
@@ -4397,10 +5083,10 @@ boolean video_fmt_mp4r_process_atom_tfhd
             else
                 stream->default_sample_flags = default_sample_prop.default_sample_flags;
 
-			if(stream->default_sample_flags == FLAG_I_VOP)
-			{
+         if(stream->default_sample_flags == FLAG_I_VOP)
+         {
               stream_info->inter_frames = TRUE;
-			}
+         }
 
             if(default_sample_description_index != 0)
                 stream->default_sample_description_index = default_sample_description_index;
@@ -4444,9 +5130,7 @@ boolean video_fmt_mp4r_process_atom_tfhd
                      sizeof(video_fmt_mp4r_trun_four_entry_type)*VIDEO_FMT_MP4R_TABLE_CACHE_SIZE);
 
                 stream->current_trun = 0;
-    #ifdef FEATURE_QTV_INTER_FRAG_REPOS
                 stream->fragment_repositioned = FALSE;
-    #endif /*FEATURE_QTV_INTER_FRAG_REPOS*/
                 stream->trun_entry_count = 0;
                 stream->initialize_trun = FALSE;
             }
@@ -4543,7 +5227,6 @@ boolean video_fmt_mp4r_process_atom_trex
     video_fmt_mp4r_finish_atom (context);
     return FALSE;
 }
-#endif
 
 /* <EJECT> */
 /*===========================================================================
@@ -4586,7 +5269,7 @@ boolean video_fmt_mp4r_process_atom_trak
     /* we only process VIDEO_FMT_MAX_MEDIA_STREAMS number of tracks */
     if(context->num_streams >= VIDEO_FMT_MAX_MEDIA_STREAMS)
     {
-      MSG_ERROR ("more tracks than supported (%d).", context->num_streams, 0, 0);
+      MSG_ERROR ( "more tracks than supported (%d).", context->num_streams, 0, 0);
       return video_fmt_mp4r_process_atom_skip(context_ptr, atom_struct_ptr);
     }
 
@@ -4855,7 +5538,17 @@ boolean video_fmt_mp4r_process_atom_stbl
     /* Branch according to processing substate. */
     context = (video_fmt_mp4r_context_type *) context_ptr;
     atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
-    stream = &context->stream_state [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+      stream = &context->stream_state [context->num_streams - 1];
+    }
+    else
+    {
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure(context);
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return FALSE;
+    }
     stream_info = &context->stream_info [context->num_streams - 1];
     switch (atom_stack_top->process_substate)
     {
@@ -4905,9 +5598,7 @@ boolean video_fmt_mp4r_process_atom_stbl
             context->get_data_dst
                 = (uint8 *) &atom_stack_top->parse_uint32 [1];
             context->get_data_src = atom_stack_top->parse_uint32 [0] + 4;
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
             context->get_data_src_in_mdat = TRUE;
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
             context->get_data_size = 8;
             context->get_data_needed = 8;
             context->get_data_read = 0;
@@ -4918,8 +5609,6 @@ boolean video_fmt_mp4r_process_atom_stbl
             return TRUE;
 
         case 2: /* Determine and set frame size. */
-
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
             context->get_data_src_in_mdat = FALSE;
             /* If no bytes are given: i.e. all the bytes read are 0x0 */
             if(!atom_stack_top->parse_uint32 [1] &&
@@ -4951,8 +5640,6 @@ boolean video_fmt_mp4r_process_atom_stbl
                 context->callback_ptr(VIDEO_FMT_DATA_INCOMPLETE, context->client_data, NULL, NULL);
                 return TRUE;
             }
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-
             /* Parsing bits in a 32-bit word, big-endian order
                msb position=0, lsb position=32 */
             video_fmt_mp4r_read_network_word
@@ -5035,7 +5722,7 @@ boolean video_fmt_mp4r_process_atom_stbl
                       }
                       break;
                     default:
-                      MSG_ERROR ("process_atom_stbl: invalid H.263 profile 3 source_format!",
+                      MSG_ERROR ( "process_atom_stbl: invalid H.263 profile 3 source_format!",
                                    0, 0, 0);
                       video_fmt_mp4r_failure (context);
                       return TRUE;
@@ -5043,14 +5730,14 @@ boolean video_fmt_mp4r_process_atom_stbl
                 }
                 else
                 {
-                  MSG_ERROR ("process_atom_stbl: invalid H.263 profile 3 source_format!",
+                  MSG_ERROR ( "process_atom_stbl: invalid H.263 profile 3 source_format!",
                                 0, 0, 0);
                   video_fmt_mp4r_failure (context);
                   return TRUE;
                 }
                 break;
             default: /* reserved */
-                MSG_ERROR ("process_atom_stbl: invalid H.263 source_format!",
+                MSG_ERROR ( "process_atom_stbl: invalid H.263 source_format!",
                            0, 0, 0);
                 video_fmt_mp4r_failure (context);
                 return TRUE;
@@ -5083,9 +5770,7 @@ boolean video_fmt_mp4r_process_atom_stbl
 
             /* Add "sample_count" entry to total frame count. */
             stream_info->frames += atom_stack_top->parse_uint32 [1];
-#ifdef FEATURE_FILE_FRAGMENTATION
             stream->main_fragment_frames = stream_info->frames;
-#endif
             if(stream_info->frames == 0)
             {
               /* if stts table is empty, this is an empty track */
@@ -5108,9 +5793,8 @@ boolean video_fmt_mp4r_process_atom_stbl
                 /* Recalculate total number of bytes in stream. */
                 stream_info->bytes = stream_info->frames * stream->sample_size
                     + stream_info->header;
-#ifdef FEATURE_FILE_FRAGMENTATION
+
                 stream->main_fragment_bytes = stream_info->bytes;
-#endif
                 atom_stack_top->process_substate
                     = VIDEO_FMT_MP4R_PROCESS_ATOM_SUBSTATE_CHILDREN_DONE;
             }
@@ -5191,7 +5875,7 @@ boolean video_fmt_mp4r_process_atom_stbl
 
             if ( context->bs_status == VIDEO_FMT_BS_FAILURE )
             {
-              MSG_ERROR ("process_atom_stbl: failed bit-stream processing",
+              MSG_ERROR ( "process_atom_stbl: failed bit-stream processing",
                          0, 0, 0);
               video_fmt_mp4r_failure (context);
               return TRUE;
@@ -5209,7 +5893,7 @@ boolean video_fmt_mp4r_process_atom_stbl
             /* Otherwise, flag an error. */
             else
             {
-                MSG_ERROR ("process_atom_stbl: invalid data!",
+                MSG_ERROR ( "process_atom_stbl: invalid data!",
                            0, 0, 0);
                 video_fmt_mp4r_failure (context);
                 return TRUE;
@@ -5247,9 +5931,9 @@ boolean video_fmt_mp4r_process_atom_stbl
               stream->sample_duration = atom_stack_top->parse_uint32 [1];
             stream_info->media_duration = stream_info->frames *
                                  stream->sample_duration;
-#ifdef FEATURE_FILE_FRAGMENTATION
+
             stream->main_fragment_timestamp = stream_info->media_duration;
-#endif /*FEATURE_FILE_FRAGMENTATION*/
+
             atom_stack_top->process_substate
                     = VIDEO_FMT_MP4R_PROCESS_ATOM_SUBSTATE_CHILDREN_DONE;
             break;
@@ -5257,7 +5941,12 @@ boolean video_fmt_mp4r_process_atom_stbl
         break;
     case VIDEO_FMT_MP4R_PROCESS_ATOM_SUBSTATE_CHILDREN_DONE:
         /* if stco table is empty, this is an empty track */
-        if( stream->stco.table_size == 0)
+        if( stream->stco.table_size == 0 || 
+            (stream->stts.table_size == 0 && stream_info->frames > 1) ||
+	    stream->stts.atom_size < stream->stts.table_size * 8 ||
+	    stream->stco.atom_size < stream->stco.table_size * 4 ||
+            stream->stsz.table_size == 0 || (stream->sample_size == 0 && 
+            stream->stsz.atom_size < stream->stsz.table_size * 4) )
         {
           stream_info->type = VIDEO_FMT_STREAM_INVALID;
           video_fmt_mp4r_finish_atom (context);
@@ -5292,9 +5981,7 @@ boolean video_fmt_mp4r_process_atom_stbl
         }
         else
         {
-#ifdef FEATURE_FILE_FRAGMENTATION
             stream->main_fragment_timestamp = stream_info->media_duration;
-#endif /*FEATURE_FILE_FRAGMENTATION*/
         }
 
         /* If there is no 'stss' table, the stream definitely does not have
@@ -5389,9 +6076,11 @@ boolean video_fmt_mp4r_process_atom_tx3g
     /* Set stream type and format to indicate 3GPP Timed Text */
     context = (video_fmt_mp4r_context_type *) context_ptr;
     atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
-    if (context->num_streams > VIDEO_FMT_MAX_MEDIA_STREAMS)
+    if( (context->num_streams > VIDEO_FMT_MAX_MEDIA_STREAMS)||
+        (context->num_streams == 0 ) )
+
     {
-        MSG_ERROR ("process_atom_tx3g: too many streams!", 0, 0, 0);
+        MSG_ERROR ("process_atom_tx3g: too many/few streams!", 0, 0, 0);
         video_fmt_mp4r_failure (context);
         return TRUE;
     }
@@ -5465,6 +6154,12 @@ boolean video_fmt_mp4r_process_atom_avc1
 
   /* Branch according to processing substate. */
   context = (video_fmt_mp4r_context_type *) context_ptr;
+  if(context->num_streams == 0)
+  {
+     MSG_ERROR("num streams is ZERO!", 0, 0, 0);
+     video_fmt_mp4r_failure (context);
+     return TRUE;
+  }
   atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
   /* atom_struct = (video_fmt_consume_atom_structure_type *) atom_struct_ptr;*/
 
@@ -5479,11 +6174,11 @@ boolean video_fmt_mp4r_process_atom_avc1
         video_fmt_mp4r_skip_data (context, atom_stack_top->atom.size, VIDEO_FMT_MP4R_IN_BUFFER);
         video_fmt_mp4r_finish_atom (context);
         break;
-     }
-	  /*Initializing the structure variables for avcc atom*/
-	  h264_info->avcc_alloc.memory_ptr = NULL;
-	  h264_info->avcc_alloc.allocated_size = 0;
-	  h264_info->avcc_alloc.memory_allocated = FALSE;
+      }
+      /*Initializing the structure variables for avcc atom*/
+      h264_info->avcc_alloc.memory_ptr = NULL;
+      h264_info->avcc_alloc.allocated_size = 0;
+      h264_info->avcc_alloc.memory_allocated = FALSE;
 
       stream_info->type = VIDEO_FMT_STREAM_VIDEO;
       stream_info->subinfo.video.format = VIDEO_FMT_STREAM_VIDEO_H264;
@@ -5492,7 +6187,7 @@ boolean video_fmt_mp4r_process_atom_avc1
       if (!video_fmt_mp4r_read_buffer
           (context, 78, FALSE, VIDEO_FMT_MP4R_IN_BUFFER))
       {
-          return TRUE;
+        return TRUE;
       }
 
       /* Skip redefined, reserved etc */
@@ -5587,7 +6282,17 @@ boolean video_fmt_mp4r_process_atom_avcC
 
   context = (video_fmt_mp4r_context_type *) context_ptr;
   atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
-  stream_info = &context->stream_info [context->num_streams - 1];
+  if(context->num_streams > 0)
+  {
+    stream_info = &context->stream_info [context->num_streams - 1];
+  }
+  else
+  {
+    MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+    video_fmt_mp4r_failure (context);
+    context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+    return FALSE;
+  }
   h264_info = &stream_info->dec_specific_info.h264_info;
 
   /*
@@ -5599,38 +6304,37 @@ boolean video_fmt_mp4r_process_atom_avcC
    if(h264_info->avcc_alloc.memory_allocated == FALSE)
    {
 
-		alloc_atom.size = atom_stack_top->atom.size;
-		context->callback_ptr ( VIDEO_FMT_ALLOC, context->client_data,
-								(video_fmt_status_cb_info_type *) &alloc_atom,
-								NULL );
-		if(alloc_atom.ptr == NULL)
-		{
-                   MSG_ERROR ("memory not allocated to alloc_atom.ptr ", 0, 0, 0);
-                   video_fmt_mp4r_failure (context);
-		   return TRUE;
-		}
-		memset((byte*)alloc_atom.ptr, 0, alloc_atom.size);
+      alloc_atom.size = atom_stack_top->atom.size;
+      context->callback_ptr ( VIDEO_FMT_ALLOC, context->client_data,
+                        (video_fmt_status_cb_info_type *) &alloc_atom,
+                        NULL );
+      if(alloc_atom.ptr == NULL)
+      {
+         MSG_ERROR ( "memory not allocated to alloc_atom.ptr ", 0, 0, 0);
+         video_fmt_mp4r_failure (context);
+         return TRUE;
+      }
+      memset((byte*)alloc_atom.ptr, 0, alloc_atom.size);
 
-		/* Invalidate the ping pong buffer */
-		context->in_buffer_pos = 0;
-        context->in_buffer_size = 0;
+      /* Invalidate the ping pong buffer */
+      context->in_buffer_pos = 0;
+      context->in_buffer_size = 0;
 
-		context->get_data_dst = (uint8 *)alloc_atom.ptr;
-		context->get_data_src = context->abs_pos;
-		context->get_data_size = alloc_atom.size;
-		context->get_data_needed = alloc_atom.size;
-		context->get_data_read = 0;
-		context->expect_eof = FALSE;
-		context->state_next [0] = context->state;
-		context->state = VIDEO_FMT_MP4R_STATE_GET_DATA;
+      context->get_data_dst = (uint8 *)alloc_atom.ptr;
+      context->get_data_src = context->abs_pos;
+      context->get_data_size = alloc_atom.size;
+      context->get_data_needed = alloc_atom.size;
+      context->get_data_read = 0;
+      context->expect_eof = FALSE;
+      context->state_next [0] = context->state;
+      context->state = VIDEO_FMT_MP4R_STATE_GET_DATA;
 
+      /*Setting the structure variable indicating memory had been allocated*/
+      h264_info->avcc_alloc.memory_ptr = alloc_atom.ptr;
+      h264_info->avcc_alloc.allocated_size = alloc_atom.size;
+      h264_info->avcc_alloc.memory_allocated = TRUE;
 
-		/*Setting the structure variable indicating memory had been allocated*/
-		h264_info->avcc_alloc.memory_ptr = alloc_atom.ptr;
-		h264_info->avcc_alloc.allocated_size = alloc_atom.size;
-		h264_info->avcc_alloc.memory_allocated = TRUE;
-
-		return TRUE;
+      return TRUE;
    }
 
 
@@ -5638,43 +6342,55 @@ boolean video_fmt_mp4r_process_atom_avcC
   bytes_consumed = 0;
 
   /* Read configuration version */
-  bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
-	                                   &h264_info->config_ver,
-	                                   h264_info->avcc_alloc.allocated_size,
-                                       bytes_consumed,1,FALSE,context);
-
+  if((bytes_consumed+1) <= h264_info->avcc_alloc.allocated_size)
+  {
+     bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
+                                      &h264_info->config_ver,
+                                      h264_info->avcc_alloc.allocated_size,
+                                      bytes_consumed,1,FALSE,context);
+  }
   /* Read profile code */
-  bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
-                                       (byte *)&stream_info->subinfo.video.profile ,
-									   h264_info->avcc_alloc.allocated_size,
-                                       bytes_consumed,1,FALSE,context);
-
+  if((bytes_consumed+1) <= h264_info->avcc_alloc.allocated_size)
+  {
+      bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
+                                      (byte *)&stream_info->subinfo.video.profile ,
+                                      h264_info->avcc_alloc.allocated_size,
+                                      bytes_consumed,1,FALSE,context);
+  }
   /*Read profile compatibility */
-  bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
-	                                   &h264_info->profile_comp ,
-									   h264_info->avcc_alloc.allocated_size,
-                                       bytes_consumed,1,FALSE,context);
-
+  if((bytes_consumed+1) <= h264_info->avcc_alloc.allocated_size)
+  {
+      bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
+                                      &h264_info->profile_comp ,
+                                      h264_info->avcc_alloc.allocated_size,
+                                      bytes_consumed,1,FALSE,context);
+  }   
   /*  Read level code */
-  bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
-	                                   (byte *)&stream_info->subinfo.video.level ,
-									   h264_info->avcc_alloc.allocated_size,
-                                       bytes_consumed,1,FALSE,context);
-
-  /* Read "NAL unit length minus one" field (only first 2 bits are valid) */
-  bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
-	                                   &h264_info->len_minus_one,
-									   h264_info->avcc_alloc.allocated_size,
-                                       bytes_consumed,1,FALSE,context);
-
+  if((bytes_consumed+1) <= h264_info->avcc_alloc.allocated_size)
+  {
+      bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
+                                      (byte *)&stream_info->subinfo.video.level ,
+                                      h264_info->avcc_alloc.allocated_size,
+                                      bytes_consumed,1,FALSE,context);
+  }
+  if((bytes_consumed+1) <= h264_info->avcc_alloc.allocated_size)
+  {
+      /* Read "NAL unit length minus one" field (only first 2 bits are valid) */
+      bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
+                                      &h264_info->len_minus_one,
+                                      h264_info->avcc_alloc.allocated_size,
+                                      bytes_consumed,1,FALSE,context);
+  }
   h264_info->len_minus_one &= 0x03;
 
-  /* Read number of sequence parameter sets (only first 5 bits are valid) */
-  bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
-	                                   &h264_info->num_seq_param,
-									   h264_info->avcc_alloc.allocated_size,
-                                       bytes_consumed,1,FALSE,context);
-
+  if((bytes_consumed+1) <= h264_info->avcc_alloc.allocated_size)
+  {
+      /* Read number of sequence parameter sets (only first 5 bits are valid) */
+      bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
+                                      &h264_info->num_seq_param,
+                                      h264_info->avcc_alloc.allocated_size,
+                                      bytes_consumed,1,FALSE,context);
+  }
   h264_info->num_seq_param &= 0x1F;
 
   if(h264_info->num_seq_param)
@@ -5685,7 +6401,7 @@ boolean video_fmt_mp4r_process_atom_avcC
                             NULL );
    if(alloc.ptr == NULL)
    {
-     MSG_ERROR ("memory not allocated to alloc.ptr ", 0, 0, 0);
+     MSG_ERROR ( "memory not allocated to alloc.ptr ", 0, 0, 0);
      video_fmt_mp4r_failure (context);
      return TRUE;
    }
@@ -5695,11 +6411,19 @@ boolean video_fmt_mp4r_process_atom_avcC
     for(i=0; (i<h264_info->num_seq_param) && (bytes_consumed<atom_stack_top->atom.size); i++)
     {
       /* Read seq parameter length */
-	  bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
-		                                   (byte *)&h264_info->seq_param_set[i].len,
-										   h264_info->avcc_alloc.allocated_size,
-                                           bytes_consumed,2,context->byte_swap_needed,context);
-
+      if((bytes_consumed+h264_info->seq_param_set[i].len) <= h264_info->avcc_alloc.allocated_size)
+      {
+        bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
+                                         (byte *)&h264_info->seq_param_set[i].len,
+                                         h264_info->avcc_alloc.allocated_size,
+                                         bytes_consumed,2,context->byte_swap_needed,context);
+      }
+      else
+      {
+        MSG_ERROR ("error while parsing AVCC sequence parameters", 0, 0, 0);
+        video_fmt_mp4r_failure (context);
+        return TRUE;
+      }
       if(h264_info->seq_param_set[i].len)
       {
         alloc.size = h264_info->seq_param_set[i].len;
@@ -5707,30 +6431,41 @@ boolean video_fmt_mp4r_process_atom_avcC
                                 (video_fmt_status_cb_info_type *) &alloc,
                                 NULL );
         if(alloc.ptr == NULL)
-	{
-          MSG_ERROR ("memory not allocated to alloc.ptr ", 0, 0, 0);
+        {
+          MSG_ERROR ( "memory not allocated to alloc.ptr ", 0, 0, 0);
           video_fmt_mp4r_failure (context);
           return TRUE;
-	}
+        }
 
         h264_info->seq_param_set[i].data = (byte*)alloc.ptr;
         memset(h264_info->seq_param_set[i].data, 0, alloc.size);
         /* Read seq parameter */
-		bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
-			                                 h264_info->seq_param_set[i].data,
-											 h264_info->avcc_alloc.allocated_size,
-                                             bytes_consumed,h264_info->seq_param_set[i].len,
-											 FALSE,context);
+        if((bytes_consumed+h264_info->seq_param_set[i].len) <= h264_info->avcc_alloc.allocated_size)
+        {
+           bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
+                                  h264_info->seq_param_set[i].data,
+                                  h264_info->avcc_alloc.allocated_size,
+                                  bytes_consumed,h264_info->seq_param_set[i].len,
+                                  FALSE,context);
+        }
+        else
+        {
+          MSG_ERROR ("error while parsing AVCC sequence parameters", 0, 0, 0);
+          video_fmt_mp4r_failure (context);
+          return TRUE;
+        }
       }
     } /* end of for(num seq param set) */
   }
 
-  /* Read number of picture parameter sets */
-  bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
-	                                   &h264_info->num_pic_param,
-									   h264_info->avcc_alloc.allocated_size,
-                                       bytes_consumed,1,FALSE,context);
-
+  if((bytes_consumed+1) <= h264_info->avcc_alloc.allocated_size)
+  {
+     /* Read number of picture parameter sets */
+     bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
+                                              &h264_info->num_pic_param,
+                                              h264_info->avcc_alloc.allocated_size,
+                                              bytes_consumed,1,FALSE,context);
+  }
   if(h264_info->num_pic_param)
   {
     alloc.size = h264_info->num_pic_param * sizeof(video_fmt_h264_param_type);
@@ -5739,7 +6474,7 @@ boolean video_fmt_mp4r_process_atom_avcC
                             NULL );
     if(alloc.ptr == NULL)
     {
-      MSG_ERROR ("memory not allocated to alloc.ptr ", 0, 0, 0);
+      MSG_ERROR ( "memory not allocated to alloc.ptr ", 0, 0, 0);
       video_fmt_mp4r_failure (context);
       return TRUE;
     }
@@ -5750,11 +6485,11 @@ boolean video_fmt_mp4r_process_atom_avcC
     for(i=0; (i<h264_info->num_pic_param) && (bytes_consumed<atom_stack_top->atom.size); i++)
     {
       /* Read pic parameter length */
-	  bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
-		                                   (byte *)&h264_info->pic_param_set[i].len,
-										   h264_info->avcc_alloc.allocated_size,
+     bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
+                                         (byte *)&h264_info->pic_param_set[i].len,
+                                 h264_info->avcc_alloc.allocated_size,
                                            bytes_consumed,2,
-										   context->byte_swap_needed,context);
+                                 context->byte_swap_needed,context);
 
       if(h264_info->pic_param_set[i].len)
       {
@@ -5764,26 +6499,35 @@ boolean video_fmt_mp4r_process_atom_avcC
                                 NULL );
        if(alloc.ptr== NULL)
        {
-         MSG_ERROR ("memory not allocated to alloc.ptr ", 0, 0, 0);
+         MSG_ERROR ( "memory not allocated to alloc.ptr ", 0, 0, 0);
          video_fmt_mp4r_failure (context);
          return TRUE;
        }
 
         h264_info->pic_param_set[i].data = (byte*)alloc.ptr;
         memset(h264_info->pic_param_set[i].data, 0, alloc.size);
-        /* Read seq parameter */
-		bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
-			                                 h264_info->pic_param_set[i].data,
-											 h264_info->avcc_alloc.allocated_size,
-                                             bytes_consumed,h264_info->pic_param_set[i].len,
-											 FALSE,context);
+        if((bytes_consumed+h264_info->pic_param_set[i].len) <= h264_info->avcc_alloc.allocated_size)
+        {
+            /* Read seq parameter */
+            bytes_consumed += video_fmt_consume_data(h264_info->avcc_alloc.memory_ptr,
+                                  h264_info->pic_param_set[i].data,
+                                  h264_info->avcc_alloc.allocated_size,
+                                  bytes_consumed,h264_info->pic_param_set[i].len,
+                                  FALSE,context);
+        }
+        else
+        {
+         MSG_ERROR ("error while parsing AVCC picture parameters", 0, 0, 0);
+         video_fmt_mp4r_failure (context);
+         return TRUE;
+        }
       }
     } /* end of for(num pic param set) */
   }
 
   if(bytes_consumed != atom_stack_top->atom.size)
   {
-    MSG_ERROR ("error in parsing avcC atom.", 0, 0, 0);
+    MSG_ERROR ( "error in parsing avcC atom.", 0, 0, 0);
     video_fmt_mp4r_failure (context);
     return TRUE;
   }
@@ -5825,28 +6569,35 @@ int video_fmt_consume_data
  video_fmt_mp4r_context_type   *context
  )
 {
-        int index;
-        if (source == NULL || destination == NULL)
-	{
-           video_fmt_mp4r_failure(context);
-           return 0;
-	}
-        if (byte_reverse)
-        {
-            for (index = 0; index < readsize; ++index)
-            {
-                destination [index] = source[readpos + readsize - index - 1];
-            }
-        }
-        else
-        {
-            memcpy (destination,
-                    source+readpos,readsize);
-        }
-
-        context->abs_pos += readsize;
-        return readsize;
-
+   int index;
+   if (source == NULL || destination == NULL)
+   {
+      video_fmt_mp4r_failure(context);
+      return 0;
+   }
+   if (byte_reverse)
+   {
+      for (index = 0; index < readsize; ++index)
+      {
+        destination [index] = source[readpos + readsize - index - 1];
+      }
+    }
+    else
+    {
+       //make sure we are copying from valid range within source
+       if((readpos+readsize)<=size)
+       {
+         memcpy (destination,source+readpos,readsize);
+       }
+       else
+       {
+         MSG_ERROR ("video_fmt_consume_data:Read is outside input buffer size...", 0, 0, 0);
+         video_fmt_mp4r_failure(context);
+         return 0;
+       }
+    }
+    context->abs_pos += readsize;
+    return readsize;
 }
 /*===========================================================================
 
@@ -5880,7 +6631,17 @@ boolean video_fmt_mp4r_process_atom_btrt
 
   context = (video_fmt_mp4r_context_type *) context_ptr;
   atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
-  stream_info = &context->stream_info [context->num_streams - 1];
+  if(context->num_streams > 0)
+  {
+    stream_info = &context->stream_info [context->num_streams - 1];
+  }
+  else
+  {     
+    MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+    video_fmt_mp4r_failure (context);   
+    context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+    return FALSE;
+  }
 
   /* read required bytes */
   if (!video_fmt_mp4r_read_buffer (context, atom_stack_top->atom.size, FALSE, VIDEO_FMT_MP4R_IN_BUFFER))
@@ -5940,7 +6701,17 @@ boolean video_fmt_mp4r_process_atom_bitr
 
     context = (video_fmt_mp4r_context_type *) context_ptr;
     atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
-    stream_info = &context->stream_info [context->num_streams - 1];
+    if(context->num_streams > 0)
+    {
+      stream_info = &context->stream_info [context->num_streams - 1];
+    }
+    else
+    {     
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);   
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return FALSE;
+    }
 
     /* read required bytes */
     if (!video_fmt_mp4r_read_buffer (context, atom_stack_top->atom.size, FALSE, VIDEO_FMT_MP4R_IN_BUFFER))
@@ -5999,13 +6770,31 @@ boolean video_fmt_mp4r_process_atom_esds
 
     /* Branch according to processing substate. */
     context = (video_fmt_mp4r_context_type *) context_ptr;
-    atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
+    atom_stack_top = &context->atom_stack [context->atom_stack_top - 2];
     if (context->num_streams > VIDEO_FMT_MAX_MEDIA_STREAMS)
     {
         MSG_ERROR ("process_atom_esds: too many streams!", 0, 0, 0);
         video_fmt_mp4r_failure (context);
         return TRUE;
     }
+
+    if(atom_stack_top->atom.type != MP4A_TYPE &&
+       atom_stack_top->atom.type != MP4S_TYPE &&
+       atom_stack_top->atom.type != MP4V_TYPE)
+    {
+        MSG_ERROR ( "process_atom_esds: Wrong parent atom", 0, 0, 0);
+        video_fmt_mp4r_failure (context);
+        return TRUE;
+    }
+
+    if(context->num_streams == 0)
+    {
+        MSG_ERROR ( "process_atom_esds: Stream descriptor without track", 0,0, 0);
+        video_fmt_mp4r_failure (context);
+        return TRUE;
+    }
+    atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
+
     stream = &context->stream_state [context->num_streams - 1];
     stream_info = &context->stream_info [context->num_streams - 1];
     switch (atom_stack_top->process_substate)
@@ -6056,7 +6845,7 @@ boolean video_fmt_mp4r_process_atom_esds
             if (atom_stack_top->parse_uint32 [0] > atom_stack_top->atom.size
                 + atom_stack_top->atom.offset - context->abs_pos)
             {
-                MSG_ERROR ("process_atom_esds: invalid descriptor size!",
+                MSG_ERROR ( "process_atom_esds: invalid descriptor size!",
                            0, 0, 0);
                 video_fmt_mp4r_failure (context);
                 return TRUE;
@@ -6150,8 +6939,7 @@ boolean video_fmt_mp4r_process_atom_esds
             if ( atom_stack_top->parse_uint32 [2]> atom_stack_top->parse_uint32 [0]
                 + atom_stack_top->parse_uint32 [1] - context->abs_pos)
             {
-                MSG_ERROR ("process_atom_esds: invalid descriptor size!",
-                           0, 0, 0);
+                MSG_ERROR ( "process_atom_esds: invalid descriptor size!",0, 0, 0);
             }
             atom_stack_top->parse_uint32 [3] = context->abs_pos;
             ++atom_stack_top->parse_pos;
@@ -6180,8 +6968,10 @@ boolean video_fmt_mp4r_process_atom_esds
             {
             case 0x04:
                 stream_info->type = VIDEO_FMT_STREAM_VIDEO;
-                stream_info->subinfo.video.width = 0;
-                stream_info->subinfo.video.height = 0;
+                stream_info->subinfo.video.width
+                                  = (stream_info->tkhd_width >> 16);
+                stream_info->subinfo.video.height
+                                  = (stream_info->tkhd_height >> 16);
                 stream_info->subinfo.video.frame_rate = 0;
                 switch (objectType)
                 {
@@ -6260,21 +7050,21 @@ boolean video_fmt_mp4r_process_atom_esds
                 break;
 
             case 0x01:
-		switch (objectType)
-		{
-		  case 0x20:
-		    stream_info->type = VIDEO_FMT_STREAM_VIDEO;
-		    stream_info->subinfo.video.width = 0;
-		    stream_info->subinfo.video.height = 0;
-		    stream_info->subinfo.video.frame_rate = 0;
-		    stream_info->subinfo.video.format = VIDEO_FMT_STREAM_VIDEO_MPEG4;
-		    break;
-		  default:
+      switch (objectType)
+      {
+        case 0x20:
+          stream_info->type = VIDEO_FMT_STREAM_VIDEO;
+          stream_info->subinfo.video.width = 0;
+          stream_info->subinfo.video.height = 0;
+          stream_info->subinfo.video.frame_rate = 0;
+          stream_info->subinfo.video.format = VIDEO_FMT_STREAM_VIDEO_MPEG4;
+          break;
+        default:
                     stream_info->type = VIDEO_FMT_STREAM_DATA;
                     stream_info->subinfo.data.format = VIDEO_FMT_STREAM_DATA_OD;
                     break;
-		}
-		break;
+      }
+      break;
 #ifdef FEATURE_QTV_SKT_MOD
             case 0x20:
                 switch (objectType)
@@ -6345,20 +7135,20 @@ boolean video_fmt_mp4r_process_atom_esds
             /* Break out early if this is not a decSpecificInfo descriptor. */
             if (temp8 != 0x05)
             {
-                /*Check if we have a sampling frequency. If we dont, assign 
+                /*Check if we have a sampling frequency. If we dont, assign
                   the media timescale to the sampling frequency. This is ok
-                  since the standard says that if there is an mp4a atom, 
+                  since the standard says that if there is an mp4a atom,
                   the sampling frequency must be equal to the media timescale.
-                  If there is still a problem, videofmt will still throw an 
+                  If there is still a problem, videofmt will still throw an
                    error.
                  */
 
                 if(stream_info->subinfo.audio.sampling_frequency == 0)
                 {
-                   stream_info->subinfo.audio.sampling_frequency = 
+                   stream_info->subinfo.audio.sampling_frequency =
                       stream_info->media_timescale;
                 }
-                    
+
                 video_fmt_mp4r_skip_data (context, atom_stack_top->atom.size
                                           + atom_stack_top->atom.offset
                                           - context->abs_pos, VIDEO_FMT_MP4R_IN_BUFFER);
@@ -6397,8 +7187,7 @@ boolean video_fmt_mp4r_process_atom_esds
             if ( atom_stack_top->parse_uint32 [4] > atom_stack_top->parse_uint32 [2]
                 + atom_stack_top->parse_uint32 [3] - context->abs_pos)
             {
-                MSG_ERROR ("process_atom_esds: invalid descriptor size!",
-                           0, 0, 0);
+                MSG_ERROR ( "process_atom_esds: invalid descriptor size!",0, 0, 0);
             }
 
             /* Store header location and size.  Store a copy in both the
@@ -6467,7 +7256,7 @@ boolean video_fmt_mp4r_process_atom_esds
             /* If there is more we can store, skip it. */
             if (stream_info->header > VIDEO_FMT_MAX_DEC_SPECIFIC_INFO)
             {
-                MSG_ERROR ("VOL size=%d, Can Store=%d, skipping rest",
+                MSG_ERROR ( "VOL size=%d, Can Store=%d, skipping rest",
                             stream_info->header, VIDEO_FMT_MAX_DEC_SPECIFIC_INFO, 0);
                 video_fmt_mp4r_skip_data
                     (context, stream_info->header
@@ -6526,7 +7315,9 @@ boolean video_fmt_mp4r_process_atom_esds
 
             /* If the video uses short header mode, set H.263 video type. */
             if ((stream_info->type == VIDEO_FMT_STREAM_VIDEO)
-                && (context->bs_short_header))
+                 && (stream_info->subinfo.video.format
+                 == VIDEO_FMT_STREAM_VIDEO_INVALID)
+                 && (context->bs_short_header))
             {
                 stream_info->subinfo.video.format
                     = VIDEO_FMT_STREAM_VIDEO_H263;
@@ -6578,17 +7369,19 @@ boolean video_fmt_mp4r_process_atom_stsz
     /* Branch according to processing substate. */
     context = (video_fmt_mp4r_context_type *) context_ptr;
     atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
-    if (context->num_streams > VIDEO_FMT_MAX_MEDIA_STREAMS)
+    if( (context->num_streams > VIDEO_FMT_MAX_MEDIA_STREAMS)||
+        (context->num_streams ==0 ) )
+    
     {
-        MSG_ERROR ("process_atom_stsz: too many streams!", 0, 0, 0);
+        MSG_ERROR ("process_atom_stsz: too many/few streams!", 0, 0, 0);
         video_fmt_mp4r_failure (context);
         return TRUE;
     }
     stream = &context->stream_state [context->num_streams - 1];
     stream_info = &context->stream_info [context->num_streams - 1];
-#ifdef FEATURE_FILE_FRAGMENTATION
+
     stream_info->track_frag_info.first_frame = 0;
-#endif
+
     switch (atom_stack_top->process_substate)
     {
     case VIDEO_FMT_MP4R_PROCESS_ATOM_SUBSTATE_INIT:
@@ -6607,12 +7400,14 @@ boolean video_fmt_mp4r_process_atom_stsz
              context->byte_swap_needed,
              VIDEO_FMT_MP4R_IN_BUFFER);
 
+        if(context->cur_atom_size >= 8)
+        {
+          stream->stsz.atom_size = context->cur_atom_size - 8;
+        }
 
         /* The stream size in frames is also the size of the 'stsz' table. */
         stream_info->frames = stream->stsz.table_size;
-#ifdef FEATURE_FILE_FRAGMENTATION
         stream->main_fragment_frames = stream_info->frames;
-#endif
         /* If the sample size field is non-zero, every sample has the same
         ** size, and there is no 'stsz' table.  In this case, store the sample
         ** size in the stream table and finish the atom.
@@ -6629,9 +7424,7 @@ boolean video_fmt_mp4r_process_atom_stsz
             stream_info->fixed_size = TRUE;
             /* Found the largest */
             stream_info->largest_found = TRUE;
-#ifdef FEATURE_FILE_FRAGMENTATION
             stream->main_fragment_bytes = stream_info->bytes;
-#endif
             return FALSE;
         }
 
@@ -6653,10 +7446,8 @@ boolean video_fmt_mp4r_process_atom_stsz
         need to remove this the stream_info->largest variable later. */
         stream_info->largest = 0;
         stream_info->largest_found = FALSE;
-
-#ifdef FEATURE_FILE_FRAGMENTATION
         stream->main_fragment_bytes = 0;
-#endif
+
         /* skip rest of the atom and finish */
         video_fmt_mp4r_skip_data (context, atom_stack_top->atom.size
                                   + atom_stack_top->atom.offset
@@ -6666,7 +7457,7 @@ boolean video_fmt_mp4r_process_atom_stsz
     return FALSE;
 }
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
 /* <EJECT> */
 /*===========================================================================
 
@@ -6711,7 +7502,7 @@ boolean video_fmt_mp4r_process_atom_trun
 
     if (context->current_track_id > VIDEO_FMT_MAX_MEDIA_STREAMS)
     {
-        MSG_ERROR ("process_atom_trun: too many streams!", 0, 0, 0);
+        MSG_ERROR ( "process_atom_trun: too many streams!", 0, 0, 0);
         video_fmt_mp4r_failure (context);
         return TRUE;
     }
@@ -6728,7 +7519,7 @@ boolean video_fmt_mp4r_process_atom_trun
 
     if(!(stream_info) || !(stream))
     {
-        MSG_ERROR ("process_atom_trun: Could not find stream for track!", 0, 0, 0);
+        MSG_ERROR ( "process_atom_trun: Could not find stream for track!", 0, 0, 0);
         video_fmt_mp4r_failure (context);
         return TRUE;
     }
@@ -6943,7 +7734,6 @@ boolean video_fmt_mp4r_process_atom_trun
     }
     return FALSE;
 }
-#endif /*FEATURE_FILE_FRAGMENTATION*/
 
 /* <EJECT> */
 /*===========================================================================
@@ -6988,14 +7778,14 @@ boolean video_fmt_mp4r_process_atom_udta_child
     atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
     if (context->num_streams > VIDEO_FMT_MAX_MEDIA_STREAMS)
     {
-        MSG_ERROR ("process_atom_udta_child: too many streams!", 0, 0, 0);
+        MSG_ERROR ( "process_atom_udta_child: too many streams!", 0, 0, 0);
         video_fmt_mp4r_failure (context);
         return TRUE;
     }
 
     if(context->num_streams > 0)
     {
-        stream_info = &context->stream_info [context->num_streams - 1];
+       stream_info = &context->stream_info [context->num_streams - 1];
     }
     else
     {
@@ -7162,9 +7952,10 @@ void video_fmt_mp4r_bs_callback
 
     /* Recover context from client data. */
     context = (video_fmt_mp4r_context_type *) client_data;
-    if (context->num_streams > VIDEO_FMT_MAX_MEDIA_STREAMS)
+    if ((context->num_streams > VIDEO_FMT_MAX_MEDIA_STREAMS)||
+        (context->num_streams == 0) )     
     {
-        MSG_ERROR ("bs_callback: too many streams!", 0, 0, 0);
+        MSG_ERROR ("bs_callback: too many/few streams!", 0, 0, 0);
         video_fmt_mp4r_failure (context);
         return;
     }
@@ -7240,6 +8031,15 @@ void video_fmt_mp4r_bs_callback
         {
             stream_info->subinfo.audio.aac_params.audio_object_type
                 = (uint8) info->var_info.value;
+            if( (stream_info->subinfo.audio.aac_params.audio_object_type == 5)
+                || (stream_info->subinfo.audio.aac_params.audio_object_type == 29))
+            {
+              stream_info->subinfo.audio.aac_params.sbr_present_flag = 1;
+              if( stream_info->subinfo.audio.aac_params.audio_object_type == 29)
+              {
+                stream_info->subinfo.audio.aac_params.ps_present_flag = 1;
+              }
+            }
         }
         else if (!strcmp (info->var_info.name, "m4a_sampling_freq_index"))
         {
@@ -7336,6 +8136,18 @@ void video_fmt_mp4r_bs_callback
             stream_info->subinfo.audio.num_channels
                 = (uint8) info->var_info.value;
         }
+        else if (!strcmp (info->var_info.name, "ext_audio_object_type"))
+        {
+          if(info->var_info.value == 5)
+          {
+            stream_info->subinfo.audio.aac_params.sbr_present_flag = 1;
+          }
+        }
+        else if (!strcmp (info->var_info.name, "ps_present_flag"))
+        {
+          stream_info->subinfo.audio.aac_params.ps_present_flag
+                = (uint8) info->var_info.value;
+        }
         else if (!strcmp (info->var_info.name, "ep_config"))
         {
             stream_info->subinfo.audio.aac_params.ep_config
@@ -7368,10 +8180,10 @@ void video_fmt_mp4r_bs_callback
         {
             context->bs_done = TRUE;
         }
-        MSG_LOW ("video_fmt_mp4r_bs_callback: offset %lu, size %lu:",
+        MSG_LOW ( "video_fmt_mp4r_bs_callback: offset %lu, size %lu:",
                  info->var_info.offset,
                  info->var_info.size, 0);
-        MSG_LOW ("video_fmt_mp4r_bs_callback: "
+        MSG_LOW ( "video_fmt_mp4r_bs_callback: "
                  "variable '%s' = '0x%x'",
                  info->var_info.name,
                  info->var_info.value, 0);
@@ -7380,10 +8192,10 @@ void video_fmt_mp4r_bs_callback
     case VIDEO_FMT_BS_CONST_INFO:
         context->bs_cont = info->var_info.callback_ptr;
         context->bs_server_data = info->var_info.server_data;
-        MSG_LOW ("video_fmt_mp4r_bs_callback: offset %lu, size %lu:",
+        MSG_LOW ( "video_fmt_mp4r_bs_callback: offset %lu, size %lu:",
                  info->var_info.offset,
                  info->var_info.size, 0);
-        MSG_LOW ("video_fmt_mp4r_bs_callback: "
+        MSG_LOW ( "video_fmt_mp4r_bs_callback: "
                  "constant '%s' = '0x%x'",
                  info->var_info.name,
                  info->var_info.value, 0);
@@ -7397,7 +8209,7 @@ void video_fmt_mp4r_bs_callback
         break;
 
     case VIDEO_FMT_BS_FUNC_DONE:
-        MSG_LOW ("video_fmt_mp4r_bs_callback: function returned "
+        MSG_LOW ( "video_fmt_mp4r_bs_callback: function returned "
                  "at offset %lu",
                  info->func_done.offset, 0, 0);
         break;
@@ -7415,13 +8227,13 @@ void video_fmt_mp4r_bs_callback
         /* Commenting here because of this error if we try to play AAC clip with corrupted esds atom
            we are simply exiting even though decoder can play that clip. */
         //stream_info->type = VIDEO_FMT_STREAM_INVALID;
-        MSG_ERROR ("bs_callback: failure during bitstream parsing!",
+        MSG_ERROR ( "bs_callback: failure during bitstream parsing!",
                    0, 0, 0);
         break;
 
     case VIDEO_FMT_BS_STATUS_INVALID:
     default:
-        MSG_ERROR ("bs_callback: invalid status!", 0, 0, 0);
+        MSG_ERROR ( "bs_callback: invalid status!", 0, 0, 0);
     }
 }
 
@@ -7467,7 +8279,6 @@ void video_fmt_mp4r_read_network_word
     }
 }
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_check_mfra_box
@@ -7541,7 +8352,7 @@ boolean video_fmt_mp4r_check_mfra_box
         }
         else
         {
-          MSG_ERROR ("Corrupted size field in mfro atom.!!", 0, 0, 0);
+          MSG_ERROR ( "Corrupted size field in mfro atom.!!", 0, 0, 0);
           return FALSE;
         }
         context->mfro_present = TRUE;
@@ -7647,18 +8458,18 @@ boolean video_fmt_mp4r_check_mfra_box
       }
   }
 }
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
 
+#ifdef FEATURE_MP4_MP3
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_process_atom_mp3
 
 DESCRIPTION
   This function consumes the .mp3 and ms\0u atoms. These atoms are not a part
-	of the normal MP4 file format but are usually encountered in files encoded
-	by ffmpeg. When these atoms are encountered, we set the codec type to mp3
-	audio and set other parametes to NULL. These parameters are set later by
-	reading the ES headers by the client application.
+   of the normal MP4 file format but are usually encountered in files encoded
+   by ffmpeg. When these atoms are encountered, we set the codec type to mp3
+   audio and set other parametes to NULL. These parameters are set later by
+   reading the ES headers by the client application.
 
 DEPENDENCIES
   None
@@ -7680,10 +8491,425 @@ boolean video_fmt_mp4r_process_atom_mp3
   video_fmt_stream_info_type  *stream_info;
   video_fmt_mp4r_atom_pos_type *atom_stack_top;
   atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
-  stream_info = &context->stream_info [context->num_streams - 1];
+  if(context->num_streams > 0)
+  {
+     stream_info = &context->stream_info [context->num_streams - 1];
+  }
+  else
+  {
+    MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+    video_fmt_mp4r_failure (context);
+    context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+    return FALSE;
+  }
   stream_info->type = VIDEO_FMT_STREAM_AUDIO;
   stream_info->subinfo.audio.format = VIDEO_FMT_STREAM_AUDIO_MPEG1_L3;
   video_fmt_mp4r_skip_data (context, atom_stack_top->atom.size, VIDEO_FMT_MP4R_IN_BUFFER);
-  video_fmt_mp4r_finish_atom(context);
-  return FALSE;
+   video_fmt_mp4r_finish_atom (context);
+   return FALSE;
+}
+#endif
+
+
+/*===========================================================================
+
+FUNCTION  video_fmt_mp4r_process_atom_mdhd
+
+DESCRIPTION
+  This function is used to process the mdhd atom, with added support
+  for mdhd atoms with atom_version = 1.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+
+boolean video_fmt_mp4r_process_atom_mdhd
+(
+  void *context_ptr,
+  void *atom_struct_ptr
+)
+{
+     /*For the case of mdhd, these are the variables that we need.*/
+    video_fmt_mp4r_context_type  *context;
+    video_fmt_stream_info_type  *stream_info;
+    video_fmt_mp4r_atom_pos_type *atom_stack_top;
+
+    uint32  atom_version;
+    uint32   timescale;
+    uint32  duration;
+    uint32  atom_size;
+    uint16  language;
+    /* Verify that the atom is not missing any key data. */
+    context = (video_fmt_mp4r_context_type *) context_ptr;
+    if(context->num_streams > 0)
+    {
+      stream_info = &context->stream_info [context->num_streams - 1];
+    }
+    else
+    {
+      MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+      video_fmt_mp4r_failure (context);
+      context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+      return FALSE;
+    }
+    atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
+    atom_size = atom_stack_top->atom.size;
+
+    /*Read 44 bytes. This is the maximum length of the mdhd atom.*/
+    if (!video_fmt_mp4r_read_buffer (context, atom_size, FALSE, VIDEO_FMT_MP4R_IN_BUFFER))
+    {
+        return TRUE;
+    }
+
+      /*Depending on the atom version the atom is parsed*/
+    video_fmt_mp4r_consume_data
+        (context, (uint8 *) &atom_version, 4,
+         context->byte_swap_needed,
+         VIDEO_FMT_MP4R_IN_BUFFER);
+
+      /*Depending on the atom version the atom is parsed*/
+      if(atom_version == (0x1)<<24)
+      {
+         /*Parse for 64 bit values.*/
+         /*Skip the creation time and modification time, each of 64 bits*/
+         video_fmt_mp4r_skip_data (context,16 , VIDEO_FMT_MP4R_IN_BUFFER);
+         /*Read the 32 bit field timescale.*/
+         video_fmt_mp4r_consume_data
+               (context, (uint8 *) &timescale, 4,
+                context->byte_swap_needed,
+                VIDEO_FMT_MP4R_IN_BUFFER);
+         /*Read the 64 bit field duration, discard the top 32 bits.*/
+         video_fmt_mp4r_skip_data (context,4 , VIDEO_FMT_MP4R_IN_BUFFER);
+         video_fmt_mp4r_consume_data
+               (context, (uint8 *) &duration, 4,
+                context->byte_swap_needed,
+                VIDEO_FMT_MP4R_IN_BUFFER);
+         /*Read the 16 bit field language.*/
+         video_fmt_mp4r_consume_data
+               (context, (uint8 *) &language, 2,
+                context->byte_swap_needed,
+                VIDEO_FMT_MP4R_IN_BUFFER);
+      }
+      else
+      {
+         /*Parse for 32 bit values.*/
+         /*Skip the creation time and modification time, each of 32 bits*/
+         video_fmt_mp4r_skip_data (context, 8, VIDEO_FMT_MP4R_IN_BUFFER);
+         /*Read the 32 bit field timescale.*/
+         video_fmt_mp4r_consume_data
+               (context, (uint8 *) &timescale, 4,
+                context->byte_swap_needed,
+                VIDEO_FMT_MP4R_IN_BUFFER);
+         /*Read the 32 bit field duration.*/
+         video_fmt_mp4r_consume_data
+               (context, (uint8 *) &duration, 4,
+                context->byte_swap_needed,
+                VIDEO_FMT_MP4R_IN_BUFFER);
+         /*Read the 16 bit field language.*/
+         video_fmt_mp4r_consume_data
+               (context, (uint8 *) &language, 2,
+                context->byte_swap_needed,
+                VIDEO_FMT_MP4R_IN_BUFFER);
+      }
+
+
+    /*Support when "mvex" atom parse when it is before the "trak" atom*/
+    stream_info->media_timescale = timescale;
+    stream_info->media_duration = duration;
+      stream_info->media_language = language;
+    video_fmt_mp4r_skip_data (context, 2, VIDEO_FMT_MP4R_IN_BUFFER);
+    video_fmt_mp4r_finish_atom (context);
+    return FALSE;
+}
+
+/*===========================================================================
+
+FUNCTION  video_fmt_mp4r_process_atom_mvhd
+
+DESCRIPTION
+  This function is used to process the mvhd atom, with added support
+  for mvhd atoms with atom_version = 1.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+
+boolean video_fmt_mp4r_process_atom_mvhd
+(
+  void *context_ptr,
+  void *atom_struct_ptr
+)
+{
+     /*For the case of mdhd, these are the variables that we need.*/
+    video_fmt_mp4r_context_type  *context;
+    video_fmt_mp4r_atom_pos_type *atom_stack_top;
+    uint32 atom_size;
+    uint32 atom_version;
+
+    uint32 creation_time;
+    uint32 mod_time;
+    uint32 movie_timescale;
+    uint32 total_movie_duration;
+    uint32 next_track_id;
+
+    /* Verify that the atom is not missing any key data. */
+    context = (video_fmt_mp4r_context_type *) context_ptr;
+    atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
+    atom_size = atom_stack_top->atom.size;
+
+    /*Read 44 bytes. This is the maximum length of the mdhd atom.*/
+    if (!video_fmt_mp4r_read_buffer (context,
+           atom_size, FALSE, VIDEO_FMT_MP4R_IN_BUFFER))
+    {
+        return TRUE;
+    }
+
+      /*Depending on the atom version the atom is parsed*/
+    video_fmt_mp4r_consume_data
+        (context, (uint8 *) &atom_version, 4,
+         context->byte_swap_needed,
+         VIDEO_FMT_MP4R_IN_BUFFER);
+
+
+    /*Depending on the atom version the atom is parsed*/
+    if(atom_version == (0x1)<<24)
+    {
+       /*Parse for 64 bit values.*/
+       /*Skip the creation time and modification time, each of 64 bits*/
+       video_fmt_mp4r_skip_data (context, 4, VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+             (context, (uint8 *) &creation_time, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+
+       video_fmt_mp4r_skip_data (context, 4, VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+             (context, (uint8 *) &mod_time, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+
+       video_fmt_mp4r_consume_data
+             (context, (uint8 *) &movie_timescale, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+
+       video_fmt_mp4r_skip_data (context, 4, VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+             (context, (uint8 *) &total_movie_duration, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_skip_data (context, 76, VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+             (context, (uint8 *) &next_track_id, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+    }
+    else
+    {
+       /*Parse for 32 bit values.*/
+       /*Read the 32 bit field timescale.*/
+       video_fmt_mp4r_consume_data
+             (context, (uint8 *) &creation_time, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+             (context, (uint8 *) &mod_time, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+             (context, (uint8 *) &movie_timescale, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+             (context, (uint8 *) &total_movie_duration, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_skip_data (context, 76, VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+             (context, (uint8 *) &next_track_id, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+    }
+
+    context->file_level_data.creation_time = creation_time;
+    context->file_level_data.mod_time      = mod_time;
+    context->file_level_data.movie_timescale = movie_timescale;
+    context->file_level_data.total_movie_duration = total_movie_duration;
+    context->file_level_data.next_track_id = next_track_id;
+    video_fmt_mp4r_finish_atom (context);
+    return FALSE;
+}
+
+/*===========================================================================
+
+FUNCTION  video_fmt_mp4r_process_atom_tkhd
+
+DESCRIPTION
+  This function is used to process the tkhd atom, with added support
+  for tkhd atoms with atom_version = 1.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+boolean video_fmt_mp4r_process_atom_tkhd
+(
+  void *context_ptr,
+  void *atom_struct_ptr
+)
+{
+     /*For the case of mdhd, these are the variables that we need.*/
+  video_fmt_mp4r_context_type  *context;
+  video_fmt_stream_info_type  *stream_info;
+  video_fmt_mp4r_atom_pos_type *atom_stack_top;
+  uint32 atom_size;
+  uint32 atom_version;
+  /* Set the destination fields before "consuming" the data */
+  uint32 creation_time;
+  uint32 mod_time;
+  uint32 track_id;
+  uint32 media_duration;
+  uint32 tkhd_origin_x;
+  uint32 tkhd_origin_y;
+  uint32 tkhd_width;
+  uint32 tkhd_height;
+  context = (video_fmt_mp4r_context_type *) context_ptr;
+  if(context->num_streams > 0)
+  {
+     stream_info = &context->stream_info [context->num_streams - 1];
+  }
+  else
+  {
+    MSG_ERROR ("context->num_streams is 0", 0, 0, 0);
+    video_fmt_mp4r_failure (context);
+    context->state = VIDEO_FMT_MP4R_STATE_INVALID;
+    return FALSE;
+  }
+
+  /* Initialize the parameters */
+  tkhd_origin_x = 0;
+  tkhd_origin_y = 0;
+
+  /* Verify that the atom is not missing any key data. */
+  atom_stack_top = &context->atom_stack [context->atom_stack_top - 1];
+  atom_size = atom_stack_top->atom.size;
+
+
+  if (!video_fmt_mp4r_read_buffer (context, atom_size, FALSE, VIDEO_FMT_MP4R_IN_BUFFER))
+  {
+     return TRUE;
+  }
+
+  /*Depending on the atom version the atom is parsed*/
+  video_fmt_mp4r_consume_data
+      (context, (uint8 *) &atom_version, 4,
+      context->byte_swap_needed,
+      VIDEO_FMT_MP4R_IN_BUFFER);
+
+
+   /*Depending on the atom version the atom is parsed*/
+   if(atom_version & ((0x1)<<24))
+   {
+      /*Parse for 64 bit values.*/
+      /*Skip the creation time and modification time, each of 64 bits*/
+       video_fmt_mp4r_skip_data (context, 4, VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+             (context, (uint8 *) &creation_time, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_skip_data (context, 4, VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+          (context, (uint8 *) &mod_time, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+          (context, (uint8 *) &track_id, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_skip_data (context, 8, VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+          (context, (uint8 *) &media_duration, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_skip_data (context, 52, VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+          (context, (uint8 *) &tkhd_width, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+       video_fmt_mp4r_consume_data
+          (context, (uint8 *) &tkhd_height, 4,
+              context->byte_swap_needed,
+              VIDEO_FMT_MP4R_IN_BUFFER);
+   }
+   else
+   {
+      /*Parse for 32 bit values.*/
+      /*Read the 32 bit field timescale.*/
+      video_fmt_mp4r_consume_data
+            (context, (uint8 *) &creation_time, 4,
+             context->byte_swap_needed,
+             VIDEO_FMT_MP4R_IN_BUFFER);
+      video_fmt_mp4r_consume_data
+         (context, (uint8 *) &mod_time, 4,
+             context->byte_swap_needed,
+             VIDEO_FMT_MP4R_IN_BUFFER);
+      video_fmt_mp4r_consume_data
+         (context, (uint8 *) &track_id, 4,
+             context->byte_swap_needed,
+             VIDEO_FMT_MP4R_IN_BUFFER);
+      video_fmt_mp4r_skip_data (context, 4, VIDEO_FMT_MP4R_IN_BUFFER);
+      video_fmt_mp4r_consume_data
+         (context, (uint8 *) &media_duration, 4,
+             context->byte_swap_needed,
+             VIDEO_FMT_MP4R_IN_BUFFER);
+      video_fmt_mp4r_skip_data (context, 40, VIDEO_FMT_MP4R_IN_BUFFER);
+      video_fmt_mp4r_consume_data
+               (context, (uint8 *) &tkhd_origin_x, 4,
+                   context->byte_swap_needed,
+                   VIDEO_FMT_MP4R_IN_BUFFER);
+      video_fmt_mp4r_consume_data
+               (context, (uint8 *) &tkhd_origin_y, 4,
+                   context->byte_swap_needed,
+                   VIDEO_FMT_MP4R_IN_BUFFER);
+      video_fmt_mp4r_skip_data (context, 4, VIDEO_FMT_MP4R_IN_BUFFER);
+      video_fmt_mp4r_consume_data
+         (context, (uint8 *) &tkhd_width, 4,
+             context->byte_swap_needed,
+             VIDEO_FMT_MP4R_IN_BUFFER);
+      video_fmt_mp4r_consume_data
+         (context, (uint8 *) &tkhd_height, 4,
+             context->byte_swap_needed,
+             VIDEO_FMT_MP4R_IN_BUFFER);
+   }
+
+   stream_info->creation_time  = creation_time;
+   stream_info->mod_time       = mod_time;
+   stream_info->track_id       = track_id;
+   stream_info->media_duration = media_duration;
+   stream_info->tkhd_origin_x  = tkhd_origin_x;
+   stream_info->tkhd_origin_y  = tkhd_origin_y;
+   stream_info->tkhd_width     = tkhd_width;
+   stream_info->tkhd_height    = tkhd_height;
+   video_fmt_mp4r_finish_atom (context);
+   return FALSE;
 }

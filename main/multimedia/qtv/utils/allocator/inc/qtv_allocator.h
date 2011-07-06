@@ -14,9 +14,9 @@
 /*============================================================================
                              Edit History
 
- $Header: //source/qcom/qct/multimedia/qtv/utils/allocator/main/latest/inc/qtv_allocator.h#4 $
- $DateTime: 2008/06/24 04:58:04 $
- $Change: 685818 $
+ $Header: //source/qcom/qct/multimedia/qtv/utils/allocator/main/latest/inc/qtv_allocator.h#5 $
+ $DateTime: 2009/03/18 21:44:35 $
+ $Change: 866593 $
 
  ===========================================================================*/
 
@@ -252,7 +252,11 @@ QTV_Allocator<T>& QTV_Allocator<T>::operator=( const QTV_Allocator<U>& )
 // @return the address of the referenced item.
 // ----------------------------------------------------------------------------
 template <typename T>
+#ifdef PLATFORM_LTK
+#error code not present
+#else
 QTV_Allocator<T>::pointer QTV_Allocator<T>::address(reference r) const
+#endif
 {
    return &r;
 }
@@ -264,7 +268,11 @@ QTV_Allocator<T>::pointer QTV_Allocator<T>::address(reference r) const
 // @return the address of the referenced item.
 // ----------------------------------------------------------------------------
 template <typename T>
+#ifdef PLATFORM_LTK
+#error code not present
+#else
 QTV_Allocator<T>::const_pointer QTV_Allocator<T>::address(const_reference r) const
+#endif
 {
    return &r;
 }
@@ -284,7 +292,11 @@ QTV_Allocator<T>::const_pointer QTV_Allocator<T>::address(const_reference r) con
 // @return A pointer to the new memory.
 // ----------------------------------------------------------------------------
 template <typename T>
+#ifdef PLATFORM_LTK
+#error code not present
+#else
 QTV_Allocator<T>::pointer QTV_Allocator<T>::allocate( size_type n, const void* /* hint */ )
+#endif
 {
    return ( pointer )QTV_Malloc( n * sizeof( T ) );
 }
@@ -306,7 +318,11 @@ void QTV_Allocator<T>::deallocate( pointer p, size_type /* n */ )
 // Returns the largest number of bytes this allocator could allocate.
 // ----------------------------------------------------------------------------
 template <typename T>
+#ifdef PLATFORM_LTK
+#error code not present
+#else
 QTV_Allocator<T>::size_type QTV_Allocator<T>::max_size(  void )
+#endif
 {
    return UINT_MAX;
 }

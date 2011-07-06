@@ -16,9 +16,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/decoder/transform/mp4_dsp/rel/2.0/inc/mp4_types.h#2 $
-$DateTime: 2008/12/17 04:18:59 $
-$Change: 807181 $
+$Header: //source/qcom/qct/multimedia/qtv/decoder/transform/mp4_dsp/rel/2.0/inc/mp4_types.h#8 $
+$DateTime: 2011/01/11 22:07:48 $
+$Change: 1576561 $
 
 ========================================================================== */
 
@@ -57,6 +57,7 @@ $Change: 807181 $
 #define MP4_INVALID_VOL_STATE   (0x0001)  // unsupported video version num
 #define MP4_UNSUPPORTED_MODE    (0x0002)  // unsupported video mode
 #define MP4_SHORT_HEADER_MODE   (0x0003) // short (H.263) header
+#define MP4_INVALID_DIMENSION   (0x0004) // unsupported VOL DIMENSION
 #define MP4_FAILURE             (0xFFFF)  // cmd unsuccessful 
 
 // Frame types
@@ -79,6 +80,7 @@ $Change: 807181 $
 
 #define NYBLOCKS 4     /* total nr. of Y blocks per macroblock */
 
+#define MP4_MAX_NUM_YUV_BUFFERS 8
 #ifdef T_MSM7500
 #error code not present
 #else
@@ -124,12 +126,13 @@ typedef struct {
   boolean  pending_release;          /* TRUE if this YUV is with the client and pending release. */
   uint32   pts;                      /* Presentation timestamp for this frame */
   boolean  used_as_reference;            /* For each frame which references this YUV we increment the count. */
+  DecodeStatsType* FrameStats; 
 } mp4_dec_yuv_buf_info_type;
 
 typedef struct {
   /* YUV buffer info array. There is a 1:1 mapping between this info
      and the actual buf pointer stored inside MP4CodecInfo.OutputBufInfo */
-  mp4_dec_yuv_buf_info_type  bufs[MP4_NUM_YUV_BUFFERS];
+  mp4_dec_yuv_buf_info_type  bufs[MP4_MAX_NUM_YUV_BUFFERS];
   /* Critical section for thread safety */
   rex_crit_sect_type         cs;
   /* Timestamp from last released YUV buffer */
@@ -229,7 +232,7 @@ typedef struct
                      /* previous MB is copied. Also used in Error Resilience*/
   boolean fStartSlice;    /* indicates first MB in a slice */
 
-  MotionVectorType MV;    /* x and y motion vectors */
+  MotionVectorType MV;    /* x and y motion vectors: used only in case of DP clip */
 #ifdef FEATURE_MPEG4_B_FRAMES
   MotionVectorType BMV;   // try to union BMX with ordinary MV
   MotionVectorType FMV;   // so that they use the same address
@@ -527,6 +530,7 @@ typedef struct
 #endif /* FEATURE_MP4_H263_ANNEX_J */
 
   boolean     fCustomSourceFormat;
+  boolean     fMp4ImageSvhStream; /* Mp4 DSP image is downloaded, VOL has SVH flag*/
 } MP4VOLType;
 
 /*
@@ -791,6 +795,7 @@ typedef enum
 #define SHORT_HEADER_MASK       0xFFFFFC00
 #define LAST_BYTE_MASK          0x000000FF
 #define GOV_START_CODE          0x000001B3
+#define USR_START_CODE          0x000001B2
 #define VOP_START_CODE          0x000001B6
 #define SHORT_HEADER_START_CODE 0x00008000
 
@@ -816,13 +821,11 @@ typedef enum
 #define GOB_RESYNC_MARKER        0x1
 #define GOB_FRAME_ID_LENGTH 2
 
-#ifdef FEATURE_MP4_H263_ANNEX_K
 #define SLICE_RESYNC_MARKER_LENGTH 17
 #define SLICE_RESYNC_MARKER        0x1
 #define SLICE_EMULATION_PREVENTION_BIT_LENGTH 1
 #define SLICE_EMULATION_PREVENTION_BIT        0x1
 #define SLICE_QUANT_LENGTH 5
-#endif /* FEATURE_MP4_H263_ANNEX_K */
 
 
 // valid decoding types (Table 6-20, p121)

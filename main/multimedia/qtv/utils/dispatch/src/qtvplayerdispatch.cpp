@@ -14,9 +14,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 
 /* =======================================================================
                              Edit History
-$Header: //source/qcom/qct/multimedia/qtv/utils/dispatch/main/latest/src/qtvplayerdispatch.cpp#4 $
-$DateTime: 2008/11/24 20:32:49 $
-$Change: 791893 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/dispatch/main/latest/src/qtvplayerdispatch.cpp#8 $
+$DateTime: 2010/06/08 02:52:59 $
+$Change: 1325960 $
 ========================================================================== */
 
 /* ==========================================================================
@@ -30,7 +30,6 @@ $Change: 791893 $
 #ifdef FEATURE_QTV_DRM_DCF
 
  #include "QtvPlayerDispatch.h"
- #include "AEEContentTypes.h"
 
 #ifdef FEATURE_REAL_PLAYER_USE_QTV_API
   #include "QtvRealPlayer.h"
@@ -3464,12 +3463,11 @@ void DispatchThread::QTVDispatchThread(void)
    "UnRegistering IPC Signal QTV_DRM_DCF_IPC_SIG");
    //when done, de-register with ixipc.
    ixipc_terminate();
-   QCUtils::EnterCritSect(&QTVDispatchThread_CS);
-   QCUtils::LeaveCritSect(&QTVDispatchThread_CS);
 
    QCUtils::SetCondition( &QTVDispatchThreadIODoneSync);
 
    // Suspend the thread, so it can be killed by the Terminate function
+   m_bStopToBeDone = false;
    QCUtils::PauseThread(&QTVDispatchThreadTC);
 }//QTVDispatchThread
 /* ======================================================================
@@ -3608,13 +3606,19 @@ void DispatchThread::QTVDispatchThreadStopAndDestroy()
     QTVDIAG_PRIO_ERROR,
     "Stopping and destroying DispatchThread::::QTVThread");
 
-     QCUtils::EnterCritSect(&QTVDispatchThread_CS);
-     QTVPLAYER_STOP_EVENT_type *pEvent = QCCreateMessage(QTVPLAYER_STOP_EVENT,this);
-    pEvent->DispatchHandle = (void*)this;
-     m_bStopToBeDone = true;
-     QCUtils::LeaveCritSect(&QTVDispatchThread_CS);
+    QCUtils::EnterCritSect(&QTVDispatchThread_CS);
+    QTVPLAYER_STOP_EVENT_type *pEvent = QCCreateMessage(QTVPLAYER_STOP_EVENT,this);
+    if (pEvent != NULL && pEvent->DispatchHandle != NULL)
+    {
+      pEvent->DispatchHandle = (void*)this;
+    } 
+    m_bStopToBeDone = true;
+    QCUtils::LeaveCritSect(&QTVDispatchThread_CS);
 
-     QTVDispatchThreadPostMessage(pEvent);
+    if (NULL != pEvent)
+    {
+      QTVDispatchThreadPostMessage(pEvent);
+    }
     unsigned long sleepTotal = 0;
     long EVENT_DISPATCH_TABLE_CREATION_POLL_INTERVAL = 10;
     while ( m_bStopToBeDone && (sleepTotal <= COMMON_THREAD_START_TIMEOUT_MSEC) )
@@ -3631,14 +3635,13 @@ void DispatchThread::QTVDispatchThreadStopAndDestroy()
     {
       QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "DispatchThread stopped successfully, time taken  %d", sleepTotal);
       QCUtils::KillThread(&QTVDispatchThreadTC);
-       QCUtils::DestroyCondition(&QTVDispatchThreadStartSync);
-       QCUtils::DestroyCondition(&QTVDispatchThreadIODoneSync);
+      QCUtils::DestroyCondition(&QTVDispatchThreadStartSync);
+      QCUtils::DestroyCondition(&QTVDispatchThreadIODoneSync);
 
-       QCUtils::EnterCritSect(&QTVDispatchThread_CS);
-       m_bStopToBeDone = false;
+      QCUtils::EnterCritSect(&QTVDispatchThread_CS);
       m_bThreadStarted = false;
-       QCUtils::LeaveCritSect(&QTVDispatchThread_CS);
-       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,"DispatchThread::::QTVThread cleanup done..");
+      QCUtils::LeaveCritSect(&QTVDispatchThread_CS);
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,"DispatchThread::::QTVThread cleanup done..");
     }
   }
 }//QTVDispatchThreadStopAndDestroy

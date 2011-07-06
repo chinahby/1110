@@ -1,6 +1,6 @@
 /* =======================================================================
-mpeg4file.cpp  
-DESCRIPTION 
+mpeg4file.cpp
+DESCRIPTION
 Meaningful description of the definitions contained in this file.
 Description must specify if the module is portable specific, mobile
 specific, or common to both, and it should alert the reader if the
@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
 Edit History
 
-$Header: //depot/asic/msmshared/users/QTVOEMDrops/QSC11x0/3350_BA7/qtv/legacymedia/filemedia/mp4parser/src/mpeg4file.cpp#2 $
-$DateTime: 2010/03/15 01:41:01 $
-$Change: 1219353 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/mp4parser/main/latest/src/mpeg4file.cpp#67 $
+$DateTime: 2010/11/11 20:41:30 $
+$Change: 1514851 $
 
 ========================================================================== */
 
@@ -55,7 +55,7 @@ INCLUDE FILES FOR MODULE
 #include "oscl_string.h"
 #include "videofmt_mp4r.h"
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD || defined FEATURE_QTV_PSEUDO_STREAM
 extern "C" {
 #include "event.h"
 }
@@ -68,6 +68,9 @@ extern "C" {
  #include "IxStream.h"
 #endif
 
+#ifdef CHECK_MP4_MAX_VIDEO_BITRATE
+#define MAX_MP4_VIDEO_BIT_RATE 2000000
+#endif
 /* ==========================================================================
 
 DEFINITIONS AND DECLARATIONS FOR MODULE
@@ -185,11 +188,11 @@ Mpeg4File::Mpeg4File(  OSCL_STRING filename,
     uint32 userData = 0;
     #ifdef FEATURE_QTV_DRM_DCF
       userData = (uint32)m_inputStream;
-    #endif 
+    #endif
     FetchBufferedDataSize(userData, &nSize, &bEndOfData, handle);
     /*if bEndofData is true,then OEM has indicated that the entire clip is available in the buffer
     Therefore we can use the atom like MFRA which is present at the end of the clip*/
-    
+
     if(bEndOfData == TRUE)
     {
       m_fileSize = nSize;
@@ -222,7 +225,7 @@ Mpeg4File::Mpeg4File(  OSCL_STRING filename,
     _success = false;
     return;
   }
-  m_fileSizeFound = true;  
+  m_fileSizeFound = true;
   AtomUtils::fileSize   = m_fileSize;
 
 #ifdef FEATURE_MEASURE_TIMING
@@ -270,7 +273,7 @@ Mpeg4File::Mpeg4File(dcf_ixstream_type inputStream,
                      bool bPlayAudio,
                      bool bPlayText
                      )
-{ 
+{
   IxStream* pStream;
 
   #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
@@ -293,6 +296,8 @@ Mpeg4File::Mpeg4File(dcf_ixstream_type inputStream,
   {
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
        "Mpeg4File::Mpeg4File input-stream is NULL");
+    _success = false;
+    return;
   }
 
   #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
@@ -308,7 +313,7 @@ Mpeg4File::Mpeg4File(dcf_ixstream_type inputStream,
   #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
     if(m_fpFetchBufferedDataSize)
     {
-      uint32 nSize = 0;      
+      uint32 nSize = 0;
       m_fpFetchBufferedDataSize((uint32)inputStream, &nSize, &bEndOfData, NULL);
 
       /*if bEndofData is true,then OEM has indicated that the entire clip is available in the buffer
@@ -352,7 +357,7 @@ Mpeg4File::Mpeg4File(dcf_ixstream_type inputStream,
     #endif /* defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) */
     {
       pStream->Size(&m_fileSize);
-    }    
+    }
     QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED,"Mpeg4File::Mpeg4File size %d",m_fileSize);
   }
 
@@ -376,7 +381,7 @@ void Mpeg4File::InitData()
 {
 
   _success = true;
-
+  fragmentNumber         = 0;
   m_playAudio            = false;
   m_playVideo            = false;
   m_playText             = false;
@@ -384,6 +389,9 @@ void Mpeg4File::InitData()
   m_parsedEndofFragment  = false;
   m_parsedEndofFile      = false;
   m_corruptFile          = false;
+  m_mp4ParseLastStatus = VIDEO_FMT_DONE;
+  m_parseIODoneSize = 0;
+  m_mp4ParseContinueCb = NULL;
 
   m_hasAudio             = false;
   m_hasVideo             = false;
@@ -498,16 +506,19 @@ void Mpeg4File::InitData()
   bsendParseFragmentCmd        = FALSE;
   m_currentParseFragment       = 0;
   m_minOffsetRequired          = 0;
-  parserState                  = Common::PARSER_IDLE;
+  parserState                  = Common::PARSER_PAUSE;
   m_pbTime                     = 0;
-  m_startupTime                = 0;
+  m_startupTime                = HTTP_DEFAULT_STARTUP_TIME;
   m_fpFetchBufferedDataSize    = NULL;
   m_fpFetchBufferedData        = NULL;
   m_QtvInstancehandle          = NULL;
   QCUtils::InitCritSect(&videoFMT_Access_CS);
+  Initialized = FALSE;
+  Parsed = FALSE;
 #endif /* defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) */
   m_bUdtaAtomPresent           = false;
   UUIDatomEntryCount = 0;
+  aac_data_type = AAC_FORMAT_UNK;
 }
 
 /*===========================================================================
@@ -521,172 +532,167 @@ the consturctor.
 ===========================================================================*/
 void Mpeg4File::parseFirstFragment()
 {
-	if(_success)
-	{
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-		if(!initializeVideoFMT())
-		{
-			_fileErrorCode = (int32)READ_FAILED; // Read past EOF
-			_success = false;
+     if(_success)
+     {
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+          if(!initializeVideoFMT())
+          {
+      _fileErrorCode = (int)READ_FAILED; // Read past EOF
+               _success = false;
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "VIDEO_FMT_FAILURE");
+          }
+#else
+          // Parse the file as an MP4 file, building a list of atom information
+          // structures.
+          video_fmt_open (mp4ParseStatusCallback, this, VIDEO_FMT_MP4,0xff);
+
+          while(  (m_mp4ParseLastStatus != VIDEO_FMT_INFO) &&
+               (m_mp4ParseLastStatus != VIDEO_FMT_FAILURE) &&
+          (m_mp4ParseLastStatus != VIDEO_FMT_DATA_INCOMPLETE) &&
+          (m_mp4ParseLastStatus != VIDEO_FMT_FRAGMENT) &&
+               (m_mp4ParseLastStatus != VIDEO_FMT_DATA_CORRUPT)  )
+          {
+               if( (m_mp4ParseContinueCb == NULL) ||
+                    (m_mp4ParseServerData == NULL)  )
+                    break;
+               else
+                    m_mp4ParseContinueCb(m_mp4ParseServerData);
+          }
+    if(m_mp4ParseLastStatus == VIDEO_FMT_FRAGMENT)
+    {
+      m_isFragmentedFile = true;
+    }
+#endif /*FEATURE_QTV_PSEUDO_STREAM */
+          // Check for any atoms that may have read past the EOF that were not
+          // already caught by any earlier error handling
+          if( (m_mp4ParseLastStatus == VIDEO_FMT_FAILURE) ||
+               (m_mp4ParseLastStatus == VIDEO_FMT_DATA_CORRUPT)  )
+          {
+               _fileErrorCode = (int32)READ_FAILED; // Read past EOF
+               _success = false;
+               (void)OSCL_FileClose( m_parseFilePtr );
+               m_parseFilePtr = NULL;
                         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "VIDEO_FMT_FAILURE");
-		}
-#else
-		// Parse the file as an MP4 file, building a list of atom information
-		// structures.
-		video_fmt_open (mp4ParseStatusCallback, this, VIDEO_FMT_MP4,0xff);
+               return;
+          }
 
-		while(  (m_mp4ParseLastStatus != VIDEO_FMT_INFO) &&
-			(m_mp4ParseLastStatus != VIDEO_FMT_FAILURE) &&
-			(m_mp4ParseLastStatus != VIDEO_FMT_DATA_CORRUPT)  )
-		{
-			if( (m_mp4ParseContinueCb == NULL) ||
-				(m_mp4ParseServerData == NULL)  )
-				break;
-			else
-				m_mp4ParseContinueCb(m_mp4ParseServerData);
-		}
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-		// Check for any atoms that may have read past the EOF that were not
-		// already caught by any earlier error handling
-		if( (m_mp4ParseLastStatus == VIDEO_FMT_FAILURE) ||
-			(m_mp4ParseLastStatus == VIDEO_FMT_DATA_CORRUPT)  )
-		{
-			_fileErrorCode = (int32)READ_FAILED; // Read past EOF
-			_success = false;
-			(void)OSCL_FileClose( m_parseFilePtr );
-			m_parseFilePtr = NULL;
-                        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "VIDEO_FMT_FAILURE");
-			return;
-		}
-
-		if(_success)
-		{
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-			if( !bHttpStreaming && (!getNumTracks()) )
+#if defined FEATURE_QTV_PSEUDO_STREAM || defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+          if(!bHttpStreaming && m_parseFilePtr)
 #else
-			if( !getNumTracks() )
+          if(m_parseFilePtr)
 #endif
-			{
-				_success = false;
-				(void)OSCL_FileClose( m_parseFilePtr );
-				m_parseFilePtr = NULL;
-				_fileErrorCode = (int32)NO_MEDIA_TRACKS_IN_FILE;
-				return;
-			}
-		}
-
-		/* now close the parse file pointer */
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-		if(!bHttpStreaming && m_parseFilePtr)
-#else
-		if(m_parseFilePtr)
-#endif
-		{
-			(void)OSCL_FileClose( m_parseFilePtr );
-			m_parseFilePtr = NULL;
-		}
+          {
+               (void)OSCL_FileClose( m_parseFilePtr );
+               m_parseFilePtr = NULL;
+      if(!getNumTracks() && _success)
+      {
+        _success = false;
+        _fileErrorCode = NO_MEDIA_TRACKS_IN_FILE;
+        return;
+      }
+          }
 
 #ifdef FEATURE_MP4_KDDI_TELOP_TEXT
-		//if parsing was successful, parse KDDI Telop Text
-		if (_success && _kddiTelopElement)
-		{
-			process_kddi_telop_text();
-		}
+          //if parsing was successful, parse KDDI Telop Text
+          if (_success && _kddiTelopElement)
+          {
+               process_kddi_telop_text();
+          }
 #endif /* FEATURE_MP4_KDDI_TELOP_TEXT */
 
 #if defined(FEATURE_QTV_SKT_MOD_MIDI)
-		process_mod_midi_atom();
+          process_mod_midi_atom();
 #endif /* FEATURE_QTV_SKT_MOD_MIDI */
-		/* if video track does not have STSS table, then all video frames are SYNC frame */
-		if(_success && m_playVideo)
-		{
-			/* if clip has video and we don't have STSS table, we can't reposition */
-			video_fmt_stream_info_type *p_track;
-			for(uint32 index = 0; index < m_videoFmtInfo.num_streams; index++)
-			{
-				p_track = m_videoFmtInfo.streams + index;
-				if( p_track->type == VIDEO_FMT_STREAM_VIDEO )
-				{
-					video_fmt_mp4r_context_type  *context;
-					video_fmt_mp4r_stream_type   *stream;
-					context = (video_fmt_mp4r_context_type *) m_videoFmtInfo.server_data;
-					if(index <= context->num_streams)
-					{
-						stream = &context->stream_state [index];
-						if(!stream->stss.table_size)
-						{
-							m_allSyncVideo = true;
-							QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "no Video STSS, assuming all frames are sync frames");
-						}
-					}
-				}
-			}
-		} /* end of if(m_playVideo) */
+          /* if video track does not have STSS table, then all video frames are SYNC frame */
+          if(_success && m_playVideo)
+          {
+               /* if clip has video and we don't have STSS table, we can't reposition */
+               video_fmt_stream_info_type *p_track;
+               for(uint32 index = 0; index < m_videoFmtInfo.num_streams; index++)
+               {
+                    p_track = m_videoFmtInfo.streams + index;
+                    if( p_track->type == VIDEO_FMT_STREAM_VIDEO )
+                    {
+                         video_fmt_mp4r_context_type  *context;
+                         video_fmt_mp4r_stream_type   *stream;
+                         context = (video_fmt_mp4r_context_type *) m_videoFmtInfo.server_data;
+                         if(index <= context->num_streams)
+                         {
+                              stream = &context->stream_state [index];
+                              if(!stream->stss.table_size)
+                              {
+                                   m_allSyncVideo = true;
+                                   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "no Video STSS, assuming all frames are sync frames");
+                              }
+                         }
+                    }
+               }
+          } /* end of if(m_playVideo) */
 
-		if((_success)&& (m_playAudio))
-		{
-			video_fmt_stream_info_type *p_track=0;
-			uint32 framelength=0;
-			for(uint32 index = 0; index < m_videoFmtInfo.num_streams; index++)
-			{
-				p_track = m_videoFmtInfo.streams + index;
-				if( (p_track)                                                   &&
-					(p_track->type == VIDEO_FMT_STREAM_AUDIO)                   &&
-					(p_track->subinfo.audio.format==VIDEO_FMT_STREAM_AUDIO_AMR) )
-				{
-					video_fmt_sample_info_type sampleInfo;
-					memset(&sampleInfo, 0x0, sizeof(video_fmt_sample_info_type));
-					bool retStat = false;
-					uint32 sampleId = 0;
-					do
-					{
-						//Keep reading untill we get valid sample with non zero DELTA and non zero SIZE
-						retStat = (getSampleInfo(p_track->stream_num, sampleId, 1, &sampleInfo)>0)?true:false;                                   
-						sampleId++;
-					}while( (retStat) && (m_mp4ReadLastStatus[p_track->stream_num] == VIDEO_FMT_IO_DONE) &&
-						(!sampleInfo.delta || !sampleInfo.size) );
+          if((_success)&& (m_playAudio))
+          {
+               video_fmt_stream_info_type *p_track=0;
+               uint32 framelength=0;
+               for(uint32 index = 0; index < m_videoFmtInfo.num_streams; index++)
+               {
+                    p_track = m_videoFmtInfo.streams + index;
+                    if( (p_track)                                                   &&
+                         (p_track->type == VIDEO_FMT_STREAM_AUDIO)                   &&
+                         (p_track->subinfo.audio.format==VIDEO_FMT_STREAM_AUDIO_AMR) )
+                    {
+                         video_fmt_sample_info_type sampleInfo;
+                         memset(&sampleInfo, 0x0, sizeof(video_fmt_sample_info_type));
+                         bool retStat = false;
+                         uint32 sampleId = 0;
+                         do
+                         {
+                              //Keep reading untill we get valid sample with non zero DELTA and non zero SIZE
+                              retStat = (getSampleInfo(p_track->stream_num, sampleId, 1, &sampleInfo)>0)?true:false;
+                              sampleId++;
+                         }while( (retStat) && (m_mp4ReadLastStatus[p_track->stream_num] == VIDEO_FMT_IO_DONE) &&
+                              (!sampleInfo.delta || !sampleInfo.size) );
 
 
-					if( !retStat || (m_mp4ReadLastStatus[p_track->stream_num] != VIDEO_FMT_IO_DONE) )              
-					{
-						_success = false;
-						QTV_MSG_PRIO(QTVDIAG_GENERAL, 
-							QTVDIAG_PRIO_HIGH, 
-							"parseFirstFragment encountered an error making (_success = false)");
-						return;
-					}
+                         if( !retStat || (m_mp4ReadLastStatus[p_track->stream_num] != VIDEO_FMT_IO_DONE) )
+                         {
+                              _success = false;
+                              QTV_MSG_PRIO(QTVDIAG_GENERAL,
+                                   QTVDIAG_PRIO_HIGH,
+                                   "parseFirstFragment encountered an error making (_success = false)");
+                              return;
+                         }
 
-					/* for some clips, SamplesPerFrame value is wrongly set to 10 and the correct
-					value was one. This check is to fix those clips and we also try to
-					minimize the scope of this fix by checking this value in clip and
-					size of first AMR sample from a clip in question/given clip*/
-					if( ((sampleInfo.size==32) || (sampleInfo.size==13)|| (sampleInfo.size==21) || (sampleInfo.size==18))&&
-						(p_track->subinfo.audio.audio_params.frames_per_sample==10) )
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, 
-							QTVDIAG_PRIO_ERROR, 
-							"SamplesPerFrame=%d for AMR track, but using 1.",
-							p_track->subinfo.audio.audio_params.frames_per_sample);
-						p_track->subinfo.audio.audio_params.frames_per_sample = 1;
-					}		          
-					if(p_track->subinfo.audio.audio_params.frames_per_sample && p_track->media_timescale)
-					{
-						framelength=
-							((sampleInfo.delta*1000)/(p_track->subinfo.audio.audio_params.frames_per_sample))/(p_track->media_timescale);
-					}
-					if((framelength<(DURATION_OF_AMR_FRAME_BLOCK-1))||(framelength>(DURATION_OF_AMR_FRAME_BLOCK+1)))
-					{
-						//CMX validates AMR frame contents so QTV check is redundant.
-						//_success = false;
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Invalid(?) AMR Audio content:Duration of Frame Block=%d",framelength);
-					}
-				}
-			}//for(uint32 index = 0; index < m_videoFmtInfo.num_streams; index++)
-		}//if((_success)&& (m_playAudio))
-	}//if(_success)
+                         /* for some clips, SamplesPerFrame value is wrongly set to 10 and the correct
+                         value was one. This check is to fix those clips and we also try to
+                         minimize the scope of this fix by checking this value in clip and
+                         size of first AMR sample from a clip in question/given clip*/
+                         if( ((sampleInfo.size==32) || (sampleInfo.size==13)|| (sampleInfo.size==21) || (sampleInfo.size==18))&&
+                              (p_track->subinfo.audio.audio_params.frames_per_sample==10) )
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL,
+                                   QTVDIAG_PRIO_ERROR,
+                                   "SamplesPerFrame=%d for AMR track, but using 1.",
+                                   p_track->subinfo.audio.audio_params.frames_per_sample);
+                              p_track->subinfo.audio.audio_params.frames_per_sample = 1;
+                         }
+                         if(p_track->subinfo.audio.audio_params.frames_per_sample && p_track->media_timescale)
+                         {
+                              framelength=
+                                   ((sampleInfo.delta*1000)/(p_track->subinfo.audio.audio_params.frames_per_sample))/(p_track->media_timescale);
+                         }
+                         if((framelength<(DURATION_OF_AMR_FRAME_BLOCK-1))||(framelength>(DURATION_OF_AMR_FRAME_BLOCK+1)))
+                         {
+                              //CMX validates AMR frame contents so QTV check is redundant.
+                              //_success = false;
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Invalid(?) AMR Audio content:Duration of Frame Block=%d",framelength);
+                         }
+                    }
+               }//for(uint32 index = 0; index < m_videoFmtInfo.num_streams; index++)
+          }//if((_success)&& (m_playAudio))
+     }//if(_success)
 }
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD||defined FEATURE_QTV_PSEUDO_STREAM
 /*===========================================================================
 
 FUNCTION  initializeVideoFMT
@@ -725,12 +731,12 @@ boolean Mpeg4File::initializeVideoFMT ( void )
     m_currentParseFragment = 0;
     bGetMetaDataSize = TRUE;
     bDataIncomplete = TRUE;
-    (void)parseHTTPStream();
+    (void)ParseStream();
     returnStatus = TRUE;
   }
   else if((m_mp4ParseLastStatus == VIDEO_FMT_INIT) && !bHttpStreaming)
   {
-    if(parseMetaData())
+    if(ParseStream())
       returnStatus = TRUE;
     else
       returnStatus = FALSE;
@@ -758,7 +764,8 @@ bool Mpeg4File::getMetaDataSize ( void )
   while ((m_mp4ParseLastStatus != VIDEO_FMT_FRAGMENT_SIZE)
     && (m_mp4ParseLastStatus != VIDEO_FMT_FAILURE)
     && (m_mp4ParseLastStatus != VIDEO_FMT_DATA_INCOMPLETE)
-    && (m_mp4ParseLastStatus != VIDEO_FMT_DATA_CORRUPT))
+    && (m_mp4ParseLastStatus != VIDEO_FMT_DATA_CORRUPT)
+     && (m_mp4ParseLastStatus != VIDEO_FMT_INFO))
   {
     if((m_mp4ParseContinueCb == NULL) ||
       (m_mp4ParseServerData == NULL))
@@ -778,8 +785,12 @@ bool Mpeg4File::getMetaDataSize ( void )
     video_fmt_parse_context = (video_fmt_mp4r_context_type *)m_videoFmtInfo.server_data;
     if(m_currentParseFragment == video_fmt_parse_context->fragment_requested)
     {
+      if(m_currentParseFragment == 0)
+        m_minOffsetRequired = video_fmt_parse_context->fragment_size;
+      else
       m_minOffsetRequired += video_fmt_parse_context->fragment_size;
       /* Added this to support 3g2 files */
+      mdat_size = video_fmt_parse_context->mdat_size;
       fragmentNumber = video_fmt_parse_context->fragment_requested;
       m_currentParseFragment = fragmentNumber + 1;
       /* Added this to support 3g2 files  */
@@ -857,6 +868,8 @@ bool Mpeg4File::CanPlayTracks(uint32 pbTime)
 
     returnStatus = false;
 
+
+    timescaledTime= MIN(timescaledTime,(m_track[index]->media_duration)/(m_track[index]->media_timescale));
     for (reqSampleNum = m_track[index]->prevReqSampleNum;
       reqSampleNum < maxFrames; ++reqSampleNum )
     {
@@ -910,7 +923,7 @@ bool Mpeg4File::CanPlayTracks(uint32 pbTime)
       sampleInfo.offset,
       sampleInfo.size);
 
-    if((!absFileOffset) || absFileOffset >= m_wBufferOffset)
+    if((!absFileOffset) || (m_wBufferOffset>0 && absFileOffset >= m_wBufferOffset))
     {
       returnStatus = false;
       QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "CanPlayTracks: absFileOffset=%d, m_wBufferOffset=%d, streamNum=%d",
@@ -1008,10 +1021,14 @@ void Mpeg4File::updateBufferWritePtr ( uint32 writeOffset )
 {
   //Executing in the UI thread context.
   m_wBufferOffset = writeOffset;
-  if((parserState == Common::PARSER_PAUSE) || (parserState == Common::PARSER_RESUME))
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "m_wBufferOffset = %d",m_wBufferOffset);
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "m_minOffsetRequired = %d",m_minOffsetRequired);
+  if((parserState == Common::PARSER_PAUSE) || (parserState == Common::PARSER_RESUME)
+    && m_wBufferOffset>= m_minOffsetRequired)
   {
     //check if we got sufficient data to start parsing the
     //meta data.
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "sendParseHTTPStreamEvent");
     sendParseHTTPStreamEvent();
   }
 }
@@ -1026,58 +1043,39 @@ Public method used to parse the Http Stream.
 ===========================================================================*/
 bool Mpeg4File::parseHTTPStream ( void )
 {
-  bool returnStatus = true;
-
-  if(bGetMetaDataSize)
-    returnStatus = getMetaDataSize();
-
-  if(returnStatus && (m_mp4ParseLastStatus == VIDEO_FMT_FRAGMENT_SIZE))
+  //First Make sure next fragment moov/moof is available.
+  if(peekMetaDataSize(m_currentParseFragment))
   {
-    bGetMetaDataSize = FALSE;
-  }
-  else if(!returnStatus && (m_mp4ParseLastStatus == VIDEO_FMT_DATA_INCOMPLETE))
-  {
-    //QTV_PS_PARSER_STATUS_PAUSED
-    sendParserEvent(Common::PARSER_PAUSE);
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_PAUSE");
-    return returnStatus;
-  }
-
-  QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "parseHTTPStream: m_wBufferOffset=%d, m_minOffsetRequired=%d, m_playVideo=%d",
-    m_wBufferOffset, m_minOffsetRequired, m_playVideo);
-
-  if((m_wBufferOffset >= m_minOffsetRequired)
-    && m_wBufferOffset && m_minOffsetRequired)
-  {
-    if(!bDataIncomplete && !bsendParseFragmentCmd)
+    if(Initialized == FALSE)
     {
-      bsendParseFragmentCmd = TRUE;
-      /*Parse the fragment here..*/
-      if(!parseMetaData())
+     //Then parse it and check for canPlayTracks().
+      if(Parsed == FALSE && !parseMetaData())
       {
         //QTV_PS_PARSER_STATUS_PAUSED
-        sendParserEvent(Common::PARSER_PAUSE);
-        QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_PAUSE, m_playVideo=%d",m_playVideo);
+        sendParserEvent(Common::PARSER_RESUME);
+        QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_RESUME, m_playVideo=%d",m_playVideo);
         return false;
       }
-    }
-    if ((parserState == Common::PARSER_RESUME) && CanPlayTracks(m_startupTime))
+      Parsed = TRUE;
+      if((parserState == Common::PARSER_RESUME || parserState == Common::PARSER_PAUSE)
+        && CanPlayTracks(m_startupTime))
     {
-      //QTV_PS_PARSER_STATUS_READY
+        m_currentParseFragment++;
+        Initialized = TRUE;
       QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_READY, m_playVideo=%d",m_playVideo);
       sendParserEvent(Common::PARSER_READY);
+        return true;
     }
-    else
-      returnStatus = false;
+      return false;
   }
   else
   {
-    //QTV_PS_PARSER_STATUS_PAUSED
-    sendParserEvent(Common::PARSER_PAUSE);
-    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_PAUSE, m_playVideo=%d",m_playVideo);
-    returnStatus = false;
+      QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_READY, m_playVideo=%d",m_playVideo);
+      sendParserEvent(Common::PARSER_READY);
+      return true;
   }
-  return returnStatus;
+  }
+  return false;
 }
 
 /*===========================================================================
@@ -1101,6 +1099,7 @@ bool Mpeg4File::parseMetaData ( void )
   while ((m_mp4ParseLastStatus != VIDEO_FMT_INFO)
     && (m_mp4ParseLastStatus != VIDEO_FMT_FAILURE)
     && (m_mp4ParseLastStatus != VIDEO_FMT_FRAGMENT)
+    && (m_mp4ParseLastStatus != VIDEO_FMT_DATA_INCOMPLETE)
     && (m_mp4ParseLastStatus != VIDEO_FMT_DATA_CORRUPT)
     && (_fileErrorCode == EVERYTHING_FINE))
   {
@@ -1111,14 +1110,12 @@ bool Mpeg4File::parseMetaData ( void )
       m_mp4ParseContinueCb (m_mp4ParseServerData);
   }
   if(_fileErrorCode != EVERYTHING_FINE)
-  {	 	
-	QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "Mp4FragmentFile::parseFragment _fileErrorCode != EVERYTHING_FINE");
-	return false;
+  {
+     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "Mp4FragmentFile::parseFragment _fileErrorCode != EVERYTHING_FINE");
+     return false;
   }
   if((m_parsedEndofFile || m_parsedEndofFragment) && !m_corruptFile)
   {
-    if (bHttpStreaming)
-    {
       if(m_mp4ParseLastStatus == VIDEO_FMT_FRAGMENT)
       {
           m_isFragmentedFile = true;
@@ -1133,8 +1130,21 @@ bool Mpeg4File::parseMetaData ( void )
         bQtvPlayerPaused = FALSE;
       }
       bsendParseFragmentCmd = FALSE;
-    }
+
     returnValue = true;
+#ifdef CHECK_MP4_MAX_VIDEO_BITRATE
+	for (int i = 0; i < m_trackCount; i++)
+	{
+           if (m_track[i]->type == VIDEO_FMT_STREAM_VIDEO)
+	   {
+		if (m_track[i]->dec_specific_info.maxbitrate > MAX_MP4_VIDEO_BIT_RATE)
+		{
+		   _fileErrorCode = TRACK_VIDEO_UNSUPPORTED_BITRATE;
+		   break;
+		}
+	   }
+	}
+#endif
   }
   else
   {
@@ -1155,14 +1165,19 @@ Public method used to switch contexts and call the parseHttpStream.
 ===========================================================================*/
 void Mpeg4File::sendParseHTTPStreamEvent(void)
 {
-  QTV_PROCESS_HTTP_STREAM_type *pEvent = QCCreateMessage(QTV_PROCESS_HTTP_STREAM, m_pMpeg4Player);
-
-  if (pEvent)
+  if (m_pMpeg4Player)
   {
-    pEvent->bHasAudio = (bool) m_playAudio;
-    pEvent->bHasVideo = (bool) m_playVideo;
-    pEvent->bHasText = (bool) m_playText;
-    QCUtils::PostMessage(pEvent, 0, NULL);
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser Event:QTV_HTTP_BUFFER_UPDATE");
+    QTV_HTTP_BUFFER_UPDATE_type *pEvent = QCCreateMessage(QTV_HTTP_BUFFER_UPDATE, m_pMpeg4Player);
+
+
+    if (pEvent)
+    {
+      pEvent->bHasAudio = m_playAudio ;
+      pEvent->bHasVideo = m_playVideo;
+      pEvent->bHasText  = m_playText;
+      QCUtils::PostMessage(pEvent, 0, NULL);
+    }
   }
 }
 
@@ -1176,15 +1191,7 @@ Public method used to switch contexts and notify the player about buffer-underru
 ===========================================================================*/
 void Mpeg4File::sendHTTPStreamUnderrunEvent(void)
 {
-  QTV_HTTP_STREAM_BUFFER_UNDERRUN_EVENT_type *pEvent = QCCreateMessage(QTV_HTTP_STREAM_BUFFER_UNDERRUN_EVENT, m_pMpeg4Player);
-
-  if (pEvent)
-  {
-    pEvent->bAudio = (bool) m_playAudio;
-    pEvent->bVideo = (bool) m_playVideo;
-    pEvent->bText = (bool) m_playText;
-    QCUtils::PostMessage(pEvent, 0, NULL);
-  }
+  sendParserEvent(Common::PARSER_PAUSE);
 }
 
 /*===========================================================================
@@ -1198,15 +1205,18 @@ Public method used send parser events
 void Mpeg4File::sendParserEvent(Common::ParserStatusCode status)
 {
   parserState = status;
-  QTV_HTTP_PARSER_STATUS_EVENT_type *pEvent = QCCreateMessage(QTV_HTTP_PARSER_STATUS_EVENT, m_pMpeg4Player);
-
-  if (pEvent)
+  if(m_pMpeg4Player)
   {
-    pEvent->status = status;
-    pEvent->bHasVideo = m_playVideo;
-    pEvent->bHasAudio = m_playAudio;
-    pEvent->bHasText = m_playText;
-    QCUtils::PostMessage(pEvent, 0, NULL);
+	 QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser Event:QTV_HTTP_EVENT");
+	 QTV_HTTP_EVENT_type *pEvent = QCCreateMessage(QTV_HTTP_EVENT, m_pMpeg4Player);
+    if (pEvent)
+    {
+      pEvent->status = status;
+      pEvent->bHasVideo = m_playVideo;
+      pEvent->bHasAudio = m_playAudio;
+      pEvent->bHasText = m_playText;
+      QCUtils::PostMessage(pEvent, 0, NULL);
+    }
   }
 }
 
@@ -1339,7 +1349,7 @@ int32 Mpeg4File::getSample (uint32 streamNum,
 
   m_iodoneSize[streamNum] = 0;
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD || defined FEATURE_QTV_PSEUDO_STREAM
 
   video_fmt_mp4r_context_type *context = (video_fmt_mp4r_context_type *) m_videoFmtInfo.server_data;
   video_fmt_mp4r_stream_type  *stream = &context->stream_state [streamNum];
@@ -1378,7 +1388,7 @@ int32 Mpeg4File::getSample (uint32 streamNum,
     while ( (m_mp4ReadLastStatus[streamNum] != VIDEO_FMT_IO_DONE) &&
       (m_mp4ReadLastStatus[streamNum] != VIDEO_FMT_FAILURE) &&
       (m_mp4ReadLastStatus[streamNum] != VIDEO_FMT_BUSY) &&
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD||defined FEATURE_QTV_PSEUDO_STREAM
       (m_mp4ReadLastStatus[streamNum] != VIDEO_FMT_DATA_INCOMPLETE) &&
 #endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
       (m_mp4ReadLastStatus[streamNum] != VIDEO_FMT_DATA_CORRUPT) &&
@@ -1405,7 +1415,7 @@ int32 Mpeg4File::getSample (uint32 streamNum,
       bDone = true;
       break;
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD ||defined FEATURE_QTV_PSEUDO_STREAM
     case VIDEO_FMT_DATA_INCOMPLETE:
       /*Inform data-underrun to the player.*/
       sendHTTPStreamUnderrunEvent();
@@ -1428,6 +1438,43 @@ int32 Mpeg4File::getSample (uint32 streamNum,
   return (int32)m_iodoneSize[streamNum];
 }
 
+/*===========================================================================
+
+FUNCTION  setAudioPlayerData
+
+DESCRIPTION
+
+===========================================================================*/
+void Mpeg4File::setAudioPlayerData( const void *client_data )
+{
+  AudioPlayerPtr = (AudioPlayer *)client_data;
+}
+
+/*===========================================================================
+
+FUNCTION  setVideoPlayerData
+
+DESCRIPTION
+
+===========================================================================*/
+void Mpeg4File::setVideoPlayerData( const void *client_data )
+{
+  VideoPlayerPtr = (VideoPlayer *)client_data;
+}
+
+/*===========================================================================
+
+FUNCTION  setTextPlayerData
+
+DESCRIPTION
+
+===========================================================================*/
+void Mpeg4File::setTextPlayerData( const void *client_data )
+{
+#ifdef FEATURE_MP4_3GPP_TIMED_TEXT
+  TextPlayerPtr = (TimedText *)client_data;
+#endif
+}
 /* <EJECT> */
 /*===========================================================================
 
@@ -1457,12 +1504,12 @@ int32 Mpeg4File::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &
 #ifdef FEATURE_QTV_PDCF
   for(int i=0; i<VIDEO_FMT_MAX_MEDIA_STREAMS; i++)
   {
-    if(( m_EncryptionType[i].track_id == p_track->track_id ) 
+    if(( m_EncryptionType[i].track_id == p_track->track_id )
        && (m_EncryptionType[i].encryptionType == QtvPlayer::ENCRYPT_OMA_DRM_V2))
     {
       /* This track is encrypted with OMA DRM V2 encryption mechanism */
       isOMADRMV2Encrypted = true;
-      /* Allocate the buffer for encrypted data */    
+      /* Allocate the buffer for encrypted data */
       if((m_pEncryptedDataBuffer == NULL) && size)
       {
         m_pEncryptedDataBuffer = (uint8*) QTV_Malloc(size);
@@ -1516,12 +1563,12 @@ int32 Mpeg4File::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &
       }
       p_track->largest = MAX(m_sampleInfo[streamNum].size,p_track->largest);
 #ifdef FEATURE_QTV_PDCF
-      /* If the sample size is greater than the size of the 
+      /* If the sample size is greater than the size of the
         m_pEncryptedDataBuffer then free the buffer so that next time
         we can allocate with the size of the audio or video requesting */
       if(isOMADRMV2Encrypted && (m_pEncryptedDataBuffer != NULL))
       {
-        QTV_Free(m_pEncryptedDataBuffer);  
+        QTV_Free(m_pEncryptedDataBuffer);
       }
 #endif /* FEATURE_QTV_PDCF */
       return INSUFFICIENT_BUFFER_SIZE;
@@ -1560,40 +1607,46 @@ int32 Mpeg4File::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &
   }
   if ( returnVal <=0 )
   {
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD ||defined FEATURE_QTV_PSEUDO_STREAM
     if(returnVal == INSUFFICIENT_DATA)
       return INSUFFICIENT_DATA;
     else
 #endif /*FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
       if(returnVal == READ_FAILURE)
       {
-        /* If this READ_FAILURE is because of corrupted audio/video data
-           then return READ_FAILURE */
+  		/* If this READ_FAILURE is because of corrupted audio/video data
+                  then return READ_FAILURE */
         if((m_pMpeg4Player && !m_pMpeg4Player->m_bMediaAbort)
 #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-           ||(bHttpStreaming)
+            ||(bHttpStreaming)
 #endif
-          )
+    	  )
+  		{
+  		/* In case of corrupted audio/video data returning 0 instead of READ_FAILURE for KDDI specific code */
+		/* Returning 0 implied as MEDIA_END at the QTV layer and returning READ_FAILURE implied as DATA_ERROR */
+#ifdef FEATURE_PARSER_KDDI_MEDIA_END
+#error code not present
+#else
+     		return READ_FAILURE;
+#endif
+  		}
+  		else
         {
-           return READ_FAILURE;
-        }
-        else
-        {
-          /*
-          * In case of local playback, when read fails, simply return
-          * 0 to indicate DATA_END. This will avoid reporting AUDIO_ERROR/VIDEO_ERROR
-          * to OEM.
-          */
+    	/*
+          	  * In case of local playback, when read fails, simply return
+	         * 0 to indicate DATA_END. This will avoid reporting AUDIO_ERROR/VIDEO_ERROR
+       	  * to OEM.
+	         */
 #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
           if(!bHttpStreaming)
 #endif
-          {
+    	  {
             return 0;
           }
         }
-      }
-      else
-        return 0;
+	  }
+	  else
+	      return 0;
   }
 #ifdef FEATURE_QTV_PDCF
   /* This is to call the registered call back to decrypt the audio/video
@@ -1601,17 +1654,17 @@ int32 Mpeg4File::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &
   if(isOMADRMV2Encrypted)
   {
    /* Size of the decrypted sample */
-    uint32 dwDecryptedDataSize = size;  
+    uint32 dwDecryptedDataSize = size;
 
     if(m_pEncryptedDataBuffer)
     {
 #ifdef FEATURE_QTV_DRM_DCF
       if(m_inputStream)
       {
-        IxErrnoType result = ((IxStreamMedia*)(m_inputStream))->Decrypt(p_track->track_id, 
-                                                                        m_pEncryptedDataBuffer, 
-                                                                        returnVal, 
-                                                                        buf, 
+        IxErrnoType result = ((IxStreamMedia*)(m_inputStream))->Decrypt(p_track->track_id,
+                                                                        m_pEncryptedDataBuffer,
+                                                                        returnVal,
+                                                                        buf,
                                                                         &dwDecryptedDataSize);
         if(result != E_SUCCESS)
         {
@@ -1628,19 +1681,19 @@ int32 Mpeg4File::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &
       {
         if( FALSE == m_pDRMDecryptFunction( p_track->track_id,
                                             m_pEncryptedDataBuffer,
-                                            buf,                                            
-                                            returnVal, 
-                                            &dwDecryptedDataSize, 
+                                            buf,
+                                            returnVal,
+                                            &dwDecryptedDataSize,
                                             m_pDRMClientData ) )
         {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Failed to Decrypt the sample");      
+          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Failed to Decrypt the sample");
           return FAILED_TO_DECRYPT;
-        }     
+        }
       }
     }
     else
     {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Memory allocation failure. Could not decrypt frame");      
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Memory allocation failure. Could not decrypt frame");
       return FAILED_TO_DECRYPT;
     }
     /* decrypting successful */
@@ -1711,6 +1764,32 @@ uint32 Mpeg4File::getMediaTimestampForCurrentSample(uint32 id)
   uint32 streamNum = p_track->stream_num;
 
   return m_sampleInfo[streamNum].time;
+}
+
+/*===========================================================================
+
+FUNCTION  getMediaTimestampDeltaForCurrentSample
+
+DESCRIPTION
+Public method used to request the delta for the sample currently processed
+
+===========================================================================*/
+uint32 Mpeg4File::getMediaTimestampDeltaForCurrentSample(uint32 id)
+{
+  video_fmt_stream_info_type *p_track = getTrackInfoForID(id);
+  if ( !p_track ){
+    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "getMediaTimestampDeltaForCurrentSample, unknown track id = %d", id);
+    return 0;
+  }
+  uint32 streamNum = p_track->stream_num;
+  if(p_track->media_timescale)
+  {
+    return (uint32)((((float)m_sampleInfo[streamNum].delta)/ p_track->media_timescale) * 1000.0F);
+  }
+  else
+  {
+    return m_sampleInfo[streamNum].delta;
+  }
 }
 
 /* <EJECT> */
@@ -1807,14 +1886,14 @@ bool Mpeg4File::getSampleAtTimestamp(video_fmt_stream_info_type *p_track,
       {
         /*
         * For text/audio track, we should not pick the sample whose TS > what is being requested.
-        * Otherwise, incorrect sample will be displayed for duration 
+        * Otherwise, incorrect sample will be displayed for duration
         * which could be > sample's own duration. Example below:
         *
-        * Lets say each text sample is of 5 seconds, and user does RW by 2 seconds, 
+        * Lets say each text sample is of 5 seconds, and user does RW by 2 seconds,
         * when playback time is 5 seconds.
         * Now, if we pick sample#1, since it's TS (5 seconds) is > TS being requested(3 seconds),
         * then sample#1 would be displayed for 7 seconds (5 second from it's own duration + (5-3))
-        * 
+        *
         * Thus, picking sample#0 would make sure that it gets displayed only from 2 seconds.
         *
         */
@@ -1881,13 +1960,18 @@ bool Mpeg4File::getTimestampedSampleInfo(
 
   uint32 sampleDelta = 1;
   uint32 reqSampleNum = 0;
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD ||defined FEATURE_QTV_PSEUDO_STREAM
   uint32 absFileOffset = 0;
   boolean bEndOfData = false;
 #endif // FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
   int32 timeOffset = 0;
   bool  lRewind = false;
   bool retStat = false;
+  if(maxFrames == 0)
+  {
+    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "No valid frames for given track %d",p_track->track_id);
+    return false;
+  }
 
   if( (m_nextSample[streamNum]==0) && (m_sampleInfo[streamNum].size==0) && (p_track->dec_specific_info.obj_type!=(int)MPEG4_IMAGE) )
   {
@@ -1916,7 +2000,7 @@ bool Mpeg4File::getTimestampedSampleInfo(
 
   /* if all video frames are SYNC frames, we don't have to search for sync frame
   repositioing will work same as audio where all frames are always sync frames */
-  if((m_allSyncVideo) || (p_track->type == VIDEO_FMT_STREAM_AUDIO))
+  if(p_track->type == VIDEO_FMT_STREAM_AUDIO)
     bSetToSyncSample = false;
 
   if( (p_track->type == VIDEO_FMT_STREAM_VIDEO) &&
@@ -2066,12 +2150,12 @@ bool Mpeg4File::getTimestampedSampleInfo(
           /* check if we got any sync sample later than current sample */
           if(*newTimeStamp > currentPosTimeStamp)
           {
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD|| defined FEATURE_QTV_PSEUDO_STREAM
             if( bHttpStreaming)
             {
               if(m_fpFetchBufferedDataSize)
               {
-                //Pull interface so pull dnld data size from OEM                
+                //Pull interface so pull dnld data size from OEM
                 uint32 userData = 0;
                 #ifdef FEATURE_QTV_DRM_DCF
                   userData = (uint32)m_inputStream;
@@ -2114,13 +2198,13 @@ bool Mpeg4File::getTimestampedSampleInfo(
           /* check if we got any sync sample later than current sample */
           if(*newTimeStamp > currentPosTimeStamp)
           {
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD|| defined FEATURE_QTV_PSEUDO_STREAM
             if( bHttpStreaming)
             {
               if(m_fpFetchBufferedDataSize)
               {
                 //Pull interface so pull dnld data size from OEM
-                uint32 userData = 0;                
+                uint32 userData = 0;
                 #ifdef FEATURE_QTV_DRM_DCF
                    userData = (uint32)m_inputStream;
                 #endif
@@ -2153,7 +2237,7 @@ bool Mpeg4File::getTimestampedSampleInfo(
       if(*newTimeStamp == currentPosTimeStamp)
         retStat = false;
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD||defined FEATURE_QTV_PSEUDO_STREAM
       if( bHttpStreaming && retStat )
       {
         if(m_fpFetchBufferedDataSize)
@@ -2162,7 +2246,7 @@ bool Mpeg4File::getTimestampedSampleInfo(
           uint32 userData = 0;
           #ifdef FEATURE_QTV_DRM_DCF
             userData = (uint32)m_inputStream;
-          #endif          
+          #endif
           (*m_fpFetchBufferedDataSize)(userData,&m_wBufferOffset,&bEndOfData, m_QtvInstancehandle);
         }
 
@@ -2266,7 +2350,7 @@ bool Mpeg4File::getTimestampedSampleInfo(
 
   *newTimeStamp = (uint32)(((float)sampleInfo->time*1000.0F)/p_track->media_timescale);
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD||defined FEATURE_QTV_PSEUDO_STREAM
   if( bHttpStreaming && retStat )
   {
     if(m_fpFetchBufferedDataSize)
@@ -2275,7 +2359,7 @@ bool Mpeg4File::getTimestampedSampleInfo(
       uint32 userData = 0;
       #ifdef FEATURE_QTV_DRM_DCF
         userData = (uint32)m_inputStream;
-      #endif      
+      #endif
       (*m_fpFetchBufferedDataSize)(userData,&m_wBufferOffset,&bEndOfData, m_QtvInstancehandle);
     }
 
@@ -2360,7 +2444,6 @@ uint32 Mpeg4File::resetPlayback (
 
     else
       qtv_cfg_aud_fixed_size_max  = 0;
-    MSG_HIGH("Audio clip fixed_size_max = %d",qtv_cfg_aud_fixed_size_max, 0, 0);
   }
   ///
 
@@ -2418,32 +2501,32 @@ Detail any side effects.
 ========================================================================== */
 #ifdef FEATURE_QTV_REPOSITION_SYNC_FRAME
 uint32 Mpeg4File::skipNSyncSamples(int offset, uint32 id, bool *bError, uint32 currentPosTimeStamp)
-{      
-  
+{
+
   int32 reqSampleNum = 0;
   int8  noOfSyncSamplesSkipped = 0;
   bool result = false;
   uint32 newTimeStamp =0;
 
   video_fmt_stream_info_type *p_track = getTrackInfoForID(id);
-   
+
   int streamNum = 0;
   if(p_track)
   {
       streamNum = p_track->stream_num;
   }
   else
-  {    
+  {
     *bError =  true;
     QTV_MSG_PRIO1( QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "seekToSync function Failed In Skipping %d Sync Samples", offset );
-    return currentPosTimeStamp;  
+    return currentPosTimeStamp;
   }
   int maxFrames = p_track->frames;
 
   reqSampleNum = m_sampleInfo[streamNum].sample;
 
   video_fmt_sample_info_type  sampleInfo;
-  
+
   if( offset < 0 )
   {
     // rewind case
@@ -2451,11 +2534,11 @@ uint32 Mpeg4File::skipNSyncSamples(int offset, uint32 id, bool *bError, uint32 c
     {
 
       if(getSyncSampleInfo (streamNum, reqSampleNum, true, &sampleInfo))
-      {        
+      {
         noOfSyncSamplesSkipped++;
         if( noOfSyncSamplesSkipped == abs(offset) )
         {
-          // In successfull case return the latest sync sample time          
+          // In successfull case return the latest sync sample time
           result = true;
           break;
         }
@@ -2464,12 +2547,12 @@ uint32 Mpeg4File::skipNSyncSamples(int offset, uint32 id, bool *bError, uint32 c
       {
         // Not successfull in skipping desired sync samplese so return the old time.
          break;
-      }       
+      }
     }
   }
   else
   {
-    // forward case     
+    // forward case
     for(reqSampleNum = m_sampleInfo[streamNum].sample; reqSampleNum<maxFrames; ++reqSampleNum)
     {
        if(getSyncSampleInfo( streamNum, reqSampleNum, false, &sampleInfo ))
@@ -2477,7 +2560,7 @@ uint32 Mpeg4File::skipNSyncSamples(int offset, uint32 id, bool *bError, uint32 c
          noOfSyncSamplesSkipped++;
          if( noOfSyncSamplesSkipped==offset )
          {
-           // In successfull case return the last sync sample time           
+           // In successfull case return the last sync sample time
            result = true;
            break;
          }
@@ -2485,31 +2568,31 @@ uint32 Mpeg4File::skipNSyncSamples(int offset, uint32 id, bool *bError, uint32 c
        else
        {
          // Not successfull in skipping desired sync samplese so return the old time.
-         break;    
+         break;
        }
-    }                          
+    }
   }
-  
+
   // Check for The result
   if(result)
   {
     *bError =  false;
     newTimeStamp = (uint32)(((float)sampleInfo.time*1000.0F)/p_track->media_timescale);
 
-    m_reposStreamPending |= maskByte[streamNum]; 
-    m_nextReposSample[streamNum] = sampleInfo.sample; 
+    m_reposStreamPending |= maskByte[streamNum];
+    m_nextReposSample[streamNum] = sampleInfo.sample;
     m_sampleInfo[streamNum] = sampleInfo;
 
-    QTV_MSG_PRIO2( QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Time Stamp Returned after Skipping %d Sync Samples= %ld", 
+    QTV_MSG_PRIO2( QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Time Stamp Returned after Skipping %d Sync Samples= %ld",
                    offset, newTimeStamp );
 
     return newTimeStamp;
   }
   else
-  {    
+  {
     *bError =  true;
     QTV_MSG_PRIO1( QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "seekToSync function Failed In Skipping %d Sync Samples", offset );
-    return currentPosTimeStamp;  
+    return currentPosTimeStamp;
   }
 }
 #endif /* FEATURE_QTV_REPOSITION_SYNC_FRAME */
@@ -2653,24 +2736,24 @@ Public method used to request a media sample (frame)
 ===========================================================================*/
 OSCL_STRING Mpeg4File::getTitle() const
 {
- 	if(m_bUdtaAtomPresent && _titlAtom)
-	{
-		OSCL_STRING Title;
-		uint32 dwDataToBeCopied;
-		char *str =(char *)QTV_Malloc(_titlAtom->getUdtaTitlDataSize()+1);
+     if(m_bUdtaAtomPresent && _titlAtom)
+     {
+          OSCL_STRING Title;
+          uint32 dwDataToBeCopied;
+          char *str =(char *)QTV_Malloc(_titlAtom->getUdtaTitlDataSize()+1);
         if (!str)
         {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                                         "Mpeg4File::getTitle() failed to allocate memory");
           return 0;
         }
-		dwDataToBeCopied=_titlAtom->getUdtaTitlData((uint8*)str,_titlAtom->getUdtaTitlDataSize()+1,2);
-		/*Two bytes offset to skip Pad and Language fields*/
-		str[dwDataToBeCopied]='\0';
-		Title=str;
-		QTV_Free(str);
-		return Title;
-	}
+          dwDataToBeCopied=_titlAtom->getUdtaTitlData((uint8*)str,_titlAtom->getUdtaTitlDataSize()+1,2);
+          /*Two bytes offset to skip Pad and Language fields*/
+          str[dwDataToBeCopied]='\0';
+          Title=str;
+          QTV_Free(str);
+          return Title;
+     }
   return 0;
 }
 
@@ -2686,23 +2769,23 @@ Public method used to request a media sample (frame)
 OSCL_STRING Mpeg4File::getAuthor()const
 {
   if(m_bUdtaAtomPresent && _authAtom)
-	{
-		OSCL_STRING Auth;
-		uint32 dwDataToBeCopied;
-		char *str=(char *)QTV_Malloc(_authAtom->getUdtaAuthDataSize()+1);
+     {
+          OSCL_STRING Auth;
+          uint32 dwDataToBeCopied;
+          char *str=(char *)QTV_Malloc(_authAtom->getUdtaAuthDataSize()+1);
         if (!str)
         {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                                         "Mpeg4File::getAuthor() failed to allocate memory");
           return 0;
         }
-   		dwDataToBeCopied=_authAtom->getUdtaAuthData((uint8*)str,_authAtom->getUdtaAuthDataSize()+1,2);
-		/*Two bytes offset to skip Pad and Language fields*/
-		str[dwDataToBeCopied]='\0';
-		Auth=(char*)str;
-		QTV_Free(str);
-		return Auth;
-	}
+          dwDataToBeCopied=_authAtom->getUdtaAuthData((uint8*)str,_authAtom->getUdtaAuthDataSize()+1,2);
+          /*Two bytes offset to skip Pad and Language fields*/
+          str[dwDataToBeCopied]='\0';
+          Auth=(char*)str;
+          QTV_Free(str);
+          return Auth;
+     }
   return 0;
 }
 /* <EJECT> */
@@ -2730,23 +2813,23 @@ Public method used to request a media sample (frame)
 OSCL_STRING Mpeg4File::getCopyright()const
 {
    if(m_bUdtaAtomPresent && _cprtAtom)
-	{
-		OSCL_STRING cprt;
-		uint32 dwDataToBeCopied;
-		char *str=(char *)QTV_Malloc(_cprtAtom->getUdtaCprtDataSize()+1);
+     {
+          OSCL_STRING cprt;
+          uint32 dwDataToBeCopied;
+          char *str=(char *)QTV_Malloc(_cprtAtom->getUdtaCprtDataSize()+1);
         if (!str)
         {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                                         "Mpeg4File::getCopyright() failed to allocate memory");
           return 0;
         }
-   		dwDataToBeCopied=_cprtAtom->getUdtaCprtData((uint8*)str,_cprtAtom->getUdtaCprtDataSize()+1,2);
-		/*Two bytes offset to skip Pad and Language fields*/
-		str[dwDataToBeCopied]='\0';
-		cprt=(char*)str;
-		QTV_Free(str);
-		return cprt;
-	}
+          dwDataToBeCopied=_cprtAtom->getUdtaCprtData((uint8*)str,_cprtAtom->getUdtaCprtDataSize()+1,2);
+          /*Two bytes offset to skip Pad and Language fields*/
+          str[dwDataToBeCopied]='\0';
+          cprt=(char*)str;
+          QTV_Free(str);
+          return cprt;
+     }
   return 0;
 }
 /* <EJECT> */
@@ -2762,23 +2845,23 @@ OSCL_STRING Mpeg4File::getDescription()const
 {
 
   if(m_bUdtaAtomPresent && _dscpAtom)
-	{
-		OSCL_STRING cprt;
-		uint32 dwDataToBeCopied;
-		char *str=(char *)QTV_Malloc(_dscpAtom->getUdtaDscpDataSize()+1);
+     {
+          OSCL_STRING cprt;
+          uint32 dwDataToBeCopied;
+          char *str=(char *)QTV_Malloc(_dscpAtom->getUdtaDscpDataSize()+1);
         if (!str)
         {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                                         "Mpeg4File::getDescription() failed to allocate memory");
           return 0;
         }
-   		dwDataToBeCopied=_dscpAtom->getUdtaDscpData((uint8*)str,_dscpAtom->getUdtaDscpDataSize()+1,2);
-		/*Two bytes offset to skip Pad and Language fields*/
-		str[dwDataToBeCopied]='\0';
-		cprt=(char*)str;
-		QTV_Free(str);
-		return cprt;
-	}
+          dwDataToBeCopied=_dscpAtom->getUdtaDscpData((uint8*)str,_dscpAtom->getUdtaDscpDataSize()+1,2);
+          /*Two bytes offset to skip Pad and Language fields*/
+          str[dwDataToBeCopied]='\0';
+          cprt=(char*)str;
+          QTV_Free(str);
+          return cprt;
+     }
   return 0;
 }
 /* <EJECT> */
@@ -2793,23 +2876,23 @@ Public method used to request a media sample (frame)
 OSCL_STRING Mpeg4File::getRating() const
 {
   if(m_bUdtaAtomPresent && _rtngAtom)
-	{
-		OSCL_STRING rtng;
-		uint32 dwDataToBeCopied;
-		char *str=(char *)QTV_Malloc(_rtngAtom->getUdtaRtngDataSize()+1);
+     {
+          OSCL_STRING rtng;
+          uint32 dwDataToBeCopied;
+          char *str=(char *)QTV_Malloc(_rtngAtom->getUdtaRtngDataSize()+1);
         if (!str)
         {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                                         "Mpeg4File::getRating() failed to allocate memory");
           return 0;
         }
-   		dwDataToBeCopied=_rtngAtom->getUdtaRtngData((uint8*)str,_rtngAtom->getUdtaRtngDataSize()+1 ,2);
-		/*Two bytes offset to skip Pad and Language fields*/
-		str[dwDataToBeCopied]='\0';
-		rtng=(char*)str;
-		QTV_Free(str);
-		return rtng;
-	}
+          dwDataToBeCopied=_rtngAtom->getUdtaRtngData((uint8*)str,_rtngAtom->getUdtaRtngDataSize()+1 ,2);
+          /*Two bytes offset to skip Pad and Language fields*/
+          str[dwDataToBeCopied]='\0';
+          rtng=(char*)str;
+          QTV_Free(str);
+          return rtng;
+     }
   return 0;
 }
 
@@ -2825,23 +2908,23 @@ Public method used to request a media sample (frame)
 OSCL_STRING Mpeg4File::getPerf() const
 {
   if(m_bUdtaAtomPresent && _perfAtom)
-	{
-		OSCL_STRING perf;
-		uint32 dwDataToBeCopied;
-		char *str=(char *)QTV_Malloc(_perfAtom->getUdtaPerfDataSize()+1);
+     {
+          OSCL_STRING perf;
+          uint32 dwDataToBeCopied;
+          char *str=(char *)QTV_Malloc(_perfAtom->getUdtaPerfDataSize()+1);
         if (!str)
         {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                                         "Mpeg4File::getPerf() failed to allocate memory");
           return 0;
         }
-   		dwDataToBeCopied=_perfAtom->getUdtaPerfData((uint8*)str,_perfAtom->getUdtaPerfDataSize()+1 ,2);
-		/*Two bytes offset to skip Pad and Language fields*/
-		str[dwDataToBeCopied]='\0';
-		perf=(char*)str;
-		QTV_Free(str);
-		return perf;
-	}
+          dwDataToBeCopied=_perfAtom->getUdtaPerfData((uint8*)str,_perfAtom->getUdtaPerfDataSize()+1 ,2);
+          /*Two bytes offset to skip Pad and Language fields*/
+          str[dwDataToBeCopied]='\0';
+          perf=(char*)str;
+          QTV_Free(str);
+          return perf;
+     }
   return 0;
 }
 
@@ -2856,23 +2939,23 @@ Public method used to request a media sample (frame)
 OSCL_STRING Mpeg4File::getGenre() const
 {
   if(m_bUdtaAtomPresent && _gnreAtom)
-	{
-		OSCL_STRING gnre;
-		uint32 dwDataToBeCopied;
-		char *str=(char *)QTV_Malloc(_gnreAtom->getUdtaGnreDataSize()+1);
+     {
+          OSCL_STRING gnre;
+          uint32 dwDataToBeCopied;
+          char *str=(char *)QTV_Malloc(_gnreAtom->getUdtaGnreDataSize()+1);
         if (!str)
         {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                                         "Mpeg4File::getGenre() failed to allocate memory");
           return 0;
         }
-   		dwDataToBeCopied=_gnreAtom->getUdtaGnreData((uint8*)str,_gnreAtom->getUdtaGnreDataSize()+1 ,2);
-		/*Two bytes offset to skip Pad and Language fields*/
-		str[dwDataToBeCopied]='\0';
-		gnre=(char*)str;
-		QTV_Free(str);
-		return gnre;
-	}
+          dwDataToBeCopied=_gnreAtom->getUdtaGnreData((uint8*)str,_gnreAtom->getUdtaGnreDataSize()+1 ,2);
+          /*Two bytes offset to skip Pad and Language fields*/
+          str[dwDataToBeCopied]='\0';
+          gnre=(char*)str;
+          QTV_Free(str);
+          return gnre;
+     }
   return 0;
 }
 
@@ -2887,23 +2970,23 @@ Public method used to request a media sample (frame)
 OSCL_STRING Mpeg4File::getClsf() const
 {
   if(m_bUdtaAtomPresent && _clsfAtom)
-	{
-		OSCL_STRING clsf;
-		uint32 dwDataToBeCopied;
-		char *str=(char *)QTV_Malloc(_clsfAtom->getUdtaClsfDataSize()+1);
+     {
+          OSCL_STRING clsf;
+          uint32 dwDataToBeCopied;
+          char *str=(char *)QTV_Malloc(_clsfAtom->getUdtaClsfDataSize()+1);
         if (!str)
         {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                                         "Mpeg4File::getClsf() failed to allocate memory");
           return 0;
         }
-   		dwDataToBeCopied=_clsfAtom->getUdtaClsfData((uint8*)str,_clsfAtom->getUdtaClsfDataSize()+1  ,2);
-		/*Two bytes offset to skip Pad and Language fields*/
-		str[dwDataToBeCopied]='\0';
-		clsf=(char*)str;
-		QTV_Free(str);
-		return clsf;
-	}
+          dwDataToBeCopied=_clsfAtom->getUdtaClsfData((uint8*)str,_clsfAtom->getUdtaClsfDataSize()+1  ,2);
+          /*Two bytes offset to skip Pad and Language fields*/
+          str[dwDataToBeCopied]='\0';
+          clsf=(char*)str;
+          QTV_Free(str);
+          return clsf;
+     }
   return 0;
 }
 /*===========================================================================
@@ -2917,23 +3000,23 @@ Public method used to request a media sample (frame)
 OSCL_STRING Mpeg4File::getKywd() const
 {
   if(m_bUdtaAtomPresent && _kywdAtom)
-	{
-		OSCL_STRING kywd;
-		uint32 dwDataToBeCopied;
-		char *str=(char *)QTV_Malloc(_kywdAtom->getUdtaKywdDataSize()+1);
+     {
+          OSCL_STRING kywd;
+          uint32 dwDataToBeCopied;
+          char *str=(char *)QTV_Malloc(_kywdAtom->getUdtaKywdDataSize()+1);
         if (!str)
         {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                                         "Mpeg4File::getKywd() failed to allocate memory");
           return 0;
         }
-   		dwDataToBeCopied=_kywdAtom->getUdtaKywdData((uint8*)str,_kywdAtom->getUdtaKywdDataSize()+1  ,3);
-		/*Three bytes offset to skip Pad,Language,Keywdcnt fields*/
-		str[dwDataToBeCopied]='\0';
-		kywd=(char*)str;
-		QTV_Free(str);
-		return kywd;
-	}
+          dwDataToBeCopied=_kywdAtom->getUdtaKywdData((uint8*)str,_kywdAtom->getUdtaKywdDataSize()+1  ,3);
+          /*Three bytes offset to skip Pad,Language,Keywdcnt fields*/
+          str[dwDataToBeCopied]='\0';
+          kywd=(char*)str;
+          QTV_Free(str);
+          return kywd;
+     }
   return 0;
 }
 
@@ -2948,23 +3031,23 @@ Public method used to request a media sample (frame)
 OSCL_STRING Mpeg4File::getLoci() const
 {
   if(m_bUdtaAtomPresent && _lociAtom)
-	{
-		OSCL_STRING loci;
-		uint32 dwDataToBeCopied;
-		char *str=(char *)QTV_Malloc(_lociAtom->getUdtaLociDataSize()+1);
+     {
+          OSCL_STRING loci;
+          uint32 dwDataToBeCopied;
+          char *str=(char *)QTV_Malloc(_lociAtom->getUdtaLociDataSize()+1);
         if (!str)
         {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                                         "Mpeg4File::getLoci() failed to allocate memory");
           return 0;
         }
-   		dwDataToBeCopied=_lociAtom->getUdtaLociData((uint8*)str,_lociAtom->getUdtaLociDataSize()+1,2);
-		/*Two bytes offset to skip Pad and Language fields*/
-		str[dwDataToBeCopied]='\0';
-		loci=(char*)str;
-		QTV_Free(str);
-		return loci;
-	}
+          dwDataToBeCopied=_lociAtom->getUdtaLociData((uint8*)str,_lociAtom->getUdtaLociDataSize()+1,2);
+          /*Two bytes offset to skip Pad and Language fields*/
+          str[dwDataToBeCopied]='\0';
+          loci=(char*)str;
+          QTV_Free(str);
+          return loci;
+     }
   return 0;
 }
 /* <EJECT> */
@@ -2978,16 +3061,16 @@ Public method used to request a media sample (frame)
 ===========================================================================*/
 OSCL_STRING Mpeg4File::getCreationDate()const
 {
-  	if(m_videoFmtInfo.file_info.creation_time)
-	{
-	  OSCL_STRING CreationDate;
-	  char str[128];
-	  /* This is 3GPP time (number of seconds elapsed since mid-night, 1 Jan,1904)
-	     Since we can pass string to OEM, converting it */	  
-	  std_strlprintf(str, sizeof(str), "%d", m_videoFmtInfo.file_info.creation_time);
-	  CreationDate=(char*)str;
-	  return CreationDate;
-	}
+     if(m_videoFmtInfo.file_info.creation_time)
+     {
+       OSCL_STRING CreationDate;
+       char str[128];
+       /* This is 3GPP time (number of seconds elapsed since mid-night, 1 Jan,1904)
+          Since we can pass string to OEM, converting it */
+       std_strlprintf(str, sizeof(str), "%d", m_videoFmtInfo.file_info.creation_time);
+       CreationDate=(char*)str;
+       return CreationDate;
+     }
   return 0;
 }
 
@@ -3008,7 +3091,7 @@ OSCL_STRING Mpeg4File::getAlbum() const
     char *str=(char *)QTV_Malloc(_albumAtom->getUdtaAlbumDataSize()+1);
     if (!str)
     {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                                "Mpeg4File::getAlbum() failed to allocate memory");
       return 0;
     }
@@ -3039,7 +3122,7 @@ OSCL_STRING Mpeg4File::getYrrc() const
     char *str=(char *)QTV_Malloc(_yrrcAtom->getUdtaYrrcDataSize()+1);
     if (!str)
     {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                              "Mpeg4File::getYrrc() failed to allocate memory");
       return 0;
     }
@@ -3068,7 +3151,7 @@ This private function create UUID atom by parsing media file.
 ===========================================================================*/
 void Mpeg4File::mp4ParseUUIDAtom(video_fmt_uuid_data_type *pAtomInfo,OSCL_FILE* localFilePtr)
 {
-  Atom * entry = NULL ;  
+  Atom * entry = NULL ;
   int32 saveFilePos = OSCL_FileTell (localFilePtr);
 
   /* videoFMT offset is after atom header, but current parsing needs
@@ -3147,8 +3230,8 @@ void Mpeg4File::mp4ParseUUIDAtom(video_fmt_uuid_data_type *pAtomInfo,OSCL_FILE* 
   }
   /* videoFMT offset is after atom header, but current parsing needs
      atom header as well, so goback 24 bytes */
-  if (pAtomInfo->offset > DEFAULT_UDTA_CHILD_ATOM_HEADER_SIZE)
-    OSCL_FileSeek(localFilePtr, pAtomInfo->offset - DEFAULT_UDTA_CHILD_ATOM_HEADER_SIZE, SEEK_SET); 
+  if (pAtomInfo->offset > DEFAULT_UUID_ATOM_HEADER_SIZE)
+    OSCL_FileSeek(localFilePtr, pAtomInfo->offset - DEFAULT_UUID_ATOM_HEADER_SIZE, SEEK_SET);
 
   entry = QTV_New_Args( Atom, (localFilePtr) );
   if(entry != NULL)
@@ -3156,8 +3239,8 @@ void Mpeg4File::mp4ParseUUIDAtom(video_fmt_uuid_data_type *pAtomInfo,OSCL_FILE* 
     if (!entry->FileSuccess())
     {
       QTV_Delete( entry );
-      /* Here even though the UDTA child is corrupted let the playback continue */         
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "UUID atom parsing failed");	      
+      /* Here even though the UDTA child is corrupted let the playback continue */
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "UUID atom parsing failed");
     }
     else
     {
@@ -3165,7 +3248,7 @@ void Mpeg4File::mp4ParseUUIDAtom(video_fmt_uuid_data_type *pAtomInfo,OSCL_FILE* 
       UUIDatomEntryArray += entry;
       UUIDatomEntryCount++;
     }
-   }  
+   }
   (void)OSCL_FileSeek(localFilePtr, saveFilePos, SEEK_SET);
 }
 
@@ -3824,19 +3907,19 @@ Detail any side effects.
 ========================================================================== */
 void Mpeg4File::Parse3GPPTimedTextAtom(video_fmt_tx3g_data_type *tx3g_atom,OSCL_FILE* localFilePtr)
 {
-	int32 saveFilePos = OSCL_FileTell (localFilePtr);
+     int32 saveFilePos = OSCL_FileTell (localFilePtr);
 
-	/* videoFMT offset is after atom header, but current parsing needs
+     /* videoFMT offset is after atom header, but current parsing needs
      atom header as well, so goback 8 bytes */
-	if (tx3g_atom->offset > DEFAULT_TX3G_ATOM_HEADER_SIZE)
-		(void)OSCL_FileSeek(localFilePtr, (int32)(tx3g_atom->offset-DEFAULT_TX3G_ATOM_HEADER_SIZE), SEEK_SET);
+     if (tx3g_atom->offset > DEFAULT_TX3G_ATOM_HEADER_SIZE)
+          (void)OSCL_FileSeek(localFilePtr, (int32)(tx3g_atom->offset-DEFAULT_TX3G_ATOM_HEADER_SIZE), SEEK_SET);
 
-	TextSampleEntry * entry = QTV_New_Args( TextSampleEntry, (localFilePtr) );
+     TextSampleEntry * entry = QTV_New_Args( TextSampleEntry, (localFilePtr) );
 
     if(!entry)
     {
       _success = false;
-		_fileErrorCode = (int)MEMORY_ALLOCATION_FAILED;
+          _fileErrorCode = (int)MEMORY_ALLOCATION_FAILED;
     }
     else if (!(entry->FileSuccess()))
     {
@@ -3880,7 +3963,7 @@ Mpeg4File::~Mpeg4File()
 {
   uint32 i;
 
-  if (m_mp4ParseEndCb)
+  if (m_mp4ParseEndCb && m_mp4ParseServerData)
   {
     m_mp4ParseEndCb (m_mp4ParseServerData);
     while ( (m_mp4ParseLastStatus != VIDEO_FMT_DONE) &&
@@ -3904,10 +3987,10 @@ Mpeg4File::~Mpeg4File()
   for (i = 0; i < textSampleEntryCount; i++)
   {
     if((textSampleEntryArray)[i] &&
-      (textSampleEntryArray)[i] != NULL)  
+      (textSampleEntryArray)[i] != NULL)
     {
       QTV_Delete( (textSampleEntryArray)[i] );
-      (textSampleEntryArray)[i] = NULL; 
+      (textSampleEntryArray)[i] = NULL;
     }
   }
   textSampleEntryCount = 0;
@@ -3927,7 +4010,7 @@ for (i = 0; i < UUIDatomEntryCount; i++)
   {
     if(m_streamFilePtr[i]!= NULL)
     {
-      (void)OSCL_FileClose( m_streamFilePtr[i] ); 
+      (void)OSCL_FileClose( m_streamFilePtr[i] );
       m_streamFilePtr[i] = NULL;
     }
   }
@@ -3935,7 +4018,7 @@ for (i = 0; i < UUIDatomEntryCount; i++)
 #ifdef FEATURE_MP4_KDDI_META_DATA
   if (_kddiDRMAtom != NULL)
   {
-    QTV_Delete( _kddiDRMAtom ); 
+    QTV_Delete( _kddiDRMAtom );
   }
   if (_kddiContentPropertyAtom != NULL)
   {
@@ -3962,14 +4045,14 @@ for (i = 0; i < UUIDatomEntryCount; i++)
   }
   if (_kddiTelopElement != NULL)
   {
-    QTV_Delete( _kddiTelopElement ); 
+    QTV_Delete( _kddiTelopElement );
   }
 #endif
 
 #if defined(FEATURE_QTV_SKT_MOD_MIDI)
   if(_midiAtom)
   {
-    QTV_Delete( _midiAtom ); 
+    QTV_Delete( _midiAtom );
   }
   if(_linkAtom)
   {
@@ -4034,7 +4117,7 @@ for (i = 0; i < UUIDatomEntryCount; i++)
   {
     QTV_Delete( _perfAtom );
   }
- 
+
   if(_metaAtom)
   {
     QTV_Delete( _metaAtom );
@@ -4045,10 +4128,10 @@ for (i = 0; i < UUIDatomEntryCount; i++)
   {
     QTV_Delete( _pdcfAtom );
   }
-  /* free the m_pEncryptedDataBuffer*/      
+  /* free the m_pEncryptedDataBuffer*/
   if(m_pEncryptedDataBuffer)
   {
-    QTV_Free(m_pEncryptedDataBuffer);        
+    QTV_Free(m_pEncryptedDataBuffer);
   }
 #endif /* FEATURE_QTV_PDCF */
 
@@ -4056,7 +4139,7 @@ for (i = 0; i < UUIDatomEntryCount; i++)
 
   if(m_parseFilePtr)
   {
-    (void)OSCL_FileClose( m_parseFilePtr ); 
+    (void)OSCL_FileClose( m_parseFilePtr );
 
   }
 
@@ -4197,8 +4280,8 @@ QtvPlayer::EncryptionTypeT Mpeg4File::getEncryptionType()
     {
       return m_EncryptionType[i].encryptionType;
     }
-  }   
-  return QtvPlayer::ENCRYPT_NONE; 
+  }
+  return QtvPlayer::ENCRYPT_NONE;
 }
 
 /*===========================================================================
@@ -4218,8 +4301,8 @@ QtvPlayer::EncryptionTypeT Mpeg4File::getEncryptionType(uint32 track_id)
     {
       return m_EncryptionType[i].encryptionType;
     }
-  }   
-  return QtvPlayer::ENCRYPT_NONE; 
+  }
+  return QtvPlayer::ENCRYPT_NONE;
 }
 
 /* ======================================================================
@@ -4336,23 +4419,23 @@ uint32 Mpeg4File::getTrackAudioSamplingFreq(uint32 id)
 {
   video_fmt_stream_info_type *p_track = getTrackInfoForID(id);
 
-  if ( p_track )
-  {
+if ( p_track )
+{
 #ifdef FEATURE_MP4_MP3
-    return p_track->subinfo.audio.sampling_frequency;
+   return p_track->subinfo.audio.sampling_frequency;
 #else
    if (p_track->subinfo.audio.sampling_frequency)
    {
-      return p_track->subinfo.audio.sampling_frequency;
+     return p_track->subinfo.audio.sampling_frequency;
    }
    else
    {
-      return p_track->media_timescale;
+     return p_track->media_timescale;
    }
 #endif /* FEATURE_MP4_MP3 */
-  }
-  else
-    return 0;
+}
+else
+   return 0;
 }
 
 
@@ -4368,12 +4451,12 @@ OSCL_STRING Mpeg4File::getAudioTrackLanguage(uint32 id)
 {
   video_fmt_stream_info_type *p_track = getTrackInfoForID(id);
   if ( p_track )
-  {     
+  {
     OSCL_STRING Language;
     char *str =(char *)QTV_Malloc(QTV_MAX_LANGUAGE_BYTES);
     if (!str)
     {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, 
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                         "Mpeg4File::getAudioTrackLanguage() failed to allocate memory");
       return 0;
     }
@@ -4437,16 +4520,16 @@ uint32 Mpeg4File::getAudioSamplesPerFrame(uint32 id)
         if ( getSampleInfo(streamNum, 0, 1, &sampleInfo) > 0 )
         {
           /* for some clips, SamplesPerFrame value is wrongly set to 10 and the correct
-			    value was one. This check is to fix those clips and we also try to
-			    minimize the scope of this fix by checking this value in clip and
-			    size of first AMR sample from a clip in question/given clip*/
-			    if( ((sampleInfo.size==32) || (sampleInfo.size==13) || (sampleInfo.size==21) || (sampleInfo.size==18))&&
-              (p_track->subinfo.audio.audio_params.frames_per_sample==10) )
-				  {
-				    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "SamplesPerFrame=%d for AMR track, but using 1.",
- 				                  p_track->subinfo.audio.audio_params.frames_per_sample);
-				    p_track->subinfo.audio.audio_params.frames_per_sample = 1;
-				  }		  
+          value was one. This check is to fix those clips and we also try to
+          minimize the scope of this fix by checking this value in clip and
+          size of first AMR sample from a clip in question/given clip*/
+          if( ((sampleInfo.size==32) || (sampleInfo.size==13) || (sampleInfo.size==21) || (sampleInfo.size==18))&&
+               (p_track->subinfo.audio.audio_params.frames_per_sample==10) )
+          {
+            QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "SamplesPerFrame=%d for AMR track, but using 1.",
+            p_track->subinfo.audio.audio_params.frames_per_sample);
+            p_track->subinfo.audio.audio_params.frames_per_sample = 1;
+          }
         }
       }
       samplesPerFrame = (uint32)(p_track->subinfo.audio.audio_params.frames_per_sample *
@@ -4520,7 +4603,7 @@ FUNCTION  Mpeg4File::getTrackDecoderSpecificInfoContent
 DESCRIPTION
 ===========================================================================*/
 MP4_ERROR_CODE Mpeg4File::getTrackDecoderSpecificInfoContent(uint32 id, uint8* buf, uint32 *pbufSize)
-{  
+{
   int32 bufsize = 0;
   uint32 headersize=0;
   uint8 *poutputtemp = NULL;
@@ -4538,7 +4621,7 @@ MP4_ERROR_CODE Mpeg4File::getTrackDecoderSpecificInfoContent(uint32 id, uint8* b
   {
      return (DEFAULT_ERROR);
   }
-  
+
   /*Initialize Parameters*/
   poutputtemp = buf;
   bufsize = *pbufSize;
@@ -4546,13 +4629,13 @@ MP4_ERROR_CODE Mpeg4File::getTrackDecoderSpecificInfoContent(uint32 id, uint8* b
 #ifdef FEATURE_H264_DECODER
   /*Check if the input media type is H264*/
  if( (p_track->type == VIDEO_FMT_STREAM_VIDEO) &&
-     (p_track->subinfo.video.format == VIDEO_FMT_STREAM_VIDEO_H264) )    
+     (p_track->subinfo.video.format == VIDEO_FMT_STREAM_VIDEO_H264) )
  {
     int32 nBytes = 0;
     uint8* psize;
     uint8  *ptempbuf = NULL;
-	 
-	 /*Allocate temp buffer*/
+
+      /*Allocate temp buffer*/
     ptempbuf = (uint8 *) QTV_Malloc (ALLOC_MEMORY_HEADER);
 
     /*Check for allocation failure*/
@@ -4562,89 +4645,89 @@ MP4_ERROR_CODE Mpeg4File::getTrackDecoderSpecificInfoContent(uint32 id, uint8* b
        *pbufSize = 0;
        return (MEMORY_ALLOCATION_FAILED);
     }
-    psize = (uint8 *) &nBytes;  
+    psize = (uint8 *) &nBytes;
 
     /*Reset the NAL parameters */
     resetParamSetNAL(id);
 
-		do
-		{
-		   /*read the next NAL unit in the file*/
-	           nBytes = getNextParamSetNAL(id, ptempbuf, ALLOC_MEMORY_HEADER);
+          do
+          {
+             /*read the next NAL unit in the file*/
+                nBytes = getNextParamSetNAL(id, ptempbuf, ALLOC_MEMORY_HEADER);
                    if(nBytes == FRAGMENT_CORRUPT)
                    {
                        QTV_Free(ptempbuf);
                        return(DEFAULT_ERROR);
                    }
-		   if( poutputtemp != NULL   &&  /*Check if ouput buffer is valid*/
-				nBytes > 0    &&          /*Check if we have reached end of header*/
-				bufsize >= (nBytes + 4)   /* Check if we have enough space in input buffer*/
-		          )
-			{
+             if( poutputtemp != NULL   &&  /*Check if ouput buffer is valid*/
+                    nBytes > 0    &&          /*Check if we have reached end of header*/
+                    bufsize >= (nBytes + 4)   /* Check if we have enough space in input buffer*/
+                    )
+               {
 
-				//ARM is big-endian, and decoder expects size in little-endian
-				for( int i = 0; i < 4; i++ )
-				{
-					poutputtemp[i] = psize[ 3 - i ];        
-				}
-				/*increment pointer*/
-				poutputtemp += 4;
-				/*Copy the header related stuff*/
-				memcpy (poutputtemp,ptempbuf,nBytes); 
-				/*Increment the Source pointer*/
-				poutputtemp += nBytes;
-				/*Decrement the input buffer size*/
-				bufsize -= (nBytes + 4);        
-			}
-			/*
-			Buffer that client has supplied is not enough
-			Hence Flag error
-			*/
-			else if ( poutputtemp == NULL   ||
-				bufsize < (nBytes +4) ||
-				bufsize < 0
-				) 
-			{
-				readstatus = (MP4_ERROR_CODE)INSUFFICIENT_BUFFER_SIZE;   
-			}
-			/*If nothing is read avoid incrementing headersize*/
-			if(nBytes)
-			{
-				/*Increment Header Size*/
-				headersize += (nBytes+4);
-			}
-		}
-		while (nBytes); 
-		/*
-		Not enough memory to add the nal length information 
-		then return error
-		*/
-		if ( poutputtemp == NULL ||
-			bufsize < 2 ) 
-		{
-			readstatus = (MP4_ERROR_CODE)INSUFFICIENT_BUFFER_SIZE;   
-		}
-		else
-		{
-			//This is not part of header but output of below two methods is needed 
-			//to configure VDEC object for decoding H.264 clip.
-			//Means, it will be input parameter for vdec_h264_init_decoder_specific_info
-			poutputtemp[0]   = GetSizeOfNALLengthField(id);
+                    //ARM is big-endian, and decoder expects size in little-endian
+                    for( int i = 0; i < 4; i++ )
+                    {
+                         poutputtemp[i] = psize[ 3 - i ];
+                    }
+                    /*increment pointer*/
+                    poutputtemp += 4;
+                    /*Copy the header related stuff*/
+                    memcpy (poutputtemp,ptempbuf,nBytes);
+                    /*Increment the Source pointer*/
+                    poutputtemp += nBytes;
+                    /*Decrement the input buffer size*/
+                    bufsize -= (nBytes + 4);
+               }
+               /*
+               Buffer that client has supplied is not enough
+               Hence Flag error
+               */
+               else if ( poutputtemp == NULL   ||
+                    bufsize < (nBytes +4) ||
+                    bufsize < 0
+                    )
+               {
+                    readstatus = (MP4_ERROR_CODE)INSUFFICIENT_BUFFER_SIZE;
+               }
+               /*If nothing is read avoid incrementing headersize*/
+               if(nBytes)
+               {
+                    /*Increment Header Size*/
+                    headersize += (nBytes+4);
+               }
+          }
+          while (nBytes);
+          /*
+          Not enough memory to add the nal length information
+          then return error
+          */
+          if ( poutputtemp == NULL ||
+               bufsize < 2 )
+          {
+               readstatus = (MP4_ERROR_CODE)INSUFFICIENT_BUFFER_SIZE;
+          }
+          else
+          {
+               //This is not part of header but output of below two methods is needed
+               //to configure VDEC object for decoding H.264 clip.
+               //Means, it will be input parameter for vdec_h264_init_decoder_specific_info
+               poutputtemp[0]   = GetSizeOfNALLengthField(id);
 
-			//We are going to work with Stored media, so fix this one as zero.
-			poutputtemp[1] = 0;
+               //We are going to work with Stored media, so fix this one as zero.
+               poutputtemp[1] = 0;
 
-			headersize+=2;
-		}
+               headersize+=2;
+          }
 
-		/*Reset the NAL parameters */
-		resetParamSetNAL(id);
+          /*Reset the NAL parameters */
+          resetParamSetNAL(id);
 
-		/*
-		Check if Buffer is allocated
-		Free if allocated
-		*/
-		QTV_Free (ptempbuf); 
+          /*
+          Check if Buffer is allocated
+          Free if allocated
+          */
+          QTV_Free (ptempbuf);
 
  } /*Video format is H.264*/
  else
@@ -4662,7 +4745,7 @@ MP4_ERROR_CODE Mpeg4File::getTrackDecoderSpecificInfoContent(uint32 id, uint8* b
    {
        /*
          Don't have enough space hence update the Status.
-         Send actual header size     
+         Send actual header size
        */
      readstatus = (MP4_ERROR_CODE)INSUFFICIENT_BUFFER_SIZE;
      headersize = p_track->header;
@@ -4728,8 +4811,8 @@ uint8  Mpeg4File::getTrackOTIType(uint32 id)
 
   if ( p_track )
   {
-    format = p_track->dec_specific_info.obj_type;
-#ifdef FEATURE_QTV_BSAC 
+     format = p_track->dec_specific_info.obj_type;
+#ifdef FEATURE_QTV_BSAC
 #error code not present
 #endif /* FEATURE_QTV_BSAC */
 
@@ -4763,6 +4846,11 @@ uint8  Mpeg4File::getTrackOTIType(uint32 id)
       format = (uint8)H263_VIDEO;
     }
 #endif /* FEATURE_H264_DECODER */
+    if (!p_track->header &&(p_track->type == VIDEO_FMT_STREAM_VIDEO)&&
+          (p_track->subinfo.video.format == VIDEO_FMT_STREAM_VIDEO_MPEG4))
+    {
+      format = (uint8)H263_VIDEO;
+    }
     if ( (p_track->dec_specific_info.obj_type == MPEG4_VIDEO) &&
          (p_track->frames == 1) )
     {
@@ -4770,6 +4858,15 @@ uint8  Mpeg4File::getTrackOTIType(uint32 id)
        it as STILL IMAGE frame, so that audio track repositioning can work */
        format = MPEG4_IMAGE;
     }
+
+    if((p_track->frames == 1)&&(p_track->type == VIDEO_FMT_STREAM_VIDEO)
+        && (p_track->subinfo.video.format == VIDEO_FMT_STREAM_VIDEO_H263))
+    {
+      /* this is H263 Video CODEC with just one video frame. We will treat
+       it as STILL IMAGE frame, so that audio track repositioning can work */
+       format = H263_IMAGE;
+    }
+
     /* Audio special treatment
     */
     if (p_track->type == VIDEO_FMT_STREAM_AUDIO)
@@ -4789,10 +4886,12 @@ uint8  Mpeg4File::getTrackOTIType(uint32 id)
         format = (uint8)PUREVOICE_AUDIO; // 3GPP2 QCELP
         break;
 
-      case VIDEO_FMT_STREAM_AUDIO_MPEG1_L3:              
-      case VIDEO_FMT_STREAM_AUDIO_MPEG2_L3: 
-        format = (uint8)MP3_AUDIO; 
-        break; 
+#ifdef FEATURE_MP4_MP3
+      case VIDEO_FMT_STREAM_AUDIO_MPEG1_L3:
+      case VIDEO_FMT_STREAM_AUDIO_MPEG2_L3:
+        format = (uint8)MP3_AUDIO;
+        break;
+#endif
 
       case VIDEO_FMT_STREAM_AUDIO_QCELP13K_FULL:
         format = (uint8)PUREVOICE_AUDIO_2; // 3GPP2 QCELP
@@ -5265,6 +5364,9 @@ int32 Mpeg4File::getNumTracks()
         m_bTextPresentInClip = true;
       totalTracks++;
     }
+    else
+      QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
+                    "track id %d is unsupported/unknown track type", p_track->track_id);
   }
 
   /* Added this to correct the play information sent in constructor*/
@@ -5436,11 +5538,11 @@ void Mpeg4File::process_video_fmt_info(video_fmt_status_type status,
 #ifdef FEATURE_QTV_PDCF
       if(m_OffsetinEncryptionTypeArray < VIDEO_FMT_MAX_MEDIA_STREAMS)
       {
-        if(( (p_track->subinfo.video.pdcf_info.scheme_type == ODKM_TYPE) 
+        if(( (p_track->subinfo.video.pdcf_info.scheme_type == ODKM_TYPE)
               && (p_track->subinfo.video.pdcf_info.scheme_version == OMA_DRM_SCHEME_VERSION))
-           || ((p_track->subinfo.audio.pdcf_info.scheme_type == ODKM_TYPE) 
-              && (p_track->subinfo.audio.pdcf_info.scheme_version == OMA_DRM_SCHEME_VERSION)))            
-        {          
+           || ((p_track->subinfo.audio.pdcf_info.scheme_type == ODKM_TYPE)
+              && (p_track->subinfo.audio.pdcf_info.scheme_version == OMA_DRM_SCHEME_VERSION)))
+        {
           m_EncryptionType[m_OffsetinEncryptionTypeArray].track_id = p_track->track_id;
           m_EncryptionType[m_OffsetinEncryptionTypeArray].encryptionType = QtvPlayer::ENCRYPT_OMA_DRM_V2;
           m_OffsetinEncryptionTypeArray++;
@@ -5480,7 +5582,7 @@ void Mpeg4File::process_video_fmt_info(video_fmt_status_type status,
           }
         }
         /*
-        * m_track is declared as 
+        * m_track is declared as
         * video_fmt_stream_info_type* m_track[VIDEO_FMT_MAX_MEDIA_STREAMS];
         * Make sure (m_trackCount+1) is within the correct limits before attempting to write to it.
         */
@@ -5508,7 +5610,7 @@ void Mpeg4File::process_video_fmt_info(video_fmt_status_type status,
           }
         }
          /*
-        * m_track is declared as 
+        * m_track is declared as
         * video_fmt_stream_info_type* m_track[VIDEO_FMT_MAX_MEDIA_STREAMS];
         * Make sure (m_trackCount+1) is within the correct limits before attempting to write to it.
         */
@@ -5536,7 +5638,7 @@ void Mpeg4File::process_video_fmt_info(video_fmt_status_type status,
           }
         }
         /*
-        * m_track is declared as 
+        * m_track is declared as
         * video_fmt_stream_info_type* m_track[VIDEO_FMT_MAX_MEDIA_STREAMS];
         * Make sure (m_trackCount+1) is within the correct limits before attempting to write to it.
         */
@@ -5592,13 +5694,13 @@ void Mpeg4File::mp4ParseStatus (video_fmt_status_type status,
 
   // Store session end callback function.
   m_mp4ParseEndCb = end;
-  
+
   /*
-  * m_parseFilePtr is valid only for initial parsing. 
-  * For subsequent fragment parsing, we will use one of the already opened 
-  * file pointer for playing track because we want to limit 
-  * opened file pointers to one per stream. 
-  * Some OEM have limited file pointers and for some OEM opening and 
+  * m_parseFilePtr is valid only for initial parsing.
+  * For subsequent fragment parsing, we will use one of the already opened
+  * file pointer for playing track because we want to limit
+  * opened file pointers to one per stream.
+  * Some OEM have limited file pointers and for some OEM opening and
   * closing file pointers are very CPU expensive.
   *
   * Validation of localParseFilePtr is done below before use.
@@ -5636,7 +5738,10 @@ void Mpeg4File::mp4ParseStatus (video_fmt_status_type status,
     break;
 
   case VIDEO_FMT_FILESIZE:
+    if(!bHttpStreaming)
     info->fSize.fileSize = (m_fileSizeFound) ? m_fileSize : 0;
+    else
+      info->fSize.fileSize = 0xFFFFFFFF;
     break;
 
   case VIDEO_FMT_GET_DATA:
@@ -5654,42 +5759,47 @@ void Mpeg4File::mp4ParseStatus (video_fmt_status_type status,
         if(m_pMpeg4Player && m_pMpeg4Player->m_bMediaAbort)
         {
           info->get_data.num_bytes = 0;
-		  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Failed to readFile (mp4ParseStatus): User aborted playback..!!"); 
-		  _fileErrorCode = (int32)READ_FAILED;
+            QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Failed to readFile (mp4ParseStatus): User aborted playback..!!");
+            _fileErrorCode = (int32)READ_FAILED;
           break;
         }
+
+      QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+         "Read offset %d Read bytes %d", info->get_data.offset,
+          info->get_data.num_bytes);
+      memset(info->get_data.buffer,0,info->get_data.num_bytes);
       // Read the given number of bytes from the given offset in the
       // file.
       info->get_data.num_bytes
         = MIN (info->get_data.num_bytes,
         (m_fileSize - MIN (m_fileSize, info->get_data.offset)));
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
       if(bHttpStreaming && !m_parsedEndofFile)
       {
         video_fmt_mp4r_context_type *context =
           (video_fmt_mp4r_context_type *) m_videoFmtInfo.server_data;
         if(context->get_data_src_in_mdat &&
-          ((info->get_data.offset + info->get_data.num_bytes -1) >= m_wBufferOffset))
-        {
+            ((info->get_data.offset + info->get_data.num_bytes -1) >= m_wBufferOffset))
+       {
           //eg: h.263
           bsendParseFragmentCmd = FALSE;
           memset(info->get_data.buffer,0x0,info->get_data.num_bytes);
           /* Update the minimum offset required */
           m_minOffsetRequired = info->get_data.offset + info->get_data.num_bytes;
+          info->get_data.num_bytes = 0;
           break;
         }
       }
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+
 
       if ( info->get_data.num_bytes )
       {
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
         uint32 totalReqBytes = info->get_data.num_bytes;
         if(bHttpStreaming)
         {
           if(info->get_data.offset >= m_wBufferOffset)
           {
+            info->get_data.num_bytes = 0;
             memset(info->get_data.buffer,0x0,info->get_data.num_bytes);
             break;
           }
@@ -5699,15 +5809,14 @@ void Mpeg4File::mp4ParseStatus (video_fmt_status_type status,
           }
         }
 
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
         if( (info->get_data.offset+info->get_data.num_bytes) > m_fileSize )
-		    {
+              {
            /*
            * This can happen if file has some junk data at the end
            * or in case of encrypted file, there is some padding at the end.
-           * Make sure we don't read beyond the file size.           
-           */           
-           QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, 
+           * Make sure we don't read beyond the file size.
+           */
+           QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
                          "Trying to read beyond file size: offset %d nRead %d file_size %d",
                          info->get_data.offset,info->get_data.num_bytes,m_fileSize);
            /*
@@ -5716,15 +5825,15 @@ void Mpeg4File::mp4ParseStatus (video_fmt_status_type status,
            */
            if((signed) (m_fileSize - info->get_data.offset) >=(signed) 0)
            {
-				     info->get_data.num_bytes = (m_fileSize - info->get_data.offset);
+                         info->get_data.num_bytes = (m_fileSize - info->get_data.offset);
            }
            else
            {
              info->get_data.num_bytes = 0;
            }
-           QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, 
+           QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
                          "Adjusted #of bytes to read %d", info->get_data.num_bytes);
-			  }
+                 }
         if(info->get_data.num_bytes > 0)
         {
 
@@ -5732,33 +5841,28 @@ void Mpeg4File::mp4ParseStatus (video_fmt_status_type status,
                                                info->get_data.buffer,
                                                info->get_data.offset,
                                                info->get_data.num_bytes);
+
+          QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+                         "Number of bytes read: %d data Offset: %d",
+                         info->get_data.num_bytes,info->get_data.offset);
+
+          memset(info->get_data.buffer + info->get_data.num_bytes,0,
+            totalReqBytes - info->get_data.num_bytes);
           if (!info->get_data.num_bytes)
-		      {
+                {
             QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Failed to readFile");
 #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
             if(!bHttpStreaming)
 #endif
             {
               //This should be done for local playback as
-		          //for PD,PS, it is possible to have 0 bytes being read.            
+                    //for PD,PS, it is possible to have 0 bytes being read.
               //Set the error code to let player know the exact failure.
               //This will help to stop/abort the playback.
               _fileErrorCode = (int32)READ_FAILED;
             }
           }
         }
-
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-        if(info->get_data.num_bytes < totalReqBytes)
-        {
-          if(bHttpStreaming)
-          {
-            QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Retrieving meta data size: Req bytes = %d, Read bytes = %d",
-              totalReqBytes,info->get_data.num_bytes);
-            info->get_data.num_bytes = totalReqBytes;
-          }
-        }
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
       }
     }
     break;
@@ -5817,198 +5921,198 @@ void Mpeg4File::mp4ParseStatus (video_fmt_status_type status,
 
   case VIDEO_FMT_HINT:
     {
-       			video_fmt_mp4_atom_type* pAtomInfo = info->hint.mp4;
+                    video_fmt_mp4_atom_type* pAtomInfo = info->hint.mp4;
   #ifdef FEATURE_QTV_PDCF
-      if( pAtomInfo->type == SCHM_TYPE || pAtomInfo->type == FRMA_TYPE 
+      if( pAtomInfo->type == SCHM_TYPE || pAtomInfo->type == FRMA_TYPE
          || pAtomInfo->type == OHDR_TYPE || pAtomInfo->type == ODAF_TYPE
          || pAtomInfo->type == MDRI_TYPE)
-      {		
+      {
         QtvPlayer::DataT atom_type = QtvPlayer::DATA_ATOM_NONE;
         QtvPlayer::DataT atom_offset_type = QtvPlayer::DATA_ATOM_NONE;
         switch(pAtomInfo->type)
         {
-          case SCHM_TYPE:			
-            atom_type = QtvPlayer::DATA_ATOM_SCHM;			
-            atom_offset_type = QtvPlayer::DATA_ATOM_SCHM_OFFSET;			
+          case SCHM_TYPE:
+            atom_type = QtvPlayer::DATA_ATOM_SCHM;
+            atom_offset_type = QtvPlayer::DATA_ATOM_SCHM_OFFSET;
             break;
           case FRMA_TYPE:
-            atom_type = QtvPlayer::DATA_ATOM_FRMA;			
-            atom_offset_type = QtvPlayer::DATA_ATOM_FRMA_OFFSET;			
+            atom_type = QtvPlayer::DATA_ATOM_FRMA;
+            atom_offset_type = QtvPlayer::DATA_ATOM_FRMA_OFFSET;
             break;
           case OHDR_TYPE:
-            atom_type = QtvPlayer::DATA_ATOM_OHDR;			
-            atom_offset_type = QtvPlayer::DATA_ATOM_OHDR_OFFSET;			
+            atom_type = QtvPlayer::DATA_ATOM_OHDR;
+            atom_offset_type = QtvPlayer::DATA_ATOM_OHDR_OFFSET;
             break;
           case ODAF_TYPE:
-            atom_type = QtvPlayer::DATA_ATOM_ODAF;			
-            atom_offset_type = QtvPlayer::DATA_ATOM_ODAF_OFFSET;			
-            break;		
+            atom_type = QtvPlayer::DATA_ATOM_ODAF;
+            atom_offset_type = QtvPlayer::DATA_ATOM_ODAF_OFFSET;
+            break;
           case MDRI_TYPE:
-            atom_type = QtvPlayer::DATA_ATOM_MDRI;			
-            atom_offset_type = QtvPlayer::DATA_ATOM_MDRI_OFFSET;			
-            break;	
+            atom_type = QtvPlayer::DATA_ATOM_MDRI;
+            atom_offset_type = QtvPlayer::DATA_ATOM_MDRI_OFFSET;
+            break;
           default:
             break;
         }
         if((m_playAudio && (info->hint.stream_info->type == VIDEO_FMT_STREAM_AUDIO)) ||
-           (m_playVideo && (info->hint.stream_info->type == VIDEO_FMT_STREAM_VIDEO))) 
+           (m_playVideo && (info->hint.stream_info->type == VIDEO_FMT_STREAM_VIDEO)))
         {
           if(_pdcfAtom == NULL)
           {
             _pdcfAtom = QTV_New( PdcfAtom );
           }
-          if(!_pdcfAtom->saveAtom(atom_type, atom_offset_type, 
-                                          info->hint.stream_info->track_id, 
+          if(!_pdcfAtom->saveAtom(atom_type, atom_offset_type,
+                                          info->hint.stream_info->track_id,
                                           pAtomInfo->size, pAtomInfo->offset)
             )
           {
             QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "VIDEO_FMT_HINT failed to store the pdcfAtom");
           }
-	}
+     }
       }
 #endif /* FEATURE_QTV_PDCF */
 
-			if( pAtomInfo->type == FTYP_TYPE || pAtomInfo->type == CPRT_TYPE ||
-				pAtomInfo->type == AUTH_TYPE || pAtomInfo->type == TITL_TYPE ||
-				pAtomInfo->type == DSCP_TYPE || pAtomInfo->type == DCMD_DRM_ATOM||
-				pAtomInfo->type == RTNG_TYPE || pAtomInfo->type == GNRE_TYPE||
-				pAtomInfo->type == PERF_TYPE || pAtomInfo->type == CLSF_TYPE||
-				pAtomInfo->type == KYWD_TYPE || pAtomInfo->type == LOCI_TYPE||
-				pAtomInfo->type == META_TYPE || pAtomInfo->type == UDTA_TYPE||
+               if( pAtomInfo->type == FTYP_TYPE || pAtomInfo->type == CPRT_TYPE ||
+                    pAtomInfo->type == AUTH_TYPE || pAtomInfo->type == TITL_TYPE ||
+                    pAtomInfo->type == DSCP_TYPE || pAtomInfo->type == DCMD_DRM_ATOM||
+                    pAtomInfo->type == RTNG_TYPE || pAtomInfo->type == GNRE_TYPE||
+                    pAtomInfo->type == PERF_TYPE || pAtomInfo->type == CLSF_TYPE||
+                    pAtomInfo->type == KYWD_TYPE || pAtomInfo->type == LOCI_TYPE||
+                    pAtomInfo->type == META_TYPE || pAtomInfo->type == UDTA_TYPE||
                                 pAtomInfo->type == ALBM_TYPE || pAtomInfo->type == YRRC_TYPE
-				)
-			{
-				int32 saveFilePos = OSCL_FileTell (localParseFilePtr);
-				/* for child videoFMT offset is after atom size and type, but
-				current parsing needs atom header as well, so goback 8 bytes */
-				if (pAtomInfo->offset >= DEFAULT_UDTA_CHILD_ATOM_HEADER_SIZE)
-					(void)OSCL_FileSeek(localParseFilePtr,
-					(int32)(pAtomInfo->offset-DEFAULT_UDTA_CHILD_ATOM_HEADER_SIZE),
-					SEEK_SET);
+                    )
+               {
+                    int32 saveFilePos = OSCL_FileTell (localParseFilePtr);
+                    /* for child videoFMT offset is after atom size and type, but
+                    current parsing needs atom header as well, so goback 8 bytes */
+                    if (pAtomInfo->offset >= DEFAULT_UDTA_CHILD_ATOM_HEADER_SIZE)
+                         (void)OSCL_FileSeek(localParseFilePtr,
+                         (int32)(pAtomInfo->offset-DEFAULT_UDTA_CHILD_ATOM_HEADER_SIZE),
+                         SEEK_SET);
 
-				switch(pAtomInfo->type)
-				{
-				case UDTA_TYPE:
-					m_bUdtaAtomPresent=true;
-					QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "3GPP Udta atom present..");
-					break;
-				case FTYP_TYPE: /* 'ftyp' */
-					if(_ftypAtom)
-						QTV_Delete( _ftypAtom );
-					_ftypAtom = QTV_New_Args( FtypAtom, (localParseFilePtr) );
+                    switch(pAtomInfo->type)
+                    {
+                    case UDTA_TYPE:
+                         m_bUdtaAtomPresent=true;
+                         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "3GPP Udta atom present..");
+                         break;
+                    case FTYP_TYPE: /* 'ftyp' */
+                         if(_ftypAtom)
+                              QTV_Delete( _ftypAtom );
+                         _ftypAtom = QTV_New_Args( FtypAtom, (localParseFilePtr) );
                                  if(_ftypAtom != NULL)
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "FileType Atom Size = %d", _ftypAtom->getFtypDataSize());
-					}
-					break;
-				case CPRT_TYPE: /* 'cprt' */
-					if(_cprtAtom)
-						QTV_Delete( _cprtAtom );
-					_cprtAtom = QTV_New_Args( UdtaCprtAtom, (localParseFilePtr) );
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "FileType Atom Size = %d", _ftypAtom->getFtypDataSize());
+                         }
+                         break;
+                    case CPRT_TYPE: /* 'cprt' */
+                         if(_cprtAtom)
+                              QTV_Delete( _cprtAtom );
+                         _cprtAtom = QTV_New_Args( UdtaCprtAtom, (localParseFilePtr) );
                                 if(_cprtAtom != NULL)
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "CopyRight Atom Size = %d", _cprtAtom->getUdtaCprtDataSize());
-					}
-					break;
-				case AUTH_TYPE: /* 'auth' */
-					if(_authAtom)
-						QTV_Delete( _authAtom );
-					_authAtom = QTV_New_Args( UdtaAuthAtom, (localParseFilePtr) );
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "CopyRight Atom Size = %d", _cprtAtom->getUdtaCprtDataSize());
+                         }
+                         break;
+                    case AUTH_TYPE: /* 'auth' */
+                         if(_authAtom)
+                              QTV_Delete( _authAtom );
+                         _authAtom = QTV_New_Args( UdtaAuthAtom, (localParseFilePtr) );
                                   if(_authAtom != NULL)
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Author Atom Size = %d", _authAtom->getUdtaAuthDataSize());
-					}
-					break;
-				case TITL_TYPE: /* 'titl' */
-					if(_titlAtom)
-						QTV_Delete( _titlAtom );
-					_titlAtom = QTV_New_Args( UdtaTitlAtom, (localParseFilePtr) );
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Author Atom Size = %d", _authAtom->getUdtaAuthDataSize());
+                         }
+                         break;
+                    case TITL_TYPE: /* 'titl' */
+                         if(_titlAtom)
+                              QTV_Delete( _titlAtom );
+                         _titlAtom = QTV_New_Args( UdtaTitlAtom, (localParseFilePtr) );
                                  if(_titlAtom != NULL)
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Title Atom Size = %d", _titlAtom->getUdtaTitlDataSize());
-					}
-					break;
-				case DSCP_TYPE: /* 'dscp' */
-					if(_dscpAtom)
-						QTV_Delete( _dscpAtom );
-					_dscpAtom = QTV_New_Args( UdtaDscpAtom, (localParseFilePtr) );
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Title Atom Size = %d", _titlAtom->getUdtaTitlDataSize());
+                         }
+                         break;
+                    case DSCP_TYPE: /* 'dscp' */
+                         if(_dscpAtom)
+                              QTV_Delete( _dscpAtom );
+                         _dscpAtom = QTV_New_Args( UdtaDscpAtom, (localParseFilePtr) );
                                 if(_dscpAtom != NULL)
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Description Atom Size = %d", _dscpAtom->getUdtaDscpDataSize());
-					}
-					break;
-				case  DCMD_DRM_ATOM: /* 'dcmd' */
-					if(_dcmdAtom)
-						QTV_Delete( _dcmdAtom );
-					_dcmdAtom = QTV_New_Args( DcmdDrmAtom, (localParseFilePtr) );
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Description Atom Size = %d", _dscpAtom->getUdtaDscpDataSize());
+                         }
+                         break;
+                    case  DCMD_DRM_ATOM: /* 'dcmd' */
+                         if(_dcmdAtom)
+                              QTV_Delete( _dcmdAtom );
+                         _dcmdAtom = QTV_New_Args( DcmdDrmAtom, (localParseFilePtr) );
                                 if(_dcmdAtom != NULL)
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "DCMD DRM Atom Size = %d", _dcmdAtom->getDcmdDataSize());
-					}
-					break;
-				case  RTNG_TYPE:
-					if(_rtngAtom)
-						QTV_Delete( _rtngAtom );
-					_rtngAtom= QTV_New_Args( UdtaRtngAtom, (localParseFilePtr) );
-		            	if(_rtngAtom != NULL)
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Rating Atom Size = %d", _rtngAtom->getUdtaRtngDataSize());
-					}
-					break;
-				case  GNRE_TYPE:
-					if(_gnreAtom)
-						QTV_Delete( _gnreAtom );
-					_gnreAtom= QTV_New_Args( UdtaGnreAtom, (localParseFilePtr) );
-		         	if(_gnreAtom != NULL)
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Genre Atom Size = %d", _gnreAtom->getUdtaGnreDataSize());
-					}
-					break;
-				case  PERF_TYPE:
-					if(_perfAtom)
-						QTV_Delete( _perfAtom );
-					_perfAtom= QTV_New_Args( UdtaPerfAtom, (localParseFilePtr) );
-			     if(_perfAtom != NULL)
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Performance Atom Size = %d", _perfAtom->getUdtaPerfDataSize());
-					}
-					break;
-				case  CLSF_TYPE:
-					if(_clsfAtom)
-						QTV_Delete( _clsfAtom );
-					_clsfAtom= QTV_New_Args( UdtaClsfAtom, (localParseFilePtr) );
-			   if(_clsfAtom != NULL)
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Classification Atom Size = %d", _clsfAtom->getUdtaClsfDataSize());
-					}
-					break;
-				case  KYWD_TYPE:
-					if(_kywdAtom)
-						QTV_Delete( _kywdAtom );
-					_kywdAtom= QTV_New_Args( UdtaKywdAtom, (localParseFilePtr) );
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "DCMD DRM Atom Size = %d", _dcmdAtom->getDcmdDataSize());
+                         }
+                         break;
+                    case  RTNG_TYPE:
+                         if(_rtngAtom)
+                              QTV_Delete( _rtngAtom );
+                         _rtngAtom= QTV_New_Args( UdtaRtngAtom, (localParseFilePtr) );
+                         if(_rtngAtom != NULL)
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Rating Atom Size = %d", _rtngAtom->getUdtaRtngDataSize());
+                         }
+                         break;
+                    case  GNRE_TYPE:
+                         if(_gnreAtom)
+                              QTV_Delete( _gnreAtom );
+                         _gnreAtom= QTV_New_Args( UdtaGnreAtom, (localParseFilePtr) );
+                    if(_gnreAtom != NULL)
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Genre Atom Size = %d", _gnreAtom->getUdtaGnreDataSize());
+                         }
+                         break;
+                    case  PERF_TYPE:
+                         if(_perfAtom)
+                              QTV_Delete( _perfAtom );
+                         _perfAtom= QTV_New_Args( UdtaPerfAtom, (localParseFilePtr) );
+                    if(_perfAtom != NULL)
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Performance Atom Size = %d", _perfAtom->getUdtaPerfDataSize());
+                         }
+                         break;
+                    case  CLSF_TYPE:
+                         if(_clsfAtom)
+                              QTV_Delete( _clsfAtom );
+                         _clsfAtom= QTV_New_Args( UdtaClsfAtom, (localParseFilePtr) );
+                  if(_clsfAtom != NULL)
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Classification Atom Size = %d", _clsfAtom->getUdtaClsfDataSize());
+                         }
+                         break;
+                    case  KYWD_TYPE:
+                         if(_kywdAtom)
+                              QTV_Delete( _kywdAtom );
+                         _kywdAtom= QTV_New_Args( UdtaKywdAtom, (localParseFilePtr) );
                            if(_kywdAtom != NULL)
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Keyword Atom Size = %d", _kywdAtom->getUdtaKywdDataSize());
-					}
-					break;
-				case  LOCI_TYPE:
-					if(_lociAtom)
-						QTV_Delete( _lociAtom );
-					_lociAtom= QTV_New_Args( UdtaLociAtom, (localParseFilePtr) );
-			     if(_lociAtom != NULL)
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Location Atom Size = %d", _lociAtom->getUdtaLociDataSize());
-					}
-					break;
-				case  META_TYPE:
-					if(_metaAtom)
-						QTV_Delete( _metaAtom );
-					_metaAtom= QTV_New_Args( UdtaMetaAtom, (localParseFilePtr) );
-					if(_metaAtom)
-					{
-						QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Meta Atom Size = %d", _metaAtom->getUdtaMetaDataSize());
-					}
-					break;
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Keyword Atom Size = %d", _kywdAtom->getUdtaKywdDataSize());
+                         }
+                         break;
+                    case  LOCI_TYPE:
+                         if(_lociAtom)
+                              QTV_Delete( _lociAtom );
+                         _lociAtom= QTV_New_Args( UdtaLociAtom, (localParseFilePtr) );
+                    if(_lociAtom != NULL)
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Location Atom Size = %d", _lociAtom->getUdtaLociDataSize());
+                         }
+                         break;
+                    case  META_TYPE:
+                         if(_metaAtom)
+                              QTV_Delete( _metaAtom );
+                         _metaAtom= QTV_New_Args( UdtaMetaAtom, (localParseFilePtr) );
+                         if(_metaAtom)
+                         {
+                              QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Meta Atom Size = %d", _metaAtom->getUdtaMetaDataSize());
+                         }
+                         break;
                                case ALBM_TYPE: /* 'albm' */
                                        if(_albumAtom)
                                          QTV_Delete( _albumAtom );
@@ -6027,14 +6131,14 @@ void Mpeg4File::mp4ParseStatus (video_fmt_status_type status,
                                           QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Yrrc Atom Size = %d", _yrrcAtom->getUdtaYrrcDataSize());
                                       }
                                       break;
-				default:
-					break;
-				}
-				(void)OSCL_FileSeek(localParseFilePtr, saveFilePos, SEEK_SET);
-			}
-			//QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "VIDEO_FMT_HINT");
-			break;
-		}
+                    default:
+                         break;
+                    }
+                    (void)OSCL_FileSeek(localParseFilePtr, saveFilePos, SEEK_SET);
+               }
+               //QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "VIDEO_FMT_HINT");
+               break;
+          }
 
   case VIDEO_FMT_FAILURE:
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "VIDEO_FMT_FAILURE");
@@ -6047,16 +6151,8 @@ void Mpeg4File::mp4ParseStatus (video_fmt_status_type status,
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "VIDEO_FMT_BUSY");
     break;
 
-#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-
   case VIDEO_FMT_INIT:
     m_trackCount = 0;
-    memcpy ( &m_videoFmtInfo, (void *)&info->info, sizeof(video_fmt_info_type) );
-    // Save stream reading callback.
-    m_mp4ParseServerData = info->info.server_data;
-    break;
-
-  case VIDEO_FMT_FRAGMENT_SIZE:
     memcpy ( &m_videoFmtInfo, (void *)&info->info, sizeof(video_fmt_info_type) );
     // Save stream reading callback.
     m_mp4ParseServerData = info->info.server_data;
@@ -6067,6 +6163,17 @@ void Mpeg4File::mp4ParseStatus (video_fmt_status_type status,
     if(!m_parsedEndofFile)
       m_parsedEndofFile = true;
     m_corruptFile = true;
+    break;
+
+#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+
+  case VIDEO_FMT_FRAGMENT_SIZE:
+    memcpy ( &m_videoFmtInfo, (void *)&info->info, sizeof(video_fmt_info_type) );
+    // Save stream reading callback.
+    m_mp4ParseServerData = info->info.server_data;
+    break;
+  case VIDEO_FMT_FRAGMENT_PEEK:
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "VIDEO_FMT_FRAGMENT_PEEK");
     break;
 
   case VIDEO_FMT_DATA_INCOMPLETE:
@@ -6180,7 +6287,7 @@ void Mpeg4File::mp4ReadStatus (uint32 streamNum,
         {
           info->get_data.num_bytes = 0;
           QTV_MSG (MSG_LEGACY_HIGH, "Failed to readFile (mp4ReadStatus): User aborted playback..!!");
-		  _fileErrorCode = (int32)READ_FAILED;
+            _fileErrorCode = (int32)READ_FAILED;
           break;
         }
       /* if file pointer for this stream is already not opened, then open it */
@@ -6239,12 +6346,12 @@ void Mpeg4File::mp4ReadStatus (uint32 streamNum,
 #endif
           {
             //This should be done for local playback as
-		        //for PD,PS, it is possible to have 0 bytes being read.            
+                  //for PD,PS, it is possible to have 0 bytes being read.
             //Set the error code to let player know the exact failure.
             //This will help to stop/abort the playback.
             _fileErrorCode = (int32)READ_FAILED;
           }
-		}
+          }
       }
     }
     break;
@@ -6297,7 +6404,7 @@ void Mpeg4File::mp4ReadStatus (uint32 streamNum,
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "VIDEO_FMT_BUSY");
     break;
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD ||defined FEATURE_QTV_PSEUDO_STREAM
   case VIDEO_FMT_DATA_INCOMPLETE:
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "VIDEO_FMT_DATA_INCOMPLETE");
     break;
@@ -6398,7 +6505,7 @@ void Mpeg4File::mp4SyncStatus (uint32 streamNum,
       {
         info->get_data.num_bytes = 0;
         QTV_MSG (MSG_LEGACY_HIGH, "Failed to readFile (mp4SyncStatus): User aborted playback..!!");
-		_fileErrorCode = (int32)READ_FAILED;
+          _fileErrorCode = (int32)READ_FAILED;
         break;
       }
 
@@ -6442,19 +6549,19 @@ void Mpeg4File::mp4SyncStatus (uint32 streamNum,
         m_mp4SyncServerData[streamNum] = info->get_data.server_data;
       }
       else
-	  {
+       {
         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Failed to readFile");
 #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
           if(!bHttpStreaming)
 #endif
           {
             //This should be done for local playback as
-		        //for PD,PS, it is possible to have 0 bytes being read.            
+                  //for PD,PS, it is possible to have 0 bytes being read.
             //Set the error code to let player know the exact failure.
             //This will help to stop/abort the playback.
             _fileErrorCode = (int32)READ_FAILED;
           }
-	  }
+       }
     }
     break;
 
@@ -6646,7 +6753,7 @@ int32 Mpeg4File::getNextParamSetNAL(uint32 trackId, uint8 *buf, uint32 size)
       if (!(nBytes < (int32)size))
       {
          nBytes = FRAGMENT_CORRUPT;
-	 return nBytes;
+      return nBytes;
       }
       memcpy(buf, h264Info->seq_param_set[m_nextSeqSample].data, (uint32)nBytes);
       m_nextSeqSample++;
@@ -6659,8 +6766,8 @@ int32 Mpeg4File::getNextParamSetNAL(uint32 trackId, uint8 *buf, uint32 size)
 
       if (!(nBytes < (int32)size))
       {
-	nBytes = FRAGMENT_CORRUPT;
-	return nBytes;
+     nBytes = FRAGMENT_CORRUPT;
+     return nBytes;
       }
       memcpy(buf, h264Info->pic_param_set[m_nextPicSample].data, (uint32)nBytes);
       m_nextPicSample++;
@@ -6949,42 +7056,42 @@ bool Mpeg4File::IsDataPresent(QtvPlayer::DataT dType, uint32 track_id)
     }
     return false;
   case QtvPlayer::DATA_ATOM_UDTA_RTNG:  /* Rating Atom*/
-	if ( _rtngAtom )
-	{
-	 return true;
-	}
-	return false;
+     if ( _rtngAtom )
+     {
+      return true;
+     }
+     return false;
   case QtvPlayer::DATA_ATOM_UDTA_PERF:  /* Performance Atom*/
-	if ( _perfAtom )
-	{
-	  return true;
-	}
-	return false;
+     if ( _perfAtom )
+     {
+       return true;
+     }
+     return false;
   case QtvPlayer::DATA_ATOM_UDTA_CLSF:  /* Classification Atom*/
-	if ( _clsfAtom )
-	{
-	  return true;
-	}
-	return false;
+     if ( _clsfAtom )
+     {
+       return true;
+     }
+     return false;
   case QtvPlayer::DATA_ATOM_UDTA_KYWD:  /* Keyword Atom*/
-	if ( _kywdAtom )
-	{
-	  return true;
-	}
-	return false;
+     if ( _kywdAtom )
+     {
+       return true;
+     }
+     return false;
   case QtvPlayer::DATA_ATOM_UDTA_LOCI:  /* Location Atom*/
-	if ( _lociAtom )
-	{
-	  return true;
-	}
-	return false;
+     if ( _lociAtom )
+     {
+       return true;
+     }
+     return false;
 
   case QtvPlayer::DATA_ATOM_UDTA_META:  /* Meta Atom*/
-	if ( _metaAtom )
-	{
-	  return true;
-	}
-	return false;
+     if ( _metaAtom )
+     {
+       return true;
+     }
+     return false;
 case QtvPlayer::DATA_ATOM_UDTA_ALBM:  /* Album Atom*/
     if ( _albumAtom )
     {
@@ -7185,10 +7292,10 @@ uint32 Mpeg4File::GetDataSize(QtvPlayer::DataT dType, uint32 offset )
     }
     return 0;
 #ifdef FEATURE_QTV_PDCF
-  case QtvPlayer::DATA_ATOM_SCHM: 	  
-  case QtvPlayer::DATA_ATOM_FRMA: 
-  case QtvPlayer::DATA_ATOM_OHDR: 
-  case QtvPlayer::DATA_ATOM_ODAF:  
+  case QtvPlayer::DATA_ATOM_SCHM:
+  case QtvPlayer::DATA_ATOM_FRMA:
+  case QtvPlayer::DATA_ATOM_OHDR:
+  case QtvPlayer::DATA_ATOM_ODAF:
   case QtvPlayer::DATA_ATOM_MDRI:
     if(_pdcfAtom)
     {
@@ -7383,7 +7490,7 @@ uint32 Mpeg4File::GetData(QtvPlayer::DataT dType, uint8 *pBuf, uint32 size, uint
     return 0;
 
 case QtvPlayer::DATA_ATOM_UUID:
-  { 
+  {
     if(m_parseFilePtr)
     {
       int32 saveFilePos = OSCL_FileTell (m_parseFilePtr);
@@ -7400,7 +7507,7 @@ case QtvPlayer::DATA_ATOM_UUID:
         OSCL_FileSeek(m_parseFilePtr, UUIDatom->getOffsetInFile(), SEEK_SET);
         uint32 uuidatomSize = UUIDatom->getSize();
         copiedSize = MIN(size, uuidatomSize);
-        if ( OSCL_FileRead (pBuf, copiedSize, 
+        if ( OSCL_FileRead (pBuf, copiedSize,
                           1,  m_parseFilePtr) == 0 )
         {
           QTV_MSG (MSG_LEGACY_ERROR, "Failed to readFile");
@@ -7422,7 +7529,7 @@ case QtvPlayer::DATA_ATOM_UUID:
     if(m_parseFilePtr)
     {
       int32 saveFilePos = OSCL_FileTell (m_parseFilePtr);
-      uint32 trackid = 0;    
+      uint32 trackid = 0;
       for (uint32 index = 0; index < m_trackCount; index++)
       {
         if ( m_track[index]->type == VIDEO_FMT_STREAM_TEXT )
@@ -7432,11 +7539,11 @@ case QtvPlayer::DATA_ATOM_UUID:
       uint32 copiedSize = 0;
       if (textAtom != NULL)
       {
-        OSCL_FileSeek(m_parseFilePtr, 
+        OSCL_FileSeek(m_parseFilePtr,
           textAtom->getOffsetInFile() +  DEFAULT_TX3G_ATOM_HEADER_SIZE, SEEK_SET);
         uint32 uuidatomSize = textAtom->getSize()-DEFAULT_TX3G_ATOM_HEADER_SIZE;
         copiedSize = MIN(size, uuidatomSize);
-        if ( OSCL_FileRead (pBuf, copiedSize, 
+        if ( OSCL_FileRead (pBuf, copiedSize,
                           1,  m_parseFilePtr) == 0 )
         {
           QTV_MSG (MSG_LEGACY_ERROR, "Failed to readFile");
@@ -7453,11 +7560,11 @@ case QtvPlayer::DATA_ATOM_UUID:
     break;
   }
 #ifdef FEATURE_QTV_PDCF
-  case QtvPlayer::DATA_ATOM_SCHM: 	  
-  case QtvPlayer::DATA_ATOM_FRMA: 
-  case QtvPlayer::DATA_ATOM_OHDR: 
-  case QtvPlayer::DATA_ATOM_ODAF:   
-  case QtvPlayer::DATA_ATOM_MDRI: 
+  case QtvPlayer::DATA_ATOM_SCHM:
+  case QtvPlayer::DATA_ATOM_FRMA:
+  case QtvPlayer::DATA_ATOM_OHDR:
+  case QtvPlayer::DATA_ATOM_ODAF:
+  case QtvPlayer::DATA_ATOM_MDRI:
     if(_pdcfAtom)
     {
       if( m_parseFilePtr == NULL )
@@ -7478,10 +7585,10 @@ case QtvPlayer::DATA_ATOM_UUID:
       }
     }
     break;
-  case QtvPlayer::DATA_ATOM_SCHM_OFFSET: 	  
-  case QtvPlayer::DATA_ATOM_FRMA_OFFSET: 
-  case QtvPlayer::DATA_ATOM_OHDR_OFFSET: 
-  case QtvPlayer::DATA_ATOM_ODAF_OFFSET:   
+  case QtvPlayer::DATA_ATOM_SCHM_OFFSET:
+  case QtvPlayer::DATA_ATOM_FRMA_OFFSET:
+  case QtvPlayer::DATA_ATOM_OHDR_OFFSET:
+  case QtvPlayer::DATA_ATOM_ODAF_OFFSET:
   case QtvPlayer::DATA_ATOM_MDRI_OFFSET:
     if(_pdcfAtom)
     {
@@ -7559,3 +7666,166 @@ void Mpeg4File::process_mod_midi_atom()
 #endif /* FEATURE_QTV_SKT_MOD_MIDI */
 
 
+bool   Mpeg4File::isADTSHeader()
+{
+   if(aac_data_type == AAC_FORMAT_ADTS)
+     return true;
+   if(aac_data_type == AAC_FORMAT_NON_ADTS)
+     return false;
+
+   uint8 byte[3];
+   video_fmt_stream_info_type *p_track = NULL;
+   video_fmt_sample_info_type sample_info;
+   for (uint32 index = 0; index < m_trackCount; index++)
+   {
+    if (m_track[index]->type == VIDEO_FMT_STREAM_AUDIO &&
+            m_track[index]->subinfo.audio.format == VIDEO_FMT_STREAM_AUDIO_MPEG4_AAC)
+    {
+      p_track = m_track[index];
+    }
+   }
+   if(p_track == NULL)
+      return false;
+
+   getSampleInfo (p_track->stream_num,
+                  1,
+                  1,
+                  &sample_info);
+
+   getSample (p_track->stream_num,
+      VIDEO_FMT_DATA_UNIT_BYTE,
+      sample_info.offset,
+      2,
+      byte);
+
+   if((byte[0] == 0xFF) && (byte[1]&0xF0 == 0xF0))
+   {
+      aac_data_type = AAC_FORMAT_ADTS;
+      return true;
+   }
+   else
+   {
+      aac_data_type = AAC_FORMAT_NON_ADTS;
+      return false;
+   }
+}
+
+
+/*===========================================================================
+
+FUNCTION  peekMetaDataSize
+
+DESCRIPTION
+Public method used to determine the meta-data size of the fragment.
+
+===========================================================================*/
+bool Mpeg4File::peekMetaDataSize (uint32 fragment_num)
+{
+  //If the buffer size is zero while streaming, no need to check videofmt.
+  if(m_wBufferOffset==0 && bHttpStreaming && ((m_videoFmtInfo.parse_fragment_cb == NULL) ||
+      (m_videoFmtInfo.server_data == NULL)))
+  {
+    return false;
+  }
+
+  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Trying to peek metadatasize");
+  QCUtils::EnterCritSect(&videoFMT_Access_CS);
+  m_videoFmtInfo.fragment_size_peek_cb (m_videoFmtInfo.server_data,
+    fragment_num);
+
+  while ((m_mp4ParseLastStatus != VIDEO_FMT_FAILURE)
+    && (m_mp4ParseLastStatus != VIDEO_FMT_DATA_INCOMPLETE)
+    && (m_mp4ParseLastStatus != VIDEO_FMT_DATA_CORRUPT)
+    && (m_mp4ParseLastStatus != VIDEO_FMT_INFO)
+    && (m_mp4ParseLastStatus != VIDEO_FMT_FRAGMENT_PEEK))
+  {
+    if((m_mp4ParseContinueCb == NULL) ||
+      (m_mp4ParseServerData == NULL))
+      break;
+    else
+      m_mp4ParseContinueCb (m_mp4ParseServerData);
+  }
+  QCUtils::LeaveCritSect(&videoFMT_Access_CS);
+
+  video_fmt_mp4r_context_type *ctxt= (video_fmt_mp4r_context_type *)m_videoFmtInfo.server_data;
+  switch(m_mp4ParseLastStatus)
+  {
+  case VIDEO_FMT_FAILURE:
+  case VIDEO_FMT_DATA_CORRUPT:
+    return false;
+
+  case VIDEO_FMT_FRAGMENT_PEEK:
+    m_minOffsetRequired = ctxt->fragment_size + ctxt->fragment_offset;
+      QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "m_minOffsetRequired = %d", m_minOffsetRequired);
+    bDataIncomplete = FALSE;
+    return true;
+
+  case VIDEO_FMT_DATA_INCOMPLETE:
+    bDataIncomplete = TRUE;
+    return false;
+
+  case VIDEO_FMT_INFO:
+    return true;
+
+  default:
+    break;
+  }
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "m_minOffsetRequired = %d", m_minOffsetRequired);
+  return false;
+}
+
+
+/*===========================================================================
+
+FUNCTION  ParseStream
+
+DESCRIPTION
+Public method called at the end of every fragment and at the beginning.This is
+to be used irrespective of whether PD or PS is in use.
+
+===========================================================================*/
+bool Mpeg4File::ParseStream ()
+{
+  //First Make sure next fragment moov/moof is available.
+  if(!peekMetaDataSize(m_currentParseFragment))
+  {
+    sendParserEvent(Common::PARSER_RESUME);
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_RESUME");
+    return false;
+  }
+
+  //Check for data present.
+  if((m_wBufferOffset==0) || (m_wBufferOffset >= m_minOffsetRequired))
+  {
+    m_currentParseFragment++;
+    //Then parse it and check for canPlayTracks().
+    if(!parseMetaData())
+    {
+      //QTV_PS_PARSER_STATUS_PAUSED
+      sendParserEvent(Common::PARSER_RESUME);
+      QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_RESUME, m_playVideo=%d",m_playVideo);
+      return false;
+    }
+    else
+    {
+      Parsed = TRUE;
+      if((parserState == Common::PARSER_RESUME || parserState == Common::PARSER_PAUSE)
+        && CanPlayTracks(m_startupTime))
+      {
+        QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_READY, m_playVideo=%d",m_playVideo);
+        sendParserEvent(Common::PARSER_READY);
+        return true;
+      }
+      else
+      {
+        return true;
+      }
+    }
+  }
+  else
+  {
+    sendParserEvent(Common::PARSER_RESUME);
+    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Parser State = Common::PARSER_RESUME, m_playVideo=%d",m_playVideo);
+    return false;
+  }
+}

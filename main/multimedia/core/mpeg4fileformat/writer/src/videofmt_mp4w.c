@@ -31,10 +31,18 @@ Copyright(c) 2002-2003 by QUALCOMM, Incorporated. All Rights Reserved.
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/writer/main/latest/src/videofmt_mp4w.c#3 $
+  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/writer/main/latest/src/videofmt_mp4w.c#12 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+11/11/10  mukulj   adding footer size in stsz atom for last sample, if stop at exact max sample table size
+11/10/10  mukulj   klockwork fixes
+09/02/10  mukulj   take level and profile compatibility from header for h264.
+10/12/09   sk      Changes to check overflow of table stores and stop for all streams.
+05/27/09   ps      Changes for DL Phase-2(marked few functions to be non demand paged)
+05/04/09   ps      Corrected the space limit calculation for movie size limit and added
+                   approximation reduction for smaller size limit and imminent warning messages
+02/21/09   ps      Changed space limit calculation for movie size limit.
 08/28/07   rpw     Added EVRC-B and EVRC-WB support
 07/08/08   shiven  Adding support for loci atom
 06/09/08   shiven  Max bit rate not working when EFS done
@@ -63,13 +71,13 @@ when       who     what, where, why
                    In videofmt support has been added as an additional API.
                    Also videofmt is feature free file hence didn't featurize
                    code.
-06/05/06   jdas    Removed lint warning of "division by 0" in 
+06/05/06   jdas    Removed lint warning of "division by 0" in
                    video_fmt_mp4w_fixup_data function
 05/15/06   jdas    Removed the hard-coded profile/level from avcC atom
 03/10/06   Gopi    Added support for MFRA Atom
 02/01/06   jk      Changed so that videofmt does not generate the meta data
                    if space limit is reached, until the client ends videofmt.
-12/23/05   ali     Fix for 3g2-frag where first few chunks have only one 
+12/23/05   ali     Fix for 3g2-frag where first few chunks have only one
                    sample
 12/09/05   rpw     Added AMR-WB and AMR-WB+ support
 11/14/05   Shahed New implementation of camcorder space status error/warning msgs.
@@ -174,7 +182,12 @@ when       who     what, where, why
 #include "videofmt_mp4.h"       /* MP4 format typedefs and prototypes      */
 #include "videofmt_mp4w.h"      /* Internal MP4 writer definitions         */
 #include "task.h"               /* task management services                */
+#ifdef FEATURE_CMI
+#error code not present
+#else
 #include "clk.h"                /* clock services                          */
+#endif
+
 #include "msg.h"                /* Message logging/reporting services      */
 #include "assert.h"             /* assertion definitions                   */
 #include <string.h>             /* Memory Manipulation routines            */
@@ -221,6 +234,14 @@ when       who     what, where, why
     (buffer) [11] = (uint8) ((flags) & 0xFF)
 
 #define EXTRA_PAD_FOR_SPACE_LIMIT 3 /* To make sure when space is full data gets written */
+#define MOVIE_SIZE_LIMIT_THRESHOLD_400KB (1024 * 400) /* for 400 KB movie size limit */
+#define MOVIE_SIZE_LIMIT_THRESHOLD_1000KB (1024 * 1000) /* for 1000 KB movie size limit */
+// Following are the extra pad values for different movie sizes in order to
+// get the recorded clip size near to size limit and also not to exceed the limit
+#define EXTRA_PAD_FOR_SPACE_LIMIT_FOR_MOVIE_THRESHOLD_400KB 1.1
+#define EXTRA_PAD_FOR_SPACE_LIMIT_FOR_MOVIE_THRESHOLD_1000KB 1.2
+
+
 /* <EJECT> */
 /*===========================================================================
 
@@ -584,13 +605,13 @@ void video_fmt_mp4w_create
         {
             if (!video_fmt_mp4w_copy_language_coded_string(
 			       &context->user_data.title, &params->user_data.title,
-                   callback_ptr, client_data) || 
+                   callback_ptr, client_data) ||
 				!video_fmt_mp4w_copy_language_coded_string(
 				   &context->user_data.author, &params->user_data.author,
-                   callback_ptr, client_data) || 
+                   callback_ptr, client_data) ||
 				!video_fmt_mp4w_copy_language_coded_string(
 				   &context->user_data.description, &params->user_data.description,
-                   callback_ptr, client_data) || 
+                   callback_ptr, client_data) ||
 				!video_fmt_mp4w_copy_language_coded_string(
 				   &context->user_data.copyright, &params->user_data.copyright,
                    callback_ptr, client_data)
@@ -607,8 +628,8 @@ void video_fmt_mp4w_create
         /* Check & update location info */
         if (params->user_data.loci.loci_valid)
         {
-            if(!video_fmt_mp4w_copy_location 
-                (&context->user_data.loci, &params->user_data.loci, 
+            if(!video_fmt_mp4w_copy_location
+                (&context->user_data.loci, &params->user_data.loci,
                  callback_ptr, client_data))
             {
               MSG_ERROR ("create: alloc failure!", 0, 0, 0);
@@ -1048,7 +1069,7 @@ void video_fmt_mp4w_write_stream (
     /* Serialize any simultaneous writes using a critical section. */
     rex_enter_crit_sect (&context->cs);
 
-    /* If context is about to be deleted return right away */    
+    /* If context is about to be deleted return right away */
     if(context->context_deleted)
     {
         rex_leave_crit_sect(&context->cs);
@@ -1165,7 +1186,7 @@ void video_fmt_mp4w_write_stream (
             {
             case VIDEO_FMT_FAILURE:
                 video_fmt_mp4w_failure (context, TRUE);
-                //rex_leave_crit_sect (&context->cs); called inside 
+                //rex_leave_crit_sect (&context->cs); called inside
                 //video_fmt_mp4w_failure
                 return;
 
@@ -1346,7 +1367,7 @@ void video_fmt_mp4w_write_stream (
         }
     }
 
-    /* Update movie duration if this stream pushes it out. */    
+    /* Update movie duration if this stream pushes it out. */
     temp_var         =video_fmt_mp4w_convert_time_units(stream->duration, stream->timescale, context->timescale);
     context->fragment_duration = MAX( context->fragment_duration, temp_var );
 
@@ -1452,7 +1473,7 @@ void video_fmt_mp4w_write_text (
         MSG_ERROR ("write_text: not a text stream!", 0, 0, 0);
         video_fmt_mp4w_free_text (text, callback_ptr, client_data);
         video_fmt_mp4w_failure (context, FALSE);
-        //rex_leave_crit_sect (&context->cs); 
+        //rex_leave_crit_sect (&context->cs);
         //called inside video_fmt_mp4w_failure
         return;
     }
@@ -1593,7 +1614,7 @@ void video_fmt_mp4w_write_text (
     if (!video_fmt_mp4w_sample_processing
         (context, stream_number, FALSE, limit_reached))
     {
-        video_fmt_mp4w_failure (context, TRUE);       
+        video_fmt_mp4w_failure (context, TRUE);
         //rex_leave_crit_sect (&context->cs);
         //called inside video_fmt_mp4w_failure
         return;
@@ -1671,7 +1692,7 @@ void video_fmt_mp4w_write_header (
     /* Serialize any simultaneous writes using a critical section. */
     rex_enter_crit_sect (&context->cs);
 
-    /* If context is about to be deleted return right away */    
+    /* If context is about to be deleted return right away */
     if(context->context_deleted)
     {
         rex_leave_crit_sect(&context->cs);
@@ -1845,7 +1866,7 @@ void video_fmt_mp4w_write_header_text (
     /* Serialize any simultaneous writes using a critical section. */
     rex_enter_crit_sect (&context->cs);
 
-    /* If context is about to be deleted return right away */    
+    /* If context is about to be deleted return right away */
     if(context->context_deleted)
     {
         rex_leave_crit_sect(&context->cs);
@@ -2079,7 +2100,7 @@ void video_fmt_mp4w_write_footer (
 
     /* Serialize any simultaneous writes using a critical section. */
     rex_enter_crit_sect (&context->cs);
-    
+
     /* If context is about to be deleted return right away */
     if(context->context_deleted)
     {
@@ -2187,7 +2208,7 @@ void video_fmt_mp4w_write_uuid (
     /* Serialize any simultaneous writes using a critical section. */
     rex_enter_crit_sect (&context->cs);
 
-    /* If context is about to be deleted return right away */    
+    /* If context is about to be deleted return right away */
     if(context->context_deleted)
     {
         rex_leave_crit_sect(&context->cs);
@@ -2507,7 +2528,7 @@ void video_fmt_mp4w_free_text (
         return;
 
     }
-    
+
     MSG_LOW ("free_text: Entered function", 0, 0, 0);
 
     /* Store updated client callback pointer and data, in case the client
@@ -3223,7 +3244,7 @@ void video_fmt_mp4w_modify_wrap_text (
 FUNCTION video_fmt_mp4w_modify_user_atoms
 
 DESCRIPTION
- Client can dynamically set auth,titl and decsp atoms during recording session. 
+ Client can dynamically set auth,titl and decsp atoms during recording session.
 DEPENDENCIES
   None
 RETURN VALUE
@@ -3259,20 +3280,20 @@ void video_fmt_mp4w_modify_user_atoms(
         {
             if(!video_fmt_mp4w_copy_language_coded_string(
 			       &context->user_data.title, &puser_data->title,
-                    callback_ptr, client_data) || 
+                    callback_ptr, client_data) ||
 			   !video_fmt_mp4w_copy_language_coded_string(
 			       &context->user_data.author, &puser_data->author,
-                   callback_ptr, client_data) || 
+                   callback_ptr, client_data) ||
 			   !video_fmt_mp4w_copy_language_coded_string(
 			       &context->user_data.description, &puser_data->description,
-                   callback_ptr, client_data) || 
+                   callback_ptr, client_data) ||
 			   !video_fmt_mp4w_copy_language_coded_string(
 			       &context->user_data.copyright, &puser_data->copyright,
                    callback_ptr, client_data)
             )
             {
                 MSG_ERROR ("create: alloc failure!", 0, 0, 0);
-            } 
+            }
             else
             {
                 context->user_data.titl_auth_desc_valid = TRUE;
@@ -3283,8 +3304,8 @@ void video_fmt_mp4w_modify_user_atoms(
         /* Check & modify location info */
         if(puser_data->loci.loci_valid)
         {
-            if(!video_fmt_mp4w_copy_location 
-               (&context->user_data.loci, 
+            if(!video_fmt_mp4w_copy_location
+               (&context->user_data.loci,
                 &puser_data->loci, callback_ptr, client_data)
               )
             {
@@ -3305,11 +3326,11 @@ void video_fmt_mp4w_modify_user_atoms(
 FUNCTION video_fmt_mp4w_write_clipinfo
 
 DESCRIPTION
-  This function pushes the Qcom platform specific information into the 
+  This function pushes the Qcom platform specific information into the
   the stream as skip atom
 
 DEPENDENCIES
-  Should be called while generating metadata for the clip at the end of 
+  Should be called while generating metadata for the clip at the end of
   recording session
 
 RETURN VALUE
@@ -3346,8 +3367,8 @@ boolean video_fmt_mp4w_write_clipinfo(video_fmt_mp4w_context_type *context,
     }
 
     //Calculate the total atom size
-    skipatom_size = 
-                12 // atom head size    
+    skipatom_size =
+                12 // atom head size
                 + 260
                 + clipinfo->build_id_len
                 + 3  // for AAC recording
@@ -3572,9 +3593,9 @@ boolean video_fmt_mp4w_write_clipinfo(video_fmt_mp4w_context_type *context,
            return FALSE;
         }
     }
-    
+
     return TRUE;
-} 
+}
 /* <EJECT> */
 
 /*===========================================================================
@@ -3925,6 +3946,12 @@ boolean video_fmt_mp4w_sample_processing (
               break;
         }
     }
+    else if(TRUE == limit_reached)
+    {
+        MSG_HIGH ("WARNING: Will stop now as one of the streams overflowed the table size", 0,0,0);
+        context->space_out = TRUE;
+        video_fmt_mp4w_do_limit_reached_callback (context);
+    }
     return TRUE;
 }
 
@@ -4032,7 +4059,7 @@ DEPENDENCIES
 
 RETURN VALUE
   If TRUE is returned, fixup was successful
-  If FALSE was returned, there was an error, and function did not touch 
+  If FALSE was returned, there was an error, and function did not touch
   anything
 
 ===========================================================================*/
@@ -4041,7 +4068,7 @@ boolean video_fmt_mp4w_fixup_data
 (
   video_fmt_mp4w_context_type  *context
 )
-{ 
+{
   uint32 video_stream_length = 0;
   uint32 audio_stream_length = 0;
   uint32 cur_video_length = 0;
@@ -4054,7 +4081,7 @@ boolean video_fmt_mp4w_fixup_data
   int total_frames_in_chunk=0;
   uint64 cumulative_video_length = 0;
   int num_i_frames = 0;
-  
+
   video_fmt_mp4w_table_store_entry_type   *stored;
 
   /* Go through the streams get video/audio length */
@@ -4062,7 +4089,7 @@ boolean video_fmt_mp4w_fixup_data
   {
       switch(context->streams[count].type)
       {  case VIDEO_FMT_STREAM_VIDEO:
-          
+
           /* Get video length */
           num_video_stream = count;
           if(context->streams[count].timescale)
@@ -4070,20 +4097,20 @@ boolean video_fmt_mp4w_fixup_data
             video_timescale = (uint64)context->streams[count].timescale;
             video_stream_length =  video_fmt_mp4w_convert_time_units
                                   (context->streams[count].duration,
-                                   context->streams[count].timescale, 
+                                   context->streams[count].timescale,
                                    1000);
            MSG_HIGH("Video stream length is  %u", video_stream_length,0,0);
           }
           else return FALSE;
           break;
          case VIDEO_FMT_STREAM_AUDIO:
-           
+
            /* Get audio length */
            if(context->streams[count].timescale)
            {
              audio_stream_length = video_fmt_mp4w_convert_time_units
                                    (context->streams[count].duration,
-                                    context->streams[count].timescale, 
+                                    context->streams[count].timescale,
                                     1000);
              MSG_HIGH("Audio stream length is  %u", audio_stream_length,0,0);
            }
@@ -4096,11 +4123,11 @@ boolean video_fmt_mp4w_fixup_data
   /* by more than 3 seconds  tunable param                               */
   if(video_stream_length > audio_stream_length + 3000 && context->num_streams > 1)
   { /* calculate the number of video frames to keep in the file*/
-    
+
       if(!video_timescale)
          return FALSE;
       MSG_HIGH("Fixing the file video > audio",0,0,0);
-      
+
       /* initialize values */
       context->update_file_data = TRUE;
       context->streams[num_video_stream].stts_size = 1;
@@ -4120,20 +4147,20 @@ boolean video_fmt_mp4w_fixup_data
                 /* Calculate length of video in ms */
                 cur_video_length = video_fmt_mp4w_convert_time_units
                                             (cumulative_video_length,
-                                             context->streams[num_video_stream].timescale, 
+                                             context->streams[num_video_stream].timescale,
                                              1000);
 
                 if(audio_stream_length < cur_video_length )
-                {   
+                {
                     MSG_HIGH("Number of video frames in file will be %u",numframes_in_video,0,0);
                     numframes_in_video = count;
                     MSG_HIGH("Number of I-frames in file will be %u",num_i_frames,0,0);
                     context->streams[num_video_stream].samples_num_iframes = num_i_frames;
                     MSG_HIGH("Length of video will be %u",cumulative_video_length,0,0);
-                
+
                     break;
                 }
-                cumulative_video_length = (uint64) cumulative_video_length + 
+                cumulative_video_length = (uint64) cumulative_video_length +
                                           (uint64) context->streams[num_video_stream].samples[count].delta;
             }
         for(count = 1; count < numframes_in_video; count++)
@@ -4166,7 +4193,7 @@ boolean video_fmt_mp4w_fixup_data
 
                 for (index = 0; index < (int32) stored->items;
                     ++index, ++sample)
-                {   
+                {
                     /* Read samples from sample table, add up delta */
                     /* until video length >= audio length */
                     /* Also keep a tab of how many i-frames we have encountered*/
@@ -4176,17 +4203,17 @@ boolean video_fmt_mp4w_fixup_data
                     }
                     cur_video_length = video_fmt_mp4w_convert_time_units
                                                 (cumulative_video_length,
-                                                 context->streams[num_video_stream].timescale, 
+                                                 context->streams[num_video_stream].timescale,
                                                  1000);
                     if(audio_stream_length < cur_video_length )
-                    {   
+                    {
                         numframes_in_video = sample;
                         MSG_HIGH("Number of video frames in file will be %u",numframes_in_video,0,0);
                         context->streams[num_video_stream].samples_num_iframes = num_i_frames;
                         MSG_HIGH("Number of I-frames in file will be %u",num_i_frames,0,0);
                         table = context->streams[num_video_stream].table_stores_size;
                         MSG_HIGH("Video length in ms would be %u",cur_video_length,0,0);
-                        
+
                         /* See if last entry in stts should be updated */
                         if(context->streams[num_video_stream].samples[index-1].delta
                            != context->streams[num_video_stream].samples[index].delta && sample)
@@ -4197,7 +4224,7 @@ boolean video_fmt_mp4w_fixup_data
                         MSG_HIGH("Stts size is %u",context->streams[num_video_stream].stts_size,0,0);
                         break;
                     }
-                    cumulative_video_length = (uint64) cumulative_video_length + 
+                    cumulative_video_length = (uint64) cumulative_video_length +
                                               (uint64) context->streams[num_video_stream].samples[index].delta;
                     if(context->streams[num_video_stream].samples[index-1].delta
                         != context->streams[num_video_stream].samples[index].delta && sample)
@@ -4221,29 +4248,29 @@ boolean video_fmt_mp4w_fixup_data
 
    if (context->streams[num_video_stream].stored_chunks_table <= 1)
    { /* chunk table stored in memory */
-     
+
      for(count = 0; count <context->streams[num_video_stream].chunks_size; count++)
-     { 
+     {
        /* calculate how many chunks are required for the number of video */
        /* samples in the new file                                        */
        if( (total_frames_in_chunk  +  context->streams[num_video_stream].chunks[count].samples)
              >= numframes_in_video)
-       {   
-           context->streams[num_video_stream].chunks[count].samples = 
+       {
+           context->streams[num_video_stream].chunks[count].samples =
            numframes_in_video - total_frames_in_chunk;
-           MSG_HIGH("Number of samples in last chunk %u", 
+           MSG_HIGH("Number of samples in last chunk %u",
                     context->streams[num_video_stream].chunks[count].samples,
                     0,0);
            context->streams[num_video_stream].chunks_size = count+1;
            MSG_HIGH("Total number of video chunks in file %u", count+1,0,0);
            break;
        }
-       MSG_HIGH("Video samples in chunk %u is %u", count+1, 
+       MSG_HIGH("Video samples in chunk %u is %u", count+1,
                  context->streams[num_video_stream].chunks[count].samples,0);
        total_frames_in_chunk += context->streams[num_video_stream].chunks[count].samples;
      }
-   
-     
+
+
      context->streams[num_video_stream].stsc_size = 1;
      for(count = 1; count < context->streams[num_video_stream].chunks_size; count++)
      {
@@ -4252,12 +4279,12 @@ boolean video_fmt_mp4w_fixup_data
           != context->streams[num_video_stream].chunks[count-1].samples)
       {
           context->streams[num_video_stream].stsc_size++;
-      }         
+      }
      }
      MSG_HIGH("Number of entries in video stsc table is %u", context->streams[num_video_stream].stsc_size,0,0);
    }
    else
-   { 
+   {
       /* read chunk table from file */
       chunk = 0;
       for (table = 0, stored = context->streams[num_video_stream].table_stores;
@@ -4265,9 +4292,9 @@ boolean video_fmt_mp4w_fixup_data
           table++, stored++)
       {
           if (stored->type == VIDEO_FMT_MP4W_CHUNK)
-          {   
+          {
               /* look for chunk table */
-              
+
             if (!video_fmt_mp4w_get_meta_table
                 (context, num_video_stream, stored))
             {
@@ -4282,41 +4309,41 @@ boolean video_fmt_mp4w_fixup_data
 
                 if( (total_frames_in_chunk  +  context->streams[num_video_stream].chunks[index].samples)
                     >= numframes_in_video)
-                {   
+                {
                     /* Number of samples in last chunk */
-                    context->streams[num_video_stream].chunks[index].samples = 
+                    context->streams[num_video_stream].chunks[index].samples =
                     numframes_in_video - total_frames_in_chunk;
-                    MSG_HIGH("Number of video samples in last chunk is %u", 
+                    MSG_HIGH("Number of video samples in last chunk is %u",
                               context->streams[num_video_stream].chunks[index].samples,0,0);
                     context->last_chunk_size = numframes_in_video - total_frames_in_chunk;
-                    
+
                     /* Total number of chunks in new file */
                     context->streams[num_video_stream].chunks_size = chunk+1;
                     MSG_HIGH("Total number of chunks in new file is %u",
                               context->streams[num_video_stream].chunks_size,
                               0,0);
-  
+
                     /* Update stsc size if sample size don't match */
                     if(context->streams[num_video_stream].chunks[index-1].samples
                      != context->streams[num_video_stream].chunks[index].samples && chunk)
                     {
                         context->streams[num_video_stream].stsc_size++;
                     }
-                    MSG_HIGH("Total stsc size is %u", 
+                    MSG_HIGH("Total stsc size is %u",
                               context->streams[num_video_stream].stsc_size,
                               0,0);
                     table = context->streams[num_video_stream].table_stores_size;
                     break;
                 }
                 total_frames_in_chunk += context->streams[num_video_stream].chunks[index].samples;
-                
+
                 /* see if size of sample matches */
                 if(context->streams[num_video_stream].chunks[index-1].samples
                    != context->streams[num_video_stream].chunks[index].samples && chunk)
                     {
                         context->streams[num_video_stream].stsc_size++;
                     }
-                MSG_HIGH("Video samples in chunk %u is %u", chunk+1, 
+                MSG_HIGH("Video samples in chunk %u is %u", chunk+1,
                           context->streams[num_video_stream].chunks[index].samples,0);
 
             }
@@ -4326,12 +4353,12 @@ boolean video_fmt_mp4w_fixup_data
    }
 
 
-   
+
    /* Get fragment duration */
    context->fragment_duration = video_fmt_mp4w_convert_time_units
                                                        (cumulative_video_length,
-                                                         video_timescale, 
-                                                         context->timescale); 
+                                                         video_timescale,
+                                                         context->timescale);
    /* Set number of video frames */
    context->streams[num_video_stream].samples_size = numframes_in_video;
    context->streams[num_video_stream].samples_chunk_start = numframes_in_video;
@@ -4718,13 +4745,55 @@ video_fmt_status_type video_fmt_mp4w_chunk_processing (
         }
     }
 
+
+  /* Reducing extra pad for determining limit near/imminent/reached c
+     * ondition, in order to get recorded clip size near to "movie_size_limit"
+     * if following conditions are satisfied :
+     * 1) If "movie_size_limit" is less than 400 KB then make it to 1.1 and if less than
+     * 1000 KB then 1.2. This limit was derived depending upon the experiments with
+     * different resolutions/bitrate recording
+     *
+     * The case where efs space is lesser than movie size limit, this reduction in extra
+     * pad is not considered.
+     */
+  /* We can not ignore "EXTRA_PAD_FOR_SPACE_LIMIT" in this case because if
+      *someone uses dynamically allocated buffers depending upon the movie size
+      * limit to store recorded clip (memory type - MEM instead of EFS),
+      * exceeding limit may cause problem.
+      */
     /* Add the estimated amount of audio/video stream data in the next
-    ** threshold window time to space estimate.  If we don't yet have at least
-    ** a second of data for a stream, don't include it in the estimate.
-    */
-	space = (space * EXTRA_PAD_FOR_SPACE_LIMIT) >> 1; /* Increase the reqd space*1.5*/
+         ** threshold window time to space estimate.  If we don't yet have at least
+         ** a second of data for a stream, don't include it in the estimate.
+         */
+
+    if(context->movie_size_limit)
+    {
+       if(context->movie_size_limit <= MOVIE_SIZE_LIMIT_THRESHOLD_400KB)
+       {
+         /* Increase the reqd space*1.1*/;
+         space *= EXTRA_PAD_FOR_SPACE_LIMIT_FOR_MOVIE_THRESHOLD_400KB;
+       }
+       else if(context->movie_size_limit <= MOVIE_SIZE_LIMIT_THRESHOLD_1000KB)
+       {
+         /* Increase the reqd space*1.2*/;
+         space *= EXTRA_PAD_FOR_SPACE_LIMIT_FOR_MOVIE_THRESHOLD_1000KB;
+       }
+       else
+       {
+         /* Increase the reqd space*1.5*/;
+         space = (space * EXTRA_PAD_FOR_SPACE_LIMIT) >> 1;
+       }
+    }
+    else
+    {
+       /* Increase the reqd space*1.5*/;
+       space = (space * EXTRA_PAD_FOR_SPACE_LIMIT) >> 1;
+    }
+
 
     space2 = space3 = space;
+
+
     for (i = 0; i < context->num_streams; ++i)
     {
         if (context->streams [i].total_duration
@@ -4742,10 +4811,12 @@ video_fmt_status_type video_fmt_mp4w_chunk_processing (
         }
     }
 
+
     /* Get number of bytes before threshold is reached. */
     context->callback_ptr (VIDEO_FMT_SPACE_CHECK, context->client_data,
                            (video_fmt_status_cb_info_type *) &space_check,
                            video_fmt_mp4w_end);
+
 
     /* If file size limit set, and limit is smaller than actual storage space,
     ** use that instead.
@@ -4808,7 +4879,7 @@ video_fmt_status_type video_fmt_mp4w_chunk_processing (
     }
 
     /* Return right away if the space limit was reached and 'last_chunk' was
-    ** not set. 
+    ** not set.
     */
     if (!last_chunk && status == VIDEO_FMT_LIMIT_REACHED)
     {
@@ -4891,8 +4962,8 @@ video_fmt_status_type video_fmt_mp4w_chunk_processing (
     }
 
     if(!context->fragment_size && context->enable_fixupdata){
-     video_fmt_mp4w_fixup_data(context);     
-     
+     video_fmt_mp4w_fixup_data(context);
+
     }
     /* For the first fragment, generate normal meta-data. */
     if (context->fragment_sequence_number == 0)
@@ -4917,13 +4988,13 @@ video_fmt_status_type video_fmt_mp4w_chunk_processing (
     */
     ++context->fragment_sequence_number;
     context->duration = video_fmt_mp4w_convert_time_units
-                          (context->streams [0].total_duration, 
-                           context->streams [0].timescale, 
+                          (context->streams [0].total_duration,
+                           context->streams [0].timescale,
                            context->timescale);
     for (i = 1; i < context->num_streams; ++i)
     {
-        uint64  temp64 =  video_fmt_mp4w_convert_time_units (context->streams [i].total_duration, 
-                                                             context->streams [i].timescale, 
+        uint64  temp64 =  video_fmt_mp4w_convert_time_units (context->streams [i].total_duration,
+                                                             context->streams [i].timescale,
                                                              context->timescale);
         context->duration = MAX(context->duration, temp64);
     }
@@ -5278,13 +5349,13 @@ boolean video_fmt_mp4w_generate_meta_data
     uint32                              num_sample_iframes_written;
     uint32                              num_sample_stsz_written;
     uint32                              num_chunk_stsc_written;
-    uint32                              num_chunk_stco_written; 
+    uint32                              num_chunk_stco_written;
     uint32                              num_sample_stts_written;
 
     uint32                                  table;
     int32                                   index;
     video_fmt_mp4w_table_store_entry_type   *stored;
-    video_fmt_user_data_type                user_atomsdata; 
+    video_fmt_user_data_type                user_atomsdata;
     /* Atom types and sizes - one for every possible atom and stream
     ** combination, listed here in order from deepest atom level upwards.
     **
@@ -5316,19 +5387,19 @@ boolean video_fmt_mp4w_generate_meta_data
     uint32               moov_size;
     uint32               mvex_size;
     uint32               udta_size;
-    
+
     for( i=0;i<VIDEO_FMT_MAX_MEDIA_STREAMS;i++)
     {
       sample_entry_size[i]=0;
       media_header_size[i] = 0;
       oti[i]=0;
       stream_type[i]=0;
-    } 
-    
+    }
+
     for(i=0;i<VIDEO_FMT_MAX_MEDIA_STREAMS;i++)
     {
       sample_entry[i]=(sample_entry_type_t )1;
-    } 
+    }
 
     MSG_LOW ("generate_meta_data: entered", 0,0,0);
 
@@ -5834,7 +5905,7 @@ boolean video_fmt_mp4w_generate_meta_data
     /* recording session has ended.
     **Try calling client call back funciton to check if there are
     **titl,auth,descp atoms to be updated.
-    */  
+    */
     context->callback_ptr (VIDEO_FMT_UDTA_ATOM_REQ, context->client_data,
                            (video_fmt_status_cb_info_type *)&user_atomsdata,NULL);
 
@@ -5913,14 +5984,14 @@ boolean video_fmt_mp4w_generate_meta_data
             if (context->user_data.loci.name.isUTF16)
             {
                 udta_size += 12 + 2 + 1 + 12
-                    + ((context->user_data.loci.name.length 
+                    + ((context->user_data.loci.name.length
                     +  context->user_data.loci.astr_body.length
                     +  context->user_data.loci.add_notes.length ) * sizeof (short));
             }
             else
             {
                 udta_size += 12 + 2 + 1 + 12
-                    + (context->user_data.loci.name.length 
+                    + (context->user_data.loci.name.length
                     +  context->user_data.loci.astr_body.length
                     +  context->user_data.loci.add_notes.length
                       ) * sizeof (char);
@@ -5996,7 +6067,11 @@ boolean video_fmt_mp4w_generate_meta_data
     ** Midnight, January 6, 1980, and the MPEG-4 timebase of Midnight, January
     ** 1, 1904.
     */
-    current_time = clk_read_secs ();
+   	#ifdef FEATURE_CMI
+#error code not present
+	#else
+        current_time = clk_read_secs();
+	#endif
     current_time += 2398809600UL;
     STORE_ATOM_UINT32 (temp_buffer, 0, current_time);
     if (!video_fmt_mp4w_stream_push (context, buffer, temp_buffer, 4))
@@ -6801,15 +6876,38 @@ boolean video_fmt_mp4w_generate_meta_data
             /* Write size and type of "avcC" atom */
             MAKE_ATOM_HEADER (temp_buffer,
                               stream->header_size
-                              + 8  /* size and type of avcC atom */ 
-                              + 5, /* first part of avcC atom */ 
+                              + 8  /* size and type of avcC atom */
+                              + 5, /* first part of avcC atom */
                               "avcC");
 
             if (!video_fmt_mp4w_stream_push (context, buffer, temp_buffer, 8))
             {
                return FALSE;
             }
-            /* Construct the first part of "avcC" atom */ 
+
+            /* Overwrite the info.
+               We will try to get it from header 
+               We need to skip
+               forbidden_zero_bit    1 bit
+               nal_ref_idc           2 bits
+               nal_unit_type         5 bits
+                       
+               and read
+                         
+               profile_idc           8 bits
+               profile_comp          8 bits
+               level_idc             8 bits
+           */
+            if(stream->header_size && stream->header)
+            {
+               /*Skip first three bytes E1 00 0A */
+               /* Then apply the logic in comment above*/
+               stream->subinfo.video.profile = stream->header[3 + 1];
+               stream->subinfo.video.profile_comp = stream->header[3 + 2];
+               stream->subinfo.video.level = stream->header[3 + 3];
+            }
+            
+            /* Construct the first part of "avcC" atom */
             temp_buffer[0] = 0x01; /* configurationVersion */
             temp_buffer[1] = stream->subinfo.video.profile; /* AVCProfileIndication */
             temp_buffer[2] = stream->subinfo.video.profile_comp; /* ProfileCommpatibility */
@@ -6880,7 +6978,7 @@ boolean video_fmt_mp4w_generate_meta_data
 
         case SAMPLE_ENTRY_TX3G:
             /* Write out text sample entry atoms. */
-            STORE_ATOM_UINT32 (temp_buffer, 12, 1);/*lint !e572 */ 
+            STORE_ATOM_UINT32 (temp_buffer, 12, 1);/*lint !e572 */
             for (atom = stream->text; atom; atom = atom->next)
             {
                 if (!video_fmt_mp4w_stream_push
@@ -6905,7 +7003,7 @@ boolean video_fmt_mp4w_generate_meta_data
         if (esds_size [i])
         {
             /* Output atom header. */
-            MAKE_FULL_ATOM_HEADER (temp_buffer, esds_size [i], "esds", 0, 0); /*lint !e572 */ 
+            MAKE_FULL_ATOM_HEADER (temp_buffer, esds_size [i], "esds", 0, 0); /*lint !e572 */
             if (!video_fmt_mp4w_stream_push
                 (context, buffer, temp_buffer, 12))
             {
@@ -7017,7 +7115,7 @@ boolean video_fmt_mp4w_generate_meta_data
         */
 
         /* Output atom header and entry count. */
-        MAKE_FULL_ATOM_HEADER (temp_buffer, stts_size [i], "stts", 0, 0); /*lint !e572 */ 
+        MAKE_FULL_ATOM_HEADER (temp_buffer, stts_size [i], "stts", 0, 0); /*lint !e572 */
         STORE_ATOM_UINT32 (temp_buffer, 12, stream->stts_size);
         if (!video_fmt_mp4w_stream_push
             (context, buffer, temp_buffer, 16))
@@ -7137,7 +7235,7 @@ boolean video_fmt_mp4w_generate_meta_data
         */
 
         /* Output atom header and entry count. */
-        MAKE_FULL_ATOM_HEADER (temp_buffer, stco_size [i], "stco", 0, 0);/*lint !e572 */ 
+        MAKE_FULL_ATOM_HEADER (temp_buffer, stco_size [i], "stco", 0, 0);/*lint !e572 */
         STORE_ATOM_UINT32 (temp_buffer, 12, stream->chunks_size);
         if (!video_fmt_mp4w_stream_push
             (context, buffer, temp_buffer, 16))
@@ -7199,7 +7297,7 @@ boolean video_fmt_mp4w_generate_meta_data
         */
 
         /* Output atom header and entry count. */
-        MAKE_FULL_ATOM_HEADER (temp_buffer, stsc_size [i], "stsc", 0, 0);/*lint !e572 */ 
+        MAKE_FULL_ATOM_HEADER (temp_buffer, stsc_size [i], "stsc", 0, 0);/*lint !e572 */
         STORE_ATOM_UINT32 (temp_buffer, 12, stream->stsc_size);
         if (!video_fmt_mp4w_stream_push
             (context, buffer, temp_buffer, 16))
@@ -7265,10 +7363,10 @@ boolean video_fmt_mp4w_generate_meta_data
                                 != stream->chunks [index - 1].desc))
                         {
                           num_chunk_stsc_written++;
-                          if(context->update_file_data && 
+                          if(context->update_file_data &&
                              num_chunk_stsc_written == stream->stsc_size)
                             {
-                               stream->chunks [index].samples = 
+                               stream->chunks [index].samples =
                                 context->last_chunk_size;
                             }
                             /* first chunk */
@@ -7306,10 +7404,10 @@ boolean video_fmt_mp4w_generate_meta_data
         */
 
         /* Output atom header, fixed sample size, and sample count. */
-        MAKE_FULL_ATOM_HEADER (temp_buffer, stsz_size [i], "stsz", 0, 0);/*lint !e572 */ 
+        MAKE_FULL_ATOM_HEADER (temp_buffer, stsz_size [i], "stsz", 0, 0);/*lint !e572 */
         if (context->force_stsz_table)
         {
-            STORE_ATOM_UINT32 (temp_buffer, 12, 0);/*lint !e572 */ 
+            STORE_ATOM_UINT32 (temp_buffer, 12, 0);/*lint !e572 */
         }
         else
         {
@@ -7338,7 +7436,15 @@ boolean video_fmt_mp4w_generate_meta_data
                     }
                     else
                     {
-                        entry = stream->samples [sample].size;
+                        if ((sample == stream->samples_size - 1 )  
+				   && stream->last_sample_size_increase )
+                        {
+                            entry = stream->samples [sample].size + stream->last_sample_size_increase;
+                        }
+                        else
+                        {
+                            entry = stream->samples [sample].size;
+                        }
                     }
                     STORE_ATOM_UINT32 (temp_buffer, 0, entry);
                     if (!video_fmt_mp4w_stream_push
@@ -7401,7 +7507,7 @@ boolean video_fmt_mp4w_generate_meta_data
         if (stream->has_inter_frames)
         {
             /* Output atom header and entry count. */
-            MAKE_FULL_ATOM_HEADER (temp_buffer, stss_size [i], "stss", 0, 0);/*lint !e572 */ 
+            MAKE_FULL_ATOM_HEADER (temp_buffer, stss_size [i], "stss", 0, 0);/*lint !e572 */
             STORE_ATOM_UINT32 (temp_buffer, 12, stream->samples_num_iframes);
             if (!video_fmt_mp4w_stream_push
                 (context, buffer, temp_buffer, 16))
@@ -7453,7 +7559,7 @@ boolean video_fmt_mp4w_generate_meta_data
                                 {
                                     return FALSE;
                                 }
-                              if(num_sample_iframes_written >= 
+                              if(num_sample_iframes_written >=
                                 stream->samples_num_iframes)
                               {    table = stream->table_stores_size;
                                    break;
@@ -7485,7 +7591,7 @@ boolean video_fmt_mp4w_generate_meta_data
             uint32 size = 12 + context->user_data.midiSize;
 
             /* Generate atom header. */
-            MAKE_FULL_ATOM_HEADER (temp_buffer, size, "midi", 0, 0);/*lint !e572 */ 
+            MAKE_FULL_ATOM_HEADER (temp_buffer, size, "midi", 0, 0);/*lint !e572 */
 
             //output atom full header
             if (!video_fmt_mp4w_stream_push
@@ -7565,8 +7671,8 @@ boolean video_fmt_mp4w_generate_meta_data
         */
 
         /* Output atom header and empty fragment_duration field. */
-        MAKE_FULL_ATOM_HEADER (temp_buffer, 16, "mehd", 0, 0); /*lint !e572 */ 
-        STORE_ATOM_UINT32 (temp_buffer, 12, 0); /*lint !e572 */ 
+        MAKE_FULL_ATOM_HEADER (temp_buffer, 16, "mehd", 0, 0); /*lint !e572 */
+        STORE_ATOM_UINT32 (temp_buffer, 12, 0); /*lint !e572 */
         if (!video_fmt_mp4w_stream_push (context, buffer, temp_buffer, 16))
         {
             return FALSE;
@@ -7584,9 +7690,9 @@ boolean video_fmt_mp4w_generate_meta_data
             /* Output atom header, track ID, and default sample description
             ** index.
             */
-            MAKE_FULL_ATOM_HEADER (temp_buffer, 32, "trex", 0, 0);/*lint !e572 */ 
+            MAKE_FULL_ATOM_HEADER (temp_buffer, 32, "trex", 0, 0);/*lint !e572 */
             STORE_ATOM_UINT32 (temp_buffer, 12, i + 1);
-            STORE_ATOM_UINT32 (temp_buffer, 16, 1);/*lint !e572 */ 
+            STORE_ATOM_UINT32 (temp_buffer, 16, 1);/*lint !e572 */
             if (!video_fmt_mp4w_stream_push
                 (context, buffer, temp_buffer, 20))
             {
@@ -7601,14 +7707,14 @@ boolean video_fmt_mp4w_generate_meta_data
             /* Default sample size is always 0 according to the spec, even
             ** if we are dealing with a fixed sample size stream.
             */
-            STORE_ATOM_UINT32 (temp_buffer, 4, 0);/*lint !e572 */ 
+            STORE_ATOM_UINT32 (temp_buffer, 4, 0);/*lint !e572 */
 
             /* Set up default sample flags -- 0x10000 for video, 0 for audio,
             ** and presumably 0 for text as well (spec does not say).
             */
             STORE_ATOM_UINT32 (temp_buffer, 8,
                                ((stream->type == VIDEO_FMT_STREAM_VIDEO)
-                                ? 0x10000 : 0));/*lint !e572 */ 
+                                ? 0x10000 : 0));/*lint !e572 */
 
             /* Output atom contents. */
             if (!video_fmt_mp4w_stream_push
@@ -7705,7 +7811,7 @@ void video_fmt_mp4w_addmfra_node(video_fmt_mpw_mfrastruct_type *pData,video_fmt_
        context->pCurrent->TrakId = pData->traf_number;
        context->pCurrent->pMfraData = alloc.ptr;
        /*Update the MFRA node values*/
-       STORE_ATOM_UINT32(context->pCurrent->pMfraData, context->pCurrent->currentIndex, pData->time); 
+       STORE_ATOM_UINT32(context->pCurrent->pMfraData, context->pCurrent->currentIndex, pData->time);
        STORE_ATOM_UINT32(context->pCurrent->pMfraData, (context->pCurrent->currentIndex+4), pData->moof_offset);
        context->pCurrent->pMfraData[context->pCurrent->currentIndex+8]=pData->traf_number;
        context->pCurrent->pMfraData[context->pCurrent->currentIndex+9]=pData->trun_number;
@@ -7714,20 +7820,20 @@ void video_fmt_mp4w_addmfra_node(video_fmt_mpw_mfrastruct_type *pData,video_fmt_
        context->pCurrent->currentIndex += sizeof(video_fmt_mpw_mfrastruct_type);
    }
    /*Check if current Node has enough space*/
-   else if( (context->pCurrent != NULL) && 
-            (context->pCurrent->currentIndex < MEMORYSIZE) 
+   else if( (context->pCurrent != NULL) &&
+            (context->pCurrent->currentIndex < MEMORYSIZE)
           )
    {
        /*Update the MFRA node values*/
-       STORE_ATOM_UINT32(context->pCurrent->pMfraData, context->pCurrent->currentIndex, pData->time); 
+       STORE_ATOM_UINT32(context->pCurrent->pMfraData, context->pCurrent->currentIndex, pData->time);
        STORE_ATOM_UINT32(context->pCurrent->pMfraData, (context->pCurrent->currentIndex+4), pData->moof_offset);
        context->pCurrent->pMfraData[context->pCurrent->currentIndex+8]=pData->traf_number;
        context->pCurrent->pMfraData[context->pCurrent->currentIndex+9]=pData->trun_number;
        context->pCurrent->pMfraData[context->pCurrent->currentIndex+10]=pData->SampleNumber;
-    
+
        /*Increment the index*/
        context->pCurrent->currentIndex += sizeof(video_fmt_mpw_mfrastruct_type);
-     
+
    }
    else
    {
@@ -7775,14 +7881,14 @@ void video_fmt_mp4w_addmfra_node(video_fmt_mpw_mfrastruct_type *pData,video_fmt_
 
      context->pCurrent->pMfraData = alloc.ptr;
      /*Update the MFRA node values*/
-     STORE_ATOM_UINT32(context->pCurrent->pMfraData, context->pCurrent->currentIndex, pData->time); 
+     STORE_ATOM_UINT32(context->pCurrent->pMfraData, context->pCurrent->currentIndex, pData->time);
      STORE_ATOM_UINT32(context->pCurrent->pMfraData, (context->pCurrent->currentIndex+4), pData->moof_offset);
      context->pCurrent->pMfraData[context->pCurrent->currentIndex+8]=pData->traf_number;
      context->pCurrent->pMfraData[context->pCurrent->currentIndex+9]=pData->trun_number;
      context->pCurrent->pMfraData[context->pCurrent->currentIndex+10]=pData->SampleNumber;
-     
+
      /*Increment the index*/
-     context->pCurrent->currentIndex += sizeof(video_fmt_mpw_mfrastruct_type);    
+     context->pCurrent->currentIndex += sizeof(video_fmt_mpw_mfrastruct_type);
    }
 
 }
@@ -7819,10 +7925,10 @@ void video_fmt_mp4w_writemfra_tofile(video_fmt_mp4w_context_type *context)
 
   /*Fixed Header Size + Number of entires*/
   TfraSize = context->MfraEntryCount * sizeof(video_fmt_mpw_mfrastruct_type) + 24;
-  
+
   /*TfraSize+MfraHeader+Mfro*/
   MfraSize = 8+16+TfraSize;
-  
+
   /*Allocate Temp buffer*/
   alloc.size = 32;
   context->callback_ptr (VIDEO_FMT_ALLOC, context->client_data,
@@ -7836,37 +7942,37 @@ void video_fmt_mp4w_writemfra_tofile(video_fmt_mp4w_context_type *context)
   }
 
   pData = (uint8 *) alloc.ptr;
-  
+
   /*Write MFRA size*/
   STORE_ATOM_UINT32(pData,index,MfraSize);
   index +=4;
-  
+
   /*Write MFRA Atom*/
   STORE_ATOM_ID(pData,index,"mfra");
   index +=4;
-  
+
   /*Write TFRA size*/
   STORE_ATOM_UINT32(pData,index,TfraSize);
   index +=4;
-  
+
   /*Write TFRA Atom*/
   STORE_ATOM_ID(pData,index,"tfra");
   index +=4;
-  
+
   /*TFRA Version+Flags*/
   TempInt = 0;
   STORE_ATOM_UINT32(pData,index,TempInt);
   index +=4;
-  
+
   /*Track Id*/
   STORE_ATOM_UINT32(pData,index,context->pHead->TrakId);
   index +=4;
-  
+
   /*Reserved Zero values*/
   TempInt = 0;
   STORE_ATOM_UINT32(pData,index,TempInt);
   index +=4;
-  
+
   /*Number Of entries*/
   STORE_ATOM_UINT32(pData,index,context->MfraEntryCount);
   index +=4;
@@ -7880,7 +7986,7 @@ void video_fmt_mp4w_writemfra_tofile(video_fmt_mp4w_context_type *context)
      index -= WrittenBytes;
   }
   while(index);
-  
+
   pTempDStruct = context->pHead;
   /*Write all the data*/
   while(pTempDStruct)
@@ -7902,22 +8008,22 @@ void video_fmt_mp4w_writemfra_tofile(video_fmt_mp4w_context_type *context)
      else
        pTempDStruct = NULL;
   }
-  
+
   index = 0;
   /*MFRO size*/
   TempInt = 16;
   STORE_ATOM_UINT32(pData,index,TempInt);
   index +=4;
-  
+
   /*Write MFRO Atom*/
   STORE_ATOM_ID(pData,index,"mfro");
   index +=4;
-  
+
   /*TFRA Version+Flags*/
   TempInt = 0;
   STORE_ATOM_UINT32(pData,index,TempInt);
   index +=4;
-    
+
   /*Write MFRA size*/
   STORE_ATOM_UINT32(pData,index,MfraSize);
   index +=4;
@@ -7965,7 +8071,7 @@ void video_fmt_mp4w_freemfra_datastruct(video_fmt_mp4w_context_type  *context)
  video_fmt_free_type  free;
 
  /*Free Data Structure Allocated*/
- while(context->pHead) 
+ while(context->pHead)
  {
     /*Free the MFRA Data buffer*/
     if(context->pHead->pMfraData)
@@ -8046,6 +8152,7 @@ boolean video_fmt_mp4w_generate_fragment
 
     for(i=0;i<VIDEO_FMT_MAX_MEDIA_STREAMS;i++)
     {
+      traf_size[i]  = 0;
       run_header_size[i]=0;
       run_element_size[i]=0;
       header_flags[i]=0;
@@ -8177,7 +8284,7 @@ boolean video_fmt_mp4w_generate_fragment
     */
 
     /* Output atom header and fragment sequence number. */
-    MAKE_FULL_ATOM_HEADER (temp_buffer, 16, "mfhd", 0, 0);/*lint !e572 */ 
+    MAKE_FULL_ATOM_HEADER (temp_buffer, 16, "mfhd", 0, 0);/*lint !e572 */
     STORE_ATOM_UINT32 (temp_buffer, 12, context->fragment_sequence_number);
     if (!video_fmt_mp4w_stream_push (context, buffer, temp_buffer, 16))
     {
@@ -8188,7 +8295,7 @@ boolean video_fmt_mp4w_generate_fragment
     ** Generate track fragment atom for each stream, one at a time.
     **-----------------------------------------------------------------------
     */
-    for (i = 0; i < context->num_streams; ++i)
+    for (i = 0; (i < VIDEO_FMT_MAX_MEDIA_STREAMS) && (i < context->num_streams); ++i)
     {
         /* Cache pointer to stream being accessed. */
         stream = &context->streams [i];
@@ -8206,7 +8313,7 @@ boolean video_fmt_mp4w_generate_fragment
         */
 
         /* Output atom header and track ID. */
-        MAKE_FULL_ATOM_HEADER (temp_buffer, 24, "tfhd", 0, header_flags [i]);/*lint !e572 */ 
+        MAKE_FULL_ATOM_HEADER (temp_buffer, 24, "tfhd", 0, header_flags [i]);/*lint !e572 */
         STORE_ATOM_UINT32 (temp_buffer, 12, i + 1);
         if (!video_fmt_mp4w_stream_push (context, buffer, temp_buffer, 16))
         {
@@ -8258,7 +8365,7 @@ boolean video_fmt_mp4w_generate_fragment
             {
                 STORE_ATOM_UINT32 (temp_buffer, 0,
                                    (stream->samples [sample].iframe
-                                    ? 0x00000000 : 0x00010000));/*lint !e572 */ 
+                                    ? 0x00000000 : 0x00010000));/*lint !e572 */
                 if (!video_fmt_mp4w_stream_push
                     (context, buffer, temp_buffer, 4))
                 {
@@ -8293,7 +8400,7 @@ boolean video_fmt_mp4w_generate_fragment
                 */
                 if (stream->fixed_sample_delta > 0
                     && stream->type == VIDEO_FMT_STREAM_VIDEO)
-                { 
+                {
                     TimeOfCurrentFrame += stream->fixed_sample_delta;
                 }
                 else if(stream->fixed_sample_delta == 0
@@ -8918,7 +9025,7 @@ RETURN VALUE
 SIDE EFFECTS
   None
 
-===========================================================================*/
+===========================================================================*/ 
 uint32 video_fmt_mp4w_write_movie
 (
   video_fmt_mp4w_context_type  *context,
@@ -9220,7 +9327,7 @@ video_fmt_status_type video_fmt_mp4w_close
     {
         /*Check if the file is fragmented*/
         if(context->fragment_size)
-           video_fmt_mp4w_writemfra_tofile(context); 
+           video_fmt_mp4w_writemfra_tofile(context);
 
         return VIDEO_FMT_DONE;
     }
@@ -9283,7 +9390,7 @@ RETURN VALUE
 SIDE EFFECTS
   The target language coded string is constructed.
 
-===========================================================================*/
+===========================================================================*/ 
 boolean video_fmt_mp4w_copy_language_coded_string
 (
   video_fmt_language_coded_string_type        *target,
@@ -9334,7 +9441,7 @@ boolean video_fmt_mp4w_copy_language_coded_string
             }
             target->string.utf16 = (const short *) alloc.ptr;
         }
-        
+
         video_fmt_mp4w_wcscpy
             ((short *) target->string.utf16, source->string.utf16, source->length);
     }
@@ -9650,7 +9757,7 @@ boolean video_fmt_mp4w_encode_loci_atom
 	STORE_ATOM_UINT32(temp_buffer, 1 , source->longitude);
 	STORE_ATOM_UINT32(temp_buffer, 1 + 4 , source->latitude );
 	STORE_ATOM_UINT32(temp_buffer, 1 + 4 + 4 , source->altitude );
-	
+
     /* Output atom so far. 13 = 1+ 4+ 4+ 4*/
     if (!video_fmt_mp4w_stream_push (context, buffer, temp_buffer, 13 ))
     {

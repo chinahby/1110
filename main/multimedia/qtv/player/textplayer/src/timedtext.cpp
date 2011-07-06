@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/textplayer/main/latest/src/timedtext.cpp#9 $
-$DateTime: 2008/12/03 22:31:57 $
-$Change: 797922 $
+$Header: //source/qcom/qct/multimedia/qtv/player/textplayer/main/latest/src/timedtext.cpp#17 $
+$DateTime: 2010/02/19 00:32:23 $
+$Change: 1184937 $
 
 
 ========================================================================== */
@@ -308,16 +308,15 @@ bool TimedText::Create(void *pContext, AVSync* pAVSync)
   pMp4Player = (Mpeg4Player *)pContext;
   m_pAVSync = pAVSync;
 
+  QCUtils::CreateCondition(&wakeupSync,false,false);
+  QCUtils::CreateCondition(&responseSync,false,false);
+
   // Start the thread
   if (!StartThread())
   {
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "ERROR: TimedText::Create failed");
     return false;
   }
-
-  QCUtils::CreateCondition(&wakeupSync,false,false);
-  QCUtils::CreateCondition(&responseSync,false,false);
-
   return true;
 }
 
@@ -450,12 +449,11 @@ bool TimedText::Prep(int const playbackID, bool bRestart, Media *pMpeg4In)
     }
 #endif /* if defined(FEATURE_MP4_KDDI_TELOP_TEXT) || defined(FEATURE_QTV_ISDB_SUBTITLES) */
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
     if (pMedia)
     {
        pMedia->SetTextPlayerData(this);
     }
-#endif  /* FEATURE_FILE_FRAGMENTATION */
 
 
 #if defined(FEATURE_MP4_KDDI_TELOP_TEXT) || defined(FEATURE_QTV_ISDB_SUBTITLES)
@@ -815,7 +813,11 @@ long TimedText::GetElapsedTime()
    ** playback speed ratio. 
    */
    nElapsedTime = ((iTime - timeOffset)*m_playbackSpeedNum)/m_playbackSpeedDen;
-   
+
+#ifdef FEATURE_QTV_AFE_CLK_BASED_AV_SYNC
+#error code not present
+#endif // #ifdef FEATURE_QTV_AFE_CLK_BASED_AV_SYNC
+
   /* Calculate and store the Max and Min Text data lead time */
   int32 lTextDataLead = 0;     
   lTextDataLead = (m_iTimeStamp + m_iSampleDuration) - nElapsedTime;
@@ -1040,7 +1042,9 @@ unsigned char const *TimedText::GetText()
 {
   // Everytime the text is gotten, print it out to QxDM
   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Timed text: ");
+#ifndef FEATURE_WINCE
   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, (const char *)(pThis->m_pTextBuffer + 2) );
+#endif
 
   return pThis->m_pTextBuffer;
 }
@@ -2334,10 +2338,11 @@ void TimedText::ProcessNextTextSample(int &sleepTime)
          if (pMedia)
          {
             pMedia->GetCurTextSampleInfo((uint32*)&m_iTimeStamp, (uint32*)&m_iSampleDuration, &m_iSampleDescIndex);
-         }
-         #ifdef FEATURE_QTV_GENERIC_BCAST_PCR
+#ifdef FEATURE_QTV_GENERIC_BCAST_PCR
 #error code not present
-         #endif
+#endif
+         }
+
          // Sample Modifier Content Retrieval
          uint8* byteBuffer = m_pTextBuffer;
          // byteBuffer may not be aligned properly, needs to use PACKED
@@ -2831,7 +2836,9 @@ const QtvPlayer::TelopSubStringT* TimedText::GetTelopSubString(int index)
 
     // Log Telop Substring to QxDM
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "TelopSubString: ");
+#ifndef FEATURE_WINCE
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, pSubStrings->textSubString );
+#endif
 
     returnedSubStringStruct.LineFeed      = pSubStrings->oLineFeed;
     returnedSubStringStruct.Underline     = pSubStrings->oUnderLine;

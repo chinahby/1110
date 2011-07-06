@@ -3,21 +3,21 @@
 /* =======================================================================
                                oscl_string.h
 DESCRIPTION
-//    This is a simple string class without any multithread access 
+//    This is a simple string class without any multithread access
 //    protection.
-  
-Portions copyrighted by PacketVideo Corporation; 
+
+Portions copyrighted by PacketVideo Corporation;
 Copyright 1998, 2002, 2003 PacketVideo Corporation, All Rights Reserved; and
-Portions copyrighted by QUALCOMM Incorporated; 
+Portions copyrighted by QUALCOMM Incorporated;
 Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 ========================================================================== */
 
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/oscl/main/latest/inc/oscl_string.h#7 $
-$DateTime: 2008/05/08 14:04:55 $
-$Change: 656428 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/oscl/main/latest/inc/oscl_string.h#9 $
+$DateTime: 2009/11/24 21:58:24 $
+$Change: 1095572 $
 
 
 ========================================================================== */
@@ -50,8 +50,13 @@ $Change: 656428 $
 /* -----------------------------------------------------------------------
 ** Constant / Define Declarations
 ** ----------------------------------------------------------------------- */
-/* This macro is used on string literals to determine if they are 
+/* This macro is used on string literals to determine if they are
    of type wchar_t or int8. */
+
+#ifdef FEATURE_WINCE
+#error code not present
+#endif // FEATURE_WINCE
+
 
 #ifdef UNICODE
 #define _T(x) L ## x
@@ -63,8 +68,20 @@ $Change: 656428 $
 ** Type Declarations
 ** ----------------------------------------------------------------------- */
 
+template <class C>
+class OSCL_String;
+
+/* Set character code to ASCII or UNICODE */
+#ifdef __cplusplus
+#ifdef UNICODE
+typedef OSCL_String<wchar_t>        OSCL_STRING;
+#else /* UNICODE */
+typedef OSCL_String<char>           OSCL_STRING;
+#endif /* UNICODE */
+#endif /* __cplusplus */
+
 /* -----------------------------------------------------------------------
-** Global Constant Data Declarations 
+** Global Constant Data Declarations
 ** ----------------------------------------------------------------------- */
 
 /* -----------------------------------------------------------------------
@@ -78,7 +95,7 @@ $Change: 656428 $
 /* =======================================================================
 MACRO MYOBJ
 
-ARGS 
+ARGS
   xx_obj - this is the xx argument
 
 DESCRIPTION:
@@ -90,20 +107,20 @@ DESCRIPTION:
 ** ======================================================================= */
 
 /* ======================================================================
-CLASS 
+CLASS
   OSCL_String_Srep
 
 DESCRIPTION
-    OSCL_String is a simple string class 
-    which is compatible with regular character array 
-    strings as well as Unicode wchar_t array strings. 
-    
+    OSCL_String is a simple string class
+    which is compatible with regular character array
+    strings as well as Unicode wchar_t array strings.
+
     The class uses a copy-on-write to minimize unnecessary
-    copying when multiple instances of a string are created 
-    for reading.  Allocated memory is automatically freed by 
-    the class destructor when the last string referencing the 
-    memory is destroyed.  The class HAS NO thread synchronization 
-    built-in, so it is NOT MT-SAFE.  External locks should be used 
+    copying when multiple instances of a string are created
+    for reading.  Allocated memory is automatically freed by
+    the class destructor when the last string referencing the
+    memory is destroyed.  The class HAS NO thread synchronization
+    built-in, so it is NOT MT-SAFE.  External locks should be used
     if the class is to be shared across threads.
 
 DEPENDENCIES
@@ -115,7 +132,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 #ifdef FEATURE_QTV_STRING_REFCNT
 template <class C>
@@ -132,7 +149,7 @@ struct OSCL_String_Srep
     size = nsz;
     if ( size > 0 )
     {
-      /* allocate enough space including terminator */   
+      /* allocate enough space including terminator */
       buffer = QTV_New_Array( C, size+1 );
       /* copy the buffer into ours - automatically null-terminates */
       std_strlcpy(buffer,src,size+1);
@@ -191,11 +208,11 @@ struct OSCL_String_Srep
 #endif /* FEATURE_QTV_STRING_REFCNT */
 
 /* ======================================================================
-CLASS 
+CLASS
   OSCL_String
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -206,9 +223,9 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
-template <class C>  
+template <class C>
 class OSCL_String
 {
 public:
@@ -219,8 +236,8 @@ public:
   /// Copy constructor from character array
   OSCL_String(const C *cp);
 
-  /// Copy constructor from character array, but allocates 
-  /// length according to the length parameter.  
+  /// Copy constructor from character array, but allocates
+  /// length according to the length parameter.
   OSCL_String(const C *src, uint32 length);
 
   /// Copy constructor from another OSCL_String
@@ -233,12 +250,12 @@ public:
   OSCL_String<C>& operator=(const OSCL_String<C> &);
 
   // These don't seem to have any effect on the Metrowerks ARM compiler ...
-  friend int32 operator== (const OSCL_String<C>& a, const OSCL_String<C>& b);
-  friend int32 operator!= (const OSCL_String<C>& a, const OSCL_String<C>& b);
-  friend int32 operator<  (const OSCL_String<C>& a, const OSCL_String<C>& b);
-  friend int32 operator<= (const OSCL_String<C>& a, const OSCL_String<C>& b);
-  friend int32 operator>  (const OSCL_String<C>& a, const OSCL_String<C>& b);
-  friend int32 operator>= (const OSCL_String<C>& a, const OSCL_String<C>& b);
+  friend int32 operator== (const OSCL_STRING& a, const OSCL_STRING& b);
+  friend int32 operator!= (const OSCL_STRING& a, const OSCL_STRING& b);
+  friend int32 operator<  (const OSCL_STRING& a, const OSCL_STRING& b);
+  friend int32 operator<= (const OSCL_STRING& a, const OSCL_STRING& b);
+  friend int32 operator>  (const OSCL_STRING& a, const OSCL_STRING& b);
+  friend int32 operator>= (const OSCL_STRING& a, const OSCL_STRING& b);
 
   ~OSCL_String();
 
@@ -255,15 +272,15 @@ public:
   {
     return get_size();
   }
- 
+
   // Return the capacity that this buffer can hold without reallocating.
-  uint32 get_capacity() const 
-  { 
+  uint32 get_capacity() const
+  {
 #ifdef FEATURE_QTV_STRING_REFCNT
     return get_size();
 #else
-    return m_capacity; 
-#endif /* FEATURE_QTV_STRING_REFCNT */   
+    return m_capacity;
+#endif /* FEATURE_QTV_STRING_REFCNT */
   }
 
   bool ensure_capacity(int32 capacity);
@@ -291,11 +308,11 @@ public:
   C operator[] (int32 index) const;
 
   // Needed so that (OSCL_String == const char *) does not convert OSCL_String
-  // and do (const char * == const char *) which would be only a pointer 
+  // and do (const char * == const char *) which would be only a pointer
   // comparison.
-  int32 operator==(const char *b) const 
-  { 
-    return ((const OSCL_String &) *this == (const OSCL_String &) OSCL_String(b)); 
+  int32 operator==(const char *b) const
+  {
+    return ((const OSCL_String &) *this == (const OSCL_String &) OSCL_String(b));
   }
 
   uint32 hash() const;
@@ -333,9 +350,9 @@ template<class C> const C* OSCL_String<C>::EMPTY_STRING = "";
 template<class C>
 void OSCL_String<C>::deallocate()
 {
-  if ( m_buffer != NULL ) 
-  { 
-    QTV_Delete_Array( m_buffer ); 
+  if ( m_buffer != NULL )
+  {
+    QTV_Delete_Array( m_buffer );
   }
 
   m_buffer = NULL;
@@ -350,20 +367,20 @@ void OSCL_String<C>::assign(const C *cp)
   {
     cp = "";
   }
-  
+
   int32 size = std_strlen(cp);
 
   m_buffer = QTV_New_Array( C, size + 1 );
   std_strlcpy( BUFFER, cp, size + 1);
   m_capacity = size;
-  m_size = size;  
+  m_size = size;
 }
 
 template<class C>
 void OSCL_String<C>::assign(const C *cp, int32 length)
 {
   if (( cp == NULL ) || (length <= 0))
-  {    
+  {
     cp = "";
     length = 0;
   }
@@ -380,7 +397,7 @@ void OSCL_String<C>::assign(const C *cp, int32 length)
   /* strlcpy automatically null-terminates */
   std_strlcpy( m_buffer, cp, length+1 );
   m_size = length;
-  m_capacity = length;  
+  m_capacity = length;
 }
 
 template<class C>
@@ -388,7 +405,7 @@ void OSCL_String<C>::assign(const OSCL_String<C> &src)
 {
   if (src.m_buffer == NULL)
   {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, 
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL,
                  "assign: src buffer is NULL!");
     return;
   }
@@ -397,14 +414,14 @@ void OSCL_String<C>::assign(const OSCL_String<C> &src)
 
   if (size < 0)
   {
-    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, 
+    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL,
                   "assign: src size = %d < 0!", size);
     return;
   }
 
   QTV_MSG1( QTVDIAG_DEBUG, "OSCL_String assign, size=%d", size );
   m_buffer = QTV_New_Array( C, size + 1 );
-    
+
   if (m_buffer == NULL)
   {
     m_size = 0;
@@ -414,11 +431,11 @@ void OSCL_String<C>::assign(const OSCL_String<C> &src)
 
   std_strlcpy( m_buffer, src.m_buffer, size + 1 );
   m_size = size;
-  m_capacity = size;  
+  m_capacity = size;
 }
 
 template<class C>
-OSCL_String<C>& OSCL_String<C>::append(const C *src) 
+OSCL_String<C>& OSCL_String<C>::append(const C *src)
 {
   if (src == NULL)
   {
@@ -428,7 +445,7 @@ OSCL_String<C>& OSCL_String<C>::append(const C *src)
 }
 
 template<class C>
-OSCL_String<C>& OSCL_String<C>::append(const C *src, int32 length) 
+OSCL_String<C>& OSCL_String<C>::append(const C *src, int32 length)
 {
   if (!ensure_capacity(length + m_size) || (m_buffer == NULL))
   {
@@ -452,11 +469,11 @@ OSCL_String<C>& OSCL_String<C>::append(const OSCL_String<C> &suffix)
 }
 #endif /* !FEATURE_QTV_STRING_REFCNT */
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::OSCL_String
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -467,10 +484,10 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
-OSCL_String<C>::OSCL_String() 
+OSCL_String<C>::OSCL_String()
 {
 #ifdef FEATURE_QTV_STRING_REFCNT
   C *ptr = NULL;
@@ -481,11 +498,11 @@ OSCL_String<C>::OSCL_String()
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::OSCL_String
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -496,7 +513,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
 OSCL_String<C>::OSCL_String(const C *cp)
@@ -512,11 +529,11 @@ OSCL_String<C>::OSCL_String(const C *cp)
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::OSCL_String
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -527,7 +544,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
 OSCL_String<C>::OSCL_String(const C *cp, uint32 length)
@@ -540,11 +557,11 @@ OSCL_String<C>::OSCL_String(const C *cp, uint32 length)
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::OSCL_String
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -555,7 +572,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
 OSCL_String<C>::OSCL_String(const OSCL_String<C> &src )
@@ -571,11 +588,11 @@ OSCL_String<C>::OSCL_String(const OSCL_String<C> &src )
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::~OSCL_String
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -586,15 +603,15 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
-OSCL_String<C>::~OSCL_String() 
+OSCL_String<C>::~OSCL_String()
 {
 #ifdef FEATURE_QTV_STRING_REFCNT
-  if ( --rep->refcnt == 0 ) 
-  { 
-    QTV_Delete( rep ); 
+  if ( --rep->refcnt == 0 )
+  {
+    QTV_Delete( rep );
   }
 #else
   deallocate();
@@ -602,7 +619,7 @@ OSCL_String<C>::~OSCL_String()
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::Read
 
 DESCRIPTION
@@ -619,10 +636,10 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
-C OSCL_String<C>::Read(int32 index, oscl_status_t & status) const 
+C OSCL_String<C>::Read(int32 index, oscl_status_t & status) const
 {
   if ((index < 0) || (index >= size()))
   {
@@ -635,11 +652,11 @@ C OSCL_String<C>::Read(int32 index, oscl_status_t & status) const
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::write
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -650,10 +667,10 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
-oscl_status_t OSCL_String<C>::write(int32 index, C c) 
+oscl_status_t OSCL_String<C>::write(int32 index, C c)
 {
   if ((index < 0) || (index >= size()))
   {
@@ -661,19 +678,19 @@ oscl_status_t OSCL_String<C>::write(int32 index, C c)
   }
 
 #ifdef FEATURE_QTV_STRING_REFCNT
-  rep = rep->get_own_copy(); 
+  rep = rep->get_own_copy();
 #endif /* FEATURE_QTV_STRING_REFCNT */
 
   BUFFER[index] = c;
-  return SUCCESS;  
-}      
+  return SUCCESS;
+}
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::write
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -684,13 +701,13 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
 void OSCL_String<C>::write(uint32 offset, uint32 length, C *ptr)
 {
 #ifdef FEATURE_QTV_STRING_REFCNT
-  rep = rep->get_own_copy(); 
+  rep = rep->get_own_copy();
 #endif /* FEATURE_QTV_STRING_REFCNT */
   int32 to_copy = (length > size() - offset) ? (size() - offset) : length;
   memcpy( BUFFER + offset, ptr, to_copy );
@@ -699,14 +716,14 @@ void OSCL_String<C>::write(uint32 offset, uint32 length, C *ptr)
   {
     BUFFER[to_copy] = '\0';
   }
-}      
+}
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::get_cstr
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -717,7 +734,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
 const C * OSCL_String<C>::get_cstr() const
@@ -732,11 +749,11 @@ const C * OSCL_String<C>::get_cstr() const
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::get_size
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -747,7 +764,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
 int32 OSCL_String<C>::get_size() const
@@ -759,21 +776,21 @@ int32 OSCL_String<C>::get_size() const
 #endif /* FEATURE_QTV_STRING_REFCNT */
 }
 
-// Ensure this buffer has enough room for size characters without 
+// Ensure this buffer has enough room for size characters without
 // reallocating.
 template<class C>
-bool OSCL_String<C>::ensure_capacity(int32 capacity) 
+bool OSCL_String<C>::ensure_capacity(int32 capacity)
 {
 #ifdef FEATURE_QTV_STRING_REFCNT
   QTV_USE_ARG1(capacity);
 #else
-  if (m_capacity < capacity) 
+  if (m_capacity < capacity)
   {
-    C *buffer_to_dealloc = m_buffer;  
-    
-    m_capacity = MAX((capacity << 1) - 1, 15);          
+    C *buffer_to_dealloc = m_buffer;
 
-    m_buffer = QTV_New_Array( C, m_capacity + 1 );         
+    m_capacity = MAX((capacity << 1) - 1, 15);
+
+    m_buffer = QTV_New_Array( C, m_capacity + 1 );
 
     if (m_buffer == NULL)
     {
@@ -793,11 +810,11 @@ bool OSCL_String<C>::ensure_capacity(int32 capacity)
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::operator=
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -808,7 +825,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
 OSCL_String<C>& OSCL_String<C>::operator=(const OSCL_String<C> &src)
@@ -818,7 +835,7 @@ OSCL_String<C>& OSCL_String<C>::operator=(const OSCL_String<C> &src)
   {
     return(*this);  // protect against "str = str"
   }
-  src.rep->refcnt++; 
+  src.rep->refcnt++;
   if ( --rep->refcnt == 0 )
   {
     QTV_Delete( rep );
@@ -836,11 +853,11 @@ OSCL_String<C>& OSCL_String<C>::operator=(const OSCL_String<C> &src)
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::operator=
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -851,7 +868,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
 OSCL_String<C>& OSCL_String<C>::operator=(const C *cp)
@@ -879,11 +896,11 @@ OSCL_String<C>& OSCL_String<C>::operator=(const C *cp)
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::operator+=
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -894,11 +911,11 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
 OSCL_String<C>& OSCL_String<C>::operator+=(const C* src)
-{  
+{
 #ifdef FEATURE_QTV_STRING_REFCNT
   int32 new_size = size() + std_strlen(src);
   Srep *new_rep;
@@ -917,11 +934,11 @@ OSCL_String<C>& OSCL_String<C>::operator+=(const C* src)
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::operator+=
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -932,7 +949,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
 OSCL_String<C>& OSCL_String<C>::operator+=(const OSCL_String& src)
@@ -955,11 +972,11 @@ OSCL_String<C>& OSCL_String<C>::operator+=(const OSCL_String& src)
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::operator+=
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -970,25 +987,25 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
 OSCL_String<C>& OSCL_String<C>::operator+=(const C c)
 {
   C tmp_str[2];
   tmp_str[0] = c;
-  tmp_str[1] = (C) '\0'; 
+  tmp_str[1] = (C) '\0';
 
   operator+=(tmp_str);
   return *this;
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::operator[]
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -999,7 +1016,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
 C OSCL_String<C>::operator[](int32 index) const
@@ -1032,7 +1049,7 @@ OSCL_String<C>& OSCL_String<C>::set(const C *cp, int32 length)
   }
 #else
   deallocate();
-  assign(cp, length);  
+  assign(cp, length);
 #endif /* FEATURE_QTV_STRING_REFCNT */
 
   return *this;
@@ -1040,11 +1057,11 @@ OSCL_String<C>& OSCL_String<C>::set(const C *cp, int32 length)
 
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   OSCL_String<C>::hash()
 
 DESCRIPTION
-  Thorough, meaningful description of what this function does. 
+  Thorough, meaningful description of what this function does.
 
 DEPENDENCIES
   List any dependencies for this function, global variables, state,
@@ -1055,7 +1072,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   Detail any side effects.
-  
+
 ========================================================================== */
 template<class C>
 uint32 OSCL_String<C>::hash() const
@@ -1072,24 +1089,14 @@ uint32 OSCL_String<C>::hash() const
   return h;
 }
 
-/* Set character code to ASCII or UNICODE */
-#ifdef __cplusplus
-#ifdef UNICODE
-typedef OSCL_String<wchar_t>        OSCL_STRING;
-#else /* UNICODE */
-typedef OSCL_String<char>           OSCL_STRING;
-#endif /* UNICODE */
-#endif /* __cplusplus */
-
-
-/* Note that in the following operators, the protected buffer field cannot be 
+/* Note that in the following operators, the protected buffer field cannot be
  * dereferenced even though these operators are declared as friends. This seems
- * to be a limitation of the ARM compiler; VC++ does allow the 
+ * to be a limitation of the ARM compiler; VC++ does allow the
  * access.
- */  
+ */
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   operator==(const OSCL_STRING &a, const OSCL_STRING &b)
 
 DESCRIPTION
@@ -1103,7 +1110,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   None.
-  
+
 ========================================================================== */
 inline int32 operator==(const OSCL_STRING &a, const OSCL_STRING &b)
 {
@@ -1115,10 +1122,10 @@ inline int32 operator==(const OSCL_STRING &a, const OSCL_STRING &b)
 #endif /* FEATURE_QTV_STRING_REFCNT */
 
   return ((std_strcmp(a.get_cstr(), b.get_cstr()) == 0) ? 1 : 0);
-} 
+}
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   operator!=(const OSCL_STRING &a, const OSCL_STRING &b)
 
 DESCRIPTION
@@ -1132,7 +1139,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   None.
-  
+
 ========================================================================== */
 inline int32 operator!=(const OSCL_STRING &a, const OSCL_STRING &b)
 {
@@ -1140,7 +1147,7 @@ inline int32 operator!=(const OSCL_STRING &a, const OSCL_STRING &b)
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   operator>(const OSCL_STRING &a, const OSCL_STRING &b)
 
 DESCRIPTION
@@ -1154,7 +1161,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   None.
-  
+
 ========================================================================== */
 inline int32 operator>(const OSCL_STRING &a, const OSCL_STRING &b)
 {
@@ -1162,7 +1169,7 @@ inline int32 operator>(const OSCL_STRING &a, const OSCL_STRING &b)
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   operator>=(const OSCL_STRING &a, const OSCL_STRING &b)
 
 DESCRIPTION
@@ -1176,7 +1183,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   None.
-  
+
 ========================================================================== */
 inline int32 operator>=(const OSCL_STRING &a, const OSCL_STRING &b)
 {
@@ -1184,7 +1191,7 @@ inline int32 operator>=(const OSCL_STRING &a, const OSCL_STRING &b)
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   operator<=(const OSCL_STRING &a, const OSCL_STRING &b)
 
 DESCRIPTION
@@ -1198,7 +1205,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   None.
-  
+
 ========================================================================== */
 inline int32 operator<=(const OSCL_STRING &a, const OSCL_STRING &b)
 {
@@ -1206,7 +1213,7 @@ inline int32 operator<=(const OSCL_STRING &a, const OSCL_STRING &b)
 }
 
 /* ======================================================================
-FUNCTION 
+FUNCTION
   operator>(const OSCL_STRING &a, const OSCL_STRING &b)
 
 DESCRIPTION
@@ -1220,7 +1227,7 @@ RETURN VALUE
 
 SIDE EFFECTS
   None.
-  
+
 ========================================================================== */
 inline int32 operator<(const OSCL_STRING &a, const OSCL_STRING &b)
 {
@@ -1228,3 +1235,4 @@ inline int32 operator<(const OSCL_STRING &a, const OSCL_STRING &b)
 }
 
 #endif /* OSCL_STRING_H */
+

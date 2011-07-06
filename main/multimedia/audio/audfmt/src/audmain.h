@@ -18,10 +18,12 @@ Copyright (c) 2000 - 2007 by QUALCOMM, Incorporated.  All Rights Reserved.
   This section contains comments describing changes made to this file.
   Notice that changes are listed in reverse chronological order.
    
-  $Header: //source/qcom/qct/multimedia/audio/6k/ver1/audfmt/main/latest/src/audmain.h#4 $
+  $Header: //source/qcom/qct/multimedia/audio/6k/ver1/audfmt/main/latest/src/audmain.h#5 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+09/07/10    rp     added audmain_get_data_buffer_size API to get the 
+                   read data length
 01/16/09    kd     Added default volume level for SMAF.
 10/02/08    vsud   Fixed CR# 157201 for SMAF file play back issues.
 08/26/08   anb     Added support for DSP based WMAPRO
@@ -3421,5 +3423,25 @@ extern void audmain_cleanup_vbr (
   audmain_file_type file_type
 );
 
+/*===========================================================================
+
+FUNCTION audmain_get_data_buffer_size
+
+DESCRIPTION
+  This function returns the data read lengh value. When audmain_get_data()
+  called for synchronous mode, data length can be obtain with these
+  function.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+extern uint32 audmain_get_data_buffer_size ( void);
 #endif /* FEATURE_AUDIO_FORMAT */
 #endif /* AUDMAIN_H */

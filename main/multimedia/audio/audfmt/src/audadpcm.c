@@ -38,10 +38,14 @@ Copyright(c) 2003 - 2007 by QUALCOMM, Incorporated. All Rights Reserved.
   This section contains comments describing changes made to this file.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/multimedia/audio/6k/ver1/audfmt/main/latest/src/audadpcm.c#7 $ $DateTime: 2009/10/14 23:25:20 $ $Author: bsingh $
+  $Header: //source/qcom/qct/multimedia/audio/6k/ver1/audfmt/main/latest/src/audadpcm.c#10 $ $DateTime: 2010/09/07 05:27:19 $ $Author: rpampana $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+09/07/10    rp     fix to handle the corrupted adpcm fmt data chunck size . 
+01/18/10   aim     Fixed the compiler warnings. 
+10/23/09   sk/gs   Modified the code to return error if
+                   audadpcm_parse_ctl.format.bytes_rate is zero.
 10/14/09    bk     Changed the way of calculation in audadpcm_set_data_rate
                    for very low sample rate files. And made the minimum allowed
                    sampling rate for wav file to be 100 Hz.
@@ -453,20 +457,20 @@ LOCAL void audadpcm_do_file_spec (
       break;
     case QCPSUP_WAVE_FORMAT_LINEAR_PCM:
       snd_spec.file_type      = SND_CMX_AF_FILE_PCM;
-      snd_spec.supported_ops  = SND_SUPPORTED_OPS_MASK_SEEK |
-                                SND_SUPPORTED_OPS_MASK_GETTIME;
+      snd_spec.supported_ops  = (snd_supported_ops_mask_type)(SND_SUPPORTED_OPS_MASK_SEEK |
+                                 SND_SUPPORTED_OPS_MASK_GETTIME);
       break;
 #ifdef FEATURE_VOC_G711
     case QCPSUP_WAVE_FORMAT_ALAW:
       snd_spec.file_type      = SND_CMX_AF_FILE_WAV_ALAW;
-      snd_spec.supported_ops  = SND_SUPPORTED_OPS_MASK_SEEK |
-                                SND_SUPPORTED_OPS_MASK_GETTIME;
+      snd_spec.supported_ops  = (snd_supported_ops_mask_type)(SND_SUPPORTED_OPS_MASK_SEEK |
+                                 SND_SUPPORTED_OPS_MASK_GETTIME);
 
       break;
     case QCPSUP_WAVE_FORMAT_MULAW:
       snd_spec.file_type      = SND_CMX_AF_FILE_WAV_MULAW;
-      snd_spec.supported_ops  = SND_SUPPORTED_OPS_MASK_SEEK |
-                                SND_SUPPORTED_OPS_MASK_GETTIME;
+      snd_spec.supported_ops  = (snd_supported_ops_mask_type)(SND_SUPPORTED_OPS_MASK_SEEK |
+                                 SND_SUPPORTED_OPS_MASK_GETTIME);
       break;
 #endif /* FEATURE_VOC_G711 */
   }
@@ -775,7 +779,7 @@ audmain_status_type audadpcm_format_play (
     {
       return (AUDMAIN_STATUS_ERROR);
     }
-    audmain_set_hybrid_mode(7);
+    audmain_set_hybrid_mode(AUDMAIN_AUDFMT_POLY_MODE_7);
 #if defined(FEATURE_WEBAUDIO) || defined(FEATURE_MIDI_OUT_QCP)
     audmain_adec_reset_channel(parse_ctl, 0);
 #endif
@@ -886,6 +890,30 @@ audmain_status_type audadpcm_parse_head (
            AUDMAIN_STATUS_SUCCESS) {
           return(AUDMAIN_STATUS_ERROR);
         } else {
+          parse_ctl->buffer_size = audmain_get_data_buffer_size();
+          buffer_start  += index;
+          index          = 0;
+        }
+      }
+
+      /*Check the index, if audfmt format chunck size is corrupted 
+        index can have undesirable value */
+      if((index + buffer_start) > file_size) {
+         MSG_ERROR("format chunk data size corrupted" 
+                   "index:%x buffer_start:%x  file_size:%x ",
+                   index, buffer_start, file_size);
+        return(AUDMAIN_STATUS_ERROR);
+      }
+   
+      /*Check the index size, if required get the new data buffer */
+      if(index >= parse_ctl->buffer_size )
+      {
+        audmain_do_play_cb(handle, SND_CMX_AF_FREE_BUF, 0, (void *) buffer);
+        if(audmain_get_data(handle, buffer_start + index, &buffer) !=
+           AUDMAIN_STATUS_SUCCESS) {
+          return(AUDMAIN_STATUS_ERROR);
+        } else {
+          parse_ctl->buffer_size = audmain_get_data_buffer_size();
           buffer_start  += index;
           index          = 0;
         }
@@ -910,10 +938,21 @@ audmain_status_type audadpcm_parse_head (
              AUDMAIN_STATUS_SUCCESS) {
             return(AUDMAIN_STATUS_ERROR);
           } else {
+            parse_ctl->buffer_size = audmain_get_data_buffer_size();
             buffer_start  += index;
             index          = 0;
           }
         }
+        /*Check for the valid data length */
+        if(audadpcm_parse_ctl.total_length >= file_size )
+        {
+          MSG_ERROR("data chunk size corrupted" 
+                    "data total_length:%x file_size:%x ",
+                    audadpcm_parse_ctl.total_length, file_size, 0);
+         return(AUDMAIN_STATUS_ERROR);
+
+        }
+
       }
 
       if (!status == QCPSUP_STATUS_SUCCESS) {
@@ -924,13 +963,24 @@ audmain_status_type audadpcm_parse_head (
     }
 
     /* Calculate total time to play file */
-    if(audadpcm_parse_ctl.total_length < 4294967) {
-      audadpcm_parse_ctl.time_ms = (audadpcm_parse_ctl.total_length * 1000) / 
-                                         (audadpcm_parse_ctl.format.bytes_rate);
-    } else {
-      tqword = (uint64) audadpcm_parse_ctl.total_length * 1000;
-      audadpcm_parse_ctl.time_ms = tqword /
-                                       audadpcm_parse_ctl.format.bytes_rate;
+    /* Check If bytes_rate is zero before calculating the totaltime
+       to prevent divied by Zero error */
+    if(!audadpcm_parse_ctl.format.bytes_rate)
+    {
+      MSG_ERROR("audadpcm_parse_head :Received Zero Bytes_rate=%d",
+                audadpcm_parse_ctl.format.bytes_rate,0,0);
+      return (AUDMAIN_STATUS_ERROR);
+    }
+    else
+    {
+      if(audadpcm_parse_ctl.total_length < 4294967) {
+        audadpcm_parse_ctl.time_ms = (audadpcm_parse_ctl.total_length * 1000) / 
+                                           (audadpcm_parse_ctl.format.bytes_rate);
+      } else {
+        tqword = (uint64) audadpcm_parse_ctl.total_length * 1000;
+        audadpcm_parse_ctl.time_ms = tqword /
+                                         audadpcm_parse_ctl.format.bytes_rate;
+      }
     }
 
     audadpcm_parse_ctl.track1.buffer  = buffer;
@@ -985,7 +1035,7 @@ audmain_status_type audadpcm_parse_head (
       if (audmain_set_adec_mode(adec_mode) != AUDMAIN_STATUS_SUCCESS) {
         return (AUDMAIN_STATUS_ERROR);
       }
-      audmain_set_hybrid_mode(7);
+      audmain_set_hybrid_mode(AUDMAIN_AUDFMT_POLY_MODE_7);
 #if defined(FEATURE_WEBAUDIO) || defined(FEATURE_MIDI_OUT_QCP)
       audmain_adec_reset_channel(parse_ctl, 0);
 #endif
@@ -1328,7 +1378,7 @@ audmain_status_type audadpcm_adec_adjust (
     if ((adpcm_ctl->format.wave_format == QCPSUP_WAVE_FORMAT_IMA_ADPCM) ||
         (adpcm_ctl->format.wave_format == QCPSUP_WAVE_FORMAT_LINEAR_PCM)) {
       if (!(adpcm_ctl->status_flag & AUDADPCM_MASK_DONE_PENDING)) {
-        adpcm_ctl->track_inuse = *buf_usage_mask;
+        adpcm_ctl->track_inuse = (audadpcm_track_status_enum_type)*buf_usage_mask;
       }
       if(num_used != 0) {
         adpcm_ctl->track1.length -= *buf1_used;

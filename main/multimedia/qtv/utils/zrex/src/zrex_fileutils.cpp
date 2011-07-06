@@ -437,6 +437,11 @@ int FileUtils::Fclose( FILE *stream )
     RemoveFile(stream);
   }
 
+/* ------
+Commented out, since this code goes to all targets as common and 
+below REX API is not currently ported to all active targets and baselines.
+--------- */
+  //rex_del_crit_sect(&FilesCS);
   return fclose(stream);
 }
 

@@ -17,9 +17,9 @@ Copyright 2007 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/qtvmediaadtsparser.h#7 $ 
-$DateTime: 2008/05/08 08:09:22 $
-$Change: 656074 $ 
+$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/qtvmediaadtsparser.h#9 $ 
+$DateTime: 2010/05/19 21:47:11 $
+$Change: 1306101 $ 
 
 ========================================================================== */
 

@@ -20,9 +20,9 @@
 /*=========================================================================
                              Edit History
                              
-$Header: //source/qcom/qct/multimedia/qtv/staticextensions/oem/main/latest/src/oemmediampeg4.c#9 $
-$DateTime: 2009/01/08 00:46:58 $
-$Change: 815455 $
+$Header: //source/qcom/qct/multimedia/qtv/staticextensions/oem/main/latest/src/oemmediampeg4.c#57 $
+$DateTime: 2010/12/15 02:39:32 $
+$Change: 1554380 $
 
 =========================================================================*/
 
@@ -33,7 +33,15 @@ $Change: 815455 $
 ===========================================================================*/
 #include "customer.h"
 #include "OEMMediaMPEG4.h"
+#ifdef FEATURE_CMI
+#error code not present
+#else
 #include "clk.h"
+#endif
+
+#ifdef FEATURE_CMI_MM
+#error code not present
+#endif
 #include "msg.h"
 #include "AEEMimeTypes.h"
 #include "AEEFile.h"
@@ -42,6 +50,15 @@ $Change: 815455 $
 #include "OEMFeatures.h"
 #include "OEMOS.h"
 #include "qtv_perf.h"
+#ifdef FEATURE_BMP
+#include "AEEBase.h"
+#include "AEEISettings.h"
+#endif
+#include "OEMMedia.h"
+extern int AEEMedia_QueryInterface(IMedia * po, AEECLSID idReq, void ** ppo);
+#ifdef FEATURE_USE_CLKREGIM_DEVMAN_REV2
+#include "mddihost.h"
+#endif
 #if MIN_BREW_VERSION(4,0)
 # include "OEMefs.h"
 /* Brew 4.0 doesn't declare these functions anymore. */
@@ -118,6 +135,8 @@ extern void disp_update_yuv420(void * buf_ptr, int16 num_of_rows,int16 num_of_co
 #define MDPOP_SCALE_MASK 0x00000078
 #endif /* FEATURE_QTV_MDP_TRANSFORMATIONS */
 
+OEMCriticalSection TimedText3gppCS;
+
 /* Macros for changing app context.  The underlying function changes
  * among BREW versions, so this macro abstracts the BREW version.
  */
@@ -160,6 +179,11 @@ OBJECT(OEMMediaMPEG4)
 {
    INHERIT_AEEMedia(IMediaMPEG4);
    boolean  m_bRelMark;
+   #ifdef FEATURE_BMP
+   struct QTV_ISeetings {
+     AEEBASE_INHERIT(ISettings, OEMMediaMPEG4);
+   }m_qtvISettings;   
+   #endif
    OEMMediaMPEG4Layer *m_pMPEG4;
    int                 m_nPlayType;
 };
@@ -170,7 +194,8 @@ OBJECT(OEMMediaMPEG4)
 
 ==============================================================================*/
 uint32                    g_uMPEG4RefCnt = 0;
-OEMMediaMPEG4Layer        *g_pOEMLayer[MAX_NUM_OEM_PLAYBACK_INST]; 
+//Add one more NULL if there is support for four instances
+OEMMediaMPEG4Layer        *g_pOEMLayer[MAX_NUM_OEM_PLAYBACK_INST] = { NULL, NULL, NULL }; 
 
 #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
 static uint8 bPseudoStream = 0;                    
@@ -257,6 +282,7 @@ static void OEMMediaMPE4Qtv_handleSoundPending(OEMHandle pOEM);
 
 ===========================================================================*/
 static uint32 OEMMediaMPEG4_Release(IMedia * po);
+static int    OEMMediaMPEG4_QueryInterface(IMedia * po, AEECLSID clsid, void **ppo);
 static int    OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 p2);
 static int    OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * pP1, int32 *  pP2);
 static int    OEMMediaMPEG4_Play(IMedia * po);
@@ -275,7 +301,7 @@ static const VTBL(IMediaMPEG4) gMediaMPEG4Funcs =
 {
    AEEMedia_AddRef,
    OEMMediaMPEG4_Release,
-   AEEMedia_QueryInterface,
+   OEMMediaMPEG4_QueryInterface,
    AEEMedia_RegisterNotify,
    OEMMediaMPEG4_SetMediaParm,
    OEMMediaMPEG4_GetMediaParm,
@@ -293,12 +319,107 @@ static const VTBL(IMediaMPEG4) gMediaMPEG4Funcs =
       MPEG4 FUNCTION DEFINITIONS
 
 ===============================================================================*/
+// QueryInterface
+static int OEMMediaMPEG4_QueryInterface(IMedia * po, AEECLSID clsid, void **ppo)
+{
+   int nResult = ECLASSNOTSUPPORT;
+   #ifdef FEATURE_BMP
+   OEMMediaMPEG4 *pMe = (OEMMediaMPEG4 *)po;
+
+   *ppo = NULL;
+
+   if(AEEIID_ISettings == clsid){
+      *ppo = (void *)&pMe->m_qtvISettings;
+      nResult = AEE_SUCCESS;
+   }
+
+   if(nResult == AEE_SUCCESS){
+      (void)AEEMedia_AddRef(po);
+   }
+   else
+   {   
+
+     nResult = AEEMedia_QueryInterface(po, clsid, ppo);   
+   }
+   #endif
+   return nResult;
+}
+
+// Get the value of the setting using its URI
+#ifdef FEATURE_BMP
+int OEMMediaMPEG4Settings_Get(ISettings *po, const char *cpszKey, char *pszValue, int nValueLen, int *pnValueLenReq)
+{
+  return AEE_EUNSUPPORTED;
+}
+
+// Set the value of a setting using its URI
+int OEMMediaMPEG4Settings_Set(ISettings *po, const char *cpszKey, const char *cpszValue)
+{
+  if (!po)
+  {
+     MSG_ERROR("OEMMediaMPEG4Settings_Set, po is NULL!", 0, 0, 0);
+     return EFAILED;
+  }
+  else
+  {
+    struct QTV_ISeetings * pISetting = (struct QTV_ISeetings *)po;
+    OEMMediaMPEG4 * pme = (OEMMediaMPEG4 *)pISetting->pMe;
+    if (NULL != pme)
+    {
+        OEMHandle pOEM = OEMMediaMPEG42PV_GetOEMLayer(pme->m_pMPEG4);
+        return (OEMMediaMPEG42Qtv_ISettings_Set((char *)cpszKey,(char *)cpszValue,pOEM));
+    }
+    else
+    {
+        MSG_ERROR("OEMMediaMPEG4Settings_Set, pme is NULL!", 0, 0, 0);
+        return EFAILED;
+    }
+  }
+}
+
+// Delete a setting from the settings store
+int OEMMediaMPEG4Settings_Delete(ISettings *po, const char *cpszKey)
+{
+  return AEE_EUNSUPPORTED;
+}
+
+// Reset settings to their default values
+int OEMMediaMPEG4Settings_Reset(ISettings *po, const char *cpszKey)
+{
+  return AEE_EUNSUPPORTED;
+}
+
+// Register a signal to fire when a particular setting (or settings subtree) changes
+int OEMMediaMPEG4Settings_OnChange(ISettings *po, const char *cpszKey, ISignal *piSignal, IQueryInterface **ppiReg)
+{
+  return AEE_EUNSUPPORTED;
+}
+
+// Return a count of the children under the specified parent settings node
+int OEMMediaMPEG4Settings_GetNumChildren(ISettings *po, const char *cpszKey, int *pnChildren)
+{
+  return AEE_EUNSUPPORTED;
+}
+
+// Return the Nth child under the specified parent settings node
+int OEMMediaMPEG4Settings_GetChildName(ISettings *po, const char *cpszKey, int nChild, char *pszResults, int nResultSize, int *pnResultLen)
+{
+  return AEE_EUNSUPPORTED;
+}
+
+// Get an ISettings object rooted at the specified key
+int OEMMediaMPEG4Settings_GetSubTree(ISettings *po, const char *cpszKey, ISettings **ppo)
+{
+  return AEE_EUNSUPPORTED;
+}
+#endif
 /*==================================================================
    Destructor
 ==================================================================*/
 void OEMMediaMPEG4_Delete(IMedia * po, boolean bFree)
 {
-   OEMMediaMPEG4      * pme = (OEMMediaMPEG4 *)po;
+   OEMMediaMPEG4      * pme = (OEMMediaMPEG4 *)po;	
+   MSG_HIGH("OEMMediaMPEG4Layer_Delete Entry", 0, 0, 0);
    if (!pme->m_bRelMark)
    {
       pme->m_bRelMark = TRUE;
@@ -315,6 +436,8 @@ void OEMMediaMPEG4_Delete(IMedia * po, boolean bFree)
 #ifndef T_QSC1110
    disp_lock_screen(0,0,0,0);
 #endif
+   MSG_HIGH("OEMMediaMPEG4Layer_Delete Exit", 0, 0, 0);
+
 }
 
 /*==================================================================
@@ -339,6 +462,7 @@ void OEMMediaMPEG4Layer_Delete(OEMMediaMPEG4Layer * pOEM)
   for ( i=0; i<MAX_NUM_OEM_PLAYBACK_INST; i++ ) {
     if ( g_pOEMLayer[i] == pOEM ) {
        g_pOEMLayer[i] = NULL;
+	--g_uMPEG4RefCnt;
     }
   }
 
@@ -399,6 +523,7 @@ void OEMMediaMPEG4Layer_Delete(OEMMediaMPEG4Layer * pOEM)
   }
 #endif
   FREE(pOEM);
+  MSG_HIGH("OEMMediaMPEG4Layer_Delete...return",0,0,0);
 }
 
 /*==============================================================================
@@ -410,6 +535,7 @@ void OEMMediaMPEG4Layer_Delete(OEMMediaMPEG4Layer * pOEM)
 static uint32 OEMMediaMPEG4_Release(IMedia * po)
 {
    int32 nRef = AEEMedia_Release(po);
+   MSG_HIGH("OEMMediaMPEG4_Release Entry",0,0,0);
 
    if (!nRef)
    {
@@ -417,8 +543,8 @@ static uint32 OEMMediaMPEG4_Release(IMedia * po)
       OEMMediaMPEG4_FreeMediaDataEx((OEMMediaMPEG4 *) po);
 #endif
       OEMMediaMPEG4_Delete(po, TRUE);
-      --g_uMPEG4RefCnt;
    }
+   MSG_HIGH("OEMMediaMPEG4_Release Exit nRef = %d",nRef,0,0);
    return nRef;
 }
 
@@ -504,6 +630,8 @@ static int OEMMediaMPEG4Qtv_PlayISOURCE( OEMMediaMPEG4 * pme)
 */
 static void OEMMediaMPE4Qtv_handleSoundPending(OEMHandle pOEM)
 {
+  int retValue = 0;
+  pOEM = OEMMediaMPEG42PV_GetOEMLayer(pOEM);
   // Need to provide valid OEMhandle, return if pOEM is NULL
   if(!pOEM)
   {
@@ -532,10 +660,10 @@ static void OEMMediaMPE4Qtv_handleSoundPending(OEMHandle pOEM)
     // Based on pending sound cmd, call the corresponding sound function
     // if result is not pending, send MM_STATUS_ABORT callback
     if(((pOEM->m_Sound.sound_cmd.cmd) < SOUNDCMD_MAX) && (OEMMediaMPEG4Qtv_SoundFunction[pOEM->m_Sound.sound_cmd.cmd]))
-    {          
-      if(OEMMediaMPEG4Qtv_SoundFunction[pOEM->m_Sound.sound_cmd.cmd](pOEM, 
-                                                                     &(pOEM->m_Sound.sound_cmd.param)) 
-         != MM_PENDING)
+    {
+      retValue = OEMMediaMPEG4Qtv_SoundFunction[pOEM->m_Sound.sound_cmd.cmd](pOEM, 
+                                                                     &(pOEM->m_Sound.sound_cmd.param));
+      if(retValue != MM_PENDING && retValue != EALREADY)
       {
         OEMMediaMPEG4_QueueCallback(pOEM->m_pCallbackData,
                                     MM_STATUS_ABORT,
@@ -685,6 +813,12 @@ static int OEMMediaMPEG4_SetMediaData (AEEMedia * pMedia, int32 p1)
     MSG_ERROR("OEMMediaMPEG4_SetMediaData, pOEM is invalid!", 0, 0, 0);
     return EBADPARM;
   }
+
+  if (pOEM->m_dwEnabledCaps != pOEM->m_dwCaps)
+  {
+    return OEMMediaMPEG4_OpenURN((AEEMediaDataEx *)p1, 1, pOEM);
+  }
+
   switch( pMedia->m_md.clsData )
   {
     case MMD_BUFFER:  /* playback from buffer */
@@ -822,13 +956,16 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
 #if defined (FEATURE_ACM) || defined (FEATURE_BMP_ACM)
    int nACMStatus;
 #endif
-
+   MSG_HIGH("OEMMediaMPEG4_SetMediaParm Entry",0,0,0);
 #if defined (FEATURE_BMP_ACM)
 #error code not present
 #endif 
 
+   MSG_HIGH("OEMMediaMPEG4_SetMediaParm... nParmID:%d; p1:%d; p2:%d", nParmID, p1, p2);
+
    if (pOEM == NULL) 
    {
+      MSG_ERROR("OEMMediaMPEG4_SetMediaParm: returning, pOEM is NULL", 0, 0, 0);
       return EBADPARM;
    }
 
@@ -838,6 +975,7 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
    */
    if ((pOEM->m_bSuspend) && (nParmID != MM_PARM_RECT))
    {
+      MSG_ERROR("OEMMediaMPEG4_SetMediaParm: returning, EBADSTATE", 0, 0, 0);   
       return EBADSTATE;
    }
 
@@ -883,7 +1021,7 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD       
       case MM_MP4_PARM_HTTP_SETUP_TIME:
         m_ds = (AEEMediaDataSetupTime *)p1;
-        OEMMediaMPEG4Qtv_SetStartAndBufferingTime(m_ds->dwStartupTime, m_ds->dwBufferingTime);
+        OEMMediaMPEG4Qtv_SetStartAndBufferingTime(m_ds->dwStartupTime, m_ds->dwBufferingTime, pOEM);
         break;
 #endif
 
@@ -904,6 +1042,7 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
           // SetMediaDataEx can only be called in idle state
           if (!AEEMedia_IsIdleState(pMedia))
           {
+            MSG_ERROR("OEMMediaMPEG4_SetMediaParm: returning, EBADSTATE", 0, 0, 0);
             return EBADSTATE;
           }
           
@@ -973,11 +1112,13 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
               AEEMedia_CleanUpResource((AEEMedia *)po);
               nRet = EFAILED;
             }
+            MSG_HIGH("OEMMediaMPEG4_SetMediaParm... return nRet:%d", nRet, 0, 0);
             return nRet;
           }
           // resource not granted
           else
           {
+            MSG_ERROR("OEMMediaMPEG4_SetMediaParm: returning, EFAILED", 0, 0, 0);
             return EFAILED;
           }
 #endif // FEATURE_ACM || FEATURE_BMP_ACM
@@ -985,15 +1126,34 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
         else
         {
 #if !defined(FEATURE_ACM) && !defined(FEATURE_BMP_ACM)
-          nRet = AEEMedia_SetMediaParm(po, nParmID, p1, p2);
+          int replaymode = 0;
+          if(p1 != NULL)
+          {
+            replaymode = ((AEEMediaData*)p1)->clsData;
+          }
+          // if this is PULL replay mode, just copy the data and set state to ready
+          if(replaymode == MMD_HTTP_PULL_BUFFER_PLAYBACK)
+          {
+            // pull mode replay
+            MEMCPY(&pMedia->m_md, (AEEMediaData*)p1, sizeof(AEEMediaData));
+            pme->m_nState = MM_STATE_READY;
+            nRet = SUCCESS;
+          }
+          else
+          {
+            nRet = AEEMedia_SetMediaParm(po, nParmID, p1, p2);
+          }
+
           if (nRet == SUCCESS)
           {
             nRet = OEMMediaMPEG4_SetMediaData (pMedia, p1) ;
           }
 #else // !FEATURE_ACM && !FEATURE_BMP_ACM
+          int replaymode = 0;
           // SetMediaDataEx can only be called in idle state
           if (!AEEMedia_IsIdleState(pMedia))
           {
+            MSG_HIGH("OEMMediaMPEG4_SetMediaParm... returning EBADSTATE", 0, 0, 0);
             return EBADSTATE;
           }
 
@@ -1004,12 +1164,28 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
           nACMStatus = AEEMedia_RequestResource((AEEMedia *)po, TRUE);
           if(nACMStatus != SUCCESS && nACMStatus != MM_PENDING)
           {
+            MSG_ERROR("OEMMediaMPEG4_SetMediaParm: returning, EBADSTATE", 0, 0, 0);
             return EBADSTATE;
           }
 
-          // Call AEEMedia_SetMediaParm, this will automatically
-          // save the AEEMediaData to be used for delayed acquiring
-          nRet = AEEMedia_SetMediaParm(po, nParmID, p1, p2);
+          if(p1 != NULL)
+          {
+            replaymode = ((AEEMediaData*)p1)->clsData;
+          }
+          // if this is PULL replay mode, just copy the data and set state to ready
+          if(replaymode == MMD_HTTP_PULL_BUFFER_PLAYBACK)
+          {
+            // pull mode replay
+            MEMCPY(&pMedia->m_md, (AEEMediaData*)p1, sizeof(AEEMediaData));
+            pme->m_nState = MM_STATE_READY;
+            nRet = SUCCESS;
+          }
+          else
+          {
+            // Call AEEMedia_SetMediaParm, this will automatically
+            // save the AEEMediaData to be used for delayed acquiring
+            nRet = AEEMedia_SetMediaParm(po, nParmID, p1, p2);
+          }
           if (nRet == SUCCESS)
           {
             if (nACMStatus == MM_PENDING)
@@ -1078,6 +1254,7 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
          if( !pOEM->m_bFrameCBEnabled && p1 )
          {  /* If we're switching from Direct Mode to Frame CB Mode */
             /* Erase the frame from the MDP */
+            pOEM->m_bMDPScale = FALSE;
             OEMMediaMPEG4_MDPDeregister(pOEM);
          }
 #endif /* !FEATURE_QTV_MDP_TRANSFORMATIONS */
@@ -1105,9 +1282,10 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
          break;
 
       case MM_PARM_TICK_TIME:
-         if (p1 != 0) {
-           pOEM->m_nTickInterval = ((uint32)p1);
-         }
+         // set the tick time what ever application sends as p1
+         // m_nTickInterval reflects the Periodicity of MM_TICK_UPDATE event 
+         // default implies 1000ms and zero implies no event 
+         pOEM->m_nTickInterval = ((uint32)p1);
          break;
 
       case MM_PARM_POS:
@@ -1146,11 +1324,9 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
          break;
       }
 
-#ifdef FEATURE_FILE_FRAGMENTATION
       case MM_MP4_PARM_LOOP_TRACK:
          nRet = OEMMediaMPEG42PV_SetLoopTrack((boolean)p1, pOEM);
          break;
-#endif /* FEATURE_FILE_FRAGMENTATION */
 
 #ifdef FEATURE_QTV_MFDRM
 #error code not present
@@ -1200,16 +1376,40 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
          break;    
 #endif /* FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2 */
 
-      case MM_MP4_PARAM_HTTP_REGISTER_CALLBACK_BUFFER_DATA_SIZE:
+      case MM_MP4_PARAM_REGISTER_DRM_CALLBACK_BUFFER_DATA_SIZE:
          nRet = OEMMediaMPEG42PV_RegisterFetchDataSizeCallback((uint32 *)p1);
          break;
 
-      case MM_MP4_PARAM_HTTP_REGISTER_CALLBACK_BUFFER_DATA:
+      case MM_MP4_PARAM_REGISTER_DRM_CALLBACK_BUFFER_DATA:
          nRet = OEMMediaMPEG42PV_RegisterFetchDataCallback((uint32 *)p1);
          break;
 
-      case MM_MP4_PARAM_HTTP_REGISTER_CALLBACK_BUFFER_SUPPORTED_TYPE:
+      case MM_MP4_PARAM_REGISTER_DRM_CALLBACK_BUFFER_SUPPORTED_TYPE:
          nRet = OEMMediaMPEG42PV_RegisterIsMimeSupportedCallback((uint32 *)p1);
+         break;
+
+      case MM_MP4_PARAM_REGISTER_CALLBACK_BUFFER_DATA_SIZE:
+         if(p1)
+         {
+           pOEM->m_bPULLDataMode = TRUE;
+           pOEM->m_FetchBufferSizeCB = (AEEFetchBufferedDataSizeT)p1;
+           if(p2)
+           {
+             pOEM->m_pClientData = (void*)p2;
+           }
+         }		 
+         break;
+
+      case MM_MP4_PARAM_REGISTER_CALLBACK_BUFFER_DATA:
+         if(p1)
+         {
+           pOEM->m_bPULLDataMode = TRUE;
+           pOEM->m_FetchBufferCB = (AEEFetchBufferedDataT)p1;
+           if(p2)
+           {
+             pOEM->m_pClientData = (void*)p2;
+           }
+         }		 
          break;
 
       case MM_MP4_PARAM_HTTP_FILE_SAVE_OPTION:
@@ -1217,7 +1417,7 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
          break;
 
       case MM_MP4_PARAM_HTTP_FREE_DOWNLOAD_BUFFER:
-         nRet = OEMMediaMPEG42PV_FreeDownloadBuffer((char *)p1);
+         nRet = OEMMediaMPEG42PV_FreeDownloadBuffer((char *)p1); 
          break;
       case MM_MP4_PARM_PRIORITY:
          nRet = EBADPARM;
@@ -1225,6 +1425,8 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
          {
            pOEM->m_nPriority = (uint32)p1;
            nRet = SUCCESS;
+           // Register the Default priority for QTV
+           //nRet = OEMMediaMPEG42PV_RegisterInst(pOEM,pOEM->m_nPriority);
          }
          break;
 #ifdef FEATURE_QTV_GENERIC_BCAST
@@ -1253,7 +1455,7 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
 
       case MM_MP4_PARM_PB_SPEED:
       {
-        nRet = OEMMediaMPEG42PV_SetPlaybackSpeed((uint32)p1, pOEM);
+        nRet = OEMMediaMPEG42PV_SetPlaybackSpeed((AEEMediaPlaybackSpeedType)p1, pOEM);
         break;
       }
 
@@ -1279,11 +1481,24 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
            nRet = OEMMediaMPEG42PV_RegisterDRMDecryptMethod((AEEMediaDRMDecryptMethodT)p1, (void *)p2, pOEM);
          }
          break;
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif
+      case MM_PARM_ENABLE: 
+         if (p1 != 0 && (pOEM->m_dwCaps & p1) != 0)
+         {
+            pOEM->m_dwEnabledCaps = (pOEM->m_dwCaps & p1); 
+         }
+         else
+         {
+            nRet = EBADPARM;
+         }
+         break; 
 
       default:
          nRet = EUNSUPPORTED;
-   }
-
+   }	
+   MSG_HIGH("OEMMediaMPEG4_SetMediaParm Exit nRet = %d",nRet,0,0);
    return nRet;
 }
 
@@ -1298,12 +1513,15 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
    OEMMediaMPEG4Layer * pOEM = OEMMediaMPEG42PV_GetOEMLayer(pme->m_pMPEG4);
    int nRet = SUCCESS;
 
+   MSG_HIGH("OEMMediaMPEG4_GetMediaParm... nParmID:%d; p1:%d; p2:%d",nParmID,p1,p2);
+   
 #if defined(FEATURE_BMP_ACM)
 #error code not present
 #endif 
 
    if (pOEM == NULL) 
    {
+      MSG_ERROR("OEMMediaMPEG4_GetMediaParm: pOEM is NULL, return badparam", 0, 0, 0);
       return EBADPARM;
    }
 
@@ -1322,6 +1540,8 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
 
       case MM_PARM_CLSID:
          if (p1 == NULL)
+         {
+            MSG_ERROR("OEMMediaMPEG4_GetMediaParm: returning EFAILED", 0, 0, 0);
             return EFAILED;
 
          *p1 = AEECLSID_MEDIAMPEG4;
@@ -1329,7 +1549,10 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
 
       case MM_PARM_CAPS:
          if (p1 == NULL)
+         {
+            MSG_ERROR("OEMMediaMPEG4_GetMediaParm: returning EFAILED", 0, 0, 0);
             return EFAILED;
+         }
 
          *p1 = (int32)pOEM->m_dwCaps;
          if (p2)
@@ -1339,6 +1562,7 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
       case MM_PARM_RECT:
          if ( !p1 | !pme )
          {
+           MSG_ERROR("OEMMediaMPEG4_GetMediaParm: returning EFAILED", 0, 0, 0);
            return EFAILED;
          }
 
@@ -1349,6 +1573,7 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
          if ((p1 == NULL && p2 == NULL) ||
              (p1 != NULL && p2 != NULL))
          { /* Invalid parameters */
+            MSG_ERROR("OEMMediaMPEG4_GetMediaParm: returning EFAILED", 0, 0, 0);
             return EFAILED;
          }
 
@@ -1394,6 +1619,7 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
          if (p1 == NULL || p2 == NULL) 
          { /* Invalid params. Extended frame info requires both frame and
               extended frame info ptrs. */
+           MSG_ERROR("OEMMediaMPEG4_GetMediaParm: returning EFAILED", 0, 0, 0);
            return EFAILED;
          }
          else
@@ -1525,12 +1751,24 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
          break;
 #endif /* FEATURE_QTV_GENERIC_BCAST */
 
+      case MM_PARM_ENABLE: 
+         if (p1 != NULL)
+         {
+            *p1= (int32)pOEM->m_dwEnabledCaps;
+         }
+         if (p2!= NULL)
+         {
+            *p2 = 0;
+         }
+         break; 
+
       default:
         nRet = EUNSUPPORTED;
    }
    /* TODO
    return OEMMediaMPEG4Layer_GetMediaParm(pOEM, nParmID, p1, p2);
    */
+   MSG_HIGH("OEMMediaMPEG4_GetMediaParm...return nRet:%d",nRet,0,0);
    return nRet;
 }
 
@@ -1543,23 +1781,36 @@ static int OEMMediaMPEG4_Play(IMedia * po)
 {
    int nRet;
    OEMHandle pOEM = OEMMediaMPEG42PV_GetOEMLayer(((OEMMediaMPEG4*)po)->m_pMPEG4);
-
+	
+    MSG_HIGH("OEMMediaMPEG4_Play Entry ",0,0,0);
 #if defined(FEATURE_BMP_ACM)
 #error code not present
 #endif 
 
    if (pOEM == NULL) 
    {
+      MSG_ERROR("OEMMediaMPEG4_Play: pOEM is NULL, return badparam", 0, 0, 0);
       return EBADPARM;
    }
    if (pOEM->m_bSuspend) 
    {
+      MSG_ERROR("OEMMediaMPEG4_Play: pOEM is NULL, return badstate", 0, 0, 0);
       return EBADSTATE;
    }
 
    pOEM->m_bPausePending = FALSE;
+
+#if defined (FEATURE_ACM) || defined (FEATURE_BMP_ACM)
+   if (pOEM->b_SetMediaDataRequest)
+   {
+      pOEM->b_PlayRequest = TRUE; 
+      return SUCCESS; 
+   }
+#endif
+
    nRet = AEEMedia_Play(po);
 
+   MSG_HIGH("OEMMediaMPEG4_Play calling AEEMEDIA_PLAY , nRet = %d",nRet,0,0);
 #if defined (FEATURE_ACM) || defined (FEATURE_BMP_ACM)
    if (nRet == MM_PENDING)
    {
@@ -1572,7 +1823,10 @@ static int OEMMediaMPEG4_Play(IMedia * po)
 #endif // FEATURE_ACM || FEATURE_BMP_ACM
 
    if (nRet != SUCCESS)
+   {
+      MSG_HIGH("OEMMediaMPEG4_Play... return nRet:%d",nRet,0,0);
       return nRet;
+   }
 
 #if defined (FEATURE_QTV_QOS_SELECTION) && defined (FEATURE_QTV_QDSP_RELEASE_RESTORE)
 #error code not present
@@ -1583,12 +1837,13 @@ static int OEMMediaMPEG4_Play(IMedia * po)
 #endif
 
    nRet = OEMMediaMPEG42PV_Play(0, pOEM);
+   MSG_HIGH("OEMMediaMPEG4_Play calling OEMMediaMPEG42PV_Play , nRet = %d",nRet,0,0);
    nMdpFramePendingCounter =0;
 #if defined (FEATURE_ACM) || defined (FEATURE_BMP_ACM)
    if(nRet != SUCCESS)
      AEEMedia_CleanUpResource((AEEMedia*)po);
 #endif // FEATURE_ACM || FEATURE_BMP_ACM
-
+   MSG_HIGH("OEMMediaMPEG4_Play... return nRet:%d",nRet,0,0);
    return nRet;
 }
 
@@ -1599,9 +1854,11 @@ static int OEMMediaMPEG4_Play(IMedia * po)
  */
 static int OEMMediaMPEG4_RecordUnsupported(IMedia * po)
 {
+   MSG_HIGH("OEMMediaMPEG4_RecordUnsupported Entry",0,0,0);
 #if defined(FEATURE_BMP_ACM)
 #error code not present
 #endif 
+   MSG_HIGH("OEMMediaMPEG4_RecordUnsupported Exit ",0,0,0);
    return EUNSUPPORTED;
 }
 
@@ -1613,14 +1870,15 @@ static int OEMMediaMPEG4_RecordUnsupported(IMedia * po)
 static int OEMMediaMPEG4_Stop(IMedia * po)
 {
    int            nRet;
-   OEMHandle pOEM = OEMMediaMPEG42PV_GetOEMLayer(((OEMMediaMPEG4*)po)->m_pMPEG4);
-
+   OEMHandle pOEM = OEMMediaMPEG42PV_GetOEMLayer(((OEMMediaMPEG4*)po)->m_pMPEG4);	
+   MSG_HIGH("OEMMediaMPEG4_Stop Entry",0,0,0);
 #if defined(FEATURE_BMP_ACM)   
 #error code not present
 #endif 
 
    if (pOEM == NULL) 
    {
+      MSG_ERROR("OEMMediaMPEG4_Stop: pOEM is NULL, return badstate", 0, 0, 0);
       return EBADSTATE;
    }
    nRet = AEEMedia_Stop(po);
@@ -1645,9 +1903,29 @@ static int OEMMediaMPEG4_Stop(IMedia * po)
 #ifndef T_QSC1110
    disp_lock_screen(0,0,0,0);
 #endif
+   MSG_HIGH("OEMMediaMPEG4_Stop Exit returns from OEMMediaMPEG42PV_Stop",0,0,0);
    return OEMMediaMPEG42PV_Stop(pOEM);
 }
+/*=====================================================================
+This API is called when QTV_PLAYER_STATUS_PAUSED_SUSPENDED is notified 
+Releases the resource
+======================================================================*/
+void OEMMediaMPEG4_Conc_ACM_Stop(AEEMedia *pOEM)
+{
+   
+   if(NULL == pOEM)
+   {
+     return;
+   }
+#if defined(FEATURE_BMP_ACM)   
+#error code not present
+#endif
 
+   /* This releases the CMX resource from Qtv */
+   AEEMedia_Stop((IMedia *)pOEM);
+
+   return;
+}
 /*==================================================================
 
 ==================================================================*/
@@ -1752,12 +2030,20 @@ static int OEMMediaMPEG4_Resume(IMedia * po)
       position at stop.
    */
    int startPlayPos = -1; 
-   OEMHandle pOEM = OEMMediaMPEG42PV_GetOEMLayer(((OEMMediaMPEG4*)po)->m_pMPEG4);
-   
-
+   OEMHandle pOEM = OEMMediaMPEG42PV_GetOEMLayer(((OEMMediaMPEG4*)po)->m_pMPEG4);   
+   MSG_HIGH("OEMMediaMPEG4_Resume - Entry",0,0,0);
 #if defined(FEATURE_BMP_ACM)
 #error code not present
 #endif 
+   MSG_HIGH("OEMMediaMPEG4_Resume - AEEMedia_RequestResource",0,0,0);
+#if defined (FEATURE_ACM) || defined (FEATURE_BMP_ACM)
+   nRet =  AEEMedia_RequestResource((AEEMedia *)po, TRUE);
+   if(nRet != SUCCESS && nRet != MM_PENDING)
+   {
+      MSG_HIGH("OEMMediaMPEG4_Resume - AEEMedia_RequestResource FAILED ",0,0,0);
+      return nRet;
+   }
+#endif // FEATURE_ACM || FEATURE_BMP_ACM
 
    if (pOEM == NULL) 
    {
@@ -1791,7 +2077,8 @@ static int OEMMediaMPEG4_Resume(IMedia * po)
   
    ((OEMMediaMPEG4*)po)->m_pMPEG4->m_bResumePending = TRUE;
 
-   if (pOEM->m_MPEG4Spec.streamtype == MM_MEDIA_BUFFERED_LIVE_STREAMING)
+   /* In case repositioning is allowed, it is a recorded playback, allow to resume with -1 -1 */
+   if (pOEM->m_MPEG4Spec.streamtype == MM_MEDIA_BUFFERED_LIVE_STREAMING && pOEM->m_MPEG4Spec.bRepositioningAllowed ==0)
    {
       /* if streamtype is MM_MEDIA_BUFFERED_LIVE_STREAMING, resume from the tip position */
       startPlayPos = 0;
@@ -1811,6 +2098,7 @@ static int OEMMediaMPEG4_GetTotalTime(IMedia * po)
 {
    int            nRet;
    OEMHandle pOEM = OEMMediaMPEG42PV_GetOEMLayer(((OEMMediaMPEG4*)po)->m_pMPEG4);
+   MSG_HIGH("OEMMediaMPEG4_GetTotalTime - Entry",0,0,0);
 
 #if defined(FEATURE_BMP_ACM)
 #error code not present
@@ -1818,12 +2106,16 @@ static int OEMMediaMPEG4_GetTotalTime(IMedia * po)
 
    if (pOEM == NULL) 
    {
+      MSG_ERROR("OEMMediaMPEG4_GetTotalTime: pOEM is NULL, return badparam", 0, 0, 0);
       return EBADPARM;
    }
    nRet = AEEMedia_GetTotalTime(po);
    if (nRet != SUCCESS)
+   { 
+      MSG_ERROR("OEMMediaMPEG4_GetTotalTime: AEEMedia_GetTotalTime failed nRet=%d", nRet, 0, 0);
       return nRet;
-
+   }
+   MSG_HIGH("OEMMediaMPEG4_GetTotalTime - returns from OEMMediaMPEG42PV_GetClipInfo",0,0,0);
    return OEMMediaMPEG42PV_GetClipInfo(pOEM);
 }
 
@@ -1847,6 +2139,7 @@ void OEMMediaMPEG4_CallbackNotify(AEEMediaCallback * pcb)
 {
   OEMMediaMPEG4 *    pme;
   OEMMediaMPEG4Layer *pOEM;
+  void *             paLast;
 
   if (!pcb)
   {
@@ -1872,7 +2165,11 @@ void OEMMediaMPEG4_CallbackNotify(AEEMediaCallback * pcb)
   if ( pcb->cmdNotify.nCmd    == MM_CMD_PLAY &&
        (pcb->cmdNotify.nStatus == MM_MP4_STATUS_VIDEO_ABORT ||
         pcb->cmdNotify.nStatus == MM_STATUS_DONE            ||
-        pcb->cmdNotify.nStatus == MM_STATUS_ABORT ) )
+        pcb->cmdNotify.nStatus == MM_STATUS_ABORT 
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif
+	))
   {
     /* Video has ended */
     OEMMediaMPEG4_MDPDeregister(pOEM);
@@ -2005,12 +2302,12 @@ void OEMMediaMPEG4_CallbackNotify(AEEMediaCallback * pcb)
         if ( (pOEM->m_rectImage.dx >= VGA_SIZE) || 
              (pOEM->m_rectImage.dy >= VGA_SIZE) ) 
         {
-          OEMMediaMPEG42PV_ClkrgmIncrease( pOEM );
+          mddi_host_set_fast_clock(TRUE);
         }
         else if ( (pOEM->m_rectImage.dx < VGA_SIZE) &&
                   (pOEM->m_rectImage.dy < VGA_SIZE) ) 
         {
-          OEMMediaMPEG42PV_ClkrgmRelease( pOEM );
+          mddi_host_set_fast_clock(FALSE);
         }
 #endif /* FEATURE_USE_CLKREGIM_DEVMAN_REV2 */
 
@@ -2070,7 +2367,11 @@ void OEMMediaMPEG4_CallbackNotify(AEEMediaCallback * pcb)
         else if( SUCCESS == IBITMAP_QueryInterface(pFrame, AEEIID_YCBCR, (void**)&pYCbCr) &&
                  pYCbCr != NULL )
         {
+#ifdef FEATURE_QTV_MDP_COLOR_FORMAT_SWAP
+#error code not present
+#else
           pOEM->m_Video.image.imgType   = MDP_Y_CBCR_H2V2;
+#endif
           pOEM->m_Video.image.bmy_addr  = (uint32*)pYCbCr->pLuma;
           pOEM->m_Video.image.cbcr_addr = (uint32*)pYCbCr->pChroma;
           pOEM->m_Video.image.width     = pYCbCr->nYPitch;
@@ -2238,7 +2539,21 @@ void OEMMediaMPEG4_CallbackNotify(AEEMediaCallback * pcb)
     return;
   }
   
+
+  if(MM_MP4_STATUS_3GPP_TTEXT == pcb->cmdNotify.nStatus)
+  {
+       MUTEX_LOCK_CS(TimedText3gppCS);
+  }
+  
+  paLast = ENTER_APP_CONTEXT(pOEM->m_pAppContext);
   AEEMedia_CallbackNotify((AEEMedia *)pme, pcb);
+  LEAVE_APP_CONTEXT(paLast);
+
+  if(MM_MP4_STATUS_3GPP_TTEXT == pcb->cmdNotify.nStatus)
+  {
+       MUTEX_UNLOCK_CS(TimedText3gppCS);
+  }
+
 
   if(pcb->cmdNotify.nStatus == MM_MP4_STATUS_INFO && pcb->cmdNotify.pCmdData != NULL)
   {
@@ -2395,12 +2710,34 @@ static void OEMMediaMPEG4_Notify(AEEMediaCallback * pcb)
   MEMCPY(pmcb, pcb, sizeof(AEEMediaCallback));
 
   /* Free the callback structure */
+  MUTEX_LOCK();
   pcb->bInUse = FALSE;
+  MUTEX_UNLOCK();
 
   if (pme->m_pfnNotify) 
   {
     pme->m_pfnNotify(pmcb);
   }
+
+switch (pcb->cmdNotify.nStatus)
+  {
+  	case MM_STATUS_TICK_UPDATE:
+        AEE_SetTimer( pme->m_nTickInterval, UpdateProgressBar, (void*)pme );
+        break;
+
+	#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+        case MM_MP4_STATUS_PS_BUFFER_UPDATE:
+        AEE_SetTimer( pme->m_nTickInterval, UpdateProgressBar, (void*)pme );
+	break;
+	#endif
+
+	#ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
+	case MM_STATUS_DOWNLOAD_TICK_UPDATE:
+	AEE_SetTimer( pme->m_nTickInterval, UpdateDownloadProgressBar, (void*)pme );
+	break;
+	#endif
+  }
+
 
   FREE(pmcb);
 }
@@ -2414,12 +2751,13 @@ OEMMediaMPEG4Layer * OEMMediaMPEG4Layer_New(IMedia * po, PFNNOTIFY pfn)
   int           i;
   int           nRetVal;
   AEEDeviceInfo di;
-
+  int freeIndex = 0;
+  MSG_HIGH("OEMMediaMPEG4Layer_New(IMedia * po, PFNNOTIFY pfn) Entry",0,0,0);
   /* Only allow one instantiation of the MPEG4 IMedia object and one Ringer inst*/
   if( !po || (g_uMPEG4RefCnt >= MAX_NUM_OEM_PLAYBACK_INST) )      
     return NULL;
 
-  pme = MALLOC(sizeof(OEMMediaMPEG4Layer));
+  pme = (OEMMediaMPEG4Layer *)MALLOC(sizeof(OEMMediaMPEG4Layer));
 
   if (!pme)
     return NULL;
@@ -2436,6 +2774,7 @@ OEMMediaMPEG4Layer * OEMMediaMPEG4Layer_New(IMedia * po, PFNNOTIFY pfn)
 
   pme->m_pfnNotify = pfn;  // pfn is OEMMediaMPEG4_CallbackNotify
   pme->m_dwCaps = MM_CAPS_AUDIO | MM_CAPS_VIDEO;
+  pme->m_dwEnabledCaps = pme->m_dwCaps; // Enable all capabilities by default
 
   // Initialize callbacks.
   for (i = 0; i < OEMMPEG4_MAX_CB; i++)
@@ -2516,7 +2855,29 @@ OEMMediaMPEG4Layer * OEMMediaMPEG4Layer_New(IMedia * po, PFNNOTIFY pfn)
     pme = NULL;
   }
   nMdpFramePendingCounter = 0;
-  g_pOEMLayer[g_uMPEG4RefCnt] = pme;
+  
+  pme->m_bPULLDataMode     = FALSE;
+  pme->m_pClientData       = NULL;
+  pme->m_FetchBufferSizeCB = NULL;
+  pme->m_FetchBufferCB     = NULL;
+  
+  for(freeIndex = 0; freeIndex < MAX_NUM_OEM_PLAYBACK_INST; freeIndex++)
+  {
+       if(g_pOEMLayer[freeIndex] == NULL)
+       break;
+  }
+  if(freeIndex < MAX_NUM_OEM_PLAYBACK_INST )
+  {
+      MSG_HIGH("OEMMediaMPEG4Layer_New freeIndex = %d",freeIndex,0,0);      
+      g_pOEMLayer[freeIndex] = pme;
+  }
+  else 
+  {
+      MSG_HIGH("OEMMediaMPEG4Layer_New freeIndex not found returning NULL",0,0,0);
+      return NULL;
+  }
+  ++g_uMPEG4RefCnt;
+  MSG_HIGH("OEMMediaMPEG4Layer_New(IMedia * po, PFNNOTIFY pfn) Exit",0,0,0);
   return pme;
 }
 
@@ -2524,11 +2885,29 @@ static IBase * OEMMediaMPEG4_New(IShell * ps, AEECLSID cls)
 {
   IMedia *      po;
   OEMMediaMPEG4 * pme;
-
+  #ifdef FEATURE_BMP
+   static const AEEVTBL(ISettings) vt = {
+      AEEBASE_AddRef(ISettings),
+      AEEBASE_Release(ISettings),
+      AEEBASE_QueryInterface(ISettings),
+      OEMMediaMPEG4Settings_Get,
+      OEMMediaMPEG4Settings_Set,
+      OEMMediaMPEG4Settings_Delete,
+      OEMMediaMPEG4Settings_Reset,
+      OEMMediaMPEG4Settings_OnChange,
+      OEMMediaMPEG4Settings_GetNumChildren,
+      OEMMediaMPEG4Settings_GetChildName,
+      OEMMediaMPEG4Settings_GetSubTree
+   };
+  #endif
+  MSG_HIGH("OEMMediaMPEG4_New Entry",0,0,0);   
   // Alloc memory for the object
   po = (IMedia *)AEE_NewClass((IBaseVtbl *)&gMediaMPEG4Funcs, sizeof(OEMMediaMPEG4));
   if (!po)
+  {
+    MSG_ERROR("OEMMediaMPEG4_New, po is NULL...", 0, 0, 0);
     return NULL;
+  }
 
 #if defined (FEATURE_QTV_QOS_SELECTION) && defined (FEATURE_QTV_QDSP_RELEASE_RESTORE)
 #error code not present
@@ -2537,6 +2916,7 @@ static IBase * OEMMediaMPEG4_New(IShell * ps, AEECLSID cls)
   // Call base class constructor
   if (SUCCESS != AEEMedia_New(po, ps, cls))
   {
+    MSG_ERROR("OEMMediaMPEG4_New, AEEMedia_New failed....", 0, 0, 0);
     FREE(po);
     return NULL;
   }
@@ -2545,10 +2925,16 @@ static IBase * OEMMediaMPEG4_New(IShell * ps, AEECLSID cls)
   pme = (OEMMediaMPEG4 *)po;
   pme->m_pMPEG4 = OEMMediaMPEG4Layer_New(po, (PFNNOTIFY)OEMMediaMPEG4_CallbackNotify);
 
+  #ifdef FEATURE_BMP
+  pme->m_qtvISettings.pMe = pme;   
+  AEEINITVTBL(&(pme->m_qtvISettings), IModule, vt);
+  #endif
+
   if ( !pme->m_pMPEG4 )
   {
     AEEMedia_Delete(po);
     FREE(po);
+    MSG_ERROR("OEMMediaMPEG4_New, pme->m_pMPEG4 is NULL....", 0, 0, 0);
     return NULL;
   }
 
@@ -2557,6 +2943,7 @@ static IBase * OEMMediaMPEG4_New(IShell * ps, AEECLSID cls)
 #endif 
 
   pme->m_nPlayType = MM_PLAY_TYPE_NORMAL;
+  MSG_HIGH("OEMMediaMPEG4_New Exit",0,0,0);
   return (IBase *)po;
 }
 
@@ -2579,11 +2966,19 @@ void IMediaMPEG4_Init(IShell * ps)
    AEEMedia_Init(ps, "video/3gp", AEECLSID_MEDIAMPEG4);
    AEEMedia_Init(ps, "video/3gpp", AEECLSID_MEDIAMPEG4);
    AEEMedia_Init(ps, "video/amc", AEECLSID_MEDIAMPEG4);
-   AEEMedia_Init(ps, "video/3g2", AEECLSID_MEDIAMPEG4);   
+   AEEMedia_Init(ps, "video/3g2", AEECLSID_MEDIAMPEG4); 
+   AEEMedia_Init(ps, "video/3gpp2", AEECLSID_MEDIAMPEG4);  
    AEEMedia_Init(ps, "video/k3g", AEECLSID_MEDIAMPEG4);
    AEEMedia_Init(ps, "video/skm", AEECLSID_MEDIAMPEG4);
    AEEMedia_Init(ps, "video/mfpt", AEECLSID_MEDIAMPEG4);
    AEEMedia_Init(ps, "video/m4a", AEECLSID_MEDIAMPEG4);
+   AEEMedia_Init(ps, "audio/mp4a-latm", AEECLSID_MEDIAMPEG4);
+   AEEMedia_Init(ps, "audio/mp4", AEECLSID_MEDIAMPEG4);
+   AEEMedia_Init(ps, "audio/m4a", AEECLSID_MEDIAMPEG4);
+   AEEMedia_Init(ps, "audio/x-m4a", AEECLSID_MEDIAMPEG4);
+   AEEMedia_Init(ps, "audio/3gpp2", AEECLSID_MEDIAMPEG4);
+
+   
 #ifdef FEATURE_QTV_WINDOWS_MEDIA
    AEEMedia_Init(ps, "video/asf", AEECLSID_MEDIAMPEG4);
    AEEMedia_Init(ps, "video/wmv", AEECLSID_MEDIAMPEG4);
@@ -2591,6 +2986,8 @@ void IMediaMPEG4_Init(IShell * ps)
    AEEMedia_Init(ps, "video/asx", AEECLSID_MEDIAMPEG4);
    AEEMedia_Init(ps, "audio/wma", AEECLSID_MEDIAMPEG4);
    AEEMedia_Init(ps, "audio/wax", AEECLSID_MEDIAMPEG4);
+   AEEMedia_Init(ps, "audio/x-wav", AEECLSID_MEDIAMPEG4);
+   AEEMedia_Init(ps, "audio/x-ms-wma", AEECLSID_MEDIAMPEG4);
 #endif /* FEATURE_QTV_WINDOWS_MEDIA */
 
 #ifdef FEATURE_QTV_AVI
@@ -2637,10 +3034,6 @@ int IMediaMPEG4_New(IShell * ps, AEECLSID cls, void **ppif)
    if (g_uMPEG4RefCnt < MAX_NUM_OEM_PLAYBACK_INST)
    {
       pobj = OEMMediaMPEG4_New(ps, cls);
-      if (pobj)
-      {
-        ++g_uMPEG4RefCnt;
-      }
    }
    else
    {
@@ -2671,6 +3064,26 @@ int OEMMediaMPEG4_QueueCallback(void *pClientData, int nStatus, int nCmd, int nS
    }
    pme = pMedia->m_pMPEG4;
 
+   if(pme != NULL)
+   {
+     for( i = 0; i < MAX_NUM_OEM_PLAYBACK_INST; i++ ) 
+     {
+       if(g_pOEMLayer[i] == pme) 
+         break;
+     }
+
+     if( i >= MAX_NUM_OEM_PLAYBACK_INST) 
+     {
+       MSG_HIGH( "OEMMediaMPEG4_QueueCallback() : pme is not equal to any element of global array g_pOEMLayer , just return 0 ", 0, 0, 0 );
+       return 0;
+     }
+   }
+   else
+   {
+     MSG_HIGH( "OEMMediaMPEG4_QueueCallback() : pme is NULL , just return 0 ", 0, 0, 0 );
+     return 0;
+   }
+
    /* Find a free callback structure */
    MUTEX_LOCK();
    for (i = 0; i < OEMMPEG4_MAX_CB; i++)
@@ -2679,6 +3092,12 @@ int OEMMediaMPEG4_QueueCallback(void *pClientData, int nStatus, int nCmd, int nS
       {
          pme->m_cb[i].bInUse = TRUE;
          pcb = &pme->m_cb[i];
+	 pcb->cmdNotify.nStatus = nStatus;
+   	 pcb->cmdNotify.nCmd = nCmd;
+   	 pcb->cmdNotify.nSubCmd = nSubCmd;
+   	 pcb->cmdNotify.pCmdData = pData;
+   	 pcb->cmdNotify.dwSize = dwSize;
+   	 AEE_ResumeCallback(&pcb->cb, pme->m_pAppContext);
          break;
       }
    }
@@ -2705,6 +3124,12 @@ int OEMMediaMPEG4_QueueCallback(void *pClientData, int nStatus, int nCmd, int nS
            {
              pme->m_cb[j].bInUse = TRUE;
              pcb = &pme->m_cb[j];
+	     pcb->cmdNotify.nStatus = nStatus;
+             pcb->cmdNotify.nCmd = nCmd;
+             pcb->cmdNotify.nSubCmd = nSubCmd;
+             pcb->cmdNotify.pCmdData = pData;
+             pcb->cmdNotify.dwSize = dwSize;
+             AEE_ResumeCallback(&pcb->cb, pme->m_pAppContext);
              break;
            }
          }
@@ -2719,13 +3144,7 @@ int OEMMediaMPEG4_QueueCallback(void *pClientData, int nStatus, int nCmd, int nS
        }
      }
    }
-
-   pcb->cmdNotify.nStatus = nStatus;
-   pcb->cmdNotify.nCmd = nCmd;
-   pcb->cmdNotify.nSubCmd = nSubCmd;
-   pcb->cmdNotify.pCmdData = pData;
-   pcb->cmdNotify.dwSize = dwSize;
-   AEE_ResumeCallback(&pcb->cb, pme->m_pAppContext);
+   
    return 0;
 }
 
@@ -2763,7 +3182,7 @@ static int OEMMediaMPEG4_OpenURN(AEEMediaDataEx *pmdExList, int nCount, OEMHandl
     int nLen = 0;
     int nRet = 0;
     char* pTempFilePath = NULL; 
-    const char* RelativePathStartTag = "fs:/~";
+    const char* RelativePathStartTag = "fs:";
     boolean allocateVideoFile = FALSE;
     boolean allocateAudioFile = FALSE;
     boolean allocateTextFile = FALSE;
@@ -2786,7 +3205,7 @@ static int OEMMediaMPEG4_OpenURN(AEEMediaDataEx *pmdExList, int nCount, OEMHandl
            allocateVideoFile = TRUE;
            if(SUCCESS == AEE_ResolvePath((char *)pmdExList[i].pData, 0, &nLen))
            {
-             pTempFilePath = (char*)malloc(nLen);
+             pTempFilePath = (char*)MALLOC(nLen);
              if(pTempFilePath)
              {
                if(SUCCESS == AEE_ResolvePath((char *)pmdExList[i].pData, pTempFilePath, &nLen) )
@@ -2797,7 +3216,7 @@ static int OEMMediaMPEG4_OpenURN(AEEMediaDataEx *pmdExList, int nCount, OEMHandl
                   if (SUCCESS == OEMFS_GetNativePath(pTempFilePath,0, &nLen))  
                  #endif
                  {
-                   pVideoFile = (char*)malloc(nLen);
+                   pVideoFile = (char*)MALLOC(nLen);
                    if(pVideoFile)
                    {
                      #if MIN_BREW_VERSION(4,0)
@@ -2809,7 +3228,7 @@ static int OEMMediaMPEG4_OpenURN(AEEMediaDataEx *pmdExList, int nCount, OEMHandl
                  }
                  if(pTempFilePath)
                  {
-                   free(pTempFilePath);
+                   FREE(pTempFilePath);
                    pTempFilePath = NULL;
                  }            
                }
@@ -2829,7 +3248,7 @@ static int OEMMediaMPEG4_OpenURN(AEEMediaDataEx *pmdExList, int nCount, OEMHandl
            allocateAudioFile = TRUE;
            if(SUCCESS == AEE_ResolvePath((char *)pmdExList[i].pData, 0, &nLen))
            {
-             pTempFilePath = (char*)malloc(nLen);
+             pTempFilePath = (char*)MALLOC(nLen);
              if(pTempFilePath)
              {
                if(SUCCESS == AEE_ResolvePath((char *)pmdExList[i].pData, pTempFilePath, &nLen) )
@@ -2840,7 +3259,7 @@ static int OEMMediaMPEG4_OpenURN(AEEMediaDataEx *pmdExList, int nCount, OEMHandl
                    if (SUCCESS == OEMFS_GetNativePath(pTempFilePath,0, &nLen))   
                  #endif
                  {
-                   pAudioFile = (char*)malloc(nLen);
+                   pAudioFile = (char*)MALLOC(nLen);
                    if(pAudioFile)
                    {
                      #if MIN_BREW_VERSION(4,0)
@@ -2852,7 +3271,7 @@ static int OEMMediaMPEG4_OpenURN(AEEMediaDataEx *pmdExList, int nCount, OEMHandl
                  }
                  if(pTempFilePath)
                  {
-                   free(pTempFilePath);
+                   FREE(pTempFilePath);
                    pTempFilePath = NULL;
                  }            
                }
@@ -2872,7 +3291,7 @@ static int OEMMediaMPEG4_OpenURN(AEEMediaDataEx *pmdExList, int nCount, OEMHandl
            allocateTextFile = TRUE;
            if(SUCCESS == AEE_ResolvePath((char *)pmdExList[i].pData, 0, &nLen))
            {
-             pTempFilePath = (char*)malloc(nLen);
+             pTempFilePath = (char*)MALLOC(nLen);
              if(pTempFilePath)
              {
                if(SUCCESS == AEE_ResolvePath((char *)pmdExList[i].pData, pTempFilePath, &nLen) )
@@ -2883,7 +3302,7 @@ static int OEMMediaMPEG4_OpenURN(AEEMediaDataEx *pmdExList, int nCount, OEMHandl
                    if (SUCCESS == OEMFS_GetNativePath(pTempFilePath,0, &nLen)) 
                  #endif
                  {
-                   pTextFile = (char*)malloc(nLen);
+                   pTextFile = (char*)MALLOC(nLen);
                    if(pTextFile)
                    {
                      #if MIN_BREW_VERSION(4,0)
@@ -2895,7 +3314,7 @@ static int OEMMediaMPEG4_OpenURN(AEEMediaDataEx *pmdExList, int nCount, OEMHandl
                  }
                  if(pTempFilePath)
                  {
-                   free(pTempFilePath);
+                   FREE(pTempFilePath);
                    pTempFilePath = NULL;
                  }            
                }
@@ -2916,15 +3335,15 @@ static int OEMMediaMPEG4_OpenURN(AEEMediaDataEx *pmdExList, int nCount, OEMHandl
       */
       if((allocateVideoFile == TRUE)&&pVideoFile)
       {
-        free(pVideoFile);
+        FREE(pVideoFile);
       }
       if((allocateAudioFile == TRUE)&&pAudioFile)
       {
-        free(pAudioFile);
+        FREE(pAudioFile);
       }
       if((allocateTextFile == TRUE)&&pTextFile)
       {
-        free(pTextFile);
+        FREE(pTextFile);
       }
       return nRet;   
     }

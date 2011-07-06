@@ -59,10 +59,12 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
   This section contains comments describing changes made to this file.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //depot/asic/qsc1100/multimedia/audio/avs/src/vocstate.c#4 $ $DateTime: 2010/04/21 03:17:09 $ $Author: kmodak $
+$Header: //depot/asic/qsc1100/multimedia/audio/avs/src/vocstate.c#5 $ $DateTime: 2010/09/26 23:15:28 $ $Author: asifmd $
 
 when       who     what, where, why
 --------   ---    -------------------------------------------------------------
+09/27/10   aim     Modified code so that BT callback is done with PLAYBACK_SCO if 
+                   A2DP is not supported by FW for the current image.
 04/21/10   knm     Fixed pop noise issue with FM recording by disconnecting
                    Rx filter before configuring iclock.
 03/31/10   aim     when the image loaded is QDSP_IMAGE_CAM_AUDIO_CONC and we are not 
@@ -4424,9 +4426,7 @@ voc_state_return_type voc_state_voc_config (voc_capability_type so)
 #if defined(FEATURE_QTUNES) || \
     defined(FEATURE_QTUNES_AAC)
     case VOC_CAP_QTUNES:
-#ifdef FEATURE_QTUNES_AAC // Gemsea ADD
     case VOC_CAP_QTUNES_AAC:
-#endif
 #ifdef FEATURE_WMA
     case VOC_CAP_QTUNES_WMA:
 #ifdef QDSP_IMAGE_WM_PRO_DEFINED
@@ -12087,9 +12087,16 @@ voc_state_return_type voc_state_graph_audio_entry (void)
     #if defined (FEATURE_AVS_BT_SCO_REWORK)
     if (bt_func_ptr != NULL)
     {
-      MSG_MED("Calling BT callback with PLAYBACK A2DP | SCO", 0,0,0);
-      bt_func_ptr(VOC_PLAYBACK_A2DP|VOC_PLAYBACK_SCO);
-      voc_bt_playback_started = TRUE;
+      /* Calling BT callback with PLAYBACK_A2DP only if FW supports,
+         if not callback with PLAYBACK_SCO */
+      #if defined(QDSP_vocoderPpFirstInitFlag)
+#error code not present
+      #endif
+      {
+        MSG_MED("Calling BT callback with PLAYBACK SCO", 0,0,0);
+        bt_func_ptr((voc_playback_enum_type)VOC_PLAYBACK_SCO);
+        voc_bt_playback_started = TRUE;
+      }
     }
     #endif/*AVS_BT_SCO_REWORK*/
  #else

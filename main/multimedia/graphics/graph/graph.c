@@ -1558,7 +1558,7 @@ void graph_png_set_buf
 } /* end graph_png_set_buf */
 
 #endif /* FEATURE_PNG_DECODER */
-#ifdef FEATURE_PNG_ENCODER
+#ifdef FEATURE_PNG_ENCODER  // Gemsea Modify #ifdef FEATURE_PNG_DECODER
 /* <EJECT> */
 /*===========================================================================
 

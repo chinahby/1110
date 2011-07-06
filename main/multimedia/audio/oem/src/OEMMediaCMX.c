@@ -20,10 +20,11 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/multimedia/audio/oem/BREW3.1.5/main/latest/src/OEMMediaCMX.c#17 $
+  $Header: //source/qcom/qct/multimedia/audio/oem/BREW3.1.5/main/latest/src/OEMMediaCMX.c#18 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+10/25/10   rp/rg  NULL pointer check in OEMMedia_Stop function.
 08/11/09   bk      Changes for returning failure in case unsupported OATMedia 
                    test of Linear PCM is run.
 06/25/09   kk      Added the missed code.
@@ -1738,57 +1739,67 @@ static int  OEMMedia_Start(OEMMedia * pme)
 ==================================================================*/
 static int OEMMedia_Stop(OEMMedia * pme)
 {
-   cmx_cb_func_ptr_type pfn = (cmx_cb_func_ptr_type)pme->m_ciStatus.dwCB;
-   void *               pUser = (void *)pme->m_ciStatus.dwUserData;
+  cmx_cb_func_ptr_type pfn;
+  void *               pUser;
 
-   switch (pme->m_ciStart.nType)
-   {
+  if(pme != NULL)
+  {
+    pfn = (cmx_cb_func_ptr_type)pme->m_ciStatus.dwCB;
+    pUser = (void *)pme->m_ciStatus.dwUserData;
+
+    switch (pme->m_ciStart.nType)
+    {
       case OEMCMX_TYPE_AUDFMT_PLAY: // Fall thru...
       case OEMCMX_TYPE_AUDFMT_RINGER: // Fall thru...
       case OEMCMX_TYPE_AUDFMT_PLAY_CODEC:
-         cmx_audfmt_stop(pfn, pUser);
-         break;
+        cmx_audfmt_stop(pfn, pUser);
+        break;
 
       case OEMCMX_TYPE_MIDI_OUT_MSG:
-         // No effect.
-         break;
+        // No effect.
+        break;
 
 #if defined(FEATURE_MIDI_OUT_QCP)
       case OEMCMX_TYPE_MIDI_OUT_QCP:
-         cmx_midi_out_qcp_stop((void *)pme->m_dwChannel, pfn, pUser);
-         break;
+        cmx_midi_out_qcp_stop((void *)pme->m_dwChannel, pfn, pUser);
+        break;
 #endif // defined(FEATURE_MIDI_OUT_QCP)
 
 #ifdef FEATURE_MULTISEQUENCER
       case OEMCMX_TYPE_AUDFMT_PLAY_MULTI:
-         cmx_audfmt_sequence_cmd(pme->m_pSequence, pme->m_pSeqParam, 
+        cmx_audfmt_sequence_cmd(pme->m_pSequence, pme->m_pSeqParam, 
                                  pfn, pUser);
-         break;
+        break;
 #endif // FEATURE_MULTISEQUENCER
 
 #if defined(FEATURE_QCP)
       case OEMCMX_TYPE_QCP_RECORD:
-         cmx_qcp_record_stop(pfn, pUser);
-         break;
+        cmx_qcp_record_stop(pfn, pUser);
+        break;
 #endif // defined(FEATURE_QCP)
 
 #ifdef FEATURE_PCM_REC
       case OEMCMX_TYPE_PCM_RECORD:
-         cmx_pcm_record_stop(pme->m_Link, pfn, pUser);
-         break;
+        cmx_pcm_record_stop(pme->m_Link, pfn, pUser);
+        break;
 #endif // FEATURE_PCM_REC
 
 #ifdef FEATURE_AAC_REC
       case OEMCMX_TYPE_AAC_RECORD:
-         cmx_mm_record_stop(CMX_MM_REC_LINK_REVERSE, pfn, pUser);
-         break;
+        cmx_mm_record_stop(CMX_MM_REC_LINK_REVERSE, pfn, pUser);
+        break;
 #endif // FEATURE_AAC_REC
 
       default:
-         return EFAILED;
-   }
+        return EFAILED;
+    }
 
-   return SUCCESS;
+    return SUCCESS;
+  }
+  else
+  {
+    return EFAILED;
+  }
 }
 
 /*==================================================================

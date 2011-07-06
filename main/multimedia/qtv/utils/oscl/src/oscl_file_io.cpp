@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/oscl/main/latest/src/oscl_file_io.cpp#12 $
-$DateTime: 2009/01/05 02:25:34 $
-$Change: 813462 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/oscl/main/latest/src/oscl_file_io.cpp#15 $
+$DateTime: 2009/10/05 01:23:08 $
+$Change: 1044203 $
 
 
 ========================================================================== */
@@ -356,7 +356,6 @@ bool OSCL_IsFileOpen(OSCL_FILE *fp)
     case DRM_IXSTREAM:
       //For IxStream input, it is always open!
       return true;
-      break;
     }
   }
 #endif
@@ -511,14 +510,9 @@ uint32  OSCL_FileRead (void *buffer, uint32 size,
     {
     case DRM_IXSTREAM:
 #ifdef FEATURE_QTV_DRM_DCF_TEST
-      if (fp->inputStream != NULL)
+      if (fp->inputStream >= 0)
       {
-        fs_rsp_msg_type rsp;
-        fs_read(*fp->inputStream, buffer, size*numelements, NULL, &rsp);
-        if (rsp.read.status == FS_OKAY_S)
-        {
-          numRead = rsp.read.count;
-        }
+        numread = efs_read(*fp->inputStream,buffer, size*numelements);
       }
 #elif defined(FEATURE_QTV_DRM_DCF)
       //Read from IxStream
@@ -745,23 +739,22 @@ uint32 OSCL_FileSeekRead ( void *buffer, uint32 size, uint32 numelements,
     {
       case DRM_IXSTREAM:
         #ifdef FEATURE_QTV_DRM_DCF_TEST
-        if (fp->inputStream != NULL)
+        if (fp->inputStream >= 0)
         {
-          fs_rsp_msg_type          rsp;
-          fs_seek_origin_type      fs_origin;
+          int                      whence;
 
           switch ( origin )
           {
             case SEEK_SET:
-            fs_origin = FS_SEEK_SET;
+            whence = SEEK_SET;
             break;
 
             case SEEK_CUR:
-            fs_origin = FS_SEEK_CURRENT;
+            whence = SEEK_CUR;
             break;
 
             case SEEK_END:
-            fs_origin = FS_SEEK_EOF;
+            whence = SEEK_END;
             break;
 
             default:
@@ -769,11 +762,13 @@ uint32 OSCL_FileSeekRead ( void *buffer, uint32 size, uint32 numelements,
             */
             return 0;
           }
-
-          fs_seek_read(*fp->inputStream, fs_origin, offset, buffer, size*numelements, NULL, &rsp);
-          if(rsp.seek_read.status == FS_OKAY_S)
+          if (efs_lseek(*fp->inputStream, offset, whence) >= 0)
           {
-            numRead = rsp.seek_read.count;
+            numRead = efs_read (*fp->inputStream, buffer, size*numelements);
+          }
+          else
+          {
+            numRead = 0;
           }
         }
         #elif defined(FEATURE_QTV_DRM_DCF)
@@ -1135,23 +1130,22 @@ int32 OSCL_FileSeek (OSCL_FILE *fp,  int32 offset, int32 origin)
 
 #ifdef FEATURE_QTV_DRM_DCF_TEST
 
-      if (fp->inputStream != NULL)
+      if (fp->inputStream >= 0)
       {
-        fs_rsp_msg_type          rsp;
-        fs_seek_origin_type      fs_origin;
+        int whence;
 
         switch (origin)
         {
           case SEEK_SET:
-          fs_origin = FS_SEEK_SET;
+          whence = SEEK_SET;
           break;
 
           case SEEK_CUR:
-          fs_origin = FS_SEEK_CURRENT;
+          whence = SEEK_CUR;
           break;
 
           case SEEK_END:
-          fs_origin = FS_SEEK_EOF;
+          whence = SEEK_END;
           break;
 
           default:
@@ -1160,8 +1154,7 @@ int32 OSCL_FileSeek (OSCL_FILE *fp,  int32 offset, int32 origin)
           return -1;
         }
 
-        fs_seek(*fp->inputStream, fs_origin, offset, NULL, &rsp);
-        if (rsp.seek.status == FS_OKAY_S)
+        if(efs_lseek(*fp->inputStream, offset, whence)>=0)
         {
           nReturn = 0;
         }
@@ -1273,13 +1266,13 @@ int32 OSCL_FileTell (OSCL_FILE *fp)
     {
       case DRM_IXSTREAM:
         #ifdef FEATURE_QTV_DRM_DCF_TEST
-          if (fp->inputStream != NULL)
+          if (fp->inputStream >= 0)
           {
-            fs_rsp_msg_type rsp;
-            fs_tell(*fp->inputStream, NULL, &rsp );
-            if ( rsp.tell.status == FS_OKAY_S )
+            fs_off_t result;
+            result = efs_lseek (*fp->inputStream, 0, SEEK_CUR);
+            if (result >= 0)
             {
-               fpos = rsp.tell.position;
+              fpos = (uint32)result;
             }
           }
         #elif defined(FEATURE_QTV_DRM_DCF)
@@ -1629,12 +1622,12 @@ bool OSCL_FileList(void *buffer,unsigned char *dirName,unsigned long bufSize)
   struct fs_dirent    *fsDentry   = NULL;
   uint32              offSetLngth = 0; 
   uint32              bytesRead   = 0;
-
+   bool status = false;
   efd = efs_opendir ( (char *)dirName);
   if( efd == NULL )
   {
     QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR, "efs_opendir failed. FS Status=%d", efs_errno );
-    return false;
+    status = false;
   } 
   else
   {
@@ -1654,8 +1647,10 @@ bool OSCL_FileList(void *buffer,unsigned char *dirName,unsigned long bufSize)
         break; 
       }
     }       
+    status = true;      
   }
-  return true;
+  efs_closedir(efd); 
+  return status;
 }
 
 /* ======================================================================
@@ -1679,12 +1674,13 @@ bool OSCL_NumFiles(const char *dirName,int32 *numFiles)
 {
   EFSDIR   *efd      = NULL;
   int32    fileCount = 0;
+  bool status = false;
   efd = efs_opendir ( dirName );
   if( efd == NULL )
   {
     QTV_MSG_PRIO1( QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR, "efs_opendir failed. FS Status=%d", efs_errno );
     *numFiles = -1;
-    return false;
+    status = false;
   }
   else
   {
@@ -1693,8 +1689,10 @@ bool OSCL_NumFiles(const char *dirName,int32 *numFiles)
       fileCount++;
     }
     *numFiles = fileCount;
-    return true;
+    status = true;
   }
+  efs_closedir(efd);
+  return status;
 }
 
 /* ======================================================================

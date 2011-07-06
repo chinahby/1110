@@ -13,9 +13,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //depot/asic/msmshared/services/Qtv/dec/TL/TL_common.h
-$DateTime: 
-$Change: 
+$Header: //source/qcom/qct/multimedia/qtv/decoder/transform/common/rel/2.0/inc/tl_common.h#8 $
+$DateTime: 2010/09/06 05:34:39 $
+$Change: 1428535 $
 
 ========================================================================== */
 
@@ -38,23 +38,43 @@ extern "C" {
 #define DEC_QCIF_WIDTH 176
 #define DEC_QCIF_HEIGHT 144
 
+#define MB_COUNT_QCIF   99
+#define MB_COUNT_QVGA  300
+#define MB_COUNT_WQVGA 375
+#define MB_COUNT_CIF   400
+#define MB_COUNT_HVGA  690
+
+#ifdef FEATURE_VIDEO_NPA
+#error code not present
+#endif
+
 #ifdef FEATURE_QTV_DYNAMIC_CPU_SWITCHING
 extern boolean qtv_cfg_enable_dynamic_cpu_switching;
 #endif 
+extern boolean qtv_cfg_init_frames_to_black;
 
 typedef enum{
   VIDEO_MP4,
   VIDEO_H264,
+  VIDEO_WMV,
   VIDEO_H263,
-  VIDEO_REAL,
-  VIDEO_WMV
+  VIDEO_REAL
 }VideoDecoderType;
+
+typedef enum{
+  VIDEO_QCIF,
+  VIDEO_QVGA,
+  VIDEO_WQVGA,
+  VIDEO_CIF,
+  VIDEO_HVGA
+}VideoResType;
 
 #ifndef PLATFORM_LTK
 
 /* YUV frame data */
 #define LOG_MPEG4_MAX_YUV_SIZE  512
 #define LOG_MPEG4_LOG_ALLOC_WAIT_MS  20
+#define LOG_MPEG4_LOG_ALLOC_MAX_WAIT_MS 400
 LOG_RECORD_DEFINE(LOG_MPEG4_YUV_FRAME_C)
   uint16 FrameNumber;          /* Frame number within current video */
   uint16 ChunkNumber;          /* Data block within current frame */
@@ -162,3 +182,4 @@ SIDE EFFECTS:
 ============================================================================*/
 boolean check_allowed_input_dimensions(uint32 Width,uint32 Height,VideoDecoderType VideoType);
 #endif
+

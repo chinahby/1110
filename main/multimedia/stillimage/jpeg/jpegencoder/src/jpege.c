@@ -50,10 +50,12 @@ Copyright(c) 2002-2004 by QUALCOMM, Incorporated. All Rights Reserved.
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/multimedia/stillimage/jpeg6k/jpegencoder/main/latest/src/jpege.c#6 $
+$Header: //source/qcom/qct/multimedia/stillimage/jpeg6k/jpegencoder/main/latest/src/jpege.c#10 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+12/03/10  chai  fixed klock work errors
+08/21/09   sv      Added EFS APIs by removing deprecated FS APIs.
 01/05/09   kdiv    Make sure to abort the QDSP current session before termination (while the 
                       request comes from QDSP layers)
 12/22/08   kdiv    Reverting the CL#770749
@@ -148,9 +150,14 @@ when       who     what, where, why
 #include "msg.h"                /* Message logging/reporting services      */
 #include "graph.h"              /* Graphics task typedefs and prototype    */
 #include "jpeg_malloc.h"
+#include "fs_public.h"
 #ifdef JPEG_USES_LIBSTD
 #include "AEEstd.h"
 #endif /* JPEG_USES_LIBSTD */
+
+#ifdef FEATURE_NEW_SLEEP_API
+#include "sleep.h"
+#endif
 
 #define jpeg_file_id MALLOC_JPEGE
 
@@ -284,8 +291,7 @@ struct
   /* Destination dimension */
   storeHeaderType       memData;         /* The header buffer - temporary */
   JPEGENC_handleType    dst_format;      /* Destination format */
-  fs_rsp_msg_type       fs_rsp;
-  fs_handle_type        fs_handle;       /* For easy access only */
+  int                   file_descriptor; /* variable for EFS operations*/
   char *                filename;        /* File name */
   uint16                filename_len;    /* File name length */
   uint32                exif_data_size;  /* Destination buffer size */
@@ -357,6 +363,11 @@ static uint16 *jpegeFileSizeEstiBufPtr = NULL;
 static uint16 chromaWidth,chromaHeight;
 static uint16 subsample; 
 static uint16 acSize ;
+
+#ifdef CACHE_POLICY_WRITE_BACK
+static uint8 *original_thumb_luma_ptr = 0x0;
+static uint8 *original_thumb_chroma_ptr = 0x0;
+#endif /*CACHE_POLICY_WRITE_BACK*/
 
 /* log2 table in Q8 */
 static uint16 jpegLogTable[]=
@@ -535,6 +546,10 @@ static uint8    *thumbnail_chroma_ptr = NULL;
 
 
 static boolean  in_file_size_ctrl = FALSE;
+
+#ifdef FEATURE_NEW_SLEEP_API
+extern sleep_okts_handle jpeg_sleep_okts_handle;
+#endif /* FEATURE_NEW_SLEEP_API */
 
 /* <EJECT> */
 /*===========================================================================
@@ -1743,6 +1758,8 @@ Side Effects:
 void jpege_setup_encode_cmd(JPEGENC_encodeSpecType *pInfo, JPEGE_encodeCmdType *pCmd)
 {
   uint16 cnt;
+  uint8 * thumb_cached_luma_buff = 0x0;
+  uint8 * thumb_cached_chroma_buff = 0x0;
 
   if (!pInfo || !pCmd)
   {
@@ -1790,6 +1807,56 @@ void jpege_setup_encode_cmd(JPEGENC_encodeSpecType *pInfo, JPEGE_encodeCmdType *
     pCmd->Enc.Restart   = pInfo->Thumbnail.Restart; /* Restart interval count */
 
     pCmd->Img.Width = pInfo->Thumbnail.Width;
+#ifdef CACHE_POLICY_WRITE_BACK
+    //Malloc and update Luma buff with 32 bit aligned address
+    thumb_cached_luma_buff  = JPEG_MALLOC(pInfo->Thumbnail.Width*pInfo->Thumbnail.Height + CACHE_LINE_SIZE);
+    //preserve the original ptr for freeing it later
+    original_thumb_luma_ptr = thumb_cached_luma_buff;
+    //allign 32 bit now.
+    thumb_cached_luma_buff  = (uint8*)((((uint32)thumb_cached_luma_buff+CACHE_LINE_SIZE-1)/CACHE_LINE_SIZE)*CACHE_LINE_SIZE);
+    //Malloc and update Chroma buff with 32 bit aligned address
+	if (pInfo->Thumbnail.Subsample == JPEGENC_H2V2)
+	{
+	    thumb_cached_chroma_buff  = JPEG_MALLOC((pInfo->Thumbnail.Width*pInfo->Thumbnail.Height)/2 + CACHE_LINE_SIZE);
+	}
+	else 
+	{
+	    thumb_cached_chroma_buff  = JPEG_MALLOC((pInfo->Thumbnail.Width*pInfo->Thumbnail.Height) + CACHE_LINE_SIZE);
+	}
+   	//preserve the original ptr for freeing it later
+    original_thumb_chroma_ptr = thumb_cached_chroma_buff;
+    //Allign to 32 now
+    thumb_cached_chroma_buff  = (uint8*)((((uint32)thumb_cached_chroma_buff+CACHE_LINE_SIZE-1)/CACHE_LINE_SIZE)*CACHE_LINE_SIZE);
+
+    if (thumb_cached_luma_buff && thumb_cached_chroma_buff)
+    {
+        //Copy the contents to the new alligned buffer
+        memcpy (thumb_cached_luma_buff,pInfo->Thumbnail.Data.Luma_ptr, pInfo->Thumbnail.Width*pInfo->Thumbnail.Height);
+        memcpy (thumb_cached_chroma_buff,pInfo->Thumbnail.Data.Chroma_ptr, pInfo->Thumbnail.Width*pInfo->Thumbnail.Height);
+    
+        //Update the original luma and chroma address with the cached/alligned ones
+        pInfo->Thumbnail.Data.Luma_ptr = thumb_cached_luma_buff;
+        pInfo->Thumbnail.Data.Chroma_ptr = thumb_cached_chroma_buff;
+    
+        //Flush the cache for thumbnail before encoding 
+        JPEG_FLUSH_DATA_CACHE ((uint32*)pInfo->Thumbnail.Data.Luma_ptr,pInfo->Thumbnail.Width*pInfo->Thumbnail.Height);
+        
+        if (pInfo->Thumbnail.Subsample == JPEGENC_H2V2)
+        {
+              JPEG_FLUSH_DATA_CACHE ((uint32*)pInfo->Thumbnail.Data.Chroma_ptr,pInfo->Thumbnail.Width*pInfo->Thumbnail.Height/2);
+        }
+        else 
+        {
+            //Hope that it is only H2V1 or H1V2, not H1V1 case 
+            //TO DO address H1V1 case too!
+            JPEG_FLUSH_DATA_CACHE ((uint32*)pInfo->Thumbnail.Data.Chroma_ptr,pInfo->Thumbnail.Width*pInfo->Thumbnail.Height);        
+        }
+    }
+    else 
+    {
+        MSG_ERROR ("jpege_setup_encode_cmd : Malloc failed",0,0,0);    
+    }
+#endif /*CACHE_POLICY_WRITE_BACK*/ 
     pCmd->Fragmnt[0] = pInfo->Thumbnail.Data; 
   }
   else
@@ -1839,7 +1906,6 @@ Side Effects:  jpege_info
 ============================================================================*/
 static boolean jpege_init()
 {
-  fs_open_xparms_type open_parms;
   char *p = NULL;
   uint16 chroma_height, chroma_width, cnt;
   uint16 luma_height_padded, luma_width_padded;
@@ -1848,7 +1914,7 @@ static boolean jpege_init()
   uint8 *luma_ptr;
   uint8 *chroma_ptr;
   boolean isH2V2;
-
+    
   isH2V2 = (localEncodeInfo.Main.Subsample == JPEGENC_H2V2);
   jpege_get_dimensions(&luma_width_padded, &luma_height_padded, localEncodeInfo.Main.Width, 
                        localEncodeInfo.Main.Height, isH2V2, localEncodeInfo.Rotation,
@@ -1948,20 +2014,15 @@ static boolean jpege_init()
     }
 
     /* Handle the case of the file already exist */
-    fs_remove(localEncodeInfo.Dest.handle.efs.filename, NULL, &jpege_info.fs_rsp);
-    open_parms.create.cleanup_option = FS_OC_CLOSE;
-    open_parms.create.buffering_option = FS_OB_PROHIBIT;
+    efs_unlink(localEncodeInfo.Dest.handle.efs.filename);
 
-    /* Open the file with a handle */
-    fs_open(localEncodeInfo.Dest.handle.efs.filename, FS_OA_CREATE, 
-            &open_parms, NULL, &jpege_info.fs_rsp);
-    if (jpege_info.fs_rsp.open.status != FS_OKAY_S)
+    jpege_info.file_descriptor = efs_open(localEncodeInfo.Dest.handle.efs.filename, O_CREAT | O_TRUNC | O_RDWR);
+    if (jpege_info.file_descriptor == (-1))
     {
       jpeg_encode_failed = TRUE;
-      MSG_ERROR("JPEGENC: EFS failed. ", 0, 0, 0);
+      MSG_ERROR("JPEGENC: EFS open failed. ", 0, 0, 0);
       return(FALSE);
     }
-    jpege_info.fs_handle = jpege_info.fs_rsp.open.handle;
   }
 
   /* Now that the destination device is setup, setup header buffer */
@@ -2020,6 +2081,9 @@ boolean jpege_prepare_header(exif_info_type *pExifData, JPEGENC_OrientType rotat
   exif_header_type   header;
   boolean  ret_val = TRUE; 
   double scaleFactor;
+  byte *temp_exif_buffer = NULL;
+  uint32 temp_exif_buffer_data_size = 0;
+  int write_count=0;
 
   quality = localEncodeInfo.Main.Quality;
   /* Used in EFS & MEM modes for File Size Control Algorithm */    
@@ -2167,13 +2231,31 @@ boolean jpege_prepare_header(exif_info_type *pExifData, JPEGENC_OrientType rotat
     else
     { /* dst_format.device == EFS */
       /* Write data to the EFS file */
-      fs_write(jpege_info.fs_handle, jpege_info.exif_buf, 
-               jpege_info.exif_data_size, NULL, &jpege_info.fs_rsp);
+      write_count = efs_write(jpege_info.file_descriptor, jpege_info.exif_buf, 
+               jpege_info.exif_data_size);
+      temp_exif_buffer = jpege_info.exif_buf;
+      temp_exif_buffer_data_size = jpege_info.exif_data_size;
 
-	    if ((jpege_info.fs_rsp.write.status != FS_OKAY_S) || (jpege_info.fs_rsp.write.count != jpege_info.exif_data_size))
+      if (write_count == (-1))
       {
         MSG_HIGH("JPEGENC: Error writing to efs", 0, 0, 0);
         ret_val = FALSE;
+      }
+      else
+      {  
+        //efs_write() some times writes fewer bytes than requested so below while loop is to handle that.	  
+        while ((unsigned int)write_count < temp_exif_buffer_data_size)
+        {
+          temp_exif_buffer += write_count;
+          temp_exif_buffer_data_size -= (unsigned)write_count;
+          write_count = efs_write( jpege_info.file_descriptor, temp_exif_buffer , temp_exif_buffer_data_size );
+          if (write_count == (-1))
+          {
+            MSG_HIGH("JPEGENC: Error writing to efs", 0, 0, 0);
+            ret_val = FALSE;
+            break;
+          }
+        }
       }
     }
 
@@ -2313,6 +2395,9 @@ void jpege_write_main_img(JPEGE_outputMsgBufType buffer)
 {
   JPEGE_OutBufCfgType  output_consummed;
   JPEGQDSPReturnCodeType retCode = JPEGQDSP_SUCCESS;
+  uint8 *temp_buffer_ptr = NULL;
+  uint32 temp_buffer_size = 0;
+  int write_count=0;
 
   if ((buffer.Ptr != outputBuf[0].Ptr) && (buffer.Ptr != outputBuf[1].Ptr))
   {
@@ -2358,13 +2443,31 @@ void jpege_write_main_img(JPEGE_outputMsgBufType buffer)
   else
   { /* dst_format.device == EFS */
     /* Write data to the EFS file */
-    fs_write(jpege_info.fs_handle, buffer.Ptr, 
-             buffer.Size, NULL, &jpege_info.fs_rsp);
+    temp_buffer_ptr = buffer.Ptr;
+    temp_buffer_size = buffer.Size;
+    write_count = efs_write(jpege_info.file_descriptor, temp_buffer_ptr, 
+             temp_buffer_size);
 
-  	if ((jpege_info.fs_rsp.write.status != FS_OKAY_S) || (jpege_info.fs_rsp.write.count != buffer.Size))
+    if (write_count == (-1))
     {
       MSG_HIGH("JPEGENC: Error writing to efs", 0, 0, 0);
-      jpeg_encode_failed = TRUE; 
+      jpeg_encode_failed = TRUE;
+    }
+    else
+    {
+      //efs_write() some times writes fewer bytes than requested so below while loop is to handle that.	  
+      while ((unsigned int)write_count < temp_buffer_size)
+      {
+        temp_buffer_ptr += write_count;
+        temp_buffer_size -= (unsigned)write_count;
+        write_count = efs_write( jpege_info.file_descriptor, temp_buffer_ptr , temp_buffer_size );
+        if (write_count == (-1))
+        {
+          MSG_HIGH("JPEGENC: Error writing to efs", 0, 0, 0);
+          jpeg_encode_failed = TRUE;
+          break;
+        }
+      }
     }
   }
 
@@ -2470,6 +2573,9 @@ static void jpege_process_callback(int32 clientId, int32 clientData)
       /* Download the DSP image */
       (void)jpeg_qdsp_initialize(jpege_handle_dsp_CB, JPEG_ENCODER_DSP);
 
+#ifdef FEATURE_NEW_SLEEP_API
+      sleep_negate_okts(jpeg_sleep_okts_handle);
+#endif
       /* allocate the ping pong buffers here */
       for (i=0; i<2; i++)
       {
@@ -2566,12 +2672,10 @@ static void jpege_process_callback(int32 clientId, int32 clientData)
 
         if (jpege_info.dst_format.device == JPEGENC_EFS)
         {
-          fs_close(jpege_info.fs_handle, NULL, &jpege_info.fs_rsp);
-          jpege_info.fs_handle = NULL;
-
+          efs_close(jpege_info.file_descriptor);
           /* If abort command or JPEG failed before writing to file       
              remove file */
-          fs_remove(localEncodeInfo.Dest.handle.efs.filename, NULL, &jpege_info.fs_rsp);
+          efs_unlink(localEncodeInfo.Dest.handle.efs.filename);
         }
 
         if (localClientCB_func)
@@ -2609,8 +2713,7 @@ static void jpege_process_callback(int32 clientId, int32 clientData)
 
       if (jpege_info.dst_format.device == JPEGENC_EFS)
       {
-        fs_close(jpege_info.fs_handle, NULL, &jpege_info.fs_rsp);
-        jpege_info.fs_handle = NULL;
+        efs_close(jpege_info.file_descriptor);
       }
 
       /* Clean up the jpeg encoder space */
@@ -2801,6 +2904,13 @@ static void jpeg_encoder_terminate()
   jpege_in_shutdown_process = FALSE;
 
   jpege_terminate();
+#ifdef CACHE_POLICY_WRITE_BACK
+  JPEG_FREE(original_thumb_luma_ptr);
+  original_thumb_luma_ptr = NULL;
+  JPEG_FREE(original_thumb_chroma_ptr);
+  original_thumb_chroma_ptr = NULL;		
+#endif
+
   for (i=0; i<2; i++)
   {
 #ifdef CACHE_POLICY_WRITE_BACK
@@ -2839,6 +2949,10 @@ static void jpeg_encoder_terminate()
     mobicatStreamPtr = NULL;
     mobicatStreamSize = 0;
   }
+#endif
+
+#ifdef FEATURE_NEW_SLEEP_API
+  sleep_assert_okts(jpeg_sleep_okts_handle);
 #endif
 }
 
@@ -3104,7 +3218,7 @@ Side Effects:
 static  int16 jpege_log2Q8(uint16 x)
 {
   int8 scale=0;
-  uint16 index;
+  uint16 index=0;
 
   if (x==0)
   {
@@ -3124,7 +3238,15 @@ static  int16 jpege_log2Q8(uint16 x)
 
   /* Compensate for the shift and scale */
   /*lint -save -e734 scale much less than uint8 */
+
+ if (index != NULL)
+{
   return(jpegLogTable[index-1]+scale*(1<<8));
+}
+else
+{
+   return(0);
+}
   /*lint -restore */ 
 }
 

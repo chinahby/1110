@@ -96,10 +96,13 @@ Copyright(c) 2000 - 2007 by QUALCOMM, Incorporated. All Rights Reserved.
   This section contains comments describing changes made to this file.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/multimedia/audio/6k/ver1/audfmt/main/latest/src/audmain.c#8 $
+  $Header: //source/qcom/qct/multimedia/audio/6k/ver1/audfmt/main/latest/src/audmain.c#11 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+09/07/10    rp     added audmain_get_data_buffer_size API to get the 
+04/08/10   aim     Fixed MM warnings.
+01/18/10   aim     Fixed the compiler warnings.
 10/13/09   bk      Modified audmain_parse_head() such that if a unsupported
                    wav file bitstream contains MP3 sync word then its allowed 
                    to go through MP3 parser. This fix works in conjunction with 
@@ -2416,8 +2419,7 @@ audmain_status_type audmain_parse_head (
   uint8                  *buffer;
 #ifdef FEATURE_MIDI
   audmain_play_param_type local_param;
-#endif /* FEATURE_MIDI */
-  audmain_status_type audmain_adpcm_status = AUDMAIN_STATUS_FAILURE;
+#endif /* FEATURE_MIDI */  
 
   if((param->calc_time) && (audmain_parse_ctl.type != AUDMAIN_INVALID_TYPE)
 #ifdef FEATURE_MIDI
@@ -2503,7 +2505,7 @@ audmain_status_type audmain_parse_head (
     } else
 #endif
 #ifdef FEATURE_WAVE_PB
-    if((audmain_adpcm_status = audadpcm_parse_head(buffer, handle, param, &audmain_parse_ctl)) ==
+    if((audadpcm_parse_head(buffer, handle, param, &audmain_parse_ctl)) ==
        AUDMAIN_STATUS_SUCCESS) {
       /* type is set in audadpcm_parse_head() */
     }
@@ -5173,33 +5175,17 @@ SIDE EFFECTS
 void audmain_set_hybrid_mode (
   audmain_audfmt_poly_mode_type hybrid_mode
 ) {
-  snd_audfmt_poly_mode_type trans_poly_mode;
   boolean set_poly_mode = TRUE;
 
   switch(hybrid_mode) {
     case AUDMAIN_AUDFMT_POLY_MODE_0:
-        trans_poly_mode = SND_AUDFMT_POLY_MODE_0;
-        break;
     case AUDMAIN_AUDFMT_POLY_MODE_1:
-        trans_poly_mode = SND_AUDFMT_POLY_MODE_1;
-        break;
     case AUDMAIN_AUDFMT_POLY_MODE_2:
-        trans_poly_mode = SND_AUDFMT_POLY_MODE_2;
-        break;
     case AUDMAIN_AUDFMT_POLY_MODE_3:
-        trans_poly_mode = SND_AUDFMT_POLY_MODE_3;
-        break;
     case AUDMAIN_AUDFMT_POLY_MODE_4:
-        trans_poly_mode = SND_AUDFMT_POLY_MODE_4;
-        break;
     case AUDMAIN_AUDFMT_POLY_MODE_5:
-        trans_poly_mode = SND_AUDFMT_POLY_MODE_5;
-        break;
     case AUDMAIN_AUDFMT_POLY_MODE_6:
-        trans_poly_mode = SND_AUDFMT_POLY_MODE_6;
-        break;
     case AUDMAIN_AUDFMT_POLY_MODE_7:
-      trans_poly_mode = SND_AUDFMT_POLY_MODE_7;
       break;
     default:
       set_poly_mode = FALSE;
@@ -5207,7 +5193,7 @@ void audmain_set_hybrid_mode (
   }
 
   if (set_poly_mode == TRUE) {
-    snd_set_hybrid_mode(hybrid_mode);
+    snd_set_hybrid_mode((snd_audfmt_poly_mode_type)hybrid_mode);
   }
 }
 
@@ -5928,5 +5914,29 @@ void audmain_cleanup_vbr (audmain_file_type file_type)
     default:
       break;
   }
+}
+/*===========================================================================
+
+FUNCTION audmain_get_data_buffer_size
+
+DESCRIPTION
+  This function returns the data read lengh value. When audmain_get_data()
+  called for synchronous mode, data length can be obtain with these
+  function.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  unit32  return the date read length value.
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+uint32 audmain_get_data_buffer_size ( void )
+{
+/*  return the audmain read length variable */
+  return (audmain_read_length);
 }
 #endif /* FEATURE_AUDIO_FORMAT */

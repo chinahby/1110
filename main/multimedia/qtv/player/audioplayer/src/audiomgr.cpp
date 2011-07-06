@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audiomgr.cpp#28 $
-$DateTime: 2009/01/09 02:49:45 $
-$Change: 816294 $
+$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audiomgr.cpp#61 $
+$DateTime: 2011/01/27 02:57:36 $
+$Change: 1596592 $
 
 ========================================================================== */
 
@@ -88,12 +88,20 @@ qtv_event_Audiochannelswitch_frame Audioeventpayload;
     #define MAX_BYTES_PER_RESTORE_BUFFER_ENTRY_FOR_AAC  2048
 #endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_AAC */
 
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_EVRC
+/**
+   If required we can change average value of frame size in bytes
+   based on testing performance 
+*/ 
+  #define MAX_BYTES_PER_RESTORE_BUFFER_ENTRY_FOR_EVRC  2048 
+#endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_EVRC */
+
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_MP3
    /**
    If required we can change average value of frame size in bytes
    based on testing performance
    */
-   #define MAX_BYTES_PER_RESTORE_BUFFER_ENTRY_FOR_MP3  16000
+#define MAX_BYTES_PER_RESTORE_BUFFER_ENTRY_FOR_MP3  8192
 #endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_MP3 */
 
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_QCELP
@@ -111,8 +119,8 @@ qtv_event_Audiochannelswitch_frame Audioeventpayload;
     #define MAX_BYTES_PER_RESTORE_BUFFER_ENTRY_FOR_AMR  320
 #endif
 #if defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER)
-    #define MAX_BYTES_PER_RESTORE_BUFFER_ENTRY_FOR_WMA_PRO  	512// WMA_PRO_CODEC,
-    #define MAX_BYTES_PER_RESTORE_BUFFER_ENTRY_FOR_WMA_PRO_PLUS  	512// WMA_PRO_PLUS_CODEC,
+    #define MAX_BYTES_PER_RESTORE_BUFFER_ENTRY_FOR_WMA_PRO    512// WMA_PRO_CODEC,
+    #define MAX_BYTES_PER_RESTORE_BUFFER_ENTRY_FOR_WMA_PRO_PLUS   512// WMA_PRO_PLUS_CODEC,
 #endif /* defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER) */
 
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_EVRC_NB
@@ -123,10 +131,24 @@ qtv_event_Audiochannelswitch_frame Audioeventpayload;
 #error code not present
 #endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_EVRC_WB */
 
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_AC3
+   //Sateesh: Need to check with CMX folks before checking in
+   // This calculation is based on 6144 * 20
+   #define MAX_BYTES_PER_RESTORE_BUFFER_ENTRY_FOR_AC3  122880
+#endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_AC3 */
+
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_PCM
+#error code not present
+#endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_PCM */
+
 int const AudioMgr::NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER[] =
 {
   0,	                                            // UNKNOWN_CODEC,
-  0,	                                            // EVRC_CODEC,
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_EVRC
+  EVRC_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER, // EVRC_CODEC,
+#else
+  0, 
+#endif
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_EVRC_NB
 #error code not present
 #else
@@ -141,9 +163,9 @@ int const AudioMgr::NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER[] =
   QCELP_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER, // QCELP_CODEC,
 #else
   0,
-#endif	                                            // QCELP_CODEC,
+#endif                                              // QCELP_CODEC,
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_AAC
-  AAC_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER,	// AAC_CODEC,
+  AAC_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER,  // AAC_CODEC,
 #else
   0,
 #endif
@@ -152,44 +174,44 @@ int const AudioMgr::NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER[] =
 #else
   0,
 #endif
-  0,	                                            // MPEG4_CODEC,
-  0,	                                            // H263_CODEC,
-  0,	                                            // H264_CODEC,
-  0,	                                            // STILL_IMAGE_CODEC,
-  0,	                                            // TIMED_TEXT_CODEC,
+  0,                                              // MPEG4_CODEC,
+  0,                                              // H263_CODEC,
+  0,                                              // H264_CODEC,
+  0,                                              // STILL_IMAGE_CODEC,
+  0,                                              // TIMED_TEXT_CODEC,
   0,                                                // GENERIC_TEXT_CODEC,
-  0,	                                            // JPEG_CODEC,
+  0,                                              // JPEG_CODEC,
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_MP3
   MP3_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER,     // MP3_CODEC,
 #else
   0,
 #endif
 #ifdef FEATURE_QTV_WINDOWS_MEDIA
-  WMA_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER,	// WMA_CODEC,
+  WMA_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER,  // WMA_CODEC,
 #else
   0,
 #endif
-  0,	                                            // WMV1_CODEC,
-  0,	                                            // WMV2_CODEC,
-  0,	                                            // WMV3_CODEC,
+  0,                                              // WMV1_CODEC,
+  0,                                              // WMV2_CODEC,
+  0,                                              // WMV3_CODEC,
 #if defined (FEATURE_QTV_WMA_PRO_DECODER)
-  WMA_PRO_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER,	// WMA_PRO_CODEC,
+  WMA_PRO_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER,  // WMA_PRO_CODEC,
 #elif defined (FEATURE_QTV_WMA_PRO_DSP_DECODER)
   WMA_PRO_DSP_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER, // WMA_PRO_CODEC DSP based
 #else
   0,
 #endif
 #if defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER)
-  WMA_PRO_PLUS_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER,	// WMA_PRO_PLUS_CODEC,
+  WMA_PRO_PLUS_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER, // WMA_PRO_PLUS_CODEC,
 #else
   0,
 #endif // (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER)
-  0,	                                            // OSCAR_CODEC,
-  0,	                                            // CONC_CODEC, // audio codec of concurrent image not available for Qtv
-  0,	                                            // COOK_CODEC,
-  0,	                                            // SIPR_CODEC,
-  0,	                                            // RV30_CODEC,
-  0,	                                              // RV40_CODEC,
+  0,                                              // OSCAR_CODEC,
+  0,                                              // CONC_CODEC, // audio codec of concurrent image not available for Qtv
+  0,                                              // COOK_CODEC,
+  0,                                              // SIPR_CODEC,
+  0,                                              // RV30_CODEC,
+  0,                                                // RV40_CODEC,
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_AMR_WB
 #error code not present
 #else
@@ -201,11 +223,24 @@ int const AudioMgr::NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER[] =
   0,                                                //QCP_CODEC,
   0,                                                //NONMP4_AAC_CODEC,
   0,                                                //NONMP4_AMR_CODEC,
+  0,                                                //DIVX311_CODEC,
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_AAC
-  AAC_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER,	// BSAC_CODEC,
+  AAC_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER,  // BSAC_CODEC,
 #else
   0,
 #endif
+  0,                                                 //FGV_CODEC_NB,
+  0,                                                 //FGV_CODEC_WB,
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_AC3
+#error code not present
+#else
+  0,
+#endif  /* FEATURE_QTV_CMX_AV_SYNC_BYTES_AC3  */
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_PCM
+#error code not present
+#else
+  0,
+#endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_PCM */
   0                                                 //MAX_CODEC
 };
 #endif
@@ -373,6 +408,12 @@ bool AudioMgr::CreateAudioInterface(Media::CodecType codec)
 #ifdef FEATURE_QTV_3GPP_EVRC_WB
 #error code not present
 #endif /* FEATURE_QTV_3GPP_EVRC_WB */
+#ifdef FEATURE_QTV_AVI_AC3
+#error code not present
+#endif /* FEATURE_QTV_AVI_AC3 */
+#ifdef FEATURE_QTV_PCM
+#error code not present
+#endif /* FEATURE_QTV_PCM */
     pAudioCMX = QTV_New_Args( AudioCMX, (codec) );
     break;
   }
@@ -428,7 +469,7 @@ bool AudioMgr::Prep(
      defined (FEATURE_QTV_GENERIC_BCAST_PCR) || \
      defined (FEATURE_QTV_IN_CALL_VIDEO))
 #error code not present
-#endif /* FEATURE_QTV_IN_CALL_PHASE_2 || 
+#endif /* FEATURE_QTV_IN_CALL_PHASE_2 ||
           FEATURE_QTV_GENERIC_BCAST_PCR ||
           FEATURE_QTV_IN_CALL_VIDEO */
     if ( pMpeg4==NULL )
@@ -437,9 +478,9 @@ bool AudioMgr::Prep(
     }
 
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
     pMpeg4->SetAudioPlayerData(playerData);
-#endif
+
 
     ///////////////////////
     //get audio parameters
@@ -513,18 +554,20 @@ bool AudioMgr::Prep(
        if(QTV_AAC_SAMPLES_PER_FRAME != audioInfo.nSamplesPerFrame)
        {
          /* Current(Dec 2004) AAC/AAC+ firmware supports only 1024 samples per frame.*/
+#ifndef FEATURE_WINCE
             QTV_MSG1( QTVDIAG_AUDIO_TASK,
                       "Qtv does not support AAC %ld Samples per frame."
                       "Using 1024 samples per frame",
                        audioInfo.nSamplesPerFrame );
-
+#endif
           audioInfo.nSamplesPerFrame = QTV_AAC_SAMPLES_PER_FRAME;
        }
     }
 
-#if defined (FEATURE_QTV_WINDOWS_MEDIA) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER)
     audioInfo.nBitsPerSample = pMpeg4->GetAudioBitsPerSample();
     if ( pMpeg4->CheckError(Common::GETMAXAUDIO) ) bMp4Error = true;
+
+#if defined (FEATURE_QTV_WINDOWS_MEDIA) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER)
 
     audioInfo.nChannels = pMpeg4->GetNumAudioChannels();
     if ( pMpeg4->CheckError(Common::GETMAXAUDIO) ) bMp4Error = true;
@@ -630,8 +673,8 @@ bool AudioMgr::Prep(
     if ( audioBuffer.pPendingData == NULL )
     {
       QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL,
-	  	            "Can't allocate data buffer of size %d",
-	  	            audioInfo.nMaxBytesPerFrame);
+                  "Can't allocate data buffer of size %d",
+                  audioInfo.nMaxBytesPerFrame);
       return false;
     }
 
@@ -763,9 +806,9 @@ bool AudioMgr::HandleSampleFrequencyChange()
   {
     // It should not happen since media has said that data is available
     QTV_ASSERT(0);
-	QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_ERROR,
-		         "HandleSampleFrequencyChange: failed due to invalid media");
-	return false;
+  QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_ERROR,
+             "HandleSampleFrequencyChange: failed due to invalid media");
+  return false;
   }
   audioInfo.nSamplingRate  = pMpeg4->GetAudioSamplingFreq();
   if (audioInfo.nSamplesPerFrame)
@@ -813,7 +856,7 @@ bool AudioMgr::HandleSampleFrequencyChange()
 
 
   return true;
-		}
+    }
 
 /* ======================================================================
 FUNCTION
@@ -1169,8 +1212,8 @@ void AudioMgr::ResetThrottling()
     if ((pMpeg4 != NULL) && is_GenericBcastMedia(pMpeg4))
     {
       // Set the Lead to zero here since delay indication received from Audio CMX
-      nAVSyncAudioBufferSize      = 0;  
-      nAVSyncAudioBufferWriteIndex= 0;  
+      nAVSyncAudioBufferSize      = 0;
+      nAVSyncAudioBufferWriteIndex= 0;
     }
     QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, "ResetThrottling():Updated nAVSyncAudioBufferSize to %d",nAVSyncAudioBufferSize);
   }
@@ -1295,10 +1338,11 @@ long AudioMgr::GetAmtBufferedMsec(unsigned long lTime)
       QTV_MSG1( QTVDIAG_AUDIO_TASK, "AudioDataLead calculated from DurationPerpacket is %d", nDataLead);
       QCUtils::LeaveCritSect(&audioMgrCS);
       return nDataLead;
-    #endif /* (FEATURE_QTV_WINDOWS_MEDIA) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER) */
+    #else
 
       QCUtils::LeaveCritSect(&audioMgrCS);
       return 0;
+    #endif /* (FEATURE_QTV_WINDOWS_MEDIA) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER) */
     }
 
     /*
@@ -1306,17 +1350,56 @@ long AudioMgr::GetAmtBufferedMsec(unsigned long lTime)
     */
     if(IS_BYTE_BASED_AVSYNC_SUPPORTED(audioCodec))
     {
-	  #ifdef FEATURE_QTV_AVI
-	    if(pMpeg4->isAviFileInstance())
-	    {
-	      int DurationPerFrame = (long)pMpeg4->getAudioFrameDuration(0);
-	      QTV_MSG1( QTVDIAG_AUDIO_TASK, "DurationPerFrame is %d", DurationPerFrame);
-		    long nDataLead = nAVSyncAudioBufferSize * DurationPerFrame;
-		    QTV_MSG1( QTVDIAG_AUDIO_TASK, "AudioDataLead calculated from DurationPerFrame is %d", nDataLead);
-		    QCUtils::LeaveCritSect(&audioMgrCS);
+    #ifdef FEATURE_QTV_AVI
+      if(pMpeg4->isAviFileInstance())
+      {
+        long nDataLead =0;
+        if(nAVSyncAudioBufferSize != 0)
+        {
+          int nBottomIndex = nAVSyncAudioBufferWriteIndex - 1;
+          if(nBottomIndex < 0)
+          {
+            nBottomIndex += MAX_AVSYNC_AUDIO_BUFFER_SIZE;
+          }
+          QTV_MSG_PRIO3(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH,
+            "GetAmtBufferedMsec: nAVSyncAudioBufferWriteIndex: %d,nAVSyncAudioBufferSize: %d, nBottomIndex: %d",
+            nAVSyncAudioBufferWriteIndex, nAVSyncAudioBufferSize, nBottomIndex);
+
+          if( nAVSyncAudioBufferSize > 1 )
+          {
+            if(audioBuffer.nPartialFrame == 0)
+            {
+              nDataLead = AVSyncAudioBuffer[nBottomIndex].nTimeStamp +
+                          AVSyncAudioBuffer[nBottomIndex].nSampleDelta -
+                          m_nCurrentTSFromCMXBytes;
+            }
+            else
+            {
+              nDataLead = AVSyncAudioBuffer[nBottomIndex].nTimeStamp - m_nCurrentTSFromCMXBytes;
+            }
+          }
+          else
+          {
+            if(audioBuffer.nPartialFrame == 0)
+            {
+              nDataLead = AVSyncAudioBuffer[nBottomIndex].nTimeStamp +
+                          AVSyncAudioBuffer[nBottomIndex].nSampleDelta - m_nCurrentTSFromCMXBytes;
+            }
+            else
+            {
+              nDataLead = 0;
+            }
+          }
+          QTV_MSG_PRIO1( QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, "GetAmtBufferedMsec::nDataLead is %d", nDataLead);
+        }
+        else
+        {
+          QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH,"AudioMgr::GetAmtBufferedMsec: nAVSyncAudioBufferSize is 0, so nDataLead is 0");
+        }
+        QCUtils::LeaveCritSect(&audioMgrCS);
         return nDataLead;
-	    }
-	    else
+      }
+      else
     #endif
       {
         //Calculate how much data is buffered based on number of entries
@@ -1353,7 +1436,7 @@ long AudioMgr::GetAmtBufferedMsec(unsigned long lTime)
          // Get current position by adding elapsed time to start of interval.
          nCurFrame = xferInfo.startOfInterval.nFrame +
                     (float)xferInfo.startOfInterval.nFrameFraction/FRAME_FRACTION_BASE + f;
-	 long cmxRemainedFrames   = (long)audioBuffer.nLastFrame - (long)nCurFrame;
+   long cmxRemainedFrames   = (long)audioBuffer.nLastFrame - (long)nCurFrame;
          if (clipInfo.fFramesPerMsec)
          {
            cmxAmtBufferedMse = (long)(cmxRemainedFrames / clipInfo.fFramesPerMsec);
@@ -1361,7 +1444,7 @@ long AudioMgr::GetAmtBufferedMsec(unsigned long lTime)
 
 #ifdef SHOW_TIMING
          QTV_MSG2( QTVDIAG_AUDIO_TASK, "Time %d Last %d",
-	           lTime, cmxAmtBufferedMse);
+             lTime, cmxAmtBufferedMse);
 #endif
          QCUtils::LeaveCritSect(&audioMgrCS);
          return cmxAmtBufferedMse;
@@ -1388,7 +1471,7 @@ long AudioMgr::GetAmtBufferedMsec(unsigned long lTime)
      defined (FEATURE_QTV_GENERIC_BCAST_PCR) || \
      defined (FEATURE_QTV_IN_CALL_VIDEO))
 #error code not present
-#endif /* FEATURE_QTV_IN_CALL_PHASE_2 || 
+#endif /* FEATURE_QTV_IN_CALL_PHASE_2 ||
           FEATURE_QTV_GENERIC_BCAST_PCR ||
           FEATURE_QTV_IN_CALL_VIDEO */
 
@@ -1448,7 +1531,7 @@ bool AudioMgr::PlaySomeAudio(
 
     cmxDataLead = nDataLead;
 
-    /* Audo data lead caliculation (Min and Max) */   
+    /* Audo data lead caliculation (Min and Max) */
     long lAudioDataLead = cmxDataLead;
     if (m_MaxCmxAudioDataLead < lAudioDataLead) {
        m_MaxCmxAudioDataLead = lAudioDataLead;
@@ -1526,7 +1609,10 @@ bool AudioMgr::PlaySomeAudio(
 #endif
   }
 
-  if ( (pAudioCMX) && nWaitMsec<=0 && !bError )
+  if ( (pAudioCMX) &&
+       ( (nWaitMsec <= 0) || (pAudioCMX->image_swap) || ( (nWaitMsec > 0) && (audioBuffer.nPartialFrame) ) ) &&
+       (!bError)
+     )
   {
     //Send another buffer.
     long tProc;
@@ -1569,7 +1655,7 @@ bool AudioMgr::PlaySomeAudio(
       xferInfo.nLastFrameSent=audioBuffer.nLastFrame;
 
       //keep track of elapsed time info.
-      /* This is to avoid the avoid situations like giving -1 as the 
+      /* This is to avoid the avoid situations like giving -1 as the
          audio playback time (which should never be the case) to the above layers
       */
       elapsed.nLastTimestamp=ZMAX(0, audioBuffer.nLastTimestamp);
@@ -1659,13 +1745,15 @@ bool AudioMgr::PlaySomeAudio(
 
 #ifdef FEATURE_QTV_GENERIC_BCAST_PCR
 #error code not present
-#endif
-
+#endif  //FEATURE_QTV_GENERIC_BCAST_PCR
+    {
     /*-------------------------------------------------------------------
       Media audio underruns shall never be passed up to the audio thread.
       Override it so that the audio thread can recover.
     -------------------------------------------------------------------*/
     mediaInfo.dataState = Media::DATA_OK;
+  }
+
   }
 
   //Set data state.
@@ -1683,6 +1771,36 @@ bool AudioMgr::PlaySomeAudio(
       return false;
   else
       return bSent;
+}
+
+/* ========================================================================
+FUNCTION:
+  AudioMgr::IsDataBeingRestored
+
+DESCRIPTION:
+  Check to see if data being restored .
+
+PARAMETERS:
+  None.
+
+RETURN VALUE:
+  true/false.
+===========================================================================*/
+bool AudioMgr::IsDataBeingRestored()
+{
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
+  Media::CodecType audioCodec = GetAudioCodecType();
+  int32 nMaxEntries = NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER[audioCodec];
+  if((RestoreDataBufferInfo.nEntriesToRestore > 0) &&
+     (RestoreDataBufferInfo.nTmpReadIndex >= 0)    &&
+     (RestoreDataBufferInfo.bRestoreBufferValid) &&
+      ((RestoreDataBufferInfo.nWriteIndex -
+        RestoreDataBufferInfo.nTmpReadIndex + nMaxEntries)%nMaxEntries > 0 ))
+  {
+    return true;
+  }
+#endif
+  return false;
 }
 
 /* ======================================================================
@@ -1711,13 +1829,15 @@ bool AudioMgr::FillAudioBuffer(const uint32 max_len, const uint32 offset)
 {
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
    int outDataSize = 0;
+   //Initialize the data source to unknown. We will set this to an appropriate
+   //value below.
+   m_DataSrcFlag = UNKNOWN;
 #endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES */
 #if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER)
    long VirtualPacketSize=0;
 #endif /* #if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) */
 
   // QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "AudioMgr::FillAudioBuffer");
-
   audioBuffer.nData=0;
   audioBuffer.nSize=0;
 
@@ -1751,7 +1871,7 @@ bool AudioMgr::FillAudioBuffer(const uint32 max_len, const uint32 offset)
     nLimit = ZMIN(2* VirtualPacketSize, nLimit);
     QTV_MSG1( QTVDIAG_AUDIO_TASK, "Adjusted nLimit: %d",nLimit);
   }
-#endif /* defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) */ 
+#endif /* defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) */
 
 #ifdef FEATURE_QTV_WMA_PRO_DECODER
 if ( (Media::WMA_PRO_CODEC != GetAudioCodecType()) && (Media::WMA_PRO_PLUS_CODEC != GetAudioCodecType()) )
@@ -1783,32 +1903,31 @@ if ( (Media::WMA_PRO_CODEC != GetAudioCodecType()) && (Media::WMA_PRO_PLUS_CODEC
       int frame_duration =  0;
       bool bDataBeingRestore = false;
       bool bFetchedFromPendingBuffer = false;
+	  bool bPendingDataAboveMaxDataLead = false;
       if(clipInfo.fFramesPerMsec)
       {
          frame_duration = (int)(1/clipInfo.fFramesPerMsec);
       }
 
-#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
-      Media::CodecType audioCodec = GetAudioCodecType();
-#endif
-
       while (
             //while there's data
-            (mediaInfo.dataState == Media::DATA_OK)
+            (mediaInfo.dataState == Media::DATA_OK||IsDataBeingRestored())
             //and sample count not exceeded
             && (audioBuffer.nSize < audioBuffer.nMaxSize)
             //and there's room for one more maximum size sample
             // && ((audioBuffer.nData + nLargestFrameSize) <= nLimit)
             && (audioBuffer.nData < nLimit)
             && (  pMpeg4->IsMinAudioBuffered()  ||
-                 ( (duration_msec + GetAmtBufferedMsec(ZUtils::Clock())) < pAudioCMX->nAudioIFMaxAheadMsec)  )
+                 ( (duration_msec + GetAmtBufferedMsec(ZUtils::Clock())) < pAudioCMX->nAudioIFMaxAheadMsec)  ||
+                 (audioBuffer.nPartialFrame) )
             )
       {
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
         if( ( m_audioCodec == Media::GSM_AMR_CODEC
              || m_audioCodec == Media::AAC_CODEC
              || m_audioCodec == Media::BSAC_CODEC
-             || m_audioCodec == Media::QCELP_CODEC )
+             || m_audioCodec == Media::QCELP_CODEC 
+			 || m_audioCodec == Media::EVRC_CODEC )
              && IS_BYTE_BASED_AVSYNC_SUPPORTED(m_audioCodec) )
         {
           int nDataLeadFromCurrentSamples = 0;
@@ -1822,13 +1941,21 @@ if ( (Media::WMA_PRO_CODEC != GetAudioCodecType()) && (Media::WMA_PRO_PLUS_CODEC
           */
           if( clipInfo.fFramesPerMsec && (pAudioCMX) )
           {
-            nDataLeadFromCurrentSamples =(int) ((float)audioBuffer.nSize / clipInfo.fFramesPerMsec);
+            if(pMpeg4->isAviFileInstance())
+            {
+              // For AVI case we dont require clock time to calculate datalead
+              nDataLeadFromCurrentSamples = GetAmtBufferedMsec(0);
+            }
+            else
+            {
+              nDataLeadFromCurrentSamples =(int) ((float)audioBuffer.nSize / clipInfo.fFramesPerMsec);
+            }
 
             QTV_MSG_PRIO3(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_LOW,
                           "#samples accumulated %d nDataLeadFromCurrentSamples %d pAudioCMX->nAudioIFMaxAheadMsec %d",
                           audioBuffer.nSize,nDataLeadFromCurrentSamples,pAudioCMX->nAudioIFMaxAheadMsec);
-            if( (audioBuffer.nSize) &&
-                (pAudioCMX->nAudioIFMaxAheadMsec < nDataLeadFromCurrentSamples) )
+            if( (audioBuffer.nPartialFrame == 0) &&
+                (pAudioCMX->nAudioIFMaxAheadMsec < GetAmtBufferedMsec(ZUtils::Clock())))
             {
               QTV_MSG( QTVDIAG_AUDIO_TASK,"Not filling any more samples..");
               return true;
@@ -1845,10 +1972,10 @@ if ( (Media::WMA_PRO_CODEC != GetAudioCodecType()) && (Media::WMA_PRO_PLUS_CODEC
 
         //WZeng, add "int channel" to support aac silence insertion when streaming, 06/05/02
         cmx_af_aac_spec_type *pCmx_af_aac_spec = NULL;
-	if(pAudioCMX)
-	{
-        pCmx_af_aac_spec = (cmx_af_aac_spec_type *) ((AudioCMX*)pAudioCMX)->GetCmx_af_aac_spec();
-	}
+        if(pAudioCMX)
+        {
+          pCmx_af_aac_spec = (cmx_af_aac_spec_type *) ((AudioCMX*)pAudioCMX)->GetCmx_af_aac_spec();
+        }
 
         // Change Logic to put 1600 bytes even in each audio buffer.
         // i.e. Not Frame Aligned
@@ -1857,11 +1984,19 @@ if ( (Media::WMA_PRO_CODEC != GetAudioCodecType()) && (Media::WMA_PRO_PLUS_CODEC
         {
           // Calculate the Pending data pointer
           unsigned char * pStart = audioBuffer.pPendingData + audioBuffer.nPendingOffset;
+          //Thre data that we are sending to the cmx is from the pending
+          //buffer. Setting the flag accordingly.
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
+          m_DataSrcFlag = PENDING;
+#endif
           // Pick the timestamp value from the one stored when fill audio buffer was called previously
           // This is essential when the samples are retrieved from the restore data buffer.
-	  nTimestampMsec = audioBuffer.nPartialTimestamp;
+    nTimestampMsec = audioBuffer.nPartialTimestamp;
           bFetchedFromPendingBuffer = true;
 
+          //New debug message. Might come in handy while collecting logs.
+          QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_HIGH,
+                              "DBG_MSG Restoring from pending buffer with length%ld",audioBuffer.nPendingData );
           if((audioBuffer.nPendingData + audioBuffer.nData)<= nLimit)
           {
             // Case 1: When the partial frame status cleared since all the bytes are grabbed
@@ -1875,7 +2010,7 @@ if ( (Media::WMA_PRO_CODEC != GetAudioCodecType()) && (Media::WMA_PRO_PLUS_CODEC
             // Clear the Pending flags so that next pull will be made from the media
             audioBuffer.nPendingData   = 0;
             audioBuffer.nPendingOffset = 0;
-	  }
+         }
           else
           {
             // Case 2. Partial frame status continue
@@ -1889,21 +2024,41 @@ if ( (Media::WMA_PRO_CODEC != GetAudioCodecType()) && (Media::WMA_PRO_PLUS_CODEC
             audioBuffer.nPendingData   -= nBytes;
             audioBuffer.nPendingOffset += nBytes;
           }
+          if( pAudioCMX->nAudioIFMaxAheadMsec < GetAmtBufferedMsec(0))
+          {
+            QTV_MSG( QTVDIAG_AUDIO_TASK,"Filling only partial frames as maxAudioLead is satisfied.");
+            bPendingDataAboveMaxDataLead = true;
+          } 
         }
         else
         {
 
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
+         //Obtain the capacity of the restore buffer. This will be used in
+         //the calculation below.
+         Media::CodecType audioCodec = GetAudioCodecType();
+         int32 nMaxEntries = NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER[audioCodec];
+
           //Don't add data back to call data buffer while restoring as it already
           //exists in the call buffer. It will be flushed out when feedback comes in from DSP.
-
+          //Also make sure that we are restoring only those number of entries
+          //that are actually present in the restore buffer. For this check
+          //the nTmpReadIndex against the write index. Without this check,
+          //we may end up giving data to cmx from a non-existent buffer entry.
           if(
               (IS_BYTE_BASED_AVSYNC_SUPPORTED(audioCodec))  &&
               (RestoreDataBufferInfo.nEntriesToRestore > 0) &&
               (RestoreDataBufferInfo.nTmpReadIndex >= 0)    &&
-              (RestoreDataBufferInfo.bRestoreBufferValid) )
+              (RestoreDataBufferInfo.bRestoreBufferValid) &&
+              ((RestoreDataBufferInfo.nWriteIndex -
+                RestoreDataBufferInfo.nTmpReadIndex + nMaxEntries)
+                %nMaxEntries > 0 ))
           {
             bDataBeingRestore = true;
+            audioBuffer.nPartialFrame =0;
+            //More logs for debug.
+            QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_HIGH,
+                              "DBG_MSG Restoring from data buffer with entries%ld", RestoreDataBufferInfo.nEntriesToRestore);
             if(RestoreDataBufferInfo.nTmpReadIndex >= NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER[audioCodec])
             {
               RestoreDataBufferInfo.nTmpReadIndex = 0;
@@ -1911,6 +2066,9 @@ if ( (Media::WMA_PRO_CODEC != GetAudioCodecType()) && (Media::WMA_PRO_PLUS_CODEC
             if( audioBuffer.pPendingData )
             {
               //Retrieve the data
+              //Copy data from the restore buffer and set the flag to signal
+              //that we have obtained this data from the restore buffer.
+              m_DataSrcFlag = RESTORE;
               numSample = RestoreDataBufferInfo.UnAckDataBuffer[RestoreDataBufferInfo.nTmpReadIndex].nFrames;
               outDataSize = nBytes = RestoreDataBufferInfo.UnAckDataBuffer[RestoreDataBufferInfo.nTmpReadIndex].nSize;
               status = Media::DATA_OK;
@@ -1942,19 +2100,20 @@ if ( (Media::WMA_PRO_CODEC != GetAudioCodecType()) && (Media::WMA_PRO_PLUS_CODEC
             }
           }
           else
-         {
+          {
             // If the status changes witin the while loop we need to fetch the sample from media
             // Otherwise what was happening is that media sample is not retrieved from the media
             // untill the fill audio buffer is called for the next time.
             bDataBeingRestore = false;
-         }
+          }
 #endif
          if ((!bDataBeingRestore) && (audioBuffer.pPendingData))
          {
-          /////////////////////////////////////////////////////////////////////////
-         nBytes = FetchAudioSample(pMpeg4,status,&numSample,audioInfo.nMaxBytesPerFrame,
+            nBytes = FetchAudioSample(pMpeg4,status,&numSample,audioInfo.nMaxBytesPerFrame,
                                                    (int)pCmx_af_aac_spec->channel);
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
+            //Read from file, as there is no data in pending or restore buffers.
+            m_DataSrcFlag = MEDIA;
            outDataSize = nBytes;
            m_bFirstAudioFragment = true;
 #endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES */
@@ -1992,13 +2151,13 @@ if ( (Media::WMA_PRO_CODEC != GetAudioCodecType()) && (Media::WMA_PRO_PLUS_CODEC
           else if(nBytes > 0 && audioBuffer.pPendingData)
           {
            /*
-			     * It's possible to have nBytes as 0 and status as
-			     * DATA_SKIP or DATA_UNDERRUN etc. Thus, if there is no audio data, we should not attempt
-			     * to send anything by copying the data into audioBuffer.pData.
-			     * Otherwise, when nBytes is 0, audioBuffer.nPendingData might become negative
+           * It's possible to have nBytes as 0 and status as
+           * DATA_SKIP or DATA_UNDERRUN etc. Thus, if there is no audio data, we should not attempt
+           * to send anything by copying the data into audioBuffer.pData.
+           * Otherwise, when nBytes is 0, audioBuffer.nPendingData might become negative
            * when we execute 'nBytes - (nLimit - audioBuffer.nData)' and will cause
-			     * the crash.
-			     */
+           * the crash.
+           */
             // Frame is crossing the audio buffer boundary
             // Wait for the next call
             // Store the true size of the frame in nPartialFrame attribute
@@ -2011,7 +2170,7 @@ if ( (Media::WMA_PRO_CODEC != GetAudioCodecType()) && (Media::WMA_PRO_PLUS_CODEC
             audioBuffer.nPendingData   = audioBuffer.nPartialFrame - nBytes;
             audioBuffer.nPendingOffset = nBytes;
             QTV_MSG2( QTVDIAG_AUDIO_TASK, "Pending %d Bytes; size = %d",
-				      audioBuffer.nPendingData,audioBuffer.nPartialFrame);
+              audioBuffer.nPendingData,audioBuffer.nPartialFrame);
           }
         }
 
@@ -2042,6 +2201,10 @@ if ( (Media::WMA_PRO_CODEC != GetAudioCodecType()) && (Media::WMA_PRO_PLUS_CODEC
               audioStats.nCurrentNullChunk=0;
               QCUtils::LeaveCritSect(&audioStats.CS);
             }
+			if(bPendingDataAboveMaxDataLead)
+			{
+				return(audioBuffer.nData>0);
+			}
 
             break;
           }// OK or NULLFILL
@@ -2150,6 +2313,25 @@ void AudioMgr::RestoreDataBufferInsertSample(int nBytes,
   int nCurrEntrySizeAllocated = GetRestoreDataBufferEntrySize(audioCodec);
   int nMaxEntries = NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER[audioCodec];
 
+  if(nBytes > nCurrEntrySizeAllocated)
+  {
+    QTV_MSG_PRIO2(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_FATAL,
+                   "Sample size  %d is more than the restore buffer entry size  %d returning without restoring",
+                   nBytes, nCurrEntrySizeAllocated);
+    QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_FATAL,
+                   "we need to increase the restore buffer entry size to %d ", nBytes);
+
+     /* Here we are retrunig even though we don't restore because we should continue the playback
+      * if we don't restore and continue playback may lead some issues during pause/resume
+      */
+    return;
+  }
+
+  QTV_MSG_PRIO3(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_HIGH,
+                "DBG_MSG: Inserting sample into restore data buffer %ld, %ld, %ld",
+            nBytes, nTimestamp,nSampleCount );
+
+
   //make sure we are not over-writing
   if( (RestoreDataBufferInfo.bRestoreBufferValid) &&
       (!RestoreDataBufferInfo.nEntriesToRestore)  &&
@@ -2158,11 +2340,14 @@ void AudioMgr::RestoreDataBufferInsertSample(int nBytes,
 
     if((nLastWriteIndex >=0) && (nLastWriteIndex < nMaxEntries))
     {
-      if(RestoreDataBufferInfo.UnAckDataBuffer[nLastWriteIndex].nPresTime == nTimestamp)
+      //Make sure that we add an entry to the restore buffer only if its time
+      //stamp is greater than the previous entry added to the restore buffer.
+      //This prevents duplicate entries.
+      if(RestoreDataBufferInfo.UnAckDataBuffer[nLastWriteIndex].nPresTime >= nTimestamp)
       {
         QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK,QTVDIAG_PRIO_HIGH,
                       "Sample With Timestamp %ld Already Inserted in Restore Databuffer,So Rejecting The Duplicate entry",
-					  nTimestamp );
+            nTimestamp );
         return;
       }
     }
@@ -2194,12 +2379,6 @@ void AudioMgr::RestoreDataBufferInsertSample(int nBytes,
                     "OVERFLOW RestoreDataBufferInfo.nEntriesInRestoreBuffer %ld",
                     (RestoreDataBufferInfo.nEntriesInRestoreBuffer- nMaxEntries));
     }
-  }
-
-
-  if( RestoreDataBufferInfo.nEntriesToRestore > 0 )
-  {
-    RestoreDataBufferInfo.nEntriesToRestore--;
   }
 
   return;
@@ -2239,10 +2418,13 @@ bool AudioMgr::AVSyncAudioBufferInsertEntry(int nBytes, long nTimestamp)
     AVSyncAudioBuffer[nAVSyncAudioBufferWriteIndex].nByteOffSet  = nAVSyncAudioWriteByteOffSet;
     AVSyncAudioBuffer[nAVSyncAudioBufferWriteIndex].nTimeStamp   = nTimestamp;
     AVSyncAudioBuffer[nAVSyncAudioBufferWriteIndex].nFrame       = mediaInfo.nFramesProcessed;
-    QTV_MSG_PRIO2(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH,
-		          "added entry in mapping_table, Bytes %ld  TS %ld",
-		          AVSyncAudioBuffer[nAVSyncAudioBufferWriteIndex].nByteOffSet,
-		          AVSyncAudioBuffer[nAVSyncAudioBufferWriteIndex].nTimeStamp);
+    AVSyncAudioBuffer[nAVSyncAudioBufferWriteIndex].nSampleDelta =
+                      pMpeg4->GetTimestampDeltaForCurrentAudioSample(0);
+    QTV_MSG_PRIO3(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH,
+              "added entry in mapping_table, Bytes %ld  TS %ld SampleDelta %ld",
+              AVSyncAudioBuffer[nAVSyncAudioBufferWriteIndex].nByteOffSet,
+              AVSyncAudioBuffer[nAVSyncAudioBufferWriteIndex].nTimeStamp,
+              AVSyncAudioBuffer[nAVSyncAudioBufferWriteIndex].nSampleDelta);
 
     if((++nAVSyncAudioBufferWriteIndex) >= MAX_AVSYNC_AUDIO_BUFFER_SIZE)
     {
@@ -2283,7 +2465,8 @@ bool AudioMgr::ProcessAudioSample(int          nBytes,
                                        bool           bRestoring,
                                        unsigned long nSampleCount)
 {
-
+   QTV_MSG3( QTVDIAG_AUDIO_TASK, "DBG_MSG: Bytes = %d, timestamp = %d sample count = %d",
+              nBytes,nTimestamp, nSampleCount);
   // If we are not restoring samples from the buffer then obtain the TS from Media
   if(!bRestoring)
   {
@@ -2381,7 +2564,7 @@ bool AudioMgr::ProcessAudioSample(int          nBytes,
       // NULL_FILL
       if(nBytes > 0)
       {
-	// Drop due to faster playback mode
+  // Drop due to faster playback mode
         bPlay = false;
       }
             }
@@ -2412,9 +2595,9 @@ bool AudioMgr::StartFastAudioPlayback(int nModulus, int nDropCount)
             {
   bool bRet = false;
 #ifdef FEATURE_QTV_FAST_PLAYBACK_AUDIO
-  // Removed the byte based feedback dependency check from here 
-  // Player setting will be received here un-conditionally 
-  // Later at the prep time we will double check and reset if necessary. 
+  // Removed the byte based feedback dependency check from here
+  // Player setting will be received here un-conditionally
+  // Later at the prep time we will double check and reset if necessary.
   if(nModulus == nDropCount)
   {
     QTV_MSG1(QTVDIAG_AUDIO_TASK,
@@ -2626,7 +2809,7 @@ void AudioMgr::SetupFastAudioPlaybackFilters()
   if(aFastPlaybackFilterConfig)
   {
     QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_ERROR,
-		 "Most Probably Stop Fast Playback Mode setting skipped???");
+     "Most Probably Stop Fast Playback Mode setting skipped???");
     // Free the old memory ; It should not happen if the resetting is done before.
     QTV_Free(aFastPlaybackFilterConfig);
                   }
@@ -2650,9 +2833,9 @@ void AudioMgr::SetupFastAudioPlaybackFilters()
       if(aFastPlaybackFilterConfig[i])
       {
         // If the modulus is odd number then we will jump across the squares nicely.
-	// If the modulus is even number then we will get to an occupied square when the wrap around
-	// happens . In that case we just need to jump the next one.
-	i = (i+1)% nFastPlaybackWindow;
+  // If the modulus is even number then we will get to an occupied square when the wrap around
+  // happens . In that case we just need to jump the next one.
+  i = (i+1)% nFastPlaybackWindow;
       }
       aFastPlaybackFilterConfig[i] = 1;
       i = (i+2) % nFastPlaybackWindow;
@@ -2727,6 +2910,9 @@ void AudioMgr::UpdateAudioBuffer(int nBytes, long nTimestamp,
                                  unsigned long nSampleCount,
                                  bool bPlay)
           {
+   QTV_MSG3(QTVDIAG_AUDIO_TASK, "DBG_MSG: UpdateAudioBuffer %d,%d,%d",
+      nBytes,nTimestamp,nSampleCount);
+
   Media::CodecType audioCodec = GetAudioCodecType();
 
   if(bPlay)
@@ -2774,17 +2960,25 @@ void AudioMgr::UpdateAudioBuffer(int nBytes, long nTimestamp,
       if( (Media::WMA_CODEC != GetAudioCodecType())|| (!isStartOfDummyBytes()) )
       {
 #endif  /* FEATURE_QTV_WINDOWS_MEDIA */
-      if( audioBuffer.nPartialFrame > 0 )
+      //You should add a data to the restore buffer only if it has been
+      //read from the pending buffer or the file. Adding data that has been
+      //read from the restore buffer again to the restore buffer may cause
+      //repeat of the same audio data, jumps in playback time, etc.
+      if( audioBuffer.nPartialFrame > 0 && (m_DataSrcFlag!=RESTORE))
       {
         RestoreDataBufferInsertSample(audioBuffer.nPartialFrame,nTimestamp,audioBuffer.nPartialSamples);
       }
-      else
+      else if(m_DataSrcFlag != RESTORE)
       {
         RestoreDataBufferInsertSample(nBytes,nTimestamp,nSampleCount);
       }
 #ifdef FEATURE_QTV_WINDOWS_MEDIA
       }
 #endif /* FEATURE_QTV_WINDOWS_MEDIA */
+      if( RestoreDataBufferInfo.nEntriesToRestore > 0 )
+      {
+         RestoreDataBufferInfo.nEntriesToRestore--;
+      }
     }
 #endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES */
   }
@@ -2851,7 +3045,7 @@ void AudioMgr::UpdateAudioBuffer(int nBytes, long nTimestamp,
 
 }
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
 /* ======================================================================
 FUNCTION
   AudioMgr::SetClientData
@@ -2874,7 +3068,7 @@ void AudioMgr::SetClientData(const void *client_data)
 {
   playerData = client_data;
 }
-#endif /*FEATURE_FILE_FRAGMENTATION*/
+
 
 /* ======================================================================
 FUNCTION
@@ -3026,10 +3220,10 @@ bool AudioMgr::Pause()
             xferInfo.endOfInterval.timestamp=cmx_avsync_update.curTimeStamp;
             xferInfo.endOfInterval.nFrame = cmx_avsync_update.nFrames;
 
-	          /* whenever we resume after a pause, we update the start of interval timestamp
-	          to the timestamp at which we paused, whereas cmx will report the number of samples
-	          from the beginning of play or from the time we repositioned till we paused,
-	          so we need to store the startofinterval timestamp in a variable only for the first
+            /* whenever we resume after a pause, we update the start of interval timestamp
+            to the timestamp at which we paused, whereas cmx will report the number of samples
+            from the beginning of play or from the time we repositioned till we paused,
+            so we need to store the startofinterval timestamp in a variable only for the first
             time we paused */
             if(cmx_avsync_update.cmxPause==false)
             {
@@ -3608,8 +3802,12 @@ void AudioMgr::UpdateAVSyncFromCMXBytes(long num_of_bytes)
    if(bGotTimeStamp)
    {
      /* now update AVSync offset as the current time - current timestamp */
+#ifdef FEATURE_QTV_AUDIO_DISCONTINUITY
+#error code not present
+#else
      SetPlaybackOffset(ZUtils::Clock(),m_nCurrentTSFromCMXBytes);
      QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, "AVSyncAudioBuffer size after AVSync Set: %d",nAVSyncAudioBufferSize );
+#endif
    }
 }
 
@@ -3701,24 +3899,24 @@ int32 AudioMgr::GetTimeStampFromCMXBytes(long num_of_bytes, int &nFrame)
     //to virtual packet length bytes.
     if( num_of_bytes < (long)(AVSyncAudioBuffer[nTopIndex].nByteOffSet & (~1)))
     {
-      QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, "First entry TS..: %ld",AVSyncAudioBuffer[nTopIndex].nTimeStamp);    
+      QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, "First entry TS..: %ld",AVSyncAudioBuffer[nTopIndex].nTimeStamp);
       /* calculating the exact time stamp if the feedback is less than the first
       entry in the mapping table. */
       if( nTopIndex + 1 <= nBottomIndex)
       {
-        /* firstEntryOffset : the byte offset of the just before the current 
-                              top entry 
+        /* firstEntryOffset : the byte offset of the just before the current
+                              top entry
            bFirstEntryPlayedOut : Flag to find out if the very first entry after starting
                                   playback(fresh start/ pause-resume/seek) has been played out
                                   Only if this is set to true , we can access the entry before the current top entry
         */
         nFrame = -1;
-        nTimeDiff = AVSyncAudioBuffer[nTopIndex + 1].nTimeStamp - AVSyncAudioBuffer[nTopIndex].nTimeStamp;      
+        nTimeDiff = AVSyncAudioBuffer[nTopIndex + 1].nTimeStamp - AVSyncAudioBuffer[nTopIndex].nTimeStamp;
         if (!bFirstEntryPlayedOut && !firstEntryOffset)
         {
            firstEntryOffset = AVSyncAudioBuffer[nTopIndex].nByteOffSet;
         }
-        
+
         if (num_of_bytes > firstEntryOffset)
         {
            bFirstEntryPlayedOut = true;
@@ -3734,33 +3932,61 @@ int32 AudioMgr::GetTimeStampFromCMXBytes(long num_of_bytes, int &nFrame)
             firstEntryOffset = AVSyncAudioBuffer[nTopIndex-1+MAX_AVSYNC_AUDIO_BUFFER_SIZE].nByteOffSet;
           }
           QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, "First Entry Offset = %d",firstEntryOffset);
-          num_of_bytes -=firstEntryOffset; 
+          num_of_bytes -=firstEntryOffset;
         }
         if (firstEntryOffset != AVSyncAudioBuffer[nTopIndex].nByteOffSet)
         {
           nByteDiff = (AVSyncAudioBuffer[nTopIndex].nByteOffSet & (~1))- firstEntryOffset;
         }
         else
-        {    
+        {
           nByteDiff = (AVSyncAudioBuffer[nTopIndex].nByteOffSet &(~1));
         }
         nTime = (nTimeDiff/nByteDiff)*(num_of_bytes) + AVSyncAudioBuffer[nTopIndex].nTimeStamp;
-      
+
       if( (nTime < AVSyncAudioBuffer[nTopIndex + 1].nTimeStamp) && (nTime >= AVSyncAudioBuffer[nTopIndex].nTimeStamp) )
-      {        
+      {
           QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, "nTime = %d lies in between the top 2 entries",nTime);
         return nTime;
       }
       else
-      {    	
+      {
           QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, "Failed to interpolate between top 2 entries");
         return AVSyncAudioBuffer[nTopIndex].nTimeStamp;
       }
     }
-    QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, "returning AVSyncAudioBuffer[nTopIndex].nTimeStamp:%d",AVSyncAudioBuffer[nTopIndex].nTimeStamp);
-      
-    return AVSyncAudioBuffer[nTopIndex].nTimeStamp;
-    }
+    if(bFirstEntryPlayedOut)
+    {
+      if(nTopIndex != 0)
+      {
+        firstEntryOffset = AVSyncAudioBuffer[nTopIndex-1].nByteOffSet;
+      }
+      else
+      {
+        firstEntryOffset = AVSyncAudioBuffer[nTopIndex-1+MAX_AVSYNC_AUDIO_BUFFER_SIZE].nByteOffSet;
+      }
+      QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, "First Entry Offset = %d",firstEntryOffset);
+      num_of_bytes -=firstEntryOffset;
+     }
+     else
+     {
+       firstEntryOffset = 0;
+     }
+     if(AVSyncAudioBuffer[nTopIndex].nSampleDelta)
+     {
+       nTimeDiff = AVSyncAudioBuffer[nTopIndex].nSampleDelta;
+     }
+     else
+     {
+       QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, "returning AVSyncAudioBuffer[nTopIndex].nTimeStamp:%d",AVSyncAudioBuffer[nTopIndex].nTimeStamp);
+       return AVSyncAudioBuffer[nTopIndex].nTimeStamp;
+     }
+     nByteDiff = AVSyncAudioBuffer[nTopIndex].nByteOffSet - firstEntryOffset;
+     nTime = (nTimeDiff/nByteDiff)*num_of_bytes + AVSyncAudioBuffer[nTopIndex].nTimeStamp;
+
+     QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, "returning timestamp calculated from delta %d",nTime);
+     return nTime;
+   }
 
     if((AVSyncAudioBuffer[nBottomIndex].nByteOffSet & (~1))< (uint32)num_of_bytes)
     {
@@ -3779,15 +4005,15 @@ int32 AudioMgr::GetTimeStampFromCMXBytes(long num_of_bytes, int &nFrame)
     }
 
     for(;nTopIndex != nBottomIndex;)
-      {
+    {
       // Calculate the Mid Index for the circular buffer
       if(nBottomIndex > nTopIndex)
-        {
+      {
         // Normal scenario
         nMiddleIndex = (nTopIndex + nBottomIndex)/2;
-        }
+      }
       else
-        {
+      {
         // Wrap around scenario
         nSize = MAX_AVSYNC_AUDIO_BUFFER_SIZE - nTopIndex;
         nSize += nBottomIndex + 1;
@@ -3797,20 +4023,20 @@ int32 AudioMgr::GetTimeStampFromCMXBytes(long num_of_bytes, int &nFrame)
       }
 
       if((AVSyncAudioBuffer[nMiddleIndex].nByteOffSet & (~1)) == (uint32)num_of_bytes)
-        {
+      {
         // Store the middle index into last index in case the buffer size reduced to zero
         nLastIndex    = nMiddleIndex;
         //#ifndef T_MSM7500
         nMatchedIndex = (nMiddleIndex + 1) % MAX_AVSYNC_AUDIO_BUFFER_SIZE;
         //#else /* T_MSM7500 */
-        // In 7500 targets, feedback is not aligned to the frame boundaries and hence we 
-        // should not take the upper bound as done above. If we take the upper bound , 
-        // then the error could be positive which makes the renderer to increase the sleep 
+        // In 7500 targets, feedback is not aligned to the frame boundaries and hence we
+        // should not take the upper bound as done above. If we take the upper bound ,
+        // then the error could be positive which makes the renderer to increase the sleep
         // time while waiting.
-        //nMatchedIndex = nMiddleIndex; 
+        //nMatchedIndex = nMiddleIndex;
         //#endif /* T_MSM7500 */
-          break;
-        }
+        break;
+      }
 
       if((AVSyncAudioBuffer[nMiddleIndex].nByteOffSet & (~1)) > (uint32)num_of_bytes)
         {
@@ -3846,10 +4072,10 @@ int32 AudioMgr::GetTimeStampFromCMXBytes(long num_of_bytes, int &nFrame)
       // byte count lies within this range
       nLastIndex = nMatchedIndex = nTopIndex;
       //#ifndef T_MSM7500
-      // In 7500 targets, feedback is not aligned to the frame boundaries and hence we 
-      // should not take the upper bound as done here. If we take the upper bound , 
-      // then the error could be positive which makes the renderer to increase the sleep 
-      // time while waiting. 
+      // In 7500 targets, feedback is not aligned to the frame boundaries and hence we
+      // should not take the upper bound as done here. If we take the upper bound ,
+      // then the error could be positive which makes the renderer to increase the sleep
+      // time while waiting.
       if((AVSyncAudioBuffer[nMatchedIndex].nByteOffSet & (~1)) == (uint32)num_of_bytes)
       {
         nMatchedIndex = (nMatchedIndex + 1) % MAX_AVSYNC_AUDIO_BUFFER_SIZE;
@@ -3858,14 +4084,19 @@ int32 AudioMgr::GetTimeStampFromCMXBytes(long num_of_bytes, int &nFrame)
       {
         // move the matched Index by one
         nPrevIndex     = nMatchedIndex;
-	QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, 
-        "nMatchedIndex ts = %d ",AVSyncAudioBuffer[nMatchedIndex].nTimeStamp);
+        QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH,
+          "nMatchedIndex ts = %d ",AVSyncAudioBuffer[nMatchedIndex].nTimeStamp);
         nMatchedIndex  = (nMatchedIndex + 1) % MAX_AVSYNC_AUDIO_BUFFER_SIZE;
-        QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, 
-        "nMatchedIndex ts after increment= %d ",AVSyncAudioBuffer[nMatchedIndex].nTimeStamp);
+        QTV_MSG_PRIO1(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH,
+          "nMatchedIndex ts after increment= %d ",AVSyncAudioBuffer[nMatchedIndex].nTimeStamp);
         bNotExactMatch = true;
-	QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, 
-        "Setting bNotExactMatch = true ");
+        QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH,
+          "Setting bNotExactMatch = true ");
+      }
+      else
+      {
+        bNotExactMatch = true;
+        nPrevIndex = nMatchedIndex -1;
       }
 
       // There is a possibility that previous for loop may not be executed
@@ -3884,36 +4115,46 @@ int32 AudioMgr::GetTimeStampFromCMXBytes(long num_of_bytes, int &nFrame)
     if(nAVSyncAudioBufferWriteIndex > nMatchedIndex)
     {
       nAVSyncAudioBufferSize = nAVSyncAudioBufferWriteIndex - nMatchedIndex;
-
     }
     else if(nAVSyncAudioBufferWriteIndex == nMatchedIndex)
     {
       nAVSyncAudioBufferSize = 0;
     }
     else
-      {
+    {
       nAVSyncAudioBufferSize = MAX_AVSYNC_AUDIO_BUFFER_SIZE - (nMatchedIndex-nAVSyncAudioBufferWriteIndex);
-      }
+    }
 
     if(nAVSyncAudioBufferSize == 0)
     {
       nRet   = AVSyncAudioBuffer[nLastIndex].nTimeStamp;
       nFrame = AVSyncAudioBuffer[nLastIndex].nFrame;
-      UpdateRestoreDataBuffer(nRet);  
+      UpdateRestoreDataBuffer(nRet);
     }
     else
     {
       if( bNotExactMatch )
       {
-        nTimeDiff = AVSyncAudioBuffer[nMatchedIndex].nTimeStamp - AVSyncAudioBuffer[nPrevIndex].nTimeStamp;
+        if(AVSyncAudioBuffer[nMatchedIndex].nSampleDelta)
+        {
+          nTimeDiff = AVSyncAudioBuffer[nMatchedIndex].nSampleDelta;
+        }
+        else if((0 == AVSyncAudioBuffer[nMatchedIndex].nSampleDelta) && (nMatchedIndex == nAVSyncAudioBufferWriteIndex -1))
+        {
+          nTimeDiff = 0;
+        }
+        else
+        {
+          nTimeDiff = AVSyncAudioBuffer[(nMatchedIndex+1)% MAX_AVSYNC_AUDIO_BUFFER_SIZE].nTimeStamp - AVSyncAudioBuffer[nMatchedIndex].nTimeStamp;
+        }
         nByteDiff = (AVSyncAudioBuffer[nMatchedIndex].nByteOffSet & (~1))- (AVSyncAudioBuffer[nPrevIndex].nByteOffSet & (~1));
         nTime = (nTimeDiff/nByteDiff)*(num_of_bytes - AVSyncAudioBuffer[nPrevIndex].nByteOffSet & (~1));
         nRet  = AVSyncAudioBuffer[nMatchedIndex].nTimeStamp + (int32)nTime;
-    }
-    else
-    {
-      nRet   = AVSyncAudioBuffer[nMatchedIndex].nTimeStamp;
-	QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH, 
+      }
+      else
+      {
+         nRet   = AVSyncAudioBuffer[nMatchedIndex].nTimeStamp;
+   QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH,
           "Returning Matched index timestamp. Marking first entry played out to true");
       }
       nFrame = AVSyncAudioBuffer[nMatchedIndex].nFrame;
@@ -3977,6 +4218,7 @@ void AudioMgr::FlushRestoreDataBufferInfo()
     RestoreDataBufferInfo.nWriteIndex = 0;
     RestoreDataBufferInfo.nReadIndex = 0;
     RestoreDataBufferInfo.nEntriesToRestore = 0;
+    nLastWriteIndex = -1;
     QTV_MSG_PRIO(QTVDIAG_AUDIO_TASK, QTVDIAG_PRIO_HIGH,"AudioMgr::FlushRestoreDataBufferInfo");
   }
   SetMediaStatus(Media::DATA_OK);
@@ -4050,7 +4292,7 @@ void AudioMgr::UpdateRestoreDataBuffer(int tsToMatched)
                   RestoreDataBufferInfo.nReadIndex,
                   RestoreDataBufferInfo.nWriteIndex,
                   RestoreDataBufferInfo.nEntriesInRestoreBuffer);
-	break;
+  break;
       }
       itr++;
       tempReadIndex++;
@@ -4099,8 +4341,8 @@ void AudioMgr::SetCurTimeStamp(uint64 num_of_samples)
    * Thus, we should discard the feedback(not update the a/v offset)if audio data state is DATA_END
    * and feedback reports 0 number of samples.
    */
-	 QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "SetCurTimeStamp detected DATA_END and num_of_samples is 0..Discarding feedback");
-	 return;
+   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "SetCurTimeStamp detected DATA_END and num_of_samples is 0..Discarding feedback");
+   return;
  }
  if(cmx_avsync_update.bCmxFlushed == true)
  {
@@ -4127,35 +4369,35 @@ void AudioMgr::SetCurTimeStamp(uint64 num_of_samples)
      if(GetAudioCodecType() == Media::AAC_CODEC)
 #endif /* FEATURE_QTV_BSAC */
  {
-	 /*this compensation is being done for low sampling rate AAC clips till the DSP image
-	 with the correction becomes available */
-	 if(audioInfo.nSamplingRate == 8000)
-	 {
-		 if(num_of_samples > (2*1024))
-			 nFrames = (long)((float)(num_of_samples - (2*1024))/audioInfo.nSamplesPerFrame);
-		 else
-			 nFrames = 0;
-	 }
-	 else
-	 {
-		 if(num_of_samples > 1024)
-			 nFrames = (long)((float)(num_of_samples - 1024)/audioInfo.nSamplesPerFrame);
-		 else
-			 nFrames = 0;
-	 }
+   /*this compensation is being done for low sampling rate AAC clips till the DSP image
+   with the correction becomes available */
+   if(audioInfo.nSamplingRate == 8000)
+   {
+     if(num_of_samples > (2*1024))
+       nFrames = (long)((float)(num_of_samples - (2*1024))/audioInfo.nSamplesPerFrame);
+     else
+       nFrames = 0;
+   }
+   else
+   {
+     if(num_of_samples > 1024)
+       nFrames = (long)((float)(num_of_samples - 1024)/audioInfo.nSamplesPerFrame);
+     else
+       nFrames = 0;
+   }
 
-	 timestamp = (long)((float)nFrames/clipInfo.fFramesPerMsec);
+   timestamp = (long)((float)nFrames/clipInfo.fFramesPerMsec);
  }
  else
  {
-	 /* For speech codecs (AMR/EVRC/QCELP), in AV SYNC callback, CMX returns number of frames played (not number of
-	 samples as in case of AAC). Some time when we read one access unit from Mpeg4File, it returns multiple frames, so
-	 we should account for that as well).Here num_of_samples is number of audio frame played by CMX and nFrames is
-	 number of access unit which we read from Mpeg4File. */
-	 nFrames = (long)num_of_samples / (audioInfo.nSamplesPerFrame/Media::AMR_SAMPLES_PER_FRAME);
+   /* For speech codecs (AMR/EVRC/QCELP), in AV SYNC callback, CMX returns number of frames played (not number of
+   samples as in case of AAC). Some time when we read one access unit from Mpeg4File, it returns multiple frames, so
+   we should account for that as well).Here num_of_samples is number of audio frame played by CMX and nFrames is
+   number of access unit which we read from Mpeg4File. */
+   nFrames = (long)num_of_samples / (audioInfo.nSamplesPerFrame/Media::AMR_SAMPLES_PER_FRAME);
 
-	 /* Duration of one audio frame for speech codec is fixed at 20 ms */
-	 timestamp = (long)num_of_samples * 20;
+   /* Duration of one audio frame for speech codec is fixed at 20 ms */
+   timestamp = (long)num_of_samples * 20;
  }
 #else
  /* convert the number of samples passed to number of frames */
@@ -4165,9 +4407,9 @@ void AudioMgr::SetCurTimeStamp(uint64 num_of_samples)
 
  if( (long)audioBuffer.nLastFrame < nFrames )
  {
-	 QTV_MSG1(QTVDIAG_AUDIO_TASK,"DISCARDED CMX Feedback num of samples:%d",num_of_samples);
-	 QTV_MSG2( QTVDIAG_AUDIO_TASK, "audioBuffer.nLastFrame %d nFrames %d",audioBuffer.nLastFrame,nFrames);
-	 return;
+   QTV_MSG1(QTVDIAG_AUDIO_TASK,"DISCARDED CMX Feedback num of samples:%d",num_of_samples);
+   QTV_MSG2( QTVDIAG_AUDIO_TASK, "audioBuffer.nLastFrame %d nFrames %d",audioBuffer.nLastFrame,nFrames);
+   return;
  }
 
  QTV_MSG1(QTVDIAG_AUDIO_TASK,"cmx api:num of samples:%d",num_of_samples);
@@ -4187,41 +4429,43 @@ void AudioMgr::SetCurTimeStamp(uint64 num_of_samples)
  with twice the timestamp */
  if((cmx_avsync_update.cmxPause==true))
  {
-	 cmx_avsync_update.curTimeStamp = cmx_avsync_update.prevResumedTimeStamp + timestamp;
-	 cmx_avsync_update.nFrames = cmx_avsync_update.prevResumedFrame + nFrames;
+   cmx_avsync_update.curTimeStamp = cmx_avsync_update.prevResumedTimeStamp + timestamp;
+   cmx_avsync_update.nFrames = cmx_avsync_update.prevResumedFrame + nFrames;
  }
  else
  {
-	 cmx_avsync_update.curTimeStamp = xferInfo.startOfInterval.timestamp + timestamp;
-	 cmx_avsync_update.nFrames = xferInfo.startOfInterval.nFrame + nFrames;
+   cmx_avsync_update.curTimeStamp = xferInfo.startOfInterval.timestamp + timestamp;
+   cmx_avsync_update.nFrames = xferInfo.startOfInterval.nFrame + nFrames;
  }
 
  QTV_MSG2(QTVDIAG_AUDIO_TASK,"cmx api:time:%d timestamp:%d",cmx_avsync_update.curTime,
-	 cmx_avsync_update.curTimeStamp);
+   cmx_avsync_update.curTimeStamp);
  QTV_MSG1(QTVDIAG_AUDIO_TASK,"cmx api:offset:%d",cmx_avsync_update.curTime -
-	 cmx_avsync_update.curTimeStamp);
+   cmx_avsync_update.curTimeStamp);
 
  if(pMpeg4 != NULL)
  {
-	 if( (pMpeg4->GetSource() == Media::BCAST_FLO_SOURCE) && (CheckForChannelSwitchFrame == true))
-	 {
-		 ChannelSwitchDelay = cmx_avsync_update.curTimeStamp - AudioChannelSwitchedTS;
-		 if(ChannelSwitchDelay >= 0)
-		 {
-			 QTV_MSG2( QTVDIAG_AUDIO_TASK,                                      \
-				 "First Audio frame after channel switch rendered "       \
-				 " CurrentTS = %d, ChannelSwitchedTS = %d",               \
-				 cmx_avsync_update.curTimeStamp,AudioChannelSwitchedTS);
-
-			 Audioeventpayload.ChannelSwitchedTS = 	AudioChannelSwitchedTS;
-			 Audioeventpayload.ApproxDelay = ChannelSwitchDelay;
-			 event_report_payload(EVENT_QTV_AUDIO_CHANNEL_SWITCH_FRAME,
-				 sizeof(qtv_event_Audiochannelswitch_frame),&Audioeventpayload);
-
-			 LogAudioChannelSwitch(ChannelSwitchDelay);
-			 CheckForChannelSwitchFrame = false;
-		 }
-	 }
+   if( (pMpeg4->GetSource() == Media::BCAST_FLO_SOURCE) && (CheckForChannelSwitchFrame == true))
+   {
+     ChannelSwitchDelay = cmx_avsync_update.curTimeStamp - AudioChannelSwitchedTS;
+     if(ChannelSwitchDelay >= 0)
+     {
+#ifndef FEATURE_WINCE
+       QTV_MSG2( QTVDIAG_AUDIO_TASK,                                      \
+         "First Audio frame after channel switch rendered "       \
+         " CurrentTS = %d, ChannelSwitchedTS = %d",               \
+         cmx_avsync_update.curTimeStamp,AudioChannelSwitchedTS);
+#endif
+       Audioeventpayload.ChannelSwitchedTS =  AudioChannelSwitchedTS;
+       Audioeventpayload.ApproxDelay = ChannelSwitchDelay;
+#ifndef FEATURE_WINCE
+       event_report_payload(EVENT_QTV_AUDIO_CHANNEL_SWITCH_FRAME,
+         sizeof(qtv_event_Audiochannelswitch_frame),&Audioeventpayload);
+#endif
+       LogAudioChannelSwitch(ChannelSwitchDelay);
+       CheckForChannelSwitchFrame = false;
+     }
+   }
  }
 
  /* now compute offset as the current time - current timestamp */
@@ -4296,7 +4540,8 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
-bool AudioMgr::GetAudioPosition(long iTime, long &nCurTimestamp, float &nCurFrame)
+bool AudioMgr::GetAudioPosition(long iTime, long &nCurTimestamp,
+  float &nCurFrame)
 {
   // Our calculation assumes the following:
   // 1) audio timestamps are continuous.
@@ -4315,7 +4560,7 @@ bool AudioMgr::GetAudioPosition(long iTime, long &nCurTimestamp, float &nCurFram
 
 #ifdef SHOW_TIMING2
 
-	  // Round up to the nearest whole frame since
+    // Round up to the nearest whole frame since
       // we assume audio always plays whole frames.
       long nElapsedFrames = (long)f; //ZUtils::ceil(f) ;
 
@@ -4471,7 +4716,8 @@ void AudioMgr::SetAVTiming(long tPlayBegin,long nTimestamp,long nFrame)
     }
     if ( tPlayBegin<0 )
     {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "ERROR no play time was set");
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
+        "ERROR no play time was set");
     }
     else
     {
@@ -4520,13 +4766,14 @@ void AudioMgr::SetAVTiming(long tPlayBegin,long nTimestamp,long nFrame)
 
 #if(defined FEATURE_QTV_CMX_AV_SYNC_INTERFACE || defined FEATURE_QTV_CMX_AV_SYNC_BYTES)
 
-     /*
-       On doing rapid FWD till we reach almost EOF followed by rapid RW untill we reach BOF and pause|resume results in loss of audio.
-       In some scenerios, cmx_avsync_update.curTimeStamp doesn't get updated correctly as AV SYNC feedback doesn't come right away after the pause.
-       Thus, when we resume, our TS is wrong and we abort the audio with audio device stravation error.
-     */
+      /*On doing rapid FWD till we reach almost EOF followed by rapid RW
+      untill we reach BOF and pause|resume results in loss of audio.In
+      some scenerios, cmx_avsync_update.curTimeStamp doesn't get updated
+      correctly as AV SYNC feedback doesn't come right away after the
+      pause. Thus, when we resume, our TS is wrong and we abort the
+      audio with audio device stravation error.*/
       Media::CodecType audioCodec = GetAudioCodecType();
-     if(
+      if(
          (Media::MP3_CODEC != audioCodec) &&
          (Media::NONMP4_MP3_CODEC != audioCodec) &&
          (Media::QCP_CODEC != audioCodec) &&
@@ -4535,22 +4782,24 @@ void AudioMgr::SetAVTiming(long tPlayBegin,long nTimestamp,long nFrame)
          (!IS_BYTE_BASED_AVSYNC_SUPPORTED(audioCodec)) &&
          (cmx_avsync_update.curTimeStamp > 0))
       {
-          cmx_avsync_update.curTimeStamp = xferInfo.startOfInterval.timestamp;
+        cmx_avsync_update.curTimeStamp = xferInfo.startOfInterval.timestamp;
       }
 #endif
 
 #ifdef SHOW_TIMING
-      QTV_MSG4( QTVDIAG_AUDIO_TASK, "Start of Interval f %d.%d ts %d clk %d",
-                xferInfo.startOfInterval.nFrame,
-                xferInfo.startOfInterval.nFrameFraction,
-                xferInfo.startOfInterval.timestamp,
-                xferInfo.startOfInterval.time);
+      QTV_MSG4( QTVDIAG_AUDIO_TASK,
+        "Start of Interval f %d.%d ts %d clk %d",
+        xferInfo.startOfInterval.nFrame,
+        xferInfo.startOfInterval.nFrameFraction,
+        xferInfo.startOfInterval.timestamp,
+        xferInfo.startOfInterval.time);
 #endif
 
       audioTime.tPlay = tPlayBegin;
 
       // Set the AV player timing.
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Setting AV Sync for first time");
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+        "Setting AV Sync for first time");
       SetPlaybackOffset(
                        xferInfo.startOfInterval.time,
                        xferInfo.startOfInterval.timestamp);
@@ -4584,19 +4833,17 @@ void AudioMgr::UpdateAVTiming(long nTimestamp,long nFrame)
     // interval, adjust the start of this interval to match.
     // this makes up for irregularities or discontinuities
     // in the audio timestamps.
-
 #ifdef SHOW_TIMING3
-    QTV_MSG1( QTVDIAG_AUDIO_TASK, "TimingUpdateInterval:%d", clipInfo.nTimingUpdateIntervalBuffers);
-    QTV_MSG3( QTVDIAG_AUDIO_TASK, "SetAVTiming: nFirstFrame:%d - nFrame:%d.%d",
-              audioBuffer.nFirstFrame, xferInfo.startOfInterval.nFrame,
-              xferInfo.startOfInterval.nFrameFraction);
+    QTV_MSG1(QTVDIAG_AUDIO_TASK, "TimingUpdateInterval:%d",
+      clipInfo.nTimingUpdateIntervalBuffers);
+    QTV_MSG3(QTVDIAG_AUDIO_TASK,"SetAVTiming: nFirstFrame:%d - nFrame:%d.%d",
+      audioBuffer.nFirstFrame, xferInfo.startOfInterval.nFrame,
+      xferInfo.startOfInterval.nFrameFraction);
 #endif
 
 #if(defined FEATURE_QTV_CMX_AV_SYNC || defined FEATURE_QTV_CMX_AV_SYNC_BYTES)
-
     Media::CodecType audioCodec = GetAudioCodecType();
-    if(
-       (Media::MP3_CODEC != audioCodec) &&
+    if((Media::MP3_CODEC != audioCodec) &&
        (!IS_GENERIC_AUDIO_FORMAT(audioCodec)) &&
        (!IS_BYTE_BASED_AVSYNC_SUPPORTED(audioCodec)) )
    {
@@ -4606,16 +4853,15 @@ void AudioMgr::UpdateAVTiming(long nTimestamp,long nFrame)
        if ( numFrames >= 0 )
        {
          float timestamp = numFrames / clipInfo.fFramesPerMsec;
-         cmx_avsync_update.prevResumedTimeStamp = nTimestamp - (long)timestamp;
+         cmx_avsync_update.prevResumedTimeStamp = nTimestamp -
+          (long)timestamp;
        }
      }
    }
 #endif
-
-
     // See how many frames have passed in this interval.
   float nFramesPassed =  nFrame - xferInfo.startOfInterval.nFrame -
-                         (float)xferInfo.startOfInterval.nFrameFraction/FRAME_FRACTION_BASE;
+    (float)xferInfo.startOfInterval.nFrameFraction/FRAME_FRACTION_BASE;
   if ( nFramesPassed >= 0 )
   {
     // Recalculate the start of interval timing backward using
@@ -4623,7 +4869,8 @@ void AudioMgr::UpdateAVTiming(long nTimestamp,long nFrame)
     float f = nFramesPassed / clipInfo.fFramesPerMsec;
     long newstart = nTimestamp - (long)f;
 #ifdef SHOW_TIMING3
-    QTV_MSG2( QTVDIAG_AUDIO_TASK, "newstart:%d, xfertimestamp:%d", newstart, xferInfo.startOfInterval.timestamp);
+    QTV_MSG2( QTVDIAG_AUDIO_TASK, "newstart:%d, xfertimestamp:%d",
+      newstart, xferInfo.startOfInterval.timestamp);
 #endif
     // Make an adjustment if necessary.
     if ( newstart != xferInfo.startOfInterval.timestamp )
@@ -4642,9 +4889,11 @@ void AudioMgr::UpdateAVTiming(long nTimestamp,long nFrame)
       }
 
 #ifdef SHOW_DELTA
-      QTV_MSG3( QTVDIAG_AUDIO_TASK, "-> Audio Delta %d ts-nStrt %d  nDrft %d <-",delta, xferInfo.startOfInterval.timestamp - newstart, audioStats.nDrift);
+      QTV_MSG3( QTVDIAG_AUDIO_TASK,
+        "-> Audio Delta %d ts-nStrt %d  nDrft %d <-",
+        delta, xferInfo.startOfInterval.timestamp - newstart,
+        audioStats.nDrift);
 #endif
-
 
 #ifdef SHOW_SYNC
         //update the interval start.
@@ -4654,28 +4903,27 @@ void AudioMgr::UpdateAVTiming(long nTimestamp,long nFrame)
                 newstart );
 #endif
       xferInfo.startOfInterval.timestamp = newstart;
-
 #if(defined FEATURE_QTV_CMX_AV_SYNC || defined FEATURE_QTV_CMX_AV_SYNC_BYTES)
-       if(
-         (Media::MP3_CODEC != audioCodec) &&
+       if((Media::MP3_CODEC != audioCodec) &&
          (!IS_GENERIC_AUDIO_FORMAT(audioCodec)) &&
          (!IS_BYTE_BASED_AVSYNC_SUPPORTED(audioCodec)))
       {
-        /*readjust the playback offset with the updated interval only incase of
-        streaming if this feature is defined, since the cmx a/v sync callback
-        changes are restricted to only local file playback. This should not be called for
-        local file playback since we are updating the offset based on the current timestamp*/
-
+        /*readjust the playback offset with the updated interval only
+        incase of streaming if this feature is defined, since the cmx
+        a/v sync callback changes are restricted to only local file
+        playback. This should not be called for local file playback
+        since we are updating the offset based on the current timestamp*/
         if(cmx_avsync_update.curTimeStamp==0)
         {
-          SetPlaybackOffset(xferInfo.startOfInterval.time,xferInfo.startOfInterval.timestamp);
+          SetPlaybackOffset(xferInfo.startOfInterval.time,
+            xferInfo.startOfInterval.timestamp);
         }
       }
 #else
       /* if the feature is not defined, then readjust the playback offset as usual */
-      SetPlaybackOffset(xferInfo.startOfInterval.time,xferInfo.startOfInterval.timestamp);
+      SetPlaybackOffset(xferInfo.startOfInterval.time,
+        xferInfo.startOfInterval.timestamp);
 #endif
-
       }// newstart
     }// nFrameprocessed
   }// startOfInterval.bValid
@@ -4707,10 +4955,14 @@ void AudioMgr::SetPlaybackOffset(long lTime,long timestamp)
     m_pAVSync->SetPlaybackOffset(AVSync::AudioAV, lTime, timestamp);
   }
 
-  if ( notifyFunc ) (notifyFunc)(Common::NOTIFY_TIMING, m_pClientData, NULL);
+  if ( notifyFunc )
+  {
+    (notifyFunc)(Common::NOTIFY_TIMING, m_pClientData, NULL);
+  }
 
 #ifdef SHOW_TIMING
-  QTV_MSG2( QTVDIAG_AUDIO_TASK, "  audio SetTiming clk %d ts %d",lTime,timestamp);
+  QTV_MSG2( QTVDIAG_AUDIO_TASK,"  audio SetTiming clk %d ts %d",
+    lTime,timestamp);
 #endif
 }
 
@@ -4811,10 +5063,9 @@ void AudioMgr::GetStatistics(QtvPlayer::AudioVideoStatisticsT &stat,
 {
   QTV_MSG( QTVDIAG_AUDIO_TASK, "AudioMgr::GetStatistics");
 
-  /* Code to obtain clipstats calls this fn even though audio interface was not created.
-     Workaround: If pAudioCMX is NULL, just return.
+  /*Code to obtain clipstats calls this fn even though audio interface
+  was not created.Workaround: If pAudioCMX is NULL, just return.
   */
-
   if(NULL == pAudioCMX )
   {
     memcpy(&stat.Audio, &m_nAudioVideoStat.Audio, sizeof(stat.Audio) );
@@ -4828,10 +5079,8 @@ void AudioMgr::GetStatistics(QtvPlayer::AudioVideoStatisticsT &stat,
   stat.Audio.frames         = mediaInfo.nFramesProcessed;
   stat.Audio.nullSamples    = audioStats.nNullFrames;
   stat.Audio.maxDrop        = audioStats.nMaxNullChunk;
-  stat.Audio.maxAudioDataLead  = (int32)m_MaxCmxAudioDataLead;; // Audio Data lead information
-  stat.Audio.minAudioDataLead  = (int32)m_MinCmxAudioDataLead;; // Audio Data lead information
-  
-  
+  stat.Audio.maxAudioDataLead  = (int32)m_MaxCmxAudioDataLead;;
+  stat.Audio.minAudioDataLead  = (int32)m_MinCmxAudioDataLead;;
 
   stat.Audio.encodedBitrate   = 0;
   if( pMpeg4 != NULL )
@@ -4840,14 +5089,13 @@ void AudioMgr::GetStatistics(QtvPlayer::AudioVideoStatisticsT &stat,
     switch( pMpeg4->GetSource() )
     {
     case Media::FILE_SOURCE:
-	{
-		FileBase *pFile = pMpeg4->GetFile();
-
-		if(pFile)
-		{
-			stat.Audio.encodedBitrate   =  pFile->getTrackAverageBitrate(audioTrackID);
-		}
-	 break;
+    {
+      FileBase *pFile = pMpeg4->GetFile();
+      if(pFile)
+      {
+        stat.Audio.encodedBitrate   =  pFile->getTrackAverageBitrate(audioTrackID);
+      }
+      break;
     }
     case Media::STREAM_SOURCE:
     {
@@ -4872,7 +5120,6 @@ void AudioMgr::GetStatistics(QtvPlayer::AudioVideoStatisticsT &stat,
     }
 #endif
   }
-
   lastFrame = audioStats.lastFrame;
   QCUtils::LeaveCritSect(&audioStats.CS);
 }
@@ -4948,25 +5195,38 @@ void AudioMgr::ShowInfo()
   QTV_MSG( QTVDIAG_AUDIO_TASK, "AudioMgr::ShowInfo");
 
   QTV_MSG( QTVDIAG_AUDIO_TASK, "");
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "***** Audio Frames %d",mediaInfo.nFramesProcessed);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "***** Audio Frames %d",
+    mediaInfo.nFramesProcessed);
 
   QTV_MSG( QTVDIAG_AUDIO_TASK, "Xfer Info:");
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nFramesPerBuffer: %d",clipInfo.nFramesPerBuffer);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nTimingUpdateIntervalBuffers: %d",clipInfo.nTimingUpdateIntervalBuffers);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nBuffersSentInInterval: %d",xferInfo.nBuffersSentInInterval);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nLastTimestampSent: %d",xferInfo.nLastTimestampSent);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nLastFrameSent: %d",xferInfo.nLastFrameSent);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   bTimingUpdatedInInterval: %d",xferInfo.bTimingUpdatedInInterval);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nFramesPerBuffer: %d",
+    clipInfo.nFramesPerBuffer);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nTimingUpdateIntervalBuffers: %d",
+    clipInfo.nTimingUpdateIntervalBuffers);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nBuffersSentInInterval: %d",
+    xferInfo.nBuffersSentInInterval);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nLastTimestampSent: %d",
+    xferInfo.nLastTimestampSent);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nLastFrameSent: %d",
+    xferInfo.nLastFrameSent);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   bTimingUpdatedInInterval: %d",
+    xferInfo.bTimingUpdatedInInterval);
+
   ShowInterval(xferInfo.startOfInterval);
   ShowInterval(xferInfo.endOfInterval);
   QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nBytesSent: %d",xferInfo.nBytesSent);
 
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nSamplesPerFrame %d",audioInfo.nSamplesPerFrame);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nMediaTimescale %d",audioInfo.nMediaTimescale);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nSamplingRate %d",audioInfo.nSamplingRate);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nSamplesPerFrame %d",
+    audioInfo.nSamplesPerFrame);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nMediaTimescale %d",
+    audioInfo.nMediaTimescale);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nSamplingRate %d",
+    audioInfo.nSamplingRate);
   QTV_MSG1( QTVDIAG_AUDIO_TASK, "   Total bytes %d",audioInfo.nTotalBytes);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nMaxBytesPerFrame %d",audioInfo.nMaxBytesPerFrame);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nLastTimestamp %d",elapsed.nLastTimestamp);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nMaxBytesPerFrame %d",
+    audioInfo.nMaxBytesPerFrame);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nLastTimestamp %d",
+    elapsed.nLastTimestamp);
 
   //audio time
   QTV_MSG( QTVDIAG_AUDIO_TASK, "Audio Time:");
@@ -4975,14 +5235,20 @@ void AudioMgr::ShowInfo()
   QTV_MSG1( QTVDIAG_AUDIO_TASK, "   audio Play %d",audioTime.tPlay);
 
   QTV_MSG( QTVDIAG_AUDIO_TASK, "Audio Stats:");
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nNullFrames %d",audioStats.nNullFrames);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nMaxNullChunk %d",audioStats.nMaxNullChunk);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nCurrentNullChunk %d",audioStats.nCurrentNullChunk);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nNullFrames %d",
+    audioStats.nNullFrames);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nMaxNullChunk %d",
+    audioStats.nMaxNullChunk);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nCurrentNullChunk %d",
+    audioStats.nCurrentNullChunk);
   QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nDrift %d",audioStats.nDrift);
   QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nMaxAhead %d",audioStats.nMaxAhead);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nMaxBehind %d",audioStats.nMaxBehind);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nMaxProcTime %d",audioStats.nMaxProcTime);
-  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nFramesDiscarded %d",audioStats.nFramesDiscarded);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nMaxBehind %d",
+    audioStats.nMaxBehind);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nMaxProcTime %d",
+    audioStats.nMaxProcTime);
+  QTV_MSG1( QTVDIAG_AUDIO_TASK, "   nFramesDiscarded %d",
+    audioStats.nFramesDiscarded);
   ShowLastFrame(audioStats.lastFrame);
 
   QTV_MSG( QTVDIAG_AUDIO_TASK, " *****************");
@@ -5008,7 +5274,8 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
-bool AudioMgr::OpenAudioManager(Common::AudioNotifyFuncT pNotifyFunc, void* pClientData)
+bool AudioMgr::OpenAudioManager(Common::AudioNotifyFuncT pNotifyFunc,
+  void* pClientData)
 {
   QTV_MSG( QTVDIAG_AUDIO_TASK, "AudioMgr::OpenAudioManager");
 
@@ -5051,7 +5318,7 @@ void AudioMgr::CloseAudioManager()
 #if (defined (FEATURE_QTV_IN_CALL_PHASE_2) || \
      defined (FEATURE_QTV_IN_CALL_VIDEO ))
 #error code not present
-#endif /* FEATURE_QTV_IN_CALL_PHASE_2 || 
+#endif /* FEATURE_QTV_IN_CALL_PHASE_2 ||
           FEATURE_QTV_IN_CALL_VIDEO */
   m_pClientData = NULL;
   m_pAVSync = NULL;
@@ -5077,14 +5344,13 @@ SIDE EFFECTS
 ========================================================================== */
 void AudioMgr::InitDefaults()
 {
-  m_audioCodec = Media::UNKNOWN_CODEC;
   InitPlayData(false);
 
   pMpeg4     = NULL;
 #if (defined (FEATURE_QTV_IN_CALL_PHASE_2) || \
      defined (FEATURE_QTV_IN_CALL_VIDEO))
 #error code not present
-#endif /* FEATURE_QTV_IN_CALL_PHASE_2 || 
+#endif /* FEATURE_QTV_IN_CALL_PHASE_2 ||
           FEATURE_QTV_IN_CALL_VIDEO */
 
   notifyFunc=NULL;
@@ -5123,6 +5389,7 @@ AudioMgr::AudioMgr(Media *pMedia)
 {
   QTV_MSG( QTVDIAG_AUDIO_TASK, "AudioMgr::AudioMgr");
 
+  m_audioCodec = Media::UNKNOWN_CODEC;
   pMpeg4 = pMedia;
  //Audio Data Lead for statistics purposes
   m_MaxCmxAudioDataLead = 0;
@@ -5141,24 +5408,27 @@ AudioMgr::AudioMgr(Media *pMedia)
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
   nLastWriteIndex = -1;
   m_nCurrentTSFromCMXBytes = 0;
-  #ifdef T_MSM7500
+#ifdef T_MSM7500
 #error code not present
-  #endif /* T_MSM7500 */
+#endif /* T_MSM7500 */
   RestoreDataBufferInfo.bRestoreBufferValid = false;
   memset(&RestoreDataBufferInfo,0,sizeof(RestoreDataBufferInfo));
   m_bCurrentTSFromCMXBytesUpdatePending = false;
   /*
-  * We need to add only one entry in AV SYNC mapping table irrespective of whether
-  * we will be sending audio frame/packet in multiple chunks or in one shot.
-  * Initialized to true by default in constructor and also when we fetch the audio sample.
-  * Variable is reset when entry gets added into AV SYNC mapping table.
+  We need to add only one entry in AV SYNC mapping table
+  irrespective of whether we will be sending audio frame/packet in
+  multiple chunks or in one shot.Initialized to true by default in
+  constructor and also when we fetch the audio sample.Variable is reset
+  when entry gets added into AV SYNC mapping table.
   */
   m_bFirstAudioFragment = true;
   //We don't know yet what the audio codec is, so initialising the entire UnAckDataBuffer
-  for(int iterator =0; iterator < MAX_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER ; iterator++)
+  for(int iterator=0;
+    iterator<MAX_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER;
+    iterator++)
   {
-     memset(&RestoreDataBufferInfo.UnAckDataBuffer[iterator],0,
-         sizeof(RestoreDataBufferInfo.UnAckDataBuffer[iterator]));
+    memset(&RestoreDataBufferInfo.UnAckDataBuffer[iterator],0,
+      sizeof(RestoreDataBufferInfo.UnAckDataBuffer[iterator]));
   }
 #endif
 
@@ -5226,6 +5496,13 @@ int AudioMgr::GetRestoreDataBufferEntrySize(Media::CodecType audioCodec)
   }
 #endif
 
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_EVRC
+  if(audioCodec == Media::EVRC_CODEC)
+  {
+    return MAX_BYTES_PER_RESTORE_BUFFER_ENTRY_FOR_EVRC;
+  }
+#endif
+
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_QCELP
   if(audioCodec == Media::QCELP_CODEC)
   {
@@ -5265,16 +5542,28 @@ int AudioMgr::GetRestoreDataBufferEntrySize(Media::CodecType audioCodec)
 #error code not present
 #endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_EVRC_WB*/
 
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_AC3
+  if(Media::AC3_CODEC == audioCodec)
+  {
+    return MAX_BYTES_PER_RESTORE_BUFFER_ENTRY_FOR_AC3;
+  }
+#endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_AC3*/
+
+#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_PCM
+#error code not present
+#endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_PCM*/
+
   /*
   * We should never come here as GetRestoreDataBufferEntrySize gets called
   * when BYTE BASED AV SYNC is supported for given audio codec.
   * In such case, bytes per restore buffer entry should be non-zero.
   */
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "AudioMgr::GetRestoreDataBufferEntrySize RETURNING 0..");
+  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL,
+    "AudioMgr::GetRestoreDataBufferEntrySize RETURNING 0..");
   return 0;
 }
 /* ======================================================================
-FUNCTION
+FUNCTION8
   AudioMgr::DestroyRestoreDataBufferInfo
 
 DESCRIPTION
@@ -5295,11 +5584,13 @@ SIDE EFFECTS
 void AudioMgr::DestroyRestoreDataBufferInfo()
 {
   Media::CodecType audioCodec = GetAudioCodecType();
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "AudioMgr::DestroyRestoreDataBufferInfo");
+  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+    "AudioMgr::DestroyRestoreDataBufferInfo");
 
-  for(int k = 0 ; k < NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER[audioCodec] ; k++)
+  for(int k=0;k<NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER[audioCodec];k++)
   {
-    if(RestoreDataBufferInfo.bRestoreBufferValid && RestoreDataBufferInfo.UnAckDataBuffer[k].pDataPtr)
+    if(RestoreDataBufferInfo.bRestoreBufferValid &&
+       RestoreDataBufferInfo.UnAckDataBuffer[k].pDataPtr)
     {
       QTV_Free(RestoreDataBufferInfo.UnAckDataBuffer[k].pDataPtr);
       RestoreDataBufferInfo.UnAckDataBuffer[k].pDataPtr = NULL;
@@ -5334,6 +5625,11 @@ AudioMgr::~AudioMgr()
 #endif
   // Cleanup the data structures related to fast playback mode
   DestroyFastAudioPlaybackObject();
+  aFastPlaybackFilterConfig = NULL;
+
+  QCUtils::DinitCritSect(&audioStats.CS);
+  QCUtils::DinitCritSect(&audioMgrCS);
+  QCUtils::DinitCritSect(&audioMgrCSforTS);
 }
 
 /*======================================================================
@@ -5490,7 +5786,7 @@ int AudioMgr::DecodeAACHeader(TAudioSpecificConfig* aInfo,
 
   pVars->inputStream.usedBits = 0;
 
-  if ( pVars->inputStream.availableBits>0 )
+  if(pVars->inputStream.availableBits>0)
   {
 
     /*
@@ -5498,8 +5794,7 @@ int AudioMgr::DecodeAACHeader(TAudioSpecificConfig* aInfo,
      * decode the AudioSpecificConfig() structure
      */
     status =
-    get_audio_specific_config(
-                             pVars, pCmx_af_aac_spec);
+    get_audio_specific_config(pVars, pCmx_af_aac_spec);
 
   }
   else
@@ -5541,8 +5836,6 @@ int AudioMgr::get_audio_specific_config(
 #ifdef FEATURE_MP4_AAC_FRAME_MARKER
   int     extension_sampling_rate_idx;
 #endif
-  /* UInt    epConfig; */
-
   status = SUCCESS;
 
 #ifdef FEATURE_MP4_AAC_FRAME_MARKER
@@ -5579,115 +5872,127 @@ int AudioMgr::get_audio_specific_config(
   switch ( pVars->prog_config.sampling_rate_idx )
   {
   case 0:
-    pCmx_af_aac_spec->sample_rate =  CMX_AF_SAMPLE_RATE_96000;  /* 96k     */
+    /* 96k     */
+    pCmx_af_aac_spec->sample_rate =  CMX_AF_SAMPLE_RATE_96000;
     sampling_rate = 96000;
     break;
   case 1:
-    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_88200;   /* 88.2k   */
+    /* 88.2k   */
+    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_88200;
     sampling_rate = 88200;
     break;
   case 2:
-    pCmx_af_aac_spec->sample_rate= CMX_AF_SAMPLE_RATE_64000;    /* 64k     */
+    /* 64k     */
+    pCmx_af_aac_spec->sample_rate= CMX_AF_SAMPLE_RATE_64000;
     sampling_rate = 64000;
     break;
   case 3:
-    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_48000;   /* 48k     */
+    /* 48k     */
+    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_48000;
     sampling_rate = 48000;
     break;
   case 4:
-    pCmx_af_aac_spec->sample_rate =  CMX_AF_SAMPLE_RATE_44100;  /* 44.1k   */
+    /* 44.1k   */
+    pCmx_af_aac_spec->sample_rate =  CMX_AF_SAMPLE_RATE_44100;
     sampling_rate = 44100;
     break;
   case 5:
-    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_32000;   /* 32k     */
+    /* 32k     */
+    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_32000;
     sampling_rate = 32000;
     break;
   case 6:
-    pCmx_af_aac_spec->sample_rate= CMX_AF_SAMPLE_RATE_24000;    /* 24k     */
+    /* 24k     */
+    pCmx_af_aac_spec->sample_rate= CMX_AF_SAMPLE_RATE_24000;
     sampling_rate = 24000;
     break;
   case 7:
-    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_22050;   /* 22.050k */
+    /* 22.050k */
+    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_22050;
     sampling_rate = 22050;
     break;
   case 8:
-    pCmx_af_aac_spec->sample_rate =  CMX_AF_SAMPLE_RATE_16000;  /* 16k     */
+    /* 16k     */
+    pCmx_af_aac_spec->sample_rate =  CMX_AF_SAMPLE_RATE_16000;
     sampling_rate = 16000;
     break;
   case 9:
-    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_12000;   /* 12k     */
+    /* 12k     */
+    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_12000;
     sampling_rate = 12000;
     break;
   case 10:
-    pCmx_af_aac_spec->sample_rate= CMX_AF_SAMPLE_RATE_11025;    /* 11.025k */
+    /* 11.025k */
+    pCmx_af_aac_spec->sample_rate= CMX_AF_SAMPLE_RATE_11025;
     sampling_rate = 11025;
     break;
   case 11:
-    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_8000;    /* 8k      */
+    /* 8k      */
+    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_8000;
     sampling_rate = 8000;
     break;
   case 12:
-    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_UNKNOWN; /* Unknown rate */
+    /* Unknown rate */
+    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_UNKNOWN;
     sampling_rate = 7350;
     status = 1; /* do not support now */
     break;
   case 15:
-    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_UNKNOWN; /* Unknown rate */
+    /* Unknown rate */
+    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_UNKNOWN;
     /* sampling rate not listed in Table 1.6.2, the value is dierctly
        stored in following bits. */
     sampling_rate = getbits((uint32)LEN_SAMP_RATE, pInputStream);
     status = 1; /* do not support now */
     break;
   default:
-    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_UNKNOWN; /* Unknown rate */
+    /* Unknown rate */
+    pCmx_af_aac_spec->sample_rate = CMX_AF_SAMPLE_RATE_UNKNOWN;
     sampling_rate = 0;
     status = 1;
     break;
   }
   nBitRate = sampling_rate;
   pMpeg4->SetAudioSamplingFreq(sampling_rate);
-
   channel_config =getbits((uint)LEN_CHAN_CONFIG,pInputStream);
-
   // For AAC ADTS Codec assign the channel returned from the media
 #ifdef FEATURE_QTV_BSAC
 #error code not present
 #else
   if(pMpeg4->GetAACDataFormat() == Media::AAC_DATA_FORMAT_ADTS)
 #endif /* FEATURE_QTV_BSAC */
-
   {
     pCmx_af_aac_spec->channel = CMX_AF_AAC_CHANNEL_UNKNOWN;
     if(channel_config == 1)
     {
       pCmx_af_aac_spec->channel = CMX_AF_AAC_CHANNEL_MONO;
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
-                  ": AAC ADTS MONO  SPEAKER");
+        ": AAC ADTS MONO  SPEAKER");
     }
     else if (channel_config == 2)
     {
       pCmx_af_aac_spec->channel = CMX_AF_AAC_CHANNEL_DUAL;
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
-                  ": AAC ADTS STEREO SPEAKER ");
+        ": AAC ADTS STEREO SPEAKER ");
     }
     else
     {
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
-                  ": AAC ADTS UNKNOWN SPEAKER ");
+        ": AAC ADTS UNKNOWN SPEAKER ");
     }
   }
 
-  if ( channel_config > 2 )
+  if(channel_config > 2 )
   {
     status = 1; /* do not support more than two channels */
   }
 
 #ifdef FEATURE_MP4_AAC_FRAME_MARKER
-  if( (audioObjectType==5) && (status==SUCCESS) )
+  if((audioObjectType==5) && (status==SUCCESS) )
   {
     /* as per ISO/IEC 14496-3:2001/FDAM 1:2003(E) Table 1.8 */
-
-    extension_sampling_rate_idx = getbits((int)LEN_SAMP_RATE_IDX, pInputStream);
+    extension_sampling_rate_idx =
+      getbits((int)LEN_SAMP_RATE_IDX, pInputStream);
     if(extension_sampling_rate_idx == 0x0f)
     {
       status = 1; /* do not support this rate */
@@ -5701,19 +6006,20 @@ int AudioMgr::get_audio_specific_config(
   /* saving an audioObjectType into a profile field */
   pVars->prog_config.profile = audioObjectType;
 
-  if( (audioObjectType==5) || (audioObjectType==18) )
+  if((audioObjectType==5) || (audioObjectType==18) )
   {
-      status = 1; /* do not support this */
+    status = 1; /* do not support this */
   }
-  else if ( ( (((int)audioObjectType>=(int)MP4AUDIO_AAC_MAIN)&&((int)audioObjectType<=(int)MP4AUDIO_TWINVQ)) ||
+  else if(((((int)audioObjectType>=(int)MP4AUDIO_AAC_MAIN)&&((int)audioObjectType<=(int)MP4AUDIO_TWINVQ)) ||
               (((int)audioObjectType>=(int)MP4AUDIO_ER_AAC_LC)&&((int)audioObjectType<=(int)MP4AUDIO_ER_AAC_LD))) &&
             (status == SUCCESS) )
 #else
-  // -1 to be consistent with the operation in get_prog_config
-  pVars->prog_config.profile = audioObjectType-1;
-
-  if ( (/*(audioObjectType == MP4AUDIO_AAC_MAIN)     ||*/
-        (audioObjectType == MP4AUDIO_AAC_LC)        ||
+  {
+    // -1 to be consistent with the operation in get_prog_config
+    pVars->prog_config.profile = audioObjectType-1;
+  }
+  if((/*(audioObjectType == MP4AUDIO_AAC_MAIN)     ||*/
+     (audioObjectType == MP4AUDIO_AAC_LC)||
 #ifdef FEATURE_QTV_BSAC
 #error code not present
 #endif /* FEATURE_QTV_BSAC */
@@ -5814,9 +6120,7 @@ int AudioMgr::get_audio_specific_config(
 #else
   pCmx_af_aac_spec->bit_rate = nBitRate*2; // 16 bits per sample only
 #endif
-
   return status;
-
 }
 
 /* ======================================================================
@@ -5871,16 +6175,19 @@ int AudioMgr::get_GA_specific_config(
   if ( frameLenFlag == 0 )
   {
     pMpeg4->SetAACSamplesPerFrame(1024);
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"AAC samples per frame : 1024");
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+      "AAC samples per frame : 1024");
   }
   else if ( frameLenFlag == 1 )
   {
     pMpeg4->SetAACSamplesPerFrame(960);
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"AAC samples per frame : 960");
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+      "AAC samples per frame : 960");
   }
   else
   {
-    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "AAC: Invalid FrameLengthFlag: %d", frameLenFlag );
+    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
+      "AAC: Invalid FrameLengthFlag: %d", frameLenFlag );
     pMpeg4->SetAACSamplesPerFrame(1024);
   }
 
@@ -5918,15 +6225,16 @@ int AudioMgr::get_GA_specific_config(
   if ( status == SUCCESS )
   {
 
-    if ( channel_config == 0 && (pInputStream->availableBits > pInputStream->usedBits) )
+    if(channel_config==0 &&
+        (pInputStream->availableBits > pInputStream->usedBits))
     {
       status =
       get_prog_config(
                      pVars,
                      &pVars->scratch_prog_config);
 
-      memcpy( &(pVars->prog_config.front), &(pVars->scratch_prog_config.front), sizeof(EleList) );
-
+      memcpy( &(pVars->prog_config.front),
+        &(pVars->scratch_prog_config.front), sizeof(EleList) );
     }
     else
     {
@@ -6120,7 +6428,8 @@ uint32 AudioMgr::getbits(
   uint32   returnValue;
   uint     offset;
   uint     bitIndex;
-  unsigned char    *pElem;        /* Needs to be same type as pInput->pBuffer */
+  /* Needs to be same type as pInput->pBuffer */
+  unsigned char    *pElem;
 
   // Check for exceptions
   // If all the bits used up , then bail out by returning zero
@@ -6438,8 +6747,8 @@ int AudioMgr::get_prog_config(
           pScratchPCE,
           sizeof(ProgConfig));
 
-    /*if there is program_config_element in esds atom then we have to map the abject type value to
-    the profile values that CMX is using */
+    /*if there is program_config_element in esds atom then we have to map
+    the abject type value to the profile values that CMX is using */
     switch(pVars->prog_config.profile)
     {
       /* AAC MAIN profile */
@@ -6516,14 +6825,10 @@ void AudioMgr::get_ele_list(
     {
       *pEleIsCPE++ = FALSE;
     }
-
     *pEleTag++ = getbits((int)LEN_TAG, pInputStream);
-
-  } /* end for (index) */
-
+  }
   return;
-
-} /* end get_ele_list */
+}
 
 /* ======================================================================
 FUNCTION
@@ -6610,22 +6915,21 @@ bool AudioMgr::ReallocateAudioMediaBuffer()
     if(bufferSize > (uint32)audioInfo.nMaxBytesPerFrame)
     {
       audioInfo.nMaxBytesPerFrame = bufferSize;
-      audioBuffer.pPendingData = (unsigned char *)QTV_Realloc(audioBuffer.pPendingData,
-                                                              audioInfo.nMaxBytesPerFrame);
+      audioBuffer.pPendingData =
+        (unsigned char *)QTV_Realloc(
+        audioBuffer.pPendingData,audioInfo.nMaxBytesPerFrame);
       if(!audioBuffer.pPendingData)
       {
         bRet = false;
-        QTV_MSG_PRIO1(QTVDIAG_GENERAL,
-                      QTVDIAG_PRIO_FATAL,
-                      "Can't re-allocate data buffer of size %d",
-                      audioInfo.nMaxBytesPerFrame);
+        QTV_MSG_PRIO1(QTVDIAG_GENERAL,QTVDIAG_PRIO_FATAL,
+          "Can't re-allocate data buffer of size %d",
+          audioInfo.nMaxBytesPerFrame);
         mediaInfo.dataState = Media::DATA_ERROR;
         Abort();
       }
       else
       {
-        QTV_MSG_PRIO1(QTVDIAG_GENERAL,
-                      QTVDIAG_PRIO_HIGH,
+        QTV_MSG_PRIO1(QTVDIAG_GENERAL,QTVDIAG_PRIO_HIGH,
                       "re-allocated to  data buffer of size %d",
                       audioInfo.nMaxBytesPerFrame);
       }
@@ -6658,30 +6962,23 @@ int AudioMgr::FetchAudioSample(Media *pMedia,
                                int nChannel)
 {
   int nBytesPulled = 0;
-  #ifdef FEATURE_QTV_ADTS_PARSER
+#ifdef FEATURE_QTV_ADTS_PARSER
 #error code not present
-  #endif
+#endif
   // By default assume zero samples and zero bytes.
   *nSamples = 0;
 
   if(pMedia)
   {
-  #ifdef FEATURE_QTV_ADTS_PARSER
+#ifdef FEATURE_QTV_ADTS_PARSER
 #error code not present
 #endif
     {
       nBytesPulled = pMedia->GetNextAudioSample(eStatus,
-	  	                                audioBuffer.pPendingData,
-	  	                                nMaxSize,
-	  	                                nSamples,
-	  	                                0,
-	  	                                nChannel);
-
-     }
-
+        audioBuffer.pPendingData,nMaxSize,nSamples,0,nChannel);
+    }
   }
   return nBytesPulled;
-
 }
 #ifdef FEATURE_QTV_ADTS_PARSER
 #error code not present
@@ -6691,14 +6988,14 @@ FUNCTION
   AudioMgr::FetchNextAudioTimestamp
 
 DESCRIPTION
-  Returns the next timestamp wating to be pulled 
-  from the media. 
+  Returns the next timestamp wating to be pulled
+  from the media.
 
 DEPENDENCIES
   None.
 
 RETURN VALUE
-  Returns the next available timestamp. 
+  Returns the next available timestamp.
 
 SIDE EFFECTS
   None.
@@ -6714,7 +7011,7 @@ unsigned long AudioMgr::FetchNextAudioTimestamp(Media *pMedia)
     int nSamples;
     FetchAudioSample(pMedia, eStatus, &nSamples, 0);
     nTS = FetchAudioTimestamp(pMedia);
-  } 
+  }
   return nTS;
 }
 
@@ -6738,8 +7035,6 @@ SIDE EFFECTS
 unsigned long AudioMgr::FetchAudioTimestamp(Media *pMedia)
 {
   unsigned long nTS = QTV_MEDIA_INVALID_TIMESTAMP;
-
-
   if(!pMedia)
   {
     return nTS;
@@ -6756,8 +7051,6 @@ unsigned long AudioMgr::FetchAudioTimestamp(Media *pMedia)
 #error code not present
 #endif
   return nTS;
-
-
 }
 #ifdef FEATURE_QTV_ADTS_PARSER
 #error code not present
@@ -6794,7 +7087,6 @@ int AudioMgr::getCMXMaxAheadInMsec()
 
 }
 
-#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER)
 /* ======================================================================
 FUNCTION
   AudioMgr::GetSampleRate
@@ -6824,33 +7116,6 @@ uint32 AudioMgr::GetSampleRate()
 
 /* ======================================================================
 FUNCTION
-  AudioMgr::GetCodecVersion
-
-DESCRIPTION
-  Thorough, meaningful description of what this function does.
-
-DEPENDENCIES
-  List any dependencies for this function, global variables, state,
-  resource availability, etc.
-
-RETURN VALUE
-  Enumerate possible return values
-
-SIDE EFFECTS
-  Detail any side effects.
-
-========================================================================== */
-uint16 AudioMgr::GetCodecVersion()
-{
-  if( pMpeg4 != NULL )
-  {
-    return (uint16)pMpeg4->GetAudioCodecVersion();
-  }
-  return 0;
-}
-
-/* ======================================================================
-FUNCTION
   AudioMgr::GetNumChannels
 
 DESCRIPTION
@@ -6872,6 +7137,35 @@ uint16 AudioMgr::GetNumChannels()
   if( pMpeg4 != NULL )
   {
     return (uint16)pMpeg4->GetNumAudioChannels();
+  }
+  return 0;
+}
+
+
+#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER)
+/* ======================================================================
+FUNCTION
+  AudioMgr::GetCodecVersion
+
+DESCRIPTION
+  Thorough, meaningful description of what this function does.
+
+DEPENDENCIES
+  List any dependencies for this function, global variables, state,
+  resource availability, etc.
+
+RETURN VALUE
+  Enumerate possible return values
+
+SIDE EFFECTS
+  Detail any side effects.
+
+========================================================================== */
+uint16 AudioMgr::GetCodecVersion()
+{
+  if( pMpeg4 != NULL )
+  {
+    return (uint16)pMpeg4->GetAudioCodecVersion();
   }
   return 0;
 }
@@ -6926,7 +7220,7 @@ uint16 AudioMgr::GetVirtualPacketSize()
 {
   if( pMpeg4 != NULL )
   {
-  	return pMpeg4->GetAudioVirtualPacketSize(0);
+    return pMpeg4->GetAudioVirtualPacketSize(0);
   }
   return 0;
 }
@@ -6952,7 +7246,7 @@ bool AudioMgr::isStartOfDummyBytes()
 {
   if( pMpeg4 != NULL )
   {
-  	return pMpeg4->isStartOfDummyBytes(0);
+    return pMpeg4->isStartOfDummyBytes(0);
   }
   return false;
 }
@@ -7119,7 +7413,8 @@ uint8 AudioMgr::GetValidBitsperSample()
   }
   return 0;
 }
-#endif /* defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) */
+#endif /* defined(FEATURE_QTV_WINDOWS_MEDIA) ||
+          defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) */
 
 
 /* ========================================================================
@@ -7212,29 +7507,25 @@ RETURN VALUE:
 bool AudioMgr::SetDualMonoOutput(Common::DualMonoOutputType dualMonoOutput)
 {
   bool bRet = true;
-
   if (pAudioCMX)
   {
     bRet = pAudioCMX->SetDualMonoOutput(dualMonoOutput);
   }
-
   return bRet;
 }
 #endif /* FEATURE_QTV_DUAL_MONO_OUTPUT_SELECTION */
 
 #ifdef FEATURE_QTV_LOW_POWER_AUDIO
-
 bool AudioMgr::isAudioOnlyLocalPlayback()
 {
   Media* pMedia = GetMediaPtr();
   if(pMedia != NULL)
   {
     Media::MediaFileType fileType = pMedia->GetFileType();
-    return ((pMedia->GetFile()!= NULL) && (fileType == Media::CONTENT_AUDIO));
+    return ((pMedia->GetFile()!= NULL) && (!pMedia->isHTTPStreaming()) && (fileType == Media::CONTENT_AUDIO));
   }
   return false;
 }
-
 #endif
 
 #ifdef FEATURE_QTV_AUDIO_DISCONTINUITY

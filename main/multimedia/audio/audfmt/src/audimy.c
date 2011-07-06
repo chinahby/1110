@@ -37,18 +37,23 @@ Copyright(c) 2002 - 2006 by QUALCOMM, Incorporated. All Rights Reserved.
 This section contains comments describing changes made to this file.
 Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/multimedia/audio/6k/ver1/audfmt/main/latest/src/audimy.c#3 $ $DateTime: 2009/07/31 03:38:08 $ $Author: rkarra $
+  $Header: //source/qcom/qct/multimedia/audio/6k/ver1/audfmt/main/latest/src/audimy.c#6 $ $DateTime: 2010/09/07 05:27:19 $ $Author: rpampana $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
-07/23/09   rk      Giving the correct weightage to the notes c,d,e,f,g,a, b to 
+09/07/10    rp     fix to handle the bigger imy header data
+01/27/10    gs     Fixed RVCT compiler warnings
+10/29/09    kk     Fixed the crash when corrupt imelody files are played in
+                   some particular order due to not getting proper file_len
+                   before parsing.
+07/23/09    rk     Giving the correct weightage to the notes c,d,e,f,g,a, b to
                    generate the appropriate MIDI Key Note Numbers.
-06/03/09   bk      Added Macros __NON_DEMAND_PAGED_FUNCTION__ and 
+06/03/09    bk     Added Macros __NON_DEMAND_PAGED_FUNCTION__ and
                    __NON_DEMAND_PAGED_FUNCTION_END__ for non demand
                    pageable functions.
-07/31/07   ss/sg   Removed the code which aborts playback for iMeoldy files 
-                   with spaces in header and melody content. 
-                   Fixed CR_124069(SR_956997)  
+07/31/07   ss/sg   Removed the code which aborts playback for iMeoldy files
+                   with spaces in header and melody content.
+                   Fixed CR_124069(SR_956997)
 02/13/06    ay     Added support for iMelody pausing; also added led,
                    vibration, and backlight state information to
                    "audimy_pp_ctl".
@@ -492,7 +497,7 @@ LOCAL boolean audimy_sync_get_data(
 )
 {
   audimy_buf_type *curr_buf = audimy_pp_ctl.curr_buf;
-
+  uint32  buffer_size = 0;
   /* In synchronous mode, if the current_pos has not gone beyond the end
    * of the current buffer, we still have data, and don't have to do anything.
    * Otherwise, request for more data.
@@ -511,11 +516,18 @@ LOCAL boolean audimy_sync_get_data(
       if(!audimy_get_data(audimy_pp_ctl.file_location, curr_buf)) {
         return FALSE;
       }
-
+      /* Update the File location*/
+      buffer_size = audmain_get_data_buffer_size();
+      audimy_pp_ctl.file_location = curr_buf->start + buffer_size;
+      curr_buf->loading = FALSE;
       if(audimy_data_state != AUDIMY_DATA_READY) {
         MSG_ERROR("Unable to get data", 0,0,0);
         return FALSE;
       }
+    }
+    else
+    {
+      return FALSE;
     }
 
     if(curr_buf->length == 0) {
@@ -561,7 +573,6 @@ LOCAL boolean audimy_async_get_data(
   audimy_buf_type *prev_buf       = NULL;
   byte            num_buffers     = 2;
   boolean         done            = FALSE;
-  boolean         audimy_lf_found = FALSE;
 
   if(num_bytes_reqd > AUDIMY_MAX_TOKEN_SIZE) {
     MSG_ERROR("Size of data reqd. too large %d", num_bytes_reqd,0,0);
@@ -639,7 +650,6 @@ LOCAL boolean audimy_async_get_data(
         else {
           MSG_HIGH("Ignoring bad syntax: LF not preceded by a CR", 0,0,0);
         }
-        audimy_lf_found = TRUE;
       }
       /* For all other characters... */
       else {
@@ -676,7 +686,6 @@ LOCAL boolean audimy_async_get_data(
 
           audimy_tok_buf[audimy_tb_start+audimy_tb_length] = data_p[buf_index];
           audimy_tb_length++;
-          audimy_lf_found = FALSE;
         }
       }
       audimy_scan_ahead_index++;
@@ -865,6 +874,7 @@ LOCAL boolean audimy_get_lhs(
   static const uint16 max_lhs_size = sizeof("COMPOSER:");
   uint32 buf_index = 0;
   uint8  bi = 0;
+  uint8  new_buf = 0; 
   uint32  current_pos = audimy_scan_ahead_index;
   audimy_buf_type *curr_buf = audimy_pp_ctl.curr_buf;
 
@@ -876,7 +886,17 @@ LOCAL boolean audimy_get_lhs(
 
     curr_buf = audimy_pp_ctl.curr_buf;
 
-    buf_index = audimy_scan_ahead_index - curr_buf->start;
+    if(!new_buf)
+    {
+      /* buffer is not updated curr_buf->start holds previous value*/
+      buf_index = audimy_scan_ahead_index - curr_buf->start;
+    }
+    else
+    {
+      /* buffer got updated curr_buf->start holds new value
+         considering previous bi bytes for index */
+      buf_index = (audimy_scan_ahead_index + bi) - curr_buf->start;
+    }
     while(buf_index < curr_buf->length) {
       if(bi >= max_lhs_size) {
         MSG_ERROR("LHS too long: Expecting a ':'", 0,0,0);
@@ -893,8 +913,9 @@ LOCAL boolean audimy_get_lhs(
       bi++;
     }
     current_pos = audimy_pp_ctl.file_location;
+    /* mark the buffer got updated */
+    new_buf = 1;
   }
-  return FALSE;
 }
 /***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
@@ -926,6 +947,7 @@ LOCAL boolean audimy_get_rhs(
 {
   uint32  buf_index = 0;
   uint8   bi = 0;
+  uint8  new_buf = 0; 
   uint8   max_rhs_size = AUDIMY_MAX_LINE_LENGTH - lhs_token_size;
   uint32  current_pos = audimy_scan_ahead_index;
   audimy_buf_type *curr_buf = &audimy_pp_ctl.buf1;
@@ -935,8 +957,17 @@ LOCAL boolean audimy_get_rhs(
     if(audimy_sync_get_data(current_pos) == FALSE) {
       return FALSE;
     }
-
-    buf_index = audimy_scan_ahead_index - curr_buf->start;
+    if(!new_buf)
+    {
+      /* buffer is not updated curr_buf->start holds previous value*/
+      buf_index = audimy_scan_ahead_index - curr_buf->start;
+    }
+    else
+    {
+      /* buffer got updated curr_buf->start holds new value
+         considering previous bi bytes for index */
+      buf_index = (audimy_scan_ahead_index + bi) - curr_buf->start;
+    }
     while(buf_index < curr_buf->length) {
       if(bi >= max_rhs_size) {
         MSG_ERROR("RHS too long: Expecting a '\n'", 0,0,0);
@@ -962,8 +993,10 @@ LOCAL boolean audimy_get_rhs(
       bi++;
     }
     current_pos = audimy_pp_ctl.file_location;
+    /* mark the buffer got updated */
+    new_buf = 1;
+
   }
-  return FALSE;
 }
 /***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
@@ -1625,69 +1658,69 @@ LOCAL boolean audimy_process_note()
     #g and &a are same
     #a and &b are same
  */
-  switch(note) { 
-  case 'a': 
-    note_index = 12; 
-    break; 
-  case 'b': 
-    note_index = 14; 
-    break; 
-  case 'c': 
-    note_index = 3; 
-    break; 
-  case 'd': 
-    note_index = 5; 
-    break; 
-  case 'e': 
-    note_index = 7; 
-    break; 
-  case 'f': 
-    note_index = 8; 
-    break; 
-  case 'g': 
-    note_index = 10; 
-    break; 
-  default: 
-    MSG_ERROR("Invalid note '%c'", note, 0,0);  
-    return FALSE; 
-  } 
-  data_index++; 
+  switch(note) {
+  case 'a':
+    note_index = 12;
+    break;
+  case 'b':
+    note_index = 14;
+    break;
+  case 'c':
+    note_index = 3;
+    break;
+  case 'd':
+    note_index = 5;
+    break;
+  case 'e':
+    note_index = 7;
+    break;
+  case 'f':
+    note_index = 8;
+    break;
+  case 'g':
+    note_index = 10;
+    break;
+  default:
+    MSG_ERROR("Invalid note '%c'", note, 0,0);
+    return FALSE;
+  }
+  data_index++;
 
   /* b# and e# don't Exist */
   if(half_step == '#')
-  { 
-    /* A half-step up */ 
-    switch(note) { 
-    case 'c': 
-    case 'd': 
-    case 'f': 
-    case 'g': 
-    case 'a': 
-      note_index++; 
-      break; 
-    
+  {
+    /* A half-step up */
+    switch(note) {
+    case 'c':
+    case 'd':
+    case 'f':
+    case 'g':
+    case 'a':
+      note_index++;
+      break;
+
     default:
       MSG_ERROR("Invalid note '%c' %c", note, half_step,0);
-      break; 
-    } 
+      break;
+    }
   } /* &c and &f don't Exist */
   else if(half_step == '&')
-  { 
-    /* A half-step down */ 
-    switch(note) { 
-    case 'd': 
-    case 'e': 
-    case 'g': 
-    case 'a': 
-    case 'b': 
-      note_index--; 
-      break; 
-    
-    default: 
+  {
+    /* A half-step down */
+    switch(note) {
+    case 'd':
+    case 'e':
+    case 'g':
+    case 'a':
+    case 'b':
+      note_index--;
+      break;
+
+    default:
       MSG_ERROR("Invalid note '%c' %c", note, half_step,0);
-      break; 
-    } 
-  } 
+      break;
+    }
+  }
   /* Determine MIDI Note Number; Down shift by one octave - otherwise the notes
    * sound too high.
    */
@@ -2165,6 +2198,10 @@ audmain_status_type audimy_parse_head (
   audimy_pp_ctl.curr_buf      = &audimy_pp_ctl.buf1;
   audimy_pp_ctl.error_status  = AUDMAIN_STATUS_MAX;
 
+  /* Get the Imelody file length */
+  audmain_do_play_cb(handle, SND_CMX_AF_GET_FILE_LEN, 0,
+                     (void *)&audimy_pp_ctl.file_len);
+
   /* Extract iMelody header from the input stream */
   if (audimy_extract_header() != TRUE) {
     return AUDMAIN_STATUS_ERROR;
@@ -2174,9 +2211,6 @@ audmain_status_type audimy_parse_head (
    * supported integral note length (1/32).
    */
   audimy_min_note_size = 75000/audimy_info.beat;
-
-  audmain_do_play_cb(handle, SND_CMX_AF_GET_FILE_LEN, 0,
-                     (void *)&audimy_pp_ctl.file_len);
 
   audimy_loop_start_index = audimy_scan_ahead_index;
 

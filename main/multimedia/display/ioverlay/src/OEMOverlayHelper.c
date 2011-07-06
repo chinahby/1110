@@ -10,7 +10,7 @@
 ================================================================================
 ================================================================================
     
-               Copyright ?1999-2005 QUALCOMM Incorporated 
+               Copyright © 1999-2005 QUALCOMM Incorporated 
                      All Rights Reserved.
                    QUALCOMM Proprietary/GTDR
 
@@ -99,8 +99,10 @@ void OverlayHelper_NotifyListeners( OverlayHelper_Listener *pHead, ModelEvent *p
    { 
       ModelListener * pListener = pl->pListener;
       PACONTEXT pacLast = AEE_EnterAppContext(pl->pac);
+
       //Move to next node
       pl = pl->pNext;
+
       //Call the function
       if(NULL != pListener->pfnListener)
       {

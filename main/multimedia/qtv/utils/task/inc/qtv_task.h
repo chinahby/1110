@@ -15,9 +15,9 @@ Copyright 2005 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/task/main/latest/inc/qtv_task.h#1 $
-$DateTime: 2008/05/09 08:14:38 $
-$Change: 657007 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/task/main/latest/inc/qtv_task.h#2 $
+$DateTime: 2009/01/29 06:14:06 $
+$Change: 829425 $
 
 ========================================================================== */
 
@@ -205,7 +205,12 @@ protected:
     CONSTRUCTING,
     RUNNING,
     DESTRUCTING,
+#ifndef FEATURE_WINCE
     ERROR
+#else
+#error code not present
+#endif
+
   };
 
   State m_state;

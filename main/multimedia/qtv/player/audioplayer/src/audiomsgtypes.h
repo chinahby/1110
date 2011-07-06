@@ -18,9 +18,9 @@ Copyright 2006 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audiomsgtypes.h#7 $
-$DateTime: 2008/05/08 08:09:22 $
-$Change: 656074 $
+$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audiomsgtypes.h#8 $
+$DateTime: 2009/05/12 14:25:55 $
+$Change: 911031 $
 
 ========================================================================== */
 
@@ -51,7 +51,8 @@ public:
       AUDIO_PLAYER_SHOW_INFO = 19,
       AUDIO_PLAYER_GET_ISPAUSED_DISABLED = 20,
       AUDIO_PLAYER_PCR_RESET = 21,
-      AUDIO_PLAYER_CMX_FEEDBACK = 22
+      AUDIO_PLAYER_CMX_FEEDBACK = 22,
+      AUDIO_PLAYER_CLOCK_ADJUST = 23
       #ifdef FEATURE_QTV_AUDIO_DISCONTINUITY
 #error code not present
       #endif /* FEATURE_QTV_AUDIO_DISCONTINUITY */
@@ -210,6 +211,12 @@ public:
 #ifdef FEATURE_QTV_GENERIC_BCAST_PCR
 #error code not present
 #endif /* FEATURE_QTV_GENERIC_BCAST_PCR */
+
+    typedef struct audio_clock_adjust_msg_tag
+    {
+      audio_msg_hdr msgHdr;
+    } audio_clock_adjust_msg;
+
 };
 
 #endif //_AudioMsgTypes_H_ 

@@ -20,7 +20,7 @@ Copyright 2004 QUALCOMM Incorporated, All Rights Reserved
 
 /* =======================================================================
                              PERFORCE HEADER
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/latest/src/avifile.cpp#22 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/latest/src/avifile.cpp#46 $
 ========================================================================== */
 
 /* ==========================================================================
@@ -31,16 +31,17 @@ $Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/l
 
 #ifdef FEATURE_QTV_AVI
 
-  #ifdef FEATURE_QTV_DIVX_DRM    
+  #ifdef FEATURE_QTV_DIVX_DRM
     #include "DrmTypes.h"
     #include "DrmApi.h"
   #endif//#ifdef FEATURE_QTV_DIVX_DRM
 
- #include "avifile.h"     
- #include "Events.h"      
- #include "media.h"      
- #include "aviParser.h" 
+ #include "avifile.h"
+ #include "Events.h"
+ #include "media.h"
+ #include "aviParser.h"
  #include "Mpeg4Player.h"
+ #include "filebase.h"
 
 /* ==========================================================================
 
@@ -75,7 +76,7 @@ MP4_ERROR_CODE MAP_DRM_ERROR_2_MP4_ERROR_CODE(drmErrorCodes_t error_code)
   }
   if(error_code == DRM_RENTAL_EXPIRED)
   {
-    return DRM_RENTAL_COUNT_EXPIRED;    
+    return DRM_RENTAL_COUNT_EXPIRED;
   }
   return DRM_PLAYBACK_GENERAL_ERROR;
 }
@@ -168,7 +169,7 @@ uint32 AVIFile::FileGetData(  uint32 nOffset,
     {
       QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR, "Breaking, user Abort is true.");
     }
-  } 
+  }
   return nRead;
 }
 /* ==============================================================================
@@ -326,6 +327,31 @@ AVIFile::AVIFile( const OSCL_STRING &filename
   drmContextLength = 0;
   memset(drm_frame_info,0,DIVX_DRM_FRAME_DRM_INFO_SIZE);
 #endif
+#ifdef FEATURE_MPEG4_B_FRAMES
+  m_videoFramesReadAhead.firstVideoFrame = false;
+  m_videoFramesReadAhead.currentSampleIndex = 0;
+  m_videoFramesReadAhead.validSampleIndex = 0;
+  m_videoFramesReadAhead.allocatedForReadAhead = false;
+  /* Initializing read ahead buffer
+     This is to adjust the time stamps for Mpeg4 if there are any B-Frames
+  */
+  for(uint8 index = 0; index<AVI_MAX_VIDEO_FRAMES_READ_AHEAD; index++)
+  {
+    m_avi_video_samples[index].vop_type = NO_VOP;
+    m_avi_video_samples[index].bVopCount = 0;
+    m_avi_video_samples[index].size = 0;
+
+    m_avi_video_samples[index].m_sampleInfo.time = 0;
+    m_avi_video_samples[index].m_sampleInfo.size = 0;
+    m_avi_video_samples[index].m_sampleInfo.sync = 0;
+    m_avi_video_samples[index].m_sampleInfo.delta = 0;
+
+    if( m_avi_video_samples[index].buff != NULL)
+    {
+      m_avi_video_samples[index].buff = NULL;
+    }
+  }
+#endif /* FEATURE_MPEG4_B_FRAMES */
 
   m_pAudioPacketBuffer = NULL;
   m_nAudioPacketBufferSize = 0;
@@ -338,14 +364,14 @@ AVIFile::AVIFile( const OSCL_STRING &filename
   memset(m_sampleInfo, 0, sizeof(m_sampleInfo));
   memset(m_nDecodedDataSize, 0, sizeof(m_nDecodedDataSize));
   memset(m_nLargestFrame, 0, sizeof(m_nLargestFrame));
-  
+
   //Initializing largest sample size for Audio and Video to 0
   m_audioLargestSize = 0;
   m_videoLargestSize = 0;
 
 #if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
       bHttpStreaming = bHttpStream;
-      wBufferOffset = 0;                                  // To avoid compiler warning
+      QTV_USE_ARG1(wBufferOffset); // To avoid compiler warning
       bGetMetaDataSize = TRUE;
       bIsMetaDataParsed = FALSE;
       m_HttpDataBufferMinOffsetRequired.Offset = 0;
@@ -415,6 +441,7 @@ AVIFile::AVIFile( const OSCL_STRING &filename
     {
       return;
     }
+    UpdateTrackIdInFilePointer();
 
 #ifdef __TEST
     if(m_playAudio||m_playVideo)
@@ -432,7 +459,7 @@ AVIFile::AVIFile( const OSCL_STRING &filename
       uint32 index = 0;
       int count = 0;
       int nSize = 0;
-      int trid = -1;       
+      int trid = -1;
       CHUNK_t chunkType;
       for(int track = 0; track < m_nNumStreams && (trid < 0); track++)
       {
@@ -458,38 +485,38 @@ AVIFile::AVIFile( const OSCL_STRING &filename
       }
       bool bFirst = true;
       while(1)
-      {                
+      {
         if(m_playVideo)
         {
           uint8 vcodec = getTrackOTIType(trid);
           if(bFirst)
-          {            
-            if(MPEG4_VIDEO == vcodec)            
+          {
+            if(MPEG4_VIDEO == vcodec)
             {
               uint8* vol  = getTrackDecoderSpecificInfoContent(trid);
-              uint32 size = getTrackDecoderSpecificInfoSize(trid);                                      
-              fwrite(hardCodedValues, 1, sizeof(hardCodedValues), vfp);                            
-            }            
-            bFirst = false;                                  
+              uint32 size = getTrackDecoderSpecificInfoSize(trid);
+              fwrite(hardCodedValues, 1, sizeof(hardCodedValues), vfp);
+            }
+            bFirst = false;
            continue;
           }
           else
-          {            
-            nSize = getNextMediaSample(trid,buff,200000,index);                        
+          {
+            nSize = getNextMediaSample(trid,buff,200000,index);
             if(nSize)
-            {                              
+            {
               if(MPEG4_VIDEO != vcodec)
               {
                 int wid = getTrackVideoFrameWidth(trid);
                 int ht = getTrackVideoFrameHeight(trid);
                 fwrite(&wid, 1, sizeof(int), vfp);
                 fwrite(&ht, 1, sizeof(int), vfp);
-              }                   
-              fwrite(buff, 1, nSize, vfp);                                                                                  
+              }
+              fwrite(buff, 1, nSize, vfp);
               QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR,"AVIFile::getNextMediaSample retrieved video chunk %d nSize %d",count++,nSize);
-            }            
+            }
           }
-        }        
+        }
 
         if(!nSize)
         {
@@ -498,7 +525,7 @@ AVIFile::AVIFile( const OSCL_STRING &filename
       }
       if(vfp)
       {
-        fclose(vfp);          
+        fclose(vfp);
       }
     }
 #endif
@@ -526,7 +553,7 @@ bool AVIFile::initDivXDrmSystem()
 {
   bool bRet = true;
   if(m_playVideo && IsDRMProtection())
-  {    
+  {
     drmErrorCodes_t result;
 	  avi_uint8 rentalMessageFlag = 0;
 	  avi_uint8 useLimit;
@@ -535,7 +562,7 @@ bool AVIFile::initDivXDrmSystem()
 	  avi_uint8 acptbSignal;
 	  avi_uint8 digitalProtectionSignal;
     int drm_size = 0;
-    
+
     result = drmInitSystem( NULL,&drmContextLength );
 
     drmContext = (uint8_t*)QTV_Malloc( drmContextLength  );
@@ -616,7 +643,7 @@ bool AVIFile::initDivXDrmSystem()
     if(m_pClipDrmInfo)
     {
       memset(m_pClipDrmInfo,0,sizeof(QtvPlayer::ClipDrmInfoT));
-      QtvPlayer::ClipDrmInfoT* clipdrminfo = (QtvPlayer::ClipDrmInfoT*)m_pClipDrmInfo;              
+      QtvPlayer::ClipDrmInfoT* clipdrminfo = (QtvPlayer::ClipDrmInfoT*)m_pClipDrmInfo;
       clipdrminfo->isRental = false;
       if(rentalMessageFlag > 0)
       {
@@ -627,7 +654,7 @@ bool AVIFile::initDivXDrmSystem()
 
       clipdrminfo->cgmsaSignal = cgmsaSignal;
 	    clipdrminfo->acptbSignal = acptbSignal;
-	    clipdrminfo->digitalProtectionSignal = digitalProtectionSignal;      
+	    clipdrminfo->digitalProtectionSignal = digitalProtectionSignal;
     }
   }
   return bRet;
@@ -653,14 +680,15 @@ bool AVIFile::CommitDivXPlayback()
   bool bRet = false;
   if(drmContext)
   {
-    drmErrorCodes_t result = drmCommitPlayback( drmContext );        
+    drmErrorCodes_t result = drmCommitPlayback( drmContext );
 	  if ( DRM_SUCCESS == result )
-	  {	  
+	  {
       bRet = true;
 	  }
     else
     {
-      QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "drmCommitPlayback failed result %ld",result);        
+      QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL, "drmCommitPlayback failed result %ld",result);
+	  _fileErrorCode = MAP_DRM_ERROR_2_MP4_ERROR_CODE(result);
     }
   }
   return bRet;
@@ -760,17 +788,17 @@ void AVIFile::GetClipDrmInfo(void* ptr)
 {
   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "AVIFile::GetClipDrmInfo");
   if(ptr)
-  {    
+  {
     QtvPlayer::ClipDrmInfoT* clip_drmInfo = (QtvPlayer::ClipDrmInfoT*)ptr;
     memset(clip_drmInfo,0,sizeof(QtvPlayer::ClipDrmInfoT));
     if(m_pClipDrmInfo)
     {
-      memcpy(clip_drmInfo,(QtvPlayer::ClipDrmInfoT*)m_pClipDrmInfo,sizeof(QtvPlayer::ClipDrmInfoT) );                
+      memcpy(clip_drmInfo,(QtvPlayer::ClipDrmInfoT*)m_pClipDrmInfo,sizeof(QtvPlayer::ClipDrmInfoT) );
     }
     else
     {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "AVIFile::GetClipDrmInfo m_pClipDrmInfo is NULL");     
-    }    
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "AVIFile::GetClipDrmInfo m_pClipDrmInfo is NULL");
+    }
   }
 }
 #endif
@@ -820,7 +848,7 @@ bool AVIFile::ParseMetaData()
       if(!initDivXDrmSystem())
       {
         //Appropriate error code is set in initDivXDrmSystem.
-        _success = false;        
+        _success = false;
         return false;
       }
       #else
@@ -868,7 +896,7 @@ bool AVIFile::ParseMetaData()
       }//for(track = 0; track < m_nNumStreams; track++)
       if( (_fileErrorCode == EVERYTHING_FINE) && (m_bStreaming) )
       {
-        //send parser ready event to Mpeg4Player 
+        //send parser ready event to Mpeg4Player
         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Common::PARSER_READY");
         sendParserEvent(Common::PARSER_READY);
       }
@@ -930,6 +958,7 @@ AVIFile::~AVIFile()
 #ifdef FEATURE_QTV_DIVX_DRM
   if(m_playVideo && drmContext)
   {
+    drmFinalizePlayback(drmContext);
     QTV_Free(drmContext);
     drmContext = NULL;
   }
@@ -939,6 +968,16 @@ AVIFile::~AVIFile()
     m_pClipDrmInfo = NULL;
   }
 #endif
+#ifdef FEATURE_MPEG4_B_FRAMES
+  for(uint8 index = 0; index<AVI_MAX_VIDEO_FRAMES_READ_AHEAD; index++)
+  {
+    if( m_avi_video_samples[index].buff != NULL)
+    {
+      QTV_Free(m_avi_video_samples[index].buff);
+      m_avi_video_samples[index].buff = NULL;
+    }
+  }
+#endif /* FEATURE_MPEG4_B_FRAMES */
 }
 
 /* ======================================================================
@@ -959,11 +998,326 @@ SIDE EFFECTS:
 ======================================================================*/
 int32 AVIFile::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &index)
 {
+  CHUNK_t Type;
+  int32 nOutDataSize = 0;
+#ifdef FEATURE_MPEG4_B_FRAMES
+  uint32 temp_time;
+  uint8 noOfBVops = 0;
+  //uint32 width = 0;
+  //uint32 height = 0;
+  uint8 readIndex = 0;
+  uint8 noOfBVopsInSameChunk = 0;
+  uint8 totalNoOfBVops = 0;
+#endif /* FEATURE_MPEG4_B_FRAMES */
+
+  QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,"AVIFile::GetNextMediaSample");
+  if(m_pAVIParser->GetTrackChunkType(id,&Type) == AVI_SUCCESS)
+  {
+    switch(Type)
+    {
+      case AVI_CHUNK_VIDEO:
+#ifdef FEATURE_MPEG4_B_FRAMES
+        /* This piece of code is applicable to MPEG4 video only. in future if we
+           need to add for H264 then we may have to remove this check.
+        */
+        if(getTrackOTIType(id) == (uint8)MPEG4_VIDEO)
+        {
+          /* We need to allocate this memory once for the playback. This is
+             to read ahead to know whether the following frame is B-Frame or not.
+          */
+          if(m_videoFramesReadAhead.allocatedForReadAhead == false)
+          {
+            //width = getTrackVideoFrameWidth(id);
+            //height = getTrackVideoFrameHeight(id);
+            for(readIndex = 0; readIndex<AVI_MAX_VIDEO_FRAMES_READ_AHEAD; readIndex++)
+            {
+              //m_avi_video_samples[readIndex].buff = (uint8*)QTV_Malloc(width * height *2);
+              m_avi_video_samples[readIndex].buff = (uint8*)QTV_Malloc(AVI_DEFAULT_VIDEO_BUF_SIZE);
+              if(m_avi_video_samples[readIndex].buff == NULL)
+              {
+                QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR,
+                                  "AVIFile::GetNextMediaSample memory allocation failed for size %d", AVI_DEFAULT_VIDEO_BUF_SIZE);
+                return nOutDataSize;
+              }
+              m_avi_video_samples[readIndex].buff_Size = AVI_DEFAULT_VIDEO_BUF_SIZE;
+            }
+            m_videoFramesReadAhead.allocatedForReadAhead = true;
+          }
+          /* If we are reading for the first time just read the frame */
+          if(m_videoFramesReadAhead.firstVideoFrame == false)
+          {
+            if(m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].buff_Size <  size)
+            {
+              QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
+                                  "AVIFile::GetNextMediaSample memory re allocating for size %d", size);
+              m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].buff = (uint8 *)QTV_Realloc(m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].buff, size);
+              if( m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].buff != NULL)
+              {
+                m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].buff_Size = size;
+              }
+              else
+              {
+                QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR,
+                                 "AVIFile::GetNextMediaSample memory re allocation failed for size %d", size);
+                return 0;
+              }
+            }
+            nOutDataSize = getNextAVIMediaSample(id, m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].buff, size, index);
+            if(nOutDataSize > 0)
+            {
+              //Fill in sample information.
+              m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].m_sampleInfo.time = m_sampleInfo[id].time;
+              m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].m_sampleInfo.sync = m_sampleInfo[id].sync;
+              m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].m_sampleInfo.delta = m_sampleInfo[id].delta;
+              m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].m_sampleInfo.sample = m_sampleInfo[id].sample;
+              m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].size = nOutDataSize;
+              m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].vop_type = whichVop( m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].buff, nOutDataSize, &noOfBVopsInSameChunk);
+              m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].bVopCount = noOfBVopsInSameChunk;
+              QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,"AVIFile::GetNextMediaSample vop type  %d  no. of Bvops  %d ", m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].vop_type, noOfBVopsInSameChunk);
+              QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
+                              "AVIFile::GetNextMediaSample Reading first vedeo frame VIDEO nTimeStamp %d nDuration %d nSize %d",
+                            m_sampleInfo[id].time,nOutDataSize);
+            }
+            else
+            {
+              return nOutDataSize;
+            }
+          }
+          /* If we already read a frame from the file and that frame is a B-Frame then send that frame no need to read
+             any frames ahead
+             Here we already computed the time stamp of the B-frame
+          */
+          if(m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].vop_type == MPEG4_B_VOP)
+          {
+            /* copy the frame into the supplied buffer */
+            memcpy(buf,m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].buff,m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].size);
+            m_videoFramesReadAhead.currentSampleIndex = (m_videoFramesReadAhead.currentSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD;
+            QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
+                            "AVIFile::GetNextMediaSample Video nTimeStamp this is B-Frame %d nSize %d",
+                            m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time ,
+                            m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].size);
+            return m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].size;
+          }
+
+          /* Read the next frame */
+          m_videoFramesReadAhead.validSampleIndex = (m_videoFramesReadAhead.validSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD;
+          if(m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff_Size <  size)
+          {
+            QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
+                                       "AVIFile::GetNextMediaSample memory re allocating for size %d", size);
+            m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff = (uint8 *)QTV_Realloc(m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff, size);
+            if( m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff != NULL)
+            {
+              m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff_Size = size;
+            }
+            else
+            {
+              QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR,
+                                  "AVIFile::GetNextMediaSample memory re allocation failed for size %d", size);
+              return 0;
+            }
+          }
+          nOutDataSize = getNextAVIMediaSample(id, m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff, size, index);
+          if(nOutDataSize > 0)
+          {
+            //Fill in sample information.
+            m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].m_sampleInfo.time = m_sampleInfo[id].time;
+            m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].m_sampleInfo.sync = m_sampleInfo[id].sync;
+            m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].m_sampleInfo.delta = m_sampleInfo[id].delta;
+            m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].m_sampleInfo.sample = m_sampleInfo[id].sample;
+            m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].size = nOutDataSize;
+            m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].vop_type = whichVop( m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff, nOutDataSize, &noOfBVopsInSameChunk);
+            m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].bVopCount = noOfBVopsInSameChunk;
+            QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,"AVIFile::GetNextMediaSample vop type  %d  no. of Bvops  %d ", m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].vop_type, noOfBVopsInSameChunk);
+          }
+          else
+          {
+            // Failed to read so decrementing the write pointer by 1
+            m_videoFramesReadAhead.validSampleIndex = (m_videoFramesReadAhead.validSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD;
+            return nOutDataSize;
+          }
+          m_videoFramesReadAhead.firstVideoFrame = true;
+          /* After I or P see how many B-Frames are following this is required to compute the
+             TS for the current I/P frame and the consecutive B-Frames */
+          for(readIndex=0; readIndex<AVI_MAX_VIDEO_FRAMES_READ_AHEAD; readIndex++)
+          {
+            if(m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].vop_type == MPEG4_B_VOP)
+            {
+              /* Increment the B-VoP counter */
+              ++noOfBVops;
+              QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,"AVIFile::GetNextMediaSample consecutive B-Frame count %d",noOfBVops);
+              m_videoFramesReadAhead.validSampleIndex = (m_videoFramesReadAhead.validSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD;
+              if(m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff_Size <  size)
+              {
+                QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
+                                  "AVIFile::GetNextMediaSample memory re allocating for size %d", size);
+                m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff = (uint8 *)QTV_Realloc(m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff, size);
+                if( m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff != NULL)
+                {
+                  m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff_Size = size;
+                }
+                else
+                {
+                  QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR,
+                                  "AVIFile::GetNextMediaSample memory re allocation failed for size %d", size);
+                  return 0;
+                }
+              }
+              nOutDataSize = getNextAVIMediaSample(id, m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff, size, index);
+              if(nOutDataSize > 0)
+              {
+                m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].m_sampleInfo.time = m_sampleInfo[id].time;
+                m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].m_sampleInfo.sync = m_sampleInfo[id].sync;
+                m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].m_sampleInfo.delta = m_sampleInfo[id].delta;
+                m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].m_sampleInfo.sample = m_sampleInfo[id].sample;
+                m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].size = nOutDataSize;
+                m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].vop_type = whichVop( m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].buff, nOutDataSize, &noOfBVopsInSameChunk);
+                m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].bVopCount = noOfBVopsInSameChunk;
+                QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,"AVIFile::GetNextMediaSample vop type  %d  no. of Bvops  %d ", m_avi_video_samples[m_videoFramesReadAhead.validSampleIndex].vop_type, noOfBVopsInSameChunk);
+                continue;
+              }
+              else
+              {
+                // Failed to read so decrementing the write pointer by 1
+                m_videoFramesReadAhead.validSampleIndex = (m_videoFramesReadAhead.validSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD;
+                return nOutDataSize;
+              }
+            }
+            else
+            {
+              break;
+            }
+          }
+		  // This is to take care of the B-Frames in the current access unit and following in a seperate access unit
+          totalNoOfBVops = m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].bVopCount + noOfBVops;
+          /* If we encounter a clip where there are 4 or more consecutive B-Frames we don't support so
+             we need to return with an error
+          */
+          if(totalNoOfBVops == 4)
+          {
+            QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,"AVIFile::GetNextMediaSample we don't support clips with more than 3 consecutive B-Frames  %d",totalNoOfBVops);
+            return 0;
+          }
+          switch (totalNoOfBVops)
+          {
+            case 0:
+              // There are no B-Frames following this P/I frame so no need to compute any new TS
+              memcpy(buf,m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].buff,m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].size);
+              m_videoFramesReadAhead.currentSampleIndex = (m_videoFramesReadAhead.currentSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD;
+              nOutDataSize = m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].size;
+              QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
+                            "AVIFile::GetNextMediaSample Video nTimeStamp %d nSize %d",
+                            m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time, nOutDataSize);
+              break;
+            case 1:
+              // one B-frame is following P/I frame
+              memcpy(buf,m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].buff,m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].size);
+              // Recalculate the new time stamps for P/I and B-Frame
+              temp_time = m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].m_sampleInfo.time;
+              m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].m_sampleInfo.time += m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].m_sampleInfo.delta;
+			  // Only one B-Frame and it is following in a seperate access unit
+              if(m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].bVopCount == 0)
+              {
+              m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time = temp_time;
+              }
+              //Increment the read index
+              m_videoFramesReadAhead.currentSampleIndex = (m_videoFramesReadAhead.currentSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD;
+              nOutDataSize = m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].size;
+              QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
+                            "AVIFile::GetNextMediaSample Video nTimeStamp %d nSize %d",
+                            m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time, nOutDataSize);
+	      break;
+            case 2:
+              // two B-frames are following this current P/I frame
+              memcpy(buf,m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].buff,m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].size);
+  	      // Recalculate the new time stamps for P/I and the consecutive two B-Frame
+              temp_time = m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].m_sampleInfo.time;
+              m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].m_sampleInfo.time += m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].m_sampleInfo.delta * totalNoOfBVops;
+			  // Two B-Frames and two are following in a seperate access units
+              if(m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].bVopCount == 0)
+              {
+              m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + 2) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time = m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time;
+              m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time = temp_time;
+              }
+			  //Increment the read index
+              m_videoFramesReadAhead.currentSampleIndex = (m_videoFramesReadAhead.currentSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD;
+              nOutDataSize = m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].size;
+              QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
+                            "AVIFile::GetNextMediaSample Video nTimeStamp %d nSize %d",
+                            m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time, nOutDataSize);
+              break;
+            case 3:
+              // two B-frames are following this current P/I frame
+              memcpy(buf,m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].buff,m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].size);
+              // Recalculate the new time stamps for P/I and the consecutive three B-Frame
+              temp_time = m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].m_sampleInfo.time;
+              m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].m_sampleInfo.time += m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].m_sampleInfo.delta * totalNoOfBVops;
+			  // Three B-Frames and two are following in a seperate access units
+              if(m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].bVopCount == 0)
+              {
+              m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + 3) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time = m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + 2) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time;
+              m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + 2) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time = m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time;
+              m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time = temp_time;
+              }
+			  // Three B-Frames are there and two are in the same access unit and one in a seperate access unit
+              else if(m_avi_video_samples[m_videoFramesReadAhead.currentSampleIndex].bVopCount == 2)
+              {
+                m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time = m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time + m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.delta;
+              }
+			  //Increment the read index
+              m_videoFramesReadAhead.currentSampleIndex = (m_videoFramesReadAhead.currentSampleIndex + 1) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD;
+              nOutDataSize = m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].size;
+              QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
+                            "AVIFile::GetNextMediaSample Video nTimeStamp %d nSize %d",
+                            m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time, nOutDataSize);
+              break;
+            default :
+              break;
+          }
+        }
+        else
+        {
+          //other than Mpeg4 we don't support B-Frames
+          nOutDataSize = getNextAVIMediaSample(id, buf, size, index);
+        }
+#else
+        nOutDataSize = getNextAVIMediaSample(id, buf, size, index);
+#endif /*  FEATURE_MPEG4_B_FRAMES */
+        break;
+      case AVI_CHUNK_AUDIO:
+        nOutDataSize = getNextAVIMediaSample(id, buf, size, index);
+        break;
+      default:
+        break;
+    }
+  }
+  return nOutDataSize;
+}
+
+/* ======================================================================
+FUNCTION:
+  AVIFile::getNextAVIMediaSample
+
+DESCRIPTION:
+  gets next sample of the given track.
+
+INPUT/OUTPUT PARAMETERS:
+  None.
+
+RETURN VALUE:
+ size of sample
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+int32 AVIFile::getNextAVIMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &index)
+{
   avi_uint16 trackID;
   //AVI_FILE_OFFSET filePos;
   aviErrorType retVal = AVI_SUCCESS;
   avi_int32 nOutDataSize = 0;
   avi_sample_info minfo;
+  avi_audio_info aInfo ;
 
 #ifdef FEATURE_QTV_DIVX_DRM
   bool bDecrypt = false;
@@ -972,7 +1326,7 @@ int32 AVIFile::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &in
   if(!m_pAVIParser)
   {
     QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_FATAL,
-                  "AVIFile::getNextMediaSample NULL PARSER HANDLE for track id = %d", id);
+                  "AVIFile::getNextAVIMediaSample NULL PARSER HANDLE for track id = %d", id);
     return nOutDataSize;
   }
 
@@ -990,7 +1344,7 @@ int32 AVIFile::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &in
       if((minfo.nSampleSize > size)||(retVal == AVI_INSUFFICIENT_BUFFER))
       {
         QTV_MSG_PRIO2(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR,
-                     "Error:AVIFile::getNextMediaSample minfo.nSampleSize %d > available buffer size %d",minfo.nSampleSize,size);
+                     "Error:AVIFile::getNextAVIMediaSample minfo.nSampleSize %d > available buffer size %d",minfo.nSampleSize,size);
         if (minfo.chunkType == AVI_CHUNK_AUDIO)
         {
           m_audioLargestSize = minfo.nSampleSize;
@@ -1030,13 +1384,21 @@ int32 AVIFile::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &in
             m_sampleInfo[id].size = minfo.nSampleSize;
             m_sampleInfo[id].sync = 1;
             m_sampleInfo[id].delta = minfo.nDuration;
-            m_sampleInfo[id].sample = m_sampleInfo[id].sample++;            
+            m_sampleInfo[id].sample = m_sampleInfo[id].sample++;
             nOutDataSize = minfo.nSampleSize;
             if(minfo.chunkType == AVI_CHUNK_AUDIO)
             {
               QTV_MSG_PRIO3(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
-                            "AVIFile::GetNextMediaSample AUDIO nTimeStamp %d nDuration %d nSize %d",
+                            "AVIFile::getNextAVIMediaSample AUDIO nTimeStamp %d nDuration %d nSize %d",
                              minfo.nTimeStamp,minfo.nDuration,minfo.nSampleSize);
+              if(m_pAVIParser->GetAudioInfo(id,&aInfo)==AVI_SUCCESS)
+              {
+                if(aInfo.strfAudio.wFormatTag == AVI_AUDIO_AC3)
+                {
+                  QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, "AVIFile::GetNextMediaSample AC3 AUDIO frame need to be decoded by OEM decoder So returning 0 as the frame size");
+                  nOutDataSize = 0;
+                }
+              }
               #ifdef FEATURE_QTV_DIVX_DRM
               if(bDecrypt)
               {
@@ -1044,7 +1406,7 @@ int32 AVIFile::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &in
 				        if ( DRM_SUCCESS!= result )
 				        {
                    QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
-                            "AVIFile::GetNextMediaSample AUDIO frame decryption failed..");
+                            "AVIFile::getNextAVIMediaSample AUDIO frame decryption failed..");
                    nOutDataSize = 0;
 
                 }
@@ -1055,7 +1417,7 @@ int32 AVIFile::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &in
             else if(minfo.chunkType == AVI_CHUNK_VIDEO)
             {
               QTV_MSG_PRIO3(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
-                            "AVIFile::GetNextMediaSample VIDEO nTimeStamp %d nDuration %d nSize %d",
+                            "AVIFile::getNextAVIMediaSample VIDEO nTimeStamp %d nDuration %d nSize %d",
                             minfo.nTimeStamp,minfo.nDuration,minfo.nSampleSize);
 
               #ifdef FEATURE_QTV_DIVX_DRM
@@ -1065,7 +1427,7 @@ int32 AVIFile::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &in
 				        if ( DRM_SUCCESS!= result )
 				        {
                    QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
-                            "AVIFile::GetNextMediaSample VIDEO frame decryption failed..");
+                            "AVIFile::getNextAVIMediaSample VIDEO frame decryption failed..");
                    nOutDataSize = 0;
 
                 }
@@ -1080,16 +1442,93 @@ int32 AVIFile::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &in
     if(retVal == AVI_END_OF_FILE)
     {
       QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR,
-                 "AVIFile::getNextMediaSample encountered end of file..");
+                 "AVIFile::getNextAVIMediaSample encountered end of file..");
     }
     else if(retVal != AVI_SUCCESS)
     {
       QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR,
-                 "AVIFile::getNextMediaSample encountered an error while getting next_chunk");
+                 "AVIFile::getNextAVIMediaSample encountered an error while getting next_chunk");
     }
   }
   return nOutDataSize;
 }
+
+
+#ifdef FEATURE_MPEG4_B_FRAMES
+/*===========================================================================
+
+FUNCTION:
+  whichVop
+
+DESCRIPTION:
+  This function tells the application whether a the bitstream passed contains
+  a VOP and if yes then what kind of VOP is it - I/P/B or S VOP.
+
+INPUT/OUTPUT PARAMETERS:
+  pBitstream - pointer to raw bitstream.
+  size - size of the bitstream.
+
+RETURN VALUE:
+   I_VOP: bitstream contains an I-VOP
+   P_VOP: bitstream contains an P-VOP
+   B_VOP: bitstream contains an B-VOP
+   S_VOP: bitstream contains an S-VOP
+   NO_VOP: bitstream contains no VOP.
+SIDE EFFECTS:
+  None.
+
+===========================================================================*/
+AVI_VOP_TYPE AVIFile::whichVop(uint8* pBitstream, int size, uint8 * noOfBVopsInSameChunk )
+{
+  int i;
+  int j;
+  int code = 0;
+  int vopType;
+  AVI_VOP_TYPE  returnVopType = NO_VOP;
+
+  QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR,"AVIFile::whichVop");
+  *noOfBVopsInSameChunk = 0;
+  for (i=0;i<size;++i)
+  {
+    code <<= 8;
+    code |= (0x000000FF & (pBitstream[i]));
+    {
+      if(MPEG4_VOP_START_CODE == code)
+      {
+        if((i+1)<size)
+        {
+          vopType = 0x000000c0 & (pBitstream[i+1]);
+          if(0x00000000 == vopType) returnVopType = MPEG4_I_VOP;
+          else if(0x00000040 == vopType)  returnVopType = MPEG4_P_VOP;
+          else if(0x00000080 == vopType)  returnVopType = MPEG4_B_VOP;
+          else if(0x000000c0 == vopType)  returnVopType = MPEG4_S_VOP;
+        break;
+      }
+    }
+  }
+  }
+  if(returnVopType == MPEG4_P_VOP)
+  {
+    if((i+2)<size)
+    {
+      code = 0;
+      for (j=i+2;j<size;++j)
+      {
+        code <<= 8;
+        code |= (0x000000FF & (pBitstream[j]));
+        {
+          if(MPEG4_VOP_START_CODE == code)
+          {
+            vopType = 0x000000c0 & (pBitstream[j+1]);
+            if(0x00000080 == vopType) (*noOfBVopsInSameChunk) = (*noOfBVopsInSameChunk) + 1;
+          }
+        }
+      }
+    }
+  }
+  return returnVopType;
+}
+#endif /* FEATURE_MPEG4_B_FRAMES */
 /* ======================================================================
 FUNCTION:
   AVIFile::getMediaTimestampForCurrentSample
@@ -1107,9 +1546,68 @@ SIDE EFFECTS:
   None.
 ======================================================================*/
 uint32 AVIFile::getMediaTimestampForCurrentSample(uint32 id)
-{ 
- return m_sampleInfo[id].time;
+{
+#ifdef FEATURE_MPEG4_B_FRAMES
+  CHUNK_t Type;
+  uint32 nTimeStamp = 0;
+  if(!m_pAVIParser)
+  {
+    return AVI_PARSE_ERROR;
 }
+  if( id < m_pAVIParser->GetTotalNumberOfTracks() )
+  {
+    if(m_pAVIParser->GetTrackChunkType(id,&Type) == AVI_SUCCESS)
+    {
+      switch(Type)
+      {
+        case AVI_CHUNK_VIDEO:
+          if(getTrackOTIType(id) == (uint8)MPEG4_VIDEO)
+          {
+            nTimeStamp = m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo.time;
+          }
+          else
+          {
+            nTimeStamp = m_sampleInfo[id].time;
+          }
+          QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, "AVIFile::getMediaTimestampForCurrentSample Video TS %d",nTimeStamp);
+          break;
+        case AVI_CHUNK_AUDIO:
+          nTimeStamp = m_sampleInfo[id].time;
+          QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, "AVIFile::getMediaTimestampForCurrentSample Audio TS %d",nTimeStamp);
+          break;
+        default:
+          break;
+      }
+    }
+  }
+  return nTimeStamp;
+#else
+  return m_sampleInfo[id].time;
+#endif /* FEATURE_MPEG4_B_FRAMES */
+}
+
+/* ======================================================================
+FUNCTION:
+  AVIFile::getMediaTimestampDeltaForCurrentSample
+
+DESCRIPTION:
+  gets time stamp delta of current sample of the track.
+
+INPUT/OUTPUT PARAMETERS:
+  None.
+
+RETURN VALUE:
+ time stamp in track time scale unit
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+uint32 AVIFile::getMediaTimestampDeltaForCurrentSample(uint32 id)
+{
+  QTV_MSG_PRIO1( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_ERROR, "Timestamp delta @avifile: %d, ", m_sampleInfo[id].delta);
+   return m_sampleInfo[id].delta;
+}
+
 #ifdef FEATURE_QTV_REPOSITION_SYNC_FRAME
 /* ======================================================================
 FUNCTION:
@@ -1119,7 +1617,7 @@ DESCRIPTION:
   Skips specified sync samples in forward or backward direction.
 
 INPUT/OUTPUT PARAMETERS:
-  
+
 
 RETURN VALUE:
  none
@@ -1127,11 +1625,11 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ======================================================================*/
-uint32 AVIFile::skipNSyncSamples(int nSyncSamplesToSkip, 
-                                 uint32 id, 
-                                 bool *bError, 
+uint32 AVIFile::skipNSyncSamples(int nSyncSamplesToSkip,
+                                 uint32 id,
+                                 bool *bError,
                                  uint32 currentPosTimeStamp)
-{  
+{
   avi_sample_info sinfo;
 
   //Do quick sanity check
@@ -1143,8 +1641,8 @@ uint32 AVIFile::skipNSyncSamples(int nSyncSamplesToSkip,
   if(nSyncSamplesToSkip == 0)
   {
     //??? To avoid unnecessary Seek, just return 0 and set bError to TRUE.
-    QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, 
-                 "AVIFile::skipNSyncSamples nSyncSamplesToSkip is 0");    
+    QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH,
+                 "AVIFile::skipNSyncSamples nSyncSamplesToSkip is 0");
     *bError = true;
     return 0;
   }
@@ -1163,7 +1661,7 @@ uint32 AVIFile::skipNSyncSamples(int nSyncSamplesToSkip,
                   "AVIFile::skipNSyncSamples failed for trackid %ld nSyncSamplesToSkip %ld current TS %ld",
                   id,nSyncSamplesToSkip,currentPosTimeStamp);
     return 0;
-  } 
+  }
   *bError = false;
   QTV_MSG_PRIO4(QTVDIAG_FILE_OPS,
                 QTVDIAG_PRIO_HIGH,
@@ -1174,9 +1672,9 @@ uint32 AVIFile::skipNSyncSamples(int nSyncSamplesToSkip,
   m_sampleInfo[id].size = sinfo.nSampleSize;
   m_sampleInfo[id].sync = 1;
   m_sampleInfo[id].delta = sinfo.nDuration;
-  return sinfo.nTimeStamp;  
+  return sinfo.nTimeStamp;
 }
-#endif 
+#endif
 /* ======================================================================
 FUNCTION:
   AVIFile::resetPlayback
@@ -1248,6 +1746,12 @@ uint32 AVIFile::resetPlayback(  uint32 repos_time, uint32 id, bool bSetToSyncSam
   m_sampleInfo[id].size = sinfo.nSampleSize;
   m_sampleInfo[id].sync = 1;
   m_sampleInfo[id].delta = sinfo.nDuration;
+#ifdef FEATURE_MPEG4_B_FRAMES
+  //After seek we need to reset these variables to fill the ahead buffer with fresh data.
+  m_videoFramesReadAhead.firstVideoFrame = false;
+  m_videoFramesReadAhead.currentSampleIndex = 0;
+  m_videoFramesReadAhead.validSampleIndex = 0;
+#endif /* FEATURE_MPEG4_B_FRAMES */
   return sinfo.nTimeStamp;
 }
 /* ======================================================================
@@ -1828,9 +2332,9 @@ float AVIFile::getTrackVideoFrameRate(uint32 id)
   }
   if(m_pAVIParser->GetVideoInfo(id,&videoInfo)==AVI_SUCCESS)
   {
-    if(videoInfo.strhVideo.dwRate)
+    if(videoInfo.strhVideo.dwScale)
     {
-      return( (float)videoInfo.strhVideo.dwScale /(float)videoInfo.strhVideo.dwRate);
+      return( (float)videoInfo.strhVideo.dwRate /(float)videoInfo.strhVideo.dwScale);
     }
   }
   return 0;
@@ -2036,6 +2540,52 @@ uint32 AVIFile::getTrackAudioSamplingFreq(uint32 id)
   }
   return nSamplingFreq;
 }
+
+/* ======================================================================
+FUNCTION:
+  ASFFile::UpdateTrackIdInFilePointer
+
+DESCRIPTION:
+  Updates pull buffer's Track ID.
+
+INPUT/OUTPUT PARAMETERS:
+  None.
+
+RETURN VALUE:
+ none
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+void AVIFile::UpdateTrackIdInFilePointer()
+{
+  CHUNK_t cType;
+  if(m_pAVIParser)
+  {
+    int numStreams = m_pAVIParser->GetTotalNumberOfTracks();
+    for(int i = 0; i < numStreams; i++)
+    {
+      if((m_pAVIParser->GetTrackChunkType(i,&cType)==AVI_SUCCESS) && (cType == AVI_CHUNK_AUDIO))
+      {
+        if((m_playAudio) && (m_AviFilePtr))
+        {
+          m_AviFilePtr->pullBuf.trackId = i;
+        }
+      }
+      else if((m_pAVIParser->GetTrackChunkType(i,&cType)==AVI_SUCCESS) && (cType == AVI_CHUNK_VIDEO))
+      {
+        if((m_playVideo) && (m_AviFilePtr))
+        {
+          m_AviFilePtr->pullBuf.trackId = i;
+        }
+      }
+    }
+  }
+  else
+  {
+    QTV_MSG_PRIO(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR, "AVIFile::UpdateTrackIdInFilePointer m_pAVIParser is NULL");
+  }
+}
 /* ======================================================================
 FUNCTION:
   AVIFile::getAudioFrameDuration
@@ -2054,9 +2604,10 @@ SIDE EFFECTS:
 ======================================================================*/
 long  AVIFile::getAudioFrameDuration(int trackid)
 {
-  long frame_duration = 0;  
+  long frame_duration = 0;
   avi_audiotrack_summary_info ainfo;
-  avi_audio_info audtrackInfo;  
+  avi_audio_info audtrackInfo;
+  avi_audio_info aInfo ;
   CHUNK_t cType;
 
   if(!m_pAVIParser)
@@ -2071,19 +2622,28 @@ long  AVIFile::getAudioFrameDuration(int trackid)
         if( (m_pAVIParser->GetAudioInfo((avi_uint8)trackid,&audtrackInfo)==AVI_SUCCESS) &&
             (m_pAVIParser->GetAudioTrackSummaryInfo((avi_uint8)trackid,&ainfo)==AVI_SUCCESS))
         {
-          if(!ainfo.isVbr && (audtrackInfo.strhAudio.dwRate)) 
+          if(!ainfo.isVbr && (audtrackInfo.strhAudio.dwRate))
           {
             float framerate =  ( (float)audtrackInfo.strhAudio.dwScale /
                                              (float)audtrackInfo.strhAudio.dwRate );
             framerate *= 1000; //Convert to milliseconds.
             frame_duration = (long)framerate;
           }
-          else if((ainfo.audioFrequency) && ainfo.isVbr)
+          else if((audtrackInfo.strfAudio.nSamplesPerSec) && ainfo.isVbr && audtrackInfo.strhAudio.dwRate)
           {
-            float framerate = ( (float)(ainfo.nBlockAlign * 1000 /ainfo.audioFrequency));
+            double framerate = ((double)audtrackInfo.strhAudio.dwScale/audtrackInfo.strhAudio.dwRate)* 1000.f;
             //framerate *= 1000; //Convert to milliseconds.
-            frame_duration = (long)framerate;  
-          }          
+            frame_duration = (long)framerate;
+          }
+        }
+        if(m_pAVIParser->GetAudioInfo(trackid,&aInfo)==AVI_SUCCESS)
+        {
+          if((aInfo.strfAudio.wFormatTag == AVI_AUDIO_AC3) ||
+             (aInfo.strfAudio.wFormatTag == AVI_AUDIO_PCM))
+          {
+            frame_duration = (long) m_sampleInfo[trackid].delta;
+            QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, "frame_duration for AC3 or PCM is %d",frame_duration);
+          }
         }
         break;
         default:
@@ -2091,6 +2651,53 @@ long  AVIFile::getAudioFrameDuration(int trackid)
      }
   }
   return frame_duration;
+}
+/* ======================================================================
+FUNCTION:
+  AVIFile::SetIDX1Cache
+
+DESCRIPTION:
+  Sets IDX1 cache in AVIParser
+
+INPUT/OUTPUT PARAMETERS:
+  None.
+
+RETURN VALUE:
+ none
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+void  AVIFile::SetIDX1Cache(void* ptr)
+{
+  if(m_pAVIParser)
+  {
+    m_pAVIParser->SetIDX1Cache(ptr);
+  }
+}
+/* ======================================================================
+FUNCTION:
+  AVIFile::GetIDX1Cache
+
+DESCRIPTION:
+  Gets IDX1 cache from AVIParser
+
+INPUT/OUTPUT PARAMETERS:
+  None.
+
+RETURN VALUE:
+ none
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+void* AVIFile::GetIDX1Cache()
+{
+  if(m_pAVIParser)
+  {
+    return m_pAVIParser->GetIDX1Cache();
+  }
+  return NULL;
 }
 /* ======================================================================
 FUNCTION:
@@ -2269,14 +2876,38 @@ SIDE EFFECTS:
 ======================================================================*/
 uint32 AVIFile::peekCurSample(uint32 trackid, file_sample_info_type *pSampleInfo)
 {
+  CHUNK_t Type;
   if(!m_pAVIParser)
   {
     return AVI_PARSE_ERROR;
   }
   if( trackid < m_pAVIParser->GetTotalNumberOfTracks() )
   {
-    //ASSERT(pSampleInfo);//To DO
-    *pSampleInfo = m_sampleInfo[trackid];
+    if(m_pAVIParser->GetTrackChunkType(trackid,&Type) == AVI_SUCCESS)
+    {
+      switch(Type)
+      {
+        case AVI_CHUNK_VIDEO:
+#ifdef FEATURE_MPEG4_B_FRAMES
+          if(getTrackOTIType(trackid) == (uint8)MPEG4_VIDEO)
+          {
+            *pSampleInfo = m_avi_video_samples[(m_videoFramesReadAhead.currentSampleIndex + (AVI_MAX_VIDEO_FRAMES_READ_AHEAD -1)) % AVI_MAX_VIDEO_FRAMES_READ_AHEAD].m_sampleInfo;
+          }
+          else
+          {
+            *pSampleInfo = m_sampleInfo[trackid];
+          }
+#else
+         *pSampleInfo = m_sampleInfo[trackid];
+#endif /* FEATURE_MPEG4_B_FRAMES */
+          break;
+        case AVI_CHUNK_AUDIO:
+          *pSampleInfo = m_sampleInfo[trackid];
+          break;
+        default:
+          break;
+      }
+    }
     return EVERYTHING_FINE;
   }
   return DEFAULT_ERROR;
@@ -2314,9 +2945,23 @@ uint8 AVIFile::getTrackOTIType(uint32 id)
         case AVI_CHUNK_AUDIO:
          if(m_pAVIParser->GetAudioInfo(id,&aInfo)==AVI_SUCCESS)
           {
-            if(aInfo.strfAudio.wFormatTag == AVI_AUDIO_MP3)
-            {              
-              format = (uint8)MP3_AUDIO;          
+            switch(aInfo.strfAudio.wFormatTag)
+            {
+              case AVI_AUDIO_MP3:
+              format = (uint8)MP3_AUDIO;
+                break;
+              case AVI_AUDIO_AC3:
+                format = (uint8)AC3_AUDIO;
+                break;
+              case AVI_AUDIO_PCM:
+                format = PCM_AUDIO;
+                break;
+              case AVI_AUDIO_AAC:
+              case AVI_AUDIO_AAC_FAAD:
+                format = (uint8)MPEG4_AUDIO;
+                break;
+              default:
+              break;
             }
           }
           break;
@@ -2326,20 +2971,28 @@ uint8 AVIFile::getTrackOTIType(uint32 id)
 #ifdef FEATURE_QTV_AVI_DIVX_PARSER
             if(
                 (!memcmp(&vInfo.strhVideo.fccHandler,"divx",sizeof(fourCC_t))) ||
-                (!memcmp(&vInfo.strhVideo.fccHandler,"DIVX",sizeof(fourCC_t))) ||                        
+                (!memcmp(&vInfo.strhVideo.fccHandler,"DIVX",sizeof(fourCC_t))) ||
                 (!memcmp(&vInfo.strhVideo.fccHandler,"XVID",sizeof(fourCC_t))) ||
                 (!memcmp(&vInfo.strhVideo.fccHandler,"xvid",sizeof(fourCC_t))) ||
                 (!memcmp(&vInfo.strhVideo.fccHandler,"dx50",sizeof(fourCC_t))) ||
                 (!memcmp(&vInfo.strhVideo.fccHandler,"DX50",sizeof(fourCC_t))) ||
                 (!memcmp(&vInfo.strhVideo.fccHandler,"FMP4",sizeof(fourCC_t))) ||
-                (!memcmp(&vInfo.strhVideo.fccHandler,"fmp4",sizeof(fourCC_t)))
+                (!memcmp(&vInfo.strhVideo.fccHandler,"mp4v",sizeof(fourCC_t))) ||
+                (!memcmp(&vInfo.strhVideo.fccHandler,"MP4V",sizeof(fourCC_t))) ||
+                (!memcmp(&vInfo.strhVideo.fccHandler,"fmp4",sizeof(fourCC_t))) ||
+                (!memcmp(&vInfo.strhVideo.fccHandler,"YV12",sizeof(fourCC_t))) ||
+                (!memcmp(&vInfo.strhVideo.fccHandler,"yv12",sizeof(fourCC_t)))
               )
 #else
-            if(                
+            if(
                 (!memcmp(&vInfo.strhVideo.fccHandler,"xvid",sizeof(fourCC_t))) ||
                 (!memcmp(&vInfo.strhVideo.fccHandler,"XVID",sizeof(fourCC_t))) ||
                 (!memcmp(&vInfo.strhVideo.fccHandler,"FMP4",sizeof(fourCC_t))) ||
-                (!memcmp(&vInfo.strhVideo.fccHandler,"fmp4",sizeof(fourCC_t)))
+                (!memcmp(&vInfo.strhVideo.fccHandler,"mp4v",sizeof(fourCC_t))) ||
+                (!memcmp(&vInfo.strhVideo.fccHandler,"MP4V",sizeof(fourCC_t))) ||
+                (!memcmp(&vInfo.strhVideo.fccHandler,"fmp4",sizeof(fourCC_t))) ||
+                (!memcmp(&vInfo.strhVideo.fccHandler,"YV12",sizeof(fourCC_t))) ||
+                (!memcmp(&vInfo.strhVideo.fccHandler,"yv12",sizeof(fourCC_t)))
               )
 #endif  /* FEATURE_QTV_AVI_DIVX_PARSER */
               {
@@ -2353,10 +3006,10 @@ uint8 AVIFile::getTrackOTIType(uint32 id)
               }
 #ifdef FEATURE_DIVX_311_ENABLE
               else if(
-                       (!memcmp(&vInfo.strhVideo.fccHandler,"div3",sizeof(fourCC_t))) ||   
-                       (!memcmp(&vInfo.strhVideo.fccHandler,"DIV3",sizeof(fourCC_t))) ||   
-                       (!memcmp(&vInfo.strhVideo.fccHandler,"DIV4",sizeof(fourCC_t))) ||   
-                       (!memcmp(&vInfo.strhVideo.fccHandler,"div4",sizeof(fourCC_t))) 
+                       (!memcmp(&vInfo.strhVideo.fccHandler,"div3",sizeof(fourCC_t))) ||
+                       (!memcmp(&vInfo.strhVideo.fccHandler,"DIV3",sizeof(fourCC_t))) ||
+                       (!memcmp(&vInfo.strhVideo.fccHandler,"DIV4",sizeof(fourCC_t))) ||
+                       (!memcmp(&vInfo.strhVideo.fccHandler,"div4",sizeof(fourCC_t)))
                      )
               {
                 format = (uint8)DIVX311_VIDEO;
@@ -2501,11 +3154,10 @@ SIDE EFFECTS:
 ======================================================================*/
 int32 AVIFile::getTrackMaxBufferSizeDB(uint32 id)
 {
-  avi_video_info videoInfo;
   avi_audio_info audioInfo;
   CHUNK_t cType;
   avi_mainheader_avih aviHdr;
-  int32 bufferSize;
+  int32 bufferSize = AVI_DEFAULT_AUDIO_BUF_SIZE;
 
   if(!m_pAVIParser)
   {
@@ -2525,6 +3177,10 @@ int32 AVIFile::getTrackMaxBufferSizeDB(uint32 id)
           if(m_pAVIParser->GetAudioInfo(id,&audioInfo)==AVI_SUCCESS)
           {
             bufferSize = audioInfo.strhAudio.dwSuggestedBufferSize;
+            if (bufferSize == 0)
+            {
+               bufferSize = AVI_DEFAULT_AUDIO_BUF_SIZE;
+            }
           }
           else
           {
@@ -2542,7 +3198,10 @@ int32 AVIFile::getTrackMaxBufferSizeDB(uint32 id)
         {
           if(m_pAVIParser->GetAVIHeader(&aviHdr)==AVI_SUCCESS)
           {
+            uint32 width = getTrackVideoFrameWidth(id);
+            uint32 height = getTrackVideoFrameHeight(id);
             bufferSize = aviHdr.dwSuggestedBufferSize?aviHdr.dwSuggestedBufferSize:AVI_DEFAULT_VIDEO_BUF_SIZE;
+            bufferSize = MIN( (width*height*1.5), bufferSize );
           }
           else
           {
@@ -2579,7 +3238,7 @@ int32 AVIFile::getTrackAverageBitrate(uint32 id)
 {
   int32 nBitRate = 0;
   avi_audiotrack_summary_info audioSummaryInfo;
-  avi_video_info videoInfo;
+  //avi_video_info videoInfo;
   //int nFrames = 0;
   CHUNK_t cType;
 
@@ -2595,14 +3254,16 @@ int32 AVIFile::getTrackAverageBitrate(uint32 id)
       case AVI_CHUNK_AUDIO:
         if(m_pAVIParser->GetAudioTrackSummaryInfo(id,&audioSummaryInfo)==AVI_SUCCESS)
         {
-          nBitRate = audioSummaryInfo.audioBitrate;
+          nBitRate = audioSummaryInfo.audioBytesPerSec * 8;
         }
         break;
 
         case AVI_CHUNK_VIDEO:
-          if(m_pAVIParser->GetVideoInfo(id,&videoInfo)==AVI_SUCCESS)
+          avi_mainheader_avih avih;
+          if(m_pAVIParser->GetAVIHeader(&avih)==AVI_SUCCESS)
           {
-            //???//
+            //Since AVI format has no direct way of getting clip video bitrate, returning dwMaxByesPerSec
+            nBitRate = 8*(avih.dwMaxBytesPerSec);
           }
           break;
     }
@@ -2757,6 +3418,9 @@ SIDE EFFECTS:
 uint8 *AVIFile::getTrackDecoderSpecificInfoContent(uint32 id)
 {
   CHUNK_t cType;
+  uint32 pbufSize = (sizeof(fourCC_t)/2); //We prepare only 2 byte header for AAC audio
+  //MP4_ERROR_CODE errorCode = DEFAULT_ERROR;
+
   if(!m_pAVIParser)
   {
     return NULL;
@@ -2767,6 +3431,35 @@ uint8 *AVIFile::getTrackDecoderSpecificInfoContent(uint32 id)
     {
       case AVI_CHUNK_VIDEO:
         return m_pAVIParser->GetAVIVolHeader((avi_uint8)id);
+
+      case AVI_CHUNK_AUDIO:
+       {
+         avi_audiotrack_summary_info audioSummaryInfo;
+         avi_audio_info aInfo ;
+         if ( (m_pAVIParser->GetAudioTrackSummaryInfo(id,&audioSummaryInfo)==AVI_SUCCESS) &&
+              (m_pAVIParser->GetAudioInfo(id,&aInfo)==AVI_SUCCESS) &&
+              ((aInfo.strfAudio.wFormatTag == AVI_AUDIO_AAC) ||(aInfo.strfAudio.wFormatTag == AVI_AUDIO_AAC_FAAD) ))
+         {
+            uint32 index =0;
+            bool bError;
+            uint8* firstSampleBuf = (uint8*)QTV_Malloc(5000);
+            if(firstSampleBuf)
+            {
+              getNextMediaSample(id, firstSampleBuf, 5000, index);
+              avi_uint8 audio_object = ((firstSampleBuf[2] >> 6) & 0x03)+ 1;
+              avi_uint8 samplingFrequencyIndex = ((firstSampleBuf[2] >> 2) & 0x0F);
+              //avi_uint8 channelConfiguration   = ((firstSampleBuf[2] << 2) & 0x04) | ((firstSampleBuf[3] >> 6) & 0x03);
+              if(MAKE_AAC_AUDIO_CONFIG(m_TrackDecoderSpecificInfo, audio_object, samplingFrequencyIndex, audioSummaryInfo.nChannels, (uint8*)pbufSize))
+              {
+                //errorCode = EVERYTHING_FINE;
+              }
+              resetPlayback(0, id, false, &bError, 1);
+              QTV_Free(firstSampleBuf);
+              return m_TrackDecoderSpecificInfo;
+            }
+        }
+        break;
+      }
     }
   }
   return NULL;
@@ -2790,6 +3483,9 @@ SIDE EFFECTS:
 uint32 AVIFile::getTrackDecoderSpecificInfoSize(uint32 id)
 {
  CHUNK_t cType;
+ //uint8 *buf = NULL;
+ uint32 pbufSize = (sizeof(fourCC_t)/2); //Only for AAC audio
+
  if(!m_pAVIParser)
  {
    return 0;
@@ -2800,6 +3496,17 @@ uint32 AVIFile::getTrackDecoderSpecificInfoSize(uint32 id)
    {
      case AVI_CHUNK_VIDEO:
        return (m_pAVIParser->GetAVIVolHeaderSize(id));
+
+     case AVI_CHUNK_AUDIO:
+       avi_audiotrack_summary_info audioSummaryInfo;
+       avi_audio_info aInfo ;
+       if ( (m_pAVIParser->GetAudioTrackSummaryInfo(id,&audioSummaryInfo)==AVI_SUCCESS) &&
+            (m_pAVIParser->GetAudioInfo(id,&aInfo)==AVI_SUCCESS) &&
+            ((aInfo.strfAudio.wFormatTag == AVI_AUDIO_AAC) ||(aInfo.strfAudio.wFormatTag == AVI_AUDIO_AAC_FAAD) ))
+       {
+        QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_HIGH, "AVIFile::getTrackDecoderSpecificInfoSize pbufSize %d", pbufSize);
+        return pbufSize;
+       }
 
      default:
        break;
@@ -2979,7 +3686,11 @@ DESCRIPTION
 void AVIFile::sendParserEvent(Common::ParserStatusCode status)
 {
   parserState = status;
+#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
   QTV_HTTP_PARSER_STATUS_EVENT_type *pEvent = QCCreateMessage(QTV_HTTP_PARSER_STATUS_EVENT, m_pMpeg4Player);
+#else
+  QTV_PS_PARSER_STATUS_EVENT_type *pEvent = QCCreateMessage(QTV_PS_PARSER_STATUS_EVENT, m_pMpeg4Player);
+#endif
 
   if (pEvent)
   {
@@ -3332,5 +4043,59 @@ SIDE EFFECTS:
 //  return WMCDec_Succeeded;
 //}
 #endif //  FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+/* ======================================================================
+FUNCTION:
+  AVIFile::isADTSHeader()
 
+DESCRIPTION:
+  Check if audio has ADTS header
+
+INPUT/OUTPUT PARAMETERS:
+  None.
+
+RETURN VALUE:
+ TRUE or FALSE
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+bool AVIFile::isADTSHeader()
+{
+  CHUNK_t chunkType;
+  for(int id = 0; id < m_nNumStreams; id++)
+  {
+    // Get the chunk type corresponding to track number.
+    m_pAVIParser->GetTrackChunkType(id,&chunkType);
+
+    if(chunkType == AVI_CHUNK_AUDIO)
+    {
+      avi_audiotrack_summary_info audioSummaryInfo;
+      avi_audio_info aInfo ;
+      if ( (m_pAVIParser->GetAudioTrackSummaryInfo(id,&audioSummaryInfo)==AVI_SUCCESS) &&
+           (m_pAVIParser->GetAudioInfo(id,&aInfo)==AVI_SUCCESS) &&
+           ((aInfo.strfAudio.wFormatTag == AVI_AUDIO_AAC) ||(aInfo.strfAudio.wFormatTag == AVI_AUDIO_AAC_FAAD) ))
+      {
+        //Get the first audio sample,check if it has ADTS header
+        uint8* firstSampleBuf = (uint8*)QTV_Malloc(5000);
+        uint32 index =0;
+        bool bError;
+
+        if(firstSampleBuf)
+        {
+          getNextMediaSample(id, firstSampleBuf, 5000, index);
+          if((firstSampleBuf[0] == 0xFF) && (firstSampleBuf[1]&0xF0 == 0xF0))
+          {
+            return true;
+          }
+          else
+          {
+            return false;
+          }
+          resetPlayback(0, id, false, &bError, 1);
+          QTV_Free(firstSampleBuf);
+        }
+      }
+    }
+  }
+}
 #endif /* FEATURE_QTV_AVI */

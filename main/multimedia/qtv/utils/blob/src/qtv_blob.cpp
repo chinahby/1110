@@ -9,9 +9,9 @@
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/blob/main/latest/src/qtv_blob.cpp#1 $
-$DateTime: 2008/05/08 11:03:24 $
-$Change: 656211 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/blob/main/latest/src/qtv_blob.cpp#2 $
+$DateTime: 2009/11/30 03:18:44 $
+$Change: 1098040 $
 
 ========================================================================== */
 
@@ -28,6 +28,7 @@ $Change: 656211 $
 #include "customer.h"
 #include "qtvInternalDefs.h"
 #include "qtv_blob.h"
+#include "qcutils.h"
 #include "qtvsystem.h"
 #include "qtv_msg.h"
 #include "assert.h"
@@ -85,7 +86,7 @@ qtv_blob_class::memory_tag::memory_tag( const uint8* ptr, uint32 size )
   mem_ptr( 0 ),
   mem_size( 0 )
 {
-  rex_init_crit_sect( &cs );
+  QCUtils::InitCritSect( &cs );
   if ( size > 0 )
   {
     mem_ptr = ( uint8* )QTV_Malloc( size );
@@ -118,6 +119,7 @@ qtv_blob_class::memory_tag::~memory_tag( void )
     #endif
     QTV_Free( mem_ptr );
   }
+  QCUtils::DinitCritSect(&cs);
 }
 
 /************************************************************************* */
@@ -266,10 +268,10 @@ void qtv_blob_class::copy( const qtv_blob_class& other )
 
   if ( other.m_tag_ptr )
   {
-    rex_enter_crit_sect( &other.m_tag_ptr->cs );
+    QCUtils::EnterCritSect( &other.m_tag_ptr->cs );
     m_tag_ptr = other.m_tag_ptr;
     ++( m_tag_ptr->ref_cnt );
-    rex_leave_crit_sect( &other.m_tag_ptr->cs );
+    QCUtils::LeaveCritSect( &other.m_tag_ptr->cs );
   }
 }
 
@@ -311,13 +313,13 @@ void qtv_blob_class::release_tag( void )
 
   if ( m_tag_ptr )
   {
-    rex_enter_crit_sect( &m_tag_ptr->cs );
+    QCUtils::EnterCritSect( &m_tag_ptr->cs );
     --( m_tag_ptr->ref_cnt );
     if ( m_tag_ptr->ref_cnt < 1 )
     {
       delete_tag = true;
     }
-    rex_leave_crit_sect( &m_tag_ptr->cs );
+    QCUtils::LeaveCritSect( &m_tag_ptr->cs );
 
     if ( delete_tag )
     {

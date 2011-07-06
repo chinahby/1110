@@ -1720,7 +1720,8 @@ API_EXTERN ipl_status_type ipl2_rot_add_crop
   ------------------------------------------------------------------------*/
   if ( ipl2_init() != IPL_SUCCESS )
   {
-    IPL2_MSG_FATAL( "ipl2_rot_add_crop :: Could not initialize IPL2_IPL lookup tables", 0, 0, 0);
+    IPL2_MSG_FATAL( "ipl2_rot_add_crop :: /\
+                    Could not initialize IPL2_IPL lookup tables", 0, 0, 0);
     return( IPL_FAILURE );
   }
 
@@ -1729,7 +1730,8 @@ API_EXTERN ipl_status_type ipl2_rot_add_crop
    -----------------------------------------------------------------------*/
   if ( !crop || !i_img_ptr || !o_img_ptr )
   {
-    IPL2_MSG_FATAL( "ipl2_rot_add_crop failed crop = %x,i_img_ptr = %x, o_img_ptr = %x", (uint32) crop,
+    IPL2_MSG_FATAL( "ipl2_rot_add_crop failed crop = %x, /\
+                   i_img_ptr = %x, o_img_ptr = %x", (uint32) crop,
                    (uint32) i_img_ptr, (uint32) o_img_ptr);
     return( IPL_FAILURE );
   }
@@ -1741,7 +1743,8 @@ API_EXTERN ipl_status_type ipl2_rot_add_crop
 
     if ( !i_img_ptr->imgPtr || !o_img_ptr->imgPtr )
     {
-      IPL2_MSG_FATAL( "ipl2_rot_add_crop failed  i_img_ptr->imgPtr = %x, o_img_ptr->imgPtr = %x", (uint32) i_img_ptr->imgPtr,
+      IPL2_MSG_FATAL( "ipl2_rot_add_crop failed  i_img_ptr->imgPtr = %x, /\
+                   o_img_ptr->imgPtr = %x", (uint32) i_img_ptr->imgPtr,
                    (uint32) o_img_ptr->imgPtr, 0);
 
       return( IPL_FAILURE );
@@ -1756,7 +1759,11 @@ API_EXTERN ipl_status_type ipl2_rot_add_crop
     if ( (input_frame_ptr->cFormat != IPL_RGB565) &&
       (!input_frame_ptr->imgPtr ) )
     {
-      IPL2_MSG_FATAL( "ipl2_rot_add_crop failed Frame input_frame_ptr = %p, color format = %d, imgptr = %p", input_frame_ptr, input_frame_ptr->cFormat, input_frame_ptr->imgPtr );
+      IPL2_MSG_FATAL( "ipl2_rot_add_crop failed Frame /\
+                    input_frame_ptr = %p, color format = %d, imgptr = %p",
+                    input_frame_ptr, input_frame_ptr->cFormat,
+                    input_frame_ptr->imgPtr
+                    );
       /*--------------------------------------------------------------------
             Only RGB Frame format currently supported
       --------------------------------------------------------------------*/
@@ -1770,7 +1777,11 @@ API_EXTERN ipl_status_type ipl2_rot_add_crop
   if ( icon_list_ptr && !((i_img_ptr->cFormat == IPL_RGB565) &&
     (o_img_ptr->cFormat == IPL_RGB565)) )
   {
-    IPL2_MSG_FATAL( "ipl2_rot_add_crop failed on icon processing iii_list_ptr = %p,i_img_ptr->cFormat = %p, o_img_ptr->cFormat = %d", icon_list_ptr, i_img_ptr->cFormat, o_img_ptr->cFormat );
+    IPL2_MSG_FATAL( "ipl2_rot_add_crop failed on icon processing /\
+                     iii_list_ptr = %p, /\
+                     i_img_ptr->cFormat = %p, o_img_ptr->cFormat = %d",
+                     icon_list_ptr, i_img_ptr->cFormat,
+                     o_img_ptr->cFormat );
     return(IPL_FAILURE);
   }
 
@@ -1783,9 +1794,15 @@ API_EXTERN ipl_status_type ipl2_rot_add_crop
     /*----------------------------------------------------------------------
              Invalid dimensions set
      ---------------------------------------------------------------------*/
-    IPL2_MSG_FATAL( "ipl2_rot_add_crop failed for invalid crop setting crop->x = %d,crop->dx= %d, o_img_ptr->dx = %d", crop->x,crop->dx, o_img_ptr->dx);
+    IPL2_MSG_FATAL( "ipl2_rot_add_crop failed for invalid crop setting /\
+                   crop->x = %d, /\
+                   crop->dx= %d, o_img_ptr->dx = %d", crop->x,
+                   crop->dx, o_img_ptr->dx);
 
-    IPL2_MSG_FATAL( "ipl2_rot_add_crop failed for invalid crop setting crop->y = %d,crop->dy= %d, o_img_ptr->dy = %d", crop->y,crop->dy, o_img_ptr->dy);
+    IPL2_MSG_FATAL( "ipl2_rot_add_crop failed for invalid crop setting /\
+                   crop->y = %d, /\
+                   crop->dy= %d, o_img_ptr->dy = %d", crop->y,
+                   crop->dy, o_img_ptr->dy);
 
     return(IPL_FAILURE);
   }
@@ -1798,9 +1815,15 @@ API_EXTERN ipl_status_type ipl2_rot_add_crop
   {
     if( (i_img_ptr->dx < crop->dx) || (i_img_ptr->dy < crop->dy ) )
     {
-      IPL2_MSG_FATAL( "ipl2_rot_add_crop not proceeding with less than perfect  crop setting  crop->dx = %d, i_img_ptr->dx = %d, IPL_ROT = %d", crop->dx,i_img_ptr->dx, rotate);
+      IPL2_MSG_FATAL( "ipl2_rot_add_crop not proceeding with less than /\
+                    perfect  crop setting  crop->dx = %d, /\
+                     i_img_ptr->dx = %d, IPL_ROT = %d", crop->dx,
+                     i_img_ptr->dx, rotate);
 
-      IPL2_MSG_FATAL( "ipl2_rot_add_crop not proceeding with less than perfect crop setting crop->dy = %d, i_img_ptr->dy = %d", crop->dy,i_img_ptr->dy, 0);
+      IPL2_MSG_FATAL( "ipl2_rot_add_crop not proceeding with less than /\
+                    perfect crop setting crop->dy = %d, /\
+                   i_img_ptr->dy = %d", crop->dy,
+                   i_img_ptr->dy, 0);
       return( IPL_FAILURE );
     }
   }
@@ -1808,9 +1831,15 @@ API_EXTERN ipl_status_type ipl2_rot_add_crop
   {
       if( (i_img_ptr->dy < crop->dx) || (i_img_ptr->dx < crop->dy ) )
       {
-        IPL2_MSG_FATAL( "ipl2_rot_add_crop not proceeding with less than perfect crop setting  crop->dx = %d,i_img_ptr->dx = %d, IPL_ROT = %d", crop->dx, i_img_ptr->dx, rotate);
+        IPL2_MSG_FATAL( "ipl2_rot_add_crop not proceeding with less than /\
+                        perfect crop setting  crop->dx = %d, /\
+                       i_img_ptr->dx = %d, IPL_ROT = %d", crop->dx,
+                       i_img_ptr->dx, rotate);
 
-        IPL2_MSG_FATAL( "ipl2_rot_add_crop not proceeding with less than perfect crop setting crop->dy = %d,i_img_ptr->dy = %d", crop->dy,i_img_ptr->dy, 0);
+        IPL2_MSG_FATAL( "ipl2_rot_add_crop not proceeding with less than /\
+                        perfect crop setting crop->dy = %d, /\
+                       i_img_ptr->dy = %d", crop->dy,
+                       i_img_ptr->dy, 0);
 
         return( IPL_FAILURE );
       }

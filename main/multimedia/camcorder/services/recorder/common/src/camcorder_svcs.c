@@ -14,10 +14,11 @@
  This section contains comments describing changes made to this file.
  Notice that changes are listed in reverse chronological order.
 
- $Header: //source/qcom/qct/multimedia/camcorder/services/recorder/6k/common/rel/1.1.0/src/camcorder_svcs.c#2 $
+ $Header: //source/qcom/qct/multimedia/camcorder/services/recorder/6k/common/rel/1.1.0/src/camcorder_svcs.c#3 $
 
  when         who    what, where, why
  --------  -----  ----------------------------------------------------------
+ 01/28/11  kamit  Added FLUSH api call for frameoverlay preview buffer.
  03/31/10   kamit    Changes merged for simultaneous handling of failure and stop
  04/22/09  ps     Used QCAMERA client for voting high ARM clock
  04/14/09  ps     Changes done after changed in IPL for frame overlay
@@ -119,7 +120,7 @@
 #include "video_enc.h"
 #include "camera_svcs.h"
 #include "camcorder_svcs.h"
-
+#include "qdsp.h"
 /* To obtain hardware version (chip id) or */
 #if defined FEATURE_H264_ENCODER || defined FEATURE_CAMCORDER_AAC_REC
 #include "hw.h"
@@ -2321,6 +2322,7 @@ camera_ret_code_type camcorder_create_preview_overlay(ipl_image_type *overlay,
     preview_overlay->dx      = img.dx;
     preview_overlay->dy      = img.dy;
   }
+  FLUSH_DATA_CACHE(preview_overlay->imgPtr,size);
 #ifdef FEATURE_MDP
   camera_svcs_display_frame_overlay(FALSE);
 #endif /* FEATURE_MDP */

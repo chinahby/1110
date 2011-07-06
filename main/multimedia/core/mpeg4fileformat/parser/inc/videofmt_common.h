@@ -18,7 +18,7 @@ Copyright(c) 2002 by QUALCOMM, Incorporated. All Rights Reserved.
   This section contains comments describing changes made to this file.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/parser/main/latest/inc/videofmt_common.h#5 $
+  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/parser/main/latest/inc/videofmt_common.h#10 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
@@ -187,9 +187,11 @@ when       who     what, where, why
 #define AVCC_TYPE 0x61766343  /* 'avcC' */
 #define BTRT_TYPE 0x62747274  /* 'btrt' */
 #define STCO_TYPE 0x7374636F  /* 'stco' */
+#define CO64_TYPE 0x636F3634  /* 'co64' */
 #define STSC_TYPE 0x73747363  /* 'stsc' */
 #define STSZ_TYPE 0x7374737A  /* 'stsz' */
 #define STTS_TYPE 0x73747473  /* 'stts' */
+#define CTTS_TYPE 0x63747473  /* 'ctts' */
 #define STSS_TYPE 0x73747373  /* 'stss' */
 #define FREE_TYPE 0x66726565  /* 'free' */
 #define SKIP_TYPE 0x736B6970  /* 'skip' */
@@ -288,6 +290,7 @@ typedef enum {
   VIDEO_FMT_BUSY,           /* NULL            */
   VIDEO_FMT_FRAGMENT,       /* info            */
   VIDEO_FMT_FRAGMENT_SIZE,
+  VIDEO_FMT_FRAGMENT_PEEK,
   VIDEO_FMT_ABS_FILE_OFFSET,
   VIDEO_FMT_DATA_INCOMPLETE,
   VIDEO_FMT_INIT,
@@ -358,6 +361,8 @@ typedef struct {
   uint8    audio_object_type;
   uint8    channel_configuration;
   uint8    ep_config;
+  boolean  sbr_present_flag;
+  uint8    ps_present_flag;
   boolean  aac_section_data_resilience_flag;
   boolean  aac_scalefactor_data_resilience_flag;
   boolean  aac_spectral_data_resilience_flag;
@@ -541,7 +546,8 @@ typedef struct {
   uint32 sample; /* sample number (first sample is zero)                    */
   uint32 size;   /* size of sample in bytes                                 */
   uint32 offset; /* offset of sample in stream, in bytes                    */
-  uint32 time;   /* composition time of sample, in the media timescale      */
+  uint32 time;   /* decode time of sample, in the media timescale      */
+  uint32 decode_time;   /* composition time of sample, in the media timescale  */
   uint32 delta;  /* difference between composition time of this sample and  */
                  /* the next sample, in the media timescale                 */
   uint32 sync;   /* Indication if sample is a random access point           */
@@ -1414,6 +1420,7 @@ typedef struct {
   video_fmt_sync_sample_cb_func_type  sync_sample_cb;
   video_fmt_parse_fragment_cb_func_type parse_fragment_cb;
   video_fmt_fragment_size_cb_func_type fragment_size_cb;
+  video_fmt_fragment_size_cb_func_type fragment_size_peek_cb;
   video_fmt_largest_frame_size_cb_func_type largest_frame_size_cb;
   uint32                              abs_file_offset;
   video_fmt_abs_file_offset_cb_func_type         abs_file_offset_cb;

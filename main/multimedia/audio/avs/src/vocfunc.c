@@ -176,10 +176,12 @@ Copyright(c) 1999 - 2008 by QUALCOMM, Incorporated. All Rights Reserved.
   This section contains comments describing changes made to this file.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //depot/asic/qsc1100/multimedia/audio/avs/src/vocfunc.c#3 $ $DateTime: 2010/04/21 23:51:58 $ $Author: digishp $
+$Header: //depot/asic/qsc1100/multimedia/audio/avs/src/vocfunc.c#4 $ $DateTime: 2010/09/26 23:15:28 $ $Author: asifmd $
 
 when       who     what, where, why
---------   ---     ------------------------------------------------------------
+--------   ---     ------------------------------------------------------------ 
+09/27/10   aim     Modified code so that A2DP link is enabled only if 
+                   FW supports A2DP over current playback format.  
 04/15/10    dp     Fixed the issue of ADPCM playback not starting when GRAPH image
                    is loaded.
 03/23/10   skr     Modified code to send ADPCM decoder start command when ADPCM 
@@ -3976,6 +3978,46 @@ void voc_register_a2dp_enabled_cb(voc_bt_link_enabled_cb_type cb)
     voc_bt_a2dp_link_enabled_cb = cb;
   }
 }
+/* <EJECT> */
+/*===========================================================================
+
+FUNCTION voc_check_and_enable_bt_a2dp
+
+DESCRIPTION
+  Enables the BT A2DP link if the A2DP is supported by FW for the current playback format. 
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None.
+
+SIDE EFFECTS
+  None.
+
+===========================================================================*/
+void voc_check_and_enable_bt_a2dp()
+{
+  voc_state_control_type     *state;
+  state = voc_state_get_state_data();
+  if((state->config == VOC_CAP_AMR)      || (state->config == VOC_CAP_IS733) 
+           || (state->config == VOC_CAP_IS127)     
+#ifdef FEATURE_AMR_WB_AUDIO_DEC
+           || (state->config == VOC_CAP_AMR_WB)
+#endif
+           || (state->config == VOC_CAP_4GV_NB)  || (state->config == VOC_CAP_4GV_WB)
+           || (state->config == VOC_CAP_GSM_EFR) || (state->config ==VOC_CAP_GSM_FR)
+           || (state->config == VOC_CAP_GSM_HR))
+        {        
+#if defined(QDSP_vocoderPpFirstInitFlag)
+#error code not present
+#endif
+        }
+        else{
+          voc_enable_bt_a2dp();
+        }
+}
+
 /* <EJECT> */
 /*===========================================================================
 
@@ -4068,7 +4110,7 @@ boolean voc_check_bt_a2dp (
       voc_check_bt_ag(VOC_BT_OP_AG_FORCE_DISABLE);
 
       if (voc_bt_state == VOC_BT_STATE_DISABLED) {
-      voc_enable_bt_a2dp();
+      voc_check_and_enable_bt_a2dp();
     }
     }
     else if ((VOC_BT_STATE_A2DP_SBC_CONFIG_PENDING == voc_bt_state)
@@ -4085,7 +4127,7 @@ boolean voc_check_bt_a2dp (
     {
       /* If the state is DISABLED, codec is SBC, BT APP is active and
       if we are being asked to enable the connection lets go ahead and do it */
-      voc_enable_bt_a2dp();
+      voc_check_and_enable_bt_a2dp();
     }
   }
 

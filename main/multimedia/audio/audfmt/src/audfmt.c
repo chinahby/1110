@@ -44,10 +44,12 @@ Copyright(c) 2000 - 2007 by QUALCOMM, Incorporated. All Rights Reserved.
   This section contains comments describing changes made to this file.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //depot/asic/qsc1100/multimedia/audio/audfmt/src/audfmt.c#1 $
+  $Header: //depot/asic/qsc1100/multimedia/audio/audfmt/src/audfmt.c#2 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+09/29/10   rp/kk   Added code to exit safely while playing corrupt midi
+                   content. Fixed CR-241233.
 04/22/10   sk      Modified the code to add div by zero check in 
                    audfmt_calc_routine().
 10/23/09    kk      Fixed issues related to GET_SPECS & GET_TIME callback 
@@ -12863,6 +12865,12 @@ static boolean do_midi_head (
     tlong = AUDFMT_MAX_MIDI_TRACKS;
   }
 
+  if(!tlong) {
+    MSG_HIGH("(%d)tracks cannot be ZERO ",tlong, 0, 0);
+    MSG_ERROR("Unrecognized midi file!",0,0,0);
+    return(FALSE);
+  }
+
   midi_ctl->num_tracks = tlong;
 
   /* Determine PPQN */
@@ -19040,7 +19048,11 @@ static boolean audfmt_parse_single (
           audfmt_do_play_cb(midi_ctl->handle, SND_CMX_AF_FAILURE, 0, NULL);
           midi_ctl->midi_status = 0;
           audfmt_check_reset_calc_time();
-          return(FALSE);
+          if(midi_ctl->tracks->skip_buf_count != 0) {
+            return(TRUE);
+          }else{
+            return(FALSE);
+          }
         } else if(!(midi_ctl->midi_status & AUDFMT_MASK_PARSE_DELAYED)) {
           /* Add tick amount to elapsed tick */
           midi_ctl->elapsed_tick += midi_ctl->delta_tick;

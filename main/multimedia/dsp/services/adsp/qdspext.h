@@ -4,7 +4,7 @@
 /*
 WARNING: This file is auto-generated.
 
-Generated at:    Sat Apr 24 23:07:12 2010
+Generated at:    Fri Apr 29 05:50:08 2011
 Generated using: MSMSHARED_EXT_PARSER.00.11.00.01.07
 Generated from:
 
@@ -85,7 +85,7 @@ DESCRIPTION
 
 REFERENCES
 
-Copyright (c) 2010 by QUALCOMM, Incorporated.  All Rights Reserved.
+Copyright (c) 2011 by QUALCOMM, Incorporated.  All Rights Reserved.
 ===========================================================================*/
 
 /* <EJECT> */
@@ -1388,7 +1388,7 @@ extern const qdspext_data_type qdsp_data_table;
 #define QDSP_IMAGE_CRYPT_LENGTH 20664
 #endif
 #ifdef FEATURE_CAMERA
-#ifdef T_QSC1110
+#ifdef T_QSC1110 // Gemsea Add
 #define QDSP_IMAGE_SA_DS05_DEFINED
 #define QDSP_IMAGE_SA_DS05_LENGTH 6970
 #endif
@@ -1565,7 +1565,7 @@ typedef enum
 #endif
 #if (defined(FEATURE_AUDIO_CAMERA_CONCURRENCY)) || \
  (defined(FEATURE_AVS_NEXTGEN_EC) && defined(FEATURE_AMR_VOCODER))
-#ifdef T_QSC1110
+#ifdef T_QSC1110// Gemsea Add
 #define QDSP_MODULE_VFE05_DEFINED
 #endif
 #endif
@@ -1634,12 +1634,12 @@ typedef enum
 #define QDSP_MODULE_CRYPTO_DEFINED
 #endif
 #if (defined(FEATURE_CAMERA))
-#ifdef T_QSC1110
+#ifdef T_QSC1110// Gemsea Add
 #define QDSP_MODULE_SA_DS05_DEFINED
 #endif
 #endif
 #if (defined(FEATURE_AUDIO_CAMERA_CONCURRENCY))
-#ifdef T_QSC1110
+#ifdef T_QSC1110// Gemsea Add
 #define QDSP_MODULE_VFE05_CAPTURE_DEFINED
 #endif
 #endif

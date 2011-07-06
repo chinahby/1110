@@ -13,10 +13,14 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/decoder/transform/common/rel/2.0/inc/tl_types.h#1 $
-$DateTime: 2008/11/03 04:38:22 $
-$Change: 775446 $
+$Header: //source/qcom/qct/multimedia/qtv/decoder/transform/common/rel/2.0/inc/tl_types.h#5 $
+$DateTime: 2010/12/15 22:39:10 $
+$Change: 1555888 $
 
+when       who      what, where, why
+--------   ---      ---------------------------------------------------------
+04/08/09    vs      Remove the dependencies of other modules.
+--------   ---      ---------------------------------------------------------
 ========================================================================== */
 
 /* =======================================================================
@@ -28,12 +32,12 @@ $Change: 775446 $
                      INCLUDE FILES FOR MODULE
 
 ========================================================================== */
-#include "qtvInternalDefs.h"
 #include "queue.h"
 #include "assert.h"
 #include "comdef.h"
 
 #include "VDL_Types.h"
+
 
 /* ==========================================================================
 
@@ -48,27 +52,32 @@ $Change: 775446 $
 ** Type Declarations
 ** ----------------------------------------------------------------------- */
 
+#define VIDEO_WVGA_WIDTH          800
+#define VIDEO_WVGA_HEIGHT         480
+#define VIDEO_VGA_WIDTH           640
+#define VIDEO_VGA_HEIGHT          480
+#define VIDEO_WQVGA_WIDTH         400
+#define VIDEO_WQVGA_HEIGHT        240
+#define VIDEO_QCIF_WIDTH          176
+#define VIDEO_QCIF_HEIGHT         144
+#define VIDEO_QVGA_WIDTH          320
+#define VIDEO_QVGA_HEIGHT         240
+
 #ifdef FEATURE_QTV_WVGA_ENABLE
-  #define VIDEO_WVGA_WIDTH            800
-  #define VIDEO_WVGA_HEIGHT           480
   #define VIDEO_MAX_DSP_WIDTH         VIDEO_WVGA_WIDTH
   #define VIDEO_MAX_DECODE_WIDTH      VIDEO_WVGA_WIDTH
   #define VIDEO_MAX_DECODE_HEIGHT     VIDEO_WVGA_HEIGHT
 #elif defined FEATURE_QTV_VGA_ENABLE
-  #define VIDEO_VGA_WIDTH             640
-  #define VIDEO_VGA_HEIGHT            480
   #define VIDEO_MAX_DSP_WIDTH         VIDEO_VGA_WIDTH
   #define VIDEO_MAX_DECODE_WIDTH      VIDEO_VGA_WIDTH
   #define VIDEO_MAX_DECODE_HEIGHT     VIDEO_VGA_HEIGHT
+#elif defined FEATURE_QTV_WQVGA_ENABLE
+#error code not present
 #elif defined FEATURE_QTV_QCIF_ENABLE
-  #define VIDEO_QCIF_WIDTH             176
-  #define VIDEO_QCIF_HEIGHT            144
   #define VIDEO_MAX_DSP_WIDTH         VIDEO_QCIF_WIDTH
   #define VIDEO_MAX_DECODE_WIDTH      VIDEO_QCIF_WIDTH
   #define VIDEO_MAX_DECODE_HEIGHT     VIDEO_QCIF_HEIGHT  
 #else 
-  #define VIDEO_QVGA_WIDTH             320
-  #define VIDEO_QVGA_HEIGHT            240
   #define VIDEO_MAX_DSP_WIDTH         VIDEO_QVGA_WIDTH
   #define VIDEO_MAX_DECODE_WIDTH      VIDEO_QVGA_WIDTH
   #define VIDEO_MAX_DECODE_HEIGHT     VIDEO_QVGA_HEIGHT
@@ -79,6 +88,8 @@ $Change: 775446 $
   #define MAX_MB    1500
 #elif defined FEATURE_QTV_VGA_ENABLE
   #define MAX_MB    1200
+#elif defined FEATURE_QTV_WQVGA_ENABLE
+#error code not present
 #else
   #define MAX_MB    300  
 #endif /* FEATURE_QTV_WVGA_ENABLE */
@@ -183,7 +194,9 @@ typedef struct
                                 /* transported to upper layers in a         */
                                 /* a VDEC_FRAME. It is freed when the frame */
                                 /* buffer is released.                      */
+#ifdef FEATURE_MPEG4_DEBLOCKER								
   MP4DeblockerInfoType DeblockerInfo;
+#endif
 
 #if defined(FEATURE_VIDEO_PLAYER_INTERFACE_REV_2A) && defined(FEATURE_MP4_H263_ANNEX_J) 
 #error code not present

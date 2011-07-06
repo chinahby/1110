@@ -18,10 +18,11 @@ Copyright(c) 2002 by QUALCOMM, Incorporated. All Rights Reserved.
   This section contains comments describing changes made to this file.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/parser/main/latest/inc/video_common.h#1 $
+  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/parser/main/latest/inc/video_common.h#2 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+06/03/09  prs      Changes to support mehd info API, added mehd info callback to video client handle
 06/29/07   kadhir  Added max and dynamic bitrate support for camcorder recording
 11/09/06   jk      Added VIDEO_ALLOC and VIDEO_FREE.
 04/03/06   wyh     Remove old video types that are no longer valid.
@@ -350,9 +351,19 @@ typedef uint32 (*video_method_client_cb_func_ptr_type) (
   uint32             offset,       /* Destination byte offset in file   */
   void               *client_data  /* Client data from calling function */
 );
+/*callback function to return mehd related info back to client in VIDEO_METHOD_CLIENT type*/
+typedef uint32 (*video_method_client_mehd_info_cb_func_ptr_type) 
+(
+  uint32 frag_total_duration, /*Total fragment duration in movie time scale*/
+  uint32 mehd_offset,         /*offset for mehd atom, in bytes.
+  								In case of recording stopped at first fragment, this will be set to 0 to denote it to client*/
+  uint32 frag_duration_size  /*size of the duration field, in bytes*/
+);
+
 typedef struct {
   video_method_type    method;     /* This must be VIDEO_METHOD_CLIENT      */
   video_method_client_cb_func_ptr_type  data_push_fn; /* Data push function */
+  video_method_client_mehd_info_cb_func_ptr_type  mehd_info_data_push_fn; /*data push function for mehd info*/
   void                 *client_data;  /* Client data from calling function  */
 } video_handle_type_client;
 

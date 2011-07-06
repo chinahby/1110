@@ -14,9 +14,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/qc/main/latest/inc/qcutils.h#1 $
-$DateTime: 2008/05/09 08:14:38 $
-$Change: 657007 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/qc/main/latest/inc/qcutils.h#3 $
+$DateTime: 2009/12/03 02:35:48 $
+$Change: 1101863 $
 
 
 ========================================================================== */
@@ -33,6 +33,7 @@ $Change: 657007 $
 /* Includes custmp4.h. The following 2 includes must be the first includes in this file! */
 #include "customer.h"
 #include "qtvInternalDefs.h"
+//#include "rex.h"
 #include "qcplayer.h"
 
 // Include the definitions for
@@ -141,6 +142,7 @@ public:
   /////////////////////////////////////////
 
   static void InitCritSect(QCCritSectType *p);
+  static void DinitCritSect(QCCritSectType *p);
   static void EnterCritSect(QCCritSectType *p);
   static void LeaveCritSect(QCCritSectType *p);
 

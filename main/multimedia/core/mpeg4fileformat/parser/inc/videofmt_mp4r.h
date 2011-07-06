@@ -19,7 +19,7 @@ Copyright(c) 2002-2003 by QUALCOMM, Incorporated. All Rights Reserved.
   This section contains comments describing changes made to this file.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/parser/main/latest/inc/videofmt_mp4r.h#5 $
+  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/parser/main/latest/inc/videofmt_mp4r.h#13 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
@@ -201,15 +201,10 @@ typedef enum video_fmt_mp4r_state_type
   VIDEO_FMT_MP4R_STATE_DECODE_EXTENDED_ATOM_HEADER,
   VIDEO_FMT_MP4R_STATE_PROCESS_ATOM,
   VIDEO_FMT_MP4R_STATE_READY,
-#ifdef FEATURE_FILE_FRAGMENTATION
   VIDEO_FMT_MP4R_STATE_PROCESS_FRAGMENT,
-#endif
-#if defined(FEATURE_FILE_FRAGMENTATION) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
   VIDEO_FMT_MP4R_STATE_UPDATE_SIZE_RETRIEVE_BUFFER,
-#endif
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
   VIDEO_FMT_MP4R_STATE_RETRIEVE_FRAGMENT_SIZE,
-#endif
+  VIDEO_FMT_MP4R_STATE_PEEK_FRAGMENT_SIZE,
   VIDEO_FMT_MP4R_STATE_INVALID
 } video_fmt_mp4r_state_type;
 
@@ -226,9 +221,7 @@ typedef enum video_fmt_mp4r_stream_state_type
   VIDEO_FMT_MP4R_STREAM_STATE_FIND_SYNC_SAMPLE,
   VIDEO_FMT_MP4R_STREAM_STATE_TRUN_COUNT,
   VIDEO_FMT_MP4R_STREAM_STATE_FIND_ABS_OFFSET,
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
   VIDEO_FMT_MP4R_STREAM_STATE_GET_ACCESS_POINT,
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
   VIDEO_FMT_MP4R_STREAM_STATE_INVALID
 } video_fmt_mp4r_stream_state_type;
 
@@ -242,9 +235,10 @@ typedef enum
   VIDEO_FMT_MP4R_STSC_TABLE,
   VIDEO_FMT_MP4R_STSC_INFO_TABLE,
   VIDEO_FMT_MP4R_STTS_TABLE,
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+  VIDEO_FMT_MP4R_CTTS_TABLE,
+
   VIDEO_FMT_MP4R_TFRA_TABLE,
-#endif/*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+
   VIDEO_FMT_MP4R_INVALID_TABLE
 } video_fmt_mp4r_table_type;
 
@@ -294,7 +288,16 @@ typedef struct
   uint32 delta;
 } video_fmt_mp4r_stts_entry_type;
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+/*  Definition of the fields of the 'ctts' table entries
+*/
+typedef struct
+{
+  uint32 count;
+  uint32 offset;
+} video_fmt_mp4r_ctts_entry_type;
+
+
+
 
 /* This structure contains information in one entry of the sample table
 ** trun atom
@@ -352,18 +355,18 @@ typedef enum video_fmt_mp4r_trun_sample_combination_type
   VIDEO_FMT_MP4R_TRUN_SAMPLE_ALL_PRESENT = 0x000F00,
   VIDEO_FMT_MP4R_TRUN_SAMPLE_INVALID
 } video_fmt_mp4r_trun_sample_combination_type;
-#endif
+
 
 /*  Definition of the generic attributes of a sample table
 */
 typedef struct
 {
   uint32 file_offset;
+  uint32 atom_size; /* This field is used to cross check whether table size field is proper or not */
   uint32 table_size;
   int32 current_table_pos;
   int32 cache_start;
   uint32 cache_size;
-#ifdef FEATURE_FILE_FRAGMENTATION
   uint32 tr_flags;
   uint32 first_sample_flags;
   int64  data_offset;
@@ -386,13 +389,10 @@ typedef struct
   boolean tr_flag_sample_size_present;
   boolean tr_flag_sample_flags_present;
   boolean tr_flag_sample_composition_time_offset_present;
-#endif/*FEATURE_FILE_FRAGMENTATION*/
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
   uint32 track_id;
   uint2  length_size_of_traf_num;
   uint2  length_size_of_trun_num;
   uint2  length_size_of_sample_num;
-#endif/*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
 } video_fmt_mp4r_sample_table_type;
 
 /* This structure contains all the information the video format services needs
@@ -414,10 +414,8 @@ typedef struct video_fmt_mp4r_stream_type
   */
   void *client_data;
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
   uint32 wBufferOffset; /*Set by the client. Stream sample reads should not go
                         beyond this value.*/
-#endif
 
   /* This tracks the current state of the MP4 file format services stream
   ** state machine.
@@ -451,25 +449,21 @@ typedef struct video_fmt_mp4r_stream_type
   video_fmt_mp4r_sample_table_type stss;
   video_fmt_mp4r_sample_table_type stsc;
   video_fmt_mp4r_sample_table_type stts;
+  video_fmt_mp4r_sample_table_type ctts;
   video_fmt_mp4r_sample_table_type stsc_info;
-#ifdef FEATURE_FILE_FRAGMENTATION
   int32 current_trun;      /* trun currently processed */
   uint32 trun_entry_count;  /* number of entries in the trun array */
   video_fmt_mp4r_sample_table_type  trun[VIDEO_FMT_MAX_RUNS];
   uint32 trun_sample_cache_trun_loaded; /* ??? */
-#endif
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
   video_fmt_mp4r_sample_table_type  tfra;
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
-
   /* These arrays cache a part of the sample table for the stream. */
   video_fmt_mp4r_stsz_entry_type   stsz_cache [VIDEO_FMT_MP4R_TABLE_CACHE_SIZE];
   video_fmt_mp4r_stco_entry_type   stco_cache [VIDEO_FMT_MP4R_TABLE_CACHE_SIZE];
   video_fmt_mp4r_stss_entry_type   stss_cache [VIDEO_FMT_MP4R_TABLE_CACHE_SIZE];
   video_fmt_mp4r_stsc_entry_type   stsc_cache [VIDEO_FMT_MP4R_TABLE_CACHE_SIZE];
   video_fmt_mp4r_stts_entry_type   stts_cache [VIDEO_FMT_MP4R_TABLE_CACHE_SIZE];
+  video_fmt_mp4r_ctts_entry_type   ctts_cache [VIDEO_FMT_MP4R_TABLE_CACHE_SIZE];
   video_fmt_mp4r_stsc_entry_type   stsc_info_cache [VIDEO_FMT_MP4R_TABLE_CACHE_SIZE];
-#ifdef FEATURE_FILE_FRAGMENTATION
   video_fmt_mp4r_trun_entry_type        trun_cache[VIDEO_FMT_MP4R_TABLE_CACHE_SIZE];
   video_fmt_mp4r_trun_one_entry_type    trun_one_entry_cache[VIDEO_FMT_MP4R_TABLE_CACHE_SIZE];
   video_fmt_mp4r_trun_two_entry_type    trun_two_entry_cache[VIDEO_FMT_MP4R_TABLE_CACHE_SIZE];
@@ -477,16 +471,17 @@ typedef struct video_fmt_mp4r_stream_type
   video_fmt_mp4r_trun_four_entry_type   trun_four_entry_cache[VIDEO_FMT_MP4R_TABLE_CACHE_SIZE];
   boolean                               initialize_trun;
   boolean                               fill_trun_cache;
-#endif
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
    video_fmt_tfra_entry_type  tfra_cache [VIDEO_FMT_MP4R_TABLE_CACHE_SIZE];
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
   /* While walking through the chunk and sample information in the sample
   ** table, these keep track of the current positions in the various parts of
   ** the sample table.
   */
   uint32 stsc_sample_countdown;
 
+  /* This flag is to use the correct 32 bit offset from the stco table 
+     if the co64 atom is present   
+  */
+  boolean co64_present;
   /* These cache the sample offset, byte offset, and size in bytes of the
   ** current chunk being iterated in the VIDEO_FMT_MP4R_STATE_STREAM_READ
   ** state.
@@ -517,6 +512,7 @@ typedef struct video_fmt_mp4r_stream_type
   uint32 sample_timestamp;
   uint32 sample_byte_offset;
   uint32 sample_delta_count;
+  uint32 sample_ctts_offset_count;
 
   /* This is the size of each sample.  If zero, the 'stsz' table needs to be
   ** consulted to find size of any particular sample in the file.  Otherwise,
@@ -585,7 +581,6 @@ typedef struct video_fmt_mp4r_stream_type
   */
   boolean                     seek_start_found;
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
   /* These variables track state information for when information about
   ** access point in a stream are being collected for the client.
   */
@@ -594,9 +589,7 @@ typedef struct video_fmt_mp4r_stream_type
   int32                       tfra_skip;
   video_fmt_tfra_entry_type   *get_access_point_buffer;
   boolean                     seek_access_point_reverse;
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
 
-#ifdef FEATURE_FILE_FRAGMENTATION
   /* This flag indicates the whether the fragment is being processed in the
   ** stream.
   */
@@ -615,18 +608,15 @@ typedef struct video_fmt_mp4r_stream_type
   uint32                      tf_flags;
   uint32                      default_sample_flags;
   int64                       base_data_offset;
-#endif
 
   /* These variables allow the Annex I modification
   for stsc atom first_chunk starting from 0 */
   uint32                      first_entry_offset;
   boolean                     first_entry_offset_set;
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
   boolean                     fragment_repositioned;
-#endif
 } video_fmt_mp4r_stream_type;
 
-#ifdef FEATURE_FILE_FRAGMENTATION/*Support when "mvex" atom parse when it is before the "trak" atom*/
+
 typedef struct trex_data_type
 {
   uint32                      track_id;
@@ -635,7 +625,7 @@ typedef struct trex_data_type
   uint32                      default_sample_size;
   uint32                      default_sample_flags;
 }trex_data_type;
-#endif
+
 /* This structure contains all the state information for the MP4 file format
 ** services functions.
 */
@@ -685,14 +675,13 @@ typedef struct video_fmt_mp4r_context_type
   uint32 in_buffer_pos;    /* offset of first byte in buffer   */
 
 
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
   /* These are the ping-pong buffers to retrieve the size of the required fragment
   */
   uint8  size_retrieve_buffers [2] [VIDEO_FMT_MP4R_BUFFER_SIZE];
   uint32 size_retrieve_buffer_which;  /* which buffer currently in use    */
   uint32 size_retrieve_buffer_size;   /* number of bytes in buffer        */
   uint32 size_retrieve_buffer_pos;    /* offset of first byte in buffer   */
-#endif
+
 
   /* These variables are used by the VIDEO_FMT_MP4R_STATE_GET_DATA state to
   ** track the progress of getting data from the application layer.
@@ -700,10 +689,7 @@ typedef struct video_fmt_mp4r_context_type
   uint8  *get_data_dst;
   uint32 get_data_src;
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
   boolean get_data_src_in_mdat;
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-
   uint32 get_data_size;
   uint32 get_data_needed;
   uint32 get_data_read;
@@ -717,14 +703,11 @@ typedef struct video_fmt_mp4r_context_type
   boolean moov_present;             /* This flag indicates if moov atom is present for this clip */
   boolean moof_present;             /* This flag indicates if moof atom is present for this clip
                                        (always FALSE for non-fragmented files)*/
-
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
   boolean mfra_present;            /* This flag indicates if the Random Access Atom exists for this clip */
   video_fmt_mp4r_sample_table_type  tfra; /*contains information about tfra box if it exists*/
   boolean eof_reached;
   uint32  file_size;                /* To find out File Size */
   boolean mfro_present;
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
 
   /* This union is used to pass information back to the client through the
   ** status callback function.
@@ -736,12 +719,15 @@ typedef struct video_fmt_mp4r_context_type
   */
   uint32 abs_pos;
 
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+  /* These variables keep track of the current atom size and type */
+  uint32 cur_atom_size;
+  uint32 cur_atom_type;
+
   /* This keeps track of the current absolute position for finding the fragment size
   ** within the MP4 file.
   */
   uint32 abs_size_retrieve_pos;
-#endif
+
 
   /* This flag is set to TRUE on little-endian targets. */
   boolean byte_swap_needed;
@@ -759,21 +745,19 @@ typedef struct video_fmt_mp4r_context_type
   boolean in_sample_description_atom;
   //moved out here to know which fragment number that we are currently parsing.
   uint32  current_sequence_number;  /* fragment identification */
-#ifdef FEATURE_FILE_FRAGMENTATION
+
   /* This flag is set when Fragments are present in the file */
   boolean fragment_present;
   uint32  current_track_id;         /* track currently parsed, in a fragment */
-#endif
 
-#ifdef FEATURE_FILE_FRAGMENTATION/*Support when "mvex" atom parse when it is before the "trak" atom*/
   trex_data_type trex_data[VIDEO_FMT_MAX_MEDIA_STREAMS];
   uint32 trex_count;
-#endif
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+
   uint32 fragment_requested;       /* to return the size of the requested fragment */
+  uint32 fragment_offset;
   uint32 fragment_size;
+  int32  mdat_size;
   boolean fragment_size_found;
-#endif
 
   /* These values cache information returned by the video bitstream services
   ** during its callback.
@@ -882,7 +866,6 @@ extern void video_fmt_mp4r_read_stream
   void                           *client_data
 );
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_abs_file_offset
@@ -910,7 +893,6 @@ extern void video_fmt_mp4r_abs_file_offset
   video_fmt_status_cb_func_type  callback_ptr,
   void                           *client_data
 );
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
 
 /*===========================================================================
 
@@ -942,7 +924,6 @@ extern void video_fmt_mp4r_get_sample_info
   void                           *client_data
 );
 
-#if defined (FEATURE_FILE_FRAGMENTATION) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_parse_fragment
@@ -966,9 +947,6 @@ extern void video_fmt_mp4r_parse_fragment
   void                        *server_data
 );
 
-
-
-#endif
 
 /*===========================================================================
 
@@ -995,7 +973,6 @@ extern void video_fmt_mp4r_largest_frame_size
   uint32                       stream_num
 );
 
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_fragment_size
@@ -1019,6 +996,31 @@ extern void video_fmt_mp4r_fragment_size
   void                        *server_data,
   uint32                      fragment_number
 );
+
+/*===========================================================================
+
+FUNCTION  video_fmt_mp4r_peek_fragment_size
+
+DESCRIPTION
+  This function is given to the client as a callback.  It is called in order
+  to request parsing of the fragment if it exists.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  None
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+extern void video_fmt_mp4r_peek_fragment_size
+(
+  void                        *server_data,
+  uint32                      fragment_number
+);
+
 
 /*===========================================================================
 
@@ -1063,7 +1065,7 @@ extern void video_fmt_mp4r_atom_read_size_type
  uint8                        *atom_size,
  uint8                        *atom_type
  );
-#endif
+
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_find_sync_sample
@@ -1094,7 +1096,6 @@ extern void video_fmt_mp4r_find_sync_sample
   void                           *client_data
 );
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_find_access_point
@@ -1124,7 +1125,6 @@ extern void video_fmt_mp4r_find_access_point
   video_fmt_status_cb_func_type  callback_ptr,
   void                           *client_data
 );
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
 
 /*===========================================================================
 
@@ -1759,6 +1759,26 @@ extern void video_fmt_mp4r_stco_prep_dest (void *context_ptr);
 
 /*===========================================================================
 
+FUNCTION  video_fmt_mp4r_co64_prep_dest
+
+DESCRIPTION
+  This function prepares the destination fields where information
+  from the 'co64' atom is to be stored.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  none
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+extern void video_fmt_mp4r_co64_prep_dest (void *context_ptr);
+
+/*===========================================================================
+
 FUNCTION  video_fmt_mp4r_stsc_prep_dest
 
 DESCRIPTION
@@ -1796,6 +1816,27 @@ SIDE EFFECTS
 
 ===========================================================================*/
 extern void video_fmt_mp4r_stts_prep_dest (void *context_ptr);
+
+/*===========================================================================
+
+FUNCTION  video_fmt_mp4r_ctts_prep_dest
+
+DESCRIPTION
+  This function prepares the destination fields where information
+  from the 'ctts' atom is to be stored.
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  none
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+extern void video_fmt_mp4r_ctts_prep_dest (void *context_ptr);
+
 
 /*===========================================================================
 
@@ -1838,7 +1879,7 @@ SIDE EFFECTS
 ===========================================================================*/
 extern void video_fmt_mp4r_stsd_prep_dest (void *context_ptr);
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_mehd_prep_dest
@@ -1951,7 +1992,7 @@ extern boolean video_fmt_mp4r_process_atom_trex
   void *atom_struct_ptr
 );
 
-#endif /*FEATURE_FILE_FRAGMENTATION*/
+
 
 /*===========================================================================
 
@@ -1975,6 +2016,90 @@ extern boolean video_fmt_mp4r_parse_atom
 (
   void *context_ptr,
   void *atom_struct_pt
+);
+
+/*===========================================================================
+
+FUNCTION  video_fmt_mp4r_process_atom_mdhd
+
+DESCRIPTION
+
+  This function processes the mdhd atom. The original
+  design of videofmt called for mdhd to be processed by the 
+  *parse_atom function, it is difficult to add support for the 
+   atom_version = 1 there. So this function is being added. 
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  If TRUE, the MP4 file format services should return to the caller.
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+
+extern boolean video_fmt_mp4r_process_atom_mdhd
+(
+  void *context_ptr,
+  void *atom_struct_pt
+);
+
+/*===========================================================================
+
+FUNCTION  video_fmt_mp4r_process_atom_mvhd
+
+DESCRIPTION
+
+  This function processes the mvhd atom. The original
+  design of videofmt called for mvhd to be processed by the 
+  *parse_atom function, it is difficult to add support for the 
+  atom_version = 1 there. So this function is being added. 
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  If TRUE, the MP4 file format services should return to the caller.
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+
+extern boolean video_fmt_mp4r_process_atom_mvhd
+(
+  void *context_ptr,
+  void *atom_struct_ptr
+);
+
+/*===========================================================================
+
+FUNCTION  video_fmt_mp4r_process_atom_tkhd
+
+DESCRIPTION
+
+  This function processes the tkhd atom. The original
+  design of videofmt called for tkhd to be processed by the 
+  *parse_atom function, it is difficult to add support for the 
+   atom_version = 1 there. So this function is being added. 
+
+DEPENDENCIES
+  None
+
+RETURN VALUE
+  If TRUE, the MP4 file format services should return to the caller.
+
+SIDE EFFECTS
+  None
+
+===========================================================================*/
+
+boolean video_fmt_mp4r_process_atom_tkhd
+(
+  void *context_ptr,
+  void *atom_struct_ptr
 );
 
 /*===========================================================================
@@ -2263,7 +2388,6 @@ extern boolean video_fmt_mp4r_process_atom_stsz
   void *atom_struct_ptr
 );
 
-#ifdef FEATURE_FILE_FRAGMENTATION
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_process_atom_trun
@@ -2289,7 +2413,7 @@ extern boolean video_fmt_mp4r_process_atom_trun
   void *context_ptr,
   void *atom_struct_ptr
 );
-#endif
+
 
 /*===========================================================================
 
@@ -2370,7 +2494,6 @@ extern void video_fmt_mp4r_read_network_word
   unsigned long *network_word
 );
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_check_mfra_box
@@ -2392,7 +2515,9 @@ extern boolean video_fmt_mp4r_check_mfra_box
 (
   video_fmt_mp4r_context_type  *context
 );
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+
+
+#ifdef FEATURE_MP4_MP3
 /*===========================================================================
 FUNCTION  video_fmt_mp4r_process_atom_mp3
 
@@ -2418,5 +2543,6 @@ boolean video_fmt_mp4r_process_atom_mp3
   void  *context_ptr,
   void  *atom_struct
 );
+#endif
 
 #endif /* VIDEOFMT_MP4R_H */

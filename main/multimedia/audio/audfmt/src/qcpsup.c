@@ -20,7 +20,7 @@ EXTERNALIZED FUNCTIONS
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS
 
-Copyright(c) 2001-2007 by QUALCOMM, Incorporated. All Rights Reserved.
+Copyright(c) 2001-2010 by QUALCOMM, Incorporated. All Rights Reserved.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 /* <EJECT> */
 /*===========================================================================
@@ -30,10 +30,13 @@ Copyright(c) 2001-2007 by QUALCOMM, Incorporated. All Rights Reserved.
   This section contains comments describing changes made to this file.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/multimedia/audio/6k/ver1/audfmt/main/latest/src/qcpsup.c#4 $
+  $Header: //source/qcom/qct/multimedia/audio/6k/ver1/audfmt/main/latest/src/qcpsup.c#6 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+05/28/10    av     Adding checks in qcpsup_do_riff(), qcpsup_find_chunk() and qcpsup_get_wave_fmt()
+                   to avoid buffer over-indexing
+01/22/10   ab      Fixed Compiler Warnings.
 06/06/09   bk      Fixed Lint warning.
 06/03/09   bk      Added Macros __NON_DEMAND_PAGED_FUNCTION__ and 
                    __NON_DEMAND_PAGED_FUNCTION_END__ for non demand
@@ -244,6 +247,12 @@ qcpsup_status_type qcpsup_find_chunk (
   qcpsup_status_type ret_val   = QCPSUP_STATUS_BUFF_ERROR;
   uint32             cur_index = 0;
 
+  /*Check for valid index*/
+  if( *index > buf_len )
+  {
+	  return ret_val;
+  }
+
   // Checking NULL to prevent crashing
   if( buffer != NULL )
   {
@@ -264,6 +273,11 @@ qcpsup_status_type qcpsup_find_chunk (
     }
   
     *index += cur_index;
+  }
+
+  if( *index > buf_len )
+  {
+	  ret_val   = QCPSUP_STATUS_BUFF_ERROR;
   }
 
   return(ret_val);
@@ -300,6 +314,12 @@ qcpsup_status_type qcpsup_get_wave_fmt (
   uint32             cur_index = 0;
   uint16             wav_format;
 
+  /*Check for valid index*/
+  if( *index > buf_len )
+  {
+	  return ret_val;
+  }
+
   buffer = &buffer[*index];
   while((cur_index + QCPSUP_CHUNK_ID_BYTES + QCPSUP_LENGTH_BYTES) <= buf_len) {
     if(strncmp(QCPSUP_FMT_ID, (char *) buffer, QCPSUP_CHUNK_ID_BYTES) == 0) {
@@ -314,7 +334,7 @@ qcpsup_status_type qcpsup_get_wave_fmt (
            wav_format != QCPSUP_WAVE_FORMAT_IMA_ADPCM) {
           ret_val = QCPSUP_STATUS_ERROR;
         } else {
-          format->wave_format     = wav_format;
+          format->wave_format     = (qcpsup_wave_format_enum_type)wav_format;
           memcpy((uint16 *)(&format->channels),        buffer+10, sizeof(uint16));
           memcpy((uint32 *)(&format->sample_rate),     buffer+12, sizeof(uint32));
           memcpy((uint32 *)(&format->bytes_rate),      buffer+16, sizeof(uint32));
@@ -332,6 +352,13 @@ qcpsup_status_type qcpsup_get_wave_fmt (
     }
   }
   *index += cur_index;
+
+  /* Check for index overflow after parsing FMT header*/
+  if( *index > buf_len )
+  {
+  	  ret_val = QCPSUP_STATUS_BUFF_ERROR;
+  }
+
   return(ret_val);
 }
 /***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
@@ -475,11 +502,13 @@ boolean qcpsup_validate_amr_frame (
 ) {
   qcpsup_amr_frame_type_enum amr_type;
   boolean                    ret_val = TRUE;
-
-  /* Extract AMR frame type from header byte */
-  amr_type = (qcpsup_amr_frame_type_enum)
+  int frm_byte = 0;
+  
+  frm_byte = (qcpsup_amr_frame_type_enum)
                (frame_byte & AUDAMR_FRAME_TYPE_MASK) >> AUDAMR_FRAME_TYPE_SHIFT;
-
+               
+  amr_type = (qcpsup_amr_frame_type_enum)frm_byte;  
+ 
   /* Choose size based on amr_type */
   switch(amr_type) {
     case QCPSUP_AMR_TYPE_0475:
@@ -557,10 +586,12 @@ boolean qcpsup_validate_amr_wb_frame (
 ) {
   qcpsup_amr_wb_frame_type_enum amr_wb_ftype;
   boolean                    ret_val = TRUE;
-
-  /* Extract AMR frame type from header byte */
-  amr_wb_ftype = (qcpsup_amr_wb_frame_type_enum)
+  int frm_byte = 0;  
+  
+  frm_byte = (qcpsup_amr_wb_frame_type_enum)
                (frame_byte & AUDAWB_FRAME_TYPE_MASK) >> AUDAWB_FRAME_TYPE_SHIFT;
+               
+  amr_wb_ftype = (qcpsup_amr_wb_frame_type_enum)frm_byte;    
 
   /* Choose size based on amr_type */
   switch(amr_wb_ftype) {
@@ -1097,6 +1128,12 @@ qcpsup_status_type qcpsup_get_fmt (
   qcpsup_status_type ret_val   = QCPSUP_STATUS_BUFF_ERROR;
   uint32             cur_index = 0;
 
+  /* Check for valid index */
+  if( *index > buf_len )
+  {
+	  return ret_val;
+  }
+
   // Checking NULL to prevent crashing
   if( buffer != NULL )
   {
@@ -1183,6 +1220,12 @@ qcpsup_status_type qcpsup_get_fmt (
     }
   
     *index += cur_index;
+  }
+
+  /*Check for index overflow after FMT header parsing*/
+  if( *index > buf_len )
+  {
+  	 ret_val = QCPSUP_STATUS_BUFF_ERROR;
   }
 
   return(ret_val);

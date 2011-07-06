@@ -12,10 +12,15 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/decoder/core/rel/2.0/inc/vdecoder_types.h#5 $
-$DateTime: 2008/12/04 05:26:40 $
-$Change: 798180 $
+$Header: //source/qcom/qct/multimedia/qtv/decoder/core/rel/2.0/inc/vdecoder_types.h#16 $
+$DateTime: 2010/10/28 07:44:25 $
+$Change: 1496645 $
 
+when       who      what, where, why
+--------   ---      ---------------------------------------------------------
+04/08/09    vs      Remove the dependencies of other modules.
+--------   ---      ---------------------------------------------------------
+06/30/09    as      Added Function level profiling feature
 ========================================================================== */
 
 /* =======================================================================
@@ -27,12 +32,13 @@ $Change: 798180 $
                      INCLUDE FILES FOR MODULE
 
 ========================================================================== */
-#include "comdef.h"
+#include "vdecoder_perf.h"
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-#include "qdsp.h"
+#include "vdecoder_log.h"
+#include "rex.h"
 /* ==========================================================================
 
                         DATA DECLARATIONS
@@ -65,6 +71,20 @@ extern "C"
 #ifdef FEATURE_H264_DECODER
   #define H264_NAL_LENGTH_SIZE 4
 #endif 
+
+//added because we removed internaldef.h file
+#ifdef FEATURE_VIDEO_PLAYER_INTERFACE_REV_2A_XSCALE
+#define FEATURE_QTV_DECODER_XSCALE_VIDEO
+#endif /* FEATURE_VIDEO_PLAYER_INTERFACE_REV_2A_XSCALE */ 
+
+//Max number of layers the player handles.
+//I think this is actually used as max media layers,
+//max video layers, and max audio layers
+#if defined(FEATURE_MP4_TEMPORAL_SCALABILITY)
+#define VDEC_COMMON_MAX_LAYERS 4 
+#else
+#define VDEC_COMMON_MAX_LAYERS 1
+#endif /* FEATURE_MP4_TEMPORAL_SCALABILITY */
 
 /*******************************************************************************
   Type Declarations
@@ -233,6 +253,12 @@ typedef struct
 
   VDEC_FRAMETYPE    frameType;  /* the frame type                            */
   VDEC_EXT_FRAME    extFrame;    /* extended frame data                      */
+  void*             pMetaData;   /* Pointer to metadata that is malloc'd and */ 
+                                /* freed by the decoder. This pointer is    */
+                                /* transported to upper layers in a         */
+                                /* a VDEC_FRAME. It is freed when the frame */
+                                /* buffer is released.                      */
+  uint32   frameStatus;      /* frame is with UI or renderer */
 }
 VDEC_FRAME;
 
@@ -246,6 +272,9 @@ typedef struct
   /* IN/OUT param:
   ** Presentation timestamps for data in each layer. */
   uint64  timestamp  [ VDEC_MAX_LAYERS ];
+
+  /* duration for the data in each layer. */
+  uint32  delta      [ VDEC_MAX_LAYERS ];
 
   /* buffer_size must be filled by the application with the number of
   ** bytes available in each buffer.
@@ -382,10 +411,37 @@ typedef uint32 VDEC_PARAMETER_ID;
 #define  VDEC_PARM_ENABLE_VLD_IN_DSP               9
 #define  VDEC_PARM_SET_TS_MULTIPLY_FACTOR_BRAZIL   10
 #define  VDEC_PARM_AUDIO_VTYPE                     11
+#define  VDEC_PARM_MODE_SELECT                     12
+#define  VDEC_PARM_ENABLE_VIDEO_AT_KEY_FRAME       13
+#define  VDEC_PARM_ENABLE_UBM_ACCELERATION         14
+#define  VDEC_PARM_QVP_ERR_CONCEAL                 15
 
 /* Each VDEC parameter is tied to a corresponding VDEC parameter stucture,
 ** below.
 */
+
+typedef struct
+{
+  /* QvpErrConceal: TRUE enables QVP Error concealment algorithm
+  **                FALSE disables it.
+*/
+  boolean bEnableQvpErrConceal;
+}
+VDEC_QVP_ERR_CONCEAL;
+
+typedef enum 
+{
+  VTYPE_NORMAL_MODE = 0,
+  VTYPE_STEP_MODE
+}DECODE_MODE_SELECTION;
+
+typedef struct
+{
+  /* Mode Selection for decoder */
+  DECODE_MODE_SELECTION mode;
+}
+VDEC_MODE_SELECT;
+
 typedef struct
 {
   /* sizeOfNalLengthField: the size of the NAL length field */
@@ -473,6 +529,13 @@ typedef struct
 }
 VDEC_SET_TS_MULTIPLY_FACTOR_BRAZIL;
 
+typedef struct
+{
+/* Enable Video at Key frame*/
+  boolean bEnableVideoAtKeyFrame;
+}
+VDEC_ENABLEVIDEO_AT_KEY_FRAME;
+
 /*Audio vocoder types during incall*/
 typedef enum
 {
@@ -491,6 +554,13 @@ typedef struct
 }
 VDEC_SET_AUDIO_CONC_VTYPE;
 
+typedef struct
+{
+  /* Use UBM Acceleration*/
+  boolean bUseUBMAcceleration;
+}
+VDEC_UBM_ACCELERATION;
+
 /* Structure containing all the parameter info required for the
 ** vdec_get_parameter() and vdec_set_parameter() APIs.
 */
@@ -507,7 +577,11 @@ typedef union
   VDEC_ENABLE_VLD_IN_DSP          VLDinDSP;
   VDEC_EXTERNAL_CLOCK_ENABLE      externalClockEnable;
   VDEC_SET_TS_MULTIPLY_FACTOR_BRAZIL     TSMultiplyFactor;
+  VDEC_ENABLEVIDEO_AT_KEY_FRAME   VidKeyFrameEnable;
   VDEC_SET_AUDIO_CONC_VTYPE       audio_vtype;
+  VDEC_MODE_SELECT                mode;
+  VDEC_UBM_ACCELERATION           UBMEnable;
+  VDEC_QVP_ERR_CONCEAL            QvpErrConceal;
 }
 VDEC_PARAMETER_DATA;
 
@@ -519,6 +593,7 @@ typedef struct
   boolean bValid;
   VDEC_STREAM_ID StreamID;
   char fourCC[VDEC_FOURCC_STRLEN];
+  rex_crit_sect_type cs;
 }
 VDEC_INSTANCE_LIST;
 
@@ -526,6 +601,9 @@ VDEC_INSTANCE_LIST;
 ** Global Constant Data Declarations
 ** ----------------------------------------------------------------------- */
 
+#ifdef FEATURE_QTV_VIDEO_DECODER_PROFILING
+#error code not present
+#endif
 /* -----------------------------------------------------------------------
 ** Global Data Declarations
 ** ----------------------------------------------------------------------- */
@@ -596,3 +674,4 @@ typedef void (*VDEC_SCALE_CB_FN)( const VDEC_STREAM_ID      stream,
 #endif
 
 #endif /* VDECODER_TYPES_H */
+

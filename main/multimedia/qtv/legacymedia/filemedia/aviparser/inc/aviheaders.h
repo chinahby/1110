@@ -10,7 +10,7 @@ Copyright 2004 QUALCOMM Incorporated, All Rights Reserved
 
 /* =======================================================================
                              PERFORCE HEADER
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/latest/inc/aviheaders.h#9 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/latest/inc/aviheaders.h#15 $
 ========================================================================== */
 
 /*
@@ -21,6 +21,7 @@ $Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/l
 #include "aviConstants.h"
 #include "aviFourCC.h"
 
+#define MPEG4_VOP_START_CODE                      0x000001B6
 typedef struct avi_mainheader_avih_t
 {
   avi_int32 dwMicroSecPerFrame;    
@@ -84,7 +85,7 @@ typedef struct avi_header_audio_strf_t
 	avi_int16 nBlockAlign;        
 	avi_int16 wBitsPerSample;     
 	avi_int16 cbSize;             
-	avi_uint8 extra[AVI_STRF_MAX_EXTRA_SIZE]; 
+	avi_uint8* extra; 
 } avi_header_audio_strf;
 
 
@@ -129,7 +130,7 @@ typedef struct avi_audio_info_t
 
 typedef struct avi_audiotrack_summary_info_t
 {
-  avi_uint32 audioBitrate;
+  avi_uint32 audioBytesPerSec;
   avi_uint32 audioFrequency;
   avi_int16  wFormatTag; 
   avi_int16  nBlockAlign;
@@ -189,10 +190,7 @@ typedef struct avi_idx1_entry_t
   avi_uint32 dwVidFrameCount;
   
   //Store number of audio frames/chunk before current entry from MOVI.
-  avi_uint32 dwAudFrameCount;
-
-  //Specify if current frame/chunk is key frame.
-  bool  bIsKeyFrame;
+  avi_uint32 dwAudFrameCount;  
 
   //stores the timestamp corresponding to current entry.
   float nTimeStamp;
@@ -250,6 +248,7 @@ typedef struct avi_idx1_tbl_t
 
   //Total number of key/sync frames found so far in IDX1.
   avi_uint32 nKeyVideoyEntriesInIDX1;
+  avi_uint64 nTotalAudioBytes;
 }avi_idx1_table;
 
 /*
@@ -357,6 +356,12 @@ typedef struct avi_sample_info_t
   CHUNK_t  chunkType;
 }avi_sample_info;
 
+typedef struct avi_riff_info_t
+{
+  avi_uint64 startOffset;
+  avi_uint32 size;
+}avi_riff_info;
+
 typedef struct avi_summary_info_t 
 {	
 	avi_mainheader_avih* avih;
@@ -416,11 +421,24 @@ typedef struct memory_struct_t
 typedef struct avi_parser_seek_buffer_cache_t
 {
   avi_uint8* pMemory;
-  avi_uint32 nSize;
+  avi_uint64 nSize;
   avi_uint64 nStartOffset;
   avi_uint64 nEndOffset;
   avi_int64  nReadOffset;
 }avi_parser_seek_buffer_cache;
+
+typedef enum AVIVOPTYPE
+{
+  NO_VOP = -1, // bitstream contains no VOP.
+  MPEG4_I_VOP = 0,   // bitstream contains an MPEG4 I-VOP
+  MPEG4_P_VOP = 1,   // bitstream contains an MPEG4 P-VOP
+  MPEG4_B_VOP = 2,   // bitstream contains an MPEG4 B-VOP
+  MPEG4_S_VOP = 3,   // bitstream contains an MPEG4 S-VOP 
+  H264_I_VOP = 4,   // bitstream contains an H264 I-VOP
+  H264_P_VOP = 5,   // bitstream contains an H264 P-VOP
+  H264_B_VOP = 6,   // bitstream contains an H264 B-VOP
+  H264_S_VOP = 7   // bitstream contains an H264 S-VOP 
+}AVI_VOP_TYPE;
 
 #endif
 

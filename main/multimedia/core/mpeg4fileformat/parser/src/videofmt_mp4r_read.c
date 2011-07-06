@@ -32,7 +32,7 @@ Copyright(c) 2002-2003 by QUALCOMM, Incorporated. All Rights Reserved.
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/parser/main/latest/src/videofmt_mp4r_read.c#5 $
+  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/parser/main/latest/src/videofmt_mp4r_read.c#12 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
@@ -181,17 +181,28 @@ void set_cache (video_fmt_mp4r_stream_type*   stream,
       stream->stsz.cache_size  = MIN ( VIDEO_FMT_MP4R_TABLE_CACHE_SIZE,
                                        MAX(stream->stsz.table_size - start_pos, 1) );
       dest_cache_ptr           = (uint8 *) &stream->stsz_cache [0];
-      src_data_start           = stream->stsz.file_offset + 
+      src_data_start           = stream->stsz.file_offset +
                                  sizeof (stream->stsz_cache [0]) * stream->stsz.cache_start;
       data_size                = sizeof (stream->stsz_cache [0]) * stream->stsz.cache_size;
       break;
 
     case VIDEO_FMT_MP4R_STCO_TABLE:
       stream->stco.cache_start = start_pos;
-      stream->stco.cache_size  = MIN ( VIDEO_FMT_MP4R_TABLE_CACHE_SIZE,
+      /* if co64 atom is present then multipy the stco table size by 2
+         because each offset entry will be of 64 bits.
+      */
+      if(stream->co64_present)
+      {
+        stream->stco.cache_size  = MIN ( VIDEO_FMT_MP4R_TABLE_CACHE_SIZE,
+                                       MAX((stream->stco.table_size * 2)-start_pos, 1) );
+      }
+      else
+      {
+        stream->stco.cache_size  = MIN ( VIDEO_FMT_MP4R_TABLE_CACHE_SIZE,
                                        MAX(stream->stco.table_size-start_pos, 1) );
+      }
       dest_cache_ptr           = (uint8 *) &stream->stco_cache [0];
-      src_data_start           = stream->stco.file_offset + 
+      src_data_start           = stream->stco.file_offset +
                                  sizeof (stream->stco_cache [0]) * stream->stco.cache_start;
       data_size                = sizeof (stream->stco_cache [0]) * stream->stco.cache_size;
       break;
@@ -201,7 +212,7 @@ void set_cache (video_fmt_mp4r_stream_type*   stream,
       stream->stss.cache_size  = MIN ( VIDEO_FMT_MP4R_TABLE_CACHE_SIZE,
                                        MAX(stream->stss.table_size-start_pos, 1) );
       dest_cache_ptr           = (uint8 *) &stream->stss_cache [0];
-      src_data_start           = stream->stss.file_offset + 
+      src_data_start           = stream->stss.file_offset +
                                  sizeof (stream->stss_cache [0]) * stream->stss.cache_start;
       data_size                = sizeof (stream->stss_cache [0]) * stream->stss.cache_size;
       break;
@@ -211,7 +222,7 @@ void set_cache (video_fmt_mp4r_stream_type*   stream,
       stream->stsc.cache_size  = MIN ( VIDEO_FMT_MP4R_TABLE_CACHE_SIZE,
                                        MAX(stream->stsc.table_size-start_pos, 1) );
       dest_cache_ptr           = (uint8 *) &stream->stsc_cache [0];
-      src_data_start           = stream->stsc.file_offset + 
+      src_data_start           = stream->stsc.file_offset +
                                  sizeof (stream->stsc_cache [0]) * stream->stsc.cache_start;
       data_size                = sizeof (stream->stsc_cache [0]) * stream->stsc.cache_size;
       break;
@@ -221,7 +232,7 @@ void set_cache (video_fmt_mp4r_stream_type*   stream,
       stream->stsc_info.cache_size  = MIN ( VIDEO_FMT_MP4R_TABLE_CACHE_SIZE,
                                             MAX(stream->stsc.table_size-start_pos, 1) );
       dest_cache_ptr           = (uint8 *) &stream->stsc_info_cache [0];
-      src_data_start           = stream->stsc.file_offset + 
+      src_data_start           = stream->stsc.file_offset +
                                  sizeof (stream->stsc_info_cache [0]) * stream->stsc_info.cache_start;
       data_size                = sizeof (stream->stsc_info_cache [0]) * stream->stsc_info.cache_size;
       break;
@@ -231,12 +242,22 @@ void set_cache (video_fmt_mp4r_stream_type*   stream,
       stream->stts.cache_size  = MIN ( VIDEO_FMT_MP4R_TABLE_CACHE_SIZE,
                                        MAX(stream->stts.table_size-start_pos, 1) );
       dest_cache_ptr           = (uint8 *) &stream->stts_cache [0];
-      src_data_start           = stream->stts.file_offset + 
+      src_data_start           = stream->stts.file_offset +
                                  sizeof (stream->stts_cache [0]) * stream->stts.cache_start;
       data_size                = sizeof (stream->stts_cache [0]) * stream->stts.cache_size;
       break;
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+    case VIDEO_FMT_MP4R_CTTS_TABLE:
+      stream->ctts.cache_start = start_pos;
+      stream->ctts.cache_size  = MIN ( VIDEO_FMT_MP4R_TABLE_CACHE_SIZE,
+                                       MAX(stream->ctts.table_size-start_pos, 1) );
+      dest_cache_ptr           = (uint8 *) &stream->ctts_cache [0];
+      src_data_start           = stream->ctts.file_offset +
+                                 sizeof (stream->ctts_cache [0]) * stream->ctts.cache_start;
+      data_size                = sizeof (stream->ctts_cache [0]) * stream->ctts.cache_size;
+      break;
+
+
     case VIDEO_FMT_MP4R_TFRA_TABLE:
       stream->tfra.cache_start = start_pos;
       stream->tfra.cache_size  = MIN ( VIDEO_FMT_MP4R_TABLE_CACHE_SIZE,
@@ -246,7 +267,7 @@ void set_cache (video_fmt_mp4r_stream_type*   stream,
                                  sizeof (stream->tfra_cache [0]) * stream->tfra.cache_start;
       data_size                = sizeof (stream->tfra_cache [0]) * stream->tfra.cache_size;
       break;
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+
 
     default:
       MSG_ERROR ("set_cache: invalid table type", 0, 0, 0);
@@ -263,7 +284,6 @@ void set_cache (video_fmt_mp4r_stream_type*   stream,
   stream->state_next [0] = stream->state;
 
 }
-#ifdef FEATURE_FILE_FRAGMENTATION
 /*===========================================================================
 
 FUNCTION  set_cache_trun
@@ -303,7 +323,7 @@ void set_cache_trun (video_fmt_mp4r_stream_type*   stream,
       break;
 
     case 1:
-      dest_cache_ptr  = (uint8 *)stream->trun_one_entry_cache;     
+      dest_cache_ptr  = (uint8 *)stream->trun_one_entry_cache;
       src_data_start  = stream->trun[current_trun].file_offset +
                         sizeof (video_fmt_mp4r_trun_one_entry_type) * stream->trun[current_trun].cache_start;
       data_size       = sizeof (video_fmt_mp4r_trun_one_entry_type) * stream->trun[current_trun].cache_size;
@@ -337,7 +357,7 @@ void set_cache_trun (video_fmt_mp4r_stream_type*   stream,
       stream->fill_trun_cache = TRUE;
       getData = TRUE;
       break;
-   
+
     default:
       getData = FALSE;
       stream->fill_trun_cache = FALSE;
@@ -393,7 +413,7 @@ void process_fill_trun_cache (video_fmt_mp4r_stream_type*   stream,
                 stream->trun_cache[i].sample_duration
                     = stream->trun_one_entry_cache[i].entry_one;
                 break;
-            
+
             case VIDEO_FMT_MP4R_TRUN_SAMPLE_SIZE_PRESENT:
                 stream->trun_cache[i].sample_size
                     = stream->trun_one_entry_cache[i].entry_one;
@@ -403,12 +423,12 @@ void process_fill_trun_cache (video_fmt_mp4r_stream_type*   stream,
                 stream->trun_cache[i].sample_flags
                     = stream->trun_one_entry_cache[i].entry_one;
                 break;
-            
+
             case VIDEO_FMT_MP4R_TRUN_SAMPLE_COMP_TIME_OFFSET_PRESENT:
                 stream->trun_cache[i].sample_composition_time_offset
                     = stream->trun_one_entry_cache[i].entry_one;
                 break;
-           
+
             default:
                 break;
           }
@@ -500,7 +520,7 @@ void process_fill_trun_cache (video_fmt_mp4r_stream_type*   stream,
                 stream->trun_cache[i].sample_composition_time_offset
                     = stream->trun_three_entry_cache[i].entry_three;
                 break;
-            
+
             default:
                 break;
           }
@@ -534,7 +554,6 @@ void process_fill_trun_cache (video_fmt_mp4r_stream_type*   stream,
     stream->fill_trun_cache = FALSE;
 }
 
-#endif  /* FEATURE_FILE_FRAGMENTATION */
 
 /* <EJECT> */
 /*===========================================================================
@@ -554,7 +573,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-void process_get_data_state (void *server_data) 
+void process_get_data_state (void *server_data)
 {
   video_fmt_mp4r_stream_type   *stream = (video_fmt_mp4r_stream_type *) server_data;
 
@@ -564,6 +583,20 @@ void process_get_data_state (void *server_data)
   stream->cb_info.get_data.num_bytes    = stream->get_data_size;
   stream->cb_info.get_data.callback_ptr = video_fmt_mp4r_stream_process;
   stream->cb_info.get_data.server_data  = stream;
+
+
+  /*Make sure that we dont read past the current write buffer offset*/
+  if (stream->wBufferOffset && ((stream->get_data_src + stream->get_data_size-1)
+      >= stream->wBufferOffset))
+  {
+    stream->state = VIDEO_FMT_MP4R_STREAM_STATE_READY;
+    stream->callback_ptr (VIDEO_FMT_DATA_INCOMPLETE,
+                          stream->client_data,
+                          &stream->cb_info,
+                          video_fmt_mp4r_end);
+    return;
+  }
+
 
   stream->callback_ptr (VIDEO_FMT_GET_DATA,
                         stream->client_data,
@@ -595,7 +628,7 @@ void process_get_data_state (void *server_data)
       MSG_ERROR ("Read File Error!", 0, 0, 0);
       stream->state = VIDEO_FMT_MP4R_STREAM_STATE_READY;
       stream->callback_ptr (VIDEO_FMT_FAILURE, stream->client_data, NULL, video_fmt_mp4r_end);
-      return;      
+      return;
   }
   if (!stream->get_data_needed)
   {
@@ -622,18 +655,18 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-void process_stsz_count_state (void *server_data) 
+void process_stsz_count_state (void *server_data)
 {
   uint32  i;
 
   video_fmt_mp4r_stream_type   *stream = (video_fmt_mp4r_stream_type *) server_data;
 
   /* check for the need to set up the stsz table cache */
-  if (( (int32)stream->count_sample < stream->stsz.cache_start) || 
+  if (( (int32)stream->count_sample < stream->stsz.cache_start) ||
       ( stream->count_sample >= (int32)stream->stsz.cache_start + stream->stsz.cache_size))
   {
     /* Set up to read table into memory. */
-    if((stream->state_next [0] == VIDEO_FMT_MP4R_STREAM_STATE_READ) && 
+    if((stream->state_next [0] == VIDEO_FMT_MP4R_STREAM_STATE_READ) &&
       ((stream->read_unit == VIDEO_FMT_DATA_UNIT_BYTE) || (stream->read_unit == VIDEO_FMT_DATA_UNIT_FRAME))&&
        (stream->chunk_adj_start_byte))
     {
@@ -651,8 +684,8 @@ void process_stsz_count_state (void *server_data)
   }
 
   /* Count as many samples as we have in cache. */
-  for (i = stream->count_sample; 
-       i < MIN (stream->count_sample_end, (stream->stsz.cache_start + stream->stsz.cache_size)); 
+  for (i = stream->count_sample;
+       i < MIN (stream->count_sample_end, (stream->stsz.cache_start + stream->stsz.cache_size));
        ++i)
   {
     *stream->count_bytes
@@ -668,7 +701,6 @@ void process_stsz_count_state (void *server_data)
 }
 
 /* <EJECT> */
-#ifdef FEATURE_FILE_FRAGMENTATION
 /*===========================================================================
 
 FUNCTION  process_trun_count_state
@@ -686,7 +718,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-void process_trun_count_state (void *server_data) 
+void process_trun_count_state (void *server_data)
 {
   uint32  i;
   video_fmt_mp4r_sample_table_type        *trun;
@@ -695,8 +727,8 @@ void process_trun_count_state (void *server_data)
   trun = &stream->trun[stream->current_trun];
 
   /* check for the need to set up the trun sample table cache */
-  if ((stream->count_sample < trun->cache_start) || 
-      (stream->count_sample >= trun->cache_start + trun->cache_size) || 
+  if ((stream->count_sample < trun->cache_start) ||
+      (stream->count_sample >= trun->cache_start + trun->cache_size) ||
       (stream->current_trun != stream->trun_sample_cache_trun_loaded))
   {
 
@@ -717,11 +749,11 @@ void process_trun_count_state (void *server_data)
   {
     if(trun->tr_flag_sample_size_present)
     {
-      *stream->count_bytes += N2H (stream->trun_cache[i - trun->cache_start].sample_size);                    
+      *stream->count_bytes += N2H (stream->trun_cache[i - trun->cache_start].sample_size);
     }
     else
     {
-      *stream->count_bytes += trun->default_sample_size;  
+      *stream->count_bytes += trun->default_sample_size;
     }
     ++stream->count_sample;
   }
@@ -732,7 +764,6 @@ void process_trun_count_state (void *server_data)
     stream->state = stream->state_next [0];
   }
 }
-#endif /* FEATURE_FILE_FRAGMENTATION */
 
 /* <EJECT> */
 /*===========================================================================
@@ -752,27 +783,21 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-void process_read_state (void *server_data, boolean *exit_loop) 
+void process_read_state (void *server_data, boolean *exit_loop)
 {
   uint32  bytes;
-#ifdef FEATURE_FILE_FRAGMENTATION
   uint32  first_sample_to_read;
-#endif
   uint32  current_chunk;
   boolean cache_needed;
   boolean reverse;
 
   video_fmt_mp4r_stco_entry_type     *stco_entry;
   video_fmt_mp4r_stsc_entry_type     *stsc_entry;
-
-#ifdef FEATURE_FILE_FRAGMENTATION
   video_fmt_mp4r_sample_table_type        *trun;
-#endif
+
 
   video_fmt_mp4r_stream_type   *stream = (video_fmt_mp4r_stream_type *) server_data;
-#ifdef FEATURE_FILE_FRAGMENTATION
   trun = &stream->trun[stream->current_trun];
-#endif
 
   if (!stream->read_size)
   {
@@ -786,8 +811,6 @@ void process_read_state (void *server_data, boolean *exit_loop)
     return;
   }
 
-#ifdef FEATURE_FILE_FRAGMENTATION
-  /* if the sample is in the fragment */
   if (stream->fragment_processing)
   {
     if (stream->chunk_start_sample < stream->main_fragment_frames + stream->last_fragment_frames)
@@ -850,7 +873,7 @@ void process_read_state (void *server_data, boolean *exit_loop)
     if (stream->read_unit == VIDEO_FMT_DATA_UNIT_FRAME)
     {
       /* Determine the number of samples to read from this chunk. */
-      stream->read_amt_samples = MIN (stream->read_size, 
+      stream->read_amt_samples = MIN (stream->read_size,
                                       trun->table_size + stream->chunk_start_sample - stream->read_offset);
 
       /* If the read amount is not yet known, count the samples. */
@@ -897,7 +920,7 @@ void process_read_state (void *server_data, boolean *exit_loop)
     {
       /* Determine the number of bytes to read from this chunk. */
       stream->read_amt_bytes_set = TRUE;
-      stream->read_amt_bytes = MIN (stream->read_size, 
+      stream->read_amt_bytes = MIN (stream->read_size,
                                     stream->chunk_count_bytes + stream->chunk_start_byte - stream->read_offset);
 
       /* We don't yet know how many samples this covers, so zero out
@@ -917,7 +940,7 @@ void process_read_state (void *server_data, boolean *exit_loop)
     else
     {
       bytes = stream->read_amt_bytes;
-      stream->get_data_src = (trun->base_data_offset) + 
+      stream->get_data_src = (trun->base_data_offset) +
                              (trun->data_offset) + ((stream->read_unit == VIDEO_FMT_DATA_UNIT_FRAME)
                                                     ? stream->last_read_offset : stream->read_offset)
                              - stream->chunk_start_byte;
@@ -975,7 +998,6 @@ void process_read_state (void *server_data, boolean *exit_loop)
     stream->read_amt_bytes_set = FALSE;
     return;
   } /*end of if(fragment_processing)*/
-#endif
 
 
   /* if stream->chunk_adj_start_byte is set and we have already counted the bytes
@@ -1074,7 +1096,7 @@ void process_read_state (void *server_data, boolean *exit_loop)
       if (cache_needed)
       {
         /* Set up to read table into memory. */
-        set_cache ( stream, 
+        set_cache ( stream,
                     (stream->stsc.current_table_pos + 1
                      - MIN (stream->stsc.current_table_pos + 1, (int32)stream->stsc.cache_size)),
                      VIDEO_FMT_MP4R_STSC_TABLE);
@@ -1094,8 +1116,8 @@ void process_read_state (void *server_data, boolean *exit_loop)
       }
 
       /* Cache 'stsc' table entries. */
-      if (NEED_CACHE(stream->stsc) || 
-          ((stream->stsc.current_table_pos + 1 >= stream->stsc.cache_start + (int32)stream->stsc.cache_size) && 
+      if (NEED_CACHE(stream->stsc) ||
+          ((stream->stsc.current_table_pos + 1 >= stream->stsc.cache_start + (int32)stream->stsc.cache_size) &&
           (stream->stsc.cache_start + (int32)stream->stsc.cache_size < (int32)stream->stsc.table_size)))
       {
         /* Set up to read table into memory. */
@@ -1105,8 +1127,19 @@ void process_read_state (void *server_data, boolean *exit_loop)
       }
     }
   }
+  /* if co64 atom is present then advance the stco table by 2
+       because each offset entry will be of 64 bits.
+  */
+  if(stream->co64_present)
+  {
+    /* Count the bytes in this chunk, if not yet counted. */
+    stco_entry = (stream->stco_cache + stream->stco.current_table_pos + 1) - stream->stco.cache_start;
+  }
+  else
+  {
   /* Count the bytes in this chunk, if not yet counted. */
   stco_entry = stream->stco_cache + stream->stco.current_table_pos - stream->stco.cache_start;
+  }
   stsc_entry = stream->stsc_cache + stream->stsc.current_table_pos - stream->stsc.cache_start;
   if (!stream->chunk_count_bytes_valid)
   {
@@ -1148,8 +1181,19 @@ void process_read_state (void *server_data, boolean *exit_loop)
     stream->chunk_start_sample = stream->chunk_start_sample + N2H (stsc_entry->samples_per_chunk);
     stream->chunk_start_byte   = stream->chunk_start_byte + stream->chunk_count_bytes;
 
+    /* if co64 atom is present then advance the stco table by 2
+       because each offset entry will be of 64 bits.
+    */
+    if(stream->co64_present)
+    {
+      /* Advance to next chunk and recalculate chunk byte count. */
+      stream->stco.current_table_pos = stream->stco.current_table_pos + 2;
+    }
+    else
+    {
     /* Advance to next chunk and recalculate chunk byte count. */
     ++stream->stco.current_table_pos;
+    }
     stream->chunk_count_bytes_valid = FALSE;
 
     /* Advance to next 'stsc' entry if it starts with the next
@@ -1165,21 +1209,25 @@ void process_read_state (void *server_data, boolean *exit_loop)
       stream->first_entry_offset_set = TRUE;
     }
 
-    /* If there is a duplicate entry in the STSC table ignore the second entry and increment the 
-    ** pointers accordingly. Obviously this will not work if the entry is repeated more than 
+    /* If there is a duplicate entry in the STSC table ignore the second entry and increment the
+    ** pointers accordingly. Obviously this will not work if the entry is repeated more than
     ** twice or the entries are out of order.
     */
     if((stream->stsc.current_table_pos + 1 < stream->stsc.cache_start + (int32)stream->stsc.cache_size) &&
        (N2H((stsc_entry+1)->first_chunk) <= N2H((stsc_entry)->first_chunk)))
-	{
+  {
         MSG_ERROR ("process_read_state: Duplicate entry found in STSC at position %d for track ID %d",
                    stream->stsc.current_table_pos , N2H((stsc_entry)->first_chunk), 0);
-		++stream->stsc.current_table_pos;
-		++stsc_entry;
-	}
+    ++stream->stsc.current_table_pos;
+    ++stsc_entry;
+  }
 
-    if ((stream->stsc.current_table_pos + 1 < stream->stsc.cache_start + stream->stsc.cache_size) && 
-        (N2H ((stsc_entry+1)->first_chunk) == stream->stco.current_table_pos + stream->first_entry_offset))
+    /* In case of co64 atom every two entries will constitue one entry. So we are divinding by 2*/
+    if ((stream->stsc.current_table_pos + 1 < stream->stsc.cache_start + stream->stsc.cache_size) &&
+    ((stream->co64_present == 0 && 
+      N2H ((stsc_entry+1)->first_chunk) == stream->stco.current_table_pos  + stream->first_entry_offset) ||
+     (stream->co64_present == 1 && 
+      N2H ((stsc_entry+1)->first_chunk) == stream->stco.current_table_pos / 2  + stream->first_entry_offset)))
     {
       ++stream->stsc.current_table_pos;
     }
@@ -1193,9 +1241,19 @@ void process_read_state (void *server_data, boolean *exit_loop)
     /* back sample and byte position to end of prev chunk,
     ** and record chunk start sample and byte.
     */
-
+    /* if co64 atom is present then decrement the stco table by 2
+       because each offset entry will be of 64 bits.
+    */
+    if(stream->co64_present)
+    {
+      /* Advance to next chunk and initialize chunk byte count. */
+      stream->stco.current_table_pos = stream->stco.current_table_pos - 2;
+    }
+    else
+    {
     /* Advance to next chunk and initialize chunk byte count. */
     --stream->stco.current_table_pos;
+    }
 
     /* back to prev 'stsc' entry if it starts with the prev
     ** chunk.
@@ -1222,7 +1280,10 @@ void process_read_state (void *server_data, boolean *exit_loop)
     /* Back up to previous 'stsc' table entry if we've reached the first chunk of that entry. */
     if( (stream->stsc.current_table_pos <= (stream->stsc.cache_start+(int32)stream->stsc.cache_size))
         && (stream->stsc.current_table_pos > stream->stsc.cache_start)
-        && (stream->stco.current_table_pos + stream->first_entry_offset) < N2H ((stsc_entry)->first_chunk) )
+        && ((stream->co64_present == 0 && 
+             (stream->stco.current_table_pos + stream->first_entry_offset) < N2H ((stsc_entry)->first_chunk)) ||
+            (stream->co64_present == 1 && 
+             (stream->stco.current_table_pos / 2 + stream->first_entry_offset) < N2H ((stsc_entry)->first_chunk))))
     {
       --stream->stsc.current_table_pos;
       stsc_entry--;
@@ -1242,7 +1303,7 @@ void process_read_state (void *server_data, boolean *exit_loop)
   if (stream->read_unit == VIDEO_FMT_DATA_UNIT_FRAME)
   {
     /* Determine the number of samples to read from this chunk. */
-    stream->read_amt_samples = MIN (stream->read_size, 
+    stream->read_amt_samples = MIN (stream->read_size,
                                     N2H (stsc_entry->samples_per_chunk) + stream->chunk_start_sample - stream->read_offset);
 
     /* If the read amount is not yet known, count the samples. */
@@ -1301,9 +1362,9 @@ void process_read_state (void *server_data, boolean *exit_loop)
   else
   {
       /* Determine the number of bytes to read from this chunk. */
-      stream->read_amt_bytes = MIN (stream->read_size, 
-                                    stream->chunk_count_bytes + 
-                                    stream->chunk_start_byte - 
+      stream->read_amt_bytes = MIN (stream->read_size,
+                                    stream->chunk_count_bytes +
+                                    stream->chunk_start_byte -
                                     stream->read_offset);
 
     /* We don't yet know how many samples this covers, so zero out
@@ -1334,7 +1395,6 @@ void process_read_state (void *server_data, boolean *exit_loop)
                               : stream->read_offset - stream->chunk_start_byte);
   }
 
-#ifdef  FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
   /*Make sure that we dont read past the current write buffer offset*/
   if (stream->wBufferOffset && ((stream->get_data_src + bytes-1) >= stream->wBufferOffset))
   {
@@ -1346,7 +1406,6 @@ void process_read_state (void *server_data, boolean *exit_loop)
     *exit_loop = TRUE;
     return;
   }
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
 
   /* If a valid buffer pointer was given, set up to read from the
   ** stream directly to the client's buffer.
@@ -1405,7 +1464,6 @@ void process_read_state (void *server_data, boolean *exit_loop)
 
 }
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
 /* <EJECT> */
 /*===========================================================================
 
@@ -1424,11 +1482,11 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-void process_find_abs_file_Offset (void *server_data, boolean *exit_loop) 
+void process_find_abs_file_Offset (void *server_data, boolean *exit_loop)
 {
   uint32  bytes;
   /* uint32  current_chunk; */
- 
+
   video_fmt_mp4r_stco_entry_type     *stco_entry;
   video_fmt_mp4r_stsc_entry_type     *stsc_entry;
 
@@ -1460,7 +1518,7 @@ void process_find_abs_file_Offset (void *server_data, boolean *exit_loop)
 
   /* Cache 'stsc' table entries. */
   if (NEED_CACHE(stream->stsc) || /*lint!e574 */
-      ((stream->stsc.current_table_pos + 1 >= stream->stsc.cache_start + (int32)stream->stsc.cache_size) && 
+      ((stream->stsc.current_table_pos + 1 >= stream->stsc.cache_start + (int32)stream->stsc.cache_size) &&
       (stream->stsc.cache_start + (int32)stream->stsc.cache_size < stream->stsc.table_size)))
   {
     /* Set up to read table into memory. */
@@ -1469,8 +1527,19 @@ void process_find_abs_file_Offset (void *server_data, boolean *exit_loop)
     return;
   }
 
+  /* if co64 atom is present then advance the stco table by 2 
+       because each offset entry will be of 64 bits. 
+  */
+  if(stream->co64_present)
+  {
+    /* Count the bytes in this chunk, if not yet counted. */
+    stco_entry = (stream->stco_cache + stream->stco.current_table_pos + 1) - stream->stco.cache_start;
+  }
+  else
+  {
   /* Count the bytes in this chunk, if not yet counted. */
   stco_entry = stream->stco_cache + stream->stco.current_table_pos - stream->stco.cache_start;
+  }
   stsc_entry = stream->stsc_cache + stream->stsc.current_table_pos - stream->stsc.cache_start;
   if (!stream->chunk_count_bytes_valid)
   {
@@ -1509,9 +1578,19 @@ void process_find_abs_file_Offset (void *server_data, boolean *exit_loop)
     */
     stream->chunk_start_sample = stream->chunk_start_sample + N2H (stsc_entry->samples_per_chunk);
     stream->chunk_start_byte   = stream->chunk_start_byte + stream->chunk_count_bytes;
-
+    /* if co64 atom is present then advance the stco table by 2
+       because each offset entry will be of 64 bits.
+    */
+    if(stream->co64_present)
+    {
+      /* Advance to next chunk and recalculate chunk byte count. */
+      stream->stco.current_table_pos = stream->stco.current_table_pos + 2;
+    }
+    else
+    {
     /* Advance to next chunk and recalculate chunk byte count. */
     ++stream->stco.current_table_pos;
+    }
     stream->chunk_count_bytes_valid = FALSE;
 
     /* Advance to next 'stsc' entry if it starts with the next
@@ -1526,25 +1605,30 @@ void process_find_abs_file_Offset (void *server_data, boolean *exit_loop)
       stream->first_entry_offset = N2H(stream->stsc_cache[0].first_chunk);
       stream->first_entry_offset_set = TRUE;
     }
-    if ((stream->stsc.current_table_pos + 1 < stream->stsc.cache_start + (int32)stream->stsc.cache_size) && 
-        (N2H ((stsc_entry+1)->first_chunk) == stream->stco.current_table_pos + stream->first_entry_offset))
+
+    /* In case of co64 atom every two entries will constitue one entry. So we are divinding by 2*/
+    if ((stream->stsc.current_table_pos + 1 < stream->stsc.cache_start + (int32)stream->stsc.cache_size) &&
+        ((stream->co64_present == 0 && 
+          N2H ((stsc_entry+1)->first_chunk) == stream->stco.current_table_pos  + stream->first_entry_offset) ||
+         (stream->co64_present == 1 && 
+          N2H ((stsc_entry+1)->first_chunk) == stream->stco.current_table_pos / 2  + stream->first_entry_offset)))
     {
       ++stream->stsc.current_table_pos;
     }
 
     return;
   }
-  
+
 
   /* Determine the number of bytes to read from this chunk. */
-  bytes = MIN (stream->read_size, 
-               stream->chunk_count_bytes + 
-               stream->chunk_start_byte - 
+  bytes = MIN (stream->read_size,
+               stream->chunk_count_bytes +
+               stream->chunk_start_byte -
                stream->read_offset);
-  
+
   stream->get_data_src = N2H (stco_entry->chunk_offset)
                          + (stream->read_offset - stream->chunk_start_byte);
-  
+
   /*Return the abs_file_offset to the client*/
   stream->state = VIDEO_FMT_MP4R_STREAM_STATE_READY;
   stream->cb_info.info.abs_file_offset = stream->get_data_src + bytes-1;
@@ -1555,7 +1639,6 @@ void process_find_abs_file_Offset (void *server_data, boolean *exit_loop)
   *exit_loop = TRUE;
   return;
 }
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
 
 /* <EJECT> */
 /*===========================================================================
@@ -1575,7 +1658,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-void process_get_sample_info_state (void *server_data, boolean *exit_loop) 
+void process_get_sample_info_state (void *server_data, boolean *exit_loop)
 {
   boolean cache_needed;
   boolean reverse;
@@ -1583,18 +1666,16 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
   video_fmt_mp4r_stsz_entry_type     *stsz_entry;
   video_fmt_mp4r_stss_entry_type     *stss_entry;
   video_fmt_mp4r_stts_entry_type     *stts_entry;
+  video_fmt_mp4r_ctts_entry_type     *ctts_entry;
   video_fmt_mp4r_stsc_entry_type     *stsc_info_entry;
 
-  #ifdef FEATURE_FILE_FRAGMENTATION
   uint32                                  offset;
   video_fmt_mp4r_sample_table_type        *trun;
   video_fmt_mp4r_trun_entry_type          *trun_entry = 0;
-#endif
+
 
   video_fmt_mp4r_stream_type   *stream = (video_fmt_mp4r_stream_type *) server_data;
-#ifdef FEATURE_FILE_FRAGMENTATION
   trun = &stream->trun[stream->current_trun];
-#endif
 
   if (!stream->get_sample_info_size)
   {
@@ -1610,12 +1691,11 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
     return;
   }
 
-#ifdef FEATURE_FILE_FRAGMENTATION
   /* the sample is in the fragment */
   if (stream->fragment_processing)
   {
     uint32 i;
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
+
     if(stream->fragment_repositioned)
     {
         trun->cache_start = 0;
@@ -1631,7 +1711,7 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
       stream->fragment_repositioned = FALSE;
       return;
     }
-#endif /*FEATURE_QTV_INTER_FRAG_REPOS*/
+
 
     offset = stream->main_fragment_frames + stream->last_fragment_frames;
 
@@ -1655,6 +1735,7 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
       //stream->get_sample_info_offset = offset;
       stream->get_sample_info_buffer->offset = stream->sample_byte_offset;
       stream->get_sample_info_buffer->time = stream->sample_timestamp;
+      stream->get_sample_info_buffer->decode_time = stream->get_sample_info_buffer->time;
     }
 
     /* return if the sample is in the main fragment */
@@ -1688,7 +1769,7 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
              trun->table_size
              - trun->current_table_pos);
 
-      
+
       set_cache_trun (stream, trun);
       return;
     }
@@ -1712,17 +1793,26 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
         if (!stream->sample_timestamp)
         {
           if(stream->sample_duration)
+          {
              stream->get_sample_info_buffer->time = stream->sample_duration *
                   (stream->last_fragment_frames + stream->main_fragment_frames);
+             stream->get_sample_info_buffer->decode_time = stream->get_sample_info_buffer->time;
+          }
            else
+          {
              stream->get_sample_info_buffer->time +=
                 stream->get_sample_info_buffer->time;
+            stream->get_sample_info_buffer->decode_time = stream->get_sample_info_buffer->time;
+          }
 
           stream->sample_timestamp = stream->get_sample_info_buffer->time;
         }
         else
+        {
           stream->get_sample_info_buffer->time = stream->sample_timestamp;
-        
+          stream->get_sample_info_buffer->decode_time = stream->get_sample_info_buffer->time;
+        }
+
         if (!stream->sample_byte_offset)
         {
           if(stream->sample_size)
@@ -1749,12 +1839,12 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
           /*
           * We store sample duration to be used for 'TRUN' in 'TRUN' itself.
           * This is becasue since there can be multiple TRAF in a given fragment, there can be
-          * multiple TFHD. 
+          * multiple TFHD.
           * So, while parsing 'TRUN', if it does not have sample duration information,
           * we update value from corresponding TFHD.
-          *           
+          *
           */
-                    
+
           stream->get_sample_info_buffer->delta = trun->default_sample_duration;
         }
 
@@ -1769,17 +1859,17 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
           /*
           * We store sample size to be used for 'TRUN' in 'TRUN' itself.
           * This is becasue since there can be multiple TRAF in a given fragment, there can be
-          * multiple TFHD. 
+          * multiple TFHD.
           *
           * So, while parsing 'TRUN', if it does not have sample size information,
           * we update value from corresponding TFHD.
-          *           
+          *
           */
-          
-          stream->get_sample_info_buffer->size = trun->default_sample_size; 
+
+          stream->get_sample_info_buffer->size = trun->default_sample_size;
         }
 
-		stream->get_sample_info_buffer->sync = 0;
+    stream->get_sample_info_buffer->sync = 0;
         /* set Sync Sample flag if first_sample_flag is present. */
         if (trun->tr_flag_first_sample_flag_present)
         {
@@ -1792,15 +1882,15 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
            if (N2H (trun_entry->sample_flags) == FLAG_I_VOP)
              stream->get_sample_info_buffer->sync = 1;
         }
-		/* set Sync Sample flag to default value (trex atom) if first_sample_flag and 
+    /* set Sync Sample flag to default value (trex atom) if first_sample_flag and
             flag_sample_flag are not present. */
         else
-		{
-		  if (stream->default_sample_flags == FLAG_I_VOP)
+    {
+      if (stream->default_sample_flags == FLAG_I_VOP)
           stream->get_sample_info_buffer->sync = 1;
-		}
+    }
 
-        stream->get_sample_info_buffer->sample_desc_index = 
+        stream->get_sample_info_buffer->sample_desc_index =
             trun->sample_description_index;
 
         ++stream->get_sample_info_buffer;
@@ -1826,13 +1916,13 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
        /*
        * We store sample duration to be used for 'TRUN' in 'TRUN' itself.
        * This is becasue since there can be multiple TRAF in a given fragment, there can be
-       * multiple TFHD. 
+       * multiple TFHD.
        *
        * So, while parsing 'TRUN', if it does not have sample duration information,
        * we update value from corresponding TFHD.
-       *           
+       *
        */
-          
+
        stream->sample_timestamp += trun->default_sample_duration;
     }
 
@@ -1843,11 +1933,10 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
     }
     else
     {
-      stream->sample_byte_offset += trun->default_sample_size; 
+      stream->sample_byte_offset += trun->default_sample_size;
     }
     return;
   }
-#endif            
   /* Reset sample position if the next sample to collect information
   ** is before the current sample.
   */
@@ -1858,10 +1947,12 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
   {
     stream->stsz.current_table_pos = 0;
     stream->stts.current_table_pos = 0;
+    stream->ctts.current_table_pos = 0;
     stream->stss.current_table_pos = 0;
     stream->sample_timestamp = 0; /* TODO: start>0 allowed? */
     stream->sample_byte_offset = 0;
     stream->sample_delta_count = 0;
+    stream->sample_ctts_offset_count = 0;
     stream->stsc_info.current_table_pos = 0;
     reverse = FALSE;
   }
@@ -1928,7 +2019,7 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
     /* Update cache information. */
     if (reverse)
     {
-      set_cache (stream, 
+      set_cache (stream,
                  (stream->stsz.current_table_pos + 1
                   - MIN (stream->stsz.current_table_pos + 1, VIDEO_FMT_MP4R_TABLE_CACHE_SIZE)),
                  VIDEO_FMT_MP4R_STSZ_TABLE);
@@ -1995,7 +2086,7 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
     /* Update cache information. */
     if (reverse)
     {
-      set_cache (stream, 
+      set_cache (stream,
                  (stream->stts.current_table_pos + 1
                   - MIN (stream->stts.current_table_pos + 1, VIDEO_FMT_MP4R_TABLE_CACHE_SIZE)),
                  VIDEO_FMT_MP4R_STTS_TABLE);
@@ -2039,6 +2130,87 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
     }
   }
 
+  /* if there is any CTTS atom present */
+  if(stream->ctts.table_size)
+  {
+    /* Cache 'ctts' table entries. */
+    cache_needed = FALSE;
+    if (reverse)
+    {
+      /* Check if current position is at or before first sample in
+      ** the cached region.
+      */
+      if (stream->ctts.current_table_pos <= stream->ctts.cache_start)
+      {
+        /* Exception: if current position is on first sample,
+        ** do not recache.
+        */
+        if (stream->ctts.current_table_pos != 0)
+        {
+          cache_needed = TRUE;
+        }
+      }
+
+      /* Check if current position is beyond one past the last
+      ** sample in the cached region. */
+      else if (stream->ctts.current_table_pos
+               > stream->ctts.cache_start
+               +(int32) stream->ctts.cache_size)
+      {
+        cache_needed = TRUE;
+      }
+    }
+    else
+    {
+      /* Check if current position is before first sample in
+      ** cached region.
+      */
+      if (stream->ctts.current_table_pos < stream->ctts.cache_start)
+      {
+        cache_needed = TRUE;
+      }
+
+      /* Check if current position is at or beyond one past the last
+      ** sample in the cached region.
+      */
+      else if (stream->ctts.current_table_pos
+               >= stream->ctts.cache_start
+               +(int32) stream->ctts.cache_size)
+      {
+        cache_needed = TRUE;
+        if(stream->ctts.current_table_pos >= stream->ctts.table_size)
+            cache_needed = FALSE;
+      }
+    }
+    if (cache_needed)
+    {
+      /* Update cache information. */
+      if (reverse)
+      {
+        set_cache (stream,
+                   (stream->ctts.current_table_pos + 1
+                    - MIN (stream->ctts.current_table_pos + 1, VIDEO_FMT_MP4R_TABLE_CACHE_SIZE)),
+                   VIDEO_FMT_MP4R_CTTS_TABLE);
+
+      }
+      else
+      {
+        set_cache (stream, stream->ctts.current_table_pos, VIDEO_FMT_MP4R_CTTS_TABLE);
+
+      }
+      stream->state = VIDEO_FMT_MP4R_STREAM_STATE_GET_DATA;
+      return;
+    }
+    else
+    {
+      uint32 ctts_table_pos = stream->ctts.current_table_pos;
+      /* some clips have more samples than entries in CTTS table (SKT-MOD clips). So we make sure that
+         we don't go beyond entries in CTTS table and keep using last entry values for all extra samples */
+      if(ctts_table_pos >= stream->ctts.table_size)
+        ctts_table_pos = stream->ctts.table_size-1;
+    }
+  }
+
   /* Cache 'stss' table entries, if 'stss' table is present and the
   ** current position is before the cache start, after the cache
   ** end, or there is a next entry in the table and the current
@@ -2071,7 +2243,7 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
     /* Update cache information. */
     if (reverse)
     {
-      set_cache (stream, 
+      set_cache (stream,
                  (stream->stss.current_table_pos + 2
                   - MIN (stream->stss.current_table_pos + 2, VIDEO_FMT_MP4R_TABLE_CACHE_SIZE)),
                  VIDEO_FMT_MP4R_STSS_TABLE);
@@ -2115,7 +2287,7 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
     if (cache_needed)
     {
       /* Set up to read table into memory. */
-      set_cache (stream, 
+      set_cache (stream,
                  (stream->stsc_info.current_table_pos + 1
                   - MIN (stream->stsc_info.current_table_pos + 1, (int32)stream->stsc_info.cache_size)),
                  VIDEO_FMT_MP4R_STSC_INFO_TABLE);
@@ -2146,6 +2318,8 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
                - stream->stsz.cache_start;
   stts_entry = stream->stts_cache + stream->stts.current_table_pos
                - stream->stts.cache_start;
+  ctts_entry = stream->ctts_cache + stream->ctts.current_table_pos
+               - stream->ctts.cache_start;
   stss_entry = stream->stss_cache + stream->stss.current_table_pos
                - stream->stss.cache_start;
   stsc_info_entry = stream->stsc_info_cache + stream->stsc_info.current_table_pos
@@ -2181,7 +2355,13 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
       = stream->sample_byte_offset;
       stream->get_sample_info_buffer->time
       = stream->sample_timestamp;
+      stream->get_sample_info_buffer->decode_time = stream->get_sample_info_buffer->time;
       stream->get_sample_info_buffer->delta = N2H (stts_entry->delta);
+      if(stream->ctts.table_size)
+      {
+        /* Count delta time of sample. */
+        stream->get_sample_info_buffer->time = stream->get_sample_info_buffer->decode_time + N2H (ctts_entry->offset);
+      }
 
       /* If 'stss' table exists, frame might not be sync
       ** frame.
@@ -2261,6 +2441,20 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
     /* Count delta time of previous sample. */
     stream->sample_timestamp -= N2H (stts_entry->delta);
 
+    /* Back up to previous 'ctts' entry if all deltas in this
+    ** table entry are accounted for, but back only if current CTTS position
+    ** is greater than zero.
+    */
+    if ((stream->sample_ctts_offset_count == 0) && (stream->ctts.current_table_pos >0))
+    {
+      --stream->ctts.current_table_pos;
+      --ctts_entry;
+      stream->sample_ctts_offset_count = N2H (ctts_entry->count);
+    }
+
+    if(stream->sample_ctts_offset_count>0)
+      --stream->sample_ctts_offset_count;
+
     /* Count size of sample. */
     stream->sample_byte_offset
     -= (stream->sample_size ? stream->sample_size
@@ -2337,7 +2531,7 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
         && (N2H ((stss_entry+1)->sync_sample)
             == stream->stsz.current_table_pos + 1))
     {
-      ++stream->stss.current_table_pos;      
+      ++stream->stss.current_table_pos;
     }
 
     /* Advance to next 'stts' entry if all deltas in this table
@@ -2347,6 +2541,17 @@ void process_get_sample_info_state (void *server_data, boolean *exit_loop)
     {
       stream->stts.current_table_pos++;
       stream->sample_delta_count = 0;
+    }
+
+    ++stream->sample_ctts_offset_count;
+
+    /* Advance to next 'ctts' entry if all deltas in this table
+    ** entry are accounted for.
+    */
+    if (stream->sample_ctts_offset_count == N2H (ctts_entry->count))
+    {
+      stream->ctts.current_table_pos++;
+      stream->sample_ctts_offset_count = 0;
     }
 
     /* Advance to next 'stsc' table entry if we've reached the first chunk of that entry. */
@@ -2389,7 +2594,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-void process_find_sync_sample_state (void *server_data, boolean *exit_loop) 
+void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
 {
   boolean cache_needed;
   boolean reverse;
@@ -2397,22 +2602,20 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
   video_fmt_mp4r_stsz_entry_type     *stsz_entry;
   video_fmt_mp4r_stss_entry_type     *stss_entry;
   video_fmt_mp4r_stts_entry_type     *stts_entry;
-#ifdef FEATURE_FILE_FRAGMENTATION
+  video_fmt_mp4r_ctts_entry_type     *ctts_entry;
+
   video_fmt_mp4r_trun_entry_type     *trun_entry = 0;
   uint32                             offset;
   video_fmt_mp4r_sample_table_type   *trun;
-#endif
+
 
   video_fmt_mp4r_stream_type   *stream = (video_fmt_mp4r_stream_type *) server_data;
-#ifdef FEATURE_FILE_FRAGMENTATION
   trun = &stream->trun[stream->current_trun];
-#endif
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
   if (stream->fragment_processing)
   {
     uint32  i;
-#ifdef FEATURE_QTV_INTER_FRAG_REPOS
     if(stream->fragment_repositioned)
     {
         trun->cache_start = 0;
@@ -2428,73 +2631,73 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
       stream->fragment_repositioned = FALSE;
       return;
     }
-#endif /*FEATURE_QTV_INTER_FRAG_REPOS*/
-    
+
+
     if(stream->fill_trun_cache)
       process_fill_trun_cache(stream, trun);
-    
+
     //Process the Fragment
     offset = stream->main_fragment_frames + stream->last_fragment_frames;
 
     for (i = 0; i < stream->current_trun; i++)
     {
       offset += stream->trun[i].table_size;
-    }             
+    }
 #ifdef REPOSTN_DEBUG
-	MSG_ERROR("offset:%d stream->current_trun:%d",offset, stream->current_trun, 0);
+  MSG_ERROR("offset:%d stream->current_trun:%d",offset, stream->current_trun, 0);
 #endif
-                 
-	/*Rewind case */
+
+  /*Rewind case */
     if(stream->seek_reverse)
-    {      
-	  /* Check if current position is beyond one past the last*/
-      if (!stream->seek_start_found && (trun->current_table_pos + offset == stream->get_sample_info_offset))    
+    {
+    /* Check if current position is beyond one past the last*/
+      if (!stream->seek_start_found && (trun->current_table_pos + offset == stream->get_sample_info_offset))
       {
         stream->seek_start_found = TRUE;
 #ifdef REPOSTN_DEBUG
         MSG_ERROR("offset:%d stream->current_trun:%d",offset, stream->current_trun, 0);
-		MSG_ERROR("trun->current_table_pos:%d stream->get_sample_info_offset:%d",trun->current_table_pos, stream->get_sample_info_offset, 0);
+    MSG_ERROR("trun->current_table_pos:%d stream->get_sample_info_offset:%d",trun->current_table_pos, stream->get_sample_info_offset, 0);
         MSG_ERROR("Setting stream->seek_start_found = TRUE",0,0,0);
 #endif
-		/*If trun->table_size == trun->current_table_pos then we need to update the current trun to 
-		  process the last sample in the current trun*/
+    /*If trun->table_size == trun->current_table_pos then we need to update the current trun to
+      process the last sample in the current trun*/
         if(trun->table_size == trun->current_table_pos)
-        { 
+        {
 #ifdef REPOSTN_DEBUG
-		  MSG_ERROR("trun->table_size == trun->current_table_pos", 0,0,0);
-		  MSG_ERROR("trun->table_size:%d trun->current_table_pos:%d", trun->table_size,trun->current_table_pos,0);
+      MSG_ERROR("trun->table_size == trun->current_table_pos", 0,0,0);
+      MSG_ERROR("trun->table_size:%d trun->current_table_pos:%d", trun->table_size,trun->current_table_pos,0);
 #endif
           if(stream->current_trun < stream->trun_entry_count)
-          { 
+          {
 #ifdef REPOSTN_DEBUG
-		    MSG_ERROR("stream->current_trun < stream->trun_entry_count", 0,0,0);
+        MSG_ERROR("stream->current_trun < stream->trun_entry_count", 0,0,0);
             MSG_ERROR("stream->current_trun:%d stream->trun_entry_count:%d", stream->current_trun,stream->trun_entry_count,0);
 #endif
             ++stream->current_trun;
             trun = &stream->trun[stream->current_trun];
-			trun->cache_start = 0;
-			trun->current_table_pos = 0;
+      trun->cache_start = 0;
+      trun->current_table_pos = 0;
 
-			/* Update cache information. */
-			trun->cache_size = MIN (VIDEO_FMT_MP4R_TABLE_CACHE_SIZE,trun->table_size);			  
-			set_cache_trun (stream, trun);
-			return;                     
-		  }
-		}
-	  }
-	}
+      /* Update cache information. */
+      trun->cache_size = MIN (VIDEO_FMT_MP4R_TABLE_CACHE_SIZE,trun->table_size);
+      set_cache_trun (stream, trun);
+      return;
+      }
+    }
+    }
+  }
     else
     {
-	  /* Check if current position is beyond one past the last*/
+    /* Check if current position is beyond one past the last*/
       if (!stream->seek_start_found
         && (trun->current_table_pos + offset
-            == stream->get_sample_info_offset))    
+            == stream->get_sample_info_offset))
       {
         stream->seek_start_found = TRUE;
       }
-    }	
+    }
 
-	
+
     /* Determine whether we're currently moving forwards or reverse
     ** through the sample table.
     */
@@ -2510,7 +2713,7 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
 
     /* Cache 'trun' table entries if samples are variable-length and
     ** the current sample is not in the 'stsz' cache.
-    */              
+    */
     cache_needed = FALSE;
     if (reverse)
     {
@@ -2601,7 +2804,7 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
       trun->cache_size
       = MIN (VIDEO_FMT_MP4R_TABLE_CACHE_SIZE,
              trun->table_size);
-      
+
       set_cache_trun (stream, trun);
       return;
     }
@@ -2616,25 +2819,25 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
                    + trun->current_table_pos
                    - trun->cache_start;
 
-	stream->get_sample_info_buffer->sync = 0;
+  stream->get_sample_info_buffer->sync = 0;
 
-	/* If the first sample flag is present and set
-       and we are at the start of the trun then 
+  /* If the first sample flag is present and set
+       and we are at the start of the trun then
        return the first sample as sync frame.
        if the first sample flag is not present,
-       the sample flags are set and the current sample 
-       is the I-Frame then retun that sample as sync frame. 
+       the sample flags are set and the current sample
+       is the I-Frame then retun that sample as sync frame.
     */
     if (stream->seek_start_found
        /* first sample flag is present */
-       && ((trun->tr_flag_first_sample_flag_present 
+       && ((trun->tr_flag_first_sample_flag_present
        /* current position in the current trun is zero means first position */
         && (trun->current_table_pos == 0)
        /* first sample flags should be zero for an I-frame*/
         && (trun->first_sample_flags == FLAG_I_VOP))
-     
+
        /* first sample flags are not present */
-       || ((!trun->tr_flag_first_sample_flag_present) 
+       || ((!trun->tr_flag_first_sample_flag_present)
        /* sample flags are set */
        && (trun->tr_flag_sample_flags_present)
        /* current position should not be more than trun size - 1 */
@@ -2642,8 +2845,8 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
        /* the sample flags should be zero for an I-Frame */
        && (N2H (trun_entry->sample_flags)== FLAG_I_VOP ))
 
-	   || ((!trun->tr_flag_first_sample_flag_present)&& (!trun->tr_flag_sample_flags_present)
-	   && (stream->default_sample_flags == FLAG_I_VOP))))
+     || ((!trun->tr_flag_first_sample_flag_present)&& (!trun->tr_flag_sample_flags_present)
+     && (stream->default_sample_flags == FLAG_I_VOP))))
     {
       stream->get_sample_info_buffer->sample
       = offset + trun->current_table_pos;
@@ -2667,7 +2870,7 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
       }
       else
       {
-        stream->get_sample_info_buffer->size = trun->default_sample_size;  
+        stream->get_sample_info_buffer->size = trun->default_sample_size;
       }
 
       if (offset + trun->current_table_pos == stream->last_sample_offset)
@@ -2690,10 +2893,11 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
         }
         else
         {
-          stream->sample_byte_offset -= trun->default_sample_size; 
+          stream->sample_byte_offset -= trun->default_sample_size;
         }
       }
-      stream->get_sample_info_buffer->time = stream->sample_timestamp;                           
+      stream->get_sample_info_buffer->time = stream->sample_timestamp;
+      stream->get_sample_info_buffer->decode_time = stream->get_sample_info_buffer->time;
       stream->get_sample_info_buffer->offset = stream->sample_byte_offset;
 
       /* set Sync Sample flag */
@@ -2724,12 +2928,12 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
     ** zero to indicate that the previous sync sample was not found,
     ** and return to the "ready" state.
     */
-    if (((stream->current_trun == 0) 
+    if (((stream->current_trun == 0)
          && (trun->current_table_pos == 0) && reverse)
         || ((stream->current_trun + 1 >= stream->trun_entry_count)
             && (trun->current_table_pos + 1 >= trun->table_size)
             && !reverse))
-    {      
+    {
       stream->cb_info.io_done.bytes = 0;
       stream->state = VIDEO_FMT_MP4R_STREAM_STATE_READY;
       stream->callback_ptr (VIDEO_FMT_IO_DONE,
@@ -2763,7 +2967,7 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
         }
         else
         {
-          stream->sample_byte_offset -= trun->default_sample_size;  
+          stream->sample_byte_offset -= trun->default_sample_size;
         }
         --stream->last_sample_offset;
       }
@@ -2791,7 +2995,7 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
         }
         else
         {
-          stream->sample_byte_offset += trun->default_sample_size;  
+          stream->sample_byte_offset += trun->default_sample_size;
         }
         ++stream->last_sample_offset;
       }
@@ -2800,13 +3004,12 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
     }
     return;
   }
-#endif
 
   /* If we know the 'stss' table is empty, and then all the samples are sync samples in the main fragment*/
   if(0 == stream->stss.table_size)
   {
     stream->state = VIDEO_FMT_MP4R_STREAM_STATE_GET_SAMPLE_INFO;
-    stream->get_sample_info_size = 1;    
+    stream->get_sample_info_size = 1;
     *exit_loop = FALSE;
     return;
   }
@@ -2890,7 +3093,7 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
     /* Update cache information. */
     if (reverse)
     {
-      set_cache (stream, 
+      set_cache (stream,
                  (stream->stsz.current_table_pos + 1
                   - MIN (stream->stsz.current_table_pos + 1, VIDEO_FMT_MP4R_TABLE_CACHE_SIZE)),
                  VIDEO_FMT_MP4R_STSZ_TABLE);
@@ -2957,7 +3160,7 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
     /* Update cache information. */
     if (reverse)
     {
-      set_cache (stream, 
+      set_cache (stream,
                  (stream->stts.current_table_pos + 1
                   - MIN (stream->stts.current_table_pos + 1, VIDEO_FMT_MP4R_TABLE_CACHE_SIZE)),
                  VIDEO_FMT_MP4R_STTS_TABLE);
@@ -3001,6 +3204,106 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
     }
   }
 
+  /* if there is any CTTS atom present */
+  if(stream->ctts.table_size)
+  {
+    /* Cache 'ctts' table entries. */
+    cache_needed = FALSE;
+    if (reverse)
+    {
+      /* Check if current position is at or before first sample in
+      ** the cached region.
+      */
+      if (stream->ctts.current_table_pos <= stream->ctts.cache_start)
+      {
+        /* Exception: if current position is on first sample,
+        ** do not recache.
+        */
+        if (stream->ctts.current_table_pos != 0)
+        {
+          cache_needed = TRUE;
+        }
+      }
+
+      /* Check if current position is beyond one past the last
+      ** sample in the cached region. */
+      else if (stream->ctts.current_table_pos
+               > stream->ctts.cache_start
+               + (int32)stream->ctts.cache_size)
+      {
+        cache_needed = TRUE;
+      }
+    }
+    else
+    {
+      /* Check if current position is before first sample in
+      ** cached region.
+      */
+      if (stream->ctts.current_table_pos < stream->ctts.cache_start)
+      {
+        cache_needed = TRUE;
+      }
+
+      /* Check if current position is at or beyond one past the last
+      ** sample in the cached region.
+      */
+      else if (stream->ctts.current_table_pos
+               >= stream->ctts.cache_start
+               + (int32)stream->ctts.cache_size)
+      {
+        cache_needed = TRUE;
+        if(stream->ctts.current_table_pos >= stream->ctts.table_size)
+            cache_needed = FALSE;
+      }
+    }
+    if (cache_needed)
+    {
+      /* Update cache information. */
+      if (reverse)
+      {
+        set_cache (stream,
+                   (stream->ctts.current_table_pos + 1
+                    - MIN (stream->ctts.current_table_pos + 1, VIDEO_FMT_MP4R_TABLE_CACHE_SIZE)),
+                   VIDEO_FMT_MP4R_CTTS_TABLE);
+
+      }
+      else
+      {
+        set_cache (stream, stream->ctts.current_table_pos, VIDEO_FMT_MP4R_CTTS_TABLE);
+
+      }
+      stream->state = VIDEO_FMT_MP4R_STREAM_STATE_GET_DATA;
+      return;
+    }
+    else
+    {
+      uint32 ctts_table_pos = stream->ctts.current_table_pos;
+      /* some clips have more samples than entries in CTTS table (SKT-MOD clips). So we make sure that
+         we don't go beyond entries in CTTS table and keep using last entry values for all extra samples */
+      if(ctts_table_pos >= stream->ctts.table_size)
+        ctts_table_pos = stream->ctts.table_size-1;
+
+    /* some SKTT clips have zero sample count in some ctts entries, so we need to add
+       their time delta and goto next entry and update cache if needed */
+    ctts_entry = stream->ctts_cache + ctts_table_pos
+                - stream->ctts.cache_start;
+    if( N2H(ctts_entry->count) == 0 )
+    {
+      /* Count delta time of sample. */
+      if (reverse && (ctts_table_pos>0) )
+      {       
+        stream->ctts.current_table_pos = ctts_table_pos-1;
+        return;
+      }
+      else if(ctts_table_pos<(stream->ctts.table_size-1))
+      {       
+        stream->ctts.current_table_pos = ctts_table_pos+1;
+        return;
+      }
+    }
+    }
+  }
+
   /* Cache 'stss' table entries, if 'stss' table is present and the
   ** current position is before the cache start, after the cache
   ** end, or there is a next entry in the table and the current
@@ -3033,7 +3336,7 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
     /* Update cache information. */
     if (reverse)
     {
-      set_cache (stream, 
+      set_cache (stream,
                  (stream->stss.current_table_pos + 2
                   - MIN (stream->stss.current_table_pos + 2, VIDEO_FMT_MP4R_TABLE_CACHE_SIZE)),
                  VIDEO_FMT_MP4R_STSS_TABLE);
@@ -3053,6 +3356,8 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
                - stream->stsz.cache_start;
   stts_entry = stream->stts_cache + stream->stts.current_table_pos
                - stream->stts.cache_start;
+  ctts_entry = stream->ctts_cache + stream->ctts.current_table_pos
+               - stream->ctts.cache_start;
   stss_entry = stream->stss_cache + stream->stss.current_table_pos
                - stream->stss.cache_start;
   if (stream->seek_start_found
@@ -3082,7 +3387,12 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
     = stream->sample_byte_offset;
     stream->get_sample_info_buffer->time
     = stream->sample_timestamp;
+    stream->get_sample_info_buffer->decode_time = stream->get_sample_info_buffer->time;
     stream->get_sample_info_buffer->delta = N2H (stts_entry->delta);
+    if(stream->ctts.table_size)
+    {
+      stream->get_sample_info_buffer->time = stream->get_sample_info_buffer->decode_time + N2H (ctts_entry->offset);      
+    }
     stream->get_sample_info_buffer->sync
     = (stream->stss.file_offset
        ? (stream->stsz.current_table_pos + 1
@@ -3159,6 +3469,19 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
 
     /* Count delta time of previous sample. */
     stream->sample_timestamp -= N2H (stts_entry->delta);
+    /* Back up to previous 'ctts' entry if all deltas in this
+    ** table entry are accounted for, but back only if current CTTS position
+    ** is greater than zero.
+    */
+    if ((stream->sample_ctts_offset_count == 0) && (stream->ctts.current_table_pos >0))
+    {
+      --stream->ctts.current_table_pos;
+      --ctts_entry;
+      stream->sample_ctts_offset_count = N2H (ctts_entry->count);
+    }
+
+    if(stream->sample_ctts_offset_count>0)
+      --stream->sample_ctts_offset_count;
 
     /* Count size of sample. */
     stream->sample_byte_offset
@@ -3222,10 +3545,29 @@ void process_find_sync_sample_state (void *server_data, boolean *exit_loop)
       stream->stts.current_table_pos++;
       stream->sample_delta_count = 0;
     }
+
+    /* some clips have more samples than entries in CTTS table (SKT-MOD clips). So we make sure that
+       we don't go beyond entries in CTTS table and keep using last entry values for all extra samples */
+    if(stream->ctts.current_table_pos >= stream->ctts.table_size)
+    {
+      stream->ctts.current_table_pos = stream->ctts.table_size-1;
+      ctts_entry = stream->ctts_cache + stream->ctts.current_table_pos
+                  - stream->ctts.cache_start;
+    }
+
+    ++stream->sample_ctts_offset_count;   
+   
+    /* Advance to next 'ctts' entry if all deltas in this table
+    ** entry are accounted for.
+    */
+    if (stream->sample_ctts_offset_count == N2H (ctts_entry->count))
+    {
+      stream->ctts.current_table_pos++;
+      stream->sample_ctts_offset_count = 0;
+    }
   }
 }
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
 /* <EJECT> */
 /*===========================================================================
 
@@ -3244,7 +3586,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-void process_get_access_point_state (void *server_data, boolean *exit_loop) 
+void process_get_access_point_state (void *server_data, boolean *exit_loop)
 {
   boolean reverse = FALSE;
 
@@ -3316,7 +3658,7 @@ void process_get_access_point_state (void *server_data, boolean *exit_loop)
     /* Update cache information. */
     if (reverse)
     {
-      set_cache (stream, 
+      set_cache (stream,
                  (stream->tfra.current_table_pos + 1
                   - MIN (stream->tfra.current_table_pos + 1, VIDEO_FMT_MP4R_TABLE_CACHE_SIZE)),
                  VIDEO_FMT_MP4R_TFRA_TABLE);
@@ -3400,15 +3742,14 @@ void process_get_access_point_state (void *server_data, boolean *exit_loop)
 
   /* Move one sample forwards or backwards in sample table. */
   if (reverse)
-  {    
+  {
     --stream->tfra.current_table_pos;
   }
   else
-  {    
+  {
     ++stream->tfra.current_table_pos;
   }
 }
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
 
 /* <EJECT> */
 /*===========================================================================
@@ -3428,7 +3769,7 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-void video_fmt_mp4r_stream_process (void *server_data) 
+void video_fmt_mp4r_stream_process (void *server_data)
 {
 
   boolean                      exit_loop = FALSE;
@@ -3459,20 +3800,17 @@ void video_fmt_mp4r_stream_process (void *server_data)
         process_stsz_count_state (server_data);
         break;
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
       case VIDEO_FMT_MP4R_STREAM_STATE_TRUN_COUNT:
         /* If sample to count is outside range of cached region of TRUN
         ** table, update cache.
         */
         process_trun_count_state (server_data);
         break;
-#endif  /* FEATURE_FILE_FRAGMENTATION */
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
       case VIDEO_FMT_MP4R_STREAM_STATE_FIND_ABS_OFFSET:
           process_find_abs_file_Offset(server_data,&exit_loop);
           break;
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
 
       case VIDEO_FMT_MP4R_STREAM_STATE_READ:
         /* If no more bytes are needed, issue an I/O done callback to the
@@ -3494,11 +3832,9 @@ void video_fmt_mp4r_stream_process (void *server_data)
         process_find_sync_sample_state (server_data, &exit_loop);
         break;
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
       case VIDEO_FMT_MP4R_STREAM_STATE_GET_ACCESS_POINT:
         process_get_access_point_state (server_data, &exit_loop);
         break;
-#endif
 
       case VIDEO_FMT_MP4R_STREAM_STATE_INVALID:
       default:
@@ -3602,7 +3938,6 @@ void video_fmt_mp4r_read_stream
             stream->read_header_offset = stream_info->header;
         }
         stream->read_offset = offset;
-#ifdef FEATURE_FILE_FRAGMENTATION
         if( (offset >= stream->main_fragment_frames) && context->fragment_present )
         {
             /* getting samples from the fragments */
@@ -3610,7 +3945,6 @@ void video_fmt_mp4r_read_stream
         }
         else
             stream->fragment_processing = FALSE;
-#endif
         break;
 
     case VIDEO_FMT_DATA_UNIT_BYTE:
@@ -3618,8 +3952,8 @@ void video_fmt_mp4r_read_stream
         stream->read_header_offset = MIN (offset, stream_info->header);
         stream->read_offset
                 = offset - MIN (offset, stream->read_header_offset);
-#ifdef FEATURE_FILE_FRAGMENTATION
-        if(stream->main_fragment_bytes && (offset >= stream->main_fragment_bytes) 
+
+        if(stream->main_fragment_bytes && (offset >= stream->main_fragment_bytes)
            && context->fragment_present )
         {
             /* getting samples from the fragments */
@@ -3627,7 +3961,6 @@ void video_fmt_mp4r_read_stream
         }
         else
             stream->fragment_processing = FALSE;
-#endif        
         break;
 
     default:
@@ -3651,7 +3984,6 @@ void video_fmt_mp4r_read_stream
     video_fmt_mp4r_stream_process (stream);
 }
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
 /* <EJECT> */
 /*===========================================================================
 
@@ -3678,7 +4010,7 @@ void video_fmt_mp4r_abs_file_offset
   uint32                         sampleSize,          /* in units              */
   void                           *server_data,
   video_fmt_status_cb_func_type  callback_ptr,
-  void                           *client_data  
+  void                           *client_data
 )
 {
     video_fmt_mp4r_context_type *context;
@@ -3713,19 +4045,18 @@ void video_fmt_mp4r_abs_file_offset
         callback_ptr (VIDEO_FMT_BUSY, client_data, NULL, NULL);
         return;
     }
-    
+
     /* Store other read parameters. */
     stream->callback_ptr = callback_ptr;
     stream->client_data = client_data;
     stream->read_offset = sampleOffset;
-    stream->read_size = sampleSize;    
+    stream->read_size = sampleSize;
 
-    /* Begin the stream read operation. */    
+    /* Begin the stream read operation. */
     stream->state = VIDEO_FMT_MP4R_STREAM_STATE_FIND_ABS_OFFSET;
     video_fmt_mp4r_stream_process (stream);
 
 }
-#endif //FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
 
 /* <EJECT> */
 /*===========================================================================
@@ -3795,13 +4126,12 @@ void video_fmt_mp4r_get_sample_info
 
     /* Put given offset and size into range. */
     offset = MIN (offset, stream_info->frames);
-#ifdef FEATURE_FILE_FRAGMENTATION
+
     if(offset < stream_info->track_frag_info.first_frame)
         offset = stream_info->track_frag_info.first_frame;
-#endif /*FEATURE_FILE_FRAGMENTATION*/
     size = MIN (size, stream_info->frames - offset);
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
     if( (offset >= stream->main_fragment_frames) && context->fragment_present )
     {
         /* getting samples from the fragments */
@@ -3809,7 +4139,7 @@ void video_fmt_mp4r_get_sample_info
     }
     else
         stream->fragment_processing = FALSE;
-#endif
+
 
     /* Store get sample info parameters. */
     stream->callback_ptr = callback_ptr;
@@ -3893,7 +4223,7 @@ void video_fmt_mp4r_find_sync_sample (
     /* Put given offset into range. */
     offset = MIN (offset, stream_info->frames);
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
     if( (offset >= stream->main_fragment_frames) && context->fragment_present )
     {
         /* getting samples from the fragments */
@@ -3901,7 +4231,7 @@ void video_fmt_mp4r_find_sync_sample (
     }
     else
         stream->fragment_processing = FALSE;
-#endif
+
 
     /* Store get sample info parameters. */
     stream->callback_ptr = callback_ptr;
@@ -3917,7 +4247,6 @@ void video_fmt_mp4r_find_sync_sample (
     video_fmt_mp4r_stream_process (stream);
 }
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
 /*===========================================================================
 
 FUNCTION  video_fmt_mp4r_find_access_point
@@ -3994,4 +4323,3 @@ void video_fmt_mp4r_find_access_point (
     stream->state = VIDEO_FMT_MP4R_STREAM_STATE_GET_ACCESS_POINT;
     video_fmt_mp4r_stream_process (stream);
 }
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/

@@ -16,9 +16,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/qc/main/latest/inc/qcplayer_misc.h#1 $
-$DateTime: 2008/05/08 11:03:24 $
-$Change: 656211 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/qc/main/latest/inc/qcplayer_misc.h#3 $
+$DateTime: 2009/12/03 02:35:48 $
+$Change: 1101863 $
 
 
 ========================================================================== */
@@ -35,7 +35,7 @@ $Change: 656211 $
 /* Includes custmp4.h. The following 2 includes must be the first includes in this file! */
 #include "customer.h"
 #include "qtvInternalDefs.h"
-
+//#include "rex.h"
 /* ==========================================================================
 
                         DATA DECLARATIONS
@@ -79,7 +79,11 @@ typedef rex_crit_sect_type CRITICAL_SECTION;
 #define InitializeCriticalSection(x) rex_init_crit_sect(x)
 #define EnterCriticalSection(x) rex_enter_crit_sect(x)
 #define LeaveCriticalSection(x) rex_leave_crit_sect(x)
-#define DeleteCriticalSection(x) 
+/* ------
+Commented out, since this code goes to all targets as common and 
+below REX API is not currently ported to all active targets and baselines.
+--------- */
+#define DeleteCriticalSection(x) //rex_del_crit_sect(x)
 
 
 

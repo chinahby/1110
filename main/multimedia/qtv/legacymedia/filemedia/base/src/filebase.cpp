@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/base/main/latest/src/filebase.cpp#17 $
-$DateTime: 2008/12/11 02:28:12 $
-$Change: 803007 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/base/main/latest/src/filebase.cpp#24 $
+$DateTime: 2010/09/24 05:36:59 $
+$Change: 1452660 $
 
 ========================================================================== */
 
@@ -51,6 +51,9 @@ $Change: 803007 $
 
 #include "filebase.h"
 #include "mpeg4file.h"
+uint8 MP4_3GP_SIG_BYTES1[MPG4_FILE_SIGNATURE_BYTES] ={'f','t','y','p'};
+uint8 MP4_3GP_SIG_BYTES2[MPG4_FILE_SIGNATURE_BYTES] ={'m','o','o','v'};
+uint8 MP4_3GP_SIG_BYTES3[MPG4_FILE_SIGNATURE_BYTES] ={'m','d','a','t'};
 
 #ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT
 #include "GenericAudioFile.h"
@@ -187,6 +190,62 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
+
+/* ======================================================================
+FUNCTION
+  FileBase::isMp4Filebool
+
+DESCRIPTION
+  Static method to Returns True if the file is MP4 otherwise, returns FALSE.
+
+DEPENDENCIES
+  List any dependencies for this function, global variables, state,
+  resource availability, etc.
+
+RETURN VALUE
+  Enumerate possible return values
+
+SIDE EFFECTS
+  Detail any side effects.
+
+========================================================================== */
+bool FileBase::isMp4Filebool(uint8* pBuf, uint32 mp4size)
+{
+  if(pBuf && mp4size >=8 )
+  {
+    if ( (!memcmp(pBuf+4, "ftyp", MPG4_FILE_SIGNATURE_BYTES)) )
+      return true;
+  }
+  return false;
+}
+bool FileBase::MAKE_AAC_AUDIO_CONFIG(uint8* pBuffer,uint16 nAudObjectType,
+                                  uint16 nSamplingFreq,uint16 nChannelsConfig,
+                                  uint8* pConfigSize)
+{
+  uint16 configData = 0;
+  bool bRet = false;
+  if(pConfigSize)
+  {
+    bRet = true;
+    if(pBuffer)
+    {
+      memset(pBuffer,0,(size_t)pConfigSize);
+      //Syntax of Audio Config is as below
+      // MSB 5 bits(15-11) gives Audio Object Type
+      // Bits(10-7) gives sampling frequency index
+      // Bits(6-3)  gives channel configuration
+      // Bits(2-0)  unused as of now
+      configData |= ( (nAudObjectType & 0x001F) << 11);
+      configData |= ( (nSamplingFreq  & 0x000F) << 7);
+      configData |= ( (nChannelsConfig& 0x000F) << 3);      
+      //Convert to little endian
+      uint8* pData = (uint8*)&configData;
+      configData = (((uint16)pData[0])<<8) | (uint16)pData[1];      
+      memcpy(pBuffer,&configData,(size_t)pConfigSize);
+    }
+  }
+  return bRet;
+}
 
 /* ======================================================================
 FUNCTION
@@ -355,54 +414,65 @@ AudioDataFormatType audioFormatType = AUDIO_UNKNOWN;
     else
 #endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT */
     {
-      Mpeg4File *mp4 = NULL;
-
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-
-  #ifdef FEATURE_QTV_MFDRM
-#error code not present
-  #else /* FEATURE_QTV_MFDRM */
-    #ifdef FEATURE_FILE_FRAGMENTATION
-      mp4 = QTV_New_Args(Mp4FragmentFile, (NULL, pMpeg4Player, pBuf, bufSize, bPlayVideo, bPlayAudio, bPlayText,
-                                         bPseudoStream, wBufferOffset, wStartupTime, FetchBufferedDataSize, FetchBufferedData, handle));
-    #else
-      mp4 = QTV_New_Args(Mp4FragmentFile, (NULL, pMpeg4Player, pBuf, bufSize, bPlayVideo, bPlayAudio, bPlayText,
-                                         bPseudoStream, wBufferOffset, wStartupTime, FetchBufferedDataSize, FetchBufferedData, handle));
-  #endif /* FEATURE_FILE_FRAGMENTATION */
-  #endif /* FEATURE_QTV_MFDRM */
-
-#elif defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-  #ifdef FEATURE_QTV_MFDRM
-#error code not present
-  #else
-     #ifdef FEATURE_FILE_FRAGMENTATION
-      mp4 = QTV_New_Args( Mp4FragmentFile, (NULL, pMpeg4Player, pBuf, bufSize, bPlayVideo, bPlayAudio, bPlayText,
-                                     bPseudoStream, wBufferOffset, wStartupTime,
-                                     FetchBufferedDataSize, FetchBufferedData,handle) );
-     #else
-
-      mp4 = QTV_New_Args( Mpeg4File, (NULL, pMpeg4Player, pBuf, bufSize, bPlayVideo, bPlayAudio, bPlayText,
-                                     bPseudoStream, wBufferOffset, wStartupTime,
-                                     FetchBufferedDataSize, FetchBufferedData, handle));
-     #endif
-  #endif /* FEATURE_QTV_MFDRM */
-#else
-  #ifdef FEATURE_FILE_FRAGMENTATION
-      mp4 = QTV_New_Args( Mp4FragmentFile, (NULL, pMpeg4Player, pBuf, bufSize,bPlayVideo,bPlayAudio, bPlayText) );
-  #else
-      mp4 = QTV_New_Args( Mpeg4File, (NULL, pMpeg4Player, pBuf, bufSize, bPlayVideo, bPlayAudio, bPlayText) );
-  #endif //FEATURE_FILE_FRAGMENTATION
-#endif //FEATURE_QTV_PSEUDO_STREAM
-      if (mp4)
+      /* If pBuf is available and size of the buffer is minimum 8 bytes, then use the pBuf.
+         If pBuf is NULL, then use FetchBuffer functions to check whether it is valid 3gp
+         or mp4 clip*/
+      if ( (pBuf != NULL && bufSize >= MPG4_FILE_SIGNATURE_BYTES * 2 &&
+            IsMP4_3GPFile(pBuf + MPG4_FILE_SIGNATURE_BYTES, 4))
+#if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+            || IsMP4_3GPFile(FetchBufferedDataSize, FetchBufferedData, handle)
+#endif
+         )
       {
-        if ( mp4->FileSuccess())
+        Mpeg4File *mp4 = NULL;
+  
+  #ifdef FEATURE_QTV_PSEUDO_STREAM
+  
+    #ifdef FEATURE_QTV_MFDRM
+#error code not present
+    #else /* FEATURE_QTV_MFDRM */
+      #ifdef FEATURE_FILE_FRAGMENTATION
+        mp4 = QTV_New_Args(Mp4FragmentFile, (NULL, pMpeg4Player, pBuf, bufSize, bPlayVideo, bPlayAudio, bPlayText,
+                                           bPseudoStream, wBufferOffset, wStartupTime, FetchBufferedDataSize, FetchBufferedData, handle));
+      #else
+        mp4 = QTV_New_Args(Mp4FragmentFile, (NULL, pMpeg4Player, pBuf, bufSize, bPlayVideo, bPlayAudio, bPlayText,
+                                           bPseudoStream, wBufferOffset, wStartupTime, FetchBufferedDataSize, FetchBufferedData, handle));
+    #endif /* FEATURE_FILE_FRAGMENTATION */
+    #endif /* FEATURE_QTV_MFDRM */
+  
+  #elif defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+    #ifdef FEATURE_QTV_MFDRM
+#error code not present
+    #else
+       #ifdef FEATURE_FILE_FRAGMENTATION
+        mp4 = QTV_New_Args( Mp4FragmentFile, (NULL, pMpeg4Player, pBuf, bufSize, bPlayVideo, bPlayAudio, bPlayText,
+                                       bPseudoStream, wBufferOffset, wStartupTime,
+                                       FetchBufferedDataSize, FetchBufferedData,handle) );
+       #else
+  
+        mp4 = QTV_New_Args( Mpeg4File, (NULL, pMpeg4Player, pBuf, bufSize, bPlayVideo, bPlayAudio, bPlayText,
+                                       bPseudoStream, wBufferOffset, wStartupTime,
+                                       FetchBufferedDataSize, FetchBufferedData, handle));
+       #endif
+    #endif /* FEATURE_QTV_MFDRM */
+  #else
+    #ifdef FEATURE_FILE_FRAGMENTATION
+        mp4 = QTV_New_Args( Mp4FragmentFile, (NULL, pMpeg4Player, pBuf, bufSize,bPlayVideo,bPlayAudio, bPlayText) );
+    #else
+        mp4 = QTV_New_Args( Mpeg4File, (NULL, pMpeg4Player, pBuf, bufSize, bPlayVideo, bPlayAudio, bPlayText) );
+    #endif //FEATURE_FILE_FRAGMENTATION
+  #endif //FEATURE_QTV_PSEUDO_STREAM
+        if (mp4)
         {
-	      mp4->parseFirstFragment();
-	      return mp4;
-        }
-        else
-        {
-          QTV_Delete( mp4 );
+          if ( mp4->FileSuccess())
+          {
+          mp4->parseFirstFragment();
+          return mp4;
+          }
+          else
+          {
+            QTV_Delete( mp4 );
+          }
         }
       }
       return NULL;
@@ -528,23 +598,29 @@ FileBase* FileBase::openMediaFile(  OSCL_STRING filename,
     else
 #endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT */
     {
-      Mpeg4File *mp4 = NULL;
+      uint8 mp4_buff[MPG4_FILE_SIGNATURE_BYTES];
+      uint32 mp4_bufSize = readFile(filename, mp4_buff, 4, MPG4_FILE_SIGNATURE_BYTES);
 
-#ifdef FEATURE_FILE_FRAGMENTATION
-      mp4 = QTV_New_Args( Mp4FragmentFile, (filename, pMpeg4Player, NULL,0,bPlayVideo,bPlayAudio,bPlayText) );
-#else
-      mp4 = QTV_New_Args( Mpeg4File, (filename, pMpeg4Player, NULL,0,bPlayVideo,bPlayAudio,bPlayText) );
-#endif //FEATURE_FILE_FRAGMENTATION
-      if (mp4)
+      if(IsMP4_3GPFile(mp4_buff, mp4_bufSize))
       {
-        if ( mp4->FileSuccess() )
+        Mpeg4File *mp4 = NULL;
+  
+  #ifdef FEATURE_FILE_FRAGMENTATION
+        mp4 = QTV_New_Args( Mp4FragmentFile, (filename, pMpeg4Player, NULL,0,bPlayVideo,bPlayAudio,bPlayText) );
+  #else
+        mp4 = QTV_New_Args( Mpeg4File, (filename, pMpeg4Player, NULL,0,bPlayVideo,bPlayAudio,bPlayText) );
+  #endif //FEATURE_FILE_FRAGMENTATION
+        if (mp4)
         {
-          mp4->parseFirstFragment();
-          return mp4;
-        }
-        else
-        {
-          QTV_Delete( mp4 );
+          if ( mp4->FileSuccess() )
+          {
+            mp4->parseFirstFragment();
+            return mp4;
+          }
+          else
+          {
+            QTV_Delete( mp4 );
+          }
         }
       }
     }
@@ -609,24 +685,30 @@ FileBase* FileBase::openMediaFile(  dcf_ixstream_type inputStream,
   else
 #endif /* FEATURE_QTV_WINDOWS_MEDIA */
   {
-    Mpeg4File *mp4 = NULL;
+    uint8 mp4_buff[MPG4_FILE_SIGNATURE_BYTES];
+    uint32 mp4_bufSize = readFile(inputStream, mp4_buff, 4, MPG4_FILE_SIGNATURE_BYTES);
 
-#ifdef FEATURE_FILE_FRAGMENTATION
-    mp4 = QTV_New_Args( Mp4FragmentFile, (inputStream, pMpeg4Player, bPlayVideo, bPlayAudio, bPlayText));
-#else
-    mp4 = QTV_New_Args( Mpeg4File, (inputStream, pMpeg4Player, bPlayVideo, bPlayAudio, bPlayText));
-#endif //FEATURE_FILE_FRAGMENTATION
-    if(mp4)
+    if(IsMP4_3GPFile(mp4_buff, mp4_bufSize))
     {
-      if ( mp4->FileSuccess() )
+      Mpeg4File *mp4 = NULL;
+  
+  #ifdef FEATURE_FILE_FRAGMENTATION
+      mp4 = QTV_New_Args( Mp4FragmentFile, (inputStream, pMpeg4Player, bPlayVideo, bPlayAudio, bPlayText));
+  #else
+      mp4 = QTV_New_Args( Mpeg4File, (inputStream, pMpeg4Player, bPlayVideo, bPlayAudio, bPlayText));
+  #endif //FEATURE_FILE_FRAGMENTATION
+      if(mp4)
       {
-        mp4->parseFirstFragment();
-        return mp4;
-      }
-      else
-      {
-        QTV_Delete( mp4 );
-        return NULL;
+        if ( mp4->FileSuccess() )
+        {
+          mp4->parseFirstFragment();
+          return mp4;
+        }
+        else
+        {
+          QTV_Delete( mp4 );
+          return NULL;
+        }
       }
     }
     return NULL;
@@ -667,7 +749,7 @@ uint32 FileBase::readFile( dcf_ixstream_type inputStream,
   bool   isEndofStream = false;
   uint32 reqSizeToRead = size;
 
-  pos = 0;//Warning//
+  QTV_USE_ARG1(pos);
 
   if(inputStream == NULL)
     return nRead;
@@ -684,7 +766,7 @@ uint32 FileBase::readFile( dcf_ixstream_type inputStream,
   pStream = (IxStream*)inputStream;
   if(pStream)
   {
-	  errorCode = pStream->Seek(0,IX_STRM_SEEK_START);
+	  errorCode = pStream->Seek(pos,IX_STRM_SEEK_START);
 	  if(errorCode == E_SUCCESS)
 	  {
 	    errorCode = E_FAILURE;
@@ -1342,3 +1424,80 @@ bool FileBase::IsAVIFile(QtvPlayer::FetchBufferedDataSizeT FetchBufferedDataSize
   return false;
 }
 #endif//#ifdef FEATURE_QTV_AVI
+/* ======================================================================
+FUNCTION
+  FileBase::IsMP4_3GPFile
+
+DESCRIPTION
+  Returns True if the file is MP4 or 3GP otherwise, returns FALSE;
+
+INPUT/OUTPUT
+
+
+DEPENDENCIES
+  List any dependencies for this function, global variables, state,
+  resource availability, etc.
+
+RETURN VALUE
+ Returns True is the file is MP4 or 3GP otherwise, returns FALSE;
+
+SIDE EFFECTS
+  None
+========================================================================== */
+bool FileBase::IsMP4_3GPFile(QtvPlayer::FetchBufferedDataSizeT FetchBufferedDataSize, QtvPlayer::FetchBufferedDataT FetchBufferedData, QtvPlayer::InstanceHandleT handle)
+{
+  uint8 httpDataBuf[ MPG4_FILE_SIGNATURE_BYTES ];
+  uint32 wHttpBufOffset = 0;
+  boolean bEndOfData = false;
+
+  if( FetchBufferedDataSize && FetchBufferedData )
+  {
+     /* Get down loaded data offset from OEM */
+     /* We will only pass 0 for userdata now since we don't have ixstream implementation for 3GP*/
+     FetchBufferedDataSize( 0, &wHttpBufOffset, &bEndOfData, handle);
+
+     if( wHttpBufOffset >= MPG4_FILE_SIGNATURE_BYTES * 2 )
+     {
+       (void)FetchBufferedData( httpDataBuf, MPG4_FILE_SIGNATURE_BYTES, 4, 0x0, handle);
+
+       if( !memcmp(httpDataBuf, MP4_3GP_SIG_BYTES1, MPG4_FILE_SIGNATURE_BYTES) ||
+           !memcmp(httpDataBuf, MP4_3GP_SIG_BYTES2, MPG4_FILE_SIGNATURE_BYTES) ||
+           !memcmp(httpDataBuf, MP4_3GP_SIG_BYTES3, MPG4_FILE_SIGNATURE_BYTES) )
+       {
+         return true;
+       }
+     }
+  }
+  return false;
+}
+
+/* ======================================================================
+FUNCTION
+  FileBase::IsMP4_3GPFile
+
+DESCRIPTION
+  Static method to Returns True if the file is MP4 or 3GP otherwise, returns FALSE.
+
+DEPENDENCIES
+  List any dependencies for this function, global variables, state,
+  resource availability, etc.
+
+RETURN VALUE
+  Enumerate possible return values
+
+SIDE EFFECTS
+  Detail any side effects.
+
+========================================================================== */
+bool FileBase::IsMP4_3GPFile(uint8* pBuf, uint32 mp4size)
+{
+  if(pBuf && mp4size >=4 )
+  {
+    if ( (!memcmp(pBuf, MP4_3GP_SIG_BYTES1, MPG4_FILE_SIGNATURE_BYTES)) ||
+         (!memcmp(pBuf, MP4_3GP_SIG_BYTES2, MPG4_FILE_SIGNATURE_BYTES)) ||
+         (!memcmp(pBuf, MP4_3GP_SIG_BYTES3, MPG4_FILE_SIGNATURE_BYTES)) )
+      return true;
+  }
+  return false;
+}
+

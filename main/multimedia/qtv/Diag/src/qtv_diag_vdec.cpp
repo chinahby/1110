@@ -11,9 +11,9 @@ Copyright (c) 2005 by QUALCOMM, Incorporated.  All Rights Reserved.
 
 /*===========================================================================
 
-$Header: //source/qcom/qct/multimedia/qtv/diag/main/latest/src/qtv_diag_vdec.cpp#10 $
-$DateTime: 2008/10/06 02:13:23 $
-$Change: 757003 $
+$Header: //source/qcom/qct/multimedia/qtv/diag/main/latest/src/qtv_diag_vdec.cpp#15 $
+$DateTime: 2011/02/04 05:02:15 $
+$Change: 1607101 $
                            Edit History
 
 when       who     what, where, why
@@ -32,7 +32,9 @@ when       who     what, where, why
 #include "fileMedia.h"
 #include "ITrackList.h"
 #include "ReferenceCountedPointer.h"
+#ifndef FEATURE_WINCE
 #include "OEMMediaMPEG4.h"
+#endif // #ifndef FEATURE_WINCE
 #include "qtv_event.h"
 #include "mp4buf.h"
 #include "Mp4_Types.h"
@@ -41,7 +43,11 @@ extern "C" {
   #include "queue.h"
   #include "event.h"
   #include "event_defs.h"
+#ifndef FEATURE_WINCE
   #include "fs.h"
+#else
+#error code not present
+#endif
   #include "assert.h"
 }
 
@@ -144,7 +150,7 @@ static bool bInitialized = FALSE;
 static Media *pMedia = NULL;
 static uint32 videoMaxSize[COMMON_MAX_LAYERS];
 static int frameCount=0;
-static fs_handle_type filedes=0;
+static int filedes = 0;
 
 /*===========================================================================
 =                         Handler function table                            =
@@ -295,7 +301,8 @@ extern "C" void qtvdiag_vdecFrame_CbFn(
   void * const         /*pCbData, unused */)
 {
   bool bFileWrite=false;
-  fs_rsp_msg_type fs_rsp;
+  fs_off_t   result;
+  fs_size_t write_result;
   vdec_diag_callback_status_type ret_status;
 
   QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"VDEC_DIAG: stream ID %d, status %d, pFrame 0x%x",
@@ -356,20 +363,17 @@ extern "C" void qtvdiag_vdecFrame_CbFn(
       /* write to EFS file test */
       if(bFileWrite && filedes>0)
       {
-        fs_file_position_type fs_pos;
         ret_status.wr_status = 2; /* write failed */
 
         /* get current file position */
-        fs_tell(filedes,NULL,&fs_rsp);
-        if(fs_rsp.tell.status==FS_OKAY_S)
+        result = efs_lseek(filedes,0,SEEK_CUR);
+        if(result >= 0)
         {
-          fs_pos = fs_rsp.tell.position;
-
           /* write frame "header" */
-          fs_write(filedes,pFrame,sizeof(VDEC_FRAME),NULL,&fs_rsp);
+          write_result = efs_write(filedes,pFrame,sizeof(VDEC_FRAME));
 
           /* check for write success, and an image buffer to write */
-          if(fs_rsp.write.status==FS_OKAY_S && pFrame->pBuf)
+          if(write_result >= 0 && pFrame->pBuf)
           {
             /* write frame data */
             int frame_byte_size;
@@ -385,8 +389,8 @@ extern "C" void qtvdiag_vdecFrame_CbFn(
             {
               frame_byte_size=0;
             }
-            fs_write(filedes,pFrame->pBuf,frame_byte_size,NULL,&fs_rsp);
-            if(fs_rsp.write.status==FS_OKAY_S)
+            write_result = efs_write(filedes,pFrame->pBuf,frame_byte_size);
+            if(write_result >= 0)
             {
               /* write succeded */
               ret_status.wr_status = 1;
@@ -394,8 +398,8 @@ extern "C" void qtvdiag_vdecFrame_CbFn(
             else
             {
               /* write failed, truncate to frame boundary */
-              fs_truncate(filedes,fs_pos,NULL,&fs_rsp);
-              fs_close(filedes,NULL,&fs_rsp);
+              efs_ftruncate(filedes,result);
+              efs_close(filedes);
               filedes=0;
               QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,"VDEC_DIAG: Output file closed, fs out of space.");
             }
@@ -403,19 +407,19 @@ extern "C" void qtvdiag_vdecFrame_CbFn(
           else
           {
             /* write failed, truncate to frame boundary */
-            fs_truncate(filedes,fs_pos,NULL,&fs_rsp);
-            fs_close(filedes,NULL,&fs_rsp);
+            efs_ftruncate(filedes,result);
+            efs_close(filedes);
             filedes=0;
             QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,"VDEC_DIAG: Output file closed, fs out of space.");
           } /* if header write succeeded */
         }
         else
         {
-          /* fs_tell failed */
-          fs_close(filedes,NULL,&fs_rsp);
+          /* efs_lseek failed */
+          efs_close(filedes);
           filedes=0;
           QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,"VDEC_DIAG: Output file closed, file error.");
-        } /* if fs_tell succeeded */
+        } /* if efs_lseek succeeded */
       } /* write to efs check */
     } /* status check */
   }
@@ -1292,9 +1296,9 @@ VDEC_ERROR qtvdiag_vdec_cleanup( vdec_diag_cmd_type * )
       pMedia=NULL;
     }
 
-    if (filedes>0)
+    if (filedes>=0)
     {
-      fs_close(filedes,NULL,&fs_rsp);
+      efs_close(filedes);
       filedes=0;
     }
   }
@@ -1393,8 +1397,8 @@ public:
       }
       else
       {      
-        if ((selectedVideoTrack < 0) &&
-            (codecType == Media::H263_CODEC))
+        if (((selectedVideoTrack < 0) &&
+            (codecType == Media::H263_CODEC))||(codecType == Media::STILL_IMAGE_H263_CODEC))
         {
           //Select track.
           if (trackList->SelectTrack(i))
@@ -1558,8 +1562,6 @@ static VDEC_ERROR qtvdiag_vdec_diag_init( vdec_diag_cmd_type *cmd_ptr )
   char outputFile[QTV_MAX_URN_BYTES+11];
   bool audio=false;
   bool video=false;
-  fs_open_xparms_type fs_open_xparms;
-  fs_rsp_msg_type fs_rsp;
   VDEC_ERROR vdec_error=VDEC_ERR_EVERYTHING_FINE;
   int32 diag_ret;
 
@@ -1582,7 +1584,52 @@ static VDEC_ERROR qtvdiag_vdec_diag_init( vdec_diag_cmd_type *cmd_ptr )
     (void)DescribeAndSelectTracks(pMedia,audio,video);
 
     vdec_info.layers=pMedia->GetNumberOfVideoTracks();
-    vdec_info.audio = ConvertMediaAudioToVdec(pMedia->GetAudioCodecType());
+    //vdec_info.audio = ConvertMediaAudioToVdec(pMedia->GetAudioCodecType());
+    switch(pMedia->GetAudioCodecType())
+    {
+    case Media::UNKNOWN_CODEC:
+      vdec_info.audio = VDEC_CONCURRENT_NONE;
+    break;
+    case Media::EVRC_CODEC:
+      vdec_info.audio = VDEC_CONCURRENT_AUDIO_EVRC;
+    break;
+    case Media::QCELP_CODEC:
+      vdec_info.audio = VDEC_CONCURRENT_AUDIO_QCELP;
+    break;
+    case Media::AAC_CODEC:
+      vdec_info.audio = VDEC_CONCURRENT_AUDIO_AAC;
+    break;
+    case Media::BSAC_CODEC:
+      vdec_info.audio = VDEC_CONCURRENT_AUDIO_BSAC;
+    break;
+    case Media::GSM_AMR_CODEC:
+      vdec_info.audio = VDEC_CONCURRENT_AUDIO_AMR;
+    break;
+    case Media::MP3_CODEC:
+      vdec_info.audio = VDEC_CONCURRENT_AUDIO_MP3;
+    break;
+    case Media::WMA_CODEC:
+      vdec_info.audio = VDEC_CONCURRENT_NONE; //Right now, no WMA support. This will change soon.
+    break;
+    case Media::CONC_CODEC:
+      vdec_info.audio = VDEC_CONCURRENT_AUDIO_CONC;
+    break;
+    case Media::AMR_WB_CODEC:
+      vdec_info.audio = VDEC_CONCURRENT_AUDIO_AMR_WB;
+    break;
+    case Media::AMR_WB_PLUS_CODEC:
+      vdec_info.audio = VDEC_CONCURRENT_AUDIO_AMR_WB_PLUS;
+    break;
+    case Media::EVRC_NB_CODEC:
+      vdec_info.audio = VDEC_CONCURRENT_AUDIO_EVRC;
+    break;
+    case Media::EVRC_WB_CODEC:
+      vdec_info.audio = VDEC_CONCURRENT_AUDIO_EVRC;
+    break;
+    default:
+      vdec_info.audio = VDEC_CONCURRENT_NONE;
+    break;
+    }
 
     /* see if they wanted to save the decoded frame and act accordingly */
     if (recInfo.start != 0 || recInfo.stop != 0)
@@ -1593,17 +1640,10 @@ static VDEC_ERROR qtvdiag_vdec_diag_init( vdec_diag_cmd_type *cmd_ptr )
       temp = std_strchr(outputFile,'.');
       *temp = '\0';
       (void)std_strlcat(outputFile,".dec", QTV_MAX_URN_BYTES+11);
-      fs_open_xparms.create.cleanup_option = FS_OC_CLOSE;
-      fs_open_xparms.create.buffering_option = FS_OB_PROHIBIT;
-      fs_open_xparms.create.attribute_mask = FS_FA_UNRESTRICTED;
-      fs_open(outputFile,FS_OA_CREATE,&fs_open_xparms,NULL,&fs_rsp);
-      if (fs_rsp.open.status != FS_OKAY_S)
+      filedes = efs_open(outputFile,O_CREAT | O_RDWR | O_EXCL, S_IRUSR | S_IWUSR);
+      if (filedes < 0)
       {
         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,"Output file create failure");
-      }
-      else
-      {
-        filedes = fs_rsp.open.handle;
       }
     }
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"File open successful");

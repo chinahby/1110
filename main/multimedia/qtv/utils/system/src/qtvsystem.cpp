@@ -19,9 +19,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/system/main/latest/src/qtvsystem.cpp#4 $
-$DateTime: 2008/10/10 02:00:24 $
-$Change: 760239 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/system/main/latest/src/qtvsystem.cpp#5 $
+$DateTime: 2009/02/11 04:24:59 $
+$Change: 838655 $
 
 ========================================================================== */
 
@@ -37,7 +37,9 @@ $Change: 760239 $
 /* Includes custmp4.h. The following 2 includes must be the first includes in this file! */
 #include "customer.h"
 #include "qtvInternalDefs.h"
+#ifndef FEATURE_WINCE
 #include "OEMFeatures.h"
+#endif
 #include "qtvsystem.h"
 
 
@@ -53,7 +55,9 @@ $Change: 760239 $
 # include "AEE_OEMHeap.h"
 # include "OEMHeap.h"
 #else
+#ifndef FEATURE_WINCE
 # include "AEE_OEM.h"
+#endif
 #endif /* FEATURE_BREW_3_0 */
 
 #ifdef FEATURE_QTV_IMEM 

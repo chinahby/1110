@@ -471,7 +471,7 @@ PNGE_returnCodeType   pnge_encode
           (void)ipl_convert_ycbcr422lp_to_ycbcr422(&pnge_inputTemp_ipl_image, &pnge_outputTemp_ipl_image);
       
       pnge_input_ipl_image.imgPtr = YCbYCr_ptr;
-      
+     
       pnge_bytes_per_pixel = 2;
       pnge_input_ipl_image.cFormat = IPL_YCbCr;
       break;     

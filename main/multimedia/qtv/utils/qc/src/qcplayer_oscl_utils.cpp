@@ -19,9 +19,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/qc/main/latest/src/qcplayer_oscl_utils.cpp#4 $
-$DateTime: 2008/09/23 06:32:03 $
-$Change: 748913 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/qc/main/latest/src/qcplayer_oscl_utils.cpp#5 $
+$DateTime: 2009/01/29 06:14:06 $
+$Change: 829425 $
 
 
 ========================================================================== */
@@ -283,6 +283,8 @@ void ZUtils::Init()
   InitClock();
 }
 
+#ifndef FEATURE_WINCE
+
 /* ======================================================================
 FUNCTION:
   ZUtils::readNVItem
@@ -334,6 +336,8 @@ bool ZUtils::readNVItem
       return false;
    }
 }
+#endif
+
 
 #ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
 /* ======================================================================

@@ -15,9 +15,9 @@ Copyright 2006 QUALCOMM Incorporated, All Rights Reserved
 ============================================================================ */
 /* =========================================================================
                              Edit History
-$Header: //source/qcom/qct/multimedia/qtv/concurrencymgr/main/latest/inc/qtv_conc_mgr.h#9 $
-$DateTime: 2008/12/03 20:49:39 $
-$Change: 797823 $
+$Header: //source/qcom/qct/multimedia/qtv/concurrencymgr/main/latest/inc/qtv_conc_mgr.h#14 $
+$DateTime: 2010/07/11 23:39:43 $
+$Change: 1363025 $
 
 ============================================================================ */
 /* =========================================================================
@@ -34,6 +34,9 @@ $Change: 797823 $
 extern "C"
 {
   #include "cm.h"
+#ifdef FEATURE_QTV_IN_CALL_1X  
+#error code not present
+#endif  
 }
 
 /* =========================================================================
@@ -112,7 +115,7 @@ public:
     bool
       True if we were able to successfully register with CM, false otherwise.
   ========================================================================== */
-  static bool init(
+  static void init(
     Mpeg4Player *context_ptr, 
     const char *current_MIME_type,
     uint32 num_qtv_instance);
@@ -132,6 +135,21 @@ public:
     None.
   ========================================================================== */
   static void terminate(uint32 num_qtv_instance);
+
+  /* =======================================================================
+  FUNCTION:
+    qtv_conc_mgr::register_with_call_mgr
+
+  DESCRIPTION:
+    Registering the qtv with call manager.
+
+  PARAMETERS:
+    None.
+    
+  RETURN VALUE:
+    None.
+  ========================================================================== */
+  static bool register_with_call_mgr();
 
   /* =======================================================================
   FUNCTION:
@@ -342,6 +360,9 @@ private:
 
   /* MIME type used to determine player */
   static const char *current_MIME_type_ptr;
+
+  /* Determine whether player suspended internally at call set up response event */
+  static bool is_qtv_suspended_internally;
 
   /* =======================================================================
   FUNCTION:
@@ -643,3 +664,4 @@ private:
 
 };
 #endif /* _CONCURRENCYMGR_H_ */
+

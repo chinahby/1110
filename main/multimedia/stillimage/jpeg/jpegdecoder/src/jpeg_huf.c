@@ -8,7 +8,7 @@ GENERAL DESCRIPTION
   JPEG decoder.
   
 
-Copyright(c) 2005-2009 by QUALCOMM, Incorporated. All Rights Reserved.
+Copyright(c) 2005-2010 by QUALCOMM, Incorporated. All Rights Reserved.
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /* <EJECT> */
@@ -19,10 +19,12 @@ Copyright(c) 2005-2009 by QUALCOMM, Incorporated. All Rights Reserved.
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/multimedia/stillimage/jpeg6k/jpegdecoder/main/latest/src/jpeg_huf.c#2 $
+$Header: //source/qcom/qct/multimedia/stillimage/jpeg6k/jpegdecoder/main/latest/src/jpeg_huf.c#5 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+05/24/2010 gbc     Fixed a issue with component is null when decoding.
+12/03/10   chai    fixed klock work errors
 04/01/2009 sigu    Fixed the 'output picture is broken for YUV422 progressive 
                    decoding'
 04/08/08   sigu    Fixed Klocwork errors for 6800 6.4 target.
@@ -103,7 +105,6 @@ extern uint32  scanACTableSelector[JPGD_MAXCOMPONENTS];
 extern uint16  jpegd_imageWidth;
 extern uint32  progCompSel;
 extern uint32  progScanAC;
-JPEGD_STATUS_MSG     jpegd_statusMessage;
 
 // Tables and macro used to fully decode the DPCM differences.
 // (Note: In x86 asm this can be done without using tables.)
@@ -158,13 +159,14 @@ Comments:
 
 Side Effects:
 ============================================================================*/
-void jpeg_gen_huff_tbl(uint32 index, boolean isDC, jpeg_derived_tbl derived_table[], uint32 table_index)
+JPEGD_STATUS_MSG jpeg_gen_huff_tbl(uint32 index, boolean isDC, jpeg_derived_tbl derived_table[], uint32 table_index)
 {
   uint32 idx_l, idx_k;
   uint32 code, idx_j;
   int32  si;
   uint32 lookbits,lastk;
   jpeg_huff_tbl * huffTbl;
+  JPEGD_STATUS_MSG jpegd_statusMessage = JPEGD_DECODING_OK;
 
   /* Based on the Figure C.1 flow diagram */
   if (!prog_flag)
@@ -212,7 +214,8 @@ void jpeg_gen_huff_tbl(uint32 index, boolean isDC, jpeg_derived_tbl derived_tabl
     {
       derived_table[index].offset[idx_l] = idx_j - huffcode[idx_j];
       idx_j += huffTbl->bits[idx_l];
-      derived_table[index].maxcode[idx_l] = (int32) huffcode[idx_j -1];
+      if ((idx_j != NULL) && (idx_j <257))
+         derived_table[index].maxcode[idx_l] = (int32) huffcode[idx_j -1];
     }
     else /* bits[idx_l] == 0 */
     {
@@ -232,11 +235,19 @@ void jpeg_gen_huff_tbl(uint32 index, boolean isDC, jpeg_derived_tbl derived_tabl
     for(idx_k=1; idx_k <= huffTbl->bits[idx_l]; idx_k++,idx_j++)
     {
       lookbits = huffcode[idx_j] << (HUFF_LOOKAHEAD -idx_l);
-      for( si=1 << (HUFF_LOOKAHEAD -idx_l); si >0; si--)
+
+      if (lookbits < (1<<HUFF_LOOKAHEAD))
       {
-        derived_table[index].look_nbits[lookbits] = idx_l;
-        derived_table[index].look_sym[lookbits] = huffTbl->huffval[idx_j];
-        lookbits++;
+        for( si=1 << (HUFF_LOOKAHEAD -idx_l); si >0; si--)
+        {
+          derived_table[index].look_nbits[lookbits] = idx_l;
+          derived_table[index].look_sym[lookbits] = huffTbl->huffval[idx_j];
+          lookbits++;
+        }
+      }
+      else
+      {
+        return JPEGD_INVALID_DHT_MARKER;
       }
     }
   }
@@ -248,9 +259,11 @@ void jpeg_gen_huff_tbl(uint32 index, boolean isDC, jpeg_derived_tbl derived_tabl
     {
       code = huffTbl->huffval[idx_k];
       if((code ==0) || (code > 15))
-        return ;
+        return jpegd_statusMessage;
     }
   }
+
+  return jpegd_statusMessage;
 }
 
 /*===========================================================================
@@ -343,6 +356,8 @@ JPEGD_STATUS_MSG jpeg_check_huff_tables(uint32 comps_in_scan)
 {
   uint32 i, huff_tbl_set;
 
+  JPEGD_STATUS_MSG jpegd_statusMessage = JPEGD_DECODING_OK;
+
   /* There areonly 2 set of tables for 3 components */
   huff_tbl_set = (comps_in_scan == 3) ? 2 : 1;
 
@@ -365,18 +380,24 @@ JPEGD_STATUS_MSG jpeg_check_huff_tables(uint32 comps_in_scan)
 
   for(i = 0; i < 4 ; i++)  //4 is max. number of huffman tables
   {
-    if(dc_huff[scanDCTableSelector[i]].read)
+    if (JPEGD_DECODING_OK == jpegd_statusMessage)
     {
-      jpeg_gen_huff_tbl(i, TRUE, dc_derived_table, scanDCTableSelector[i]);
+      if(dc_huff[scanDCTableSelector[i]].read)
+      {
+        jpegd_statusMessage = jpeg_gen_huff_tbl(i, TRUE, dc_derived_table, scanDCTableSelector[i]);
+      }
     }
 
-    if(ac_huff[scanACTableSelector[i]].read)
+    if (JPEGD_DECODING_OK == jpegd_statusMessage)
     {
-      jpeg_gen_huff_tbl(i, FALSE, ac_derived_table, scanACTableSelector[i]);
+      if(ac_huff[scanACTableSelector[i]].read)
+      {
+        jpegd_statusMessage = jpeg_gen_huff_tbl(i, FALSE, ac_derived_table, scanACTableSelector[i]);
+      }
     }
   }
 
-  return JPEGD_DECODING_OK;
+  return jpegd_statusMessage;
 }
 
 /*===========================================================================
@@ -619,6 +640,12 @@ boolean jpeg_dec_mcu (const MCU_info_type *mcu /*, uint32 blocks_per_MCU*/)
     /* How about component ID here?????  */
     component = jpeg_next_block_addr(*mcu, mcu->subsample, cnt, 0);
 
+    if (component.coef_ptr == 0x0)
+    {
+        MSG_ERROR("jpeg_dec_mcu : component.coef_ptr = NULL",0,0,0);
+        return FALSE;        
+    }
+
     /*  To avoid memory corruption  */ 
     if(component.coef_ptr >= (comp_data[component.id].seg_ptr + 2*comp_data[component.id].coeff_size))
     {
@@ -631,7 +658,8 @@ boolean jpeg_dec_mcu (const MCU_info_type *mcu /*, uint32 blocks_per_MCU*/)
     if(s)
     {
       r = fetchBits((int32)s, TRUE);
-      s = (uint32)HUFF_EXTEND((int32)r, s);
+      if(s<16)
+        s = (uint32)HUFF_EXTEND((int32)r, s);
     }
 
     /* This has to be for the DC predictor coefficient */
@@ -655,7 +683,8 @@ boolean jpeg_dec_mcu (const MCU_info_type *mcu /*, uint32 blocks_per_MCU*/)
         if (k <= 63)
         {
           r = fetchBits((int32)s, TRUE);  
-          s = (uint32)HUFF_EXTEND((int32)r, s);
+          if(s<16)
+            s = (uint32)HUFF_EXTEND((int32)r, s);
           /* Output coefficient in natural order. */
           component.coef_ptr[k]= (int16) s;
         }
@@ -761,6 +790,7 @@ boolean jpeg_dec_1st_DC(MCU_info_type mcu, uint32 num_comp, const uint32 compSel
     if(s)
     {
       r = (int32)fetchBits(s, TRUE);  
+      if(s<16)
       s = HUFF_EXTEND(r, s);
     }
 

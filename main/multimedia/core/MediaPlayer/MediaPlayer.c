@@ -11305,6 +11305,8 @@ static int CPlayerWin_HandleCreateMedia(IWindow *po, AEEEvent eCode, uint16 wPar
 
         if (pme->m_pOwner->m_bPlugin || pme->m_pOwner->m_nContMode != CONT_MODE_OFF)
         {
+          DBGPRINTF("MP: Calling Play since m_bPlugin = %d || m_nContMode (%d) != CONT_MODE_OFF",
+            pme->m_pOwner->m_bPlugin, pme->m_pOwner->m_nContMode);
           CPlayerWin_AutoPlayClip(pme->m_pOwner);
           //(void)ISHELL_PostEvent(((CMediaPlayer *)pme->m_pOwner)->a.m_pIShell, AEECLSID_MEDIAPLAYER, EVT_COMMAND, IDM_PM_PLAY, 0);
         }
@@ -18423,10 +18425,12 @@ CPlayerWin_UpdateMenu(CPlayerWin *pme, int nSelectMenuID)
     (void)IMEDIA_GetMediaParm(pme->m_pMedia, MM_PARM_CAPS, (&capType),0);
     if (capType & MM_CAPS_VIDEO)
     {
+      DBGPRINTF("MP: DRM file IDB_FILE_ICON, set handler type to VIDEO");
       FileHandlerType = IDB_VIDEO_ICON;
     }
     else if (capType & MM_CAPS_AUDIO)
     {
+      DBGPRINTF("MP: DRM file IDB_FILE_ICON, set handler type to AUDIO");
       FileHandlerType = IDB_AUDIO_ICON;
     }
   }
@@ -22696,15 +22700,20 @@ static boolean CPlayerWin_SetAScale(CPlayerWin * pwin)
   if (scaledX > clipWidth*4)
   {
     scaledX = clipWidth*4;
+    DBGPRINTF("MP: adjusted scaledX to %d", scaledX);
   }
   if (scaledY > clipHeight*4)
   {
     scaledY = clipHeight*4;
+    DBGPRINTF("MP: adjusted scaledY to %d", scaledY);
   }
 
+  DBGPRINTF_MED("MP: scaledX,scaledY = %d,%d", scaledX, scaledY);
   nRet = IMEDIA_SetMediaParm(pwin->m_pMedia, MM_MP4_PARM_ASCALING, scaledX, scaledY);
   if (SUCCESS != nRet)
   {
+    DBGPRINTF_MED("MP: IMEDIA_SetMediaParm(MM_MP4_PARM_ASCALING,%d,%d) returns %d = %s",
+              scaledX, scaledY, nRet, MP_ErrorStateToString(nRet));
     return FALSE;
   }
 
@@ -24882,6 +24891,7 @@ CPlayerWin_MappedKeyEventHandler(IWindow *po, AEEEvent eCode, uint16 wParam,
       if ( pme->m_pOwner->m_bPlayRingerWithQTV)
       {
         int ret;
+        DBGPRINTF("MP: play ringer while QTV play is on");
         if(!pme->m_pMedia1)
         {
           AEEMediaData md;

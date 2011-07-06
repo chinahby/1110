@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/base/main/latest/inc/media.h#23 $
-$DateTime: 2008/12/11 02:28:12 $
-$Change: 803007 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/base/main/latest/inc/media.h#35 $
+$DateTime: 2010/04/20 22:35:42 $
+$Change: 1273913 $
 
 
 ========================================================================== */
@@ -237,6 +237,9 @@ enum MediaStatus {
     BSAC_CODEC,
     FGV_CODEC_NB,
     FGV_CODEC_WB,
+    AC3_CODEC,
+    PCM_CODEC,
+    STILL_IMAGE_H263_CODEC,	
     MAX_CODEC
   };
 
@@ -246,7 +249,8 @@ enum MediaStatus {
     AAC_DATA_FORMAT_RAW,
     AAC_DATA_FORMAT_PSEUDO_RAW,
     BSAC_DATA_FORMAT_ADTS,
-    AAC_DATA_FORMAT_LOAS
+    AAC_DATA_FORMAT_LOAS,
+    AAC_DATA_FORMAT_UNKNOWN /*Please add all the valid format information above this line*/
   };
 
   typedef struct
@@ -316,6 +320,8 @@ defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD))
 #endif /* FEATURE_QTV_PSEUDO_STREAM */
   /* FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
                           );
+
+  virtual bool isHTTPStreaming ( void ) { return false; }
 
 #ifdef FEATURE_QTV_PSEUDO_STREAM
   virtual void UpdatePSBufferOffset(uint32) { }
@@ -483,9 +489,9 @@ defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD))
   virtual unsigned long GetAvgVideoBitRate(int idx=0);
   virtual bool GetAudioTrackLanguage(OSCL_STRING &, uint32);
   virtual unsigned int UserCompare(bool &, int, int, int){return 0;}
+  virtual unsigned long GetAudioBitsPerSample(int idx=0);
 #if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER)
   /* use these functions only for windows media audio */
-  virtual unsigned long GetAudioBitsPerSample(int idx=0);
   virtual unsigned long GetAudioCodecVersion(int idx=0);
   virtual unsigned long GetFixedAsfAudioPacketSize(int idx=0);
   virtual unsigned long GetAudioEncoderOptions(int idx=0);
@@ -507,7 +513,9 @@ defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD))
 #endif /* defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) */
 
 #ifdef FEATURE_QTV_AVI
-  virtual long getAudioFrameDuration(int){return 0;}
+  virtual long  getAudioFrameDuration(int){return 0;}
+  virtual void  SetIDX1Cache(void*){}
+  virtual void* GetIDX1Cache(){return NULL;}
 #endif
 
   virtual void resetInitialization(){};
@@ -634,7 +642,7 @@ virtual uint32 SetTextPosition(unsigned long pos,bool &bError,uint32 currentPosT
 
 #endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT*/
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
   virtual void SetAudioPlayerData (const void *client_data)
   {
     QTV_USE_ARG1(client_data);
@@ -649,12 +657,12 @@ virtual uint32 SetTextPosition(unsigned long pos,bool &bError,uint32 currentPosT
   {
     QTV_USE_ARG1(client_data);
   }
-#endif /* FEATURE_FILE_FRAGMENTATION */
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+
+#ifdef FEATURE_FILE_FRAGMENTATION
 virtual uint32 RepositionVideoAccessPoint(int32 skipNumber, bool &bError ,uint32 currentPosTimeStampMsec);
 virtual uint32 RepositionAudioAccessPoint(int32 skipNumber, bool &bError,uint32 currentPosTimeStampMsec);
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+#endif /*FEATURE_FILE_FRAGMENTATION*/
 
 //VIDEO SAMPLE METHODS
 
@@ -663,6 +671,8 @@ virtual uint32 RepositionAudioAccessPoint(int32 skipNumber, bool &bError,uint32 
                                         uint32 buf_pos = 0, void **userdata = NULL) = 0;
   virtual bool ResetLayeredVideoPlayback(int idx) = 0;
   virtual unsigned long GetTimestampForCurrentLayeredVideoSample(int idx = 0) = 0;
+  virtual unsigned long GetTimestampDeltaForCurrentLayeredVideoSample(int layer = 0);
+  virtual unsigned long GetTimestampDeltaForCurrentAudioSample(int idx = 0);
   virtual unsigned char *GetVOLHeader(int idx, int &size) = 0;
   virtual bool GetVideoDimensions(uint32 *pWidth, uint32 *pHeight, uint32 trackIdx=0) = 0;
   virtual void GetCurVideoSampleInfo(uint32 track_id, uint32 *timeStamp, uint32 *timeDuration) = 0;
@@ -812,6 +822,8 @@ virtual uint32 RepositionAudioAccessPoint(int32 skipNumber, bool &bError,uint32 
       This value is then used to offset the time stamp of successive video frame
       (i.e. first video frame with timestamp 0) when the playback restarts.*/
   uint32 videoLoopTrackTimeOffset;
+  uint32 audioLoopTrackTimeOffset;
+  uint32 textLoopTrackTimeOffset;
   virtual void SetLoopTrackFlag(bool bLoop) {bLoopTrackFlag = bLoop;}
 
   virtual AACDataFormatType GetAACDataFormat(void);
@@ -895,6 +907,9 @@ int audioSamplesPerFrame;
 
   //Callback funtion..called by Media layer
   pfnMediaPlayerCb MediaPlayerCbFn;
+#ifdef FEATURE_WINCE
+#error code not present
+#endif
 };
 #endif /* _MEDIA_H_ */
 

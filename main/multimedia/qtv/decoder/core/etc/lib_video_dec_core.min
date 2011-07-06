@@ -6,7 +6,8 @@ QTV_DEC_COMMON_SOURCES =\
        vdecoder_utils.cpp \
        vdecoder_i.cpp \
        vdecoder.cpp \
-       frame_buffer_pool.cpp 
+       frame_buffer_pool.cpp \
+       vdecoder_perf.cpp
 
 QTV_DEC_COMMON_OBJS :=  $(addprefix $(LIBDIR)/, $(QTV_DEC_COMMON_SOURCES:%.cpp=%.o))
 

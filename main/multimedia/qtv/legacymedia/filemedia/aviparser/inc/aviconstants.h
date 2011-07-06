@@ -10,7 +10,7 @@ Copyright 2004 QUALCOMM Incorporated, All Rights Reserved
 
 /* =======================================================================
                              PERFORCE HEADER
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/latest/inc/aviconstants.h#10 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/latest/inc/aviconstants.h#16 $
 ========================================================================== */
 
 #include "aviDataTypes.h"
@@ -33,14 +33,17 @@ $Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/l
 #define AVI_SIZEOF_FOURCC_PLUS_LENGTH  ((sizeof(fourCC_t))+(sizeof(avi_uint32)))
 
 //Various format tag to identify the audio track.
+#define AVI_AUDIO_PCM 0x0001
 #define AVI_AUDIO_MP2 0x0050
 #define AVI_AUDIO_MP3 0x0055
 #define AVI_AUDIO_AC3 0x2000
 #define AVI_AUDIO_DTS 0x2001
+#define AVI_AUDIO_AAC 0x00ff
+#define AVI_AUDIO_AAC_FAAD 0x706d
 
 #define AVI_IDX1_ENTRY_SIZE 16
 
-#define AVI_DEFAULT_VIDEO_BUF_SIZE 76000
+#define AVI_DEFAULT_VIDEO_BUF_SIZE 200000
 #define AVI_DEFAULT_AUDIO_BUF_SIZE 16000
 
 #define AVI_READ_BUFFER_SIZE  1024  // file i/o buffer size
@@ -64,7 +67,9 @@ $Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/l
 #define AVI_INDEX_OF_DATA    0x80
 #define AVI_INDEX_2FIELD     0x01
 
-#define MAX_VOL_HDR_SIZE 256
+#define MAX_VOL_HDR_SIZE 1024
+
+#define AUDIO_SAMPLE_CACHING_INTERVAL 1000
 /*
 * DIVX encoder puts start codes in little endian
 * such as 0x00000100 and 0x00000120.

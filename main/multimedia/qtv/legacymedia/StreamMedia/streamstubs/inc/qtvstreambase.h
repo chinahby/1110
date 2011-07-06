@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/streammedia/streamstubs/rel/1.0/inc/qtvstreambase.h#2 $
-$DateTime: 2008/07/11 08:12:20 $
-$Change: 700132 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/streammedia/streamstubs/rel/1.0/inc/qtvstreambase.h#3 $
+$DateTime: 2011/02/02 22:29:39 $
+$Change: 1605117 $
 
 ========================================================================== */
 
@@ -50,6 +50,8 @@ $Change: 700132 $
 const int DEFAULT_TIMEOUT               = 30000; /* 30 secs */
 const int DEFAULT_OPTIONS_TIMEOUT       = 60000; /* 60 secs */
 const int DEFAULT_DATA_INACTIVITY_TIMEOUT = 60000; /*60 secs*/
+const int DEFAULT_RTP_MIN_BUFFER_DURATION   = 2500; /* ms */
+const int DEFAULT_RTP_MAX_BUFFER_DURATION   = 5000; /* ms */
 #ifdef FEATURE_QTV_MCAST
 /*default broadcast interface*/
 const uint8 DEFAULT_BCAST_IFACE = (uint8) BSD_IFACE_CDMA_BCAST;

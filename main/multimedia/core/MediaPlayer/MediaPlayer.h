@@ -1062,9 +1062,6 @@ struct CMediaPlayer
   MPWindow  m_eSuspendWin;             // Suspended window, when true,
                                        // CPlayerWin_MediaNotify will
                                        // reject all events
-
-  IAnnunciator        *m_pIAnn;         //Add By zzg 2010_08_09
-                                       
   IWindow  *m_pWin;
   uint16   m_nPlayerType;              // The MenuID of the player that was selected;
 

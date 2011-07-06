@@ -17,9 +17,9 @@ Copyright 2005, 2006 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/task/main/latest/src/qtv_task_if_task.cpp#7 $
-$DateTime: 2008/05/08 14:17:40 $
-$Change: 656443 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/task/main/latest/src/qtv_task_if_task.cpp#11 $
+$DateTime: 2009/11/30 03:18:44 $
+$Change: 1098040 $
 
 ========================================================================== */
 
@@ -172,7 +172,8 @@ RETURN VALUE:
 ===========================================================================*/
 void qtv_task_fn( unsigned long info_as_long )
 {
-  const int NUM_DISPATCH_TIMERS = 4;
+  const int NUM_DISPATCH_TIMERS = 6;
+  int i = 0;
 
   qtv_task_info_struct* info_ptr = ( qtv_task_info_struct* )info_as_long;
 
@@ -185,14 +186,14 @@ void qtv_task_fn( unsigned long info_as_long )
   /*----- INITIALIZATION -----*/
 
   q_init( &info_ptr->input_q );
-  rex_init_crit_sect( &info_ptr->input_cs );
+  QCUtils::InitCritSect( &info_ptr->input_cs );
 
   rex_def_timer( &dog_rpt_timer,
                  rex_self(),
                  QTV_TASK_DOG_RPT_SIG );
 
   sigs = FIRST_TIMER_SIG;
-  for ( int i = 0; i < NUM_DISPATCH_TIMERS; ++i )
+  for ( i = 0; i < NUM_DISPATCH_TIMERS; ++i )
   {
     ASSERT( sigs <= LAST_USABLE_SIG );
     rex_def_timer( &( dispatch_timers[ i ].timer ), rex_self(), sigs );
@@ -201,9 +202,11 @@ void qtv_task_fn( unsigned long info_as_long )
     sigs <<= 1;
   }
 
+#ifndef FEATURE_WINCE
   task_start( QTV_TASK_DOG_RPT_SIG,
               rex_self()->dog_report_val,
               &dog_rpt_timer);
+#endif
 
   /* Set the watchdog report timer signal so that we'll
   ** reset the watchdog as soon as we start checking for events. */
@@ -231,7 +234,9 @@ void qtv_task_fn( unsigned long info_as_long )
 
       dog_report_val = rex_self()->dog_report_val;
       rex_self()->dog_report_val = -1;
+#ifndef FEATURE_WINCE
       dog_monitor_pause( dog_report_val );
+#endif
     #endif // not DISABLE_WATCHDOG_MONITORING
   }
 
@@ -271,7 +276,9 @@ void qtv_task_fn( unsigned long info_as_long )
     if ( sigs & TASK_OFFLINE_SIG )
     {
       /* We don't actually go offline, but we must do the handshake. */
+#ifndef FEATURE_WINCE
       task_offline();
+#endif
     } /* TASK_OFFLINE_SIG? */
 
     /*-------------------------------------------------------------------------
@@ -287,7 +294,16 @@ void qtv_task_fn( unsigned long info_as_long )
   /*----- SHUTDOWN -----*/
 
   ( void )rex_clr_timer( &dog_rpt_timer );
+
+  // Clear all the dispatch_timers
+  for ( i = 0; i < NUM_DISPATCH_TIMERS; ++i )
+  {
+    rex_clr_timer( &( dispatch_timers[ i ].timer ));
+  }
+
+#ifndef FEATURE_WINCE
   task_stop();
+#endif
 }
 
 /* ========================================================================
@@ -315,9 +331,9 @@ qtv_task_if_class::link_struct* get_link_from_protected_q
 )
 {
   qtv_task_if_class::link_struct* link_ptr;
-  rex_enter_crit_sect( cs_ptr );
+  QCUtils::EnterCritSect( cs_ptr );
   link_ptr  = ( qtv_task_if_class::link_struct* )q_get( q_ptr );
-  rex_leave_crit_sect( cs_ptr );
+  QCUtils::LeaveCritSect( cs_ptr );
   return link_ptr;
 }
 
@@ -398,13 +414,13 @@ void do_qtv_signal_handling
                          q_cnt(input_q_ptr) );
 #endif //QTV_TASK_IF_MSG_QUEUE_DEBUG
 
-          rex_enter_crit_sect( input_q_cs_ptr );
+          QCUtils::EnterCritSect( input_q_cs_ptr );
           do_cancellation( sigs,
                            ( qtv_task_if_class::link_struct* )link_ptr->dispatch_id,
                            input_q_ptr,
                            dispatch_timers,
                            num_timers );
-          rex_leave_crit_sect( input_q_cs_ptr );
+          QCUtils::LeaveCritSect( input_q_cs_ptr );
           release_link( link_ptr );
           break;
         }
@@ -649,5 +665,6 @@ static void release_link
   }
 
   qtv_task_if_class::link_struct::free( link_ptr );
+  //QCUtils::DinitCritSect( &info_ptr->input_cs );
 }
 

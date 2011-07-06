@@ -1,16 +1,17 @@
 #-------------------------------------------------------------------------------
 # StaticExtensions QTV OEM Library
 #
-# $Header: //source/qcom/qct/multimedia/qtv/staticextensions/oem/main/latest/etc/qtv_oem.min#5 $
-# $DateTime: 2008/07/30 04:05:09 $
-# $Change: 713096 $
-# $Author: atulp $
+# $Header: //source/qcom/qct/multimedia/qtv/staticextensions/oem/main/latest/etc/qtv_oem.min#6 $
+# $DateTime: 2009/08/24 22:49:47 $
+# $Change: 1006683 $
+# $Author: c_sulege $
 # 
 #-------------------------------------------------------------------------------
 
 ifeq ($(USES_MP4), yes)
   QTV_OEM_LIB_SOURCES     = oemmediampeg4.c \
-                            oemmediamultiplefile.c
+                            oemmediamultiplefile.c \
+                            OEMVdec.c
   QTV_OEM_LIB_CPP_SOURCES = oemmediampeg42pv.cpp
 endif
 

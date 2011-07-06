@@ -1,10 +1,10 @@
 #-------------------------------------------------------------------------------
 # StaticExtensions QTV OEM Library
 #
-# $Header: //source/qcom/qct/multimedia/qtv/staticextensions/oem/main/latest/etc/ext_qtv.min#4 $
-# $DateTime: 2008/10/07 01:12:40 $
-# $Change: 757796 $
-# $Author: c_ppatel $
+# $Header: //source/qcom/qct/multimedia/qtv/staticextensions/oem/main/latest/etc/ext_qtv.min#5 $
+# $DateTime: 2009/10/28 22:11:49 $
+# $Change: 1067860 $
+# $Author: c_sulege $
 # 
 #-------------------------------------------------------------------------------
 
@@ -39,8 +39,3 @@ qtv_all: $(QTV_ALL_OBJS)
 	@echo qtv_all compiled successfully -- no link
 endif
 
-qtv_oem_docs :
-	@echo ------------------------------------------------------------------------
-	@echo Generating Qtv OEM Docs
-	doxygen $(BREW_STATIC_EXTENSIONS_OEM_SRC)/ext_qtv.doxyfile
-	@echo ------------------------------------------------------------------------

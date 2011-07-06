@@ -1,5 +1,5 @@
-#ifndef _FILEMEDIA_H_ 
-#define _FILEMEDIA_H_ 
+#ifndef _FILEMEDIA_H_
+#define _FILEMEDIA_H_
 /* =======================================================================
                               filemedia.h
 DESCRIPTION
@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/base/main/latest/inc/filemedia.h#8 $
-$DateTime: 2008/12/11 02:28:12 $
-$Change: 803007 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/base/main/latest/inc/filemedia.h#19 $
+$DateTime: 2010/02/21 21:35:19 $
+$Change: 1187322 $
 
 
 ========================================================================== */
@@ -68,8 +68,8 @@ public:
 
 #endif
 
-  FileMedia(unsigned char *pBuf, uint32 bufSize, Mpeg4Player *pMpeg4Player,            
-             bool bPlayVideo =  false, bool bPlayAudio = false, 
+  FileMedia(unsigned char *pBuf, uint32 bufSize, Mpeg4Player *pMpeg4Player,
+             bool bPlayVideo =  false, bool bPlayAudio = false,
              bool bPlayText = false
 #if  defined (FEATURE_QTV_PSEUDO_STREAM) || \
      defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
@@ -216,11 +216,11 @@ public:
 #endif
 
 #ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT
-  virtual unsigned long SetAudioBitRate(uint32 idx);  
+  virtual unsigned long SetAudioBitRate(uint32 idx);
   virtual void setRepositioningAllowed(bool repositioningNotAllowed);
   virtual bool IsGenericAudioFileMediaInitialized();
   virtual bool IsGenericAudioFileRepositioned();
-  virtual uint32 GetTimeStampFromMedia();  
+  virtual uint32 GetTimeStampFromMedia();
   virtual int GetNextGenericAudioSample
     (MediaStatus &status, unsigned char * buf, int size, uint32 offset, int *numSample=NULL, unsigned long track = 0, int channel=0);
   #endif /* #ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT */
@@ -241,14 +241,14 @@ public:
   virtual unsigned long GetNumAudioChannels(int idx=0);
   virtual unsigned long GetAudioBitRate(int idx);
   virtual bool GetAudioTrackLanguage(OSCL_STRING &, uint32);
-  virtual unsigned int UserCompare(bool &bError, int nAudID, int nVidID, int nTextID);  
+  virtual unsigned int UserCompare(bool &bError, int nAudID, int nVidID, int nTextID);
 
   virtual float GetVideoFrameRate(int idx);
   virtual unsigned long GetVideoBitRate(int idx);
-
-#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) 
-  /* use these functions only for windows media audio */
   virtual unsigned long GetAudioBitsPerSample(int idx);
+
+#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER)
+  /* use these functions only for windows media audio */
   virtual unsigned long GetAudioCodecVersion(int idx);
   virtual unsigned long GetFixedAsfAudioPacketSize(int idx);
   virtual unsigned long GetAudioEncoderOptions(int idx);
@@ -271,8 +271,10 @@ virtual uint16 GetAudioAdvancedEncodeOptions(int idx);
 
 #ifdef FEATURE_QTV_AVI
   virtual long getAudioFrameDuration(int);
+  virtual void  SetIDX1Cache(void*);
+  virtual void* GetIDX1Cache();
 #endif
-  
+
   virtual void resetInitialization();
   virtual unsigned long GetMaxVideoBufferSizeDB(int trackNum = 0) ;
   virtual unsigned long GetMaxAudioBufferSizeDB(int trackNum = 0) ;
@@ -297,12 +299,12 @@ virtual uint16 GetAudioAdvancedEncodeOptions(int idx);
   virtual uint32 SetVideoPosition(unsigned long pos, bool &bError, uint32 currentPosTimeStamp);
   virtual uint32 SetAudioPosition(unsigned long pos, bool &bError,uint32 currentPosTimeStamp);
 
-#ifdef FEATURE_QTV_REPOSITION_SYNC_FRAME  
+#ifdef FEATURE_QTV_REPOSITION_SYNC_FRAME
   virtual uint32 seekToSync(int, bool &, uint32 );
 #endif /* FEATURE_QTV_REPOSITION_SYNC_FRAME */
 
   virtual void ResetVideoPlaybackPos();
-
+  virtual Media::AACDataFormatType GetAACDataFormat(void);
 
 #ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
   virtual void DownloadDone();
@@ -332,10 +334,10 @@ virtual uint16 GetAudioAdvancedEncodeOptions(int idx);
 #endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT */
 #endif /* FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+#ifdef FEATURE_FILE_FRAGMENTATION
   virtual uint32 RepositionVideoAccessPoint(int32 skipNumber, bool &bError ,uint32 currentPosTimeStampMsec);
   virtual uint32 RepositionAudioAccessPoint(int32 skipNumber, bool &bError,uint32 currentPosTimeStampMsec);
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+#endif /*FEATURE_FILE_FRAGMENTATION*/
 
   // VIDEO SAMPLE METHODS
 
@@ -343,6 +345,9 @@ virtual uint16 GetAudioAdvancedEncodeOptions(int idx);
                                         unsigned char * buf, int size,
                                         uint32 bit_pos = 0, void **userdata = NULL);
   virtual unsigned long GetTimestampForCurrentLayeredVideoSample(int layer = 0);
+  virtual unsigned long GetTimestampDeltaForCurrentLayeredVideoSample(int layer = 0);
+  virtual unsigned long GetTimestampDeltaForCurrentAudioSample(int idx);
+
   virtual unsigned char *GetVOLHeader(int idx, int &size) ;
   virtual bool ResetLayeredVideoPlayback(int idx);
   virtual bool GetVideoDimensions(uint32 *pWidth, uint32 *pHeight, uint32 trackIdx=0);
@@ -367,11 +372,11 @@ virtual uint16 GetAudioAdvancedEncodeOptions(int idx);
   virtual int GetNextAudioSample
     (MediaStatus &status, unsigned char * buf, int size, int *numSample=NULL, unsigned long track = 0, int channel=0);
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+
   virtual void SetAudioPlayerData( const void *client_data);
   virtual void SetVideoPlayerData( const void *client_data);
   virtual void SetTextPlayerData( const void *client_data);
-#endif
+
 
   virtual unsigned long GetTimestampForCurrentAudioSample(unsigned long track = 0);
   virtual unsigned char *GetAACHeader(int idx, int &size);
@@ -393,8 +398,8 @@ virtual uint16 GetAudioAdvancedEncodeOptions(int idx);
   virtual bool isAudioPresentInClip();
 #ifdef FEATURE_QTV_PDCF
   virtual QtvPlayer::EncryptionTypeT getEncryptionType();
-  virtual QtvPlayer::EncryptionTypeT getEncryptionType(uint32);  
-#endif /* FEATURE_QTV_PDCF */  
+  virtual QtvPlayer::EncryptionTypeT getEncryptionType(uint32);
+#endif /* FEATURE_QTV_PDCF */
 #ifdef FEATURE_QTV_WM_DRM_API
   virtual bool RegisterDRMDecryptMethod(QtvPlayer::DRMDecryptMethodT pDRMDecriptFunction, void *pClientData);
 #endif /* FEATURE_QTV_WM_DRM_API */
@@ -405,6 +410,7 @@ private:
 
   FileBase *pBaseFile;
   int nMp4Error;
+  Media::AACDataFormatType  m_AACDataFormatType;
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
   long nTimestampA,nTimestampV,nTimestampT;
 #else
@@ -413,7 +419,7 @@ private:
   int32 curAudioSDI;
   char evrcFrameType;
   char amrFrameType;
-
+  bool lockTrackList;
   enum MediaReqType
   {
     VIDEO_REQUEST,
@@ -427,7 +433,7 @@ private:
   bool m_bPlayVideo;
   bool m_bPlayAudio;
   bool m_bPlayText;
-  ReferenceCountedPointer<DefaultTrackSelectionPolicy> 
+  ReferenceCountedPointer<DefaultTrackSelectionPolicy>
     m_defaultTrackSelectionPolicy;
 
   bool m_bMediaInitialized;
@@ -438,6 +444,10 @@ private:
 #if defined (FEATURE_QTV_PSEUDO_STREAM) || \
     defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
   bool m_bPseudoStream;
+  virtual bool isHTTPStreaming( void )
+  {
+	 return m_bPseudoStream;
+  }
 #endif /* FEATURE_QTV_PSEUDO_STREAM ||
           FEATURE_QTV_3GPP_PROGRESSIVE_DNLD  */
 
@@ -450,7 +460,7 @@ private:
   const void *TextPlayerDataPtr;
   int32 getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &index, MediaReqType type);
 #ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT
-  int32 getNextGenericAudioMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 offset, uint32 &index, MediaReqType type);  
+  int32 getNextGenericAudioMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 offset, uint32 &index, MediaReqType type);
 #endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT */
   int preroll;
 

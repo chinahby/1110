@@ -19,10 +19,11 @@ Copyright(c) 2002-2003 by QUALCOMM, Incorporated. All Rights Reserved.
   This section contains comments describing changes made to this file.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/writer/main/latest/inc/videofmt_mp4w.h#2 $
+  $Header: //source/qcom/qct/multimedia/mmservices/mpeg4fileformat/writer/main/latest/inc/videofmt_mp4w.h#3 $
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
+07/08/10   prs	     Increasing meta data buffer size as it helps meta data writes for long time record stop scenarios.
 07/08/08   shiven  Adding support for loci atom
 08/28/07   rpw     Added EVRC-B and EVRC-WB support
 04/28/08   sanal   Adding length filed, Merging changes for cprt atom.
@@ -121,7 +122,7 @@ when       who     what, where, why
 
 /* This sets the amount of memory allocated for the meta data buffer.
 */
-#define VIDEO_FMT_MP4W_META_DATA_BUFFER_SIZE  4096
+#define VIDEO_FMT_MP4W_META_DATA_BUFFER_SIZE  16384//4096//32768
 
 /* This structure represents one stream buffer.  The buffer consists of a
 ** chunk of memory allocated for the buffer, along with its size and two

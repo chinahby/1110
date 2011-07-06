@@ -17,9 +17,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/playertask/main/latest/src/appfile.cpp#7 $
-$DateTime: 2008/05/08 12:36:04 $
-$Change: 656312 $
+$Header: //source/qcom/qct/multimedia/qtv/player/playertask/main/latest/src/appfile.cpp#9 $
+$DateTime: 2010/01/04 23:14:42 $
+$Change: 1127650 $
 
 
 ========================================================================== */
@@ -170,7 +170,11 @@ ERROR_CODE AppFile::ParseApplicationFile(char *Filename)
   DWORD nBytesRead;
   char  *pvx_file_data;
   ERROR_CODE retVal = PV_NO_ERROR;
+#ifndef FEATURE_WINCE
   hPvxFile = OSCL_FileOpen((OSCL_STRING)Filename,"rb");
+#else
+#error code not present
+#endif // #ifndef FEATURE_WINCE
 
   if( hPvxFile == NULL )
   {
@@ -416,7 +420,8 @@ ERROR_CODE AppFile::ParseApplicationFileInBuffer(char *PvxFileData,USHORT FileSi
     file_length -= objectLength;
     PlayList[i].ClipName[objectLength]='\0';
 
-    if(!strincmp(PlayList[i].ClipName, "RTSP://", 7))
+    if(!strincmp(PlayList[i].ClipName, "RTSP://", 7) || 
+         !strincmp(PlayList[i].ClipName, "RTSPT://", 8) )
     {
       PlayList[i].Source = PV_REMOTE;
     }

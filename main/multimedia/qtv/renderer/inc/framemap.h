@@ -12,9 +12,9 @@
 // ============================================================================
 //                              Edit History
 //
-// $Header: //source/qcom/qct/multimedia/qtv/renderer/main/latest/inc/framemap.h#1 $
-// $DateTime: 2008/05/09 08:14:38 $
-// $Change: 657007 $
+// $Header: //source/qcom/qct/multimedia/qtv/renderer/main/latest/inc/framemap.h#2 $
+// $DateTime: 2009/06/18 08:14:34 $
+// $Change: 943958 $
 //
 // ============================================================================
 
@@ -54,6 +54,11 @@ extern "C"
 // ----------------------------------------------------------------------------
 // Global Constant Data Declarations
 // ----------------------------------------------------------------------------
+enum frame_current_status
+{
+   FRAME_WITH_RENDERER = 0,
+   FRAME_WITH_UI = 1
+};
 
 // ----------------------------------------------------------------------------
 // Global Data Declarations

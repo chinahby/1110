@@ -15,9 +15,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/playertask/main/latest/inc/mpeg4player.h#20 $
-$DateTime: 2008/12/04 05:07:30 $
-$Change: 798168 $
+$Header: //source/qcom/qct/multimedia/qtv/player/playertask/main/latest/inc/mpeg4player.h#38 $
+$DateTime: 2010/06/29 22:58:48 $
+$Change: 1351543 $
 
 ========================================================================== */
 
@@ -108,6 +108,14 @@ class QTV_BroadcastTransmitterTask;
 **                          Macro Definitions
 ** ======================================================================= */
 
+#define QTV_LOCAL_MEDIA_TRACK_LIST_IDENTICAL   0x1
+
+#define QTV_STATS_LOCAL_BUFFER_SIZE   2048
+
+#define HTTP_DEFAULT_STARTUP_TIME         4000
+#define HTTP_DEFAULT_REBUFFERING_TIME     4000
+
+
 /* =======================================================================
 MACRO MYOBJ
 
@@ -158,6 +166,8 @@ public:
   bool Destroy();
   void DestroyMedia();
 
+  void UpdateClipInfoDimensions(int height, int width);
+  
   QtvPlayer::ReturnT GetPlayerStateExternal(QtvPlayer::PlayerStateRecordT &state);
   QtvPlayer::ReturnT GetRTPStatistics(QtvPlayer::RTPStatisticsT &statistics);
   QtvPlayer::ReturnT GetAudioVideoStatistics(QtvPlayer::AudioVideoStatisticsT &statistics);
@@ -167,14 +177,19 @@ public:
                     uint16 SrcHeight, uint16 SrcWidth,
                     uint32 Timestamp, uint32 NumconcealedMB,
                     uint8 fVOP, void *pPostFilterMbInfo, unsigned long NumIntraMbs,
+                    void *pMetaData,
                     uint16 wCropWinX2, uint16 wCropWinY2);
   /* GetFrameInfo returns the frame and any extended frame info
      associated with the current frame */
-  QtvPlayer::ReturnT GetFrameInfo(QtvPlayer::FrameInfoT &info);
+  QtvPlayer::ReturnT GetFrameInfo(QtvPlayer::FrameInfoT &info,void **ppExtFrmInfo);
   QtvPlayer::ReturnT GetClipInfo(QtvPlayer::ClipInfoT &info);
   QtvPlayer::ReturnT GetServerChallenge(char *);
   Media::CodecType GetAudioCodecType();
   Media::CodecType GetVideoCodecType();
+
+  char sUrnStatsName[QTV_STATS_LOCAL_BUFFER_SIZE];
+  int  WriteStatisticsToEFS (QtvPlayer::AudioVideoStatisticsT stats);
+
 
   #ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
   bool WaitForDownloadFileHeader();
@@ -201,10 +216,13 @@ public:
   Media * GetTextMedia();
 #endif
 
+#ifndef FEATURE_WINCE
   PlayerBaseIF * GetVideoPlayer(){return pActiveVideoPlayer;};
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
   TimedText   * GetTextPlayer() {return &textPlayer;};
 #endif
+#endif   /*    FEATURE_WINCE   */
+  void SetIncallVoiceCodec(Media::CodecType eVocoderType);
 
   QtvPlayer::ReturnT SetUserAgentParameters(const char *man,
                                                          const char *ctn);
@@ -275,6 +293,12 @@ public:
   }
 
 #ifdef FEATURE_QTV_GENERIC_BCAST
+  bool isBcastGeneric()
+  {
+    return clip.bBcastGeneric;
+  }
+
+
   bool isBcastStream()
   {
     return clip.bBcastStream;
@@ -413,11 +437,13 @@ public:
   }
   bool IsVideoPlaying();
 
+#ifdef FEATURE_MP4_3GPP_TIMED_TEXT
   bool HasText()
   {
     return clip.bHasText;
   }
   bool IsTextPlaying();
+#endif
 
   void RedirectToNewURN(mbchar* newURN = NULL);
 
@@ -508,7 +534,7 @@ public:
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
   static void CPVTEXT_STATUS_handler(QCMessageHandleType handle);
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-#if defined (FEATURE_FILE_FRAGMENTATION) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
   static void QTV_PAUSE_AUDIO_handler(QCMessageHandleType handle);
   static void QTV_PAUSE_VIDEO_handler(QCMessageHandleType handle);
   static void QTV_PAUSE_TEXT_handler(QCMessageHandleType handle);
@@ -517,7 +543,7 @@ public:
   static void QTV_RESUME_TEXT_handler(QCMessageHandleType handle);
 #endif /* FEATURE_FILE_FRAGMENTATION || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+#ifdef FEATURE_QTV_PSEUDO_STREAM
   static void QTV_PS_PARSER_STATUS_EVENT_handler(QCMessageHandleType handle);
 #endif
 
@@ -530,9 +556,9 @@ public:
   static void QTV_PS_UPDATE_WBUFFER_OFFSET_EVENT_handler(QCMessageHandleType handle);
 #endif
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+#ifdef FEATURE_FILE_FRAGMENTATION
   static void QTV_SKIP_CLIP_handler(QCMessageHandleType handle);
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+#endif /*FEATURE_FILE_FRAGMENTATION*/
 
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
   static void QTV_HTTP_STREAM_OPEN_EVENT_handler(QCMessageHandleType handle);
@@ -542,6 +568,12 @@ public:
   static void QTV_HTTP_STREAM_BUFFER_UNDERRUN_EVENT_handler(QCMessageHandleType handle);
   static void QTV_PROCESS_HTTP_STREAM_handler(QCMessageHandleType handle);
 #endif /*FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
+
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+  static void QTV_HTTP_BUFFER_UPDATE_handler(QCMessageHandleType handle);
+  static void QTV_HTTP_EVENT_handler(QCMessageHandleType handle);
+#endif
+
 
 #ifdef FEATURE_QTV_HTTP_DOWNLOAD
   static void QTV_HTTP_REGISTER_CALLBACK_EVENT_handler(QCMessageHandleType handle);
@@ -567,7 +599,7 @@ public:
 #endif
 
 #if defined (FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-  static void Mpeg4Player::QTV_COPY_BUFFER_TO_FILE_handler(QCMessageHandleType handle) ;
+  static void QTV_COPY_BUFFER_TO_FILE_handler(QCMessageHandleType handle) ;
 #endif
 
   static void QTV_AUDIO_RESTARTING_TRACK_handler(QCMessageHandleType);
@@ -616,9 +648,10 @@ public:
     rex_timer_type* pHttpPullTimer;
 
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-    QTV_HTTP_STREAM_UPDATE_WBUFFER_OFFSET_EVENT_type *pUpdateWptrOffset;
-#elif defined FEATURE_QTV_PSEUDO_STREAM
-    QTV_PS_UPDATE_WBUFFER_OFFSET_EVENT_type *pUpdateWptrOffset;
+    QTV_HTTP_STREAM_UPDATE_WBUFFER_OFFSET_EVENT_type *pUpdateWptrOffsetPD;
+#endif
+#if defined FEATURE_QTV_PSEUDO_STREAM
+    QTV_PS_UPDATE_WBUFFER_OFFSET_EVENT_type *pUpdateWptrOffsetPS;
 #endif
 
   };
@@ -630,7 +663,7 @@ public:
   void freeDownloadBuffer(char *buffer);
   char *getEncryptedData(uint32 &size);
   QtvPlayer::OemHttpHeaderResult AddOemHttpHeaders(
-       const char *headerName,  
+       const char *headerName,
        const char *headerValue);
 #endif
 
@@ -687,7 +720,7 @@ public:
   enum AudioConcurrencyState
   {
     AUDIO_NOT_CONCURRENT,           /* Audio is from the clip */
-    AUDIO_CONCURRENT,               /* Audio is from concurrent source 
+    AUDIO_CONCURRENT,               /* Audio is from concurrent source
                                        (voice call, MIDI/MP3 ringer */
     AUDIO_CONCURRENCY_NOT_SUPPORTED /* No concurrent DSP image available, play
                                        is not allowed */
@@ -812,7 +845,7 @@ public:
       bufSize     = urnData.bufSize;
       pBufURN     = urnData.pBufURN;
       FetchBufferedDataSize = urnData.FetchBufferedDataSize;
-      FetchBufferedData 	 = urnData.FetchBufferedData;
+      FetchBufferedData   = urnData.FetchBufferedData;
       m_QtvInstanceHandle = urnData.m_QtvInstanceHandle;
 #ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
       bHttpURN    = urnData.bHttpURN;
@@ -830,7 +863,7 @@ public:
       }
       else
       {
-        sURN = NULL; 
+        sURN = NULL;
       }
     }
 
@@ -841,7 +874,7 @@ public:
       bufSize     = urnData.bufSize;
       pBufURN     = urnData.pBufURN;
       FetchBufferedDataSize = urnData.FetchBufferedDataSize;
-      FetchBufferedData 	 = urnData.FetchBufferedData;
+      FetchBufferedData   = urnData.FetchBufferedData;
       m_QtvInstanceHandle = urnData.m_QtvInstanceHandle;
 #ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
       bHttpURN    = urnData.bHttpURN;
@@ -868,6 +901,7 @@ private:
   /////////////////////////
   int selectedAudioTrackIdx;
   int selectedVideoTrackIdx;
+  uint32 numReconnectAttemptsMade;
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
   int selectedTextTrackIdx;
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
@@ -879,6 +913,9 @@ private:
   URNData videoURN;
   URNData audioURN;
   URNData textURN;
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif
 
   QCCritSectType URN_CS;
 
@@ -949,8 +986,8 @@ private:
       }
       else
       {
-        sURL = NULL; 
-      }    
+        sURL = NULL;
+      }
     }
 
     URLData& operator=( URLData &urlData )
@@ -1029,7 +1066,7 @@ private:
 
    private:
       // Copy construction is unsupported.  If this ever is
-      // to be supported, care must be taken to do a proper depth copy of 
+      // to be supported, care must be taken to do a proper depth copy of
       // the AppParametersT member contained herein.
       AppData(const AppData& );
    };
@@ -1090,9 +1127,11 @@ private:
     QtvPlayer::FrameInfoT info;
     bool bValid;
     bool bInfoSetSinceLastPrep;
+    void *pMetaData;   /* Meta data for use by upper layers */
   };
   FrameInfo frameInfo;
   FrameInfo frameToRelease;
+  QCCritSectType frameToRelease_CS;
   QCCritSectType frameInfo_CS;
   uint32 numBuffersSent;
 
@@ -1152,6 +1191,7 @@ private:
 #if defined (FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)||defined (FEATURE_QTV_HTTP_DOWNLOAD)
     char rootpath[QTV_MAX_FILENAME_BYTES];
 #endif
+    char pdrootpath[QTV_MAX_FILENAME_BYTES];   
 
 #if (defined FEATURE_QTV_QDSP_RELEASE_RESTORE && defined FEATURE_QTV_QOS_SELECTION)
 #error code not present
@@ -1236,7 +1276,7 @@ private:
         eGenericBcastMediaID     = Common::GENERIC_BCAST_MEDIA_INVALID;
 #endif
         // Initialize the mute combination inside the clip object
-        bmQueuedMute             =  0; 
+        bmQueuedMute             =  0;
         bmMute                   =  0;
         bStillImage              = false;
         bM4vFile                 = false;
@@ -1256,7 +1296,7 @@ private:
         pMpeg4Download        = NULL;
 #endif /* FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2 */
         bmMute = 0;
-        bmQueuedMute = 0; 
+        bmQueuedMute = 0;
      }
 
     URNData* videoURN;
@@ -1289,7 +1329,6 @@ private:
 #ifdef FEATURE_QTV_PSEUDO_STREAM
     bool   bPseudoStreaming;
     uint32 pseudoStreamWritePtrOffset;
-    uint32 mediaCounter;
 #endif
 
  #if defined (FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)||defined (FEATURE_QTV_HTTP_DOWNLOAD)
@@ -1300,13 +1339,13 @@ private:
 
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
     uint32 HTTPStreamWritePtrOffset;
-    uint32 mediaCounter;
 #endif /*FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
 
 #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
    QtvPlayer::FetchBufferedDataSizeT FetchBufferedDataSize;
    QtvPlayer::FetchBufferedDataT FetchBufferedData;
    QtvPlayer::InstanceHandleT m_QtvInstanceHandle;
+   uint32 mediaCounter;
 #endif /*defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)*/
 
      //File Type (mpeg-4 or video bitstream)
@@ -1406,6 +1445,7 @@ private:
   State lastPlayerState;
   AudioConcurrencyState playerAudioConcState;
   QtvPlayer::AudioSourceFormatT audioSource;
+  AudioConcurrencyState prevAudioConcState;
 
   bool threadIdle; // indicates whether the player thread is IDLE or not
 
@@ -1435,7 +1475,7 @@ private:
   //message receive block.
   static QCMessageReceive playerER;
 
-
+#ifndef FEATURE_WINCE
   /* Current Active Video Player Instance */
   PlayerBaseIF* pActiveVideoPlayer;
 
@@ -1446,6 +1486,7 @@ private:
   //Timed Text player object
   TimedText         textPlayer;
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
+#endif   /*    FEATURE_WINCE   */
 
   //Streamer object
   QtvStream * pQtvStream;
@@ -1476,7 +1517,7 @@ private:
   //App control
   class AppControl
   {
-    
+
   public:
     AppControl() { }
 
@@ -1488,14 +1529,16 @@ private:
     //when ready
     bool bStartPlaying;
 
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+    uint32 mediaCounter;
+#endif
+
 #ifdef FEATURE_QTV_PSEUDO_STREAM
     unsigned int nPseudoStreamDownloadRate;
-    uint32 mediaCounter;
 #endif /*  FEATURE_QTV_PSEUDO_STREAM */
 
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
     unsigned int nHTTPStreamDownloadRate;
-    uint32 mediaCounter;
 #endif /*  FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
 
 
@@ -1597,11 +1640,6 @@ private:
   bool redirectFlag;
   int32 redirectTime;
   URL * redirectURL;
-
-   enum EndCode
-  {
-    COMPLETE,ABORT,STOPPED,ABORT_MEM_ERROR
-  };
 
   #ifdef FEATURE_QTV_STREAM_RECORD
   enum RecorderStatusCode
@@ -1719,16 +1757,14 @@ private:
   bool ResumeText(QTV_RESUME_TEXT_type *pEvent);
 #endif /* FEATURE_FILE_FRAGMENTATION || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
 
-#ifdef FEATURE_FILE_FRAGMENTATION
-  void ParserStatus(const QTV_PS_PARSER_STATUS_EVENT_type *pEvent);
-#endif
-
   #ifdef FEATURE_QTV_PSEUDO_STREAM
+  void ParserStatus(const QTV_PS_PARSER_STATUS_EVENT_type *pEvent);
   bool ProcessPseudoStream(const QTV_PS_PROCESS_PSEUDO_STREAM_type *pEvent);
 #endif /*FEATURE_QTV_PSEUDO_STREAM*/
   bool PlayClip(const PV_PLAY_CLIP_type * pEvent);
-  bool PlayClip(int32 startTime, 
+  bool PlayClip(int32 startTime,
                 int32 stopTime,
+                const URL* urlToSwitch = NULL,
                 Common::PlaybackSpeedType pbSpeed = Common::PLAYBACK_SPEED_NO_CHANGE);
 
 #ifdef FEATURE_QTV_STREAM_RECORD
@@ -1752,11 +1788,11 @@ private:
 #endif /* FEATURE_QTV_IN_CALL_PHASE_2 */
   void GenerateSuspendEvent();
   bool RestoreResumeAudio(long stop);
-  void UpdateAudioConcState(); 
+  void UpdateAudioConcState();
 #if (defined (FEATURE_QTV_IN_CALL_PHASE_2) || \
      defined (FEATURE_QTV_IN_CALL_VIDEO))
 #error code not present
-#endif /* FEATURE_QTV_IN_CALL_PHASE_2 || 
+#endif /* FEATURE_QTV_IN_CALL_PHASE_2 ||
           FEATURE_QTV_IN_CALL_VIDEO */
 
 #ifdef  FEATURE_QTV_QOS_SELECTION
@@ -1822,13 +1858,13 @@ bool CheckForAllMute(uint32 bmTrackSelected);
   /* SelectPlaybackTracks interface    */
   /*************************************/
   QtvPlayer::ReturnT
-  SelectPlaybackTracks(uint32 bmTrackSelected, 
+  SelectPlaybackTracks(uint32 bmTrackSelected,
                        uint32 nAudioTrackID,
                        uint32 nVideoTrackID,
                        uint32 nTextTrackID,
                        uint32 &bmSucceeded);
 
-  // PlaySyncFrame interface 
+  // PlaySyncFrame interface
   QtvPlayer::ReturnT
   PlaySyncFrame(sint31 nSyncOffset,
                 uint32 uTransID);
@@ -1851,17 +1887,17 @@ bool CheckForAllMute(uint32 bmTrackSelected);
 
   // Reposition interface
   QtvPlayer::ReturnT
-  Reposition(uint32 nTimestamp, 
-             bool   bExtCmd, 
+  Reposition(uint32 nTimestamp,
+             bool   bExtCmd,
              uint32 uTransID);
 
-  //Activate DSP : Takes the comparison result and playback position as input. 
+  //Activate DSP : Takes the comparison result and playback position as input.
   bool ActivatePlayer(unsigned int nResult,unsigned long start);
 
-  //Freeze or Activate DSP 
+  //Freeze or Activate DSP
   bool StateBasedFreezeOrActivate(bool bFreeze, unsigned int nResult,unsigned long start);
 
-  //Release DSP 
+  //Release DSP
   bool FreezePlayer(unsigned int nResult);
 
   // Audio Player reposition
@@ -1894,30 +1930,27 @@ bool CheckForAllMute(uint32 bmTrackSelected);
   // Generic Broadcast Upgrade Tracks
   bool GenericBcastUpgradeTracks(unsigned int nResult);
 
-  // Act On User Track Selection 
+  // Act On User Track Selection
   bool ActOnUserTrackSelection(int nAudID, int nVidID, int nTextID);
 
   // Act on Network Track List Update
   bool ActOnNetworkTrackListUpdate(void);
 
-  // Update the track list data structure changes to to the player clip information 
+  // Update the track list data structure changes to to the player clip information
   void UpdateClipInfo(Media *pMedia,unsigned int nResult);
 
-  // Map the Media Codec to player codec understandable by the application. 
-  QtvPlayer::TrackTypeT MapMediaCodecToQtvPlayerCodec(Media::CodecType codec);
-
-  // Upgrade Qtv Media Type in general based on teh comparison result. 
-  QtvPlayer::MediaTypeT UpgradeQtvMediaType(Media *pMedia, unsigned int nResult, 
+  // Upgrade Qtv Media Type in general based on teh comparison result.
+  QtvPlayer::MediaTypeT UpgradeQtvMediaType(Media *pMedia, unsigned int nResult,
                                             QtvPlayer::MediaTypeT eType);
 
-  // Upgrade Media Type for video track addition 
+  // Upgrade Media Type for video track addition
   QtvPlayer::MediaTypeT UpgradeMediaTypeForVideo(Media *pMedia,
                                                  QtvPlayer::MediaTypeT eType);
 
   // Upgrade Media Type for audio track addition
   QtvPlayer::MediaTypeT UpgradeMediaTypeForAudio( QtvPlayer::MediaTypeT eType);
 
-  // Upgrade Media Type for text track addition 
+  // Upgrade Media Type for text track addition
   QtvPlayer::MediaTypeT UpgradeMediaTypeForText(QtvPlayer::MediaTypeT eType);
 
 
@@ -1925,12 +1958,16 @@ bool CheckForAllMute(uint32 bmTrackSelected);
 
 #endif /* FEATURE_QTV_GENERIC_BCAST */
 
+  // Map the Media Codec to player codec understandable by the application.
+  QtvPlayer::TrackTypeT MapMediaCodecToQtvPlayerCodec(Media::CodecType codec);
+
+
 /*************************************/
   /*  Mute & Unmute Feature interface  */
   /*************************************/
-  QtvPlayer::ReturnT 
-  MutePlaybackTracks(uint32 bmTrackSelected, 
-                    uint32 bmTrackState, 
+  QtvPlayer::ReturnT
+  MutePlaybackTracks(uint32 bmTrackSelected,
+                    uint32 bmTrackState,
                     uint32 *bmSucceeded);
 
   // Track specific mute methods
@@ -1942,14 +1979,28 @@ bool CheckForAllMute(uint32 bmTrackSelected);
   QtvPlayer::ReturnT UnmuteMedia(uint32 &bmUnmuteCombo);
 
   // Unmute Utils
-  bool ResumeAll(uint32 uPlayTime);
+// Method -1 which resumes all the clip tracks
+  bool ResumeAll(uint32 );
+  
+  //  Mehtod-2 which resumes the specific tracks only without affecting others
+  bool ResumeAll(uint32 uPlayTime,uint32 bmTrackSelected);
 
-  // Suspend & Flush all applicable tracks. 
+  // Suspend & Flush all applicable tracks.
   bool SuspendMedia();
-  // Start all applicable tracks. 
+
+  // Suspend and FLush the specific tracks only
+  bool SuspendMedia(uint32 bmTrackSelected);
+
+  // Start all applicable tracks.
   bool StartMedia();
 
-  // Calculate the new position 
+  // Start the specific tracks only
+  bool StartMedia(uint32 bmTrackSelected);
+
+  // Prep the specific tracks only
+  bool PrepSpecificTracks(uint32 bmTrackSelected);
+
+  // Calculate the new position
   void CalculateNewPosition(unsigned long &ulPlayTime,
                             uint32 &uPlayTimestamp);
 
@@ -1959,6 +2010,12 @@ bool CheckForAllMute(uint32 bmTrackSelected);
                        QtvPlayer::TrackTypeT &eQtvCodec,
                        QtvPlayer::MediaTypeT &eMediaType);
 
+  void UpdateLocalClipInfo(Media * pMedia,unsigned int nResult);
+  bool LocalMediaPLaybackUpgradeTracks(unsigned int nResult);
+  enum EndCode
+  {
+    COMPLETE,ABORT,STOPPED,ABORT_MEM_ERROR,FCS_COMPLETE,FCS_SWITCH_ERROR
+  };
 #ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
   bool DeleteDownloadSession(PV_DELETE_DOWNLOAD_SESSION_type *pEvent);
   bool StopDownload(PV_STOP_DOWNLOAD_type *pEvent);
@@ -1991,11 +2048,11 @@ bool CheckForAllMute(uint32 bmTrackSelected);
   void TimedTextStatus(const CPVTEXT_STATUS_type *pEvent);
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+#ifdef FEATURE_FILE_FRAGMENTATION
     bool SkipClip(const QTV_SKIP_CLIP_type * pEvent);
     bool RestartActiveClip(int32 skipNumber);
     bool RepositionAccessPoint(int32 skipNumber);
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+#endif /*FEATURE_FILE_FRAGMENTATION*/
 
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
   bool OpenHTTPStream(const QTV_HTTP_STREAM_OPEN_EVENT_type * pEvent);
@@ -2011,6 +2068,13 @@ bool CheckForAllMute(uint32 bmTrackSelected);
   bool HTTPCanPlayTracks(uint32 pbTime);
 #endif /* FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
 
+
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+  void ProcessHTTPBufferUpdate(const QTV_HTTP_BUFFER_UPDATE_type *pEvent);
+  void ProcessHTTPStateEvent(const QTV_HTTP_EVENT_type *pEvent);
+#endif
+
+
 #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
   void HttpPullTimerStart();
   void HttpPullTimerStop();
@@ -2018,13 +2082,17 @@ bool CheckForAllMute(uint32 bmTrackSelected);
 
 #ifdef FEATURE_QTV_PLAYLIST
   bool Skip(const QTV_SKIP_type * pEvent);
-  bool Skip(const char *playlistName, int32 clipIndex, 
+  bool Skip(const char *playlistName, int32 clipIndex,
             bool isClipIndexRelative, int32 offset, int32 when = -1);
 
 #ifdef FEATURE_QTV_SERVER_SIDE_PLAYLIST
   bool SwitchToNextClipInServerSidePlaylist(bool bUserInitiated);
 #endif /* FEATURE_QTV_SERVER_SIDE_PLAYLIST */
 #endif /* FEATURE_QTV_PLAYLIST */
+
+#ifdef FEATURE_QTV_FCS
+#error code not present
+#endif /*  FEATURE_QTV_FCS */
 
   //Internal Player implementation routines
   void SetURN(const URL &sURN, URNData &destURN);
@@ -2048,8 +2116,8 @@ bool DescribeAndSelectTracks(Media *p,bool &bAudioSelected,bool &VideoSelected,
 
   void HandleTrackListChange(ITrackList *trackList /* in */,
                              Media *media,
-                             bool &bAudioSelected, 
-                             bool &bVideoSelected, 
+                             bool &bAudioSelected,
+                             bool &bVideoSelected,
                              bool &bTextSelected);
 
   void NotifyTrackListChange(ITrackList *trackList /* in */);
@@ -2061,10 +2129,10 @@ bool DescribeAndSelectTracks(Media *p,bool &bAudioSelected,bool &VideoSelected,
   bool OpenBitstream();
   bool OpenStream(KEY_DEF *p);
   bool OpenLocalFile();
-  
+
   #ifdef FEATURE_QTV_GENERIC_BCAST
   bool OpenGenericBcastMediaSource();
-  #endif 
+  #endif
   bool OpenBcastFLO();
   bool PrepAudioVideo(bool isReposSuccessful);
   bool PrepAudio();
@@ -2137,7 +2205,7 @@ bool DescribeAndSelectTracks(Media *p,bool &bAudioSelected,bool &VideoSelected,
 #endif
   void LogClipStatistics(QtvPlayer::AudioVideoStatisticsT &stats);
   void StopPlayer(bool &bError, bool bCloseStreamer = true);
-  bool StartStreaming();
+  bool StartStreaming( const URL* urlToSwitch = NULL );
   void PlaybackErrorAbort();
   void ErrorAbort(ErrorCode code);
 
@@ -2161,7 +2229,7 @@ bool DescribeAndSelectTracks(Media *p,bool &bAudioSelected,bool &VideoSelected,
   void HttpDownloadComplete(EndCode code);
   void HttpDownloadStatus(const HTTP_DOWNLOAD_STATUS_type *pEvent);
   void HTTPRegisterCallback(QTV_HTTP_REGISTER_CALLBACK_EVENT_type *pEvent);
-  char* checkforHttpBrokenDownload(uint32 &);  
+  char* checkforHttpBrokenDownload(uint32 &);
 #endif
 
   /***************************************************************************
@@ -2176,10 +2244,10 @@ public:
   /*************************************/
   /*  ReadPlaybackTracks interface     */
   /*************************************/
-  QtvPlayer::ReturnT 
-  ReadPlaybackTracks(uint32 *nTrackCount, 
+  QtvPlayer::ReturnT
+  ReadPlaybackTracks(uint32 *nTrackCount,
                      QtvPlayer::TrackListT *pTrackList);
-  
+
 
   /* Maps the QtvPlayer playabck speed type to Common playback speed type */
   Common::PlaybackSpeedType MapQtvPBSpeedToCommonPBSpeed(
@@ -2197,7 +2265,7 @@ public:
       // adjusted to the new signature of QtvPlayerT::MallocOutputBufferT
       ptr = OEMMallocBuffer(NULL,NULL,size);
     }
-    return ptr; 
+    return ptr;
   }
 
   void ReleaseVideoBuffer( void *pBuffer );
@@ -2206,7 +2274,7 @@ public:
   void LogCumulativeClipStatistics(bool resetStats);
 
   //Function to process all request from Media Layer
-  static void MediaNotifyCB(Media::MediaLayerRequest reqType, Mpeg4Player *pThis, 
+  static void MediaNotifyCB(Media::MediaLayerRequest reqType, Mpeg4Player *pThis,
                                        uint32 reqData1, uint32 reqData2);
 
 #ifdef FEATURE_QTV_DUAL_MONO_OUTPUT_SELECTION
@@ -2222,11 +2290,12 @@ public:
   **
   ** This event is set when the player thread is ready to be terminated.
   */
-
+#ifdef FEATURE_WINCE
+#error code not present
+#endif
 QtvPlayer::ReturnT SetVDECParameter( QtvPlayer::QtvVDECParameterIdT inputParamId,  QtvPlayer::QtvVDECParameterDataT* pInputParam);
-
-void SetIncallVoiceCodec(Media::CodecType eVocoderType);
-
+ void setSpeed(float speed);
+ void setAccDuration(int time);
 private:
 
   static bool m_bIsTaskDone;
@@ -2246,6 +2315,8 @@ private:
   ** Clients wishing to access this transmitter may obtain a pointer
   ** by calling QTV_BroadcastTransmitter::Locate( "QTV" )
   */
+ float speed;
+ int acceleratedDuration;
 private:
   static  QTV_BroadcastTransmitterTask* m_bcastXmitTask;
 
@@ -2302,8 +2373,8 @@ private:
   /* Updates the track list information */
   void UpdateTrackListInfo(QtvPlayer::MediaTypeT media);
 
-  /* Maps the Common channel configuration type to QtvPlayer channel 
-  ** configuration type 
+  /* Maps the Common channel configuration type to QtvPlayer channel
+  ** configuration type
   */
   QtvPlayer::ChannelConfigT MapCommonChConfigToQtvChConfig(
     Common::ChannelConfigType channelConfig);

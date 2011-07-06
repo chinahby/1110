@@ -20,9 +20,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/qc/main/latest/src/qcutilszrex.cpp#1 $
-$DateTime: 2008/05/08 11:03:24 $
-$Change: 656211 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/qc/main/latest/src/qcutilszrex.cpp#4 $
+$DateTime: 2009/12/03 02:35:48 $
+$Change: 1101863 $
 
 
 ========================================================================== */
@@ -263,6 +263,7 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void QCUtils::KillThread(QCThreadControl *pTC)
 {
   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "In Mpeg4Player::KillThread");
@@ -275,6 +276,7 @@ void QCUtils::KillThread(QCThreadControl *pTC)
     }
   }
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION
@@ -325,6 +327,7 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 bool QCUtils::IsThreadActive(QCThreadControl * pTC)
 {
   if (pTC)
@@ -333,6 +336,7 @@ bool QCUtils::IsThreadActive(QCThreadControl * pTC)
   }
   return false;
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION
@@ -379,10 +383,12 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void QCUtils::DestroyCondition(QCConditionType * p)
 {
   zrex_release_sync_event( p );
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION
@@ -405,12 +411,14 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 bool QCUtils::WaitForCondition(QCConditionType * p, const unsigned long delay_msec)
 {
   //if you tell zrex to wait for zero, it waits forever!
   ASSERT( delay_msec > 0 );
   return (zrex_wait_for_sync_event(p, delay_msec) == ZREX_SYNC_EVENT_SET);
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION
@@ -432,10 +440,12 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void QCUtils::SetCondition(QCConditionType * p)
 {
   zrex_set_sync_event(p);
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION
@@ -457,10 +467,12 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void QCUtils::ResetCondition(QCConditionType * p)
 {
   zrex_reset_sync_event(p);
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION
@@ -515,6 +527,35 @@ void QCUtils::InitCritSect(QCCritSectType *p)
 
 /* ======================================================================
 FUNCTION
+  QCUtils::DinitCritSect
+
+DESCRIPTION
+  Thorough, meaningful description of what this function does.
+
+DEPENDENCIES
+  List any dependencies for this function, global variables, state,
+  resource availability, etc.
+
+RETURN VALUE
+  Enumerate possible return values
+
+SIDE EFFECTS
+  Detail any side effects.
+
+========================================================================== */
+void QCUtils::DinitCritSect(QCCritSectType *p)
+{
+
+/* ------
+Commented out, since this code goes to all targets as common and 
+below REX API is not currently ported to all active targets and baselines.
+--------- */
+
+  //rex_del_crit_sect(p);
+}
+
+/* ======================================================================
+FUNCTION
   QCUtils::EnterCritSect
 
 DESCRIPTION
@@ -531,10 +572,12 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void QCUtils::EnterCritSect(QCCritSectType *p)
 {
   rex_enter_crit_sect(p);
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION
@@ -554,11 +597,13 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void QCUtils::LeaveCritSect(QCCritSectType *p)
 {
   rex_leave_crit_sect(p);
 }
-
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
+	
 /* ======================================================================
 FUNCTION
   QCUtils::PostMessage
@@ -577,6 +622,7 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void QCUtils::PostMessage(
   QCMessageType * pEvent,
   int,
@@ -584,7 +630,8 @@ void QCUtils::PostMessage(
 {
   zrex_post_event(pEvent);
 }
-
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
+	
 /* ======================================================================
 FUNCTION
   QCUtils::SetMessageDispatchTable
@@ -727,6 +774,7 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 QCThreadControl::~QCThreadControl()
 {
   if (threadHandle)
@@ -735,6 +783,7 @@ QCThreadControl::~QCThreadControl()
     threadHandle = NULL;
   }
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION
@@ -754,11 +803,13 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
+/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void QCUtils::Terminate()
 {
   /* clear all pending(if any) sync events */
   zrex_release_all_sync_event();
 }
+/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /* ======================================================================
 FUNCTION

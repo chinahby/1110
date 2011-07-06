@@ -11,9 +11,9 @@ DESCRIPTION
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/config/main/latest/src/configfilereader.h#6 $
-$DateTime: 2008/07/14 04:31:08 $
-$Change: 701105 $
+$Header: //source/qcom/qct/multimedia/qtv/config/main/latest/src/configfilereader.h#7 $
+$DateTime: 2009/04/29 04:39:32 $
+$Change: 899616 $
 
 ========================================================================== */
 
@@ -103,6 +103,10 @@ private:
    // convert the string and set *pValue to the value. Return true iff 
    // conversion was successful.
    bool convertInt32Value(const char *setting_value_str,void *pValue);
+
+   bool convertProbeURL(const char *setting_value_str, 
+                        int value_str_length,
+                        ProbeURLType* pValue);
 
 
 #ifdef FEATURE_QTV_ENCRYPTED_STREAMS

@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/base/main/latest/src/filemedia.cpp#20 $
-$DateTime: 2008/12/11 02:28:12 $
-$Change: 803007 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/base/main/latest/src/filemedia.cpp#39 $
+$DateTime: 2010/06/24 17:18:48 $
+$Change: 1346396 $
 
 
 ========================================================================== */
@@ -191,6 +191,9 @@ bool FileMedia::GetSelectedTrackList(ITrackList **ppTrackList /* out */)
         case MPEG4_VIDEO:
           trackInfoArray[i].codec = MPEG4_CODEC;
           break;
+        case H263_IMAGE:
+          trackInfoArray[i].codec = STILL_IMAGE_H263_CODEC;
+          break;		  
         case MPEG4_IMAGE:
           trackInfoArray[i].codec = STILL_IMAGE_CODEC;
           break;
@@ -285,6 +288,12 @@ bool FileMedia::GetSelectedTrackList(ITrackList **ppTrackList /* out */)
           trackInfoArray[i].codec =  DIVX311_CODEC;
           break;
 #endif
+#ifdef FEATURE_QTV_AVI_AC3
+#error code not present
+#endif /* FEATURE_QTV_AVI_AC3 */
+#ifdef FEATURE_QTV_PCM
+#error code not present
+#endif /* FEATURE_QTV_PCM */
           
         default:
           trackInfoArray[i].codec = UNKNOWN_CODEC;
@@ -322,6 +331,11 @@ bool FileMedia::GetSelectedTrackList(ITrackList **ppTrackList /* out */)
       SetError();
       return false;
     }
+  }
+  else
+  {
+    SetError();
+    return false;
   }
 
   // Create dummy track list with no tracks
@@ -2007,7 +2021,7 @@ void FileMedia::GetCurVideoSampleInfo(uint32 idx, uint32 *timeStamp, uint32 *tim
 
     timescale  = pBaseFile->getTrackMediaTimescale(videoTrackIDs[idx]);
     returnCode = (int)pBaseFile->peekCurSample(videoTrackIDs[idx], &SampleInfo);
-    if(returnCode == (int)EVERYTHING_FINE)
+    if(returnCode == (int)EVERYTHING_FINE && timescale)
     {
       *timeStamp    = (uint32) ( ( (uint64)(SampleInfo.time) * 1000 ) / timescale ); 
       *timeDuration = (SampleInfo.delta*1000)/timescale;
@@ -2147,6 +2161,12 @@ Media::MediaFileType FileMedia::GetFileType()
 #ifdef FEATURE_QTV_3GPP_EVRC_WB
 #error code not present
 #endif /* FEATURE_QTV_3GPP_EVRC_WB */
+#ifdef FEATURE_QTV_AVI_AC3
+#error code not present
+#endif /* FEATURE_QTV_AVI_AC3 */
+#ifdef FEATURE_QTV_PCM
+#error code not present
+#endif /* FEATURE_QTV_PCM */
         hasAudio = true;
         break;
       case MPEG4_CODEC:
@@ -2168,6 +2188,7 @@ Media::MediaFileType FileMedia::GetFileType()
         hasVideo = true;
         break;
       case STILL_IMAGE_CODEC:
+      case STILL_IMAGE_H263_CODEC:
         hasStillImage = true;
         break;
       case TIMED_TEXT_CODEC:
@@ -2397,8 +2418,10 @@ TelopElement *FileMedia::GetNextTelopElementPtr()
       bool bError = false;
 
       (void)QtvPlayer::GetPlayerState(ps);
+#ifndef FEATURE_WINCE
       ((TimedText *)TextPlayerDataPtr)->Notify(TimedText::ETTGetText, Common::CPVTEXT_RESTARTING_TRACK);
       ((TimedText *)TextPlayerDataPtr)->SetPlayTimes(0, -1);
+#endif	  
       if(m_pMpeg4Player)
       {
         m_pMpeg4Player->m_mediaSync.ResetPlaybackOffset(AVSync::TextAV);
@@ -2830,6 +2853,10 @@ unsigned long FileMedia::GetTimestampForCurrentTextSample(unsigned long idx)
     SetError();
     if ( nMp4Error==(int)EVERYTHING_FINE )
     {
+      if(bLoopTrackFlag)
+      {
+          n += textLoopTrackTimeOffset;
+      }
       nTimestampT=(long)n;
     }
   }
@@ -2926,6 +2953,9 @@ void FileMedia::HandleSelectedTrackList()
 
   QTV_NULL_PTR_CHECK( m_trackList, RETURN_VOID );
 
+  if(lockTrackList == true)
+    return;
+
   // Do any FileMedia specific members need to be reset? If so we should call
   // FileInitData() but that overwrites stuff set by the constructor.
   BaseInitData();
@@ -2976,6 +3006,12 @@ void FileMedia::HandleSelectedTrackList()
 #ifdef FEATURE_QTV_3GPP_EVRC_WB
 #error code not present
 #endif /* FEATURE_QTV_3GPP_EVRC_WB */
+#ifdef FEATURE_QTV_AVI_AC3
+#error code not present
+#endif /* FEATURE_QTV_AVI_AC3 */
+#ifdef FEATURE_QTV_PCM
+#error code not present
+#endif /* FEATURE_QTV_PCM */
         //Audio track
       if (numAudioTracks < COMMON_MAX_LAYERS )
       {
@@ -3024,6 +3060,12 @@ void FileMedia::HandleSelectedTrackList()
 #ifdef FEATURE_QTV_3GPP_EVRC_WB
 #error code not present
 #endif /* FEATURE_QTV_3GPP_EVRC_WB */
+#ifdef FEATURE_QTV_AVI_AC3
+#error code not present
+#endif /* FEATURE_QTV_AVI_AC3 */
+#ifdef FEATURE_QTV_PCM
+#error code not present
+#endif /* FEATURE_QTV_PCM */
           audioSamplesPerFrame = pBaseFile->getAudioSamplesPerFrame(
             (unsigned long) trackID);
           break;
@@ -3042,6 +3084,7 @@ void FileMedia::HandleSelectedTrackList()
 
       case MPEG4_CODEC:
       case STILL_IMAGE_CODEC:
+      case STILL_IMAGE_H263_CODEC:
       case H263_CODEC:
   #ifdef FEATURE_H264_DECODER
       case H264_CODEC:
@@ -3170,6 +3213,12 @@ Media::MediaFileType FileMedia::GetFileType()
       case QCP_CODEC:
       case MIDI_CODEC:
 #endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT */
+#ifdef FEATURE_QTV_AVI_AC3
+#error code not present
+#endif /* FEATURE_QTV_AVI_AC3 */
+#ifdef FEATURE_QTV_PCM
+#error code not present
+#endif /* FEATURE_QTV_PCM */
         hasAudio = true;
         break;
       case MPEG4_CODEC:
@@ -3177,6 +3226,7 @@ Media::MediaFileType FileMedia::GetFileType()
         hasVideo = true;
         break;
       case STILL_IMAGE_CODEC:
+      case STILL_IMAGE_H263_CODEC:
         hasStillImage = true;
         break;
       default:
@@ -3690,6 +3740,66 @@ unsigned long FileMedia::GetTimestampForCurrentLayeredVideoSample(int idx)
 
 /* ======================================================================
 FUNCTION
+  FileMedia::GetTimestampDeltaForCurrentAudioSample
+
+DESCRIPTION
+  Thorough, meaningful description of what this function does.
+
+DEPENDENCIES
+  List any dependencies for this function, global variables, state,
+  resource availability, etc.
+
+RETURN VALUE
+  Enumerate possible return values
+
+SIDE EFFECTS
+  Detail any side effects.
+
+========================================================================== */
+unsigned long FileMedia::GetTimestampDeltaForCurrentAudioSample(int idx)
+{
+  long n=0;
+  if ( pBaseFile )
+  {
+    n = (long)pBaseFile->getMediaTimestampDeltaForCurrentSample(audioTrackIDs[idx]);
+
+    SetError();
+  }
+  return (unsigned long)n;
+}
+
+/* ======================================================================
+FUNCTION
+FileMedia::GetTimestampDeltaForCurrentLayeredVideoSample
+
+DESCRIPTION
+Gets the current time stamp delta for the input layer/track.
+
+DEPENDENCIES
+  None
+
+INPUT  
+  layer
+
+RETURN VALUE
+  The timestamp delta value for the current sample. Default to 0.
+
+SIDE EFFECTS
+  None.
+========================================================================== */
+unsigned long FileMedia::GetTimestampDeltaForCurrentLayeredVideoSample(int layer)
+{
+  long n=0;
+  if ( pBaseFile )
+  {
+    n = (long)pBaseFile->getMediaTimestampDeltaForCurrentSample(videoTrackIDs[layer]);
+    QTV_MSG_PRIO2( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_ERROR, "Timestamp delta @filemedia: %d, layer=%d", n,layer);
+  }
+  return (unsigned long)n;
+}
+
+/* ======================================================================
+FUNCTION
   FileMedia::GetVOLHeader
 
 DESCRIPTION
@@ -3906,10 +4016,12 @@ int FileMedia::GetNextAudioSample(MediaStatus &status, unsigned char * buf, int 
              (0x03 != buf[0]) && (0x04 != buf[0]) &&
              (0x0E != buf[0]))
              {
+#ifndef FEATURE_WINCE
                 //return BLANK frame
-                QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,"Corrupted EVRC frame with size %d,"
-                     "Data: %d --> Replacing with BLANK frame",
+                QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
+                "Corrupted EVRC frame with size %d,Data:%d-->Replacing with BLANK frame",
                      size,buf[0]);
+#endif
                      memcpy(buf, &NULL_AUDIO, sizeof(NULL_AUDIO));
                 nBytes = 1;
              }
@@ -4250,6 +4362,10 @@ int FileMedia::GetNextAudioSample(MediaStatus &status, unsigned char * buf, int 
 #error code not present
 #endif /* (FEATURE_QTV_3GPP_EVRC_NB) || defined (FEATURE_QTV_3GPP_EVRC_WB) */
 
+#if defined (FEATURE_QTV_AVI_AC3) || defined (FEATURE_QTV_PCM) 
+#error code not present
+#endif /* (FEATURE_QTV_AVI_AC3) || defined (FEATURE_QTV_PCM) */
+
     default:
       QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Audio codec(%d) not supported in GetNextAudioSample",
                 audioCodecType );
@@ -4384,6 +4500,10 @@ unsigned long FileMedia::GetTimestampForCurrentAudioSample(unsigned long idx)
     SetError();
     if ( nMp4Error==(int)EVERYTHING_FINE )
     {
+     if(bLoopTrackFlag)
+      {
+          n += audioLoopTrackTimeOffset;
+      }
       nTimestampA=n;
     }
   }
@@ -4729,6 +4849,7 @@ bool FileMedia::ParseFragment( void )
 
   return retVal;
 }
+#endif  /* FEATURE_FILE_FRAGMENTATION */
 
 /* ======================================================================
 FUNCTION
@@ -4810,7 +4931,7 @@ void FileMedia::SetTextPlayerData(const void *client_data)
     TextPlayerDataPtr = client_data;
   }
 }
-#endif  /* FEATURE_FILE_FRAGMENTATION */
+
 
 /* ======================================================================
 FUNCTION
@@ -4874,14 +4995,14 @@ int32 FileMedia::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &
     {
       if ( pBaseFile )
       {
+        memset(&SampleInfo,0,sizeof(SampleInfo));
 				if(type == VIDEO_REQUEST)
 				{
-					/*For video track, store the timestamp of the last video frame of the currently played video track.
-					This will be used to offset the timestamps of the successive video frames after we start looping video track.
+          /*For any track, store the timestamp of the last frame of the currently played track.
+          This will be used to offset the timestamps of the successive frames after we start looping track.
 					This effectively puts the next video frame at ts 0 at the end of the renderer queue after
 					the video frames from previous playback loop.
 					*/
-					memset(&SampleInfo,0,sizeof(SampleInfo));
 					returnCode = pBaseFile->peekCurSample(videoTrackIDs[0], &SampleInfo);
 
 					if(returnCode == EVERYTHING_FINE)
@@ -4895,6 +5016,22 @@ int32 FileMedia::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &
 						QTV_MSG_PRIO1(QTVDIAG_FILE_OPS, QTVDIAG_PRIO_ERROR,"FileMedia::getNextMediaSample: peekCurSample returned an Error while updating videoLoopTrackTimeOffset = %d",videoLoopTrackTimeOffset);
 					}
 				}
+        else if(type == AUDIO_REQUEST)
+        {
+          returnCode = pBaseFile->peekCurSample(audioTrackIDs[0], &SampleInfo);
+          if(returnCode == EVERYTHING_FINE)
+          {
+            audioLoopTrackTimeOffset += (SampleInfo.delta + SampleInfo.time);
+          }
+        }
+        else if(type==TEXT_REQUEST)
+        {
+          returnCode = pBaseFile->peekCurSample(textTrackIDs[0], &SampleInfo);
+          if(returnCode == EVERYTHING_FINE)
+          {
+            textLoopTrackTimeOffset += (SampleInfo.delta + SampleInfo.time);
+          }
+        }
 				QTV_Delete( pBaseFile );
 				pBaseFile = NULL;
       }
@@ -4928,17 +5065,18 @@ int32 FileMedia::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &
 
     if(pBaseFile)
     {
-#ifdef FEATURE_FILE_FRAGMENTATION
+
       pBaseFile->setAudioPlayerData(AudioPlayerDataPtr);
       pBaseFile->setVideoPlayerData(VideoPlayerDataPtr);
       pBaseFile->setTextPlayerData(TextPlayerDataPtr);
-#endif  /* FEATURE_FILE_FRAGMENTATION */
 
       if(type == VIDEO_REQUEST)
       {
         if(VideoPlayerDataPtr)
         {
+#ifndef FEATURE_WINCE
           ((VideoPlayer *)VideoPlayerDataPtr)->Notify(VideoPlayer::PLAYING, Common::VIDEO_RESTARTING_TRACK);
+#endif
         }
       }
       else if(type == AUDIO_REQUEST)
@@ -4961,7 +5099,9 @@ int32 FileMedia::getNextMediaSample(uint32 id, uint8 *buf, uint32 size, uint32 &
       {
         if(TextPlayerDataPtr)
         {
+#ifndef FEATURE_WINCE
           ((TimedText *)TextPlayerDataPtr)->Notify(TimedText::ETTGetText, Common::CPVTEXT_RESTARTING_TRACK);
+#endif
         }
         if(m_pMpeg4Player)
         {
@@ -5072,28 +5212,31 @@ int32 FileMedia::getNextGenericAudioMediaSample(uint32 id, uint8 *buf, uint32 si
 
     if(pBaseFile)
     {
-#ifdef FEATURE_FILE_FRAGMENTATION
+
       pBaseFile->setAudioPlayerData(AudioPlayerDataPtr);
       pBaseFile->setVideoPlayerData(VideoPlayerDataPtr);
       pBaseFile->setTextPlayerData(TextPlayerDataPtr);
-#endif  /* FEATURE_FILE_FRAGMENTATION */
 
       if(type == VIDEO_REQUEST)
       {
         if(VideoPlayerDataPtr)
         {
+#ifndef FEATURE_WINCE
           ((VideoPlayer *)VideoPlayerDataPtr)->Notify(VideoPlayer::PLAYING, Common::VIDEO_RESTARTING_TRACK);
+#endif
         }
       }
       else if(type == AUDIO_REQUEST)
       {
         if(AudioPlayerDataPtr)
         {
+#ifndef FEATURE_WINCE
           QTV_AUDIO_RESTARTING_TRACK_type *pEvent = QCCreateMessage(QTV_AUDIO_RESTARTING_TRACK, m_pMpeg4Player);
           if (pEvent)
           {
             QCUtils::PostMessage(pEvent, 0, NULL);
           }
+#endif
         }
         if(m_pMpeg4Player)
         {
@@ -5104,7 +5247,9 @@ int32 FileMedia::getNextGenericAudioMediaSample(uint32 id, uint8 *buf, uint32 si
       {
         if(TextPlayerDataPtr)
         {
+#ifndef FEATURE_WINCE
           ((TimedText *)TextPlayerDataPtr)->Notify(TimedText::ETTGetText, Common::CPVTEXT_RESTARTING_TRACK);
+#endif
         }
         if(m_pMpeg4Player)
         {
@@ -5326,7 +5471,7 @@ bool FileMedia::HTTPCanPlayTracks( uint32 pbTime )
 }
 #endif /*FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
 
-#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
+#ifdef FEATURE_FILE_FRAGMENTATION
 /* ======================================================================
 FUNCTION
   FileMedia::RepositionVideoAccessPoint
@@ -5398,7 +5543,7 @@ uint32 FileMedia::RepositionAudioAccessPoint( int32 skipNumber, bool &bError,uin
   }
   return 0;
 }
-#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
+#endif /*FEATURE_FILE_FRAGMENTATION*/
 
 /* ======================================================================
 FUNCTION
@@ -6103,9 +6248,51 @@ long FileMedia::getAudioFrameDuration(int idx)
   }
   return 0;
 }
+/* ======================================================================
+FUNCTION:
+  FileMedia::SetIDX1Cache
+
+DESCRIPTION:
+  Sets idx1 cache pointer
+
+INPUT/OUTPUT PARAMETERS:
+
+RETURN VALUE:
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+void  FileMedia::SetIDX1Cache(void* ptr)
+{
+  if ( pBaseFile )
+  {
+    pBaseFile->SetIDX1Cache(ptr);
+  } 
+}
+/* ======================================================================
+FUNCTION:
+  FileMedia::GetIDX1Cache
+
+DESCRIPTION:
+  Returns idx1 cache pointer
+
+INPUT/OUTPUT PARAMETERS:
+
+RETURN VALUE:
+
+SIDE EFFECTS:
+  None.
+======================================================================*/
+void* FileMedia::GetIDX1Cache()
+{
+  if ( pBaseFile )
+  {
+    return pBaseFile->GetIDX1Cache();
+  } 
+  return NULL;
+}
 #endif
 
-#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) 
 /* ======================================================================
 FUNCTION:
   FileMedia::GetAudioBitsPerSample
@@ -6128,6 +6315,7 @@ unsigned long FileMedia::GetAudioBitsPerSample(int idx)
   return 0;
 }
 
+#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) 
 /* ======================================================================
 FUNCTION:
   FileMedia::GetAudioCodecVersion
@@ -6501,8 +6689,10 @@ bool FileMedia::IsAudioAvailable(  bool* )
             if (CheckDataRate(playbackTime))
             {
               state = Play;
+#ifndef FEATURE_WINCE			  
               QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH," CheckDataRate succeeded-->"
                            "IsAudioAvailable returning TRUE ");
+#endif						   
               return true;
             }
           }
@@ -6575,8 +6765,10 @@ bool FileMedia::IsVideoAvailable()
     else
     {
       state = Buffer;
+#ifndef FEATURE_WINCE	  	  
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED,"Dload not Done and Audio is Not available"
                    "..Changing video player state to BUFFER");
+#endif				   
       return false;
 
     }
@@ -6637,9 +6829,10 @@ bool FileMedia::IsVideoAvailable()
             if (CheckDataRate(playbackTime))
             {
               state = Play;
+#ifndef FEATURE_WINCE			  
               QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH," CheckDataRate succeeded-->"
                            "IsVideoAvailable returning TRUE ");
-
+#endif
               return true;
             }
           }
@@ -6995,6 +7188,7 @@ void FileMedia::FileInitData()
   AudioPlayerDataPtr = NULL;
   VideoPlayerDataPtr = NULL;
   TextPlayerDataPtr  = NULL;
+  m_AACDataFormatType = AAC_DATA_FORMAT_UNKNOWN;
 #ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
   pPVDL              = NULL;
   audioPos           = 0;
@@ -7003,7 +7197,7 @@ void FileMedia::FileInitData()
   bCheckRate         = false ;
   state              = Buffer;
 #endif
-
+  lockTrackList      = false;
   m_defaultTrackSelectionPolicy = 
     QTV_New_Args(DefaultTrackSelectionPolicy, ());
 
@@ -7058,30 +7252,119 @@ unsigned int FileMedia::UserCompare(bool &bError,
         if(audioTrackIDs[0] == nAudID)
         {
 #ifdef FEATURE_QTV_GENERIC_BCAST		  
-          return QTV_MEDIA_TRACK_LIST_IDENTICAL;
-#else 
-  /* this is for ULC target where we don't have this macro QTV_MEDIA_TRACK_LIST_IDENTICAL */
-          return bRet;
+          bRet = QTV_MEDIA_TRACK_LIST_IDENTICAL;
+          break;
 #endif /* FEATURE_QTV_GENERIC_BCAST */
 
         }
         if(Media::IsAudioCodec(m_trackList->GetCodecType(i)))
         {
           m_trackList->SelectTrack(i, false);        
+      m_trackList->SelectTrack(idx, true);
+      --numAudioTracks;
+          lockTrackList = false;
+      HandleSelectedTrackList();
+          lockTrackList = true;
           break;
         }
       }
-      m_trackList->SelectTrack(idx, true);
-      --numAudioTracks;
-      HandleSelectedTrackList();
-      return bRet;
     }
     else
     {
-      QTV_MSG_PRIO1(QTVDIAG_GENERIC_BCAST, 
+      QTV_MSG_PRIO1(QTVDIAG_GENERIC_BCAST,
                         QTVDIAG_PRIO_ERROR,
                     "User Compare:Invalid Audio Track ID; Ignoring it silently",nAudID);
       nAudID = -1;
+    }
+  }
+
+
+  if(nTextID >= 0)
+  {
+    // Compare the audio tracks first
+    // Map the audio track to its associated index within the list
+    idx = MapTrackToIndex(nTextID);
+    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+      "FileMedia::MapTrackToIndex output = %d",idx);
+    if(idx >= 0)
+    {
+      for (int32 i = 0; i < m_trackList->GetNumTracksAvailable(); i++)
+      {
+        if (!m_trackList->IsTrackSelected(i))
+        {
+          continue;
+        }
+        QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+          "FileMedia::UserCompare current track = %d",i);
+        if(textTrackIDs[0] == nTextID)
+        {
+#ifdef FEATURE_QTV_GENERIC_BCAST
+          bRet = QTV_MEDIA_TRACK_LIST_IDENTICAL;
+#endif /* FEATURE_QTV_GENERIC_BCAST */
+        }
+        if(Media::IsTextCodec(m_trackList->GetCodecType(i)))
+        {
+          m_trackList->SelectTrack(i, false);
+          m_trackList->SelectTrack(idx, true);
+          --numTextTracks;
+          lockTrackList = false;
+          HandleSelectedTrackList();
+          lockTrackList = true;
+          break;
+        }
+      }
+    }
+    else
+    {
+#ifdef FEATURE_QTV_GENERIC_BCAST
+      QTV_MSG_PRIO1(QTVDIAG_GENERIC_BCAST,
+                        QTVDIAG_PRIO_ERROR,
+                    "User Compare:Invalid Text Track ID; Ignoring it silently",nTextID);
+#endif
+      nTextID = -1;
+    }
+  }
+
+  if(nVidID >= 0)
+  {
+    // Compare the audio tracks first
+    // Map the audio track to its associated index within the list
+    idx = MapTrackToIndex(nVidID);
+    if(idx >= 0)
+    {
+      for (int32 i = 0; i < m_trackList->GetNumTracksAvailable(); i++)
+      {
+        if (!m_trackList->IsTrackSelected(i))
+        {
+          continue;
+        }
+        if(videoTrackIDs[0] == nVidID)
+        {
+#ifdef FEATURE_QTV_GENERIC_BCAST
+          bRet = QTV_MEDIA_TRACK_LIST_IDENTICAL;
+          break;
+#endif /* FEATURE_QTV_GENERIC_BCAST */
+        }
+        if(Media::IsVideoCodec(m_trackList->GetCodecType(i)))
+        {
+          m_trackList->SelectTrack(i, false);
+      m_trackList->SelectTrack(idx, true);
+          --numVideoTracks;
+          lockTrackList = false;
+      HandleSelectedTrackList();
+          lockTrackList = true;
+          break;
+        }
+      }
+    }
+    else
+    {
+#ifdef FEATURE_QTV_GENERIC_BCAST
+      QTV_MSG_PRIO1(QTVDIAG_GENERIC_BCAST, 
+                        QTVDIAG_PRIO_ERROR,
+                    "User Compare:Invalid video Track ID; Ignoring it silently",nVidID);
+#endif
+      nVidID = -1;
     }
   }
   return bRet; 
@@ -7113,11 +7396,12 @@ int FileMedia::MapTrackToIndex(int nTrackID)
 
     //Allocate temporary ID list.
     uint32 *trackIDList = QTV_New_Array(uint32, numTracks);   
-    (void)pBaseFile->getTrackWholeIDList(trackIDList);
     if (trackIDList == NULL)
     {
-      return false;
+      return bRet;
     }
+
+    (void)pBaseFile->getTrackWholeIDList(trackIDList);
 
     for ( uint32 i = 0; i < numTracks; i++ )
     {
@@ -7131,3 +7415,21 @@ int FileMedia::MapTrackToIndex(int nTrackID)
   }  
   return bRet;
 }
+
+
+Media::AACDataFormatType FileMedia::GetAACDataFormat(void)
+{
+   if(m_AACDataFormatType == AAC_DATA_FORMAT_UNKNOWN)
+   {
+      if(pBaseFile->isADTSHeader())
+      {
+          m_AACDataFormatType = AAC_DATA_FORMAT_ADTS;
+      }
+      else
+      {
+	      m_AACDataFormatType = AAC_DATA_FORMAT_PSEUDO_RAW;
+      }
+   }
+   return m_AACDataFormatType;
+}
+

@@ -10,9 +10,9 @@ DESCRIPTION
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/decoder/driver/common/rel/2.0/inc/vdl_types.h#2 $
-$DateTime: 2008/12/03 04:32:47 $ 
-$Change: 796990 $
+$Header: //source/qcom/qct/multimedia/qtv/decoder/driver/common/rel/2.0/inc/vdl_types.h#5 $
+$DateTime: 2010/02/02 00:16:07 $ 
+$Change: 1161143 $
 
 ========================================================================== */
 
@@ -24,7 +24,6 @@ $Change: 796990 $
 #include "queue.h"
 #include "comdef.h"
 
-#include "qtvsystem.h" /* for QTV_USE_ARG1() and QTV_USE_ARG2() */
 
 /*==========================================================================
 
@@ -75,7 +74,9 @@ typedef struct
   uint16        fFirstMB;         /* indicates first MacroBlock in a frame */
   uint16        fLastMB;          /* indicates last MacroBlock in a frame */
   void          *pSliceData;      /* slice data */
-
+#ifdef FEATURE_L4_WRITEBACK_CACHE
+#error code not present
+#endif
   uint16        SubframePktSeqNum;/* indicates subframe packet sequence number */
   uint32        SliceDataSize;    /* indicates size of subframe in bytes */
   uint32        SliceBufferSize;  /* indicates size of slice buffer allocated */
@@ -214,6 +215,7 @@ typedef struct
   VDL_Decode_Info_Type DecodeInfo;
   /* VLD RTOS specific parameters */
   boolean vld_dsp_flag;
+  boolean bSVHMode;
 }VDL_CONFIG_PARAMS;
 
 typedef void (* VDL_Decoder_Cb_Type)     /* decoder callback function definition*/

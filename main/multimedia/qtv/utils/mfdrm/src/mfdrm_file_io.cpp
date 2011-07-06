@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------------
 // FILE: mfdrm_file_io.cpp
-// 
+//
 // GENERAL DESCRIPTION:
 //     File io shim around AES CTR decryption core
-// 
+//
 // IMPLEMENTATION-SPECIFIC COMMENTS:
 //     None.
 //               (c) COPYRIGHT 2004 QUALCOMM Incorporated.
@@ -18,9 +18,9 @@
 /* =======================================================================
                            Perforce Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/mfdrm/main/latest/src/mfdrm_file_io.cpp#3 $
-$DateTime: 2008/05/08 10:55:34 $
-$Change: 656201 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/mfdrm/main/latest/src/mfdrm_file_io.cpp#4 $
+$DateTime: 2009/12/14 01:06:02 $
+$Change: 1112911 $
 
 ========================================================================== */
 

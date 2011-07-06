@@ -155,6 +155,7 @@ template <class T> boolean CMPListWin<T>::Init(int nRowHeight, int cols, int siz
   // init the vector, the size is actually doesn't matter
   if(NULL == m_pVector  || IVector_Init(m_pVector, size) != SUCCESS)
   {
+    DBGPRINTF("VECTOR Init Failed");
     return FALSE;
   }
   

@@ -40,10 +40,12 @@ All Rights Reserved. Qualcomm Proprietary and Confidential.
 This section contains comments describing changes made to this file.
 Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/multimedia/audio/6k/drivers/QSC11X0/main/latest/inc/msmaud.h#6 $ $DateTime: 2010/04/21 02:44:57 $ $Author: kmodak $
+$Header: //source/qcom/qct/multimedia/audio/6k/drivers/QSC11X0/main/latest/inc/msmaud.h#7 $ $DateTime: 2011/01/05 16:15:51 $ $Author: kmodak $
 
 when       who     what, where, why
---------   ---     ----------------------------------------------------------
+--------   ---     ---------------------------------------------------------- 
+01/05/10   knm     Removed DC offset from Line Out by diabling Rx Filter for 
+                   Speaker. 
 04/21/10   knm     Fixed pop noise issue with FM recording by disconnecting
                    Rx filter before configuring iclock.
 03/30/10   knm     Added dummy device for FM on handset or LineOut
@@ -2385,6 +2387,7 @@ Added Defines for Reset and Set DWA bit in Rx Filter Reg in ADIE.
 }
 #endif /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
 
+
 /*===========================================================================
   Configure for mono mp3/ringer playback mode - using MIC2 and both 
   headphone channels (MIC2 input -> HPH_Diff output)
@@ -3214,13 +3217,7 @@ Added Defines for Reset and Set DWA bit in Rx Filter Reg in ADIE.
   ADIE_CODEC_TX_ADC_CNTL_REGISTER2_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER2_INIT_M, (ADIE_CODEC_TX_ADC_CNTL_REG2_COMPARATOR_THRESHOLD_356_MVOLT_V            \
                                                                                  | ADIE_CODEC_TX_ADC_CNTL_REG2_VICM_REF_BUFFER_OUTPUT_1P15_VOLT_V),   0, \
   ADIE_CODEC_TX_ADC_CNTL_REGISTER3_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER3_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REG3_VOCM_REF_BUFFER_OUTPUT_0P90_VOLT_V,       0, \
-  ADIE_RX_FILTER_CONTROL_REGISTER1_R,  ADIE_RX_FILTER_CONTROL_REGISTER1_INIT_M, (ADIE_RX_FILTER_CONTROL1_FILTER_ENA_V                                    \
-                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_LEFT_CHAN_ENA_V                        \
-                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_RIGHT_CHAN_ENA_V                       \
-                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_CONFIG_1ST_ORDER_V                     \
-                                                                                 | ADIE_RX_FILTER_CONTROL1_DWA_TO_RX_FILTER_FALLING_EDGE_SYNC_CLK_V      \
-                                                                                 | ADIE_RX_FILTER_CONTROL1_BIT0_V                                        \
-                                                                                 | ADIE_RX_FILTER_CONTROL1_RX_DAC_REF_BUFFER_DECOUP_ENA_V),           0, \
+  ADIE_RX_FILTER_CONTROL_REGISTER1_R,  ADIE_RX_FILTER_CONTROL_REGISTER1_INIT_M, ADIE_RX_FILTER_CONTROL1_FILTER_DIS_V,                                 0, \
   ADIE_RX_FILTER_CONTROL_REGISTER2_R,  ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_M, ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_V,                              0, \
   ADIE_RX_FILTER_CONTROL_REGISTER3_R,  ADIE_RX_FILTER_CONTROL_REGISTER3_INIT_M, (ADIE_RX_FILTER_CONTROL3_CMFB_REF_BUFFER_BIAS_15_UA_V                    \
                                                                                  | ADIE_RX_FILTER_CONTROL3_VICM_REF_BUFFER_BIAS_075_UA_V                 \
@@ -3230,11 +3227,10 @@ Added Defines for Reset and Set DWA bit in Rx Filter Reg in ADIE.
                                                                                  | ADIE_RX_FILTER_CONTROL4_OTA2_BIAS_05_UA_V),                        0, \
   ADIE_RX_PA_ENABLE_REGISTER1_R,       ADIE_RX_PA_ENABLE_REGISTER1_INIT_M,      ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V,                         0, \
   ADIE_RX_PA_ENABLE_REGISTER2_R,       ADIE_RX_PA_ENABLE_REGISTER2_INIT_M,      (ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_LEFT_REF_BUFFER_ENA_V                 \
-                                                                                 | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_LEFT_ENA_V                      \
-                                                                                 | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_RIGHT_REF_BUFFER_ENA_V          \
-                                                                                 | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_RIGHT_ENA_V ),               0, \
-  ADIE_RX_PA_CONTROL_REGISTER1_R,      ADIE_RX_PA_CONTROL_REGISTER1_INIT_M,     (ADIE_RX_PA_CONTROL1_RX_FILTER_TO_PMIC_LINEOUT_CONNECT_MONO_V            \
-                                                                                 | MSMAUD_ADIE_RX_PA_CNTL1_HPH_PA_CNFIG_MODE),                        0, \
+                                                                                 | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_LEFT_ENA_V                          \
+                                                                                 | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_RIGHT_REF_BUFFER_ENA_V              \
+                                                                                 | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_RIGHT_ENA_V ),                   0, \
+  ADIE_RX_PA_CONTROL_REGISTER1_R,      ADIE_RX_PA_CONTROL_REGISTER1_INIT_M,     MSMAUD_ADIE_RX_PA_CNTL1_HPH_PA_CNFIG_MODE,                            0, \
   ADIE_RX_PA_CONTROL_REGISTER3_R,      ADIE_RX_PA_CONTROL_REGISTER3_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER3_INIT_V,                                  0, \
   ADIE_RX_PA_CONTROL_REGISTER4_R,      ADIE_RX_PA_CONTROL_REGISTER4_INIT_M,     ADIE_RX_PA_CONTROL4_PMIC_LINEOUT_PA_OUTPUT_STAGE_BIAS_NOMINAL_V,      0, \
   ADIE_RX_PA_CONTROL_REGISTER5_R,      ADIE_RX_PA_CONTROL_REGISTER5_INIT_M,     ADIE_RX_PA_CONTROL5_LINEOUT_PA_INPUT_BIAS_12P5_UA_V,                  0, \
@@ -3304,13 +3300,7 @@ Added Defines for Reset and Set DWA bit in Rx Filter Reg in ADIE.
   ADIE_CODEC_TX_ADC_CNTL_REGISTER2_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER2_INIT_M, (ADIE_CODEC_TX_ADC_CNTL_REG2_COMPARATOR_THRESHOLD_356_MVOLT_V            \
                                                                                  | ADIE_CODEC_TX_ADC_CNTL_REG2_VICM_REF_BUFFER_OUTPUT_1P15_VOLT_V),   0, \
   ADIE_CODEC_TX_ADC_CNTL_REGISTER3_R,  ADIE_CODEC_TX_ADC_CNTL_REGISTER3_INIT_M, ADIE_CODEC_TX_ADC_CNTL_REG3_VOCM_REF_BUFFER_OUTPUT_0P90_VOLT_V,       0, \
-  ADIE_RX_FILTER_CONTROL_REGISTER1_R,  ADIE_RX_FILTER_CONTROL_REGISTER1_INIT_M, (ADIE_RX_FILTER_CONTROL1_FILTER_ENA_V                                    \
-                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_LEFT_CHAN_ENA_V                        \
-                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_RIGHT_CHAN_ENA_V                       \
-                                                                                 | ADIE_RX_FILTER_CONTROL1_FILTER_CONFIG_1ST_ORDER_V                     \
-                                                                                 | ADIE_RX_FILTER_CONTROL1_DWA_TO_RX_FILTER_FALLING_EDGE_SYNC_CLK_V      \
-                                                                                 | ADIE_RX_FILTER_CONTROL1_BIT0_V                                        \
-                                                                                 | ADIE_RX_FILTER_CONTROL1_RX_DAC_REF_BUFFER_DECOUP_ENA_V),           0, \
+  ADIE_RX_FILTER_CONTROL_REGISTER1_R,  ADIE_RX_FILTER_CONTROL_REGISTER1_INIT_M, ADIE_RX_FILTER_CONTROL1_FILTER_DIS_V,                                 0, \
   ADIE_RX_FILTER_CONTROL_REGISTER2_R,  ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_M, ADIE_RX_FILTER_CONTROL_REGISTER2_INIT_V,                              0, \
   ADIE_RX_FILTER_CONTROL_REGISTER3_R,  ADIE_RX_FILTER_CONTROL_REGISTER3_INIT_M, (ADIE_RX_FILTER_CONTROL3_CMFB_REF_BUFFER_BIAS_15_UA_V                    \
                                                                                  | ADIE_RX_FILTER_CONTROL3_VICM_REF_BUFFER_BIAS_075_UA_V                 \
@@ -3320,11 +3310,10 @@ Added Defines for Reset and Set DWA bit in Rx Filter Reg in ADIE.
                                                                                  | ADIE_RX_FILTER_CONTROL4_OTA2_BIAS_05_UA_V),                        0, \
   ADIE_RX_PA_ENABLE_REGISTER1_R,       ADIE_RX_PA_ENABLE_REGISTER1_INIT_M,      ADIE_RX_PA_ENA_REG1_PA_BIAS_DISTRIBUTE_ENA_V,                         0, \
   ADIE_RX_PA_ENABLE_REGISTER2_R,       ADIE_RX_PA_ENABLE_REGISTER2_INIT_M,      (ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_LEFT_REF_BUFFER_ENA_V                 \
-                                                                                 | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_LEFT_ENA_V                      \
-                                                                                 | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_RIGHT_REF_BUFFER_ENA_V          \
-                                                                                 | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_RIGHT_ENA_V ),               0, \
-  ADIE_RX_PA_CONTROL_REGISTER1_R,      ADIE_RX_PA_CONTROL_REGISTER1_INIT_M,     (ADIE_RX_PA_CONTROL1_RX_FILTER_TO_PMIC_LINEOUT_CONNECT_MONO_V            \
-                                                                                 | MSMAUD_ADIE_RX_PA_CNTL1_HPH_PA_CNFIG_MODE),                        0, \
+                                                                                 | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_LEFT_ENA_V                          \
+                                                                                 | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_RIGHT_REF_BUFFER_ENA_V              \
+                                                                                 | ADIE_RX_PA_ENA_REG2_PMIC_LINE_OUT_RIGHT_ENA_V ),                   0, \
+  ADIE_RX_PA_CONTROL_REGISTER1_R,      ADIE_RX_PA_CONTROL_REGISTER1_INIT_M,     MSMAUD_ADIE_RX_PA_CNTL1_HPH_PA_CNFIG_MODE,                            0, \
   ADIE_RX_PA_CONTROL_REGISTER3_R,      ADIE_RX_PA_CONTROL_REGISTER3_INIT_M,     ADIE_RX_PA_CONTROL_REGISTER3_INIT_V,                                  0, \
   ADIE_RX_PA_CONTROL_REGISTER4_R,      ADIE_RX_PA_CONTROL_REGISTER4_INIT_M,     ADIE_RX_PA_CONTROL4_PMIC_LINEOUT_PA_OUTPUT_STAGE_BIAS_NOMINAL_V,      0, \
   ADIE_RX_PA_CONTROL_REGISTER5_R,      ADIE_RX_PA_CONTROL_REGISTER5_INIT_M,     ADIE_RX_PA_CONTROL5_LINEOUT_PA_INPUT_BIAS_12P5_UA_V,                  0, \

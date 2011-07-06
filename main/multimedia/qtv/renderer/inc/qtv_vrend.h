@@ -15,9 +15,9 @@ Copyright 2006 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/renderer/main/latest/inc/qtv_vrend.h#7 $
-$DateTime: 2009/01/05 22:24:35 $
-$Change: 813956 $
+$Header: //source/qcom/qct/multimedia/qtv/renderer/main/latest/inc/qtv_vrend.h#9 $
+$DateTime: 2009/08/14 03:00:59 $
+$Change: 996932 $
 
 ========================================================================== */
 
@@ -169,6 +169,22 @@ public:
     None.
   =========================================================================*/
   void render( VDEC_FRAME* const frame_ptr );
+
+  /* ======================================================================
+  FUNCTION:
+    notify_clipInfo_Dimensions
+
+  DESCRIPTION:
+    This is a sync funciton which updates the height & width of clipinfo and notify to UI for clipinfo validation.
+
+  PARAMETERS:
+  int height : height of enoded frame.
+  int width  : width of encoded frame.
+
+  RETURN VALUE:
+    None.
+  =========================================================================*/
+  void notify_clipInfo_Dimensions( int width, int height );
 
   /* ======================================================================
   FUNCTION:
@@ -339,7 +355,8 @@ RETURN VALUE:
     EVENT_PCR_RESET,
     EVENT_SET_QUEUEING_MODE,
     EVENT_SET_MAX_TIMESTAMP,
-    EVENT_RELEASE_FRAME
+    EVENT_RELEASE_FRAME,
+	EVENT_CLIPINFO_DIMENSION
   };
 
 private:
@@ -355,6 +372,20 @@ private:
 
   /* Parameterized events for the state machine.
   */
+  class clipinfo_event_class : public qtvhsm::event_class
+  {
+  public:
+    void init( int width, int height )
+    {
+      kind        = EVENT_CLIPINFO_DIMENSION;
+      this->width  = width;
+      this->height = height;
+    }
+
+    int width;
+	int height;
+  };
+
   class frame_event_class : public qtvhsm::event_class
   {
   public:
@@ -556,7 +587,9 @@ private:
   /* Utility functions to hide the nitty-gritty of last-frame-rendered accounting.
   ** Really, this is pretty trivial and could probably be omitted if not for
   ** the complication of invalid timestamps */
+ public:
   void set_last_frame_rendered_( const uint64& ts ) { m_last_frame_rendered_ = ts; }
+private:
   void reset_last_frame_rendered_( void )    { m_last_frame_rendered_ = invalid_timestamp_(); }
   uint64 get_last_frame_rendered_( void )    { return m_last_frame_rendered_; }
   bool last_frame_rendered_is_valid_( void ) { return ( m_last_frame_rendered_ & invalid_timestamp_() ) == 0; }

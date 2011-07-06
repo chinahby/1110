@@ -13,9 +13,9 @@ Copyright 2005, 2006 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/url/main/latest/inc/url.h#1 $
-$DateTime: 2008/05/08 11:03:24 $
-$Change: 656211 $ 
+$Header: //source/qcom/qct/multimedia/qtv/utils/url/main/latest/inc/url.h#2 $
+$DateTime: 2010/01/04 23:14:42 $
+$Change: 1127650 $ 
 
 ========================================================================== */
 /* Includes custmp4.h. The following 2 includes must be the first includes in this file! */
@@ -70,6 +70,7 @@ class URL
     {
       PROTO_HTTP,
       PROTO_RTSP,
+      PROTO_RTSPT,
       PROTO_ISDB,
       PROTO_SDP_BUFFER,
       PROTO_UNKNOWN
