@@ -1048,7 +1048,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             }
 #endif
             return MainMenu_RouteDialogEvt(pMe,eCode,wParam,dwParam);  
-#ifdef FEATURE_VERSION_N021
+#if defined (FEATURE_VERSION_N021)||defined(FEATURE_VERSION_W0216A)
 		case EVT_KEY_HELD:
 			{
 				if(wParam == AVK_INFO)

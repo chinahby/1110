@@ -349,6 +349,8 @@ typedef PACKED struct _Key_pad_Cfg
 #define   OEMNV_DEFAULTRINGER       4
 #elif defined(FEATURE_VERSION_VERYKOOL)
 #define   OEMNV_DEFAULTRINGER       7
+#elif defined(FEATURE_VERSION_W0216A)
+#define   OEMNV_DEFAULTRINGER       10
 #else
 #define   OEMNV_DEFAULTRINGER       4
 #endif

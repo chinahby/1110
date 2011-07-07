@@ -1281,7 +1281,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             	}
             	break;
             default:
-            #ifdef FEATURE_VERSION_N021
+            #if defined (FEATURE_VERSION_N021) || defined(FEATURE_VERSION_W0216A)
             	if(wParam==1)
             	{
             		OEM_GetConfig(CFGI_FLSHLITHG_STATUS,&pMe->TorchOn, sizeof(pMe->TorchOn));
