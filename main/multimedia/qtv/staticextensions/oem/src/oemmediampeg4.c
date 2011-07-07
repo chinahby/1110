@@ -115,7 +115,7 @@ static OEMCriticalSection gcmCriticalSection;
 #endif
 
 int nMdpFramePendingCounter = 0;
-#ifndef T_QSC1110
+#ifndef T_QSC1110 // Gemsea Add
 extern void disp_lock_screen(word start_row,word num_row,word start_column,word num_column);
 extern void disp_update_yuv420(void * buf_ptr, int16 num_of_rows,int16 num_of_columns);
 #endif
@@ -433,7 +433,7 @@ void OEMMediaMPEG4_Delete(IMedia * po, boolean bFree)
    // Free object memory
    if (bFree)
       FREE(po);
-#ifndef T_QSC1110
+#ifndef T_QSC1110 // Gemsea Add
    disp_lock_screen(0,0,0,0);
 #endif
    MSG_HIGH("OEMMediaMPEG4Layer_Delete Exit", 0, 0, 0);
@@ -1241,7 +1241,7 @@ static int OEMMediaMPEG4_SetMediaParm(IMedia * po, int nParmID, int32 p1, int32 
 #endif /* !FEATURE_QTV_MDP_TRANSFORMATIONS */
          MEMCPY(&pOEM->m_rectClip, (void *)p1, sizeof(AEERect));
          pOEM->m_bRectClipChanged = TRUE;
-#ifndef T_QSC1110
+#ifndef T_QSC1110 // Gemsea Add
          if(pme->m_nState == MM_STATE_PLAY)
          {
             disp_lock_screen(pOEM->m_rectClip.y,pOEM->m_rectClip.dy,pOEM->m_rectClip.x,pOEM->m_rectClip.dx);
@@ -1543,6 +1543,7 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
          {
             MSG_ERROR("OEMMediaMPEG4_GetMediaParm: returning EFAILED", 0, 0, 0);
             return EFAILED;
+         } 
 
          *p1 = AEECLSID_MEDIAMPEG4;
          break;
@@ -1832,7 +1833,7 @@ static int OEMMediaMPEG4_Play(IMedia * po)
 #error code not present
 #endif
 
-#ifndef T_QSC1110
+#ifndef T_QSC1110 // Gemsea Add
    disp_lock_screen(pOEM->m_rectClip.y,pOEM->m_rectClip.dy,pOEM->m_rectClip.x,pOEM->m_rectClip.dx);
 #endif
 
@@ -1900,7 +1901,7 @@ static int OEMMediaMPEG4_Stop(IMedia * po)
    OEMMediaMPEG4_MDPDeregister(pOEM);
 #endif /* FEATURE_QTV_MDP_TRANSFORMATIONS */
 
-#ifndef T_QSC1110
+#ifndef T_QSC1110 // Gemsea Add
    disp_lock_screen(0,0,0,0);
 #endif
    MSG_HIGH("OEMMediaMPEG4_Stop Exit returns from OEMMediaMPEG42PV_Stop",0,0,0);
@@ -2012,7 +2013,7 @@ static int OEMMediaMPEG4_Pause(IMedia * po)
    }
    pOEM->m_bPausePending = TRUE;
    MSG_HIGH("OEMMediaMPEG4_Pause - Return",0,0,0);
-#ifndef T_QSC1110
+#ifndef T_QSC1110 // Gemsea Add
    disp_lock_screen(0,0,0,0);
 #endif
    return OEMMediaMPEG42PV_Pause(pOEM);
@@ -2084,7 +2085,7 @@ static int OEMMediaMPEG4_Resume(IMedia * po)
       startPlayPos = 0;
    }
    MSG_HIGH("OEMMediaMPEG4_Resume - Return",0,0,0);
-#ifndef T_QSC1110
+#ifndef T_QSC1110 // Gemsea Add
    disp_lock_screen(pOEM->m_rectClip.y,pOEM->m_rectClip.dy,pOEM->m_rectClip.x,pOEM->m_rectClip.dx);
 #endif
    return OEMMediaMPEG42PV_Play(startPlayPos, pOEM);
@@ -2502,7 +2503,7 @@ void OEMMediaMPEG4_CallbackNotify(AEEMediaCallback * pcb)
         }
 
 #else
-#ifndef T_QSC1110
+#ifndef T_QSC1110 // Gemsea Add
     {
         IDIB *pDIB;
         
