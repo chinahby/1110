@@ -32,12 +32,12 @@ when       who      what, where, why
                      INCLUDE FILES FOR MODULE
 
 ========================================================================== */
-#include "vdecoder_perf.h"
+//Gemsea Modify #include "vdecoder_perf.h"
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-#include "vdecoder_log.h"
+//Gemsea Modify #include "vdecoder_log.h"
 #include "rex.h"
 /* ==========================================================================
 
