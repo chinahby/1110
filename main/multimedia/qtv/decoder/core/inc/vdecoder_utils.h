@@ -182,7 +182,7 @@ void ConvertStatsToVdecFrame
   VDEC_FRAME               &frame_out
 );
 
-#ifndef PLATFORM_LTK
+#if 0//Gemsea ndef PLATFORM_LTK
   log_vdec_video_bitstream_type* wait_for_bitstream_log_buffer( void );
 #endif /* PLATFORM_LTK */
 void log_bitstream_buffer( uint8 *pBitstream, uint32 numBytes );

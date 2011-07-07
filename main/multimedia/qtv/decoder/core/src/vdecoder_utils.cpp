@@ -423,7 +423,7 @@ void ConvertStatsToVdecFrame
   frame_out.frameStatus = 0;
 }
 
-#ifndef PLATFORM_LTK
+#if 0//Gemsea ndef PLATFORM_LTK
 /*===========================================================================
 Function: wait_for_bitstream_log_buffer
 
@@ -482,7 +482,7 @@ Side Effects:
 ============================================================================*/
 void log_bitstream_buffer( uint8 *pBitstream, uint32 numBytes )
 {
-#ifndef PLATFORM_LTK
+#if 0//Gemsea ndef PLATFORM_LTK
   uint16 LogChunkCount = 0;
   uint16 LogSize = (uint32) MIN( numBytes, LOG_BITSTREAM_MAX_SIZE );
 
@@ -516,7 +516,7 @@ void log_bitstream_buffer( uint8 *pBitstream, uint32 numBytes )
     } /* while there is more bitstream to log */
   }
 #else
-#error code not present
+//Gemsea #error code not present
 #endif /* PLATFORM_LTK */
 }
 
