@@ -11,7 +11,7 @@ DESCRIPTION: This is the header file for Bluetooth BREW Extension
 
 PUBLIC CLASSES:  Not Applicable
 
-        Copyright ?2004-2009 QUALCOMM Incorporated.
+        Copyright ? 2004-2009 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ===========================================================================*/
@@ -47,7 +47,6 @@ extern "C" {
 /* Size of OBEX buffer (subtract max OBEX header size (11) )*/
 /* Used for all OBEX profiles that use a dynamic buffer. */
   /* Currently (16384-11) 16K - max size of OBEX header (11 bytes) */
-
 #define AEEBT_OBEX_BUFFER_SIZE      16373
 
 /* Link key status */

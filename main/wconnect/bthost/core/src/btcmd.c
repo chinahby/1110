@@ -4583,8 +4583,6 @@ bt_cmd_status_type bt_cmd_rm_set_local_info_ext
   bt_cmd_msg_type*    cmd_ptr;
   bt_cmd_status_type  cmd_status = BT_CS_GN_CMD_Q_FULL;
 
-  MSG_FATAL("***zzg bt_cmd_rm_set_local_info_ext***", 0, 0, 0);
-
   if ( (cmd_ptr = bt_get_free_cmd()) != NULL )
   {
     cmd_ptr->cmd_hdr.cmd_type  = BT_CMD_RM_SET_LOCAL_INFO_EXT;
@@ -4616,7 +4614,6 @@ bt_cmd_status_type bt_cmd_rm_set_local_info_ext
     }
 
     /* Short Name */
-
     if ( bt_short_name_str_ptr != NULL )
     {
       cmd_ptr->cmd_msg.cmd_rm_setif_ext.bt_short_name_valid = TRUE;
@@ -4628,9 +4625,6 @@ bt_cmd_status_type bt_cmd_rm_set_local_info_ext
     {
       cmd_ptr->cmd_msg.cmd_rm_setif_ext.bt_short_name_valid = FALSE;
     }
-	
-
-	
 
     cmd_status = bt_cmd( cmd_ptr );
   }

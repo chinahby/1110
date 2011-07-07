@@ -11,7 +11,7 @@ PUBLIC CLASSES:  Not Applicable
 INITIALIZATION AND SEQUENCING REQUIREMENTS:  N/A
 
 
-        Copyright ?2004-2008  QUALCOMM Incorporated.
+        Copyright © 2004-2008  QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ===========================================================================*/
@@ -1235,6 +1235,7 @@ static mt_obex_status_type OEMOBEX_MapCmdStatus(AEEOBEXCmdStatusType status)
 
 static int  OEMOBEX_CheckCmdStatus( mt_obex_status_type status )
 {
+
   switch (status)
   {
   case MT_OBEX_SUCCESS:
@@ -1768,6 +1769,7 @@ static void OEMOBEX_DeliverQueuedUpModelEvents(OEMOBEXobj_t *pMe)
   //set the app context
   pc = AEE_EnterAppContext(pMe->pac);
   AEEOBEX_QueryInterface(pMe->pParent, AEEIID_MODEL, (void**)&piModel);
+
   // There is a slim chance that me->num_events may get incremented by
   // OEMOBEX_QueueUpModelEvent()--which is invoked by the BT task--
   // while we are delivering events already.  Since we need to clear

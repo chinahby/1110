@@ -196,9 +196,7 @@ extern void bt_rm_nv_init( void );
 //Add By zzg 2011_02_25
 extern boolean bt_save_efs_params(void);
 extern void bt_rm_refresh_efs_param(void);
-
 //Add End
-
 
 /*===========================================================================
 

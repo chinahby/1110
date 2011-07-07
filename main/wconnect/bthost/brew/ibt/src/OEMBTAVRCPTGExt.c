@@ -8,7 +8,7 @@ GENERAL DESCRIPTION:
    
 
 ===============================================================================
-        Copyright ? 2008 QUALCOMM Incorporated.
+        Copyright © 2008 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 =============================================================================*/
@@ -346,7 +346,7 @@ static uint32 OEMBTAVRCPTGExt_PfToAeeEventId(uint32 eventid)
 //
 //=============================================================================
 static int OEMBTAVRCPTGExt_CmdStatusToAeeResult(bt_cmd_status_type status)
-{	
+{
    switch ( status )
    {
    case BT_CS_GN_SUCCESS:

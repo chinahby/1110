@@ -1154,7 +1154,6 @@ bt_cmd_status_type bt_cmd_pf_opp_cli_push(
   bt_cmd_status_type     cmd_status;
   uint8                  len;
 
-
   if ( (cmd_ptr = bt_pf_get_free_cmd()) == NULL )
   {
     BT_ERR( "BT PF CMD OPP CLI PSH: cmd q full, cmd dropped, App: %x",

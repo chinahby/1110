@@ -17,9 +17,12 @@ GENERAL DESCRIPTION
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btl2.c#5 $ $DateTime:
+$Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btl2.c#6 $ $DateTime:
  when        who  what, where, why
  ----------  ---  -----------------------------------------------------------
+ 2009-07-15  jtl  Set the idle timeout timer after the last remote-initiated L2CAP
+                  connection has been disconnected. Also, better dectection of when
+                  to disconnect ACLs when there are no L2CAP channels.
  2009-02-21   gs  Added support for cancelling l2cap connection if l2cap
                   disconnect API is called before the connection is up.
  2009-02-03   VK  Sending Dealyed HCI Disconnect in case of security failure. To allow 
@@ -754,6 +757,7 @@ typedef struct
 
   bt_l2_sig_cmd_type           pending_sig_cmd;
   boolean                      initiated_conn;
+  boolean                      initiated_disconn;
   boolean                      received_reconfig;
   bt_app_id_type               app_id;
   byte                         last_conn_rqst_rcvd_matching_id;
@@ -1119,7 +1123,6 @@ bt_rm_disc_reason_type bt_l2_convert_disconn_reason_to_rm
       rm_reason = BT_RMDR_USER_ENDED;
       break;
     case BT_EVR_L2_AUTHENTICATION_FAILED:
-		MSG_FATAL("***zzg BT_RMDR_AUTH_FAILED 1***", 0, 0, 0);
         rm_reason = BT_RMDR_AUTH_FAILED;
         break; 
     default:
@@ -1260,6 +1263,7 @@ LOCAL void bt_l2_init_conn_db_entry
   cdb_ptr->status            = 0;
   cdb_ptr->pending_sig_cmd   = BT_L2_SIG_CMD_REJECT;
   cdb_ptr->initiated_conn    = TRUE;
+  cdb_ptr->initiated_disconn = FALSE;
   cdb_ptr->received_reconfig = FALSE;
   cdb_ptr->app_id            = BT_APP_ID_NULL;
   cdb_ptr->echo_app_id       = BT_APP_ID_NULL;
@@ -1452,17 +1456,22 @@ LOCAL void bt_l2_conn_closed_disconn_acl_link_if_ok
     else
     {
       bt_l2_conn_db[ ci ].state          = BT_L2_ACL_LINK_CONNECTED;
-#ifdef BT_SWDEV_2_1_SSP
-      /* Dont tear down ACL if the link was set up by a remote device. 
-         We have already disconnected the L2 and if the remote device has
-         nothing else it will/should disconnect ACL */
-      if ( bt_l2_conn_db[ ci ].initiated_conn == TRUE )
-#endif /* BT_SWDEV_2_1_SSP */
+      /* Tear down the ACL only if we initiated this L2CAP link, or if
+         we initiated the disconnection. Do not tear down the link for
+         remote initiated L2CAP links which the remote closes */
+      if( bt_l2_conn_db[ ci ].initiated_conn == TRUE ||
+          bt_l2_conn_db[ ci ].initiated_disconn == TRUE )
       {
         /* Set timer to disconnect ACL */        
         bt_l2_conn_db[ ci ].disconn_reason = disconn_reason;
         (void)rex_set_timer( &bt_l2_conn_db[ ci ].acl_link_disconnect_timer,
                              BT_L2_ACL_LINK_DISCONNECT_TIME );
+      }
+      else
+      {
+        /* Start the idle timer to disconnect the link if the remote device
+         * doesn't do so */
+        bt_l2_conn_db[ ci ].idle_timeout = BT_L2_IDLE_TIMEOUT_MS;
       }
     }
   }
@@ -3772,6 +3781,7 @@ LOCAL boolean bt_l2_process_conn_rqst_pkt
 
         cdb_ptr = new_cdb_ptr;
         cdb_ptr->initiated_conn  = FALSE;
+        cdb_ptr->initiated_disconn = FALSE;
       }
       else
       {
@@ -3810,6 +3820,7 @@ LOCAL boolean bt_l2_process_conn_rqst_pkt
     cdb_ptr->remote_cid     = req_cmd_ptr->source_cid;
     cdb_ptr->state          = BT_L2_W4_L2CA_CONNECT_RSP;
     cdb_ptr->initiated_conn = FALSE;
+    cdb_ptr->initiated_disconn = FALSE;
     cdb_ptr->idle_timeout   = BT_L2_IDLE_TIMEOUT_MS;
     cdb_ptr->last_conn_rqst_rcvd_matching_id = cmd_hdr_ptr->matching_id;
 
@@ -3872,6 +3883,8 @@ LOCAL boolean bt_l2_process_conn_rqst_pkt
       bt_l2_conn_db[i].serv_sec_local_initiated = FALSE;
       bt_l2_conn_db[i].serv_sec_psm             = req_cmd_ptr->psm;
       bt_l2_conn_db[i].serv_sec_matching_id     = cmd_hdr_ptr->matching_id;
+      bt_l2_conn_db[i].initiated_conn           = FALSE;
+      bt_l2_conn_db[i].initiated_disconn        = FALSE;
 
       BT_MSG_API( "BT L2 CMD TX: RM Enf Sec PSM %x MI %x lcid %x",
                   bt_l2_conn_db[i].serv_sec_psm,
@@ -5697,7 +5710,6 @@ LOCAL void bt_l2_ev_rm_l2cap_psm_sec_result
                                        pkt_ptr, cdb_ptr, FALSE );
           }
 
-		  MSG_FATAL("***zzg BT_EVR_L2_AUTHENTICATION_FAILED 1***", 0, 0, 0);
           bt_l2_conn_db[ci ].disconn_reason = BT_EVR_L2_AUTHENTICATION_FAILED ;
           
           /* Get ACL link status */
@@ -5709,10 +5721,7 @@ LOCAL void bt_l2_ev_rm_l2cap_psm_sec_result
           {
                 bt_l2_conn_db[ ci ].state          = BT_L2_ACL_LINK_CONNECTED;
                 /* Set timer to disconnect ACL */
-
-				MSG_FATAL("***zzg BT_EVR_L2_AUTHENTICATION_FAILED 2***", 0, 0, 0);				
                 bt_l2_conn_db[ ci ].disconn_reason = BT_EVR_L2_AUTHENTICATION_FAILED;
-				
                 (void)rex_set_timer( &bt_l2_conn_db[ ci ].acl_link_sec_fail_dis_timer,
                                         BT_L2_ACL_LINK_SEC_FAIL_DIS_TIME );
           }
@@ -5720,7 +5729,6 @@ LOCAL void bt_l2_ev_rm_l2cap_psm_sec_result
           {
               /* Security Failed but Encryption is enabled, go through normal way 
                  of disconnect */
-                 MSG_FATAL("***zzg BT_EVR_L2_AUTHENTICATION_FAILED 3***", 0, 0, 0);
               bt_l2_close_l2_connection(
                 &bt_l2_conn_db[ci], BT_EVR_L2_AUTHENTICATION_FAILED );
           }
@@ -5752,16 +5760,12 @@ LOCAL void bt_l2_ev_rm_l2cap_psm_sec_result
           ev_l2_conn.ev_msg.ev_l2_conn_failed.reason =
           BT_EVR_L2_AUTHENTICATION_FAILED;
 
-		  MSG_FATAL("***zzg BT_EVR_L2_AUTHENTICATION_FAILED 4***", 0, 0, 0);
-
           BT_MSG_API( "BT L2 EV TX: Conn Failed lcid:%x rcid:%x %x",
                                   cdb_ptr->local_cid, cdb_ptr->remote_cid,
                                   BT_EV_L2_CONNECTION_FAILED );
           bt_ec_send_event( &ev_l2_conn );
 
           /* Connection refused;  tear down the ACL link if necessary.*/
-
-		  MSG_FATAL("***zzg BT_EVR_L2_AUTHENTICATION_FAILED 5***", 0, 0, 0);
           bt_l2_close_l2_connection(
             cdb_ptr, BT_EVR_L2_AUTHENTICATION_FAILED );
         }
@@ -5846,6 +5850,7 @@ LOCAL void bt_l2_ev_rm_connect_req_acl
 
     cdb_ptr->conn_status    = BT_LM_CONN_GOING_UP;
     cdb_ptr->initiated_conn = FALSE;
+    cdb_ptr->initiated_disconn = FALSE;
     cdb_ptr->state          = BT_L2_W4_ACL_LINK;
     cdb_ptr->baseband_conn_role = BT_ROLE_SLAVE;
 
@@ -6375,6 +6380,7 @@ LOCAL void bt_l2_cmd_connect
     }
     cdb_ptr->conn_status     = acl_conn_state;
     cdb_ptr->initiated_conn  = TRUE;
+    cdb_ptr->initiated_disconn = FALSE;
     cdb_ptr->app_id          = l2_conn_ptr->cmd_hdr.bt_app_id;
     memcpy( (byte*) &cdb_ptr->bd_addr,
             (byte*) &l2_conn_ptr->cmd_msg.cmd_l2_conn.bd_addr,
@@ -6699,12 +6705,14 @@ LOCAL void bt_l2_cmd_disconnect
       bt_ec_send_event( &ev_l2_conn_failed );
 
 
+      cdb_ptr->initiated_disconn = TRUE;
       bt_l2_close_l2_connection( cdb_ptr, BT_EVR_L2_LOCAL_REJECT_CONNECTION ); 
     }
     else if( cdb_ptr->state < BT_L2_W4_L2CAP_DISCONNECT_RSP )
     {
       /* For all other cases, we've already sent (or received) a connection
        * request. So send a discon request here */
+      cdb_ptr->initiated_disconn = TRUE;
       pkt_ptr = bt_l2_get_free_signalling_pkt();
       if( pkt_ptr != NULL )
       {
@@ -6957,6 +6965,7 @@ LOCAL void bt_l2_cmd_ping
               sizeof( bt_bd_addr_type ) );
 
       cdb_ptr->initiated_conn     = TRUE;
+      cdb_ptr->initiated_disconn  = TRUE;
       cdb_ptr->app_id             = cdb_ptr->echo_app_id;
       cdb_ptr->conn_status        = BT_LM_CONN_GOING_UP;
       cdb_ptr->state              = BT_L2_W4_ACL_LINK;
@@ -7632,6 +7641,8 @@ void bt_l2_background_tick
         BT_BDA( MSG_HIGH, "BT L2: Idle timer expired", &bt_l2_conn_db[ ci ].bd_addr );
         // Timer expired; disconnect
         bt_l2_conn_db[ ci ].idle_timeout = 0;
+        bt_l2_conn_db[ ci ].disconn_acl_immediate = TRUE;
+                
         if( bt_l2_conn_db[ ci ].local_cid != BT_L2_NULL_CID )
         {
           // This is an established connection
@@ -7674,10 +7685,8 @@ void bt_l2_disconnect_acl_if_unused(void)
        bt_l2_conn_db[i].initiated_conn == FALSE )
    {
      BT_MSG_DEBUG( "BT L2: Close l2 and ACL for unused connection", 0, 0, 0 );
-#ifdef BT_SWDEV_2_1_SSP   
      /* This should be disconnected immediately */
      bt_l2_conn_db[i].disconn_acl_immediate = TRUE;
-#endif /* BT_SWDEV_2_1_SSP */
      bt_l2_close_l2_connection(&bt_l2_conn_db[i], BT_EVR_L2_UNSPECIFIED_ERROR);
    }
  }

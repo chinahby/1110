@@ -495,7 +495,6 @@ LOCAL OI_STATUS bt_pf_opp_cli_objsys_read(
   OI_OPP_CONNECTION      conn_id )
 {
   bt_ev_msg_type event;
-  
 
   /* send event to tell app to read object */
   if (bt_pf_opp_cli_conn_id != (bt_pf_opp_cli_conn_id_type)conn_id)
@@ -505,8 +504,9 @@ LOCAL OI_STATUS bt_pf_opp_cli_objsys_read(
     return(OI_OBEX_CONNECTION_NOT_FOUND);
   }
   
-  BT_MSG_DEBUG( "BT PF OPP CLI OS READ: Conn: %x", conn_id, 0, 0 ); 
-  
+  BT_MSG_DEBUG( "BT PF OPP CLI OS READ: Conn: %x", 
+                conn_id, 0, 0 ); 
+
   event.ev_hdr.bt_app_id = bt_pf_opp_cli_app_id;
   event.ev_hdr.ev_type = BT_EV_PF_OPP_CLI_READ_REQ;
   event.ev_msg.ev_opp_cli_read_req.conn_id = 
@@ -598,8 +598,6 @@ bt_cmd_status_type bt_pf_opp_cli_cmd_connect(
   bt_pf_opp_cli_conn_id_type*   conn_id_ptr )
 {
   OI_STATUS status;
-
-  BT_MSG_DEBUG("***zzg bt_pf_opp_cli_cmd_connect***", 0, 0, 0);
 
   if ( bt_pf_opp_cli_conn_id != BT_PF_OPP_NO_CONN_ID )
   {

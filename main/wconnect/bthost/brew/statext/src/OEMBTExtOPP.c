@@ -106,8 +106,6 @@ typedef struct OEMBTExtOPPobj_struct
   bt_pf_opp_cli_conn_id_type  clientConnID;
 
   uint8*                      pBuffer;
-  //uint16*                      pBuffer;
-  
 #ifdef FEATURE_BT_OBEX_DBL_BUF_WRITE
   bt_cmd_status_type          prevWriteStatus;
 #endif /* FEATURE_BT_OBEX_DBL_BUF_WRITE */
@@ -382,7 +380,6 @@ int OEMBTExtOPP_Register( IBTExtOPP*     pParent,
   }
   if ( pMe->state > AEEBT_OPP_STATE_INIT )
   {
-  	MSG_FATAL("***zzg OEMBTExtOPP_Register EBADSTATE state=%d***", pMe->state, 0, 0);
     return EBADSTATE;
   }
 
@@ -393,9 +390,6 @@ int OEMBTExtOPP_Register( IBTExtOPP*     pParent,
   {
     pMe->supportedFormat = supportedFormat;
   }
-  
-  MSG_FATAL("***zzg OEMBTExtOPP_Register  stat=%d***", stat, 0, 0);
-  
   return OEMBTExtOPP_CheckCmdStatus( stat );
 }
 
@@ -548,13 +542,11 @@ int OEMBTExtOPP_Push(
   fileInfoEx.pClasses = NULL;
   fileInfoEx.nClassesSize = 0;
 
-  MSG_FATAL("***zzg OEMBTExtOPP_Push***", 0, 0, 0);
-
-  if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, (OEMINSTANCE*)&pMe ) != TRUE )
+  if( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
+                      (OEMINSTANCE*)&pMe ) != TRUE )
   {
     return EFAILED;
   }
-
   
 #ifndef CUST_EDITION
   if ( (pwFileName == NULL) && (pMe->bIsServer == FALSE) )
@@ -667,9 +659,6 @@ int OEMBTExtOPP_Push(
   }
 
   TASKLOCK();
-
-  MSG_FATAL("***zzg OEMBTExtOpp Push bIsServer=%d, pMe->state=%d***", pMe->bIsServer, pMe->state, 0);
-  
   if ( pMe->bIsServer == FALSE )
   {
     // client calls this function to push data to server
@@ -682,8 +671,6 @@ int OEMBTExtOPP_Push(
       statOut = bt_cmd_pf_opp_cli_push( pMe->appId, pMe->clientConnID, 
                                         pMe->wName, pMe->pszType );
     }
-
-	MSG_FATAL("***zzg OEMBTExtOpp Push statOut=%d***", statOut, 0, 0);
   }
   else
   {
@@ -699,10 +686,7 @@ int OEMBTExtOPP_Push(
       pMe->appId, pMe->serverConnID, (bt_pf_opp_handle_type)pMe->pFile,
       NAME_ONLY( pMe->wName ), pMe->pszType, pMe->dwFileSize, statIn );
     }
-
-	MSG_FATAL("***zzg OEMBTExtOpp Push statOut=%d***", statOut, 0, 0);
   }
-
 
   if ( statIn == OI_OBEX_NOT_FOUND )
   {
@@ -714,7 +698,6 @@ int OEMBTExtOPP_Push(
     pMe->bytesSent = 0;
     pMe->bytesRcvd = 0;
   }
-
   TASKFREE();
 
   return OEMBTExtOPP_CheckCmdStatus( statOut );
@@ -847,9 +830,6 @@ int OEMBTExtOPP_GetProgressInfo(IBTExtOPP* pParent, AEEBTProgressInfo* pProgress
                               pMe->bytesSent :
                               pMe->bytesRcvd;
   }
-
-  MSG_FATAL("***zzg OEMBTExtOPP_GetProgressInfo bytesSent=%d, bytesRcvd=%d***",pMe->bytesSent, pMe->bytesRcvd, 0);
-  
   return ret;
 }
 //==========================================================================
@@ -895,8 +875,8 @@ static boolean OEMBTExtOPP_HandleCmdDone(
 {
   boolean doSendNotif = TRUE;
 
-  MSG_LOW( "OPP_HandleCmdDone - st=%x stat=%x cmd=%x", pMe->state, pCmdDn->cmd_status, pCmdDn->cmd_type );
-
+  MSG_LOW( "OPP_HandleCmdDone - st=%x stat=%x cmd=%x", pMe->state,
+           pCmdDn->cmd_status, pCmdDn->cmd_type );
 
   switch ( pCmdDn->cmd_type )
   {
@@ -1000,6 +980,8 @@ static void OEMBTExtOPP_NotifyProgress(OEMBTExtOPPobj_t* pMe)
                                        pMe->bytesRcvd;
     pN->uID = AEEBT_OPP_EVT_PROGRESS;
 
+    MSG_HIGH( "OPP Notify progress - objSize %x, bytes trans %x",
+               pMe->dwFileSize, pN->data.ProgressInfo.numBytes, 0 );
 
     pN->uID = (pN->uID << 16) | GET_NOTIFIER_MASK( NMASK_BT_OPP );
     IBTEXTNOTIFIER_DoNotify( pMe->pNotifier, pN, pMe->pac );
@@ -1012,7 +994,6 @@ static void OEMBTExtOPP_ReadCb( OEMBTExtOPP_EvCb* pEvCb )
   OEMBTExtOPPobj_t* pMe = OEMBTExtOPP_FindMe( pEvCb->appId );
   uint32 bytesRead = 0;
   bt_cmd_status_type status = BT_CS_GN_SUCCESS;
-
 
   if ( pMe == NULL )
   {
@@ -1042,7 +1023,6 @@ static void OEMBTExtOPP_ReadCb( OEMBTExtOPP_EvCb* pEvCb )
   }
   else // everything checks out
   {
-	
     if ( pMe->bytesSent == 0 )
     {
       if ( IFILE_Seek( pMe->pFile, _SEEK_START, 0 ) != SUCCESS )
@@ -1057,8 +1037,6 @@ static void OEMBTExtOPP_ReadCb( OEMBTExtOPP_EvCb* pEvCb )
     }
     bytesRead = IFILE_Read( pMe->pFile, pMe->pBuffer, bytesRead );
     pMe->bytesSent += bytesRead;
-	
-	
     if ( bytesRead == 0 )
     {
       MSG_ERROR( "ReadCb: failed to read from obj", 0, 0, 0 );
@@ -1248,8 +1226,6 @@ static void OEMBTExtOPP_CloseCb( OEMBTExtOPP_EvCb* pEvCb )
   OEMBTExtOPPobj_t* pMe = OEMBTExtOPP_FindMe( pEvCb->appId );
   AEEBTNotification* notif;
 
-  
-
   if ( pMe == NULL )
   {
     TASKLOCK();
@@ -1294,8 +1270,6 @@ static void OEMBTExtOPP_CloseCb( OEMBTExtOPP_EvCb* pEvCb )
           notif->data.OppObject.pszName = pMe->szFileName;
           notif->uID = AEEBT_OPP_EVT_OBJ_PULLED;
         }
-		
-		
         notif->data.uError = OEMBTExt_MapCmdStatus( pEvCb->status );
 
         notif->uID = (notif->uID << 16) | GET_NOTIFIER_MASK( NMASK_BT_OPP );
@@ -1317,7 +1291,6 @@ static void OEMBTExtOPP_PushDoneCb( OEMBTExtOPP_EvCb* pEvCb )
 {
   OEMBTExtOPPobj_t* pMe = OEMBTExtOPP_FindMe( pEvCb->appId );
   AEEBTNotification* notif;
-
 
   if ( pMe == NULL )
   {
@@ -1673,8 +1646,9 @@ static void OEMBTExtOPP_SrvOpenCb( OEMBTExtOPP_EvCb* pEvCb )
     bt_cmd_status_type status = BT_CS_GN_SUCCESS;
     AEEBTNotification*  pN    = NULL;
     OEMBTExtOPPobj_t* pMe     = OEMBTExtOPP_FindMe ( pEvCb->appId );
-
+#ifdef CUST_EDITION
 	uint32 dwFreeSpace = 0;
+#endif
     if( pMe == NULL )
     {
       MSG_ERROR( "OEMBTExtOPP_SrvOpenCb - Can't get pMe.",
@@ -1697,16 +1671,20 @@ static void OEMBTExtOPP_SrvOpenCb( OEMBTExtOPP_EvCb* pEvCb )
 
   pN->data.uError  = AEEBT_OPP_ERR_NONE;
 
-
+#ifdef CUST_EDITION
   IFILEMGR_GetFreeSpaceEx(pMe->pFileMgr, AEEFS_CARD0_DIR, NULL, &dwFreeSpace);	//Check the TCard Free Space
 
   MSG_FATAL("***zzg OEMBTExtOPP_SrvOpenCb 2 FreeSize=%d***", dwFreeSpace, 0, 0);
- 
+#endif
   if ( (pMe->serverConnID == pEvCb->connId) &&
        (pMe->state == AEEBT_OPP_STATE_CONNECTED) &&
        (pMe->bPushAllowed != FALSE) &&
-       //(IFILEMGR_GetFreeSpace( pMe->pFileMgr, NULL ) > pEvCb->objSize))
-       (dwFreeSpace>pEvCb->objSize))	//Modify by zzg 2010_11_19
+#ifdef CUST_EDITION
+       (dwFreeSpace>pEvCb->objSize)
+#else
+       (IFILEMGR_GetFreeSpace( pMe->pFileMgr, NULL ) > pEvCb->objSize)
+#endif
+       )
   {
     pMe->state = AEEBT_OPP_STATE_PUSH_REQ_PENDING;
     pMe->dwFileSize = pEvCb->objSize;
@@ -1781,7 +1759,6 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
   }
 
   pN->data.uError  = AEEBT_OPP_ERR_NONE;
-
 
   switch ( ev_msg_ptr->ev_hdr.ev_type )
   {
@@ -1981,8 +1958,6 @@ static void OEMBTExtOPP_EventCallback( bt_ev_msg_type* ev_msg_ptr )
                ev_msg_ptr->ev_msg.ev_opp_cli_read_req.conn_id, 
                ev_msg_ptr->ev_msg.ev_opp_cli_read_req.handle, 0 );
       pEvCb = OEMBTExtOPP_GetFreeEvCb();
-
-	  
       if ( pEvCb != NULL )
       {
         pEvCb->event    = ev_msg_ptr->ev_hdr.ev_type;

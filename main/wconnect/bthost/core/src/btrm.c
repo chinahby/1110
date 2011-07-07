@@ -17,12 +17,17 @@ Qualcomm Confidential and Proprietary
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btrm.c#22 $
-  $DateTime: 2009/08/06 12:39:50 $
+  $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btrm.c#24 $
+  $DateTime: 2009/10/02 11:00:49 $
   $Author: nksingh $
 
   when        who  what, where, why
   ----------  ---  ------------------------------------------------------------
+  2009-10-02   ns  Resolved race condition when dedicated bonding is attempted
+                   on an existing connnection and that connection is disconnected
+                   before bonding is finished.
+  2009-09-10   ns  Fixed a race condition when local device tries to
+                   reconnect SCO after the remote side has disconnected it.
   2009-07-21   ns  Fixed a bug in enforce service security when 
                    local device has a 2.0 controller 
   2009-06-25   ns  IS_SSP_DOABLE and IS_SSR_DOABLE now return FALSE if
@@ -2842,6 +2847,7 @@ LOCAL void bt_rm_init_connection
 
   conn_ptr->bt_app_id_acl                  = BT_APP_ID_NULL;
   conn_ptr->state_acl                      = BT_RM_CS_DISCONNECTED;
+  conn_ptr->state_sco                      = BT_RM_CS_DISCONNECTED;
   conn_ptr->busy_timeout_ms_left           = 0;
   conn_ptr->updates                        = BT_RM_LU_NONE;
   conn_ptr->role                           = BT_ROLE_NONE;
@@ -4008,17 +4014,17 @@ LOCAL bt_rm_device_type* bt_rm_get_device
   bt_rm_device_type*  dev_ptr = NULL;
   bt_rm_device_type*  alt_dev_ptr = NULL;
 
-  for (i = 0; i < BT_RM_MAX_DEVICES; i++)
+  for ( i = 0; i < BT_RM_MAX_DEVICES; i++ )
   {
-    if (BT_BD_ADDRS_EQUAL(
-           &bt_rm_device[i].dev_public.bd_addr,
-           bd_addr_ptr) != FALSE)
+    if ( BT_BD_ADDRS_EQUAL(
+           &bt_rm_device[ i ].dev_public.bd_addr,
+           bd_addr_ptr ) != FALSE )
     {
-      dev_ptr = &bt_rm_device[i];
+      dev_ptr = &bt_rm_device[ i ];
       break;
     }
-  }  
-  
+  }
+
   if ( (dev_ptr == NULL) && (entry_required != FALSE) )
   {
     for ( i = 0; i < BT_RM_MAX_DEVICES; i++ )
@@ -4038,22 +4044,15 @@ LOCAL bt_rm_device_type* bt_rm_get_device
       }
     }
 
-  {
-  	  MSG_FATAL("***zzg bt_rm_get_device 2 i=%d***", i, 0, 0);
-  }
-
     if ( dev_ptr == NULL )
     {
-      MSG_FATAL("***zzg bt_rm_get_device dev_ptr == NULL***", 0, 0, 0);	
-	  
       dev_ptr = alt_dev_ptr;
     }
 
     if ( dev_ptr != NULL )
     {
-      MSG_FATAL("***zzg bt_rm_get_device dev_ptr != NULL***", 0, 0, 0);		
-	  
       bt_rm_init_device( dev_ptr );
+
       dev_ptr->dev_public.bd_addr = *bd_addr_ptr;
     }
     else
@@ -5693,8 +5692,6 @@ LOCAL void bt_rm_ev_send_bond_failed
 
   bt_ev_msg_type  ev_rm_bf;
 
-  MSG_FATAL("***zzg BT_EV_RM_BOND_FAILED 1***", 0, 0, 0);
-
   ev_rm_bf.ev_hdr.ev_type             = BT_EV_RM_BOND_FAILED;
   ev_rm_bf.ev_hdr.bt_app_id           = bt_app_id;
   ev_rm_bf.ev_msg.ev_rm_bondf.bd_addr = *bd_addr_ptr;
@@ -5735,9 +5732,6 @@ LOCAL void bt_rm_ev_send_bond_failed_all_bondable
       {
         BT_MSG_DEBUG( "BT RM: Sec cleanup: Sending bond failed BAI %x",
                       bt_rm_app[ i ].bt_app_id, 0, 0 );
-
-		MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 1***", 0, 0, 0);
-		
         bt_rm_ev_send_bond_failed(
           bt_rm_app[ i ].bt_app_id,
           &conn_ptr->dev_ptr->dev_public.bd_addr,
@@ -5766,8 +5760,6 @@ LOCAL void bt_rm_update_device_name
 
   uint8    i = 0;
   boolean  name_different = FALSE;
-
-  MSG_FATAL("***zzg bt_rm_update_device_name***", 0, 0, 0);
 
   while ( (i < BT_SD_MAX_DEVICE_NAME_LEN) &&
           (name_different == FALSE) )
@@ -6097,13 +6089,10 @@ void bt_rm_parse_eir
           break;
         }
 
-		MSG_FATAL("***zzg bt_rm_parse_eir eir_data_type=%x, eir_data_type_len=%d***", eir_data_type, eir_data_type_len, 0);
-
         if( eir_data_type == BT_EIR_TYPE_LOCAL_NAME_COMPLETE )
         {
           SETBIT( dev_ptr->dev_public.eir_data.eir_flag, BT_EIR_NAME_CMPLT_B );
         }
-				
         if( eir_data_type_len <= BT_SD_MAX_DEVICE_NAME_LEN )
         {
           memcpy( (void *)dev_ptr->dev_public.name_str,
@@ -6114,22 +6103,12 @@ void bt_rm_parse_eir
         else
         {
           /* Name longer than we can accept - just copy what we can*/
-          memcpy((void *)dev_ptr->dev_public.name_str,
+          memcpy( (void *)dev_ptr->dev_public.name_str,
                   (void *)&eir_data[index],
                   BT_SD_MAX_DEVICE_NAME_LEN-1 );
           dev_ptr->dev_public.name_str[ BT_SD_MAX_DEVICE_NAME_LEN ] = '\0';
           CLRBIT( dev_ptr->dev_public.eir_data.eir_flag, BT_EIR_NAME_CMPLT_B );
         }
-			
-
-		{
-			int temp;
-			for (temp=0; temp<eir_data_type_len; temp++)
-			{
-				MSG_FATAL("***zzg bt_rm_parse_eir after memcpy name_str[%d]=%c***", temp, (void *)dev_ptr->dev_public.name_str[temp], 0);
-			}
-		}
-				
         BT_MSG_DEBUG( "BT RM: Par EIR - Name: %x" ,eir_data_type_len, 0, 0 );
         break;
 
@@ -6336,27 +6315,12 @@ void bt_rm_update_eir
 #endif
 
   /* Local Name */
-
-  
   data_type = ( bt_rm_device_eir.is_name_complete ?
                 BT_EIR_TYPE_LOCAL_NAME_COMPLETE : BT_EIR_TYPE_LOCAL_NAME_SHORTENED );
-
   index += bt_rm_append_eir_data( &eir_packet[index], (BT_MAX_EIR_LEN - index),
                                   data_type, strlen( bt_efs_params.bt_short_name ),
                                   (uint8 *)bt_efs_params.bt_short_name );
 
-  
-
-  /*
-  //Modify by zzg 2011_03_02
-  data_type = BT_EIR_TYPE_LOCAL_NAME_COMPLETE;
-
-  index += bt_rm_append_eir_data( &eir_packet[index], (BT_MAX_EIR_LEN - index),
-                                  data_type, strlen( bt_efs_params.bt_name ),
-                                  (uint8 *)bt_efs_params.bt_name );
-   */                               
-
-  //Modify End
   /* Manufacturer Specific Data */
   index += bt_rm_append_eir_data( &eir_packet[index], (BT_MAX_EIR_HCI_LEN - index),
                                   BT_EIR_TYPE_MANUF_SPECIFIC_DATA,
@@ -6813,8 +6777,6 @@ LOCAL void bt_rm_finish_bond_attempt
   /*  within bt_rm_link_sec_re_pair_started().           */
   if ( conn_ptr->bonding_app_id != BT_APP_ID_NULL )
   {
-    MSG_FATAL("***zzg bonding_key_rxd=%d authenticated=%d bond_canceling=%d***", conn_ptr->bonding_key_rxd, conn_ptr->authenticated, conn_ptr->bond_canceling);
-	
     if ( (conn_ptr->bonding_key_rxd != FALSE) &&
          (conn_ptr->authenticated   != FALSE) &&
          (conn_ptr->bond_canceling != TRUE) )
@@ -6865,9 +6827,6 @@ LOCAL void bt_rm_finish_bond_attempt
         conn_ptr->hc_error  = BT_BE_SUCCESS;
         conn_ptr->updates  &= ~BT_RM_LU_ERROR_VALID_B;
       }
-
-	  MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 2***", 0, 0, 0);
-	  
       bt_rm_ev_send_bond_failed( conn_ptr->bonding_app_id,
                                  &conn_ptr->dev_ptr->dev_public.bd_addr,
                                  conn_ptr->rm_handle, reason );
@@ -8948,7 +8907,8 @@ LOCAL void bt_rm_check_busy_timeout
   {
     link_busy = TRUE;
   }
-  else if ( (conn_ptr->link_mode != BT_LM_ACTIVE) && (conn_ptr->link_mode_request != BT_LM_NONE) )
+  else if ( (conn_ptr->link_mode != BT_LM_ACTIVE) &&
+            (conn_ptr->link_mode_request != BT_LM_NONE) )
   {
     link_busy = TRUE;
   }
@@ -8986,10 +8946,7 @@ LOCAL void bt_rm_check_busy_timeout
 
         if ( conn_ptr->bonding_app_id != BT_APP_ID_NULL )
         {
-          MSG_FATAL("***zzg bonding_app_id=%x***", conn_ptr->bonding_app_id, 0, 0);
           bt_rm_update_conn_hc_error( conn_ptr, BT_BE_HW_FAILURE );
-
-		  MSG_FATAL("***zzg bt_rm_finish_bond_attempt 1***", 0, 0, 0);
           bt_rm_finish_bond_attempt( conn_ptr );
         }
         else if ( conn_ptr->rname_app_id != BT_APP_ID_NULL )
@@ -9035,7 +8992,7 @@ LOCAL void bt_rm_check_busy_timeout
         {
           conn_ptr->security_request = BT_SEC_NONE;
 #endif /* BT_SWDEV_2_1_SSP */
-         
+
           bt_rm_update_conn_hc_error( conn_ptr, BT_BE_HW_FAILURE );
           bt_rm_link_status_updated( conn_ptr );
         }
@@ -9702,8 +9659,6 @@ LOCAL void bt_rm_init_hc_sec_settings_acl
     conn_ptr->encrypt_mode = BT_EM_DISABLED;
   }
 
-  MSG_FATAL("***zzg authenticated 1***", 0, 0, 0);
-  
   conn_ptr->authenticated  = FALSE;
   conn_ptr->encrypt_enable = BT_ENCRYPT_ENABLE_OFF;
 
@@ -10935,7 +10890,6 @@ LOCAL void bt_rm_cmd_bond_ext
       {
         conn_ptr->bonding_app_id  = rm_bext_ptr->cmd_hdr.bt_app_id;
         conn_ptr->bonding_pin     = rm_bext_ptr->cmd_msg.cmd_rm_bondext.pin;
-		MSG_FATAL("***zzg bonding_key_rxd 1***", 0, 0, 0);
         conn_ptr->bonding_key_rxd = FALSE;
         conn_ptr->mitm_protection_reqd = rm_bext_ptr->cmd_msg.cmd_rm_bondext.mitm_protection_reqd;
         conn_ptr->dedicated_bonding = TRUE;
@@ -10950,9 +10904,19 @@ LOCAL void bt_rm_cmd_bond_ext
     }
     else
     {
+      /* The conn_ptr->state_acl has to be  BT_RM_CS_CONNECTED to reach here, 
+      for CONNECTING and DISCONNECTING states the bt_rm_get_conn_bd_addr would
+      have set the status to BT_CS_GN_RETRY_CMD_LATER */
+      BT_MSG_API( "BT RM CMD RX: RM Bond Ext, state_acl = %x", conn_ptr->state_acl,0,0);
+      BT_MSG_API( "BT RM CMD RX: RM Bond Ext, dedicated bonding on"
+                  "existing ACL connection disconnect the ACL and requeue RM Bond Ext", 0,0,0);
+      bt_rm_disconnect_acl(conn_ptr,BT_RMDR_USER_ENDED);
+      rm_bext_ptr->cmd_hdr.cmd_status =  BT_CS_GN_RETRY_CMD_LATER;
+                
+     /* This block is commented out till we comprehensively resolve the
+        L2CAP disconnect while bonding in progress issue. 
       conn_ptr->bonding_app_id  = rm_bext_ptr->cmd_hdr.bt_app_id;
       conn_ptr->bonding_pin     = rm_bext_ptr->cmd_msg.cmd_rm_bondext.pin;
-	  MSG_FATAL("***zzg bonding_key_rxd 2***", 0, 0, 0);
       conn_ptr->bonding_key_rxd = FALSE;
       conn_ptr->mitm_protection_reqd = rm_bext_ptr->cmd_msg.cmd_rm_bondext.mitm_protection_reqd;
 
@@ -10963,14 +10927,13 @@ LOCAL void bt_rm_cmd_bond_ext
       conn_ptr->dedicated_bonding = TRUE;
 
       bt_rm_reset_idle_timeout( conn_ptr );
+     */
     }
   }
 
   if ( (rm_bext_ptr->cmd_hdr.cmd_status != BT_CS_GN_SUCCESS) &&
        (rm_bext_ptr->cmd_hdr.cmd_status != BT_CS_GN_RETRY_CMD_LATER) )
   {
-  	MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 3 cmd_status=%x***", rm_bext_ptr->cmd_hdr.cmd_status, 0, 0);
-	
     bt_rm_ev_send_bond_failed( rm_bext_ptr->cmd_hdr.bt_app_id,
                                &rm_bext_ptr->cmd_msg.cmd_rm_bondext.bd_addr,
                                (bt_rm_handle_type)(-1), reason );
@@ -11181,7 +11144,6 @@ LOCAL void bt_rm_cmd_authorize_rebond
         {
           conn_ptr->authorized_rebond = TRUE;
           /* Send HCI_IO_capability_request{_negative}_reply */
-		  MSG_FATAL("***zzg bonding_key_rxd 3***", 0, 0, 0);
           conn_ptr->bonding_key_rxd = FALSE;
 
           switch ( rm_areb_ptr->cmd_msg.cmd_rm_areb.bond_req )
@@ -11256,8 +11218,6 @@ LOCAL void bt_rm_cmd_authorize_rebond
   if ( (rm_areb_ptr->cmd_hdr.cmd_status != BT_CS_GN_SUCCESS) &&
        (rm_areb_ptr->cmd_hdr.cmd_status != BT_CS_GN_RETRY_CMD_LATER) )
   {
-  	MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 4 cmd_status=%x***", rm_areb_ptr->cmd_hdr.cmd_status, 0, 0);
-	
     bt_rm_ev_send_bond_failed( rm_areb_ptr->cmd_hdr.bt_app_id,
                                &rm_areb_ptr->cmd_msg.cmd_rm_areb.bd_addr,
                                (bt_rm_handle_type)(-1), reason );
@@ -11522,7 +11482,6 @@ LOCAL boolean bt_rm_unbond_performed
       }
       case BT_BE_AUTHENTICATION_FAILURE:
       {
-	  	MSG_FATAL("***zzg BT_BE_AUTHENTICATION_FAILURE 1***", 0, 0, 0);
         {
            /* Authentiction fails, it means either Pairing or
             * authentication or change of link key failed (SRES did not match)
@@ -11547,8 +11506,6 @@ LOCAL boolean bt_rm_unbond_performed
       }
       case BT_BE_AUTHENTICATION_FAILURE:
       {
-	  	MSG_FATAL("***zzg BT_BE_AUTHENTICATION_FAILURE 2***", 0, 0, 0);
-		
          /* Authentiction fails, it means either Pairing or
           * authentication or change of link key failed (SRES did not match)
           * Do not start repairing in this case.
@@ -12299,8 +12256,6 @@ LOCAL void bt_rm_ev_hc_auth_complete
   BT_MSG_API( "BT RM EV RX: HC AuthC S %x H %x",
               hc_status, hc_handle, 0 );
 
-  MSG_FATAL("***zzg bt_rm_ev_hc_auth_complete hc_status=%x***", hc_status, 0, 0);
-
   if ( (conn_ptr = bt_rm_get_acl_conn_hc_handle( hc_handle )) != NULL )
   {
     /* If the authentication was not initiated via RM bond api, 
@@ -12361,12 +12316,8 @@ LOCAL void bt_rm_ev_hc_auth_complete
       conn_ptr->rebond_req_pending = FALSE;
       conn_ptr->authorized_rebond  = FALSE;
 
-      MSG_FATAL("***zzg hc_status=%x***", hc_status, 0, 0);
-	  
       if ( hc_status != BT_BE_SUCCESS )
       {
-        MSG_FATAL("***zzg authenticated 2***", 0, 0, 0);
-		
         conn_ptr->authenticated = FALSE;
         conn_ptr->enh_enc_state = BT_RM_ENH_ENC_OK;
         BT_MSG_DEBUG( "BT RM: Auth failed S %x H %x",
@@ -12375,8 +12326,6 @@ LOCAL void bt_rm_ev_hc_auth_complete
       }
       else
       {
-      	MSG_FATAL("***zzg authenticated 3***", 0, 0, 0);
-		
         conn_ptr->authenticated = TRUE;
         if((conn_ptr->enh_enc_state == BT_RM_ENH_ENC_AUTHENTICATING) &&
            (conn_ptr->encrypt_enable!=TRUE))
@@ -12401,14 +12350,12 @@ LOCAL void bt_rm_ev_hc_auth_complete
 #else
       if ( hc_status != BT_BE_SUCCESS )
       {
-        MSG_FATAL("***zzg authenticated 4***", 0, 0, 0);
         conn_ptr->authenticated = FALSE;
         BT_MSG_DEBUG( "BT RM: Auth failed S %x H %x",
                       hc_status, hc_handle, 0 );
       }
       else
       {
-        MSG_FATAL("***zzg authenticated 5***", 0, 0, 0);
         conn_ptr->authenticated = TRUE;
       }
 
@@ -12430,7 +12377,6 @@ LOCAL void bt_rm_ev_hc_auth_complete
       }
 #endif /* BT_SWDEV_2_1_SSP */
 
-	  MSG_FATAL("***zzg bt_rm_finish_bond_attempt 2***", 0, 0, 0);
       bt_rm_finish_bond_attempt( conn_ptr );
 
       bt_rm_security_updated( conn_ptr );
@@ -12935,7 +12881,6 @@ LOCAL void bt_rm_remote_name_complete_processing
   if ( ( conn_ptr->bonding_app_id != BT_APP_ID_NULL ) &&
        ( conn_ptr->send_pin_req_pending == FALSE ) )
   {
-  	MSG_FATAL("***zzg bt_rm_finish_bond_attempt 3***", 0, 0, 0);
       bt_rm_finish_bond_attempt( conn_ptr );
   }
 #endif
@@ -12945,9 +12890,7 @@ LOCAL void bt_rm_remote_name_complete_processing
   {
     conn_ptr->pin_code_reply_len_bytes = 0;
     conn_ptr->pin_code_reply_neg_sent  = FALSE;
-	
-	MSG_FATAL("***zzg BT_EV_RM_PIN_REQUEST 1***", 0, 0, 0);
-	
+
     ev_rm_pcr.ev_hdr.ev_type = BT_EV_RM_PIN_REQUEST;
     ev_rm_pcr.ev_msg.ev_rm_pinrq.bd_addr =
                         conn_ptr->dev_ptr->dev_public.bd_addr;
@@ -13181,8 +13124,6 @@ LOCAL void bt_rm_pin_req_resp_failed
   {
     conn_ptr->pin_req_pairing_done = TRUE;
 
-	MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 5***", 0, 0, 0);
-	
     bt_rm_ev_send_bond_failed(
       conn_ptr->pin_req_resp_app_id,
       &conn_ptr->dev_ptr->dev_public.bd_addr,
@@ -13291,19 +13232,16 @@ LOCAL void bt_rm_conn_complete_processing
 
         if ( conn_ptr->hc_auth_enable == BT_HC_AUTH_DISABLED )
         {
-          MSG_FATAL("***zzg authenticated 6***", 0, 0, 0);
           conn_ptr->authenticated = FALSE;
         }
         else
         {
-          MSG_FATAL("***zzg authenticated 7***", 0, 0, 0);
           conn_ptr->authenticated = TRUE;
         }
       }
       else
       {
         conn_ptr->encrypt_enable = BT_ENCRYPT_ENABLE_ON;
-		MSG_FATAL("***zzg authenticated 8***", 0, 0, 0);
         conn_ptr->authenticated  = TRUE;
 #if ( defined ( FEATURE_BT_QSOC ) && defined ( FEATURE_BT_EXTPF_SAP ) )
 #error code not present
@@ -13337,7 +13275,6 @@ LOCAL void bt_rm_conn_complete_processing
     if ( conn_ptr->rname_app_id == BT_APP_ID_NULL )
 #endif
     {
-    	MSG_FATAL("***zzg bt_rm_finish_bond_attempt 4***", 0, 0, 0);
       bt_rm_finish_bond_attempt( conn_ptr );
     }
 
@@ -13604,7 +13541,6 @@ LOCAL void bt_rm_ev_hc_conn_complete_acl
       bt_rm_finish_pending_sec_ui( conn_ptr,
                                     (BT_HCI_REASON( hc_status )) );
 
-	MSG_FATAL("***zzg bt_rm_finish_bond_attempt 5***", 0, 0, 0);
       bt_rm_finish_bond_attempt( conn_ptr );
 
       bt_rm_pin_req_resp_failed( conn_ptr,
@@ -14668,7 +14604,6 @@ LOCAL void bt_rm_ev_hc_sp_complete
         ( conn_ptr->dev_ptr->bonded_link_key == TRUE ))
     {
       /* Authentication complete will not be received later. Cleanup now */
-	  MSG_FATAL("***zzg authenticated 9***", 0, 0, 0);
       conn_ptr->authenticated = FALSE;
       conn_ptr->enh_enc_state = BT_RM_ENH_ENC_OK;
       BT_MSG_DEBUG( "BT RM: Auth failed S %x", hc_status, 0, 0 );
@@ -15999,7 +15934,6 @@ LOCAL void bt_rm_ev_hc_disconnection_complete
       bt_rm_finish_pending_sec_ui( conn_ptr,
                                     (BT_HCI_REASON( hc_status )) );
 
-	MSG_FATAL("***zzg bt_rm_finish_bond_attempt 6***", 0, 0, 0);
       bt_rm_finish_bond_attempt( conn_ptr );
 
       bt_rm_pin_req_resp_failed( conn_ptr,
@@ -16214,7 +16148,6 @@ LOCAL void bt_rm_ev_hc_encryption_change
       else
       {
 #ifdef BT_SWDEV_2_1_SSP
-		MSG_FATAL("***zzg authenticated 10***", 0, 0, 0);
         conn_ptr->authenticated = TRUE;
 #endif /* BT_SWDEV_2_1_SSP */
         conn_ptr->enh_enc_state = BT_RM_ENH_ENC_OK;
@@ -17000,8 +16933,6 @@ LOCAL void bt_rm_ev_hc_pin_code_request
         conn_ptr->pin_code_reply_len_bytes = 0;
         conn_ptr->pin_code_reply_neg_sent  = FALSE;
 
-		MSG_FATAL("***zzg BT_EV_RM_PIN_REQUEST 2***", 0, 0, 0);
-
         ev_rm_pcr.ev_hdr.ev_type = BT_EV_RM_PIN_REQUEST;
         ev_rm_pcr.ev_msg.ev_rm_pinrq.bd_addr = *bd_addr_ptr;
 
@@ -17117,8 +17048,6 @@ LOCAL void bt_rm_ev_hc_pin_code_request
       {
         conn_ptr->pin_code_reply_len_bytes = 0;
         conn_ptr->pin_code_reply_neg_sent  = FALSE;
-
-		MSG_FATAL("***zzg BT_EV_RM_PIN_REQUEST 3***", 0, 0, 0);
 
         ev_rm_pcr.ev_hdr.ev_type = BT_EV_RM_PIN_REQUEST;
         ev_rm_pcr.ev_msg.ev_rm_pinrq.bd_addr = *bd_addr_ptr;
@@ -17304,8 +17233,6 @@ LOCAL void bt_rm_ev_hc_link_key_notification
   BT_MSG_HIGH( "BT RM: SSP Link Key Notif LKT %x",
                ev_msg_ptr->ev_msg.ev_hc_keynt.key_type_key, 0,0);
 
-  MSG_FATAL("***zzg bt_rm_ev_hc_link_key_notification start***", 0, 0, 0);
-
   if ( (status = bt_rm_get_conn_bd_addr(
                    TRUE,   /*  Connection must exist.           */
                    FALSE,  /*  Connection need not be settled.  */
@@ -17314,7 +17241,6 @@ LOCAL void bt_rm_ev_hc_link_key_notification
   {
 
 #ifdef BT_SWDEV_2_1_SSP
-	MSG_FATAL("***zzg authenticated 11***", 0, 0, 0);
     conn_ptr->authenticated = TRUE;
     conn_ptr->new_link_key = TRUE;
     conn_ptr->update_link_key_request = FALSE;
@@ -17446,7 +17372,6 @@ LOCAL void bt_rm_ev_hc_link_key_notification
 
       if ( conn_ptr->bonding_app_id != BT_APP_ID_NULL )
       {
-        MSG_FATAL("***zzg bonding_key_rxd 4***", 0, 0, 0);
         conn_ptr->bonding_key_rxd = TRUE;
 
         bt_rm_reset_idle_timeout( conn_ptr );
@@ -17467,10 +17392,9 @@ LOCAL void bt_rm_ev_hc_link_key_notification
   }
   else
   {
-    MSG_FATAL("***zzg bt_rm_ev_hc_link_key_notification bt_rm_get_conn_bd_addr Failed***", 0, 0, 0);
-    
     BT_ERR( "BT RM: Bad LK Notif St %x", status, 0, 0 );
-    BT_BDA( ERR, "BT RM: Bad LK Notif", &ev_msg_ptr->ev_msg.ev_hc_keynt.bd_addr );
+    BT_BDA( ERR, "BT RM: Bad LK Notif",
+            &ev_msg_ptr->ev_msg.ev_hc_keynt.bd_addr );
   }
 
 }
@@ -18630,7 +18554,6 @@ LOCAL void bt_rm_hc_ev_qc_ext_cs_create_conn
 
         bt_rm_update_conn_hc_error( conn_ptr, (bt_error_code_type)hc_status );
 
-		MSG_FATAL("***zzg bt_rm_finish_bond_attempt 7***", 0, 0, 0);
         bt_rm_finish_bond_attempt( conn_ptr );
 
         bt_rm_init_link( conn_ptr, BT_ACL_LINK );
@@ -19205,7 +19128,6 @@ LOCAL void bt_rm_process_event
   bt_ev_msg_type*  ev_msg_ptr
 )
 {
-	MSG_FATAL("***zzg bt_rm_process_event ev_type=%x***", ev_msg_ptr->ev_hdr.ev_type, 0, 0);
 
   switch ( ev_msg_ptr->ev_hdr.ev_type )
   {
@@ -19841,12 +19763,9 @@ bt_cmd_status_type bt_cmd_rm_get_local_info
   if ( bt_name_str_ptr != NULL )
   {
     bt_efs_params.bt_name[ BT_MAX_NAME_LEN ] = 0;
-	
     memcpy( (void *)(bt_name_str_ptr),
             (void *)(bt_efs_params.bt_name),
             BT_MAX_NAME_LEN );
-
-	MSG_FATAL("***zzg after bt_efs_params.bt_name=%d***", bt_efs_params.bt_name, 0, 0);
   }
 
   if ( security_ptr != NULL ) //TODO
@@ -19883,7 +19802,7 @@ bt_cmd_status_type bt_cmd_rm_get_local_info_ext
   char*                  bt_short_name_str_ptr
 )
 {
-	
+
   BT_MSG_API( "BT RM CMD RX: RM Get Loc Inf Ext AID %x", bt_app_id, 0, 0 );
 
   /* Call the Get local info function */
@@ -19925,8 +19844,6 @@ LOCAL void bt_rm_cmd_set_local_info
 {
 
   dsm_item_type*  dsm_ptr;
-
-  MSG_FATAL("***zzg bt_rm_cmd_set_local_info***", 0, 0, 0);
 
   BT_MSG_API( "BT RM CMD RX: RM Set LI C %x N %x AID %x",
               rm_sli_ptr->cmd_msg.cmd_rm_setif.cod_valid,
@@ -21475,7 +21392,6 @@ LOCAL void bt_rm_cmd_bond
         {
           conn_ptr->bonding_app_id  = rm_b_ptr->cmd_hdr.bt_app_id;
           conn_ptr->bonding_pin     = rm_b_ptr->cmd_msg.cmd_rm_bond.pin;
-		  MSG_FATAL("***zzg bonding_key_rxd 5***", 0, 0, 0);
           conn_ptr->bonding_key_rxd = FALSE;
 
           bt_rm_create_connection_acl( conn_ptr );
@@ -21489,7 +21405,6 @@ LOCAL void bt_rm_cmd_bond
       {
         conn_ptr->bonding_app_id  = rm_b_ptr->cmd_hdr.bt_app_id;
         conn_ptr->bonding_pin     = rm_b_ptr->cmd_msg.cmd_rm_bond.pin;
-		MSG_FATAL("***zzg bonding_key_rxd 6***", 0, 0, 0);
         conn_ptr->bonding_key_rxd = FALSE;
 
         BT_MSG_API( "BT RM CMD TX: HC Auth Req H %x",
@@ -21509,8 +21424,6 @@ LOCAL void bt_rm_cmd_bond
   if ( (rm_b_ptr->cmd_hdr.cmd_status != BT_CS_GN_SUCCESS) &&
        (rm_b_ptr->cmd_hdr.cmd_status != BT_CS_GN_RETRY_CMD_LATER) )
   {
-  	MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 6***", 0, 0, 0);
-	
     bt_rm_ev_send_bond_failed( rm_b_ptr->cmd_hdr.bt_app_id,
                                &rm_b_ptr->cmd_msg.cmd_rm_bond.bd_addr,
                                (bt_rm_handle_type)(-1), reason );
@@ -25681,8 +25594,6 @@ LOCAL void bt_rm_process_cmd_radio_off
       {
         rm_cmd_ptr->cmd_hdr.cmd_status = BT_CS_RM_RADIO_OFF;
 
-		MSG_FATAL("***zzg bt_rm_ev_send_bond_failed 7***", 0, 0, 0);
-		
         bt_rm_ev_send_bond_failed( rm_cmd_ptr->cmd_hdr.bt_app_id,
                                    &rm_cmd_ptr->cmd_msg.cmd_rm_bond.bd_addr,
                                    (bt_rm_handle_type)(-1),
@@ -27124,7 +27035,6 @@ void bt_rm_nv_init
 
 
 //Add By zzg 2011_02_25
-
 boolean bt_save_efs_params(void)
 {
 
@@ -27246,9 +27156,6 @@ void bt_rm_refresh_efs_param
 
 }
 //Add End
-
-
-
 
 /*===========================================================================
 

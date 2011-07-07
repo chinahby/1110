@@ -39,11 +39,14 @@ Copyright (c) 2006-2008 by QUALCOMM Incorporated. All Rights Reserved.
  This section contains comments describing changes made to the module.
  Notice that changes are listed in reverse chronological order.
 
- $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/hci/src/btsocetc.c#1 $
- $DateTime: 2009/01/07 18:14:54 $$Author: deepikas $  
+ $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/hci/src/btsocetc.c#4 $
+ $DateTime: 2011/02/15 00:51:03 $$Author: bneti $
 
   when        who  what, where, why
   ----------  ---  -----------------------------------------------------------
+  2011-15-02   bn  Removed the main line fix for RSSI ,addressing locally on rel/26.
+  2011-02-03   bn  Defined one variable dint came in as a part of inegration
+  2011-01-13   ss  Added support for sending Inquiry events with RSSI for BT_SOC_LMP_VERSION_2_0
   2008-10-27   pg  Fixed BT_EV_RM_RADIO_ACTIVITY event logic for SOC based BT.
   2008-09-15   pg  Fixed Compiler warning.
 
@@ -60,21 +63,21 @@ Copyright (c) 2006-2008 by QUALCOMM Incorporated. All Rights Reserved.
  *
  * #20         19 Oct 2007            DSN\SSK
  * Add support for Controller to Host flow control.
- * 
+ *
  * #19         02 Oct  2007           BK
  * Don't disable driver if test mode is enabled.  Also consolidated FEATURE_BT_SOC1_ROM
- * and FEATURE_BT_QSOC featurization in bt_soc_etc_check_driver_idle_timeout 
+ * and FEATURE_BT_QSOC featurization in bt_soc_etc_check_driver_idle_timeout
  * and removed FEATURE_BT_SOC1_DIS_DRV_DISABLED (no required anymore).
  *
  * #18         11 Sept 2007           BK
- * Implement QSoC Driver State state machine.  
+ * Implement QSoC Driver State state machine.
  *
  * #17         23 Aug 2007            PG
  * Removed bt_soc_etc_get_rssi() stub function which is not needed
  * anymore.
  *
  * #16         20 Aug 2007           PG
- * Seperated HCI generic vendor specific event handling from Qualcomm 
+ * Seperated HCI generic vendor specific event handling from Qualcomm
  * proprietary implementation used with embedded controller.
  *
  * #15         06 Jun 2007          DSN
@@ -94,7 +97,7 @@ Copyright (c) 2006-2008 by QUALCOMM Incorporated. All Rights Reserved.
  * Send HCI Read Buffer Size command after SOC initialization.
  *
  * #10       31 Jan 2007            ACG
- * Rename function bt_rm_check_driver_idle_timeout to 
+ * Rename function bt_rm_check_driver_idle_timeout to
  * bt_soc_etc_check_driver_idle_timeout.
  *
  *  #9        30 Jan 2007           PG
@@ -112,14 +115,14 @@ Copyright (c) 2006-2008 by QUALCOMM Incorporated. All Rights Reserved.
  *
  *  #5        9 Jan 2007            ACG
  *  Make sure disable driver routine doesn't get called for BC4 based
- *  SURFs.  
+ *  SURFs.
  *
  *  #4        8 Jan 2007            ACG
  *  Following features were added for the SOC solution:
  *  - vote for SIO sleep/wakeup based on BT activity
  *  - enable/disable driver
  *  - radio on/off
- * 
+ *
  *   #3         05 Jan 2007          SSK
  *   Changed Debug message level in bt_soc_etc_get_rssi()
  *
@@ -210,7 +213,7 @@ void bt_soc_etc_check_driver_idle_timeout
        !bt_dc.inq_active &&
        !bt_dc.page_active &&
        !bt_dc.scan_active &&
-       !bt_rm_any_conn_active() && 
+       !bt_rm_any_conn_active() &&
        !bt_rm_test_mode_enabled() &&
        !BT_IN_HCI_MODE() )
   {
@@ -219,7 +222,7 @@ void bt_soc_etc_check_driver_idle_timeout
       BT_MSG_HIGH( "BT SOC ETC: Starting disable driver routine ", 0,0,0 );
       // Wait until timer expires. If no activity is detected in the meanwhile
       // it is ok to disable driver.
-      rex_set_timer( &bt_soc_driver_idle_timer, BT_SOC_DRIVER_IDLE_TIMER ); 
+      rex_set_timer( &bt_soc_driver_idle_timer, BT_SOC_DRIVER_IDLE_TIMER );
   }
 #elif defined(FEATURE_BT_SOC1_FLASH)
 #error code not present
@@ -298,8 +301,12 @@ void bt_soc_etc_version_init( void )
 
       (void) bt_cmd_hc_wr_simple_pairing_mode( TRUE );
 
-      bt_cmd_hc_rd_inq_rsp_tx_pwr(); 
-    }                    
+      bt_cmd_hc_rd_inq_rsp_tx_pwr();
+    }
+    else
+    {
+		bt_cmd_hc_wr_inq_mode(BT_INQ_RESULT_WITH_RSSI);
+	}
 }
 #endif /* FEATURE_BT_2_1 */
 
@@ -515,20 +522,20 @@ void bt_soc_etc_send_cur_conn_enc_ev
   bt_ev_msg_type                      hc_ev;
   bt_ev_hc_qc_cur_conn_encrypt_type*  cce_ptr;
 
-  
+
   BT_MSG_API( "BT SOC ETC TX: Cur Conn Enc H %x EKL %x",
               conn_hndl, enc_key_len, 0 );
 
   hc_ev.ev_hdr.ev_type           = BT_EV_HC_CUR_CONN_ENCRYPT;
 
   cce_ptr = &hc_ev.ev_msg.ev_hc_ccenc;
-  
+
   cce_ptr->conn_hndl             = conn_hndl;
   cce_ptr->encrypt_enable        = BT_ENCRYPT_ENABLE_ON;
   cce_ptr->cur_enc_key_len_bytes = enc_key_len;
 
   bt_hc_send_event( &hc_ev );
-  
+
 } /* bt_soc_etc_send_cur_conn_enc_ev */
 
 /*=====================================================================
@@ -568,8 +575,8 @@ void bt_soc_etc_powerup_init( void )
   {
 
     for ( i = 0; i < 10; i++ )
-    {                        
-      /* Initialize channel map with all channels set to "unknown" */ 
+    {
+      /* Initialize channel map with all channels set to "unknown" */
       /* 1==> channel indicated by bit position is unknown */
       bt_soc_etc_data.host_ch_class.bytes[ i ] = 0xFF;
     }
@@ -612,23 +619,23 @@ void bt_soc_etc_init( void )
 
 #ifdef FEATURE_BT_HCI_HOST_FCTL
   (void) bt_cmd_hc_host_buf_size();
-  BT_MSG_HIGH( "BT SOC ETC: Host Buffer Size cmd sent", 0, 0, 0 );
+    BT_MSG_HIGH( "BT SOC ETC: Host Buffer Size cmd sent", 0, 0, 0 );
 
   (void) bt_cmd_hc_set_hc_to_host_fc();
-  BT_MSG_HIGH( "BT SOC ETC: Set Con2Host Flow Control cmd sent", 0, 0, 0 );
+    BT_MSG_HIGH( "BT SOC ETC: Set Con2Host Flow Control cmd sent", 0, 0, 0 );
 #endif /* FEATURE_BT_HCI_HOST_FCTL */
 
   /* Command to read the device features from external SOC */
   (void) bt_cmd_hc_rd_local_feat();
 
-  /* Command to read the Local Version info from external SOC */
+    /* Command to read the Local Version info from external SOC */
   (void) bt_cmd_hc_rd_local_ver();
 
-  /* Write the initial class of device */
+    /* Write the initial class of device */
   (void)bt_cmd_hc_wr_class_of_device( bt_class_of_device );
 
-  /* Write the Device Name into the external SOC */
-  BT_MSG_HIGH( "BT HC SOC ETC: HC Init Loc Name from EFS", 0, 0, 0 );
+    /* Write the Device Name into the external SOC */
+    BT_MSG_HIGH( "BT HC SOC ETC: HC Init Loc Name from EFS", 0, 0, 0 );
 
   dsm_ptr = bt_get_free_dsm_ptr( BT_TL_HCI_BB,
                                  BT_MAX_LOCAL_DEVICE_NAME_LEN );
@@ -638,7 +645,7 @@ void bt_soc_etc_init( void )
                         BT_MAX_LOCAL_DEVICE_NAME_LEN,
                         DSM_DS_SMALL_ITEM_POOL );
 
-  /* The event response to this command need not be processed */
+    /* The event response to this command need not be processed */
   (void) bt_cmd_hc_change_local_name( dsm_ptr );
 
 #ifdef FEATURE_BT_WLAN_COEXISTENCE
@@ -646,7 +653,7 @@ void bt_soc_etc_init( void )
 #endif /* FEATURE_BT_WLAN_COEXISTENCE */
 
 #ifdef FEATURE_BT_2_1
-  /* Set the event mask */
+    /* Set the event mask */
   bt_cmd_hc_set_event_mask( bt_soc_event_mask );
 #endif /* FEATURE_BT_2_1 */
 

@@ -449,7 +449,6 @@ int OEMBTExtRM_GetLocalInfo(
   char                  bt_short_name[ BT_MAX_EIR_NAME_LEN + 1 ];
 #endif
 
-
   if ( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                        (OEMINSTANCE*)&pMe ) != TRUE )
   {
@@ -459,8 +458,6 @@ int OEMBTExtRM_GetLocalInfo(
   {
     return EBADPARM;
   }
-
-  
   /*lint -save -e613*/
 #ifdef FEATURE_BT_2_1
   bt_cmd_rm_get_local_info_ext( pMe->appId,
@@ -720,18 +717,13 @@ int OEMBTExtRM_SetBondable( IBTExtRM* pParent, boolean bondable )
   bt_cmd_status_type  stat;
   OEMBTExtRMobj_t*    pMe;
 
-  MSG_FATAL("***zzg OEMBTExtRM_SetBondable bondable=%d***", bondable, 0, 0);
-  
-  if ( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT,(OEMINSTANCE*)&pMe ) != TRUE )
+  if ( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
+                       (OEMINSTANCE*)&pMe ) != TRUE )
   {
-  	MSG_FATAL("***zzg OEMBTExtRM_SetBondable EBADPARM***", 0,  0, 0);
     return EBADPARM;
   }
 
   stat = bt_cmd_rm_set_bondable( pMe->appId, bondable );
-
-  MSG_FATAL("***zzg bt_cmd_rm_set_bondable return stat=%x***", stat,  0, 0);
-  
   return( OEMBTExtRM_CheckCmdStatus( stat ) );
 }
 
@@ -1185,25 +1177,8 @@ int OEMBTExtRM_DeviceRead(
   device.bd_addr = *((bt_bd_addr_type*) &pDevice->bdAddr);
   pDevice->uNumSvcs = AEEBT_MAX_NUM_OF_SRV_REC;
   pDevice->bValid   = FALSE;
-
-  {
-	  char btname[AEEBT_MAX_DEVICENAME_LEN+1];
-	  char btnickname[AEEBT_MAX_NICKNAME_LEN+1];
-	  
-	  WSTRTOSTR (pDevice->wName, btname, sizeof(char)*(AEEBT_MAX_DEVICENAME_LEN+1));	
-	  WSTRTOSTR (pDevice->wNickName, btnickname, sizeof(char)*(AEEBT_MAX_NICKNAME_LEN+1));	
-	  
-	  DBGPRINTF("***zzg OEMBTExtRM_DeviceRead before btname=%s***", btname);
-	  DBGPRINTF("***zzg OEMBTExtRM_DeviceRead before btnickname=%s***", btnickname);
-  }
-  
-  stat = bt_cmd_rm_device_read(pMe->appId, &device, &pDevice->uNumSvcs, svcs);
-
-  {
-	  DBGPRINTF("***zzg OEMBTExtRM_DeviceRead after name_str=%s***", (char *)(&device)->name_str);
-	  DBGPRINTF("***zzg OEMBTExtRM_DeviceRead after nick_name_str=%s***", (char *)(&device)->nick_name_str);
-  }
-  
+  stat = bt_cmd_rm_device_read( pMe->appId, &device, &pDevice->uNumSvcs,
+                                svcs );
   if ( stat == BT_CS_GN_SUCCESS )
   {
     OEMBTExtRM_Core2BrewDev( &device, pDevice, svcs, pMe->cls );
@@ -1229,21 +1204,20 @@ int OEMBTExtRM_DeviceEnumInit(
   {
     return EBADPARM;
   }
-  
   if ( pEnum == NULL )
-  {  
+  {
     return EBADPARM;
   }
 
   pMe->iterator.reset = TRUE;
   pMe->iterator.control = (bt_rm_iter_ctrl_enum_type)pEnum->control;
-  
   switch ( pEnum->control )
   {
     case AEEBT_RM_EC_ALL:
       break;  // no filtering
-    case AEEBT_RM_EC_MATCH_SERVICE_CLASS:		
-      pMe->iterator.service_class = (bt_service_class_enum_type) pEnum->svcCls;
+    case AEEBT_RM_EC_MATCH_SERVICE_CLASS:
+      pMe->iterator.service_class = 
+        (bt_service_class_enum_type) pEnum->svcCls;
       break;
     case AEEBT_RM_EC_MATCH_BONDED:
       pMe->iterator.bonded = pEnum->bBonded;
@@ -1267,7 +1241,6 @@ int OEMBTExtRM_DeviceEnumInit(
     default:
       return EBADPARM;
   }
- 
   return SUCCESS;
 }
 
@@ -1394,8 +1367,6 @@ int OEMBTExtRM_GetHCIMode( IBTExtRM* pParent, AEEBTHCIMode* pHCIMode )
   bt_hci_mode_type mode = bt_cmd_dc_get_hci_mode();
   OEMBTExtRMobj_t* pMe;
 
-  MSG_FATAL("***zzg OEMBTExtRM_GetHCIMode pParent=%x***", pParent, 0, 0);
-
   if ( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                        (OEMINSTANCE*)&pMe ) != TRUE )
   {
@@ -1403,11 +1374,8 @@ int OEMBTExtRM_GetHCIMode( IBTExtRM* pParent, AEEBTHCIMode* pHCIMode )
   }
   if ( pHCIMode == NULL )
   {
-  	MSG_FATAL("***zzg OEMBTExtRM_GetHCIMode pHCIMode == NULL***", 0, 0, 0);
     return EBADPARM;
   }
-
-  MSG_FATAL("***zzg OEMBTExtRM_GetHCIMode mode = %d***", mode, 0, 0);
 
   switch ( mode )
   {
@@ -2376,8 +2344,6 @@ int OEMBTExtSSPBond(
   bt_cmd_status_type  stat;
   bt_pin_code_type    pin;
 
-  MSG_FATAL("***zzg OEMBTExeSSPBond bMITMProtectionRequired***", 0, 0, 0);
-
   if ( AEEHandle_From( &gOEMBTExtHandleList, pParent->m_hBT, 
                        (OEMINSTANCE*)&pMe ) != TRUE )
   {
@@ -2393,8 +2359,6 @@ int OEMBTExtSSPBond(
 
   stat = bt_cmd_rm_bond_ext( pMe->appId, (bt_bd_addr_type*)pBDAddr, &pin,
                              bMITMProtectionRequired );
-
-  MSG_FATAL("***zzg OEMBTExeSSPBond bt_cmd_rm_bond_ext return stat=%x***", stat, 0, 0);
 
   return( OEMBTExtRM_CheckCmdStatus( stat ) );
 #endif
@@ -2690,9 +2654,6 @@ static void OEMBTExtRM_Brew2CoreDev(
     pDstDev->eir_data.manuf_data_size = pSrcDev->EIRData.uManufDataSize;
   }
   pDstDev->link_key_status = (bt_rm_lk_status_type)pSrcDev->linkKeyStatus;
-
-  MSG_FATAL("***zzg Brew2CoreDev bSSPCapable=%d***", pSrcDev->bSSPCapable, 0, 0);
-  
   pDstDev->ssp_capable = pSrcDev->bSSPCapable;
 #endif
 
@@ -2789,9 +2750,6 @@ static void OEMBTExtRM_Core2BrewDev(
     pDstDev->EIRData.deviceRanking  = pSrcDev->eir_data.device_ranking;
   }
   pDstDev->linkKeyStatus      = (AEEBTLinkKeyStatus) pSrcDev->link_key_status;
-  
-  MSG_FATAL("***zzg Core2BrewDev bSSPCapable=%d***", pSrcDev->ssp_capable, 0, 0);
-  
   pDstDev->bSSPCapable        = pSrcDev->ssp_capable;
 #endif /* FEATURE_BT_2_1 */
 }
@@ -2839,8 +2797,6 @@ static uint16 OEMBTExtRM_ConvertCmdStatus( bt_cmd_status_type cmd_status )
 
 static uint16 OEMBTExtRM_ConvertEvReason( bt_event_reason_type ev_reason )
 {
-  MSG_FATAL("***zzg OEMBTExtRM_ConvertEvReason ev_reason=%x***", ev_reason, 0, 0);
-  
   switch ( ev_reason )
   {
     case BT_EVR_GN_SUCCESS:
@@ -2861,10 +2817,7 @@ static uint16 OEMBTExtRM_ConvertEvReason( bt_event_reason_type ev_reason )
     case (BT_CMD_EV_HCI_BASE+BT_BE_PDU_NOT_ALLOWED):
       return AEEBT_RM_ERR_REMOTE_REJECTED;
     default:
-	{ 
-	  MSG_FATAL("***zzg OEMBTExtRM_ConvertEvReason ev_reason=%x***", ev_reason, 0, 0);	
       return AEEBT_RM_ERR_CONN_FAIL;
-    }
   }
 }
 
@@ -3487,9 +3440,6 @@ static void OEMBTExtRM_EventCallback(bt_ev_msg_type* bt_ev_msg_ptr)
 
     case BT_EV_RM_BOND_FAILED:
     {
-	  MSG_FATAL("***zzg BT_EV_RM_BOND_FAILED 5***", 0, 0, 0);
-	  MSG_FATAL("***zzg OEMBTExtRM BT_EV_RM_BOND_FAILED cls=%x***", pMe->cls, 0, 0);
-		
       pN->uID = AEEBT_RM_EVT_BONDED;
       MSG_HIGH( "OEMBTExt RM BT_EV_RM_BOND_FAILED- stat=%x",
                        bt_ev_msg_ptr->ev_msg.ev_rm_bondf.reason, 0, 0 );
@@ -3599,8 +3549,6 @@ static void OEMBTExtRM_EventCallback(bt_ev_msg_type* bt_ev_msg_ptr)
     {
       bt_rm_link_status_type* sptr = 
         &bt_ev_msg_ptr->ev_msg.ev_rm_lstat.link_status;
-
-	  MSG_FATAL("***zzg OEMBTExtRM BT_EV_RM_LINK_STATUS***", 0, 0, 0);
 
       pN->uID = AEEBT_RM_EVT_LINK_STATUS;
 

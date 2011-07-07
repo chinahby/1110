@@ -739,9 +739,11 @@ Qualcomm Confidential and Proprietary.
 #define BT_HV1_PAYLOAD_LEN      10
 #define BT_HV2_PAYLOAD_LEN      20
 #define BT_HV3_PAYLOAD_LEN      30
-
-#define BT_CMD_MAX_RETRIES         50//20
-
+#ifdef CUST_EDITION
+#define BT_CMD_MAX_RETRIES         50
+#else
+#define BT_CMD_MAX_RETRIES         20
+#endif
 #ifdef FEATURE_BT_SOC
   #define BT_L2_MAX_MTU              2036
 #else
@@ -1400,10 +1402,14 @@ typedef struct bt_event_q_info_struct
 #ifdef FEATURE_MANUFACTURER_INFO /* defined for ODM builds */
   #define DEFAULT_BT_NAME         CUST_MODEL_ID
 #else
+#ifdef CUST_EDITION
 #ifdef FEATURE_VERSION_S1000T
   #define DEFAULT_BT_NAME         "V3 Dew"
 #else
   #define DEFAULT_BT_NAME         "Hitz 233C"
+#endif
+#else
+  #define DEFAULT_BT_NAME         "BlueQ"
 #endif
 #endif
 

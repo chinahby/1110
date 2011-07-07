@@ -363,19 +363,14 @@ int OEMBTExtSD_SetDiscoverable( IBTExtSD* pParent, boolean discoverable )
 
   pMe = OEMBTExtSD_CheckParentPtr( pParent );
 
-  MSG_FATAL("***zzg OEMBTExtSD_SetDiscoverable discoverable=%d***",  discoverable, 0, 0);
-
   if ( pMe == NULL )
   {
-    MSG_FATAL("***zzg OEMBTExtSD_SetDiscoverable pMe == NULL***",  0, 0, 0);
     return EBADPARM;
   }
 
   mode = discoverable ? BT_SD_SERVICE_DISCOVERABLE_MODE_GENERAL : 
                         BT_SD_SERVICE_DISCOVERABLE_MODE_NONE;
   stat = bt_cmd_sd_set_service_discoverable_mode( pMe->appId, mode );
-
-  MSG_FATAL("***zzg bt_cmd_sd_set_service_discoverable_mode  stat = %x***",  stat, 0, 0);
 
   return (OEMBTExtSD_CheckCmdStatus( stat ));
 }

@@ -135,7 +135,7 @@ int AEEOBEXNotifier_New( IShell *pIShell, AEECLSID cls, void **ppif )
   if ( pAEEOBEXNotifier == NULL )
   {
   //allocate the memory in system memory using AEE_NewClassEx
-    pNew = (IOBEXNotifier*) AEE_OEM_NEWCLASSEX( (IBaseVtbl*)&gpvtIOBEXNotifier,
+    pNew = (IOBEXNotifier*) AEE_NewClassEx( (IBaseVtbl*)&gpvtIOBEXNotifier,
                                              sizeof(IOBEXNotifier), TRUE );
 
     if (pNew == NULL)

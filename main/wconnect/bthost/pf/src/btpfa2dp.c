@@ -21,19 +21,21 @@ EDIT HISTORY FOR MODULE
 This section contains comments describing changes made to the module.
 Notice that changes are listed in reverse chronological order.
 
-$Header: //source/qcom/qct/wconnect/bthost/pf/rel/00.00.26/src/btpfa2dp.c#3 $
-$DateTime: 2009/06/08 17:25:38 $
+$Header: //source/qcom/qct/wconnect/bthost/pf/rel/00.00.26/src/btpfa2dp.c#4 $
+$DateTime: 2011/04/14 21:44:03 $
 
  when        who  what, where, why
  ----------  ---  -----------------------------------------------------------
+ 2011-04-14  pts  Added the changes to handle the outstanding a2dp disconnect
+ 				  in process avdtp start cfm.
  2009-06-08  jtl  Updating slow UART support.
  2009-04-03   jn  For slow UARTs, restrict max A2DP bit-rates to 230kbps.
  2008-12-16   hs  Updated the discon reason across if stream is opened after
                   closing it. 
  2008-12-12   hs  Updated the disconnect reason in case stream is opened after 
                   closing it. In case connection is yanked due to any reason 
-				  apart from Normal disconnect and link loss, target would 
-				  initiate the reconnection.  
+                  apart from Normal disconnect and link loss, target would 
+                  initiate the reconnection.  
  2008-11-07   hs  Added the handling to disconnect the connection if close is 
                   rejected by the remote device due to any reason  
  2008-05-27   rb  Fix compiler warnings
@@ -445,9 +447,9 @@ and other items needed by this module.
 /* Macro to see if SBC data is valid (not all zeros)                       */
 /* Assumes that parameters passed in are word aligned                      */
 /*-------------------------------------------------------------------------*/
-#define BT_PF_A2DP_SBC_DATA_IS_VALID(x) \
-  ( memcmp( (void*)&(x),\
-            (void*)&bt_pf_a2dp_null_sbc_data,\
+#define BT_PF_A2DP_SBC_DATA_IS_VALID(x)         \
+  ( memcmp( (void*)&(x),                        \
+            (void*)&bt_pf_a2dp_null_sbc_data,   \
             sizeof( audiosbcenc_data_type ) ) )
 
 /*-------------------------------------------------------------------------*/
@@ -482,7 +484,7 @@ LOCAL const bt_bd_addr_type bt_pf_a2dp_null_bd_addr = BT_PF_BD_ADDR_NULL;
 /* Null SBC data                                                           */
 /*-------------------------------------------------------------------------*/
 const audiosbcenc_data_type bt_pf_a2dp_null_sbc_data =
-  { { 0 }, { 0 }, 0, 0 };
+{ { 0 }, { 0 }, 0, 0 };
 
 /*-------------------------------------------------------------------------*/
 /*  Keep track of stream states                                            */
@@ -618,7 +620,7 @@ typedef struct {
   /* This holds the reason for Disconnection */
   uint32                          discon_reason;
   uint8                           a2dp_abort_stream_retries;
-
+  
 } bt_pf_a2dp_unit_type;
 
 LOCAL bt_pf_a2dp_unit_type bt_pf_a2dp_unit;
@@ -632,10 +634,10 @@ LOCAL void bt_pf_a2dp_cmd_start( bt_pf_cmd_msg_type *cmd_ptr );
 LOCAL void bt_pf_a2dp_cmd_send_data( bt_pf_cmd_msg_type *cmd_ptr );
 #ifdef FEATURE_BT_SOC
 LOCAL void bt_pf_a2dp_sbc_data_cb( uint8*     data,
-                                   uint32     seq_num,
-                                   uint32     timestamps_per_frame,
-                                   boolean    last_frame,
-                                   uint16     frame_len );
+                                    uint32     seq_num,
+                                    uint32     timestamps_per_frame,
+                                    boolean    last_frame,
+                                    uint16     frame_len );
 
 LOCAL void bt_pf_a2dp_sbc_init_cb( const void *data, snd_status_type status );
 #endif
@@ -766,20 +768,20 @@ LOCAL void bt_pf_a2dp_change_bitrate( void )
     default:
       lowest_bitrate = AUDIOSBC_BITRATE_LOWEST * 2;
       break;
-  }
+    }
 
   if( bt_pf_a2dp_unit.auto_bitrate != FALSE )
-  {
-    /* For slow uarts, insure we use a slow bitrate if A2DP is allowed to
-     * pick bitrates. */
+    {
+      /* For slow uarts, insure we use a slow bitrate if A2DP is allowed to
+       * pick bitrates. */
     bt_pf_a2dp_unit.bitrate = BT_PF_A2DP_BITRATE_CUSTOM;
     bt_pf_a2dp_unit.custom_bitrate = 
       MAX( BT_PF_A2DP_MAX_SLOW_UART_BITRATE, lowest_bitrate );
   }
 #endif /* FEATURE_BT_SOC_BITRATE_460800 */
-
+    
   event.ev_hdr.bt_app_id = bt_pf_a2dp_unit.ext_id;
-  event.ev_hdr.ev_type   = BT_EV_PF_A2DP_BITRATE;
+    event.ev_hdr.ev_type   = BT_EV_PF_A2DP_BITRATE;
   event.ev_msg.ev_a2dp_bitrate.bitrate_hint   = bt_pf_a2dp_unit.bitrate;
   event.ev_msg.ev_a2dp_bitrate.custom_bitrate = bt_pf_a2dp_unit.custom_bitrate;
   event.ev_msg.ev_a2dp_bitrate.bd_addr = bt_pf_a2dp_unit.bd_addr;
@@ -788,13 +790,13 @@ LOCAL void bt_pf_a2dp_change_bitrate( void )
                bt_pf_a2dp_unit.ext_id,
                bt_pf_a2dp_unit.bitrate,
                bt_pf_a2dp_unit.custom_bitrate);
-  bt_ec_send_event( &event );
+    bt_ec_send_event( &event );
 
-  // Also call the sound interface directly
+    // Also call the sound interface directly
   snd_sbc_set_bitrate( (snd_sbc_bitrate_type)bt_pf_a2dp_unit.bitrate,
                        bt_pf_a2dp_unit.custom_bitrate,
-                       NULL, NULL );
-}
+                         NULL, NULL );
+  }
 
 /*===========================================================================
 
@@ -945,8 +947,8 @@ LOCAL void bt_pf_a2dp_streaming_timeout_cb( unsigned long unused )
     bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_SUSPENDING;
     bt_cmd_pf_avdtp_suspend( bt_pf_a2dp_unit.int_id,
                              bt_pf_a2dp_unit.handle,
-                             NULL );
-  }
+                               NULL );
+    }
   else
   {
     BT_ERR("BT PF A2DP: streaming timeout cb called in wrong state %x",
@@ -967,25 +969,25 @@ LOCAL void bt_pf_a2dp_acp_timeout_cb( unsigned long unused )
 {
   BT_MSG_HIGH("BT PF A2DP: ACP Timeout expired",0,0,0);
   if( bt_pf_a2dp_unit.role == BT_PF_A2DP_ROLE_ACP )
-  {
+{
     /* If we're in the open state, just go ahead with discovery, */
     if( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_OPEN )
-    {
+  {
       BT_MSG_DEBUG("BT PF A2DP CMD TX: discover",0,0,0);
       if( bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_STREAM )
-      {
+    {
         bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_DISCOVERING );
-      }
-      else
-      {
+    }
+    else
+    {
         bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_DISC_THEN_STREAM );
       }
       bt_cmd_pf_avdtp_discover( bt_pf_a2dp_unit.int_id,
                                 &bt_pf_a2dp_unit.bd_addr, 
                                 NULL );
-    }
+      }
     else /* We haven't even made it to open yet. Abort */
-    {
+      {
       bt_pf_a2dp_abort_stream();
     }
   }
@@ -1037,8 +1039,8 @@ void bt_pf_a2dp_try_next_endpoint( void )
           bt_pf_a2dp_unit.state != BT_PF_A2DP_SS_CONFIGURING ) )
     {
       if( found_record == FALSE )
-      {
-        found_record = TRUE;
+    {
+      found_record = TRUE;
         bt_pf_a2dp_unit.current_endpoint = i;
         bt_pf_a2dp_unit.current_seid     = bt_pf_a2dp_unit.endpoints[i].seid;
         BT_MSG_DEBUG("BT PF A2DP CMD TX: Get cap seid %x",
@@ -1046,9 +1048,9 @@ void bt_pf_a2dp_try_next_endpoint( void )
         bt_cmd_pf_avdtp_get_cap( bt_pf_a2dp_unit.int_id,
                                  &bt_pf_a2dp_unit.bd_addr,
                                  bt_pf_a2dp_unit.endpoints[i].seid,
-                                 NULL );
-      }
+                               NULL );
     }
+  }
   }
   if( found_record == FALSE )
   {
@@ -1092,21 +1094,21 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_con_ind( bt_ev_pf_avdtp_con_ind_type *ev )
 
     bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_CONNECTING;
     bt_cmd_pf_avdtp_accept( bt_pf_a2dp_unit.int_id,
-                            &ev->bd_addr, TRUE );
+                              &ev->bd_addr, TRUE );
 
     bt_pf_a2dp_unit.role = BT_PF_A2DP_ROLE_ACP;
     rex_set_timer( &bt_pf_a2dp_unit.acp_timer,
-                   BT_PF_A2DP_ACP_TIMEOUT_MS );
+                     BT_PF_A2DP_ACP_TIMEOUT_MS );
 
   }
   else
-  {
+      {
     // If we're already connected to someone, don't accept.
     BT_MSG_DEBUG("BT PF A2DP: already connected. Rejecting",0,0,0);
     bt_cmd_pf_avdtp_accept( bt_pf_a2dp_unit.int_id,
                             &ev->bd_addr, FALSE );
-  }
-}
+      }
+    }
 
 /*===========================================================================
 
@@ -1161,8 +1163,8 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_con_cfm( bt_ev_pf_avdtp_con_cfm_type *ev )
                   bt_pf_a2dp_unit.ext_id,0,0);
 
     bt_ec_send_event( &event );
+    }
   }
-}
 
 /*===========================================================================
 
@@ -1181,17 +1183,17 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_discon_ind( bt_ev_pf_avdtp_discon_ind_type *ev
 #endif /* FEATURE_BT_AVSYNC */
   BT_MSG_DEBUG("BT PF A2DP EV RX: discon ind ss|sss %08x",
                (bt_pf_a2dp_unit.state << 16) | bt_pf_a2dp_unit.substate,
-               0,0);
+                 0,0);
 
   if( !BT_BD_ADDRS_EQUAL( &ev->bd_addr, &bt_pf_a2dp_unit.bd_addr ) )
-  {
+    {
     // Disconnected from another device
     return;
-  }
-
+    }
+      
   bt_pf_a2dp_end_streaming( BT_PF_A2DP_EVENT_REMOTE_INIT );
 
-  // Keep track of the correct states, and clear out old information:
+    // Keep track of the correct states, and clear out old information:
   memset( (void*)&bt_pf_a2dp_unit.endpoints, 0,
           ( sizeof( bt_pf_avdtp_discover_rsp_info )
             * BT_PF_AVDTP_MAX_REMOTE_RECORDS ) );
@@ -1200,7 +1202,7 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_discon_ind( bt_ev_pf_avdtp_discon_ind_type *ev
   memset( (void*)&bt_pf_a2dp_unit.pending_sbc_config, 0,
           sizeof( audiosbcenc_data_type ) );
   memset( (void*)&bt_pf_a2dp_unit.sbc_config, 0,
-          sizeof( audiosbcenc_data_type ) );
+            sizeof( audiosbcenc_data_type ) );
   bt_pf_a2dp_unit.state            = BT_PF_A2DP_SS_IDLE;
   bt_pf_a2dp_unit.handle           = 0;
   bt_pf_a2dp_unit.current_endpoint = -1;
@@ -1216,11 +1218,11 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_discon_ind( bt_ev_pf_avdtp_discon_ind_type *ev
   rex_clr_timer( &bt_pf_a2dp_unit.streaming_timer );
 
 #ifdef FEATURE_BT_AVSYNC
-  /* Free up the queued a2dp frames */
-  while((a2dp_frame_handle = q_get(&a2dp_frame_handle_q)) != NULL)
-  {
-    q_put(&a2dp_free_frame_handle_q, &a2dp_frame_handle->link);
-  }
+    /* Free up the queued a2dp frames */
+          while((a2dp_frame_handle = q_get(&a2dp_frame_handle_q)) != NULL)
+          {
+            q_put(&a2dp_free_frame_handle_q, &a2dp_frame_handle->link);
+          }
 #endif /* FEATURE_BT_AVSYNC */
   // Let the upper layer know.
   event.ev_hdr.bt_app_id = bt_pf_a2dp_unit.ext_id;
@@ -1228,15 +1230,15 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_discon_ind( bt_ev_pf_avdtp_discon_ind_type *ev
   event.ev_msg.ev_a2dp_discon.bd_addr = ev->bd_addr;
 
   if(bt_pf_a2dp_unit.discon_reason != BT_CS_PF_A2DP_ERR_A2DP_NONE)
-  {
+    {
    event.ev_msg.ev_a2dp_discon.reason  
     = (bt_cmd_status_type)bt_pf_a2dp_unit.discon_reason;
    bt_pf_a2dp_unit.discon_reason       = BT_CS_PF_A2DP_ERR_A2DP_NONE;
-  }
+    }
   else
-  {
+    {
    event.ev_msg.ev_a2dp_discon.reason  = ev->reason;
-  }
+      }
 
   BT_MSG_DEBUG("BT PF A2DP TX EV: discon. AppID: %x reason: %x",
                bt_pf_a2dp_unit.ext_id,
@@ -1246,7 +1248,7 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_discon_ind( bt_ev_pf_avdtp_discon_ind_type *ev
   bt_ec_send_event( &event );
 
   if( bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_DISABLE )
-  {
+    {
     bt_cmd_pf_a2dp_disable( bt_pf_a2dp_unit.int_id );
   }
 }
@@ -1469,7 +1471,7 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_set_cfg_ind( bt_ev_pf_avdtp_set_cfg_ind_type *
     if( bt_pf_a2dp_unit.role == BT_PF_A2DP_ROLE_ACP )
     {
       rex_set_timer( &bt_pf_a2dp_unit.acp_timer,
-                     BT_PF_A2DP_ACP_TIMEOUT_MS );
+                   BT_PF_A2DP_ACP_TIMEOUT_MS );
     }
 
     // Save the info
@@ -1603,12 +1605,12 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_open_cfm( bt_ev_pf_avdtp_open_cfm_type *ev )
 
     if(bt_pf_a2dp_unit.discon_reason == 
          BT_CS_PF_A2DP_ERR_ATTEMPTED_TO_CLOSE_AND_OPEN_STREAM)
-    {
+  {
       bt_pf_a2dp_unit.discon_reason = BT_CS_PF_A2DP_ERR_A2DP_NONE;
-    }
+  }
 
     if( ev->out_mtu > BT_PF_A2DP_MAX_MTU )
-    {
+  {
       ev->out_mtu = BT_PF_A2DP_MAX_MTU;
     }
     bt_pf_a2dp_unit.out_mtu = ev->out_mtu;
@@ -1616,7 +1618,7 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_open_cfm( bt_ev_pf_avdtp_open_cfm_type *ev )
     // Send the open event
     event.ev_hdr.bt_app_id = bt_pf_a2dp_unit.ext_id;
     event.ev_hdr.ev_type   = BT_EV_PF_A2DP_OPEN;
-    event.ev_msg.ev_a2dp_open.origin = BT_PF_A2DP_EVENT_LOCAL_INIT;
+      event.ev_msg.ev_a2dp_open.origin = BT_PF_A2DP_EVENT_LOCAL_INIT;
     event.ev_msg.ev_a2dp_open.bd_addr = bt_pf_a2dp_unit.bd_addr;
 
     BT_MSG_DEBUG("BT PF A2DP TX EV: open. aid: %x, Init %x",
@@ -1682,7 +1684,7 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_open_ind( bt_ev_pf_avdtp_open_ind_type *ev )
   {
     BT_MSG_HIGH("BT PF A2DP: open ind in unexpected state %x",
                 bt_pf_a2dp_unit.state, 0, 0);
-  }
+    }
   else if( ev->handle == bt_pf_a2dp_unit.handle )
   {
     // Set the state to open
@@ -1740,23 +1742,23 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_close_ind( bt_ev_pf_avdtp_close_ind_type *ev )
     bt_pf_a2dp_end_streaming( BT_PF_A2DP_EVENT_REMOTE_INIT );
     if( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_STREAMING ||
           bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_SUSPENDING )
-    {
+  {
       bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_CLOSE_FRM_STREAMING;
-    }
-    else
-    {
+  }
+  else
+  {
       bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_CLOSE_FRM_OPEN;
-    }
+  }
     if( bt_pf_a2dp_unit.substate != BT_PF_A2DP_SSS_ATTEMPT_TO_DISCONNECT &&
         bt_pf_a2dp_unit.substate != BT_PF_A2DP_SSS_ATTEMPT_TO_DISABLE )
-    {
+  {
       bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_REMOTE_CLOSING );
     }
   }
   else
   {
     BT_ERR( "BT PF A2DP: Wrong handle in close ind %x, should be %x",
-            ev->handle,
+                                ev->handle,
             bt_pf_a2dp_unit.handle,
             0 );
   }
@@ -1789,7 +1791,7 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_close_cfm( bt_ev_pf_avdtp_close_cfm_type *ev )
             ev->handle,
             bt_pf_a2dp_unit.handle,
             0 );
-  } 
+  }
   else if ( ev->error != BT_CS_GN_SUCCESS )
   {
     /* Abort the stream */ 
@@ -1903,9 +1905,9 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_start_ind( bt_ev_pf_avdtp_start_ind_type *ev )
   if( ev->handle != bt_pf_a2dp_unit.handle )
   {
     BT_ERR( "BT PF A2DP: wrong handle in start ind %x, should be %x",
-            ev->handle,
+               ev->handle,
             bt_pf_a2dp_unit.handle,
-            0 );
+               0 );
   }
   else if( bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_DISCONNECT ||
            bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_DISABLE )
@@ -1983,17 +1985,22 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_start_cfm( bt_ev_pf_avdtp_start_cfm_type *ev )
   if( ev->error == BT_CS_GN_SUCCESS &&
       ev->handle == bt_pf_a2dp_unit.handle )
   {
-    if( bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_SUSPEND ||
-        bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_DISABLE ||
-        bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_DISCONNECT )
+    if( bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_SUSPEND )
     {
-      // We've received a suspend or disconnect command while trying to start the
+      // We've received a suspend command while trying to start the
       // stream. Suspend it now.
 
       // Should we inform upper layers that the previous start command
       // was successful?
       bt_pf_a2dp_start_streaming( BT_PF_A2DP_EVENT_LOCAL_INIT );
       bt_cmd_pf_a2dp_suspend( bt_pf_a2dp_unit.int_id );
+    }
+    else if( bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_DISABLE ||
+             bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_DISCONNECT )
+    {
+	  // We've received a disable or disconnect command while trying to start the
+	  // stream. disconnect it now.
+	  bt_cmd_pf_a2dp_disconnect( bt_pf_a2dp_unit.int_id );
     }
     else
     {
@@ -2020,7 +2027,7 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_start_cfm( bt_ev_pf_avdtp_start_cfm_type *ev )
         {
           /* Must close the stream to reconfigure */
 		  bt_pf_a2dp_close_stream( BT_PF_A2DP_SS_CLOSE_FRM_STREAMING, 
-			                       BT_CS_PF_A2DP_ERR_ATTEMPTED_TO_CLOSE_AND_OPEN_STREAM );
+                                   BT_CS_PF_A2DP_ERR_ATTEMPTED_TO_CLOSE_AND_OPEN_STREAM );
         }
       }
     }
@@ -2063,25 +2070,25 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_suspend_ind( bt_ev_pf_avdtp_suspend_ind_type *
         ( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_SUSPENDING )          ||
         ( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_CLOSE_FRM_STREAMING ) ||
         ( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_ABORTING ) ) 
-    {
+  {
       bt_pf_a2dp_end_streaming( BT_PF_A2DP_EVENT_REMOTE_INIT );
-    }
+  } 
 
     switch(bt_pf_a2dp_unit.state)
-    {
-      case BT_PF_A2DP_SS_STREAMING:
-      case BT_PF_A2DP_SS_SUSPENDING:
+  {
+    case BT_PF_A2DP_SS_STREAMING:
+    case BT_PF_A2DP_SS_SUSPENDING:
         bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_OPEN;
-         break;
-      case BT_PF_A2DP_SS_CLOSE_FRM_STREAMING:
+      break;
+    case BT_PF_A2DP_SS_CLOSE_FRM_STREAMING:
         bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_CLOSE_FRM_OPEN;
-        break;
-      case BT_PF_A2DP_SS_ABORTING:
-        /* Ignore the event as abort is already underway */
-       break;
-      default:
-       BT_ERR("BT PF A2DP: Unexpected Event ", 0, 0, 0);
-    }
+      break;
+    case BT_PF_A2DP_SS_ABORTING:
+      /* Ignore the event as abort is already underway */
+      break;
+    default:
+      BT_ERR("BT PF A2DP: Unexpected Event ", 0, 0, 0);
+  }
   }
   else
   {
@@ -2137,7 +2144,7 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_suspend_cfm( bt_ev_pf_avdtp_suspend_cfm_type *
     if( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_SUSPENDING )
     {
       bt_pf_a2dp_close_stream( BT_PF_A2DP_SS_CLOSE_FRM_STREAMING, 
-			                   BT_CS_PF_A2DP_ERR_ATTEMPTED_TO_CLOSE_AND_OPEN_STREAM );
+                               BT_CS_PF_A2DP_ERR_ATTEMPTED_TO_CLOSE_AND_OPEN_STREAM );
     }
     else if ( ev->error == BT_CS_GN_SUCCESS )
     {
@@ -2161,56 +2168,56 @@ Handles event from AVDTP.
 LOCAL void bt_pf_a2dp_ev_pf_avdtp_recfg_ind( bt_ev_pf_avdtp_recfg_ind_type *ev )
 {
   BT_MSG_DEBUG("BT PF A2DP EV RX: recfg ind hndl %x num_caps %x ss|sss %08x",
-               ev->handle, ev->num_caps,
+                 ev->handle, ev->num_caps,
                (bt_pf_a2dp_unit.state << 16) | bt_pf_a2dp_unit.substate );
-
+    
   if( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_OPEN                            &&
       ev->handle == bt_pf_a2dp_unit.handle                                   &&
-      ev->num_caps == 1                                                      &&
-      ev->caps[0].type                       == BT_PF_AVDTP_CAP_CODEC        &&
-      ev->caps[0].data.codec_data.media_type == BT_PF_AVDTP_MEDIA_TYPE_AUDIO &&
-      ev->caps[0].data.codec_data.codec_type == BT_PF_AVDTP_CODEC_SBC        &&
-      bt_pf_a2dp_verify_sbc_data( &ev->caps[1].data.codec_data.data.sbc_data ) )
-  {
+        ev->num_caps == 1                                                      &&
+        ev->caps[0].type                       == BT_PF_AVDTP_CAP_CODEC        &&
+        ev->caps[0].data.codec_data.media_type == BT_PF_AVDTP_MEDIA_TYPE_AUDIO &&
+        ev->caps[0].data.codec_data.codec_type == BT_PF_AVDTP_CODEC_SBC        &&
+        bt_pf_a2dp_verify_sbc_data( &ev->caps[1].data.codec_data.data.sbc_data ) )
+    {
     bt_pf_a2dp_unit.sbc_config       = ev->caps[0].data.codec_data.data.sbc_data;
-
-    // Tell AVS the current config
+      
+      // Tell AVS the current config
     audiosbc_set_enc_params( (audiosbcenc_data_type*)&bt_pf_a2dp_unit.sbc_config );
-
+      
     bt_cmd_pf_avdtp_reconfigure_rsp( bt_pf_a2dp_unit.int_id,
                                      ev->handle,
                                      ev->txn,
                                      BT_PF_AVDTP_CAP_CODEC,
                                      BT_CS_GN_SUCCESS );
-  }
-  else
-  {
+    }
+    else
+    {
     bt_cmd_status_type error = BT_CS_PF_AVDTP_ERR_UNSUPPORTED_CONFIG;
 
     if(  bt_pf_a2dp_unit.state != BT_PF_A2DP_SS_OPEN )
-    {
-      error = BT_CS_PF_AVDTP_ERR_STATE;
-    }
+      {
+        error = BT_CS_PF_AVDTP_ERR_STATE;
+      }
     else if( ev->handle != bt_pf_a2dp_unit.handle )
     {
       error = BT_CS_PF_AVDTP_ERR_BAD_SERVICE;
     }
-    else if ( ev->num_caps != 1                                                      ||
-              ev->caps[0].type                       != BT_PF_AVDTP_CAP_CODEC        ||
-              ev->caps[0].data.codec_data.media_type == BT_PF_AVDTP_MEDIA_TYPE_AUDIO ||
-              ev->caps[0].data.codec_data.codec_type == BT_PF_AVDTP_CODEC_SBC        ||
-              bt_pf_a2dp_verify_sbc_data( &ev->caps[1].data.codec_data.data.sbc_data )
-              == FALSE )
-    {
-      error = BT_CS_PF_AVDTP_ERR_INVALID_CAPABILITIES;
-    }
+      else if ( ev->num_caps != 1                                                      ||
+                ev->caps[0].type                       != BT_PF_AVDTP_CAP_CODEC        ||
+                ev->caps[0].data.codec_data.media_type == BT_PF_AVDTP_MEDIA_TYPE_AUDIO ||
+                ev->caps[0].data.codec_data.codec_type == BT_PF_AVDTP_CODEC_SBC        ||
+                bt_pf_a2dp_verify_sbc_data( &ev->caps[1].data.codec_data.data.sbc_data )
+                == FALSE )
+      {
+        error = BT_CS_PF_AVDTP_ERR_INVALID_CAPABILITIES;
+      }
 
     bt_cmd_pf_avdtp_reconfigure_rsp( bt_pf_a2dp_unit.int_id,
-                                     ev->handle,
-                                     ev->txn,
-                                     BT_PF_AVDTP_CAP_CODEC,
-                                     error );
-  }
+                                   ev->handle,
+                                   ev->txn,
+                                   BT_PF_AVDTP_CAP_CODEC,
+                                   error );
+}
 }
 
 /*===========================================================================
@@ -2243,7 +2250,7 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_recfg_cfm( bt_ev_pf_avdtp_recfg_cfm_type *ev )
   {
     BT_ERR("BT A2DP: can't reconfigure stream. Attempting to close & reopen",0,0,0);
 	bt_pf_a2dp_close_stream( BT_PF_A2DP_SS_CLOSE_FRM_OPEN, 
-			                 BT_CS_PF_A2DP_ERR_ATTEMPTED_TO_CLOSE_AND_OPEN_STREAM );
+                             BT_CS_PF_A2DP_ERR_ATTEMPTED_TO_CLOSE_AND_OPEN_STREAM );
     /* make sure we try again */
     if( bt_pf_a2dp_unit.substate != BT_PF_A2DP_SSS_ATTEMPT_TO_SUSPEND &&
         bt_pf_a2dp_unit.substate != BT_PF_A2DP_SSS_ATTEMPT_TO_DISABLE &&
@@ -2283,16 +2290,16 @@ Handles event from AVDTP.
 LOCAL void bt_pf_a2dp_ev_pf_avdtp_abort_ind( bt_ev_pf_avdtp_abort_ind_type *ev )
 {
   BT_MSG_HIGH("BT PF A2DP EV RX: abort ind handle %x",
-              ev->handle, 0, 0);
+            ev->handle,0,0 );
 
   if( ev->handle == bt_pf_a2dp_unit.handle )
   {
     bt_pf_a2dp_unit.role = BT_PF_A2DP_ROLE_NONE;
     rex_clr_timer( &bt_pf_a2dp_unit.acp_timer );
-
+  
     bt_pf_a2dp_end_streaming( BT_PF_A2DP_EVENT_REMOTE_INIT );
-
-    // Restart connection process
+  
+  // Restart connection process
     bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_CONFIGURING;
     bt_cmd_pf_avdtp_discover( bt_pf_a2dp_unit.int_id,
                               &bt_pf_a2dp_unit.bd_addr, NULL );
@@ -2320,29 +2327,29 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_abort_cfm( bt_ev_pf_avdtp_abort_cfm_type *ev )
 
     bt_pf_a2dp_end_streaming( BT_PF_A2DP_EVENT_REMOTE_INIT );
 
-    if( ev->error == BT_CS_GN_SUCCESS )
-    {
+  if( ev->error == BT_CS_GN_SUCCESS )
+  {
       if( bt_pf_a2dp_unit.a2dp_abort_stream_retries == BT_PF_A2DP_MAX_ABORT_RETRY_ATTEMPTS )
-      {
+    {
         bt_pf_a2dp_unit.discon_reason = BT_CS_PF_A2DP_ERR_A2DP_NONE;
-        /* Abort attempts reached so disconnect */
+      /* Abort attempts reached so disconnect */
         bt_cmd_pf_a2dp_disconnect( bt_pf_a2dp_unit.int_id );
         bt_pf_a2dp_unit.a2dp_abort_stream_retries = 0;
-      }
-      else 
-      {
-        /* Restart connection process */
+    }
+    else 
+    {
+      /* Restart connection process */
         bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_CONFIGURING;
         bt_cmd_pf_avdtp_discover( bt_pf_a2dp_unit.int_id,
                                   &bt_pf_a2dp_unit.bd_addr, 
-                                  NULL );
-      }
-      
+                                NULL );
     }
-    else
-    {
+      
+  }
+  else
+  {
       bt_pf_a2dp_unit.discon_reason = BT_CS_PF_A2DP_ERR_ABORT_FAILED;
-      // Abort failed. Disconnect
+    // Abort failed. Disconnect
       bt_cmd_pf_a2dp_disconnect( bt_pf_a2dp_unit.int_id );
     }
   }
@@ -2420,12 +2427,12 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_send_cfm( bt_ev_pf_avdtp_send_cfm_type *ev )
   /* De-queue and call the AVS Ack callback if required */
   a2dp_frame_handle = q_get(&a2dp_frame_handle_q);
   if(a2dp_frame_handle == NULL)
-  {
+{
     BT_ERR("BT PF A2DP: No A2DP frames queued", 0, 0, 0);
     return;
-  }
+      }
   if(a2dp_frame_handle->last_frame)
-  {
+      {
 #ifdef FEATURE_BT_AVSYNC_DEBUG
     BT_MSG_API("BT PF A2DP: SND tx cfm to AVS frame = 0x%x",
                   a2dp_frame_handle->a2dp_last_seq, 0, 0);
@@ -2447,7 +2454,7 @@ LOCAL void bt_pf_a2dp_ev_pf_avdtp_send_cfm( bt_ev_pf_avdtp_send_cfm_type *ev )
 #endif
   q_put(&a2dp_free_frame_handle_q, &a2dp_frame_handle->link);
 #endif /* FEATURE_BT_AVSYNC */
-}
+    }
 
 /*===========================================================================
 
@@ -2510,17 +2517,17 @@ LOCAL void bt_pf_a2dp_process_event( bt_ev_msg_type*  ev_msg_ptr )
   switch ( ev_msg_ptr->ev_hdr.ev_type )
   {
     case BT_EV_GN_CMD_DONE:
+    {
+      if ( ev_msg_ptr->ev_msg.ev_gn_cmd_done.cmd_status !=
+           BT_CS_GN_SUCCESS )
       {
-        if ( ev_msg_ptr->ev_msg.ev_gn_cmd_done.cmd_status !=
-             BT_CS_GN_SUCCESS )
-        {
-          BT_ERR( "BT A2DP: Bad CMD Done Stat %x Typ %x AID %x",
-                  ev_msg_ptr->ev_msg.ev_gn_cmd_done.cmd_status,
-                  ev_msg_ptr->ev_msg.ev_gn_cmd_done.cmd_type,
-                  ev_msg_ptr->ev_hdr.bt_app_id );
+        BT_ERR( "BT A2DP:Bad CMD Done Stat %x Typ %x AID %x",
+                ev_msg_ptr->ev_msg.ev_gn_cmd_done.cmd_status,
+                ev_msg_ptr->ev_msg.ev_gn_cmd_done.cmd_type,
+                ev_msg_ptr->ev_hdr.bt_app_id );
           if( ev_msg_ptr->ev_msg.ev_gn_cmd_done.cmd_status
               == BT_CS_PF_NOT_CONNECTED )
-          {
+        {
             // Some error. Let everyone know we're disconnected
             bt_ev_pf_avdtp_discon_ind_type ev;
             ev.bd_addr = bt_pf_a2dp_unit.bd_addr;
@@ -2548,20 +2555,20 @@ LOCAL void bt_pf_a2dp_process_event( bt_ev_msg_type*  ev_msg_ptr )
           }
           else if( ev_msg_ptr->ev_msg.ev_gn_cmd_done.cmd_type
                    == BT_PF_CMD_AVDTP_ABORT )
-          {
+            {
             // The abort didn't work. As a last ditch effort, lets say it succeeded
             // and try to connect anyway.
-            bt_ev_pf_avdtp_abort_cfm_type ev;
+              bt_ev_pf_avdtp_abort_cfm_type ev;
             BT_MSG_DEBUG("BT PF A2DP: Abort failed. Try to connect anyway",
                          0,0,0);
             ev.txn = 0;
             ev.handle = 0;
             ev.error = BT_CS_GN_SUCCESS;
-            bt_pf_a2dp_ev_pf_avdtp_abort_cfm(&ev);
+              bt_pf_a2dp_ev_pf_avdtp_abort_cfm( &ev );
+            }
           }
-        }
-        break;
-      }
+      break;
+    }
     case BT_EV_PF_AVDTP_CON_IND:
       bt_pf_a2dp_ev_pf_avdtp_con_ind(&ev_msg_ptr->ev_msg.ev_avdtp_con_ind);
       break;
@@ -2696,7 +2703,7 @@ LOCAL void bt_pf_a2dp_cmd_enable( bt_pf_cmd_msg_type *cmd_ptr )
 
   if( bt_pf_a2dp_unit.int_id != BT_APP_ID_NULL )
   {
-    BT_ERR("BT PF A2DP: already enabled",0,0,0);
+    BT_ERR("BT PF A2DP:already enabled",0,0,0);
     cmd_ptr->cmd_hdr.cmd_status = BT_CS_PF_ALREADY_INITIALIZED;
     return;
   }
@@ -2750,7 +2757,7 @@ LOCAL void bt_pf_a2dp_cmd_enable( bt_pf_cmd_msg_type *cmd_ptr )
   dsm_free_packet( &bt_pf_a2dp_unit.dsm_ptr );
   // rex doesn't have a way to properly remove critical sections.
   rex_init_crit_sect( &bt_pf_a2dp_unit.audio_crit_sect );
-
+  
   old_avs_id = bt_pf_a2dp_unit.avs_id;
 
   memset( &bt_pf_a2dp_unit, 0, sizeof( bt_pf_a2dp_unit_type ) );
@@ -2758,11 +2765,11 @@ LOCAL void bt_pf_a2dp_cmd_enable( bt_pf_cmd_msg_type *cmd_ptr )
   bt_pf_a2dp_unit.avs_id = old_avs_id;
 
   rex_def_timer_ex( &bt_pf_a2dp_unit.acp_timer,
-                    bt_pf_a2dp_acp_timeout_cb,
+                      bt_pf_a2dp_acp_timeout_cb,
                     BT_PF_A2DP_ACP_TIMEOUT_MS );
 
   rex_def_timer_ex( &bt_pf_a2dp_unit.streaming_timer,
-                    bt_pf_a2dp_streaming_timeout_cb,
+                      bt_pf_a2dp_streaming_timeout_cb,
                     BT_PF_A2DP_STREAMING_TIMEOUT_MS );
 
   rex_def_timer_ex( &bt_pf_a2dp_unit.pending_data_timer,
@@ -2788,10 +2795,10 @@ LOCAL void bt_pf_a2dp_cmd_enable( bt_pf_cmd_msg_type *cmd_ptr )
   bt_cmd_pf_avdtp_register( bt_pf_a2dp_unit.int_id );
 
   bt_cmd_pf_avdtp_register_endpoint( bt_pf_a2dp_unit.int_id,
-                                     BT_PF_AVDTP_MEDIA_TYPE_AUDIO,
-                                     BT_PF_AVDTP_SRC,
-                                     bt_pf_a2dp_local_cap,
-                                     2,
+                                         BT_PF_AVDTP_MEDIA_TYPE_AUDIO,
+                                         BT_PF_AVDTP_SRC,
+                                         bt_pf_a2dp_local_cap,
+                                         2,
                                      &bt_pf_a2dp_unit.local_seid );
 
   bt_cmd_sd_register_serv_ext( bt_pf_a2dp_unit.int_id,
@@ -2818,7 +2825,7 @@ Disables A2DP. Deregisters L2CAP.
 LOCAL void bt_pf_a2dp_cmd_disable( bt_pf_cmd_msg_type *cmd_ptr )
 {
   BT_MSG_API("BT PF A2DP CMD RX: Disable aid %x ss|sss %08x",
-             cmd_ptr->cmd_hdr.app_id,
+           cmd_ptr->cmd_hdr.app_id,
              (bt_pf_a2dp_unit.state << 16) | bt_pf_a2dp_unit.substate, 0);
 
   bt_cmd_sd_unregister_srv_by_psm( bt_pf_a2dp_unit.int_id,
@@ -2854,10 +2861,10 @@ LOCAL void bt_pf_a2dp_cmd_set_device( bt_pf_cmd_msg_type *cmd_ptr )
     cmd_ptr->cmd_hdr.cmd_status = BT_CS_PF_INVALID_STATE;
   }
   else
-  {
+{
     bt_pf_a2dp_unit.bd_addr = cmd_ptr->cmd_msg.cmd_a2dp_set_device.bd_addr;
-    cmd_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
-  }
+  cmd_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
+}
 }
 
 /*===========================================================================
@@ -2879,24 +2886,24 @@ LOCAL void bt_pf_a2dp_cmd_connect( bt_pf_cmd_msg_type *cmd_ptr )
   if ( bt_pf_a2dp_unit.state != BT_PF_A2DP_SS_IDLE )
   {
     cmd_ptr->cmd_hdr.cmd_status = BT_CS_PF_ALREADY_CONNECTED;
-  }
-  else if ( BT_BD_ADDRS_EQUAL( &cmd_ptr->cmd_msg.cmd_a2dp_connect.bd_addr,
-                               &bt_pf_a2dp_null_bd_addr )
-            == FALSE )
-  {
-    // if the connect address is not null, set the internal address and connect
+    }
+    else if ( BT_BD_ADDRS_EQUAL( &cmd_ptr->cmd_msg.cmd_a2dp_connect.bd_addr,
+                                 &bt_pf_a2dp_null_bd_addr )
+              == FALSE )
+    {
+      // if the connect address is not null, set the internal address and connect
     bt_pf_a2dp_unit.bd_addr = cmd_ptr->cmd_msg.cmd_a2dp_connect.bd_addr;
-
+      
     bt_pf_a2dp_unit.discon_reason = BT_CS_PF_A2DP_ERR_A2DP_NONE;
     bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_CONNECTING;
     bt_pf_a2dp_unit.role = BT_PF_A2DP_ROLE_INT;
     rex_clr_timer( &bt_pf_a2dp_unit.acp_timer );
     bt_cmd_pf_avdtp_connect( bt_pf_a2dp_unit.int_id,
                              &bt_pf_a2dp_unit.bd_addr );
-    cmd_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
-  }
+      cmd_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
+    }
 
-}
+    }
 
 /*===========================================================================
 
@@ -2917,21 +2924,21 @@ LOCAL void bt_pf_a2dp_cmd_disconnect( bt_pf_cmd_msg_type *cmd_ptr )
 
   if( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_OPEN ||
       bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_STREAMING )
-  {
-    // Need to close the stream first
+    {
+        // Need to close the stream first
     if( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_STREAMING )
-    {
+        {
       bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_CLOSE_FRM_STREAMING;
-    }
-    else
-    {
+        }
+        else
+        {
       bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_CLOSE_FRM_OPEN;
-    } 
+        } 
     BT_MSG_DEBUG("BT PF A2DP CMD TX: close",0,0,0);
     bt_cmd_pf_avdtp_close( bt_pf_a2dp_unit.int_id,
                            bt_pf_a2dp_unit.handle,
-                           NULL );
-  }
+                               NULL );
+      }
   else if( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_RECONFIG_SENT  ||
            bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_RECONFIGURING  ||
            bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_START_SENT     ||
@@ -2939,26 +2946,26 @@ LOCAL void bt_pf_a2dp_cmd_disconnect( bt_pf_cmd_msg_type *cmd_ptr )
            bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_CLOSE_FRM_OPEN ||
            bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_ABORTING       ||
            bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_CLOSE_FRM_STREAMING )
-  {
-    /* Don't do anything here */
-    BT_MSG_DEBUG("BT PF A2DP: Discon pending state transition; ss %x sss %x",
+      {
+        /* Don't do anything here */
+        BT_MSG_DEBUG("BT PF A2DP: Discon pending state transition; ss %x sss %x",
                  bt_pf_a2dp_unit.state,
                  bt_pf_a2dp_unit.substate, 0);
-  }
-  else
-  {
-    // Just disconnect
+      }
+      else
+      {
+        // Just disconnect
     BT_MSG_DEBUG("BT PF A2DP CMD TX: disconnect",0,0,0);
     if( bt_pf_a2dp_unit.discon_reason == BT_CS_PF_A2DP_ERR_A2DP_NONE )
-    {
+        {
       bt_pf_a2dp_unit.discon_reason = BT_CS_PF_A2DP_NORMAL_DISCONNECT;
-    }
+        }
     bt_cmd_pf_avdtp_disconnect( bt_pf_a2dp_unit.int_id,
                                 &bt_pf_a2dp_unit.bd_addr );
-  }
+      }
 
   cmd_ptr->cmd_hdr.cmd_status = BT_CS_GN_SUCCESS;
-}
+    }
 
 /*===========================================================================
 
@@ -2982,19 +2989,19 @@ LOCAL void bt_pf_a2dp_cmd_start( bt_pf_cmd_msg_type *cmd_ptr )
               (bt_pf_a2dp_unit.state << 16) | bt_pf_a2dp_unit.substate );
 
   if( data_valid )
-  {
+{
     if( memcmp( (byte*)&bt_pf_a2dp_unit.pending_sbc_config,
                 (byte*)&cmd_ptr->cmd_msg.cmd_a2dp_start.sbc_data,
                 sizeof( audiosbcenc_data_type ) ) != 0 )
-    {
+  {
       config_changed = TRUE;
       bt_pf_a2dp_unit.pending_sbc_config = 
         cmd_ptr->cmd_msg.cmd_a2dp_start.sbc_data;
-    }
+  } 
     if( (bt_pf_a2dp_unit.app_ctl_start != FALSE)           &&
         (bt_pf_a2dp_unit.state != BT_PF_A2DP_SS_STREAMING) &&
         (bt_pf_a2dp_unit.substate != BT_PF_A2DP_SSS_ATTEMPT_TO_STREAM) )
-    {
+  {
       // The app is controlling start. So don't start
       // when we have a valid SBC config.
       // However, if we're currently streaming (or trying to stream)
@@ -3006,11 +3013,11 @@ LOCAL void bt_pf_a2dp_cmd_start( bt_pf_cmd_msg_type *cmd_ptr )
 
   if( bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_DISABLE ||
       bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_DISCONNECT )
-  {
+    {
     BT_MSG_HIGH("BT PF A2DP: rx start command when attempting to disconnect",
                 0, 0, 0);
     cmd_ptr->cmd_hdr.cmd_status = BT_CS_PF_INVALID_STATE;
-  }
+    }
   else if( bt_pf_a2dp_unit.role == BT_PF_A2DP_ROLE_ACP )
   {
     bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_ATTEMPT_TO_STREAM );
@@ -3028,73 +3035,73 @@ LOCAL void bt_pf_a2dp_cmd_start( bt_pf_cmd_msg_type *cmd_ptr )
       // nothing
     } 
     else if ( data_valid == FALSE )
-    {
+  {
       bt_pf_a2dp_start_streaming( BT_PF_A2DP_EVENT_LOCAL_INIT );
-    }
+  }
     else
-    {
+  {
       // already connected
       // Compare negotiated stream states first:
       if( memcmp( (byte*)&bt_pf_a2dp_unit.sbc_config,
                   (byte*)&cmd_ptr->cmd_msg.cmd_a2dp_start.sbc_data,
-                  sizeof( audiosbcenc_data_type ) ) == 0 )
-      {
+                sizeof( audiosbcenc_data_type ) ) == 0 )
+    {
         bt_pf_a2dp_start_streaming( BT_PF_A2DP_EVENT_LOCAL_INIT );
-      }
-      else
-      {
-        // Need to renegotiate stream params
-        // Save the SBC info:
+    }
+    else
+    {
+      // Need to renegotiate stream params
+      // Save the SBC info:
 
         if( bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_DISCOVERING )
-        {
-          /* This will occur if we're discovering endpoints because the remote
+      {
+        /* This will occur if we're discovering endpoints because the remote
            * just connected, then we received a start command.
            */
           bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_DISC_THEN_STREAM );
-        }
+      }
         else if( bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_DISC_THEN_STREAM )
-        {
-          // Nothing to do here.
-        }
-        else
-        {
+      {
+        // Nothing to do here.
+      }
+      else
+      {
           bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_RECONFIGURING );
           if( bt_pf_a2dp_unit.recfg_option == BT_PF_A2DP_RECONFIGURE )
-          {
+        {
             bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_SUSPENDING;
             bt_cmd_pf_avdtp_suspend( bt_pf_a2dp_unit.int_id,
                                      bt_pf_a2dp_unit.handle,
-                                     NULL );
-          }
-          else
-          {
-            /* Must close the stream to reconfigure */
+                                   NULL );
+        }
+        else
+        {
+          /* Must close the stream to reconfigure */
             bt_pf_a2dp_close_stream( BT_PF_A2DP_SS_CLOSE_FRM_STREAMING, 
 			                         BT_CS_PF_A2DP_ERR_ATTEMPTED_TO_CLOSE_AND_OPEN_STREAM );
-          }
         }
       }
     }
   }
+}
   else if( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_START_SENT )
-  {
-    // We're currently starting the stream.
-    // If the stream states are the same, do nothing.
-    // If the stream state is different, must reconfigure later
+{
+  // We're currently starting the stream.
+  // If the stream states are the same, do nothing.
+  // If the stream state is different, must reconfigure later
     bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_ATTEMPT_TO_STREAM );
 
-  }
+}
   else if( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_OPEN )
-  {
-    // Compare negotiated stream states first:
+{
+  // Compare negotiated stream states first:
     if( memcmp( (byte*)&bt_pf_a2dp_unit.sbc_config,
                 (byte*)&bt_pf_a2dp_unit.pending_sbc_config,
-                sizeof( audiosbcenc_data_type ) )
-        == 0 )
+                 sizeof( audiosbcenc_data_type ) )
+         == 0 )
     {
       // Negotiated stream is currently up. Just start.
-
+      
       bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_START_SENT;
       bt_cmd_pf_avdtp_start( bt_pf_a2dp_unit.int_id,
                              bt_pf_a2dp_unit.handle,
@@ -3142,7 +3149,7 @@ LOCAL void bt_pf_a2dp_cmd_start( bt_pf_cmd_msg_type *cmd_ptr )
         // Close the stream and open it again.
         BT_MSG_DEBUG("BT PF A2DP CMD TX: close -- attempt to reopen",0,0,0);
         bt_pf_a2dp_close_stream( BT_PF_A2DP_SS_CLOSE_FRM_OPEN, 
-			                     BT_CS_PF_A2DP_ERR_ATTEMPTED_TO_CLOSE_AND_OPEN_STREAM );
+                                 BT_CS_PF_A2DP_ERR_ATTEMPTED_TO_CLOSE_AND_OPEN_STREAM );
         /* make sure we try again */
         bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_ATTEMPT_TO_STREAM );
       }
@@ -3153,33 +3160,33 @@ LOCAL void bt_pf_a2dp_cmd_start( bt_pf_cmd_msg_type *cmd_ptr )
   {
     bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_ATTEMPT_TO_STREAM );
 
-    // A set config has already been sent, make sure it's the
-    // right one:
-    if( config_changed != FALSE )
-    {
+  // A set config has already been sent, make sure it's the
+  // right one:
+  if( config_changed != FALSE )
+  {
       if(bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_RECONFIG_SENT)
       {
         bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_RECONFIGURING;
       }
       else
-      {
+    {
         bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_CONFIGURING;
-      }
     }
   }
+}
   else if ( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_CONFIGURING )
   {
     if( BT_PF_A2DP_SBC_DATA_IS_VALID(bt_pf_a2dp_unit.pending_sbc_config) )
-    {
-      bt_pf_avdtp_cap_type cap[2];
+{
+  bt_pf_avdtp_cap_type cap[2];
    
-      cap[0].type                          = BT_PF_AVDTP_CAP_MEDIA_TRANSPORT;
-      cap[0].data.generic_data.data        = NULL;
-      cap[0].data.generic_data.data_len    = 0;
+    cap[0].type                          = BT_PF_AVDTP_CAP_MEDIA_TRANSPORT;
+    cap[0].data.generic_data.data        = NULL;
+    cap[0].data.generic_data.data_len    = 0;
    
-      cap[1].type = BT_PF_AVDTP_CAP_CODEC;
-      cap[1].data.codec_data.media_type = BT_PF_AVDTP_MEDIA_TYPE_AUDIO;
-      cap[1].data.codec_data.codec_type = BT_PF_AVDTP_CODEC_SBC;
+    cap[1].type = BT_PF_AVDTP_CAP_CODEC;
+    cap[1].data.codec_data.media_type = BT_PF_AVDTP_MEDIA_TYPE_AUDIO;
+    cap[1].data.codec_data.codec_type = BT_PF_AVDTP_CODEC_SBC;
       cap[1].data.codec_data.data.sbc_data = bt_pf_a2dp_unit.pending_sbc_config;
    
       BT_MSG_DEBUG( "BT PF A2DP CMD TX: set config, seid %x",
@@ -3189,30 +3196,30 @@ LOCAL void bt_pf_a2dp_cmd_start( bt_pf_cmd_msg_type *cmd_ptr )
                                   &bt_pf_a2dp_unit.bd_addr,
                                   bt_pf_a2dp_unit.current_seid,
                                   bt_pf_a2dp_unit.local_seid,
-                                  cap,
-                                  2,
-                                  NULL,
+                                cap,
+                                2,
+                                NULL,
                                   &bt_pf_a2dp_unit.handle);
-    }
+  }
     bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_ATTEMPT_TO_STREAM );
   }
   else if( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_RECONFIGURING )
-  {
+{
     // Need to renegotiate stream parameters.
     bt_pf_avdtp_cap_type cap[1];
-    
+      
     if( BT_PF_A2DP_SBC_DATA_IS_VALID(bt_pf_a2dp_unit.pending_sbc_config) )
-    {
+  {
       bt_pf_a2dp_unit.role     = BT_PF_A2DP_ROLE_INT;
       bt_pf_a2dp_unit.state    = BT_PF_A2DP_SS_RECONFIG_SENT;
       bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_ATTEMPT_TO_STREAM );
       rex_clr_timer( &bt_pf_a2dp_unit.acp_timer );
-      
+
       cap[0].type                          = BT_PF_AVDTP_CAP_CODEC;
       cap[0].data.codec_data.media_type    = BT_PF_AVDTP_MEDIA_TYPE_AUDIO;
       cap[0].data.codec_data.codec_type    = BT_PF_AVDTP_CODEC_SBC;
       cap[0].data.codec_data.data.sbc_data = bt_pf_a2dp_unit.pending_sbc_config;
-      
+
       BT_MSG_DEBUG("BT PF A2DP CMD TX: reconfigure",0,0,0);
       bt_cmd_pf_avdtp_reconfigure( bt_pf_a2dp_unit.int_id,
                                    bt_pf_a2dp_unit.handle,
@@ -3229,26 +3236,26 @@ LOCAL void bt_pf_a2dp_cmd_start( bt_pf_cmd_msg_type *cmd_ptr )
            bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_ABORTING )
   {
     bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_ATTEMPT_TO_STREAM );
-  }
+    }
   else if ( BT_BD_ADDRS_EQUAL( &bt_pf_a2dp_unit.bd_addr, 
-                               &bt_pf_a2dp_null_bd_addr ) == FALSE )
-  {
-    bt_pf_cmd_msg_type cmd;
+                            &bt_pf_a2dp_null_bd_addr ) == FALSE )
+    {
+      bt_pf_cmd_msg_type cmd;
     cmd.cmd_msg.cmd_a2dp_connect.bd_addr = bt_pf_a2dp_unit.bd_addr;
     if( BT_PF_A2DP_SBC_DATA_IS_VALID(bt_pf_a2dp_unit.pending_sbc_config) )
-    {
+      {
       bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_ATTEMPT_TO_STREAM );
-    }
+      }
     bt_pf_a2dp_cmd_connect( &cmd );
-  }
-  else
-  {
-    BT_MSG_HIGH("BT PF A2DP: Start cmd in invalid state, ss %x sss %x",
+    }
+    else
+    {
+      BT_MSG_HIGH("BT PF A2DP: Start cmd in invalid state, ss %x sss %x",
                 bt_pf_a2dp_unit.state,
                 bt_pf_a2dp_unit.substate, 0);
-    cmd_ptr->cmd_hdr.cmd_status = BT_CS_PF_INVALID_STATE;
+      cmd_ptr->cmd_hdr.cmd_status = BT_CS_PF_INVALID_STATE;
+    }
   }
-}
 
 /*===========================================================================
 
@@ -3279,42 +3286,42 @@ LOCAL void bt_pf_a2dp_cmd_suspend( bt_pf_cmd_msg_type *cmd_ptr )
       bt_pf_a2dp_unit.state = BT_PF_A2DP_SS_SUSPENDING;
       bt_cmd_pf_avdtp_suspend( bt_pf_a2dp_unit.int_id,
                                bt_pf_a2dp_unit.handle,
-                               NULL );
-    }
-    else
-    {
-      // close on end
+                                 NULL );
+      }
+      else
+      {
+        // close on end
       bt_pf_a2dp_close_stream( BT_PF_A2DP_SS_CLOSE_FRM_STREAMING, 
-			                   BT_CS_PF_A2DP_ERR_ATTEMPTED_TO_CLOSE_AND_OPEN_STREAM );
+                                 BT_CS_PF_A2DP_ERR_ATTEMPTED_TO_CLOSE_AND_OPEN_STREAM );
+      }
     }
-  }
   else if( bt_pf_a2dp_unit.state    == BT_PF_A2DP_SS_CLOSE_FRM_OPEN      ||
            bt_pf_a2dp_unit.state    == BT_PF_A2DP_SS_CLOSE_FRM_STREAMING ||
            bt_pf_a2dp_unit.state    == BT_PF_A2DP_SS_START_SENT          ||
            bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_STREAM  ||
            bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_RECONFIGURING      ||
            bt_pf_a2dp_unit.substate == BT_PF_A2DP_SSS_ATTEMPT_TO_SUSPEND )
-  {
+    {
     if( bt_pf_a2dp_unit.substate != BT_PF_A2DP_SSS_ATTEMPT_TO_DISCONNECT &&
         bt_pf_a2dp_unit.substate != BT_PF_A2DP_SSS_ATTEMPT_TO_DISABLE )
-    {
+      {
       bt_pf_a2dp_set_substate( BT_PF_A2DP_SSS_ATTEMPT_TO_SUSPEND );
+      }
     }
-  }
-  else
-  {
-    // Send a suspend event back to app which sent the suspend cmd.
-    bt_ev_msg_type event;
-    event.ev_hdr.bt_app_id              = cmd_ptr->cmd_hdr.app_id;
-    event.ev_hdr.ev_type                = BT_EV_PF_A2DP_SUSPEND;
-    event.ev_msg.ev_a2dp_suspend.origin = BT_PF_A2DP_EVENT_LOCAL_INIT;
+    else
+    {
+      // Send a suspend event back to app which sent the suspend cmd.
+      bt_ev_msg_type event;
+      event.ev_hdr.bt_app_id              = cmd_ptr->cmd_hdr.app_id;
+      event.ev_hdr.ev_type                = BT_EV_PF_A2DP_SUSPEND;
+      event.ev_msg.ev_a2dp_suspend.origin = BT_PF_A2DP_EVENT_LOCAL_INIT;
     event.ev_msg.ev_a2dp_suspend.bd_addr = bt_pf_a2dp_unit.bd_addr;
 
     BT_MSG_DEBUG("BT PF A2DP TX EV: suspend. AppID: %x, origin: %x",
                  bt_pf_a2dp_unit.ext_id, BT_PF_A2DP_EVENT_LOCAL_INIT, 0);
-    bt_ec_send_event( &event );
+      bt_ec_send_event( &event );
+    }
   }
-}
 
 /*===========================================================================
 
@@ -3337,59 +3344,59 @@ LOCAL void bt_pf_a2dp_cmd_send_data( bt_pf_cmd_msg_type *cmd_ptr )
   bt_pf_cmd_msg_type bt_cmd;
 #endif /* BT_TEST_PYLD_FAST_TX */
 #ifdef FEATURE_BT_AVSYNC
-  bt_pf_a2dp_frame_handle_type  *a2dp_frame_handle=NULL;
+  bt_pf_a2dp_frame_handle_type *a2dp_frame_handle=NULL;
 #endif /* FEATURE_BT_AVSYNC */
 
   rex_enter_crit_sect( &bt_pf_a2dp_unit.audio_crit_sect );
 
   if( bt_pf_a2dp_unit.state == BT_PF_A2DP_SS_STREAMING )
   {
-    unsigned char a2dp_header;
+  unsigned char a2dp_header;
 
     rex_clr_timer( &bt_pf_a2dp_unit.streaming_timer );
 
-    a2dp_header =
-      cmd->num_frames << BT_PF_A2DP_HDR_NUM_FRAMES_OFFSET ;
+  a2dp_header =
+    cmd->num_frames << BT_PF_A2DP_HDR_NUM_FRAMES_OFFSET ;
 
-    dsm_pushdown_packed( &orig_ptr,
-                         &a2dp_header,
-                         1,
-                         DSM_DS_SMALL_ITEM_POOL );
+  dsm_pushdown_packed( &orig_ptr,
+                       &a2dp_header,
+                       1,
+                       DSM_DS_SMALL_ITEM_POOL );
 
 #ifdef FEATURE_BT_AVSYNC
-    if(cmd->last_frame)
-    {
-      a2dp_frame_handle = q_get(&a2dp_free_frame_handle_q);
+  if(cmd->last_frame)
+  {
+    a2dp_frame_handle = q_get(&a2dp_free_frame_handle_q);
 #ifdef FEATURE_BT_AVSYNC_DEBUG
       BT_MSG_DEBUG("BT PF A2DP: AVS Requesting Ack for seq_num=0x%x",
                     cmd->seq_num + cmd->num_frames, 0, 0);
 #endif
-      if(a2dp_frame_handle != NULL)
-      {
+    if(a2dp_frame_handle != NULL)
+    {
         a2dp_frame_handle->a2dp_last_seq = cmd->seq_num + cmd->num_frames;
         a2dp_frame_handle->last_frame = cmd->last_frame;
 #ifdef FEATURE_BT_AVSYNC_DEBUG
-        /* Store the time of Transmission */
-        clk_read_ms(a2dp_frame_handle->sent_timestamp);
+      /* Store the time of Transmission */
+      clk_read_ms(a2dp_frame_handle->sent_timestamp);
 #endif
-        q_put(&a2dp_frame_handle_q, &a2dp_frame_handle->link);
-      }
-      else
-      {
-        BT_ERR("BT PF A2DP: Ran out of free a2dp frame handles", 0, 0, 0);
-      }
+      q_put(&a2dp_frame_handle_q, &a2dp_frame_handle->link);
     }
     else
     {
+        BT_ERR("BT PF A2DP: Ran out of free a2dp frame handles", 0, 0, 0);
+    }
+  }
+    else
+  {
     /* Only ask for tx cfm for the required frames that needs to be 
      * acked to AVS, for the others we still need to pass some 
      * non NULL value so that it is identified as a flushable 
      * packet
      */
-      a2dp_frame_handle = BT_INVALID_ADDRESS;
-    }
+    a2dp_frame_handle = BT_INVALID_ADDRESS;
+  }
 #endif /* FEATURE_BT_AVSYNC */
-
+  
 #ifdef BT_TEST_PYLD_FAST_TX
     bt_cmd.cmd_hdr.cmd_type = BT_PF_CMD_AVDTP_SEND_DATA;
     bt_cmd.cmd_hdr.app_id   = bt_pf_a2dp_unit.int_id;
@@ -3606,7 +3613,7 @@ void bt_pf_a2dp_sbc_init_cb( const void *data, snd_status_type status )
 {
   if( status != SND_SUCCESS )
   {
-    BT_ERR("BT PF A2DP RX CB: sbc init status %x", status, 0, 0);
+    BT_ERR("BT PF A2DP RX CB:sbc init status %x", status, 0, 0);
   }
 }
 
@@ -3774,9 +3781,9 @@ void bt_pf_a2dp_sbc_data_cb( uint8*     data,
     {
       if( bt_dsm_pushdown_tail( &bt_pf_a2dp_unit.dsm_ptr,
                                 data, frame_len,
-                                DSM_DS_SMALL_ITEM_POOL )
-          == FALSE )
-      {
+                              DSM_DS_SMALL_ITEM_POOL )
+        == FALSE )
+    {
         BT_ERR("BT PF A2DP: out of space in DSMs",0,0,0);
         dsm_free_packet( &bt_pf_a2dp_unit.dsm_ptr );
       }
@@ -3941,15 +3948,15 @@ void bt_pf_a2dp_sbc_data_cb( uint8*     data,
     last_frame_len = 0;
     bytes_sent += bytes_buffered;
     bytes_buffered = 0;
-  }
+    }
   // Ahead of time, make sure there's space on the BT watermark
   dsm_pushdown_tail( &dsm_ptr, data, frame_len, DSM_DS_LARGE_ITEM_POOL );
   bytes_buffered += frame_len;
   last_frame_len = frame_len;
   num_frames ++;
 
-  if( last_frame )
-  {
+    if(last_frame)
+    {
     start_of_run = TRUE;
     if( seq_num - max_hold_buf_cnt > MAX_HOLD_BUF_CNT )
     {
@@ -4028,7 +4035,7 @@ extern void bt_pf_a2dp_init( void )
   {
     q_link_type   *link_item;
     link_item = q_link(&a2dp_free_frame_handle[i], 
-                &a2dp_free_frame_handle[i].link);
+                       &a2dp_free_frame_handle[i].link);
     q_put(&a2dp_free_frame_handle_q, link_item);
   }
 #endif /* FEATURE_BT_AVSYNC */

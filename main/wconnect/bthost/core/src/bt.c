@@ -1483,6 +1483,7 @@ LOCAL void bt_read_my_bd_addr_from_nv
   }
   else
   {
+#ifdef CUST_EDITION  
     //Add By zzg 2011_02_28
     //Read the first 32bytes of the ESN to fill the my_bd_addr.....
   	nv_stat_enum_type status;
@@ -1510,7 +1511,9 @@ LOCAL void bt_read_my_bd_addr_from_nv
    (void) rex_wait(BT_WAIT_SIG);
    (void) rex_clr_sigs(rex_self(), BT_WAIT_SIG);
     */
-       
+#else
+    const bt_bd_addr_type bd_addr = { 0x34, 0x12, 0x78, 0x56, 0xbc, 0x9a };
+#endif
     BT_ERR( "BT: Unable to read MY_BD_ADDR from NV", 0, 0, 0 );
     bt_cmd_dc_set_bd_addr( ( bt_bd_addr_type* ) &bd_addr );
   }
@@ -1842,7 +1845,6 @@ LOCAL void bt_init_efs_params
   void
 )
 {
-  MSG_FATAL("***zzg bt_init_efs_params bt_efs_params 1***", 0, 0, 0);
 
   bt_efs_params.version          = BT_EFS_PARAMS_FILE_VER;
   bt_efs_params.ag_ad_mic_gain   = BT_AG_DEFAULT_HS_VOLUME_LEVEL;
@@ -1869,10 +1871,10 @@ LOCAL void bt_init_efs_params
 
 #ifdef BT_SWDEV_2_1_EIR
   /* Use the first 'n' characeters of the default name as short name */
-  
   BT_STRCPY( (char *)bt_efs_params.bt_short_name,
              bt_efs_params.bt_name, 
              (BT_MAX_EIR_NAME_LEN + 1) );
+
   bt_efs_params.eir_manuf_data_size = 0;
 #endif /* BT_SWDEV_2_1_EIR */
     
@@ -2475,7 +2477,7 @@ LOCAL void bt_process_command
       }
       else
       {
-        //BT_MSG_HIGH( "BT: Re-Queuing HC commands until BTS init ", 0, 0, 0 );
+        BT_MSG_HIGH( "BT: Re-Queuing HC commands until BTS init ", 0, 0, 0 );
         bt_cmd_ptr->cmd_hdr.cmd_status = BT_CS_GN_RETRY_CMD_LATER;
       }
 
@@ -2552,10 +2554,10 @@ LOCAL void bt_process_requeued_commands
             cmd_ptr->cmd_hdr.cmd_state = BT_CST_QUEUED;
             q_put( &bt_cmd_re_q, &cmd_ptr->cmd_hdr.link );
 
-            //BT_MSG_DEBUG( "BT: Cmd ReQd Cnt %x Typ %x AID %x",
-            //              cmd_ptr->cmd_hdr.cmd_retries,
-            //              cmd_ptr->cmd_hdr.cmd_type,
-            //              cmd_ptr->cmd_hdr.bt_app_id );
+            BT_MSG_DEBUG( "BT: Cmd ReQd Cnt %x Typ %x AID %x",
+                          cmd_ptr->cmd_hdr.cmd_retries,
+                          cmd_ptr->cmd_hdr.cmd_type,
+                          cmd_ptr->cmd_hdr.bt_app_id );
           }
           else
           {

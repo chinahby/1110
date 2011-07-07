@@ -10,7 +10,7 @@ PUBLIC CLASSES:  Not Applicable
 
 INITIALIZATION AND SEQUENCING REQUIREMENTS:  N/A
 
-      Copyright ?2004-2005 QUALCOMM Incorporated.
+      Copyright © 2004-2005 QUALCOMM Incorporated.
                All Rights Reserved.
             QUALCOMM Proprietary/GTDR
 ===========================================================================*/
@@ -346,7 +346,6 @@ int OEMBTExtNotifier_DoNotify( IBTExtNotifier*     pParent,
 
 AEEBTError OEMBTExt_MapCmdStatus( bt_cmd_status_type status )
 {
-  
   switch ( status )
   {
   case BT_CS_GN_SUCCESS:

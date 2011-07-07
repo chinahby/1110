@@ -419,7 +419,6 @@ static void PushReadCfm(OI_OPP_HANDLE handle,
      */
     client->ofsCfmPending = FALSE;
 
-
     /*
      * Check for disconnect that occurred during wait for this confirm.
      */
@@ -477,27 +476,20 @@ static void ClientPutCfm(OI_OBEXCLI_CONNECTION_HANDLE connectionId,
              * Set pending first because the confirm may be called from within the OFS function 
              */
             client->ofsCfmPending = TRUE;
-
             
             status = client->objops->Read(client->handle, client->maxReadSize, PushReadCfm, (OI_OPP_CONNECTION) client->id);
-
-			
-            if (status == OI_STATUS_END_OF_FILE) 
-			{
+            if (status == OI_STATUS_END_OF_FILE) {
                 PushReadCfm(client->handle, NULL, 0, status, (OI_OPP_CONNECTION) client->id);
                 status = OI_OK;
             }
-			
-            if (!OI_SUCCESS(status)) 
-			{
+            if (!OI_SUCCESS(status)) {
                 /* 
                  * If OFS returns error, there is no pending confirm callback 
                  */
                 client->ofsCfmPending = FALSE;
             }
         }
-        if (!OI_SUCCESS(status)) 
-		{
+        if (!OI_SUCCESS(status)) {
             /*
              * Let obex know the put operation terminated with an error.
              */
@@ -525,14 +517,12 @@ static void PushOpenCfm(OI_OPP_HANDLE handle,
     OI_OBEX_HEADER hdrs[3];
     OI_OBEX_HEADER_LIST hdrList;
 
-    if (!OI_INIT_FLAG_VALUE(OPP_CLI) || (client->state != CLIENT_STATE_PUSH_PENDING) || !client->ofsCfmPending) 
-	{
+    if (!OI_INIT_FLAG_VALUE(OPP_CLI) || (client->state != CLIENT_STATE_PUSH_PENDING) || !client->ofsCfmPending) {
         OI_LOG_ERROR(("Push open confirm called at wrong time"));
         return;
     }
 
     OI_DBGPRINT2(("PushOpenCfm %!", status));
-
     
     /* 
      * Confirm is no longer pending 
@@ -542,10 +532,8 @@ static void PushOpenCfm(OI_OPP_HANDLE handle,
     /*
      * Check for disconnect that occurred during wait for this confirm.
      */
-    if (client->disconnected) 
-	{
-        if (OI_SUCCESS(status)) 
-		{
+    if (client->disconnected) {
+        if (OI_SUCCESS(status)) {
             /* 
              * OFS reported a successful open, set state to PUSHING to trigger close() callback.
              */
@@ -559,8 +547,7 @@ static void PushOpenCfm(OI_OPP_HANDLE handle,
     hdrList.count = 0;
 
 
-    if (OI_SUCCESS(status)) 
-	{
+    if (OI_SUCCESS(status)) {
         setState(CLIENT_STATE_PUSHING);
         client->handle = handle;
         /*
@@ -575,11 +562,9 @@ static void PushOpenCfm(OI_OPP_HANDLE handle,
         /*
          * Type header is optional
          */
-        if (type != NULL) 
-		{
+        if (type != NULL) {
             len = OI_StrLen(type);
-            if ( len > 0 )
-			{
+            if ( len > 0 ){
                 hdrs[hdrList.count].id = OI_OBEX_HDR_TYPE;
                 hdrs[hdrList.count].val.type.data = (OI_BYTE*) type;
                 hdrs[hdrList.count].val.type.len = len + 1; /* include nul termination */
@@ -1014,8 +999,6 @@ OI_STATUS OI_OPPClient_Abort(OI_OPP_CLIENT_CONNECTION_HANDLE connectionId)
      * To abort immediately, without waiting for a put/get response from the
      * server, call the put/get command immediately after the abort command.
      */
-
-	
     switch (snapState) {
         case CLIENT_STATE_PUSHING:
             (void) OI_OBEXCLI_Put(client->id, NULL, ClientPutCfm, OI_OK);

@@ -144,19 +144,15 @@ static OI_STATUS AppendHeader(OBEX_COMMON *common,
     OI_UINT16 pos;
     OI_UINT16 length = HeaderSize(header);
 
-
-    if (length == 0) 
-	{
+    if (length == 0) {
         return OI_STATUS_INVALID_PARAMETERS;
     }
     /*
      * Check the packet has room for this header. We will segment body and
      * end-of-body headers across multiple packets if necessary.
      */
-    if ((*pktLen + length) > common->maxSendPktLen) 
-	{
-        if (!OI_OBEX_IS_A_BODY_HEADER(header->id)) 
-		{
+    if ((*pktLen + length) > common->maxSendPktLen) {
+        if (!OI_OBEX_IS_A_BODY_HEADER(header->id)) {
             return OI_OBEX_PACKET_OVERFLOW;
         }
         OI_DBGPRINT(("Segmenting body header total=%d", length + *pktLen));
@@ -164,10 +160,8 @@ static OI_STATUS AppendHeader(OBEX_COMMON *common,
          * How much data will fit in this packet? 
          */
         length = common->maxSendPktLen - *pktLen;
-        if (length <= OI_OBEX_HEADER_PREFIX_LEN) 
-		{
+        if (length <= OI_OBEX_HEADER_PREFIX_LEN) {
             OI_DBGPRINT(("Segmenting body header - no room to send body this time"));
-			
             return OI_OK;
         }
         OI_DBGPRINT(("Segmenting size=%d", length));
@@ -182,26 +176,21 @@ static OI_STATUS AppendHeader(OBEX_COMMON *common,
 
     *pktLen += length;
 
-
-	
-    switch (OI_OBEX_HDR_KIND(hdrId)) 
-	{
+    switch (OI_OBEX_HDR_KIND(hdrId)) {
         case OI_OBEX_HDR_ID_UNICODE:
             /*
              * We want to preserve the byte order of the unicode string so we
              * have to allocate a buffer and copy the string over.
              */
             buf = OI_Malloc(length);
-            if (buf == NULL) 
-			{
+            if (buf == NULL) {
                 return OI_STATUS_OUT_OF_MEMORY;
             }
             ByteStream_Init(bs, buf, length);
             ByteStream_Open(bs, BYTESTREAM_WRITE);
             ByteStream_PutUINT8(bs, hdrId);
             ByteStream_PutUINT16(bs, length, OI_OBEX_BO);
-            for (i = 0; i < header->val.unicode.len; ++i) 
-			{
+            for (i = 0; i < header->val.unicode.len; ++i) {
                 ByteStream_PutUINT16(bs, header->val.unicode.str[i], OI_OBEX_BO);
             }
             /*
@@ -216,7 +205,6 @@ static OI_STATUS AppendHeader(OBEX_COMMON *common,
             /*
              * MBUF will free the buffer when it is no longer needed.
              */
-			
             status = OI_MBUF_Append(mbuf,
                                     ByteStream_GetDataPointer(bs),
                                     ByteStream_GetSize(bs),
@@ -227,9 +215,7 @@ static OI_STATUS AppendHeader(OBEX_COMMON *common,
             tmp[0] = hdrId;
             SetUINT16_BigEndian(&tmp[1], length);
             status = OI_MBUF_Append(mbuf, tmp, OI_OBEX_HEADER_PREFIX_LEN, MBUF_COPY);
-
-            if (OI_SUCCESS(status)) 
-			{
+            if (OI_SUCCESS(status)) {
                 status = OI_MBUF_Append(mbuf, header->val.byteseq.data, (OI_UINT16)(length - OI_OBEX_HEADER_PREFIX_LEN), MBUF_KEEP);
             }
             break;
@@ -246,7 +232,6 @@ static OI_STATUS AppendHeader(OBEX_COMMON *common,
         default:
             status = OI_FAIL;
     }
-
     return status;
 }
 
@@ -304,32 +289,22 @@ OI_STATUS OI_OBEXCOMMON_MarshalPacket(OBEX_COMMON *common,
      */
     mbuf = OI_MBUF_Alloc(cells);
     OI_DBGPRINT2(("Allocating MBUF %lx", mbuf));
-    if (mbuf == NULL) 
-	{
+    if (mbuf == NULL) {
         status = OI_STATUS_OUT_OF_MEMORY;
         goto ErrorExit;
     }
-	
-	
-    for (i = 0; i < hdrCount; ++i) 
-	{
+    for (i = 0; i < hdrCount; ++i) {
         status = AppendHeader(common, mbuf, &hdrs[i], &pktLen);
-        if (!OI_SUCCESS(status)) 
-		{
+        if (!OI_SUCCESS(status)) {
             goto ErrorExit;
         }
     }
-
-	
-    for (i = 0; i < hdrCount2; ++i) 
-	{
+    for (i = 0; i < hdrCount2; ++i) {
         status = AppendHeader(common, mbuf, &hdrList->list[i], &pktLen);
-        if (!OI_SUCCESS(status)) 
-		{
+        if (!OI_SUCCESS(status)) {
             goto ErrorExit;
         }
     }
-
 
     pos = ByteStream_GetPos(*pktHdr);
     ByteStream_SetPos(*pktHdr, 0);
@@ -351,16 +326,12 @@ OI_STATUS OI_OBEXCOMMON_MarshalPacket(OBEX_COMMON *common,
     ByteStream_SetPos(*pktHdr, pos);
     ByteStream_Close(*pktHdr);
 
-
-	
     status = OI_MBUF_Prepend(mbuf,
                              ByteStream_GetDataPointer(*pktHdr),
                              ByteStream_GetSize(*pktHdr),
                              MBUF_COPY);
 
-
-    if (!OI_SUCCESS(status)) 
-	{
+    if (!OI_SUCCESS(status)) {
         goto ErrorExit;
     }
 
@@ -370,18 +341,15 @@ OI_STATUS OI_OBEXCOMMON_MarshalPacket(OBEX_COMMON *common,
 
     common->mbuf = mbuf;
 
-	
     return OI_OK;
 
 ErrorExit:
 
     OI_DBGPRINT(("OBEXCOMMON_MarshalPacket error exit %!", status));
 
-    if (mbuf) 
-	{
+    if (mbuf) {
         OI_MBUF_Free(mbuf);
     }
-	
     return status;
 }
 

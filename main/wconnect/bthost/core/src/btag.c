@@ -21,12 +21,15 @@ Qualcomm Confidential and Proprietary
   This section contains comments describing changes made to the module.
   Notice that changes are listed in reverse chronological order.
 
-  $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btag.c#7 $ 
-  $DateTime: 2009/09/02 22:49:46 $
+  $Header: //source/qcom/qct/wconnect/bthost/core/rel/00.00.26/src/btag.c#10 $ 
+  $DateTime: 2009/11/20 18:39:15 $
   $Author: phuongn $
 
   when        who  what, where, why
   ----------  ---  -----------------------------------------------------------
+  2009-11-20   pn  Volume received from remote gets saved in AVS.
+  2009-10-15   co  Added AT+CLCC support in CDMA.
+  2009-09-24   pn  Added flow control to support sending large amount of data.
   2009-09-02   pn  Echoes remote speaker gain change not done by user app.
   2009-08-25   co  Added Emergency call support in AT+CLCC processing.
   2009-07-31   gb  Added support for FEATURE_IBT_DYNAMIC. 
@@ -826,13 +829,14 @@ LOCAL void    bt_ag_cancel_connect(void);
 /* Wait this amount of time, then assume waiting call has ended.
    This is added because there are no signals/events in 1X to alert AG when
    remote party hangs up the waiting call. */
-#define BT_AG_1X_CW_TIMEOUT (1000 * 60 * 30)
+#define BT_AG_1X_CW_TIMEOUT (1000 * 60) /* 1 minute should be safe enough*/
 #define CDMA_CW_B           0x0008
-#define ANSWER_CALL_B       0x0010
 #endif /* FEATURE_CDMA_800 || FEATURE_CDMA_1900 */
 #if (defined(FEATURE_WCDMA) || defined(FEATURE_GSM))
 #error code not present
 #endif /* FEATURE_WCDMA) || FEATURE_GSM */
+
+#define BT_AG_SEND_DATA_B      0x0100
 
 
 #ifdef FEATURE_BT_HFP_1_5
@@ -1121,6 +1125,8 @@ typedef struct
   sio_stream_id_type          sio_stream_id;
   sio_stream_id_type          sio_stream_id_hs;
   sio_stream_id_type          sio_stream_id_hf;
+  dsm_item_type**             cur_dsm_ptr_ptr;
+  dsm_item_type*              tx_dsm_ptr;
   dsm_watermark_type          tx_wm;
   dsm_watermark_type          rx_wm;
   q_type                      ev_q;
@@ -1393,6 +1399,8 @@ typedef struct
   uint8                 rx_param_count;
 
   boolean               enable_external_io;
+  boolean               respond_pending;
+  dsm_item_type*        tx_dsm_ptr;
   dsm_watermark_type*   rx_wm_ptr;
   dsm_watermark_type*   tx_wm_ptr;
   wm_cb_type            orig_tx_wm_ne_fptr;
@@ -1482,6 +1490,112 @@ void extapp_rx_hf_data_cb( void )
 
 ===========================================================================*/
 
+#if (defined(FEATURE_CDMA_800) || defined(FEATURE_CDMA_1900))
+
+/* the call_info_table lookup algorithm here inside this
+ * featurization is based on the fact that there are at
+ * most two calls can co-exist in CDMA (is this TRUE?).
+ */
+
+/*===========================================================================
+
+FUNCTION
+  bt_ag_call_info_table_update_waiting_call
+
+DESCRIPTION
+  update the CDMA waiting call entry in the call_info_table
+
+===========================================================================*/
+LOCAL void bt_ag_call_info_table_update_waiting_call
+(
+  boolean  call_is_ended  /* TRUE if waiting call ended */
+)
+{
+
+  /* call_info[ 1 ] holds the waiting call info */
+
+  if ( call_is_ended )
+  {
+    call_info_table.call_info[ 1 ].call_id = CM_CALL_ID_INVALID;
+    call_info_table.num_call_ids--;
+  }
+  else
+  {
+    /* waiting call answered */
+    call_info_table.call_info[ 1 ].call_state = CM_CALL_STATE_CONV;
+  }
+
+}
+
+
+/*===========================================================================
+
+FUNCTION
+  bt_ag_call_info_table_update_callheld
+
+DESCRIPTION
+  update the CDMA call IDs in the call_info_table when callheld set to
+  BT_AG_CALL_HELD_ACTIVE.
+
+===========================================================================*/
+LOCAL void bt_ag_call_info_table_update_callheld
+(
+  const cm_mm_call_info_s_type*  call_info_ptr  /* active call info */
+)
+{
+
+  if ( call_info_table.call_info[ 0 ].call_id !=
+         call_info_ptr->call_id )
+  {
+    /* active-held call swap */
+
+    call_info_table.call_info[ 0 ].call_id =
+      call_info_ptr->call_id;
+    call_info_table.call_info[ 1 ].call_id =
+      ++call_info_table.call_info[ 1 ].call_id % CM_CALL_ID_MAX;
+  }
+  else
+  {
+    /* waiting call answered.
+     * call_info[ 1 ] holds the waiting call info.
+     */
+
+    call_info_table.call_info[ 1 ].call_id =
+      call_info_ptr->call_id;
+    call_info_table.call_info[ 0 ].call_id =
+      ++call_info_table.call_info[ 0 ].call_id % CM_CALL_ID_MAX;
+  }
+
+}
+
+
+/*===========================================================================
+
+FUNCTION
+  bt_ag_call_info_table_update_2nd_ended
+
+DESCRIPTION
+  clear the 2nd CDMA call entry in the call_info_table
+
+===========================================================================*/
+LOCAL void bt_ag_call_info_table_update_2nd_ended
+(
+  void
+)
+{
+
+  /* the 2nd call (MO) was ended, revise the call id of the
+   * 1st call back to the real one.
+   */
+  call_info_table.call_info[ 0 ].call_id =
+    call_info_table.call_info[ 1 ].call_id;
+  call_info_table.call_info[ 1 ].call_id = CM_CALL_ID_INVALID;
+  call_info_table.num_call_ids--;
+
+}
+#endif /* FEATURE_CDMA_800 || FEATURE_CDMA_1900 */
+
+
 /*===========================================================================
 
 FUNCTION
@@ -1496,6 +1610,7 @@ LOCAL void bt_ag_call_info_table_cleanup
   void
 )
 {
+
   uint8 seq_num = 0;
   
   while ( seq_num < CM_CALL_ID_MAX )
@@ -1505,6 +1620,7 @@ LOCAL void bt_ag_call_info_table_cleanup
   }
 
   call_info_table.num_call_ids = 0;
+
 }
 
 
@@ -1524,51 +1640,109 @@ LOCAL void bt_ag_update_call_info_table
   bt_ag_cm_call_ev_type*  ev_ptr
 )
 {
+
   uint8 seq_num   = 0;
   uint8 l_seq_num = CM_CALL_ID_MAX; /* lowest available seq_num */
 
-  BT_MSG_DEBUG( "BT AG: Rcvd call info, id=%x st=%d held=%d", 
-                ev_ptr->call_info.call_id, ev_ptr->call_info.call_state,
-                HF_DATA.call_held_state );
+  BT_MSG_DEBUG( "BT AG: Rcvd call info, ev=%x id=%x st=%d held=%d",
+                ev_ptr->call_event,
+                ev_ptr->call_info.call_id,
+                ev_ptr->call_info.call_state );
 
-  switch ( ev_ptr->call_event )
+  if ( (ev_ptr->call_event == CM_CALL_EVENT_INFO) ||
+       (ev_ptr->call_event == CM_CALL_EVENT_ORIG) ||
+       (ev_ptr->call_event == CM_CALL_EVENT_INCOM) )
   {
-    case CM_CALL_EVENT_INFO:
-    case CM_CALL_EVENT_ORIG:
-    case CM_CALL_EVENT_INCOM:
-    {
-      /* if the call_info table is not full */
-      if ( call_info_table.num_call_ids < CM_CALL_ID_MAX )
-      {
-        /* checks if call info has been stored */
-        while ( seq_num < CM_CALL_ID_MAX )
-        {
-          /* store the lowest available seq_num */
-          if ( (l_seq_num == CM_CALL_ID_MAX) &&
-               (call_info_table.call_info[seq_num].call_id ==
-                  CM_CALL_ID_INVALID) )
-          {
-            l_seq_num = seq_num;
-          }
+    /* new call, add an entry for it */
 
-          if ( call_info_table.call_info[seq_num].call_id !=
-                 ev_ptr->call_info.call_id )
-          {
-            seq_num++;
-          }
-          else
-          {
-            BT_MSG_SIG ( "BT AG: Call info has been stored! id=%x",
-                           ev_ptr->call_info.call_id, 0, 0 );
-            break;
-          }
+    /* if the call_info table is not full */
+    if ( call_info_table.num_call_ids < CM_CALL_ID_MAX )
+    {
+      /* checks if call info has been stored */
+      while ( seq_num < CM_CALL_ID_MAX )
+      {
+        /* store the lowest available seq_num */
+        if ( (l_seq_num == CM_CALL_ID_MAX) &&
+             (call_info_table.call_info[seq_num].call_id ==
+                CM_CALL_ID_INVALID) )
+        {
+          l_seq_num = seq_num;
         }
 
-        if ( (seq_num == CM_CALL_ID_MAX) &&
-             (l_seq_num < CM_CALL_ID_MAX) ) /* Added to fix lint errors */
+        if ( call_info_table.call_info[seq_num].call_id !=
+               ev_ptr->call_info.call_id )
         {
-          /* Copy passed data to local variable */
-          memcpy( (void*)&call_info_table.call_info[l_seq_num],
+          seq_num++;
+        }
+        else
+        {
+          BT_MSG_SIG ( "BT AG: Call info has been stored! id=%x",
+                         ev_ptr->call_info.call_id, 0, 0 );
+          break;
+        }
+      }
+
+      if ( (seq_num == CM_CALL_ID_MAX) &&
+           (l_seq_num < CM_CALL_ID_MAX) ) /* Added to fix lint errors */
+      {
+        /* Copy passed data to local variable */
+        memcpy( (void*)&call_info_table.call_info[l_seq_num],
+                (void*)&ev_ptr->call_info,
+                sizeof( cm_mm_call_info_s_type ) );
+
+        call_info_table.num_call_ids++;
+
+        BT_MSG_HIGH( "BT AG: Updated call info, idx|id=0x%04x st=%d held=%d",
+                     ((uint16)((l_seq_num + 1) << 8) | 
+                      call_info_table.call_info[l_seq_num].call_id),                
+                     call_info_table.call_info[l_seq_num].call_state,
+                     HF_DATA.call_held_state );
+      }
+    }
+    else
+    {
+      MSG_ERROR( "BT AG: Call info table is full! cNo=%d",
+                 call_info_table.num_call_ids, 0, 0 );
+    }
+  }
+  else
+  {
+    /* call info entry should exist already */
+
+    /* find the corresponding entry for the call */
+    while ( (seq_num < CM_CALL_ID_MAX) &&
+            (call_info_table.call_info[seq_num].call_id !=
+             ev_ptr->call_info.call_id) )
+    {
+      seq_num++;
+    }
+
+    if ( seq_num < CM_CALL_ID_MAX )
+    {
+      /* may be able to optimize the code below to get rid
+       * of the duplicated check of the call_event.
+       */
+      if ( ev_ptr->call_event == CM_CALL_EVENT_END )
+      {
+        call_info_table.call_info[seq_num].call_id = CM_CALL_ID_INVALID;
+        call_info_table.num_call_ids--;
+      }
+      else if ( ev_ptr->call_event == CM_CALL_EVENT_CONNECT )
+      {
+#if (defined(FEATURE_CDMA_800) || defined(FEATURE_CDMA_1900))
+        if ( call_info_table.call_info[seq_num].call_state ==
+               CM_CALL_STATE_CONV )
+        {
+          /* this is the 2nd call (MO).
+           * find another entry and copy passed data
+           * to local variables.
+           */
+          call_info_table.call_info[seq_num].call_id =
+            ++call_info_table.call_info[seq_num].call_id % CM_CALL_ID_MAX;
+
+          seq_num = ( seq_num + 1 ) % CM_CALL_ID_MAX;
+
+          memcpy( (void*)&call_info_table.call_info[seq_num],
                   (void*)&ev_ptr->call_info,
                   sizeof( cm_mm_call_info_s_type ) );
 
@@ -1580,62 +1754,40 @@ LOCAL void bt_ag_update_call_info_table
                        call_info_table.call_info[l_seq_num].call_state,
                        HF_DATA.call_held_state );
         }
-      }
-      else
-      {
-        MSG_ERROR( "BT AG: Call info table is full! cNo=%d",
-                   call_info_table.num_call_ids, 0, 0 );
-      }
-      break;
-    }
-    case CM_CALL_EVENT_END:
-    case CM_CALL_EVENT_CONNECT:
-    case CM_CALL_EVENT_PROGRESS_INFO_IND:
-    {
-      while ( (seq_num < CM_CALL_ID_MAX) &&
-              (call_info_table.call_info[seq_num].call_id !=
-               ev_ptr->call_info.call_id) )
-      {
-        seq_num++;
-      }
-
-      if ( seq_num < CM_CALL_ID_MAX )
-      {
-        if ( ev_ptr->call_event == CM_CALL_EVENT_END )
-        {
-          call_info_table.call_info[seq_num].call_id = CM_CALL_ID_INVALID;
-          call_info_table.num_call_ids--;
-        }
-        else if ( ev_ptr->call_event == CM_CALL_EVENT_CONNECT )
+        else
+#endif /* FEATURE_CDMA_800 || FEATURE_CDMA_1900 */
         {
           call_info_table.call_info[seq_num].call_state =
             CM_CALL_STATE_CONV;
         }
-        else if ( call_info_table.call_info[seq_num].call_state ==
-                  CM_CALL_STATE_ORIG )
-        {
-          call_info_table.call_info[seq_num].call_state =
-            CM_CALL_STATE_CC_IN_PROGRESS;
-        }
-
-        BT_MSG_HIGH( "BT AG: Updated call info, idx|id=0x%04x st=%d held=%d",
-                     ((uint16)((seq_num + 1) << 8) | 
-                      call_info_table.call_info[seq_num].call_id),                
-                     call_info_table.call_info[seq_num].call_state,
-                     HF_DATA.call_held_state );
       }
-      else
+#if (defined(FEATURE_CDMA_800) || defined(FEATURE_CDMA_1900))
+      else if ( ev_ptr->call_event == CM_CALL_EVENT_CALLER_ID )
       {
-        MSG_ERROR ("BT AG: Call id %x NOT found!", ev_ptr->call_info.call_id, 0, 0);
+        /* get the caller ID for the CDMA call */
+        call_info_table.call_info[seq_num].num = ev_ptr->call_info.num;
       }
-      break;
+#endif /* FEATURE_CDMA_800 || FEATURE_CDMA_1900 */
+      /* must be (ev_ptr->call_event == CM_CALL_EVENT_PROGRESS_INFO_IND) */
+      else if ( call_info_table.call_info[seq_num].call_state ==
+                CM_CALL_STATE_ORIG )
+      {
+        call_info_table.call_info[seq_num].call_state =
+          CM_CALL_STATE_CC_IN_PROGRESS;
+      }
+
+      BT_MSG_HIGH( "BT AG: Updated call info, idx|id=0x%04x st=%d held=%d",
+                   ((uint16)((seq_num + 1) << 8) | 
+                    call_info_table.call_info[seq_num].call_id),                
+                   call_info_table.call_info[seq_num].call_state,
+                   HF_DATA.call_held_state );
     }
-    default:
+    else
     {
-      MSG_ERROR ("BT AG: Unanticipated event %d", ev_ptr->call_event, 0, 0);
-      break;
+      MSG_ERROR ("BT AG: Call id %x NOT found!", ev_ptr->call_info.call_id, 0, 0);
     }
   }
+
 }
 
 
@@ -1653,10 +1805,7 @@ LOCAL boolean bt_ag_ok_to_send
   void
 )
 {
-  if ( ((bt_ag.state == BT_AGS_CONNECTED) ||
-        (bt_ag.state == BT_AGS_AUDIO_CONNECTING) ||
-        (bt_ag.state == BT_AGS_AUDIO_DISCONNECTING) ||
-        (bt_ag.state == BT_AGS_AUDIO_CONNECTED)) &&
+  if ( (bt_ag.state > BT_AGS_OPEN) && (bt_ag.state < BT_AGS_CLOSING) &&
        (bt_ag.tx_wm_enabled == TRUE) )
   {
     return TRUE;
@@ -1682,6 +1831,7 @@ LOCAL void bt_ag_initialize_external_cmd_io
   bt_agcpe.enable_external_io   = FALSE;
   bt_agcpe.rx_wm_ptr            = NULL;
   bt_agcpe.tx_wm_ptr            = NULL;
+  bt_agcpe.tx_dsm_ptr           = NULL;
   bt_agcpe.int_cmd_off_mask     = BT_AG_IC_NONE_M;
 
 #if defined ( FEATURE_IBT )  ||  defined ( FEATURE_IBT_DYNAMIC )
@@ -1709,7 +1859,11 @@ LOCAL void bt_ag_disable_external_cmd_io
   BT_MSG_DEBUG( "BT AG: ATCMD Disable external parsing.", 0, 0, 0 );
 
   bt_agcpe.enable_external_io = FALSE;
+  bt_agcpe.respond_pending    = FALSE;
   bt_agcpe.int_cmd_off_mask   = BT_AG_IC_NONE_M;
+
+  bt_ag.cur_dsm_ptr_ptr       = &bt_ag.tx_dsm_ptr;
+  dsm_free_packet( &bt_agcpe.tx_dsm_ptr );
 
   bt_agcpe.rx_wm_ptr = NULL;
   bt_agcpe.tx_wm_ptr = NULL;
@@ -1811,6 +1965,21 @@ LOCAL void bt_ag_cpe_reset_engine
 
 }
 
+/*===========================================================================
+
+FUNCTION
+  bt_ag_send_volume_to_snd_task
+
+DESCRIPTION
+  Updates AVS with new volume setting.
+
+===========================================================================*/
+LOCAL void bt_ag_send_volume_to_snd_task( uint8 volume )
+{
+#if defined(FEATURE_BT_DEVICE_VOLUME_CONTROL)
+#error code not present
+#endif /* FEATURE_BT_DEVICE_VOLUME_CONTROL */
+}
 
 /*===========================================================================
 
@@ -2344,6 +2513,7 @@ LOCAL void bt_ag_close_sio
   
   dsm_empty_queue( &bt_ag.tx_wm );
   dsm_empty_queue( &bt_ag.rx_wm );
+  dsm_free_packet( &bt_ag.tx_dsm_ptr );
 
   bt_ag_close_hs_stream();
   bt_ag_close_hf_stream();
@@ -3136,6 +3306,104 @@ LOCAL void bt_ag_build_chld_resp_str
   }
 }
 
+/*===========================================================================
+
+FUNCTIONS
+  bt_ag_external_io_final_response
+
+DESCRIPTION
+  Returns TRUE if given DSM item holds the final response.
+
+===========================================================================*/
+static boolean bt_ag_external_io_final_response( dsm_item_type* dsm_ptr )
+{
+  boolean is_final = FALSE;
+  char buf[10] = "";
+  uint16 haystack_len = dsm_length_packet(dsm_ptr);
+  uint16 needle_len = MIN(haystack_len, sizeof(buf));
+  if ((haystack_len > 0) &&
+      (dsm_extract(dsm_ptr, haystack_len-needle_len, buf, sizeof(buf)) > 0))
+  {
+    if ( (strstr(buf, "OK") != NULL) || (strstr(buf, "ERROR") != NULL) )
+    {
+      BT_MSG_DEBUG( "BT AG: final external response", 0, 0, 0 );
+      is_final = TRUE;
+    }
+  }
+  return is_final;
+}
+
+/*===========================================================================
+
+FUNCTION
+  bt_ag_cpe_dequeuing_external_io_tx_wm
+
+DESCRIPTION
+  Dequeues external I/O TX WM if there's no pending data on TX DSM chain.
+
+===========================================================================*/
+LOCAL void bt_ag_cpe_dequeuing_external_io_tx_wm
+(
+  void
+)
+{
+  dsm_item_type* dsm_ptr;
+  uint32 len = dsm_length_packet( bt_agcpe.tx_dsm_ptr );
+
+  BT_MSG_DEBUG( "dequeuing_external_io_tx_wm - have=%d", len, 0, 0 );
+  if ( (len == 0) && ((dsm_ptr = dsm_dequeue( bt_agcpe.tx_wm_ptr )) != NULL) )
+  {
+    if (bt_ag_external_io_final_response( dsm_ptr ) != FALSE)
+    {
+      bt_agcpe.respond_pending = FALSE; // expect no more from upper layer
+    }
+    dsm_append( &bt_agcpe.tx_dsm_ptr, &dsm_ptr );
+  }
+}
+
+/*===========================================================================
+
+FUNCTION
+  bt_ag_send_data
+
+DESCRIPTION
+  Transmits data with flow control restrictions as necessary.  
+  Data from external I/O gets sent first, then internal data.
+
+===========================================================================*/
+LOCAL void bt_ag_send_data( void )
+{
+  uint32 len;
+  uint32 room;
+  dsm_item_type* dsm_ptr;
+
+  while ( bt_ag_ok_to_send() && 
+          (dsm_length_packet( *bt_ag.cur_dsm_ptr_ptr ) > 0) )
+  {
+    room = bt_ag.tx_wm.dont_exceed_cnt - dsm_queue_cnt( &bt_ag.tx_wm );
+    len = dsm_dup_packet( &dsm_ptr, *bt_ag.cur_dsm_ptr_ptr, 0, room );
+    dsm_pullup( bt_ag.cur_dsm_ptr_ptr, NULL, len );
+    BT_MSG_DEBUG( "send_data: len=%d room=%d", len, room, 0 );
+    if ( bt_ag.cur_dsm_ptr_ptr == &bt_agcpe.tx_dsm_ptr )
+    {
+      BT_MSG_DEBUG( "BT AG TX: ext IO data", 0, 0, 0 );
+      bt_ag_cpe_dequeuing_external_io_tx_wm();
+      if ( (len < room) && (bt_agcpe.respond_pending == FALSE) )
+      {
+        bt_ag.cur_dsm_ptr_ptr = &bt_ag.tx_dsm_ptr;
+      }
+    }
+    else
+    {
+      BT_MSG_DEBUG( "BT AG TX: internal IO data", 0, 0, 0 );
+      if ( (len < room) && (dsm_length_packet( bt_agcpe.tx_dsm_ptr ) > 0) )
+      {
+        bt_ag.cur_dsm_ptr_ptr = &bt_agcpe.tx_dsm_ptr;
+      }
+    }
+    sio_transmit( bt_ag.sio_stream_id, dsm_ptr );
+  }
+}
 
 /*===========================================================================
 
@@ -3165,7 +3433,7 @@ LOCAL void bt_ag_cpe_send_response
   uint32          to_value;
   uint8           num_type = 0;
 
-  if ( bt_ag_ok_to_send() )
+  if ( (bt_ag.state > BT_AGS_OPEN) && (bt_ag.state < BT_AGS_CLOSING) )
   {
     dsm_ptr = bt_get_free_dsm_ptr( BT_TL_RFCOMM, 1 );
     if ( dsm_ptr != NULL )
@@ -3487,7 +3755,8 @@ LOCAL void bt_ag_cpe_send_response
     BT_MSG_SIG( "BT AG TX: response %x SID %x", resp,
                 bt_ag.sio_stream_id, 0 );
 
-    sio_transmit( bt_ag.sio_stream_id, dsm_ptr );
+    dsm_append( &bt_ag.tx_dsm_ptr, &dsm_ptr );
+    bt_ag_send_data();
 
     /*  Set timer to go idle now.  */
     if ( bt_ag.state < BT_AGS_AUDIO_CONNECTED )
@@ -4313,43 +4582,6 @@ LOCAL void bt_ag_cmd_update_vr_state
 /*===========================================================================
 
 FUNCTIONS
-  bt_ag_cpe_xfer_ext_io_tx_to_ag_tx
-
-DESCRIPTION
-  This transfers data from the external I/O transmit watermark to the
-  AG transmit watermark with flow control restrictions as necessary.
-
-===========================================================================*/
-LOCAL void bt_ag_cpe_xfer_ext_io_tx_to_ag_tx
-(
-  void
-)
-{
-
-  dsm_item_type*  dsm_ptr;
-
-  if ( (bt_agcpe.enable_external_io != FALSE) &&
-       (bt_ag_ok_to_send()) )
-  {
-    while ( (dsm_ptr = dsm_dequeue( bt_agcpe.tx_wm_ptr )) != NULL )
-    {
-      sio_transmit( bt_ag.sio_stream_id, dsm_ptr );
-    }
-  }
-  else
-  {
-    BT_ERR( "BT AG: CPE ExtIO Ignored TXD C %x",
-            bt_agcpe.tx_wm_ptr->current_cnt, 0, 0 );
-    
-    dsm_empty_queue( bt_agcpe.tx_wm_ptr );
-  }
-
-}
-
-
-/*===========================================================================
-
-FUNCTIONS
   bt_ag_cpe_external_io_tx_wm_ne_cb
 
 DESCRIPTION
@@ -4364,7 +4596,23 @@ LOCAL void bt_ag_cpe_external_io_tx_wm_ne_cb
 )
 {
 
-  bt_ag_cpe_xfer_ext_io_tx_to_ag_tx();
+  BT_MSG_DEBUG( "external_io_tx_wm_ne_cb", 0, 0, 0 );
+
+  if ( (bt_agcpe.respond_pending != FALSE) &&
+       (bt_ag.state > BT_AGS_OPEN) && (bt_ag.state < BT_AGS_CLOSING) )
+  {
+    bt_ag_cpe_dequeuing_external_io_tx_wm();
+
+    bt_ag.flags |= BT_AG_SEND_DATA_B;
+    rex_set_sigs( &bt_tcb, BT_AG_RX_DATA_SIG );
+  }
+  else
+  {
+    BT_ERR( "BT AG: CPE ExtIO Ignored TXD C %x",
+            bt_agcpe.tx_wm_ptr->current_cnt, 0, 0 );
+
+    dsm_empty_queue( bt_agcpe.tx_wm_ptr );
+  }
 
   /*  Call the application's callback as necessary.  */
   if ( bt_agcpe.orig_tx_wm_ne_fptr != NULL )
@@ -5444,7 +5692,8 @@ LOCAL boolean bt_ag_cpe_handle_unrecognized_cmd( void )
   uint32 dsm_pkt_len;
   dsm_item_type* dsm_ptr = bt_get_free_dsm_ptr( BT_TL_HCI_BB, 
                                                 bt_agcpe.rx_count );
-  if ( bt_agcpe.enable_external_io == FALSE)
+  if ( (bt_agcpe.enable_external_io == FALSE) ||
+       (bt_agcpe.respond_pending != FALSE) )
   {
     /*  Unrecognized command - send error response.  */
     bt_ag_cpe_send_response( BT_AG_RESP_ERROR, 0 );
@@ -5470,6 +5719,7 @@ LOCAL boolean bt_ag_cpe_handle_unrecognized_cmd( void )
   else
   {
     dsm_enqueue( bt_agcpe.rx_wm_ptr, &dsm_ptr );
+    bt_agcpe.respond_pending = TRUE;
     forwarded = TRUE;
   }
   return forwarded;
@@ -5512,7 +5762,6 @@ LOCAL void bt_ag_cpe_process_button_pressed
 
 }
 
-
 /*===========================================================================
 
 FUNCTION
@@ -5549,11 +5798,15 @@ LOCAL void bt_ag_cpe_process_volume_gain
     }
     else if ( bt_agcpe.cmd_idx == BT_AG_CMD_VGS )
     {
-      if ( bt_ag.set_spkr_gain == FALSE )
+      BT_MSG_SIG( "BT AG RX: AT+VGS=%d", gain, 0, 0 );
+      if (AUDIO_DEV.spkr_volume != (uint8) gain)
       {
-        BT_MSG_SIG( "BT AG RX: AT+VGS=%d", gain, 0, 0 );
         AUDIO_DEV.spkr_volume = (uint8) gain;
+        bt_ag_send_volume_to_snd_task( AUDIO_DEV.spkr_volume );
         bt_ag_send_event( BT_EV_AG_SPKR_GAIN_REPORT );
+
+        /* make sure to drop the pending vol change from app */
+        bt_ag.set_spkr_gain = FALSE;
       }
     }
     else
@@ -6165,7 +6418,7 @@ LOCAL void bt_ag_cpe_process_call_hold
   void
 )
 {
-  
+
   bt_ag_response_type         rsp = BT_AG_RESP_CME_ERROR;
   uint32                      err = CME_ERR_NO_NETWORK_SERVICE;
   int32                       val = bt_ag_param2int32( CPE_PARAM_0 );
@@ -6205,11 +6458,33 @@ LOCAL void bt_ag_cpe_process_call_hold
         case BT_AG_CH_RELEASE_ALL:
         {
           sups_type = CM_CALL_SUPS_TYPE_NONE;
+
           if ( (HF_DATA.call_held_state == BT_AG_CALL_HELD_NONE) &&
                (HF_DATA.call_setup_state == BT_AG_CALL_SETUP_IN) )
           {
-            bt_ag_send_event( BT_EV_AG_DEV_HANGUP ); /* Reject incoming call */
             rsp = BT_AG_RESP_OK;
+
+            if ( ISBITSET( bt_ag.flags, CDMA_CW_B ) )
+            {
+              /* to ignore the waiting call.
+               *
+               * Note: if the waiting call is ignored on the
+               * phone UI directly instead of sending this AT
+               * command, we'll update the call info table after
+               * BT_AG_1X_CW_TIMEOUT.
+               */
+
+              rex_set_timer( &bt_ag_timer, 10 ); /* 10 ms */
+
+              /* TODO: the way how waiting call is handled can be
+               * fine tuned. e.g we might not need to set the timer
+               * and handle it in bt_ag_timer_expired().
+               */
+            }
+            else /* else, single call case */
+            {
+              bt_ag_send_event( BT_EV_AG_DEV_HANGUP );
+            }
           }
           break;
         }
@@ -6442,17 +6717,154 @@ LOCAL void bt_ag_cpe_process_list_call_info
   void
 )
 {
-  bt_ag_response_type         rsp        = BT_AG_RESP_ERROR;
+
+  bt_ag_response_type         rsp   = BT_AG_RESP_ERROR;
+  uint8                       index = 0;
+  uint8                       len   = 0;
+  bt_ag_clcc_direction_type   call_direction;
+  bt_ag_clcc_state_type       call_state;
+  bt_ag_clcc_mode_type        call_mode;
+  boolean                     call_multiparty;
+  uint8                       call_num_type;
+  char                        tmp_str[ BT_AG_RESP_MAX_LEN ];
+  uint8                       call_id_no = call_info_table.num_call_ids;
 
   BT_MSG_SIG( "BT AG RX: AT+CLCC - calls=%d",
               call_info_table.num_call_ids, 0, 0 );
 
-  if ( BT_AG_IN_GW )
+  /* each iteration processes information for one call */
+  for ( ; (call_id_no > 0) &&
+          (index < ARR_SIZE( call_info_table.call_info )); index++ )
   {
-#if (defined(FEATURE_WCDMA) || defined(FEATURE_GSM))
-#error code not present
-#endif /* FEATURE_WCDMA || FEATURE_GSM*/
+    if ( call_info_table.call_info[index].call_id != CM_CALL_ID_INVALID )
+    {
+      call_id_no--;
+
+      /* obtain call direction */
+      /* outgoing : incoming */
+      call_direction = (call_info_table.call_info[index].direction ==
+                          CM_CALL_DIRECTION_MO) ?
+                       BT_AG_CLCC_DIRECTION_MO : BT_AG_CLCC_DIRECTION_MT;
+
+      /* obtain call state */
+      switch ( call_info_table.call_info[index].call_state )
+      {
+        case CM_CALL_STATE_CONV:
+        {
+          if ( HF_DATA.call_held_state == BT_AG_CALL_HELD_NONE )
+          {
+            call_state = BT_AG_CLCC_STATE_ACTIVE; /* active */
+          }
+          else if ( HF_DATA.call_held_state == BT_AG_CALL_HELD_TERMINATED )
+          {
+            call_state = BT_AG_CLCC_STATE_HELD; /* held */
+          }
+          else
+          {
+            /* active : held */
+            call_state = (call_info_table.call_info[index].call_id ==
+                            HF_DATA.call_id) ? 
+                         BT_AG_CLCC_STATE_ACTIVE : BT_AG_CLCC_STATE_HELD;
+          }
+          break;
+        }
+        case CM_CALL_STATE_ORIG:
+        {
+          call_state = BT_AG_CLCC_STATE_DIALING; /* dialing */
+          break;
+        }
+        case CM_CALL_STATE_CC_IN_PROGRESS:
+        {
+          call_state = BT_AG_CLCC_STATE_ALERTING; /* alerting */      
+          break;
+        }
+        case CM_CALL_STATE_INCOM:
+        {
+          /* incoming : waiting */
+          call_state = (call_info_table.call_info[index].call_id ==
+                          HF_DATA.call_id) ? 
+                       BT_AG_CLCC_STATE_INCOMING : BT_AG_CLCC_STATE_WAITING;
+          break;
+        }
+        default:
+        {
+          MSG_ERROR( "BT AG: +CLCC - invalid call state %d id=%x",
+                     call_info_table.call_info[index].call_state,
+                     call_info_table.call_info[index].call_id, 0 );
+          continue; // skip this call
+        }
+      }
+
+      /* obtain the call mode */
+      switch ( call_info_table.call_info[index].call_type )
+      {
+        case CM_CALL_TYPE_VOICE:
+        case CM_CALL_TYPE_EMERGENCY:
+        {
+          call_mode = BT_AG_CLCC_MODE_VOICE; /* voice */
+          break;
+        }
+        case CM_CALL_TYPE_PS_DATA:
+        {
+          call_mode = BT_AG_CLCC_MODE_DATA; /* data */
+          break;
+        }
+        case CM_CALL_TYPE_CS_DATA:
+        {
+          call_mode = BT_AG_CLCC_MODE_FAX; /* fax */
+          break;
+        }
+        default:
+        {
+          MSG_ERROR( "BT AG: +CLCC - invalid call mode %d id=%x",
+                     call_info_table.call_info[index].call_type,
+                     call_info_table.call_info[index].call_id, 0 );
+          continue; // skip this call
+        }
+      }
+      
+      /* obtain multi-party info (conference or not) */
+      /* multiparty : not multiparty */
+      call_multiparty = 
+        ( (call_info_table.num_call_ids > 1) &&
+          (HF_DATA.call_held_state != BT_AG_CALL_HELD_ACTIVE) &&
+          (HF_DATA.call_setup_state == BT_AG_CALL_SETUP_NONE) ) ?
+        BT_AG_CLCC_MPTY : BT_AG_CLCC_NOT_MPTY;
+
+      call_info_table.call_info[index].num.
+        buf[call_info_table.call_info[index].num.len] = '\0';
+
+      /* obtain the number type */
+      /* INTERNATIONAL : UNKNOWN */
+      call_num_type = (call_info_table.call_info[index].num.buf[0] == '+') ?
+                      BT_AG_CLCC_INTERNATIONAL : BT_AG_CLCC_UNKNOWN;
+
+      /* format the response packet */
+      snprintf( tmp_str, sizeof( tmp_str ) - 1,
+                "%d,%d,%d,%d,%d,\"%s\",%d",
+                index + 1, call_direction, call_state,
+                call_mode, call_multiparty,
+                (char*) call_info_table.call_info[index].num.buf,
+                call_num_type );
+      tmp_str[sizeof( tmp_str ) - 1] = '\0';
+
+      /* debug msg for QXDM */
+      len += BT_STRFORMAT( bt_ag_qxdm_msg + len,
+                           sizeof( bt_ag_qxdm_msg ) - 1 - len,
+                           "+CLCC: %s;", (const char*) tmp_str );
+            
+      bt_ag_cpe_send_response( BT_AG_RESP_CLCC, (uint32)(tmp_str) );
+    }
   }
+
+  if ( call_info_table.num_call_ids > 0 )
+  {
+    bt_ag_qxdm_msg[ sizeof( bt_ag_qxdm_msg ) - 1 ] = '\0';
+    BT_MSG_DEBUG( "BT AG TX:", 0, 0, 0 );
+    BT_MSG_DEBUG( (const char*) bt_ag_qxdm_msg, 0, 0, 0 );
+  }
+
+  rsp = BT_AG_RESP_OK;
 
   bt_ag_cpe_send_response( rsp, 0 );
 
@@ -7632,6 +8044,7 @@ LOCAL void bt_ag_ev_cmd_done
             BT_ERR("BT AG:  Failed to register with CM",0,0,0);
             bt_ag_cm_dereg();
           }
+          bt_ag_send_volume_to_snd_task( AUDIO_DEV.spkr_volume );
           bt_ag_send_event( BT_EV_AG_ENABLED );
           break;
 
@@ -8911,7 +9324,6 @@ LOCAL void bt_ag_process_spp_event
       BT_MSG_DEBUG( "BT AG: SPP Open Error SID %x R %x", 
                     ev_ptr->spp_status.stream_id, 
                     ev_ptr->spp_status.spp_reason, 0 );
-      bt_ag.event_reason = ev_ptr->spp_status.spp_reason;
       bt_ag_process_spp_connect_failed( ev_ptr->spp_status.stream_id );
       break;
 
@@ -9026,6 +9438,8 @@ LOCAL bt_ag_call_held_state_type bt_ag_process_cm_call_event_sups
       /* timer expire because waiting call has not been answered */
       HF_DATA.call_setup_state = BT_AG_CALL_SETUP_NONE;
       CLRBIT( bt_ag.flags, CDMA_CW_B );
+      bt_ag_call_info_table_update_waiting_call( TRUE );
+      HF_DATA.num_calls--;
     }
     else if ( ISBITSET( bt_ag.flags, CDMA_CW_B ) &&
               (HF_DATA.call_setup_state == BT_AG_CALL_SETUP_IN) )
@@ -9035,8 +9449,10 @@ LOCAL bt_ag_call_held_state_type bt_ag_process_cm_call_event_sups
       CLRBIT( bt_ag.flags, CDMA_CW_B );
       HF_DATA.call_setup_state = BT_AG_CALL_SETUP_NONE;
       HF_DATA.call_held_state  = BT_AG_CALL_HELD_ACTIVE;
+      bt_ag_call_info_table_update_waiting_call( FALSE );
+      bt_ag_call_info_table_update_callheld( call_info_ptr );
     }
-    else if ( HF_DATA.call_held_state != BT_AG_CALL_HELD_NONE )
+    else if ( HF_DATA.call_held_state == BT_AG_CALL_HELD_ACTIVE )
     {
       if ( HF_DATA.call_setup_state == BT_AG_CALL_SETUP_OUT )
       {
@@ -9046,19 +9462,42 @@ LOCAL bt_ag_call_held_state_type bt_ag_process_cm_call_event_sups
       }
       else
       {
-        /* force call_held update */
+        /* active/held swap, force callheld update */
         cur_call_held_state = BT_AG_CALL_HELD_NONE;
+        bt_ag_call_info_table_update_callheld( call_info_ptr );
       }
     }
     else if ( memcmp( call_info_ptr->num.buf,
                       HF_DATA.phone_num.buf, HF_DATA.phone_num.len ) != 0 )
     {
-      /* must be the case of 3rd party call being an MO call */
-      HF_DATA.call_held_state  = BT_AG_CALL_HELD_ACTIVE;
-      HF_DATA.call_setup_state = BT_AG_CALL_SETUP_OUT;
-      HF_DATA.num_calls++;
-
-      /* no info on whether 3rd party will be reached... what to do? */
+      if ( HF_DATA.num_calls == 1 )
+      {
+        /* must be the case of 3rd party call being an MO call */
+        HF_DATA.call_held_state  = BT_AG_CALL_HELD_ACTIVE;
+        HF_DATA.call_setup_state = BT_AG_CALL_SETUP_OUT;
+        HF_DATA.num_calls++;
+        /* no info on whether 3rd party will be reached... */
+      }
+      else /* there were two calls */
+      {
+        /* the 2nd call was ended in a conference call.
+         * is this a generic network behavior?
+         */
+        bt_ag_call_info_table_update_2nd_ended();
+        HF_DATA.num_calls--;
+      }
+    }
+    else
+    {
+      /* single call swap */
+      if ( HF_DATA.call_held_state == BT_AG_CALL_HELD_NONE )
+      {
+        HF_DATA.call_held_state = BT_AG_CALL_HELD_TERMINATED;
+      }
+      else
+      {
+        HF_DATA.call_held_state = BT_AG_CALL_HELD_NONE;
+      }
     }
 #endif /* FEATURE_CDMA_800 || FEATURE_CDMA_1900 */
   }
@@ -9094,16 +9533,13 @@ LOCAL void bt_ag_process_cm_call_event_end
   {
     HF_DATA.num_calls = 0;
 
-    if ( ISBITSET( bt_ag.flags, CDMA_CW_B ) )
+    bt_ag_call_info_table_cleanup();
+
+    if ( ISBITSET( bt_ag.flags, CDMA_CW_B ) &&
+         (HF_DATA.call_setup_state == BT_AG_CALL_SETUP_IN) )
     {
-      /* active CDMA call must have ended due to AT+CHLD=1;
-         wait for incoming signal for waiting CDMA call
-      */
-    }
-    else if ( HF_DATA.call_held_state == BT_AG_CALL_HELD_ACTIVE )
-    {
-      /* active call ended while another call is held */
-      HF_DATA.call_held_state = BT_AG_CALL_HELD_TERMINATED;
+      rex_clr_timer( &bt_ag_timer );
+      CLRBIT( bt_ag.flags, CDMA_CW_B );
     }
   }
   else
@@ -9324,19 +9760,7 @@ LOCAL void bt_ag_process_cm_call_event
         HF_DATA.incoming_call_id = ev_ptr->call_info.call_id;
         HF_DATA.num_calls++;
       }
-#if (defined(FEATURE_CDMA_800) || defined(FEATURE_CDMA_1900))
-      /* To automatically pick up the waiting/held call */
-      if ( ISBITSET( bt_ag.flags, CDMA_CW_B ) ||
-           (BT_AG_IN_CDMA && 
-            (HF_DATA.call_held_state != BT_AG_CALL_HELD_NONE)) )
-      {
-        HF_DATA.call_held_state = BT_AG_CALL_HELD_NONE;
-        CLRBIT( bt_ag.flags, CDMA_CW_B );
-        SETBIT( bt_ag.flags, ANSWER_CALL_B );
-        rex_set_timer( &bt_ag_timer, 100 );
-      }
-      else
-#endif
+
       if ( (HF_DATA.call_active != FALSE) &&
            (HF_DATA.notify_call_waiting != FALSE) )
       {
@@ -9385,23 +9809,36 @@ LOCAL void bt_ag_process_cm_call_event
 #if (defined(FEATURE_CDMA_800) || defined(FEATURE_CDMA_1900))
     case CM_CALL_EVENT_CALLER_ID: /* CDMA only */
     {
-      HF_DATA.phone_num        = ev_ptr->call_info.num;
-      if ( ev_ptr->call_info.call_state != CM_CALL_STATE_INCOM )
+      HF_DATA.phone_num = ev_ptr->call_info.num;
+
+      if ( HF_DATA.call_active != FALSE )
       {
         /* this is call waiting notification */
-        if ( HF_DATA.call_active != FALSE )
-        {
-          BT_MSG_DEBUG( "BT AG: A CDMA call is waiting", 0, 0, 0 );
-          HF_DATA.call_id          = ev_ptr->call_info.call_id;
-          HF_DATA.call_setup_state = BT_AG_CALL_SETUP_IN;
-          SETBIT( bt_ag.flags, CDMA_CW_B );
 
-          if ( HF_DATA.notify_call_waiting != FALSE )
-          {
-            bt_ag_cpe_send_response( BT_AG_RESP_CCWA, 0 );
-            rex_set_timer( &bt_ag_timer, BT_AG_1X_CW_TIMEOUT );
-          }
+        BT_MSG_DEBUG( "BT AG: A CDMA call is waiting", 0, 0, 0 );
+
+        /* we fake the call info here for the waiting call
+         * in order to keep it in the call info table.
+         */
+        ev_ptr->call_event           = CM_CALL_EVENT_INCOM;
+        ev_ptr->call_info.call_id    =
+          ++ev_ptr->call_info.call_id % CM_CALL_ID_MAX;
+        ev_ptr->call_info.call_state = CM_CALL_STATE_INCOM;
+        HF_DATA.num_calls++;
+        bt_ag_update_call_info_table( ev_ptr );
+        HF_DATA.call_setup_state = BT_AG_CALL_SETUP_IN;
+        SETBIT( bt_ag.flags, CDMA_CW_B );
+
+        if ( HF_DATA.notify_call_waiting != FALSE )
+        {
+          bt_ag_cpe_send_response( BT_AG_RESP_CCWA, 0 );
+          rex_set_timer( &bt_ag_timer, BT_AG_1X_CW_TIMEOUT );
         }
+      }
+      else /* else, it's the only single call case */
+      {
+        /* CDMA MT caller ID becomes available once this event received */
+        bt_ag_update_call_info_table( ev_ptr );
       }
       break;
     }
@@ -9410,6 +9847,32 @@ LOCAL void bt_ag_process_cm_call_event
     {
       cur_call_held_state = 
         bt_ag_process_cm_call_event_sups( &ev_ptr->call_info );
+
+      if ( BT_AG_IN_CDMA &&
+           (HF_DATA.num_calls > 1) )
+      {
+#if (defined(FEATURE_CDMA_800) || defined(FEATURE_CDMA_1900))
+        if ( (HF_DATA.call_setup_state == BT_AG_CALL_SETUP_NONE) &&
+             (HF_DATA.call_held_state  == BT_AG_CALL_HELD_NONE) )
+        {
+          /* not to send callsetup */
+          cur_call_setup_state = BT_AG_CALL_SETUP_NONE;
+        }
+        else if ( HF_DATA.call_setup_state == BT_AG_CALL_SETUP_OUT )
+        {
+          /* an MO call was made to form a 3-way calling scenario */
+
+          /* we fake the call info here for the MO call
+           * in order to keep it in the call info table.
+           */
+          mo_call_connected            = TRUE;
+          ev_ptr->call_event           = CM_CALL_EVENT_CONNECT;
+          ev_ptr->call_info.call_state = CM_CALL_STATE_CONV;
+
+          bt_ag_update_call_info_table( ev_ptr );
+        }
+#endif /* FEATURE_CDMA_800 || FEATURE_CDMA_1900 */
+      }
       break;
     }
 #if defined(FEATURE_WCDMA) || defined(FEATURE_GSM)
@@ -9429,11 +9892,26 @@ LOCAL void bt_ag_process_cm_call_event
     /* CDMA call connected? */
     if ( mo_call_connected != FALSE )
     {
-      HF_DATA.call_setup_state = BT_AG_CALL_SETUP_REMOTE_PARTY_ALERTED;
-      bt_ag_cpe_send_response( BT_AG_RESP_CIEV, BT_AG_INDICATOR_CALL_SETUP );
-      bt_ag_cpe_send_response( BT_AG_RESP_CIEV, BT_AG_INDICATOR_CALL );
-      HF_DATA.call_setup_state = BT_AG_CALL_SETUP_NONE;
-      bt_ag_cpe_send_response( BT_AG_RESP_CIEV, BT_AG_INDICATOR_CALL_SETUP );
+      if ( HF_DATA.num_calls == 1 )
+      {
+        HF_DATA.call_setup_state = BT_AG_CALL_SETUP_REMOTE_PARTY_ALERTED;
+        bt_ag_cpe_send_response( BT_AG_RESP_CIEV, BT_AG_INDICATOR_CALL_SETUP );
+        bt_ag_cpe_send_response( BT_AG_RESP_CIEV, BT_AG_INDICATOR_CALL );
+        HF_DATA.call_setup_state = BT_AG_CALL_SETUP_NONE;
+        bt_ag_cpe_send_response( BT_AG_RESP_CIEV, BT_AG_INDICATOR_CALL_SETUP );
+      }
+      else
+      {
+        /* hide the 2nd MO call info from the remote,
+         * but callheld needs to be sent - strange, but
+         * required by some customer.
+         */
+        if ( HF_DATA.features_bitmap & BT_HF_F_ENH_CALL_STATUS )
+        {
+          bt_ag_cpe_send_response( BT_AG_RESP_CIEV,
+                                   BT_AG_INDICATOR_CALL_HELD );
+        }
+      }
     }
     else
     {
@@ -9894,14 +10372,10 @@ LOCAL void bt_ag_tx_low_wm_cb
   void
 )
 {
-  
-  bt_ag.tx_wm_enabled = TRUE;
 
-  if ( bt_agcpe.enable_external_io != FALSE )
-  {
-    /*  Continue transfer of external I/O transmit data.  */
-    bt_ag_cpe_xfer_ext_io_tx_to_ag_tx();
-  }
+  BT_MSG_DEBUG( "BT AG: AG TX lo WM - enabled=%d", bt_ag.tx_wm_enabled, 0, 0 );
+  bt_ag.tx_wm_enabled = TRUE;
+  bt_ag_send_data();
 
 }
 
@@ -9921,16 +10395,8 @@ LOCAL void bt_ag_tx_high_wm_cb
 )
 {
 
-  BT_MSG_DEBUG( "BT AG: AG TX high WM occurred.", 0, 0, 0 );
-
-  if ( bt_ag.tx_wm_enabled != FALSE )
-  {
-    bt_ag.tx_wm_enabled = FALSE;
-  }
-  else
-  {
-    BT_MSG_DEBUG( "BT AG: Multiple AG TX high WM.", 0, 0, 0 );
-  }
+  BT_MSG_DEBUG( "BT AG: AG TX hi WM - enabled=%d", bt_ag.tx_wm_enabled, 0, 0 );
+  bt_ag.tx_wm_enabled = FALSE;
   
 }
 
@@ -9951,6 +10417,7 @@ void bt_ag_powerup_init
 {
   
   uint8  i;
+  uint32 dne;
 
   BT_MSG_HIGH( "BT AG: Powerup init", 0, 0, 0 );
 
@@ -9962,17 +10429,21 @@ void bt_ag_powerup_init
   bt_ag.ev_q_info.max_event_bytes  = bt_ag_get_max_event_bytes();
 
   /*  Set up TX watermark.  */
-  dsm_queue_init( &bt_ag.tx_wm, 1000, &bt_ag.to_sio_q );
-  bt_ag.tx_wm.lo_watermark        = 50;
-  bt_ag.tx_wm.hi_watermark        = 200;
+  dne = 1000;
+  dsm_queue_init( &bt_ag.tx_wm, dne, &bt_ag.to_sio_q );
+  bt_ag.tx_wm.lo_watermark        = dne / 10;
+  bt_ag.tx_wm.hi_watermark        = bt_ag.tx_wm.lo_watermark * 9;
   bt_ag.tx_wm.lowater_func_ptr    = bt_ag_tx_low_wm_cb;
   bt_ag.tx_wm.hiwater_func_ptr    = bt_ag_tx_high_wm_cb;
   bt_ag.tx_wm_enabled             = TRUE;
+  bt_ag.tx_dsm_ptr                = NULL;
+  bt_ag.cur_dsm_ptr_ptr           = &bt_ag.tx_dsm_ptr;
 
   /*  Set up RX watermark.  */
-  dsm_queue_init( &bt_ag.rx_wm, 1000, &bt_ag.from_sio_q );
-  bt_ag.rx_wm.lo_watermark        = 100;
-  bt_ag.rx_wm.hi_watermark        = 100;
+  dne = 500;
+  dsm_queue_init( &bt_ag.rx_wm, dne, &bt_ag.from_sio_q );
+  bt_ag.rx_wm.lo_watermark        = dne / 10;
+  bt_ag.rx_wm.hi_watermark        = bt_ag.rx_wm.lo_watermark * 9;
   bt_ag.rx_wm.non_empty_func_ptr  = bt_ag_every_rx_data_cb;
 
   /*  Initialize AG state variables.  */
@@ -10140,11 +10611,6 @@ void bt_ag_timer_expired
     {
       BT_ERR( "BT AG: cb_ev_free_q empty", 0, 0, 0 );
     }
-  }
-  else if ( ISBITSET( bt_ag.flags, ANSWER_CALL_B ) )
-  {
-    bt_ag_send_event( BT_EV_AG_DEV_PICKUP ); /* answer waiting CDMA call */
-    CLRBIT( bt_ag.flags, ANSWER_CALL_B );
   }
 #endif
   else if ( bt_ag.send_audio_conn_ev )
@@ -10471,6 +10937,16 @@ void bt_ag_check_rx_wm_data
     }
   }
 #endif
+
+  if ( bt_ag.flags & BT_AG_SEND_DATA_B )
+  {
+     bt_ag.flags &= ~BT_AG_SEND_DATA_B;
+     if ( dsm_length_packet( bt_ag.tx_dsm_ptr ) == 0 )
+     {
+       bt_ag.cur_dsm_ptr_ptr = &bt_agcpe.tx_dsm_ptr;
+     }
+     bt_ag_send_data();
+  }
 
   while ( (ev_ptr = (bt_ag_ev_type*) q_get( &bt_ag.cb_ev_q )) != NULL )
   {
