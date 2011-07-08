@@ -1158,6 +1158,8 @@ static void OEMNet_IfaceEventCallback
 {
    OEMNet* pNet = OEMNet_FromAppID(app_id);
 
+   DBGPRINTF("***zzg OEMNet_IfaceEventCallback event=%d***", event);
+
    if ((OEMNet*)0 != pNet) {
    switch (event) {
 
@@ -1312,15 +1314,23 @@ static int OEMNet_RegisterIfaceEventCallback(OEMNet* pNet, dss_iface_ioctl_event
    ev_cb.app_id = pNet->sAppID;
 
    iface_id = OEMNet_GetIfaceId(pNet);
-   if (DSS_IFACE_INVALID_ID == iface_id) {
+   
+   if (DSS_IFACE_INVALID_ID == iface_id) 
+   {
       return AEE_NET_ENETNONET;
    }
 
+	DBGPRINTF("***zzg OEMNet_RegisterIfaceEventCallback iface_id=%d***", iface_id);
+	
    ret = oemdss_iface_ioctl(iface_id,
                             bRegister ? DSS_IFACE_IOCTL_REG_EVENT_CB : DSS_IFACE_IOCTL_DEREG_EVENT_CB,
                             &ev_cb,
                             &ndssErr);
-   if (DSS_SUCCESS != ret) {
+
+   DBGPRINTF("***zzg OEMNet_RegisterIfaceEventCallback event=%d, ret=%d***", event, ret);
+   
+   if (DSS_SUCCESS != ret) 
+   {
       return DSSToAEE_Err(ndssErr);
    }
 
@@ -1497,6 +1507,8 @@ OEMCONTEXT OEMNet_Open
          }
          case AEE_NETWORK_CDMA(0):
          {
+		 	DBGPRINTF("***zzg OEMNet_Open AEE_NETWORK_CDMA***");
+			
             policy_info.iface.kind = DSS_IFACE_NAME;
             policy_info.iface.info.name = DSS_IFACE_CDMA_SN;
 
@@ -1513,6 +1525,8 @@ OEMCONTEXT OEMNet_Open
          }
          case AEE_NETWORK_IWLAN_3GPP2(0):
          {
+		 	DBGPRINTF("***zzg OEMNet_Open AEE_NETWORK_IWLAN_3GPP2***");
+			
             policy_info.iface.info.name = (dss_iface_name_enum_type)DSS_IFACE_IWLAN_3GPP2;
             // Allow certain ops for only for CDMA Service Network
             OEMDSS_SetCDMAProfileId(nNetwork,&policy_info);
@@ -1521,6 +1535,8 @@ OEMCONTEXT OEMNet_Open
 
          case AEE_NETWORK_3GPP2_ANY(0):
          {
+		 	DBGPRINTF("***zzg OEMNet_Open AEE_NETWORK_3GPP2_ANY***");
+			
             policy_info.iface.info.name = (dss_iface_name_enum_type)DSS_IFACE_3GPP2_ANY;
             // Allow certain ops for only for CDMA Service Network
             OEMDSS_SetCDMAProfileId(nNetwork,&policy_info);

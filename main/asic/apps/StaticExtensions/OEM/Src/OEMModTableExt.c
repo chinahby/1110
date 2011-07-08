@@ -249,7 +249,7 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #include "mcs.bid"
 #endif /* FEATURE_STATIC_MTP */
 #ifdef FEATURE_SUPPORT_WAP_APP
-#include"nf3static.h"
+#include	"nf3static.h"
 #endif
 
 // HDR Static Extension
