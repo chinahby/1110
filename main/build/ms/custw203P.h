@@ -10,6 +10,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
+#define FEATURE_OEMOMH
+#define FEATURE_VERSION_W203
 #define FEATURE_APP_BLUETOOTH
 #define FEATURE_BT
 #define FEATURE_IBT
@@ -231,7 +233,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ALL_KEY_PAD
 #define FEATURE_TORCH_SUPPORT		// ÷µÁÕ≤
 #define FEATURE_COMBINED_PWR_END_KEYS
-//#define FEATURE_FLEXI_STATIC_BREW_APP
 #define FEATURE_DRV_SDCC
 #define FEATURE_HFAT
 #define FEATURE_SDCC_CLK_CONFIG
@@ -279,7 +280,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "Custsdcc.h"
 #endif
 
-#ifndef USES_DS_1536
+#if 0//ndef USES_DS_1536
 #ifdef FEATURE_DS_MOBILE_IP
    #undef FEATURE_DS_MOBILE_IP
 #endif
