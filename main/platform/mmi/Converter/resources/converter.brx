@@ -113,49 +113,49 @@
 		<Text>grain</Text>
 	</STRING>
 	<STRING Id="1037" Name="IDS_VOLUME_CM3">
-		<Text>cm³</Text>
+		<Text>cm3</Text>
 	</STRING>
 	<STRING Id="1038" Name="IDS_VOLUME_M3">
-		<Text>m³</Text>
+		<Text>m3</Text>
 	</STRING>
 	<STRING Id="1039" Name="IDS_VOLUME_L">
 		<Text>l</Text>
 	</STRING>
 	<STRING Id="1040" Name="IDS_VOLUME_IN3">
-		<Text>in³</Text>
+		<Text>in3</Text>
 	</STRING>
 	<STRING Id="1041" Name="IDS_VOLUME_FT3">
-		<Text>ft³</Text>
+		<Text>ft3</Text>
 	</STRING>
 	<STRING Id="1042" Name="IDS_VOLUME_YD3">
-		<Text>yd³</Text>
+		<Text>yd3</Text>
 	</STRING>
 	<STRING Id="1043" Name="IDS_VOLUME_GAL">
 		<Text>gal</Text>
 	</STRING>
 	<STRING Id="1044" Name="IDS_AREA_CM2">
-		<Text>cm²</Text>
+		<Text>cm2</Text>
 	</STRING>
 	<STRING Id="1045" Name="IDS_AREA_M2">
-		<Text>m²</Text>
+		<Text>m2</Text>
 	</STRING>
 	<STRING Id="1046" Name="IDS_AREA_A">
 		<Text>a</Text>
 	</STRING>
 	<STRING Id="1047" Name="IDS_AREA_IN2">
-		<Text>in²</Text>
+		<Text>in2</Text>
 	</STRING>
 	<STRING Id="1048" Name="IDS_AREA_FT2">
-		<Text>ft²</Text>
+		<Text>ft2</Text>
 	</STRING>
 	<STRING Id="1049" Name="IDS_AREA_ACRE">
 		<Text>acre</Text>
 	</STRING>
 	<STRING Id="1050" Name="IDS_TEMPERATURE_C">
-		<Text>°C</Text>
+		<Text>oC</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_TEMPERATURE_F">
-		<Text>°F</Text>
+		<Text>oF</Text>
 	</STRING>
 	<STRING Id="1052" Name="IDS_CHANGE_TITLE">
 		<Text>Currency of reference</Text>
