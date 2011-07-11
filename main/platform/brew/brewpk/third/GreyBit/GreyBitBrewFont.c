@@ -44,7 +44,7 @@ int gLineCursor;     // cursor position, 0 means at first character
 
 ALE_UINT16 gLayoutEngineBiDiBuffer [(MAXLINESIZE+1)*3]={0,};  // buffer for layout engine
 ALE_UINT16 gLineCharPos [MAXLINESIZE+1];   //position of each char (used by layout engine)
-unsigned char gbFont_Arabic_Hebrew[] = {
+const unsigned char gbFont_Arabic_Hebrew[] = {
 #include "FontDB//Arabic_Hebrew_14x14p.i"
 };
 
@@ -1081,6 +1081,12 @@ int GreyBitBrewFont_MeasureText(IDisplay *p, int nSize, const AECHAR *psz)
 }
 
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+void Hebrew_ARbmpGetDataProc(void *RbmpInstance, ALE_UINT32 rbmOffs, void *dataBuf, ALE_UINT16 dataLen)
+{
+    //DBGPRINTF("Hebrew_ARbmpGetDataProc %d %d",rbmOffs,dataLen);
+    MEMCPY(dataBuf, &gbFont_Arabic_Hebrew[rbmOffs],dataLen);
+}
+
 /*==============================================================================
 º¯Êý:
     HebrewArabicLangInit
@@ -1102,7 +1108,7 @@ int32 HebrewArabicLangInit(void)
 
    if ( !staArabicInitFlag )
    {
-      if ( (kret = RbmpReset (gRbmpWorkBuffer, sizeof (gRbmpWorkBuffer), gbFont_Arabic_Hebrew, 0 )) < 0 )
+      if ( (kret = RbmpReset (gRbmpWorkBuffer, sizeof (gRbmpWorkBuffer), NULL, Hebrew_ARbmpGetDataProc )) < 0 )
       {
           DBGPRINTF("Insufficient memory for font data.Initializing Error");
           return kret;
