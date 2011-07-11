@@ -11,23 +11,18 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 
 #ifdef CUST_EDITION
 #define FEATURE_OEMOMH
-#define FEATURE_VERSION_W203
-#define FEATURE_APP_BLUETOOTH
-#define FEATURE_BT
-#define FEATURE_IBT
-#define FEATURE_BT_QSOC_INBAND_SLEEP  
-#define FEATURE_DRM_NO_BREW 
-#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
 
-#define BT_QSC1110//FEATURE_BT_QSC1100
 #define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  型号
 #define FEATURE_TORCH_KEY_SPACE		//手电筒功能按键
-#define FEATURE_GPIO_LAMP_EN_OUTPUT_32	//GPIO_OUTPUT_32
-#define FEATURE_SIM_SEL_GPIO_31_PULL_DOWN		//SIM_SEL == GPIO_OUP(31,GROUP_GPIO2_0,GPIO_PULL_DOWN)
-#define FEATURE_GPIO_33_AND_34_KYPD_EX	//GPIO_33_SIGNAL == KYPD_EX1
+
+#define FEATURE_GPIO_LAMP_EN_OUTPUT_32			//GPIO_OUTPUT_32
+#define FEATURE_GPIO_33_AND_34_KYPD_EX			//GPIO_33_SIGNAL == KYPD_EX1
 #define FEATURE_GPIO_47_SIGNAL_EQUAL_OUTPUT_47	// GPIO_47_SIGNAL== GPIO_OUTPUT_47
 #define FEATURE_GPIO_32_SIGNAL_OUPUT_32			//GPIO_32_SIGNAL== GPIO_OUTPUT_32
+#define FEATURE_SIM_SEL_GPIO_31_PULL_DOWN		//SIM_SEL == GPIO_OUP(31,GROUP_GPIO2_0,GPIO_PULL_DOWN)
+
 //Add End
+#define FEATURE_USES_BLACKBERRY                  //USE BLACKBERRY STYLE
 
 #define FEATURE_SMS_UDH
 //#define FEATURE_SUPPORT_ID
@@ -38,7 +33,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
-#define FEATURE_LANG_CHINESE
+#define FEATURE_ARPHIC_LAYOUT_ENGINE
+#undef FEATURE_LANG_CHINESE
 //#define FEATURE_NET_LOCK
 //#define FEATURE_SEAMLESS_SMS
 #define FEATURE_OMH_SMS
@@ -52,8 +48,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
    #include "targsb12864.h"
 #endif
 
+
 //#define FEATURE_DATA_STRIP_ATCOP 
 #define FEATURE_STD_MIDI 
+//#define FEATURE_GSTK 
 #define FEATURE_DIAG_LOWMEM 
 //#define FEATURE_AMR_VOCODER 
 #define CUST_MOB_MODEL 22
@@ -65,20 +63,22 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
-//#define FEATURE_LOWTIER_LOWMEM 
+#define FEATURE_LOWTIER_LOWMEM 
 #define FEATURE_REX_IPC 
 #define FEATURE_ASYNC_DATA_NOOP 
 #define FEATURE_HS_USB_PMIC_PHY 
 #define FEATURE_HS_USB_USER_EVENT_POST 
 #define FEATURE_RRC_SIB_HEAP 
-//#define FEATURE_LOW_MEMORY_USAGE 
+#define FEATURE_LOW_MEMORY_USAGE 
 #define FEATURE_FS_LOW_MEMORY_USAGE 
-//#define FEATURE_DSM_MINIMIZE 
+#define FEATURE_DSM_MINIMIZE 
 #define FEATURE_MSG_LOW_MEMORY_USAGE 
 #define FEATURE_SIO_NO_DEBUG_TRACE 
 #define FEATURE_DIAG_SMALL_BUFFER 
 #define FEATURE_IPC_SMALL_MEMORY_POOL 
 #define FEATURE_APP_DIALER 
+//#define FEATURE_MM_REC 
+//#define FEATURE_VOC_ADPCM 
 #define FEATURE_RUIM 
 #define FEATURE_UIM1 
 #define FEATURE_UIM_PMIC_ON_UIM1 
@@ -226,7 +226,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_XO 
 
 #ifdef CUST_EDITION
-#define FEATURE_DUAL_UIMCARD
+//#define FEATURE_DUAL_UIMCARD
 #define FEATRUE_AUTO_SET_NEED_NV_VALUE
 #define FEATURE_FM_RADIO
 #define FEATURE_FM_OEM
@@ -255,10 +255,6 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "custmmode.h"
 #include "custcdma.h"
 #include "custrf.h"
-#ifdef FEATURE_BT
-#include "custqbt.h"
-#include "custbt.h"
-#endif
 #include "custcdma2000.h"
 #include "custdebug.h"
 #include "custdmss.h"
@@ -280,7 +276,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #include "Custsdcc.h"
 #endif
 
-#if 0//ndef USES_DS_1536
+#ifndef USES_DS_1536
 #ifdef FEATURE_DS_MOBILE_IP
    #undef FEATURE_DS_MOBILE_IP
 #endif
@@ -398,22 +394,18 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef FEATURE_SECOND_UART
    #undef FEATURE_SECOND_UART
 #endif
-//#ifndef USES_DS_1536 //注释掉是为了解决1900M搜不到网的问题
 #ifdef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
    #undef FEATURE_UNIFORM_SCAN_OOS_HDR_ENH
 #endif
-//#endif
 #ifdef FEATURE_SC2X_HAS_UART1
    #undef FEATURE_SC2X_HAS_UART1
 #endif
 #ifdef FLASH_USES_DM
    #undef FLASH_USES_DM
 #endif
-//#ifndef USES_DS_1536 //注释掉是为了解决1900M搜不到网的问题
 #ifdef FEATURE_UNIFORM_SCAN_OOS
    #undef FEATURE_UNIFORM_SCAN_OOS
 #endif
-//#endif
 
 #ifdef CAMERA_USES_SOFTDSP
 #define FEATURE_CAMERA_NOFULLSCREEN
