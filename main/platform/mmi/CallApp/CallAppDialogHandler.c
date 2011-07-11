@@ -1863,6 +1863,39 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         (void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);
                     }
                     return TRUE;
+
+                case AVK_UP:   //add by pyg
+                    {
+                     //for(i=0;i<pMe->m_nCurrLine;i++)
+                     if((WSTRLEN(pMe->m_DialString)-pMe->m_nCursorPos) > pMe->m_nCurrLineFits[0])
+                     {
+                       pMe->m_nCursorPos += pMe->m_nCurrLineFits[0];
+                     }
+                     else
+                     {
+                         pMe->m_nCursorPos = pMe->m_nCursorPos%pMe->m_nCurrLineFits[0];
+                     }
+                     (void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);
+                    }
+                    return TRUE;
+                case AVK_DOWN:   //add by pyg
+                     if(pMe->m_nCursorPos < pMe->m_nCurrLineFits[0])
+                     {
+                       if((WSTRLEN(pMe->m_DialString)%pMe->m_nCurrLineFits[0]) > pMe->m_nCursorPos)
+                       {
+                          pMe->m_nCursorPos=((WSTRLEN(pMe->m_DialString)/pMe->m_nCurrLineFits[0]) * pMe->m_nCurrLineFits[0])+pMe->m_nCursorPos;
+                       }
+                       else
+                       {
+                          pMe->m_nCursorPos=WSTRLEN(pMe->m_DialString)-(WSTRLEN(pMe->m_DialString)%pMe->m_nCurrLineFits[0])-pMe->m_nCurrLineFits[0] + pMe->m_nCursorPos;
+                       }
+                     }
+                     else
+                     {
+                         pMe->m_nCursorPos -= pMe->m_nCurrLineFits[0];
+                     }      
+                     (void) ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER_REDRAW,0,0);
+                    return TRUE;
 #endif
 				case AVK_CAMERA:
             	{
@@ -6988,6 +7021,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
             pMe->m_nCurrLineFits[nLine] = fits;
             dstStr += fits;
             nLine++;
+            MSG_FATAL("nLine---=%d",nLine,0,0);
         }
     }
     
