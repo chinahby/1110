@@ -2347,7 +2347,7 @@ void OEM_TextSetCursorPos(OEMCONTEXT hTextField, int32 nOffset)
 
 // add the code for when the cursor in begin, the button should be changed
 /*=============================================================================
-FUNCTION: OEM_TextGetT9End
+FUNCTION: OEM_TextGetEnd
 
 DESCRIPTION:
 
@@ -2364,7 +2364,7 @@ SIDE EFFECTS:
 SEE ALSO:
 
 =============================================================================*/
-int32 OEM_TextGetT9End(OEMCONTEXT hTextField)
+int32 OEM_TextGetEnd(OEMCONTEXT hTextField)
 {
    register TextCtlContext *pContext = (TextCtlContext *) hTextField;
 

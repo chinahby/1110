@@ -44,7 +44,6 @@ OEM_LIB_SOURCES=\
 	OEMSysClock.c \
 	OEMTAPI.c \
 	OEMTelephone.c \
-	OEMText.c \
 	OEMUASMS.c \
 	OEMUASMSStorage.c \
 	OEMWSMS.c \
@@ -121,7 +120,6 @@ OEM_LIB_SOURCES=\
 	OEMSysClock.c \
 	OEMTAPI.c \
 	OEMTelephone.c \
-	OEMText.c \
 	OEMSMS.c \
 	OEMUASMS.c \
 	OEMUASMSStorage.c \
@@ -212,7 +210,6 @@ OEM_LIB_SOURCES=\
 	OEMSysClock.c \
 	OEMTAPI.c \
 	OEMTelephone.c \
-	OEMText.c \
 	OEMTSupps.c \
 	OEMUASMS.c \
 	OEMUASMSStorage.c \
@@ -229,6 +226,11 @@ OEM_LIB_SOURCES=\
 	OEMFMRDS.c \
 	OEMOMH.c
 endif
+endif
+ifeq ($(USES_ZI),yes)
+  OEM_LIB_SOURCES+=OEMZIText.c
+else
+	OEM_LIB_SOURCES+=OEMText.c
 endif
 ifeq ($(USES_UIONE),yes)
 # Tell make where the static extension source files from the Porting Kit are located

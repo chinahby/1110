@@ -175,7 +175,7 @@ extern int OEMNativeNotifierClass_New(IShell * pIShell, AEECLSID clsID, void ** 
 #endif // FEATURE_BREW_NATIVENOTIFIER
 
 #ifdef FEATURE_BREW_IME // {
-extern int OEMIMUI_New(IShell * pIShell, AEECLSID clsID, void ** ppobj);
+//extern int OEMIMUI_New(IShell * pIShell, AEECLSID clsID, void ** ppobj);
 #endif // } FEATURE_BREW_IME
 
 #if defined(FEATURE_BREW_IME) || defined(FEATURE_ZICORP_EZITEXT) // {
@@ -962,7 +962,7 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
 #endif
 
 #ifdef FEATURE_BREW_IME // {
-         {AEECLSID_OEMIMUI,                 0,0,NULL,OEMIMUI_New},
+  //       {AEECLSID_OEMIMUI,                 0,0,NULL,OEMIMUI_New},
 #endif // } FEATURE_BREW_IME
 #if defined(FEATURE_BREW_IME) || defined(FEATURE_ZICORP_EZITEXT) // {
          {AEECLSID_OEMIMMGR,                 0,0,NULL,OEMIMMgr_New},

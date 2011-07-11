@@ -37,7 +37,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS:  Not Applicable
 
 when       who     what, where, why
 --------   ---     ----------------------------------------------------------
-01/01/08   bw      Build for T9
+01/01/08   bw      Build for ZI
 
 ===========================================================================*/
 
@@ -68,8 +68,9 @@ when       who     what, where, why
       FEATURE DEFINED
 -------------------------------------------------------------------*/
 
-// USE T9 input method
-#define FEATURE_T9_INPUT
+// USE ZI input method
+
+#define FEATURE_ZI_INPUT
 #ifdef FEATURE_LANGUAGE_MYANMAR
 #define FEATURE_MYANMAR_INPUT_MOD     //add by yangdecai 2010-12-23
 #endif
@@ -82,220 +83,220 @@ when       who     what, where, why
 #define AEE_APPSTISIMAPP_RES_FILE AEE_RES_LANGDIR ZHCNIME_RES_FILE
 #define IDD_IME 6001
 
-#ifdef FEATURE_T9_INPUT
 
-#define FEATURE_T9_ALPHABETIC
+#ifdef FEATURE_ZI_INPUT
 
-#ifdef FEATURE_T9_ALPHABETIC
+#define FEATURE_ZI_ALPHABETIC
 
-#define FEATURE_T9_MULTITAP
+#ifdef FEATURE_ZI_ALPHABETIC
+
+#define FEATURE_ZI_MULTITAP
 //#define FEATURE_LANG_HINDI     //add  by yangdecai
 //#define FEATURE_LANG_ARABIC
 #ifdef FEATURE_LANG_ENGLISH
-#define FEATURE_T9_MT_ENGLISH
-#define FEATURE_T9_RAPID_ENGLISH
+#define FEATURE_ZI_MT_ENGLISH
+#define FEATURE_ZI_RAPID_ENGLISH
 
 #if defined (FEATURE_ALL_KEY_PAD)|| defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W515V3)
-#define FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
+#define FEATURE_ZI_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #endif
 
 #endif //FEATURE_LANG_ENGLISH
 
 #ifdef FEATURE_LANG_ARABIC
-#define FEATURE_T9_MT_ARABIC
-//#define FEATURE_T9_RAPID_ARABIC
+#define FEATURE_ZI_MT_ARABIC
+//#define FEATURE_ZI_RAPID_ARABIC
 #endif //FEATURE_LANG_ARABIC
 
 #ifdef FEATURE_LANG_HEBREW
-#define FEATURE_T9_MT_HEBREW
-#define FEATURE_T9_RAPID_HEBREW
+#define FEATURE_ZI_MT_HEBREW
+#define FEATURE_ZI_RAPID_HEBREW
 #endif //FEATURE_LANG_HEBREW
 
 #ifdef FEATURE_LANG_HINDI
-#define FEATURE_T9_MT_HINDI
-#define FEATURE_T9_RAPID_HINDI
+#define FEATURE_ZI_MT_HINDI
+#define FEATURE_ZI_RAPID_HINDI
 #endif //FEATURE_LANG_HINDI
 
 #ifdef FEATURE_LANG_THAI
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) || defined(FEATURE_VERSION_C01)
-#define FEATURE_T9_MT_THAI
+#define FEATURE_ZI_MT_THAI
 #else
-#define FEATURE_T9_MT_THAI
-#define FEATURE_T9_RAPID_THAI
+#define FEATURE_ZI_MT_THAI
+#define FEATURE_ZI_RAPID_THAI
 #endif
 #endif //FEATURE_LANG_THAI
 
 #ifdef FEATURE_LANG_SPANISH
-#define FEATURE_T9_MT_SPANISH
-#define FEATURE_T9_RAPID_SPANISH
+#define FEATURE_ZI_MT_SPANISH
+#define FEATURE_ZI_RAPID_SPANISH
 #endif //FEATURE_LANG_SPANISH
 
 #ifdef FEATURE_LANG_PORTUGUESE
-//#define FEATURE_T9_MT_PORTUGUESE
-#define FEATURE_T9_RAPID_PORTUGUESE
+//#define FEATURE_ZI_MT_PORTUGUESE
+#define FEATURE_ZI_RAPID_PORTUGUESE
 #endif //FEATURE_LANG_PORTUGUESE
 
 #ifdef FEATURE_INPUTMODE_INDONESIAN
-#define FEATURE_T9_MT_INDONESIAN
-#define FEATURE_T9_RAPID_INDONESIAN
+#define FEATURE_ZI_MT_INDONESIAN
+#define FEATURE_ZI_RAPID_INDONESIAN
 #endif //FEATURE_LANG_INDONESIAN
 
 #ifdef FEATURE_LANG_VIETNAMESE
-#define FEATURE_T9_MT_VIETNAMESE
-#define FEATURE_T9_RAPID_VIETNAMESE
+#define FEATURE_ZI_MT_VIETNAMESE
+#define FEATURE_ZI_RAPID_VIETNAMESE
 #endif //FEATURE_LANG_VIETNAMESE
 
 #ifdef FEATURE_LANG_FRENCH
-#define FEATURE_T9_MT_FRENCH
-#define FEATURE_T9_RAPID_FRENCH
+#define FEATURE_ZI_MT_FRENCH
+#define FEATURE_ZI_RAPID_FRENCH
 #endif //FEATURE_LANG_FRENCH
 
 #ifdef FEATURE_LANG_JAPANESE
-#define FEATURE_T9_JAPANESE
+#define FEATURE_ZI_JAPANESE
 #endif //FEATURE_LANG_JAPANESE
 
 #ifdef FEATURE_LANG_KOREAN
-#define FEATURE_T9_KOREAN
+#define FEATURE_ZI_KOREAN
 #endif //FEATURE_LANG_KOREAN
 
 #ifdef FEATURE_LANG_ITALIAN
-#define FEATURE_T9_ITALIAN
+#define FEATURE_ZI_ITALIAN
 #endif //FEATURE_LANG_ITALIAN
 
-#endif //#ifdef FEATURE_T9_ALPHABETIC
+#endif //#ifdef FEATURE_ZI_ALPHABETIC
 
 #ifdef FEATURE_LANG_CHINESE
-#define FEATURE_T9_CHINESE
-#define FEATURE_T9_PINYIN
-#define FEATURE_T9_STROKE
+#define FEATURE_ZI_CHINESE
+#define FEATURE_ZI_PINYIN
+#define FEATURE_ZI_STROKE
 #endif //FEATURE_LANG_CHINESE
 
 #ifdef FEATURE_LANG_TCHINESE
-#define FEATURE_T9_CHINESE
+#define FEATURE_ZI_CHINESE
 #ifndef AEE_SIMULATOR
-#define FEATURE_T9_ZHUYIN
+#define FEATURE_ZI_ZHUYIN
 #endif
 #endif //FEATURE_LANG_TCHINESE
 
-#ifdef FEATURE_T9_MT_ENGLISH
+#ifdef FEATURE_ZI_MT_ENGLISH
 #define FEATURE_3STYLE_MULTITAP
-#endif //FEATURE_T9_MT_ENGLISH
+#endif //FEATURE_ZI_MT_ENGLISH
 
-#endif //FEATURE_T9_INPUT
-
+#endif //FEATURE_ZI_INPUT
 //===============================================================================
 // Input method mode use for input method 
 //===============================================================================  
 #define TEXT_MODE_NUMBERS          AEE_TM_NUMBERS
 
-#ifdef FEATURE_T9_MULTITAP
+#ifdef FEATURE_ZI_MULTITAP
 #define TEXT_MODE_MULTITAP         AEE_TM_LETTERS
-#endif //FEATURE_T9_MULTITAP
+#endif //FEATURE_ZI_MULTITAP
 
-#ifdef FEATURE_T9_RAPID_ENGLISH
-#define TEXT_MODE_T9_RAPID_ENGLISH AEE_TM_RAPID 
-#endif //FEATURE_T9_RAPID_ENGLISH
-#ifdef FEATURE_T9_CAP_LOWER_ENGLISH  //add by yangdecai   2010-09-09
-#define TEXT_MODE_T9_CAP_LOWER_ENGLISH  AEE_TM_CAPLOWER
+#ifdef FEATURE_ZI_RAPID_ENGLISH
+#define TEXT_MODE_ZI_RAPID_ENGLISH AEE_TM_RAPID 
+#endif //FEATURE_ZI_RAPID_ENGLISH
+#ifdef FEATURE_ZI_CAP_LOWER_ENGLISH  //add by yangdecai   2010-09-09
+#define TEXT_MODE_ZI_CAP_LOWER_ENGLISH  AEE_TM_CAPLOWER
 #endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD
 #define TEXT_MODE_MYANMAR  AEE_TM_MYANMAR   //add by yangdecai   2010-12-23
 #endif
-#ifdef FEATURE_T9_PINYIN
-#define TEXT_MODE_T9_PINYIN        AEE_TM_PINYIN 
-#endif //FEATURE_T9_PINYIN
+#ifdef FEATURE_ZI_PINYIN
+#define TEXT_MODE_ZI_PINYIN        AEE_TM_PINYIN 
+#endif //FEATURE_ZI_PINYIN
 
-#ifdef FEATURE_T9_STROKE
-#define TEXT_MODE_T9_STROKE        AEE_TM_STROKE 
-#endif //FEATURE_T9_STROKE
+#ifdef FEATURE_ZI_STROKE
+#define TEXT_MODE_ZI_STROKE        AEE_TM_STROKE 
+#endif //FEATURE_ZI_STROKE
 
-#ifdef FEATURE_T9_ZHUYIN
-#define TEXT_MODE_T9_ZHUYIN        AEE_TM_ZHUYIN 
-#endif //FEATURE_T9_ZHUYIN
+#ifdef FEATURE_ZI_ZHUYIN
+#define TEXT_MODE_ZI_ZHUYIN        AEE_TM_ZHUYIN 
+#endif //FEATURE_ZI_ZHUYIN
 
-#ifdef FEATURE_T9_MT_ARABIC
-#define TEXT_MODE_T9_MT_ARABIC     AEE_TM_ARABIC
-#endif //FEATURE_T9_MT_ARABIC
+#ifdef FEATURE_ZI_MT_ARABIC
+#define TEXT_MODE_ZI_MT_ARABIC     AEE_TM_ARABIC
+#endif //FEATURE_ZI_MT_ARABIC
 
-#ifdef FEATURE_T9_RAPID_ARABIC
-#define TEXT_MODE_T9_RAPID_ARABIC  AEE_TM_ARABIC_R
-#endif //FEATURE_T9_RAPID_ARABIC
+#ifdef FEATURE_ZI_RAPID_ARABIC
+#define TEXT_MODE_ZI_RAPID_ARABIC  AEE_TM_ARABIC_R
+#endif //FEATURE_ZI_RAPID_ARABIC
 
-#ifdef FEATURE_T9_MT_HEBREW
-#define TEXT_MODE_T9_MT_HEBREW     AEE_TM_HEBREW
-#endif //FEATURE_T9_MT_HEBREW
+#ifdef FEATURE_ZI_MT_HEBREW
+#define TEXT_MODE_ZI_MT_HEBREW     AEE_TM_HEBREW
+#endif //FEATURE_ZI_MT_HEBREW
 
-#ifdef FEATURE_T9_RAPID_HEBREW
-#define TEXT_MODE_T9_RAPID_HEBREW  AEE_TM_HEBREW_R
-#endif //FEATURE_T9_RAPID_HEBREW
+#ifdef FEATURE_ZI_RAPID_HEBREW
+#define TEXT_MODE_ZI_RAPID_HEBREW  AEE_TM_HEBREW_R
+#endif //FEATURE_ZI_RAPID_HEBREW
 
-#ifdef FEATURE_T9_MT_HINDI
-#define TEXT_MODE_T9_MT_HINDI      AEE_TM_HINDI
-#endif //FEATURE_T9_MT_HINDI
+#ifdef FEATURE_ZI_MT_HINDI
+#define TEXT_MODE_ZI_MT_HINDI      AEE_TM_HINDI
+#endif //FEATURE_ZI_MT_HINDI
 
-#ifdef FEATURE_T9_RAPID_HINDI
-#define TEXT_MODE_T9_RAPID_HINDI   AEE_TM_HINDI_R
-#endif //FEATURE_T9_RAPID_HINDI
+#ifdef FEATURE_ZI_RAPID_HINDI
+#define TEXT_MODE_ZI_RAPID_HINDI   AEE_TM_HINDI_R
+#endif //FEATURE_ZI_RAPID_HINDI
 
-#ifdef FEATURE_T9_MT_THAI
-#define TEXT_MODE_T9_MT_THAI       AEE_TM_THAI
-#endif //FEATURE_T9_MT_THAI
+#ifdef FEATURE_ZI_MT_THAI
+#define TEXT_MODE_ZI_MT_THAI       AEE_TM_THAI
+#endif //FEATURE_ZI_MT_THAI
 
-#ifdef FEATURE_T9_RAPID_THAI
-#define TEXT_MODE_T9_RAPID_THAI    AEE_TM_THAI_R
-#endif //FEATURE_T9_RAPID_THAI
+#ifdef FEATURE_ZI_RAPID_THAI
+#define TEXT_MODE_ZI_RAPID_THAI    AEE_TM_THAI_R
+#endif //FEATURE_ZI_RAPID_THAI
 
-#ifdef FEATURE_T9_MT_SPANISH
-#define TEXT_MODE_T9_MT_SPANISH    AEE_TM_SPANISH_LA
-#endif //FEATURE_T9_MT_SPANISH
+#ifdef FEATURE_ZI_MT_SPANISH
+#define TEXT_MODE_ZI_MT_SPANISH    AEE_TM_SPANISH_LA
+#endif //FEATURE_ZI_MT_SPANISH
 
-#ifdef FEATURE_T9_RAPID_SPANISH
-#define TEXT_MODE_T9_RAPID_SPANISH AEE_TM_SPANISH_LA_R
-#endif //FEATURE_T9_RAPID_SPANISH
+#ifdef FEATURE_ZI_RAPID_SPANISH
+#define TEXT_MODE_ZI_RAPID_SPANISH AEE_TM_SPANISH_LA_R
+#endif //FEATURE_ZI_RAPID_SPANISH
 
-#ifdef FEATURE_T9_MT_PORTUGUESE
-#define TEXT_MODE_T9_MT_PORTUGUESE AEE_TM_PORTUGUESE_EU
-#endif //FEATURE_T9_MT_PORTUGUESE
+#ifdef FEATURE_ZI_MT_PORTUGUESE
+#define TEXT_MODE_ZI_MT_PORTUGUESE AEE_TM_PORTUGUESE_EU
+#endif //FEATURE_ZI_MT_PORTUGUESE
 
-#ifdef FEATURE_T9_RAPID_PORTUGUESE
-#define TEXT_MODE_T9_RAPID_PORTUGUESE AEE_TM_PORTUGUESE_EU_R
-#endif //FEATURE_T9_RAPID_PORTUGUESE
+#ifdef FEATURE_ZI_RAPID_PORTUGUESE
+#define TEXT_MODE_ZI_RAPID_PORTUGUESE AEE_TM_PORTUGUESE_EU_R
+#endif //FEATURE_ZI_RAPID_PORTUGUESE
 
-#ifdef FEATURE_T9_MT_INDONESIAN
-#define TEXT_MODE_T9_MT_INDONESIAN    AEE_TM_INDONESIAN
-#endif //FEATURE_T9_MT_INDONESIAN
+#ifdef FEATURE_ZI_MT_INDONESIAN
+#define TEXT_MODE_ZI_MT_INDONESIAN    AEE_TM_INDONESIAN
+#endif //FEATURE_ZI_MT_INDONESIAN
 
-#ifdef FEATURE_T9_RAPID_INDONESIAN
-#define TEXT_MODE_T9_RAPID_INDONESIAN AEE_TM_INDONESIAN_R
-#endif //FEATURE_T9_RAPID_INDONESIAN
+#ifdef FEATURE_ZI_RAPID_INDONESIAN
+#define TEXT_MODE_ZI_RAPID_INDONESIAN AEE_TM_INDONESIAN_R
+#endif //FEATURE_ZI_RAPID_INDONESIAN
 
-#ifdef FEATURE_T9_MT_VIETNAMESE
-#define TEXT_MODE_T9_MT_VIETNAMESE    AEE_TM_VIETNAMESE
-#endif //FEATURE_T9_MT_VIETNAMESE
+#ifdef FEATURE_ZI_MT_VIETNAMESE
+#define TEXT_MODE_ZI_MT_VIETNAMESE    AEE_TM_VIETNAMESE
+#endif //FEATURE_ZI_MT_VIETNAMESE
 
-#ifdef FEATURE_T9_RAPID_VIETNAMESE
-#define TEXT_MODE_T9_RAPID_VIETNAMESE AEE_TM_VIETNAMESE_R
-#endif //FEATURE_T9_RAPID_VIETNAMESE
+#ifdef FEATURE_ZI_RAPID_VIETNAMESE
+#define TEXT_MODE_ZI_RAPID_VIETNAMESE AEE_TM_VIETNAMESE_R
+#endif //FEATURE_ZI_RAPID_VIETNAMESE
 
-#ifdef FEATURE_T9_MT_FRENCH
-#define TEXT_MODE_T9_MT_FRENCH        AEE_TM_FRENCH_CA
-#endif //FEATURE_T9_MT_FRENCH
+#ifdef FEATURE_ZI_MT_FRENCH
+#define TEXT_MODE_ZI_MT_FRENCH        AEE_TM_FRENCH_CA
+#endif //FEATURE_ZI_MT_FRENCH
 
-#ifdef FEATURE_T9_RAPID_FRENCH
-#define TEXT_MODE_T9_RAPID_FRENCH     AEE_TM_FRENCH_CA_R
-#endif //FEATURE_T9_RAPID_FRENCH
+#ifdef FEATURE_ZI_RAPID_FRENCH
+#define TEXT_MODE_ZI_RAPID_FRENCH     AEE_TM_FRENCH_CA_R
+#endif //FEATURE_ZI_RAPID_FRENCH
 
-#ifdef FEATURE_T9_JAPANESE
-#define TEXT_MODE_T9_JAPANESE         AEE_TM_KANJI
-#endif //FEATURE_T9_JAPANESE
+#ifdef FEATURE_ZI_JAPANESE
+#define TEXT_MODE_ZI_JAPANESE         AEE_TM_KANJI
+#endif //FEATURE_ZI_JAPANESE
 
-#ifdef FEATURE_T9_KOREAN
-#define TEXT_MODE_T9_KOREAN           AEE_TM_HANGUL
-#endif //FEATURE_T9_KOREAN
+#ifdef FEATURE_ZI_KOREAN
+#define TEXT_MODE_ZI_KOREAN           AEE_TM_HANGUL
+#endif //FEATURE_ZI_KOREAN
 
-#ifdef FEATURE_T9_ITALIAN
-#define TEXT_MODE_T9_ITALIAN          AEE_TM_ITALIAN
-#endif //FEATURE_T9_ITALIAN
+#ifdef FEATURE_ZI_ITALIAN
+#define TEXT_MODE_ZI_ITALIAN          AEE_TM_ITALIAN
+#endif //FEATURE_ZI_ITALIAN
 
 
 //#ifdef WIN32 
@@ -318,130 +319,130 @@ enum
 {
     OEM_MODE_NUMBERS = 0,   // 数字 
 
-#ifdef FEATURE_T9_MT_ENGLISH
-    OEM_MODE_T9_MT_ENGLISH 
-    ,OEM_MODE_T9_MT_ENGLISH_LOW
-    ,OEM_MODE_T9_MT_ENGLISH_UP
+#ifdef FEATURE_ZI_MT_ENGLISH
+    OEM_MODE_ZI_MT_ENGLISH 
+    ,OEM_MODE_ZI_MT_ENGLISH_LOW
+    ,OEM_MODE_ZI_MT_ENGLISH_UP
     #ifdef FEATURE_VERSION_C01
-    ,OEM_MODE_T9_MT_CAP_LOWER
+    ,OEM_MODE_ZI_MT_CAP_LOWER
     #endif
-#endif //FEATURE_T9_MT_ENGLISH
+#endif //FEATURE_ZI_MT_ENGLISH
 
-#ifdef FEATURE_T9_RAPID_ENGLISH
-    ,OEM_MODE_T9_RAPID_ENGLISH
-    ,OEM_MODE_T9_RAPID_ENGLISH_LOW
-    ,OEM_MODE_T9_RAPID_ENGLISH_UP    
-#endif //FEATURE_T9_RAPID_ENGLISH
+#ifdef FEATURE_ZI_RAPID_ENGLISH
+    ,OEM_MODE_ZI_RAPID_ENGLISH
+    ,OEM_MODE_ZI_RAPID_ENGLISH_LOW
+    ,OEM_MODE_ZI_RAPID_ENGLISH_UP    
+#endif //FEATURE_ZI_RAPID_ENGLISH
 
-#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
-	,OEM_MODE_T9_CAP_LOWER_ENGLISH
+#ifdef FEATURE_ZI_CAP_LOWER_ENGLISH   //add by yangdecai
+	,OEM_MODE_ZI_CAP_LOWER_ENGLISH
 #endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD
 	,OEM_MODE_MYANMAR,
 #endif
-#ifdef FEATURE_T9_PINYIN
-    ,OEM_MODE_T9_PINYIN
-#endif //FEATURE_T9_PINYIN
+#ifdef FEATURE_ZI_PINYIN
+    ,OEM_MODE_ZI_PINYIN
+#endif //FEATURE_ZI_PINYIN
 
-#ifdef FEATURE_T9_STROKE
-    ,OEM_MODE_T9_STROKE
-#endif //FEATURE_T9_STROKE
+#ifdef FEATURE_ZI_STROKE
+    ,OEM_MODE_ZI_STROKE
+#endif //FEATURE_ZI_STROKE
 
-#ifdef FEATURE_T9_ZHUYIN
-    ,OEM_MODE_T9_ZHUYIN
-#endif //FEATURE_T9_ZHUYIN
+#ifdef FEATURE_ZI_ZHUYIN
+    ,OEM_MODE_ZI_ZHUYIN
+#endif //FEATURE_ZI_ZHUYIN
 
-#ifdef FEATURE_T9_MT_ARABIC
-    ,OEM_MODE_T9_MT_ARABIC
-#endif //FEATURE_T9_MT_ARABIC
+#ifdef FEATURE_ZI_MT_ARABIC
+    ,OEM_MODE_ZI_MT_ARABIC
+#endif //FEATURE_ZI_MT_ARABIC
 
-#ifdef FEATURE_T9_RAPID_ARABIC
-    ,OEM_MODE_T9_RAPID_ARABIC
-#endif //FEATURE_T9_RAPID_ARABIC
+#ifdef FEATURE_ZI_RAPID_ARABIC
+    ,OEM_MODE_ZI_RAPID_ARABIC
+#endif //FEATURE_ZI_RAPID_ARABIC
 
-#ifdef FEATURE_T9_MT_HEBREW
-    ,OEM_MODE_T9_MT_HEBREW
-#endif //FEATURE_T9_MT_HEBREW
+#ifdef FEATURE_ZI_MT_HEBREW
+    ,OEM_MODE_ZI_MT_HEBREW
+#endif //FEATURE_ZI_MT_HEBREW
 
-#ifdef FEATURE_T9_RAPID_HEBREW
-    ,OEM_MODE_T9_RAPID_HEBREW
-#endif //FEATURE_T9_RAPID_HEBREW
+#ifdef FEATURE_ZI_RAPID_HEBREW
+    ,OEM_MODE_ZI_RAPID_HEBREW
+#endif //FEATURE_ZI_RAPID_HEBREW
 
-#ifdef FEATURE_T9_MT_HINDI
-    ,OEM_MODE_T9_MT_HINDI
-#endif //FEATURE_T9_MT_HINDI
+#ifdef FEATURE_ZI_MT_HINDI
+    ,OEM_MODE_ZI_MT_HINDI
+#endif //FEATURE_ZI_MT_HINDI
 
-#ifdef FEATURE_T9_RAPID_HINDI
-    ,OEM_MODE_T9_RAPID_HINDI
-#endif //FEATURE_T9_RAPID_HINDI
+#ifdef FEATURE_ZI_RAPID_HINDI
+    ,OEM_MODE_ZI_RAPID_HINDI
+#endif //FEATURE_ZI_RAPID_HINDI
 
-#ifdef FEATURE_T9_MT_THAI
-    ,OEM_MODE_T9_MT_THAI
-#endif //FEATURE_T9_MT_THAI
+#ifdef FEATURE_ZI_MT_THAI
+    ,OEM_MODE_ZI_MT_THAI
+#endif //FEATURE_ZI_MT_THAI
 
-#ifdef FEATURE_T9_RAPID_THAI
-    ,OEM_MODE_T9_RAPID_THAI
-#endif //FEATURE_T9_RAPID_THAI
+#ifdef FEATURE_ZI_RAPID_THAI
+    ,OEM_MODE_ZI_RAPID_THAI
+#endif //FEATURE_ZI_RAPID_THAI
 
-#ifdef FEATURE_T9_MT_SPANISH
-    ,OEM_MODE_T9_MT_SPANISH
-    ,OEM_MODE_T9_MT_SPANISH_LOW  
-    ,OEM_MODE_T9_MT_SPANISH_UP
-#endif //FEATURE_T9_MT_SPANISH
+#ifdef FEATURE_ZI_MT_SPANISH
+    ,OEM_MODE_ZI_MT_SPANISH
+    ,OEM_MODE_ZI_MT_SPANISH_LOW  
+    ,OEM_MODE_ZI_MT_SPANISH_UP
+#endif //FEATURE_ZI_MT_SPANISH
 
-#ifdef FEATURE_T9_RAPID_SPANISH
-    ,OEM_MODE_T9_RAPID_SPANISH
-    ,OEM_MODE_T9_RAPID_SPANISH_LOW  
-    ,OEM_MODE_T9_RAPID_SPANISH_UP
-#endif //FEATURE_T9_RAPID_SPANISH
+#ifdef FEATURE_ZI_RAPID_SPANISH
+    ,OEM_MODE_ZI_RAPID_SPANISH
+    ,OEM_MODE_ZI_RAPID_SPANISH_LOW  
+    ,OEM_MODE_ZI_RAPID_SPANISH_UP
+#endif //FEATURE_ZI_RAPID_SPANISH
 
-#ifdef FEATURE_T9_MT_PORTUGUESE
-    ,OEM_MODE_T9_MT_PORTUGUESE
-#endif //FEATURE_T9_MT_PORTUGUESE
+#ifdef FEATURE_ZI_MT_PORTUGUESE
+    ,OEM_MODE_ZI_MT_PORTUGUESE
+#endif //FEATURE_ZI_MT_PORTUGUESE
 
-#ifdef FEATURE_T9_RAPID_PORTUGUESE
-    ,OEM_MODE_T9_RAPID_PORTUGUESE
-#endif //FEATURE_T9_RAPID_PORTUGUESE
+#ifdef FEATURE_ZI_RAPID_PORTUGUESE
+    ,OEM_MODE_ZI_RAPID_PORTUGUESE
+#endif //FEATURE_ZI_RAPID_PORTUGUESE
 
-#ifdef FEATURE_T9_MT_INDONESIAN
-    ,OEM_MODE_T9_MT_INDONESIAN
-#endif //FEATURE_T9_MT_INDONESIAN
+#ifdef FEATURE_ZI_MT_INDONESIAN
+    ,OEM_MODE_ZI_MT_INDONESIAN
+#endif //FEATURE_ZI_MT_INDONESIAN
 
-#ifdef FEATURE_T9_RAPID_INDONESIAN
-    ,OEM_MODE_T9_RAPID_INDONESIAN
-#endif //FEATURE_T9_RAPID_INDONESIAN
+#ifdef FEATURE_ZI_RAPID_INDONESIAN
+    ,OEM_MODE_ZI_RAPID_INDONESIAN
+#endif //FEATURE_ZI_RAPID_INDONESIAN
 
-#ifdef FEATURE_T9_MT_VIETNAMESE
-    ,OEM_MODE_T9_MT_VIETNAMESE
-#endif //FEATURE_T9_MT_VIETNAMESE
+#ifdef FEATURE_ZI_MT_VIETNAMESE
+    ,OEM_MODE_ZI_MT_VIETNAMESE
+#endif //FEATURE_ZI_MT_VIETNAMESE
 
-#ifdef FEATURE_T9_RAPID_VIETNAMESE
-    ,OEM_MODE_T9_RAPID_VIETNAMESE
-#endif //FEATURE_T9_RAPID_VIETNAMESE
+#ifdef FEATURE_ZI_RAPID_VIETNAMESE
+    ,OEM_MODE_ZI_RAPID_VIETNAMESE
+#endif //FEATURE_ZI_RAPID_VIETNAMESE
 
-#ifdef FEATURE_T9_MT_FRENCH
-    ,OEM_MODE_T9_MT_FRENCH
-    ,OEM_MODE_T9_MT_FRENCH_LOW  
-    ,OEM_MODE_T9_MT_FRENCH_UP
-#endif //FEATURE_T9_MT_FRENCH
+#ifdef FEATURE_ZI_MT_FRENCH
+    ,OEM_MODE_ZI_MT_FRENCH
+    ,OEM_MODE_ZI_MT_FRENCH_LOW  
+    ,OEM_MODE_ZI_MT_FRENCH_UP
+#endif //FEATURE_ZI_MT_FRENCH
 
-#ifdef FEATURE_T9_RAPID_FRENCH
-    ,OEM_MODE_T9_RAPID_FRENCH
-    ,OEM_MODE_T9_RAPID_FRENCH_LOW  
-    ,OEM_MODE_T9_RAPID_FRENCH_UP
-#endif //FEATURE_T9_RAPID_FRENCH
+#ifdef FEATURE_ZI_RAPID_FRENCH
+    ,OEM_MODE_ZI_RAPID_FRENCH
+    ,OEM_MODE_ZI_RAPID_FRENCH_LOW  
+    ,OEM_MODE_ZI_RAPID_FRENCH_UP
+#endif //FEATURE_ZI_RAPID_FRENCH
 
-#ifdef FEATURE_T9_JAPANESE
-    ,OEM_MODE_T9_JAPANESE
-#endif //FEATURE_T9_JAPANESE
+#ifdef FEATURE_ZI_JAPANESE
+    ,OEM_MODE_ZI_JAPANESE
+#endif //FEATURE_ZI_JAPANESE
 
-#ifdef FEATURE_T9_KOREAN
-    ,OEM_MODE_T9_KOREAN
-#endif //FEATURE_T9_KOREAN
+#ifdef FEATURE_ZI_KOREAN
+    ,OEM_MODE_ZI_KOREAN
+#endif //FEATURE_ZI_KOREAN
 
-#ifdef FEATURE_T9_ITALIAN
-    ,OEM_MODE_T9_ITALIAN
-#endif //FEATURE_T9_ITALIAN
+#ifdef FEATURE_ZI_ITALIAN
+    ,OEM_MODE_ZI_ITALIAN
+#endif //FEATURE_ZI_ITALIAN
 };
 
 //===============================================================================
@@ -450,323 +451,323 @@ enum
 //Maximum length of the Mode string. This is used in the Menu.    
 #define MAX_MODE_STR                (16)
 
-#define _T9_NUMBER_MODES             (1)
+#define _ZI_NUMBER_MODES             (1)
 
-#ifdef FEATURE_T9_MT_ENGLISH
-#define _T9_MULTITAP_MODES             (1)
-#else // #ifdef FEATURE_T9_MT_ENGLISH
-#define _T9_MULTITAP_MODES             (0)
-#endif //#ifdef FEATURE_T9_MT_ENGLISH
+#ifdef FEATURE_ZI_MT_ENGLISH
+#define _ZI_MULTITAP_MODES             (1)
+#else // #ifdef FEATURE_ZI_MT_ENGLISH
+#define _ZI_MULTITAP_MODES             (0)
+#endif //#ifdef FEATURE_ZI_MT_ENGLISH
 
-#ifdef	FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
-#define _T9_CAPLOWER_MODES             (1)
+#ifdef	FEATURE_ZI_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
+#define _ZI_CAPLOWER_MODES             (1)
 #else
-#define _T9_CAPLOWER_MODES             (0)
+#define _ZI_CAPLOWER_MODES             (0)
 #endif
 
-#ifdef FEATURE_T9_RAPID_ENGLISH
-#define _T9_RAPID_ENGLISH_MODE             (1)
-#else // #ifdef FEATURE_T9_RAPID_ENGLISH
-#define _T9_RAPID_ENGLISH_MODE             (0)
-#endif //#ifdef FEATURE_T9_RAPID_ENGLISH
+#ifdef FEATURE_ZI_RAPID_ENGLISH
+#define _ZI_RAPID_ENGLISH_MODE             (1)
+#else // #ifdef FEATURE_ZI_RAPID_ENGLISH
+#define _ZI_RAPID_ENGLISH_MODE             (0)
+#endif //#ifdef FEATURE_ZI_RAPID_ENGLISH
 
-#ifdef FEATURE_T9_PINYIN
-#define _T9_PINYIN_MODE             (1)
-#else // #ifdef FEATURE_T9_PINYIN
-#define _T9_PINYIN_MODE             (0)
-#endif //FEATURE_T9_PINYIN
+#ifdef FEATURE_ZI_PINYIN
+#define _ZI_PINYIN_MODE             (1)
+#else // #ifdef FEATURE_ZI_PINYIN
+#define _ZI_PINYIN_MODE             (0)
+#endif //FEATURE_ZI_PINYIN
 #ifdef FEATURE_MYANMAR_INPUT_MOD
-#define _T9_MYANMAR_MODE             (1)
-#else // #ifdef FEATURE_T9_PINYIN
-#define _T9_MYANMAR_MODE             (0)
-#endif //FEATURE_T9_PINYIN
-#ifdef FEATURE_T9_STROKE
-#define _T9_STROKE_MODE             (1)
-#else // #ifdef FEATURE_T9_STROKE
-#define _T9_STROKE_MODE             (0)
-#endif //FEATURE_T9_STROKE
+#define _ZI_MYANMAR_MODE             (1)
+#else // #ifdef FEATURE_ZI_PINYIN
+#define _ZI_MYANMAR_MODE             (0)
+#endif //FEATURE_ZI_PINYIN
+#ifdef FEATURE_ZI_STROKE
+#define _ZI_STROKE_MODE             (1)
+#else // #ifdef FEATURE_ZI_STROKE
+#define _ZI_STROKE_MODE             (0)
+#endif //FEATURE_ZI_STROKE
 
-#ifdef FEATURE_T9_ZHUYIN
-#define _T9_ZHUYIN_MODE             (1)
-#else // #ifdef FEATURE_T9_ZHUYIN
-#define _T9_ZHUYIN_MODE             (0)
-#endif //FEATURE_T9_ZHUYIN
+#ifdef FEATURE_ZI_ZHUYIN
+#define _ZI_ZHUYIN_MODE             (1)
+#else // #ifdef FEATURE_ZI_ZHUYIN
+#define _ZI_ZHUYIN_MODE             (0)
+#endif //FEATURE_ZI_ZHUYIN
 
-#ifdef FEATURE_T9_MT_ARABIC
-#define _T9_MT_ARABIC_MODE             (1)
-#else // #ifdef FEATURE_T9_MT_ARABIC
-#define _T9_MT_ARABIC_MODE             (0)
-#endif //FEATURE_T9_MT_ARABIC
+#ifdef FEATURE_ZI_MT_ARABIC
+#define _ZI_MT_ARABIC_MODE             (1)
+#else // #ifdef FEATURE_ZI_MT_ARABIC
+#define _ZI_MT_ARABIC_MODE             (0)
+#endif //FEATURE_ZI_MT_ARABIC
 
-#ifdef FEATURE_T9_RAPID_ARABIC
-#define _T9_RAPID_ARABIC_MODE             (1)
-#else // #ifdef FEATURE_T9_MT_ARABIC
-#define _T9_RAPID_ARABIC_MODE             (0)
-#endif //FEATURE_T9_RAPID_ARABIC
+#ifdef FEATURE_ZI_RAPID_ARABIC
+#define _ZI_RAPID_ARABIC_MODE             (1)
+#else // #ifdef FEATURE_ZI_MT_ARABIC
+#define _ZI_RAPID_ARABIC_MODE             (0)
+#endif //FEATURE_ZI_RAPID_ARABIC
 
-#ifdef FEATURE_T9_MT_HEBREW
-#define _T9_MT_HEBREW_MODE             (1)
-#else // #ifdef FEATURE_T9_MT_HEBREW
-#define _T9_MT_HEBREW_MODE             (0)
-#endif //FEATURE_T9_MT_HEBREW
+#ifdef FEATURE_ZI_MT_HEBREW
+#define _ZI_MT_HEBREW_MODE             (1)
+#else // #ifdef FEATURE_ZI_MT_HEBREW
+#define _ZI_MT_HEBREW_MODE             (0)
+#endif //FEATURE_ZI_MT_HEBREW
 
-#ifdef FEATURE_T9_RAPID_HEBREW
-#define _T9_RAPID_HEBREW_MODE             (1)
-#else // #ifdef FEATURE_T9_RAPID_HEBREW
-#define _T9_RAPID_HEBREW_MODE             (0)
-#endif //FEATURE_T9_RAPID_HEBREW
+#ifdef FEATURE_ZI_RAPID_HEBREW
+#define _ZI_RAPID_HEBREW_MODE             (1)
+#else // #ifdef FEATURE_ZI_RAPID_HEBREW
+#define _ZI_RAPID_HEBREW_MODE             (0)
+#endif //FEATURE_ZI_RAPID_HEBREW
 
-#ifdef FEATURE_T9_MT_HINDI
-#define _T9_MT_HINDI_MODE             (1)
-#else // #ifdef FEATURE_T9_MT_HINDI
-#define _T9_MT_HINDI_MODE             (0)
-#endif //FEATURE_T9_MT_HINDI
+#ifdef FEATURE_ZI_MT_HINDI
+#define _ZI_MT_HINDI_MODE             (1)
+#else // #ifdef FEATURE_ZI_MT_HINDI
+#define _ZI_MT_HINDI_MODE             (0)
+#endif //FEATURE_ZI_MT_HINDI
 
-#ifdef FEATURE_T9_RAPID_HINDI
-#define _T9_RAPID_HINDI_MODE             (1)
-#else // #ifdef FEATURE_T9_RAPID_HINDI
-#define _T9_RAPID_HINDI_MODE             (0)
-#endif //FEATURE_T9_RAPID_HINDI
+#ifdef FEATURE_ZI_RAPID_HINDI
+#define _ZI_RAPID_HINDI_MODE             (1)
+#else // #ifdef FEATURE_ZI_RAPID_HINDI
+#define _ZI_RAPID_HINDI_MODE             (0)
+#endif //FEATURE_ZI_RAPID_HINDI
 
-#ifdef FEATURE_T9_MT_THAI
-#define _T9_MT_THAI_MODE             (1)
-#else // #ifdef FEATURE_T9_MT_THAI
-#define _T9_MT_THAI_MODE             (0)
-#endif //FEATURE_T9_MT_THAI
+#ifdef FEATURE_ZI_MT_THAI
+#define _ZI_MT_THAI_MODE             (1)
+#else // #ifdef FEATURE_ZI_MT_THAI
+#define _ZI_MT_THAI_MODE             (0)
+#endif //FEATURE_ZI_MT_THAI
 
-#ifdef FEATURE_T9_RAPID_THAI
-#define _T9_RAPID_THAI_MODE             (1)
-#else // #ifdef FEATURE_T9_RAPID_THAI
-#define _T9_RAPID_THAI_MODE             (0)
-#endif //FEATURE_T9_RAPID_THAI
+#ifdef FEATURE_ZI_RAPID_THAI
+#define _ZI_RAPID_THAI_MODE             (1)
+#else // #ifdef FEATURE_ZI_RAPID_THAI
+#define _ZI_RAPID_THAI_MODE             (0)
+#endif //FEATURE_ZI_RAPID_THAI
 
-#ifdef FEATURE_T9_MT_SPANISH
-#define _T9_MT_SPANISH_MODE             (1)
-#else // #ifdef FEATURE_T9_MT_SPANISH
-#define _T9_MT_SPANISH_MODE             (0)
-#endif //FEATURE_T9_MT_SPANISH
+#ifdef FEATURE_ZI_MT_SPANISH
+#define _ZI_MT_SPANISH_MODE             (1)
+#else // #ifdef FEATURE_ZI_MT_SPANISH
+#define _ZI_MT_SPANISH_MODE             (0)
+#endif //FEATURE_ZI_MT_SPANISH
 
-#ifdef FEATURE_T9_RAPID_SPANISH
-#define _T9_RAPID_SPANISH_MODE             (1)
-#else // #ifdef FEATURE_T9_RAPID_SPANISH
-#define _T9_RAPID_SPANISH_MODE             (0)
-#endif //FEATURE_T9_RAPID_SPANISH
+#ifdef FEATURE_ZI_RAPID_SPANISH
+#define _ZI_RAPID_SPANISH_MODE             (1)
+#else // #ifdef FEATURE_ZI_RAPID_SPANISH
+#define _ZI_RAPID_SPANISH_MODE             (0)
+#endif //FEATURE_ZI_RAPID_SPANISH
 
-#ifdef FEATURE_T9_MT_PORTUGUESE
-#define _T9_MT_PORTUGUESE_MODE             (1)
-#else // #ifdef FEATURE_T9_MT_PORTUGUESE
-#define _T9_MT_PORTUGUESE_MODE             (0)
-#endif //FEATURE_T9_MT_PORTUGUESE
+#ifdef FEATURE_ZI_MT_PORTUGUESE
+#define _ZI_MT_PORTUGUESE_MODE             (1)
+#else // #ifdef FEATURE_ZI_MT_PORTUGUESE
+#define _ZI_MT_PORTUGUESE_MODE             (0)
+#endif //FEATURE_ZI_MT_PORTUGUESE
 
-#ifdef FEATURE_T9_RAPID_PORTUGUESE
-#define _T9_RAPID_PORTUGUESE_MODE             (1)
-#else // #ifdef FEATURE_T9_MT_PORTUGUESE
-#define _T9_RAPID_PORTUGUESE_MODE             (0)
-#endif //FEATURE_T9_RAPID_PORTUGUESE
+#ifdef FEATURE_ZI_RAPID_PORTUGUESE
+#define _ZI_RAPID_PORTUGUESE_MODE             (1)
+#else // #ifdef FEATURE_ZI_MT_PORTUGUESE
+#define _ZI_RAPID_PORTUGUESE_MODE             (0)
+#endif //FEATURE_ZI_RAPID_PORTUGUESE
 
-#ifdef FEATURE_T9_MT_INDONESIAN
-#define _T9_MT_INDONESIAN_MODE             (1)
-#else // #ifdef FEATURE_T9_MT_INDONESIAN
-#define _T9_MT_INDONESIAN_MODE             (0)
-#endif //FEATURE_T9_MT_INDONESIAN
+#ifdef FEATURE_ZI_MT_INDONESIAN
+#define _ZI_MT_INDONESIAN_MODE             (1)
+#else // #ifdef FEATURE_ZI_MT_INDONESIAN
+#define _ZI_MT_INDONESIAN_MODE             (0)
+#endif //FEATURE_ZI_MT_INDONESIAN
 
-#ifdef FEATURE_T9_RAPID_INDONESIAN
-#define _T9_RAPID_INDONESIAN_MODE             (1)
-#else // #ifdef FEATURE_T9_MT_INDONESIAN
-#define _T9_RAPID_INDONESIAN_MODE             (0)
-#endif //FEATURE_T9_RAPID_INDONESIAN
+#ifdef FEATURE_ZI_RAPID_INDONESIAN
+#define _ZI_RAPID_INDONESIAN_MODE             (1)
+#else // #ifdef FEATURE_ZI_MT_INDONESIAN
+#define _ZI_RAPID_INDONESIAN_MODE             (0)
+#endif //FEATURE_ZI_RAPID_INDONESIAN
 
-#ifdef FEATURE_T9_MT_VIETNAMESE
-#define _T9_MT_VIETNAMESE_MODE             (1)
-#else // #ifdef FEATURE_T9_MT_VIETNAMESE
-#define _T9_MT_VIETNAMESE_MODE             (0)
-#endif //FEATURE_T9_MT_VIETNAMESE
+#ifdef FEATURE_ZI_MT_VIETNAMESE
+#define _ZI_MT_VIETNAMESE_MODE             (1)
+#else // #ifdef FEATURE_ZI_MT_VIETNAMESE
+#define _ZI_MT_VIETNAMESE_MODE             (0)
+#endif //FEATURE_ZI_MT_VIETNAMESE
 
-#ifdef FEATURE_T9_RAPID_VIETNAMESE
-#define _T9_RAPID_VIETNAMESE_MODE             (1)
-#else // #ifdef FEATURE_T9_MT_VIETNAMESE
-#define _T9_RAPID_VIETNAMESE_MODE             (0)
-#endif //FEATURE_T9_RAPID_VIETNAMESE
+#ifdef FEATURE_ZI_RAPID_VIETNAMESE
+#define _ZI_RAPID_VIETNAMESE_MODE             (1)
+#else // #ifdef FEATURE_ZI_MT_VIETNAMESE
+#define _ZI_RAPID_VIETNAMESE_MODE             (0)
+#endif //FEATURE_ZI_RAPID_VIETNAMESE
 
-#ifdef FEATURE_T9_MT_FRENCH
-#define _T9_MT_FRENCH_MODE             (1)
-#else // #ifdef FEATURE_T9_MT_FRENCH
-#define _T9_MT_FRENCH_MODE             (0)
-#endif //FEATURE_T9_MT_FRENCH
+#ifdef FEATURE_ZI_MT_FRENCH
+#define _ZI_MT_FRENCH_MODE             (1)
+#else // #ifdef FEATURE_ZI_MT_FRENCH
+#define _ZI_MT_FRENCH_MODE             (0)
+#endif //FEATURE_ZI_MT_FRENCH
 
-#ifdef FEATURE_T9_RAPID_FRENCH
-#define _T9_RAPID_FRENCH_MODE             (1)
-#else // #ifdef FEATURE_T9_RAPID_FRENCH
-#define _T9_RAPID_FRENCH_MODE             (0)
-#endif //FEATURE_T9_RAPID_FRENCH
+#ifdef FEATURE_ZI_RAPID_FRENCH
+#define _ZI_RAPID_FRENCH_MODE             (1)
+#else // #ifdef FEATURE_ZI_RAPID_FRENCH
+#define _ZI_RAPID_FRENCH_MODE             (0)
+#endif //FEATURE_ZI_RAPID_FRENCH
 
-#ifdef FEATURE_T9_JAPANESE
-#define _T9_JAPANESE_MODE             (1)
-#else // #ifdef FEATURE_T9_JAPANESE
-#define _T9_JAPANESE_MODE             (0)
-#endif //FEATURE_T9_JAPANESE
+#ifdef FEATURE_ZI_JAPANESE
+#define _ZI_JAPANESE_MODE             (1)
+#else // #ifdef FEATURE_ZI_JAPANESE
+#define _ZI_JAPANESE_MODE             (0)
+#endif //FEATURE_ZI_JAPANESE
 
-#ifdef FEATURE_T9_KOREAN
-#define _T9_KOREAN_MODE             (1)
-#else // #ifdef FEATURE_T9_JAPANESE
-#define _T9_KOREAN_MODE             (0)
-#endif //FEATURE_T9_KOREAN
+#ifdef FEATURE_ZI_KOREAN
+#define _ZI_KOREAN_MODE             (1)
+#else // #ifdef FEATURE_ZI_JAPANESE
+#define _ZI_KOREAN_MODE             (0)
+#endif //FEATURE_ZI_KOREAN
 
-#ifdef FEATURE_T9_ITALIAN
-#define _T9_ITALIAN_MODE             (1)
-#else // #ifdef FEATURE_T9_ITALIAN
-#define _T9_ITALIAN_MODE             (0)
-#endif //FEATURE_T9_ITALIAN
+#ifdef FEATURE_ZI_ITALIAN
+#define _ZI_ITALIAN_MODE             (1)
+#else // #ifdef FEATURE_ZI_ITALIAN
+#define _ZI_ITALIAN_MODE             (0)
+#endif //FEATURE_ZI_ITALIAN
 
-#define NUM_OF_MODES            ( _T9_NUMBER_MODES \
-                                + _T9_MULTITAP_MODES \
-                                + _T9_RAPID_ENGLISH_MODE \
-                                + _T9_MYANMAR_MODE \
-                                + _T9_PINYIN_MODE \
-                                + _T9_STROKE_MODE \
-                                + _T9_ZHUYIN_MODE \
-                                + _T9_MT_ARABIC_MODE \
-                                + _T9_RAPID_ARABIC_MODE \
-                                + _T9_MT_HEBREW_MODE \
-                                + _T9_RAPID_HEBREW_MODE \
-                                + _T9_MT_HINDI_MODE \
-                                + _T9_RAPID_HINDI_MODE \
-                                + _T9_MT_THAI_MODE \
-                                + _T9_RAPID_THAI_MODE \
-                                + _T9_MT_SPANISH_MODE \
-                                + _T9_RAPID_SPANISH_MODE \
-                                + _T9_MT_PORTUGUESE_MODE \
-                                + _T9_RAPID_PORTUGUESE_MODE \
-                                + _T9_MT_INDONESIAN_MODE \
-                                + _T9_RAPID_INDONESIAN_MODE \
-                                + _T9_MT_VIETNAMESE_MODE \
-                                + _T9_RAPID_VIETNAMESE_MODE \
-                                + _T9_MT_FRENCH_MODE \
-                                + _T9_RAPID_FRENCH_MODE \
-                                + _T9_JAPANESE_MODE \
-                                + _T9_KOREAN_MODE \
-                                + _T9_ITALIAN_MODE  \
-                                + _T9_CAPLOWER_MODES  \
+#define NUM_OF_MODES            ( _ZI_NUMBER_MODES \
+                                + _ZI_MULTITAP_MODES \
+                                + _ZI_RAPID_ENGLISH_MODE \
+                                + _ZI_MYANMAR_MODE \
+                                + _ZI_PINYIN_MODE \
+                                + _ZI_STROKE_MODE \
+                                + _ZI_ZHUYIN_MODE \
+                                + _ZI_MT_ARABIC_MODE \
+                                + _ZI_RAPID_ARABIC_MODE \
+                                + _ZI_MT_HEBREW_MODE \
+                                + _ZI_RAPID_HEBREW_MODE \
+                                + _ZI_MT_HINDI_MODE \
+                                + _ZI_RAPID_HINDI_MODE \
+                                + _ZI_MT_THAI_MODE \
+                                + _ZI_RAPID_THAI_MODE \
+                                + _ZI_MT_SPANISH_MODE \
+                                + _ZI_RAPID_SPANISH_MODE \
+                                + _ZI_MT_PORTUGUESE_MODE \
+                                + _ZI_RAPID_PORTUGUESE_MODE \
+                                + _ZI_MT_INDONESIAN_MODE \
+                                + _ZI_RAPID_INDONESIAN_MODE \
+                                + _ZI_MT_VIETNAMESE_MODE \
+                                + _ZI_RAPID_VIETNAMESE_MODE \
+                                + _ZI_MT_FRENCH_MODE \
+                                + _ZI_RAPID_FRENCH_MODE \
+                                + _ZI_JAPANESE_MODE \
+                                + _ZI_KOREAN_MODE \
+                                + _ZI_ITALIAN_MODE  \
+                                + _ZI_CAPLOWER_MODES  \
                                 )
 
 //wangliang modify!  2010-09-01
 //#if defined(FEATURE_PROJECT_SMART) || defined(FEATURE_PROJECT_M8)
-#if defined (FEATURE_T9_TEXT)
+#if defined (FEATURE_ZI_TEXT)
 static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 {
    // Lint complains because all the fields aren't explicitly initialized
    //lint -save -e785
    {'1','2','3',0}
    
-#ifdef FEATURE_T9_MT_ENGLISH   
+#ifdef FEATURE_ZI_MT_ENGLISH   
    ,{'A','B','C',0}
-#endif //FEATURE_T9_MT_ENGLISH
+#endif //FEATURE_ZI_MT_ENGLISH
 
-#ifdef FEATURE_T9_RAPID_ENGLISH
+#ifdef FEATURE_ZI_RAPID_ENGLISH
    ,{'a', 'b','c',0}
-#endif //FEATURE_T9_RAPID_ENGLISH
+#endif //FEATURE_ZI_RAPID_ENGLISH
 
-#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
+#ifdef FEATURE_ZI_CAP_LOWER_ENGLISH   //add by yangdecai
    ,{'A','b','c',0}
 #endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD      //add by yangdecai 2010-1223
    ,{'M','Y','A','N','M','A','R',0}
 #endif
-#ifdef FEATURE_T9_PINYIN
+#ifdef FEATURE_ZI_PINYIN
    ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}
-#endif //FEATURE_T9_PINYIN
+#endif //FEATURE_ZI_PINYIN
 
-#ifdef FEATURE_T9_STROKE
+#ifdef FEATURE_ZI_STROKE
    ,{'T', '9','S', 'T', 'R', 'O', 'K', 'E', 0}
-#endif //FEATURE_T9_STROKE
+#endif //FEATURE_ZI_STROKE
 
-#ifdef FEATURE_T9_ZHUYIN
+#ifdef FEATURE_ZI_ZHUYIN
    ,{'T', '9','Z', 'H', 'U', 'Y', 'I', 'N', 0}
-#endif //FEATURE_T9_ZHUYIN
+#endif //FEATURE_ZI_ZHUYIN
 
-#ifdef FEATURE_T9_MT_ARABIC
+#ifdef FEATURE_ZI_MT_ARABIC
    ,{'T', '9', 'M', 'T', 'A', 'R', 'A', 'B','C',0}
-#endif //FEATURE_T9_MT_ARABIC
+#endif //FEATURE_ZI_MT_ARABIC
 
-#ifdef FEATURE_T9_RAPID_ARABIC
+#ifdef FEATURE_ZI_RAPID_ARABIC
    ,{'T', '9', 'E', 'Z', 'A', 'R', 'A', 'B', 'I', 'C',0}
-#endif //FEATURE_T9_RAPID_ARABIC
+#endif //FEATURE_ZI_RAPID_ARABIC
 
-#ifdef FEATURE_T9_MT_HEBREW
+#ifdef FEATURE_ZI_MT_HEBREW
    ,{'T', '9', 'M', 'T', 'H', 'E', 'B', 'R', 'E', 'W',0}
-#endif //FEATURE_T9_MT_HEBREW
+#endif //FEATURE_ZI_MT_HEBREW
 
-#ifdef FEATURE_T9_RAPID_HEBREW
+#ifdef FEATURE_ZI_RAPID_HEBREW
    ,{'T', '9','E', 'Z', 'H', 'E', 'B', 'R', 'E', 'W',0}
-#endif //FEATURE_T9_RAPID_HEBREW
+#endif //FEATURE_ZI_RAPID_HEBREW
 
-#ifdef FEATURE_T9_MT_HINDI
+#ifdef FEATURE_ZI_MT_HINDI
    ,{'T', '9','M', 'T', 'H', 'I', 'N', 'D', 'I', 0}
-#endif //FEATURE_T9_MT_HINDI
+#endif //FEATURE_ZI_MT_HINDI
 
-#ifdef FEATURE_T9_RAPID_HINDI
+#ifdef FEATURE_ZI_RAPID_HINDI
    ,{'T', '9', 'E', 'Z', 'H', 'I', 'N', 'D', 'I', 0}
-#endif //FEATURE_T9_RAPID_HINDI
+#endif //FEATURE_ZI_RAPID_HINDI
 
-#ifdef FEATURE_T9_MT_THAI
+#ifdef FEATURE_ZI_MT_THAI
    ,{'T', '9','M', 'T', 'T', 'H', 'A', 'I', 0}
-#endif //FEATURE_T9_MT_THAI
+#endif //FEATURE_ZI_MT_THAI
 
-#ifdef FEATURE_T9_RAPID_THAI
+#ifdef FEATURE_ZI_RAPID_THAI
    ,{'T', '9','E', 'Z', 'T', 'H', 'A', 'I', 0}
-#endif //FEATURE_T9_RAPID_THAI
+#endif //FEATURE_ZI_RAPID_THAI
 
-#ifdef FEATURE_T9_MT_SPANISH
+#ifdef FEATURE_ZI_MT_SPANISH
    ,{'T', '9','M', 'T', 'S', 'P', 'A', 'N', 'I', 'S', 'H',0}
-#endif //FEATURE_T9_MT_SPANISH
+#endif //FEATURE_ZI_MT_SPANISH
 
-#ifdef FEATURE_T9_RAPID_SPANISH
+#ifdef FEATURE_ZI_RAPID_SPANISH
    ,{'T', '9','E', 'Z', 'S', 'P', 'A', 'N', 'I', 'S', 'H',0}
-#endif //FEATURE_T9_RAPID_SPANISH
+#endif //FEATURE_ZI_RAPID_SPANISH
 
-#ifdef FEATURE_T9_MT_PORTUGUESE
+#ifdef FEATURE_ZI_MT_PORTUGUESE
    ,{'T', '9','M', 'T', 'P', 'O', 'R', 'T', 'U', 'G', 'U','E', 'S', 'E',0}
-#endif //FEATURE_T9_MT_PORTUGUESE
+#endif //FEATURE_ZI_MT_PORTUGUESE
 
-#ifdef FEATURE_T9_RAPID_PORTUGUESE
+#ifdef FEATURE_ZI_RAPID_PORTUGUESE
    ,{'T', '9','E', 'Z', 'P', 'O', 'R', 'T', 'U', 'G', 'U','E', 'S', 'E',0}
-#endif //FEATURE_T9_RAPID_PORTUGUESE
+#endif //FEATURE_ZI_RAPID_PORTUGUESE
 
-#ifdef FEATURE_T9_MT_INDONESIAN
+#ifdef FEATURE_ZI_MT_INDONESIAN
    ,{'T', '9','M', 'T', 'I', 'N', 'D', 'O', 'N', 'E', 'S','I', 'A', 'N',0}
-#endif //FEATURE_T9_MT_INDONESIAN
+#endif //FEATURE_ZI_MT_INDONESIAN
 
-#ifdef FEATURE_T9_RAPID_INDONESIAN
+#ifdef FEATURE_ZI_RAPID_INDONESIAN
    ,{'T', '9','E', 'Z', 'I', 'N', 'D', 'O', 'N', 'E', 'S','I', 'A', 'N',0}
-#endif //FEATURE_T9_RAPID_INDONESIAN
+#endif //FEATURE_ZI_RAPID_INDONESIAN
 
-#ifdef FEATURE_T9_MT_VIETNAMESE
+#ifdef FEATURE_ZI_MT_VIETNAMESE
    ,{'T', '9','M', 'T', 'N', 'I', 'E', 'T', 'N', 'A', 'M','E', 'S', 'E',0}
-#endif //FEATURE_T9_MT_VIETNAMESE
+#endif //FEATURE_ZI_MT_VIETNAMESE
 
-#ifdef FEATURE_T9_RAPID_VIETNAMESE
+#ifdef FEATURE_ZI_RAPID_VIETNAMESE
    ,{'T', '9','E', 'Z', 'N', 'I', 'E', 'T', 'N', 'A', 'M','E', 'S', 'E',0}
-#endif //FEATURE_T9_RAPID_VIETNAMESE
+#endif //FEATURE_ZI_RAPID_VIETNAMESE
 
-#ifdef FEATURE_T9_MT_FRENCH
+#ifdef FEATURE_ZI_MT_FRENCH
    ,{'T', '9','M', 'T', 'F', 'R', 'E', 'N', 'C', 'H',0}
-#endif //FEATURE_T9_MT_FRENCH
+#endif //FEATURE_ZI_MT_FRENCH
 
-#ifdef FEATURE_T9_RAPID_FRENCH
+#ifdef FEATURE_ZI_RAPID_FRENCH
    ,{'T', '9','E', 'Z', 'F', 'R', 'E', 'N', 'C', 'H',0}
-#endif //FEATURE_T9_RAPID_FRENCH
+#endif //FEATURE_ZI_RAPID_FRENCH
 
-#ifdef FEATURE_T9_JAPANESE
+#ifdef FEATURE_ZI_JAPANESE
    ,{'J', 'A', 'P', 'A', 'N', 'E', 'S', 'E',0}
-#endif //FEATURE_T9_JAPANESE
+#endif //FEATURE_ZI_JAPANESE
 
-#ifdef FEATURE_T9_KOREAN
+#ifdef FEATURE_ZI_KOREAN
    ,{'K', 'O', 'R', 'E', 'A', 'N', 0}
-#endif //FEATURE_T9_KOREAN
+#endif //FEATURE_ZI_KOREAN
 
-#ifdef FEATURE_T9_ITALIAN
+#ifdef FEATURE_ZI_ITALIAN
    ,{'I', 'T', 'A', 'L', 'I', 'A',  'N',0}
-#endif //FEATURE_T9_ITALIAN
+#endif //FEATURE_ZI_ITALIAN
 };
 #else
 static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
@@ -775,115 +776,115 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
    //lint -save -e785
    {'1','2','3',0}
    
-#ifdef FEATURE_T9_MT_ENGLISH   
+#ifdef FEATURE_ZI_MT_ENGLISH   
    ,{'A','B','C',0}
-#endif //FEATURE_T9_MT_ENGLISH
+#endif //FEATURE_ZI_MT_ENGLISH
    
-#ifdef FEATURE_T9_RAPID_ENGLISH
+#ifdef FEATURE_ZI_RAPID_ENGLISH
    ,{'a', 'b','c', 0}
-#endif //FEATURE_T9_RAPID_ENGLISH
+#endif //FEATURE_ZI_RAPID_ENGLISH
 
-#ifdef FEATURE_T9_CAP_LOWER_ENGLISH   //add by yangdecai
+#ifdef FEATURE_ZI_CAP_LOWER_ENGLISH   //add by yangdecai
    ,{'A','b','c',0}
 #endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD      //add by yangdecai 2010-1223
    ,{'M','Y','A','N','M','A','R',0}
 #endif
-#ifdef FEATURE_T9_PINYIN
+#ifdef FEATURE_ZI_PINYIN
    ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}
-#endif //FEATURE_T9_PINYIN
+#endif //FEATURE_ZI_PINYIN
 
-#ifdef FEATURE_T9_STROKE
+#ifdef FEATURE_ZI_STROKE
    ,{'T', '9','S', 'T', 'R', 'O', 'K', 'E', 0}
-#endif //FEATURE_T9_STROKE
+#endif //FEATURE_ZI_STROKE
 
-#ifdef FEATURE_T9_ZHUYIN
+#ifdef FEATURE_ZI_ZHUYIN
    ,{'T', '9','Z', 'H', 'U', 'Y', 'I', 'N', 0}
-#endif //FEATURE_T9_ZHUYIN
+#endif //FEATURE_ZI_ZHUYIN
 
-#ifdef FEATURE_T9_MT_ARABIC
+#ifdef FEATURE_ZI_MT_ARABIC
    ,{'T', '9', 'M', 'T', 'A', 'R', 'A', 'B', 'I', 'C',0}
-#endif //FEATURE_T9_MT_ARABIC
+#endif //FEATURE_ZI_MT_ARABIC
 
-#ifdef FEATURE_T9_RAPID_ARABIC
+#ifdef FEATURE_ZI_RAPID_ARABIC
    ,{'T', '9', 'E', 'Z', 'A', 'R', 'A', 'B', 'I', 'C',0}
-#endif //FEATURE_T9_RAPID_ARABIC
+#endif //FEATURE_ZI_RAPID_ARABIC
 
-#ifdef FEATURE_T9_MT_HEBREW
+#ifdef FEATURE_ZI_MT_HEBREW
    ,{'T', '9', 'M', 'T', 'H', 'E', 'B', 'R', 'E', 'W',0}
-#endif //FEATURE_T9_MT_HEBREW
+#endif //FEATURE_ZI_MT_HEBREW
 
-#ifdef FEATURE_T9_RAPID_HEBREW
+#ifdef FEATURE_ZI_RAPID_HEBREW
    ,{'T', '9','E', 'Z', 'H', 'E', 'B', 'R', 'E', 'W',0}
-#endif //FEATURE_T9_RAPID_HEBREW
+#endif //FEATURE_ZI_RAPID_HEBREW
 
-#ifdef FEATURE_T9_MT_HINDI
+#ifdef FEATURE_ZI_MT_HINDI
    ,{'T', '9','M', 'T', 'H', 'I', 'N', 'D', 'I', 0}
-#endif //FEATURE_T9_MT_HINDI
+#endif //FEATURE_ZI_MT_HINDI
 
-#ifdef FEATURE_T9_RAPID_HINDI
+#ifdef FEATURE_ZI_RAPID_HINDI
    ,{'T', '9', 'E', 'Z', 'H', 'I', 'N', 'D', 'I', 0}
-#endif //FEATURE_T9_RAPID_HINDI
+#endif //FEATURE_ZI_RAPID_HINDI
 
-#ifdef FEATURE_T9_MT_THAI
+#ifdef FEATURE_ZI_MT_THAI
    ,{'T', '9','M', 'T', 'T', 'H', 'A', 'I', 0}
-#endif //FEATURE_T9_MT_THAI
+#endif //FEATURE_ZI_MT_THAI
 
-#ifdef FEATURE_T9_RAPID_THAI
+#ifdef FEATURE_ZI_RAPID_THAI
    ,{'T', '9','E', 'Z', 'T', 'H', 'A', 'I', 0}
-#endif //FEATURE_T9_RAPID_THAI
+#endif //FEATURE_ZI_RAPID_THAI
 
-#ifdef FEATURE_T9_MT_SPANISH
+#ifdef FEATURE_ZI_MT_SPANISH
    ,{'T', '9','M', 'T', 'S', 'P', 'A', 'N', 'I', 'S', 'H',0}
-#endif //FEATURE_T9_MT_SPANISH
+#endif //FEATURE_ZI_MT_SPANISH
 
-#ifdef FEATURE_T9_RAPID_SPANISH
+#ifdef FEATURE_ZI_RAPID_SPANISH
    ,{'T', '9','E', 'Z', 'S', 'P', 'A', 'N', 'I', 'S', 'H',0}
-#endif //FEATURE_T9_RAPID_SPANISH
+#endif //FEATURE_ZI_RAPID_SPANISH
 
-#ifdef FEATURE_T9_MT_PORTUGUESE
+#ifdef FEATURE_ZI_MT_PORTUGUESE
    ,{'T', '9','M', 'T', 'P', 'O', 'R', 'T', 'U', 'G', 'U','E', 'S', 'E',0}
-#endif //FEATURE_T9_MT_PORTUGUESE
+#endif //FEATURE_ZI_MT_PORTUGUESE
 
-#ifdef FEATURE_T9_RAPID_PORTUGUESE
+#ifdef FEATURE_ZI_RAPID_PORTUGUESE
    ,{'T', '9','E', 'Z', 'P', 'O', 'R', 'T', 'U', 'G', 'U','E', 'S', 'E',0}
-#endif //FEATURE_T9_RAPID_PORTUGUESE
+#endif //FEATURE_ZI_RAPID_PORTUGUESE
 
-#ifdef FEATURE_T9_MT_INDONESIAN
+#ifdef FEATURE_ZI_MT_INDONESIAN
    ,{'T', '9','M', 'T', 'I', 'N', 'D', 'O', 'N', 'E', 'S','I', 'A', 'N',0}
-#endif //FEATURE_T9_MT_INDONESIAN
+#endif //FEATURE_ZI_MT_INDONESIAN
 
-#ifdef FEATURE_T9_RAPID_INDONESIAN
+#ifdef FEATURE_ZI_RAPID_INDONESIAN
    ,{'T', '9','E', 'Z', 'I', 'N', 'D', 'O', 'N', 'E', 'S','I', 'A', 'N',0}
-#endif //FEATURE_T9_RAPID_INDONESIAN
+#endif //FEATURE_ZI_RAPID_INDONESIAN
 
-#ifdef FEATURE_T9_MT_VIETNAMESE
+#ifdef FEATURE_ZI_MT_VIETNAMESE
    ,{'T', '9','M', 'T', 'N', 'I', 'E', 'T', 'N', 'A', 'M','E', 'S', 'E',0}
-#endif //FEATURE_T9_MT_VIETNAMESE
+#endif //FEATURE_ZI_MT_VIETNAMESE
 
-#ifdef FEATURE_T9_RAPID_VIETNAMESE
+#ifdef FEATURE_ZI_RAPID_VIETNAMESE
    ,{'T', '9','E', 'Z', 'N', 'I', 'E', 'T', 'N', 'A', 'M','E', 'S', 'E',0}
-#endif //FEATURE_T9_RAPID_VIETNAMESE
+#endif //FEATURE_ZI_RAPID_VIETNAMESE
 
-#ifdef FEATURE_T9_MT_FRENCH
+#ifdef FEATURE_ZI_MT_FRENCH
    ,{'T', '9','M', 'T', 'F', 'R', 'E', 'N', 'C', 'H',0}
-#endif //FEATURE_T9_MT_FRENCH
+#endif //FEATURE_ZI_MT_FRENCH
 
-#ifdef FEATURE_T9_RAPID_FRENCH
+#ifdef FEATURE_ZI_RAPID_FRENCH
    ,{'T', '9','E', 'Z', 'F', 'R', 'E', 'N', 'C', 'H',0}
-#endif //FEATURE_T9_RAPID_FRENCH
+#endif //FEATURE_ZI_RAPID_FRENCH
 
-#ifdef FEATURE_T9_JAPANESE
+#ifdef FEATURE_ZI_JAPANESE
    ,{'T', '9','J', 'A', 'P', 'A', 'N', 'E', 'S', 'E',0}
-#endif //FEATURE_T9_JAPANESE
+#endif //FEATURE_ZI_JAPANESE
 
-#ifdef FEATURE_T9_KOREAN
+#ifdef FEATURE_ZI_KOREAN
    ,{'T', '9','K', 'O', 'R', 'E', 'A', 'N', 0}
-#endif //FEATURE_T9_KOREAN
+#endif //FEATURE_ZI_KOREAN
 
-#ifdef FEATURE_T9_ITALIAN
+#ifdef FEATURE_ZI_ITALIAN
    ,{'T', '9','I', 'T', 'A', 'L', 'I', 'A',  'N',0}
-#endif //FEATURE_T9_ITALIAN
+#endif //FEATURE_ZI_ITALIAN
 };
 #endif
 
@@ -1118,7 +1119,7 @@ static const AECHAR *const sszFaceSymbolList[MAX_FACE_SYMBOL] =
 // Show net symbol list
 //===============================================================================
 #if defined(FEATURE_LANG_ENGLISH) && defined(FEATURE_LANG_TCHINESE) && \
-    defined(_T9_NUMBER_MODES)
+    defined(_ZI_NUMBER_MODES)
 
 #define MAX_NET_SYMBOL          (20)//台湾版本网络符号的总个�?
 
@@ -1612,7 +1613,7 @@ static const AECHAR *const sszNetSymbolList[MAX_NET_SYMBOL] =
 
 #endif
 
-#ifdef FEATURE_T9_MT_ENGLISH
+#ifdef FEATURE_ZI_MT_ENGLISH
 //===============================================================================
 // Show multitap english list
 //===============================================================================
@@ -1771,10 +1772,10 @@ static const AECHAR *const saMultitapStrings[10] =
    sszMultitap5, sszMultitap6, sszMultitap7, sszMultitap8, sszMultitap9
 };
 
-#endif //FEATURE_T9_MT_ENGLISH
+#endif //FEATURE_ZI_MT_ENGLISH
 
 
-#ifdef FEATURE_T9_MT_SPANISH
+#ifdef FEATURE_ZI_MT_SPANISH
 static const AECHAR esszMultitap1[] =
 {
    '.',',','-',0x00BF,'?','!',0x00A1,'@',':','1',0 
@@ -1835,9 +1836,9 @@ static const AECHAR *const esaMultitapStrings[10] =
    esszMultitap5, esszMultitap6, esszMultitap7, esszMultitap8, esszMultitap9
 };
 
-#endif // FEATURE_T9_MT_SPANISH
+#endif // FEATURE_ZI_MT_SPANISH
 
-#ifdef FEATURE_T9_MT_FRENCH
+#ifdef FEATURE_ZI_MT_FRENCH
 static const AECHAR frszMultitap1[] =
 {
    '.',',','-','?','!',0x0027,'@',':','1',0 
@@ -1899,44 +1900,44 @@ static const AECHAR *const fraMultitapStrings[10] =
    frszMultitap5, frszMultitap6, frszMultitap7, frszMultitap8, frszMultitap9
 };
 
-#endif // FEATURE_T9_MT_FRENCH
+#endif // FEATURE_ZI_MT_FRENCH
 
-#ifdef FEATURE_T9_MT_THAI
+#ifdef FEATURE_ZI_MT_THAI
 //===============================================================================
 // Show special multitap thai list
 //===============================================================================
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH   
-static const AECHAR sszT9Multitap2SpecialThai[] =
+static const AECHAR sszZIMultitap2SpecialThai[] =
 {//0，去除上元音和下元音 none 0x0e31, 0x0e34, 0x0e35, 0x0e36, 0x0e37, 0x0e38, 0x0e39,
     0x0e01,0x0e02,0x0e04,0x0e06,0x0e07,0x0032,0
 };
 #endif //FEATURE_CARRIER_THAILAND_HUTCH
 
-static const AECHAR sszT9Multitap0SpecialThai[] =
+static const AECHAR sszZIMultitap0SpecialThai[] =
 {//0，去除上元音和下元音 none 0x0e31, 0x0e34, 0x0e35, 0x0e36, 0x0e37, 0x0e38, 0x0e39,
     0x0030,0
 };
 
-static const AECHAR sszT9MultitapPound1SpecialThai[] =
+static const AECHAR sszZIMultitapPound1SpecialThai[] =
 {//#,去除音标 none 0x0e48, 0x0e49, 0x0e4a, 0x0e4b,
     0x0e46, 0x0e2f, 0x0e3f,0
 };
 
-static const AECHAR sszT9MultitapPound2SpecialThai[] =
+static const AECHAR sszZIMultitapPound2SpecialThai[] =
 {//#,去除上元�?none 0x0e47,0x0e4c
     0x0e48, 0x0e49, 0x0e4a, 0x0e4b, 0x0e46, 0x0e2f, 0x0e3f,0
 };
-#endif//FEATURE_T9_MT_THAI
+#endif//FEATURE_ZI_MT_THAI
 
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW
-static const AECHAR sszT9Multitap1SpecialHebrew[] =
+static const AECHAR sszZIMultitap1SpecialHebrew[] =
 {
     0x002e, 0x002c, 0x002d, 0x003f, 0x0021, 0x0027, 0x0022, 0x003a, 0x002b, 0x20aa, 0x002f, 0x0031,0
 };
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
 
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
-static const AECHAR sszT9Multitap1SpecialUnicom[] =
+static const AECHAR sszZIMultitap1SpecialUnicom[] =
 {
     0x002E, 0x0040, 0x002D, 0x005F, 0x002F,
     0x003A, 0x007E, 0x003F, 0x002C, 0x0031,0
@@ -1958,16 +1959,6 @@ typedef struct
     AECHAR pszTitle[MAX_MODE_STR+1]; // Name of the mode. This name is used in the menu.
 }AEETextMode;
 
-#ifdef FEATURE_T9_INPUT
-typedef enum sFocusType {
-   FOCUS_SELECTION,         // focus on Selection Page
-   FOCUS_SYLLABLE,          // focus on Syllable
-   FOCUS_TEXT,              // focus on Text and no selection page
-   FOCUS_TEXT_PREDICTION,   // focus on the Text and display the T9 Selection Page
-   FOCUS_MAX
-
-}sFocusType;
-#endif //FEATURE_T9_INPUT
 
 typedef enum {
    MULTITAP_ALL_SMALL,  // all small letters
@@ -2054,7 +2045,7 @@ int32 OEM_TextGetCursorPos(OEMCONTEXT hTextField);
 
 void  OEM_TextSetCursorPos(OEMCONTEXT hTextField, int32 nOffset);
 
-int32 OEM_TextGetEnd(OEMCONTEXT hTextField);
+int32 OEM_TextGetZIEnd(OEMCONTEXT hTextField);
 
 void OEM_TextSetMultiCaps(OEMCONTEXT hTextField,MultitapCapsState nCaps);
 
@@ -2085,6 +2076,7 @@ boolean          TSIM_ProcPenDown(OEMCONTEXT hTextCtl,
 boolean          OEM_TextShiftStatus(OEMCONTEXT hTextField);
 boolean          OEM_TextAltStatus(OEMCONTEXT hTextField);
 boolean          OEM_TextCapStatus(OEMCONTEXT hTextField);
+int32 OEM_TextGetEnd(OEMCONTEXT hTextField);
 #ifdef FEATURE_MYANMAR_INPUT_MOD
 void OEM_TextRestart(OEMCONTEXT hTextField);
 boolean OEM_TextMyaStar(OEMCONTEXT hTextField);
@@ -2415,7 +2407,7 @@ Function: OEM_TextQueryModes()
 
 Description:
    This function is invoked by the AEE to query the different text modes
-   (T9, MULTITAP, etc) supported by the OEM. This information is used by
+   (ZI, MULTITAP, etc) supported by the OEM. This information is used by
    the AEE for two purposes:
    1) To populate the pop-up menu containing selections for the
       different modes supported.
@@ -2577,7 +2569,7 @@ Function: OEM_TextGetProperties()
 
 Description:
    This function returns the properties of the text control, such as frame type,
-   multiline, or rapid entry (such as T9).
+   multiline, or rapid entry (such as ZI).
 
 Prototype:
    uint32 OEM_TextGetProperties(OEMCONTEXT hTextField)
@@ -2617,7 +2609,7 @@ Function: OEM_TextSetProperties()
 
 Description:
    This function sets the properties of the text control, such as frame type,
-   multiline, rapid entry (such as T9), or a combination thereof.
+   multiline, rapid entry (such as ZI), or a combination thereof.
 
 Prototype:
    void OEM_TextSetProperties(OEMCONTEXT hTextField, uint32 dwProperties)

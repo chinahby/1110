@@ -128,7 +128,9 @@ endif
 
 #应用的标签
 ifeq ($(USES_MMI),yes)
+ifneq ($(USES_ZI),yes)
 USES_T9=yes
+endif
 USES_KEYGUARD=yes
 USES_BREW_AEE_SRC=yes
 USES_HANWANG=no

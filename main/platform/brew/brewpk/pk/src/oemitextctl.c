@@ -4871,7 +4871,7 @@ See Also: none
 static int32 CTextCtl_GetT9End(ITextCtl * po)
 {
    CTextCtl * pme = (CTextCtl*)po;
-   return OEM_TextGetT9End(pme->m_pText);
+   return OEM_TextGetEnd(pme->m_pText);
 }
 // add end for cursor and button
 /*==============================================================================
