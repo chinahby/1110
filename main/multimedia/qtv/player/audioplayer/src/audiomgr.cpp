@@ -5719,8 +5719,9 @@ int AudioMgr::GetAndDecodeAudioSpecificConfig(cmx_af_aac_spec_type *pCmx_af_aac_
       to decode, so we have another interface for filling in the CMX config
       info.
     -----------------------------------------------------------------------*/
+#ifdef FEATURE_AAC
     retVal = pMpeg4->FillCMXAACConfig(pCmx_af_aac_spec);
-
+#endif
     /* Error Resilience (I'm guessing that's what ER stands for) flags.
        Dunno what epConfig is, but safe to say that the DSP/CMX doesn't
        yet support this stuff */

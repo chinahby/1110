@@ -371,9 +371,9 @@ defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD))
 #ifdef FEATURE_QTV_BCAST_FLO
 #error code not present
 #endif /* FEATURE_QTV_BCAST_FLO */
-
+#ifdef FEATURE_AAC
   virtual int FillCMXAACConfig(cmx_af_aac_spec_type *) { return SUCCESS; }
-
+#endif
   //Method to get information about this particular interface.
   virtual MediaSource GetSource() const = 0;
   virtual FileBase *GetFile() const { return NULL; }
