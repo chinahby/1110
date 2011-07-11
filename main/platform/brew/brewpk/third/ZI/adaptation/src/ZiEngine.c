@@ -201,19 +201,23 @@
 //#include "GlobalConstants.h"
 //#include "gui_data_types.h"
 //#include "Fat_fs.h"
-//#include "IMERes.h"     /* include for sIMEModeDetails */
+#include "IMERes.h"     /* include for sIMEModeDetails */
 
 //#include "DebugInitDef.h"
 
 //#include "ImeGprot.h"
-
-//#include "Word_engine.h"  
-//#include "Imc_symbol.h"
-//#include "Imc_config.h"
+#include "AEE.h"
+#include "AEEShell.h"
+#include "AEEStdlib.h"
+#include "assert.h"
+#include "Word_engine.h"  
+#include "Imc_symbol.h"
+#include "Imc_config.h"
 //#include "Imc.h"
 //#include "ImmProt.h"
-
+#include "AEEText.h"
 #include "zi8api.h"
+#include "err.h"
 
 #if defined(__MMI_ZI_MULTITAP__)
 //#include "Multitap_engine.h"
@@ -2763,15 +2767,18 @@ MMI_BOOL mmi_ime_word_init( void )
 
     if (gIMELDBArray == NULL)
     {
+    	MSG_FATAL("g_engine.is_inited111111111111111111111111111111111111",0,0,0);
         g_engine.is_inited = MMI_TRUE;
     }
     else if (gIMELDBArray[0].Language == 0 && gIMELDBArray[0].pTable == 0) /* We can't go to fail when there is not Zi resource */
     {
+    	MSG_FATAL("g_engine.is_inited222222222222222222222222222",0,0,0);
         g_engine.is_inited = MMI_TRUE;
     }
     else
     {
         g_engine.is_inited = Zi8InitializeDynamic((PZI8VOID)gIMELDBArray); /* Initialize LDB table */
+		MSG_FATAL("g_engine.is_inited========%d",g_engine.is_inited,0,0);
     }
     
 #if defined(__MMI_IME_USER_DATABASE__)
@@ -2981,25 +2988,25 @@ MMI_BOOL mmi_ime_word_is_valid_key( mmi_imm_input_mode_enum input_mode, U16 key_
     
     switch(key_code)
     {
-    case KEY_LSK:
-    case KEY_RSK:
-    case KEY_CSK:
-    case KEY_UP_ARROW:
-    case KEY_DOWN_ARROW:
-    case KEY_LEFT_ARROW:
-    case KEY_RIGHT_ARROW:
+    case AVK_SELECT:
+    case AVK_CLR:
+    case AVK_INFO:
+    case AVK_UP:
+    case AVK_DOWN:
+    case AVK_LEFT:
+    case AVK_RIGHT:
         return MMI_TRUE;
-    case KEY_0:
-    case KEY_1:
-    case KEY_2:
-    case KEY_3:
-    case KEY_4:
-    case KEY_5:
-    case KEY_6:
-    case KEY_7:
-    case KEY_8:
-    case KEY_9:
-        if (required_key & (MMI_IME_REQUIRED_KEY_0 << (key_code - KEY_0)))
+    case AVK_0:
+    case AVK_1:
+    case AVK_2:
+    case AVK_3:
+    case AVK_4:
+    case AVK_5:
+    case AVK_6:
+    case AVK_7:
+    case AVK_8:
+    case AVK_9:
+        if (required_key & (MMI_IME_REQUIRED_KEY_0 << (key_code - AVK_0)))
         {
             return MMI_TRUE;
         }
@@ -3007,7 +3014,7 @@ MMI_BOOL mmi_ime_word_is_valid_key( mmi_imm_input_mode_enum input_mode, U16 key_
         {
             return MMI_FALSE;
         }
-    case KEY_STAR:
+    case AVK_STAR:
         if (required_key & MMI_IME_REQUIRED_KEY_STAR)
         {
             return MMI_TRUE;
@@ -3016,7 +3023,7 @@ MMI_BOOL mmi_ime_word_is_valid_key( mmi_imm_input_mode_enum input_mode, U16 key_
         {
             return MMI_FALSE;
         }
-    case KEY_POUND:
+    case AVK_POUND:
         if (required_key & MMI_IME_REQUIRED_KEY_POUND)
         {
             return MMI_TRUE;
@@ -3768,7 +3775,7 @@ static void mmi_ime_ezi_get_spellings_pinyin_smart( mmi_ime_query_param_struct_p
     /* Code Body                                                      */
     /*----------------------------------------------------------------*/
     
-    ASSERT( NULL != param_ptr );
+    //ASSERT( NULL != param_ptr );
     
     if ( 0 == param_ptr->elembuf_cnt )
         return;
@@ -3911,7 +3918,7 @@ static void   mmi_ime_ezi_get_spellings_zhuyin_smart( mmi_ime_query_param_struct
     /* Code Body                                                      */
     /*----------------------------------------------------------------*/
     
-    ASSERT( NULL != param_ptr );
+    //ASSERT( NULL != param_ptr );
     if ( 0 == param_ptr->elembuf_cnt )
         return;
     
@@ -4131,8 +4138,9 @@ static void mmi_ime_ezi_get_candidates( mmi_ime_query_param_struct_p param_ptr, 
     Zi8GetCandidates(&temp_get_param);
 
     result_ptr->result_cnt = Zi8GetCandidates( &g_engine.get_param );
-
-	MMI_ASSERT(candidate_buffer[MMI_IME_EZI_MAX_TEMP_BUFFER_SIZE - 1] == MMI_IME_EZI_TEMP_BUFFER_FLAG);
+	
+	//dele by yangdecai 2011-07-05
+	//MMI_ASSERT(candidate_buffer[MMI_IME_EZI_MAX_TEMP_BUFFER_SIZE - 1] == MMI_IME_EZI_TEMP_BUFFER_FLAG);
 
     if (result_ptr->result_cnt) /* Get next page info and resume candidate list */
     {
@@ -4216,7 +4224,7 @@ static void  mmi_ime_ezi_get_associates( mmi_ime_query_param_struct_p param_ptr,
     g_engine.get_param.FirstCandidate   = (ZI8WCHAR)param_ptr->first_index;
     g_engine.get_param.pCandidates      = (PZI8WCHAR)candidate_buffer;
 
-    len = mmi_ucs2strlen((const S8 *) param_ptr->pre_string);
+    len = STRLEN((const S8 *) param_ptr->pre_string);
 
     g_engine.get_param.WordCharacterCount   = (ZI8UCHAR)len;
 
@@ -4233,7 +4241,8 @@ static void  mmi_ime_ezi_get_associates( mmi_ime_query_param_struct_p param_ptr,
     
     result_ptr->result_cnt = Zi8GetCandidates( &g_engine.get_param );
 
-	MMI_ASSERT(candidate_buffer[MMI_IME_EZI_MAX_TEMP_BUFFER_SIZE - 1] == MMI_IME_EZI_TEMP_BUFFER_FLAG);
+	//dele by yangdecai 2011-07-05
+	//MMI_ASSERT(candidate_buffer[MMI_IME_EZI_MAX_TEMP_BUFFER_SIZE - 1] == MMI_IME_EZI_TEMP_BUFFER_FLAG);
 
     if (result_ptr->result_cnt) /* Get next page info and resume candidate list */
     {
@@ -4300,7 +4309,7 @@ static void  mmi_ime_ezi_get_associates_alphabetic( mmi_ime_query_param_struct_p
     g_engine.get_param.FirstCandidate   = (ZI8WCHAR)param_ptr->first_index;
     g_engine.get_param.pCandidates      = (PZI8WCHAR)candidate_buffer;
 
-    len = mmi_ucs2strlen((const S8 *) param_ptr->pre_string);
+    len = STRLEN((const S8 *) param_ptr->pre_string);
 
     for (i = 0; i < len; i++)
     {
@@ -4320,7 +4329,8 @@ static void  mmi_ime_ezi_get_associates_alphabetic( mmi_ime_query_param_struct_p
     
     result_ptr->result_cnt = Zi8GetCandidates( &g_engine.get_param );
 
-	MMI_ASSERT(candidate_buffer[MMI_IME_EZI_MAX_TEMP_BUFFER_SIZE - 1] == MMI_IME_EZI_TEMP_BUFFER_FLAG);
+	//dele by yangdecai 2011-07-05
+	//MMI_ASSERT(candidate_buffer[MMI_IME_EZI_MAX_TEMP_BUFFER_SIZE - 1] == MMI_IME_EZI_TEMP_BUFFER_FLAG);
 
     if (result_ptr->result_cnt) /* Get next page info and resume candidate list */
     {
@@ -4548,8 +4558,14 @@ static UI_character_type mmi_ime_ezi_char_to_upper(UI_character_type char_code)
     return inChar;
     
 #else
-
+#if 0  //add by yangdecai
     return (UI_character_type)mmi_towupper((kal_wchar)char_code);
+#else
+{
+	UI_character_type inChar = char_code;
+	return inChar;
+}
+#endif
     
 #endif
 }
@@ -4578,7 +4594,16 @@ static UI_character_type mmi_ime_ezi_char_to_lower(UI_character_type char_code)
     Zi8ChangeCharCase(ZI8FALSE, (PZI8WCHAR)&inChar, g_engine.curr_mode_info->language);
     return inChar;
 #else
-    return (UI_character_type)mmi_towlower((kal_wchar)char_code);
+    
+#if 0  //add by yangdecai
+    return (UI_character_type)mmi_towupper((kal_wchar)char_code);
+#else
+{
+	UI_character_type inChar = char_code;
+	return inChar;
+}
+#endif
+    
 #endif
 }
 
@@ -4780,7 +4805,7 @@ mmi_ime_word_add_new_word_ret_value_enum mmi_ime_word_add_new_word(mmi_imm_input
 
     if (g_ezi_pud_id_active > 0)
     {
-        str_len = mmi_ucs2strlen((const S8 *)str_ptr);
+        str_len = STRLEN((const S8 *)str_ptr);
 
         for (i = 0; i < str_len; i++)
         {
@@ -4897,7 +4922,7 @@ MMI_BOOL mmi_ime_word_update_word_frequency(mmi_imm_input_mode_enum input_mode, 
     {
         if (g_ezi_uwd_zh_id_active > 0)
         {
-            str_len = mmi_ucs2strlen((const S8 *)str_ptr);
+            str_len = STRLEN((const S8 *)str_ptr);
 
 			if (str_len > 0)
             {
@@ -4910,7 +4935,7 @@ MMI_BOOL mmi_ime_word_update_word_frequency(mmi_imm_input_mode_enum input_mode, 
     {
         if (g_ezi_uwd_id_active > 0)
         {
-            str_len = mmi_ucs2strlen((const S8 *)str_ptr);
+            str_len = STRLEN((const S8 *)str_ptr);
 
             for (i = 0; i < str_len; i++)
             {
@@ -5107,7 +5132,7 @@ static void mmi_ime_ezi_add_word_to_all_langs(UI_string_type str)
         {
             if (g_ezi_pud_id_active > 0)
             {
-                str_len = mmi_ucs2strlen((const S8 *)str);
+                str_len = STRLEN((const S8 *)str);
 
                 if (str_len > 0)
                 {
@@ -5145,8 +5170,10 @@ static FS_HANDLE mmi_ime_ezi_open_file(PU16 path_name_ptr, PU16 file_name_ptr, M
     /*----------------------------------------------------------------*/
     /* Code Body                                                      */
     /*----------------------------------------------------------------*/
-    MMI_ASSERT(NULL != path_name_ptr);
-    MMI_ASSERT(NULL != file_name_ptr);
+    //dele by yangdecai 2011-07-05
+	//MMI_ASSERT(NULL != path_name_ptr);
+    //dele by yangdecai 2011-07-05
+	//MMI_ASSERT(NULL != file_name_ptr);
 
     ret_val = FS_SetCurrentDir(path_name_ptr);
     if (ret_val < 0)

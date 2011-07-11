@@ -220,7 +220,8 @@
 
 #else
 #if defined(__MMI_ZI_TR_CHINESE__) && defined(__MMI_ZI_SM_CHINESE__)
-#include "Zi8DatZH_Pans.h"
+#include "Zi8DatZH_Hk.h"
+//#include "Zi8DatZH_Pans.h"//moci by yangdecai 
 #elif defined(__MMI_ZI_TR_CHINESE__)
 #include "Zi8DatZH_Hk.h"
 #elif defined(__MMI_ZI_SM_CHINESE__)
