@@ -18,6 +18,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define __MMI_ZI_SMART_PHONETIC_INPUT__
 #define FEATURE_ZICORP_STROKE
 #define FEATURE_ZICORP_PINYIN
+#define FEATURE_ZICORP_EZI_HI
 //#define FEATURE_VERSION_C306
 //Add by zzg 2010_10_13
 //#define FEATURE_TORCH_KEY_CAMERA			//手电筒功能按键
