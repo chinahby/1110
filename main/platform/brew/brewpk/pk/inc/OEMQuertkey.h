@@ -80,7 +80,7 @@ struct _UI_character_type
 #ifdef FEATURE_LANG_ARABIC
 static AR_character_type  VLARCharKeyItem[MAX_ARKEYPAD_NUMBER] =
 {
-	#if defined(FEATURE_VERSION_N021)||defined(FEATURE_VERSION_W0216A)
+	#if defined(FEATURE_VERSION_N021)
 	{AVK_2,	 {0x062B,0x0629,0x062A,0x0628,'2'},5},
 	{AVK_3,  {0x0621,0x0626,0x0624,0x0649,0x0622,0x0625,0x0623,0x0627,'3'},9},
 	{AVK_4,  {0x0634,0x0636,0x0635,0x0633,'4'},5},
