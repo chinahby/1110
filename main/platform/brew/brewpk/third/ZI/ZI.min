@@ -17,20 +17,8 @@ $(ZI_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 vpath %.c $(ZI_SRC)
 vpath %.c $(ZI_ENGININ_INC)
 
-ifeq ($(USE_ZI_SUPPORT_HE_AR),yes)
-ZILIBS :=\
-	$(T9_LIB)/T9_Core_730_ADS__t9rel_AC_1.o \
-	$(T9_LIB)/alearab.o \
-	$(T9_LIB)/alebidi.o \
-	$(T9_LIB)/alehebr.o \
-	$(T9_LIB)/alelib.o \
-	$(T9_LIB)/alemain.o \
-	$(T9_LIB)/alethai.o \
-	$(T9_LIB)/rbmpapi.o
-else
 ZILIBS :=\
 	$(ZI_LIB)/zi8clib.a
-endif
 
 INC  += $(ZI_INC)
 INC  += $(ZI_PRO_INC)
