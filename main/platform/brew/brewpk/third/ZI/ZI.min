@@ -29,8 +29,7 @@ ZILIBS :=\
 	$(T9_LIB)/rbmpapi.o
 else
 ZILIBS :=\
-	$(ZI_LIB)/zi8clib.a \
-	$(ZI_LIB)/zishape.a
+	$(ZI_LIB)/zi8clib.a
 endif
 
 INC  += $(ZI_INC)
