@@ -139,6 +139,9 @@
 	<Object Id="5402" Name="IDB_MODE_T9_MT_ENGLISH_LOW" MimeType="image/png">
 		<File>..\images\128x160\common\IME\lowabc.png</File>
 	</Object>
+	<Object Id="5412" Name="IDB_MODE_T9_RAPID_ENGLISH_UP" MimeType="image/png">
+		<File>..\images\128x160\common\IME\upezenglish.png</File>
+	</Object>
 	<Object Id="5404" Name="IDB_MODE_NUMBERS" MimeType="image/png">
 		<File>..\images\128x160\common\IME\123.png</File>
 	</Object>
