@@ -46,7 +46,7 @@ __align(16) static uint32 MDP_DISP_SCR_ST7735R[MDP_LCD_SCR_SIZE][MDP_LCD_SCR_LEN
 
 static uint8 disp_ic_mdp_getformat(void)
 {
-    return 8; //8 16BPP 0 //18BPP
+    return LCD_16BPP_88_II;
 }
 
 static uint16 disp_ic_mdp_getscr(uint32 **ppscr)
@@ -233,7 +233,8 @@ boolean disp_st7735r_tft177(disp_drv_ic_type *pdispic)
     LCD_WRITE_CMD(0xDC);
     id3 = LCD_READ_DATA();
     id3 = LCD_READ_DATA();
-    
+
+    // 5C 89 F0
     //if(id3 == 0x35)
     {
         DISP_IC_INIT_TBL(pdispic);
