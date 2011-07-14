@@ -3564,7 +3564,7 @@ camera_ret_code_type camera_svcs_set_dimensions
   }
 
   camera_log (LOG_FUNC, (uint32)CAMERA_FUNC_SET_DIMENSIONS, 0, 0, __LINE__);
-
+#ifndef CUST_EDITION
   /* Be smart about setting dimensions.  Note that internal buffer dimensions
      during preview/capture are ALWAYS landscape: so the larger UI dimension
      is the "width" and the smaller the height */
@@ -3588,7 +3588,7 @@ camera_ret_code_type camera_svcs_set_dimensions
   {
     display_height = CAMERA_QVGA_HEIGHT;
   }
-
+#endif
   /* Delimit the image size to maximum sensor output
    * The full_size_* includes necessary paddings for VFE, which is 12 pixels
    * per line and 8 lines (5 on the top and 3 at the bottom) for bayer sensors.
@@ -5764,6 +5764,8 @@ camera_ret_code_type camera_set_lcd_direct_mode
  int32 dst_dy  /* destination window width */
 )
 {
+  MSG_FATAL("camera_set_lcd_direct_mode %x %d %d",mode,dst_x,dst_y);
+  MSG_FATAL("camera_set_lcd_direct_mode %x %d %d",camera_state,dst_dx,dst_dy);
   if (camera_state != CAMERA_STATE_READY)
   {
     return CAMERA_INVALID_STATE;
@@ -6093,10 +6095,12 @@ camera_ret_code_type camera_svcs_blt_ex
     {
       /* width here is based on the source orientation */
       mdpImg.width = frame->dx;
+#ifndef CUST_EDITION
       dst_dx += BREW_OFFSET_X;
       dst_dy += BREW_OFFSET_Y;
       dx += BREW_OFFSET_X;
       dy += BREW_OFFSET_Y;
+#endif
     }
 #endif /* FEATURE_MDP */
     /* 2) Adjust destination rectangle so it does not exceed destination */
@@ -12641,6 +12645,9 @@ static void camera_svcs_adjust_mdp_for_video (void)
       mdpImg.mdpOp = mdpImg.mdpOp | MDPOP_UD;
     }
   }
+#ifdef CUST_EDITION
+  mdpImg.mdpOp = mdpImg.mdpOp | MDPOP_QUEUE_COPY;
+#endif
 } /* camera_svcs_adjust_mdp_for_video */
 #endif /* FEATURE_MDP */
 

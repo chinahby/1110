@@ -863,7 +863,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     pImage = NULL;
                 }
             }
-            
+            DBGPRINTF("EVT_USER_REDRAW");
             CameraApp_DrawBottomBarText(pMe, BTBAR_OPTION_BACK);
             
             CameraApp_DrawMidPic(pMe);
@@ -3100,14 +3100,8 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
         captureSize.cx = g_CameraSizeCFG[pMe->m_nCameraSize].dx;
         captureSize.cy = g_CameraSizeCFG[pMe->m_nCameraSize].dy;
 #ifndef FEATURE_CAMERA_NOFULLSCREEN
-#ifdef T_QSC1110
-		displaySize.cx = g_CameraSizeCFG[1].dx;
-		displaySize.cy = g_CameraSizeCFG[1].dy;
-#else
 		displaySize.cx = g_CameraSizeCFG[0].dx;
 		displaySize.cy = g_CameraSizeCFG[0].dy;
-#endif
-
 #endif
     }
     else if(pMe->m_sensor_model == 10)
@@ -3115,13 +3109,8 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
         captureSize.cx = g_CameraSizeCFG_10[pMe->m_nCameraSize].dx;
         captureSize.cy = g_CameraSizeCFG_10[pMe->m_nCameraSize].dy;
 #ifndef FEATURE_CAMERA_NOFULLSCREEN
-#ifdef T_QSC1110
-        displaySize.cx = g_CameraSizeCFG_10[1].dx;
-        displaySize.cy = g_CameraSizeCFG_10[1].dy;
-#else
-		displaySize.cx = g_CameraSizeCFG_10[0].dx;
+        displaySize.cx = g_CameraSizeCFG_10[0].dx;
         displaySize.cy = g_CameraSizeCFG_10[0].dy;
-#endif
 #endif
     }
 #ifdef FEATURE_CAMERA_NOFULLSCREEN
@@ -3146,6 +3135,17 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     pMe->m_rcPreview.dx = displaySize.cx;
     pMe->m_rcPreview.dy = displaySize.cy;
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_LCD_DIRECT_ACCESS, (int32)FALSE, (int32)&(pMe->m_rcPreview));
+#elif defined(T_QSC1110)
+{
+    CameraDirectMode myMode;
+    myMode.clsDisplay = 0;
+    myMode.nLayer     = 0;
+    myMode.xDst       = 0;
+    myMode.yDst       = 0;
+    myMode.cxDst      = displaySize.cx;
+    myMode.cyDst      = displaySize.cy;
+    //ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_LCD_DIRECT_ACCESS_EX, (int32)TRUE, (int32)&(myMode));
+}
 #endif
     // set camera quality
     switch(pMe->m_nCameraQuality)
@@ -3757,6 +3757,7 @@ static void CameraApp_EventNotify(CCameraApp *pMe, AEECameraNotify *pcn)
     case CAM_CMD_START:
         switch (pcn->nStatus){
         case CAM_STATUS_FRAME:
+            DBGPRINTF("CameraApp_EventNotify Frame");
             //It is the image from the viewfinder.
             CameraApp_UpdateFrame(pMe);
             ISHELL_PostEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);

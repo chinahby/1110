@@ -1837,7 +1837,7 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
             //Invalid mode
             mode = 0;
           }
-
+          MSG_FATAL("CAM_PARM_LCD_DIRECT_ACCESS_EX %x",mode,0,0);
           if(mode > 0)
           {
             nRet = camera_set_lcd_direct_mode(mode,
@@ -4317,7 +4317,7 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
          goto Resume;
 
       case CAMERA_EVT_CB_FRAME:
-         MSG_FATAL("CAMERA_EVT_CB_FRAME.....................",0,0,0);
+         MSG_FATAL("CAMERA_EVT_CB_FRAME %d",bDirectMode,0,0);
          if (func == CAMERA_FUNC_START_PREVIEW
 #if defined(FEATURE_VIDEO_ENCODE)
              || func == CAMERA_FUNC_START_RECORD
@@ -4327,6 +4327,7 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
 #ifdef FEATURE_CAMERA_LCD_DIRECT_MODE
            if(bDirectMode)
            {
+             DBGPRINTF("bDirectMode");
              /* if in Direct Access mode then blt out now */
              camera_blt_direct((camera_frame_type *)parm4);
            }
