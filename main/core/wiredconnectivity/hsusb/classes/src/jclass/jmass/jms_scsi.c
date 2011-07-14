@@ -61,8 +61,7 @@ static jresult_t unsafe_scsi_start_stop_unit(ms_device_t *device,
 static jresult_t set_part_size(juint32_t capacity, juint32_t *hds, juint32_t *secs, 
     juint32_t *cyls);
 #ifdef CONFIG_JUMASS_READ_GEOMETRY
-static jresult_t scsi_part_size(juint8_t *bh, juint32_t capacity, juint32_t *hds, 
-    juint32_t *secs, juint32_t *cyls);
+#error code not present
 #endif
 
 #define SENSE_SKIP      1
@@ -508,26 +507,6 @@ jresult_t unsafe_scsi_read_partsize(ms_device_t *device)
     juint32_t heads = 0, sectors = 0;
     juint32_t size = device->sector_count;
 
-
-#ifdef CONFIG_JUMASS_READ_GEOMETRY
-    juint32_t transfered = MASS_BLOCK_SIZE; 
-    juint8_t *buf = (juint8_t*)jmalloc(MASS_BLOCK_SIZE, 0);
-# ifdef JDEBUG
-    if (!buf)
-        j_panic("scsi_read_partsize: not enough memory\n");
-# endif
-#endif
-
-#ifdef CONFIG_JUMASS_READ_GEOMETRY
-    /* 1. Read Partition table from device placed on sector 0 - sized 4K*/
-    rc = unsafe_scsi_read_write(device, 0, MASS_BLOCK_SIZE/device->sector_size,
-        buf, 0, &transfered, 1 /*FROM_DEVICE*/);
-    if (rc)
-        goto Exit;
-    /* 2. Try to get from it the correct parameters Heads, sectors, cylinders*/
-    rc = scsi_part_size(buf, size, &heads, &sectors, &cylinders);
-    if (rc)
-#endif
     {
         /* 3. If not succeed - pick some standart mapping 
          *    with at most 1024 cylinders,
@@ -555,11 +534,6 @@ jresult_t unsafe_scsi_read_partsize(ms_device_t *device)
     device->sectors = (juint8_t)sectors;
     device->cylinders = cylinders;
     
-#ifdef CONFIG_JUMASS_READ_GEOMETRY
-Exit:
-    jfree(buf); 
-#endif
-
     return rc;
 }
 
@@ -1195,84 +1169,6 @@ jresult_t scsi_unit_attention(ms_device_t *device)
 #define FAT_OFFSET 0x1BE
 #define CYL_MASK 0xc0
 #define SECTOR_MASK 0x3f 
-
-#ifdef CONFIG_JUMASS_READ_GEOMETRY
-static jresult_t scsi_part_size(juint8_t *bh, juint32_t capacity, juint32_t *hds, 
-    juint32_t *secs, juint32_t *cyls)
-{
-    ms_partition_t *p, *largest = NULL;
-    jint_t i, largest_cyl;
-    jint_t cyl, ext_cyl, end_head, end_cyl, end_sector;
-    juint32_t logical_end, physical_end, ext_physical_end;
-    jresult_t rc = JEINVAL;
-
-    if (*(juint16_t *)((void*)(bh + MSDOS_MBR_OFFSET)) == MSDOS_MBR) 
-    {
-        for (largest_cyl = -1, p = (ms_partition_t *)
-            ((void *)(FAT_OFFSET + bh)), i = 0; i < 4; ++i, ++p) 
-        {
-            if (!p->sys_ind)
-                continue;
-
-            DBG_V(DMASS_SCSI, ("scsi_part_size : partition %d has system \n"
-                ,i));
-            cyl = p->cyl + ((p->sector & CYL_MASK) << 2);
-            if (cyl > largest_cyl) 
-            {
-                largest_cyl = cyl;
-                largest = p;
-            }
-        }
-    }
-
-    if (largest) 
-    {
-        end_cyl = largest->end_cyl + ((largest->end_sector & CYL_MASK) << 2);
-        end_head = largest->end_head;
-        end_sector = largest->end_sector & SECTOR_MASK;
-
-        if (end_head + 1 == 0 || end_sector == 0)
-            goto Exit;
-
-        DBG_V(DMASS_SCSI,("scsi_part_size : end at h = %d, c = %d, s = %d\n",
-            end_head, end_cyl, end_sector));
-
-        physical_end = end_cyl * (end_head + 1) * end_sector +
-            end_head * end_sector + end_sector;
-
-        /* This is the actual _sector_ number at the end */
-        logical_end = largest->start_sect + largest->nr_sects;
-        DBG_V(DMASS_SCSI,("scsi_part_size : largest start = %u, "
-            "num_sect = %u\n", largest->start_sect, largest->nr_sects)) ;
-
-        /* This is for >1023 cylinders */
-        ext_cyl = (logical_end - (end_head * end_sector + end_sector))
-            / (end_head + 1) / end_sector;
-        ext_physical_end = ext_cyl * (end_head + 1) * end_sector +
-            end_head * end_sector + end_sector;
-
-
-        DBG_V(DMASS_SCSI,(" scsi_part_size: logical_end=%u physical_end=%u "
-            "ext_physical_end=%u ext_cyl=%u\n", logical_end, physical_end,
-            ext_physical_end, ext_cyl));
-
-        if ((logical_end == physical_end) ||
-            (end_cyl == 1023 && ext_physical_end == logical_end)) 
-        {
-            *secs = end_sector;
-            *hds = end_head + 1;
-            *cyls = capacity / ((end_head + 1) * end_sector);
-            rc = 0;
-            goto Exit;
-        }
-        DBG_E(DMASS_SCSI,("scsi_part_size : logical (%u) != physical (%u)\n",
-            logical_end, physical_end));
-    }
-
-Exit:
-    return rc;
-}
-#endif
 
 #define MAX_CYLINDERS 1024L
 #define MAX_SECTORS 62L

@@ -72,7 +72,14 @@ void devmon_get_info(mdev_t dev, devmon_info_t *info)
 
     if (!dev)
         return;
-    
+    /* HSU addition - CR fix 255791 - 
+    j_get_usbd_device() shouldn't be used for devices of type "ehci_local", 
+    because it returns a core number rather than a device handle */
+    if ((j_device_get_parent((jdevice_t)dev)) == 0)
+    {
+        return;
+    }
+    /* End of HSU addition */
     usbd_device = j_get_usbd_device(dev);
     if (!usbd_device)
         return;
