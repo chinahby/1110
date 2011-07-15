@@ -4317,7 +4317,7 @@ void OEMCamera_CameraLayerCB(camera_cb_type cb, const void *client_data, camera_
          goto Resume;
 
       case CAMERA_EVT_CB_FRAME:
-         MSG_FATAL("CAMERA_EVT_CB_FRAME %d",bDirectMode,0,0);
+         //MSG_FATAL("CAMERA_EVT_CB_FRAME %d",bDirectMode,0,0);
          if (func == CAMERA_FUNC_START_PREVIEW
 #if defined(FEATURE_VIDEO_ENCODE)
              || func == CAMERA_FUNC_START_RECORD
