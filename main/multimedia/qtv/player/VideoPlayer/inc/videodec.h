@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/videoplayer/main/latest/inc/videodec.h#12 $
-$DateTime: 2009/07/17 06:15:34 $
-$Change: 970658 $
+$Header: //source/qcom/qct/multimedia/qtv/player/videoplayer/main/latest/inc/videodec.h#8 $
+$DateTime: 2008/12/04 05:07:30 $
+$Change: 798168 $
 
 ========================================================================== */
 
@@ -58,9 +58,7 @@ extern "C" {
 #include "qtv_log.h"
 #include "broadcast.h"
 #include "FrameMap.h"
-#ifndef FEATURE_WINCE
 #include "QTV_VideoDelayAnalyzer.h"
-#endif
 
 /* ==========================================================================
 
@@ -136,7 +134,6 @@ public:
   void SetStopTime(long stop);
   void SetPos(long pos);
 
-  void UpdateClipInfoDimensions(int height, int width);
   //
   // Use these during video playback.
   //
@@ -259,7 +256,6 @@ public:
     INTERPOLATED
 };
   void UpdateStats(StatUpdateType action);
-  void UpdateStats(StatUpdateType action, void * const pFrame);
   void UpdateFrameIntervalStats(long timestampMsec);
   void UpdateFrameIntervalStatsForReposition();
   void UpdateTimeOffset(const long nPresTime);
@@ -295,9 +291,6 @@ private:
 
   //AV Sync object shared by all the media types
   AVSync* m_pAVSync;
-
-  // This flag indicates clip's First Frame.
-  bool isbFirstFrameDecoded;
 
   // We need access to the video player decoder thread's wakeup event.
   //vdec_suspend is asynchrounous. 
@@ -455,11 +448,6 @@ private:
 
     // Weighted average of the time between frames.
     float averageInterFrameIntervalMsec;
-
-    /*Count of different types of frames*/
-    uint32 nIFrameTally; // Count of I Frames 
-    uint32 nPFrameTally; // Count of P Frames
-    uint32 nBFrameTally; // Count of B Frames
   };
   VideoStats videoStat;
 
@@ -474,7 +462,6 @@ private:
     uint32 maxSize[COMMON_MAX_LAYERS];
     int32  size[COMMON_MAX_LAYERS];
     uint64 timestamp[COMMON_MAX_LAYERS];
-    uint32 delta[COMMON_MAX_LAYERS];
     int32  pos[COMMON_MAX_LAYERS];
     void  *userdata[COMMON_MAX_LAYERS];
     bool bUseAgain[COMMON_MAX_LAYERS];
@@ -903,9 +890,7 @@ public:
    // In conjunction with AVSync, monitors rendering delays and attempts
    // to minimize interruptions to playback.
 private:
-#ifndef FEATURE_WINCE
    QTV_VideoDelayAnalyzer* m_pVideoDelayAnalyzer;
-#endif
 };
 #endif
 

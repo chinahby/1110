@@ -14,9 +14,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/qc/main/latest/inc/qcplayer.h#20 $
-$DateTime: 2010/11/09 04:48:52 $
-$Change: 1509879 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/qc/main/latest/inc/qcplayer.h#3 $
+$DateTime: 2008/09/23 06:32:03 $
+$Change: 748913 $
 
 
 ========================================================================== */
@@ -199,8 +199,8 @@ extern "C" {
 // 5000 due to the premption occurring when random positioning
 // The searcher and other related threads sometimes starve off
 // the Video Player thread from running.
-#define COMMON_VIDEO_RESPONSE_TIMEOUT_MSEC    12000
-#define COMMON_VIDEO_STOP_TIMEOUT_MSEC      60000
+#define COMMON_VIDEO_RESPONSE_TIMEOUT_MSEC    5000
+#define COMMON_VIDEO_STOP_TIMEOUT_MSEC      10000
 
 //
 // Audio
@@ -231,14 +231,6 @@ extern "C" {
 #define COMMON_STREAM_DEFAULT_BUFFER_DURATION  5000
 #define COMMON_STREAM_DEFAULT_BCAST_BUFFER_DURATION  2000
 
-// The max preroll cap which can be set by User/OEM through
-// config item/ISetting
-#define COMMON_STREAM_DEFAULT_MAX_PREROLL  25000
-
-// This preroll used to decide for disabling the rate adaptaion
-// above 15 sec of preoll and increase the max duration, so that
-// QTV can allocate buffer based on new max duration
-#define COMMON_STREAM_DEFAULT_DECISIVE_PREROLL  15000
 #define COMMON_STREAM_DEFAULT_REBUFFER_PREROLL  5000
 #define COMMON_STREAM_DEFAULT_BCAST_REBUFFER_PREROLL  2000
 
@@ -331,8 +323,8 @@ public:
     RENDERER_THREAD_NAME
 
 #ifdef FEATURE_QTV_DRM_DCF
-  //QTV Player thread
-  ,QTV_UTIL_THREAD_NAME
+	//QTV Player thread
+	,QTV_UTIL_THREAD_NAME
 #endif
 #ifdef FEATURE_QTV_STREAM_RECORD
     ,RECORDER_THREAD_NAME
@@ -427,27 +419,10 @@ public:
     STREAM_TRACK_SELECTION_CHANGED,
     STREAM_RELEASE_QOS_COMPLETE,
     STREAM_SERVER_CLOSED_EXCEPTION,
-    STREAM_SERVER_NOT_ENOUGH_BW,
     STREAM_SERVER_SIDE_PLAYLIST_SKIP_SUCCESS,
     STREAM_SERVER_SIDE_PLAYLIST_SKIP_FAILED,
     STREAM_SERVER_SIDE_PLAYLIST_TRANSITION,
     STREAM_INVALID
-    ,STREAM_TRACK_PRE_SELECTION_COMPLETE
-
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif
-    ,STREAM_DATA_INACTIVITY_TIMEOUT
-    ,STREAM_TRACKLIST_UNKNOWN_CODEC
-    ,STREAM_NETWORK_ERROR
-    ,STREAM_RECONNECT_SUCCESS
-    ,STREAM_RECONNECT_FAIL
-    ,STREAM_RECONNECT_PREPARE_SUCCESS
-    ,STREAM_RECONNECT_PREPARE_FAIL
-    ,STREAM_RECONNECT_IN_PROGRESS
-    ,STREAM_FCS_SWITCH_SUPPORTED
-    ,STREAM_BLOCKED_BY_FIREWALL
-    ,STREAM_TEARDOWN_FOR_RECONNECT
   };
 
 
@@ -480,9 +455,6 @@ public:
     GENERIC_BCAST_MEDIA_TDMB,     /* TDMB Media */
     GENERIC_BCAST_MEDIA_MASK,     /* Media mask source */
     GENERIC_BCAST_SIMULATED_SOURCE, /* Media mask log source */
-#ifdef FEATURE_QTV_GENERIC_BCAST_CMMB
-#error code not present
-#endif
     GENERIC_BCAST_MEDIA_MAX
   };
 
@@ -493,7 +465,7 @@ public:
   };
 #endif /* FEATURE_QTV_GENERIC_BCAST */
 
-  // Audio Track State
+  // Audio Track State 
   enum AudioTrackState
   {
     AUDIO_TRACK_STATE_INVALID,  /* Invalid state */
@@ -505,15 +477,15 @@ public:
   // Audio Channel Configuration Type
   enum ChannelConfigType
   {
-    AUDIO_CHANNEL_UNKNOWN = 0,
+    AUDIO_CHANNEL_UNKNOWN = 0, 
     AUDIO_CHANNEL_MONO,         /* Single channel */
-    AUDIO_CHANNEL_DUAL,         /* Stereo */
-    AUDIO_CHANNEL_TRIPLE,       /* 3 channels (UNSUPPORTED) */
-    AUDIO_CHANNEL_QUAD,         /* 4 channels (UNSUPPORTED) */
-    AUDIO_CHANNEL_QUINTUPLE,    /* 5 channels (UNSUPPORTED */
-    AUDIO_CHANNEL_SEXTUPLE,     /* 5+1 channels (UNSUPPORTED */
-    AUDIO_CHANNEL_OCTUPLE,      /* 7+1 channels (UNSUPPORTED) */
-    AUDIO_CHANNEL_DUAL_MONO,    /* Dual mono */
+    AUDIO_CHANNEL_DUAL,         /* Stereo */ 
+    AUDIO_CHANNEL_TRIPLE,       /* 3 channels (UNSUPPORTED) */  
+    AUDIO_CHANNEL_QUAD,         /* 4 channels (UNSUPPORTED) */ 
+    AUDIO_CHANNEL_QUINTUPLE,    /* 5 channels (UNSUPPORTED */ 
+    AUDIO_CHANNEL_SEXTUPLE,     /* 5+1 channels (UNSUPPORTED */ 
+    AUDIO_CHANNEL_OCTUPLE,      /* 7+1 channels (UNSUPPORTED) */ 
+    AUDIO_CHANNEL_DUAL_MONO,    /* Dual mono */ 
     AUDIO_CHANNEL_UNSUPPORTED
   };
 
@@ -522,7 +494,7 @@ public:
   {
     PLAYBACK_SPEED_NO_CHANGE /* Use existing configuration */
     ,PLAYBACK_SPEED_NORMAL   /* Normal speed (default) */
-    ,PLAYBACK_SPEED_1P3X     /* 1.3x speed */
+    ,PLAYBACK_SPEED_1P3X     /* 1.3x speed */ 
   };
 
 #ifdef FEATURE_QTV_DUAL_MONO_OUTPUT_SELECTION
@@ -530,7 +502,7 @@ public:
   enum DualMonoOutputType
   {
     DUAL_MONO_OUTPUT_MAIN_TO_L_AND_R = 0, /* main channel to left and right */
-    DUAL_MONO_OUTPUT_SUB_TO_L_AND_R,      /* sub channel to left and right */
+    DUAL_MONO_OUTPUT_SUB_TO_L_AND_R,      /* sub channel to left and right */ 
     DUAL_MONO_OUTPUT_MAIN_TO_L_SUB_TO_R,  /* main channel to left, sub channel to right */
     DUAL_MONO_OUTPUT_SUB_TO_L_MAIN_TO_R   /* sub channel to left, main channel to right */
   };
@@ -607,7 +579,7 @@ public:
 #if (defined (FEATURE_QTV_IN_CALL_PHASE_2) || \
      defined (FEATURE_QTV_IN_CALL_VIDEO))
 #error code not present
-#endif /* FEATURE_QTV_IN_CALL_PHASE_2 ||
+#endif /* FEATURE_QTV_IN_CALL_PHASE_2 || 
           FEATURE_QTV_IN_CALL_VIDEO */
   };
 
@@ -653,10 +625,6 @@ public:
     //timestamp and frame number of data in buffer.
     long nFirstTimestamp,nLastTimestamp;
     unsigned long nFirstFrame,nLastFrame;
-
-#ifdef FEATURE_QTV_AFE_CLK_BASED_AV_SYNC
-#error code not present
-#endif // FEATURE_QTV_AFE_CLK_BASED_AV_SYNC
   };
 
 #ifdef  FEATURE_QTV_CMX_AV_SYNC_BYTES
@@ -665,7 +633,6 @@ public:
     uint32 nByteOffSet;
     uint32 nTimeStamp;
     uint32 nFrame; // Added for Fast Audio Playback
-    uint32 nSampleDelta;
   };
 #endif
 
@@ -687,12 +654,10 @@ public:
     ,NOTIFY_FEEDBACK
     ,NOTIFY_TRACK_STATE_CHANGE
     /*
-    * Use to initiate immediate data delivery by waking audio thread rather than
+    * Use to initiate immediate data delivery by waking audio thread rather than 
     * waiting for timer to expire.
     */
-    ,NOTIFY_INITIATE_IMMEDIATE_DATA_DELIVERY
-    ,NOTIFY_CLOCK_DRIFT_ADJUST
-    ,NOTIFY_IMAGE_CHANGE
+    ,NOTIFY_INITIATE_IMMEDIATE_DATA_DELIVERY 
   };
   typedef void (*AudioNotifyFuncT)(AudioNotifyType notify,
                                    void* pClientData,

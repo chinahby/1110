@@ -63,9 +63,9 @@ Copyright 2006 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/renderer/main/latest/src/qtv_vrend.cpp#24 $
-$DateTime: 2010/08/17 06:21:07 $
-$Change: 1404651 $
+$Header: //source/qcom/qct/multimedia/qtv/renderer/main/latest/src/qtv_vrend.cpp#9 $
+$DateTime: 2009/01/05 22:24:35 $
+$Change: 813956 $
 
 ========================================================================== */
 
@@ -164,7 +164,7 @@ qtv_vrend_class::qtv_vrend_class
 {
    reset_last_frame_rendered_();
    ( void )q_init( &m_frame_q_ );
-   QCUtils::InitCritSect( &m_frame_q_cs); 
+   rex_init_crit_sect( &m_frame_q_cs); 
    init();
 }
 
@@ -190,8 +190,6 @@ qtv_vrend_class::~qtv_vrend_class( void )
 
   flush_(); /*lint !e1551 */
   m_transmitter_ptr_ = 0; /* to quiet lint */
-
-  QCUtils::DinitCritSect(&m_frame_q_cs);
 }
 
 /* ======================================================================
@@ -272,44 +270,6 @@ void qtv_vrend_class::disable( void )
   if ( msg_ptr )
   {
     event_ptr->kind = EVENT_DISABLE;
-    ( void )m_vrend_task_.dispatch( this, msg_ptr );
-  }
-  else
-  {
-    QTV_MSG_PRIO( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_FATAL, "out of memory" );
-  }
-}
-
-/* ======================================================================
-FUNCTION:
-  notify_clipInfo_Dimensions
-
-DESCRIPTION:
-  This is a sync funciton which updates the height & width of clipinfo and notify to UI for clipinfo validation.
-
-PARAMETERS:
-  int height : height of enoded frame.
-  int width  : width of encoded frame.
-
-RETURN VALUE:
-    None.
-=========================================================================*/
-void qtv_vrend_class::notify_clipInfo_Dimensions( int width, int height )
-{
-  qtv_msg_struct* msg_ptr = qtv_msg_struct::malloc();
-
-  /* here we are type casting "qtv_msg_struct" type object to "frame_event_class" type object
-  ** to ensure safe type casting, sizeof(qtv_msg_struct) >= sizeof(frame_event_class)
-  ** To live with this legacy code, a ASSERT is placed. if this ASSERT hits, then we have to 
-  ** inrease the size of "qtv_msg_struct"
-  */
-  ASSERT( sizeof(qtv_msg_struct) >= sizeof(clipinfo_event_class) ); 
-
-  clipinfo_event_class* event_ptr = ( clipinfo_event_class* )msg_ptr; /*lint !e740 */
-
-  if ( msg_ptr )
-  {
-    event_ptr->init( width, height );
     ( void )m_vrend_task_.dispatch( this, msg_ptr );
   }
   else
@@ -399,7 +359,7 @@ bool qtv_vrend_class::single_step( void )
   {
     event_ptr->init( EVENT_SINGLE_STEP, &init_is_complete, &result );
     ( void )m_vrend_task_.dispatch( this, msg_ptr );
-    WaitForFlag( init_is_complete, COMMON_VIDEO_RESPONSE_TIMEOUT_MSEC, 5 );
+    WaitForFlag( init_is_complete );
   }
   else
   {
@@ -443,7 +403,7 @@ void qtv_vrend_class::flush( void )
   {
     event_ptr->init( EVENT_FLUSH, &flush_is_complete );
     ( void )m_vrend_task_.dispatch( this, msg_ptr );
-    WaitForFlag( flush_is_complete, COMMON_VIDEO_RESPONSE_TIMEOUT_MSEC, 5 );
+    WaitForFlag( flush_is_complete );
   }
   else
   {
@@ -684,8 +644,7 @@ void qtv_vrend_class::dispatch( qtv_msg_struct* const msg_ptr )
     "EVENT_PCR_RESET",
     "EVENT_SET_QUEUEING_MODE",
     "EVENT_SET_MAX_TIMESTAMP",
-    "EVENT_RELEASE_FRAME",
-	"EVENT_CLIPINFO_DIMENSION"
+    "EVENT_RELEASE_FRAME"
   };
 
   /* In all cases, the message payload contains an event
@@ -750,9 +709,6 @@ RETURN VALUE:
 HSM_DEFINE_STATE( qtv_vrend_class::main_state_ )
 {
    qtvhsm::state_class::state_fn_type result( 0 );
-   QTV_MSG_PRIO2( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_HIGH,
-    "qtv_vrend_class::main_state_, event_ptr->kind=%d, m_frame_q_.cnt=%d",
-    event_ptr->kind,m_frame_q_.cnt);
    switch ( event_ptr->kind )
    {
       case qtvhsm::event_class::EVENT_ENTRY:
@@ -824,12 +780,6 @@ HSM_DEFINE_STATE( qtv_vrend_class::main_state_ )
          m_videoDec_.ReleaseBuffer( *(pe->pframe) );
          break;
       }
-      case EVENT_CLIPINFO_DIMENSION:
-      {
-        clipinfo_event_class* pe = (clipinfo_event_class *)event_ptr ;
-        m_videoDec_.UpdateClipInfoDimensions(pe->width,pe->height);
-        break;
-      }
       default:
       {
          result = &qtv_vrend_class::top;
@@ -856,9 +806,6 @@ RETURN VALUE:
 ===========================================================================*/
 HSM_DEFINE_STATE( qtv_vrend_class::disabled_state_ )
 {
-  QTV_MSG_PRIO2( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_HIGH,
-   "qtv_vrend_class::disabled_state_, event_ptr->kind=%d, m_frame_q_.cnt=%d",
-   event_ptr->kind,m_frame_q_.cnt);
   switch( event_ptr->kind )
   {
     case qtvhsm::event_class::EVENT_ENTRY:
@@ -909,9 +856,6 @@ RETURN VALUE:
 ===========================================================================*/
 HSM_DEFINE_STATE( qtv_vrend_class::enabled_state_ )
 {
-  QTV_MSG_PRIO2( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_HIGH,
-   "qtv_vrend_class::enabled_state_, event_ptr->kind=%d, m_frame_q_.cnt=%d", 
-   event_ptr->kind,m_frame_q_.cnt);
   switch( event_ptr->kind )
   {
     case qtvhsm::event_class::EVENT_ENTRY:
@@ -958,9 +902,6 @@ RETURN VALUE:
 ===========================================================================*/
 HSM_DEFINE_STATE( qtv_vrend_class::idle_state_ )
 {
-  QTV_MSG_PRIO2( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_HIGH,
-   "qtv_vrend_class::idle_state_, event_ptr->kind=%d,m_frame_q_.cnt=%d",
-   event_ptr->kind,m_frame_q_.cnt);
   switch( event_ptr->kind )
   {
     case qtvhsm::event_class::EVENT_ENTRY:
@@ -1010,9 +951,6 @@ RETURN VALUE:
 ===========================================================================*/
 HSM_DEFINE_STATE( qtv_vrend_class::active_state_ )
 {
-  QTV_MSG_PRIO2( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_HIGH,
-   "qtv_vrend_class::active_state_, event_ptr->kind=%d,m_frame_q_.cnt=%d", 
-   event_ptr->kind,m_frame_q_.cnt);
   switch( event_ptr->kind )
   {
     case qtvhsm::event_class::EVENT_ENTRY:
@@ -1387,43 +1325,59 @@ bool qtv_vrend_class::render_frame_( void )
   frame_link_struct* link_ptr;
   bool is_abort = false;
   bool free_frame = false;
-  VDEC_FRAME vdecFrame;
 
-  CS_Locker lock( m_frame_q_cs );   
+ CS_Locker lock( m_frame_q_cs );   
   link_ptr = ( frame_link_struct* )q_get( &m_frame_q_ );
   if ( link_ptr )
   {
     ASSERT( link_ptr->frame_ptr );
 
-    m_sequential_drops_ = 0;
+    /* Is this frame later in the time sequence than the last one we rendered?
+    ** If it's the first frame being rendered, we must assume it's in order. */
+    bool frame_is_in_order;
 
-    QTV_MSG_PRIO3( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_MED,
-                   "renderer %x rendering frame <%d> ts <%d>",
-                    this, m_videoDec_.GetFrameCount(),
-                    link_ptr->frame_ptr->timestamp );
-
-    link_ptr->frame_ptr->frameStatus = FRAME_WITH_UI;
-
-   /* Copy the frame buffer to local variable before sending to display and release.
-   ** As there was a timing issue and accessing the invalid frame buffer in different context. */
-    memcpy(&vdecFrame,link_ptr->frame_ptr,sizeof(VDEC_FRAME));
-
-    result = m_videoDec_.RenderVideoFrame( is_abort,
-                                           *link_ptr->frame_ptr
-                                           #ifdef FEATURE_QTV_MDP
-                                           , free_frame
-                                           #endif /* FEATURE_QTV_MDP */
-                                           );
-
-    if ( !result )
+    frame_is_in_order = !( last_frame_rendered_is_valid_() ) ||
+                         ( compare_timestamps_( get_last_frame_rendered_(),
+                                                link_ptr->frame_ptr->timestamp ) == RIGHT_IS_LARGER );
+    if ( frame_is_in_order )
     {
-      drop_frame_( link_ptr, QTV_VideoRendererBroadcast::SUBTYPE_DROP_DUE_TO_RENDERING_FAILURE );
+       m_sequential_drops_ = 0;
+
+       m_videoDec_.IncrementFrameCount();
+
+       QTV_MSG_PRIO3( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_MED,
+                      "renderer %x rendering frame <%d> ts <%d>",
+                      this, m_videoDec_.GetFrameCount(),
+                      link_ptr->frame_ptr->timestamp );
+
+       result = m_videoDec_.RenderVideoFrame( is_abort,
+                                              *link_ptr->frame_ptr
+                                              #ifdef FEATURE_QTV_MDP
+                                                , free_frame
+                                              #endif /* FEATURE_QTV_MDP */
+                                            );
     }
     else
     {
+       /* If this frame's timestamp is not later than the last frame
+       ** that was rendered, we must under no circumstances render it. */
+       QTV_MSG_PRIO2( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_HIGH,
+                      "dropping frame due to out-of-order timestamp %d !> %d",
+                      link_ptr->frame_ptr->timestamp,
+                      get_last_frame_rendered_() );
+    }
+
+    if ( !result )
+    {
+      drop_frame_( link_ptr, QTV_VideoRendererBroadcast::QTV_VideoRendererBroadcast::SUBTYPE_DROP_DUE_TO_RENDERING_FAILURE );
+    }
+    else
+    {
+      set_last_frame_rendered_( link_ptr->frame_ptr->timestamp );
+
       broadcast_( QTV_Broadcast::VIDEO_FRAME_RENDERED,
                   QTV_VideoRendererBroadcast::SUBTYPE_UNUSED,
-                  vdecFrame );
+                  *link_ptr->frame_ptr );
 
       if ( free_frame )
       {
@@ -1652,7 +1606,7 @@ void qtv_vrend_class::get_frame_timing_
 )
 {
   frame_link_struct* link_ptr;
-  VDEC_FRAME* frame_ptr = NULL;
+  VDEC_FRAME* frame_ptr;
 
   /* Check the frame at the head of the queue, figure out how long
   ** we must wait before rendering it, and set up a delayed dispatch
@@ -1660,10 +1614,7 @@ void qtv_vrend_class::get_frame_timing_
   CS_Locker lock( m_frame_q_cs );   
   link_ptr = ( frame_link_struct* )q_check( &m_frame_q_ );
   ASSERT( link_ptr );
-  if (link_ptr)
-  {
-    frame_ptr = link_ptr->frame_ptr;
-  }
+  frame_ptr = link_ptr->frame_ptr;
   ASSERT( frame_ptr );
 
   get_frame_timing_( *frame_ptr, frame_is_late, sleep_ms, timestamp_ptr );

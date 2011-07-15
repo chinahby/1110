@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/oscl/main/latest/src/oscl_string_utils.cpp#9 $
-$DateTime: 2010/01/04 23:14:42 $
-$Change: 1127650 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/oscl/main/latest/src/oscl_string_utils.cpp#7 $
+$DateTime: 2008/05/08 14:04:55 $
+$Change: 656428 $
 
 
 ========================================================================== */
@@ -677,8 +677,7 @@ SIDE EFFECTS:
 ======================================================================*/
 char *stripTrailingSlashFromURL(char *url)
 {
-    if ((strincmp(url, "rtsp://", strlen("rtsp://")) != 0) ||
-        (strincmp(url, "rtspt://", strlen("rtspt://")) != 0))
+  if (strincmp(url, "rtsp://", strlen("rtsp://")) != 0)
   {
     return url;
   }
@@ -686,14 +685,7 @@ char *stripTrailingSlashFromURL(char *url)
   int i = -1;
   int slashes = 0;
   int prevSlashIndex = -1;
-  int protoLength = 0;
-
-  if(strincmp(url,"rtsp://", strlen("rtsp://") ) == 0)
-    protoLength = strlen("rtsp://");
-  else if (strincmp(url,"rtspt://", strlen("rtspt://") ) == 0)
-    protoLength = strlen("rtspt://");
-  
-  for (i = protoLength; url[i] != '\0'; i++)
+  for (i = strlen("rtsp://"); url[i] != '\0'; i++)
   {
     if (url[i] == '/')
     {
@@ -1051,17 +1043,9 @@ char *strncpy_word(char *dest, const char *src, int n, int *nchars_copied)
 #ifndef PLATFORM_LTK
 int strcmpi(const char *s1, const char *s2)
 {
-  int i = 0, len1 = 0, len2 = 0, retval = 0;
+  int i = 0;
+
   char c, d;
-
-  len1 = strlen(s1); 
-  len2 = strlen(s2);
-
-  if((s1[len1] != '\0') || (s2[len2] != '\0'))
-  {
-    retval = -2;
-    return retval;
-  }
 
   do {
     c = tolower(s1[i]);
@@ -1071,32 +1055,27 @@ int strcmpi(const char *s1, const char *s2)
     {
       if (d == '\0')
       {
-        retval = 0;
-        break;
+        return 0;
       }
-      retval = 1;
-      break;
+      return 1;
     }
     else if (d == '\0')
     {
-      retval = -1;
-      break;
+      return -1;
     }
     else if (c < d)
     {
-      retval = -1;
-      break;
+      return -1;
     } 
     else if (c > d)
     {
-      retval = 1;
-      break;
+      return 1;
     }
 
     i++;
   } while ((c != '\0') && (d != '\0'));
 
-  return retval;
+  return 0;
 }
 #endif /* PLATFORM_LTK */
     

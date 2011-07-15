@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/videoplayer/main/latest/inc/mp4dec_api.h#2 $
-$DateTime: 2009/03/18 21:44:35 $
-$Change: 866593 $
+$Header: //source/qcom/qct/multimedia/qtv/player/videoplayer/main/latest/inc/mp4dec_api.h#1 $
+$DateTime: 2008/05/14 09:40:11 $
+$Change: 659468 $
 
 
 ========================================================================== */
@@ -38,9 +38,7 @@ $Change: 866593 $
 #include "customer.h"
 #include "qtvInternalDefs.h"
 #include "MP4_Types.h"
-#ifdef PLATFORM_LTK
-#error code not present
-#endif // PLATFORM_LTK
+
 class Mpeg4Player;
 /* ==========================================================================
 
@@ -258,4 +256,3 @@ bool PVScaleVideo(MP4TransformType VideoScaling);
 #endif /* FEATURE_MP4_FRAME_TRANSFORMATIONS */
 
 #endif // __MP4DEC_API_H__
-

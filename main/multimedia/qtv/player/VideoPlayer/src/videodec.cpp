@@ -6,7 +6,7 @@ DESCRIPTION
   specific, or common to both, and it should alert the reader if the
   module contains any conditional definitions which tailors the module to
   different targets.
-
+ 
 EXTERNALIZED FUNCTIONS
   List functions and a brief description that are exported from this file
 
@@ -23,9 +23,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/videoplayer/main/latest/src/videodec.cpp#78 $
-$DateTime: 2010/11/12 04:31:46 $
-$Change: 1515318 $
+$Header: //source/qcom/qct/multimedia/qtv/player/videoplayer/main/latest/src/videodec.cpp#48 $
+$DateTime: 2009/02/18 04:41:14 $
+$Change: 843627 $
 
 ========================================================================== */
 
@@ -184,7 +184,6 @@ AVSync* pAVSync
 
   InitVideoInfo();
   InitPlayData();
-#ifndef PLATFORM_LTK
 #ifdef FEATURE_QTV_AVI
   m_pVideoDelayAnalyzer = QTV_New_Args( QTV_VideoDelayAnalyzer, 
                                         ( 3 , pPlayer->pAVPlayer));
@@ -192,7 +191,6 @@ AVSync* pAVSync
   m_pVideoDelayAnalyzer = QTV_New_Args( QTV_VideoDelayAnalyzer, 
                                         ( 3 ));
 #endif
-#endif // PLATFORM_LTK
 
 #ifdef FEATURE_FRE
   m_bEnableQFRE.bFreEnable = pPlayer->m_pQtvConfigObject->GetQTVConfigItem(QtvConfig::QTVCONFIG_ENABLE_QFRE);
@@ -218,11 +216,8 @@ SIDE EFFECTS:
 ========================================================================== */
 void VideoDec::Destroy()
 {
-  if (NULL != m_pVideoDelayAnalyzer)
-  {
-    QTV_Delete( m_pVideoDelayAnalyzer );
-    m_pVideoDelayAnalyzer = NULL;
-  }
+  QTV_Delete( m_pVideoDelayAnalyzer );
+  m_pVideoDelayAnalyzer = 0;
 
   CleanupPlay();
   pPlayer=NULL;
@@ -324,9 +319,6 @@ void VideoDec::InitPlayData()
   m_last_timestamp = 0;
   m_uLastTimestampBeforeRebuffering = 0;
   bIsFrameErrorThresholdMet = false;
-
-  //initialized to false
-  isbFirstFrameDecoded = false;
 }
 
 /* ======================================================================
@@ -351,9 +343,6 @@ void VideoDec::InitStatistics()
 
   videoStat.nFailedDecode=0;
   videoStat.nFramesInterpolated = 0;
-  videoStat.nIFrameTally = 0;
-  videoStat.nPFrameTally = 0;
-  videoStat.nBFrameTally = 0;
   videoStat.nMaxChunk=0;
   videoStat.nDroppedConvert=0;
   videoStat.nDroppedDecode=0;
@@ -693,11 +682,12 @@ void VideoDec::InitVideoInfo()
   videoInfo.imageWidth = 0;
   videoInfo.videoCodec = Media::MPEG4_CODEC;
 
-
+#ifdef FEATURE_FILE_FRAGMENTATION
   if ((pMpeg4) && (pPlayer))
   {
     pMpeg4->SetVideoPlayerData(pPlayer);
   }
+#endif  /* FEATURE_FILE_FRAGMENTATION */
 }
 
 /* ======================================================================
@@ -969,21 +959,6 @@ Media::CodecType audioCodec
 
  // Set the audio codec type got from Mpeg4Player (media source)
   AudioMediaCodecTypeSet = audioCodec;
-
-if((pPlayer != NULL) && (pPlayer->pAVPlayer != NULL))
- {
-     pVideoMedia = pPlayer->pAVPlayer->GetVideoMedia();
- 
-     if( (pVideoMedia != NULL) && pPlayer->pAVPlayer->IsLocalMediaPLayback())
-     {
-       if (pVideoMedia->isAviFileInstance() &&
-          (videoInfo.videoCodec == Media::MPEG4_CODEC))
-       {
-          SetPrerollRendererCount(2);
-       }
-     }
-      pVideoMedia = NULL;
- }
   
   // if we are restarting, we don't need to initialize decoder again.
   if (bRestart)
@@ -1061,8 +1036,8 @@ if((pPlayer != NULL) && (pPlayer->pAVPlayer != NULL))
     {
       // Default VDEC_MAX_DECODE dimensions if we can't get the video
       // dimensions.
-      videoInfo.originalWidth = 0;
-      videoInfo.originalHeight = 0;
+      videoInfo.originalWidth = MP4_MAX_DECODE_WIDTH;
+      videoInfo.originalHeight = MP4_MAX_DECODE_HEIGHT;
     }
 
     if((videoInfo.videoCodec != Media::WMV3_CODEC) 
@@ -1075,16 +1050,8 @@ if((pPlayer != NULL) && (pPlayer->pAVPlayer != NULL))
     }
     else
     { 
-	  if( videoInfo.originalWidth == 0 && videoInfo.originalHeight == 0)
-	  {
-		videoInfo.imageWidth = MP4_MAX_DECODE_WIDTH;
-		videoInfo.imageHeight = MP4_MAX_DECODE_HEIGHT;		
-	  }
-	  else
-	  {
-		videoInfo.imageWidth  = videoInfo.originalWidth;
-		videoInfo.imageHeight = videoInfo.originalHeight;
-	  }
+      videoInfo.imageWidth = videoInfo.originalWidth;
+      videoInfo.imageHeight = videoInfo.originalHeight;
     }
     if (videoInfo.videoCodec != Media::H264_CODEC && bOK == true)
     {
@@ -1139,7 +1106,6 @@ if((pPlayer != NULL) && (pPlayer->pAVPlayer != NULL))
           }
           break;
         case Media::H263_CODEC:
-		case Media::STILL_IMAGE_H263_CODEC:		
           //There is no header info to decode so we will do nothing.
 #ifdef FEATURE_QTV_OSCAR_DECODER
 #error code not present
@@ -1227,7 +1193,6 @@ bool VideoDec::DecodeStreamHeader_MP4( void )
         m_pVDEC_InputBuffer->buffer     [ i ] = decodeBuf.pData    [ i ];
         m_pVDEC_InputBuffer->buffer_size[ i ] = decodeBuf.size     [ i ];
         m_pVDEC_InputBuffer->timestamp  [ i ] = decodeBuf.timestamp[ i ];
-        m_pVDEC_InputBuffer->delta      [ i ] = decodeBuf.delta    [ i ];
         m_pVDEC_InputBuffer->buffer_pos [ i ] = decodeBuf.pos      [ i ];
         m_pVDEC_InputBuffer->userData   [ i ] = decodeBuf.userdata [ i ];
       }
@@ -1265,7 +1230,6 @@ bool VideoDec::DecodeStreamHeader_MP4( void )
       if (bOK == true)
       {
         err_status = vdec_decode( m_vdec );
-        last_vdec_err = err_status;
         switch (err_status)
         {
           case VDEC_ERR_EVERYTHING_FINE:
@@ -1440,7 +1404,6 @@ bool VideoDec::DecodeStreamHeader_H264(void)
     if (bOK == true)
     {
       err_status = vdec_decode( m_vdec );
-      last_vdec_err = err_status;
       switch (err_status)
       {
         case VDEC_ERR_EVERYTHING_FINE:
@@ -1540,19 +1503,19 @@ bool  VideoDec::DecodeStreamHeader_WMV (void)
         break;
 
       case VDEC_ERR_NO_INPUT_AVAILABLE:
-        QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
+        QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
                       "vdec_queue: %d. No Input available.", err_status );
         bOK = false;
         break;
 
       case VDEC_ERR_OUT_OF_BUFFERS:
-        QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
+        QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
                       "vdec_queue: %d. Out of buffers.", err_status );
         bOK = false;
         break;
 
       default:
-        QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
+        QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
                       "Failure in vdec_queue: %d", err_status );
         bOK = false;
     }
@@ -1560,7 +1523,6 @@ bool  VideoDec::DecodeStreamHeader_WMV (void)
     if (bOK == true)
     {
       err_status = vdec_decode( m_vdec );
-      last_vdec_err = err_status;
       switch (err_status)
       {
         case VDEC_ERR_EVERYTHING_FINE:
@@ -1568,25 +1530,25 @@ bool  VideoDec::DecodeStreamHeader_WMV (void)
           break;
 
         case VDEC_ERR_RESOURCE_UNAVAILABLE:
-          QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
+          QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
                         "Failure in vdec_decode: %d - Resource unavailable", err_status );
           bOK = false;
           break;
 
         case VDEC_ERR_OUT_OF_MEMORY:
-          QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
+          QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
                         "Failure in vdec_decode: %d - Out of memory", err_status );
           bOK = false;
           break;
 
         case VDEC_ERR_INVALID_INPUT:
-          QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
+          QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
                     "Failure in vdec_decode (VDEC_ERR_INVALID_INPUT): %d", err_status );
           bOK = false;
           break;
-		  
+
         default:
-          QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
+          QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
                         "Failure in vdec_decode: %d", err_status );
           bOK = false;
       }
@@ -1771,7 +1733,6 @@ void VideoDec::RefillMpeg4DecodeBuf(const int layer)
              ))
       {
         uint32 timeStamp = 0;
-        uint32 timeStampDelta = 0;
 
         Media::MediaStatus status = Media::DATA_OK;
         long nBytes = 0;
@@ -1793,15 +1754,11 @@ void VideoDec::RefillMpeg4DecodeBuf(const int layer)
             //get timestamp.  this does an unsigned to signed conversion,
             //if the timestamp is unknown it will be (-1) here.
             timeStamp = pMpeg4->GetTimestampForCurrentLayeredVideoSample(layer);
-            timeStampDelta = pMpeg4->GetTimestampDeltaForCurrentLayeredVideoSample(layer);
-
             //decoder wants msec input.
             if (timestamp_is_defined( timeStamp ))
             {
               decodeBuf.timestamp[layer] = (uint64)pMpeg4->
                                            ConvertVideoTimestamp ( timeStamp,layer );
-              decodeBuf.delta[layer] = pMpeg4->ConvertVideoTimestamp( timeStampDelta,layer );
-
             }
             else
             {
@@ -1843,7 +1800,7 @@ void VideoDec::RefillMpeg4DecodeBuf(const int layer)
                                                                     &decodeBuf.userdata[i] );
                 //initialize the buffer read pos to 0.
                 decodeBuf.pos[layer] = 0;
-
+				
                   timeStamp =
                   pMpeg4->GetTimestampForCurrentLayeredVideoSample(i);
                   if (timestamp_is_defined( timeStamp ))
@@ -2245,49 +2202,6 @@ void VideoDec::UpdateStats(StatUpdateType action)
   }
   QCUtils::LeaveCritSect(&videoStat.CS);
 }
-
-/* ======================================================================
-FUNCTION:
-  VideoDec::UpdateStats
-
-DESCRIPTION:
-  Update the stats
-
-INPUT/OUPUT PARAMETERS:
-  action
-
-RETURN VALUE:
-  None.
-
-SIDE EFFECTS:
-  None.
-========================================================================== */
-void VideoDec::UpdateStats(StatUpdateType action, void * const pFrame)
-{
-  //Update counts.
-  QCUtils::EnterCritSect(&videoStat.CS);
-  switch (action)
-  {
-    case CONVERTED:
-        if (((VDEC_FRAME*)pFrame)->frameType == VDEC_FRAMETYPE_I)
-        {
-          ++videoStat.nIFrameTally;
-        }
-        else if (((VDEC_FRAME*)pFrame)->frameType == VDEC_FRAMETYPE_P)
-        {
-          ++videoStat.nPFrameTally;
-        }
-        else if (((VDEC_FRAME*)pFrame)->frameType == VDEC_FRAMETYPE_B)
-        {
-          ++videoStat.nBFrameTally;
-        }
-
-	IncrementFrameCount();
-      break;
-  }
-  QCUtils::LeaveCritSect(&videoStat.CS);
-}
-
 
 /* ======================================================================
 FUNCTION:
@@ -2895,7 +2809,7 @@ void VideoDec::UpdateTimeOffset(const long nPresTime)
   {
     bool ballowVideoToSetAVSyncOffSet = false;
 
-    if ((nPresTime==0) && pMpeg4->bLoopTrackFlag && (nPresTime >= get_last_timestamp()))
+    if ((nPresTime==0) && pMpeg4->bLoopTrackFlag)
     {
       QTV_MSG(QTVDIAG_VIDEO_TASK,
               "Video Track is looping. Allow video to set AV sync offset");
@@ -2950,25 +2864,6 @@ void VideoDec::UpdateTimeOffset(const long nPresTime)
       pPlayer->pAVPlayer->bAllowVidToSetOffSetOnAudUnderrun = false;
 
     }
-    //in case of Streaming and if Audio has not yet set the Playback offset 
-    //Allow Video to set the playback offset once 
-    if(((pPlayer->decIF.pMpeg4 != NULL) && (Media::STREAM_SOURCE == pPlayer->decIF.pMpeg4->GetSource())) &&
-	   pPlayer->HasAudio() && m_pAVSync &&
-        !m_pAVSync->IsOffsetValid(AVSync::AudioAV) )
-	{
-		/*---------------------------------------------------------------------
-		  This clip has audio, however, its offset is not valid, and its
-		  not currently available Audio Thread is late in pulling .
-		  Allow video to set av sync
-		---------------------------------------------------------------------*/
-		QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
-				"Audio not yet available, allowing video to set AV sync");
-		ballowVideoToSetAVSyncOffSet = true;
-
-		/* Reset this flag. it is enough to set once */
-		pPlayer->pAVPlayer->bAllowVidToSetOffSetOnAudUnderrun = false;
-	}
-
     if (m_pAVSync)
     {
       long int delay = 0;
@@ -3133,8 +3028,7 @@ VDEC_FRAME   &frame
   ////////////////////////////////////////////////
 
   //timestamp range.
-  //If its a first frame
-  if (nFramesProcessed==1)
+  if (nFramesProcessed==0)
   {
     videoStat.nFirstTimestamp=nPresentationTime;
   }
@@ -3151,16 +3045,12 @@ VDEC_FRAME   &frame
 
   if (pPlayer)
   {
-    //store last frame info which is now displayed (frame is purged
-    //as soon as it is displayed), this information is required for
-    //recording stream
+    //store last frame info which is now displayed (frame is purged 
+    //as soon as it is displayed), this information is required for 
+    //recording stream 
     lastRenderedFrameInfo.layer = frame.layer;
-    lastRenderedFrameInfo.bIsIntra = (frame.frameType == VDEC_FRAMETYPE_I);
+    lastRenderedFrameInfo.bIsIntra = (frame.frameType == VDEC_FRAMETYPE_I); 
     lastRenderedFrameInfo.timestamp = frame.timestamp;
-
-#ifdef FEATURE_QTV_STREAM_RECORD
-    RecordFrame( &lastRenderedFrameInfo );
-#endif // FEATURE_QTV_STREAM_RECORD
 
     // Record the information about the frame we'll send up.  Do this
     // before we send it to avoid race conditions.  If the render fails,
@@ -3175,6 +3065,10 @@ VDEC_FRAME   &frame
                  ,bFreeFrame
 #endif /* FEATURE_QTV_MDP */
                  );
+
+#ifdef FEATURE_QTV_STREAM_RECORD
+    RecordFrame( &lastRenderedFrameInfo );
+#endif // FEATURE_QTV_STREAM_RECORD
 
     if (bDisplayed)
     {
@@ -3262,7 +3156,6 @@ bool &bSleepAfter
         m_pVDEC_InputBuffer->buffer     [ i ] = decodeBuf.pData    [ i ];
         m_pVDEC_InputBuffer->buffer_size[ i ] = decodeBuf.size     [ i ];
         m_pVDEC_InputBuffer->timestamp  [ i ] = decodeBuf.timestamp[ i ];
-        m_pVDEC_InputBuffer->delta      [ i ] = decodeBuf.delta    [ i ];
         m_pVDEC_InputBuffer->buffer_pos [ i ] = decodeBuf.pos      [ i ];
         m_pVDEC_InputBuffer->userData   [ i ] = decodeBuf.userdata [ i ];
       }
@@ -3336,17 +3229,6 @@ bool &bSleepAfter
   // Wind the decoding machinery through another turn!
   //
   err = vdec_decode( m_vdec );
-  last_vdec_err = err;
-
-  if( isbFirstFrameDecoded == false)
-  {
-	VDEC_PARAMETER_DATA parm_data;
-	isbFirstFrameDecoded = true; 
-	vdec_get_parameter(m_vdec, VDEC_PARM_DIMENSIONS, &parm_data);
-	pPlayer->m_pRenderer->notify_clipInfo_Dimensions( parm_data.dimensions.width, parm_data.dimensions.height);
-	videoInfo.originalWidth = parm_data.dimensions.width;
-	videoInfo.originalHeight = parm_data.dimensions.height;
-  }
 
 #ifndef PLATFORM_LTK /* no timer services on LTK */
   if (m_broadcaster_ptr != 0)
@@ -3397,8 +3279,7 @@ bool &bSleepAfter
     }
     case VDEC_ERR_RESOURCE_UNAVAILABLE:
     case VDEC_ERR_OUT_OF_MEMORY:
-    case VDEC_ERR_UNSUPPORTED_DIMENSIONS:
-    case VDEC_ERR_UNSUPPORTED_PROFILE:
+    case VDEC_ERR_UNSUPPORTED_DIMENSIONS: 
     {
       QTV_MSG_PRIO1(QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_FATAL,
                     "Fatal error, aborting(%d)", err );
@@ -3406,33 +3287,8 @@ bool &bSleepAfter
       break;
     }
     case VDEC_ERR_INVALID_INPUT:
-    {
-      // Not updating the FAILED_DECODE stats as VDEC_ERR_INVALID_INPUT is
-      // returned only when decoder is fed with invalid data
-      // and this should not be treated as failure in decoding
-
-#ifdef FEATURE_QTV_VIDEO_RENDERING_QUALITY_ENABLE
-#error code not present
-#endif // FEATURE_QTV_VIDEO_RENDERING_QUALITY_ENABLE
-      if (overallDataState == Media::DATA_UNDERRUN)
-      {
-        // Underruns are very common and not cause for concern.
-        QTV_MSG_PRIO2( QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
-                       "Decoder is fed with invalid data: %d overallDataState %d",
-                       err, overallDataState );
-      }
-      else
-      {
-        // Debug message to know that decoder is fed with invalid data and
-        // because of which small chunks of data might not be decoded
-        QTV_MSG_PRIO2( QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
-                       "Decoder is fed with invalid data: %d overallDataState %d",
-                       err, overallDataState );
-      }
-      break;
-    }
     case VDEC_ERR_MYSTERY_ERROR:
-    {
+    { 
 #ifdef FEATURE_QTV_VIDEO_RENDERING_QUALITY_ENABLE
 #error code not present
 #endif // FEATURE_QTV_VIDEO_RENDERING_QUALITY_ENABLE
@@ -3987,13 +3843,10 @@ void VideoDec::GetStatistics(QtvPlayer::AudioVideoStatisticsT &stat,
     stat.Video.format             = (int)pMpeg4->GetVideoCodecType();
   }
   stat.Video.frames             = nFramesProcessed;
-  stat.Video.nIFrameTally       = videoStat.nIFrameTally;
-  stat.Video.nPFrameTally       = videoStat.nPFrameTally;
-  stat.Video.nBFrameTally       = videoStat.nBFrameTally;
   stat.Video.framesInterpolated = videoStat.nFramesInterpolated;
   stat.Video.skippedDecode      = videoStat.nDroppedDecode;
   stat.Video.skippedDisplay     = videoStat.nDroppedDisplay; // drop Before Display (UI Drop)
-  stat.Video.avSyncDrops     =  videoStat.nDroppedAVSync; // drop due to AV sync
+  stat.Video.avSyncDrops     =  videoStat.nDroppedAVSync; // drop due to AV sync  
   stat.Video.skippedDisplayDueToErrs = videoStat.nDropMacroBlockErrs;
   stat.Video.failedDecode       = videoStat.nFailedDecode;
   stat.Video.maxDrop            = videoStat.nMaxChunk;
@@ -4052,11 +3905,11 @@ void VideoDec::GetStatistics(QtvPlayer::AudioVideoStatisticsT &stat,
       }
       case Media::STREAM_SOURCE:
       {
-        stat.Video.encodedBitrate = pMpeg4->GetVideoBitRate(0);
+        stat.Video.encodedBitrate = pMpeg4->GetAudioBitRate(0);
         stat.Video.encodedFrameRate = (uint32)pMpeg4->GetVideoFrameRate(0);
         if(stat.Video.encodedFrameRate == 0 )
-        {
-          if (videoStat.averageInterFrameIntervalMsec)
+        {  
+          if (videoStat.averageInterFrameIntervalMsec) 
           {
             stat.Video.encodedFrameRate = (uint32)(1000/videoStat.averageInterFrameIntervalMsec);
           }
@@ -4152,10 +4005,6 @@ void VideoDec::ShowInfo(bool bEnd)
 
   //video stats
   QTV_MSG( QTVDIAG_VIDEO_TASK, "Video Stats" );
-  QTV_MSG1( QTVDIAG_VIDEO_TASK, "Total Number of Frames: %d",nFramesProcessed);
-  QTV_MSG1( QTVDIAG_VIDEO_TASK, "Total Number of I-Frames: %d",videoStat.nIFrameTally);
-  QTV_MSG1( QTVDIAG_VIDEO_TASK, "Total Number of P-Frames: %d",videoStat.nPFrameTally);
-  QTV_MSG1( QTVDIAG_VIDEO_TASK, "Total Number of B-Frames: %d",videoStat.nBFrameTally);
   QTV_MSG1( QTVDIAG_VIDEO_TASK, "Frame Interpolated %d",videoStat.nFramesInterpolated);
   QTV_MSG1( QTVDIAG_VIDEO_TASK, "Fail decode %d",videoStat.nFailedDecode);
   QTV_MSG1( QTVDIAG_VIDEO_TASK, "Dropped Decode %d", videoStat.nDroppedDecode);
@@ -4258,9 +4107,9 @@ m_maxTimestamp( MAX_UINT32 ),
   lastRenderedFrameInfo.bIsIntra = false;
   lastRenderedFrameInfo.timestamp = 0;
 
-  QCUtils::InitCritSect( &m_shutdown_CS );
-  QCUtils::InitCritSect( &m_vdecCreationLock );
-
+  rex_init_crit_sect( &m_shutdown_CS );
+  rex_init_crit_sect( &m_vdecCreationLock );
+  
   m_pDecoderSettings = InitDecoderSettings( (int)Media::UNKNOWN_CODEC );
    if (m_pDecoderSettings == NULL)
    {
@@ -4321,7 +4170,7 @@ SIDE EFFECTS:
 VideoDec::~VideoDec()
 {
 
-  QCUtils::EnterCritSect( &m_shutdown_CS );
+  rex_enter_crit_sect( &m_shutdown_CS );
   if (m_pDecoderSettings)
   {
 #ifdef FEATURE_QTV_IMEM //Sathiya
@@ -4331,18 +4180,10 @@ VideoDec::~VideoDec()
 #endif
     m_pDecoderSettings = NULL;
   }
-  QCUtils::LeaveCritSect( &m_shutdown_CS );
+  rex_leave_crit_sect( &m_shutdown_CS );
 
   QCUtils::DestroyCondition(&m_suspendSync);
   pPlayer = NULL;
-
-  //initialized to false
-  isbFirstFrameDecoded = false;
-
-  QCUtils::DinitCritSect(&videoStat.CS);
-  QCUtils::DinitCritSect(&frameReqUpdate_CS);
-  QCUtils::DinitCritSect( &m_shutdown_CS );
-  QCUtils::DinitCritSect( &m_vdecCreationLock );
 
 }/*lint!e1540 */
 
@@ -4379,7 +4220,7 @@ bool VideoDec::DoGenericVdecInit(VDEC_BLOB *pConfig,Media * pMpeg4)
     return false;
   }
 
-  QCUtils::EnterCritSect( &m_vdecCreationLock );
+  rex_enter_crit_sect( &m_vdecCreationLock );
 
   ASSERT( videoInfo.nLayers <= MAX_MP4_LAYERS );
 
@@ -4397,69 +4238,20 @@ bool VideoDec::DoGenericVdecInit(VDEC_BLOB *pConfig,Media * pMpeg4)
   concurrencyConfig = VDEC_CONCURRENT_NONE;
 
   /*
-    if audio override format set
-    */
+    if audio override format set 
+    */  
   if (m_pDecoderSettings->audioFormat != (int)Media::UNKNOWN_CODEC)
   {
-     //incase of Audio override we should convert the override format to VDEC understandable format
+     //incase of Audio override we should convert the override format to VDEC understandable format  
      concurrencyConfig = MapToVdecConcurrencyFormat (m_pDecoderSettings->audioFormat );
-  }
+  }  
 
   if (concurrencyConfig == VDEC_CONCURRENT_NONE)
   {
-#if (defined (FEATURE_QTV_IN_CALL_PHASE_2) || \
-     defined (FEATURE_QTV_IN_CALL_VIDEO))
-#error code not present
-#endif
-     switch(( Media::CodecType )AudioMediaCodecTypeSet)
-     {
-       case Media::UNKNOWN_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_NONE;
-       break;
-       case Media::EVRC_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_EVRC ;
-       break;
-       case Media::QCELP_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_QCELP;
-       break;
-       case Media::AAC_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_AAC;
-       break;
-       case Media::BSAC_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_BSAC;
-       break;
-       case Media::GSM_AMR_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_AMR;
-       break;
-       case Media::MP3_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_MP3;
-       break;
-       case Media::WMA_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_NONE; //Right now, no WMA support. This will change soon.
-       break;
-       case Media::CONC_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_CONC;
-       break;
-       case Media::AMR_WB_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_AMR_WB;
-       break;
-       case Media::AMR_WB_PLUS_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_AMR_WB_PLUS;
-       break;
-       case Media::EVRC_NB_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_EVRC;
-       break;
-       case Media::EVRC_WB_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_EVRC;
-       break;
-       default:
-         concurrencyConfig = VDEC_CONCURRENT_NONE;
-       break;
-     }
-
-      QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+      concurrencyConfig = ConvertMediaAudioToVdec( ( Media::CodecType )AudioMediaCodecTypeSet);
+      QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, 
                     "Audio Codec Set from Media Source : AudioMediaCodecTypeSet (%d) -> concurrencyConfig (%d )",
-                     AudioMediaCodecTypeSet, concurrencyConfig);
+                     AudioMediaCodecTypeSet, concurrencyConfig);		   		   
   }
 
   if (videoInfo.videoCodec == Media::H264_CODEC)
@@ -4478,10 +4270,10 @@ bool VideoDec::DoGenericVdecInit(VDEC_BLOB *pConfig,Media * pMpeg4)
     else
     {
 #ifdef FEATURE_FRE
-      parm_data.startCodeDetection.bStartCodeDetectionEnable = FALSE;
+      parm_data.startCodeDetection.bStartCodeDetectionEnable = FALSE;  
 #else
 #ifdef FEATURE_H264_DECODER
-      parm_data.startCodeDetection.bStartCodeDetectionEnable =
+      parm_data.startCodeDetection.bStartCodeDetectionEnable = 
       (boolean)pMpeg4->GetH264StartCodeDetectFlag(0);
 #endif /* FEATURE_H264_DECODER */
 #endif
@@ -4489,12 +4281,12 @@ bool VideoDec::DoGenericVdecInit(VDEC_BLOB *pConfig,Media * pMpeg4)
 #else
 #ifdef FEATURE_H264_DECODER
 
-    // As the external media model exports the flag to identify whether the
-    // H264 byteStream format used or not, similar thing is enquired
-    // against all the media models. Broadcast media by default shall
-    // return true to take care of the media FLO case. File/Stream media
-    // shall return false for this accessor method.
-    parm_data.startCodeDetection.bStartCodeDetectionEnable =
+    // As the external media model exports the flag to identify whether the 
+    // H264 byteStream format used or not, similar thing is enquired 
+    // against all the media models. Broadcast media by default shall 
+    // return true to take care of the media FLO case. File/Stream media 
+    // shall return false for this accessor method. 
+    parm_data.startCodeDetection.bStartCodeDetectionEnable = 
     (boolean)pMpeg4->GetH264StartCodeDetectFlag(0);
 #endif /* FEATURE_H264_DECODER */
 #endif
@@ -4519,12 +4311,9 @@ bool VideoDec::DoGenericVdecInit(VDEC_BLOB *pConfig,Media * pMpeg4)
   vdec_set_parameter(m_vdec,VDEC_PARM_ENABLE_XSCALING,&parm_data);
 #endif
 
-
+  
   parm_data.TSMultiplyFactor.TSMultiplyFactor = pPlayer->m_pQtvConfigObject->GetQTVConfigItem(QtvConfig::QTVCONFIG_ENABLE_BRAZIL_SPECIFIC_H264_VUI_PARAM_TYPE);
   vdec_set_parameter(m_vdec,VDEC_PARM_SET_TS_MULTIPLY_FACTOR_BRAZIL,&parm_data);
-
-  parm_data.VidKeyFrameEnable.bEnableVideoAtKeyFrame = pPlayer->m_pQtvConfigObject->GetQTVConfigItem(QtvConfig::QTVCONFIG_ENABLEVIDEO_AT_KEY_FRAME);
-  vdec_set_parameter(m_vdec,VDEC_PARM_ENABLE_VIDEO_AT_KEY_FRAME,&parm_data);
 
 #ifdef FEATURE_QTV_H264_VLD_DSP
   if (Media::BCAST_FLO_SOURCE == pMpeg4->GetSource())
@@ -4540,7 +4329,7 @@ bool VideoDec::DoGenericVdecInit(VDEC_BLOB *pConfig,Media * pMpeg4)
   frameSize.width  = videoInfo.imageWidth;
 
   SetIncallStateParameter();
-
+  
   returnCode = vdec_initialize(m_vdec,
                                pConfig,
                                videoInfo.nLayers,
@@ -4551,7 +4340,7 @@ bool VideoDec::DoGenericVdecInit(VDEC_BLOB *pConfig,Media * pMpeg4)
                                frameSize,
                                concurrencyConfig);
 
-  QCUtils::LeaveCritSect( &m_vdecCreationLock );
+  rex_leave_crit_sect( &m_vdecCreationLock );
 
   if (returnCode != VDEC_ERR_EVERYTHING_FINE)
   {
@@ -4572,17 +4361,17 @@ bool VideoDec::DoGenericVdecInit(VDEC_BLOB *pConfig,Media * pMpeg4)
 #endif //FEATURE_QTV_XSCALE_VIDEO
 
   #ifdef FEATURE_QTV_AVI
-  if (videoInfo.videoCodec == Media::MPEG4_CODEC
+  if (videoInfo.videoCodec == Media::MPEG4_CODEC 
       || videoInfo.videoCodec == Media::H263_CODEC
       || videoInfo.videoCodec == Media::DIVX311_CODEC
-      )
+      ) 
   {
     returnCode = InitExternalClock();
     if(returnCode != VDEC_ERR_EVERYTHING_FINE)
     {
       QTV_MSG_PRIO1(QTVDIAG_GENERAL,QTVDIAG_PRIO_ERROR,
                     "InitExternalClock!! error - %d",returnCode);
-    }
+    } 
   }
   #endif
 
@@ -4604,24 +4393,24 @@ VDEC_ERROR VideoDec::InitExternalClock( void )
 {
   bool external_clk_flag = true;
   VDEC_PARAMETER_DATA parm_data;
-  Media* pVideoMedia = NULL;
+  Media* pVideoMedia = pPlayer->pAVPlayer->GetVideoMedia();
 
   if((pPlayer != NULL) && (pPlayer->pAVPlayer != NULL))
   {
     pVideoMedia = pPlayer->pAVPlayer->GetVideoMedia();
+  }
 
-    if((pPlayer->pAVPlayer->IsLocalMediaPLayback()) &&
-       (pVideoMedia) && (pVideoMedia->isAviFileInstance()) &&
-       (videoInfo.videoCodec == Media::MPEG4_CODEC))
-    {
-      external_clk_flag = false;
-    }
+  if((pPlayer->pAVPlayer->IsLocalMediaPLayback()) &&
+     (pVideoMedia) && (pVideoMedia->isAviFileInstance()) &&
+     (videoInfo.videoCodec == Media::MPEG4_CODEC))
+  {
+    external_clk_flag = false;
   }
 
   if(external_clk_flag == true)
   {
     parm_data.externalClockEnable.bExternalClock = true;
-  }
+  } 
   else
   {
     parm_data.externalClockEnable.bExternalClock = false;
@@ -4645,7 +4434,7 @@ boolean VideoDec::DoGenericVdecShutdown( void )
   boolean retVal = TRUE;
   VDEC_ERROR  vdec_error;
 
-  QCUtils::EnterCritSect( &m_vdecCreationLock );
+  rex_enter_crit_sect( &m_vdecCreationLock );
 
   if (m_vdec)
   {
@@ -4667,7 +4456,7 @@ boolean VideoDec::DoGenericVdecShutdown( void )
     }
   }
 
-  QCUtils::LeaveCritSect( &m_vdecCreationLock );
+  rex_leave_crit_sect( &m_vdecCreationLock );
   return retVal;
 }
 
@@ -4832,13 +4621,14 @@ VDEC_INPUT_BUFFER * const pBuffer
   {
     if (pBuffer->bFrameEventPending[ i ] == true)
     {
+#ifdef SHOW_FRAME_QUEUES
+      QTV_MSG2( QTVDIAG_VIDEO_TASK,
+                "Frame event pending in layer %d @ timestamp %d",
+                i,
+                pBuffer->timestamp[ i ] );
+#endif // SHOW_FRAME_QUEUES
+
       ++nFramesPending;
-      QTV_MSG_PRIO3( QTVDIAG_DEBUG,
-       QTVDIAG_PRIO_HIGH,
-       "Frame event pending in layer %d @ timestamp %d nFramesPending %d",
-        i,
-        pBuffer->timestamp[ i ],
-        nFramesPending);
     }
   }
 
@@ -4890,7 +4680,7 @@ void * const         pCbData
   // Don't put anything else in this stub.  All frame-buffer handling
   // should be in FrameBufferReadyHandler.
 
-  /* "nBytesConsumed" variable declared but not used in the function,
+  /* "nBytesConsumed" variable declared but not used in the function, 
        below statement is added to clear the compiler warning. */
   QTV_USE_ARG1(nBytesConsumed);
   pThis->FrameBufferReadyHandler( status, pFrame );
@@ -4917,9 +4707,9 @@ VDEC_FRAME * const      pFrame
    {
        // in the player idle state ignore the frames
        if ( (pPlayer->GetState() == VideoPlayer::IDLE) &&
-             (status != VDEC_STATUS_SUSPEND_DONE)      &&
-             (status != VDEC_STATUS_EOS_INDICATION)    &&
-             (status != VDEC_STATUS_FLUSH)             &&
+             (status != VDEC_STATUS_SUSPEND_DONE)      && 
+             (status != VDEC_STATUS_EOS_INDICATION)    && 
+             (status != VDEC_STATUS_FLUSH)             && 
              (status != VDEC_STATUS_FATAL_ERROR) )
        {
               QTV_MSG_PRIO(QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_HIGH,
@@ -4928,7 +4718,13 @@ VDEC_FRAME * const      pFrame
 	       return;
        }
    }
-
+   
+#ifndef PLATFORM_LTK
+  if (pFrame)
+  {
+    LogFrameDecodeInfo( *pFrame );
+  }
+#endif /* ! PLATFORM_LTK */
 
   switch (status)
   {
@@ -4989,7 +4785,7 @@ VDEC_FRAME * const      pFrame
                  "Eos Indication received..ignoring for now");
     break;
   }
-  case VDEC_STATUS_SUSPEND_DONE:
+  case VDEC_STATUS_SUSPEND_DONE: 
   {
      QTV_MSG_PRIO(QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_HIGH,"Suspend CallBack received");
      QCUtils::SetCondition(&m_suspendSync);
@@ -5004,15 +4800,6 @@ VDEC_FRAME * const      pFrame
                      status );
   }
   } /* switch ( status ) */
-
-
-#ifndef PLATFORM_LTK
-  if (pFrame)
-  {
-    LogFrameDecodeInfo( *pFrame );
-  }
-#endif /* ! PLATFORM_LTK */
-
   if ((status != VDEC_STATUS_SUSPEND_DONE) && (status != VDEC_STATUS_EOS_INDICATION))
   {
   /* A decode-done is one of the endpoint-events for decoding.
@@ -5031,11 +4818,6 @@ if(m_bEnableQFRE)
   if(!ofc)
     SetPrerollRendererCount(1);
 }
-#else
-  unsigned int ofc;
-  ofc = GetOutstandingFrameCount();
-  if(!ofc)
-    SetPrerollRendererCount(1);
 #endif
 }
 }
@@ -5070,7 +4852,7 @@ void VideoDec::HandleFrameReady( VDEC_FRAME * const pFrame )
   repair_timestamp( pFrame );
 
   // By default frame is syncd
-  bool bFrameSyncToPCR = true;
+  bool bFrameSyncToPCR = true; 
   #ifdef FEATURE_QTV_GENERIC_BCAST_PCR
 #error code not present
   #endif
@@ -5088,8 +4870,6 @@ void VideoDec::HandleFrameReady( VDEC_FRAME * const pFrame )
     return;
   }
 
-  UpdateStats(CONVERTED, pFrame);
-
   // A healthy frame should be punted right to the renderer.
 
   if
@@ -5101,7 +4881,7 @@ void VideoDec::HandleFrameReady( VDEC_FRAME * const pFrame )
   {
 #ifdef FEATURE_QTV_VIDEO_RENDERING_QUALITY_ENABLE
 #error code not present
-#endif // FEATURE_QTV_VIDEO_RENDERING_QUALITY_ENABLE
+#endif // FEATURE_QTV_VIDEO_RENDERING_QUALITY_ENABLE 
     {
       /* Render the frame, after checking for minimum required frame quality */
       m_renderingFrames.Learn( *pFrame );
@@ -5109,7 +4889,7 @@ void VideoDec::HandleFrameReady( VDEC_FRAME * const pFrame )
     }
 #ifdef FEATURE_QTV_VIDEO_RENDERING_QUALITY_ENABLE
 #error code not present
-#endif // FEATURE_QTV_VIDEO_RENDERING_QUALITY_ENABLE
+#endif // FEATURE_QTV_VIDEO_RENDERING_QUALITY_ENABLE 
   }
   else
   {
@@ -5127,8 +4907,8 @@ FUNCTION
   IsBroadcastLeadCheckFailed
 
 DESCRIPTION
-  Returns true when the broadcast lead is greater than the maximum
-  configured.
+  Returns true when the broadcast lead is greater than the maximum 
+  configured. 
 
 RETURN VALUE
   True/False depending the broadcast lead check failure.
@@ -5142,7 +4922,7 @@ bool VideoDec::IsBroadcastLeadCheckFailed( long nSleepMsec )
   #else
   QTV_USE_ARG1(nSleepMsec);
   #endif
-  return bFail;
+  return bFail; 
 }
 
 /* ======================================================================
@@ -5258,7 +5038,7 @@ RETURN VALUE
   None.
 
 ========================================================================== */
-void VideoDec::LogRenderEvents( const VDEC_FRAME &frame )
+void VideoDec::LogRenderEvents( const VDEC_FRAME &frame ) 
 {
   if ( frame.frameType == VDEC_FRAMETYPE_I )
   { // I-frame
@@ -5268,7 +5048,7 @@ void VideoDec::LogRenderEvents( const VDEC_FRAME &frame )
     event_report(EVENT_QTV_FIRST_VIDEO_I_FRAME_RENDERED);
   }
   }
-
+  
   if(bFirstFrameRendered == false)
   {
   bFirstFrameRendered = true;
@@ -5331,7 +5111,7 @@ void VideoDec::LogFrameDecodeInfo( const VDEC_FRAME &frame ) const
 
     /*Calculate percentage of macroblocks*/
     uint32 nMacroBlocksInFrame = ((frame.dimensions.width)*(frame.dimensions.height))/(16*16);
-    uint32 nPercentageOfMacroBlocksConcealed = 0;
+    uint32 nPercentageOfMacroBlocksConcealed = 0; 
     if(frame.extFrame.numConcealedMbs && nMacroBlocksInFrame)
     {
        nPercentageOfMacroBlocksConcealed = ((frame.extFrame.numConcealedMbs)*100)/nMacroBlocksInFrame;
@@ -5431,7 +5211,7 @@ void VideoDec::RecordFrame
   const LastRenderedFrameInfo * const pFrameInfo
 )
 {
-  if( (NULL != pFrameInfo) && (NULL != pMpeg4) &&
+  if( (NULL != pFrameInfo) && (NULL != pMpeg4) && 
       (pMpeg4->GetSource()==Media::STREAM_SOURCE))
   {
     if (0 == pFrameInfo->layer)
@@ -5582,21 +5362,7 @@ int VideoDec::AlterOutstandingFrameCount
                    "Waking decoder, OFC %d -> %d",
                    preOFC, postOFC );
 
-    if(NULL!=pPlayer)
-    {
-      if(QCUtils::IsThreadActive(&pPlayer->decoderTC))
-      {
-        QCUtils::SetCondition( &m_wakeupSync);
-      }
-      else
-      {
-        QTV_MSG_PRIO( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_MED," not setting Condition as pPlayer->decoderTC Thread is not Active ...." );
-      }
-    }
-    else
-    {
-        QTV_MSG_PRIO( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_MED," not setting Condition as pPlayer is NULL ...." );  
-    }
+    QCUtils::SetCondition( &m_wakeupSync );
 
   return postOFC;
 }
@@ -5724,70 +5490,22 @@ bool VideoDec::DoGenericVdecResume( void )
   concurrencyConfig = VDEC_CONCURRENT_NONE;
 
   /*
-    if audio override format set
+    if audio override format set 
     */
   if (m_pDecoderSettings->audioFormat != (int)Media::UNKNOWN_CODEC)
   {
       //incase of Audio override we should convert the override format to VDEC understandable format
       concurrencyConfig = MapToVdecConcurrencyFormat(m_pDecoderSettings->audioFormat );
-  }
+  }  
 
   if (concurrencyConfig == VDEC_CONCURRENT_NONE)
   {
-#if (defined (FEATURE_QTV_IN_CALL_PHASE_2) || \
-     defined (FEATURE_QTV_IN_CALL_VIDEO))
-#error code not present
-#endif
-     switch(( Media::CodecType )AudioMediaCodecTypeSet)
-     {
-       case Media::UNKNOWN_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_NONE  ;
-       break;
-       case Media::EVRC_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_EVRC ;
-       break;
-       case Media::QCELP_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_QCELP;
-       break;
-       case Media::AAC_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_AAC;
-       break;
-       case Media::BSAC_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_BSAC;
-       break;
-       case Media::GSM_AMR_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_AMR;
-       break;
-       case Media::MP3_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_MP3;
-       break;
-       case Media::WMA_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_NONE; //Right now, no WMA support. This will change soon.
-       break;
-       case Media::CONC_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_CONC;
-       break;
-       case Media::AMR_WB_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_AMR_WB;
-       break;
-       case Media::AMR_WB_PLUS_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_AMR_WB_PLUS;
-       break;
-       case Media::EVRC_NB_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_EVRC;
-       break;
-       case Media::EVRC_WB_CODEC:
-         concurrencyConfig = VDEC_CONCURRENT_AUDIO_EVRC;
-       break;
-       default:
-         concurrencyConfig = VDEC_CONCURRENT_NONE;
-       break;
-     }
-      QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+	   concurrencyConfig = ConvertMediaAudioToVdec( ( Media::CodecType )AudioMediaCodecTypeSet);
+          QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, 
                               "Audio Codec Set from Media Source : AudioMediaCodecTypeSet (%d) -> concurrencyConfig (%d )",
-                              AudioMediaCodecTypeSet, concurrencyConfig);
+                              AudioMediaCodecTypeSet, concurrencyConfig);		   		   
   }
-
+  
   SetIncallStateParameter();
 
   vdec_error = vdec_resume ( m_vdec, concurrencyConfig );
@@ -5905,8 +5623,7 @@ bool VideoDec::IsItOkayToDropThisFrame( const VDEC_FRAME* const pFrame ) const
       pFrame->layer == 0
     ) ||
     //never drop frame zero since it could be a still image.
-    //nFramesProcessed is the number of frames decoded and therefore for frame 0, nFrameProcessed=1 and so on...
-    ( nFramesProcessed == 1 );
+    ( nFramesProcessed == 0 );
 
   return !bNoDrop;
 }
@@ -5990,10 +5707,7 @@ SIDE EFFECTS
 void VideoDec::Flush( void )
 {
   // All of our queues are managed by the decoder.
-  if (NULL !=  m_vdec)
-  {
-    (void)vdec_flush( m_vdec );
-  }
+  (void)vdec_flush( m_vdec );
 
   // Zorch the input buffer in case any outstanding data is left in it.
   // (We can get this in 'backoff' situations)
@@ -6066,12 +5780,11 @@ RETURN VALUE
 bool VideoDec::DoGenericVdecCreate(void)
 {
    const char *fourcc[] = {"mp4v","i263","avc1","wmv1","wmv2","wmv3","rv40","jpeg","div3","div4","isom"};
-                         /* 0      1      2      3      4      5      6      7      8      9      10*/
    unsigned int index = 0;
    VDEC_ERROR  vdec_error = VDEC_ERR_EVERYTHING_FINE;
    bool bOK = true;
 
-   QCUtils::EnterCritSect( &m_vdecCreationLock );
+   rex_enter_crit_sect( &m_vdecCreationLock );
 
   /* It's possible the application is just calling Init over and over with
   ** no CleanUp calls in between, so make sure we take care of that.
@@ -6088,13 +5801,9 @@ bool VideoDec::DoGenericVdecCreate(void)
     case Media::WMV3_CODEC : index = 5; break;
     case Media::RV40_CODEC : index = 6; break;
     case Media::JPEG_CODEC : index = 7; break;
-#ifdef FEATURE_DIVX_311_ENABLE
     case Media::DIVX311_CODEC : index = 8; break;
-#endif
-    case Media::STILL_IMAGE_CODEC : index = 10; break;
-	case Media::STILL_IMAGE_H263_CODEC : index = 1; break;
-
-    default:
+    case Media::STILL_IMAGE_CODEC : index = 9; break;
+    default: 
       bOK = false;
 	  vdec_error = VDEC_ERR_INVALID_PARAMETER;
       QTV_MSG_PRIO(QTVDIAG_GENERAL,QTVDIAG_PRIO_ERROR,"DoGenericVdecCreate failed!! error - unknown Codec type");
@@ -6102,10 +5811,9 @@ bool VideoDec::DoGenericVdecCreate(void)
 
   if(bOK == true)
 {
-    QTV_MSG_PRIO1(QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_ERROR,"vdec_create: %d", index);
     vdec_error = vdec_create(fourcc[index],&m_vdec);
 
-    QCUtils::LeaveCritSect( &m_vdecCreationLock );
+    rex_leave_crit_sect( &m_vdecCreationLock );
 
     if ( vdec_error != VDEC_ERR_EVERYTHING_FINE )
   {
@@ -6155,18 +5863,15 @@ RETURN VALUE
 void VideoDec::GetFrameDimensionsFromMedia(Media * pMpeg4)
 {
   bool bGotVideoDimensions = false;
-
-   if((videoInfo.videoCodec != Media::WMV3_CODEC)
-      && (videoInfo.videoCodec != Media::WMV2_CODEC)
+   
+   if((videoInfo.videoCodec != Media::WMV3_CODEC) 
+      && (videoInfo.videoCodec != Media::WMV2_CODEC) 
       && (videoInfo.videoCodec != Media::WMV1_CODEC)
       && (videoInfo.videoCodec != Media::JPEG_CODEC)
       && (videoInfo.videoCodec != Media::H264_CODEC)
       && (videoInfo.videoCodec != Media::MPEG4_CODEC)
       && (videoInfo.videoCodec != Media::H263_CODEC)
-#ifdef FEATURE_DIVX_311_ENABLE
-      && (videoInfo.videoCodec != Media::DIVX311_CODEC)
-#endif
-                                   )
+      && (videoInfo.videoCodec != Media::DIVX311_CODEC))
   {
     videoInfo.imageWidth = MP4_MAX_DECODE_WIDTH;
     videoInfo.imageHeight = MP4_MAX_DECODE_HEIGHT;
@@ -6185,7 +5890,7 @@ void VideoDec::GetFrameDimensionsFromMedia(Media * pMpeg4)
     else
     {
        /* validate dimensions from meda data with max supported */
-       if( (videoInfo.imageWidth > MP4_MAX_DECODE_WIDTH)
+       if( (videoInfo.imageWidth > MP4_MAX_DECODE_WIDTH) 
             || ( (videoInfo.imageWidth * videoInfo.imageHeight) > (MP4_MAX_DECODE_WIDTH*MP4_MAX_DECODE_HEIGHT)))
        {
          // Default VDEC_MAX_DECODE dimensions if we got unsupported diemsions
@@ -6195,17 +5900,8 @@ void VideoDec::GetFrameDimensionsFromMedia(Media * pMpeg4)
     }
   }
 
-  if ( !bGotVideoDimensions )
-  {
-   
-     videoInfo.originalWidth = 0;
-     videoInfo.originalHeight = 0;
-  }
-  else
-  {
-    videoInfo.originalWidth = videoInfo.imageWidth;
-	videoInfo.originalHeight = videoInfo.imageHeight;
-  }
+  videoInfo.originalWidth = videoInfo.imageWidth;
+  videoInfo.originalHeight = videoInfo.imageHeight;
 
   QTV_MSG2( QTVDIAG_VIDEO_TASK,
             "Video dimensions: %dx%d",
@@ -6261,7 +5957,7 @@ void SetDriftConstantValue(Media::CodecType audioCodec)
 /************************************************************************* */
 /**
  * Returns true if a timestamp is 'defined'; if it has a healthy value.
- *
+ * 
  * @param[in] ts The timestamp under scrutiny.
  * @return true or false (or maybe? oooooh...)
  *
@@ -6283,11 +5979,11 @@ void VideoDec::record_timestamp( VDEC_FRAME* const frame_ptr )
 {
   if (frame_ptr)
   {
-    if( !(UNDEFINED_TIMESTAMP & frame_ptr->timestamp)  )
+    if(timestamp_is_defined( frame_ptr->timestamp ) )
     {
       m_last_timestamp = frame_ptr->timestamp;
     }
-    else if( !(UNDEFINED_TIMESTAMP & frame_ptr->extFrame.derivedTimestamp) )
+    else if(timestamp_is_defined( frame_ptr->extFrame.derivedTimestamp ))
     {
       m_last_timestamp = frame_ptr->extFrame.derivedTimestamp;
     }
@@ -6315,7 +6011,6 @@ void VideoDec::repair_timestamp( VDEC_FRAME* const frame_ptr )
                        "## Found decoded frame with no timestamp.  Last good ts = %d.  Setting current ts = %d",
                        m_last_timestamp,
                        frame_ptr->timestamp );
-		m_last_timestamp = frame_ptr->timestamp;
       }
       else /* inband timestamp ok */
       {
@@ -6415,15 +6110,7 @@ void VideoDec::ReleaseBuffer( const QtvPlayer::FrameInfoT& frame )
 
    if ( pVDEC_Frame )
    {
-      if (pVDEC_Frame->frameStatus == FRAME_WITH_UI)
-      {
-         DoGenericVdecReuseFrame( VideoDec::FRAME_RENDERED, pVDEC_Frame );
-      }
-      else
-      {
-        QTV_MSG_PRIO( QTVDIAG_VIDEO_TASK,
-             QTVDIAG_PRIO_HIGH, "invalid release, ignoring...");
-      }
+      DoGenericVdecReuseFrame( VideoDec::FRAME_RENDERED, pVDEC_Frame );
    }
    else
    {
@@ -6448,7 +6135,7 @@ PARAMETERS
 RETURN VALUE
   average video frame interval.
 ========================================================================== */
-uint32 VideoDec::GetAverageVideoFrameInterval( )
+uint32 VideoDec::GetAverageVideoFrameInterval( ) 
 {
   uint32 nAverageVideoFrameInterval = 0;
 
@@ -6481,7 +6168,7 @@ RETURN VALUE
   returns timestamp if defiend else returns -1.
 ========================================================================== */
 
-uint32 VideoDec::GetLastReadVideoFrameTimeStamp( )
+uint32 VideoDec::GetLastReadVideoFrameTimeStamp( ) 
 {
   if (!(decodeBuf.timestamp[0] & UNDEFINED_TIMESTAMP))
   {
@@ -6508,29 +6195,29 @@ bool VideoDec::RunVideoQualityThreshold( VDEC_FRAME* const pFrame )
 {
   bool bIsThresholdMet = false;
   uint32 nMacroBlocksInFrame = ((pFrame->dimensions.width)*(pFrame->dimensions.height))/(16*16);
-  uint32 nPercentageOfMacroBlocksConcealed = 0;
-
+  uint32 nPercentageOfMacroBlocksConcealed = 0; 
+  
   if(pFrame->extFrame.numConcealedMbs)
   {
     QTV_MSG_PRIO3( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_HIGH,
                   "frame dim, Width: %d Height: %d, num macroblocks Concealed: %d", pFrame->dimensions.width, pFrame->dimensions.height, pFrame->extFrame.numConcealedMbs );
     QTV_MSG_PRIO1( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_HIGH,
-                  "QTVCONFIG_GENERIC_VIDEO_RENDERING_QUALITY: %d", pPlayer->pAVPlayer->GetQTVConfigItem(QtvConfig::QTVCONFIG_GENERIC_VIDEO_RENDERING_QUALITY));
-
+                  "QTVCONFIG_GENERIC_VIDEO_RENDERING_QUALITY: %d", pPlayer->pAVPlayer->GetQTVConfigItem(QtvConfig::QTVCONFIG_GENERIC_VIDEO_RENDERING_QUALITY));  
+      
     if(nMacroBlocksInFrame)
     {
       nPercentageOfMacroBlocksConcealed = ((pFrame->extFrame.numConcealedMbs)*100)/nMacroBlocksInFrame;
-      if( nPercentageOfMacroBlocksConcealed >
+      if( nPercentageOfMacroBlocksConcealed > 
          (uint32) (pPlayer->pAVPlayer->GetQTVConfigItem(QtvConfig::QTVCONFIG_GENERIC_VIDEO_RENDERING_QUALITY)))
       {
         bIsThresholdMet = true;
         QTV_MSG_PRIO2( QTVDIAG_VIDEO_TASK, QTVDIAG_PRIO_HIGH,
-                      "Video frame error threshold met., since Percentage of macroblocks concealed: %d, TS: %d",nPercentageOfMacroBlocksConcealed, ((pFrame->timestamp)&TIMESTAMP_MASK) );
-      }
+                      "Video frame error threshold met., since Percentage of macroblocks concealed: %d, TS: %d",nPercentageOfMacroBlocksConcealed, ((pFrame->timestamp)&TIMESTAMP_MASK) );  
+      }   
     }
   }
   return bIsThresholdMet;
-}
+} 
 
 /* ======================================================================
 FUNCTION
@@ -6553,14 +6240,14 @@ VDEC_ERROR VideoDec::SetVDECParameter( VDEC_PARAMETER_ID inputParamId,  VDEC_PAR
 {
   VDEC_ERROR nReturn = VDEC_ERR_MYSTERY_ERROR;
 
-  QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
+  QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
                 "inputParamId: %d, pInputParam->freEnable.bFreEnable: %d",
                 inputParamId, (pInputParam->freEnable.bFreEnable));
   if( pInputParam)
   {
     nReturn = vdec_set_parameter(m_vdec,inputParamId, pInputParam);
   }
-  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
+  QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, 
                 "VDEC_ERROR return %d", nReturn);
 
   return nReturn;
@@ -6571,7 +6258,7 @@ FUNCTION
   VideoDec::MapToVdecConcurrencyFormat
 
 DESCRIPTION
-  Maps the format to the Vdec override format (concurrency format), this will be executed when there is
+  Maps the format to the Vdec override format (concurrency format), this will be executed when there is 
   a SetAudioOverride call was done and the audio over ride format has been set successfully
 
 PARAMETERS
@@ -6590,41 +6277,41 @@ RETURN VALUE
      {
            case QtvPlayer::AUD_OVER_ENC_QCELP13K:
            {
-                QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+                QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, 
                               "VDEC Concurency Format : format: %d -> %d (VDEC_CONCURRENT_AUD_OVER_ENC_QCELP13K)",
-                              format, concurrencyConfig);
-                concurrencyConfig = VDEC_CONCURRENT_AUD_OVER_ENC_QCELP13K;
+                              format, concurrencyConfig);		   	
+                concurrencyConfig = VDEC_CONCURRENT_AUD_OVER_ENC_QCELP13K;					
 		  break;
            }
    	    case QtvPlayer::AUD_OVER_ENC_EVRC:
 	    {
-                QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+                QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, 
                               "VDEC Concurency Format : format: %d -> %d (VDEC_CONCURRENT_AUD_OVER_ENC_EVRC)",
-                              format, concurrencyConfig);
+                              format, concurrencyConfig);				
                 concurrencyConfig = VDEC_CONCURRENT_AUD_OVER_ENC_EVRC;
-		  break;
+		  break;			
            }
    	    case QtvPlayer::AUD_OVER_ENC_AMR:
 	    {
-                QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+                QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, 
                               "VDEC Concurency Format : format: %d -> %d (VDEC_CONCURRENT_AUD_OVER_ENC_AMR)",
-                              format, concurrencyConfig);
+                              format, concurrencyConfig);				
                 concurrencyConfig = VDEC_CONCURRENT_AUD_OVER_ENC_AMR;
-		  break;
-           }
-	   /*Other formats have to be added (mentioned in Qtvplayer.h enum AudOverrideType) after there is a Support form Decoder,
+		  break;			
+           }	
+	   /*Other formats have to be added (mentioned in Qtvplayer.h enum AudOverrideType) after there is a Support form Decoder, 
              needs to be clarified by Sathiya N from QTV Decoder team. And also what should be
              the default cuncerrency type to be returend ????? */
 	   default:
 	   {
 	   	  concurrencyConfig = VDEC_CONCURRENT_NONE;
 
-                QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+                QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, 
                               "VDEC Concurency Format : format: %d -> %d (VDEC_CONCURRENT_NONE -> Default))",
-                              format, concurrencyConfig);
+                              format, concurrencyConfig);		   	
                 break;
 	   }
-     }
+     }	 
      return concurrencyConfig;
 }
 
@@ -6633,7 +6320,7 @@ FUNCTION
   VideoDec::SetIncallStateParameter
 
 DESCRIPTION
-  This calls vdec_set_parameter inorder to select proper voice+qtv image/module
+  This calls vdec_set_parameter inorder to select proper voice+qtv image/module 
 
 PARAMETERS
   uint32 format
@@ -6643,17 +6330,17 @@ RETURN VALUE
 ========================================================================== */
 void VideoDec::SetIncallStateParameter()
 {
-   VDEC_PARAMETER_DATA parm_data;
+   VDEC_PARAMETER_DATA parm_data;   
    Media::CodecType nIncallVoiceCodecType = GetIncallVoiceCodec();
 
   memset (&parm_data,0x00,sizeof(VDEC_PARAMETER_DATA));
-
+  
   switch(nIncallVoiceCodecType)
   {
     case Media::EVRC_CODEC:
     {
         parm_data.audio_vtype.vtype = VTYPE_EVRC;
-
+ 
 	break;
     }
     case Media::QCELP_CODEC:
@@ -6679,9 +6366,9 @@ void VideoDec::SetIncallStateParameter()
     }
   }
    vdec_set_parameter(m_vdec,VDEC_PARM_AUDIO_VTYPE,&parm_data);
-   QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
+   QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, 
                       "In call codec %d and vtype %d ",
-                       nIncallVoiceCodecType,parm_data.audio_vtype.vtype);
+                       nIncallVoiceCodecType,parm_data.audio_vtype.vtype);    
 }
 
 /* ======================================================================
@@ -6689,7 +6376,7 @@ FUNCTION
   VideoDec::SetIncallVoiceCodec
 
 DESCRIPTION
-  This functions sets the voice codec type during incall video (QTV)
+  This functions sets the voice codec type during incall video (QTV) 
 
 PARAMETERS
   Media::CodecType eVocoderType
@@ -6707,7 +6394,7 @@ FUNCTION
   VideoDec::GetIncallVoiceCodec
 
 DESCRIPTION
-  This functions returns the voice codec type during incall video (QTV)
+  This functions returns the voice codec type during incall video (QTV) 
 
 PARAMETERS
   void
@@ -6720,29 +6407,3 @@ Media::CodecType VideoDec::GetIncallVoiceCodec()
      return nInCallVocodertype;
 }
 
-/* ======================================================================
-FUNCTION:
-  VideoDec::UpdateClipInfoDimensions
-
-DESCRIPTION:
- This is a sync funciton which updates the height and width of clipinfo.
-
-INPUT/OUTPUT PARAMETERS:
-  int height : height of enoded frame.
-  int width  : width of encoded frame.
-
-RETURN VALUE:
-  None
-
-SIDE EFFECTS:
-  None.
-======================================================================*/
-void VideoDec::UpdateClipInfoDimensions(int height, int width)
-{
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
-	  "VideoDec::UpdateClipInfoDimensions () ");
-	if (pPlayer)
-	{
-       pPlayer->UpdateClipInfoDimensions(height, width);
-	}
-}

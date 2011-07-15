@@ -12,9 +12,9 @@ Copyright 2005, 2006 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audioplayerif.cpp#13 $
-$DateTime: 2009/11/30 03:18:44 $
-$Change: 1098040 $
+$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audioplayerif.cpp#10 $
+$DateTime: 2008/10/10 11:52:23 $
+$Change: 760476 $
 
 ========================================================================== */
 
@@ -103,7 +103,7 @@ void AudioPlayerIf::Init()
     m_pAudioDispatcher = NULL;
     QCUtils::CreateCondition(&responseSync,false,false);
     bPlayerIfInitDone = true;
-    QCUtils::InitCritSect( &dispatcherCS);
+    rex_init_crit_sect( &dispatcherCS);
   }
   else
   {
@@ -143,14 +143,10 @@ bool AudioPlayerIf::CreateAudioPlayer(AUDIO_PLAYER_ID&     apID,
 
   if(!m_pAudioDispatcher)
   {
-#ifndef FEATURE_WINCE
-  
     m_pAudioDispatcher = QTV_New_Args( qtv_task_if_class,
                                          ( &qtv_audio_tcb,
                                            qtv_task_audio_info )
                                       );
-#endif									  
-
   }
 
   if( m_pAudioDispatcher )
@@ -1263,7 +1259,7 @@ bool DispatchMsgToSink(void* pMsg, size_t msgSize, AUDIO_PLAYER_ID playerID)
   {
     memcpy(msg->payload, pMsg, msgSize);
 
-    QCUtils::EnterCritSect(&dispatcherCS);
+    rex_enter_crit_sect(&dispatcherCS);
     QCUtils::ResetCondition(&responseSync);
     //dispatch the msg to the "PV Audio" task..
     ++( pSink->NumAudioDispatchesPending() );
@@ -1286,7 +1282,7 @@ bool DispatchMsgToSink(void* pMsg, size_t msgSize, AUDIO_PLAYER_ID playerID)
       --( pSink->NumAudioDispatchesPending() );
       qtv_msg_struct::free(msg);
     }
-    QCUtils::LeaveCritSect(&dispatcherCS);
+    rex_leave_crit_sect(&dispatcherCS);
   }
   else
   {
@@ -1336,7 +1332,6 @@ void AudioPlayerIf::Destroy(AUDIO_PLAYER_ID const recipientID)
       bPlayerIfInitDone = false;
     }
   }
-  QCUtils::DinitCritSect(&dispatcherCS);
   return;
 }
 

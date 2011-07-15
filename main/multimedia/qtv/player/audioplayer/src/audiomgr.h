@@ -25,9 +25,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audiomgr.h#27 $
-$DateTime: 2010/11/16 05:21:40 $
-$Change: 1519115 $
+$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audiomgr.h#14 $
+$DateTime: 2008/12/01 15:36:22 $
+$Change: 795490 $
 
 ========================================================================== */
 
@@ -63,7 +63,7 @@ $Change: 1519115 $
 #define INBUF_BIT_MODULO_MASK   ((INBUF_BIT_WIDTH)-1)
 
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
-#define MAX_AVSYNC_AUDIO_BUFFER_SIZE   770
+#define MAX_AVSYNC_AUDIO_BUFFER_SIZE   500
 #endif
 
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES
@@ -75,14 +75,9 @@ $Change: 1519115 $
  * if sampling freq < 32KHz, each frame contains 2048 samples.
  */
 #ifdef FEATURE_QTV_LOW_POWER_AUDIO
-  #define MAX_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER   770
+  #define MAX_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER   330
 #else
   #define MAX_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER   80
-#endif
-#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_EVRC
-  #define EVRC_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER  80	
-#else
-  #define EVRC_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER  0
 #endif
 
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_QCELP
@@ -92,14 +87,14 @@ $Change: 1519115 $
 #endif
 
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_MP3
-  #define MP3_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER  300	
+  #define MP3_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER  150	
 #else
   #define MP3_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER  0
 #endif
 
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_AAC
   #ifdef FEATURE_QTV_LOW_POWER_AUDIO
-    #define AAC_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER   770
+    #define AAC_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER   330
   #else
     #define AAC_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER   80
   #endif
@@ -111,18 +106,6 @@ $Change: 1519115 $
 #define WMA_PRO_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER   10
 #define WMA_PRO_DSP_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER   40
 #define WMA_PRO_PLUS_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER   10
-
-#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_AC3
-#error code not present
-#else
-#define AC3_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER  0
-#endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_AC3 */
-
-#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_PCM
-#error code not present
-#else
-#define PCM_NUMBER_OF_ENTRIES_TO_HOLD_IN_RESTORE_BUFFER  0
-#endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_PCM */
 
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_AMR_WB
 #error code not present
@@ -344,11 +327,10 @@ public:
 #error code not present
 #endif /* FEATURE_QTV_GENERIC_BCAST_PCR */
 
+#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER)
   uint32 GetSampleRate();
+  uint16 GetCodecVersion(); 
   uint16 GetNumChannels();
-
-#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER)  
-  uint16 GetCodecVersion();   
   uint32 GetBitRate();
   uint32 GetEncoderOptions();
   
@@ -382,14 +364,9 @@ public:
   Common::AudioNotifyFuncT notifyFunc;
 
   bool FlushDataRequests();
-  /* Made public for image swap fix*/
-  void EndElapsedTime(long time);
 
   virtual bool FillAudioBuffer(const uint32 max_len, const uint32 offset) ;
   
-  // Check to see if data being restored
-  bool IsDataBeingRestored();
-
   /* Private Members related to Fast Playback Mode */
   bool bFastPlaybackMode;       /* FastPlaybackMode */
   int  *aFastPlaybackFilterConfig;       /* Fast Playback Filter Config */
@@ -467,9 +444,9 @@ public:
 #endif /* FEATURE_QTV_GENERIC_AUDIO_FORMAT */
     long nChannels;
     long nVersion;          /* AUDIO/WMA codec version */
-    long nBitsPerSample;
     
-#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER)    
+#if defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER)
+    long nBitsPerSample;
     long nAsfPacketSize;    /* fixed ASF audio packet size */
 #endif /* defined(FEATURE_QTV_WINDOWS_MEDIA) || defined(FEATURE_QTV_WMA_PRO_DSP_DECODER) */
   };
@@ -664,9 +641,9 @@ public:
   //audio device interface.
   AudioCMX * pAudioCMX;
   //end, WZeng, 05/22/02
-
+#ifdef FEATURE_FILE_FRAGMENTATION
   void SetClientData(const void *client_data);
-
+#endif
 
   long GetAmtBufferedMsec(unsigned long time);
 
@@ -721,12 +698,6 @@ public:
 			return true;
 		}
 #endif
-#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_EVRC		
-    if(audioCodec == Media::EVRC_CODEC)
-    {
-      return true;
-    }
-#endif
 #ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_QCELP		
 	if(audioCodec == Media::QCELP_CODEC)
         {
@@ -760,17 +731,6 @@ if(audioCodec == Media::Media::WMA_PRO_PLUS_CODEC)
     }
 #endif//#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_MP3
 
-#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_AC3
-   if(audioCodec == Media::AC3_CODEC)
-    {
-      return true;
-    }
-#endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_AC3 */
-
-#ifdef FEATURE_QTV_CMX_AV_SYNC_BYTES_PCM
-#error code not present
-#endif /* FEATURE_QTV_CMX_AV_SYNC_BYTES_PCM */
-   
 		return false;
 };
 #endif
@@ -804,11 +764,6 @@ static bool IS_GENERIC_AUDIO_FORMAT(Media::CodecType audioCodec)
   int32 GetTimeStampFromCMXBytes(long num_of_bytes, int &nFrame);  
   int32 m_nCurrentTSFromCMXBytes;
   bool  m_bCurrentTSFromCMXBytesUpdatePending;  
-
-  //This flag will keep track of where the current data came from.It can
-  //come from the file, the restore buffer or the pending buffer.
-  enum{UNKNOWN, PENDING, RESTORE, MEDIA} m_DataSrcFlag;
-
 
   //Variables/functions to manage restore data buffer
   //This is used when resuming after voice call or after releasing the DSP.
@@ -927,9 +882,9 @@ protected:
   bool m_bFirstAudioFragment;
 #endif // FEATURE_QTV_CMX_AV_SYNC_BYTES
 
-
+#ifdef FEATURE_FILE_FRAGMENTATION
   const void *playerData;
-
+#endif
 
 #ifdef FEATURE_MP4_DEBUG_AV_TICK
 #error code not present
@@ -1024,7 +979,7 @@ protected:
   void InitDefaults();
 
   
-  
+  void EndElapsedTime(long time);
 
   //WZeng, 05/22/02, for decoding AAC audioSpecificConfig 
 
@@ -1207,8 +1162,7 @@ public:
     MP4AUDIO_ER_CELP         = 24, /*                                       */
     MP4AUDIO_ER_HVXC         = 25, /*                                       */
     MP4AUDIO_ER_HILN         = 26, /*                                       */
-    MP4AUDIO_PARAMETRIC      = 27,  /*                                       */
-    MP4AUDIO_PARAMETRIC_STEREO = 29  /*            */
+    MP4AUDIO_PARAMETRIC      = 27  /*                                       */
                                /* 28-21 are reserved                    */
 
   } tMP4AudioObjectType;

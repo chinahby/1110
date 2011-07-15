@@ -20,9 +20,9 @@ Copyright 2007 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/qtvmediaadtsparser.cpp#13 $
-$DateTime: 2010/06/01 00:09:10 $
-$Change: 1318147 $
+$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/qtvmediaadtsparser.cpp#8 $
+$DateTime: 2008/10/01 04:27:47 $
+$Change: 754449 $
 
 ========================================================================== */
 
@@ -38,7 +38,7 @@ $Change: 1318147 $
 #include "QtvMediaADTSParser.h"
 #include "QCUtils.h"
 
-#ifdef FEATURE_QTV_GENERIC_BCAST
+
 // static initialization of a state-table...
 QtvCommonStateTable::Transition const QtvMediaADTSParser::myTable[MAX_STATE][MAX_SIG] = 
 {
@@ -220,19 +220,9 @@ SIDE EFFECTS:
 ===========================================================================*/
 unsigned int QtvMediaADTSParser::SyncingFirstHandleSyncd()
 {
-  if(m_bPacketPending && (m_nCurTS != QTV_MEDIA_ADTS_INVALID_TIMESTAMP) )
-  {
-    QTV_MSG_PRIO(QTVDIAG_GENERIC_BCAST,QTVDIAG_PRIO_LOW,
-                 "ADTS_PARSER_SM: SYNCING_FIRST (pp=true) --SYNCD_SIG--> VALIDATING_FIRST");
-    /* this is a case where sync marker is split across PES boundary, we have to predict Ts */
-    PredictTS();
-  }
-  else
-  {
-    QTV_MSG_PRIO(QTVDIAG_GENERIC_BCAST,QTVDIAG_PRIO_LOW,
-                 "ADTS_PARSER_SM: SYNCING_FIRST (pp=false) --SYNCD_SIG--> VALIDATING_FIRST");
-    InitValidTS();
-  }
+  QTV_MSG_PRIO(QTVDIAG_GENERIC_BCAST,QTVDIAG_PRIO_LOW,
+               "ADTS_PARSER_SM: SYNCING_FIRST --SYNCD_SIG--> VALIDATING_FIRST");
+  InitValidTS();
   return ValidateADTSHeader();
 }
 
@@ -654,7 +644,7 @@ unsigned int QtvMediaADTSParser::LocateSyncMarker(bool bFirst)
       {
         QTV_MSG_PRIO(QTVDIAG_GENERIC_BCAST,QTVDIAG_PRIO_ERROR,
              "Syncing received with PP flag set to true");
-       m_bPacketPending = true;
+        PredictTS();
       }
       else if(bPP)
       {
@@ -908,10 +898,6 @@ SIDE EFFECTS:
 void QtvMediaADTSParser::ResetTS()
 {
    m_nPrevTS = m_nCurTS = m_nOutTS = m_nTS = QTV_MEDIA_ADTS_INVALID_TIMESTAMP;
-
-#ifdef FEATURE_QTV_AUDIO_DISCONTINUITY
-#error code not present
-#endif //FEATURE_QTV_AUDIO_DISCONTINUITY
    
    QTV_MSG_PRIO(QTVDIAG_GENERIC_BCAST,QTVDIAG_PRIO_LOW,
                 "All the Timestamp values are reset to INVALID");
@@ -933,6 +919,7 @@ SIDE EFFECTS:
 void QtvMediaADTSParser::InitValidTS()
 {
    m_nPrevTS = m_nCurTS;
+   m_nCurTS  =  m_nTS;
    // Packet pending flag indicates that next possible audio frame constructed 
    // should be initialized with the chunk timestamp. When this routine is called from 
    // SyncingFirstSyncd, it means that following frames that could be syncd -- within the
@@ -1199,7 +1186,6 @@ RETURN VALUE:
 SIDE EFFECTS:
   None.
 ===========================================================================*/
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void QtvMediaADTSParser::Flush()
 {
    while(m_objSliceBuf.DeleteSlice())
@@ -1210,7 +1196,6 @@ void QtvMediaADTSParser::Flush()
    init();
    return;
 }
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /*===========================================================================
 FUNCTION:
@@ -1575,4 +1560,3 @@ unsigned int QtvMediaADTSParser::MapToSamplingFreqIndex(unsigned int  nFreq)
 #ifdef FEATURE_QTV_AUDIO_DISCONTINUITY
 #error code not present
 #endif /* FEATURE_QTV_AUDIO_DISCONTINUITY */
-#endif

@@ -17,9 +17,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/playertask/main/latest/src/mpeg4player.cpp#154 $
-$DateTime: 2010/11/26 01:07:04 $
-$Change: 1532594 $
+$Header: //depot/asic/msmshared/users/QTVOEMDrops/QSC11x0/3350/multimedia/qtv/player/playertask/main/latest/src/mpeg4player.cpp#2 $
+$DateTime: 2009/07/24 05:34:58 $
+$Change: 977170 $
 
 ========================================================================== */
 
@@ -82,31 +82,18 @@ extern "C" {
 #if defined (FEATURE_QTV_MFDRM) && defined (FEATURE_SEC)
 #error code not present
 #endif
-#include "clkregim.h"
-#ifdef FEATURE_CMI
-#error code not present
-#else
-#include "clk.h"
-#endif
-
-#ifdef FEATURE_CMI_MM
-#error code not present
-#endif
 }
 
-#ifndef FEATURE_WINCE
 #include "disp.h"
-#endif   /*    FEATURE_WINCE   */
-#ifdef FEATURE_WINCE
-#error code not present
-#endif   /*    FEATURE_WINCE   */
+
 #include "zrex.h"
 #include "vdecoder_types.h"
 
+/* #define FEATURE_MP4_WRITE_CLIP_STATS_TO_FILE */
 
-#ifndef FEATURE_WINCE
+#ifdef FEATURE_MP4_WRITE_CLIP_STATS_TO_FILE
 #include "fs_public.h"
-#endif   /*    FEATURE_WINCE   */
+#endif
 
 
 #ifdef FEATURE_QTV_GENERIC_BCAST
@@ -175,9 +162,9 @@ static const char DownloadConfigFilename[] = "PVDLCONF.DAT";
 
 static const int DOWNLOAD_TIMEOUT_SECONDS  =30 ;
 
-//static const int DOWNLOAD_FILESIZE_TIMEOUT_MSEC = 20000 * 10;
+static const int DOWNLOAD_FILESIZE_TIMEOUT_MSEC = 20000 * 10;
 
-//static const int DOWNLOAD_FILESIZE_POLL_INTERVAL_MSEC = 100;
+static const int DOWNLOAD_FILESIZE_POLL_INTERVAL_MSEC = 100;
 
 
 #endif
@@ -191,8 +178,6 @@ static const int MAX_TEMPFILENAME=20;
 extern char mp4WriteClipStatsFileName[AEE_MAX_FILE_NAME];
 #endif
 
-
-//static int AUDIO_DELAY_DURATION = 250;
 /* -----------------------------------------------------------------------
 ** Type Declarations
 ** ----------------------------------------------------------------------- */
@@ -239,6 +224,12 @@ const char* const Mpeg4Player::ErrorStrings[] = {
    "START_HTTP_STREAM_ERROR",
    "QTV_HTTP_RESUME_ERROR",
 };
+
+#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+/* The default/minimum startup time and Rebuffering time, OEM can override these values by specifying greater values */
+#define HTTP_DEFAULT_STARTUP_TIME         4000
+#define HTTP_DEFAULT_REBUFFERING_TIME     4000
+#endif /*FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
 
 /* How long to wait for the player's to comeout of its event processing loop */
 #define PLAYER_EVENT_LOOP_EXIT_TIMEOUT 10000 /* in ms */
@@ -314,7 +305,7 @@ EVENT_SINK( PV_REGISTER_FOR_CALLBACK_EX, Mpeg4Player::PV_REGISTER_FOR_CALLBACK_E
 #endif
 EVENT_SINK( PV_PAUSE, Mpeg4Player::PV_PAUSE_handler,
            API_EVENT_PRI, TRUE )/*lint !e641 */
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+#if defined (FEATURE_FILE_FRAGMENTATION) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
 EVENT_SINK( QTV_PAUSE_AUDIO, Mpeg4Player::QTV_PAUSE_AUDIO_handler,
            API_EVENT_PRI, TRUE )/*lint !e641 */
 EVENT_SINK( QTV_PAUSE_VIDEO, Mpeg4Player::QTV_PAUSE_VIDEO_handler,
@@ -363,11 +354,9 @@ EVENT_SINK( AUDIO_SPEC, Mpeg4Player::AUDIO_SPEC_handler,
 #error code not present
 #endif /* FEATURE_MP4_DEBUG_AV_TICK */
 
-#ifndef FEATURE_WINCE
 //from video thread.
 EVENT_SINK( VIDEO_STATUS, Mpeg4Player::VIDEO_STATUS_handler,
            INTERNAL_EVENT_PRI, TRUE )/*lint !e641 */
-#endif   /*    FEATURE_WINCE   */
 
 //from streamer thread
 EVENT_SINK( STREAMER_STATUS, Mpeg4Player::STREAMER_STATUS_handler,
@@ -405,10 +394,13 @@ EVENT_SINK( CPVTEXT_STATUS, Mpeg4Player::CPVTEXT_STATUS_handler,
            INTERNAL_EVENT_PRI, TRUE )/*lint !e641 */
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
-#ifdef FEATURE_QTV_PSEUDO_STREAM
+#ifdef FEATURE_FILE_FRAGMENTATION
 
 EVENT_SINK( QTV_PS_PARSER_STATUS_EVENT, Mpeg4Player::QTV_PS_PARSER_STATUS_EVENT_handler,
             INTERNAL_EVENT_PRI, TRUE )/*lint !e641 */
+#endif /*FEATURE_FILE_FRAGMENTATION*/
+
+#ifdef FEATURE_QTV_PSEUDO_STREAM
 
 EVENT_SINK( QTV_PS_PAUSE_EVENT, Mpeg4Player::QTV_PS_PAUSE_EVENT_handler,
             INTERNAL_EVENT_PRI, TRUE)/*lint !e641 */
@@ -428,10 +420,10 @@ EVENT_SINK( QTV_PS_UPDATE_WBUFFER_OFFSET_EVENT,
 #endif/*FEATURE_QTV_PSEUDO_STREAM*/
 
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
 EVENT_SINK( QTV_SKIP_CLIP, Mpeg4Player::QTV_SKIP_CLIP_handler,
             API_EVENT_PRI, TRUE )/*lint !e641 */
-#endif /*FEATURE_FILE_FRAGMENTATION*/
+#endif /*FEATURE_RANDOM_ACCESS_REPOS*/
 
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
 
@@ -452,17 +444,6 @@ EVENT_SINK( QTV_HTTP_STREAM_BUFFER_UNDERRUN_EVENT, Mpeg4Player::QTV_HTTP_STREAM_
 EVENT_SINK( QTV_PROCESS_HTTP_STREAM, Mpeg4Player::QTV_PROCESS_HTTP_STREAM_handler,
            INTERNAL_EVENT_PRI, TRUE )/*lint !e641 */
 #endif /*FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
-
-
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-EVENT_SINK( QTV_HTTP_BUFFER_UPDATE, Mpeg4Player::QTV_HTTP_BUFFER_UPDATE_handler,
-  API_EVENT_PRI, TRUE )
-
-EVENT_SINK( QTV_HTTP_EVENT, Mpeg4Player::QTV_HTTP_EVENT_handler,
-  API_EVENT_PRI, TRUE )
-#endif
-
-
 
 EVENT_SINK( QTV_SUSPEND, Mpeg4Player::QTV_SUSPEND_handler,
             API_EVENT_PRI, TRUE )/*lint !e641 */
@@ -590,7 +571,7 @@ bool Mpeg4Player::CreatePlayer
   QtvPlayer::FreeOutputBufferT   FreeOutputBuffer
 )
 {
-   //static const char pCreateError[] = "Mpeg4Player::CreatePlayer failed";
+   static const char pCreateError[] = "Mpeg4Player::CreatePlayer failed";
 
    //prevent multiple invocation on CreatePlayer
    if (bInstance)
@@ -611,14 +592,14 @@ bool Mpeg4Player::CreatePlayer
 
      if (!QCUtils::Init())
      {
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Mpeg4Player::CreatePlayer failed" );
+        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, pCreateError );
         return false;
      }
    }
 
    if (!m_mediaSync.Init(&AVSync_CS, &qtvConfigObject))
    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Mpeg4Player::CreatePlayer failed" );
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, pCreateError );
       return false;
    }
 
@@ -637,12 +618,12 @@ bool Mpeg4Player::CreatePlayer
    //
 
    //create the embedded objects
-#ifndef FEATURE_WINCE
+
   //Initialize the AudioPlayerIf
   AudioPlayerIf::Init();
   if (!AudioPlayerIf::CreateAudioPlayer(activeAudioPlayerId, EventPostCallback, (void *)this))
    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Mpeg4Player::CreatePlayer failed" );
+      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, pCreateError );
       return false;
    }
   else
@@ -652,7 +633,7 @@ bool Mpeg4Player::CreatePlayer
 
   if (pActiveVideoPlayer && !(pActiveVideoPlayer->Create((void *)this, MallocOutputBuffer, FreeOutputBuffer, &m_mediaSync,&qtvConfigObject)))
   {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Mpeg4Player::CreatePlayer failed" );
+     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, pCreateError );
      return false;
   }
   if(1 == guMpeg4PlayerRefCnt)
@@ -660,14 +641,14 @@ bool Mpeg4Player::CreatePlayer
     #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
     if (!textPlayer.Create((void *)this, &m_mediaSync))
     {
-       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Mpeg4Player::CreatePlayer failed" );
+       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, pCreateError );
        return false;
     }
     #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
   }
 
   ResetPlaybackData();
-#endif   /*    FEATURE_WINCE   */
+
   #ifndef FEATURE_QTV_MAPI_STREAM_MEDIA
   if (pQtvStream)
   {
@@ -679,7 +660,7 @@ bool Mpeg4Player::CreatePlayer
   //create the player thread.
   if (!StartThread())
   {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Mpeg4Player::CreatePlayer failed" );
+    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, pCreateError );
     return false;
   }
 
@@ -980,17 +961,9 @@ QtvPlayer::ReturnT Mpeg4Player::GetAudioVideoStatistics(QtvPlayer::AudioVideoSta
     if (clip.bHasVideo || IsVideoMuted())
 #endif
     {
-      if (
-#ifndef FEATURE_WINCE
-            pActiveVideoPlayer
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
-)
+      if (pActiveVideoPlayer)
       {
-#ifndef FEATURE_WINCE
          bVideoOK = pActiveVideoPlayer->GetStatistics(statistics,videoLastFrame);
-#endif   /*    FEATURE_WINCE   */
          if (!bVideoOK)
          {
            bOK=false;
@@ -1006,9 +979,7 @@ QtvPlayer::ReturnT Mpeg4Player::GetAudioVideoStatistics(QtvPlayer::AudioVideoSta
     if (clip.bHasAudio || IsAudioMuted())
 #endif
     {
-#ifndef FEATURE_WINCE
       bAudioOK = AudioPlayerIf::GetStatistics(activeAudioPlayerId,statistics,audioLastFrame);
-#endif
       if (!bAudioOK)
       {
         bOK=false;
@@ -1029,10 +1000,7 @@ QtvPlayer::ReturnT Mpeg4Player::GetAudioVideoStatistics(QtvPlayer::AudioVideoSta
         QTV_MSG( QTVDIAG_STATISTICS,  " Video:");
         QTV_MSG1( QTVDIAG_STATISTICS, "   format %d", statistics.Video.format );
         QTV_MSG1( QTVDIAG_STATISTICS, "   frames %d", statistics.Video.frames );
-        QTV_MSG1( QTVDIAG_STATISTICS, "   I-Frames %d", statistics.Video.nIFrameTally );
-        QTV_MSG1( QTVDIAG_STATISTICS, "   P-Frames %d", statistics.Video.nPFrameTally );
-        QTV_MSG1( QTVDIAG_STATISTICS, "   B-Frames %d", statistics.Video.nBFrameTally );
-        QTV_MSG1( QTVDIAG_STATISTICS, "   framesInterpolated %d", statistics.Video.framesInterpolated );
+   QTV_MSG1( QTVDIAG_STATISTICS, "   framesInterpolated %d", statistics.Video.framesInterpolated );
         QTV_MSG1( QTVDIAG_STATISTICS, "   skippedDecode %d", statistics.Video.skippedDecode );
         QTV_MSG1( QTVDIAG_STATISTICS, "   skippedDisplay %d", statistics.Video.skippedDisplay );
         QTV_MSG1( QTVDIAG_STATISTICS, "   avSyncDrops %d", statistics.Video.avSyncDrops );
@@ -1231,7 +1199,6 @@ bool Mpeg4Player::SetFrameInfo(void *pRGBFrame, void *pYUVFrame,
                                uint32 Timestamp, uint32 NumConcealedMB,
                                uint8 fVOP, void *pPostFilterMbInfo,
                                unsigned long NumIntraMbs,
-                               void *pMetaData,
                                uint16 wCropWinX2, uint16 wCropWinY2)
 {
    QCUtils::EnterCritSect(&frameInfo_CS);
@@ -1249,12 +1216,10 @@ bool Mpeg4Player::SetFrameInfo(void *pRGBFrame, void *pYUVFrame,
    if ( frameInfo.bValid )
    {
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Set/Get FrameInfo lost a frame" );
-#ifndef FEATURE_WINCE
       if (pActiveVideoPlayer)
       {
          pActiveVideoPlayer->UpdateStats(VideoDec::DROP_BEFORE_DISPLAY);
-      }
-#endif   /*    FEATURE_WINCE   */
+        }
       QCUtils::LeaveCritSect(&frameInfo_CS);
       QTV_PERF(QTV_PERF_MDP_DROP);
       return false;
@@ -1311,7 +1276,6 @@ bool Mpeg4Player::SetFrameInfo(void *pRGBFrame, void *pYUVFrame,
    frameInfo.info.bI_VOP         = fVOP;
    frameInfo.info.pPostFilterMbInfo = (VDEC_POST_FILTER_MB_INFO *)pPostFilterMbInfo;
    frameInfo.info.NumIntraMBBuffer = NumIntraMbs;
-   frameInfo.pMetaData             = pMetaData;
 
    frameInfo.bInfoSetSinceLastPrep = true;
 
@@ -1319,22 +1283,13 @@ bool Mpeg4Player::SetFrameInfo(void *pRGBFrame, void *pYUVFrame,
 
    if( (Media::MPEG4_CODEC  == GetVideoCodecType()) ||
        (Media::H263_CODEC  == GetVideoCodecType()) ||
-       (Media::H264_CODEC  == GetVideoCodecType()) ||
-       (Media::WMV1_CODEC  == GetVideoCodecType()) ||
-       (Media::WMV2_CODEC  == GetVideoCodecType()) ||
-       (Media::WMV3_CODEC  == GetVideoCodecType()))
+       (Media::H264_CODEC  == GetVideoCodecType()))
    {
        //update clipinfo dimensions here
        SetImageDimensions(frameInfo.info.Width,frameInfo.info.Height);
    }
-   //Set the time stamp to renderer
-   if (pActiveVideoPlayer)
-   {
-   pActiveVideoPlayer->set_last_frame_rendered_((uint64)Timestamp);
-   }
 
-   QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
-    "Set FrameInfo TS=%d,numBuffersSent=%d",Timestamp,numBuffersSent );
+   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "Set FrameInfo TS=%d",Timestamp );
 
    /* Notify the application layer of the decoded frame */
    Notify(QtvPlayer::QTV_PLAYER_STATUS_DECODE_FRAME);
@@ -1362,8 +1317,7 @@ SIDE EFFECTS
 ========================================================================== */
 QtvPlayer::ReturnT Mpeg4Player::GetFrameInfo
 (
-  QtvPlayer::FrameInfoT &info,
-  void ** ppExtFrmInfo
+  QtvPlayer::FrameInfoT &info
 )
 {
    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Mpeg4Player::GetFrameInfo" );
@@ -1397,11 +1351,6 @@ QtvPlayer::ReturnT Mpeg4Player::GetFrameInfo
          nReturn=QtvPlayer::QTV_RETURN_OK;
          /* Copy our data into the user buffer */
          info = frameInfo.info;
-         /* Copy the extended frame info if a valid ptr is provided */
-         if (ppExtFrmInfo)
-         {
-           *ppExtFrmInfo = frameInfo.pMetaData;
-         }
          frameInfo.bValid = FALSE;
       }
       QCUtils::LeaveCritSect(&frameInfo_CS);
@@ -1749,7 +1698,6 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 bool Mpeg4Player::Destroy()
 {
    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Mpeg4Player::Destroy this=0x%x",this );
@@ -1768,10 +1716,10 @@ bool Mpeg4Player::Destroy()
    {
       //reset instance counter
       bInstance=false;
-#ifndef FEATURE_WINCE
+
       //destroy embedded objects.
       AudioPlayerIf::Destroy(activeAudioPlayerId);
-      activeAudioPlayerId = 0;
+
       //destroy the video player object
       if (pActiveVideoPlayer)
       {
@@ -1779,15 +1727,12 @@ bool Mpeg4Player::Destroy()
          PlayerBaseIF::DestroyVideoPlayerInstance(pActiveVideoPlayer);
          pActiveVideoPlayer = NULL;
       }
-#endif   /*    FEATURE_WINCE   */
 
       if(1 == guMpeg4PlayerRefCnt)
       {
-#ifndef FEATURE_WINCE
   #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
         textPlayer.Destroy();
   #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-#endif
         if (streamer != NULL)
         {
           streamer->Destroy();
@@ -1863,7 +1808,7 @@ bool Mpeg4Player::Destroy()
       return true;
    }
 }
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
+
 /* ======================================================================
 FUNCTION
   Mpeg4Player::GetBitfile
@@ -1957,7 +1902,6 @@ bool Mpeg4Player::StartThread()
 
       playerAudioConcState = AUDIO_NOT_CONCURRENT;
       audioSource = QtvPlayer::AUDIO_SOURCE_AUTO;
-      prevAudioConcState   = AUDIO_NOT_CONCURRENT;
 
       playerTC.priority = QTVPlayerPriority;
       m_bThreadStartSync = false;
@@ -2156,7 +2100,7 @@ void Mpeg4Player::GetPlayerState(QtvPlayer::PlayerStateRecordT &ps)
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
   ps.textPlaybackMsec=0;
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-#ifndef FEATURE_WINCE
+
   //video frames.
   ps.videoFrames=0;
   if (clip.bHasVideo)
@@ -2187,7 +2131,7 @@ void Mpeg4Player::GetPlayerState(QtvPlayer::PlayerStateRecordT &ps)
     QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,"Text playback time in Msec:  %ld",ps.textPlaybackMsec);
   }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-#endif   /*    FEATURE_WINCE   */
+
 #ifdef FEATURE_QTV_PV_SERVER_SIDE_PLAYLIST
   // Adjust playback times for PV server side playlists. Since some times may be
   // before and after clip transitions, we convert maximum raw time and set the
@@ -2304,8 +2248,7 @@ void Mpeg4Player::GetPlayerState(QtvPlayer::PlayerStateRecordT &ps)
   * it won't correspond to the frame being displayed under this scenario. So, We should take MAX TS across all media streams
   * when player is in a PAUSED state. Otherwise, return audio playback time if audio is not done etc.
   */
-  if(playerState == PAUSED || playerState == SUSPENDED ||
-    ( playerState == REPOSITIONING && (lastPlayerState == PAUSED || lastPlayerState == SUSPENDED) ))
+  if(playerState == PAUSED || playerState == SUSPENDED)
   {
       ps.playbackMsec = MAX(ps.audioPlaybackMsec, ps.videoPlaybackMsec);
       #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
@@ -2315,7 +2258,6 @@ void Mpeg4Player::GetPlayerState(QtvPlayer::PlayerStateRecordT &ps)
   }
   else
   {
-#ifndef FEATURE_WINCE
       /* audio always has higher priority, so while repositioning
          audio will be updated before video.
          If we have audio and audio track is still not done, we should
@@ -2356,7 +2298,6 @@ void Mpeg4Player::GetPlayerState(QtvPlayer::PlayerStateRecordT &ps)
                                       ps.videoPlaybackMsec  );
     #endif
       }
-#endif   /*    FEATURE_WINCE   */
   }//end of else if(playerState == PAUSED)
 
 #ifdef FEATURE_QTV_QOS_SELECTION
@@ -2524,7 +2465,6 @@ void Mpeg4Player::Notify(QtvPlayer::PlayerStatusT status)
    if (status == QtvPlayer::QTV_PLAYER_STATUS_SUSPENDED ||
        status == QtvPlayer::QTV_PLAYER_STATUS_PAUSED)
    {
-#ifndef FEATURE_QTV_DISABLE_CONC_MGR
      qtv_conc_mgr::suspend_state_type suspend_state =
        qtv_conc_mgr::get_suspend_state(this, QTV_PLAYER_MIME_TYPE);
 
@@ -2540,7 +2480,6 @@ void Mpeg4Player::Notify(QtvPlayer::PlayerStatusT status)
      {
        status = QtvPlayer::QTV_PLAYER_STATUS_PAUSED;
      }
-#endif /*FEATURE_QTV_DISABLE_CONC_MGR*/
    }
 
    /*
@@ -2595,9 +2534,6 @@ void Mpeg4Player::LogClipStatistics( QtvPlayer::AudioVideoStatisticsT &stats)
   pBuf->DecodedFrameRate                 = (stats.Video.decodedFrameRate << 16); /* Convert to 16.16 fixed point */
   pBuf->DisplayedFrameRate               = (stats.Video.displayedFrameRate << 16); /* Convert to 16.16 fixed point */
   pBuf->NumberFrames                     = stats.Video.frames;
-  pBuf->nIFrameTally                     = stats.Video.nIFrameTally;
-  pBuf->nPFrameTally                     = stats.Video.nPFrameTally;
-  pBuf->nBFrameTally                     = stats.Video.nBFrameTally;
   pBuf->VideoFramesInterpolated          = stats.Video.framesInterpolated;
   pBuf->NumberFramesDroppedUnrecoverable = stats.Video.failedDecode;
   pBuf->NumberFramesDroppedDecodeTime    = stats.Video.skippedDecode;
@@ -2677,12 +2613,6 @@ void Mpeg4Player::LogClipStatistics( QtvPlayer::AudioVideoStatisticsT &stats)
         sprintf(str, "Displayed Frame Rate:           %8lu\r\n", pBuf->DisplayedFrameRate);
         (void)OSCL_FileWrite ((OSCL_CHAR)str, strlen(str), 1, fp );
         sprintf(str, "Number Frames:                  %8lu\r\n", pBuf->NumberFrames);
-        (void)OSCL_FileWrite ((OSCL_CHAR)str, strlen(str), 1, fp );
-        sprintf(str, "Number of I-Frames:             %8lu\r\n", pBuf->nIFrameTally);
-        (void)OSCL_FileWrite ((OSCL_CHAR)str, strlen(str), 1, fp );
-        sprintf(str, "Number of P-Frames:             %8lu\r\n", pBuf->nPFrameTally);
-        (void)OSCL_FileWrite ((OSCL_CHAR)str, strlen(str), 1, fp );
-        sprintf(str, "Number of B-Frames:             %8lu\r\n", pBuf->nBFrameTally);
         (void)OSCL_FileWrite ((OSCL_CHAR)str, strlen(str), 1, fp );
   sprintf(str, "Video Frames Interpolated:          %8lu\r\n", pBuf->VideoFramesInterpolated);
         (void)OSCL_FileWrite ((OSCL_CHAR)str, strlen(str), 1, fp );
@@ -2908,9 +2838,7 @@ void Mpeg4Player::StopPlayer(bool &bError, bool bCloseStreamer)
   if (playerState==OPENING)
   {
    //stop audio polling.
-#ifndef FEATURE_WINCE
     bErr = AudioPlayerIf::Stop(activeAudioPlayerId);
-#endif
     if (bErr) bError=true;
   }
   else
@@ -2933,23 +2861,6 @@ void Mpeg4Player::StopPlayer(bool &bError, bool bCloseStreamer)
       QtvPlayer::AudioVideoStatisticsT stats;
       (void)GetAudioVideoStatistics(stats);
       LogClipStatistics(stats);
-
-#ifndef FEATURE_WINCE
-      uint32 writeClipStatsToFile = 0;
-      writeClipStatsToFile = qtvConfigObject.GetQTVConfigItem(
-                                   QtvConfig::QTVCONFIG_WRITE_STATS_TO_FILE);
-
-      if (writeClipStatsToFile)
-      {
-          int nreturn = 0;
-          nreturn = WriteStatisticsToEFS(stats);
-          if (nreturn)
-               QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Successfully statistics are written to a text file in EFS");
-          else
-               QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Failed to write statistics to a text file in EFS");
-      }
-#endif   /*    FEATURE_WINCE   */
-
 #endif
 
       // Start to teardown and close network resources --
@@ -2964,7 +2875,6 @@ void Mpeg4Player::StopPlayer(bool &bError, bool bCloseStreamer)
       #endif /* FEATURE_QTV_BCAST_FLO */
 
       QTV_MSG( QTVDIAG_MP4_PLAYER, "Stop Audio First, followed by Video " );
-#ifndef FEATURE_WINCE
       //  if (clip.bHasAudio)
       {
         bErr = AudioPlayerIf::Stop(activeAudioPlayerId);
@@ -3016,7 +2926,6 @@ void Mpeg4Player::StopPlayer(bool &bError, bool bCloseStreamer)
 #endif /* FEATURE_QTV_GENERIC_BCAST_PCR */
 
       #endif /* FEATURE_QTV_GENERIC_BCAST */
-#endif   /*    FEATURE_WINCE   */
 
       // Wait for streamer to close network resources, destroy streamer
       // objects and stop scheduler.
@@ -3025,20 +2934,7 @@ void Mpeg4Player::StopPlayer(bool &bError, bool bCloseStreamer)
         // This will call Streamer::Stop() and Streamer::DestroySession()
         streamer->Destroy();
       }
-#ifdef FEATURE_QTV_STREAM_RECORD
-      if (bRecording)
-      {
-         bRecording = FALSE;
-         if(clip.pVideoMpeg4Playback)
-         {
-            (void)clip.pVideoMpeg4Playback->qtvio_stop_file_writer();
-         }
-      }
-#endif
     }
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif
   }
 
   appControl.bHasMediaStarted = false;
@@ -3177,7 +3073,7 @@ void Mpeg4Player::Notify(State newState)
   //save current status before doing the state change.
   Mpeg4Player::CallbackData cb ;
   QtvPlayer::PlayerStateRecordT ps;
-  bool bIgnoreNotify = false;  
+
   GetCallback(cb,ps);
 
 #ifdef FEATURE_QTV_GENERIC_BCAST
@@ -3203,7 +3099,7 @@ void Mpeg4Player::Notify(State newState)
   SetState(newState);
 
   //map state to notification.
-  QtvPlayer::PlayerStatusT s = QtvPlayer::QTV_PLAYER_STATUS_IDLE;
+  QtvPlayer::PlayerStatusT s;
   switch (newState)
   {
     case PLAYING:
@@ -3272,17 +3168,8 @@ void Mpeg4Player::Notify(State newState)
       {
          nPrerollPercentageFilled = 100;
       }
-      if (nPrerollPercentageFilled != 100)
-      {
-         cb.pClientData = &nPrerollPercentageFilled;
-         s=QtvPlayer::QTV_PLAYER_STATUS_BUFFERING;
-	 bIgnoreNotify = false;		 
-      }
-      else
-      {
-          // if 100% buffering done then ignore STATUS_BUFFERING CB to OEM 	     
-          bIgnoreNotify = true;
-      }
+      cb.pClientData = &nPrerollPercentageFilled;
+      s=QtvPlayer::QTV_PLAYER_STATUS_BUFFERING;
       break;
 
     case OPENING:
@@ -3304,7 +3191,6 @@ void Mpeg4Player::Notify(State newState)
     case PAUSED:
     case SUSPENDED:
     {
-#ifndef FEATURE_QTV_DISABLE_CONC_MGR
       qtv_conc_mgr::suspend_state_type suspend_state =
         qtv_conc_mgr::get_suspend_state(this, QTV_PLAYER_MIME_TYPE);
 
@@ -3320,9 +3206,6 @@ void Mpeg4Player::Notify(State newState)
       {
         s=QtvPlayer::QTV_PLAYER_STATUS_PAUSED;
       }
-#else
-      s=QtvPlayer::QTV_PLAYER_STATUS_PAUSED;
-#endif /*FEATURE_QTV_DISABLE_CONC_MGR*/
       break;
     }
 
@@ -3333,9 +3216,10 @@ void Mpeg4Player::Notify(State newState)
 
     case PB_READY:
       s=QtvPlayer::QTV_PLAYER_STATUS_PLAYBACK_READY;
-      if( (clip.bHasVideo && clip.pVideoMpeg4Playback) || (clip.bHasAudio && clip.pAudioMpeg4Playback))
+#ifdef FEATURE_H264_DECODER
+      //Parse the sequence and picture parameter headers for H.264
+      if(clip.bHasVideo && clip.pVideoMpeg4Playback && pActiveVideoPlayer)
       {
-#ifndef FEATURE_QTV_DISABLE_CONC_MGR
          // update incall concurrency state for H264
          if ( qtv_conc_mgr::can_process_command(this, QTV_PLAYER_MIME_TYPE) )
          {
@@ -3346,37 +3230,12 @@ void Mpeg4Player::Notify(State newState)
              QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
                        "In Call Concurrency not supported");
          }
-#endif
-       }
-#ifdef FEATURE_H264_DECODER
-      //Parse the sequence and picture parameter headers for H.264
-      if(clip.bHasVideo && clip.pVideoMpeg4Playback
-#ifndef FEATURE_WINCE
-         && pActiveVideoPlayer
-#endif   /*    FEATURE_WINCE   */
-)
-      {
 
-#ifndef FEATURE_WINCE
-         bool nRet = false;
-         if (pActiveVideoPlayer)
-         {
-           nRet = pActiveVideoPlayer->PreParseHeader(clip.pVideoMpeg4Playback, reposControl.bRestart, GetAudioCodecType());
-           if (pActiveVideoPlayer->GetLastVDECError() == VDEC_ERR_UNSUPPORTED_PROFILE)
-           {
-               Notify(QtvPlayer::QTV_PLAYER_VIDEO_UNSUPPORTED_PROFILE);
-           }
-           if (pActiveVideoPlayer->GetLastVDECError() == VDEC_ERR_UNSUPPORTED_DIMENSIONS)
-           {
-               Notify(QtvPlayer::QTV_PLAYER_STATUS_VIDEO_RESOLUTION_NOT_SUPPORTED);
-           }
-         }
-
+         bool nRet = pActiveVideoPlayer->PreParseHeader(clip.pVideoMpeg4Playback, reposControl.bRestart, GetAudioCodecType());
        if ( (!clip.bHasAudio) && (!clip.bHasText) && (!nRet))
        {
                  s=QtvPlayer::QTV_PLAYER_STATUS_PLAYBACK_ERROR_ABORT;
        }
-#endif   /*    FEATURE_WINCE   */
       }
 #endif /* FEATURE_H264_DECODER */
       nPrerollDurationFilled = tempPrerollDuration = 0;
@@ -3436,7 +3295,7 @@ void Mpeg4Player::Notify(State newState)
       ** a status notification. The status notification will be sent after the
       ** video player is done releasing the DSP.
       */
-  (newState != SUSPENDED) && (!bIgnoreNotify))
+      newState != SUSPENDED )
   {
     //Notify caller.
     Callback(s,cb,ps);
@@ -3481,22 +3340,16 @@ void Mpeg4Player::SetState(State newState)
             QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Player state = IDLE %d ",ZUtils::Clock());
 
 #ifdef SHOW_INFO
-#ifndef FEATURE_WINCE
             //show the stream info.
             if (clip.bHasAudio) AudioPlayerIf::ShowInfo(activeAudioPlayerId);
             if (clip.bHasVideo && pActiveVideoPlayer)
        {
          pActiveVideoPlayer->ShowInfo();
             }
-#endif   /*    FEATURE_WINCE   */
 #endif /* SHOW_INFO */
 
             //cleanup stream.
-            if (clip.bStreaming && streamer
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif
-                )
+            if (clip.bStreaming && streamer )
             {
                bool bError;
                streamer->Stop(bError);
@@ -3557,11 +3410,7 @@ void Mpeg4Player::SetState(State newState)
             break;
 
         case PLAYING:
-#ifndef FEATURE_WINCE
             curr_time = ZUtils::Clock();
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
 
             QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Player state = PLAYING %d",curr_time);
             // Transition from BUFFERING to PLAYING
@@ -3597,17 +3446,9 @@ void Mpeg4Player::SetState(State newState)
                 */
                 if(clip.bHasVideo)
                 {
-                  if (
-#ifndef FEATURE_WINCE
-                      pActiveVideoPlayer
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
-)
+                  if (pActiveVideoPlayer)
                   {
-#ifndef FEATURE_WINCE
                     currentPlayTime = pActiveVideoPlayer->GetElapsedTime();
-#endif   /*    FEATURE_WINCE   */
                     QTV_MSG_PRIO1(QTVDIAG_GENERAL,
                                   QTVDIAG_PRIO_MED,"currentPlayTime updated from Video TS %d",currentPlayTime);
                   }
@@ -3616,9 +3457,7 @@ void Mpeg4Player::SetState(State newState)
                 {
                   //In case there is no video, we would have repositioned audio first before doing it for text
                   //so, use audio elapsed time.
-#ifndef FEATURE_WINCE
                   currentPlayTime = AudioPlayerIf::GetElapsedTime(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
                    QTV_MSG_PRIO1(QTVDIAG_GENERAL,
                                 QTVDIAG_PRIO_MED,"currentPlayTime updated from Audio TS %d",currentPlayTime);
 
@@ -3626,9 +3465,7 @@ void Mpeg4Player::SetState(State newState)
                 else if(clip.bHasText)
                 {
                   //Text only clip, use elapsed time from text player
-#ifndef FEATURE_WINCE
                   currentPlayTime = textPlayer.GetElapsedTime();
-#endif
                    QTV_MSG_PRIO1(QTVDIAG_GENERAL,
                                 QTVDIAG_PRIO_MED,"currentPlayTime updated from Text TS %d",currentPlayTime);
                 }
@@ -3641,16 +3478,12 @@ void Mpeg4Player::SetState(State newState)
                   QTV_MSG_PRIO1(QTVDIAG_GENERAL,
                                 QTVDIAG_PRIO_FATAL,"No a/v/t in clip Info currentPlayTime %d",currentPlayTime);
                 }
-
-                //Now set the A/V offset based on current playback time(only when it is positive)
-                if (currentPlayTime > 0)
-                {
-                   QTV_MSG_PRIO2(QTVDIAG_GENERAL,QTVDIAG_PRIO_MED,"AV sync set at curr_time %d currentPlayTime %d",curr_time,currentPlayTime);
-                   m_mediaSync.SetPlaybackOffset(AVSync::AudioAV,curr_time, currentPlayTime);
-                   m_mediaSync.SetPlaybackOffset(AVSync::TextAV,curr_time, currentPlayTime);
-                   m_mediaSync.SetPlaybackOffset(AVSync::VideoAV,curr_time, currentPlayTime);
-                }
-        }
+                //Now set the A/V offset based on current playback time.
+                 QTV_MSG_PRIO2(QTVDIAG_GENERAL,QTVDIAG_PRIO_MED,"AV sync set at curr_time %d currentPlayTime %d",curr_time,currentPlayTime);
+                m_mediaSync.SetPlaybackOffset(AVSync::AudioAV,curr_time, currentPlayTime);
+                 m_mediaSync.SetPlaybackOffset(AVSync::TextAV,curr_time, currentPlayTime);
+                 m_mediaSync.SetPlaybackOffset(AVSync::VideoAV,curr_time, currentPlayTime);
+      }
             break;
 
 #ifdef FEATURE_QTV_PSEUDO_STREAM
@@ -3770,7 +3603,6 @@ void Mpeg4Player::InitDefaults()
 #endif
    selectedAudioTrackIdx = -1;
    selectedVideoTrackIdx = -1;
-   numReconnectAttemptsMade = 0;
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
    selectedTextTrackIdx = -1;
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
@@ -3786,7 +3618,7 @@ void Mpeg4Player::InitDefaults()
    httpPullData.FetchBufferedDataSize = 0;
    httpPullData.m_QtvInstanceHandle= NULL;
    httpPullData.pHttpPullTimer = NULL;
-   httpPullData.pUpdateWptrOffsetPS = 0;
+   httpPullData.pUpdateWptrOffset = 0;
 #endif
 
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
@@ -3798,7 +3630,7 @@ void Mpeg4Player::InitDefaults()
    httpPullData.FetchBufferedDataSize = 0;
    httpPullData.pHttpPullTimer = NULL;
    httpPullData.m_QtvInstanceHandle= NULL;
-   httpPullData.pUpdateWptrOffsetPD = 0;
+   httpPullData.pUpdateWptrOffset = 0;
    http_bContentPurge = false;
    http_ContentSizeFromSDP = -1;
 #endif /*FEATURE_QTV_3GPP_PROGRESSIVE_DNLD*/
@@ -3830,8 +3662,6 @@ void Mpeg4Player::InitDefaults()
 
   m_nVideoPlaybackTime = 0;
   m_nAudioPlaybackTime = 0;
-  acceleratedDuration = -1;
-  speed = -1;
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
   m_nTextPlaybackTime = 0;
 #endif
@@ -3846,10 +3676,8 @@ void Mpeg4Player::InitDefaults()
   mediaInfoSize = 0;
 #endif
 
-#ifndef FEATURE_WINCE
   activeAudioPlayerId = 0;
   pActiveVideoPlayer = NULL;
-#endif   /*    FEATURE_WINCE   */
 
    InitURN();
 
@@ -3952,7 +3780,6 @@ void Mpeg4Player::InitDefaults()
    pvxIF.bPlaylistComplete=false;
 
    playerAudioConcState = AUDIO_NOT_CONCURRENT;
-   prevAudioConcState  = AUDIO_NOT_CONCURRENT;
    audioSource = QtvPlayer::AUDIO_SOURCE_AUTO;
 
 #ifdef FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2
@@ -4078,7 +3905,6 @@ void Mpeg4Player::InitUserAgentParams(const char* min )
     static char mintable[10] = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
     // set default MIN for SKT streaming
     char minBuf[QTV_MAX_USER_AGENT_MIN_BYTES] = "6191234567";
-#ifndef FEATURE_WINCE
     nv_item_type nv1, nv2;
     // To deal with the case when NV_MIN1_I/NV_MIN2_I are internal NV Items,
     // Set up correct index here. Anyway, this is a weird NV access requirement
@@ -4122,9 +3948,6 @@ void Mpeg4Player::InitUserAgentParams(const char* min )
 
       minBuf[10] = '\0';
     }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
 
     if( min == NULL )
     {
@@ -4222,7 +4045,6 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void Mpeg4Player::CleanupPlayback()
 {
    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Mpeg4Player::CleanupPlayback" );
@@ -4260,8 +4082,6 @@ void Mpeg4Player::CleanupPlayback()
    frameToRelease.info.YUVBuffer = NULL;
    redirectFlag = false ;
 
-   numReconnectAttemptsMade = 0;
-
 #if defined (FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
   if (clip.pMpeg4Download)
   {
@@ -4298,9 +4118,6 @@ void Mpeg4Player::CleanupPlayback()
   #endif /* defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) */
 
 }
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
-
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void Mpeg4Player::DestroyMedia()
 {
   if ( (clip.pVideoMpeg4Playback == clip.pAudioMpeg4Playback) &&
@@ -4335,7 +4152,6 @@ void Mpeg4Player::DestroyMedia()
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
   }
 }
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 /* ======================================================================
 FUNCTION
   Mpeg4Player::PostMessage
@@ -4355,14 +4171,12 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void Mpeg4Player::PostMessage(QCMessageType *pEvent)
 {
    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Mpeg4Player::PostEvent" );
 
    QCUtils::PostMessage(pEvent, EVENT_PRI_URGENT, &playerER);
 }
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 ////////////////////////////////////////////////////////////////////
 //
@@ -4402,28 +4216,15 @@ void Mpeg4Player::PV_OPEN_URN_handler(QCMessageHandleType handle)
    Mpeg4Player *pThis = (Mpeg4Player *)((zrex_event_header_type *)handle)->user_data;
    if (pThis)
    {
-      const PV_OPEN_URN_type * pEvent = (PV_OPEN_URN_type *)handle;
-      bool bOK = pThis->OpenURN(pEvent);
-
-      if (bOK)
-      {
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif
+      if (pThis->OpenURN((PV_OPEN_URN_type *)handle))
       {
          pThis->Notify(QtvPlayer::QTV_COMMAND_OPEN_URN_COMPLETE);
       }
-      }
       else
-      {
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif
       {
          pThis->Notify(QtvPlayer::QTV_COMMAND_OPEN_URN_FAILED);
       }
    }
- }
 }
 
 
@@ -5098,7 +4899,7 @@ void Mpeg4Player::PV_PAUSE_handler(QCMessageHandleType handle)
    }
 }
 
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+#if defined (FEATURE_FILE_FRAGMENTATION) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
 /* ======================================================================
 FUNCTION
   Mpeg4Player::QTV_PAUSE_AUDIO_handler
@@ -5352,7 +5153,7 @@ void Mpeg4Player::QTV_RESUME_TEXT_handler(QCMessageHandleType handle)
 }
 #endif /* FEATURE_FILE_FRAGMENTATION || FEATURE_QTV_3GPP_PROGRESSIVE_DNLD */
 
-#ifdef FEATURE_QTV_PSEUDO_STREAM
+#ifdef FEATURE_FILE_FRAGMENTATION
 /* ======================================================================
 FUNCTION
   Mpeg4Player::QTV_PS_PARSER_STATUS_EVENT_handler
@@ -6140,121 +5941,6 @@ bool Mpeg4Player::CheckForAllMute(uint32  bmTrackSelected)
   return false;
 }
 
-/* ======================================================================
-FUNCTION
-  Mpeg4Player::MapMediaCodecToQtvPlayerCodec
-
-DESCRIPTION
-//
-//  This function returns the codec type which understandable by player application
-//
-
-DEPENDENCIES
-  None.
-
-RETURN VALUE
-  None
-SIDE EFFECTS
-  None
-
-========================================================================== */
-
-QtvPlayer::TrackTypeT Mpeg4Player::MapMediaCodecToQtvPlayerCodec(Media::CodecType codec)
-{
-  switch(codec)
-  {
-    case Media::EVRC_CODEC:
-      return QtvPlayer::TRACK_AUDIO_EVRC;
-
-    case Media::QCELP_CODEC:
-      return QtvPlayer::TRACK_AUDIO_QCELP;
-
-    case Media::AAC_CODEC:
-#ifdef FEATURE_QTV_BSAC
-#error code not present
-#endif /* FEATURE_QTV_BSAC */
-      return  QtvPlayer::TRACK_AUDIO_MP4A_LATM;
-
-    case Media::GSM_AMR_CODEC:
-      return  QtvPlayer::TRACK_AUDIO_AMR;
-
-#ifdef FEATURE_QTV_3GPP_AMR_WB
-#error code not present
-#endif /* FEATURE_QTV_3GPP_AMR_WB */
-
-#ifdef FEATURE_QTV_3GPP_AMR_WB_PLUS
-#error code not present
-#endif /* FEATURE_QTV_3GPP_AMR_WB_PLUS */
-
-#ifdef FEATURE_QTV_3GPP_EVRC_NB
-#error code not present
-#endif /* FEATURE_QTV_3GPP_EVRC_NB */
-
-#ifdef FEATURE_QTV_3GPP_EVRC_WB
-#error code not present
-#endif /* FEATURE_QTV_3GPP_EVRC_WB */
-
-    case Media::MPEG4_CODEC:
-      return QtvPlayer::TRACK_VIDEO_MP4V_ES;
-
-    case Media::H263_CODEC:
-      return QtvPlayer::TRACK_VIDEO_H263_2000;
-
-#ifdef FEATURE_H264_DECODER
-    case Media::H264_CODEC:
-      return  QtvPlayer::TRACK_VIDEO_H264;
-
-#endif /* FEATURE_H264_DECODER */
-    case Media::STILL_IMAGE_CODEC:
-	case Media::STILL_IMAGE_H263_CODEC:	
-      return QtvPlayer::TRACK_UNKNOWN;
-
-#ifdef FEATURE_QTV_OSCAR_DECODER
-#error code not present
-#endif /* FEATURE_QTV_OSCAR_DECODER */
-#ifdef FEATURE_MP4_3GPP_TIMED_TEXT
-    case Media::TIMED_TEXT_CODEC:
-      return QtvPlayer::TRACK_3GPP_TIMED_TEXT;
-#endif
-
-#ifdef FEATURE_QTV_WINDOWS_MEDIA
-    case Media::WMA_CODEC:
-      return QtvPlayer::TRACK_WM_AUDIO;
-
-
-    case Media::WMV1_CODEC:
-      return QtvPlayer::TRACK_WM1_VIDEO;
-
-    case Media::WMV2_CODEC:
-      return QtvPlayer::TRACK_WM2_VIDEO;
-
-    case Media::WMV3_CODEC:
-      return QtvPlayer::TRACK_WM3_VIDEO;
-
-#endif /* FEATURE_H264_DECODER */
-#if defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER)
-    case Media::WMA_PRO_CODEC:
-       return QtvPlayer::TRACK_WM_PRO_AUDIO;
-
-    case Media::WMA_PRO_PLUS_CODEC:
-       return QtvPlayer::TRACK_WM_PRO_PLUS_AUDIO;
-#endif /* defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER) */
-
-#ifdef FEATURE_QTV_AVI_AC3
-#error code not present
-#endif /* FEATURE_QTV_AVI_AC3 */
-
-#ifdef FEATURE_QTV_PCM
-#error code not present
-#endif /* FEATURE_QTV_PCM */
-
-    case Media::UNKNOWN_CODEC:
-      /* fall thru */
-    default:
-      return QtvPlayer::TRACK_UNKNOWN;
-  } /* end of switch(codec) */
-}
-
 #ifdef FEATURE_QTV_GENERIC_BCAST
 /* ======================================================================
 FUNCTION
@@ -6647,7 +6333,7 @@ void Mpeg4Player::CPVTEXT_STATUS_handler(QCMessageHandleType handle)
 }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
 /* ======================================================================
 FUNCTION
   Mpeg4Player::QTV_SKIP_CLIP_handler
@@ -6691,7 +6377,7 @@ void Mpeg4Player::QTV_SKIP_CLIP_handler(QCMessageHandleType handle)
     }
   }
 }
-#endif /*FEATURE_FILE_FRAGMENTATION*/
+#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
 
 /* ======================================================================
 FUNCTION
@@ -7463,7 +7149,6 @@ QtvPlayer::ClipExtInfoKindT Mpeg4Player::GetClipExtInfo(Media * pMedia, ClipInfo
      QtvPlayer::ClipDrmInfoT *pClipDivxDrmInfo = &(tempExtInfo.DrmInfo);
      pMedia->GetClipDrmInfo((void*)pClipDivxDrmInfo);
      extInfoKind = QtvPlayer::CLIP_EXT_DIVX_DRM_INFO;
-     QTV_USE_ARG1(pfm);
    }
 #endif
 
@@ -7795,9 +7480,9 @@ void Mpeg4Player::SetClipInfo(Media * pVideo, int VideoFileSize, Media * pAudio,
       /*---------------------------------------------------------------------
         Broadcast is not always live.
       ---------------------------------------------------------------------*/
-      if (clip.bBcastStream && pMedia && pMedia->IsLive())
+      if (clip.bBcastStream && pVideo->IsLive())
       {
-        if ( pMedia->IsRepositioningAllowed() )
+        if ( pMedia && pMedia->IsRepositioningAllowed() )
         {
           tempInfo.info.streamtype = QtvPlayer::MEDIA_BUFFERED_LIVE_STREAMING;
         }
@@ -7874,7 +7559,7 @@ void Mpeg4Player::SetClipInfo(Media * pVideo, int VideoFileSize, Media * pAudio,
     // Get MIME Types
     ReferenceCountedPointer<ITrackList> trackList;
 
-    if ((pMedia != NULL && !pMedia->GetTrackList(MakeOutPointer(trackList))) ||
+    if (!pMedia->GetTrackList(MakeOutPointer(trackList)) ||
         (trackList == NULL))
     {
       return;
@@ -7923,13 +7608,6 @@ void Mpeg4Player::SetClipInfo(Media * pVideo, int VideoFileSize, Media * pAudio,
 #ifdef FEATURE_QTV_3GPP_EVRC_WB
 #error code not present
 #endif /* FEATURE_QTV_3GPP_EVRC_WB */
-#ifdef FEATURE_QTV_AVI_AC3
-#error code not present
-#endif /* FEATURE_QTV_AVI_AC3 */
-#ifdef FEATURE_QTV_PCM
-#error code not present
-#endif /* FEATURE_QTV_PCM */
-
         case Media::MPEG4_CODEC:
           tempInfo.info.TrackTypes[i] = QtvPlayer::TRACK_VIDEO_MP4V_ES;
           break;
@@ -7947,7 +7625,6 @@ void Mpeg4Player::SetClipInfo(Media * pVideo, int VideoFileSize, Media * pAudio,
           break;
 #endif
         case Media::STILL_IMAGE_CODEC:
-		case Media::STILL_IMAGE_H263_CODEC:		
           tempInfo.info.TrackTypes[i] = QtvPlayer::TRACK_UNKNOWN;
           break;
 #ifdef FEATURE_QTV_OSCAR_DECODER
@@ -8196,8 +7873,6 @@ void Mpeg4Player::SetClipInfo(Media * pVideo, int VideoFileSize, Media * pAudio,
          }
          tempInfo.info.AudioSamplingFreq = ((StreamMedia *)pMedia)->GetAudioSampleRate();
          tempInfo.info.NumAudioChannels = pMedia->GetNumAudioChannels(0);
-         tempInfo.info.AudioEncodedBitRate = pMedia->GetAudioBitRate(0);
-         tempInfo.info.VideoEncodedBitRate = pMedia->GetVideoBitRate(0);
       }
     } /* end of else if ( clip.bStreaming ) */
   }
@@ -8473,7 +8148,6 @@ bool Mpeg4Player::SetClipComponents(bool bAudioSelected,bool bVideoSelected, boo
 
   if(clip.bHasVideo)
   {
-#ifndef FEATURE_WINCE
     if (NULL == pActiveVideoPlayer)
     {
       pActiveVideoPlayer = (PlayerBaseIF*)PlayerBaseIF::CreateVideoPlayerInstance();
@@ -8492,7 +8166,6 @@ bool Mpeg4Player::SetClipComponents(bool bAudioSelected,bool bVideoSelected, boo
         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Video Player Creation Failed");
       }
     }
-#endif
 
   }
 
@@ -8544,7 +8217,6 @@ Mpeg4Player::QTV_EXCESSIVE_FRAME_DROPS_handler
    {
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
         "Mpeg4Player::QTV_EXCESSIVE_FRAME_DROPS_handler: Input param handle is NULL");
-      QTV_USE_ARG1(pMedia);
       return;
    }
 
@@ -8565,7 +8237,7 @@ Mpeg4Player::QTV_EXCESSIVE_FRAME_DROPS_handler
        }
     }
   }
-QTV_USE_ARG1(pMedia);
+
 }
 
 #endif
@@ -8988,14 +8660,10 @@ void Mpeg4Player::SetURN(const URL &fullURN, URNData &destURN)
       }
     }
     //get chars
-#ifndef FEATURE_WINCE
     while (OSCL_FileRead(&c,1,1,fp)==1 && i <= URL::MaxUrlSize)
     {
       strippedURN[i++] = c;
     }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
     (void)OSCL_FileClose(fp);
 
     if (strippedURN[URL::MaxUrlSize] != '\0' )
@@ -9050,7 +8718,7 @@ void Mpeg4Player::SetURN(const URL &fullURN, URNData &destURN)
   // Get the URN type.
   //
 
-  if (urn.sURN->StartsWith("rtsp://") || urn.sURN->StartsWith("rtspt://"))
+  if (urn.sURN->StartsWith("rtsp://"))
   {
     // Workaround for HTML being inserted into URL by faulty browsers.
     if ((ZUtils::Find((const char *)(*urn.sURN), "<") != ZUtils::npos) ||
@@ -9096,10 +8764,6 @@ void Mpeg4Player::SetURN(const URL &fullURN, URNData &destURN)
     urn.type = QtvPlayer::URN_BCAST_ISDB;
     urn.bValid = true;
   }
-#endif
-
-#ifdef FEATURE_QTV_GENERIC_BCAST_CMMB
-#error code not present
 #endif
 
 #ifdef FEATURE_QTV_GENERIC_BCAST_TDMB
@@ -9186,9 +8850,7 @@ void Mpeg4Player::SetURN(const URL &fullURN, URNData &destURN)
       //in this case OpenURN will eventually fail.
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Mpeg4Player::SetURN, SDP parse failed");
     }
-#ifndef FEATURE_WINCE
     event_report(EVENT_QTV_SDP_SELECTED);
-#endif   /*    FEATURE_WINCE   */
   }
   else if (  urn.sURN->EndsWith(".pvx") || (bPVXFileDownload) )
   {
@@ -9197,7 +8859,7 @@ void Mpeg4Player::SetURN(const URL &fullURN, URNData &destURN)
 
     // Always allow LTK to stream Progressive download 2
     // content for testing.
-#if !defined (PLATFORM_LTK) && !defined (FEATURE_WINCE)
+#ifndef PLATFORM_LTK
     nv_item_type  nv_item;
     /* Read FastTrack enable item from NV */
     if (!ZUtils::readNVItem( NV_ENABLE_FASTTRACK_I , &nv_item) ||
@@ -9207,7 +8869,7 @@ void Mpeg4Player::SetURN(const URL &fullURN, URNData &destURN)
       QTV_Free(strippedURN);
       return;
     }
-#endif   /* IF-ENDIF   <=>   #if !defined (PLATFORM_LTK) && !defined (FEATURE_WINCE) */
+#endif
 #endif /* End of FEATURE_PDS2_NV_CONFIG */
 
     //PVX filename.
@@ -9477,7 +9139,7 @@ SIDE EFFECTS
 ========================================================================== */
 bool Mpeg4Player::SetURL()
 {
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Mpeg4Player::SetURL" );
+  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Mpeg4Player::SetURL" );
 
   bool bUpdate=false;
 
@@ -9877,8 +9539,7 @@ bool Mpeg4Player::SetClipType()
                clip.bPseudoStreaming = true;
                bIsProgressive = true;
              }
-           #endif
-           #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+           #else
              IxStream* pixStream = (IxStream* )videoURN.inputStream;
              if(pixStream && pixStream->IsProgressive())
              {
@@ -9886,6 +9547,7 @@ bool Mpeg4Player::SetClipType()
                bIsProgressive = true;
              }
            #endif
+           break;
            if(bIsProgressive)
            {
              clip.FetchBufferedDataSize = videoURN.FetchBufferedDataSize;
@@ -9893,7 +9555,6 @@ bool Mpeg4Player::SetClipType()
              clip.m_QtvInstanceHandle = videoURN.m_QtvInstanceHandle;
 
            }
-           break;
          }
   #endif
 #endif//#endif #if defined(FEATURE_QTV_PSEUDO_STREAM) || defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
@@ -9944,7 +9605,7 @@ bool Mpeg4Player::SetClipType()
                     fp = OSCL_FileOpen(DownloadTxtFile, "r");
                     uint32 len;
                     //skip leading blanks
-                    for (len=0; OSCL_FileRead(&c,1,1,fp)==1 && len < sizeof(field);)
+                    for (len=0; OSCL_FileRead(&c,1,1,fp)==1 && len <= sizeof(field);)
                     {
                       if (c>' ')
                       {
@@ -9952,14 +9613,11 @@ bool Mpeg4Player::SetClipType()
                       }
                     }
                     //read file name
-                    while (OSCL_FileRead(&c,1,1,fp)==1 && c!='\0' && len < sizeof(field))
+                    while (OSCL_FileRead(&c,1,1,fp)==1 && c!='\0' && len <= sizeof(field))
                     {
                       field[len++]=c;
                     }
-                    if( len < sizeof(field))
-                    {
-                      field[len++]='\0';
-                    }
+                    field[len++]='\0';
                     if (len == sizeof(field))
                     {
                       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Mpeg4Player::SetClipType Filename too long" );
@@ -9997,11 +9655,7 @@ bool Mpeg4Player::SetClipType()
                     }
                     else
                     {
-#ifndef FEATURE_WINCE
                       clip.pAudioLocalFilename = clip.pVideoLocalFilename = (char *)"/brew/mod/mediaplayer/media/ftest.mp4";
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
                     }
 
                     QTV_Free(pUrl);
@@ -10027,10 +9681,6 @@ bool Mpeg4Player::SetClipType()
        clip.bBcastStream = true;
        clip.bBcastISDB   = true;
        break;
-#endif
-
-#ifdef FEATURE_QTV_GENERIC_BCAST_CMMB
-#error code not present
 #endif
 
 #ifdef FEATURE_QTV_GENERIC_BCAST_TDMB
@@ -10081,7 +9731,7 @@ bool Mpeg4Player::SetClipType()
          IxStream* pStream = (IxStream* )audioURN.inputStream;
          if(pStream)
          {
-           bipstreamprog = ((pStream->IsProgressive())!=0);
+           bipstreamprog = pStream->IsProgressive();
          }
        }
      #endif
@@ -10149,17 +9799,13 @@ bool Mpeg4Player::SetClipType()
           IxStream* pStream = (IxStream* )textURN.inputStream;
           if(pStream)
           {
-            bipstreamprog = ((pStream->IsProgressive())!=0);
+            bipstreamprog = pStream->IsProgressive();
           }
         }
      #endif
       if (textURN.type == QtvPlayer::URN_LOCAL_FILE)
       {
-#ifndef FEATURE_WINCE
         clip.pTextLocalFilename = textURN.sURN->GetUrlBuffer();
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
       }
       else if (textURN.type == QtvPlayer::URN_LOCAL_BUFFER
 
@@ -10196,7 +9842,7 @@ bool Mpeg4Player::SetClipType()
 #ifdef FEATURE_QTV_PSEUDO_STREAM
          if( (textURN.type == QtvPlayer::URN_PSEUDO_STREAM)
              #ifdef FEATURE_QTV_DRM_DCF
-              || (bipstreamprog == true)
+              || (textURN.type == QtvPlayer::URN_INPUTSTREAM)
              #endif
            )
          {
@@ -10282,7 +9928,6 @@ OSCL_FILE * Mpeg4Player::OpenDownloadDatFile(char *mode)
   return OSCL_FileOpen(temp,mode);
 }
 
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 bool Mpeg4Player::DeleteDownloadDatFile(void)
 {
     char temp[QTV_MAX_FILENAME_BYTES+MAX_TEMPFILENAME+2];
@@ -10298,7 +9943,6 @@ bool Mpeg4Player::DeleteDownloadDatFile(void)
             temp);
   return OSCL_FileDelete(temp);
 }
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 #endif /* FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2 */
 
 
@@ -10354,11 +9998,9 @@ bool Mpeg4Player::OpenURN(const PV_OPEN_URN_type * pEvent)
   if (pEvent)
   {
     //Set URN from the user command.
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Mpeg4Player::Calling Set VideoURN" );
     SetURN(*pEvent->videoURN, videoURN);
 #ifdef FEATURE_QTV_WM_NO_STREAMING
-    if ((videoURN.sURN->StartsWith("rtsp://") ||
-         videoURN.sURN->StartsWith("rtspt://"))&&
+    if (videoURN.sURN->StartsWith("rtsp://") &&
         (videoURN.sURN->EndsWith(".wma") ||
          videoURN.sURN->EndsWith(".wmv")))
     {
@@ -10371,7 +10013,7 @@ bool Mpeg4Player::OpenURN(const PV_OPEN_URN_type * pEvent)
         pEvent->videoURN->EndsWith(".sdp"))
     {
       QTV_MSG_PRIO(QTVDIAG_GENERAL,
-                   QTVDIAG_PRIO_HIGH,
+                   QTVDIAG_PRIO_LOW,
                    "Input is URL/SDP file. No need to set AudioURN" );
     }
     else if(pEvent->videoURN->StartsWith("sdp//"))
@@ -10382,10 +10024,9 @@ bool Mpeg4Player::OpenURN(const PV_OPEN_URN_type * pEvent)
     else
     {
       QTV_MSG_PRIO(QTVDIAG_GENERAL,
-                   QTVDIAG_PRIO_HIGH,
+                   QTVDIAG_PRIO_LOW,
                    "Input is Non URL/SDP file. Set AudioURN..." );
       SetURN(*pEvent->audioURN, audioURN);
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"Trying to Set textURN..." );
       SetURN(*pEvent->textURN, textURN);
     }
   }
@@ -10406,20 +10047,6 @@ bool Mpeg4Player::OpenURN(const PV_OPEN_URN_type * pEvent)
   }
   else
   {
-
-  memset (sUrnStatsName,0x00,QTV_STATS_LOCAL_BUFFER_SIZE);
-  if (pEvent->videoURN->GetUrlBuffer()) {
-    std_strlcpy(sUrnStatsName,pEvent->videoURN->GetUrlBuffer(),strlen(pEvent->videoURN->GetUrlBuffer())+1);
-  }
-  else if(pEvent->audioURN->GetUrlBuffer())
-  {
-    std_strlcpy(sUrnStatsName,pEvent->audioURN->GetUrlBuffer(),strlen(pEvent->audioURN->GetUrlBuffer())+1);
-  }
-  else if(pEvent->textURN->GetUrlBuffer())
-  {
-    std_strlcpy(sUrnStatsName,pEvent->textURN->GetUrlBuffer(),strlen(pEvent->textURN->GetUrlBuffer())+1);
-  }
-
     //Open the clip
     bOK = OpenClip();
     if (!bOK)
@@ -10576,20 +10203,16 @@ bool Mpeg4Player::OpenPseudoStream(const QTV_PS_STREAM_OPEN_EVENT_type * pEvent)
     ///* Update the current write ptr offset.*/
     //if (pEvent->writePtrOffset)
     //   updatePseudoStreamBufferOffset(pEvent);
-#ifndef FEATURE_WINCE
+
     ps_last_ts = ZUtils::Clock();
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
 
       qtv_event_ps_dl_start.totalBufSize =  pEvent->bufferSize;
       qtv_event_ps_dl_start.unfilledBufSize =
                                (pEvent->bufferSize - pEvent->writePtrOffset);
-#ifndef FEATURE_WINCE
+
       event_report_payload(EVENT_QTV_PS_DOWNLOAD_STARTED,
                           sizeof(qtv_event_ps_dl_start_type),
                           &qtv_event_ps_dl_start);
-#endif   /*    FEATURE_WINCE   */
 
    }
 
@@ -10678,11 +10301,8 @@ boolean Mpeg4Player::updatePseudoStreamBufferOffset( const QTV_PS_UPDATE_WBUFFER
    {
        prev_wPtrOffset = 0;
    }
-#ifndef FEATURE_WINCE
+
    duration = ZUtils::Clock() - ps_last_ts;
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
    if(duration)
        download_rate = (((wPtrOffset - prev_wPtrOffset) * 1000)/duration) * 8;
 
@@ -10690,22 +10310,17 @@ boolean Mpeg4Player::updatePseudoStreamBufferOffset( const QTV_PS_UPDATE_WBUFFER
    QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"Mpeg4Player::Download rate %u BPS",download_rate);
 
    prev_wPtrOffset = wPtrOffset;
-#ifndef FEATURE_WINCE
    ps_last_ts =ZUtils::Clock();
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
  }
  /* End of code to compute download rate */
 
  clip.pseudoStreamWritePtrOffset = wPtrOffset;
 
  //Generate DIAG event to report amount of data downloaded so far..
-#ifndef FEATURE_WINCE
  event_report_payload(EVENT_QTV_DOWNLOAD_DATA_REPORT,
                            sizeof(wPtrOffset),
                            &wPtrOffset);
-#endif   /*    FEATURE_WINCE   */
+
 
  if ( playerState == OPENING || playerState == PLAYER_PSEUDO_PAUSE)
  {
@@ -10732,169 +10347,6 @@ boolean Mpeg4Player::updatePseudoStreamBufferOffset( const QTV_PS_UPDATE_WBUFFER
 #endif /* FEATURE_QTV_PSEUDO_STREAM */
 
 
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-void Mpeg4Player::QTV_HTTP_BUFFER_UPDATE_handler(QCMessageHandleType handle)
-{
-  if(handle == NULL)
-  {
-     return;
-  }
-
-  Mpeg4Player *pThis = (Mpeg4Player *)((zrex_event_header_type *)handle)->user_data;
-  if (pThis)
-  {
-     pThis->ProcessHTTPBufferUpdate((QTV_HTTP_BUFFER_UPDATE_type *)handle);
-  }
-}
-
-void Mpeg4Player::QTV_HTTP_EVENT_handler(QCMessageHandleType handle)
-{
-  if(handle == NULL)
-  {
-     return;
-  }
-
-  Mpeg4Player *pThis = (Mpeg4Player *)((zrex_event_header_type *)handle)->user_data;
-  if (pThis)
-  {
-     pThis->ProcessHTTPStateEvent((QTV_HTTP_EVENT_type*)handle);
-  }
-}
-
-void Mpeg4Player::ProcessHTTPBufferUpdate(const QTV_HTTP_BUFFER_UPDATE_type *pEvent)
-{
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-  if(clip.bPseudoStreaming)
-  {
-    QTV_PS_PROCESS_PSEUDO_STREAM_type *pEvent2 = QCCreateMessage(QTV_PS_PROCESS_PSEUDO_STREAM,this);
-
-    if(pEvent2)
-    {
-      pEvent2->bPSHasAudio = (bool) pEvent->bHasAudio;
-      pEvent2->bPSHasVideo = (bool) pEvent->bHasVideo;
-      pEvent2->bPSHasText = (bool) pEvent->bHasText;
-      PostMessage(pEvent2);
-    }
-    if(clip.bHasVideo)
-    {
-      QTV_RESUME_VIDEO_type *video_pEvent = QCCreateMessage(QTV_RESUME_VIDEO, this);/*lint !e641 */
-      if (video_pEvent)
-      {
-        PostMessage(video_pEvent);
-      }
-    }
-    if(clip.bHasAudio)
-    {
-      QTV_RESUME_AUDIO_type *audio_pEvent = QCCreateMessage(QTV_RESUME_AUDIO, this);/*lint !e641 */
-      if (audio_pEvent)
-      {
-        PostMessage(audio_pEvent);
-      }
-    }
-
-    if(clip.bHasText)
-    {
-      QTV_RESUME_TEXT_type *text_pEvent = QCCreateMessage(QTV_RESUME_TEXT, this);/*lint !e641 */
-      if (text_pEvent)
-      {
-        PostMessage(text_pEvent);
-      }
-    }
-  }
-#endif
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-  if(clip.bHTTPStreaming)
-  {
-    QTV_PROCESS_HTTP_STREAM_type *pEvent2 = QCCreateMessage(QTV_PROCESS_HTTP_STREAM,this);
-
-    if (pEvent2)
-    {
-      pEvent2->bHasAudio = (bool) pEvent->bHasAudio;
-      pEvent2->bHasVideo = (bool) pEvent->bHasVideo;
-      pEvent2->bHasText = (bool) pEvent->bHasText;
-      PostMessage(pEvent2);
-    }
-  }
-#endif
-}
-
-void Mpeg4Player::ProcessHTTPStateEvent(const QTV_HTTP_EVENT_type *pEvent)
-{
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-  if(clip.bPseudoStreaming)
-  {
-    QTV_PS_PARSER_STATUS_EVENT_type *pEvent2 = QCCreateMessage(QTV_PS_PARSER_STATUS_EVENT, this);
-    if (pEvent2)
-    {
-      pEvent2->status = pEvent->status;
-      pEvent2->bHasVideo = pEvent->bHasVideo;
-      pEvent2->bHasAudio = pEvent->bHasAudio;
-      pEvent2->bHasText = pEvent->bHasText;
-      PostMessage(pEvent2);
-      if(pEvent->status == Common::PARSER_PAUSE)
-      {
-        if(clip.bHasVideo)
-        {
-          QTV_PAUSE_VIDEO_type *video_pEvent = QCCreateMessage(QTV_PAUSE_VIDEO, this);/*lint !e641 */
-          if (video_pEvent)
-          {
-            PostMessage(video_pEvent);
-          }
-        }
-
-        if(clip.bHasAudio)
-        {
-          QTV_PAUSE_AUDIO_type *audio_pEvent = QCCreateMessage(QTV_PAUSE_AUDIO, this);/*lint !e641 */
-          if (audio_pEvent)
-          {
-            PostMessage(audio_pEvent);
-          }
-        }
-
-        if(clip.bHasText)
-        {
-          QTV_PAUSE_TEXT_type *text_pEvent = QCCreateMessage(QTV_PAUSE_TEXT, this);/*lint !e641 */
-          if (text_pEvent)
-          {
-            PostMessage(text_pEvent);
-          }
-        }
-      }
-    }
-  }
-#endif
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-  if(clip.bHTTPStreaming)
-  {
-    QTV_HTTP_PARSER_STATUS_EVENT_type *pEvent2 = QCCreateMessage(QTV_HTTP_PARSER_STATUS_EVENT, this);
-    if (pEvent2)
-    {
-      pEvent2->status = pEvent->status;
-      pEvent2->bHasVideo = pEvent->bHasVideo;
-      pEvent2->bHasAudio = pEvent->bHasAudio;
-      pEvent2->bHasText = pEvent->bHasText;
-      PostMessage(pEvent2);
-    }
-    if(pEvent->status == Common::PARSER_PAUSE)
-    {
-      QTV_HTTP_STREAM_BUFFER_UNDERRUN_EVENT_type *pEventUnderrun = QCCreateMessage(QTV_HTTP_STREAM_BUFFER_UNDERRUN_EVENT, this);
-
-      if(pEventUnderrun)
-      {
-        pEventUnderrun->bAudio = (bool) pEvent->bHasAudio;
-        pEventUnderrun->bVideo = (bool) pEvent->bHasVideo;
-        pEventUnderrun->bText = (bool) pEvent->bHasText;
-        PostMessage(pEventUnderrun);
-      }
-    }
-  }
-#endif
-}
-
-#endif
-
-
-
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
 /* ======================================================================
 FUNCTION
@@ -10918,7 +10370,6 @@ bool Mpeg4Player::OpenHTTPStream(const QTV_HTTP_STREAM_OPEN_EVENT_type * pEvent)
 {
    QTV_MSG(QTVDIAG_MP4_PLAYER,"Mpeg4Player::OpenHTTPStream for Progressive Download");
    bool bOK = false;
-#ifndef FEATURE_WINCE
    // An OpenURN command will automatically stop the player.
    if (!clip.bQtvHttpStreaming)
    {
@@ -10929,7 +10380,7 @@ bool Mpeg4Player::OpenHTTPStream(const QTV_HTTP_STREAM_OPEN_EVENT_type * pEvent)
    // Clear the zrex count of memory allocated
   (void)QTV_ClearBytesAllocated();
    }
-#endif   /*    FEATURE_WINCE   */
+
    //Set the URN
    if (pEvent)
    {
@@ -10955,11 +10406,8 @@ bool Mpeg4Player::OpenHTTPStream(const QTV_HTTP_STREAM_OPEN_EVENT_type * pEvent)
           setHTTPStream(pEvent->pPSBuffer, pEvent->bufferSize,
                         pEvent->FetchBufferedDataSize, pEvent->FetchBufferedData,pEvent->handle, audioURN);
       }
-#ifndef FEATURE_WINCE
+
         http_last_ts = ZUtils::Clock();
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
 
         /* Update the current write ptr offset.*/
         if(pEvent->bufferSize)
@@ -11074,21 +10522,14 @@ bool Mpeg4Player::updateHTTPStreamBufferOffset(const QTV_HTTP_STREAM_UPDATE_WBUF
          "Mpeg4Player::updateHTTPStreamBufferOffset called");
 
  /* Code to compute download rate */
-#ifndef FEATURE_WINCE
+
  duration = ZUtils::Clock() - http_last_ts;
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
 
  if(duration && clip.HTTPStreamWritePtrOffset && (wPtrOffset > clip.HTTPStreamWritePtrOffset))
  {
    download_rate = (((wPtrOffset - clip.HTTPStreamWritePtrOffset) * 1000 * 8)/duration);
    appControl.nHTTPStreamDownloadRate = download_rate/1024;
-#ifndef FEATURE_WINCE
-   http_last_ts = ZUtils::Clock();
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
+   http_last_ts =ZUtils::Clock();
 
    QTV_MSG_PRIO3(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"Mpeg4Player::Download rate %u BPS, CurrentOffSet %u,PreviousOffSet %u",download_rate,wPtrOffset,clip.HTTPStreamWritePtrOffset);
  }
@@ -11097,11 +10538,10 @@ bool Mpeg4Player::updateHTTPStreamBufferOffset(const QTV_HTTP_STREAM_UPDATE_WBUF
  clip.HTTPStreamWritePtrOffset = wPtrOffset;
 
  //Generate DIAG event to report amount of data downloaded so far..
-#ifndef FEATURE_WINCE
  event_report_payload(EVENT_QTV_DOWNLOAD_DATA_REPORT,
                            sizeof(wPtrOffset),
                            &wPtrOffset);
-#endif   /*    FEATURE_WINCE   */
+
 
  if ( playerState == OPENING || playerState == PLAYER_HTTP_PAUSE)
  {
@@ -11837,39 +11277,23 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void Mpeg4Player::HttpPullDataInterface(unsigned long mySelf)
 {
     Mpeg4Player* pPlayer = (Mpeg4Player*)(mySelf);
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-    if(pPlayer->clip.bHTTPStreaming && pPlayer->httpPullData.bTimerSet && pPlayer->httpPullData.pUpdateWptrOffsetPD)
+    if(pPlayer->httpPullData.bTimerSet && pPlayer->httpPullData.pUpdateWptrOffset)
     {
         //Use the static event to update the amt of data available
       //Data Size will be pulled from OEM by the event handler
-      (pPlayer->httpPullData.pUpdateWptrOffsetPD)->writePtrOffset = 0;
-        QCUtils::PostMessage(pPlayer->httpPullData.pUpdateWptrOffsetPD, 0, NULL);
+      (pPlayer->httpPullData.pUpdateWptrOffset)->writePtrOffset = 0;
+        QCUtils::PostMessage(pPlayer->httpPullData.pUpdateWptrOffset, 0, NULL);
 
        //Reset the timer
     (void)rex_set_timer(pPlayer->httpPullData.pHttpPullTimer,QTV_HTTP_PULL_DATA_INTERVAL);
     }
-#endif
-
-#ifdef FEATURE_QTV_PSEUDO_STREAM
-    if(pPlayer->clip.bPseudoStreaming && pPlayer->httpPullData.bTimerSet && pPlayer->httpPullData.pUpdateWptrOffsetPS)
-    {
-        //Use the static event to update the amt of data available
-      //Data Size will be pulled from OEM by the event handler
-      (pPlayer->httpPullData.pUpdateWptrOffsetPS)->writePtrOffset = 0;
-        QCUtils::PostMessage(pPlayer->httpPullData.pUpdateWptrOffsetPS, 0, NULL);
-
-       //Reset the timer
-    (void)rex_set_timer(pPlayer->httpPullData.pHttpPullTimer,QTV_HTTP_PULL_DATA_INTERVAL);
-    }
-#endif
 
     return;
 }
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
+
 #endif // defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
 
 #ifdef FEATURE_QTV_GENERIC_BCAST
@@ -12066,56 +11490,11 @@ bool Mpeg4Player::ActOnUserTrackSelection(int nAudID,
   // Obtain the secondary track list
   // Analyze the primary and secondary tracks list
   // Take action to update the secondary to primary in the gbm object.
-  unsigned int  nResult = 0;
+  unsigned int  nResult;
   bool bError = false;
 
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-  if(IsLocalMediaPLayback() || clip.bHTTPStreaming)
-#else
-  if(IsLocalMediaPLayback())
-#endif
-  {
-    if((clip.pAudioMpeg4Playback) && (clip.bHasAudio) && (playerState== PB_READY))
-    {
-      bError = false;
-      nResult = clip.pAudioMpeg4Playback->UserCompare(bError, nAudID,-1,-1);
-    }
-    else
-    {
-        bError = true;
-    }
-    if((clip.pVideoMpeg4Playback) && (clip.bHasVideo) && (playerState== PB_READY))
-    {
-      bError = false;
-      nResult = clip.pVideoMpeg4Playback->UserCompare(bError, -1,nVidID,-1);
-    }
-    else
-    {
-        bError = true;
-    }
-    if((clip.pTextMpeg4Playback) && (clip.bHasText) && (playerState== PB_READY))
-    {
-      bError = false;
-      nResult = clip.pTextMpeg4Playback->UserCompare(bError, -1,-1,nTextID);
-    }
-    else
-    {
-        bError = true;
-    }
-
-    if (bError)
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL,
-                 QTVDIAG_PRIO_ERROR,
-                 "Localfileplayback ActOnUserTrackSelection failed: Returning false");
-      return false;
-    }
-  }
-  else
-  {
   nResult = GENERIC_BCAST_MEDIA_USER_COMPARE(clip.pVideoMpeg4Playback,
                                              nAudID,nVidID,nTextID,bError);
-  }
   if(bError || (nResult & QTV_MEDIA_TRACK_LIST_ABORT))
   {
     // Raise Error message and abort
@@ -12124,18 +11503,6 @@ bool Mpeg4Player::ActOnUserTrackSelection(int nAudID,
                  QTVDIAG_PRIO_ERROR,
                  "Generic Bcast Media User Compare failed: Raising abort");
     return false;
-  }
-  if(IsLocalMediaPLayback())
-  {
-    if(!LocalMediaPLaybackUpgradeTracks(nResult))
-    {
-      PlaybackErrorAbort();
-      return false;
-    }
-    else
-    {
-      return true;
-    }
   }
   if(!GenericBcastUpgradeTracks(nResult))
   {
@@ -12326,9 +11693,8 @@ void Mpeg4Player::GenericBcastMediaStatusHandler
 
           qtv_event_parser_ready_type qtv_event_parser_ready;
           memset (&qtv_event_parser_ready,0x00,sizeof(qtv_event_parser_ready_type));
-#ifndef FEATURE_WINCE
           event_report_payload(EVENT_QTV_PARSER_STATE_READY, sizeof(qtv_event_parser_ready_type), &qtv_event_parser_ready);
-#endif   /*    FEATURE_WINCE   */
+
           if(appControl.bStartPlaying)
           {
             // Pause to Play Transition. Indicate PlayModePlay to Media source
@@ -12356,11 +11722,9 @@ void Mpeg4Player::GenericBcastMediaStatusHandler
             }
             else
             {
-#ifndef FEATURE_WINCE
               event_report_payload(EVENT_QTV_CLIP_STARTED,
                                    sizeof(qtv_event_clip_started_type),
                                    &qtv_event_clip_started_payload);
-#endif   /*    FEATURE_WINCE   */
             }
           }
           break;
@@ -12647,7 +12011,7 @@ bool Mpeg4Player::OpenLocalFile()
   clip.bHasVideo     = false;
   clip.bHasAudio     = false;
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
-  bool bTextOK  = false;
+  bool bTextOK = false;
   clip.bHasText      = false;
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
@@ -12700,7 +12064,6 @@ bool Mpeg4Player::OpenLocalFile()
   }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
   }
-
 
   //Parsing takes a while, so go to opening state.
   if (playerState!=OPENING)
@@ -12772,11 +12135,7 @@ bool Mpeg4Player::OpenLocalFile()
   // Create the stored file media interface.
 #ifdef SHOW_PARSE_INFO
   unsigned long t;
-#ifndef FEATURE_WINCE
   t = ZUtils::Clock();
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
 #endif
 #ifdef FEATURE_QTV_DIVX_DRM
   bool b_DrmError = false;
@@ -12949,22 +12308,19 @@ bool Mpeg4Player::OpenLocalFile()
                                                       false /*Do not play text*/ );
 #endif /* FEATURE_QTV_PSEUDO_STREAM/FEATURE_QTV_3GPP_PROGRESSIVE_DNLD/FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2 */
 
+
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
     if ( clip.pVideoMpeg4Playback )
     {
-       if ( !isVideoParsedSuccessfully(clip.pVideoMpeg4Playback))
-       {
-          bVideoOK = false;
-          QTV_Delete(clip.pVideoMpeg4Playback);
-          clip.pVideoMpeg4Playback = NULL;
-       }
-       else
-       {
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-          clip.mediaCounter++;
-# endif
-          bVideoOK = true;
-       }
+      clip.mediaCounter++;
+      bVideoOK = true;
     }
+#else
+    if ( clip.pVideoMpeg4Playback )
+    {
+      bVideoOK = true;
+    }
+#endif
   }
  /* If audio buffer was provided */
   if(clip.pAudioLocalBuffer)
@@ -13031,22 +12387,18 @@ bool Mpeg4Player::OpenLocalFile()
             );
 #endif /* FEATURE_QTV_PSEUDO_STREAM/FEATURE_QTV_3GPP_PROGRESSIVE_DNLD/FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2 */
 
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
     if ( clip.pAudioMpeg4Playback )
     {
-      if (!isAudioParsedSuccessfully(clip.pAudioMpeg4Playback))
-      {
-        bAudioOK = false;
-        QTV_Delete(clip.pAudioMpeg4Playback);
-        clip.pAudioMpeg4Playback = NULL;
-      }
-      else
-      {
-        bAudioOK = true;
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-        clip.mediaCounter++;
-#endif
-      }
+      clip.mediaCounter++;
+      bAudioOK = true;
     }
+#else
+    if ( clip.pAudioMpeg4Playback )
+    {
+      bAudioOK = true;
+    }
+#endif
   }
 
       #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
@@ -13138,7 +12490,7 @@ bool Mpeg4Player::OpenLocalFile()
   */
   if (clip.videoURN->bValid) /* If this clip has video */
   {
-    if (clip.videoURN->type == QtvPlayer::URN_INPUTSTREAM && !clip.pVideoMpeg4Playback)
+    if (clip.videoURN->type == QtvPlayer::URN_INPUTSTREAM)
     {
 
       clip.pVideoMpeg4Playback = Media::OpenFile( clip.videoURN->inputStream,
@@ -13147,23 +12499,22 @@ bool Mpeg4Player::OpenLocalFile()
                                                    true, /* Play video */
                                                    false, /* Do not Play audio */
                                                    false /*Do not play text*/);
+    }
+
     if( clip.pVideoMpeg4Playback )
     {
       bVideoOK = true;
-#if defined (FEATURE_QTV_PSEUDO_STREAM) && defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-        if(clip.bPseudoStreaming || clip.bHTTPStreaming)
-#elif defined FEATURE_QTV_PSEUDO_STREAM
+      #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+        #ifdef FEATURE_QTV_PSEUDO_STREAM
            if(clip.bPseudoStreaming)
-#elif defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+        #else
            if( clip.bHTTPStreaming)
         #endif
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
            {
              clip.mediaCounter++;
            }
       #endif
     }
-  }
   }
 
   /*
@@ -13173,7 +12524,7 @@ bool Mpeg4Player::OpenLocalFile()
    */
   if(clip.audioURN->bValid) /* If this clip has audio */
   {
-    if (clip.audioURN->type == QtvPlayer::URN_INPUTSTREAM && !clip.pAudioMpeg4Playback)
+    if (clip.audioURN->type == QtvPlayer::URN_INPUTSTREAM)
     {
       clip.pAudioMpeg4Playback = Media::OpenFile( clip.audioURN->inputStream,
                                                   clip.audioURN->type,
@@ -13181,24 +12532,22 @@ bool Mpeg4Player::OpenLocalFile()
                                                   false, /* Do not Play video */
                                                   true, /* Play audio */
                                                   false /*Do not play text*/);
+    }
 
     if( clip.pAudioMpeg4Playback )
     {
       bAudioOK = true;
-#if defined (FEATURE_QTV_PSEUDO_STREAM) && defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-           if(clip.bPseudoStreaming || clip.bHTTPStreaming)
-#elif defined FEATURE_QTV_PSEUDO_STREAM
+      #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+        #ifdef FEATURE_QTV_PSEUDO_STREAM
           if(clip.bPseudoStreaming)
-#elif defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+        #else
           if( clip.bHTTPStreaming)
         #endif
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
           {
             clip.mediaCounter++;
           }
       #endif
     }
-  }
   }
 
   /*
@@ -13209,7 +12558,7 @@ bool Mpeg4Player::OpenLocalFile()
   #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
     if (clip.textURN->bValid) /* If this clip has text */
     {
-      if (clip.textURN->type == QtvPlayer::URN_INPUTSTREAM && !clip.pTextMpeg4Playback)
+      if (clip.textURN->type == QtvPlayer::URN_INPUTSTREAM)
       {
         clip.pTextMpeg4Playback = Media::OpenFile( clip.textURN->inputStream,
                                                   clip.textURN->type,
@@ -13217,24 +12566,22 @@ bool Mpeg4Player::OpenLocalFile()
                                                   false, /* Do not Play video */
                                                   false, /* Do not Play audio */
                                                   true /*Play text*/);
+      }
 
       if( clip.pTextMpeg4Playback )
       {
         bTextOK = true;
-#if defined (FEATURE_QTV_PSEUDO_STREAM) && defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-           if(clip.bPseudoStreaming || clip.bHTTPStreaming)
-#elif defined FEATURE_QTV_PSEUDO_STREAM
+        #if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
+          #ifdef FEATURE_QTV_PSEUDO_STREAM
             if(clip.bPseudoStreaming)
-#elif defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+          #else
             if( clip.bHTTPStreaming)
           #endif
-#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
             {
               clip.mediaCounter++;
             }
         #endif
       }
-    }
     }
   #endif
 #endif
@@ -13256,84 +12603,28 @@ bool Mpeg4Player::OpenLocalFile()
        Mpeg4Player::HttpPullDataInterface. Within this APC we cannot malloc as it can potentially interfere with
        some other APC triggered before Mpeg4Player::HttpPullDataInterface finishes; potentially corrupting the heap.
      */
-
-#if defined FEATURE_QTV_PSEUDO_STREAM
-     if(clip.bPseudoStreaming)
+     if(!httpPullData.pUpdateWptrOffset)
      {
-      if(!httpPullData.pUpdateWptrOffsetPS)
-      {
-
-        httpPullData.pUpdateWptrOffsetPS =
+#ifdef FEATURE_QTV_PSEUDO_STREAM
+        httpPullData.pUpdateWptrOffset =
         QCCreateStaticMessage(QTV_PS_UPDATE_WBUFFER_OFFSET_EVENT, this);/*lint!e641 */
-        if(!httpPullData.pHttpPullTimer || !httpPullData.pUpdateWptrOffsetPS)
-        {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "OpenLocalFile: Pull Interface: Can't create timer/static event.");
-          return false;
-     }
-      }
-    }
+#elif defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
+        httpPullData.pUpdateWptrOffset =
+        QCCreateStaticMessage(QTV_HTTP_STREAM_UPDATE_WBUFFER_OFFSET_EVENT, this);/*lint!e641 */
 #endif
-#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-    if(clip.bHTTPStreaming)
-    {
-      if(!httpPullData.pUpdateWptrOffsetPD)
-      {
-        httpPullData.pUpdateWptrOffsetPD =
-          QCCreateStaticMessage(QTV_HTTP_STREAM_UPDATE_WBUFFER_OFFSET_EVENT, this);/*lint!e641 */
-        if(!httpPullData.pHttpPullTimer || !httpPullData.pUpdateWptrOffsetPD)
+     }
+
+     if(!httpPullData.pHttpPullTimer || !httpPullData.pUpdateWptrOffset)
      {
        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "OpenLocalFile: Pull Interface: Can't create timer/static event.");
        return false;
      }
-      }
-    }
-#endif
 
      httpPullData.FetchBufferedDataSize = clip.FetchBufferedDataSize;
      httpPullData.m_QtvInstanceHandle = clip.m_QtvInstanceHandle;
 
-     if(
-        #ifdef FEATURE_QTV_DRM_DCF
-     clip.videoURN->bValid &&
-     #endif
-     !clip.pVideoMpeg4Playback)
+     if(clip.videoURN->bValid && !clip.pVideoMpeg4Playback)
      {
-
-#if defined(FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) && defined(FEATURE_QTV_PSEUDO_STREAM)
-      if(clip.bHTTPStreaming)
-      {
-       clip.pVideoMpeg4Playback = Media::OpenFile
-                                 (clip.pVideoLocalBuffer,
-                                 clip.videoBufSize,
-                                 this,
-                                 true,  /*Play video */
-                                 false, /* Do Not Play audio */
-                                 false, /*Do not play text*/
-                                 clip.bHTTPStreaming,
-                                 clip.HTTPStreamWritePtrOffset,
-                                 http_startupTime,
-                                 clip.FetchBufferedDataSize,
-                                 clip.FetchBufferedData,
-                                 clip.m_QtvInstanceHandle);
-      }
-      else
-      {
-       clip.pVideoMpeg4Playback = Media::OpenFile
-                                 (clip.pVideoLocalBuffer,
-                                 clip.videoBufSize,
-                                 this,
-                                 true,  /*Play video */
-                                 false, /* Do Not Play audio */
-                                 false, /*Do not play text*/
-                                 clip.bPseudoStreaming,
-                                 clip.pseudoStreamWritePtrOffset,
-                                 http_startupTime,
-                                 clip.FetchBufferedDataSize,
-                                 clip.FetchBufferedData,
-                                 clip.m_QtvInstanceHandle
-                                 );
-      }
-#else
        clip.pVideoMpeg4Playback = Media::OpenFile
                                  (clip.pVideoLocalBuffer,
                                  clip.videoBufSize,
@@ -13356,28 +12647,12 @@ bool Mpeg4Player::OpenLocalFile()
                                  clip.m_QtvInstanceHandle
        #endif /* defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) */
                                  );
-#endif
 
-        if (clip.pVideoMpeg4Playback)
-        {
-          if ( !isVideoParsedSuccessfully(clip.pVideoMpeg4Playback))
-          {
-            bVideoOK = false;
-            QTV_Delete(clip.pVideoMpeg4Playback);
-            clip.pVideoMpeg4Playback = NULL;
-          }
-          else
-          {
-            clip.mediaCounter++;
-            bVideoOK = true;
-          }
-        }
+       if ( !clip.pVideoMpeg4Playback )
+         return false;
+       clip.mediaCounter++;
      }
-     if(
-     #ifdef FEATURE_QTV_DRM_DCF
-     clip.audioURN->bValid &&
-     #endif
-     !clip.pAudioMpeg4Playback)
+     if(clip.audioURN->bValid &&!clip.pAudioMpeg4Playback)
      {
        clip.pAudioMpeg4Playback = Media::OpenFile
                                  (clip.pAudioLocalBuffer,
@@ -13402,64 +12677,12 @@ bool Mpeg4Player::OpenLocalFile()
        #endif /* defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) */
                                  );
 
-       if (clip.pAudioMpeg4Playback)
-       {
-         if(!isAudioParsedSuccessfully(clip.pAudioMpeg4Playback))
-         {
-           bAudioOK = false;
-           QTV_Delete(clip.pAudioMpeg4Playback);
-           clip.pAudioMpeg4Playback = NULL;
-         }
-         else
-         {
-           bAudioOK = true;
-           clip.mediaCounter++;
-         }
-       }
+       if ( !clip.pAudioMpeg4Playback )
+         return false;
+       clip.mediaCounter++;
      }
-     if(
-     #ifdef FEATURE_QTV_DRM_DCF
-     clip.textURN->bValid &&
-     #endif
-     !clip.pTextMpeg4Playback)
+     if(clip.textURN->bValid &&!clip.pTextMpeg4Playback)
      {
-#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD && defined FEATURE_QTV_PSEUDO_STREAM
-       if(clip.bHTTPStreaming)
-       {
-        clip.pTextMpeg4Playback = Media::OpenFile
-                                 (clip.pTextLocalBuffer,
-                                 clip.textBufSize,
-                                 this,
-                                 false, /* Don't play video */
-                                 false, /* Don't play audio */
-                                 true, /* Play audio */
-                                 clip.bHTTPStreaming,
-                                 clip.HTTPStreamWritePtrOffset,
-                                 http_startupTime,
-                                 clip.FetchBufferedDataSize,
-                                 clip.FetchBufferedData,
-                                 clip.m_QtvInstanceHandle
-                                 );
-      }
-      else
-      {
-       clip.pTextMpeg4Playback = Media::OpenFile
-                                 (clip.pTextLocalBuffer,
-                                 clip.textBufSize,
-                                 this,
-                                 false, /* Don't play video */
-                                 false, /* Don't play audio */
-                                 true, /* Play audio */
-                                 clip.bPseudoStreaming,
-                                 clip.pseudoStreamWritePtrOffset,
-                                 http_startupTime,
-                                 clip.FetchBufferedDataSize,
-                                 clip.FetchBufferedData,
-                                 clip.m_QtvInstanceHandle
-                                 );
-      }
-#else
-
        clip.pTextMpeg4Playback = Media::OpenFile
                                  (clip.pTextLocalBuffer,
                                  clip.textBufSize,
@@ -13482,29 +12705,26 @@ bool Mpeg4Player::OpenLocalFile()
                                  clip.m_QtvInstanceHandle
        #endif /* defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) */
                                  );
-#endif
+
        if ( !clip.pTextMpeg4Playback )
          return false;
        clip.mediaCounter++;
      }
  }
 
-#endif
+#endif /* defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) */
+ //Checking whether the created media instance is generic audio or mpeg4file
  if(clip.pAudioMpeg4Playback)
  {
    if(clip.pAudioMpeg4Playback->isGenericAudioFileInstance())
    {
      //create generic AudioMger
-#ifndef FEATURE_WINCE
      AudioPlayerIf::initializeAudioplayer(activeAudioPlayerId, AUDIO_ONLY_MIME_TYPE);
-#endif   /*    FEATURE_WINCE   */
    }
    else
    {
      //create AudioMger
-#ifndef FEATURE_WINCE
      AudioPlayerIf::initializeAudioplayer(activeAudioPlayerId, QTV_PLAYER_MIME_TYPE);
-#endif   /*    FEATURE_WINCE   */
    }
  }
  #ifdef FEATURE_QTV_DIVX_DRM
@@ -13623,11 +12843,7 @@ bool Mpeg4Player::OpenLocalFile()
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
 #ifdef SHOW_PARSE_INFO
-#ifndef FEATURE_WINCE
   t = ZUtils::Clock()-t;
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Time to parse file %d",t);
 #endif
 
@@ -13695,12 +12911,6 @@ bool Mpeg4Player::OpenLocalFile()
   }
 
   Notify(PB_READY);
-#ifdef FEATURE_QTV_AVI
-  if(clip.pVideoMpeg4Playback && clip.pAudioMpeg4Playback && clip.pVideoMpeg4Playback->isAviFileInstance())
-  {
-    clip.pAudioMpeg4Playback->SetIDX1Cache(clip.pVideoMpeg4Playback->GetIDX1Cache());
-  }
-#endif
 #ifdef FEATURE_QTV_DIVX_DRM
   if( clipInfo.info.ExtInfo.DrmInfo.isRental && clipInfo.info.ExtInfoType == QtvPlayer::CLIP_EXT_DIVX_DRM_INFO)
   {
@@ -13920,7 +13130,6 @@ SIDE EFFECTS
 ========================================================================== */
 void Mpeg4Player::ResetPlaybackData()
 {
-#ifndef FEATURE_WINCE
   AudioPlayerIf::ResetData(activeAudioPlayerId);
   if (pActiveVideoPlayer)
   {
@@ -13929,7 +13138,6 @@ void Mpeg4Player::ResetPlaybackData()
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
    textPlayer.ResetData();
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-#endif   /*    FEATURE_WINCE   */
 }
 
 #if defined (FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)||defined (FEATURE_QTV_HTTP_DOWNLOAD)
@@ -13982,20 +13190,12 @@ bool Mpeg4Player::SetSessionStart(SESSION_START *p,KEY_DEF *pKey)
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Filename too long in SetSessionStart");
       return false;
     }
-#ifndef FEATURE_WINCE
     (void)std_strlcpy(p->datfilename,rootpath,sizeof(p->datfilename));
     if (p->datfilename[strlen(p->datfilename)-1] != '/')
     {
       (void)std_strlcat(p->datfilename,"/",sizeof(p->datfilename));
     }
-#else // #ifndef FEATURE_WINCE
-#error code not present
-#endif   /*    FEATURE_WINCE   */
-#ifndef FEATURE_WINCE
     (void)std_strlcat(p->datfilename,DownloadDatFilename, sizeof(p->datfilename));
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
     QTV_MSG_SPRINTF_PRIO_1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
                            "PDS2: datafilename %s",
                            p->datfilename);
@@ -14039,12 +13239,6 @@ bool Mpeg4Player::SetSessionStart(SESSION_START *p,KEY_DEF *pKey)
 
     char DownloadTxtFile[QTV_MAX_FILENAME_BYTES+MAX_TEMPFILENAME+2];
     getDownloadTxtFileName(DownloadTxtFile, sizeof(DownloadTxtFile));
-    if ((char *)(*URN.sURN).IsNull())
-    {
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
-           " SetSessionStart fails, returning..");
-        return false;
-    }
     if (OSCL_FileExists(DownloadTxtFile))
     {
       OSCL_FILE *fp;
@@ -14079,13 +13273,12 @@ bool Mpeg4Player::SetSessionStart(SESSION_START *p,KEY_DEF *pKey)
   return false;
 }
 
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
+
 void Mpeg4Player::PurgeDownloadConfig()
 //purge the download config file if it exists.
 {
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"PDS2: PurgeDownloadConfig called");
 }
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 bool Mpeg4Player::OpenDownload(KEY_DEF * pKey)
 {
@@ -14187,11 +13380,7 @@ bool Mpeg4Player::StartPlayingOrNotifyReady(void)
                               appControl.bStartPlaying))
         {
           /* Check if it is ok to send PlayClip */
-#ifndef FEATURE_QTV_DISABLE_CONC_MGR
           if (qtv_conc_mgr::can_process_command(this, QTV_PLAYER_MIME_TYPE))
-#else
-       if(true)
-#endif
           {
             if (OpenLocalFile())
             {
@@ -14203,7 +13392,6 @@ bool Mpeg4Player::StartPlayingOrNotifyReady(void)
               {
                 pEvent->startTime=appData.startTime;
                 pEvent->stopTime=appData.stopTime;
-                pEvent->switchURN=NULL;
                 PostMessage(pEvent);
               }
               else
@@ -14363,28 +13551,6 @@ bool Mpeg4Player::OpenHTTPDownload()
     QTV_Free(fileName);
     fileName = NULL;
   }
-
-  int isPDPathSet = std_strlcpy(pdrootpath,
-                    (char*)(qtvConfigObject.GetQTVConfigItem(QtvConfig::QTVCONFIG_HTTP_FILE_SAVE_TO_EFS_PATH)),
-                     QTV_MAX_FILENAME_BYTES);
-
-  if(isPDPathSet > 0)
-  {
-    SetPvxSaveOption(pdrootpath);
-  } 
-  else
-  {
-// Dont call the SetPvxSaveOption() twice if its already set by MediaPlayer/QTVPlayer.
-// Checking if the SetPvxSaveOption() already called by MediaPlayer/QTvPlayer based on the flag
-// FileSavedToBuffer. If its 0 means it is set by upper layer already,so we are not calling again.
-//default value of FileSavedToBuffer flag is 1 means Heap.
-
-    if(FileSavedToBuffer !=0)
-    	{
-          SetPvxSaveOption(0);
-    	}
-  }
-
 
   if (nPvxFilePath)
   {
@@ -14762,9 +13928,7 @@ bool Mpeg4Player::OpenStream(KEY_DEF * pKey)
   }
 
   //create AudioMgr
-#ifndef FEATURE_WINCE
   AudioPlayerIf::initializeAudioplayer(activeAudioPlayerId, QTV_PLAYER_MIME_TYPE);
-#endif   /*    FEATURE_WINCE   */
 
 #ifdef FEATURE_QTV_MAPI_STREAM_MEDIA
   m_useMAPILogic = false;
@@ -14842,8 +14006,7 @@ bool Mpeg4Player::OpenStream(KEY_DEF * pKey)
        // Prepend "file://" if the URN is not a RTSP URL and it ends with ".sdp".
        OSCL_STRING urnBuffer = videoURN.sURN->GetUrlBuffer();
 
-       if ((!videoURN.sURN->StartsWith("rtsp://") ||
-              !videoURN.sURN->StartsWith("rtspt://"))&&
+       if (!videoURN.sURN->StartsWith("rtsp://") &&
            videoURN.sURN->EndsWith(".sdp"))
        {
          urnBuffer = "file://";
@@ -15126,127 +14289,6 @@ bool Mpeg4Player::DescribeClip( Media *pVideo, int VideoFileSize,
     "Mpeg4Player::DescribeClip failed");
 
   return false;
-}
-
-/*===========================================================================
-FUNCTION
-  Mpeg4Player::LocalMediaPLaybackUpgradeTracks
-
-DESCRIPTION
-  Player is updated with new track list parameters selected.
-  This function is for local file playback.
-
-RETURN VALUE
-  None.
-
-SIDE EFFECTS
-
-===========================================================================*/
-bool Mpeg4Player::LocalMediaPLaybackUpgradeTracks(unsigned int nResult)
-{
-
-  // Update the state information in the Mpeg4Player class.
-  if(nResult != QTV_LOCAL_MEDIA_TRACK_LIST_IDENTICAL)
-  {
-    UpdateLocalClipInfo(clip.pAudioMpeg4Playback,nResult);
-    // Issue Track List Update when the track IDs are modified also.
-    Notify(QtvPlayer::QTV_PLAYER_STATUS_TRACK_LIST_UPDATE);
-  }
-  return true;
-}
-
-
-
-/* ======================================================================
-FUNCTION
-  Mpeg4Player::UpdateLocalClipInfo
-
-DESCRIPTION
- This updates  the clip info in case local file playback
-
-DEPENDENCIES
-  None.
-
-RETURN VALUE
-  None
-SIDE EFFECTS
-  None
-
-========================================================================== */
-void Mpeg4Player::UpdateLocalClipInfo(Media * pMedia,unsigned int nResult)
-{
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Mpeg4Player::UpdateLocalClipInfo" );
-
-  uint32 numTracks=0;                  /* Number of Tracks          */
-  int i;                               /* For loop index            */
-  QTV_USE_ARG1(nResult);
-
-  ReferenceCountedPointer<ITrackList> trackList;
-
-  if ((pMedia && !pMedia->GetTrackList(MakeOutPointer(trackList))) ||
-     (trackList == NULL))
-  {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
-                 "Invalid Track List ; Quitting ");
-    ASSERT(0);
-    return;
-  }
-
-  numTracks = trackList->GetNumTracksAvailable();
-
-  for (int i = 0; i < numTracks; i++)
-  {
-    if (!trackList->IsTrackSelected(i))
-    {
-      continue;
-    }
-    Media::CodecType codecType = trackList->GetCodecType(i);
-    if (Media::IsAudioCodec(codecType))
-    {
-      if (selectedAudioTrackIdx < 0)
-      {
-        selectedAudioTrackIdx = i;
-      }
-    } // if (isAudioCodec)
-    if (Media::IsVideoCodec(codecType))
-    {
-      if (selectedVideoTrackIdx < 0)
-      {
-        selectedVideoTrackIdx = i;
-      }
-    }
-    if (Media::IsTextCodec(codecType))
-    {
-      if (selectedTextTrackIdx < 0)
-      {
-        selectedTextTrackIdx = i;
-      }
-    }
-
-  } // for (int i = 0; i < numTracks; i++)
-
-
-  QCUtils::EnterCritSect(&clipInfo_CS);
-  clipInfo.info.TrackCount = numTracks;
-  for(i = 0; i < numTracks; i++)
-  {
-    clipInfo.info.TrackTypes[i] = MapMediaCodecToQtvPlayerCodec(
-    trackList->GetCodecType(i));
-  }
-  if (selectedAudioTrackIdx >= 0)
-  {
-    // get audio codec for the qtv_event_clip_started_type payload
-    qtv_event_clip_started_payload.audio_codec =
-      (uint8) trackList->GetCodecType(selectedAudioTrackIdx);
-  }
-  clipInfo.info.AudioSamplingFreq = pMedia->GetAudioSamplingFreq();
-  clipInfo.info.NumAudioChannels  = pMedia->GetNumAudioChannels();
-  QCUtils::LeaveCritSect(&clipInfo_CS);
-
-#ifdef SHOW_INFO
-  ShowClip();
-#endif /* SHOW_INFO */
-  return;
 }
 
 #ifdef FEATURE_QTV_GENERIC_BCAST
@@ -15591,17 +14633,119 @@ void Mpeg4Player::UpdateClipInfo(Media * pMedia,unsigned int nResult)
   (void)QtvPlayer::GetPlayerState(ps);
   qtv_event_clip_started_payload.start_time = ps.playbackMsec;
   qtv_event_clip_started_payload.num_layers = numDepVideoLayers;
-#ifndef FEATURE_WINCE
-
   event_report_payload(EVENT_QTV_CLIP_STARTED,
                        sizeof(qtv_event_clip_started_type),
                        &qtv_event_clip_started_payload);
-#endif   /*    FEATURE_WINCE   */
 
 #ifdef SHOW_INFO
   ShowClip();
 #endif /* SHOW_INFO */
   return;
+}
+/* ======================================================================
+FUNCTION
+  Mpeg4Player::MapMediaCodecToQtvPlayerCodec
+
+DESCRIPTION
+//
+//  This function returns the codec type which understandable by player application
+//
+
+DEPENDENCIES
+  None.
+
+RETURN VALUE
+  None
+SIDE EFFECTS
+  None
+
+========================================================================== */
+
+QtvPlayer::TrackTypeT Mpeg4Player::MapMediaCodecToQtvPlayerCodec(Media::CodecType codec)
+{
+  switch(codec)
+  {
+    case Media::EVRC_CODEC:
+      return QtvPlayer::TRACK_AUDIO_EVRC;
+
+    case Media::QCELP_CODEC:
+      return QtvPlayer::TRACK_AUDIO_QCELP;
+
+    case Media::AAC_CODEC:
+#ifdef FEATURE_QTV_BSAC
+#error code not present
+#endif /* FEATURE_QTV_BSAC */
+      return  QtvPlayer::TRACK_AUDIO_MP4A_LATM;
+
+    case Media::GSM_AMR_CODEC:
+      return  QtvPlayer::TRACK_AUDIO_AMR;
+
+#ifdef FEATURE_QTV_3GPP_AMR_WB
+#error code not present
+#endif /* FEATURE_QTV_3GPP_AMR_WB */
+
+#ifdef FEATURE_QTV_3GPP_AMR_WB_PLUS
+#error code not present
+#endif /* FEATURE_QTV_3GPP_AMR_WB_PLUS */
+
+#ifdef FEATURE_QTV_3GPP_EVRC_NB
+#error code not present
+#endif /* FEATURE_QTV_3GPP_EVRC_NB */
+
+#ifdef FEATURE_QTV_3GPP_EVRC_WB
+#error code not present
+#endif /* FEATURE_QTV_3GPP_EVRC_WB */
+
+    case Media::MPEG4_CODEC:
+      return QtvPlayer::TRACK_VIDEO_MP4V_ES;
+
+    case Media::H263_CODEC:
+      return QtvPlayer::TRACK_VIDEO_H263_2000;
+
+#ifdef FEATURE_H264_DECODER
+    case Media::H264_CODEC:
+      return  QtvPlayer::TRACK_VIDEO_H264;
+
+#endif /* FEATURE_H264_DECODER */
+    case Media::STILL_IMAGE_CODEC:
+      return QtvPlayer::TRACK_UNKNOWN;
+
+#ifdef FEATURE_QTV_OSCAR_DECODER
+#error code not present
+#endif /* FEATURE_QTV_OSCAR_DECODER */
+#ifdef FEATURE_MP4_3GPP_TIMED_TEXT
+    case Media::TIMED_TEXT_CODEC:
+      return QtvPlayer::TRACK_3GPP_TIMED_TEXT;
+#endif
+
+#ifdef FEATURE_QTV_WINDOWS_MEDIA
+    case Media::WMA_CODEC:
+      return QtvPlayer::TRACK_WM_AUDIO;
+
+
+    case Media::WMV1_CODEC:
+      return QtvPlayer::TRACK_WM1_VIDEO;
+
+    case Media::WMV2_CODEC:
+      return QtvPlayer::TRACK_WM2_VIDEO;
+
+    case Media::WMV3_CODEC:
+      return QtvPlayer::TRACK_WM3_VIDEO;
+
+#endif /* FEATURE_H264_DECODER */
+#if defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER)
+    case Media::WMA_PRO_CODEC:
+       return QtvPlayer::TRACK_WM_PRO_AUDIO;
+
+    case Media::WMA_PRO_PLUS_CODEC:
+       return QtvPlayer::TRACK_WM_PRO_PLUS_AUDIO;
+#endif /* defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER) */
+
+    case Media::UNKNOWN_CODEC:
+      /* fall thru */
+    default:
+      return QtvPlayer::TRACK_UNKNOWN;
+  } /* end of switch(codec) */
 }
 
 /* ======================================================================
@@ -16011,12 +15155,8 @@ bool Mpeg4Player::PrepAudioVideo(bool isReposSuccessful)
   *  with out exiting the QTV.
   */
 
-
-  bOkToPrep = (clip.bHasVideo && clip.pVideoMpeg4Playback
-#ifndef FEATURE_WINCE
-&& pActiveVideoPlayer && (!pActiveVideoPlayer->TrackHasEnded())
-#endif   /*    FEATURE_WINCE   */
-);
+  bOkToPrep = (clip.bHasVideo && clip.pVideoMpeg4Playback && pActiveVideoPlayer &&
+               (!pActiveVideoPlayer->TrackHasEnded()));
 
   if((clip.bHasVideo) && (playerState== PB_READY))
   {
@@ -16038,12 +15178,10 @@ bool Mpeg4Player::PrepAudioVideo(bool isReposSuccessful)
         /* Video is currently disabled; need to enable before Prep.
         ** If Enable fails Prep will too, so defer error handling to Prep.
         */
-#ifndef FEATURE_WINCE
         if (pActiveVideoPlayer)
-        {
-          pActiveVideoPlayer->Enable(bError, GetAudioCodecType());
+  {
+    pActiveVideoPlayer->Enable(bError, GetAudioCodecType());
         }
-#endif   /*    FEATURE_WINCE   */
         if (bError)
         {
           QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
@@ -16057,7 +15195,6 @@ bool Mpeg4Player::PrepAudioVideo(bool isReposSuccessful)
     }
 
     //Prep video
-#ifndef FEATURE_WINCE
     if(pActiveVideoPlayer && pActiveVideoPlayer->Prep(playbackID, clip.pVideoMpeg4Playback, bError,
                          reposControl.bRestart, GetAudioCodecType()) )
     {
@@ -16080,7 +15217,6 @@ bool Mpeg4Player::PrepAudioVideo(bool isReposSuccessful)
       bError = true;
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Video prep failed");
     }
-#endif   /*    FEATURE_WINCE   */
     frameInfo.bInfoSetSinceLastPrep = false;
   }
 
@@ -16106,11 +15242,7 @@ bool Mpeg4Player::PrepAudioVideo(bool isReposSuccessful)
   *  The only exception to this is if player is in PB_READY state or PLAYER_HTTP_PAUSE state (for HTTP Streaming only)
   *  as user can play the same clip with out exiting the QTV.
   */
-  bOkToPrep =(clip.bHasAudio
-#ifndef FEATURE_WINCE
-           && (!AudioPlayerIf::TrackHasEnded(activeAudioPlayerId))
-#endif   /*    FEATURE_WINCE   */
-  );
+  bOkToPrep =(clip.bHasAudio && (!AudioPlayerIf::TrackHasEnded(activeAudioPlayerId)));
   if((clip.bHasAudio) && ((playerState== PB_READY)
       #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
        || ( playerState== PLAYER_HTTP_PAUSE)
@@ -16119,7 +15251,6 @@ bool Mpeg4Player::PrepAudioVideo(bool isReposSuccessful)
   {
     bOkToPrep = true;
   }
-
 #ifdef FEATURE_QTV_IN_CALL_VIDEO
 #error code not present
 #endif /* FEATURE_QTV_IN_CALL_VIDEO */
@@ -16130,7 +15261,6 @@ bool Mpeg4Player::PrepAudioVideo(bool isReposSuccessful)
       )
     )
   {
-#ifndef FEATURE_WINCE
 #ifdef FEATURE_QTV_QDSP_RELEASE_RESTORE
     if ( (qtv_cfg_enable_dsp_release == TRUE ) && AudioPlayerIf::IsIdle(activeAudioPlayerId))
     {
@@ -16161,8 +15291,6 @@ bool Mpeg4Player::PrepAudioVideo(bool isReposSuccessful)
        bAudioOK = AudioPlayerIf::Prep(activeAudioPlayerId,playbackID,reposControl.bRestart,
                                   GetAudioMedia(),clip.bHasVideo,GetAudioCodecType());
     }
-#endif   /*    FEATURE_WINCE   */
-
     if (!bAudioOK)
     {
       AudioError();
@@ -16177,14 +15305,12 @@ bool Mpeg4Player::PrepAudioVideo(bool isReposSuccessful)
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
   if (clip.bHasText)
   {
-#ifndef FEATURE_WINCE
     if (!textPlayer.Prep(playbackID,reposControl.bRestart, GetTextMedia()))
     {
       TimedTextError();
       bTextOK = false;
       clip.bHasText = false;
     }
-#endif   /*    FEATURE_WINCE   */
   }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
@@ -16238,7 +15364,6 @@ bool Mpeg4Player::PrepVideo()
       bool bError;
 
       //Prep video
-#ifndef FEATURE_WINCE
       if (pActiveVideoPlayer && pActiveVideoPlayer->Prep( playbackID, clip.pVideoMpeg4Playback, bError,
                             reposControl.bRestart, GetAudioCodecType() ))
       {
@@ -16247,7 +15372,6 @@ bool Mpeg4Player::PrepVideo()
             bOK=true;
          }
       }
-#endif   /*    FEATURE_WINCE   */
    }
    if (!bOK) QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "PrepVideo Failed");
    return bOK;
@@ -16279,7 +15403,6 @@ bool Mpeg4Player::PrepAudio()
 
   if (clip.bHasAudio)
   {
-#ifndef FEATURE_WINCE
     if (!AudioPlayerIf::Prep(activeAudioPlayerId,playbackID,reposControl.bRestart,
                                   GetAudioMedia(),clip.bHasVideo,GetAudioCodecType()))
     {
@@ -16289,7 +15412,6 @@ bool Mpeg4Player::PrepAudio()
     {
       bOK=true;
     }
-#endif   /*    FEATURE_WINCE   */
   }
   if (!bOK)
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "PrepAudio Failed");
@@ -16323,7 +15445,6 @@ bool Mpeg4Player::PrepText()
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
   if (clip.bHasText)
   {
-#ifndef FEATURE_WINCE
     if (!textPlayer.Prep(playbackID,reposControl.bRestart,GetTextMedia()))
     {
       TimedTextError();
@@ -16332,7 +15453,6 @@ bool Mpeg4Player::PrepText()
     {
       bOK=true;
     }
-#endif   /*    FEATURE_WINCE   */
   }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
   if (!bOK)
@@ -16363,9 +15483,7 @@ SIDE EFFECTS
 void Mpeg4Player::AudioError()
 {
    Notify(QtvPlayer::QTV_PLAYER_STATUS_AUDIO_ERROR);
-#ifndef FEATURE_WINCE
    AudioPlayerIf::Stop(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
 }
 
 /* ======================================================================
@@ -16390,13 +15508,8 @@ SIDE EFFECTS
 void Mpeg4Player::VideoError()
 {
    bool bError;
-   if(
-#ifndef FEATURE_WINCE
-   pActiveVideoPlayer && ((VideoPlayer*)pActiveVideoPlayer)->GetLastVDECError() == VDEC_ERR_UNSUPPORTED_DIMENSIONS
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
-)
+
+   if(pActiveVideoPlayer && ((VideoPlayer*)pActiveVideoPlayer)->GetLastVDECError() == VDEC_ERR_UNSUPPORTED_DIMENSIONS)
    {
      Notify(QtvPlayer::QTV_PLAYER_STATUS_VIDEO_RESOLUTION_NOT_SUPPORTED);
    }
@@ -16404,12 +15517,10 @@ void Mpeg4Player::VideoError()
    {
      Notify(QtvPlayer::QTV_PLAYER_STATUS_VIDEO_ERROR);
    }
-#ifndef FEATURE_WINCE
    if(pActiveVideoPlayer)
    {
      pActiveVideoPlayer->Stop(bError);
    }
-#endif   /*    FEATURE_WINCE   */
 }
 
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
@@ -16436,9 +15547,7 @@ void Mpeg4Player::TimedTextError()
 {
    bool bError;
    Notify(QtvPlayer::QTV_PLAYER_STATUS_TEXT_ERROR);
-#ifndef FEATURE_WINCE
   (void)textPlayer.Stop(bError);
-#endif   /*    FEATURE_WINCE   */
 }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
@@ -16483,11 +15592,7 @@ bool Mpeg4Player::WaitForDownloadFileHeader()
   UpdateDownloadState();
   bool bWait = (downloadState.playbackTime <= 5000 && bDownloading);
 
-#ifndef FEATURE_WINCE
   return bWait;
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
 }
 
 
@@ -16578,7 +15683,6 @@ bool Mpeg4Player::StartPlaying()
    long audout = 0;
 
    GetPlayerState(ps);
-   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, " StartPlaying");
 
    if ((playerState != PB_READY) && (playerState != REPOSITIONING))
    {
@@ -16591,7 +15695,6 @@ bool Mpeg4Player::StartPlaying()
    ** it's possible to receive an incoming call, so check with concurrency
    ** manager if it is ok to play.
    */
-#ifndef FEATURE_QTV_DISABLE_CONC_MGR
    if (!qtv_conc_mgr::can_process_command(this, QTV_PLAYER_MIME_TYPE))
    {
      /* If there is a call in progress, just complain and return true.
@@ -16602,7 +15705,7 @@ bool Mpeg4Player::StartPlaying()
                   "StartPlaying issued while in a call.");
      return true;
    }
-#endif
+
    //Retrieve the start and stop times.
    long start,stop;
    if (!GetPlayTimes(start,stop))
@@ -16653,15 +15756,9 @@ bool Mpeg4Player::StartPlaying()
    *  with out exiting the QTV.
    */
    if(
-       (playerState != PB_READY)
-#ifndef FEATURE_WINCE
-        &&
+       (playerState != PB_READY) &&
        ((clip.bHasVideo && pActiveVideoPlayer && (pActiveVideoPlayer->TrackHasEnded()) && !clip.bStillImage) ||
-        (clip.bHasAudio && AudioPlayerIf::TrackHasEnded(activeAudioPlayerId)))
-#else
-#error code not present
-#endif
-          )
+        (clip.bHasAudio && AudioPlayerIf::TrackHasEnded(activeAudioPlayerId))) )
    {
      bOkToRepos = false;
      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Audio/Video track has ended, reposition failed...");
@@ -16684,12 +15781,6 @@ bool Mpeg4Player::StartPlaying()
       {
         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL,
                      "clip.pVideoMpeg4Playback->CommitDivXPlayback returned FALSE..");
-        if( clip.pVideoMpeg4Playback->GetFile()->GetFileError() == DRM_AUTHORIZATION_ERROR)
-        {
-          //Report AUTHORIZATION ERROR
-          Notify(QtvPlayer::QTV_PLAYER_DRM_AUTHORIZATION_ERROR );
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "QTV_PLAYER_DRM_AUTHORIZATION_ERROR");
-      }
         bOkToRepos = false;
       }
     }
@@ -16745,7 +15836,6 @@ bool Mpeg4Player::StartPlaying()
             {
               /* repositioning is successful, so we can call suspend to
                  flush any buffers which may have old frames */
-#ifndef FEATURE_WINCE
               if (pActiveVideoPlayer)
         {
           (void)pActiveVideoPlayer->Suspend(bError);
@@ -16764,7 +15854,6 @@ bool Mpeg4Player::StartPlaying()
               if (clip.bHasText)
               (void)textPlayer.Suspend(bError);
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-#endif   /*    FEATURE_WINCE   */
               reposition = true;
 
               /* The VideoPlayer is suspendded, We're in the REPOSITIONING state,
@@ -16773,7 +15862,6 @@ bool Mpeg4Player::StartPlaying()
               ** frame which plays. Make sure there aren't any decoded frames queued
               ** which might screw up that process!
               */
-#ifndef FEATURE_WINCE
               if (pActiveVideoPlayer)
         {
       pActiveVideoPlayer->Flush();
@@ -16784,19 +15872,16 @@ bool Mpeg4Player::StartPlaying()
         {
       pActiveVideoPlayer->SetPlayTimes(start,stop);
               }
-#endif   /*    FEATURE_WINCE   */
             }
          }
       }
       else
       {
         // if vidstart < 0
-#ifndef FEATURE_WINCE
         if (pActiveVideoPlayer)
   {
     pActiveVideoPlayer->SetPlayTimes(start,stop);
   }
-#endif   /*    FEATURE_WINCE   */
       }
    } // bHasVideo
 
@@ -16829,9 +15914,7 @@ bool Mpeg4Player::StartPlaying()
            {
              reposition = true;
              start = audout;
-#ifndef FEATURE_WINCE
              AudioPlayerIf::SetPlayTimes(activeAudioPlayerId, start, stop);
-#endif   /*    FEATURE_WINCE   */
              bReposReadError = false;
            }
            else
@@ -16846,7 +15929,6 @@ bool Mpeg4Player::StartPlaying()
                  bReposReadError = true;
              }
            }
-#ifndef FEATURE_WINCE
      if((!clip.bHasVideo) && (!bError))
            {
              /* in case it does not have video, here we call suspend to
@@ -16857,16 +15939,13 @@ bool Mpeg4Player::StartPlaying()
                (void)textPlayer.Suspend(bError);
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
            }
-#endif   /*    FEATURE_WINCE   */
          }
        }
      }
      else
      {
        start = audout;
-#ifndef FEATURE_WINCE
       AudioPlayerIf::SetPlayTimes(activeAudioPlayerId, start, stop);
-#endif   /*    FEATURE_WINCE   */
      }
    } // bHasAudio && !clip.bStillImage
 
@@ -16898,12 +15977,10 @@ bool Mpeg4Player::StartPlaying()
 
          /* in case it does not have video/audio, here we call
             suspend to flush any buffers which may have old frames */
-#ifndef FEATURE_WINCE
          if( !clip.bHasVideo && !clip.bHasAudio )
            (void)textPlayer.Suspend(bError);
 
          textPlayer.SetPlayTimes(start,stop);
-#endif   /*    FEATURE_WINCE   */
          if(
              (bError)                            &&
              (clip.pTextMpeg4Playback)           &&
@@ -16917,9 +15994,7 @@ bool Mpeg4Player::StartPlaying()
      }
      else
      {
-#ifndef FEATURE_WINCE
        textPlayer.SetPlayTimes(start,stop);
-#endif   /*    FEATURE_WINCE   */
      }
    } // bHasText
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
@@ -16946,11 +16021,9 @@ bool Mpeg4Player::StartPlaying()
       // for PAYLOAD use the "start"
       qtv_event_clip_reposition_resume.resume_time = start;
       // for PAYLOAD use the "start"
-#ifndef FEATURE_WINCE
       event_report_payload(EVENT_QTV_CLIP_REPOSITION_RESUME, // for PLAYBACK only
                            sizeof(qtv_event_clip_reposition_resume_type),
                            &qtv_event_clip_reposition_resume);
-#endif   /*    FEATURE_WINCE   */
    }
 
    /*
@@ -16975,16 +16048,11 @@ bool Mpeg4Player::StartPlaying()
      // when it first reads it -- don't set the offset here.
      if (!appControl.bDelayAudioOutput)
      {
-#ifndef FEATURE_WINCE
        m_mediaSync.SetPlaybackOffset(AVSync::AudioAV, (int) ZUtils::Clock(), start);
        m_mediaSync.SetPlaybackOffset(AVSync::VideoAV, (int) ZUtils::Clock(), start);
        m_mediaSync.SetPlaybackOffset(AVSync::TextAV, (int) ZUtils::Clock(), start);
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
      }
    }
-#ifndef FEATURE_WINCE
    else
    {
       if( (lastPlayerState == PAUSED) || (lastPlayerState == SUSPENDED) )
@@ -17004,7 +16072,6 @@ bool Mpeg4Player::StartPlaying()
          }
       }
    }
-#endif   /*    FEATURE_WINCE   */
 
 //The order of starting video followed by audio followed by text changed because
 //of change in renderer task priority. With out this fix, if text is available, video won't be displayed
@@ -17012,7 +16079,6 @@ bool Mpeg4Player::StartPlaying()
 
 //start the text, if available and track has not ended
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
-#ifndef FEATURE_WINCE
    if (clip.bHasText)
    {
       if (textPlayer.Start(bError, reposControl.bRestart))
@@ -17026,36 +16092,18 @@ bool Mpeg4Player::StartPlaying()
          }
       }
    }
-#endif   /*    FEATURE_WINCE   */
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-/*
-   * For some clips, there is some delay when starting the actual audio playback. Begining of audio playback is indicated
-   * when first AV SYNC feedback arrives from DSP.
-   * However, this delay might cause momentary video freeze as video would have played
-   * frames worth more than 250 milliseconds(our lip-sync video size).
-   * Thus give some time for audio before starting video.
-   */
-
-   //if ((playerState == PB_READY)&& clip.bHasAudio && clip.bHasVideo)
-   //{
-   //  zrex_sleep(AUDIO_DELAY_DURATION);
-   //}
 
    //Start the video,if available and track has not ended
-   if (clip.bHasVideo
-#ifndef FEATURE_WINCE
-&& pActiveVideoPlayer && !(pActiveVideoPlayer->TrackHasEnded())
-#endif   /*    FEATURE_WINCE   */
-)
+   if (clip.bHasVideo && pActiveVideoPlayer && !(pActiveVideoPlayer->TrackHasEnded()))
    {
        appControl.bReceivedFirstFrame = false;
-#ifndef FEATURE_WINCE
+
 #ifdef FEATURE_MP4_DEBUG_AV_TICK
 #error code not present
 #else
       if (pActiveVideoPlayer && pActiveVideoPlayer->Start(bError, reposControl.bRestart))
 #endif /* FEATURE_MP4_DEBUG_AV_TICK */
-#endif   /*    FEATURE_WINCE   */
       {
          if (bError)
          {
@@ -17068,20 +16116,14 @@ bool Mpeg4Player::StartPlaying()
    }
 
    //start the audio,if available and track has not ended
-   if (clip.bHasAudio
-#ifndef FEATURE_WINCE
-        && (!AudioPlayerIf::TrackHasEnded(activeAudioPlayerId))
-#endif   /*    FEATURE_WINCE   */
-        )
+   if (clip.bHasAudio && (!AudioPlayerIf::TrackHasEnded(activeAudioPlayerId)) )
    {
       if (StartAudio())
       {
-#ifndef FEATURE_WINCE
           if (reposition)
           {
              AudioPlayerIf::SetTSfromBytes(activeAudioPlayerId, audout);
           }
-#endif   /*    FEATURE_WINCE   */
           bStarted = true;
       }
    }
@@ -17117,7 +16159,6 @@ bool Mpeg4Player::StartPlaying()
       {
          Notify(BUFFERING);
       }
-      #ifdef FEATURE_QTV_GENERIC_BCAST
       // Execute the Queued up Mute Commands
       if(clip.bmQueuedMute)
       {
@@ -17137,7 +16178,6 @@ bool Mpeg4Player::StartPlaying()
         }
         clip.bmQueuedMute = 0;
       }
-      #endif
       return true;
    }
 
@@ -17239,7 +16279,6 @@ bool Mpeg4Player::RestartActiveClip()
             }
             else
 #endif /* FEATURE_QTV_QDSP_RELEASE_RESTORE */
-#ifndef FEATURE_WINCE
             if (AudioPlayerIf::Pause(activeAudioPlayerId))
             {
                bAudioPaused=true;
@@ -17247,13 +16286,9 @@ bool Mpeg4Player::RestartActiveClip()
 #ifdef FEATURE_QTV_IN_CALL_VIDEO
 #error code not present
 #endif /* FEATURE_QTV_IN_CALL_VIDEO */
-#else //#ifndef FEATURE_WINCE
-#error code not present
-#endif   /*    FEATURE_WINCE   */
          }
          if (clip.bHasVideo)
          {
-#ifndef FEATURE_WINCE
             if (pActiveVideoPlayer && pActiveVideoPlayer->Pause(bError))
             {
                if (bError)
@@ -17265,14 +16300,10 @@ bool Mpeg4Player::RestartActiveClip()
                  bVideoPaused=true;
                }
             }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
          }
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
          if (clip.bHasText)
          {
-#ifndef FEATURE_WINCE
             if (textPlayer.Pause(bError))
             {
                if (bError)
@@ -17284,9 +16315,6 @@ bool Mpeg4Player::RestartActiveClip()
                bTextPaused=true;
                }
             }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
          }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
         /* If any one of the audio or video failed to pause then resume and return */
@@ -17417,14 +16445,12 @@ bool Mpeg4Player::ResumePlay()
   if (!qtv_cfg_enable_dsp_release)
 #endif /* FEATURE_QTV_QDSP_RELEASE_RESTORE */
   {
-#ifndef FEATURE_WINCE
      if(IsDone())
      {
        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Mpeg4Player::ResumePlay called when media is done.." );
        DonePlaying(false,false);
        return true;
      }
-#endif   /*    FEATURE_WINCE   */
   }
 
   if( playerState!=PAUSED && playerState!=REPOSITIONING
@@ -17473,27 +16499,18 @@ bool Mpeg4Player::ResumePlay()
   {
     /* now synchronize audio and text with video */
     long PlayTime = 0;
-     long AudioPlayTime = 0;
-    /* now synchronize audio and text with video */
-
-#ifndef FEATURE_WINCE
     if (pActiveVideoPlayer)
     {
       PlayTime = pActiveVideoPlayer->GetElapsedTime();
     }
-    AudioPlayTime = PlayTime;
-#endif   /*    FEATURE_WINCE   */
+    long AudioPlayTime = PlayTime;
 
     /*
      * Make sure audio track has not ended otherwise, doing audioPlayer::Prep will throw an
      * AUDIO_ERROR which will abort the playback.
      */
 
-    if(clip.bHasAudio
-#ifndef FEATURE_WINCE
-        && (!AudioPlayerIf::IsDone(activeAudioPlayerId))
-#endif   /*    FEATURE_WINCE   */
-        )
+    if(clip.bHasAudio && (!AudioPlayerIf::IsDone(activeAudioPlayerId)))
     {
       if (clip.pAudioMpeg4Playback )
       {
@@ -17506,13 +16523,9 @@ bool Mpeg4Player::ResumePlay()
 
       if(!bError)
       {
-#ifndef FEATURE_WINCE
         AudioPlayerIf::SetPlayTimes(activeAudioPlayerId, AudioPlayTime, stop);
         /* this will flush audio buffered in CMX */
         bError = AudioPlayerIf::Suspend(activeAudioPlayerId);
-        /* update audio TS value to current position when resuming */
-        AudioPlayerIf::SetTSfromBytes(activeAudioPlayerId,AudioPlayTime);
-#endif   /*    FEATURE_WINCE   */
       }
     }
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
@@ -17525,10 +16538,9 @@ bool Mpeg4Player::ResumePlay()
       {
         (void)txtMedia->SetTextPosition(PlayTime, lBError,ps.textPlaybackMsec);
       }
-#ifndef FEATURE_WINCE
+
       textPlayer.SetPlayTimes(PlayTime, stop);
       (void)textPlayer.Suspend(lBError);
-#endif   /*    FEATURE_WINCE   */
     }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
@@ -17536,11 +16548,7 @@ bool Mpeg4Player::ResumePlay()
      * Should not do Prep for audio if the track has already ended, otherwise,
      * AUDIO_ERROR will be reported which will abort the playback.
      */
-     if(clip.bHasAudio
-#ifndef FEATURE_WINCE
-          && (AudioPlayerIf::IsDone(activeAudioPlayerId))
-#endif
-          )
+     if(clip.bHasAudio && (AudioPlayerIf::IsDone(activeAudioPlayerId)))
      {
        //Do prep for video and text,if available,individually as audio track has ended.
        if (clip.bHasVideo)
@@ -17569,8 +16577,8 @@ bool Mpeg4Player::ResumePlay()
 
   //resume video followed by audio.
   //resuming audio before video causes loss of AV SYNC when playing WMV from MMC.
-#ifndef FEATURE_WINCE
-  if (clip.bHasVideo && !clip.bStillImage) //If video has ended and audio still exists, enable video so that we can pause/resume
+
+  if (clip.bHasVideo && !clip.bStillImage)
   {
     if (playerState == SUSPENDED)
     {
@@ -17806,9 +16814,6 @@ bool Mpeg4Player::ResumePlay()
     }
   }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
 
 #ifdef FEATURE_QTV_QDSP_RELEASE_RESTORE
   /* State of Qtv and its DSP has been restored */
@@ -17827,7 +16832,7 @@ bool Mpeg4Player::ResumePlay()
   {
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Mpeg4Player::ResumeClip failed");
   }
-  prevAudioConcState = AUDIO_NOT_CONCURRENT;
+
   return bResumed;
 }
 
@@ -17853,19 +16858,11 @@ void Mpeg4Player::UpdateStopTime(long stop)
 {
    if (clip.bHasAudio)
    {
-#ifndef FEATURE_WINCE
     AudioPlayerIf::SetPlayTimes(activeAudioPlayerId, -1, stop);
-#endif   /*    FEATURE_WINCE   */
    }
-   if (clip.bHasVideo
-#ifndef FEATURE_WINCE
-       && pActiveVideoPlayer
-#endif   /*    FEATURE_WINCE   */
-)
+   if (clip.bHasVideo && pActiveVideoPlayer)
    {
-#ifndef FEATURE_WINCE
       pActiveVideoPlayer->SetPlayTimes(-1,stop);
-#endif   /*    FEATURE_WINCE   */
    }
 }
 
@@ -17893,17 +16890,10 @@ bool Mpeg4Player::PlayClip(const PV_PLAY_CLIP_type * pEvent)
 {
    ASSERT( pEvent );
 
-  bool bOK = false;
-  bOK = PlayClip(pEvent->startTime, pEvent->stopTime,pEvent->switchURN, pEvent->pbSpeed);
-
-  if (pEvent->switchURN != NULL)
-  {
-    QTV_Delete(pEvent->switchURN);
-  }
-  return bOK;
+   return PlayClip(pEvent->startTime, pEvent->stopTime, pEvent->pbSpeed);
 }
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
 /* ======================================================================
 FUNCTION
   Mpeg4Player::SkipClip
@@ -17952,7 +16942,6 @@ bool Mpeg4Player::SkipClip(const QTV_SKIP_CLIP_type *pEvent)
 
    // Skip clip can result in playing of audio or video, so query the
    // concurrency manager.
-#ifndef FEATURE_QTV_DISABLE_CONC_MGR
    if (qtv_conc_mgr::can_process_command(this, QTV_PLAYER_MIME_TYPE))
    {
      UpdateAudioConcState();
@@ -17971,7 +16960,7 @@ bool Mpeg4Player::SkipClip(const QTV_SKIP_CLIP_type *pEvent)
      Notify(QtvPlayer::QTV_PLAYER_STATUS_PLAY_NOT_SUPPORTED);
      return false;
    }
-#endif //#ifndef FEATURE_QTV_DISABLE_CONC_MGR
+
    //Take actions.
    long start = -1;
    long stop = -1;
@@ -18014,30 +17003,21 @@ bool Mpeg4Player::SkipClip(const QTV_SKIP_CLIP_type *pEvent)
    qtv_event_clip_repositioning_payload.current_time = 0;
    //get elapsed time.
    unsigned long mediaElapsedTime =0;
-   if (clip.bHasVideo
-#ifndef FEATURE_WINCE
-       && pActiveVideoPlayer
-#endif   /*    FEATURE_WINCE   */
-)
+   if (clip.bHasVideo && pActiveVideoPlayer)
    {
-#ifndef FEATURE_WINCE
      mediaElapsedTime = pActiveVideoPlayer->GetElapsedTime();
-#endif   /*    FEATURE_WINCE   */
      qtv_event_clip_repositioning_payload.current_time = ZMAX(qtv_event_clip_repositioning_payload.current_time,mediaElapsedTime);
    }
 
    if (clip.bHasAudio)
    {
-#ifndef FEATURE_WINCE
      mediaElapsedTime =  AudioPlayerIf::GetElapsedTime(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
      qtv_event_clip_repositioning_payload.current_time = ZMAX(qtv_event_clip_repositioning_payload.current_time,mediaElapsedTime);
    }
-#ifndef FEATURE_WINCE
+
    event_report_payload(EVENT_QTV_CLIP_REPOSITIONING,
                         sizeof(qtv_event_clip_repositioning_type),
                         &qtv_event_clip_repositioning_payload);
-#endif   /*    FEATURE_WINCE   */
 
    //Set restart time.
 #ifdef FEATURE_QTV_PSEUDO_STREAM
@@ -18123,16 +17103,15 @@ bool Mpeg4Player::RestartActiveClip(int32 skipNumber)
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Weird state in RestartActiveClip");
       return false;
    }
-#ifndef FEATURE_WINCE
+
    /* don't do repositioning if any of the tracks has ended */
    if( (clip.bHasAudio && AudioPlayerIf::TrackHasEnded(activeAudioPlayerId)) ||
        (clip.bHasVideo && pActiveVideoPlayer && (pActiveVideoPlayer->TrackHasEnded() && !clip.bStillImage)) )
    {
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Track ended. Repositioning failed.");
-      Notify(QtvPlayer::QTV_PLAYER_STATUS_SEEK_FAILED);
       return true;
    }
-#endif   /*    FEATURE_WINCE   */
+
    //Get the new play times.
    long start,stop;
    if (!GetPlayTimes(start,stop))
@@ -18152,16 +17131,13 @@ bool Mpeg4Player::RestartActiveClip(int32 skipNumber)
          bSuspended=false;
          if (clip.bHasAudio)
          {
-#ifndef FEATURE_WINCE
             if (AudioPlayerIf::Pause(activeAudioPlayerId))
                {
                   bSuspended=true;
                }
-#endif   /*    FEATURE_WINCE   */
             }
          if (clip.bHasVideo)
          {
-#ifndef FEATURE_WINCE
             if (pActiveVideoPlayer && pActiveVideoPlayer->Pause(bError))
             {
                if (bError)
@@ -18172,12 +17148,10 @@ bool Mpeg4Player::RestartActiveClip(int32 skipNumber)
                   bSuspended=true;
                }
             }
-#endif   /*    FEATURE_WINCE   */
          }
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
          if (clip.bHasText)
          {
-#ifndef FEATURE_WINCE
             if (textPlayer.Pause(bError))
             {
                if (bError)
@@ -18188,7 +17162,6 @@ bool Mpeg4Player::RestartActiveClip(int32 skipNumber)
                   bSuspended=true;
                }
             }
-#endif   /*    FEATURE_WINCE   */
          }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
@@ -18291,7 +17264,6 @@ bool Mpeg4Player::RepositionAccessPoint(int32 skipNumber)
         {
           /* repositioning is successful, so we can call suspend to
              flush any buffers which may have old frames */
-#ifndef FEATURE_WINCE
           if (pActiveVideoPlayer)
           {
             (void)pActiveVideoPlayer->Suspend(bError);
@@ -18304,7 +17276,6 @@ bool Mpeg4Player::RepositionAccessPoint(int32 skipNumber)
           if(clip.bHasText)
             (void)textPlayer.Suspend(bError);
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-#endif   /*    FEATURE_WINCE   */
           reposition = true;
           /* The VideoPlayer is suspendded, We're in the REPOSITIONING state,
           ** and we're about to clear the playback offset, which will cause
@@ -18312,7 +17283,6 @@ bool Mpeg4Player::RepositionAccessPoint(int32 skipNumber)
           ** frame which plays. Make sure there aren't any decoded frames queued
           ** which might screw up that process!
           */
-#ifndef FEATURE_WINCE
           if (pActiveVideoPlayer)
           {
             pActiveVideoPlayer->Flush();
@@ -18323,7 +17293,6 @@ bool Mpeg4Player::RepositionAccessPoint(int32 skipNumber)
     {
        pActiveVideoPlayer->SetPlayTimes(start,stop);
           }
-#endif   /*    FEATURE_WINCE   */
         }
       }
    } // bHasVideo
@@ -18349,23 +17318,17 @@ bool Mpeg4Player::RepositionAccessPoint(int32 skipNumber)
           {
             /* in case it does not have video, here we call suspend to
                flush any buffers which may have old frames */
-#ifndef FEATURE_WINCE
             bError = AudioPlayerIf::Suspend(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
-#ifndef FEATURE_WINCE
             if(clip.bHasText)
               (void)textPlayer.Suspend(bError);
-#endif   /*    FEATURE_WINCE   */
           }
           if(!bError)
           {
             start = audout;
             if(!clip.bHasVideo)
               SetPlayTimes(start,stop,true);
-#ifndef FEATURE_WINCE
             AudioPlayerIf::SetPlayTimes(activeAudioPlayerId, start, stop);
-#endif   /*    FEATURE_WINCE   */
           }
           else
           {
@@ -18392,12 +17355,10 @@ bool Mpeg4Player::RepositionAccessPoint(int32 skipNumber)
 
         /* in case it does not have video/audio, here we call
            suspend to flush any buffers which may have old frames */
-#ifndef FEATURE_WINCE
         if( !clip.bHasVideo && !clip.bHasAudio )
            (void)textPlayer.Suspend(lBError);
 
         textPlayer.SetPlayTimes(textout,stop);
-#endif   /*    FEATURE_WINCE   */
       }
    } // bHasText
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
@@ -18421,11 +17382,9 @@ bool Mpeg4Player::RepositionAccessPoint(int32 skipNumber)
       // for PAYLOAD use the "start"
       qtv_event_clip_reposition_resume.resume_time = start;
       // for PAYLOAD use the "start"
-#ifndef FEATURE_WINCE
       event_report_payload(EVENT_QTV_CLIP_REPOSITION_RESUME, // for PLAYBACK only
                            sizeof(qtv_event_clip_reposition_resume_type),
                            &qtv_event_clip_reposition_resume);
-#endif   /*    FEATURE_WINCE   */
    }
 
    if(reposition)
@@ -18436,13 +17395,9 @@ bool Mpeg4Player::RepositionAccessPoint(int32 skipNumber)
      m_mediaSync.ResetPlaybackOffset(AVSync::TextAV);
 
    //First set the new AV sync offset.
-#ifndef FEATURE_WINCE
    m_mediaSync.SetPlaybackOffset(AVSync::AudioAV, (int)ZUtils::Clock(), start);
    m_mediaSync.SetPlaybackOffset(AVSync::VideoAV, (int)ZUtils::Clock(), start);
    m_mediaSync.SetPlaybackOffset(AVSync::TextAV, (int)ZUtils::Clock(), start);
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
    }
 
 
@@ -18450,7 +17405,6 @@ bool Mpeg4Player::RepositionAccessPoint(int32 skipNumber)
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
    if (clip.bHasText)
    {
-#ifndef FEATURE_WINCE
       if (textPlayer.Start(bError, reposControl.bRestart))
       {
          if (bError)
@@ -18461,7 +17415,6 @@ bool Mpeg4Player::RepositionAccessPoint(int32 skipNumber)
             bStarted = true;
          }
       }
-#endif   /*    FEATURE_WINCE   */
    }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
@@ -18470,13 +17423,11 @@ bool Mpeg4Player::RepositionAccessPoint(int32 skipNumber)
 
    if (clip.bHasVideo && pActiveVideoPlayer)
    {
-#ifndef FEATURE_WINCE
 #ifdef FEATURE_MP4_DEBUG_AV_TICK
 #error code not present
 #else
       if (pActiveVideoPlayer->Start(bError, reposControl.bRestart))
 #endif /* FEATURE_MP4_DEBUG_AV_TICK */
-#endif   /*    FEATURE_WINCE   */
       {
          if (bError)
          {
@@ -18520,7 +17471,7 @@ bool Mpeg4Player::RepositionAccessPoint(int32 skipNumber)
    return false;
 }
 
-#endif /*FEATURE_FILE_FRAGMENTATION*/
+#endif /*FEATURE_QTV_RANDOM_ACCESS_REPOS*/
 
 #ifdef FEATURE_QTV_PLAYLIST
 bool Mpeg4Player::Skip(const QTV_SKIP_type *pEvent)
@@ -18538,11 +17489,9 @@ bool Mpeg4Player::Skip(const char *playlistName, int32 clipIndex,
 #ifdef FEATURE_QTV_SERVER_SIDE_PLAYLIST
   State stateBeforeSkip = playerState;
 
-#ifndef FEATURE_WINCE
   QTV_MSG_PRIO5(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Mpeg4Player::Skip, state = %d, "
                 "clipIndex = %d, rel = %d, offset = %d, when = %d",
                 stateBeforeSkip, clipIndex, isClipIndexRelative ? 1 : 0, offset, when);
-#endif   /*    FEATURE_WINCE   */
 
   reposControl.reposType = 1;
 
@@ -19132,9 +18081,6 @@ bool Mpeg4Player::Stop(PV_STOP_type *pEvent)
    {
       case IDLE:
          //ignore
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif
          break;
       case CONNECTING:
          //could be either download or streaming connect.
@@ -19150,13 +18096,10 @@ bool Mpeg4Player::Stop(PV_STOP_type *pEvent)
    }
    if (bActive)
    {
-#ifndef FEATURE_WINCE
       if (HasVideo() && pActiveVideoPlayer)
       {
         pActiveVideoPlayer->StopVideoOutput();
       }
-#endif   /*    FEATURE_WINCE   */
-
       bool bError;
       StopPlayer(bError);
 /* Instead of deleting the Media Object through StopPlayer, Initialize the Playback data */
@@ -19217,23 +18160,15 @@ bool Mpeg4Player::PauseMedia()
 
   if (clip.bHasAudio)
   {
-#ifndef FEATURE_WINCE
     if (!AudioPlayerIf::Pause(activeAudioPlayerId))
     {
       bError = true;
       AudioError();
     }
-#endif   /*    FEATURE_WINCE   */
   }
   if (clip.bHasVideo)
   {
-    if (
-#ifndef FEATURE_WINCE
-        pActiveVideoPlayer && pActiveVideoPlayer->Pause(bError)
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
-    )
+    if (pActiveVideoPlayer && pActiveVideoPlayer->Pause(bError))
     {
       if (bError)
       {
@@ -19245,7 +18180,6 @@ bool Mpeg4Player::PauseMedia()
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
   if (clip.bHasText)
   {
-#ifndef FEATURE_WINCE
     if (textPlayer.Pause(bError))
     {
       if (bError)
@@ -19253,7 +18187,6 @@ bool Mpeg4Player::PauseMedia()
         TimedTextError();
       }
     }
-#endif   /*    FEATURE_WINCE   */
   }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
@@ -19288,12 +18221,6 @@ bool Mpeg4Player::Pause(PV_PAUSE_type *)
 
    bool bStreamPaused = false;
    bool bError = false;
-
-   if (clip.bStreaming && streamer && streamer->isReconnectionInProgress())
-   {
-     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
-                  "Pause issued while reconnection in progress");
-   }
 
    // If we are in repositioning, that means were were waiting for
    // STREAM_START before calling StartPlaying(). Do that now so
@@ -19401,17 +18328,14 @@ bool Mpeg4Player::Pause(PV_PAUSE_type *)
             /* Get the current audio timestamp and store it in lastAudioPosition
             ** so that we can resume audio at the correct position.
             */
-#ifndef FEATURE_WINCE
             lastAudioPosition = AudioPlayerIf::GetElapsedTime(activeAudioPlayerId);
             bError = AudioPlayerIf::Stop(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
           }
           if (clip.bHasVideo)
           {
 #ifdef FEATURE_QTV_QOS_SELECTION
 #error code not present
 #endif /*  FEATURE_QTV_QOS_SELECTION */
-#ifndef FEATURE_WINCE
             if (pActiveVideoPlayer)
             {
               pActiveVideoPlayer->Release(bError);
@@ -19423,7 +18347,6 @@ bool Mpeg4Player::Pause(PV_PAUSE_type *)
 #endif /*  FEATURE_QTV_QOS_SELECTION */
                VideoError();
             }
-#endif   /*    FEATURE_WINCE   */
           }
           else
           {
@@ -19529,26 +18452,19 @@ bool Mpeg4Player::Pause(PV_PAUSE_type *)
 #ifdef FEATURE_QTV_QDSP_RELEASE_RESTORE
                if (qtv_cfg_enable_dsp_release)
          {
-#ifndef FEATURE_WINCE
                  lastAudioPosition = AudioPlayerIf::GetElapsedTime(activeAudioPlayerId);
                  bError = AudioPlayerIf::Stop(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
          bPaused=true;
          }
          else
 #endif /* FEATURE_QTV_QDSP_RELEASE_RESTORE */
-#ifndef FEATURE_WINCE
               if (AudioPlayerIf::Pause(activeAudioPlayerId))
                   {
                      bPaused=true;
                   }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
                }
             if (clip.bHasVideo)
             {
-#ifndef FEATURE_WINCE
                if (pActiveVideoPlayer && pActiveVideoPlayer->Pause(bError))
                {
                   if (bError)
@@ -19559,16 +18475,12 @@ bool Mpeg4Player::Pause(PV_PAUSE_type *)
                      bPaused=true;
                   }
                }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
 #ifdef FEATURE_QTV_QDSP_RELEASE_RESTORE
                if (qtv_cfg_enable_dsp_release)
                {
 #ifdef FEATURE_QTV_QOS_SELECTION
 #error code not present
 #endif /*  FEATURE_QTV_QOS_SELECTION */
-#ifndef FEATURE_WINCE
                   if (pActiveVideoPlayer)
                   {
                     pActiveVideoPlayer->Release(bError);
@@ -19580,7 +18492,6 @@ bool Mpeg4Player::Pause(PV_PAUSE_type *)
 #endif /* FEATURE_QTV_QOS_SELECTION */
                      VideoError();
                   }
-#endif   /*    FEATURE_WINCE   */
                }
 #endif /* FEATURE_QTV_QDSP_RELEASE_RESTORE */
             } /* if (clip.bHasVideo) */
@@ -19603,7 +18514,6 @@ bool Mpeg4Player::Pause(PV_PAUSE_type *)
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
          if (clip.bHasText)
          {
-#ifndef FEATURE_WINCE
             if (textPlayer.Pause(bError))
             {
                if (bError)
@@ -19614,9 +18524,6 @@ bool Mpeg4Player::Pause(PV_PAUSE_type *)
                   bPaused=true;
                }
             }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
          }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
@@ -19646,33 +18553,24 @@ bool Mpeg4Player::Pause(PV_PAUSE_type *)
 
       //get elapsed time since beginning of clip.
     unsigned long temp_var=0;
-      if (clip.bHasVideo
-#ifndef FEATURE_WINCE
-          && pActiveVideoPlayer
-#endif   /*    FEATURE_WINCE   */
-)
+      if (clip.bHasVideo && pActiveVideoPlayer)
       {
-#ifndef FEATURE_WINCE
          temp_var=(unsigned long)pActiveVideoPlayer->GetElapsedTime();
-#endif   /*    FEATURE_WINCE   */
          qtv_event_clip_pause_payload.current_time =
          ZMAX(qtv_event_clip_pause_payload.current_time, temp_var);
       }
 
       if (clip.bHasAudio)
       {
-#ifndef FEATURE_WINCE
       temp_var=(unsigned long)AudioPlayerIf::GetElapsedTime(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
          qtv_event_clip_pause_payload.current_time =
          ZMAX(qtv_event_clip_pause_payload.current_time,
         temp_var);
       }
-#ifndef FEATURE_WINCE
+
       event_report_payload(EVENT_QTV_CLIP_PAUSE,
                            sizeof(qtv_event_clip_pause_type),
                            &qtv_event_clip_pause_payload);
-#endif   /*    FEATURE_WINCE   */
       /* Reset the resume pending flag, this is to handle the case when mpeg4player about to resume and
       "PAUSE" from app is recieved */
       appControl.bResumePending = FALSE;
@@ -19718,26 +18616,6 @@ bool Mpeg4Player::Suspend(QTV_SUSPEND_type *pEvent)
   bool bTextPaused = false;
   bool bStreamPaused;
   bool bError;
-
-#ifdef FEATURE_WINCE
-#error code not present
-#endif   /*    FEATURE_WINCE   */
-
-  if (clip.bStreaming && streamer && streamer->isReconnectionInProgress())
-  {
-    if (!pEvent->bSuspendIsExternal)
-    {
-      //we have reconnection in progress, we need to stop player instead of suspnd
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
-                  "Stopping player for suspend(internal due to incoming call),reconnection in progress");
-      return Stop(NULL);
-    }
-    else
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
-                  "suspend(external) issued while reconnection in progress");
-    }
-  }
 
   switch (playerState)
   {
@@ -19812,14 +18690,12 @@ bool Mpeg4Player::Suspend(QTV_SUSPEND_type *pEvent)
       /* If clip has audio, store elapsed time and disable audio. */
       if (clip.bHasAudio)
       {
-#ifndef FEATURE_WINCE
         audioPositionWhenSuspended = AudioPlayerIf::GetElapsedTime(activeAudioPlayerId);
 
         if (AudioPlayerIf::Disable(activeAudioPlayerId))
         {
           bAudioDisabled = true;
         }
-#endif   /*    FEATURE_WINCE   */
       }
       else
       {
@@ -19827,15 +18703,9 @@ bool Mpeg4Player::Suspend(QTV_SUSPEND_type *pEvent)
       } /* end if clip.bHasAudio */
 
       /* If clip has video, disable video (it is already paused). */
-      if (clip.bHasVideo
-#ifndef FEATURE_WINCE
-          && pActiveVideoPlayer
-#endif   /*    FEATURE_WINCE   */
-      )
+      if (clip.bHasVideo && pActiveVideoPlayer)
       {
-#ifndef FEATURE_WINCE
         pActiveVideoPlayer->Disable(bError);
-#endif   /*    FEATURE_WINCE   */
         if (bError)
         {
           VideoError();
@@ -19856,13 +18726,8 @@ bool Mpeg4Player::Suspend(QTV_SUSPEND_type *pEvent)
       * If clip has text and text track has not done playing,
       * pause the text track
       */
-      if( (clip.bHasText)
-#ifndef FEATURE_WINCE
-            &&(!textPlayer.IsDone())
-#endif   /*    FEATURE_WINCE   */
-            )
+      if( (clip.bHasText)&&(!textPlayer.IsDone()) )
       {
-#ifndef FEATURE_WINCE
         if (textPlayer.Pause(bError))
         {
           if (bError)
@@ -19874,9 +18739,6 @@ bool Mpeg4Player::Suspend(QTV_SUSPEND_type *pEvent)
             bTextPaused = true;
           }
         }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
       }
       else
       {
@@ -19930,6 +18792,11 @@ bool Mpeg4Player::Suspend(QTV_SUSPEND_type *pEvent)
           /* If the stream is cannot be repositioned it is the pure live case,
           ** there is no TSB. Do not allow pause.
           */
+          if(pEvent->bSuspendIsExternal == false)
+          {
+            /* This is internal suspend (for incall), we must stop sothat incall goes through */
+            (void)Stop(NULL);
+          }
           return false;
         }
       }
@@ -19959,44 +18826,31 @@ bool Mpeg4Player::Suspend(QTV_SUSPEND_type *pEvent)
         /* If clip has audio, store elapsed time and disable audio. */
         if (clip.bHasAudio)
         {
-#ifndef FEATURE_WINCE
           audioPositionWhenSuspended = AudioPlayerIf::GetElapsedTime(activeAudioPlayerId);
 
           if (AudioPlayerIf::Disable(activeAudioPlayerId))
           {
             bAudioDisabled = true;
           }
-#else
-#error code not present
-#endif /*    FEATURE_WINCE   */
         }
         else
         {
           bAudioDisabled = true;
         } /* end if clip.bHasAudio */
 
-
         /* If clip has video, pause then disable video. */
-        if (clip.bHasVideo )
+        if (clip.bHasVideo && pActiveVideoPlayer)
         {
-#ifndef FEATURE_WINCE
-       if (pActiveVideoPlayer)
-       {
-               pActiveVideoPlayer->Disable(bError);
-               if (bError)
-               {
-                 VideoError();
-               }
-               else
-               {
-                 bVideoDisabled = true;
-               }
+          pActiveVideoPlayer->Disable(bError);
+          if (bError)
+          {
+            VideoError();
           }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
+          else
+          {
+            bVideoDisabled = true;
+          }
         }
-
         else
         {
           /* No video. */
@@ -20008,13 +18862,8 @@ bool Mpeg4Player::Suspend(QTV_SUSPEND_type *pEvent)
         * If clip has text and text track has not done playing,
         * pause the text track
         */
-        if( (clip.bHasText)
-#ifndef FEATURE_WINCE
-               &&(!textPlayer.IsDone())
-#endif   /*    FEATURE_WINCE   */
-               )
+        if( (clip.bHasText)&&(!textPlayer.IsDone()) )
         {
-#ifndef FEATURE_WINCE
           if (textPlayer.Pause(bError))
           {
             if (bError)
@@ -20026,9 +18875,6 @@ bool Mpeg4Player::Suspend(QTV_SUSPEND_type *pEvent)
               bTextPaused = true;
             }
           }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
         }
         else
         {
@@ -20071,7 +18917,7 @@ bool Mpeg4Player::Suspend(QTV_SUSPEND_type *pEvent)
   }
   else // If suspend is ignored
   {
-    if((playerState == IDLE)&&(pEvent->bSuspendIsExternal == true))
+    if(((playerState == IDLE) || (playerState == PB_READY))&&(pEvent->bSuspendIsExternal == true))
     {
       bIgnore = false ;
       /* The external pause has come in the wrong state
@@ -20141,23 +18987,14 @@ bool Mpeg4Player::Resume(QTV_RESUME_type *pEvent)
       Notify(QtvPlayer::QTV_PLAYER_STATUS_PAUSED);
     bResumed = true;
   }
-  } /*If IDLE send IDLE Status notification to application*/
-  else if (playerState == IDLE)
+  } /*Either IDLE or PB_READY send IDLE notification to application*/
+  else if ((playerState == IDLE) || (playerState == PB_READY))
   {
     /* Notify idle, so that app knows Qtv is no longer suspended */
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
                  "Resume: App not suspended, player is IDLE");
 
     Notify(QtvPlayer::QTV_PLAYER_STATUS_IDLE);
-    bResumed = true;
-  }
-  else if (playerState == PB_READY)
-  {
-    /* Notify PB READY, so that app knows Qtv is no longer suspended */
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
-                 "Resume: App not suspended, player is in PB_READY");
-
-    Notify(QtvPlayer::QTV_PLAYER_STATUS_PLAYBACK_READY);
     bResumed = true;
   }
   else
@@ -20193,7 +19030,7 @@ SIDE EFFECTS
 ========================================================================== */
 bool Mpeg4Player::FreezePlayer(unsigned int nResult)
 {
-#ifndef FEATURE_WINCE
+
   if(nResult & QTV_MEDIA_TRACK_LIST_AUDIO_RESET)
   {
     // Audio DSP is put to sleep independent of audio mute
@@ -20246,7 +19083,7 @@ bool Mpeg4Player::FreezePlayer(unsigned int nResult)
     }
   }
 
-#endif   /*    FEATURE_WINCE   */
+
   return true;
 }
 
@@ -20291,9 +19128,7 @@ bool Mpeg4Player::AudioMediaReposition(unsigned int  nResult,
         return false;
       }
     }
-#ifndef FEATURE_WINCE
     AudioPlayerIf::SetPlayTimes(activeAudioPlayerId,start,stop);
-#endif   /*    FEATURE_WINCE   */
 
     QTV_MSG_PRIO(QTVDIAG_GENERAL,
                  QTVDIAG_PRIO_HIGH,
@@ -20302,11 +19137,7 @@ bool Mpeg4Player::AudioMediaReposition(unsigned int  nResult,
     // Just to avoid the audio mute scenario we check the audio component flag here.
     if(clip.bHasAudio)
     {
-#ifndef FEATURE_WINCE
       m_mediaSync.SetPlaybackOffset(AVSync::AudioAV, (int)ZUtils::Clock(), start);
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
       QTV_MSG_PRIO1(QTVDIAG_GENERAL,QTVDIAG_PRIO_HIGH,
                     "Audio Player to be resumed but updated the OFFSET for TS %ld",
                     start);
@@ -20341,7 +19172,6 @@ bool Mpeg4Player::AudioMediaPrep(unsigned int nResult)
      (nResult & QTV_MEDIA_TRACK_LIST_AUDIO_RESET))
   {
     //Prep the audio player.
-#ifndef FEATURE_WINCE
     bRet = AudioPlayerIf::Prep(activeAudioPlayerId,playbackID,false,
                                GetAudioMedia(),clip.bHasVideo,GetAudioCodecType());
     if(!bRet)
@@ -20358,7 +19188,7 @@ bool Mpeg4Player::AudioMediaPrep(unsigned int nResult)
                  "ActivateAudioDSP:Prep Successful");
 
   }
-#endif   /*    FEATURE_WINCE   */
+
   return true;
 }
 
@@ -20386,7 +19216,7 @@ bool Mpeg4Player::AudioMediaStart(unsigned int nResult,long stop)
   bool bRet=true;
 
 
-#ifndef FEATURE_WINCE
+
   if((nResult & QTV_MEDIA_TRACK_LIST_AUDIO_ADDED) ||
      (nResult & QTV_MEDIA_TRACK_LIST_AUDIO_RESET))
   {
@@ -20441,7 +19271,6 @@ bool Mpeg4Player::AudioMediaStart(unsigned int nResult,long stop)
                  "ActivateAudioDSP:Resume Successful");
 
   }
-#endif   /*    FEATURE_WINCE   */
   return true;
 }
 
@@ -20483,9 +19312,7 @@ bool Mpeg4Player::TextMediaReposition(unsigned int  nResult,
                      "ActivateTextDSP:Reposition failed");
         return false;
       }
-#ifndef FEATURE_WINCE
       textPlayer.SetPlayTimes(start,stop);
-#endif   /*    FEATURE_WINCE   */
       QTV_MSG_PRIO(QTVDIAG_GENERAL,
                    QTVDIAG_PRIO_HIGH,
                    "ActivateTextDSP:Reposition Success");
@@ -20494,11 +19321,7 @@ bool Mpeg4Player::TextMediaReposition(unsigned int  nResult,
     // Set the Playback offset if needed.
     if(!clip.bHasAudio && !clip.bHasVideo && clip.bHasText)
     {
-#ifndef FEATURE_WINCE
       m_mediaSync.SetPlaybackOffset(AVSync::TextAV, (int)ZUtils::Clock(), start);
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
       QTV_MSG_PRIO1(QTVDIAG_GENERAL,QTVDIAG_PRIO_HIGH,
                     "Text Player to be resumed but updated the OFFSET for TS %ld",
                     start);
@@ -20534,9 +19357,8 @@ bool Mpeg4Player::TextMediaPrep(unsigned int nResult)
   {
 
     //Prep text
-#ifndef FEATURE_WINCE
     bRet = textPlayer.Prep(playbackID, false,clip.pVideoMpeg4Playback);
-#endif   /*    FEATURE_WINCE   */
+
     if(!bRet)
     {
       //When text PREP fails, return false
@@ -20583,7 +19405,7 @@ bool Mpeg4Player::TextMediaStartOrResume(unsigned int nResult,
   // Add the text track if the comparison result says so
   if(nResult & QTV_MEDIA_TRACK_LIST_TEXT_ADDED)
   {
-#ifndef FEATURE_WINCE
+
     bRet = textPlayer.Start(bError, false);
     if(!bRet || bError)
     {
@@ -20593,7 +19415,6 @@ bool Mpeg4Player::TextMediaStartOrResume(unsigned int nResult,
                    "ActivateTextDSP: Text Start failed");
       return false;
     }
-#endif   /*    FEATURE_WINCE   */
     QTV_MSG_PRIO(QTVDIAG_GENERAL,
                  QTVDIAG_PRIO_HIGH,
                  "ActivateTextDSP:Text Start Successful");
@@ -20601,7 +19422,6 @@ bool Mpeg4Player::TextMediaStartOrResume(unsigned int nResult,
   }
   else if(clip.bHasText && !textPlayer.IsDone())
   {
-#ifndef FEATURE_WINCE
     bRet = textPlayer.Resume(bError,stop);
     if(!bRet || bError)
     {
@@ -20611,7 +19431,6 @@ bool Mpeg4Player::TextMediaStartOrResume(unsigned int nResult,
                    "ActivateTextDSP:  Resume failed");
       return false;
     }
-#endif   /*    FEATURE_WINCE   */
     QTV_MSG_PRIO(QTVDIAG_GENERAL,
                  QTVDIAG_PRIO_ERROR,
                  "ActivateTextDSP: Resume Successful");
@@ -20660,12 +19479,10 @@ bool Mpeg4Player::VideoMediaReposition(unsigned int  nResult,
                      "ActivateVideoDSP:Reposition failed");
         return false;
       }
-#ifndef FEATURE_WINCE
       if (pActiveVideoPlayer)
       {
         pActiveVideoPlayer->SetPlayTimes(vidstart,stop);
       }
-#endif   /*    FEATURE_WINCE   */
 
       QTV_MSG_PRIO(QTVDIAG_GENERAL,
                    QTVDIAG_PRIO_HIGH,
@@ -20674,11 +19491,7 @@ bool Mpeg4Player::VideoMediaReposition(unsigned int  nResult,
     }
     if(!clip.bHasAudio && clip.bHasVideo && !clip.bStillImage)
     {
-#ifndef FEATURE_WINCE
       m_mediaSync.SetPlaybackOffset(AVSync::VideoAV, (int)ZUtils::Clock(), start);
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
       QTV_MSG_PRIO1(QTVDIAG_GENERAL,QTVDIAG_PRIO_HIGH,
                     "Video Player to be resumed but updated the OFFSET for TS %ld",
                     start);
@@ -20713,7 +19526,6 @@ bool Mpeg4Player::VideoMediaPrepOrEnable(unsigned int nResult)
   // Add the video track if the comparison result says so
   if(nResult & QTV_MEDIA_TRACK_LIST_VIDEO_ADDED)
   {
-#ifndef FEATURE_WINCE
     if (pActiveVideoPlayer)
     {
     // Preparse before prep. Otherwise prep is failing.
@@ -20730,7 +19542,7 @@ bool Mpeg4Player::VideoMediaPrepOrEnable(unsigned int nResult)
                    "ActivateVideoDSP:Prep failed");
       return false;
     }
-#endif   /*    FEATURE_WINCE   */
+
     QTV_MSG_PRIO(QTVDIAG_GENERAL,
                  QTVDIAG_PRIO_HIGH,
                  "ActivateVideoDSP:Prep Successful");
@@ -20739,7 +19551,6 @@ bool Mpeg4Player::VideoMediaPrepOrEnable(unsigned int nResult)
   else if(nResult & QTV_MEDIA_TRACK_LIST_VIDEO_RESET)
   {
     // Video is currently disabled; need to enable before resume.
-#ifndef FEATURE_WINCE
     if (pActiveVideoPlayer)
     {
       pActiveVideoPlayer->Enable(bError, GetAudioCodecType());
@@ -20751,7 +19562,6 @@ bool Mpeg4Player::VideoMediaPrepOrEnable(unsigned int nResult)
                    "ActivateVideoDSP: Enable video failed");
       return false;
     }
-#endif   /*    FEATURE_WINCE   */
     QTV_MSG_PRIO(QTVDIAG_GENERAL,
                  QTVDIAG_PRIO_HIGH,
                  "ActivateVideoDSP: Enable Successful");
@@ -20788,9 +19598,9 @@ bool Mpeg4Player::VideoMediaStartOrResume(unsigned int nResult,
   // Add the video track if the comparison result says so
   if(nResult & QTV_MEDIA_TRACK_LIST_VIDEO_ADDED)
   {
-#ifndef FEATURE_WINCE
      if (pActiveVideoPlayer)
      {
+
 #ifdef FEATURE_MP4_DEBUG_AV_TICK
 #error code not present
 #else
@@ -20805,21 +19615,14 @@ bool Mpeg4Player::VideoMediaStartOrResume(unsigned int nResult,
                    "ActivateVideoDSP: Video Start failed");
       return false;
     }
-#endif   /*    FEATURE_WINCE   */
     QTV_MSG_PRIO(QTVDIAG_GENERAL,
                  QTVDIAG_PRIO_HIGH,
                  "ActivateVideoDSP:Video Start Successful");
 
     appControl.bReceivedFirstFrame = false;
   }
-
-  else if(clip.bHasVideo
-#ifndef FEATURE_WINCE
-&& pActiveVideoPlayer && !(pActiveVideoPlayer->IsDone())
-#endif   /*    FEATURE_WINCE   */
-)
+  else if(clip.bHasVideo && pActiveVideoPlayer && !(pActiveVideoPlayer->IsDone()))
   {
-#ifndef FEATURE_WINCE
     bRet = pActiveVideoPlayer->Resume(bError,stop);
     if(!bRet || bError)
     {
@@ -20829,7 +19632,6 @@ bool Mpeg4Player::VideoMediaStartOrResume(unsigned int nResult,
                    "ActivateVideoDSP: Video Resume failed");
       return false;
     }
-#endif   /*    FEATURE_WINCE   */
     QTV_MSG_PRIO(QTVDIAG_GENERAL,
                  QTVDIAG_PRIO_ERROR,
                  "ActivateVideoDSP:Video Resume Successful");
@@ -21001,28 +19803,21 @@ void Mpeg4Player::GenerateSuspendEvent()
   qtv_event_clip_pause_payload.current_time = 0;
 
   unsigned long mediaElapsedTime =0;
-  #ifndef FEATURE_WINCE
   if (clip.bHasVideo && pActiveVideoPlayer)
   {
     mediaElapsedTime = pActiveVideoPlayer->GetElapsedTime();
-#endif   /*    FEATURE_WINCE   */
     qtv_event_clip_pause_payload.current_time = ZMAX( qtv_event_clip_pause_payload.current_time, mediaElapsedTime );
- #ifndef FEATURE_WINCE
   }
-#endif   /*    FEATURE_WINCE   */
 
   if (clip.bHasAudio)
   {
-#ifndef FEATURE_WINCE
     mediaElapsedTime = AudioPlayerIf::GetElapsedTime(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
     qtv_event_clip_pause_payload.current_time = ZMAX( qtv_event_clip_pause_payload.current_time, mediaElapsedTime );
   }
-#ifndef FEATURE_WINCE
+
   event_report_payload(EVENT_QTV_CLIP_PAUSE,
                        sizeof(qtv_event_clip_pause_type),
                        &qtv_event_clip_pause_payload);
-#endif   /*    FEATURE_WINCE   */
 }
 
 /* ======================================================================
@@ -21057,8 +19852,6 @@ bool Mpeg4Player::RestoreResumeAudio(long stop)
 #endif /* FEATURE_MP4_DEBUG_AV_TICK */
 
    QtvPlayer::PlayerStateRecordT ps;
-   unsigned long nPlayTimel;
-   bool bSetAudError=false;
    GetPlayerState(ps);
 
   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "RestoreResumeAudio");
@@ -21069,10 +19862,8 @@ bool Mpeg4Player::RestoreResumeAudio(long stop)
 
   /* Prep the audio player. Audio is currently PAUSED_DISABLED, so this is a
      fresh start not a restart. */
-#ifndef FEATURE_WINCE
   bResumed = AudioPlayerIf::Prep(activeAudioPlayerId,playbackID,bRestart,
                                  GetAudioMedia(),clip.bHasVideo,GetAudioCodecType());
-#endif   /*    FEATURE_WINCE   */
 
   /* If unsuccessful ... */
   if (!bResumed)
@@ -21085,21 +19876,18 @@ bool Mpeg4Player::RestoreResumeAudio(long stop)
   else
   {
     long audioPlayTime = ps.playbackMsec;
-
-    /* If clip has video and previous concurent state is AUDIO CONCURENT then we
-       have to update the audio playback times with the Video playback time so that
-       once the call is disconnected audio can catch up with the video*/
-#ifndef FEATURE_WINCE
-    if(clip.bHasVideo && (prevAudioConcState == AUDIO_CONCURRENT))
-    {
-            /* During incall video we should move the audio media pointers to video inorder
-             to audio to catch up with the video*/
-        if (clip.pAudioMpeg4Playback )
-        {
-           nPlayTimel = pActiveVideoPlayer->GetElapsedTime();
-           audioPlayTime = clip.pAudioMpeg4Playback->SetAudioPosition(ps.playbackMsec, bSetAudError, nPlayTimel);
-         }
-    }
+#ifdef FEATURE_QTV_IN_CALL_VIDEO
+#error code not present
+#else
+    /*
+    * Set audio playtime to the audio TS recorded when the player was
+    * suspended in order to release the DSP.
+    *
+    * Repositioning audio here might cause the last audio sample that was played
+    * before the player was suspended to be played again.
+    */
+    audioPlayTime = audioPositionWhenSuspended;
+#endif /* FEATURE_QTV_IN_CALL_VIDEO */
     AudioPlayerIf::SetPlayTimes(activeAudioPlayerId, audioPlayTime, stop);
     /* Now start audio. */
 #ifdef FEATURE_MP4_DEBUG_AV_TICK
@@ -21107,7 +19895,6 @@ bool Mpeg4Player::RestoreResumeAudio(long stop)
 #else
     bResumed = AudioPlayerIf::Start(activeAudioPlayerId, bRestart);
 #endif /* FEATURE_MP4_DEBUG_AV_TICK */
-#endif   /*    FEATURE_WINCE   */
   }
 
   return bResumed;
@@ -21136,8 +19923,6 @@ void Mpeg4Player::UpdateAudioConcState()
 {
   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Mpeg4Player::UpdateAudioConcState");
 
-#ifndef FEATURE_QTV_DISABLE_CONC_MGR
-
   switch (audioSource)
   {
     case QtvPlayer::AUDIO_SOURCE_AUTO:
@@ -21145,11 +19930,7 @@ void Mpeg4Player::UpdateAudioConcState()
       if (qtv_conc_mgr::get_play_mode(this, QTV_PLAYER_MIME_TYPE)
           == qtv_conc_mgr::PLAY_NORMAL)
       {
-        if (playerAudioConcState == AUDIO_CONCURRENT)
-        {
-            prevAudioConcState = AUDIO_CONCURRENT;
-        }
-  playerAudioConcState = AUDIO_NOT_CONCURRENT;
+        playerAudioConcState = AUDIO_NOT_CONCURRENT;
       }
 #ifdef FEATURE_QTV_IN_CALL_VIDEO
 #error code not present
@@ -21158,7 +19939,6 @@ void Mpeg4Player::UpdateAudioConcState()
                == qtv_conc_mgr::PLAY_NOT_SUPPORTED)
       {
         playerAudioConcState = AUDIO_CONCURRENCY_NOT_SUPPORTED;
-        prevAudioConcState = AUDIO_CONCURRENCY_NOT_SUPPORTED;
       }
       break;
 
@@ -21175,7 +19955,6 @@ void Mpeg4Player::UpdateAudioConcState()
 
   QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
                 "Audio concurrency state = %d", playerAudioConcState);
-#endif
 }
 
 #ifdef FEATURE_QTV_IN_CALL_PHASE_2
@@ -21264,14 +20043,10 @@ bool Mpeg4Player::PauseAudio(QTV_PAUSE_AUDIO_type *)
          {
             if (clip.bHasAudio)
             {
-#ifndef FEATURE_WINCE
               if ( AudioPlayerIf::Pause(activeAudioPlayerId) )
                   {
                      bPaused=true;
                   }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
                }
             }
         //change state if either audio or video paused.
@@ -21303,9 +20078,7 @@ bool Mpeg4Player::PauseAudio(QTV_PAUSE_AUDIO_type *)
         if(playerState != PLAYER_PSEUDO_PAUSE)
         {
           QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "set PLAYER_STATE_PSEUDO_PAUSE");
-#ifndef FEATURE_WINCE
           event_report(EVENT_QTV_PLAYER_STATE_PSEUDO_PAUSE);
-#endif   /*    FEATURE_WINCE   */
           player_pp_entry_time = pvGetTickCount();
           Notify(PLAYER_PSEUDO_PAUSE);
         }
@@ -21410,7 +20183,6 @@ bool Mpeg4Player::PauseVideo(QTV_PAUSE_VIDEO_type *)
          {
             if (clip.bHasVideo)
             {
-#ifndef FEATURE_WINCE
                if (pActiveVideoPlayer && pActiveVideoPlayer->Pause(bError))
                {
                   if (bError)
@@ -21422,9 +20194,6 @@ bool Mpeg4Player::PauseVideo(QTV_PAUSE_VIDEO_type *)
                      bPaused=true;
                   }
                }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
             }
          }
         //change state if either audio or video paused.
@@ -21457,9 +20226,7 @@ bool Mpeg4Player::PauseVideo(QTV_PAUSE_VIDEO_type *)
         if(playerState != PLAYER_PSEUDO_PAUSE)
         {
           QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "set PLAYER_STATE_PSEUDO_PAUSE");
-#ifndef FEATURE_WINCE
           event_report(EVENT_QTV_PLAYER_STATE_PSEUDO_PAUSE);
-#endif   /*    FEATURE_WINCE   */
           player_pp_entry_time = pvGetTickCount();
           Notify(PLAYER_PSEUDO_PAUSE);
         }
@@ -21564,7 +20331,6 @@ bool Mpeg4Player::PauseText(QTV_PAUSE_TEXT_type *)
          {
             if (clip.bHasText)
             {
-#ifndef FEATURE_WINCE
                if (textPlayer.Pause(bError))
                {
                   if (bError)
@@ -21575,9 +20341,6 @@ bool Mpeg4Player::PauseText(QTV_PAUSE_TEXT_type *)
                      bPaused=true;
                   }
                }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
             }
          }
         //change state if either audio or video paused.
@@ -21611,9 +20374,7 @@ bool Mpeg4Player::PauseText(QTV_PAUSE_TEXT_type *)
               if(playerState != PLAYER_PSEUDO_PAUSE)
         {
           QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, "set PLAYER_STATE_PSEUDO_PAUSE");
-#ifndef FEATURE_WINCE
           event_report(EVENT_QTV_PLAYER_STATE_PSEUDO_PAUSE);
-#endif   /*    FEATURE_WINCE   */
           player_pp_entry_time = pvGetTickCount();
           Notify(PLAYER_PSEUDO_PAUSE);
         }
@@ -21698,13 +20459,11 @@ bool Mpeg4Player::ResumeAudio( QTV_RESUME_AUDIO_type * )
     long PlayTime = 0;
     long AudioPlayTime;
     /* now synchronize audio and text with video */
-#ifndef FEATURE_WINCE
     if (pActiveVideoPlayer)
     {
        PlayTime = pActiveVideoPlayer->GetElapsedTime();
        pActiveVideoPlayer->SetPlayTimes(PlayTime, stop);
     }
-#endif   /*    FEATURE_WINCE   */
     if(clip.bHasAudio)
     {
       /* Below temp variable and if condition is added to fix Klocwork warnings */
@@ -21712,11 +20471,9 @@ bool Mpeg4Player::ResumeAudio( QTV_RESUME_AUDIO_type * )
       if(tempMedia != NULL)
       {
         AudioPlayTime = tempMedia->SetAudioPosition(PlayTime, bError, ps.playbackMsec);
-#ifndef FEATURE_WINCE
         AudioPlayerIf::SetPlayTimes(activeAudioPlayerId, AudioPlayTime, stop);
         /* this will flush audio buffered in CMX */
         bError = AudioPlayerIf::Suspend(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
       }
     }
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
@@ -21729,10 +20486,9 @@ bool Mpeg4Player::ResumeAudio( QTV_RESUME_AUDIO_type * )
       {
         (void)txtMedia->SetTextPosition(PlayTime, lBError, ps.playbackMsec);
       }
-#ifndef FEATURE_WINCE
+
       textPlayer.SetPlayTimes(PlayTime, stop);
       (void)textPlayer.Suspend(lBError);
-#endif   /*    FEATURE_WINCE   */
     }
 #endif
     (void)PrepAudio();
@@ -21752,13 +20508,11 @@ bool Mpeg4Player::ResumeAudio( QTV_RESUME_AUDIO_type * )
     }
     else
     {
-#ifndef FEATURE_WINCE
       if ( AudioPlayerIf::Resume(activeAudioPlayerId, stop) )
         {
           bResumed=true;
         }
       else
-#endif   /*    FEATURE_WINCE   */
       {
         /* audioPlayer.Resume returns false.  This means that Resume cannot be
          * performed due to Resume being issued while the audioPlayer is playing.
@@ -21848,13 +20602,11 @@ bool Mpeg4Player::ResumeVideo( QTV_RESUME_VIDEO_type * )
     long PlayTime = 0;
     long AudioPlayTime = 0;
     /* now synchronize audio and text with video */
-#ifndef FEATURE_WINCE
     if (pActiveVideoPlayer)
     {
        PlayTime = pActiveVideoPlayer->GetElapsedTime();
        pActiveVideoPlayer->SetPlayTimes(PlayTime, stop);
     }
-#endif   /*    FEATURE_WINCE   */
     if(clip.bHasAudio)
     {
       if (clip.pAudioMpeg4Playback )
@@ -21865,11 +20617,9 @@ bool Mpeg4Player::ResumeVideo( QTV_RESUME_VIDEO_type * )
       {
          AudioPlayTime = clip.pVideoMpeg4Playback->SetAudioPosition(PlayTime, bError, ps.playbackMsec);
       }
-#ifndef FEATURE_WINCE
       AudioPlayerIf::SetPlayTimes(activeAudioPlayerId, AudioPlayTime, stop);
       /* this will flush audio buffered in CMX */
       bError = AudioPlayerIf::Suspend(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
     }
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
     if(clip.bHasText)
@@ -21881,10 +20631,9 @@ bool Mpeg4Player::ResumeVideo( QTV_RESUME_VIDEO_type * )
       {
         (void)txtMedia->SetTextPosition(PlayTime, lBError,ps.playbackMsec);
       }
-#ifndef FEATURE_WINCE
+
       textPlayer.SetPlayTimes(PlayTime, stop);
       (void)textPlayer.Suspend(lBError);
-#endif   /*    FEATURE_WINCE   */
     }
 #endif
 
@@ -21914,7 +20663,6 @@ bool Mpeg4Player::ResumeVideo( QTV_RESUME_VIDEO_type * )
 
     if (clip.bHasVideo)
     {
-#ifndef FEATURE_WINCE
       if (pActiveVideoPlayer && pActiveVideoPlayer->Resume(bError,stop))
       {
         if (bError)
@@ -21936,15 +20684,11 @@ bool Mpeg4Player::ResumeVideo( QTV_RESUME_VIDEO_type * )
          */
         bResumed=true;
       }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
     }
 
   #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
     if (clip.bHasText)
     {
-#ifndef FEATURE_WINCE
       if (textPlayer.Start(bError, reposControl.bRestart))
       {
          if (bError)
@@ -21955,9 +20699,6 @@ bool Mpeg4Player::ResumeVideo( QTV_RESUME_VIDEO_type * )
             bResumed = true;
          }
       }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
     }
   #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
   }
@@ -21965,7 +20706,6 @@ bool Mpeg4Player::ResumeVideo( QTV_RESUME_VIDEO_type * )
   {
     if (clip.bHasVideo)
     {
-#ifndef FEATURE_WINCE
       if (pActiveVideoPlayer && pActiveVideoPlayer->Resume(bError,stop))
       {
         if (bError)
@@ -21987,9 +20727,6 @@ bool Mpeg4Player::ResumeVideo( QTV_RESUME_VIDEO_type * )
          */
         bResumed=true;
       }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
     }
   }
 
@@ -22053,7 +20790,6 @@ bool Mpeg4Player::ResumeText( QTV_RESUME_TEXT_type * )
   //resume streamer.
   if (clip.bStreaming && streamer )
   {
-#ifndef FEATURE_WINCE
     if (streamer->Resume(bError))
     {
       //report an error.
@@ -22063,7 +20799,6 @@ bool Mpeg4Player::ResumeText( QTV_RESUME_TEXT_type * )
         StreamError();
       }
     }
-#endif   /*    FEATURE_WINCE   */
     //if it's not streaming just resume anyway, the AV will
     //run out of data soon enough.
   }
@@ -22080,13 +20815,11 @@ bool Mpeg4Player::ResumeText( QTV_RESUME_TEXT_type * )
     long PlayTime = 0;
     long AudioPlayTime;
     /* now synchronize audio and text with video */
-#ifndef FEATURE_WINCE
     if (pActiveVideoPlayer)
     {
        PlayTime = pActiveVideoPlayer->GetElapsedTime();
        pActiveVideoPlayer->SetPlayTimes(PlayTime, stop);
     }
-#endif   /*    FEATURE_WINCE   */
     if(clip.bHasAudio)
     {
       if (clip.pAudioMpeg4Playback )
@@ -22097,11 +20830,9 @@ bool Mpeg4Player::ResumeText( QTV_RESUME_TEXT_type * )
       {
          AudioPlayTime = clip.pVideoMpeg4Playback->SetAudioPosition(PlayTime, bError, ps.playbackMsec);
       }
-#ifndef FEATURE_WINCE
       AudioPlayerIf::SetPlayTimes(activeAudioPlayerId, AudioPlayTime, stop);
       /* this will flush audio buffered in CMX */
       bError = AudioPlayerIf::Suspend(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
     }
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
     if(clip.bHasText)
@@ -22113,10 +20844,8 @@ bool Mpeg4Player::ResumeText( QTV_RESUME_TEXT_type * )
       {
         (void)txtMedia->SetTextPosition(PlayTime, lBError, ps.playbackMsec);
       }
-#ifndef FEATURE_WINCE
       textPlayer.SetPlayTimes(PlayTime, stop);
       (void)textPlayer.Suspend(lBError);
-#endif   /*    FEATURE_WINCE   */
     }
 #endif
     (void)PrepText();
@@ -22128,13 +20857,10 @@ bool Mpeg4Player::ResumeText( QTV_RESUME_TEXT_type * )
     if(appControl.bStepAVSyncNeeded)
     {
       appControl.bStepAVSyncNeeded = false;
-#ifndef FEATURE_WINCE
       bResumed = textPlayer.Start(bError,false);
-#endif   /*    FEATURE_WINCE   */
     }
     else
     {
-#ifndef FEATURE_WINCE
       if (textPlayer.Resume(bError,stop))
       {
         if (bError)
@@ -22146,9 +20872,6 @@ bool Mpeg4Player::ResumeText( QTV_RESUME_TEXT_type * )
           bResumed=true;
         }
       }
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
     }
 #ifdef FEATURE_FILE_FRAGMENTATION
     if( clip.bHasText && GetTextMedia() && bResumed)
@@ -22280,7 +21003,6 @@ Mpeg4Player::ReadPlaybackTracks(uint32 *pnTrackCount,
     // It is a base layer.
     pTrackList[nCount].nTrackID = currTrackList->GetTrackID(i);
     pTrackList[nCount].encryptionType = currTrackList->GetEncryptionType(i);
-    currTrackList->GetAudioTrackLanguage(pTrackList[nCount].language, i);
     GetCodecDetails(currTrackList->GetCodecType(i),
                     pTrackList[nCount].trackType,
                     pTrackList[nCount].mediaType);
@@ -22291,12 +21013,7 @@ Mpeg4Player::ReadPlaybackTracks(uint32 *pnTrackCount,
       {
         case QtvPlayer::MEDIA_AUDIO_ONLY:
         {
-          /*if track was muted during Plaback or after PB_READY, on both the cases return proper
-            track state information to the upper layers
-          */
-          if( (clip.bmMute       & QTV_AUDIO_TRACK_SELECTED) ||
-        (clip.bmQueuedMute & QTV_AUDIO_TRACK_SELECTED)
-      )
+          if(clip.bmMute & QTV_AUDIO_TRACK_SELECTED)
           {
             pTrackList[nCount].bmTrackState |= QTV_TRACK_STATE_MUTED;
           }
@@ -22304,12 +21021,7 @@ Mpeg4Player::ReadPlaybackTracks(uint32 *pnTrackCount,
         }
         case QtvPlayer::MEDIA_VIDEO_ONLY:
         {
-          /*if track was muted during Plaback or after PB_READY, on both the cases return proper
-            track state information to the upper layers
-          */
-          if( (clip.bmMute       & QTV_VIDEO_TRACK_SELECTED) ||
-        (clip.bmQueuedMute & QTV_VIDEO_TRACK_SELECTED)
-      )
+          if(clip.bmMute & QTV_VIDEO_TRACK_SELECTED)
           {
             pTrackList[nCount].bmTrackState |= QTV_TRACK_STATE_MUTED;
           }
@@ -22317,12 +21029,7 @@ Mpeg4Player::ReadPlaybackTracks(uint32 *pnTrackCount,
         }
         case QtvPlayer::MEDIA_TEXT:
         {
-          /*if track was muted during Plaback or after PB_READY, on both the cases return proper
-            track state information to the upper layers
-          */
-          if( (clip.bmMute       & QTV_TEXT_TRACK_SELECTED) ||
-        (clip.bmQueuedMute & QTV_TEXT_TRACK_SELECTED)
-      )
+          if(clip.bmMute & QTV_TEXT_TRACK_SELECTED)
           {
             pTrackList[nCount].bmTrackState |= QTV_TRACK_STATE_MUTED;
           }
@@ -22405,14 +21112,6 @@ void Mpeg4Player::GetCodecDetails(Media::CodecType eMediaCodec,
 #ifdef FEATURE_QTV_3GPP_EVRC_WB
 #error code not present
 #endif /* FEATURE_QTV_3GPP_EVRC_WB */
-#ifdef FEATURE_QTV_AVI_AC3
-#error code not present
-#endif /* FEATURE_QTV_AVI_AC3 */
-
-#ifdef FEATURE_QTV_PCM
-#error code not present
-#endif /* FEATURE_QTV_PCM */
-
     case Media::MPEG4_CODEC:
     {
       eQtvCodec = QtvPlayer::TRACK_VIDEO_MP4V_ES;
@@ -22434,7 +21133,6 @@ void Mpeg4Player::GetCodecDetails(Media::CodecType eMediaCodec,
     }
 #endif /* FEATURE_H264_DECODER */
     case Media::STILL_IMAGE_CODEC:
-	case Media::STILL_IMAGE_H263_CODEC:
     {
       eQtvCodec = QtvPlayer::TRACK_UNKNOWN;
       eMediaType= QtvPlayer::MEDIA_VIDEO_ONLY;
@@ -22488,13 +21186,13 @@ void Mpeg4Player::GetCodecDetails(Media::CodecType eMediaCodec,
  #if defined (FEATURE_QTV_WMA_PRO_DECODER) || defined (FEATURE_QTV_WMA_PRO_DSP_DECODER)
     case Media::WMA_PRO_CODEC:
     {
-       eQtvCodec = QtvPlayer::TRACK_WM_PRO_AUDIO;
+       eQtvCodec = QtvPlayer::QtvPlayer::TRACK_WM_PRO_AUDIO;
        eMediaType= QtvPlayer::MEDIA_AUDIO_ONLY;
        break;
     }
     case Media::WMA_PRO_PLUS_CODEC:
     {
-      eQtvCodec = QtvPlayer::TRACK_WM_PRO_PLUS_AUDIO;
+      eQtvCodec = QtvPlayer::QtvPlayer::TRACK_WM_PRO_PLUS_AUDIO;
       eMediaType= QtvPlayer::MEDIA_AUDIO_ONLY;
       break;
     }
@@ -22668,26 +21366,22 @@ QtvPlayer::ReturnT Mpeg4Player::MuteAudio()
    // with the mute duration remembered. We will not do any estimation.
 
    m_uMuteClock       = pvGetTickCount();
-#ifndef FEATURE_WINCE
    m_uMuteTimestamp   =
    m_ulMuteDuration   = AudioPlayerIf::GetElapsedTime(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
+
 
    if(playerState == PLAYING || playerState == BUFFERING)
    {
-#ifndef FEATURE_WINCE
      if ( !AudioPlayerIf::Pause(activeAudioPlayerId)  )
      {
         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                      "Error, MuteAudio: Mute failed");
         return QtvPlayer::QTV_RETURN_ERROR;
      }
-#endif   /*    FEATURE_WINCE   */
    }
 
    clip.bHasAudio =  false;
    clip.bmMute |= QTV_AUDIO_TRACK_SELECTED;
-
 #ifdef FEATURE_QTV_GENERIC_BCAST
    if (clip.bBcastGeneric)
    {
@@ -22775,23 +21469,22 @@ QtvPlayer::ReturnT Mpeg4Player::MuteVideo()
   // For the broadcast streams of recorded kind, we will hint the players
   // with the mute duration remembered. We will not do any estimation.
   m_uMuteClock           = pvGetTickCount();
-#ifndef FEATURE_WINCE
+  if (pActiveVideoPlayer)
+  {
      m_uMuteTimestamp       =
      m_ulMuteDuration      =   pActiveVideoPlayer->GetElapsedTime();
-#endif   /*    FEATURE_WINCE   */
+  }
 
   /* Pause the video player */
   if(playerState == PLAYING || playerState == BUFFERING)
   {
     bool bError;
-#ifndef FEATURE_WINCE
     if (pActiveVideoPlayer && !pActiveVideoPlayer->Pause(bError))
     {
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
                    "Error, MuteVideo: Mute failed");
       return QtvPlayer::QTV_RETURN_ERROR;
     }
-#endif   /*    FEATURE_WINCE   */
   }
 
   clip.bmMute |= QTV_VIDEO_TRACK_SELECTED;
@@ -22874,10 +21567,8 @@ QtvPlayer::ReturnT Mpeg4Player::MuteText()
   // For the broadcast streams of recorded kind, we will hint the players
   // with the mute duration remembered. We will not do any estimation.
   m_uMuteClock           = pvGetTickCount();
-#ifndef FEATURE_WINCE
   m_uMuteTimestamp       =
   m_ulMuteDuration       = textPlayer.GetElapsedTime();
-#endif   /*    FEATURE_WINCE   */
 
   /* For streaming clips we need to issue the pause to the
    * streamer. Currently not implementing this since the
@@ -22888,7 +21579,6 @@ QtvPlayer::ReturnT Mpeg4Player::MuteText()
   if(playerState == PLAYING || playerState == BUFFERING)
   {
     bool bError;
-#ifndef FEATURE_WINCE
     if (!textPlayer.Pause(bError))
     {
       QTV_MSG_PRIO(QTVDIAG_GENERAL,
@@ -22896,7 +21586,6 @@ QtvPlayer::ReturnT Mpeg4Player::MuteText()
                    "Error, MuteText: Mute failed");
       return QtvPlayer::QTV_RETURN_ERROR;
     }
-#endif   /*    FEATURE_WINCE   */
   }
 
   clip.bHasText          = false;
@@ -22914,250 +21603,6 @@ QtvPlayer::ReturnT Mpeg4Player::MuteText()
 #endif //FEATURE_QTV_GENERIC_BCAST
 
   return QtvPlayer::QTV_RETURN_OK;
-}
-
-/* ======================================================================
-FUNCTION
-  Mpeg4Player::PrepSpecificTracks
-
-DESCRIPTION
-//
-// Prep the specific tracks specified
-// Return True if all is well.
-
-DEPENDENCIES
-  None.
-
-RETURN VALUE
-  True/False
-
-SIDE EFFECTS
-  None.
-
-========================================================================== */
-bool Mpeg4Player::PrepSpecificTracks(uint32 bmTrackSelected)
-{
-  bool bError=false;
-  bool bOK   = true;
-
-  /*
-  *  PREP for Video is needed only when clip has Video that has not ended.
-  */
-
-  if (clip.bHasVideo && clip.pVideoMpeg4Playback && pActiveVideoPlayer && !pActiveVideoPlayer->TrackHasEnded())
-  {
-    if(bmTrackSelected & QTV_VIDEO_TRACK_SELECTED)
-    {
-      //Prep video
-      if( !pActiveVideoPlayer->Prep(playbackID, clip.pVideoMpeg4Playback, bError,
-                           true, GetAudioCodecType()) || bError)
-      {
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Video prep failed");
-        VideoError();
-        bOK =  false;
-
-      }
-      else
-      {
-        frameInfo.bInfoSetSinceLastPrep = false;
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Video prep Success!!");
-      }
-    }
-  }
-
-  if (clip.bHasAudio && !AudioPlayerIf::TrackHasEnded(activeAudioPlayerId))
-  {
-    if(bmTrackSelected & QTV_AUDIO_TRACK_SELECTED)
-    {
-      bOK = AudioPlayerIf::Prep(activeAudioPlayerId,playbackID,true,
-            GetAudioMedia(),clip.bHasVideo,GetAudioCodecType());
-
-      if (!bOK)
-      {
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Audio prep failed");
-        AudioError();
-        bOK = false;
-      }
-      else
-      {
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Audio prep Success!!");
-      }
-    }
-  }
-
-#ifdef FEATURE_MP4_3GPP_TIMED_TEXT
-  if (clip.bHasText && (bmTrackSelected & QTV_TEXT_TRACK_SELECTED))
-  {
-    if (!textPlayer.Prep(playbackID,true, GetTextMedia()))
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Text prep Failed!!");
-      TimedTextError();
-      bOK=false;
-    }
-    else
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "Text prep Success!!");
-    }
-  }
-#endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-
-  return bOK;
-}
-/* ======================================================================
-FUNCTION
-  Mpeg4Player::SuspendMedia
-
-DESCRIPTION
-//
-//  Execute Suspend on all the applicable player tracks.
-//
-
-DEPENDENCIES
-  None
-
-RETURN VALUE
-  TRUE/FALSE
-
-SIDE EFFECTS
-  None.
-
-========================================================================== */
-bool Mpeg4Player::SuspendMedia(uint32 bmTrackSelected)
-{
-  bool            bError=false;
-
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED,
-               "Mpeg4Player::SuspendMedia" );
-
-  if(bmTrackSelected & QTV_AUDIO_TRACK_SELECTED)
-  {
-    /* this will flush audio buffered in CMX */
-    if(clip.bHasAudio &&
-       !AudioPlayerIf::Suspend(activeAudioPlayerId) )
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL,
-                   QTVDIAG_PRIO_ERROR,
-                   "Mpeg4Player::SuspendMedia Audio failed");
-      return false;
-    }
-  }
-
-
-  if(bmTrackSelected & QTV_VIDEO_TRACK_SELECTED)
-  {
-    if(clip.bHasVideo)
-    {
-      if ((pActiveVideoPlayer && !pActiveVideoPlayer->Suspend(bError)) || bError)
-      {
-        QTV_MSG_PRIO(QTVDIAG_GENERAL,
-                     QTVDIAG_PRIO_ERROR,
-                     "Mpeg4Player::SuspendMedia Video failed");
-        return false;
-      }
-      if (pActiveVideoPlayer)
-      {
-         (void)pActiveVideoPlayer->Flush();
-      }
-    }
-  }
-
-#ifdef FEATURE_MP4_3GPP_TIMED_TEXT
-  if(bmTrackSelected & QTV_TEXT_TRACK_SELECTED)
-  {
-    if(clip.bHasText && (!textPlayer.Suspend(bError) || bError))
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL,
-                   QTVDIAG_PRIO_ERROR,
-                   "Mpeg4Player::SuspendMedia Text failed");
-      return false;
-    }
-  }
-#endif
-
-  return true;
-}
-/* ======================================================================
-FUNCTION
-  Mpeg4Player::StartMedia
-
-DESCRIPTION
-//
-//  Start all the applicable player tracks.
-//
-
-DEPENDENCIES
-  None
-
-RETURN VALUE
-  TRUE/FALSE
-
-SIDE EFFECTS
-  None.
-
-========================================================================== */
-bool Mpeg4Player::StartMedia(uint32 bmTrackSelected)
-{
-  bool            bError=false;
-
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED,
-               "Mpeg4Player::StartMedia" );
-
-  if(bmTrackSelected & QTV_AUDIO_TRACK_SELECTED)
-  {
-    if (clip.bHasAudio)
-    {
-      bool bOK;
-
-      appControl.bDoneAudioBuffering = false;
-      #ifdef FEATURE_MP4_DEBUG_AV_TICK
-#error code not present
-      #else
-        bOK = AudioPlayerIf::Start(activeAudioPlayerId, true);
-      #endif /* FEATURE_MP4_DEBUG_AV_TICK */
-      if (!bOK || bError)
-      {
-
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
-                     "Mpeg4Player::StartMedia audio failed");
-        return false;
-      }
-    }
-  }
-
-  if(bmTrackSelected & QTV_VIDEO_TRACK_SELECTED)
-  {
-    if(clip.bHasVideo)
-    {
-      appControl.bReceivedFirstFrame = false;
-      #ifdef FEATURE_MP4_DEBUG_AV_TICK
-#error code not present
-      #else
-        if ( (pActiveVideoPlayer && !pActiveVideoPlayer->Start(bError, true)) || bError)
-        {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL,
-                       QTVDIAG_PRIO_ERROR,
-                       "Mpeg4Player::UnmuteVideo Start failed");
-          return false;
-        }
-      #endif /* FEATURE_MP4_DEBUG_AV_TICK */
-    }
-  }
-
-#ifdef FEATURE_MP4_3GPP_TIMED_TEXT
-  if(bmTrackSelected & QTV_TEXT_TRACK_SELECTED)
-  {
-    if( clip.bHasText &&
-        (!textPlayer.Start(bError,true) || bError))
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL,
-                   QTVDIAG_PRIO_ERROR,
-                   "Mpeg4Player::StartMedia audio failed");
-      return false;
-    }
-  }
-#endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-
-  return true;
 }
 
 /* ======================================================================
@@ -23181,7 +21626,6 @@ SIDE EFFECTS
 ========================================================================== */
 bool Mpeg4Player::SuspendMedia()
 {
-#ifndef FEATURE_WINCE
   bool            bError=false;
 
   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED,
@@ -23223,7 +21667,7 @@ bool Mpeg4Player::SuspendMedia()
     return false;
   }
 #endif
-#endif   /*    FEATURE_WINCE   */
+
   return true;
 }
 /* ======================================================================
@@ -23263,7 +21707,6 @@ bool Mpeg4Player::StartMedia()
   if(clip.bHasVideo)
   {
     appControl.bReceivedFirstFrame = false;
-#ifndef FEATURE_WINCE
 #ifdef FEATURE_MP4_DEBUG_AV_TICK
 #error code not present
 #else
@@ -23276,11 +21719,9 @@ bool Mpeg4Player::StartMedia()
       return false;
     }
 #endif /* FEATURE_MP4_DEBUG_AV_TICK */
-#endif   /*    FEATURE_WINCE   */
   }
 
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
-#ifndef FEATURE_WINCE
   if( clip.bHasText &&
       (!textPlayer.Start(bError,true) || bError))
   {
@@ -23289,7 +21730,6 @@ bool Mpeg4Player::StartMedia()
                  "Mpeg4Player::StartMedia audio failed");
     return false;
   }
-#endif   /*    FEATURE_WINCE   */
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
   return true;
@@ -23349,23 +21789,17 @@ bool Mpeg4Player::ResumeAll(uint32 uPlayTime)
   /* This will flush the video buffered */
   if(clip.bHasAudio)
   {
-#ifndef FEATURE_WINCE
     AudioPlayerIf::SetPlayTimes(activeAudioPlayerId,uPlayTime,stop);
-#endif   /*    FEATURE_WINCE   */
   }
-#ifndef FEATURE_WINCE
   if(clip.bHasVideo && pActiveVideoPlayer)
   {
     pActiveVideoPlayer->SetPlayTimes(uPlayTime,stop);
   }
-#endif   /*    FEATURE_WINCE   */
 
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
   if(clip.bHasText)
   {
-#ifndef FEATURE_WINCE
     textPlayer.SetPlayTimes(uPlayTime,stop);
-#endif   /*    FEATURE_WINCE   */
   }
 #endif
 
@@ -23386,85 +21820,7 @@ bool Mpeg4Player::ResumeAll(uint32 uPlayTime)
   }
   return true;
 }
-/* ======================================================================
-FUNCTION
-  Mpeg4Player::ResumeAll
 
-DESCRIPTION
-//
-//  Bring up all the applicable track players.
-//
-
-DEPENDENCIES
-  None
-
-RETURN VALUE
-  TRUE/FALSE
-
-SIDE EFFECTS
-  None.
-
-========================================================================== */
-bool Mpeg4Player::ResumeAll(uint32 uPlayTime,uint32 bmTrackSelected)
-{
-
-  // start and stop times.
-  long start,stop;
-
-
-  QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED,
-               "Mpeg4Player::ResumeAll %d, %x",uPlayTime,bmTrackSelected );
-
-  if (!GetPlayTimes(start,stop))
-  {
-    return false;
-  }
-
-
-  if(!SuspendMedia(bmTrackSelected))
-  {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL,
-                 QTVDIAG_PRIO_ERROR,
-                 "Mpeg4Player::ResumeAll SuspendMedia failed");
-    return false;
-  }
-  /* This will flush the video buffered */
-  if(clip.bHasAudio  && (bmTrackSelected & QTV_AUDIO_TRACK_SELECTED))
-  {
-    AudioPlayerIf::SetPlayTimes(activeAudioPlayerId,uPlayTime,stop);
-  }
-  if(clip.bHasVideo & (bmTrackSelected & QTV_VIDEO_TRACK_SELECTED))
-  {
-    if (pActiveVideoPlayer)
-    {
-       pActiveVideoPlayer->SetPlayTimes(uPlayTime,stop);
-    }
-  }
-
-#ifdef FEATURE_MP4_3GPP_TIMED_TEXT
-  if(clip.bHasText & (bmTrackSelected & QTV_TEXT_TRACK_SELECTED))
-  {
-    textPlayer.SetPlayTimes(uPlayTime,stop);
-  }
-#endif
-
-  if(!PrepSpecificTracks(bmTrackSelected))
-  {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL,
-                 QTVDIAG_PRIO_ERROR,
-                 "Mpeg4Player::UnmuteText Prep failed");
-    return false;
-  }
-
-  if(!StartMedia(bmTrackSelected))
-  {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL,
-                 QTVDIAG_PRIO_ERROR,
-                 "Mpeg4Player::ResumeAll StartMedia failed");
-    return false;
-  }
-  return true;
-}
 /* ======================================================================
 FUNCTION
   Mpeg4Player::UnmuteMedia
@@ -23513,13 +21869,12 @@ QtvPlayer::ReturnT Mpeg4Player::UnmuteMedia( uint32 &bmUnmuteCombo)
                  "Mpeg4Player::UnmuteMedia Not muted yet" );
     return QtvPlayer::QTV_RETURN_OK;
   }
-#ifndef FEATURE_QTV_UNMUTE_OPTIMIZED
+
   // If the player is paused or suspended then defer the un-mute
   if(playerState == PLAYING || playerState == BUFFERING)
   {
     PauseMedia();
   }
-#endif
 
   // Immaterial to how un-mute executed take out the bit from the bit mask.
   if(bmUnmuteCombo & QTV_AUDIO_TRACK_SELECTED)
@@ -23583,11 +21938,7 @@ QtvPlayer::ReturnT Mpeg4Player::UnmuteMedia( uint32 &bmUnmuteCombo)
     }
     clip.bmMute ^= bmReturnUnmuteCombo;
 
-#ifdef FEATURE_QTV_UNMUTE_OPTIMIZED
-#error code not present
-#else
     if(!ResumeAll(playTime))
-#endif
     {
       QTV_MSG_PRIO(QTVDIAG_GENERAL,
                    QTVDIAG_PRIO_ERROR,
@@ -23683,24 +22034,18 @@ void Mpeg4Player::CalculateNewPosition( unsigned long &ulPlayTime,
    */
   if(clip.bHasAudio && !(clip.bmMute & QTV_AUDIO_TRACK_SELECTED))
   {
-#ifndef FEATURE_WINCE
     ulPlayTime      = AudioPlayerIf::GetElapsedTime(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
   }
   else if(clip.bHasVideo && !(clip.bmMute & QTV_VIDEO_TRACK_SELECTED))
   {
-#ifndef FEATURE_WINCE
     if (pActiveVideoPlayer)
     {
       ulPlayTime      = pActiveVideoPlayer->GetElapsedTime();
     }
-#endif   /*    FEATURE_WINCE   */
   }
   else if(clip.bHasText && !(clip.bmMute & QTV_TEXT_TRACK_SELECTED))
   {
-#ifndef FEATURE_WINCE
     ulPlayTime      = textPlayer.GetElapsedTime();
-#endif   /*    FEATURE_WINCE   */
   }
   else
   {
@@ -23757,6 +22102,7 @@ uint32 Mpeg4Player::RepositionMediaDueToUnmute(uint32 bmUnmuteCombo, uint32 &bmR
     return retVal;
   }
 #endif // FEATURE_QTV_GENERIC_BCAST
+
 
   if(bmUnmuteCombo & QTV_VIDEO_TRACK_SELECTED)
   {
@@ -23838,14 +22184,6 @@ Mpeg4Player::MutePlaybackTracks(uint32 bmTrackSelected,
   QtvPlayer::ReturnT retVal     =QtvPlayer::QTV_RETURN_OK;
   QtvPlayer::ReturnT tempRetVal = QtvPlayer::QTV_RETURN_OK;
   *bmSucceeded = 0;
-
-  /* In streaming Mute tracks is not applicable. */
-  if (clip.bStreaming == true)
-  {
-     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
-                   "Mute playback tracks feature not supported for streaming");
-     return QtvPlayer::QTV_RETURN_FEATURE_NOT_AVAILABLE;
-  }
 
   if(bmTrackState == QTV_TRACK_MUTE)
   {
@@ -24213,11 +22551,9 @@ bool Mpeg4Player::StartPlayingFromSeekedPoint(long startTime)
    {
       if ( StartPlaying() )
       {
-#ifndef FEATURE_WINCE
          event_report_payload(EVENT_QTV_CLIP_STARTED,
                               sizeof(qtv_event_clip_started_type),
                               &qtv_event_clip_started_payload);
-#endif   /*    FEATURE_WINCE   */
       }
       else
       {
@@ -24538,7 +22874,7 @@ bool Mpeg4Player::PlayNextFrame(PV_NEXT_FRAME_type *)
         clip.bStreaming )
     return bDone;
 
-#ifndef FEATURE_WINCE
+
     bool bError = false;
     if (qtv_conc_mgr::can_process_command(this, QTV_PLAYER_MIME_TYPE))
     {
@@ -24584,16 +22920,10 @@ bool Mpeg4Player::PlayNextFrame(PV_NEXT_FRAME_type *)
         (clip.bHasVideo && pActiveVideoPlayer && !(pActiveVideoPlayer->IsDone())))
             appControl.bStepAVSyncNeeded = TRUE;
         }
-        if (clip.bHasAudio)
-        {
-          QtvPlayer::PlayerStateRecordT ps;
-          GetPlayerState(ps);
-          AudioPlayerIf::SetTSfromBytes(activeAudioPlayerId,ps.playbackMsec);
-        }
+
         bDone=true;
       }
     }
-#endif   /*    FEATURE_WINCE   */
 
   return bDone;
 }
@@ -24641,7 +22971,6 @@ bool Mpeg4Player::PlayPrevFrame(PV_PREV_FRAME_type *)
 
 
       bool bError = false;
-#ifndef FEATURE_WINCE
       if (qtv_conc_mgr::can_process_command(this, QTV_PLAYER_MIME_TYPE))
       {
         if (playerState == SUSPENDED)
@@ -24680,7 +23009,6 @@ bool Mpeg4Player::PlayPrevFrame(PV_PREV_FRAME_type *)
             bDone=true;
          }
       }
-#endif   /*    FEATURE_WINCE   */
 
    return bDone;
 }
@@ -24722,13 +23050,10 @@ bool Mpeg4Player::RotateVideo(PV_VIDEO_ROTATE_type *pEvent)
    // pending command when playback resumes. Besides being more complicated,
    // the user will probably not remember how many times the rotate command
    // was issued anyway -- we might as well throw away the command now.
-#ifndef FEATURE_WINCE
    if (!clip.bHasVideo || (pActiveVideoPlayer && !(pActiveVideoPlayer->RotateVideo(pEvent->direction))))
    {
       bSuccess = false;
-   }
-   else
-   {
+   } else {
       qtv_event_clip_rotate_type qtv_rotate_payload;
 
       qtv_rotate_payload.direction = pEvent->direction;
@@ -24737,7 +23062,6 @@ bool Mpeg4Player::RotateVideo(PV_VIDEO_ROTATE_type *pEvent)
                        &qtv_rotate_payload);
       bSuccess = true;
    }
-#endif   /*    FEATURE_WINCE   */
 
    return bSuccess;
 }
@@ -24781,7 +23105,6 @@ bool Mpeg4Player::ScaleVideo(PV_VIDEO_SCALE_type *pEvent)
    // pending command when playback resumes. Besides being more complicated,
    // the user will probably not remember how many times the scale command
    // was issued anyway -- we might as well throw away the command now.
-#ifndef FEATURE_WINCE
    if (clip.bHasVideo)
    {
 #ifdef FEATURE_QTV_XSCALE_VIDEO
@@ -24803,7 +23126,6 @@ bool Mpeg4Player::ScaleVideo(PV_VIDEO_SCALE_type *pEvent)
      }
 #endif //FEATURE_MP4_FRAME_TRANSFORMATIONS
    }
-#endif   /*    FEATURE_WINCE   */
    return bSuccess;
 }
 
@@ -24833,7 +23155,6 @@ bool Mpeg4Player::SetAudioOverride(PV_SET_AUDIOOVER_type *pEvent)
 
   bool bDone=false;
   bool bError;
-#ifndef FEATURE_WINCE
   if (pActiveVideoPlayer && pActiveVideoPlayer->SetAudioOverride(pEvent->audOverrideFormat, bError))
   {
     if (bError)
@@ -24845,7 +23166,6 @@ bool Mpeg4Player::SetAudioOverride(PV_SET_AUDIOOVER_type *pEvent)
       bDone=true;
     }
   }
-#endif   /*    FEATURE_WINCE   */
   return bDone;
 }
 
@@ -25170,7 +23490,6 @@ SIDE EFFECTS
 ========================================================================== */
 bool Mpeg4Player::IsPlaying()
 {
-#ifndef FEATURE_WINCE
    if (clip.bHasAudio)
    {
     if (AudioPlayerIf::IsPlaying(activeAudioPlayerId))
@@ -25200,7 +23519,6 @@ bool Mpeg4Player::IsPlaying()
       }
    }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-#endif   /*    FEATURE_WINCE   */
    return false;
 }
 
@@ -25230,7 +23548,6 @@ bool Mpeg4Player::IsPaused()
          Player goes to the idle state, even though the Mpeg4Player does
          a Pause
       */
-#ifndef FEATURE_WINCE
     if (!(AudioPlayerIf::IsPaused(activeAudioPlayerId)
 #ifdef FEATURE_QTV_QDSP_RELEASE_RESTORE
             || ( qtv_cfg_enable_dsp_release &&
@@ -25243,30 +23560,25 @@ bool Mpeg4Player::IsPaused()
                  "Mpeg4Player::IsPlaying --> Audio is not Paused");
          return false;
       }
-#endif   /*    FEATURE_WINCE   */
    }
    if (clip.bHasVideo)
    {
-#ifndef FEATURE_WINCE
       if (pActiveVideoPlayer && !(pActiveVideoPlayer->IsPaused() || pActiveVideoPlayer->IsPausedDisabled()))
       {
          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
                  "Mpeg4Player::IsPlaying --> Video is not Paused");
          return false;
       }
-#endif   /*    FEATURE_WINCE   */
    }
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
    if (clip.bHasText)
    {
-#ifndef FEATURE_WINCE
       if (!textPlayer.IsPaused())
       {
         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
                  "Mpeg4Player::IsPlaying --> Text is not Paused");
          return false;
       }
-#endif   /*    FEATURE_WINCE   */
    }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
    return true;
@@ -25296,12 +23608,10 @@ void Mpeg4Player::setStopVideoInitFlag(void)
   bStop = true ;
   if (isStreaming())
   {
-#ifndef FEATURE_WINCE
     if (pActiveVideoPlayer)
     {
       pActiveVideoPlayer->setStopVideoInitFlag();
     }
-#endif   /*    FEATURE_WINCE   */
   }
   return;
 }
@@ -25326,11 +23636,10 @@ SIDE EFFECTS
 ========================================================================== */
 bool Mpeg4Player::IsDone()
 {
-#ifndef FEATURE_WINCE
-   if (clip.bHasAudio
+   if (clip.bHasAudio 
 #ifdef FEATURE_QTV_IN_CALL_VIDEO
 #error code not present
-#endif
+#endif 
       )
    {
     if (!AudioPlayerIf::IsDone(activeAudioPlayerId))
@@ -25340,7 +23649,7 @@ bool Mpeg4Player::IsDone()
    }
    if (clip.bHasVideo)
    {
-      if (pActiveVideoPlayer && !(pActiveVideoPlayer->IsDone()) && !clip.bStillImage)
+      if (pActiveVideoPlayer && !(pActiveVideoPlayer->IsDone()))
       {
          return false;
       }
@@ -25354,7 +23663,6 @@ bool Mpeg4Player::IsDone()
       }
    }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-#endif   /*    FEATURE_WINCE   */
    return true;
 }
 
@@ -25454,13 +23762,7 @@ void Mpeg4Player::AudioBufferingDone()
     if (!wasDoneBefore && (!appControl.bDelayAudioOutput || appControl.bReceivedFirstFrame))
     {
         appControl.bDelayAudioOutput = false;
-#ifndef FEATURE_WINCE
-      // if audio player is in paused state do not post Restart Audio Output
-      if (!AudioPlayerIf::IsPaused(activeAudioPlayerId))
-      {
       AudioPlayerIf::RestartAudioOutput(activeAudioPlayerId);
-      }
-#endif   /*    FEATURE_WINCE   */
     }
   }
 }
@@ -25491,11 +23793,7 @@ SIDE EFFECTS
 ========================================================================== */
 bool Mpeg4Player::StartAudio()
 {
-#ifndef FEATURE_WINCE
    bool bOK;
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
 
    appControl.bDoneAudioBuffering = false;
 
@@ -25513,9 +23811,7 @@ bool Mpeg4Player::StartAudio()
         ** was stopped by the incoming call.
         */
         //Here error would be reported via a separate audio_err notification event
-#ifndef FEATURE_WINCE
         bOK = AudioPlayerIf::Start(activeAudioPlayerId, false);
-#endif   /*    FEATURE_WINCE   */
       }
       else
 #endif /* FEATURE_QTV_QDSP_RELEASE_RESTORE */
@@ -25528,15 +23824,11 @@ bool Mpeg4Player::StartAudio()
           playerAudioConcState == AUDIO_NOT_CONCURRENT)
       {
         bool bRestart = false;
-#ifndef FEATURE_WINCE
         bOK = AudioPlayerIf::Start(activeAudioPlayerId, bRestart);
-#endif   /*    FEATURE_WINCE   */
       }
       else
       {
-#ifndef FEATURE_WINCE
         bOK = AudioPlayerIf::Start(activeAudioPlayerId, reposControl.bRestart);
-#endif   /*    FEATURE_WINCE   */
       }
 #endif /* FEATURE_MP4_DEBUG_AV_TICK */
 #ifdef FEATURE_QTV_QDSP_RELEASE_RESTORE
@@ -25595,9 +23887,7 @@ void Mpeg4Player::VideoRendering()
         !appControl.bReceivedFirstFrame)
     {
       appControl.bDelayAudioOutput = false;
-#ifndef FEATURE_WINCE
       AudioPlayerIf::RestartAudioOutput(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
     }
   }
   appControl.bReceivedFirstFrame = true;
@@ -25757,9 +24047,7 @@ void Mpeg4Player::DonePlaying(const bool bError, const bool bVideo)
      {
        appControl.bReceivedFirstFrame = true;
        appControl.bDelayAudioOutput = false;
-#ifndef FEATURE_WINCE
       AudioPlayerIf::RestartAudioOutput(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
      }
      else
      {
@@ -25794,10 +24082,6 @@ void Mpeg4Player::DonePlaying(const bool bError, const bool bVideo)
         }
 #endif /* FEATURE_QTV_SERVER_SIDE_PLAYLIST */
 
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif
-
         // Stop everything except possibly the streamer.
         StopPlayer(bErr, bCloseStreamer);
 
@@ -25831,14 +24115,9 @@ void Mpeg4Player::DonePlaying(const bool bError, const bool bVideo)
           else
 #endif /* FEATURE_QTV_SERVER_SIDE_PLAYLIST */
           {
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif
-            {
             PlaybackComplete(COMPLETE);
           }
         }
-       }
       }
       break;
    }
@@ -25879,7 +24158,6 @@ void Mpeg4Player::PlaybackComplete(EndCode code)
          (playerState != IDLE))
 #endif
    {
-#ifndef FEATURE_WINCE
        if(pActiveVideoPlayer)
        {
          bVideoOK = pActiveVideoPlayer->GetStatistics(statistics,videoLastFrame);
@@ -25888,7 +24166,6 @@ void Mpeg4Player::PlaybackComplete(EndCode code)
        {
          bVideoOK = false;
        }
-#endif   /*    FEATURE_WINCE   */
    }
 
    qtv_event_clip_ended_type_ver2 qtv_event_clip_ended_payload;
@@ -25931,31 +24208,18 @@ void Mpeg4Player::PlaybackComplete(EndCode code)
             Notify(QtvPlayer::QTV_PLAYER_STATUS_PLAYBACK_COMPLETE );
             qtv_event_clip_ended_payload.end_type = QTV_EVENT_CLIP_ENDED_SUCCESS;
             break;
-         case FCS_COMPLETE:
-            Notify(QtvPlayer::QTV_PLAYER_STATUS_FCS_PLAYBACK_COMPLETE );
-            qtv_event_clip_ended_payload.end_type = QTV_EVENT_CLIP_ENDED_SUCCESS;
-            break;
-        case FCS_SWITCH_ERROR:
-            Notify(QtvPlayer::QTV_PLAYER_STATUS_SWITCH_STREAM_FAILED);
-            qtv_event_clip_ended_payload.end_type = QTV_EVENT_CLIP_ENDED_ERROR_ABORT;
-            break;
       }
 
       //replace an old event with newer version due to change in payload
       //reports video statistics after playback
-#ifndef FEATURE_WINCE
       event_report_payload(EVENT_QTV_CLIP_ENDED_VER2,
                            sizeof(qtv_event_clip_ended_type_ver2),
                            (void *)&qtv_event_clip_ended_payload);
-#endif   /*    FEATURE_WINCE   */
    }
 
    //Do state transition.
-   // Always Notify we're IDLE! except if the session supports content switching
-   if((code != FCS_COMPLETE) && (code != FCS_SWITCH_ERROR))
-   {
-     Notify(IDLE);
-   }
+   // Always Notify we're IDLE!
+   Notify(IDLE);
    CleanupPlayback();
    bStop = false;
 }
@@ -26069,7 +24333,6 @@ void Mpeg4Player::AudioTiming(const AUDIO_TIMING_type *pEvent)
       //checking the play ID tag and the state
       if (pEvent->playbackID==playbackID && playerState!=IDLE)
       {
-#ifndef FEATURE_WINCE
          if (clip.bHasVideo && pActiveVideoPlayer)
          {
             pActiveVideoPlayer->TimingUpdate();
@@ -26090,8 +24353,6 @@ void Mpeg4Player::AudioTiming(const AUDIO_TIMING_type *pEvent)
 #endif
          }
 #endif
-#endif   /*    FEATURE_WINCE   */
-
       }
    }
 }
@@ -26331,9 +24592,7 @@ void Mpeg4Player::AudioStatus(const AUDIO_STATUS_type *pEvent)
               if (stop == -1 || (stop - start > MAX_STARVING_TIME))
               {
                 appControl.bDoneAudioBuffering = false;
-#ifndef FEATURE_WINCE
                   AudioPlayerIf::RestartAudio(activeAudioPlayerId);
-#endif   /*    FEATURE_WINCE   */
               }
               break;
 
@@ -26343,14 +24602,10 @@ void Mpeg4Player::AudioStatus(const AUDIO_STATUS_type *pEvent)
                /* Notify change of status according to whether or not it is
                ** necessary to wait for video to be disabled.
                */
-#ifndef FEATURE_WINCE
-               if ( (!clip.bHasVideo || (pActiveVideoPlayer && pActiveVideoPlayer->IsDone())) &&
-                  (!AudioPlayerIf::IsDone(activeAudioPlayerId))
-                  )
+               if (!clip.bHasVideo || (pActiveVideoPlayer && pActiveVideoPlayer->IsDone()))
                {
                  Notify(QtvPlayer::QTV_PLAYER_STATUS_SUSPENDED);
                }
-#endif   /*    FEATURE_WINCE   */
                break;
              }
 
@@ -26409,11 +24664,7 @@ void Mpeg4Player::VideoStatus(const VIDEO_STATUS_type *pEvent)
                // happen, the duration starts from 0.
                if ((clip.bStillImage && clip.bHasAudio) ||
                    (playerState == REPOSITIONING)||
-                   ( clip.bHasAudio
-#ifndef FEATURE_WINCE
-               && AudioPlayerIf::IsPlaying(activeAudioPlayerId)
-#endif   /*    FEATURE_WINCE   */
-                       ))
+                   ( clip.bHasAudio && AudioPlayerIf::IsPlaying(activeAudioPlayerId)))
                {
                  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
                               "Ignoring VIDEO_BUFFERING for still image");
@@ -26634,7 +24885,6 @@ void Mpeg4Player::TimedTextStatus(const CPVTEXT_STATUS_type *pEvent)
          {
             case Common::CPVTEXT_BUFFERING:
                QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Received CPVTEXT_BUFFERING");
-               if(!textPlayer.IsDone())
                Buffering();
                break;
 
@@ -26721,7 +24971,7 @@ void Mpeg4Player::TimedTextStatus(const CPVTEXT_STATUS_type *pEvent)
 }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
 
-#ifdef FEATURE_QTV_PSEUDO_STREAM
+#ifdef FEATURE_FILE_FRAGMENTATION
 /* ======================================================================
 FUNCTION
   Mpeg4Player::ParserStatus
@@ -26792,14 +25042,13 @@ void Mpeg4Player::ParserStatus(const QTV_PS_PARSER_STATUS_EVENT_type *pEvent)
 
                qtv_event_parser_ready.buffer_fill_rate =
                         appControl.nPseudoStreamDownloadRate;
-#ifndef FEATURE_WINCE
+
                if(clip.bPseudoStreaming)
                  event_report_payload(
                         EVENT_QTV_PARSER_STATE_READY,
                         sizeof(qtv_event_parser_ready_type),
                         &qtv_event_parser_ready
                        );
-#endif   /*    FEATURE_WINCE   */
 #endif /*FEATURE_QTV_PSEUDO_STREAM*/
 
          Notify(QtvPlayer::QTV_PS_PARSER_STATUS_READY);
@@ -26893,13 +25142,11 @@ void Mpeg4Player::ParserStatus(const QTV_PS_PARSER_STATUS_EVENT_type *pEvent)
                        else
                        {
 #ifdef FEATURE_QTV_PSEUDO_STREAM
-#ifndef FEATURE_WINCE
                          if(clip.bPseudoStreaming)
                            event_report(EVENT_QTV_PSEUDO_STREAM_STARTED);
                          event_report_payload(EVENT_QTV_CLIP_STARTED,
                                                 sizeof(qtv_event_clip_started_type),
                                                 &qtv_event_clip_started_payload);
-#endif   /*    FEATURE_WINCE   */
 #endif /*FEATURE_QTV_PSEUDO_STREAM*/
                        }
                      }
@@ -26928,13 +25175,11 @@ void Mpeg4Player::ParserStatus(const QTV_PS_PARSER_STATUS_EVENT_type *pEvent)
                      qtv_event_pp_duration_type qtv_event_pp_duration;
                      qtv_event_pp_duration.pseudo_pause_duration =
                                    pvGetTickCount() - player_pp_entry_time;
-#ifndef FEATURE_WINCE
                      event_report_payload(
                                    EVENT_QTV_PLAYER_STATE_PSEUDO_RESUME,
                                    sizeof(qtv_event_pp_duration_type),
                                    &qtv_event_pp_duration
                          );
-#endif   /*    FEATURE_WINCE   */
                      break;
 #endif /*FEATURE_QTV_PSEUDO_STREAM*/
 
@@ -27006,13 +25251,11 @@ void Mpeg4Player::ParserStatus(const QTV_PS_PARSER_STATUS_EVENT_type *pEvent)
                qtv_event_pp_duration_type qtv_event_parser_pause_duration;
                qtv_event_parser_pause_duration.pseudo_pause_duration =
                                   pvGetTickCount() - parser_pause_entry_time;
-#ifndef FEATURE_WINCE
                event_report_payload(
                               EVENT_QTV_PARSER_STATE_PSEUDO_RESUME,
                               sizeof(qtv_event_pp_duration_type),
                               &qtv_event_parser_pause_duration
                               );
-#endif   /*    FEATURE_WINCE   */
                parser_pause_entry_time = 0;
 
          //Start timer for pull interface
@@ -27095,9 +25338,7 @@ SIDE EFFECTS
 void Mpeg4Player::PseudoPauseHandler(const QTV_PS_PAUSE_EVENT_type *)
 {
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Received PSEUDO_PAUSE");
-#ifndef FEATURE_WINCE
     event_report(EVENT_QTV_PLAYER_STATE_PSEUDO_PAUSE);
-#endif   /*    FEATURE_WINCE   */
     player_pp_entry_time = pvGetTickCount();
     Notify(PLAYER_PSEUDO_PAUSE);
    //Start timer for pull interface
@@ -27164,14 +25405,12 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void Mpeg4Player::HttpPullTimerStop()
 {
     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "HttpPullDataStop: called..!");
     httpPullData.bTimerSet = false;
     return;
 }
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 #endif /* defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD) */
 
 #ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
@@ -27237,7 +25476,6 @@ void Mpeg4Player::HTTPParserStatus(const QTV_HTTP_PARSER_STATUS_EVENT_type *pEve
 
                qtv_event_parser_ready.buffer_fill_rate =
                         appControl.nHTTPStreamDownloadRate;
-#ifndef FEATURE_WINCE
 
                if(clip.bHTTPStreaming)
                  event_report_payload(
@@ -27245,7 +25483,6 @@ void Mpeg4Player::HTTPParserStatus(const QTV_HTTP_PARSER_STATUS_EVENT_type *pEve
                         sizeof(qtv_event_parser_ready_type),
                         &qtv_event_parser_ready
                        );
-#endif   /*    FEATURE_WINCE   */
 
          Notify(QtvPlayer::QTV_HTTP_PARSER_STATUS_READY);
 
@@ -27388,12 +25625,9 @@ void Mpeg4Player::HTTPParserStatus(const QTV_HTTP_PARSER_STATUS_EVENT_type *pEve
                        {
                          //if(clip.bHTTPStreaming)
                            //event_report(EVENT_QTV_PSEUDO_STREAM_STARTED);
-#ifndef FEATURE_WINCE
-
                          event_report_payload(EVENT_QTV_CLIP_STARTED,
                                               sizeof(qtv_event_clip_started_type),
                                               &qtv_event_clip_started_payload);
-#endif   /*    FEATURE_WINCE   */
                        }
                      }
                      appControl.mediaCounter = 0;
@@ -27427,14 +25661,11 @@ void Mpeg4Player::HTTPParserStatus(const QTV_HTTP_PARSER_STATUS_EVENT_type *pEve
                qtv_event_pp_duration_type qtv_event_parser_pause_duration;
                qtv_event_parser_pause_duration.pseudo_pause_duration =
                                   pvGetTickCount() - parser_pause_entry_time;
-#ifndef FEATURE_WINCE
-
                event_report_payload(
                               EVENT_QTV_PARSER_STATE_PSEUDO_RESUME,
                               sizeof(qtv_event_pp_duration_type),
                               &qtv_event_parser_pause_duration
                               );
-#endif   /*    FEATURE_WINCE   */
                parser_pause_entry_time = 0;
                //Start timer for pull interface
                if(clip.FetchBufferedDataSize)
@@ -27503,46 +25734,23 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
-bool Mpeg4Player::StartStreaming
-(
-  const URL* urlToSwitch
-)
+bool Mpeg4Player::StartStreaming()
 {
-  bool bError = false;
-  bool rslt = false;
-
-  bool reconnecting = (streamer && (streamer->getReconnectionStatus() !=
-                                                 RECONNECT_STATUS_INVALID));
-
-
-  bool enablePipelining = (qtvConfigObject.GetQTVConfigItem(
-    QtvConfig::QTVCONFIG_ENABLE_PIPELINING_FOR_STREAMING))>0?true:false;
-  
-   if ((!reconnecting && playerState!=PB_READY
+   if (playerState!=PB_READY
        && playerState!=REPOSITIONING)
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#elif FEATURE_QTV_PIPELINING 
-#error code not present
-#endif
-       )
    {
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Weird state in StartStreaming");
       return false;
    }
 
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif /* FEATURE_QTV_FCS */
-
    long start,stop;
-   bool reposition = (playerState==REPOSITIONING);
-
    if (!GetPlayTimes(start,stop))
    {
       Notify(QtvPlayer::QTV_PLAYER_STATUS_PLAY_TIME_ERROR);
    } else
    {
+      bool bError;
+
       //save stream times
       reposControl.nStreamStop=stop;
       reposControl.nStreamStart=start;
@@ -27555,34 +25763,12 @@ bool Mpeg4Player::StartStreaming
       QTV_MSG2(QTVDIAG_STREAMING,
                "Elapsed time since start of play = %d and New play start time = %d", GetElapsedTime(), start);
 
-      if (streamer && reconnecting)
-      {
-        if (!reposition)
-        {
-          start = GetElapsedTime();
-        }
-        if (playerState != PB_READY)
-        {
-          reposition = true;
-        }
-      }
-
-if(streamer)
-      {
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif
-        {
-          rslt = streamer->StartStreaming(bError,start,-1/*stop*/,reposition);
-        }
-      }
-
-      if (rslt)
+      if (streamer && streamer->StartStreaming(bError,start,-1/*stop*/,playerState==REPOSITIONING))
       {
          if (bError)
          {
             QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Stream error from StartStreaming");
-            ErrorAbort(STREAM_START_ERROR);
+            StreamError();
          }
          else
          {
@@ -27591,23 +25777,17 @@ if(streamer)
                qtv_event_clip_reposition_resume_type  qtv_event_clip_reposition_resume;
                qtv_event_clip_reposition_resume.resume_time = start;
                // for PAYLOAD use the "start"
-#ifndef FEATURE_WINCE
                event_report_payload(EVENT_QTV_CLIP_REPOSITION_RESUME, // for STREAMING only
                                     sizeof(qtv_event_clip_reposition_resume_type),
                                     &qtv_event_clip_reposition_resume);
-#endif
             }// if
 
             //wait on STREAM_START message
             return true;
          }
       }
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif
    }
-   QTV_USE_ARG1(urlToSwitch);
-   return (bError == false);
+   return false;
 }
 
 /* ======================================================================
@@ -27726,11 +25906,6 @@ void Mpeg4Player::StreamerStatus(const STREAMER_STATUS_type *pEvent)
       Notify(CONNECTING);
       break;
 #endif /* FEATURE_QTV_MAPI_STREAM_MEDIA */
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#elif FEATURE_QTV_PIPELINING 
-#error code not present
-#endif
     case Common::STREAM_CONNECTED:
     {
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "streamer status STREAM_CONNECTED");
@@ -27744,6 +25919,10 @@ void Mpeg4Player::StreamerStatus(const STREAMER_STATUS_type *pEvent)
       /* This is initial buffering
        * passing a 'false' here sets all buffering parameters
        */
+      if( streamer )
+      {
+         streamer->SetStreamBufferingParameters(false);
+      }
       bool bOK = true;
       //Mark the tracks to play.
       if (DescribeClip(clip.pVideoMpeg4Playback,0, NULL,0, NULL,0))
@@ -27789,12 +25968,7 @@ void Mpeg4Player::StreamerStatus(const STREAMER_STATUS_type *pEvent)
         break;
       }
 
-      // move to PB_READY only when connected status is received from status
-      // otherwise fast startup(play) is effected with the state change
-       if(pEvent->code == Common::STREAM_CONNECTED)
-        {
-          Notify(PB_READY);
-     }
+      Notify(PB_READY);
 #ifdef FEATURE_QTV_MAPI_STREAM_MEDIA
       if (m_useMAPILogic && clip.pVideoMpeg4Playback != NULL)
       {
@@ -27809,141 +25983,8 @@ void Mpeg4Player::StreamerStatus(const STREAMER_STATUS_type *pEvent)
         {
           ErrorAbort(STREAM_START_ERROR);
         }
-     // set this to false as streamer will come back with CONNECTED status
-     // which results in sending play again
-        appControl.bStartPlaying = false;
-
         //else wait for STREAM_START
       }
-    }
-    break;
-
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif /* FEATURE_QTV_FCS */
-
-    case Common::STREAM_RECONNECT_PREPARE_FAIL:
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "streamer status STREAM_RECONNECT_PREPARE_FAIL");
-      // abort session
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
-         "PrepareForReconnect failed, streamer status STREAM_ERROR_ABORT");
-      Notify(QtvPlayer::QTV_PLAYER_STATUS_STREAM_ERROR);
-      ErrorAbort(STREAM_CONNECT_ERROR);
-      ResetPlaybackData();
-    }
-    break;
-
-    case Common::STREAM_RECONNECT_IN_PROGRESS:
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
-                   "streamer status STREAM_RECONNECT_IN_PROGRESS");
-      bool bError = true;
-
-      //notify player with reconnect in progress
-      Notify(QtvPlayer::QTV_PLAYER_STATUS_RECONNECT_IN_PROGRESS);
-
-      streamer->Reconnect(bError);
-      if (bError)
-      {
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Stream error from StartReconnecting");
-        // abort session
-        Notify(QtvPlayer::QTV_PLAYER_STATUS_RECONNECT_FAIL);
-        ErrorAbort(STREAM_CONNECT_ERROR);
-        ResetPlaybackData();
-      }
-    }
-    break;
-#ifdef FEATURE_AUTOFALLBACK
-#error code not present
-#endif  
-    case Common::STREAM_NETWORK_ERROR:
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "streamer status STREAM_NETWORK_ERROR");
-
-      uint32 numberOfReconnectAttempt =
-         qtvConfigObject.GetQTVConfigItem(QtvConfig::QTVCONFIG_WM_FAST_RECONNECT_MAX_ATTEMPTS);
-      if ( numReconnectAttemptsMade >= numberOfReconnectAttempt)
-      {
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
-             "Max Retry Reached : streamer status STREAM_ERROR_ABORT");
-        Notify(QtvPlayer::QTV_PLAYER_STATUS_STREAM_ERROR);
-        ErrorAbort(STREAM_CONNECT_ERROR);
-        ResetPlaybackData();
-        break;
-      }
-
-      bool isPlayerInReconnectAcceptableState = (playerState == PLAYING) ||
-                                                (playerState == BUFFERING) ||
-                                                (playerState == PAUSED) ||
-                                                (playerState == SUSPENDED);
-
-      QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
-                   "Network error in player state=%d", playerState);
-
-      if (!isPlayerInReconnectAcceptableState)
-      {
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR,
-                    "Reconnection can not made due to player state");
-        Notify(QtvPlayer::QTV_PLAYER_STATUS_STREAM_ERROR);
-        ErrorAbort(STREAM_CONNECT_ERROR);
-        ResetPlaybackData();
-        break;
-      }
-
-      if (streamer)
-      {
-        if(!streamer->PrepareForReconnect())
-        {
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "PrepareForReconnect failed, Aborting");
-          // abort session
-          Notify(QtvPlayer::QTV_PLAYER_STATUS_STREAM_ERROR);
-          ErrorAbort(STREAM_CONNECT_ERROR);
-          ResetPlaybackData();
-        }
-        numReconnectAttemptsMade++;
-        QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,
-                    "numReconnectAttemptsMade :: %d", numReconnectAttemptsMade);
-        
-      }
-    }
-    break;
-
-    case Common::STREAM_RECONNECT_SUCCESS:
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "streamer status STREAM_RECONNECT_SUCCESS");
-
-
-      if ((playerState == PAUSED) || (playerState == SUSPENDED) || (playerState == PB_READY))
-      {
-        Notify(QtvPlayer::QTV_PLAYER_STATUS_RECONNECT_SUCCESS);
-        break;
-      }
-
-#ifdef FEATURE_QTV_MAPI_STREAM_MEDIA
-      if (m_useMAPILogic && clip.pVideoMpeg4Playback != NULL)
-      {
-        GENERIC_BCAST_MEDIA_SET_STATE(clip.pVideoMpeg4Playback, true);
-      }
-#endif /* FEATURE_QTV_MAPI_STREAM_MEDIA */
-
-      if (!StartStreaming())
-       {
-         ErrorAbort(STREAM_START_ERROR);
-       }
-       else
-       {
-         Notify(QtvPlayer::QTV_PLAYER_STATUS_RECONNECT_SUCCESS);
-       }
-    }
-    break;
-
-    case Common::STREAM_RECONNECT_FAIL:
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "streamer status STREAM_RECONNECT_FAILURE, Aborting");
-      Notify(QtvPlayer::QTV_PLAYER_STATUS_RECONNECT_FAIL);
-      ErrorAbort(STREAM_CONNECT_ERROR);
-      ResetPlaybackData();
     }
     break;
 
@@ -27999,9 +26040,6 @@ void Mpeg4Player::StreamerStatus(const STREAMER_STATUS_type *pEvent)
       }
       break;
 
-#ifdef FEATURE_AUTOFALLBACK
-#error code not present
-#endif        
     case Common::STREAM_DONE:
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "streamer status STREAM_DONE");
       //Unless EOS, we'll end when the audio/video report in.
@@ -28065,28 +26103,6 @@ void Mpeg4Player::StreamerStatus(const STREAMER_STATUS_type *pEvent)
         ResetPlaybackData();
       }
       break;
-    case Common::STREAM_SERVER_NOT_ENOUGH_BW:
-      RTSPStatusNotify(pEvent); // pass rtsp status to callback fcn
-      {
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "streamer status STREAM_SERVER_NOT_ENOUGH_BW");
-        /* JG Notify the upper layer regardless of state */
-        Notify(QtvPlayer::QTV_PLAYER_STATUS_SERVER_NOT_ENOUGH_BW);
-        ErrorAbort(STREAM_CONNECT_ERROR);
-        ResetPlaybackData();  // reset the staticstics, pvdt#7961
-      }
-      break;
-
-    case Common::STREAM_DATA_INACTIVITY_TIMEOUT:
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "streamer status STREAM_DATA_INACTIVITY_TIMEOUT");
-      RTSPStatusNotify(pEvent); // pass rtsp status to callback fcn
-      {
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "streamer status STREAM_DATA_INACTIVITY_TIMEOUT");
-        /* JG Notify the upper layer regardless of state */
-        Notify(QtvPlayer::QTV_PLAYER_STATUS_DATA_INACTIVITY_ERROR);
-        ErrorAbort(STREAM_CONNECT_ERROR);
-        ResetPlaybackData();
-      }
-     break;
 
     case Common::STREAM_SERVER_CLOSED_EXCEPTION:
       {
@@ -28123,25 +26139,19 @@ void Mpeg4Player::StreamerStatus(const STREAMER_STATUS_type *pEvent)
           }
           if (clip.bHasAudio)
           {
-#ifndef FEATURE_WINCE
             AudioPlayerIf::EnableTimeCheck( activeAudioPlayerId, redirectTime );
-#endif   /*    FEATURE_WINCE   */
           }
           else if (clip.bHasVideo)
           {
-#ifndef FEATURE_WINCE
             if (pActiveVideoPlayer)
             {
               pActiveVideoPlayer->EnableTimeCheck(redirectTime );
             }
-#endif   /*    FEATURE_WINCE   */
           }
 #ifdef FEATURE_MP4_3GPP_TIMED_TEXT
           else if (clip.bHasText)
           {
-#ifndef FEATURE_WINCE
             textPlayer.EnableTimeCheck( redirectTime );
-#endif   /*    FEATURE_WINCE   */
           }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
         }
@@ -28169,13 +26179,6 @@ void Mpeg4Player::StreamerStatus(const STREAMER_STATUS_type *pEvent)
       RTSPStatusNotify(pEvent); // pass rtsp status to callback fcn
       Notify(QtvPlayer::QTV_STREAM_RATE_ADAPTATION_SUPPORTED);
       QTV_MSG(QTVDIAG_MP4_PLAYER, "QTV_STREAM_RATE_ADAPTATION_SUPPORTED sent to Qtv Player");
-      break;
-
-     case Common::STREAM_TRACKLIST_UNKNOWN_CODEC:
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "streamer status STREAM_TRACKLIST_UNKNOWN_CODEC");
-      RTSPStatusNotify(pEvent); // pass rtsp status to callback fcn
-      Notify(QtvPlayer::QTV_STREAM_TRACKLIST_UNKNOWN_CODEC);
-      QTV_MSG(QTVDIAG_MP4_PLAYER, "QTV_STREAM_TRACKLIST_UNKNOWN_CODEC sent to Qtv Player");
       break;
 
 #if (defined FEATURE_QTV_QDSP_RELEASE_RESTORE && defined FEATURE_QTV_QOS_SELECTION)
@@ -28415,10 +26418,6 @@ void Mpeg4Player::StreamerStatus(const STREAMER_STATUS_type *pEvent)
       break;
 #endif /* FEATURE_QTV_WM_SWITCHING_THINNING */
 
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif /* FEATURE_QTV_FCS */
-
     default:
       QTV_MSG_PRIO1(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "ERROR: Unknown stream status %d",(int)pEvent->status);
       break;
@@ -28575,7 +26574,6 @@ void Mpeg4Player::CleanupDownload()
 #endif
 }
 
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void Mpeg4Player::HandlePurgeAfterDownload()
 //handle the PVX purge after download flag, right after download went idle.
 {
@@ -28590,9 +26588,7 @@ void Mpeg4Player::HandlePurgeAfterDownload()
     }
   }
 }
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 void Mpeg4Player::PurgeDownload()
 {
   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED,
@@ -28635,7 +26631,7 @@ void Mpeg4Player::PurgeDownload()
   downloadInfo.bValid=false;
   //QCUtils::LeaveCritSect(&downloadInfo_CS);
 }
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
+
 
 void Mpeg4Player::DownloadComplete(EndCode code)
 {
@@ -28939,7 +26935,6 @@ void Mpeg4Player::HttpDownloadComplete(EndCode code)
       bDownloadDone = true;
       //Delete the corresponding txt file once download is complete
       char DownloadTxtFile[QTV_MAX_FILENAME_BYTES+MAX_TEMPFILENAME+2];
-      memset( DownloadTxtFile, 0, sizeof(DownloadTxtFile) ); 
       getDownloadTxtFileName(DownloadTxtFile, sizeof(DownloadTxtFile));
       if (OSCL_FileExists (DownloadTxtFile))
       {
@@ -29402,20 +27397,12 @@ SIDE EFFECTS
 ========================================================================== */
 bool Mpeg4Player::SetLoopTrackFlag(bool bLoop)
 {
-    bool bRet = false;
+  if( (playerState==IDLE) && !clip.pVideoMpeg4Playback && !clip.pAudioMpeg4Playback )
+  {
     bLoopTrackFlag = bLoop;
-    if( (playerState==IDLE) || (playerState==PB_READY) || (playerState==OPENING) )
-    {
-    if(clip.pVideoMpeg4Playback)
-      clip.pVideoMpeg4Playback->SetLoopTrackFlag(bLoopTrackFlag);
-    if(clip.pAudioMpeg4Playback)
-      clip.pAudioMpeg4Playback->SetLoopTrackFlag(bLoopTrackFlag);
-    if(clip.pTextMpeg4Playback)
-      clip.pTextMpeg4Playback->SetLoopTrackFlag(bLoopTrackFlag);
-    bRet = true;
+    return true;
   }
-
-  return bRet;
+  return false;
 }
 /* ======================================================================
 FUNCTION
@@ -29791,11 +27778,7 @@ RETURN VALUE
 ========================================================================== */
 long Mpeg4Player::GetAmtBufferedInCMX()
 {
-#ifndef FEATURE_WINCE
   return AudioPlayerIf::GetAmtBufferedInCmx( activeAudioPlayerId );
-#else
-#error code not present
-#endif   /*    FEATURE_WINCE   */
 }
 
 /* ======================================================================
@@ -29819,7 +27802,6 @@ SIDE EFFECTS
 unsigned long Mpeg4Player::GetElapsedTime()
 {
    unsigned long elapsedTime = 0;
-#ifndef FEATURE_WINCE
    if (clip.bHasAudio)
    {
     elapsedTime = (unsigned long)AudioPlayerIf::GetElapsedTime(activeAudioPlayerId);
@@ -29837,7 +27819,6 @@ unsigned long Mpeg4Player::GetElapsedTime()
       elapsedTime = (uint32)textPlayer.GetElapsedTime();
    }
 #endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-#endif   /*    FEATURE_WINCE   */
    return elapsedTime;
 }
 
@@ -30189,11 +28170,7 @@ SIDE EFFECTS:
 ======================================================================*/
 bool Mpeg4Player::IsAudioPlaying()
 {
-  if(clip.bHasAudio
-#ifndef FEATURE_WINCE
-      &&  !AudioPlayerIf::IsDone(activeAudioPlayerId)
-#endif   /*    FEATURE_WINCE   */
-      )
+  if(clip.bHasAudio &&  !AudioPlayerIf::IsDone(activeAudioPlayerId))
     return true;
   else
     return false;
@@ -30240,11 +28217,7 @@ SIDE EFFECTS:
 ======================================================================*/
 bool Mpeg4Player::IsVideoPlaying()
 {
-  if(clip.bHasVideo
-#ifndef FEATURE_WINCE
-&&  pActiveVideoPlayer && !(pActiveVideoPlayer->IsDone())
-#endif   /*    FEATURE_WINCE   */
-)
+  if(clip.bHasVideo &&  pActiveVideoPlayer && !(pActiveVideoPlayer->IsDone()))
     return true;
   else
     return false;
@@ -30269,11 +28242,7 @@ SIDE EFFECTS:
 ======================================================================*/
 bool Mpeg4Player::IsTextPlaying()
 {
-  if(clip.bHasText
-#ifndef FEATURE_WINCE
-      &&  !textPlayer.IsDone()
-#endif   /*    FEATURE_WINCE   */
-      )
+  if(clip.bHasText &&  !textPlayer.IsDone())
     return true;
   else
     return false;
@@ -30444,11 +28413,7 @@ bool Mpeg4Player::CopyBufferToFile(const QTV_COPY_BUFFER_TO_FILE_type * pEvent)
 
      }
   }
-  if (pvxIF.appFile.PurgeDownloadFile(pvxIF.nPlaylistIndex)
-#ifdef FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-  || http_bContentPurge
-#endif
-  )
+  if (pvxIF.appFile.PurgeDownloadFile(pvxIF.nPlaylistIndex) || http_bContentPurge)
   {
      /* Notify PDS2 Save operation is not allowed */
      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"Save As: Save operation is not allowed");
@@ -30690,56 +28655,26 @@ void Mpeg4Player::getDownloadTxtFileName(char *DownloadTxtFile, const int size)
 {
   const char* pvxString = NULL;
   char *tempUrl =NULL;
-  char *pUrl = NULL;
   int32 urlLen=0;
-  if ((char *)(*URN.sURN).IsNull())
-  {
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"*URN.sURN  is NULL, Returing..");
-    return;
-  }  
-  else
-  {  
-    pvxString = strstr((const char*)(*URN.sURN),"pvx");
-  }      
-
-  if(!(URN.sURN->GetUrlLength()))
-  {
-     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"*URN.sURN length is NULL, Returing..");
-     return;
-  }
-
+  pvxString = strstr((const char*)(*URN.sURN),"pvx");
   if (!pvxString)
   {
-#ifndef FEATURE_WINCE
     (void)std_strlcpy(rootpath, "/", sizeof(rootpath));
-#else
-#error code not present
-#endif
   }
 
-#ifndef FEATURE_WINCE
-  //extract the clip name from url
+  // extract the clip name from url
   tempUrl = (char *)strrchr((const char*)(*URN.sURN), '/') + 1;
-#else
-#error code not present
-#endif
 
-  //Extract the length of the clip name
-  if (tempUrl)
+  // Lenght of the clip name
+  urlLen = strlen(tempUrl);
+  char *pUrl = (char*)QTV_Malloc(urlLen+1);
+
+  if(NULL == pUrl)
   {
-    urlLen = strlen(tempUrl);
-    pUrl = (char*)QTV_Malloc(urlLen + 1);
-    if (pUrl != NULL)
-    {
-      (void)std_strlcpy(pUrl, tempUrl, urlLen + 1);
-    }
-    else
-    {
-      QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH,"pUrl is NULL, Malloc failed Returing..");
-      return;
-    }
+    return;
   }
 
+  (void)std_strlcpy(pUrl,tempUrl,urlLen+1);
 
   // the pUrl now will show the url without any special character and .3gp
   // extension
@@ -30948,15 +28883,10 @@ Mpeg4Player::Mpeg4Player()
    QCUtils::InitCritSect(&URN_CS);
    QCUtils::InitCritSect(&URL_CS);
    QCUtils::InitCritSect(&clipInfo_CS);
-   QCUtils::InitCritSect(&frameToRelease_CS);
    QCUtils::InitCritSect(&frameInfo_CS);
    QCUtils::InitCritSect(&AVSync_CS);
 
    InitDefaults();
-#ifdef PLATFORM_LTK
-#error code not present
-#endif // PLATFORM_LTK
-
 
 #ifndef FEATURE_QTV_MAPI_STREAM_MEDIA
    streamer = QTV_New(Streamer);
@@ -30981,7 +28911,6 @@ SIDE EFFECTS
   Detail any side effects.
 
 ========================================================================== */
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 Mpeg4Player::~Mpeg4Player()
 {
    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW, "Mpeg4Player::~Mpeg4Player" );
@@ -31073,34 +29002,24 @@ Mpeg4Player::~Mpeg4Player()
 #endif /* FEATURE_QTV_PROGRESSIVE_DL_STREAMING_2 */
 
 
-#if defined (FEATURE_QTV_PSEUDO_STREAM)
+#if defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
    //Cleanup the timer and the static event.
    if(httpPullData.pHttpPullTimer)
    {
        rex_delete_timer_ex(httpPullData.pHttpPullTimer);
        httpPullData.pHttpPullTimer = NULL;
    }
-   if(httpPullData.pUpdateWptrOffsetPS)
+   if(httpPullData.pUpdateWptrOffset)
    {
-      QTV_Free(httpPullData.pUpdateWptrOffsetPS);
-      httpPullData.pUpdateWptrOffsetPS = NULL;
+      QTV_Free(httpPullData.pUpdateWptrOffset);
+      httpPullData.pUpdateWptrOffset = NULL;
    }
 #endif //defined (FEATURE_QTV_PSEUDO_STREAM) || defined (FEATURE_QTV_3GPP_PROGRESSIVE_DNLD)
-#if defined FEATURE_QTV_3GPP_PROGRESSIVE_DNLD
-   if(httpPullData.pHttpPullTimer)
-   {
-       rex_delete_timer_ex(httpPullData.pHttpPullTimer);
-       httpPullData.pHttpPullTimer = NULL;
-   }
-   if(httpPullData.pUpdateWptrOffsetPD)
-   {
-      QTV_Free(httpPullData.pUpdateWptrOffsetPD);
-      httpPullData.pUpdateWptrOffsetPD = NULL;
-   }
-#endif
+
    --guMpeg4PlayerRefCnt;
+
 }
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
+
 /* ======================================================================
 FUNCTION:                                                            GRB
   Mpeg4Player::ReleaseVideoBuffer
@@ -31123,19 +29042,13 @@ void Mpeg4Player::ReleaseVideoBuffer( void *pBuffer )
 {
   if (pBuffer != NULL)
   {
-/* Due to some race condition between UI and MDP, have added critical sections to the following piece of code so that
-    all the frames are released with out any issues */
-    QCUtils::EnterCritSect(&frameToRelease_CS);
     frameToRelease.info.RGBBuffer = pBuffer;
     frameToRelease.info.YUVBuffer = pBuffer;
     numBuffersSent--;
-#ifndef FEATURE_WINCE
     if (pActiveVideoPlayer)
     {
       pActiveVideoPlayer->ReleaseBuffer( frameToRelease.info );
     }
-#endif   /*    FEATURE_WINCE   */
-    QCUtils::LeaveCritSect(&frameToRelease_CS);
   }
 }
 /* ======================================================================
@@ -31164,24 +29077,20 @@ void Mpeg4Player::LogCumulativeClipStatistics(bool reset_stats)
   // Audio/Video Stats Structure
   QtvPlayer::AudioVideoStatisticsT stats;
 
-#ifndef FEATURE_WINCE
   //Calculate the PlayMsec
   if (pActiveVideoPlayer)
   {
     pActiveVideoPlayer->SetPlayedbackTime();
   }
-#endif   /*    FEATURE_WINCE   */
 
   //Get the Audio & Video Statistics
   (void)GetAudioVideoStatistics(stats);
 
-#ifndef FEATURE_WINCE
   //Once again set the tResume
   if (pActiveVideoPlayer)
   {
     pActiveVideoPlayer->SetResumeTime();
   }
-#endif   /*    FEATURE_WINCE   */
 
   //Log the Audio and Video Stats
   Mpeg4Player::LogClipStatistics(stats);
@@ -31189,13 +29098,11 @@ void Mpeg4Player::LogCumulativeClipStatistics(bool reset_stats)
   /* Reset Statistics if needed */
   if(reset_stats)
   {
-#ifndef FEATURE_WINCE
     //Reset Video Stats.
     if (pActiveVideoPlayer)
     {
       pActiveVideoPlayer->ResetData();
     }
-#endif   /*    FEATURE_WINCE   */
   }
 
 #endif //PLATFORM_LTK
@@ -31238,13 +29145,11 @@ void Mpeg4Player::MediaNotifyCB(Media::MediaLayerRequest reqType,
       }break;
       case Media::SET_PREROLL_RENDERER:
       {
-#ifndef FEATURE_WINCE
         //Set the Preroll Renderer Count
          if (pThis->pActiveVideoPlayer)
          {
              ((VideoPlayer*)pThis->pActiveVideoPlayer)->SetPrerollRendererCount(reqData1);
          }
-#endif   /*    FEATURE_WINCE   */
       }break;
       case Media::LOG_FRAME_INFO:
       {
@@ -31300,9 +29205,7 @@ void Mpeg4Player::MediaNotifyCB(Media::MediaLayerRequest reqType,
       // audio mgr
       case Media::AUDIO_CHANNEL_SWITCH_FRAME:
       {
-#ifndef FEATURE_WINCE
         AudioPlayerIf::SetAudioChannelSwitchTS(pThis->activeAudioPlayerId, reqData1);
-#endif   /*    FEATURE_WINCE   */
 
       }break;
 
@@ -31381,50 +29284,6 @@ bool Mpeg4Player::IsVideoRenderingOkInState( const Mpeg4Player::State state )
 }
 
 /* ======================================================================
-FUNCTION:
- Mpeg4Player::setSpeed
-
-DESCRIPTION:
-  sets AccDuration for Fast start/Fast Cache
-
-INPUT/OUTPUT PARAMETERS:
-  speed
-
-RETURN VALUE:
-  None
-
-SIDE EFFECTS:
-  None.
-======================================================================*/
- void Mpeg4Player::setSpeed(float speedParam)
- {
-   //store time locally and push to streamer once streamer is created
-   speed = speedParam;
- }
-
-/* ======================================================================
-FUNCTION:
-  Mpeg4Player::setAccDuration
-
-DESCRIPTION:
-  sets AccDuration for Fast start/Fast Cache
-
-INPUT/OUTPUT PARAMETERS:
-  speed
-
-RETURN VALUE:
-  None
-
-SIDE EFFECTS:
-  None.
-======================================================================*/
- void Mpeg4Player::setAccDuration(int time)
- {
-   //store time locally and push to streamer once streamer is created
-   acceleratedDuration = time;
- }
-
-/* ======================================================================
 FUNCTION
   Mpeg4Player::SetQTVConfigItem
 
@@ -31493,9 +29352,7 @@ void Mpeg4Player::SetPlaybackSpeed(Common::PlaybackSpeedType pbSpeed)
 
   if (clip.bHasAudio)
   {
-#ifndef FEATURE_WINCE
     AudioPlayerIf::SetPlaybackSpeed(activeAudioPlayerId, pbSpeed);
-#endif   /*    FEATURE_WINCE   */
   }
 #ifdef FEATURE_QTV_FAST_PLAYBACK_VIDEO_ONLY
   else
@@ -31505,7 +29362,6 @@ void Mpeg4Player::SetPlaybackSpeed(Common::PlaybackSpeedType pbSpeed)
     ** and when it starts playing faster it will force both video and text
     ** to play faster.
     */
-#ifndef FEATURE_WINCE
     if (clip.bHasVideo && pActiveVideoPlayer)
     {
       pActiveVideoPlayer->SetPlaybackSpeed(pbSpeed);
@@ -31514,7 +29370,6 @@ void Mpeg4Player::SetPlaybackSpeed(Common::PlaybackSpeedType pbSpeed)
     {
       textPlayer.SetPlaybackSpeed(pbSpeed);
     }
-#endif   /*    FEATURE_WINCE   */
   }
 #endif /* FEATURE_QTV_FAST_PLAYBACK_VIDEO_ONLY */
 }
@@ -31768,7 +29623,6 @@ void Mpeg4Player::UpdateRendererQueuingMode()
   bool isFIFORendering =
     GENERIC_BCAST_MEDIA_GET_IS_FIFO_RENDERING(clip.pVideoMpeg4Playback);
 
-#ifndef FEATURE_WINCE
   if (pActiveVideoPlayer)
   {
     if (isFIFORendering)
@@ -31782,7 +29636,6 @@ void Mpeg4Player::UpdateRendererQueuingMode()
        ((VideoPlayer*)pActiveVideoPlayer)->SetRendererQueuingMode(VideoPlayer::RENDERER_QUEUING_MODE_SORTING);
     }
   }
-#endif   /*    FEATURE_WINCE   */
 }
 
 /* ======================================================================
@@ -31875,9 +29728,9 @@ RETURN VALUE
 bool Mpeg4Player::SetDualMonoOutput(Common::DualMonoOutputType dualMonoOutput)
 {
   bool bRet = false;
-#ifndef FEATURE_WINCE
+
   bRet = AudioPlayerIf::SetDualMonoOutput(activeAudioPlayerId, dualMonoOutput);
-#endif   /*    FEATURE_WINCE   */
+
   return bRet;
 }
 #endif /* FEATURE_QTV_DUAL_MONO_OUTPUT_SELECTION */
@@ -31908,12 +29761,10 @@ QtvPlayer::ReturnT Mpeg4Player::SetVDECParameter( QtvPlayer::QtvVDECParameterIdT
   QtvPlayer::ReturnT nReturn = QtvPlayer::QTV_RETURN_ERROR;
   VDEC_ERROR nVDECReturn = VDEC_ERR_MYSTERY_ERROR;
 
-#ifndef FEATURE_WINCE
   if (pActiveVideoPlayer)
   {
       nVDECReturn = ((VideoPlayer*)pActiveVideoPlayer)->SetVDECParameter((VDEC_PARAMETER_ID)inputParamId, (VDEC_PARAMETER_DATA *)pInputParam);
   }
-#endif   /*    FEATURE_WINCE   */
 
   if(nVDECReturn == VDEC_ERR_EVERYTHING_FINE)
   {
@@ -31938,219 +29789,8 @@ RETURN VALUE
 ========================================================================== */
 void Mpeg4Player::SetIncallVoiceCodec(Media::CodecType eVocoderType)
 {
-#ifndef FEATURE_WINCE
    if (pActiveVideoPlayer)
    {
-#ifdef FEATURE_QTV_IN_CALL_VIDEO
-#error code not present
-#else
-    ((VideoPlayer*)pActiveVideoPlayer)->SetIncallVoiceCodec(eVocoderType);
-#endif /* FEATURE_QTV_IN_CALL_VIDEO */
-   }
-#endif   /*    FEATURE_WINCE   */
+      ((VideoPlayer*)pActiveVideoPlayer)->SetIncallVoiceCodec(eVocoderType);
+   }     
 }
-
-/* ======================================================================
-FUNCTION:
-  Mpeg4Player::UpdateClipInfoDimensions
-
-DESCRIPTION:
- This is a sync funciton which updates the height & width of clipinfo and notify to UI for clipinfo validation.
-
-INPUT/OUTPUT PARAMETERS:
-  int height : height of enoded frame.
-  int width  : width of encoded frame.
-
-RETURN VALUE:
-  None
-
-SIDE EFFECTS:
-  None.
-======================================================================*/
-void  Mpeg4Player::UpdateClipInfoDimensions(int height, int width)
-{
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
-    "Mpeg4Player::UpdateClipInfoDimensions() : START");
-
-    if( (Media::MPEG4_CODEC  == GetVideoCodecType()) ||
-      (Media::H263_CODEC  == GetVideoCodecType()) ||
-      (Media::H264_CODEC  == GetVideoCodecType()))
-   {
-      QTV_MSG_PRIO2(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
-      " SetImageDimensions(width:%d, height:%d)", height, width);
-    //update clipinfo dimensions here
-    SetImageDimensions(width, height);
-
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
-    " Notify(QtvPlayer::QTV_PLAYER_STATUS_VALID_CLIPINFO_DIMENSIONS) : Notify to UI for clipinfo validation");
-    //Notify to UI for clipinfo validation
-    Notify(QtvPlayer::QTV_PLAYER_STATUS_VALID_CLIPINFO_DIMENSIONS);
-  }
-
-    QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_LOW,
-    " Mpeg4Player::UpdateClipInfoDimensions() : END");
-}
-
-#ifndef FEATURE_WINCE
-/* ======================================================================
-FUNCTION
-  Mpeg4Player::WriteStatisticsToEFS
-
-DESCRIPTION
-  To write the clip statistics to a text file, if config item is set
-
-PARAMETERS
-  QtvPlayer::AudioVideoStatisticsT stats
-
-RETURN VALUE
-  0 for failure and 1 for success
-========================================================================== */
-
-int  Mpeg4Player::WriteStatisticsToEFS (QtvPlayer::AudioVideoStatisticsT stats)
-{
-#ifndef PLATFORM_LTK
-
-    char str[QTV_STATS_LOCAL_BUFFER_SIZE];
-    if (sUrnStatsName[0] != '\0')
-    {
-      char *endpos;
-      char *pos = str;
-      OSCL_FILE* fp = NULL;
-     memset (str,0x00,QTV_STATS_LOCAL_BUFFER_SIZE);
-      (void)std_strlcpy(str, "dbg/", strlen("dbg/") + 1);
-      (void)std_strlcat(str, sUrnStatsName, sizeof(str));
-
-      /* Make sure the complete directory path exists */
-      endpos = strrchr(str, '/');
-      if (endpos != NULL)
-      {
-         *endpos = '\0';
-         while(pos)
-         {
-            pos = strchr(pos, '/');
-            if (pos)
-            {
-               *pos = '\0';
-            }
-            efs_mkdir(str, S_IREAD | S_IWRITE);
-            if (pos)
-            {
-               *pos = '/';
-               pos++;
-            }
-         }
-         *endpos = '/';
-      }
-      /* add the Clip STats extension, and open the file */
-      (void)std_strlcat(str, ".cst", sizeof(str));
-      fp = OSCL_FileOpen((OSCL_CHAR *)str, (OSCL_TCHAR *) _T("wb"));
-      /* Fill in the statistics */
-      if ( fp!= NULL )
-      {
-#ifndef FEATURE_QTV_GENERIC_BCAST
-    if (clip.bHasVideo)
-#else
-    if (clip.bHasVideo || IsVideoMuted())
-#endif
-    {
-         /* Write the clip stats to file */
-         std_strlprintf(str, sizeof(str), "Video:            \n\n");
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Decoded Frame Rate:             %8lu\r\n", stats.Video.decodedFrameRate);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Displayed Frame Rate:           %8lu\r\n", stats.Video.displayedFrameRate);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Number Frames:                  %8lu\r\n", stats.Video.frames);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Video Frames Interpolated:          %8lu\r\n", stats.Video.framesInterpolated);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Frames Dropped - Unrecoverable: %8lu\r\n", stats.Video.failedDecode);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Frames Dropped - Decode Time:   %8lu\r\n", stats.Video.skippedDecode);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Frames Dropped - Render Time:   %8lu\r\n", stats.Video.skippedDisplay);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Frames Dropped due to AV sync:   %8lu\r\n", stats.Video.avSyncDrops);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Total MacroBlocks Concealed:   %8lu\r\n",stats.Video.skippedDisplayDueToErrs);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Max consecutive frame drops:   %8lu\r\n",stats.Video.maxDrop);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  maxVideoDataLead:          %8ld\r\n", stats.Video.maxDataLead);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  minVideoDataLead:          %8ld\r\n", stats.Video.minDataLead);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Video Encoded Frame Rate:       %8lu\r\n", stats.Video.encodedFrameRate);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Video Format:                   %8lu\r\n", stats.Video.format);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Video Encoded Bitrate:          %8lu\r\n\n", stats.Video.encodedBitrate);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-   }
-
-     if( stats.AVSync.avSyncValid )
-        {
-            std_strlprintf(str, sizeof(str), "A/V Sync:        \n");
-            (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-            std_strlprintf(str, sizeof(str), "  Max Msec Video Ahead:           %8lu\r\n", stats.AVSync.videoAheadMsec);
-            (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-            std_strlprintf(str, sizeof(str), "  Max Msec Video Behind:          %8lu\r\n\n", stats.AVSync.videoBehindMsec);
-            (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-          }
-#ifndef FEATURE_QTV_GENERIC_BCAST
-    if (clip.bHasAudio)
-#else
-    if (clip.bHasAudio || IsAudioMuted())
-#endif
-    {
-     std_strlprintf(str, sizeof(str), "Audio:            \n");
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Audio Format:                   %8lu\r\n",stats.Audio.format);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Audio Encoded Bitrate:          %8lu\r\n", stats.Audio.encodedBitrate);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  maxAudioDataLead:          %8ld\r\n", stats.Audio.maxAudioDataLead);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  minAudioDataLead:          %8ld\r\n", stats.Audio.minAudioDataLead);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  max consecutive AudioDrop:          %8lu\r\n",  stats.Audio.maxDrop);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Number Audio Frames:          %8lu\r\n", stats.Audio.frames);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-        std_strlprintf(str, sizeof(str), "  Null Audio Samples:          %8lu\r\n\n", stats.Audio.nullSamples);
-        (void)OSCL_FileWrite ((OSCL_CHAR *)str, (strlen(str)), 1, fp );
-     }
-
-
-#ifdef FEATURE_MP4_3GPP_TIMED_TEXT
-#ifdef FEATURE_MP4_UNUSED_CODE
-#error code not present
-#endif /* FEATURE_MP4_UNUSED_CODE */
-#endif /* FEATURE_MP4_3GPP_TIMED_TEXT */
-
-     (void)OSCL_FileClose(fp);
-        fp = NULL;
-      }
-      else
-      {
-       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Unable to open file");
-       return 0;
-       }
-    }
-    else
-    {
-     QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "Invalid file name");
-                return 0;
-    }
-#endif
-    return 1;
-}
-#endif   /*    FEATURE_WINCE   */
-
-#ifdef FEATURE_WINCE
-#error code not present
-#endif   /*    FEATURE_WINCE   */
-
-#ifdef FEATURE_QTV_FCS
-#error code not present
-#endif /* FEATURE_QTV_FCS */

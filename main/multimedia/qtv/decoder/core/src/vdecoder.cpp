@@ -22,15 +22,10 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/decoder/core/rel/2.0/src/vdecoder.cpp#11 $
-$DateTime: 2009/10/20 05:30:33 $
-$Change: 1058225 $
+$Header: //source/qcom/qct/multimedia/qtv/decoder/core/rel/2.0/src/vdecoder.cpp#4 $
+$DateTime: 2009/01/30 02:47:36 $
+$Change: 830406 $
 
-when       who      what, where, why
---------   ---      ---------------------------------------------------------
-04/08/09    vs      Remove the dependencies of other modules.
---------   ---      ---------------------------------------------------------
-06/30/09    as      Added Function level profiling feature
 ========================================================================== */
 
 /* ==========================================================================
@@ -40,6 +35,10 @@ when       who      what, where, why
 ========================================================================== */
 #include "vdecoder.h"
 #include "vdecoder_i.h"
+
+#include "assert.h"
+
+#include "qtvsystem.h" /* for QTV_USE_ARG1() and QTV_USE_ARG2() */
 
 
 /* Determines whether codec supports only single instance of itself or not */
@@ -122,16 +121,8 @@ VDEC_ERROR vdec_create
   if(gInstanceListCSInit == FALSE)
   {
     rex_init_crit_sect( &gInstanceList_cs);
-    for (uLoop=0; uLoop < MAX_NO_OF_INSTANCES; uLoop++)
-    {
-      rex_init_crit_sect(&gInstanceList[uLoop].cs);  
-    }
     gInstanceListCSInit = TRUE;
   }
-
-#ifdef FEATURE_QTV_VIDEO_DECODER_PROFILING
-#error code not present
-#endif
 
   rex_enter_crit_sect( &gInstanceList_cs );
   for (uLoop = 0; uLoop < MAX_NO_OF_INSTANCES; uLoop++)
@@ -238,7 +229,7 @@ VDEC_ERROR vdec_initialize
 {
   VideoDecoder *pDec;
 
-  if (VideoDecoder::IsInstanceValid(stream) == -1)
+  if (!VideoDecoder::IsInstanceValid(stream))
  {
     return VDEC_ERR_INVALID_STREAM_ID;
  }
@@ -278,27 +269,31 @@ VDEC_ERROR vdec_destroy
   const VDEC_STREAM_ID stream
 )
 {
+  uint32  uLoop;
   VideoDecoder *pDec;
-  int nIndex;
-  nIndex = VideoDecoder::IsInstanceValid(stream);
-  if (nIndex == -1)
+
+  if (!VideoDecoder::IsInstanceValid(stream))
   {
     return VDEC_ERR_INVALID_STREAM_ID;
   }
-  
-#ifdef FEATURE_QTV_VIDEO_DECODER_PROFILING
-#error code not present
-#endif
-
   pDec = ( VideoDecoder * )stream;
-  rex_enter_crit_sect(&gInstanceList[nIndex].cs);
-  pDec->Destroy();
-  Vdec_Delete( pDec );
-  rex_leave_crit_sect(&gInstanceList[nIndex].cs);
+
+  QTV_Delete( pDec );
 
   rex_enter_crit_sect( &gInstanceList_cs );
-  gInstanceList[nIndex].bValid = FALSE;
-  gInstanceList[nIndex].StreamID = NULL ;
+
+  for (uLoop = 0; uLoop < MAX_NO_OF_INSTANCES; uLoop++)
+  {
+    if (gInstanceList[uLoop].bValid == TRUE)
+    {
+      if (gInstanceList[uLoop].StreamID == stream)
+      {
+        gInstanceList[uLoop].bValid = FALSE;
+        gInstanceList[uLoop].StreamID = NULL ;
+        break;
+      }
+    }
+  }
   rex_leave_crit_sect( &gInstanceList_cs );
 
   return VDEC_ERR_EVERYTHING_FINE;
@@ -336,12 +331,12 @@ VDEC_ERROR vdec_dump
 )
 {
   
-  if (VideoDecoder::IsInstanceValid(stream) == -1)
+  if (!VideoDecoder::IsInstanceValid(stream))
   {
     return VDEC_ERR_INVALID_STREAM_ID;
   }
 
-  VDEC_USE_ARG1(pBlob);
+  QTV_USE_ARG1(pBlob);
 
   //return pDec->Dump( ppBuf_ret, pBufSize_ret );
   return VDEC_ERR_OPERATION_UNSUPPORTED;
@@ -409,8 +404,6 @@ RETURN VALUE
 SIDE EFFECTS
   None.
 ========================================================================== */
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
-
 VDEC_ERROR vdec_reuse_frame_buffer
 (
   const VDEC_STREAM_ID stream,
@@ -419,7 +412,7 @@ VDEC_ERROR vdec_reuse_frame_buffer
 {
   VideoDecoder *pDec;
 
-  if (VideoDecoder::IsInstanceValid(stream) == -1)
+  if (!VideoDecoder::IsInstanceValid(stream))
   {
     return VDEC_ERR_INVALID_STREAM_ID;
   }
@@ -427,9 +420,6 @@ VDEC_ERROR vdec_reuse_frame_buffer
 
   return pDec->ReuseFrameBuffer( pFrame );
 }
-
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
-
 
 /* ======================================================================
 FUNCTION
@@ -465,28 +455,40 @@ RETURN VALUE
   A VDEC_ERROR tells the world if everything worked.
 
 ========================================================================== */
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
-
 VDEC_ERROR vdec_queue( const VDEC_STREAM_ID      stream,
                        VDEC_INPUT_BUFFER * const pInput,
                        VDEC_QUEUE_CB_FN          pfnQueueCb,
                        void *  const             pQueueCbData )
 {
+  int i;
   VDEC_ERROR    err  ( VDEC_ERR_EVERYTHING_FINE );
   VideoDecoder *pDec;
 
-  if (VideoDecoder::IsInstanceValid(stream) == -1)
+  if (!VideoDecoder::IsInstanceValid(stream))
   {
     return VDEC_ERR_INVALID_STREAM_ID;
   }
   pDec = ( VideoDecoder * )stream;
+  
   err = pDec->Queue( pInput, pfnQueueCb, pQueueCbData );
+  if(err == VDEC_ERR_EVERYTHING_FINE)
+  {
+      for ( i = 0; i < pInput->layers; ++i )
+      {
+          if ( pInput->buffer_size[ i ] > 0 )
+          {   
+#ifndef PLATFORM_LTK                
+              pDec->log_bitstream_buffer( pInput->buffer[i],
+    	  						pInput->buffer_size[i] ); 
+#endif /* PLATFORM_LTK */
+
+              break;
+          }
+      }
+  }
   return err;
 
 }
-
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
-
 
 /* ======================================================================
 FUNCTION
@@ -514,7 +516,7 @@ VDEC_ERROR vdec_queue_eos( const VDEC_STREAM_ID      stream,
   VDEC_ERROR    err  ( VDEC_ERR_EVERYTHING_FINE );
   VideoDecoder *pDec;
 
-  if (VideoDecoder::IsInstanceValid(stream) == -1)
+  if (!VideoDecoder::IsInstanceValid(stream))
   {
     return VDEC_ERR_INVALID_STREAM_ID;
   }
@@ -552,29 +554,21 @@ NOTES
   calling Decode until the video frame it wants is returned.
 
 ========================================================================== */
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
-
 VDEC_ERROR vdec_decode
 (
   const VDEC_STREAM_ID stream
 )
 {
-  VDEC_ERROR ErrorCode;
   VideoDecoder *pDec;
-  int nIndex;
-  nIndex = VideoDecoder::IsInstanceValid(stream);
-  if (nIndex == -1)
+
+  if (!VideoDecoder::IsInstanceValid(stream))
   {
     return VDEC_ERR_INVALID_STREAM_ID;
   }
   pDec = ( VideoDecoder * )stream;
-  rex_enter_crit_sect(&gInstanceList[nIndex].cs);
-  ErrorCode = pDec->Decode( );
-  rex_leave_crit_sect(&gInstanceList[nIndex].cs);
-  return ErrorCode;
-}
 
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
+  return pDec->Decode( );
+}
 
 /* ======================================================================
 FUNCTION
@@ -598,22 +592,14 @@ VDEC_ERROR vdec_flush
 )
 {
   VideoDecoder *pDec;
-  VDEC_ERROR ErrorCode = VDEC_ERR_INVALID_STREAM_ID;
-  int nIndex = -1;
 
-  nIndex = VideoDecoder::IsInstanceValid(stream);
-  if (nIndex == -1)
+  if (!VideoDecoder::IsInstanceValid(stream))
   {
     return VDEC_ERR_INVALID_STREAM_ID;
   }
   pDec = ( VideoDecoder * )stream;
 
-  rex_enter_crit_sect(&gInstanceList[nIndex].cs);
-  ErrorCode = pDec->Flush( );   
-  rex_leave_crit_sect(&gInstanceList[nIndex].cs);
-
-  return ErrorCode;
- 
+  return pDec->Flush( );
 }
 
 /* ======================================================================
@@ -667,7 +653,7 @@ VDEC_ERROR vdec_suspend
 {
   VideoDecoder *pDec;
 
-  if (VideoDecoder::IsInstanceValid(stream) == -1)
+  if (!VideoDecoder::IsInstanceValid(stream))
   {
     return VDEC_ERR_INVALID_STREAM_ID;
   }
@@ -702,7 +688,7 @@ VDEC_ERROR vdec_resume
 {
   VideoDecoder *pDec;
 
-  if (VideoDecoder::IsInstanceValid(stream) == -1)
+  if (!VideoDecoder::IsInstanceValid(stream))
   {
     return VDEC_ERR_INVALID_STREAM_ID;
   }
@@ -739,7 +725,7 @@ VDEC_ERROR vdec_set_parameter
 {
   VideoDecoder *pDec;
 
-  if (VideoDecoder::IsInstanceValid(stream) == -1)
+  if (!VideoDecoder::IsInstanceValid(stream))
   {
     return VDEC_ERR_INVALID_STREAM_ID;
   }
@@ -776,7 +762,7 @@ VDEC_ERROR vdec_get_parameter
 {
   VideoDecoder *pDec;
 
-  if (VideoDecoder::IsInstanceValid(stream) == -1)
+  if (!VideoDecoder::IsInstanceValid(stream))
   {
     return VDEC_ERR_INVALID_STREAM_ID;
   }
@@ -822,7 +808,7 @@ VDEC_ERROR vdec_scale( VDEC_STREAM_ID stream,
 {
   VideoDecoder *pDec;
 
-  if (VideoDecoder::IsInstanceValid(stream) == -1)
+  if (!VideoDecoder::IsInstanceValid(stream))
   {
     return VDEC_ERR_INVALID_STREAM_ID;
   }

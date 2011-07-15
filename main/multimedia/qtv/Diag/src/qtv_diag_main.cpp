@@ -11,9 +11,9 @@ Copyright (c) 2002-2003 by QUALCOMM, Incorporated.  All Rights Reserved.
 
 /*===========================================================================
 
-$Header: //source/qcom/qct/multimedia/qtv/diag/main/latest/src/qtv_diag_main.cpp#16 $
-$DateTime: 2010/06/10 02:47:50 $
-$Change: 1329400 $
+$Header: //source/qcom/qct/multimedia/qtv/diag/main/latest/src/qtv_diag_main.cpp#9 $
+$DateTime: 2008/10/17 06:13:02 $
+$Change: 765016 $
                            Edit History
 
 when       who     what, where, why
@@ -3691,8 +3691,6 @@ bool qtvdiag_exec_api(char *request_packet_ptr, char* response_pkt_ptr, uint32 c
         {
           // Calling again ReadPlaybackTracks API with proper TrackList pointer memory allocated and getting
           // the tracklist details for the given track count.
-          memset(pTrackList,0x00,(sizeof(QtvPlayer::TrackListT)) * nTrackCount);
-          
           if(pHandle)
           {
             retVal = QtvPlayer::ReadPlaybackTracks(&nTrackCount, pTrackList, (QtvPlayer::InstanceHandleT)pHandle);
@@ -4187,7 +4185,7 @@ case QTVDIAG_FRAMEWORK_OPEN_URN3_API_ID:
 
 
   case QTVDIAG_FRAMEWORK_SKIP_API_ID:
-#ifdef FEATURE_FILE_FRAGMENTATION
+#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
     {
       int32 skipNumber = (int32) *((int32 *) api_packet_ptr); //lint !e826
       retVal = QtvPlayer::SkipClip(skipNumber);
@@ -4200,7 +4198,7 @@ case QTVDIAG_FRAMEWORK_OPEN_URN3_API_ID:
       retVal = QtvPlayer::QTV_RETURN_FEATURE_NOT_AVAILABLE;
       diag_error_code = QTVDIAG_ERROR_CODE_GENERIC_ERROR;
     }
-#endif // #ifdef FEATURE_FILE_FRAGMENTATION
+#endif // #ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
     break;
 
     // This should match the #ifdef whether RotateVideo() and ScaleVideo() are
@@ -5505,10 +5503,8 @@ PACKED void * qtvdiag_handle_api_cmd( PACKED void *request_packet_ptr, word /*pa
                                 &filename)) 
       {
         // Should copy filename into its internal buffer
-        if (filename != NULL)
-        {
-           retVal = QtvPlayer::RecordClip(filename, overwrite, mode, duration); 
-        }      
+        retVal = QtvPlayer::RecordClip(filename, overwrite, mode, duration); 
+      
         QTV_Free(filename);
       }
       else
@@ -5597,7 +5593,7 @@ PACKED void * qtvdiag_handle_api_cmd( PACKED void *request_packet_ptr, word /*pa
     }
     break; 
 
-#ifdef FEATURE_FILE_FRAGMENTATION
+#ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
     case QTVDIAG_COMMAND_SKIP:
     {
       int32 skipNumber = (int32) *((int32 *) packet); //lint !e826
@@ -5612,7 +5608,7 @@ PACKED void * qtvdiag_handle_api_cmd( PACKED void *request_packet_ptr, word /*pa
       retVal = QtvPlayer::QTV_RETURN_FEATURE_NOT_AVAILABLE;
       diag_error_code = QTVDIAG_ERROR_CODE_GENERIC_ERROR;      
     }
-#endif // #ifdef FEATURE_FILE_FRAGMENTATION
+#endif // #ifdef FEATURE_QTV_RANDOM_ACCESS_REPOS
     break;
 
 
@@ -7538,10 +7534,8 @@ SIDE EFFECTS
 ========================================================================== */
 void QtvDiag_CommandComplete()
 {
-#ifndef FEATURE_DISABLE_QTV_DIAG_IFACE
   QTV_MSG(QTVDIAG_GENERAL, "QTV Diag Cmd Done - QtvDiagResponseSync");
   QCUtils::SetCondition(&QtvDiagResponseSync);
-#endif
 }
 
 /* ======================================================================
@@ -7566,7 +7560,6 @@ SIDE EFFECTS
 ========================================================================== */
 void QtvDiag_End()
 {
-#ifndef FEATURE_DISABLE_QTV_DIAG_IFACE
    QTV_MSG(QTVDIAG_GENERAL, "QTV Diag is Ending");
    /*Destroy the Sync event*/
    QCUtils::DestroyCondition(&QtvDiagResponseSync);
@@ -7576,6 +7569,5 @@ void QtvDiag_End()
       QTV_Free(pMsgToQtvDiag);
       pMsgToQtvDiag = NULL;
    }
- #endif
 }
 

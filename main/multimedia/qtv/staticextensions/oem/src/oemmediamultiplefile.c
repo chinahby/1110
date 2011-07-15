@@ -30,7 +30,6 @@ INCLUDE FILES FOR MODULE
 #include "AEEMimeTypes.h"
 #include "AEEMediaFormats.h"
 #include "fs.h"
-#include "fs_public.h"
 #include "AEEMediaUtil.h"
 #include "AEEFile.h"
 
@@ -507,20 +506,24 @@ boolean OEMMediaMultipleFile_GetAudioVideoFileNames(const char *pFile, const cha
    char       buf[AEE_MAX_FILE_NAME*4];
    char       image[AEE_MAX_FILE_NAME];
    char       sound[AEE_MAX_FILE_NAME];
-   int filedes = -1;
-   fs_ssize_t result;   
+   fs_rsp_msg_type       rsp_msg;
+   fs_open_xparms_type   open_options;
+   fs_handle_type        handle;
 
-   filedes = efs_open(pFile,O_RDONLY);
-   if(filedes < 0)
+   MEMSET(&open_options, 0, sizeof(open_options));
+
+   fs_open(pFile, FS_OA_READONLY, &open_options, NULL, &rsp_msg);
+   if(rsp_msg.open.status != FS_OKAY_S)
    {
       return FALSE;
    }
 
+   handle = rsp_msg.open.handle;
    MEMSET(buf, 0, sizeof(buf));
-   result = efs_read(filedes, buf, sizeof(buf));
+   fs_read(handle, buf, sizeof(buf), NULL, &rsp_msg);
    buf[sizeof(buf) - 1] = '\0';
-   efs_close(filedes);
-   if(result < 0)
+   fs_close(handle, NULL, &rsp_msg);
+   if(rsp_msg.read.status != FS_OKAY_S)
    {
       return FALSE;
    }
@@ -1243,7 +1246,7 @@ IMediaMultipleFile constructor functions
 ==================================================================*/
 static OEMMediaMultipleFileLayer *OEMMediaMultipleFileLayer_New(IMedia *po, PFNNOTIFY pfn)
 {
-   OEMMediaMultipleFileLayer *  pme = (OEMMediaMultipleFileLayer *)MALLOC(sizeof(OEMMediaMultipleFileLayer));
+   OEMMediaMultipleFileLayer *  pme = MALLOC(sizeof(OEMMediaMultipleFileLayer));
    int           i;
 
    if (!pme || !po)

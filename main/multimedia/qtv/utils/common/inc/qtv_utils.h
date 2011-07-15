@@ -15,9 +15,9 @@ Copyright 2005 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/common/main/latest/inc/qtv_utils.h#3 $
-$DateTime: 2009/12/03 02:35:48 $
-$Change: 1101863 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/common/main/latest/inc/qtv_utils.h#1 $
+$DateTime: 2008/05/08 11:03:24 $
+$Change: 656211 $
 
 ========================================================================== */
 
@@ -89,11 +89,6 @@ public:
     {
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_ERROR, "~QTV_LockableQueue with items queued" );
     }
-    /* ------
-       Commented out, since this code goes to all targets as common and 
-       below REX API is not currently ported to all active targets and baselines.
-    --------- */
-    //rex_del_crit_sect( &m_cs );
   }
 
   q_type* Lock( void )

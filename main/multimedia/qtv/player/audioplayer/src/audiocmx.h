@@ -18,9 +18,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =================================================== ====================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audiocmx.h#12 $
-$DateTime: 2010/05/05 05:27:11 $
-$Change: 1288565 $
+$Header: //source/qcom/qct/multimedia/qtv/player/audioplayer/main/latest/src/audiocmx.h#8 $
+$DateTime: 2008/10/23 04:15:23 $
+$Change: 768864 $
 
 
 ========================================================================== */
@@ -42,7 +42,6 @@ $Change: 1288565 $
 
 extern "C" {
 # include "cmx.h"
-#include "snd.h"
 } // extern "C"
 
 #include "audioRequestQ.h"
@@ -129,8 +128,6 @@ public:
   bool Start(long &tStart);
   bool Resume(long &tResume);
   void Flush();
-  bool   image_swap;
-  bool   no_flush;  
 #ifdef FEATURE_QTV_GENERIC_BCAST_PCR
 #error code not present
 #endif
@@ -172,12 +169,6 @@ public:
   static void PlayCallback(
     cmx_status_type status, 
     const void * client_data
-    );
-
-    static void AVSyncPlayCallback(
-    cmx_status_type status, 
-    const void * client_data,
-    cmx_af_server_data_type *server_data
     );
 
 #ifdef FEATURE_QTV_GENERIC_AUDIO_FORMAT
@@ -333,8 +324,6 @@ private:
   static void FlushSingleDataRequest( cmx_client_req_cb_func_ptr_type data_req_cb, 
                                       const void *server_client_data );
 
-
-  static void ImageChangeCallback(uint32 status);
   Media::CodecType _codec;
 
   Common::AudioNotifyFuncT pNotify;

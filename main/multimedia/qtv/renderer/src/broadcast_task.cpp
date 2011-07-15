@@ -10,9 +10,9 @@ Copyright 2005 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/renderer/main/latest/src/broadcast_task.cpp#6 $
-$DateTime: 2009/11/30 03:18:44 $
-$Change: 1098040 $
+$Header: //source/qcom/qct/multimedia/qtv/renderer/main/latest/src/broadcast_task.cpp#5 $
+$DateTime: 2008/05/08 13:21:55 $
+$Change: 656367 $
 
 ========================================================================== */
 
@@ -157,12 +157,12 @@ void QTV_BroadcastTransmitterTask::Transmit( QTV_Broadcast* &pMessage )
     // Check the registry of receivers.  If nobody's listening for this
     // message type, avoid waking the broadcast task.
     //
-    QCUtils::EnterCritSect( &m_sinkAccessLock );
+    rex_enter_crit_sect( &m_sinkAccessLock );
 
     bAreListenersWaiting = 
       ( q_cnt( &m_aInstalledSinks[ pMessage->m_type ] ) > 0 );
 
-    QCUtils::LeaveCritSect( &m_sinkAccessLock );
+    rex_leave_crit_sect( &m_sinkAccessLock );
 
     if ( bAreListenersWaiting )
     {

@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =============================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/player/avsync/main/latest/src/avsync.cpp#14 $
-$DateTime: 2010/03/15 06:39:12 $
-$Change: 1219644 $
+$Header: //source/qcom/qct/multimedia/qtv/player/avsync/main/latest/src/avsync.cpp#11 $
+$DateTime: 2008/09/23 06:32:03 $
+$Change: 748913 $
 
 
 ============================================================================= */

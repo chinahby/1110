@@ -10,9 +10,9 @@ Copyright 2005, 2006 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/url/main/latest/src/url.cpp#9 $
-$DateTime: 2010/04/23 00:39:40 $
-$Change: 1276762 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/url/main/latest/src/url.cpp#3 $
+$DateTime: 2008/07/14 04:31:08 $
+$Change: 701105 $
 
 ========================================================================== */
 
@@ -1023,12 +1023,9 @@ void URL::MakeEmptyNonNullUrl()
   if (NULL == url)
   {
     url = (char *) QTV_Malloc(sizeof(char));
-    if (url != NULL)
-    {
     urlLen = 0;
     capacity = 1;
     url[0] = '\0';
-  }
   }
   else
   {
@@ -1098,10 +1095,6 @@ enum URL::UrlProtocol URL::GetProtocol() const
   {
     return PROTO_RTSP;
   }
-  else if (ZUtils::StrncmpI(url, "rtspt", 5))
-  {
-    return PROTO_RTSPT;
-  }
   else if (ZUtils::StrncmpI(url, "http", 4))
   {
     return PROTO_HTTP;
@@ -1138,7 +1131,6 @@ URL::UrlErrCode URL::GetHost(char * host,int maxHostLen) const
 {
   char *server_ip_ptr;
   char *server_port_ptr = NULL;
-  char *ptr_to_first_slash_in_url = NULL;
   char *url_end;
 
   ResetErrorCode();
@@ -1165,15 +1157,6 @@ URL::UrlErrCode URL::GetHost(char * host,int maxHostLen) const
   /* Locate the IP address. */
   {
     server_port_ptr = zrex_strstri(server_ip_ptr, ":");
-  }
-
-  ptr_to_first_slash_in_url = zrex_strstri(server_ip_ptr, "/");
-
-  if ((NULL != server_port_ptr) && 
-      (NULL != ptr_to_first_slash_in_url) &&
-      (ptr_to_first_slash_in_url < server_port_ptr))
-  {
-    server_port_ptr = ptr_to_first_slash_in_url;
   }
 
   if (NULL == server_port_ptr)
@@ -1279,7 +1262,7 @@ URL::UrlErrCode URL::GetPort(uint32 * port) const
   if ((NULL == server_port_ptr) || (server_port_ptr > clip_name))
   {
     //port not found; return default port
-    if (GetProtocol() == PROTO_RTSP || GetProtocol() == PROTO_RTSPT)
+    if (GetProtocol() == PROTO_RTSP)
 	{
 	  *port = DEF_RTSP_PORT;
 	  return URL_OK;

@@ -468,19 +468,19 @@ char *OEMMediaSDP_GetMIMEType(const char *pFile)
    char       *pos;
    static char mime[MAX_MIME_STR_LEN] = "";
    char       *mimepos = NULL;
+   fs_rsp_msg_type      rsp_msg;
+   fs_open_xparms_type  open_options;
+   fs_handle_type       handle;
    unsigned long        file_length;
-   int result;
-   struct fs_stat sbuf;
-   int filedes = -1;
-   int read_count;
 
-   result = efs_stat (pFile, &sbuf);
-   if(result != 0)
+   MEMSET(&open_options, 0, sizeof(open_options));
+
+   fs_file_size(pFile, NULL, &rsp_msg);
+   if(rsp_msg.file_size.status != FS_OKAY_S)
    {
       return FALSE;
    }
-
-   file_length = sbuf.st_size;
+   file_length = rsp_msg.file_size.size;
    buf = (char *)MALLOC(file_length + 1);
 
    if (buf == NULL)
@@ -489,19 +489,19 @@ char *OEMMediaSDP_GetMIMEType(const char *pFile)
    }
 
 
-   filedes = efs_open(pFile,O_RDONLY);
-   if(filedes < 0)
+   fs_open(pFile, FS_OA_READONLY, &open_options, NULL, &rsp_msg);
+   if(rsp_msg.open.status != FS_OKAY_S)
    {
       FREE(buf);
       return FALSE;
    }
 
-
+   handle = rsp_msg.open.handle;
    MEMSET(buf, 0, sizeof(buf));
-   read_count = efs_read(filedes, buf, file_length);
+   fs_read(handle, buf, file_length, NULL, &rsp_msg);
    buf[file_length] = '\0';
-   efs_close(filedes);
-   if(read_count < 0)
+   fs_close(handle, NULL, &rsp_msg);
+   if(rsp_msg.read.status != FS_OKAY_S)
    {
       FREE(buf);
       return FALSE;

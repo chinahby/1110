@@ -10,9 +10,9 @@ Copyright 2005 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/renderer/main/latest/src/broadcast.cpp#6 $
-$DateTime: 2009/11/30 03:18:44 $
-$Change: 1098040 $
+$Header: //source/qcom/qct/multimedia/qtv/renderer/main/latest/src/broadcast.cpp#5 $
+$DateTime: 2008/05/08 13:21:55 $
+$Change: 656367 $
 
 ========================================================================== */
 
@@ -141,7 +141,7 @@ QTV_BroadcastTransmitter::QTV_BroadcastTransmitter( const char* szName )
   q_type*                             pRegistryQ   ( NULL );
   TransmitterRegistry::RegistryQNode* pRegistryNode( NULL );
 
-  QCUtils::InitCritSect(&m_sinkAccessLock);
+  rex_init_crit_sect( &m_sinkAccessLock );
 
   for
   (
@@ -216,7 +216,6 @@ QTV_BroadcastTransmitter::~QTV_BroadcastTransmitter( void )
 
     m_pThisInRegistry = NULL;
   }
-  QCUtils::DinitCritSect(&m_sinkAccessLock);
 }
 
 /* ======================================================================
@@ -265,7 +264,7 @@ QTV_BroadcastTransmitter::InstallationKey QTV_BroadcastTransmitter::InstallRecei
     return 0;
   }
 
-  QCUtils::EnterCritSect( &m_sinkAccessLock );
+  rex_enter_crit_sect( &m_sinkAccessLock );
 
   // To install a sink, we just put a record for it on the queue
   // associated with the event type.
@@ -292,7 +291,7 @@ QTV_BroadcastTransmitter::InstallationKey QTV_BroadcastTransmitter::InstallRecei
                   "InstallReceiver out of memory!" );
   }
 
-  QCUtils::LeaveCritSect( &m_sinkAccessLock );
+  rex_leave_crit_sect( &m_sinkAccessLock );
 
   return key;
 }
@@ -320,14 +319,14 @@ bool QTV_BroadcastTransmitter::UninstallReceiver( const InstallationKey key )
 
   if ( pNode != NULL )
   {
-    QCUtils::EnterCritSect( &m_sinkAccessLock );
+    rex_enter_crit_sect( &m_sinkAccessLock );
 
     q_delete( pNode->pQ, &( pNode->link ) );
     QTV_Delete( pNode );
 
     rc = true;
 
-    QCUtils::LeaveCritSect( &m_sinkAccessLock );
+    rex_leave_crit_sect( &m_sinkAccessLock );
   }
 
   return rc;
@@ -363,7 +362,7 @@ void QTV_BroadcastTransmitter::Transmit( QTV_Broadcast* &pMsg )
     return;
   }
 
-  QCUtils::EnterCritSect( &m_sinkAccessLock );
+  rex_enter_crit_sect( &m_sinkAccessLock );
 
   for
   (
@@ -376,7 +375,7 @@ void QTV_BroadcastTransmitter::Transmit( QTV_Broadcast* &pMsg )
     pNode->pSink->Receive( *pMsg, pNode->userData );
   }
 
-  QCUtils::LeaveCritSect( &m_sinkAccessLock );
+  rex_leave_crit_sect( &m_sinkAccessLock );
 
   // We're done with the message now, so delete it.
   QTV_Delete( pMsg );

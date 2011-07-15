@@ -11,9 +11,9 @@ Copyright 2005, 2006 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/utils/task/main/latest/src/qtv_task_if.cpp#8 $
-$DateTime: 2009/11/30 03:18:44 $
-$Change: 1098040 $
+$Header: //source/qcom/qct/multimedia/qtv/utils/task/main/latest/src/qtv_task_if.cpp#7 $
+$DateTime: 2008/05/08 14:17:40 $
+$Change: 656443 $
 
 ========================================================================== */
 
@@ -152,7 +152,7 @@ qtv_task_if_class::dispatch_id_type qtv_task_if_class::dispatch
       ( void )q_link( link_ptr, &( link_ptr->link ) );
       link_ptr->type = link_struct::DISPATCH;
       link_ptr->parcel.fill( this, recipient_ptr, msg_ptr, delay_ms );
-      QCUtils::EnterCritSect( &m_task_info_.input_cs );
+      rex_enter_crit_sect( &m_task_info_.input_cs );
       q_put( &m_task_info_.input_q, &( link_ptr->link ) );
 
 #ifdef QTV_TASK_IF_MSG_QUEUE_DEBUG
@@ -163,7 +163,7 @@ qtv_task_if_class::dispatch_id_type qtv_task_if_class::dispatch
                      link_ptr->type,
                      q_cnt(&m_task_info_.input_q) );
 #endif //QTV_TASK_IF_MSG_QUEUE_DEBUG
-      QCUtils::LeaveCritSect( &m_task_info_.input_cs );
+      rex_leave_crit_sect( &m_task_info_.input_cs );
 
       ( void )rex_set_sigs( m_task_tcb_ptr_, QTV_TASK_INPUT_SIG );
       msg_is_dispatched = true;
@@ -213,7 +213,7 @@ void qtv_task_if_class::cancel_dispatch( dispatch_id_type dispatch_id )
     ** close the hole caused by submission of everything through a single
     ** FIFO queue, cancellations are pushed into the FRONT of the input
     ** queue.  This is intentended only as a short-term fix. */
-    QCUtils::EnterCritSect( &m_task_info_.input_cs );
+    rex_enter_crit_sect( &m_task_info_.input_cs );
 
     head_ptr = ( link_struct* )q_check( &m_task_info_.input_q );
     if ( head_ptr != 0 )
@@ -229,7 +229,7 @@ void qtv_task_if_class::cancel_dispatch( dispatch_id_type dispatch_id )
     {
       q_put( &m_task_info_.input_q, &( link_ptr->link ) );
     }
-    QCUtils::LeaveCritSect( &m_task_info_.input_cs );
+    rex_leave_crit_sect( &m_task_info_.input_cs );
 
 #ifdef QTV_TASK_IF_MSG_QUEUE_DEBUG
     QTV_MSG_PRIO1( QTVDIAG_GENERAL, QTVDIAG_PRIO_MED,
@@ -330,8 +330,8 @@ qtv_msg_sink_handle_class::qtv_msg_sink_handle_class( void )
 : m_ref_cnt_( 0 ),
   m_sink_ptr_( 0 )
 {
-  QCUtils::InitCritSect( &m_ref_cnt_cs_ );
-  QCUtils::InitCritSect( &m_sink_ptr_cs_ );
+  rex_init_crit_sect( &m_ref_cnt_cs_ );
+  rex_init_crit_sect( &m_sink_ptr_cs_ );
   add_ref();
 }
 
@@ -351,8 +351,6 @@ RETURN VALUE:
 ===========================================================================*/
 qtv_msg_sink_handle_class::~qtv_msg_sink_handle_class( void )
 {
-  QCUtils::DinitCritSect( &m_ref_cnt_cs_ );
-  QCUtils::DinitCritSect( &m_sink_ptr_cs_ );
 }
 
 /* ========================================================================
@@ -377,9 +375,9 @@ qtv_msg_sink_handle_class* qtv_msg_sink_handle_class::add_ref( void )
   ** 1) task A reads m_ref_cnt_, swaps out.
   ** 2) task B reads m_ref_cnt_, increments, stores, swaps out.
   ** 3) task A increments and stores...and now ref_cnt is wrong. */
-  QCUtils::EnterCritSect( &m_ref_cnt_cs_ );
+  rex_enter_crit_sect( &m_ref_cnt_cs_ );
   ++m_ref_cnt_;
-  QCUtils::LeaveCritSect( &m_ref_cnt_cs_ );
+  rex_leave_crit_sect( &m_ref_cnt_cs_ );
 
   return this;
 }
@@ -404,9 +402,9 @@ void qtv_msg_sink_handle_class::release( void )
   uint32 cached_ref_cnt;
 
   /* See comment in add_ref about the critical section */
-  QCUtils::EnterCritSect( &m_ref_cnt_cs_ );
+  rex_enter_crit_sect( &m_ref_cnt_cs_ );
   cached_ref_cnt = --m_ref_cnt_;
-  QCUtils::LeaveCritSect( &m_ref_cnt_cs_ );
+  rex_leave_crit_sect( &m_ref_cnt_cs_ );
 
   if ( cached_ref_cnt == 0 )
   {
@@ -436,9 +434,9 @@ void qtv_msg_sink_handle_class::set_sink( qtv_msg_sink_class* sink_ptr )
   ** add_ref & release, as it does not touch the reference count.
   ** However, access to the sink_ptr must still be locked - see 
   ** dispatch_to_sink for more discussion. */
-  QCUtils::EnterCritSect( &m_sink_ptr_cs_ );
+  rex_enter_crit_sect( &m_sink_ptr_cs_ );
   m_sink_ptr_ = sink_ptr;
-  QCUtils::LeaveCritSect( &m_sink_ptr_cs_ );
+  rex_leave_crit_sect( &m_sink_ptr_cs_ );
 }
 
 /* ========================================================================
@@ -475,13 +473,13 @@ bool qtv_msg_sink_handle_class::dispatch_to_sink
   ** sink_ptr to 0) and then be destructed during a dispatch.
   ** This problem is avoided by blocking outside access to sink_ptr
   ** during dispatch or set_sink operations. */
-  QCUtils::EnterCritSect( &m_sink_ptr_cs_ );
+  rex_enter_crit_sect( &m_sink_ptr_cs_ );
   if ( m_sink_ptr_ )
   {
     m_sink_ptr_->dispatch( msg_ptr );
     msg_was_dispatched = true;
   }
-  QCUtils::LeaveCritSect( &m_sink_ptr_cs_ );
+  rex_leave_crit_sect( &m_sink_ptr_cs_ );
 
   return msg_was_dispatched;
 }
@@ -503,9 +501,9 @@ RETURN VALUE:
 qtv_msg_sink_class::qtv_msg_sink_class( void )
 : m_handle_ptr_( QTV_New( qtv_msg_sink_handle_class ))
 {
-  QCUtils::InitCritSect( &m_handle_cs_ );
+  rex_init_crit_sect( &m_handle_cs_ );
 
-  QCUtils::EnterCritSect( &m_handle_cs_ );
+  rex_enter_crit_sect( &m_handle_cs_ );
 
   if ( m_handle_ptr_ )
   {
@@ -516,7 +514,7 @@ qtv_msg_sink_class::qtv_msg_sink_class( void )
     QTV_MSG_PRIO( QTVDIAG_GENERAL, QTVDIAG_PRIO_FATAL,
                   "qtv_msg_sink_class out of memory" );
   }
-  QCUtils::LeaveCritSect( &m_handle_cs_ );
+  rex_leave_crit_sect( &m_handle_cs_ );
 }
 
 /* ========================================================================
@@ -540,7 +538,7 @@ qtv_msg_sink_class::~qtv_msg_sink_class( void )
   ** destructing. */
   qtv_msg_sink_handle_class* cached_handle_ptr = 0;
 
-  QCUtils::EnterCritSect( &m_handle_cs_ );
+  rex_enter_crit_sect( &m_handle_cs_ );
   if ( m_handle_ptr_ )
   {
     cached_handle_ptr = m_handle_ptr_;
@@ -558,15 +556,13 @@ qtv_msg_sink_class::~qtv_msg_sink_class( void )
     **
     ** Unlike the previous case, this one is commonplace. */
   }
-  QCUtils::LeaveCritSect( &m_handle_cs_ );
+  rex_leave_crit_sect( &m_handle_cs_ );
 
   if (cached_handle_ptr != NULL)
   {
     cached_handle_ptr->set_sink( 0 );
     cached_handle_ptr->release();
   }
-  QCUtils::DinitCritSect(&m_handle_cs_);
-
   // no else: empty handles do not require cleanup
 }
 
@@ -592,12 +588,12 @@ qtv_msg_sink_handle_class* qtv_msg_sink_class::get_handle( void )
 {
   qtv_msg_sink_handle_class* handle_ptr = 0;
 
-  QCUtils::EnterCritSect( &m_handle_cs_ );
+  rex_enter_crit_sect( &m_handle_cs_ );
   if ( m_handle_ptr_ )
   {
     handle_ptr = m_handle_ptr_->add_ref();
   }
-  QCUtils::LeaveCritSect( &m_handle_cs_ );
+  rex_leave_crit_sect( &m_handle_cs_ );
 
   return handle_ptr;
 }

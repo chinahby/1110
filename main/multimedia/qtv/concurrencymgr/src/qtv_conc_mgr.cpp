@@ -12,9 +12,9 @@ Copyright 2006 QUALCOMM Incorporated, All Rights Reserved
 ========================================================================== */
 /* =======================================================================
                              Edit History
-$Header: //source/qcom/qct/multimedia/qtv/concurrencymgr/main/latest/src/qtv_conc_mgr.cpp#26 $
-$DateTime: 2010/05/04 00:03:26 $
-$Change: 1286941 $
+$Header: //source/qcom/qct/multimedia/qtv/concurrencymgr/main/latest/src/qtv_conc_mgr.cpp#15 $
+$DateTime: 2008/12/15 02:43:02 $
+$Change: 805216 $
 
 ========================================================================== */
 /* =======================================================================
@@ -41,9 +41,6 @@ and other items needed by this module.
 /* -----------------------------------------------------------------------
 ** Constant / Define Declarations
 ** ----------------------------------------------------------------------- */
-#ifdef PLATFORM_LTK
-#error code not present
-#endif // PLATFORM_LTK
 /* -----------------------------------------------------------------------
 ** Type Declarations
 ** ----------------------------------------------------------------------- */
@@ -61,7 +58,6 @@ qtv_conc_mgr::conc_play_mode_type qtv_conc_mgr::play_mode;
 qtv_conc_mgr::in_call_state_type qtv_conc_mgr::in_call_state;
 qtv_conc_mgr::suspend_state_type qtv_conc_mgr::suspend_state;
 qtv_conc_mgr::call_info_type *qtv_conc_mgr::call_info_table_ptr = NULL;
-bool qtv_conc_mgr::is_qtv_suspended_internally = false;
 
 Mpeg4Player *qtv_conc_mgr::av_player_ptr = NULL;
 const char *qtv_conc_mgr::current_MIME_type_ptr = NULL;
@@ -109,11 +105,13 @@ RETURN VALUE:
   bool
     True if we were able to successfully register with CM, false otherwise.
 ========================================================================== */
-void qtv_conc_mgr::init(
+bool qtv_conc_mgr::init(
   Mpeg4Player *context_ptr,
   const char *current_MIME_type,
   uint32 num_qtv_instance)
 {
+  bool status = false;
+
   QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, 
                "qtv_conc_mgr::init");
 
@@ -139,27 +137,7 @@ void qtv_conc_mgr::init(
     suspend_due_to = NOT_SUSPENDED_INTERNALLY;
 
     suspend_state = STATE_NOT_SUSPENDED;
-  }
-}
 
-/* =======================================================================
-FUNCTION:
-  qtv_conc_mgr::register_with_call_mgr
-
-DESCRIPTION:
-  Registering the qtv with call manager.
-
-PARAMETERS:
-  None.
-    
-RETURN VALUE:
-  None.
-========================================================================== */
-bool qtv_conc_mgr::register_with_call_mgr()
-{
-  bool status = false;
-
-  QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "qtv_conc_mgr::register_with_call_mgr()");
 #ifndef FEATURE_QTV_DISABLE_CONC_MGR_CM_REGISTRATION
     /* Initialize Qtv as a client with CM */
     if (init_qtv_with_cm())
@@ -170,15 +148,19 @@ bool qtv_conc_mgr::register_with_call_mgr()
         /* Activate client */
         if (activate_qtv_with_cm())
         {
-        status = true;
-        QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, "activate_qtv_with_cm DONE");
+          status = true;
+        }
       }
     }
-  }
 #else
-  /* If CM registration is disabled then set status to true and return. */
-  status = true;
-#endif
+    /* If CM registration is disabled then set status to true and return. */
+    status = true;
+#endif /* FEATURE_QTV_DISABLE_CONC_MGR_CM_REGISTRATION */
+  }
+  else
+  {
+    status = true;
+  }
   return status;
 }
 
@@ -400,15 +382,11 @@ void qtv_conc_mgr::process_call_event(
       QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, 
                    "process_call_event: Call event info/incom");
 
-      /* If player not suspended in a call set up response then suspend here */
-      if(!is_qtv_suspended_internally)
-      {
-        set_suspend_type(SUSPENDED_INTERNALLY,
-                         av_player_ptr,
-                         current_MIME_type_ptr);
-        suspend(av_player_ptr);
-      }
-      is_qtv_suspended_internally = false;
+      /* Already in a call, suspend the player */
+      set_suspend_type(SUSPENDED_INTERNALLY,
+                       av_player_ptr,
+                       current_MIME_type_ptr);
+      suspend(av_player_ptr);
       break;
     }
 
@@ -418,14 +396,14 @@ void qtv_conc_mgr::process_call_event(
       {
         if (call_info_table_ptr[call_id].mode_info.info.gw_cs_call.accept)
         {
+          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, 
+                       "process_call_event: Call set up response");
+
+          /* Received a set up response, suspend the player */
           set_suspend_type(SUSPENDED_INTERNALLY,
                            av_player_ptr,
                            current_MIME_type_ptr);
           suspend(av_player_ptr);
-          is_qtv_suspended_internally = true;
-
-          QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_MED, 
-                       "process_call_event: Call set up response: suspending player internally ");
         }
         else
         {
@@ -453,7 +431,6 @@ void qtv_conc_mgr::process_call_event(
         QTV_MSG_PRIO(QTVDIAG_GENERAL, QTVDIAG_PRIO_HIGH, 
                      "process_call_event: Call end, calls still active");
       }
-      is_qtv_suspended_internally = false;
       break;
     }
 
@@ -1031,12 +1008,6 @@ RETURN VALUE:
 bool qtv_conc_mgr::init_qtv_with_cm()
 {
   bool status = true;
-  if(call_info_table_ptr)
-  {
-    /* De-allocate the call info table memory and make NULL*/
-    QTV_Free(call_info_table_ptr);
-    call_info_table_ptr = NULL;
-  }
 
   /* Allocate memory to internal call table information */
   call_info_table_ptr = (call_info_type*)QTV_Malloc((sizeof(call_info_type)) * CM_CALL_ID_MAX);

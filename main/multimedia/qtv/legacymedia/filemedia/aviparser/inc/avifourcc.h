@@ -10,7 +10,7 @@ Copyright 2004 QUALCOMM Incorporated, All Rights Reserved
 
 /* =======================================================================
                              PERFORCE HEADER
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/latest/inc/avifourcc.h#11 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/latest/inc/avifourcc.h#9 $
 ========================================================================== */
 
 //Various FOURCCs used in an AVI file.
@@ -34,7 +34,6 @@ $Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/aviparser/main/l
 #define AVI_INFO_FOURCC       "INFO"
 #define AVI_IX_FOURCC         "ix"
 #define AVI_DRM_INFO_FOURCC   "dc"
-#define AVI_RES_FOURCC        "RES"
 
 //Various Chunk IDs used in INFO chunk
 

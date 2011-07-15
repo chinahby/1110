@@ -10,9 +10,9 @@
 // ============================================================================
 //                              Edit History
 //
-// $Header: //source/qcom/qct/multimedia/qtv/renderer/main/latest/src/framemap.cpp#9 $
-// $DateTime: 2009/11/30 03:18:44 $
-// $Change: 1098040 $
+// $Header: //source/qcom/qct/multimedia/qtv/renderer/main/latest/src/framemap.cpp#5 $
+// $DateTime: 2008/05/08 13:21:55 $
+// $Change: 656367 $
 //
 // ============================================================================
 
@@ -82,9 +82,7 @@ FrameMap::MemoryLink::MemoryLink( void )
 /// MemoryLink destructor.
 ///
 /// ---------------------------------------------------------------------------
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 FrameMap::MemoryLink::~MemoryLink( void ) {}
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /// ---------------------------------------------------------------------------
 ///
@@ -118,7 +116,7 @@ void FrameMap::MemoryLink::Set( VDEC_FRAME* pVF,
 FrameMap::FrameMap( void )
 {
    q_init( &m_learnedFramesQ );
-   QCUtils::InitCritSect( &m_cs );
+   rex_init_crit_sect( &m_cs );
 }
 
 /// ---------------------------------------------------------------------------
@@ -128,7 +126,6 @@ FrameMap::FrameMap( void )
 /// Frees all the memory held in the learned-frames queue.
 ///
 /// ---------------------------------------------------------------------------
-/***/ __NON_DEMAND_PAGED_FUNCTION__ /***/
 FrameMap::~FrameMap( void )
 {
    CS_Locker lock( m_cs );
@@ -139,10 +136,7 @@ FrameMap::~FrameMap( void )
       QTV_Delete( pL );
       pL = ( MemoryLink* )q_get( &m_learnedFramesQ );
    }
-
-   QCUtils::DinitCritSect(&m_cs);
 }
-/***/ __NON_DEMAND_PAGED_FUNCTION_END__ /***/
 
 /// ---------------------------------------------------------------------------
 ///
@@ -189,14 +183,12 @@ void FrameMap::Learn( VDEC_FRAME& f )
    if ( pL )
    {
       pL->Set( &f, f.pBuf, f.timestamp );
-      pL->pFrame->frameStatus = FRAME_WITH_RENDERER;
-      QTV_MSG_PRIO4( QTVDIAG_DEBUG,
-       QTVDIAG_PRIO_HIGH,
-       "Frame learned: frame %x display buffer %x ts %d,m_learnedFramesQ.cnt=%d",
-       pL->pFrame,
-       pL->pBuf,
-       pL->timestamp,
-       m_learnedFramesQ.cnt);
+      QTV_MSG_PRIO3( QTVDIAG_DEBUG,
+                     QTVDIAG_PRIO_HIGH,
+                     "Frame learned: frame %x display buffer %x ts %d",
+                     pL->pFrame,
+                     pL->pBuf,
+                     pL->timestamp );
 
    }
    else
@@ -229,15 +221,14 @@ VDEC_FRAME* FrameMap::Recall( const QtvPlayer::FrameInfoT& fit )
       pL = ( MemoryLink* )q_next( &m_learnedFramesQ, &pL->link );
    }
 
-   if ( pL && pL->pFrame->frameStatus == FRAME_WITH_UI)
+   if ( pL )
    {
-      QTV_MSG_PRIO4( QTVDIAG_DEBUG,
-       QTVDIAG_PRIO_HIGH,
-       "Frame recalled: frame %x display buffer %x ts %d,m_learnedFramesQ.cnt=%d",
-       pL->pFrame,
-       pL->pBuf,
-       pL->timestamp,
-       m_learnedFramesQ.cnt);
+      QTV_MSG_PRIO3( QTVDIAG_DEBUG,
+                     QTVDIAG_PRIO_HIGH,
+                     "Frame recalled: frame %x display buffer %x ts %d",
+                     pL->pFrame,
+                     pL->pBuf,
+                     pL->timestamp );
    }
 
    DumpAllLearnedFrames();
@@ -270,13 +261,12 @@ void FrameMap::Forget( const VDEC_FRAME* const pF )
 
    if ( pL )
    {
-      QTV_MSG_PRIO4( QTVDIAG_DEBUG,
-       QTVDIAG_PRIO_HIGH,
-       "Frame forgotten: frame %x display buffer %x ts %d,m_learnedFramesQ.cnt=%d",
-       pL->pFrame,
-       pL->pBuf,
-       pL->timestamp,
-       m_learnedFramesQ.cnt);
+      QTV_MSG_PRIO3( QTVDIAG_DEBUG,
+                     QTVDIAG_PRIO_HIGH,
+                     "Frame forgotten: frame %x display buffer %x ts %d",
+                     pL->pFrame,
+                     pL->pBuf,
+                     pL->timestamp );
       q_delete( &m_learnedFramesQ, &pL->link );
       QTV_Delete( pL );
    }

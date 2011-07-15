@@ -24,9 +24,9 @@ Copyright 2003 QUALCOMM Incorporated, All Rights Reserved
 /* =======================================================================
                              Edit History
 
-$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/mp4parser/main/latest/src/textsamplemodifiers.cpp#11 $
-$DateTime: 2010/06/09 10:21:06 $
-$Change: 1328021 $
+$Header: //source/qcom/qct/multimedia/qtv/legacymedia/filemedia/mp4parser/main/latest/src/textsamplemodifiers.cpp#9 $
+$DateTime: 2008/05/07 15:14:25 $
+$Change: 655407 $
 
 
 ========================================================================== */
@@ -487,7 +487,7 @@ TextHyperTextBox::TextHyperTextBox (uint8  *buf) : Atom(buf)
 
     _pURL = (uint8*)QTV_Malloc(_urlLength);
 
-    if ( NULL == _pURL || !AtomUtils::readByteData(buf, _urlLength, _pURL) )
+    if ( !AtomUtils::readByteData(buf, _urlLength, _pURL) )
     {
       _success = false;
       _fileErrorCode = (int32)READ_TEXT_SAMPLE_MODIFIERS_FAILED;
@@ -503,7 +503,7 @@ TextHyperTextBox::TextHyperTextBox (uint8  *buf) : Atom(buf)
 
     _pAltString = (uint8*)QTV_Malloc(_altLength);
 
-    if ( NULL == _pAltString || !AtomUtils::readByteData(buf, _altLength, _pAltString) )
+    if ( !AtomUtils::readByteData(buf, _altLength, _pAltString) )
     {
       _success = false;
       _fileErrorCode = (int32)READ_TEXT_SAMPLE_MODIFIERS_FAILED;
@@ -846,7 +846,6 @@ TextSampleModifiers:: TextSampleModifiers (uint8  *buf, uint32 size)
         {
           _success = false;
           _fileErrorCode = pKaraokeBox->GetFileError();
-		  QTV_Delete(pKaraokeBox); 
           return;
         }
         if(_pTextKaraokeBoxVec)
@@ -897,7 +896,6 @@ TextSampleModifiers:: TextSampleModifiers (uint8  *buf, uint32 size)
         {
           _success = false;
           _fileErrorCode = pHyperTextBox->GetFileError();
-		  QTV_Delete(pHyperTextBox); 
           return;
         }
 
@@ -950,7 +948,6 @@ TextSampleModifiers:: TextSampleModifiers (uint8  *buf, uint32 size)
         {
           _success = false;
           _fileErrorCode = pBlinkBox->GetFileError();
-		  QTV_Delete(pBlinkBox); 
           return;
         }
 

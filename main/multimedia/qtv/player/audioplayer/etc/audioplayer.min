@@ -11,8 +11,7 @@ QTV_AUDIOPLAYER_CPP_SOURCES=\
         genericaudiomgr.cpp\
         audiorequestq.cpp\
 	qtvmediaadtsparser.cpp\
-	qtvmediaslicebuffer.cpp\
-        QtvAudioDiscontinuity.cpp
+	qtvmediaslicebuffer.cpp
 
 
 QTV_AUDIOPLAYER_OBJS :=  $(addprefix $(TARGETDIR)/, $(QTV_AUDIOPLAYER_CPP_SOURCES:%.cpp=%.o)) $(QTV_AUDIOPLAYER_OBJS)
