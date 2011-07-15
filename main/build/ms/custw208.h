@@ -265,14 +265,13 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_ENHANCED_AAC_PLUS
 #endif
 
+#include "custdisplay.h"
+
 #ifdef USES_CAMERA
 #include "custcamera.h"
-//#include "custcamcorder.h"
 #include "custjpeg.h"
-//#define FEATURE_PNG_ENCODER
 #endif
 
-#include "custdisplay.h"
 #include "custuim.h"
 #include "custcmx.h"
 #include "custavs.h"
