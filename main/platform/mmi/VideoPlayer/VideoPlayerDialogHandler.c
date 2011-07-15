@@ -2382,8 +2382,13 @@ boolean VideoPlayer_ChangeScrState(CVideoPlayer* pMe,boolean isLockScr)
 			rc.dx = pMe->m_rc.dx;
 			rc.y =  pMe->m_rc.y;
 			rc.dy = pMe->m_rc.dy;
-			
-			result = IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia, MM_MP4_PARM_ASCALING, rc.dx, rc.dy);
+
+            if(rc.dx < rc.dy)
+            {
+                result = IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia, MM_MP4_PARM_ROTATION, MM_MPEG4_90_CW_ROTATION, 0);
+            }
+            
+			result += IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia, MM_MP4_PARM_ASCALING, rc.dx, rc.dy);
 			
 			if(result == SUCCESS || (result  == MM_PENDING))
 			{
@@ -2392,12 +2397,24 @@ boolean VideoPlayer_ChangeScrState(CVideoPlayer* pMe,boolean isLockScr)
 		}
 		else
 		{
-			result = IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia, MM_MP4_PARM_SCALING, MM_MPEG4_NO_SCALING, 0);
+            //int yDelta;
+            //int dy;
+            result = IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia, MM_MP4_PARM_ROTATION, MM_MPEG4_NO_ROTATION, 0);
+            result+= IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia, MM_MP4_PARM_SCALING, MM_MPEG4_NO_SCALING, 0);
 			
-			rc.x = pMe->m_rc.x;
-			rc.dx = pMe->m_rc.dx;
-			rc.y = VIDEOPLAYER_NAMEPART_H;
-			rc.dy = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay);
+			rc.x    = pMe->m_rc.x;
+			rc.dx   = pMe->m_rc.dx;
+			rc.y    = VIDEOPLAYER_NAMEPART_H;
+			rc.dy   = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay);
+            //dy      = (rc.dx*3)/4;
+            //yDelta  = rc.dy - dy;
+
+            //if(yDelta > 0)
+            //{
+            //    rc.y += (yDelta/2);
+            //    rc.dy = dy;
+            //    result += IMEDIA_SetMediaParm((IMedia*)pMe->m_pMedia, MM_MP4_PARM_ASCALING, rc.dx, rc.dy);
+            //}
 			
 			if(result == SUCCESS || (result  == MM_PENDING))
 			{
