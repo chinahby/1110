@@ -4457,9 +4457,7 @@ static boolean  HandleFtpServerDialogEvent(CBTApp * pMe,
 					{
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
-#endif 
-
-						MSG_ERROR( "FTP_Deregister() failed with %x", result, 0, 0 );							
+#endif 						
 						BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
 					}
 					else
@@ -4647,7 +4645,6 @@ static boolean  HandleFtpClientDialogEvent(CBTApp * pMe,
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif 
-						MSG_ERROR( "FTP_Disconnect() failed with %x", result, 0, 0 );
 						BTApp_ShowMessage( pMe, IDS_MSG_DISCONN_FAILED, NULL, 3 );
 					}
 
@@ -4946,8 +4943,6 @@ static boolean  HandleFtpServerRegisterDialogEvent(CBTApp * pMe,
 #endif
 
 						MSG_FATAL("***zzg HandleFTPServerRegisterDlg EVT_KEY_PRESS IBTEXTFTP_Register != SUCCESS***", 0, 0, 0);
-
-						MSG_ERROR( "FTP_Register() failed with %x", result, 0, 0 );
 						BTApp_ClearBondable( pMe ); // no need to be bondable anymore
 
 						pMe->m_msg_state_id = BTAPPST_FTP_SERVER;	
