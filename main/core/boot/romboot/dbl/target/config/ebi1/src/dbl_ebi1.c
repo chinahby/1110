@@ -365,7 +365,7 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ATC_48MHZ[] =
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x001A2AAA),  0xC0    },
 
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x013400             },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01011034           },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01010034           },
   {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
 
   /*-----------------------------------------------------------------------
@@ -382,7 +382,7 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ATC_64MHZ[] =
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x001A3AAA),  0xC0    },
 
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x013400             },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01011034           },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01010034           },
   {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
 
   /*-----------------------------------------------------------------------
@@ -398,8 +398,8 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ATC_96MHZ[] =
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x001A6AAA),  0xC0    },
 
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x013400             },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01011034           },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x025400             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01010034           },
   {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
 
   /*-----------------------------------------------------------------------
@@ -892,7 +892,7 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_PSRAM_CS1_96MHZ[] =
   {WRITE_16_BIT,     0x9FFFFFE,               0x1        },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
-  {WRITE_16_BIT,     0x9FFFFFE,               0x81903    },
+  {WRITE_16_BIT,     0x9FFFFFE,               0x81103    },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
   
   {READ_16_BIT,      0x9FFFFFE,               0x0        },
