@@ -403,6 +403,12 @@ static boolean InitWorldTime(CWorldTime *pme)
 	{
 		//pme->m_ismyatime = TRUE;
 		pme->m_isMya = TRUE;
+		pme->m_timeZone = pme->m_timeZone-20;
+		MSG_FATAL("pme->m_timeZone===000==%d",pme->m_timeZone,0,0);
+	}
+    if(pme->m_timeZone == 25)
+	{
+		//pme->m_ismyatime = TRUE;
         pme->m_isIndia = TRUE;
 		pme->m_timeZone = pme->m_timeZone-20;
 		MSG_FATAL("pme->m_timeZone===000==%d",pme->m_timeZone,0,0);
@@ -1211,11 +1217,16 @@ static int get_timezone(void)
 	double  mytime = 0.0;
     int32   local    = LOCALTIMEOFFSET( &daylight);
     int     timezone = local / 3600;
+   // local = local-36*250;
 	MSG_FATAL("local=========%d",local,0,0);
 	if(36*650 == local)
 	{
 		timezone =timezone+ 20;
 	}
+    else if(36*550 == local)
+    {
+        timezone =timezone+ 20;
+    }
 	else
 	{
     	if( daylight)
