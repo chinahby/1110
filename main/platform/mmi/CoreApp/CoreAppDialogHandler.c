@@ -3382,10 +3382,13 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				    int ret = 0;
 				    if(!OEMKeyguard_IsEnabled())
                     {
+                        #if defined( FEATURE_VERSION_W515V3)
+                           Mainmenu_KeypadLock(TRUE);
+                        #endif
     				    #ifdef FEATURE_USES_BLACKBERRY
-    				    ret = CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+    				        ret = CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
     				    #else
-#if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_MYANMAR) ||defined( FEATURE_VERSION_W515V3)
+#if defined( FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| defined(FEATURE_VERSION_MYANMAR) //||defined( FEATURE_VERSION_W515V3)
     					if(!pMe->m_iskeypadtime)
     					{
     						
@@ -3447,7 +3450,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 #endif	/*FEATURE_SMARTFREN_STATIC_BREW_APP*/
-#elif defined (FEATURE_VERSION_HITZ181)
+#elif defined (FEATURE_VERSION_HITZ181) || defined (FEATURE_VERSION_W515V3)
     				    ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 #else
                         ret= CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
@@ -3784,10 +3787,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				                                &bData,
 				                                sizeof(bData));
 				                    pMe->m_iskeypadtime = FALSE;
+                                    #ifdef FEATURE_VERSION_W515V3
+                                        CoreApp_TimeKeyguard(pMe);
+                                    #else
 				        			if(bData)
 				        			{
 				                        CoreApp_TimeKeyguard(pMe);
 				            		}
+                                    #endif
 				        		}
 								#endif	
 								AEE_CancelTimer(CoreApp_keypadtimer,pMe);

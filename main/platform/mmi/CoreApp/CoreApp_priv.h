@@ -272,12 +272,12 @@
 #define    PWROFF_ANI_FRAME_COUNT                (6)
 #define    PWROFF_ANI_RATE                       (660) 
 #elif defined FEATURE_VERSION_W515V3
-#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.png"
-#define    PWRON_ANI_FRAME_COUNT                 (10)
-#define    PWRON_ANI_RATE                        (400)
-#define    PWROFF_ANI_FILE                       PWRON_ANI_FILE
-#define    PWROFF_ANI_FRAME_COUNT                (10)
-#define    PWROFF_ANI_RATE                       (400) 
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.jpg"
+#define    PWRON_ANI_FRAME_COUNT                 (1)
+#define    PWRON_ANI_RATE                        (4000)
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronoff.jpg"
+#define    PWROFF_ANI_FRAME_COUNT                (1)
+#define    PWROFF_ANI_RATE                       (4000) 
 #elif defined FEATURE_VERSION_OLIVE203
 #define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoff.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
@@ -961,6 +961,8 @@ boolean CoreApp_IsEmergencyMode(ICM* pICM);
 boolean CoreApp_IsEmergencyMode(ITelephone* pICM);
 #endif
 void CoreApp_UpdateAnnunciator(CCoreApp *pMe);
+
+extern AEE_EXPORTS IShell    *AEE_GetShell(void);
 
 void CoreApp_Draw_Charger_image(void *pp);
 
