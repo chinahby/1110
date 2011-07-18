@@ -299,6 +299,7 @@ static int MainMenuMod_CreateInstance( IModule *po,
     AEECLSID    ClsId,
     void        **ppObj
 );
+void Mainmenu_KeypadLock(boolean block);
 
 static uint32 MainMenuMod_AddRef( IModule *po);
 

@@ -121,6 +121,11 @@ NextFSMAction MainMenu_ProcessState(MainMenu *pMe);
 
 void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId);
 
+static boolean  gbMainmenuLock = FALSE;
+
+static void Main_keypadtimer(void *pUser);
+
+
 // MAINST_MAIN 状态处理函数
 static NextFSMAction MAINST_MAIN_Handler(MainMenu *pMe);
 //MAINST_EXIT  状态处理函数
@@ -1073,6 +1078,11 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
     }
 }
 
+void Mainmenu_KeypadLock(boolean block)
+{
+   gbMainmenuLock = block;
+}
+
 /*==============================================================================
 函数:
     MainMenu_ProcessState
@@ -1330,6 +1340,8 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 #endif                    
                 }
             }
+			AEE_CancelTimer(Main_keypadtimer,pMe);
+			AEE_SetTimer(5*1000,Main_keypadtimer,pMe);
             (void) ISHELL_PostEvent( pMe->m_pShell,
                                      AEECLSID_MAIN_MENU,
                                      EVT_USER_REDRAW,
@@ -1534,7 +1546,15 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     return TRUE;
                     
                 case AVK_STAR:
-                    StartApplet(pMe, pMe->m_IconTitle[9]);
+                    if(gbMainmenuLock)
+                    {
+                        OEMKeyguard_SetState(TRUE);
+                        ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
+                    }
+                    else
+                    {
+                     StartApplet(pMe, pMe->m_IconTitle[9]);
+                    }
                     return TRUE;
 
                 case AVK_0:
@@ -1556,6 +1576,11 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
     }
 
     return FALSE;
+}
+
+static void Main_keypadtimer(void *pUser)
+{
+    gbMainmenuLock =FALSE;
 }
 
 /*=============================================================================

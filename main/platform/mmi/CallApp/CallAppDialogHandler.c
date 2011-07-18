@@ -6624,7 +6624,11 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
         	{
 	            AECHAR internation[MAX_SIZE_DIAL_STR] = {0};
 	            //ICONFIG_GetItem(pMe->m_pConfig, CFGI_FDN_ENABLED, &internation,sizeof(internation));
-	            STRTOWSTR("0",internation,sizeof(internation));
+	            #if defined(FEATURE_VERSION_W515V3)
+	            STRTOWSTR("00",internation,sizeof(internation));
+                #else
+                STRTOWSTR("0",internation,sizeof(internation));
+                #endif
 	            //WSTRLCPY(internation,(AECHAR)OEM_INTERNATION_NUMBER ,MAX_SIZE_DIAL_STR);
 	            WSTRLCAT(internation, &wbuf[1] ,MAX_SIZE_DIAL_STR);
 	            WSTRLCPY(wbuf,internation,MAX_SIZE_DIAL_STR);
