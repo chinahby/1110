@@ -316,7 +316,9 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
         
         case EVT_USER_REDRAW:
 			{
-#if 0			
+		    AEERect rc = {0,0,SCR_W,SCR_H};   
+			IDisplay_FillRect(pMe->m_pDisplay,&rc,0x0);
+#ifdef FEATURE_DISP_128X160
             if(!pMe->IsPlay)
             {
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAYERPICTURE_PLAY, 0, 0);                 
@@ -326,10 +328,10 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAYERPICTURE_PAUSE, 0, 0);                
             } 
 #endif		
-            AEERect rc = {0,0,SCR_W,SCR_H};         
-            IDisplay_FillRect(pMe->m_pDisplay,&rc,0x0);
 			VideoPlayer_WriteTitleRes(pMe,AEE_APPSVIDEOPLAYER_RES_FILE,IDS_TITLE);
+			#ifndef FEATURE_DISP_128X160
 			VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_LOGO, VIDEOPLAYER_LOGO_X, VIDEOPLAYER_LOGO_Y);
+			#endif
             if(pMe->m_FileToPlay != NULL) // 如果不加此判断条件，则在pMe->m_FileToPlay为NULL时，屏幕上会显示乱码
             {
                 VideoPlayer_RefreshPlayerFileName(pMe); //刷新文件名
@@ -782,7 +784,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 {                   
                     if(!pMe->IsPlay) // 非播放状态
                     {    
-#if 0
+#ifdef FEATURE_DISP_128X160
                         VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_PAUSE, VIDEOPLAYER_PLAY_X, VIDEOPLAYER_PLAY_Y); //"||"
 #endif
 						pMe->m_rtype = TYPE_PLAYER;
@@ -808,7 +810,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                     }
                     else// 当前状态为播放时
                     {  
-#if 0                    
+#ifdef FEATURE_DISP_128X160                  
                         VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_PLAY, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y); //"|>"
 #endif
 						pMe->m_rtype = TYPE_PLAYER;
@@ -871,7 +873,9 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                     AEERect rc = {0,0,SCR_W,SCR_H};         
                     IDisplay_FillRect(pMe->m_pDisplay,&rc,0x0);
                     VideoPlayer_WriteTitleRes(pMe,AEE_APPSVIDEOPLAYER_RES_FILE,IDS_TITLE);
+					#ifndef FEATURE_DISP_128X160
                     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_LOGO, VIDEOPLAYER_LOGO_X, VIDEOPLAYER_LOGO_Y);
+					#endif
 
 					pMe->m_rtype = TYPE_PLAYER;
                     if(pMe->m_IsPlaynext)
@@ -916,14 +920,16 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 							
 					IDisplay_FillRect(pMe->m_pDisplay,&rc,0x0);
 					VideoPlayer_WriteTitleRes(pMe,AEE_APPSVIDEOPLAYER_RES_FILE,IDS_TITLE);
+					#ifndef FEATURE_DISP_128X160
 					VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_LOGO, VIDEOPLAYER_LOGO_X, VIDEOPLAYER_LOGO_Y);
+					#endif
 
-#if 0                    
+#ifdef FEATURE_DISP_128X160                   
                     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAYERPICTURE_PLAY, 0, 0);//背景图
 #endif
                     if( pMe->IsPlay)
                     { 
-#if 0                    
+#ifdef FEATURE_DISP_128X160                    
                         VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_PAUSE, VIDEOPLAYER_PLAY_X, VIDEOPLAYER_PLAY_Y); // "||"   
 #endif
 						pMe->m_rtype = TYPE_PLAYER;
@@ -1664,18 +1670,21 @@ static void VideoPlayer_RefreshPlayingTick(CVideoPlayer *pMe)
     }      
    
     //画时间显示区域
+    #ifndef FEATURE_DISP_128X160
     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_TIME_PART, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y); 
 	VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_TIME_PART, VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y); 
     //tick time
+    #else
+	
+    #endif
     SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
-
-    
     MEMSET(tick_time,0,MAX_STR_LEN);
 
     SPRINTF(tick_time,"%02d:%02d",
 		pMe->bCurrentTime/60,pMe->bCurrentTime%60);
     
     STRTOWSTR(tick_time, Wtick_time, sizeof(Wtick_time));
+	#ifndef FEATURE_DISP_128X160
     DrawTextWithProfile(pMe->m_pShell, 
                         pMe->m_pDisplay, 
                         RGB_WHITE, 
@@ -1686,8 +1695,13 @@ static void VideoPlayer_RefreshPlayingTick(CVideoPlayer *pMe)
                         57, 
                         &rc_tick, 
                         IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
-
+	#else
+	#endif
+	#ifndef FEATURE_DISP_128X160
 	SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
+	#else
+	SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
+    #endif
 	MEMSET(tick_time, 0, MAX_STR_LEN);
 	MEMSET(Wtick_time, 0, sizeof(Wtick_time));
 	SPRINTF(tick_time, "%02d:%02d",
@@ -1722,11 +1736,16 @@ static void VideoPlayer_RefreshScheduleBar(CVideoPlayer *pMe)
 	IIMAGE_GetInfo(image, &pi);
     //取小图标图片
     image =ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_GLIDER); 
-	
+	#ifdef FEATURE_DISP_128X160
+	VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY, VIDEOPLAYER_SCHEDULE_X, VIDEOPLAYER_SCHEDULE_Y); 
+    SETAEERECT(&rc,VIDEOPLAYER_SCHEDULE_X,VIDEOPLAYER_SCHEDULE_Y,5,5);//滑块起始位置 
+    SETAEERECT(&Rc,pi.cx-5,VIDEOPLAYER_SCHEDULE_Y,5,5);//滑块最终位置   
+	#else
     //画进度条
     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY, VIDEOPLAYER_SCHEDULE_X, VIDEOPLAYER_SCHEDULE_Y); 
-    SETAEERECT(&rc,VIDEOPLAYER_SCHEDULE_X,VIDEOPLAYER_SCHEDULE_Y,5,5);//滑块起始位置 
-    SETAEERECT(&Rc,pi.cx-5,VIDEOPLAYER_SCHEDULE_Y,5,5);//滑块最终位置    
+    SETAEERECT(&rc,VIDEOPLAYER_SCHEDULE_X,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块起始位置 
+    SETAEERECT(&Rc,pi.cx-9,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块最终位置    
+    #endif
     ma=Rc.x-rc.x;//滑块可以移动的长度，26个像素  
     if(pMe->bTotalTime == 0)
     {
@@ -1744,9 +1763,13 @@ static void VideoPlayer_RefreshScheduleBar(CVideoPlayer *pMe)
     //VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_GLIDER, Clip.x, 174);
     
     IDISPLAY_GetClipRect(pMe->m_pDisplay, &OldClip);//restore clip rect
-    SETAEERECT(&Clip,Clip.x,VIDEOPLAYER_SCHEDULE_Y,5,5);//滑块移动时的位置    
+    SETAEERECT(&Clip,Clip.x,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块移动时的位置    
     IDISPLAY_SetClipRect(pMe->m_pDisplay, &Clip);
+	#ifdef FEATURE_DISP_128X160
+	IIMAGE_Draw(image,Clip.x,VIDEOPLAYER_SCHEDULE_Y);   
+	#else
     IIMAGE_Draw(image,Clip.x,VIDEOPLAYER_SCHEDULE_Y);    
+    #endif
     IIMAGE_Release(image);
     IDISPLAY_SetClipRect(pMe->m_pDisplay, &OldClip);//recover clip rect
 
@@ -2405,7 +2428,11 @@ boolean VideoPlayer_ChangeScrState(CVideoPlayer* pMe,boolean isLockScr)
 			rc.x    = pMe->m_rc.x;
 			rc.dx   = pMe->m_rc.dx;
 			rc.y    = VIDEOPLAYER_NAMEPART_H;
+			#ifdef FEATURE_DISP_128X160
+			rc.dy   = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H - 26-  GetBottomBarHeight(pMe->m_pDisplay);
+			#else
 			rc.dy   = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay);
+			#endif
             //dy      = (rc.dx*3)/4;
             //yDelta  = rc.dy - dy;
 

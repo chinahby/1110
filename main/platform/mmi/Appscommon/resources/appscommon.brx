@@ -212,7 +212,7 @@
 		<Text>Turn off music player</Text>
 	</STRING>
 	<STRING Id="1022" Name="IDS_FULLSCREEN">
-		<Text>Full screen</Text>
+		<Text>Full scr</Text>
 	</STRING>
 	<STRING Id="1023" Name="IDS_GALLERY">
 		<Text>Gallery</Text>
