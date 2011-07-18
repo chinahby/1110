@@ -133,7 +133,8 @@ CONSTFILE_FILES+=\
 else
 CONSTFILE_FILES+=\
 	poweron.gif|fs:/image/pwronoffani/poweron.gif \
-	poweroff.gif|fs:/image/pwronoffani/poweroff.gif
+	poweroff.gif|fs:/image/pwronoffani/poweroff.gif \
+	poweronoff.gif|fs:/image/pwronoffani/poweronoff.gif
     #poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \
     #poweroffani.jpg|fs:/image/pwronoffani/poweroffani.jpg
 endif
