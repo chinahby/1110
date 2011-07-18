@@ -813,7 +813,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
             {
                 if(pMe->m_converterMode == CONVERTER_MODE_CURRENCY)
                 {
-                    BBarParam.eBBarType = BTBAR_BACK;
+                    BBarParam.eBBarType = BTBAR_OPTION_BACK;
                 }
                 else
                 {
