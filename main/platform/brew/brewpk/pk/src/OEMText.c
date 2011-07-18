@@ -11436,7 +11436,7 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
    }
    else if(key == AVK_0)
    {
-#ifdef FEATURE_OEMOMH
+#if  defined(FEATURE_OEMOMH) && !defined(FEATURE_VERSION_W515V3)
         MSG_FATAL("KEY 0 bHold %d",(eCode == EVT_KEY_HELD)?TRUE:FALSE,0,0);
         if(eCode == EVT_KEY_HELD)
         {
@@ -11465,7 +11465,25 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 	    {   
 #if !defined (FEATURE_ALL_KEY_PAD)
 	        case AVK_STAR:
-	          TextCtl_AddChar(pContext, (AECHAR) '*');
+#ifdef FEATURE_VERSION_W515V3
+              if(eCode == EVT_KEY_HELD)
+              {
+                  if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+                  {
+                       --pContext->wSelStart;
+                  }
+                  
+                  /* Insert a "NUL" to just delete and insert nothing */
+                  TextCtl_AddChar(pContext, 0);
+                  TextCtl_NoSelection(pContext);
+         		  TextCtl_AddChar(pContext,(AECHAR) ('+'));
+              }
+              else
+#endif
+              {
+                   TextCtl_NoSelection(pContext);
+	               TextCtl_AddChar(pContext, (AECHAR) '*');
+              }
 	          return TRUE;            
 
 	        case AVK_POUND:
