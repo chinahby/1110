@@ -13,6 +13,12 @@
 	<Object Id="5004" Name="IDI_SCHEDULE" MimeType="image/png">
 		<File>..\images\220x176\common\Calendar\calendar.png</File>
 	</Object>
+	<Object Id="5007" Name="IDB_CALCAPP_GROUND" MimeType="image/png">
+		<File>..\images\220x176\common\Calculator\background.png</File>
+	</Object>
+	<Object Id="5008" Name="IDB_CALCAPP_LINE" MimeType="image/png">
+		<File>..\images\220x176\common\Calculator\line.png</File>
+	</Object>
 	<Object Id="5005" Name="IDI_NOTE_BOOK" MimeType="image/png">
 		<File>..\images\220x176\common\Calendar\notebook.png</File>
 	</Object>

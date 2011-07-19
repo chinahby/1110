@@ -116,7 +116,7 @@ else ifeq ($(USES_RESDIR), S106)
 CONSTFILE_FILES+=\
 	poweron.gif|fs:/image/pwronoffani/poweron.gif \
 	poweroff.gif|fs:/image/pwronoffani/poweroff.gif
-else ifeq ($(USES_RESDIR), S1000T)
+else ifeq ($(USES_RESDIR), S1000DEW)
 CONSTFILE_FILES+=\
 	poweron.gif|fs:/image/pwronoffani/poweron.gif \
 	poweroff.gif|fs:/image/pwronoffani/poweroff.gif
