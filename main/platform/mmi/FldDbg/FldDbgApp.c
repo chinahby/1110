@@ -6886,9 +6886,14 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
     {
-    	//extern int OEM_ReadMEID(uint64 *meid);
-    	//OEM_ReadMEID(&meid);
-    	tmc_get_stored_meid_me(&meid);
+    	
+        #ifdef FEATURE_VERSION_W515V3
+        extern int OEM_ReadMEID(uint64 *meid);
+    	OEM_ReadMEID(&meid);
+        #else
+        tmc_get_stored_meid_me(&meid);
+        #endif
+    	
         L32 = (uint32)meid;
         H32 = (uint32)(meid>>32);
     }
