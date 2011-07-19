@@ -644,7 +644,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
             {
                 case CONVERTER_MODE_CURRENCY:
                     {
-                    	#ifdef FEATURE_VERSION_W515V3
+                    	#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
                     	IMENUCTL_SetSel(pMe->pUnitMenu1, IDS_CURRENCY_USD);
                     	IMENUCTL_SetSel(pMe->pUnitMenu2, IDS_CURRENCY_INR);
                     	#else

@@ -6206,6 +6206,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 			                            #else
 			                            TextCtl_AddChar(pContext,(AECHAR)(VLCharKeyItem[i].wp));
 										#endif
+										pContext->is_isShift = FALSE;
 
 			                        }
 			                        else
@@ -6232,7 +6233,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	            break;
 	         case AVK_SHIFT:
 	              {
-	              	 #ifndef FEATURE_VERSION_S1000T
+	              	 #if 1//ndef FEATURE_VERSION_S1000T
 	                 if(pContext->is_isShift)
 	                 {
 	                    pContext->is_isShift = FALSE;
@@ -7202,7 +7203,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	            break;
 	         case AVK_SHIFT:
 	              {
-	              	 #ifndef FEATURE_VERSION_S1000T
+	              	 #if  1//ndef FEATURE_VERSION_S1000T
 	                 if(pContext->is_isShift)
 	                 {
 	                    pContext->is_isShift = FALSE;
