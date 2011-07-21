@@ -8896,6 +8896,17 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 		         	{
 		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
 		         	}
+					#elif defined(FEATURE_LANG_THAI)
+					nv_language_enum_type language;
+        	    	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
+                    if(NV_LANGUAGE_THAI== language)
+                    {
+		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_THAI);
+		         	}
+		         	else
+		         	{
+		         		(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);
+		         	}
 		         	#else
 					#ifdef FEATURE_ALL_KEY_PAD
         	    	(void)ITEXTCTL_SetInputMode(pIText, AEE_TM_RAPID);

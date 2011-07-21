@@ -654,7 +654,7 @@ static boolean CallApp_Esn_Meid_DlgHandler(CCallApp *pMe,
 		                H32
 		                );
 		        n = WSTRLEN(szBuf);
-		        STRTOWSTR("%X", fmt_str, sizeof(fmt_str));
+		        STRTOWSTR("%08X", fmt_str, sizeof(fmt_str));
 		        WSPRINTF((szBuf + n),
 		                sizeof(szBuf),
 		                fmt_str,
