@@ -64,26 +64,26 @@ when       who     what, where, why
 
    This enum is used to index a table of response packets, so these
    values map exactly to possible responses. */
-
+// Gemsea Modify for lock the value
 typedef enum
   {
-  ACK,                    /* Success. Send an acknowledgement.           */
-  NAK_INVALID_FCS,        /* Failure: invalid frame check sequence.      */
-  NAK_INVALID_DEST,       /* Failure: destination address is invalid.    */
-  NAK_INVALID_LEN,        /* Failure: operation length is invalid.       */
-  NAK_EARLY_END,          /* Failure: packet was too short for this cmd. */
-  NAK_TOO_LARGE,          /* Failure: packet was too long for my buffer. */
-  NAK_INVALID_CMD,        /* Failure: packet command code was unknown.   */
-  NAK_FAILED,             /* Failure: operation did not succeed.         */
-  NAK_WRONG_IID,          /* Failure: intelligent ID code was wrong.     */
-  NAK_BAD_VPP,            /* Failure: programming voltage out of spec    */
-  NAK_OP_NOT_PERMITTED,   /* Failure: memory dump not permitted          */
+  ACK=0x0,                    /* Success. Send an acknowledgement.           */
+  NAK_INVALID_FCS=0x1,        /* Failure: invalid frame check sequence.      */
+  NAK_INVALID_DEST=0x2,       /* Failure: destination address is invalid.    */
+  NAK_INVALID_LEN=0x3,        /* Failure: operation length is invalid.       */
+  NAK_EARLY_END=0x4,          /* Failure: packet was too short for this cmd. */
+  NAK_TOO_LARGE=0x5,          /* Failure: packet was too long for my buffer. */
+  NAK_INVALID_CMD=0x6,        /* Failure: packet command code was unknown.   */
+  NAK_FAILED=0x7,             /* Failure: operation did not succeed.         */
+  NAK_WRONG_IID=0x8,          /* Failure: intelligent ID code was wrong.     */
+  NAK_BAD_VPP=0x9,            /* Failure: programming voltage out of spec    */
+  NAK_OP_NOT_PERMITTED=0xA,   /* Failure: memory dump not permitted          */
 #ifdef FEATURE_DLOAD_MEM_DEBUG
-  NAK_INVALID_ADDR,       /* Failure: invalid address for a memory read  */
+  NAK_INVALID_ADDR=0xB,       /* Failure: invalid address for a memory read  */
 #endif
-  NAK_VERIFY_FAILED,      /* Failure: readback verify did not match      */
-  NAK_NO_SEC_CODE,        /* Failure: not permitted without unlock       */
-  NAK_BAD_SEC_CODE        /* Failure: invalid security code              */
+  NAK_VERIFY_FAILED=0xC,      /* Failure: readback verify did not match      */
+  NAK_NO_SEC_CODE=0xD,        /* Failure: not permitted without unlock       */
+  NAK_BAD_SEC_CODE=0xE        /* Failure: invalid security code              */
   } response_code_type;
 
 /*-   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -*/
