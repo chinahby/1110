@@ -387,6 +387,11 @@
 #include "camsensor_siv121a.h"
 #endif
 #endif
+#ifdef USE_CAMSENSOR_DB8B63A
+#ifdef T_QSC1110
+#include "camsensor_DB8V63A_yuv.h"
+#endif
+#endif
 
 #ifdef USE_CAMSENSOR_SIC110A
 #include "camsensor_sic110a.h"
@@ -468,7 +473,7 @@
 #define PMIC_VOTE_INVALID -1
 #endif /* CAMERA_USE_PMIC_TO_POWER_SENSOR */
 
-#if defined(USE_CAMSENSOR_SIV121A) || defined(USE_CAMSENSOR_SIC110A)
+#if defined(USE_CAMSENSOR_SIV121A) || defined(USE_CAMSENSOR_SIC110A) || defined(USE_CAMSENSOR_DB8B63A)
 #define CAM_ENABLE_PULLUP
 #endif
 
@@ -767,9 +772,14 @@ LOCAL boolean (*camsensor_detect_table[])(camsensor_function_table_type *, camct
   camsensor_siv121a_init,
 #endif
 
+#ifdef USE_CAMSENSOR_DB8B63A
+  camsensor_DB8V63A_ycbcr_init,
+#endif
+
 #ifdef USE_CAMSENSOR_SIC110A
   camsensor_sic110a_init,
 #endif
+
 
 #ifdef USE_CAMSENSOR_OV7675
   camsensor_ov7675_init
