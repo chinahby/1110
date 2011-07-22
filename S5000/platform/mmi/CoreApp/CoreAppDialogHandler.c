@@ -4934,7 +4934,12 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #elif defined FEATURE_VERSION_M8P
 		eBBarType = BTBAR_FACEBOOK_CHAT;
 #elif defined FEATURE_VERSION_FLEXI203P
+		MSG_FATAL("-------->BTBAR_APPLICATION_CONTACTS",0,0,0);
+#ifdef FEATURE_VERSION_S5000
+		eBBarType = BTBAR_APPLICATION_CONTACTS;
+#else
 		eBBarType = BTBAR_MENU_CONTACTS;
+#endif
 #else										//Include IVIO
 	#if defined (FEATURE_GURU)
 		eBBarType = BTBAR_FGURU_FPORTAL;	

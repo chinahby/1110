@@ -393,6 +393,10 @@
 
 
 
+
+
+
+
 #line 1 "targsb12864.h"
 
 
@@ -513,7 +517,7 @@
 
 
 
-#line 54 "custs5000.h"
+#line 58 "custs5000.h"
 
 
 
@@ -1247,7 +1251,7 @@
 
 
 
-#line 248 "custs5000.h"
+#line 252 "custs5000.h"
 #line 1 "..\cust\custcmx.h"
 
 
@@ -2032,7 +2036,7 @@
 
 
 
-#line 249 "custs5000.h"
+#line 253 "custs5000.h"
 #line 1 "..\cust\custavs.h"
 
 
@@ -2263,7 +2267,7 @@
 
 
 
-#line 250 "custs5000.h"
+#line 254 "custs5000.h"
 #line 1 "..\cust\custsio.h"
 
 
@@ -2505,7 +2509,7 @@
 
 
 
-#line 251 "custs5000.h"
+#line 255 "custs5000.h"
 #line 1 "..\cust\custmmode.h"
 
 
@@ -2757,7 +2761,7 @@
 
 
 
-#line 252 "custs5000.h"
+#line 256 "custs5000.h"
 #line 1 "..\cust\custcdma.h"
 
 
@@ -3383,7 +3387,7 @@
 
 
 
-#line 253 "custs5000.h"
+#line 257 "custs5000.h"
 #line 1 "..\cust\custrf.h"
 
 
@@ -3549,7 +3553,7 @@
  
 
 
-#line 254 "custs5000.h"
+#line 258 "custs5000.h"
 #line 1 "..\cust\custcdma2000.h"
 
 
@@ -3668,7 +3672,7 @@
 
 
 
-#line 255 "custs5000.h"
+#line 259 "custs5000.h"
 #line 1 "..\cust\custdebug.h"
 
 
@@ -3727,7 +3731,7 @@
 
 
 
-#line 256 "custs5000.h"
+#line 260 "custs5000.h"
 #line 1 "..\cust\custdmss.h"
 
 
@@ -3841,7 +3845,7 @@
 
 
 
-#line 257 "custs5000.h"
+#line 261 "custs5000.h"
 #line 1 "..\cust\custdata.h"
 
 
@@ -4074,7 +4078,7 @@
 
 
 
-#line 258 "custs5000.h"
+#line 262 "custs5000.h"
 #line 1 "..\cust\custdiag.h"
 
 
@@ -4151,7 +4155,7 @@
 
 
 
-#line 259 "custs5000.h"
+#line 263 "custs5000.h"
 #line 1 "..\cust\custwms.h"
 
 
@@ -4269,7 +4273,7 @@
 
 
 
-#line 260 "custs5000.h"
+#line 264 "custs5000.h"
 #line 1 "..\cust\custsrch.h"
 
 
@@ -4787,7 +4791,7 @@
 
 
 
-#line 261 "custs5000.h"
+#line 265 "custs5000.h"
 #line 1 "..\cust\custui.h"
 
 
@@ -4912,7 +4916,7 @@
 
 
 
-#line 262 "custs5000.h"
+#line 266 "custs5000.h"
 #line 1 "..\cust\custmcs.h"
 
 
@@ -5261,7 +5265,7 @@
 
 
 
-#line 263 "custs5000.h"
+#line 267 "custs5000.h"
 #line 1 "..\cust\custpmic3.h"
 
 
@@ -5423,7 +5427,7 @@
 
 
 
-#line 264 "custs5000.h"
+#line 268 "custs5000.h"
 #line 1 "..\cust\custefs.h"
 
 
@@ -5653,7 +5657,7 @@
 
 
 
-#line 265 "custs5000.h"
+#line 269 "custs5000.h"
 
 #line 1 "..\cust\custnvm.h"
 
@@ -5715,7 +5719,7 @@
 
 
 
-#line 267 "custs5000.h"
+#line 271 "custs5000.h"
 #line 1 "..\cust\custrex.h"
 
 
@@ -5794,7 +5798,7 @@
 
 
 
-#line 268 "custs5000.h"
+#line 272 "custs5000.h"
 #line 1 "..\cust\custbmp.h"
 
 
@@ -5920,7 +5924,7 @@
 
 
 
-#line 269 "custs5000.h"
+#line 273 "custs5000.h"
 #line 1 "..\cust\custsurf.h"
 
 
@@ -6024,7 +6028,7 @@
 
 
 
-#line 270 "custs5000.h"
+#line 274 "custs5000.h"
 
 #line 1 "..\cust\Custsdcc.h"
 
@@ -6067,7 +6071,7 @@
 
 
 
-#line 272 "custs5000.h"
+#line 276 "custs5000.h"
 
 
 

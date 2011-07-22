@@ -350,7 +350,7 @@ extern int GURU_Load(IShell *ps, void * pHelpers,  IModule **pMod);
 #endif
 #endif  /*FEATURE_FLEXI_STATIC_BREW_APP*/
 
-#ifdef FEATURE_VERSION_FLEXI203P
+#if defined(FEATURE_VERSION_FLEXI203P)|| defined(FEATURE_VERSION_S5000)
 extern int ODPMORA_Load(IShell *ps, void * pHelpers,  IModule **pMod);
 extern int FlexiMusik_Load(IShell *ps, void * pHelpers,  IModule **pMod);
 extern int FACEBOOK_Load(IShell *ps, void * pHelpers, IModule **pMod);

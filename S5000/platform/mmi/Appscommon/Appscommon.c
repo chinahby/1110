@@ -2692,10 +2692,14 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             break;
             
         case BTBAR_MENU_CONTACTS:
+			MSG_FATAL("--------->BTBAR_MENU_CONTACTS",0,0,0);
             nResID_L = IDS_MENU;
             nResID_R = IDS_STRING_CONTACTS;
             break;
-            
+        case BTBAR_APPLICATION_CONTACTS:
+			nResID_L = IDS_APPLICATION;
+			nResID_R = IDS_STRING_CONTACTS;
+			break;
 		case BTBAR_MENU_SOS:
          	nResID_L = IDS_MENU;
             nResID_R = IDS_SOS;
