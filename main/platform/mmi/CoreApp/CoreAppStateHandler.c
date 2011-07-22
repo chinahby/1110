@@ -854,7 +854,6 @@ static NextFSMAction COREST_UIMERR_Handler(CCoreApp *pMe)
         case DLGRET_ENTER:
         {
             char wPWD[10]= "*1796*08#";
-            char wMEID[6]="*#06#";
             if (STRCMP(wPWD,pMe->m_strLockuimPWD) == 0)
             {// ÃÜÂë·ûºÏ
             #ifdef FEATURE_LONG_NETLOCK
@@ -869,12 +868,6 @@ static NextFSMAction COREST_UIMERR_Handler(CCoreApp *pMe)
 				#endif
                 return NFSMACTION_CONTINUE;
             }
-            #ifdef FEATURE_VERSION_W515V3
-            else if(STRCMP(wMEID,pMe->m_strLockuimPWD) == 0)
-            {
-                ISHELL_StartAppletArgs(AEE_GetShell(), AEECLSID_FIELDDEBUGAPP, "*#06#");
-            }
-            #endif
             //     else
             //       {// ÃÜÂë´íÎó
             // ÊäÈë´íÎó

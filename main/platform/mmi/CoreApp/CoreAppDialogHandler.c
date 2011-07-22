@@ -2449,9 +2449,15 @@ static boolean  IDD_UIMERR_Handler(void       *pUser,
                 }
                 else if (nLen < LOCKUIMPASSWORDLENTH)
                 {
+                	char wMEID[6]="*#06#";
                     pMe->m_strLockuimPWD[nLen] = chEnter;
                     nLen++;
                     pMe->m_strLockuimPWD[nLen] = 0;
+					if (STRCMP(wMEID,pMe->m_strLockuimPWD) == 0)
+            		{// ÃÜÂë·ûºÏ
+            			ISHELL_StartAppletArgs(AEE_GetShell(), AEECLSID_FIELDDEBUGAPP, "*#06#");
+					}
+					
                 }
             break;
         }

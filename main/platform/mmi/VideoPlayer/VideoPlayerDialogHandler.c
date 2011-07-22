@@ -1067,21 +1067,24 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
        
         //播放下一首   
         case AVK_RIGHT:  
-			MSG_FATAL("-------->yes2",0,0,0);
+			MSG_FATAL("-------->yes2pMe->m_IsPlaynext=%d",pMe->m_IsPlaynext,0,0);
             if(! pMe->m_IsPlaynext)
             {
                 return TRUE;
             }
             ISHELL_SetTimer(pMe->m_pShell,APPISREADY_TIMER,VideoPlayer_APPIsReadyTimer,pMe);
+			MSG_FATAL("pMe->m_bAppIsReady======%d",pMe->m_bAppIsReady,0,0);
             if(! pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
+			MSG_FATAL("pMe->IsFullScreen======%d",pMe->IsFullScreen,0,0);
             if(!pMe->IsFullScreen)
             { 
 #if 0            
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NEXT_SELECT, VIDEOPLAYER_NEXT_X, VIDEOPLAYER_NEXT_Y);//画按键按下去的小图标  
 #endif
+				MSG_FATAL("play next.................111",0,0,0);
 				pMe->m_rtype = TYPE_NEXT;
                 IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
                 (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);//100ms后画按钮弹起的图
@@ -1089,7 +1092,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             }            
             else if(!pMe->IsPause)//全屏播放状态
             {
-                DBGPRINTF("play next");
+                MSG_FATAL("play next.................",0,0,0);
                 VideoPlayer_PlayNext(pMe, TRUE); 
             }
             pMe->m_bAppIsReady=FALSE;
@@ -1423,13 +1426,13 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
     FileInfo  pInfo;
     
     videoID=VideoPlayer_GetFileID(pMe);
-	DBGPRINTF("videoID=%d",pMe->m_RecordCount);
-    DBGPRINTF("pMe->m_RecordCount=%d",pMe->m_RecordCount);
+	MSG_FATAL("videoID=%d",pMe->m_RecordCount,0,0);
+    MSG_FATAL("pMe->m_RecordCount=%d",pMe->m_RecordCount,0,0);
     //video放置在指定文件夹外
     MSG_FATAL("-------->yes3",0,0,0);
     if(videoID >= pMe->m_RecordCount)
     {  
-        DBGPRINTF("videoID >= pMe->m_RecordCount");
+        MSG_FATAL("videoID >= pMe->m_RecordCount",0,0,0);
         return ;
     }
     else
@@ -1787,7 +1790,7 @@ static void VideoPlayer_RefreshScheduleBar(CVideoPlayer *pMe)
 	#if defined( FEATURE_DISP_128X160)
 	IIMAGE_Draw(image,Clip.x,VIDEOPLAYER_SCHEDULE_Y);  
 	#elif defined(FEATURE_DISP_220X176)
-	IIMAGE_Draw(image,Clip.x,VIDEOPLAYER_SCHEDULE_Y-1);
+	IIMAGE_Draw(image,Clip.x,VIDEOPLAYER_SCHEDULE_Y+1);
 	#else
     IIMAGE_Draw(image,Clip.x,VIDEOPLAYER_SCHEDULE_Y);    
     #endif

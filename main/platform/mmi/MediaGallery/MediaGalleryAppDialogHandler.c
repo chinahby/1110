@@ -5461,7 +5461,7 @@ static boolean MediaGalleryApp_VideoAddDlg_HandleEvent(CMediaGalleryApp* pMe,
                {
                   MenuInsItem OptItems[] =
                   {
-                     {IDS_MG_BUILDPL, TRUE},
+                     //{IDS_MG_BUILDPL, TRUE},
                      {IDS_MG_DELETE, TRUE}, {IDS_MG_DELALL, TRUE},
                      {IDS_MG_SORT, TRUE},  {IDS_MG_DETAIL, TRUE}
                   };
