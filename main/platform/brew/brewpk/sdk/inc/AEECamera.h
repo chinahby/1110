@@ -148,7 +148,6 @@ Qualcomm Confidential and Proprietary
 #define  CAM_PARM_DISPLAY_OFFSET    (CAM_PARM_BASE + 24)
 #define  CAM_PARM_SENSOR_MODEL     (CAM_PARM_BASE + 25)   //add by xuhui
 
-
 #define CAM_PARM_CTL_BASE           (CAM_PARM_BASE + 0x100)
 #define CAM_PARM_QUALITY            (CAM_PARM_CTL_BASE)     // [Set/Get] Quality
 #define CAM_PARM_FPS                (CAM_PARM_CTL_BASE + 1) // [Set/Get] Frames per second
@@ -174,6 +173,8 @@ Qualcomm Confidential and Proprietary
 #define CAM_PARM_MULTISHOT          (CAM_PARM_CTL_BASE + 21)// [Set]  Multishot 
 #define CAM_PARM_BANDING            (CAM_PARM_CTL_BASE + 22)// [Set] Camera Banding
 #define CAM_PARM_PREVIEWWITHFRAME   (CAM_PARM_CTL_BASE + 23)// [Set] Camera Preview with frame or not
+#define CAM_PARM_WB                 (CAM_PARM_CTL_BASE + 24) // [Set/Get] Frames per second
+
 #define CAM_PARM_FADE               CAM_PARM_QCOM_RESERVED_BEGIN //[Set] Set the fading for movie recording mode
 #define CAM_PARM_QCOM_RESERVED_END  (CAM_PARM_QCOM_RESERVED_BEGIN + 100) // Reserved parameter ID's end
 #define CAM_PARM_EXPOSURE_METERING  (CAM_PARM_CTL_BASE + 121)// [Set/Get] Set exposure metering
@@ -632,11 +633,14 @@ AEEINTERFACE(ICamera)
 #define ICAMERA_SetBrightness(p, v)             ICAMERA_SetParm(p, CAM_PARM_BRIGHTNESS,   (int32)(v),       0)
 #define ICAMERA_SetSharpness(p, v)              ICAMERA_SetParm(p, CAM_PARM_SHARPNESS,    (int32)(v),       0)
 #define ICAMERA_SetZoom(p, v)                   ICAMERA_SetParm(p, CAM_PARM_ZOOM,         (int32)(v),       0)
+#define ICAMERA_SetEffect(p,v)                  ICAMERA_SetParm(p, CAM_PARM_EFFECT,       (int32)(v),       0)
+#define ICAMERA_SetWb(p,v)                      ICAMERA_SetParm(p, CAM_PARM_WB,           (int32)(v),       0)
 #define ICAMERA_SetMaxFileSize(p, s)            ICAMERA_SetParm(p, CAM_PARM_FILE_SIZE,    (int32)(s),       0)
 #define ICAMERA_RotatePreview(p, v)             ICAMERA_SetParm(p, CAM_PARM_ROTATE_PREVIEW,(int32)(v),      0)
 #define ICAMERA_RotateEncode(p, v)              ICAMERA_SetParm(p, CAM_PARM_ROTATE_ENCODE,(int32)(v),       0)
 #define ICAMERA_AddOverlay(p, pb)               ICAMERA_SetParm(p, CAM_PARM_OVERLAY,      (int32)(pb),      0)
 #define ICAMERA_ClearOverlay(p)                 ICAMERA_SetParm(p, CAM_PARM_OVERLAY,      0,                0)
+
 
 // Camera display API:
 #define ICAMERA_SetDisplaySize(p, pr)           ICAMERA_SetParm(p, CAM_PARM_DISPLAY_SIZE, (int32)(pr),      0)

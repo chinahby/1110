@@ -32,6 +32,7 @@ when       who     what, where, why
 //#define USE_CAMSENSOR_MICRON_MT9D112_MU2M0YU
 //#define USE_CAMSENSOR_GC0309
 #define USE_CAMSENSOR_SIV121A
+#define USE_CAMSENSOR_DB8B63A
 #define USE_CAMSENSOR_SIC110A
 //bool use_camsensor_siv121a = FALSE;
 //bool use_camsensor_sic110a = FALSE;

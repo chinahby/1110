@@ -167,6 +167,8 @@ Anthor:			Wangliang
 #define CAM_PARM_MULTISHOT          (CAM_PARM_CTL_BASE + 21)// [Set]  Multishot 
 #define CAM_PARM_BANDING            (CAM_PARM_CTL_BASE + 22)// [Set] Camera Banding
 #define CAM_PARM_PREVIEWWITHFRAME   (CAM_PARM_CTL_BASE + 23)// [Set] Camera Preview with frame or not
+#define CAM_PARM_WB                (CAM_PARM_CTL_BASE + 24) // [Set/Get] Frames per second
+
 #define CAM_PARM_FADE               CAM_PARM_QCOM_RESERVED_BEGIN //[Set] Set the fading for movie recording mode
 #define CAM_PARM_QCOM_RESERVED_END  (CAM_PARM_QCOM_RESERVED_BEGIN + 100) // Reserved parameter ID's end
 #define CAM_PARM_EXPOSURE_METERING  (CAM_PARM_CTL_BASE + 121)// [Set/Get] Set exposure metering

@@ -819,13 +819,15 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             if(pMe->m_pCamera && (!pMe->m_bIsPreview))
             {
                 CameraApp_CPreviewStart(pMe);
-                return TRUE;
+				MSG_FATAL("CameraApp_CPreviewStart........000000",0,0,0);
+                //return TRUE;
             }            
             if(pMe->m_bRePreview && pMe->m_pCamera)
             {
                 CameraApp_CPreviewStart(pMe);
                 pMe->m_bRePreview = FALSE;
-                return TRUE;
+				MSG_FATAL("CameraApp_CPreviewStart........2222222",0,0,0);
+                //return TRUE;
                 
             }
 #else
@@ -863,7 +865,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     pImage = NULL;
                 }
             }
-            DBGPRINTF("EVT_USER_REDRAW");
+            MSG_FATAL("EVT_USER_REDRAW....................",0,0,0);
             CameraApp_DrawBottomBarText(pMe, BTBAR_OPTION_BACK);
             
             CameraApp_DrawMidPic(pMe);
@@ -935,6 +937,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 
             case AVK_INFO:
                 // 防止快速按键，导致hotkey Text存在于LCD上 
+                MSG_FATAL("AVK_INFO...................",0,0,0);
                 ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
                 
                 if(!pMe->m_bCanCapture)
@@ -1727,7 +1730,7 @@ static boolean CameraApp_PopMenu_EnvironmentCommandHandleEvent(CCameraApp *pMe, 
                                   &pMe->m_nCameraEnviroment,
                                   sizeof(pMe->m_nCameraEnviroment));
             
-            ICAMERA_SetFramesPerSecond(pMe->m_pCamera, dwFPS);
+            ICAMERA_SetWb(pMe->m_pCamera, dwFPS);
             break;
 
         case IDD_CVIDEOCFG:
@@ -1762,7 +1765,7 @@ static boolean CameraApp_PopMenu_EnvironmentCommandHandleEvent(CCameraApp *pMe, 
                                   &pMe->m_nCameraEnviroment,
                                   sizeof(pMe->m_nCameraEnviroment));
             
-            ICAMERA_SetFramesPerSecond(pMe->m_pCamera, dwFPS);
+            ICAMERA_SetWb(pMe->m_pCamera, dwFPS);
             break;
             
     }
@@ -3187,7 +3190,7 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 static void CameraApp_RecordSnapShot(CCameraApp *pMe)
 { 
     char sFileName[MIN_PIC_CHAR_NAME_LEN];
-    
+    MSG_FATAL("CameraApp_RecordSnapShot..........",0,0,0);
     MEMSET(pMe->m_sCurrentFileName, '\0', sizeof(pMe->m_sCurrentFileName));
     MEMSET(sFileName, '\0', sizeof(sFileName));
     

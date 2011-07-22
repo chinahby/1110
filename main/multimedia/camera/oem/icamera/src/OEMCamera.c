@@ -1136,6 +1136,7 @@ int OEMCamera_RegisterNotify(OEMINSTANCE h, PFNCAMERANOTIFY pfnNotify, void * pU
 ==================================================================*/
 int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
 {
+	
 #ifdef FEATURE_DSP
 	int               nRet = SUCCESS;
 	OEMCamera *       pme = (OEMCamera *)h;
@@ -1211,6 +1212,16 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
 				nRet = EBADPARM;
 			}
 			break;
+		case CAM_PARM_WB:
+			if(p1)
+			{
+				eParm = CAMERA_PARM_WB;
+			}
+			else
+			{
+				nRet = EBADPARM;
+			}
+			break;
 
 		case CAM_PARM_IS_SUPPORT:  // Fall through...
 		case CAM_PARM_IS_MOVIE: // This cannot be set by user
@@ -1231,7 +1242,7 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
   camera_parm_type  eParm = CAMERA_PARM_MAX;
   CameraData        *pCData = NULL;
   OEMCamera *       pme = (OEMCamera *)h;
-  
+  MSG_FATAL("camera_set_parm........nParmID=%d",nParmID,0,0);
   switch (nParmID)
   {
     case CAM_PARM_MEDIA_DATA:
@@ -1957,6 +1968,17 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
         break;
 #endif // FEATURE_CAMERA_CONCURRENT_SHUTTER_SOUND
 
+	case CAM_PARM_WB:
+		if(p1)
+		{
+			eParm = CAMERA_PARM_WB;
+		}
+		else
+		{
+			nRet = EBADPARM;
+		}
+		break;
+
       case CAM_PARM_IS_SUPPORT:  // Fall through...
       case CAM_PARM_IS_MOVIE: // This cannot be set by user
       case CAM_PARM_PIXEL_COUNT:
@@ -1968,12 +1990,12 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
          nRet = EUNSUPPORTED;
          break;
    }
-
+   MSG_FATAL("nRet=================%d",nRet,0,0);
    if (SUCCESS == nRet && eParm != CAMERA_PARM_MAX)
    {
       int         nCamRet;
       CameraRsp * pRsp;
-
+      MSG_FATAL("OEMCamera_AllocCmdCameraRsp start",0,0,0);
       pRsp = OEMCamera_AllocCmdCameraRsp(pme, CAM_CMD_SETPARM, nParmID);
       if (!pRsp)
          nRet = EITEMBUSY;
@@ -1994,6 +2016,7 @@ int OEMCamera_SetParm(OEMINSTANCE h, int16 nParmID, int32 p1, int32 p2)
 #endif //FEATURE_CAMERA_V770
          else
 #endif // FEATURE_CAMERA_V7
+			MSG_FATAL("camera_set_parm..............",0,0,0);
             nCamRet = (int)camera_set_parm(eParm, p1, OEMCamera_CameraLayerCB, (void *)pRsp->hObject);
          if (!nCamRet)
             nRet = CAM_PENDING;
