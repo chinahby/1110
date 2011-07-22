@@ -138,8 +138,13 @@ GENERAL DESCRIPTION:
 #define AEECLSID_BRW_APP    	    0x0104c960
 #define AEECLSID_BLUETOOTH_APP    	0x01015223
 #if defined(FEATURE_VERSION_FLEXI203P)
+#ifdef USE_OLD_TWITTER
 #define AEECLSID_TWTTER             0x09090000
+#else
+#define AEECLSID_TWTTER             0x0100927B
+#endif
 #define AEECLSID_APPMORA            0x010BB7D5
+
 #define AEECLSID_FRAME              0x11111121
 #define AEECLSID_FTP005             0x19882401
 #define AEECLSID_FLEXIKOMIK         0x11111114
@@ -147,7 +152,13 @@ GENERAL DESCRIPTION:
 #define AEECLSID_FGEN               0x01009279
 #define AEECLSID_EFSBROWSER         0x20000013
 #define AEECLSID_CHATTING           0x01007262
+#ifdef USE_OLD_FACEBOOK
 #define AEECLSID_FACEBOOK           0x20000010
+#else
+#define AEECLSID_FACEBOOK           0x0100927A
+#endif
+#define AEECLSID_FADZ               0x01111011
+
 #endif
 #endif /*CUST_EDITION*/
 /*=====================================================================
