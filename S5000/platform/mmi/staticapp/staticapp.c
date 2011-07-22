@@ -1017,7 +1017,8 @@ static boolean Staticapp_ListMenuHandler(Staticapp *pMe, AEEEvent eCode, uint16 
             IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_TWITTER, IDS_STATICAPP_TITLE_FLEXI_TWITTER, NULL, 0);
             IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_FCHAT, IDS_STATICAPP_TITLE_FLEXI_FCHAT, NULL, 0);
 		    IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_MUSIK, IDS_STATICAPP_TITLE_FLEXI_MUSIK, NULL, 0);							
-			IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_PORTAL, IDS_STATICAPP_TITLE_FLEXI_PORTAL, NULL, 0);			
+			//IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_PORTAL, IDS_STATICAPP_TITLE_FLEXI_PORTAL, NULL, 0);
+            IMENUCTL_AddItem(pMenu, STATICAPP_RES_FILE_LANG,IDS_STATICAPP_TITLE_FLEXI_FADZ, IDS_STATICAPP_TITLE_FLEXI_FADZ, NULL, 0);
 #endif			
 		#if defined(FEATURE_FLEXI_STATIC_BREW_APP) 
 
@@ -1366,6 +1367,8 @@ static boolean StartApplet(Staticapp *pMe, int wParam)
 			break;
 		case IDS_STATICAPP_TITLE_FLEXI_FACEBOOK:
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FACEBOOK);
+            
+            MSG_FATAL("Result = %d",Result,0,0);
 			//CLOSE_DIALOG(DLGRET_APLIKASI)
 			break;
 		case IDS_STATICAPP_TITLE_FLEXI_TWITTER:
@@ -1382,9 +1385,11 @@ static boolean StartApplet(Staticapp *pMe, int wParam)
 			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_CHATTING);	
 			MSG_FATAL("%%%%%%%%%%%%%==%d",Result,0,0);
 			break;
-
-		
-
+        case IDS_STATICAPP_TITLE_FLEXI_FADZ:
+			MSG_FATAL("IDS_STATICAPP_TITLE_FLEXI_FADZ",0,0,0);
+			Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FADZ);	
+			MSG_FATAL("%%%%%%%%%%%%%==%d",Result,0,0);
+		    break;    
 #endif	
 
 #if defined(FEATURE_FLEXI_STATIC_BREW_APP) 	
