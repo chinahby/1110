@@ -36,7 +36,7 @@ CONSTFILE_FILES+=\
     poweronani.gif|fs:/image/pwronoffani/poweronani.gif
 else ifeq ($(USES_RESDIR), S5000)    
 CONSTFILE_FILES+=\
-    poweronani.gif|fs:/image/pwronoffani/poweronani.gif
+    poweronoff.jpg|fs:/image/pwronoffani/poweronoff.jpg
 else ifeq ($(USES_RESDIR), Smart)
 CONSTFILE_FILES+=\
 	poweronani.png|fs:/image/pwronoffani/poweronani.png \
