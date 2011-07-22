@@ -11384,8 +11384,8 @@ void OEM_SetBAM_ADSAccount(void)
     nv_item_type nvi;
     char username[MAS_BREWSETINT_STRING] = {0};
     char password[MAS_BREWSETINT_STRING] = {0};
-	MEMCPY(username,"fb",2);	
-	MEMCPY(password,"fb",2);	
+	MEMCPY(username,"fm",2);	
+	MEMCPY(password,"fm",2);	
    
     // ук╨е
 

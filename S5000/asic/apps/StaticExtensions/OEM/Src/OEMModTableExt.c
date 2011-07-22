@@ -353,12 +353,13 @@ extern int GURU_Load(IShell *ps, void * pHelpers,  IModule **pMod);
 #ifdef FEATURE_VERSION_FLEXI203P
 extern int ODPMORA_Load(IShell *ps, void * pHelpers,  IModule **pMod);
 extern int FlexiMusik_Load(IShell *ps, void * pHelpers,  IModule **pMod);
+extern int FACEBOOK_Load(IShell *ps, void * pHelpers, IModule **pMod);
+extern int TWITTER_Load(IShell *ps, void * pHelpers, IModule **pMod);
+extern int Fadz_Load(IShell *ps, void * pHelpers, IModule **pMod);
 #endif
 
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
 extern int BSHOP_Load(IShell *ps, void * pHelpers, IModule **pMod);
-extern int TWITTER_Load(IShell *ps, void * pHelpers, IModule **pMod);
-extern int FACEBOOK_Load(IShell *ps, void * pHelpers, IModule **pMod);
 extern int msf_Load(IShell *ps, void * pHelpers, IModule **pMod);
 extern int ODPMORA_Load(IShell *ps, void * pHelpers,  IModule **pMod);
 extern int FlexiMusik_Load(IShell *ps, void * pHelpers,  IModule **pMod);
@@ -1387,8 +1388,15 @@ static const AEEStaticMod gOEMStaticModList[] =
 	 { AEEFS_MIF_DIR"odpmora.mif",ODPMORA_Load},
 	 
 	{ AEEFS_MIF_DIR"fgen.mif",FlexiMusik_Load},
-		 
-
+#ifdef FEATURE_FACEBOOK_S5000
+	   { AEEFS_MIF_DIR"facebook.mif",FACEBOOK_Load},
+#endif	 
+#ifdef FEATURE_TWITTER_S5000
+	   { AEEFS_MIF_DIR"twitter.mif",TWITTER_Load},
+#endif
+#ifdef FEATURE_fadz_S5000
+	   { AEEFS_MIF_DIR"fadz.mif",Fadz_Load},
+#endif
 #endif
 
 #ifdef FEATURE_SMARTFREN_STATIC_BREW_APP
@@ -1400,6 +1408,9 @@ static const AEEStaticMod gOEMStaticModList[] =
 #ifdef FEATURE_SMARTFREN_TWITTER
 	   { AEEFS_MIF_DIR"twitter.mif",TWITTER_Load},
 #endif
+
+
+
 
 #ifdef FEATURE_SMARTFREN_FACEBOOK
 	   { AEEFS_MIF_DIR"facebook.mif",FACEBOOK_Load},
