@@ -137,7 +137,7 @@
 		<Text>Unmute</Text>
 	</STRING>
 	<STRING Id="46" Name="IDS_STRING_UNLOCK">
-		<Text>Unlock</Text>
+		<Text>Open</Text>
 	</STRING>
 	<STRING Id="47" Name="IDS_START">
 		<Text>Start</Text>
