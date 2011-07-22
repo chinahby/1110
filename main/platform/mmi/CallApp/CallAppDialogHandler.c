@@ -4899,7 +4899,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             switch ((AVKType)wParam)
             {
                 case AVK_SELECT:
-                    #if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
+                    #if defined(NOFEATURE_VERSION_S1000T)|| defined(NOFEATURE_VERSION_W515V3)
                     if(pMe->Ispwpass && bValue)
                     {
                         CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
@@ -6506,7 +6506,7 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
         return CALL_FAIL_EMERGENCY_MODE;
     }
 #endif
-    // 呼出限制不仅是拨号界面，还包括电话本、呼叫记录等的直接呼出限制
+    // 呼出限制不仅是拨号界面，还包括电话本、呼叫记录等的直接呼出限制 
     if(b_restict)
     {
         if(pMe->m_pActiveDlgID == IDD_IP_NUMBER)

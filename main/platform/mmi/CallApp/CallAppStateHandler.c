@@ -534,6 +534,10 @@ static NextFSMAction STATE_CALLING_FROM_ANOTHERAPP_Handler(CCallApp *pMe)
             {
                 MOVE_TO_STATE(STATE_EXIT)
             }
+            else if(CALL_FAIL_RESTICT == result)
+            {
+                MOVE_TO_STATE(STATE_OUT_RESTRICT)
+            }
             else
             {
                 pMe->m_bNotOverwriteDlgRet = TRUE;
