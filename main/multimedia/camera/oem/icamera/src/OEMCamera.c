@@ -2343,10 +2343,11 @@ int OEMCamera_GetParm(OEMINSTANCE h, int16 nParmID, int32 * pP1, int32 * pP2)
       case CAM_PARM_SENSOR_MODEL:
       {
 	  	  
-          if(
-		  	#if defined( USE_CAMSENSOR_SIV121A) || defined(USE_CAMSENSOR_DB8B63A)
-		  	camsensor_static_params[0].sensor_model == CAMSENSOR_SIV121A_ID||
-			camsensor_static_params[0].sensor_model == CAMSENSOR_DB8V63A_ID
+          if(FALSE
+		  	#if defined( USE_CAMSENSOR_SIV121A) 
+		  	||camsensor_static_params[0].sensor_model == CAMSENSOR_SIV121A_ID
+		  	#if defined(USE_CAMSENSOR_DB8B63A)
+			||camsensor_static_params[0].sensor_model == CAMSENSOR_DB8V63A_ID
 			#endif
 		  	)
           {
