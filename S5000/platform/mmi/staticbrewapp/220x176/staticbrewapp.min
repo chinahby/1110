@@ -89,6 +89,9 @@ STATIC_BREW_APP_LIB += \
     $(STATIC_BREW_APP)/fmn2010/fmn2010.o
 endif
 
+
+
+
 #####cah006 application##########
 ifeq ($(CAH006),yes)
 CAH006_DIRS:=$(STATIC_BREW_APP)/cah006
@@ -206,10 +209,8 @@ CONSTFILE_FILES += \
 STATIC_BREW_APP_LIB += \
     $(MUSIK_DIRS)/fgen.o
 
-endif
-    
-    
-    
+endif  
+      
 #####odpmora application###############################################################################################################################
 ODPMORA_DIRS:=$(STATIC_BREW_APP)/odpmora
 
@@ -218,10 +219,13 @@ vpath %.cfg $(ODPMORA_DIRS)
 vpath %.dat $(ODPMORA_DIRS)
 
 CONSTFILE_BIN_FILES += \
-    odpmora.bar|fs:/mod/odpmora/odpmora.bar \
+    odpmora.bar|fs:/mod/odpmora/odpmora.bar 
+
+	
+EFSFILE_FILES += \
 	odpconfig.cfg|fs:/mod/odpmora/odpconfig.cfg \
 	odphomedefault.dat|fs:/mod/odpmora/odphomedefault.dat
-
+	
 CONSTFILE_FILES += \
     odpmora.mif|fs:/mif/odpmora.mif
     
@@ -230,8 +234,7 @@ STATIC_BREW_APP_LIB += \
 
 
 
-
-
+ifeq ($(efsbrowser),yes)
 #####efsbrowser application############################################################################################################################### 
 EFSBROWSER_DIRS:=$(STATIC_BREW_APP)/efsbrowser
 EFSBROWSER_IMG_DIRS:=$(STATIC_BREW_APP)/efsbrowser/images
@@ -249,9 +252,9 @@ CONSTFILE_BIN_FILES+= \
 	
 CONSTFILE_FILES += \
     efsbrowser.mif|fs:/mif/efsbrowser.mif    
+endif    
     
-    
-    
+ifeq ($(komik),yes)    
 #####komik application############################################################################################################################### 
 KOMIK_DIRS:=$(STATIC_BREW_APP)/komik
 KOMIK_IMG_DIRS:=$(STATIC_BREW_APP)/komik
@@ -286,11 +289,11 @@ CONSTFILE_BIN_FILES+= \
 	
 CONSTFILE_FILES += \
     flexikomik.mif|fs:/mif/flexikomik.mif 
-    
+endif    
     
     
 #####komik application############################################################################################################################### 
-
+ifeq ($(USE_chatting),yes)
 CAH006_DIRS:=$(STATIC_BREW_APP)/cah006
 
 #todo something here如果是这种零散的资源文件文件也需要修改，这个就具体看情况了
@@ -328,6 +331,9 @@ EFSFILE_FILES += \
 CONSTFILE_FILES += \
     cah006.mif|fs:/mif/cah006.mif
 
+endif
+
+ifeq ($(USE_ikan),yes)
 #####ikan application##########
 #todo something here   应用的名字添加
 IKAN_DIRS:=$(STATIC_BREW_APP)/ikan
@@ -370,8 +376,9 @@ CONSTFILE_BIN_FILES += \
 CONSTFILE_FILES += \
     flexiiklan.mif|fs:/mif/flexiiklan.mif \
     flexiiklan.mod|fs:/mod/flexiiklan/flexiiklan.mod
+endif
 
-
+ifeq ($(USE_frame),yes)
 #####frame application##########
 #todo something here   应用的名字添加
 FRAME_DIRS:=$(STATIC_BREW_APP)/frame
@@ -453,7 +460,9 @@ CONSTFILE_BIN_FILES += \
 CONSTFILE_FILES += \
     frame.mif|fs:/mif/frame.mif \
     frame.mod|fs:/mod/frame/frame.mod
+endif
 
+ifeq ($(USE_PORTAL),yes)
 #####PORTAL application##########
 #todo something here   应用的名字添加
 PORTAL_DIRS:=$(STATIC_BREW_APP)/portal
@@ -510,7 +519,9 @@ CONSTFILE_FILES += \
     fpt005.mif|fs:/mif/fpt005.mif \
     fpt005.mod|fs:/mod/fpt005/fpt005.mod
 
+endif
 
+ifeq ($(USE_OLD_FACEBOOK),yes)
 #####facebook application##########
 #todo something here   应用的名字添加
 FACEBOOK_DIRS:=$(STATIC_BREW_APP)/facebook
@@ -562,8 +573,61 @@ CONSTFILE_FILES += \
     fb11.mif|fs:/mif/fb11.mif \
     fb11.mod|fs:/mod/fb11/fb11.mod
 
+else
+#####facebook s5000 application##########
+#todo something here   应用的名字添加
+FBS5000_DIRS:=$(STATIC_BREW_APP)/fbs5000
+vpath %.cuk $(FBS5000_DIRS)
+vpath %.bar $(FBS5000_DIRS)
+vpath %.o $(FBS5000_DIRS)
+
+CONSTFILE_FILES += \
+    facebook.mif|fs:/mif/facebook.mif
+
+STATIC_BREW_APP_LIB += \
+    $(FBS5000_DIRS)/facebook.o
+
+EFSFILE_FILES += \
+	    facebook.bar|fs:/mod/facebook/facebook.bar  \
+	    configfacebook.cuk|fs:/mod/facebook/configfacebook.cuk  
+endif	    
+
+#####fadz application##########
+ifeq ($(fadz),yes)
+#todo something here   应用的名字添加
+FADZ_DIRS:=$(STATIC_BREW_APP)/fadz
+#todo something here如果是这种零散的资源文件文件也需要修改，这个就具体看情况了
 
 
+vpath %.htm $(FADZ_DIRS)
+vpath %.bci $(FADZ_DIRS)
+vpath %.bmp $(FADZ_DIRS)
+vpath %.mgm $(FADZ_DIRS)
+vpath %.mid $(FADZ_DIRS)
+
+FADZ_CONST_FILES = \
+    $(notdir $(wildcard $(FADZ_DIRS)/*.bci)) \
+    $(notdir $(wildcard $(FADZ_DIRS)/*.bmp)) \
+    $(notdir $(wildcard $(FADZ_DIRS)/*.mid))
+	
+FADZ_EFS_FILES = \
+    $(notdir $(wildcard $(FADZ_DIRS)/*.mgm)) \
+    $(notdir $(wildcard $(FADZ_DIRS)/*.htm))
+	
+CONSTFILE_BIN_FILES += \
+    $(foreach filename, $(FADZ_CONST_FILES), $(filename)|fs:/mod/fadz/$(filename))
+
+EFSFILE_FILES += \
+    $(foreach filename, $(FADZ_EFS_FILES), $(filename)|fs:/mod/fadz/$(filename))
+
+CONSTFILE_FILES += \
+    fadz.mif|fs:/mif/fadz.mif
+    
+STATIC_BREW_APP_LIB += \
+    $(STATIC_BREW_APP)/fadz/fadz.o
+endif
+
+ifeq ($(USE_OLD_twitter),yes)
 #####twitter application##########
 #todo something here   应用的名字添加
 TWITTER_DIRS:=$(STATIC_BREW_APP)/twitter
@@ -601,6 +665,27 @@ EFSFILE_FILES += \
 CONSTFILE_FILES += \
     twt11.mif|fs:/mif/twt11.mif \
     twt11.mod|fs:/mod/twt11/twt11.mod
+    
+else
+#####twitter S5000 application##########
+#todo something here   应用的名字添加
+twitter_DIRS:=$(STATIC_BREW_APP)/twitter
+
+vpath %.cuk $(twitter_DIRS)
+vpath %.bar $(twitter_DIRS)
+vpath %.o $(twitter_DIRS)
+
+CONSTFILE_FILES += \
+    twitter.mif|fs:/mif/twitter.mif \
+    configtwitter.cuk|fs:/mod/twitter/configtwitter.cuk
+
+STATIC_BREW_APP_LIB += \
+    $(twitter_DIRS)/twitter.o
+
+EFSFILE_FILES += \
+	    twitter.bar|fs:/mod/twitter/twitter.bar  
+endif	  
+
 endif
 
 
