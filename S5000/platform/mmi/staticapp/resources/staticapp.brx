@@ -41,24 +41,26 @@
 		<Text>Musicbox</Text>
 	</String>
     <String Id="1050" Name="IDS_STATICAPP_TITLE_FLEXI_FGAUL">
-            <Text>FGAUL</Text>
-        </String>
-        <String Id="1051" Name="IDS_STATICAPP_TITLE_FLEXI_FACEBOOK">
-            <Text>Facebook</Text>
-        </String>
-        <String Id="1052" Name="IDS_STATICAPP_TITLE_FLEXI_TWITTER">
-            <Text>Twitter</Text>
-        </String>
-        <String Id="1053" Name="IDS_STATICAPP_TITLE_FLEXI_FCHAT">
-            <Text>Fchatting</Text>
-        </String>
-        <String Id="1054" Name="IDS_STATICAPP_TITLE_FLEXI_MUSIK">
-            <Text>FMusik</Text>
-        </String>
-        <String Id="1055" Name="IDS_STATICAPP_TITLE_FLEXI_PORTAL">
-            <Text>FPortal</Text>
-        </String>
-
+    <Text>FCampus</Text>
+  </String>
+  <String Id="1051" Name="IDS_STATICAPP_TITLE_FLEXI_FACEBOOK">
+     <Text>Facebook</Text>
+  </String>
+  <String Id="1052" Name="IDS_STATICAPP_TITLE_FLEXI_TWITTER">
+     <Text>Twitter</Text>
+  </String>
+  <String Id="1053" Name="IDS_STATICAPP_TITLE_FLEXI_FCHAT">
+    <Text>Fchatting</Text>
+  </String>
+  <String Id="1054" Name="IDS_STATICAPP_TITLE_FLEXI_MUSIK">
+    <Text>FMusik</Text>
+  </String>
+  <String Id="1055" Name="IDS_STATICAPP_TITLE_FLEXI_PORTAL">
+   <Text>FPortal</Text>
+  </String>
+  <String Id="1056" Name="IDS_STATICAPP_TITLE_FLEXI_FADZ">
+   <Text>Fadz</Text>
+  </String>
 
 </Strings>
 <Dialogs>
