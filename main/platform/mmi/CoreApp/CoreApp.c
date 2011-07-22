@@ -1909,9 +1909,9 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     MediaGallery_SetUSBCableConnect(pMe->m_bExtPwrState);
 #endif
 #if defined(FEATURE_VERSION_W515V3) || defined(FEATURE_VERSION_S1000T)
-                  if(pMe->m_bBatteryActive)
+                  if(!pMe->m_bBatteryActive)
                   {
-                     pMe->m_bBatteryActive=FALSE;
+                     pMe->m_bBatteryActive=TRUE;
                      pMe->m_nMsgID = IDS_BATTERY_FULLY_CHARGE;
                      CLOSE_DIALOG(DLGRET_BATT_INFO)
                   }
@@ -1929,6 +1929,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                     {
                         break;
                     }
+					pMe->m_bBatteryActive=FALSE;
                     (void) ISHELL_SetTimer(pMe->a.m_pIShell,1000, CCharger_EnableICONCB, (void *) pMe);
                     break;
                 }
