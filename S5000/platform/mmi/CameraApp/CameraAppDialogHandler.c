@@ -1035,11 +1035,16 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
                     return TRUE;
 
                 case AVK_END:
-                    ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
-                    ICAMERA_Stop(pMe->m_pCamera);
-                    pMe->m_nCameraState = CAM_STOP;
+                    MSG_FATAL("AVK_END...................",0,0,0);
+                	CLOSE_DIALOG(DLGRET_CANCELED);
+                	ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+	                if(pMe->m_nCameraState == CAM_PREVIEW)
+	                {
+	                    ICAMERA_Stop(pMe->m_pCamera);
+	                    pMe->m_nCameraState = CAM_STOP;
+	                }
+                	MSG_FATAL("AVK_END...................2",0,0,0);
                     return FALSE;
-                    
                 default:
                     return TRUE;
             }
