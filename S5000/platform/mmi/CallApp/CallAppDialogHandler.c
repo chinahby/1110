@@ -768,7 +768,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         return TRUE;
                     
                      case IDS_SAVE_NEW:
-                        if(pMe->m_b_incall && WSTRLEN(pMe->m_DialString) > (33 - 1))
+                        if(WSTRLEN(pMe->m_DialString) > (33 - 1))
                         {
                         	MSG_FATAL("Too Long",0,0,0);
                             CLOSE_DIALOG(DLGRET_NUM_TOO_LONG);
