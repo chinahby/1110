@@ -2079,7 +2079,6 @@ boolean          TSIM_ProcPenDown(OEMCONTEXT hTextCtl,
 
 boolean          OEM_TextShiftStatus(OEMCONTEXT hTextField);
 boolean          OEM_TextAltStatus(OEMCONTEXT hTextField);
-boolean          OEM_TextCapLStatus(OEMCONTEXT hTextField);
 #ifdef FEATURE_MYANMAR_INPUT_MOD
 void OEM_TextRestart(OEMCONTEXT hTextField);
 #endif
