@@ -2697,7 +2697,7 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             nResID_R = IDS_STRING_CONTACTS;
             break;
         case BTBAR_APPLICATION_CONTACTS:
-			nResID_L = IDS_APPLICATION;
+			nResID_L = IDS_FMENU;
 			nResID_R = IDS_STRING_CONTACTS;
 			break;
 		case BTBAR_MENU_SOS:
