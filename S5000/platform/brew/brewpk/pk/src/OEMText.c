@@ -4799,7 +4799,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		            break;
 		         case AVK_SHIFT:
 		              {
-		              	 #ifdef FEATURE_VERSION_HITZ181
+		              	 #if defined( FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_S5000)
 		              	 if(pContext->is_bAlt)
 		              	 {
 		              	 	pContext->is_bAlt = FALSE;
@@ -4816,7 +4816,7 @@ static boolean T9TextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                 pContext->m_islong = FALSE;
 		              }
 		              break;
-		        #ifdef FEATURE_VERSION_HITZ181
+		        #if defined( FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_S5000)
 		        case AVK_LCTRL:
 		        	{
 		              	 if(pContext->is_isShift)
@@ -12747,6 +12747,11 @@ boolean          OEM_TextAltStatus(OEMCONTEXT hTextField)
 {
 	TextCtlContext *pContext = (TextCtlContext *) hTextField;
 	return pContext->is_bAlt;
+}
+boolean          OEM_TextCapLStatus(OEMCONTEXT hTextField)
+{
+	TextCtlContext *pContext = (TextCtlContext *) hTextField;
+	return pContext->m_bCaplk;
 }
 
 //*****************************************************************************

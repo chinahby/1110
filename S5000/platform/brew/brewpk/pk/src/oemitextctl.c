@@ -173,9 +173,10 @@ OBJECT(CTextCtl)
    IImage                    *m_pImageBg;
    uint16                     m_nBgImgResID;
    char                       m_strBgImgResFile[MAX_FILE_NAME];
-   #ifdef FEATURE_VERSION_HITZ181
+   #if defined( FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_S5000)
    boolean                    m_isshift;
    boolean                    m_isAlt;
+   boolean                    m_isCapL;
    #endif
 };
 
@@ -379,9 +380,10 @@ int TextCtl_New(IShell * pIShell, AEECLSID clsID, void ** ppobj)
    pme->m_SymPageNum = 0;
    pme->m_pImageBg = NULL;
    pme->m_clsMe = clsID;
-   #ifdef FEATURE_VERSION_HITZ181
+   #if defined( FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_S5000)
    pme->m_isshift = FALSE;
    pme->m_isAlt = FALSE;
+   pme->m_isCapL = FALSE;
    #endif
 
    // Increment the reference count on the shell...
@@ -1541,14 +1543,16 @@ NormalKeyEvent:
 
 			if ((wParam != AVK_SYMBOL))
          	{
-         		#ifdef FEATURE_VERSION_HITZ181
+         		#if defined( FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_S5000)
          		boolean TempShift = FALSE;
          		boolean TempAlt = FALSE;
+				boolean TempCap = FALSE;
          		MSG_FATAL("EVT_KEY_RELEASE  AVK_SHIFT",0,0,0);
          		
          		TempShift = OEM_TextShiftStatus(pme->m_pText);
          		TempAlt = OEM_TextAltStatus(pme->m_pText);
-         		if((TempShift != pme->m_isshift) || ((TempAlt != pme->m_isAlt)))
+				TempCap = OEM_TextCapLStatus(pme->m_pText);
+         		if((TempShift != pme->m_isshift) || ((TempAlt != pme->m_isAlt))|| ((TempCap != pme->m_isCapL)))
          		{
 					CTextCtl_Redraw((ITextCtl *)pme);
 				}
@@ -1897,9 +1901,11 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
                 }
                 IDISPLAY_Update(pme->m_pIDisplay);
             }
-            #ifdef FEATURE_VERSION_HITZ181
+            #if defined( FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_S5000)
             pme->m_isshift = OEM_TextShiftStatus(pme->m_pText);
             pme->m_isAlt   = OEM_TextAltStatus(pme->m_pText);
+			pme->m_isCapL  = OEM_TextCapLStatus(pme->m_pText);
+			#if defined( FEATURE_VERSION_HITZ181)
             if(pme->m_isshift)
             {
             	AECHAR Shiftbuf[8] = {L"Shift"};
@@ -1915,12 +1921,32 @@ static boolean CTextCtl_Redraw(ITextCtl * pITextCtl)
             	AECHAR Altbuf[8] = {L"Alt"};
             	MSG_FATAL("qrc.x===%d,qrc.y====%d",qrc.x,qrc.y,0);
             	IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色
+            	#ifdef FEATURE_VERSION_S5000
+				IDISPLAY_DrawText(pme->m_pIDisplay,
+                AEE_FONT_BOLD,Altbuf, -1,
+                qrc.dx-80, qrc.y,&qrc,IDF_TEXT_TRANSPARENT);
+                IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色
+				#else
             	IDISPLAY_DrawText(pme->m_pIDisplay,
                 AEE_FONT_BOLD,Altbuf, -1,
                 qrc.dx-60, qrc.y,&qrc,IDF_TEXT_TRANSPARENT);
                 IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色
+                #endif
             }
-            #endif
+			#elif defined(FEATURE_VERSION_S5000)
+			if(pme->m_isCapL)
+			{
+				AECHAR Altbuf[8] = {L"aA"};
+            	MSG_FATAL("qrc.x===%d,qrc.y====%d",qrc.x,qrc.y,0);
+            	IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_WHITE);//临时改变文本颜色
+				IDISPLAY_DrawText(pme->m_pIDisplay,
+                AEE_FONT_BOLD,Altbuf, -1,
+                qrc.dx-80, qrc.y,&qrc,IDF_TEXT_TRANSPARENT);
+                IDISPLAY_SetColor(pme->m_pIDisplay, CLR_USER_TEXT, RGB_BLACK);//恢复文本显示颜色
+				
+			}
+			#endif
+			#endif
         }
         
         if (pme->m_pText) 
