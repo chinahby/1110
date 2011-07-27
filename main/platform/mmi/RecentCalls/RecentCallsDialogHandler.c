@@ -2702,7 +2702,7 @@ static void RecentCalls_GetRecord(CRecentCalls *pMe)
                     {
                         MEMSET(wstrNumber, 0, sizeof(wstrNumber));
                         (void) STRTOWSTR((char*)pEntry->pFields[nFieldNum].pData, wstrNumber, sizeof(wstrNumber));
-                        #if defined(FEATURE_VERSION_MTM)
+                        #if defined(FEATURE_VERSION_MTM) || defined(FEATURE_VERSION_W515V3)
                         {
                         	if(WSTRNCMP(wstrNumber,L"+",1)==0)
                         	{
@@ -3957,7 +3957,7 @@ SEE ALSO:
 static boolean RecentCalls_SendCall(CRecentCalls *pMe ,boolean is_ip_call)
 {
     PARAM_NOT_REF(pMe)
-    boolean  bRet = FALSE;        
+    boolean  bRet = FALSE; 
     ICallApp *pCallApp = NULL;
     
     if(SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, 
@@ -4100,8 +4100,40 @@ static void RecentCalls_GetContactName(CRecentCalls* pMe,
     CInfo.pName = pwszName;
     CInfo.wNameLen = wBufLen;
     
-    (void)ICONTAPP_NumberLookup(pContactApp, pwszNum, &CInfo);
-    (void)ICONTAPP_Release(pContactApp);   
+   // (void)ICONTAPP_NumberLookup(pContactApp, pwszNum, &CInfo);
+    if (SUCCESS == ICONTAPP_NumberLookup(pContactApp, pwszNum, &CInfo))
+     {
+         (void)ICONTAPP_Release(pContactApp);   
+     }
+     else
+     {
+         #if defined(FEATURE_VERSION_W515V3)
+         if((WSTRNICMP(pwszNum,L"0",1)==0)||(WSTRNICMP(pwszNum,L"+00",3)==0)||(WSTRNICMP(pwszNum,L"+",1)==0)||(WSTRNICMP(pwszNum,L"00",2)==0))
+         {
+                     
+            AECHAR Temp_Number[AEECM_MAX_DIGITS_LENGTH] = {0};
+            if(WSTRNICMP(pwszNum,L"0",1)==0)
+            {
+                WSTRLCPY(Temp_Number,pwszNum+1,AEECM_MAX_DIGITS_LENGTH);
+            }
+            else if(WSTRNICMP(pwszNum,L"+00",3)==0)
+            {
+                WSTRLCPY(Temp_Number,pwszNum+3,AEECM_MAX_DIGITS_LENGTH);
+            }
+            else if(WSTRNICMP(pwszNum,L"+",1)==0)
+            {
+                WSTRLCPY(Temp_Number,pwszNum+1,AEECM_MAX_DIGITS_LENGTH);
+            }
+            if(WSTRNICMP(pwszNum,L"00",2)==0)
+            {
+                WSTRLCPY(Temp_Number,pwszNum+2,AEECM_MAX_DIGITS_LENGTH);
+            }            
+            ICONTAPP_NumberLookup(pContactApp, Temp_Number, &CInfo);
+          }
+         #endif
+         (void)ICONTAPP_Release(pContactApp); 
+     }
+   // (void)ICONTAPP_Release(pContactApp);   
 }
 #ifdef FEATURE_THAILAND  
    ////////////////////////////////////////////////////////////////////////////
