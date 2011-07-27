@@ -6995,8 +6995,20 @@ void CallApp_StartCallTest(void)
     pCurr->nWaitTimeMS  = 1000;
     pCurr->event = AEECM_EVENT_CALL_INCOM;
     pCurr->myInfo.call_id = 1;
-    STRCPY((char *)pCurr->myInfo.num.buf, "111111");
-    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    STRCPY((char *)pCurr->myInfo.num.buf,"00911234567890");
+    pCurr->myInfo.num.len=STRLEN("00911234567890");
+   // STRCPY((char *)pCurr->myInfo.num.buf, "111111");
+   /* MEMSET(pCurr->myInfo.num.buf,0xFF,sizeof(pCurr->myInfo.num.buf));
+    pCurr->myInfo.num.len=6;
+	pCurr->myInfo.num.buf[0]	  = 0x91;
+	pCurr->myInfo.num.buf[1]	  = 0x13;
+	pCurr->myInfo.num.buf[2]	  = 0x56;
+	pCurr->myInfo.num.buf[3]	  = 0x07;
+	pCurr->myInfo.num.buf[4]	  = 0x23;
+	pCurr->myInfo.num.buf[5]	  = 0x30;
+    */
+    
+    pCurr->myInfo.num.number_type = CM_NUM_TYPE_INTERNATIONAL;
     pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
     pCurr->myInfo.num.pi          = 0;
     pCurr->myInfo.num.si          = 1;
@@ -7009,13 +7021,16 @@ void CallApp_StartCallTest(void)
     pCurr->myInfo.signal.signal       = AEECM_CDMA_TONE_RING;
     pCurr->myInfo.end_status                    = CM_CALL_END_ALERT_STOP;
     pCurr++;
-    
+   #if 0 
     // Init Step 2
     pCurr->nWaitTimeMS  = 1000;
     pCurr->event = AEECM_EVENT_CALL_SIGNAL;
-    pCurr->myInfo.call_id = 1;
-    STRCPY((char *)pCurr->myInfo.num.buf, "111111");
-    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    STRCPY((char *)pCurr->myInfo.num.buf,"00911234567890");
+    pCurr->myInfo.num.len=STRLEN("00911234567890");
+
+
+
+    pCurr->myInfo.num.number_type = CM_NUM_TYPE_INTERNATIONAL;
     pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
     pCurr->myInfo.num.pi          = 0;
     pCurr->myInfo.num.si          = 1;
@@ -7033,8 +7048,12 @@ void CallApp_StartCallTest(void)
     pCurr->nWaitTimeMS  = 10000;
     pCurr->event = AEECM_EVENT_CALL_CALLER_ID;
     pCurr->myInfo.call_id = 1;
-    STRCPY((char *)pCurr->myInfo.num.buf, "111111");
-    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    STRCPY((char *)pCurr->myInfo.num.buf,"911234567890");
+    pCurr->myInfo.num.len=STRLEN("911234567890");
+
+
+
+    pCurr->myInfo.num.number_type = CM_NUM_TYPE_INTERNATIONAL;
     pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
     pCurr->myInfo.num.pi          = 0;
     pCurr->myInfo.num.si          = 1;
@@ -7052,8 +7071,12 @@ void CallApp_StartCallTest(void)
     pCurr->nWaitTimeMS  = 1000;
     pCurr->event = AEECM_EVENT_CALL_ANSWER;
     pCurr->myInfo.call_id = 1;
-    STRCPY((char *)pCurr->myInfo.num.buf, "111111");
-    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    STRCPY((char *)pCurr->myInfo.num.buf,"911234567890");
+    pCurr->myInfo.num.len=STRLEN("911234567890");
+
+
+
+    pCurr->myInfo.num.number_type = CM_NUM_TYPE_INTERNATIONAL;
     pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
     pCurr->myInfo.num.pi          = 0;
     pCurr->myInfo.num.si          = 1;
@@ -7071,8 +7094,12 @@ void CallApp_StartCallTest(void)
     pCurr->nWaitTimeMS  = 1000;
     pCurr->event = AEECM_EVENT_CALL_CONNECT;
     pCurr->myInfo.call_id = 1;
-    STRCPY((char *)pCurr->myInfo.num.buf, "111111");
-    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    STRCPY((char *)pCurr->myInfo.num.buf,"911234567890");
+    pCurr->myInfo.num.len=STRLEN("911234567890");
+
+
+
+    pCurr->myInfo.num.number_type = CM_NUM_TYPE_INTERNATIONAL;
     pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
     pCurr->myInfo.num.pi          = 0;
     pCurr->myInfo.num.si          = 1;
@@ -7090,8 +7117,12 @@ void CallApp_StartCallTest(void)
     pCurr->nWaitTimeMS  = 1000;
     pCurr->event = AEECM_EVENT_CALL_INCOM;
     pCurr->myInfo.call_id = 1;
-    STRCPY((char *)pCurr->myInfo.num.buf, "222222");
-    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    STRCPY((char *)pCurr->myInfo.num.buf,"911234567890");
+    pCurr->myInfo.num.len=STRLEN("911234567890");
+
+
+
+    pCurr->myInfo.num.number_type = CM_NUM_TYPE_INTERNATIONAL;
     pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
     pCurr->myInfo.num.pi          = 0;
     pCurr->myInfo.num.si          = 1;
@@ -7109,8 +7140,11 @@ void CallApp_StartCallTest(void)
     pCurr->nWaitTimeMS  = 1000;
     pCurr->event = AEECM_EVENT_CALL_SIGNAL;
     pCurr->myInfo.call_id = 1;
-    STRCPY((char *)pCurr->myInfo.num.buf, "222222");
-    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    STRCPY((char *)pCurr->myInfo.num.buf,"911234567890");
+    pCurr->myInfo.num.len=STRLEN("911234567890");
+
+
+    pCurr->myInfo.num.number_type = CM_NUM_TYPE_INTERNATIONAL;
     pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
     pCurr->myInfo.num.pi          = 0;
     pCurr->myInfo.num.si          = 1;
@@ -7128,8 +7162,12 @@ void CallApp_StartCallTest(void)
     pCurr->nWaitTimeMS  = 10000;
     pCurr->event = AEECM_EVENT_CALL_CALLER_ID;
     pCurr->myInfo.call_id = 1;
-    STRCPY((char *)pCurr->myInfo.num.buf, "222222");
-    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    STRCPY((char *)pCurr->myInfo.num.buf,"911234567890");
+    pCurr->myInfo.num.len=STRLEN("911234567890");
+
+
+
+    pCurr->myInfo.num.number_type = CM_NUM_TYPE_INTERNATIONAL;
     pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
     pCurr->myInfo.num.pi          = 0;
     pCurr->myInfo.num.si          = 1;
@@ -7147,8 +7185,10 @@ void CallApp_StartCallTest(void)
     pCurr->nWaitTimeMS  = 1000;
     pCurr->event = AEECM_EVENT_CALL_END;
     pCurr->myInfo.call_id = 1;
-    STRCPY((char *)pCurr->myInfo.num.buf, "222222");
-    pCurr->myInfo.num.number_type = CM_TON_INTERNATIONAL;
+    STRCPY((char *)pCurr->myInfo.num.buf,"911234567890");
+    pCurr->myInfo.num.len=STRLEN("911234567890");
+
+    pCurr->myInfo.num.number_type = CM_NUM_TYPE_INTERNATIONAL;
     pCurr->myInfo.num.number_plan = CM_NPI_UNKNOWN;
     pCurr->myInfo.num.pi          = 0;
     pCurr->myInfo.num.si          = 1;
@@ -7160,7 +7200,7 @@ void CallApp_StartCallTest(void)
     pCurr->myInfo.signal.signal_type            = AEECM_SIGNAL_CDMA_IS54B;
     pCurr->myInfo.signal.signal       = AEECM_CDMA_TONE_INTERCEPT;
     pCurr->myInfo.end_status                    = CM_CALL_END_ALERT_STOP;
-    
+    #endif
     AEE_SetSysTimer(0,CallApp_CallTestCB,NULL);
 }
 

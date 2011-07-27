@@ -1017,6 +1017,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                             ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#06#");
                             return TRUE;
                         }
+                        if (WSTRCMP(pMe->m_DialString, L"*08#") == 0)
+                        {
+                            CallApp_StartCallTest();
+                            return TRUE;
+                        }                        
                         if ((WSTRCMP(pMe->m_DialString, L"*#*#8378#0#") == 0)||
                         	(WSTRCMP(pMe->m_DialString, L"*#4224876#") == 0))
                         {
@@ -4674,8 +4679,27 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                                 pMe->m_CallsTable->call_number, &rect, IDF_TEXT_TRANSPARENT);
                     }
                 	#else
-                    CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
-                                pMe->m_CallsTable->call_number, &rect, IDF_TEXT_TRANSPARENT);
+                    {
+                       #ifdef FEATURE_VERSION_W515V3
+                        AECHAR Temp_Number[AEECM_MAX_DIGITS_LENGTH] = {0};
+                        if(WSTRNICMP(pMe->m_CallsTable->call_number,L"+00",3)==0)
+                        {
+                            Temp_Number[0]=L'+';
+                            WSTRLCPY(Temp_Number+1,pMe->m_CallsTable->call_number+3,AEECM_MAX_DIGITS_LENGTH);
+                            //WSTRCAT(Temp_Number, L"+");
+                        }
+                        else
+                        {
+                            WSTRLCPY(Temp_Number,pMe->m_CallsTable->call_number,AEECM_MAX_DIGITS_LENGTH);
+                        }
+                        // MSG_FATAL("pMe->m_CallsTable->call_number---=%d",pMe->m_CallsTable->call_number,0,0);
+                       CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,Temp_Number, &rect, IDF_TEXT_TRANSPARENT);
+                      #else
+                       CallApp_DrawText_Ex(pMe, AEE_FONT_NORMAL,
+                                          pMe->m_CallsTable->call_number, &rect, IDF_TEXT_TRANSPARENT);
+                      #endif
+
+                    }
                     #endif
                 }
             }
@@ -7339,7 +7363,7 @@ boolean CallApp_NumberLookup(CCallApp     *pMe,
      //在电话本里面如果没有给它赋值,直接读取的时候,应该有初试值,否则会出错
     ContInfo    pContInfo = {0};
 #ifndef FEATRUE_SET_IP_NUMBER
-    CALL_FUN_START("CallApp_NumberLookup", 0, 0, 0);
+    CALL_FUN_START("CallApp_NumberLookup----=%d", WSTRLEN(Number), 0, 0);
 #endif
     if(0 == WSTRLEN(Number))
     {
@@ -7393,34 +7417,60 @@ boolean CallApp_NumberLookup(CCallApp     *pMe,
             return FALSE;
         }
 #else
-        if (SUCCESS != ICONTAPP_NumberLookup(ca,
-                                             Number,
-                                             &pContInfo))
+        if (SUCCESS != ICONTAPP_NumberLookup(ca, Number,&pContInfo))
         {
-            IContactApp_Release(ca);
-            return FALSE;
+         #if  defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+         if((WSTRNICMP(Number,L"0",1)==0)||(WSTRNICMP(Number,L"+00",3)==0)||(WSTRNICMP(Number,L"+",1)==0)||(WSTRNICMP(Number,L"00",2)==0)) //pContInfo.pName == NULL &&
+         {
+            
+         	AECHAR Temp_Number[AEECM_MAX_DIGITS_LENGTH] = {0};
+         	MSG_FATAL("Temp_name...............................",0,0,0);
+         	if(WSTRNICMP(Number,L"0",1)==0)
+         	{
+         		WSTRLCPY(Temp_Number,Number+1,AEECM_MAX_DIGITS_LENGTH);
+         	}
+            else if(WSTRNICMP(Number,L"+00",3)==0)
+         	{
+         		WSTRLCPY(Temp_Number,Number+3,AEECM_MAX_DIGITS_LENGTH);
+                MEMSET(Number,0,AEECM_MAX_DIGITS_LENGTH);
+         	    WSTRLCPY(Number,Temp_Number,AEECM_MAX_DIGITS_LENGTH);
+         	}
+            else if(WSTRNICMP(Number,L"+",1)==0)
+         	{
+         		WSTRLCPY(Temp_Number,Number+1,AEECM_MAX_DIGITS_LENGTH);
+         	}
+            if(WSTRNICMP(Number,L"00",2)==0)
+         	{
+                MEMSET(Temp_Number,0,AEECM_MAX_DIGITS_LENGTH); 
+         		WSTRLCPY(Temp_Number,Number+2,AEECM_MAX_DIGITS_LENGTH);
+         	}       
+             CALL_FUN_START("CallApp_NumberLookup-Number---=%d", WSTRLEN(Number), 0, 0);
+            if (SUCCESS != ICONTAPP_NumberLookup(ca, Temp_Number,&pContInfo))
+            {
+                IContactApp_Release(ca);
+                return FALSE;
+            }
+         }
+         else
+         {
+             IContactApp_Release(ca);
+             return FALSE;
+         }
+         #else
+             IContactApp_Release(ca);
+             return FALSE;
+         #endif
         }
-        #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
-        if(pContInfo.pName == NULL &&((WSTRNICMP(Number,L"0",1)==0)||(WSTRNICMP(Number,L"+91",3)==0)))
-        {
-        	AECHAR Temp_Number[AEECM_MAX_DIGITS_LENGTH] = {0};
-        	MSG_FATAL("Temp_name...............................",0,0,0);
-        	if(WSTRNICMP(Number,L"0",1)==0)
-        	{
-        		WSTRLCPY(Temp_Number,Number+1,AEECM_MAX_DIGITS_LENGTH);
-        	}
-        	else if(WSTRNICMP(Number,L"+91",3)==0)
-        	{
-        		WSTRLCPY(Temp_Number,Number+3,AEECM_MAX_DIGITS_LENGTH);
-        	}
-        	MEMSET(Number,0,AEECM_MAX_DIGITS_LENGTH);
-        	WSTRLCPY(Number,Temp_Number,AEECM_MAX_DIGITS_LENGTH);
-        	ICONTAPP_NumberLookup(ca,
-        						  Number,
-                                  &pContInfo);
-        }
-        #endif
 #endif
+{
+        int i;
+        CALL_FUN_START("CallApp_NumberLookup-Number---=%d", WSTRLEN(Number), 0, 0);
+        for(i=0;i<WSTRLEN(Number);i++)
+        {
+            MSG_FATAL("New_Temp_Number---2=%d",Number[i]-48,0,0);
+        
+        }
+}
         if(ringer != NULL)
         {
             WSTRCPY(ringer, pContInfo.ringName);
