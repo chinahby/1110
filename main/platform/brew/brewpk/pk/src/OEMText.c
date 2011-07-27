@@ -228,6 +228,8 @@ typedef struct _TextCtlContext {
    unsigned short       wLines;
    unsigned short       *pwLineStarts;    // Array of wLines+1 entries
    int32                nLineHeight;
+   int32                m_curpros;
+   boolean              b_multenter;
 
    //add by ydc
    PenTracker        ptTracker;
@@ -325,6 +327,7 @@ static void TextCtl_NumbersRestart(TextCtlContext *);
 static boolean TextCtl_NumbersKey(TextCtlContext *,AEEEvent, AVKType);
 static void TextCtl_NumbersExit(TextCtlContext *);
 static void TextCtl_MultitapTimer(void *pUser);
+static void TextCtl_keypadtimer(void *pUser);
 
 #ifdef FEATURE_T9_INPUT
 #ifdef FEATURE_T9_ALPHABETIC
@@ -11404,6 +11407,13 @@ static void TextCtl_NumbersTimer(void *pUser)
    IDISPLAY_Update((IDisplay *)pContext->pIDisplay);
 }
 
+static void TextCtl_keypadtimer(void *pUser)
+{
+	register TextCtlContext *pContext = (TextCtlContext *) pUser;
+	pContext->m_curpros = 0;
+	pContext->b_multenter = FALSE;
+}
+
 /*=============================================================================
 FUNCTION: TextCtl_NumbersKey
 
@@ -11482,8 +11492,84 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
               else
 #endif
               {
+                #ifdef FEATURE_VERSION_W515V3
+                	AEE_CancelTimer(TextCtl_keypadtimer,pContext);
+                	{    
+            			if(pContext->m_curpros == 0)
+    					{
+                            if(pContext->b_multenter == TRUE)
+                            {
+                             if(pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+                              {
+                                   /* Set selection to the character before the insertion point */
+                                   --pContext->wSelStart;
+                              }
+                              else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+                              {
+                                    return FALSE;
+                              }
+                              
+                              /* Insert a "NUL" to just delete and insert nothing */
+                              TextCtl_AddChar(pContext, 0);
+                            }
+                            TextCtl_NoSelection(pContext);
+                            TextCtl_AddChar(pContext, (AECHAR) '*');
+    					}
+    					if(pContext->m_curpros == 1)
+    					{
+                            if(pContext->b_multenter == TRUE)
+                            {
+                             if(pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+                              {
+                                   /* Set selection to the character before the insertion point */
+                                   --pContext->wSelStart;
+                              }
+                              else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+                              {
+                                    return FALSE;
+                              }
+                              
+                              /* Insert a "NUL" to just delete and insert nothing */
+                              TextCtl_AddChar(pContext, 0);
+                            }                                
+    						TextCtl_NoSelection(pContext);
+                            TextCtl_AddChar(pContext, (AECHAR) 'p');
+    					}
+    					if(pContext->m_curpros == 2)
+    					{
+                            if(pContext->b_multenter == TRUE)
+                            {
+                                 if(pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+                                  {
+                                       /* Set selection to the character before the insertion point */
+                                       --pContext->wSelStart;
+                                  }
+                                  else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+                                  {
+                                        return FALSE;
+                                  }
+                                  
+                                  /* Insert a "NUL" to just delete and insert nothing */
+                                  TextCtl_AddChar(pContext, 0);
+                            }                                
+    						TextCtl_NoSelection(pContext);
+                            TextCtl_AddChar(pContext, (AECHAR) 'w');
+    					} 
+                	}
+                	if(pContext->m_curpros<2)
+                	{
+                		pContext->m_curpros ++;
+                	}
+                	else
+                	{
+                		pContext->m_curpros = 0;
+                	}
+                	pContext->b_multenter = TRUE;
+                	AEE_SetTimer(1000,TextCtl_keypadtimer,pContext);
+                  #else
                    TextCtl_NoSelection(pContext);
-	               TextCtl_AddChar(pContext, (AECHAR) '*');
+	               TextCtl_AddChar(pContext, (AECHAR) '*');                    
+                  #endif
               }
 	          return TRUE;            
 
