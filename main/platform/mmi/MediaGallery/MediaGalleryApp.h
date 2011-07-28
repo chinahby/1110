@@ -453,6 +453,7 @@ struct  _CMediaGalleryApp{
    IAniCtl           *m_pAniCtl;
 #endif
    boolean           m_bImgLoadDone;
+   boolean           m_videoLoadDone;
    IAnnunciator        *m_pIAnn;
 } ;
 

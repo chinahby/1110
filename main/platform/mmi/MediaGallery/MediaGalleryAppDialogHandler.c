@@ -5415,6 +5415,7 @@ static boolean MediaGalleryApp_VideoAddDlg_HandleEvent(CMediaGalleryApp* pMe,
 
       case EVT_USER_REDRAW:
       {
+	  	 pMe->m_videoLoadDone = TRUE;
          MGAppUtil_UpdateMediaMenuSoftkey(pMe);
          IDISPLAY_Update(pMe->m_pDisplay);
          return TRUE;
@@ -6701,7 +6702,15 @@ static boolean MGAppUtil_UpdateMediaMenuSoftkey(CMediaGalleryApp* pMe)
          if(pMe->m_Explorer.m_nCurDepth == MG_CURDEPTH_INIT)
          {
          	#if defined(FEATURE_VERSION_S1000T)
-			nSoftkeyType = BTBAR_0PTION_PLAY_BACK;
+			if(pMe->m_videoLoadDone)
+			{
+				nSoftkeyType = BTBAR_0PTION_PLAY_BACK;
+				pMe->m_videoLoadDone = FALSE;
+			}
+			else
+			{
+				nSoftkeyType = BTBAR_OPTION_BACK;
+			}
 			#else
             nSoftkeyType = BTBAR_OPTION_BACK;
 			#endif

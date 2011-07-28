@@ -1342,6 +1342,7 @@ static int MediaGalleryApp_InitAppData(CMediaGalleryApp* pMe)
    pMe->m_pszNameList = NULL;
    pMe->m_pFilesDB = NULL;
    pMe->m_pDetailText = NULL;
+   pMe->m_videoLoadDone = FALSE;  //add by yangdecai 2011-0728
 
    pMe->m_pMedia = NULL;
    pMe->m_pMediaSpec = NULL;
