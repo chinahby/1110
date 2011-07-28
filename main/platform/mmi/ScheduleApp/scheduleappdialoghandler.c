@@ -4497,7 +4497,6 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
                     IMENUCTL_SetSel( pAutoDelete, IDS_SETUP_AUTO_DELETE_OPTION_NEVER);
                 }
             }
-						
             ITIMECTL_SetProperties( pStart, TP_NO_SECONDS | TP_AUTOREDRAW);
             ITIMECTL_SetOemProperties( pStart, TP_OEM_COUNTDOWNCTL_EDITABLE|((timeFormatType==OEMNV_TIMEFORM_AMPM)?TP_OEM_COUNTDOWNCTL_12_FORMAT:0));
             ITIMECTL_SetTimeEx( pStart, startTimeValue>0?startTimeValue:(pme->m_CalMgr.m_cfg.wDayStart*60*1000), TRUE);
@@ -4611,13 +4610,14 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
                         rc.dx   -= ARROW_HEIGHT;
                     }
                     ICONTROL_SetRect( pControls[(i<<1)+1], &rc);
-
+                       
                     y += height * 2 + 2 + 3;
 
                     ICONTROL_Redraw( pControls[i<<1]);
                     ICONTROL_Redraw( pControls[(i<<1)+1]);
                 }
-                IDISPLAY_SetColor( pme->m_pDisplay, CLR_USER_TEXT, themeParms.textColor);
+                
+                IDISPLAY_SetColor( pme->m_pDisplay, CLR_USER_TEXT, themeParms.seltextColor);
 
                 // set the focus to the current item
                 ICONTROL_SetActive( pControls[(currentItem<<1)+1], TRUE);
