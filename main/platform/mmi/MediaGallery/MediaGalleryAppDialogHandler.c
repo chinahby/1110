@@ -6700,7 +6700,11 @@ static boolean MGAppUtil_UpdateMediaMenuSoftkey(CMediaGalleryApp* pMe)
       default:
          if(pMe->m_Explorer.m_nCurDepth == MG_CURDEPTH_INIT)
          {
+         	#if defined(FEATURE_VERSION_S1000T)
+			nSoftkeyType = BTBAR_0PTION_PLAY_BACK;
+			#else
             nSoftkeyType = BTBAR_OPTION_BACK;
+			#endif
          }
          else
          {
@@ -8940,6 +8944,7 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
       pi = &ImgInfo;
       IIMAGE_GetInfo(po, pi);
    }
+   MSG_FATAL("pi->cx==%d,pi->cy=%d",pi->cx,pi->cy,0);
 
    rc = pMe->m_rc;
 
@@ -8956,8 +8961,41 @@ static int MGAppUtil_RedrawImage(CMediaGalleryApp *pMe,
    nDrawX = pi->cx > rc.dx ? 0 : ((rc.dx - pi->cx) / 2);
    nDrawY = pi->cy > rc.dy ? 0 : ((rc.dy - pi->cy) / 2);
 
-   if(pi->cx > rc.dx || pi->cy > rc.dy)
-      IIMAGE_SetDrawSize(po, rc.dx, rc.dy);
+   if(pi->cx > rc.dx || pi->cy > rc.dy)  //MODI BY yandecai 2011-07-28
+   	{
+   	  int x;
+	  int y;
+	  int scalex = pi->cx/rc.dx;
+	  int scaley = pi->cy/rc.dy;
+	  int mx = pi->cx%rc.dx;
+	  int my = pi->cy%rc.dy;
+	  if(mx>0)
+	  {
+	  	  scalex++;
+	  }
+	  if(my>0)
+	  {
+	  	  scaley++;
+	  }
+      //IIMAGE_SetDrawSize(po, rc.dx, rc.dy);
+      if(scalex>scaley)
+      {
+      	  x = pi->cx/scalex;
+		  y = pi->cy/scalex;
+      }
+	  else
+	  {
+	  	  x = pi->cx/scaley;
+		  y = pi->cy/scaley;
+	  }
+      
+      IIMAGE_SetParm(po,
+                     IPARM_SCALE,
+                     x,
+                     y);
+	  nDrawX = (rc.dx -x)/2;
+	  nDrawY = (rc.dy -y)/2;
+   	}
 
    if(pi->bAnimated)
    {

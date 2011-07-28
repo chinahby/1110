@@ -182,7 +182,7 @@
 		<Text>Radio FM</Text>
 	</String>
 	<String Id="1062" Name="IDS_BATTERY_FULLY_CHARGE">
-		<Text>Battery is full already</Text>
+		<Text>Charge Completed</Text>
 	</String>
 	<String Id="1063" Name="IDS_USERPROFILE_MODE">
 		<Text>vibrate mode actived</Text>
