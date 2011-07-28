@@ -2801,7 +2801,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     int i;
     int16  nResID[CAMERACFGMAX];
     IImage *pTopBarImage = NULL; 
-          
+#ifndef FEATURE_VERSION_W515V3          
     // enviroment cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_ENVIROMENT,
@@ -2830,7 +2830,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	        nResID[CAMERACFGENVIRMENT] = IDI_ENV_AUTO;
 	        break;
     }
-
+#endif
     // quality cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_QUALITY,
@@ -2951,7 +2951,21 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     }
     #endif
     nResID[CAMERACFGRESET] = IDI_RESET;
-    
+    #ifdef FEATURE_VERSION_W515V3
+    for(i = CAMERACFGFIRST; i < CAMERACFGMAX; i++)
+    {
+        pTopBarImage = ISHELL_LoadResImage(pMe->m_pShell, 
+                                           CAMERAAPP_IMAGE_RES_FILE, 
+                                           nResID[i]);
+        if(pTopBarImage)
+        {
+            IIMAGE_Draw(pTopBarImage, (i-1)*(TOPBAR_ICON_WIDTH+TOPBAR_ICON_SPACE), TOPBAR_ICON_Y);  // + 5
+            IIMAGE_Release(pTopBarImage);
+            pTopBarImage = NULL;
+        }
+    }
+
+    #else
     for(i = 0; i < CAMERACFGMAX; i++)
     {
         pTopBarImage = ISHELL_LoadResImage(pMe->m_pShell, 
@@ -2964,6 +2978,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
             pTopBarImage = NULL;
         }
     }
+    #endif 
 
 	//Add By zzg 2010_07_25
     {
@@ -2972,8 +2987,11 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	    if (pCameraCFGChooseIcon)
 	    {  
 			IIMAGE_SetDrawSize(pCameraCFGChooseIcon, TOPBAR_ICON_WIDTH, CFGBAR_TEXT_HEIGHT);
-			IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG), TOPBAR_ICON_Y);	//Add By zzg 2010_07_25
-			
+            #ifdef FEATURE_VERSION_W515V3
+			IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG-1), TOPBAR_ICON_Y);	//Add By zzg 2010_07_25
+			#else
+            IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG), TOPBAR_ICON_Y);
+            #endif
 	        IIMAGE_Release(pCameraCFGChooseIcon);
 	        pCameraCFGChooseIcon = NULL;
 	    }
