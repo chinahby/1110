@@ -4680,7 +4680,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                     }
                 	#else
                     {
-                       #ifdef FEATURE_VERSION_W515V3
+                       #if defined (FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
                         AECHAR Temp_Number[AEECM_MAX_DIGITS_LENGTH] = {0};
                         if(WSTRNICMP(pMe->m_CallsTable->call_number,L"+00",3)==0)
                         {
@@ -6648,7 +6648,7 @@ MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe)
         	{
 	            AECHAR internation[MAX_SIZE_DIAL_STR] = {0};
 	            //ICONFIG_GetItem(pMe->m_pConfig, CFGI_FDN_ENABLED, &internation,sizeof(internation));
-	            #if defined(FEATURE_VERSION_W515V3)
+	            #if defined (FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
 	            STRTOWSTR("00",internation,sizeof(internation));
                 #else
                 STRTOWSTR("0",internation,sizeof(internation));
