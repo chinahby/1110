@@ -4854,7 +4854,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
             //CALL_ERR("incoming EVT_FLIP %d", wParam, 0, 0);
             if(CallApp_Process_EVT_FLIP_Event(pMe,wParam) == FALSE)
             {
-#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+#if defined(NOFEATURE_VERSION_S1000T) || defined(NOFEATURE_VERSION_W515V3)
                 if(pMe->Ispwpass && bValue)
                 {
                     CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
@@ -4889,7 +4889,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 case AVK_UP:
                 case AVK_DOWN:
                 {
-#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+#if defined(NOFEATURE_VERSION_S1000T) || defined(NOFEATURE_VERSION_W515V3)
                     if(pMe->Ispwpass && bValue)
                     {
                         CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
@@ -5137,7 +5137,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 }
                 case AVK_USER_HEADSET:
                 case AVK_SELECT:
-#if defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
+#if defined(NOFEATURE_VERSION_S1000T)|| defined(NOFEATURE_VERSION_W515V3)
                     if(pMe->Ispwpass && bValue)
                     {
                         CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
@@ -5176,7 +5176,7 @@ static boolean  CallApp_IncomingCall_DlgHandler(CCallApp *pMe,
                 case AVK_DOWN:
                 default:
                 {
-#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+#if defined(NOFEATURE_VERSION_S1000T) || defined(NOFEATURE_VERSION_W515V3)
                     if(pMe->Ispwpass && bValue)
                     {
                         CallApp_AnswerCall(pMe,FALSE,eCode,wParam,FALSE);
