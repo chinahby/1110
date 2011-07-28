@@ -2369,11 +2369,17 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             titlerect.dx = TitleBgImgInfo.cx;
             titlerect.x = totalrect.x - TitleBgImgInfo.cx/2;
             titlerect.y = totalrect.y  - StringBgImgInfo.cy/2 + TitleBgImgInfo.cy/2;
-            
+            #ifdef FEATURE_VERSION_W515V3
+            strrect.dy = StringBgImgInfo.cy/2 + 20;
+            strrect.dx = StringBgImgInfo.cx;
+            strrect.x = totalrect.x - StringBgImgInfo.cx/2;
+            strrect.y = totalrect.y - 15;
+            #else
             strrect.dy = StringBgImgInfo.cy/2;
             strrect.dx = StringBgImgInfo.cx;
             strrect.x = totalrect.x - StringBgImgInfo.cx/2;
-            strrect.y = totalrect.y;
+            strrect.y = totalrect.y;            
+            #endif
 
             
             drawbgimage = TRUE;                           
@@ -2392,7 +2398,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
             strrect.dy = totalrect.dy - titlerect.dy;
             strrect.dx = totalrect.dx;
             strrect.x = totalrect.x;
-            strrect.y = totalrect.y - titlerect.dy;  
+            strrect.y = totalrect.y - titlerect.dy;
             IDISPLAY_EraseRect(pIDisplay, &totalrect);     
         } 
     }
