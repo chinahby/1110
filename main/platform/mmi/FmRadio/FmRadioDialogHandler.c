@@ -1107,7 +1107,11 @@ static boolean handleCommandEvent( CFmRadio *pMe, uint16 itemId)
         ISHELL_CloseApplet( pMe->m_pShell, (itemId == IDS_FMRADIO_OPTION_MENU_QUIT) ? FALSE : TRUE);
     }
 #if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
-    else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
+#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+else if( itemId == IDS_FMRADIO_OPTION_MENU_SEARCH)
+#else
+else if( itemId == IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH)
+#endif
     {
         hideMenu( pMe);
         moveOperationModeTo( pMe, FM_RADIO_OPMODE_REFRESH_CHANNEL_LIST_CONFIRM);
@@ -1567,7 +1571,11 @@ static void popOptionMenu( CFmRadio *pMe)
 	uint16  resId[] = { 
 	#if FEATURE_FMRADIO_CHANNEL_LIST_SUPPORT
 						//IDS_FMRADIO_OPTION_MENU_QUIT,
-						IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH,
+                        #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+                        IDS_FMRADIO_OPTION_MENU_SEARCH,
+                        #else
+                        IDS_FMRADIO_OPTION_MENU_GLOBAL_SEARCH,
+                        #endif						
 						IDS_FMRADIO_OPTION_MENU_LIST,
 						IDS_SAVE,
                         IDS_FMRADIO_SPEAKER,
