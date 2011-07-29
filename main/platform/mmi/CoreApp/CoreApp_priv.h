@@ -108,7 +108,7 @@
 #define    IDLESEARCHINTIME       (10000)
 
 //receive AEEBATTSTATUS_POWERDOWN ,set time to power down the phone
-#define    POWER_DOWN_TIME       (3000)
+#define    POWER_DOWN_TIME       (5000)
 // 关机充电提示动画文件
 #define    CHARGING_ANIFILE             "fs:/image/charge/"
 #define    CHARGING_FRAME_COUNT         (5)
