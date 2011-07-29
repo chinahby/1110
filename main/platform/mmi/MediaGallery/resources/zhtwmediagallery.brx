@@ -322,6 +322,12 @@
 	<String Id="1106" Name="IDS_MG_LOADING">
 		<Text>載入中...</Text>
 	</String>
+	<STRING Id="1114" Name="IDS_MG_COPYING">
+		<Text>Copying</Text>
+	</STRING>
+	<STRING Id="1115" Name="IDS_MG_MOVEING">
+		<Text>Moveing</Text>
+	</STRING>		
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">

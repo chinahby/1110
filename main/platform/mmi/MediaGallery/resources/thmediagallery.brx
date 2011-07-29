@@ -341,6 +341,12 @@
 		<Text>USB not Connected</Text>
 	</String>	
 </Strings>
+	<STRING Id="1114" Name="IDS_MG_COPYING">
+		<Text>Copying</Text>
+	</STRING>
+	<STRING Id="1115" Name="IDS_MG_MOVEING">
+		<Text>Moveing</Text>
+	</STRING>	
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_MG_MAINMENU" Focus="7001">
 		<Controls>
