@@ -2801,7 +2801,8 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     int i;
     int16  nResID[CAMERACFGMAX];
     IImage *pTopBarImage = NULL; 
-#ifndef FEATURE_VERSION_W515V3          
+#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
+#else
     // enviroment cfgID
     (void)ICONFIG_GetItem(pMe->m_pConfig,
                           CFGI_CAMERA_ENVIROMENT,
@@ -2951,7 +2952,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     }
     #endif
     nResID[CAMERACFGRESET] = IDI_RESET;
-    #ifdef FEATURE_VERSION_W515V3
+    #if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
     for(i = CAMERACFGFIRST; i < CAMERACFGMAX; i++)
     {
         pTopBarImage = ISHELL_LoadResImage(pMe->m_pShell, 
@@ -2987,7 +2988,7 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
 	    if (pCameraCFGChooseIcon)
 	    {  
 			IIMAGE_SetDrawSize(pCameraCFGChooseIcon, TOPBAR_ICON_WIDTH, CFGBAR_TEXT_HEIGHT);
-            #ifdef FEATURE_VERSION_W515V3
+			#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
 			IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG-1), TOPBAR_ICON_Y);	//Add By zzg 2010_07_25
 			#else
             IIMAGE_Draw(pCameraCFGChooseIcon, (TOPBAR_ICON_SPACE+TOPBAR_ICON_WIDTH)*(pMe->m_nCameraCFG), TOPBAR_ICON_Y);

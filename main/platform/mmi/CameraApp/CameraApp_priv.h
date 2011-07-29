@@ -411,7 +411,7 @@ typedef enum
 // 照相机设置参数列表
 typedef enum 
 {
-    #ifdef FEATURE_VERSION_W515V3
+    #if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
     CAMERACFGENVIRMENT,
     CAMERACFGQUALITY,    
     CAMERACFGFIRST = CAMERACFGQUALITY,

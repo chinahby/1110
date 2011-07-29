@@ -624,7 +624,7 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
             switch (pMe->m_nMsgID)
             {
                 case IDS_LOWBATTMSG_TEXT:
-                    set_time = 60000;
+                    set_time = 5000;
                     break;
                 case IDS_SERVICEREQ:
                 case IDS_EXIT_EMERGENCY_MODE:
