@@ -89,6 +89,8 @@ static void CoreApp_Process_AutoPower_Event(void *pUser);
 #endif
 
 static void CoreApp_Process_Batty_Msg(CCoreApp   *pMe, uint16  msg_id);
+static void CoreApp_Process_BattyLow_Msg(CCoreApp   *pMe, uint16  msg_id);
+
 static void CoreApp_Process_Batty_Msg_CB(void *pp);
 #ifdef FEATURE_ICM
 static void CoreApp_Process_SS_info(CCoreApp * pMe ,AEECMSSEventData *ss);
@@ -1856,6 +1858,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
         
     switch (pNotify->dwMask) 
     {
+        
         // 外部电源接入或拔除
         case NMASK_BATTERY_EXTPWR_CHANGE:
             pMe->m_bExtPwrState = IBATTERY_GetExternalPower(pMe->m_pBatt);
@@ -1885,7 +1888,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
         // 充电状态改变
         case NMASK_BATTERY_CHARGERSTATUS_CHANGE:  
             nChargerStatus = IBATTERY_GetChargerStatus(pMe->m_pBatt);
-            
+      //    (void)ISHELL_CancelTimer(pMe->a.m_pIShell, (PFNNOTIFY)CoreApp_Process_BattyLow_Msg, (void *) pMe);
             if(pMe->m_wActiveDlgID == IDD_LPM)
             {
                 ISHELL_PostEvent(pMe->a.m_pIShell, 
@@ -1963,7 +1966,7 @@ static boolean CoreApp_HandleBattNotify(CCoreApp * pMe, AEENotify *pNotify)
                             IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_BATT, ANNUN_STATE_BATT_LOW | ANNUN_STATE_BLINK);
                         }
                         (void) ISHELL_SetTimer(pMe->a.m_pIShell, 10000, CCharger_BlinkLowBattIcon, (void *) pMe);
-                        CoreApp_Process_Batty_Msg(pMe, IDS_LOWBATTMSG_TEXT);
+                        CoreApp_Process_BattyLow_Msg(pMe, IDS_LOWBATTMSG_TEXT);
                         break;
                     }
 
@@ -2689,6 +2692,31 @@ static void CoreApp_Process_Batty_Msg(CCoreApp   *pMe, uint16  msg_id)
     }
     prv_msg_id = msg_id;
 }
+static void CoreApp_Process_BattyLow_Msg(CCoreApp   *pMe, uint16  msg_id)
+{
+    if(msg_id == IDS_LOWBATTMSG_TEXT)
+    {
+    IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_LOW_BATTERY);
+    }
+    else
+    {
+        IALERT_StartAlerting(pMe->m_pAlert, NULL, NULL, AEEALERT_ALERT_ROAMING);
+    }
+    if((pMe->m_wActiveDlgID == IDD_PWDIMSIMCC ||
+               pMe->m_wActiveDlgID == IDD_PWDINPUT ||
+               pMe->m_wActiveDlgID == IDD_UIMSECCODE ||
+               pMe->m_wActiveDlgID == IDD_EMERGENCYNUMLIST ||
+               pMe->m_wActiveDlgID == IDD_IDLE
+               ) && (pMe->m_bSuspended == FALSE))
+    {
+        pMe->m_nMsgID = msg_id;
+        MSG_FATAL("CoreApp_Process_Batty_Msg 1",0,0,0); 
+        CLOSE_DIALOG(DLGRET_BATT_INFO)
+      //ISHELL_MessageBox(pMe->a.m_pIShell,AEE_COREAPPRES_LANGFILE,NULL,IDS_LOWBATTMSG_TEXT);
+        pMe->m_battery_state = FALSE ;
+    }
+}
+
 static void CoreApp_Process_Batty_Msg_CB(void *pp)
 {
     CCoreApp   *pMe = (CCoreApp *)pp;

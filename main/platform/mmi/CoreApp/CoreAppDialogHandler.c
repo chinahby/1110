@@ -623,6 +623,9 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
             uint32 set_time= 1500;
             switch (pMe->m_nMsgID)
             {
+                case IDS_LOWBATTMSG_TEXT:
+                    set_time = 60000;
+                    break;
                 case IDS_SERVICEREQ:
                 case IDS_EXIT_EMERGENCY_MODE:
                     set_time = 0;
@@ -844,6 +847,11 @@ static boolean  IDD_MSGBOX_Handler(void       *pUser,
                         ISHELL_CancelTimer(pMe->a.m_pIShell,DialogTimeoutCallback,pMe);
                         pMe->m_SYS_MODE_NO_SRV = TRUE;  // 这里付值可以在idle界面骗过用户，planemode可以马上显示出来
                         CLOSE_DIALOG(DLGRET_YES)
+                        return TRUE;
+                    }
+                    else if(pMe->m_MsgID == IDS_LOWBATTMSG_TEXT )
+                    {
+                        ISHELL_CancelTimer(pMe->a.m_pIShell,DialogTimeoutCallback,pMe);
                         return TRUE;
                     }
 #endif
