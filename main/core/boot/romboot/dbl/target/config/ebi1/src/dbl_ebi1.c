@@ -620,10 +620,20 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_ebi1_default[] =
   {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
 };
 
+const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_ASYC[] = 
+{
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x00010020  },
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000  }
+};
 
 const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_48MHZ[] = 
 {
-#if 0//defined(T_QSC1110)
+
   {READ_16_BIT,      0x9FFFFFE,               0x0       },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
@@ -650,10 +660,7 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_48MHZ
 
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0031003C  },
-#else
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x00010020  },
-#endif
+
   /*-----------------------------------------------------------------------
                             End of Configuration
   -----------------------------------------------------------------------*/   
@@ -732,7 +739,7 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_48MHZ
 #endif
 const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_64MHZ[] =
 {
-#if 0//defined(T_QSC1110)
+
   {READ_16_BIT,      0x9FFFFFE,               0x0       },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
@@ -763,11 +770,6 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_64MHZ
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0031003C  },
 */
-#else
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x00010020  },
-#endif
-
   /*-----------------------------------------------------------------------
                             End of Configuration
   -----------------------------------------------------------------------*/   
@@ -846,7 +848,7 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_64MHZ
 
 const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_96MHZ[] =
 {
-#if 0//defined(T_QSC1110)
+
   {READ_16_BIT,      0x9FFFFFE,               0x0       },
   {HWIO_OPERATION,   HWIO_ADDR(PAUSE_TIMER),  48 * 1000  }, 
 
@@ -873,10 +875,7 @@ const static dbl_parser_cfg_data_item_type ebi1_samsung_cfg_data_PSRAM_CS1_96MHZ
 
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x0031003C  },
-#else
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, 1),    0x003300    },
-  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, 1),    0x00010020  },
-#endif
+
   /*-----------------------------------------------------------------------
                             End of Configuration
   -----------------------------------------------------------------------*/   
@@ -1416,9 +1415,13 @@ void dbl_ebi1_data_psram_configure
 	
 	DBL_VERIFY(dev != NULL, DBL_ERR_NOR_DETECTION_FAILED );
 #ifndef FEATURE_USES_LOWMEM
-	if ((dev == &K5N6433ABM) || (dev == &K5N6433ATM) || (dev == &K5N2833ATB) || (dev == &K5N2833ABB) || (dev == &K5N5629ABM))//|| (dev == &K5N5629ATC) || (dev == &K5N5629ABC) || (dev == &K5N5629AUC))
+    if((dev == &K5N6433ABM) || (dev == &K5N6433ATM) || (dev == &K5N2833ATB) || (dev == &K5N2833ABB) || (dev == &K5N5629ABM))
+    {
+        dbl_parse_cfg_data(ebi1_cfg_data_ebi1_default);
+        dbl_parse_cfg_data(ebi1_samsung_cfg_data_PSRAM_CS1_ASYC);
+    }
+	else if((dev == &K5N5629ATC) || (dev == &K5N5629ABC) || (dev == &K5N5629AUC))
 	{
-		dbl_parse_cfg_data(ebi1_cfg_data_ebi1_default);
         if( configured_clk_speed->ebi1 == 48 )
         {
             dbl_parse_cfg_data(ebi1_samsung_cfg_data_PSRAM_CS1_48MHZ);
