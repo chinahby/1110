@@ -80,11 +80,7 @@
 		<Text>Resetting...</Text>
 	</STRING>
 	<STRING Id="1027" Name="IDS_LOWBATTMSG_TEXT">
-<<<<<<< .mine
 		<Text>Battery low!</Text>
-=======
-		<Text>Battery low</Text>
->>>>>>> .r3987
 	</STRING>
 	<STRING Id="1028" Name="IDS_RUIM_DOOR_REMOVED">
 		<Text>UIM card moved</Text>
