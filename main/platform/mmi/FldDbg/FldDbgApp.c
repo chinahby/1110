@@ -5163,13 +5163,11 @@ static void CFieldDebug_DrawVersionScreen(CFieldDebug * pme)
                           CFGI_BUILD_TIME,
                           (szBuf + n),
                           sizeof(szBuf));
+   
+    n = WSTRLEN(szBuf);
+    szBuf[n++] = (AECHAR) '\n';
+   
     #if defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W515V3)
-    {
-    	//AECHAR BUIDTIME[20] = {L"22/07/2011"};
-		STRTOWSTR("30/07/2011", (szBuf + n), sizeof(szBuf));
-    	n = WSTRLEN(szBuf);
-    	szBuf[n++] = (AECHAR) '\n';
-    }
     #else
    (void) ISHELL_LoadResString(pme->a.m_pIShell,
                                FLDDBG_RES_FILE,
@@ -6888,9 +6886,14 @@ static void CFieldDebug_DrawEsnScreen(CFieldDebug * pme)
     n = WSTRLEN(szBuf);
     szBuf[n++] = (AECHAR) '\n';
     {
-    	//extern int OEM_ReadMEID(uint64 *meid);
-    	//OEM_ReadMEID(&meid);
-    	tmc_get_stored_meid_me(&meid);
+    	
+        #ifdef FEATURE_VERSION_W515V3
+        extern int OEM_ReadMEID(uint64 *meid);
+    	OEM_ReadMEID(&meid);
+        #else
+        tmc_get_stored_meid_me(&meid);
+        #endif
+    	
         L32 = (uint32)meid;
         H32 = (uint32)(meid>>32);
     }
