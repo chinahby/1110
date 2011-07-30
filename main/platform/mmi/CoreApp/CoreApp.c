@@ -476,6 +476,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bAcquiredTime = FALSE;
     pMe->m_bExit = FALSE;
     pMe->m_isShift  = FALSE;   //add by yangdecai  2010-07-27
+    pMe->m_battery_msgup = FALSE;//add by yangdecai 2010-07-27
     
 #if defined(FEATURE_WMS_APP)
     pMe->m_bsmstipscheck = FALSE;

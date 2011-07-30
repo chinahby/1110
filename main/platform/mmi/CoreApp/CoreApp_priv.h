@@ -736,6 +736,7 @@ typedef struct _CCoreApp
     IBacklight*         m_pBacklight;
     byte                m_battery_time;
     boolean             m_battery_state;
+	boolean             m_battery_msgup;
 #ifdef FEATURE_UTK2
     uint16     wRefreshMask;
 #endif
