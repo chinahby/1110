@@ -9482,6 +9482,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTEMOTIONSYMBOL);
 						#endif
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTCONTACT);
+                        MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
+                        MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_VIDEO);//add by xuhui 2011/08/01
+                        MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_SOUND);//add by xuhui 2011/08/01
+                        MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTTEMPLATES);
 						MENU_ADDITEM(pMe->m_pMenu, IDS_SAVETODRAFT);	//Add By zzg 2010_09_11
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SAVEASPRESET);
@@ -9556,6 +9560,19 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 case IDS_INSERTTEMPLATES:
                     CLOSE_DIALOG(DLGRET_INSERTTEMPLATES)
                     return TRUE;
+
+                case IDS_INSERT_PICTURE:
+                    return TRUE;
+
+                case IDS_INSERT_VIDEO:
+                    return TRUE;    
+
+                case IDS_INSERT_SOUND:
+                    return TRUE;
+
+                case IDS_INSERT_FILE:
+                    return TRUE;  
+                    
                 // 插入表情符号: 
                 case IDS_INSERTEMOTIONSYMBOL:
 //                // 插入域名符号: 

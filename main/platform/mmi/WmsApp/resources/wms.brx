@@ -574,6 +574,36 @@
 	<String Id="1012" Name="IDS_STR_FLASHSMS">
 		<Text>Flash sms</Text>
 	</String>
+	<String Id="1013" Name="IDS_INSERT_PICTURE" Encoding="Unicode">
+		<Text>Insert picture</Text>
+	</String>
+	<String Id="1014" Name="IDS_FROM_PICTURES" Encoding="Unicode">
+		<Text>From pictures</Text>
+	</String>
+	<String Id="1015" Name="IDS_NEW_PHOTO" Encoding="Unicode">
+		<Text>New photo</Text>
+	</String>
+	<String Id="1016" Name="IDS_INSERT_VIDEO" Encoding="Unicode">
+		<Text>Insert video</Text>
+	</String>
+	<String Id="1017" Name="IDS_FROM_MOVIES" Encoding="Unicode">
+		<Text>From movies</Text>
+	</String>
+	<String Id="1018" Name="IDS_NEW_VIDEO" Encoding="Unicode">
+		<Text>New video</Text>
+	</String>
+	<String Id="1019" Name="IDS_INSERT_SOUND" Encoding="Unicode">
+		<Text>Insert sound</Text>
+	</String>
+	<String Id="1020" Name="IDS_FROM_MUSIC" Encoding="Unicode">
+		<Text>From music</Text>
+	</String>
+	<String Id="1021" Name="IDS_NEW_SOUND" Encoding="Unicode">
+		<Text>New sound</Text>
+	</String>
+	<String Id="1022" Name="IDS_INSERT_FILE" Encoding="Unicode">
+		<Text>Insert file</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

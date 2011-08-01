@@ -511,6 +511,36 @@
 	<String Id="176" Name="IDS_BROWSE">
 		<Text>Browse</Text>
 	</String>
+	<String Id="1001" Name="IDS_INSERT_PICTURE" Encoding="Unicode">
+		<Text>Insert picture</Text>
+	</String>
+	<String Id="1002" Name="IDS_FROM_PICTURES" Encoding="Unicode">
+		<Text>From pictures</Text>
+	</String>
+	<String Id="1003" Name="IDS_NEW_PHOTO" Encoding="Unicode">
+		<Text>New photo</Text>
+	</String>
+	<String Id="1004" Name="IDS_INSERT_VIDEO" Encoding="Unicode">
+		<Text> Insert video</Text>
+	</String>
+	<String Id="1005" Name="IDS_FROM_MOVIES" Encoding="Unicode">
+		<Text>From movies</Text>
+	</String>
+	<String Id="1006" Name="IDS_NEW_VIDEO" Encoding="Unicode">
+		<Text>New video</Text>
+	</String>
+	<String Id="1007" Name="IDS_INSERT_SOUND" Encoding="Unicode">
+		<Text>Insert sound</Text>
+	</String>
+	<String Id="1008" Name="IDS_FROM_MUSIC" Encoding="Unicode">
+		<Text>From music</Text>
+	</String>
+	<String Id="1009" Name="IDS_NEW_SOUND" Encoding="Unicode">
+		<Text>New sound</Text>
+	</String>
+	<String Id="1010" Name="IDS_INSERT_FILE" Encoding="Unicode">
+		<Text>Insert file</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

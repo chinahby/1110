@@ -511,6 +511,36 @@
 	<String Id="176" Name="IDS_BROWSE">
 		<Text>流覽</Text>
 	</String>
+	<String Id="1001" Name="IDS_INSERT_PICTURE">
+		<Text>插入图片</Text>
+	</String>
+	<String Id="1002" Name="IDS_FROM_PICTURES">
+		<Text>从图片文件夹</Text>
+	</String>
+	<String Id="1003" Name="IDS_NEW_PHOTO">
+		<Text>新图片</Text>
+	</String>
+	<String Id="1004" Name="IDS_INSERT_VIDEO">
+		<Text>插入视频</Text>
+	</String>
+	<String Id="1005" Name="IDS_FROM_MOVIES">
+		<Text>从视频文件夹</Text>
+	</String>
+	<String Id="1006" Name="IDS_NEW_VIDEO">
+		<Text>新的视频</Text>
+	</String>
+	<String Id="1007" Name="IDS_INSERT_SOUND">
+		<Text>插入声音</Text>
+	</String>
+	<String Id="1008" Name="IDS_FROM_MUSIC">
+		<Text>从音乐文件夹</Text>
+	</String>
+	<String Id="1009" Name="IDS_NEW_SOUND">
+		<Text>新的声音</Text>
+	</String>
+	<String Id="1010" Name="IDS_INSERT_FILE">
+		<Text>插入文件</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

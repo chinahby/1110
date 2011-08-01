@@ -568,8 +568,38 @@
 	<String Id="1010" Name="IDS_TEMPLATEHITZ9">
 		<Text>เป็นอย่างไรบ้าง</Text>
 	</String>
+	<String Id="1011" Name="IDS_INSERT_PICTURE">
+		<Text>Insert picture</Text>
+	</String>
 	<String Id="1012" Name="IDS_STR_FLASHSMS">
 		<Text>Flash sms</Text>
+	</String>
+	<String Id="1013" Name="IDS_FROM_PICTURES">
+		<Text>From pictures</Text>
+	</String>
+	<String Id="1014" Name="IDS_NEW_PHOTO">
+		<Text>New photo</Text>
+	</String>
+	<String Id="1015" Name="IDS_INSERT_VIDEO">
+		<Text>Insert video</Text>
+	</String>
+	<String Id="1016" Name="IDS_FROM_MOVIES">
+		<Text>From movies</Text>
+	</String>
+	<String Id="1017" Name="IDS_NEW_VIDEO">
+		<Text>New video</Text>
+	</String>
+	<String Id="1018" Name="IDS_INSERT_SOUND">
+		<Text>Insert sound</Text>
+	</String>
+	<String Id="1019" Name="IDS_FROM_MUSIC">
+		<Text>From music</Text>
+	</String>
+	<String Id="1020" Name="IDS_NEW_SOUND">
+		<Text>New sound</Text>
+	</String>
+	<String Id="1021" Name="IDS_INSERT_FILE">
+		<Text>Insert file</Text>
 	</String>
 </Strings>
 <Dialogs>
