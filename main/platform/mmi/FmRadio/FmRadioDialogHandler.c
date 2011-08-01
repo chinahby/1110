@@ -3001,7 +3001,7 @@ static void drawRefreshListPrompt( void *pme)
 
     if( pMe->drawRefreshListPrompt)
     {
-        ISHELL_SetTimer( pMe->m_pShell, 200, drawRefreshListPrompt, pme);
+        ISHELL_SetTimer( pMe->m_pShell, 100, drawRefreshListPrompt, pme);
     }
 #endif
 }
