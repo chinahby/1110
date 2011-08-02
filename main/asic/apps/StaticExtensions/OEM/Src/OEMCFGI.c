@@ -3017,8 +3017,8 @@ void OEM_RestoreFactorySetting( void )
    OEMFS_Remove( ALARM_EFS_FILE);
    
 #ifdef FEATURE_DUAL_UIMCARD
-   //nvi.sim_select = 0;
-   //(void) OEMNV_Put( NV_SIM_SELECT_I, &nvi);
+   nvi.sim_select = 0;
+   (void) OEMNV_Put( NV_SIM_SELECT_I, &nvi);
 #endif
 
    {
