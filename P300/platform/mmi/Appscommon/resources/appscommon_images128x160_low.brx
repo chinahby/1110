@@ -4,6 +4,12 @@
 	<Object Id="5002" Name="IDB_BACKGROUND">
 		<File>..\images\128x160\common\Appscommon\Menu\background\background.png</File>
 	</Object>
+	<Object Id="5010" Name="IDI_KEY_TEST" MimeType="image/png">
+		<File>..\images\128x160\common\QuickTest\keytest.png</File>
+	</Object>
+	<Object Id="5011" Name="IDI_TEST_DOWN" MimeType="image/png">
+		<File>..\images\128x160\common\QuickTest\down.png</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON">
 		<File>..\images\128x160\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
