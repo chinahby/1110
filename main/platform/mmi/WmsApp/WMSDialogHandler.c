@@ -30,6 +30,7 @@
 #include "recentcalls.h"
 #ifdef FEATURE_APP_MUSICPLAYER
 #include "MusicPlayer.h"
+#include "MediaGallery.h"
 #endif 
 /*==============================================================================
                                  
@@ -9562,15 +9563,31 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     return TRUE;
 
                 case IDS_INSERT_PICTURE:
+#ifdef FEATURE_APP_MEDIAGALLERY					
+					CMediaGallery_FileExplorer(GALLERY_IMAGE_SETTING, NULL);
+#endif                    
+                    //CLOSE_DIALOG(DLGRET_INSERTPICTURE)
                     return TRUE;
 
                 case IDS_INSERT_VIDEO:
+#ifdef FEATURE_APP_MEDIAGALLERY					
+					CMediaGallery_FileExplorer(GALLERY_VIDEO_BROWSE, NULL);
+#endif                      
+                    //CLOSE_DIALOG(DLGRET_INSERTVIDEO)
                     return TRUE;    
 
                 case IDS_INSERT_SOUND:
+#ifdef FEATURE_APP_MEDIAGALLERY					
+					CMediaGallery_FileExplorer(GALLERY_MUSIC_SETTING, NULL);
+#endif                           
+                    //CLOSE_DIALOG(DLGRET_INSERTSOUND)
                     return TRUE;
 
                 case IDS_INSERT_FILE:
+#ifdef FEATURE_APP_MEDIAGALLERY					
+					CMediaGallery_FileExplorer(GALLERY_FILE_SELECT, NULL);
+#endif                      
+                    //CLOSE_DIALOG(DLGRET_INSERTFILE)
                     return TRUE;  
                     
                 // ≤Â»Î±Ì«È∑˚∫≈: 

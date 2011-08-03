@@ -222,6 +222,26 @@ static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe);
 static NextFSMAction WMSST_WMSPOP_Hander(WmsApp *pMe);
 static NextFSMAction WMSST_FLASHSMS_Hander(WmsApp *pMe);
 
+/*
+// WMSST_INSERTPICTURE 状态处理函数 add by xuhui 2011/08/01
+static NextFSMAction WMSST_INSERTPICTURE_Handler(WmsApp *pMe);
+static NextFSMAction WMSST_INSERTPICTURE_PRESET_Handler(WmsApp *pMe);
+static NextFSMAction WMSST_INSERTPICTURE_NEW_Handler(WmsApp *pMe);
+
+
+// WMSST_INSERTVIDEO 状态处理函数 add by xuhui 2011/08/01
+static NextFSMAction WMSST_INSERTVIDEO_Handler(WmsApp *pMe);
+static NextFSMAction WMSST_INSERTVIDEO_PRESET_Handler(WmsApp *pMe);
+static NextFSMAction WMSST_INSERTVIDEO_NEW_Handler(WmsApp *pMe);
+
+// WMSST_INSERTSOUND 状态处理函数 add by xuhui 2011/08/01
+static NextFSMAction WMSST_INSERTSOUND_Handler(WmsApp *pMe);
+static NextFSMAction WMSST_INSERTSOUND_PRESET_Handler(WmsApp *pMe);
+static NextFSMAction WMSST_INSERTSOUND_NEW_Handler(WmsApp *pMe);
+
+// WMSST_INSERTFILE 状态处理函数 add by xuhui 2011/08/01
+static NextFSMAction WMSST_INSERTFILE_Handler(WmsApp *pMe);*/
+
 /*==============================================================================
 
                                  函数定义
@@ -458,7 +478,38 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
             
         case WMSST_EXIT:
             return WMSST_EXIT_Handler(pMe);
-            
+/*
+        //add by xuhui 2011/08/01
+ 	    case WMSST_INSERTPICTURE:
+			return WMSST_INSERTPICTURE_Handler(pMe);       
+
+ 	    case WMSST_INSERTPICTURE_PRESET:
+			return WMSST_INSERTPICTURE_PRESET_Handler(pMe);
+
+ 	    case WMSST_INSERTPICTURE_NEW:
+			return WMSST_INSERTPICTURE_NEW_Handler(pMe);
+
+ 	    case WMSST_INSERTVIDEO:
+			return WMSST_INSERTVIDEO_Handler(pMe);
+
+ 	    case WMSST_INSERTVIDEO_PRESET:
+			return WMSST_INSERTVIDEO_PRESET_Handler(pMe);
+
+ 	    case WMSST_INSERTVIDEO_NEW:
+			return WMSST_INSERTVIDEO_NEW_Handler(pMe);
+
+ 	    case WMSST_INSERTSOUND:
+			return WMSST_INSERTSOUND_Handler(pMe);
+
+ 	    case WMSST_INSERTSOUND_PRESET:
+			return WMSST_INSERTSOUND_PRESET_Handler(pMe);
+
+  	    case WMSST_INSERTSOUND_NEW:
+			return WMSST_INSERTSOUND_NEW_Handler(pMe);
+
+ 	    case WMSST_INSERTFILE:
+			return WMSST_INSERTFILE_Handler(pMe);       
+*/			
         default:
             break;
     }
@@ -2963,6 +3014,26 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
             #endif
             MOVE_TO_STATE(WMSST_TEMPLATES)
             return NFSMACTION_CONTINUE;
+/*
+        case DLGRET_INSERTPICTURE://add by xuhui 2011/08/01
+            pMe->m_bTextFullAlert = FALSE;
+            MOVE_TO_STATE(WMSST_INSERTPICTURE)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_INSERTVIDEO://add by xuhui 2011/08/01
+            pMe->m_bTextFullAlert = FALSE;
+            MOVE_TO_STATE(WMSST_INSERTVIDEO)
+            return NFSMACTION_CONTINUE;       
+
+        case DLGRET_INSERTSOUND://add by xuhui 2011/08/01
+            pMe->m_bTextFullAlert = FALSE;
+            MOVE_TO_STATE(WMSST_INSERTSOUND)
+            return NFSMACTION_CONTINUE;                
+
+        case DLGRET_INSERTFILE://add by xuhui 2011/08/01
+            pMe->m_bTextFullAlert = FALSE;
+            MOVE_TO_STATE(WMSST_INSERTFILE)
+            return NFSMACTION_CONTINUE;   */
             
         // 用户选择返回
         case DLGRET_CANCELED:
@@ -6304,3 +6375,125 @@ static NextFSMAction WMSST_EXIT_Handler(WmsApp *pMe)
     return NFSMACTION_WAIT;
 } // WMSST_EXIT_Handler
 
+
+/*==============================================================================
+函数:
+    WMSST_INSERTPICTURE_Handler
+
+说明:
+    WMSST_TEMPLATES 状态处理函数。
+
+参数:
+    pMe [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    NFSMACTION_CONTINUE: 指示不停状态机。
+    NFSMACTION_WAIT: 指示停止状态机。
+
+备注:
+
+==============================================================================*/
+
+/*
+static NextFSMAction WMSST_INSERTPICTURE_Handler(WmsApp *pMe)
+{
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch (pMe->m_eDlgReturn)
+    {
+        case DLGRET_CREATE:
+        case DLGRET_LOADCANCELED:
+        case DLGRET_LOADFAILED:
+            pMe->m_eMBoxType = WMS_MB_INBOX;
+            WmsApp_ShowDialog(pMe, IDD_MESSAGELIST);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_LOAD:
+            pMe->m_eOptType = OPT_VIA_VIEWMSG;
+            WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
+            return NFSMACTION_WAIT;
+            
+        case DLGRET_CANCELED:
+            MOVE_TO_STATE(WMSST_MAIN)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_LOADOK:
+            if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
+            {
+                MOVE_TO_STATE(WMSST_VIEWINBOXMSG)
+            }
+            else
+            {
+                MOVE_TO_STATE(WMSST_INBOXMSGOPTS)
+            }
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_OPT:
+            pMe->m_eOptType = OPT_VIA_LISTMSG;
+            WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_DELETE:
+            //释放查看的消息内存
+            WMSMessageStruct_Free(pMe);
+            //ADD BY YANGDECAI 2010-08-16
+            pMe->m_eEraseWMSType = ERASE_DRAFT_ONE;
+            MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
+            return NFSMACTION_CONTINUE;
+            
+        default:
+            // 用退出程序代替宏断言
+            MOVE_TO_STATE(WMSST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+} // WMSST_INSERTPICTURE_Handler
+
+// WMSST_INSERTPICTURE 状态处理函数 add by xuhui 2011/08/01
+static NextFSMAction WMSST_INSERTPICTURE_PRESET_Handler(WmsApp *pMe)
+{
+    return NFSMACTION_CONTINUE;
+}
+
+static NextFSMAction WMSST_INSERTPICTURE_NEW_Handler(WmsApp *pMe)
+{
+    return NFSMACTION_CONTINUE;
+}
+
+
+// WMSST_INSERTVIDEO 状态处理函数 add by xuhui 2011/08/01
+static NextFSMAction WMSST_INSERTVIDEO_Handler(WmsApp *pMe)
+{
+    return NFSMACTION_CONTINUE;
+}
+static NextFSMAction WMSST_INSERTVIDEO_PRESET_Handler(WmsApp *pMe)
+{
+    return NFSMACTION_CONTINUE;
+}
+static NextFSMAction WMSST_INSERTVIDEO_NEW_Handler(WmsApp *pMe)
+{
+    return NFSMACTION_CONTINUE;
+}
+
+// WMSST_INSERTSOUND 状态处理函数 add by xuhui 2011/08/01
+static NextFSMAction WMSST_INSERTSOUND_Handler(WmsApp *pMe)
+{
+    return NFSMACTION_CONTINUE;
+}
+static NextFSMAction WMSST_INSERTSOUND_PRESET_Handler(WmsApp *pMe)
+{
+    return NFSMACTION_CONTINUE;
+}
+static NextFSMAction WMSST_INSERTSOUND_NEW_Handler(WmsApp *pMe)
+{
+    return NFSMACTION_CONTINUE;
+}
+
+// WMSST_INSERTFILE 状态处理函数 add by xuhui 2011/08/01
+static NextFSMAction WMSST_INSERTFILE_Handler(WmsApp *pMe)
+{
+    return NFSMACTION_CONTINUE;
+}
+*/
