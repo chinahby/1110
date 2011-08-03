@@ -253,6 +253,9 @@
 	<Object Id="7019" Name="IDB_ALARM" MimeType="image/bmp">
 		<File>..\images\128x160\common\Annunciator\alarm.bmp</File>
 	</Object>
+	<Object Id="7020" Name="IDB_FM_RADIO">
+		<File>..\images\128x160\common\Annunciator\fm_radio.bmp</File>
+	</Object>
 	<Object Id="7021" Name="IDB_HEADSET" MimeType="image/bmp">
 		<File>..\images\128x160\common\Annunciator\headset.bmp</File>
 	</Object>
