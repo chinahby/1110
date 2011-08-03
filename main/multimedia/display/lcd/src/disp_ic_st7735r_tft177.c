@@ -221,7 +221,8 @@ static void disp_ic_rot(uint16 degree)
 
 boolean disp_st7735r_tft177(disp_drv_ic_type *pdispic)
 {
-    uint8 id1,id2,id3;
+    uint8 id1,id2;
+	uint8 id3;
     
     // Read ID
     LCD_WRITE_CMD(0xDA);
@@ -233,9 +234,8 @@ boolean disp_st7735r_tft177(disp_drv_ic_type *pdispic)
     LCD_WRITE_CMD(0xDC);
     id3 = LCD_READ_DATA();
     id3 = LCD_READ_DATA();
-
     // 5C 89 F0
-    if(id3 == 0x35)
+    if(id3 == 0x35 || id3 == 0xF0)
     {
         DISP_IC_INIT_TBL(pdispic);
         return TRUE;
