@@ -286,5 +286,11 @@
 	<Object Id="7040" Name="IDB_NO_SERVICE" MimeType="image/bmp">
 		<File>..\images\128x160\common\Annunciator\no_service.bmp</File>
 	</Object>
+	<Object Id="7101" Name="IDB_MMS_ENTER" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Icon\enter.png</File>
+	</Object>
+	<Object Id="7102" Name="IDB_MMS_SPACE" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Icon\space.png</File>
+	</Object>
 </Objects>
 </BREWRes>
