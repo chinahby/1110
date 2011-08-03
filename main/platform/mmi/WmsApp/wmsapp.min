@@ -11,7 +11,8 @@ WMSAPP_SOURCES=\
 	WMSStateMachine.c \
 	WMSDialogHandler.c \
 	WMSUtil.c \
-	OEMWMS.c
+	OEMWMS.c \
+	WMSMms.c
 	
 WMSAPP_OBJS :=  $(addprefix $(TARGETDIR)/, $(WMSAPP_SOURCES:%.c=%.o))
 $(WMSAPP_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC

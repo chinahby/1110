@@ -13,7 +13,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_VERSION_W516
 #define FEATURE_VERSION_W208
 #ifdef CUST_EDITION
-#define FEATURE_SUPPORT_WAP_APP
+//#define FEATURE_SUPPORT_WAP_APP
 #define FEATURE_APP_BLUETOOTH
 #define FEATURE_BT
 #define FEATURE_IBT
@@ -31,6 +31,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_GPIO_32_SIGNAL_OUPUT_32			//GPIO_32_SIGNAL== GPIO_OUTPUT_32
 //Add End
 #define FEATURE_USES_BLACKBERRY                  //USE BLACKBERRY STYLE
+
+//wangliang add!   2011-07-30
+#define FEATURE_USES_MMS
 
 #define FEATURE_SMS_UDH
 //#define FEATURE_SUPPORT_ID

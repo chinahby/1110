@@ -260,6 +260,9 @@ when       who     what, where, why
 #include "AEERUIM.h"
 #endif
 
+#ifdef FEATURE_USES_MMS
+#include "WMSMMS.h"
+#endif
 /*===========================================================================
 
                      DEFINES AND CONSTANTS
@@ -315,8 +318,6 @@ typedef struct
    boolean                         suppress_pref_cug;
    boolean                         suppress_outgoing_access;
 } OEMConfigCugInfo;
-
-
 /* BREW Download Information */
 
 #define OEMCFG_DEFAULT_CID           (27)
@@ -548,6 +549,10 @@ typedef struct
 #ifdef FEATURE_SCREEN_SAVE
    char          s_screensave_type[AEE_MAX_FILE_NAME/*FILESPECLEN*/];//CFGI_SCREENSAVE_TYPE 
 #endif
+#ifdef FEATURE_USES_MMS
+   CFG_MMsInfo   mms_setting;				//CFGI_MMS_SETTING
+#endif
+
    byte          wms_priority;                  //CFGI_WMS_PRIORITY
    byte          wms_sendmode;                  //CFGI_WMS_SENDMODE
    byte          wms_storetype;                 //CFGI_WMS_STORETYPE
@@ -1400,6 +1405,11 @@ static int OEMPriv_SetItem_CFGI_NET_LOCK_FLAGS(void *pBuff);
 
 #endif
 
+#ifdef FEATURE_USES_MMS
+static int OEMPriv_GetItem_CFGI_MMS_SETTING(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MMS_SETTING(void *pBuff);
+#endif
+
 //Add By zzg 2010_11_22
 #ifdef FEATURE_APP_BLUETOOTH
 static int OEMPriv_GetItem_CFGI_BT_STATUS(void *pBuff);
@@ -1632,6 +1642,10 @@ static OEMConfigListType oemi_cache = {
 #ifdef FEATURE_SCREEN_SAVE
    OEMNV_SCREENSAVE_TYPE,                           //CFGI_SCREENSAVE_TYPE
 #endif
+#ifdef FEATURE_USES_MMS
+   {TRUE,MMS_DEFAULT_PROXYHOST,MMS_DEFAULT_PROXYPORT},
+#endif
+
    WMS_PRIORITY_NORMAL,                             //CFGI_WMS_PRIORITY
    SENDOPT_SAVEANDSEND,                             //CFGI_WMS_SENDMODE
    WMS_MEMORY_STORE_NV_CDMA,                        //CFGI_WMS_STORETYPE
@@ -2179,6 +2193,10 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #ifdef FEATRUE_KEY_PAD_CTL  
    CFGTABLEITEM(CFGI_KEY_PAD_CTL, sizeof(Key_pad_Cfg)),
 #endif
+#ifdef FEATURE_USES_MMS
+	CFGTABLEITEM(CFGI_MMS_SETTING, sizeof(CFG_MMsInfo)),
+#endif
+
    CFGTABLEITEM(CFGI_WMS_PRIORITY, sizeof(byte)),
    CFGTABLEITEM(CFGI_WMS_SENDMODE, sizeof(byte)),
    CFGTABLEITEM(CFGI_WMS_STORETYPE, sizeof(byte)),
@@ -10362,6 +10380,21 @@ static int OEMPriv_SetItem_CFGI_NET_LOCK_FLAGS(void *pBuff)
 
 #endif
 
+#ifdef FEATURE_USES_MMS
+static int OEMPriv_GetItem_CFGI_MMS_SETTING(void *pBuff)
+{
+	MEMCPY(pBuff, (void*) &oemi_cache.mms_setting, sizeof(CFG_MMsInfo));
+	return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_MMS_SETTING(void *pBuff)
+{
+	MEMCPY((void*) &oemi_cache.mms_setting, pBuff, sizeof(CFG_MMsInfo));
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+#endif
+
+
 //Add By  zzg 2010_11_22
 #ifdef FEATURE_APP_BLUETOOTH
 static int OEMPriv_GetItem_CFGI_BT_STATUS(void *pBuff) 
@@ -11224,9 +11257,11 @@ void OEM_SetBAM_ADSAccount(void)
     char username[MAS_BREWSETINT_STRING] = {0};
     char password[MAS_BREWSETINT_STRING] = {0};
     
-	MEMCPY(username,"card",4);	
-	MEMCPY(password,"card",4);
-		
+	MEMCPY(username,"ctwap@mycdma.cn",15);	
+	MEMCPY(password,"vnet.mobi",9);
+	//MEMCPY(username,"card",4);	
+	//MEMCPY(password,"card",4);
+	
     // ук╨е
     (void)STRCPY((char *)nvi.pap_user_id.user_id, (char *)username);
     nvi.pap_user_id.user_id_len = STRLEN((char *)username);
@@ -11240,6 +11275,7 @@ void OEM_SetBAM_ADSAccount(void)
 } /* OEM_SetBAM_ADSAccount */
 //Add End
 #else 
+
 void OEM_SetBAM_ADSAccount(void)
 {
 #ifndef WIN32

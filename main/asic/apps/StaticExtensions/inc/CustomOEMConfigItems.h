@@ -235,6 +235,18 @@ typedef struct
     TLG_REGION_CODE region; //当前设置的区域
 }CFG_TvSetting;
 #endif
+
+#ifdef FEATURE_USES_MMS
+/* MMS setting */
+typedef struct _OEMConfigMMsInfo_
+{
+   boolean                         	bUseProxy;
+   char                  			hProxyHost[128];
+   int                         		iProxyPort;
+}CFG_MMsInfo;
+#endif
+
+
 typedef PACKED struct// _Emergency_Number
 {
    char  num_buf[MAX_EMERGENCY_NUM_LEN];
@@ -318,6 +330,10 @@ enum{
 #ifdef FEATRUE_KEY_PAD_CTL
     CFGI_KEY_PAD_CTL,                 //type = Key_pad_Cfg
 #endif
+#ifdef FEATURE_USES_MMS
+	CFGI_MMS_SETTING,				  //MMS Setting
+#endif
+
     CFGI_WMS_PRIORITY,                // type=byte
     CFGI_WMS_SENDMODE,                // type=byte
     CFGI_WMS_STORETYPE,               // type=byte
@@ -450,8 +466,7 @@ enum{
     CFGI_NET_LOCK_MNC,
     CFGI_NET_LOCK_MCC,
     CFGI_NET_LOCK_SID,
-
-
+    
     CFGI_CUST_END
 };
 

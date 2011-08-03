@@ -1257,7 +1257,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 int nRet;
 #endif
                 
-                MSG_MED("WMSApp received new message!",0,0,0);
+                MSG_FATAL("WMSApp received new message teleservice=%d",info->mt_message_info.message.u.cdma_message.teleservice,0,0);
                 
                 // 非 CDMA 模式消息不予受理
                 if (info->mt_message_info.message.msg_hdr.message_mode != WMS_MESSAGE_MODE_CDMA)
@@ -1268,11 +1268,131 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 
                 bRet = IWMS_CfgCheckWapPushMsg(pMe->m_pwms, 
                             &info->mt_message_info.message);
-                if (bRet == TRUE)
+
+				if (bRet == TRUE)
                 {
+                	int result = SUCCESS;
+                	IFile* pIFile = NULL;
+				    IFileMgr *pIFileMgr = NULL;
+				    FileInfo pInfo = {0};
                     // Wms Applet 不处理此消息
-                    MSG_HIGH("WAP PUsh Message Recieved and Dropped", 0, 0, 0);
-                    WMSAPPU_SYSFREE(dwParam);
+                    MSG_FATAL("WAP PUsh Message Recieved and Dropped", 0, 0, 0);
+
+                    result = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_FILEMGR,(void **)&pIFileMgr);
+					if (SUCCESS != result)
+				    {
+						MSG_FATAL("MRS: Open file error %x", result,0,0);
+						//goto Exit;
+				    }
+
+					MSG_FATAL("WAP PUsh Message format=%d", info->mt_message_info.message.u.cdma_message.raw_ts.format, 0, 0);
+					MSG_FATAL("WAP PUsh Message tpdu_type=%d", info->mt_message_info.message.u.cdma_message.raw_ts.tpdu_type, 0, 0);
+					
+                    pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms_raw.txt", _OFM_READWRITE);
+					if ( pIFile != NULL )
+			        {
+			            IFILE_Seek(pIFile, _SEEK_START, 0);
+			            IFILE_Write( pIFile, info->mt_message_info.message.u.cdma_message.raw_ts.data, info->mt_message_info.message.u.cdma_message.raw_ts.len);
+
+			            MSG_FATAL("IFILEMGR_OpenFile mms_raw size=%d",info->mt_message_info.message.u.cdma_message.raw_ts.len,0,0);
+			            IFILE_Release( pIFile);
+			            pIFile = NULL;
+			            IFILEMGR_Release(pIFileMgr);
+			            pIFileMgr = NULL;
+			        }
+			        else
+			        {
+						pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms_raw.txt", _OFM_CREATE);
+						if ( pIFile != NULL )
+				        {
+				            IFILE_Write( pIFile, info->mt_message_info.message.u.cdma_message.raw_ts.data, info->mt_message_info.message.u.cdma_message.raw_ts.len);
+
+				            MSG_FATAL("IFILEMGR_OpenFile mms_raw size=%d",info->mt_message_info.message.u.cdma_message.raw_ts.len,0,0);
+				            IFILE_Release( pIFile);
+				            pIFile = NULL;
+				            IFILEMGR_Release(pIFileMgr);
+				            pIFileMgr = NULL;
+				        }
+			        }
+                }
+                
+				if (bRet == TRUE)
+                {
+					(void)MEMSET(&pMe->m_CltTsdata, 0 , sizeof(pMe->m_CltTsdata));
+                    
+	                 nRet = IWMS_TsDecode(pMe->m_pwms, 
+	                             &info->mt_message_info.message.u.cdma_message.raw_ts, 
+	                             &pMe->m_CltTsdata);
+                }
+
+                MSG_FATAL("IWMS_TsDecode=%d", nRet, 0, 0);
+                if (bRet == SUCCESS)
+                {
+                	int result = SUCCESS;
+                	IFile* pIFile = NULL;
+				    IFileMgr *pIFileMgr = NULL;
+				    FileInfo pInfo = {0};
+				    int len = 0;
+                    uint8 temp[8], *buf = temp;
+                    // Wms Applet 不处理此消息
+                    MSG_FATAL("WAP PUsh Message Recieved and Dropped", 0, 0, 0);
+
+                    result = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_FILEMGR,(void **)&pIFileMgr);
+					if (SUCCESS != result)
+				    {
+						MSG_FATAL("MRS: Open file error %x", result,0,0);
+						goto Exit;
+				    }
+
+					if ((nRet == SUCCESS) &&
+                        (pMe->m_CltTsdata.u.cdma.mask & WMS_MASK_BD_USER_DATA))
+                    {
+                        int len = 0;
+                        uint8 temp[8], *buf = temp;
+                        wms_cdma_user_data_s_type *user_data = &pMe->m_CltTsdata.u.cdma.user_data;
+
+						MSG_FATAL("WAP PUsh Message Decode OK user_data->encoding=%d", user_data->encoding, 0, 0);
+                        if ((user_data->encoding == WMS_ENCODING_IA5) || 
+                            (user_data->encoding == WMS_ENCODING_ASCII))
+                        {
+                            len = wms_ts_unpack_ascii(user_data, 6, (byte *)buf);
+                        }
+                        else if (user_data->encoding == WMS_ENCODING_OCTET)
+                        {
+                            len = user_data->data_len;
+                            buf = user_data->data;
+                        }
+
+                        pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms.txt", _OFM_READWRITE);
+						if ( pIFile != NULL )
+				        {
+				            IFILE_Seek(pIFile, _SEEK_START, 0);
+				            IFILE_Write( pIFile, buf, len);
+
+				            MSG_FATAL("IFILEMGR_OpenFile size=%d",len,0,0);
+				            IFILE_Release( pIFile);
+				            pIFile = NULL;
+				            IFILEMGR_Release(pIFileMgr);
+				            pIFileMgr = NULL;
+				        }
+				        else
+				        {
+							pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms.txt", _OFM_CREATE);
+							if ( pIFile != NULL )
+					        {
+					            IFILE_Write( pIFile, buf, len);
+
+					            MSG_FATAL("IFILEMGR_OpenFile size=%d",len,0,0);
+					            IFILE_Release( pIFile);
+					            pIFile = NULL;
+					            IFILEMGR_Release(pIFileMgr);
+					            pIFileMgr = NULL;
+					        }
+				        }
+                    }			    
+	
+                Exit:
+                	WMSAPPU_SYSFREE(dwParam);
                     return TRUE;
                 }
                 
