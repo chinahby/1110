@@ -9483,12 +9483,14 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTEMOTIONSYMBOL);
 						#endif
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTCONTACT);
+#ifdef FEATURE_USES_MMS                        
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_VIDEO);//add by xuhui 2011/08/01
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_SOUND);//add by xuhui 2011/08/01
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTTEMPLATES);
 						MENU_ADDITEM(pMe->m_pMenu, IDS_SAVETODRAFT);	//Add By zzg 2010_09_11
+#endif						
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SAVEASPRESET);
                         MENU_ADDITEM(pMe->m_pMenu, IDS_EXIT_EDITOR);
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SETTING);
@@ -9561,7 +9563,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 case IDS_INSERTTEMPLATES:
                     CLOSE_DIALOG(DLGRET_INSERTTEMPLATES)
                     return TRUE;
-
+#ifdef FEATURE_USES_MMS
                 case IDS_INSERT_PICTURE:
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer(GALLERY_IMAGE_SETTING, NULL);
@@ -9586,7 +9588,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 case IDS_INSERT_FILE:
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer(GALLERY_FILE_SELECT, NULL);
-#endif                      
+#endif  
+#endif
                     //CLOSE_DIALOG(DLGRET_INSERTFILE)
                     return TRUE;  
                     

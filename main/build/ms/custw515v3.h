@@ -45,6 +45,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifndef TARGSB2_H
    #include "targsbw2.h"
 #endif
+#define FEATURE_USES_MMS //add by xuhui
 
 //#define FEATURE_DATA_STRIP_ATCOP 
 #define FEATURE_STD_MIDI 
