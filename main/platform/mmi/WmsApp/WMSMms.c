@@ -65,7 +65,7 @@
 #include "AEESound.h"
 #include "AEE_OEM.h"
 #include "AEERUIM.h"
-
+#include "OEMCFGI.h"
 #include "WMSMMS.h"
 
 #ifdef FEATURE_USES_MMS
@@ -78,6 +78,10 @@ static int MMS_WSP_GetExpiry(uint8* buf, int iDataLen, int curtime);
 static int MMS_WSP_DecodeLongInteger(uint8* buf, int iDataLen, int* iValue);
 static int MMS_WSP_GetValueLen(uint8* pData, int iDataLen, int* iDataOffset);
 static int MMS_PDU_DecodeEncodedString(uint8* ptr, int datalen,	uint8 ePDUType,	uint8* handle);
+static void MMI_SocketSend(void *pData);
+static void SocketReadableCB(void* pSocketData);
+static void SocketConnect_OnTimeout(void* pData);
+static void ConnectError(void* pDdata, int nError);
 
 
 /*
@@ -844,12 +848,410 @@ int MMS_PDU_DecodeEncodedString(uint8* ptr, int datalen,	uint8 ePDUType,	uint8* 
 
 boolean MMS_GetProxySettings(boolean *bUseProxy,char* hProxyHost, int* iProxyPort)
 {
+	IConfig             *m_pConfig;
+	int 				nRet;
+	CFG_MMsInfo         cfg_mmsinfo = {0};
 	
+	nRet = ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_CONFIG, (void **)&m_pConfig);
+
+	if ( nRet == SUCCESS )
+	{
+		(void)ICONFIG_GetItem(m_pConfig,CFGI_MMS_SETTING,&cfg_mmsinfo,sizeof(CFG_MMsInfo));
+
+		*bUseProxy = cfg_mmsinfo.bUseProxy;
+		*iProxyPort = cfg_mmsinfo.iProxyPort;
+		MEMCPY(hProxyHost,cfg_mmsinfo.hProxyHost,sizeof(cfg_mmsinfo.hProxyHost));
+
+		(void)ICONFIG_Release(m_pConfig);
+        m_pConfig = NULL;
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
-boolean MMS_SetProxySettings(boolean *bUseProxy,char* hProxyHost, int* iProxyPort)
+boolean MMS_SetProxySettings(boolean bUseProxy,char* hProxyHost, int iProxyPort)
 {
+	IConfig             *m_pConfig;
+	int 				nRet;
+	CFG_MMsInfo         cfg_mmsinfo = {0};
+	
+	nRet = ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_CONFIG, (void **)&m_pConfig);
 
+	if ( nRet == SUCCESS )
+	{
+
+		cfg_mmsinfo.bUseProxy = bUseProxy;
+		cfg_mmsinfo.iProxyPort = iProxyPort;
+		MEMCPY(cfg_mmsinfo.hProxyHost,hProxyHost,sizeof(cfg_mmsinfo.hProxyHost));
+		
+		(void)ICONFIG_SetItem(m_pConfig,CFGI_MMS_SETTING,&cfg_mmsinfo,sizeof(CFG_MMsInfo));
+
+		(void)ICONFIG_Release(m_pConfig);
+        m_pConfig = NULL;
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+boolean  MMSSocketNew (MMSSocket **pps, uint16 nType)
+{
+	ISocket* pISocket = NULL;
+	INetMgr *pINetMgr = NULL;
+	MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketNew Enter!"));
+
+	if(pINetMgr == NULL)
+	{
+		if(ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_NET, (void**)&pINetMgr) != SUCCESS)
+			return FALSE;
+	}
+	
+	pISocket = INETMGR_OpenSocket(pINetMgr, AEE_SOCK_STREAM);
+
+	if(pISocket != NULL)
+	{
+		int result = 0;
+		int OptionValue = 0;
+		
+		*pps = MALLOC(sizeof(MMSSocket));
+		if(*pps == NULL)
+		{
+			return FALSE;
+		}
+
+		OptionValue = SOCKET_BUFFER_SIZE;
+		result = ISOCKET_SetOpt(pISocket,
+						AEE_SOL_SOCKET,
+						AEE_SO_RCVBUF,
+						&OptionValue,
+						sizeof(OptionValue));
+		if(result != SUCCESS)
+		{
+			result = ISOCKET_GetLastError(pISocket);
+			MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketNew SetOpt1 = %d!",result));
+			result = 0;
+		}
+
+		OptionValue = SOCKET_BUFFER_SIZE;
+		result = ISOCKET_SetOpt(pISocket,
+						AEE_SOL_SOCKET,
+						AEE_SO_SNDBUF,
+						&OptionValue,
+						sizeof(OptionValue));
+						
+		if(result != SUCCESS)
+		{
+			result = ISOCKET_GetLastError(pISocket);
+			MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketNew SetOpt2 = %d!",result));
+			result = 0;
+		}
+
+		(*pps)->pISocket = pISocket;
+
+		MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketNew Success!"));
+		return TRUE;
+	}
+
+	MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketNew Failed!"));
+	return FALSE;
+}
+
+boolean  MMSSocketClose (MMSSocket **pps)
+{
+	MMSSocket* pSocketInfo = *pps;
+	MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketClose Enter!"));
+	
+	CALLBACK_Cancel(&pSocketInfo->DNSCallback);//cancel DNS callback
+	//ISHELL_CancelTimer(AEE_GetShell(), (PFNNOTIFY)SocketConnect_OnTimeout, (void*)pSocketInfo);
+	
+	if(pSocketInfo->pISocket != NULL)
+	{
+		ISOCKET_Cancel(pSocketInfo->pISocket, NULL, NULL);
+		ISOCKET_Close(pSocketInfo->pISocket);
+		(void)IBASE_Release((IBase*)pSocketInfo->pISocket);
+		pSocketInfo->pISocket = NULL;
+	}
+	
+	return TRUE;
+}
+
+
+static void ConnectError(void* pDdata, int nError)
+{
+	MMSSocket* pUser = (MMSSocket*)pDdata;
+	if ( pUser == NULL )
+	{
+		return;
+	}
+	
+	switch(nError)
+	{
+		case AEE_NET_SUCCESS:
+			MSG_FATAL("ConnectError AEE_NET_SUCCESS",0,0,0);
+			ISOCKET_Readable(pUser->pISocket, SocketReadableCB, pUser);			
+			break;
+		/* Èô³¬Ê±´íÎó, Ôò ... */
+		case AEE_NET_ETIMEDOUT:
+			MSG_FATAL("ConnectError AEE_NET_ETIMEDOUT",0,0,0);
+			break;
+
+		case AEE_NET_ECONNREFUSED:
+			MSG_FATAL("ConnectError AEE_NET_ECONNREFUSED",0,0,0);
+			break;
+			
+		default:
+			MSG_FATAL("ConnectError error: 0x%x",nError,0,0);
+			break; 
+	}
+}
+
+
+boolean  MMSSocketConnect (MMSSocket *ps, char *pszServer, uint16 nPort)
+{
+	INAddr mAddress = 0;
+	INPort mPort = 0;
+	MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketConnect Enter pszServer = %s,nPort = %d!",pszServer,nPort));
+
+#ifdef MMS_TEST
+	if (!INET_ATON("10.0.0.200",&mAddress))
+	{
+		MSG_FATAL("INET_ATON failed!", 0,0,0);
+		return FALSE;
+	}
+#endif
+
+	ISOCKET_Connect(ps->pISocket, mAddress, HTONS((INPort)nPort), ConnectError, (void*)ps);
+	return TRUE;
+}
+
+boolean  MMSSocketRecv (MMSSocket *ps, uint8 *pBuf, uint16 *pLen)
+{
+	MMSSocket* pSocketInfo = ps;
+	MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketRecv Enter!"));
+	
+	MEMCPY(pBuf, pSocketInfo->RecBuffer, pSocketInfo->RecCount);
+	MEMSET(pSocketInfo->RecBuffer, 0, sizeof(pSocketInfo->RecBuffer));
+	
+	*pLen = pSocketInfo->RecCount;
+	pSocketInfo->RecCount = 0;
+	
+	return TRUE;
+}
+
+
+/**
+This function is used to send data over the socket. It is an asynchronous function call,
+with the success or failure of the sending operation being notified via the socket callback.
+
+\param	ps		[in]    The socket object
+\param	pBuf	[in]    The buffer containing the data to send
+\param	nLen	[in]    The length of the above data buffer
+\param	pnID	[out]   A unique ID is returned. This ID is used in the socket callback
+                        to determine whether the data has been successfully sent or not.
+
+\return M4_ESuccess         If all the input arguments are valid. It does not indicate that
+
+\return Whether the send request was accepted
+*/
+boolean  MMSSocketSend (MMSSocket *ps, const uint8 *pBuf, uint16 nLen)
+{
+	int ret = SUCCESS;
+	
+	MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketSend Enter nLen = %d, pBuf = %s",nLen, pBuf));
+
+	if(nLen == 0)
+	{
+		return EFAILED;
+	}
+
+	ps->pSendData = (uint8*)MALLOC(nLen);
+	if ( ps->pSendData == NULL )
+	{
+		return ENOMEMORY;
+	}
+	MEMCPY(ps->pSendData,pBuf,nLen);
+
+	ISOCKET_Writeable(ps->pISocket, MMI_SocketSend, ps);
+
+	return ret;
+}
+
+static void MMI_SocketSend(void *pData)
+{
+	MMSSocket *pUserData = (MMSSocket*)pData;
+	int32 bytes_written = 0;
+	uint32 nLen = pUserData->nDataLen - pUserData->nBytesSent;
+	
+	MSG_FATAL("[MSG][DeviceSocket]: MMI_SocketSend Enter nLen = %d,pSocketInfo->nBytesSent=%d",nLen,pUserData->nBytesSent,0);
+	
+	if(nLen > 0)
+	{
+		bytes_written = ISOCKET_Write(pUserData->pISocket,
+								pUserData->pSendData + pUserData->nBytesSent,
+								nLen);
+		MSG_FATAL("[MSG][DeviceSocket]: MMI_SocketSend Enter nLen = %d,bytes_written = %d",nLen,bytes_written,0);
+	}
+	
+	if(bytes_written > 0)
+	{
+		//reset the timeout timer
+		if((uint32)bytes_written < nLen)
+		{
+			pUserData->nBytesSent += (uint16)bytes_written;
+		}
+		else if((uint32)bytes_written == nLen)
+		{
+			//client may destroy socket in M4_SOCKETNOTIFICATION_RECEIVE synchronously
+			//so we must register call-back first, otherwise the pointer may invaliable
+			MSG_FATAL("[MSG][DeviceSocket]: MMI_SocketSend Send-Queue Empty!",0,0,0);
+			//ISOCKET_Readable(pUserData->pISocket, SocketReadableCB, pSocketInfo);
+			return;
+		}
+	}
+	else if(bytes_written == AEE_NET_ERROR)
+	{
+		int nError = 0;
+
+		nError = ISOCKET_GetLastError(pUserData->pISocket);
+		MSG_FATAL("[MSG][DeviceSocket]: MMI_SocketSend nError = %d", nError,0,0);
+
+		return;
+	}
+	else
+	{
+		//do nothing
+	}
+
+	if(pUserData->pSendData!= NULL)
+	{
+		ISOCKET_Writeable(pUserData->pISocket, MMI_SocketSend, pUserData);
+	}
+	else
+	{
+		MSG_FATAL("[MSG][DeviceSocket]: MMI_SocketSend Send-Queue Empty!",0,0,0);
+	}
+}
+
+static void SocketConnect_OnTimeout(void* pData)
+{
+	MMSSocket* pSocketInfo = (MMSSocket*)pData;
+	MMS_DEBUG(("[MSG][DeviceSocket]: SocketConnect_OnTimeout!"));
+}
+
+static void SocketReadableCB(void *pSocketData)
+{
+	MMSSocket* pData = (MMSSocket*)pSocketData;
+	int i;
+	MSG_FATAL("[MSG][DeviceSocket]: SocketReadableCB Enter!",0,0,0);
+    
+	if(pData == NULL)
+	{
+		return;
+	}
+	else if(pData->pISocket == NULL)
+	{
+		return;
+	}
+	
+	pData->RecCount = (uint16)ISOCKET_Read(pData->pISocket, pData->RecBuffer, MSG_MAX_PACKET_SIZE);
+	MSG_FATAL("[MSG][DeviceSocket]: SocketReadableCB Enter pSocketInfo->RecCount = %d!",pData->RecCount,0,0);
+
+	if(pData->RecCount > 0)
+	{
+		//reset the timeout timer
+		MSG_FATAL("[MSG][DeviceSocket]: SocketReadableCB Enter!",0,0,0);
+
+		pData->NoDataCount = 0;
+
+		if(pData->RecCount > 0)
+		{
+		#ifdef MMS_TEST	
+			IFile* pIFile = NULL;
+		    IFileMgr *pIFileMgr = NULL;
+		    int result = 0;
+    
+			result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+			if (SUCCESS != result)
+		    {
+				MSG_FATAL("MRS: Open file error %x", result,0,0);
+				return;
+		    }
+
+		    pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/out.txt", _OFM_READWRITE);
+			if ( pIFile != NULL )
+	        {
+	            IFILE_Seek(pIFile, _SEEK_START, 0);
+	            IFILE_Write( pIFile, pData->RecBuffer, pData->RecCount);
+
+	            MSG_FATAL("IFILEMGR_OpenFile pSocketInfoTag.RecCount=%d",pData->RecCount,0,0);
+	            IFILE_Release( pIFile);
+	            pIFile = NULL;
+	            IFILEMGR_Release(pIFileMgr);
+	            pIFileMgr = NULL;
+	        }
+	        else
+	        {
+				pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/out.txt", _OFM_CREATE);
+				if ( pIFile != NULL )
+		        {
+		            IFILE_Write( pIFile, pData->RecBuffer, pData->RecCount);
+
+		            MSG_FATAL("IFILEMGR_OpenFile pSocketInfoTag.RecCount=%d",pData->RecCount,0,0);
+		            IFILE_Release( pIFile);
+		            pIFile = NULL;
+		            IFILEMGR_Release(pIFileMgr);
+		            pIFileMgr = NULL;
+		        }
+	        }
+		}
+	#endif
+		//client may destroy socket in M4_SOCKETNOTIFICATION_RECEIVE synchronously
+		//so we must register call-back first, otherwise the pointer may invaliable
+		if(pData != NULL && pData->pISocket != NULL)
+		{
+			ISOCKET_Readable(pData->pISocket, SocketReadableCB, pData);
+		}
+
+		return;
+	}
+	else if(pData->RecCount == AEE_NET_WOULDBLOCK)
+	{
+		pData->RecCount = 0;
+		pData->NoDataCount = 0;
+	}
+	else if(pData->RecCount == AEE_NET_ERROR)
+	{
+		int err = 0;
+		
+		err = ISOCKET_GetLastError(pData->pISocket);
+		MSG_FATAL("[MSG][DeviceSocket]: SocketReadableCB err = %d!",err,0,0);
+		
+		pData->RecCount = 0;
+		pData->NoDataCount = 0;
+
+		return;
+	}
+	else if(pData->RecCount == 0)
+	{
+		pData->NoDataCount++;
+
+		MSG_FATAL("[MSG][DeviceSocket]: SocketReadableCB Enter pSocketInfo->NoDataCount = %d!",pData->NoDataCount,0,0);
+
+		//when the RecCount equal to zero three times continiously,
+		//to ensure the connection is closed
+		if(pData->NoDataCount > 3)
+		{
+			return;
+		}
+	}
+
+	//client may destroy socket in M4_SOCKETNOTIFICATION_RECEIVE synchronously
+	if(pData != NULL && pData->pISocket != NULL)
+	{
+		MSG_FATAL("[MSG][DeviceSocket]: SocketReadableCB setSocketReadableCB!",0,0,0);
+		ISOCKET_Readable(pData->pISocket, SocketReadableCB, pData);
+	}
 }
 
 #endif

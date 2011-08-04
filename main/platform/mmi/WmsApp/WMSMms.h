@@ -17,6 +17,7 @@
 时       间      修 改 人     修改内容、位置及原因
 -----------      ----------   -----------------------------------------------
 2011-07-30       wangliang            初始版本
+2011-08-04       wangliang            增加数据发送和接受接口，已经设置和获取代理的接口
 ==============================================================================*/
 
 /*==============================================================================
@@ -26,6 +27,10 @@
 ==============================================================================*/
 #include "AEE.h"              // Standard AEE Declarations
 #include "AEEShell.h"         // AEE Shell Services
+#include "AEENet.h"
+
+#define MMS_TEST
+/////////////////////////////////////////////////////////////
 
 #define MMS_DELREP_STATUS_FLAG_NOREQ 0x0000
 #define MMS_DELREP_STATUS_FLAG_NORCV 0x0001
@@ -207,7 +212,63 @@ typedef union _wsp_decoder_data_
 
 #define MMS_DECODER_ERROR_VALUE	0xFFFF
 #define MMS_INT_MAX		0X7FFFFFFF
+///////////////////////////////////////////////////////////////////////////////////////
 
+
+#define MSG_MAX_PACKET_SIZE		(6*1024)//MUST bigger than max header length, because client must send whole header in singal packet
+#define SOCKET_BUFFER_SIZE		(30*1024)
+#define SENDDATAQUEUE_SIZE		(5)
+#define NOQUEUESLOTAVAILABLE	(-1)
+#define SOCKET_CONNECT_TIMER	(2*60000)// 2 min
+
+typedef struct tag_MSocket
+{
+	int16 RecCount;
+	uint8 RecBuffer[MSG_MAX_PACKET_SIZE];
+
+	boolean				bConnected;
+	ISocket*		    pISocket;
+	INPort				Port;
+	uint8				*pSendData;
+	uint16				nDataLen;
+	uint16				nBytesSent;
+
+	uint16 NoDataCount;
+
+	AEEDNSResult DNSResult;
+	AEECallback DNSCallback;
+}MMSSocket;
+
+/**
+Called to create a new socket, according to the input type.
+The newly-created socket object is returned as an out parameter
+
+\param	pps		[out]   The newly created socket object is returned in this parameter.
+\param	nType	[in]    Indicates the socket type. For the IM workshop this will always be  MG4SOCKTYPE_STREAM
+
+\return ETrue if a new socket is created
+*/
+boolean  MMSSocketNew(MMSSocket **pps, uint16 nType);
+boolean  MMSSocketClose(MMSSocket **pps);
+boolean  MMSSocketConnect (MMSSocket *ps, char *pszServer, uint16 nPort);
+
+/**
+This function is used to send data over the socket. It is an asynchronous function call,
+with the success or failure of the sending operation being notified via the socket callback.
+
+\param	ps		[in]    The socket object
+\param	pBuf	[in]    The buffer containing the data to send
+\param	nLen	[in]    The length of the above data buffer
+\param	pnID	[out]   A unique ID is returned. This ID is used in the socket callback
+                        to determine whether the data has been successfully sent or not.
+
+\return M4_ESuccess         If all the input arguments are valid. It does not indicate that
+
+\return Whether the send request was accepted
+*/
+boolean  MMSSocketSend (MMSSocket *ps, const uint8 *pBuf, uint16 nLen);
+boolean  MMSSocketRecv (MMSSocket *ps, uint8 *pBuf, uint16 *pLen);
+//////////////////////////////////////////////////////////////////////////////
 int MMS_PDU_PutMessageClass(int in_MessageClass, int* out_MessageClass);
 int MMS_PDU_PutDeliveryReport(int in_DelRep, int* out_DelRep);
 int MMS_PDU_PutPriority(int in_priority, int* out_priority);
@@ -219,5 +280,5 @@ int MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8* ePDU
 
 
 boolean MMS_GetProxySettings(boolean *bUseProxy,char* hProxyHost, int* iProxyPort);
-boolean MMS_SetProxySettings(boolean *bUseProxy,char* hProxyHost, int* iProxyPort);
+boolean MMS_SetProxySettings(boolean bUseProxy,char* hProxyHost, int iProxyPort);
 #endif
