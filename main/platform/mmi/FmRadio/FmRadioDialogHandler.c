@@ -528,6 +528,17 @@ static void tuneVolumeByLeftRightArrowKeyCloseCb( CFmRadio* pMe)
 	repaint( pMe, FALSE);
 }
 #endif
+static void MsgTimeOutSetchannel( CFmRadio* pMe)
+{
+    setChannelTo( pMe, convertChannelValueFromText( pMe->directInputChannel));
+    ITEXTCTL_SetActive( pMe->pText, FALSE);
+    moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
+}
+static void MsgTimeOut( CFmRadio* pMe)
+{
+    ITEXTCTL_SetActive( pMe->pText, FALSE);
+    moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
+}
 
 static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
 {
@@ -884,11 +895,16 @@ __handleKeyEvent_input_channel_done__:
 				ITEXTCTL_GetText( pMe->pText, pMe->directInputChannel, sizeof( pMe->directInputChannel));
 				if( channelNumberIsvalid( pMe->directInputChannel))
 				{
-					setChannelTo( pMe, convertChannelValueFromText( pMe->directInputChannel));
+                    FmRadio_ShowMsgBoxDialog( pMe, FMRADIOLS_RES_FILE_LANG,IDS_FMRADIO_CHANNEL_EDIT_TURE,0, NULL,-1);
+                    (void) ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY)MsgTimeOutSetchannel,pMe);
 				}
-
-				ITEXTCTL_SetActive( pMe->pText, FALSE);
-				moveOperationModeTo( pMe, FM_RADIO_OPMODE_PLAY);
+                else
+                {
+                    FmRadio_ShowMsgBoxDialog( pMe, FMRADIOLS_RES_FILE_LANG,IDS_FMRADIO_CHANNEL_EDIT_ERROR,0,NULL,-1);
+                    (void) ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY)MsgTimeOut,pMe);
+                }
+               
+				
 			}
           
 #endif
