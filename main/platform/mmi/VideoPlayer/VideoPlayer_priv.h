@@ -103,7 +103,7 @@
 #define SETTIME_SHORT            300
 
 // 定义的字符串数组最大长度
-#define  MAX_STR_LEN             64
+#define  MAX_STR_LEN             128//64
 
 //图片中名字显示区域的最大像素值
 #define  MAX_NAME_LEN            120//167
