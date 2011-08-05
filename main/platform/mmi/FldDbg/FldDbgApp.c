@@ -1545,7 +1545,7 @@ static boolean CFieldDebug_VersionMenuHandleEvent(CFieldDebug *pme,
          {
             (void) CFieldDebug_MoveToDialog(pme, IDD_TOP_DIALOG);
          }
-#ifdef FEATURE_VERSION_W515V3 
+#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T) 
          else if (pme->m_dlgID == IDD_VERSION_DIALOG)
          {
             //ISHELL_CloseApplet(pme->a.m_pIShell, FALSE); // This return the EditNum dialog
