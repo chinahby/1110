@@ -42,7 +42,7 @@
 	</String>
 	
 	<String Id="1050" Name="IDS_STATICAPP_TITLE_FLEXI_FGAUL">
-		<Text>FCampus</Text>
+		<Text>Komunitas</Text>
 	</String>
 	<String Id="1051" Name="IDS_STATICAPP_TITLE_FLEXI_FACEBOOK">
 		<Text>Facebook</Text>
