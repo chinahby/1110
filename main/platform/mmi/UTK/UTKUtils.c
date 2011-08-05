@@ -739,6 +739,26 @@ void UTK_SendTerminalProfile (void)
                         UIM_TK_TERMINAL_PROFILE_DATA_LENGTH);
                     
                     /* Fill bit fields for command data */
+					#if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
+					 uim_cmd_ptr->terminal_profile.data[0]  |=
+                        ( UIM_TK_B1_PROFILE_DOWNLOAD | UIM_TK_B1_CDMA_SMS_PP_DOWNLOAD|UIM_TK_B1_MENU_SELECTION|UIM_TK_B1_CDMA_SMS_PP_DOWNLOAD2);
+					uim_cmd_ptr->terminal_profile.data[1]  |= 
+						(UIM_TK_B2_COMMAND_RESULT|UIM_TK_B2_DISPAY_EXTENSION_TEXT);
+                    uim_cmd_ptr->terminal_profile.data[2]  |=
+                        ( UIM_TK_B3_DISPLAY_TEXT | UIM_TK_B3_GET_INKEY | UIM_TK_B3_GET_INPUT | UIM_TK_B3_MORE_TIME | UIM_TK_B3_POLL_INTERVAL | UIM_TK_B3_POLLING_OFF | UIM_TK_B3_REFRESH);
+					uim_cmd_ptr->terminal_profile.data[3] |=
+						( UIM_TK_B4_SELECT_ITEM | UIM_TK_B4_SEND_SHORT_MSG | UIM_TK_B4_SETUP_CALL | UIM_TK_B4_SETUP_MENU | UIM_TK_B4_PROVIDE_LOCAL_INFO_MCC | UIM_TK_B4_PROVIDE_LOCAL_INFO_NMR);
+					uim_cmd_ptr->terminal_profile.data[4]  |=  UIM_TK_B5_SETUP_EVENT_LIST;
+					uim_cmd_ptr->terminal_profile.data[8]  |=  
+                        (UIM_TK_B9_DISPLAY_TEXT | UIM_TK_B9_PROVIDE_LOCAL_INFO_ACC_TECH | UIM_TK_B9_PROVIDE_LOCAL_INFO_LANG | UIM_TK_B9_PROVIDE_LOCAL_INFO_TIMING | UIM_TK_B9_PROVIDE_LOCAL_INFO_NMR);
+                    uim_cmd_ptr->terminal_profile.data[9]  |=  (UIM_TK_B10_SOFT_KEYS_SELECT_ITEM | UIM_TK_B10_SOFT_KEYS_SETUP_MENU);
+
+					uim_cmd_ptr->terminal_profile.data[17] |=
+                        ( UIM_TK_B18_DISP_TEXT_VAR_TIME_OUT | UIM_TK_B18_GET_INKEY_W_HELP );
+					
+					uim_cmd_ptr->terminal_profile.data[19] |=
+                        ( UIM_TK_B20_CDMA_SEND_SMS | UIM_TK_B20_CDMA_SMS_PP_DOWNLOAD );
+					#else
                     uim_cmd_ptr->terminal_profile.data[0]  |=
                         ( UIM_TK_B1_PROFILE_DOWNLOAD | UIM_TK_B1_CDMA_SMS_PP_DOWNLOAD );
 
@@ -754,10 +774,13 @@ void UTK_SendTerminalProfile (void)
                     uim_cmd_ptr->terminal_profile.data[9]  |=  (UIM_TK_B10_SOFT_KEYS_SELECT_ITEM | UIM_TK_B10_SOFT_KEYS_SETUP_MENU);
                     uim_cmd_ptr->terminal_profile.data[19] |=
                         ( UIM_TK_B20_CDMA_SEND_SMS | UIM_TK_B20_CDMA_SMS_PP_DOWNLOAD );
-                    
+                    #endif
+                   
+					
                     for(i=0; i<UIM_TK_TERMINAL_PROFILE_DATA_LENGTH; i++)
                     {
             			MSG_FATAL("uim_cmd_ptr->terminal_profile.data[%d] = 0x%x",i,uim_cmd_ptr->terminal_profile.data[i],0);
+						//uim_cmd_ptr->terminal_profile.data[i] = 0xff;
                     }
                     
                     /* Clear the signal */
