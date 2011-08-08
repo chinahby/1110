@@ -5479,7 +5479,7 @@ void          (*task_wait_handler)( rex_sigs_type )
 #endif
 #endif
 #else
-#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_W023)
 	gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_LOW_VALUE);
 #else
 	gpio_out(SIM_SEL,(GPIO_ValueType)GPIO_HIGH_VALUE);
