@@ -2277,7 +2277,14 @@ static void hideChannelEditingScreen( CFmRadio *pMe)
 
                 ITEXTCTL_SetActive( pMe->pText, FALSE);
                 pMe->channelListMenuSelectedItemId = CHANNEL_LIST_MENU_ITEM_ID_FIRST + pMe->byChannelMax - 1;
-                showChannelList( pMe);
+                //showChannelList( pMe);
+                drawPrompt( pMe,
+                    IDS_FMRADIO_CHANNEL_EDIT_SUCCESS,
+                    BTBAR_NONE,
+                    TRUE
+                );
+
+                ISHELL_SetTimer( pMe->m_pShell, 1200, showChannelList, (void*)pMe);
             }
         }
 
