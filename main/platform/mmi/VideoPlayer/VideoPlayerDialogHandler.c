@@ -1397,7 +1397,7 @@ void  VideoPlayer_InitVideo(CVideoPlayer  *pMe)
 		uiClsId = IMEDIA_GetTotalTime((IMedia*)pMe->m_pMedia); 
 		DBGPRINTF("(void)IMEDIA_GetTotalTime(pMe->m_pMedia); %d",uiClsId);
         (void)IMEDIA_SetVolume((IMedia*)pMe->m_pMedia, pMe->totalvolume); //设置当前音量大小
-        //VideoPlayer_ChangeScrState(pMe,TRUE);
+       // VideoPlayer_ChangeScrState(pMe,TRUE);
     }    
 }
 /*=================================================================================================================
@@ -1423,21 +1423,16 @@ void VideoPlayer_PlayVideo(CVideoPlayer *pMe)
 static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
 {  
     uint16    videoID = 0;
-    FileInfo  pInfo;
+    MGFileInfo  pInfo;
     
     videoID=VideoPlayer_GetFileID(pMe);
-	MSG_FATAL("videoID=%d",pMe->m_RecordCount,0,0);
-    MSG_FATAL("pMe->m_RecordCount=%d",pMe->m_RecordCount,0,0);
     //video放置在指定文件夹外
-    MSG_FATAL("-------->yes3",0,0,0);
     if(videoID >= pMe->m_RecordCount)
     {  
-        MSG_FATAL("videoID >= pMe->m_RecordCount",0,0,0);
         return ;
     }
     else
     {
-    	MSG_FATAL("-------->yes4",0,0,0);
         switch(pMe->m_RecordCount)
         {
             //文件数为0，什么都不做
@@ -1472,7 +1467,6 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
         
             //文件数大于1，播放下一首   
             default:  
-            	MSG_FATAL("-------->yes5",0,0,0);
                 if(! pMe->UserStop)
                 {
                     (void)IMEDIA_Stop((IMedia*)pMe->m_pMedia); 
@@ -1498,8 +1492,7 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
                     }                    
                     else  videoID-=1;
                 } 
-				// YY TODO:
-                //CMediaGallery_GetFileInfoRecord(pMe->m_pFileDB,videoID, (FileInfo*)&pInfo);
+                CMediaGallery_GetFileInfoRecord(pMe->m_pFileDB,videoID, &pInfo);
                 
                 pMe->m_FileToPlay= STRDUP(pInfo.szName);
                 if(pMe->m_pFileDB!=NULL)
@@ -1507,10 +1500,11 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
                     IDATABASE_Release(pMe->m_pFileDB);
                     pMe->m_pFileDB = NULL;
                 }
-           
                 VideoPlayer_InitVideo(pMe);
                 // 如果当前视频为播放状态,则下一首视频也直接置为播放状态;不是,则手动播放                
+               
                 VideoPlayer_PlayVideo(pMe); 
+                
                 if(pMe->IsPause)
                 {
                     IMedia_Pause((IMedia*)pMe->m_pMedia);                    
@@ -1521,7 +1515,6 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
                 }
                 if(pMe->IsFullScreen)
                 {
-				// YY TODO:
 					//MMD_LCDRotate(0);
                     //如果下一首播放成功，则转为全屏，不成功则在正常模式弹出播放失败的弹框
                     if(pMe->m_PlayFailed == SUCCESS)
@@ -2359,7 +2352,7 @@ static void DialogTimeoutCallback(void *pUser)
 // 获取指定视频的名字
 static int VideoPlayer_GetFileID(CVideoPlayer *pMe)
 {   
-    FileInfo  pInfo;
+    MGFileInfo   pInfo;
     uint16    fileID=0;//ufileID;
     
     if(pMe->m_pFileDB!=NULL)
@@ -2376,17 +2369,16 @@ static int VideoPlayer_GetFileID(CVideoPlayer *pMe)
         pMe->m_RecordCount=IDATABASE_GetRecordCount(pMe->m_pFileDB);  
         DBGPRINTF("pMe->m_RecordCount=%s",pMe->m_RecordCount);
     }
+    #if 1
     for(fileID=0;fileID < pMe->m_RecordCount; fileID++)
     {
-		// YY TODO:
-        //CMediaGallery_GetFileInfoRecord(pMe->m_pFileDB,fileID, (FileInfo)&pInfo);  
-            
-       
+        CMediaGallery_GetFileInfoRecord(pMe->m_pFileDB,fileID, &pInfo);  
         if(STRCMP(pInfo.szName,pMe->m_FileToPlay)== 0)
         {
             break;
         }
-    }   
+    }  
+    #endif
 	MSG_FATAL("------>fileID = %d" ,fileID,0,0);
     return fileID;
 
