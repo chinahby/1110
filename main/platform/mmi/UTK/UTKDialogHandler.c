@@ -1304,6 +1304,8 @@ static boolean  IDD_SENDMSG_Handler(CUTK *pMe,
             return TRUE;
             
         case EVT_DIALOG_END:
+			//add by yangdecai 2011-08-09
+			UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_NETWORK_CURRENTLY_UNABLE_TO_PROCESS_COMMAND);
             (void)ISHELL_CancelTimer(pMe->m_pShell, UTKApp_DialogTimeout, pMe);
             return TRUE;
             
@@ -1385,6 +1387,17 @@ static boolean  IDD_SENDMSG_Handler(CUTK *pMe,
             return TRUE;
             
         case EVT_KEY:
+			{
+				//add by yangdecai 2011-08-09
+				switch(wParam)
+				{
+					case AVK_CLR:
+						UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_NETWORK_CURRENTLY_UNABLE_TO_PROCESS_COMMAND);
+						break;
+					default:
+						break;
+				}
+			}
             return TRUE;
             
         default:
