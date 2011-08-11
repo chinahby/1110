@@ -2656,12 +2656,12 @@ static int MGExplorer_GetItemIcon(CFileIcons *pFileIcons,
          //case MG_MIME_AACPLUS:
          // nResID = IDI_MG_UNKNOWN;
          //   break;
-
+//#ifdef T_QSC1110
       case MG_MIME_3GP:
          nResID = IDI_MG_3GPICON;
          ppFileIcon = &pFileIcons->p3GPIcon;
          break;
-
+//#endif
       case MG_MIME_MP4:
          nResID = IDI_MG_MP4ICON;
          ppFileIcon = &pFileIcons->pMp4Icon;

@@ -84,7 +84,10 @@ const static MGExt2Mime SoundFileExt[] = {
 
 const static MGExt2Mime VideoFileExt[] = {
          /*video file extension*/
-         {MG_3GP_EXTENSION, MG_MIME_3GP}, {MG_MPEG4_EXTENSION, MG_MIME_MP4},
+		 #if 1//def T_QSC1110
+         {MG_3GP_EXTENSION, MG_MIME_3GP}, 
+         #endif
+         {MG_MPEG4_EXTENSION, MG_MIME_MP4},
          {MG_WMV_EXTENSION, MG_MIME_WMV}, {MG_PMD_EXTENSION, MG_MIME_PMD},
          {MG_SVG_EXTENSION, MG_MIME_SVG}, {MG_SVGZ_EXTENSION, MG_MIME_SVGZ}
       };

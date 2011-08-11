@@ -100,7 +100,9 @@ typedef enum _MGMimeType{
    MG_MIME_SNDMAX,
 
    MG_MIME_VIDEOBASE = 0x50,
+   #if  1//def T_QSC1110
    MG_MIME_3GP,
+   #endif
    MG_MIME_MP4,
    MG_MIME_PMD,
    MG_MIME_SVG,
