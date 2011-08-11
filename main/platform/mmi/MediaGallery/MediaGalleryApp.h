@@ -239,6 +239,9 @@ typedef enum _MediaDialogStat
    MG_DLGSTAT_IMGZOOM,
    MG_DLGSTAT_IMGMOVE,
    MG_DLGSTAT_UNKNOWN,
+#ifdef FEATURE_USES_MMS
+   MG_DLGSTAT_FORMMS,
+#endif   
    MG_DLGSTAT_MAX,
 }MediaDlgStat;
 
@@ -288,6 +291,9 @@ typedef enum _MediaDialogStat
 #define MG_OP_SORT         0x000D
 #define MG_OP_SELECT       0x000E
 
+#ifdef FEATURE_USES_MMS
+#define MG_OP_FORMMS_IMAGE 0x000F
+#endif
 /*Handle type for finish operation*/
 #define MG_FNSHOP_NULL   0X00000000 /*Do default handle*/
 #define MG_FNSHOP_DONE   0X00000001 /*Show Done message*/
@@ -455,6 +461,9 @@ struct  _CMediaGalleryApp{
    boolean           m_bImgLoadDone;
    boolean           m_videoLoadDone;
    IAnnunciator        *m_pIAnn;
+#ifdef FEATURE_USES_MMS
+   boolean           m_isForMMS;
+#endif
 } ;
 
 /*===========================================================================

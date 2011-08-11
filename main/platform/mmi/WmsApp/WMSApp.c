@@ -529,7 +529,9 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     {
         return EFAILED;
     }
-    
+#ifdef FEATURE_USES_MMS    
+    pMe->m_pMMSImage = NULL;
+#endif
     // 初始化各成员变量
     pMe->m_prevState = WMSST_NONE;
     pMe->m_currState = WMSST_MAIN;
@@ -692,11 +694,20 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
 ==============================================================================*/
 static void CWmsApp_FreeAppData(WmsApp *pMe)
 {
+    MSG_FATAL("CWmsApp_FreeAppData Start",0,0,0);
     if (NULL == pMe)
     {
         return;
     }
-    
+#ifdef FEATURE_USES_MMS
+    if(pMe->m_pMMSImage != NULL)
+    {
+        char MMSImageName[MG_MAX_FILE_NAME]={'/0'};
+        MSG_FATAL("pMe->m_pMMSImage != NULL",0,0,0);
+        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImageName, sizeof(MMSImageName));       
+        RELEASEIF(pMe->m_pMMSImage);
+    }
+#endif    
     pMe->m_eAppStatus = WMSAPP_STOP;
     FREEIF(pMe->m_strPhonePWD);
 
@@ -766,6 +777,7 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
 	    pMe->m_pIRUIM = NULL;
 	}
     WMSAPPU_SYSFREE(pMe->m_msSend.m_szMessage);
+    MSG_FATAL("CWmsApp_FreeAppData End",0,0,0);
 }
 #ifdef FEATURE_CDSMS
 /*=========================================================================

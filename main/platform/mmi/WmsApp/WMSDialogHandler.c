@@ -8764,6 +8764,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 	AECHAR Annstr[20] = {0};
     WmsApp *pMe = (WmsApp *)pUser;
     boolean m_Issetmod = FALSE;
+    MSG_FATAL("IDD_WRITEMSG_Handler Start eCode=0x%x",eCode,0,0);
     if (NULL == pMe)
     {
         return FALSE;
@@ -8783,20 +8784,46 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
     {
         return FALSE;
     }
-    
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
         	{
         		boolean Is_notend = TRUE;
+#ifdef FEATURE_USES_MMS                 
+                char pszPath[MG_MAX_FILE_NAME];
+                pMe->m_pMMSImage = NULL;
+                ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,pszPath, sizeof(pszPath));
+                DBGPRINTF("pszPath=%s len=%d", pszPath, STRLEN(pszPath));
+#endif       
+                MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_INIT",0,0,0);
 	            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
 #if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
 	            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL);
 #else
 	            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 #endif
+#ifdef FEATURE_USES_MMS
+                if(STRLEN(pszPath) != 0)
+                {
+                    AEERect ctlRect;
+                    pMe->m_pMMSImage = ISHELL_LoadImage(pMe->m_pShell,pszPath);
+                    if(pMe->m_pMMSImage != NULL)
+                    {
+                        IIMAGE_SetParm(pMe->m_pMMSImage,IPARM_SCALE, pMe->m_rc.dx/2, pMe->m_rc.dy/2);
+                        MSG_FATAL("m_pMMSImage != NULL",0,0,0);
+                    }
+                    else
+                    {
+                        MSG_FATAL("m_pMMSImage == NULL",0,0,0);
+                    }             
+                    SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
+                    ICONTROL_SetRect((IControl*)pIText, &ctlRect);                    
+                }
+                else
+#endif                
 	            SetControlRect(pMe, pIText);
 	            ICONFIG_GetItem(pMe->m_pConfig,CFGI_WMSWRITD_END_STATUS,&Is_notend,sizeof(Is_notend));
+                MSG_FATAL("Is_notend=%d",Is_notend,0,0);
 	            if(!Is_notend)
 	            {
 	            	uint16 m_nCount = 0;
@@ -8889,6 +8916,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 	            	{
 	                	ITEXTCTL_SetMaxSize ( pIText, WMS_MSG_MAXCHARS);
 	                	(void)ITEXTCTL_SetText(pIText,pMe->m_msSend.m_szMessage,-1);
+                        DBGPRINTF("pMe->m_msSend.m_szMessage=%S", pMe->m_msSend.m_szMessage);
 	            	}
 	            }
 	            
@@ -8974,7 +9002,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 int i;
                 boolean Is_notend;
                 wms_msg_event_info_s_type *Info = (wms_msg_event_info_s_type*)dwParam;
-                MSG_FATAL("...................................200",0,0,0);
+                MSG_FATAL("IDD_WRITEMSG_Handler EVT_WMS_MSG_READ",0,0,0);
                 mem_store = Info->status_info.message.msg_hdr.mem_store;
                 wIdx = Info->status_info.message.msg_hdr.index;
                 pnode = pMe->m_CurMsgNodes[pMe->m_idxCur];
@@ -9137,6 +9165,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
         	}
         	return TRUE;
         case EVT_DIALOG_START:
+            MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_START",0,0,0);
         	pMe->m_bwriteclr = FALSE;
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
@@ -9147,6 +9176,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             return TRUE;
 
         case EVT_USER_REDRAW:
+#ifdef FEATURE_USES_MMS             
+            IDISPLAY_ClearScreen(pMe->m_pDisplay);
+#endif
 			(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_WMSAPPRES_LANGFILE,                                
                         IDS_EDIT,
@@ -9197,6 +9229,29 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 }
             }
             #endif
+#ifdef FEATURE_USES_MMS            
+            if(pMe->m_pMMSImage != NULL)
+            {
+                uint8 x = 0, y = 0;
+                AEEImageInfo pi;
+                IIMAGE_GetInfo(pMe->m_pMMSImage, &pi); 
+                x = (pMe->m_rc.dx - pMe->m_rc.dx/2)/2;
+                y = pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay) + 2;
+                MSG_FATAL("EVT_USER_REDRAW m_pMMSImage != NULL",0,0,0);
+            	if(pi.bAnimated)
+            	{
+            		IIMAGE_Start(pMe->m_pMMSImage, x, y);
+            	}    
+                else
+                {
+                    IIMAGE_Draw(pMe->m_pMMSImage, x, y);
+                }
+            }
+            else
+            {
+                MSG_FATAL("EVT_USER_REDRAW m_pMMSImage == NULL",0,0,0);
+            }
+#endif            
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
             return TRUE; 
             
@@ -9298,7 +9353,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             return TRUE;
 
         case EVT_DIALOG_END:
-			
+            MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_END",0,0,0);            
             if (NULL != pMe->m_pMenu)
             {
                 IMENUCTL_Release(pMe->m_pMenu);
@@ -9442,6 +9497,16 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     #else
                     if (NULL == pMe->m_pMenu)
                     {
+#ifdef FEATURE_USES_MMS
+                       // if(pMe->m_pMMSImage != NULL)
+                        {
+                            char MMSImageName[MG_MAX_FILE_NAME]={'\0'};
+                            DBGPRINTF("MMSImageName=%s len=%d", MMSImageName, STRLEN(MMSImageName));
+                            MSG_FATAL("pMe->m_pMMSImage != NULL",0,0,0);
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImageName, sizeof(MMSImageName));       
+                            RELEASEIF(pMe->m_pMMSImage);
+                        }
+#endif                           
                         CLOSE_DIALOG(DLGRET_CANCELED)
                     }
                     else
@@ -9566,28 +9631,28 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 #ifdef FEATURE_USES_MMS
                 case IDS_INSERT_PICTURE:
 #ifdef FEATURE_APP_MEDIAGALLERY					
-					CMediaGallery_FileExplorer(GALLERY_IMAGE_SETTING, NULL);
+					CMediaGallery_FileExplorer_ForMMS(GALLERY_IMAGE_SETTING, NULL);
 #endif                    
                     //CLOSE_DIALOG(DLGRET_INSERTPICTURE)
                     return TRUE;
 
                 case IDS_INSERT_VIDEO:
 #ifdef FEATURE_APP_MEDIAGALLERY					
-					CMediaGallery_FileExplorer(GALLERY_VIDEO_BROWSE, NULL);
+					CMediaGallery_FileExplorer_ForMMS(GALLERY_VIDEO_BROWSE, NULL);
 #endif                      
                     //CLOSE_DIALOG(DLGRET_INSERTVIDEO)
                     return TRUE;    
 
                 case IDS_INSERT_SOUND:
 #ifdef FEATURE_APP_MEDIAGALLERY					
-					CMediaGallery_FileExplorer(GALLERY_MUSIC_SETTING, NULL);
+					CMediaGallery_FileExplorer_ForMMS(GALLERY_MUSIC_SETTING, NULL);
 #endif                           
                     //CLOSE_DIALOG(DLGRET_INSERTSOUND)
                     return TRUE;
 
                 case IDS_INSERT_FILE:
 #ifdef FEATURE_APP_MEDIAGALLERY					
-					CMediaGallery_FileExplorer(GALLERY_FILE_SELECT, NULL);
+					CMediaGallery_FileExplorer_ForMMS(GALLERY_FILE_SELECT, NULL);
 #endif  
 #endif
                     //CLOSE_DIALOG(DLGRET_INSERTFILE)

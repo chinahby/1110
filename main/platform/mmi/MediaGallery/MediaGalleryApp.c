@@ -24,6 +24,7 @@
 #ifdef FEATURE_APP_MUSICPLAYER
 #include "MusicPlayer.h"
 #endif
+#include"Msg.h"
 /*===========================================================================
  *                      MACRO DECLARATIONs
  * ==========================================================================
@@ -583,7 +584,7 @@ static boolean MediaGalleryApp_ParseStartArgs(CMediaGalleryApp* pMe,
    {
       return TRUE;
    }
-
+   DBGPRINTF("pszStartArg=%s", pszStartArg);
    pszArg = STRDUP(pszStartArg);
 
    if(!pszArg)
@@ -618,7 +619,6 @@ static boolean MediaGalleryApp_ParseStartArgs(CMediaGalleryApp* pMe,
       {
          GalleryType eType;
          MGStartMode       eStartMode = MGSM_NORMAL_EXPLORER;
-
          if(!pMe->m_pFileMgr || !pMe->m_pFolderList)
          {
             bRet =  FALSE;
@@ -627,7 +627,7 @@ static boolean MediaGalleryApp_ParseStartArgs(CMediaGalleryApp* pMe,
 
          pTemp++;
          eType = ATOI(pTemp);
-
+         MSG_FATAL("eType=%d",eType,0,0);
          switch(eType)
          {
          case GALLERY_PHOTO_BROWSE:
@@ -666,7 +666,22 @@ static boolean MediaGalleryApp_ParseStartArgs(CMediaGalleryApp* pMe,
             eStartMode = MGSM_FILE_BROWSE;
             break;
          }
-
+#ifdef FEATURE_USES_MMS  
+         if((eType == GALLERY_IMAGE_SETTING) || (eType == GALLERY_VIDEO_BROWSE)
+          ||(eType == GALLERY_MUSIC_SETTING) || (eType == GALLERY_FILE_SELECT))  
+         {
+             pTemp++;
+             MSG_FATAL("ATOI(pTemp)=%d", ATOI(pTemp+1),0,0);
+             if(ATOI(++pTemp) == 1)
+             {
+                pMe->m_isForMMS = TRUE;
+             }
+             else
+             {
+                pMe->m_isForMMS = FALSE;
+             }
+         }
+#endif
          pTemp = STRRCHR(pszStartArg,',');
          if (NULL != pTemp)
          {
@@ -865,6 +880,43 @@ int32 CMediaGallery_FileExplorer(GalleryType eType, ExplorerPara *pPara)
    return SUCCESS;
 }//CMediaGallery_FileExplorer
 
+
+#ifdef FEATURE_USES_MMS
+int32 CMediaGallery_FileExplorer_ForMMS(GalleryType eType, ExplorerPara *pPara)
+{
+   char pszArg[100];
+   ExplorerPara *pExpPara = NULL;
+   int nRet = EFAILED;
+   if (NULL != pPara)
+   {
+      pExpPara = (ExplorerPara *)sys_malloc(sizeof(ExplorerPara));
+      if(NULL == pExpPara)
+      {
+         MG_FARF(ADDR, ("Allocate memory failed"));
+         return EFAILED;
+      }
+      MEMCPY(pExpPara, pPara, sizeof(ExplorerPara));
+   }
+   
+   MG_FARF(ADDR, ("copy explorer data, later just take pointer"));
+
+   SNPRINTF(pszArg, sizeof(pszArg),
+            "%c,%u,%u,%u",MG_STARTARGPREFIX_FILEEXPLORER,eType,1,pExpPara);
+
+   nRet = ISHELL_StartAppletArgs(AEE_GetShell(),
+                                 AEECLSID_MEDIAGALLERY,
+                                 pszArg);
+   /*If failed to start applet, free the memory*/
+   if(SUCCESS != nRet)
+   {
+      if(pExpPara)
+      {
+          sys_free(pExpPara);
+      }
+   }
+   return SUCCESS;
+}//CMediaGallery_FileExplorer_ForMMS
+#endif
 /*
  * ==========================================================================
  * FUNCTION     :  CMediaGallery_GetTflashStatus

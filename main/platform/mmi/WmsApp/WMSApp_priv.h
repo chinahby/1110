@@ -81,6 +81,10 @@
 #include "OEMSVC.h"
 #endif
 
+#ifdef FEATURE_USES_MMS
+#include "MediaGallery.h"
+#endif
+
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 #define WMSAPP_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 #endif
@@ -822,6 +826,9 @@ typedef struct WmsApp
 	#ifdef FEATURE_FLASH_SMS
 	boolean                         m_bflash_sms;              //add by yangdecai 2011-04-01
 	#endif
+#ifdef FEATURE_USES_MMS      
+    IImage                          *m_pMMSImage;
+#endif    
 } WmsApp;
 
 /*==============================================================================

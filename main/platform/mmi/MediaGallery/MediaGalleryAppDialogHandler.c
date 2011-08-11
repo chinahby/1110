@@ -310,7 +310,15 @@ static int MGAppUtil_HandleOperateFileError(CMediaGalleryApp* pMe,
 static void MGAppUtil_StartUDisk(void *po);
 static void CheckUSBCableConnect_HandleDialogTimer(void *pUser);
 
+#ifdef FEATURE_USES_MMS
+static boolean MGAppPopupMenu_OnSetMMSImage(CMediaGalleryApp *pMe,
+                                             MGFileInfo *pItemData);
+#endif
 
+#ifdef FEATURE_USES_MMS  
+static boolean MGAppUtil_SetMMSImage(CMediaGalleryApp *pMe,
+                                      AEEImageInfo *pImgInfo);
+#endif
 /*===========================================================================
  *                      Public Function Definitions
  *===========================================================================
@@ -335,7 +343,7 @@ boolean MediaGalleryApp_RouteDialogEvent(CMediaGalleryApp* pMe,
    {
       return FALSE;
    }
-
+   MSG_FATAL("MediaGalleryApp_RouteDialogEvent m_nActiveDlgID=%d", pMe->m_nActiveDlgID,0,0);
    switch(pMe->m_nActiveDlgID)
    {
       case IDD_MG_MSGBOX:
@@ -1198,6 +1206,7 @@ static boolean MediaGalleryApp_PhoneMemDlg_HandleEvent(CMediaGalleryApp* pMe,
                         sizeof(WTitle));
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
             }
+         MSG_FATAL("MediaGalleryApp_PhoneMemDlg_HandleEvent init",0,0,0);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_PICTURES);
          MGMENU_ADDITEM(pMenuCtl, IDS_MG_MUSIC);
 #if !defined(FEATRUE_MG_NOHSVIDEO)
@@ -2053,6 +2062,7 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
    {
       case EVT_DIALOG_INIT:
       {
+         MSG_FATAL("MGAppUtil_CreateMediaMenu",0,0,0);
          MGAppUtil_CreateMediaMenu(pMe,  NULL);
 
          return TRUE;
@@ -2082,13 +2092,14 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 #endif
 
 #endif
-
+         MSG_FATAL("MGAppUtil_CreateMediaMenu m_bKeepMediaMenu=%d",pMe->m_bKeepMediaMenu,0,0);
          if(pMe->m_bKeepMediaMenu == FALSE)
          {
             MGAppUtil_StartMediaMenu(pMe, pMenuCtl, eCode, wParam, dwParam);
          }
          else
          {
+            MSG_FATAL("MGAppUtil_CreateMediaMenu m_PopupOps=0X%x",pMe->m_PopupOps,0,0);
             switch(pMe->m_PopupOps)
             {
             case MG_OP_COPY:
@@ -2868,6 +2879,26 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
                                            wParam,
                                            dwParam);
             }
+#ifdef FEATURE_USES_MMS
+            else if(pMe->m_isForMMS)
+            {
+                MGFileInfo *pItemData = NULL;
+                boolean  bRet = TRUE;
+                MSG_FATAL("(pMe->m_isForMMS)",0,0,0);
+                pItemData = MediaGalleryApp_GetCurrentNode(pMe);
+                if(!pItemData)
+                {
+                  MSG_FATAL("On popup menu command: no item data",0,0,0);
+                  return FALSE;
+                }                
+                MediaGalleryApp_SetOps(pMe, MG_OPS_DEFAULT, MG_OP_FORMMS_IMAGE);
+                bRet = MGAppPopupMenu_OnSetMMSImage(pMe, pItemData);   
+                if(bRet)
+                {
+                    MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_DONE);
+                }
+            }
+#endif               
             return TRUE;
 
          case AVK_RIGHT:
@@ -5237,6 +5268,7 @@ static boolean MediaGalleryApp_MusicAddDlg_HandleEvent(CMediaGalleryApp* pMe,
    {
       case EVT_DIALOG_INIT:
       {
+        MSG_FATAL("MGAppUtil_CreateMediaMenu",0,0,0);
          MGAppUtil_CreateMediaMenu(pMe,  NULL);
 
          return TRUE;
@@ -5394,6 +5426,7 @@ static boolean MediaGalleryApp_VideoAddDlg_HandleEvent(CMediaGalleryApp* pMe,
    {
       case EVT_DIALOG_INIT:
          swRecID = 0;
+         MSG_FATAL("MGAppUtil_CreateMediaMenu",0,0,0);
          MGAppUtil_CreateMediaMenu(pMe,  NULL);
 
          return TRUE;
@@ -5629,6 +5662,7 @@ static boolean MediaGalleryApp_ImageSettingDlg_HandleEvent(
    {
       case EVT_DIALOG_INIT:
       {
+         MSG_FATAL("MGAppUtil_CreateMediaMenu",0,0,0);
          MGAppUtil_CreateMediaMenu(pMe,  NULL);
 
          return TRUE;
@@ -5820,6 +5854,7 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
    {
       case EVT_DIALOG_INIT:
       {
+         MSG_FATAL("MGAppUtil_CreateMediaMenu",0,0,0);
          MGAppUtil_CreateMediaMenu(pMe,  NULL);
 
          return TRUE;
@@ -6756,36 +6791,53 @@ static boolean MGAppUtil_UpdateImgViewerSoftkey(CMediaGalleryApp* pMe)
       return FALSE;
 
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
-
-   if(eDlgStat == MG_DLGSTAT_IMGZOOM)
-   {
+#ifdef FEATURE_USES_MMS
+    if(pMe->m_isForMMS)
+    {
       MGAppUtil_DrawSoftkeyOverImage(pMe,
                                      MGRES_LANGFILE,
                                      0,
-                                     IDS_MG_ZOOM,
+                                     IDS_MG_SELECT,
                                      0);
 
       MGAppUtil_DrawSoftkeyOverImage(pMe,
                                      APPSCOMMON_RES_LANG_FILE,
                                      0,
                                      0,
-                                     IDS_BACK);
-   }
-   else
-   {
-      if( eDlgStat == MG_DLGSTAT_NORMAL &&
-         (pMe->m_bImgLoadDone == TRUE))
-      {
-         nLeftResID = IDS_OPTION;
-      }
+                                     IDS_BACK);        
+    }
+    else
+#endif
+    {
+       if(eDlgStat == MG_DLGSTAT_IMGZOOM)
+       {
+          MGAppUtil_DrawSoftkeyOverImage(pMe,
+                                         MGRES_LANGFILE,
+                                         0,
+                                         IDS_MG_ZOOM,
+                                         0);
 
-      MGAppUtil_DrawSoftkeyOverImage(pMe,
-                                     APPSCOMMON_RES_LANG_FILE,
-                                     nLeftResID,
-                                     0,
-                                     IDS_BACK);
-   }
+          MGAppUtil_DrawSoftkeyOverImage(pMe,
+                                         APPSCOMMON_RES_LANG_FILE,
+                                         0,
+                                         0,
+                                         IDS_BACK);
+       }
+       else
+       {
+          if( eDlgStat == MG_DLGSTAT_NORMAL &&
+             (pMe->m_bImgLoadDone == TRUE))
+          {
+             nLeftResID = IDS_OPTION;
+          }
 
+          MGAppUtil_DrawSoftkeyOverImage(pMe,
+                                         APPSCOMMON_RES_LANG_FILE,
+                                         nLeftResID,
+                                         0,
+                                         IDS_BACK);
+       }
+    }
    IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 
    return TRUE;
@@ -9233,7 +9285,11 @@ static void MGAppUtil_LoadImageNotify(void *pUser,
                   pMe->m_PopupOps, pMe->m_ImgViewOps));
 
    if(pMe->m_PopupOps == MG_OP_VIEWIMG &&
-      pMe->m_ImgViewOps != MG_OP_WALLPAPER)
+      pMe->m_ImgViewOps != MG_OP_WALLPAPER
+#ifdef FEATURE_USES_MMS      
+      && pMe->m_ImgViewOps != MG_OP_FORMMS_IMAGE
+#endif      
+      )
    {
       MGAppUtil_RedrawImage(pMe, pi, FALSE);
    }
@@ -9242,7 +9298,13 @@ static void MGAppUtil_LoadImageNotify(void *pUser,
    {
       MGAppUtil_SetWallpaper(pMe, pi);
    }
-
+#ifdef FEATURE_USES_MMS  
+    else if (pMe->m_PopupOps == MG_OP_FORMMS_IMAGE ||
+             pMe->m_ImgViewOps == MG_OP_FORMMS_IMAGE)
+    {
+       MGAppUtil_SetMMSImage(pMe, pi);
+    }
+#endif
 }//MGAppUtil_LoadImageNotify
 
 
@@ -10073,4 +10135,234 @@ static	int MGAppUtil_ReadMusiclist(CMediaGalleryApp *pMe , char *curFileName,boo
     return SUCCESS;
 }
 
+
+#ifdef FEATURE_USES_MMS
+static boolean MGAppPopupMenu_OnSetMMSImage(CMediaGalleryApp *pMe,
+                                             MGFileInfo *pItemData)
+{
+   MGFileInfo *pSelData = pItemData;
+   IConfig *pConfig = NULL;
+   if(!pMe)
+      return FALSE;
+
+   if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                       AEECLSID_CONFIG,
+                                       (void **)&pConfig))
+   {
+      MSG_FATAL("Create config interface failed",0,0,0);
+      return FALSE;
+   }
+
+   if(pSelData->dwSize >= MG_WALLPAPER_MAX)
+   {
+      MediaGalleryApp_ShowPromptMsgBox(pMe,
+                                       IDS_MG_LARGEFILE,
+                                       MESSAGE_ERR,
+                                       BTBAR_BACK);
+
+      return TRUE;
+   }
+
+   if(pMe->m_PopupOps != MG_OP_VIEWIMG)
+   {
+      if(NULL == pSelData)
+      {
+         pSelData = MediaGalleryApp_GetCurrentNode(pMe);
+      }
+
+      if(!pSelData || !pSelData->szName)
+      {
+         MSG_FATAL("Data is invalidate",0,0,0);
+         return FALSE;
+      }
+      
+      // Check the image size, too small or to large are not permit. And the
+      //animate image also do not permit
+      RELEASEIF(pMe->m_pImage);
+      pMe->m_pImage = ISHELL_LoadImage(pMe->m_pShell, pSelData->szName);
+      if(pMe->m_pImage)
+      {
+          IIMAGE_GetInfo(pMe->m_pImage, &pMe->m_ImgInfo);
+      }
+   }
+   else if(pMe->m_ImgViewOps != MG_OP_FORMMS_IMAGE)
+   {
+      return FALSE;
+   }
+
+   MSG_FATAL("PopupOps is %d, ImgViewOps is %d", pMe->m_PopupOps, pMe->m_ImgViewOps,0);
+   if(pMe->m_pImage)
+   {
+      /*
+       * if call IIMAGE_Notify for png, bmp, it will be async, if for it
+       * is sync. So we must set status before call IIMAGE_Notify */
+       DBGPRINTF("pSelData->szName=%s", pSelData->szName);
+       pMe->m_bImgLoadDone = FALSE;
+       ICONFIG_SetItem(pConfig, CFGI_MMSIMAGE,
+                       pSelData->szName, sizeof(pSelData->szName));      
+    //  IIMAGE_Notify(pMe->m_pImage, MGAppUtil_LoadImageNotify, pMe);
+   }
+   else
+   {
+      /* 由于ISHELL_LoadImage只用文件名的扩展名来判断是否是图片，如果不是，
+       * 就不LoadImage。例如：对于长文件名，把扩展名截掉了，我们用
+       * ISHELL_LoadImage就不成功。*/
+      MediaGalleryApp_ShowPromptMsgBox(pMe,
+                                       IDS_MG_LOADFAILED,
+                                       MESSAGE_ERR,
+                                       BTBAR_BACK);
+
+      MSG_FATAL("IImage interface is 0x%x", pMe->m_pImage,0,0);
+      return FALSE;
+   }
+   return TRUE;
+}//MGAppPopupMenu_OnSetWallpaper
+
+static boolean MGAppUtil_SetMMSImage(CMediaGalleryApp *pMe,
+                                      AEEImageInfo *pImgInfo)
+{
+   IConfig *pConfig = NULL;
+   MGFileInfo *pSelData;   
+   
+   //add by miaoxiaoming
+   AEEImageInfo myInfo;	   
+   IBitmap *pIBitmap = NULL;
+   char BmpFileName[MG_MAX_FILE_NAME];
+   int ret = EFAILED;
+   
+   if(NULL == pMe||pMe->m_pImage==NULL)
+   {
+      return FALSE;
+   }
+
+   pSelData = MediaGalleryApp_GetCurrentNode(pMe);
+
+   if(NULL == pSelData)
+   {
+      MG_FARF(STATE, ("ERR, LoadMediaNotify"));
+      return FALSE;
+   }
+
+   if(FALSE == MGAppUtil_WallpaperSettingCheck(NULL, pImgInfo, pMe->m_pShell))
+   {
+      MediaGalleryApp_ShowPromptMsgBox(pMe,
+                                       IDS_MG_WALLPAPERNOSET,
+                                       MESSAGE_INFORMATION,
+                                       BTBAR_BACK);
+      return FALSE;
+   }
+   
+   if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+                                       AEECLSID_CONFIG,
+                                       (void **)&pConfig))
+   {
+      MG_FARF(ADDR, ("Create config interface failed"));
+      return FALSE;
+   }
+
+	IImage_GetInfo(pMe->m_pImage,&myInfo);
+#ifdef FEATURE_BREW_SCALE
+	//MSG_FATAL("pMe->m_rc.dx=%d pMe->m_rc.dy=%d",pMe->m_rc.dx,pMe->m_rc.dy,0);
+	//MSG_FATAL("myInfo.cx=%d myInfo.cy=%d",myInfo.cx,myInfo.cy,0);
+    if(myInfo.cy > 0 && myInfo.cx > 0)
+    {
+#if 1    
+        if((myInfo.cx*1000)/myInfo.cy > (pMe->m_rc.dx*1000)/pMe->m_rc.dy)
+        {
+            myInfo.cx = (myInfo.cx*pMe->m_rc.dy)/myInfo.cy;
+            myInfo.cy = pMe->m_rc.dy;
+        }
+        else
+        {
+            myInfo.cy = (myInfo.cy*pMe->m_rc.dx)/myInfo.cx;
+            myInfo.cx = pMe->m_rc.dx;
+        }
+
+        IImage_SetParm(pMe->m_pImage,
+               IPARM_SCALE,
+               myInfo.cx,
+               myInfo.cy);
+#else
+
+        IImage_SetParm(pMe->m_pImage,
+                       IPARM_SCALE,
+                       pMe->m_rc.dx,
+                       pMe->m_rc.dy);
+#endif
+    }
+		
+	//MSG_FATAL("myInfo.cx=%d myInfo.cy=%d",myInfo.cx,myInfo.cy,0);
+#endif
+
+    ret = ImageExplorer_ImageToBmp(pMe->m_pDisplay,pMe->m_pImage,&pIBitmap,myInfo.cx,myInfo.cy);
+    if (ret != SUCCESS)
+	{
+		
+		RELEASEIF(pConfig);
+		if (pMe->m_pImage!=NULL)
+		{
+			IImage_Release(pMe->m_pImage);
+		}
+		if (NULL != pIBitmap)
+		{
+			IBase_Release((IBase *)pIBitmap);
+		}
+		
+		MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_ERROR);
+		return FALSE;
+	}
+
+	ICONFIG_GetItem(pConfig, CFGI_MMSIMAGE,
+					BmpFileName, sizeof(BmpFileName));
+#if 0    
+	if(STRNCMP(BmpFileName,HEXING_OEM_WALLPAPER1,STRLEN(HEXING_OEM_WALLPAPER1))!=0)
+	{		
+		MSG_FATAL("HEXING_OEM_WALLPAPER2",0,0,0);
+		STRCPY(BmpFileName,HEXING_OEM_WALLPAPER1);	
+	}
+	else
+	{
+		MSG_FATAL("HEXING_OEM_WALLPAPER2",0,0,0);
+        STRCPY(BmpFileName,HEXING_OEM_WALLPAPER2);	
+	}
+#endif
+		
+	ret = ImageExplorer_WriteDIBFile(pMe->m_pShell,BmpFileName,pIBitmap);
+    if (ret != SUCCESS)
+	{		
+		RELEASEIF(pConfig);
+		if (pMe->m_pImage!=NULL)
+		{
+			IImage_Release(pMe->m_pImage);
+		}
+		if (NULL != pIBitmap)
+		{
+			IBase_Release((IBase *)pIBitmap);
+		}
+		
+		MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_ERROR);
+		return FALSE;
+	}
+	
+	if (NULL != pIBitmap)
+	{
+		IBase_Release((IBase *)pIBitmap);
+	}
+	
+	//MSG_FATAL("MGAppUtil_SetWallpaper Leave",0,0,0);
+   
+   ICONFIG_SetItem(pConfig, CFGI_MMSIMAGE,
+                   BmpFileName, sizeof(BmpFileName));
+
+   MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_DONE);
+
+   RELEASEIF(pConfig);
+   if(pMe->m_PopupOps == MG_OP_WALLPAPER)
+   {
+      RELEASEIF(pMe->m_pImage);
+   }
+   return TRUE;
+}
+
+#endif
 /* ===================== End of File ===================================== */

@@ -680,7 +680,9 @@ typedef struct
    #ifdef FEATURE_LONG_NETLOCK
    boolean netlock_flg;
    #endif
-
+#ifdef FEATURE_USES_MMS   
+   char  s_MMSImage[AEE_MAX_FILE_NAME];     //CFGI_WALLPAPER
+#endif
 } OEMConfigListType;
 
 
@@ -1784,7 +1786,9 @@ static OEMConfigListType oemi_cache = {
    #ifdef FEATURE_LONG_NETLOCK
    ,0
    #endif
-
+#ifdef FEATURE_USES_MMS   
+   ,{OEMNV_MMSIMAGE}
+#endif   
 };
 
 ////
@@ -2319,6 +2323,9 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    #ifdef FEATURE_LONG_NETLOCK
    CFGTABLEITEM(CFGI_NET_LOCK_FLAGS,sizeof(boolean)),
    #endif
+#ifdef FEATURE_USES_MMS   
+   CFGTABLEITEM_EMPTY(CFGI_MMSIMAGE) ,
+#endif   
 };
 #endif
 
@@ -2715,7 +2722,9 @@ void OEM_RestoreFactorySetting( void )
        byte restore_beep_level[PROFILENUMBER] = OEMNV_BEEP_VOL_INIT;
        MEMCPY((void *) oemi_cache.p_beep_level,(const void * )restore_beep_level,sizeof(restore_beep_level));       
   }
-  
+#ifdef FEATURE_USES_MMS   
+   MEMCPY(oemi_cache.s_MMSImage,OEMNV_MMSIMAGE, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
+#endif  
    //ÆÁ±£Ê±¼ä
    oemi_cache.p_screensaver_time=0; 
    oemi_cache.restrict_incoming = 0;
@@ -4542,6 +4551,11 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 #endif        
         return SUCCESS;
     }    
+#ifdef FEATURE_USES_MMS
+    case CFGI_MMSIMAGE:
+      MEMCPY((void *)pBuff, (void *)oemi_cache.s_MMSImage, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      return AEE_SUCCESS;
+#endif      
    default:
       return(EUNSUPPORTED);
 
@@ -5499,6 +5513,16 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 #endif
         return SUCCESS;
     }   
+
+#ifdef FEATURE_USES_MMS
+   case CFGI_MMSIMAGE:
+      if(!pBuff) return EFAILED;
+      DBGPRINTF("pBuff=%s", (char*)pBuff);
+      MEMSET((void *)oemi_cache.s_MMSImage,'\0', AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      MEMCPY((void *)oemi_cache.s_MMSImage, (void *)pBuff, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      OEMPriv_WriteOEMConfigList();
+      return AEE_SUCCESS;
+#endif
 
    default:
       return(EUNSUPPORTED);

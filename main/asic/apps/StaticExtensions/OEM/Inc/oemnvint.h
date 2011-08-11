@@ -307,6 +307,10 @@ typedef PACKED struct _Key_pad_Cfg
 #ifdef FEATURE_SCREEN_SAVE
 #define  OEMNV_SCREENSAVE_TYPE "\\image\\wallpaper\\w1.bmp"
 #endif
+
+#ifdef FEATURE_USES_MMS
+#define  OEMNV_MMSIMAGE    ""
+#endif
 /*
 
 */

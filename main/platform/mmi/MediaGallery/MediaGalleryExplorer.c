@@ -1845,7 +1845,7 @@ __inline int MGExplorer_UpdateMediaMenuTitle(CMediaGalleryApp *pMe,
    MGMimeType     eMimeBase;
    AECHAR m_Annstr[40] = {0};
 
-
+   MSG_FATAL("MGExplorer_UpdateMediaMenuTitle Start",0,0,0);
    if(!pMe || !pMenuCtl){
       return EFAILED;
    }
@@ -1899,7 +1899,10 @@ __inline int MGExplorer_UpdateMediaMenuTitle(CMediaGalleryApp *pMe,
             else if(eStartMode == MGSM_VIDEO_ADD)
                nResID = IDS_MG_VIDEOS;
             else if(eStartMode == MGSM_IMAGE_SETTING)
+            {
+               MSG_FATAL("eStartMode == MGSM_IMAGE_SETTING",0,0,0);
                nResID = IDS_MG_PICTURES;
+            }
             else if(eStartMode == MGSM_MUSIC_SETTING)
                nResID = IDS_MG_MUSIC;
             else
