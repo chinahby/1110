@@ -86,10 +86,10 @@
 		<Text>Search</Text>
 	</STRING>	
 	<STRING Id="1029" Name="IDS_FMRADIO_CHANNEL_EDIT_TURE">
-		<Text>Input Ture</Text>
+		<Text>OK</Text>
 	</STRING>	
 	<STRING Id="1030" Name="IDS_FMRADIO_CHANNEL_EDIT_ERROR">
-		<Text>Input Error</Text>
+		<Text>Not OK</Text>
 	</STRING>	
 	<STRING Id="1031" Name="IDS_FMRADIO_CHANNEL_EDIT_SUCCESS">
 		<Text>Add Success</Text>
