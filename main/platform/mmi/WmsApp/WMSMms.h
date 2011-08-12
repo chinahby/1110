@@ -189,8 +189,8 @@ typedef enum _mms_message_type_
 	MMS_MESSAGE_JPG,
 	MMS_MESSAGE_GIF,
 	MMS_MESSAGE_BMP,
-	MMS_MESSAGE_VIDEO,
-	MMS_MESSAGE_SOUND,
+	MMS_MESSAGE_3GP,
+	MMS_MESSAGE_MID,
 }MMS_MESSAGE_TYPE;
 /*
 ** 收到的彩信内容
@@ -261,7 +261,7 @@ typedef struct _wsp_encoder_data_sent
 	uint8 hTo[MMS_MAX_SINGLE_ADDRESS_SIZE];
 	uint8 hSubject[MMS_MAX_SUBJECT_SIZE];
 	uint8 hCc[MMS_MAX_SINGLE_ADDRESS_SIZE];
-	uint8 FilePath[MMS_MAX_FILE_NAME_PATH];
+	char FilePath[MMS_MAX_FILE_NAME_PATH];
 	uint8 Text[MMS_MAX_TEXT_SIZE];
 	MMS_MESSAGE_TYPE  bMsgType;
 	boolean bIsText;
@@ -275,6 +275,20 @@ typedef union _wsp_decoder_data_
 	MMS_WSP_DEC_READREP_RECEIVED		readrep;
 	MMS_WSP_DEC_SEND_CONF				sendconf;
 }MMS_WSP_DEC_DATA;
+
+
+typedef enum _HTTP_METHOD_TYPE_
+{
+	HTTP_METHOD_OPTIONS = 0,
+	HTTP_METHOD_GET,
+	HTTP_METHOD_HEAD,
+	HTTP_METHOD_POST,
+	HTTP_METHOD_PUT,
+	HTTP_METHOD_DELETE,
+	HTTP_METHOD_TRACE,
+	HTTP_METHOD_CONNECT,
+	HTTP_METHODS
+}HTTP_METHOD_TYPE;
 
 #define MMS_DECODER_ERROR_VALUE	0xFFFF
 #define MMS_INT_MAX		0X7FFFFFFF
@@ -340,7 +354,7 @@ int MMS_PDU_PutDeliveryReport(int in_DelRep, int* out_DelRep);
 int MMS_PDU_PutPriority(int in_priority, int* out_priority);
 int MMS_PDU_PutDeliveryReportStatus(int in_Status, int* out_Status);
 
-
+int MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen);
 int MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata,uint8* hPDU, int* hLen, uint8 ePDUType);
 int MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8* ePDUType);
 int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  uint8* hContentType, uint8* hBody,int* iBodyLen);
