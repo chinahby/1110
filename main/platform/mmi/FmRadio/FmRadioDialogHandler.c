@@ -2279,7 +2279,11 @@ static void hideChannelEditingScreen( CFmRadio *pMe)
                 pMe->channelListMenuSelectedItemId = CHANNEL_LIST_MENU_ITEM_ID_FIRST + pMe->byChannelMax - 1;
                 //showChannelList( pMe);
                 drawPrompt( pMe,
+                	#if defined(FEATURE_VERSION_S1000T)||defined(FEATURE_VERSION_W515V3)
+					IDS_FMRADIO_CHANNEL_EDIT_TURE,
+					#else
                     IDS_FMRADIO_CHANNEL_EDIT_SUCCESS,
+                    #endif
                     BTBAR_NONE,
                     TRUE
                 );
