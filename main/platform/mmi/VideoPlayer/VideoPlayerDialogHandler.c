@@ -996,6 +996,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 }
                 if(!pMe->IsFullScreen)
                 {
+                    
                     VideoPlayer_RefreshPlayingTick(pMe);//刷新时间
                     VideoPlayer_RefreshScheduleBar(pMe);//刷新播放进度
 #if 0
@@ -1031,14 +1032,13 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 #endif
 					pMe->m_rtype = TYPE_KUAITUI;
                     IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-                    (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateFRButton, pMe);            
+                    //(void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateFRButton, pMe);            
                 }
             }
             return TRUE;     
                
         //播放上一首   
         case AVK_LEFT: 
-			MSG_FATAL("-------->yes1",0,0,0);
             if(! pMe->m_IsPlaynext)
             {
                 return TRUE;
@@ -1053,6 +1053,7 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 #if 0   
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_BEFORE_SELECT, VIDEOPLAYER_PREVIOUS_X, VIDEOPLAYER_PREVIOUS_Y); //画按键按下去的小图标
 #endif
+                pMe->bOldTime=0;
                 pMe->m_rtype = TYPE_PREVIOUS;
                 IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
                 (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);//100ms后画按钮弹起的图
@@ -1067,24 +1068,21 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
        
         //播放下一首   
         case AVK_RIGHT:  
-			MSG_FATAL("-------->yes2pMe->m_IsPlaynext=%d",pMe->m_IsPlaynext,0,0);
             if(! pMe->m_IsPlaynext)
             {
                 return TRUE;
             }
             ISHELL_SetTimer(pMe->m_pShell,APPISREADY_TIMER,VideoPlayer_APPIsReadyTimer,pMe);
-			MSG_FATAL("pMe->m_bAppIsReady======%d",pMe->m_bAppIsReady,0,0);
             if(! pMe->m_bAppIsReady)
             {
                 return TRUE;
             }
-			MSG_FATAL("pMe->IsFullScreen======%d",pMe->IsFullScreen,0,0);
             if(!pMe->IsFullScreen)
             { 
 #if 0            
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NEXT_SELECT, VIDEOPLAYER_NEXT_X, VIDEOPLAYER_NEXT_Y);//画按键按下去的小图标  
 #endif
-				MSG_FATAL("play next.................111",0,0,0);
+                pMe->bOldTime=0;
 				pMe->m_rtype = TYPE_NEXT;
                 IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
                 (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);//100ms后画按钮弹起的图
@@ -1092,7 +1090,6 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
             }            
             else if(!pMe->IsPause)//全屏播放状态
             {
-                MSG_FATAL("play next.................",0,0,0);
                 VideoPlayer_PlayNext(pMe, TRUE); 
             }
             pMe->m_bAppIsReady=FALSE;
@@ -1756,6 +1753,16 @@ static void VideoPlayer_RefreshScheduleBar(CVideoPlayer *pMe)
     SETAEERECT(&Rc,pi.cx-9,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块最终位置    
     #endif
     ma=Rc.x-rc.x;//滑块可以移动的长度，26个像素  
+    if(pMe->bCurrentTime == 0)
+    {
+        pMe->bCurrentTime=pMe->bOldTime;
+    }
+    else
+    {
+        pMe->bOldTime=pMe->bCurrentTime;
+    }
+
+        
     if(pMe->bTotalTime == 0)
     {
         Clip.x=rc.x;        
@@ -1768,7 +1775,8 @@ static void VideoPlayer_RefreshScheduleBar(CVideoPlayer *pMe)
     if(pMe->bCurrentTime > pMe->bTotalTime)
     {
         Clip.x=Rc.x;        
-    }  
+    }
+
     //VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_GLIDER, Clip.x, 174);
     
     IDISPLAY_GetClipRect(pMe->m_pDisplay, &OldClip);//restore clip rect

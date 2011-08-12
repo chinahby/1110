@@ -357,6 +357,7 @@ static int VideoPlayer_InitAppData(CVideoPlayer *pMe)
     pMe->PauseLock      = FALSE; 
     pMe->bCurrentTime   = 0;
     pMe->bTotalTime     = 0;
+    pMe->bOldTime       = 0;
     pMe->m_IsPlaynext   = FALSE;
     pMe->IsPause        = FALSE;
     pMe->IsFullScreen   = FALSE;

@@ -739,6 +739,8 @@ typedef struct _CVideoPlayer
     
     //正播放时  的时间
     uint32           bCurrentTime;
+
+    uint32           bOldTime;
    
     //暂停时的时间
     uint32           m_bPauseTime;
