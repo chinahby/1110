@@ -227,7 +227,8 @@ static void getCursorPosX( CWorldTime* pme,boolean left)
     int          timeZone   = pme->m_timeZone;
 
     IIMAGE_GetInfo( pme->m_pImageBar, &ii);
-#ifndef WIN32//wlh 临时修改
+	#if 1
+	#ifndef WIN32//wlh 临时修改
     switch( timeZone)
     {
         case 12:
@@ -275,8 +276,60 @@ static void getCursorPosX( CWorldTime* pme,boolean left)
 			}
             break;
     }
-    pme->m_xBar  = pme->m_xBar < 0 ? 0 : pme->m_xBar;
-#endif//WIN32
+
+	#endif//WIN32
+	#else
+	switch( timeZone)
+    {
+        case 0:
+			pme->m_xBar = pme->m_widthBg - ii.cx / 2;
+            pme->m_xBar = pme->m_widthBg / 2 + ii.cx / 2;
+            break;
+
+        case 1:
+            pme->m_xBar = pme->m_widthBg / 2 + ii.cx;
+            break;
+
+        case -11:
+            pme->m_xBar = 0;
+            break;
+
+        case -10:
+            pme->m_xBar = pme->m_widthBg - ii.cx / 2;
+            break;
+
+        default:
+			if(pme->m_ismyatime ||(pme->m_isMya))
+			{
+				timeZone ++;
+				pme->m_xBar =(int)( (pme->m_widthBg / 24.0 * timeZone ) + 0.5)+3;
+			}
+            else if(pme->m_isIndia)
+            {
+                timeZone ++;
+                if(left)
+                {
+                    pme->m_xBar =(int)( (pme->m_widthBg / 24.0 * timeZone ) + 0.5)-3;
+                }
+                else
+                {
+                    pme->m_xBar =(int)( (pme->m_widthBg / 24.0 * timeZone ) + 0.5)+3;
+                }
+            }
+			else
+			{
+	            if( timeZone < 0)
+	            {
+	                timeZone += 25;
+	            }
+	            timeZone ++;
+	            pme->m_xBar =(int)( (pme->m_widthBg / 24.0 * timeZone ) + 0.5);
+			}
+            break;
+    }
+	#endif
+	pme->m_xBar  = pme->m_xBar < 0 ? 0 : pme->m_xBar;
+
 }
 
 /*=============================================================================
