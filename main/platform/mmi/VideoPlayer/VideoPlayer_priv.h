@@ -593,6 +593,7 @@ typedef enum DLGRetValue
     //DLGRET_DELETE,              //是否删除界面,IDD_DELETE   
     DLGRET_MSGBOX,              //消息弹窗，IDD_MSGBOX
     DLGRET_OK,                  //对话框关闭时可返回的通用值
+    DLGRET_FAILD,
     DLGRET_CANCELED
 }DLGRetValue;
 

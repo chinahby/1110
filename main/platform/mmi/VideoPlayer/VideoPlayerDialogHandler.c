@@ -33,6 +33,7 @@
 //#include "appscommon_color.brh"
 #include "appscommon.brh"
 
+extern boolean b_is_GetFrame;
 
 boolean        FullScreen = FALSE;
 /*=================================================================================================================
@@ -676,7 +677,7 @@ static boolean  VPDMSGBOX_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint16 wP
             {
                 PromptMsg_Param_type PromptMsg={0}; 
     
-                if(pMe->m_nMsgResID==IDS_PLAYFAILED)
+                if(pMe->m_nMsgResID==IDS_PLAYFAILED || pMe->m_nMsgResID==IDS_PLAYFORMATFAILD)
                 {
                     DBGPRINTF("message");
                     PromptMsg.ePMsgType = MESSAGE_ERR;
@@ -710,7 +711,7 @@ static boolean  VPDMSGBOX_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint16 wP
             return TRUE;
         
         case EVT_KEY:           
-            if(pMe->m_nMsgResID != IDS_PLAYFAILED)
+            if(pMe->m_nMsgResID != IDS_PLAYFAILED || pMe->m_nMsgResID!=IDS_PLAYFORMATFAILD)
             {
                 switch(wParam)
                 {
@@ -740,7 +741,7 @@ static boolean  VPDMSGBOX_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint16 wP
             //return VPDMSGBOX_HandleKeyEvent(pMe,eCode,wParam,dwParam);            
 
         case EVT_DISPLAYDIALOGTIMEOUT:            
-            if(pMe->m_nMsgResID==IDS_PLAYFAILED)
+            if(pMe->m_nMsgResID==IDS_PLAYFAILED|| pMe->m_nMsgResID==IDS_PLAYFORMATFAILD)
             {
                 CLOSE_DIALOG(DLGRET_CANCELED);
             }
@@ -1404,10 +1405,12 @@ void VideoPlayer_PlayVideo(CVideoPlayer *pMe)
 {     
     if(pMe->m_pMedia)
     {  
-    	DBGPRINTF("YY Said : Play!!! ");
+    	MSG_FATAL("VideoPlayer_PlayVideo YY Said : Play!!! ",0,0,0);
     	VideoPlayer_ChangeScrState(pMe,TRUE);
+		b_is_GetFrame = FALSE;
         pMe->m_PlayFailed = IMEDIA_Play((IMedia*)pMe->m_pMedia);//播放  
         SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_ON);
+		MSG_FATAL("b_is_GetFrame===========%d",b_is_GetFrame,0,0);
     }      
 } 
                     
@@ -2304,7 +2307,19 @@ static void VideoPlayer_VideoNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify
                                
             //播放的时候每秒会发上来一次
             case MM_STATUS_TICK_UPDATE: 
-                pMe->bCurrentTime=((uint32)pCmdNotify->pCmdData) / 1000;   
+				MSG_FATAL("b_is_GetFrame========%d",b_is_GetFrame,0,0);
+				
+                pMe->bCurrentTime=((uint32)pCmdNotify->pCmdData) / 1000;  
+				if(!b_is_GetFrame && pMe->bCurrentTime>0)
+				{
+					if(pMe->IsGallery)
+            		{
+                		VPDVideoPlayer_HandleKeyEvent(pMe,EVT_KEY,AVK_CLR,0); 
+            		}
+					CLOSE_DIALOG(DLGRET_FAILD)
+					break;
+				}
+				MSG_FATAL("pMe->bCurrentTime==%d",pMe->bCurrentTime,0,0);
                 if(!pMe->IsFullScreen)
                 {
                     VideoPlayer_RefreshScheduleBar(pMe);//刷新进度条

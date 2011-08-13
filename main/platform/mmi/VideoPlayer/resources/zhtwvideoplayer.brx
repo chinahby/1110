@@ -16,6 +16,12 @@
 	<String Id="1013" Name="IDS_HELP">
 		<Text>上下键: 调整音量大小\nGallery:\n查找视频文件\n注意:\n在全屏观看时，按任意键回到一般播放状态</Text>
 	</String>
+	<String Id="1014" Name="IDS_FILENAMETOOLONG">
+		<Text>FileName too long</Text>
+	</String>	
+	<STRING Id="1015" Name="IDS_PLAYFORMATFAILD">
+		<Text>Play Format Failed</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_OPTION" Focus="7001">

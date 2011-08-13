@@ -243,8 +243,13 @@ static NextFSMAction StatePlayerHandler(CVideoPlayer *pMe)
             MOVE_TO_STATE(STATE_OPTION)
             return NFSMACTION_CONTINUE;
 #endif
+
         case DLGRET_CANCELED:
             MOVE_TO_STATE(STATE_EXIT)
+            return NFSMACTION_CONTINUE;
+		case DLGRET_FAILD:
+			VideoPlayer_ShowMsgBox(pMe,IDS_PLAYFORMATFAILD);
+			MOVE_TO_STATE(STATE_MSGBOX)
             return NFSMACTION_CONTINUE;
         
         default:

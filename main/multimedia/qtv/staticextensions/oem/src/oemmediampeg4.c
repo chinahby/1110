@@ -97,6 +97,8 @@ static OEMCriticalSection gcmCriticalSection;
 #define AEEIID_BITMAPCTL AEEIID_IBitmapCtl
 #endif
 
+boolean b_is_GetFrame = FALSE;
+
 int nMdpFramePendingCounter = 0;
 #ifndef T_QSC1110 // Gemsea Add
 extern void disp_lock_screen(word start_row,word num_row,word start_column,word num_column);
@@ -1302,6 +1304,7 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
 #if defined(FEATURE_BMP_ACM)
 #error code not present
 #endif 
+	MSG_FATAL("OEMMediaMPEG4_GetMediaParm.nParmID===%d",nParmID,0,0);
 
    if (pOEM == NULL) 
    {
@@ -1347,9 +1350,12 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
          break;
 
       case MM_PARM_FRAME:
+	  	 MSG_FATAL("MM_PARM_FRAME..............0000",0,0,0);
+		 
          if ((p1 == NULL && p2 == NULL) ||
              (p1 != NULL && p2 != NULL))
          { /* Invalid parameters */
+            MSG_FATAL("MM_PARM_FRAME..............1111",0,0,0);
             return EFAILED;
          }
 
@@ -1363,7 +1369,10 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
             IBitmap* pFrame;
             /* The standard GetFrame does not care about extended info
                so just pass a NULL for extended info ptr-ptr */
+            MSG_FATAL("OEMMediaMPEG42PV_GetFrame..............1111",0,0,0);
+			b_is_GetFrame = TRUE;
             nRet = OEMMediaMPEG42PV_GetFrame(&pFrame, NULL, pOEM);
+			MSG_FATAL("b_is_GetFrame========%d",b_is_GetFrame,0,0);
             if (nRet == SUCCESS)
             {
                *(IBitmap**)p1 = pFrame;
@@ -1392,6 +1401,7 @@ static int OEMMediaMPEG4_GetMediaParm(IMedia * po, int nParmID, int32 * p1, int3
          Retrieve the extended frame info pointer in addition to the frame 
          pointer that is returned for the standard MM_PARM_FRAME
          -------------------------------------------------------------------*/
+         MSG_FATAL("MM_MP4_PARM_FRAME_EXT..............",0,0,0);
          if (p1 == NULL || p2 == NULL) 
          { /* Invalid params. Extended frame info requires both frame and
               extended frame info ptrs. */

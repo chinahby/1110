@@ -20,6 +20,12 @@
     <String Id="5" Name= "IDS_HELP">
         <Text>"المفتاح لأعلى ولأسفل: ضبط مستوى الصوت.\nالمعرض: البحث عن ملفات الفيديو في الدليل.\nملاحظة: في وضع ملء الشاشة، اضغط على أي مفتاح للرجوع."</Text>
     </String>
+    <String Id="1014" Name="IDS_FILENAMETOOLONG">
+		<Text>FileName too long</Text>
+	 </String>	
+	 <STRING Id="1015" Name="IDS_PLAYFORMATFAILD">
+		 <Text>Play Format Failed</Text>
+	 </STRING>
 
 </Strings>
 <Dialogs>
