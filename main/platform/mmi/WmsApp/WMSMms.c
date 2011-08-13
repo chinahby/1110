@@ -84,12 +84,12 @@ static void SocketConnect_OnTimeout(void* pData);
 static void ConnectError(void* pDdata, int nError);
 static int MMS_Encode_header(uint8* mms_context,uint8 *phonenum, uint8 *subject);
 static int MMS_WSP_Encode_UINTVAR(uint8* buf, int val);
-static int MMS_Encode_MsgBody(MMS_WSP_ENCODE_SEND* encdata,char* hPDU, int* hLen);
+static int MMS_Encode_MsgBody(uint8* hPDU, int hLen, boolean isText);
 static int MMS_CreateSmilFile(uint8* encbuf,MMS_MESSAGE_TYPE type);
 static int MMS_GetFileContent(uint8* encbuf,char* FileName,MMS_MESSAGE_TYPE type);
 static int MMS_EncodeText(uint8* encbuf,uint8 *text,int len);
 
-#define POST_TEST ("POST http://mmsc.vnet.mobi HTTP/1.1\r\nHost:10.0.0.200:80\r\nAccept-Charset:utf-8\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nContent-Length:3109\r\nUser-Agent: Nokia6235/1.0 (S190V0200.nep) UP.Browser/6.2.3.2 MMP/2.0\r\nx-wap-profile: \"http://nds1.nds.nokia.com/uaprof/N6235r200.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n";)
+#define POST_TEST ("POST http://mmsc.vnet.mobi HTTP/1.1\r\nHost:10.0.0.200:80\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: Nokia6235/1.0 (S190V0200.nep) UP.Browser/6.2.3.2 MMP/2.0\r\nx-wap-profile: \"http://nds1.nds.nokia.com/uaprof/N6235r200.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
 /*
 ** 彩信里面用到的数据类型
 */
@@ -235,12 +235,12 @@ static int MMS_Encode_header(uint8* mms_context,uint8 *phonenum, uint8 *subject)
 	//To(0x97)
 	addresslen = STRLEN((char*)phonenum) + STRLEN(addresstype);
 	*pCurPos = 0x97; pCurPos++;
-	*pCurPos = addresslen; pCurPos++;
 	STRNCPY((char*)pCurPos,(char*)phonenum,STRLEN((char*)phonenum));
 	pCurPos += STRLEN((char*)phonenum);
 	STRNCPY((char*)pCurPos,addresstype,STRLEN(addresstype));
 	pCurPos += STRLEN(addresstype);
 	*pCurPos = 0x00; pCurPos++;
+
 
 	//subject
 	len = STRLEN((char*)subject);
@@ -261,24 +261,25 @@ static int MMS_Encode_header(uint8* mms_context,uint8 *phonenum, uint8 *subject)
 			*pCurPos = l; pCurPos++;
 		}
 
-		*pCurPos = 0x0b; pCurPos++;/*Charset - UTF-8*/
+		//*pCurPos = 0x0b; pCurPos++;/*Charset - UTF-8*/
+		*pCurPos = 0xea; pCurPos++;
 		STRNCPY((char*)pCurPos,(char*)subject,STRLEN((char*)subject));
 		pCurPos += STRLEN((char*)subject);
 		*pCurPos = 0x00; pCurPos++;
 	}
-	
+
 	//后面为数据部分
 	return (int)(pCurPos - (uint8*)mms_context);
 }
 
-static int MMS_Encode_MsgBody(MMS_WSP_ENCODE_SEND* encdata,char* hPDU, int* hLen)
+static int MMS_Encode_MsgBody(uint8* hPDU, int hLen, boolean isText)
 {
 	int head_length = 0;
 	int file_length = 0;
 	int sub_head_length = 0;
 	int content_size = 0;
 	
-	uint8* pCurPos = (uint8*)hPDU;
+	uint8* pCurPos = hPDU;
 
 	//Msg body
 	*pCurPos = 0x84; pCurPos++;
@@ -318,20 +319,16 @@ static int MMS_Encode_MsgBody(MMS_WSP_ENCODE_SEND* encdata,char* hPDU, int* hLen
 
 	// -------------- files -------------- //
 	//file count, smil file is one
-	if ( encdata->bIsText )
+	if ( isText )
 	{
 		*pCurPos = 0x03; pCurPos++;	//part number
 	}
 	else
 	{
 		*pCurPos = 0x02; pCurPos++;	//part number
-	}
+	}	
 
-	//head length
-	//file length
-	//sub head length
-	//content
-	
+	return (int)(pCurPos-hPDU);
 }
 
 static int MMS_EncodeText(uint8* encbuf,uint8 *text,int len)
@@ -808,7 +805,7 @@ static int MMS_CreateSmilFile(uint8* encbuf,MMS_MESSAGE_TYPE type)
 	//add Content-Location
 	*pCurPos = 0x8e; pCurPos++;
 	STRNCPY((char*)pCurPos,"ArSmil.smil",11);
-	pCurPos += 5;
+	pCurPos += 11;
 	*pCurPos = 0x00; pCurPos++;
 
 	if ( type == MMS_MESSAGE_PNG )
@@ -818,27 +815,27 @@ static int MMS_CreateSmilFile(uint8* encbuf,MMS_MESSAGE_TYPE type)
 	}
 	else if ( type == MMS_MESSAGE_JPG )
 	{
-		STRNCPY((char*)pCurPos,MMS_PNG_SMIL_FILE,STRLEN(MMS_JPG_SMIL_FILE));
+		STRNCPY((char*)pCurPos,MMS_JPG_SMIL_FILE,STRLEN(MMS_JPG_SMIL_FILE));
 		pCurPos += STRLEN(MMS_JPG_SMIL_FILE);
 	}
 	else if ( type == MMS_MESSAGE_GIF )
 	{
-		STRNCPY((char*)pCurPos,MMS_PNG_SMIL_FILE,STRLEN(MMS_GIF_SMIL_FILE));
+		STRNCPY((char*)pCurPos,MMS_GIF_SMIL_FILE,STRLEN(MMS_GIF_SMIL_FILE));
 		pCurPos += STRLEN(MMS_GIF_SMIL_FILE);
 	}
 	else if ( type == MMS_MESSAGE_BMP )
 	{
-		STRNCPY((char*)pCurPos,MMS_PNG_SMIL_FILE,STRLEN(MMS_BMP_SMIL_FILE));
+		STRNCPY((char*)pCurPos,MMS_BMP_SMIL_FILE,STRLEN(MMS_BMP_SMIL_FILE));
 		pCurPos += STRLEN(MMS_BMP_SMIL_FILE);
 	}
 	else if ( type == MMS_MESSAGE_3GP )
 	{
-		STRNCPY((char*)pCurPos,MMS_PNG_SMIL_FILE,STRLEN(MMS_3GP_SMIL_FILE));
+		STRNCPY((char*)pCurPos,MMS_3GP_SMIL_FILE,STRLEN(MMS_3GP_SMIL_FILE));
 		pCurPos += STRLEN(MMS_3GP_SMIL_FILE);
 	}
 	else if ( type == MMS_MESSAGE_MID )
 	{
-		STRNCPY((char*)pCurPos,MMS_PNG_SMIL_FILE,STRLEN(MMS_MID_SMIL_FILE));
+		STRNCPY((char*)pCurPos,MMS_MID_SMIL_FILE,STRLEN(MMS_MID_SMIL_FILE));
 		pCurPos += STRLEN(MMS_MID_SMIL_FILE);
 	}
 	
@@ -848,6 +845,51 @@ static int MMS_CreateSmilFile(uint8* encbuf,MMS_MESSAGE_TYPE type)
 int MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen)
 {
 	
+}
+
+int MMS_SEND_TEST(uint8 *buffer)
+{
+	uint8 buf[5*1024] = {0};
+	int head_len = 0;
+	int size = 0;
+	uint8 *pCurPos = buf;
+
+	head_len = MMS_Encode_header(pCurPos,(uint8*)"+8615986838642",(uint8*)"123456789");
+
+	MMS_DEBUG(("[MMS] MMS_Encode_header head_len = %d",head_len));
+	
+	pCurPos += head_len;
+
+	head_len = MMS_Encode_MsgBody(pCurPos,0,FALSE);
+
+	MMS_DEBUG(("[MMS] MMS_Encode_MsgBody head_len = %d",head_len));
+	
+	pCurPos += head_len;
+	
+	head_len =	MMS_CreateSmilFile(pCurPos,MMS_MESSAGE_JPG);
+
+	MMS_DEBUG(("[MMS] MMS_CreateSmilFile head_len = %d",head_len));
+	
+	pCurPos += head_len;
+	
+	head_len = MMS_GetFileContent(pCurPos,"fs:/hsmm/pictures/1.jpg",MMS_MESSAGE_JPG);
+
+	MMS_DEBUG(("[MMS] MMS_GetFileContent head_len = %d",head_len));
+	
+	pCurPos += head_len;
+
+	size = (int)(pCurPos-buf);
+
+	MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
+	SNPRINTF((char*)buffer,MSG_MAX_PACKET_SIZE,POST_TEST,size);
+
+	MMS_DEBUG(("POST_TEST:%s",buffer));
+	head_len = STRLEN((char*)buffer);
+	MMS_DEBUG(("[MMS] POST_TEST head_len = %d",head_len));
+	
+	MEMCPY((char*)(buffer+head_len),buf,size);
+
+	return (head_len+size);
 }
 
 int MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, int* hLen, uint8 ePDUType)
