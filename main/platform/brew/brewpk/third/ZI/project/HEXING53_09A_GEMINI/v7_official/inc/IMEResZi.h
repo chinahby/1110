@@ -63,29 +63,21 @@
 #ifndef _IME_Res_Zi_H_
 #define _IME_Res_Zi_H_
 // __CUSTPACK_MULTIBIN     Terry   BEGIN
-#if defined __MMI_ZI_V7__
+
 //PMT ZIV7 PATCH 20060616 START
-#if defined __LARGE_CHINESE_DB_V7__
-#if defined(__MMI_ZI_TR_CHINESE__) && defined(__MMI_ZI_SM_CHINESE__)
-#include "Zi8DatZH_Pans_Large.h"
-#elif defined(__MMI_ZI_TR_CHINESE__)
-#include "Zi8DatZH_TW_Large.h"
-#elif defined(__MMI_ZI_SM_CHINESE__)
-#include "Zi8DatZH_Prc_Large.h"
-#endif
-#else
+
 #if defined(__MMI_ZI_TR_CHINESE__) && defined(__MMI_ZI_SM_CHINESE__)
 #include "Zi8DatZH_Pan.h"
 #elif defined(__MMI_ZI_TR_CHINESE__)
 #include "Zi8DatZH_TW.h"
 #elif defined(__MMI_ZI_SM_CHINESE__)
-#include "Zi8DatZH_Prc.h"
+//#include "Zi8DatZH.c"
 #endif
-#endif
+
 //PMT ZIV7 PATCH 20060616 END
-#if defined(__MMI_ZI_PRC_ENGLISH__)
-#include "Zi8DatENPRC.h"
-#elif defined(__MMI_ZI_UK_ENGLISH__)
+//#if defined(__MMI_ZI_PRC_ENGLISH__)
+
+#if defined(__MMI_ZI_UK_ENGLISH__)
 #include "Zi8DatENUK.h"
 #elif defined(__MMI_ZI_AM_ENGLISH__)
 #include "Zi8DatENAM.h"
@@ -218,154 +210,13 @@
 #include "Zi8DatHU.h"
 #endif
 
-#else
-#if defined(__MMI_ZI_TR_CHINESE__) && defined(__MMI_ZI_SM_CHINESE__)
-#include "Zi8DatZH_Hk.h"
-//#include "Zi8DatZH_Pans.h"//moci by yangdecai 
-#elif defined(__MMI_ZI_TR_CHINESE__)
-#include "Zi8DatZH_Hk.h"
-#elif defined(__MMI_ZI_SM_CHINESE__)
-#include "Zi8DatZH_Prc.h"
-#endif
-
-#if defined(__MMI_ZI_PRC_ENGLISH__)
-#include "Zi8DatENPRC.h"
-#elif defined(__MMI_ZI_UK_ENGLISH__)
-#include "Zi8DatENUK.h"
-#endif
-
-#if defined(__MMI_ZI_RECOMMENDED_SIZE_RUSSIAN__)
-#include "Zi8DatRU.h"
-#elif defined(__MMI_ZI_RUSSIAN__)
-#include "Zi8DatRUM.h"
-#endif
-
-#if defined(__MMI_ZI_BULGARIAN__)
-#include "Zi8DatBG.h"
-#endif
-
-#if defined(__MMI_ZI_CA_FRENCH__)
-#include "Zi8DatFRCA.h"
-#elif defined(__MMI_ZI_EU_FRENCH__)
-#include "Zi8DatFREU.h"
-#endif
-
-#if defined(__MMI_ZI_GERMAN__)
-#include "Zi8DatDE.h"
-#endif
-
-#if defined(__MMI_ZI_ITALIAN__)
-#include "Zi8DatIT.h"
-#endif
-
-#if defined(__MMI_ZI_EU_SPANISH__)
-#include "Zi8DatESEU.h"
-#elif defined(__MMI_ZI_SA_SPANISH__)
-#include "Zi8DatESSA.h"
-#endif
-
-#if defined(__MMI_ZI_THAI__)
-#include "Zi8DatTH.h"
-#endif
-
-#if defined(__MMI_ZI_ARABIC__)
-#include "Zi8DatAR.h"
-#endif
-
-//PMT START PERSIAN
-#if defined(__MMI_ZI_PERSIAN__)
-#include "Zi8DatFA.h"
-#endif
-//PMT END PERSIAN
-#if defined(__MMI_ZI_HINDI__)
-#include "Zi8DatHI.h"
-#endif
-
-#if defined(__MMI_ZI_HEBREW__)
-#include "Zi8DatIW.h"
-#endif
-
-#if defined(__MMI_ZI_EU_PORTUGUESE__)
-#include "Zi8DatPTEU.h"
-#elif defined(__MMI_ZI_SA_PORTUGUESE__)
-#include "Zi8DatPTSA.h"
-#endif
-
-#if defined(__MMI_ZI_TURKISH__)
-#include "Zi8DatTR.h"
-#endif
-
-#if defined(__MMI_ZI_NORWEGIAN__)
-#include "Zi8DatNO.h"
-#endif
-
-#if defined(__MMI_ZI_POLISH__)
-#include "Zi8DatPL.h"
-#endif
-
-#if defined(__MMI_ZI_INDONESIAN__)
-#include "Zi8DatIN.h"
-#endif
-
-#if defined(__MMI_ZI_MALAY__)
-#include "Zi8DatMS.h"
-#endif
-
-#if defined(__MMI_ZI_VIETNAMESE__)
-#include "Zi8DatVI.h"
-#endif
-
-#if defined(__MMI_ZI_SLOVAK__)
-#include "Zi8DatSKM.h"
-#endif
-
-#if defined(__MMI_ZI_DUTCH__)
-#include "Zi8DatNLM.h"
-#endif
-
-#if defined(__MMI_ZI_SWEDISH__)
-#include "Zi8DatSVM.h"
-#endif
-
-#if defined(__MMI_ZI_CROATIAN__)
-#include "Zi8DatHRM.h"
-#endif
-
-#if defined(__MMI_ZI_ROMANIAN__)
-#include "Zi8DatROM.h"
-#endif
-
-#if defined(__MMI_ZI_SLOVENIAN__)
-#include "Zi8DatSLM.h"
-#endif
-
-#if defined(__MMI_ZI_GREEK__)
-#include "Zi8DatELM.h"
-#endif
-
-#if defined(__MMI_ZI_CZECH__)
-#include "Zi8DatCSM.h"
-#endif
-
-#if defined(__MMI_ZI_FINNISH__)
-#include "Zi8DatFIM.h"
-#endif
-
-#if defined(__MMI_ZI_DANISH__)
-#include "Zi8DatDAM.h"
-#endif
-
-#if defined(__MMI_ZI_HUNGARIAN__)
-#include "Zi8DatHUM.h"
-#endif
-#endif
 
 
 ZI8_LANGUAGE_ENTRY ZI8ROMDATA mtk_gIMELDBArray[] =
 {
 //Chinese
 #if defined(__MMI_ZI_TR_CHINESE__) || defined(__MMI_ZI_SM_CHINESE__)
-    {ZI8_LANG_ZH,     (void ZI8ROMPOINTER)&Zi8DatZH[0]},
+    //{ZI8_LANG_ZH,     (void ZI8ROMPOINTER)&Zi8DatZH[0]},
 #endif 
 //English
 #ifdef __MMI_ZI_V7__

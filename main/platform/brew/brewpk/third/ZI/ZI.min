@@ -7,18 +7,141 @@ ZI_SRC = $(ZI_PATH)/adaptation/src
 ZI_ENGININ_INC = $(ZI_PATH)/Engine
 ZI_LIB = $(ZI_PATH)/project/HEXING53_09A_GEMINI/v7_official/lib
 
+vpath %.c $(ZI_SRC)
+vpath %.c $(ZI_ENGININ_INC)
+
 ZI_SOURCES = IMERes.c \
-						 Zi_Engine.c
-						 
+						 zi8sdata.c \
+						 Zi8DatENPRC.c
+ifeq ($(EXTLANG1),zhcn)
+			ZI_SOURCES += Zi8DatZH.c
+endif
+
+ifeq ($(EXTLANG1),HI)
+			ZI_SOURCES += Zi8DatHI.c
+endif
+
+ifeq ($(EXTLANG1),AR)
+			ZI_SOURCES += Zi8DatAR.c
+endif
+
+ifeq ($(EXTLANG1),HR)
+			ZI_SOURCES += Zi8DatHR.c
+endif
+
+ifeq ($(EXTLANG1),TH)
+			ZI_SOURCES += Zi8DatTH.c
+endif
+
+ifeq ($(EXTLANG1),ESSA)
+			ZI_SOURCES += Zi8DatESSA.c
+endif
+
+ifeq ($(EXTLANG1),FR)
+			ZI_SOURCES += Zi8DatFREU.c
+endif
+
+ifeq ($(EXTLANG1),BG)
+			ZI_SOURCES += Zi8DatBG.c
+endif
+
+ifeq ($(EXTLANG1),CS)
+			ZI_SOURCES += Zi8DatCS.c
+endif
+
+ifeq ($(EXTLANG1),DA)
+			ZI_SOURCES += Zi8DatDA.c
+endif
+
+ifeq ($(EXTLANG1),DE)
+			ZI_SOURCES += Zi8DatDE.c
+endif
+
+ifeq ($(EXTLANG1),EL)
+			ZI_SOURCES += Zi8DatEL.c
+endif
+
+ifeq ($(EXTLANG1),FA)
+			ZI_SOURCES += Zi8DatFA.c
+endif
+
+ifeq ($(EXTLANG1),FI)
+			ZI_SOURCES += Zi8DatFI.c
+endif
+
+ifeq ($(EXTLANG1),HU)
+			ZI_SOURCES += Zi8DatHU.c
+endif
+
+ifeq ($(EXTLANG1),IN)
+			ZI_SOURCES += Zi8DatIN.c
+endif
+
+ifeq ($(EXTLANG1),IT)
+			ZI_SOURCES += Zi8DatIT.c
+endif
+
+ifeq ($(EXTLANG1),IW)
+			ZI_SOURCES += Zi8DatIW.c
+endif
+
+ifeq ($(EXTLANG1),MS)
+			ZI_SOURCES += Zi8DatMS.c
+endif
+
+ifeq ($(EXTLANG1),NL)
+			ZI_SOURCES += Zi8DatNL.c
+endif
+
+ifeq ($(EXTLANG1),NO)
+			ZI_SOURCES += Zi8DatNO.c
+endif
+
+ifeq ($(EXTLANG1),PL)
+			ZI_SOURCES += Zi8DatPL.c
+endif
+
+ifeq ($(EXTLANG1),RO)
+			ZI_SOURCES += Zi8DatRO.c
+endif
+
+ifeq ($(EXTLANG1),RU)
+			ZI_SOURCES += Zi8DatRU.c
+endif
+
+ifeq ($(EXTLANG1),SK)
+			ZI_SOURCES += Zi8DatSK.c
+endif
+
+ifeq ($(EXTLANG1),SL)
+			ZI_SOURCES += Zi8DatSL.c
+endif
+
+ifeq ($(EXTLANG1),SV)
+			ZI_SOURCES += Zi8DatSV.c
+endif
+
+ifeq ($(EXTLANG1),TR)
+			ZI_SOURCES += Zi8DatTR.c
+endif
+
+ifeq ($(EXTLANG1),UK)
+			ZI_SOURCES += Zi8DatUK.c
+endif
+
+ifeq ($(EXTLANG1),VI)
+			ZI_SOURCES += Zi8DatVI.c
+endif
+
 ZI_OBJS :=  $(addprefix $(TARGETDIR)/, $(ZI_SOURCES:%.c=%.o))
 $(ZI_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 
 
-vpath %.c $(ZI_SRC)
-vpath %.c $(ZI_ENGININ_INC)
+
 
 ZILIBS :=\
-	$(ZI_LIB)/zi8clib.a
+	$(ZI_LIB)/zi8clib.a \
+	$(ZI_LIB)/zishape.a
 
 INC  += $(ZI_INC)
 INC  += $(ZI_PRO_INC)
