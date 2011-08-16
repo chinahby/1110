@@ -828,6 +828,7 @@ typedef struct WmsApp
 	#endif
 #ifdef FEATURE_USES_MMS      
     IImage                          *m_pMMSImage;
+    IImage                          *m_pMMSSOUND;
 #endif    
 } WmsApp;
 

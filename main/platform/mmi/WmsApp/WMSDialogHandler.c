@@ -8790,10 +8790,13 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
         	{
         		boolean Is_notend = TRUE;
 #ifdef FEATURE_USES_MMS                 
-                char pszPath[MG_MAX_FILE_NAME];
+                char MMSImagepszPath[MG_MAX_FILE_NAME];
+                char MMSSoundpszPath[MG_MAX_FILE_NAME];
                 pMe->m_pMMSImage = NULL;
-                ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,pszPath, sizeof(pszPath));
-                DBGPRINTF("pszPath=%s len=%d", pszPath, STRLEN(pszPath));
+                ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
+                ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSSoundpszPath, sizeof(MMSSoundpszPath));
+                DBGPRINTF("MMSImagepszPath=%s len=%d", MMSImagepszPath, STRLEN(MMSImagepszPath));
+                DBGPRINTF("MMSSoundpszPath=%s len=%d", MMSSoundpszPath, STRLEN(MMSSoundpszPath));
 #endif       
                 MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_INIT",0,0,0);
 	            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
@@ -8803,21 +8806,41 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 	            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 #endif
 #ifdef FEATURE_USES_MMS
-                if(STRLEN(pszPath) != 0)
+                //一次只能插入一个彩信元素
+                if(STRLEN(MMSImagepszPath) != 0)
                 {
                     AEERect ctlRect;
-                    pMe->m_pMMSImage = ISHELL_LoadImage(pMe->m_pShell,pszPath);
+                    pMe->m_pMMSImage = ISHELL_LoadImage(pMe->m_pShell,MMSImagepszPath);
                     if(pMe->m_pMMSImage != NULL)
                     {
                         IIMAGE_SetParm(pMe->m_pMMSImage,IPARM_SCALE, pMe->m_rc.dx/2, pMe->m_rc.dy/2);
-                        MSG_FATAL("m_pMMSImage != NULL",0,0,0);
+                        SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
+                        ICONTROL_SetRect((IControl*)pIText, &ctlRect);                           
+                        MSG_FATAL("m_pMMSImage != NULL,dy=%d, pMe->m_rc.dy=%d",pMe->m_rc.dy/2,pMe->m_rc.dy,0);
                     }
                     else
                     {
                         MSG_FATAL("m_pMMSImage == NULL",0,0,0);
-                    }             
-                    SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
-                    ICONTROL_SetRect((IControl*)pIText, &ctlRect);                    
+                        SetControlRect(pMe, pIText);
+                    }                              
+                }
+                else if(STRLEN(MMSSoundpszPath) != 0)
+                {
+                    AEERect ctlRect;
+                    //下面的MUSICPLAYERIMAGE_RES_FILE这个资源文件的路径是在musicplayer里面，是个绝对路径。这里要能取
+                    //图片成功的话，要加绝对路径，像下面这样
+                    //pResImg = ISHELL_LoadResImage( pMe->a.m_pIShell, "fs:/mod/clockapps/clockapps_images.bar", IDI_ALARMCLOCK);
+                    pMe->m_pMMSSOUND = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MUSIC);           
+                    if(pMe->m_pMMSSOUND == NULL)
+                    {
+                        MSG_FATAL("pMe->m_pMMSSOUND == NULL",0,0,0);
+                        SetControlRect(pMe, pIText);
+                    }     
+                    else
+                    {
+                        SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
+                        ICONTROL_SetRect((IControl*)pIText, &ctlRect);     
+                    }
                 }
                 else
 #endif                
@@ -9247,9 +9270,13 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     IIMAGE_Draw(pMe->m_pMMSImage, x, y);
                 }
             }
-            else
+            if(pMe->m_pMMSSOUND!= NULL)
             {
-                MSG_FATAL("EVT_USER_REDRAW m_pMMSImage == NULL",0,0,0);
+                uint8 x = 0, y = 0;
+                AEEImageInfo pi;
+                y = pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay) + 2;
+                MSG_FATAL("EVT_USER_REDRAW m_pMMSImage != NULL",0,0,0);
+                IIMAGE_Draw(pMe->m_pMMSSOUND, x, y);          
             }
 #endif            
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
@@ -9500,11 +9527,13 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 #ifdef FEATURE_USES_MMS
                        // if(pMe->m_pMMSImage != NULL)
                         {
-                            char MMSImageName[MG_MAX_FILE_NAME]={'\0'};
-                            DBGPRINTF("MMSImageName=%s len=%d", MMSImageName, STRLEN(MMSImageName));
+                            char pszPath[MG_MAX_FILE_NAME]={'\0'};
+                            DBGPRINTF("MMSImageName=%s len=%d", pszPath, STRLEN(pszPath));
                             MSG_FATAL("pMe->m_pMMSImage != NULL",0,0,0);
-                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImageName, sizeof(MMSImageName));       
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,pszPath, sizeof(pszPath));      
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
                             RELEASEIF(pMe->m_pMMSImage);
+                            RELEASEIF(pMe->m_pMMSSOUND);
                         }
 #endif                           
                         CLOSE_DIALOG(DLGRET_CANCELED)

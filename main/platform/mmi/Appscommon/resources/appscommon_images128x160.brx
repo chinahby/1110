@@ -34,6 +34,9 @@
 	<Object Id="5011" Name="IDI_TEST_DOWN" MimeType="image/png">
 		<File>..\images\128x160\common\QuickTest\down.png</File>
 	</Object>
+	<Object Id="5012" Name="IDI_MUSIC" MimeType="image/png">
+		<File>..\images\128x160\common\Appscommon\Icon\music.png</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
@@ -139,9 +142,6 @@
 	<Object Id="5402" Name="IDB_MODE_T9_MT_ENGLISH_LOW" MimeType="image/png">
 		<File>..\images\128x160\common\IME\lowabc.png</File>
 	</Object>
-	<Object Id="5412" Name="IDB_MODE_T9_RAPID_ENGLISH_UP" MimeType="image/png">
-		<File>..\images\128x160\common\IME\upezenglish.png</File>
-	</Object>
 	<Object Id="5404" Name="IDB_MODE_NUMBERS" MimeType="image/png">
 		<File>..\images\128x160\common\IME\123.png</File>
 	</Object>
@@ -153,6 +153,9 @@
 	</Object>
 	<Object Id="5409" Name="IDB_MODE_T9_RAPID_INDONESIAN" MimeType="image/png">
 		<File>..\images\128x160\common\IME\T9In.png</File>
+	</Object>
+	<Object Id="5412" Name="IDB_MODE_T9_RAPID_ENGLISH_UP" MimeType="image/png">
+		<File>..\images\128x160\common\IME\upezenglish.png</File>
 	</Object>
 	<Object Id="5413" Name="IDB_MODE_T9_MT_ARABIC" MimeType="image/png">
 		<File>..\images\128x160\common\IME\Ar.png</File>

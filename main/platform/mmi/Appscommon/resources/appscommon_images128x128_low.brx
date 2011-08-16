@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="appscommon_images128x128_low" VERSION="1">
 <Objects MimeType="image/bmp">
+	<Object Id="5001" Name="IDI_MUSIC" MimeType="image/png">
+		<File>..\images\128x128\common\Appscommon\Icon\music.png</File>
+	</Object>
 	<Object Id="5002" Name="IDB_BACKGROUND" MimeType="image/png">
 		<File>..\images\128x128\common\Appscommon\Menu\background\background.png</File>
 	</Object>

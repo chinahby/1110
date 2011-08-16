@@ -681,7 +681,8 @@ typedef struct
    boolean netlock_flg;
    #endif
 #ifdef FEATURE_USES_MMS   
-   char  s_MMSImage[AEE_MAX_FILE_NAME];     //CFGI_WALLPAPER
+   char  s_MMSImage[AEE_MAX_FILE_NAME];     
+   char  s_MMSSOUND[AEE_MAX_FILE_NAME];   
 #endif
 } OEMConfigListType;
 
@@ -1788,6 +1789,7 @@ static OEMConfigListType oemi_cache = {
    #endif
 #ifdef FEATURE_USES_MMS   
    ,{OEMNV_MMSIMAGE}
+   ,{OEMNV_MMSSOUND}
 #endif   
 };
 
@@ -2325,6 +2327,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    #endif
 #ifdef FEATURE_USES_MMS   
    CFGTABLEITEM_EMPTY(CFGI_MMSIMAGE) ,
+   CFGTABLEITEM_EMPTY(CFGI_MMSSOUND) ,
 #endif   
 };
 #endif
@@ -2724,6 +2727,7 @@ void OEM_RestoreFactorySetting( void )
   }
 #ifdef FEATURE_USES_MMS   
    MEMCPY(oemi_cache.s_MMSImage,OEMNV_MMSIMAGE, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
+   MEMCPY(oemi_cache.s_MMSImage,OEMNV_MMSSOUND, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
 #endif  
    //ÆÁ±£Ê±¼ä
    oemi_cache.p_screensaver_time=0; 
@@ -4553,8 +4557,12 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
     }    
 #ifdef FEATURE_USES_MMS
     case CFGI_MMSIMAGE:
-      MEMCPY((void *)pBuff, (void *)oemi_cache.s_MMSImage, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      MEMCPY((void *)pBuff, (void *)oemi_cache.s_MMSImage, AEE_MAX_FILE_NAME);
       return AEE_SUCCESS;
+
+    case CFGI_MMSSOUND:
+      MEMCPY((void *)pBuff, (void *)oemi_cache.s_MMSSOUND, AEE_MAX_FILE_NAME);
+      return AEE_SUCCESS;      
 #endif      
    default:
       return(EUNSUPPORTED);
@@ -5522,6 +5530,14 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       MEMCPY((void *)oemi_cache.s_MMSImage, (void *)pBuff, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
       OEMPriv_WriteOEMConfigList();
       return AEE_SUCCESS;
+
+   case CFGI_MMSSOUND:
+      if(!pBuff) return EFAILED;
+      DBGPRINTF("pBuff=%s", (char*)pBuff);
+      MEMSET((void *)oemi_cache.s_MMSSOUND,'\0', AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      MEMCPY((void *)oemi_cache.s_MMSSOUND, (void *)pBuff, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      OEMPriv_WriteOEMConfigList();
+      return AEE_SUCCESS;      
 #endif
 
    default:

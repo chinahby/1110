@@ -2873,7 +2873,6 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-
     switch (pMe->m_eDlgReturn)
     {
         // 创建编辑消息对话框界面

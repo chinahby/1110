@@ -2787,7 +2787,13 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
 
          case AVK_SELECT:
             {
-               MSG_FATAL("MGAppPopupMenu_OnImageViewer AVK_SELECT 1",0,0,0);
+                MSG_FATAL("MGAppPopupMenu_OnImageViewer AVK_SELECT 1",0,0,0);
+ #ifdef FEATURE_USES_MMS
+               if(pMe->m_isForMMS)      
+               {
+                   return TRUE;
+               }
+#endif               
                if(eDlgStat == MG_DLGSTAT_NORMAL &&
                   (pMe->m_bImgLoadDone == TRUE))
                {
@@ -2841,7 +2847,6 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
 
                }
                return TRUE;
-               break;
             }
 
          case AVK_INFO:
@@ -7763,16 +7768,16 @@ static boolean MGAppUtil_OnMediaMenuDefaultKeyEvt(CMediaGalleryApp* pMe,
 {
    MediaDlgStat eDlgStat;
    boolean bMenuEmpty;
-
+   MSG_FATAL("MGAppUtil_OnMediaMenuDefaultKeyEvt Start",0,0,0);
    if(!pMe || !pMenuCtl)
    {
-      MG_FARF(ADDR, ("Bad parameter, MGAppUtil_OnMediaMenuCommandEvt!"));
+      MSG_FATAL("Bad parameter, MGAppUtil_OnMediaMenuCommandEvt!",0,0,0);
       return FALSE;
    }
 
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
    bMenuEmpty = pMe->m_bMediaMenuEmpty;
-
+   MSG_FATAL("eDlgStat=%d, bMenuEmpty=%d",eDlgStat,bMenuEmpty,0); 
    if(eDlgStat == MG_DLGSTAT_NORMAL)
    {
       if(FALSE == bMenuEmpty && FALSE ==IMENUCTL_IsActive(pMenuCtl))
@@ -7800,7 +7805,33 @@ static boolean MGAppUtil_OnMediaMenuDefaultKeyEvt(CMediaGalleryApp* pMe,
       MG_FARF(ADDR, ("Error, unknown status !"));
       return FALSE;
    }
+#ifdef FEATURE_USES_MMS                     
+    {
+       uint16 i = IMENUCTL_GetSel(pMenuCtl);
+       MSG_FATAL("i=%d",i,0,0);
+       if(i != 0)
+       {
+            MGFileInfo *pItemData;
+            char  pszTemp[MG_MAX_FILE_NAME]={'/0'};
+            MSG_FATAL("MGAppUtil_OnMediaMenuDefaultKeyEvt 0",0,0,0);          
+            IMENUCTL_GetItemData(pMenuCtl,i, (uint32*)&pItemData);
+            if(pItemData && pItemData->szName) 
+            {
+                IConfig *pConfig = NULL;	
+                DBGPRINTF("szName=%s, len=%d", pItemData->szName, STRLEN(pItemData->szName));
+                if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG, (void **)&pConfig))
+                {
+                    MSG_FATAL("Create config interface failed",0,0,0);
+                    return FALSE;
+                }
+                ICONFIG_SetItem(pConfig, CFGI_MMSSOUND,pItemData->szName, sizeof(pItemData->szName));    
+            }
+       }                       
+    }
+#endif
 
+   
+   MSG_FATAL("MGAppUtil_OnMediaMenuDefaultKeyEvt End",0,0,0);
    return TRUE;
 
 }//MGAppUtil_OnMediaMenuDefaultKeyEvt

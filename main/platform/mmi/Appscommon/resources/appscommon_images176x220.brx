@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="appscommon_images176x220_common" VERSION="1">
+<BREWRes Name="appscommon_images176x220" VERSION="1">
 <Objects MimeType="image/bmp">
 	<Object Id="5001" Name="IDB_MODE_T9_PINYIN" MimeType="image/png">
 		<File>..\images\176x220\common\IME\T9pin.png</File>
@@ -18,6 +18,9 @@
 	</Object>
 	<Object Id="5006" Name="IDB_MODE_T9_STROKE" MimeType="image/png">
 		<File>..\images\176x220\common\IME\T9str.png</File>
+	</Object>
+	<Object Id="5007" Name="IDI_MUSIC" MimeType="image/png">
+		<File>..\images\160x128\common\Appscommon\Icon\music.png</File>
 	</Object>
 	<Object Id="5009" Name="IDI_PLAYLISTMG">
 		<File>..\images\176x220\common\mediagallery\playlistplaying.bmp</File>
@@ -169,7 +172,6 @@
 	<Object Id="5426" Name="IDB_EDIT_UP_DOWN_BMP" MimeType="image/png">
 		<File>..\images\176x220\common\IME\arrow.png</File>
 	</Object>
-
 	<Object Id="5801" Name="IDB_TEMPLATE">
 		<File>..\images\176x220\common\Message\Icon\Template.bmp</File>
 	</Object>
@@ -287,134 +289,133 @@
 	<Object Id="6444" Name="IDI_DATE_BAR" MimeType="image/png">
 		<File>..\images\176x220\common\Calendar\bar.png</File>
 	</Object>
-	
-	<Object Id="7001" Name="IDB_BATT_LOW" MimeType="image/bmp">
+	<Object Id="7001" Name="IDB_BATT_LOW">
 		<File>..\images\176x220\common\Annunciator\batt0.bmp</File>
 	</Object>
-	<Object Id="7002" Name="IDB_BATT1" MimeType="image/bmp">
+	<Object Id="7002" Name="IDB_BATT1">
 		<File>..\images\176x220\common\Annunciator\batt1.bmp</File>
 	</Object>
-	<Object Id="7003" Name="IDB_BATT2" MimeType="image/bmp">
+	<Object Id="7003" Name="IDB_BATT2">
 		<File>..\images\176x220\common\Annunciator\batt2.bmp</File>
 	</Object>
-	<Object Id="7004" Name="IDB_BATT3" MimeType="image/bmp">
+	<Object Id="7004" Name="IDB_BATT3">
 		<File>..\images\176x220\common\Annunciator\batt3.bmp</File>
 	</Object>
-	<Object Id="7005" Name="IDB_BATT_FULL" MimeType="image/bmp">
+	<Object Id="7005" Name="IDB_BATT_FULL">
 		<File>..\images\176x220\common\Annunciator\batt4.bmp</File>
 	</Object>
-	<Object Id="7006" Name="IDB_RSSI0" MimeType="image/bmp">
+	<Object Id="7006" Name="IDB_RSSI0">
 		<File>..\images\176x220\common\Annunciator\rssi0.bmp</File>
 	</Object>
-	<Object Id="7007" Name="IDB_RSSI1" MimeType="image/bmp">
+	<Object Id="7007" Name="IDB_RSSI1">
 		<File>..\images\176x220\common\Annunciator\rssi1.bmp</File>
 	</Object>
-	<Object Id="7008" Name="IDB_RSSI2" MimeType="image/bmp">
+	<Object Id="7008" Name="IDB_RSSI2">
 		<File>..\images\176x220\common\Annunciator\rssi2.bmp</File>
 	</Object>
-	<Object Id="7009" Name="IDB_RSSI3" MimeType="image/bmp">
+	<Object Id="7009" Name="IDB_RSSI3">
 		<File>..\images\176x220\common\Annunciator\rssi3.bmp</File>
 	</Object>
-	<Object Id="7010" Name="IDB_RSSI4" MimeType="image/bmp">
+	<Object Id="7010" Name="IDB_RSSI4">
 		<File>..\images\176x220\common\Annunciator\rssi4.bmp</File>
 	</Object>
-	<Object Id="7011" Name="IDB_VMAIL" MimeType="image/bmp">
+	<Object Id="7011" Name="IDB_VMAIL">
 		<File>..\images\176x220\common\Annunciator\voice_mail.bmp</File>
 	</Object>
-	<Object Id="7012" Name="IDB_SMS" MimeType="image/bmp">
+	<Object Id="7012" Name="IDB_SMS">
 		<File>..\images\176x220\common\Annunciator\sms.bmp</File>
 	</Object>
-	<Object Id="7013" Name="IDB_ROAM" MimeType="image/bmp">
+	<Object Id="7013" Name="IDB_ROAM">
 		<File>..\images\176x220\common\Annunciator\roam.bmp</File>
 	</Object>
-	<Object Id="7014" Name="IDB_SILENCE" MimeType="image/bmp">
+	<Object Id="7014" Name="IDB_SILENCE">
 		<File>..\images\176x220\common\Annunciator\silence.bmp</File>
 	</Object>
-	<Object Id="7015" Name="IDB_ALERT" MimeType="image/bmp">
+	<Object Id="7015" Name="IDB_ALERT">
 		<File>..\images\176x220\common\Annunciator\alert.bmp</File>
 	</Object>
-	<Object Id="7016" Name="IDB_INUSE" MimeType="image/bmp">
+	<Object Id="7016" Name="IDB_INUSE">
 		<File>..\images\176x220\common\Annunciator\in_use.bmp</File>
 	</Object>
-	<Object Id="7017" Name="IDB_1X" MimeType="image/bmp">
+	<Object Id="7017" Name="IDB_1X">
 		<File>..\images\176x220\common\Annunciator\1x.bmp</File>
 	</Object>
-	<Object Id="7018" Name="IDB_VOICE_PRIV" MimeType="image/bmp">
+	<Object Id="7018" Name="IDB_VOICE_PRIV">
 		<File>..\images\176x220\common\Annunciator\voice_priv.bmp</File>
 	</Object>
-	<Object Id="7019" Name="IDB_ALARM" MimeType="image/bmp">
+	<Object Id="7019" Name="IDB_ALARM">
 		<File>..\images\176x220\common\Annunciator\alarm.bmp</File>
 	</Object>
-	<Object Id="7020" Name="IDB_FM_RADIO" MimeType="image/bmp">
+	<Object Id="7020" Name="IDB_FM_RADIO">
 		<File>..\images\176x220\common\Annunciator\fm_radio.bmp</File>
 	</Object>
-	<Object Id="7021" Name="IDB_HEADSET" MimeType="image/bmp">
+	<Object Id="7021" Name="IDB_HEADSET">
 		<File>..\images\176x220\common\Annunciator\headset.bmp</File>
 	</Object>
-	<Object Id="7022" Name="IDB_MISSED_CALL" MimeType="image/bmp">
+	<Object Id="7022" Name="IDB_MISSED_CALL">
 		<File>..\images\176x220\common\Annunciator\missed_call.bmp</File>
 	</Object>
-	<Object Id="7023" Name="IDB_VIBRING" MimeType="image/bmp">
+	<Object Id="7023" Name="IDB_VIBRING">
 		<File>..\images\176x220\common\Annunciator\vibring.bmp</File>
 	</Object>
-	<Object Id="7024" Name="IDB_SMS_FULL" MimeType="image/bmp">
+	<Object Id="7024" Name="IDB_SMS_FULL">
 		<File>..\images\176x220\common\Annunciator\sms_full.bmp</File>
 	</Object>
-	<Object Id="7025" Name="IDB_VIBRATOR" MimeType="image/bmp">
+	<Object Id="7025" Name="IDB_VIBRATOR">
 		<File>..\images\176x220\common\Annunciator\vibrator.bmp</File>
 	</Object>
-	<Object Id="7026" Name="IDB_MUTE" MimeType="image/bmp">
+	<Object Id="7026" Name="IDB_MUTE">
 		<File>..\images\176x220\common\Annunciator\mute.bmp</File>
 	</Object>
-	<Object Id="7027" Name="IDB_LOCKSTATUS" MimeType="image/bmp">
+	<Object Id="7027" Name="IDB_LOCKSTATUS">
 		<File>..\images\176x220\common\Annunciator\lock_status.bmp</File>
 	</Object>
-	<Object Id="7028" Name="IDB_SCHEDULE" MimeType="image/bmp">
+	<Object Id="7028" Name="IDB_SCHEDULE">
 		<File>..\images\176x220\common\Annunciator\schedule.bmp</File>
 	</Object>
-	<Object Id="7029" Name="IDB_TIMER" MimeType="image/bmp">
+	<Object Id="7029" Name="IDB_TIMER">
 		<File>..\images\176x220\common\Annunciator\timer.bmp</File>
 	</Object>
-	<Object Id="7030" Name="IDB_BLUETOOTH" MimeType="image/bmp">
+	<Object Id="7030" Name="IDB_BLUETOOTH">
 		<File>..\images\176x220\common\Annunciator\bluetooth.bmp</File>
 	</Object>
-	<Object Id="7031" Name="IDB_BT_TRANS" MimeType="image/bmp">
+	<Object Id="7031" Name="IDB_BT_TRANS">
 		<File>..\images\176x220\common\Annunciator\bt_trans.bmp</File>
 	</Object>
-	<Object Id="7032" Name="IDB_BT_HEADSET" MimeType="image/bmp">
+	<Object Id="7032" Name="IDB_BT_HEADSET">
 		<File>..\images\176x220\common\Annunciator\bt_headset.bmp</File>
 	</Object>
-	<Object Id="7033" Name="IDB_AIR_MODE" MimeType="image/bmp">
+	<Object Id="7033" Name="IDB_AIR_MODE">
 		<File>..\images\176x220\common\Annunciator\airplane_mode.bmp</File>
 	</Object>
-	<Object Id="7034" Name="IDB_WAP" MimeType="image/bmp">
+	<Object Id="7034" Name="IDB_WAP">
 		<File>..\images\176x220\common\Annunciator\wap.bmp</File>
 	</Object>
-	<Object Id="7035" Name="IDB_LOADSPEAKER" MimeType="image/bmp">
+	<Object Id="7035" Name="IDB_LOADSPEAKER">
 		<File>..\images\176x220\common\Annunciator\loadspeaker.bmp</File>
 	</Object>
-	<Object Id="7036" Name="IDB_EMERGENCY" MimeType="image/bmp">
+	<Object Id="7036" Name="IDB_EMERGENCY">
 		<File>..\images\176x220\common\Annunciator\emergency.bmp</File>
 	</Object>
-	<Object Id="7037" Name="IDB_PUSH_MSG" MimeType="image/bmp">
+	<Object Id="7037" Name="IDB_PUSH_MSG">
 		<File>..\images\176x220\common\Annunciator\push_msg.bmp</File>
 	</Object>
-	<Object Id="7038" Name="IDB_SPORTS" MimeType="image/bmp">
+	<Object Id="7038" Name="IDB_SPORTS">
 		<File>..\images\176x220\common\Annunciator\sports.bmp</File>
 	</Object>
-	<Object Id="7039" Name="IDB_SD_CARD" MimeType="image/bmp">
+	<Object Id="7039" Name="IDB_SD_CARD">
 		<File>..\images\176x220\common\Annunciator\sd_card.bmp</File>
 	</Object>
-	<Object Id="7040" Name="IDB_NO_SERVICE" MimeType="image/bmp">
+	<Object Id="7040" Name="IDB_NO_SERVICE">
 		<File>..\images\176x220\common\Annunciator\no_service.bmp</File>
 	</Object>
-	<Object Id="7041" Name="IDB_MMS_UNREAD" MimeType="image/bmp">
+	<Object Id="7041" Name="IDB_MMS_UNREAD">
 		<File>..\images\176x220\common\Annunciator\mms_unread.bmp</File>
 	</Object>
-	<Object Id="7042" Name="IDB_MMS_UNRECEIVED" MimeType="image/bmp">
+	<Object Id="7042" Name="IDB_MMS_UNRECEIVED">
 		<File>..\images\176x220\common\Annunciator\mms_unreceived.bmp</File>
 	</Object>
-	<Object Id="7043" Name="IDB_MMS_FULL" MimeType="image/bmp">
+	<Object Id="7043" Name="IDB_MMS_FULL">
 		<File>..\images\176x220\common\Annunciator\mms_full.bmp</File>
 	</Object>
 	<Object Id="7101" Name="IDB_MMS_ENTER" MimeType="image/png">

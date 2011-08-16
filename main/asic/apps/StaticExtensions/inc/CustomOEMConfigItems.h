@@ -464,6 +464,7 @@ enum{
 #endif
 #ifdef FEATURE_USES_MMS    
     CFGI_MMSIMAGE,
+    CFGI_MMSSOUND,
 #endif  
     CFGI_NET_LOCK_ENABLED,
     CFGI_NET_LOCK_MNC,

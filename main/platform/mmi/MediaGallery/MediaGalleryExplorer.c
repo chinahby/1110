@@ -899,7 +899,7 @@ static void MGExplorer_BuildFileList(void *po)
             FREEIF(pInfo);
             continue;
          }
-
+         
          UTF8TOWSTR((const byte*)pszBasename,
                     nBasenameLen+1,
                     FileName,
@@ -934,12 +934,11 @@ static void MGExplorer_BuildFileList(void *po)
             FREEIF(pInfo);
             continue;
          }
-
          MenuItem.wItemID = (uint16)(MG_EXPLORER_GENERALITEM + nIndex);
          MenuItem.pText = FileName;
          MenuItem.pImage = NULL;
          MenuItem.dwData = (uint32)pInfo;/*do not FREE pNode when use data*/
-         MG_FARF(ADDR, ("Enum directory tree,%s", pInfo->szName));
+         DBGPRINTF("Enum directory tree,%s", pInfo->szName);
          IMENUCTL_AddItemEx(pIMenu, &MenuItem);
          pInfo = NULL;
 
