@@ -57,30 +57,24 @@ when       who     what, where, why
 
 #include "OEMFeatures.h"
 #include "AEEConfig.h"
-#include "oemcfgi.h"
 #include "nv.h"
 #include "OEMCFGI.h"
-
-#ifdef OEMTEXT
 #include "OEMZIText.h"
 #include "OEMHeap.h"
 #include "OEMClassIDs.h"
-#include "OEMITSIM.h"
 #include "AEE_OEM.h"
 
-#ifdef AEE_DEBUG
-#include "msg.h"
-#endif
-
-#ifdef FEATURE_ZI_INPUT
-#include "zi8api.h"
-#include "Word_engine.h"
-#endif
 #include "Appscommon.h"
 #include "appscommonimages.brh"
 #include "err.h"
 #include "OEMQuertkey.h"
-
+#include "zi_Engine.h"
+#include "OEMConfig.h"
+#include "AEE.h"
+#include "AEEDisp.h"
+#include "AEEError.h"
+#include "AEEStdLib.h"
+#include "BREWVersion.h"
 
 #ifdef FEATURE_MYANMAR_INPUT_MOD
 #include "splime.h"
@@ -168,7 +162,13 @@ static int snTextModeIndex = 0;
 #define INPUT_BETWEEN_LINE_PIXEL   (0)
 #define  PTRCK_GEN_TMRSET  (0x01)   // Timer is set
 #define TSIM_MODE      (2)
+#define SIZE_OF_ELEMENT_BUF      (32)
+#define SIZE_OF_CANDIDATE_BUF    (256)
+#define SIZE_OF_WORD_BUF         (256)
 
+#define DEFAULT_MAXCANDIDATE     (64)
+#define DEFAULT_CHOICEBUFF_SIZE  (32*sizeof(AECHAR))
+#define MULT_IMC_HINT_CANDIDATE  (0x3e)
 typedef struct
 {
 	uint8    cbHit;
@@ -177,9 +177,22 @@ typedef struct
 	AEEPoint ptPosition;
 } PenTracker;
 
-OBJECT(ZIChineseCxt){
-	IDialog *      pDlg;
+OBJECT(ZiGPData){
+   ZI8GETPARAM    ziGetParam;
+
+   ZI8WCHAR       ziElementBuffer[SIZE_OF_ELEMENT_BUF];
+   ZI8WCHAR       ziElementBackup[SIZE_OF_ELEMENT_BUF];
+   ZI8WCHAR       ziCandidates[SIZE_OF_CANDIDATE_BUF];
+   ZI8WCHAR       ziWordBuffer[SIZE_OF_WORD_BUF];
 };
+
+#if defined(FEATURE_ZICORP_CHINESE) || defined(FEATURE_ZICORP_EZITEXT) 
+OBJECT(ZIChineseCxt)
+{
+   IIMMgr *       pIMMgr;
+};
+#endif
+
 
 #define PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 /*===========================================================================
@@ -200,6 +213,7 @@ typedef struct _MultitapStateInfo {
                      // displayed and highlighted
    int nMax;         // Number of characters in multitap string
    int nCapsState;   // Capslock state, 0=>lower, 1=>upper
+   int nCurentPos;   // Curent pos
 } MultitapStateInfo;
 
 typedef union _ModeStateInfo {
@@ -207,7 +221,8 @@ typedef union _ModeStateInfo {
    MultitapStateInfo mtap;
 } ModeStateInfo;
 
-typedef struct _TextCtlContext {
+typedef struct _TextCtlContext
+{
    IShell               *pIShell;
    IDisplay             *pIDisplay;
    AEECLSID             clsMe;             // To keep old behaviors.
@@ -238,8 +253,10 @@ typedef struct _TextCtlContext {
    flg               bdowntsim:1;//record if the pen has hit the textrange in tsim
    flg               binorig:1;//record if it is in the original state
    AEERect           rc_text;
-   CoordiRange       textrange;//the range of the text area
-   ZIChineseCxt      ZICxt;
+   //CoordiRange       textrange;//the range of the text area
+   #if defined(FEATURE_ZICORP_CHINESE) || defined(FEATURE_ZICORP_EZITEXT) 
+   //ZIChineseCxt      ZICxt;
+   #endif
    flg               flgPenDown;       
    //end ydc
    flg                  bValid:1;
@@ -287,6 +304,17 @@ typedef struct _TextCtlContext {
    boolean              m_myaisnull;
    boolean              m_Selectcandidates;
 #endif
+   ZiGPData             ziCtext;     //add by yangdecai 2011-07-05
+   int                  nModeIdx;         // Enumerator
+   //AECHAR *             pszwWordChoice;   // Buffer to hold final choices
+   boolean              m_init;
+   int                  nelementcount;
+   HzGroupInfo          TextInfo;
+   PyOrSEGroupInfo      PinGroupInfo;
+#if defined(FEATURE_ZICORP_CHINESE) || defined(FEATURE_ZICORP_EZITEXT) // {
+   //ZiGPData             ziCtx;            // Context for Zi
+#endif // } FEATURE_ZICORP_CHINESE || FEATURE_ZICORP_EZITEXT
+
 } TextCtlContext;
 
 typedef boolean         (*PFN_ModeCharHandler)(TextCtlContext *,AEEEvent, AVKType);
@@ -327,6 +355,7 @@ static void ZITextCtl_Latin_Rapid_Exit(TextCtlContext *pContext);
 static void ZITextCtl_MultitapRestart(TextCtlContext *pContext);
 static boolean ZITextCtl_MultitapKey(TextCtlContext *,AEEEvent,AVKType);
 static void ZITextCtl_MultitapExit(TextCtlContext *pContext);
+static ZI8WCHAR OEMZITEXT_AlphabeticMapKeytoElent(AVKType key);
 
 //ZI Cap Lower   yangdecai 2010-09-09
 static void ZITextCtl_Cap_Lower_Restart(TextCtlContext *pContext);
@@ -352,8 +381,14 @@ static void ZI_CJK_CHINESE_DisplaySyllable ( TextCtlContext *pContext );
 static void ZI_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext );
 
 static boolean ZI_CJK_CHINESE_Init(TextCtlContext *pContext);
+static boolean ZI_CJK_CHINESE_SETMODE(TextCtlContext *pContext,unsigned char Mode);
 static void ZI_CJK_CHINESE_Destroy(TextCtlContext *pContext);
 static boolean ZI_CJK_CHINESE_DisplayText(TextCtlContext *pContext);
+static ZI8WCHAR OEMZITEXT_PYNMapKeytoElement(AVKType key);
+static ZI8WCHAR OEMZITEXT_STKMapKeytoElement(AVKType key);
+static ZI8WCHAR OEMZITEXT_EZIMapKeytoElement(AVKType key);
+static void OEMZITEXT_GetCompleteCandiates(TextCtlContext *pContext); //add by yangdecai
+
 //static ZIKEY ZI_CJK_CHINESE_BrewKeyToZIKey(TextCtlContext *pContext, AVKType cKey);
 //ZISTATUS ZIFARCALL ZI_CJK_CHINESE_HandleRequest(ZIFieldInfo *pFieldInfo, ZIRequest *pRequest);
 #endif // #ifdef FEATURE_ZI_CHINESE
@@ -382,7 +417,7 @@ static uint8     TextCtl_PenHitToTrack(TextCtlContext * pme, int16 wXPos, int16 
 static int       TextCtl_GetScrollBarRects(TextCtlContext * pme, AEERect * prcFrame, AEERect * prcThumb);
 static void      TSIM_CreateDlg(TextCtlContext *pContext);
 static boolean   TSIM_DlgHandleEvent(void * pUser, AEEEvent evt, uint16 wparam, uint32 dwparam);
-static boolean   TextCtl_IsInRange(int16 xpos, int16 ypos, CoordiRange* range);
+//static boolean   TextCtl_IsInRange(int16 xpos, int16 ypos, CoordiRange* range);
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 static void TextCtl_DrawCursorTimer(TextCtlContext *pContext);
 extern uint32 ParagraphAlignment(AECHAR *pszText, int nChars);                 
@@ -413,6 +448,8 @@ extern int WMSUtil_CalculateMessagesCount(AECHAR *pWstr,
 static void TextCtl_NumbersTimer(void *pUser);
 /* add the code end */
 static void TextCtl_DrawBackGround(TextCtlContext *pContext, AEERect *pRect);
+
+
 /*===========================================================================
 
                     STATIC/LOCAL DATA
@@ -695,6 +732,10 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
       
       pNewContext->byMode = 0;
    }
+   pNewContext->m_init = FALSE;
+   pNewContext->nelementcount = 0;
+   MEMSET(&pNewContext->TextInfo,0,sizeof(HzGroupInfo));
+   MEMSET(&pNewContext->PinGroupInfo,0,sizeof(PyOrSEGroupInfo));
    pNewContext->m_bDigital = FALSE;
    pNewContext->is_isShift = FALSE;   
    pNewContext->is_bAlt = FALSE;
@@ -709,24 +750,7 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
                                               NULL,
                                               NULL);
 
-   // KLUDGE
-   //
-   // A multiline,framed text control requires a display area of at least
-   // "nLineHeight + 4" pixels on the y plane.
-   //
-   // When the ITextCtl creates a new OEM Text Control, it adjusts the OEM
-   // display area as follows:
-   //    - subtract nLineHeight for a title
-   //    - subtract nLineHeight if it is multiline (?!)
-   //
-   // This means that if the ITextCtl actually has a rectangle of
-   // 3 * nLineHeight y pixels assigned to it, the OEM Text Control will
-   // only get nLineHeight pixels even though there is enough physical
-   // room for 2 * nLineHeight pixels!!!
-   //
-   // This workaround will ensure there is always enough room to display
-   // a single line regardless of the rectangle that the ITextCtl gives us.
-   //
+   
    if (pNewContext->rectDisplay.dy < pNewContext->nLineHeight) {
       SETAEERECT(&pNewContext->rectDisplay,
                   pNewContext->rectDisplay.x,
@@ -781,6 +805,13 @@ OEMCONTEXT OEM_TextCreate(const IShell* pIShell,
     }  
 
 #endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+#if defined(FEATURE_ZICORP_CHINESE) || defined(FEATURE_ZICORP_EZITEXT) // {  //modi by yangdecai 2011-07-05
+	  //if( (ISHELL_CreateInstance((IShell *)pNewContext->pIShell, AEECLSID_OEMIMMGR, (void **)&pNewContext->ZICxt.pIMMgr)) ){
+	  //	 sys_free( pNewContext );
+	  //	 return NULL;
+	  //}
+	  //IIMMGR_Initialise(pNewContext->ZICxt.pIMMgr);
+#endif
    // Return the newly created context
    return pNewContext;
 }
@@ -1008,7 +1039,7 @@ void OEM_TextSetEdit(OEMCONTEXT hTextCtl,
    if (pContext) {
       unsigned char byModeIndex = FindModeIndex(pContext, wmode);
       boolean bRedraw=FALSE, bRestartEdit=FALSE, bExitEdit=FALSE;
-		MSG_FATAL("OEM_TextSetEdit pContext.............",0,0,0);
+		MSG_FATAL("OEM_TextSetEdit =%d",byModeIndex,0,0);
       if (pContext->bEditable != bIsEditable) {
          // We must redraw here after changing mode
          bRedraw=TRUE;
@@ -1066,6 +1097,7 @@ void OEM_TextUpdate(OEMCONTEXT hTextCtl)
 {
    register TextCtlContext *pContext = (TextCtlContext *) hTextCtl;
    if (pContext && pContext->bNeedsDraw) {
+   	  MSG_FATAL("OEM_TextUpdate......",0,0,0);
       OEM_TextDraw(pContext);
    }
 }
@@ -1886,8 +1918,8 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
         if (pContext->dwProperties & TP_FRAME) 
         {
             AEERect rect = pContext->rectDisplay;
-			//MSG_FATAL("rect.X=%d,rect.y=%d",rect.x,rect.y,0);
-			//MSG_FATAL("rect.dX=%d,rect.dy=%d",rect.dx,rect.dy,0);
+			MSG_FATAL("rect.X=%d,rect.y=%d",rect.x,rect.y,0);
+			MSG_FATAL("rect.dX=%d,rect.dy=%d",rect.dx,rect.dy,0);
             // See side effects above!
             if (pContext->dwProperties & TP_DISPLAY_COUNT) 
             {
@@ -2047,6 +2079,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
         {
             nOldFontColor = TEXT_FONT_COLOR;
         }
+		MSG_FATAL("TextCtl_DrawTextPart............",0,0,0);
         nOldFontColor = IDISPLAY_SetColor(pContext->pIDisplay, CLR_USER_TEXT, nOldFontColor); 
         TextCtl_DrawTextPart(pContext, bScroll, bFrame);
         (void)IDISPLAY_SetColor(pContext->pIDisplay, CLR_USER_TEXT, nOldFontColor);
@@ -2165,7 +2198,7 @@ int OEM_TextGetKeyBufLen(OEMCONTEXT hTextField)
 {
 #ifdef FEATURE_ZI_CHINESE
    register TextCtlContext *pContext = (TextCtlContext *) hTextField;
-   return pContext ? pContext->sZIccFieldInfo.nKeyBufLen : NULL;
+   //return pContext ? pContext->sZIccFieldInfo.nKeyBufLen : NULL;
 #else
    return ( NULL);
 #endif
@@ -2235,9 +2268,12 @@ static unsigned char FindModeIndex(TextCtlContext   *pContext,
    }
    
    sTextModesSize = ARRAY_SIZE(sTextModes);
-   
-   for (i=0; i<sTextModesSize; ++i) {
-      if (sTextModes[i].info.wID == wMode) {
+   MSG_FATAL("wMode=%d,==%d",wMode,sTextModesSize,0);
+   for (i=0; i<sTextModesSize; ++i) 
+   {
+   	  MSG_FATAL("info.wID=%d,i=%d",sTextModes[i].info.wID,i,0);
+      if (sTextModes[i].info.wID == wMode)
+	  {
          return i;
       }
    }
@@ -3569,7 +3605,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                if(pContext->dwProperties & TP_GRAPHIC_BG)
                {
                    TextCtl_DrawBackGround(pContext, &rectText);
-                   //MSG_FATAL("IDISPLAY_DrawText.............1",0,0,0);
+                   MSG_FATAL("IDISPLAY_DrawText.............1",0,0,0);
                    (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                        pContext->font,
                                        wszHide,
@@ -3581,7 +3617,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                }
                else
                {
-               		//MSG_FATAL("IDISPLAY_DrawText.............2",0,0,0);
+               		MSG_FATAL("IDISPLAY_DrawText.............2",0,0,0);
                     (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                         pContext->font,
                                         wszHide,
@@ -3657,7 +3693,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
             if(pContext->dwProperties & TP_GRAPHIC_BG)
             {
                 TextCtl_DrawBackGround(pContext, &rectClip);
-				//MSG_FATAL("IDISPLAY_DrawText.............3",0,0,0);
+				MSG_FATAL("IDISPLAY_DrawText.............3",0,0,0);
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                       pContext->font,
                                       pContext->pwLineStarts[i] +
@@ -3670,7 +3706,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
             }
             else
             {
-            	//MSG_FATAL("IDISPLAY_DrawText.............4",0,0,0);
+            	MSG_FATAL("IDISPLAY_DrawText.............4",0,0,0);
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                       pContext->font,
                                       pContext->pwLineStarts[i] +
@@ -3741,7 +3777,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                 if(pContext->dwProperties & TP_GRAPHIC_BG)
                 {
                     TextCtl_DrawBackGround(pContext, &rectText);
-                  	//MSG_FATAL("IDISPLAY_DrawText.............6",0,0,0);
+                  	MSG_FATAL("IDISPLAY_DrawText.............6",0,0,0);
                     (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                              pContext->font,
                                              pContext->pwLineStarts[i] +
@@ -3754,7 +3790,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                 }
                 else
                 {
-                	//MSG_FATAL("IDISPLAY_DrawText.............7",0,0,0);
+                	MSG_FATAL("IDISPLAY_DrawText.............7",0,0,0);
                     (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                              pContext->font,
                                              pContext->pwLineStarts[i] +
@@ -3773,7 +3809,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
          {
             if (wSelStartLine == i && pContext->bEditable) 
             {
-              // MSG_FATAL("bCursor.......................7",0,0,0);
+               MSG_FATAL("bCursor.......................7",0,0,0);
                cursRect.x = (int16)cursorx1;//rectText.x + (int16)(cursorx1);
                cursRect.y = rectText.y; // Would subtract 1, but vertical leading
                                         // is embedded in our fonts too
@@ -4287,7 +4323,10 @@ static boolean TextCtl_NumbersKey(TextCtlContext *pContext, AEEEvent eCode,AVKTy
 {
    uint16   nBufLen =0;
    boolean  bRet       = FALSE;
-   
+   #ifdef FEATURE_ZI_MT_ENGLISH
+   MSG_FATAL("TextCtl_NumbersKey000",0,0,0);
+   #endif
+   MSG_FATAL("TextCtl_NumbersKey111111",0,0,0);
    pContext->m_bDigital = TRUE;
    if (key >= AVK_1 && key <= AVK_9) 
    {
@@ -4759,6 +4798,53 @@ static void TextCtl_NumbersExit(TextCtlContext *pContext)
 static void ZITextCtl_Latin_Rapid_Restart(TextCtlContext *pContext)
 {
 	
+	ZiGPData *        pZi   = &pContext->ziCtext;
+    PZI8GETPARAM      pziGP = &pZi->ziGetParam;
+	MSG_FATAL("ZITextCtl_Latin_Rapid_Restart.....",0,0,0);
+	ZI_AW_Init(pContext);
+	
+	pziGP->GetMode = ZI8_GETMODE_DEFAULT;
+    pziGP->Context = ZI8_GETCONTEXT_DEFAULT;
+    pziGP->GetOptions = ZI8_GETOPTION_WSTRINGS;
+    pziGP->MaxCandidates = 10;
+	pziGP->ElementCount = 1;
+	switch ( OEM_TextGetCurrentMode((OEMCONTEXT)pContext) )
+    {
+#ifdef FEATURE_ZI_RAPID_ARABIC
+	     case TEXT_MODE_ZI_RAPID_ARABIC:
+	        pziGP->Language = ZI8_LANG_AR;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+	        break;
+#endif //FEATURE_ZI_RAPID_ARABIC
+
+#ifdef FEATURE_ZI_RAPID_HEBREW
+	     case TEXT_MODE_ZI_RAPID_HEBREW:
+	        pziGP->Language = ZI8_LANG_HR;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+	        break;    
+#endif //FEATURE_ZI_RAPID_HEBREW
+
+#ifdef FEATURE_ZI_RAPID_HINDI
+	     case TEXT_MODE_ZI_RAPID_HINDI:
+	        pziGP->Language = ZI8_LANG_HI;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+	        break;        
+#endif //FEATURE_ZI_RAPID_HINDI
+
+#ifdef FEATURE_ZI_RAPID_ENGLISH            
+		case TEXT_MODE_MULTITAP:
+			MSG_FATAL("TEXT_MODE_MULTITAP...........",0,0,0);
+			pziGP->Language = ZI8_LANG_EN;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+			break;	 	
+#endif //FEATURE_ZI_RAPID_ENGLISH
+		default:
+			MSG_FATAL("default...........",0,0,0);
+			pziGP->Language = ZI8_LANG_EN;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+			break;
+
+	 }
     TextCtl_NoSelection(pContext);
     TextCtl_TextChanged(pContext);
     pContext->sFocus = FOCUS_TEXT;
@@ -4778,7 +4864,278 @@ static void ZITextCtl_Latin_Rapid_Restart(TextCtlContext *pContext)
 static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCode,AVKType key)
 {
     boolean  bRet       = FALSE;
-	
+	int nBufLen = 0;
+	int nMatches = 0;
+	int i = 0;
+	ZiGPData *        pZi   = &pContext->ziCtext;
+    PZI8GETPARAM      pziGP = &pZi->ziGetParam;
+	//int16             temp = -20;
+	//MSG_FATAL("temp=====%0x",temp,0,0);
+	MSG_FATAL("ZITextCtl_Latin_Rapid_Key.............",0,0,0);
+	switch(key)
+	{
+		case AVK_0:
+		case AVK_1:
+		case AVK_2:
+		case AVK_3:
+		case AVK_4:
+		case AVK_5:
+		case AVK_6:
+		case AVK_7:
+		case AVK_8:
+		case AVK_9:
+		{
+			
+			if(pContext->uModeInfo.mtap.kLast == key && pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED
+				)
+			{
+				pZi->ziElementBuffer[0] = pZi->ziCandidates[0];
+			}
+			else
+			{
+				pContext->uModeInfo.mtap.nCurentPos = 0;
+				pZi->ziElementBuffer[0] = OEMZITEXT_AlphabeticMapKeytoElent(key);
+			}
+			MEMSET((void *)pZi->ziCandidates, 0, sizeof(pZi->ziCandidates));
+		    
+			MSG_FATAL("pziGP->pElements[0]====%x",pZi->ziElementBuffer[0],0,0);
+			MSG_FATAL("ZITextCtl_MultitapKey::2",0,0,0);
+		    //nMatches = Zi8GetCandidatesCount(pziGP);
+			MSG_FATAL("nMatches====%d",nMatches,0,0);
+			//if(nMatches>0)
+			{
+				nMatches = Zi8GetCandidates(pziGP);
+			}
+			for(i=0;i<100;i++)
+			{
+				MSG_FATAL("pZi->ziCandidates[%d]=%x",i,pZi->ziCandidates[i],0);
+			}
+			if(pZi->ziCandidates[0] == MULT_IMC_HINT_CANDIDATE)
+			{
+				pziGP->FirstCandidate = 1;
+				nMatches= Zi8GetCandidates(pziGP);
+				for(i=0;i<40;i++)
+				{
+					MSG_FATAL("pZi->ziCandidates[%d]=%x",i,pZi->ziCandidates[i],0);
+				}
+			}
+		}
+		break;
+		case AVK_LEFT:
+			{                
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+                if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
+                {
+                   uint16 wNewSel;
+                   wNewSel = pContext->wSelEnd + 1;
+                   if(OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
+                   {
+                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G, T9CA_FROMBEG, 0 );
+                       //OEM_TextSetSel(pContext, 0, 0);
+                       OEM_TextSetCursorPos(pContext, 0);
+                   }
+                   else 
+                   {  
+                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );          
+                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
+                   }
+                }
+                else
+#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+                if (OEM_TextGetCursorPos(pContext) == 0)
+                {
+                    OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
+                }
+                else
+                {
+                    uint16 wNewSel;
+                    wNewSel = pContext->wSelStart;
+                    if (wNewSel)
+                    {
+                        --wNewSel;
+                    }
+#ifdef FEATURE_LANG_THAI  
+                    {
+                        int count=0;
+                        count = moveleftselThaiChar(pContext->pszContents[pContext->wSelStart-2],
+                                                    pContext->pszContents[pContext->wSelStart-1]);
+                        if(count!= 0)
+                        {
+                            wNewSel = wNewSel - count;
+                        }
+                    }
+#endif //FEATURE_LANG_THAI           
+                    OEM_TextSetSel(pContext, wNewSel, wNewSel);
+                    (void) TextCtl_AutoScroll(pContext);
+                }
+                return TRUE;
+            }
+			break;
+		case AVK_RIGHT:
+			{
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+                if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
+                {
+                   uint16 wNewSel;
+                   wNewSel = pContext->wSelStart ;
+                   if ( OEM_TextGetCursorPos(pContext) == 0 )
+                   {
+                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G, T9CA_FROMBEG, 0 );
+                       //OEM_TextSetSel(pContext, 0, 0);
+                       OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
+                   }
+                   else 
+                   {  
+                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
+                       wNewSel --;            
+                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
+                   }
+                }
+                else
+#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+                if (OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
+                {
+                    OEM_TextSetCursorPos(pContext, -1);
+                }                
+                else
+                {
+                    uint16 wNewSel;
+                    wNewSel = pContext->wSelEnd + 1;
+#ifdef FEATURE_LANG_THAI  
+                    {
+                        int count=0;
+                        count = moverightselThaiChar(pContext->pszContents[pContext->wSelStart+2],
+                                                     pContext->pszContents[pContext->wSelStart+1]);
+                        if(count!= 0)
+                        {
+                            wNewSel = wNewSel + count;
+                        }
+                    }
+#endif //FEATURE_LANG_THAI                       
+                    OEM_TextSetSel(pContext, wNewSel, wNewSel);
+                    (void) TextCtl_AutoScroll(pContext);
+                }
+                return TRUE;
+            }
+			break;
+		case AVK_UP:
+			{
+                uint16 nLine, nCharsIn,nSel;
+                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+
+                // If it is on the first line, return false
+                if(nLine == 0 || !pContext->pwLineStarts)
+                    return FALSE;
+
+                // Otherwise figure out how many characters from the start
+                // of the line the cursor is and try to put the cursor in a
+                // similar position on previous line. Or, if not enough
+                // chars, at the end of the line
+                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+                if(nCharsIn + pContext->pwLineStarts[nLine-1] >=
+                                               pContext->pwLineStarts[nLine]) 
+                {
+                    nSel = pContext->pwLineStarts[nLine]-1;
+                } 
+                else 
+                {
+                    nSel = nCharsIn + pContext->pwLineStarts[nLine-1];
+                }
+                OEM_TextSetSel(pContext, nSel,nSel);
+                (void) TextCtl_AutoScroll(pContext);
+                return TRUE;
+            }
+			break;
+		case AVK_DOWN:
+			{
+                uint16 nLine, nCharsIn,nSel;
+
+                if((!pContext->pwLineStarts)||(!pContext->wLines))
+                    return FALSE;
+                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+
+                // If the cursor is on the last line and the line's last
+                // character is not a LF, then FALSE is returned as nothing
+                // can be done. A LF on the end of a line does not tell the
+                // wLines member that there is another line, hence this
+                // extra check.
+                if ( nLine == (pContext->wLines-1) &&
+                    pContext->pszContents[WSTRLEN(pContext->pszContents)-1] != LINEBREAK ) 
+                {
+                    return FALSE;
+                }
+
+                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+                // If the cursor is more characters in than the next line...
+                // This can happen because the LINEBREAK may be immediate, or at least < nCharsIn
+                if(nCharsIn + pContext->pwLineStarts[nLine+1] > pContext->pwLineStarts[nLine+2])
+                {
+                    // If it is the last line, don't subtract the LINEBREAK from selection spot
+                    if( nLine+2 == pContext->wLines )
+                    {
+                        nSel = pContext->pwLineStarts[nLine+2];
+                    }
+                    else
+                    {
+                        nSel = pContext->pwLineStarts[nLine+2]-1;
+                    }
+                }
+                else
+                {
+                    // Selection spot is number of chars into the next line
+                    nSel = nCharsIn + pContext->pwLineStarts[nLine+1];
+                    // If this is not the beginning of a line 
+                    // and the selection point is a LINEBREAK, subtract one
+                    // Otherwise the selection overshoots to the first character
+                    // of the following line.
+                    if( nCharsIn && nSel && pContext->pszContents[nSel-1] == LINEBREAK )
+                    {
+                        nSel--;
+                    }
+                }
+                OEM_TextSetSel(pContext, nSel,nSel);
+                (void) TextCtl_AutoScroll(pContext);
+
+                return TRUE;
+            }
+			break;
+		case AVK_CLR:
+			MSG_FATAL("avk_clr...................00000",0,0,0);
+			if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+            {
+                 /* Set selection to the character before the insertion point */
+				 MSG_FATAL("avk_clr...................",0,0,0);
+                 --pContext->wSelStart;
+            }
+            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+            {
+                  return FALSE;
+            }
+            
+            /* Insert a "NUL" to just delete and insert nothing */
+            TextCtl_AddChar(pContext, 0);
+            return TRUE; 
+			break;
+		default:
+			break;
+	}
+	if(nMatches>0)
+	{
+		pContext->uModeInfo.mtap.nMax = nMatches;
+		bRet = TRUE;
+	}
+	pContext->uModeInfo.mtap.kLast = key; 
+    TextCtl_AddChar(pContext,(AECHAR)(pZi->ziCandidates[pContext->uModeInfo.mtap.nCurentPos*2]));
+    //Set timer 
+    MSG_FATAL("bRet==========%d",bRet,0,0);
+    if(TRUE == bRet)
+    {
+        // Set timer to deselect it
+        (void) ISHELL_SetTimer((IShell *) pContext->pIShell,
+                        MULTITAP_TIMEOUT,
+                        TextCtl_MultitapTimer,
+                        pContext);  
+    }
     return bRet;
 }
 
@@ -4811,11 +5168,80 @@ static void ZITextCtl_Latin_Rapid_Exit(TextCtlContext *pContext)
  *-----------------------------------------------------------------------*/
 static void ZITextCtl_MultitapRestart(TextCtlContext *pContext)
 {
+	ZiGPData *        pZi   = &pContext->ziCtext;
+    PZI8GETPARAM      pziGP = &pZi->ziGetParam;
+	MSG_FATAL("ZITextCtl_MultitapRestart...",0,0,0);
+	ZI_AW_Init(pContext);
+	
+	pziGP->GetMode = ZI8_GETMODE_DEFAULT;
+    pziGP->Context = ZI8_GETCONTEXT_DEFAULT;
+    pziGP->GetOptions = ZI8_GETOPTION_WSTRINGS;
+    pziGP->MaxCandidates = 10;
+	pziGP->ElementCount = 1;
+	switch ( OEM_TextGetCurrentMode((OEMCONTEXT)pContext) )
+    {
+#ifdef FEATURE_ZI_MT_ARABIC
+	     case TEXT_MODE_ZI_MT_ARABIC:
+	        pziGP->Language = ZI8_LANG_AR;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+	        break;
+#endif //FEATURE_ZI_MT_ARABIC
 
+#ifdef FEATURE_ZI_MT_HEBREW
+	     case TEXT_MODE_ZI_MT_HEBREW:
+	        pziGP->Language = ZI8_LANG_HR;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+	        break;    
+#endif //FEATURE_ZI_MT_HEBREW
+
+#ifdef FEATURE_ZI_MT_HINDI
+	     case TEXT_MODE_ZI_MT_HINDI:
+	        pziGP->Language = ZI8_LANG_HI;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+	        break;        
+#endif //FEATURE_ZI_MT_HINDI
+
+#ifdef FEATURE_ZI_MT_THAI
+         case TEXT_MODE_ZI_MT_THAI:
+			pziGP->Language = ZI8_LANG_TH;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+	        break; 
+#endif//FEATURE_ZI_MT_THAI
+
+#ifdef FEATURE_ZI_MT_SPANISH
+         case TEXT_MODE_ZI_MT_SPANISH:
+		 	pziGP->Language = ZI8_LANG_ESSA;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+		 	break;
+#endif //FEATURE_ZI_MT_SPANISH
+
+#ifdef FEATURE_ZI_MT_FRENCH
+         case TEXT_MODE_ZI_MT_FRENCH:
+		 	pziGP->Language = ZI8_LANG_FR;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+		 	break;
+#endif //FEATURE_ZI_MT_FRENCH
+
+
+#ifdef FEATURE_ZI_MT_ENGLISH            
+		case TEXT_MODE_MULTITAP:
+			MSG_FATAL("TEXT_MODE_MULTITAP...........",0,0,0);
+			pziGP->Language = ZI8_LANG_EN;//ZI8_LANG_EN;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+			break;	 	
+#endif //FEATURE_ZI_MT_ENGLISH
+		default:
+			MSG_FATAL("default...........",0,0,0);
+			pziGP->Language = ZI8_LANG_EN;//ZI8_LANG_EN;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+			break;
+
+	 }
     TextCtl_NoSelection(pContext);
     pContext->uModeInfo.mtap.kLast = AVK_FIRST;  
     TextCtl_TextChanged(pContext);
     pContext->sFocus = FOCUS_TEXT;
+	//OEMIMMgr_Testziinput(pContext->ZICxt.pIMMgr);
 
 }
 
@@ -4833,7 +5259,11 @@ static boolean ZITextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 {
     boolean  bRet       = FALSE;
 	int nBufLen = 0;
-
+	int nMatches = 0;
+	int i = 0;
+	ZiGPData *        pZi   = &pContext->ziCtext;
+    PZI8GETPARAM      pziGP = &pZi->ziGetParam;
+	MSG_FATAL("ZITextCtl_MultitapKey...",0,0,0);
 #if defined (FEATURE_ALL_KEY_PAD)
 	if(eCode == EVT_KEY_HELD)
     {
@@ -5280,7 +5710,7 @@ static boolean ZITextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 #else
 	if(eCode == EVT_KEY_HELD)
     {
-    	int i;
+    	
         AECHAR ch = 0;
         switch(key){
         case AVK_0:
@@ -5310,6 +5740,7 @@ static boolean ZITextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
         
         if(ch != 0)
         {
+        	
             if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
             {
                 /* Set selection to the character before the insertion point */
@@ -5332,34 +5763,321 @@ static boolean ZITextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                 }
             }
             TextCtl_NoSelection(pContext);
+			
             TextCtl_AddChar(pContext,ch);
             //bRet = ZI_AW_DisplayText ( pContext, key);  
             return TRUE;
         }
         
     }
-	//MSG_FATAL("ZITextCtl_MultitapKey::1",0,0,0);
-	#ifdef FEATURE_VERSION_C01
-	if(key == AVK_1 && pContext->byMode == TEXT_MODE_ZI_MT_THAI)
+	else
 	{
-		return FALSE;
+		uint16 nBuflen = 0;
+		AECHAR Tempstr[5] = {L". "};
+		AECHAR Tempstrp[5] = {L"."};
+		MSG_FATAL("ZITextCtl_MultitapKey::1",0,0,0);
+		switch(key)
+		{
+			case AVK_0:
+			case AVK_1:
+			case AVK_2:
+			case AVK_3:
+			case AVK_4:
+			case AVK_5:
+			case AVK_6:
+			case AVK_7:
+			case AVK_8:
+			case AVK_9:
+			{
+				
+				if(pContext->uModeInfo.mtap.kLast == key && pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED
+					)
+				{
+					if(pContext->uModeInfo.mtap.nCurentPos < (pContext->uModeInfo.mtap.nMax-1))
+					{
+						pContext->uModeInfo.mtap.nCurentPos++;
+					}
+					else
+					{
+						pContext->uModeInfo.mtap.nCurentPos=0;
+					}
+					if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+	            	{
+	                 /* Set selection to the character before the insertion point */
+					 	MSG_FATAL("avk_clr...................",0,0,0);
+	                 	--pContext->wSelStart;
+	            	}
+	            	else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+	            	{
+	                  	return FALSE;
+	            	}
+	            
+	            	/* Insert a "NUL" to just delete and insert nothing */
+	            	TextCtl_AddChar(pContext, 0);	
+				}
+				else
+				{
+					pContext->uModeInfo.mtap.nCurentPos = 0;
+				}
+				MEMSET((void *)pZi->ziCandidates, 0, sizeof(pZi->ziCandidates));
+			    pZi->ziElementBuffer[0] = OEMZITEXT_AlphabeticMapKeytoElent(key);
+				MSG_FATAL("pziGP->pElements[0]====%x",pZi->ziElementBuffer[0],0,0);
+				MSG_FATAL("ZITextCtl_MultitapKey::2",0,0,0);
+			    //nMatches = Zi8GetCandidatesCount(pziGP);
+				MSG_FATAL("nMatches====%d",nMatches,0,0);
+				//if(nMatches>0)
+				{
+					nMatches = Zi8GetCandidates(pziGP);
+				}
+				for(i=0;i<40;i++)
+				{
+					MSG_FATAL("pZi->ziCandidates[%d]=%x",i,pZi->ziCandidates[i],0);
+				}
+				if(pZi->ziCandidates[0] == MULT_IMC_HINT_CANDIDATE)
+				{
+					pziGP->FirstCandidate = 1;
+					nMatches= Zi8GetCandidates(pziGP);
+					for(i=0;i<40;i++)
+					{
+						MSG_FATAL("pZi->ziCandidates[%d]=%x",i,pZi->ziCandidates[i],0);
+					}
+				}
+			}
+			break;
+			case AVK_LEFT:
+				{                
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+	                if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
+	                {
+	                   uint16 wNewSel;
+	                   wNewSel = pContext->wSelEnd + 1;
+	                   if(OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
+	                   {
+	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G, T9CA_FROMBEG, 0 );
+	                       //OEM_TextSetSel(pContext, 0, 0);
+	                       OEM_TextSetCursorPos(pContext, 0);
+	                   }
+	                   else 
+	                   {  
+	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );          
+	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
+	                   }
+	                }
+	                else
+#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+	                if (OEM_TextGetCursorPos(pContext) == 0)
+	                {
+	                    OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
+	                }
+	                else
+	                {
+	                    uint16 wNewSel;
+	                    wNewSel = pContext->wSelStart;
+	                    if (wNewSel)
+	                    {
+	                        --wNewSel;
+	                    }
+#ifdef FEATURE_LANG_THAI  
+	                    {
+	                        int count=0;
+	                        count = moveleftselThaiChar(pContext->pszContents[pContext->wSelStart-2],
+	                                                    pContext->pszContents[pContext->wSelStart-1]);
+	                        if(count!= 0)
+	                        {
+	                            wNewSel = wNewSel - count;
+	                        }
+	                    }
+#endif //FEATURE_LANG_THAI           
+	                    OEM_TextSetSel(pContext, wNewSel, wNewSel);
+	                    (void) TextCtl_AutoScroll(pContext);
+	                }
+	                return TRUE;
+	            }
+				break;
+			case AVK_RIGHT:
+				{
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+	                if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
+	                {
+	                   uint16 wNewSel;
+	                   wNewSel = pContext->wSelStart ;
+	                   if ( OEM_TextGetCursorPos(pContext) == 0 )
+	                   {
+	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G, T9CA_FROMBEG, 0 );
+	                       //OEM_TextSetSel(pContext, 0, 0);
+	                       OEM_TextSetCursorPos(pContext, WSTRLEN(pContext->pszContents)); 
+	                   }
+	                   else 
+	                   {  
+	                       //sT9Status = T9Cursor ( &pContext->sT9awFieldInfo.G,  T9CA_MOVERIGHT, 1 );  
+	                       wNewSel --;            
+	                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
+	                   }
+	                }
+	                else
+#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
+	                if (OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
+	                {
+	                    OEM_TextSetCursorPos(pContext, -1);
+	                }                
+	                else
+	                {
+	                    uint16 wNewSel;
+	                    wNewSel = pContext->wSelEnd + 1;
+#ifdef FEATURE_LANG_THAI  
+	                    {
+	                        int count=0;
+	                        count = moverightselThaiChar(pContext->pszContents[pContext->wSelStart+2],
+	                                                     pContext->pszContents[pContext->wSelStart+1]);
+	                        if(count!= 0)
+	                        {
+	                            wNewSel = wNewSel + count;
+	                        }
+	                    }
+#endif //FEATURE_LANG_THAI                       
+	                    OEM_TextSetSel(pContext, wNewSel, wNewSel);
+	                    (void) TextCtl_AutoScroll(pContext);
+	                }
+	                return TRUE;
+	            }
+				break;
+			case AVK_UP:
+				{
+	                uint16 nLine, nCharsIn,nSel;
+	                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+
+	                // If it is on the first line, return false
+	                if(nLine == 0 || !pContext->pwLineStarts)
+	                    return FALSE;
+
+	                // Otherwise figure out how many characters from the start
+	                // of the line the cursor is and try to put the cursor in a
+	                // similar position on previous line. Or, if not enough
+	                // chars, at the end of the line
+	                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+	                if(nCharsIn + pContext->pwLineStarts[nLine-1] >=
+	                                               pContext->pwLineStarts[nLine]) 
+	                {
+	                    nSel = pContext->pwLineStarts[nLine]-1;
+	                } 
+	                else 
+	                {
+	                    nSel = nCharsIn + pContext->pwLineStarts[nLine-1];
+	                }
+	                OEM_TextSetSel(pContext, nSel,nSel);
+	                (void) TextCtl_AutoScroll(pContext);
+	                return TRUE;
+	            }
+				break;
+			case AVK_DOWN:
+				{
+	                uint16 nLine, nCharsIn,nSel;
+
+	                if((!pContext->pwLineStarts)||(!pContext->wLines))
+	                    return FALSE;
+	                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+
+	                // If the cursor is on the last line and the line's last
+	                // character is not a LF, then FALSE is returned as nothing
+	                // can be done. A LF on the end of a line does not tell the
+	                // wLines member that there is another line, hence this
+	                // extra check.
+	                if ( nLine == (pContext->wLines-1) &&
+	                    pContext->pszContents[WSTRLEN(pContext->pszContents)-1] != LINEBREAK ) 
+	                {
+	                    return FALSE;
+	                }
+
+	                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+	                // If the cursor is more characters in than the next line...
+	                // This can happen because the LINEBREAK may be immediate, or at least < nCharsIn
+	                if(nCharsIn + pContext->pwLineStarts[nLine+1] > pContext->pwLineStarts[nLine+2])
+	                {
+	                    // If it is the last line, don't subtract the LINEBREAK from selection spot
+	                    if( nLine+2 == pContext->wLines )
+	                    {
+	                        nSel = pContext->pwLineStarts[nLine+2];
+	                    }
+	                    else
+	                    {
+	                        nSel = pContext->pwLineStarts[nLine+2]-1;
+	                    }
+	                }
+	                else
+	                {
+	                    // Selection spot is number of chars into the next line
+	                    nSel = nCharsIn + pContext->pwLineStarts[nLine+1];
+	                    // If this is not the beginning of a line 
+	                    // and the selection point is a LINEBREAK, subtract one
+	                    // Otherwise the selection overshoots to the first character
+	                    // of the following line.
+	                    if( nCharsIn && nSel && pContext->pszContents[nSel-1] == LINEBREAK )
+	                    {
+	                        nSel--;
+	                    }
+	                }
+	                OEM_TextSetSel(pContext, nSel,nSel);
+	                (void) TextCtl_AutoScroll(pContext);
+
+	                return TRUE;
+	            }
+				break;
+			case AVK_CLR:
+				MSG_FATAL("avk_clr...................00000",0,0,0);
+				if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+	            {
+	                 /* Set selection to the character before the insertion point */
+					 MSG_FATAL("avk_clr...................",0,0,0);
+	                 --pContext->wSelStart;
+	            }
+	            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+	            {
+	                  return FALSE;
+	            }
+	            
+	            /* Insert a "NUL" to just delete and insert nothing */
+	            TextCtl_AddChar(pContext, 0);
+	            return TRUE; 
+				break;
+			default:
+				break;
+		}
+		if(nMatches>0)
+		{
+			pContext->uModeInfo.mtap.nMax = nMatches;
+			bRet = TRUE;
+		}
+		pContext->uModeInfo.mtap.kLast = key; 
+		nBuflen = WSTRLEN(pContext->pszContents);
+		if((nBuflen<1))
+		{
+			TextCtl_AddChar(pContext,(AECHAR)(app_ucs2_towupper(pZi->ziCandidates[pContext->uModeInfo.mtap.nCurentPos*2])));
+		}
+		else
+		{
+			int k = nBuflen-2;
+			int j = nBuflen-1;
+		    if((!WSTRCMP(pContext->pszContents+k,Tempstr))||
+			(!WSTRCMP(pContext->pszContents+j,Tempstrp)))
+		    {
+		    	TextCtl_AddChar(pContext,(AECHAR)(app_ucs2_towupper(pZi->ziCandidates[pContext->uModeInfo.mtap.nCurentPos*2])));
+		    }
+			else
+			{
+	    		TextCtl_AddChar(pContext,(AECHAR)(pZi->ziCandidates[pContext->uModeInfo.mtap.nCurentPos*2]));
+			}
+		}
+	    //Set timer 
+	    MSG_FATAL("bRet==========%d",bRet,0,0);
+	    if(TRUE == bRet)
+	    {
+	        // Set timer to deselect it
+	        (void) ISHELL_SetTimer((IShell *) pContext->pIShell,
+	                        MULTITAP_TIMEOUT,
+	                        TextCtl_MultitapTimer,
+	                        pContext);  
+	    }
 	}
-	#endif
-    
-    {     
-        bRet = ZI_AW_DisplayText ( pContext, key);  
-    }
-    
-    //Set timer 
-    if(TRUE == bRet)
-    {
-        // Set timer to deselect it
-        (void) ISHELL_SetTimer((IShell *) pContext->pIShell,
-                        MULTITAP_TIMEOUT,
-                        TextCtl_MultitapTimer,
-                        pContext);  
-    }
-   // MSG_FATAL("ZITextCtl_MultitapKey::13",0,0,0);
 #endif	
     
     return bRet;
@@ -6314,6 +7032,26 @@ static void ZITextCtl_Cap_Lower_Rapid_Exit(TextCtlContext *pContext)
 static void ZI_AW_Init(TextCtlContext *pContext)
 {
     
+    //IIMMGR_Reset(pContext->ZICxt.pIMMgr);
+    ZiGPData *        pZi   = &pContext->ziCtext;
+    PZI8GETPARAM      pziGP = &pZi->ziGetParam;
+   
+    MEMSET((void *)pziGP, 0, sizeof(ZI8GETPARAM));
+    //add by yangdecai 2011-07-11
+    
+    MEMSET((void *)pZi->ziElementBuffer, 0, sizeof(pZi->ziElementBuffer));
+    MEMSET((void *)pZi->ziElementBackup, 0, sizeof(pZi->ziElementBackup));
+    MEMSET((void *)pZi->ziWordBuffer, 0, sizeof(pZi->ziWordBuffer));
+    MEMSET((void *)pZi->ziCandidates, 0, sizeof(pZi->ziCandidates));
+    pziGP->pElements     = pZi->ziElementBuffer;
+    pziGP->pCurrentWord  = pZi->ziWordBuffer;
+    pziGP->pCandidates   = pZi->ziCandidates;
+	
+	//MEMSET((void *));
+    //pziGP->Language      = ZI8_LANG_ZH;
+    //pziGP->SubLanguage   = ZI8_SUBLANG_DEFAULT;
+    pContext->m_init = Zi8Initialize();
+    
 }
 
 /*------------------------------------------------------------------------
@@ -6330,8 +7068,8 @@ static void ZI_AW_Init(TextCtlContext *pContext)
  *-----------------------------------------------------------------------*/
 static void ZI_AW_Destroy(TextCtlContext *pContext)
 {
-    //FREEIF(pContext->sZIawFieldInfo.G.psTxtBuf);
-    //FREEIF(pContext->sZIawFieldInfo.G.paAuxBuf);
+    //FREEIF(pContext->ziCtext.ziGetParam.pElements);
+    //FREEIF(pContext->ziCtext.ziGetParam.pCandidates);
 }
 
 /*------------------------------------------------------------------------
@@ -6365,6 +7103,17 @@ static boolean ZI_AW_DisplayText(TextCtlContext *pContext, AVKType key)
 
 
 #ifdef FEATURE_ZI_CHINESE
+int TextToAECHARNCopy(AECHAR *pdDisplay, ZI8WCHAR *psBuffer, unsigned int iLength)
+{
+	unsigned int i;
+
+        for (i = 0; i < iLength;i++) {
+            *(pdDisplay + i) = *(psBuffer + i);
+        }
+
+    return i;
+}
+
 /*------------------------------------------------------------------------
  *
  *  Function name   : 
@@ -6377,9 +7126,14 @@ static boolean ZI_AW_DisplayText(TextCtlContext *pContext, AVKType key)
  *-----------------------------------------------------------------------*/
 static void ZITextCtl_CJK_CHINESE_Restart(TextCtlContext *pContext)
 {
-    //ZISTATUS sZIStatus = ZISTATERROR;  
+    boolean sZIStatus = FALSE;  
+	unsigned char nPresentMode = sTextModes[pContext->byMode].info.wID;
     // TRI Chinese input Init
-    //sZIStatus = ZI_CJK_CHINESE_Init ( pContext );
+    sZIStatus = ZI_CJK_CHINESE_Init(pContext);
+	MSG_FATAL("CHINESE_Restart==%d",sZIStatus,0,0);
+	MSG_FATAL("byMode=====%d",pContext->byMode,0,0);
+	ZI_CJK_CHINESE_SETMODE(pContext,nPresentMode);
+    //IIMMGR_SetInputMode(pContext->ZICxt.pIMMgr, AEE_TM_PINYIN);
 
     // set rectChinese input Rect
     pContext->rectChineseSyllableInput.x = pContext->rectDisplay.x;
@@ -6396,10 +7150,6 @@ static void ZITextCtl_CJK_CHINESE_Restart(TextCtlContext *pContext)
     pContext->rectChineseInput.dx = pContext->rectChineseSyllableInput.dx;
     pContext->rectChineseInput.dy = pContext->rectChineseSyllableInput.dy + pContext->rectChineseTextInput.dy;    
     pContext->rectChineseInput.y = pContext->rectDisplay.y + pContext->rectDisplay.dy - pContext->rectChineseInput.dy;            
-    
-
-
-        
     TextCtl_NoSelection(pContext);
     TextCtl_TextChanged(pContext);
     pContext->nSelectionSelectd = 0;       // no default selected word   
@@ -6420,16 +7170,26 @@ static boolean ZITextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
 {
     
     unsigned int uWordCount = 0;
+	unsigned int npresentcurnt = sTextModes[pContext->byMode].info.wID;
     //ZISTATUS sStatus = ZISTATERROR;
     boolean bRet = TRUE;
-
     // discard the event that we don't handle
-    if ( key == AVK_SEND )
+    #if defined(FEATURE_ZICORP_CHINESE) || defined(FEATURE_ZICORP_EZITEXT) // {
+    ZiGPData *        pZi   = &pContext->ziCtext;
+    PZI8GETPARAM      pziGP = &pZi->ziGetParam;
+	#endif // } FEATURE_ZICORP_CHINESE || FEATURE_ZICORP_EZITEXT
+	MEMSET((void *)pZi->ziCandidates, 0, sizeof(pZi->ziCandidates));
+	MSG_FATAL("ZITextCtl_CJK_CHINESE_Key.........",0,0,0);
+    if( !pContext->m_init)
+	{
+      return FALSE;
+    }
+    if( key == AVK_SEND )
     {
         return FALSE;
     }  
 
-    switch ( key ) 
+    switch (key) 
     {
         /* Assign zhuyin */
         case AVK_1:
@@ -6443,10 +7203,142 @@ static boolean ZITextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
         case AVK_9:    
         case AVK_0:     
         case AVK_POUND:            
-        case AVK_STAR:    
-     
-        
+        case AVK_STAR:  
+		//case AVK_CLR:
+		{
+			//IIMMGR_HandleEvent(pContext->ZICxt.pIMMgr,EVT_KEY,key,0);
+        	MSG_FATAL("TextCtl_ZiPinyinKey.................",0,0,0);
+			//npresentcurnt = AEE_TM_NONE;
+			switch(npresentcurnt){
+#if defined(FEATURE_ZICORP_CHINESE) || defined(FEATURE_ZICORP_EZITEXT) // {
+#ifdef FEATURE_ZICORP_PINYIN // {
+		      case AEE_TM_PINYIN:
+#endif // } FEATURE_ZICORP_PINYIN
+#ifdef FEATURE_ZICORP_STROKE // {
+		      case AEE_TM_STROKE:
+#endif // } FEATURE_ZICORP_STROKE
+#ifdef FEATURE_ZICORP_EZITEXT // {
+		      case AEE_TM_EZTEXT:
+#endif // } FEATURE_ZICORP_EZITEXT
+		         {
+		            int   i = 0;
+					int   nMatches = 0;
+
+#if 0 // {
+		            // Handle the shift modifier
+		            if( pme->tmCurrent == AEE_TM_EZTEXT && wParam == (uint16)AVK_STAR ){
+		               if( pme->nShiftState == EZISHIFT_CAPS ){
+		                  pme->nShiftState = EZISHIFT_SMALL;
+		               }else{
+		                  pme->nShiftState++;
+		               }
+		               return TRUE;
+		            }
+#endif // } FEATURE_ZICORP_EZITEXT
+
+		            // Count the typed elements
+		            
+		            // If they are really clearing a char, we handle it
+		            // If not, it isn't handled.
+		            
+					pContext->sFocus = FOCUS_SYLLABLE;
+		            pziGP->FirstCandidate   = 0;
+					MSG_FATAL("pContext->byMode===========%d",pContext->byMode,0,0);
+					
+    			 	if( (pContext->nelementcount+1) < SIZE_OF_ELEMENT_BUF)
+    				 {
+    				 	// We start with 0, they start with 1, so special case it.
+                      if(npresentcurnt == AEE_TM_PINYIN )
+    				  {
+    #ifdef FEATURE_ZICORP_PINYIN 
+						 pziGP->GetMode          = ZI8_GETMODE_1KEYPRESS_PINYIN;
+		 				 pziGP->GetOptions       = ZI8_GETOPTION_GET_SPELLING;
+    					 MSG_FATAL("pContext->nelementcount==Start=%d",pContext->nelementcount,0,0);
+                         pZi->ziElementBuffer[pContext->nelementcount] = OEMZITEXT_PYNMapKeytoElement((AVKType)key);
+    					 pContext->nelementcount++;
+    					 pZi->ziElementBuffer[pContext->nelementcount] = '\0';
+    					 MSG_FATAL("pziGP->pElements[0]====%x",pZi->ziElementBuffer[pContext->nelementcount-1],0,0);
+    #endif
+                      }else if( npresentcurnt == AEE_TM_STROKE )
+                      {
+    #ifdef FEATURE_ZICORP_STROKE 
+                         pZi->ziElementBuffer[pContext->nelementcount] = OEMZITEXT_STKMapKeytoElement((AVKType)key);
+    					 pContext->nelementcount++;
+    					 pZi->ziElementBuffer[pContext->nelementcount] = '\0';
+    #endif 
+                      }else if( npresentcurnt  == AEE_TM_EZTEXT )
+                      {
+    #ifdef FEATURE_ZICORP_EZITEXT 
+                         pZi->ziElementBuffer[pContext->nelementcount] = OEMZITEXT_EZIMapKeytoElement((AVKType)key);
+    					 pContext->nelementcount++;
+    					 pZi->ziElementBuffer[pContext->nelementcount] = '\0';
+    #endif 
+                      }
+                      if( !pZi->ziElementBuffer[pContext->nelementcount-1]){
+                         return FALSE;
+                      }
+    			 	 }
+    			
+	    			MSG_FATAL("pme->nelementcount======%d",pContext->nelementcount,0,0);
+	    			for(i=0;i<pContext->nelementcount;i++)
+	    			{
+	    				MSG_FATAL("pme->elementBuffer[%d]=%x",i,pZi->ziElementBuffer[i],0);
+	    			}
+	    			
+	    			MSG_FATAL("GetMode=%d,GetOptions=%d,MaxCandidates=%d",pziGP->GetMode,pziGP->GetOptions,pziGP->MaxCandidates);
+	    			//pziGP->pElements = pziGP->elementBuffer;
+	    			//pziGP->ElementCount = pziGP->nelementcount;
+	                nMatches = Zi8GetCandidatesCount(pziGP);
+					MSG_FATAL("nMatches====%d",nMatches,0,0);
+					if(nMatches>0)
+					{
+						Zi8GetCandidates(pziGP);
+					}
+					for(i=0;i<40;i++)
+	    			{
+	    				MSG_FATAL("pZi->ziCandidates[%d]=%x",i,pZi->ziCandidates[i],0);
+	    			}
+					
+					if(pZi->ziCandidates!=NULL && nMatches>0)
+					{
+						int k = 0;
+						int j = 0;
+						int nCandIter = 0;
+						int nCandidate = 0;
+						MEMSET(pContext->PinGroupInfo.groupData,NULL,sizeof(pContext->PinGroupInfo.groupData));
+						for( nCandIter = 0; nCandIter < SIZE_OF_CANDIDATE_BUF; nCandIter++)
+						{
+							unsigned short temp = pziGP->pCandidates[nCandIter];
+							if( pziGP->pCandidates[nCandIter] )
+						  	{
+								pContext->PinGroupInfo.groupData[j][k] =((pziGP->pCandidates[nCandIter]-ZI8_CODE_PINYIN_A)+0x61);
+								k++;
+							}
+							else
+							{
+								nCandidate++;
+								pContext->PinGroupInfo.groupData[j][k] = 0x20;
+								j++;
+								k=0;
+								if( nCandidate == nMatches )
+								{
+								   break;
+								}
+							}
+						}
+			  			pContext->PinGroupInfo.nmaxcountsize = nMatches;
+						MSG_FATAL("get CANDISATES..........",0,0,0);
+						OEMZITEXT_GetCompleteCandiates(pContext);
+						
+					}
+					
+		        }
+				#endif
+			}
+        	}
+			break;
         case AVK_CLR:
+			MSG_FATAL("pContext->sFocus=====%d",pContext->sFocus,0,0);
             if ( FOCUS_SELECTION == pContext->sFocus )
             {
               
@@ -6465,11 +7357,77 @@ static boolean ZITextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
                       pContext->wSelStart == pContext->wSelEnd )
             {
                 // need to retrue FALSE;
+                if( key == AVK_CLR && pContext->nelementcount<= 1 )
+				{
+	               if(pContext->nelementcount )
+				   {
+				   	  MSG_FATAL("AVK_CLR..........0000000",0,0,0);
+	                  pZi->ziElementBuffer[0] = 0;
+					  pContext->nelementcount = 0;
+	                  return TRUE;
+	               }
+				   else
+	               {
+	               		MSG_FATAL("AVK_CLR..........1111111",0,0,0);
+	               	   if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+			            {
+			                 /* Set selection to the character before the insertion point */
+			                 --pContext->wSelStart;
+			            }
+			            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+			            {
+			                  return FALSE;
+			            }
+			            
+			            /* Insert a "NUL" to just delete and insert nothing */
+						//TextCtl_NoSelection(pContext);
+			            TextCtl_AddChar(pContext, 0);
+						TextCtl_NoSelection(pContext);
+			            return TRUE; 
+	               }
+	            }
+				else
+				{
+					 pZi->ziElementBuffer[pContext->nelementcount-1] = 0;
+				}
                 return FALSE;
             }
             else // focus on BPMF text or on TEXT
             {
-                
+                if( key == AVK_CLR && pContext->nelementcount<= 1 )
+				{
+	               if(pContext->nelementcount )
+				   {
+				   	  MSG_FATAL("AVK_CLR..........0000000",0,0,0);
+	                  pZi->ziElementBuffer[0] = 0;
+					  pContext->nelementcount = 0;
+	                  return TRUE;
+	               }
+				   else
+	               {
+	               		MSG_FATAL("AVK_CLR..........111111=%d,%d",pContext->wSelStart,pContext->wSelEnd,0);
+	               	   if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+			            {
+			                 /* Set selection to the character before the insertion point */
+			                 --pContext->wSelStart;
+			            }
+			            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+			            {
+			                  return FALSE;
+			            }
+			            
+			            /* Insert a "NUL" to just delete and insert nothing */
+						//TextCtl_NoSelection(pContext);
+			            TextCtl_AddChar(pContext, 0);
+						TextCtl_NoSelection(pContext);
+			            return TRUE; 
+	               }
+	            }
+				else
+				{
+					 pZi->ziElementBuffer[pContext->nelementcount-1] = NULL;
+					 pContext->nelementcount --;
+				}
             }
             
             break;
@@ -6485,7 +7443,22 @@ static boolean ZITextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
             }                      
             else if ( FOCUS_SELECTION == pContext->sFocus ) // focus on Candidate text
             {
-                 
+            	 int m_Candidateslen = 0;
+                 ZI_CJK_CHINESE_DisplayText ( pContext );
+                 m_Candidateslen =STRLEN((void*)pContext->TextInfo.currentSelHz[pContext->nSelectionSelectd]);
+                 //m_Candidateslen = WSTRLEN((void*)g_SplImeGlobals.outputInfo.candidates[g_SplImeGlobals.outputInfo.candidateIndex]);
+	        	 MSG_FATAL("m_Candidateslen=====%d",m_Candidateslen,0,0);
+	        	 //if(m_Candidateslen>1)
+	        	 //{
+	        	//		AECHAR *m_Tempcand = (AECHAR *)pContext->TextInfo.currentSelHz[pContext->nSelectionSelectd];
+	        			//MSG_FATAL("i================%d",i,0,0);
+				//		TextCtl_AddString(pContext,m_Tempcand);
+				 //}
+				 //else
+				 //{
+				//		TextCtl_AddChar(pContext,*(AECHAR *)(pContext->TextInfo.currentSelHz[pContext->nSelectionSelectd]));
+				 //}
+				 //OEM_TextUpdate(pContext);
             }
             else if ( FOCUS_TEXT_PREDICTION == pContext->sFocus )
             {
@@ -6499,6 +7472,7 @@ static boolean ZITextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
         
         case AVK_RIGHT:
             // the focus is in BPMF stirng, no Selectedin Selection string
+            /*
             if ( FOCUS_SYLLABLE == pContext->sFocus ) 
             {
                 ZI_CJK_CHINESE_DisplaySyllable  (pContext);
@@ -6520,10 +7494,38 @@ static boolean ZITextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
                 {
                       
                 }
-            }        
+            }  */    
+            MSG_FATAL("AVK_RIGHT,pContext->sFocus=%d",pContext->sFocus,0,0);
+            if ( FOCUS_SYLLABLE == pContext->sFocus ) 
+            {
+            	if(pContext->PinGroupInfo.currentPosInLib<pContext->PinGroupInfo.nmaxcountsize)
+            	{
+            		pContext->PinGroupInfo.currentPosInLib++;
+            	}
+				else
+				{
+					pContext->PinGroupInfo.currentPosInLib = 0;
+				}
+            }
+			else if( FOCUS_SELECTION == pContext->sFocus )
+			{
+				if(pContext->nSelectionSelectd<pContext->TextInfo.HzIndex)
+				{
+					pContext->nSelectionSelectd++;
+				}
+				else
+				{
+					pContext->nSelectionSelectd = 1;
+				}
+			}
+			else
+			{
+				
+			}
             break;        
         
-        case AVK_LEFT:            
+        case AVK_LEFT:    
+			/*
             if ( FOCUS_SYLLABLE == pContext->sFocus ) 
             {
                
@@ -6547,6 +7549,34 @@ static boolean ZITextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
                 {
                 }
             }
+            */
+            MSG_FATAL("AVK_LEFT,pContext->sFocus=%d",pContext->sFocus,0,0);
+            if ( FOCUS_SYLLABLE == pContext->sFocus ) 
+            {
+            	if(pContext->PinGroupInfo.currentPosInLib>1)
+            	{
+            		pContext->PinGroupInfo.currentPosInLib --;
+            	}
+				else
+				{
+					pContext->PinGroupInfo.currentPosInLib = pContext->PinGroupInfo.nmaxcountsize;
+				}
+            }
+			else if( FOCUS_SELECTION == pContext->sFocus )
+			{
+				if(pContext->nSelectionSelectd >0)
+				{
+					pContext->nSelectionSelectd--;
+				}
+				else
+				{
+					pContext->nSelectionSelectd = pContext->TextInfo.HzIndex;
+				}
+			}
+			else
+			{
+				
+			}
             break;
             
         case AVK_UP:       
@@ -6591,12 +7621,16 @@ static boolean ZITextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
             break;
             
         case AVK_DOWN:
+			MSG_FATAL("pContext->sFocus1====%d",pContext->sFocus,0,0);
             if ( FOCUS_SYLLABLE == pContext->sFocus )
             {
                 pContext->sFocus = FOCUS_SELECTION;
                 pContext->nSelectionSelectd = 0; 
+				MSG_FATAL("pContext->sFocus2====%d",pContext->sFocus,0,0);
                 ZI_CJK_CHINESE_DisplaySyllable  ( pContext );
+				MSG_FATAL("pContext->sFocus3====%d",pContext->sFocus,0,0);
                 ZI_CJK_CHINESE_DisplaySelection ( pContext );
+				MSG_FATAL("pContext->sFocus4====%d",pContext->sFocus,0,0);
             }                      
            else if ( FOCUS_TEXT_PREDICTION == pContext->sFocus ||   
                  FOCUS_TEXT == pContext->sFocus )
@@ -6654,6 +7688,7 @@ static boolean ZITextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
             {    
                
             }
+			return TRUE;
             break;
 
         default:
@@ -6664,16 +7699,17 @@ static boolean ZITextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
     
                    
             
-            // sFocus is TEXT and nKeyBufLen have changed to non zero.
-            // this case, the nKeyBufLen should be 1.
-            if ( pContext->sZIccFieldInfo.nKeyBufLen >= 1 )
-            {
-                pContext->sFocus = FOCUS_SYLLABLE;
-                ZI_CJK_CHINESE_DisplayText ( pContext );// update cursor.                
-            }
-            // when sFocus on SELECTION, TEXT, TEXT_PRIDICTION, SYLLABLE
-            ZI_CJK_CHINESE_DisplaySyllable  (pContext);
-            ZI_CJK_CHINESE_DisplaySelection (pContext);
+    // sFocus is TEXT and nKeyBufLen have changed to non zero.
+    // this case, the nKeyBufLen should be 1.
+    if ( pContext->TextInfo.HzIndex>= 1 )
+    {
+        //pContext->sFocus = FOCUS_SYLLABLE;
+        //ZI_CJK_CHINESE_DisplayText ( pContext );// update cursor.                
+    }
+    // when sFocus on SELECTION, TEXT, TEXT_PRIDICTION, SYLLABLE
+    ZI_CJK_CHINESE_DisplaySyllable  (pContext);
+    ZI_CJK_CHINESE_DisplaySelection (pContext);
+    OEM_TextUpdate(pContext);
 
     return bRet;
 }
@@ -6695,6 +7731,56 @@ static void ZITextCtl_CJK_CHINESE_Exit(TextCtlContext *pContext)
 }
 
 
+static boolean ZI_CJK_CHINESE_SETMODE(TextCtlContext *pContext,unsigned char Mode)
+{
+#if defined(FEATURE_ZICORP_CHINESE) || defined(FEATURE_ZICORP_EZITEXT) // {
+   ZiGPData *        pZi   = &pContext->ziCtext;
+   PZI8GETPARAM      pziGP = &pZi->ziGetParam;
+#endif // } FEATURE_ZICORP_CHINESE || FEATURE_ZICORP_EZITEXT
+
+   if( !pContext->m_init  ){
+      return EBADSTATE;
+   }
+#if defined(FEATURE_ZICORP_CHINESE) || defined(FEATURE_ZICORP_EZITEXT)
+   MEMSET((void *)pziGP, 0, sizeof(ZI8GETPARAM));
+   MEMSET((void *)pZi->ziElementBuffer, 0, sizeof(pZi->ziElementBuffer));
+   MEMSET((void *)pZi->ziElementBackup, 0, sizeof(pZi->ziElementBackup));
+   MEMSET((void *)pZi->ziWordBuffer, 0, sizeof(pZi->ziWordBuffer));
+   MEMSET((void *)pZi->ziCandidates, 0, sizeof(pZi->ziCandidates));
+   pziGP->pElements     = pZi->ziElementBuffer;
+   pziGP->pCurrentWord  = pZi->ziWordBuffer;
+   pziGP->pCandidates   = pZi->ziCandidates;
+#endif // } FEATURE_ZICORP_CHINESE || FEATURE_ZICORP_EZITEXT
+	switch(Mode)
+	{
+		case TEXT_MODE_ZI_PINYIN:
+			 pziGP->Language      = ZI8_LANG_ZH;
+      		// If you're system allows configuration of 
+      		// Taiwan or Hong Kong lookup mode, you should look
+      		// up the current setting and apply it here.
+      		pziGP->SubLanguage   = ZI8_SUBLANG_ZH;
+	  		pziGP->Context      = ZI8_GETCONTEXT_SMS;
+	  		pziGP->GetMode = ZI8_GETMODE_1KEYPRESS_PINYIN;   
+	  		pziGP->GetOptions = ZI8_GETOPTION_GET_SPELLING; 
+	  		pziGP->MaxCandidates = MAX_PY_PAGE_SIZE+1;
+			break;
+		case TEXT_MODE_ZI_STROKE:
+			pziGP->Language      = ZI8_LANG_ZH;
+      		// If you're system allows configuration of 
+      		// Taiwan or Hong Kong lookup mode, you should look
+      		// up the current setting and apply it here.
+      		pziGP->SubLanguage   = ZI8_SUBLANG_ZH;
+      		/*
+      		pziGP->SubLanguage   = ZI8_SUBLANG_ZH_TW;
+      		pziGP->SubLanguage   = ZI8_SUBLANG_ZH_HK;
+      		pziGP->SubLanguage   = ZI8_SUBLANG_ZH_ALL;
+      		*/
+			break;
+		default:
+			break;
+	}
+	return AEE_SUCCESS;
+}
 
 /*------------------------------------------------------------------------
  *
@@ -6715,8 +7801,22 @@ static boolean ZI_CJK_CHINESE_Init(TextCtlContext *pContext)
 {
     
 	boolean sStatus = FALSE;
+    //IIMMGR_Reset(pContext->ZICxt.pIMMgr);
+    ZiGPData *        pZi   = &pContext->ziCtext;
+    PZI8GETPARAM      pziGP = &pZi->ziGetParam;
    
-    return sStatus;
+    MEMSET((void *)pziGP, 0, sizeof(ZI8GETPARAM));
+    //add by yangdecai 2011-07-11
+    
+    MEMSET((void *)pZi->ziElementBuffer, 0, sizeof(pZi->ziElementBuffer));
+    MEMSET((void *)pZi->ziElementBackup, 0, sizeof(pZi->ziElementBackup));
+    MEMSET((void *)pZi->ziWordBuffer, 0, sizeof(pZi->ziWordBuffer));
+    MEMSET((void *)pZi->ziCandidates, 0, sizeof(pZi->ziCandidates));
+	//MEMSET((void *));
+    pziGP->Language      = ZI8_LANG_ZH;
+    pziGP->SubLanguage   = ZI8_SUBLANG_DEFAULT;
+    pContext->m_init = Zi8Initialize();
+    return pContext->m_init;
 }
 
 /*------------------------------------------------------------------------
@@ -6750,8 +7850,8 @@ static void ZI_CJK_CHINESE_Destroy(TextCtlContext *pContext)
  *-----------------------------------------------------------------------*/
 static boolean ZI_CJK_CHINESE_DisplayText(TextCtlContext *pContext)
 {
-    UINT  nBufLen;
-    UINT  nCursor;
+    int  nBufLen = 1;
+    int  nCursor;
     boolean bModified = FALSE;
     boolean bAdjust = FALSE;
    
@@ -6767,36 +7867,35 @@ static boolean ZI_CJK_CHINESE_DisplayText(TextCtlContext *pContext)
         pContext->rectDisplay.dy = pContext->rectDisplay.dy -pContext->rectChineseSyllableInput.dy - pContext->rectChineseTextInput.dy+4;     
             bAdjust = TRUE;
         }
-    }
-
-    nCursor = pContext->sZIccFieldInfo.G.nCursor;
-    nBufLen = pContext->sZIccFieldInfo.G.nBufLen;
+    } 
     
     if ( !pContext->wMaxChars || nBufLen <= pContext->wMaxChars ) 
     {
         // don't forget to include the
-        // NULL character!0
         AECHAR *pNewContents;
+		MSG_FATAL("ZI_CJK_CHINESE_DisplayText...111",0,0,0);
         pNewContents = (AECHAR *) OEM_Realloc(pContext->pszContents,
                                        sizeof(AECHAR) *
-                                       (nBufLen + 1));
+                                       1);
         if ( !pNewContents )
         {
            // out of memory, so just ignore the character
            return FALSE;
         }
         pContext->pszContents = pNewContents;
-                     
-        SymbToAECHARNCopy ( pContext->pszContents, 
-                            pContext->sZIccFieldInfo.G.psTxtBuf, 
+        MSG_FATAL("pContext->wContentsChars===%d",pContext->wContentsChars,0,0);
+        TextToAECHARNCopy ( pContext->pszContents+pContext->wContentsChars, 
+                            &pContext->TextInfo.currentSelHz[pContext->nSelectionSelectd], 
                             nBufLen );
-                            
-        pContext->pszContents[nBufLen] = 0; 
-        pContext->wContentsChars = nBufLen;
+
+        ++pContext->wContentsChars;
         
         // Update the selection to be after the new character
+        
+		nCursor = pContext->wContentsChars;
         pContext->wSelEnd = nCursor ;
         pContext->wSelStart = nCursor ;
+		MSG_FATAL("nCursor=====%d",nCursor,0,0);
         
         bModified = TRUE;
 
@@ -6882,17 +7981,15 @@ static void ZI_CJK_CHINESE_AdjustInputInfoLocation(TextCtlContext *pContext,
 static void ZI_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
 {
     unsigned int    k = 0;
-    //unsigned int    iWindX = pContext->rectChineseInput.x + 1;
-    //unsigned int    iWindY = pContext->rectChineseInput.y + 1;
     unsigned int     iWindX = pContext->rectChineseSyllableInput.x;
     unsigned int     iWindY = pContext->rectChineseSyllableInput.y ;
     unsigned int     iWindDx = pContext->rectChineseSyllableInput.dx;
     unsigned int     iWindDy = pContext->rectChineseSyllableInput.dy ;
-    U8            *pbBuffer;
-    U8            bNumOfComp = 0;
-    UINT           nStrokeLen = 0;
-    UINT           nStart = 0;
-    UINT           nStrokeDisLen = 0;
+    unsigned char    *pbBuffer;
+    unsigned char    bNumOfComp = 0;
+    unsigned int     nStrokeLen = 0;
+    unsigned int     nStart = 0;
+    unsigned int     nStrokeDisLen = 0;
 
     AECHAR ch[2]={0,0}; 
     uint32 format;
@@ -6924,10 +8021,10 @@ static void ZI_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
        IDISPLAY_EraseRect ( pContext->pIDisplay, &pRect );
 
     /* len of the stroke buffer, extra 1 for a component */
-    nStrokeLen = pContext->sZIccFieldInfo.nKeyBufLen;
+    //nStrokeLen = pContext->sZIccFieldInfo.nKeyBufLen;
 
     /*nStrokeDisLen is the length of the strokes and components in spell buffer */
-    nStrokeDisLen = pContext->sZIccFieldInfo.nKeyBufLen;
+    //nStrokeDisLen = pContext->sZIccFieldInfo.nKeyBufLen;
 
 #ifdef FEATURE_FUNCS_THEME                       
     IDISPLAY_DrawRect(pContext->pIDisplay,
@@ -6965,10 +8062,10 @@ static void ZI_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
     }
 
     /* Point to the strokes to draw */
-    pbBuffer = pContext->sZIccFieldInfo.pbKeyBuf + bNumOfComp;
+    //pbBuffer = pContext->sZIccFieldInfo.pbKeyBuf + bNumOfComp;
 
     /* Draw each stroke, starting fromt the nstart */
-    for (k = nStart; k < pContext->sZIccFieldInfo.nKeyBufLen - bNumOfComp; k++) 
+    //for (k = nStart; k < pContext->sZIccFieldInfo.nKeyBufLen - bNumOfComp; k++) 
     {
         format = IDF_ALIGN_NONE;
         ch[0] = *(pbBuffer+k) + 0x3129;
@@ -6982,7 +8079,7 @@ static void ZI_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
                                format);
 
         /* If this character is a NULL terminator, then stop drawing */
-        if (*(pbBuffer + k ) == 0) break;
+        //if (*(pbBuffer + k ) == 0) break;
 
         /* Advance X position to after this character. */
         iWindX += ZI_STROKE_FONT_WIDTH;
@@ -7013,15 +8110,15 @@ static void ZI_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     int     nSelectedCode   = 0;            // the number of selected in displayed spell code list(base-0)
     int     nSpellBufLen    = 0;
     char   *pbSpellBuffer   = NULL;
-    UINT  nKeyBufLen      = pContext->sZIccFieldInfo.nKeyBufLen ;
+    int  nKeyBufLen      = pContext->PinGroupInfo.nmaxcountsize ;
     uint32  format          = IDF_ALIGN_NONE;
     
-    UINT  bSpellCode      = 0;
+    int  bSpellCode      = 0;
     AECHAR *wszSpellBuf     = NULL;
     AECHAR *wszSpellBufDisp = NULL;
     AECHAR *wszTmp          = NULL;
     AEERect pRect;
-    int    iLenTemp[ZICCSPELLBUFMAXSIZE] = {0};	// 存储每个字符的长度
+    int    iLenTemp[100] = {0};	// 存储每个字符的长度
     int    iCount = 0; // 为字符计数
     int    iwszlen = 0;    // 字符的长度
     int32  iSpellLenTemp[SPELLMAX] = {0};   // 存储字母组合的长度
@@ -7029,6 +8126,7 @@ static void ZI_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     int     nSelectedCodeTemp = 0;  // 字母组合序号
     static int nSpellCodeStart = 0;         // the start index in the Zhuyin Code list (base-0)
     static int nKeyBufLenOrig  = 0;         // the original len of Key buffer
+    int    nCurntSpe = 0;
 
     ZI_CJK_CHINESE_AdjustInputInfoLocation(pContext, (unsigned int *)&iWindX, (unsigned int *)&iWindY, &iWindDx, &iWindDy);
     
@@ -7041,7 +8139,8 @@ static void ZI_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
 
     // Erase BMPF Rect
     IDISPLAY_EraseRect ( pContext->pIDisplay, &pRect );
-    
+	MSG_FATAL("iWindX=====%d,iWindX====%d",iWindX,iWindY,0);
+    MSG_FATAL("iWinDX=====%d,iWinDX====%d,nKeyBufLen=%d",iWindDx,iWindDy,nKeyBufLen);
     // no syllable to drew
     if ( 0 == nKeyBufLen )
     {
@@ -7049,13 +8148,13 @@ static void ZI_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     }
 
     // Point to the Spell to draw 
-    pbSpellBuffer = (char*)pContext->sZIccFieldInfo.pbSpellBuf;
+    pbSpellBuffer = (char*)pContext->PinGroupInfo.groupData;
                 
     // number of words in Spell buffer 
-    nWordCount = ( STRLEN(pbSpellBuffer) + 1 ) / ( nKeyBufLen + 1 );
+    //nWordCount = ( STRLEN(pbSpellBuffer) + 1 ) / ( nKeyBufLen + 1 );
     
     // number of spell words that can be displayed
-    if (pContext->sZIccFieldInfo.G.nLdbNum == (ZIPIDChinese | ZISIDChineseSimplified))
+    if (1)
     {
         nWordCountDisp = ( pContext->rectChineseInput.dx - 2 ) / 
                      ( nKeyBufLen * PSYLLABLEWIDTH + PSEPARATORWIDTH );
@@ -7076,7 +8175,7 @@ static void ZI_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     }
         
     // Length of AECHAR Spell buffer 
-    nSpellBufLen = (nWordCount * (nKeyBufLen+2) + 1) * sizeof(AECHAR);
+    nSpellBufLen = 64;//(nWordCount * (nKeyBufLen+2) + 1) * sizeof(AECHAR);
     
     // get some memory to work with 
     wszSpellBuf     = (AECHAR *)MALLOC ( nSpellBufLen );
@@ -7085,39 +8184,62 @@ static void ZI_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
     MEMSET ( wszSpellBufDisp, 0, nSpellBufLen ); 
     
     // Base-1 value indicating which phonetic spelling is currently selected.
-    bSpellCode = pContext->sZIccFieldInfo.bSpellCode;
+    //bSpellCode = pContext->sZIccFieldInfo.bSpellCode;
     // base-0
     nSelectedCode = bSpellCode - 1;
     wszTmp = wszSpellBuf;
     
     // Copy syllables
-    while ( *pbSpellBuffer )
+    
+    while ( iwszlen < SCREEN_WIDTH && FOCUS_SYLLABLE == pContext->sFocus)
     {
-        if (pContext->sZIccFieldInfo.G.nLdbNum == (ZIPIDChinese | ZISIDChineseSimplified))
+    	int Templen = 0;
+        //if (pContext->sZIccFieldInfo.G.nLdbNum == (ZIPIDChinese | ZISIDChineseSimplified))
         {
             *wszTmp = *pbSpellBuffer;
         }
-        else if ((pContext->sZIccFieldInfo.G.nLdbNum == (ZIPIDChinese | ZISIDChineseTraditional)) && (IsBPMFChar(*pbSpellBuffer)))
+        //else if ((pContext->sZIccFieldInfo.G.nLdbNum == (ZIPIDChinese | ZISIDChineseTraditional)) && (IsBPMFChar(*pbSpellBuffer)))
         {
-            *wszTmp = (AECHAR)BPMFInternalToUnicode ( *pbSpellBuffer );      
+         //   *wszTmp = (AECHAR)BPMFInternalToUnicode ( *pbSpellBuffer );      
         }
-        else
+        //else
         {
             *wszTmp = 0x0020;
         }
-        iwszlen = IDISPLAY_MeasureTextEx(pContext->pIDisplay,
+
+		(void) IDISPLAY_DrawText ((IDisplay *)pContext->pIDisplay,
+                               AEE_FONT_NORMAL,
+                               pContext->PinGroupInfo.groupData[nCurntSpe],  
+                               -1,  
+                               pRect.x+1,
+                               pRect.y+1,
+                               NULL,
+                               format );
+		
+		wszTmp = (AECHAR*)pContext->PinGroupInfo.groupData[nCurntSpe];
+        Templen = IDISPLAY_MeasureTextEx(pContext->pIDisplay,
                                                       pContext->font,
                                                       wszTmp,
-                                                      1,
+                                                      -1,
                                                       -1,
                                                       NULL);
-        iLenTemp[iCount] = iwszlen;
-        pbSpellBuffer ++;
-        wszTmp   ++;
-        iCount ++;
+        //iLenTemp[iCount] = iwszlen;
+        //pbSpellBuffer ++;
+        //wszTmp   ++;
+        //iCount ++;
+        iSpellCursX[nCurntSpe] = iwszlen;
+        iwszlen = iwszlen+ Templen;
+        MSG_FATAL("iwszlen==befor=======%d",iwszlen,0,0);
+		iSpellLenTemp[nCurntSpe] = Templen;
+		
+        iwszlen = iwszlen+8;
+		pRect.x = iwszlen;
+		MSG_FATAL("iwszlen==after=======%d",iwszlen,0,0);
+		nCurntSpe++;
     }
+	
 
-    
+    /*
     // the Len changed
     if ( nKeyBufLenOrig != nKeyBufLen )
     {
@@ -7141,11 +8263,11 @@ static void ZI_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
         // set Selected index for the display Spell code
         nSelectedCode = nSelectedCode - nSpellCodeStart;
     }
-
+*/
     // copy the displaying part from wszSpellBuf
-    SymbToAECHARNCopy ( wszSpellBufDisp, 
-                        wszSpellBuf + nSpellCodeStart * (nKeyBufLen+1) ,
-                        nWordCountDisp * (nKeyBufLen+1) - 1 );
+    //TextToAECHARNCopy ( wszSpellBufDisp, 
+    //                    wszSpellBuf + nSpellCodeStart * (nKeyBufLen+1) ,
+     //                   nWordCountDisp * (nKeyBufLen+1) - 1 );
 #ifdef FEATURE_FUNCS_THEME                       
     IDISPLAY_DrawRect(pContext->pIDisplay,
             &pRect,
@@ -7159,7 +8281,7 @@ static void ZI_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
             RGB_WHITE,
             IDF_RECT_FRAME);
 #endif //FEATURE_FUNCS_THEME  
-
+/*
     (void) IDISPLAY_DrawText ((IDisplay *)pContext->pIDisplay,
                                AEE_FONT_NORMAL,
                                wszSpellBufDisp,  
@@ -7167,8 +8289,9 @@ static void ZI_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
                                pRect.x+1,
                                pRect.y+1,
                                NULL,
-                               format );
+                               format );*/
     // Add the character width
+    /*
     for ( nSelectedCodeTemp=0; nSelectedCodeTemp < SPELLMAX; nSelectedCodeTemp++)
     {
         int32  cursTempX = 0;   // 字母组合的横坐标位置
@@ -7190,10 +8313,12 @@ static void ZI_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
             iSpellCursX[nSelectedCodeTemp] = iSpellCursX[nSelectedCodeTemp-1]+
                 iSpellLenTemp[nSelectedCodeTemp-1]+iLenTemp[nSelectedCodeTemp*(nKeyBufLen+1)-1];
         }
-    }                                                    
+    }  */                                                  
     // draw Select Rect.
     // bSpellCode's value of 0 indicates there is no active phonetic spelling
-    if ( nSelectedCode >= 0 )
+    nSelectedCode = pContext->PinGroupInfo.currentPosInLib;
+	MSG_FATAL("nSelectedCode=======%d",nSelectedCode,0,0);
+    if ( nSelectedCode >= 0 && FOCUS_SYLLABLE == pContext->sFocus)
     {
         AEERect  invertRect;
         invertRect.dx = iSpellLenTemp[nSelectedCode]+2;
@@ -7205,7 +8330,7 @@ static void ZI_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
             }
             else
             {   // 中文的后面的字母组合的精确位置
-                invertRect.x = iSpellCursX[nSelectedCode]-2;
+                invertRect.x = iSpellCursX[nSelectedCode];
             }
         }
         invertRect.y  = pRect.y+1;
@@ -7256,7 +8381,8 @@ static void ZI_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
         return;
     }
     ZI_CJK_CHINESE_AdjustInputInfoLocation(pContext, &iWindX, &iWindY, &iWindDx, &iWindDy);
-    
+    MSG_FATAL("iWindX==%d,iWindY=%d",iWindX,iWindY,0);
+	MSG_FATAL("iWindDx==%d,iWindDy=%d",iWindDx,iWindDy,0);
     // setup the text Rect
     SETAEERECT(&pRect,
               iWindX+2,
@@ -7286,11 +8412,11 @@ static void ZI_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
         //psBuffer = pContext->sZIccFieldInfo.pwSelectPage;
 
         /* Draw each character */
-        //for (k = 0; k < pContext->sZIccFieldInfo.nSelectPageMax; k++) 
+        for (k = 0; k < 6; k++) 
         {
             format = IDF_ALIGN_NONE;
              
-            //ch[0] = *(psBuffer+k); // use GBcode for EVB board    
+            ch[0] = pContext->TextInfo.currentSelHz[k]; // use GBcode for EVB board    
             (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                    AEE_FONT_NORMAL,
                                    ch,
@@ -7300,7 +8426,7 @@ static void ZI_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
                                    NULL,
                                    format);
             /* If this character is a NULL terminator, then stop drawing */
-           // if (*(psBuffer + k ) == 0)  break;
+           if (pContext->TextInfo.currentSelHz[k] == 0)  break;
             
         };
         
@@ -7308,14 +8434,17 @@ static void ZI_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
         if ( FOCUS_SELECTION == pContext->sFocus &&
              pContext->nSelectionSelectd >= 0 )
         {
-            if ( pContext->nSelectionSelectd + 1 > pContext->sZIccFieldInfo.nSelectPageLen)
+            //if ( pContext->nSelectionSelectd + 1 > pContext->sZIccFieldInfo.nSelectPageLen)
             {
-                pContext->nSelectionSelectd = pContext->sZIccFieldInfo.nSelectPageLen - 1;
+               // pContext->nSelectionSelectd = pContext->sZIccFieldInfo.nSelectPageLen - 1;
             }
+			MSG_FATAL("draw Select Rect",0,0,0);
             invertRect.x = pRect.x+1+(ZI_FONT_WIDTH)*pContext->nSelectionSelectd;
             invertRect.y = pRect.y+1;
             invertRect.dx = CHINESE_FONT_WIDTH;
             invertRect.dy = CHINESE_FONT_HEIGHT;
+			MSG_FATAL("invertRect.x=%d,invertRect.y=%d",invertRect.x,invertRect.y,0);
+			MSG_FATAL("invertRect.dx=%d,invertRect.dy=%d",invertRect.dx,invertRect.dy,0);
             IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
         }
     }   
@@ -7574,21 +8703,7 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
 
 void OEM_TextDrawIMEDlg(OEMCONTEXT hTextField)
 {
-//modi by ydc nf
-//remark next line
-//#ifdef FEATURE_ZICORP_CHINESE // {
-	TextCtlContext * pme = (TextCtlContext *)hTextField;
 
-	if( pme->ZICxt.pDlg ){
-		IDIALOG_Redraw(pme->ZICxt.pDlg);
-	}
-	if( pme->pIDialog )
-	{
-		IDIALOG_Redraw(pme->pIDialog);
-	}
-//modi by ydc nf
-//remark next line
-//#endif // } FEATURE_ZICORP_CHINESE 
 }
 
 
@@ -7624,32 +8739,7 @@ boolean TSIM_ProcPenUp(OEMCONTEXT hTextCtl,int16 xpos,int16 ypos)
 {
 	register TextCtlContext *pContext = (TextCtlContext *) hTextCtl;
 
-	pContext->rc_text.x = 0;
-	pContext->rc_text.y = 20;
-	pContext->rc_text.dx = 170;
-	pContext->rc_text.dy = 164;
-	pContext ->binorig = TRUE;
-
-	//if the pendown point is in the pinyin keypad, then pass the event to the virtualkey controls
-	//set the range of the text now
-	SETCoordiRange(&pContext->textrange,
-		pContext->rc_text.x,
-		pContext->rc_text.y,
-		(pContext->rc_text.x + pContext->rc_text.dx) - 1,
-		(pContext->rc_text.y + pContext->rc_text.dy) - 1);
-
-	if ((TextCtl_IsInRange(xpos, ypos, &pContext->textrange))
-		&& pContext->binorig)
-	{
-		pContext->bdowntsim = TRUE;
-		if (pContext->pIDialog == NULL)
-		{
-			pContext->bdowntsim = FALSE;
-			pContext->binorig = FALSE;
-			TSIM_CreateDlg(pContext);
-		}
-		return TRUE;
-	}
+	
 	return FALSE;
 }
 static void TextCtl_StepTimerCB(TextCtlContext *pme)
@@ -7799,45 +8889,6 @@ boolean          OEM_TextCapStatus(OEMCONTEXT hTextField)
 	return pContext->m_bCaplk ;
 }
 
-//*****************************************************************************
-// touch screen  Input integration
-//  
-//*****************************************************************************
-/*=============================================================================
-FUNCTION: TextCtl_IsInRange
-
-DESCRIPTION:This function check if the coordinate passed into is in the coordirange.
-
-PARAMETERS:
-dwparam:the coordinate passed into will de checked.
-range:  the pointer to the coordirange.
-
-RETURN VALUE:true if successful, otherwise false
-
-COMMENTS:
-
-SIDE EFFECTS:
-
-SEE ALSO:
-
-=============================================================================*/
-static boolean TextCtl_IsInRange(int16 xpos, int16 ypos, CoordiRange* range)
-{
-	if (!range)
-	{
-		//ERR("range is NULL", 0, 0, 0);
-	}
-
-	if ((range) &&
-		(xpos>= range->xmin) && 
-		(xpos <= range->xmax) &&
-		(ypos >= range->ymin) &&
-		(ypos <= range->ymax))
-	{
-		return TRUE;
-	}
-	return FALSE;
-}
 
 // add the code for when the cursor in begin, the button should be changed
 /*=============================================================================
@@ -7952,5 +9003,341 @@ boolean OEM_TextMyaStar(OEMCONTEXT hTextField)
 	return pContext->m_myaisnull;
 }
 #endif
-#endif /* OEMTEXT */
+#ifdef FEATURE_ZICORP_PINYIN // {
+static ZI8WCHAR OEMZITEXT_PYNMapKeytoElement(AVKType key)
+{
+	ZI8WCHAR zikey = 0;
+	MSG_FATAL("key================%d",key,0,0);
+   if( key >= AVK_0 && key <= AVK_9 )
+   {
+	  if(key == AVK_0)
+	  {
+	  		zikey = g_ezi_onekeys[0];
+	  }
+	  else
+	  {
+	  		zikey = g_ezi_onekeys[key-AVK_0];
+	  }
+   	  //zikey = ((key == AVK_0) ? ZI8_ONEKEY_KEY0 : (key-AVK_1)+ZI8_ONEKEY_KEY1);
+	  MSG_FATAL("zikey================%d",zikey,0,0);
+      return zikey;
+   }
+   return 0;
+}
+#endif // } FEATURE_ZICORP_PINYIN
+#ifdef FEATURE_ZICORP_STROKE // {
+static ZI8WCHAR OEMZITEXT_STKMapKeytoElement(AVKType key)
+{
+   if( key >= AVK_1 && key <= AVK_9 ){
+      switch( key ){
+      case AVK_1:
+         return (ZI8WCHAR)ZI8_CODE_OVER;
+      case AVK_2:
+         return (ZI8WCHAR)ZI8_CODE_DOWN;
+      case AVK_3:
+         return (ZI8WCHAR)ZI8_CODE_LEFT;
+      case AVK_4:
+         return (ZI8WCHAR)ZI8_CODE_DOT;
+      case AVK_5:
+         return (ZI8WCHAR)ZI8_CODE_OVER_DOWN;
+      case AVK_6:
+         return (ZI8WCHAR)ZI8_CODE_CURVED_HOOK;
+      case AVK_7:
+         return (ZI8WCHAR)ZI8_CODE_DOWN_OVER;
+      case AVK_9:
+         return (ZI8WCHAR)ZI8_CODE_OVER_DOWN_OVER;
+      case AVK_8:
+      default:
+         return (ZI8WCHAR)ZI8_CODE_WILDCARD;
+      }
+   }
+   return 0;
+}
+#endif // } FEATURE_ZICORP_STROKE
+#ifdef FEATURE_ZICORP_EZITEXT // {
+static ZI8WCHAR OEMZITEXT_EZIMapKeytoElement(AVKType key)
+{
+   if( key >= AVK_2 && key <= AVK_9 ){
+      return (ZI8WCHAR)(ZI8_CODE_LATIN_KEY2 + (ZI8WCHAR) key - (ZI8WCHAR) AVK_2);
+   }
+   switch( key ){
+   case AVK_1:
+      return (ZI8WCHAR)ZI8_CODE_LATIN_PUNCT;
+   default:
+      break;
+   }
+   return 0;
+}
+#endif // } FEATURE_ZICORP_EZITEXT
+static ZI8WCHAR OEMZITEXT_AlphabeticMapKeytoElent(AVKType key)
+{
+	ZI8WCHAR zikey = 0;
+	MSG_FATAL("key================%d",key,0,0);
+   if( key >= AVK_0 && key <= AVK_9 )
+   {
+	  if(key == AVK_0)
+	  {
+	  		zikey = g_ezi_onekeys[0];
+	  }
+	  else
+	  {
+	  		zikey = g_ezi_onekeys[key-AVK_0];
+	  }
+   	  
+	  MSG_FATAL("zikey================%d",zikey,0,0);
+      return zikey;
+   }
+   return 0;
+}
+#ifdef FEATURE_ZI_CHINESE
+static void OEMZITEXT_GetCompleteCandiates(TextCtlContext *pContext)
+{
+	ZiGPData *        pZi   = &pContext->ziCtext;
+    PZI8GETPARAM      pziGP = &pZi->ziGetParam;
+	unsigned int npresentcurnt = sTextModes[pContext->byMode].info.wID;
+	switch(npresentcurnt)
+	{
+		case AEE_TM_PINYIN:
+			{
+				uint16 currentPyIndex = pContext->PinGroupInfo.currentPosInLib ;
+				int cHZcounter = 0;
+				int nCandIter = 0;
+				int nMatches = 0;
+				MEMCPY((void *)pZi->ziElementBackup, (void *)pZi->ziElementBuffer, sizeof(pZi->ziElementBuffer));
+				MEMSET((void *)pZi->ziElementBuffer, 0, sizeof(pZi->ziElementBuffer));
+				MEMSET(&pContext->TextInfo,'\0',sizeof(pContext->TextInfo));
+				pContext->TextInfo.bNoNextPage = TRUE;
+				pContext->TextInfo.endHzInLib = 8;
+				pziGP->Context       = ZI8_GETCONTEXT_SMS;
+				pziGP->GetMode       = ZI8_GETMODE_PINYIN;
+				pziGP->GetOptions    = ZI8_GETOPTION_DEFAULT;
+				MSG_FATAL("nMatches=========AEE_TM_PINYIN=",0,0,0);
+				while (pContext->PinGroupInfo.groupData[currentPyIndex][cHZcounter]!=0x20)   
+				{   
+					ZI8WCHAR temp = pContext->PinGroupInfo.groupData[currentPyIndex][cHZcounter];
+					pziGP->pElements[cHZcounter] = (ZI8WCHAR)(ZI8_CODE_PINYIN_A + pContext->PinGroupInfo.groupData[currentPyIndex][cHZcounter]-0x61);  
+					cHZcounter++;   
+				}
+				pziGP->ElementCount     =  cHZcounter; 
+				nMatches = Zi8GetCandidatesCount(pziGP);
+				pContext->TextInfo.HzIndex = nMatches;
+				if(nMatches>0)
+				{
+					Zi8GetCandidates(pziGP);
+				}
+				MEMSET(pContext->TextInfo.currentSelHz,NULL,sizeof(pContext->TextInfo.currentSelHz));
+				MSG_FATAL("nMatches=============%d",nMatches,0,0);
+				for( nCandIter = 0; nCandIter < SIZE_OF_CANDIDATE_BUF && pziGP->pCandidates[nCandIter]; nCandIter++ )
+				{
+					if( nCandIter < nMatches)
+					{
+						pContext->TextInfo.currentSelHz[nCandIter] = (uint16)(pziGP->pCandidates[nCandIter]);
+						MSG_FATAL("nCandIter========%d",nCandIter,0,0);
+					}
+					if(pziGP->pCandidates[nCandIter] == NULL)
+					{
+						break;
+					}
+				}
+				MEMCPY((void *)pZi->ziElementBuffer, (void *)pZi->ziElementBackup, sizeof(pZi->ziElementBackup));
+				
+			}
+			break;
+		case AEE_TM_STROKE:
+			
+			break;
+		default:
+			break;
+	}
+}
+#endif
+
+uint16 app_ucs2_towlower(uint16 wc)
+{
+    /*----------------------------------------------------------------*/
+    /* Local Variables                                                */
+    /*----------------------------------------------------------------*/
+    
+    /*----------------------------------------------------------------*/
+    /* Code Body                                                      */
+    /*----------------------------------------------------------------*/
+    /* Latin Basic        0x0000 ~ 0x007F */
+    /* Latin-1            0x0080 ~ 0x00FF */
+    /* Latin extend-A     0x0100 ~ 0x017F */
+    /* Latin extend-B     0x0180 ~ 0x024F */
+    /* Greek              0x0370 ~ 0x03FF */
+    /* Cyrillic           0x0400 ~ 0x04FF */
+    
+    if ((wc >= 0x0041 && wc <= 0x005A) || /* Latin basic */
+        (wc >= 0x00C0 && wc <= 0x00D6) || (wc >= 0x00D8 && wc <= 0x00DE) || /* Latin-1 */
+        (wc >= 0x0410 && wc <= 0x042F) ) /* Cyrillic */
+    {
+        return (wc + 0x0020);
+    }
+	/* Greek */
+    else if ((wc >= 0x0391 && wc <= 0x03A1) || (wc >= 0x03A3 && wc <= 0x03AB))
+    {
+        return (wc + 0x20);
+    }
+    else if (wc == 0x038F || wc == 0x038E)
+    {
+        return (wc + 0x3F);
+    }
+    else if (wc == 0x038C)
+    {
+        return (wc + 0x40);
+    }
+    else if (wc >= 0x0388 && wc <= 0x038A)
+    {
+        return (wc + 0x25);
+    }
+    else if (wc == 0x0386)
+    {
+        return (wc + 0x26);
+    }
+    /* Greek */
+    else if (wc == 0x0102 || /* Latin extend-A */
+             wc == 0x01A0 || wc == 0x01AF || wc == 0x0187 || wc == 0x018B ||  /* Latin extend-B */
+             wc == 0x0191 || wc == 0x01AB || wc == 0x01B8 || wc == 0x01F2) /* Latin extend-B */
+    {
+        return (wc + 0x0001);
+    }
+    else if (wc >= 0x0400 && wc <= 0x040F) /* Cyrillic */
+    {
+        return (wc + 0x50);
+    }
+    else if (wc == 0x0490) /* Cyrillic */
+    {
+        return 0x0491;
+    }
+    else if (wc >= 0x0100 && wc <= 0x0137 || wc >= 0x014A && wc <= 0x0177 || /* Latin extend-A */
+             wc >= 0x0182 && wc <= 0x0185 || wc >= 0x0198 && wc <= 0x01A5 || /* Latin extend-B */
+             wc >= 0x01DE && wc <= 0x01EF || wc >= 0x01F8 && wc <= 0x01FF || /* Latin extend-B */
+             wc >= 0x0222 && wc <= 0x0233) /* Latin extend-B */ 
+    {
+        if ((wc & 0x0001) == 0) /* odd is small case */
+            return wc + 1;
+        else
+            return wc;
+    }
+    else if (wc >= 0x0139 && wc <= 0x0148 ||  /* Latin extend-A */
+             wc >= 0x0179 && wc <= 0x017E ||wc >= 0x01B3 && wc <= 0x01B6 ||  /* Latin extend-B */
+             wc >= 0x01CD && wc <= 0x01DC) /* Latin extend-B*/
+    {
+        if ((wc & 0x0001) == 1) /* even is small case */
+            return wc + 1;
+        else
+            return wc;
+    }
+	else if (wc >= 0x0531 && wc <= 0x0556) /* Armenian */
+	{
+		return (wc + 0x30); 
+	}
+    else
+    {
+        return wc;
+    }
+    
+}
+
+
+/*****************************************************************************
+ * FUNCTION
+ *  app_ucs2_towupper
+ * DESCRIPTION
+ *  Convert character to uppercase.
+ * PARAMETERS
+ *  wc      [IN]  Character to convert.
+ * RETURNS
+ *  Each of these routines converts a copy of wc, if possible, and returns the 
+ *  result.
+ *****************************************************************************/
+uint16 app_ucs2_towupper(uint16 wc)
+{
+    /*----------------------------------------------------------------*/
+    /* Local Variables                                                */
+    /*----------------------------------------------------------------*/
+
+    /*----------------------------------------------------------------*/
+    /* Code Body                                                      */
+    /*----------------------------------------------------------------*/
+    /* Latin Basic        0x0000 ~ 0x007F */
+    /* Latin-1            0x0080 ~ 0x00FF */
+    /* Latin extend-A     0x0100 ~ 0x017F */
+    /* Latin extend-B     0x0180 ~ 0x024F */
+    /* Greek              0x0370 ~ 0x03FF */
+    /* Cyrillic           0x0400 ~ 0x04FF */
+    
+    if ((wc >= 0x0061 && wc <= 0x007A) || /* Latin basic */
+        (wc >= 0x00E0 && wc <= 0x00F6) || (wc >= 0x00F8 && wc <= 0x00FE) || /* Latin-1 */
+        (wc >= 0x0430 && wc <= 0x044F)) /* Cyrillic */
+    {
+        return (wc - 0x0020);
+    }
+	/* Greek */
+    else if ((wc >= 0x03B1 && wc <= 0x03C1) || (wc >= 0x03C3 && wc <= 0x03CB))
+    {
+        return (wc - 0x20);
+    }
+    else if (wc == 0x03CE || wc == 0x03CD)
+    {
+        return (wc - 0x3F);
+    }
+    else if (wc == 0x03CC)
+    {
+        return (wc - 0x40);
+    }
+    else if (wc >= 0x03AD && wc <= 0x03AF)
+    {
+        return (wc - 0x25);
+    }
+    else if (wc == 0x03AC)
+    {
+        return (wc - 0x26);
+    }
+    /* Greek */
+    else if (wc == 0x0103 || /* Latin extend-A */
+             wc == 0x01A1 || wc == 0x01B0 || wc == 0x0188 || wc == 0x018C ||  /* Latin extend-B */
+             wc == 0x0192 || wc == 0x01AC || wc == 0x01B9 || wc == 0x01F3) /* Latin extend-B */
+    {
+        return (wc - 0x0001);
+    }
+    else if (wc >= 0x0450 && wc <= 0x045f) /* Cyrillic */
+    {
+        return (wc - 0x50);
+    }
+    else if (wc == 0x0491) /* Cyrillic */
+    {
+        return 0x0490;
+    }
+    else if (wc >= 0x0100 && wc <= 0x0137 ||wc >= 0x014A && wc <= 0x0177 || /* Latin extend-A */
+             wc >= 0x0182 && wc <= 0x0185 ||wc >= 0x0198 && wc <= 0x01A5 || /* Latin extend-B */
+             wc >= 0x01DE && wc <= 0x01EF ||wc >= 0x01F8 && wc <= 0x01FF || /* Latin extend-B */
+             wc >= 0x0222 && wc <= 0x0233) /* Latin extend-B */ 
+    {
+        if ((wc & 1) == 1) /* odd is small case */
+            return wc - 1;
+        else
+            return wc;
+    }
+    else if (wc >= 0x0139 && wc <= 0x0148 || /* Latin extend-A */
+             wc >= 0x0179 && wc <= 0x017E || wc >= 0x01B3 && wc <= 0x01B6 ||  /* Latin extend-B */
+             wc >= 0x01CD && wc <= 0x01DC) /* Latin extend-B*/
+    {
+        if ((wc & 1) == 0) /* even is small case */
+            return wc - 1;
+        else
+            return wc;
+    }
+	else if (wc >= 0x0561 && wc <= 0x0586) /* Armenian */
+	{
+		return (wc - 0x30); 
+	}
+    else
+    {
+        return wc;
+    }    
+    
+}
+
 /*---------------------------------- eof ---------------------------------*/

@@ -59,7 +59,8 @@ when       who     what, where, why
 #include "OEMFeatures.h"
 #include "OEMConfig.h"
 #include "OEMCFGI.h"
-
+#include "zi8api.h"
+#include "Word_engine.h"
 //#include "zhcnime.brh"
 
 
@@ -84,6 +85,7 @@ when       who     what, where, why
 #define IDD_IME 6001
 
 
+
 #ifdef FEATURE_ZI_INPUT
 
 #define FEATURE_ZI_ALPHABETIC
@@ -96,7 +98,6 @@ when       who     what, where, why
 #ifdef FEATURE_LANG_ENGLISH
 #define FEATURE_ZI_MT_ENGLISH
 #define FEATURE_ZI_RAPID_ENGLISH
-
 #if defined (FEATURE_ALL_KEY_PAD)|| defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W515V3)
 #define FEATURE_ZI_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
 #endif
@@ -105,7 +106,7 @@ when       who     what, where, why
 
 #ifdef FEATURE_LANG_ARABIC
 #define FEATURE_ZI_MT_ARABIC
-//#define FEATURE_ZI_RAPID_ARABIC
+#define FEATURE_ZI_RAPID_ARABIC
 #endif //FEATURE_LANG_ARABIC
 
 #ifdef FEATURE_LANG_HEBREW
@@ -189,54 +190,54 @@ when       who     what, where, why
 //===============================================================================  
 #define TEXT_MODE_NUMBERS          AEE_TM_NUMBERS
 
-#ifdef FEATURE_ZI_MULTITAP
+//#ifdef FEATURE_ZI_MULTITAP
 #define TEXT_MODE_MULTITAP         AEE_TM_LETTERS
-#endif //FEATURE_ZI_MULTITAP
+//#endif //FEATURE_ZI_MULTITAP
 
-#ifdef FEATURE_ZI_RAPID_ENGLISH
+//#ifdef FEATURE_ZI_RAPID_ENGLISH
 #define TEXT_MODE_ZI_RAPID_ENGLISH AEE_TM_RAPID 
-#endif //FEATURE_ZI_RAPID_ENGLISH
-#ifdef FEATURE_ZI_CAP_LOWER_ENGLISH  //add by yangdecai   2010-09-09
+//#endif //FEATURE_ZI_RAPID_ENGLISH
+//#ifdef FEATURE_ZI_CAP_LOWER_ENGLISH  //add by yangdecai   2010-09-09
 #define TEXT_MODE_ZI_CAP_LOWER_ENGLISH  AEE_TM_CAPLOWER
-#endif
-#ifdef FEATURE_MYANMAR_INPUT_MOD
+//#endif
+//#ifdef FEATURE_MYANMAR_INPUT_MOD
 #define TEXT_MODE_MYANMAR  AEE_TM_MYANMAR   //add by yangdecai   2010-12-23
-#endif
-#ifdef FEATURE_ZI_PINYIN
+//#endif
+//#ifdef FEATURE_ZI_PINYIN
 #define TEXT_MODE_ZI_PINYIN        AEE_TM_PINYIN 
-#endif //FEATURE_ZI_PINYIN
+//#endif //FEATURE_ZI_PINYIN
 
-#ifdef FEATURE_ZI_STROKE
+//#ifdef FEATURE_ZI_STROKE
 #define TEXT_MODE_ZI_STROKE        AEE_TM_STROKE 
-#endif //FEATURE_ZI_STROKE
+//#endif //FEATURE_ZI_STROKE
 
-#ifdef FEATURE_ZI_ZHUYIN
+//#ifdef FEATURE_ZI_ZHUYIN
 #define TEXT_MODE_ZI_ZHUYIN        AEE_TM_ZHUYIN 
-#endif //FEATURE_ZI_ZHUYIN
+//#endif //FEATURE_ZI_ZHUYIN
 
-#ifdef FEATURE_ZI_MT_ARABIC
+//#ifdef FEATURE_ZI_MT_ARABIC
 #define TEXT_MODE_ZI_MT_ARABIC     AEE_TM_ARABIC
-#endif //FEATURE_ZI_MT_ARABIC
+//#endif //FEATURE_ZI_MT_ARABIC
 
-#ifdef FEATURE_ZI_RAPID_ARABIC
+//#ifdef FEATURE_ZI_RAPID_ARABIC
 #define TEXT_MODE_ZI_RAPID_ARABIC  AEE_TM_ARABIC_R
-#endif //FEATURE_ZI_RAPID_ARABIC
+//#endif //FEATURE_ZI_RAPID_ARABIC
 
-#ifdef FEATURE_ZI_MT_HEBREW
+//#ifdef FEATURE_ZI_MT_HEBREW
 #define TEXT_MODE_ZI_MT_HEBREW     AEE_TM_HEBREW
-#endif //FEATURE_ZI_MT_HEBREW
+//#endif //FEATURE_ZI_MT_HEBREW
 
-#ifdef FEATURE_ZI_RAPID_HEBREW
+//#ifdef FEATURE_ZI_RAPID_HEBREW
 #define TEXT_MODE_ZI_RAPID_HEBREW  AEE_TM_HEBREW_R
-#endif //FEATURE_ZI_RAPID_HEBREW
+//#endif //FEATURE_ZI_RAPID_HEBREW
 
-#ifdef FEATURE_ZI_MT_HINDI
+//#ifdef FEATURE_ZI_MT_HINDI
 #define TEXT_MODE_ZI_MT_HINDI      AEE_TM_HINDI
-#endif //FEATURE_ZI_MT_HINDI
+//#endif //FEATURE_ZI_MT_HINDI
 
-#ifdef FEATURE_ZI_RAPID_HINDI
+//#ifdef FEATURE_ZI_RAPID_HINDI
 #define TEXT_MODE_ZI_RAPID_HINDI   AEE_TM_HINDI_R
-#endif //FEATURE_ZI_RAPID_HINDI
+//#endif //FEATURE_ZI_RAPID_HINDI
 
 #ifdef FEATURE_ZI_MT_THAI
 #define TEXT_MODE_ZI_MT_THAI       AEE_TM_THAI
@@ -308,6 +309,9 @@ when       who     what, where, why
 #define AVK_F2  AVK_SOFT3
 
 #define AVK_F3  AVK_SOFT4
+
+#define  MAX_HZ_PAGE_SIZE       20      // 每页最多显示8
+#define  MAX_PY_PAGE_SIZE       15       // 每页显示的最多5个拼音
 
 void             OEM_TextDrawIMEDlg(OEMCONTEXT hTextField);
 
@@ -1838,6 +1842,26 @@ static const AECHAR *const esaMultitapStrings[10] =
 
 #endif // FEATURE_ZI_MT_SPANISH
 
+static const ZI8WCHAR   g_ezi_onekeys[MMI_IMC_SYMB_KEY_MAX - MMI_IMC_SYMB_KEY_BASE] =
+{
+#if defined(__MMI_ZI_CHINESE_PHRASE_LEVEL_INPUTS__)
+    ZI8_CODE_SEPARATOR, // MMI_IMC_SYMB_KEY_0
+#else
+    ZI8_ONEKEY_KEY0, // MMI_IMC_SYMB_KEY_0
+#endif
+    ZI8_ONEKEY_KEY1, // MMI_IMC_SYMB_KEY_1
+    ZI8_ONEKEY_KEY2, // MMI_IMC_SYMB_KEY_2
+    ZI8_ONEKEY_KEY3, // MMI_IMC_SYMB_KEY_3
+    ZI8_ONEKEY_KEY4, // MMI_IMC_SYMB_KEY_4
+    ZI8_ONEKEY_KEY5, // MMI_IMC_SYMB_KEY_5
+    ZI8_ONEKEY_KEY6, // MMI_IMC_SYMB_KEY_6
+    ZI8_ONEKEY_KEY7, // MMI_IMC_SYMB_KEY_7
+    ZI8_ONEKEY_KEY8, // MMI_IMC_SYMB_KEY_8
+    ZI8_ONEKEY_KEY9, // MMI_IMC_SYMB_KEY_9
+    0, //MMI_IMC_SYMB_KEY_STAR,
+    0, //MMI_IMC_SYMB_KEY_POUND,
+};
+
 #ifdef FEATURE_ZI_MT_FRENCH
 static const AECHAR frszMultitap1[] =
 {
@@ -1973,6 +1997,40 @@ typedef enum {
    MULTITAP_MAX_AUTO_STATE
 } MultitapAutoSetState;
 
+typedef enum sFocusType {
+   FOCUS_SELECTION,         // focus on Selection Page
+   FOCUS_SYLLABLE,          // focus on Syllable
+   FOCUS_TEXT,              // focus on Text and no selection page
+   FOCUS_TEXT_PREDICTION,   // focus on the Text and display the T9 Selection Page
+   FOCUS_MAX
+
+}sFocusType;
+
+
+typedef struct HzGroupInfoTag          /*根据拼音取得的一组汉字信息*/   
+{   
+	uint16        beginHzInLib;           /*这组的第一个汉字是LIB中的第几个*/   
+	uint16        currentHzIndex;         /*这组的当前一个汉字是LIB中的第几个*/   
+	uint16        endHzInLib;             /*这组的最后一个汉字是LIB中的第几个*/    
+	uint16        pageNo;                 /*当前这一组是第几页*/   
+	uint16        HzIndex;                //汉字的总和；
+	ZI8WCHAR      currentSelHz[MAX_HZ_PAGE_SIZE+1];   /*将当前一组汉字全都保存在这里，用于显示*/     
+	boolean       bNoNextPage;        /*判断一下后面还有没有汉字了，用来决定按向下箭头是否还要取字*/   
+}HzGroupInfo;
+
+typedef struct PyOrSEGroupInfoTag  /* 当前的一组拼音信息*/   
+{   
+	uint16    firstPosInLib;   /*这组的第一个拼音是LIB中的第几个*/   
+	uint16    lastPosInLib;    /*这组的最后一个拼音是LIB中的第几个*/   
+	uint16    currentPosInLib; /*当前选中拼音是LIB中的第几个*/     
+	/*从ZI库里取出的一组拼音或SE，保存在全局变量里，这样在左右键选下一个拼音或SE的时候就不用再取值了，  
+	最多的英文字母是32个吧*/   
+	uint16 groupData[MAX_PY_PAGE_SIZE+1][33];   
+	boolean  noNextPage;        /*判断一下后面还有没有拼音了，用来显示上下箭头*/   
+	uint16   nmaxcountsize;     //拼音组合的总和个数
+	uint16   PYpageNo;          //当前这组是第几页
+	uint16   bNopageStart;      //第几个换行
+}PyOrSEGroupInfo; 
 
 //-------------------------------------------------------------------
 // Global Constant Declarations
@@ -2081,6 +2139,8 @@ int32 OEM_TextGetEnd(OEMCONTEXT hTextField);
 void OEM_TextRestart(OEMCONTEXT hTextField);
 boolean OEM_TextMyaStar(OEMCONTEXT hTextField);
 #endif
+uint16 app_ucs2_towupper(uint16 wc);
+uint16 app_ucs2_towlower(uint16 wc);
 //#endif
 
 /*========================================================================

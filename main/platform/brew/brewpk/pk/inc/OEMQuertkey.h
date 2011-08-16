@@ -56,7 +56,7 @@ when       who     what, where, why
 #define MAX_SHEFTKEYPAD_NUMBER 40
 #define MAX_ARKEYPAD_NUMBER 8
 typedef struct _SheftKeyItem_Own  SheftKeyItem_Own;
-typedef struct _UI_character_type UI_character_type ;
+//typedef struct _UI_character_type UI_character_type ;
 typedef struct _AR_character_type AR_character_type;
 struct _SheftKeyItem_Own
 {

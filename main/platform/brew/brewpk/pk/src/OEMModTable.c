@@ -965,7 +965,7 @@ const AEEStaticClass ***OEMMod_GetStaticClassLists(void)
   //       {AEECLSID_OEMIMUI,                 0,0,NULL,OEMIMUI_New},
 #endif // } FEATURE_BREW_IME
 #if defined(FEATURE_BREW_IME) || defined(FEATURE_ZICORP_EZITEXT) // {
-         {AEECLSID_OEMIMMGR,                 0,0,NULL,OEMIMMgr_New},
+ //        {AEECLSID_OEMIMMGR,                 0,0,NULL,OEMIMMgr_New},
 #endif // } FEATURE_BREW_IME || FEATURE_ZICORP_EZITEXT
          // Device Notifier
 #if defined(FEATURE_DEV_NOTIFIER) // {

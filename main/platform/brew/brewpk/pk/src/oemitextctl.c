@@ -35,7 +35,11 @@ when       who     what, where, why
 // Include Files
 //---------------------------------------------------------------------
 #include "OEMFeatures.h"
+#ifdef FEATURE_USES_ZI
+#include "OEMZIText.h"
+#else
 #include "OEMText.h"
+#endif
 #include "AEEStdLib.h"
 #include "AEEClassIDs.h"
 #include "AEEControls.brh"
@@ -416,6 +420,7 @@ int TextCtl_New(IShell * pIShell, AEECLSID clsID, void ** ppobj)
    TextCtl_CalcRects(pme);
    
    // Define Input List, we can change Input list here!
+   MSG_FATAL("TextCtl_SetInputList...............",0,0,0);
    TextCtl_SetInputList(pme);
 
     // È¡ÊäÈë·¨ÌáÊ¾ÎÄ±¾
@@ -1323,17 +1328,32 @@ if ((!pme->m_pSoftKey) &&
                 // and requires no special handling
     
 NormalKeyEvent:
+				#ifdef FEATURE_USES_ZI
+				if ( OEM_MODE_ZI_MT_ENGLISH_LOW == pme->m_nCurrInputMode
+                     ||OEM_MODE_ZI_MT_ENGLISH_UP == pme->m_nCurrInputMode 
+                     ||OEM_MODE_ZI_MT_ENGLISH == pme->m_nCurrInputMode )
+				#else
                 if ( OEM_MODE_T9_MT_ENGLISH_LOW == pme->m_nCurrInputMode
                      ||OEM_MODE_T9_MT_ENGLISH_UP == pme->m_nCurrInputMode 
                      ||OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode )
+                #endif
                 {
                     // if MultitapCapsState have been change to all small in OEMText,
                     //then change input mode
-                    if ( OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode
+                    #ifdef FEATURE_USES_ZI
+                    if ( OEM_MODE_ZI_MT_ENGLISH == pme->m_nCurrInputMode
                          && MULTITAP_ALL_SMALL == OEM_TextGetMultiCaps(pme->m_pText) )
+                    #else
+					if ( OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode
+                         && MULTITAP_ALL_SMALL == OEM_TextGetMultiCaps(pme->m_pText) )
+					#endif
                     {
                        // change to the sll small mode
-                       pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_LOW;
+                       #ifdef FEATURE_USES_ZI
+                       pme->m_nCurrInputMode = OEM_MODE_ZI_MT_ENGLISH_LOW;
+					   #else
+					   pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_LOW;
+					   #endif
                        OEM_SetInputMode((CTextCtl *)pme);
                        pme->m_eAutoState = MULTITAP_MAX_AUTO_STATE;
                     }
@@ -1356,13 +1376,22 @@ NormalKeyEvent:
                     } */        
                                
                     // if the cursor is in Right position then change to FirstCap.
-                    else if (OEM_MODE_T9_MT_ENGLISH_LOW == pme->m_nCurrInputMode
+                    else if (
+						#ifdef FEATURE_USES_ZI
+						OEM_MODE_ZI_MT_ENGLISH_LOW == pme->m_nCurrInputMode
+						#else
+						OEM_MODE_T9_MT_ENGLISH_LOW == pme->m_nCurrInputMode
+						#endif
                          // && MULTITAP_MAX_AUTO_STATE == pme->m_eAutoState 
                          &&( MULTITAP_MAX_AUTO_STATE == pme->m_eAutoState ||   MULTITAP_AUTOSET_FIRSTCAP == pme->m_eAutoState)
                          && OEM_isFirstCap(pme->m_pText))
                     {
                        // change to the fist cap mode
-                       pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;
+                       #ifdef FEATURE_USES_ZI
+                       pme->m_nCurrInputMode = OEM_MODE_ZI_MT_ENGLISH;
+					   #else
+					   pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;
+					   #endif
                        OEM_SetInputMode((CTextCtl *)pme);
                        
                        // set flag
@@ -1372,18 +1401,32 @@ NormalKeyEvent:
                        pme->m_nAutoSetCurPos = OEM_TextGetSelEnd(pme->m_pText);
                     }                      
                 }
-
-                if ( OEM_MODE_T9_RAPID_ENGLISH_LOW == pme->m_nCurrInputMode
+				#ifdef FEATURE_USES_ZI
+                if ( OEM_MODE_ZI_RAPID_ENGLISH_LOW == pme->m_nCurrInputMode
+                     ||OEM_MODE_ZI_RAPID_ENGLISH_UP == pme->m_nCurrInputMode 
+                     ||OEM_MODE_ZI_RAPID_ENGLISH == pme->m_nCurrInputMode )
+                #else
+				if ( OEM_MODE_T9_RAPID_ENGLISH_LOW == pme->m_nCurrInputMode
                      ||OEM_MODE_T9_RAPID_ENGLISH_UP == pme->m_nCurrInputMode 
                      ||OEM_MODE_T9_RAPID_ENGLISH == pme->m_nCurrInputMode )
+				#endif
                 {
                     // if MultitapCapsState have been change to all small in OEMText,
                     //then change input mode
-                    if ( OEM_MODE_T9_RAPID_ENGLISH == pme->m_nCurrInputMode
+                    #ifdef FEATURE_USES_ZI
+                    if ( OEM_MODE_ZI_RAPID_ENGLISH == pme->m_nCurrInputMode
                          && MULTITAP_ALL_SMALL == OEM_TextGetMultiCaps(pme->m_pText) )
+                    #else
+					if ( OEM_MODE_T9_RAPID_ENGLISH == pme->m_nCurrInputMode
+                         && MULTITAP_ALL_SMALL == OEM_TextGetMultiCaps(pme->m_pText) )
+					#endif
                     {
                        // change to the sll small mode
+                       #ifdef FEATURE_USES_ZI
+					   pme->m_nCurrInputMode = OEM_MODE_ZI_RAPID_ENGLISH_LOW;
+					   #else
                        pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH_LOW;
+					   #endif
                        OEM_SetInputMode((CTextCtl *)pme);
                        pme->m_eAutoState = MULTITAP_MAX_AUTO_STATE;
                     }
@@ -1406,12 +1449,21 @@ NormalKeyEvent:
                     }*/         
                                
                     // if the cursor is in Right position then change to FirstCap.
-                    else if ( OEM_MODE_T9_RAPID_ENGLISH_LOW == pme->m_nCurrInputMode
+                    else if ( 
+						#ifdef FEATURE_USES_ZI
+						OEM_MODE_ZI_RAPID_ENGLISH_LOW == pme->m_nCurrInputMode
+						#else
+						OEM_MODE_T9_RAPID_ENGLISH_LOW == pme->m_nCurrInputMode
+						#endif
                          && MULTITAP_MAX_AUTO_STATE == pme->m_eAutoState
                          && OEM_isFirstCap(pme->m_pText))
                     {
                        // change to the fist cap mode
+                       #ifdef FEATURE_USES_ZI
+					   pme->m_nCurrInputMode = OEM_MODE_ZI_RAPID_ENGLISH;
+					   #else
                        pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH;
+					   #endif
                        OEM_SetInputMode((CTextCtl *)pme);
                        
                        // set flag
@@ -1683,11 +1735,30 @@ NormalKeyEvent:
 
                 // if the cursor is in Right position then change to FirstCap.
                 //it should check Key release event 
-               
+                        #ifdef FEATURE_USES_ZI
+						if ( ( OEM_MODE_ZI_MT_ENGLISH == pme->m_nCurrInputMode         // Ab --> ab --> AB --> Ab inputmethod switch
+		                       ||OEM_MODE_ZI_MT_ENGLISH_LOW == pme->m_nCurrInputMode )
+		                       ||OEM_MODE_ZI_MT_ENGLISH_UP == pme->m_nCurrInputMode )
+						#else
 		                if ( ( OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode         // Ab --> ab --> AB --> Ab inputmethod switch
 		                       ||OEM_MODE_T9_MT_ENGLISH_LOW == pme->m_nCurrInputMode )
 		                       ||OEM_MODE_T9_MT_ENGLISH_UP == pme->m_nCurrInputMode )
+		                #endif
 		                {
+		                	#ifdef FEATURE_USES_ZI
+							if (OEM_MODE_ZI_MT_ENGLISH == pme->m_nCurrInputMode)
+		                    {
+		                        pme->m_nCurrInputMode = OEM_MODE_ZI_MT_ENGLISH_LOW;    // Ab --> ab inputmethod switch
+		                    }
+		                    else if (OEM_MODE_ZI_MT_ENGLISH_LOW == pme->m_nCurrInputMode)
+		                    {
+		                        pme->m_nCurrInputMode = OEM_MODE_ZI_MT_ENGLISH_UP;     // ab --> AB inputmethod switch
+		                    }
+		                    else if(OEM_MODE_ZI_MT_ENGLISH_UP == pme->m_nCurrInputMode)
+		                    {
+		                        pme->m_nCurrInputMode = OEM_MODE_ZI_MT_ENGLISH;        // AB --> Ab inputmethod switch
+		                    }
+							#else
 		                    if (OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode)
 		                    {
 		                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_LOW;    // Ab --> ab inputmethod switch
@@ -1700,6 +1771,7 @@ NormalKeyEvent:
 		                    {
 		                        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;        // AB --> Ab inputmethod switch
 		                    }
+							#endif
 		        
 
 		                   OEM_SetInputMode((CTextCtl *)pme);
@@ -1712,6 +1784,30 @@ NormalKeyEvent:
 
                 // if the cursor is in Right position then change to FirstCap.
                 //it should check Key release event 
+                #ifdef FEATURE_USES_ZI
+				if ( ( OEM_MODE_ZI_RAPID_ENGLISH == pme->m_nCurrInputMode         // En --> en --> EN --> En inputmethod switch
+                       ||OEM_MODE_ZI_RAPID_ENGLISH_LOW == pme->m_nCurrInputMode )
+                       ||OEM_MODE_ZI_RAPID_ENGLISH_UP == pme->m_nCurrInputMode )
+                {
+                    if (OEM_MODE_ZI_RAPID_ENGLISH == pme->m_nCurrInputMode)
+                    {
+                        pme->m_nCurrInputMode = OEM_MODE_ZI_RAPID_ENGLISH_LOW;    // En --> en inputmethod switch
+                    }
+                    else if (OEM_MODE_ZI_RAPID_ENGLISH_LOW == pme->m_nCurrInputMode)
+                    {
+                        pme->m_nCurrInputMode = OEM_MODE_ZI_RAPID_ENGLISH_UP;     // en --> EN inputmethod switch
+                    }
+                    else if(OEM_MODE_ZI_RAPID_ENGLISH_UP == pme->m_nCurrInputMode)
+                    {
+                        pme->m_nCurrInputMode = OEM_MODE_ZI_RAPID_ENGLISH;        // EN --> En inputmethod switch
+                    }
+
+                   OEM_SetInputMode((CTextCtl *)pme);
+                   
+                   // set flag
+                   pme->m_eAutoState = MULTITAP_USER_DENY_AUTOSET;
+                }
+				#else
                 if ( ( OEM_MODE_T9_RAPID_ENGLISH == pme->m_nCurrInputMode         // En --> en --> EN --> En inputmethod switch
                        ||OEM_MODE_T9_RAPID_ENGLISH_LOW == pme->m_nCurrInputMode )
                        ||OEM_MODE_T9_RAPID_ENGLISH_UP == pme->m_nCurrInputMode )
@@ -1733,7 +1829,8 @@ NormalKeyEvent:
                    
                    // set flag
                    pme->m_eAutoState = MULTITAP_USER_DENY_AUTOSET;
-                }                     
+                }     
+				#endif
 #ifdef FEATURE_T9_MT_SPANISH
 		 if ( ( OEM_MODE_T9_MT_SPANISH == pme->m_nCurrInputMode
                        ||OEM_MODE_T9_MT_SPANISH_LOW == pme->m_nCurrInputMode )
@@ -2348,6 +2445,21 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
 #endif
 		if(pme->m_dwProps & TP_STARKEY_ID_SWITCH)
 		{
+			#ifdef FEATURE_USES_ZI
+			if(pme->m_nCurrInputMode == OEM_MODE_ZI_MT_ENGLISH || 
+                    pme->m_nCurrInputMode == OEM_MODE_ZI_MT_ENGLISH_LOW ||
+                    pme->m_nCurrInputMode == OEM_MODE_ZI_MT_ENGLISH_UP ||
+                    pme->m_nCurrInputMode == OEM_MODE_NUMBERS)
+                {
+                #ifdef FEATURE_ZI_CAP_LOWER_ENGLISH   //add by yangdecai
+                	pme->m_nCurrInputMode = OEM_MODE_ZI_CAP_LOWER_ENGLISH;
+                #endif
+                }
+                else
+                {
+                	pme->m_nCurrInputMode = OEM_MODE_NUMBERS;
+                }
+		    #else
 			if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH || 
                     pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_LOW ||
                     pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP ||
@@ -2361,6 +2473,7 @@ static void CTextCtl_SetProperties(ITextCtl * pITextCtl, uint32 nProperties)
                 {
                 	pme->m_nCurrInputMode = OEM_MODE_NUMBERS;
                 }
+			#endif
                 
 		}
         OEM_SetInputMode((CTextCtl *)pme);
@@ -2878,6 +2991,7 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
     CTextCtl * pme = (CTextCtl *)po;
     AEETextInputMode tmCurr;
     AEETextInputMode tmSetMode = m;
+	AEETextInputMode tempMode;
 
     // Create the control if it isn't present
     if (pme->m_pText == NULL)
@@ -2957,6 +3071,9 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
     
     // If not, try it with the OEM
     tmCurr   = CTextCtl_GetInputMode(po, NULL);
+	MSG_FATAL("tmSetMode==%d",tmSetMode,0,0);
+	tempMode = OEM_TextGetCurrentMode(pme->m_pText);
+	MSG_FATAL("tempMode==%d",tempMode,0,0);
     if (tmSetMode != OEM_TextGetCurrentMode(pme->m_pText))
     {
         AEETextInputMode  tmNext;
@@ -2976,6 +3093,20 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW            
                 break;
+#ifdef FEATURE_USES_ZI
+#ifdef FEATURE_ZI_CAP_LOWER_ENGLISH  //add by yangdecai 2010-0909
+			case TEXT_MODE_ZI_CAP_LOWER_ENGLISH:
+				{
+					#ifdef FEATURE_ALL_KEY_PAD
+					pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+					#else
+					pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+					#endif
+				}
+				break;
+#endif
+
+#else
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH  //add by yangdecai 2010-0909
 			case TEXT_MODE_T9_CAP_LOWER_ENGLISH:
 				{
@@ -2987,8 +3118,12 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 				}
 				break;
 #endif
-
+#endif
+#ifdef FEATURE_USES_ZI
+			case TEXT_MODE_ZI_RAPID_ENGLISH:
+#else
             case TEXT_MODE_T9_RAPID_ENGLISH:
+#endif
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW
 	         pme->m_wResID = IDB_MODE_T9_RAPID_HEBREW_ENGLISH;
 #else
@@ -3001,6 +3136,35 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW				
                 break;
+#ifdef FEATURE_USES_ZI
+#ifdef FEATURE_ZI_MT_SPANISH
+	      case TEXT_MODE_ZI_MT_SPANISH://×ÖÄ¸ÊäÈëÄ£Ê½
+                pme->m_wResID = IDB_MODE_T9_MT_SPANISH;
+                break;
+#endif
+
+#ifdef FEATURE_ZI_RAPID_SPANISH
+	     case TEXT_MODE_ZI_RAPID_SPANISH:
+		 pme->m_wResID = IDB_MODE_T9_RAPID_SPANISH;
+		 break;
+#endif
+            case TEXT_MODE_NUMBERS:
+                pme->m_wResID = IDB_MODE_NUMBERS;
+                break;
+				
+#ifdef FEATURE_ZI_MT_ARABIC
+			case TEXT_MODE_ZI_MT_ARABIC:	
+				pme->m_wResID = IDB_MODE_T9_MT_ARABIC;
+				break;
+#endif //FEATURE_ZI_MT_ARABIC
+				
+#ifdef FEATURE_ZI_RAPID_ARABIC
+			case TEXT_MODE_ZI_RAPID_ARABIC:
+				pme->m_wResID = IDB_MODE_T9_RAPID_ARABIC;
+				break;
+#endif //FEATURE_ZI_RAPID_ARABIC
+
+#else
 #ifdef FEATURE_T9_MT_SPANISH
 	      case TEXT_MODE_T9_MT_SPANISH://×ÖÄ¸ÊäÈëÄ£Ê½
                 pme->m_wResID = IDB_MODE_T9_MT_SPANISH;
@@ -3027,6 +3191,7 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 				pme->m_wResID = IDB_MODE_T9_RAPID_ARABIC;
 				break;
 #endif //FEATURE_T9_RAPID_ARABIC
+#endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD
 			case TEXT_MODE_MYANMAR:
 				pme->m_wResID = IDI_MODE_MYANMAR;
@@ -4914,7 +5079,371 @@ static void OEM_SetInputMode(CTextCtl * pme)
 	                          (void*)&is_Taimod,
 	                          sizeof(boolean));
             break; 
+#ifdef FEATURE_USES_ZI
+#ifdef FEATURE_ZI_MT_ENGLISH
+        case OEM_MODE_ZI_MT_ENGLISH:
+            wMode = TEXT_MODE_MULTITAP;//Ê××ÖÄ¸´óÐ´×ÖÄ¸ÊäÈëÄ£Ê½
+#ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
+	        pme->m_wResID = IDB_MODE_T9_MT_HEBREW_ENGLISH;
+#else
 
+#if defined(FEATURE_ALL_KEY_PAD)
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#else
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
+
+#endif  // FEATURE_PREPAID_ISRAEL_HEBREW
+			#if defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W515V3)
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP); 
+            #else
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP); 
+            #endif
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+            break;            
+            
+        case OEM_MODE_ZI_MT_ENGLISH_LOW:
+            wMode = TEXT_MODE_MULTITAP;//Ð¡Ð´×ÖÄ¸ÊäÈëÄ£Ê½
+#ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
+	        pme->m_wResID = IDB_MODE_T9_MT_HEBREW_ENGLISH_LOW;
+#else
+            pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#endif  // FEATURE_PREPAID_ISRAEL_HEBREW
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL);  
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+            break;
+
+#ifdef FEATURE_ZI_CAP_LOWER_ENGLISH  //add by yangdecai 2010-0909
+		case OEM_MODE_ZI_CAP_LOWER_ENGLISH:
+			MSG_FATAL("OEM_MODE_ZI_CAP_LOWER_ENGLISH:::::::::::::::::::::::::::::",0,0,0);
+			#ifndef  FEATURE_ALL_KEY_PAD
+			wMode = AEE_TM_CAPLOWER;//Ð¡Ð´×ÖÄ¸ÊäÈëÄ£Ê½
+			OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+	        #else
+			wMode = AEE_TM_CAPLOWER;//´óÐ¡Ð´×ÖÄ¸ÊäÈëÄ£Ê
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+			#endif
+			
+			//OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);  
+			(void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+	        
+			break;
+#endif
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+		case OEM_MODE_MYANMAR:
+			wMode = AEE_TM_MYANMAR;   //add by yangdecai   2010-12-23
+			pme->m_wResID = IDI_MODE_MYANMAR;
+			(void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+			break;
+#endif
+        case OEM_MODE_ZI_MT_ENGLISH_UP:
+            wMode = AEE_TM_LETTERS;//´óÐ´×ÖÄ¸ÊäÈëÄ£Ê½
+#ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
+	        pme->m_wResID = IDB_MODE_T9_MT_HEBREW_ENGLISH_UP;
+#else
+
+#if defined(FEATURE_ALL_KEY_PAD)
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+#else
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+#endif
+
+#endif  // FEATURE_PREPAID_ISRAEL_HEBREW         
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+            break;            
+#endif //FEATURE_ZI_MT_ENGLISH
+
+#ifdef FEATURE_ZI_RAPID_ENGLISH
+        case OEM_MODE_ZI_RAPID_ENGLISH:
+            wMode = TEXT_MODE_ZI_RAPID_ENGLISH;
+#ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
+	        pme->m_wResID = IDB_MODE_T9_RAPID_HEBREW_ENGLISH;
+#else
+
+#if defined(FEATURE_ALL_KEY_PAD)
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#else
+			pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
+
+#endif  // FEATURE_PREPAID_ISRAEL_HEBREW
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);  
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+            break;
+
+        case OEM_MODE_ZI_RAPID_ENGLISH_LOW:
+            wMode = TEXT_MODE_ZI_RAPID_ENGLISH;
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+#ifdef FEATURE_PREPAID_ISRAEL_HEBREW  
+	        pme->m_wResID = IDB_MODE_T9_RAPID_HEBREW_ENGLISH_LOW;
+#else
+
+#if defined(FEATURE_ALL_KEY_PAD)
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+#else
+			pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
+
+#endif  // FEATURE_PREPAID_ISRAEL_HEBREW			
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL);   
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+            break;
+
+        case OEM_MODE_ZI_RAPID_ENGLISH_UP:
+            wMode = TEXT_MODE_ZI_RAPID_ENGLISH;
+#ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
+	        pme->m_wResID = IDB_MODE_T9_RAPID_HEBREW_ENGLISH_UP;
+#else
+
+#if defined(FEATURE_ALL_KEY_PAD)
+			 pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH_UP;
+#else
+			pme->m_wResID = IDB_MODE_T9_RAPID_ENGLISH;
+#endif
+
+#endif  // FEATURE_PREPAID_ISRAEL_HEBREW
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS);   
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+            break;            
+#endif //FEATURE_MODE_ZI_RAPID_ENGLISH
+
+#ifdef FEATURE_ZI_PINYIN
+        case OEM_MODE_ZI_PINYIN:
+            wMode = TEXT_MODE_ZI_PINYIN;
+            pme->m_wResID = IDB_MODE_T9_PINYIN;
+            break;
+#endif //FEATURE_ZI_PINYIN
+
+#ifdef FEATURE_ZI_STROKE
+        case OEM_MODE_ZI_STROKE:
+            wMode = TEXT_MODE_ZI_STROKE;
+            pme->m_wResID = IDB_MODE_T9_STROKE;
+            break;
+#endif //FEATURE_ZI_STROKE
+
+#ifdef FEATURE_ZI_ZHUYIN
+        case OEM_MODE_ZI_ZHUYIN:
+            wMode = TEXT_MODE_ZI_ZHUYIN;
+            pme->m_wResID = IDB_MODE_T9_ZHUYIN;
+            break;
+#endif //FEATURE_ZI_ZHUYIN
+
+#ifdef FEATURE_ZI_MT_ARABIC
+        case OEM_MODE_ZI_MT_ARABIC:
+            wMode = TEXT_MODE_ZI_MT_ARABIC;
+            pme->m_wResID = IDB_MODE_T9_MT_ARABIC;
+            break;
+#endif //FEATURE_ZI_MT_ARABIC
+
+#ifdef FEATURE_ZI_RAPID_ARABIC
+        case OEM_MODE_ZI_RAPID_ARABIC:
+            wMode = TEXT_MODE_ZI_RAPID_ARABIC;
+            pme->m_wResID = IDB_MODE_T9_RAPID_ARABIC;
+            break;
+#endif //FEATURE_ZI_RAPID_ARABIC
+
+#ifdef FEATURE_ZI_MT_HEBREW
+        case OEM_MODE_ZI_MT_HEBREW:   // FEATURE_T9_MT_HEBREW: 
+            wMode = TEXT_MODE_ZI_MT_HEBREW;
+            pme->m_wResID = IDB_MODE_T9_MT_HEBREW;
+            break;
+#endif //FEATURE_ZI_MT_HEBREW
+
+#ifdef FEATURE_ZI_RAPID_HEBREW
+        case OEM_MODE_ZI_RAPID_HEBREW:
+            wMode = TEXT_MODE_ZI_RAPID_HEBREW;
+            pme->m_wResID = IDB_MODE_T9_RAPID_HEBREW;
+            break;
+#endif //FEATURE_ZI_RAPID_HEBREW
+
+#ifdef FEATURE_ZI_MT_HINDI
+        case OEM_MODE_ZI_MT_HINDI:
+            wMode = TEXT_MODE_ZI_MT_HINDI;
+            pme->m_wResID = IDB_MODE_T9_MT_HINDI;
+            break;
+#endif //FEATURE_ZI_MT_HINDI
+
+#ifdef FEATURE_ZI_RAPID_HINDI
+        case OEM_MODE_ZI_RAPID_HINDI:
+            wMode = TEXT_MODE_ZI_RAPID_HINDI;
+            pme->m_wResID = IDB_MODE_T9_RAPID_HINDI;
+            break;
+#endif //FEATURE_ZI_RAPID_HINDI
+
+#ifdef FEATURE_ZI_MT_THAI
+        case OEM_MODE_ZI_MT_THAI:
+            wMode = TEXT_MODE_ZI_MT_THAI;
+            pme->m_wResID = IDB_MODE_T9_MT_THAI;
+            break;
+#endif //FEATURE_ZI_MT_THAI
+
+#ifdef FEATURE_ZI_RAPID_THAI
+        case OEM_MODE_ZI_RAPID_THAI:
+        	is_Taimod = TRUE;
+            wMode = TEXT_MODE_ZI_RAPID_THAI;
+            pme->m_wResID = IDB_MODE_T9_RAPID_THAI;
+            (void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+	                          (void*)&is_Taimod,
+	                          sizeof(boolean));
+            break;
+#endif //FEATURE_ZI_RAPID_THAI
+
+#ifdef FEATURE_ZI_MT_SPANISH
+        case OEM_MODE_ZI_MT_SPANISH:
+            wMode = TEXT_MODE_ZI_MT_SPANISH;
+            pme->m_wResID = IDB_MODE_T9_MT_SPANISH;
+	        OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);
+            break;
+	     case OEM_MODE_ZI_MT_SPANISH_LOW:
+            wMode = TEXT_MODE_ZI_MT_SPANISH;
+            pme->m_wResID = IDB_MODE_T9_MT_SPANISH_LOW;
+	        OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL); 
+            break;
+	     case OEM_MODE_ZI_MT_SPANISH_UP:
+            wMode = TEXT_MODE_ZI_MT_SPANISH;
+            pme->m_wResID = IDB_MODE_T9_MT_SPANISH_UP;
+	        OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+            break;
+#endif //FEATURE_ZI_MT_SPANISH
+
+#ifdef FEATURE_ZI_RAPID_SPANISH
+        case OEM_MODE_ZI_RAPID_SPANISH:
+            wMode = TEXT_MODE_ZI_RAPID_SPANISH;
+            pme->m_wResID = IDB_MODE_T9_RAPID_SPANISH;
+	        OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP); 
+            break;
+	     case OEM_MODE_ZI_RAPID_SPANISH_LOW:
+            wMode = TEXT_MODE_ZI_RAPID_SPANISH;
+            pme->m_wResID = IDB_MODE_T9_RAPID_SPANISH_LOW;
+	        OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL); 
+            break;
+	     case OEM_MODE_ZI_RAPID_SPANISH_UP:
+            wMode = TEXT_MODE_ZI_RAPID_SPANISH;
+            pme->m_wResID = IDB_MODE_T9_RAPID_SPANISH_UP;
+	        OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+            break;
+#endif //FEATURE_ZI_RAPID_SPANISH
+
+#ifdef FEATURE_ZI_MT_PORTUGUESE
+        case OEM_MODE_ZI_MT_PORTUGUESE:
+            wMode = TEXT_MODE_ZI_MT_PORTUGUESE;
+            pme->m_wResID = IDB_MODE_T9_MT_PORTUGUESE;
+            break;
+#endif //FEATURE_ZI_MT_PORTUGUESE
+
+#ifdef FEATURE_ZI_RAPID_PORTUGUESE
+        case OEM_MODE_ZI_RAPID_PORTUGUESE:
+            wMode = TEXT_MODE_ZI_RAPID_PORTUGUESE;
+            pme->m_wResID = IDB_MODE_T9_RAPID_PORTUGUESE;
+            break;
+#endif //FEATURE_ZI_RAPID_PORTUGUESE
+
+#ifdef FEATURE_ZI_MT_INDONESIAN
+        case OEM_MODE_ZI_MT_INDONESIAN:
+            wMode = TEXT_MODE_ZI_MT_INDONESIAN;
+            pme->m_wResID = IDB_MODE_T9_MT_INDONESIAN;  
+            break;
+#endif //FEATURE_ZI_MT_INDONESIAN
+
+#ifdef FEATURE_ZI_RAPID_INDONESIAN
+        case OEM_MODE_ZI_RAPID_INDONESIAN:
+            wMode = TEXT_MODE_ZI_RAPID_INDONESIAN;
+            pme->m_wResID= IDB_MODE_T9_RAPID_INDONESIAN;//IDB_MODE_T9_TEZ_INDONESIAN;  
+            break;
+#endif //FEATURE_ZI_RAPID_INDONESIAN
+
+#ifdef FEATURE_ZI_MT_VIETNAMESE
+        case OEM_MODE_ZI_MT_VIETNAMESE:
+            wMode = TEXT_MODE_ZI_MT_VIETNAMESE;
+            pme->m_wResID = IDB_MODE_T9_MT_VIETNAMESE;
+            break;
+#endif //FEATURE_ZI_MT_VIETNAMESE
+
+#ifdef FEATURE_ZI_RAPID_VIETNAMESE
+        case OEM_MODE_ZI_RAPID_VIETNAMESE:
+            wMode = TEXT_MODE_ZI_RAPID_VIETNAMESE;
+            pme->m_wResID = IDB_MODE_T9_RAPID_VIETNAMESE;
+            break;
+#endif //FEATURE_ZI_RAPID_VIETNAMESE
+
+#ifdef FEATURE_ZI_MT_FRENCH
+        case OEM_MODE_ZI_MT_FRENCH:
+            wMode = TEXT_MODE_ZI_MT_FRENCH;
+            pme->m_wResID = IDB_MODE_T9_MT_FRENCH;
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP); 
+            break;
+	     case OEM_MODE_ZI_MT_FRENCH_LOW:
+            wMode = TEXT_MODE_ZI_MT_FRENCH;
+            pme->m_wResID = IDB_MODE_T9_MT_FRENCH_LOW;
+	        OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL); 
+            break;
+	     case OEM_MODE_ZI_MT_FRENCH_UP:
+            wMode = TEXT_MODE_ZI_MT_FRENCH;
+            pme->m_wResID = IDB_MODE_T9_MT_FRENCH_UP;
+	        OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+            break;
+#endif //FEATURE_ZI_MT_FRENCH
+
+#ifdef FEATURE_ZI_RAPID_FRENCH
+        case OEM_MODE_ZI_RAPID_FRENCH:
+            wMode = TEXT_MODE_ZI_RAPID_FRENCH;
+            pme->m_wResID = IDB_MODE_T9_RAPID_FRENCH;
+            OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP); 
+            break;
+	     case OEM_MODE_ZI_RAPID_FRENCH_LOW:
+            wMode = TEXT_MODE_ZI_RAPID_FRENCH;
+            pme->m_wResID = IDB_MODE_T9_RAPID_FRENCH_LOW;
+	        OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_SMALL); 
+            break;
+	     case OEM_MODE_ZI_RAPID_FRENCH_UP:
+            wMode = TEXT_MODE_ZI_RAPID_FRENCH;
+            pme->m_wResID = IDB_MODE_T9_RAPID_FRENCH_UP;
+	        OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+            break;
+#endif //FEATURE_ZI_RAPID_FRENCH
+
+#ifdef FEATURE_ZI_JAPANESE
+        case OEM_MODE_ZI_JAPANESE:
+            wMode = TEXT_MODE_ZI_JAPANESE;
+            pme->m_wResID = IDB_MODE_T9_JAPANESE;
+            break;
+#endif //FEATURE_ZI_JAPANESE
+
+#ifdef FEATURE_ZI_KOREAN
+        case OEM_MODE_T9_KOREAN:
+            wMode = TEXT_MODE_ZI_KOREAN;
+            pme->m_wResID = IDB_MODE_T9_KOREAN;
+            break;
+#endif //FEATURE_ZI_KOREAN
+
+#ifdef FEATURE_ZI_ITALIAN
+        case OEM_MODE_ZI_ITALIAN:
+            wMode = TEXT_MODE_ZI_ITALIAN;
+            pme->m_wResID = IDB_MODE_T9_ITALIAN;
+            break;
+#endif //FEATURE_ZI_ITALIAN
+
+#else
 #ifdef FEATURE_T9_MT_ENGLISH
         case OEM_MODE_T9_MT_ENGLISH:
             wMode = TEXT_MODE_MULTITAP;//Ê××ÖÄ¸´óÐ´×ÖÄ¸ÊäÈëÄ£Ê½
@@ -5277,13 +5806,14 @@ static void OEM_SetInputMode(CTextCtl * pme)
             pme->m_wResID = IDB_MODE_T9_ITALIAN;
             break;
 #endif //FEATURE_T9_ITALIAN
+#endif
 
         default:
             wMode = TEXT_MODE_NUMBERS;//Êý×ÖÊäÈëÄ£Ê½
             pme->m_wResID = IDB_MODE_NUMBERS;
             break;
         }
-	//MSG_FATAL("2pme->m_wResID:::::::::::::::::::%d,wMode=%d",pme->m_wResID,wMode,0);
+	MSG_FATAL("2pme->m_wResID=%d,wMode=%d",pme->m_wResID,wMode,0);
     //ÉèÖÃÊäÈë·¨
     (void)CTextCtl_SetInputMode((ITextCtl *)pme, wMode);
     
@@ -5314,7 +5844,152 @@ See Also: none
 static void TextCtl_SetInputList(CTextCtl *pme)
 {
     int i=0;
+#ifdef FEATURE_USES_ZI
+#ifdef FEATURE_ZI_RAPID_SPANISH
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_RAPID_SPANISH;
+#endif //FEATURE_ZI_RAPID_SPANISH
 
+#ifdef FEATURE_ZI_MT_SPANISH
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_SPANISH;
+#endif //FEATURE_ZI_MT_SPANISH
+
+#ifdef FEATURE_ZI_RAPID_FRENCH
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_RAPID_FRENCH;
+#endif //FEATURE_ZI_RAPID_FRENCH
+
+#ifdef FEATURE_ZI_MT_FRENCH
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_FRENCH;
+#endif //FEATURE_ZI_MT_FRENCH
+
+#ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
+	MSG_FATAL("TextCtl_SetInputList...000",0,0,0);
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_NUMBERS; 
+
+#ifdef FEATURE_ZI_RAPID_ENGLISH
+	MSG_FATAL("TextCtl_SetInputList...111",0,0,0);
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_RAPID_ENGLISH;
+#endif //FEATURE_MODE_ZI_RAPID_ENGLISH
+
+#ifdef FEATURE_ZI_MT_ENGLISH
+	MSG_FATAL("TextCtl_SetInputList...222",0,0,0);
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_ENGLISH; 
+#endif //FEATURE_ZI_MT_ENGLISH
+
+#else //FEATURE_CARRIER_VENEZUELA_MOVILNET
+
+#ifdef FEATURE_ZI_MT_ENGLISH
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
+	pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_ENGLISH_LOW;
+	pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_ENGLISH_UP;
+#else
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_ENGLISH;
+#endif
+#endif //FEATURE_ZI_MT_ENGLISH
+
+#ifdef FEATURE_ZI_RAPID_ENGLISH
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_RAPID_ENGLISH;
+#endif //FEATURE_MODE_ZI_RAPID_ENGLISH
+#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+#else
+#ifdef FEATURE_ZI_CAP_LOWER_ENGLISH   //add by yangdecai 2010-09-09
+	pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_CAP_LOWER_ENGLISH;
+	#if defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W515V3)
+	OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+	#endif
+#endif
+#endif
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_NUMBERS;  
+
+#endif // FEATURE_CARRIER_VENEZUELA_MOVILNET
+#ifdef FEATURE_MYANMAR_INPUT_MOD    //add by yangdecai 20101223
+		
+		pme->m_nCurrInputModeList[i++] = OEM_MODE_MYANMAR;
+
+#endif
+
+#ifdef FEATURE_ZI_PINYIN
+	MSG_FATAL("TextCtl_SetInputList...333",0,0,0);
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_PINYIN;
+#endif //FEATURE_ZI_PINYIN
+
+#ifdef FEATURE_ZI_ZHUYIN
+   pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_ZHUYIN;
+#endif //FEATURE_ZI_ZHUYIN
+
+#ifdef FEATURE_ZI_STROKE
+	MSG_FATAL("TextCtl_SetInputList...444",0,0,0);
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_STROKE;
+#endif //FEATURE_ZI_STROKE
+
+#ifdef FEATURE_ZI_MT_ARABIC
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_ARABIC;
+#endif //FEATURE_ZI_MT_ARABIC
+
+#ifdef FEATURE_ZI_RAPID_ARABIC
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_RAPID_ARABIC;
+#endif //FEATURE_ZI_RAPID_ARABIC
+
+#ifdef FEATURE_ZI_MT_HEBREW
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_HEBREW;
+#endif //FEATURE_T9_MT_HEBREW
+
+#ifdef FEATURE_ZI_RAPID_HEBREW
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_RAPID_HEBREW;
+#endif //FEATURE_ZI_RAPID_HEBREW
+
+#ifdef FEATURE_ZI_MT_HINDI
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_HINDI;
+#endif //FEATURE_ZI_MT_HINDI
+
+#ifdef FEATURE_ZI_RAPID_HINDI
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_RAPID_HINDI;
+#endif //FEATURE_ZI_RAPID_HINDI
+
+#ifdef FEATURE_ZI_MT_THAI
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_THAI;
+#endif //FEATURE_ZI_MT_THAI
+
+#ifdef FEATURE_ZI_RAPID_THAI
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_RAPID_THAI;
+#endif //FEATURE_ZI_RAPID_THAI
+
+#ifdef FEATURE_ZI_MT_PORTUGUESE
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_PORTUGUESE;
+#endif //FEATURE_ZI_MT_PORTUGUESE
+
+#ifdef FEATURE_ZI_RAPID_PORTUGUESE
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_RAPID_PORTUGUESE;
+#endif //FEATURE_ZI_RAPID_PORTUGUESE
+
+#ifdef FEATURE_ZI_MT_INDONESIAN
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_INDONESIAN;
+#endif //FEATURE_ZI_MT_INDONESIAN
+
+#ifdef FEATURE_ZI_RAPID_INDONESIAN
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_RAPID_INDONESIAN;
+#endif //FEATURE_ZI_RAPID_INDONESIAN
+
+#ifdef FEATURE_ZI_MT_VIETNAMESE
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_VIETNAMESE;
+#endif //FEATURE_ZI_MT_VIETNAMESE
+
+#ifdef FEATURE_ZI_RAPID_VIETNAMESE
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_RAPID_VIETNAMESE;
+#endif //FEATURE_ZI_RAPID_VIETNAMESE
+
+#ifdef FEATURE_ZI_JAPANESE
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_JAPANESE;
+#endif //FEATURE_ZI_JAPANESE
+
+#ifdef FEATURE_ZI_KOREAN
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_KOREAN;
+#endif //FEATURE_ZI_KOREAN
+
+#ifdef FEATURE_ZI_ITALIAN
+    pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_ITALIAN;
+#endif //FEATURE_ZI_ITALIAN
+
+#else
 #ifdef FEATURE_T9_RAPID_SPANISH
     pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_RAPID_SPANISH;
 #endif //FEATURE_T9_RAPID_SPANISH
@@ -5332,14 +6007,16 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 #endif //FEATURE_T9_MT_FRENCH
 
 #ifdef FEATURE_CARRIER_VENEZUELA_MOVILNET
-
+	MSG_FATAL("TextCtl_SetInputList...000",0,0,0);
     pme->m_nCurrInputModeList[i++] = OEM_MODE_NUMBERS; 
 
 #ifdef FEATURE_T9_RAPID_ENGLISH
+	MSG_FATAL("TextCtl_SetInputList...111",0,0,0);
     pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_RAPID_ENGLISH;
 #endif //FEATURE_MODE_T9_RAPID_ENGLISH
 
 #ifdef FEATURE_T9_MT_ENGLISH
+	MSG_FATAL("TextCtl_SetInputList...222",0,0,0);
     pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_MT_ENGLISH; 
 #endif //FEATURE_T9_MT_ENGLISH
 
@@ -5376,6 +6053,7 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 #endif
 
 #ifdef FEATURE_T9_PINYIN
+	MSG_FATAL("TextCtl_SetInputList...333",0,0,0);
     pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_PINYIN;
 #endif //FEATURE_T9_PINYIN
 
@@ -5384,6 +6062,7 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 #endif //FEATURE_T9_ZHUYIN
 
 #ifdef FEATURE_T9_STROKE
+	MSG_FATAL("TextCtl_SetInputList...444",0,0,0);
     pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_STROKE;
 #endif //FEATURE_T9_STROKE
 
@@ -5454,7 +6133,7 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 #ifdef FEATURE_T9_ITALIAN
     pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_ITALIAN;
 #endif //FEATURE_T9_ITALIAN
-
+#endif
     pme->m_nCurrInputModeCount = i;
 
 }
@@ -5482,12 +6161,22 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
 {
     boolean ret = FALSE;
     int i;
-    MSG_FATAL("pme->m_nCurrInputMode:::::::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
-	MSG_FATAL("pme->m_nCurrInputModeCount:::::::::::::::::::::%d",pme->m_nCurrInputModeCount,0,0);
+    MSG_FATAL("Mode==%d",pme->m_nCurrInputMode,0,0);
+	MSG_FATAL("ModeCount::=%d",pme->m_nCurrInputModeCount,0,0);
 	#ifdef FEATURE_VERSION_C01
 	pme->m_isAvk1 = FALSE;
 	#endif
 	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+	#ifdef FEATURE_USES_ZI
+	if((pme->m_nCurrInputMode == OEM_MODE_ZI_MT_THAI))
+	{
+		pme->m_nCurrInputMode = OEM_MODE_ZI_RAPID_ENGLISH_LOW;
+	}
+	else
+	{
+		pme->m_nCurrInputMode = OEM_MODE_ZI_MT_THAI;
+	}
+	#else
 	if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_THAI))
 	{
 		pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH_LOW;
@@ -5496,9 +6185,28 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
 	{
 		pme->m_nCurrInputMode = OEM_MODE_T9_MT_THAI;
 	}
+	#endif
 	#else
 	if(pme->m_dwProps & TP_STARKEY_ID_SWITCH)
 	{
+		#ifdef FEATURE_USES_ZI
+		if(pme->m_nCurrInputMode == OEM_MODE_ZI_MT_ENGLISH || 
+                pme->m_nCurrInputMode == OEM_MODE_ZI_MT_ENGLISH_LOW ||
+                pme->m_nCurrInputMode == OEM_MODE_ZI_MT_ENGLISH_UP ||
+                pme->m_nCurrInputMode == OEM_MODE_NUMBERS)
+            {
+            	#ifdef FEATURE_ZI_CAP_LOWER_ENGLISH   //add by yangdecai
+                	pme->m_nCurrInputMode = OEM_MODE_ZI_CAP_LOWER_ENGLISH;
+                	#if defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W515V3)
+                	OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+                	#endif
+                #endif
+            }
+            else
+            {
+            	pme->m_nCurrInputMode = OEM_MODE_NUMBERS;
+            }
+		#else
 		if(pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH || 
                 pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_LOW ||
                 pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP ||
@@ -5515,8 +6223,55 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
             {
             	pme->m_nCurrInputMode = OEM_MODE_NUMBERS;
             }
+		#endif
 	}
+	#ifdef FEATURE_USES_ZI
+
+	if((pme->m_nCurrInputMode == OEM_MODE_ZI_MT_ENGLISH_LOW) || (pme->m_nCurrInputMode == OEM_MODE_ZI_MT_ENGLISH_UP))
+    {
+        pme->m_nCurrInputMode = OEM_MODE_ZI_MT_ENGLISH;
+    }
+
+    if((pme->m_nCurrInputMode == OEM_MODE_ZI_RAPID_ENGLISH_LOW) || (pme->m_nCurrInputMode == OEM_MODE_ZI_RAPID_ENGLISH_UP))
+    {
+        pme->m_nCurrInputMode = OEM_MODE_ZI_RAPID_ENGLISH;
+    }    
+#ifdef FEATURE_ZI_CAP_LOWER_ENGLISH
+	if(pme->m_nCurrInputMode == OEM_MODE_ZI_CAP_LOWER_ENGLISH)
+	{
+		pme->m_nCurrInputMode = OEM_MODE_ZI_CAP_LOWER_ENGLISH;
+		#if defined(FEATURE_VERSION_C01)||defined(FEATURE_VERSION_W515V3)
+		OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
+		#endif
+	}
+#endif
+
+#ifdef FEATURE_ZI_MT_SPANISH
+    if((pme->m_nCurrInputMode == OEM_MODE_ZI_MT_SPANISH_LOW) || (pme->m_nCurrInputMode == OEM_MODE_T9_MT_SPANISH_UP))
+    {
+        pme->m_nCurrInputMode = OEM_MODE_ZI_MT_SPANISH;
+    }
+#endif
+#ifdef FEATURE_ZI_RAPID_SPANISH
+    if((pme->m_nCurrInputMode == OEM_MODE_ZI_RAPID_SPANISH_LOW) || (pme->m_nCurrInputMode == OEM_MODE_ZI_RAPID_SPANISH_UP))
+    {
+        pme->m_nCurrInputMode = OEM_MODE_ZI_RAPID_SPANISH;
+    }
+#endif
+#ifdef FEATURE_ZI_MT_FRENCH
+    if((pme->m_nCurrInputMode == OEM_MODE_ZI_MT_FRENCH_LOW) || (pme->m_nCurrInputMode == OEM_MODE_ZI_MT_FRENCH_UP))
+    {
+        pme->m_nCurrInputMode = OEM_MODE_ZI_MT_FRENCH;
+    }
+#endif
+#ifdef FEATURE_ZI_RAPID_FRENCH
+    if((pme->m_nCurrInputMode == OEM_MODE_ZI_RAPID_FRENCH_LOW) || (pme->m_nCurrInputMode == OEM_MODE_ZI_RAPID_FRENCH_UP))
+    {
+        pme->m_nCurrInputMode = OEM_MODE_ZI_RAPID_FRENCH;
+    }
+#endif
 	
+	#else
     if((pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_LOW) || (pme->m_nCurrInputMode == OEM_MODE_T9_MT_ENGLISH_UP))
     {
         pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;
@@ -5559,6 +6314,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
     {
         pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_FRENCH;
     }
+#endif
 #endif
 #endif
     for (i=0; i<pme->m_nCurrInputModeCount; i++)
@@ -5627,7 +6383,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
             else
             {
                 // if meet the end , then return the first one
-                MSG_FATAL("pme->m_nCurrInputMode::::end1:::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
+                MSG_FATAL("tMode::::end1=%d",pme->m_nCurrInputMode,0,0);
                 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                 #else
                 if((pme->m_dwProps & TP_STARKEY_ID_SWITCH))
@@ -5675,7 +6431,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
     #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
     ret = TRUE;
     #endif
-    MSG_FATAL("pme->m_nCurrInputMode::::end:::::::::::::::::%d",pme->m_nCurrInputMode,0,0);
+    MSG_FATAL("Mode::::end::=%d",pme->m_nCurrInputMode,0,0);
     return ret;
 }
 
@@ -5701,11 +6457,20 @@ static void TextCtl_3STYLE_MultitapTimer(void *pUser)
     
     // if MultitapCapsState have been change to all small in OEMText,
     //then change input mode
+    #ifdef FEATURE_USES_ZI
+	if ( OEM_MODE_ZI_MT_ENGLISH == pme->m_nCurrInputMode
+         && MULTITAP_ALL_SMALL == OEM_TextGetMultiCaps(pme->m_pText) )
+	#else
     if ( OEM_MODE_T9_MT_ENGLISH == pme->m_nCurrInputMode
          && MULTITAP_ALL_SMALL == OEM_TextGetMultiCaps(pme->m_pText) )
+    #endif
     {
        // change to the sll small mode
+       #ifdef FEATURE_USES_ZI
+	   pme->m_nCurrInputMode = OEM_MODE_ZI_MT_ENGLISH_LOW;
+	   #else
        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_LOW;
+	   #endif
        OEM_SetInputMode((CTextCtl *)pme);
     }
     
@@ -5719,7 +6484,11 @@ static void TextCtl_3STYLE_MultitapTimer(void *pUser)
         if ( MULTITAP_AUTOSET_FIRSTCAP == pme->m_eAutoState )
         {
             // change to the all small mode
+            #ifdef FEATURE_USES_ZI
+			pme->m_nCurrInputMode = OEM_MODE_ZI_MT_ENGLISH_LOW;
+			#else
             pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH_LOW;
+			#endif
             OEM_SetInputMode(pme);
         }
         
@@ -5728,13 +6497,24 @@ static void TextCtl_3STYLE_MultitapTimer(void *pUser)
 
     // if the cursor is in Right position then change to FirstCap.
     //it will be checked in timer
+    #ifdef FEATURE_USES_ZI
+	else if ( ( OEM_MODE_ZI_MT_ENGLISH_LOW == pme->m_nCurrInputMode
+           ||OEM_MODE_ZI_MT_ENGLISH_UP == pme->m_nCurrInputMode )
+         && MULTITAP_MAX_AUTO_STATE == pme->m_eAutoState 
+         && OEM_isFirstCap(pme->m_pText) )
+	#else
     else if ( ( OEM_MODE_T9_MT_ENGLISH_LOW == pme->m_nCurrInputMode
            ||OEM_MODE_T9_MT_ENGLISH_UP == pme->m_nCurrInputMode )
          && MULTITAP_MAX_AUTO_STATE == pme->m_eAutoState 
          && OEM_isFirstCap(pme->m_pText) )
+    #endif
     {
        // change to the fist cap mode
+       #ifdef FEATURE_USES_ZI
+	   pme->m_nCurrInputMode = OEM_MODE_ZI_MT_ENGLISH;
+	   #else
        pme->m_nCurrInputMode = OEM_MODE_T9_MT_ENGLISH;
+	   #endif
        OEM_SetInputMode((CTextCtl *)pme);
        
        // set flag
@@ -5743,6 +6523,100 @@ static void TextCtl_3STYLE_MultitapTimer(void *pUser)
        // save the Cursor Pos when Auto Set to first cap.
        pme->m_nAutoSetCurPos = OEM_TextGetSelEnd(pme->m_pText);
     }
+	#ifdef FEATURE_USES_ZI
+	#ifdef FEATURE_ZI_MT_SPANISH
+    // if MultitapCapsState have been change to all small in OEMText,
+    //then change input mode
+    if ( OEM_MODE_ZI_MT_SPANISH == pme->m_nCurrInputMode
+         && MULTITAP_ALL_SMALL == OEM_TextGetMultiCaps(pme->m_pText) )
+    {
+       // change to the sll small mode
+       pme->m_nCurrInputMode = OEM_MODE_T9_MT_SPANISH_LOW;
+       OEM_SetInputMode((CTextCtl *)pme);
+    }
+    
+    // if it have been Auto set to first cap and move the cursor then 
+    //change to all small mode
+    else if ( ( MULTITAP_AUTOSET_FIRSTCAP == pme->m_eAutoState 
+           || MULTITAP_USER_DENY_AUTOSET == pme->m_eAutoState )
+         && OEM_TextGetSelEnd(pme->m_pText) != pme->m_nAutoSetCurPos 
+         && OEM_TextGetSelEnd(pme->m_pText) == OEM_TextGetCursorPos(pme->m_pText) )
+    {
+        if ( MULTITAP_AUTOSET_FIRSTCAP == pme->m_eAutoState )
+        {
+            // change to the all small mode
+            pme->m_nCurrInputMode = OEM_MODE_ZI_MT_SPANISH_LOW;
+            OEM_SetInputMode(pme);
+        }
+        
+        pme->m_eAutoState = MULTITAP_MAX_AUTO_STATE;
+    }
+
+    // if the cursor is in Right position then change to FirstCap.
+    //it will be checked in timer
+    else if ( ( OEM_MODE_ZI_MT_SPANISH_LOW == pme->m_nCurrInputMode
+           ||OEM_MODE_ZI_MT_SPANISH_UP == pme->m_nCurrInputMode )
+         && MULTITAP_MAX_AUTO_STATE == pme->m_eAutoState 
+         && OEM_isFirstCap(pme->m_pText) )
+    {
+       // change to the fist cap mode
+       pme->m_nCurrInputMode = OEM_MODE_ZI_MT_SPANISH;
+       OEM_SetInputMode((CTextCtl *)pme);
+       
+       // set flag
+       pme->m_eAutoState = MULTITAP_AUTOSET_FIRSTCAP;
+       
+       // save the Cursor Pos when Auto Set to first cap.
+       pme->m_nAutoSetCurPos = OEM_TextGetSelEnd(pme->m_pText);
+    }
+#endif // FEATURE_T9_MT_SPANISH
+#ifdef FEATURE_ZI_MT_FRENCH
+    // if MultitapCapsState have been change to all small in OEMText,
+    //then change input mode
+    if ( OEM_MODE_ZI_MT_FRENCH == pme->m_nCurrInputMode
+         && MULTITAP_ALL_SMALL == OEM_TextGetMultiCaps(pme->m_pText) )
+    {
+       // change to the sll small mode
+       pme->m_nCurrInputMode = OEM_MODE_ZI_MT_FRENCH_LOW;
+       OEM_SetInputMode((CTextCtl *)pme);
+    }
+    
+    // if it have been Auto set to first cap and move the cursor then 
+    //change to all small mode
+    else if ( ( MULTITAP_AUTOSET_FIRSTCAP == pme->m_eAutoState 
+           || MULTITAP_USER_DENY_AUTOSET == pme->m_eAutoState )
+         && OEM_TextGetSelEnd(pme->m_pText) != pme->m_nAutoSetCurPos 
+         && OEM_TextGetSelEnd(pme->m_pText) == OEM_TextGetCursorPos(pme->m_pText) )
+    {
+        if ( MULTITAP_AUTOSET_FIRSTCAP == pme->m_eAutoState )
+        {
+            // change to the all small mode
+            pme->m_nCurrInputMode = OEM_MODE_ZI_MT_FRENCH_LOW;
+            OEM_SetInputMode(pme);
+        }
+        
+        pme->m_eAutoState = MULTITAP_MAX_AUTO_STATE;
+    }
+
+    // if the cursor is in Right position then change to FirstCap.
+    //it will be checked in timer
+    else if ( ( OEM_MODE_ZI_MT_FRENCH_LOW == pme->m_nCurrInputMode
+           ||OEM_MODE_ZI_MT_FRENCH_UP == pme->m_nCurrInputMode )
+         && MULTITAP_MAX_AUTO_STATE == pme->m_eAutoState 
+         && OEM_isFirstCap(pme->m_pText) )
+    {
+       // change to the fist cap mode
+       pme->m_nCurrInputMode = OEM_MODE_ZI_MT_FRENCH;
+       OEM_SetInputMode((CTextCtl *)pme);
+       
+       // set flag
+       pme->m_eAutoState = MULTITAP_AUTOSET_FIRSTCAP;
+       
+       // save the Cursor Pos when Auto Set to first cap.
+       pme->m_nAutoSetCurPos = OEM_TextGetSelEnd(pme->m_pText);
+    }
+#endif // FEATURE_ZI_MT_FRENCH
+	#else
 #ifdef FEATURE_T9_MT_SPANISH
     // if MultitapCapsState have been change to all small in OEMText,
     //then change input mode
@@ -5835,6 +6709,7 @@ static void TextCtl_3STYLE_MultitapTimer(void *pUser)
        pme->m_nAutoSetCurPos = OEM_TextGetSelEnd(pme->m_pText);
     }
 #endif // FEATURE_T9_MT_FRENCH
+#endif
     (void) ISHELL_SetTimer((IShell *) pme->m_pIShell,
                             MULTITAP_TIMEOUT,
                             TextCtl_3STYLE_MultitapTimer,
@@ -5979,7 +6854,223 @@ static int TextCtl_Oemmode_Textmode(byte oeminputmode)
         case OEM_MODE_NUMBERS:
             wMode = TEXT_MODE_NUMBERS;//Êý×ÖÊäÈëÄ£Ê½
             break; 
+#ifdef FEATURE_USES_ZI
+#ifdef FEATURE_ZI_MT_ENGLISH
+        case OEM_MODE_ZI_MT_ENGLISH:
+            wMode = TEXT_MODE_MULTITAP;//Ê××ÖÄ¸´óÐ´×ÖÄ¸ÊäÈëÄ£Ê½          
+            break;            
+            
+        case OEM_MODE_ZI_MT_ENGLISH_LOW:
+            wMode = TEXT_MODE_MULTITAP;//Ð¡Ð´×ÖÄ¸ÊäÈëÄ£Ê½          
+            break;
+            
+        case OEM_MODE_ZI_MT_ENGLISH_UP:
+            wMode = AEE_TM_LETTERS;//´óÐ´×ÖÄ¸ÊäÈëÄ£Ê½          
+            break;            
+#endif //FEATURE_ZI_MT_ENGLISH
+#ifdef FEATURE_ZI_CAP_LOWER_ENGLISH  //add by yangdecai   2010-09-09
+		case TEXT_MODE_ZI_CAP_LOWER_ENGLISH:
+			wMode = AEE_TM_CAPLOWER;
+			break;
+#endif
+#ifdef FEATURE_MYANMAR_INPUT_MOD
+		case TEXT_MODE_MYANMAR:
+			wMode = AEE_TM_MYANMAR;   //add by yangdecai   2010-12-23
+			break;
+#endif
 
+
+#ifdef FEATURE_ZI_RAPID_ENGLISH
+        case OEM_MODE_ZI_RAPID_ENGLISH:
+            wMode = TEXT_MODE_ZI_RAPID_ENGLISH;          
+            break;
+
+        case OEM_MODE_ZI_RAPID_ENGLISH_LOW:
+            wMode = TEXT_MODE_ZI_RAPID_ENGLISH;            
+            break;
+
+        case OEM_MODE_ZI_RAPID_ENGLISH_UP:
+            wMode = TEXT_MODE_ZI_RAPID_ENGLISH;            
+            break;            
+#endif //FEATURE_MODE_ZI_RAPID_ENGLISH
+
+#ifdef FEATURE_ZI_PINYIN
+        case OEM_MODE_ZI_PINYIN:
+            wMode = TEXT_MODE_ZI_PINYIN;
+            break;
+#endif //FEATURE_ZI_PINYIN
+
+#ifdef FEATURE_ZI_STROKE
+        case OEM_MODE_ZI_STROKE:
+            wMode = TEXT_MODE_ZI_STROKE;
+            break;
+#endif //FEATURE_ZI_STROKE
+
+#ifdef FEATURE_ZI_ZHUYIN
+        case OEM_MODE_ZI_ZHUYIN:
+            wMode = TEXT_MODE_ZI_ZHUYIN;
+            break;
+#endif //FEATURE_ZI_ZHUYIN
+
+#ifdef FEATURE_ZI_MT_ARABIC
+        case OEM_MODE_ZI_MT_ARABIC:
+            wMode = TEXT_MODE_ZI_MT_ARABIC;
+            break;
+#endif //FEATURE_ZI_MT_ARABIC
+
+#ifdef FEATURE_ZI_RAPID_ARABIC
+        case OEM_MODE_ZI_RAPID_ARABIC:
+            wMode = TEXT_MODE_ZI_RAPID_ARABIC;
+            break;
+#endif //FEATURE_ZI_RAPID_ARABIC
+
+#ifdef FEATURE_ZI_MT_HEBREW
+        case OEM_MODE_ZI_MT_HEBREW:   
+            wMode = TEXT_MODE_ZI_MT_HEBREW;
+            break;
+#endif //FEATURE_ZI_MT_HEBREW
+
+#ifdef FEATURE_ZI_RAPID_HEBREW
+        case OEM_MODE_T9_RAPID_HEBREW:
+            wMode = TEXT_MODE_ZI_RAPID_HEBREW;
+            break;
+#endif //FEATURE_ZI_RAPID_HEBREW
+
+#ifdef FEATURE_ZI_MT_HINDI
+        case OEM_MODE_ZI_MT_HINDI:
+            wMode = TEXT_MODE_ZI_MT_HINDI;
+            break;
+#endif //FEATURE_ZI_MT_HINDI
+
+#ifdef FEATURE_ZI_RAPID_HINDI
+        case OEM_MODE_ZI_RAPID_HINDI:
+            wMode = TEXT_MODE_ZI_RAPID_HINDI;
+            break;
+#endif //FEATURE_ZI_RAPID_HINDI
+
+#ifdef FEATURE_ZI_MT_THAI
+        case OEM_MODE_ZI_MT_THAI:
+            wMode = TEXT_MODE_ZI_MT_THAI;
+            break;
+#endif //FEATURE_ZI_MT_THAI
+
+#ifdef FEATURE_ZI_RAPID_THAI
+        case OEM_MODE_ZI_RAPID_THAI:
+            wMode = TEXT_MODE_ZI_RAPID_THAI;
+            break;
+#endif //FEATURE_ZI_RAPID_THAI
+
+#ifdef FEATURE_ZI_MT_SPANISH
+        case OEM_MODE_ZI_MT_SPANISH:
+            wMode = TEXT_MODE_ZI_MT_SPANISH;
+            break;
+
+         case OEM_MODE_ZI_MT_SPANISH_LOW:
+            wMode = TEXT_MODE_ZI_MT_SPANISH;
+            
+            break;
+         case OEM_MODE_ZI_MT_SPANISH_UP:
+            wMode = TEXT_MODE_ZI_MT_SPANISH;
+            break;
+#endif //FEATURE_ZI_MT_SPANISH
+
+#ifdef FEATURE_ZI_RAPID_SPANISH
+        case OEM_MODE_ZI_RAPID_SPANISH:
+            wMode = TEXT_MODE_ZI_RAPID_SPANISH;
+            break;
+            
+         case OEM_MODE_ZI_RAPID_SPANISH_LOW:
+            wMode = TEXT_MODE_ZI_RAPID_SPANISH;
+            break;
+            
+         case OEM_MODE_ZI_RAPID_SPANISH_UP:
+            wMode = TEXT_MODE_ZI_RAPID_SPANISH;
+            break;
+#endif //FEATURE_ZI_RAPID_SPANISH
+
+#ifdef FEATURE_ZI_MT_PORTUGUESE
+        case OEM_MODE_ZI_MT_PORTUGUESE:
+            wMode = TEXT_MODE_ZI_MT_PORTUGUESE;
+            break;
+#endif //FEATURE_ZI_MT_PORTUGUESE
+
+#ifdef FEATURE_ZI_RAPID_PORTUGUESE
+        case OEM_MODE_ZI_RAPID_PORTUGUESE:
+            wMode = TEXT_MODE_ZI_RAPID_PORTUGUESE;
+            break;
+#endif //FEATURE_ZI_RAPID_PORTUGUESE
+
+#ifdef FEATURE_ZI_MT_INDONESIAN
+        case OEM_MODE_ZI_MT_INDONESIAN:
+            wMode = TEXT_MODE_ZI_MT_INDONESIAN;
+            break;
+#endif //FEATURE_ZI_MT_INDONESIAN
+
+#ifdef FEATURE_ZI_RAPID_INDONESIAN
+        case OEM_MODE_ZI_RAPID_INDONESIAN:
+            wMode = TEXT_MODE_ZI_RAPID_INDONESIAN;
+            break;
+#endif //FEATURE_ZI_RAPID_INDONESIAN
+
+#ifdef FEATURE_ZI_MT_VIETNAMESE
+        case OEM_MODE_ZI_MT_VIETNAMESE:
+            wMode = TEXT_MODE_ZI_MT_VIETNAMESE;
+            break;
+#endif //FEATURE_ZI_MT_VIETNAMESE
+
+#ifdef FEATURE_ZI_RAPID_VIETNAMESE
+        case OEM_MODE_ZI_RAPID_VIETNAMESE:
+            wMode = TEXT_MODE_ZI_RAPID_VIETNAMESE;
+            break;
+#endif //FEATURE_ZI_RAPID_VIETNAMESE
+
+#ifdef FEATURE_ZI_MT_FRENCH
+        case OEM_MODE_ZI_MT_FRENCH:
+            wMode = TEXT_MODE_ZI_MT_FRENCH;
+            break;
+
+         case OEM_MODE_ZI_MT_FRENCH_LOW:
+            wMode = TEXT_MODE_ZI_MT_FRENCH;
+            break;
+
+         case OEM_MODE_ZI_MT_FRENCH_UP:
+            wMode = TEXT_MODE_ZI_MT_FRENCH;
+            break;
+#endif //FEATURE_ZI_MT_FRENCH
+
+#ifdef FEATURE_ZI_RAPID_FRENCH
+        case OEM_MODE_ZI_RAPID_FRENCH:
+            wMode = TEXT_MODE_ZI_RAPID_FRENCH;
+            break;
+
+         case OEM_MODE_ZI_RAPID_FRENCH_LOW:
+            wMode = TEXT_MODE_ZI_RAPID_FRENCH;
+            break;
+
+         case OEM_MODE_ZI_RAPID_FRENCH_UP:
+            wMode = TEXT_MODE_ZI_RAPID_FRENCH;
+            break;
+#endif //FEATURE_ZI_RAPID_FRENCH
+
+#ifdef FEATURE_ZI_JAPANESE
+        case OEM_MODE_ZI_JAPANESE:
+            wMode = TEXT_MODE_ZI_JAPANESE;
+            break;
+#endif //FEATURE_ZI_JAPANESE
+
+#ifdef FEATURE_ZI_KOREAN
+        case OEM_MODE_ZI_KOREAN:
+            wMode = TEXT_MODE_ZI_KOREAN;
+            break;
+#endif //FEATURE_ZI_KOREAN
+
+#ifdef FEATURE_ZI_ITALIAN
+        case OEM_MODE_ZI_ITALIAN:
+            wMode = TEXT_MODE_ZI_ITALIAN;
+            break;
+#endif //FEATURE_ZI_ITALIAN
+
+#else
 #ifdef FEATURE_T9_MT_ENGLISH
         case OEM_MODE_T9_MT_ENGLISH:
             wMode = TEXT_MODE_MULTITAP;//Ê××ÖÄ¸´óÐ´×ÖÄ¸ÊäÈëÄ£Ê½          
@@ -6194,7 +7285,7 @@ static int TextCtl_Oemmode_Textmode(byte oeminputmode)
             wMode = TEXT_MODE_T9_ITALIAN;
             break;
 #endif //FEATURE_T9_ITALIAN
-
+#endif
         default:
             wMode = TEXT_MODE_NUMBERS;
             break;
