@@ -565,9 +565,7 @@
 	<String Id="1009" Name="IDS_NEW_SOUND">
 		<Text>新的声音</Text>
 	</String>
-	<String Id="1010" Name="IDS_STRING_1010">
-		<Text></Text>
-	</String>
+
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
