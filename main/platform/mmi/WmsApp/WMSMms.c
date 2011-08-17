@@ -15,6 +15,8 @@
 时       间      修 改 人     修改内容、位置及原因
 -----------      ----------   -----------------------------------------------
 2011-07-30       wangliang            初始版本
+2011-08-03       wamgliang            增加数据接收和发送函数
+2011-08-17       wangliang            增加编码和解码函数
 ==============================================================================*/
 
 /*==============================================================================
@@ -88,12 +90,59 @@ static int MMS_Encode_MsgBody(uint8* hPDU, int hLen, boolean isText);
 static int MMS_CreateSmilFile(uint8* encbuf,MMS_MESSAGE_TYPE type);
 static int MMS_GetFileContent(uint8* encbuf,char* FileName,MMS_MESSAGE_TYPE type);
 static int MMS_EncodeText(uint8* encbuf,uint8 *text,int len);
+static int MMS_WSP_DecodeContentTypeHeader(uint8* pData, int iDataLen, WSP_DEC_DATA_FRAGMENT* iMIMEHeaders, boolean* bIsMultipart,
+								 int* charset, boolean add_boundary_param, int iHeadersLen, boolean in_encode_check_param, int *inout_depth);
+static int MMS_WSP_DecodeContentTypeParams(uint8* pData, int iDataLen, WSP_DEC_DATA_FRAGMENT* iMIMEParams, int* charset);
+static int MMS_WSP_Decode_MultipartData(uint8* pData, int iDataLen,int nParts, WSP_DEC_DATA_FRAGMENT* iMIMEParts,int *inout_depth);
+
+static char* MMS_WSP_ContentTypeDB_MMS2Text(int ct);
+static boolean is_us_ascii_string(char * in_s, int in_len);
+
+#define SLIM_WSP_WELL_KNWON_VALULES_MIME_TEXT_PLAIN 0x03
+#define SLIM_WSP_WELL_KNWON_VALULES_MIME_MULTIPART_MIXED 0x0c
+#define SLIM_WSP_WELL_KNWON_VALULES_MIME_APPLICATION_VND_WAP_MULTIPART_MIXED 0x23
+#define SLIM_WSP_WELL_KNWON_VALULES_MIME_APPLICATION_VND_WAP_MULTIPART_RELATED 0x33
+#define SLIM_WSP_WELL_KNWON_VALULES_MIME_MULTIPART_ALTERNATIVE 0x0c
+#define SLIM_WSP_WELL_KNWON_VALULES_MIME_APPLICATION_VND_WAP_MULTIPART_ALTERNATIVE 0x26
+
+#define SLIM_CLIB_CTYPE_UPPER 0x00000001
+#define SLIM_CLIB_CTYPE_LOWER 0x00000002
+#define SLIM_CLIB_CTYPE_CNTRL_LOW 0x00000004
+#define SLIM_CLIB_CTYPE_OCT 0x00000008
+#define SLIM_CLIB_CTYPE_DIGIT 0x00000010
+#define SLIM_CLIB_CTYPE_SPACE 0x00000020
+#define SLIM_CLIB_CTYPE_TAB 0x00000040
+#define SLIM_CLIB_CTYPE_HEX 0x00000080
+#define SLIM_CLIB_CTYPE_PUNCT 0x00000100
+#define SLIM_CLIB_CTYPE_ASCII_SP 0x00000200
+#define SLIM_CLIB_CTYPE_EOL 0x00000400
+#define SLIM_CLIB_CTYPE_NONASCII 0x00000800
+#define SLIM_CLIB_CTYPE_HYPHEN 0x00001000
+#define SLIM_CLIB_CTYPE_UNDER_SCORE 0x00002000
+#define SLIM_CLIB_CTYPE_COMMA 0x00004000
+#define SLIM_CLIB_CTYPE_PLUS 0x00008000
+#define SLIM_CLIB_CTYPE_EQUAL 0x00010000
+#define SLIM_CLIB_CTYPE_CSS_SEL_MOD 0x00020000
+#define SLIM_CLIB_CTYPE_CSS_SEL_TERM 0x00040000
+#define SLIM_CLIB_CTYPE_CSS_DECL_DELIM 0x00080000
+#define SLIM_CLIB_CTYPE_CSS_PROPVAL_DELIM 0x00100000
+#define SLIM_CLIB_CTYPE_CSS_ATTR_DELIM 0x00200000
+#define SLIM_CLIB_CTYPE_FORM_NO_ENCODE_CHARS 0x00400000
+#define SLIM_CLIB_CTYPE_RFC2396_MARK 0x00800000
+#define SLIM_CLIB_CTYPE_RFC2396_RESERVED 0x01000000
+#define SLIM_CLIB_CTYPE_RFC822_SPECIALS 0x02000000
+#define SLIM_CLIB_CTYPE_XML_NAME_1ST_EXT 0x04000000
+#define SLIM_CLIB_CTYPE_XML_NAME_EXT 0x08000000
+#define SLIM_CLIB_CTYPE_XML_CLOSE_PAREN 0x10000000
+
+#define slim_isctype(c,type) (cSlim_clib_ctype_table[(c)] & (type))
+#define slim_isnonascii(c) (slim_isctype((c),SLIM_CLIB_CTYPE_NONASCII))
 
 #define POST_TEST ("POST http://mmsc.vnet.mobi HTTP/1.1\r\nHost:10.0.0.200:80\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: Nokia6235/1.0 (S190V0200.nep) UP.Browser/6.2.3.2 MMP/2.0\r\nx-wap-profile: \"http://nds1.nds.nokia.com/uaprof/N6235r200.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
 /*
 ** 彩信里面用到的数据类型
 */
-const char* db_mms2text[76] =
+const char* DB_Mms2Text[76] =
 {
 	"*/*",
 	"text/*",
@@ -175,6 +224,68 @@ const char* db_mms2text[76] =
     "application/vnd.oma.drm.rights+xml",
     "application/vnd.oma.drm.rights+wbxml",
 };
+
+uint32 cSlim_clib_ctype_table[256] = {
+	0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 
+	0x4, 0x64, 0x424, 0x24, 0x24, 0x424, 0x4, 0x4, 
+	0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 
+	0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 
+	0x220, 0x900100, 0x2000100, 0x20100, 0x1000100, 0x100, 0x1000100, 0x800100, 
+	0x2800100, 0x2800100, 0xc00100, 0x1008100, 0x3044100, 0x8c01100, 0xac20100, 0x1000100, 
+	0x98, 0x98, 0x98, 0x98, 0x98, 0x98, 0x98, 0x98, 
+	0x90, 0x90, 0x7020100, 0x3180100, 0x2000100, 0x1210100, 0x12000100, 0x1000100, 
+	0x3000100, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0x1, 
+	0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 
+	0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 
+	0x1, 0x1, 0x1, 0x2020100, 0x2000100, 0x2200100, 0x100, 0x4c02100, 
+	0x100, 0x82, 0x82, 0x82, 0x82, 0x82, 0x82, 0x2, 
+	0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 
+	0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 0x2, 
+	0x2, 0x2, 0x2, 0x40100, 0x200100, 0x180100, 0xa00100, 0x4, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
+};
+
+static char* MMS_WSP_ContentTypeDB_MMS2Text(int ct)
+{
+	if ((ct >= 0) && (ct <= 0x4b))
+	{
+		return (char*)DB_Mms2Text[ct];
+	}
+	else
+		return "application/octet-stream";
+}
+
+static boolean is_us_ascii_string(char * in_s, int in_len)
+{
+	int i;
+	i = 0;
+	
+	while( i < in_len)
+	{
+		if(slim_isnonascii(*(in_s + i)))
+		{
+			return FALSE;
+		}
+
+		i++;
+	}
+	return TRUE;
+}
 
 static int MMS_WSP_Encode_UINTVAR(uint8* buf, int val)
 {
@@ -923,15 +1034,8 @@ int MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, int* hLen, uint8 e
 	
 }
 
-int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  uint8* hContentType, uint8* hBody,int* iBodyLen)
-{
-	#define WSP_WELL_KNWON_VALULES_MIME_TEXT_PLAIN 0x03	
-	#define WSP_WELL_KNWON_VALULES_MIME_MULTIPART_MIXED 0x0c
-	#define WSP_WELL_KNWON_VALULES_MIME_APPLICATION_VND_WAP_MULTIPART_MIXED 0x23
-	#define WSP_WELL_KNWON_VALULES_MIME_APPLICATION_VND_WAP_MULTIPART_RELATED 0x33
-	#define WSP_WELL_KNWON_VALULES_MIME_MULTIPART_ALTERNATIVE 0x0c
-	#define WSP_WELL_KNWON_VALULES_MIME_APPLICATION_VND_WAP_MULTIPART_ALTERNATIVE 0x26
-
+int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  WSP_MMS_DATA* pContent)
+{		
 	int charset, iPart, dec = MMC_GENERIC, ret = MMC_GENERIC, acc, contenttypelen;
 	boolean bIsMultipart, completed = FALSE;
 	uint8 content_type = 0;
@@ -944,8 +1048,407 @@ int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  uint8* hContentType, uint
 	int contenttypevaluelen;
 	
 	contenttypevaluelen = MMS_WSP_GetValueLen(pData, iDataLen, &iDataOffset);
+	if (contenttypelen != MMS_DECODER_ERROR_VALUE)
+	{
+		int depth = 0;
+
+		ret = MMS_WSP_DecodeContentTypeHeader(&pData[iDataOffset], contenttypelen, &pContent->head_info, &bIsMultipart, &charset, TRUE, 0, FALSE, &depth);
+
+		if (ret != MMS_DECODER_ERROR_VALUE)
+		{
+			consumed = contenttypelen+iDataOffset;
+			
+			if (bIsMultipart == TRUE)
+			{				
+				pContent->frag_num = MMS_WSP_Decode_UINTVAR(&pData[consumed],iDataLen-consumed,&iDataOffset);
+				if (acc != MMS_DECODER_ERROR_VALUE)
+				{
+					dec = MMS_WSP_Decode_MultipartData(&pData[consumed+iDataOffset],
+						iDataLen-consumed-iDataOffset,acc,pContent->fragment, &depth);
+					if (dec != MMC_GENERIC)
+						completed = TRUE;
+				}
+			}
+			else
+			{
+				dec = MMC_MIME_CONTENT_TYPE;
+			}
+		}
+		else
+		{
+			dec = MMC_MIME_CONTENT_TYPE;
+		}
+	}
+	else
+	{
+		dec = MMC_MIME_CONTENT_TYPE;
+	}
+
+no_mem:
+	return MMC_NOMEM;
+}
+
+static int MMS_WSP_Decode_MultipartData(uint8* pData, int iDataLen,int nParts, WSP_DEC_DATA_FRAGMENT* iMIMEParts,int *inout_depth)
+{
+	int i,iHeadersLen, iPartDataLen, iDataOffset,ret,iPart=0, consumed = 0;
+	int iHeadersDataOffset, iDataDataOffset, contenttypelen, charset;
+	boolean bIsMultipart;
+	uint8* pbyte;
+	int iInsDataLen, otherheaders;
+	boolean bodycreated, modified = FALSE;
+	int size = 0;
+	int acc, iAccOffset, dec;
+	int cur_part = 0;
+	MMS_DEBUG(("[MMS]: MMS_WSP_Decode_MultipartData nParts=%d",nParts));
+	
+	for(i=0;(i < nParts)&&(consumed < iDataLen);i++)
+	{
+		iHeadersLen = MMS_WSP_Decode_UINTVAR(&pData[consumed], iDataLen-consumed,
+			&iHeadersDataOffset);
+		if (iHeadersLen == MMS_DECODER_ERROR_VALUE)
+			goto leave_it;
+		iPartDataLen = MMS_WSP_Decode_UINTVAR(&pData[iHeadersDataOffset+consumed],
+			iDataLen-iHeadersDataOffset-consumed, &iDataDataOffset);
+		if (iPartDataLen == MMS_DECODER_ERROR_VALUE)
+			goto leave_it;
+
+		contenttypelen = MMS_WSP_GetValueLen(&pData[iHeadersDataOffset+iDataDataOffset+consumed],
+			iHeadersLen, &iDataOffset);
+		if (contenttypelen == MMS_DECODER_ERROR_VALUE)
+			goto skip_it;
+		charset = 0;
+		
+		ret = MMS_WSP_DecodeContentTypeHeader(&pData[iHeadersDataOffset+iDataDataOffset+iDataOffset+consumed],
+			contenttypelen, &iMIMEParts[cur_part], &bIsMultipart, &charset, TRUE, (iHeadersLen - iDataOffset), TRUE, inout_depth);
+		if (ret == MMS_DECODER_ERROR_VALUE)
+			goto skip_it;
+			
+		if (bIsMultipart == TRUE)
+		{
+			consumed += (contenttypelen + iHeadersDataOffset + iDataDataOffset + iDataOffset);
+			acc = MMS_WSP_Decode_UINTVAR(&pData[consumed], iDataLen - consumed, &iAccOffset);
+			if (acc != MMS_DECODER_ERROR_VALUE)
+			{
+				dec = MMS_WSP_Decode_MultipartData(&pData[consumed+iAccOffset],iDataLen-consumed-iAccOffset, acc, iMIMEParts, inout_depth);
+			}
+			consumed += iPartDataLen;
+			continue;
+		}
+		else
+		{
+			/* other headers */
+			if (iHeadersLen > contenttypelen+iDataOffset)
+			{
+				otherheaders = contenttypelen+iDataOffset;
+				ret = MMS_WSP_DecodeContentTypeParams(&pData[iHeadersDataOffset+iDataDataOffset+consumed+otherheaders],
+					iHeadersLen-otherheaders, &iMIMEParts[cur_part],&charset);
+				if (ret == MMS_DECODER_ERROR_VALUE)
+					goto skip_it;
+			}
+			
+			pbyte = &pData[iHeadersDataOffset+iDataDataOffset+iHeadersLen+consumed];
+			iInsDataLen = iPartDataLen;
+			size += iPartDataLen;
+			if (size <= MMS_MAX_RECEIVED_MMS_CONTENT_SIZE)
+			{
+				bodycreated = FALSE;
+				if (charset == 0x03e8)
+				{
+				}
+				else
+				{
+					//bodycreated = TMIMEParts_NewBodySS(iMIMEParts,iPart,pbyte,iInsDataLen,SLIM_MIMECODEC_BINARY,TRUE);
+				}
+
+				if (!bodycreated)
+					goto skip_it;
+			}
+			else
+			{
+				size -= iPartDataLen;
+skip_it:
+				modified = TRUE;
+			}
+			consumed += iHeadersDataOffset+iDataDataOffset+iHeadersLen+iPartDataLen;
+			continue;
+		}
+leave_it:
+		modified = TRUE;
+		goto completed;
+	}
+completed:
+/*	if (iPart == 0)
+		return MMC_GENERIC;*/
+	if (modified)
+	{
+		return MMC_MODIFIED;
+	}
+	return MMC_OK;
+}
+
+static int MMS_WSP_DecodeContentTypeParams(uint8* pData, int iDataLen, WSP_DEC_DATA_FRAGMENT* iMIMEParams, int* charset)
+{
+	/*
+	 * 8.4.2.3 Parameter Values
+	 * 8.4.2.4 Parameter
+	 */
+
+	char* paramname;
+	char* paramvalue;
+	int paramnamelen,paramvaluelen,iDataOffsetname, iDataOffsetvalue,consumed=0;
+	boolean ok;
+	int charset_type;
+	char* filename_str = NULL;
+
+	while (consumed < iDataLen)
+	{
+		paramnamelen = MMS_WSP_GetValueLen(&pData[consumed],iDataLen,&iDataOffsetname);
+		if (paramnamelen == MMS_DECODER_ERROR_VALUE)
+			return MMS_DECODER_ERROR_VALUE;
+		paramname = (char*)&pData[consumed+iDataOffsetname];
+		consumed += paramnamelen+iDataOffsetname;
+		paramvaluelen = MMS_WSP_GetValueLen(&pData[consumed],
+			iDataLen-consumed,&iDataOffsetvalue);
+		if (paramvaluelen == MMS_DECODER_ERROR_VALUE)
+			return MMS_DECODER_ERROR_VALUE;
+		paramvalue = (char*)&pData[consumed+iDataOffsetvalue];
+		consumed += paramvaluelen+iDataOffsetvalue;
+
+		ok = TRUE;
+		if (paramnamelen == 1)/* case of Short-interger */
+		{
+			/*
+			 * Short-integer = OCTET
+			 * ; Integers in range 0-127 shall be encoded as a one octet value with the most significant bit set
+			 * ; to one (1xxx xxxx) and with the value in the remaining least significant bits.
+			 */
+			uint8 short_integer;
+			short_integer = paramname[0] & 0x7F;
+			switch(short_integer)
+			{
+				/* WAP-230-WSP-20010705-a, Approved Version 5 July 2001 
+				 * Table 38. Well-Known Parameter Assignments
+				 */
+			case 0x0a: /* WAP230WSP20010705A_TABLE38_WELL_KNWON_PARAMETER_ASSINGMENTS_V1_2_Start*/
+			case 0x19: /*WAP230WSP20010705A_TABLE38_WELL_KNWON_PARAMETER_ASSINGMENTS_V1_4_Start:*/
+				paramname = "start";
+				paramvaluelen--;/* ?? */
+				break;
+			case 0x03: /* WAP230WSP20010705A_TABLE38_WELL_KNWON_PARAMETER_ASSINGMENTS_V1_1_Type:*/
+			case 0x09: /* WAP230WSP20010705A_TABLE38_WELL_KNWON_PARAMETER_ASSINGMENTS_V1_2_Type:*/
+			{
+				paramname = "type";
+				paramvaluelen--;/* ?? */
+				if (paramvaluelen > 0)
+				{
+					if (paramvalue[0] == '"')/* ?? Quoted? */
+					{
+						STRNCPY((char*)iMIMEParams->hContentType,(char*)&paramvalue[1],paramvaluelen-1);
+					}
+					else
+					{
+						STRNCPY((char*)iMIMEParams->hContentType,(char*)paramvalue,paramvaluelen);
+					}
+				}
+				break;
+			}
+			case 0x01: /* WAP230WSP20010705A_TABLE38_WELL_KNWON_PARAMETER_ASSINGMENTS_V1_1_Charset:*/
+				paramname = "charset";
+				if (paramvaluelen == 1)
+				{
+					charset_type = paramvalue[0] - 0x80;
+					switch(charset_type)
+					{
+							/*
+							 * Table 42. Character Set Assignment Examples
+							 * us-ascii 0x03 3
+							 * utf-8 0x6A 106
+							 * See also
+							 * http://www.iana.org/assignments/character-sets
+							 * ! We should prepare a rom table for this.
+							 */
+						case 0x03:
+							paramvalue = "us-ascii";
+							paramvaluelen = STRLEN(paramvalue);
+							*charset = 0x03;
+							if (paramvaluelen > 0)
+							{
+								if (paramvalue[0] == '"')/* ?? Quoted? */
+								{
+									STRNCPY((char*)iMIMEParams->hContentEnCode,(char*)&paramvalue[1],paramvaluelen-1);
+								}
+								else
+								{
+									STRNCPY((char*)iMIMEParams->hContentEnCode,(char*)paramvalue,paramvaluelen);
+								}
+							}
+							break;
+						case 0x6a:
+							paramvalue = "utf-8";
+							paramvaluelen = STRLEN(paramvalue);
+							*charset = 0x6a;
+							if (paramvaluelen > 0)
+							{
+								if (paramvalue[0] == '"')/* ?? Quoted? */
+								{
+									STRNCPY((char*)iMIMEParams->hContentEnCode,(char*)&paramvalue[1],paramvaluelen-1);
+								}
+								else
+								{
+									STRNCPY((char*)iMIMEParams->hContentEnCode,(char*)paramvalue,paramvaluelen);
+								}
+							}
+							break;
+						default:
+							/* Ugh! */
+							ok = FALSE;
+							break;
+					}
+				}
+				else if (paramvaluelen == 2)
+				{
+					if ((paramvalue[0] == 0x03)&&(paramvalue[1] == 0xe8))
+						/* iso-10646-ucs-2 0x03E8 1000 */
+					{
+						paramvalue = "utf-16";/* !? */
+						paramvaluelen = STRLEN(paramvalue);
+						*charset = 0x03e8; 
+						if (paramvaluelen > 0)
+						{
+							if (paramvalue[0] == '"')/* ?? Quoted? */
+							{
+								STRNCPY((char*)iMIMEParams->hContentEnCode,(char*)&paramvalue[1],paramvaluelen-1);
+							}
+							else
+							{
+								STRNCPY((char*)iMIMEParams->hContentEnCode,(char*)paramvalue,paramvaluelen);
+							}
+						}
+					}
+					else
+						/* Ugh! */
+						ok = FALSE;
+				}
+				else
+					ok = FALSE;
+				break;
+			case 0x05: /* WAP230WSP20010705A_TABLE38_WELL_KNWON_PARAMETER_ASSINGMENTS_V1_1_Name:*/
+			case 0x17: /* WAP230WSP20010705A_TABLE38_WELL_KNWON_PARAMETER_ASSINGMENTS_V1_4_Name:*/
+				paramname = "name";
+				if(is_us_ascii_string(paramvalue, paramvaluelen))
+				{
+					paramvaluelen--;
+				}
+				else
+				{					
+					paramvalue = "non_ascii_name";
+					paramvaluelen = STRLEN(paramvalue);
+					consumed = iDataLen;/* consume all */
+				}
+
+				if (paramvaluelen > 0)
+				{
+					if (paramvalue[0] == '"')/* ?? Quoted? */
+					{
+						STRNCPY((char*)iMIMEParams->hContentName,(char*)&paramvalue[1],paramvaluelen-1);
+					}
+					else
+					{
+						STRNCPY((char*)iMIMEParams->hContentName,(char*)paramvalue,paramvaluelen);
+					}
+				}
+						
+				break;
+
+			case 0x0e:		//content location
+			{
+				paramname = "content location";
+				paramvaluelen--;/* ?? */
+				if (paramvaluelen > 0)
+				{
+					if (paramvalue[0] == '"')/* ?? Quoted? */
+					{
+						STRNCPY((char*)iMIMEParams->hContentLocation,(char*)&paramvalue[1],paramvaluelen-1);
+					}
+					else
+					{
+						STRNCPY((char*)iMIMEParams->hContentLocation,(char*)paramvalue,paramvaluelen);
+					}
+				}
+				break;
+			}
+
+			case 0x40:		//content ID
+			{
+				paramname = "content ID";
+				paramvaluelen--;/* ?? */
+				if (paramvaluelen > 0)
+				{
+					if (paramvalue[0] == '"')/* ?? Quoted? */
+					{
+						STRNCPY((char*)iMIMEParams->hContentID,(char*)&paramvalue[1],paramvaluelen-1);
+					}
+					else
+					{
+						STRNCPY((char*)iMIMEParams->hContentID,(char*)paramvalue,paramvaluelen);
+					}
+				}
+				break;
+			}
+			
+			default:
+				/* Ugh! */
+				ok = FALSE;
+				break;
+			}
+		}
+		else
+		{
+			if (paramvaluelen > 0)
+			{
+				//do nothing
+			}
+			else
+			{
+				/* Ugh! negative legnth for param value*/ 
+			}
+		}
+	}
+	return consumed;
+}
+
+static int MMS_WSP_DecodeContentTypeHeader(uint8* pData, int iDataLen, WSP_DEC_DATA_FRAGMENT* iMIMEHeaders, boolean* bIsMultipart,
+								 int* charset, boolean add_boundary_param, int iHeadersLen, boolean in_encode_check_param, int *inout_depth)
+{
+	int i = 0, iDataOffset, contenttype = -1,consumed=0;
+	int contenttypevaluelen;
+	char* headernameContentType = "Content-Type";
+	char* headertransfername = "Content-Transfer-Encoding";
+	char* headertransferbin = "Binary";
+/*
+	char* headervalueMultipartRelated = "multipart/related";
+	char* headervalueMultipartMixed = "multipart/mixed";
+	char* headervalueImageGIF = "image/gif";
+	char* headervalueImageJPEG = "image/jpeg";
+	char* headervalueImagePNG = "image/png";
+	char* headervalueImageWBMP = "image/vnd.wap.wbmp";
+	char* headervalueTextPlain = "text/plain";
+	char* headervalueUnknown = "application/octet-stream";
+*/
+	char* param1name = "boundary";
+	char* param1value = "abecadlo_bnd";
+	char* headervaluect;
+
+	*bIsMultipart = FALSE;
+
+	if (iDataLen == 0)
+		return MMS_DECODER_ERROR_VALUE;
+
+	contenttypevaluelen = MMS_WSP_GetValueLen(pData, iDataLen, &iDataOffset);
+
 	if (contenttypevaluelen == MMS_DECODER_ERROR_VALUE)
 		return MMS_DECODER_ERROR_VALUE;
+
 	if (iDataOffset == 0)
 	{
 		/* 8.4.1.2 Field values */
@@ -973,20 +1476,21 @@ int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  uint8* hContentType, uint
 		{
 			contenttype = pData[i] - 128;
 			i = 1;
-		}else{
+		}
+		else
+		{
 			/* Ugh! */
 		}
 	}
+	
 	if (iDataOffset > 0)
 	{
 		consumed += iDataOffset;
 		contenttypevaluelen = MMS_WSP_GetValueLen(&pData[iDataOffset],
 			iDataLen-consumed, &iDataOffset);
-			
 		if (contenttypevaluelen == MMS_DECODER_ERROR_VALUE)
 			return MMS_DECODER_ERROR_VALUE;
 		i = consumed;
-		
 		if (iDataOffset == 0)
 		{
 			if ((pData[i] >= 32) && (pData[i] <= 127))
@@ -1011,16 +1515,48 @@ int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  uint8* hContentType, uint
 			}
 			else
 			{
-			/* Ugh! */
+				/* Ugh! */
 			}
 		}
 	}
 
+	if (contenttype == -1)
+	{
+		STRNCPY((char*)iMIMEHeaders->hContentType,(char*)&pData[iDataOffset+consumed],contenttypevaluelen-1);
+	}
+
 	consumed += i;
 
-	
-}
+	if (contenttype != -1)
+	{
+		if (contenttype == SLIM_WSP_WELL_KNWON_VALULES_MIME_MULTIPART_MIXED)
+			contenttype = SLIM_WSP_WELL_KNWON_VALULES_MIME_APPLICATION_VND_WAP_MULTIPART_MIXED;
+		if (contenttype == SLIM_WSP_WELL_KNWON_VALULES_MIME_MULTIPART_ALTERNATIVE)
+			contenttype = SLIM_WSP_WELL_KNWON_VALULES_MIME_APPLICATION_VND_WAP_MULTIPART_ALTERNATIVE;
 
+		headervaluect = MMS_WSP_ContentTypeDB_MMS2Text(contenttype);
+
+		STRNCPY((char*)iMIMEHeaders->hContentType,headervaluect,STRLEN(headervaluect));
+	}
+
+	consumed += MMS_WSP_DecodeContentTypeParams(&pData[consumed],iDataLen-consumed, iMIMEHeaders, charset);
+	if (contenttype != SLIM_WSP_WELL_KNWON_VALULES_MIME_TEXT_PLAIN)
+	{
+		*charset = 0;
+	}
+
+	if (consumed == MMS_DECODER_ERROR_VALUE)
+	{
+		return MMS_DECODER_ERROR_VALUE;
+	}
+
+	if ((contenttype == SLIM_WSP_WELL_KNWON_VALULES_MIME_APPLICATION_VND_WAP_MULTIPART_RELATED) || (contenttype == SLIM_WSP_WELL_KNWON_VALULES_MIME_APPLICATION_VND_WAP_MULTIPART_MIXED) || (contenttype == SLIM_WSP_WELL_KNWON_VALULES_MIME_APPLICATION_VND_WAP_MULTIPART_ALTERNATIVE))
+	{
+		*bIsMultipart = TRUE;
+	}
+
+	return consumed;/*contenttypevaluelen;*/
+}
 int MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *ePDUType)
 {
 	int len,i=0,iDataOffset,j;
@@ -1140,9 +1676,7 @@ int MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *ePDU
 					if (decdata->message.iRetrieveStatus == 0x80)
 					{
 						int decret;
-						decret = MMS_WSP_DecodeMessage(&ptr[i], datalen-i,
-							decdata->message.hContentType,
-							decdata->message.hBody, &decdata->message.iBodyLen);
+						decret = MMS_WSP_DecodeMessage(&ptr[i], datalen-i,&decdata->message.mms_data);
 						if (decret == MMC_OK)
 							return ret;
 						else

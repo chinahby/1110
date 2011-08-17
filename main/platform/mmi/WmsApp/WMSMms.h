@@ -50,6 +50,10 @@
 #define	MMS_MAX_ADDRESS_COUNT	70
 #define MMS_MAX_SINGLE_ADDRESS_SIZE 90
 #define MMS_MAX_CONTENT_LOCATION	100
+#define MMS_MAX_CONTENT_ID	100
+#define MMS_MAX_CONTENT_TYPE	100
+#define MMS_MAX_CONTENT_NAME	256
+#define MMS_MAX_CONTENT_ENCODE	32
 #define MMS_MAX_FILE_NAME_PATH      256
 #define MMS_MAX_TEXT_SIZE 256
 #define	MMSCORE_MAX_SERVER_URL_LENGTH	256
@@ -192,6 +196,25 @@ typedef enum _mms_message_type_
 	MMS_MESSAGE_3GP,
 	MMS_MESSAGE_MID,
 }MMS_MESSAGE_TYPE;
+
+typedef struct _wsp_decoder_data_fragment_
+{
+	uint8 hContentType[MMS_MAX_CONTENT_TYPE];
+	uint8 hContentLocation[MMS_MAX_CONTENT_LOCATION];
+	uint8 hContentID[MMS_MAX_CONTENT_ID];
+	uint8 hContentName[MMS_MAX_CONTENT_NAME];
+	uint8 hContentEnCode[MMS_MAX_CONTENT_ENCODE];
+	uint8 *pContent;
+	uint32 size;
+}WSP_DEC_DATA_FRAGMENT;
+
+typedef struct _wsp_mms_data_
+{
+	WSP_DEC_DATA_FRAGMENT head_info;
+	WSP_DEC_DATA_FRAGMENT fragment[20];
+	int				 frag_num;
+}WSP_MMS_DATA;
+
 /*
 ** 收到的彩信内容
 */
@@ -203,7 +226,8 @@ typedef struct _wsp_decoder_data_message_received
 	uint8 hSubject[MMS_MAX_SUBJECT_SIZE];
 	uint8 hMessageID[MMS_MAX_MESSAGEID_CHARSIZE];
 	uint8 hTransactionID[MMS_MAX_TRANSACTION_ID_SIZE];
-	uint8 hContentType[40];
+	uint8 hContentType[MMS_MAX_CONTENT_TYPE];
+	WSP_MMS_DATA mms_data;
 	boolean	bDelRep;
 	boolean	bReadRep;
 	uint8* hBody;
@@ -357,7 +381,7 @@ int MMS_SEND_TEST(uint8 *buffer);
 int MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen);
 int MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata,uint8* hPDU, int* hLen, uint8 ePDUType);
 int MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8* ePDUType);
-int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  uint8* hContentType, uint8* hBody,int* iBodyLen);
+int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  WSP_MMS_DATA* pContent);
 
 boolean MMS_GetProxySettings(boolean *bUseProxy,char* hProxyHost, int* iProxyPort);
 boolean MMS_SetProxySettings(boolean bUseProxy,char* hProxyHost, int iProxyPort);
