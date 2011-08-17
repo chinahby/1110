@@ -10,15 +10,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #ifdef CUST_EDITION
-#define __MMI_ZI__
-#define __MMI_ZI_SM_CHINESE__
-#define __MMI_ZI_TR_CHINESE__
-#define __MMI_LANG_SM_CHINESE__
-#define __MMI_LANG_TR_CHINESE__
-#define __MMI_ZI_SMART_PHONETIC_INPUT__
-#define FEATURE_ZICORP_STROKE
-#define FEATURE_ZICORP_PINYIN
-#define FEATURE_ZICORP_EZI_HI
+
 //#define FEATURE_VERSION_C306
 //Add by zzg 2010_10_13
 //#define FEATURE_TORCH_KEY_CAMERA			//手电筒功能按键
@@ -32,6 +24,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #ifdef CUST_EDITION
 #define FEATURE_SMS_UDH
 //#define FEATURE_SUPPORT_ID
+#define FEATURE_USES_ZI
 #define FEATURE_WMS_APP
 #define FEATURE_INIT_RUIM_SMSandADD_BYUIMTASK
 #undef  FEATRUE_SUPPORT_G_SENSOR
