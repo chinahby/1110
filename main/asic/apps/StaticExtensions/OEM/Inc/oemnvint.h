@@ -82,7 +82,11 @@ when       who     what, where, why
 #error oemnvint.h must not be included directly, include OEMConfig.h instead
 #endif
 #include "OEMFeatures.h"
+#ifdef FEATURE_USES_ZI
+#include "OEMZIText.h"
+#else
 #include "OEMText.h"
+#endif
 #include "AEEFile.h"
 /************************************************************************/
 /*                                                                      */
@@ -861,7 +865,40 @@ typedef PACKED struct _ringID
 #ifdef WIN32//wlh ÁÙÊ±ÐÞ¸Ä
 #define OEM_MODE_T9_ZHUYIN  1
 #endif//WIN32
+#ifdef FEATURE_USES_ZI
+#if defined FEATURE_LANG_THAI 
+#if defined( FEATURE_VERSION_C01)||defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ZI_MT_THAI
+#else
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ZI_RAPID_THAI
+#endif
+#elif defined FEATURE_LANG_TCHINESE
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ZI_ZHUYIN
+#elif defined FEATURE_LANG_SPANISH
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ZI_RAPID_SPANISH //OEM_MODE_T9_MT_SPANISH
+#elif defined FEATURE_INPUTMODE_INDONESIAN
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ZI_MT_INDONESIAN
+//#elif defined FEATURE_LANG_PORTUGUESE
+//#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ZI_MT_PORTUGUESE
+#elif defined FEATURE_LANG_HEBREW
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ZI_MT_HEBREW
+//#elif defined(FEATURE_LANG_ARABIC) && !defined(FEATURE_LANG_FRENCH)
+#elif defined FEATURE_LANG_ARABIC
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ZI_MT_ARABIC
+//#elif defined(FEATURE_LANG_ARABIC) && defined(FEATURE_LANG_FRENCH)
+#elif defined FEATURE_CARRIER_MAROC_WANA
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ZI_RAPID_FRENCH
+#else
 
+//#ifdef FEATURE_DISP_160X128
+#ifdef FEATURE_ALL_KEY_PAD
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ZI_CAP_LOWER_ENGLISH
+#else
+#define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_ZI_MT_ENGLISH
+#endif/*FEATURE_DISP_160X128*/
+#endif  
+
+#else
 #if defined FEATURE_LANG_THAI 
 #if defined( FEATURE_VERSION_C01)||defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_THAI
@@ -893,7 +930,7 @@ typedef PACKED struct _ringID
 #define OEMNV_INPUTMODE_DEFAULT              OEM_MODE_T9_MT_ENGLISH
 #endif/*FEATURE_DISP_160X128*/
 #endif  
-
+#endif
 #ifdef FEATURE_SHORT_CODE_NAM_COUNT
 #define   OEMNV_SHORT_CODE_NAM_COUNT         10   // CFGI_SHORT_CODE_NAM_COUNT
 #endif //FEATURE_SHORT_CODE_NAM_COUNT

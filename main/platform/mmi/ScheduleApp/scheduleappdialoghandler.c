@@ -8,7 +8,11 @@
  */
 
 #include "ScheduleApp_priv.h"
-#include "OEMText.h"
+#ifdef FEATURE_USES_ZI
+#include "OEMZIText.h" 
+#else
+#include "OEMText.h" 
+#endif
 #ifdef FEATURE_APP_MUSICPLAYER
 #include "MusicPlayer.h"
 #endif 

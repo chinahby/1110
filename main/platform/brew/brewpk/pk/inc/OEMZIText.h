@@ -168,6 +168,12 @@ when       who     what, where, why
 #endif //#ifdef FEATURE_ZI_ALPHABETIC
 
 #ifdef FEATURE_LANG_CHINESE
+#define FEATURE_ZICORP_STROKE
+#define FEATURE_ZICORP_PINYIN
+#define FEATURE_ZICORP_EZI_HI
+#endif
+
+#ifdef FEATURE_LANG_CHINESE
 #define FEATURE_ZI_CHINESE
 #define FEATURE_ZI_PINYIN
 #define FEATURE_ZI_STROKE

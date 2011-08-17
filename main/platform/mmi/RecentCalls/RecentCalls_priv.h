@@ -58,7 +58,11 @@
 #include "AEEConfig.h"
 #include "OEMCFGI.h"
 #include "AppComFunc.h"
+#ifdef FEATURE_USES_ZI
+#include "OEMZIText.h"
+#else
 #include "OEMText.h"
+#endif
 #include "OEMFeatures.h"
 #if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
 #include "WMSApp.h"

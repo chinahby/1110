@@ -72,7 +72,11 @@
 #include "AEEAlarm.h"
 #endif
 #include "AEEAlert.h"
-#include "OEMText.h"  // for TP_LARGE_FONT
+#ifdef FEATURE_USES_ZI
+#include "OEMZIText.h"
+#else
+#include "OEMText.h"
+#endif
 //#include "OEMRUIM.h"
 #include "OEMDisp.h"       // TBD - hack until available somewhere else
 #include "OEMSound.h"      // TBD - hack until available somewhere else

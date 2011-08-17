@@ -57,13 +57,16 @@
 #include "AEEAnnunciator.h"
 //#include "AEEPhone.h"//add by lzhl20040823
 #include "SoundMenu.h"
-#include "OEMText.h"
+#ifdef FEATURE_USES_ZI
+#include "OEMZIText.h" 
+#else
+#include "OEMText.h" 
+#endif
 #include "OEMFeatures.h"
 #include "OEMCFGI.h"
 #include "AppComFunc.h"
 #include "Appscommon.h"
 #include "AEERUIM.h"
-#include "OEMText.h"
 #include "OEMNV.h"
 
 

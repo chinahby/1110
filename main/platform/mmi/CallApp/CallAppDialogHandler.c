@@ -1059,7 +1059,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         	ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_FIELDDEBUGAPP, "*#0000#");
                         	#else
                         	nv_language_enum_type language = NV_LANGUAGE_ENGLISH;
+							#ifdef FEATURE_USES_ZI
+							byte inputmode = OEM_MODE_ZI_MT_ENGLISH;
+							#else
     						byte inputmode = OEM_MODE_T9_MT_ENGLISH;
+							#endif
     						(void) ICONFIG_SetItem(pMe->m_pConfig,
                                    CFGI_LANGUAGE_SELECTION,
                                    &language,

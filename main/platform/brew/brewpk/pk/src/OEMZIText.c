@@ -311,9 +311,6 @@ typedef struct _TextCtlContext
    int                  nelementcount;
    HzGroupInfo          TextInfo;
    PyOrSEGroupInfo      PinGroupInfo;
-#if defined(FEATURE_ZICORP_CHINESE) || defined(FEATURE_ZICORP_EZITEXT) // {
-   //ZiGPData             ziCtx;            // Context for Zi
-#endif // } FEATURE_ZICORP_CHINESE || FEATURE_ZICORP_EZITEXT
 
 } TextCtlContext;
 
@@ -4806,8 +4803,9 @@ static void ZITextCtl_Latin_Rapid_Restart(TextCtlContext *pContext)
 	pziGP->GetMode = ZI8_GETMODE_DEFAULT;
     pziGP->Context = ZI8_GETCONTEXT_DEFAULT;
     pziGP->GetOptions = ZI8_GETOPTION_WSTRINGS;
-    pziGP->MaxCandidates = 10;
-	pziGP->ElementCount = 1;
+    pziGP->MaxCandidates = 20;
+	pziGP->ElementCount = 0;
+	pContext->uModeInfo.mtap.kLast = AVK_UNDEFINED;
 	switch ( OEM_TextGetCurrentMode((OEMCONTEXT)pContext) )
     {
 #ifdef FEATURE_ZI_RAPID_ARABIC
@@ -4885,27 +4883,46 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		case AVK_8:
 		case AVK_9:
 		{
-			
-			if(pContext->uModeInfo.mtap.kLast == key && pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED
-				)
+			int nBufLen = 0;
+			int k = 0;
+			if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
 			{
-				pZi->ziElementBuffer[0] = pZi->ziCandidates[0];
+				pziGP->ElementCount = 0;
+				MEMSET(pZi->ziElementBuffer,NULL,sizeof(pZi->ziElementBuffer));
 			}
 			else
 			{
-				pContext->uModeInfo.mtap.nCurentPos = 0;
-				pZi->ziElementBuffer[0] = OEMZITEXT_AlphabeticMapKeytoElent(key);
+				int t_NelementC = 0;
+				for(t_NelementC=0;t_NelementC<pziGP->ElementCount;t_NelementC++)
+				{
+					if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+	            	{
+	                 /* Set selection to the character before the insertion point */
+					 	MSG_FATAL("avk_clr...................",0,0,0);
+	                 	--pContext->wSelStart;
+	            	}
+	            	else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+	            	{
+	                  	return FALSE;
+	            	}
+	            
+	            	/* Insert a "NUL" to just delete and insert nothing */
+	            	TextCtl_AddChar(pContext, 0);
+				}
 			}
+			MSG_FATAL("FIRST.................",0,0,0);
+			
+			pZi->ziElementBuffer[pziGP->ElementCount] = OEMZITEXT_AlphabeticMapKeytoElent(key);
+			//pZi->ziElementBuffer[1] = OEMZITEXT_AlphabeticMapKeytoElent(key);
+			pziGP->ElementCount++;
 			MEMSET((void *)pZi->ziCandidates, 0, sizeof(pZi->ziCandidates));
 		    
 			MSG_FATAL("pziGP->pElements[0]====%x",pZi->ziElementBuffer[0],0,0);
 			MSG_FATAL("ZITextCtl_MultitapKey::2",0,0,0);
-		    //nMatches = Zi8GetCandidatesCount(pziGP);
-			MSG_FATAL("nMatches====%d",nMatches,0,0);
-			//if(nMatches>0)
-			{
-				nMatches = Zi8GetCandidates(pziGP);
-			}
+
+			nMatches = Zi8GetCandidates(pziGP);
+
+			
 			for(i=0;i<100;i++)
 			{
 				MSG_FATAL("pZi->ziCandidates[%d]=%x",i,pZi->ziCandidates[i],0);
@@ -4917,6 +4934,63 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 				for(i=0;i<40;i++)
 				{
 					MSG_FATAL("pZi->ziCandidates[%d]=%x",i,pZi->ziCandidates[i],0);
+				}
+			}
+			MSG_FATAL("nMatches===========%d",nMatches,0,0);
+			if(nMatches ==0)
+			{
+				pziGP->ElementCount--;
+				pZi->ziElementBuffer[pziGP->ElementCount] = 0;
+			}
+			if(pZi->ziCandidates!=NULL && nMatches>0)
+			{
+				int k = 0;
+				int j = 0;
+				int nCandIter = 0;
+				int nCandidate = 0;
+				int nk = 0;
+				uint16 T_buf[32] = {0};
+				for( nk = 0; nk < SIZE_OF_CANDIDATE_BUF;)
+				{
+					if( pziGP->pCandidates[nk])
+				  	{
+				  		 nk++;
+					}
+					else
+					{
+						break;
+					}
+				}
+				MSG_FATAL("nk===%d,pziGP->ElementCount=%d",nk,pziGP->ElementCount,0);
+				if(nk>pziGP->ElementCount)
+				{
+					pziGP->ElementCount--;
+					pZi->ziElementBuffer[pziGP->ElementCount] = 0;
+					break;
+				}
+				MEMSET(pContext->PinGroupInfo.groupData,NULL,sizeof(pContext->PinGroupInfo.groupData));
+				pContext->uModeInfo.mtap.nCurentPos = 0;
+				for( nCandIter = 0; nCandIter < SIZE_OF_CANDIDATE_BUF; nCandIter++)
+				{
+					unsigned short temp = pziGP->pCandidates[nCandIter];
+					if( pziGP->pCandidates[nCandIter] )
+				  	{
+						pContext->PinGroupInfo.groupData[j][k] =(pziGP->pCandidates[nCandIter]);
+						k++;
+					}
+					else
+					{
+						pContext->uModeInfo.mtap.nMax = j;
+						nCandidate++;
+						j++;
+						MSG_FATAL("pContext->uModeInfo.mtap.nMax==%d",pContext->uModeInfo.mtap.nMax,0,0);
+						if((nCandidate == nMatches)||(pziGP->ElementCount != k))
+						{
+						
+						   break;
+						}
+						k=0;
+					}
 				}
 			}
 		}
@@ -5020,122 +5094,292 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 			break;
 		case AVK_UP:
 			{
-                uint16 nLine, nCharsIn,nSel;
-                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+				if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
+				{
+		            uint16 nLine, nCharsIn,nSel;
+		            nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
 
-                // If it is on the first line, return false
-                if(nLine == 0 || !pContext->pwLineStarts)
-                    return FALSE;
+		            // If it is on the first line, return false
+		            if(nLine == 0 || !pContext->pwLineStarts)
+		                return FALSE;
 
-                // Otherwise figure out how many characters from the start
-                // of the line the cursor is and try to put the cursor in a
-                // similar position on previous line. Or, if not enough
-                // chars, at the end of the line
-                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
-                if(nCharsIn + pContext->pwLineStarts[nLine-1] >=
-                                               pContext->pwLineStarts[nLine]) 
-                {
-                    nSel = pContext->pwLineStarts[nLine]-1;
-                } 
-                else 
-                {
-                    nSel = nCharsIn + pContext->pwLineStarts[nLine-1];
-                }
-                OEM_TextSetSel(pContext, nSel,nSel);
-                (void) TextCtl_AutoScroll(pContext);
+		            // Otherwise figure out how many characters from the start
+		            // of the line the cursor is and try to put the cursor in a
+		            // similar position on previous line. Or, if not enough
+		            // chars, at the end of the line
+		            nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+		            if(nCharsIn + pContext->pwLineStarts[nLine-1] >=
+		                                           pContext->pwLineStarts[nLine]) 
+                	{
+                    	nSel = pContext->pwLineStarts[nLine]-1;
+                	} 
+                	else 
+                	{
+                    	nSel = nCharsIn + pContext->pwLineStarts[nLine-1];
+                	}
+                	OEM_TextSetSel(pContext, nSel,nSel);
+                	(void) TextCtl_AutoScroll(pContext);
+				}
+				else
+				{
+					int t_NelementC = 0;
+					MSG_FATAL("pContext->uModeInfo.mtap.nMax==%d",pContext->uModeInfo.mtap.nMax,0,0);
+					if(pContext->uModeInfo.mtap.nCurentPos<(pContext->uModeInfo.mtap.nMax-1))
+					{
+						pContext->uModeInfo.mtap.nCurentPos ++;
+					}
+					else
+					{
+						pContext->uModeInfo.mtap.nCurentPos = 0;
+					}
+					for(t_NelementC=0;t_NelementC<pziGP->ElementCount;t_NelementC++)
+					{
+						if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+		            	{
+		                 /* Set selection to the character before the insertion point */
+						 	MSG_FATAL("avk_clr...................",0,0,0);
+		                 	--pContext->wSelStart;
+		            	}
+		            	else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+		            	{
+		                  	return FALSE;
+		            	}
+		            
+		            	/* Insert a "NUL" to just delete and insert nothing */
+		            	TextCtl_AddChar(pContext, 0);
+					}
+					MSG_FATAL("====%d",pContext->uModeInfo.mtap.nCurentPos,0,0);
+					TextCtl_AddString(pContext,(AECHAR *)(pContext->PinGroupInfo.groupData[pContext->uModeInfo.mtap.nCurentPos]));
+				}
                 return TRUE;
             }
 			break;
 		case AVK_DOWN:
 			{
-                uint16 nLine, nCharsIn,nSel;
+				if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
+				{
+	                uint16 nLine, nCharsIn,nSel;
 
-                if((!pContext->pwLineStarts)||(!pContext->wLines))
-                    return FALSE;
-                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
+	                if((!pContext->pwLineStarts)||(!pContext->wLines))
+	                    return FALSE;
+	                nLine = TextCtl_GetLine(pContext, pContext->wSelEnd);
 
-                // If the cursor is on the last line and the line's last
-                // character is not a LF, then FALSE is returned as nothing
-                // can be done. A LF on the end of a line does not tell the
-                // wLines member that there is another line, hence this
-                // extra check.
-                if ( nLine == (pContext->wLines-1) &&
-                    pContext->pszContents[WSTRLEN(pContext->pszContents)-1] != LINEBREAK ) 
-                {
-                    return FALSE;
-                }
+	                // If the cursor is on the last line and the line's last
+	                // character is not a LF, then FALSE is returned as nothing
+	                // can be done. A LF on the end of a line does not tell the
+	                // wLines member that there is another line, hence this
+	                // extra check.
+	                if ( nLine == (pContext->wLines-1) &&
+	                    pContext->pszContents[WSTRLEN(pContext->pszContents)-1] != LINEBREAK ) 
+	                {
+	                    return FALSE;
+	                }
 
-                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
-                // If the cursor is more characters in than the next line...
-                // This can happen because the LINEBREAK may be immediate, or at least < nCharsIn
-                if(nCharsIn + pContext->pwLineStarts[nLine+1] > pContext->pwLineStarts[nLine+2])
-                {
-                    // If it is the last line, don't subtract the LINEBREAK from selection spot
-                    if( nLine+2 == pContext->wLines )
-                    {
-                        nSel = pContext->pwLineStarts[nLine+2];
-                    }
-                    else
-                    {
-                        nSel = pContext->pwLineStarts[nLine+2]-1;
-                    }
-                }
-                else
-                {
-                    // Selection spot is number of chars into the next line
-                    nSel = nCharsIn + pContext->pwLineStarts[nLine+1];
-                    // If this is not the beginning of a line 
-                    // and the selection point is a LINEBREAK, subtract one
-                    // Otherwise the selection overshoots to the first character
-                    // of the following line.
-                    if( nCharsIn && nSel && pContext->pszContents[nSel-1] == LINEBREAK )
-                    {
-                        nSel--;
-                    }
-                }
-                OEM_TextSetSel(pContext, nSel,nSel);
-                (void) TextCtl_AutoScroll(pContext);
+	                nCharsIn = pContext->wSelEnd - pContext->pwLineStarts[nLine];
+	                // If the cursor is more characters in than the next line...
+	                // This can happen because the LINEBREAK may be immediate, or at least < nCharsIn
+	                if(nCharsIn + pContext->pwLineStarts[nLine+1] > pContext->pwLineStarts[nLine+2])
+	                {
+	                    // If it is the last line, don't subtract the LINEBREAK from selection spot
+	                    if( nLine+2 == pContext->wLines )
+	                    {
+	                        nSel = pContext->pwLineStarts[nLine+2];
+	                    }
+	                    else
+	                    {
+	                        nSel = pContext->pwLineStarts[nLine+2]-1;
+	                    }
+	                }
+	                else
+	                {
+	                    // Selection spot is number of chars into the next line
+	                    nSel = nCharsIn + pContext->pwLineStarts[nLine+1];
+	                    // If this is not the beginning of a line 
+	                    // and the selection point is a LINEBREAK, subtract one
+	                    // Otherwise the selection overshoots to the first character
+	                    // of the following line.
+	                    if( nCharsIn && nSel && pContext->pszContents[nSel-1] == LINEBREAK )
+	                    {
+	                        nSel--;
+	                    }
+	                }
+	                OEM_TextSetSel(pContext, nSel,nSel);
+	                (void) TextCtl_AutoScroll(pContext);
+				}
+				else
+				{
+					int t_NelementC = 0;
+					MSG_FATAL("pContext->uModeInfo.mtap.nMax==%d",pContext->uModeInfo.mtap.nMax,0,0);
+					if(pContext->uModeInfo.mtap.nCurentPos>0)
+					{
+						pContext->uModeInfo.mtap.nCurentPos --;
+					}
+					else
+					{
+						pContext->uModeInfo.mtap.nCurentPos = pContext->uModeInfo.mtap.nMax-1;
+					}
+					for(t_NelementC=0;t_NelementC<pziGP->ElementCount;t_NelementC++)
+					{
+						if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+		            	{
+		                 /* Set selection to the character before the insertion point */
+						 	MSG_FATAL("avk_clr...................",0,0,0);
+		                 	--pContext->wSelStart;
+		            	}
+		            	else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+		            	{
+		                  	return FALSE;
+		            	}
+		            
+		            	/* Insert a "NUL" to just delete and insert nothing */
+		            	TextCtl_AddChar(pContext, 0);
+					}
+					MSG_FATAL("====%d",pContext->uModeInfo.mtap.nCurentPos,0,0);
+					MSG_FATAL("AVK_DOWN===%0x",pContext->PinGroupInfo.groupData[pContext->uModeInfo.mtap.nCurentPos][0],0,0);
+					TextCtl_AddString(pContext,(AECHAR *)(pContext->PinGroupInfo.groupData[pContext->uModeInfo.mtap.nCurentPos]));
+				}
 
                 return TRUE;
             }
 			break;
 		case AVK_CLR:
 			MSG_FATAL("avk_clr...................00000",0,0,0);
-			if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
-            {
-                 /* Set selection to the character before the insertion point */
-				 MSG_FATAL("avk_clr...................",0,0,0);
-                 --pContext->wSelStart;
-            }
-            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
-            {
-                  return FALSE;
-            }
-            
-            /* Insert a "NUL" to just delete and insert nothing */
-            TextCtl_AddChar(pContext, 0);
+			if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
+			{
+				if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+	            {
+	                 /* Set selection to the character before the insertion point */
+					 MSG_FATAL("avk_clr...................",0,0,0);
+	                 --pContext->wSelStart;
+	            }
+	            else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+	            {
+	                  return FALSE;
+	            }
+	            
+	            /* Insert a "NUL" to just delete and insert nothing */
+	            TextCtl_AddChar(pContext, 0);
+			}
+			else
+			{
+				if(pziGP->ElementCount>1)
+				{
+					int t_NelementC = 0;
+					for(t_NelementC=0;t_NelementC<pziGP->ElementCount;t_NelementC++)
+					{
+						if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+		            	{
+		                 /* Set selection to the character before the insertion point */
+						 	MSG_FATAL("avk_clr...................",0,0,0);
+		                 	--pContext->wSelStart;
+		            	}
+		            	else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+		            	{
+		                  	return FALSE;
+		            	}
+		            
+		            	/* Insert a "NUL" to just delete and insert nothing */
+		            	TextCtl_AddChar(pContext, 0);
+					}
+					pziGP->ElementCount--;
+					pZi->ziElementBuffer[pziGP->ElementCount] = 0;
+					MEMSET((void *)pZi->ziCandidates, 0, sizeof(pZi->ziCandidates));
+					nMatches = Zi8GetCandidates(pziGP);
+					for(i=0;i<100;i++)
+					{
+						MSG_FATAL("pZi->ziCandidates[%d]=%x",i,pZi->ziCandidates[i],0);
+					}
+					if(pZi->ziCandidates[0] == MULT_IMC_HINT_CANDIDATE)
+					{
+						pziGP->FirstCandidate = 1;
+						nMatches= Zi8GetCandidates(pziGP);
+						for(i=0;i<40;i++)
+						{
+							MSG_FATAL("pZi->ziCandidates[%d]=%x",i,pZi->ziCandidates[i],0);
+						}
+					}
+					MSG_FATAL("nMatches===========%d",nMatches,0,0);
+					if(nMatches ==0)
+					{
+						pziGP->ElementCount--;
+						pZi->ziElementBuffer[pziGP->ElementCount] = 0;
+					}
+					if(pZi->ziCandidates!=NULL && nMatches>0)
+					{
+						int k = 0;
+						int j = 0;
+						int nCandIter = 0;
+						int nCandidate = 0;
+						MEMSET(pContext->PinGroupInfo.groupData,NULL,sizeof(pContext->PinGroupInfo.groupData));
+						pContext->uModeInfo.mtap.nCurentPos = 0;
+						for( nCandIter = 0; nCandIter < SIZE_OF_CANDIDATE_BUF; nCandIter++)
+						{
+							unsigned short temp = pziGP->pCandidates[nCandIter];
+							if( pziGP->pCandidates[nCandIter] )
+						  	{
+								pContext->PinGroupInfo.groupData[j][k] =(pziGP->pCandidates[nCandIter]);
+								k++;
+							}
+							else
+							{
+								pContext->uModeInfo.mtap.nMax = j;
+								nCandidate++;
+								j++;
+								MSG_FATAL("pContext->uModeInfo.mtap.nMax==%d",pContext->uModeInfo.mtap.nMax,0,0);
+								if((nCandidate == nMatches)||(pziGP->ElementCount != k))
+								{
+								
+								   break;
+								}
+								k=0;
+							}
+						}
+					}
+					break;
+				}
+				else
+				{
+					pziGP->ElementCount = 0;
+					pZi->ziElementBuffer[pziGP->ElementCount] = 0;
+					pContext->uModeInfo.mtap.kLast = AVK_UNDEFINED;
+					if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
+	            	{
+	                	 /* Set selection to the character before the insertion point */
+					 	MSG_FATAL("avk_clr...................",0,0,0);
+	                 	--pContext->wSelStart;
+	            	}
+	            	else if ((pContext->wSelStart == 0) && (pContext->wSelStart == pContext->wSelEnd))
+	            	{
+	                  	return FALSE;
+	            	}
+	            	/* Insert a "NUL" to just delete and insert nothing */
+	            	TextCtl_AddChar(pContext, 0);
+				}
+					
+			}
             return TRUE; 
+			break;
+		case AVK_INFO:
+			if(pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED)
+			{
+				pContext->uModeInfo.mtap.kLast = AVK_UNDEFINED;
+				return TRUE;
+			}
+			return FALSE;
 			break;
 		default:
 			break;
 	}
 	if(nMatches>0)
 	{
-		pContext->uModeInfo.mtap.nMax = nMatches;
 		bRet = TRUE;
 	}
-	pContext->uModeInfo.mtap.kLast = key; 
-    TextCtl_AddChar(pContext,(AECHAR)(pZi->ziCandidates[pContext->uModeInfo.mtap.nCurentPos*2]));
+	pContext->uModeInfo.mtap.kLast = key;
+	
+	TextCtl_AddString(pContext,(AECHAR *)(pContext->PinGroupInfo.groupData[pContext->uModeInfo.mtap.nCurentPos]));
+    //TextCtl_AddChar(pContext,(AECHAR)(pZi->ziCandidates[pContext->uModeInfo.mtap.nCurentPos*2]));
     //Set timer 
-    MSG_FATAL("bRet==========%d",bRet,0,0);
-    if(TRUE == bRet)
-    {
-        // Set timer to deselect it
-        (void) ISHELL_SetTimer((IShell *) pContext->pIShell,
-                        MULTITAP_TIMEOUT,
-                        TextCtl_MultitapTimer,
-                        pContext);  
-    }
+  
     return bRet;
 }
 
@@ -7174,10 +7418,8 @@ static boolean ZITextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
     //ZISTATUS sStatus = ZISTATERROR;
     boolean bRet = TRUE;
     // discard the event that we don't handle
-    #if defined(FEATURE_ZICORP_CHINESE) || defined(FEATURE_ZICORP_EZITEXT) // {
     ZiGPData *        pZi   = &pContext->ziCtext;
     PZI8GETPARAM      pziGP = &pZi->ziGetParam;
-	#endif // } FEATURE_ZICORP_CHINESE || FEATURE_ZICORP_EZITEXT
 	MEMSET((void *)pZi->ziCandidates, 0, sizeof(pZi->ziCandidates));
 	MSG_FATAL("ZITextCtl_CJK_CHINESE_Key.........",0,0,0);
     if( !pContext->m_init)
@@ -7210,7 +7452,6 @@ static boolean ZITextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
         	MSG_FATAL("TextCtl_ZiPinyinKey.................",0,0,0);
 			//npresentcurnt = AEE_TM_NONE;
 			switch(npresentcurnt){
-#if defined(FEATURE_ZICORP_CHINESE) || defined(FEATURE_ZICORP_EZITEXT) // {
 #ifdef FEATURE_ZICORP_PINYIN // {
 		      case AEE_TM_PINYIN:
 #endif // } FEATURE_ZICORP_PINYIN
@@ -7333,7 +7574,7 @@ static boolean ZITextCtl_CJK_CHINESE_Key(TextCtlContext *pContext, AEEEvent eCod
 					}
 					
 		        }
-				#endif
+				
 			}
         	}
 			break;
@@ -7733,15 +7974,11 @@ static void ZITextCtl_CJK_CHINESE_Exit(TextCtlContext *pContext)
 
 static boolean ZI_CJK_CHINESE_SETMODE(TextCtlContext *pContext,unsigned char Mode)
 {
-#if defined(FEATURE_ZICORP_CHINESE) || defined(FEATURE_ZICORP_EZITEXT) // {
    ZiGPData *        pZi   = &pContext->ziCtext;
    PZI8GETPARAM      pziGP = &pZi->ziGetParam;
-#endif // } FEATURE_ZICORP_CHINESE || FEATURE_ZICORP_EZITEXT
-
    if( !pContext->m_init  ){
       return EBADSTATE;
    }
-#if defined(FEATURE_ZICORP_CHINESE) || defined(FEATURE_ZICORP_EZITEXT)
    MEMSET((void *)pziGP, 0, sizeof(ZI8GETPARAM));
    MEMSET((void *)pZi->ziElementBuffer, 0, sizeof(pZi->ziElementBuffer));
    MEMSET((void *)pZi->ziElementBackup, 0, sizeof(pZi->ziElementBackup));
@@ -7750,7 +7987,6 @@ static boolean ZI_CJK_CHINESE_SETMODE(TextCtlContext *pContext,unsigned char Mod
    pziGP->pElements     = pZi->ziElementBuffer;
    pziGP->pCurrentWord  = pZi->ziWordBuffer;
    pziGP->pCandidates   = pZi->ziCandidates;
-#endif // } FEATURE_ZICORP_CHINESE || FEATURE_ZICORP_EZITEXT
 	switch(Mode)
 	{
 		case TEXT_MODE_ZI_PINYIN:

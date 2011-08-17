@@ -23,8 +23,11 @@
                                  本文件包含的外部文件
 ==============================================================================*/
 #include "ContApp_priv.h"
+#ifdef FEATURE_USES_ZI
+#include "OEMZIText.h"
+#else
 #include "OEMText.h"
-
+#endif
 //#define CONTAPP_STR2KEY_INCLUDE
 //#include "ContApp_Str2Key.h"
 

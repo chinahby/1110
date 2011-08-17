@@ -55,7 +55,11 @@
 #include "AEEConfig.h"
 #include "AppComFunc.h"
 #include "Appscommon.h"
-#include "OEMText.h"
+#ifdef FEATURE_USES_ZI
+#include "OEMZIText.h" 
+#else
+#include "OEMText.h" 
+#endif
 #include "AEEBacklight.h"
 #include "AEEFile.h"
 #ifndef WIN32

@@ -31,7 +31,12 @@
 #include "AEEStdLib.h"
 #include "AEEFile.h"
 #include "OEMFeatures.h"
+#ifdef FEATURE_USES_ZI
+#include "OEMZIText.h"
+#else
 #include "OEMText.h"
+#endif
+
 /*==============================================================================
                                  
                                  宏定义和常数

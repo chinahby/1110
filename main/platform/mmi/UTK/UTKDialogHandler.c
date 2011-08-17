@@ -24,7 +24,11 @@
                                  本文件包含的外部文件
 ==============================================================================*/
 #include "UTK_priv.h"
+#ifdef FEATURE_USES_ZI
+#include "OEMZIText.h" 
+#else
 #include "OEMText.h" 
+#endif
 //#include "uasms.h"
 #include "UTKUtils.h"
 

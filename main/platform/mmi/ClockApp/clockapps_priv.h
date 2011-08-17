@@ -53,7 +53,11 @@
 
 #include "AEEMenu.h"
 #include "AEETime.h"
-#include "OEMText.h"
+#ifdef FEATURE_USES_ZI
+#include "OEMZIText.h" 
+#else
+#include "OEMText.h" 
+#endif
 #ifdef FEATURE_UIALARM
 #include "AEEAlarm.h"
 #endif

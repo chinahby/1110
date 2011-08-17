@@ -4027,6 +4027,117 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
         case EVT_COMMAND:
             switch (wParam)
             {
+#ifdef FEATURE_USES_ZI
+			#ifdef FEATURE_LANG_CHINESE
+                case IDS_CHINESE:       //中文
+                    language = NV_LANGUAGE_CHINESE;
+                    inputmode = OEM_MODE_ZI_PINYIN;    
+                    break;
+#endif /* FEATURE_LANG_CHINESE */
+
+#ifdef FEATURE_LANG_TCHINESE
+                case IDS_TCHINESE:       //繁体中文
+                    language = NV_LANGUAGE_TCHINESE;
+                    inputmode = OEM_MODE_ZI_ZHUYIN;    
+                    break;
+#endif /* FEATURE_LANG_TCHINESE */
+
+#ifdef FEATURE_LANG_ITALIAN
+                case IDS_ITALIAN:       //意大利文
+                    language = NV_LANGUAGE_ITALIAN;
+                    inputmode = OEM_MODE_ZI_ITALIAN;     
+                    break;
+#endif /* FEATURE_LANG_ITALIAN */
+
+#ifdef FEATURE_LANG_SPANISH
+                case IDS_SPANISH:       //西班牙文
+                    language = NV_LANGUAGE_SPANISH;
+                    inputmode = OEM_MODE_ZI_RAPID_SPANISH;  //OEM_MODE_T9_MT_SPANISH;
+                    break;
+#endif /* FEATURE_LANG_SPANISH */
+
+#ifdef FEATURE_LANG_PORTUGUESE
+                case IDS_PORTUGUESE:    //葡萄牙文
+                    language = NV_LANGUAGE_PORTUGUESE;
+                    inputmode = OEM_MODE_ZI_MT_ENGLISH;//OEM_MODE_T9_RAPID_PORTUGUESE;//OEM_MODE_T9_MT_PORTUGUESE;
+                    break;
+#endif /* FEATURE_LANG_PORTUGUESE */
+
+#ifdef FEATURE_LANG_INDONESIAN
+                case IDS_INDONESIAN:    //印度尼西亚
+                    language = NV_LANGUAGE_INDONESIAN;
+                    inputmode = OEM_MODE_ZI_MT_ENGLISH; //OEM_MODE_T9_MT_INDONESIAN;                           
+                    break;
+#endif /* FEATURE_LANG_INDONESIAN */
+#ifdef FEATURE_LANG_MYANMAR   //add by yangdecai 2010-1224
+				case IDS_MYANMAR:
+					language = NV_LANGUAGE_MYANMAR;
+                    inputmode = OEM_MODE_MYANMAR; //OEM_MODE_T9_MT_INDONESIAN;                           
+                    break;
+#endif
+#ifdef FEATURE_LANG_HINDI
+                case IDS_HINDI:    //印度语
+                    language = NV_LANGUAGE_HINDI;
+                    inputmode = OEM_MODE_ZI_MT_HINDI;                          
+                    break;
+#endif /*FEATURE_LANG_HINDI*/
+
+#ifdef FEATURE_LANG_ARABIC
+                case IDS_ARABIC:    //阿拉伯语
+                    language = NV_LANGUAGE_ARABIC;
+                    inputmode = OEM_MODE_ZI_MT_ARABIC;                             
+                    break;
+#endif /*FEATURE_LANG_ARABIC*/
+
+#ifdef FEATURE_LANG_HEBREW
+                case IDS_HEBREW:    //希伯来语
+                    language = NV_LANGUAGE_HEBREW;
+                    inputmode = OEM_MODE_ZI_MT_HEBREW;                          
+                    break;
+#endif /*FEATURE_LANG_HEBREW*/
+
+#ifdef FEATURE_LANG_THAI
+                case IDS_THAI:    //泰国语
+                    language = NV_LANGUAGE_THAI;
+                    #ifdef FEATURE_ZI_RAPID_THAI
+                    inputmode = OEM_MODE_ZI_MT_THAI;   
+                    #else
+                    inputmode = OEM_MODE_ZI_MT_THAI;
+                    #endif
+                    break;
+#endif /*FEATURE_LANG_THAI*/
+
+#ifdef FEATURE_LANG_VIETNAMESE
+                case IDS_VIETNAMESE:    //越南语
+                    language = NV_LANGUAGE_VIETNAMESE;
+                    inputmode = OEM_MODE_ZI_MT_VIETNAMESE;                         
+                    break;
+#endif /*FEATURE_LANG_VIETNAMESE*/
+
+#ifdef FEATURE_LANG_RUSSIAN
+                case IDS_RUSSIAN:    //俄文
+                    language = NV_LANGUAGE_RUSSIAN;               
+                    break;
+#endif /*FEATURE_LANG_RUSSIAN*/
+
+#if defined(FEATURE_LANG_FRENCH)
+                case IDS_FRENCH:
+                    language = NV_LANGUAGE_FRENCH;
+                    inputmode = OEM_MODE_ZI_MT_FRENCH;
+                    break;
+#endif //#if defined(FEATURE_LANG_FRENCH)
+
+                case IDS_ENGLISH:       //英文
+                default:
+                    language = NV_LANGUAGE_ENGLISH;
+              // inputmode = OEM_MODE_ZI_MT_ENGLISH;
+#if defined FEATURE_LANG_SPANISH
+                    inputmode = OEM_MODE_ZI_RAPID_ENGLISH;
+#else
+                    inputmode = OEM_MODE_ZI_MT_ENGLISH;
+#endif
+                    break;
+            #else
 #ifdef FEATURE_LANG_CHINESE
                 case IDS_CHINESE:       //中文
                     language = NV_LANGUAGE_CHINESE;
@@ -4136,6 +4247,7 @@ static boolean  HandleLanguageDialogEvent(CSettingMenu *pMe,
                     inputmode = OEM_MODE_T9_MT_ENGLISH;
 #endif
                     break;
+#endif
             }
             (void) ICONFIG_SetItem(pMe->m_pConfig,
                                    CFGI_LANGUAGE_SELECTION,
