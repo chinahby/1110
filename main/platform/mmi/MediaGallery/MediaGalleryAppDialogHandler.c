@@ -2062,7 +2062,7 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
    {
       case EVT_DIALOG_INIT:
       {
-         MSG_FATAL("MGAppUtil_CreateMediaMenu",0,0,0);
+         MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent EVT_DIALOG_INIT",0,0,0);
          MGAppUtil_CreateMediaMenu(pMe,  NULL);
 
          return TRUE;
@@ -2176,6 +2176,7 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
                break;
 
             case AVK_INFO:
+               MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent AVK_INFO",0,0,0); 
                return MGAppUtil_OnMediaMenuInfoKeyEvt(pMe,
                                                       pMenuCtl,
                                                       eCode,
@@ -2291,7 +2292,7 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
        TRUE == pMe->m_bCallbackDoing ||
        TRUE == pMe->m_bMediaMenuEmpty)
    {
-      MG_FARF(ADDR, ("pCurNode NULL, or in build or menu empty!"));
+      MSG_FATAL("pCurNode NULL, or in build or menu empty!",0,0,0);
       return FALSE;
    }
 
@@ -2312,7 +2313,7 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
          int        nRet;
 
          uMimeBase = MGMediaInfo_MimeBaseConvert(eMimeBase);
-
+         DBGPRINTF("pCurNode->szName=%s",pCurNode->szName);   
          /*if eMimeBase is MG_MIME_UNKNOWN etc, we need detect each
           * type*/
          nRet = MGMediaInfo_GetMimeType(pMe->m_pShell,
@@ -2326,6 +2327,7 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
       }
       if(MG_BETWEEN(eMimeBase, MG_MIME_IMGBASE, MG_MIME_IMGMAX))
       {
+         DBGPRINTF("1pCurNode->szName=%s",pCurNode->szName);  
          pMe->m_PopupOps = MG_OP_VIEWIMG;
          MGCLOSE_DIALOG(MGDLGRET_VIEW);
       }
@@ -2333,18 +2335,43 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
               (eMimeBase == MG_MIME_VOICEREC) ||
               (eMimeBase == MG_MIME_CALLREC))
       {
+         DBGPRINTF("2pCurNode->szName=%s",pCurNode->szName);  
          if(SUCCESS != MGAppPopupMenu_OnMusicPlay(pMe, pMenuCtl))
             bRet = FALSE;
       }
 #if defined(FEATURE_VIDEOPLAYER)
       else if(MG_BETWEEN(eMimeBase, MG_MIME_VIDEOBASE, MG_MIME_VIDEOMAX))
       {
+         DBGPRINTF("3pCurNode->szName=%s",pCurNode->szName);
+#ifdef FEATURE_USES_MMS
+         if(pMe->m_isForMMS) 
+         {
+            IConfig *pConfig = NULL;
+            if(SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG, (void **)&pConfig))
+            {
+                ICONFIG_SetItem(pConfig, CFGI_MMSVIDEO, pCurNode->szName, sizeof(pCurNode->szName));   
+            }
+            RELEASEIF(pConfig);
+         }
+#endif           
          if(SUCCESS != MGAppPopupMenu_OnVideoPlay(pMe, pMenuCtl))
             bRet = FALSE;
       }
 #endif
       else
       {
+         DBGPRINTF("4pCurNode->szName=%s",pCurNode->szName);  
+#ifdef FEATURE_USES_MMS
+         if(pMe->m_isForMMS) 
+         {
+            IConfig *pConfig = NULL;
+            if(SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG, (void **)&pConfig))
+            {
+                ICONFIG_SetItem(pConfig, CFGI_MMSVIDEO, pCurNode->szName, sizeof(pCurNode->szName));   
+            }
+            RELEASEIF(pConfig);
+         }
+#endif         
       	 //add by yangdecai 2010-08-04
 		 MediaGalleryApp_ShowPromptMsgBox(pMe,
                                           IDS_MG_FILEOPERR,
@@ -3079,12 +3106,12 @@ static int MGAppPopupMenu_OnVideoPlay(CMediaGalleryApp* pMe, IMenuCtl* pMenuCtl)
 {
    IVideoPlayer *pVideoPlayer = NULL;
    MGFileInfo *pCurNode;
-
+   MSG_FATAL("MGAppPopupMenu_OnVideoPlay Start",0,0,0);
    if(!pMe || !pMenuCtl)
       return EBADPARM;
 
    pCurNode = MediaGalleryApp_GetCurrentNode(pMe);
-
+   MSG_FATAL("MGAppPopupMenu_OnVideoPlay 1",0,0,0);
    if(!pCurNode)
       return EBADPARM;
 
@@ -3103,6 +3130,7 @@ static int MGAppPopupMenu_OnVideoPlay(CMediaGalleryApp* pMe, IMenuCtl* pMenuCtl)
 
    if(pVideoPlayer != NULL)
    {
+      MSG_FATAL("MGAppPopupMenu_OnVideoPlay 2",0,0,0);
       pMe->m_PopupOps =  MG_OP_PLAYVIDEO;
       IVideoPlayer_Play(pVideoPlayer, pCurNode->szName);
       IVideoPlayer_Release(pVideoPlayer);
@@ -3110,9 +3138,10 @@ static int MGAppPopupMenu_OnVideoPlay(CMediaGalleryApp* pMe, IMenuCtl* pMenuCtl)
    }
    else
    {
+      MSG_FATAL("MGAppPopupMenu_OnVideoPlay 3",0,0,0);
       return EFAILED;
    }
-
+   MSG_FATAL("MGAppPopupMenu_OnVideoPlay End",0,0,0);
    return SUCCESS;
 }//MGAppPopupMenu_OnVideoPlay
 #endif
@@ -5416,8 +5445,8 @@ static boolean MediaGalleryApp_VideoAddDlg_HandleEvent(CMediaGalleryApp* pMe,
    if(!pMe)
       return FALSE;
 
-   MG_FARF(ADDR, ("VideoAddDlg eCode:%d, wParam:%d, dwParam:%d",
-            eCode, wParam, dwParam));
+   MSG_FATAL("VideoAddDlg eCode:%d, wParam:%d, dwParam:%d",
+            eCode, wParam, dwParam);
 
    pMenuCtl = pMe->m_pMediaMenu;
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
@@ -6711,10 +6740,10 @@ static boolean MGAppUtil_UpdateMediaMenuSoftkey(CMediaGalleryApp* pMe)
    MGFileInfo *pItemData;
    int nSoftkeyType = BTBAR_NONE;
    MediaDlgStat eDlgStat;
-
+   MSG_FATAL("MGAppUtil_UpdateMediaMenuSoftkey Start",0,0,0);
    if(!pMe || !pMe->m_pMediaMenu)
       return FALSE;
-
+   
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
 
    if(eDlgStat != MG_DLGSTAT_NORMAL)
@@ -6728,10 +6757,12 @@ static boolean MGAppUtil_UpdateMediaMenuSoftkey(CMediaGalleryApp* pMe)
       TRUE == pMe->m_bCallbackDoing ||
       TRUE == pMe->m_bMediaMenuEmpty)
    {
+      MSG_FATAL("MGAppUtil_UpdateMediaMenuSoftkey 1",0,0,0);
       nSoftkeyType = BTBAR_BACK;
    }
    else
    {
+      MSG_FATAL("pMe->m_Explorer.m_nCurDepth=%d m_StartMode=%d",pMe->m_Explorer.m_nCurDepth, pMe->m_StartMode,0);
       switch(pMe->m_StartMode)
       {
       case MGSM_MUSIC_ADD:
@@ -6752,29 +6783,43 @@ static boolean MGAppUtil_UpdateMediaMenuSoftkey(CMediaGalleryApp* pMe)
          	#if defined(FEATURE_VERSION_S1000T)
 			if(pMe->m_videoLoadDone)
 			{
+                MSG_FATAL("MGAppUtil_UpdateMediaMenuSoftkey 2",0,0,0);
 				nSoftkeyType = BTBAR_0PTION_PLAY_BACK;
 				pMe->m_videoLoadDone = FALSE;
 			}
 			else
 			{
+                MSG_FATAL("MGAppUtil_UpdateMediaMenuSoftkey 3",0,0,0);
 				nSoftkeyType = BTBAR_OPTION_BACK;
 			}
 			#else
+            MSG_FATAL("MGAppUtil_UpdateMediaMenuSoftkey 4",0,0,0);
             nSoftkeyType = BTBAR_OPTION_BACK;
 			#endif
+#ifdef FEATURE_USES_MMS
+            if(pMe->m_isForMMS && (pMe->m_StartMode == MGSM_VIDEO_BROWSE))
+            {
+                nSoftkeyType =  BTBAR_SELECT_BACK;
+            }
+            else
+            {
+                nSoftkeyType =  BTBAR_OPTION_UP;
+            }
+#endif            
          }
          else
          {
+            MSG_FATAL("MGAppUtil_UpdateMediaMenuSoftkey BTBAR_OPTION_UP",0,0,0);
             nSoftkeyType =  BTBAR_OPTION_UP;
          }
 
          break;
       }
    }
-
+   MSG_FATAL("MGAppUtil_UpdateMediaMenuSoftkey 3",0,0,0); 
    IMENUCTL_SetBottomBarType(pMe->m_pMediaMenu, nSoftkeyType);
    IMENUCTL_Redraw(pMe->m_pMediaMenu);
-
+   MSG_FATAL("MGAppUtil_UpdateMediaMenuSoftkey End",0,0,0); 
    return TRUE;
 }//MGAppUtil_UpdateMediaMenuSoftkey
 
@@ -7010,7 +7055,7 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
 
    if(nState == MG_CBS_DOING)
    {
-      MG_FARF(ADDR, ("call back still doing"));
+      MSG_FATAL("call back still doing",0,0,0);
       return FALSE;
    }
 
@@ -7038,7 +7083,7 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
                                           cls,
                                           (void **)&pMenuCtl))
       {
-         MG_FARF(ADDR, ("Create media menu failed!"));
+         MSG_FATAL("Create media menu failed!",0,0,0);
          return FALSE;
       }
 
@@ -7049,12 +7094,13 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
    }
    else if(pMe->m_bKeepMediaMenu == FALSE)
    {
+      MSG_FATAL("MGAppUtil_CreateMediaMenu 1",0,0,0);
       MGExplorer_FreeMediaMenuItem(pMenuCtl);
    }
    else
    {
       nState = MediaGalleryApp_GetCallbackState(pMe, MG_CBT_BUILDMENU);
-      MG_FARF(ADDR, ("callback state %d", nState));
+      MSG_FATAL("callback state 0x%x", nState,0,0);
 
       switch(nState)
       {
@@ -7067,19 +7113,21 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
       case MG_CBS_CANDOFOR:
          if(FALSE == pMe->m_bMediaMenuEmpty )
          {
+            MSG_FATAL("FALSE == pMe->m_bMediaMenuEmpty",0,0,0);
             if( FALSE ==IMENUCTL_IsActive(pMenuCtl))
             {
                IMENUCTL_SetActive(pMenuCtl ,TRUE);
             }
             else
             {
-               MG_FARF(ADDR, ("ERROR: Media menu active!"));
+               MSG_FATAL("ERROR: Media menu active!",0,0,0);
             }
             IMENUCTL_Redraw(pMenuCtl);
 
          }
          else
          {
+            MSG_FATAL("FALSE != pMe->m_bMediaMenuEmpty",0,0,0);
             MGAppUtil_UpdateMediaMenuSoftkey(pMe);
             MGAppUtil_OnMediaMenuEmpty(pMe,
                                        /*MG_ONMENUEMPTY_MESSAGEBOX*/
@@ -7088,7 +7136,7 @@ static __inline boolean MGAppUtil_CreateMediaMenu(CMediaGalleryApp *pMe,
          break;
 
       case MG_CBS_DOING:
-         MG_FARF(ADDR, ("Error, invalid status"));
+         MSG_FATAL("Error, invalid status",0,0,0);
          break;
 
       default:
@@ -7596,7 +7644,7 @@ static __inline boolean MGAppUtil_OnMediaMenuInfoKeyEvt(CMediaGalleryApp* pMe,
 {
    boolean bMenuEmpty;
    MediaDlgStat eDlgStat;
-
+   MSG_FATAL("MGAppUtil_OnMediaMenuInfoKeyEvt Start",0,0,0); 
    if(!pMe || !pMenuCtl)
    {
       return FALSE;
@@ -7609,7 +7657,7 @@ static __inline boolean MGAppUtil_OnMediaMenuInfoKeyEvt(CMediaGalleryApp* pMe,
    }
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
    bMenuEmpty = pMe->m_bMediaMenuEmpty;
-
+   MSG_FATAL("MGAppUtil_OnMediaMenuInfoKeyEvt bMenuEmpty=%d,eDlgStat=%d",bMenuEmpty,eDlgStat,0); 
    if(eDlgStat == MG_DLGSTAT_NORMAL)
    {
        //do default operation on current object
@@ -7825,6 +7873,7 @@ static boolean MGAppUtil_OnMediaMenuDefaultKeyEvt(CMediaGalleryApp* pMe,
                     return FALSE;
                 }
                 ICONFIG_SetItem(pConfig, CFGI_MMSSOUND,pItemData->szName, sizeof(pItemData->szName));    
+                RELEASEIF(pConfig);
             }
        }                       
     }
@@ -7979,7 +8028,7 @@ static __inline boolean MGAppUtil_OnMediaMenuCommandEvt(CMediaGalleryApp* pMe,
                                                       uint32 dwParam)
 {
    MediaDlgStat eDlgStat;
-
+   MSG_FATAL("MGAppUtil_OnMediaMenuCommandEvt Start",0,0,0);
    if(!pMe || !pMenuCtl)
    {
       MG_FARF(ADDR, ("Bad parameter, MGAppUtil_OnMediaMenuCommandEvt!"));
@@ -8000,6 +8049,7 @@ static __inline boolean MGAppUtil_OnMediaMenuCommandEvt(CMediaGalleryApp* pMe,
 
    if(eDlgStat == MG_DLGSTAT_NORMAL)
    {
+      MSG_FATAL("MGAppUtil_OnMediaMenuCommandEvt MGAppUtil_BuildPopupMenuItems",0,0,0);
       if(MGAppUtil_BuildPopupMenuItems(pMe, pMenuCtl) == SUCCESS)
          return TRUE;
    }

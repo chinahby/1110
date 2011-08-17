@@ -315,6 +315,7 @@ typedef PACKED struct _Key_pad_Cfg
 #ifdef FEATURE_USES_MMS
 #define  OEMNV_MMSIMAGE    ""
 #define  OEMNV_MMSSOUND    ""
+#define  OEMNV_MMSVIDEO    ""
 #endif
 /*
 

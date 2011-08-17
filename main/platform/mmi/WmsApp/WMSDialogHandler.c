@@ -8792,11 +8792,14 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 #ifdef FEATURE_USES_MMS                 
                 char MMSImagepszPath[MG_MAX_FILE_NAME];
                 char MMSSoundpszPath[MG_MAX_FILE_NAME];
+                char MMSVideopszPath[MG_MAX_FILE_NAME];
                 pMe->m_pMMSImage = NULL;
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSSoundpszPath, sizeof(MMSSoundpszPath));
+                ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSVideopszPath, sizeof(MMSVideopszPath));
                 DBGPRINTF("MMSImagepszPath=%s len=%d", MMSImagepszPath, STRLEN(MMSImagepszPath));
                 DBGPRINTF("MMSSoundpszPath=%s len=%d", MMSSoundpszPath, STRLEN(MMSSoundpszPath));
+                DBGPRINTF("MMSVideopszPath=%s len=%d", MMSVideopszPath, STRLEN(MMSVideopszPath));
 #endif       
                 MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_INIT",0,0,0);
 	            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);

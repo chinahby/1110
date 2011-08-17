@@ -683,6 +683,7 @@ typedef struct
 #ifdef FEATURE_USES_MMS   
    char  s_MMSImage[AEE_MAX_FILE_NAME];     
    char  s_MMSSOUND[AEE_MAX_FILE_NAME];   
+   char  s_MMSVIDEO[AEE_MAX_FILE_NAME];
 #endif
 } OEMConfigListType;
 
@@ -1790,6 +1791,7 @@ static OEMConfigListType oemi_cache = {
 #ifdef FEATURE_USES_MMS   
    ,{OEMNV_MMSIMAGE}
    ,{OEMNV_MMSSOUND}
+   ,{OEMNV_MMSVIDEO}
 #endif   
 };
 
@@ -2328,6 +2330,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 #ifdef FEATURE_USES_MMS   
    CFGTABLEITEM_EMPTY(CFGI_MMSIMAGE) ,
    CFGTABLEITEM_EMPTY(CFGI_MMSSOUND) ,
+   CFGTABLEITEM_EMPTY(CFGI_MMSVIDEO) ,
 #endif   
 };
 #endif
@@ -2728,6 +2731,7 @@ void OEM_RestoreFactorySetting( void )
 #ifdef FEATURE_USES_MMS   
    MEMCPY(oemi_cache.s_MMSImage,OEMNV_MMSIMAGE, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
    MEMCPY(oemi_cache.s_MMSImage,OEMNV_MMSSOUND, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
+   MEMCPY(oemi_cache.s_MMSImage,OEMNV_MMSVIDEO, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
 #endif  
    //ÆÁ±£Ê±¼ä
    oemi_cache.p_screensaver_time=0; 
@@ -4563,6 +4567,10 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
     case CFGI_MMSSOUND:
       MEMCPY((void *)pBuff, (void *)oemi_cache.s_MMSSOUND, AEE_MAX_FILE_NAME);
       return AEE_SUCCESS;      
+
+    case CFGI_MMSVIDEO:
+      MEMCPY((void *)pBuff, (void *)oemi_cache.s_MMSVIDEO, AEE_MAX_FILE_NAME);
+      return AEE_SUCCESS;        
 #endif      
    default:
       return(EUNSUPPORTED);
@@ -5538,6 +5546,14 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       MEMCPY((void *)oemi_cache.s_MMSSOUND, (void *)pBuff, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
       OEMPriv_WriteOEMConfigList();
       return AEE_SUCCESS;      
+
+   case CFGI_MMSVIDEO:
+      if(!pBuff) return EFAILED;
+      DBGPRINTF("pBuff=%s", (char*)pBuff);
+      MEMSET((void *)oemi_cache.s_MMSVIDEO,'\0', AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      MEMCPY((void *)oemi_cache.s_MMSVIDEO, (void *)pBuff, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
+      OEMPriv_WriteOEMConfigList();
+      return AEE_SUCCESS;        
 #endif
 
    default:
