@@ -395,6 +395,9 @@ static void TextCtl_RestartEdit(TextCtlContext *);
 static void TextCtl_NoSelection(TextCtlContext *);
 static void TextCtl_AddChar(TextCtlContext *, AECHAR ch);
 static void TextCtl_AddString(TextCtlContext *, AECHAR *);
+static void TextCtl_TextDisplayChar(TextCtlContext *, AECHAR ch);
+static void TextCtl_TextDisplayString(TextCtlContext *, AECHAR *);
+
 static boolean TextCtl_SetSel(TextCtlContext *, int selStart, int selEnd);
 static void TextCtl_TextChanged(TextCtlContext *);
 static boolean TextCtl_CalText(TextCtlContext *);
@@ -1601,7 +1604,8 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
 	        }
 			//Add End
 		}
-        MSG_FATAL("...........................2",0,0,0);
+        MSG_FATAL("pContext->bEditable=%d...................2",pContext->bEditable,0,0);
+		MSG_FATAL("pContext->sFocus==%d",pContext->sFocus,0,0);
         if (pContext->bEditable) 
         {
             switch (key) 
@@ -1648,7 +1652,7 @@ boolean OEM_TextKeyPress(OEMCONTEXT hTextCtl,
                             OEM_TextSetSel(pContext, nSel,nSel);
                             TextCtl_AutoScroll(pContext);
                             OEM_TextUpdate(pContext);
-                          
+                            MSG_FATAL("FOCUS_TEXT........",0,0,0);
                             return TRUE;
                         }
                     }
@@ -1982,7 +1986,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                       
                     IDISPLAY_FillRect(pContext->pIDisplay, &pRect,  pContext->m_themeColor);
 
-  
+                     MSG_FATAL("IDISPLAY_DrawText................000000000000",0,0,0);
                     (void)IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                             AEE_FONT_NORMAL,
                             szRemainingCount, -1, rect.x+2, rect.y-pContext->nLineHeight,
@@ -2046,7 +2050,9 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
                     TitleBar.prc = &rc;
                     DrawTitleBar(pContext->pIDisplay, &TitleBar);
                     nOldFontColor = IDISPLAY_SetColor(pContext->pIDisplay, CLR_USER_TEXT, RGB_WHITE);
-                    
+                    MSG_FATAL("IDISPLAY_DrawText................1111111111",0,0,0);
+					MSG_FATAL("rc.x=====%d,rc.y======%d",rc.x,rc.y,0);
+					MSG_FATAL("rc.dx=====%d,rc.dy======%d",rc.dx,rc.dy,0);
                     (void)IDISPLAY_DrawText(pContext->pIDisplay,
                             AEE_FONT_NORMAL,
                             szRemainingCount, -1, 0, 0,
@@ -2647,28 +2653,18 @@ static void TextCtl_AddChar(TextCtlContext *pContext, AECHAR ch)
 
             // Write in the new character
             pContext->pszContents[pContext->wSelStart] = ch;
-            #ifdef FEATURE_VERSION_W515V3 //ndef FEATURE_ALL_KEY_PAD
-            if(!pContext->m_bDigital)
-            {
-				pContext->sZIawFieldInfo.G.psTxtBuf[pContext->wSelStart] = ch;
-            }
-            else
-            {
-            	pContext->m_bDigital = FALSE;
-            }
-            #endif
+            
             ++pContext->wContentsChars;
 
             // Update the selection to be after the new character
             ++pContext->wSelStart;
             pContext->wSelEnd = pContext->wSelStart;
-
             bModified = TRUE;
          } else {
             // Maybe beep at the user because maximum length exceeded?
          }
       }
-      
+      MSG_FATAL("pContext->wSelEnd=%d,pContext->wSelStart=%d",pContext->wSelEnd,pContext->wSelStart,0);
       if (bModified) {
          // Now re-calc and re-draw
          TextCtl_TextChanged(pContext);
@@ -2787,6 +2783,167 @@ static void TextCtl_AddString(TextCtlContext *pContext, AECHAR * sz)
       }
    }
 }
+
+static void TextCtl_TextDisplayChar(TextCtlContext *pContext, AECHAR ch)
+{
+	   boolean bModified = FALSE;
+   		// Don't allow the null character to be inserted.
+   		if (pContext) {
+      	AECHAR *pNewContents;
+
+      /* handle when textcontent reaches the limit */
+      // effect: delete all if contents is full.
+      /*   if (pContext->wContentsChars == pContext->wMaxChars){
+               pContext->wSelEnd   = pContext->wMaxChars;
+               pContext->wSelStart =0;
+           }
+       */
+      // First delete the selection if any
+      if (pContext->wSelEnd > pContext->wSelStart) {
+         // Be sure not to lose the trailing NUL character!
+         MEMMOVE(pContext->pszContents+pContext->wSelStart,
+                 pContext->pszContents+pContext->wSelEnd,
+                 sizeof(AECHAR) *
+                         ((pContext->wContentsChars - pContext->wSelEnd) + 1));
+         pContext->wContentsChars -= pContext->wSelEnd - pContext->wSelStart;
+         pContext->wSelEnd = pContext->wSelStart;
+         bModified = TRUE;
+      }
+      if (ch) {
+         if (!pContext->wMaxChars
+             || pContext->wContentsChars < pContext->wMaxChars) {
+            // Now grow the contents bl0ock to make sure it will fit the
+            // additional character (and don't forget to include the
+            // NULL character!)
+            pNewContents = (AECHAR *) OEM_Realloc(pContext->pszContents,
+                                           sizeof(AECHAR) *
+                                           (pContext->wContentsChars + 1 + 1));
+            if (!pNewContents) {
+               // Bad, out of memory, so just ignore the character
+               return;
+            }
+            pContext->pszContents = pNewContents;
+
+            // Now move text around to make room for the new character
+            MEMMOVE(pContext->pszContents+pContext->wSelStart+1,
+                    pContext->pszContents+pContext->wSelEnd,
+                    sizeof(AECHAR) *
+                         ((pContext->wContentsChars - pContext->wSelEnd) + 1));
+
+            // Write in the new character
+            pContext->pszContents[pContext->wSelStart] = ch;
+            
+            ++pContext->wContentsChars;
+
+            // Update the selection to be after the new character
+            ++pContext->wSelEnd;
+			
+            bModified = TRUE;
+         } else {
+            // Maybe beep at the user because maximum length exceeded?
+         }
+      }
+      MSG_FATAL("pContext->wSelEnd=%d,pContext->wSelStart=%d",pContext->wSelEnd,pContext->wSelStart,0);
+      if (bModified) {
+         // Now re-calc and re-draw
+         TextCtl_TextChanged(pContext);
+      }
+   }
+}
+static void TextCtl_TextDisplayString(TextCtlContext *pContext, AECHAR *sz)
+{
+	   boolean bModified = FALSE;
+   	  if( pContext && sz && *sz ){
+      AECHAR * pNewContents;
+
+      // First delete the selection if any
+      if( pContext->wSelEnd > pContext->wSelStart ){
+         // Be sure not to lose the trailing NULL character!
+         MEMMOVE(pContext->pszContents+pContext->wSelStart,
+                 pContext->pszContents+pContext->wSelEnd,
+                 sizeof(AECHAR) * (pContext->wContentsChars - pContext->wSelEnd + 1));
+         pContext->wContentsChars -= pContext->wSelEnd - pContext->wSelStart;
+         pContext->wSelEnd = pContext->wSelStart;
+         bModified = TRUE;
+      }
+
+      if( !pContext->wMaxChars
+          || pContext->wContentsChars < pContext->wMaxChars ){
+         int   nAllocSize;
+         // Check if the full substring can fit.
+         if( pContext->wMaxChars && WSTRLEN(sz)+pContext->wContentsChars > pContext->wMaxChars ){
+            nAllocSize = (pContext->wMaxChars+1)*sizeof(AECHAR);
+         }else{
+            nAllocSize = (pContext->wContentsChars + WSTRLEN(sz) + 1) * sizeof(AECHAR);
+         }
+         // Now grow the contents block to make sure it will fit the
+         // additional character (and don't forget to include the NUL character!)
+         pNewContents = (AECHAR *) OEM_Realloc(pContext->pszContents, nAllocSize);
+
+         if (!pNewContents) {
+            // Bad, out of memory, so just ignore the character
+            return;
+         }
+         pContext->pszContents = pNewContents;
+
+         // Now move text around to make room for the new character
+         if ((!pContext->wMaxChars) ||
+             ((pContext->wContentsChars + WSTRLEN(sz))
+                < pContext->wMaxChars))
+          {
+              MEMMOVE(pContext->pszContents+pContext->wSelStart+WSTRLEN(sz),
+                      pContext->pszContents+pContext->wSelEnd,
+                      sizeof(AECHAR) * ((pContext->wContentsChars - pContext->wSelEnd) + 1));
+          }
+          else
+          {
+              MEMMOVE(pContext->pszContents+pContext->wSelStart
+                      +(pContext->wMaxChars - pContext->wContentsChars),
+                      pContext->pszContents+pContext->wSelEnd,
+                      sizeof(AECHAR) * ((pContext->wContentsChars - pContext->wSelEnd) + 1));
+          }
+
+         // Write in the new character
+         if ((!pContext->wMaxChars) ||
+             ((pContext->wContentsChars + WSTRLEN(sz))
+               < pContext->wMaxChars))
+          {
+              MEMCPY((void *)&pContext->pszContents[pContext->wSelStart],(void *)sz, WSTRLEN(sz)*sizeof(AECHAR));
+              pContext->wContentsChars += WSTRLEN(sz);
+
+              // Update the selection to be after the new character
+              pContext->wSelEnd += WSTRLEN(sz);
+			  
+              
+          }
+          else
+          {
+              uint16       nadd;
+              // Write in the new character
+              MEMCPY((void *)&pContext->pszContents[pContext->wSelStart],
+                    (void *)sz,
+                    (pContext->wMaxChars - pContext->wContentsChars)*sizeof(AECHAR));
+              nadd = pContext->wMaxChars - pContext->wContentsChars;
+              pContext->wContentsChars += nadd;
+
+              // Update the selection to be after the new character
+              pContext->wSelEnd += nadd;
+             
+          }
+         
+         bModified = TRUE;
+      }
+      else {
+         // Maybe beep at the user because maximum length exceeded?
+      }
+
+      if (bModified) {
+         // Now re-calc and re-draw
+         TextCtl_TextChanged(pContext);
+      }
+   }
+}
+
 
 /*=============================================================================
 FUNCTION: TextCtl_SetSel
@@ -3497,7 +3654,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
    /*因为当字符串超过一行或者在行尾时，向字符串插入空格
    会把很长的空间反显(multitap input mode)*/
    
-
+   MSG_FATAL("pContext->wSelStart==%d,pContext->wSelEnd=%d",pContext->wSelStart,pContext->wSelEnd,0);
    memset(&cursRect, 0, sizeof(cursRect));
 
    rectClip.x  = pContext->rectDisplay.x;
@@ -3602,7 +3759,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                if(pContext->dwProperties & TP_GRAPHIC_BG)
                {
                    TextCtl_DrawBackGround(pContext, &rectText);
-                   MSG_FATAL("IDISPLAY_DrawText.............1",0,0,0);
+                   MSG_FATAL("IDISPLAY_DrawText................222222222",0,0,0);
                    (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                        pContext->font,
                                        wszHide,
@@ -3614,7 +3771,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                }
                else
                {
-               		MSG_FATAL("IDISPLAY_DrawText.............2",0,0,0);
+               		MSG_FATAL("IDISPLAY_DrawText................3333333333333333",0,0,0);
                     (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                         pContext->font,
                                         wszHide,
@@ -3644,7 +3801,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
 				{
 				   	nv_language_enum_type language;
 		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
-		           	MSG_FATAL("IDISPLAY_DrawText..................1=%d",pContext->byMode,0,0);
+		           	MSG_FATAL("IDISPLAY_DrawText................44444444444",0,0,0);
 		           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
 		           	  (/*pContext->byMode != TEXT_MODE_ZI_RAPID_ARABIC ||*/ pContext->byMode != TEXT_MODE_ZI_MT_ARABIC))
 		           	{
@@ -3670,6 +3827,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
 				    }
 		        }
 				#endif
+				MSG_FATAL("IDISPLAY_DrawText................5555555555",0,0,0);
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                          pContext->font,
                                          pContext->pwLineStarts[i] + pContext->pszContents,
@@ -3690,7 +3848,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
             if(pContext->dwProperties & TP_GRAPHIC_BG)
             {
                 TextCtl_DrawBackGround(pContext, &rectClip);
-				MSG_FATAL("IDISPLAY_DrawText.............3",0,0,0);
+				MSG_FATAL("IDISPLAY_DrawText................66666666666666666",0,0,0);
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                       pContext->font,
                                       pContext->pwLineStarts[i] +
@@ -3703,7 +3861,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
             }
             else
             {
-            	MSG_FATAL("IDISPLAY_DrawText.............4",0,0,0);
+            	MSG_FATAL("IDISPLAY_DrawText................777777777777777",0,0,0);
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                       pContext->font,
                                       pContext->pwLineStarts[i] +
@@ -3728,7 +3886,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
 				   	nv_language_enum_type language;
 		           	OEM_GetConfig( CFGI_LANGUAGE_SELECTION,&language,sizeof(language));
 		           	IDISPLAY_FillRect(pContext->pIDisplay, &rectText, RGB_WHITE);
-		           	MSG_FATAL("IDISPLAY_DrawText..................2=%d",pContext->byMode,0,0);
+		           	MSG_FATAL("IDISPLAY_DrawText................88888888888888888",0,0,0);
 		           	MSG_FATAL("IDISPLAY_DrawText.............language=%d",language,0,0);
 		           	
 		           	if(NV_LANGUAGE_ARABIC == language && (!(pContext->dwProperties & TP_MULTILINE))&&
@@ -3753,7 +3911,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
 				    }
 		        }
 				#endif
-                //MSG_FATAL("IDISPLAY_DrawText.............5",0,0,0);
+                MSG_FATAL("IDISPLAY_DrawText................999999999999",0,0,0);
                 (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                          pContext->font,
                                          pContext->pwLineStarts[i] + pContext->pszContents,
@@ -3774,7 +3932,10 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                 if(pContext->dwProperties & TP_GRAPHIC_BG)
                 {
                     TextCtl_DrawBackGround(pContext, &rectText);
-                  	MSG_FATAL("IDISPLAY_DrawText.............6",0,0,0);
+                  	MSG_FATAL("IDISPLAY_DrawText................10101010101010101010",0,0,0);
+					MSG_FATAL("lineChars==%d,I===%d",lineChars,i,0);
+					MSG_FATAL("rectText.x=%d,rectText.y=%d",rectText.x,rectText.y,0);
+					MSG_FATAL("rectText.dx=%d,rectText.dy=%d",rectText.dx,rectText.dy,0);
                     (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                              pContext->font,
                                              pContext->pwLineStarts[i] +
@@ -3787,7 +3948,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                 }
                 else
                 {
-                	MSG_FATAL("IDISPLAY_DrawText.............7",0,0,0);
+                	MSG_FATAL("IDISPLAY_DrawText................11 11 11 11 ",0,0,0);
                     (void) IDISPLAY_DrawText(pContext->pIDisplay,
                                              pContext->font,
                                              pContext->pwLineStarts[i] +
@@ -3919,18 +4080,18 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
 #endif               
                )
                {
-               		;// no invert
+               		MSG_FATAL("no invert...........",0,0,0);// no invert
                }
                else
                {
                		//MSG_FATAL("invertRectx=%d,invertRecty=%d",invertRect.x,invertRect.y,0);
-               		//MSG_FATAL("invertRectx=%dx,invertRecty=%dy",invertRect.dx,invertRect.dy,0);
+               		MSG_FATAL("invertRectx=%dx,invertRecty=%dy",invertRect.dx,invertRect.dy,0);
                     IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
                }
             }
          }
 #else //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
-
+		 MSG_FATAL("bCursor=====%d",bCursor,0,0);
          if ( bCursor ) 
          {
             if (wSelStartLine == i && pContext->bEditable) 
@@ -4085,7 +4246,7 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                }
                invertRect.dx = (int16)(endX - startX);
                invertRect.dy = dy;
-               
+               MSG_FATAL("IDISPLAY_InvertRect.......00000000000",0,0,0);
                IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
             }
          }
@@ -4885,6 +5046,7 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		{
 			int nBufLen = 0;
 			int k = 0;
+			pContext->sFocus = FOCUS_SYLLABLE;
 			if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
 			{
 				pziGP->ElementCount = 0;
@@ -4893,11 +5055,12 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 			else
 			{
 				int t_NelementC = 0;
+				/*
 				for(t_NelementC=0;t_NelementC<pziGP->ElementCount;t_NelementC++)
 				{
 					if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
 	            	{
-	                 /* Set selection to the character before the insertion point */
+	                
 					 	MSG_FATAL("avk_clr...................",0,0,0);
 	                 	--pContext->wSelStart;
 	            	}
@@ -4906,9 +5069,9 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 	                  	return FALSE;
 	            	}
 	            
-	            	/* Insert a "NUL" to just delete and insert nothing */
+	            	
 	            	TextCtl_AddChar(pContext, 0);
-				}
+				}*/
 			}
 			MSG_FATAL("FIRST.................",0,0,0);
 			
@@ -5132,11 +5295,12 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 					{
 						pContext->uModeInfo.mtap.nCurentPos = 0;
 					}
+					/*
 					for(t_NelementC=0;t_NelementC<pziGP->ElementCount;t_NelementC++)
 					{
 						if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
 		            	{
-		                 /* Set selection to the character before the insertion point */
+		                 
 						 	MSG_FATAL("avk_clr...................",0,0,0);
 		                 	--pContext->wSelStart;
 		            	}
@@ -5145,17 +5309,17 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		                  	return FALSE;
 		            	}
 		            
-		            	/* Insert a "NUL" to just delete and insert nothing */
 		            	TextCtl_AddChar(pContext, 0);
-					}
+					}*/
 					MSG_FATAL("====%d",pContext->uModeInfo.mtap.nCurentPos,0,0);
-					TextCtl_AddString(pContext,(AECHAR *)(pContext->PinGroupInfo.groupData[pContext->uModeInfo.mtap.nCurentPos]));
+					TextCtl_TextDisplayString(pContext,(AECHAR *)(pContext->PinGroupInfo.groupData[pContext->uModeInfo.mtap.nCurentPos]));
 				}
                 return TRUE;
             }
 			break;
 		case AVK_DOWN:
 			{
+				MSG_FATAL("AVK_DOWN..........................",0,0,0);
 				if(pContext->uModeInfo.mtap.kLast == AVK_UNDEFINED)
 				{
 	                uint16 nLine, nCharsIn,nSel;
@@ -5218,11 +5382,11 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 					{
 						pContext->uModeInfo.mtap.nCurentPos = pContext->uModeInfo.mtap.nMax-1;
 					}
+					/*
 					for(t_NelementC=0;t_NelementC<pziGP->ElementCount;t_NelementC++)
 					{
 						if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
 		            	{
-		                 /* Set selection to the character before the insertion point */
 						 	MSG_FATAL("avk_clr...................",0,0,0);
 		                 	--pContext->wSelStart;
 		            	}
@@ -5230,13 +5394,11 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		            	{
 		                  	return FALSE;
 		            	}
-		            
-		            	/* Insert a "NUL" to just delete and insert nothing */
 		            	TextCtl_AddChar(pContext, 0);
-					}
+					}*/
 					MSG_FATAL("====%d",pContext->uModeInfo.mtap.nCurentPos,0,0);
 					MSG_FATAL("AVK_DOWN===%0x",pContext->PinGroupInfo.groupData[pContext->uModeInfo.mtap.nCurentPos][0],0,0);
-					TextCtl_AddString(pContext,(AECHAR *)(pContext->PinGroupInfo.groupData[pContext->uModeInfo.mtap.nCurentPos]));
+					TextCtl_TextDisplayString(pContext,(AECHAR *)(pContext->PinGroupInfo.groupData[pContext->uModeInfo.mtap.nCurentPos]));
 				}
 
                 return TRUE;
@@ -5265,11 +5427,11 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 				if(pziGP->ElementCount>1)
 				{
 					int t_NelementC = 0;
+					/*
 					for(t_NelementC=0;t_NelementC<pziGP->ElementCount;t_NelementC++)
 					{
 						if (pContext->wSelStart && pContext->wSelStart == pContext->wSelEnd) 
 		            	{
-		                 /* Set selection to the character before the insertion point */
 						 	MSG_FATAL("avk_clr...................",0,0,0);
 		                 	--pContext->wSelStart;
 		            	}
@@ -5277,10 +5439,9 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 		            	{
 		                  	return FALSE;
 		            	}
-		            
-		            	/* Insert a "NUL" to just delete and insert nothing */
 		            	TextCtl_AddChar(pContext, 0);
 					}
+					*/
 					pziGP->ElementCount--;
 					pZi->ziElementBuffer[pziGP->ElementCount] = 0;
 					MEMSET((void *)pZi->ziCandidates, 0, sizeof(pZi->ziCandidates));
@@ -5363,6 +5524,10 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 			if(pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED)
 			{
 				pContext->uModeInfo.mtap.kLast = AVK_UNDEFINED;
+				pContext->sFocus = FOCUS_TEXT;
+				pContext->wSelStart = pContext->wSelEnd;
+				OEM_TextDraw(pContext);
+      			IDISPLAY_Update(pContext->pIDisplay);
 				return TRUE;
 			}
 			return FALSE;
@@ -5376,7 +5541,7 @@ static boolean ZITextCtl_Latin_Rapid_Key(TextCtlContext *pContext, AEEEvent eCod
 	}
 	pContext->uModeInfo.mtap.kLast = key;
 	
-	TextCtl_AddString(pContext,(AECHAR *)(pContext->PinGroupInfo.groupData[pContext->uModeInfo.mtap.nCurentPos]));
+	TextCtl_TextDisplayString(pContext,(AECHAR *)(pContext->PinGroupInfo.groupData[pContext->uModeInfo.mtap.nCurentPos]));
     //TextCtl_AddChar(pContext,(AECHAR)(pZi->ziCandidates[pContext->uModeInfo.mtap.nCurentPos*2]));
     //Set timer 
   
@@ -6295,7 +6460,7 @@ static boolean ZITextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 		nBuflen = WSTRLEN(pContext->pszContents);
 		if((nBuflen<1))
 		{
-			TextCtl_AddChar(pContext,(AECHAR)(app_ucs2_towupper(pZi->ziCandidates[pContext->uModeInfo.mtap.nCurentPos*2])));
+			TextCtl_TextDisplayChar(pContext,(AECHAR)(app_ucs2_towupper(pZi->ziCandidates[pContext->uModeInfo.mtap.nCurentPos*2])));
 		}
 		else
 		{
@@ -6304,11 +6469,11 @@ static boolean ZITextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 		    if((!WSTRCMP(pContext->pszContents+k,Tempstr))||
 			(!WSTRCMP(pContext->pszContents+j,Tempstrp)))
 		    {
-		    	TextCtl_AddChar(pContext,(AECHAR)(app_ucs2_towupper(pZi->ziCandidates[pContext->uModeInfo.mtap.nCurentPos*2])));
+		    	TextCtl_TextDisplayChar(pContext,(AECHAR)(app_ucs2_towupper(pZi->ziCandidates[pContext->uModeInfo.mtap.nCurentPos*2])));
 		    }
 			else
 			{
-	    		TextCtl_AddChar(pContext,(AECHAR)(pZi->ziCandidates[pContext->uModeInfo.mtap.nCurentPos*2]));
+	    		TextCtl_TextDisplayChar(pContext,(AECHAR)(pZi->ziCandidates[pContext->uModeInfo.mtap.nCurentPos*2]));
 			}
 		}
 	    //Set timer 
