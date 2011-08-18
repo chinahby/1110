@@ -260,6 +260,8 @@ uint32 cSlim_clib_ctype_table[256] = {
 	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
 };
 
+uint8 g_mms_buffer[300*1024];
+
 static char* MMS_WSP_ContentTypeDB_MMS2Text(int ct)
 {
 	if ((ct >= 0) && (ct <= 0x4b))
@@ -1003,6 +1005,51 @@ int MMS_SEND_TEST(uint8 *buffer)
 	return (head_len+size);
 }
 
+int MMS_Decode_TEST(char *file)
+{
+	IFile* pIFile = NULL;
+    IFileMgr *pIFileMgr = NULL;
+    FileInfo pInfo = {0};
+	int result = 0;
+	int data_size;
+	int decret;
+	WSP_MMS_DATA pContent = {0};
+	
+    result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+	if (SUCCESS != result)
+    {
+		MSG_FATAL("[MMS]: Open file error %x", result,0,0);
+		return;
+    }
+
+	if (IFILEMGR_GetInfo(pIFileMgr,file, &pInfo) == SUCCESS)
+    {
+		pIFile = IFILEMGR_OpenFile( pIFileMgr, file, _OFM_READ);
+		if ( pIFile != NULL )
+	    {
+	        IFILE_Seek(pIFile, _SEEK_START, 1);
+	        data_size = IFILE_Read(pIFile, g_mms_buffer, pInfo.dwSize);
+
+	        MSG_FATAL("[MMS]: pInfo.dwSize=%d,data_size=%d",pInfo.dwSize,data_size,0);
+	        IFILE_Release( pIFile);
+	        pIFile = NULL;
+	        IFILEMGR_Release(pIFileMgr);
+	        pIFileMgr = NULL;
+	    }    
+    }
+
+
+    MMS_DEBUG(("Decode testing start!"));
+    MSG_FATAL("[MMS]: 0x%x 0x%x 0x%x",g_mms_buffer[0],g_mms_buffer[1],g_mms_buffer[2]);
+	decret = MMS_WSP_DecodeMessage(g_mms_buffer, data_size,&pContent);
+	if (decret == MMC_OK)
+	{
+		MMS_DEBUG(("Decode testing success"));
+	}
+
+	return 0;
+}
+
 int MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, int* hLen, uint8 ePDUType)
 {
 	int head_len = 0;
@@ -1036,7 +1083,7 @@ int MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, int* hLen, uint8 e
 
 int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  WSP_MMS_DATA* pContent)
 {		
-	int charset, iPart, dec = MMC_GENERIC, ret = MMC_GENERIC, acc, contenttypelen;
+	int charset, iPart, dec = MMC_GENERIC, ret = MMC_GENERIC, contenttypelen;
 	boolean bIsMultipart, completed = FALSE;
 	uint8 content_type = 0;
 	uint8 file_count = 0;
@@ -1045,15 +1092,16 @@ int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  WSP_MMS_DATA* pContent)
 	int sub_head_length = 0;
 	int content_size = 0;
 	int i = 0, iDataOffset, contenttype = -1,consumed=0;
-	int contenttypevaluelen;
 	
-	contenttypevaluelen = MMS_WSP_GetValueLen(pData, iDataLen, &iDataOffset);
+	contenttypelen = MMS_WSP_GetValueLen(pData, iDataLen, &iDataOffset);
 	if (contenttypelen != MMS_DECODER_ERROR_VALUE)
 	{
 		int depth = 0;
 
 		ret = MMS_WSP_DecodeContentTypeHeader(&pData[iDataOffset], contenttypelen, &pContent->head_info, &bIsMultipart, &charset, TRUE, 0, FALSE, &depth);
 
+		MMS_DEBUG(("[MMS]: MMS_WSP_DecodeContentTypeHeader hContentType=%s",(char*)pContent->head_info.hContentType));
+		
 		if (ret != MMS_DECODER_ERROR_VALUE)
 		{
 			consumed = contenttypelen+iDataOffset;
@@ -1061,10 +1109,11 @@ int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  WSP_MMS_DATA* pContent)
 			if (bIsMultipart == TRUE)
 			{				
 				pContent->frag_num = MMS_WSP_Decode_UINTVAR(&pData[consumed],iDataLen-consumed,&iDataOffset);
-				if (acc != MMS_DECODER_ERROR_VALUE)
+				MMS_DEBUG(("[MMS]: pContent->frag_num = %d",pContent->frag_num));
+				if (pContent->frag_num != MMS_DECODER_ERROR_VALUE)
 				{
 					dec = MMS_WSP_Decode_MultipartData(&pData[consumed+iDataOffset],
-						iDataLen-consumed-iDataOffset,acc,pContent->fragment, &depth);
+						iDataLen-consumed-iDataOffset,pContent->frag_num,pContent->fragment, &depth);
 					if (dec != MMC_GENERIC)
 						completed = TRUE;
 				}
@@ -1098,11 +1147,13 @@ static int MMS_WSP_Decode_MultipartData(uint8* pData, int iDataLen,int nParts, W
 	boolean bodycreated, modified = FALSE;
 	int size = 0;
 	int acc, iAccOffset, dec;
-	int cur_part = 0;
+	int cur_part = -1;
 	MMS_DEBUG(("[MMS]: MMS_WSP_Decode_MultipartData nParts=%d",nParts));
 	
 	for(i=0;(i < nParts)&&(consumed < iDataLen);i++)
 	{
+		cur_part++;
+		
 		iHeadersLen = MMS_WSP_Decode_UINTVAR(&pData[consumed], iDataLen-consumed,
 			&iHeadersDataOffset);
 		if (iHeadersLen == MMS_DECODER_ERROR_VALUE)
@@ -1122,14 +1173,20 @@ static int MMS_WSP_Decode_MultipartData(uint8* pData, int iDataLen,int nParts, W
 			contenttypelen, &iMIMEParts[cur_part], &bIsMultipart, &charset, TRUE, (iHeadersLen - iDataOffset), TRUE, inout_depth);
 		if (ret == MMS_DECODER_ERROR_VALUE)
 			goto skip_it;
-			
+
+		MMS_DEBUG(("[MMS]: bIsMultipart=%d,cur_part=%d",bIsMultipart,cur_part));
+		MMS_DEBUG(("[MMS]: hContentType=%s",iMIMEParts[cur_part].hContentType));
+		MMS_DEBUG(("[MMS]: hContentName=%s",iMIMEParts[cur_part].hContentName));
+		MMS_DEBUG(("[MMS]: hContentID=%s",iMIMEParts[cur_part].hContentID));
+		MMS_DEBUG(("[MMS]: hContentLocation=%s",iMIMEParts[cur_part].hContentLocation));
+		
 		if (bIsMultipart == TRUE)
 		{
 			consumed += (contenttypelen + iHeadersDataOffset + iDataDataOffset + iDataOffset);
 			acc = MMS_WSP_Decode_UINTVAR(&pData[consumed], iDataLen - consumed, &iAccOffset);
 			if (acc != MMS_DECODER_ERROR_VALUE)
 			{
-				dec = MMS_WSP_Decode_MultipartData(&pData[consumed+iAccOffset],iDataLen-consumed-iAccOffset, acc, iMIMEParts, inout_depth);
+				dec = MMS_WSP_Decode_MultipartData(&pData[consumed+iAccOffset],iDataLen-consumed-iAccOffset, acc, &iMIMEParts[cur_part], inout_depth);
 			}
 			consumed += iPartDataLen;
 			continue;
