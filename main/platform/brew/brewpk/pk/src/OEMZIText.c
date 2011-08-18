@@ -4990,6 +4990,28 @@ static void ZITextCtl_Latin_Rapid_Restart(TextCtlContext *pContext)
 	        break;        
 #endif //FEATURE_ZI_RAPID_HINDI
 
+#ifdef FEATURE_ZI_MT_THAI
+         case TEXT_MODE_ZI_MT_THAI:
+			pziGP->Language = ZI8_LANG_TH;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+	        break; 
+#endif//FEATURE_ZI_MT_THAI
+
+#ifdef FEATURE_ZI_MT_SPANISH
+         case TEXT_MODE_ZI_MT_SPANISH:
+		 	pziGP->Language = ZI8_LANG_ESSA;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+		 	break;
+#endif //FEATURE_ZI_MT_SPANISH
+
+#ifdef FEATURE_ZI_MT_FRENCH
+         case TEXT_MODE_ZI_MT_FRENCH:
+		 	pziGP->Language = ZI8_LANG_FR;
+			pziGP->SubLanguage = ZI8_SUBLANG_DEFAULT;
+		 	break;
+#endif //FEATURE_ZI_MT_FRENCH
+
+
 #ifdef FEATURE_ZI_RAPID_ENGLISH            
 		case TEXT_MODE_MULTITAP:
 			MSG_FATAL("TEXT_MODE_MULTITAP...........",0,0,0);
