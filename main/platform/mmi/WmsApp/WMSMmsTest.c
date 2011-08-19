@@ -45,6 +45,8 @@
 
 #include "WMSMms.h"
 
+int MMS_SocketTest(void);
+
 #define SOCKET_STATE_IDLE            0   // socket not opened
 #define SOCKET_STATE_CONNECTING      1   // waiting on connect
 #define SOCKET_STATE_CONNECTED       2   // connected
@@ -269,7 +271,7 @@ static void MMI_SocketSend(void *pUserData)
 	}
 }
 
-extern int MMS_SEND_TEST(uint8 *buffer);
+extern int WMS_MMS_SEND_TEST(uint8 *buffer);
 
 static void ConnectError(void* pUser, int nError)
 {
@@ -286,8 +288,8 @@ static void ConnectError(void* pUser, int nError)
 	{
 		case AEE_NET_SUCCESS:
 
-			pSocketInfo->nDataLen  = MMS_SEND_TEST(pSocketInfo->SendBuffer);
-			
+			pSocketInfo->nDataLen  = WMS_MMS_SEND_TEST(pSocketInfo->SendBuffer);
+			MSG_FATAL("[MSG][DeviceSocket]: WMS_MMS_SEND_TEST nDataLen=%d",pSocketInfo->nDataLen,0,0);
 			{
 				IFile* pIFile = NULL;
 			    IFileMgr *pIFileMgr = NULL;
@@ -300,7 +302,7 @@ static void ConnectError(void* pUser, int nError)
 					return;
 			    }
 
-			    pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/send_test.txt", _OFM_READWRITE);
+			    pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/send_test1.txt", _OFM_READWRITE);
 				if ( pIFile != NULL )
 		        {
 		            IFILE_Seek(pIFile, _SEEK_START, 0);
@@ -314,7 +316,7 @@ static void ConnectError(void* pUser, int nError)
 		        }
 		        else
 		        {
-					pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/send_test.txt", _OFM_CREATE);
+					pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/send_test1.txt", _OFM_CREATE);
 					if ( pIFile != NULL )
 			        {
 			            IFILE_Write( pIFile, pSocketInfo->SendBuffer, pSocketInfo->nDataLen);
@@ -349,7 +351,7 @@ static void ConnectError(void* pUser, int nError)
 	}
 }
 
-static int MMS_SocketTest(Application *pMe)
+int MMS_SocketTest(void)
 {
 	int result = SUCCESS;
 	INetMgr *pINetMgr = NULL;
@@ -362,7 +364,7 @@ static int MMS_SocketTest(Application *pMe)
 
     OEM_SetBAM_ADSAccount();
     
-	result = ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_NET, (void **)&pINetMgr);
+	result = ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_NET, (void **)&pINetMgr);
 	if ( result != SUCCESS || pINetMgr == NULL)
 	{
 		goto Exit;

@@ -155,7 +155,7 @@ typedef enum _mms_core_ans_
 	MMC_SAME_MSG,
 	MMC_CANCEL,
 	MMC_CORE_ANSs
-};
+}MMS_CORE_RET;
 
 typedef enum _mms_priorty_
 {
@@ -189,13 +189,21 @@ typedef enum _setting_validity_
 
 typedef enum _mms_message_type_
 {
-	MMS_MESSAGE_PNG,
-	MMS_MESSAGE_JPG,
-	MMS_MESSAGE_GIF,
-	MMS_MESSAGE_BMP,
-	MMS_MESSAGE_3GP,
-	MMS_MESSAGE_MID,
+	MMS_MESSAGE_TYPE_IMAGE,
+	MMS_MESSAGE_TYPE_AUDIO,
+	MMS_MESSAGE_TYPE_VIDEO,
+	MMS_MESSAGE_TYPE_TEXT,
+	MMS_MESSAGE_TYPE_UNKNOW
 }MMS_MESSAGE_TYPE;
+
+typedef enum _mms_message_image_type_
+{
+	MMS_MESSAGE_JPG,
+	MMS_MESSAGE_PNG,
+	MMS_MESSAGE_GIF,
+	MMS_MESSAGE_WBMP,
+	MMS_MESSAGE_UNKNOW
+}MMS_MESSAGE_IMAGE_TYPE;
 
 typedef struct _wsp_decoder_data_fragment_
 {
@@ -208,12 +216,58 @@ typedef struct _wsp_decoder_data_fragment_
 	uint32 size;
 }WSP_DEC_DATA_FRAGMENT;
 
+typedef struct _wsp_encoder_data_fragment_
+{
+	uint8 hContentType[MMS_MAX_CONTENT_TYPE];
+	uint8 hContentLocation[MMS_MAX_CONTENT_LOCATION];
+	uint8 hContentID[MMS_MAX_CONTENT_ID];
+	uint8 hContentName[MMS_MAX_CONTENT_NAME];
+	uint8 hContentEnCode[MMS_MAX_CONTENT_ENCODE];
+	uint8 hContentFile[MMS_MAX_FILE_NAME_PATH];
+	uint8 hContentText[MMS_MAX_TEXT_SIZE];
+}WSP_ENCODE_DATA_FRAGMENT;
+
+typedef struct _wsp_mms_encode_data_
+{
+	WSP_ENCODE_DATA_FRAGMENT fragment[10];
+	int				 frag_num;
+	boolean			 bImage;
+	boolean			 bAudio;
+	boolean			 bVideo;
+}WSP_MMS_ENCODE_DATA;
+
 typedef struct _wsp_mms_data_
 {
 	WSP_DEC_DATA_FRAGMENT head_info;
-	WSP_DEC_DATA_FRAGMENT fragment[20];
+	WSP_DEC_DATA_FRAGMENT fragment[10];
 	int				 frag_num;
 }WSP_MMS_DATA;
+
+enum _mms_wsp_headers_names
+{
+	MMS_WSP_HEADER_CONTENT_TYPE,
+	MMS_WSP_HEADER_CONTENT_ID,
+	MMS_WSP_HEADER_CONTENT_LOCATION,
+	MMS_WSP_HEADER_CONTENT_DISPOSITION,
+	MMS_WSP_HEADER_NONE
+};
+
+enum _mms_wsp_headers_values
+{
+	MMS_WSP_HEADER_VALUE_MULTIPART_RELATED,
+	MMS_WSP_HEADER_VALUE_MULTIPART_MIXED,
+	MMS_WSP_HEADER_VALUE_TEXT_PLAIN,
+/*	MMS_WSP_HEADER_VALUE_IMAGE_GIF,
+	MMS_WSP_HEADER_VALUE_IMAGE_JPEG,
+	MMS_WSP_HEADER_VALUE_IMAGE_PNG,
+	MMS_WSP_HEADER_VALUE_IMAGE_WBMP,
+	MMS_WSP_HEADER_VALUE_VCARD,
+	MMS_WSP_HEADER_VALUE_VCALENDAR,*/
+	MMS_WSP_HEADER_VALUE_APPLICATION_SMIL,
+	MMS_WSP_HEADER_VALUE_KNOWN,
+	MMS_WSP_HEADER_VALUE_UNKNOWN,
+	MMS_WSP_HEADER_VALUE_NONE
+};
 
 /*
 ** 收到的彩信内容
@@ -285,10 +339,7 @@ typedef struct _wsp_encoder_data_sent
 	uint8 hTo[MMS_MAX_SINGLE_ADDRESS_SIZE];
 	uint8 hSubject[MMS_MAX_SUBJECT_SIZE];
 	uint8 hCc[MMS_MAX_SINGLE_ADDRESS_SIZE];
-	char FilePath[MMS_MAX_FILE_NAME_PATH];
-	uint8 Text[MMS_MAX_TEXT_SIZE];
-	MMS_MESSAGE_TYPE  bMsgType;
-	boolean bIsText;
+	WSP_MMS_ENCODE_DATA mms_data;
 }MMS_WSP_ENCODE_SEND;
 
 typedef union _wsp_decoder_data_
@@ -377,12 +428,15 @@ int MMS_PDU_PutMessageClass(int in_MessageClass, int* out_MessageClass);
 int MMS_PDU_PutDeliveryReport(int in_DelRep, int* out_DelRep);
 int MMS_PDU_PutPriority(int in_priority, int* out_priority);
 int MMS_PDU_PutDeliveryReportStatus(int in_Status, int* out_Status);
-int MMS_SEND_TEST(uint8 *buffer);
-int MMS_Decode_TEST(char *file);
-int MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen);
-int MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata,uint8* hPDU, int* hLen, uint8 ePDUType);
-int MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8* ePDUType);
-int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  WSP_MMS_DATA* pContent);
+int WMS_MMS_SEND_TEST(uint8 *buffer);
+int WMS_MMS_Decode_TEST(char *file);
+int WMS_MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen);
+int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata,uint8* hPDU, int* hLen, uint8 ePDUType);
+int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8* ePDUType);
+int WMS_MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  WSP_MMS_DATA* pContent);
+
+//根据附件生成布局文件。
+int WMS_MMS_CreateSMIL(uint8 *out_buf,int buf_size,WSP_MMS_ENCODE_DATA data);
 
 boolean MMS_GetProxySettings(boolean *bUseProxy,char* hProxyHost, int* iProxyPort);
 boolean MMS_SetProxySettings(boolean bUseProxy,char* hProxyHost, int iProxyPort);

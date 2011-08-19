@@ -87,9 +87,8 @@ static void ConnectError(void* pDdata, int nError);
 static int MMS_Encode_header(uint8* mms_context,uint8 *phonenum, uint8 *subject);
 static int MMS_WSP_Encode_UINTVAR(uint8* buf, int val);
 static int MMS_Encode_MsgBody(uint8* hPDU, int hLen, boolean isText);
-static int MMS_CreateSmilFile(uint8* encbuf,MMS_MESSAGE_TYPE type);
-static int MMS_GetFileContent(uint8* encbuf,char* FileName,MMS_MESSAGE_TYPE type);
-static int MMS_EncodeText(uint8* encbuf,uint8 *text,int len);
+static int MMS_EncodeSmilFile(uint8* encbuf,uint8 *smilFile, int len);
+static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag);
 static int MMS_WSP_DecodeContentTypeHeader(uint8* pData, int iDataLen, WSP_DEC_DATA_FRAGMENT* iMIMEHeaders, boolean* bIsMultipart,
 								 int* charset, boolean add_boundary_param, int iHeadersLen, boolean in_encode_check_param, int *inout_depth);
 static int MMS_WSP_DecodeContentTypeParams(uint8* pData, int iDataLen, WSP_DEC_DATA_FRAGMENT* iMIMEParams, int* charset);
@@ -97,6 +96,9 @@ static int MMS_WSP_Decode_MultipartData(uint8* pData, int iDataLen,int nParts, W
 
 static char* MMS_WSP_ContentTypeDB_MMS2Text(int ct);
 static boolean is_us_ascii_string(char * in_s, int in_len);
+static int MMS_WSP_ContentTypeDB_Text2MMS(uint8* ct, int ct_len, uint8* ctbyte);
+static int slim_strncmp_nocase(char *in_s, char *in_t, int in_n);
+static MMS_MESSAGE_TYPE MMS_GetMMSTypeByName(uint8 *hContentType);
 
 #define SLIM_WSP_WELL_KNWON_VALULES_MIME_TEXT_PLAIN 0x03
 #define SLIM_WSP_WELL_KNWON_VALULES_MIME_MULTIPART_MIXED 0x0c
@@ -137,6 +139,11 @@ static boolean is_us_ascii_string(char * in_s, int in_len);
 
 #define slim_isctype(c,type) (cSlim_clib_ctype_table[(c)] & (type))
 #define slim_isnonascii(c) (slim_isctype((c),SLIM_CLIB_CTYPE_NONASCII))
+#define SLIM_SS_FORWARD(s,len,n)	((s)+=(n),(len)-=(n))
+#define SLIM_SS_INC(s,len)			((s)++,(len)--)
+#define SLIM_SS_DEC(s,len)			((s)--,(len)++)
+#define slim_tolower(c) ((int)cSlim_clib_tolower_table[(c)])
+#define slim_toupper(c) ((int)cSlim_clib_toupper_table[(c)])
 
 #define POST_TEST ("POST http://mmsc.vnet.mobi HTTP/1.1\r\nHost:10.0.0.200:80\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: Nokia6235/1.0 (S190V0200.nep) UP.Browser/6.2.3.2 MMP/2.0\r\nx-wap-profile: \"http://nds1.nds.nokia.com/uaprof/N6235r200.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
 /*
@@ -173,7 +180,7 @@ const char* DB_Mms2Text[76] =
     "application/x-x509-ca-cert",
     "application/x-x509-user-cert",
     "image/*",
-    "image/gif",
+    "image/gif",  //29
     "image/jpeg",
     "image/tiff",   //0x1f
     "image/png",
@@ -260,6 +267,44 @@ uint32 cSlim_clib_ctype_table[256] = {
 	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
 };
 
+uint8 cSlim_clib_toupper_table[256] = {
+	  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,  15,
+	 16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,  31,
+	 32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,
+	 48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63,
+	 64,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,
+	 80,  81,  82,  83,  84,  85,  86,  87,  88,  89,  90,  91,  92,  93,  94,  95,
+	 96,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,
+	 80,  81,  82,  83,  84,  85,  86,  87,  88,  89,  90, 123, 124, 125, 126, 127,
+	128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143,
+	144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159,
+	160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
+	176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191,
+	192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207,
+	208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223,
+	224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
+	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255,
+};
+
+uint8 cSlim_clib_tolower_table[256] = {
+	  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,  15,
+	 16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,  31,
+	 32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,
+	 48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63,
+	 64,  97,  98,  99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
+	112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122,  91,  92,  93,  94,  95,
+	 96,  97,  98,  99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
+	112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
+	128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143,
+	144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159,
+	160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
+	176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191,
+	192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207,
+	208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223,
+	224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
+	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255,
+};
+
 uint8 g_mms_buffer[300*1024];
 
 static char* MMS_WSP_ContentTypeDB_MMS2Text(int ct)
@@ -270,6 +315,88 @@ static char* MMS_WSP_ContentTypeDB_MMS2Text(int ct)
 	}
 	else
 		return "application/octet-stream";
+}
+
+static int slim_strncmp_nocase(char *in_s, char *in_t, int in_n)
+{
+	int s;
+
+	if (in_n <= 0)
+		return 0;
+
+	s = *in_s;
+	while (in_n > 1 && slim_tolower(s) == slim_tolower(*in_t))
+	{
+		if (s != '\0')
+		{
+			in_s++;
+			in_t++;
+			in_n--;
+			s = *in_s;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	return (slim_tolower(s) - slim_tolower(*in_t));
+}
+
+static MMS_MESSAGE_TYPE MMS_GetMMSTypeByName(uint8 *hContentType)
+{
+	if (slim_strncmp_nocase((char*)hContentType,"text",4) == 0)
+	{
+		return MMS_MESSAGE_TYPE_TEXT;
+	}
+
+	if (slim_strncmp_nocase((char*)hContentType,"image",5) == 0)
+	{
+		return MMS_MESSAGE_TYPE_IMAGE;
+	}
+	
+	if (slim_strncmp_nocase((char*)hContentType,"audio",5) == 0)
+	{
+		return MMS_MESSAGE_TYPE_AUDIO;
+	}
+
+	if (slim_strncmp_nocase((char*)hContentType,"video",5) == 0)
+	{
+		return MMS_MESSAGE_TYPE_VIDEO;
+	}
+
+	return MMS_MESSAGE_TYPE_UNKNOW;
+}
+
+static int MMS_WSP_ContentTypeDB_Text2MMS(uint8* ct, int ct_len, uint8* ctbyte)
+{
+	int i,hv = MMS_WSP_HEADER_VALUE_UNKNOWN;
+	
+	for(i=0;i<76;i++)
+	{
+		if (slim_strncmp_nocase((char*)ct,(char*)DB_Mms2Text[i],ct_len) == 0)
+		{
+			hv = MMS_WSP_HEADER_VALUE_KNOWN;
+			*ctbyte = i;
+			break;
+		}
+	}
+	
+	if (hv == MMS_WSP_HEADER_VALUE_KNOWN)
+	{
+		switch(*ctbyte)
+		{
+		case 0x33:
+			hv = MMS_WSP_HEADER_VALUE_MULTIPART_RELATED;
+			break;
+		case 0x0c:
+		case 0x23:
+			hv = MMS_WSP_HEADER_VALUE_MULTIPART_MIXED;
+			break;
+		}
+	}
+	
+	return hv;
 }
 
 static boolean is_us_ascii_string(char * in_s, int in_len)
@@ -309,7 +436,6 @@ static int MMS_WSP_Encode_UINTVAR(uint8* buf, int val)
 
 static int MMS_Encode_header(uint8* mms_context,uint8 *phonenum, uint8 *subject)
 {
-	int i=0;
     JulianType juDateTime	= {0};
 	char szDataTime[30] = {0};
     int addresslen = 0;
@@ -319,7 +445,8 @@ static int MMS_Encode_header(uint8* mms_context,uint8 *phonenum, uint8 *subject)
     uint8 uintvar[5];
     
     uint8* pCurPos = (uint8*)mms_context;	
-	
+
+	MMS_DEBUG(("[MMS]: MMS_Encode_header!!!!"));
 
 	//X-Mms-Message-Type(0x8c): m-send-req(0x80)
 	*pCurPos = 0x8c; pCurPos++;
@@ -385,15 +512,11 @@ static int MMS_Encode_header(uint8* mms_context,uint8 *phonenum, uint8 *subject)
 	return (int)(pCurPos - (uint8*)mms_context);
 }
 
-static int MMS_Encode_MsgBody(uint8* hPDU, int hLen, boolean isText)
+static int MMS_Encode_MsgBody(uint8* hPDU, int hLen, uint8 fragment)
 {
-	int head_length = 0;
-	int file_length = 0;
-	int sub_head_length = 0;
-	int content_size = 0;
-	
 	uint8* pCurPos = hPDU;
 
+	MMS_DEBUG(("[MMS]: MMS_Encode_MsgBody!!!!"));
 	//Msg body
 	*pCurPos = 0x84; pCurPos++;
 	*pCurPos = 0x1c; pCurPos++;  //head length
@@ -432,105 +555,27 @@ static int MMS_Encode_MsgBody(uint8* hPDU, int hLen, boolean isText)
 
 	// -------------- files -------------- //
 	//file count, smil file is one
-	if ( isText )
-	{
-		*pCurPos = 0x03; pCurPos++;	//part number
-	}
-	else
-	{
-		*pCurPos = 0x02; pCurPos++;	//part number
-	}	
+	*pCurPos = fragment; pCurPos++;	//part number
 
 	return (int)(pCurPos-hPDU);
 }
 
-static int MMS_EncodeText(uint8* encbuf,uint8 *text,int len)
+static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 {
-	int head_length = 0;
-	int file_length = 0;
-	int sub_head_length = 0;
-	int content_size = 0;
-	int uintvar_len;
-	uint8 m_buf[128] = {0};
-	uint8 uintvar[5];
-	uint8* pCurPos = m_buf;
-	
-	
-	if ( encbuf == NULL || text == NULL )
-	{
-		return -1;
-	}
-
-	//file use "text.txt"
-	content_size = len;
-	file_length = 8;
-	sub_head_length = 8+5;
-	*pCurPos = sub_head_length; pCurPos++;
-
-	//UTF-8
-	*pCurPos = 0x83; pCurPos++;
-	*pCurPos = 0x85; pCurPos++;
-
-	//FILE NAME
-	STRNCPY((char*)pCurPos,"text.txt",8);
-	pCurPos += 8;
-	*pCurPos = 0x00; pCurPos++;
-
-	*pCurPos = 0x81; pCurPos++;
-	*pCurPos = 0xea; pCurPos++;
-
-	//add Content-ID
-	*pCurPos = 0xc0; pCurPos++;
-	*pCurPos = 0x22; pCurPos++;
-	*pCurPos = 0x3c; pCurPos++;
-	STRNCPY((char*)pCurPos,"text.txt",8);
-	pCurPos += 8;
-	*pCurPos = 0x3e; pCurPos++;
-	*pCurPos = 0x00; pCurPos++;
-
-	//add Content-Location
-	*pCurPos = 0x8e; pCurPos++;
-	STRNCPY((char*)pCurPos,"text.txt",8);
-	pCurPos += 8;
-	*pCurPos = 0x00; pCurPos++;
-
-	head_length = (uint8)(pCurPos-m_buf);
-
-	pCurPos = encbuf;
-
-	//head length
-	*pCurPos = head_length; pCurPos++;
-	uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,content_size);
-
-	//content length
-	STRNCPY((char*)pCurPos,(char*)&uintvar[5-uintvar_len],uintvar_len);
-	pCurPos += uintvar_len;
-
-	//sub head
-	STRNCPY((char*)pCurPos,(char*)m_buf,head_length);
-	pCurPos += head_length;
-
-	//content
-	STRNCPY((char*)pCurPos,(char*)text,len);
-	pCurPos += len;
-
-	return (int)(pCurPos-encbuf);
-}
-
-static int MMS_GetFileContent(uint8* encbuf,char* FileName,MMS_MESSAGE_TYPE type)
-{
-	int head_length = 0;
-	int file_length = 0;
-	int sub_head_length = 0;
 	int content_size = 0;
 	IFile* pIFile = NULL;
     IFileMgr *pIFileMgr = NULL;
     FileInfo pInfo = {0};
     uint8* pCurPos = encbuf;
-    uint8 uintvar[5];
     int uintvar_len;
 	int result = SUCCESS;
-	int16 readcount = 0;
+	int value_len, mediatype_value_len;
+	int hn,hv,ct, param_len;
+	uint8 *value, *mediatype_value, onebyte, ctbyte;
+	uint8 uintvar[5];
+	uint8 param_buf[256];
+	uint8 subhead_buf[512];
+	uint8 *temp_pos;
 	
     result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
 	if (SUCCESS != result)
@@ -539,354 +584,282 @@ static int MMS_GetFileContent(uint8* encbuf,char* FileName,MMS_MESSAGE_TYPE type
 		return -1;
     }
 
-    if (IFILEMGR_GetInfo(pIFileMgr,FileName, &pInfo) == SUCCESS)
+    if (IFILEMGR_GetInfo(pIFileMgr,(char*)frag.hContentFile, &pInfo) == SUCCESS)
     {
     	content_size = (int)pInfo.dwSize;
-    	//IFILEMGR_Release(pIFileMgr);
-        //pIFileMgr = NULL;
     }
-    
-	if ( type == MMS_MESSAGE_JPG )
+    else
+    {
+		return -1;
+    }
+
+
+    hn = MMS_WSP_HEADER_CONTENT_TYPE;
+
+	value = frag.hContentType;
+	value_len = STRLEN((char*)frag.hContentType);
+	hv = MMS_WSP_ContentTypeDB_Text2MMS(value, value_len, &ctbyte);
+	ct = hv;
+
+	if (hv == MMS_WSP_HEADER_VALUE_UNKNOWN)
 	{
-		*pCurPos = 0x1a; pCurPos++;
-		uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,content_size);
-		//content length
-		STRNCPY((char*)pCurPos,(char*)&uintvar[5-uintvar_len],uintvar_len);
-		pCurPos += uintvar_len;
-
-		*pCurPos = 0x08; pCurPos++;
-		*pCurPos = 0x9e; pCurPos++;
-
-		//name
-		*pCurPos = 0x85; pCurPos++; 
-		STRNCPY((char*)pCurPos,"1.jpg",5);
-		pCurPos += 5;
-		*pCurPos = 0x00; pCurPos++;
-		
-		//add Content-ID
-		*pCurPos = 0xc0; pCurPos++;
-		*pCurPos = 0x22; pCurPos++;
-		*pCurPos = 0x3c; pCurPos++;
-		STRNCPY((char*)pCurPos,"1.jpg",5);
-		pCurPos += 5;
-		*pCurPos = 0x3e; pCurPos++;
-		*pCurPos = 0x00; pCurPos++;
-
-		//add Content-Location
-		*pCurPos = 0x8e; pCurPos++;
-		STRNCPY((char*)pCurPos,"1.jpg",5);
-		pCurPos += 5;
-		*pCurPos = 0x00; pCurPos++;
-
-		pIFile = IFILEMGR_OpenFile( pIFileMgr, FileName, _OFM_READ );
-		if ( pIFile != NULL )
-        {
-            IFILE_Seek(pIFile, _SEEK_START, 0);
-            readcount = IFILE_Read( pIFile, pCurPos, pInfo.dwSize);
-            pCurPos += readcount;
-            
-            MSG_FATAL("MRS: Open file pInfo.dwSize=%d,pSocketInfoTag.RecCount=%d", pInfo.dwSize,readcount,0);
-            IFILE_Release( pIFile);
-            pIFile = NULL;
-            IFILEMGR_Release(pIFileMgr);
-            pIFileMgr = NULL;
-        }
-
-        return (int)(pCurPos-encbuf);
+		mediatype_value = value;
+		mediatype_value_len = value_len;
 	}
-	else if ( type == MMS_MESSAGE_GIF )
+
+	//param encode
+	temp_pos = param_buf;
+	switch(ct)
 	{
-		*pCurPos = 0x1a; pCurPos++;
-		uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,content_size);
-		//content length
-		STRNCPY((char*)pCurPos,(char*)&uintvar[5-uintvar_len],uintvar_len);
-		pCurPos += uintvar_len;
+		case MMS_WSP_HEADER_VALUE_UNKNOWN:
+		{
+			STRNCPY((char*)temp_pos,(char*)mediatype_value,mediatype_value_len);
+			temp_pos += mediatype_value_len;
+			*temp_pos = 0x00; temp_pos++;
+			
+			param_len = STRLEN((char*)frag.hContentName);
+			if ( param_len > 0 )
+			{
+				//name
+				*temp_pos = 0x85; temp_pos++;
+				STRNCPY((char*)temp_pos,(char*)frag.hContentName,param_len);
+				temp_pos += param_len;
+				*temp_pos = 0x00; temp_pos++;
+			}
 
-		*pCurPos = 0x08; pCurPos++;
-		*pCurPos = 0x9d; pCurPos++;
-
-		//name
-		*pCurPos = 0x85; pCurPos++; 
-		STRNCPY((char*)pCurPos,"1.gif",5);
-		pCurPos += 5;
-		*pCurPos = 0x00; pCurPos++;
+			param_len = (int)(temp_pos-param_buf);
+			break;
+		}
 		
-		//add Content-ID
-		*pCurPos = 0xc0; pCurPos++;
-		*pCurPos = 0x22; pCurPos++;
-		*pCurPos = 0x3c; pCurPos++;
-		STRNCPY((char*)pCurPos,"1.gif",5);
-		pCurPos += 5;
-		*pCurPos = 0x3e; pCurPos++;
-		*pCurPos = 0x00; pCurPos++;
 
-		//add Content-Location
-		*pCurPos = 0x8e; pCurPos++;
-		STRNCPY((char*)pCurPos,"1.gif",5);
-		pCurPos += 5;
-		*pCurPos = 0x00; pCurPos++;
+		case MMS_WSP_HEADER_VALUE_KNOWN:
+		{
+			onebyte = ctbyte+0x80;
+			*temp_pos = onebyte; temp_pos++;
 
-		pIFile = IFILEMGR_OpenFile( pIFileMgr, FileName, _OFM_READ );
-		if ( pIFile != NULL )
-        {
-            IFILE_Seek(pIFile, _SEEK_START, 0);
-            readcount = IFILE_Read( pIFile, pCurPos, pInfo.dwSize);
-            pCurPos += readcount;
-            
-            MSG_FATAL("MRS: Open file pInfo.dwSize=%d,pSocketInfoTag.RecCount=%d", pInfo.dwSize,readcount,0);
-            IFILE_Release( pIFile);
-            pIFile = NULL;
-            IFILEMGR_Release(pIFileMgr);
-            pIFileMgr = NULL;
-        }
+			//text/plain
+			if ( onebyte == 0x83)
+			{
+				*temp_pos = 0x81; temp_pos++;
 
-        return (int)(pCurPos-encbuf);
+				//0x83 us-ascii   0xea utf-8
+				*temp_pos = 0xea; temp_pos++;  //utf-8
+			}
+			
+			param_len = STRLEN((char*)frag.hContentName);
+			if ( param_len > 0 )
+			{
+				//name
+				*temp_pos = 0x85; temp_pos++;
+				STRNCPY((char*)temp_pos,(char*)frag.hContentName,param_len);
+				temp_pos += param_len;
+				*temp_pos = 0x00; temp_pos++;
+			}
+
+			param_len = (int)(temp_pos-param_buf);
+			break;
+		}
 	}
-	else if ( type == MMS_MESSAGE_PNG )
+
+
+	//sub head encode
+	temp_pos = subhead_buf;
+
+	*temp_pos = 0x1f; temp_pos++;
+	uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,param_len);
+	STRNCPY((char*)temp_pos,(char*)&uintvar[5-uintvar_len],uintvar_len);
+	temp_pos += uintvar_len;
+
+	param_len = STRLEN((char*)frag.hContentID);
+	if ( param_len > 0 )
 	{
-		*pCurPos = 0x1a; pCurPos++;
-		uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,content_size);
-		//content length
-		STRNCPY((char*)pCurPos,(char*)&uintvar[5-uintvar_len],uintvar_len);
-		pCurPos += uintvar_len;
-
-		*pCurPos = 0x08; pCurPos++;
-		*pCurPos = 0xa0; pCurPos++;
-
-		//name
-		*pCurPos = 0x85; pCurPos++; 
-		STRNCPY((char*)pCurPos,"1.png",5);
-		pCurPos += 5;
-		*pCurPos = 0x00; pCurPos++;
-		
-		//add Content-ID
-		*pCurPos = 0xc0; pCurPos++;
-		*pCurPos = 0x22; pCurPos++;
-		*pCurPos = 0x3c; pCurPos++;
-		STRNCPY((char*)pCurPos,"1.png",5);
-		pCurPos += 5;
-		*pCurPos = 0x3e; pCurPos++;
-		*pCurPos = 0x00; pCurPos++;
-
-		//add Content-Location
-		*pCurPos = 0x8e; pCurPos++;
-		STRNCPY((char*)pCurPos,"1.png",5);
-		pCurPos += 5;
-		*pCurPos = 0x00; pCurPos++;
-
-		pIFile = IFILEMGR_OpenFile( pIFileMgr, FileName, _OFM_READ );
-		if ( pIFile != NULL )
-        {
-            IFILE_Seek(pIFile, _SEEK_START, 0);
-            readcount = IFILE_Read( pIFile, pCurPos, pInfo.dwSize);
-            pCurPos += readcount;
-            
-            MSG_FATAL("MRS: Open file pInfo.dwSize=%d,pSocketInfoTag.RecCount=%d", pInfo.dwSize,readcount,0);
-            IFILE_Release( pIFile);
-            pIFile = NULL;
-            IFILEMGR_Release(pIFileMgr);
-            pIFileMgr = NULL;
-        }
-
-        return (int)(pCurPos-encbuf);
+		//content id
+		*temp_pos = 0xc0; temp_pos++;
+		*temp_pos = 0x22; temp_pos++;
+		*temp_pos = 0x3c; temp_pos++;
+		STRNCPY((char*)temp_pos,(char*)frag.hContentID,param_len);
+		temp_pos += param_len;
+		*temp_pos = 0x3e; temp_pos++;
+		*temp_pos = 0x00; temp_pos++;
 	}
-	else if ( type == MMS_MESSAGE_BMP )
+
+	param_len = STRLEN((char*)frag.hContentLocation);
+	if ( param_len > 0 )
 	{
-		*pCurPos = 0x1a; pCurPos++;
-		uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,content_size);
-		//content length
-		STRNCPY((char*)pCurPos,(char*)&uintvar[5-uintvar_len],uintvar_len);
-		pCurPos += uintvar_len;
-
-		*pCurPos = 0x08; pCurPos++;
-		*pCurPos = 0xA1; pCurPos++;
-
-		//name
-		*pCurPos = 0x85; pCurPos++; 
-		STRNCPY((char*)pCurPos,"1.bmp",5);
-		pCurPos += 5;
-		*pCurPos = 0x00; pCurPos++;
-		
-		//add Content-ID
-		*pCurPos = 0xc0; pCurPos++;
-		*pCurPos = 0x22; pCurPos++;
-		*pCurPos = 0x3c; pCurPos++;
-		STRNCPY((char*)pCurPos,"1.bmp",5);
-		pCurPos += 5;
-		*pCurPos = 0x3e; pCurPos++;
-		*pCurPos = 0x00; pCurPos++;
-
-		//add Content-Location
-		*pCurPos = 0x8e; pCurPos++;
-		STRNCPY((char*)pCurPos,"1.bmp",5);
-		pCurPos += 5;
-		*pCurPos = 0x00; pCurPos++;
-
-		pIFile = IFILEMGR_OpenFile( pIFileMgr, FileName, _OFM_READ );
-		if ( pIFile != NULL )
-        {
-            IFILE_Seek(pIFile, _SEEK_START, 0);
-            readcount = IFILE_Read( pIFile, pCurPos, pInfo.dwSize);
-            pCurPos += readcount;
-            
-            MSG_FATAL("MRS: Open file pInfo.dwSize=%d,pSocketInfoTag.RecCount=%d", pInfo.dwSize,readcount,0);
-            IFILE_Release( pIFile);
-            pIFile = NULL;
-            IFILEMGR_Release(pIFileMgr);
-            pIFileMgr = NULL;
-        }
-
-        return (int)(pCurPos-encbuf);
+		//content id
+		*temp_pos = 0x8e; temp_pos++;
+		STRNCPY((char*)temp_pos,(char*)frag.hContentLocation,param_len);
+		temp_pos += param_len;
+		*temp_pos = 0x00; temp_pos++;
 	}
-	else if ( type == MMS_MESSAGE_3GP)
+	param_len = (int)(temp_pos - subhead_buf);
+
+	pCurPos = encbuf;
+	//head length
+	uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,param_len);
+	STRNCPY((char*)pCurPos,(char*)&uintvar[5-uintvar_len],uintvar_len);
+	pCurPos += uintvar_len;
+
+	//text/plain
+	if ( onebyte == 0x83)
 	{
-		*pCurPos = 0x1a; pCurPos++;
-		uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,content_size);
-		//content length
-		STRNCPY((char*)pCurPos,(char*)&uintvar[5-uintvar_len],uintvar_len);
-		pCurPos += uintvar_len;
-
-		*pCurPos = 0x12; pCurPos++;
-
-		STRNCPY((char*)pCurPos,"video/3gpp",10);
-		pCurPos += 10;
-		*pCurPos = 0x00; pCurPos++;
-
-		//name
-		*pCurPos = 0x85; pCurPos++; 
-		STRNCPY((char*)pCurPos,"1.3gp",5);
-		pCurPos += 5;
-		*pCurPos = 0x00; pCurPos++;
-		
-		//add Content-ID
-		*pCurPos = 0xc0; pCurPos++;
-		*pCurPos = 0x22; pCurPos++;
-		*pCurPos = 0x3c; pCurPos++;
-		STRNCPY((char*)pCurPos,"1.3gp",5);
-		pCurPos += 5;
-		*pCurPos = 0x3e; pCurPos++;
-		*pCurPos = 0x00; pCurPos++;
-
-		//add Content-Location
-		*pCurPos = 0x8e; pCurPos++;
-		STRNCPY((char*)pCurPos,"1.3gp",5);
-		pCurPos += 5;
-		*pCurPos = 0x00; pCurPos++;
-
-		pIFile = IFILEMGR_OpenFile( pIFileMgr, FileName, _OFM_READ );
-		if ( pIFile != NULL )
-        {
-            IFILE_Seek(pIFile, _SEEK_START, 0);
-            readcount = IFILE_Read( pIFile, pCurPos, pInfo.dwSize);
-            pCurPos += readcount;
-            
-            MSG_FATAL("MRS: Open file pInfo.dwSize=%d,pSocketInfoTag.RecCount=%d", pInfo.dwSize,readcount,0);
-            IFILE_Release( pIFile);
-            pIFile = NULL;
-            IFILEMGR_Release(pIFileMgr);
-            pIFileMgr = NULL;
-        }
-
-        return (int)(pCurPos-encbuf);
+		content_size = STRLEN((char*)frag.hContentText);
 	}
-	else if ( type == MMS_MESSAGE_MID )
+	//content size
+	uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,content_size);
+	STRNCPY((char*)pCurPos,(char*)&uintvar[5-uintvar_len],uintvar_len);
+	pCurPos += uintvar_len;
+
+	STRNCPY((char*)pCurPos,(char*)subhead_buf,param_len);
+	pCurPos += param_len;
+
+	//text/plain
+	if ( onebyte == 0x83)
 	{
-		*pCurPos = 0x1a; pCurPos++;
-		uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,content_size);
-		//content length
-		STRNCPY((char*)pCurPos,(char*)&uintvar[5-uintvar_len],uintvar_len);
-		pCurPos += uintvar_len;
-
-		*pCurPos = 0x12; pCurPos++;
-
-		STRNCPY((char*)pCurPos,"audio/midi",10);
-		pCurPos += 10;
-		*pCurPos = 0x00; pCurPos++;
-
-		//name
-		*pCurPos = 0x85; pCurPos++; 
-		STRNCPY((char*)pCurPos,"1.mid",5);
-		pCurPos += 5;
-		*pCurPos = 0x00; pCurPos++;
-		
-		//add Content-ID
-		*pCurPos = 0xc0; pCurPos++;
-		*pCurPos = 0x22; pCurPos++;
-		*pCurPos = 0x3c; pCurPos++;
-		STRNCPY((char*)pCurPos,"1.mid",5);
-		pCurPos += 5;
-		*pCurPos = 0x3e; pCurPos++;
-		*pCurPos = 0x00; pCurPos++;
-
-		//add Content-Location
-		*pCurPos = 0x8e; pCurPos++;
-		STRNCPY((char*)pCurPos,"1.mid",5);
-		pCurPos += 5;
-		*pCurPos = 0x00; pCurPos++;
-
-		pIFile = IFILEMGR_OpenFile( pIFileMgr, FileName, _OFM_READ );
-		if ( pIFile != NULL )
-        {
-            IFILE_Seek(pIFile, _SEEK_START, 0);
-            readcount = IFILE_Read( pIFile, pCurPos, pInfo.dwSize);
-            pCurPos += readcount;
-            
-            MSG_FATAL("MRS: Open file pInfo.dwSize=%d,pSocketInfoTag.RecCount=%d", pInfo.dwSize,readcount,0);
-            IFILE_Release( pIFile);
-            pIFile = NULL;
-            IFILEMGR_Release(pIFileMgr);
-            pIFileMgr = NULL;
-        }
-
-        return (int)(pCurPos-encbuf);
+		content_size = STRLEN((char*)frag.hContentText);
+		STRNCPY((char*)pCurPos,(char*)frag.hContentText,content_size);
 	}
+	else
+	{
+		pIFile = IFILEMGR_OpenFile( pIFileMgr, (char*)frag.hContentFile, _OFM_READ);
+		if ( pIFile != NULL )
+	    {
+	        IFILE_Seek(pIFile, _SEEK_START, 0);
+	        IFILE_Write( pIFile, (char*)pCurPos, content_size);
+
+	        MSG_FATAL("IFILEMGR_OpenFile content_size=%d",content_size,0,0);
+	        IFILE_Release( pIFile);
+	        pIFile = NULL;
+	        IFILEMGR_Release(pIFileMgr);
+	        pIFileMgr = NULL;
+	    }
+	}
+	pCurPos += content_size;
+	
+    return (int)(pCurPos-encbuf);
 }
 
-#define MMS_JPG_SMIL_FILE ("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" /><region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" /><region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head><body><par dur=\"5000ms\" ><img src=\"1.jpg\" region=\"Image\" /><text src=\"text.txt\" region=\"Text\"/></par></body></smil>")
-#define MMS_PNG_SMIL_FILE ("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" /><region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" /><region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head><body><par dur=\"5000ms\" ><img src=\"1.png\" region=\"Image\" /><text src=\"text.txt\" region=\"Text\"/></par></body></smil>")
-#define MMS_BMP_SMIL_FILE ("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" /><region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" /><region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head><body><par dur=\"5000ms\" ><img src=\"1.bmp\" region=\"Image\" /><text src=\"text.txt\" region=\"Text\"/></par></body></smil>")
-#define MMS_GIF_SMIL_FILE ("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" /><region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" /><region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head><body><par dur=\"5000ms\" ><img src=\"1.gif\" region=\"Image\" /><text src=\"text.txt\" region=\"Text\"/></par></body></smil>")
-#define MMS_MID_SMIL_FILE ("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" /><region id=\"audio\"/><region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head><body><par dur=\"5000ms\" ><audio src=\"1.mid\" region=\"audio\" /><text src=\"text.txt\" region=\"Text\"/></par></body></smil>")
-#define MMS_3GP_SMIL_FILE ("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" /><region id=\"video\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\"/><region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head><body><par dur=\"5000ms\" ><video src=\"1.3gp\" region=\"video\" /><text src=\"text.txt\" region=\"Text\"/></par></body></smil>")
-
-static int MMS_CreateSmilFile(uint8* encbuf,MMS_MESSAGE_TYPE type)
+//一个SMIL文件的例子
+//("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" /><region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" /><region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head><body><par dur=\"5000ms\" ><img src=\"1.jpg\" region=\"Image\" /><text src=\"text.txt\" region=\"Text\"/></par></body></smil>")
+//根据附件生成布局文件
+int WMS_MMS_CreateSMIL(uint8 *out_buf,int buf_size,WSP_MMS_ENCODE_DATA data)
 {
-	int head_length = 0;
-	int file_length = 0;
-	int sub_head_length = 0;
+	char *cur_pos = (char*)out_buf;
+	int len;
+	int i=0;
+	MMS_MESSAGE_TYPE type;
+
+	MMS_DEBUG(("[MMS]: WMS_MMS_CreateSMIL!!!!"));
+	if ( out_buf == NULL )
+	{
+		return -1;
+	}
+
+	len = STRLEN("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" />");
+	STRNCPY(cur_pos,"<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" />",len);
+	cur_pos += len;
+	
+	if ( data.bImage )
+	{
+		len = STRLEN("<region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" />");
+		STRNCPY(cur_pos,"<region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" />",len);
+		cur_pos += len;
+	}
+
+	if ( data.bVideo )
+	{
+		len = STRLEN("<region id=\"video\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\"/>");
+		STRNCPY(cur_pos,"<region id=\"video\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\"/>",len);
+		cur_pos += len;
+	}
+
+	len = STRLEN("<region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head>");
+	STRNCPY(cur_pos,"<region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head>",len);
+	cur_pos += len;
+
+	len = STRLEN("<body><par>");
+	STRNCPY(cur_pos,"<body><par>",len);
+	cur_pos += len;
+	
+	for(i=0; i<data.frag_num; i++)
+	{
+		type = MMS_GetMMSTypeByName(data.fragment[i].hContentType);
+
+		if ( type == MMS_MESSAGE_TYPE_IMAGE)
+		{
+			len = STRLEN("<img src=\"");
+			STRNCPY(cur_pos,"<img src=\"",len);
+			cur_pos += len;
+
+			len = STRLEN((char*)data.fragment[i].hContentName);
+			STRNCPY(cur_pos,(char*)data.fragment[i].hContentName,len);
+			cur_pos += len;
+
+			len = STRLEN("\" region=\"Image\" dur=\"5000ms\" />");
+			STRNCPY(cur_pos,"\" region=\"Image\" dur=\"5000ms\" />",len);
+			cur_pos += len;
+		}
+		else if ( type == MMS_MESSAGE_TYPE_AUDIO )
+		{
+			len = STRLEN("<audio src=\"");
+			STRNCPY(cur_pos,"<audio src=\"",len);
+			cur_pos += len;
+
+			len = STRLEN((char*)data.fragment[i].hContentName);
+			STRNCPY(cur_pos,(char*)data.fragment[i].hContentName,len);
+			cur_pos += len;
+
+			len = STRLEN("\" dur=\"5000ms\" />");
+			STRNCPY(cur_pos,"\" dur=\"5000ms\" />",len);
+			cur_pos += len;
+		}
+		else if ( type == MMS_MESSAGE_TYPE_VIDEO)
+		{
+			len = STRLEN("<video src=\"");
+			STRNCPY(cur_pos,"<video src=\"",len);
+			cur_pos += len;
+
+			len = STRLEN((char*)data.fragment[i].hContentName);
+			STRNCPY(cur_pos,(char*)data.fragment[i].hContentName,len);
+			cur_pos += len;
+
+			len = STRLEN("\" region=\"video\" dur=\"5000ms\" />");
+			STRNCPY(cur_pos,"\" region=\"video\" dur=\"5000ms\" />",len);
+			cur_pos += len;
+		}
+		else if ( type == MMS_MESSAGE_TYPE_TEXT)
+		{
+			len = STRLEN("<text src=\"");
+			STRNCPY(cur_pos,"<text src=\"",len);
+			cur_pos += len;
+
+			len = STRLEN((char*)data.fragment[i].hContentName);
+			STRNCPY(cur_pos,(char*)data.fragment[i].hContentName,len);
+			cur_pos += len;
+
+			len = STRLEN("\" region=\"Text\"/>");
+			STRNCPY(cur_pos,"\" region=\"Text\"/>",len);
+			cur_pos += len;
+		}
+	}
+
+	len = STRLEN("</par></body></smil>");
+	STRNCPY(cur_pos,"</par></body></smil>",len);
+	cur_pos += len;
+
+	return (int)(cur_pos-(char*)out_buf);
+}
+
+static int MMS_EncodeSmilFile(uint8* encbuf,uint8 *smilFile, int len)
+{
 	int content_size = 0;
     uint8* pCurPos = encbuf;
     uint8 uintvar[5];
     int uintvar_len;
 
-	if ( type == MMS_MESSAGE_PNG )
-	{
-		content_size = STRLEN(MMS_PNG_SMIL_FILE);
-	}
-	else if ( type == MMS_MESSAGE_JPG )
-	{
-		content_size = STRLEN(MMS_JPG_SMIL_FILE);
-	}
-	else if ( type == MMS_MESSAGE_GIF )
-	{
-		content_size = STRLEN(MMS_GIF_SMIL_FILE);
-	}
-	else if ( type == MMS_MESSAGE_BMP )
-	{
-		content_size = STRLEN(MMS_BMP_SMIL_FILE);
-	}
-	else if ( type == MMS_MESSAGE_3GP )
-	{
-		content_size = STRLEN(MMS_3GP_SMIL_FILE);
-	}
-	else if ( type == MMS_MESSAGE_MID )
-	{
-		content_size = STRLEN(MMS_MID_SMIL_FILE);
-	}
-	else
-	{
-		return -1;
-	}
+	MMS_DEBUG(("[MMS]: MMS_EncodeSmilFile!!!!"));
+	
+	content_size = len;
 	
 	*pCurPos = 0x35; pCurPos++;
 	uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,content_size);
@@ -921,75 +894,73 @@ static int MMS_CreateSmilFile(uint8* encbuf,MMS_MESSAGE_TYPE type)
 	pCurPos += 11;
 	*pCurPos = 0x00; pCurPos++;
 
-	if ( type == MMS_MESSAGE_PNG )
-	{
-		STRNCPY((char*)pCurPos,MMS_PNG_SMIL_FILE,STRLEN(MMS_PNG_SMIL_FILE));
-		pCurPos += STRLEN(MMS_PNG_SMIL_FILE);
-	}
-	else if ( type == MMS_MESSAGE_JPG )
-	{
-		STRNCPY((char*)pCurPos,MMS_JPG_SMIL_FILE,STRLEN(MMS_JPG_SMIL_FILE));
-		pCurPos += STRLEN(MMS_JPG_SMIL_FILE);
-	}
-	else if ( type == MMS_MESSAGE_GIF )
-	{
-		STRNCPY((char*)pCurPos,MMS_GIF_SMIL_FILE,STRLEN(MMS_GIF_SMIL_FILE));
-		pCurPos += STRLEN(MMS_GIF_SMIL_FILE);
-	}
-	else if ( type == MMS_MESSAGE_BMP )
-	{
-		STRNCPY((char*)pCurPos,MMS_BMP_SMIL_FILE,STRLEN(MMS_BMP_SMIL_FILE));
-		pCurPos += STRLEN(MMS_BMP_SMIL_FILE);
-	}
-	else if ( type == MMS_MESSAGE_3GP )
-	{
-		STRNCPY((char*)pCurPos,MMS_3GP_SMIL_FILE,STRLEN(MMS_3GP_SMIL_FILE));
-		pCurPos += STRLEN(MMS_3GP_SMIL_FILE);
-	}
-	else if ( type == MMS_MESSAGE_MID )
-	{
-		STRNCPY((char*)pCurPos,MMS_MID_SMIL_FILE,STRLEN(MMS_MID_SMIL_FILE));
-		pCurPos += STRLEN(MMS_MID_SMIL_FILE);
-	}
+	STRNCPY((char*)pCurPos,(char*)smilFile,len);
+	pCurPos += len;
 	
     return (int)(pCurPos-encbuf);
 }
 
-int MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen)
+int WMS_MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen)
 {
 	
 }
 
-int MMS_SEND_TEST(uint8 *buffer)
+WSP_MMS_ENCODE_DATA mms_data = {0};
+uint8 buf[5*1024] = {0};
+
+int WMS_MMS_SEND_TEST(uint8 *buffer)
 {
-	uint8 buf[5*1024] = {0};
+	
 	int head_len = 0;
 	int size = 0;
 	uint8 *pCurPos = buf;
-
+	int len;
+	int i;
+	
 	head_len = MMS_Encode_header(pCurPos,(uint8*)"+8615986838642",(uint8*)"123456789");
-
-	MMS_DEBUG(("[MMS] MMS_Encode_header head_len = %d",head_len));
-	
+	MMS_DEBUG(("[MMS] MMS_Encode_header head_len = %d",head_len));	
 	pCurPos += head_len;
 
-	head_len = MMS_Encode_MsgBody(pCurPos,0,FALSE);
+	mms_data.frag_num = 2;
+	mms_data.bImage = TRUE;
 
-	MMS_DEBUG(("[MMS] MMS_Encode_MsgBody head_len = %d",head_len));
+	len = STRLEN("image/jpeg");
+	STRNCPY((char*)mms_data.fragment[0].hContentType,"image/jpeg",len);
+	len = STRLEN("fs:/hsmm/pictures/1.jpg");
+	STRNCPY((char*)mms_data.fragment[0].hContentFile,"fs:/hsmm/pictures/1.jpg",len);
+	len = STRLEN("1.jpg");
+	STRNCPY((char*)mms_data.fragment[0].hContentLocation,"1.jpg",len);
+	len = STRLEN("1.jpg");
+	STRNCPY((char*)mms_data.fragment[0].hContentID,"1.jpg",len);
+	len = STRLEN("1.jpg");
+	STRNCPY((char*)mms_data.fragment[0].hContentName,"1.jpg",len);
 	
-	pCurPos += head_len;
-	
-	head_len =	MMS_CreateSmilFile(pCurPos,MMS_MESSAGE_JPG);
 
-	MMS_DEBUG(("[MMS] MMS_CreateSmilFile head_len = %d",head_len));
+	len = STRLEN("123456789");
+	STRNCPY((char*)mms_data.fragment[1].hContentText,"123456789",len);
+	len = STRLEN("text/plain");
+	STRNCPY((char*)mms_data.fragment[1].hContentType,"text/plain",len);
+	len = STRLEN("1.txt");
+	STRNCPY((char*)mms_data.fragment[1].hContentLocation,"1.txt",len);
+	len = STRLEN("1.txt");
+	STRNCPY((char*)mms_data.fragment[1].hContentID,"1.txt",len);
+	len = STRLEN("1.txt");
+	STRNCPY((char*)mms_data.fragment[1].hContentName,"1.txt",len);
 	
+	head_len = MMS_Encode_MsgBody(pCurPos,0,mms_data.frag_num+1);
+	MMS_DEBUG(("[MMS] MMS_Encode_MsgBody head_len = %d",head_len));	
 	pCurPos += head_len;
-	
-	head_len = MMS_GetFileContent(pCurPos,"fs:/hsmm/pictures/1.jpg",MMS_MESSAGE_JPG);
 
-	MMS_DEBUG(("[MMS] MMS_GetFileContent head_len = %d",head_len));
-	
+	len = WMS_MMS_CreateSMIL(buf,5*1024,mms_data);	
+	head_len = MMS_EncodeSmilFile(pCurPos,buffer,len);
+	MMS_DEBUG(("[MMS] MMS_EncodeSmilFile head_len = %d",head_len));	
 	pCurPos += head_len;
+
+	for(i=0; i<mms_data.frag_num; i++)
+	{
+		head_len = MMS_GetFileContent(pCurPos,mms_data.fragment[i]);
+		pCurPos += head_len;
+	}
 
 	size = (int)(pCurPos-buf);
 
@@ -1005,7 +976,7 @@ int MMS_SEND_TEST(uint8 *buffer)
 	return (head_len+size);
 }
 
-int MMS_Decode_TEST(char *file)
+int WMS_MMS_Decode_TEST(char *file)
 {
 	IFile* pIFile = NULL;
     IFileMgr *pIFileMgr = NULL;
@@ -1019,7 +990,7 @@ int MMS_Decode_TEST(char *file)
 	if (SUCCESS != result)
     {
 		MSG_FATAL("[MMS]: Open file error %x", result,0,0);
-		return;
+		return -1;
     }
 
 	if (IFILEMGR_GetInfo(pIFileMgr,file, &pInfo) == SUCCESS)
@@ -1041,7 +1012,7 @@ int MMS_Decode_TEST(char *file)
 
     MMS_DEBUG(("Decode testing start!"));
     MSG_FATAL("[MMS]: 0x%x 0x%x 0x%x",g_mms_buffer[0],g_mms_buffer[1],g_mms_buffer[2]);
-	decret = MMS_WSP_DecodeMessage(g_mms_buffer, data_size,&pContent);
+	decret = WMS_MMS_WSP_DecodeMessage(g_mms_buffer, data_size,&pContent);
 	if (decret == MMC_OK)
 	{
 		MMS_DEBUG(("Decode testing success"));
@@ -1050,13 +1021,13 @@ int MMS_Decode_TEST(char *file)
 	return 0;
 }
 
-int MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, int* hLen, uint8 ePDUType)
+int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, int* hLen, uint8 ePDUType)
 {
 	int head_len = 0;
-	IFile* pIFile = NULL;
-    IFileMgr *pIFileMgr = NULL;
-    FileInfo pInfo = {0};
 	uint8 *pCurPos = hPDU;
+	uint8 buffer[1024];
+	int len;
+	int i;
 	
 	if ( hPDU == NULL || hLen == NULL || encdata == NULL )
 	{
@@ -1065,33 +1036,30 @@ int MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, int* hLen, uint8 e
 
 
 	head_len = MMS_Encode_header(pCurPos,encdata->hTo,encdata->hSubject);
-
 	pCurPos += head_len;
 
-	head_len =	MMS_CreateSmilFile(pCurPos,encdata->bMsgType);
-
+	head_len = MMS_Encode_MsgBody(pCurPos,0,encdata->mms_data.frag_num+1);
+	MMS_DEBUG(("[MMS] MMS_Encode_MsgBody head_len = %d",head_len));	
 	pCurPos += head_len;
-	
-	head_len = MMS_GetFileContent(pCurPos,encdata->FilePath,encdata->bMsgType);
 
+	len = WMS_MMS_CreateSMIL(buffer,1024,encdata->mms_data);	
+	head_len = MMS_EncodeSmilFile(pCurPos,buffer,len);
 	pCurPos += head_len;
+
+	for(i=0; i<encdata->mms_data.frag_num; i++)
+	{
+		head_len = MMS_GetFileContent(pCurPos,encdata->mms_data.fragment[i]);
+		pCurPos += head_len;
+	}
 	
 	return (int)(pCurPos - hPDU);
-
-	
 }
 
-int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  WSP_MMS_DATA* pContent)
+int WMS_MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  WSP_MMS_DATA* pContent)
 {		
-	int charset, iPart, dec = MMC_GENERIC, ret = MMC_GENERIC, contenttypelen;
+	int charset, dec = MMC_GENERIC, ret = MMC_GENERIC, contenttypelen;
 	boolean bIsMultipart, completed = FALSE;
-	uint8 content_type = 0;
-	uint8 file_count = 0;
-	uint8* pCurPos = NULL;
-	int head_length = 0;
-	int sub_head_length = 0;
-	int content_size = 0;
-	int i = 0, iDataOffset, contenttype = -1,consumed=0;
+	int iDataOffset,consumed=0;
 	
 	contenttypelen = MMS_WSP_GetValueLen(pData, iDataLen, &iDataOffset);
 	if (contenttypelen != MMS_DECODER_ERROR_VALUE)
@@ -1133,13 +1101,12 @@ int MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  WSP_MMS_DATA* pContent)
 		dec = MMC_MIME_CONTENT_TYPE;
 	}
 
-no_mem:
-	return MMC_NOMEM;
+	return 0;
 }
 
 static int MMS_WSP_Decode_MultipartData(uint8* pData, int iDataLen,int nParts, WSP_DEC_DATA_FRAGMENT* iMIMEParts,int *inout_depth)
 {
-	int i,iHeadersLen, iPartDataLen, iDataOffset,ret,iPart=0, consumed = 0;
+	int i,iHeadersLen, iPartDataLen, iDataOffset,ret,consumed = 0;
 	int iHeadersDataOffset, iDataDataOffset, contenttypelen, charset;
 	boolean bIsMultipart;
 	uint8* pbyte;
@@ -1179,6 +1146,7 @@ static int MMS_WSP_Decode_MultipartData(uint8* pData, int iDataLen,int nParts, W
 		MMS_DEBUG(("[MMS]: hContentName=%s",iMIMEParts[cur_part].hContentName));
 		MMS_DEBUG(("[MMS]: hContentID=%s",iMIMEParts[cur_part].hContentID));
 		MMS_DEBUG(("[MMS]: hContentLocation=%s",iMIMEParts[cur_part].hContentLocation));
+		MMS_DEBUG(("[MMS]: hContentEnCode=%s",iMIMEParts[cur_part].hContentEnCode));
 		
 		if (bIsMultipart == TRUE)
 		{
@@ -1255,7 +1223,6 @@ static int MMS_WSP_DecodeContentTypeParams(uint8* pData, int iDataLen, WSP_DEC_D
 	int paramnamelen,paramvaluelen,iDataOffsetname, iDataOffsetvalue,consumed=0;
 	boolean ok;
 	int charset_type;
-	char* filename_str = NULL;
 
 	while (consumed < iDataLen)
 	{
@@ -1437,17 +1404,23 @@ static int MMS_WSP_DecodeContentTypeParams(uint8* pData, int iDataLen, WSP_DEC_D
 
 			case 0x40:		//content ID
 			{
+				int i=0;
 				paramname = "content ID";
 				paramvaluelen--;/* ?? */
 				if (paramvaluelen > 0)
 				{
-					if (paramvalue[0] == '"')/* ?? Quoted? */
+					if ( paramvalue[0] == 0x22 && paramvalue[1] == 0x3c)
 					{
-						STRNCPY((char*)iMIMEParams->hContentID,(char*)&paramvalue[1],paramvaluelen-1);
-					}
-					else
-					{
-						STRNCPY((char*)iMIMEParams->hContentID,(char*)paramvalue,paramvaluelen);
+						//STRNCPY((char*)iMIMEParams->hContentID,(char*)paramvalue,paramvaluelen);
+						for(i=0; i<(paramvaluelen-2); i++)
+						{
+							if ( paramvalue[i+2] == 0x3E)
+							{
+								break;
+							}
+							
+							iMIMEParams->hContentID[i] = paramvalue[i+2];
+						}
 					}
 				}
 				break;
@@ -1479,21 +1452,6 @@ static int MMS_WSP_DecodeContentTypeHeader(uint8* pData, int iDataLen, WSP_DEC_D
 {
 	int i = 0, iDataOffset, contenttype = -1,consumed=0;
 	int contenttypevaluelen;
-	char* headernameContentType = "Content-Type";
-	char* headertransfername = "Content-Transfer-Encoding";
-	char* headertransferbin = "Binary";
-/*
-	char* headervalueMultipartRelated = "multipart/related";
-	char* headervalueMultipartMixed = "multipart/mixed";
-	char* headervalueImageGIF = "image/gif";
-	char* headervalueImageJPEG = "image/jpeg";
-	char* headervalueImagePNG = "image/png";
-	char* headervalueImageWBMP = "image/vnd.wap.wbmp";
-	char* headervalueTextPlain = "text/plain";
-	char* headervalueUnknown = "application/octet-stream";
-*/
-	char* param1name = "boundary";
-	char* param1value = "abecadlo_bnd";
 	char* headervaluect;
 
 	*bIsMultipart = FALSE;
@@ -1614,7 +1572,7 @@ static int MMS_WSP_DecodeContentTypeHeader(uint8* pData, int iDataLen, WSP_DEC_D
 
 	return consumed;/*contenttypevaluelen;*/
 }
-int MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *ePDUType)
+int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *ePDUType)
 {
 	int len,i=0,iDataOffset,j;
 	uint8* pchar;
@@ -1733,7 +1691,7 @@ int MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *ePDU
 					if (decdata->message.iRetrieveStatus == 0x80)
 					{
 						int decret;
-						decret = MMS_WSP_DecodeMessage(&ptr[i], datalen-i,&decdata->message.mms_data);
+						decret = WMS_MMS_WSP_DecodeMessage(&ptr[i], datalen-i,&decdata->message.mms_data);
 						if (decret == MMC_OK)
 							return ret;
 						else
@@ -2231,8 +2189,6 @@ int MMS_PDU_PutDeliveryReport(int in_DelRep, int* out_DelRep)
 
 int MMS_PDU_PutDeliveryReportStatus(int in_Status, int* out_Status)
 {
-
-
 	if (out_Status != NULL)
 	{
 		*out_Status = in_Status -127;
@@ -2257,7 +2213,7 @@ int MMS_PDU_PutDeliveryReportStatus(int in_Status, int* out_Status)
 int MMS_PDU_DecodeEncodedString(uint8* ptr, int datalen,	uint8 ePDUType,	uint8* handle)
 {
 	int i = 0,j;
-	boolean notmail = FALSE, is_utf8 = FALSE;
+	boolean is_utf8 = FALSE;
 	int charset_len = 0, charset = 0;
 	uint8* pchar = NULL, *pcharset = NULL;
 	int len = 0, iDataOffset, whole_len=0, ret;
