@@ -906,11 +906,11 @@ int WMS_MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen)
 }
 
 WSP_MMS_ENCODE_DATA mms_data = {0};
-uint8 buf[5*1024] = {0};
+
 
 int WMS_MMS_SEND_TEST(uint8 *buffer)
 {
-	
+	uint8 buf[5*1024] = {0};
 	int head_len = 0;
 	int size = 0;
 	uint8 *pCurPos = buf;
