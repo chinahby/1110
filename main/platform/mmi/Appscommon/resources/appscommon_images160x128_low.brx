@@ -7,6 +7,9 @@
 	<Object Id="5002" Name="IDB_BACKGROUND" MimeType="image/png">
 		<File>..\images\160x128\common\Appscommon\Menu\background\background.png</File>
 	</Object>
+	<Object Id="5003" Name="IDI_VIDEO" MimeType="image/png">
+		<File>..\images\160x128\common\Appscommon\Icon\video.png</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\160x128\common\Appscommon\Icon\check_yes.png</File>
 	</Object>

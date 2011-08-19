@@ -22,6 +22,9 @@
 	<Object Id="5007" Name="IDI_MUSIC" MimeType="image/png">
 		<File>..\images\160x128\common\Appscommon\Icon\music.png</File>
 	</Object>
+	<Object Id="5008" Name="IDI_VIDEO" MimeType="image/png">
+		<File>..\images\176x220\common\Appscommon\Icon\video.png</File>
+	</Object>
 	<Object Id="5009" Name="IDI_PLAYLISTMG">
 		<File>..\images\176x220\common\mediagallery\playlistplaying.bmp</File>
 	</Object>

@@ -22,6 +22,9 @@
 	<Object Id="5007" Name="IDI_OBJECT_5007" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\music.png</File>
 	</Object>
+	<Object Id="5008" Name="IDI_VIDEO" MimeType="image/png">
+		<File>..\images\240x320\common\Appscommon\Icon\video.png</File>
+	</Object>
 	<Object Id="5010" Name="IDI_KEY_TEST" MimeType="image/png">
 		<File>..\images\240x320\common\QuickTest\keytest.png</File>
 	</Object>

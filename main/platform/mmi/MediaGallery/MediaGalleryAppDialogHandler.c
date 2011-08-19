@@ -876,7 +876,7 @@ static boolean MediaGalleryApp_MsgBoxDlg_HandleEvent(CMediaGalleryApp* pMe,
       {
          MGDLGRetValue eMsgRet = MGDLGRET_MSGBOX_OK;
          uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
-
+         MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT Start",0,0,0);
          switch(nMsgBoxId)
          {
          default:
@@ -1155,6 +1155,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
       }
 
       case EVT_DISPLAYDIALOGTIMEOUT:
+         MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT Start",0,0,0);
          MGCLOSE_DIALOG(MGDLGRET_MSGBOX_OK)
          return TRUE;
 
@@ -1350,6 +1351,7 @@ static boolean MediaGalleryApp_PhoneMemDlg_HandleEvent(CMediaGalleryApp* pMe,
       }
 
       case EVT_DISPLAYDIALOGTIMEOUT:
+         MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT Start",0,0,0);
          MGCLOSE_DIALOG(MGDLGRET_MSGBOX_OK)
          return TRUE;
 
@@ -1817,6 +1819,7 @@ MEMSTATEXIT:
       break;
 
    case EVT_DISPLAYDIALOGTIMEOUT:
+      MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT Start",0,0,0);
       MGCLOSE_DIALOG(MGDLGRET_MSGBOX_OK)
          return TRUE;
 
@@ -2215,11 +2218,36 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 
       case EVT_DISPLAYDIALOGTIMEOUT:
          {
-            MG_FARF(ADDR, ("display dialog time out"));
+            MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT Start",0,0,0);
+#ifdef FEATURE_USES_MMS   
+            {
+                uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);  
+                MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT nMsgBoxId=%d",nMsgBoxId,0,0); 
+                if(nMsgBoxId == MG_MSGID_DONE)
+                {
+                   MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT 0",0,0,0); 
+                   if(pMe->m_StartMode == MGSM_VIDEO_BROWSE)
+                   {
+                      MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT 1",0,0,0); 
+                      MGCLOSE_DIALOG(MGDLGRET_SETTING_SELECT);
+                      return TRUE;
+                   }
+                }  
+                else
+                {
+                    MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT 2",nMsgBoxId,0,0); 
+                    return MGAppUtil_OnMediaMenuMsgBoxTimeOut(pMe,
+                                              pMenuCtl,
+                                              wParam,
+                                              dwParam);
+                }
+            }
+#else            
             return MGAppUtil_OnMediaMenuMsgBoxTimeOut(pMe,
                                                       pMenuCtl,
                                                       wParam,
                                                       dwParam);
+#endif
          }
          break;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
@@ -2350,8 +2378,11 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
             if(SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG, (void **)&pConfig))
             {
                 ICONFIG_SetItem(pConfig, CFGI_MMSVIDEO, pCurNode->szName, sizeof(pCurNode->szName));   
+                MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_DONE);
+                return TRUE;                
             }
             RELEASEIF(pConfig);
+            return FALSE;
          }
 #endif           
          if(SUCCESS != MGAppPopupMenu_OnVideoPlay(pMe, pMenuCtl))
@@ -2362,14 +2393,17 @@ static boolean MediaGalleryApp_OnDefaultOperate(CMediaGalleryApp* pMe,
       {
          DBGPRINTF("4pCurNode->szName=%s",pCurNode->szName);  
 #ifdef FEATURE_USES_MMS
-         if(pMe->m_isForMMS) 
+         if(pMe->m_isForMMS && (MG_BETWEEN(eMimeBase, MG_MIME_VIDEOBASE, MG_MIME_VIDEOMAX))) 
          {
             IConfig *pConfig = NULL;
             if(SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG, (void **)&pConfig))
             {
                 ICONFIG_SetItem(pConfig, CFGI_MMSVIDEO, pCurNode->szName, sizeof(pCurNode->szName));   
+                MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_DONE);
+                return TRUE;
             }
             RELEASEIF(pConfig);
+            return FALSE;
          }
 #endif         
       	 //add by yangdecai 2010-08-04
@@ -2990,7 +3024,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
       {
          uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
 
-         MSG_FATAL("display dialog time out",0,0,0);
+         MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT Start",0,0,0);
 
          MGAppPopupMenu_OperationDone(pMe, 0);
 
@@ -2998,6 +3032,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          {
             if(pMe->m_StartMode == MGSM_IMAGE_SETTING)
             {
+               MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT 1",0,0,0); 
                MGCLOSE_DIALOG(MGDLGRET_SETTING_SELECT);
                return TRUE;
             }
@@ -3010,6 +3045,7 @@ static boolean MGAppPopupMenu_OnImageViewer(CMediaGalleryApp* pMe,
          }
          else
          {
+            MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT 2",0,0,0);
             pMe->m_PopupOps = MG_OP_NULL;
             pMe->m_ImgViewOps = MG_OP_NULL;
 
@@ -3517,7 +3553,7 @@ static boolean MGAppPopupMenu_OnSetAs(CMediaGalleryApp *pMe,
       case EVT_DISPLAYDIALOGTIMEOUT:
          {
             uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
-
+            MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT",0,0,0);
             if(MG_MSGID_DONE == nMsgBoxId)
             {
                MGAppPopupMenu_OperationDone(pMe, 0);
@@ -4698,6 +4734,7 @@ static boolean MGAppPopupMenu_OnSelectPath(CMediaGalleryApp *pMe,
 
    case EVT_DISPLAYDIALOGTIMEOUT:
       {
+         MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT",0,0,0);
          if(FALSE == IMENUCTL_IsActive(pMenuCtl))
          {
             IMENUCTL_SetActive(pMenuCtl, TRUE);
@@ -5408,7 +5445,7 @@ static boolean MediaGalleryApp_MusicAddDlg_HandleEvent(CMediaGalleryApp* pMe,
 
       case EVT_DISPLAYDIALOGTIMEOUT:
          {
-            MG_FARF(ADDR, ("display dialog time out"));
+            MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT",0,0,0);
             if(FALSE == IMENUCTL_IsActive(pMenuCtl))
             {
                IMENUCTL_SetActive(pMenuCtl, TRUE);
@@ -5661,7 +5698,7 @@ static boolean MediaGalleryApp_VideoAddDlg_HandleEvent(CMediaGalleryApp* pMe,
          return TRUE;
 
       case EVT_DISPLAYDIALOGTIMEOUT:
-         MG_FARF(ADDR, ("display dialog time out"));
+         MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT",0,0,0);
          return MGAppUtil_OnMediaMenuMsgBoxTimeOut(pMe,
                                             pMenuCtl, wParam, dwParam);
 
@@ -5831,10 +5868,11 @@ static boolean MediaGalleryApp_ImageSettingDlg_HandleEvent(
          {
             uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
 
-            MG_FARF(ADDR, ("display dialog time out"));
+            MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT",0,0,0);
 
             if (nMsgBoxId == MG_MSGID_DONE)
             {
+               MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT 1",0,0,0); 
                MGCLOSE_DIALOG(MGDLGRET_SETTING_SELECT);
                return TRUE;
             }
@@ -6050,7 +6088,7 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
       case EVT_DISPLAYDIALOGTIMEOUT:
          {
             uint16   nMsgBoxId =MediaGalleryApp_GetMsgBoxID(pMe);
-
+            MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT",0,0,0);
             if(nMsgBoxId == MG_MSGID_ENUMMAX)
             {
                MGAppUtil_ScheduleRingTonePreview(pMe);

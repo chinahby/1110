@@ -8793,9 +8793,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 char MMSImagepszPath[MG_MAX_FILE_NAME];
                 char MMSSoundpszPath[MG_MAX_FILE_NAME];
                 char MMSVideopszPath[MG_MAX_FILE_NAME];
-                pMe->m_pMMSImage = NULL;
+                MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_INIT",0,0,0);
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSSoundpszPath, sizeof(MMSSoundpszPath));
+                MSG_FATAL("IDD_WRITEMSG_Handler 1",0,0,0);
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSVideopszPath, sizeof(MMSVideopszPath));
                 DBGPRINTF("MMSImagepszPath=%s len=%d", MMSImagepszPath, STRLEN(MMSImagepszPath));
                 DBGPRINTF("MMSSoundpszPath=%s len=%d", MMSSoundpszPath, STRLEN(MMSSoundpszPath));
@@ -8830,9 +8831,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 else if(STRLEN(MMSSoundpszPath) != 0)
                 {
                     AEERect ctlRect;
-                    //下面的MUSICPLAYERIMAGE_RES_FILE这个资源文件的路径是在musicplayer里面，是个绝对路径。这里要能取
-                    //图片成功的话，要加绝对路径，像下面这样
-                    //pResImg = ISHELL_LoadResImage( pMe->a.m_pIShell, "fs:/mod/clockapps/clockapps_images.bar", IDI_ALARMCLOCK);
                     pMe->m_pMMSSOUND = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MUSIC);           
                     if(pMe->m_pMMSSOUND == NULL)
                     {
@@ -8845,6 +8843,21 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         ICONTROL_SetRect((IControl*)pIText, &ctlRect);     
                     }
                 }
+                else if(STRLEN(MMSVideopszPath) != 0)
+                {
+                    AEERect ctlRect;
+                    pMe->m_pMMSVIDEO = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_VIDEO);           
+                    if(pMe->m_pMMSVIDEO== NULL)
+                    {
+                        MSG_FATAL("pMe->m_pMMSVIDEO == NULL",0,0,0);
+                        SetControlRect(pMe, pIText);
+                    }     
+                    else
+                    {
+                        SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
+                        ICONTROL_SetRect((IControl*)pIText, &ctlRect);     
+                    }
+                }                
                 else
 #endif                
 	            SetControlRect(pMe, pIText);
@@ -9273,14 +9286,26 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     IIMAGE_Draw(pMe->m_pMMSImage, x, y);
                 }
             }
-            if(pMe->m_pMMSSOUND!= NULL)
+            else if(pMe->m_pMMSSOUND!= NULL)
             {
                 uint8 x = 0, y = 0;
                 AEEImageInfo pi;
+                IIMAGE_GetInfo(pMe->m_pMMSSOUND, &pi); 
+                x = (pMe->m_rc.dx - pi.cx)/2;
                 y = pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay) + 2;
-                MSG_FATAL("EVT_USER_REDRAW m_pMMSImage != NULL",0,0,0);
+                MSG_FATAL("EVT_USER_REDRAW m_pMMSSOUND != NULL",0,0,0);
                 IIMAGE_Draw(pMe->m_pMMSSOUND, x, y);          
             }
+            else if(pMe->m_pMMSVIDEO!= NULL)
+            {
+                uint8 x = 0, y = 0;
+                AEEImageInfo pi;
+                IIMAGE_GetInfo(pMe->m_pMMSVIDEO, &pi); 
+                x = (pMe->m_rc.dx - pi.cx)/2;                
+                y = pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay) + 2;
+                MSG_FATAL("EVT_USER_REDRAW m_pMMSVIDEO != NULL",0,0,0);
+                IIMAGE_Draw(pMe->m_pMMSVIDEO, x, y);          
+            }            
 #endif            
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
             return TRUE; 
@@ -9535,8 +9560,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             MSG_FATAL("pMe->m_pMMSImage != NULL",0,0,0);
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,pszPath, sizeof(pszPath));      
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
                             RELEASEIF(pMe->m_pMMSImage);
                             RELEASEIF(pMe->m_pMMSSOUND);
+                            RELEASEIF(pMe->m_pMMSVIDEO);
                         }
 #endif                           
                         CLOSE_DIALOG(DLGRET_CANCELED)
