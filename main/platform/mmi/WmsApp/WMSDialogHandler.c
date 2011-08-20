@@ -8793,6 +8793,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 char MMSImagepszPath[MG_MAX_FILE_NAME];
                 char MMSSoundpszPath[MG_MAX_FILE_NAME];
                 char MMSVideopszPath[MG_MAX_FILE_NAME];
+                char MMSName[MG_MAX_FILE_NAME]={'/0'};
                 MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_INIT",0,0,0);
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSSoundpszPath, sizeof(MMSSoundpszPath));
@@ -8817,6 +8818,17 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     pMe->m_pMMSImage = ISHELL_LoadImage(pMe->m_pShell,MMSImagepszPath);
                     if(pMe->m_pMMSImage != NULL)
                     {
+                        if(pMe->m_pMMSSOUND!= NULL)
+                        {
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));       
+                            RELEASEIF(pMe->m_pMMSImage);
+                        }    
+
+                        if(pMe->m_pMMSVIDEO!= NULL)
+                        {
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));       
+                            RELEASEIF(pMe->m_pMMSVIDEO);
+                        }                           
                         IIMAGE_SetParm(pMe->m_pMMSImage,IPARM_SCALE, pMe->m_rc.dx/2, pMe->m_rc.dy/2);
                         SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
                         ICONTROL_SetRect((IControl*)pIText, &ctlRect);                           
@@ -8839,6 +8851,16 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     }     
                     else
                     {
+                        if(pMe->m_pMMSImage!= NULL)
+                        {
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));       
+                            RELEASEIF(pMe->m_pMMSImage);
+                        }    
+                        if(pMe->m_pMMSVIDEO!= NULL)
+                        {
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));       
+                            RELEASEIF(pMe->m_pMMSVIDEO);
+                        }                           
                         SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
                         ICONTROL_SetRect((IControl*)pIText, &ctlRect);     
                     }
@@ -8849,11 +8871,20 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     pMe->m_pMMSVIDEO = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_VIDEO);           
                     if(pMe->m_pMMSVIDEO== NULL)
                     {
-                        MSG_FATAL("pMe->m_pMMSVIDEO == NULL",0,0,0);
                         SetControlRect(pMe, pIText);
                     }     
                     else
                     {
+                        if(pMe->m_pMMSImage!= NULL)
+                        {
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));       
+                            RELEASEIF(pMe->m_pMMSImage);
+                        }    
+                        if(pMe->m_pMMSSOUND!= NULL)
+                        {
+                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));       
+                            RELEASEIF(pMe->m_pMMSVIDEO);
+                        }                           
                         SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
                         ICONTROL_SetRect((IControl*)pIText, &ctlRect);     
                     }
@@ -9215,6 +9246,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             return TRUE;
 
         case EVT_USER_REDRAW:
+            MSG_FATAL("EVT_USER_REDRAW 1",0,0,0);
 #ifdef FEATURE_USES_MMS             
             IDISPLAY_ClearScreen(pMe->m_pDisplay);
 #endif
@@ -9305,7 +9337,12 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 y = pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay) + 2;
                 MSG_FATAL("EVT_USER_REDRAW m_pMMSVIDEO != NULL",0,0,0);
                 IIMAGE_Draw(pMe->m_pMMSVIDEO, x, y);          
-            }            
+            }      
+            else
+            {
+                pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_WRITEMSG_TEXT);
+                SetControlRect(pMe, pIText);                
+            }
 #endif            
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
             return TRUE; 
@@ -9557,7 +9594,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         {
                             char pszPath[MG_MAX_FILE_NAME]={'\0'};
                             DBGPRINTF("MMSImageName=%s len=%d", pszPath, STRLEN(pszPath));
-                            MSG_FATAL("pMe->m_pMMSImage != NULL",0,0,0);
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,pszPath, sizeof(pszPath));      
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
@@ -9570,6 +9606,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     }
                     else
                     {
+                        MSG_FATAL("pMe->m_pMenu != NULL",0,0,0);
                     	IMENUCTL_Release(pMe->m_pMenu);
                        	pMe->m_pMenu = NULL;
                        	(void) ISHELL_PostEventEx(pMe->m_pShell, 
@@ -9607,14 +9644,38 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTEMOTIONSYMBOL);
 						#endif
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTCONTACT);
-#ifdef FEATURE_USES_MMS                        
-                        MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
-                        MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_VIDEO);//add by xuhui 2011/08/01
-                        MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_SOUND);//add by xuhui 2011/08/01
-                        MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
+#ifdef FEATURE_USES_MMS       
+                        if((pMe->m_pMMSImage == NULL) && (pMe->m_pMMSSOUND == NULL) && (pMe->m_pMMSVIDEO == NULL))
+                        {
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_VIDEO);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_SOUND);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
+                        } 
+                        else if(pMe->m_pMMSImage && (pMe->m_pMMSSOUND == NULL) && (pMe->m_pMMSVIDEO == NULL))
+                        {
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_PICTURE);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_VIDEO);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_SOUND);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
+                        } 
+                        else if(pMe->m_pMMSSOUND && (pMe->m_pMMSImage == NULL) && (pMe->m_pMMSVIDEO == NULL))
+                        {
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_VIDEO);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_SOUND);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
+                        }   
+                        else if(pMe->m_pMMSVIDEO && (pMe->m_pMMSImage == NULL) && (pMe->m_pMMSSOUND == NULL))
+                        {
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_PICTURE);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_REMOVE_VIDEO);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_SOUND);//add by xuhui 2011/08/01
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_INSERT_FILE);//add by xuhui 2011/08/01
+                        }                         
+#endif                       
                         MENU_ADDITEM(pMe->m_pMenu, IDS_INSERTTEMPLATES);
-						MENU_ADDITEM(pMe->m_pMenu, IDS_SAVETODRAFT);	//Add By zzg 2010_09_11
-#endif						
+						MENU_ADDITEM(pMe->m_pMenu, IDS_SAVETODRAFT);	//Add By zzg 2010_09_11						
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SAVEASPRESET);
                         MENU_ADDITEM(pMe->m_pMenu, IDS_EXIT_EDITOR);
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SETTING);
@@ -9713,9 +9774,53 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer_ForMMS(GALLERY_FILE_SELECT, NULL);
 #endif  
+                    return TRUE;
+
+                case IDS_REMOVE_PICTURE:
+                {
+                    char MMSImageName[MG_MAX_FILE_NAME]={'/0'};
+                    MSG_FATAL("pMe->m_pMMSImage != NULL",0,0,0);
+                    ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImageName, sizeof(MMSImageName));       
+                    RELEASEIF(pMe->m_pMMSImage);
+                	(void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                        EVTFLG_ASYNC,
+                                        AEECLSID_WMSAPP,
+                                        EVT_USER_REDRAW,
+                                        0, 
+                                        0);
+                    return TRUE;
+                }
+
+                case IDS_REMOVE_SOUND:
+                {
+                    char MMSImageName[MG_MAX_FILE_NAME]={'/0'};
+                    MSG_FATAL("pMe->m_pMMSSOUND != NULL",0,0,0);
+                    ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSImageName, sizeof(MMSImageName));       
+                    RELEASEIF(pMe->m_pMMSImage);
+                	(void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                        EVTFLG_ASYNC,
+                                        AEECLSID_WMSAPP,
+                                        EVT_USER_REDRAW,
+                                        0, 
+                                        0);
+                    return TRUE;
+                }          
+
+                case IDS_REMOVE_VIDEO:
+                {
+                    char MMSImageName[MG_MAX_FILE_NAME]={'/0'};
+                    MSG_FATAL("pMe->m_pMMSVIDEO != NULL",0,0,0);
+                    ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSImageName, sizeof(MMSImageName));       
+                    RELEASEIF(pMe->m_pMMSVIDEO);
+                	(void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                        EVTFLG_ASYNC,
+                                        AEECLSID_WMSAPP,
+                                        EVT_USER_REDRAW,
+                                        0, 
+                                        0);
+                    return TRUE;
+                }                   
 #endif
-                    //CLOSE_DIALOG(DLGRET_INSERTFILE)
-                    return TRUE;  
                     
                 // ≤Â»Î±Ì«È∑˚∫≈: 
                 case IDS_INSERTEMOTIONSYMBOL:

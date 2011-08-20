@@ -574,6 +574,15 @@
 	<String Id="1012" Name="IDS_STR_FLASHSMS">
 		<Text>Flash sms</Text>
 	</String>
+	<String Id="1013" Name="IDS_REMOVE_PICTURE" Encoding="Unicode">
+		<Text>Remove picture</Text>
+	</String>
+	<String Id="1014" Name="IDS_REMOVE_VIDEO" Encoding="Unicode">
+		<Text>Remove video</Text>
+	</String>
+	<String Id="1015" Name="IDS_REMOVE_SOUND" Encoding="Unicode">
+		<Text>Remove Sound</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

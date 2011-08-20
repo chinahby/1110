@@ -601,6 +601,15 @@
 	<String Id="1021" Name="IDS_INSERT_FILE">
 		<Text>Insert file</Text>
 	</String>
+	<String Id="1022" Name="IDS_REMOVE_PICTURE">
+		<Text>Remove picture</Text>
+	</String>
+	<String Id="1023" Name="IDS_REMOVE_VIDEO">
+		<Text>Remove video</Text>
+	</String>
+	<String Id="1024" Name="IDS_REMOVE_SOUND">
+		<Text>Remove Sound</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

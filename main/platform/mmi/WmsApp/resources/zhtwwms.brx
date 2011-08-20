@@ -541,6 +541,15 @@
 	<String Id="1010" Name="IDS_INSERT_FILE">
 		<Text>插入文件</Text>
 	</String>
+	<String Id="1011" Name="IDS_REMOVE_PICTURE">
+		<Text>移除图片</Text>
+	</String>
+	<String Id="1012" Name="IDS_REMOVE_VIDEO">
+		<Text>移除视频</Text>
+	</String>
+	<String Id="1013" Name="IDS_REMOVE_SOUND">
+		<Text>移除声音</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

@@ -2730,8 +2730,8 @@ void OEM_RestoreFactorySetting( void )
   }
 #ifdef FEATURE_USES_MMS   
    MEMCPY(oemi_cache.s_MMSImage,OEMNV_MMSIMAGE, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
-   MEMCPY(oemi_cache.s_MMSImage,OEMNV_MMSSOUND, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
-   MEMCPY(oemi_cache.s_MMSImage,OEMNV_MMSVIDEO, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
+   MEMCPY(oemi_cache.s_MMSSOUND,OEMNV_MMSSOUND, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
+   MEMCPY(oemi_cache.s_MMSVIDEO,OEMNV_MMSVIDEO, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
 #endif  
    //ÆÁ±£Ê±¼ä
    oemi_cache.p_screensaver_time=0; 
