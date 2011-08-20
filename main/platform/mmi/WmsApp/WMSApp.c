@@ -1281,6 +1281,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             {
                 wms_msg_event_info_s_type *info = ((wms_msg_event_info_s_type*)dwParam);
                 boolean bRet;
+                uint8 notify_buf[256] = {0};
 #ifdef FEATURE_SMS_UDH
                 boolean bUDHPortPresent = FALSE;
                 int nRet;
@@ -1297,53 +1298,6 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 
                 bRet = IWMS_CfgCheckWapPushMsg(pMe->m_pwms, 
                             &info->mt_message_info.message);
-
-				if (bRet == TRUE)
-                {
-                	int result = SUCCESS;
-                	IFile* pIFile = NULL;
-				    IFileMgr *pIFileMgr = NULL;
-				    FileInfo pInfo = {0};
-                    // Wms Applet 不处理此消息
-                    MSG_FATAL("WAP PUsh Message Recieved and Dropped", 0, 0, 0);
-
-                    result = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_FILEMGR,(void **)&pIFileMgr);
-					if (SUCCESS != result)
-				    {
-						MSG_FATAL("MRS: Open file error %x", result,0,0);
-						//goto Exit;
-				    }
-
-					MSG_FATAL("WAP PUsh Message format=%d", info->mt_message_info.message.u.cdma_message.raw_ts.format, 0, 0);
-					MSG_FATAL("WAP PUsh Message tpdu_type=%d", info->mt_message_info.message.u.cdma_message.raw_ts.tpdu_type, 0, 0);
-					
-                    pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms_raw.txt", _OFM_READWRITE);
-					if ( pIFile != NULL )
-			        {
-			            IFILE_Seek(pIFile, _SEEK_START, 0);
-			            IFILE_Write( pIFile, info->mt_message_info.message.u.cdma_message.raw_ts.data, info->mt_message_info.message.u.cdma_message.raw_ts.len);
-
-			            MSG_FATAL("IFILEMGR_OpenFile mms_raw size=%d",info->mt_message_info.message.u.cdma_message.raw_ts.len,0,0);
-			            IFILE_Release( pIFile);
-			            pIFile = NULL;
-			            IFILEMGR_Release(pIFileMgr);
-			            pIFileMgr = NULL;
-			        }
-			        else
-			        {
-						pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms_raw.txt", _OFM_CREATE);
-						if ( pIFile != NULL )
-				        {
-				            IFILE_Write( pIFile, info->mt_message_info.message.u.cdma_message.raw_ts.data, info->mt_message_info.message.u.cdma_message.raw_ts.len);
-
-				            MSG_FATAL("IFILEMGR_OpenFile mms_raw size=%d",info->mt_message_info.message.u.cdma_message.raw_ts.len,0,0);
-				            IFILE_Release( pIFile);
-				            pIFile = NULL;
-				            IFILEMGR_Release(pIFileMgr);
-				            pIFileMgr = NULL;
-				        }
-			        }
-                }
                 
 				if (bRet == TRUE)
                 {
@@ -1352,17 +1306,20 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 	                 nRet = IWMS_TsDecode(pMe->m_pwms, 
 	                             &info->mt_message_info.message.u.cdma_message.raw_ts, 
 	                             &pMe->m_CltTsdata);
+
+	            #ifdef FEATURE_USES_MMS
+	            	 nRet = IWMS_MMsDecodeNotifyBody(pMe->m_pwms,&pMe->m_CltTsdata,notify_buf);
+	            #endif
                 }
 
-                MSG_FATAL("IWMS_TsDecode=%d", nRet, 0, 0);
-                if (bRet == SUCCESS)
+                MSG_FATAL("IWMS_MMsDecodeNotifyBody=%d", nRet, 0, 0);
+                if (bRet > 0)
                 {
                 	int result = SUCCESS;
                 	IFile* pIFile = NULL;
 				    IFileMgr *pIFileMgr = NULL;
 				    FileInfo pInfo = {0};
-				    int len = 0;
-                    uint8 temp[8], *buf = temp;
+				    int len = bRet;
                     // Wms Applet 不处理此消息
                     MSG_FATAL("WAP PUsh Message Recieved and Dropped", 0, 0, 0);
 
@@ -1373,30 +1330,24 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 						goto Exit;
 				    }
 
-					if ((nRet == SUCCESS) &&
-                        (pMe->m_CltTsdata.u.cdma.mask & WMS_MASK_BD_USER_DATA))
-                    {
-                        int len = 0;
-                        uint8 temp[8], *buf = temp;
-                        wms_cdma_user_data_s_type *user_data = &pMe->m_CltTsdata.u.cdma.user_data;
+                    pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms_nofity.txt", _OFM_READWRITE);
+					if ( pIFile != NULL )
+			        {
+			            IFILE_Seek(pIFile, _SEEK_START, 0);
+			            IFILE_Write( pIFile, notify_buf, len);
 
-						MSG_FATAL("WAP PUsh Message Decode OK user_data->encoding=%d", user_data->encoding, 0, 0);
-                        if ((user_data->encoding == WMS_ENCODING_IA5) || 
-                            (user_data->encoding == WMS_ENCODING_ASCII))
-                        {
-                            len = wms_ts_unpack_ascii(user_data, 6, (byte *)buf);
-                        }
-                        else if (user_data->encoding == WMS_ENCODING_OCTET)
-                        {
-                            len = user_data->data_len;
-                            buf = user_data->data;
-                        }
-
-                        pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms.txt", _OFM_READWRITE);
+			            MSG_FATAL("IFILEMGR_OpenFile size=%d",len,0,0);
+			            IFILE_Release( pIFile);
+			            pIFile = NULL;
+			            IFILEMGR_Release(pIFileMgr);
+			            pIFileMgr = NULL;
+			        }
+			        else
+			        {
+						pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms_nofity.txt", _OFM_CREATE);
 						if ( pIFile != NULL )
 				        {
-				            IFILE_Seek(pIFile, _SEEK_START, 0);
-				            IFILE_Write( pIFile, buf, len);
+				            IFILE_Write( pIFile, notify_buf, len);
 
 				            MSG_FATAL("IFILEMGR_OpenFile size=%d",len,0,0);
 				            IFILE_Release( pIFile);
@@ -1404,21 +1355,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 				            IFILEMGR_Release(pIFileMgr);
 				            pIFileMgr = NULL;
 				        }
-				        else
-				        {
-							pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms.txt", _OFM_CREATE);
-							if ( pIFile != NULL )
-					        {
-					            IFILE_Write( pIFile, buf, len);
-
-					            MSG_FATAL("IFILEMGR_OpenFile size=%d",len,0,0);
-					            IFILE_Release( pIFile);
-					            pIFile = NULL;
-					            IFILEMGR_Release(pIFileMgr);
-					            pIFileMgr = NULL;
-					        }
-				        }
-                    }			    
+			        }	    
 	
                 Exit:
                 	WMSAPPU_SYSFREE(dwParam);

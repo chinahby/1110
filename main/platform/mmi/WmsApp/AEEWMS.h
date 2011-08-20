@@ -612,6 +612,13 @@ AEEINTERFACE(IWMS)
                           wms_raw_ts_data_s_type              * RawTsDataPtr,
                           wms_client_ts_data_s_type           * ClientTsDataPtr
                       );
+#ifdef FEATURE_USES_MMS
+	int    (*MMsDecodeNotifyBody)(
+                          IWMS                                * po,
+                          wms_client_ts_data_s_type           * ClientTsDataPtr,
+                          uint8           					  * body
+                      );
+#endif
 
   uint8  (*TsGetHeaderLength)(
                           IWMS                                * po,
@@ -1194,6 +1201,11 @@ AEEINTERFACE(IWMS)
 
 #define IWMS_TsDecode(p, RawTsDataPtr, ClientTsDataPtr) \
            AEEGETPVTBL(p,IWMS)->TsDecode(p, RawTsDataPtr, ClientTsDataPtr)
+
+#ifdef FEATURE_USES_MMS
+#define IWMS_MMsDecodeNotifyBody(p, ClientTsDataPtr, body) \
+           AEEGETPVTBL(p,IWMS)->MMsDecodeNotifyBody(p, ClientTsDataPtr, body)
+#endif
 
 #define IWMS_TsGetHeaderLength(p, udhPtr) \
            AEEGETPVTBL(p,IWMS)->TsGetHeaderLength(p, udhPtr)

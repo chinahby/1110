@@ -491,6 +491,12 @@ static int OEMWMS_TsDecode(         IWMS                      *pMe,
                                     wms_raw_ts_data_s_type    *RawTsDataPtr,
                                     wms_client_ts_data_s_type *ClientTsDataPtr); 
 
+#ifdef FEATURE_USES_MMS
+static int OEMWMS_MMsDecodeNotifyBody(         IWMS                      *pMe,
+                                    		   wms_client_ts_data_s_type    *ClientTsDataPtr,
+                                               uint8 *body);
+#endif
+
 static uint8 OEMWMS_TsGetHeaderLength(   IWMS                 *pMe,
                                          wms_udh_s_type       *udhPtr);
 
@@ -821,6 +827,9 @@ static const AEEVTBL(IWMS) gOEMWMSFuncs = {
    ,OEMWMS_DbgSetRetryInterval
    ,OEMWMS_TsEncode
    ,OEMWMS_TsDecode	
+#ifdef FEATURE_USES_MMS
+   ,OEMWMS_MMsDecodeNotifyBody
+#endif
    ,OEMWMS_TsGetHeaderLength
    ,OEMWMS_TsBcdToAscii
    ,OEMWMS_TsAsciiToBcd
@@ -3367,6 +3376,92 @@ static int OEMWMS_TsDecode (
   return (MapWMSStatusToBREWCode(st));
 }
 
+#ifdef FEATURE_USES_MMS
+static int OEMWMS_MMsDecodeNotifyBody(         IWMS                      *pMe,
+                                    		   wms_client_ts_data_s_type    *ClientTsDataPtr,
+                                               uint8 *body)
+{
+	wms_status_e_type           st = WMS_OK_S;
+	wms_cdma_user_data_s_type	*user_data = NULL;
+	uint16                      pos;      /* running position in bytes */
+    uint16                      bit_pos;  /* position in bits */
+    uint8   					parm_id;
+    uint8                       parm_len;
+    uint8                       i;
+    wms_user_data_encoding_e_type      encoding;
+  	wms_IS91EP_type_e_type             is91ep_type;
+    uint8                       	   digit_size;
+    
+	if ((ClientTsDataPtr == NULL)
+      ||(body == NULL))
+	{
+		return EBADPARM;
+	}
+
+	user_data = &ClientTsDataPtr->u.cdma.user_data;
+
+	pos = 0;
+	while( pos < user_data->data_len )
+	{
+		parm_id = user_data->data[pos];
+        pos++;  /* skip parm id */
+        
+        parm_len = user_data->data[pos];
+        pos++;  /* skip parm len */
+
+		//we only need notify body information
+        if ( parm_id == 0x01)
+        {
+			bit_pos = (uint16)(pos * 8);
+			encoding = (wms_user_data_encoding_e_type)b_unpackb(user_data->data, bit_pos, 5 );
+
+			bit_pos += 5;
+
+			if ( encoding == WMS_ENCODING_IS91EP)
+            {
+                is91ep_type = (wms_IS91EP_type_e_type)b_unpackb(user_data->data, bit_pos, 8);
+                bit_pos += 8;
+                
+                if ( is91ep_type == WMS_IS91EP_CLI_ORDER)
+                {
+                    digit_size = 4;
+                }
+                else
+                {
+                    digit_size = 6;
+                }
+            }
+            else /* for all the other encoding tpyes, copy the raw bits */
+            {
+                digit_size = 8;
+            }
+
+            (void)b_unpackb(user_data->data,bit_pos,8 );
+            bit_pos += 8;
+
+        	/* Extract each digits according to parm_len: */
+            for (i=0; bit_pos < (pos+parm_len)*8; i++, bit_pos += digit_size)
+            {
+                if (i >= WMS_CDMA_USER_DATA_MAX)
+                {
+                    MSG_FATAL("decoding: BD user data too big. len=%d", parm_len,0,0);
+                    st = WMS_INVALID_USER_DATA_SIZE_S;
+                    break; /* out of for loop */
+                }
+                
+                body[i] = b_unpackb(user_data->data, bit_pos, digit_size);
+                return i;
+            } /* for */
+        }
+        else
+        {
+			pos += parm_len;
+        }
+	}
+
+	return -1;
+}
+#endif
 /*===========================================================================
 FUNCTION    OEMWMS_TsGetHeaderLength
 DESCRIPTION
