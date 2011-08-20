@@ -6990,7 +6990,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
     {
         pMe->m_pCurrNumFont = pMe->m_pBigNumFont;
         MSG_FATAL(" pMe->m_large_Num_Height=%d", pMe->m_large_Num_Height,0,0);
-        #if defined (FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
+        #if defined(FEATURE_LANG_ARABIC)
         pMe->m_nCurrNumHeight =30;// pMe->m_large_Num_Height;
         #else
         pMe->m_nCurrNumHeight =pMe->m_large_Num_Height;
