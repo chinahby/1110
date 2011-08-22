@@ -751,7 +751,6 @@ static boolean handleKeyEvent( CFmRadio *pMe, uint16 key, uint32 keyModifier)
             ITEXTCTL_SetActive( pMe->pText, TRUE);
             ITEXTCTL_SetText( pMe->pText, pMe->directInputChannel, WSTRLEN( pMe->directInputChannel));
             ITEXTCTL_SetCursorPos( pMe->pText, TC_CURSOREND);
-
             moveOperationModeTo( pMe, FM_RADIO_OPMODE_DIRECT_INPUT_CHANNEL);
             return TRUE;
     }
@@ -2689,9 +2688,11 @@ static void paint( CFmRadio *pMe)
         #endif
             //IDISPLAY_UpdateEx( pMe->m_pDisplay, FALSE);            
         }
-    }
+        
+        DRAW_BOTTOMBAR(BTBAR_OK_BACK);
+    }    
     #endif
-
+    
     IDISPLAY_UpdateEx( pMe->m_pDisplay, FALSE);
 }
 
