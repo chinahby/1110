@@ -8793,7 +8793,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 char MMSImagepszPath[MG_MAX_FILE_NAME];
                 char MMSSoundpszPath[MG_MAX_FILE_NAME];
                 char MMSVideopszPath[MG_MAX_FILE_NAME];
-                char MMSName[MG_MAX_FILE_NAME]={'/0'};
+                char MMSName[MG_MAX_FILE_NAME]={'\0'};
                 MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_INIT",0,0,0);
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSSoundpszPath, sizeof(MMSSoundpszPath));
@@ -8818,17 +8818,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     pMe->m_pMMSImage = ISHELL_LoadImage(pMe->m_pShell,MMSImagepszPath);
                     if(pMe->m_pMMSImage != NULL)
                     {
-                        if(pMe->m_pMMSSOUND!= NULL)
-                        {
-                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));       
-                            RELEASEIF(pMe->m_pMMSImage);
-                        }    
-
-                        if(pMe->m_pMMSVIDEO!= NULL)
-                        {
-                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));       
-                            RELEASEIF(pMe->m_pMMSVIDEO);
-                        }                           
                         IIMAGE_SetParm(pMe->m_pMMSImage,IPARM_SCALE, pMe->m_rc.dx/2, pMe->m_rc.dy/2);
                         SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
                         ICONTROL_SetRect((IControl*)pIText, &ctlRect);                           
@@ -8851,16 +8840,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     }     
                     else
                     {
-                        if(pMe->m_pMMSImage!= NULL)
-                        {
-                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));       
-                            RELEASEIF(pMe->m_pMMSImage);
-                        }    
-                        if(pMe->m_pMMSVIDEO!= NULL)
-                        {
-                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));       
-                            RELEASEIF(pMe->m_pMMSVIDEO);
-                        }                           
                         SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
                         ICONTROL_SetRect((IControl*)pIText, &ctlRect);     
                     }
@@ -8875,16 +8854,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     }     
                     else
                     {
-                        if(pMe->m_pMMSImage!= NULL)
-                        {
-                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));       
-                            RELEASEIF(pMe->m_pMMSImage);
-                        }    
-                        if(pMe->m_pMMSSOUND!= NULL)
-                        {
-                            ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));       
-                            RELEASEIF(pMe->m_pMMSVIDEO);
-                        }                           
                         SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
                         ICONTROL_SetRect((IControl*)pIText, &ctlRect);     
                     }
@@ -9750,26 +9719,80 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     return TRUE;
 #ifdef FEATURE_USES_MMS
                 case IDS_INSERT_PICTURE:
+                {
+                    char MMSName[MG_MAX_FILE_NAME]={'\0'};
+                    DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));
+                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));
+                    if(STRLEN(MMSName) != 0)
+                    {
+                        MEMSET(MMSName,'\0', MG_MAX_FILE_NAME);
+                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));       
+                        RELEASEIF(pMe->m_pMMSSOUND);
+                    }    
+                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));
+                    if(STRLEN(MMSName) != 0)
+                    {
+                        MEMSET(MMSName,'\0', MG_MAX_FILE_NAME);
+                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));       
+                        RELEASEIF(pMe->m_pMMSVIDEO);
+                    }                         
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer_ForMMS(GALLERY_IMAGE_SETTING, NULL);
 #endif                    
-                    //CLOSE_DIALOG(DLGRET_INSERTPICTURE)
                     return TRUE;
-
+                }
+                    //CLOSE_DIALOG(DLGRET_INSERTPICTURE)
+                    
                 case IDS_INSERT_VIDEO:
+                {
+                    char MMSName[MG_MAX_FILE_NAME]={'\0'};
+                    DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));
+                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));
+                    if(STRLEN(MMSName) != 0)
+                    {
+                        MEMSET(MMSName,'\0', MG_MAX_FILE_NAME);
+                        DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));
+                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));       
+                        RELEASEIF(pMe->m_pMMSSOUND);
+                    }   
+                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSName, sizeof(MMSName));
+                    if(STRLEN(MMSName) != 0)
+                    {
+                        MEMSET(MMSName,'\0', MG_MAX_FILE_NAME);
+                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSName, sizeof(MMSName));       
+                        RELEASEIF(pMe->m_pMMSImage);
+                    }                         
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer_ForMMS(GALLERY_VIDEO_BROWSE, NULL);
 #endif                      
                     //CLOSE_DIALOG(DLGRET_INSERTVIDEO)
                     return TRUE;    
+                }
 
                 case IDS_INSERT_SOUND:
+                {
+                    char MMSName[MG_MAX_FILE_NAME]={'\0'};
+                    DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));
+                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));
+                    if(STRLEN(MMSName) != 0)
+                    {
+                        MEMSET(MMSName,'\0', MG_MAX_FILE_NAME);
+                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));       
+                        RELEASEIF(pMe->m_pMMSVIDEO);
+                    }    
+                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSName, sizeof(MMSName));
+                    if(STRLEN(MMSName) != 0)
+                    {
+                        MEMSET(MMSName,'\0', MG_MAX_FILE_NAME);
+                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSName, sizeof(MMSName));       
+                        RELEASEIF(pMe->m_pMMSImage);
+                    }                     
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer_ForMMS(GALLERY_MUSIC_SETTING, NULL);
 #endif                           
                     //CLOSE_DIALOG(DLGRET_INSERTSOUND)
                     return TRUE;
-
+                }
                 case IDS_INSERT_FILE:
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer_ForMMS(GALLERY_FILE_SELECT, NULL);
@@ -9796,7 +9819,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     char MMSImageName[MG_MAX_FILE_NAME]={'/0'};
                     MSG_FATAL("pMe->m_pMMSSOUND != NULL",0,0,0);
                     ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSImageName, sizeof(MMSImageName));       
-                    RELEASEIF(pMe->m_pMMSImage);
+                    RELEASEIF(pMe->m_pMMSSOUND);
                 	(void) ISHELL_PostEventEx(pMe->m_pShell, 
                                         EVTFLG_ASYNC,
                                         AEECLSID_WMSAPP,
