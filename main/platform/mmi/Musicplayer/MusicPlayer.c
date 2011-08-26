@@ -667,6 +667,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
 {
     CMusicPlayer *pMe = (CMusicPlayer*)pi;
     AEEAppStart *as;
+    MSG_FATAL("IMusicPlayer_HandleEvent,eCode = %x",eCode,0,0);
     switch (eCode)
     {
         case EVT_APP_START_BACKGROUND:
@@ -737,6 +738,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
         case EVT_APP_SUSPEND:
             pMe->m_bSuspending = TRUE;
             MP3_InterruptHandle(pMe);
+            MSG_FATAL("pMe->m_nCurrentTime = %d",pMe->m_nCurrentTime,0,0);
             return TRUE;
 
         case EVT_APP_RESUME:
@@ -752,6 +754,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
                 pMe->m_eCurState = pMe->m_ePreState;
             }
             MP3_ResumeHandle(pMe);
+            MSG_FATAL("pMe->m_nCurrentTime = %d,pMe->m_eCurState = %d",pMe->m_nCurrentTime,pMe->m_eCurState,0);
             CMusicPlayer_RunFSM(pMe);
             return TRUE;
 
@@ -1328,11 +1331,12 @@ static void MP3_ResumeHandle(CMusicPlayer *pMe)
     }
 #endif
     CMusicPlayer_ReleaseMedia(pMe);
+    MSG_FATAL("pMe->m_bPlaying = %d,pMe->m_bPaused = %d",pMe->m_bPlaying,pMe->m_bPaused,0);
     ISHELL_SetTimer(pMe->m_pShell,300,(PFNNOTIFY)CMusicPlayer_InitMusic,pMe);
     if(pMe->m_bPlaying || pMe->m_bPaused)
     {
       ISHELL_SetTimer(pMe->m_pShell,800,(PFNNOTIFY) CMusicPlayer_PlayMusic,pMe);
-      ISHELL_SetTimer(pMe->m_pShell,1000, (PFNNOTIFY)CMusicPlayer_SeekMusic,pMe);
+      ISHELL_SetTimer(pMe->m_pShell,2000, (PFNNOTIFY)CMusicPlayer_SeekMusic,pMe);
     }
     if(pMe->m_bPaused)
      {
