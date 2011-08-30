@@ -34,6 +34,12 @@
 	<Object Id="5011" Name="IDI_TEST_DOWN" MimeType="image/png">
 		<File>..\images\160x128\common\QuickTest\down.png</File>
 	</Object>
+	<Object Id="5012" Name="IDB_CALCAPP_GROUND" MimeType="image/png">
+		<File>..\images\160x128\common\Calculator\background.png</File>
+	</Object>
+	<Object Id="5013" Name="IDB_CALCAPP_LINE" MimeType="image/png">
+		<File>..\images\160x128\common\Calculator\line.png</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\160x128\common\Appscommon\Icon\check_yes.png</File>
 	</Object>

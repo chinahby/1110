@@ -40,6 +40,12 @@
 	<Object Id="5013" Name="IDI_VIDEO" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\Icon\video.png</File>
 	</Object>
+	<Object Id="5014" Name="IDB_CALCAPP_GROUND" MimeType="image/png">
+		<File>..\images\128x160\common\Calculator\background.png</File>
+	</Object>
+	<Object Id="5015" Name="IDB_CALCAPP_LINE" MimeType="image/png">
+		<File>..\images\128x160\common\Calculator\line.png</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\128x160\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
