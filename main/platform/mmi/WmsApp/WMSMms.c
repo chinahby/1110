@@ -482,7 +482,7 @@ static int MMS_Encode_header(uint8* mms_context,uint8 *phonenum, uint8 *subject)
 	pCurPos += STRLEN(addresstype);
 	*pCurPos = 0x00; pCurPos++;
 
-#if 0
+#if 1
 	//subject
 	len = STRLEN((char*)subject);
 	if ( len > 0)
@@ -492,7 +492,7 @@ static int MMS_Encode_header(uint8* mms_context,uint8 *phonenum, uint8 *subject)
 		{
 			*pCurPos = 0x1F; pCurPos++;/*Charset - UTF-8*//*Charset - UTF-8*/
 			uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,len+1+1);/* +1 = charset value , +1 - null termination*/
-			STRNCPY((char*)pCurPos,(char*)&uintvar[5-uintvar_len],uintvar_len);
+			MEMCPY((char*)pCurPos,(char*)&uintvar[5-uintvar_len],uintvar_len);
 			pCurPos += uintvar_len;
 		}
 		else
@@ -504,7 +504,7 @@ static int MMS_Encode_header(uint8* mms_context,uint8 *phonenum, uint8 *subject)
 
 		//*pCurPos = 0x0b; pCurPos++;/*Charset - UTF-8*/
 		*pCurPos = 0xea; pCurPos++;
-		STRNCPY((char*)pCurPos,(char*)subject,STRLEN((char*)subject));
+		MEMCPY((char*)pCurPos,(char*)subject,STRLEN((char*)subject));
 		pCurPos += STRLEN((char*)subject);
 		*pCurPos = 0x00; pCurPos++;
 	}
@@ -764,7 +764,7 @@ int WMS_MMS_CreateSMIL(uint8 *out_buf,int buf_size,WSP_MMS_ENCODE_DATA data)
 	{
 		return -1;
 	}
-#if 0
+#if 1
 	len = STRLEN("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" />");
 	STRNCPY(cur_pos,"<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" />",len);
 	cur_pos += len;
@@ -856,8 +856,8 @@ int WMS_MMS_CreateSMIL(uint8 *out_buf,int buf_size,WSP_MMS_ENCODE_DATA data)
 	len = STRLEN("</par></body></smil>");
 	STRNCPY(cur_pos,"</par></body></smil>",len);
 #endif
-    len = STRLEN("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" /><region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" /><region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head><body><par dur=\"5000ms\" ><img src=\"1.jpg\" region=\"Image\" /><text src=\"text.txt\" region=\"Text\"/></par></body></smil>");
-    STRNCPY(cur_pos, "<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" /><region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" /><region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head><body><par dur=\"5000ms\" ><img src=\"1.jpg\" region=\"Image\" /><text src=\"text.txt\" region=\"Text\"/></par></body></smil>",len);
+   // len = STRLEN("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" /><region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" /><region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head><body><par dur=\"5000ms\" ><img src=\"1.jpg\" region=\"Image\" /><text src=\"text.txt\" region=\"Text\"/></par></body></smil>");
+    //STRNCPY(cur_pos, "<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" /><region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" /><region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head><body><par dur=\"5000ms\" ><img src=\"1.jpg\" region=\"Image\" /><text src=\"text.txt\" region=\"Text\"/></par></body></smil>",len);
     cur_pos += len;
 
 	return (int)(cur_pos-(char*)out_buf);
