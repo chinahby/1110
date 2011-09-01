@@ -71,6 +71,7 @@
 #include "WMSMMS.h"
 
 #ifdef FEATURE_USES_MMS
+#define MG_MAX_FILE_NAME            128
 
 #define DBGPRINTF_EX_FORMAT    "*dbgprintf-%d* %s:%d"
 #define MMS_DEBUG(arg) __DBGPRINTF(DBGPRINTF_EX_FORMAT,5,__FILE__,__LINE__),__DBGPRINTF arg
@@ -481,7 +482,7 @@ static int MMS_Encode_header(uint8* mms_context,uint8 *phonenum, uint8 *subject)
 	pCurPos += STRLEN(addresstype);
 	*pCurPos = 0x00; pCurPos++;
 
-
+#if 0
 	//subject
 	len = STRLEN((char*)subject);
 	if ( len > 0)
@@ -507,7 +508,7 @@ static int MMS_Encode_header(uint8* mms_context,uint8 *phonenum, uint8 *subject)
 		pCurPos += STRLEN((char*)subject);
 		*pCurPos = 0x00; pCurPos++;
 	}
-
+#endif
 	//后面为数据部分
 	return (int)(pCurPos - (uint8*)mms_context);
 }
@@ -576,7 +577,7 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	uint8 param_buf[256];
 	uint8 subhead_buf[512];
 	uint8 *temp_pos;
-	
+	int i = 0;
     result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
 	if (SUCCESS != result)
     {
@@ -669,8 +670,11 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	uintvar_len = MMS_WSP_Encode_UINTVAR(uintvar,param_len);
 	STRNCPY((char*)temp_pos,(char*)&uintvar[5-uintvar_len],uintvar_len);
 	temp_pos += uintvar_len;
-
+    MEMCPY((char*)temp_pos,(char*)param_buf,param_len);
+	temp_pos += param_len;
+    
 	param_len = STRLEN((char*)frag.hContentID);
+    MMS_DEBUG(("hContentID = %s",(char*)frag.hContentID));
 	if ( param_len > 0 )
 	{
 		//content id
@@ -684,9 +688,10 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	}
 
 	param_len = STRLEN((char*)frag.hContentLocation);
+    MMS_DEBUG(("hContentLocation = %s",(char*)frag.hContentLocation));
 	if ( param_len > 0 )
 	{
-		//content id
+		//hContentLocation
 		*temp_pos = 0x8e; temp_pos++;
 		STRNCPY((char*)temp_pos,(char*)frag.hContentLocation,param_len);
 		temp_pos += param_len;
@@ -710,7 +715,12 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	STRNCPY((char*)pCurPos,(char*)&uintvar[5-uintvar_len],uintvar_len);
 	pCurPos += uintvar_len;
 
-	STRNCPY((char*)pCurPos,(char*)subhead_buf,param_len);
+    for(i=0; i<param_len; i=i+3 )
+    {
+        MSG_FATAL("0x%x 0x%x 0x%x",subhead_buf[i],subhead_buf[i+1],subhead_buf[i+2]);
+    }
+    
+	MEMCPY((char*)pCurPos,(char*)subhead_buf,param_len);
 	pCurPos += param_len;
 
 	//text/plain
@@ -725,7 +735,7 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 		if ( pIFile != NULL )
 	    {
 	        IFILE_Seek(pIFile, _SEEK_START, 0);
-	        IFILE_Write( pIFile, (char*)pCurPos, content_size);
+	        IFILE_Read( pIFile, (char*)pCurPos, content_size);
 
 	        MSG_FATAL("IFILEMGR_OpenFile content_size=%d",content_size,0,0);
 	        IFILE_Release( pIFile);
@@ -754,15 +764,15 @@ int WMS_MMS_CreateSMIL(uint8 *out_buf,int buf_size,WSP_MMS_ENCODE_DATA data)
 	{
 		return -1;
 	}
-
+#if 0
 	len = STRLEN("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" />");
 	STRNCPY(cur_pos,"<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" />",len);
 	cur_pos += len;
 	
 	if ( data.bImage )
 	{
-		len = STRLEN("<region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" />");
-		STRNCPY(cur_pos,"<region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" />",len);
+		len = STRLEN("<region id=\"Image\" width=\"120px\" height=\"77px\" top=\"0px\" left=\"0px\" fit=\"meet\" />");
+		STRNCPY(cur_pos,"<region id=\"Image\" width=\"120px\" height=\"77px\" top=\"0px\" left=\"0px\" fit=\"meet\" />",len);
 		cur_pos += len;
 	}
 
@@ -845,7 +855,10 @@ int WMS_MMS_CreateSMIL(uint8 *out_buf,int buf_size,WSP_MMS_ENCODE_DATA data)
 
 	len = STRLEN("</par></body></smil>");
 	STRNCPY(cur_pos,"</par></body></smil>",len);
-	cur_pos += len;
+#endif
+    len = STRLEN("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" /><region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" /><region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head><body><par dur=\"5000ms\" ><img src=\"1.jpg\" region=\"Image\" /><text src=\"text.txt\" region=\"Text\"/></par></body></smil>");
+    STRNCPY(cur_pos, "<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" /><region id=\"Image\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\" fit=\"meet\" /><region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head><body><par dur=\"5000ms\" ><img src=\"1.jpg\" region=\"Image\" /><text src=\"text.txt\" region=\"Text\"/></par></body></smil>",len);
+    cur_pos += len;
 
 	return (int)(cur_pos-(char*)out_buf);
 }
@@ -910,19 +923,75 @@ WSP_MMS_ENCODE_DATA mms_data = {0};
 
 int WMS_MMS_SEND_TEST(uint8 *buffer)
 {
-	uint8 buf[5*1024] = {0};
+	uint8 buf[10*1024] = {0};
+    uint8 smil_buf[2000] = {0};
 	int head_len = 0;
 	int size = 0;
 	uint8 *pCurPos = buf;
 	int len;
 	int i;
-	
-	head_len = MMS_Encode_header(pCurPos,(uint8*)"+8615986838642",(uint8*)"123456789");
+    IConfig *pConfig;
+	IShell  *pShell = AEE_GetShell();
+    char MMSImagepszPath[MG_MAX_FILE_NAME];
+    char MMSSoundpszPath[MG_MAX_FILE_NAME];
+    char MMSVideopszPath[MG_MAX_FILE_NAME];    
+	head_len = MMS_Encode_header(pCurPos,(uint8*)"+8613714333583",(uint8*)"123456789");
 	MMS_DEBUG(("[MMS] MMS_Encode_header head_len = %d",head_len));	
 	pCurPos += head_len;
 
-	mms_data.frag_num = 2;
-	mms_data.bImage = TRUE;
+	mms_data.frag_num = 1;
+    mms_data.bImage = TRUE;
+#if 0	
+    if (ISHELL_CreateInstance(pShell, AEECLSID_CONFIG,(void **)&pConfig) != SUCCESS)
+    {
+        return 0;
+    }
+    ICONFIG_GetItem(pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
+    ICONFIG_GetItem(pConfig, CFGI_MMSSOUND,MMSSoundpszPath, sizeof(MMSSoundpszPath));
+    ICONFIG_GetItem(pConfig, CFGI_MMSVIDEO,MMSVideopszPath, sizeof(MMSVideopszPath));
+    if(STRLEN(MMSImagepszPath) != 0)
+    {
+        mms_data.bImage = TRUE;
+        len = STRLEN("image/jpeg");
+    	STRNCPY((char*)mms_data.fragment[0].hContentType,"image/jpeg",len);
+    	len = STRLEN(MMSImagepszPath);
+    	STRNCPY((char*)mms_data.fragment[0].hContentFile,MMSImagepszPath,len);
+    	len = STRLEN(BASENAME(MMSImagepszPath));
+    	STRNCPY((char*)mms_data.fragment[0].hContentLocation,BASENAME(MMSImagepszPath),len);
+    	STRNCPY((char*)mms_data.fragment[0].hContentID,BASENAME(MMSImagepszPath),len);
+    	STRNCPY((char*)mms_data.fragment[0].hContentName,BASENAME(MMSImagepszPath),len);   
+        mms_data.frag_num++;
+        DBGPRINTF("MMSImagepszPath=%s len=%d", BASENAME(MMSImagepszPath), STRLEN(MMSImagepszPath));
+    }
+    if(STRLEN(MMSSoundpszPath) != 0)
+    {
+        mms_data.bAudio = TRUE;
+        len = STRLEN("audio/mid");
+    	STRNCPY((char*)mms_data.fragment[0].hContentType,"audio/mid",len);
+    	len = STRLEN(MMSSoundpszPath);
+    	STRNCPY((char*)mms_data.fragment[0].hContentFile,MMSSoundpszPath,len);
+    	len = STRLEN(BASENAME(MMSImagepszPath));
+    	STRNCPY((char*)mms_data.fragment[0].hContentLocation,BASENAME(MMSSoundpszPath),len);
+    	STRNCPY((char*)mms_data.fragment[0].hContentID,BASENAME(MMSSoundpszPath),len);
+    	STRNCPY((char*)mms_data.fragment[0].hContentName,BASENAME(MMSSoundpszPath),len);   
+        mms_data.frag_num++;
+        DBGPRINTF("MMSSoundpszPath=%s len=%d", BASENAME(MMSSoundpszPath), STRLEN(MMSSoundpszPath));
+    }   
+    if(STRLEN(MMSVideopszPath) != 0)
+    {
+        mms_data.bVideo = TRUE;
+        len = STRLEN("video/3gpp");
+    	STRNCPY((char*)mms_data.fragment[0].hContentType,"video/3gpp",len);
+    	len = STRLEN(MMSVideopszPath);
+    	STRNCPY((char*)mms_data.fragment[0].hContentFile,MMSVideopszPath,len);
+    	len = STRLEN(BASENAME(MMSVideopszPath));
+    	STRNCPY((char*)mms_data.fragment[0].hContentLocation,BASENAME(MMSVideopszPath),len);
+    	STRNCPY((char*)mms_data.fragment[0].hContentID,BASENAME(MMSVideopszPath),len);
+    	STRNCPY((char*)mms_data.fragment[0].hContentName,BASENAME(MMSVideopszPath),len);   
+        mms_data.frag_num++;
+        DBGPRINTF("MMSVideopszPath=%s len=%d", BASENAME(MMSVideopszPath), STRLEN(MMSVideopszPath));  
+    }     
+#endif    
 
 	len = STRLEN("image/jpeg");
 	STRNCPY((char*)mms_data.fragment[0].hContentType,"image/jpeg",len);
@@ -951,8 +1020,8 @@ int WMS_MMS_SEND_TEST(uint8 *buffer)
 	MMS_DEBUG(("[MMS] MMS_Encode_MsgBody head_len = %d",head_len));	
 	pCurPos += head_len;
 
-	len = WMS_MMS_CreateSMIL(buf,5*1024,mms_data);	
-	head_len = MMS_EncodeSmilFile(pCurPos,buffer,len);
+	len = WMS_MMS_CreateSMIL(smil_buf,2000,mms_data);	
+	head_len = MMS_EncodeSmilFile(pCurPos,smil_buf,len);
 	MMS_DEBUG(("[MMS] MMS_EncodeSmilFile head_len = %d",head_len));	
 	pCurPos += head_len;
 

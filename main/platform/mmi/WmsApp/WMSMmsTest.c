@@ -44,6 +44,7 @@
 #include "err.h"
 
 #include "WMSMms.h"
+#include "WMSMmsTest.h"
 
 int MMS_SocketTest(void);
 
@@ -53,11 +54,11 @@ int MMS_SocketTest(void);
 #define SOCKET_STATE_WRITING         3   // waiting to complete write
 #define SOCKET_STATE_READING         4   // waiting to complete read
 	
-#define MSG_MAX_PACKET_SIZE		(6*1024)
-#define SOCKET_BUFFER_SIZE		(30*1024)
-#define SENDDATAQUEUE_SIZE		(5)
-#define NOQUEUESLOTAVAILABLE	(-1)
-#define SOCKET_CONNECT_TIMER	(2*60000)// 2 min
+//#define MSG_MAX_PACKET_SIZE		(6*1024)
+//#define SOCKET_BUFFER_SIZE		(30*1024)
+//#define SENDDATAQUEUE_SIZE		(5)
+//#define NOQUEUESLOTAVAILABLE	(-1)
+//#define SOCKET_CONNECT_TIMER	(2*60000)// 2 min
 	
 #define DBGPRINTF_EX_FORMAT    "*dbgprintf-%d* %s:%d"
 #define SOCKET_DEBUG(arg) __DBGPRINTF(DBGPRINTF_EX_FORMAT,5,__FILE__,__LINE__),__DBGPRINTF arg 
@@ -301,7 +302,7 @@ static void ConnectError(void* pUser, int nError)
 					MSG_FATAL("MRS: Open file error %x", result,0,0);
 					return;
 			    }
-
+                //only for test ,
 			    pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/send_test1.txt", _OFM_READWRITE);
 				if ( pIFile != NULL )
 		        {
