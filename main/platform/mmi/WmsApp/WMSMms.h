@@ -430,7 +430,7 @@ int MMS_PDU_PutMessageClass(int in_MessageClass, int* out_MessageClass);
 int MMS_PDU_PutDeliveryReport(int in_DelRep, int* out_DelRep);
 int MMS_PDU_PutPriority(int in_priority, int* out_priority);
 int MMS_PDU_PutDeliveryReportStatus(int in_Status, int* out_Status);
-int WMS_MMS_SEND_TEST(uint8 *buffer);
+int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber);
 int WMS_MMS_Decode_TEST(char *file);
 int WMS_MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen);
 int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata,uint8* hPDU, int* hLen, uint8 ePDUType);

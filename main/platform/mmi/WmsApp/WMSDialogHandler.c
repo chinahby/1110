@@ -7392,7 +7392,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                             // 调用电话本接口获取人名
                             WMSUtil_GetContactName(pMe, pItem->m_szTo, pItem->m_szName, MAX_TITLE_LEN);
 #ifdef FEATURE_USES_MMS
-                            MMS_SocketTest();
+                            MMS_SocketTest(pItem->m_szTo);
                             return TRUE;
 #endif
                             CLOSE_DIALOG(DLGRET_SENDOPT);

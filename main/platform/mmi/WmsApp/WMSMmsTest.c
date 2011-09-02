@@ -45,8 +45,9 @@
 
 #include "WMSMms.h"
 #include "WMSMmsTest.h"
-
-int MMS_SocketTest(void);
+#include "WMSApp.h"
+#include "Wms.h"
+//int MMS_SocketTest(void);
 
 #define SOCKET_STATE_IDLE            0   // socket not opened
 #define SOCKET_STATE_CONNECTING      1   // waiting on connect
@@ -82,12 +83,13 @@ typedef struct _SocketInfoTag_{
 	AEEDNSResult			DNSResult;
 	AEECallback 			DNSCallback;
 	uint8					status;
-	int16					RecCount;
-	uint16					NoDataCount;
+	int32					RecCount;
+	uint32					NoDataCount;
 	uint8					RecBuffer[MSG_MAX_PACKET_SIZE];
 	uint8					SendBuffer[MSG_MAX_PACKET_SIZE];
-	uint16					nDataLen;
-	uint16					nBytesSent;
+	uint32					nDataLen;
+	uint32					nBytesSent;
+    AECHAR                  sendNumber[MAX_PH_DIGITS+1];
 }SocketInfoTag;
 
 static SocketInfoTag pSocketInfoTag = {0};
@@ -237,7 +239,7 @@ static void MMI_SocketSend(void *pUserData)
 		//reset the timeout timer
 		if((uint32)bytes_written < nLen)
 		{
-			pSocketInfo->nBytesSent += (uint16)bytes_written;
+			pSocketInfo->nBytesSent += (uint32)bytes_written;
 		}
 		else if((uint32)bytes_written == nLen)
 		{
@@ -272,7 +274,7 @@ static void MMI_SocketSend(void *pUserData)
 	}
 }
 
-extern int WMS_MMS_SEND_TEST(uint8 *buffer);
+extern int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber);
 
 static void ConnectError(void* pUser, int nError)
 {
@@ -288,8 +290,11 @@ static void ConnectError(void* pUser, int nError)
 	switch(nError)
 	{
 		case AEE_NET_SUCCESS:
-
-			pSocketInfo->nDataLen  = WMS_MMS_SEND_TEST(pSocketInfo->SendBuffer);
+        {
+            char sendNumber[MAX_PH_DIGITS+1] = {0};
+            WSTRTOSTR(pSocketInfo->sendNumber, sendNumber, MAX_PH_DIGITS+1);
+            DBGPRINTF("sendNumber=%s", sendNumber);
+			pSocketInfo->nDataLen  = (uint32)WMS_MMS_SEND_TEST(pSocketInfo->SendBuffer, sendNumber);
 			MSG_FATAL("[MSG][DeviceSocket]: WMS_MMS_SEND_TEST nDataLen=%d",pSocketInfo->nDataLen,0,0);
 			{
 				IFile* pIFile = NULL;
@@ -331,13 +336,14 @@ static void ConnectError(void* pUser, int nError)
 		        }
 			}
 
-			pSocketInfo->nBytesSent = (uint16)0;
-			pSocketInfo->RecCount = (uint16)0;
+			pSocketInfo->nBytesSent = (uint32)0;
+			pSocketInfo->RecCount = (uint32)0;
 			MSG_FATAL("nDataLen %d",pSocketInfo->nDataLen,0,0);
 			ISOCKET_Writeable(pSocketInfo->pISocket, MMI_SocketSend, pSocketInfo);
 
 			break;
 		/* »Ù≥¨ ±¥ÌŒÛ, ‘Ú ... */
+		}
 		case AEE_NET_ETIMEDOUT:
 			MSG_FATAL("ConnectError AEE_NET_ETIMEDOUT",0,0,0);
 			break;
@@ -352,7 +358,7 @@ static void ConnectError(void* pUser, int nError)
 	}
 }
 
-int MMS_SocketTest(void)
+int MMS_SocketTest(AECHAR *sendNumber)
 {
 	int result = SUCCESS;
 	INetMgr *pINetMgr = NULL;
@@ -384,8 +390,9 @@ int MMS_SocketTest(void)
   
 	pSocketInfoTag.pISocket = pISocket;
 	pSocketInfoTag.wPort = HTONS((INPort)80);
-
-
+    
+    MEMCPY(pSocketInfoTag.sendNumber, sendNumber, WSTRLEN(sendNumber)*2);
+    DBGPRINTF("sendNumber1=%s, sendNumber2=%s", sendNumber, pSocketInfoTag.sendNumber);
 	if (!INET_ATON("10.0.0.200",&Addr))
 	{
 		MSG_FATAL("INET_ATON failed!", 0,0,0);
