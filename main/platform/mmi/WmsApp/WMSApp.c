@@ -1279,6 +1279,13 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             
         case EVT_WMS_MSG_RECEIVED_MESSAGE:
             {
+            	#define HEADER_INFO 3
+
+				int data_len;
+				uint8 *data = NULL;
+				int header_len = 0;
+				uint8 *body;
+				int body_len;
                 wms_msg_event_info_s_type *info = ((wms_msg_event_info_s_type*)dwParam);
                 boolean bRet;
                 uint8 notify_buf[256] = {0};
@@ -1309,54 +1316,136 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 
 	            #ifdef FEATURE_USES_MMS
 	            	 nRet = IWMS_MMsDecodeNotifyBody(pMe->m_pwms,&pMe->m_CltTsdata,notify_buf);
-	            #endif
+	            
+
+					 //wangliang add! pass the notify message body to process
+					 //MMS notify is exist
+					 /*
+					 ** buffer:
+					 ** MSG_TYPE       			8       00000000
+					 ** TOTAL_SEGMENTS         	8       Total  number of segments
+					 ** SEGMENT_NUMBER       	8       The Segment Number
+					 ** DATAGRAM      (NUM_FIELDS – 3)*8         Segmented WDP Datagram
+					 **
+					 ** WDP Datagram Segment
+					 ** SOURCE_PORT       16     Source Port
+					 ** DESTINATION_PORT       16     Destination Port(2948)
+					 ** DATA        N*8  N bytes of Data from the Layer above WDP
+					 */
+					if ( nRet > 0 )
+					{
+						data_len = nRet;
+						
+						if ( data_len < HEADER_INFO )
+						{
+							goto Exit;
+						}
+
+
+						//get URL,we only need the first sms nofity
+						if ( notify_buf[2] == 0 )
+						{
+							//WDP body
+							data = &notify_buf[7];
+							header_len = data[HEADER_INFO-1];
+							if( data_len <= HEADER_INFO + header_len ) 
+							{
+								goto Exit;
+							}
+							else
+							{
+								uint8 *header = NULL;
+								body = data + HEADER_INFO + header_len;
+								header = (uint8 *)MALLOC(header_len+1);
+
+								if( NULL == header)
+								{
+									MSG_FATAL("SMSPUSH_ALLOC_ERROR1",0,0,0);
+									goto Exit;
+								}
+
+								MEMCPY( header, &data[HEADER_INFO], header_len );
+								header[header_len] = '\0';
+
+								if( !STRSTR((char*)header, "application/vnd.wap.mms-message"))
+								{
+									FREEIF( header );
+									goto Exit;
+								}
+
+								body_len = data_len - HEADER_INFO - header_len;
+								FREEIF( header );
+							}
+
+							body = (uint8*)sys_malloc(body_len);
+							if( NULL == body )
+							{
+								MSG_FATAL("SMSPUSH_ALLOC_ERROR2",0,0,0);
+								goto Exit;
+							}
+
+							MEMCPY( (void*)body, (void*)(data + HEADER_INFO + header_len), body_len);
+
+							//now, body need pass to function WMS_MMS_PDU_Decode to decode the URL.
+							//todo here
+							//
+							//ISHELL_PostEvent
+							{
+								int result = SUCCESS;
+			                	IFile* pIFile = NULL;
+							    IFileMgr *pIFileMgr = NULL;
+							    FileInfo pInfo = {0};
+							    int len = bRet;
+			                    // Wms Applet 不处理此消息
+			                    MSG_FATAL("MMS Decode body", 0, 0, 0);
+
+			                    result = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_FILEMGR,(void **)&pIFileMgr);
+								if (SUCCESS != result)
+							    {
+									MSG_FATAL("MRS: Open file error %x", result,0,0);
+									goto Exit;
+							    }
+
+			                    pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms_nofity.txt", _OFM_READWRITE);
+								if ( pIFile != NULL )
+						        {
+						            IFILE_Seek(pIFile, _SEEK_START, 0);
+						            IFILE_Write( pIFile, notify_buf, len);
+
+						            MSG_FATAL("IFILEMGR_OpenFile size=%d",len,0,0);
+						            IFILE_Release( pIFile);
+						            pIFile = NULL;
+						            IFILEMGR_Release(pIFileMgr);
+						            pIFileMgr = NULL;
+						        }
+						        else
+						        {
+									pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms_nofity.txt", _OFM_CREATE);
+									if ( pIFile != NULL )
+							        {
+							            IFILE_Write( pIFile, notify_buf, len);
+
+							            MSG_FATAL("IFILEMGR_OpenFile size=%d",len,0,0);
+							            IFILE_Release( pIFile);
+							            pIFile = NULL;
+							            IFILEMGR_Release(pIFileMgr);
+							            pIFileMgr = NULL;
+							        }
+						        }
+							}
+						}
+						else
+						{
+							goto Exit;
+						}
+					}
+				#endif
                 }
 
                 MSG_FATAL("IWMS_MMsDecodeNotifyBody=%d", nRet, 0, 0);
                 if (bRet > 0)
                 {
-                	int result = SUCCESS;
-                	IFile* pIFile = NULL;
-				    IFileMgr *pIFileMgr = NULL;
-				    FileInfo pInfo = {0};
-				    int len = bRet;
-                    // Wms Applet 不处理此消息
-                    MSG_FATAL("WAP PUsh Message Recieved and Dropped", 0, 0, 0);
-
-                    result = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_FILEMGR,(void **)&pIFileMgr);
-					if (SUCCESS != result)
-				    {
-						MSG_FATAL("MRS: Open file error %x", result,0,0);
-						goto Exit;
-				    }
-
-                    pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms_nofity.txt", _OFM_READWRITE);
-					if ( pIFile != NULL )
-			        {
-			            IFILE_Seek(pIFile, _SEEK_START, 0);
-			            IFILE_Write( pIFile, notify_buf, len);
-
-			            MSG_FATAL("IFILEMGR_OpenFile size=%d",len,0,0);
-			            IFILE_Release( pIFile);
-			            pIFile = NULL;
-			            IFILEMGR_Release(pIFileMgr);
-			            pIFileMgr = NULL;
-			        }
-			        else
-			        {
-						pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms_nofity.txt", _OFM_CREATE);
-						if ( pIFile != NULL )
-				        {
-				            IFILE_Write( pIFile, notify_buf, len);
-
-				            MSG_FATAL("IFILEMGR_OpenFile size=%d",len,0,0);
-				            IFILE_Release( pIFile);
-				            pIFile = NULL;
-				            IFILEMGR_Release(pIFileMgr);
-				            pIFileMgr = NULL;
-				        }
-			        }	    
-	
+                
                 Exit:
                 	WMSAPPU_SYSFREE(dwParam);
                     return TRUE;
