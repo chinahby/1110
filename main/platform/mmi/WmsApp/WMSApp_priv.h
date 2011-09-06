@@ -1350,6 +1350,29 @@ void WmsApp_BuildSendClentMsgList(WmsApp * pMe);
 ==============================================================================*/
 void WmsApp_ProcessStatus(WmsApp *pMe, wms_submit_report_info_s_type *pRptInfo);
 
+
+#ifdef FEATURE_USES_MMS
+/*==============================================================================
+函数:
+    WmsApp_ProcessMMSStatus
+
+说明:
+    函数处理来自 wms 的报告信息。
+
+参数:
+    pMe [in]: 指向 WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    none
+
+备注:
+
+==============================================================================*/
+
+void WmsApp_ProcessMMSStatus(WmsApp *pMe);
+
+#endif
+
 /*==============================================================================
 函数:
     WmsApp_MemberReset

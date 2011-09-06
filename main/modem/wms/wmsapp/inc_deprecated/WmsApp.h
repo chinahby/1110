@@ -376,6 +376,10 @@ typedef struct
 #define EVT_WMS_MSG_DELETE_STATUS_REPORT 0x2010
 #define EVT_WMS_MSG_DUPLICATE_CB_PAGE    0x2011
 
+#ifdef FEATURE_USES_MMS
+#define EVT_MMS_MSG_SEND_FINSH                0x2012
+#endif
+
 #define EVT_WMS_CMD_ERR                 0x3000
 
 #ifdef FEATURE_BROADCAST_SMS_MULTIMODE

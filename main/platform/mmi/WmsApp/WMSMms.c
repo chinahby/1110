@@ -1014,7 +1014,7 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
 	len = STRLEN("1.jpg");
 	STRNCPY((char*)mms_data.fragment[0].hContentName,"1.jpg",len);
 #endif	
-
+    //彩信里的消息文本
 	len = STRLEN("123456789");
 	STRNCPY((char*)mms_data.fragment[1].hContentText,"123456789",len);
 	len = STRLEN("text/plain");

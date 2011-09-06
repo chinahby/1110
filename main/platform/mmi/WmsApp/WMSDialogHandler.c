@@ -35,6 +35,7 @@
 
 #ifdef FEATURE_USES_MMS
 #include "WMSMmsTest.h"
+#include "WMSMms.h"
 #endif
 /*==============================================================================
                                  
@@ -6345,6 +6346,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
 
         // 发送提示
         case EVT_USER_REDRAW:
+            MSG_FATAL("IDD_SENDING_Handler EVT_USER_REDRAW",0,0,0);
             if ((pMe->m_eCreateWMSType != SEND_MSG_RESEND) &&
                 (pMe->m_eCreateWMSType != SEND_MSG_RESERVE) &&
                 (NULL == pMe->m_pCurSendCltMsg))
@@ -6447,29 +6449,45 @@ static boolean IDD_SENDING_Handler(void *pUser,
             
         // 发送结果提示
         case EVT_UPDATE:
-            if (!WmsApp_CurmessageIsFullSendout(pMe))
-            {// 发送完毕才提示
-                PFNNOTIFY pfn = WmsApp_MultSendMsgTimer;
-                
-                switch (pMe->m_eCreateWMSType)
+            MSG_FATAL("EVT_UPDATE",0,0,0);
+#ifdef FEATURE_USES_MMS
+            if((pMe->m_pMMSImage != NULL) || (pMe->m_pMMSSOUND!= NULL) || (pMe->m_pMMSVIDEO!= NULL))
+            {
+                if(!MMS_GetSocketSendIsFinsh())
                 {
-                    case SEND_MSG_RESEND:
-                        pfn = WmsApp_ReSendMsgTimer;
-                        break;
-                        
-                    case SEND_MSG_RESERVE:
-                        pfn = WmsApp_SendReservedMsgTimer;
-                        break;
-                        
-                    default:
-                        break;
+                    PFNNOTIFY pfn = WmsApp_MultSendMsgTimer;
+                    //(void)ISHELL_SetTimer(pMe->m_pShell, 300, pfn, pMe);
+                    MSG_FATAL("EVT_UPDATE 1",0,0,0);
+                    // 发送完毕才提示
+                  //  return TRUE;
                 }
-                
-                (void)ISHELL_SetTimer(pMe->m_pShell, 300, pfn, pMe);
-
-                return TRUE;
             }
+            else
+#endif
+            {
+                if (!WmsApp_CurmessageIsFullSendout(pMe))
+                {// 发送完毕才提示
+                    PFNNOTIFY pfn = WmsApp_MultSendMsgTimer;
+                    MSG_FATAL("EVT_UPDATE 2 m_eCreateWMSType=%d",pMe->m_eCreateWMSType,0,0);
+                    switch (pMe->m_eCreateWMSType)
+                    {
+                        case SEND_MSG_RESEND:
+                            pfn = WmsApp_ReSendMsgTimer;
+                            break;
+                            
+                        case SEND_MSG_RESERVE:
+                            pfn = WmsApp_SendReservedMsgTimer;
+                            break;
+                            
+                        default:
+                            break;
+                    }
+                    
+                    (void)ISHELL_SetTimer(pMe->m_pShell, 300, pfn, pMe);
 
+                    return TRUE;
+                }
+            }
             // 保存发送失败的短信到 OUTBOX
             // 对于 FEATURE_CARRIER_VENEZUELA_MOVILNET 要求为群发的每个目标保存短信
             // ，短信发送前已保存，这里不再保存失败的短信
@@ -6523,7 +6541,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 AEERect rc;
                 int x, y;
                 RGBVAL oldColor = 0;
-                
+                MSG_FATAL("消息发送结果提示界面",0,0,0);
                 x=0;
                 y=SENDINGSMS_ANI_Y;
                 if (pMe->m_pImage != NULL)
@@ -6535,39 +6553,55 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 }
             
                 SETAEERECT(&rc,  0, y, pMe->m_rc.dx, pMe->m_rc.dy-y);
-                MSG_FATAL("pMe->m_SendStatus==================%d",pMe->m_SendStatus,0,0);
-                if (pMe->m_SendStatus == WMS_RPT_OK)
+#ifdef FEATURE_USES_MMS
+                if((pMe->m_pMMSImage != NULL) || (pMe->m_pMMSSOUND!= NULL) || (pMe->m_pMMSVIDEO!= NULL))    
                 {
-                    nResID = IDS_MSGSENT;
-                    pMe->m_SucNum += 1;
+                    MSG_FATAL("MMS_GetSocketReadStatus()=%d",MMS_GetSocketReadStatus(),0,0);
+                    if(MMS_GetSocketReadStatus() == HTTP_CODE_OK)
+                    {
+                        nResID = IDS_MSGSENT;
+                    }
+                    else
+                    {
+                        nResID = IDS_FAILED;
+                    }
                 }
                 else
+#endif            
                 {
-                    // 为满足CDG2测试要求，针对几个特殊状态予以提示
-                    switch(pMe->m_SendtlStatus)
+                    MSG_FATAL("pMe->m_SendStatus==================%d",pMe->m_SendStatus,0,0);
+                    if (pMe->m_SendStatus == WMS_RPT_OK)
                     {
-                        // Unknown destination address.
-                        case WMS_TL_ADDRESS_TRANSLATION_FAILURE_S: 
-                            nResID = IDS_CDG2_FAIL1;
-                            break;
-       
-                        // The mobile station originated WMS feature is not
-                        // activated in the network.
-                        case WMS_TL_SMS_ORIGINATION_DENIED_S: 
-                            nResID = IDS_CDG2_FAIL97;
-                            break;
-       
-                        // The WMS feature is not supported by the base station.
-                        case WMS_TL_SMS_NOT_SUPPORTED_S: 
-                            nResID = IDS_CDG2_FAIL100;
-                            break;
-       
-                        default:
-                            break;
+                        nResID = IDS_MSGSENT;
+                        pMe->m_SucNum += 1;
                     }
-                    pMe->m_FailNum += 1;
+                    else
+                    {
+                        // 为满足CDG2测试要求，针对几个特殊状态予以提示
+                        switch(pMe->m_SendtlStatus)
+                        {
+                            // Unknown destination address.
+                            case WMS_TL_ADDRESS_TRANSLATION_FAILURE_S: 
+                                nResID = IDS_CDG2_FAIL1;
+                                break;
+           
+                            // The mobile station originated WMS feature is not
+                            // activated in the network.
+                            case WMS_TL_SMS_ORIGINATION_DENIED_S: 
+                                nResID = IDS_CDG2_FAIL97;
+                                break;
+           
+                            // The WMS feature is not supported by the base station.
+                            case WMS_TL_SMS_NOT_SUPPORTED_S: 
+                                nResID = IDS_CDG2_FAIL100;
+                                break;
+           
+                            default:
+                                break;
+                        }
+                        pMe->m_FailNum += 1;
+                    }
                 }
-                
                 (void) ISHELL_LoadResString(pMe->m_pShell,
                         AEE_WMSAPPRES_LANGFILE,
                         nResID,
@@ -6597,7 +6631,18 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 
                 IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-                
+#ifdef FEATURE_USES_MMS
+                if((pMe->m_pMMSImage != NULL) || (pMe->m_pMMSSOUND!= NULL) || (pMe->m_pMMSVIDEO!= NULL))    
+                {
+                    (void)ISHELL_PostEventEx(pMe->m_pShell,
+                                             EVTFLG_ASYNC, 
+                                             AEECLSID_WMSAPP, 
+                                             EVT_SENDSMSEND,
+                                             0, 
+                                             0);
+                }
+                else
+#endif                
                 // 设置定时器函数启动下一次发送
                 {
                     PFNNOTIFY pfn = WmsApp_MultSendMsgTimer;
@@ -6622,6 +6667,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
             return TRUE;
                 
         case EVT_DIALOG_END:
+            MSG_FATAL("IDD_SENDING_Handler EVT_DIALOG_END",0,0,0);
             (void)IWMS_SetMultiSend(pMe->m_pwms, 
                                     pMe->m_clientId, 
                                     &pMe->m_callback,
@@ -6663,7 +6709,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 wms_message_index_type  wIndex;
                 wms_message_tag_e_type  tag;
                 wms_msg_event_info_s_type *Info = (wms_msg_event_info_s_type*)dwParam;
-                
+                MSG_FATAL("IDD_SENDING_Handler EVT_WMS_MSG_WRITE",0,0,0);
                 mem_store = Info->status_info.message.msg_hdr.mem_store;
                 wIndex = Info->status_info.message.msg_hdr.index;
                 tag = Info->status_info.message.msg_hdr.tag;
@@ -6720,6 +6766,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
             
         // 读消息命令返回
         case EVT_WMS_MSG_READ:
+            MSG_FATAL("IDD_SENDING_Handler EVT_WMS_MSG_READ",0,0,0);
             if (((pMe->m_eCreateWMSType == SEND_MSG_RESEND) ||
                  (pMe->m_eCreateWMSType == SEND_MSG_RESERVE)) && 
                 (pMe->m_idxCur < LONGSMS_MAX_PACKAGES))
@@ -6798,7 +6845,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
         case EVT_WMS_CMD_STATUS:
             {
                 wmsapp_cmd_status_type  *pStatus = (wmsapp_cmd_status_type *)dwParam;
-                
+                MSG_FATAL("IDD_SENDING_Handler EVT_WMS_CMD_STATUS",0,0,0);
                 if (NULL == pStatus)
                 {
                     return TRUE;
@@ -6842,6 +6889,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
             return TRUE;
             
         case EVT_SENDSMSEND:
+            MSG_FATAL("IDD_SENDING_Handler EVT_SENDSMSEND",0,0,0);
             CLOSE_DIALOG(DLGRET_END)
             return TRUE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
@@ -7393,7 +7441,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                             WMSUtil_GetContactName(pMe, pItem->m_szTo, pItem->m_szName, MAX_TITLE_LEN);
 #ifdef FEATURE_USES_MMS
                             MMS_SocketTest(pItem->m_szTo);
-                            return TRUE;
+                            //return TRUE;
 #endif
                             CLOSE_DIALOG(DLGRET_SENDOPT);
                         }
@@ -12199,6 +12247,7 @@ static boolean IDD_MSGBOX_Handler(void *pUser,
             return TRUE;
         
         case EVT_DISPLAYDIALOGTIMEOUT:
+            MSG_FATAL("DLGRET_MSGBOX_OK",0,0,0);
             CLOSE_DIALOG(DLGRET_MSGBOX_OK)
             return TRUE;
 
@@ -15867,6 +15916,7 @@ static boolean IDD_POPMSG_Handler(void *pUser,AEEEvent eCode,uint16 wParam,uint3
                 case AVK_INFO:
                 case AVK_CLR:
                 case AVK_SELECT:
+                    MSG_FATAL("DLGRET_MSGBOX_OK",0,0,0);
                     CLOSE_DIALOG(DLGRET_MSGBOX_OK);
                     return TRUE;
                     
@@ -15877,6 +15927,7 @@ static boolean IDD_POPMSG_Handler(void *pUser,AEEEvent eCode,uint16 wParam,uint3
 			
 		case EVT_USER:
 			MSG_FATAL("EVT_USER::::::::::::::::1111111111111111111111111111111111111111111",0,0,0);
+            MSG_FATAL("DLGRET_MSGBOX_OK",0,0,0);
 			CLOSE_DIALOG(DLGRET_MSGBOX_OK);
 			break;
         

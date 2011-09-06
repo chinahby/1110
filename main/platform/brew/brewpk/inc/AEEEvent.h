@@ -310,6 +310,9 @@ enum
 #ifdef FEATURE_OEMOMH
     EVT_OMH_PROMPT,
 #endif
+#ifdef FEATURE_USES_MMS
+    EVT_MMS_MSG_SEND_FINSH,
+#endif    
     EVT_CUST_MAX
 };
 #endif /*CUST_EDITION*/

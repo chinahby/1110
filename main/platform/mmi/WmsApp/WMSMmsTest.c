@@ -90,6 +90,8 @@ typedef struct _SocketInfoTag_{
 	uint32					nDataLen;
 	uint32					nBytesSent;
     AECHAR                  sendNumber[MAX_PH_DIGITS+1];
+    uint8                   SocketReadStatus;//发送彩信后返回的状态
+    boolean                 SendFinsh;
 }SocketInfoTag;
 
 static SocketInfoTag pSocketInfoTag = {0};
@@ -110,7 +112,7 @@ static void SocketReadableCB(void * pData)
 	{
 		return;
 	}
-	
+	pSocketInfoTag.SendFinsh = TRUE;
 	pSocketInfo->RecCount = (uint16)ISOCKET_Read(pSocketInfo->pISocket, pSocketInfo->RecBuffer, MSG_MAX_PACKET_SIZE);
 	MSG_FATAL("[MSG][DeviceSocket]: SocketReadableCB Enter pSocketInfo->RecCount = %d!",pSocketInfo->RecCount,0,0);
 
@@ -128,7 +130,7 @@ static void SocketReadableCB(void * pData)
 
 		pSocketInfo->NoDataCount = 0;
 
-		if(pSocketInfo->RecCount > 0)
+		if(pSocketInfo->RecCount > 0)//已经发送完成并收到了返回的数据
 		{
 			IFile* pIFile = NULL;
 		    IFileMgr *pIFileMgr = NULL;
@@ -167,6 +169,17 @@ static void SocketReadableCB(void * pData)
 		            pIFileMgr = NULL;
 		        }
 	        }
+            if((STRISTR((char*)(pSocketInfo->RecBuffer), "HTTP/1.1 200") != NULL) ||
+               (STRISTR((char*)(pSocketInfo->RecBuffer), "HTTP/1.1200") != NULL))
+            {
+                MSG_FATAL("SocketReadStatus == HTTP_CODE_OK",0,0,0);
+                pSocketInfoTag.SocketReadStatus = HTTP_CODE_OK;
+            }
+            else
+            {
+                MSG_FATAL("SocketReadStatus == -1",0,0,0);
+                pSocketInfoTag.SocketReadStatus = 0;
+            }
 		}
 		
 		//client may destroy socket in M4_SOCKETNOTIFICATION_RECEIVE synchronously
@@ -175,15 +188,23 @@ static void SocketReadableCB(void * pData)
 		{
 			ISOCKET_Readable(pSocketInfo->pISocket, SocketReadableCB, pSocketInfo);
 		}
-
+        {
+            IShell *pShell = AEE_GetShell();
+            (void)ISHELL_PostEventEx(pShell,
+                                     EVTFLG_ASYNC, 
+                                     AEECLSID_WMSAPP, 
+                                     EVT_MMS_MSG_SEND_FINSH,
+                                     0, 
+                                     0);
+		}
 		return;
 	}
-	else if(pSocketInfo->RecCount == AEE_NET_WOULDBLOCK)
+	else if(pSocketInfo->RecCount == AEE_NET_WOULDBLOCK)//发送完成但返回的数据有问题，表示发送不成功
 	{
 		pSocketInfo->RecCount = 0;
 		pSocketInfo->NoDataCount = 0;
 	}
-	else if(pSocketInfo->RecCount == AEE_NET_ERROR)
+	else if(pSocketInfo->RecCount == AEE_NET_ERROR)//发送完成但返回的数据有问题，表示发送不成功
 	{
 		int err = 0;
 		
@@ -195,7 +216,7 @@ static void SocketReadableCB(void * pData)
 
 		return;
 	}
-	else if(pSocketInfo->RecCount == 0)
+	else if(pSocketInfo->RecCount == 0)//发送完成但返回的数据有问题，表示发送不成功
 	{
 		pSocketInfo->NoDataCount++;
 
@@ -399,6 +420,8 @@ int MMS_SocketTest(AECHAR *sendNumber)
 	}	
 
 	pSocketInfoTag.status = SOCKET_STATE_CONNECTING;
+    pSocketInfoTag.SendFinsh = FALSE;
+    pSocketInfoTag.SocketReadStatus = 0;
 	ISOCKET_Connect(pISocket, Addr, pSocketInfoTag.wPort, ConnectError, (void*)&pSocketInfoTag);
 Exit:
 
@@ -406,4 +429,17 @@ Exit:
 	MSG_FATAL("MRS: Open socket result %x", result,0,0);
 	
 	return SUCCESS;
+}
+
+//获取发送彩信后返回的状态
+uint8 MMS_GetSocketReadStatus()
+{
+    MSG_FATAL("pSocketInfoTag.SocketReadStatus=%d", pSocketInfoTag.SocketReadStatus,0,0);
+    return pSocketInfoTag.SocketReadStatus;
+}
+
+boolean MMS_GetSocketSendIsFinsh()
+{
+    MSG_FATAL("pSocketInfoTag.SendFinsh=%d", pSocketInfoTag.SendFinsh,0,0);
+    return pSocketInfoTag.SendFinsh;
 }

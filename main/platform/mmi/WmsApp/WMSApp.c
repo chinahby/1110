@@ -1268,6 +1268,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             
         case EVT_WMS_MSG_SUBMIT_REPORT:
         case EVT_WMS_MSG_SEND:
+            MSG_FATAL("CWmsApp_HandleEvent EVT_WMS_MSG_SEND eCode=0X%x",eCode,0,0);
 			if (((wms_msg_event_info_s_type *)dwParam)->submit_report_info.client_id == WMS_CLIENT_TYPE_WMS_APP)            
             {
                 WmsApp_ProcessStatus(pMe, &((wms_msg_event_info_s_type *)dwParam)->submit_report_info);
@@ -1276,7 +1277,16 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             WMSAPPU_SYSFREE((wms_msg_event_info_s_type*)dwParam);
 
             return TRUE;
-            
+
+#ifdef FEATURE_USES_MMS
+        case EVT_MMS_MSG_SEND_FINSH:
+            {
+                MSG_FATAL("CWmsApp_HandleEvent EVT_MMS_MSG_SEND_FINSH",0,0,0);
+                WmsApp_ProcessMMSStatus(pMe);
+                return TRUE;
+            }
+#endif
+
         case EVT_WMS_MSG_RECEIVED_MESSAGE:
             {
             	#define HEADER_INFO 3
@@ -2462,6 +2472,26 @@ void WmsApp_MultSendMsgTimer(void *pme)
     {
         return;
     }
+
+#ifdef FEATURE_USES_MMS
+    if((pMe->m_pMMSImage != NULL) || (pMe->m_pMMSSOUND!= NULL) || (pMe->m_pMMSVIDEO!= NULL))   
+    {
+        if(MMS_GetSocketSendIsFinsh())
+        {
+            goto END_SENDING;
+        }
+        pMe->m_bSending = TRUE;
+        pMe->m_bDCDisconnectedInSending = FALSE;
+        pMe->m_nDisconnectedInSendingRetryTimes = 0;        
+        (void)ISHELL_PostEventEx(pMe->m_pShell,
+                                 EVTFLG_ASYNC, 
+                                 AEECLSID_WMSAPP, 
+                                 EVT_USER_REDRAW,
+                                 0, 
+                                 0);
+        return;
+    }
+#endif                        
 
     pMe->m_bSaveFailedMsg = FALSE;
     
@@ -5830,7 +5860,7 @@ static uint16 WmsApp_GetMsgICONID(wms_cache_info_node * pNode)
 boolean WmsApp_CurmessageIsFullSendout(WmsApp * pMe)
 {
     boolean bRet = TRUE;
-    
+    MSG_FATAL("WmsApp_CurmessageIsFullSendout Start m_eCreateWMSType=%d",pMe->m_eCreateWMSType,0,0);
     if (pMe->m_eCreateWMSType == SEND_MSG_RESEND)
     {
         pMe->m_idxCur++;
@@ -5953,7 +5983,7 @@ boolean WmsApp_CurmessageIsFullSendout(WmsApp * pMe)
             bRet = FALSE;
         }
     }
-    
+    MSG_FATAL("WmsApp_CurmessageIsFullSendout End bRet=%d", bRet,0,0);
     return bRet;
 }
 
@@ -6312,3 +6342,44 @@ static int CWmsApp_DeleteAllNvCdmaSms(IWmsApp *p)
     
     return nRet;
 }
+
+#ifdef FEATURE_USES_MMS
+/*==============================================================================
+函数:
+    WmsApp_ProcessMMSStatus
+
+说明:
+    函数处理来自 wms 的报告信息。
+
+参数:
+    pMe [in]: 指向 WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+    pRptInfo [in]: wms_submit_report_info_s_type 结构指针。
+
+返回值:
+    none
+
+备注:
+
+==============================================================================*/
+void WmsApp_ProcessMMSStatus(WmsApp *pMe)
+{
+    MSG_FATAL("WmsApp_ProcessMMSStatus Start",0,0,0);
+    pMe->m_SendStatus = MMS_GetSocketReadStatus();
+    
+    ERR("m_SendStatus = %d", pMe->m_SendStatus, 0, 0);    
+    
+    if ((pMe->m_wActiveDlgID == IDD_SENDING) &&
+        (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_WMSAPP))
+    {
+        (void)ISHELL_PostEventEx(pMe->m_pShell,
+                                 EVTFLG_ASYNC, 
+                                 AEECLSID_WMSAPP, 
+                                 EVT_UPDATE,
+                                 0, 
+                                 0);
+    }
+    MSG_FATAL("WmsApp_ProcessMMSStatus End",0,0,0);
+}
+
+#endif
+
