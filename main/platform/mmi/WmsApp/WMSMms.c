@@ -1064,7 +1064,7 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
 	head_len = STRLEN((char*)buffer);
 	MMS_DEBUG(("[MMS] POST_TEST head_len = %d",head_len));
 	
-	MEMCPY((void*)(buffer+head_len),buf,size);//将来直接保存buf就行了
+	MEMCPY((void*)(buffer+head_len),buf,size);//将来直接保存buf就行了,再解析时用WMS_MMS_WSP_DecodeMessage解析就可以了
 
 	return (head_len+size);
 }

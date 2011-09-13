@@ -207,13 +207,13 @@ typedef enum _mms_message_image_type_
 
 typedef struct _wsp_decoder_data_fragment_
 {
-	uint8 hContentType[MMS_MAX_CONTENT_TYPE];
+	uint8 hContentType[MMS_MAX_CONTENT_TYPE];//类型
 	uint8 hContentLocation[MMS_MAX_CONTENT_LOCATION];
 	uint8 hContentID[MMS_MAX_CONTENT_ID];
 	uint8 hContentName[MMS_MAX_CONTENT_NAME];
 	uint8 hContentEnCode[MMS_MAX_CONTENT_ENCODE];
-	uint8 *pContent;
-	uint32 size;
+	uint8 *pContent;//彩信元素内容
+	uint32 size;//大小
 }WSP_DEC_DATA_FRAGMENT;
 
 typedef struct _wsp_encoder_data_fragment_
