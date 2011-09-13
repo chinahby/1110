@@ -442,4 +442,8 @@ int WMS_MMS_CreateSMIL(uint8 *out_buf,int buf_size,WSP_MMS_ENCODE_DATA data);
 
 boolean MMS_GetProxySettings(boolean *bUseProxy,char* hProxyHost, int* iProxyPort);
 boolean MMS_SetProxySettings(boolean bUseProxy,char* hProxyHost, int iProxyPort);
+#ifdef FEATURE_USES_MMS
+WSP_MMS_ENCODE_DATA *MMS_GetMMSData();
+void MMS_ResetMMSData();
+#endif
 #endif

@@ -100,6 +100,8 @@ static boolean is_us_ascii_string(char * in_s, int in_len);
 static int MMS_WSP_ContentTypeDB_Text2MMS(uint8* ct, int ct_len, uint8* ctbyte);
 static int slim_strncmp_nocase(char *in_s, char *in_t, int in_n);
 static MMS_MESSAGE_TYPE MMS_GetMMSTypeByName(uint8 *hContentType);
+static const char *MMS_GetMimeType(const char *pszSrc);
+static boolean MMS_STREQI(const char *s1, const char *s2);
 
 #define SLIM_WSP_WELL_KNWON_VALULES_MIME_TEXT_PLAIN 0x03
 #define SLIM_WSP_WELL_KNWON_VALULES_MIME_MULTIPART_MIXED 0x0c
@@ -578,22 +580,28 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	uint8 subhead_buf[512];
 	uint8 *temp_pos;
 	int i = 0;
-    result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
-	if (SUCCESS != result)
-    {
-		MSG_FATAL("MRS: Open file error %x", result,0,0);
-		return -1;
-    }
+    MMS_MESSAGE_TYPE type;
+    
+    type = MMS_GetMMSTypeByName(frag.hContentType);
 
-    if (IFILEMGR_GetInfo(pIFileMgr,(char*)frag.hContentFile, &pInfo) == SUCCESS)
+    if ( type != MMS_MESSAGE_TYPE_TEXT )
     {
-    	content_size = (int)pInfo.dwSize;
-    }
-    else
-    {
-		return -1;
-    }
+        result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+    	if (SUCCESS != result)
+        {
+    		MSG_FATAL("MRS: Open file error %x", result,0,0);
+    		return -1;
+        }
 
+        if (IFILEMGR_GetInfo(pIFileMgr,(char*)frag.hContentFile, &pInfo) == SUCCESS)
+        {
+        	content_size = (int)pInfo.dwSize;
+        }
+        else
+        {
+    		return -1;
+        }
+    }
 
     hn = MMS_WSP_HEADER_CONTENT_TYPE;
 
@@ -731,18 +739,21 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	}
 	else
 	{
-		pIFile = IFILEMGR_OpenFile( pIFileMgr, (char*)frag.hContentFile, _OFM_READ);
-		if ( pIFile != NULL )
-	    {
-	        IFILE_Seek(pIFile, _SEEK_START, 0);
-	        IFILE_Read( pIFile, (char*)pCurPos, content_size);
+        if ( type != MMS_MESSAGE_TYPE_TEXT )
+        {
+    		pIFile = IFILEMGR_OpenFile( pIFileMgr, (char*)frag.hContentFile, _OFM_READ);
+    		if ( pIFile != NULL )
+    	    {
+    	        IFILE_Seek(pIFile, _SEEK_START, 0);
+    	        IFILE_Read( pIFile, (char*)pCurPos, content_size);
 
-	        MSG_FATAL("IFILEMGR_OpenFile content_size=%d",content_size,0,0);
-	        IFILE_Release( pIFile);
-	        pIFile = NULL;
-	        IFILEMGR_Release(pIFileMgr);
-	        pIFileMgr = NULL;
-	    }
+    	        MSG_FATAL("IFILEMGR_OpenFile content_size=%d",content_size,0,0);
+    	        IFILE_Release( pIFile);
+    	        pIFile = NULL;
+    	        IFILEMGR_Release(pIFileMgr);
+    	        pIFileMgr = NULL;
+    	    }
+        }
 	}
 	pCurPos += content_size;
 	
@@ -918,7 +929,7 @@ int WMS_MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen)
 	
 }
 
-WSP_MMS_ENCODE_DATA mms_data = {0};
+static WSP_MMS_ENCODE_DATA mms_data = {0};
 
 uint8 buf[150*1024] = {0};
 
@@ -930,7 +941,7 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
 	int size = 0;
 	uint8 *pCurPos = buf;
 	int len;
-	int i,index=0;
+	int i,index = mms_data.frag_num;
     IConfig *pConfig;
 	IShell  *pShell = AEE_GetShell();
     char MMSImagepszPath[MG_MAX_FILE_NAME];
@@ -939,10 +950,10 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
     MEMSET((void*)buf, 0, 150*1024);
 	//head_len = MMS_Encode_header(pCurPos,(uint8*)"+8613714333583",(uint8*)"123456789");
 	head_len = MMS_Encode_header(pCurPos,(uint8*)sendNumber,(uint8*)"123456789");
-	MMS_DEBUG(("[MMS] MMS_Encode_header head_len = %d, sendNumber len=%d",head_len, STRLEN(sendNumber)));	
+	MMS_DEBUG(("WMS_MMS_SEND_TEST head_len = %d, sendNumber len=%d, frag_num=%d",head_len, STRLEN(sendNumber), mms_data.frag_num));	
 	pCurPos += head_len;
 
-    MEMSET((void*)&mms_data, 0, sizeof(mms_data));
+    //MEMSET((void*)&mms_data, 0, sizeof(mms_data));
 #if 1	
     if (ISHELL_CreateInstance(pShell, AEECLSID_CONFIG,(void **)&pConfig) != SUCCESS)
     {
@@ -954,8 +965,9 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
     if(STRLEN(MMSImagepszPath) != 0)
     {
         mms_data.bImage = TRUE;
-        len = STRLEN("image/jpeg");
-    	MEMCPY((char*)mms_data.fragment[index].hContentType,"image/jpeg",len);
+        len = STRLEN(MMS_GetMimeType(MMSImagepszPath));
+        DBGPRINTF("GetMimeType(MMSImagepszPath)=%s len=%d", MMS_GetMimeType(MMSImagepszPath), STRLEN(MMS_GetMimeType(MMSImagepszPath)));
+    	MEMCPY((char*)mms_data.fragment[index].hContentType,MMS_GetMimeType(MMSImagepszPath),len);
     	len = STRLEN(MMSImagepszPath);
     	STRNCPY((char*)mms_data.fragment[index].hContentFile,MMSImagepszPath,len);
     	len = STRLEN(BASENAME(MMSImagepszPath));
@@ -969,8 +981,9 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
     if(STRLEN(MMSSoundpszPath) != 0)
     {
         mms_data.bAudio = TRUE;
-        len = STRLEN("audio/mid");
-    	MEMCPY((char*)mms_data.fragment[index].hContentType,"audio/mid",len);
+        len = STRLEN(MMS_GetMimeType(MMSSoundpszPath));
+    	MEMCPY((char*)mms_data.fragment[index].hContentType,MMS_GetMimeType(MMSSoundpszPath),len);
+        DBGPRINTF("GetMimeType(MMSSoundpszPath)=%s len=%d", MMS_GetMimeType(MMSSoundpszPath), STRLEN(MMS_GetMimeType(MMSSoundpszPath)));
     	len = STRLEN(MMSSoundpszPath);
     	STRNCPY((char*)mms_data.fragment[index].hContentFile,MMSSoundpszPath,len);
     	len = STRLEN(BASENAME(MMSSoundpszPath));
@@ -987,8 +1000,8 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
     if(STRLEN(MMSVideopszPath) != 0)
     {
         mms_data.bVideo = TRUE;
-        len = STRLEN("video/3gpp");
-    	MEMCPY((char*)mms_data.fragment[index].hContentType,"video/3gpp",len);
+        len = STRLEN(MMS_GetMimeType(MMSVideopszPath));
+    	MEMCPY((char*)mms_data.fragment[index].hContentType,MMS_GetMimeType(MMSVideopszPath),len);
     	len = STRLEN(MMSVideopszPath);
     	MEMCPY((char*)mms_data.fragment[index].hContentFile,MMSVideopszPath,len);
     	len = STRLEN(BASENAME(MMSVideopszPath));
@@ -998,7 +1011,8 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
         mms_data.frag_num++;
         ++index;
         DBGPRINTF("MMSVideopszPath=%s len=%d", BASENAME(MMSVideopszPath), STRLEN(MMSVideopszPath));  
-    }     
+    }   
+ 
 #else    
 	mms_data.frag_num = 1;
     mms_data.bImage = TRUE;
@@ -1013,7 +1027,7 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
 	STRNCPY((char*)mms_data.fragment[0].hContentID,"1.jpg",len);
 	len = STRLEN("1.jpg");
 	STRNCPY((char*)mms_data.fragment[0].hContentName,"1.jpg",len);
-#endif	
+
     //彩信里的消息文本
 	len = STRLEN("123456789");
 	STRNCPY((char*)mms_data.fragment[1].hContentText,"123456789",len);
@@ -1025,7 +1039,7 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
 	STRNCPY((char*)mms_data.fragment[1].hContentID,"1.txt",len);
 	len = STRLEN("1.txt");
 	STRNCPY((char*)mms_data.fragment[1].hContentName,"1.txt",len);
-	
+#endif		
 	head_len = MMS_Encode_MsgBody(pCurPos,0,mms_data.frag_num+1);
 	MMS_DEBUG(("[MMS] MMS_Encode_MsgBody head_len = %d",head_len));	
 	pCurPos += head_len;
@@ -1050,7 +1064,7 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
 	head_len = STRLEN((char*)buffer);
 	MMS_DEBUG(("[MMS] POST_TEST head_len = %d",head_len));
 	
-	MEMCPY((void*)(buffer+head_len),buf,size);
+	MEMCPY((void*)(buffer+head_len),buf,size);//将来直接保存buf就行了
 
 	return (head_len+size);
 }
@@ -2763,4 +2777,100 @@ static void SocketReadableCB(void *pSocketData)
 	}
 }
 
+boolean MMS_STREQI(const char *s1, const char *s2)
+{
+   return (s1 && s2 && STRICMP(s1,s2) == 0);
+}
+
+static const char *MMS_GetMimeType(const char *pszSrc)
+{
+   /* TODO - call the shell for help with some content */
+   if (pszSrc && *pszSrc) {
+      char *pext = STRRCHR(pszSrc, '.');
+      if (pext) {
+         if (MMS_STREQI(pext+1, "gif")) {
+            return "image/gif";
+         
+         } else if (MMS_STREQI(pext+1, "jpeg") || MMS_STREQI(pext+1, "jpg") ) {
+            return "image/jpeg";
+         
+         } else if (MMS_STREQI(pext+1, "bmp")) {
+            return "image/bmp";
+         
+         } else if (MMS_STREQI(pext+1, "png")) {
+            return "image/png";
+         
+         } else if (MMS_STREQI(pext+1, "bci")) {
+            return "image/bci";
+            
+         } else if (MMS_STREQI(pext+1, "aac")) {
+            return "audio/aac";
+            
+         }else if (MMS_STREQI(pext+1, "amr")) {
+            return "audio/amr";
+            
+         }else if (MMS_STREQI(pext+1, "imelody")) {
+            return "audio/imelody";
+            
+         }else if (MMS_STREQI(pext+1, "mid")) {
+            return "audio/mid";
+            
+         } if (MMS_STREQI(pext+1, "midi")) {
+            return "audio/midi";
+            
+         } if (MMS_STREQI(pext+1, "mp3")) {
+            return "audio/mp3";
+            
+         } if (MMS_STREQI(pext+1, "mpeg3")) {
+            return "audio/mpeg3";
+            
+         } if (MMS_STREQI(pext+1, "mpeg")) {
+            return "audio/mpeg";
+            
+         } if (MMS_STREQI(pext+1, "mpg")) {
+            return "audio/mpg";
+            
+         } if (MMS_STREQI(pext+1, "x-mid")) {
+            return "audio/x-mid";
+            
+         } if (MMS_STREQI(pext+1, "x-midi")) {
+            return "audio/x-midi";
+            
+         } if (MMS_STREQI(pext+1, "x-mp3")) {
+            return "audio/x-mp3";
+            
+         } if (MMS_STREQI(pext+1, "x-mpeg3")) {
+            return "audio/x-mpeg3";
+            
+         } if (MMS_STREQI(pext+1, "x-mpeg")) {
+            return "audio/x-mpeg";
+            
+         } if (MMS_STREQI(pext+1, "x-mpg")) {
+            return "audio/x-mpg";
+            
+         } if (MMS_STREQI(pext+1, "3gpp")) {
+            return "video/3gpp";
+            
+         } if (MMS_STREQI(pext+1, "3gpp2")) {
+            return "video/3gpp2";
+            
+         } if (MMS_STREQI(pext+1, "mp4")) {
+            return "video/mp4";
+            
+         }
+      }
+   }
+   return NULL;
+}
+
+WSP_MMS_ENCODE_DATA *MMS_GetMMSData()
+{
+    return &mms_data;
+}
+
+void MMS_ResetMMSData()
+{
+    MSG_FATAL("MMS_ResetMMSData Start",0,0,0);
+    MEMSET((void*)&mms_data, 0, sizeof(mms_data));
+}
 #endif

@@ -48,6 +48,8 @@
 #include "WMSApp.h"
 #include "Wms.h"
 //int MMS_SocketTest(void);
+#ifdef FEATURE_USES_MMS
+
 
 #define SOCKET_STATE_IDLE            0   // socket not opened
 #define SOCKET_STATE_CONNECTING      1   // waiting on connect
@@ -177,7 +179,7 @@ static void SocketReadableCB(void * pData)
             }
             else
             {
-                MSG_FATAL("SocketReadStatus == -1",0,0,0);
+                MSG_FATAL("SocketReadStatus == 0",0,0,0);
                 pSocketInfoTag.SocketReadStatus = 0;
             }
 		}
@@ -443,3 +445,4 @@ boolean MMS_GetSocketSendIsFinsh()
     MSG_FATAL("pSocketInfoTag.SendFinsh=%d", pSocketInfoTag.SendFinsh,0,0);
     return pSocketInfoTag.SendFinsh;
 }
+#endif

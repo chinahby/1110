@@ -25,7 +25,9 @@
 #include "WmsApp_priv.h"      // 主Applet头文件
 #include "WMSUtil.h"          // Applet工具模块头文件
 #include "OEMClassIDs.h"
-
+#ifdef FEATURE_USES_MMS
+#include "WMSMmsTest.h"
+#endif
 /*==============================================================================
                                  
                                  宏定义和常数
@@ -533,6 +535,8 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     pMe->m_pMMSImage = NULL;
     pMe->m_pMMSSOUND = NULL;
     pMe->m_pMMSVIDEO = NULL;
+    pMe->m_isMMS = FALSE;
+    pMe->m_MMSData = NULL;
 #endif
     // 初始化各成员变量
     pMe->m_prevState = WMSST_NONE;
@@ -723,7 +727,9 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
         MSG_FATAL("pMe->m_pMMSVIDEO != NULL",0,0,0);
         ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSImageName, sizeof(MMSImageName));       
         RELEASEIF(pMe->m_pMMSVIDEO);
-    }        
+    }   
+    FREEIF(pMe->m_MMSData);
+    pMe->m_isMMS = FALSE;
 #endif    
     pMe->m_eAppStatus = WMSAPP_STOP;
     FREEIF(pMe->m_strPhonePWD);
@@ -2473,8 +2479,8 @@ void WmsApp_MultSendMsgTimer(void *pme)
         return;
     }
 
-#ifdef FEATURE_USES_MMS
-    if((pMe->m_pMMSImage != NULL) || (pMe->m_pMMSSOUND!= NULL) || (pMe->m_pMMSVIDEO!= NULL))   
+#if 0//def FEATURE_USES_MMS
+    if(pMe->m_isMMS)   
     {
         if(MMS_GetSocketSendIsFinsh())
         {

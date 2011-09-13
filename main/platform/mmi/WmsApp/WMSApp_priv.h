@@ -830,6 +830,8 @@ typedef struct WmsApp
     IImage                          *m_pMMSImage;
     IImage                          *m_pMMSSOUND;
     IImage                          *m_pMMSVIDEO;
+    AECHAR                          *m_MMSData;
+    boolean                         m_isMMS;
 #endif    
 } WmsApp;
 

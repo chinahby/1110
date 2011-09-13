@@ -2581,14 +2581,16 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-
+    MSG_FATAL("WMSST_TONUMLIST_Handler Start",0,0,0);
     switch (pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
+            MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_CREATE",0,0,0);
             WmsApp_ShowDialog(pMe, IDD_TONUMLIST);
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+            MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_CANCELED",0,0,0);
             if(pMe->m_STSwitchToEditMsg == WMSST_TEMPLATES)
             {
                 if(pMe->m_eOptType == OPT_VIA_VIEWMSG)
@@ -2613,6 +2615,7 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_SENDOPT:
+            MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_SENDOPT",0,0,0);
 #if defined(FEATURE_CARRIER_THAILAND_HUTCH) 
             if ((pMe->m_eCreateWMSType == SEND_MSG_RESERVE) ||
                 (pMe->m_eCreateWMSType == SEND_MSG_EDITRESERVE))
@@ -2664,6 +2667,7 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
             if (IVector_Size(pMe->m_pSendList) > 0)
 #endif                
             {
+                MSG_FATAL("WMSST_TONUMLIST_Handler m_SendOPT=%d, m_eCreateWMSType=%d",pMe->m_SendOPT,pMe->m_eCreateWMSType,0);
                 // 打包消息
                 WmsApp_PrepareUserDataMOList(pMe);
                 pMe->m_idxUserdata = 0;
@@ -2822,6 +2826,7 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
             }
             else
             {// 这只是防弹措施，程序不应执行到此
+                MSG_FATAL("WMSST_TONUMLIST_Handler WMSST_EXIT",0,0,0);
                 MOVE_TO_STATE(WMSST_EXIT)
             }
 
@@ -2829,6 +2834,7 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_MSGBOX_OK:
+            MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_MSGBOX_OK",0,0,0);
             if (pMe->m_wMsgResID == IDS_SAVED)
             {
                 MOVE_TO_STATE(WMSST_MAIN)
@@ -2840,11 +2846,13 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
                 return NFSMACTION_CONTINUE;
             }
         case DLGRET_SELECTFROMOPT:
+            MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_SELECTFROMOPT",0,0,0);
             MOVE_TO_STATE(WMSST_SELECTFROM);
             return NFSMACTION_CONTINUE;
         
         default:
             // 用退出程序代替宏断言
+            MSG_FATAL("WMSST_TONUMLIST_Handler WMSST_EXIT",0,0,0);
             MOVE_TO_STATE(WMSST_EXIT)
             return NFSMACTION_CONTINUE;
     }
@@ -3347,6 +3355,7 @@ static NextFSMAction WMSST_SENDOPTS_Handler(WmsApp *pMe)
 ==============================================================================*/
 static NextFSMAction WMSST_SENDING_Handler(WmsApp *pMe)
 {
+    MSG_FATAL("WMSST_SENDING_Handler Start m_eDlgReturn=%d",pMe->m_eDlgReturn,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -3356,6 +3365,7 @@ static NextFSMAction WMSST_SENDING_Handler(WmsApp *pMe)
     {
         // 显示发送消息状态提示界面
         case DLGRET_CREATE:
+            MSG_FATAL("WMSST_SENDING_Handler DLGRET_CREATE",0,0,0);
             pMe->m_SucNum = 0;
             pMe->m_FailNum = 0;
             WmsApp_ShowDialog(pMe, IDD_SENDING);
@@ -3363,6 +3373,7 @@ static NextFSMAction WMSST_SENDING_Handler(WmsApp *pMe)
 
         case DLGRET_END:
             //信息发送完毕
+            MSG_FATAL("WMSST_SENDING_Handler DLGRET_END m_bMuitiSend=%d",pMe->m_bMuitiSend,0,0);
             if (pMe->m_bMuitiSend)
             {
                 pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
@@ -3370,6 +3381,7 @@ static NextFSMAction WMSST_SENDING_Handler(WmsApp *pMe)
                 return NFSMACTION_WAIT;
             } // 注意：这里继续执行 case DLGRET_MSGBOX_OK
         case DLGRET_MSGBOX_OK:
+            MSG_FATAL("DLGRET_MSGBOX_OK m_eCreateWMSType=%d, m_stcontinuesendbk=%d",pMe->m_eCreateWMSType,pMe->m_stcontinuesendbk,0);
             if (pMe->m_eCreateWMSType == SEND_MSG_RESERVE)
             {
                 uint32  dwSecs;
@@ -3416,16 +3428,19 @@ static NextFSMAction WMSST_SENDING_Handler(WmsApp *pMe)
             }
             else if (pMe->m_bNaturalStart)
             {
+                MSG_FATAL("pMe->m_bNaturalStart==TRUE",0,0,0);
                 MOVE_TO_STATE(WMSST_MAIN)
             }
             else
             {
+                MSG_FATAL("pMe->m_bNaturalStart==FALSE",0,0,0);
                 MOVE_TO_STATE(WMSST_EXIT)
             }
 
             return NFSMACTION_CONTINUE;
 
         default:
+            MSG_FATAL("WMSST_SENDING_Handler default",0,0,0);
             // 用退出程序代替宏断言
             MOVE_TO_STATE(WMSST_EXIT)
             return NFSMACTION_CONTINUE;

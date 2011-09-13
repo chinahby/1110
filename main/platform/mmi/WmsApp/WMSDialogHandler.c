@@ -6247,31 +6247,35 @@ static boolean IDD_SENDING_Handler(void *pUser,
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
-            pMe->m_bSaveFailedMsg = FALSE;
-            
-            if (pMe->m_ContinueSendType == NONE_CONTINUE)
-            {// 非继续发送
-                pMe->m_bMuitiSend = FALSE;
+#ifdef FEATURE_USES_MMS             
+            if(!pMe->m_isMMS)
+#endif                
+            {
+                pMe->m_bSaveFailedMsg = FALSE;
                 
-                if (IVector_Size(pMe->m_pSendList)>1)
+                if (pMe->m_ContinueSendType == NONE_CONTINUE)
+                {// 非继续发送
+                    pMe->m_bMuitiSend = FALSE;
+                    
+                    if (IVector_Size(pMe->m_pSendList)>1)
+                    {
+                        pMe->m_bMuitiSend = TRUE;
+                    }
+                }
+                if (pMe->m_bMuitiSend) 
                 {
-                    pMe->m_bMuitiSend = TRUE;
+                    (void)IWMS_DcDisableAutoDisconnect(pMe->m_pwms, 
+                                                       pMe->m_clientId, 
+                                                       &pMe->m_callback,
+                                                       (void*)pMe);
+                                                       
+                    (void)IWMS_SetMultiSend(pMe->m_pwms, 
+                                            pMe->m_clientId, 
+                                            &pMe->m_callback,
+                                            (void*)pMe,
+                                            TRUE);
                 }
             }
-            if (pMe->m_bMuitiSend) 
-            {
-                (void)IWMS_DcDisableAutoDisconnect(pMe->m_pwms, 
-                                                   pMe->m_clientId, 
-                                                   &pMe->m_callback,
-                                                   (void*)pMe);
-                                                   
-                (void)IWMS_SetMultiSend(pMe->m_pwms, 
-                                        pMe->m_clientId, 
-                                        &pMe->m_callback,
-                                        (void*)pMe,
-                                        TRUE);
-            }
-            
             if (pMe->m_pImage == NULL)
             {
                 pMe->m_pImage = ISHELL_LoadImage(pMe->m_pShell, SENDINGSMS_ANI);
@@ -6279,63 +6283,67 @@ static boolean IDD_SENDING_Handler(void *pUser,
             return TRUE;
 
         case EVT_DIALOG_START:
-            if (pMe->m_eCreateWMSType == SEND_MSG_RESEND)
+#ifdef FEATURE_USES_MMS   
+            if(!pMe->m_isMMS)
+#endif
             {
-                (void)ISHELL_SetTimer(pMe->m_pShell,
-                                150,
-                                (PFNNOTIFY)WmsApp_ReSendMsgTimer,
-                                pMe);
-            }
-            else if (pMe->m_eCreateWMSType == SEND_MSG_RESERVE)
-            {
-                (void)ISHELL_SetTimer(pMe->m_pShell,
-                                150,
-                                (PFNNOTIFY)WmsApp_SendReservedMsgTimer,
-                                pMe);
-            }
-            else if (pMe->m_ContinueSendType == NONE_CONTINUE)
-            {
-                boolean bSetTimer = TRUE;
-                
-                // 建立客户消息列表
-                WmsApp_BuildSendClentMsgList(pMe);
-                
-                if (NULL == pMe->m_pCurSendCltMsg)
-                {
-                    bSetTimer = FALSE;
-                }
-                else if (pMe->m_SendOPT != SENDOPT_SEND)
-                {// 消息需保存
-                    int nRet;
-                  
-                    // 保存消息
-                    nRet = IWMS_MsgWrite(pMe->m_pwms, 
-                                        pMe->m_clientId, 
-                                        &pMe->m_callback,
-                                        (void*)pMe,
-                                        WMS_WRITE_MODE_INSERT,
-                                        pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]);
-                                        
-                    if (nRet == SUCCESS)
-                    {
-                        bSetTimer = FALSE;
-                    }
-					
-                }
-                
-                if (bSetTimer)
+                if (pMe->m_eCreateWMSType == SEND_MSG_RESEND)
                 {
                     (void)ISHELL_SetTimer(pMe->m_pShell,
                                     150,
-                                    (PFNNOTIFY)WmsApp_MultSendMsgTimer,
+                                    (PFNNOTIFY)WmsApp_ReSendMsgTimer,
                                     pMe);
                 }
+                else if (pMe->m_eCreateWMSType == SEND_MSG_RESERVE)
+                {
+                    (void)ISHELL_SetTimer(pMe->m_pShell,
+                                    150,
+                                    (PFNNOTIFY)WmsApp_SendReservedMsgTimer,
+                                    pMe);
+                }
+                else if (pMe->m_ContinueSendType == NONE_CONTINUE)
+                {
+                    boolean bSetTimer = TRUE;
+                    
+                    // 建立客户消息列表
+                    WmsApp_BuildSendClentMsgList(pMe);
+                    
+                    if (NULL == pMe->m_pCurSendCltMsg)
+                    {
+                        bSetTimer = FALSE;
+                    }
+                    else if (pMe->m_SendOPT != SENDOPT_SEND)
+                    {// 消息需保存
+                        int nRet;
+                      
+                        // 保存消息
+                        nRet = IWMS_MsgWrite(pMe->m_pwms, 
+                                            pMe->m_clientId, 
+                                            &pMe->m_callback,
+                                            (void*)pMe,
+                                            WMS_WRITE_MODE_INSERT,
+                                            pMe->m_pCurSendCltMsg[pMe->m_idxCurSend]);
+                                            
+                        if (nRet == SUCCESS)
+                        {
+                            bSetTimer = FALSE;
+                        }
+    					
+                    }
+                    
+                    if (bSetTimer)
+                    {
+                        (void)ISHELL_SetTimer(pMe->m_pShell,
+                                        150,
+                                        (PFNNOTIFY)WmsApp_MultSendMsgTimer,
+                                        pMe);
+                    }
+                }
+                else 
+                {
+                    WmsApp_MultSendMsgTimer((void *)pMe);
+                }
             }
-            else 
-            {
-                WmsApp_MultSendMsgTimer((void *)pMe);
-            }
-            
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
                                     AEECLSID_WMSAPP,
@@ -6349,7 +6357,11 @@ static boolean IDD_SENDING_Handler(void *pUser,
             MSG_FATAL("IDD_SENDING_Handler EVT_USER_REDRAW",0,0,0);
             if ((pMe->m_eCreateWMSType != SEND_MSG_RESEND) &&
                 (pMe->m_eCreateWMSType != SEND_MSG_RESERVE) &&
-                (NULL == pMe->m_pCurSendCltMsg))
+                (NULL == pMe->m_pCurSendCltMsg) 
+#ifdef FEATURE_USES_MMS   
+                && !pMe->m_isMMS
+#endif                
+                )
             {
                 CLOSE_DIALOG(DLGRET_END)
             }
@@ -6433,6 +6445,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
                                 AEE_FONT_NORMAL, wszTitle,
                                 -1, 0, y, NULL, 
                                 IDF_TEXT_TRANSPARENT|IDF_ALIGN_CENTER);
+                    DBGPRINTF("IDD_SENDING_Handler wszTitle=%S", wszTitle);
                 }
                 IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
                 
@@ -6450,43 +6463,27 @@ static boolean IDD_SENDING_Handler(void *pUser,
         // 发送结果提示
         case EVT_UPDATE:
             MSG_FATAL("EVT_UPDATE",0,0,0);
-#ifdef FEATURE_USES_MMS
-            if((pMe->m_pMMSImage != NULL) || (pMe->m_pMMSSOUND!= NULL) || (pMe->m_pMMSVIDEO!= NULL))
-            {
-                if(!MMS_GetSocketSendIsFinsh())
+            if (!WmsApp_CurmessageIsFullSendout(pMe))
+            {// 发送完毕才提示
+                PFNNOTIFY pfn = WmsApp_MultSendMsgTimer;
+                MSG_FATAL("EVT_UPDATE 2 m_eCreateWMSType=%d",pMe->m_eCreateWMSType,0,0);
+                switch (pMe->m_eCreateWMSType)
                 {
-                    PFNNOTIFY pfn = WmsApp_MultSendMsgTimer;
-                    //(void)ISHELL_SetTimer(pMe->m_pShell, 300, pfn, pMe);
-                    MSG_FATAL("EVT_UPDATE 1",0,0,0);
-                    // 发送完毕才提示
-                  //  return TRUE;
+                    case SEND_MSG_RESEND:
+                        pfn = WmsApp_ReSendMsgTimer;
+                        break;
+                        
+                    case SEND_MSG_RESERVE:
+                        pfn = WmsApp_SendReservedMsgTimer;
+                        break;
+                        
+                    default:
+                        break;
                 }
-            }
-            else
-#endif
-            {
-                if (!WmsApp_CurmessageIsFullSendout(pMe))
-                {// 发送完毕才提示
-                    PFNNOTIFY pfn = WmsApp_MultSendMsgTimer;
-                    MSG_FATAL("EVT_UPDATE 2 m_eCreateWMSType=%d",pMe->m_eCreateWMSType,0,0);
-                    switch (pMe->m_eCreateWMSType)
-                    {
-                        case SEND_MSG_RESEND:
-                            pfn = WmsApp_ReSendMsgTimer;
-                            break;
-                            
-                        case SEND_MSG_RESERVE:
-                            pfn = WmsApp_SendReservedMsgTimer;
-                            break;
-                            
-                        default:
-                            break;
-                    }
-                    
-                    (void)ISHELL_SetTimer(pMe->m_pShell, 300, pfn, pMe);
+                
+                (void)ISHELL_SetTimer(pMe->m_pShell, 300, pfn, pMe);
 
-                    return TRUE;
-                }
+                return TRUE;
             }
             // 保存发送失败的短信到 OUTBOX
             // 对于 FEATURE_CARRIER_VENEZUELA_MOVILNET 要求为群发的每个目标保存短信
@@ -6554,7 +6551,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
             
                 SETAEERECT(&rc,  0, y, pMe->m_rc.dx, pMe->m_rc.dy-y);
 #ifdef FEATURE_USES_MMS
-                if((pMe->m_pMMSImage != NULL) || (pMe->m_pMMSSOUND!= NULL) || (pMe->m_pMMSVIDEO!= NULL))    
+                if(pMe->m_isMMS)    
                 {
                     MSG_FATAL("MMS_GetSocketReadStatus()=%d",MMS_GetSocketReadStatus(),0,0);
                     if(MMS_GetSocketReadStatus() == HTTP_CODE_OK)
@@ -6632,7 +6629,7 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 #ifdef FEATURE_USES_MMS
-                if((pMe->m_pMMSImage != NULL) || (pMe->m_pMMSSOUND!= NULL) || (pMe->m_pMMSVIDEO!= NULL))    
+                if(pMe->m_isMMS)    
                 {
                     (void)ISHELL_PostEventEx(pMe->m_pShell,
                                              EVTFLG_ASYNC, 
@@ -6668,11 +6665,16 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 
         case EVT_DIALOG_END:
             MSG_FATAL("IDD_SENDING_Handler EVT_DIALOG_END",0,0,0);
-            (void)IWMS_SetMultiSend(pMe->m_pwms, 
-                                    pMe->m_clientId, 
-                                    &pMe->m_callback,
-                                    (void*)pMe,
-                                    FALSE);
+#ifdef FEATURE_USES_MMS
+            if(!pMe->m_isMMS)   
+#endif                    
+            {
+                (void)IWMS_SetMultiSend(pMe->m_pwms, 
+                                        pMe->m_clientId, 
+                                        &pMe->m_callback,
+                                        (void*)pMe,
+                                        FALSE);
+            }
             (void) ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)WmsApp_PlaySendingAni, pMe);
             if (pMe->m_pImage != NULL)
             {
@@ -6680,22 +6682,27 @@ static boolean IDD_SENDING_Handler(void *pUser,
                 IIMAGE_Release(pMe->m_pImage);
                 pMe->m_pImage = NULL;
             }
-            //bAniStart = FALSE;
-            (void)IWMS_DcEnableAutoDisconnect(pMe->m_pwms, 
-                                              pMe->m_clientId, 
-                                              &pMe->m_callback,
-                                              (void*)pMe,
-                                              WMSAPP_AUTO_DISCONNECT_TIME);
-            
-            if ((pMe->m_eDlgReturn == DLGRET_CREATE) &&
-                (pMe->m_eAppStatus != WMSAPP_STOP))
+#ifdef FEATURE_USES_MMS
+            if(!pMe->m_isMMS)   
+#endif   
             {
-                pMe->m_bNeedContinueSend = WmsApp_IsNeedContinueSendTask(pMe);
-            }
-            else
-            {
-                pMe->m_bNeedContinueSend = FALSE;
-                pMe->m_ContinueSendType = NONE_CONTINUE;
+                //bAniStart = FALSE;
+                (void)IWMS_DcEnableAutoDisconnect(pMe->m_pwms, 
+                                                  pMe->m_clientId, 
+                                                  &pMe->m_callback,
+                                                  (void*)pMe,
+                                                  WMSAPP_AUTO_DISCONNECT_TIME);
+                
+                if ((pMe->m_eDlgReturn == DLGRET_CREATE) &&
+                    (pMe->m_eAppStatus != WMSAPP_STOP))
+                {
+                    pMe->m_bNeedContinueSend = WmsApp_IsNeedContinueSendTask(pMe);
+                }
+                else
+                {
+                    pMe->m_bNeedContinueSend = FALSE;
+                    pMe->m_ContinueSendType = NONE_CONTINUE;
+                }
             }
             return TRUE;
 
@@ -8873,6 +8880,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     pMe->m_pMMSImage = ISHELL_LoadImage(pMe->m_pShell,MMSImagepszPath);
                     if(pMe->m_pMMSImage != NULL)
                     {
+                        pMe->m_isMMS = TRUE;
                         IIMAGE_SetParm(pMe->m_pMMSImage,IPARM_SCALE, pMe->m_rc.dx/2, pMe->m_rc.dy/2);
                         SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
                         ICONTROL_SetRect((IControl*)pIText, &ctlRect);                           
@@ -8895,6 +8903,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     }     
                     else
                     {
+                        pMe->m_isMMS = TRUE;
                         SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
                         ICONTROL_SetRect((IControl*)pIText, &ctlRect);     
                     }
@@ -8909,6 +8918,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     }     
                     else
                     {
+                        pMe->m_isMMS = TRUE;
                         SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
                         ICONTROL_SetRect((IControl*)pIText, &ctlRect);     
                     }
@@ -9494,86 +9504,85 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 }
                 
                 if (nLen>0)
-                {			
-                	
-                    pMe->m_msSend.m_szMessage = WSTRDUP(ITEXTCTL_GetTextPtr(pIText));
-                    
-                    if (pMe->m_eAppStatus == WMSAPP_STOP && pMe->m_eDlgReturn != DLGRET_EXIT_EDITOR)
-                    {// 程序被中断退出，保存输入到草稿箱
-                        int32  nItems = 0;
-                        uint16 nMsgs = 0;
-                        Is_Notend = FALSE;
-                        MSG_FATAL("EVT_DIALOG_END....IDD_WRITEMSG_Handler........2",0,0,0);
-                        // 释放用户数据列表
-                        WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
-                        ICONFIG_SetItem(pMe->m_pConfig,CFGI_WMSWRITD_END_STATUS,&Is_Notend,sizeof(Is_Notend));
-                        // 打包消息
-                        WmsApp_PrepareUserDataMOList(pMe);
-                        pMe->m_idxUserdata = 0;
-                        
-                        nItems = IVector_Size(pMe->m_pUserDataMOList);
-                        
-                        // 获取草稿箱消息数
-                        wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);
-                        
-                        if ((nMsgs+nItems) <= DRAFT_MAX)
-                        {// 存储空间足够，保存中断的输入到草稿箱
-                            wms_client_message_s_type *pClientMsg = NULL;
-                            int nRet;
-
-                            WmsApp_FreeMultiSendList(pMe->m_pSendList);
-                            
-                            pClientMsg = WmsApp_GetClientMsgMO(pMe, FALSE);
-                            while (pClientMsg != NULL)
-                            {
-                                // Must modify message tag!
-                                pClientMsg->msg_hdr.tag = WMS_TAG_MO_DRAFT;
-                               
-                                // 保存消息
-                                nRet = ENOMEMORY;
-                                do 
-                                {
-                                    nRet = IWMS_MsgWrite(pMe->m_pwms, 
-                                                         pMe->m_clientId, 
-                                                         &pMe->m_callback,
-                                                         (void*)pMe,
-                                                         WMS_WRITE_MODE_INSERT,
-                                                         pClientMsg);
-                                                         
-#ifndef WIN32
-                                    if (nRet == SUCCESS)
-                                    {// 休眠10毫秒以确保有时间执行保存消息的操作
-                                        MSLEEP(10);
-                                    }
-#endif
-                                } while(nRet != SUCCESS);
-                                                    
-                                FREE(pClientMsg);
-                                pClientMsg = WmsApp_GetClientMsgMO(pMe, FALSE);
-                            }
-                            
-                            WmsApp_FreeMultiSendList(pMe->m_pSendList);
-                            
+                {		                
+                    {
+                        pMe->m_msSend.m_szMessage = WSTRDUP(ITEXTCTL_GetTextPtr(pIText));
+                        if (pMe->m_eAppStatus == WMSAPP_STOP && pMe->m_eDlgReturn != DLGRET_EXIT_EDITOR)
+                        {// 程序被中断退出，保存输入到草稿箱
+                            int32  nItems = 0;
+                            uint16 nMsgs = 0;
+                            Is_Notend = FALSE;
+                            MSG_FATAL("EVT_DIALOG_END....IDD_WRITEMSG_Handler........2",0,0,0);
                             // 释放用户数据列表
                             WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
-                            
+                            ICONFIG_SetItem(pMe->m_pConfig,CFGI_WMSWRITD_END_STATUS,&Is_Notend,sizeof(Is_Notend));
+                            // 打包消息
+                            WmsApp_PrepareUserDataMOList(pMe);
                             pMe->m_idxUserdata = 0;
+                            
+                            nItems = IVector_Size(pMe->m_pUserDataMOList);
+                            
+                            // 获取草稿箱消息数
+                            wms_cacheinfolist_getcounts(WMS_MB_DRAFT, NULL, NULL, &nMsgs);
+                            
+                            if ((nMsgs+nItems) <= DRAFT_MAX)
+                            {// 存储空间足够，保存中断的输入到草稿箱
+                                wms_client_message_s_type *pClientMsg = NULL;
+                                int nRet;
+
+                                WmsApp_FreeMultiSendList(pMe->m_pSendList);
+                                
+                                pClientMsg = WmsApp_GetClientMsgMO(pMe, FALSE);
+                                while (pClientMsg != NULL)
+                                {
+                                    // Must modify message tag!
+                                    pClientMsg->msg_hdr.tag = WMS_TAG_MO_DRAFT;
+                                   
+                                    // 保存消息
+                                    nRet = ENOMEMORY;
+                                    do 
+                                    {
+                                        nRet = IWMS_MsgWrite(pMe->m_pwms, 
+                                                             pMe->m_clientId, 
+                                                             &pMe->m_callback,
+                                                             (void*)pMe,
+                                                             WMS_WRITE_MODE_INSERT,
+                                                             pClientMsg);
+                                                             
+#ifndef WIN32
+                                        if (nRet == SUCCESS)
+                                        {// 休眠10毫秒以确保有时间执行保存消息的操作
+                                            MSLEEP(10);
+                                        }
+#endif
+                                    } while(nRet != SUCCESS);
+                                                        
+                                    FREE(pClientMsg);
+                                    pClientMsg = WmsApp_GetClientMsgMO(pMe, FALSE);
+                                }
+                                
+                                WmsApp_FreeMultiSendList(pMe->m_pSendList);
+                                
+                                // 释放用户数据列表
+                                WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
+                                
+                                pMe->m_idxUserdata = 0;
+                            }
+                            else
+                            {
+                                // 释放用户数据列表
+                                WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
+                            }
                         }
                         else
                         {
-                            // 释放用户数据列表
-                            WmsApp_FreeUserDataMOList(pMe->m_pUserDataMOList);
+                        	
+                        	if(!(pMe->m_bwriteclr))
+                        	{
+                        		pMe->m_bincommend = TRUE;
+                        	}
                         }
                     }
-                    else
-                    {
-                    	
-                    	if(!(pMe->m_bwriteclr))
-                    	{
-                    		pMe->m_bincommend = TRUE;
-                    	}
-                    }
-					
                 }
             }			
 				
@@ -9614,7 +9623,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     if (NULL == pMe->m_pMenu)
                     {
 #ifdef FEATURE_USES_MMS
-                       // if(pMe->m_pMMSImage != NULL)
+                        if(pMe->m_isMMS)
                         {
                             char pszPath[MG_MAX_FILE_NAME]={'\0'};
                             DBGPRINTF("MMSImageName=%s len=%d", pszPath, STRLEN(pszPath));
@@ -9624,6 +9633,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             RELEASEIF(pMe->m_pMMSImage);
                             RELEASEIF(pMe->m_pMMSSOUND);
                             RELEASEIF(pMe->m_pMMSVIDEO);
+                            pMe->m_isMMS = FALSE;
                         }
 #endif                           
                         CLOSE_DIALOG(DLGRET_CANCELED)
@@ -9703,7 +9713,39 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SAVEASPRESET);
                         MENU_ADDITEM(pMe->m_pMenu, IDS_EXIT_EDITOR);
                         MENU_ADDITEM(pMe->m_pMenu, IDS_SETTING);
-                        
+#ifdef FEATURE_USES_MMS 
+                        if(pMe->m_isMMS)
+                        {
+                            AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
+                            uint8 len = 0;
+                            if (NULL != pwstrText)
+                            {
+                                len = WSTRLEN(pwstrText);
+                            }
+                            MSG_FATAL("IDD_WRITEMSG_Handler len=%d",len,0,0);
+                            if (len>0)
+                            {
+                            	WSP_MMS_ENCODE_DATA *mms_data = MMS_GetMMSData();
+                                char mmsTextData[MMS_MAX_TEXT_SIZE+1] = {0};
+                                MSG_FATAL("mms_data->frag_num=%d",mms_data->frag_num,0,0);
+                                MMS_ResetMMSData();
+                                MSG_FATAL("mms_data->frag_num=%d",mms_data->frag_num,0,0);
+                                WSTRTOSTR(pwstrText, mmsTextData, MMS_MAX_TEXT_SIZE+1);                        
+                                len = STRLEN(mmsTextData);
+                                STRNCPY((char*)mms_data->fragment[0].hContentText,mmsTextData,len);
+                                len = STRLEN("text/plain");
+                                STRNCPY((char*)mms_data->fragment[0].hContentType,"text/plain",len);
+                                len = STRLEN("1.txt");
+                                STRNCPY((char*)mms_data->fragment[0].hContentLocation,"1.txt",len);
+                                len = STRLEN("1.txt");
+                                STRNCPY((char*)mms_data->fragment[0].hContentID,"1.txt",len);
+                                len = STRLEN("1.txt");
+                                STRNCPY((char*)mms_data->fragment[0].hContentName,"1.txt",len);
+                                mms_data->frag_num++;
+                                DBGPRINTF("mmsTextData=%s len=%d", mmsTextData, STRLEN(mmsTextData));  
+                            }
+                        }     
+#endif                            
                         // 设置菜单属性
                         IMENUCTL_SetPopMenuRect(pMe->m_pMenu);
 
