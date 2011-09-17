@@ -83,6 +83,7 @@
 
 #ifdef FEATURE_USES_MMS
 #include "MediaGallery.h"
+#define MMSFILE_DIR      "fs:/user/mms"
 #endif
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
@@ -240,6 +241,9 @@ typedef enum _Erase_SMS_e_Type
 
     CLEAR_INBOXES,          //收件箱上信息(话机+UIM)
     CLEAR_ALL               //全部删除
+#ifdef FEATURE_USES_MMS
+    ,CLEAR_OUTBOX_MMS
+#endif
 } Erase_SMS_e_Type;
 
 typedef enum
@@ -509,22 +513,12 @@ typedef enum WMSAPPState
 
 	//用于显示FLASH SMS消息
 	WMSST_FLASHSMS,
-/*
-    //add by xuhui 2011/08/01
+#ifdef FEATURE_USES_MMS
+    // 显示彩信发件箱列表的状态
+    WMSST_OUTBOX_MMS,
 
-    WMSST_INSERTPICTURE,
-    WMSST_INSERTPICTURE_PRESET,
-    WMSST_INSERTPICTURE_NEW,
-
-    WMSST_INSERTVIDEO,
-    WMSST_INSERTVIDEO_PRESET,
-    WMSST_INSERTVIDEO_NEW,
-
-    WMSST_INSERTSOUND,
-    WMSST_INSERTSOUND_PRESET,
-    WMSST_INSERTSOUND_NEW,
-
-    WMSST_INSERTFILE, */
+    WMSST_VIEWOUTBOXMSG_MMS,
+#endif
 
     // 退出短信应用
     WMSST_EXIT
@@ -653,6 +647,10 @@ typedef enum DLGRetValue
    ,DLGGET_SMSNEW_OK
    ,DLGRET_FLASHSMS
    ,DLGGET_FLASHSMS_END
+#ifdef FEATURE_USES_MMS
+   ,DLGRET_OUTBOX_MMS
+   ,DLGRET_CLEAROUTBOX_MMS
+#endif
 /*   
    ,DLGRET_INSERTPICTURE //add by xuhui 2011/08/01
    ,DLGRET_INSERTPICTURE_PRESET //add by xuhui 2011/08/01
@@ -832,6 +830,8 @@ typedef struct WmsApp
     IImage                          *m_pMMSVIDEO;
     AECHAR                          *m_MMSData;
     boolean                         m_isMMS;
+    IFileMgr                        *m_pIFileMgr;
+    //MMSData		                   m_mmsDataInfoList[MAX_MMS_STORED];
 #endif    
 } WmsApp;
 
@@ -1511,5 +1511,28 @@ boolean WmsApp_IsNeedContinueSendTask(WmsApp * pMe);
         
 ==============================================================================*/
 void WmsApp_ReservedMsgSetTimer(WmsApp * pMe);
+
+
+#ifdef FEATURE_USES_MMS
+/*==============================================================================
+函数:
+    WmsApp_UpdateMenuList_MMS
+
+说明:
+    更新当前 pMe->m_eMBoxType 指向的邮箱的消息菜单列表。
+
+参数:
+    pMe [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+    pMenu [in/out]: IMenuCtl接口指针。
+
+返回值:
+    none
+
+备注:
+    New
+        
+==============================================================================*/
+void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu);
+#endif
 
 #endif // end WMSAPP_PRIV_H

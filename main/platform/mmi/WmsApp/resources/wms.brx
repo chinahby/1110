@@ -613,6 +613,9 @@
 	<String Id="1025" Name="IDS_REMOVE_SOUND" Encoding="Unicode">
 		<Text>Remove Sound</Text>
 	</String>
+	<String Id="1026" Name="IDS_OUTBOX_MMS" Encoding="Unicode">
+		<Text>Outbox  MMS</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

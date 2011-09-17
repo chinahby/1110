@@ -580,6 +580,9 @@
 	<String Id="1014" Name="IDS_REMOVE_SOUND">
 		<Text>Remove Sound</Text>
 	</String>
+	<String Id="1015" Name="IDS_OUTBOX_MMS">
+		<Text>Outbox  MMS</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">

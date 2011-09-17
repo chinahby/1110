@@ -222,25 +222,10 @@ static NextFSMAction WMSST_WMSNEW_Hander(WmsApp *pMe);
 static NextFSMAction WMSST_WMSPOP_Hander(WmsApp *pMe);
 static NextFSMAction WMSST_FLASHSMS_Hander(WmsApp *pMe);
 
-/*
-// WMSST_INSERTPICTURE 状态处理函数 add by xuhui 2011/08/01
-static NextFSMAction WMSST_INSERTPICTURE_Handler(WmsApp *pMe);
-static NextFSMAction WMSST_INSERTPICTURE_PRESET_Handler(WmsApp *pMe);
-static NextFSMAction WMSST_INSERTPICTURE_NEW_Handler(WmsApp *pMe);
-
-
-// WMSST_INSERTVIDEO 状态处理函数 add by xuhui 2011/08/01
-static NextFSMAction WMSST_INSERTVIDEO_Handler(WmsApp *pMe);
-static NextFSMAction WMSST_INSERTVIDEO_PRESET_Handler(WmsApp *pMe);
-static NextFSMAction WMSST_INSERTVIDEO_NEW_Handler(WmsApp *pMe);
-
-// WMSST_INSERTSOUND 状态处理函数 add by xuhui 2011/08/01
-static NextFSMAction WMSST_INSERTSOUND_Handler(WmsApp *pMe);
-static NextFSMAction WMSST_INSERTSOUND_PRESET_Handler(WmsApp *pMe);
-static NextFSMAction WMSST_INSERTSOUND_NEW_Handler(WmsApp *pMe);
-
-// WMSST_INSERTFILE 状态处理函数 add by xuhui 2011/08/01
-static NextFSMAction WMSST_INSERTFILE_Handler(WmsApp *pMe);*/
+#ifdef FEATURE_USES_MMS
+// WMSST_OUTBOX_MMS 状态处理函数
+static NextFSMAction WMSST_OUTBOX_MMS_Handler(WmsApp *pMe);
+#endif
 
 /*==============================================================================
 
@@ -478,38 +463,12 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
             
         case WMSST_EXIT:
             return WMSST_EXIT_Handler(pMe);
-/*
-        //add by xuhui 2011/08/01
- 	    case WMSST_INSERTPICTURE:
-			return WMSST_INSERTPICTURE_Handler(pMe);       
+            
+#ifdef FEATURE_USES_MMS
+        case WMSST_OUTBOX_MMS:
+            return WMSST_OUTBOX_MMS_Handler(pMe);
+#endif
 
- 	    case WMSST_INSERTPICTURE_PRESET:
-			return WMSST_INSERTPICTURE_PRESET_Handler(pMe);
-
- 	    case WMSST_INSERTPICTURE_NEW:
-			return WMSST_INSERTPICTURE_NEW_Handler(pMe);
-
- 	    case WMSST_INSERTVIDEO:
-			return WMSST_INSERTVIDEO_Handler(pMe);
-
- 	    case WMSST_INSERTVIDEO_PRESET:
-			return WMSST_INSERTVIDEO_PRESET_Handler(pMe);
-
- 	    case WMSST_INSERTVIDEO_NEW:
-			return WMSST_INSERTVIDEO_NEW_Handler(pMe);
-
- 	    case WMSST_INSERTSOUND:
-			return WMSST_INSERTSOUND_Handler(pMe);
-
- 	    case WMSST_INSERTSOUND_PRESET:
-			return WMSST_INSERTSOUND_PRESET_Handler(pMe);
-
-  	    case WMSST_INSERTSOUND_NEW:
-			return WMSST_INSERTSOUND_NEW_Handler(pMe);
-
- 	    case WMSST_INSERTFILE:
-			return WMSST_INSERTFILE_Handler(pMe);       
-*/			
         default:
             break;
     }
@@ -742,7 +701,26 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
                 pMe->m_currState = WMSST_CHKPWD;
             }
             return NFSMACTION_CONTINUE;
-            
+
+#ifdef FEATURE_USES_MMS
+        // 用户在主界面选择-- 彩信发件箱
+        case DLGRET_OUTBOX_MMS:
+            MSG_FATAL("WMSST_MAIN_Handler DLGRET_OUTBOX_MMS",0,0,0);
+            pMe->m_eMBoxType = WMS_MB_OUTBOX_MMS;
+            {
+                uint16  nMsgID=0;
+                
+                nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_OUTBOX_MMS);
+                if (nMsgID != 0)
+                {
+                    pMe->m_ePMsgType = MESSAGE_WARNNING;
+                    WmsApp_ShowMsgBox(pMe, nMsgID);
+                    return NFSMACTION_WAIT;
+                }
+            }
+            MOVE_TO_STATE(WMSST_OUTBOX_MMS)
+            return NFSMACTION_CONTINUE;
+#endif
         // 用户在主界面选择-- 语音信箱
         case DLGRET_VIEWVOICEMSG:
             pMe->m_eMBoxType = WMS_MB_VOICEMAIL;
@@ -6390,12 +6368,13 @@ static NextFSMAction WMSST_EXIT_Handler(WmsApp *pMe)
 } // WMSST_EXIT_Handler
 
 
+#ifdef FEATURE_USES_MMS
 /*==============================================================================
 函数:
-    WMSST_INSERTPICTURE_Handler
+    WMSST_OUTBOX_MMS_Handler
 
 说明:
-    WMSST_TEMPLATES 状态处理函数。
+    WMSST_OUTBOX_MMS 状态处理函数。
 
 参数:
     pMe [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
@@ -6407,10 +6386,9 @@ static NextFSMAction WMSST_EXIT_Handler(WmsApp *pMe)
 备注:
 
 ==============================================================================*/
-
-/*
-static NextFSMAction WMSST_INSERTPICTURE_Handler(WmsApp *pMe)
+static NextFSMAction WMSST_OUTBOX_MMS_Handler(WmsApp *pMe)
 {
+    MSG_FATAL("WMSST_OUTBOX_MMS_Handler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -6421,15 +6399,14 @@ static NextFSMAction WMSST_INSERTPICTURE_Handler(WmsApp *pMe)
         case DLGRET_CREATE:
         case DLGRET_LOADCANCELED:
         case DLGRET_LOADFAILED:
-            pMe->m_eMBoxType = WMS_MB_INBOX;
             WmsApp_ShowDialog(pMe, IDD_MESSAGELIST);
             return NFSMACTION_WAIT;
-
+            
         case DLGRET_LOAD:
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
             WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
             return NFSMACTION_WAIT;
-            
+
         case DLGRET_CANCELED:
             MOVE_TO_STATE(WMSST_MAIN)
             return NFSMACTION_CONTINUE;
@@ -6437,25 +6414,26 @@ static NextFSMAction WMSST_INSERTPICTURE_Handler(WmsApp *pMe)
         case DLGRET_LOADOK:
             if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
             {
-                MOVE_TO_STATE(WMSST_VIEWINBOXMSG)
+                MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG)
             }
             else
             {
-                MOVE_TO_STATE(WMSST_INBOXMSGOPTS)
+                MOVE_TO_STATE(WMSST_OUTMSGOPTS)
             }
             return NFSMACTION_CONTINUE;
             
         case DLGRET_OPT:
             pMe->m_eOptType = OPT_VIA_LISTMSG;
             WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
-            return NFSMACTION_CONTINUE;
-            
+            return NFSMACTION_WAIT;
         case DLGRET_DELETE:
-            //释放查看的消息内存
-            WMSMessageStruct_Free(pMe);
-            //ADD BY YANGDECAI 2010-08-16
+#if 0            
+        	//释放查看的消息内存
+			WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
             pMe->m_eEraseWMSType = ERASE_DRAFT_ONE;
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
+#endif                
             return NFSMACTION_CONTINUE;
             
         default:
@@ -6463,51 +6441,6 @@ static NextFSMAction WMSST_INSERTPICTURE_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_EXIT)
             return NFSMACTION_CONTINUE;
     }
-} // WMSST_INSERTPICTURE_Handler
+} // WMSST_OUTBOX_Handler
 
-// WMSST_INSERTPICTURE 状态处理函数 add by xuhui 2011/08/01
-static NextFSMAction WMSST_INSERTPICTURE_PRESET_Handler(WmsApp *pMe)
-{
-    return NFSMACTION_CONTINUE;
-}
-
-static NextFSMAction WMSST_INSERTPICTURE_NEW_Handler(WmsApp *pMe)
-{
-    return NFSMACTION_CONTINUE;
-}
-
-
-// WMSST_INSERTVIDEO 状态处理函数 add by xuhui 2011/08/01
-static NextFSMAction WMSST_INSERTVIDEO_Handler(WmsApp *pMe)
-{
-    return NFSMACTION_CONTINUE;
-}
-static NextFSMAction WMSST_INSERTVIDEO_PRESET_Handler(WmsApp *pMe)
-{
-    return NFSMACTION_CONTINUE;
-}
-static NextFSMAction WMSST_INSERTVIDEO_NEW_Handler(WmsApp *pMe)
-{
-    return NFSMACTION_CONTINUE;
-}
-
-// WMSST_INSERTSOUND 状态处理函数 add by xuhui 2011/08/01
-static NextFSMAction WMSST_INSERTSOUND_Handler(WmsApp *pMe)
-{
-    return NFSMACTION_CONTINUE;
-}
-static NextFSMAction WMSST_INSERTSOUND_PRESET_Handler(WmsApp *pMe)
-{
-    return NFSMACTION_CONTINUE;
-}
-static NextFSMAction WMSST_INSERTSOUND_NEW_Handler(WmsApp *pMe)
-{
-    return NFSMACTION_CONTINUE;
-}
-
-// WMSST_INSERTFILE 状态处理函数 add by xuhui 2011/08/01
-static NextFSMAction WMSST_INSERTFILE_Handler(WmsApp *pMe)
-{
-    return NFSMACTION_CONTINUE;
-}
-*/
+#endif

@@ -3450,8 +3450,8 @@ static int OEMWMS_MMsDecodeNotifyBody(         IWMS                      *pMe,
                 }
                 
                 body[i] = b_unpackb(user_data->data, bit_pos, digit_size);
+                return i;
             } /* for */
-            return i;
         }
         else
         {

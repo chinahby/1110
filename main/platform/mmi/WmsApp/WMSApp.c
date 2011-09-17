@@ -141,8 +141,13 @@ static void WmsApp_ReservedMsgTimer(void * pUser);
 #ifndef WIN32
    #error The WMS applet was never intended to be used with the AEE Simulator.
 #endif
-#endif
+#endif   
 
+#ifdef FEATURE_USES_MMS
+//MMSData		                   g_mmsDataInfoList[MAX_MMS_STORED];
+MMSData		                   g_mmsDataInfoList[2];
+uint8                          g_mmsDataInfoMax = 0;
+#endif
 /*==============================================================================
                               
                               本地（静态）数据
@@ -527,6 +532,7 @@ static uint32 CWmsApp_Release(IWmsApp *p)
 ==============================================================================*/
 static int CWmsApp_InitAppData(WmsApp *pMe)
 {
+    MSG_FATAL("CWmsApp_InitAppData Start",0,0,0);
     if (NULL == pMe)
     {
         return EFAILED;
@@ -678,7 +684,32 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
 
     (void)IWMS_Activate(pMe->m_pwms,pMe->m_clientId);
     
+#ifdef FEATURE_USES_MMS 
+	(void) ICONFIG_GetItem(pMe->m_pConfig,
+					   CFGI_MMSDATA_INFO,
+					   (void*)g_mmsDataInfoList,
+					   sizeof(g_mmsDataInfoList));
+    {/*
+        if(ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_FILEMGR,
+                           (void **) &pMe->m_pIFileMgr) != SUCCESS)    
+        {
+            MSG_FATAL("CWmsApp_InitAppData EFAILED",0,0,0);
+            return EFAILED;
+        }
 
+        if (SUCCESS != IFILEMGR_Test(pMe->m_pIFileMgr, MMSFILE_DIR))
+        {
+            if(IFILEMGR_MkDir(pMe->m_pIFileMgr, MMSFILE_DIR) != SUCCESS)
+            {
+                MSG_FATAL("CWmsApp_InitAppData EFAILED",0,0,0);
+                (void)IFILEMGR_Release(pMe->m_pIFileMgr);
+                pMe->m_pIFileMgr = NULL;
+                return EFAILED;
+            }
+        }*/
+    }
+#endif
+    MSG_FATAL("CWmsApp_InitAppData End",0,0,0);
     return SUCCESS;
 }
 
@@ -728,6 +759,10 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
         ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSImageName, sizeof(MMSImageName));       
         RELEASEIF(pMe->m_pMMSVIDEO);
     }   
+    if(pMe->m_pIFileMgr != NULL)
+    {
+        (void)IFILEMGR_Release(pMe->m_pIFileMgr);
+    }
     FREEIF(pMe->m_MMSData);
     pMe->m_isMMS = FALSE;
 #endif    
@@ -2211,6 +2246,11 @@ void WmsApp_UpdateMenuList(WmsApp *pMe, IMenuCtl *pMenu)
                 nTitleID = IDS_OUTBOX;
                 break;
 
+#ifdef FEATURE_USES_MMS
+            case WMS_MB_OUTBOX_MMS:
+                nTitleID = IDS_OUTBOX_MMS;
+                break;
+#endif
             case WMS_MB_DRAFT:
                 nTitleID = IDS_DRAFT;
                 break;
@@ -5289,7 +5329,7 @@ uint16 WmsApp_GetmemAlertID(WmsApp * pMe, wms_box_e_type eBox)
     uint16  nMsgs=0;
     uint16  nOnUIMs=0;
     uint16  nMsgID = 0;
-    
+    MSG_FATAL("WmsApp_GetmemAlertID Start eBox=%d",eBox,0,0);
     // 获取消息数
     wms_cacheinfolist_getcounts(eBox, NULL, &nOnUIMs, &nMsgs);
     
@@ -5434,6 +5474,19 @@ uint16 WmsApp_GetmemAlertID(WmsApp * pMe, wms_box_e_type eBox)
             }
             break;
     
+#ifdef FEATURE_USES_MMS
+        case WMS_MB_OUTBOX_MMS: 
+            MSG_FATAL("WMS_MB_OUTBOX_MMS g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
+            if (g_mmsDataInfoMax == 0)
+            {
+                nMsgID = IDS_EMPTY;
+            }
+            else if (g_mmsDataInfoMax >= 10)
+            {
+                nMsgID = IDS_OUTBOXFULL;
+            }
+            break;
+#endif
         default:
             break;
     }
@@ -6387,5 +6440,178 @@ void WmsApp_ProcessMMSStatus(WmsApp *pMe)
     MSG_FATAL("WmsApp_ProcessMMSStatus End",0,0,0);
 }
 
+void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
+{
+    int i, nItems;
+    uint16  wItemCount;
+    uint16  wTotalPages;
+    AECHAR  wszFmt[10]={0};
+    AECHAR  wszName[MAX_TITLE_LEN];
+    AECHAR  wszTitle[MAX_TITLE_LEN + 10];
+    AECHAR  wstrNum[MAX_PH_DIGITS+1];
+    CtlAddItem  mai;
+    uint16      wSelectItemID=0;
+    boolean     bFindCurxuhao = FALSE;
+    MSG_FATAL("WmsApp_UpdateMenuList_MMS Start",0,0,0);
+    if ((NULL == pMe) || (NULL == pMenu))
+    {
+        return;
+    }
+    
+    // 取链表项数
+    wItemCount = g_mmsDataInfoMax;
+    MSG_FATAL("WmsApp_UpdateMenuList_MMS wItemCount=%d",wItemCount,0,0);
+    if (wItemCount == 0)
+    {
+        return;
+    }
+    
+    // 计算需要的总页数
+    wTotalPages = wItemCount / (MAXITEMS_ONEPAGE);
+    if ((wItemCount % MAXITEMS_ONEPAGE) != 0)
+    {
+        wTotalPages++;
+    }
+    if (wTotalPages < 2)
+    {
+        nItems = wItemCount;
+    }
+    else
+    {
+        nItems = MAXITEMS_ONEPAGE;
+    }
+    MSG_FATAL("WmsApp_UpdateMenuList_MMS nItems=%d",nItems,0,0);
+    // 消息总数不大于一页显示的菜单项数时，不考虑下两种要求产生菜单列表的模式
+    if (((pMe->m_eMakeListMode == MAKEMSGLIST_NEXTONE) ||
+         (pMe->m_eMakeListMode == MAKEMSGLIST_BACKONE) ||
+         (pMe->m_eMakeListMode == MAKEMSGLIST_PREPAGE) ||
+         (pMe->m_eMakeListMode == MAKEMSGLIST_NEXTPAGE)) && 
+        (wTotalPages < 2))
+    {
+        int nCount;
+        uint16 wItemID;
+        
+        nCount = IMENUCTL_GetItemCount(pMenu);
+        MSG_FATAL("WmsApp_UpdateMenuList_MMS nCount=%d",nCount,0,0);
+        if (nCount > 1)
+        {
+            if (pMe->m_eMakeListMode == MAKEMSGLIST_BACKONE)
+            {
+                wItemID = IMENUCTL_GetItemID(pMenu, nCount-1);
+            }
+            else
+            {
+                wItemID = IMENUCTL_GetItemID(pMenu, 0);
+            }
+            
+            // 将当前选中项置为末尾，体现移动菜单项的连贯性
+            IMENUCTL_SetSel(pMenu, wItemID);
+            
+            (void)IMENUCTL_Redraw(pMenu);
+        }
+        return;
+    }
+        
+    // 建立菜单项列表
+    MEMSET(&mai, 0, sizeof(mai));
+    mai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
+    mai.pszResText = NULL;
+    mai.pImage = NULL;
+    mai.wFont = AEE_FONT_NORMAL;
+    mai.dwData = 0;
+    
+    // 先清除旧有消息列表
+    (void)IMENUCTL_DeleteAll(pMenu);
+
+    (void)STRTOWSTR("%s", wszFmt, sizeof(wszFmt));
+    for (i=1; i<=nItems; i++)//一般情况下g_mmsDataInfoList的第0项，是放的布局文件，从第一项开始才放的彩信元素
+    {
+        wszTitle[0] = 0;
+        MEMSET(wszName, 0, sizeof(wszName));
+        wstrNum[0] = 0;
+        DBGPRINTF("g_mmsDataInfoList[i].phoneNumber=%s, length=%d",g_mmsDataInfoList[i].phoneNumber, STRLEN(g_mmsDataInfoList[i].phoneNumber));
+        // 从电话本中取人名
+        if (0 != STRLEN(g_mmsDataInfoList[i].phoneNumber))
+        {
+            (void)STRTOWSTR(g_mmsDataInfoList[i].phoneNumber, wstrNum, sizeof(wstrNum));
+            
+            WMSUtil_GetContactName(pMe, wstrNum, wszName, MAX_TITLE_LEN);
+        }
+                                    
+        // 格式化菜单项文本
+        if (WSTRLEN(wszName) > 0)
+        {
+            WSPRINTF(wszTitle, sizeof(wszTitle), wszFmt, wszName);
+        }
+        else
+        {
+            if (NULL != g_mmsDataInfoList[i].phoneNumber)
+            {
+                WSPRINTF(wszTitle, sizeof(wszTitle), wszFmt, wstrNum);
+            }
+            else
+            {
+                (void)STRTOWSTR("**********", wstrNum, sizeof(wstrNum));
+                WSPRINTF(wszTitle, sizeof(wszTitle), wszFmt, wstrNum);
+            }
+        }
+
+        mai.pText = wszTitle;
+        mai.wItemID = MSG_CMD_BASE + i;
+
+        mai.dwData = mai.wItemID;
+        
+        mai.wImage = IDB_READ_PH_EMERGENCY;//WmsApp_GetMsgICONID(pnode);
+            
+        // 添加带图标菜单项到菜单
+        (void)IMENUCTL_AddItemEx(pMenu, &mai);
+    }
+    wSelectItemID = mai.wItemID;
+    
+    if (wSelectItemID != 0)
+    {
+        uint16 nTitleID=0;
+        int    nLen;
+        
+        (void)STRTOWSTR(" (%d/%d)", wszFmt, sizeof(wszFmt));
+        wszTitle[0] = 0;
+        
+        if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
+        {
+            nTitleID = IDS_OUTBOX_MMS;
+        }
+        
+        if (nTitleID != 0)
+        {
+            (void) ISHELL_LoadResString(pMe->m_pShell,
+                    AEE_WMSAPPRES_LANGFILE,
+                    nTitleID,
+                    wszTitle,
+                    sizeof(wszTitle));
+            nLen = WSTRLEN(wszTitle);
+            WSPRINTF(&wszTitle[nLen], (sizeof(wszTitle) - nLen*sizeof(AECHAR)), wszFmt, pMe->m_wSelItemxuhao, wItemCount);
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
+        }
+        if(wItemCount > MAXITEMS_ONEPAGE)
+        {
+            AEERect rc;
+
+            IMENUCTL_GetRect(pMenu, &rc);
+            rc.dx = pMe->m_rc.dx - SCROLLBAR_WIDTH;
+            IMENUCTL_SetRect(pMenu, &rc);
+        
+            rc.x = pMe->m_rc.dx - SCROLLBAR_WIDTH;
+            rc.dx = SCROLLBAR_WIDTH;
+            rc.y = 0;
+            rc.dy = pMe->m_rc.dy- BOTTOMBAR_HEIGHT;
+        
+            Appscommon_DrawScrollBar(pMe->m_pDisplay, pMe->m_wCurPageStarxuhao + MAXITEMS_ONEPAGE - 1, wItemCount, MAXITEMS_ONEPAGE, &rc);
+            IDISPLAY_Update(pMe->m_pDisplay);
+        }        
+        IMENUCTL_SetSel(pMenu, wSelectItemID);
+    }
+
+    (void)IMENUCTL_Redraw(pMenu);
+} //WmsApp_UpdateMenuList_MMS()
 #endif
 

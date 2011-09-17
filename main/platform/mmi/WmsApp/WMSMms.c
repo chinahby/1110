@@ -308,8 +308,12 @@ uint8 cSlim_clib_tolower_table[256] = {
 	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255,
 };
 
-uint8 g_mms_buffer[300*1024];
+//uint8 g_mms_buffer[300*1024];
+uint8 g_mms_buffer[200*1024];
 
+//extern MMSData	g_mmsDataInfoList[MAX_MMS_STORED];
+extern MMSData	g_mmsDataInfoList[2];
+extern uint8  g_mmsDataInfoMax;
 static char* MMS_WSP_ContentTypeDB_MMS2Text(int ct)
 {
 	if ((ct >= 0) && (ct <= 0x4b))
@@ -931,7 +935,7 @@ int WMS_MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen)
 
 static WSP_MMS_ENCODE_DATA mms_data = {0};
 
-uint8 buf[150*1024] = {0};
+uint8 buf[30*1024] = {0};
 
 int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
 {
@@ -944,10 +948,11 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
 	int i,index = mms_data.frag_num;
     IConfig *pConfig;
 	IShell  *pShell = AEE_GetShell();
-    char MMSImagepszPath[MG_MAX_FILE_NAME];
-    char MMSSoundpszPath[MG_MAX_FILE_NAME];
-    char MMSVideopszPath[MG_MAX_FILE_NAME];    
-    MEMSET((void*)buf, 0, 150*1024);
+    //char MMSImagepszPath[MG_MAX_FILE_NAME];
+    char MMSImagepszPath[70];
+    char MMSSoundpszPath[70];
+    char MMSVideopszPath[70];    
+    MEMSET((void*)buf, 0, 30*1024);
 	//head_len = MMS_Encode_header(pCurPos,(uint8*)"+8613714333583",(uint8*)"123456789");
 	head_len = MMS_Encode_header(pCurPos,(uint8*)sendNumber,(uint8*)"123456789");
 	MMS_DEBUG(("WMS_MMS_SEND_TEST head_len = %d, sendNumber len=%d, frag_num=%d",head_len, STRLEN(sendNumber), mms_data.frag_num));	
@@ -1039,14 +1044,15 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
 	STRNCPY((char*)mms_data.fragment[1].hContentID,"1.txt",len);
 	len = STRLEN("1.txt");
 	STRNCPY((char*)mms_data.fragment[1].hContentName,"1.txt",len);
-#endif		
+#endif		     
+
 	head_len = MMS_Encode_MsgBody(pCurPos,0,mms_data.frag_num+1);
-	MMS_DEBUG(("[MMS] MMS_Encode_MsgBody head_len = %d",head_len));	
+	MMS_DEBUG(("[MMS] MMS_Encode_MsgBody head_len1 = %d",head_len));	
 	pCurPos += head_len;
 
 	len = WMS_MMS_CreateSMIL(smil_buf,2000,mms_data);	
 	head_len = MMS_EncodeSmilFile(pCurPos,smil_buf,len);
-	MMS_DEBUG(("[MMS] MMS_EncodeSmilFile head_len = %d",head_len));	
+	MMS_DEBUG(("[MMS] MMS_EncodeSmilFile head_len2 = %d",head_len));	
 	pCurPos += head_len;
 
 	for(i=0; i<mms_data.frag_num; i++)
@@ -1065,7 +1071,19 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
 	MMS_DEBUG(("[MMS] POST_TEST head_len = %d",head_len));
 	
 	MEMCPY((void*)(buffer+head_len),buf,size);//将来直接保存buf就行了,再解析时用WMS_MMS_WSP_DecodeMessage解析就可以了
-
+	MSG_FATAL("MMS_SEND_TEST1 g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
+    if(g_mmsDataInfoMax < MAX_MMS_STORED)//这里还要判断手机内存够不够
+    {
+        g_mmsDataInfoMax++;
+        MEMCPY((void*)(g_mmsDataInfoList[g_mmsDataInfoMax].phoneNumber), sendNumber, STRLEN(sendNumber));
+        DBGPRINTF("g_mmsDataInfoList[i].phoneNumber=%s, length=%d",g_mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, STRLEN(g_mmsDataInfoList[g_mmsDataInfoMax].phoneNumber));
+        g_mmsDataInfoList[g_mmsDataInfoMax].MMSBuff = (char*)MALLOC(size);//这里分配的内存，将来要释放
+        MEMCPY((void*)(g_mmsDataInfoList[g_mmsDataInfoMax].MMSBuff), buf, size);
+        g_mmsDataInfoList[g_mmsDataInfoMax].MMSDatasize = size;
+    	(void) ICONFIG_SetItem(pConfig, CFGI_MMSDATA_INFO, (void*)g_mmsDataInfoList, sizeof(g_mmsDataInfoList));        
+        //g_mmsDataInfoMax++;
+        MSG_FATAL("MMS_SEND_TEST2 g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
+    }
 	return (head_len+size);
 }
 
@@ -1276,6 +1294,8 @@ static int MMS_WSP_Decode_MultipartData(uint8* pData, int iDataLen,int nParts, W
 				else
 				{
 					//bodycreated = TMIMEParts_NewBodySS(iMIMEParts,iPart,pbyte,iInsDataLen,SLIM_MIMECODEC_BINARY,TRUE);
+					iMIMEParts->pContent = pbyte;
+                    iMIMEParts->size = iInsDataLen;
 				}
 
 				if (!bodycreated)

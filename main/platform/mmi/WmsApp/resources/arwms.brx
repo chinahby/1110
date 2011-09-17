@@ -595,7 +595,9 @@
 	<String Id="1020" Name="IDS_NEW_SOUND">
 		<Text>New sound</Text>
 	</String>
-	
+	<String Id="1021" Name="IDS_OUTBOX_MMS">
+		<Text>Outbox  MMS</Text>
+	</String>
 	<String Id="1022" Name="IDS_REMOVE_PICTURE">
 		<Text>Remove picture</Text>
 	</String>

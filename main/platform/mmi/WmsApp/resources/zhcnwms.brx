@@ -574,6 +574,9 @@
 	<String Id="1012" Name="IDS_REMOVE_SOUND">
 		<Text>移除声音</Text>
 	</String>
+	<String Id="1013" Name="IDS_OUTBOX_MMS">
+		<Text>已发彩信</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
