@@ -839,6 +839,21 @@ typedef enum {
 #define MAX_FMRADIO_STORED_CHANNEL 40
 #define MAS_BREWSETINT_STRING    64
 
+#ifdef FEATURE_USES_MMS
+#define MAX_MMS_STORED 10//最多只能存10条彩
+#define MMS_MAX_FILE_NAME            128
+#define MAX_PH_NUMBER 36   
+
+typedef struct _MMSData
+{ 
+    // 接收消息方号码
+   // char      phoneNumber[MAX_PH_NUMBER+1];
+    char      phoneNumber[13];
+    char      MMSDataFileName[MMS_MAX_FILE_NAME]; 
+    int       MMSDatasize;
+} MMSData;
+#endif
+
 typedef struct _sChanInfo
 {
     AECHAR          szName[MAX_FMRADIO_NAME_CHAR + 1];              //广播台名
