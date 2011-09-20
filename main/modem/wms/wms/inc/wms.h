@@ -354,6 +354,9 @@ typedef enum _wms_box_e_type
     WMS_MB_TEMPLATE,     // 消息模板
     WMS_MB_RESERVE,      // 预约
     WMS_MB_RSVFAILED,    // 预约失败
+#ifdef FEATURE_USES_MMS
+    WMS_MB_OUTBOX_MMS,   // 彩信发件箱
+#endif
     WMS_MB_MAX
 } wms_box_e_type;
 

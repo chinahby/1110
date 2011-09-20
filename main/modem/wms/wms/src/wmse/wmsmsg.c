@@ -5681,6 +5681,7 @@ wms_report_status_e_type wms_msg_cdma_map_report_status
   wms_status_e_type  st
 )
 {
+  MSG_FATAL("WMS_RPT_OK st = %d",st,0,0);
   switch( st )
   {
     case WMS_OK_S:
@@ -7082,6 +7083,7 @@ void wms_msg_mt_CDMA_tl_ack_proc(
       {
          /* deliver status to client:
               */
+         MSG_FATAL("WMS_RPT_OK error_class = %d",cause_code_ptr->error_class,0,0);     
          msg_event_info.submit_report_info.client_id = rec_ptr->client_id;
          msg_event_info.submit_report_info.user_data = rec_ptr->user_data;
          msg_event_info.submit_report_info.report_status =
