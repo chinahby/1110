@@ -684,6 +684,7 @@ typedef struct
    char  s_MMSImage[AEE_MAX_FILE_NAME];     
    char  s_MMSSOUND[AEE_MAX_FILE_NAME];   
    char  s_MMSVIDEO[AEE_MAX_FILE_NAME];
+   MMSData   MMSDataInfo[MAX_MMS_STORED];   //CFGI_MMSDATA_INFO
 #endif
 } OEMConfigListType;
 
@@ -1491,6 +1492,11 @@ static int OEMPriv_GetItem_CFGI_MISSED_CALL_ICON(void *pBuff);
 static int OEMPriv_SetItem_CFGI_MISSED_CALL_ICON(void *pBuff);
 #endif //#ifdef CUST_EDITION
 
+#ifdef FEATURE_USES_MMS   
+static int OEMPriv_GetItem_CFGI_MMSDATA_INFO(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MMSDATA_INFO(void *pBuff);
+#endif
+
 /*===========================================================================
 
                      STATIC/LOCAL DATA
@@ -1792,6 +1798,10 @@ static OEMConfigListType oemi_cache = {
    ,{OEMNV_MMSIMAGE}
    ,{OEMNV_MMSSOUND}
    ,{OEMNV_MMSVIDEO}
+   ,{{"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0},
+     {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}
+    }  //CFGI_MMSDATA_INFO
+    ,   
 #endif   
 };
 
@@ -2331,6 +2341,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM_EMPTY(CFGI_MMSIMAGE) ,
    CFGTABLEITEM_EMPTY(CFGI_MMSSOUND) ,
    CFGTABLEITEM_EMPTY(CFGI_MMSVIDEO) ,
+   CFGTABLEITEM(CFGI_MMSDATA_INFO, sizeof(MMSData) * MAX_MMS_STORED),
 #endif   
 };
 #endif
@@ -2732,6 +2743,15 @@ void OEM_RestoreFactorySetting( void )
    MEMCPY(oemi_cache.s_MMSImage,OEMNV_MMSIMAGE, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
    MEMCPY(oemi_cache.s_MMSSOUND,OEMNV_MMSSOUND, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
    MEMCPY(oemi_cache.s_MMSVIDEO,OEMNV_MMSVIDEO, AEE_MAX_FILE_NAME/*FILESPECLEN*/); 
+   {
+        uint8 index = 0; 
+        for(; index < MAX_MMS_STORED; index++)
+        {
+            MEMSET(oemi_cache.MMSDataInfo[index].phoneNumber, 0, 13);
+            oemi_cache.MMSDataInfo[index].MMSBuff = NULL;
+            oemi_cache.MMSDataInfo[index].MMSDatasize = 0;
+        }
+   }
 #endif  
    //屏保时间
    oemi_cache.p_screensaver_time=0; 
@@ -3548,45 +3568,47 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 {
    uint32 j;
    nv_item_type nvi;
-
+   MSG_FATAL("OEM_GetCachedConfig Start", 0, 0, 0);
    if (!cache_initialized) {
       OEM_InitPreference();
    }
 
    if (pBuff == NULL) {
-      ERR("GetConfig(): invalid parm size", 0, 0, 0);
+      MSG_FATAL("OEM_GetCachedConfig(): invalid parm size", 0, 0, 0);
       return EBADPARM;
    }
 
    // First check if the item can be found in any of the config
    // tables before resorting to the ugly switch() statement below...
    for (j = 0; j < ARR_SIZE(cfgTable); j++) {
+      MSG_FATAL("OEM_GetCachedConfig 1", 0, 0, 0);  
       // Is the item in the range of this table?
       if ( (i >= cfgTable[j].tbl[0].item) &&
            (i <= cfgTable[j].tbl[cfgTable[j].size-1].item) ) {
 
          int idx = (int)i - (int) cfgTable[j].tbl[0].item;
-
+         MSG_FATAL("OEM_GetCachedConfig 2", 0, 0, 0);   
          // Ensure the config item table is valid
          ASSERT(i == (int) cfgTable[j].tbl[idx].item);
 
          if (NULL == cfgTable[j].tbl[idx].get) {
             // Exit the for() loop immediately if we found the
             // entry and it had a NULL function.
+            MSG_FATAL("OEM_GetCachedConfig 2", 0, 0, 0);
             break;
          }
 
          // Perform the size check here so the item functions can
          // assume the size is ok.
          if (nSize != cfgTable[j].tbl[idx].size) {
-            ERR("GetConfig(): invalid parm size", 0, 0, 0);
+            MSG_FATAL("GetConfig(): invalid parm size", 0, 0, 0);
             return EBADPARM;
          }
-
+        MSG_FATAL("OEM_GetCachedConfig 3", 0, 0, 0);
          return cfgTable[j].tbl[idx].get(pBuff);
       }
    }
-
+   MSG_FATAL("OEM_GetCachedConfig 3", 0, 0, 0);    
    // Didn't find the config item in the tables, maybe it's in this switch...
    switch (i) {
    case CFGI_BACK_LIGHT:
@@ -4603,19 +4625,20 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    disp_info_type di;
    uint32 contrast;
 #endif
-
+   MSG_FATAL("OEM_SetCachedConfig Start i=%d",i,0,0);
    if (!cache_initialized) {
       OEM_InitPreference();
    }
-
+   MSG_FATAL("OEM_SetCachedConfig 1", 0, 0, 0); 
    if (pBuff == NULL) {
-      ERR("GetConfig(): invalid parm size", 0, 0, 0);
+      MSG_FATAL("GetConfig(): invalid parm size", 0, 0, 0);
       return EBADPARM;
    }
-
+   MSG_FATAL("OEM_SetCachedConfig 2", 0, 0, 0); 
    // First check if the item can be found in any of the config
    // tables before resorting to the ugly switch() statement below...
    for (j = 0; j < ARR_SIZE(cfgTable); j++) {
+     MSG_FATAL("OEM_SetCachedConfig 3", 0, 0, 0); 
       // Is the item in the range of this table?
       if ( (i >= cfgTable[j].tbl[0].item) &&
            (i <= cfgTable[j].tbl[cfgTable[j].size-1].item) ) {
@@ -4628,20 +4651,21 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
          if (NULL == cfgTable[j].tbl[idx].get) {
             // Exit the for() loop immediately if we found the
             // entry and it had a NULL function.
+            MSG_FATAL("it had a NULL function", 0, 0, 0);
             break;
          }
 
          // Perform the size check here so the item functions can
          // assume the size is ok.
          if (nSize != cfgTable[j].tbl[idx].size) {
-            ERR("SetConfig(): invalid parm size", 0, 0, 0);
+            MSG_FATAL("SetConfig(): invalid parm size", 0, 0, 0);
             return EBADPARM;
          }
 
          return cfgTable[j].tbl[idx].set(pBuff);
       }
    }
-
+   MSG_FATAL("OEM_SetCachedConfig i=%d",i,0,0);
    // Didn't find the config item in the tables, maybe it's in this switch...
    switch(i) {
    case CFGI_BACK_LIGHT:
@@ -5553,7 +5577,7 @@ int OEM_SetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
       MEMSET((void *)oemi_cache.s_MMSVIDEO,'\0', AEE_MAX_FILE_NAME/*FILESPECLEN*/);
       MEMCPY((void *)oemi_cache.s_MMSVIDEO, (void *)pBuff, AEE_MAX_FILE_NAME/*FILESPECLEN*/);
       OEMPriv_WriteOEMConfigList();
-      return AEE_SUCCESS;        
+      return AEE_SUCCESS;             
 #endif
 
    default:
@@ -10516,7 +10540,24 @@ static int OEMPriv_SetItem_CFGI_FMRADIO_CHAN_TOTAL(void *pBuff)
 
    return SUCCESS;
 }
+#ifdef FEATURE_USES_MMS   
+static int OEMPriv_GetItem_CFGI_MMSDATA_INFO(void *pBuff) 
+{
+   MSG_FATAL("OEMPriv_GetItem_CFGI_MMSDATA_INFO Start",0,0,0);
+   MEMCPY(pBuff, (void*)(oemi_cache.MMSDataInfo), sizeof(MMSData) * MAX_MMS_STORED);
+   MSG_FATAL("OEMPriv_GetItem_CFGI_MMSDATA_INFO ENd, pBuff length=%d",STRLEN((char*)pBuff),0,0);
+   return SUCCESS;
+}
 
+static int OEMPriv_SetItem_CFGI_MMSDATA_INFO(void *pBuff)
+{
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMSDATA_INFO Start,pBuff length=%d", STRLEN((char*)pBuff),0,0);
+    DBGPRINTF("pBuff=%s", (char*)pBuff);
+    MEMCPY((void*)(oemi_cache.MMSDataInfo), pBuff, sizeof(MMSData) * MAX_MMS_STORED);
+    OEMPriv_WriteOEMConfigList(); 
+    return SUCCESS;
+}
+#endif
 /*==============================================================================
 函数：
        GetRepeatRawNumber
