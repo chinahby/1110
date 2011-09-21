@@ -982,6 +982,8 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
 #ifdef FEATURE_RANDOM_MENU_COLOR
     RGBVAL  nBgColor = APPSCOMMON_BG_COLOR;
 #endif
+
+	MSG_FATAL("***zzg DrawBottomBar***",0,0,0);
     
     if ((NULL == pShell) || (NULL == pIDisplay) || (NULL == BParam))
     {
@@ -1235,7 +1237,211 @@ void DrawBottomBar(IDisplay  * pIDisplay, BottomBar_Param_type *BParam)
 #endif /* FEATURE_FUNCS_THEME */    
 #endif /* FEATURE_FUNCS_BOTTOM_BAR */
 	IDisplay_Update(pIDisplay);
-}                       
+}   
+
+
+//Add By zzg 2011_09_08
+/*==============================================================================
+
+函数:
+    DrawBottomBg
+
+说明:
+    本函数用于画与语言相关的底部提示条。
+
+参数:
+    pIDisplay [in]: 指向 IDisplay 接口的指针。
+  
+返回值:
+    none
+
+备注:
+    本函数用于画与语言相关的底部提示条背景图。
+==============================================================================*/
+void DrawBottomBg(IDisplay  * pIDisplay)
+{
+#ifdef FEATURE_FUNCS_BOTTOM_BAR
+    IImage      *pBarImg = NULL;    
+    AEERect     rc;
+    
+#ifdef FEATURE_FUNCS_THEME    
+    RGBVAL      oldColor;
+    Theme_Param_type Theme_Param;
+#endif /* FEATURE_FUNCS_THEME */    
+
+    IShell      *pShell = AEE_GetShell();
+
+#ifdef FEATURE_RANDOM_MENU_COLOR
+    RGBVAL  nBgColor = APPSCOMMON_BG_COLOR;
+#endif
+
+	AEEDeviceInfo devinfo;
+    int nBarH = GetBottomBarHeight(pIDisplay);    
+
+	MSG_FATAL("***zzg DrawBottomBg***",0,0,0);
+	    
+    if ((NULL == pShell) || (NULL == pIDisplay))
+    {
+        return;
+    }
+
+#ifdef FEATURE_FUNCS_THEME    
+    // 获取主题参数
+    Appscom_GetThemeParameters(&Theme_Param);
+#endif /* FEATURE_FUNCS_THEME */    
+
+	MEMSET(&devinfo, 0, sizeof(devinfo));
+    ISHELL_GetDeviceInfo(pShell, &devinfo);
+    SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+	
+	pBarImg = ISHELL_LoadResImage(pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_BOTTOMBAR);
+   
+    // 绘制底部提示条
+    if (NULL != pBarImg)
+    {
+        IIMAGE_Draw(pBarImg, 0, rc.y);            
+        IIMAGE_Release(pBarImg);
+        pBarImg = NULL;		
+    } 
+
+#ifdef FEATURE_FUNCS_THEME
+    else
+    {
+        IDISPLAY_FillRect(pIDisplay, &rc, Theme_Param.themeColor);
+    }
+#endif
+     
+#endif /* FEATURE_FUNCS_BOTTOM_BAR */
+	IDisplay_Update(pIDisplay);
+}
+
+
+/*==============================================================================
+函数:
+    DrawBottomText
+
+说明:
+    本函数用于画与语言相关的底部提示条。
+
+参数:
+    pIDisplay [in]: 指向 IDisplay 接口的指针。
+    pText: 底部提示条相关文本。
+    type:   底部左中右类型。
+
+返回值:
+    none
+
+备注:
+    本函数用于画与语言相关的底部提示条文本。
+==============================================================================*/
+void DrawBottomText(IDisplay  * pIDisplay,	char* pText, int type)
+{
+#ifdef FEATURE_FUNCS_BOTTOM_BAR
+    IImage      *pBarImg = NULL;    
+    AEERect     rc;
+    AECHAR      wszBar[20]={0};// 左    
+    uint32		flags;
+    
+#ifdef FEATURE_FUNCS_THEME    
+    RGBVAL      oldColor;
+    Theme_Param_type Theme_Param;
+#endif /* FEATURE_FUNCS_THEME */    
+
+    IShell      *pShell = AEE_GetShell();
+
+#ifdef FEATURE_RANDOM_MENU_COLOR
+    RGBVAL  nBgColor = APPSCOMMON_BG_COLOR;
+#endif
+
+	AEEDeviceInfo devinfo;
+    int nBarH = GetBottomBarHeight(pIDisplay);
+    
+
+	MSG_FATAL("***zzg DrawBottomText***",0,0,0);
+
+	    
+    if ((NULL == pShell) || (NULL == pIDisplay))
+    {
+        return;
+    }
+
+	STRTOWSTR(pText, wszBar, sizeof(wszBar));
+	
+
+#ifdef FEATURE_FUNCS_THEME    
+    // 获取主题参数
+    Appscom_GetThemeParameters(&Theme_Param);
+#endif /* FEATURE_FUNCS_THEME */    
+
+	MEMSET(&devinfo, 0, sizeof(devinfo));
+    ISHELL_GetDeviceInfo(pShell, &devinfo);
+    SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+	flags = IDF_ALIGN_BOTTOM | IDF_TEXT_TRANSPARENT;
+
+	 // 加载按钮文本
+    switch(type)
+    {
+		case SOFTKEY_LEFT:
+		{	
+			flags |= IDF_ALIGN_LEFT;
+			break;
+		}
+		case SOFTKEY_CENTER:
+		{	
+			flags |= IDF_ALIGN_CENTER;
+			break;
+		}
+		case SOFTKEY_RIGHT:
+		{			
+			flags |= IDF_ALIGN_RIGHT;
+			break;
+		}
+		default :
+		{
+			break;
+		}
+	}  
+
+#ifdef FEATURE_FUNCS_THEME
+    oldColor = IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, Theme_Param.textColor);
+#else
+
+    (void)IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);
+
+#endif /* FEATURE_FUNCS_THEME */    
+    
+#if !defined( FEATURE_CARRIER_ISRAEL_PELEPHONE)  // modify the code on 080922
+    rc.x+=5;
+    rc.dx-=10;
+#endif
+    (void)IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_WHITE);	
+
+	// 绘制文本
+    if (WSTRLEN(wszBar)>0)
+    {
+        (void) IDISPLAY_DrawText(pIDisplay, 
+			                    AEE_FONT_BOLD, 
+			                    wszBar, 
+			                    -1, 
+			                    0, 
+			                    0, 
+			                    &rc, 
+			                    flags);
+    } 
+
+    
+#ifdef FEATURE_FUNCS_THEME    
+    // 恢复显示文本颜色
+    (void)IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, oldColor);
+#else
+    (void)IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_BLACK);
+#endif /* FEATURE_FUNCS_THEME */    
+#endif /* FEATURE_FUNCS_BOTTOM_BAR */
+	IDisplay_Update(pIDisplay);
+}   
+//Add End
+
 
 /*==============================================================================
 函数:
