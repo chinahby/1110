@@ -83,6 +83,7 @@
 
 #ifdef FEATURE_USES_MMS
 #include "MediaGallery.h"
+#include "WmsMms.h"
 #define MMSFILE_DIR      "fs:/user/mms"
 #endif
 
@@ -825,6 +826,8 @@ typedef struct WmsApp
 	boolean                         m_bflash_sms;              //add by yangdecai 2011-04-01
 	#endif
 #ifdef FEATURE_USES_MMS      
+    MMS_WSP_DEC_DATA                m_DecData;
+
     IImage                          *m_pMMSImage;
     IImage                          *m_pMMSSOUND;
     IImage                          *m_pMMSVIDEO;

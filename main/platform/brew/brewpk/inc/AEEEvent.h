@@ -9,7 +9,7 @@ SERVICES:  Include file event type definitions
 GENERAL DESCRIPTION:
    Defines BREW Event types.
 
-Copyright © 1999-2008 QUALCOMM Incorporated.
+Copyright ?1999-2008 QUALCOMM Incorporated.
 All Rights Reserved.
 Qualcomm Confidential and Proprietary
 =====================================================*/
@@ -312,7 +312,8 @@ enum
 #endif
 #ifdef FEATURE_USES_MMS
     EVT_MMS_MSG_SEND_FINSH,
-#endif    
+    EVT_MMS_PDUDECODE,
+#endif
     EVT_CUST_MAX
 };
 #endif /*CUST_EDITION*/

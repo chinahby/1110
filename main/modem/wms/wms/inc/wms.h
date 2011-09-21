@@ -1404,9 +1404,9 @@ typedef enum
   WMS_TELESERVICE_QMA_EMAIL          = 65490,  /* UMS for QMA */
   WMS_TELESERVICE_QMA_WPUSH          = 65002,  /* QMA Wap push message service ID */
   WMS_TELESERVICE_QMA_PMAIL          = 65497,  /* Photo Mail for QMA */
-#elif defined (FEATURE_CARRIER_CHINA_TELCOM)
+#endif//#elif defined (FEATURE_CARRIER_CHINA_TELCOM)
   WMS_TELESERVICE_WPUSH              = 65002,  /* China telecom Wap push message service ID  */
-#endif
+//#endif
 #endif /*CUST_EDITION*/
   /*---------------------------------------------------------------------
      The following are defined as extensions to the standard teleservices

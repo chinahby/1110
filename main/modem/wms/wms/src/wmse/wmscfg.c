@@ -2758,9 +2758,10 @@ boolean wms_cfg_check_wap_push_message
     if(msg_ptr->u.cdma_message.teleservice == WMS_TELESERVICE_WAP
 #if defined(FEATURE_QMA) // Gemsea
        || msg_ptr->u.cdma_message.teleservice == WMS_TELESERVICE_QMA_WPUSH
-#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
-       || msg_ptr->u.cdma_message.teleservice == WMS_TELESERVICE_WPUSH
 #endif
+//#elif defined(FEATURE_CARRIER_CHINA_TELCOM)
+       || msg_ptr->u.cdma_message.teleservice == WMS_TELESERVICE_WPUSH
+
       )
     {
       ret_value = TRUE;

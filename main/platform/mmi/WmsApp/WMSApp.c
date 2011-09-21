@@ -27,6 +27,7 @@
 #include "OEMClassIDs.h"
 #ifdef FEATURE_USES_MMS
 #include "WMSMmsTest.h"
+#include "WMSMms.h"
 #endif
 /*==============================================================================
                                  
@@ -1327,7 +1328,6 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 return TRUE;
             }
 #endif
-
         case EVT_WMS_MSG_RECEIVED_MESSAGE:
             {
             	#define HEADER_INFO 3
@@ -1438,52 +1438,15 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 							MEMCPY( (void*)body, (void*)(data + HEADER_INFO + header_len), body_len);
 
 							//now, body need pass to function WMS_MMS_PDU_Decode to decode the URL.
-							//todo here
-							//
-							//ISHELL_PostEvent
-							{
-								int result = SUCCESS;
-			                	IFile* pIFile = NULL;
-							    IFileMgr *pIFileMgr = NULL;
-							    FileInfo pInfo = {0};
-							    int len = bRet;
-			                    // Wms Applet 不处理此消息
-			                    MSG_FATAL("MMS Decode body", 0, 0, 0);
-
-			                    result = ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_FILEMGR,(void **)&pIFileMgr);
-								if (SUCCESS != result)
-							    {
-									MSG_FATAL("MRS: Open file error %x", result,0,0);
-									goto Exit;
-							    }
-
-			                    pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms_nofity.txt", _OFM_READWRITE);
-								if ( pIFile != NULL )
-						        {
-						            IFILE_Seek(pIFile, _SEEK_START, 0);
-						            IFILE_Write( pIFile, notify_buf, len);
-
-						            MSG_FATAL("IFILEMGR_OpenFile size=%d",len,0,0);
-						            IFILE_Release( pIFile);
-						            pIFile = NULL;
-						            IFILEMGR_Release(pIFileMgr);
-						            pIFileMgr = NULL;
-						        }
-						        else
-						        {
-									pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/mms_nofity.txt", _OFM_CREATE);
-									if ( pIFile != NULL )
-							        {
-							            IFILE_Write( pIFile, notify_buf, len);
-
-							            MSG_FATAL("IFILEMGR_OpenFile size=%d",len,0,0);
-							            IFILE_Release( pIFile);
-							            pIFile = NULL;
-							            IFILEMGR_Release(pIFileMgr);
-							            pIFileMgr = NULL;
-							        }
-						        }
-							}
+							MSG_FATAL(" MMS_WSP_DEC_DATA decData",0,0,0);
+                           
+							ISHELL_PostEventEx(pMe->m_pShell,
+							    EVTFLG_ASYNC,
+							    AEECLSID_WMSAPP,
+							    EVT_MMS_PDUDECODE,
+							    body_len,
+							    (int32)body);
+							    
 						}
 						else
 						{
@@ -1722,7 +1685,119 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             // 更新图标
             WmsApp_UpdateAnnunciators(pMe);
             return TRUE;
-            
+
+        case EVT_MMS_PDUDECODE:
+        {
+            MMS_WSP_DEC_DATA *pDecData = (MMS_WSP_DEC_DATA*)sys_malloc(sizeof(MMS_WSP_DEC_DATA));
+            int body_len = wParam;
+            uint8* pBody = (uint8*)dwParam;
+            uint8 nResult = SUCCESS;
+            char strAddr[100];
+            uint8 ePDUType;
+            MMSSocket* pMMSSocket = NULL; 
+
+            if(body_len == 0 || pBody == NULL)
+            {
+                break;
+            }
+            MSG_FATAL("EVT_MMS_PDUDECODE body_len:%d",body_len,0,0);
+
+            if(pDecData != NULL)
+                MEMSET(pDecData,NULL,sizeof(sizeof(MMS_WSP_DEC_DATA)));
+            if(body_len != 0)
+                nResult = WMS_MMS_PDU_Decode(pDecData,pBody,body_len,&ePDUType); 
+                
+             MSG_FATAL("EVT_MMS_PDUDECODE nResult:%d ePDUType:%d",nResult,ePDUType,0);
+            if(!nResult)
+            {
+                switch(ePDUType)
+                {
+                    case MMS_PDU_NOTIFICATION_IND:
+                    {
+                        char* pStr = STRSTR((const char *)&pDecData->notification.hContentLocation,"http://");
+                        MSG_FATAL("decData.notification.hContentLocation = %s",pStr,0,0);
+                        STRCPY((char*)&strAddr,pStr);
+                        MSG_FATAL("decData.notification.hContentLocation = %s",strAddr,0,0);
+
+                        MSG_FATAL("pMMSSocket = %d STRLEN(strAddr) = %d",pMMSSocket,STRLEN(strAddr),0);
+                        if(STRLEN(strAddr) != 0)
+                        {
+                            MMSSocketNew(&pMMSSocket,AEE_SOCK_STREAM);
+                            if(pMMSSocket != NULL)
+                            {
+                                MMSSocketConnect(pMMSSocket,"10.0.0.200",80);
+                                pMMSSocket->pAddr = (char*)&strAddr;
+                                MMSSocketState(pMMSSocket);         
+                            }
+                        }
+                    }
+                    break;
+                    case MMS_PDU_RETRIEVE_CONF:
+                    {
+                        int i = 0;
+                        char dataPath[100];
+                        MSG_FATAL("IFILEMGR_OpenFile pDecData->message.mms_data.frag_num=%d",pDecData->message.mms_data.frag_num,0,0);
+                        for(;i < pDecData->message.mms_data.frag_num; i ++)
+                        {
+                            IFile* pIFile = NULL;
+                		    IFileMgr *pIFileMgr = NULL;
+                		    int result = 0;
+                		    WSP_DEC_DATA_FRAGMENT *pDataFragment = &pDecData->message.mms_data.fragment[i];
+                		    
+                            SPRINTF(dataPath,"fs:/hsmm/pictures/%s",&pDataFragment->hContentName);
+
+                            MSG_FATAL("IFILEMGR_OpenFile dataPath=%s",&dataPath,0,0);
+                			result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+                			if (SUCCESS != result)
+                		    {
+                				MSG_FATAL("MRS: Open file error %x", result,0,0);
+                				return;
+                		    }
+
+                		    pIFile = IFILEMGR_OpenFile( pIFileMgr, dataPath, _OFM_READWRITE);
+                			if ( pIFile != NULL )
+                	        {
+                	            IFILE_Seek(pIFile, _SEEK_START, 0);
+                	            IFILE_Write( pIFile, pDataFragment->pContent, pDataFragment->size);
+
+                	            MSG_FATAL("IFILEMGR_OpenFile pDataFragment.size=%d",pDataFragment->size,0,0);
+                	            IFILE_Release( pIFile);
+                	            pIFile = NULL;
+                	            IFILEMGR_Release(pIFileMgr);
+                	            pIFileMgr = NULL;
+                	        }
+                	        else
+                	        {
+                				pIFile = IFILEMGR_OpenFile( pIFileMgr, dataPath, _OFM_CREATE);
+                				if ( pIFile != NULL )
+                		        {
+                		            IFILE_Write( pIFile, pDataFragment->pContent, pDataFragment->size);
+
+                		            MSG_FATAL("IFILEMGR_OpenFile pDataFragment.size=%d",pDataFragment->size,0,0);
+                		            IFILE_Release( pIFile);
+                		            pIFile = NULL;
+                		            IFILEMGR_Release(pIFileMgr);
+                		            pIFileMgr = NULL;
+                		        }
+                	        }
+            	        }
+                    }
+                    break;
+                    default:
+                    {
+                        ;
+                    }
+                    break;
+                }
+            }
+            else
+            {
+                MSG_FATAL("WMS_MMS_PDU_Decode nResult = %d",nResult,0,0);
+            }
+        }
+
+        break;
+        
         // 删除消息
         case EVT_WMS_MSG_DELETE:
         case EVT_WMS_MSG_DELETE_TEMPLATE:

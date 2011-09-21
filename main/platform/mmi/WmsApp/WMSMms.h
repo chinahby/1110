@@ -28,6 +28,7 @@
 #include "AEE.h"              // Standard AEE Declarations
 #include "AEEShell.h"         // AEE Shell Services
 #include "AEENet.h"
+#include "AEECallback.h"
 
 #define MMS_TEST
 /////////////////////////////////////////////////////////////
@@ -372,29 +373,41 @@ typedef enum _HTTP_METHOD_TYPE_
 
 //#define MSG_MAX_PACKET_SIZE		(6*1024)//MUST bigger than max header length, because client must send whole header in singal packet
 
-#define MSG_MAX_PACKET_SIZE		(30*1024)
+#define MSG_MAX_PACKET_SIZE		(300*1024)
 #define SOCKET_BUFFER_SIZE		(30*1024)
 #define SENDDATAQUEUE_SIZE		(5)
 #define NOQUEUESLOTAVAILABLE	(-1)
 #define SOCKET_CONNECT_TIMER	(2*60000)// 2 min
 
+typedef enum _WTP_PDU_ClientTransaction_
+{
+    WTP_PDU_INVOKE,
+    WTP_PDU_RESULT,
+    WTP_PDU_ACK
+}WTP_PDU_ClientTransaction;
+
 typedef struct tag_MSocket
 {
-	int16 RecCount;
-	uint8 RecBuffer[MSG_MAX_PACKET_SIZE];
+    int16 RecCount;
+    uint8 RecBuffer[MSG_MAX_PACKET_SIZE];
+    
+    boolean				bConnected;
+    ISocket*		    pISocket;
+    INPort				Port;
+    uint8*              pSendData;
+    uint16              nDataLen;
+    uint16				nBytesSent;
 
-	boolean				bConnected;
-	ISocket*		    pISocket;
-	INPort				Port;
-	uint8				*pSendData;
-	uint16				nDataLen;
-	uint16				nBytesSent;
-
-	uint16 NoDataCount;
-
-	AEEDNSResult DNSResult;
-	AEECallback DNSCallback;
+    uint16 NoDataCount;
+    uint16 nODataLen;
+    uint8* pOData;
+    int nState;
+    char* pAddr;
+    
+    AEEDNSResult DNSResult;
+    AEECallback DNSCallback;
 }MMSSocket;
+
 
 /**
 Called to create a new socket, according to the input type.
