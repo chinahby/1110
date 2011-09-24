@@ -314,11 +314,6 @@ static void CheckUSBCableConnect_HandleDialogTimer(void *pUser);
 static boolean MGAppPopupMenu_OnSetMMSImage(CMediaGalleryApp *pMe,
                                              MGFileInfo *pItemData);
 #endif
-
-#ifdef FEATURE_USES_MMS  
-static boolean MGAppUtil_SetMMSImage(CMediaGalleryApp *pMe,
-                                      AEEImageInfo *pImgInfo);
-#endif
 /*===========================================================================
  *                      Public Function Definitions
  *===========================================================================
@@ -9417,13 +9412,6 @@ static void MGAppUtil_LoadImageNotify(void *pUser,
    {
       MGAppUtil_SetWallpaper(pMe, pi);
    }
-#ifdef FEATURE_USES_MMS  
-    else if (pMe->m_PopupOps == MG_OP_FORMMS_IMAGE ||
-             pMe->m_ImgViewOps == MG_OP_FORMMS_IMAGE)
-    {
-       MGAppUtil_SetMMSImage(pMe, pi);
-    }
-#endif
 }//MGAppUtil_LoadImageNotify
 
 
@@ -10336,152 +10324,4 @@ static boolean MGAppPopupMenu_OnSetMMSImage(CMediaGalleryApp *pMe,
    }
    return TRUE;
 }//MGAppPopupMenu_OnSetWallpaper
-
-static boolean MGAppUtil_SetMMSImage(CMediaGalleryApp *pMe,
-                                      AEEImageInfo *pImgInfo)
-{
-   IConfig *pConfig = NULL;
-   MGFileInfo *pSelData;   
-   
-   //add by miaoxiaoming
-   AEEImageInfo myInfo;	   
-   IBitmap *pIBitmap = NULL;
-   char BmpFileName[MG_MAX_FILE_NAME];
-   int ret = EFAILED;
-   
-   if(NULL == pMe||pMe->m_pImage==NULL)
-   {
-      return FALSE;
-   }
-
-   pSelData = MediaGalleryApp_GetCurrentNode(pMe);
-
-   if(NULL == pSelData)
-   {
-      MG_FARF(STATE, ("ERR, LoadMediaNotify"));
-      return FALSE;
-   }
-
-   if(FALSE == MGAppUtil_WallpaperSettingCheck(NULL, pImgInfo, pMe->m_pShell))
-   {
-      MediaGalleryApp_ShowPromptMsgBox(pMe,
-                                       IDS_MG_WALLPAPERNOSET,
-                                       MESSAGE_INFORMATION,
-                                       BTBAR_BACK);
-      return FALSE;
-   }
-   
-   if(SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
-                                       AEECLSID_CONFIG,
-                                       (void **)&pConfig))
-   {
-      MG_FARF(ADDR, ("Create config interface failed"));
-      return FALSE;
-   }
-
-	IImage_GetInfo(pMe->m_pImage,&myInfo);
-#ifdef FEATURE_BREW_SCALE
-	//MSG_FATAL("pMe->m_rc.dx=%d pMe->m_rc.dy=%d",pMe->m_rc.dx,pMe->m_rc.dy,0);
-	//MSG_FATAL("myInfo.cx=%d myInfo.cy=%d",myInfo.cx,myInfo.cy,0);
-    if(myInfo.cy > 0 && myInfo.cx > 0)
-    {
-#if 1    
-        if((myInfo.cx*1000)/myInfo.cy > (pMe->m_rc.dx*1000)/pMe->m_rc.dy)
-        {
-            myInfo.cx = (myInfo.cx*pMe->m_rc.dy)/myInfo.cy;
-            myInfo.cy = pMe->m_rc.dy;
-        }
-        else
-        {
-            myInfo.cy = (myInfo.cy*pMe->m_rc.dx)/myInfo.cx;
-            myInfo.cx = pMe->m_rc.dx;
-        }
-
-        IImage_SetParm(pMe->m_pImage,
-               IPARM_SCALE,
-               myInfo.cx,
-               myInfo.cy);
-#else
-
-        IImage_SetParm(pMe->m_pImage,
-                       IPARM_SCALE,
-                       pMe->m_rc.dx,
-                       pMe->m_rc.dy);
 #endif
-    }
-		
-	//MSG_FATAL("myInfo.cx=%d myInfo.cy=%d",myInfo.cx,myInfo.cy,0);
-#endif
-
-    ret = ImageExplorer_ImageToBmp(pMe->m_pDisplay,pMe->m_pImage,&pIBitmap,myInfo.cx,myInfo.cy);
-    if (ret != SUCCESS)
-	{
-		
-		RELEASEIF(pConfig);
-		if (pMe->m_pImage!=NULL)
-		{
-			IImage_Release(pMe->m_pImage);
-		}
-		if (NULL != pIBitmap)
-		{
-			IBase_Release((IBase *)pIBitmap);
-		}
-		
-		MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_ERROR);
-		return FALSE;
-	}
-
-	ICONFIG_GetItem(pConfig, CFGI_MMSIMAGE,
-					BmpFileName, sizeof(BmpFileName));
-#if 0    
-	if(STRNCMP(BmpFileName,HEXING_OEM_WALLPAPER1,STRLEN(HEXING_OEM_WALLPAPER1))!=0)
-	{		
-		MSG_FATAL("HEXING_OEM_WALLPAPER2",0,0,0);
-		STRCPY(BmpFileName,HEXING_OEM_WALLPAPER1);	
-	}
-	else
-	{
-		MSG_FATAL("HEXING_OEM_WALLPAPER2",0,0,0);
-        STRCPY(BmpFileName,HEXING_OEM_WALLPAPER2);	
-	}
-#endif
-		
-	ret = ImageExplorer_WriteDIBFile(pMe->m_pShell,BmpFileName,pIBitmap);
-    if (ret != SUCCESS)
-	{		
-		RELEASEIF(pConfig);
-		if (pMe->m_pImage!=NULL)
-		{
-			IImage_Release(pMe->m_pImage);
-		}
-		if (NULL != pIBitmap)
-		{
-			IBase_Release((IBase *)pIBitmap);
-		}
-		
-		MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_ERROR);
-		return FALSE;
-	}
-	
-	if (NULL != pIBitmap)
-	{
-		IBase_Release((IBase *)pIBitmap);
-	}
-	
-	//MSG_FATAL("MGAppUtil_SetWallpaper Leave",0,0,0);
-   
-   ICONFIG_SetItem(pConfig, CFGI_MMSIMAGE,
-                   BmpFileName, sizeof(BmpFileName));
-
-   MGAppPopupMenu_OperationDone(pMe, MG_FNSHOP_DONE);
-
-   RELEASEIF(pConfig);
-   if(pMe->m_PopupOps == MG_OP_WALLPAPER)
-   {
-      RELEASEIF(pMe->m_pImage);
-   }
-   return TRUE;
-}
-
-#endif
-/* ===================== End of File ===================================== */
