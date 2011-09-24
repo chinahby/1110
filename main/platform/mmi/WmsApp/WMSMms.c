@@ -314,7 +314,7 @@ uint8 cSlim_clib_tolower_table[256] = {
 //uint8 g_mms_buffer[300*1024];
 
 //extern MMSData	g_mmsDataInfoList[MAX_MMS_STORED];
-extern MMSData	g_mmsDataInfoList[2];
+//extern MMSData	g_mmsDataInfoList[2];
 extern uint8  g_mmsDataInfoMax;
 static char* MMS_WSP_ContentTypeDB_MMS2Text(int ct)
 {
@@ -979,6 +979,7 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
     {
         return 0;
     }
+    (void) ICONFIG_GetItem(pConfig,CFGI_MMS_COUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
     ICONFIG_GetItem(pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
     ICONFIG_GetItem(pConfig, CFGI_MMSSOUND,MMSSoundpszPath, sizeof(MMSSoundpszPath));
     ICONFIG_GetItem(pConfig, CFGI_MMSVIDEO,MMSVideopszPath, sizeof(MMSVideopszPath));
@@ -1087,17 +1088,76 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
 	
 	MEMCPY((void*)(buffer+head_len),(void*)WMS_MMS_BUFFERGet(),size);//将来直接保存buf就行了,再解析时用WMS_MMS_WSP_DecodeMessage解析就可以了
 	MSG_FATAL("MMS_SEND_TEST1 g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
-    if(g_mmsDataInfoMax < MAX_MMS_STORED)//这里还要判断手机内存够不够
+    if(g_mmsDataInfoMax < MAX_MMS_STORED)
     {
+        IFile* pIFile = NULL;
+        IFileMgr *pIFileMgr = NULL;
+        int result = 0;
+        char psz[5];
+        char mmsDataFileName[MMS_MAX_FILE_NAME];
+        MMSData	mmsDataInfoList[10];
+        char sz[2] =   { '/', 0 };
+        result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+        if (SUCCESS != result)
+        {
+        	MSG_FATAL("MRS: Open file error %x", result,0,0);
+        	return 0;
+        }
+        (void) ICONFIG_GetItem(pConfig,
+                           CFGI_MMSDATA_INFO,
+                           (void*)mmsDataInfoList,
+                           sizeof(mmsDataInfoList));
+
+        MEMSET((void*)mmsDataFileName, 0, MMS_MAX_FILE_NAME);
+        psz[0] = g_mmsDataInfoMax+'A';
+        DBGPRINTF("psz 1=%s", psz);
+        (void)STRCPY(mmsDataFileName, "fs:/hsmm/mmsDataFile");
+        DBGPRINTF("1 mmsDataFileName=%s", mmsDataFileName);
+        if(SUCCESS != IFILEMGR_Test(pIFileMgr, mmsDataFileName))
+        {
+            MSG_FATAL("SUCCESS != IFILEMGR_Test",0,0,0);
+            (void)IFILEMGR_MkDir(pIFileMgr, mmsDataFileName);
+        }
+        MSG_FATAL("SUCCESS == IFILEMGR_Test",0,0,0);
+        (void)STRCAT(mmsDataFileName,sz);  
+        DBGPRINTF("2 mmsDataFileName=%s", mmsDataFileName);
+        (void)STRCAT(mmsDataFileName, psz);
+        DBGPRINTF("3 mmsDataFileName=%s", mmsDataFileName);
+
+        if(SUCCESS == IFILEMGR_Test(pIFileMgr, mmsDataFileName))
+        {
+            result = IFILEMGR_Remove(pIFileMgr, mmsDataFileName);
+            MSG_FATAL("IFILEMGR_Remove result=%d", result,0,0);
+        }
+        pIFile = IFILEMGR_OpenFile(pIFileMgr, mmsDataFileName, _OFM_CREATE);
+        if(NULL != pIFile)
+        {
+            buf[1] = 0x84;//为了将来进“已发送彩信箱”里时方便调用WMS_MMS_PDU_Decode来解码
+            result = IFILE_Write(pIFile, (void*)buf, size);
+            MSG_FATAL("result=%d",result,0,0);
+            IFILE_Release( pIFile);
+            pIFile = NULL;
+            IFILEMGR_Release(pIFileMgr);
+            pIFileMgr = NULL;
+        }   
+        else
+        {
+            return (head_len+size);
+        }
+        STRCPY(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, sendNumber);
+        STRCPY(mmsDataInfoList[g_mmsDataInfoMax].MMSDataFileName, mmsDataFileName);
+        DBGPRINTF("mmsDataInfoList[i].phoneNumber=%s, length=%d",mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, STRLEN(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber));      
+        DBGPRINTF("g_mmsDataInfoList[i].MMSDataFileName=%s", mmsDataInfoList[g_mmsDataInfoMax].MMSDataFileName);
+        mmsDataInfoList[g_mmsDataInfoMax].MMSDatasize = size;
         g_mmsDataInfoMax++;
-        MEMCPY((void*)(g_mmsDataInfoList[g_mmsDataInfoMax].phoneNumber), sendNumber, STRLEN(sendNumber));
-        DBGPRINTF("g_mmsDataInfoList[i].phoneNumber=%s, length=%d",g_mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, STRLEN(g_mmsDataInfoList[g_mmsDataInfoMax].phoneNumber));
-        g_mmsDataInfoList[g_mmsDataInfoMax].MMSBuff = (char*)MALLOC(size);//这里分配的内存，将来要释放
-        MEMCPY((void*)(g_mmsDataInfoList[g_mmsDataInfoMax].MMSBuff), WMS_MMS_BUFFERGet(), size);
-        g_mmsDataInfoList[g_mmsDataInfoMax].MMSDatasize = size;
-    	(void) ICONFIG_SetItem(pConfig, CFGI_MMSDATA_INFO, (void*)g_mmsDataInfoList, sizeof(g_mmsDataInfoList));        
-        //g_mmsDataInfoMax++;
+    	(void) ICONFIG_SetItem(pConfig, CFGI_MMSDATA_INFO, (void*)mmsDataInfoList, sizeof(mmsDataInfoList));        
+        (void) ICONFIG_SetItem(pConfig, CFGI_MMS_COUNT, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax));     
         MSG_FATAL("MMS_SEND_TEST2 g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
+    }
+    else
+    {
+        //这里有问题，g_mmsDataInfoMax不能直接置0，而要每删除一条彩信记录，就减一
+        g_mmsDataInfoMax = 0;
     }
 	return (head_len+size);
 }
@@ -1361,7 +1421,8 @@ static int MMS_WSP_Decode_MultipartData(uint8* pData, int iDataLen,int nParts, W
 				{
 					//bodycreated = TMIMEParts_NewBodySS(iMIMEParts,iPart,pbyte,iInsDataLen,SLIM_MIMECODEC_BINARY,TRUE);
 					iMIMEParts[cur_part].size = iPartDataLen;
-					iMIMEParts[cur_part].pContent = MALLOC(iPartDataLen);
+					iMIMEParts[cur_part].pContent = MALLOC(iPartDataLen+1);
+                    iMIMEParts[cur_part].pContent[iPartDataLen] = '\0';
 					MEMCPY(iMIMEParts[cur_part].pContent,pbyte,iPartDataLen);
 				}
 

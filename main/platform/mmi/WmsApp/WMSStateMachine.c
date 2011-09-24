@@ -225,6 +225,8 @@ static NextFSMAction WMSST_FLASHSMS_Hander(WmsApp *pMe);
 #ifdef FEATURE_USES_MMS
 // WMSST_OUTBOX_MMS 状态处理函数
 static NextFSMAction WMSST_OUTBOX_MMS_Handler(WmsApp *pMe);
+static NextFSMAction WMSST_VIEWOUTBOXMSG_MMS_Handler(WmsApp *pMe);
+extern uint8  g_mmsDataInfoMax;
 #endif
 
 /*==============================================================================
@@ -467,6 +469,9 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
 #ifdef FEATURE_USES_MMS
         case WMSST_OUTBOX_MMS:
             return WMSST_OUTBOX_MMS_Handler(pMe);
+
+        case WMSST_VIEWOUTBOXMSG_MMS:
+            return WMSST_VIEWOUTBOXMSG_MMS_Handler(pMe);            
 #endif
 
         default:
@@ -708,8 +713,7 @@ static NextFSMAction WMSST_MAIN_Handler(WmsApp *pMe)
             MSG_FATAL("WMSST_MAIN_Handler DLGRET_OUTBOX_MMS",0,0,0);
             pMe->m_eMBoxType = WMS_MB_OUTBOX_MMS;
             {
-                uint16  nMsgID=0;
-                
+                uint16  nMsgID=0;    
                 nMsgID = WmsApp_GetmemAlertID(pMe, WMS_MB_OUTBOX_MMS);
                 if (nMsgID != 0)
                 {
@@ -3444,6 +3448,7 @@ static NextFSMAction WMSST_SENDING_Handler(WmsApp *pMe)
 ==============================================================================*/
 static NextFSMAction WMSST_OUTBOX_Handler(WmsApp *pMe)
 {
+    MSG_FATAL("WMSST_OUTBOX_Handler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -3454,19 +3459,23 @@ static NextFSMAction WMSST_OUTBOX_Handler(WmsApp *pMe)
         case DLGRET_CREATE:
         case DLGRET_LOADCANCELED:
         case DLGRET_LOADFAILED:
+            MSG_FATAL("WMSST_OUTBOX_Handler 1",0,0,0);
             WmsApp_ShowDialog(pMe, IDD_MESSAGELIST);
             return NFSMACTION_WAIT;
             
         case DLGRET_LOAD:
+            MSG_FATAL("WMSST_OUTBOX_Handler 2",0,0,0);
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
             WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
+            MSG_FATAL("WMSST_OUTBOX_Handler 3",0,0,0);
             MOVE_TO_STATE(WMSST_MAIN)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_LOADOK:
+            MSG_FATAL("WMSST_OUTBOX_Handler DLGRET_LOADOK m_eOptType=%d",pMe->m_eOptType,0,0);
             if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
             {
                 MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG)
@@ -3478,10 +3487,12 @@ static NextFSMAction WMSST_OUTBOX_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
             
         case DLGRET_OPT:
+            MSG_FATAL("WMSST_OUTBOX_Handler 4",0,0,0);
             pMe->m_eOptType = OPT_VIA_LISTMSG;
             WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
             return NFSMACTION_WAIT;
         case DLGRET_DELETE:
+            MSG_FATAL("WMSST_OUTBOX_Handler 5",0,0,0);
         	//释放查看的消息内存
 			WMSMessageStruct_Free(pMe);
 			//ADD BY YANGDECAI 2010-08-16
@@ -3490,6 +3501,7 @@ static NextFSMAction WMSST_OUTBOX_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
             
         default:
+            MSG_FATAL("WMSST_OUTBOX_Handler 6",0,0,0);
             // 用退出程序代替宏断言
             MOVE_TO_STATE(WMSST_EXIT)
             return NFSMACTION_CONTINUE;
@@ -3515,6 +3527,7 @@ static NextFSMAction WMSST_OUTBOX_Handler(WmsApp *pMe)
 ==============================================================================*/
 static NextFSMAction WMSST_VIEWOUTBOXMSG_Handler(WmsApp *pMe)
 {
+    MSG_FATAL("WMSST_VIEWOUTBOXMSG_Handler Start", 0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -3569,6 +3582,7 @@ static NextFSMAction WMSST_VIEWOUTBOXMSG_Handler(WmsApp *pMe)
 ==============================================================================*/
 static NextFSMAction WMSST_OUTMSGOPTS_Handler(WmsApp *pMe)
 {
+    MSG_FATAL("WMSST_OUTMSGOPTS_Handler Start m_eDlgReturn=%d",pMe->m_eDlgReturn,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -3577,6 +3591,7 @@ static NextFSMAction WMSST_OUTMSGOPTS_Handler(WmsApp *pMe)
     switch (pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
+            MSG_FATAL("WMSST_OUTMSGOPTS_Handler DLGRET_CREATE",0,0,0);
             WmsApp_ShowDialog(pMe, IDD_MSGOPTS);
             return NFSMACTION_WAIT;
 
@@ -6393,36 +6408,27 @@ static NextFSMAction WMSST_OUTBOX_MMS_Handler(WmsApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
-
     switch (pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
         case DLGRET_LOADCANCELED:
         case DLGRET_LOADFAILED:
+            MSG_FATAL("WMSST_OUTBOX_MMS_Handler 1",0,0,0);
             WmsApp_ShowDialog(pMe, IDD_MESSAGELIST);
             return NFSMACTION_WAIT;
             
-        case DLGRET_LOAD:
-            pMe->m_eOptType = OPT_VIA_VIEWMSG;
-            WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
-            return NFSMACTION_WAIT;
-
         case DLGRET_CANCELED:
+            MSG_FATAL("WMSST_OUTBOX_MMS_Handler 2",0,0,0);
             MOVE_TO_STATE(WMSST_MAIN)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_LOADOK:
-            if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
-            {
-                MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG)
-            }
-            else
-            {
-                MOVE_TO_STATE(WMSST_OUTMSGOPTS)
-            }
+            MSG_FATAL("WMSST_OUTBOX_MMS_Handler 3",0,0,0);
+            MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG_MMS)
             return NFSMACTION_CONTINUE;
             
         case DLGRET_OPT:
+            MSG_FATAL("WMSST_OUTBOX_MMS_Handler 4",0,0,0);
             pMe->m_eOptType = OPT_VIA_LISTMSG;
             WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
             return NFSMACTION_WAIT;
@@ -6437,10 +6443,71 @@ static NextFSMAction WMSST_OUTBOX_MMS_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
             
         default:
+            MSG_FATAL("WMSST_OUTBOX_MMS_Handler 5",0,0,0);
             // 用退出程序代替宏断言
             MOVE_TO_STATE(WMSST_EXIT)
             return NFSMACTION_CONTINUE;
     }
 } // WMSST_OUTBOX_Handler
+
+/*==============================================================================
+函数:
+    WMSST_VIEWOUTBOXMSG_MMS_Handler
+
+说明:
+    WMSST_VIEWOUTBOXMSG 状态处理函数。
+
+参数:
+    pMe [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    NFSMACTION_CONTINUE: 指示不停状态机。
+    NFSMACTION_WAIT: 指示停止状态机。
+
+备注:
+
+==============================================================================*/
+static NextFSMAction WMSST_VIEWOUTBOXMSG_MMS_Handler(WmsApp *pMe)
+{
+    MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler Start",0,0,0);
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch (pMe->m_eDlgReturn)
+    {
+        case DLGRET_CREATE:
+            MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_CREATE",0,0,0);
+            WmsApp_ShowDialog(pMe, IDD_VIEWMSG_MMS);
+           
+            return NFSMACTION_WAIT;
+
+        case DLGRET_CANCELED:
+            MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_CANCELED",0,0,0);
+            MOVE_TO_STATE(WMSST_OUTBOX_MMS)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_OK:
+            MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_OK",0,0,0);
+            pMe->m_eOptType = OPT_VIA_VIEWMSG;
+            MOVE_TO_STATE(WMSST_OUTMSGOPTS)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_INFO:
+            MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_INFO",0,0,0);
+            pMe->m_eOptType = OPT_VIA_VIEWMSG;
+            pMe->m_eDlgReturn = DLGRET_RESEND;
+            pMe->m_bDoNotOverwriteDlgResult = TRUE;
+            MOVE_TO_STATE(WMSST_OUTMSGOPTS)
+            return NFSMACTION_CONTINUE;
+            
+        default:
+            MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler default",0,0,0);
+            // 用退出程序代替宏断言
+            MOVE_TO_STATE(WMSST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+} // WMSST_VIEWOUTBOXMSG_MMS_Handler
 
 #endif
