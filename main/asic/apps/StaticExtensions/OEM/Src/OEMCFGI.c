@@ -685,6 +685,7 @@ typedef struct
    char  s_MMSSOUND[AEE_MAX_FILE_NAME];   
    char  s_MMSVIDEO[AEE_MAX_FILE_NAME];
    MMSData   MMSDataInfo[MAX_MMS_STORED];   //CFGI_MMSDATA_INFO
+   uint8 mmsCount;//CFGI_MMS_COUNT
 #endif
 } OEMConfigListType;
 
@@ -1495,6 +1496,8 @@ static int OEMPriv_SetItem_CFGI_MISSED_CALL_ICON(void *pBuff);
 #ifdef FEATURE_USES_MMS   
 static int OEMPriv_GetItem_CFGI_MMSDATA_INFO(void *pBuff);
 static int OEMPriv_SetItem_CFGI_MMSDATA_INFO(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MMS_COUNT(void *pBuff); 
+static int OEMPriv_SetItem_CFGI_MMS_COUNT(void *pBuff);
 #endif
 
 /*===========================================================================
@@ -1801,7 +1804,8 @@ static OEMConfigListType oemi_cache = {
    ,{{"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0},
      {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}
     }  //CFGI_MMSDATA_INFO
-    ,   
+    ,  
+    0,//CFGI_MMS_COUNT
 #endif   
 };
 
@@ -2342,6 +2346,7 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM_EMPTY(CFGI_MMSSOUND) ,
    CFGTABLEITEM_EMPTY(CFGI_MMSVIDEO) ,
    CFGTABLEITEM(CFGI_MMSDATA_INFO, sizeof(MMSData) * MAX_MMS_STORED),
+   CFGTABLEITEM(CFGI_MMS_COUNT, sizeof(uint8)),
 #endif   
 };
 #endif
@@ -2748,10 +2753,11 @@ void OEM_RestoreFactorySetting( void )
         for(; index < MAX_MMS_STORED; index++)
         {
             MEMSET(oemi_cache.MMSDataInfo[index].phoneNumber, 0, 13);
-            oemi_cache.MMSDataInfo[index].MMSBuff = NULL;
+            MEMSET(oemi_cache.MMSDataInfo[index].MMSDataFileName, 0, MMS_MAX_FILE_NAME);
             oemi_cache.MMSDataInfo[index].MMSDatasize = 0;
         }
    }
+   oemi_cache.mmsCount = 0;
 #endif  
    //屏保时间
    oemi_cache.p_screensaver_time=0; 
@@ -10545,18 +10551,37 @@ static int OEMPriv_GetItem_CFGI_MMSDATA_INFO(void *pBuff)
 {
    MSG_FATAL("OEMPriv_GetItem_CFGI_MMSDATA_INFO Start",0,0,0);
    MEMCPY(pBuff, (void*)(oemi_cache.MMSDataInfo), sizeof(MMSData) * MAX_MMS_STORED);
-   MSG_FATAL("OEMPriv_GetItem_CFGI_MMSDATA_INFO ENd, pBuff length=%d",STRLEN((char*)pBuff),0,0);
+   MSG_FATAL("OEMPriv_GetItem_CFGI_MMSDATA_INFO ENd",0,0,0);
    return SUCCESS;
 }
 
 static int OEMPriv_SetItem_CFGI_MMSDATA_INFO(void *pBuff)
 {
-    MSG_FATAL("OEMPriv_SetItem_CFGI_MMSDATA_INFO Start,pBuff length=%d", STRLEN((char*)pBuff),0,0);
-    DBGPRINTF("pBuff=%s", (char*)pBuff);
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMSDATA_INFO Start", 0,0,0);
     MEMCPY((void*)(oemi_cache.MMSDataInfo), pBuff, sizeof(MMSData) * MAX_MMS_STORED);
     OEMPriv_WriteOEMConfigList(); 
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMSDATA_INFO End", 0,0,0);
     return SUCCESS;
 }
+
+static int OEMPriv_GetItem_CFGI_MMS_COUNT(void *pBuff) 
+{
+    MSG_FATAL("OEMPriv_GetItem_CFGI_MMS_COUNT Start mmsCount=%d", oemi_cache.mmsCount,0,0); 
+   *(uint8 *) pBuff = oemi_cache.mmsCount;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_MMS_COUNT(void *pBuff)
+{
+   MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_COUNT Start *pBuff=%d", *(uint8*)pBuff,0,0); 
+   if (oemi_cache.mmsCount != *(uint8 *)pBuff) {
+      oemi_cache.mmsCount = *(uint8 *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_COUNT Start mmsCount=%d", oemi_cache.mmsCount,0,0); 
+   return SUCCESS;
+}
+
 #endif
 /*==============================================================================
 函数：
