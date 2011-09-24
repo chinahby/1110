@@ -948,5 +948,11 @@
 		</Controls>
 		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
 	</Dialog>
+	<Dialog Id="6048" Name="IDD_VIEWMSG_MMS" Focus="7040">
+		<Controls>
+			<Static Id="7040" Name="IDC_VIEWMSG_MMS_STATIC">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
 </Dialogs>
 </BREWRes>
