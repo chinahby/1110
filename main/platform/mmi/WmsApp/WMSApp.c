@@ -1319,7 +1319,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 boolean bUDHPortPresent = FALSE;
                 int nRet;
 #endif
-                pMe->m_isCheckMMSNotify = TRUE;
+                
                 
                 MSG_FATAL("WMSApp received new message teleservice=%d",info->mt_message_info.message.u.cdma_message.teleservice,0,0);
                 
@@ -1336,12 +1336,14 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 				if (bRet == TRUE)
                 {
 					(void)MEMSET(&pMe->m_CltTsdata, 0 , sizeof(pMe->m_CltTsdata));
-                     pMe->m_pMsgEvent = ((wms_msg_event_info_s_type*)dwParam);
+                     
 	                 nRet = IWMS_TsDecode(pMe->m_pwms, 
 	                             &info->mt_message_info.message.u.cdma_message.raw_ts, 
 	                             &pMe->m_CltTsdata);
 
 	            #ifdef FEATURE_USES_MMS
+                     pMe->m_isCheckMMSNotify = TRUE;
+                     pMe->m_pMsgEvent = ((wms_msg_event_info_s_type*)dwParam);
 	            	 nRet = IWMS_MMsDecodeNotifyBody(pMe->m_pwms,&pMe->m_CltTsdata,notify_buf);
 	            
 
