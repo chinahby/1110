@@ -740,6 +740,7 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
     }
     FREEIF(pMe->m_MMSData);
     pMe->m_isMMS = FALSE;
+    WMS_MMS_BUFFERRelease();
 #endif    
     pMe->m_eAppStatus = WMSAPP_STOP;
     FREEIF(pMe->m_strPhonePWD);
@@ -1742,8 +1743,43 @@ Exit:
                             {
                                 gbWmsSMSNtf = TRUE;
                                 gbWmsLastNtfIsSMS = TRUE;
-                                CLOSE_DIALOG(DLGRET_INBOXES);
-                                gbWmsSMSNtf = FALSE;
+                                if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
+    	        				{
+    	        					#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+    	        					if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
+    	        					#endif
+    	        					{
+    	            					(void) ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_WMSAPP, "NEWSMS");
+    	            				}
+    	        				}
+                                else if(pMe->m_currState == WMSST_WMSNEW)
+                                {
+                                    CLOSE_DIALOG(DLGRET_CREATE)
+                                }
+            				    else
+            				    {
+    							    if(pMe->m_currState != WMSST_INBOXES && pMe->m_currState != WMSST_VIEWINBOXMSG
+    								   && pMe->m_currState !=	WMSST_INBOXMSGOPTS && pMe->m_currState !=	WMSST_WRITEMSG
+    								   && pMe->m_currState != WMSST_SENDING)
+    							    {
+                                        CLOSE_DIALOG(DLGRET_INBOXES);
+                                        gbWmsSMSNtf = FALSE;
+                                     }
+                                    else
+    								{
+    	                			    // 通知 CoreApp 需要进行短信提示
+    	                			    #if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+    	                			    if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
+    									#endif
+    	                			    {
+    	                						(void)ISHELL_PostEvent(pMe->m_pShell,
+    	                                         	AEECLSID_CORE_APP, 
+    	                                         	EVT_WMS_MSG_RECEIVED_MESSAGE,
+    	                                         	0, 
+    	                                         	0);
+    	                                }
+    								}
+    							}   
                                 MSLEEP(10);
                                 (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
                                 MSG_FATAL("EVT_MMS_PDUDECODE IWMS_MsgWrite",0,0,0);
@@ -1771,6 +1807,8 @@ Exit:
                     {
                         int i = 0;
                         char dataPath[100];
+                        WMS_MMS_SaveMMS(pDecData->message.hFrom,pBody,body_len);
+#ifdef MMS_TEST
                         MSG_FATAL("IFILEMGR_OpenFile pDecData->message.mms_data.frag_num=%d",pDecData->message.mms_data.frag_num,0,0);
                         for(;i < pDecData->message.mms_data.frag_num; i ++)
                         {
@@ -1816,6 +1854,7 @@ Exit:
                 		        }
                 	        }
             	        }
+#endif            	        
                     }
                     break;
                     default:
@@ -1830,7 +1869,7 @@ Exit:
                 MSG_FATAL("WMS_MMS_PDU_Decode nResult = %d",nResult,0,0);
             }
             WMSAPPU_SYSFREE(pMe->m_pMsgEvent);
-            FREEIF(pDecData);
+            WMS_MMS_MmsWspDecDataRelease(&pDecData,ePDUType);
         }
 
         break;
