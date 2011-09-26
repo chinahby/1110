@@ -114,7 +114,7 @@ enum {
 #ifdef CUST_EDITION
 #if defined(FEATURE_QMA)
    SMS_TELESERVICE_QMA_WPUSH          = 65002,  /* QMA Wap push message service ID */
-#elif defined (FEATURE_CARRIER_CHINA_TELCOM)
+#else//#elif defined (FEATURE_CARRIER_CHINA_TELCOM)
    SMS_TELESERVICE_WPUSH              = 65002,  /* China telecom Wap push message service ID  */
 #endif
 #endif

@@ -1032,9 +1032,20 @@ static NextFSMAction WMSST_VIEWINBOXMSG_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_INFO:
-            pMe->m_eOptType = OPT_VIA_VIEWMSG;
-            pMe->m_eDlgReturn = DLGRET_REPLY;
-            pMe->m_bDoNotOverwriteDlgResult = TRUE;
+#ifdef FEATURE_USES_MMS
+            if(pMe->m_isMMSNotify == TRUE)
+            {
+                pMe->m_eOptType = OPT_VIA_VIEWMSG;
+                pMe->m_eDlgReturn = DLGRET_GETMMS;
+                pMe->m_bDoNotOverwriteDlgResult = TRUE;
+            }
+            else
+#endif
+            {
+                pMe->m_eOptType = OPT_VIA_VIEWMSG;
+                pMe->m_eDlgReturn = DLGRET_REPLY;
+                pMe->m_bDoNotOverwriteDlgResult = TRUE;            
+            }
             MOVE_TO_STATE(WMSST_INBOXMSGOPTS)
             return NFSMACTION_CONTINUE;
             
@@ -1288,6 +1299,41 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_EXTARCTEDITEMLIST)
             return NFSMACTION_CONTINUE;
             
+#ifdef FEATURE_USES_MMS
+        case DLGRET_GETMMS:
+        {
+            MMSSocket* pMMSSocket = NULL; 
+            WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
+            pMe->m_ExtractType = EXTRACT_URL;
+            WmsApp_FreeSaveNumList(pMe);
+            
+            // 分析消息建立URL表
+            WmsApp_BuildUrlList(pMe, pMe->m_msCur.m_szMessage);
+            
+            if (IVector_Size(pMe->m_pSaveNumList) < 1)
+            {
+                pMe->m_ePMsgType = MESSAGE_WARNNING;
+                WmsApp_ShowMsgBox(pMe, IDS_NOVALIDURL);
+                return NFSMACTION_WAIT;
+            }
+
+            {
+                char str[100] = {0};
+                MSG_FATAL("WMSST_INBOXMSGOPTS_Handler",0,0,0);
+                MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%S",(AECHAR*)IVector_ElementAt(pMe->m_pSaveNumList,0),0,0);
+                WSTRTOSTR((AECHAR*)IVector_ElementAt(pMe->m_pSaveNumList,0),
+                    (char*)&str,
+                    sizeof(str));
+                MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%s",&str,0,0);
+                MMSSocketNew(&pMMSSocket,AEE_SOCK_STREAM,(char*)&str);
+                IVector_RemoveElementAt(pMe->m_pSaveNumList,0);
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)
+            return NFSMACTION_CONTINUE;
+        }
+        break;
+#endif            
         case DLGRET_SAVEURL:
 			//释放查看的消息内存
 			WMSMessageStruct_Free(pMe);
@@ -5559,7 +5605,42 @@ static NextFSMAction WMSST_EXTARCTDETAILS_Handler(WmsApp *pMe)
             }
             MOVE_TO_STATE(WMSST_EXTARCTEDITEMLIST)
             return NFSMACTION_CONTINUE;
+#ifdef FEATURE_USES_MMS
+        case DLGRET_GETMMS:
+        {
+            MMSSocket* pMMSSocket = NULL; 
+            WMSMessageStruct_Free(pMe);
+			//ADD BY YANGDECAI 2010-08-16
+            pMe->m_ExtractType = EXTRACT_URL;
+            WmsApp_FreeSaveNumList(pMe);
             
+            // 分析消息建立URL表
+            WmsApp_BuildUrlList(pMe, pMe->m_msCur.m_szMessage);
+            
+            if (IVector_Size(pMe->m_pSaveNumList) < 1)
+            {
+                pMe->m_ePMsgType = MESSAGE_WARNNING;
+                WmsApp_ShowMsgBox(pMe, IDS_NOVALIDURL);
+                return NFSMACTION_WAIT;
+            }
+
+            {
+                char str[100] = {0};
+                MSG_FATAL("WMSST_INBOXMSGOPTS_Handler",0,0,0);
+                MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%S",(AECHAR*)IVector_ElementAt(pMe->m_pSaveNumList,0),0,0);
+                WSTRTOSTR((AECHAR*)IVector_ElementAt(pMe->m_pSaveNumList,0),
+                    (char*)&str,
+                    sizeof(str));
+                MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%s",&str,0,0);
+                MMSSocketNew(&pMMSSocket,AEE_SOCK_STREAM,(char*)&str);
+                IVector_RemoveElementAt(pMe->m_pSaveNumList,0);
+            }
+            MOVE_TO_STATE(WMSST_INBOXES)
+            return NFSMACTION_CONTINUE;
+
+        }
+        break;
+#endif            
         case DLGRET_SAVEURL:
             pMe->m_ExtractType = EXTRACT_URL;
             WmsApp_FreeSaveNumList(pMe);

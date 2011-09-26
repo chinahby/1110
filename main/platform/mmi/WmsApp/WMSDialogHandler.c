@@ -2375,7 +2375,8 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
                 AECHAR *pFormatedText = NULL;
                 AECHAR wszTitle[32] = {0};
                 uint16 nTitleID=0;
-                TitleBar_Param_type     TBarParam = {0};
+                TitleBar_Param_type     TBarParam = {0};                
+
              
                 switch (pMe->m_currState)
                 {
@@ -2472,7 +2473,21 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
                     {
                         pFormatedText = FormatMessageForDisplay(pMe, &pMe->m_msCur);
                     }
-                    
+#ifdef FEATURE_USES_MMS                    
+                    {
+                        char chrStr[100] = {0};
+                        pMe->m_isMMSNotify = FALSE;
+                        WSTRTOSTR(pFormatedText,(char*)&chrStr,sizeof(chrStr));
+                        if(STRISTR((char*)&chrStr,"mms:http") != NULL)
+                        {
+                            pMe->m_isMMSNotify = TRUE;
+                        }
+                        else
+                        {
+                            pMe->m_isMMSNotify = FALSE;
+                        }
+                    }
+#endif                    
                     if (NULL != pFormatedText)
                     {
                         // 设置静态控件文本
@@ -2486,17 +2501,27 @@ static boolean IDD_VIEWMSG_Handler(void         *pUser,
                         FREE(pFormatedText);
                     }
                 }
-            }
-            ISTATIC_SetActive(pStatic, TRUE);
-            (void) ISTATIC_Redraw(pStatic);
-            
-            // 绘制底条提示
-            // Option       Back
-            DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
-
-            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-			
+                ISTATIC_SetActive(pStatic, TRUE);
+                ISTATIC_Redraw(pStatic);
+                
+                // 绘制底条提示
+                // Option       Back
+#ifdef FEATURE_USES_MMS
+                if(pMe->m_isMMSNotify)
+                {
+                    DRAW_BOTTOMBAR(BTBAR_OPTION_OK_BACK)
+                }
+                else
+                {
+                    DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
+                }    
+#else
+                DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
+#endif
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            }         
             return TRUE;
+            
 		case EVT_WMS_MSG_RECEIVED_MESSAGE:
 			{
 				switch (pMe->m_currState)

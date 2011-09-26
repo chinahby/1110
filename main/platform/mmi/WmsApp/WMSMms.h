@@ -402,7 +402,7 @@ typedef struct tag_MSocket
     uint16 nODataLen;
     uint8* pOData;
     int nState;
-    char* pAddr;
+    char pAddr[100];
     
     AEEDNSResult DNSResult;
     AEECallback DNSCallback;
@@ -418,7 +418,7 @@ The newly-created socket object is returned as an out parameter
 
 \return ETrue if a new socket is created
 */
-boolean  MMSSocketNew(MMSSocket **pps, uint16 nType);
+boolean  MMSSocketNew (MMSSocket **pps, uint16 nType,char* pAddr);
 boolean  MMSSocketClose(MMSSocket **pps);
 boolean  MMSSocketConnect (MMSSocket *ps, char *pszServer, uint16 nPort);
 

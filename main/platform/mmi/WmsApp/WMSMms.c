@@ -105,6 +105,8 @@ static int slim_strncmp_nocase(char *in_s, char *in_t, int in_n);
 static MMS_MESSAGE_TYPE MMS_GetMMSTypeByName(uint8 *hContentType);
 static const char *MMS_GetMimeType(const char *pszSrc);
 static boolean MMS_STREQI(const char *s1, const char *s2);
+void MMSSocketState(MMSSocket *ps);
+
 
 #define SLIM_WSP_WELL_KNWON_VALULES_MIME_TEXT_PLAIN 0x03
 #define SLIM_WSP_WELL_KNWON_VALULES_MIME_MULTIPART_MIXED 0x0c
@@ -1132,8 +1134,8 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
         pIFile = IFILEMGR_OpenFile(pIFileMgr, mmsDataFileName, _OFM_CREATE);
         if(NULL != pIFile)
         {
-            buf[1] = 0x84;//为了将来进“已发送彩信箱”里时方便调用WMS_MMS_PDU_Decode来解码
-            result = IFILE_Write(pIFile, (void*)buf, size);
+            WMS_MMS_BUFFERGet()[1] = 0x84;//为了将来进“已发送彩信箱”里时方便调用WMS_MMS_PDU_Decode来解码
+            result = IFILE_Write(pIFile, (void*)WMS_MMS_BUFFERGet(), size);
             MSG_FATAL("result=%d",result,0,0);
             IFILE_Release( pIFile);
             pIFile = NULL;
@@ -2581,12 +2583,15 @@ boolean MMS_SetProxySettings(boolean bUseProxy,char* hProxyHost, int iProxyPort)
 	return FALSE;
 }
 
-boolean  MMSSocketNew (MMSSocket **pps, uint16 nType)
+boolean  MMSSocketNew (MMSSocket **pps, uint16 nType,char* pAddr)
 {
 	ISocket* pISocket = NULL;
 	INetMgr *pINetMgr = NULL;
 	MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketNew Enter!"));
 
+    if(pAddr == NULL)
+        return FALSE;
+        
     OEM_SetBAM_ADSAccount();
     
 	if(pINetMgr == NULL)
@@ -2608,7 +2613,7 @@ boolean  MMSSocketNew (MMSSocket **pps, uint16 nType)
 		{
 			return FALSE;
 		}
-
+/*
 		OptionValue = SOCKET_BUFFER_SIZE;
 		result = ISOCKET_SetOpt(pISocket,
 						AEE_SOL_SOCKET,
@@ -2635,13 +2640,18 @@ boolean  MMSSocketNew (MMSSocket **pps, uint16 nType)
 			MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketNew SetOpt2 = %d!",result));
 			result = 0;
 		}
-
+*/
 		(*pps)->pISocket = pISocket;
-
+		
+        (*pps)->nState = WTP_PDU_INVOKE;
+        (*pps)->bConnected = FALSE;
+        STRCPY((char*)&((*pps)->pAddr),pAddr);
+        
+        MMSSocketState(*pps);
 		MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketNew Success!"));
 		return TRUE;
 	}
-
+    
 	MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketNew Failed!"));
 	return FALSE;
 }
@@ -2669,6 +2679,7 @@ boolean  MMSSocketClose (MMSSocket **pps)
 static void ConnectError(void* pDdata, int nError)
 {
 	MMSSocket* pUser = (MMSSocket*)pDdata;
+	pUser->bConnected = FALSE;
 	if ( pUser == NULL )
 	{
 		return;
@@ -2678,8 +2689,9 @@ static void ConnectError(void* pDdata, int nError)
 	{
 		case AEE_NET_SUCCESS:
 			MSG_FATAL("ConnectError AEE_NET_SUCCESS",0,0,0);
-			ISOCKET_Readable(pUser->pISocket, SocketReadableCB, pUser);			
-			break;
+			pUser->bConnected = TRUE;
+			//ISOCKET_Readable(pUser->pISocket, SocketReadableCB, pUser);	
+			break;		
 		/* 若超时错误, 则 ... */
 		case AEE_NET_ETIMEDOUT:
 			MSG_FATAL("ConnectError AEE_NET_ETIMEDOUT",0,0,0);
@@ -2693,6 +2705,7 @@ static void ConnectError(void* pDdata, int nError)
 			MSG_FATAL("ConnectError error: 0x%x",nError,0,0);
 			break; 
 	}
+	MMSSocketState(pUser);
 }
 
 
@@ -2705,8 +2718,9 @@ boolean  MMSSocketConnect (MMSSocket *ps, char *pszServer, uint16 nPort)
 #ifdef MMS_TEST
     if(pszServer == NULL || !STRLEN(pszServer))
         pszServer = "10.0.0.200";
+    if(nPort == 0)
+        nPort = 80;
 #endif
-
 	if (!INET_ATON(pszServer,&mAddress))
 	{
 		MSG_FATAL("INET_ATON failed!", 0,0,0);
@@ -2724,7 +2738,7 @@ boolean MMSSocket_PDUResult(MMSSocket *ps)
     MMS_DEBUG(("[MSG][DeviceSocket]: MMSSocket_PDUResult Enter!"));
     
     if(NULL == ps->pISocket
-        || ps->bConnected)
+        || !ps->bConnected)
     {
         return FALSE;
     }
@@ -2760,9 +2774,7 @@ boolean MMSSocket_PDUInvoke(MMSSocket *ps)
     MMS_DEBUG(("[MSG][DeviceSocket]: MMSSocket_PDUInvoke Enter!"));
     
     if(NULL == ps->pISocket
-        || ps->bConnected
-        || ps->pAddr == NULL
-        || STRLEN(ps->pAddr) == 0)
+        || !ps->bConnected)
     {
         return FALSE;
     }
@@ -2781,10 +2793,14 @@ boolean MMSSocket_PDUInvoke(MMSSocket *ps)
             return FALSE;
         }
     }
-    
-    pFixedAddr = STRSTR(ps->pAddr,"HTTP:");
+
+    if(STRLEN((char*)&ps->pAddr) == 0)
+        return FALSE;
+
+    MMS_DEBUG(("[MSG][DeviceSocket]: MMSSocket_PDUInvoke pFixedAddr:%s",(char*)&ps->pAddr));    
+    pFixedAddr = STRSTR((char*)&ps->pAddr,"http:");
     if(pFixedAddr == NULL)
-        pFixedAddr = ps->pAddr;
+        pFixedAddr = (char*)&ps->pAddr;
         
     nDataLen = STRLEN(pStrINVOKE) - 2 + STRLEN(pFixedAddr);
     if(nDataLen > sizeof(chrFixedAddr))
@@ -2806,7 +2822,7 @@ boolean MMSSocket_PDUAck(MMSSocket *ps)
     uint16 len = 0;
     MMS_DEBUG(("[MSG][DeviceSocket]: MMSSocket_PDUAck Enter!"));
     if(NULL == ps->pISocket
-        || ps->bConnected)
+        || !ps->bConnected)
     {
         return FALSE;
     }
@@ -2814,7 +2830,7 @@ boolean MMSSocket_PDUAck(MMSSocket *ps)
     MMS_DEBUG(("[MSG][DeviceSocket]: MMSSocket_PDUAck ps->pOData=%s",ps->pOData));
     if(ps->nODataLen!= 0 
         && ps->pOData != NULL
-        && STRISTR((char*)ps->pOData,"HTTP/1.1 200"))
+        && STRISTR((char*)ps->pOData," 200 "))
     {
         return TRUE;
     }
@@ -2840,8 +2856,16 @@ void MMSSocketState(MMSSocket *ps)
 {
     MMS_DEBUG(("[MSG][DeviceSocket]: MMSSocketState Enter! ps->nState = %d",ps->nState));
 
-    if(ISOCKET_GetLastError(ps->pISocket) != AEE_NET_SUCCESS)
+    if(!ps->bConnected)
     {
+        MMSSocketConnect(ps,"10.0.0.200",80);
+        return;
+    }
+
+    if((ISOCKET_GetLastError(ps->pISocket) != AEE_NET_SUCCESS
+        && ISOCKET_GetLastError(ps->pISocket) != AEE_NET_EWOULDBLOCK))
+    {
+        MMS_DEBUG(("[MSG][DeviceSocket]: ISOCKET_GetLastError= 0x%x",ISOCKET_GetLastError(ps->pISocket)));
         MMSSocketClose(&ps);
         return ;
     }

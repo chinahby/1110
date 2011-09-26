@@ -2160,6 +2160,7 @@ static int OEMWMS_MsgWrite
 )
 {
   wms_status_e_type   st;
+  MSG_FATAL("OEMWMS_MsgWrite", 0,0,0);
 
   st = wms_msg_write( clientId,
                      (wms_cmd_cb_type)cmdCb->pfnNotify,
@@ -3450,8 +3451,8 @@ static int OEMWMS_MMsDecodeNotifyBody(         IWMS                      *pMe,
                 }
                 
                 body[i] = b_unpackb(user_data->data, bit_pos, digit_size);
-                return i;
             } /* for */
+            return i;
         }
         else
         {

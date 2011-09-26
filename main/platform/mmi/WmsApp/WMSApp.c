@@ -1318,6 +1318,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 boolean bUDHPortPresent = FALSE;
                 int nRet;
 #endif
+                pMe->m_isCheckMMSNotify = TRUE;
                 
                 MSG_FATAL("WMSApp received new message teleservice=%d",info->mt_message_info.message.u.cdma_message.teleservice,0,0);
                 
@@ -1334,7 +1335,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 				if (bRet == TRUE)
                 {
 					(void)MEMSET(&pMe->m_CltTsdata, 0 , sizeof(pMe->m_CltTsdata));
-                    
+                     pMe->m_pMsgEvent = ((wms_msg_event_info_s_type*)dwParam);
 	                 nRet = IWMS_TsDecode(pMe->m_pwms, 
 	                             &info->mt_message_info.message.u.cdma_message.raw_ts, 
 	                             &pMe->m_CltTsdata);
@@ -1427,69 +1428,73 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 							goto Exit;
 						}
 					}
-				#endif
-                }
-
-                MSG_FATAL("IWMS_MMsDecodeNotifyBody=%d", nRet, 0, 0);
-                if (bRet > 0)
-                {
-                
-                Exit:
-                	WMSAPPU_SYSFREE(dwParam);
+                    MSG_FATAL("IWMS_MMsDecodeNotifyBody=%d", nRet, 0, 0);
                     return TRUE;
+#endif
+
+                    {
+Exit:                    
+                    	WMSAPPU_SYSFREE(dwParam);
+                    	return TRUE;
+                        
+                    }
+                    
                 }
+                else
+                {
                 
 #ifdef FEATURE_SMS_UDH
-                // 检查消息是否带 Port 头部结构，待该结构的消息归特定应用处理
-                (void)MEMSET(&pMe->m_CltTsdata, 0 , sizeof(pMe->m_CltTsdata));
-                    
-                nRet = IWMS_TsDecode(pMe->m_pwms, 
-                             &info->mt_message_info.message.u.cdma_message.raw_ts, 
-                             &pMe->m_CltTsdata);
-                             
-                if (nRet == SUCCESS)
-                {
-                	#ifdef FEATURE_CDSMS
-                	// Check for Flash SMS Message
-                	boolean  i = WMSAPP_CheckCDMAFlashSMSMessage(&pMe->m_CltTsdata.u.cdma);
-                	MSG_FATAL("i=======================%d",i,0,0);
-                	if (WMSAPP_CheckCDMAFlashSMSMessage(&pMe->m_CltTsdata.u.cdma) == TRUE)
-                	{
-                  		
-                  		#ifdef FEATURE_FLASH_SMS
-						pMe->m_bflash_sms = TRUE;              //add by yangdecai 2011-04-01
-						#else
-						/* Drop this Message since it is not supported */
-                  		MSG_HIGH("CDMA Flash SMS Message Recieved and Dropped", 0, 0, 0);
-                  		WMSAPPU_FREE(dwParam);
-                  		return TRUE;
-						#endif
-                	}
-                	#endif
-                    if (pMe->m_CltTsdata.u.cdma.message_id.udh_present)
-                    {
-                        uint8 i=0;
+                    // 检查消息是否带 Port 头部结构，待该结构的消息归特定应用处理
+                    (void)MEMSET(&pMe->m_CltTsdata, 0 , sizeof(pMe->m_CltTsdata));
                         
-                        for (i=0; i<pMe->m_CltTsdata.u.cdma.user_data.num_headers; i++)
+                    nRet = IWMS_TsDecode(pMe->m_pwms, 
+                                 &info->mt_message_info.message.u.cdma_message.raw_ts, 
+                                 &pMe->m_CltTsdata);
+                                 
+                    if (nRet == SUCCESS)
+                    {
+                    	#ifdef FEATURE_CDSMS
+                    	// Check for Flash SMS Message
+                    	boolean  i = WMSAPP_CheckCDMAFlashSMSMessage(&pMe->m_CltTsdata.u.cdma);
+                    	MSG_FATAL("i=======================%d",i,0,0);
+                    	if (WMSAPP_CheckCDMAFlashSMSMessage(&pMe->m_CltTsdata.u.cdma) == TRUE)
+                    	{
+                      		
+                      		#ifdef FEATURE_FLASH_SMS
+    						pMe->m_bflash_sms = TRUE;              //add by yangdecai 2011-04-01
+    						#else
+    						/* Drop this Message since it is not supported */
+                      		MSG_HIGH("CDMA Flash SMS Message Recieved and Dropped", 0, 0, 0);
+                      		WMSAPPU_FREE(dwParam);
+                      		return TRUE;
+    						#endif
+                    	}
+                    	#endif
+                        if (pMe->m_CltTsdata.u.cdma.message_id.udh_present)
                         {
-                            if ((pMe->m_CltTsdata.u.cdma.user_data.headers[i].header_id == WMS_UDH_PORT_8) ||
-                                (pMe->m_CltTsdata.u.cdma.user_data.headers[i].header_id == WMS_UDH_PORT_16))
+                            uint8 i=0;
+                            
+                            for (i=0; i<pMe->m_CltTsdata.u.cdma.user_data.num_headers; i++)
                             {
-                                bUDHPortPresent = TRUE;
-                                break;
+                                if ((pMe->m_CltTsdata.u.cdma.user_data.headers[i].header_id == WMS_UDH_PORT_8) ||
+                                    (pMe->m_CltTsdata.u.cdma.user_data.headers[i].header_id == WMS_UDH_PORT_16))
+                                {
+                                    bUDHPortPresent = TRUE;
+                                    break;
+                                }
                             }
                         }
                     }
-                }
-                    
-                if (bUDHPortPresent)
-                {
-                    // 丢弃不属于受理范围内的消息
-                    MSG_HIGH("Message with UDH Port Header Recieved and Dropped", 0, 0, 0);
-                    WMSAPPU_SYSFREE(dwParam);
-                    return TRUE;
-                }
+                        
+                    if (bUDHPortPresent)
+                    {
+                        // 丢弃不属于受理范围内的消息
+                        MSG_HIGH("Message with UDH Port Header Recieved and Dropped", 0, 0, 0);
+                        WMSAPPU_SYSFREE(dwParam);
+                        return TRUE;
+                    }
 #endif // FEATURE_SMS_UDH
+                }
             }
             // 注意：接着在 EVT_WMS_MSG_STATUS_REPORT 处理
         case EVT_WMS_MSG_STATUS_REPORT:
@@ -1545,7 +1550,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                     return TRUE;
                 }
 #endif
-
+                MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT info->mt_message_info.route:%d",info->mt_message_info.route,0,0);
                 if (info->mt_message_info.route == WMS_ROUTE_STORE_AND_NOTIFY)
                 {
 #ifndef FEATURE_ICM
@@ -1564,7 +1569,8 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                                 AEECM_CALL_STATE_DORMANT),
                                NULL, 
                                0);
-                               
+
+                    MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT num:%d",num,0,0);           
 					if(num<=0)
 #else
 					if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone,                                            
@@ -1573,6 +1579,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 					{
 						return FALSE;
 					}
+					MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT po.dwCount:%d",po.dwCount,0,0);
 					if(po.dwCount==0)
 #endif
 					{
@@ -1610,7 +1617,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                                 gbWmsSMSNtf = TRUE;
                                 gbWmsLastNtfIsSMS = TRUE;
                             }
-                            
+                            MSG_FATAL("EVT_WMS_MSG_STATUS_REPORT po.pMe->m_currState:%d",pMe->m_currState,0,0);
 	        				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
 	        				{
 	        					#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
@@ -1659,7 +1666,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             // 更新图标
             WmsApp_UpdateAnnunciators(pMe);
             return TRUE;
-
+#ifdef FEATURE_USES_MMS
         case EVT_MMS_PDUDECODE:
         {
             MMS_WSP_DEC_DATA *pDecData = (MMS_WSP_DEC_DATA*)sys_malloc(sizeof(MMS_WSP_DEC_DATA));
@@ -1690,18 +1697,72 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                     {
                         char* pStr = STRSTR((const char *)&pDecData->notification.hContentLocation,"http://");
                         MSG_FATAL("decData.notification.hContentLocation = %s",pStr,0,0);
-                        STRCPY((char*)&strAddr,pStr);
-                        MSG_FATAL("decData.notification.hContentLocation = %s",strAddr,0,0);
-
-                        MSG_FATAL("pMMSSocket = %d STRLEN(strAddr) = %d",pMMSSocket,STRLEN(strAddr),0);
-                        if(STRLEN(strAddr) != 0)
+                        if(pMe->m_isCheckMMSNotify)
                         {
-                            MMSSocketNew(&pMMSSocket,AEE_SOCK_STREAM);
-                            if(pMMSSocket != NULL)
+                            wms_memory_store_e_type   mem_store = WMS_MEMORY_STORE_RUIM;
+                            if (IsRunAsUIMVersion())
+                            { 
+                                ICONFIG_GetItem(pMe->m_pConfig,
+                                       CFGI_WMS_MEMSTORE,
+                                       &mem_store,
+                                       sizeof(mem_store));
+                            }
+                            else
                             {
-                                MMSSocketConnect(pMMSSocket,"10.0.0.200",80);
-                                pMMSSocket->pAddr = (char*)&strAddr;
-                                MMSSocketState(pMMSSocket);         
+                                mem_store = WMS_MEMORY_STORE_NV_CDMA;
+                            }
+                            SPRINTF((char*)pMe->m_CltTsdata.u.cdma.user_data.data,
+                            "%s%s%s",
+                            "mms:",
+                            pStr,
+                            "\nYou have a new multimedia message,do you want to get it?");
+                            //STRCPY((char*)pMe->m_CltTsdata.u.cdma.user_data.data,pStr);
+                            //STRCAT((char*)pMe->m_CltTsdata.u.cdma.user_data.data,
+                            //    "\nYou have a new multimedia message,do you want to get it?");
+                                
+                            pMe->m_CltTsdata.u.cdma.user_data.data_len = STRLEN((char*)pMe->m_CltTsdata.u.cdma.user_data.data);
+                            IWMS_TsEncode(pMe->m_pwms,
+                                &pMe->m_CltTsdata,
+                                &pMe->m_pMsgEvent->mt_message_info.message.u.cdma_message.raw_ts);  
+                                
+                                WmsApp_PlaySMSAlert(pMe, TRUE);
+
+                                MSG_FATAL("EVT_MMS_PDUDECODE = %d,%d",
+                                    pMe->m_pMsgEvent->mt_message_info.message.msg_hdr.mem_store,
+                                    pMe->m_pMsgEvent->mt_message_info.message.msg_hdr.tag,
+                                    0);
+                                    
+                                pMe->m_pMsgEvent->mt_message_info.message.msg_hdr.mem_store = mem_store;
+                            if(IWMS_MsgWrite( pMe->m_pwms,
+                                    pMe->m_clientId,
+                                    &pMe->m_callback,
+                                    (void*)pMe,
+                                    WMS_WRITE_MODE_INSERT,
+                                    &pMe->m_pMsgEvent->mt_message_info.message) == SUCCESS)
+                            {
+                                gbWmsSMSNtf = TRUE;
+                                gbWmsLastNtfIsSMS = TRUE;
+                                CLOSE_DIALOG(DLGRET_INBOXES);
+                                gbWmsSMSNtf = FALSE;
+                                MSLEEP(10);
+                                (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
+                                MSG_FATAL("EVT_MMS_PDUDECODE IWMS_MsgWrite",0,0,0);
+                               
+                            }                     
+                             WMSAPPU_SYSFREE(pMe->m_pMsgEvent);
+                             // 更新图标
+                             WmsApp_UpdateAnnunciators(pMe);
+                             return TRUE;
+                        }
+                        else
+                        {
+                            STRCPY((char*)&strAddr,pStr);
+                            MSG_FATAL("decData.notification.hContentLocation = %s",strAddr,0,0);
+
+                            MSG_FATAL("pMMSSocket = %d STRLEN(strAddr) = %d",pMMSSocket,STRLEN(strAddr),0);
+                            if(STRLEN(strAddr) != 0)
+                            {
+                                MMSSocketNew(&pMMSSocket,AEE_SOCK_STREAM,(char*)&strAddr);
                             }
                         }
                     }
@@ -1768,10 +1829,12 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             {
                 MSG_FATAL("WMS_MMS_PDU_Decode nResult = %d",nResult,0,0);
             }
+            WMSAPPU_SYSFREE(pMe->m_pMsgEvent);
+            FREEIF(pDecData);
         }
 
         break;
-        
+#endif        
         // 删除消息
         case EVT_WMS_MSG_DELETE:
         case EVT_WMS_MSG_DELETE_TEMPLATE:

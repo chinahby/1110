@@ -619,6 +619,9 @@ typedef enum DLGRetValue
    DLGRET_SAVENUM,
    DLGRET_SAVEEMAIL,
    DLGRET_SAVEURL,
+#ifdef FEATURE_USES_MMS
+   DLGRET_GETMMS,
+#endif
 #endif   
    DLGRET_COPYTORUIM,
    DLGRET_COPYTOPNONE,
@@ -828,12 +831,15 @@ typedef struct WmsApp
 #ifdef FEATURE_USES_MMS      
     MMS_WSP_DEC_DATA                m_DecData;
 
+    wms_msg_event_info_s_type       *m_pMsgEvent;
     IImage                          *m_pMMSImage;
     IImage                          *m_pMMSSOUND;
     IImage                          *m_pMMSVIDEO;
     AECHAR                          *m_MMSData;
     boolean                         m_isMMS;
     IFileMgr                        *m_pIFileMgr;
+    boolean                         m_isCheckMMSNotify;
+    boolean                         m_isMMSNotify;
     //MMSData		                   m_mmsDataInfoList[MAX_MMS_STORED];
 #endif    
 } WmsApp;
