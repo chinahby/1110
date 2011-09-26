@@ -107,6 +107,7 @@ static const char *MMS_GetMimeType(const char *pszSrc);
 static boolean MMS_STREQI(const char *s1, const char *s2);
 void MMSSocketState(MMSSocket *ps);
 boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen);
+boolean WMS_MMS_DeleteMMS(uint32 index);
 
 
 #define SLIM_WSP_WELL_KNWON_VALULES_MIME_TEXT_PLAIN 0x03
@@ -991,12 +992,25 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen)
     char sz[2] =   { '/', 0 };
     
     MSG_FATAL("[WMS_MMS_SaveMMS] g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
-    if(g_mmsDataInfoMax >= MAX_MMS_STORED)
-        return FALSE;
+    
         
     if (result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_CONFIG,(void **)&pConfig) != SUCCESS)
     {
         goto Exit;
+    }
+
+    ICONFIG_GetItem(pConfig, 
+        CFGI_MMS_COUNT,
+        &g_mmsDataInfoMax,
+        sizeof(g_mmsDataInfoMax));  
+
+    if(g_mmsDataInfoMax >= MAX_MMS_STORED)
+    {
+        if(!WMS_MMS_DeleteMMS(0))
+        {
+            result = EFAILED;
+            goto Exit;
+        }
     }
     
     result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
@@ -1005,12 +1019,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen)
     	MSG_FATAL("[WMS_MMS_SaveMMS] Open file error %x", result,0,0);
     	goto Exit;
     }
-    
-    ICONFIG_GetItem(pConfig, 
-        CFGI_MMS_COUNT,
-        &g_mmsDataInfoMax,
-        sizeof(g_mmsDataInfoMax));  
-        
+         
     ICONFIG_GetItem(pConfig,
                    CFGI_MMSDATA_INFO,
                    (void*)mmsDataInfoList,
@@ -1062,7 +1071,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen)
 
     g_mmsDataInfoMax++;
     MSG_FATAL("[WMS_MMS_SaveMMS] g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
-	ICONFIG_SetItem(pConfig, CFGI_MMSDATA_INFO, (void*)mmsDataInfoList, sizeof(mmsDataInfoList));        
+	ICONFIG_SetItem(pConfig, CFGI_MMSDATA_INFO, (void*)&mmsDataInfoList, sizeof(mmsDataInfoList));        
     ICONFIG_SetItem(pConfig, CFGI_MMS_COUNT, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax));  
 
 Exit:
@@ -1074,8 +1083,80 @@ Exit:
     
 }
 
-void WMS_MMS_LoadMMS()
+boolean WMS_MMS_DeleteMMS(uint32 index)
 {
+    IConfig *pConfig = NULL;
+    IFileMgr *pIFileMgr = NULL;
+
+    int i = 0;
+    int result;
+    MMSData	mmsDataInfoList[MAX_MMS_STORED];
+    MMSData	mmsDataInfoListCur;
+    if(index >= g_mmsDataInfoMax)
+        return FALSE;
+        
+    if (result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_CONFIG,(void **)&pConfig) != SUCCESS)
+    {
+        goto Exit;
+    }
+
+    result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+    if (SUCCESS != result)
+    {
+    	MSG_FATAL("[WMS_MMS_SaveMMS] Open file error %x", result,0,0);
+    	goto Exit;
+    }
+    
+    ICONFIG_GetItem(pConfig, 
+        CFGI_MMS_COUNT,
+        &g_mmsDataInfoMax,
+        sizeof(g_mmsDataInfoMax));  
+
+    ICONFIG_GetItem(pConfig,
+       CFGI_MMSDATA_INFO,
+       (void*)mmsDataInfoList,
+       sizeof(mmsDataInfoList));
+                   
+    if(g_mmsDataInfoMax <= 0)
+    {
+        result = EFAILED;
+        goto Exit;
+    }   
+
+    mmsDataInfoListCur = mmsDataInfoList[index];
+
+    for(i = index;i > 0;i--)
+    {
+        mmsDataInfoList[i] = mmsDataInfoList[i - 1];
+    };
+    MEMSET((void*)&mmsDataInfoList[0],NULL,sizeof(MMSData));
+    
+    if(SUCCESS == IFILEMGR_Test(pIFileMgr,
+        (char*)&(mmsDataInfoListCur.MMSDataFileName)))
+    {
+        if(EFAILED == IFILEMGR_Remove(pIFileMgr,
+            (char*)&(mmsDataInfoListCur.MMSDataFileName)))
+        {
+            result = IFILEMGR_GetLastError(pIFileMgr);
+            goto Exit;
+        }
+    }
+    else
+    {
+        result = IFILEMGR_GetLastError(pIFileMgr);
+        goto Exit;
+    }
+
+    g_mmsDataInfoMax --;
+    ICONFIG_SetItem(pConfig, CFGI_MMSDATA_INFO, (void*)mmsDataInfoList, sizeof(mmsDataInfoList));        
+    ICONFIG_SetItem(pConfig, CFGI_MMS_COUNT, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax)); 
+    
+    
+Exit:
+    RELEASEIF(pIFileMgr);
+    RELEASEIF(pConfig);
+    
+    return (result == SUCCESS);
 }
 
 int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
