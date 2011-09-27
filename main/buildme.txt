@@ -11,7 +11,7 @@
 2)安装ARM编译器：
     解压ADS1.2.rar，运行Setup.exe，安装到C:\ARM\ADSv1_2下，请不要使用默认的C:\Program Files\ARM\ADSv1_2目录，中间有空格，容易出问题
     选择安装License，找到ADS1.2.rar安装路径下面crack，选择License.dat
-    运行ARMPatch(Build848).exe，选择解压目录为C:\ARM\ADSv1_2，解压
+    运行ARMPatch(Build842).exe，选择解压目录为C:\ARM\ADSv1_2，解压
     我的电脑/右键/属性/高级/环境变量，在PATH变量中增加C:\ARM\ADSv1_2\bin;
 
 3)Cygwin的安装：
