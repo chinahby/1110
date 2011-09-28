@@ -168,6 +168,7 @@ static const VTBL(IModule) gModFuncs =
 static WmsApp gWmsApp={0};
 boolean gbWmsVMailNtf = FALSE;
 boolean gbWmsSMSNtf   = FALSE;
+boolean gbWmsMMSNtf = FALSE;
 boolean gbWmsLastNtfIsSMS = FALSE;
 
 static const VTBL(IWmsApp) gWmsAppMethods =
@@ -681,6 +682,12 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
 
 #ifdef FEATURE_CDSMS
     (void)IWMS_RegisterDcCb(pMe->m_pwms, pMe->m_clientId, WmsApp_DcCb);
+#endif
+#ifdef FEATURE_USES_MMS  
+    ICONFIG_GetItem(pMe->m_pConfig,
+        CFGI_WMS_MMSNOTIFY,
+        &pMe->m_isCheckMMSNotify,
+        sizeof(pMe->m_isCheckMMSNotify));
 #endif
 
     (void)IWMS_Activate(pMe->m_pwms,pMe->m_clientId);
@@ -1342,7 +1349,6 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 	                             &pMe->m_CltTsdata);
 
 	            #ifdef FEATURE_USES_MMS
-                     pMe->m_isCheckMMSNotify = TRUE;
                      pMe->m_pMsgEvent = ((wms_msg_event_info_s_type*)dwParam);
 	            	 nRet = IWMS_MMsDecodeNotifyBody(pMe->m_pwms,&pMe->m_CltTsdata,notify_buf);
 	            
@@ -1809,7 +1815,31 @@ Exit:
                     {
                         int i = 0;
                         char dataPath[100];
-                        WMS_MMS_SaveMMS(pDecData->message.hFrom,pBody,body_len);
+                        WMS_MMS_SaveMMS(pDecData->message.hFrom,pBody,body_len,MMS_INBOX);
+                        gbWmsMMSNtf = TRUE;
+                        WmsApp_PlaySMSAlert(pMe, TRUE);
+                        if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
+        				{
+        					#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+        					if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
+        					#endif
+        					{
+            					(void) ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_WMSAPP, "NEWMMS");
+            				}
+        				}
+                        else if(pMe->m_currState == WMSST_WMSNEW)
+                        {
+                            CLOSE_DIALOG(DLGRET_CREATE)
+                        }
+                        else
+                        {
+                            gbWmsMMSNtf = FALSE;
+                            CLOSE_DIALOG(DLGRET_INBOX_MMS);
+                        }
+                        
+                        MSG_FATAL("pDecData->message.hFrom=%s",(char*)&pDecData->message.hFrom,0,0);
+                        MSG_FATAL("pDecData->message.hFrom=%s",pDecData->message.hTo,0,0);
+                        MSG_FATAL("pDecData->message.hFrom=%s,",pDecData->message.hCc,0,0);
 #ifdef MMS_TEST
                         MSG_FATAL("IFILEMGR_OpenFile pDecData->message.mms_data.frag_num=%d",pDecData->message.mms_data.frag_num,0,0);
                         for(;i < pDecData->message.mms_data.frag_num; i ++)
@@ -2400,6 +2430,10 @@ void WmsApp_UpdateMenuList(WmsApp *pMe, IMenuCtl *pMenu)
                 break;
 
 #ifdef FEATURE_USES_MMS
+            case WMS_MB_INBOX_MMS:
+                nTitleID = IDS_INBOX_MMS;
+                break;
+
             case WMS_MB_OUTBOX_MMS:
                 nTitleID = IDS_OUTBOX_MMS;
                 break;
@@ -5628,6 +5662,7 @@ uint16 WmsApp_GetmemAlertID(WmsApp * pMe, wms_box_e_type eBox)
             break;
     
 #ifdef FEATURE_USES_MMS
+        case WMS_MB_INBOX_MMS:
         case WMS_MB_OUTBOX_MMS: 
             MSG_FATAL("WMS_MB_OUTBOX_MMS g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
             if (g_mmsDataInfoMax == 0)
@@ -6606,6 +6641,7 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
     uint16      wSelectItemID=0;
     boolean     bFindCurxuhao = FALSE;
     MMSData		                   mmsDataInfoList[MAX_MMS_STORED];
+    int nboxType = 0;
     MSG_FATAL("WmsApp_UpdateMenuList_MMS Start",0,0,0);
     if ((NULL == pMe) || (NULL == pMenu))
     {
@@ -6677,8 +6713,23 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
     // 先清除旧有消息列表
     (void)IMENUCTL_DeleteAll(pMenu);
 #ifdef FEATURE_USES_MMS 
+    switch(pMe->m_eMBoxType)
+    {
+        case WMS_MB_OUTBOX_MMS:
+        {
+            nboxType = CFGI_MMSOUTDATA_INFO;
+        }
+        break;
+        
+        default:
+        case WMS_MB_INBOX_MMS:
+        {
+            nboxType = CFGI_MMSINDATA_INFO;
+        }
+        break;
+    }
         (void) ICONFIG_GetItem(pMe->m_pConfig,
-                           CFGI_MMSDATA_INFO,
+                           nboxType,
                            (void*)mmsDataInfoList,
                            sizeof(mmsDataInfoList));
         {
@@ -6745,6 +6796,10 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
         if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
         {
             nTitleID = IDS_OUTBOX_MMS;
+        }
+        else if(pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
+        {
+            nTitleID = IDS_INBOX_MMS;
         }
         
         if (nTitleID != 0)

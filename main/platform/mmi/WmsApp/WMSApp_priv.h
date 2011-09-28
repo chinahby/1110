@@ -243,6 +243,8 @@ typedef enum _Erase_SMS_e_Type
     CLEAR_INBOXES,          //收件箱上信息(话机+UIM)
     CLEAR_ALL               //全部删除
 #ifdef FEATURE_USES_MMS
+    ,CLEAR_INBOX_MMS
+
     ,CLEAR_OUTBOX_MMS
 #endif
 } Erase_SMS_e_Type;
@@ -516,8 +518,10 @@ typedef enum WMSAPPState
 	WMSST_FLASHSMS,
 #ifdef FEATURE_USES_MMS
     // 显示彩信发件箱列表的状态
+    WMSST_MMSNOTIFY,
+    WMSST_INBOX_MMS,
     WMSST_OUTBOX_MMS,
-
+    WMSST_VIEWINBOXMSG_MMS,
     WMSST_VIEWOUTBOXMSG_MMS,
 #endif
 
@@ -652,7 +656,10 @@ typedef enum DLGRetValue
    ,DLGRET_FLASHSMS
    ,DLGGET_FLASHSMS_END
 #ifdef FEATURE_USES_MMS
+   ,DLGRET_MMSNOTIFY
+   ,DLGRET_INBOX_MMS
    ,DLGRET_OUTBOX_MMS
+   ,DLGRET_CLEARINBOX_MMS
    ,DLGRET_CLEAROUTBOX_MMS
 #endif
 /*   

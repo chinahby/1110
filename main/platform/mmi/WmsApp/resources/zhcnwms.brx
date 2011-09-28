@@ -577,6 +577,9 @@
 	<String Id="1013" Name="IDS_OUTBOX_MMS">
 		<Text>已发彩信</Text>
 	</String>
+	<STRING Id="1014" Name="IDS_MMSNOTIFY">
+		<Text>彩信通知</Text>
+	</STRING>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
@@ -906,7 +909,18 @@
 		<Controls>
 			<Static Id="7039" Name="IDC_VIEWMSG_MMS_STATIC">
 				<Items/></Static>
+			<Image Id="7041" Name="IDC_VIEWMSG_MMS_IMAGE">
+				<Items/></Image>
+			<Countdown Id="7044" Name="IDC_VIEWMSG_MMS_MUSICPROGRESS">
+				<Items/></Countdown>
 		</Controls>
 	</Dialog>
+	<DIALOG Id="6049" Name="IDD_MMSNOTIFY" Focus="7040">
+		<Controls>
+			<Menu Id="7040" Name="IDC_MMSNOTIFY_MENU">
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
 </Dialogs>
 </BREWRes>

@@ -106,8 +106,8 @@ static MMS_MESSAGE_TYPE MMS_GetMMSTypeByName(uint8 *hContentType);
 static const char *MMS_GetMimeType(const char *pszSrc);
 static boolean MMS_STREQI(const char *s1, const char *s2);
 void MMSSocketState(MMSSocket *ps);
-boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen);
-boolean WMS_MMS_DeleteMMS(uint32 index);
+boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind);
+boolean WMS_MMS_DeleteMMS(uint32 index,int nKind);
 
 
 #define SLIM_WSP_WELL_KNWON_VALULES_MIME_TEXT_PLAIN 0x03
@@ -979,34 +979,55 @@ void WMS_MMS_MmsWspDecDataRelease(MMS_WSP_DEC_DATA** ppdata,Mms_pdu_types nDataT
     FREEIF(pdata);
 }
 
-boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen)
+boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
 {
     IConfig *pConfig = NULL;
     IFile* pIFile = NULL;
     IFileMgr *pIFileMgr = NULL;
     
     int result = 0;
+    int nMmsDataInfoType = 0;
+    int nMmsCoutType = 0;
     char psz[5];
     char mmsDataFileName[MMS_MAX_FILE_NAME];
     MMSData	mmsDataInfoList[MAX_MMS_STORED];
     char sz[2] =   { '/', 0 };
+    int nCharBegin = 0;
     
     MSG_FATAL("[WMS_MMS_SaveMMS] g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
     
+    switch(nKind)
+    {
+        case MMS_OUTBOX:
+        {
+            nMmsDataInfoType = CFGI_MMSOUTDATA_INFO;
+            nMmsCoutType = CFGI_MMS_OUTCOUNT;
+            nCharBegin = 'a';
+        }
+        break;
         
+        default:
+        case MMS_INBOX:
+        {
+            nMmsDataInfoType = CFGI_MMSINDATA_INFO;
+            nMmsCoutType = CFGI_MMS_INCOUNT;
+            nCharBegin = 'A';
+        }
+        break;
+    }
     if (result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_CONFIG,(void **)&pConfig) != SUCCESS)
     {
         goto Exit;
     }
 
     ICONFIG_GetItem(pConfig, 
-        CFGI_MMS_COUNT,
+        nMmsCoutType,
         &g_mmsDataInfoMax,
         sizeof(g_mmsDataInfoMax));  
 
     if(g_mmsDataInfoMax >= MAX_MMS_STORED)
     {
-        if(!WMS_MMS_DeleteMMS(0))
+        if(!WMS_MMS_DeleteMMS(0,nKind))
         {
             result = EFAILED;
             goto Exit;
@@ -1021,13 +1042,13 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen)
     }
          
     ICONFIG_GetItem(pConfig,
-                   CFGI_MMSDATA_INFO,
+                   nMmsDataInfoType,
                    (void*)mmsDataInfoList,
                    sizeof(mmsDataInfoList));
 
 // Emulator filename and path
     MEMSET((void*)mmsDataFileName, 0, MMS_MAX_FILE_NAME);
-    psz[0] = g_mmsDataInfoMax+'A';
+    psz[0] = g_mmsDataInfoMax+nCharBegin;
     STRCPY(mmsDataFileName, "fs:/hsmm/mmsDataFile");
 
     if(SUCCESS != IFILEMGR_Test(pIFileMgr, mmsDataFileName))
@@ -1071,8 +1092,8 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen)
 
     g_mmsDataInfoMax++;
     MSG_FATAL("[WMS_MMS_SaveMMS] g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
-	ICONFIG_SetItem(pConfig, CFGI_MMSDATA_INFO, (void*)&mmsDataInfoList, sizeof(mmsDataInfoList));        
-    ICONFIG_SetItem(pConfig, CFGI_MMS_COUNT, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax));  
+	ICONFIG_SetItem(pConfig, nMmsDataInfoType, (void*)&mmsDataInfoList, sizeof(mmsDataInfoList));        
+    ICONFIG_SetItem(pConfig, nMmsCoutType, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax));  
 
 Exit:
     RELEASEIF(pIFile);
@@ -1083,7 +1104,7 @@ Exit:
     
 }
 
-boolean WMS_MMS_DeleteMMS(uint32 index)
+boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
 {
     IConfig *pConfig = NULL;
     IFileMgr *pIFileMgr = NULL;
@@ -1092,6 +1113,9 @@ boolean WMS_MMS_DeleteMMS(uint32 index)
     int result;
     MMSData	mmsDataInfoList[MAX_MMS_STORED];
     MMSData	mmsDataInfoListCur;
+    int nMmsDataInfoType = 0;
+    int nMmsCoutType = 0;
+    
     if(index >= g_mmsDataInfoMax)
         return FALSE;
         
@@ -1106,14 +1130,32 @@ boolean WMS_MMS_DeleteMMS(uint32 index)
     	MSG_FATAL("[WMS_MMS_SaveMMS] Open file error %x", result,0,0);
     	goto Exit;
     }
+
+    switch(nKind)
+    {
+        case MMS_OUTBOX:
+        {
+            nMmsDataInfoType = CFGI_MMSOUTDATA_INFO;
+            nMmsCoutType = CFGI_MMS_OUTCOUNT;
+        }
+        break;
+        
+        default:
+        case MMS_INBOX:
+        {
+            nMmsDataInfoType = CFGI_MMSINDATA_INFO;
+            nMmsCoutType = CFGI_MMS_INCOUNT;
+        }
+        break;
+    }
     
     ICONFIG_GetItem(pConfig, 
-        CFGI_MMS_COUNT,
+        nMmsCoutType,
         &g_mmsDataInfoMax,
         sizeof(g_mmsDataInfoMax));  
 
     ICONFIG_GetItem(pConfig,
-       CFGI_MMSDATA_INFO,
+       nMmsDataInfoType,
        (void*)mmsDataInfoList,
        sizeof(mmsDataInfoList));
                    
@@ -1148,8 +1190,8 @@ boolean WMS_MMS_DeleteMMS(uint32 index)
     }
 
     g_mmsDataInfoMax --;
-    ICONFIG_SetItem(pConfig, CFGI_MMSDATA_INFO, (void*)mmsDataInfoList, sizeof(mmsDataInfoList));        
-    ICONFIG_SetItem(pConfig, CFGI_MMS_COUNT, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax)); 
+    ICONFIG_SetItem(pConfig, nMmsDataInfoType, (void*)mmsDataInfoList, sizeof(mmsDataInfoList));        
+    ICONFIG_SetItem(pConfig, nMmsCoutType, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax)); 
     
     
 Exit:
@@ -1185,7 +1227,7 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
     {
         return 0;
     }
-    (void) ICONFIG_GetItem(pConfig,CFGI_MMS_COUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
+    (void) ICONFIG_GetItem(pConfig,CFGI_MMS_OUTCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
     ICONFIG_GetItem(pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
     ICONFIG_GetItem(pConfig, CFGI_MMSSOUND,MMSSoundpszPath, sizeof(MMSSoundpszPath));
     ICONFIG_GetItem(pConfig, CFGI_MMSVIDEO,MMSVideopszPath, sizeof(MMSVideopszPath));
@@ -1295,8 +1337,7 @@ int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber)
 	MEMCPY((void*)(buffer+head_len),(void*)WMS_MMS_BUFFERGet(),size);//将来直接保存buf就行了,再解析时用WMS_MMS_WSP_DecodeMessage解析就可以了
 
 // Save mms
-    WMS_MMS_SaveMMS(sendNumber,(char*)WMS_MMS_BUFFERGet(),size);
-
+    WMS_MMS_SaveMMS(sendNumber,(char*)WMS_MMS_BUFFERGet(),size,MMS_OUTBOX);
 //
 	return (head_len+size);
 }
@@ -1348,7 +1389,7 @@ int WMS_MMS_Decode_TEST(char *file)
 	return 0;
 }
 
-WMS_MMS_PDU_Decode_Test(char *file)
+int WMS_MMS_PDU_Decode_Test(char *file)
 {
     IFile* pIFile = NULL;
     IFileMgr *pIFileMgr = NULL;
@@ -2149,8 +2190,8 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 					MMS_DEBUG(("len == MMS_DECODER_ERROR_VALUE"));
 					return MMC_GENERIC;
 				}
-
 				i += iDataOffset;
+				STRNCPY((char*)decdata->message.hFrom,(char*)&ptr[i],len);
 				j = i;
 				i += len;
 				i--;
