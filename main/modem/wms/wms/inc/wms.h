@@ -356,6 +356,7 @@ typedef enum _wms_box_e_type
     WMS_MB_RSVFAILED,    // 预约失败
 #ifdef FEATURE_USES_MMS
     WMS_MB_OUTBOX_MMS,   // 彩信发件箱
+    WMS_MB_INBOX_MMS,
 #endif
     WMS_MB_MAX
 } wms_box_e_type;
@@ -838,6 +839,12 @@ typedef enum
   WMS_ROUTE_MAX32   = 0x10000000
 } wms_route_e_type;
 
+typedef enum
+{
+    MMS_OUTBOX,
+    MMS_INBOX,
+    MMS_DRAFT
+}WMS_MMS_SAVETYPE;
 
 
 /* Memory stores:

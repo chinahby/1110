@@ -684,8 +684,11 @@ typedef struct
    char  s_MMSImage[AEE_MAX_FILE_NAME];     
    char  s_MMSSOUND[AEE_MAX_FILE_NAME];   
    char  s_MMSVIDEO[AEE_MAX_FILE_NAME];
-   MMSData   MMSDataInfo[MAX_MMS_STORED];   //CFGI_MMSDATA_INFO
-   uint8 mmsCount;//CFGI_MMS_COUNT
+   MMSData   MMSOutDataInfo[MAX_MMS_STORED];   //CFGI_MMSOUTDATA_INFO
+   MMSData   MMSInDataInfo[MAX_MMS_STORED];   //CFGI_MMSINDATA_INFO
+   uint8 mmsOutCount;//CFGI_MMS_OUTCOUNT
+   uint8 mmsInCount;//CFGI_MMS_INCOUNT
+   boolean mmsNotify;
 #endif
 } OEMConfigListType;
 
@@ -1494,10 +1497,17 @@ static int OEMPriv_SetItem_CFGI_MISSED_CALL_ICON(void *pBuff);
 #endif //#ifdef CUST_EDITION
 
 #ifdef FEATURE_USES_MMS   
-static int OEMPriv_GetItem_CFGI_MMSDATA_INFO(void *pBuff);
-static int OEMPriv_SetItem_CFGI_MMSDATA_INFO(void *pBuff);
-static int OEMPriv_GetItem_CFGI_MMS_COUNT(void *pBuff); 
-static int OEMPriv_SetItem_CFGI_MMS_COUNT(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MMSOUTDATA_INFO(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MMSOUTDATA_INFO(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MMSINDATA_INFO(void *pBuff);
+static int OEMPriv_SetItem_CFGI_MMSINDATA_INFO(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MMS_OUTCOUNT(void *pBuff); 
+static int OEMPriv_SetItem_CFGI_MMS_OUTCOUNT(void *pBuff);
+static int OEMPriv_GetItem_CFGI_MMS_INCOUNT(void *pBuff); 
+static int OEMPriv_SetItem_CFGI_MMS_INCOUNT(void *pBuff);
+static int OEMPriv_GetItem_CFGI_WMS_MMSNOTIFY(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_MMSNOTIFY(void *pBuff);
+
 #endif
 
 /*===========================================================================
@@ -1804,8 +1814,13 @@ static OEMConfigListType oemi_cache = {
    ,{{"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0},
      {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}
     }  //CFGI_MMSDATA_INFO
+    ,{{"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0},
+     {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}, {"0", "0", 0}
+    }  //CFGI_MMSDATA_INFO
     ,  
+    0,//CFGI_MMS_COUNT 
     0,//CFGI_MMS_COUNT
+    TRUE,
 #endif   
 };
 
@@ -2345,8 +2360,11 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM_EMPTY(CFGI_MMSIMAGE) ,
    CFGTABLEITEM_EMPTY(CFGI_MMSSOUND) ,
    CFGTABLEITEM_EMPTY(CFGI_MMSVIDEO) ,
-   CFGTABLEITEM(CFGI_MMSDATA_INFO, sizeof(MMSData) * MAX_MMS_STORED),
-   CFGTABLEITEM(CFGI_MMS_COUNT, sizeof(uint8)),
+   CFGTABLEITEM(CFGI_MMSOUTDATA_INFO, sizeof(MMSData) * MAX_MMS_STORED),
+   CFGTABLEITEM(CFGI_MMSINDATA_INFO, sizeof(MMSData) * MAX_MMS_STORED),
+   CFGTABLEITEM(CFGI_MMS_OUTCOUNT, sizeof(uint8)),
+   CFGTABLEITEM(CFGI_MMS_INCOUNT, sizeof(uint8)),
+   CFGTABLEITEM(CFGI_WMS_MMSNOTIFY, sizeof(boolean)),
 #endif   
 };
 #endif
@@ -2752,12 +2770,17 @@ void OEM_RestoreFactorySetting( void )
         uint8 index = 0; 
         for(; index < MAX_MMS_STORED; index++)
         {
-            MEMSET(oemi_cache.MMSDataInfo[index].phoneNumber, 0, 13);
-            MEMSET(oemi_cache.MMSDataInfo[index].MMSDataFileName, 0, MMS_MAX_FILE_NAME);
-            oemi_cache.MMSDataInfo[index].MMSDatasize = 0;
+            MEMSET(oemi_cache.MMSInDataInfo[index].phoneNumber, 0, 13);
+            MEMSET(oemi_cache.MMSInDataInfo[index].MMSDataFileName, 0, MMS_MAX_FILE_NAME);
+            oemi_cache.MMSInDataInfo[index].MMSDatasize = 0;
+
+            MEMSET(oemi_cache.MMSOutDataInfo[index].phoneNumber, 0, 13);
+            MEMSET(oemi_cache.MMSOutDataInfo[index].MMSDataFileName, 0, MMS_MAX_FILE_NAME);
+            oemi_cache.MMSOutDataInfo[index].MMSDatasize = 0;
         }
    }
-   oemi_cache.mmsCount = 0;
+   oemi_cache.mmsInCount = 0;
+   oemi_cache.mmsOutCount = 0;
 #endif  
    //ÆÁ±£Ê±¼ä
    oemi_cache.p_screensaver_time=0; 
@@ -10547,38 +10570,89 @@ static int OEMPriv_SetItem_CFGI_FMRADIO_CHAN_TOTAL(void *pBuff)
    return SUCCESS;
 }
 #ifdef FEATURE_USES_MMS   
-static int OEMPriv_GetItem_CFGI_MMSDATA_INFO(void *pBuff) 
+static int OEMPriv_GetItem_CFGI_MMSOUTDATA_INFO(void * pBuff)
 {
-   MSG_FATAL("OEMPriv_GetItem_CFGI_MMSDATA_INFO Start",0,0,0);
-   MEMCPY(pBuff, (void*)(oemi_cache.MMSDataInfo), sizeof(MMSData) * MAX_MMS_STORED);
-   MSG_FATAL("OEMPriv_GetItem_CFGI_MMSDATA_INFO ENd",0,0,0);
+   MSG_FATAL("OEMPriv_GetItem_CFGI_MMSOUTDATA_INFO Start",0,0,0);
+   MEMCPY(pBuff, (void*)(oemi_cache.MMSOutDataInfo), sizeof(MMSData) * MAX_MMS_STORED);
+   MSG_FATAL("OEMPriv_GetItem_CFGI_MMSOUTDATA_INFO ENd",0,0,0);
    return SUCCESS;
 }
 
-static int OEMPriv_SetItem_CFGI_MMSDATA_INFO(void *pBuff)
+static int OEMPriv_SetItem_CFGI_MMSOUTDATA_INFO(void *pBuff)
 {
-    MSG_FATAL("OEMPriv_SetItem_CFGI_MMSDATA_INFO Start", 0,0,0);
-    MEMCPY((void*)(oemi_cache.MMSDataInfo), pBuff, sizeof(MMSData) * MAX_MMS_STORED);
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMSOUTDATA_INFO Start", 0,0,0);
+    MEMCPY((void*)(oemi_cache.MMSOutDataInfo), pBuff, sizeof(MMSData) * MAX_MMS_STORED);
     OEMPriv_WriteOEMConfigList(); 
-    MSG_FATAL("OEMPriv_SetItem_CFGI_MMSDATA_INFO End", 0,0,0);
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMSOUTDATA_INFO End", 0,0,0);
     return SUCCESS;
 }
 
-static int OEMPriv_GetItem_CFGI_MMS_COUNT(void *pBuff) 
+static int OEMPriv_GetItem_CFGI_MMS_OUTCOUNT(void *pBuff) 
 {
-    MSG_FATAL("OEMPriv_GetItem_CFGI_MMS_COUNT Start mmsCount=%d", oemi_cache.mmsCount,0,0); 
-   *(uint8 *) pBuff = oemi_cache.mmsCount;
+    MSG_FATAL("OEMPriv_GetItem_CFGI_MMS_OUTCOUNT Start mmsCount=%d", oemi_cache.mmsOutCount,0,0); 
+   *(uint8 *) pBuff = oemi_cache.mmsOutCount;
    return SUCCESS;
 }
 
-static int OEMPriv_SetItem_CFGI_MMS_COUNT(void *pBuff)
+static int OEMPriv_SetItem_CFGI_MMS_OUTCOUNT(void *pBuff)
 {
-   MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_COUNT Start *pBuff=%d", *(uint8*)pBuff,0,0); 
-   if (oemi_cache.mmsCount != *(uint8 *)pBuff) {
-      oemi_cache.mmsCount = *(uint8 *)pBuff;
+   MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_OUTCOUNT Start *pBuff=%d", *(uint8*)pBuff,0,0); 
+   if (oemi_cache.mmsOutCount != *(uint8 *)pBuff) {
+      oemi_cache.mmsOutCount = *(uint8 *)pBuff;
       OEMPriv_WriteOEMConfigList();
    }
-   MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_COUNT Start mmsCount=%d", oemi_cache.mmsCount,0,0); 
+   MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_OUTCOUNT Start mmsCount=%d", oemi_cache.mmsOutCount,0,0); 
+   return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_MMSINDATA_INFO(void *pBuff) 
+{
+   MSG_FATAL("OEMPriv_GetItem_CFGI_MMSINDATA_INFO Start",0,0,0);
+   MEMCPY(pBuff, (void*)(oemi_cache.MMSInDataInfo), sizeof(MMSData) * MAX_MMS_STORED);
+   MSG_FATAL("OEMPriv_GetItem_CFGI_MMSINDATA_INFO ENd",0,0,0);
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_MMSINDATA_INFO(void *pBuff)
+{
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMSINDATA_INFO Start", 0,0,0);
+    MEMCPY((void*)(oemi_cache.MMSInDataInfo), pBuff, sizeof(MMSData) * MAX_MMS_STORED);
+    OEMPriv_WriteOEMConfigList(); 
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMSINDATA_INFO End", 0,0,0);
+    return SUCCESS;
+}
+
+static int OEMPriv_GetItem_CFGI_MMS_INCOUNT(void *pBuff) 
+{
+    MSG_FATAL("OEMPriv_GetItem_CFGI_MMS_INCOUNT Start mmsCount=%d", oemi_cache.mmsInCount,0,0); 
+   *(uint8 *) pBuff = oemi_cache.mmsInCount;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_MMS_INCOUNT(void *pBuff)
+{
+   MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start *pBuff=%d", *(uint8*)pBuff,0,0); 
+   if (oemi_cache.mmsInCount != *(uint8 *)pBuff) {
+      oemi_cache.mmsInCount = *(uint8 *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start mmsCount=%d", oemi_cache.mmsInCount,0,0); 
+   return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_WMS_MMSNOTIFY(void *pBuff) 
+{
+    MSG_FATAL("OEMPriv_GetItem_CFGI_MMS_INCOUNT Start mmsCount=%d", oemi_cache.mmsNotify,0,0); 
+   *(uint8 *) pBuff = oemi_cache.mmsNotify;
+   return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_WMS_MMSNOTIFY(void *pBuff)
+{
+   MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start *pBuff=%d", *(uint8*)pBuff,0,0); 
+   if (oemi_cache.mmsNotify != *(boolean *)pBuff) {
+      oemi_cache.mmsNotify = *(boolean *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start mmsNotify=%d", oemi_cache.mmsNotify,0,0); 
    return SUCCESS;
 }
 
