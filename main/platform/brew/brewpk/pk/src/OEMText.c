@@ -111,6 +111,18 @@ extern const unsigned long prv_dataArray[];
 #define  PTRCK_HIT_TRIAN   (PTRCK_HIT_ABTRI | PTRCK_HIT_BLTRI)
 
 #ifdef FEATURE_T9_CHINESE
+#ifdef FEATURE_DISP_128X160
+#define SELECTION_BUFFER_SIZE   (6)
+#define CAUDB_SIZE              (110)
+#define T9KEYTYPE_NORMAL        (0)
+#define T9KEYTYPE_SELECT        (1)
+#define T9KEYTYPE_CONTROL       (2)
+#define T9KEYTYPE_UNKNOWN       (6)
+#define T9_FONT_WIDTH           (20)
+#define T9_STROKE_FONT_WIDTH    (12) // (10) 
+#define T9_STROKE_LEFT_ARROW    (10) 
+#define MAX_STROKES             (9) // (10) // the max count which display in the screen
+#else
 #define SELECTION_BUFFER_SIZE   (8)
 #define CAUDB_SIZE              (110)
 #define T9KEYTYPE_NORMAL        (0)
@@ -122,6 +134,8 @@ extern const unsigned long prv_dataArray[];
 #define T9_STROKE_LEFT_ARROW    (10) 
 #define MAX_STROKES             (9) // (10) // the max count which display in the screen
 
+#endif
+
 #ifndef AEE_SIMULATOR
 #define SYLLABLEWIDTH  15
 #define SEPARATORWIDTH 6
@@ -129,7 +143,7 @@ extern const unsigned long prv_dataArray[];
 #define PSEPARATORWIDTH 3   // 4
 #define SPELLMAX  10
 #define SPACESIZE  5  //6
-#define CHINESE_FONT_HEIGHT 14
+#define CHINESE_FONT_HEIGHT 16
 #define CHINESE_FONT_WIDTH 14    
 #else 
 //add by ydc
@@ -10015,7 +10029,7 @@ static void T9TextCtl_CJK_CHINESE_Restart(TextCtlContext *pContext)
 
     // set rectChinese input Rect
     pContext->rectChineseSyllableInput.x = pContext->rectDisplay.x;
-    pContext->rectChineseSyllableInput.dx = pContext->rectDisplay.dx -2;
+    pContext->rectChineseSyllableInput.dx = pContext->rectDisplay.dx;
     pContext->rectChineseSyllableInput.dy = pContext->nLineHeight;    
     pContext->rectChineseSyllableInput.y = pContext->rectDisplay.y + pContext->rectDisplay.dy - pContext->rectChineseSyllableInput.dy*2;
 
@@ -11226,6 +11240,8 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
     uint32          format;
     AEERect         pRect;
     AEERect         invertRect;
+	AEERect         cRect;
+	AEERect         pAllRect;
     unsigned int    k = 0;
     unsigned int    iWindX = pContext->rectChineseTextInput.x;
     unsigned int    iWindY = pContext->rectChineseTextInput.y;   
@@ -11244,9 +11260,14 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
     // setup the text Rect
     SETAEERECT(&pRect,
               iWindX+2,
-              iWindY+1, // at the bottom line
+              iWindY, // at the bottom line
               iWindDx -6,     
-              iWindDy -1);    
+              iWindDy);   
+	SETAEERECT(&pAllRect,
+              iWindX,
+              pContext->rectChineseSyllableInput.y, // at the bottom line
+              iWindDx+2,     
+              (iWindDy)*2);  
     IDISPLAY_EraseRect(pContext->pIDisplay, &pRect);
     
     // blank the selection when focus on TEXT
@@ -11274,14 +11295,18 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
         {
             format = IDF_ALIGN_NONE;
              
-            ch[0] = *(psBuffer+k); // use GBcode for EVB board    
+            ch[0] = *(psBuffer+k); // use GBcode for EVB board  
+            cRect.x = pRect.x+1+(T9_FONT_WIDTH)*k;
+			cRect.y = pRect.y;
+			cRect.dx = CHINESE_FONT_WIDTH;
+			cRect.dy = CHINESE_FONT_HEIGHT-2;
             (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                    AEE_FONT_NORMAL,
                                    ch,
                                    -1,
                                    pRect.x+1+(T9_FONT_WIDTH)*k,
                                    pRect.y,//SCREEN_HEIGHT - pContext->nLineHeight,
-                                   NULL,
+                                   &cRect,
                                    format);
             /* If this character is a NULL terminator, then stop drawing */
             if (*(psBuffer + k ) == 0)  break;
@@ -11297,7 +11322,7 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
                 pContext->nSelectionSelectd = pContext->sT9ccFieldInfo.nSelectPageLen - 1;
             }
             invertRect.x = pRect.x+1+(T9_FONT_WIDTH)*pContext->nSelectionSelectd;
-            invertRect.y = pRect.y+1;
+            invertRect.y = pRect.y;
             invertRect.dx = CHINESE_FONT_WIDTH;
             invertRect.dy = CHINESE_FONT_HEIGHT;
             IDISPLAY_InvertRect(pContext->pIDisplay, &invertRect);
