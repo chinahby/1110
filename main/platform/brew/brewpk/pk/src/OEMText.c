@@ -3798,12 +3798,24 @@ static void TextCtl_DrawTextPart(TextCtlContext *pContext,
                {
                   bShowLast = !bCursor;
                }
-
+			   
+			   
                for(q = 0;
-                   q < (bShowLast ? WSTRLEN(wszHide) - 1 : WSTRLEN(wszHide));
+                   //q < (bShowLast ? WSTRLEN(wszHide) - 1 : WSTRLEN(wszHide));
+                   q<WSTRLEN(wszHide);
                    q++ ) 
                {
-                  wszHide[q]  = '*';
+               	  if((!bCursor))
+               	  {
+               	  	if(pContext->wSelStart !=q)
+					{
+						wszHide[q]  = '*';
+					}
+               	  }
+				  else
+				  {
+                  	wszHide[q]  = '*';
+				  }
                }
                if(pContext->dwProperties & TP_GRAPHIC_BG)
                {
