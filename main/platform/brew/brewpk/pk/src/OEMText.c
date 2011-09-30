@@ -12148,6 +12148,9 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
     boolean bRet = FALSE;
     int maxsymbolcount;
     int i,j;
+	#ifdef FEATURE_VERSION_W516
+	return FALSE;
+	#endif
     
     maxsymbolcount = WSTRLEN(saMultitapStrings_3sdtyle_endsymbol);
 

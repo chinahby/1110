@@ -3088,7 +3088,11 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 #if defined (FEATURE_ALL_KEY_PAD)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 #else
+			#ifdef FEATURE_VERSION_W516
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+			#endif
 #endif	         
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW            
@@ -5090,7 +5094,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #if defined(FEATURE_ALL_KEY_PAD)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 #else
+			#ifdef FEATURE_VERSION_W516
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+			#endif
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
@@ -5125,8 +5133,12 @@ static void OEM_SetInputMode(CTextCtl * pme)
 			OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 	        #else
-			wMode = AEE_TM_CAPLOWER;//´óÐ¡Ð´×ÖÄ¸ÊäÈëÄ£Ê
+			wMode = AEE_TM_CAPLOWER;//´óÐ¡Ð´×ÖÄ¸ÊäÈëÄ£?
+			#ifdef FEATURE_VERSION_W516
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+			#endif
 			#endif
 			
 			//OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);  
@@ -5154,7 +5166,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #if defined(FEATURE_ALL_KEY_PAD)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 #else
+			#ifdef FEATURE_VERSION_W516
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+			#endif
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW         
@@ -5454,7 +5470,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #if defined(FEATURE_ALL_KEY_PAD)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 #else
+			#ifdef FEATURE_VERSION_W516
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+			#endif
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW
@@ -5489,8 +5509,12 @@ static void OEM_SetInputMode(CTextCtl * pme)
 			OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 	        #else
-			wMode = AEE_TM_CAPLOWER;//´óÐ¡Ð´×ÖÄ¸ÊäÈëÄ£Ê
+			wMode = AEE_TM_CAPLOWER;//´óÐ¡Ð´×ÖÄ¸ÊäÈëÄ£?
+			#ifdef FEATURE_VERSION_W516
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+			#endif
 			#endif
 			
 			//OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_FIRST_CAP);  
@@ -5518,7 +5542,11 @@ static void OEM_SetInputMode(CTextCtl * pme)
 #if defined(FEATURE_ALL_KEY_PAD)
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 #else
+			#ifdef FEATURE_VERSION_W516
+			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_LOW;
+			#else
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
+			#endif
 #endif
 
 #endif  // FEATURE_PREPAID_ISRAEL_HEBREW         
