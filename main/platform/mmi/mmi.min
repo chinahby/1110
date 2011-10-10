@@ -165,3 +165,5 @@ endif
 ifeq ($(USES_ZI),yes)
 include $(ZI_PATH)/ZI.min
 endif
+
+#include $(MMIDIR)/NewClass/NewClass.min

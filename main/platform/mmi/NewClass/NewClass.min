@@ -1,0 +1,9 @@
+NEWCLASS_SOURCES=\
+    hx_queryinfo.c
+	
+NEWCLASS_SRC=$(MMIDIR)/NewClass
+vpath %.c $(NEWCLASS_SRC)	
+	
+NEWCLASS_OBJS :=  $(addprefix $(TARGETDIR)/, $(NEWCLASS_SOURCES:%.c=%.o))
+
+OBJECTS+=$(NEWCLASS_OBJS)
