@@ -1,0 +1,6 @@
+set ARMHOME=C:\ARM\ADSv1_2
+set ARMINC=C:\ARM\ADSv1_2\INCLUDE
+set ARMLIB=C:\ARM\ADSv1_2\LIB
+set ARMDLL=C:\ARM\ADSv1_2\bin
+
+set PATH=C:\ARM\ADSv1_2\bin;C:\cygwin\bin;%PATH%
