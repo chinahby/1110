@@ -3230,7 +3230,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					}
 					#elif defined(FEATURE_VERSION_MYANMAR) || defined(FEATURE_VERSION_W515V3)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
-					#else
+                    #else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CAMERA);
 					#endif
                     
@@ -6222,6 +6222,27 @@ void CoreApp_UpdateAnnunciator(CCoreApp *pMe)
 	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO, ANNUN_STATE_FMRADIO_OFF/*ANNUN_STATE_OFF*/);
 	        IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_HEADSET*/, ANNUN_STATE_HEADSET_OFF/*ANNUN_STATE_OFF*/);
 	    }
+#ifdef FEATURE_QQ_APP        
+        if(pMe->m_IsQQOline)
+        {
+            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_MSG_OFF);
+            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_ONLINE);
+        }
+        else
+        {
+            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_OFFLINE);
+        }
+        
+        if(pMe->m_IsQQMsg)
+        {
+            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_MSG_ON);
+        }
+        else
+        {
+            IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_MSG_OFF);
+
+        }
+#endif        
     }
     MSG_FATAL("alertType=%d",alertType,0,0);
     switch(alertType)

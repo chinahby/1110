@@ -248,8 +248,12 @@ static OEMState_data fmradio_image_data[]=
 {
 #ifndef FEATURE_USES_LOWMEM
     {ANNUN_STATE_FMRADIO_ON, IDB_FM_RADIO, NULL},
+#ifdef FEATURE_QQ_APP         
+    {ANNUN_STATE_QQ_MSG_ON, IDB_QQMSG, NULL},
+    {ANNUN_STATE_QQ_ONLINE, IDB_QQ, NULL},
+#endif        
 #endif
-    {ANNUN_STATE_HEADSET_ON, IDB_HEADSET, NULL}
+    {ANNUN_STATE_HEADSET_ON, IDB_HEADSET, NULL}    
 };
 #ifndef FEATURE_USES_LOWMEM
 /*BT Trans/BT Headset/BT On*/
@@ -299,6 +303,14 @@ static OEMState_data batt_image_data[]=
   {ANNUN_STATE_BATT_FULL, IDB_BATT_FULL, NULL}
 };
 
+/*QQ
+static OEMState_data qq_image_data[]=
+{
+  {ANNUN_STATE_QQ_MSG_ON, IDB_QQMSG, NULL},
+  {ANNUN_STATE_QQ_ONLINE, IDB_QQ, NULL}
+};
+*/
+
 /********************************************************************
  *
  * Content data for the annunciator fields
@@ -331,10 +343,19 @@ OEMAnnun_content sms_content =
 /*ANNUN_FIELD_FMRADIO*/
 OEMAnnun_content fmradio_content =
 #ifndef FEATURE_USES_LOWMEM
+#ifdef FEATURE_QQ_APP 
+     {ANNUN_TYPE_IMAGE, 4, ANNUN_STATE_OFF, (void *)fmradio_image_data};
+#else
      {ANNUN_TYPE_IMAGE, 2, ANNUN_STATE_OFF, (void *)fmradio_image_data};
+#endif
 #else
      {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)fmradio_image_data};
 #endif
+/*ANNUN_FIELD_QQ
+OEMAnnun_content qq_content =
+     {ANNUN_TYPE_IMAGE, 1, ANNUN_STATE_OFF, (void *)qq_image_data};
+*/
+
 /*ANNUN_FIELD_BLUETOOTH*/
 #ifndef FEATURE_USES_LOWMEM
 OEMAnnun_content bluetooth_content =
@@ -509,6 +530,7 @@ static OEMAnnun_data Annunciators[] =
 {
   {ANNUN_FIELD_RSSI,                ANNUN_ICON_POSITION_1,     ROW1_Y,  LG_IMG_WIDTH, IMG_HEIGHT,  &rssi_content},
   {ANNUN_FIELD_WAP,                ANNUN_ICON_POSITION_2,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &wap_content},  
+ // {ANNUN_FIELD_QQ,               ANNUN_ICON_POSITION_3,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &qq_content},
   {ANNUN_FIELD_LOCKSTATUS,     ANNUN_ICON_POSITION_3,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &lockstatus_content},
   {ANNUN_FIELD_CALL,                ANNUN_ICON_POSITION_4,     ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &call_content}, 
   {ANNUN_FIELD_SMS,                ANNUN_ICON_POSITION_5,      ROW1_Y,  IMG_WIDTH,       IMG_HEIGHT,  &sms_content}, 
@@ -537,6 +559,7 @@ static OEMAnnun_data Annunciators[] =
 
 #endif
 #else
+ 
   {ANNUN_FIELD_ALARM,              ANNUN_ICON_POSITION_7,      ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &alarm_content},
   {ANNUN_FIELD_MMS,                ANNUN_ICON_POSITION_9,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &mms_content},
   {ANNUN_FIELD_RINGTONE,         ANNUN_ICON_POSITION_8,    ROW1_Y,  IMG_WIDTH,      IMG_HEIGHT,  &ringtone_content},
@@ -1839,10 +1862,16 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
   PACONTEXT pac;
   uint32 nStateRank = GetAnnunStateRank(nState);
   MSG_FATAL("IAnnunciator_SetField %d 0x%x",nAnnunID,nState,0);
+  
+  
   if (nAnnunID >= ARR_SIZE(Annunciators))
+  {
     return EFAILED;
+  }
   if (Annunciators[nAnnunID].pcontent->nFieldType != ANNUN_TYPE_IMAGE)
+  {
     return EFAILED;
+  }
   /*if (Annunciators[nAnnunID].pcontent->nMaxStates < (nState &
                                                      ANNUN_STATE_BLINK_UNMASK))*/
   if(nStateRank == 0)
@@ -1865,8 +1894,11 @@ static int IAnnunciator_SetField(IAnnunciator * pMe, uint32 nAnnunID,
   }
   
   if (Annunciators[nAnnunID].pcontent->data == NULL)
+  {
     return EFAILED;
-  if (pMe == NULL) {
+  }
+  if (pMe == NULL)
+  {
     return EFAILED;
   }
   

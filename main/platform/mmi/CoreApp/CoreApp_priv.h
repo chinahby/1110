@@ -796,6 +796,10 @@ typedef struct _CCoreApp
 	boolean             m_iskeypadtime;
 	#endif
 	boolean             m_IsSametime;
+    #ifdef FEATURE_QQ_APP 
+    boolean             m_IsQQOline;
+    boolean             m_IsQQMsg;
+    #endif
     AECHAR             *m_pADNName;
     AECHAR             *m_pADNNumber;
 #ifdef FEATURE_OEMOMH 

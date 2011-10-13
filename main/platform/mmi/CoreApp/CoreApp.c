@@ -649,7 +649,6 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 }
             }
             return TRUE;
-
         case EVT_APP_STOP:
 			{
             //if (pMe->m_pDisplay != NULL)
@@ -1283,6 +1282,44 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
           			CLOSE_DIALOG(DLGRET_BATT_INFO)
             	}
             	break;
+#ifdef FEATURE_QQ_APP                 
+            case EVT_QQ_ANNU_UPDATE:
+                 switch(dwParam)
+                        {
+                         case 0:
+                             pMe->m_IsQQOline=TRUE;
+                             pMe->m_IsQQMsg=FALSE;
+                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_ONLINE);                             
+                             break;
+                         case 1:
+                             pMe->m_IsQQOline=TRUE;
+                             pMe->m_IsQQMsg=FALSE;
+                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_ONLINE); 
+                             break;
+                         case 2:
+                             pMe->m_IsQQOline=TRUE;
+                              pMe->m_IsQQMsg=FALSE;
+                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_ONLINE); 
+                             break;
+                         case 3:
+                             pMe->m_IsQQOline=TRUE;
+                             pMe->m_IsQQMsg=FALSE;
+                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_ONLINE); 
+                             break;
+                         case 4:
+                              pMe->m_IsQQMsg=TRUE;
+                              pMe->m_IsQQOline=FALSE;
+                              IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_MSG_ON);                            
+                             break;
+                         case 5:
+                             pMe->m_IsQQOline=FALSE;
+                             pMe->m_IsQQMsg=FALSE;
+                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_OFFLINE);
+                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_MSG_OFF);
+                             break;
+                        }
+                break;
+#endif                
             default:
             #if defined (FEATURE_VERSION_N021) || defined(FEATURE_VERSION_W0216A)
             	if(wParam==1)

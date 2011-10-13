@@ -51,6 +51,7 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_FIELD_CALL                      3   /*Loudspeaker/Mute/Emergency/Inuse/Missed Call*/
 #define ANNUN_FIELD_SMS                       4   /*VMail/SMS/SMS Memory Full*/
 #define ANNUN_FIELD_FMRADIO                5   /*FMRadio/Headset*/
+//#define ANNUN_FIELD_QQ                     2   /*QQ*/
 #define ANNUN_FIELD_BLUETOOTH            6   /*BT Trans/BT Headset/BT On*/
 #define ANNUN_FIELD_ALARM                    7   /*Timer/Alarm/Schedule*/
 #define ANNUN_FIELD_MMS                       8   /*MMS Full/MMS Unread/MMS Unreceive/Push*/
@@ -178,8 +179,20 @@ typedef struct IAnnunciator IAnnunciator;
 /*ANNUN_FIELD_FMRADIO*/
 #define ANNUN_STATE_FMRADIO_ON    ANNUN_FIRST_STATE
 #define ANNUN_STATE_FMRADIO_OFF  ANNUN_FIRST_STATE_OFF
-#define ANNUN_STATE_HEADSET_ON    ANNUN_SECOND_STATE
+#ifdef FEATURE_QQ_APP                 
+#define ANNUN_STATE_QQ_MSG_ON    ANNUN_SECOND_STATE
+#define ANNUN_STATE_QQ_MSG_OFF   ANNUN_SECOND_STATE_OFF
+#define ANNUN_STATE_QQ_ONLINE    ANNUN_THIRD_STATE
+#define ANNUN_STATE_QQ_OFFLINE   ANNUN_THIRD_STATE_OFF
+#define ANNUN_STATE_HEADSET_ON   ANNUN_FORTH_STATE 
+#define ANNUN_STATE_HEADSET_OFF  ANNUN_FORTH_STATE_OFF
+#else
+#define ANNUN_STATE_HEADSET_ON   ANNUN_SECOND_STATE 
 #define ANNUN_STATE_HEADSET_OFF  ANNUN_SECOND_STATE_OFF
+#endif
+
+
+
 
 /*ANNUN_FIELD_BLUETOOTH*/
 #define ANNUN_STATE_BT_TRANS_ON       ANNUN_FIRST_STATE
@@ -229,6 +242,10 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_STATE_BATT_2       ANNUN_THIRD_STATE
 #define ANNUN_STATE_BATT_3       ANNUN_FORTH_STATE
 #define ANNUN_STATE_BATT_FULL  ANNUN_FIFTH_STATE
+
+// QQ field
+//#define ANNUN_STATE_QQ_MSG      ANNUN_FIRST_STATE
+//#define ANNUN_STATE_QQ_ONLINE   ANNUN_SECOND_STATE
 
 //Network field
 #define ANNUN_STATE_DORMANT   0
