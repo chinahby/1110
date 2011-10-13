@@ -1105,7 +1105,21 @@ typedef enum
 
 int WMS_MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen)
 {
-	
+/*
+	switch()
+	{
+	    case WMS_MMS_PDU_MSendReq:
+	    {
+	        WMS_MMS_PDU_SendRequest(hPDU,);
+	    }
+	    break;
+	    case WMS_MMS_PDU_MNotifyrespInd:
+	    {
+	        WMS_MMS_PDU_NotifyResp(hPDU,);
+	    }
+	    case 
+	}
+*/
 }
 
 void WMS_MMS_PDU_SendRequest(uint8* pBuff,MMS_WSP_ENCODE_SEND *pData)
@@ -3768,76 +3782,76 @@ char* MMS_WSP_MineType2MormalMimeType(const char* pszSrc)
     {
         if(STRSTR(pszSrc,AUDIO_MIME_BASE))
         {
-            if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_AAC]))
+            if(STRSTR(pszSrc,sWspMimeType[AUDIO_AAC]))
             {
                 return MT_AUDIO_AAC;
             }
-            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_AMR]))
+            else if(STRSTR(pszSrc,sWspMimeType[AUDIO_AMR]))
             {
                 return MT_AUDIO_AMR;
             }
-            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MIDI])
-                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MID])
-                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_X_MID])
-                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_X_MIDI]))
+            else if(STRSTR(pszSrc,sWspMimeType[AUDIO_MIDI])
+                || STRSTR(pszSrc,sWspMimeType[AUDIO_MID])
+                || STRSTR(pszSrc,sWspMimeType[AUDIO_X_MID])
+                || STRSTR(pszSrc,sWspMimeType[AUDIO_X_MIDI]))
             {
                 return MT_AUDIO_MIDI;
             }
-            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_X_MP3])
-                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MP3]))
+            else if(STRSTR(pszSrc,sWspMimeType[AUDIO_X_MP3])
+                || STRSTR(pszSrc,sWspMimeType[AUDIO_MP3]))
             {
                 return MT_AUDIO_MP3;
             }
-            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MPEG3])
-                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_X_MPEG3]))
+            else if(STRSTR(pszSrc,sWspMimeType[AUDIO_MPEG3])
+                || STRSTR(pszSrc,sWspMimeType[AUDIO_X_MPEG3]))
             {
                 return MT_VIDEO_MPEG4;
             }
-            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MPEG])
-                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_X_MPEG]))
+            else if(STRSTR(pszSrc,sWspMimeType[AUDIO_MPEG])
+                || STRSTR(pszSrc,sWspMimeType[AUDIO_X_MPEG]))
             {
                 return MT_AUDIO_MP3;
             }
-            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MPG])
-                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_X_MPG]))
+            else if(STRSTR(pszSrc,sWspMimeType[AUDIO_MPG])
+                || STRSTR(pszSrc,sWspMimeType[AUDIO_X_MPG]))
             {
                 return MT_AUDIO_MP3;
             }
-            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_3GPP])
-                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MP4]))
+            else if(STRSTR(pszSrc,sWspMimeType[AUDIO_3GPP])
+                || STRSTR(pszSrc,sWspMimeType[AUDIO_MP4]))
             {
                 return MT_VIDEO_MPEG4;
             }
         }
         else if(STRSTR(pszSrc,VIDEO_MIME_BASE))
         {
-            if(MMS_STREQI(pszSrc,sWspMimeType[VIDEO_MP4])
-                || MMS_STREQI(pszSrc,sWspMimeType[VIDEO_H263])
-                || MMS_STREQI(pszSrc,sWspMimeType[VIDEO_3GPP])
-                || MMS_STREQI(pszSrc,sWspMimeType[VIDEO_3G2]))
+            if(STRSTR(pszSrc,sWspMimeType[VIDEO_MP4])
+                || STRSTR(pszSrc,sWspMimeType[VIDEO_H263])
+                || STRSTR(pszSrc,sWspMimeType[VIDEO_3GPP])
+                || STRSTR(pszSrc,sWspMimeType[VIDEO_3G2]))
             {
                 return MT_VIDEO_MPEG4;
             }
         }
         else if(STRSTR(pszSrc,IMAGE_MIME_BASE))
         {
-            if(MMS_STREQI(pszSrc,sWspMimeType[IMAGE_JPEG]))
+            if(STRSTR(pszSrc,sWspMimeType[IMAGE_JPEG]))
             {
                 return MT_JPEG;
             }
-            else if(MMS_STREQI(pszSrc,sWspMimeType[IMAGE_JPG]))
+            else if(STRSTR(pszSrc,sWspMimeType[IMAGE_JPG]))
             {
                 return MT_JPG;
             }
-            else if(MMS_STREQI(pszSrc,sWspMimeType[IMAGE_PNG]))
+            else if(STRSTR(pszSrc,sWspMimeType[IMAGE_PNG]))
             {
                 return MT_PNG;
             }
-            else if(MMS_STREQI(pszSrc,sWspMimeType[IMAGE_GIF]))
+            else if(STRSTR(pszSrc,sWspMimeType[IMAGE_GIF]))
             {
                 return MT_GIF;
             }
-            else if(MMS_STREQI(pszSrc,sWspMimeType[IMAGE_WBMP]))
+            else if(STRSTR(pszSrc,sWspMimeType[IMAGE_WBMP]))
             {
                 return MT_BMP;
             }
