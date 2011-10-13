@@ -64,7 +64,7 @@
 
 #define MMS_MAX_MESSAGEID_CHARSIZE 	128
 #define MMS_MAX_ADDRESS_CHARSIZE	90
-
+#define MMS_MAX_TIME_SIZE  
 #define MMS_DEFAULT_PROXYHOST		("10.0.0.200")
 #define MMS_DEFAULT_PROXYPORT		(80)
 
@@ -129,6 +129,17 @@ typedef enum _mms_pdu_types
 	MMS_PDU_DELIVERY_IND,
 	MMS_PDU_READ_ORIG_IND
 }Mms_pdu_types;
+
+typedef enum
+{
+    WMS_MMS_PDU_MSendReq,
+    WMS_MMS_PDU_MSendConf,
+    WMS_MMS_PDU_MNotificationInd,
+    WMS_MMS_PDU_MNotifyrespInd,
+    WMS_MMS_PDU_MRetrieveConf,
+    WMS_MMS_PDU_MAcknowledgeInd,
+    WMS_MMS_PDU_MDeliveryInd,
+}WMS_MMS_PDU_MessageTypeValue;
 
 typedef enum _mms_core_ans_
 {
@@ -271,7 +282,7 @@ enum _mms_wsp_headers_values
 };
 
 /*
-** 收到的彩信内容
+** 彩信内容
 */
 typedef struct _wsp_decoder_data_message_received
 {
@@ -291,7 +302,6 @@ typedef struct _wsp_decoder_data_message_received
 	int	iDate;
 	int	iPriority;
 	int	iMessageClass;
-	int	iDeliveryReport;
 }MMS_WSP_DEC_MESSAGE_RECEIVED;
 
 /*
@@ -308,7 +318,6 @@ typedef struct _wsp_decoder_data_notification_received
 	int	iExpires;
 	int	iPriority;
 	int	iMessageClass;
-	int	iDeliveryReport;
 }MMS_WSP_DEC_NOTIFICATION_RECEIVED;
 
 //
@@ -318,6 +327,24 @@ typedef struct _wsp_decoder_data_send_conf
 	uint8 hTransactionID[MMS_MAX_TRANSACTION_ID_SIZE];
 	int	iResponseStatus;	
 }MMS_WSP_DEC_SEND_CONF;
+
+// 通知反馈
+typedef struct _wsp_encoder_data_notifty_resp
+{
+	uint8 hTransactionID[MMS_MAX_TRANSACTION_ID_SIZE];
+	int iMMSVersion;
+	int	iStatus;	
+	boolean bReportAllowed;
+}MMS_WSP_ENC_NOTIFY_RESP;
+
+// 彩信接收确认
+typedef struct _wsp_encoder_data_delivery_acknowledgement
+{
+	uint8 hTransactionID[MMS_MAX_TRANSACTION_ID_SIZE];
+	int iMMSVersion;	
+	boolean bReportAllowed;
+}MMS_WSP_ENC_DELIVERY_ACKNOWLEDGEMENT;
+
 
 typedef struct _wsp_decoder_data_readrep_received
 {
@@ -335,12 +362,35 @@ typedef struct _wsp_decoder_data_delrep_received
 	int	iDate;
 }MMS_WSP_DEC_DELREP_RECEIVED;
 
-typedef struct _wsp_encoder_data_sent
+typedef struct _wsp_encoder_data_message_send
 {
+	uint8 hFrom[MMS_MAX_SINGLE_ADDRESS_SIZE];
 	uint8 hTo[MMS_MAX_SINGLE_ADDRESS_SIZE];
-	uint8 hSubject[MMS_MAX_SUBJECT_SIZE];
 	uint8 hCc[MMS_MAX_SINGLE_ADDRESS_SIZE];
+	uint8 hBcc[MMS_MAX_SINGLE_ADDRESS_SIZE];
+	uint8 hSubject[MMS_MAX_SUBJECT_SIZE];
+	uint8 hTransactionID[MMS_MAX_TRANSACTION_ID_SIZE];
+	uint8 hContentType[MMS_MAX_CONTENT_TYPE];
 	WSP_MMS_ENCODE_DATA mms_data;
+	boolean	bDelRep;
+	boolean	bReadRep;
+	uint8* hBody;
+	int	iBodyLen;	
+	int	iRetrieveStatus;
+	int	iDate;
+	int	iPriority;
+	int	iMessageClass;
+	boolean bSenderVisibility;
+	int iMMSVersion;
+	int iExpiry;
+	int iDeliveryTime;
+}MMS_WSP_MESSAGE_SEND;
+
+typedef struct _wsp_encoder_data_send
+{
+    MMS_WSP_MESSAGE_SEND                message;
+    MMS_WSP_ENC_NOTIFY_RESP             notifyresp;
+    MMS_WSP_ENC_DELIVERY_ACKNOWLEDGEMENT deliveryacknowledgement;
 }MMS_WSP_ENCODE_SEND;
 
 typedef union _wsp_decoder_data_
@@ -440,13 +490,13 @@ boolean  MMSSocketSend (MMSSocket *ps, const uint8 *pBuf, uint16 nLen);
 boolean  MMSSocketRecv (MMSSocket *ps, uint8 *pBuf, uint16 *pLen);
 //////////////////////////////////////////////////////////////////////////////
 int MMS_PDU_PutMessageClass(int in_MessageClass, int* out_MessageClass);
-int MMS_PDU_PutDeliveryReport(int in_DelRep, int* out_DelRep);
+int MMS_PDU_PutDeliveryReport(int in_DelRep, boolean* out_DelRep);
 int MMS_PDU_PutPriority(int in_priority, int* out_priority);
 int MMS_PDU_PutDeliveryReportStatus(int in_Status, int* out_Status);
 int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber);
 int WMS_MMS_Decode_TEST(char *file);
 int WMS_MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen);
-int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata,uint8* hPDU, int* hLen, uint8 ePDUType);
+int WMS_MMS_PDU_Encode(MMS_WSP_MESSAGE_SEND* encdata,uint8* hPDU, int* hLen, uint8 ePDUType);
 int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8* ePDUType);
 int WMS_MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  WSP_MMS_DATA* pContent);
 

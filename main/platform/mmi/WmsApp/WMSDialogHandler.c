@@ -37,6 +37,8 @@
 #include "WMSMmsTest.h"
 #include "WMSMms.h"
 #include "AEEImageCtl.h"
+#include "AEEMedia.h"
+#include "AEEMimeTypes.h"
 extern uint8  g_mmsDataInfoMax;
 #endif
 /*==============================================================================
@@ -16485,7 +16487,7 @@ static void WmsApp_ReadMsg(void *pUser)
     New
     
 ==============================================================================*/
-
+extern char* MMS_WSP_MineType2MormalMimeType(const char* pszSrc);
 static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
     WmsApp *pMe = (WmsApp *)pUser;
@@ -16493,8 +16495,10 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
     IStatic * pStatic = NULL;
     IImageCtl* pImageCtl = NULL;
     ITimeCtl* pSoundProgressCtl = NULL;
-
+    IMenuCtl* pListCtl = NULL;
     static int s_nImageIndex = 0;
+    static IMedia* pMedia = NULL;
+    
     MSG_FATAL("IDD_VIEWMSG_MMS_Handler Start eCode=0X%x, wParam=0X%x",eCode,wParam,0);
     if (NULL == pMe)
     {
@@ -16504,10 +16508,12 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
     pStatic = (IStatic*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_STATIC);
     pImageCtl = (IImageCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_IMAGE);
     pSoundProgressCtl = (ITimeCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_MUSICPROGRESS);
+    pListCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_LIST);
     
     if (NULL == pStatic 
         || pImageCtl == NULL
-        || pSoundProgressCtl == NULL)
+        || pSoundProgressCtl == NULL
+        || pListCtl == NULL)
     {
         return FALSE;
     }
@@ -16542,6 +16548,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                ISTATIC_SetActive(pStatic,FALSE);
                ITIMECTL_SetActive(pSoundProgressCtl,FALSE);
                IIMAGECTL_SetActive(pImageCtl,FALSE);
+               ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_MEDIA,(void**)&pMedia);
                MSG_FATAL("EVT_DIALOG_INIT 3 %d:%d:%d",rc.x,rc.y,rc.dy);
                 
             }
@@ -16569,6 +16576,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 WSP_MMS_DATA pContent = {0};
                 MMS_WSP_DEC_DATA decdata = {0};
                 uint8* pImage = NULL;
+                char* pMimeType = NULL;
                 
                 uint8 ePDUType;
                 uint8 result = 0;
@@ -16646,56 +16654,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 MSG_FATAL("IDD_VIEWMSG_MMS_Handler result=%d, frag_num=%d, pMe->m_wCurindex=%d", result, decdata.message.mms_data.frag_num, pMe->m_wCurindex);
                 for(; index < decdata.message.mms_data.frag_num; index++)
                 {
-                    if(STRISTR((char*)(decdata.message.mms_data.fragment[index].hContentType), "image/"))
-                    {                        
-                        if(nImageIndex++ == s_nImageIndex)
-                        {
-                            rSize = decdata.message.mms_data.fragment[index].size;
-                            pImage = (uint8 *)MALLOC((rSize*sizeof(uint8)));
-                            MEMSET((void*)pImage, NULL, rSize*sizeof(uint8));
-                            MEMCPY(pImage,(void*)decdata.message.mms_data.fragment[index].pContent , rSize);
-                        }
-                        
-                        if(NULL != pImage)
-                        {
-                            AEECLSID cls;
-                            IMemAStream* pMemAStream = NULL;
-                            IImage* pIImage = NULL;
-                            DBGPRINTF("IMemAStream 1");
-                            cls = ISHELL_GetHandler(pMe->m_pShell,HTYPE_VIEWER,"image/jpg");
-                            DBGPRINTF("IMemAStream 2");
-                            if(!ISHELL_CreateInstance(pMe->m_pShell,cls,(void**)&pIImage))
-                            {
-                                DBGPRINTF("IMemAStream 3");
-                                if(!ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_MEMASTREAM,(void**)&pMemAStream))
-                                {
-                                    AEEImageInfo info;
-                                    AEERect rc;
-                                    DBGPRINTF("IMemAStream 4");
-                                    IMEMASTREAM_Set(pMemAStream,pImage,rSize,0,FALSE);
-                                    DBGPRINTF("IMemAStream 5");
-                                    IImage_SetStream(pIImage,(IAStream*)pMemAStream);
-                                    DBGPRINTF("IMemAStream 6");
-                                    IImage_GetInfo(pIImage,&info);
-                                    IIMAGECTL_GetRect(pImageCtl,&rc);
-                                    rc.x = ((SCREEN_WIDTH - info.cx)>> 1);
-                                    rc.dx = info.cx;
-                                    IIMAGECTL_SetImage(pImageCtl,pIImage);
-                                    IIMAGECTL_SetRect(pImageCtl,&rc);
-                                    DBGPRINTF("IMemAStream 7");
-                                    IIMAGECTL_SetActive(pImageCtl,TRUE);
-                                    DBGPRINTF("IMemAStream 8");
-                                    IIMAGECTL_Redraw(pImageCtl);
-                                }
-                            }
-                            DBGPRINTF("IMemAStream 9");
-                            RELEASEIF(pIImage);
-                            DBGPRINTF("IMemAStream 10");
-                            RELEASEIF(pMemAStream);
-                            FREE(pImage);
-                        }
-                    }
-                    else if(STRISTR((char*)(decdata.message.mms_data.fragment[index].hContentType), "text/"))
+                    if(STRISTR((char*)(decdata.message.mms_data.fragment[index].hContentType), "text/"))
                     {
                         rSize = decdata.message.mms_data.fragment[index].size+1;
                         MSG_FATAL("index=%d,hContentType=%s",index,(char*)(decdata.message.mms_data.fragment[index].hContentType),0);
@@ -16722,14 +16681,79 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         }
                         //break;
                     }
+                    else if(pMimeType = MMS_WSP_MineType2MormalMimeType((const char*)decdata.message.mms_data.fragment[index].hContentType))
+                    {
+                        if(STRISTR(pMimeType, IMAGE_MIME_BASE))
+                        {                        
+                            if(nImageIndex++ == s_nImageIndex)
+                            {
+                                rSize = decdata.message.mms_data.fragment[index].size;
+                                pImage = (uint8 *)MALLOC((rSize*sizeof(uint8)));
+                                MEMSET((void*)pImage, NULL, rSize*sizeof(uint8));
+                                MEMCPY(pImage,(void*)decdata.message.mms_data.fragment[index].pContent , rSize);
+                            }
+                            
+                            if(NULL != pImage)
+                            {
+                                if(!STRCMP(pMimeType, MT_JPG)
+                                    || !STRCMP(pMimeType, MT_JPEG)
+                                    || !STRCMP(pMimeType, MT_PNG)
+                                    || !STRCMP(pMimeType, MT_BMP))
+                                {
+                                    AEECLSID cls;
+                                    IMemAStream* pMemAStream = NULL;
+                                    IImage* pIImage = NULL;
 
-                    
-                    
-                    
-                    
-                }
+                                    cls = ISHELL_GetHandler(pMe->m_pShell,
+                                        HTYPE_VIEWER,
+                                        (char*)(decdata.message.mms_data.fragment[index].hContentType));
+
+                                    if(!ISHELL_CreateInstance(pMe->m_pShell,cls,(void**)&pIImage))
+                                    {
+
+                                        if(!ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_MEMASTREAM,(void**)&pMemAStream))
+                                        {
+                                            AEEImageInfo info;
+                                            AEERect rc;
+
+                                            IMEMASTREAM_Set(pMemAStream,pImage,rSize,0,FALSE);
+                                            IImage_SetStream(pIImage,(IAStream*)pMemAStream);
+                                            IImage_GetInfo(pIImage,&info);
+                                            IIMAGECTL_GetRect(pImageCtl,&rc);
+                                            rc.x = ((SCREEN_WIDTH - info.cx)>> 1);
+                                            rc.dx = info.cx;
+                                            IIMAGECTL_SetImage(pImageCtl,pIImage);
+                                            IIMAGECTL_SetRect(pImageCtl,&rc);
+                                            IIMAGECTL_SetActive(pImageCtl,TRUE);
+                                            IIMAGECTL_Redraw(pImageCtl);
+                                        }
+                                    }
+
+                                    RELEASEIF(pIImage);
+                                    RELEASEIF(pMemAStream);
+                                    FREE(pImage);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        AECHAR menuItemName[100] = {0};
+                        STRTOWSTR((char*)decdata.message.mms_data.fragment[index].hContentName,
+                            menuItemName,
+                            STRLEN((char*)decdata.message.mms_data.fragment[index].hContentName));
+                            
+                        IMENUCTL_AddItem(pListCtl,
+                            NULL,
+                            0,
+                            0,
+                            menuItemName,
+                            (uint32)decdata.message.mms_data.fragment[index].pContent);
+
+                       IMENUCTL_SetActive(pListCtl,TRUE);
+                    }
                
-                
+                }
                 
                IDIALOG_Redraw(pMe->m_pActiveIDlg);
                 // 绘制底条提示

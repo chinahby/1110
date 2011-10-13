@@ -69,6 +69,7 @@
 #include "AEERUIM.h"
 #include "OEMCFGI.h"
 #include "WMSMMS.h"
+#include "AEEMimeTypes.h"
 
 #ifdef FEATURE_USES_MMS
 #define MG_MAX_FILE_NAME            128
@@ -78,6 +79,14 @@
 
 #define DBGPRINTF_EX_FORMAT    "*dbgprintf-%d* %s:%d"
 #define MMS_DEBUG(arg) __DBGPRINTF(DBGPRINTF_EX_FORMAT,5,__FILE__,__LINE__),__DBGPRINTF arg
+
+#define WMS_MMS_PDU_FLAGS_EN(mainArg,otherArg) (mainArg | (otherArg << 16))
+#define WMS_MMS_PDU_FLAGS_DE(flags,mainArg,otherArg) \
+    { \
+        mainArg = flags & 0x00FF; \
+        otherArg = (flags >> 16); \
+    }
+    
 
 static int MMS_WSP_Decode_UINTVAR(uint8* pData, int iDataLen, int* iUintvarLen);
 static int MMS_WSP_GetExpiry(uint8* buf, int iDataLen, int curtime);
@@ -108,6 +117,7 @@ static boolean MMS_STREQI(const char *s1, const char *s2);
 void MMSSocketState(MMSSocket *ps);
 boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind);
 boolean WMS_MMS_DeleteMMS(uint32 index,int nKind);
+uint8* WMS_MMS_PDUHeader_Encode(uint8* pBuf,int nKind,uint8* pValue,int32 nValue);
 
 
 #define SLIM_WSP_WELL_KNWON_VALULES_MIME_TEXT_PLAIN 0x03
@@ -242,6 +252,92 @@ const char* DB_Mms2Text[76] =
     "application/vnd.oma.drm.rights+wbxml",
 };
 
+typedef enum
+{
+    // TEXT
+    TEXT_PLAIN,
+    TEXT_HTML,
+    TEXT_VCALENDAR,
+    TEXT_VCARD,
+    
+    // IMAGE    
+    IMAGE_JPEG,
+    IMAGE_JPG,
+    IMAGE_GIF,
+    IMAGE_WBMP,
+    IMAGE_PNG,
+
+    // AUDIO
+    AUDIO_AAC,
+    AUDIO_AMR,
+    AUDIO_IMELODY,
+    AUDIO_MID,
+    AUDIO_MIDI,
+    AUDIO_MP3,
+    AUDIO_MPEG3,
+    AUDIO_MPEG,
+    AUDIO_MPG,
+    AUDIO_MP4,
+    AUDIO_X_MID,
+    AUDIO_X_MIDI,
+    AUDIO_X_MP3,
+    AUDIO_X_MPEG3,
+    AUDIO_X_MPEG,
+    AUDIO_X_MPG,
+    AUDIO_3GPP,
+    AUDIO_OGG,
+
+    // VIDEO
+    VIDEO_3GPP,
+    VIDEO_3G2,
+    VIDEO_H263,
+    VIDEO_MP4,
+
+    MIME_TYPE_COUT
+} WSP_MIME_TYPE;
+
+const static char* sWspMimeType[MIME_TYPE_COUT] =
+{
+    // TEXT
+    "text/plain",
+    "text/html",
+    "text/x-vCalendar",
+    "text/x-vCard",
+
+    // IMAGE
+    "image/jpeg",
+    "image/jpg",
+    "image/gif",
+    "image/vnd.wap.wbmp",
+    "image/png",
+
+    // AUDIO
+    "audio/aac",
+    "audio/amr",
+    "audio/imelody",
+    "audio/mid",
+    "audio/midi",
+    "audio/mp3",
+    "audio/mpeg3",
+    "audio/mpeg",
+    "audio/mpg",
+    "audio/mp4",
+    "audio/x-mid",
+    "audio/x-midi",
+    "audio/x-mp3",
+    "audio/x-mpeg3",
+    "audio/x-mpeg",
+    "audio/x-mpg",
+    "audio/3gpp",
+    "application/ogg",
+
+    // VIDEO
+    "video/3gpp",
+    "video/3gpp2",
+    "video/h263",
+    "video/mp4",   
+};
+
 uint32 cSlim_clib_ctype_table[256] = {
 	0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 
 	0x4, 0x64, 0x424, 0x24, 0x24, 0x424, 0x4, 0x4, 
@@ -314,6 +410,7 @@ uint8 cSlim_clib_tolower_table[256] = {
 	224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
 	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255,
 };
+
 
 //uint8 g_mms_buffer[300*1024];
 
@@ -447,6 +544,50 @@ static int MMS_WSP_Encode_UINTVAR(uint8* buf, int val)
 	return i;
 }
 
+uint8* MMS_WTP_Encode_String(uint8* buf,char* pszStr)
+{
+    int strLen = 0;
+    strLen = STRLEN(pszStr);
+    
+    if(strLen == 0x1f || strLen > 0x7F)
+    {
+        int nTempLen = strLen;
+        int i = sizeof(int);
+        uint8 val = 0;
+        *buf = 0x1f;
+
+        for(;i >= 0;i--)
+        {
+            val = nTempLen >> (7 * i);
+            if(val)
+            {
+                buf++;
+                *buf = val | 0x80;
+                
+            }
+        }
+        *buf &= 0x7F;
+        buf++;
+
+        STRNCPY((char*)buf,pszStr,strLen);
+        buf += strLen;
+        
+    }
+    else if(pszStr[0] < 0x1f)
+    {
+        *buf = strLen;
+        buf++;
+        STRNCPY((char*)buf,pszStr,strLen);
+        buf += strLen;
+    }
+    else
+    {
+        STRNCPY((char*)buf,pszStr,++strLen);
+        buf += strLen;
+    }
+ 
+    return buf;
+}
 static int MMS_Encode_header(uint8* mms_context,uint8 *phonenum, uint8 *subject)
 {
     JulianType juDateTime	= {0};
@@ -934,9 +1075,261 @@ static int MMS_EncodeSmilFile(uint8* encbuf,uint8 *smilFile, int len)
     return (int)(pCurPos-encbuf);
 }
 
+typedef enum
+{
+    WMS_MMS_PDU_Bcc = 1,
+    WMS_MMS_PDU_Cc,
+    WMS_MMS_PDU_ContentLocation,
+    WMS_MMS_PDU_ContentType,
+    WMS_MMS_PDU_Date,
+    WMS_MMS_PDU_DeliveryReport,
+    WMS_MMS_PDU_DeliveryTime,
+    WMS_MMS_PDU_Expiry,
+    WMS_MMS_PDU_From,
+    WMS_MMS_PDU_MessageClass,
+    WMS_MMS_PDU_MessageID,
+    WMS_MMS_PDU_MessageType,
+    WMS_MMS_PDU_MMSVersion,
+    WMS_MMS_PDU_MessageSize,
+    WMS_MMS_PDU_Priority,
+    WMS_MMS_PDU_ReadReply,
+    WMS_MMS_PDU_ReportAllowed,
+    WMS_MMS_PDU_ResponseStatus,
+    WMS_MMS_PDU_ResponseText,
+    WMS_MMS_PDU_SenderVisibility,
+    WMS_MMS_PDU_Status,
+    WMS_MMS_PDU_Subject,
+    WMS_MMS_PDU_To,
+    WMS_MMS_PDU_TransactionId
+} WMS_MMS_PDU_AssignedNumbers;
+
 int WMS_MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen)
 {
 	
+}
+
+void WMS_MMS_PDU_SendRequest(uint8* pBuff,MMS_WSP_ENCODE_SEND *pData)
+{
+    uint8* pCurPos = pBuff;
+    
+    //X-Mms-Message-Type
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_MessageType,NULL,WMS_MMS_PDU_MSendReq);
+
+    // X-Mms-Transaction-ID
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_TransactionId,pData->message.hTransactionID,0);
+    
+    // X-Mms-MMS-Version 
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_MMSVersion,NULL,0x10);
+   
+    // Date 
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_Date,NULL,pData->message.iDate);
+    
+    // From 
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_From,pData->message.hFrom,0);
+    
+    // To 
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_To,pData->message.hTo,0);
+
+    // Cc  
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_Cc,pData->message.hCc,0);
+
+    // Bcc  
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_Bcc,pData->message.hBcc,0);
+
+    // Subject  
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_Subject,pData->message.hSubject,0);
+    
+    // X-Mms -Message-Class  
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_MessageClass,NULL,pData->message.iMessageClass);
+
+    // X-Mms -Expiry  
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_Expiry,NULL,pData->message.iExpiry);//MMS_INT_MAX
+    
+    // X-Mms -Delivery-Time  
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_DeliveryTime,NULL,pData->message.iDeliveryTime);//0
+    
+    // X-Mms -Priority  
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_Priority,NULL,pData->message.iPriority);
+    
+    // X-Mms -Sender-Visibility  
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_SenderVisibility,NULL,pData->message.bSenderVisibility);
+     
+    // X-Mms -Delivery-Report  
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_DeliveryReport,NULL,pData->message.bDelRep);
+    
+    // X-Mms -Read-Reply  
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_ReadReply,NULL,pData->message.bReadRep);
+    
+    // Content-Type  
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_ContentType,pData->message.hContentType,0);
+    
+}
+
+void WMS_MMS_PDU_NotifyResp(uint8* pBuff,MMS_WSP_ENCODE_SEND *pData)
+{
+    uint8* pCurPos = pBuff;
+        
+    //X-Mms-Message-Type
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_MessageType,NULL,WMS_MMS_PDU_MNotifyrespInd);
+
+    // X-Mms-Transaction-ID
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_TransactionId,pData->notifyresp.hTransactionID,0);
+    
+    // X-Mms-MMS-Version 
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_MMSVersion,NULL,pData->notifyresp.iMMSVersion);
+
+    // X-Mms-Response-Status
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_ResponseStatus,NULL,pData->notifyresp.iStatus);
+
+    // X-Mms-Report-Allowed
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_ReportAllowed,NULL,pData->notifyresp.bReportAllowed);
+
+}
+
+void WMS_MMS_PDU_AcknowledgeInd(uint8* pBuff,MMS_WSP_ENCODE_SEND *pData)
+{
+    uint8* pCurPos = pBuff;
+        
+    //X-Mms-Message-Type
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_MessageType,NULL,WMS_MMS_PDU_MAcknowledgeInd);
+
+    // X-Mms-Transaction-ID
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_TransactionId,pData->deliveryacknowledgement.hTransactionID,0);
+    
+    // X-Mms-MMS-Version 
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_MMSVersion,NULL,pData->deliveryacknowledgement.iMMSVersion);
+
+    // X-Mms-Report-Allowed
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_ReportAllowed,NULL,pData->deliveryacknowledgement.bReportAllowed);
+
+}
+
+
+uint8* WMS_MMS_PDUHeader_Encode(uint8* pBuf,int nKind,uint8* pValue,int32 nValue)
+{
+    int nMainFlag;
+    int nOtherFlag;
+    int nAssignedNumber;
+    int nValueLen = 0;
+
+    if(nValue == -1
+        || (pValue != NULL && STRLEN((char*)pValue) == 0))
+    {
+        return pBuf;
+    }
+    
+    WMS_MMS_PDU_FLAGS_DE(nKind,nMainFlag,nOtherFlag);
+
+    nAssignedNumber = (nMainFlag & (~0x80));
+    
+    
+    switch(nMainFlag)
+    {
+        // string
+        case WMS_MMS_PDU_Bcc:
+        case WMS_MMS_PDU_Cc:
+        case WMS_MMS_PDU_MessageID:
+        case WMS_MMS_PDU_ResponseText:
+        case WMS_MMS_PDU_Subject:
+        case WMS_MMS_PDU_To:
+        case WMS_MMS_PDU_TransactionId:
+        case WMS_MMS_PDU_ContentLocation:
+        {
+            *pBuf = (nMainFlag | 0x80);
+
+            pBuf = MMS_WTP_Encode_String(++pBuf,(char*)pValue);
+        }
+        break;
+
+        // long int
+        case WMS_MMS_PDU_Date:
+        case WMS_MMS_PDU_MessageSize:
+        {
+            int i = 0;
+            *pBuf = (nMainFlag | 0x80);
+            
+            pBuf++;
+            *pBuf = 0x04;
+            
+            if(nValue > 0x7FFFFF)
+                nValue = 0x7FFFFFFF;
+                
+            pBuf[1] = nValue >> 24;
+            pBuf[2] = nValue >> 16;
+            pBuf[3] = nValue >> 8;
+            pBuf[4] = nValue;
+            pBuf += 4;
+        }
+        break;
+
+        // special : long int | long int
+        case WMS_MMS_PDU_DeliveryTime:
+        case WMS_MMS_PDU_Expiry:
+        {
+            *pBuf = (nMainFlag | 0x80);
+
+            pBuf++;
+            *pBuf = 0x05;
+            
+            pBuf++;
+            *pBuf = (nOtherFlag | 0x80);
+       
+            if(nValue > 0x7FFFFF)
+                nValue = 0x7FFFFFFF;
+                
+            pBuf[1] = nValue >> 24;
+            pBuf[2] = nValue >> 16;
+            pBuf[3] = nValue >> 8;
+            pBuf[4] = nValue;
+            pBuf += 4;   
+            
+        }
+        break;
+        // special : long int | string
+        case WMS_MMS_PDU_From:
+        {
+            *pBuf = (nMainFlag | 0x80);
+            nValueLen = STRLEN((char*)pValue) + 1;
+            
+            pBuf++;
+            *pBuf = (nOtherFlag | 0x80);
+            
+            pBuf++;
+            STRNCPY((char*)pBuf,(char*)pValue,++nValueLen);
+            pBuf += nValueLen;
+        }
+        break;
+
+        // short int
+        case WMS_MMS_PDU_MMSVersion:
+        {
+            *pBuf = (nMainFlag | 0x80);
+            pBuf ++;
+            *pBuf = (nValue | 0x80);
+        }
+        break;
+       
+        // enum
+        case WMS_MMS_PDU_ContentType:
+        case WMS_MMS_PDU_MessageClass:
+        case WMS_MMS_PDU_MessageType:
+        case WMS_MMS_PDU_DeliveryReport: 
+        case WMS_MMS_PDU_Priority:
+        case WMS_MMS_PDU_ReadReply:
+        case WMS_MMS_PDU_ReportAllowed:
+        case WMS_MMS_PDU_ResponseStatus:
+        case WMS_MMS_PDU_SenderVisibility:
+        case WMS_MMS_PDU_Status:
+        {
+            *pBuf = (nMainFlag | 0x80);
+            
+            pBuf ++;
+            *pBuf = (nValue | 0x80);
+        }
+        break;
+    }
+        
+    return ++pBuf;
 }
 
 static WSP_MMS_ENCODE_DATA mms_data = {0};
@@ -988,7 +1381,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
     int result = 0;
     int nMmsDataInfoType = 0;
     int nMmsCoutType = 0;
-    char psz[5];
+    char psz[5] = {0};
     char mmsDataFileName[MMS_MAX_FILE_NAME];
     MMSData	mmsDataInfoList[MAX_MMS_STORED];
     char sz[2] =   { '/', 0 };
@@ -1437,7 +1830,7 @@ int WMS_MMS_PDU_Decode_Test(char *file)
 
 	return 0;
 }
-int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, int* hLen, uint8 ePDUType)
+int WMS_MMS_PDU_Encode(MMS_WSP_MESSAGE_SEND* encdata, uint8* hPDU, int* hLen, uint8 ePDUType)
 {
 	int head_len = 0;
 	uint8 *pCurPos = hPDU;
@@ -2025,6 +2418,9 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 	{
 		case 0x81:
 			*ePDUType = MMS_PDU_SEND_CONF;
+			MEMSET((void*)decdata->sendconf.hMessageID,0,sizeof(decdata->notification.hContentLocation));
+			MEMSET((void*)decdata->sendconf.hTransactionID,0,sizeof(decdata->notification.hContentLocation));
+			decdata->sendconf.iResponseStatus = 0x80;
 			break;
 			
 		case 0x82:
@@ -2038,8 +2434,6 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 			decdata->notification.iDate = 0;
 			decdata->notification.iPriority       = MMS_PRIORITY_NORMAL;
 			decdata->notification.iMessageClass   = MMS_CLASS_PERSONAL;
-			decdata->notification.iDeliveryReport = MMS_DELREP_STATUS_FLAG_NOREQ;
-			decdata->notification.iDeliveryReport = 0;
 			break;
 			
 		case 0x84:
@@ -2060,7 +2454,6 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 			decdata->message.iDate = 0;
 			decdata->message.iPriority       = MMS_PRIORITY_NORMAL;
 			decdata->message.iMessageClass   = MMS_CLASS_PERSONAL;
-			decdata->message.iDeliveryReport = MMS_DELREP_STATUS_FLAG_NOREQ;
 			break;
 			
 		case 0x86:
@@ -2217,6 +2610,7 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 
 			case 0x8b:/* messageid */
 			{
+			    uint8* pMessageID;
 				i++;
 				pchar = &ptr[i];
 				len = i;
@@ -2240,18 +2634,33 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 					switch(*ePDUType)
 					{
 						case MMS_PDU_RETRIEVE_CONF:
+						{
+						    pMessageID = decdata->message.hMessageID;
+						}
+						break;
 						case MMS_PDU_SEND_CONF:
+						{
+						    pMessageID = decdata->sendconf.hMessageID;
+						}
+						break;
 						case MMS_PDU_DELIVERY_IND:
+						{
+						    pMessageID = decdata->delrep.hMessageID;
+						}
+						break;
 						case MMS_PDU_READ_ORIG_IND:
-							//STRNCPY(mms_notif_ind->hTransactionID,pchar,len);
-							//mms_notif_ind->hTransactionID[len] = 0;
-							break;
+						{
+						
+						    pMessageID = decdata->readrep.hMessageID;							
+						}
+						break;
 							
 						default:
 							break;
 					}
-				
-					
+					STRNCPY((char*)pMessageID,(char*)pchar,len);
+					pMessageID[len] = 0;
+		
 				}
 				break;
 			}
@@ -2289,12 +2698,15 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 				i++;
 				if (*ePDUType == MMS_PDU_RETRIEVE_CONF) 
 				{
-					MMS_PDU_PutDeliveryReport(ptr[i], &decdata->message.iDeliveryReport);
+					MMS_PDU_PutDeliveryReport(ptr[i], &decdata->message.bDelRep);
 				}
+// YY!:
+/* ERROR!				
 				else if (*ePDUType == MMS_PDU_NOTIFICATION_IND) 
 				{
 					MMS_PDU_PutDeliveryReport(ptr[i], &decdata->notification.iDeliveryReport);
 				}
+*/				
 				break;
 			}
 
@@ -2614,7 +3026,7 @@ int MMS_PDU_PutPriority(int in_priority, int* out_priority)
 	return SUCCESS;
 }
 
-int MMS_PDU_PutDeliveryReport(int in_DelRep, int* out_DelRep)
+int MMS_PDU_PutDeliveryReport(int in_DelRep, boolean* out_DelRep)
 {
 	*out_DelRep = ((in_DelRep == 128) ? MMS_DELIVERYREP_YES:MMS_DELIVERYREP_NO);
 
@@ -3232,14 +3644,14 @@ static void SocketReadableCB(void *pSocketData)
 	
 	nBitGet = (uint16)ISOCKET_Read(pData->pISocket, pData->RecBuffer + pData->RecCount, MSG_MAX_PACKET_SIZE - pData->RecCount);
 	MSG_FATAL("[MSG][DeviceSocket]: SocketReadableCB Enter pSocketInfo->RecCount = %d!",pData->RecCount,0,0);
-	
-    pData->RecCount += nBitGet;
-    
+
 	if(nBitGet > 0)
 	{
 		//reset the timeout timer
 		MSG_FATAL("[MSG][DeviceSocket]: SocketReadableCB Enter!",0,0,0);
 
+        pData->RecCount += nBitGet;
+        
 		pData->NoDataCount = 0;
 #ifdef MMS_TEST 
 		if(pData->RecCount > 0)
@@ -3350,7 +3762,90 @@ boolean MMS_STREQI(const char *s1, const char *s2)
    return (s1 && s2 && STRICMP(s1,s2) == 0);
 }
 
-static const char *MMS_GetMimeType(const char *pszSrc)
+char* MMS_WSP_MineType2MormalMimeType(const char* pszSrc)
+{
+    if (pszSrc && *pszSrc) 
+    {
+        if(STRSTR(pszSrc,AUDIO_MIME_BASE))
+        {
+            if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_AAC]))
+            {
+                return MT_AUDIO_AAC;
+            }
+            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_AMR]))
+            {
+                return MT_AUDIO_AMR;
+            }
+            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MIDI])
+                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MID])
+                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_X_MID])
+                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_X_MIDI]))
+            {
+                return MT_AUDIO_MIDI;
+            }
+            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_X_MP3])
+                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MP3]))
+            {
+                return MT_AUDIO_MP3;
+            }
+            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MPEG3])
+                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_X_MPEG3]))
+            {
+                return MT_VIDEO_MPEG4;
+            }
+            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MPEG])
+                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_X_MPEG]))
+            {
+                return MT_AUDIO_MP3;
+            }
+            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MPG])
+                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_X_MPG]))
+            {
+                return MT_AUDIO_MP3;
+            }
+            else if(MMS_STREQI(pszSrc,sWspMimeType[AUDIO_3GPP])
+                || MMS_STREQI(pszSrc,sWspMimeType[AUDIO_MP4]))
+            {
+                return MT_VIDEO_MPEG4;
+            }
+        }
+        else if(STRSTR(pszSrc,VIDEO_MIME_BASE))
+        {
+            if(MMS_STREQI(pszSrc,sWspMimeType[VIDEO_MP4])
+                || MMS_STREQI(pszSrc,sWspMimeType[VIDEO_H263])
+                || MMS_STREQI(pszSrc,sWspMimeType[VIDEO_3GPP])
+                || MMS_STREQI(pszSrc,sWspMimeType[VIDEO_3G2]))
+            {
+                return MT_VIDEO_MPEG4;
+            }
+        }
+        else if(STRSTR(pszSrc,IMAGE_MIME_BASE))
+        {
+            if(MMS_STREQI(pszSrc,sWspMimeType[IMAGE_JPEG]))
+            {
+                return MT_JPEG;
+            }
+            else if(MMS_STREQI(pszSrc,sWspMimeType[IMAGE_JPG]))
+            {
+                return MT_JPG;
+            }
+            else if(MMS_STREQI(pszSrc,sWspMimeType[IMAGE_PNG]))
+            {
+                return MT_PNG;
+            }
+            else if(MMS_STREQI(pszSrc,sWspMimeType[IMAGE_GIF]))
+            {
+                return MT_GIF;
+            }
+            else if(MMS_STREQI(pszSrc,sWspMimeType[IMAGE_WBMP]))
+            {
+                return MT_BMP;
+            }
+        }     
+    }
+    return NULL;
+}
+const char *MMS_GetMimeType(const char *pszSrc)
 {
    /* TODO - call the shell for help with some content */
    if (pszSrc && *pszSrc) {
@@ -3359,11 +3854,14 @@ static const char *MMS_GetMimeType(const char *pszSrc)
          if (MMS_STREQI(pext+1, "gif")) {
             return "image/gif";
          
-         } else if (MMS_STREQI(pext+1, "jpeg") || MMS_STREQI(pext+1, "jpg") ) {
+         } else if (MMS_STREQI(pext+1, "jpg")) {
+            return "image/jpg";
+         
+         } else if (MMS_STREQI(pext+1, "jpeg")) {
             return "image/jpeg";
          
          } else if (MMS_STREQI(pext+1, "bmp")) {
-            return "image/bmp";
+            return "image/vnd.wap.wbmp";
          
          } else if (MMS_STREQI(pext+1, "png")) {
             return "image/png";
@@ -3383,46 +3881,46 @@ static const char *MMS_GetMimeType(const char *pszSrc)
          }else if (MMS_STREQI(pext+1, "mid")) {
             return "audio/mid";
             
-         } if (MMS_STREQI(pext+1, "midi")) {
+         } else if (MMS_STREQI(pext+1, "midi")) {
             return "audio/midi";
             
-         } if (MMS_STREQI(pext+1, "mp3")) {
+         } else if (MMS_STREQI(pext+1, "mp3")) {
             return "audio/mp3";
             
-         } if (MMS_STREQI(pext+1, "mpeg3")) {
+         } else if (MMS_STREQI(pext+1, "mpeg3")) {
             return "audio/mpeg3";
             
-         } if (MMS_STREQI(pext+1, "mpeg")) {
+         } else if (MMS_STREQI(pext+1, "mpeg")) {
             return "audio/mpeg";
             
-         } if (MMS_STREQI(pext+1, "mpg")) {
+         } else if (MMS_STREQI(pext+1, "mpg")) {
             return "audio/mpg";
             
-         } if (MMS_STREQI(pext+1, "x-mid")) {
+         } else if (MMS_STREQI(pext+1, "x-mid")) {
             return "audio/x-mid";
             
-         } if (MMS_STREQI(pext+1, "x-midi")) {
+         } else if (MMS_STREQI(pext+1, "x-midi")) {
             return "audio/x-midi";
             
-         } if (MMS_STREQI(pext+1, "x-mp3")) {
+         } else if (MMS_STREQI(pext+1, "x-mp3")) {
             return "audio/x-mp3";
             
-         } if (MMS_STREQI(pext+1, "x-mpeg3")) {
+         } else if (MMS_STREQI(pext+1, "x-mpeg3")) {
             return "audio/x-mpeg3";
             
-         } if (MMS_STREQI(pext+1, "x-mpeg")) {
+         } else if (MMS_STREQI(pext+1, "x-mpeg")) {
             return "audio/x-mpeg";
             
-         } if (MMS_STREQI(pext+1, "x-mpg")) {
+         } else if (MMS_STREQI(pext+1, "x-mpg")) {
             return "audio/x-mpg";
             
-         } if (MMS_STREQI(pext+1, "3gpp")) {
+         } else if (MMS_STREQI(pext+1, "3gpp")) {
             return "video/3gpp";
             
-         } if (MMS_STREQI(pext+1, "3gpp2")) {
+         } else if (MMS_STREQI(pext+1, "3gpp2")) {
             return "video/3gpp2";
             
-         } if (MMS_STREQI(pext+1, "mp4")) {
+         } else if (MMS_STREQI(pext+1, "mp4")) {
             return "video/mp4";
             
          }
