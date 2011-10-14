@@ -1156,6 +1156,9 @@ acb_type *dssocki_allocacb
     allocation allows us to allocate different indices every time a new app 
     is opened and closed.
   -------------------------------------------------------------------------*/
+
+  MSG_FATAL("***zzg dssocki_allocacb Start index=%x***", index, 0, 0); 
+
   for (loop=0; loop < DSS_MAX_APPS; loop++)
   {
     INTLOCK_SAV(int_sav);
@@ -1165,8 +1168,12 @@ acb_type *dssocki_allocacb
       still okay.
     -----------------------------------------------------------------------*/
     index = (index+1) % DSS_MAX_APPS; 
+
+	MSG_FATAL("***zzg index=%d, dssocki_acb_count=%d***", index, dssocki_acb_count, 0);  
+	
     if (dssocki_acb_array[index].app_id == APPAVAIL)
     {
+      MSG_FATAL("***zzg dssocki_acb_array[%d]==APPAVAIL***", index, 0, 0);  
       acb_ptr = &dssocki_acb_array[index]; 
 
       /*---------------------------------------------------------------------
@@ -1186,9 +1193,23 @@ acb_type *dssocki_allocacb
     }
     else
     {
+      //Add By zzg 2011_10_14
+      MSG_FATAL("***zzg dssocki_allocacb loop=%x, index=%x***", loop, index, 0);  
+#ifdef T_QSC1110
+	  if (loop == (DSS_MAX_APPS-1))
+	  {
+	  	acb_ptr = &dssocki_acb_array[0]; 
+		acb_ptr->app_id = (sint15) (dss_appidbase + 0 ); 
+		dssocki_freeacb(acb_ptr);
+	  }
+#endif	  
+	  //Add End
+		
       INTFREE_SAV(int_sav);
     }
   }
+
+  MSG_FATAL("***zzg dssocki_allocacb Start loop=%d, Max=%d***", loop, DSS_MAX_APPS, 0);  
 
   /*-------------------------------------------------------------------------
     No more application control blocks are available, so return NULL,
@@ -1198,6 +1219,8 @@ acb_type *dssocki_allocacb
   {
     return (NULL);
   }
+
+  MSG_FATAL("***zzg dssocki_allocacb index=%x, acb_ptr=%x***", index, acb_ptr, 0); 
 
   if (acb_ptr != NULL)
   {
@@ -1213,6 +1236,8 @@ acb_type *dssocki_allocacb
     {
       q_init((acb_ptr->event_q_array) + index);
     }
+
+	MSG_FATAL("***zzg dssocki_allocacb index=%x***", index, 0, 0); 
   }
   return (acb_ptr);
 
@@ -1240,6 +1265,8 @@ void dssocki_freeacb
 {
 
   ASSERT(acb_ptr != NULL);
+
+  MSG_FATAL("***zzg dssocki_freeacb dssocki_acb_count=%x***", dssocki_acb_count, 0, 0);
 
   /*-------------------------------------------------------------------------
     Clear all fields and make available for re-use
@@ -5136,6 +5163,8 @@ dssocki_process_lingering_close
   scb_ptr = *scb_ptr_ptr;
   ASSERT(scb_ptr != NULL);
 
+  MSG_FATAL("***zzg dssocki_process_lingering_close sockfd=%x***", scb_ptr->sockfd, 0, 0);
+
   MSG_MED("process_lingering_close for sockfd=%d", scb_ptr->sockfd, 0, 0);
 
   /*-------------------------------------------------------------------------
@@ -5153,6 +5182,7 @@ dssocki_process_lingering_close
     /*-------------------------------------------------------------------------
       Free up the acb and scb
     -------------------------------------------------------------------------*/
+    MSG_FATAL("***zzg dssocki_freeacb 2***", 0, 0, 0);
     dssocki_freeacb(scb_ptr->acb_ptr);
     dssocki_freescb(scb_ptr);
     *scb_ptr_ptr = NULL;
@@ -5160,6 +5190,7 @@ dssocki_process_lingering_close
   }
   else
   {
+  	MSG_FATAL("***zzg dssocki_freeacb 3***", 0, 0, 0);
     dssocki_freeacb(scb_ptr->linger_acb_ptr);
   }
   return;
