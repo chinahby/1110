@@ -477,7 +477,9 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bExit = FALSE;
     pMe->m_isShift  = FALSE;   //add by yangdecai  2010-07-27
     pMe->m_battery_msgup = FALSE;//add by yangdecai 2010-07-27
+#ifdef FEATURE_QQ_APP    
     pMe->m_qqstate=QQSTATE_QUIT; //add by pengyuangui 2011-10-14
+#endif    
 #if defined(FEATURE_WMS_APP)
     pMe->m_bsmstipscheck = FALSE;
 #endif
