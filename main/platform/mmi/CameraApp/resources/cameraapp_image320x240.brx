@@ -64,6 +64,9 @@
 	<Object Id="5037" Name="IDI_MID_CAMERA">
 		<File>..\..\Appscommon\images\320x240\common\CameraApp\camera.png</File>
 	</Object>
+	<Object Id="5038" Name="IDI_MID_RECORD">
+		<File>..\..\Appscommon\images\320x240\common\CameraApp\record.png</File>
+	</Object>
 	<Object Id="5041" Name="IDI_RESET">
 		<File>..\..\Appscommon\images\320x240\common\CameraApp\Reset.png</File>
 	</Object>
