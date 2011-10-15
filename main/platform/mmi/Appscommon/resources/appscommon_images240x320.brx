@@ -25,6 +25,9 @@
 	<Object Id="5008" Name="IDI_VIDEO" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\video.png</File>
 	</Object>
+	<Object Id="5009" Name="IDI_PLAYLISTMG">
+		<File>..\images\240x320\common\mediagallery\playlistplaying.bmp</File>
+	</Object>
 	<Object Id="5010" Name="IDI_KEY_TEST" MimeType="image/png">
 		<File>..\images\240x320\common\QuickTest\keytest.png</File>
 	</Object>
@@ -142,8 +145,17 @@
 	<Object Id="5404" Name="IDB_MODE_NUMBERS" MimeType="image/png">
 		<File>..\images\240x320\common\IME\123.png</File>
 	</Object>
+	<Object Id="5405" Name="IDB_MODE_T9_ZHUYIN">
+		<File>..\images\240x320\common\IME\T9zhu.png</File>
+	</Object>
 	<Object Id="5407" Name="IDB_MODE_T9_RAPID_ENGLISH" MimeType="image/png">
 		<File>..\images\240x320\common\IME\ezenglish.png</File>
+	</Object>
+	<Object Id="5408" Name="IDB_MODE_T9_MT_THAI">
+		<File>..\images\240x320\common\IME\thai.png</File>
+	</Object>
+	<Object Id="5409" Name="IDB_MODE_T9_RAPID_THAI">
+		<File>..\images\240x320\common\IME\T9th.png</File>
 	</Object>
 	<Object Id="5411" Name="IDB_MODE_T9_RAPID_ENGLISH_LOW" MimeType="image/png">
 		<File>..\images\240x320\common\IME\lowezenglish.png</File>
@@ -156,6 +168,9 @@
 	</Object>
 	<Object Id="5414" Name="IDB_MODE_T9_RAPID_INDONESIAN" MimeType="image/png">
 		<File>..\images\240x320\common\IME\T9In.png</File>
+	</Object>
+	<Object Id="5415" Name="IDB_MODE_T9_RAPID_PORTUGUESE">
+		<File>..\images\240x320\common\IME\T9Por.png</File>
 	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE">
 		<File>..\images\240x320\common\Message\Icon\Template.bmp</File>
@@ -265,6 +280,54 @@
 	<Object Id="6201" Name="IDB_UTKMENU">
 		<File>..\images\240x320\common\UTK\utkmenu.bmp</File>
 	</Object>
+	<Object Id="6041" Name="IDI_NUMBER_0">
+		<File>..\images\240x320\common\CallApp\DialedNumber\0.png</File>
+	</Object>
+	<Object Id="6042" Name="IDI_NUMBER_1">
+		<File>..\images\240x320\common\CallApp\DialedNumber\1.png</File>
+	</Object>
+	<Object Id="6043" Name="IDI_NUMBER_2">
+		<File>..\images\240x320\common\CallApp\DialedNumber\2.png</File>
+	</Object>
+	<Object Id="6044" Name="IDI_NUMBER_3">
+		<File>..\images\240x320\common\CallApp\DialedNumber\3.png</File>
+	</Object>
+	<Object Id="6045" Name="IDI_NUMBER_4">
+		<File>..\images\240x320\common\CallApp\DialedNumber\4.png</File>
+	</Object>
+	<Object Id="6046" Name="IDI_NUMBER_5">
+		<File>..\images\240x320\common\CallApp\DialedNumber\5.png</File>
+	</Object>
+	<Object Id="6047" Name="IDI_NUMBER_6">
+		<File>..\images\240x320\common\CallApp\DialedNumber\6.png</File>
+	</Object>
+	<Object Id="6048" Name="IDI_NUMBER_7">
+		<File>..\images\240x320\common\CallApp\DialedNumber\7.png</File>
+	</Object>
+	<Object Id="6049" Name="IDI_NUMBER_8">
+		<File>..\images\240x320\common\CallApp\DialedNumber\8.png</File>
+	</Object>
+	<Object Id="6050" Name="IDI_NUMBER_9">
+		<File>..\images\240x320\common\CallApp\DialedNumber\9.png</File>
+	</Object>
+	<Object Id="6051" Name="IDI_NUMBER_STAR">
+		<File>..\images\240x320\common\CallApp\DialedNumber\Star.png</File>
+	</Object>
+	<Object Id="6052" Name="IDI_NUMBER_POUND">
+		<File>..\images\240x320\common\CallApp\DialedNumber\Pound.png</File>
+	</Object>
+	<Object Id="6053" Name="IDI_NUMBER_P">
+		<File>..\images\240x320\common\CallApp\DialedNumber\P.png</File>
+	</Object>
+	<Object Id="6054" Name="IDI_NUMBER_T">
+		<File>..\images\240x320\common\CallApp\DialedNumber\T.png</File>
+	</Object>
+	<Object Id="6055" Name="IDI_NUMBER_PLUS">
+		<File>..\images\240x320\common\CallApp\DialedNumber\+.png</File>
+	</Object>
+	<Object Id="6056" Name="IDI_NUMBER_SUB">
+		<File>..\images\240x320\common\CallApp\DialedNumber\-.png</File>
+	</Object>
 	<Object Id="6421" Name="IDI_TIMER" MimeType="image/png">
 		<File>..\images\240x320\common\Timer\timer.png</File>
 	</Object>
@@ -276,6 +339,99 @@
 	</Object>
 	<Object Id="7001" Name="IDB_BATT_LOW">
 		<File>..\images\240x320\common\Annunciator\batt0.bmp</File>
+	</Object>
+	<Object Id="7117" Name="IDB_MODE_IME_BGROUND" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\b_bground.bmp</File>
+	</Object>
+	<Object Id="7118" Name="IDB_MODE_IME_SELAR" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\b_selbar.bmp</File>
+	</Object>
+	<Object Id="7119" Name="IDB_MODE_IME_BTITLE" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\b_title.bmp</File>
+	</Object>
+	<Object Id="7120" Name="IDB_MODE_IME_CALCDOWNKEYPAD" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\calcdownkeypad.bmp</File>
+	</Object>
+	<Object Id="7123" Name="IDB_MODE_IME_DAILKEYDOWN" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\dailkeydown.bmp</File>
+	</Object>
+	<Object Id="7124" Name="IDB_MODE_IME_DAILKEYUP" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\dailkeyup.bmp</File>
+	</Object>
+	<Object Id="7126" Name="IDB_MODE_IME_FUHAOKEYPAD" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\fuhaokeypad.bmp</File>
+	</Object>
+	<Object Id="7127" Name="IDB_MODE_IME_FUHAOKEYPADDOWN" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\fuhaokeypaddown.bmp</File>
+	</Object>
+	<Object Id="7128" Name="IDB_MODE_IME_FULLWICH" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\fullhwriteinterfaceCH.bmp</File>
+	</Object>
+	<Object Id="7130" Name="IDB_MODE_IME_FULLOLFHD" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\fullonelinefuhaodown.bmp</File>
+	</Object>
+	<Object Id="7131" Name="IDB_MODE_IME_HANDWRITE" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\handwrite.bmp</File>
+	</Object>
+	<Object Id="7134" Name="IDB_MODE_IME_ITSIMBACKSPACE" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\itsimbackspace.bmp</File>
+	</Object>
+	<Object Id="7135" Name="IDB_MODE_IME_ITSIMBLANK" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\itsimblank.bmp</File>
+	</Object>
+	<Object Id="7136" Name="IDB_MODE_IME_ITSIMDELETE" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\itsimdelete.bmp</File>
+	</Object>
+	<Object Id="7137" Name="IDB_MODE_IME_ITSIMLETTER" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\itsimletter.bmp</File>
+	</Object>
+	<Object Id="7138" Name="IDB_MODE_IME_ITSIMPINYIN" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\itsimpinyin.bmp</File>
+	</Object>
+	<Object Id="7139" Name="IDB_MODE_IME_ITSIMSYMBOL" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\itsimsymbol.bmp</File>
+	</Object>
+	<Object Id="7140" Name="IDB_MODE_IME_LETTERCAPKEYPAD" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\lettercapkeypad.bmp</File>
+	</Object>
+	<Object Id="7141" Name="IDB_MODE_IME_LETTERCAPKEYPADDOWN" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\lettercapkeypaddown.bmp</File>
+	</Object>
+	<Object Id="7142" Name="IDB_MODE_IME_LETTERKEYPAD" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\letterkeypad.bmp</File>
+	</Object>
+	<Object Id="7143" Name="IDB_MODE_IME_LETTERKEYPADDOWN" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\letterkeypaddown.bmp</File>
+	</Object>
+	<Object Id="7144" Name="IDB_MODE_IME_NOTHWRITECLEARCH" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\nothwriteclearCH.bmp</File>
+	</Object>
+	<Object Id="7145" Name="IDB_MODE_IME_NOTHWRITECOPYCH" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\nothwritecopyCH.bmp</File>
+	</Object>
+	<Object Id="7146" Name="IDB_MODE_IME_NOTHWRITEOKCH" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\nothwriteokCH.bmp</File>
+	</Object>
+	<Object Id="7147" Name="IDB_MODE_IME_NOTHWRITEPASTECH" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\nothwritepasteCH.bmp</File>
+	</Object>
+	<Object Id="7148" Name="IDB_MODE_IME_PINYINKEYPAD" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\pinyinkeypad.bmp</File>
+	</Object>
+	<Object Id="7149" Name="IDB_MODE_IME_PINYINKEYPADDOWN" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\pinyinkeypaddown.bmp</File>
+	</Object>
+	<Object Id="7150" Name="IDB_MODE_IME_PYBUTTONCH" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\pybuttonCH.bmp</File>
+	</Object>
+	<Object Id="7151" Name="IDB_MODE_IME_ONLINEFUHAODOWN" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\onelinefuhaodown.bmp</File>
+	</Object>
+	<Object Id="7152" Name="IDB_MODE_IME_RIGHT" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\RIGHT.bmp</File>
+	</Object>
+	<Object Id="7153" Name="IDB_MODE_IME_LEFT" MimeType="image/bmp">
+		<File>..\images\240x320\common\ime\LEFT.bmp</File>
 	</Object>
 	<Object Id="7002" Name="IDB_BATT1">
 		<File>..\images\240x320\common\Annunciator\batt1.bmp</File>

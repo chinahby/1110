@@ -1120,7 +1120,7 @@ static boolean  HandlePhoneSettingDialogEvent(CSettingMenu *pMe,
 #endif
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh 20090407 add
 				case IDS_ADJUSTSETTING:      //´¥ÃþÐ£×¼ÉèÖÃ
-					rt = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ADJUSTPENAPP); 
+					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_ADJUSTPENAPP); 
 					break;
 #endif
                 default:

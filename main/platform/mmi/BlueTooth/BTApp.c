@@ -1968,7 +1968,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			
             return TRUE;
         }	
-#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+#ifndef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 		case EVT_PEN_UP:
 		//case EVT_PEN_DOWN:
 		{

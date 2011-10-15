@@ -78,9 +78,7 @@
 #include "AEEBacklight.h"
 #endif
 
-#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
-#define RECENTCALLS_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
-#endif
+
 
 /*==============================================================================
                                  类型定义
@@ -237,6 +235,9 @@ typedef struct _CRecentCalls
 ==============================================================================*/
 // 根据 BREW 3 的需要，重定义资源文件宏
 #define  AEE_RECENTCALLSRES_LANGFILE (AEE_RES_LANGDIR RECENTCALLS_RES_FILE)
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+#define RECENTCALLS_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
+#endif
 
 // 为防止用户快速按键而添加事件EVT_APPISREADY，事件由定时器
 // recentcalls_APPIsReadyTimer发出

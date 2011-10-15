@@ -61,6 +61,7 @@ when         who     what, where, why
 #ifndef FETURE_HW_ON
 #include "HWOEMAPI.h"
 #endif
+
 /*=====================================================================
 
                       PUBLIC DATA DECLARATIONS
@@ -10720,7 +10721,5 @@ static void TSIM_SetHandWriteInitInfo(CTSIM *pme)
 	//		pme->m_trace++;
 	//}
 }
-
-
 
 

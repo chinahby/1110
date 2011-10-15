@@ -917,7 +917,7 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
    DBGPRINTF("IMenuCtl_HandleEvent 0x%x 0x%x 0x%x",eCode,wParam,dwParam);
    // First handle the pens, most time sensitive events we get
 
-#ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
+#ifdef FEATURE_LCD_TOUCH_ENABLE//Andrew ADD FOR LCD TOUCH
 	//if(( eCode == EVT_PEN_UP ) || (eCode == EVT_PEN_UP))
 	if(eCode == EVT_PEN_UP )//wlh 20090409 mod
 	{
@@ -959,7 +959,7 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
       // Add Item - Event from Dialog      
       case EVT_CTL_ADD_ITEM:
          return(IMenuCtl_AddItemEx(po, (CtlAddItem *)dwParam));
-#ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
+#ifdef FEATURE_LCD_TOUCH_ENABLE//Andrew ADD FOR LCD TOUCH
 	  case EVT_USER_REDRAW:
 #endif//FEATURE_LCD_TOUCH_ENABLE
       case EVT_KEY:

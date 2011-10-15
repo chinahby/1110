@@ -4669,7 +4669,7 @@ static boolean	Recentcalls_AskpasswordEvent(CRecentCalls *pMe,
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
 
-				if(SECURITYMENU_PT_IN_RECT(wXPos,wYPos,rc))
+				if(RECENTCALLS_PT_IN_RECT(wXPos,wYPos,rc))
 				{
 					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
 					{

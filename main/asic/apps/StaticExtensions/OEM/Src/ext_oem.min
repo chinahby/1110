@@ -16,7 +16,9 @@ EXT_OEM_LIB_CPP_SOURCES=
 ifeq ($(USES_MP4), yes)
   EXT_OEM_LIB_SOURCES     += OEMMovieFile.c
 endif
-
+ifeq ($(USES_LCD_TOUCH),yes)
+ EXT_OEM_LIB_SOURCES     += OEMITSIM.c
+endif
 EXT_OEM_LIB_OBJS :=  $(addprefix $(TARGETDIR)/, $(EXT_OEM_LIB_SOURCES:%.c=%.o))
 EXT_OEM_LIB_CPP_OBJS :=  $(addprefix $(TARGETDIR)/, $(EXT_OEM_LIB_CPP_SOURCES:%.cpp=%.o))
 EXT_OEM_LIB_DEPS :=  $(addprefix $(TARGETDIR)/, $(EXT_OEM_LIB_SOURCES:%.c=%.dep))

@@ -166,4 +166,9 @@ ifeq ($(USES_ZI),yes)
 include $(ZI_PATH)/ZI.min
 endif
 
+ifeq ($(USES_LCD_TOUCH),yes)
+include $(HW_PATH)/Hanwang.min
+include $(ADJUSTPENAPP)/adjustpenapp.min
+endif
+
 #include $(MMIDIR)/NewClass/NewClass.min

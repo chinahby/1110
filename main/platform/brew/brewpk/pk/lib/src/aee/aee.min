@@ -13,7 +13,7 @@ AEE_SOURCES=\
 	AEEDialog.c \
 	AEEStatic.c \
 	AEEDate.c \
-	AEEAlarm.c
+	AEEAlarm.c 
 else
 AEE_SOURCES=\
 	AEEAddrBook.c \
@@ -26,7 +26,10 @@ AEE_SOURCES=\
 	AEECamera.c \
 	AEEAlarm.c 
 endif
-    
+ifeq ($(USES_LCD_TOUCH),yes)
+AEE_SOURCES+=\
+	AEEVirtualkey.c
+endif
 ifeq ($(USES_BREW_SMS),yes)
 AEE_SOURCES+=\
 	AEESMS.c 
