@@ -870,8 +870,40 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     pImage = NULL;
                 }
             }
+            
             MSG_FATAL("EVT_USER_REDRAW....................",0,0,0);
-            CameraApp_DrawBottomBarText(pMe, BTBAR_OPTION_BACK);
+
+            if ( pMe->m_nCameraState == CAM_RECORDING )
+            {
+            	AECHAR      wszRecordTime[20]={0};  //hour:min:second
+            	
+            	(void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_RED);
+
+				MEMSET(wszRecordTime, 0, sizeof(AECHAR)*10);
+
+				WSPRINTF(wszRecordTime, 18, L"%02d:%02d:%02d", pMe->RecordingTime.Hour, pMe->RecordingTime.Min, pMe->RecordingTime.Sec);
+			    // 绘制文本-左键
+			    if(WSTRLEN(wszRecordTime)>0)
+			    {      
+			        DrawTextWithProfile(pMe->m_pShell, 
+			                            pMe->m_pDisplay, 
+			                            RGB_BLACK, 
+			                            AEE_FONT_NORMAL, 
+			                            wszRecordTime, 
+			                            -1, 
+			                            0, 
+			                            0, 
+			                            &pMe->m_rc, 
+			                            IDF_ALIGN_TOP|IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
+			    }
+
+			    (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+				CameraApp_DrawBottomBarText(pMe, BTBAR_SEND_BACK);
+            }
+            else
+            {
+            	CameraApp_DrawBottomBarText(pMe, BTBAR_OPTION_BACK);
+            }
             
             CameraApp_DrawMidPic(pMe);
 #ifdef FEATURE_DSP
@@ -3277,7 +3309,6 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 static void CameraApp_OnRecordTimeFeedBack(void *pUser)
 {
 	CCameraApp *pThis = (CCameraApp*)pUser;
-	AECHAR      wszRecordTime[20]={0};  //hour:min:second
 	AEERect     rc = pThis->m_rc;
 
 	MSG_FATAL("!!!!!!!!!!! CameraApp_OnRecordTimeFeedBack!!",0,0,0);
@@ -3287,14 +3318,12 @@ static void CameraApp_OnRecordTimeFeedBack(void *pUser)
 		uint32 elapsedTime = 0;
 		JulianType date = {0};
 
-		MSG_FATAL("!!!!!!!!!!! time=%d",time,0,0);
 		if (pThis->RecordingTime_parm.RecordStartTime > 0)
 		{
 			elapsedTime = time - pThis->RecordingTime_parm.RecordStartTime;
 		}
 		elapsedTime += pThis->RecordingTime_parm.RecordTotalTime;
 
-		MSG_FATAL("!!!!!!!!!!! elapsedTime=%d",elapsedTime,0,0);
 		if (pThis->RecordingTime_parm.LastTime != time)
 		{
 			// GETJULIANDATE returns the current date/time when seconds == 0
@@ -3306,35 +3335,13 @@ static void CameraApp_OnRecordTimeFeedBack(void *pUser)
 			pThis->RecordingTime.Hour = date.wHour;
 			pThis->RecordingTime.Min = date.wMinute;
 			pThis->RecordingTime.Sec = date.wSecond;
-
-			MSG_FATAL("!!!!!!!!!!! wHour=%d,wMinute=%d,wSecond=%d",date.wHour,date.wMinute,date.wSecond);
 			//upgrade the time to UI
-			(void)IDISPLAY_SetColor(pThis->m_pDisplay, CLR_USER_TEXT, RGB_RED);
 
-			MEMSET(wszRecordTime, 0, sizeof(AECHAR)*10);
-
-			WSPRINTF(wszRecordTime, 18, L"%02d:%02d:%02d", date.wHour, date.wMinute, date.wSecond);
-		    // 绘制文本-左键
-		    if(WSTRLEN(wszRecordTime)>0)
-		    {      
-		        DrawTextWithProfile(pThis->m_pShell, 
-		                            pThis->m_pDisplay, 
-		                            RGB_BLACK, 
-		                            AEE_FONT_NORMAL, 
-		                            wszRecordTime, 
-		                            -1, 
-		                            0, 
-		                            0, 
-		                            &rc, 
-		                            IDF_ALIGN_TOP|IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
-		    }
-
-		    (void)IDISPLAY_SetColor(pThis->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
-		    IDISPLAY_UpdateEx(pThis->m_pDisplay, FALSE);
+			ISHELL_PostEvent(pThis->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, NULL, NULL);
 			pThis->RecordingTime_parm.LastTime = time;
 		}
 
-		ISHELL_SetTimer(pThis->m_pShell, 250, (PFNNOTIFY)CameraApp_OnRecordTimeFeedBack, pThis);
+		ISHELL_SetTimer(pThis->m_pShell, 500, (PFNNOTIFY)CameraApp_OnRecordTimeFeedBack, pThis);
 	}
 }
 
@@ -4066,8 +4073,6 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
 					pMe->RecordingTime_parm.LastTime = pMe->RecordingTime_parm.RecordStartTime;
 
 					//upgrade bottom bar here
-					CameraApp_DrawBottomBarText(pMe,BTBAR_SEND_BACK);
-					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
 					ISHELL_SetTimer(pMe->m_pShell, 700, (PFNNOTIFY)CameraApp_OnRecordTimeFeedBack, pMe);
 	        	}
 #ifdef FEATURE_CAMERA_NOFULLSCREEN
