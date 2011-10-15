@@ -477,7 +477,7 @@ boolean CoreApp_InitAppData(IApplet* po)
     pMe->m_bExit = FALSE;
     pMe->m_isShift  = FALSE;   //add by yangdecai  2010-07-27
     pMe->m_battery_msgup = FALSE;//add by yangdecai 2010-07-27
-    
+    pMe->m_qqstate=QQSTATE_QUIT; //add by pengyuangui 2011-10-14
 #if defined(FEATURE_WMS_APP)
     pMe->m_bsmstipscheck = FALSE;
 #endif
@@ -1284,40 +1284,34 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             	break;
 #ifdef FEATURE_QQ_APP                 
             case EVT_QQ_ANNU_UPDATE:
+                 IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_OFFLINE);
+                 IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_MSG_OFF);
+                 IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_LEAVE_OFF); 
+                 IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_HIDING_OFF);
+
                  switch(dwParam)
                         {
-                         case 0:
-                             pMe->m_IsQQOline=TRUE;
-                             pMe->m_IsQQMsg=FALSE;
-                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_ONLINE);                             
+                        case 0:
+                             pMe->m_qqstate=QQSTATE_ONLINE;
+                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_ONLINE);
                              break;
                          case 1:
-                             pMe->m_IsQQOline=TRUE;
-                             pMe->m_IsQQMsg=FALSE;
-                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_ONLINE); 
+                             pMe->m_qqstate=QQSTATE_AWAYLINE;
+                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_LEAVE_ON); 
                              break;
                          case 2:
-                             pMe->m_IsQQOline=FALSE;
-                             pMe->m_IsQQMsg=FALSE;
-                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_OFFLINE);
-                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_MSG_OFF);
-                             //IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_ONLINE); 
+                             pMe->m_qqstate=QQSTATE_OFFLINE;
                              break;
                          case 3:
-                             pMe->m_IsQQOline=TRUE;
-                             pMe->m_IsQQMsg=FALSE;
-                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_ONLINE); 
+                             pMe->m_qqstate=QQSTATE_INVISIBLE;
+                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_HIDING_ON); 
                              break;
                          case 4:
-                              pMe->m_IsQQMsg=TRUE;
-                              pMe->m_IsQQOline=FALSE;
-                              IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_MSG_ON);                            
+                              pMe->m_qqstate=QQSTATE_HAVEMSG;
+                              IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_MSG_ON); 
                              break;
                          case 5:
-                             pMe->m_IsQQOline=FALSE;
-                             pMe->m_IsQQMsg=FALSE;
-                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_OFFLINE);
-                             IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_FMRADIO/*ANNUN_FIELD_QQ*/, ANNUN_STATE_QQ_MSG_OFF);
+                             pMe->m_qqstate=QQSTATE_QUIT;
                              break;
                         }
                 break;

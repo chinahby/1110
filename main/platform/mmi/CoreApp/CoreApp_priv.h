@@ -579,6 +579,17 @@ typedef enum
 
 typedef enum
 {
+    QQSTATE_ONLINE,       // 在线
+    QQSTATE_AWAYLINE,     // 离开
+    QQSTATE_OFFLINE,      // 离线
+    QQSTATE_INVISIBLE,    // 隐身
+    QQSTATE_HAVEMSG,      // 来消息
+    QQSTATE_QUIT          // 退出
+} QQ_STATE;
+
+
+typedef enum
+{
     POWERDOWN_NORMAL,               // 正常关机
     POWERDOWN_RESET                 // 关机需重起
 #ifdef FEATURE_UIM
@@ -797,8 +808,7 @@ typedef struct _CCoreApp
 	#endif
 	boolean             m_IsSametime;
     #ifdef FEATURE_QQ_APP 
-    boolean             m_IsQQOline;
-    boolean             m_IsQQMsg;
+    QQ_STATE            m_qqstate;
     #endif
     AECHAR             *m_pADNName;
     AECHAR             *m_pADNNumber;
