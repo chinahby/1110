@@ -171,6 +171,11 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe);
 // Camera Snapshot的处理函数
 static void CameraApp_RecordSnapShot(CCameraApp *pMe);
 
+
+static void CameraApp_RecordVideo(CCameraApp *pMe);
+
+static void CameraApp_OnRecordTimeFeedBack(void *pUser);
+
 // 找T卡的函数
 static boolean CameraApp_FindMemoryCardExist(CCameraApp *pMe);
 
@@ -191,7 +196,7 @@ static void CameraApp_DrawBottomBarText(CCameraApp *pMe,
 static boolean CameraApp_SelfTimeRecordSnapShot(CCameraApp *pMe);
 
 // 设置拍照文件名
-static boolean CameraApp_SetDateForRecordFileName(CCameraApp *pMe);
+static boolean CameraApp_SetDateForRecordFileName(CCameraApp *pMe,unsigned int fileType);
 
 // 获取当前时间
 static boolean CameraApp_GetDateForRecordFileName(CCameraApp *pMe,
@@ -926,93 +931,131 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
                     ISHELL_CloseApplet(pMe->m_pShell, FALSE);
                     return TRUE;
                 }
-                if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
+                if ( pMe->m_nCameraState == CAM_RECORDING )
                 {
-                    pMe->m_bIsPreview = FALSE;
-                    pMe->m_nLeftTime  = 0;
-                    pMe->m_nCameraState = CAM_STOP;
-                    CLOSE_DIALOG(DLGRET_CANCELED);
-                }                    
+                	pMe->m_nCameraState = CAM_STOPRECORD;
+					if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
+	                {
+	                    pMe->m_bIsPreview = FALSE;
+	                    (void)ISHELL_SendEvent(pMe->m_pShell, AEECLSID_APP_CAMERA, EVT_USER_REDRAW, 0, 0);
+	                } 
+                }
+                else
+                {
+	                if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
+	                {
+	                    pMe->m_bIsPreview = FALSE;
+	                    pMe->m_nLeftTime  = 0;
+	                    pMe->m_nCameraState = CAM_STOP;
+	                    CLOSE_DIALOG(DLGRET_CANCELED);
+	                }        
+                }
                 break;
 
             case AVK_INFO:
                 // 防止快速按键，导致hotkey Text存在于LCD上 
                 MSG_FATAL("AVK_INFO...................",0,0,0);
                 ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
-                
-                if(!pMe->m_bCanCapture)
+                if ( pMe->m_isRecordMode == FALSE)
                 {
-                	if ( pMe->m_isStartFromFacebook == TRUE)
+	                if(!pMe->m_bCanCapture)
+	                {
+	                	if ( pMe->m_isStartFromFacebook == TRUE)
+	                	{
+	                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
+	                    }
+	                    else
+	                    {
+							if(pMe->m_bMemoryCardExist)
+		                    {
+		                        pMe->m_wMsgID = IDS_MSG_NOMEMORY;
+		                    }
+		                    else
+		                    {
+		                    #ifdef FEATURE_VERSION_FLEXI203P
+								pMe->m_wMsgID = IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD;
+	                       	#else
+	                        	pMe->m_wMsgID = IDS_MSG_NOSDCARD;
+	                       	#endif
+		                    }
+	                    }
+
+	                    pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
+	                    ICAMERA_Stop(pMe->m_pCamera);
+	                    pMe->m_bIsPreview = FALSE;
+	                    CLOSE_DIALOG(DLGRET_POPMSG);
+	                    return TRUE;
+	                }
+	                
+	                switch(pMe->m_nSelfTimeItemSel)
+	                {
+	                    case IDS_SELFTIME_OFF:
+	                        nCameraSelfTime = 0;
+	                        break;
+
+	                    case IDS_SELFTIME_SEC1:
+	                        nCameraSelfTime = 6;
+	                        break;
+
+	                    case IDS_SELFTIME_SEC2:
+	                        nCameraSelfTime = 11;
+	                        break;
+
+	                    case IDS_SELFTIME_SEC3:
+	                        nCameraSelfTime = 16;
+	                        break;
+
+                    	default:
+                        	return FALSE;        
+                	}
+                
+                	pMe->m_nLeftTime = nCameraSelfTime;              
+                
+                	if(nCameraSelfTime == 0)
                 	{
-                    	pMe->m_wMsgID = IDS_MSG_NOMEMORY;
-                    }
-                    else
-                    {
+	                    pMe->m_nCameraState = CAM_CAPTURE;
+#ifdef FEATURE_DSP
+	                    CameraApp_RecordSnapShot(pMe);
+	                    ICAMERA_Stop(pMe->m_pCamera);
+	                    CameraApp_SavePhoto(pMe);
+
+	                    CameraApp_PlayShutterSound(pMe);
+	                    CLOSE_DIALOG(DLGRET_PICMENU);
+#else
+	                    ICAMERA_Stop(pMe->m_pCamera);
+#endif
+	                }
+	                else
+	                {
+	                    // 倒计时拍摄                       
+	                    CameraApp_SelfTimeRecordSnapShot(pMe);
+	                }
+                }
+                else
+                {
+					if(!pMe->m_bCanCapture)
+	                {
 						if(pMe->m_bMemoryCardExist)
 	                    {
 	                        pMe->m_wMsgID = IDS_MSG_NOMEMORY;
 	                    }
 	                    else
 	                    {
-	                    #ifdef FEATURE_VERSION_FLEXI203P
-							pMe->m_wMsgID = IDS_MSG_PHONE_MEMERY_FULL_AND_NOSDCARD;
-                       	#else
                         	pMe->m_wMsgID = IDS_MSG_NOSDCARD;
-                       	#endif
 	                    }
-                    }
 
-                    pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
-                    ICAMERA_Stop(pMe->m_pCamera);
-                    pMe->m_bIsPreview = FALSE;
-                    CLOSE_DIALOG(DLGRET_POPMSG);
-                    return TRUE;
+	                    pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
+	                    ICAMERA_Stop(pMe->m_pCamera);
+	                    pMe->m_bIsPreview = FALSE;
+	                    CLOSE_DIALOG(DLGRET_POPMSG);
+	                    return TRUE;
+	                }            
+
+	                ICAMERA_Stop(pMe->m_pCamera);
+	                
+	                pMe->m_nCameraState = CAM_STARTRECORD;					
+	                CameraApp_RecordVideo(pMe);
                 }
-                
-                switch(pMe->m_nSelfTimeItemSel)
-                {
-                    case IDS_SELFTIME_OFF:
-                        nCameraSelfTime = 0;
-                        break;
-
-                    case IDS_SELFTIME_SEC1:
-                        nCameraSelfTime = 6;
-                        break;
-
-                    case IDS_SELFTIME_SEC2:
-                        nCameraSelfTime = 11;
-                        break;
-
-                    case IDS_SELFTIME_SEC3:
-                        nCameraSelfTime = 16;
-                        break;
-
-                    default:
-                        return FALSE;        
-                }
-                
-                pMe->m_nLeftTime = nCameraSelfTime;              
-                
-                if(nCameraSelfTime == 0)
-                {
-                    pMe->m_nCameraState = CAM_CAPTURE;
-#ifdef FEATURE_DSP
-                    CameraApp_RecordSnapShot(pMe);
-                    ICAMERA_Stop(pMe->m_pCamera);
-                    CameraApp_SavePhoto(pMe);
-
-                    CameraApp_PlayShutterSound(pMe);
-                    CLOSE_DIALOG(DLGRET_PICMENU);
-#else
-                    ICAMERA_Stop(pMe->m_pCamera);
-#endif
-                }
-                else
-                {
-                    // 倒计时拍摄                       
-                    CameraApp_SelfTimeRecordSnapShot(pMe);
-                }
-                     
                 break;
                     
                 default:
@@ -3008,15 +3051,31 @@ static void CameraApp_DrawMidPic(CCameraApp *pMe)
     switch(pMe->m_pActiveDlgID)
     {
         case IDD_CPREVIEW:
-            pImage = ISHELL_LoadResImage(pMe->m_pShell,
+        	if ( pMe->m_isRecordMode )
+        	{
+           		pImage = ISHELL_LoadResImage(pMe->m_pShell,
+                                         CAMERAAPP_IMAGE_RES_FILE,
+                                         IDI_MID_RECORD);
+	            if(pImage != NULL)
+	            {
+	                IIMAGE_GetInfo(pImage, &myInfo);
+	                IIMAGE_Draw(pImage, (pMe->m_cxWidth - myInfo.cx)/2, pMe->m_cyHeight - myInfo.cy -1 );
+	                IIMAGE_Release(pImage);
+	                pImage = NULL;
+	            }
+            }
+            else
+            {
+				pImage = ISHELL_LoadResImage(pMe->m_pShell,
                                          CAMERAAPP_IMAGE_RES_FILE,
                                          IDI_MID_CAMERA);
-            if(pImage != NULL)
-            {
-                IIMAGE_GetInfo(pImage, &myInfo);
-                IIMAGE_Draw(pImage, (pMe->m_cxWidth - myInfo.cx)/2, pMe->m_cyHeight - myInfo.cy -1 );
-                IIMAGE_Release(pImage);
-                pImage = NULL;
+	            if(pImage != NULL)
+	            {
+	                IIMAGE_GetInfo(pImage, &myInfo);
+	                IIMAGE_Draw(pImage, (pMe->m_cxWidth - myInfo.cx)/2, pMe->m_cyHeight - myInfo.cy -1 );
+	                IIMAGE_Release(pImage);
+	                pImage = NULL;
+	            }
             }
             break;
             
@@ -3190,8 +3249,16 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 
     MSG_FATAL("displaySize.cx=%d,displaySize.cy=%d",displaySize.cx,displaySize.cy,0);
 #ifndef FEATURE_DSP
-    ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEW_TYPE, CAM_PREVIEW_SNAPSHOT, 0);       
-    ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_MULTISHOT, 1, 0);
+	if ( pMe->m_isRecordMode )
+	{
+		ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEW_TYPE, CAM_PREVIEW_MOVIE, 0);
+	}
+	else
+	{
+		ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_PREVIEW_TYPE, CAM_PREVIEW_SNAPSHOT, 0);
+		ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_MULTISHOT, 1, 0);
+	}
+	
     ICAMERA_SetQuality(pMe->m_pCamera, quality);    
     ICAMERA_SetSize(pMe->m_pCamera, &captureSize);
     ICAMERA_SetDisplaySize(pMe->m_pCamera, &displaySize);
@@ -3206,6 +3273,116 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     pMe->m_bIsPreview = TRUE;
 }
 
+//this function used to upgrade the record time
+static void CameraApp_OnRecordTimeFeedBack(void *pUser)
+{
+	CCameraApp *pThis = (CCameraApp*)pUser;
+	AECHAR      wszRecordTime[20]={0};  //hour:min:second
+	AEERect     rc = pThis->m_rc;
+
+	MSG_FATAL("!!!!!!!!!!! CameraApp_OnRecordTimeFeedBack!!",0,0,0);
+	if (pThis->m_nCameraState == CAM_RECORDING)
+	{
+		uint32 time = GETTIMESECONDS();
+		uint32 elapsedTime = 0;
+		JulianType date = {0};
+
+		MSG_FATAL("!!!!!!!!!!! time=%d",time,0,0);
+		if (pThis->RecordingTime_parm.RecordStartTime > 0)
+		{
+			elapsedTime = time - pThis->RecordingTime_parm.RecordStartTime;
+		}
+		elapsedTime += pThis->RecordingTime_parm.RecordTotalTime;
+
+		MSG_FATAL("!!!!!!!!!!! elapsedTime=%d",elapsedTime,0,0);
+		if (pThis->RecordingTime_parm.LastTime != time)
+		{
+			// GETJULIANDATE returns the current date/time when seconds == 0
+			if (elapsedTime > 0)
+			{
+				GETJULIANDATE(elapsedTime, &date);
+			}
+			
+			pThis->RecordingTime.Hour = date.wHour;
+			pThis->RecordingTime.Min = date.wMinute;
+			pThis->RecordingTime.Sec = date.wSecond;
+
+			MSG_FATAL("!!!!!!!!!!! wHour=%d,wMinute=%d,wSecond=%d",date.wHour,date.wMinute,date.wSecond);
+			//upgrade the time to UI
+			(void)IDISPLAY_SetColor(pThis->m_pDisplay, CLR_USER_TEXT, RGB_RED);
+
+			MEMSET(wszRecordTime, 0, sizeof(AECHAR)*10);
+
+			WSPRINTF(wszRecordTime, 18, L"%02d:%02d:%02d", date.wHour, date.wMinute, date.wSecond);
+		    // 绘制文本-左键
+		    if(WSTRLEN(wszRecordTime)>0)
+		    {      
+		        DrawTextWithProfile(pThis->m_pShell, 
+		                            pThis->m_pDisplay, 
+		                            RGB_BLACK, 
+		                            AEE_FONT_NORMAL, 
+		                            wszRecordTime, 
+		                            -1, 
+		                            0, 
+		                            0, 
+		                            &rc, 
+		                            IDF_ALIGN_TOP|IDF_ALIGN_LEFT|IDF_TEXT_TRANSPARENT);
+		    }
+
+		    (void)IDISPLAY_SetColor(pThis->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
+		    IDISPLAY_UpdateEx(pThis->m_pDisplay, FALSE);
+			pThis->RecordingTime_parm.LastTime = time;
+		}
+
+		ISHELL_SetTimer(pThis->m_pShell, 250, (PFNNOTIFY)CameraApp_OnRecordTimeFeedBack, pThis);
+	}
+}
+
+static void CameraApp_RecordVideo(CCameraApp *pMe)
+{
+	int result = 0;
+    char sFileName[MIN_PIC_CHAR_NAME_LEN];
+    MSG_FATAL("CameraApp_RecordVideo!!!",0,0,0);
+    MEMSET(pMe->m_sCurrentFileName, '\0', sizeof(pMe->m_sCurrentFileName));
+    MEMSET(sFileName, '\0', sizeof(sFileName));
+    
+    CameraApp_GetDateForRecordFileName(pMe, pMe->m_sCurrentFileName, FILE_TYPE_3GP);
+    CameraApp_SetDateForRecordFileName(pMe,FILE_TYPE_3GP);
+   
+    // copy the pic name to sFilename buffer
+    if(pMe->m_nCameraStorage == OEMNV_CAMERA_STORAGE_MEMORY_CARD)
+    {
+        STRCPY(pMe->m_sCaptureFileName, pMe->m_sCurrentFileName+STRLEN(MG_MASSCARDVIDEO_PATH));
+    }
+    else
+    {
+        STRCPY(pMe->m_sCaptureFileName, pMe->m_sCurrentFileName+STRLEN(MG_PHONEVIDEOS_PATH));
+    }
+
+    
+    pMe->m_nCameraState = CAM_STARTINGRECORD;
+
+    result = ICAMERA_SetVideoEncode(pMe->m_pCamera,AEECLSID_MEDIAMPEG4,0);
+	MSG_FATAL("ICAMERA_SetVideoEncode result=%d",result,0,0);
+    
+    // 拍照状态的处理
+    result = ICAMERA_RecordMovie(pMe->m_pCamera);
+    MSG_FATAL("ICAMERA_RecordMovie result=%d",result,0,0);
+    if(SUCCESS != result )
+    {
+        // 拍照失败,默认保留已经拍照成功的相片,并返回到预览界面,避免UI层出现死机现象
+        // Vc848.c中处理过,如果拍照失败,直接删除失败的文件.
+        pMe->m_wMsgID = IDS_MSG_CAPTURE_FAILED;
+        pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
+        ICAMERA_Stop(pMe->m_pCamera);
+        pMe->m_nCameraState = CAM_STOP;
+        pMe->m_bRePreview = TRUE;
+        CLOSE_DIALOG(DLGRET_POPMSG);
+        return;
+    }
+
+}
+
 static void CameraApp_RecordSnapShot(CCameraApp *pMe)
 { 
     char sFileName[MIN_PIC_CHAR_NAME_LEN];
@@ -3214,7 +3391,7 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
     MEMSET(sFileName, '\0', sizeof(sFileName));
     
     CameraApp_GetDateForRecordFileName(pMe, pMe->m_sCurrentFileName, FILE_TYPE_JPG);
-    CameraApp_SetDateForRecordFileName(pMe);
+    CameraApp_SetDateForRecordFileName(pMe,FILE_TYPE_JPG);
    
     // copy the pic name to sFilename buffer
     if ( pMe->m_isStartFromFacebook == TRUE )
@@ -3244,7 +3421,7 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
     {
         // 拍照失败,默认保留已经拍照成功的相片,并返回到预览界面,避免UI层出现死机现象
         // Vc848.c中处理过,如果拍照失败,直接删除失败的文件.
-        pMe->m_wMsgID = IDS_MSG_CAPTURE_FAILED;
+        pMe->m_wMsgID = IDS_CAMERA_RECORD_FAILED;
         pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
         ICAMERA_Stop(pMe->m_pCamera);
         pMe->m_nCameraState = CAM_STOP;
@@ -3401,6 +3578,11 @@ static void CameraApp_DrawBottomBarText(CCameraApp *pMe, BottomBar_e_Type eBarTy
             nResID_R = IDS_DEL;
             break;
 
+		case BTBAR_SEND_BACK:
+			nResID_L = IDS_CAMERA_RECORD_STOP;
+            nResID_R = IDS_BACK;
+            break;
+            
         default:
             return;
     }
@@ -3483,17 +3665,25 @@ static void CameraApp_DrawBottomBarText(CCameraApp *pMe, BottomBar_e_Type eBarTy
     (void)IDISPLAY_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, RGB_WHITE);
 }
 
-static boolean CameraApp_SetDateForRecordFileName(CCameraApp *pMe)
+static boolean CameraApp_SetDateForRecordFileName(CCameraApp *pMe,unsigned int fileType)
 {
     AEEMediaData   md;
-    
+    int result = 0;
     //Fill media data
     md.clsData = MMD_FILE_NAME;
     md.pData = (void *)pMe->m_sCurrentFileName;
     md.dwSize = 0;
 
-    (void)ICAMERA_SetMediaData(pMe->m_pCamera, &md, 0);
-
+	if ( fileType == FILE_TYPE_3GP )
+    {
+    	result = ICAMERA_SetMediaData(pMe->m_pCamera, &md, CAM_FILE_FORMAT_3GP);
+	}
+	else
+	{
+		result = ICAMERA_SetMediaData(pMe->m_pCamera, &md, 0);	
+	}
+	
+	MSG_FATAL("CameraApp_SetDateForRecordFileName result=%d",result,0,0);
     return TRUE;
 }
 
@@ -3512,17 +3702,24 @@ static boolean CameraApp_GetDateForRecordFileName(CCameraApp *pMe, char * pszDes
         STRCPY(pszDest, MG_PHONE_ROOTDIR);
     }
     
-    switch(fileType){
-    case FILE_TYPE_JPG:
-    default:
-        STRCAT(pszDest, FS_CARD_PICTURES_FOLDER);
+    switch(fileType)
+    {
+    	case FILE_TYPE_3GP:
+    		STRCAT(pszDest, FS_CARD_VIDEOS_FOLDER);
+		    SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.3gp", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
+		    break;
+		    
+		case FILE_TYPE_JPG:
+		default:
+		    STRCAT(pszDest, FS_CARD_PICTURES_FOLDER);
 #ifdef FEATURE_JPEG_ENCODER
-        SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.jpg", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
+		    SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.jpg", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
 #else
-        SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.png", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
+		    SPRINTF(pszDest+STRLEN(pszDest), "%02d%02d%02d%02d.png", julian.wDay, julian.wHour, julian.wMinute, julian.wSecond);
 #endif
-        break;
+		    break;
    }
+   
    return TRUE;
 }
 
@@ -3851,42 +4048,71 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
 {
     if (!pMe || !pMe->m_pCamera)
         return;
-    
+
+    MSG_FATAL("CameraApp_AppEventNotify nCmd=%d,nStatus=%d",nCmd,nStatus,0);
     switch (nCmd){
     case CAM_CMD_START:
-        switch (nStatus){
-        case CAM_STATUS_START:
-#ifdef FEATURE_CAMERA_NOFULLSCREEN
-            IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, RGB_BLACK);
-            IDISPLAY_Update(pMe->m_pDisplay);
-#endif
-            break;
-            
-        case CAM_STATUS_DONE:
-            if(pMe->m_nCameraState == CAM_CAPTURE)
-            {
-                CameraApp_RecordSnapShot(pMe);
-            }
-            else if(pMe->m_nCameraState == CAM_SAVE)
-            {
-                CameraApp_SavePhoto(pMe);
-                //CLOSE_DIALOG(DLGRET_PICMENU);
-            }
-            break;
+        switch (nStatus)
+        {
+	        case CAM_STATUS_START:
+	        	
+	        	if ( pMe->m_nCameraState == CAM_STARTINGRECORD)
+	        	{
 
-        case CAM_STATUS_ABORT:
-        case CAM_STATUS_FAIL:
-            if(pMe->m_nCameraState == CAM_CAPTURE)
-            {
-                pMe->m_bRePreview = TRUE;
-                pMe->m_wMsgID = IDS_MSG_CAPTURE_FAILED;
-                pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
-                CLOSE_DIALOG(DLGRET_POPMSG);
-            }
-            break;
-            
-        default:
-            break;
+	        		MSG_FATAL("!!!!!!!!!!! Start recording!!!",0,0,0);
+					pMe->m_nCameraState = CAM_RECORDING;
+					pMe->RecordingTime_parm.RecordTotalTime = 0;
+					pMe->RecordingTime_parm.RecordStartTime = GETTIMESECONDS();
+					pMe->RecordingTime_parm.LastTime = pMe->RecordingTime_parm.RecordStartTime;
+
+					//upgrade bottom bar here
+					CameraApp_DrawBottomBarText(pMe,BTBAR_SEND_BACK);
+					IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+					ISHELL_SetTimer(pMe->m_pShell, 700, (PFNNOTIFY)CameraApp_OnRecordTimeFeedBack, pMe);
+	        	}
+#ifdef FEATURE_CAMERA_NOFULLSCREEN
+	            IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, RGB_BLACK);
+	            IDISPLAY_Update(pMe->m_pDisplay);
+#endif
+	            break;
+	            
+	        case CAM_STATUS_DONE:
+	            if(pMe->m_nCameraState == CAM_CAPTURE)
+	            {
+	                CameraApp_RecordSnapShot(pMe);
+	            }
+	            else if(pMe->m_nCameraState == CAM_SAVE)
+	            {
+	                CameraApp_SavePhoto(pMe);
+	                //CLOSE_DIALOG(DLGRET_PICMENU);
+	            }
+	            else if(pMe->m_nCameraState == CAM_STARTINGRECORD)
+	            {
+					//
+	            }
+	            
+	            break;
+
+	        case CAM_STATUS_ABORT:
+	        case CAM_STATUS_FAIL:
+	            if(pMe->m_nCameraState == CAM_CAPTURE)
+	            {
+	                pMe->m_bRePreview = TRUE;
+	                pMe->m_wMsgID = IDS_MSG_CAPTURE_FAILED;
+	                pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
+	                CLOSE_DIALOG(DLGRET_POPMSG);
+	            }
+	            else if(pMe->m_nCameraState == CAM_STARTINGRECORD)
+	            {
+	                pMe->m_bRePreview = TRUE;
+	                pMe->m_wMsgID = IDS_CAMERA_RECORD_FAILED;
+	                pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
+	                CLOSE_DIALOG(DLGRET_POPMSG);
+	            }
+	            break;
+	            
+	        default:
+	            break;
         }
         break;
     

@@ -444,10 +444,27 @@ typedef enum
     CAM_PREVIEW,
     CAM_CAPTURE,
     CAM_SAVE,
-    CAM_RECORD,
+    CAM_STARTRECORD,
+	CAM_STARTINGRECORD,
+	CAM_RECORDING,
+	CAM_RECORDPAUSED,
+	CAM_STOPRECORD,// next state ready
     CAM_STOP
 } CAMERASTATE; 
 
+typedef struct MMIRecordTime
+{
+	int8   Hour;
+	int8   Min;
+	int8   Sec;
+}MMIRecordTime;
+
+typedef struct MMICam_RecTime_Parm
+{
+	uint32 RecordStartTime;
+	uint32 RecordTotalTime;
+	uint32 LastTime;
+}MMICam_RecTime_Parm;
 /*----------------------对话框相关数据类型声明---------------------*/
 // 对话框关闭时返回值列表
 typedef enum DLGRetValue
@@ -566,6 +583,8 @@ typedef struct _CCameraApp
     uint32               m_dwMemTotal;           // 存储空间总容量
     uint32               m_dwMemFree;            // 存储空间剩余容量
 
+	MMIRecordTime  		 RecordingTime;
+	MMICam_RecTime_Parm  RecordingTime_parm;
     int                  m_nLeftTime;
     int                  m_cxWidth; 
     int                  m_cyHeight;  
@@ -573,6 +592,7 @@ typedef struct _CCameraApp
         
     char                 m_sCurrentFileName[MIN_FILE_NAME_LEN];
     char                 m_sCaptureFileName[MIN_PICS_NAME_LEN];
+    char                 m_sRecorderFileName[MIN_PICS_NAME_LEN];
     AEECallback          m_CallBack;
     
     CAMERACFG            m_nCameraCFG;           // camera设置
@@ -593,6 +613,7 @@ typedef struct _CCameraApp
     IAnnunciator         *m_pIAnn;
     boolean              m_isFormQuicktest;
     boolean				 m_isStartFromFacebook;
+    boolean 			 m_isRecordMode;
     int32                 m_sensor_model; //判断摄像头为多少像素的 add by xuhui
 } CCameraApp;
 

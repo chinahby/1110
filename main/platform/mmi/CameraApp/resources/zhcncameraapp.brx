@@ -112,6 +112,12 @@
 	<STRING Id="1073" Name="IDS_MSG_CAPTURE_FAILED">
 		<Text>连拍失败</Text>
 	</STRING>
+	<String Id="1077" Name="IDS_CAMERA_RECORD_FAILED">
+		<Text>录像失败</Text>
+	</String>
+	<String Id="1078" Name="IDS_CAMERA_RECORD_STOP">
+		<Text>停止</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<Dialog Id="6001" Name="IDD_CMAINMENU" Focus="7001">

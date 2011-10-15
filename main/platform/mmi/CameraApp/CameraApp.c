@@ -536,7 +536,13 @@ static int CameraApp_InitAppData(CCameraApp *pMe)
     pMe->m_pCamera = NULL;  
     pMe->m_pMedia = NULL;
     pMe->m_isFormQuicktest = FALSE;
-    pMe->m_isStartFromFacebook = FALSE;
+#ifdef CAMERA_RECORD_DEBUG
+    pMe->m_isStartFromFacebook = TRUE;
+    pMe->m_isRecordMode = TRUE;
+#else
+	pMe->m_isStartFromFacebook = FALSE;
+    pMe->m_isRecordMode = FALSE;
+#endif
     pMe->m_sensor_model = -1;
     MEMSET(&pMe->m_CallBack, 0, sizeof(AEECallback));
 
@@ -743,6 +749,10 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
                 else if( STRCMP(as->pszArgs, "facebook") == 0 )
                 {
 					pMe->m_isStartFromFacebook = TRUE;
+                }
+                else if( STRCMP(as->pszArgs, "record") == 0 )
+                {
+					pMe->m_isRecordMode = TRUE;
                 }
             }
             pMe->m_rc = as->rc;
