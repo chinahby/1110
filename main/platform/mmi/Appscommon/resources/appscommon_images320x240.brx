@@ -409,6 +409,12 @@
 	<Object Id="7045" Name="IDB_QQMSG">
 		<File>..\images\128x160\common\Annunciator\qqmsg.bmp</File>
 	</Object>	
+	<Object Id="7046" Name="IDB_QQHIDING">
+		<File>..\images\128x160\common\Annunciator\qqhiding.bmp</File>
+	</Object>
+	<Object Id="7047" Name="IDB_QQLEAVE">
+		<File>..\images\128x160\common\Annunciator\qqleave.bmp</File>
+	</Object>			
 	<Object Id="7101" Name="IDB_MMS_ENTER" MimeType="image/png">
 		<File>..\images\320x240\common\Appscommon\Icon\enter.png</File>
 	</Object>
