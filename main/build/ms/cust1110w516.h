@@ -49,6 +49,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_CDSMS_CACHE_USELIST
 //#define FEATURE_SPN_FROM_BSMCCMNC
 //#define FEATURE_LONG_NETLOCK   //add by yangdecai
+
+#define FEATURE_MOVIE_RECORD_SUPPORT
 #endif
 
 #ifndef TARGSBW2_H
@@ -264,8 +266,12 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 #include "custdisplay.h"
+
+
 #ifdef USES_CAMERA
+#ifdef FEATURE_MOVIE_RECORD_SUPPORT
 #include "custcamcorder.h"
+#endif
 #include "custcamera.h"
 #include "custjpeg.h"
 #endif

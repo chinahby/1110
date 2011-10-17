@@ -3083,6 +3083,7 @@ static void CameraApp_DrawMidPic(CCameraApp *pMe)
     switch(pMe->m_pActiveDlgID)
     {
         case IDD_CPREVIEW:
+        #ifdef FEATURE_MOVIE_RECORD_SUPPORT
         	if ( pMe->m_isRecordMode )
         	{
            		pImage = ISHELL_LoadResImage(pMe->m_pShell,
@@ -3097,7 +3098,8 @@ static void CameraApp_DrawMidPic(CCameraApp *pMe)
 	            }
             }
             else
-            {
+        #endif
+        	{
 				pImage = ISHELL_LoadResImage(pMe->m_pShell,
                                          CAMERAAPP_IMAGE_RES_FILE,
                                          IDI_MID_CAMERA);
@@ -3347,6 +3349,7 @@ static void CameraApp_OnRecordTimeFeedBack(void *pUser)
 
 static void CameraApp_RecordVideo(CCameraApp *pMe)
 {
+#ifdef FEATURE_MOVIE_RECORD_SUPPORT
 	int result = 0;
     char sFileName[MIN_PIC_CHAR_NAME_LEN];
     MSG_FATAL("CameraApp_RecordVideo!!!",0,0,0);
@@ -3379,7 +3382,7 @@ static void CameraApp_RecordVideo(CCameraApp *pMe)
     {
         // 拍照失败,默认保留已经拍照成功的相片,并返回到预览界面,避免UI层出现死机现象
         // Vc848.c中处理过,如果拍照失败,直接删除失败的文件.
-        pMe->m_wMsgID = IDS_MSG_CAPTURE_FAILED;
+        pMe->m_wMsgID = IDS_CAMERA_RECORD_FAILED;
         pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
         ICAMERA_Stop(pMe->m_pCamera);
         pMe->m_nCameraState = CAM_STOP;
@@ -3387,7 +3390,9 @@ static void CameraApp_RecordVideo(CCameraApp *pMe)
         CLOSE_DIALOG(DLGRET_POPMSG);
         return;
     }
-
+#else
+	return;
+#endif
 }
 
 static void CameraApp_RecordSnapShot(CCameraApp *pMe)
@@ -3428,7 +3433,7 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
     {
         // 拍照失败,默认保留已经拍照成功的相片,并返回到预览界面,避免UI层出现死机现象
         // Vc848.c中处理过,如果拍照失败,直接删除失败的文件.
-        pMe->m_wMsgID = IDS_CAMERA_RECORD_FAILED;
+        pMe->m_wMsgID = IDS_MSG_CAPTURE_FAILED;
         pMe->m_nMsgTimeout = TIMEOUT_MS_MSGBOX;
         ICAMERA_Stop(pMe->m_pCamera);
         pMe->m_nCameraState = CAM_STOP;
@@ -3585,11 +3590,12 @@ static void CameraApp_DrawBottomBarText(CCameraApp *pMe, BottomBar_e_Type eBarTy
             nResID_R = IDS_DEL;
             break;
 
+#ifdef FEATURE_MOVIE_RECORD_SUPPORT
 		case BTBAR_SEND_BACK:
 			nResID_L = IDS_CAMERA_RECORD_STOP;
             nResID_R = IDS_BACK;
             break;
-            
+#endif            
         default:
             return;
     }
@@ -4107,6 +4113,7 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
 	                pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
 	                CLOSE_DIALOG(DLGRET_POPMSG);
 	            }
+	        #ifdef FEATURE_MOVIE_RECORD_SUPPORT
 	            else if(pMe->m_nCameraState == CAM_STARTINGRECORD)
 	            {
 	                pMe->m_bRePreview = TRUE;
@@ -4114,6 +4121,7 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
 	                pMe->m_nMsgTimeout = TIMEOUT_MS_MSGDONE;
 	                CLOSE_DIALOG(DLGRET_POPMSG);
 	            }
+	        #endif
 	            break;
 	            
 	        default:
