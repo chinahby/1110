@@ -550,6 +550,7 @@ DSM=         $(SRCASIC)/services/dsm
 FM_RDS=      $(SRCROOT)/wconnect/fmradio/fmrds/src
 FM_RDS_INC=  $(SRCROOT)/wconnect/fmradio/fmrds/inc  
 FM_INC=  $(SRCROOT)/modem/drivers_ext/fm
+TOUCHPAD_INC = $(SRCROOT)/modem/drivers_ext/touchpad
 #FLDDBG=      $(SRCROOT)/apps/FldDbg
 FLDDBG=      $(SRCPLATFORM)/FldDbg
 GRAPH=       $(SRCROOT)/multimedia/graphics/graph

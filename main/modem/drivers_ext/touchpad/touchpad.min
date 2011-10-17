@@ -6,5 +6,5 @@ TOUCHPAD_SOURCES=\
 	touchpad.c 
 
 TOUCHPAD_OBJS :=  $(addprefix $(TARGETDIR)/, $(TOUCHPAD_SOURCES:%.c=%.o))
-vpath %.c $(TOUCHPAD)	
+vpath %.c $(TOUCHPAD_INC)	
 

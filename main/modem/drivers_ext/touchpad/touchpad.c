@@ -17,7 +17,7 @@
 #include "disp_options.h" 
 #include "I2c.h" 
 #include "rex.h" 
-#include "hs_mb6100.h" 
+//#include "hs_mb6100.h" 
 #include "adc.h"
 #include "hw.h"
 
@@ -52,7 +52,7 @@
 #define TOUCHPAD_XR_ENABLE_DIS          BIO_OUTPUT_CLR_V
 
 #define TOUCHPAD_YU_CTRL                BIO_GPIO_20_REG
-#define TOUCHPAD_YU_IN                  GPIO_IN_20
+#define TOUCHPAD_YU_IN                  1//GPIO_IN_20 //modi by anderw
 #define TOUCHPAD_YU_OUT                 GPIO_OUT_20
 #define TOUCHPAD_YU_ENABLE_M            BIO_GPIO_20_M
 #define TOUCHPAD_YU_ENABLE_ENA          BIO_OUTPUT_SET_V
@@ -131,7 +131,7 @@ DESCRIPTION
 ===========================================================================*/
 #ifdef T_SLEEP
     #define TOUCHPAD_SLEEP_ALLOW() \
-  { (void) rex_set_sigs( &sleep_tcb, SLEEP_TOUCHPAD_OKTS_SIG ); }
+  { (void) rex_set_sigs( &sleep_tcb, 1/*SLEEP_TOUCHPAD_OKTS_SIG*/ ); } //modi by andrew
 #else
     #define TOUCHPAD_SLEEP_ALLOW()
 #endif
@@ -143,7 +143,7 @@ DESCRIPTION
 ===========================================================================*/
 #ifdef T_SLEEP
     #define TOUCHPAD_SLEEP_FORBID() \
-  { (void) rex_clr_sigs( &sleep_tcb, SLEEP_TOUCHPAD_OKTS_SIG ); }
+  { (void) rex_clr_sigs( &sleep_tcb, 1/*SLEEP_TOUCHPAD_OKTS_SIG*/ ); }////modi by andrew
 #else
     #define TOUCHPAD_SLEEP_FORBID()
 #endif
@@ -198,7 +198,7 @@ void touchpad_init( void )
 	touchpad_event_cb = NULL;
     
 	touchpad_init_scanner();
-    TOUCHPAD_SLEEP_ALLOW();
+    TOUCHPAD_SLEEP_ALLOW();  
 }
 
 /*===========================================================================
@@ -273,7 +273,7 @@ boolean touchpad_isr_open()
     BIO_TRISTATE(TOUCHPAD_XR_CTRL,TOUCHPAD_XR_ENABLE_M,BIO_OUTPUT_DIS_V);
     BIO_TRISTATE(TOUCHPAD_YD_CTRL,TOUCHPAD_YD_ENABLE_M,BIO_OUTPUT_DIS_V);
     
-    gpio_tlmm_un_config(TOUCHPAD_YU_IN, GPIO_INPUT);
+   // gpio_tlmm_un_config(TOUCHPAD_YU_IN, GPIO_INPUT);//modi by andrew
 	gpio_int_set_detect((gpio_int_type)TOUCHPAD_GPIO_INT,DETECT_LEVEL);
 	 /* Let the sleep task know it is now ok to sleep*/
 	TOUCHPAD_SLEEP_ALLOW();
@@ -407,7 +407,7 @@ void  touchpad_start_next_cycle(int4 ms_interval)
 {
     extern rex_tcb_type hs_tcb; 
     TOUCHPAD_LOG("touchpad_start_next_cycle %d", ms_interval, 0, 0);
-	rex_set_sigs(&hs_tcb, HS_TOUCHPAD_TIMER_SIG);
+	//rex_set_sigs(&hs_tcb, HS_TOUCHPAD_TIMER_SIG);//modi by andrew
 }
 
 LOCAL boolean touchpad_enable_polling(void)
@@ -703,7 +703,7 @@ static uint16 touchpad_read_x(void)
     BIO_OUT( TOUCHPAD_XR_CTRL, TOUCHPAD_XR_ENABLE_M, TOUCHPAD_XR_ENABLE_ENA);
     
     // Read from ADC1
-	return (uint16)adc_read(ADC_TOUCHPAD_X);
+	return 1;/*(uint16)adc_read(ADC_TOUCHPAD_X);*///modi by andrew
 }
 
 static uint16 touchpad_read_y(void)
@@ -718,7 +718,8 @@ static uint16 touchpad_read_y(void)
     BIO_OUT( TOUCHPAD_YD_CTRL, TOUCHPAD_YD_ENABLE_M, TOUCHPAD_YD_ENABLE_ENA);
     
     // Read from ADC0
-	return (uint16)adc_read(ADC_TOUCHPAD_Y);
+    return 1;/*(uint16)adc_read(ADC_TOUCHPAD_Y);*///modi by andrew
+	//return (uint16)adc_read(ADC_TOUCHPAD_Y);
 }
 
 // Sample touch data

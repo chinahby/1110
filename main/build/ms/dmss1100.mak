@@ -281,7 +281,10 @@ OBJECTS += \
 		$(ERR_OBJS) \
 		$(ALARMCLOCK_OBJS)
 
-
+ifeq ($(USES_LCD_TOUCH),yes)
+OBJECTS += \
+			$(TOUCHPAD_OBJS)
+endif
 
 OBJECTS2 = \
                 $(AUXSETTINGS_OBJS) \

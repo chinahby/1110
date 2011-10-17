@@ -321,6 +321,9 @@ endif
 include $(FM_INC)/fm.min
 #endif
 
+ifeq ($(USES_LCD_TOUCH),yes)
+include $(TOUCHPAD_INC)/touchpad.min
+endif
 include $(EFUSE)/efuse.min
 include $(EFS)/efs.min
 ifeq ($(USES_FDI),yes)
