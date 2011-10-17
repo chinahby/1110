@@ -866,9 +866,9 @@ static void KeyHoldCB(void *pUser)
 //Add By zzg 2010_11_23
 #ifdef FEATURE_UNLOCK_KEY_SPACE
 #ifdef FEATURE_KEYGUARD
-	extern boolean OEMKeyguard_HandleEvent(AEEEvent  evt, uint16    wParam); 
+	extern boolean OEMKeyguard_HandleEvent(AEEEvent  evt, uint16    wParam,uint32 dwParam); 
 
-	if (TRUE == (OEMKeyguard_HandleEvent(EVT_KEY_HELD, ptbl->aee_vcode)))
+	if (TRUE == (OEMKeyguard_HandleEvent(EVT_KEY_HELD, ptbl->aee_vcode,ptbl->dwparam)))
 	{
 		
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
@@ -1953,7 +1953,7 @@ static boolean CoreTask_HandleAEEEvt(AEEEvent evt, uint16 wParam, uint32 dwParam
 #endif
     
 #ifdef FEATURE_KEYGUARD	
-    if (OEMKeyguard_HandleEvent(evt, wParam))
+    if (OEMKeyguard_HandleEvent(evt, wParam,dwParam))
     {	
         return TRUE;
     }	

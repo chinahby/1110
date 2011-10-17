@@ -5641,6 +5641,9 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #ifdef FEATURE_KEYGUARD
     else if(OEMKeyguard_IsEnabled())
     {
+    	#ifdef FEATURE_LCD_TOUCH_ENABLE
+		
+		#else
     	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
     	eBBarType = BTBAR_UNLOCK_SOS;
         #elif defined(FEATURE_VERSION_W515V3)
@@ -5650,6 +5653,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
     	#else
         eBBarType = BTBAR_UNLOCK;
         #endif
+		#endif
     }
 #endif
     else
@@ -5694,8 +5698,11 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 #endif
 	
     }
-
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	
+	#else
     DrawBottomBar_Ex(pMe->a.m_pIShell, pMe->m_pDisplay,eBBarType);
+	#endif
 }
 
 /*==============================================================================

@@ -70,6 +70,8 @@ when       who     what, where, why
 #define TIMEOUT_MS_KEYGUARD_TIMER              (1*1000)
 
 #define KEYGUARD_ERR( str, a, b, c )         ERR( str,a,b,c )
+
+#define OEMKEYGUARD_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 /*===========================================================================
 
                     TYPE DECLARATIONs
@@ -121,6 +123,11 @@ static void    OEMKeyguard_Set_Annunciator_Enable(boolean b_state);
 
 // TRUE while the keyguard message is being displayed
 static boolean sbMessageActive = FALSE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+static uint16 m_privpinter_x = 0;
+static uint16 m_privpinter_y = 0;
+#define MOVE_DY                3
+#endif
 #ifdef FEATURE_ICM
 static ICM *spPhone  = NULL;
 #else
@@ -806,7 +813,7 @@ static void OEMPriv_DrawMessageCB(void *pUnused)
     // that the message isn't actually being displayed (because there is
     // currently an active applet) and display it
     sbMessageActive = TRUE;    
-    (void) OEMKeyguard_HandleEvent(EVT_USER, 0);
+    (void) OEMKeyguard_HandleEvent(EVT_USER, 0,0);
 }
 
 
@@ -879,7 +886,7 @@ SIDE EFFECTS:
 SEE ALSO:
 
 =============================================================================*/
-boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
+boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dwParam)
 {
     boolean bRet = FALSE;
 
@@ -894,6 +901,28 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam)
         //    db_value.db_backlight_level = TRUE;
         //    db_put(DB_BACKLIGHT_LEVEL, &db_value);
         //}
+        #ifdef FEATURE_LCD_TOUCH_ENABLE
+		if(evt == EVT_PEN_MOVE)
+		{
+			AEERect rct = {0};
+			uint16 wXPos = (int16)AEE_GET_X(dwParam);
+			uint16 wYPos = (int16)AEE_GET_Y(dwParam);
+			uint16 m_Move_Dy = wYPos-m_privpinter_y;
+			if(m_Move_Dy>MOVE_DY)
+			{
+				//drew »¬¶¯Í¼±ê
+			}
+			if(OEMKEYGUARD_PT_IN_RECT(wXPos,wYPos,rct))
+			{
+				//½âËø
+			}
+			m_privpinter_x = wXPos;
+			m_privpinter_y = wYPos;
+			return TRUE;
+		}
+		#endif
+		m_privpinter_x = 0;
+		m_privpinter_y = 0;
 #ifdef FEATURE_VERSION_W515V3
         if(wParam == AVK_CLR)
 #else

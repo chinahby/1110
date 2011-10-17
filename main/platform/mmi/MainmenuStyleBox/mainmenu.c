@@ -1001,21 +1001,8 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             return TRUE;
 
         case EVT_DIALOG_START:			
-#ifdef FEATURE_RANDOM_MENU_COLOR
-            (void)OEM_GetConfig(CFGI_MENU_BGCOLOR, &pMe->m_nBgColor, sizeof(pMe->m_nBgColor));
-#endif
             if(pMe->m_pImageBg == NULL)
             {
-#ifdef FEATURE_RANDOM_MENU_COLOR
-                (void)OEM_GetConfig(CFGI_RANDOM_MENU, (void*)&pMe->m_nRandomMenu, sizeof(pMe->m_nRandomMenu));
-				#if 0
-                if(pMe->m_nRandomMenu != 0)
-                {
-                    pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MENU_BACKGROUND_TRANS);
-                }
-                else
-				#endif 
-#endif
                 {
                     pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modi by yangdecai                   
                 }
@@ -1031,8 +1018,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 
 
         case EVT_USER_REDRAW:
-            // 初始整个背景及全部初始图标
-           // ERR("EVT_USER_REDRAW:::::::::::1111111111",0,0,0);			
+            // 初始整个背景及全部初始图标			
             DrawMatrix(pMe);
             
             // 绘制聚焦过程动画
@@ -1097,11 +1083,9 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
         #endif
             return TRUE;
         case EVT_KEY:
-            //ISHELL_CancelTimer(pMe->m_pShell, NULL, (void**)pMe);
             switch( wParam)
             {
                 case AVK_CLR:
-                   // ERR("AVK_CLR:::::::::::::::::::!111111111111",0,0,0);
                      CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
                     
