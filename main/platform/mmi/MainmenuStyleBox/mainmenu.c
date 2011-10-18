@@ -105,6 +105,7 @@ static void MovePen(MainMenu * pMe,int dx);
 static void DrawMatrix(MainMenu *pMe);
 static void DrawFocusIcon(MainMenu *pMe);
 static void MoveCursorTo(MainMenu *pMe, int row, int column);
+static void DrawMatrixBottom(MainMenu *pMe);
 
 //移动后选中移动
 //移动后整个界面显示
@@ -156,7 +157,8 @@ static char* ICON_ANI[] =
     ICON9_ANI,
     ICON10_ANI,
     ICON11_ANI,
-    ICON12_ANI,        
+    ICON12_ANI,
+    ICON13_ANI,
 };
 
 static char* ICON_ANI_1[] =
@@ -172,7 +174,8 @@ static char* ICON_ANI_1[] =
     ICON9_ANI_1,
     ICON10_ANI_1,
     ICON11_ANI_1,
-    ICON12_ANI_1,      
+    ICON12_ANI_1,
+    ICON13_ANI_1,  
 };
 
 /*=============================================================================
@@ -515,7 +518,7 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
     //释放图片资源
     {
         int i;
-        
+        int j;
         if (pMe->m_pImageBg !=NULL)
         {
             (void) IIMAGE_Release(pMe->m_pImageBg);
@@ -530,6 +533,14 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
                 pMe->m_pImageIcon[i] = NULL;
             }
         } 
+		for(j = 0;j<MAX_BOTTOM_ITEMS;i++)
+		{
+			 if(pMe->m_pImageButtom[i] != NULL)
+            {
+                (void)IIMAGE_Release(pMe->m_pImageButtom[i]);
+                pMe->m_pImageButtom[i] = NULL;
+            }
+		}
 
         if(pMe->m_pAnimate != NULL)
         {
@@ -1046,7 +1057,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
         case EVT_DIALOG_END:
             {
                 int i;
-                
+                int j;
                 if (pMe->m_pImageBg !=NULL)
                 {
                     (void) IIMAGE_Release(pMe->m_pImageBg);
@@ -1061,6 +1072,14 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                         pMe->m_pImageIcon[i] = NULL;
                     }
                 } 
+				for(j = 0;j<MAX_BOTTOM_ITEMS;i++)
+				{
+					 if(pMe->m_pImageButtom[i] != NULL)
+		            {
+		                (void)IIMAGE_Release(pMe->m_pImageButtom[i]);
+		                pMe->m_pImageButtom[i] = NULL;
+		            }
+				}
                 
                 if(pMe->m_pAnimate != NULL)
                 {
@@ -1498,6 +1517,7 @@ DESCRIPTION: // 初始整个背景及全部初始图标
 static void DrawMatrix(MainMenu *pMe)
 {
     int i = 0;
+	int j = 0;
 	//BottomBar_Param_type BarParam={0};//wlh add
     
     if (NULL == pMe)
@@ -1525,9 +1545,34 @@ static void DrawMatrix(MainMenu *pMe)
                         pMe->m_Icondefault_Pt[i].y);
         }
     }  
+    
+	//Draw Bottom ICON
+	
+    for(i = 0; i < MAX_BOTTOM_ITEMS;i++)
+    {
+    	if (pMe->m_pImageIcon[i] == NULL)
+        {
+            pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI[(i+MAX_MATRIX_ITEMS)]);
+        }
+
+        if (pMe->m_pImageIcon[i] != NULL)
+        {
+            IIMAGE_Draw(pMe->m_pImageIcon[i],
+                        pMe->m_Icondefault_Pt[i].x,
+                        pMe->m_Icondefault_Pt[i].y);
+        }
+    }
+	
     //BarParam.eBBarType = BTBAR_SELECT_BACK;
     //DrawBottomBar(pMe->m_pDisplay, &BarParam);//wlh 20090412 add
 }
+static void DrawMatrixBottom(MainMenu *pMe)
+{
+	
+}
+
+
 static void DrawMatrixMove(MainMenu *pMe,int dx)
 {
 	int i = 0;

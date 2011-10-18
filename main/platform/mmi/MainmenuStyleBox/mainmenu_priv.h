@@ -54,6 +54,7 @@
 #define  DX_MAIN_MOVE     5
 #define  MAIN_ICON_W      60
 #define  MAIN_ICON_H      60
+#define  MAX_BOTTOM_ITEMS 4
 #elif defined (FEATURE_DISP_320X240)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 3
@@ -150,6 +151,7 @@ typedef struct _MainMenu
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 	IImage          *m_pImageSelect;
 	IImage          *m_pImageSelect_foucs;
+	IImage          *m_pImageButtom[MAX_BOTTOM_ITEMS];
 	uint16          m_nCurPage;
 	Point           m_IconSelect_Pt[3];
 	Point           m_Primove_Pt;
@@ -290,6 +292,8 @@ typedef struct _MainMenu
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 	#define ICON_SELECT          "fs:/image/mianment/select.png"
 	#define ICON_SELECT_FOCUS    "fs:/image/mianment/select_focus.png"
+	#define ICON13_ANI           "fs:/image/mainmenu/qsc1100_13.png"
+	#define ICON13_ANI_1         "fs:/image/mainmenu/qsc1100_13_focus.png"
 #endif
 
 // 此宏用当前状态更新先前状态，再用nextState状态更新当前状态

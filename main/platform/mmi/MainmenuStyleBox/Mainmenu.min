@@ -80,7 +80,7 @@ CONSTFILE_FILES+=\
 	qsc1100_09.png|fs:/image/mainmenu/qsc1100_09.png \
 	qsc1100_10.png|fs:/image/mainmenu/qsc1100_10.png \
 	qsc1100_11.png|fs:/image/mainmenu/qsc1100_11.png \
-	qsc1100_12.png|fs:/image/mainmenu/qsc1100_12.png\
+	qsc1100_12.png|fs:/image/mainmenu/qsc1100_12.png \
 	qsc1100_01_focus.png|fs:/image/mainmenu/qsc1100_01_focus.png \
 	qsc1100_02_focus.png|fs:/image/mainmenu/qsc1100_02_focus.png \
 	qsc1100_03_focus.png|fs:/image/mainmenu/qsc1100_03_focus.png \
@@ -99,7 +99,9 @@ endif
 ifeq ($(USES_LCD_TOUCH),yes)
 CONSTFILE_FILES+=\
 	select.png|fs:/image/mainmenu/select.png \
-	select_focus.png|fs:/image/mainmenu/select_focus.png
+	select_focus.png|fs:/image/mainmenu/select_focus.png \
+	qsc1100_13.png|fs:/image/mainmenu/qsc1100_13.png \
+	qsc1100_13_focus.png|fs:/image/mainmenu/qsc1100_13_focus.png
 endif
 
 INC  += $(MAINMENU_INC) $(MAINMENU_RES)
