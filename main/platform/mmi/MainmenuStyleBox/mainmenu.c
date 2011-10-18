@@ -99,13 +99,18 @@ static void MainMenu_RunFSM(MainMenu *pMe);
 static void CalculateScreenParameters(MainMenu *pMe);
 
 static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect);
-
+static void MainMenu_DrawSelectIcon(MainMenu *pMe);
+static void MovePen(MainMenu * pMe,int dx);
 // 初始整个背景及全部初始图标
 static void DrawMatrix(MainMenu *pMe);
-
 static void DrawFocusIcon(MainMenu *pMe);
-
 static void MoveCursorTo(MainMenu *pMe, int row, int column);
+
+//移动后选中移动
+//移动后整个界面显示
+static void DrawMatrixMove(MainMenu *pMe,int dx);
+static void DrawFocusIconMove(MainMenu *pMe,int dx);
+static void MoveCursoToMove(MainMenu *pMe, int row, int column,int dx);
 
 static void SetCursor(MainMenu *pMe, int row, int column);
 
@@ -416,7 +421,10 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     }
 	
 	pMe->m_nRow        = 1;
-    pMe->m_nColumn     = 1;			
+    pMe->m_nColumn     = 1;	
+	pMe->m_nCurPage    = 0;
+	pMe->m_PenPos      = -1;
+
 
     // 接口创建及相关初始化
     if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG,
@@ -435,12 +443,12 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     {    	
         return EFAILED;
     }
-	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
-                                            AEECLSID_ANNUNCIATOR,
-                                            (void **)&pMe->m_pIAnn))
-    {    	
-        return EFAILED;
-    }
+	//if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
+    //                                        AEECLSID_ANNUNCIATOR,
+    //                                        (void **)&pMe->m_pIAnn))
+    //{    	
+    //    return EFAILED;
+    //}
     
     // 初始化菜单Title
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
@@ -493,11 +501,11 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
         (void) IDISPLAY_Release(pMe->m_pDisplay);
         pMe->m_pDisplay = NULL;
     }
-	if (pMe->m_pIAnn)
-    {
-        IANNUNCIATOR_Release(pMe->m_pIAnn);
-		pMe->m_pIAnn = NULL;
-    }
+	//if (pMe->m_pIAnn)
+    //{
+    //    IANNUNCIATOR_Release(pMe->m_pIAnn);
+	//	pMe->m_pIAnn = NULL;
+    //}
 
     if(pMe->m_pBacklight)
     {
@@ -528,6 +536,16 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
             (void)IIMAGE_Release(pMe->m_pAnimate);
             pMe->m_pAnimate = NULL;
         }
+		if(pMe->m_pImageSelect != NULL)
+		{
+			(void)IIMAGE_Release(pMe->m_pImageSelect);
+			pMe->m_pImageSelect = NULL;
+		}
+		if(pMe->m_pImageSelect_foucs!= NULL)
+		{
+			(void)IIMAGE_Release(pMe->m_pImageSelect_foucs);
+			pMe->m_pImageSelect_foucs= NULL;
+		}
     }  
 }
 
@@ -681,7 +699,7 @@ static boolean MainMenu_HandleEvent( IMainMenu *pi,
             pMe->m_currState = MAINST_MAIN;
             pMe->m_eDlgReturn = DLGRET_CREATE;
             pMe->m_eAppStatus = MAINMENU_RUNNING;
-            IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE); 
+            //IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE); 
             MainMenu_RunFSM(pMe);
             return TRUE;
 
@@ -917,11 +935,11 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
     if (NULL != pMe->m_pDisplay)
     {
         AEEDeviceInfo di={0,};
-        if (dlgResId == IDD_MAIN_MENU)
-        {
-            (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:0", STRLEN("a:0"));
-        }
-        else
+        //if (dlgResId == IDD_MAIN_MENU)
+        //{
+        //    (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:0", STRLEN("a:0"));
+        //}
+        //else
         {
             (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:1", STRLEN("a:1"));
         }
@@ -1049,6 +1067,16 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     (void)IIMAGE_Release(pMe->m_pAnimate);
                     pMe->m_pAnimate = NULL;
                 }
+				if(pMe->m_pImageSelect != NULL)
+				{
+					(void)IIMAGE_Release(pMe->m_pImageSelect);
+					pMe->m_pImageSelect = NULL;
+				}
+				if(pMe->m_pImageSelect_foucs!= NULL)
+				{
+					(void)IIMAGE_Release(pMe->m_pImageSelect_foucs);
+					pMe->m_pImageSelect_foucs = NULL;
+				}
                 ISHELL_CancelTimer(pMe->m_pShell, NULL, (void**)pMe);
             }
             return TRUE;
@@ -1236,12 +1264,38 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             return TRUE;
         case EVT_PEN_DOWN:
 				{
-					AEEDeviceInfo devinfo;
-					int nBarH ;
+					
 					AEERect rc;
-					int16 wXPos = (int16)AEE_GET_X(dwParam);
-					int16 wYPos = (int16)AEE_GET_Y(dwParam);
-				
+					uint16 wXPos = (int16)AEE_GET_X(dwParam);
+					uint16 wYPos = (int16)AEE_GET_Y(dwParam);
+					uint16 i = 0;
+					boolean m_bInRect = FALSE;
+					uint16 nRow = 0;
+					uint16 nCol = 0;
+					for(i=0;i<MAX_MATRIX_ITEMS;i++)
+					{
+						rc.x = pMe->m_Icondefault_Pt[i].x;
+						rc.y = pMe->m_Icondefault_Pt[i].y;
+						rc.dx = MAIN_ICON_W;
+						rc.dy = MAIN_ICON_H;
+						m_bInRect = MAINMENU_PT_IN_RECT(wXPos,wYPos,rc);
+						if(m_bInRect)
+						{
+							pMe->m_PenPos = i;
+							break;
+						}
+					}
+					if(pMe->m_PenPos>0)
+					{
+						nRow = (pMe->m_PenPos+1)/MAX_MATRIX_COLS;
+						nCol = (pMe->m_PenPos+1)%MAX_MATRIX_COLS;
+						MoveCursorTo(pMe, nRow, nCol);
+					}
+					else
+					{
+						//最低层 4个快捷键响应
+						
+					}
 					return TRUE;
 				}
 				break;
@@ -1250,19 +1304,65 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 					AEEDeviceInfo devinfo;
 					int nBarH ;
 					AEERect rc;
-					int16 wXPos = (int16)AEE_GET_X(dwParam);
-					int16 wYPos = (int16)AEE_GET_Y(dwParam);
-				
+					uint16 wXPos = (int16)AEE_GET_X(dwParam);
+					uint16 wYPos = (int16)AEE_GET_Y(dwParam);
+					int wDxPos   = wXPos-pMe->m_Primove_Pt.x;
+					int wDyPos   = wYPos-pMe->m_Primove_Pt.y;
+					uint16 uDxPos = 0;
+					if(wDxPos>0)
+					{
+						uDxPos = wDxPos;
+					}
+					else
+					{
+						uDxPos = -wDxPos;
+					}
+					if(uDxPos>DX_MAIN_MOVE)
+					{
+						MovePen(pMe,wDxPos);
+					}
+					pMe->m_Primove_Pt.x = wXPos;
+					pMe->m_Primove_Pt.y = wYPos;
 					return TRUE;
 				}
 				break;
 		case EVT_PEN_UP:
 			{
-				AEEDeviceInfo devinfo;
-				int nBarH ;
 				AEERect rc;
-				int16 wXPos = (int16)AEE_GET_X(dwParam);
-				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+				uint16 wXPos = (int16)AEE_GET_X(dwParam);
+				uint16 wYPos = (int16)AEE_GET_Y(dwParam);
+				uint16 i = 0;
+				boolean m_bInRect = FALSE;
+				uint16 nRow = 0;
+				uint16 nCol = 0;
+				for(i=0;i<MAX_MATRIX_ITEMS;i++)
+				{
+					rc.x = pMe->m_Icondefault_Pt[i].x;
+					rc.y = pMe->m_Icondefault_Pt[i].y;
+					rc.dx = MAIN_ICON_W;
+					rc.dy = MAIN_ICON_H;
+					m_bInRect = MAINMENU_PT_IN_RECT(wXPos,wYPos,rc);
+					if(m_bInRect)
+					{
+						if(pMe->m_PenPos != i)
+						{
+							pMe->m_PenPos = -1;
+							break;
+						}
+						pMe->m_PenPos = i;
+						break;
+					}
+				}
+				if(pMe->m_PenPos>0)
+				{
+					StartApplet( pMe,pMe->m_IconTitle[pMe->m_PenPos]);
+					pMe->m_PenPos = -1;
+				}
+				else
+				{
+					//最低层 4个快捷键响应
+					
+				}
 				
 				return TRUE;
 			}
@@ -1328,6 +1428,12 @@ static void CalculateScreenParameters(MainMenu *pMe)
         pMe->m_IconFocus_Pt[i].y = pMe->m_Icondefault_Pt[i].y - (ICON_ANIMATED_HEIGHT- imageInfoIcon.cy)/2;
         //end added
     }
+	pMe->m_IconSelect_Pt[0].x = SELECT_ONE_X;
+	pMe->m_IconSelect_Pt[0].y = SELECT_Y;
+	pMe->m_IconSelect_Pt[1].x = SELECT_TWO_X;
+	pMe->m_IconSelect_Pt[1].y = SELECT_Y;
+	pMe->m_IconSelect_Pt[2].x = SELECT_THR_X;
+	pMe->m_IconSelect_Pt[2].y = SELECT_Y;
     
 }
 
@@ -1355,6 +1461,33 @@ static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)
                                                     0);
     } 
 }
+static void MainMenu_DrawSelectIcon(MainMenu *pMe)
+{
+	int i =0;
+	if(pMe->m_pImageSelect == NULL)
+	{
+		pMe->m_pImageSelect = ISHELL_LoadImage(pMe->m_pShell, ICON_SELECT);
+	}
+	if(pMe->m_pImageSelect_foucs == NULL)
+	{
+		pMe->m_pImageSelect_foucs = ISHELL_LoadImage(pMe->m_pShell, ICON_SELECT_FOCUS);
+	}
+	for(i=0;i<3;i++)
+	{
+		if(i == pMe->m_nCurPage)
+		{
+			IIMAGE_Draw(pMe->m_pImageSelect_foucs,
+                        pMe->m_IconSelect_Pt[i].x,
+                        pMe->m_IconSelect_Pt[i].y);
+		}
+		else
+		{
+			IIMAGE_Draw(pMe->m_pImageSelect,
+                        pMe->m_IconSelect_Pt[i].x,
+                        pMe->m_IconSelect_Pt[i].y);
+		}
+	}
+}
 
 /*=============================================================================
 FUNCTION:  DrawMatrix
@@ -1365,7 +1498,7 @@ DESCRIPTION: // 初始整个背景及全部初始图标
 static void DrawMatrix(MainMenu *pMe)
 {
     int i = 0;
-	BottomBar_Param_type BarParam={0};//wlh add
+	//BottomBar_Param_type BarParam={0};//wlh add
     
     if (NULL == pMe)
     {
@@ -1373,6 +1506,9 @@ static void DrawMatrix(MainMenu *pMe)
     }
     //draw bg image
     MainMenu_DrawBackGround(pMe, &pMe->m_rc); 
+	//Draw select icon
+	MainMenu_DrawSelectIcon(pMe);
+	
     //Draw icon
     for (i = 0; i < MAX_MATRIX_ITEMS; i ++)
     {
@@ -1389,8 +1525,39 @@ static void DrawMatrix(MainMenu *pMe)
                         pMe->m_Icondefault_Pt[i].y);
         }
     }  
-    BarParam.eBBarType = BTBAR_SELECT_BACK;
-    DrawBottomBar(pMe->m_pDisplay, &BarParam);//wlh 20090412 add
+    //BarParam.eBBarType = BTBAR_SELECT_BACK;
+    //DrawBottomBar(pMe->m_pDisplay, &BarParam);//wlh 20090412 add
+}
+static void DrawMatrixMove(MainMenu *pMe,int dx)
+{
+	int i = 0;
+	//BottomBar_Param_type BarParam={0};//wlh add
+    
+    if (NULL == pMe)
+    {
+        return;
+    }
+    //draw bg image
+    MainMenu_DrawBackGround(pMe, &pMe->m_rc); 
+	//Draw select icon
+	MainMenu_DrawSelectIcon(pMe);
+	
+    //Draw icon
+    for (i = 0; i < MAX_MATRIX_ITEMS; i ++)
+    {
+        if (pMe->m_pImageIcon[i] == NULL)
+        {
+            pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
+                                                    ICON_ANI[i]);
+        }
+
+        if (pMe->m_pImageIcon[i] != NULL)
+        {
+            IIMAGE_Draw(pMe->m_pImageIcon[i],
+                        pMe->m_Icondefault_Pt[i].x+dx,
+                        pMe->m_Icondefault_Pt[i].y);
+        }
+    }  
 }
 
 /*=============================================================================
@@ -1409,17 +1576,11 @@ COMMENTS:
 static void DrawFocusIcon(MainMenu *pMe)
 {
     int theFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;
-    TitleBar_Param_type  titleBarParms;
     
     if (NULL == pMe)
     {
         return;
     }      
-    MEMSET( &titleBarParms, 0, sizeof( TitleBar_Param_type));
-    titleBarParms.dwAlignFlags  = IDF_TEXT_TRANSPARENT | IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE;
-    STRCPY( titleBarParms.strTitleResFile, MAINMENU_RES_FILE_LANG);
-	titleBarParms.nTitleResID   = pMe->m_IconTitle[theFocus];
-    DrawTitleBar(pMe->m_pDisplay, &titleBarParms);
     if(pMe->m_pAnimate == NULL)
     {
         pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_1[theFocus]);
@@ -1434,6 +1595,30 @@ static void DrawFocusIcon(MainMenu *pMe)
 	    IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
 	}
 }
+
+static void DrawFocusIconMove(MainMenu *pMe,int dx)
+{
+	int theFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;
+    
+    if (NULL == pMe)
+    {
+        return;
+    }      
+    if(pMe->m_pAnimate == NULL)
+    {
+        pMe->m_pAnimate = ISHELL_LoadImage(pMe->m_pShell, ICON_ANI_1[theFocus]);
+    }
+	if( pMe->m_pAnimate != NULL)
+    {
+		IIMAGE_Draw(pMe->m_pAnimate,
+                    pMe->m_IconFocus_Pt[theFocus].x+dx, 
+                    pMe->m_IconFocus_Pt[theFocus].y);
+	    IIMAGE_Release(pMe->m_pAnimate);
+        pMe->m_pAnimate = NULL;       
+	    IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
+	}
+}
+
 
 /*=============================================================================
 FUNCTION:  MoveCursorTo
@@ -1474,6 +1659,36 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
     SetCursor(pMe, row, column);
     DrawFocusIcon(pMe);
 }
+static void MoveCursoToMove(MainMenu *pMe, int row, int column,int dx)
+{
+	int theFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;
+    AEERect rect;
+    
+    // 绘制聚焦后矩阵初始界面
+    SETAEERECT(&rect, pMe->m_IconFocus_Pt[theFocus].x+dx, 
+                      pMe->m_IconFocus_Pt[theFocus].y, 
+                      ICON_ANIMATED_WIDTH, 
+                      ICON_ANIMATED_HEIGHT);
+    
+    MainMenu_DrawBackGround(pMe, &rect);
+    
+    if (pMe->m_pImageIcon[theFocus])
+    {
+        IIMAGE_Draw(pMe->m_pImageIcon[theFocus],
+                    pMe->m_Icondefault_Pt[theFocus].x+dx, 
+                    pMe->m_Icondefault_Pt[theFocus].y);
+    }
+    // 开始聚焦动画过程
+    SetCursor(pMe, row, column);
+    DrawFocusIconMove(pMe,dx);
+}
+
+static void MovePen(MainMenu * pMe,int dx)
+{
+	DrawMatrixMove(pMe,dx);
+	MoveCursoToMove(pMe,pMe->m_nRow,pMe->m_nColumn,dx);
+}
+
 /*=============================================================================
 FUNCTION:  SetCursor
 

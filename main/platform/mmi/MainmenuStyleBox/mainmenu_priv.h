@@ -44,14 +44,22 @@
 #define  MAX_MATRIX_ROWS 4
 #define  MAX_MATRIX_COLS 3
 #elif defined (FEATURE_DISP_240X320)
-#define  MAX_MATRIX_ITEMS 12
-#define  MAX_MATRIX_ROWS 4
-#define  MAX_MATRIX_COLS 3
+#define  MAX_MATRIX_ITEMS 9
+#define  MAX_MATRIX_ROWS  3
+#define  MAX_MATRIX_COLS  3
+#define  SELECT_ONE_X     70
+#define  SELECT_TWO_X     112
+#define  SELECT_THR_X     155
+#define  SELECT_Y         20
+#define  DX_MAIN_MOVE     5
+#define  MAIN_ICON_W      60
+#define  MAIN_ICON_H      60
 #elif defined (FEATURE_DISP_320X240)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 4
 #endif
+#define MAINMENU_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 
 /*==============================================================================
                                  
@@ -139,6 +147,14 @@ typedef struct _MainMenu
 #endif
 	IAnnunciator   *m_pIAnn;
     IBacklight     *m_pBacklight;
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+	IImage          *m_pImageSelect;
+	IImage          *m_pImageSelect_foucs;
+	uint16          m_nCurPage;
+	Point           m_IconSelect_Pt[3];
+	Point           m_Primove_Pt;
+	uint16          m_PenPos;
+#endif
 } MainMenu;
 
 /*==============================================================================
@@ -271,6 +287,10 @@ typedef struct _MainMenu
 #endif
 #endif
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+	#define ICON_SELECT          "fs:/image/mianment/select.png"
+	#define ICON_SELECT_FOCUS    "fs:/image/mianment/select_focus.png"
+#endif
 
 // 此宏用当前状态更新先前状态，再用nextState状态更新当前状态
 #define MOVE_TO_STATE(nextState)            \
