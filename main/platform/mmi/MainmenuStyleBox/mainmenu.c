@@ -106,12 +106,15 @@ static void DrawMatrix(MainMenu *pMe);
 static void DrawFocusIcon(MainMenu *pMe);
 static void MoveCursorTo(MainMenu *pMe, int row, int column);
 static void DrawMatrixBottom(MainMenu *pMe);
+static void DrawMatrixBottomStr(MainMenu *pMe);
+static void DrawMatrixStr(MainMenu *pMe);
 
 //移动后选中移动
 //移动后整个界面显示
 static void DrawMatrixMove(MainMenu *pMe,int dx);
 static void DrawFocusIconMove(MainMenu *pMe,int dx);
 static void MoveCursoToMove(MainMenu *pMe, int row, int column,int dx);
+static void DrawMatrixStr_Move(MainMenu *pMe,int dx);
 
 static void SetCursor(MainMenu *pMe, int row, int column);
 
@@ -466,6 +469,11 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
+
+	pMe->m_IconTitle[26]    = IDS_MAIN_MENU_CONTACTS;
+	pMe->m_IconTitle[27]    = IDS_MAIN_MENU_MESSAGES;
+	pMe->m_IconTitle[28]    = IDS_MAIN_MENU_MUSICPLAYER;
+	pMe->m_IconTitle[29]    = IDS_MAIN_MENU_GAMES;
     return SUCCESS;
 }
 
@@ -1410,7 +1418,11 @@ static void CalculateScreenParameters(MainMenu *pMe)
     uint16          iconSpaceHorizontal = 0;
     uint16          iconSpaceVertical   = 0;
     uint8           i                   = 0;
-
+	uint8           j                   = 0;
+	AEEImageInfo    BottomimageInfoIcon;
+	
+	BottomimageInfoIcon.cx = BOTTOM_ICON_WIDTH;
+	BottomimageInfoIcon.cy = BOTTOM_ICON_HEIGHT;
     //计算默认图片的坐标
     imageInfoIcon.cx = ICON_WIDTH;
     imageInfoIcon.cy = ICON_HEIGHT;
@@ -1447,6 +1459,12 @@ static void CalculateScreenParameters(MainMenu *pMe)
         pMe->m_IconFocus_Pt[i].y = pMe->m_Icondefault_Pt[i].y - (ICON_ANIMATED_HEIGHT- imageInfoIcon.cy)/2;
         //end added
     }
+	for(j = 0;j<MAX_BOTTOM_ITEMS;j++)
+	{
+		
+		pMe->m_IconButtom_pt[i].x = (BOTTOM_MID_SPACE*(i+1))+(i*BOTTOM_ICON_WIDTH);
+		pMe->m_IconButtom_pt[i].y = SCREEN_HEIGHT-BOTTOM_ICON_HEIGHT-20;
+	}
 	pMe->m_IconSelect_Pt[0].x = SELECT_ONE_X;
 	pMe->m_IconSelect_Pt[0].y = SELECT_Y;
 	pMe->m_IconSelect_Pt[1].x = SELECT_TWO_X;
@@ -1545,7 +1563,7 @@ static void DrawMatrix(MainMenu *pMe)
                         pMe->m_Icondefault_Pt[i].y);
         }
     }  
-    
+    DrawMatrixStr(pMe);
 	//Draw Bottom ICON
 	
     for(i = 0; i < MAX_BOTTOM_ITEMS;i++)
@@ -1559,14 +1577,98 @@ static void DrawMatrix(MainMenu *pMe)
         if (pMe->m_pImageIcon[i] != NULL)
         {
             IIMAGE_Draw(pMe->m_pImageIcon[i],
-                        pMe->m_Icondefault_Pt[i].x,
-                        pMe->m_Icondefault_Pt[i].y);
+                        pMe->m_IconButtom_pt[i].x,
+                        pMe->m_IconButtom_pt[i].y);
         }
-    }
-	
-    //BarParam.eBBarType = BTBAR_SELECT_BACK;
-    //DrawBottomBar(pMe->m_pDisplay, &BarParam);//wlh 20090412 add
+
+	}		
+	//Draw bottom string
+	DrawMatrixBottomStr(pMe);
 }
+static void DrawMatrixBottomStr(MainMenu *pMe)
+{
+	int i = 0;
+	int baseBottom = BASE_BOTTON_TITLE;
+	for(i=0;i<MAX_BOTTOM_ITEMS;i++)
+	{
+		uint16      nResID = 0;// 中
+    	AEERect     rc;
+		AECHAR      wszBottomstr[20]={0};
+		baseBottom = baseBottom + i;
+		(void) ISHELL_LoadResString(pMe->m_pShell,
+                                    MAINMENU_RES_FILE_LANG,
+                                    pMe->m_IconTitle[baseBottom],
+                                    wszBottomstr,
+                                    sizeof(wszBottomstr));
+		rc.x  = pMe->m_IconButtom_pt[i].x;
+		rc.y  = SCREEN_HEIGHT - 20;
+		rc.dx = BOTTOM_ICON_WIDTH;
+		rc.dy = 20;
+		(void) IDISPLAY_DrawText(pMe->m_pDisplay, 
+                    AEE_FONT_BOLD, 
+                    wszBottomstr, 
+                    -1, 
+                    0, 
+                    0, 
+                    &rc, 
+                    IDF_ALIGN_BOTTOM | IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);	
+	}
+}
+static void DrawMatrixStr(MainMenu *pMe)
+{
+	int i = 0;
+	for(i=0;i<MAX_MATRIX_ITEMS;i++)
+	{
+		uint16      nResID = 0;// 中
+    	AEERect     rc;
+		AECHAR      wszBottomstr[20]={0};
+		(void) ISHELL_LoadResString(pMe->m_pShell,
+                                    MAINMENU_RES_FILE_LANG,
+                                    pMe->m_IconTitle[i],
+                                    wszBottomstr,
+                                    sizeof(wszBottomstr));
+		rc.x  = pMe->m_Icondefault_Pt[i].x;
+		rc.y  = pMe->m_Icondefault_Pt[i].y+ICON_HEIGHT;
+		rc.dx = ICON_WIDTH;
+		rc.dy = 20;
+		(void) IDISPLAY_DrawText(pMe->m_pDisplay, 
+                    AEE_FONT_BOLD, 
+                    wszBottomstr, 
+                    -1, 
+                    0, 
+                    0, 
+                    &rc, 
+                    IDF_ALIGN_BOTTOM | IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);	
+	}
+}
+static void DrawMatrixStr_Move(MainMenu *pMe,int dx)
+{
+	int i = 0;
+	for(i=0;i<MAX_MATRIX_ITEMS;i++)
+	{
+		uint16      nResID = 0;// 中
+    	AEERect     rc;
+		AECHAR      wszBottomstr[20]={0};
+		(void) ISHELL_LoadResString(pMe->m_pShell,
+                                    MAINMENU_RES_FILE_LANG,
+                                    pMe->m_IconTitle[i],
+                                    wszBottomstr,
+                                    sizeof(wszBottomstr));
+		rc.x  = pMe->m_Icondefault_Pt[i].x+dx;
+		rc.y  = pMe->m_Icondefault_Pt[i].y+ICON_HEIGHT;
+		rc.dx = ICON_WIDTH;
+		rc.dy = 20;
+		(void) IDISPLAY_DrawText(pMe->m_pDisplay, 
+                    AEE_FONT_BOLD, 
+                    wszBottomstr, 
+                    -1, 
+                    0, 
+                    0, 
+                    &rc, 
+                    IDF_ALIGN_BOTTOM | IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);	
+	}
+}
+
 static void DrawMatrixBottom(MainMenu *pMe)
 {
 	
@@ -1603,6 +1705,7 @@ static void DrawMatrixMove(MainMenu *pMe,int dx)
                         pMe->m_Icondefault_Pt[i].y);
         }
     }  
+	DrawMatrixStr_Move(pMe,dx);
 }
 
 /*=============================================================================

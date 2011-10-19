@@ -55,6 +55,8 @@
 #define  MAIN_ICON_W      60
 #define  MAIN_ICON_H      60
 #define  MAX_BOTTOM_ITEMS 4
+#define  MAX_TITLEID_NUM  30
+#define  BASE_BOTTON_TITLE 26
 #elif defined (FEATURE_DISP_320X240)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 3
@@ -136,7 +138,7 @@ typedef struct _MainMenu
     IImage         *m_pAnimate;
     Point           m_Icondefault_Pt[MAX_MATRIX_ITEMS];
     Point           m_IconFocus_Pt[MAX_MATRIX_ITEMS];
-    uint16          m_IconTitle[MAX_MATRIX_ITEMS];
+    uint16          m_IconTitle[MAX_TITLEID_NUM];
     AEERect         m_rc;
     
     MainmenuState   m_prevState;        // Appletǰһ״̬
@@ -154,6 +156,7 @@ typedef struct _MainMenu
 	IImage          *m_pImageButtom[MAX_BOTTOM_ITEMS];
 	uint16          m_nCurPage;
 	Point           m_IconSelect_Pt[3];
+	Point           m_IconButtom_pt[MAX_BOTTOM_ITEMS];
 	Point           m_Primove_Pt;
 	uint16          m_PenPos;
 #endif
@@ -197,10 +200,13 @@ typedef struct _MainMenu
 #define ICON_ANIMATED_WIDTH     50 //40
 #define ICON_ANIMATED_HEIGHT    40 //32
 #elif defined (FEATURE_DISP_240X320)
-#define ICON_WIDTH              40
-#define ICON_HEIGHT             32
+#define ICON_WIDTH              60
+#define ICON_HEIGHT             60
 #define ICON_ANIMATED_WIDTH     40
 #define ICON_ANIMATED_HEIGHT    32
+#define BOTTOM_ICON_WIDTH       45
+#define BOTTOM_ICON_HEIGHT      45
+#define BOTTOM_MID_SPACE        11
 #elif defined (FEATURE_DISP_320X240)
 #define ICON_WIDTH              80
 #define ICON_HEIGHT             55
