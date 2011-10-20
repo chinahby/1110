@@ -138,7 +138,11 @@ typedef struct _MainMenu
     IImage         *m_pAnimate;
     Point           m_Icondefault_Pt[MAX_MATRIX_ITEMS];
     Point           m_IconFocus_Pt[MAX_MATRIX_ITEMS];
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
     uint16          m_IconTitle[MAX_TITLEID_NUM];
+	#else
+	uint16          m_IconTitle[MAX_MATRIX_ITEMS];
+	#endif
     AEERect         m_rc;
     
     MainmenuState   m_prevState;        // Appletǰһ״̬
