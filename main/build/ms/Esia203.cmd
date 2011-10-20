@@ -6,7 +6,8 @@
 @set RESOURCEDIR=Esia203
 @set MODELVERSION=%PROJECTNAME%_CAM_FM_V1.0
 @set HWVERSION=W203_MB_V0.6
-@set MODELBUILDTIME = 07/06/2011
+@set MODELBUILDTIME=07/06/2011
+@set SVNVERSION=4133
 
 rem delete some files for compile muslim or nasrani
 del %PROJECTNAME%\CoreAppDialogHandler.o
