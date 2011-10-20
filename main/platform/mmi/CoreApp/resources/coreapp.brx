@@ -190,6 +190,18 @@
 	<String Id="1064" Name="IDS_USERPROFILE_NOMAL">
 		<Text>normal mode activated</Text>
 	</String>
+	<String Id="1070" Name="IDS_STR_TOUCH_ONE">
+		<Text>Messages</Text>
+	</String>
+	<String Id="1071" Name="IDS_STR_TOUCH_TWO">
+		<Text>Contacts</Text>
+	</String>
+	<String Id="1072" Name="IDS_STR_TOUCH_TRE">
+		<Text>Musicplayer</Text>
+	</String>
+	<String Id="1073" Name="IDS_STR_TOUCH_FUR">
+		<Text>Scheduler</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_UIMERR" Focus="7001">

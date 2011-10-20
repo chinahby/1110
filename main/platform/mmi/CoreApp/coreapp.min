@@ -20,7 +20,7 @@ vpath %.brx $(COREAPP_RES)
 vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
 vpath %.jpg $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
 vpath %.gif $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
-vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/common/BlackBerry
+vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/common/core
 
 CONSTFILE_FILES+=\
 	coreapp.mif|fs:/mif/coreapp.mif \
@@ -158,6 +158,17 @@ ifeq ($(USES_BLACKBERRY),yes)
 		#PR_SL.png|fs:/image/BlackBerry/PR_SL.png \
 		#PR_MT.png|fs:/image/BlackBerry/PR_MT.png \
 		#PR_OT.png|fs:/image/BlackBerry/PR_OT.png
+endif
+ifeq ($(USES_LCD_TOUCH),yes)
+	CONSTFILE_FILES+=\
+		messages.png|fs:/image/core/messages.png \
+		messages_sel.png|fs:/image/core/messages_sel.png \
+		contact.png|fs:/image/core/contact.png \
+		contact_sel.png|fs:/image/core/contact_sel.png \
+		calendar.png|fs:/image/core/calendar.png \
+		calendar_sel.png|fs:/image/core/calendar_sel.png \
+		mediaplayer.png|fs:/image/core/mediaplayer.png \
+		mediaplayer_sel.png|fs:/image/core/mediaplayer_sel.png
 endif
 
 # 加入另外一种语言资源文件

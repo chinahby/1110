@@ -220,6 +220,7 @@ void CoreApp_FreeAppData(IApplet* po)
 {
     CCoreApp *pMe = (CCoreApp*)po;
 	int i=0;
+	int j = 0;
     FREEIF(pMe->m_pADNName);
     FREEIF(pMe->m_pADNNumber);
     if (pMe->m_pIAnn) 
@@ -365,6 +366,25 @@ void CoreApp_FreeAppData(IApplet* po)
             }
         }
 #endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#ifdef FEATURE_DISP_240X320
+	for(j=0;j<IDLE_TOUCH_ITEMMAX;j++)
+	{
+		if(pMe->m_pImageTouchIcon[j]!=NULL)
+		{
+			(void)IIMAGE_Release(pMe->m_pImageTouchIcon[j]);
+            pMe->m_pImageTouchIcon[j] = NULL;
+		}
+		if(pMe->m_pImageTouchSelIcon[j]!=NULL)
+		{
+			(void)IIMAGE_Release(pMe->m_pImageTouchSelIcon[j]);
+            pMe->m_pImageTouchSelIcon[j] = NULL;
+		}
+	}
+#else
+#endif
+#endif
+
 } /* End CoreApp_FreeAppData */
 
 
@@ -533,6 +553,19 @@ boolean CoreApp_InitAppData(IApplet* po)
 	pMe->m_pImageIcon[3] = NULL;
 	pMe->m_pImageIcon[4] = NULL;
 	pMe->m_pImageIcon[5] = NULL;
+#endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#ifdef FEATURE_DISP_240X320
+	pMe->m_pImageTouchIcon[0] = NULL;
+	pMe->m_pImageTouchIcon[1] = NULL;
+	pMe->m_pImageTouchIcon[2] = NULL;
+	pMe->m_pImageTouchIcon[3] = NULL;
+	pMe->m_pImageTouchSelIcon[0] = NULL; 
+	pMe->m_pImageTouchSelIcon[1] = NULL; 
+	pMe->m_pImageTouchSelIcon[2] = NULL; 
+	pMe->m_pImageTouchSelIcon[3] = NULL; 
+#else
+#endif
 #endif
 	pMe->m_IsSametime = FALSE;
     pMe->m_pADNName = NULL;

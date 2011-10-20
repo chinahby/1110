@@ -346,6 +346,33 @@
 #endif //#ifdef FEATURE_USES_LOWMEM
 
 #define IDS_CORE_DISPADN        0xFFFE
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#ifdef FEATURE_DISP_240X320
+#define    IDLE_TOUCH_ITEMMAX                 4
+#define    IDLE_TOUCH_DRAWDX             	  45
+#define    IDLE_TOUCH_DRAWDY                  45
+#define    IDLE_TOUCH_1                       "fs:/image/BlackBerry/messages.png"
+#define    IDLE_TOUCH_SEL_1                   "fs:/image/BlackBerry/messages_sel.png"
+#define    IDLE_TOUCH_2                       "fs:/image/BlackBerry/contact.png"
+#define    IDLE_TOUCH_SEL_2                   "fs:/image/BlackBerry/contact_sel.png"
+#define    IDLE_TOUCH_3                       "fs:/image/BlackBerry/alarm.png"
+#define    IDLE_TOUCH_SEL_3                   "fs:/image/BlackBerry/alarm_sel.png"
+#define    IDLE_TOUCH_4                       "fs:/image/BlackBerry/calendar.png"
+#define    IDLE_TOUCH_SEL_4                   "fs:/image/BlackBerry/calendar_sel.png"
+#else
+#define    IDLE_TOUCH_ITEMMAX                 4
+#define    IDLE_TOUCH_DRAWDX                  45
+#define    IDLE_TOUCH_DRAWDY                  45
+#define    IDLE_TOUCH_1                       "fs:/image/core/messages.png"
+#define    IDLE_TOUCH_SEL_1                   "fs:/image/core/messages_sel.png"
+#define    IDLE_TOUCH_2                       "fs:/image/core/contact.png"
+#define    IDLE_TOUCH_SEL_2                   "fs:/image/core/contact_sel.png"
+#define    IDLE_TOUCH_3                       "fs:/image/core/alarm.png"
+#define    IDLE_TOUCH_SEL_3                   "fs:/image/core/alarm_sel.png"
+#define    IDLE_TOUCH_4                       "fs:/image/core/calendar.png"
+#define    IDLE_TOUCH_SEL_4                   "fs:/image/core/calendar_sel.png"
+#endif
+#endif
 #ifdef FEATURE_USES_BLACKBERRY
 #define    IDLE_BLACKBERRY_ITEMMAX                 6
 #ifdef FEATURE_DISP_160X128
@@ -798,8 +825,15 @@ typedef struct _CCoreApp
 	uint8               m_CurMainItems;    //当前主菜单ITEMS
 	IImage              *m_pImageIcon[IDLE_BLACKBERRY_ITEMMAX];
 	IImage              *m_pImageSelIcon[IDLE_BLACKBERRY_ITEMMAX];
-	
 	#endif
+	
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#ifdef FEATURE_DISP_240X320
+	IImage              *m_pImageTouchIcon[IDLE_TOUCH_ITEMMAX];
+	IImage              *m_pImageTouchSelIcon[IDLE_TOUCH_ITEMMAX];
+#else
+#endif
+#endif
 	//wangliang add!
 	byte                m_active;
 	byte                m_CurProfile;      //当前情景模式

@@ -326,6 +326,10 @@ static void CoreApp_DrawWallPaper(CCoreApp *pMe);
 static void CoreApp_DrawBlackBerry_IDLE(CCoreApp *pMe);
 static void CoreApp_InitdataBlackBerry(CCoreApp *pMe);
 #endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe);
+static void CoreApp_InitdataTouch(CCoreApp *pMe);
+#endif
 static boolean CoreApp_LaunchApplet(CCoreApp *pMe,  AEECLSID   classID);
 
 //static void CoreApp_UpdateAnnunciator(CCoreApp *pMe);
@@ -1230,9 +1234,9 @@ static boolean  IDD_LPM_Handler(void       *pUser,
 			{
 				// 在此完成闹钟的开机初始化。初始化过程只需执行一次
           		static boolean bNotInitedAlarmLPM = TRUE;
-            //IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
-            ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
-            //Add By zzg 2010_08_11之前是注释着的
+            	//IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn,AEECLSID_DISPLAY1,FALSE);
+            	ISHELL_PostEvent(pMe->a.m_pIShell,AEECLSID_CORE_APP,EVT_USER_REDRAW,0,0);
+            	//Add By zzg 2010_08_11之前是注释着的
 				if (bNotInitedAlarmLPM)
           		{
 #ifdef FEATURE_UIALARM
@@ -2827,8 +2831,12 @@ static void CoreApp_ImageNotify(void *po, IImage *pIImage, AEEImageInfo *pii, in
         // 绘制当前日期、时间信息
         CoreApp_UpdateDateTime(pMe);
         #ifndef FEATURE_USES_BLACKBERRY
-        CoreApp_UpdateBottomBar(pMe);//didn't display the sos and key lock icon at the same time
-        #else
+			#ifdef FEATURE_LCD_TOUCH_ENABLE
+			CoreApp_DrawTouch_IDLE(pMe);
+			#else
+	        CoreApp_UpdateBottomBar(pMe);//didn't display the sos and key lock icon at the same time
+			#endif
+		#else
         MSG_FATAL("CoreApp_DrawBlackBerry_IDLE...........", 0, 0,0);
         if(OEMKeyguard_IsEnabled())
         {
@@ -2917,8 +2925,11 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATRUE_SUPPORT_G_SENSOR
             dword shake;
 #endif
-			#ifdef FEATURE_USES_BLACKBERRY
+#ifdef FEATURE_USES_BLACKBERRY
             CoreApp_InitdataBlackBerry(pMe);
+#endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+			CoreApp_InitdataTouch(pMe);
 #endif
 #ifndef CUST_EDITION
             if(!((MMI_GSENSOR_SHAKE_OPEN == mmi_g_sensor_state) 
@@ -5945,17 +5956,6 @@ static void CoreApp_DrawBlackBerry_IDLE(CCoreApp *pMe)
                                             Resid,
                                             szBlackBerryName,
                                             AEE_MAX_FILE_NAME);
-    MSG_FATAL("CoreApp_DrawBlackBerry_IDLE..................",0,0,0);
-    /*
-    	IDISPLAY_DrawText(pMe->m_pDisplay, 
-                        AEE_FONT_BOLD, 
-                        szBlackBerryName,
-                        -1, 
-                        0, 
-                        Draw_y - 20, 
-                        NULL, 
-                        IDF_ALIGN_CENTER|IDF_TEXT_TRANSPARENT);
-                        */
                                           
      (void)DrawTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
@@ -5984,6 +5984,66 @@ static void CoreApp_InitdataBlackBerry(CCoreApp *pMe)
 	pMe->m_pImageSelIcon[5] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_BLACKBERRY_SEL_6);
 }
 
+#endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
+{
+	pMe->m_pImageTouchIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_1);
+	pMe->m_pImageTouchIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_1);
+	pMe->m_pImageTouchIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_2);
+	pMe->m_pImageTouchIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_2);
+	pMe->m_pImageTouchSelIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_3); 
+	pMe->m_pImageTouchSelIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_3); 
+	pMe->m_pImageTouchSelIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_4); 
+	pMe->m_pImageTouchSelIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_4); 
+}
+static void CoreApp_InitdataTouch(CCoreApp *pMe)
+{
+	AEEImageInfo   ImgInfo;
+	AEERect oldClip;
+    AEERect clip;
+    AECHAR        szBlackBerryName[AEE_MAX_FILE_NAME] = {0};
+    //char               szNewBlackBerryName[AEE_MAX_FILE_NAME/*FILESPECLEN*/];
+    int i = 0;
+    uint8 Draw_x = 0;
+    uint8 Draw_y = SCREEN_HEIGHT - IDLE_TOUCH_DRAWDX - 40;
+    uint16 Resid = 0;//IDS_STR_TOUCH_ONE;
+     //int                    nX = 0,  nY = 0;
+    if ( (NULL == pMe) || (IDD_IDLE != pMe->m_wActiveDlgID) )
+    {
+        return;
+    }
+    if(pWallPaper != NULL)
+    {
+    	AEEImageInfo m_ImageInfo;
+		IImage_GetInfo(pWallPaper,&m_ImageInfo);
+		MSG_FATAL("m_ImageInfo.cx=%d, m_ImageInfo.cy=%d", m_ImageInfo.cx, m_ImageInfo.cy, 0);
+        SETAEERECT(&clip, 0, Draw_y-20, SCREEN_WIDTH, IDLE_TOUCH_DRAWDY+20); 
+        IDISPLAY_GetClipRect( pMe->m_pDisplay, &oldClip);
+        IDISPLAY_SetClipRect( pMe->m_pDisplay, &clip);
+        MSG_FATAL("clip.x=%d, clip.y=%d,pMe->m_rc.dx=%d", clip.x, clip.y, pMe->m_rc.dx);
+        IIMAGE_SetOffset( pWallPaper, ( m_ImageInfo.cx -  SCREEN_WIDTH)/2,(Draw_y-20)-( pMe->m_rc.dy - m_ImageInfo.cy)/2);
+        //IIMAGE_SetOffset( pWallPaper, 0,MUSIC_WIDTH);
+        MSG_FATAL("clip.dx=%d, clip.dy=%d", clip.dx, clip.dy, 0);
+		MSG_FATAL("pMe->m_rc.dy=%d", pMe->m_rc.dy,0,0);
+        IIMAGE_SetDrawSize( pWallPaper, clip.dx,clip.dy);
+        IIMAGE_Draw( pWallPaper, 0,Draw_y-20);
+        IDISPLAY_SetClipRect( pMe->m_pDisplay,&oldClip);
+        IIMAGE_SetOffset( pWallPaper, 0,0);
+        //IIMAGE_SetDrawSize( pWallPaper, pMe->m_rc.dx,pMe->m_rc.dy);
+        IIMAGE_SetDrawSize( pWallPaper, m_ImageInfo.cx,m_ImageInfo.cy);
+        
+		
+    }
+    MEMSET( &ImgInfo, 0x00, sizeof(ImgInfo) );
+	for(i=0;i<IDLE_TOUCH_ITEMMAX;i++)
+	{
+ 		IImage_GetInfo(pMe->m_pImageTouchSelIcon[i],&ImgInfo);
+    	IIMAGE_Draw(pMe->m_pImageTouchIcon[i],
+	                    Draw_x, 
+	                    Draw_y);
+    }
+}
 #endif
 
 /*==============================================================================
