@@ -1996,7 +1996,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			}
 			return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 		}
-		#endif
+#endif
 #endif//FEATURE_LCD_TOUCH_ENABLE
 
 		case EVT_NOTIFY:
