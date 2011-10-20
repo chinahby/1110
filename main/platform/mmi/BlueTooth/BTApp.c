@@ -1968,13 +1968,13 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			
             return TRUE;
         }	
-#ifndef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 		case EVT_PEN_UP:
 		//case EVT_PEN_DOWN:
 		{
 			return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 		}
-
+#if 0
 		case EVT_USER:
 		{
 			if ((wParam == AVK_SELECT) || (wParam == AVK_INFO))
@@ -1996,6 +1996,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			}
 			return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 		}
+		#endif
 #endif//FEATURE_LCD_TOUCH_ENABLE
 
 		case EVT_NOTIFY:
