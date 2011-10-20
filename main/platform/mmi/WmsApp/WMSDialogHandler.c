@@ -16602,8 +16602,10 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 AECHAR *pFormatedText = NULL;
                 AECHAR wszTitle[32] = {0};
                 MMSData mmsDataInfoList[MAX_MMS_STORED];
-                WSP_MMS_DATA pContent = {0};
-                MMS_WSP_DEC_DATA decdata = {0};
+                //WSP_MMS_DATA pContent = {0};
+                //MMS_WSP_DEC_DATA decdata = {0};
+                WSP_MMS_DATA *pContent = NULL;
+                MMS_WSP_DEC_DATA *pDecdata = &pMe->m_DecData;
                 uint8* pImage = NULL;
                 char* pMimeType = NULL;
                 
@@ -16617,7 +16619,9 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 void* pBuffer = NULL;
                 int nTitleName = 0;
                 int nMmsDataInfo = 0;
-                
+
+                MEMSET((void*)&pDecdata->message,NULL,sizeof(MMS_WSP_DEC_MESSAGE_RECEIVED));
+                pContent = &pDecdata->message.mms_data;
                 switch(pMe->m_eMBoxType)
                 {
                     case WMS_MB_OUTBOX_MMS:
@@ -16678,20 +16682,20 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 	            IFILEMGR_Release(pIFileMgr);
 	            pIFileMgr = NULL;
                
-                result = WMS_MMS_PDU_Decode(&decdata,(uint8*)pBuffer,mmsDataInfoList[pMe->m_wCurindex-1].MMSDatasize, &ePDUType);
+                result = WMS_MMS_PDU_Decode(pDecdata,(uint8*)pBuffer,mmsDataInfoList[pMe->m_wCurindex-1].MMSDatasize, &ePDUType);
               
-                MSG_FATAL("IDD_VIEWMSG_MMS_Handler result=%d, frag_num=%d, pMe->m_wCurindex=%d", result, decdata.message.mms_data.frag_num, pMe->m_wCurindex);
-                for(; index < decdata.message.mms_data.frag_num; index++)
+                MSG_FATAL("IDD_VIEWMSG_MMS_Handler result=%d, frag_num=%d, pMe->m_wCurindex=%d", result, pDecdata->message.mms_data.frag_num, pMe->m_wCurindex);
+                for(; index < pDecdata->message.mms_data.frag_num; index++)
                 {
-                    if(STRISTR((char*)(decdata.message.mms_data.fragment[index].hContentType), "text/"))
+                    if(STRISTR((char*)(pDecdata->message.mms_data.fragment[index].hContentType), "text/"))
                     {
-                        rSize = decdata.message.mms_data.fragment[index].size+1;
-                        MSG_FATAL("index=%d,hContentType=%s",index,(char*)(decdata.message.mms_data.fragment[index].hContentType),0);
+                        rSize = pDecdata->message.mms_data.fragment[index].size+1;
+                        MSG_FATAL("index=%d,hContentType=%s",index,(char*)(pDecdata->message.mms_data.fragment[index].hContentType),0);
                         pFormatedText = (AECHAR *)MALLOC((rSize*sizeof(AECHAR)));
                         MEMSET((void*)pFormatedText, L'\0', rSize*sizeof(AECHAR));
                         MSG_FATAL("size=%d", rSize,0,0);
-                        DBGPRINTF("pContent=%s", decdata.message.mms_data.fragment[index].pContent);
-                        UTF8TOWSTR((byte*)decdata.message.mms_data.fragment[index].pContent,rSize, pFormatedText, rSize*sizeof(AECHAR));
+                        DBGPRINTF("pContent=%s", pDecdata->message.mms_data.fragment[index].pContent);
+                        UTF8TOWSTR((byte*)pDecdata->message.mms_data.fragment[index].pContent,rSize, pFormatedText, rSize*sizeof(AECHAR));
                         DBGPRINTF("pContent=%S", pFormatedText);
 
                         if (NULL != pFormatedText)
@@ -16710,16 +16714,16 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         }
                         //break;
                     }
-                    else if(pMimeType = MMS_WSP_MineType2MormalMimeType((const char*)decdata.message.mms_data.fragment[index].hContentType))
+                    else if(pMimeType = MMS_WSP_MineType2MormalMimeType((const char*)pDecdata->message.mms_data.fragment[index].hContentType))
                     {
                         if(STRISTR(pMimeType, IMAGE_MIME_BASE))
                         {                        
                             if(nImageIndex++ == s_nImageIndex)
                             {
-                                rSize = decdata.message.mms_data.fragment[index].size;
+                                rSize = pDecdata->message.mms_data.fragment[index].size;
                                 pImage = (uint8 *)MALLOC((rSize*sizeof(uint8)));
                                 MEMSET((void*)pImage, NULL, rSize*sizeof(uint8));
-                                MEMCPY(pImage,(void*)decdata.message.mms_data.fragment[index].pContent , rSize);
+                                MEMCPY(pImage,(void*)pDecdata->message.mms_data.fragment[index].pContent , rSize);
                             }
                             
                             if(NULL != pImage)
@@ -16735,7 +16739,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 
                                     cls = ISHELL_GetHandler(pMe->m_pShell,
                                         HTYPE_VIEWER,
-                                        (char*)(decdata.message.mms_data.fragment[index].hContentType));
+                                        (char*)(pDecdata->message.mms_data.fragment[index].hContentType));
 
                                     if(!ISHELL_CreateInstance(pMe->m_pShell,cls,(void**)&pIImage))
                                     {
@@ -16768,16 +16772,16 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     else
                     {
                         AECHAR menuItemName[100] = {0};
-                        STRTOWSTR((char*)decdata.message.mms_data.fragment[index].hContentName,
+                        STRTOWSTR((char*)pDecdata->message.mms_data.fragment[index].hContentName,
                             menuItemName,
-                            STRLEN((char*)decdata.message.mms_data.fragment[index].hContentName));
+                            STRLEN((char*)pDecdata->message.mms_data.fragment[index].hContentName));
                             
                         IMENUCTL_AddItem(pListCtl,
                             NULL,
                             0,
                             0,
                             menuItemName,
-                            (uint32)decdata.message.mms_data.fragment[index].pContent);
+                            (uint32)pDecdata->message.mms_data.fragment[index].pContent);
 
                        IMENUCTL_SetActive(pListCtl,TRUE);
                     }

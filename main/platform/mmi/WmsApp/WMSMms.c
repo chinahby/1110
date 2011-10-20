@@ -1507,7 +1507,7 @@ void WMS_MMS_MmsWspDecDataRelease(MMS_WSP_DEC_DATA** ppdata,Mms_pdu_types nDataT
         };
         FREEIF(pdata->message.hBody);        
     }
-    FREEIF(pdata);
+    //FREEIF(pdata);
 }
 
 boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)

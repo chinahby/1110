@@ -1679,17 +1679,16 @@ Exit:
 #ifdef FEATURE_USES_MMS
         case EVT_MMS_PDUDECODE:
         {
-            MMS_WSP_DEC_DATA *pDecData = (MMS_WSP_DEC_DATA*)sys_malloc(sizeof(MMS_WSP_DEC_DATA));
+            MMS_WSP_DEC_DATA *pDecData = &pMe->m_DecData;
             int body_len = wParam;
             uint8* pBody = (uint8*)dwParam;
             uint8 nResult = SUCCESS;
             char *strAddr = (char*)MALLOC(100);
             uint8 ePDUType;
-            MMS_WSP_ENCODE_SEND* sendData = MALLOC(sizeof(MMS_WSP_ENCODE_SEND));
+            MMS_WSP_ENCODE_SEND* sendData = &pMe->m_EncData;
 
             if(body_len == 0 || pBody == NULL)
             {
-                FREEIF(pDecData);
                 break;
             }
             MSG_FATAL("EVT_MMS_PDUDECODE body_len:%d",body_len,0,0);
@@ -1952,9 +1951,7 @@ Exit:
                             WMS_MMSState(WMS_MMS_PDU_MNotifyrespInd,0,(uint32)sendData);
                         }
                         pMe->m_isMMSNotify = FALSE;
-                        MSG_FATAL("[MMS_PDU_NOTIFICATION_IND] WMS_MMS_MmsWspDecDataRelease 1",0,0,0);
                         WMS_MMS_MmsWspDecDataRelease(&pDecData,ePDUType);
-                        MSG_FATAL("[MMS_PDU_NOTIFICATION_IND] WMS_MMS_MmsWspDecDataRelease 2",0,0,0);
                     }
                     break;
                     default:
@@ -1968,10 +1965,7 @@ Exit:
             {
                 MSG_FATAL("WMS_MMS_PDU_Decode nResult = %d",nResult,0,0);
             }
-            MSG_FATAL("WMS_MMS_PDU_Decode FREEIF((void*)pBody)",0,0,0);
-            //FREEIF((void*)pBody);
             WMSAPPU_SYSFREE(pMe->m_pMsgEvent);
-            MSG_FATAL("WMS_MMS_PDU_Decode nResult = WMSAPPU_SYSFREE(pMe->m_pMsgEvent)",0,0,0);
             
             return TRUE;
         }
