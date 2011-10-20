@@ -40,7 +40,7 @@
 #define MMS_DELREP_STATUS_FLAG_NOCHK 0x0008
 
 #define	MMS_STANDARD_PROGRESS 10
-
+#define MMS_VALUE_USELESSNESS -1
 #define MMS_MAX_RECEIVED_MMS_PDU_SIZE (300*1024)
 #define MMS_MAX_RECEIVED_MMS_CONTENT_SIZE (300*1024)
 
@@ -132,6 +132,15 @@ typedef enum _mms_pdu_types
 
 typedef enum
 {
+    WMS_PDU_STATUS_Expired,
+    WMS_PDU_STATUS_Retrieved,
+    WMS_PDU_STATUS_Rejected,
+    WMS_PDU_STATUS_Deferred,
+    WMS_PDU_STATUS_Unrecognised
+    
+}WMS_PDU_STATUS_TYPES;
+typedef enum
+{
     WMS_MMS_PDU_MSendReq,
     WMS_MMS_PDU_MSendConf,
     WMS_MMS_PDU_MNotificationInd,
@@ -139,6 +148,7 @@ typedef enum
     WMS_MMS_PDU_MRetrieveConf,
     WMS_MMS_PDU_MAcknowledgeInd,
     WMS_MMS_PDU_MDeliveryInd,
+    WMS_MMS_PDU_WSPHTTPGETreq,
 }WMS_MMS_PDU_MessageTypeValue;
 
 typedef enum _mms_core_ans_
@@ -169,6 +179,36 @@ typedef enum _mms_core_ans_
 	MMC_CORE_ANSs
 }MMS_CORE_RET;
 
+typedef enum
+{
+    MMS_RESPONSE_OK,
+    
+    // Errors:
+    //Error-unspecified
+    MMS_RESPONSE_UNSPECIFIED,
+
+    //Error-service-denied
+    MMS_RESPONSE_SERVICCEDENIED,
+
+    //Error-message-format-corrupt
+    MMS_RESPONSE_MSGFORMATCORRUPT,
+
+    //Error-sending-address-unresolved
+    MMS_RESPONSE_SENDINGADDRUNRESOLVED,
+
+    //Error-message-not-found
+    MMS_RESPONSE_MSGNOTFOUND,
+
+    //Error-network-problem
+    MMS_RESPONSE_NETWORK_PROBLEM,
+
+    //Error-content-not-accepted
+    MMS_RESPONSE_CONTENTNOTACCEPTED,
+
+    //Error-unsupported-message
+    MMS_RESPONSE_UNSUPPORTEDMSG
+} MMS_RESPONSE_STATUS;
+
 typedef enum _mms_priorty_
 {
 	MMS_PRIORITY_HIGH = 0,
@@ -183,6 +223,12 @@ typedef enum _mms_message_class_
 	MMS_CLASS_IMFORMATIONAL,
 	MMS_CLASS_AUTO
 }MMS_MESSAGECLASS;
+
+typedef enum _mms_from_field_ 
+{
+    ADDRESS_PRESENT,
+    INSERT_ADDRESS
+}MMS_FROM_FIELD;
 
 typedef enum _mms_deliveryRep_
 {
@@ -217,6 +263,7 @@ typedef enum _mms_message_image_type_
 	MMS_MESSAGE_UNKNOW
 }MMS_MESSAGE_IMAGE_TYPE;
 
+    
 typedef struct _wsp_decoder_data_fragment_
 {
 	uint8 hContentType[MMS_MAX_CONTENT_TYPE];//¿‡–Õ
@@ -388,9 +435,9 @@ typedef struct _wsp_encoder_data_message_send
 
 typedef struct _wsp_encoder_data_send
 {
-    MMS_WSP_MESSAGE_SEND                message;
-    MMS_WSP_ENC_NOTIFY_RESP             notifyresp;
-    MMS_WSP_ENC_DELIVERY_ACKNOWLEDGEMENT deliveryacknowledgement;
+    MMS_WSP_MESSAGE_SEND                *pMessage;
+    MMS_WSP_ENC_NOTIFY_RESP             *pNotifyresp;
+    MMS_WSP_ENC_DELIVERY_ACKNOWLEDGEMENT *pDeliveryacknowledgement;
 }MMS_WSP_ENCODE_SEND;
 
 typedef union _wsp_decoder_data_
@@ -431,9 +478,13 @@ typedef enum _HTTP_METHOD_TYPE_
 
 typedef enum _WTP_PDU_ClientTransaction_
 {
+    WTP_PDU_NOT_ALLOWED,
     WTP_PDU_INVOKE,
     WTP_PDU_RESULT,
-    WTP_PDU_ACK
+    WTP_PDU_ACK,
+    WTP_SEGMENT_INVOKE,
+    WTP_SEGMENT_RESULT,
+    WTP_NEGATIVE_ACK
 }WTP_PDU_ClientTransaction;
 
 typedef struct tag_MSocket
@@ -452,10 +503,12 @@ typedef struct tag_MSocket
     uint16 nODataLen;
     uint8* pOData;
     int nState;
-    char pAddr[100];
-    
+
+    int16 wParam;
+    uint32 dwParam;
     AEEDNSResult DNSResult;
     AEECallback DNSCallback;
+    uint32 nError;
 }MMSSocket;
 
 
@@ -468,9 +521,11 @@ The newly-created socket object is returned as an out parameter
 
 \return ETrue if a new socket is created
 */
-boolean  MMSSocketNew (MMSSocket **pps, uint16 nType,char* pAddr);
-boolean  MMSSocketClose(MMSSocket **pps);
-boolean  MMSSocketConnect (MMSSocket *ps, char *pszServer, uint16 nPort);
+void WMS_MMSState(int nState,int16 wParam,uint32 dwParam);
+
+//boolean  MMSSocketNew (MMSSocket **pps, uint16 nType);
+//boolean  MMSSocketClose(MMSSocket **pps);
+//boolean  MMSSocketConnect (MMSSocket *ps, char *pszServer, uint16 nPort);
 
 /**
 This function is used to send data over the socket. It is an asynchronous function call,
@@ -486,8 +541,8 @@ with the success or failure of the sending operation being notified via the sock
 
 \return Whether the send request was accepted
 */
-boolean  MMSSocketSend (MMSSocket *ps, const uint8 *pBuf, uint16 nLen);
-boolean  MMSSocketRecv (MMSSocket *ps, uint8 *pBuf, uint16 *pLen);
+//boolean  MMSSocketSend (MMSSocket *ps, const uint8 *pBuf, uint16 nLen);
+//boolean  MMSSocketRecv (MMSSocket *ps, uint8 *pBuf, uint16 *pLen);
 //////////////////////////////////////////////////////////////////////////////
 int MMS_PDU_PutMessageClass(int in_MessageClass, int* out_MessageClass);
 int MMS_PDU_PutDeliveryReport(int in_DelRep, boolean* out_DelRep);
@@ -495,8 +550,8 @@ int MMS_PDU_PutPriority(int in_priority, int* out_priority);
 int MMS_PDU_PutDeliveryReportStatus(int in_Status, int* out_Status);
 int WMS_MMS_SEND_TEST(uint8 *buffer, char* sendNumber);
 int WMS_MMS_Decode_TEST(char *file);
-int WMS_MMS_SEND_PDU(HTTP_METHOD_TYPE type,uint8* hPDU, int hLen);
-int WMS_MMS_PDU_Encode(MMS_WSP_MESSAGE_SEND* encdata,uint8* hPDU, int* hLen, uint8 ePDUType);
+int WMS_MMS_SEND_PDU(WMS_MMS_PDU_MessageTypeValue type,uint8* hPDU,MMS_WSP_ENCODE_SEND* pData);
+int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType);
 int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8* ePDUType);
 int WMS_MMS_WSP_DecodeMessage(uint8* pData, int iDataLen,  WSP_MMS_DATA* pContent);
 
@@ -505,8 +560,5 @@ int WMS_MMS_CreateSMIL(uint8 *out_buf,int buf_size,WSP_MMS_ENCODE_DATA data);
 
 boolean MMS_GetProxySettings(boolean *bUseProxy,char* hProxyHost, int* iProxyPort);
 boolean MMS_SetProxySettings(boolean bUseProxy,char* hProxyHost, int iProxyPort);
-#ifdef FEATURE_USES_MMS
-WSP_MMS_ENCODE_DATA *MMS_GetMMSData();
-void MMS_ResetMMSData();
-#endif
+
 #endif

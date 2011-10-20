@@ -6910,8 +6910,9 @@ static boolean IDD_SENDING_Handler(void *pUser,
 #ifdef FEATURE_USES_MMS
                 if(pMe->m_isMMS)    
                 {
-                    MSG_FATAL("MMS_GetSocketReadStatus()=%d",MMS_GetSocketReadStatus(),0,0);
-                    if(MMS_GetSocketReadStatus() == HTTP_CODE_OK)
+                    //MSG_FATAL("MMS_GetSocketReadStatus()=%d",MMS_GetSocketReadStatus(),0,0);
+                    //if(MMS_GetSocketReadStatus() == HTTP_CODE_OK)
+                    if(pMe->m_SendStatus == HTTP_CODE_OK)
                     {
                         nResID = IDS_MSGSENT;
                     }
@@ -7843,7 +7844,27 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSpszPath, sizeof(MMSpszPath));
                                 ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSpszPath, sizeof(MMSpszPath));    */
                                 
-                                MMS_SocketTest(pItem->m_szTo);
+                                //MMS_SocketTest(pItem->m_szTo);
+								
+                                uint8 len = 0;
+                                if(NULL == pMe->m_EncData.pMessage)
+                                {
+                                    pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+                                    MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
+                                }
+                                
+                                MEMCPY((char*)pMe->m_EncData.pMessage->hTo,pItem->m_szTo,STRLEN((char*)pItem->m_szTo));
+                                WSTRTOSTR(pItem->m_szTo,(char*)pMe->m_EncData.pMessage->hTo,MMS_MAX_SINGLE_ADDRESS_SIZE);
+                                pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
+                                pMe->m_EncData.pMessage->iDate = MMS_VALUE_USELESSNESS;
+                                pMe->m_EncData.pMessage->iPriority = MMS_VALUE_USELESSNESS;
+                                pMe->m_EncData.pMessage->bSenderVisibility = MMS_VALUE_USELESSNESS;
+                                pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
+                                pMe->m_EncData.pMessage->iExpiry = MMS_VALUE_USELESSNESS;
+                                pMe->m_EncData.pMessage->iDeliveryTime = MMS_VALUE_USELESSNESS;
+                                
+                                
+                                WMS_MMSState(WMS_MMS_PDU_MSendReq,0,(uint32)&pMe->m_EncData);
                             }
                             //return TRUE;
 #endif
@@ -10122,10 +10143,18 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                             MSG_FATAL("IDD_WRITEMSG_Handler len=%d",len,0,0);
                             if (len>0)
                             {
-                            	WSP_MMS_ENCODE_DATA *mms_data = MMS_GetMMSData();
+                                WSP_MMS_ENCODE_DATA *mms_data = NULL;
                                 char mmsTextData[MMS_MAX_TEXT_SIZE+1] = {0};
+                                if(NULL == pMe->m_EncData.pMessage)
+                                {
+                                    MSG_FATAL("IDD_WRITEMSG_Handler pMe->m_EncData.pMessage MALLOC",0,0,0);
+                                    pMe->m_EncData.pMessage = MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+                                    MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
+                                }
+                                    
+                            	mms_data = &pMe->m_EncData.pMessage->mms_data;
+                                
                                 MSG_FATAL("mms_data->frag_num=%d",mms_data->frag_num,0,0);
-                                MMS_ResetMMSData();
                                 MSG_FATAL("mms_data->frag_num=%d",mms_data->frag_num,0,0);
                                 WSTRTOSTR(pwstrText, mmsTextData, MMS_MAX_TEXT_SIZE+1);                        
                                 len = STRLEN(mmsTextData);
@@ -16662,7 +16691,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         MEMSET((void*)pFormatedText, L'\0', rSize*sizeof(AECHAR));
                         MSG_FATAL("size=%d", rSize,0,0);
                         DBGPRINTF("pContent=%s", decdata.message.mms_data.fragment[index].pContent);
-                        STRTOWSTR((char*)decdata.message.mms_data.fragment[index].pContent, pFormatedText, rSize*sizeof(AECHAR));
+                        UTF8TOWSTR((byte*)decdata.message.mms_data.fragment[index].pContent,rSize, pFormatedText, rSize*sizeof(AECHAR));
                         DBGPRINTF("pContent=%S", pFormatedText);
 
                         if (NULL != pFormatedText)

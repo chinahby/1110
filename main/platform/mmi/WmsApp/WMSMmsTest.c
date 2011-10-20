@@ -308,7 +308,7 @@ static void ConnectError(void* pUser, int nError)
     IFileMgr *pIFileMgr = NULL;
     int result = SUCCESS;
 	int i;
-
+#if 0
 			
 	switch(nError)
 	{
@@ -379,6 +379,7 @@ static void ConnectError(void* pUser, int nError)
 			MSG_FATAL("ConnectError error: 0x%x",nError,0,0);
 			break; 
 	}
+#endif	
 }
 
 int MMS_SocketTest(AECHAR *sendNumber)

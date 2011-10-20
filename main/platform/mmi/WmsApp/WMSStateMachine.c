@@ -1333,7 +1333,6 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
 #ifdef FEATURE_USES_MMS
         case DLGRET_GETMMS:
         {
-            MMSSocket* pMMSSocket = NULL; 
             WMSMessageStruct_Free(pMe);
 			//ADD BY YANGDECAI 2010-08-16
             pMe->m_ExtractType = EXTRACT_URL;
@@ -1350,14 +1349,14 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
             }
 
             {
-                char str[100] = {0};
+                char* str = (char*)MALLOC(100);
                 MSG_FATAL("WMSST_INBOXMSGOPTS_Handler",0,0,0);
                 MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%S",(AECHAR*)IVector_ElementAt(pMe->m_pSaveNumList,0),0,0);
                 WSTRTOSTR((AECHAR*)IVector_ElementAt(pMe->m_pSaveNumList,0),
-                    (char*)&str,
-                    sizeof(str));
-                MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%s",&str,0,0);
-                MMSSocketNew(&pMMSSocket,AEE_SOCK_STREAM,(char*)&str);
+                    str,
+                    100);
+                MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%s",str,0,0);
+                WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)str);
                 IVector_RemoveElementAt(pMe->m_pSaveNumList,0);
             }
             MOVE_TO_STATE(WMSST_INBOXES)
@@ -5692,7 +5691,6 @@ static NextFSMAction WMSST_EXTARCTDETAILS_Handler(WmsApp *pMe)
 #ifdef FEATURE_USES_MMS
         case DLGRET_GETMMS:
         {
-            MMSSocket* pMMSSocket = NULL; 
             WMSMessageStruct_Free(pMe);
 			//ADD BY YANGDECAI 2010-08-16
             pMe->m_ExtractType = EXTRACT_URL;
@@ -5716,7 +5714,7 @@ static NextFSMAction WMSST_EXTARCTDETAILS_Handler(WmsApp *pMe)
                     (char*)&str,
                     sizeof(str));
                 MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%s",&str,0,0);
-                MMSSocketNew(&pMMSSocket,AEE_SOCK_STREAM,(char*)&str);
+                WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)&str);
                 IVector_RemoveElementAt(pMe->m_pSaveNumList,0);
             }
             MOVE_TO_STATE(WMSST_INBOXES)

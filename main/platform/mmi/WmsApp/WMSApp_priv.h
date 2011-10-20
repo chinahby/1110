@@ -837,7 +837,7 @@ typedef struct WmsApp
 	#endif
 #ifdef FEATURE_USES_MMS      
     MMS_WSP_DEC_DATA                m_DecData;
-
+    MMS_WSP_ENCODE_SEND             m_EncData;
     wms_msg_event_info_s_type       *m_pMsgEvent;
     IImage                          *m_pMMSImage;
     IImage                          *m_pMMSSOUND;

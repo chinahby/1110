@@ -1306,6 +1306,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
         case EVT_MMS_MSG_SEND_FINSH:
             {
                 MSG_FATAL("CWmsApp_HandleEvent EVT_MMS_MSG_SEND_FINSH",0,0,0);
+                pMe->m_SendStatus = wParam;
                 WmsApp_ProcessMMSStatus(pMe);
                 return TRUE;
             }
@@ -1682,12 +1683,13 @@ Exit:
             int body_len = wParam;
             uint8* pBody = (uint8*)dwParam;
             uint8 nResult = SUCCESS;
-            char strAddr[100];
+            char *strAddr = (char*)MALLOC(100);
             uint8 ePDUType;
-            MMSSocket* pMMSSocket = NULL; 
+            MMS_WSP_ENCODE_SEND* sendData = MALLOC(sizeof(MMS_WSP_ENCODE_SEND));
 
             if(body_len == 0 || pBody == NULL)
             {
+                FREEIF(pDecData);
                 break;
             }
             MSG_FATAL("EVT_MMS_PDUDECODE body_len:%d",body_len,0,0);
@@ -1702,6 +1704,30 @@ Exit:
             {
                 switch(ePDUType)
                 {
+                    case MMS_PDU_SEND_CONF:
+                    {
+                        MSG_FATAL("EVT_MMS_PDUDECODE iResponseStatus:%d ",pDecData->sendconf.iResponseStatus,0,0);
+                        if(pDecData->sendconf.iResponseStatus == MMS_RESPONSE_OK)
+                        {
+                            ISHELL_PostEventEx(pMe->m_pShell,
+                                         EVTFLG_ASYNC, 
+                                         AEECLSID_WMSAPP, 
+                                         EVT_MMS_MSG_SEND_FINSH,
+                                         HTTP_CODE_OK, 
+                                         0);
+                        }
+                        else
+                        {
+                            ISHELL_PostEventEx(pMe->m_pShell,
+                                     EVTFLG_ASYNC, 
+                                     AEECLSID_WMSAPP, 
+                                     EVT_MMS_MSG_SEND_FINSH,
+                                     EFAILED, 
+                                     0);
+                        }
+                        
+                    }
+                    break;
                     case MMS_PDU_NOTIFICATION_IND:
                     {
                         char* pStr = STRSTR((const char *)&pDecData->notification.hContentLocation,"http://");
@@ -1709,6 +1735,7 @@ Exit:
                         if(pMe->m_isCheckMMSNotify)
                         {
                             wms_memory_store_e_type   mem_store = WMS_MEMORY_STORE_RUIM;
+                            sendData->pNotifyresp = (MMS_WSP_ENC_NOTIFY_RESP*)MALLOC(sizeof(MMS_WSP_ENC_NOTIFY_RESP));
                             if (IsRunAsUIMVersion())
                             { 
                                 ICONFIG_GetItem(pMe->m_pConfig,
@@ -1789,24 +1816,32 @@ Exit:
     								}
     							}   
                                 MSLEEP(10);
+                                
                                 (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
                                 MSG_FATAL("EVT_MMS_PDUDECODE IWMS_MsgWrite",0,0,0);
+                                
+                                sendData->pNotifyresp->bReportAllowed = FALSE;
+                                STRNCPY((char*)sendData->pNotifyresp->hTransactionID,
+                                    (char*)pDecData->notification.hTransactionID,
+                                    STRLEN((char*)pDecData->notification.hTransactionID) + 1);
+                                sendData->pNotifyresp->iStatus = WMS_PDU_STATUS_Deferred;
+                                    
+                                WMS_MMSState(WMS_MMS_PDU_MNotifyrespInd,0,(uint32)sendData);
                                
                             }                     
                              WMSAPPU_SYSFREE(pMe->m_pMsgEvent);
                              // ¸üĞÂÍ¼±ê
                              WmsApp_UpdateAnnunciators(pMe);
-                             return TRUE;
+                             break;
                         }
                         else
                         {
-                            STRCPY((char*)&strAddr,pStr);
+                            STRCPY(strAddr,pStr);
                             MSG_FATAL("decData.notification.hContentLocation = %s",strAddr,0,0);
 
-                            MSG_FATAL("pMMSSocket = %d STRLEN(strAddr) = %d",pMMSSocket,STRLEN(strAddr),0);
                             if(STRLEN(strAddr) != 0)
                             {
-                                MMSSocketNew(&pMMSSocket,AEE_SOCK_STREAM,(char*)&strAddr);
+                                WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)strAddr);
                             }
                         }
                     }
@@ -1815,6 +1850,16 @@ Exit:
                     {
                         int i = 0;
                         char dataPath[100];
+
+                        if(pMe->m_isMMSNotify)
+                        {
+                            sendData->pDeliveryacknowledgement = (MMS_WSP_ENC_DELIVERY_ACKNOWLEDGEMENT*)MALLOC(sizeof(MMS_WSP_ENC_DELIVERY_ACKNOWLEDGEMENT));
+                        }
+                        else
+                        {
+                            sendData->pNotifyresp = (MMS_WSP_ENC_NOTIFY_RESP*)MALLOC(sizeof(MMS_WSP_ENC_NOTIFY_RESP));
+                        }    
+                        
                         WMS_MMS_SaveMMS(pDecData->message.hFrom,pBody,body_len,MMS_INBOX);
                         gbWmsMMSNtf = TRUE;
                         WmsApp_PlaySMSAlert(pMe, TRUE);
@@ -1887,6 +1932,29 @@ Exit:
                 	        }
             	        }
 #endif            	        
+                        MSG_FATAL("[MMS_PDU_NOTIFICATION_IND] m_isMMSNotify:%d",pMe->m_isMMSNotify,0,0);
+                        if(pMe->m_isMMSNotify)
+                        {
+                            STRNCPY((char*)sendData->pDeliveryacknowledgement->hTransactionID,
+                                        (char*)pDecData->message.hTransactionID,
+                                        STRLEN((char*)pDecData->message.hTransactionID) + 1);
+                            MSG_FATAL("[MMS_PDU_NOTIFICATION_IND] hTransactionID:%s",sendData->pDeliveryacknowledgement->hTransactionID,0,0);            
+                            sendData->pDeliveryacknowledgement->bReportAllowed = FALSE;            
+                            WMS_MMSState(WMS_MMS_PDU_MAcknowledgeInd,0,(uint32)sendData);
+                        }
+                        else
+                        {
+                            sendData->pNotifyresp->bReportAllowed = FALSE;
+                            STRNCPY((char*)sendData->pNotifyresp->hTransactionID,
+                                (char*)pDecData->message.hTransactionID,
+                                STRLEN((char*)pDecData->message.hTransactionID) + 1);
+                            sendData->pNotifyresp->iStatus = WMS_PDU_STATUS_Retrieved;
+                            WMS_MMSState(WMS_MMS_PDU_MNotifyrespInd,0,(uint32)sendData);
+                        }
+                        pMe->m_isMMSNotify = FALSE;
+                        MSG_FATAL("[MMS_PDU_NOTIFICATION_IND] WMS_MMS_MmsWspDecDataRelease 1",0,0,0);
+                        WMS_MMS_MmsWspDecDataRelease(&pDecData,ePDUType);
+                        MSG_FATAL("[MMS_PDU_NOTIFICATION_IND] WMS_MMS_MmsWspDecDataRelease 2",0,0,0);
                     }
                     break;
                     default:
@@ -1900,8 +1968,12 @@ Exit:
             {
                 MSG_FATAL("WMS_MMS_PDU_Decode nResult = %d",nResult,0,0);
             }
+            MSG_FATAL("WMS_MMS_PDU_Decode FREEIF((void*)pBody)",0,0,0);
+            //FREEIF((void*)pBody);
             WMSAPPU_SYSFREE(pMe->m_pMsgEvent);
-            WMS_MMS_MmsWspDecDataRelease(&pDecData,ePDUType);
+            MSG_FATAL("WMS_MMS_PDU_Decode nResult = WMSAPPU_SYSFREE(pMe->m_pMsgEvent)",0,0,0);
+            
+            return TRUE;
         }
 
         break;
@@ -6611,7 +6683,7 @@ static int CWmsApp_DeleteAllNvCdmaSms(IWmsApp *p)
 void WmsApp_ProcessMMSStatus(WmsApp *pMe)
 {
     MSG_FATAL("WmsApp_ProcessMMSStatus Start",0,0,0);
-    pMe->m_SendStatus = MMS_GetSocketReadStatus();
+    //pMe->m_SendStatus = MMS_GetSocketReadStatus();
     
     ERR("m_SendStatus = %d", pMe->m_SendStatus, 0, 0);    
     
