@@ -920,9 +920,10 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 			m_privpinter_y = wYPos;
 			return TRUE;
 		}
-		#endif
 		m_privpinter_x = 0;
 		m_privpinter_y = 0;
+		#endif
+		
 #ifdef FEATURE_VERSION_W515V3
         if(wParam == AVK_CLR)
 #else
