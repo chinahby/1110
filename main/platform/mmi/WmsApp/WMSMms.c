@@ -176,6 +176,8 @@ void WMS_MMS_BUFFERRelease();
 #define slim_toupper(c) ((int)cSlim_clib_toupper_table[(c)])
 
 #define POST_TEST ("POST http://mmsc.vnet.mobi HTTP/1.1\r\nHost:10.0.0.200:80\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: Nokia6235/1.0 (S190V0200.nep) UP.Browser/6.2.3.2 MMP/2.0\r\nx-wap-profile: \"http://nds1.nds.nokia.com/uaprof/N6235r200.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
+
+
 /*
 ** 彩信里面用到的数据类型
 */
@@ -1564,7 +1566,12 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
             goto Exit;
         }
     }
-    
+
+    ICONFIG_GetItem(pConfig, 
+        nMmsCoutType,
+        &g_mmsDataInfoMax,
+        sizeof(g_mmsDataInfoMax));  
+        
     result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
     if (SUCCESS != result)
     {
@@ -1643,7 +1650,8 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
     int i = 0;
     int result;
     MMSData	mmsDataInfoList[MAX_MMS_STORED];
-    MMSData	mmsDataInfoListCur;
+    MMSData	*pMmsDataInfoListCur = NULL;
+    MMSData	*pMmsDataInfoListNext = NULL;
     int nMmsDataInfoType = 0;
     int nMmsCoutType = 0;
     
@@ -1696,19 +1704,13 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
         goto Exit;
     }   
 
-    mmsDataInfoListCur = mmsDataInfoList[index];
+    pMmsDataInfoListCur = &mmsDataInfoList[index];
 
-    for(i = index;i > 0;i--)
-    {
-        mmsDataInfoList[i] = mmsDataInfoList[i - 1];
-    };
-    MEMSET((void*)&mmsDataInfoList[0],NULL,sizeof(MMSData));
-    
     if(SUCCESS == IFILEMGR_Test(pIFileMgr,
-        (char*)&(mmsDataInfoListCur.MMSDataFileName)))
+        pMmsDataInfoListCur->MMSDataFileName))
     {
         if(EFAILED == IFILEMGR_Remove(pIFileMgr,
-            (char*)&(mmsDataInfoListCur.MMSDataFileName)))
+            pMmsDataInfoListCur->MMSDataFileName))
         {
             result = IFILEMGR_GetLastError(pIFileMgr);
             goto Exit;
@@ -1719,7 +1721,36 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
         result = IFILEMGR_GetLastError(pIFileMgr);
         goto Exit;
     }
+    
 
+    for(i = index;
+        i < g_mmsDataInfoMax;
+        i++,pMmsDataInfoListCur = &mmsDataInfoList[i],pMmsDataInfoListNext = &mmsDataInfoList[i + 1])
+    {
+        
+        if(EFAILED == IFILEMGR_Test(pIFileMgr,pMmsDataInfoListCur->MMSDataFileName)
+            && SUCCESS == IFILEMGR_Test(pIFileMgr,pMmsDataInfoListNext->MMSDataFileName))
+        {
+            if(SUCCESS == IFILEMGR_Rename(pIFileMgr,pMmsDataInfoListNext->MMSDataFileName,pMmsDataInfoListCur->MMSDataFileName))
+            {
+                STRCPY(pMmsDataInfoListCur->phoneNumber,pMmsDataInfoListNext->phoneNumber);
+                pMmsDataInfoListCur->MMSDatasize = pMmsDataInfoListNext->MMSDatasize;
+            }
+            else
+            {
+                result = IFILEMGR_GetLastError(pIFileMgr);
+                goto Exit;
+            }
+        }
+        else
+        {
+            result = IFILEMGR_GetLastError(pIFileMgr);
+            goto Exit;
+        }
+        
+    };
+    MEMSET((void*)pMmsDataInfoListNext,NULL,sizeof(MMSData));
+    
     g_mmsDataInfoMax --;
     ICONFIG_SetItem(pConfig, nMmsDataInfoType, (void*)mmsDataInfoList, sizeof(mmsDataInfoList));        
     ICONFIG_SetItem(pConfig, nMmsCoutType, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax)); 

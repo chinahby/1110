@@ -457,12 +457,45 @@ static boolean IDD_VIEWMSG_MMS_Handler(void         *pUser,
                                    AEEEvent     eCode, 
                                    uint16       wParam, 
                                    uint32       dwParam);
-                                   
+                                
 static boolean IDD_MMSNOTIFY_Handler(void *pUser,
     AEEEvent eCode,
     uint16   wParam,
     uint32   dwParam
-);                                   
+);
+static boolean IDD_MMSDELIVERYREPORT_Handler(void *pUser,
+    AEEEvent eCode,
+    uint16   wParam,
+    uint32   dwParam
+);       
+static boolean IDD_READREPLY_Handler(void *pUser,
+    AEEEvent eCode,
+    uint16   wParam,
+    uint32   dwParam
+);       
+static boolean IDD_REPORTALLOWED_Handler(void *pUser,
+    AEEEvent eCode,
+    uint16   wParam,
+    uint32   dwParam
+);       
+static boolean IDD_SENDERVISIBILITY_Handler(void *pUser,
+    AEEEvent eCode,
+    uint16   wParam,
+    uint32   dwParam
+);       
+
+
+
+
+
+static boolean IDD_OPTION_YESNO_Handle(void *pUser,
+    int nCFIG_Id,
+    int8* pItem,
+    int nTitleTextId,
+    AEEEvent eCode,
+    uint16   wParam,
+    uint32   dwParam);
+
 #endif
 /*==============================================================================
 
@@ -602,9 +635,39 @@ void WmsApp_SetDialogHandler(WmsApp *pMe)
         case IDD_REPORTS:
             pMe->m_pDialogHandler = IDD_REPORTS_Handler;
             break;
+            
 #ifdef FEATURE_USES_MMS  
-        case IDD_MMSNOTIFY:
-            pMe->m_pDialogHandler = IDD_MMSNOTIFY_Handler;
+        case IDD_MMSOPTION_YESNO:
+			{
+            	switch(pMe->m_nDlgID)
+				{
+					case WMSST_SENDERVISIBILITY:
+					{
+			            pMe->m_pDialogHandler = IDD_SENDERVISIBILITY_Handler;
+					}
+					break;
+					case WMSST_MMSDELIVERYREPORT:
+					{
+            			pMe->m_pDialogHandler = IDD_MMSDELIVERYREPORT_Handler;
+					}
+					break;
+					case WMSST_READREPLY:
+					{
+           				 pMe->m_pDialogHandler = IDD_READREPLY_Handler;
+					}
+					break;
+					case WMSST_REPORTALLOWED:
+					{
+			            pMe->m_pDialogHandler = IDD_REPORTALLOWED_Handler;
+					}
+					break;
+					case WMSST_MMSNOTIFY:
+					{
+						pMe->m_pDialogHandler = IDD_MMSNOTIFY_Handler;
+					}
+					break;
+				}
+			}
             break;
 #endif
 #ifdef FEATURE_AUTOREPLACE
@@ -3127,6 +3190,10 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #endif 
 #ifdef FEATURE_USES_MMS  
             MENU_ADDITEM(pMenu,IDS_MMSNOTIFY);
+            MENU_ADDITEM(pMenu,IDS_MMSDELIVERYREPORT);
+            MENU_ADDITEM(pMenu,IDS_READREPLY);
+            MENU_ADDITEM(pMenu,IDS_REPORTALLOWED);
+            MENU_ADDITEM(pMenu,IDS_SENDERVISIBILITY);
 #endif
             IMENUCTL_SetSel(pMenu, pMe->m_wPrevMenuSel);
             return TRUE;
@@ -3207,6 +3274,22 @@ static boolean IDD_SETTING_Handler(void   *pUser,
 #ifdef FEATURE_USES_MMS   
                 case IDS_MMSNOTIFY:
                     CLOSE_DIALOG(DLGRET_MMSNOTIFY)
+                     return TRUE;
+                     
+                case IDS_MMSDELIVERYREPORT:
+                    CLOSE_DIALOG(DLGRET_MMSDELIVERYREPORT)
+                     return TRUE;
+                     
+                case IDS_READREPLY:
+                    CLOSE_DIALOG(DLGRET_READREPLY)
+                     return TRUE;
+                     
+                case IDS_REPORTALLOWED:
+                    CLOSE_DIALOG(DLGRET_REPORTALLOWED)
+                     return TRUE;
+                     
+                case IDS_SENDERVISIBILITY:
+                    CLOSE_DIALOG(DLGRET_SENDERVISIBILITY)
                      return TRUE;
 #endif                     
                 // 发出短信相对有效期设置
@@ -5189,11 +5272,13 @@ static boolean IDD_REPORTS_Handler(void *pUser,
 备注:
 
 ==============================================================================*/
-static boolean IDD_MMSNOTIFY_Handler(void *pUser,
+static boolean IDD_OPTION_YESNO_Handle(void *pUser,
+    int nCFIG_Id,
+    int8* pItem,
+    int nTitleTextId,
     AEEEvent eCode,
     uint16   wParam,
-    uint32   dwParam
-)
+    uint32   dwParam)
 {
     IMenuCtl *pMenu = NULL;
     WmsApp *pMe = (WmsApp *)pUser;
@@ -5203,7 +5288,7 @@ static boolean IDD_MMSNOTIFY_Handler(void *pUser,
         return FALSE;
     }
 
-    pMenu = (IMenuCtl* )IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_MMSNOTIFY_MENU);
+    pMenu = (IMenuCtl* )IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_MMSOPTION_YESNO);
     if (pMenu == NULL)
     {
         return FALSE;
@@ -5223,7 +5308,7 @@ static boolean IDD_MMSNOTIFY_Handler(void *pUser,
 				AECHAR WTitle[40] = {0};
 				(void)ISHELL_LoadResString(pMe->m_pShell,
                         AEE_WMSAPPRES_LANGFILE,                                
-                        IDS_MMSNOTIFY, //IDS_DELIVERYREPORTS,
+                        nTitleTextId, //IDS_DELIVERYREPORTS,
                         WTitle,
                         sizeof(WTitle));
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
@@ -5233,6 +5318,7 @@ static boolean IDD_MMSNOTIFY_Handler(void *pUser,
             // 菜单项初始化
             MENU_ADDITEM(pMenu, IDS_ENABLE);
             MENU_ADDITEM(pMenu, IDS_DISABLE);
+            MENU_ADDITEM(pMenu, IDS_NORMAL);
             return TRUE;
 
         case EVT_DIALOG_START:
@@ -5247,11 +5333,14 @@ static boolean IDD_MMSNOTIFY_Handler(void *pUser,
                 uint16 nSelID;
                 
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
-                                       CFGI_WMS_MMSNOTIFY,
-                                       &pMe->m_isCheckMMSNotify,
-                                       sizeof(pMe->m_isCheckMMSNotify));
-                
-                if (pMe->m_isCheckMMSNotify)
+                                       nCFIG_Id,
+                                       pItem,
+                                       sizeof(*pItem));
+                if(*pItem == -1)
+                {
+                    nSelID = IDS_NORMAL;
+                }
+                else if (*pItem)
                 {
                     nSelID = IDS_ENABLE;
                 }
@@ -5296,28 +5385,25 @@ static boolean IDD_MMSNOTIFY_Handler(void *pUser,
             {
                 // 发短信要求有投递报告
                 case IDS_ENABLE:
+                    *pItem = TRUE;
+                    break;
                 // 发短信不要求投递报告
                 case IDS_DISABLE:
-                    {
-                        pMe->m_isCheckMMSNotify = TRUE;
-                        
-                        if (wParam == IDS_DISABLE)
-                        {
-                            pMe->m_isCheckMMSNotify = FALSE;
-                        }
-
-                        InitMenuIcons(pMenu);
-                        SetMenuIcon(pMenu, wParam, TRUE);
-                        (void) ICONFIG_SetItem( pMe->m_pConfig,
-                                               CFGI_WMS_MMSNOTIFY,
-                                               &pMe->m_isCheckMMSNotify,
-                                               sizeof(pMe->m_isCheckMMSNotify));
-                    }
+                    *pItem = FALSE;
+                    break;
+                case IDS_NORMAL:
+                    *pItem = -1;
                     break;
                 
                 default:
                     return FALSE;
             }
+            InitMenuIcons(pMenu);
+            SetMenuIcon(pMenu, wParam, TRUE);
+            (void) ICONFIG_SetItem( pMe->m_pConfig,
+                                   nCFIG_Id,
+                                   pItem,
+                                   sizeof(*pItem));
             
             CLOSE_DIALOG(DLGRET_OK)
             return TRUE;
@@ -5327,7 +5413,100 @@ static boolean IDD_MMSNOTIFY_Handler(void *pUser,
     }
 
     return FALSE;
+}
+/*==============================================================================
+函数:
+    IDD_MMSNOTIFY_Handler
+
+说明:
+    WMS Applet对话框 IDD_MMSNOTIFY事件处理函数。
+    
+参数:
+    pUser [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+    eCode [in]: 事件代码。
+    wParam[in]: 事件参数
+    dwParam [in]: 与事件关联的数据。
+
+返回值:
+    TRUE:  传入事件得到处理。
+    FALSE: 传入事件没被处理。
+
+备注:
+
+==============================================================================*/
+
+static boolean IDD_MMSNOTIFY_Handler(void *pUser,
+    AEEEvent eCode,
+    uint16   wParam,
+    uint32   dwParam
+)
+{
+    return IDD_OPTION_YESNO_Handle(pUser,
+        CFGI_WMS_MMSNOTIFY,
+        (int8*)&((WmsApp*)pUser)->m_isCheckMMSNotify,
+        IDS_MMSNOTIFY,
+        eCode,
+        wParam,
+        dwParam);
+        
 } // IDD_REPORTS_Handler
+static boolean IDD_MMSDELIVERYREPORT_Handler(void *pUser,
+    AEEEvent eCode,
+    uint16   wParam,
+    uint32   dwParam
+)
+{    
+    return IDD_OPTION_YESNO_Handle(pUser,
+        CFGI_WMS_MMSDELIVERYREPORT,
+        &((WmsApp*)pUser)->m_isMMSDeliveryReport,
+        IDS_MMSDELIVERYREPORT,
+        eCode,
+        wParam,
+        dwParam);
+}
+static boolean IDD_READREPLY_Handler(void *pUser,
+    AEEEvent eCode,
+    uint16   wParam,
+    uint32   dwParam
+)
+{
+    return IDD_OPTION_YESNO_Handle(pUser,
+        CFGI_WMS_READREPLY,
+        &((WmsApp*)pUser)->m_isMMSReadReply,
+        IDS_READREPLY,
+        eCode,
+        wParam,
+        dwParam);
+}       
+static boolean IDD_REPORTALLOWED_Handler(void *pUser,
+    AEEEvent eCode,
+    uint16   wParam,
+    uint32   dwParam
+)
+{
+    return IDD_OPTION_YESNO_Handle(pUser,
+        CFGI_WMS_REPORTALLOWED,
+        &((WmsApp*)pUser)->m_isMMSReporyAllowed,
+        IDS_REPORTALLOWED,
+        eCode,
+        wParam,
+        dwParam);
+}       
+static boolean IDD_SENDERVISIBILITY_Handler(void *pUser,
+    AEEEvent eCode,
+    uint16   wParam,
+    uint32   dwParam
+)
+{
+    return IDD_OPTION_YESNO_Handle(pUser,
+        CFGI_WMS_SENDERVISIBILITY,
+        &((WmsApp*)pUser)->m_isMMSSenderVisibility,
+        IDS_SENDERVISIBILITY,
+        eCode,
+        wParam,
+        dwParam);
+}   
+
 #endif
 #ifdef FEATURE_AUTOREPLACE
 /*==============================================================================
@@ -7858,11 +8037,12 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                                 pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
                                 pMe->m_EncData.pMessage->iDate = MMS_VALUE_USELESSNESS;
                                 pMe->m_EncData.pMessage->iPriority = MMS_VALUE_USELESSNESS;
-                                pMe->m_EncData.pMessage->bSenderVisibility = MMS_VALUE_USELESSNESS;
+                                pMe->m_EncData.pMessage->bSenderVisibility = pMe->m_isMMSSenderVisibility;
                                 pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
                                 pMe->m_EncData.pMessage->iExpiry = MMS_VALUE_USELESSNESS;
                                 pMe->m_EncData.pMessage->iDeliveryTime = MMS_VALUE_USELESSNESS;
-                                
+                                pMe->m_EncData.pMessage->bReadRep = pMe->m_isMMSReadReply;
+                                pMe->m_EncData.pMessage->bDelRep = pMe->m_isMMSDeliveryReport;
                                 
                                 WMS_MMSState(WMS_MMS_PDU_MSendReq,0,(uint32)&pMe->m_EncData);
                             }

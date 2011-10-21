@@ -223,7 +223,8 @@ static NextFSMAction WMSST_WMSPOP_Hander(WmsApp *pMe);
 static NextFSMAction WMSST_FLASHSMS_Hander(WmsApp *pMe);
 
 #ifdef FEATURE_USES_MMS
-static NextFSMAction WMSST_MMSNOTIFY_Handler(WmsApp *pMe);
+
+static NextFSMAction WMSST_MMSOPTION_YESNO_Handler(WmsApp *pMe);
 
 // WMSST_OUTBOX_MMS 状态处理函数
 static NextFSMAction WMSST_OUTBOX_MMS_Handler(WmsApp *pMe);
@@ -408,8 +409,17 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
         case WMSST_SENDMODE:
             return WMSST_SENDMODE_Handler(pMe);
 #ifdef FEATURE_USES_MMS  
+
+
+        case WMSST_SENDERVISIBILITY:
+        case WMSST_REPORTALLOWED:
+        case WMSST_READREPLY:
+        case WMSST_MMSDELIVERYREPORT:
         case WMSST_MMSNOTIFY:
-            return WMSST_MMSNOTIFY_Handler(pMe);
+        {
+            pMe->m_nDlgID = (int)pMe->m_currState;
+            return WMSST_MMSOPTION_YESNO_Handler(pMe);
+        }
 #endif            
         case WMSST_CALLBACKNUMSWITCH:
             return WMSST_CALLBACKNUMSWITCH_Handler(pMe);
@@ -4274,9 +4284,27 @@ static NextFSMAction WMSST_MSGSETTING_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_SENDMODE)
             return NFSMACTION_CONTINUE;
 #ifdef FEATURE_USES_MMS  
+
         case DLGRET_MMSNOTIFY:
             MOVE_TO_STATE(WMSST_MMSNOTIFY)
             return NFSMACTION_CONTINUE;
+
+       case DLGRET_MMSDELIVERYREPORT:
+            MOVE_TO_STATE(WMSST_MMSDELIVERYREPORT)
+            return NFSMACTION_CONTINUE;
+
+       case DLGRET_READREPLY:
+            MOVE_TO_STATE(WMSST_READREPLY)
+            return NFSMACTION_CONTINUE;
+
+       case DLGRET_REPORTALLOWED:
+            MOVE_TO_STATE(WMSST_REPORTALLOWED)
+            return NFSMACTION_CONTINUE;
+
+       case DLGRET_SENDERVISIBILITY:
+            MOVE_TO_STATE(WMSST_SENDERVISIBILITY)
+            return NFSMACTION_CONTINUE;
+            
 #endif
         case DLGRET_CALLBACKNUM:
             MOVE_TO_STATE(WMSST_CALLBACKNUMSWITCH)
@@ -5154,7 +5182,7 @@ static NextFSMAction WMSST_SENDMODE_Handler(WmsApp *pMe)
 备注:
 
 ==============================================================================*/
-static NextFSMAction WMSST_MMSNOTIFY_Handler(WmsApp *pMe)
+static NextFSMAction WMSST_MMSOPTION_YESNO_Handler(WmsApp *pMe)
 {
     if (NULL == pMe)
     {
@@ -5164,7 +5192,7 @@ static NextFSMAction WMSST_MMSNOTIFY_Handler(WmsApp *pMe)
     switch (pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
-            WmsApp_ShowDialog(pMe, IDD_MMSNOTIFY);
+            WmsApp_ShowDialog(pMe, IDD_MMSOPTION_YESNO);
             return NFSMACTION_WAIT;
 
         case DLGRET_CANCELED:
@@ -5183,7 +5211,6 @@ static NextFSMAction WMSST_MMSNOTIFY_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
     }
 } // WMSST_SENDMODE_Handler
-
 
 #endif
 /*==============================================================================

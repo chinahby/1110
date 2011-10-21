@@ -970,7 +970,7 @@
 				<Items/></Countdown>
 		</Controls>
 	</Dialog>
-	<DIALOG Id="6049" Name="IDD_MMSNOTIFY" Focus="7040">
+	<DIALOG Id="6049" Name="IDD_MMSOPTION_YESNO" Focus="7040">
 		<Controls>
 			<Menu Id="7040" Name="IDC_MMSOPTION_YESNO">
 				<Items/>

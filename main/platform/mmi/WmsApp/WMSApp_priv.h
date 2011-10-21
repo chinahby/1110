@@ -519,6 +519,10 @@ typedef enum WMSAPPState
 #ifdef FEATURE_USES_MMS
     // 显示彩信发件箱列表的状态
     WMSST_MMSNOTIFY,
+    WMSST_MMSDELIVERYREPORT,
+    WMSST_READREPLY,
+    WMSST_REPORTALLOWED,
+    WMSST_SENDERVISIBILITY,
     WMSST_INBOX_MMS,
     WMSST_OUTBOX_MMS,
     WMSST_VIEWINBOXMSG_MMS,
@@ -657,6 +661,10 @@ typedef enum DLGRetValue
    ,DLGGET_FLASHSMS_END
 #ifdef FEATURE_USES_MMS
    ,DLGRET_MMSNOTIFY
+   ,DLGRET_MMSDELIVERYREPORT
+   ,DLGRET_READREPLY
+   ,DLGRET_REPORTALLOWED
+   ,DLGRET_SENDERVISIBILITY
    ,DLGRET_INBOX_MMS
    ,DLGRET_OUTBOX_MMS
    ,DLGRET_CLEARINBOX_MMS
@@ -847,6 +855,11 @@ typedef struct WmsApp
     IFileMgr                        *m_pIFileMgr;
     boolean                         m_isCheckMMSNotify;
     boolean                         m_isMMSNotify;
+    int8                            m_isMMSDeliveryReport;
+    int8                            m_isMMSReadReply;
+    int8                            m_isMMSReporyAllowed;
+    int8                            m_isMMSSenderVisibility;
+    int                             m_nDlgID;
     //MMSData		                   m_mmsDataInfoList[MAX_MMS_STORED];
 #endif    
 } WmsApp;

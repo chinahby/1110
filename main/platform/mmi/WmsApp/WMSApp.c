@@ -688,6 +688,22 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
         CFGI_WMS_MMSNOTIFY,
         &pMe->m_isCheckMMSNotify,
         sizeof(pMe->m_isCheckMMSNotify));
+    ICONFIG_GetItem(pMe->m_pConfig,
+        CFGI_WMS_MMSDELIVERYREPORT,
+        &pMe->m_isMMSDeliveryReport,
+        sizeof(pMe->m_isMMSDeliveryReport));
+    ICONFIG_GetItem(pMe->m_pConfig,
+        CFGI_WMS_READREPLY,
+        &pMe->m_isMMSReadReply,
+        sizeof(pMe->m_isMMSReadReply));
+    ICONFIG_GetItem(pMe->m_pConfig,
+        CFGI_WMS_REPORTALLOWED,
+        &pMe->m_isMMSReporyAllowed,
+        sizeof(pMe->m_isMMSReporyAllowed));
+    ICONFIG_GetItem(pMe->m_pConfig,
+        CFGI_WMS_SENDERVISIBILITY,
+        &pMe->m_isMMSSenderVisibility,
+        sizeof(pMe->m_isMMSSenderVisibility));
 #endif
 
     (void)IWMS_Activate(pMe->m_pwms,pMe->m_clientId);
@@ -1819,7 +1835,7 @@ Exit:
                                 (void)WmsApp_RouteDialogEvt(pMe,eCode,wParam,dwParam);
                                 MSG_FATAL("EVT_MMS_PDUDECODE IWMS_MsgWrite",0,0,0);
                                 
-                                sendData->pNotifyresp->bReportAllowed = FALSE;
+                                sendData->pNotifyresp->bReportAllowed = pMe->m_isMMSReporyAllowed;
                                 STRNCPY((char*)sendData->pNotifyresp->hTransactionID,
                                     (char*)pDecData->notification.hTransactionID,
                                     STRLEN((char*)pDecData->notification.hTransactionID) + 1);
@@ -1938,12 +1954,12 @@ Exit:
                                         (char*)pDecData->message.hTransactionID,
                                         STRLEN((char*)pDecData->message.hTransactionID) + 1);
                             MSG_FATAL("[MMS_PDU_NOTIFICATION_IND] hTransactionID:%s",sendData->pDeliveryacknowledgement->hTransactionID,0,0);            
-                            sendData->pDeliveryacknowledgement->bReportAllowed = FALSE;            
+                            sendData->pDeliveryacknowledgement->bReportAllowed = pMe->m_isMMSReporyAllowed;            
                             WMS_MMSState(WMS_MMS_PDU_MAcknowledgeInd,0,(uint32)sendData);
                         }
                         else
                         {
-                            sendData->pNotifyresp->bReportAllowed = FALSE;
+                            sendData->pNotifyresp->bReportAllowed = pMe->m_isMMSReporyAllowed;
                             STRNCPY((char*)sendData->pNotifyresp->hTransactionID,
                                 (char*)pDecData->message.hTransactionID,
                                 STRLEN((char*)pDecData->message.hTransactionID) + 1);
@@ -5735,10 +5751,12 @@ uint16 WmsApp_GetmemAlertID(WmsApp * pMe, wms_box_e_type eBox)
             {
                 nMsgID = IDS_EMPTY;
             }
+/*            
             else if (g_mmsDataInfoMax >= 10)
             {
                 nMsgID = IDS_OUTBOXFULL;
             }
+*/            
             break;
 #endif
         default:
