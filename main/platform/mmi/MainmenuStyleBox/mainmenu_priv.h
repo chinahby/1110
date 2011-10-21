@@ -57,6 +57,9 @@
 #define  MAX_BOTTOM_ITEMS 4
 #define  MAX_TITLEID_NUM  30
 #define  BASE_BOTTON_TITLE 26
+#define  BASE_BOTTOM_ICON_W 45
+#define  BASE_BOTTOM_ICON_H 45
+#define  BASE_BOTTOM_SPC    12
 #elif defined (FEATURE_DISP_320X240)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 3

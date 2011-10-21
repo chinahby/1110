@@ -46,6 +46,9 @@
 
 #include "clockapps.brh"
 #define  CLOCK_RES_PATH ("fs:/mod/clockapps/" AEE_RES_LANGDIR CLOCKAPPS_RES_FILE)
+#include "coreapp.brh"
+#define  CORE_RES_PATH ("fs:/mod/coreapp/" AEE_RES_LANGDIR COREAPP_RES_FILE)
+
 #if defined( FEATURE_POWERDOWN_ALARM)
 extern void registerPowerdownAlarmclock( void);
 #endif
@@ -2958,44 +2961,44 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 (void)ISHELL_CancelTimer(pMe->a.m_pIShell,
                                 CoreApp_TimeKeyguard,
                                 pMe);
-            (void) ICONFIG_GetItem(pMe->m_pConfig,
+            	(void) ICONFIG_GetItem(pMe->m_pConfig,
                                     CFGI_KEY_LOCK_CHECK/*CFGI_PHONE_KEY_LOCK_CHECK*/,
                                     &bData,
                                     sizeof(bData));
-            if(bData)
-            {
-                if ((ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)&&
+            	if(bData)
+            	{
+                	if ((ISHELL_ActiveApplet(pMe->a.m_pIShell) == AEECLSID_CORE_APP)&&
                                     (pMe->m_wActiveDlgID == IDD_IDLE))
-                {
-                	switch(bData)
                 	{
-                		case 1:
+                		switch(bData)
                 		{
-                    		(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+                			case 1:
+                			{
+                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
                                     30*1000,
                                     CoreApp_TimeKeyguard,
                                     pMe);
-                        }
-                        break;
-                        case 2:
-                		{
-                    		(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+                        	}
+                        	break;
+                        	case 2:
+                			{
+                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
                                     120*1000,
                                     CoreApp_TimeKeyguard,
                                     pMe);
-                        }
-                        break;
-                        case 3:
-                		{
-                    		(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+                        	}
+                        	break;
+                        	case 3:
+                			{
+                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
                                     300*1000,
                                     CoreApp_TimeKeyguard,
                                     pMe);
-                        }
-                        break;
-                    }
-                 }
-            }
+                        	}
+                        	break;
+                    	}
+                 	}
+            	}
             }
 #endif		
 #ifdef CUST_EDITION    
@@ -3165,7 +3168,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
 #endif
             return TRUE;
-       
+
+		
+		
         case EVT_KEY_PRESS: 
             if(pMe->m_bemergencymode)
             {
@@ -3651,6 +3656,57 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 }
 #endif                
             }
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+			case EVT_PEN_DOWN:
+				{
+					
+					break;
+				}
+			case EVT_PEN_MOVE:
+				{
+					
+					break;
+				}
+			case EVT_PEN_UP:
+				{
+					AEERect rc;
+					uint16 wXPos = (int16)AEE_GET_X(dwParam);
+					uint16 wYPos = (int16)AEE_GET_Y(dwParam);
+					uint16 i = 0;
+					boolean m_bInRect = FALSE;
+					rc.y = SCREEN_HEIGHT - IDLE_TOUCH_DRAWDX - 40;;
+					rc.x = (IDLE_TOUCH_IDLE_BOTTOM_SPC*(i+1))+(i*IDLE_TOUCH_DRAWDX);
+					for(i=0;i<IDLE_TOUCH_ITEMMAX;i++)
+					{
+						rc.x  = (IDLE_TOUCH_IDLE_BOTTOM_SPC*(i+1))+(i*IDLE_TOUCH_DRAWDX);
+						rc.dx = IDLE_TOUCH_DRAWDX;
+						rc.dy = IDLE_TOUCH_DRAWDX;
+						m_bInRect = CORE_PT_IN_RECT(wXPos,wYPos,rc);
+						if(m_bInRect)
+						{
+							break;
+						}
+					}
+					switch(i)
+					{
+						case 0:
+							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+							break;
+						case 1:
+							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+							break;
+						case 2:
+							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+							break;
+						case 3:
+							return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
+							break;
+						default:
+							break;
+					}
+					break;
+				}
+#endif
             
             if(pMe->m_bemergencymode)
             {
@@ -5655,15 +5711,15 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
     	#ifdef FEATURE_LCD_TOUCH_ENABLE
 		
 		#else
-    	#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
-    	eBBarType = BTBAR_UNLOCK_SOS;
-        #elif defined(FEATURE_VERSION_W515V3)
-        eBBarType = BTBAR_LUNLOCK;
-        #elif defined(FEATURE_VERSION_VERYKOOL)
-        eBBarType = BTBAR_UNLOCK_SOS;
-    	#else
-        eBBarType = BTBAR_UNLOCK;
-        #endif
+    		#if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)
+    			eBBarType = BTBAR_UNLOCK_SOS;
+        	#elif defined(FEATURE_VERSION_W515V3)
+        		eBBarType = BTBAR_LUNLOCK;
+        	#elif defined(FEATURE_VERSION_VERYKOOL)
+        		eBBarType = BTBAR_UNLOCK_SOS;
+    		#else
+        		eBBarType = BTBAR_UNLOCK;
+        	#endif
 		#endif
     }
 #endif
@@ -5986,7 +6042,7 @@ static void CoreApp_InitdataBlackBerry(CCoreApp *pMe)
 
 #endif
 #ifdef FEATURE_LCD_TOUCH_ENABLE
-static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
+static void CoreApp_InitdataTouch(CCoreApp *pMe)
 {
 	pMe->m_pImageTouchIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_1);
 	pMe->m_pImageTouchIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_1);
@@ -5997,7 +6053,7 @@ static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
 	pMe->m_pImageTouchSelIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_4); 
 	pMe->m_pImageTouchSelIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_4); 
 }
-static void CoreApp_InitdataTouch(CCoreApp *pMe)
+static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
 {
 	AEEImageInfo   ImgInfo;
 	AEERect oldClip;
@@ -6007,7 +6063,7 @@ static void CoreApp_InitdataTouch(CCoreApp *pMe)
     int i = 0;
     uint8 Draw_x = 0;
     uint8 Draw_y = SCREEN_HEIGHT - IDLE_TOUCH_DRAWDX - 40;
-    uint16 Resid = 0;//IDS_STR_TOUCH_ONE;
+
      //int                    nX = 0,  nY = 0;
     if ( (NULL == pMe) || (IDD_IDLE != pMe->m_wActiveDlgID) )
     {
@@ -6038,11 +6094,51 @@ static void CoreApp_InitdataTouch(CCoreApp *pMe)
     MEMSET( &ImgInfo, 0x00, sizeof(ImgInfo) );
 	for(i=0;i<IDLE_TOUCH_ITEMMAX;i++)
 	{
+		
+    	AEERect     rc;
+		AECHAR      wszBottomstr[20]={0};
+		uint16 nResID = IDS_STR_TOUCH_ONE;// жа
+		//Draw image
+		Draw_x = (IDLE_TOUCH_IDLE_BOTTOM_SPC*(i+1))+(i*IDLE_TOUCH_DRAWDX);
  		IImage_GetInfo(pMe->m_pImageTouchSelIcon[i],&ImgInfo);
     	IIMAGE_Draw(pMe->m_pImageTouchIcon[i],
 	                    Draw_x, 
 	                    Draw_y);
+
+		//Draw string
+		nResID = nResID+i;
+		(void) ISHELL_LoadResString(pMe->a.m_pIShell,
+                                    CORE_RES_PATH,
+                                    nResID,
+                                    wszBottomstr,
+                                    sizeof(wszBottomstr));
+		rc.x  = (IDLE_TOUCH_IDLE_BOTTOM_SPC*(i+1))+(i*IDLE_TOUCH_DRAWDX);
+		rc.y  = SCREEN_HEIGHT - 40;
+		rc.dx = IDLE_TOUCH_DRAWDX;
+		rc.dy = IDLE_TOUCH_DRAWDY;
+		(void) IDISPLAY_DrawText(pMe->m_pDisplay, 
+                    AEE_FONT_BOLD, 
+                    wszBottomstr, 
+                    -1, 
+                    0, 
+                    0, 
+                    &rc, 
+                    IDF_ALIGN_BOTTOM | IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);	
     }
+	if(OEMKeyguard_IsEnabled())
+	{
+		IImage *m_bottom_lock_icon = NULL;
+		ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_BOTTOM_ICON); 
+		IIMAGE_Draw(m_bottom_lock_icon,
+	                    0, 
+	                    SCREEN_HEIGHT-60);
+		if(m_bottom_lock_icon!=NULL)
+		{
+			(void)IIMAGE_Release(m_bottom_lock_icon);
+            m_bottom_lock_icon = NULL;
+		}
+		
+	}
 }
 #endif
 

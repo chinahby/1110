@@ -1360,8 +1360,11 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 				uint16 wYPos = (int16)AEE_GET_Y(dwParam);
 				uint16 i = 0;
 				boolean m_bInRect = FALSE;
+				boolean m_bbottom = FALSE;
 				uint16 nRow = 0;
 				uint16 nCol = 0;
+				uint16 j    = 0;
+				int baseBottom = BASE_BOTTON_TITLE;
 				for(i=0;i<MAX_MATRIX_ITEMS;i++)
 				{
 					rc.x = pMe->m_Icondefault_Pt[i].x;
@@ -1388,7 +1391,24 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 				else
 				{
 					//最低层 4个快捷键响应
-					
+					for(j=0;j<MAX_BOTTOM_ITEMS;j++)
+					{
+						m_bInRect = FALSE;
+						rc.x = pMe->m_IconButtom_pt[j].x;
+						rc.y = pMe->m_IconButtom_pt[j].y;
+						rc.dx = BASE_BOTTOM_ICON_W;
+						rc.dy = BASE_BOTTOM_ICON_H;
+						m_bInRect = MAINMENU_PT_IN_RECT(wXPos,wYPos,rc);
+						if(m_bInRect)
+						{
+							m_bbottom = TRUE;
+							break;
+						}
+					}
+					if(m_bbottom)
+					{
+						StartApplet( pMe,pMe->m_IconTitle[baseBottom+j]);
+					}
 				}
 				
 				return TRUE;

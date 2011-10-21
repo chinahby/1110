@@ -349,18 +349,21 @@
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 #ifdef FEATURE_DISP_240X320
 #define    IDLE_TOUCH_ITEMMAX                 4
+#define    IDLE_TOUCH_IDLE_BOTTOM_SPC         12
 #define    IDLE_TOUCH_DRAWDX             	  45
 #define    IDLE_TOUCH_DRAWDY                  45
-#define    IDLE_TOUCH_1                       "fs:/image/BlackBerry/messages.png"
-#define    IDLE_TOUCH_SEL_1                   "fs:/image/BlackBerry/messages_sel.png"
-#define    IDLE_TOUCH_2                       "fs:/image/BlackBerry/contact.png"
-#define    IDLE_TOUCH_SEL_2                   "fs:/image/BlackBerry/contact_sel.png"
-#define    IDLE_TOUCH_3                       "fs:/image/BlackBerry/alarm.png"
-#define    IDLE_TOUCH_SEL_3                   "fs:/image/BlackBerry/alarm_sel.png"
-#define    IDLE_TOUCH_4                       "fs:/image/BlackBerry/calendar.png"
-#define    IDLE_TOUCH_SEL_4                   "fs:/image/BlackBerry/calendar_sel.png"
+#define    IDLE_TOUCH_1                       "fs:/image/core/messages.png"
+#define    IDLE_TOUCH_SEL_1                   "fs:/image/core/messages_sel.png"
+#define    IDLE_TOUCH_2                       "fs:/image/core/contact.png"
+#define    IDLE_TOUCH_SEL_2                   "fs:/image/core/contact_sel.png"
+#define    IDLE_TOUCH_3                       "fs:/image/core/alarm.png"
+#define    IDLE_TOUCH_SEL_3                   "fs:/image/core/alarm_sel.png"
+#define    IDLE_TOUCH_4                       "fs:/image/core/calendar.png"
+#define    IDLE_TOUCH_SEL_4                   "fs:/image/core/calendar_sel.png"
+#define    IDLE_TOUCH_BOTTOM_ICON             "fs:/image/core/slide_bottom.png"
 #else
 #define    IDLE_TOUCH_ITEMMAX                 4
+#define    IDLE_TOUCH_IDLE_BOTTOM_SPC         12
 #define    IDLE_TOUCH_DRAWDX                  45
 #define    IDLE_TOUCH_DRAWDY                  45
 #define    IDLE_TOUCH_1                       "fs:/image/core/messages.png"
@@ -371,6 +374,7 @@
 #define    IDLE_TOUCH_SEL_3                   "fs:/image/core/alarm_sel.png"
 #define    IDLE_TOUCH_4                       "fs:/image/core/calendar.png"
 #define    IDLE_TOUCH_SEL_4                   "fs:/image/core/calendar_sel.png"
+#define    IDLE_TOUCH_BOTTOM_ICON             "fs:/image/core/slide_bottom.png"
 #endif
 #endif
 #ifdef FEATURE_USES_BLACKBERRY
@@ -444,6 +448,9 @@ typedef struct _ServiceProviderList
     char  ids_name[OPERATOR_NAME_MAX_SIZE];
 } ServiceProviderList;
 #endif //FEATURE_SPN_FROM_BSMCCMNC
+
+#define CORE_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
+
 
 #define CORE_ERR(...)
 
