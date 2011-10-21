@@ -34,6 +34,12 @@
 	<Object Id="5011" Name="IDI_TEST_DOWN" MimeType="image/png">
 		<File>..\images\240x320\common\QuickTest\down.png</File>
 	</Object>
+	<Object Id="5012" Name="IDI_SLIDE_BAR" MimeType="image/png">
+		<File>..\images\240x320\common\core\slide_bar.png</File>
+	</Object>
+	<Object Id="5013" Name="IDI_SLIDE_BOTTOM" MimeType="image/png">
+		<File>..\images\240x320\common\core\slide_bottom.png</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
@@ -277,9 +283,6 @@
 	<Object Id="6026" Name="IDI_REFUI_LOUDSPEAKER" MimeType="image/png">
 		<File>..\images\240x320\common\CallApp\Call\loudspeaker.png</File>
 	</Object>
-	<Object Id="6201" Name="IDB_UTKMENU">
-		<File>..\images\240x320\common\UTK\utkmenu.bmp</File>
-	</Object>
 	<Object Id="6041" Name="IDI_NUMBER_0">
 		<File>..\images\240x320\common\CallApp\DialedNumber\0.png</File>
 	</Object>
@@ -328,6 +331,9 @@
 	<Object Id="6056" Name="IDI_NUMBER_SUB">
 		<File>..\images\240x320\common\CallApp\DialedNumber\-.png</File>
 	</Object>
+	<Object Id="6201" Name="IDB_UTKMENU">
+		<File>..\images\240x320\common\UTK\utkmenu.bmp</File>
+	</Object>
 	<Object Id="6421" Name="IDI_TIMER" MimeType="image/png">
 		<File>..\images\240x320\common\Timer\timer.png</File>
 	</Object>
@@ -339,99 +345,6 @@
 	</Object>
 	<Object Id="7001" Name="IDB_BATT_LOW">
 		<File>..\images\240x320\common\Annunciator\batt0.bmp</File>
-	</Object>
-	<Object Id="7117" Name="IDB_MODE_IME_BGROUND" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\b_bground.bmp</File>
-	</Object>
-	<Object Id="7118" Name="IDB_MODE_IME_SELAR" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\b_selbar.bmp</File>
-	</Object>
-	<Object Id="7119" Name="IDB_MODE_IME_BTITLE" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\b_title.bmp</File>
-	</Object>
-	<Object Id="7120" Name="IDB_MODE_IME_CALCDOWNKEYPAD" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\calcdownkeypad.bmp</File>
-	</Object>
-	<Object Id="7123" Name="IDB_MODE_IME_DAILKEYDOWN" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\dailkeydown.bmp</File>
-	</Object>
-	<Object Id="7124" Name="IDB_MODE_IME_DAILKEYUP" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\dailkeyup.bmp</File>
-	</Object>
-	<Object Id="7126" Name="IDB_MODE_IME_FUHAOKEYPAD" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\fuhaokeypad.bmp</File>
-	</Object>
-	<Object Id="7127" Name="IDB_MODE_IME_FUHAOKEYPADDOWN" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\fuhaokeypaddown.bmp</File>
-	</Object>
-	<Object Id="7128" Name="IDB_MODE_IME_FULLWICH" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\fullhwriteinterfaceCH.bmp</File>
-	</Object>
-	<Object Id="7130" Name="IDB_MODE_IME_FULLOLFHD" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\fullonelinefuhaodown.bmp</File>
-	</Object>
-	<Object Id="7131" Name="IDB_MODE_IME_HANDWRITE" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\handwrite.bmp</File>
-	</Object>
-	<Object Id="7134" Name="IDB_MODE_IME_ITSIMBACKSPACE" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\itsimbackspace.bmp</File>
-	</Object>
-	<Object Id="7135" Name="IDB_MODE_IME_ITSIMBLANK" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\itsimblank.bmp</File>
-	</Object>
-	<Object Id="7136" Name="IDB_MODE_IME_ITSIMDELETE" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\itsimdelete.bmp</File>
-	</Object>
-	<Object Id="7137" Name="IDB_MODE_IME_ITSIMLETTER" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\itsimletter.bmp</File>
-	</Object>
-	<Object Id="7138" Name="IDB_MODE_IME_ITSIMPINYIN" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\itsimpinyin.bmp</File>
-	</Object>
-	<Object Id="7139" Name="IDB_MODE_IME_ITSIMSYMBOL" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\itsimsymbol.bmp</File>
-	</Object>
-	<Object Id="7140" Name="IDB_MODE_IME_LETTERCAPKEYPAD" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\lettercapkeypad.bmp</File>
-	</Object>
-	<Object Id="7141" Name="IDB_MODE_IME_LETTERCAPKEYPADDOWN" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\lettercapkeypaddown.bmp</File>
-	</Object>
-	<Object Id="7142" Name="IDB_MODE_IME_LETTERKEYPAD" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\letterkeypad.bmp</File>
-	</Object>
-	<Object Id="7143" Name="IDB_MODE_IME_LETTERKEYPADDOWN" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\letterkeypaddown.bmp</File>
-	</Object>
-	<Object Id="7144" Name="IDB_MODE_IME_NOTHWRITECLEARCH" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\nothwriteclearCH.bmp</File>
-	</Object>
-	<Object Id="7145" Name="IDB_MODE_IME_NOTHWRITECOPYCH" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\nothwritecopyCH.bmp</File>
-	</Object>
-	<Object Id="7146" Name="IDB_MODE_IME_NOTHWRITEOKCH" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\nothwriteokCH.bmp</File>
-	</Object>
-	<Object Id="7147" Name="IDB_MODE_IME_NOTHWRITEPASTECH" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\nothwritepasteCH.bmp</File>
-	</Object>
-	<Object Id="7148" Name="IDB_MODE_IME_PINYINKEYPAD" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\pinyinkeypad.bmp</File>
-	</Object>
-	<Object Id="7149" Name="IDB_MODE_IME_PINYINKEYPADDOWN" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\pinyinkeypaddown.bmp</File>
-	</Object>
-	<Object Id="7150" Name="IDB_MODE_IME_PYBUTTONCH" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\pybuttonCH.bmp</File>
-	</Object>
-	<Object Id="7151" Name="IDB_MODE_IME_ONLINEFUHAODOWN" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\onelinefuhaodown.bmp</File>
-	</Object>
-	<Object Id="7152" Name="IDB_MODE_IME_RIGHT" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\RIGHT.bmp</File>
-	</Object>
-	<Object Id="7153" Name="IDB_MODE_IME_LEFT" MimeType="image/bmp">
-		<File>..\images\240x320\common\ime\LEFT.bmp</File>
 	</Object>
 	<Object Id="7002" Name="IDB_BATT1">
 		<File>..\images\240x320\common\Annunciator\batt1.bmp</File>
@@ -564,18 +477,111 @@
 	</Object>
 	<Object Id="7045" Name="IDB_QQMSG">
 		<File>..\images\128x160\common\Annunciator\qqmsg.bmp</File>
-	</Object>	
+	</Object>
 	<Object Id="7046" Name="IDB_QQHIDING">
 		<File>..\images\128x160\common\Annunciator\qqhiding.bmp</File>
 	</Object>
 	<Object Id="7047" Name="IDB_QQLEAVE">
 		<File>..\images\128x160\common\Annunciator\qqleave.bmp</File>
-	</Object>			
+	</Object>
 	<Object Id="7101" Name="IDB_MMS_ENTER" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\enter.png</File>
 	</Object>
 	<Object Id="7102" Name="IDB_MMS_SPACE" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\space.png</File>
+	</Object>
+	<Object Id="7117" Name="IDB_MODE_IME_BGROUND">
+		<File>..\images\240x320\common\ime\b_bground.bmp</File>
+	</Object>
+	<Object Id="7118" Name="IDB_MODE_IME_SELAR">
+		<File>..\images\240x320\common\ime\b_selbar.bmp</File>
+	</Object>
+	<Object Id="7119" Name="IDB_MODE_IME_BTITLE">
+		<File>..\images\240x320\common\ime\b_title.bmp</File>
+	</Object>
+	<Object Id="7120" Name="IDB_MODE_IME_CALCDOWNKEYPAD">
+		<File>..\images\240x320\common\ime\calcdownkeypad.bmp</File>
+	</Object>
+	<Object Id="7123" Name="IDB_MODE_IME_DAILKEYDOWN">
+		<File>..\images\240x320\common\ime\dailkeydown.bmp</File>
+	</Object>
+	<Object Id="7124" Name="IDB_MODE_IME_DAILKEYUP">
+		<File>..\images\240x320\common\ime\dailkeyup.bmp</File>
+	</Object>
+	<Object Id="7126" Name="IDB_MODE_IME_FUHAOKEYPAD">
+		<File>..\images\240x320\common\ime\fuhaokeypad.bmp</File>
+	</Object>
+	<Object Id="7127" Name="IDB_MODE_IME_FUHAOKEYPADDOWN">
+		<File>..\images\240x320\common\ime\fuhaokeypaddown.bmp</File>
+	</Object>
+	<Object Id="7128" Name="IDB_MODE_IME_FULLWICH">
+		<File>..\images\240x320\common\ime\fullhwriteinterfaceCH.bmp</File>
+	</Object>
+	<Object Id="7130" Name="IDB_MODE_IME_FULLOLFHD">
+		<File>..\images\240x320\common\ime\fullonelinefuhaodown.bmp</File>
+	</Object>
+	<Object Id="7131" Name="IDB_MODE_IME_HANDWRITE">
+		<File>..\images\240x320\common\ime\handwrite.bmp</File>
+	</Object>
+	<Object Id="7134" Name="IDB_MODE_IME_ITSIMBACKSPACE">
+		<File>..\images\240x320\common\ime\itsimbackspace.bmp</File>
+	</Object>
+	<Object Id="7135" Name="IDB_MODE_IME_ITSIMBLANK">
+		<File>..\images\240x320\common\ime\itsimblank.bmp</File>
+	</Object>
+	<Object Id="7136" Name="IDB_MODE_IME_ITSIMDELETE">
+		<File>..\images\240x320\common\ime\itsimdelete.bmp</File>
+	</Object>
+	<Object Id="7137" Name="IDB_MODE_IME_ITSIMLETTER">
+		<File>..\images\240x320\common\ime\itsimletter.bmp</File>
+	</Object>
+	<Object Id="7138" Name="IDB_MODE_IME_ITSIMPINYIN">
+		<File>..\images\240x320\common\ime\itsimpinyin.bmp</File>
+	</Object>
+	<Object Id="7139" Name="IDB_MODE_IME_ITSIMSYMBOL">
+		<File>..\images\240x320\common\ime\itsimsymbol.bmp</File>
+	</Object>
+	<Object Id="7140" Name="IDB_MODE_IME_LETTERCAPKEYPAD">
+		<File>..\images\240x320\common\ime\lettercapkeypad.bmp</File>
+	</Object>
+	<Object Id="7141" Name="IDB_MODE_IME_LETTERCAPKEYPADDOWN">
+		<File>..\images\240x320\common\ime\lettercapkeypaddown.bmp</File>
+	</Object>
+	<Object Id="7142" Name="IDB_MODE_IME_LETTERKEYPAD">
+		<File>..\images\240x320\common\ime\letterkeypad.bmp</File>
+	</Object>
+	<Object Id="7143" Name="IDB_MODE_IME_LETTERKEYPADDOWN">
+		<File>..\images\240x320\common\ime\letterkeypaddown.bmp</File>
+	</Object>
+	<Object Id="7144" Name="IDB_MODE_IME_NOTHWRITECLEARCH">
+		<File>..\images\240x320\common\ime\nothwriteclearCH.bmp</File>
+	</Object>
+	<Object Id="7145" Name="IDB_MODE_IME_NOTHWRITECOPYCH">
+		<File>..\images\240x320\common\ime\nothwritecopyCH.bmp</File>
+	</Object>
+	<Object Id="7146" Name="IDB_MODE_IME_NOTHWRITEOKCH">
+		<File>..\images\240x320\common\ime\nothwriteokCH.bmp</File>
+	</Object>
+	<Object Id="7147" Name="IDB_MODE_IME_NOTHWRITEPASTECH">
+		<File>..\images\240x320\common\ime\nothwritepasteCH.bmp</File>
+	</Object>
+	<Object Id="7148" Name="IDB_MODE_IME_PINYINKEYPAD">
+		<File>..\images\240x320\common\ime\pinyinkeypad.bmp</File>
+	</Object>
+	<Object Id="7149" Name="IDB_MODE_IME_PINYINKEYPADDOWN">
+		<File>..\images\240x320\common\ime\pinyinkeypaddown.bmp</File>
+	</Object>
+	<Object Id="7150" Name="IDB_MODE_IME_PYBUTTONCH">
+		<File>..\images\240x320\common\ime\pybuttonCH.bmp</File>
+	</Object>
+	<Object Id="7151" Name="IDB_MODE_IME_ONLINEFUHAODOWN">
+		<File>..\images\240x320\common\ime\onelinefuhaodown.bmp</File>
+	</Object>
+	<Object Id="7152" Name="IDB_MODE_IME_RIGHT">
+		<File>..\images\240x320\common\ime\RIGHT.bmp</File>
+	</Object>
+	<Object Id="7153" Name="IDB_MODE_IME_LEFT">
+		<File>..\images\240x320\common\ime\LEFT.bmp</File>
 	</Object>
 </Objects>
 </BREWRes>

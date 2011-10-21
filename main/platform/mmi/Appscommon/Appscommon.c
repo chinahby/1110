@@ -2732,6 +2732,26 @@ void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unl
     DrawPromptMessage(pIDisplay,pStatic,&m_PromptMsg);
     IDISPLAY_UpdateEx(pIDisplay,FALSE);
 }
+#ifdef FEATURE_LCD_TOUCH_ENABLE 
+void Appscomm_Draw_Keyguard_Slide(IDisplay *pIDisplay,uint16 x,uint16 y)
+{
+	IImage *m_imageSlide = NULL;
+	IShell      *pShell = AEE_GetShell();
+	if ((NULL == pIDisplay))
+    {
+        return;
+    } 
+	m_imageSlide = ISHELL_LoadResImage(pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SLIDE_BAR);
+	if(m_imageSlide != NULL)
+	{
+		IIMAGE_Draw(m_imageSlide,x,y);                          
+		IIMAGE_Release(m_imageSlide);
+		m_imageSlide = NULL;
+	}
+	IDISPLAY_UpdateEx(pIDisplay,FALSE);
+}
+#endif
+
 #endif
 #ifdef FEATURE_KEYGUARD
 void Appscommon_Draw_Keyguard_Time(IDisplay *pIDisplay)

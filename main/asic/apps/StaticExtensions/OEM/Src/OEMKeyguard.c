@@ -115,6 +115,9 @@ static void    OEMPriv_DrawMessageCB(void *pUnused);
 //static void    OEMPriv_OnCallStatusCB(void *pUnused);
 static void    OEMKeyguard_Set_Annunciator_Enable(boolean b_state);
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+static void    OEMPriv_DrawPenMoveBar(uint16 x,uint16 y);
+#endif
 /*===========================================================================
 
                     STATIC/LOCAL DATA
@@ -126,6 +129,8 @@ static boolean sbMessageActive = FALSE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 static uint16 m_privpinter_x = 0;
 static uint16 m_privpinter_y = 0;
+static uint16 m_bstartInRect = FALSE;
+static AEERect m_Rct = {16,13,53,30};
 #define MOVE_DY                3
 #endif
 #ifdef FEATURE_ICM
@@ -695,7 +700,70 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                 IALERT_KeyBeep(spAlert, (AVKType) wParam, FALSE);
             }
             break;
+		
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+		if(evt == EVT_PEN_DOWN)
+		{
+			AEERect rct_Start = {16,13,53,30};
+			uint16 wXPos = (int16)AEE_GET_X(dwParam);
+			uint16 wYPos = (int16)AEE_GET_Y(dwParam);
+			m_Rct.x = rct_Start.x;
+			m_Rct.y = rct_Start.y;
+			m_Rct.dx = rct_Start.dx;
+			m_Rct.dy = rct_Start.dy;
+			if(OEMKEYGUARD_PT_IN_RECT(wXPos,wYPos,rct_Start))
+			{
+				m_bstartInRect = TRUE;	
+			}
+		}
+		else if(evt == EVT_PEN_MOVE)
+		{
+			AEERect rct = {0};
+			uint16 wXPos = (int16)AEE_GET_X(dwParam);
+			uint16 wYPos = (int16)AEE_GET_Y(dwParam);
+			uint16 m_Move_Dx = wXPos-m_privpinter_x;
+			
+			if((m_Move_Dx>MOVE_DY) &&(m_bstartInRect))
+			{
+				m_Rct.x = m_Rct.x + m_Move_Dx;
+				rct.x = m_Rct.x;
+				rct.y = m_Rct.y;
+				OEMPriv_DrawPenMoveBar(rct.x,rct.y);
+				//drew 滑动图标
+			}
+			m_privpinter_x = wXPos;
+			m_privpinter_y = wYPos;
+			return TRUE;
+		}
+		else if(evt == EVT_PEN_UP)
+		{
+			AEERect rct_End = {0};
+			uint16 wXPos = (int16)AEE_GET_X(dwParam);
+			uint16 wYPos = (int16)AEE_GET_Y(dwParam);
+			if(m_bstartInRect)
+			{
+				if(OEMKEYGUARD_PT_IN_RECT(wXPos,wYPos,rct_End))
+				{
+					//解锁
+					sUnlockState = UNLOCKSTATE_RESET;
 
+                    // Correct key, make a beep...
+                    if (spAlert)
+                    {
+                        IALERT_KeyBeep(spAlert, (AVKType) wParam, TRUE);
+                    }
+
+                    // Unlock the keyguard
+                    OEMKeyguard_SetState(FALSE);
+
+                    OEMPriv_ResumeBREW();
+				}
+			}
+			m_bstartInRect = FALSE;	
+		}
+		m_privpinter_x = 0;
+		m_privpinter_y = 0;
+#endif
         default:
             break;
     }
@@ -768,6 +836,23 @@ static void OEMPriv_DrawKeyguardMessage(boolean unlockkey)
     }
 }
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+static void    OEMPriv_DrawPenMoveBar(uint16 x,uint16 y)
+{
+	IDisplay      *pd;
+    KEYGUARD_ERR("OEMPriv_DrawPenMoveBar %x",sgpShell,0,0);
+    (void) ISHELL_CreateInstance(sgpShell,AEECLSID_DISPLAY,(void**) &pd);
+	if(pd)
+	{
+		AEEDeviceInfo devinfo = {0};
+        IShell      *pShell = AEE_GetShell();
+        
+        ISHELL_GetDeviceInfo(pShell, &devinfo);
+	}
+	Appscomm_Draw_Keyguard_Slide(pd,x,y);
+	IDISPLAY_Release(pd);
+}
+#endif
 
 static void    OEMPriv_DrawKeyguardTime(void)
 {
@@ -893,7 +978,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
     if (OEMKeyguard_IsEnabled() && OEMPriv_IsPhoneIdle())
     {
         boolean bKeyPress = FALSE;
-        AEECLSID cls = AEE_Active();        
+        AEECLSID cls = AEE_Active(); 
         KEYGUARD_ERR("OEMKeyguard_HandleEvent %d %x %x",sbMessageActive,evt,wParam);
 
         //{
@@ -901,28 +986,6 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         //    db_value.db_backlight_level = TRUE;
         //    db_put(DB_BACKLIGHT_LEVEL, &db_value);
         //}
-        #ifdef FEATURE_LCD_TOUCH_ENABLE
-		if(evt == EVT_PEN_MOVE)
-		{
-			AEERect rct = {0};
-			uint16 wXPos = (int16)AEE_GET_X(dwParam);
-			uint16 wYPos = (int16)AEE_GET_Y(dwParam);
-			uint16 m_Move_Dy = wYPos-m_privpinter_y;
-			if(m_Move_Dy>MOVE_DY)
-			{
-				//drew 滑动图标
-			}
-			if(OEMKEYGUARD_PT_IN_RECT(wXPos,wYPos,rct))
-			{
-				//解锁
-			}
-			m_privpinter_x = wXPos;
-			m_privpinter_y = wYPos;
-			return TRUE;
-		}
-		m_privpinter_x = 0;
-		m_privpinter_y = 0;
-		#endif
 		
 #ifdef FEATURE_VERSION_W515V3
         if(wParam == AVK_CLR)

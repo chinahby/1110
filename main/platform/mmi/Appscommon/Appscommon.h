@@ -773,6 +773,9 @@ void DrawPromptMessage (IDisplay *pIDisplay,
 void DrawBackground( IDisplay *pDisplay, AEERect *pRect);
 #ifdef FEATURE_KEYGUARD
 void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unlockkey);
+#ifdef FEATURE_LCD_TOUCH_ENABLE 
+void Appscomm_Draw_Keyguard_Slide(IDisplay *pIDisplay,uint16 x,uint16 y);
+#endif
 #endif
 
 #ifdef FEATURE_KEYGUARD
