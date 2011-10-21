@@ -553,6 +553,21 @@
 	<String Id="1014" Name="IDS_OUTBOX_MMS">
 		<Text>Outbox  MMS</Text>
 	</String>
+	<STRING Id="1015" Name="IDS_MMSNOTIFY">
+		<Text>MMS Notify</Text>
+	</STRING>
+	<String Id="1026" Name="IDS_MMSDELIVERYREPORT">
+		<Text>MMS Delivery Report</Text>
+	</String>
+	<String Id="1027" Name="IDS_READREPLY">
+		<Text>MMS Read Reply</Text>
+	</String>
+	<String Id="1028" Name="IDS_REPORTALLOWED">
+		<Text>MMS Report Allowed</Text>
+	</String>
+	<String Id="1029" Name="IDS_SENDERVISIBILITY">
+		<Text>MMS Sender Visibility</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
@@ -905,7 +920,7 @@
 	</Dialog>
 	<DIALOG Id="6049" Name="IDD_MMSNOTIFY" Focus="7040">
 		<Controls>
-			<Menu Id="7040" Name="IDC_MMSNOTIFY_MENU">
+			<Menu Id="7040" Name="IDC_MMSOPTION_YESNO">
 				<Items/>
 			</Menu>
 		</Controls>
