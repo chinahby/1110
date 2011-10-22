@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="numbermanager" VERSION="1">
+<Strings Encoding="ISOLATIN1">
+	<STRING Id="1" Name="IDS_NUMBERMANAGER_TITLE">
+		<Text>Best tone</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_BOOK_TICKET_TITLE">
+		<Text>Air ticket</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_BOOK_HOTEL_TITLE">
+		<Text>Hotel</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_BOOK_RESTAURANT_TITLE">
+		<Text>Restaurant</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_COMMUNICATE_ASSISTANT_TITLE">
+		<Text>Calling secretary</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_TELEPHONE_EXCHANGE_TITLE">
+		<Text>Switchboard service</Text>
+	</STRING>
+	<String Id="7" Name="IDS_CALL_NUMBER_MANAGER_TITLE">
+		<Text>Call best tone</Text>
+	</String>
+	<String Id="8" Name="IDS_TELEPHONE_EXCHANGE_NUMBER">
+		<Text>Switchboard number</Text>
+	</String>
+	<String Id="9" Name="IDS_TELEPHONE_EXCHANGE_INPUT">
+		<Text>Input number</Text>
+	</String>
+	<String Id="10" Name="IDS_TELEPHONE_EXCHANGE_MODIFY">
+		<Text>modify number</Text>
+	</String>
+	<String Id="11" Name="IDS_LIFE_SEARCHING_TITLE">
+		<Text>Life searching</Text>
+	</String>
+	<String Id="12" Name="IDS_MAP_SERVICE_TITLE">
+		<Text>Map service</Text>
+	</String>
+	<String Id="13" Name="IDS_MEMBER_SPACE_TITLE">
+		<Text>Member space</Text>
+	</String>
+	<String Id="14" Name="IDS_CONNECT_TO">
+		<Text>Connect to</Text>
+	</String>
+</Strings>
+<Dialogs>
+	<DIALOG Id="101" Name="IDD_NUMBERMANAGER_DIALOG" Focus="1">
+		<Controls>
+			<Menu Id="1" Name="IDC_NUMBERMANAGER_DIALOG">
+				<TitleID>IDS_NUMBERMANAGER_TITLE</TitleID>
+				<Items/>
+			</Menu>
+		</Controls>
+	</DIALOG>
+	<Dialog Id="102" Name="IDD_DISPLAY_NUMBER_DIALOG" Focus="0">
+		<Controls>
+			<Static Id="7001" Name="IDC_DISPLAY_NUMBER_DIALOG">
+				<Items/></Static>
+		</Controls>
+	</Dialog>
+	<Dialog Id="103" Name="IDD_TEXT_INPUT_DIALOG" Focus="0">
+		<Controls>
+			<Text Id="7002" Name="IDC_TEXT_INPUT_DIALOG">
+				<Items/></Text>
+		</Controls>
+		<Position PosX="0" PosW="0" PosY="0" PosH="0"/>
+	</Dialog>
+</Dialogs>
+</BREWRes>
