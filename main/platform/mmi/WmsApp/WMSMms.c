@@ -167,13 +167,13 @@ void WMS_MMS_BUFFERRelease();
 #define SLIM_CLIB_CTYPE_XML_NAME_EXT 0x08000000
 #define SLIM_CLIB_CTYPE_XML_CLOSE_PAREN 0x10000000
 
-#define slim_isctype(c,type) (cSlim_clib_ctype_table[(c)] & (type))
+#define slim_isctype(c,type) (cSlim_clib_ctype_table_mms[(c)] & (type))
 #define slim_isnonascii(c) (slim_isctype((c),SLIM_CLIB_CTYPE_NONASCII))
 #define SLIM_SS_FORWARD(s,len,n)	((s)+=(n),(len)-=(n))
 #define SLIM_SS_INC(s,len)			((s)++,(len)--)
 #define SLIM_SS_DEC(s,len)			((s)--,(len)++)
-#define slim_tolower(c) ((int)cSlim_clib_tolower_table[(c)])
-#define slim_toupper(c) ((int)cSlim_clib_toupper_table[(c)])
+#define slim_tolower(c) ((int)cSlim_clib_tolower_table_mms[(c)])
+#define slim_toupper(c) ((int)cSlim_clib_toupper_table_mms[(c)])
 
 #define POST_TEST ("POST http://mmsc.vnet.mobi HTTP/1.1\r\nHost:10.0.0.200:80\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: Nokia6235/1.0 (S190V0200.nep) UP.Browser/6.2.3.2 MMP/2.0\r\nx-wap-profile: \"http://nds1.nds.nokia.com/uaprof/N6235r200.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
 
@@ -350,7 +350,7 @@ const static char* sWspMimeType[MIME_TYPE_COUT] =
     "video/mp4",   
 };
 
-uint32 cSlim_clib_ctype_table[256] = {
+uint32 cSlim_clib_ctype_table_mms[256] = {
 	0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 
 	0x4, 0x64, 0x424, 0x24, 0x24, 0x424, 0x4, 0x4, 
 	0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 0x4, 
@@ -385,7 +385,7 @@ uint32 cSlim_clib_ctype_table[256] = {
 	0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 0x800, 
 };
 
-uint8 cSlim_clib_toupper_table[256] = {
+uint8 cSlim_clib_toupper_table_mms[256] = {
 	  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,  15,
 	 16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,  31,
 	 32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,
@@ -404,7 +404,7 @@ uint8 cSlim_clib_toupper_table[256] = {
 	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255,
 };
 
-uint8 cSlim_clib_tolower_table[256] = {
+uint8 cSlim_clib_tolower_table_mms[256] = {
 	  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,  15,
 	 16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,  31,
 	 32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,

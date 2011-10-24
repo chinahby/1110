@@ -644,7 +644,7 @@ void OEMOS_ResetDevice(char * pszMsg, uint32 nCause)
 extern boolean print_allocation(const char *fname, void *ptr);
 #endif//FEATURE_BREW_HEAP_TRACKER
 
-#ifndef USES_RELEASE_VERSION
+#if 1//ndef USES_RELEASE_VERSION
 #define HEAPNODE_NUM_MAX    10240
 
 typedef struct
