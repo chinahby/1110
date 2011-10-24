@@ -21,6 +21,7 @@ vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
 vpath %.jpg $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
 vpath %.gif $(APPSCOMMON)/images/$(USES_LCD_SIZE)/$(USES_RESDIR)/Pwronoffani
 vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/common/core
+vpath %.png $(APPSCOMMON)/images/$(USES_LCD_SIZE)/common/BlackBerry
 
 CONSTFILE_FILES+=\
 	coreapp.mif|fs:/mif/coreapp.mif \
@@ -138,7 +139,7 @@ CONSTFILE_FILES+=\
     #poweronani.jpg|fs:/image/pwronoffani/poweronani.jpg \
     #poweroffani.jpg|fs:/image/pwronoffani/poweroffani.jpg
 endif
-endif #ifeq ($(USES_LOWMEM), yes)
+endif 
 ifeq ($(USES_BLACKBERRY),yes)
 	CONSTFILE_FILES+=\
 		messages.png|fs:/image/BlackBerry/messages.png \
