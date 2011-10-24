@@ -1351,10 +1351,10 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 				int body_len;
                 wms_msg_event_info_s_type *info = ((wms_msg_event_info_s_type*)dwParam);
                 boolean bRet;
-                uint8 notify_buf[256] = {0};
+                uint8 notify_buf[256] = {0};                
+                int nRet;
 #ifdef FEATURE_SMS_UDH
                 boolean bUDHPortPresent = FALSE;
-                int nRet;
 #endif
                 
                 
