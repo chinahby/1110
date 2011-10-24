@@ -545,6 +545,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     pMe->m_pMMSVIDEO = NULL;
     pMe->m_isMMS = FALSE;
     pMe->m_MMSData = NULL;
+    MEMSET(&pMe->m_EncData,NULL,sizeof(MMS_WSP_ENCODE_SEND));
 #endif
     // 初始化各成员变量
     pMe->m_prevState = WMSST_NONE;
@@ -729,7 +730,9 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
 ==============================================================================*/
 static void CWmsApp_FreeAppData(WmsApp *pMe)
 {
+    int i = 0;
     MSG_FATAL("CWmsApp_FreeAppData Start",0,0,0);
+    
     if (NULL == pMe)
     {
         return;
@@ -761,6 +764,16 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
     {
         (void)IFILEMGR_Release(pMe->m_pIFileMgr);
     }
+    FREEIF(pMe->m_DecData.message.hBody);
+    FREEIF(pMe->m_DecData.message.mms_data.head_info.pContent);
+    for(i = 0;i < pMe->m_DecData.message.mms_data.frag_num;i++)
+    {
+        FREEIF(pMe->m_DecData.message.mms_data.fragment[i].pContent);
+    }
+    FREEIF(pMe->m_pMsgEvent);
+    FREEIF(pMe->m_EncData.pDeliveryacknowledgement);
+    FREEIF(pMe->m_EncData.pNotifyresp);
+    FREEIF(pMe->m_EncData.pMessage);
     FREEIF(pMe->m_MMSData);
     pMe->m_isMMS = FALSE;
     WMS_MMS_BUFFERRelease();
@@ -1750,7 +1763,9 @@ Exit:
                         if(pMe->m_isCheckMMSNotify)
                         {
                             wms_memory_store_e_type   mem_store = WMS_MEMORY_STORE_RUIM;
-                            sendData->pNotifyresp = (MMS_WSP_ENC_NOTIFY_RESP*)MALLOC(sizeof(MMS_WSP_ENC_NOTIFY_RESP));
+                            if(sendData->pNotifyresp == NULL)
+                                sendData->pNotifyresp = (MMS_WSP_ENC_NOTIFY_RESP*)MALLOC(sizeof(MMS_WSP_ENC_NOTIFY_RESP));
+                                
                             if (IsRunAsUIMVersion())
                             { 
                                 ICONFIG_GetItem(pMe->m_pConfig,
@@ -1859,6 +1874,7 @@ Exit:
                                 WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)strAddr);
                             }
                         }
+                        FREEIF(pBody); // YY: add
                     }
                     break;
                     case MMS_PDU_RETRIEVE_CONF:
@@ -1967,7 +1983,9 @@ Exit:
                             WMS_MMSState(WMS_MMS_PDU_MNotifyrespInd,0,(uint32)sendData);
                         }
                         pMe->m_isMMSNotify = FALSE;
+                        MSG_FATAL("WMS_MMS_PDU_Decode pMe->m_isMMSNotify = FALSE;",0,0,0);
                         WMS_MMS_MmsWspDecDataRelease(&pDecData,ePDUType);
+                        MSG_FATAL("WMS_MMS_PDU_Decode WMS_MMS_MmsWspDecDataRelease",0,0,0);
                     }
                     break;
                     default:
@@ -1982,7 +2000,7 @@ Exit:
                 MSG_FATAL("WMS_MMS_PDU_Decode nResult = %d",nResult,0,0);
             }
             WMSAPPU_SYSFREE(pMe->m_pMsgEvent);
-            
+            MSG_FATAL("WMS_MMS_PDU_Decode WMSAPPU_SYSFREE(pMe->m_pMsgEvent);",0,0,0);
             return TRUE;
         }
 

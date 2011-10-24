@@ -1480,14 +1480,14 @@ uint8* WMS_MMS_PDUHeader_Encode(uint8* pBuf,int nKind,uint8* pValue,int32 nValue
 uint8* WMS_MMS_BUFFERGet()
 {
     if(pBuf == NULL)
-        pBuf = (uint8*)MALLOC(150*1024);
+        pBuf = (uint8*)MALLOC(MSG_MAX_PACKET_SIZE);
         
     return pBuf;
 }
 
 void WMS_MMS_BUFFERReset()
 {
-    MEMSET(WMS_MMS_BUFFERGet(),NULL,150*1024);
+    MEMSET(WMS_MMS_BUFFERGet(),NULL,MSG_MAX_PACKET_SIZE);
 }
 
 void WMS_MMS_BUFFERRelease()

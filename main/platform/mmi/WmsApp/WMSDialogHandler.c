@@ -16944,7 +16944,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 
                                     RELEASEIF(pIImage);
                                     RELEASEIF(pMemAStream);
-                                    FREE(pImage);
+                                    FREEIF(pImage);
                                 }
                             }
                         }
@@ -16962,7 +16962,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             0,
                             menuItemName,
                             (uint32)pDecdata->message.mms_data.fragment[index].pContent);
-
+                       
                        IMENUCTL_SetActive(pListCtl,TRUE);
                     }
                
@@ -16987,6 +16987,13 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             return TRUE;
             
         case EVT_KEY_PRESS:
+            if(AVK_UP == wParam || AVK_DOWN == wParam)
+                IMENUCTL_HandleEvent(pListCtl,eCode,wParam,dwParam);
+                
+            if(AVK_INFO == wParam)
+            {
+                ;
+            }
             return TRUE;
 
         case EVT_KEY:
