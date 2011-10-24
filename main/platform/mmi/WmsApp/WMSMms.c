@@ -3975,6 +3975,7 @@ static void MMSSocketState(MMSSocket *ps)
                  }
 
                MMSSocketClose(&ps);
+               return;
             }
         }
         break;
