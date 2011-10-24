@@ -689,6 +689,10 @@ typedef struct
    uint8 mmsOutCount;//CFGI_MMS_OUTCOUNT
    uint8 mmsInCount;//CFGI_MMS_INCOUNT
    boolean mmsNotify;
+   int8 mmsDeliverReport;
+   int8 mmsReadReply;
+   int8 mmsReportAllowed;
+   int8 mmsSenderVisibility;
 #endif
 } OEMConfigListType;
 
@@ -1508,6 +1512,18 @@ static int OEMPriv_SetItem_CFGI_MMS_INCOUNT(void *pBuff);
 static int OEMPriv_GetItem_CFGI_WMS_MMSNOTIFY(void *pBuff);
 static int OEMPriv_SetItem_CFGI_WMS_MMSNOTIFY(void *pBuff);
 
+static int OEMPriv_GetItem_CFGI_WMS_MMSDELIVERYREPORT(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_MMSDELIVERYREPORT(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_WMS_READREPLY(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_READREPLY(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_WMS_REPORTALLOWED(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_REPORTALLOWED(void *pBuff);
+
+static int OEMPriv_GetItem_CFGI_WMS_SENDERVISIBILITY(void *pBuff);
+static int OEMPriv_SetItem_CFGI_WMS_SENDERVISIBILITY(void *pBuff);
+
 #endif
 
 /*===========================================================================
@@ -1821,6 +1837,10 @@ static OEMConfigListType oemi_cache = {
     0,//CFGI_MMS_COUNT 
     0,//CFGI_MMS_COUNT
     TRUE,
+    -1,
+    -1,
+    -1,
+    -1,
 #endif   
 };
 
@@ -2365,6 +2385,10 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_MMS_OUTCOUNT, sizeof(uint8)),
    CFGTABLEITEM(CFGI_MMS_INCOUNT, sizeof(uint8)),
    CFGTABLEITEM(CFGI_WMS_MMSNOTIFY, sizeof(boolean)),
+   CFGTABLEITEM(CFGI_WMS_MMSDELIVERYREPORT, sizeof(uint8)),
+   CFGTABLEITEM(CFGI_WMS_READREPLY, sizeof(uint8)),
+   CFGTABLEITEM(CFGI_WMS_REPORTALLOWED, sizeof(uint8)),
+   CFGTABLEITEM(CFGI_WMS_SENDERVISIBILITY, sizeof(uint8)),
 #endif   
 };
 #endif
@@ -10655,7 +10679,66 @@ static int OEMPriv_SetItem_CFGI_WMS_MMSNOTIFY(void *pBuff)
    MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start mmsNotify=%d", oemi_cache.mmsNotify,0,0); 
    return SUCCESS;
 }
+static int OEMPriv_GetItem_CFGI_WMS_MMSDELIVERYREPORT(void *pBuff) 
+{
+    MSG_FATAL("OEMPriv_GetItem_CFGI_MMS_INCOUNT Start mmsCount=%d", oemi_cache.mmsDeliverReport,0,0); 
+    *(int8 *) pBuff = oemi_cache.mmsDeliverReport;
+    return SUCCESS;
+}
 
+static int OEMPriv_SetItem_CFGI_WMS_MMSDELIVERYREPORT(void *pBuff)
+{
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start *pBuff=%d", *(int8*)pBuff,0,0); 
+    oemi_cache.mmsDeliverReport = *(int8 *)pBuff;
+    OEMPriv_WriteOEMConfigList();
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start mmsNotify=%d", oemi_cache.mmsDeliverReport,0,0); 
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_WMS_READREPLY(void *pBuff) 
+{
+    MSG_FATAL("OEMPriv_GetItem_CFGI_MMS_INCOUNT Start mmsCount=%d", oemi_cache.mmsReadReply,0,0); 
+    *(int8 *) pBuff = oemi_cache.mmsReadReply;
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_WMS_READREPLY(void *pBuff)
+{
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start *pBuff=%d", *(int8*)pBuff,0,0); 
+    oemi_cache.mmsReadReply = *(int8 *)pBuff;
+    OEMPriv_WriteOEMConfigList();
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start mmsNotify=%d", oemi_cache.mmsReadReply,0,0); 
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_WMS_REPORTALLOWED(void *pBuff) 
+{
+    MSG_FATAL("OEMPriv_GetItem_CFGI_MMS_INCOUNT Start mmsCount=%d", oemi_cache.mmsReportAllowed,0,0); 
+    *(int8 *) pBuff = oemi_cache.mmsReportAllowed;
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_WMS_REPORTALLOWED(void *pBuff)
+{
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start *pBuff=%d", *(int8*)pBuff,0,0); 
+    oemi_cache.mmsReportAllowed = *(int8 *)pBuff;
+    OEMPriv_WriteOEMConfigList();
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start mmsNotify=%d", oemi_cache.mmsReportAllowed,0,0); 
+    return SUCCESS;
+}
+static int OEMPriv_GetItem_CFGI_WMS_SENDERVISIBILITY(void *pBuff) 
+{
+    MSG_FATAL("OEMPriv_GetItem_CFGI_MMS_INCOUNT Start mmsCount=%d", oemi_cache.mmsSenderVisibility,0,0); 
+    *(int8 *) pBuff = oemi_cache.mmsSenderVisibility;
+    return SUCCESS;
+}
+
+static int OEMPriv_SetItem_CFGI_WMS_SENDERVISIBILITY(void *pBuff)
+{
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start *pBuff=%d", *(int8*)pBuff,0,0); 
+    oemi_cache.mmsSenderVisibility = *(int8 *)pBuff;
+    OEMPriv_WriteOEMConfigList();
+    MSG_FATAL("OEMPriv_SetItem_CFGI_MMS_INCOUNT Start mmsNotify=%d", oemi_cache.mmsSenderVisibility,0,0); 
+    return SUCCESS;
+}
 #endif
 /*==============================================================================
 º¯Êý£º
