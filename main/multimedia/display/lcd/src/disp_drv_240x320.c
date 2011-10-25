@@ -34,7 +34,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 
 ============================================================================*/
 
-//extern boolean disp_ili9163c_tft177hsd_rot(disp_drv_ic_type *pdispic);
+extern boolean disp_ili9325d_tft26_rot(disp_drv_ic_type *pdispic);
 
 /*============================================================================
 
@@ -45,6 +45,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 static disp_ic_install_type     disp_ic_install[] = 
 {
     //disp_ili9163c_tft177hsd_rot,//默认驱动，需放到最后，并且不检查IC的ID
+    disp_ili9325d_tft26_rot,
     NULL
 };
 
