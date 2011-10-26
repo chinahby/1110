@@ -6640,6 +6640,9 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                    #endif
                 }                                        
             } 
+#ifdef FEATURE_VERSION_W516
+            pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
+#endif
             MSG_FATAL("pContext->nMultitapCaps=========%d",pContext->nMultitapCaps,0,0);
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
             MSG_FATAL("pContext->sT9awFieldInfo.G.psTxtBuf=%0x,=%d.....",pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart],pContext->wSelStart,0);
@@ -8457,7 +8460,9 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
                    pContext->nMultitapCaps = MULTITAP_ALL_CAPS;
                 }                                        
             } 
-            
+#ifdef FEATURE_VERSION_W516
+            pContext->nMultitapCaps = MULTITAP_ALL_CAPS;
+#endif
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
             MSG_FATAL("pContext->sT9awFieldInfo.G.psTxtBuf=%0x,=%d.....",pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart],pContext->wSelStart,0);
             #ifdef FEATURE_T9_MT_ARABIC
@@ -8847,7 +8852,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
 
     nCursor = pContext->sT9awFieldInfo.G.nCursor;
     nBufLen = pContext->sT9awFieldInfo.G.nBufLen;
-//	MSG_FATAL("T9_AW_DisplayText........11111",0,0,0);
+   // MSG_FATAL("T9_AW_DisplayText........11111",0,0,0);
      if ( !pContext->wMaxChars || nBufLen <= pContext->wMaxChars ) 
      {
         // don't forget to include the
@@ -8862,14 +8867,14 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
            return FALSE;
         }
         pContext->pszContents = pNewContents;
-     //   MSG_FATAL("T9_AW_DisplayText........11122",0,0,0);
+       // MSG_FATAL("T9_AW_DisplayText........11122key==%d",key,0,0);
         if((TEXT_MODE_MULTITAP == OEM_TextGetCurrentMode((OEMCONTEXT)pContext) 
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH
         ||TEXT_MODE_T9_CAP_LOWER_ENGLISH == OEM_TextGetCurrentMode((OEMCONTEXT)pContext)
 #endif
              )&&(key >= AVK_0 && key <= AVK_9))
         {
-            if(pContext->dwProperties & TP_STARKEY_SWITCH)  // 字母输入法下按*键进行切换
+           if(pContext->dwProperties & TP_STARKEY_SWITCH)  // 字母输入法下按*键进行切换
             {
          #ifndef FEATURE_LANG_PORTUGUESE
                 if(AVK_0 == key)    
@@ -8895,7 +8900,6 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
                    }
                 }
 #endif // FEATURE_CARRIER_CHINA_TELCOM
-                
                 if(MULTITAP_ALL_SMALL != pContext->nMultitapCaps)
                 {
                     kInsert[0] = pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart];
@@ -8929,7 +8933,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
                 ||(AVK_SELECT == key) 
                 ||(AVK_INFO == key)))
             {
-                if(MULTITAP_ALL_CAPS == pContext->nMultitapCaps)
+               if(MULTITAP_ALL_CAPS == pContext->nMultitapCaps)
                 {
                     int i;
                     for(i=0; i<pContext->sT9awFieldInfo.G.nBufLen; i++)
@@ -10042,9 +10046,9 @@ static void T9TextCtl_CJK_CHINESE_Restart(TextCtlContext *pContext)
     // set rectChinese input Rect
     pContext->rectChineseSyllableInput.x = pContext->rectDisplay.x;
     pContext->rectChineseSyllableInput.dx = pContext->rectDisplay.dx;
-    pContext->rectChineseSyllableInput.dy = pContext->nLineHeight;    
+    pContext->rectChineseSyllableInput.dy = pContext->nLineHeight; 
+    
     pContext->rectChineseSyllableInput.y = pContext->rectDisplay.y + pContext->rectDisplay.dy - pContext->rectChineseSyllableInput.dy*2;
-
     pContext->rectChineseTextInput.x = pContext->rectChineseSyllableInput.x;
     pContext->rectChineseTextInput.dx = pContext->rectChineseSyllableInput.dx;
     pContext->rectChineseTextInput.dy = pContext->nLineHeight;    
@@ -10765,12 +10769,12 @@ static boolean T9_CJK_CHINESE_DisplayText(TextCtlContext *pContext)
     {
     if((FOCUS_SELECTION == pContext->sFocus) ||(FOCUS_TEXT_PREDICTION == pContext->sFocus))
     {
-        pContext->rectDisplay.dy = pContext->rectDisplay.dy -pContext->rectChineseTextInput.dy+3;     
+        pContext->rectDisplay.dy = pContext->rectDisplay.dy -pContext->rectChineseTextInput.dy+1;     
             bAdjust = TRUE;
     }
     if(FOCUS_SYLLABLE == pContext->sFocus)
     {
-        pContext->rectDisplay.dy = pContext->rectDisplay.dy -pContext->rectChineseSyllableInput.dy - pContext->rectChineseTextInput.dy+4;     
+        pContext->rectDisplay.dy = pContext->rectDisplay.dy -pContext->rectChineseSyllableInput.dy - pContext->rectChineseTextInput.dy+2;     
             bAdjust = TRUE;
         }
     }
@@ -10818,14 +10822,14 @@ static boolean T9_CJK_CHINESE_DisplayText(TextCtlContext *pContext)
     {
         if(bAdjust == TRUE)
         {
-        pContext->rectDisplay.dy = pContext->rectDisplay.dy + pContext->rectChineseTextInput.dy-3;     
+        pContext->rectDisplay.dy = pContext->rectDisplay.dy + pContext->rectChineseTextInput.dy-1;     
         }
     }
     if(FOCUS_SYLLABLE == pContext->sFocus)
     {
         if(bAdjust == TRUE)
         {
-        pContext->rectDisplay.dy = pContext->rectDisplay.dy + pContext->rectChineseSyllableInput.dy + pContext->rectChineseTextInput.dy-4;     
+        pContext->rectDisplay.dy = pContext->rectDisplay.dy + pContext->rectChineseSyllableInput.dy + pContext->rectChineseTextInput.dy-2;     
         }
     }    
     return bModified;
@@ -10934,7 +10938,7 @@ static void T9_CJK_CHINESE_DrawStrokeString(TextCtlContext *pContext)
 
     /*nStrokeDisLen is the length of the strokes and components in spell buffer */
     nStrokeDisLen = pContext->sT9ccFieldInfo.nKeyBufLen;
-
+   
 #ifdef FEATURE_FUNCS_THEME                       
     IDISPLAY_DrawRect(pContext->pIDisplay,
             &pRect,
@@ -11047,8 +11051,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
 
     // Erase BMPF Rect
     IDISPLAY_EraseRect ( pContext->pIDisplay, &pRect );
-    
-    // no syllable to drew
+   // no syllable to drew
     if ( 0 == nKeyBufLen )
     {
         return;
@@ -11221,6 +11224,7 @@ static void T9_CJK_CHINESE_DrawSyllableString ( TextCtlContext *pContext )
         invertRect.y  = pRect.y+1;
         invertRect.dy = CHINESE_FONT_HEIGHT;
         IDISPLAY_InvertRect ( pContext->pIDisplay, &invertRect );
+    
     }                              
 
     nKeyBufLenOrig = nKeyBufLen;
@@ -11281,7 +11285,6 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
               iWindDx+2,     
               (iWindDy)*2);  
     IDISPLAY_EraseRect(pContext->pIDisplay, &pRect);
-    
     // blank the selection when focus on TEXT
     if ( FOCUS_TEXT != pContext->sFocus )
     {
@@ -11312,17 +11315,16 @@ static void T9_CJK_CHINESE_DisplaySelection(TextCtlContext *pContext)
 			cRect.y = pRect.y;
 			cRect.dx = CHINESE_FONT_WIDTH;
 			cRect.dy = CHINESE_FONT_HEIGHT-2;
-            (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
+           (void) IDISPLAY_DrawText((IDisplay *)pContext->pIDisplay,
                                    AEE_FONT_NORMAL,
                                    ch,
                                    -1,
                                    pRect.x+1+(T9_FONT_WIDTH)*k,
                                    pRect.y,//SCREEN_HEIGHT - pContext->nLineHeight,
                                    &cRect,
-                                   format);
+                                   format); 
             /* If this character is a NULL terminator, then stop drawing */
             if (*(psBuffer + k ) == 0)  break;
-            
         };
         
         // draw Select Rect.
