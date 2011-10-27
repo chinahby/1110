@@ -640,7 +640,31 @@ adc_error_return_type adc_read_pmic_therm_cal_res(int *result, void (*adc_comple
       result,
       adc_completion_cb_fn);
 }
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 
+adc_error_return_type adc_read_touchpad_y(int *result, void (*adc_completion_cb_fn)(void))
+{
+	return (adc_error_return_type)adie_adc_start_read(
+      //ADC_PM_AMUXOUT_ADIE_MUXSEL,
+      ADIE_AD_MUX2,
+#ifdef FEATURE_ADC_MULTI_RESOLUTION
+      ADIE_ADC_RES_12_BITS,
+#endif /* FEATURE_ADC_MULTI_RESOLUTION */
+      result,
+      adc_completion_cb_fn);
+}
+
+adc_error_return_type adc_read_touchpad_x(int *result, void (*adc_completion_cb_fn)(void))
+{
+   return (adc_error_return_type)adie_adc_start_read(
+      ADC_BATT_THERM_ADIE_MUXSEL,
+#ifdef FEATURE_ADC_MULTI_RESOLUTION
+      ADIE_ADC_RES_12_BITS,
+#endif /* FEATURE_ADC_MULTI_RESOLUTION */
+      result,
+      adc_completion_cb_fn);
+}
+#endif
 adc_error_return_type adc_read_r_ext(int *result, void (*adc_completion_cb_fn)(void))
 {
   rf_setup_muxes(ADC_R_EXT);
@@ -1303,5 +1327,9 @@ adc_logical_channel_definition_type adc_logical_channel_definitions[NUMBER_OF_LO
    { ADC_XO_THERM,                     adc_read_xo_therm_raw,     	IMMEDIATE,	0,                    	ADC_ADIE_12BIT_MAX_READING,     	0,						0,                                	0,                                        adc_null_filter,         adc_null_conversion },
    { ADC_XO_THERM_DEGC,                adc_read_xo_therm_cal_res,	IMMEDIATE,	0,                    	ADC_CALIBRATED_MAX_READING,     	0,						ADC_CALIBRATE_OFFSET,				ADC_CALIBRATE_SLOPE,                      adc_null_filter,         adc_xo_therm_to_degC },
    { ADC_PTAT_DEGC,                    adc_read_ptat,             	IMMEDIATE,	0,                    	ADC_ADIE_12BIT_MAX_READING,			0,						0,                                  0,                                        adc_null_filter,         adc_ptat_to_degC }
+   #ifdef FEATURE_LCD_TOUCH_ENABLE
+   ,{ ADC_TOUCHPAD_X,                  adc_read_touchpad_x,       IMMEDIATE,   0,                   ADC_ADIE_10BIT_MAX_READING,    50,                      0,                                        0,                                        adc_null_filter,         adc_null_conversion },
+   { ADC_TOUCHPAD_Y,                   adc_read_touchpad_y,       IMMEDIATE,   0,                   ADC_ADIE_10BIT_MAX_READING,    180,                       0,                                        0,                                        adc_null_filter,         adc_null_conversion },
+   #endif
 };
 

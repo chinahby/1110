@@ -148,6 +148,11 @@ extern ui_cmd_type* ui_get_cmd(void);
 //define  TASK_START_SIG   0x8000
 //define  TASK_STOP_SIG    0x4000
 //define  TASK_OFFLINE_SIG 0x2000
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+
+#define UI_GET_PEN_SIG	   0x40000
+#endif
+
 
 #define AEE_USBDRIVER_SIG  0x20000
 #define AEE_SLEEP_SIG      0x80000 /* AEE_SLEEP_SIG for Brew 3.1 Sleep. */

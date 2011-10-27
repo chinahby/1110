@@ -82,6 +82,10 @@ typedef enum
    ADC_XO_THERM,                    /* Raw SD ADC Reading */
    ADC_XO_THERM_DEGC,               /* Reading converted to degree C */
    ADC_PTAT_DEGC,
+   #ifdef FEATURE_LCD_TOUCH_ENABLE
+   ADC_TOUCHPAD_X,
+   ADC_TOUCHPAD_Y,
+   #endif
    // Number of available logical ADC channels
    NUMBER_OF_LOGICAL_ADC_CHANNELS
 

@@ -195,6 +195,10 @@ when       who     what, where, why
 #ifdef srIMON
 #include "OEMInterceptModules.h"
 #endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#include "touchpad.h"
+#include "OEMPointerHelpers.h"
+#endif
 
 #ifdef FEATURE_UI_PBM
 #ifdef FEATURE_UI_DUALPROC_APPS
@@ -308,6 +312,10 @@ cm_mm_call_info_s_type ui_calls[CM_CALL_ID_MAX];
 #ifdef FEATURE_NEW_SLEEP_API
   sleep_okts_handle gNewSleepHandle;
 #endif /* FEATURE_NEW_SLEEP_API */
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+static void oemui_touchpadinit(void);
+static void oemui_post_pointer_data(void);
+#endif
 
 /* <EJECT> */
 /*===========================================================================
@@ -1076,7 +1084,14 @@ void HandleSignals (
   if( sigs & UI_RPT_TIMER_SIG ) {
     ui_kick_dog();
   }
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 
+  if( (sigs & UI_GET_PEN_SIG) != 0 )
+  {
+		(void) rex_clr_sigs( rex_self(), UI_GET_PEN_SIG );
+		oemui_post_pointer_data();
+  }
+#endif
 #ifndef T_WINNT
 #if !defined(FEATURE_UI_DUALPROC_MDM)
   /* IPC message signal */
@@ -1910,7 +1925,59 @@ void ui_init_rtre(void)
                                ui_convert_nv_to_cm_rtre(nvi.rtre_config));
 }
 #endif // FEATURE_UIM_RUN_TIME_ENABLE
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 
+boolean oemui_pen_callback(pen_event_type pen_event)
+{
+	//MSG_FATAL("oemui_pen_callback",0,0,0);
+	rex_set_sigs(&ui_tcb,UI_GET_PEN_SIG);
+	return TRUE;
+}
+
+static void oemui_touchpadinit(void)
+{
+	//MSG_FATAL("oemui_touchpadinit",0,0,0);
+    touchpad_register(oemui_pen_callback);
+    touchpad_set_scan_mode( PEN_NORMAL_MODE);
+}
+
+static void oemui_post_pointer_data(void)
+{
+	pen_event_type pen_event;
+	uint32 dwParam;
+	AEEEvent evtCode;
+	
+	//IBACKLIGHT_Enable(gpBacklight);
+	VoteForSleep(FALSE);
+   // MSG_FATAL("oemui_post_pointer_data",0,0,0);
+    
+	while(touchpad_get_pen_position(&pen_event))
+	{
+		if(touchpad_get_scan_mode() == PEN_NORMAL_MODE)
+		{
+			if(pen_event.pen_state == PEN_DOWN)
+			{
+				evtCode = EVT_POINTER_DOWN;
+			}
+			else if(pen_event.pen_state == PEN_MOVE)
+			{
+				evtCode = EVT_POINTER_MOVE;
+			}
+			else
+			{
+				evtCode = EVT_POINTER_UP;
+			}
+            AEE_Event( EVT_KEY,         AVK_LAST, 0 );
+            AEE_POINTER_SEND_XY(evtCode,pen_event.pen_x,pen_event.pen_y);
+		}
+		else
+		{
+           // ERR("EVENT Pen not in HW Mode",0,0,0);
+	    }
+	}
+}
+
+#endif
 /* <EJECT> */
 /*===========================================================================
 FUNCTION   ui_init
@@ -2122,7 +2189,10 @@ void ui_task (
 #endif
 
   ui_init();                      /* initialize task. */
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 
+  oemui_touchpadinit();
+  #endif
 #ifdef srIMON
   OEMInterceptModules_Init();     /* initialize STRIDE */
 #ifdef T_WINNT
@@ -2152,7 +2222,10 @@ void ui_task (
 #if !defined (FEATURE_UI_DUALPROC_MDM)
   waitMask |= UI_IPC_SIG;
 #endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 
+  waitMask |= UI_GET_PEN_SIG;
+#endif
 #ifndef FEATURE_UI_CORE_REMOVED
   waitMask |= CoreApp_Getsigs();
 #else

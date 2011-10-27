@@ -81,6 +81,11 @@ when       who      what, where, why
 #include "snd.h"        /* Sound Interface                         */
 #include "keypad.h"
 #include "hsdiag.h"
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+
+extern void touchpad_init(void);
+extern void touchpad_polling(int4 ms_interval);
+#endif
 
 #if defined(FEATURE_BATTERY_CHARGER) || defined(FEATURE_CHG_TASK) 
 #include "charger.h"    /* Battery Charger                         */
@@ -1839,6 +1844,12 @@ LOCAL void hs_init( void )
 #ifdef CUST_EDITION
   /* Initialize keypad */
   keypad_init();
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+
+  /* Initialize touchpad*/
+  touchpad_init();
+#endif
+
 
   {
     db_items_value_type  db_item;
@@ -2073,6 +2084,9 @@ void hs_task
     /* Wait for something to happen
     */
     sigs = rex_wait( HS_RPT_TIMER_SIG |   /* Watchdog report timer    */
+    #ifdef FEATURE_LCD_TOUCH_ENABLE
+    				 HS_TOUCHPAD_TIMER_SIG |
+    				 #endif
                      HS_CMD_Q_SIG |       /* Command Queue signal     */
                      HS_GPIO_TIMER_SIG |  /* GPIO 'key' poll          */
                      HS_BLINK_TIMER_SIG | /* Output blink signal      */
@@ -2115,6 +2129,14 @@ void hs_task
       task_offline();
       (void) rex_clr_sigs( &hs_tcb, TASK_OFFLINE_SIG); /* Clear the signal */
     }
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	if ( (sigs & HS_TOUCHPAD_TIMER_SIG) != 0 )
+	{
+		(void) rex_clr_sigs( &hs_tcb, HS_TOUCHPAD_TIMER_SIG); /* Clear the signal */ 
+		(void)touchpad_polling(0);
+		//(void) rex_set_timer( &hs_pen_timer, HS_PEN_SCAN_TIME );
+	}
+	#endif
 
     /* Blink the screen/annunciators
     ** This means display the 'blink' copy if the 'non-blink' copy is

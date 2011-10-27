@@ -59,6 +59,10 @@ when       who     what, where, why
   Task specific macros, commands, definitions, and types
 
 ---------------------------------------------------------------------------*/
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+
+#define HS_TOUCHPAD_TIMER_SIG   0x0800
+#endif
 
 /* Handset Task Signals
 */

@@ -125,11 +125,8 @@ boolean touchpad_set_scan_mode( PEN_MODE_TYPE mode );
 PEN_MODE_TYPE touchpad_get_scan_mode(void);
 void    touchpad_pass_pen_data( pen_event_type pen_event);
 boolean touchpad_isr_open(void);
-void    touchpad_pen_isr(void);
 boolean touchpad_isr_close(void);
-boolean touchpad_enable_polling(void);
 void    touchpad_polling(int4 ms_intervals);
-void    touchpad_disable_polling(void);
 boolean touchpad_read_value(pen_value_type *pen_value);
 boolean touchpad_lock(void);
 boolean touchpad_unlock(void);
@@ -138,10 +135,4 @@ boolean touchpad_handwritting_cfg(handwritting_cfg_type* pen_cfg);
 boolean disp_one_pixel_on_lcd(pen_event_type pen_event);
 #endif
 #endif /* TOUCHPAD_H */
-
-
-
-
-
-
 

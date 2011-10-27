@@ -36,7 +36,7 @@
 #elif defined(FEATURE_DISP_128X160)
     #define LG_IMG_WIDTH 20
 #elif defined(FEATURE_DISP_240X320)
-    #define LG_IMG_WIDTH 20
+    #define LG_IMG_WIDTH 29
 #elif defined(FEATURE_DISP_320X240)
     #define LG_IMG_WIDTH 	32
 #else
