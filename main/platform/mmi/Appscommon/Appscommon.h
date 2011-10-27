@@ -101,9 +101,9 @@
 #elif defined(FEATURE_DISP_240X320)	
 	#define SCREEN_WIDTH            240
     #define SCREEN_HEIGHT           320
-    #define STATEBAR_HEIGHT         26
-    #define BOTTOMBAR_HEIGHT        27
-    #define TITLEBAR_HEIGHT         27
+    #define STATEBAR_HEIGHT         25
+    #define BOTTOMBAR_HEIGHT        25
+    #define TITLEBAR_HEIGHT         25
     #define MENUITEM_HEIGHT         30
     #define SCROLLBAR_WIDTH         10
     #define STATUSBAR_HEIGHT        26	
