@@ -147,7 +147,7 @@ and other items needed by this module.
 
 #ifndef BUILD_BOOT_CHAIN
 #ifdef CUST_EDITION
-#if FEATURE_LCD_TOUCH_ENABLE   //add by yangdecai
+#ifdef FEATURE_LCD_TOUCH_ENABLE   //add by yangdecai
 static const hs_key_type keys[ KEYPAD_ROWS ][ KEYPAD_COLUMNS ] = {
    /* JoyStick keys [up, down, left, right] uses 2 simultaneous row inputs
     * on KEYSENSE0_N routed by SC2x FFA's Panasonic MultiFunction Switch 
