@@ -35,30 +35,30 @@
 #define TOUCHPAD_PARAM_LIMITED	0
 #define PEN_SAMPLE_NUM		3
 
-#define TOUCHPAD_GPIO_INT    	 	    GPIO_INT_32
+#define TOUCHPAD_GPIO_INT    	 	    GPIO_INT_32   //X+
 
-#define TOUCHPAD_XL_CTRL                BIO_GPIO_36_REG
+#define TOUCHPAD_XL_CTRL                BIO_GPIO_36_REG  //Y-
 #define TOUCHPAD_XL_IN                  GPIO_INPUT_36
 #define TOUCHPAD_XL_OUT                 GPIO_OUTPUT_36
 #define TOUCHPAD_XL_ENABLE_M            BIO_GPIO_36_M
 #define TOUCHPAD_XL_ENABLE_ENA          BIO_OUTPUT_SET_V
 #define TOUCHPAD_XL_ENABLE_DIS          BIO_OUTPUT_CLR_V
 
-#define TOUCHPAD_XR_CTRL                BIO_GPIO_30_REG
+#define TOUCHPAD_XR_CTRL                BIO_GPIO_30_REG  //Y+
 #define TOUCHPAD_XR_IN                  GPIO_INPUT_30
 #define TOUCHPAD_XR_OUT                 GPIO_OUTPUT_30
 #define TOUCHPAD_XR_ENABLE_M            BIO_GPIO_30_M
 #define TOUCHPAD_XR_ENABLE_ENA          BIO_OUTPUT_SET_V
 #define TOUCHPAD_XR_ENABLE_DIS          BIO_OUTPUT_CLR_V
 
-#define TOUCHPAD_YU_CTRL                BIO_GPIO_32_REG
+#define TOUCHPAD_YU_CTRL                BIO_GPIO_32_REG  //X+
 #define TOUCHPAD_YU_IN                  GPIO_INPUT_32 
 #define TOUCHPAD_YU_OUT                 GPIO_OUTPUT_32
 #define TOUCHPAD_YU_ENABLE_M            BIO_GPIO_32_M
 #define TOUCHPAD_YU_ENABLE_ENA          BIO_OUTPUT_SET_V
 #define TOUCHPAD_YU_ENABLE_DIS          BIO_OUTPUT_CLR_V
 
-#define TOUCHPAD_YD_CTRL                BIO_GPIO_31_REG
+#define TOUCHPAD_YD_CTRL                BIO_GPIO_31_REG  //X-
 #define TOUCHPAD_YD_IN                  GPIO_INPUT_31
 #define TOUCHPAD_YD_OUT                 GPIO_OUTPUT_31
 #define TOUCHPAD_YD_ENABLE_M            BIO_GPIO_31_M
