@@ -514,7 +514,17 @@ dword disp_capture2
  }
 
 #ifdef FEATURE_TORCH_SUPPORT
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+void disp_set_torch(void)
+{
 
+}
+void disp_clear_torch(void)
+{
+
+}
+
+#else
 //#if defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022) || defined(FEATURE_PROJECT_W021_128x160)|| defined (FEATURE_PROJECT_W021_176X220) || defined (FEATURE_PROJECT_W021_240X320)|| defined (FEATURE_PROJECT_W021_220X176) || defined (FEATURE_PROJECT_W021_320X240)
 //#if defined(FEATURE_PROJECT_W021) || defined(FEATURE_PROJECT_W022) || defined(FEATURE_PROJECT_W021_128x160)
 #if defined (FEATURE_GPIO_LAMP_EN_OUTPUT_31)
@@ -535,6 +545,7 @@ void disp_clear_torch(void)
 	gpio_tlmm_config(GPIO_LAMP_EN);
 	gpio_out(GPIO_LAMP_EN,GPIO_LOW_VALUE);
 }
+#endif
 #endif
 
 /************* MDP display ********************/

@@ -251,7 +251,11 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #if defined (FEATURE_GPIO_31_SIGNAL_OUPUT_31)
 #define GPIO_31_SIGNAL GPIO_OUTPUT_31
 #else
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#define GPIO_31_SIGNAL GPIO_INPUT_31
+#else
 #define GPIO_31_SIGNAL SIM_SEL
+#endif
 #endif
 /* GPIO 32 */
 
