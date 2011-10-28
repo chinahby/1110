@@ -12,7 +12,7 @@ PUBLIC CLASSES AND STATIC FUNCTIONS:
       
 INITIALIZATION & SEQUENCING REQUIREMENTS:
           
-              Copyright © 2000-2002 QUALCOMM Incorporated.
+              Copyright ?2000-2002 QUALCOMM Incorporated.
               All Rights Reserved.
               QUALCOMM Proprietary/GTDR
 ===========================================================================*/
@@ -21,6 +21,7 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #ifdef CUST_EDITION
 #include "OEMSVC.h"
 #include "Appscommon.h"
+#include "Msg.h"
 #endif
 
 #define FARF_BAM     1 
@@ -446,6 +447,7 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
    }
 #endif
    FARF(BAM, ("AppMgr_HandleEvent 0x%x 0x%x 0x%x",eCode,wParam,dwParam));
+   MSG_FATAL("AppMgr_HandleEvent->eCode = %x, wParam = %x, dwParam = %x",eCode, wParam, dwParam);
    switch (eCode) 
    { 
       case EVT_NOTIFY:
@@ -541,11 +543,17 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
          {
             int nErr;
             nErr = AppMgr_Start(pme);
+            MSG_FATAL("EVT_APP_START",0,0,0);
+   		    IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);   
+			IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,FALSE);
+			IANNUNCIATOR_SetFieldText(pme->m_pIAnn,NULL);
             if (AEE_SUCCESS != nErr) {
                AEEAppStart *st = (AEEAppStart *)dwParam;
                st->error = nErr;
                return FALSE;
-            } else {
+            } 
+            else 
+            {
                return TRUE;
             }
          }
@@ -554,6 +562,12 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
       case EVT_APP_STOP:
          // Stop Sound & Animation
          AppMgr_StopSoundAnimation(pme);
+		IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,TRUE);
+		if(NULL != pme->m_pIAnn)
+		{
+			IANNUNCIATOR_Release(pme->m_pIAnn);
+    		pme->m_pIAnn = NULL;
+		}
          return TRUE;
 
       case EVT_APP_SUSPEND:
@@ -692,6 +706,7 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
          return FALSE;
 
       case EVT_COMMAND:
+        MSG_FATAL("wParam = %d",wParam,0,0);
          switch (wParam)
          {
             case IDC_OPTIONS:
@@ -721,10 +736,12 @@ static boolean AppMgr_HandleEvent(AppMgr * pme, AEEEvent eCode, uint16 wParam, u
                      // Cache Current Menu Selection
                      pme->m_nMenuSel[++pme->m_nIndex] = IMENUCTL_GetSel(pme->m_pMenu);
                      pme->m_wLastState = pme->m_wState;
+                     MSG_FATAL("ST_ORDERAPPS",0,0,0);
                      return AppMgr_SetState(pme, wParam - IDC_BREW_APPS + ST_ORDERMAINMENU);
 
                   case ST_MOVEAPPS:                     
                      // Cache Current Menu Selection
+                     MSG_FATAL("ST_MOVEAPPS",0,0,0);
                      pme->m_nMenuSel[++pme->m_nIndex] = IMENUCTL_GetSel(pme->m_pMenu);
                      return AppMgr_SetState(pme, wParam - IDC_BREW_APPS + ST_MOVEMAINMENU);
 
@@ -1696,6 +1713,12 @@ int AppMgr_Start(AppMgr* pme)
    if (AEE_SUCCESS != nErr) {
       return nErr;
    }
+   if (AEE_SUCCESS != ISHELL_CreateInstance(pme->a.m_pIShell,
+                                            AEECLSID_ANNUNCIATOR,
+                                            (void **)&pme->m_pIAnn))
+   {
+        return EFAILED;
+   }
    #endif // FEATURE_BREW_DOWNLOAD
    
 #ifdef CUST_EDITION
@@ -2233,7 +2256,7 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
                }
 
                // Update Display
-               IDISPLAY_UpdateEx(pme->a.m_pIDisplay, FALSE);
+               IDISPLAY_UpdateEx(pme->a.m_pIDisplay, TRUE);
             }
             else
                nDraw--;
@@ -2350,7 +2373,7 @@ static boolean AppMgr_MainMenu(AppMgr * pme)
       }
 
       // Update Display
-      IDISPLAY_UpdateEx(pme->a.m_pIDisplay, FALSE);
+      IDISPLAY_UpdateEx(pme->a.m_pIDisplay, TRUE);
    }
 
    // Set Last State to NO_ENTRY
@@ -3416,7 +3439,15 @@ boolean AppMgr_LaunchCurrentApplet(AppMgr* pme,  boolean bForceRun)
       {
          case NORMAL:
             pme->m_nLaunchCls = cls;
+            MSG_FATAL("--->startapplet",0,0,0);
             bReturn = ISHELL_StartApplet(pme->a.m_pIShell, cls);
+            #if 0
+            if(SUCCESS == bReturn && pme->m_pIAnn != NULL)
+            {
+                MSG_FATAL("--->Update",0,0,0);
+                IANNUNCIATOR_SetFieldText(pme->m_pIAnn,NULL);
+            }
+            #endif
             break;
          
          default:

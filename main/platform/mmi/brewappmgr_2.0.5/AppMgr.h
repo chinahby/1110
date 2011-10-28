@@ -26,6 +26,8 @@ INITIALIZATION & SEQUENCING REQUIREMENTS:
 #include "AEESoundPlayer.h"
 #include "AEEMimeTypes.h"
 #include "AppMgrUtils.h"
+#include "AEEAnnunciator.h"
+
 
 /*===========================================================================
 
@@ -264,6 +266,7 @@ struct _AppMgr
    AEECLSID          m_nErrCls;                 // Error Class
    int               m_nErr;                    // Error
    AEECLSID          m_nLaunchCls;              // Launch Class
+   IAnnunciator      *m_pIAnn;
 };
 
 //
