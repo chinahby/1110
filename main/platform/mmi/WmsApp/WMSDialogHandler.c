@@ -16830,8 +16830,8 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         if(STRISTR(pMimeType, IMAGE_MIME_BASE))
                         {   
                             MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Image Count++", 0, 0, 0);
-                            pMe->m_ResData.imageData.data[pMe->m_ResData.soundData.nCount].nResIndex = index;
-                            pMe->m_ResData.imageData.data[pMe->m_ResData.soundData.nCount].type = pMimeType;
+                            pMe->m_ResData.imageData.data[pMe->m_ResData.imageData.nCount].nResIndex = index;
+                            pMe->m_ResData.imageData.data[pMe->m_ResData.imageData.nCount].type = pMimeType;
                             pMe->m_ResData.imageData.nCount ++;
                         }
                         else if(STRISTR(pMimeType, SOUND_MIME_BASE))
@@ -16897,7 +16897,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 {
                     FREE(pBuffer);
                 }
-                
+                 
             }
             
             return TRUE;
@@ -16916,7 +16916,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             {
             
                 AEERect rc = {0};
-                
+
                 // Set Rect 
                 if(ICONTROL_IsActive((IControl*)pStatic))
                     CONTROL_SETRECT(pStatic,&rc,0,pMe->m_rc.y,pMe->m_rc.dx,40);
@@ -17200,9 +17200,10 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         case IDC_VIEWMSG_MMS_MUSICPROGRESS:
                         {
                             boolean isMediaPlaying;
-                            IMEDIA_GetState(pMe->m_pMedia,&isMediaPlaying);
+                            
                             if(pMe->m_pMedia)
                             {
+                                IMEDIA_GetState(pMe->m_pMedia,&isMediaPlaying);
                                 if(isMediaPlaying)
                                 {
                                     IMEDIA_Stop(pMe->m_pMedia);
@@ -17309,39 +17310,40 @@ static void WmsLoadSoundFromData(WmsApp *pMe,int nFragIndex,char* pMimeType)
 {
     uint32 rSize = 0;
     WSP_MMS_DATA* pMmsData = &pMe->m_DecData.message.mms_data;
-    AEECLSID cls;
+    AEECLSID cls = 0;
     AEEMediaData mediaData = {0};
     int nResult = SUCCESS;
-
+    
     MSG_FATAL("[WmsLoadSoundFromData] Enter", 0, 0, 0);
     rSize = pMmsData->fragment[nFragIndex].size;
+
     
     MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] pMimeType:%s", pMimeType, 0, 0);
-    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] 123", 0, 0, 0);
+
     cls = ISHELL_GetHandler(pMe->m_pShell,
         HTYPE_SOUND,
         pMimeType);
-    WmsApp_SaveToFile("fs:/hsmm/output/1.txt",pMimeType,STRLEN(pMimeType));
-    MSG_FATAL("[WmsLoadSoundFromData] Enter cls:%d", cls, 0, 0);   
-    MSG_FATAL("[WmsLoadSoundFromData] Enter pData_size:%d:%d", pMmsData->fragment[nFragIndex].pContent, rSize, 0); 
+
     if(cls == 0)
     {
         MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] No Class id", 0, 0, 0);
     }
-    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] 321", 0, 0, 0);
-    mediaData.clsData = cls;
+
+    mediaData.clsData = MMD_BUFFER;
     mediaData.pData = pMmsData->fragment[nFragIndex].pContent;
     mediaData.dwSize = rSize;
-    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] 533", 0, 0, 0);
+
     
-    //IMEDIA_SetMediaData(pMe->m_pMedia,&mediaData);
-    //RELEASEIF(pMe->m_pMedia);
-    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] 975", 0, 0, 0);
-    if(nResult = AEEMediaUtil_CreateMedia(pMe->m_pShell,&mediaData,&pMe->m_pMedia))
+
+    
+    RELEASEIF(pMe->m_pMedia);
+
+
+    nResult = AEEMediaUtil_CreateMedia(pMe->m_pShell,&mediaData,&pMe->m_pMedia);
+    if(nResult != SUCCESS)
     {
         MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] CreateMedia Error:%s", nResult, 0, 0);
     }
-    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] CreateMedia pMe->m_pMedia:%d", pMe->m_pMedia, 0, 0);
     
     MSG_FATAL("[WmsLoadSoundFromData] Exit", 0, 0, 0);
     
@@ -17363,24 +17365,24 @@ boolean WmsApp_SaveToFile(char* pFileName,void* pData,uint32 nDataLen)
         if(IFILEMGR_Test(pFileMgr,pFileName))
         {
             pFile = IFILEMGR_OpenFile(pFileMgr,pFileName,_OFM_READWRITE);
-            MSG_FATAL("IDD_VIEWMSG_MMS_Handler File Exist",0,0,0);
+            MSG_FATAL("[WmsApp_SaveToFile] File Exist",0,0,0);
         }
         else
         {
             pFile = IFILEMGR_OpenFile(pFileMgr,pFileName,_OFM_CREATE);  
-            MSG_FATAL("IDD_VIEWMSG_MMS_Handler File Not Exist",0,0,0);
+            MSG_FATAL("[WmsApp_SaveToFile] File Not Exist",0,0,0);
         }
         
         if(pFile)
         {
             int nDataCount = 0;
             nDataCount = IFILE_Write(pFile,pData,nDataLen);
-            MSG_FATAL("IDD_VIEWMSG_MMS_Handler Insert Data Count:%d",nDataCount,0,0);
+            MSG_FATAL("[WmsApp_SaveToFile] Insert Data Count:%d",nDataCount,0,0);
         } 
         else
         {
             nResult = IFILEMGR_GetLastError(pFileMgr);
-            MSG_FATAL("IDD_VIEWMSG_MMS_Handler Error:%d",nResult,0,0);
+            MSG_FATAL("[WmsApp_SaveToFile] Error:%d",nResult,0,0);
         }
     }
     RELEASEIF(pFile);
