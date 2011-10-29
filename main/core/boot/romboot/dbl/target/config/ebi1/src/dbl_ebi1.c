@@ -161,6 +161,14 @@ dbl_nor_device M36W0R5040U6ZS =
   2,                                 /* # of codes to match */
   { 0x20, 0x8828 },                  /* Manufacture codes. */
 };
+
+dbl_nor_device M58LR128KC = 
+{
+  "NUMONYX M58LR128KC",
+  2,                                 /* # of codes to match */
+  { 0x20, 0x882e },                  /* Manufacture codes. */
+};
+
 dbl_nor_device K5N6433ABM = 
 {
   "SAMSUNG K5N6433ABM",
@@ -207,6 +215,7 @@ const dbl_nor_device *(intel_parts[]) = {
   &Intel_64W18_ADMux,
 #endif
   &M36W0R5040U6ZS,
+  &M58LR128KC,
   NULL
 };
 
@@ -357,6 +366,8 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ABM_96MHZ[] =
   {END_OF_CFG_DATA,  0x00000000,                    0x00000000    },
 };
 
+//ÔÚµ÷ÊÔ
+#if 1
 const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ATC_48MHZ[] =
 {
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
@@ -398,6 +409,23 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ATC_96MHZ[] =
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x001A6AAA),  0xC0    },
 
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x022400             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01010034           },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000    },
+};
+#else
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ATC_48MHZ[] =
+{
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xAA    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x001A6AAA),  0xC0    },
+
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x025400             },
   {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01010034           },
   {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
@@ -408,6 +436,40 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ATC_96MHZ[] =
   {END_OF_CFG_DATA,  0x00000000,                    0x00000000    },
 };
 
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ATC_64MHZ[] =
+{
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xAA    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x001A3AAA),  0xC0    },
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x013400             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01011034           },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000    },
+};
+#endif
+
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ATC_96MHZ[] =
+{
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000AAA),  0xAA    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000554),  0x55    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x001A6AAA),  0xC0    },
+
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x025400             },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x01010034           },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000    },
+};
+#endif
 const static dbl_parser_cfg_data_item_type ebi1_cfg_data_S29WSP_48MHZ[] =
 {
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
@@ -584,6 +646,25 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_Intel_M58_48MHZ[] =
 
   {END_OF_CFG_DATA,  0x00000000,                    0x00000000    }
 };
+
+const static dbl_parser_cfg_data_item_type ebi1_cfg_data_Intel_M58LR_48MHZ[] =
+{
+  /* Changed this values as per VI team */
+
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | ( 0x000021c3 << 1 )),  0x60    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | ( 0x000021c3 << 1 )),  0x03    },
+  {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | ( 0x000021C3 << 1 )),  0xFF    },
+  
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG0, FLASH_ON_CS),  0x13400              },
+  {HWIO_OPERATION,   HWIO_ADDRI(EBI1_CSn_CFG1, FLASH_ON_CS),  0x1011034            },
+  {HWIO_OPERATION,   HWIO_ADDR(EBI1_BUFC_CFG),                EBI1_BUFC_CFG_VALUE  },
+  /*-----------------------------------------------------------------------
+                            End of Configuration
+  -----------------------------------------------------------------------*/   
+
+  {END_OF_CFG_DATA,  0x00000000,                    0x00000000    }
+};
+
 
 const static dbl_parser_cfg_data_item_type ebi1_cfg_data_Intel_M18_96MHZ[] =
 {
@@ -1584,6 +1665,10 @@ void dbl_ebi1_nor_configure
   else if (dev == &Intel_64W18_ADMux)
   {
      dbl_parse_cfg_data(ebi1_cfg_data_Intel_W18_48MHZ);
+  }
+  else if ( dev == &M58LR128KC)
+  {
+		dbl_parse_cfg_data(ebi1_cfg_data_Intel_M58LR_48MHZ);
   }
   else if(dev == &M36W0R5040U6ZS)
   {

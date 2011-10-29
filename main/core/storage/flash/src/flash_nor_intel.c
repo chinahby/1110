@@ -335,6 +335,42 @@ flash_geometry_info M36W0R5040U6ZS_geometry =
   } 
 };
 
+flash_geometry_info M58LR128KC_geometry =
+{
+  FLASH_INTEL_FAMILY,
+  FLASH_SIZE_16MB,
+  FLASH_XIFACE_16,
+  FLASH_WBUF_NOT_PRESENT,
+  2,
+  {
+    { 127,  131072},
+    {  4,   32768},
+    {  0,      0},
+    {  0,      0},
+    {  0,      0},
+  },  /*lint !e785*/
+  131,
+  16,
+  {
+    {0,  8, 7,  0}, 
+    {8,  8, 15, 0}, 
+    {16, 8, 23, 0}, 
+    {24, 8, 31, 0}, 
+    {32, 8, 39, 0}, 
+    {40, 8, 47, 0}, 
+    {48, 8, 55, 0}, 
+    {56, 8, 63, 0},
+    {64, 8, 71, 0},
+    {72, 8, 79, 0},
+    {80, 8, 87, 0},
+    {88, 8, 95, 0},
+    {96, 8, 103, 0},
+    {104, 8, 111, 0},
+    {112, 8, 119, 0},
+    {120,11, 130, 0}
+  } 
+};
+
 flash_geometry_info L18_geometry =
 {
   FLASH_INTEL_FAMILY,
@@ -510,6 +546,20 @@ flashi_nor_device M36W0R5040U6ZS =
   0,
   INIT_USING_CFI_AT_RUNTIME,
   &M36W0R5040U6ZS_geometry,
+  &flash_intel_op_functions_W18
+};
+
+flashi_nor_device M58LR128KC = 
+{
+  "NUMONYX M58LR128KC",
+  2,                             /* # of codes to match */    
+  { 0x20, 0x882E },              /* Manufacture codes. */
+  0,
+  FS_DEVICE_WRITES_SIMPLE,       /* W18 uses SLC array */
+  0x0,
+  0,
+  INIT_USING_CFI_AT_RUNTIME,
+  &M58LR128KC_geometry,
   &flash_intel_op_functions_W18
 };
 

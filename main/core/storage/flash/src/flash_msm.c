@@ -84,6 +84,7 @@ const flashi_nor_device *(intel_parts[]) = {
   &Intel_64W18_ADMux,
 #endif
   &M36W0R5040U6ZS,
+  &M58LR128KC,
   NULL
 };
 
