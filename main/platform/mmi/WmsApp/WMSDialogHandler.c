@@ -36,10 +36,12 @@
 #ifdef FEATURE_USES_MMS
 #include "WMSMmsTest.h"
 #include "WMSMms.h"
-#include "AEEImageCtl.h"
+#include "AEEImage.h"
 #include "AEEMedia.h"
 #include "AEEMimeTypes.h"
+#include "AEEMenu.h"
 extern uint8  g_mmsDataInfoMax;
+
 #endif
 /*==============================================================================
                                  
@@ -144,6 +146,11 @@ if (NULL == pMe->m_pStatic)                                     \
 // 添加无图标菜单项宏定义
 #define MENU_ADDITEM(pMenu,ID)                                                \
     (void)IMENUCTL_AddItem((pMenu), AEE_WMSAPPRES_LANGFILE, (ID), (ID), 0, 0) 
+
+#define CONTROL_SETRECT(pControl,pRc,x,y,dx,dy) \
+                SETAEERECT(pRc,  x, y,dx,dy); \
+                ICONTROL_SetRect((IControl*)pControl,pRc);
+                            
 
 
 /*==============================================================================
@@ -495,6 +502,11 @@ static boolean IDD_OPTION_YESNO_Handle(void *pUser,
     AEEEvent eCode,
     uint16   wParam,
     uint32   dwParam);
+    
+boolean WmsApp_SaveToFile(char* pFileName,void* pData,uint32 nDataLen);
+static IImage* WmsLoadImageFromData(WmsApp *pMe,int nFragIndex,char* pMimeType);
+static void WmsLoadSoundFromData(WmsApp *pMe,int nFragIndex,char* pMimeType);
+
 
 #endif
 /*==============================================================================
@@ -10424,21 +10436,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 case IDS_INSERT_PICTURE:
                 {
                     char MMSName[MG_MAX_FILE_NAME]={'\0'};
-                    DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));
-                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));
-                    if(STRLEN(MMSName) != 0)
-                    {
-                        MEMSET(MMSName,'\0', MG_MAX_FILE_NAME);
-                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));       
-                        RELEASEIF(pMe->m_pMMSSOUND);
-                    }    
-                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));
-                    if(STRLEN(MMSName) != 0)
-                    {
-                        MEMSET(MMSName,'\0', MG_MAX_FILE_NAME);
-                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));       
-                        RELEASEIF(pMe->m_pMMSVIDEO);
-                    }                         
+                    DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));                     
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer_ForMMS(GALLERY_IMAGE_SETTING, NULL);
 #endif                    
@@ -10449,22 +10447,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 case IDS_INSERT_VIDEO:
                 {
                     char MMSName[MG_MAX_FILE_NAME]={'\0'};
-                    DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));
-                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));
-                    if(STRLEN(MMSName) != 0)
-                    {
-                        MEMSET(MMSName,'\0', MG_MAX_FILE_NAME);
-                        DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));
-                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSName, sizeof(MMSName));       
-                        RELEASEIF(pMe->m_pMMSSOUND);
-                    }   
-                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSName, sizeof(MMSName));
-                    if(STRLEN(MMSName) != 0)
-                    {
-                        MEMSET(MMSName,'\0', MG_MAX_FILE_NAME);
-                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSName, sizeof(MMSName));       
-                        RELEASEIF(pMe->m_pMMSImage);
-                    }                         
+                    DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));                  
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer_ForMMS(GALLERY_VIDEO_BROWSE, NULL);
 #endif                      
@@ -10475,21 +10458,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 case IDS_INSERT_SOUND:
                 {
                     char MMSName[MG_MAX_FILE_NAME]={'\0'};
-                    DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));
-                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));
-                    if(STRLEN(MMSName) != 0)
-                    {
-                        MEMSET(MMSName,'\0', MG_MAX_FILE_NAME);
-                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSName, sizeof(MMSName));       
-                        RELEASEIF(pMe->m_pMMSVIDEO);
-                    }    
-                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSName, sizeof(MMSName));
-                    if(STRLEN(MMSName) != 0)
-                    {
-                        MEMSET(MMSName,'\0', MG_MAX_FILE_NAME);
-                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSName, sizeof(MMSName));       
-                        RELEASEIF(pMe->m_pMMSImage);
-                    }                     
+                    DBGPRINTF("MMSName=%s len=%d", MMSName, STRLEN(MMSName));               
 #ifdef FEATURE_APP_MEDIAGALLERY					
 					CMediaGallery_FileExplorer_ForMMS(GALLERY_MUSIC_SETTING, NULL);
 #endif                           
@@ -16702,25 +16671,20 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
     WmsApp *pMe = (WmsApp *)pUser;
     
     IStatic * pStatic = NULL;
-    IImageCtl* pImageCtl = NULL;
     ITimeCtl* pSoundProgressCtl = NULL;
     IMenuCtl* pListCtl = NULL;
-    static int s_nImageIndex = 0;
-    static IMedia* pMedia = NULL;
     
-    MSG_FATAL("IDD_VIEWMSG_MMS_Handler Start eCode=0X%x, wParam=0X%x",eCode,wParam,0);
+    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] eCode:0x%x, wParam=0x%x",eCode,wParam,0);
     if (NULL == pMe)
     {
         return FALSE;
     }
     
     pStatic = (IStatic*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_STATIC);
-    pImageCtl = (IImageCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_IMAGE);
     pSoundProgressCtl = (ITimeCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_MUSICPROGRESS);
     pListCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_LIST);
     
     if (NULL == pStatic 
-        || pImageCtl == NULL
         || pSoundProgressCtl == NULL
         || pListCtl == NULL)
     {
@@ -16731,62 +16695,14 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
     {
         case EVT_DIALOG_INIT:
             {
-                AEERect rc;
-            
-                if (pMe == NULL)
-                {
-                    return TRUE;
-                }
-				SETAEERECT(&rc,  0, pMe->m_rc.y ,
-                            pMe->m_rc.dx,
-                            40);
-                ISTATIC_SetRect(pStatic, &rc);
-
-                MSG_FATAL("EVT_DIALOG_INIT 1 %d:%d:%d",rc.x,rc.y,rc.dy);
-                SETAEERECT(&rc,  rc.x, rc.y + rc.dy + 5,
-                            rc.dx,
-                            pMe->m_rc.dy - (BOTTOMBAR_HEIGHT << 1) - rc.dy);
-                IIMAGECTL_SetRect(pImageCtl,&rc);
-
-                MSG_FATAL("EVT_DIALOG_INIT 2 %d:%d:%d",rc.x,rc.y,rc.dy);
-                SETAEERECT(&rc,  rc.x, rc.y + rc.dy + 5,
-                            rc.dx,
-                            BOTTOMBAR_HEIGHT);
-               ITIMECTL_SetRect(pSoundProgressCtl,&rc);
-               
-               ISTATIC_SetActive(pStatic,FALSE);
-               ITIMECTL_SetActive(pSoundProgressCtl,FALSE);
-               IIMAGECTL_SetActive(pImageCtl,FALSE);
-               ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_MEDIA,(void**)&pMedia);
-               MSG_FATAL("EVT_DIALOG_INIT 3 %d:%d:%d",rc.x,rc.y,rc.dy);
-                
-            }
-            IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
-            // 设置静态文本控件属性
-            ISTATIC_SetProperties(pStatic, ST_CENTERTITLE | ST_NOSCROLL | ST_DISPLATSMS | ST_GRAPHIC_BG);
-            return TRUE;
-
-        case EVT_DIALOG_START:
-            //WmsApp_UpdateAnnunciators(pMe);
-            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
-            return TRUE;
-
-        case EVT_USER_REDRAW:
-            {
-                //pFormatedText这里消息里的文本
                 AECHAR *pFormatedText = NULL;
                 AECHAR wszTitle[32] = {0};
                 MMSData mmsDataInfoList[MAX_MMS_STORED];
-                //WSP_MMS_DATA pContent = {0};
-                //MMS_WSP_DEC_DATA decdata = {0};
                 WSP_MMS_DATA *pContent = NULL;
                 MMS_WSP_DEC_DATA *pDecdata = &pMe->m_DecData;
+                MMSData* pMmsDataInfoCur = NULL;
                 uint8* pImage = NULL;
+                uint8* pSound = NULL;
                 char* pMimeType = NULL;
                 
                 uint8 ePDUType;
@@ -16799,9 +16715,29 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 void* pBuffer = NULL;
                 int nTitleName = 0;
                 int nMmsDataInfo = 0;
+                int nInfoIndex = pMe->m_wCurindex - 1;
 
+                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] g_mmsDataInfoMax=%d", g_mmsDataInfoMax,0,0);
+
+                // Create Instance
+                result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+                if (SUCCESS != result)
+                {
+                	MSG_FATAL("[IDD_VIEWMSG_MMS_Handler]: Create FileMgr Failed %x", result,0,0);
+                	return FALSE;
+                }
+                
+                // Init 
                 MEMSET((void*)&pDecdata->message,NULL,sizeof(MMS_WSP_DEC_MESSAGE_RECEIVED));
                 pContent = &pDecdata->message.mms_data;
+
+                //
+                
+                // Set Active
+                ICONTROL_SetActive((IControl*)pStatic,FALSE);
+                ICONTROL_SetActive((IControl*)pSoundProgressCtl,FALSE);
+                ICONTROL_SetActive((IControl*)pListCtl,FALSE);
+                
                 switch(pMe->m_eMBoxType)
                 {
                     case WMS_MB_OUTBOX_MMS:
@@ -16824,45 +16760,40 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         sizeof(wszTitle));
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,wszTitle);
                 MEMSET(wszTitle, 0, sizeof(wszTitle));
-                MSG_FATAL("IDD_VIEWMSG_MMS_Handler 0", 0,0,0);
+                
                 (void) ICONFIG_GetItem(pMe->m_pConfig,
                                    nMmsDataInfo,
                                    (void*)mmsDataInfoList,
-                                   sizeof(mmsDataInfoList));  
-                MSG_FATAL("IDD_VIEWMSG_MMS_Handler 1 g_mmsDataInfoMax=%d", g_mmsDataInfoMax,0,0);
-                result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
-                if (SUCCESS != result)
-                {
-                	MSG_FATAL("MRS: Open file error %x", result,0,0);
-                	return 0;
-                }                
-                DBGPRINTF("MMSDataFileName=%s",mmsDataInfoList[pMe->m_wCurindex-1].MMSDataFileName);
-                pIFile = IFILEMGR_OpenFile( pIFileMgr, mmsDataInfoList[pMe->m_wCurindex-1].MMSDataFileName, _OFM_READ);
-                MSG_FATAL("IDD_VIEWMSG_MMS_Handler 2", 0,0,0);
+                                   sizeof(mmsDataInfoList));                  
+
+               
+
+                pMmsDataInfoCur  = &mmsDataInfoList[nInfoIndex];   
+                
+                DBGPRINTF("[IDD_VIEWMSG_MMS_Handler] FileName:%s",pMmsDataInfoCur->MMSDataFileName);
+                pIFile = IFILEMGR_OpenFile( pIFileMgr, pMmsDataInfoCur->MMSDataFileName, _OFM_READ);
                 if(pIFile != NULL)
                 {
                     MSG_FATAL("IDD_VIEWMSG_MMS_Handler 3", 0,0,0);
-                    pBuffer = MALLOC(mmsDataInfoList[pMe->m_wCurindex-1].MMSDatasize*sizeof(uint8));
+                    pBuffer = MALLOC(pMmsDataInfoCur->MMSDatasize*sizeof(uint8));
                     if(pBuffer == NULL)
                     {
-                        MSG_FATAL("pBuffer == NULL", 0,0,0);
+                        MSG_FATAL("pBuffer MALLOC FAILED", 0,0,0);
                         break;
                     }
-                    MEMSET(pBuffer, 0, mmsDataInfoList[pMe->m_wCurindex-1].MMSDatasize*sizeof(uint8));
-                    rSize = IFILE_Read(pIFile, pBuffer, mmsDataInfoList[pMe->m_wCurindex-1].MMSDatasize*sizeof(uint8));
-                    MSG_FATAL("IDD_VIEWMSG_MMS_Handler rSize=%d, MMSDatasize=%d", rSize, mmsDataInfoList[pMe->m_wCurindex-1].MMSDatasize*sizeof(uint8),0);
+                    MEMSET(pBuffer, 0, pMmsDataInfoCur->MMSDatasize*sizeof(uint8));
+                    rSize = IFILE_Read(pIFile, pBuffer, pMmsDataInfoCur->MMSDatasize*sizeof(uint8));
+                    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] rSize=%d, MMSDatasize=%d", rSize, pMmsDataInfoCur->MMSDatasize*sizeof(uint8),0);
                 }
                 else
                 {
-                    MSG_FATAL("IDD_VIEWMSG_MMS_Handler 4", 0,0,0);
+                    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] File Open Failed Error:0x%x", IFILEMGR_GetLastError(pIFileMgr),0,0);
                     break;
                 }
-                IFILE_Release( pIFile);
-	            pIFile = NULL;
-	            IFILEMGR_Release(pIFileMgr);
-	            pIFileMgr = NULL;
+                RELEASEIF(pIFile);
+                RELEASEIF(pIFileMgr);
                
-                result = WMS_MMS_PDU_Decode(pDecdata,(uint8*)pBuffer,mmsDataInfoList[pMe->m_wCurindex-1].MMSDatasize, &ePDUType);
+                result = WMS_MMS_PDU_Decode(pDecdata,(uint8*)pBuffer,pMmsDataInfoCur->MMSDatasize, &ePDUType);
               
                 MSG_FATAL("IDD_VIEWMSG_MMS_Handler result=%d, frag_num=%d, pMe->m_wCurindex=%d", result, pDecdata->message.mms_data.frag_num, pMe->m_wCurindex);
                 for(; index < pDecdata->message.mms_data.frag_num; index++)
@@ -16889,64 +16820,53 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             
                             // 释放格式化消息时动态分配的空间
                             FREE(pFormatedText);
-                            ISTATIC_SetActive(pStatic, TRUE);
-                            //(void) ISTATIC_Redraw(pStatic);
+                            ICONTROL_SetActive((IControl*)pStatic, TRUE);
                         }
                         //break;
                     }
                     else if(pMimeType = MMS_WSP_MineType2MormalMimeType((const char*)pDecdata->message.mms_data.fragment[index].hContentType))
                     {
+                        MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] pMimeType:%d", pMimeType, 0, 0);
                         if(STRISTR(pMimeType, IMAGE_MIME_BASE))
-                        {                        
-                            if(nImageIndex++ == s_nImageIndex)
-                            {
-                                rSize = pDecdata->message.mms_data.fragment[index].size;
-                                pImage = (uint8 *)MALLOC((rSize*sizeof(uint8)));
-                                MEMSET((void*)pImage, NULL, rSize*sizeof(uint8));
-                                MEMCPY(pImage,(void*)pDecdata->message.mms_data.fragment[index].pContent , rSize);
-                            }
+                        {   
+                            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Image Count++", 0, 0, 0);
+                            pMe->m_ResData.imageData.data[pMe->m_ResData.soundData.nCount].nResIndex = index;
+                            pMe->m_ResData.imageData.data[pMe->m_ResData.soundData.nCount].type = pMimeType;
+                            pMe->m_ResData.imageData.nCount ++;
+                        }
+                        else if(STRISTR(pMimeType, SOUND_MIME_BASE))
+                        {
+                            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Sound Count++", 0, 0, 0);
+                            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Sound Type:%s", pMimeType, 0, 0);
+                            pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nCount].nResIndex = index;
+                            pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nCount].type = pMimeType;
+                            pMe->m_ResData.soundData.nCount ++;
+                            ICONTROL_SetActive((IControl*)pSoundProgressCtl,TRUE);
+                        }
+                        else if(STRISTR(pMimeType, VIDEO_MIME_BASE))
+                        {
+                            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Video Count++", 0, 0, 0);
+                            pMe->m_ResData.videoData.data[pMe->m_ResData.videoData.nCount].nResIndex = index;
+                            pMe->m_ResData.videoData.data[pMe->m_ResData.videoData.nCount].type = pMimeType;
+                            pMe->m_ResData.videoData.nCount ++;
+                        }
+                        else
+                        {
+                            AECHAR menuItemName[100] = {0};
                             
-                            if(NULL != pImage)
-                            {
-                                if(!STRCMP(pMimeType, MT_JPG)
-                                    || !STRCMP(pMimeType, MT_JPEG)
-                                    || !STRCMP(pMimeType, MT_PNG)
-                                    || !STRCMP(pMimeType, MT_BMP))
-                                {
-                                    AEECLSID cls;
-                                    IMemAStream* pMemAStream = NULL;
-                                    IImage* pIImage = NULL;
+                            STRTOWSTR((char*)pDecdata->message.mms_data.fragment[index].hContentName,
+                                menuItemName,
+                                100 * sizeof(AECHAR));
 
-                                    cls = ISHELL_GetHandler(pMe->m_pShell,
-                                        HTYPE_VIEWER,
-                                        (char*)(pDecdata->message.mms_data.fragment[index].hContentType));
+                            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Len:%d", WSTRLEN(menuItemName),0 , 0);
 
-                                    if(!ISHELL_CreateInstance(pMe->m_pShell,cls,(void**)&pIImage))
-                                    {
-
-                                        if(!ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_MEMASTREAM,(void**)&pMemAStream))
-                                        {
-                                            AEEImageInfo info;
-                                            AEERect rc;
-
-                                            IMEMASTREAM_Set(pMemAStream,pImage,rSize,0,FALSE);
-                                            IImage_SetStream(pIImage,(IAStream*)pMemAStream);
-                                            IImage_GetInfo(pIImage,&info);
-                                            IIMAGECTL_GetRect(pImageCtl,&rc);
-                                            rc.x = ((SCREEN_WIDTH - info.cx)>> 1);
-                                            rc.dx = info.cx;
-                                            IIMAGECTL_SetImage(pImageCtl,pIImage);
-                                            IIMAGECTL_SetRect(pImageCtl,&rc);
-                                            IIMAGECTL_SetActive(pImageCtl,TRUE);
-                                            IIMAGECTL_Redraw(pImageCtl);
-                                        }
-                                    }
-
-                                    RELEASEIF(pIImage);
-                                    RELEASEIF(pMemAStream);
-                                    FREEIF(pImage);
-                                }
-                            }
+                            IMENUCTL_AddItem(pListCtl,
+                                NULL,
+                                0,
+                                0,
+                                menuItemName,
+                                (uint32)pDecdata->message.mms_data.fragment[index].pContent);
+                            ICONTROL_SetActive((IControl*)pListCtl,TRUE);
                         }
                     }
                     else
@@ -16954,28 +16874,146 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         AECHAR menuItemName[100] = {0};
                         STRTOWSTR((char*)pDecdata->message.mms_data.fragment[index].hContentName,
                             menuItemName,
-                            STRLEN((char*)pDecdata->message.mms_data.fragment[index].hContentName));
-                            
+                            100 * sizeof(AECHAR));
+
+                        MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Len:%d", WSTRLEN(menuItemName),0 , 0);
                         IMENUCTL_AddItem(pListCtl,
                             NULL,
                             0,
                             0,
                             menuItemName,
                             (uint32)pDecdata->message.mms_data.fragment[index].pContent);
-                       
-                       IMENUCTL_SetActive(pListCtl,TRUE);
+                       ICONTROL_SetActive((IControl*)pListCtl,TRUE);
                     }
                
                 }
-                
-               IDIALOG_Redraw(pMe->m_pActiveIDlg);
-                // 绘制底条提示
-                // Option       Back
-                DRAW_BOTTOMBAR(BTBAR_OPTION_BACK)
+                IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START | ST_GRAPHIC_BG);
+                // 设置静态文本控件属性
+                IMENUCTL_SetProperties(pListCtl,OEMMP_USE_MENU_STYLE | OEMMP_GRAPHIC_BG |OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
+                ITIMECTL_SetProperties(pSoundProgressCtl,TP_OEM_CUSTOM_BG_COLOR);
+                ISTATIC_SetProperties(pStatic, ST_CENTERTITLE | ST_NOSCROLL | ST_DISPLATSMS | ST_GRAPHIC_BG);
+
                 if(pBuffer != NULL)
                 {
                     FREE(pBuffer);
                 }
+                
+            }
+            
+            return TRUE;
+
+        case EVT_DIALOG_START:
+            //WmsApp_UpdateAnnunciators(pMe);
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+            return TRUE;
+
+        case EVT_USER_REDRAW:
+            {
+            
+                AEERect rc = {0};
+                
+                // Set Rect 
+                if(ICONTROL_IsActive((IControl*)pStatic))
+                    CONTROL_SETRECT(pStatic,&rc,0,pMe->m_rc.y,pMe->m_rc.dx,40);
+
+                if(pMe->m_ResData.imageData.nCount)
+                {
+                    AEEImageInfo info = {0};
+                    IImage* pIImage = NULL;
+
+                    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Image",0 ,0 , 0);
+                    pIImage = WmsLoadImageFromData(pMe,
+                        pMe->m_ResData.imageData.data[pMe->m_ResData.imageData.nIndex].nResIndex,
+                        pMe->m_ResData.imageData.data[pMe->m_ResData.imageData.nIndex].type);
+                    if(pIImage)
+                    {
+                        IIMAGE_GetInfo(pIImage,&info);
+                        pMe->m_ResData.imageData.isDoing= TRUE;
+
+                        if(info.bAnimated)
+                        {
+                            if(pMe->m_ResData.imageData.isDoing)
+                            {
+                                IIMAGE_Start(pIImage,pMe->m_rc.x,pMe->m_rc.y);
+                            }
+                            else
+                            {
+                                IIMAGE_Stop(pIImage);
+                            }
+                        }
+                        else
+                        {
+                            if(pMe->m_ResData.imageData.isDoing)
+                            {
+                                IIMAGE_SetParm(pIImage,IPARM_SCALE,pMe->m_rc.dx,pMe->m_rc.dy);
+                            }
+                            else
+                            {
+                                
+                                IIMAGE_SetParm(pIImage,IPARM_SCALE,info.cx,info.cy);
+                            }
+                            IIMAGE_Draw(pIImage,pMe->m_rc.x,pMe->m_rc.y);
+                        }
+                        RELEASEIF(pIImage);
+                    }
+                }
+                
+                if(ICONTROL_IsActive((IControl*)pSoundProgressCtl))
+                {
+                    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Sound",0 ,0 , 0);
+                    WmsLoadSoundFromData(pMe,
+                        pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].nResIndex,
+                        pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].type);
+                    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Play %d",pMe->m_pMedia ,0 , 0);
+
+                    if(pMe->m_pMedia)
+                    {
+                        int nTime = 0;
+                        MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Play",0 ,0 , 0);
+                        nTime = IMEDIA_GetTotalTime(pMe->m_pMedia);
+                        ITIMECTL_SetTime(pSoundProgressCtl,nTime);
+                        ITIMECTL_SetIncrement(pSoundProgressCtl,nTime/100);
+                        IMEDIA_Play(pMe->m_pMedia);
+                     }   
+                    CONTROL_SETRECT(pSoundProgressCtl,&rc,rc.x,rc.y + rc.dy + 5,rc.dx,BOTTOMBAR_HEIGHT);
+                }    
+                    
+                if(ICONTROL_IsActive((IControl*)pListCtl))    
+                    CONTROL_SETRECT(pListCtl,&rc,rc.x,rc.y + rc.dy + 5,rc.dx,pMe->m_rc.dy - (BOTTOMBAR_HEIGHT << 1) - rc.dy);
+               
+               IDIALOG_Redraw(pMe->m_pActiveIDlg);
+                // 绘制底条提示
+                // Option       Back
+
+                switch(pMe->m_ResData.nIndex)
+                {
+                    case IDC_VIEWMSG_MMS_IMAGE:
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                    }
+                    break;
+                    case IDC_VIEWMSG_MMS_MUSICPROGRESS:
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                    }
+                    break;
+                    case IDC_VIEWMSG_MMS_STATIC:
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                    }
+                    break;
+                    case IDC_VIEWMSG_MMS_LIST:
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                    }
+                    break;
+                }
+
                 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
     			
                 return TRUE;
@@ -16987,22 +17025,17 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             return TRUE;
             
         case EVT_KEY_PRESS:
-            if(AVK_UP == wParam || AVK_DOWN == wParam)
-                IMENUCTL_HandleEvent(pListCtl,eCode,wParam,dwParam);
-                
-            if(AVK_INFO == wParam)
-            {
-                ;
-            }
-            return TRUE;
-
         case EVT_KEY:
             switch(wParam)
             {
                 case AVK_CLR:
+                {
+                    int i;
                     MSG_FATAL("IDD_VIEWMSG_MMS_Handler EVT_KEY AVK_CLR",0,0,0);
+                    
                     CLOSE_DIALOG(DLGRET_CANCELED)
-                    return TRUE;
+                }    
+                return TRUE;
 
 				//Add By zzg 2010_09_09
 				case AVK_SEND:	
@@ -17030,19 +17063,189 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 
 				case AVK_LEFT:
 				{
-				    s_nImageIndex --;
+				    switch(pMe->m_ResData.nIndex)
+                    {
+                        case IDC_VIEWMSG_MMS_IMAGE:
+                        {
+                            
+                            pMe->m_ResData.imageData.nIndex = ((pMe->m_ResData.imageData.nIndex == 0) ?
+                                -- pMe->m_ResData.imageData.nIndex :
+                                pMe->m_ResData.imageData.nCount - 1);
+                        }
+                        break;
+                        case IDC_VIEWMSG_MMS_MUSICPROGRESS:
+                        {
+                            pMe->m_ResData.soundData.nIndex = ((pMe->m_ResData.soundData.nIndex == 0) ?
+                                -- pMe->m_ResData.soundData.nIndex :
+                                pMe->m_ResData.soundData.nCount - 1);
+                            
+                        }
+                        break;
+/*                        
+                        case IDC_VIEWMSG_MMS_MUSICPROGRESS:
+                        {
+                            pMe->m_ResData.videoData.nIndex = ((pMe->m_ResData.videoData.nIndex == 0) ?
+                                -- pMe->m_ResData.videoData.nIndex :
+                                pMe->m_ResData.videoData.nCount - 1);
+                        }
+                        break;
+*/                        
+                    }
+				    
 				}
 				break;
 
 				case AVK_RIGHT:
 				{
-				    s_nImageIndex++;
+				    switch(pMe->m_ResData.nIndex)
+                    {
+                        case IDC_VIEWMSG_MMS_IMAGE:
+                        {
+                            pMe->m_ResData.imageData.nIndex = ((++pMe->m_ResData.imageData.nIndex >= pMe->m_ResData.imageData.nCount) ?
+                                0 : 
+                                pMe->m_ResData.imageData.nIndex);
+                        }
+                        break;
+                        case IDC_VIEWMSG_MMS_MUSICPROGRESS:
+                        {
+                            pMe->m_ResData.soundData.nIndex = ((++pMe->m_ResData.soundData.nIndex >= pMe->m_ResData.soundData.nCount) ?
+                                0 : 
+                                pMe->m_ResData.soundData.nIndex);       
+                        }
+                        break;
+/*                        
+                        case IDC_VIEWMSG_MMS_MUSICPROGRESS:
+                        {
+                            pMe->m_ResData.videoData.nIndex = ((++pMe->m_ResData.videoData.nIndex >= pMe->m_ResData.videoData.nCount) ?
+                                0 : 
+                                pMe->m_ResData.videoData.nIndex);       
+                        }
+                        break;
+*/                        
+                    }
+				    
 				}
 				break;
 
+                case AVK_UP:
+                case AVK_DOWN:
+                {
+                    int nFoucedItemID = IDC_VIEWMSG_MMS_STATIC;
+                    switch(pMe->m_ResData.nIndex)
+                    {
+                        case IDC_VIEWMSG_MMS_STATIC:
+                        {
+                            nFoucedItemID = IDC_VIEWMSG_MMS_IMAGE; 
+                        }
+                        break;
+                        case IDC_VIEWMSG_MMS_IMAGE:
+                        {
+                            nFoucedItemID = IDC_VIEWMSG_MMS_MUSICPROGRESS; 
+                        }
+                        break;
+                        case IDC_VIEWMSG_MMS_MUSICPROGRESS:
+                        {
+                            nFoucedItemID = IDC_VIEWMSG_MMS_LIST; 
+                        }
+                        break;
+                        case IDC_VIEWMSG_MMS_LIST:
+                        default:
+                        {
+                            int nListItemIndex = IMENUCTL_GetSel(pListCtl);
+                            
+                            IMENUCTL_HandleEvent(pListCtl,eCode,wParam,dwParam);
+                            
+                            if( nListItemIndex >= IMENUCTL_GetItemCount(pListCtl))
+                            {
+                                nFoucedItemID = IDC_VIEWMSG_MMS_STATIC; 
+                            }  
+                        }
+                        break;
+                    }
+                    if(nFoucedItemID != pMe->m_ResData.nIndex)
+                    {
+                        pMe->m_ResData.nIndex = nFoucedItemID;
+                        IDIALOG_SetFocus(pMe->m_pActiveIDlg,nFoucedItemID);
+                    }
+                    (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+                }
+                return TRUE;
+                
                 case AVK_SELECT:
-                    CLOSE_DIALOG(DLGRET_OK)
-                    return TRUE;
+                {
+                    switch(pMe->m_ResData.nIndex)
+                    {
+                        case IDC_VIEWMSG_MMS_STATIC:
+                        {
+                            ;
+                        }
+                        break;
+                        case IDC_VIEWMSG_MMS_IMAGE:
+                        { 
+                            pMe->m_ResData.imageData.isDoing = !pMe->m_ResData.imageData.isDoing;
+
+                            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                EVTFLG_ASYNC,
+                                AEECLSID_WMSAPP,
+                                EVT_USER_REDRAW,
+                                0, 
+                                0);  
+                        }
+                        break;
+                        case IDC_VIEWMSG_MMS_MUSICPROGRESS:
+                        {
+                            boolean isMediaPlaying;
+                            IMEDIA_GetState(pMe->m_pMedia,&isMediaPlaying);
+                            if(pMe->m_pMedia)
+                            {
+                                if(isMediaPlaying)
+                                {
+                                    IMEDIA_Stop(pMe->m_pMedia);
+                                }
+                                else
+                                {
+                                    IMedia_Play(pMe->m_pMedia);
+                                }
+                            }
+                            
+                            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+                        }
+                        break;
+                        case IDC_VIEWMSG_MMS_LIST:
+                        default:
+                        {
+                            uint32* pData = NULL;
+                            int nIndex = IMENUCTL_GetSel(pListCtl);
+                            CtlAddItem item = {0};
+                            char szFilename[100] = "fs:/hsmm/others/";
+                            
+                            if(!IMENUCTL_GetItemData(pListCtl,nIndex,(uint32*)&pData) || pData == NULL)
+                            {
+                               MSG_FATAL("IDD_VIEWMSG_MMS_Handler ERROR: NOT GET ANY DATA",0,0,0);
+                               break;
+                            }   
+                            if(IMENUCTL_GetItem(pListCtl,nIndex,&item))
+                            {
+                                WSTRTOUTF8(item.pText,WSTRLEN(item.pText),(byte*)(szFilename + STRLEN((char*)szFilename)),sizeof(szFilename));
+                                MSG_FATAL("IDD_VIEWMSG_MMS_Handler ERROR: Item Name:%s",szFilename,0,0);
+                            } 
+                            WmsApp_SaveToFile(szFilename,pData,STRLEN((char*)pData));
+                        }
+                        break;
+                    }
+                }
+                    //CLOSE_DIALOG(DLGRET_OK)
+                return TRUE;
   
                 case AVK_INFO:
                     CLOSE_DIALOG(DLGRET_INFO)
@@ -17059,5 +17262,131 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 
     return FALSE;
 } // IDD_VIEWMSG_MMS_Handler
+static IImage* WmsLoadImageFromData(WmsApp *pMe,int nFragIndex,char* pMimeType)
+{
+    uint8* pData = NULL;
+    int rSize = 0;
+    WSP_MMS_DATA* pMmsData = &pMe->m_DecData.message.mms_data;
+    IImage* pIImageCur = NULL;
+
+    MSG_FATAL("[WmsLoadImageFromData] Enter", 0, 0, 0);
+    rSize = pMmsData->fragment[nFragIndex].size;
+    pData = (uint8 *)MALLOC((rSize*sizeof(uint8)));
+    MEMSET((void*)pData, NULL, rSize*sizeof(uint8));
+    MEMCPY(pData,(void*)pMmsData->fragment[nFragIndex].pContent , rSize);
+    
+    if(NULL != pData)
+    {
+        AEECLSID cls;
+        IMemAStream* pMemAStream = NULL;
+        
+        MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] pMimeType:%s", pMimeType, 0, 0);
+        cls = ISHELL_GetHandler(pMe->m_pShell,
+            HTYPE_VIEWER,
+            pMimeType);
+
+        MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] clsid:%d", cls, 0, 0);
+        if(!ISHELL_CreateInstance(pMe->m_pShell,cls,(void**)&pIImageCur))
+        {
+            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Create SUCCESS", 0, 0, 0);
+            if(!ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_MEMASTREAM,(void**)&pMemAStream))
+            {
+                AEEImageInfo info;
+                AEERect rc;
+
+                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] AEECLSID_MEMASTREAM Build", 0, 0, 0);
+                IMEMASTREAM_Set(pMemAStream,pData,rSize,0,FALSE);
+                IImage_SetStream(pIImageCur,(IAStream*)pMemAStream);
+            }
+        }
+        RELEASEIF(pMemAStream);
+    }
+    MSG_FATAL("[WmsLoadImageFromData] Exit", 0, 0, 0);
+    return pIImageCur;
+}
+
+static void WmsLoadSoundFromData(WmsApp *pMe,int nFragIndex,char* pMimeType)
+{
+    uint32 rSize = 0;
+    WSP_MMS_DATA* pMmsData = &pMe->m_DecData.message.mms_data;
+    AEECLSID cls;
+    AEEMediaData mediaData = {0};
+    int nResult = SUCCESS;
+
+    MSG_FATAL("[WmsLoadSoundFromData] Enter", 0, 0, 0);
+    rSize = pMmsData->fragment[nFragIndex].size;
+    
+    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] pMimeType:%s", pMimeType, 0, 0);
+    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] 123", 0, 0, 0);
+    cls = ISHELL_GetHandler(pMe->m_pShell,
+        HTYPE_SOUND,
+        pMimeType);
+    WmsApp_SaveToFile("fs:/hsmm/output/1.txt",pMimeType,STRLEN(pMimeType));
+    MSG_FATAL("[WmsLoadSoundFromData] Enter cls:%d", cls, 0, 0);   
+    MSG_FATAL("[WmsLoadSoundFromData] Enter pData_size:%d:%d", pMmsData->fragment[nFragIndex].pContent, rSize, 0); 
+    if(cls == 0)
+    {
+        MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] No Class id", 0, 0, 0);
+    }
+    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] 321", 0, 0, 0);
+    mediaData.clsData = cls;
+    mediaData.pData = pMmsData->fragment[nFragIndex].pContent;
+    mediaData.dwSize = rSize;
+    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] 533", 0, 0, 0);
+    
+    //IMEDIA_SetMediaData(pMe->m_pMedia,&mediaData);
+    //RELEASEIF(pMe->m_pMedia);
+    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] 975", 0, 0, 0);
+    if(nResult = AEEMediaUtil_CreateMedia(pMe->m_pShell,&mediaData,&pMe->m_pMedia))
+    {
+        MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] CreateMedia Error:%s", nResult, 0, 0);
+    }
+    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] CreateMedia pMe->m_pMedia:%d", pMe->m_pMedia, 0, 0);
+    
+    MSG_FATAL("[WmsLoadSoundFromData] Exit", 0, 0, 0);
+    
+}
+
+
+
+boolean WmsApp_SaveToFile(char* pFileName,void* pData,uint32 nDataLen)
+{                            
+    IFileMgr* pFileMgr = NULL;
+    IFile* pFile = NULL;
+    int nResult = SUCCESS;
+
+    if(NULL == pData || nDataLen == 0)
+        return EFAILED;
+        
+    if(!(nResult = ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_FILEMGR,(void**)&pFileMgr)))
+    {   
+        if(IFILEMGR_Test(pFileMgr,pFileName))
+        {
+            pFile = IFILEMGR_OpenFile(pFileMgr,pFileName,_OFM_READWRITE);
+            MSG_FATAL("IDD_VIEWMSG_MMS_Handler File Exist",0,0,0);
+        }
+        else
+        {
+            pFile = IFILEMGR_OpenFile(pFileMgr,pFileName,_OFM_CREATE);  
+            MSG_FATAL("IDD_VIEWMSG_MMS_Handler File Not Exist",0,0,0);
+        }
+        
+        if(pFile)
+        {
+            int nDataCount = 0;
+            nDataCount = IFILE_Write(pFile,pData,nDataLen);
+            MSG_FATAL("IDD_VIEWMSG_MMS_Handler Insert Data Count:%d",nDataCount,0,0);
+        } 
+        else
+        {
+            nResult = IFILEMGR_GetLastError(pFileMgr);
+            MSG_FATAL("IDD_VIEWMSG_MMS_Handler Error:%d",nResult,0,0);
+        }
+    }
+    RELEASEIF(pFile);
+    RELEASEIF(pFileMgr);
+
+    return (SUCCESS == nResult);
+}
 
 #endif

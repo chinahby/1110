@@ -546,6 +546,8 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     pMe->m_isMMS = FALSE;
     pMe->m_MMSData = NULL;
     MEMSET(&pMe->m_EncData,NULL,sizeof(MMS_WSP_ENCODE_SEND));
+    MEMSET(&pMe->m_ResData,NULL,sizeof(WSP_MMS_RESOURCE));
+    pMe->m_pMedia = NULL;
 #endif
     // 初始化各成员变量
     pMe->m_prevState = WMSST_NONE;
@@ -766,6 +768,7 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
     }
     FREEIF(pMe->m_DecData.message.hBody);
     FREEIF(pMe->m_DecData.message.mms_data.head_info.pContent);
+    RELEASEIF(pMe->m_pMedia);
     for(i = 0;i < pMe->m_DecData.message.mms_data.frag_num;i++)
     {
         FREEIF(pMe->m_DecData.message.mms_data.fragment[i].pContent);

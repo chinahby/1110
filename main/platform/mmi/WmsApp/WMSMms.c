@@ -178,9 +178,12 @@ void WMS_MMS_BUFFERRelease();
 #define POST_TEST ("POST http://mmsc.vnet.mobi HTTP/1.1\r\nHost:10.0.0.200:80\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: Nokia6235/1.0 (S190V0200.nep) UP.Browser/6.2.3.2 MMP/2.0\r\nx-wap-profile: \"http://nds1.nds.nokia.com/uaprof/N6235r200.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
 
 
+
+
 /*
 ** 彩信里面用到的数据类型
 */
+// WSP - A  适用于WSP/WTP
 const char* DB_Mms2Text[76] =
 {
 	"*/*",
@@ -264,6 +267,53 @@ const char* DB_Mms2Text[76] =
     "application/vnd.oma.drm.rights+wbxml",
 };
 
+// WSP - B
+// 适用于HTTP 1.1
+#if 0
+const char* DB_Mms2Text[76] =
+{
+    "*/*",
+    "text/*",// 0x01
+    "text/html",// 0x02
+    "text/plain",// 0x03
+    "text/x-hdml",// 0x04
+    "text/x-ttml",// 0x05
+    "text/x-vCalendar",// 0x06
+    "text/x-vCard",// 0x07
+    "text/x-wap.wml",// 0x08
+    "text/x-wap.wmlscript",// 0x09
+    "text/x-wap.wta-event",// 0x0A
+    "multipart/*"// 0x0B
+    "multipart/mixed",// 0x0C
+    "multipart/form-data",// 0x0D
+    "multipart/byteranges",// 0x0E
+    "multipart/alternative",// 0x0F
+    "application/*",// 0x10
+    "application/java-vm",// 0x11
+    "application/x-www-form-urlencoded",// 0x12
+    "application/x-hdmlc",// 0x13
+    "application/x-wap.wmlc",// 0x14
+    "application/x-wap.wmlscriptc",// 0x15
+    "application/x-wap.wta-eventc",// 0x16
+    "application/x-wap.uaprof",// 0x17
+    "application/x-wap.wtls-ca-certificate",// 0x18
+    "application/x-wap.wtls-user-certificate",// 0x19
+    "application/x-x509-ca-cert",// 0x1A
+    "application/x-x509-user-cert",// 0x1B
+    "image/*",// 0x1C
+    "image/gif",// 0x1D
+    "image/jpeg",// 0x1E
+    "image/tiff",// 0x1F
+    "image/png",// 0x20
+    "image/x-wap.wbmp",// 0x21
+    "x-wap.multipart/*",// 0x22
+    "x-wap.multipart/mixed",// 0x23
+    "x-wap.multipart/form-data",// 0x24
+    "x-wap.multipart/byteranges",// 0x25
+    "x-wap.multipart/alternative",// 0x26
+    //Unassigned 0x27-0x7F
+}
+#endif
 typedef enum
 {
     // TEXT
@@ -804,7 +854,7 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	int result = SUCCESS;
 	int value_len, mediatype_value_len;
 	int hn,hv,ct, param_len;
-	uint8 *value, *mediatype_value, onebyte, ctbyte;
+	uint8 *value = NULL, *mediatype_value = NULL, onebyte = 0, ctbyte = 0;
 	uint8 uintvar[5];
 	uint8 param_buf[256];
 	uint8 subhead_buf[512];
@@ -826,9 +876,12 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
         if (IFILEMGR_GetInfo(pIFileMgr,(char*)frag.hContentFile, &pInfo) == SUCCESS)
         {
         	content_size = (int)pInfo.dwSize;
+
+        	MSG_FATAL("MRS: content_size:%d content_len: %d", content_size,0,0);
         }
         else
         {
+            MSG_FATAL("MRS: Get content info failed", 0,0,0);
     		return -1;
         }
     }
@@ -966,6 +1019,7 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	{
 		content_size = STRLEN((char*)frag.hContentText);
 		STRNCPY((char*)pCurPos,(char*)frag.hContentText,content_size);
+		MSG_FATAL("[MMS_GetFileContent] Get Text Content:%d",content_size,0,0);
 	}
 	else
 	{
@@ -974,10 +1028,11 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
     		pIFile = IFILEMGR_OpenFile( pIFileMgr, (char*)frag.hContentFile, _OFM_READ);
     		if ( pIFile != NULL )
     	    {
+    	        int nContentLen = 0;
     	        IFILE_Seek(pIFile, _SEEK_START, 0);
-    	        IFILE_Read( pIFile, (char*)pCurPos, content_size);
+    	        nContentLen = IFILE_Read( pIFile, (char*)pCurPos, content_size);
 
-    	        MSG_FATAL("IFILEMGR_OpenFile content_size=%d",content_size,0,0);
+    	        MSG_FATAL("IFILEMGR_OpenFile content_size:%d,nContentLen:%d",content_size,nContentLen,0);
     	        IFILE_Release( pIFile);
     	        pIFile = NULL;
     	        IFILEMGR_Release(pIFileMgr);
@@ -1009,21 +1064,23 @@ int WMS_MMS_CreateSMIL(uint8 *out_buf,int buf_size,WSP_MMS_ENCODE_DATA data)
 	len = STRLEN("<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" />");
 	STRNCPY(cur_pos,"<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" />",len);
 	cur_pos += len;
-	
-	if ( data.bImage )
-	{
-		len = STRLEN("<region id=\"Image\" width=\"120px\" height=\"77px\" top=\"0px\" left=\"0px\" fit=\"meet\" />");
-		STRNCPY(cur_pos,"<region id=\"Image\" width=\"120px\" height=\"77px\" top=\"0px\" left=\"0px\" fit=\"meet\" />",len);
-		cur_pos += len;
-	}
 
-	if ( data.bVideo )
+	for(i = 0; i < data.frag_num; i++)
 	{
-		len = STRLEN("<region id=\"video\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\"/>");
-		STRNCPY(cur_pos,"<region id=\"video\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\"/>",len);
-		cur_pos += len;
-	}
+    	if ( !STRCMP(data.fragment[i].pType,IMAGE_MIME_BASE) )
+    	{
+    		len = STRLEN("<region id=\"Image\" width=\"120px\" height=\"77px\" top=\"0px\" left=\"0px\" fit=\"meet\" />");
+    		STRNCPY(cur_pos,"<region id=\"Image\" width=\"120px\" height=\"77px\" top=\"0px\" left=\"0px\" fit=\"meet\" />",len);
+    		cur_pos += len;
+    	}
 
+    	if ( !STRCMP(data.fragment[i].pType,VIDEO_MIME_BASE) )
+    	{
+    		len = STRLEN("<region id=\"video\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\"/>");
+    		STRNCPY(cur_pos,"<region id=\"video\" width=\"128px\" height=\"96px\" top=\"0px\" left=\"0px\"/>",len);
+    		cur_pos += len;
+    	}
+    }
 	len = STRLEN("<region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head>");
 	STRNCPY(cur_pos,"<region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head>",len);
 	cur_pos += len;
@@ -2032,33 +2089,26 @@ void WMS_MMS_DATA_Encode(WSP_MMS_ENCODE_DATA* pData)
     
     if(STRLEN(MMSImagepszPath) != 0)
     {
-        pData->bImage = TRUE;
-        MMS_DEBUG(("[WMS_MMS_DATA_Encode] MMSImagepszPath"));
+        pData->fragment[index].pType = IMAGE_MIME_BASE;
+        
         len = STRLEN(MMS_GetMimeType(MMSImagepszPath));
-        MMS_DEBUG(("[WMS_MMS_DATA_Encode] 1 %d",len));;
     	STRNCPY((char*)pData->fragment[index].hContentType,MMS_GetMimeType(MMSImagepszPath),len);
-    	MMS_DEBUG(("[WMS_MMS_DATA_Encode] 3 %d",len));
     	len = STRLEN(MMSImagepszPath);
-    	MMS_DEBUG(("[WMS_MMS_DATA_Encode] 4 %d",len));
     	STRNCPY((char*)pData->fragment[index].hContentFile,MMSImagepszPath,len);
-    	MMS_DEBUG(("[WMS_MMS_DATA_Encode] 5 %s",MMSImagepszPath));
     	len = STRLEN(BASENAME(MMSImagepszPath));
-    	MMS_DEBUG(("[WMS_MMS_DATA_Encode] 6 %d",len));
     	MEMCPY((void*)pData->fragment[index].hContentLocation,(void*)BASENAME(MMSImagepszPath),len);
-        MMS_DEBUG(("[WMS_MMS_DATA_Encode] 7"));
     	MEMCPY((void*)pData->fragment[index].hContentID,(void*)BASENAME(MMSImagepszPath),len);
-    	MMS_DEBUG(("[WMS_MMS_DATA_Encode] 8"));
     	MEMCPY((void*)pData->fragment[index].hContentName,(void*)BASENAME(MMSImagepszPath),len);   
-    	MMS_DEBUG(("[WMS_MMS_DATA_Encode] 9"));
         pData->frag_num++;
         ++index;
     }
     if(STRLEN(MMSSoundpszPath) != 0)
     {
-        pData->bAudio = TRUE;
+        pData->fragment[index].pType = AUDIO_MIME_BASE;
         len = STRLEN(MMS_GetMimeType(MMSSoundpszPath));
     	MEMCPY((char*)pData->fragment[index].hContentType,MMS_GetMimeType(MMSSoundpszPath),len);
         MMS_DEBUG(("GetMimeType(MMSSoundpszPath)=%s len=%d", pData->fragment[index].hContentType, len));
+        MMS_DEBUG(("MMSSoundpszPath=%s", MMSSoundpszPath));
     	len = STRLEN(MMSSoundpszPath);
     	STRNCPY((char*)pData->fragment[index].hContentFile,MMSSoundpszPath,len);
     	len = STRLEN(BASENAME(MMSSoundpszPath));
@@ -2067,14 +2117,10 @@ void WMS_MMS_DATA_Encode(WSP_MMS_ENCODE_DATA* pData)
     	MEMCPY((void*)pData->fragment[index].hContentName,(void*)BASENAME(MMSSoundpszPath),len);   
         pData->frag_num++;
         ++index;
-        MMS_DEBUG(("MMSSoundpszPath=%s len=%d", pData->fragment[index].hContentFile, len));
-        MMS_DEBUG(("hContentLocation=%s",(char*)pData->fragment[index-1].hContentLocation));
-        MMS_DEBUG(("hContentID=%s",(char*)pData->fragment[index-1].hContentID));
-        MMS_DEBUG(("hContentName=%s",(char*)pData->fragment[index-1].hContentName));
     }   
     if(STRLEN(MMSVideopszPath) != 0)
     {
-        pData->bVideo = TRUE;
+        pData->fragment[index].pType = VIDEO_MIME_BASE;
         len = STRLEN(MMS_GetMimeType(MMSVideopszPath));
     	MEMCPY((void*)pData->fragment[index].hContentType,MMS_GetMimeType(MMSVideopszPath),len);
     	len = STRLEN(MMSVideopszPath);
@@ -4257,23 +4303,23 @@ char* MMS_WSP_MineType2MormalMimeType(const char* pszSrc)
         {
             if(STRSTR(pszSrc,sWspMimeType[AUDIO_AAC]))
             {
-                return MT_AUDIO_AAC;
+                return MT_AAC;
             }
             else if(STRSTR(pszSrc,sWspMimeType[AUDIO_AMR]))
             {
-                return MT_AUDIO_AMR;
+                return MT_AMR;
             }
             else if(STRSTR(pszSrc,sWspMimeType[AUDIO_MIDI])
                 || STRSTR(pszSrc,sWspMimeType[AUDIO_MID])
                 || STRSTR(pszSrc,sWspMimeType[AUDIO_X_MID])
                 || STRSTR(pszSrc,sWspMimeType[AUDIO_X_MIDI]))
             {
-                return MT_AUDIO_MIDI;
+                return MT_MIDI;
             }
             else if(STRSTR(pszSrc,sWspMimeType[AUDIO_X_MP3])
                 || STRSTR(pszSrc,sWspMimeType[AUDIO_MP3]))
             {
-                return MT_AUDIO_MP3;
+                return MT_MP3;
             }
             else if(STRSTR(pszSrc,sWspMimeType[AUDIO_MPEG3])
                 || STRSTR(pszSrc,sWspMimeType[AUDIO_X_MPEG3]))
@@ -4283,12 +4329,12 @@ char* MMS_WSP_MineType2MormalMimeType(const char* pszSrc)
             else if(STRSTR(pszSrc,sWspMimeType[AUDIO_MPEG])
                 || STRSTR(pszSrc,sWspMimeType[AUDIO_X_MPEG]))
             {
-                return MT_AUDIO_MP3;
+                return MT_MP3;
             }
             else if(STRSTR(pszSrc,sWspMimeType[AUDIO_MPG])
                 || STRSTR(pszSrc,sWspMimeType[AUDIO_X_MPG]))
             {
-                return MT_AUDIO_MP3;
+                return MT_MP3;
             }
             else if(STRSTR(pszSrc,sWspMimeType[AUDIO_3GPP])
                 || STRSTR(pszSrc,sWspMimeType[AUDIO_MP4]))

@@ -68,6 +68,8 @@
 #define MMS_DEFAULT_PROXYHOST		("10.0.0.200")
 #define MMS_DEFAULT_PROXYPORT		(80)
 
+#define WMSMMS_FRAGMENTCOUNT 10
+
 /* constant for http status code */
 typedef enum HTTP_RET_CODE{
 	HTTP_CODE_Continue							= 100,
@@ -284,21 +286,19 @@ typedef struct _wsp_encoder_data_fragment_
 	uint8 hContentEnCode[MMS_MAX_CONTENT_ENCODE];
 	uint8 hContentFile[MMS_MAX_FILE_NAME_PATH];
 	uint8 hContentText[MMS_MAX_TEXT_SIZE];
+	char* pType;
 }WSP_ENCODE_DATA_FRAGMENT;
 
 typedef struct _wsp_mms_encode_data_
 {
-	WSP_ENCODE_DATA_FRAGMENT fragment[10];
+	WSP_ENCODE_DATA_FRAGMENT fragment[WMSMMS_FRAGMENTCOUNT];
 	int				 frag_num;
-	boolean			 bImage;
-	boolean			 bAudio;
-	boolean			 bVideo;
 }WSP_MMS_ENCODE_DATA;
 
 typedef struct _wsp_mms_data_
 {
 	WSP_DEC_DATA_FRAGMENT head_info;
-	WSP_DEC_DATA_FRAGMENT fragment[10];
+	WSP_DEC_DATA_FRAGMENT fragment[WMSMMS_FRAGMENTCOUNT];
 	int				 frag_num;
 }WSP_MMS_DATA;
 
@@ -489,7 +489,7 @@ typedef enum _WTP_PDU_ClientTransaction_
 
 typedef struct tag_MSocket
 {
-    int16 RecCount;
+    uint32 RecCount;
     uint8 RecBuffer[MSG_MAX_PACKET_SIZE];
     
     boolean				bConnected;

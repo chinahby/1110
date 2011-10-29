@@ -970,13 +970,14 @@
 		<Controls>
 			<Static Id="7040" Name="IDC_VIEWMSG_MMS_STATIC">
 				<Items/></Static>
-			<Image Id="7042" Name="IDC_VIEWMSG_MMS_IMAGE">
-				<Items/></Image>
 			<List Id="7043" Name="IDC_VIEWMSG_MMS_LIST">
 				<Items/>
 			</List>
 			<Countdown Id="7044" Name="IDC_VIEWMSG_MMS_MUSICPROGRESS">
-				<Items/></Countdown>
+				<Items/>
+			</Countdown>
+			<Image Id="7042" Name="IDC_VIEWMSG_MMS_IMAGE">
+				<Items/></Image>
 		</Controls>
 	</Dialog>
 	<DIALOG Id="6049" Name="IDD_MMSOPTION_YESNO" Focus="7041">

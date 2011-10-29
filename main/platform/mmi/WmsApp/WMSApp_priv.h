@@ -84,6 +84,7 @@
 #ifdef FEATURE_USES_MMS
 #include "MediaGallery.h"
 #include "WmsMms.h"
+#include "AEEMedia.h"
 #define MMSFILE_DIR      "fs:/user/mms"
 #endif
 
@@ -154,6 +155,31 @@ typedef struct WMSAPP_Config_Type
     // 用于指示配置信息是否初始化，用特定值 WMS_CFG_VERSION 表示已初始化
     int                     nInitIndictor;  
 } WMSAPP_Config_Type;
+#ifdef FEATURE_USES_MMS
+typedef struct
+{
+    uint32 nResIndex;
+    char* type;
+}WSP_MMS_RESOURCEINDEXTYPE;
+
+typedef struct
+{
+    uint16 nIndex;
+    uint16 nCount;
+    boolean isDoing;
+    WSP_MMS_RESOURCEINDEXTYPE data[10];
+}WSP_MMS_RESOURCEDATA;
+
+typedef struct 
+{
+    WSP_MMS_RESOURCEDATA textData;
+    WSP_MMS_RESOURCEDATA imageData;
+    WSP_MMS_RESOURCEDATA soundData;
+    WSP_MMS_RESOURCEDATA videoData;
+    WSP_MMS_RESOURCEDATA otherData;
+    uint32               nIndex;
+}WSP_MMS_RESOURCE;
+#endif
 
 // 用于生成消息列表菜单页的方式
 typedef enum _MAKE_MSGList_Mode
@@ -860,6 +886,8 @@ typedef struct WmsApp
     int8                            m_isMMSReporyAllowed;
     int8                            m_isMMSSenderVisibility;
     int                             m_nDlgID;
+    IMedia                          *m_pMedia;
+    WSP_MMS_RESOURCE                m_ResData;
     //MMSData		                   m_mmsDataInfoList[MAX_MMS_STORED];
 #endif    
 } WmsApp;
