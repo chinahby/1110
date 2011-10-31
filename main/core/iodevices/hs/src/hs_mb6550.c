@@ -1844,12 +1844,6 @@ LOCAL void hs_init( void )
 #ifdef CUST_EDITION
   /* Initialize keypad */
   keypad_init();
-#ifdef FEATURE_LCD_TOUCH_ENABLE
-
-  /* Initialize touchpad*/
-  touchpad_init();
-#endif
-
 
   {
     db_items_value_type  db_item;
@@ -2029,6 +2023,11 @@ LOCAL void hs_init( void )
 #error code not present
 #endif /* FEATURE_HWTC */
 #endif /* FEATURE_BITMAP */
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+
+  /* Initialize touchpad*/
+  touchpad_init();
+#endif
 } /* end of hs_init */
 
 /*===========================================================================

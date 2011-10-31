@@ -210,5 +210,6 @@ SIDE EFFECTS
 
 ===========================================================================*/
 extern void handle_keys(void);
+extern void pointer_keyeablebacklight(void);
 
 #endif /* UI_H */

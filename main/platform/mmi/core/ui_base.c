@@ -1948,6 +1948,7 @@ static void oemui_post_pointer_data(void)
 	AEEEvent evtCode;
 	
 	//IBACKLIGHT_Enable(gpBacklight);
+	pointer_keyeablebacklight();
 	VoteForSleep(FALSE);
    // MSG_FATAL("oemui_post_pointer_data",0,0,0);
     

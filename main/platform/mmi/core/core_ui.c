@@ -923,6 +923,11 @@ static void StopKeyHold(hs_to_aee_key_type *ptbl)
     AEE_CancelTimer(KeyHoldCB, ptbl);
 }
 
+void pointer_keyeablebacklight(void)
+{
+	IBACKLIGHT_Enable(gpBacklight);
+}
+
 /* <EJECT> */
 /*===========================================================================
 FUNCTION handle_keys

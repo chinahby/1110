@@ -28,42 +28,31 @@
 #define TOUCHPAD_LOG
 #endif
 
-#define TOUCHPAD_MIN_INTERVAL 		5 		/* min  5 ms */
-#define TOUCHPAD_DEFAULT_INTERVAL 	15		/* default to 50 ms */
+//x,y值对调等值
+#define TOUCHPAD_XCHANGE    1280
+#define TOUCHPAD_YCHANGE    1140
+
+
+#define TOUCHPAD_MIN_INTERVAL 		50		/* min  5 ms */
+#define TOUCHPAD_DEFAULT_INTERVAL 	75		/* default to 50 ms */
 #define TOUCHPAD_MAX_INTERVAL 		500		/* max 500 ms */
 
 #define TOUCHPAD_PARAM_LIMITED	0
 #define PEN_SAMPLE_NUM		3
 
-#define TOUCHPAD_GPIO_INT    	 	    GPIO_INT_32   //X+
+#define TOUCHPAD_GPIO_INT    	 	    GPIO_INT_32  //X+
 
-#define TOUCHPAD_XL_CTRL                BIO_GPIO_36_REG  //Y-
-#define TOUCHPAD_XL_IN                  GPIO_INPUT_36
-#define TOUCHPAD_XL_OUT                 GPIO_OUTPUT_36
-#define TOUCHPAD_XL_ENABLE_M            BIO_GPIO_36_M
-#define TOUCHPAD_XL_ENABLE_ENA          BIO_OUTPUT_SET_V
-#define TOUCHPAD_XL_ENABLE_DIS          BIO_OUTPUT_CLR_V
+#define TOUCHPAD_XL_IN                  GPIO_INPUT_31
+#define TOUCHPAD_XL_OUT                 GPIO_OUTPUT_31
 
-#define TOUCHPAD_XR_CTRL                BIO_GPIO_30_REG  //Y+
-#define TOUCHPAD_XR_IN                  GPIO_INPUT_30
-#define TOUCHPAD_XR_OUT                 GPIO_OUTPUT_30
-#define TOUCHPAD_XR_ENABLE_M            BIO_GPIO_30_M
-#define TOUCHPAD_XR_ENABLE_ENA          BIO_OUTPUT_SET_V
-#define TOUCHPAD_XR_ENABLE_DIS          BIO_OUTPUT_CLR_V
+#define TOUCHPAD_XR_IN                  GPIO_INPUT_32
+#define TOUCHPAD_XR_OUT                 GPIO_OUTPUT_32
 
-#define TOUCHPAD_YU_CTRL                BIO_GPIO_32_REG  //X+
-#define TOUCHPAD_YU_IN                  GPIO_INPUT_32 
-#define TOUCHPAD_YU_OUT                 GPIO_OUTPUT_32
-#define TOUCHPAD_YU_ENABLE_M            BIO_GPIO_32_M
-#define TOUCHPAD_YU_ENABLE_ENA          BIO_OUTPUT_SET_V
-#define TOUCHPAD_YU_ENABLE_DIS          BIO_OUTPUT_CLR_V
+#define TOUCHPAD_YU_IN                  GPIO_INPUT_30 
+#define TOUCHPAD_YU_OUT                 GPIO_OUTPUT_30
 
-#define TOUCHPAD_YD_CTRL                BIO_GPIO_31_REG  //X-
-#define TOUCHPAD_YD_IN                  GPIO_INPUT_31
-#define TOUCHPAD_YD_OUT                 GPIO_OUTPUT_31
-#define TOUCHPAD_YD_ENABLE_M            BIO_GPIO_31_M
-#define TOUCHPAD_YD_ENABLE_ENA          BIO_OUTPUT_SET_V
-#define TOUCHPAD_YD_ENABLE_DIS          BIO_OUTPUT_CLR_V
+#define TOUCHPAD_YD_IN                  GPIO_INPUT_36
+#define TOUCHPAD_YD_OUT                 GPIO_OUTPUT_36
 /*===========================================================================
 
                  DEFINITIONS AND DECLARATIONS FOR MODULE
@@ -80,12 +69,12 @@ and other items needed by this module.
 
 #define TOUCHPAD_SHIFT          13
 #define TOUCHPAD_MV_MAX         0xFFF // ADC Max value
-#define TOUCHPAD_MVX_MAX        4000
-#define TOUCHPAD_MVY_MAX        3900
 
+#define TOUCHPAD_MVX_MAX        940
+#define TOUCHPAD_MVY_MAX        900
+#define INIT_MVX0               -340
+#define INIT_MVY0              	-240
 
-#define INIT_MVX0              -500
-#define INIT_MVY0              -600
 #define INIT_KMVX               (((TOUCH_SCREEN_WIDTH) <<TOUCHPAD_SHIFT)/(TOUCHPAD_MVX_MAX+INIT_MVX0))
 #define INIT_KMVY               (((TOUCH_SCREEN_HEIGHT)<<TOUCHPAD_SHIFT)/(TOUCHPAD_MVY_MAX+INIT_MVY0))
 #define MIN_KMVX                (((TOUCH_SCREEN_WIDTH) <<TOUCHPAD_SHIFT)/(TOUCHPAD_MV_MAX))
@@ -94,7 +83,7 @@ and other items needed by this module.
    polling macros, commands, definitions, and types
 ---------------------------------------------------------------------------*/
 /* Interval after re-enabling polling before polling begins */
-#define TOUCHPAD_POLL_TIME      5
+#define TOUCHPAD_POLL_TIME      20
 
 /*---------------------------------------------------------------------------
                     touchpad State and touchpad Buffer Data
@@ -173,6 +162,8 @@ void TOUCHPAD_SLEEP_FORBID()
 #ifndef ABS
 #define ABS(VAL) (((VAL)>0)?(VAL):(-(VAL)))
 #endif
+
+
 /*===========================================================================
 
 FUNCTION TOUCHPAD_INIT
@@ -192,51 +183,48 @@ SIDE EFFECTS
 ===========================================================================*/
 void touchpad_init( void )
 {
-    ERR("[TP]: touchpad_init touchpad_dev_init = %d",touchpad_dev_init, 0, 0);
+	INTLOCK();
 	{
-		INTLOCK();
-		{
-			cur_pen_event.pen_state = PEN_NONE;
-			memset((char*)&pen_array,0x00,sizeof(pen_array));	
-			memset((char*)&cur_pen_value,0x00,sizeof(cur_pen_value));	
-			memset((char*)&pen_cal_data,0x00,sizeof(pen_cal_data));	
-		    
-			handwritting_cfg.color.fixed = FALSE;
-			handwritting_cfg.color.begin = 0xf00f;
-			handwritting_cfg.color.end = 0x0f00;
-			handwritting_cfg.pixels = 2;
-			handwritting_cfg.style = PEN_STYLE;
-			pen_cal_data.mvx0 = INIT_MVX0;
-			pen_cal_data.mvy0 = INIT_MVY0;
-			pen_cal_data.kmvx = INIT_KMVX;
-			pen_cal_data.kmvy = INIT_KMVY;	
+		cur_pen_event.pen_state = PEN_NONE;
+		memset((char*)&pen_array,0x00,sizeof(pen_array));	
+		memset((char*)&cur_pen_value,0x00,sizeof(cur_pen_value));	
+		memset((char*)&pen_cal_data,0x00,sizeof(pen_cal_data));	
+	    
+		handwritting_cfg.color.fixed = FALSE;
+		handwritting_cfg.color.begin = 0xf00f;
+		handwritting_cfg.color.end = 0x0f00;
+		handwritting_cfg.pixels = 2;
+		handwritting_cfg.style = PEN_STYLE;
+		pen_cal_data.mvx0 = INIT_MVX0;
+		pen_cal_data.mvy0 = INIT_MVY0;
+		pen_cal_data.kmvx = INIT_KMVX;
+		pen_cal_data.kmvy = INIT_KMVY;	
 
-			touchpad_polling_flag = FALSE;
+		touchpad_polling_flag = FALSE;
 
-			touchpad_set_scan_mode(PEN_NORMAL_MODE);
-		    
-		    /* Register the scanning routine with the Clock services,
-		    ** so that it is called at regular intervals to poll the touchpad.
-		    */
-			clk_def( &touchpad_clk_cb );
-			touchpad_event_cb = NULL;
+		touchpad_set_scan_mode(PEN_NORMAL_MODE);
+	    
+	    /* Register the scanning routine with the Clock services,
+	    ** so that it is called at regular intervals to poll the touchpad.
+	    */
+		clk_def( &touchpad_clk_cb );
+		touchpad_event_cb = NULL;
 
 #ifdef T_SLEEP
 #ifdef FEATURE_NEW_SLEEP_API
-			touchpad_sleep_handle = sleep_register(touchpadDeviceName, FALSE);
-			if (0 == touchpad_sleep_handle)
-			{
-				ERR("[TP]: %s failed sleep_register", touchpadDeviceName, 0, 0);
-			}
+		touchpad_sleep_handle = sleep_register(touchpadDeviceName, FALSE);
+		if (0 == touchpad_sleep_handle)
+		{
+			ERR("[TP]: %s failed sleep_register", touchpadDeviceName, 0, 0);
+		}
 #endif
 #endif
-			touchpad_init_scanner();
-		    touchpad_dev_init = TRUE;
-		    touchpad_isr_open();
-	    }
+		touchpad_init_scanner();
+	    touchpad_dev_init = TRUE;
+	    touchpad_isr_open();
+    }
 
-	    INTFREE();
-   	}
+    INTFREE();
 }
 
 /*===========================================================================
@@ -304,20 +292,19 @@ SIDE EFFECTS
   None
 
 ===========================================================================*/
-
+static uint16 touchpad_read_x(void);
 boolean touchpad_isr_open()
 {
     MSG_FATAL("[TP]: touchpad_isr_open", 0, 0, 0);
-
-    BIO_TRISTATE(TOUCHPAD_XL_CTRL,TOUCHPAD_XL_ENABLE_M,BIO_OUTPUT_ENA_V);
-    BIO_OUT(TOUCHPAD_XL_CTRL,TOUCHPAD_XL_ENABLE_M,BIO_OUTPUT_CLR_V);
-	BIO_TRISTATE(TOUCHPAD_XR_CTRL,TOUCHPAD_XR_ENABLE_M,BIO_OUTPUT_DIS_V);
-    BIO_TRISTATE(TOUCHPAD_YD_CTRL,TOUCHPAD_YD_ENABLE_M,BIO_OUTPUT_DIS_V);
-  
-    //gpio_tlmm_config(TOUCHPAD_YU_IN);
+	gpio_tlmm_config(TOUCHPAD_YD_OUT);
+	gpio_tlmm_config(TOUCHPAD_YU_IN);
+	gpio_tlmm_config(TOUCHPAD_XL_IN);
+	gpio_tlmm_config(TOUCHPAD_XR_IN);
+	gpio_out(TOUCHPAD_YD_OUT,GPIO_LOW_VALUE);
+	
 	gpio_int_set_detect((gpio_int_type)TOUCHPAD_GPIO_INT,DETECT_LEVEL);
+	
 	/* Let the sleep task know it is now ok to sleep*/
-
 	TOUCHPAD_SLEEP_ALLOW();
 	return gpio_int_set_handler((gpio_int_type)TOUCHPAD_GPIO_INT, ACTIVE_LOW, touchpad_pen_isr);
 }
@@ -327,11 +314,6 @@ boolean touchpad_isr_close()
     MSG_FATAL("[TP]: touchpad_isr_close", 0, 0, 0);
 
 	gpio_int_set_handler((gpio_int_type)TOUCHPAD_GPIO_INT, ACTIVE_LOW, NULL);
-    BIO_TRISTATE(TOUCHPAD_YU_CTRL,TOUCHPAD_YU_ENABLE_M,BIO_OUTPUT_DIS_V);
-    BIO_TRISTATE(TOUCHPAD_YD_CTRL,TOUCHPAD_YD_ENABLE_M,BIO_OUTPUT_DIS_V);
-    BIO_TRISTATE(TOUCHPAD_XL_CTRL,TOUCHPAD_XL_ENABLE_M,BIO_OUTPUT_DIS_V);
-    BIO_TRISTATE(TOUCHPAD_XR_CTRL,TOUCHPAD_XR_ENABLE_M,BIO_OUTPUT_DIS_V);
-
 	return TRUE;
 }
 
@@ -590,7 +572,7 @@ boolean 	touchpad_mv_2_xy(pen_event_type*pen_event,pen_value_type *pen_value)
         MSG_FATAL("[TP]: touchpad_check_pen_value_Fail",0,0,0);
         return FALSE;
     }
-	
+	MSG_FATAL("REMOVE DDtouchpad_read_value x = %d y = %d",pen_value->pen_x_mv,pen_value->pen_y_mv,0);
     x = (int32)((pen_value->pen_x_mv+pen_cal_data.mvx0)* pen_cal_data.kmvx)>>TOUCHPAD_SHIFT;
     y = (int32)((pen_value->pen_y_mv+pen_cal_data.mvy0)* pen_cal_data.kmvy)>>TOUCHPAD_SHIFT;
     
@@ -660,17 +642,13 @@ boolean touchpad_get_pen_value(pen_value_type  *pen_value)
 
 boolean touchpad_press()
 {
-	//gpio_tlmm_config(TOUCHPAD_YU_IN);
-
-    BIO_TRISTATE(TOUCHPAD_YU_CTRL,TOUCHPAD_YU_ENABLE_M,BIO_OUTPUT_ENA_V);
-    BIO_OUT(TOUCHPAD_YU_CTRL,TOUCHPAD_YU_ENABLE_M,BIO_OUTPUT_SET_V);
-    BIO_TRISTATE(TOUCHPAD_XL_CTRL,TOUCHPAD_XL_ENABLE_M,BIO_OUTPUT_ENA_V);
-    BIO_OUT(TOUCHPAD_XL_CTRL,TOUCHPAD_XL_ENABLE_M,BIO_OUTPUT_CLR_V);
-    BIO_TRISTATE(TOUCHPAD_XR_CTRL,TOUCHPAD_XR_ENABLE_M,BIO_OUTPUT_DIS_V);
-    BIO_TRISTATE(TOUCHPAD_YU_CTRL,TOUCHPAD_YU_ENABLE_M,BIO_OUTPUT_DIS_V);
-    BIO_TRISTATE(TOUCHPAD_YD_CTRL,TOUCHPAD_YD_ENABLE_M,BIO_OUTPUT_DIS_V);
+	gpio_tlmm_config(TOUCHPAD_YD_OUT);
+	gpio_tlmm_config(TOUCHPAD_YU_IN);
+	gpio_tlmm_config(TOUCHPAD_XL_IN);
+	gpio_tlmm_config(TOUCHPAD_XR_IN);
+	gpio_out(TOUCHPAD_YD_OUT,GPIO_LOW_VALUE);
     
-    if(gpio_in((GPIO_SignalType)TOUCHPAD_YU_IN)==GPIO_LOW_VALUE)
+    if(gpio_in((GPIO_SignalType)TOUCHPAD_XR_IN)==GPIO_LOW_VALUE)
     {
         MSG_FATAL("[TP]: touchpad_press TRUE",0,0,0);
         return TRUE;
@@ -756,39 +734,35 @@ void touchpad_polling(int4 ms_interval)
 
 boolean	touchpad_init_scanner(void)
 {
-    BIO_TRISTATE(TOUCHPAD_YU_CTRL,TOUCHPAD_YD_ENABLE_M,BIO_OUTPUT_DIS_V);
-    BIO_TRISTATE(TOUCHPAD_YD_CTRL,TOUCHPAD_YD_ENABLE_M,BIO_OUTPUT_DIS_V);
-    BIO_TRISTATE(TOUCHPAD_XL_CTRL,TOUCHPAD_XL_ENABLE_M,BIO_OUTPUT_DIS_V);
-    BIO_TRISTATE(TOUCHPAD_XR_CTRL,TOUCHPAD_XR_ENABLE_M,BIO_OUTPUT_DIS_V);
-
+	gpio_tlmm_config(TOUCHPAD_YD_IN);
+	gpio_tlmm_config(TOUCHPAD_YU_IN);
+	gpio_tlmm_config(TOUCHPAD_XL_IN);
+	gpio_tlmm_config(TOUCHPAD_XR_IN);
 	return TRUE;
 }
 
 static uint16 touchpad_read_x(void)
 {
-    BIO_TRISTATE(TOUCHPAD_YU_CTRL,TOUCHPAD_YU_ENABLE_M,BIO_OUTPUT_DIS_V);
-    BIO_TRISTATE(TOUCHPAD_YD_CTRL,TOUCHPAD_YD_ENABLE_M,BIO_OUTPUT_DIS_V);
-
-    BIO_TRISTATE(TOUCHPAD_XL_CTRL,TOUCHPAD_XL_ENABLE_M,BIO_OUTPUT_ENA_V);
-    BIO_OUT( TOUCHPAD_XL_CTRL, TOUCHPAD_XL_ENABLE_M, TOUCHPAD_XL_ENABLE_DIS);
-
-    BIO_TRISTATE(TOUCHPAD_XR_CTRL,TOUCHPAD_XR_ENABLE_M,BIO_OUTPUT_ENA_V);
-    BIO_OUT( TOUCHPAD_XR_CTRL, TOUCHPAD_XR_ENABLE_M, TOUCHPAD_XR_ENABLE_ENA);
+	gpio_tlmm_config(TOUCHPAD_YD_IN);
+	gpio_tlmm_config(TOUCHPAD_YU_IN);
+	gpio_tlmm_config(TOUCHPAD_XL_OUT);
+	gpio_tlmm_config(TOUCHPAD_XR_OUT);
+	gpio_out(TOUCHPAD_XL_OUT,GPIO_LOW_VALUE);
+	gpio_out(TOUCHPAD_XR_OUT,GPIO_HIGH_VALUE);
+	
     // Read from ADC1
 	return (uint16)adc_read(ADC_TOUCHPAD_X);
 }
 
 static uint16 touchpad_read_y(void)
 {
-    BIO_TRISTATE(TOUCHPAD_XL_CTRL,TOUCHPAD_XL_ENABLE_M,BIO_OUTPUT_DIS_V);
-    BIO_TRISTATE(TOUCHPAD_XR_CTRL,TOUCHPAD_XR_ENABLE_M,BIO_OUTPUT_DIS_V);
-
-
-    BIO_TRISTATE(TOUCHPAD_YU_CTRL,TOUCHPAD_YU_ENABLE_M,BIO_OUTPUT_ENA_V);
-    BIO_OUT( TOUCHPAD_YU_CTRL, TOUCHPAD_YU_ENABLE_M, TOUCHPAD_YU_ENABLE_DIS);
+    gpio_tlmm_config(TOUCHPAD_YD_OUT);
+	gpio_tlmm_config(TOUCHPAD_YU_OUT);
+	gpio_tlmm_config(TOUCHPAD_XL_IN);
+	gpio_tlmm_config(TOUCHPAD_XR_IN);
+	gpio_out(TOUCHPAD_YD_OUT,GPIO_LOW_VALUE);
+	gpio_out(TOUCHPAD_YU_OUT,GPIO_HIGH_VALUE);
     
-    BIO_TRISTATE(TOUCHPAD_YD_CTRL,TOUCHPAD_YD_ENABLE_M,BIO_OUTPUT_ENA_V);
-    BIO_OUT( TOUCHPAD_YD_CTRL, TOUCHPAD_YD_ENABLE_M, TOUCHPAD_YD_ENABLE_ENA);   
 	// Read from ADC0
 	return (uint16)adc_read(ADC_TOUCHPAD_Y);
 }
@@ -834,9 +808,13 @@ DESCRIPTION
 ===========================================================================*/
 boolean touchpad_read_value(pen_value_type *pen_value)
 {
+	pen_value->pen_x_mv = touchpad_read_x();
 	pen_value->pen_y_mv = touchpad_read_y();
-    pen_value->pen_x_mv = touchpad_read_x();
 
+	//值对调
+	pen_value->pen_x_mv = TOUCHPAD_XCHANGE - pen_value->pen_x_mv;
+	pen_value->pen_y_mv = TOUCHPAD_YCHANGE - pen_value->pen_y_mv;
+   
     MSG_FATAL("touchpad_read_value x = %d y = %d",pen_value->pen_x_mv,pen_value->pen_y_mv,0);
     return TRUE;
 }
