@@ -2000,10 +2000,13 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                 AEERect  menuRc = {0};
                 int      nCount = 0;
 #ifdef FEATURE_USES_MMS
-                if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS
-                    || pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
+                if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
                 {
-                    nCount = g_mmsDataInfoMax;
+                    ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_OUTCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
+                }
+                else if(pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
+                {
+                    ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_INCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
                 }
                 else
 #endif 
@@ -2088,10 +2091,13 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                 pMe->m_wSelItemxuhao = dwcurxuhao;
                 pList = wms_get_cacheinfolist(pMe->m_eMBoxType);
 #ifdef FEATURE_USES_MMS
-                if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS
-                    || pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
+                if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
                 {
-                    nCount = g_mmsDataInfoMax;
+                    ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_OUTCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
+                }
+                else if(pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
+                {
+                    ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_INCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
                 }
                 else
 #endif
