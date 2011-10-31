@@ -828,7 +828,19 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_M=IDS_PLAY;
             nResID_R=IDS_BACK;
             break;
+            
+         case BTBAR_OPTION_STOP_BACK:
+            nResID_L=IDS_OPTION;
+            nResID_M=IDS_STOP;
+            nResID_R=IDS_BACK;
+            break;
 
+         case BTBAR_OPTION_ZOOM_BACK:
+            nResID_L=IDS_OPTION;
+            nResID_M=IDS_FULLSCREEN;
+            nResID_R=IDS_BACK;
+            break;
+            
          case BTBAR_OPTION_PLAY_STOP:
             nResID_L = IDS_OPTION;
             nResID_M = IDS_PLAY;

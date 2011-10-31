@@ -37,6 +37,7 @@
 #include "WMSMmsTest.h"
 #include "WMSMms.h"
 #include "AEEImage.h"
+#include "AEEImageCtl.h"
 #include "AEEMedia.h"
 #include "AEEMimeTypes.h"
 #include "AEEMenu.h"
@@ -16669,7 +16670,8 @@ extern char* MMS_WSP_MineType2MormalMimeType(const char* pszSrc);
 static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
     WmsApp *pMe = (WmsApp *)pUser;
-    
+
+    IImageCtl*pImageCtl = NULL;
     IStatic * pStatic = NULL;
     ITimeCtl* pSoundProgressCtl = NULL;
     IMenuCtl* pListCtl = NULL;
@@ -16683,10 +16685,12 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
     pStatic = (IStatic*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_STATIC);
     pSoundProgressCtl = (ITimeCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_MUSICPROGRESS);
     pListCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_LIST);
+    pImageCtl = (IImageCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_IMAGE);
     
     if (NULL == pStatic 
         || pSoundProgressCtl == NULL
-        || pListCtl == NULL)
+        || pListCtl == NULL
+        || NULL == pImageCtl)
     {
         return FALSE;
     }
@@ -16821,6 +16825,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             // 释放格式化消息时动态分配的空间
                             FREE(pFormatedText);
                             ICONTROL_SetActive((IControl*)pStatic, TRUE);
+                            pMe->m_ResData.textData.nCount ++;
                         }
                         //break;
                     }
@@ -16841,7 +16846,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nCount].nResIndex = index;
                             pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nCount].type = pMimeType;
                             pMe->m_ResData.soundData.nCount ++;
-                            ICONTROL_SetActive((IControl*)pSoundProgressCtl,TRUE);
+                            //ICONTROL_SetActive((IControl*)pSoundProgressCtl,TRUE);
                         }
                         else if(STRISTR(pMimeType, VIDEO_MIME_BASE))
                         {
@@ -16866,7 +16871,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 0,
                                 menuItemName,
                                 (uint32)pDecdata->message.mms_data.fragment[index].pContent);
-                            ICONTROL_SetActive((IControl*)pListCtl,TRUE);
+                            //ICONTROL_SetActive((IControl*)pListCtl,TRUE);
                         }
                     }
                     else
@@ -16883,16 +16888,17 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             0,
                             menuItemName,
                             (uint32)pDecdata->message.mms_data.fragment[index].pContent);
-                       ICONTROL_SetActive((IControl*)pListCtl,TRUE);
+                       //ICONTROL_SetActive((IControl*)pListCtl,TRUE);
                     }
                
                 }
-                IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START | ST_GRAPHIC_BG);
+                IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START );
                 // 设置静态文本控件属性
                 IMENUCTL_SetProperties(pListCtl,OEMMP_USE_MENU_STYLE | OEMMP_GRAPHIC_BG |OEMMP_DISTINGUISH_INFOKEY_SELECTKEY);
                 ITIMECTL_SetProperties(pSoundProgressCtl,TP_OEM_CUSTOM_BG_COLOR);
                 ISTATIC_SetProperties(pStatic, ST_CENTERTITLE | ST_NOSCROLL | ST_DISPLATSMS | ST_GRAPHIC_BG);
 
+                pMe->m_ResData.nIndex = IDC_VIEWMSG_MMS_STATIC;
                 if(pBuffer != NULL)
                 {
                     FREE(pBuffer);
@@ -16916,54 +16922,26 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             {
             
                 AEERect rc = {0};
-
+                AEEImageInfo info = {0};
+                IImage* pIImage = NULL;
+                
                 // Set Rect 
-                if(ICONTROL_IsActive((IControl*)pStatic))
-                    CONTROL_SETRECT(pStatic,&rc,0,pMe->m_rc.y,pMe->m_rc.dx,40);
+                if(pMe->m_ResData.textData.nCount)
+                {
+                    ISTATIC_SizeToFit(pStatic,&rc);
+                    CONTROL_SETRECT(pStatic,&rc,rc.x,rc.y,rc.dx,rc.dy);
+                }    
 
                 if(pMe->m_ResData.imageData.nCount)
                 {
-                    AEEImageInfo info = {0};
-                    IImage* pIImage = NULL;
-
                     MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Image",0 ,0 , 0);
+                    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Image %d:%d:%d",rc.x ,rc.y , rc.dy);
                     pIImage = WmsLoadImageFromData(pMe,
                         pMe->m_ResData.imageData.data[pMe->m_ResData.imageData.nIndex].nResIndex,
                         pMe->m_ResData.imageData.data[pMe->m_ResData.imageData.nIndex].type);
-                    if(pIImage)
-                    {
-                        IIMAGE_GetInfo(pIImage,&info);
-                        pMe->m_ResData.imageData.isDoing= TRUE;
-
-                        if(info.bAnimated)
-                        {
-                            if(pMe->m_ResData.imageData.isDoing)
-                            {
-                                IIMAGE_Start(pIImage,pMe->m_rc.x,pMe->m_rc.y);
-                            }
-                            else
-                            {
-                                IIMAGE_Stop(pIImage);
-                            }
-                        }
-                        else
-                        {
-                            if(pMe->m_ResData.imageData.isDoing)
-                            {
-                                IIMAGE_SetParm(pIImage,IPARM_SCALE,pMe->m_rc.dx,pMe->m_rc.dy);
-                            }
-                            else
-                            {
-                                
-                                IIMAGE_SetParm(pIImage,IPARM_SCALE,info.cx,info.cy);
-                            }
-                            IIMAGE_Draw(pIImage,pMe->m_rc.x,pMe->m_rc.y);
-                        }
-                        RELEASEIF(pIImage);
-                    }
                 }
                 
-                if(ICONTROL_IsActive((IControl*)pSoundProgressCtl))
+                if(pMe->m_ResData.soundData.nCount)
                 {
                     MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Sound",0 ,0 , 0);
                     WmsLoadSoundFromData(pMe,
@@ -16983,10 +16961,72 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     CONTROL_SETRECT(pSoundProgressCtl,&rc,rc.x,rc.y + rc.dy + 5,rc.dx,BOTTOMBAR_HEIGHT);
                 }    
                     
-                if(ICONTROL_IsActive((IControl*)pListCtl))    
+                if(IMENUCTL_GetItemCount(pListCtl))  
                     CONTROL_SETRECT(pListCtl,&rc,rc.x,rc.y + rc.dy + 5,rc.dx,pMe->m_rc.dy - (BOTTOMBAR_HEIGHT << 1) - rc.dy);
+
                
+                switch(pMe->m_ResData.nIndex)
+                {
+                    case IDC_VIEWMSG_MMS_IMAGE:
+                    {
+                        ICONTROL_GetRect((IControl*)pListCtl,&rc);
+                    }
+                    break;
+                    case IDC_VIEWMSG_MMS_MUSICPROGRESS:
+                    {
+                        ICONTROL_GetRect((IControl*)pSoundProgressCtl,&rc);
+                    }
+                    break;
+                    case IDC_VIEWMSG_MMS_LIST:
+                    {
+                        ICONTROL_GetRect((IControl*)pListCtl,&rc);
+                    }
+                    break;
+                    default:
+                    case IDC_VIEWMSG_MMS_STATIC:
+                    {
+                        ICONTROL_GetRect((IControl*)pStatic,&rc);
+                    }
+                    break;
+                    
+                }
+               IDisplay_FillRect(pMe->m_pDisplay,&rc,0x969696);
                IDIALOG_Redraw(pMe->m_pActiveIDlg);
+                if(pIImage)
+                {
+                    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Image",0 ,0 , 0);
+                    IIMAGE_GetInfo(pIImage,&info);
+
+                    CONTROL_SETRECT(pImageCtl,&rc,rc.x,rc.y + rc.dy,rc.dx,info.cy);
+                    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Image %d:%d:%d",rc.x ,rc.y , rc.dy);
+                    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Image %d:%d:%d",info.bAnimated ,info.cx,info.cy);
+                    if(info.bAnimated)
+                    {
+                        if(pMe->m_ResData.imageData.isDoing)
+                        {
+                            IIMAGE_Start(pIImage,rc.x,rc.y);
+                        }
+                        else
+                        {
+                            IIMAGE_Stop(pIImage);
+                        }
+                    }
+                    else
+                    {
+                        if(pMe->m_ResData.imageData.isDoing)
+                        {
+                            IIMAGE_SetParm(pIImage,IPARM_SCALE,pMe->m_rc.dx,pMe->m_rc.dy);
+                            IIMAGE_Draw(pIImage,pMe->m_rc.x,pMe->m_rc.y);
+                        }
+                        else
+                        {
+                            IIMAGE_SetParm(pIImage,IPARM_SCALE,info.cx,info.cy);
+                            IIMAGE_Draw(pIImage,rc.x,rc.y);
+                        }
+                    }
+                    RELEASEIF(pIImage);
+                }
+               
                 // 绘制底条提示
                 // Option       Back
 
@@ -16994,20 +17034,38 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 {
                     case IDC_VIEWMSG_MMS_IMAGE:
                     {
-                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_ZOOM_BACK);
                     }
                     break;
                     case IDC_VIEWMSG_MMS_MUSICPROGRESS:
                     {
-                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
-                    }
-                    break;
-                    case IDC_VIEWMSG_MMS_STATIC:
-                    {
-                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                        boolean isBusy = FALSE;
+                        int nState = MM_STATE_READY;
+                        if(pMe->m_pMedia)
+                        {
+                            IMEDIA_GetState(pMe->m_pMedia,&isBusy);
+                            if(isBusy == TRUE || nState != MM_STATE_READY)
+                            {
+                                DRAW_BOTTOMBAR(BTBAR_OPTION_STOP_BACK);
+                            }
+                            else
+                            {
+                                DRAW_BOTTOMBAR(BTBAR_OPTION_PLAY_BACK);
+                            }
+                        }
+                        else
+                        {
+                            DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                        }     
                     }
                     break;
                     case IDC_VIEWMSG_MMS_LIST:
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_SAVE_BACK);
+                    }
+                    break;
+                    default:
+                    case IDC_VIEWMSG_MMS_STATIC:
                     {
                         DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
                     }
@@ -17199,12 +17257,12 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         break;
                         case IDC_VIEWMSG_MMS_MUSICPROGRESS:
                         {
-                            boolean isMediaPlaying;
-                            
+                            boolean isMediaStateChange = FALSE;
+                            int nMediaState = MM_STATE_IDLE;
                             if(pMe->m_pMedia)
                             {
-                                IMEDIA_GetState(pMe->m_pMedia,&isMediaPlaying);
-                                if(isMediaPlaying)
+                                nMediaState = IMEDIA_GetState(pMe->m_pMedia,&isMediaStateChange);
+                                if(isMediaStateChange || nMediaState != MM_STATE_READY)
                                 {
                                     IMEDIA_Stop(pMe->m_pMedia);
                                 }
@@ -17332,24 +17390,17 @@ static void WmsLoadSoundFromData(WmsApp *pMe,int nFragIndex,char* pMimeType)
     mediaData.clsData = MMD_BUFFER;
     mediaData.pData = pMmsData->fragment[nFragIndex].pContent;
     mediaData.dwSize = rSize;
-
-    
-
     
     RELEASEIF(pMe->m_pMedia);
-
 
     nResult = AEEMediaUtil_CreateMedia(pMe->m_pShell,&mediaData,&pMe->m_pMedia);
     if(nResult != SUCCESS)
     {
         MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] CreateMedia Error:%s", nResult, 0, 0);
     }
-    
     MSG_FATAL("[WmsLoadSoundFromData] Exit", 0, 0, 0);
     
 }
-
-
 
 boolean WmsApp_SaveToFile(char* pFileName,void* pData,uint32 nDataLen)
 {                            
