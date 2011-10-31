@@ -1035,7 +1035,35 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 {
                     return FALSE;
                 }
-                
+#ifdef FEATURE_USES_MMS
+                STRTOWSTR("(%d)",wstrFmt,sizeof(wstrFmt));
+                ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
+                            IDS_INBOX_MMS,
+                            pwsz, dwSize);
+
+                ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_INCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
+                nLen = WSTRLEN(pwsz);
+                if (nLen<30)
+                {
+                    WSPRINTF(&pwsz[nLen], (64-nLen)*sizeof(AECHAR), 
+                        wstrFmt, g_mmsDataInfoMax); 
+                }
+                IMENUCTL_SetItemText(pMenu, IDS_INBOX_MMS, NULL, NULL, pwsz);
+
+                STRTOWSTR("(%d)",wstrFmt,sizeof(wstrFmt));
+                ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
+                            IDS_OUTBOX_MMS,
+                            pwsz, dwSize);
+                            
+                ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_OUTCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
+                nLen = WSTRLEN(pwsz);
+                if (nLen<30)
+                {
+                    WSPRINTF(&pwsz[nLen], (64-nLen)*sizeof(AECHAR), 
+                        wstrFmt, g_mmsDataInfoMax); 
+                }
+                IMENUCTL_SetItemText(pMenu, IDS_OUTBOX_MMS, NULL, NULL, pwsz);
+#endif
                 // 格式化收件箱菜单项文本
                 (void)STRTOWSTR("(%d/%d)",wstrFmt,sizeof(wstrFmt));
                 (void)ISHELL_LoadResString(pMe->m_pShell, AEE_WMSAPPRES_LANGFILE,
