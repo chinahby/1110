@@ -541,12 +541,12 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
                 pMe->m_pImageIcon[i] = NULL;
             }
         } 
-		for(j = 0;j<MAX_BOTTOM_ITEMS;i++)
+		for(j = 0;j<MAX_BOTTOM_ITEMS;j++)
 		{
-			 if(pMe->m_pImageButtom[i] != NULL)
+			 if(pMe->m_pImageButtom[j] != NULL)
             {
-                (void)IIMAGE_Release(pMe->m_pImageButtom[i]);
-                pMe->m_pImageButtom[i] = NULL;
+                (void)IIMAGE_Release(pMe->m_pImageButtom[j]);
+                pMe->m_pImageButtom[j] = NULL;
             }
 		}
 
@@ -1082,10 +1082,10 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                 } 
 				for(j = 0;j<MAX_BOTTOM_ITEMS;i++)
 				{
-					 if(pMe->m_pImageButtom[i] != NULL)
+					 if(pMe->m_pImageButtom[j] != NULL)
 		            {
-		                (void)IIMAGE_Release(pMe->m_pImageButtom[i]);
-		                pMe->m_pImageButtom[i] = NULL;
+		                (void)IIMAGE_Release(pMe->m_pImageButtom[j]);
+		                pMe->m_pImageButtom[j] = NULL;
 		            }
 				}
                 
@@ -1586,19 +1586,19 @@ static void DrawMatrix(MainMenu *pMe)
     DrawMatrixStr(pMe);
 	//Draw Bottom ICON
 	
-    for(i = 0; i < MAX_BOTTOM_ITEMS;i++)
+    for(j = 0; j < MAX_BOTTOM_ITEMS;j++)
     {
-    	if (pMe->m_pImageIcon[i] == NULL)
+    	if (pMe->m_pImageButtom[j] == NULL)
         {
-            pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
+            pMe->m_pImageButtom[j] = ISHELL_LoadImage(pMe->m_pShell,
                                                     ICON_ANI[(i+MAX_MATRIX_ITEMS)]);
         }
 
-        if (pMe->m_pImageIcon[i] != NULL)
+        if (pMe->m_pImageButtom[j] != NULL)
         {
-            IIMAGE_Draw(pMe->m_pImageIcon[i],
-                        pMe->m_IconButtom_pt[i].x,
-                        pMe->m_IconButtom_pt[i].y);
+            IIMAGE_Draw(pMe->m_pImageButtom[j],
+                        pMe->m_IconButtom_pt[j].x,
+                        pMe->m_IconButtom_pt[j].y);
         }
 
 	}		
