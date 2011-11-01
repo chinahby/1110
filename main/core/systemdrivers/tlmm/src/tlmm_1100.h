@@ -238,8 +238,14 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #define GPIO_29_SIGNAL GPIO_INPUT_29
 #endif
 
+
 #ifdef CUST_EDITION
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#define GPIO_30_SIGNAL GPIO_OUTPUT_30
+#else
+
 #define GPIO_30_SIGNAL GPIO_INPUT_30
+#endif
 #else
 /* GPIO 30 */
 #define GPIO_30_SIGNAL XO_EN_N
