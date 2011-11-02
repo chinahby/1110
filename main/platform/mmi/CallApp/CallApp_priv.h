@@ -101,6 +101,13 @@
 #ifdef FEATURE_OEMOMH 
 #include "AEERUIM.h"
 #endif
+
+//Add By zzg 2011_10_28
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+#include "uixsnd.h"	
+#endif
+
+
 #include "Appscommon.h"
 #include "AppComFunc.h"
 #include "AEECallHistory.h"
@@ -667,6 +674,14 @@ typedef struct _CCallApp
     send_bt_audio          m_bt_audio;
     boolean                    m_b_add_btag_menu;
 #endif
+
+//Add By zzg 2011_10_27
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+	boolean				  m_bBtAvailable;
+	boolean				  m_bBtUsing;    
+#endif
+//Add End
+
     AECHAR      *m_pwstrDialStringkeep;
 
 

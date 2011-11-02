@@ -762,6 +762,28 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         CallApp_SetupCallAudio(pMe);
                         break;
 #endif
+
+//Add By zzg 2011_10_28
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+					case IDS_USE_BT_AG:
+					case IDS_USE_PHONE:
+					{
+						MSG_FATAL("***zzg CallApp_Dialer_NumEdit wParam=%x***", wParam, 0, 0);
+						if(wParam == IDS_USE_PHONE)
+                        {
+                        	pMe->m_bBtUsing = FALSE;       				
+                        }
+                        else
+                        {
+                            pMe->m_bBtUsing = TRUE;							
+                        }
+						pMe->m_bHandFree = FALSE;
+						CallApp_SetupCallAudio(pMe);
+						break;
+					}
+#endif
+//Add End
+
                      case IDS_MUTE:
                      case IDS_UNMUTE:
                          pMe->m_CallMuted = !pMe->m_CallMuted;
@@ -3605,6 +3627,28 @@ static boolean  CallApp_Dialer_Connect_DlgHandler(CCallApp *pMe,
                     break;
 #endif
 
+				//Add By zzg 2011_10_28
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+				case IDS_USE_BT_AG:
+				case IDS_USE_PHONE:
+				{
+					MSG_FATAL("***zzg CallApp_Dialer_Connect wParam=%x***", wParam, 0, 0);
+					if(wParam == IDS_USE_PHONE)
+					{
+						pMe->m_bBtUsing= FALSE;									
+					}
+					else
+					{
+						pMe->m_bBtUsing = TRUE;						
+					}
+					pMe->m_bHandFree = FALSE;
+					CallApp_SetupCallAudio(pMe);
+					break;
+				}
+#endif
+				//Add End
+
+
                 case IDS_MUTE:
                 case IDS_UNMUTE:
 
@@ -6012,10 +6056,20 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
 	AEETCalls po;
 #endif
 
+	//Add By zzg 2011_10_25
+	uisnd_notify_data_s_type sndInfo;
+	uisnd_get_device(&sndInfo);
+	MSG_FATAL("***zzg CallApp_SetupCallAudio - dev=%d sMute=%d mMute=%d***", 
+	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);	
+	//Add End
+
     if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,CFGI_HEADSET_PRESENT,&headsetPresent,sizeof(headsetPresent)))
     {
         headsetPresent = FALSE;
     }
+
+	MSG_FATAL("***zzg CallApp_SetupCallAudio headsetPresent=%x, m_bHandFree=%x, m_bBtAvailable=%x***", 
+				headsetPresent, pMe->m_bHandFree, pMe->m_bBtAvailable);	
 
 #ifdef FEATURE_SUPPORT_BT_APP
     CALL_FUN_START("CallApp_SetupCallAudio %d %d %d", pMe->m_bHandFree, headsetPresent, pMe->m_bt_audio );
@@ -6044,6 +6098,23 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
         bt_ui_process_vol_change(pMe->m_CallVolume);
     }
 #endif
+
+//Add By zzg 2011_10_28
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+	//else if(TRUE == pMe->m_bBtAvailable)
+	else if (sndInfo.out_device == SND_DEVICE_BT_HEADSET) 			
+	{				
+		soundStuff.eDevice = AEE_SOUND_DEVICE_BT_HEADSET;		
+		//bt_ui_process_vol_change(pMe->m_CallVolume);
+	}	
+	else if (sndInfo.out_device == SND_DEVICE_BT_A2DP_HEADSET)
+	{				
+		soundStuff.eDevice = AEE_SOUND_DEVICE_BT_STEREO_HEADSET;		
+		//bt_ui_process_vol_change(pMe->m_CallVolume);
+	}	
+#endif
+//Add End
+
 	/*
     else if (headsetPresent)
     {
@@ -6061,6 +6132,8 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
         pMe->m_bt_audio = SEND_NONE;
     }
 #endif
+
+	MSG_FATAL("***zzg CallApp_SetupCallAudio eDevice=%d***", soundStuff.eDevice, 0, 0);
 
     soundStuff.eMethod = AEE_SOUND_METHOD_VOICE;
     soundStuff.eAPath = AEE_SOUND_APATH_BOTH;
@@ -7670,6 +7743,15 @@ void CallApp_ChangeCallVolume(CCallApp  *pMe,
            si.eDevice = AEE_SOUND_DEVICE_BT_HEADSET;
         }
 #endif
+
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+		else if(TRUE == pMe->m_bBtUsing)
+		{
+		   //bt_ui_process_vol_change(pMe->m_CallVolume);
+		   si.eDevice = AEE_SOUND_DEVICE_BT_HEADSET;
+		}
+#endif
+
 		/*
         else if(headsetPresent)
         {
@@ -7798,6 +7880,15 @@ void CallApp_ChangeCallVolume_AVK_RWD(CCallApp  *pMe)
            si.eDevice = AEE_SOUND_DEVICE_BT_HEADSET;
         }
 #endif
+
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+		else if(TRUE == pMe->m_bBtUsing)
+		{
+		   //bt_ui_process_vol_change(pMe->m_CallVolume);
+		   si.eDevice = AEE_SOUND_DEVICE_BT_HEADSET;
+		}
+#endif
+
 		/*
         else if(headsetPresent)
         {
@@ -8250,6 +8341,28 @@ static void CallApp_Build_NumEdit_Option_Menu(CCallApp *pMe,IMenuCtl   *pMenuCtl
         }
 #endif
 
+//Add By zzg 2011_10_27
+#ifdef FEATURE_SUPPORT_BT_AUDIO		
+		MSG_FATAL("***zzg CallApp_Build_NumEdit m_bBtAvailable=%x, m_bBtUsing=%x***", pMe->m_bBtAvailable, pMe->m_bBtUsing, 0);
+
+		if (TRUE == pMe->m_bBtAvailable)
+		{
+			if(pMe->m_bBtUsing== FALSE)
+			{
+				(void) IMENUCTL_AddItem(pMenuCtl,AEE_APPSCALLAPP_RES_FILE,IDS_USE_BT_AG,IDS_USE_BT_AG,
+												(AECHAR*)NULL,(uint32)NULL);
+			}
+			else
+			{
+				(void) IMENUCTL_AddItem(pMenuCtl,AEE_APPSCALLAPP_RES_FILE,IDS_USE_PHONE,IDS_USE_PHONE,
+												(AECHAR*)NULL,(uint32)NULL);
+			}
+		}
+#endif
+//Add End
+
+
+
         if ( pMe->m_bHandFree )
         {
             (void) IMENUCTL_AddItem(pMenuCtl,AEE_APPSCALLAPP_RES_FILE, IDS_NONHANDFREE, IDS_NONHANDFREE,
@@ -8389,6 +8502,30 @@ static void CallApp_Build_Connect_Option_Menu(CCallApp *pMe)
         }
     }
 #endif
+
+//Add By zzg 2011_10_27
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+		//if(pMe->m_b_add_btag_menu ==TRUE)
+
+		MSG_FATAL("***zzg CallApp_Build_Connect m_bBtAvailable=%x, m_bBtUsing=%x***", pMe->m_bBtAvailable, pMe->m_bBtUsing, 0);
+
+		if (TRUE == pMe->m_bBtAvailable)
+		{
+			if(pMe->m_bBtUsing== FALSE)
+			{
+				(void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_USE_BT_AG,IDS_USE_BT_AG,
+												(AECHAR*)NULL,(uint32)NULL);
+			}
+			else
+			{
+				(void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_USE_PHONE,IDS_USE_PHONE,
+												(AECHAR*)NULL,(uint32)NULL);
+			}
+		}
+#endif
+//Add End
+
+
     //if ( pMe->m_bHandFree )
     //{
     //    (void) IMENUCTL_AddItem(pSKMenu,AEE_APPSCALLAPP_RES_FILE,IDS_NONHANDFREE,IDS_NONHANDFREE,

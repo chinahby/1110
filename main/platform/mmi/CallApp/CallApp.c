@@ -910,10 +910,20 @@ static int CallApp_InitAppData(CCallApp *pMe)
     }
 }
 #endif /*FEATRUE_SET_IP_NUMBER*/
+
 #ifdef FEATURE_SUPPORT_BT_APP
     pMe->m_bt_audio = SEND_NONE;
     pMe->m_b_add_btag_menu = FALSE;
 #endif
+
+	//Add By zzg 2011_10_27
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+	pMe->m_bBtAvailable = FALSE;
+	pMe->m_bBtUsing		= FALSE;
+#endif
+	//Add End
+
+
     (void) ISHELL_LoadResString(pMe->m_pShell,
                                             AEE_APPSCALLAPP_RES_FILE,
                                             IDS_NO_NUMBER,
@@ -1175,6 +1185,25 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             pMe->m_b_ip_call[0] = 0;
 #endif
             IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, NULL);
+
+			//Add By zzg 2011_10_25
+			{
+				uisnd_notify_data_s_type sndInfo;
+				uisnd_get_device(&sndInfo);
+				MSG_FATAL("***zzg CallApp_Handle EVT_APP_START - dev=%d sMute=%d mMute=%d***", 
+			  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);
+			}
+			//Add End
+
+			//Add By zzg 2011_10_27
+			MSG_FATAL("***zzg CallApp EVT_APP_START***", 0, 0, 0);
+			(void) ISHELL_PostEvent(pMe->m_pShell,
+									AEECLSID_BLUETOOTH_APP,
+									EVT_USER,
+									0x2,	
+									0);
+			//Add End
+			
             CallApp_SetupCallAudio(pMe);
             // 开始CallApp状态机
             
@@ -1279,6 +1308,12 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             pMe->m_bt_audio = SEND_NONE;
             pMe->m_b_add_btag_menu = FALSE;
 #endif
+
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+			pMe->m_bBtAvailable = FALSE;	
+			pMe->m_bBtUsing		= FALSE;
+#endif
+
             //IALERT_StopAlerting(pMe->m_pAlert);
             //IALERT_StopRingerAlert(pMe->m_pAlert);
             //ICM_EndAllCalls(pMe->m_pICM);
@@ -1635,7 +1670,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 			}
 
 		case EVT_USER:
-			{
+			{				
 				if((wParam == AVK_SELECT) || (wParam == AVK_INFO))
 				{
 					if(dwParam != 0)
@@ -1656,10 +1691,29 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 				else if((wParam >= AVK_0) && (wParam <= AVK_POUND))
 				{
 					eCode = EVT_KEY;
-				}
+				}				
 				return CallApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 			}
 #endif
+
+		//Add By zzg 2011_10_27
+		case EVT_USER:
+		{
+			MSG_FATAL("***zzg CallApp_HandleEvt EVT_USER wParam=%x***", wParam, 0, 0);
+
+			if ((wParam == 0x22) || (wParam == 0x33))
+			{
+				pMe->m_bBtAvailable = TRUE;				
+			}
+			
+			CallApp_SetupCallAudio(pMe);
+			
+			break;
+			
+		}
+		//Add End
+
+
 #ifdef FEATURE_OEMOMH
         case EVT_OMH_PROMPT:
             if(!gsdi_uim_omh_cap.omh_enabled && IRUIM_IsCardConnected(pMe->m_pIRUIM))
@@ -2954,10 +3008,12 @@ static void CallApp_ProcessCallStateVoiceEnd(CCallApp               *pMe,
 
     pMe->m_callEndStatus = call_table->end_status;
     pMe->m_callEndInOrig = FALSE;
+	
 #ifdef FEATURE_SUPPORT_BT_APP
     pMe->m_bt_audio = SEND_NONE;
     pMe->m_b_add_btag_menu = FALSE;
 #endif
+
     /*CallWaiting 第三方先挂机,记录第三方为未接电话 */
     if (pMe->m_bmissCallWaiting)
     {
@@ -3617,12 +3673,16 @@ static void CallApp_ProcessCallStateVoiceConnect(CCallApp                 *pMe,
     (void) ICONFIG_GetItem(pMe->m_pConfig,CFGI_EAR_VOL,
                                             &pMe->m_CallVolume,sizeof(pMe->m_CallVolume));
     pMe->m_CallMuted = FALSE;
+	
 #ifdef FEATURE_SUPPORT_BT_APP
     if(pMe->m_bt_audio == SEND_BT_CALL)
     {
         pMe->m_bt_audio = SEND_BT_AUDIO;
     }
 #endif
+
+    MSG_FATAL("***zzg CallApp_ProcessCallStateVoiceConnect***", 0, 0, 0);
+
     CallApp_SetupCallAudio(pMe);
     MEMSET((void*)&pMe->m_cdg_dsp_info , 0 ,sizeof(cdg_dsp_info));
 }
