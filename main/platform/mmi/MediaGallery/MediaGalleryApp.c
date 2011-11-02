@@ -2050,9 +2050,7 @@ boolean MediaGallery_HideAnnunciatorBar(IDisplay *pdisp,
    if(SUCCESS == nResult && NULL != pIAnn)
    {
       MG_FARF(ADDR, ("Enable annunciator bar"));
-      IANNUNCIATOR_EnableAnnunciatorBar(pIAnn,
-            AEECLSID_DISPLAY1,
-            (boolean)(!bHide));
+      IANNUNCIATOR_EnableAnnunciatorBar(pIAnn, AEECLSID_DISPLAY1,  (boolean)(!bHide));
    }
 
    IDisplay_GetClipRect(pdisp, &rc);
