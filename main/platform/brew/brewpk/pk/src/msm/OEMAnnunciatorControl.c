@@ -250,10 +250,10 @@ void OEMAnnunciatorControl_Enable(IAnnunciatorControl *pme, boolean bEnable)
          break;
    }
 
-   if(0 != clsDisp) {
+   if(0 != clsDisp) {   	
       (void) IANNUNCIATOR_EnableAnnunciatorBar(pme->pAnnun,
                                                clsDisp,
-                                               bEnable);
+                                               bEnable);	  
 //      if(bEnable) {
 //         (void) IANNUNCIATOR_Redraw(pme->pAnnun);
 //      }

@@ -4440,25 +4440,29 @@ See Also: none
 ===========================================================================*/
 static void TextCtl_CloseSymbolDialog(CTextCtl * pme, AECHAR ch)
 {
-    TextCtl_ClearScreen(pme); 
-    CTextCtl_SetActive((ITextCtl *)pme, TRUE);
-    SetArrowFlagonIM(FALSE);     
-    pme->m_bShowSyms = FALSE;
-    if(ch)
-        OEM_TextAddChar(pme->m_pText,ch,FALSE);
+	AEECLSID  pCLSID;
 
-   if(pme->m_pSoftKey)
-       IMENUCTL_Redraw(pme->m_pSoftKey);
+	TextCtl_ClearScreen(pme); 
+	CTextCtl_SetActive((ITextCtl *)pme, TRUE);
+	SetArrowFlagonIM(FALSE);     
+	pme->m_bShowSyms = FALSE;
+	if(ch)
+	    OEM_TextAddChar(pme->m_pText,ch,FALSE);
 
-   CTextCtl_Redraw((ITextCtl *)pme);
+	if(pme->m_pSoftKey)
+	   IMENUCTL_Redraw(pme->m_pSoftKey);
 
-   //Add By zzg 2010_08_13
-   (void)ISHELL_PostEvent(pme->m_pIShell,
-                          ISHELL_ActiveApplet(pme->m_pIShell),
-                          EVT_USER_REDRAW,
-                          0,
-                          0);  
-   //Add End
+	CTextCtl_Redraw((ITextCtl *)pme);
+
+	pCLSID = ISHELL_ActiveApplet(pme->m_pIShell);
+
+	MSG_FATAL("***zzg ISHELL_ActiveApplet=%x***", pCLSID, 0, 0);
+	
+	(void)ISHELL_PostEvent(pme->m_pIShell,
+                           pCLSID,
+                           EVT_USER_REDRAW,
+                           0,
+                           0);    
 
    ISHELL_HandleEvent(pme->m_pIShell, EVT_CTL_TEXT_MODECHANGED, (uint16)CTextCtl_GetInputMode((ITextCtl *)pme, NULL), (uint32)pme);
 }

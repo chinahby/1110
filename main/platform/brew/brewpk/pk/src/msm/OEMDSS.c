@@ -1327,10 +1327,17 @@ sint15 dss_open_netlib2
    sAppID = dss_open_netlib(OEMDSS_NetEventOccurred,
                             OEMDSS_SocketEventOccurred,
                             dss_errno);
-   if (DSS_ERROR != sAppID) {
-      if (DSS_SUCCESS != dss_set_app_net_policy(sAppID, policy_info_ptr, dss_errno)) {
+   
+   DBGPRINTF("***zzg dss_open_netlib2 sAppID=%d***", sAppID);
+   
+   if (DSS_ERROR != sAppID) 
+   {
+      if (DSS_SUCCESS != dss_set_app_net_policy(sAppID, policy_info_ptr, dss_errno)) 
+	  {
          sint15 ndssErr;
          dss_close_netlib(sAppID, &ndssErr);
+
+		 DBGPRINTF("***zzg dss_set_app_net_policy Failed!***");
          return DSS_ERROR;
       }
    }
