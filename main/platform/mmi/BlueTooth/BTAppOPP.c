@@ -235,8 +235,6 @@ void BTApp_OPPUpdateSendingProgress( CBTApp* pMe )
 	}
 	else
 	{
-		MSG_FATAL("***zzg EVT_UPDATE_PROGRESS MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)***", 0, 0, 0);
-
 		pMe->m_eDlgRet = DLGRET_BT_FILE_PROGRESS; 
 		(void) ISHELL_EndDialog(pMe->m_pShell);				
 	}	
@@ -2201,7 +2199,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 			if(pMe->mEnablingType != BTAPP_ENABLING_NONE)
 			{
 				pMe->mEnablingType++;       
-				//BTApp_EnableBT(pMe);	//Del By zzg 2010_11_18
+				BTApp_EnableBT(pMe);	//Del By zzg 2010_11_18
 			}
 			else
 			{
@@ -2383,9 +2381,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #error code not present
 #endif 
 				{
-					pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
-					pMe->m_msg_state_id = BTAPPST_EXIT;	//Add By zzg 2011_01_22
-			
+					pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27					
 					BTApp_ShowMessage( pMe, msgID, wDefaultObjectName, 2 );		  
 				}
 			}
@@ -2426,8 +2422,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 			{
 				//if ( pMe->mOPP.bRegistered != TRUE  )
 				{
-					pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
-					pMe->m_msg_state_id = BTAPPST_EXIT;	//Add By zzg 2011_01_22
+					pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27					
 					BTApp_ShowMessage( pMe, msgID, wDefaultObjectName, 2 );
 				}
 			}
@@ -2460,8 +2455,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #error code not present
 #endif 
 				{
-					pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
-					pMe->m_msg_state_id = BTAPPST_EXIT;	//Add By zzg 2011_01_22
+					pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27					
 					BTApp_ShowMessage( pMe, msgID, pMe->mOPP.wName, 2 );
 				}
 			}
@@ -2490,8 +2484,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 
 			//if ( pMe->mOPP.bRegistered != TRUE  )
 			{
-				pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
-				pMe->m_msg_state_id = BTAPPST_EXIT;	//Add By zzg 2011_01_22
+				pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27				
 				BTApp_ShowMessage( pMe, msgID, pMe->mOPP.wName, 2 );
 			}	  
 

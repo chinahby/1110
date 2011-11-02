@@ -539,7 +539,7 @@ when        who   what, where, why
 #ifdef FEATURE_BT_EXTPF_FTP
 /* No of items that can be displayed on the UI; Used when storing FTP folder 
    browsing contents */
-#define MAX_OBJECTS             25
+#define MAX_OBJECTS             100	//25
 #endif
 
 #ifdef FEATURE_BT_EXTPF_PBAP
@@ -1760,6 +1760,9 @@ typedef enum
   BT_APP_MENU_SECURITY_OPTIONS,
   BT_APP_MENU_DBG_KEY,
   BT_APP_MENU_OPEN,				//Add By zzg 2010_11_17
+  BT_APP_MENU_ON,				//Add By zzg 2011_05_25
+  BT_APP_MENU_OFF,				//Add By zzg 2011_05_25
+  BT_APP_OOB_CREATED,			//Add By zzg 2011_05_28
 #endif
 
 #ifdef FEATURE_BT_EXTPF_OPP

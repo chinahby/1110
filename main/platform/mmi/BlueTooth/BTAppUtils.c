@@ -1739,6 +1739,7 @@ DESCRIPTION
 ============================================================================= */
 void BTApp_UseA2DPDevice( CBTApp* pMe )
 {
+	MSG_FATAL("***zzg BTApp_UseA2DPDevice bAudioSelected=%x***", pMe->mA2DP.bAudioSelected, 0, 0);
   if ( pMe->mA2DP.bAudioSelected == FALSE )
   {
     MSG_MED( "UseA2DPDevice", 0, 0, 0 );
@@ -1769,6 +1770,7 @@ DESCRIPTION
 ============================================================================= */
 void BTApp_ReleaseA2DPDevice( CBTApp* pMe )
 {
+	MSG_FATAL("***zzg BTApp_ReleaseA2DPDevice bAudioSelected=%x***", pMe->mA2DP.bAudioSelected, 0, 0);
   if ( pMe->mA2DP.bAudioSelected != FALSE )
   {
     MSG_MED( "ReleaseA2DPDevice", 0, 0, 0 );
@@ -1819,6 +1821,8 @@ void BTApp_UseBTDevice( CBTApp* pMe, boolean bForceUnmute )
   a2s = pMe->mA2DP.bAudioSelected;
 #endif
 
+  MSG_FATAL("***zzg BTApp_UseBTDevice bAudioSelected=%x***", pMe->mAG.bAudioSelected, 0, 0);
+
   if ( pMe->mAG.bAudioSelected == FALSE )
   {
     MSG_MED( "UseBTDevice - a2s=%d", a2s, 0, 0 );
@@ -1832,13 +1836,13 @@ void BTApp_UseBTDevice( CBTApp* pMe, boolean bForceUnmute )
 #ifdef FEATURE_BT_AG
     uisnd_set_device_status( SND_DEVICE_BT_HEADSET, UISND_DEV_ENABLED );
 #endif
-#else
+#else	
     uisnd_force_device_autoselect();
 #endif /* UI_UISND_NO_DIRECT_STATUS_CALLS */
-
+	
     if ( ISHELL_SendURL( pMe->m_pShell, 
                          "soundman:select?dev=BTHeadset" ) == FALSE )
-    {
+    {      
       uisnd_set_device_auto( NULL, NULL );
     }
   }
@@ -1862,7 +1866,7 @@ void BTApp_UseBTDevice( CBTApp* pMe, boolean bForceUnmute )
     }
   }
 #endif /* !FEATURE_AVS_BT_SCO_REWORK */
-#endif /* defined (FEATURE_BT) */
+#endif /* defined (FEATURE_BT) */  
 }
 
 /* ==========================================================================
@@ -1871,6 +1875,8 @@ DESCRIPTION
 ============================================================================= */
 void BTApp_ReleaseBTDevice( CBTApp* pMe, boolean bForceUnmute )
 {
+  MSG_FATAL("***zzg BTApp_ReleaseBTDevice bForceUnmute=%x***", bForceUnmute, 0, 0);
+  
   if ( pMe->mAG.bAudioSelected != FALSE )
   {
     MSG_MED( "ReleaseBTDevice - fum=%d", bForceUnmute, 0, 0 );
@@ -1924,17 +1930,24 @@ boolean BTApp_CheckVoiceCallState( CBTApp* pMe, uint8 uState )
   uint8                index = 0;
   boolean              bCallState = FALSE;
 
-  uSizeOfCallsDesc = sizeof(AEETCalls) + 
-                     (sizeof(AEECallDesc)*(BTAPP_MAX_NUM_CALLS - 1));
+  MSG_FATAL("***zzg BTApp_CheckVoiceCallState uState=%x**", uState, 0, 0);
+
+  uSizeOfCallsDesc = sizeof(AEETCalls) + (sizeof(AEECallDesc)*(BTAPP_MAX_NUM_CALLS - 1));
   pCallsDesc = (AEETCalls*)MALLOC( uSizeOfCallsDesc );
+
+  MSG_FATAL("***zzg BTApp_CheckVoiceCallState pCallsDesc=%x**", pCallsDesc, 0, 0);
+  
   if ( pCallsDesc == NULL )
   {
     MSG_ERROR( "IS_VOICECALL_INCOMING - Malloc failed", 0, 0, 0 );
     return FALSE;  
-  }
+  }  
+  
   if ( ITELEPHONE_GetCalls( pMe->pIPhone, pCallsDesc, 
                             uSizeOfCallsDesc ) == SUCCESS )
   {
+  	MSG_FATAL("***zzg BTApp_CheckVoiceCallState dwCount=%x**", pCallsDesc->dwCount, 0, 0);
+	
     /* process information for each call */
     for ( index = 0; index < pCallsDesc->dwCount; index++ )
     {
@@ -1947,6 +1960,10 @@ boolean BTApp_CheckVoiceCallState( CBTApp* pMe, uint8 uState )
         bCallState = FALSE;
         break;
       }
+
+	  MSG_FATAL("***zzg BTApp_CheckVoiceCallState index=%x, call_type=%x, call_state=%x**", 
+	  			pCallsDesc->dwCount, callInfo.call_type, callInfo.call_state);
+	  
       if ( uState == BTAPP_VOICECALL_INCOMING )
       {
         if ( (callInfo.call_type == AEET_CALL_TYPE_VOICE) && 
@@ -1978,6 +1995,8 @@ boolean BTApp_CheckVoiceCallState( CBTApp* pMe, uint8 uState )
     }    
   }
   FREEIF( pCallsDesc );
+  
+  MSG_FATAL("***zzg BTApp_CheckVoiceCallState bCallState=%x**", bCallState, 0, 0);
   return bCallState;
 }
 
@@ -2020,6 +2039,9 @@ BTAppCallType BTApp_CallIncoming( CBTApp* pMe )
     callIncoming = BT_APP_CALL_VT;
   }
 #endif /* FEATURE_BT_VT */
+
+  MSG_FATAL("***zzg BTApp_CallIncoming callIncoming=%x***", callIncoming, 0, 0);
+
   return callIncoming;
 }
 
@@ -2041,6 +2063,9 @@ BTAppCallType BTApp_CallConnected( CBTApp* pMe )
     callConnected = BT_APP_CALL_VT;
   }
 #endif /* FEATURE_BT_VT */
+
+  MSG_FATAL("***zzg BTApp_CallConnected callConnected=%x***", callConnected, 0, 0);
+
   return callConnected;
 }
 

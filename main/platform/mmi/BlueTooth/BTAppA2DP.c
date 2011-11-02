@@ -129,6 +129,9 @@ void BTApp_ProcessA2DPNotifications(
      MSG_ERROR("Notification received when A2DP is not registered", 0, 0, 0);
      return;
   }
+
+  MSG_FATAL("***zzg BTApp_ProcessA2DPNotifications evt=%x***", evt, 0, 0);
+  
   switch ( evt )
   {
     case AEEBT_A2DP_EVT_CONNECTED:
@@ -140,10 +143,12 @@ void BTApp_ProcessA2DPNotifications(
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
-      if ( TOP_MENU == BT_APP_MENU_A2DP_TEST )
+
+      //if ( TOP_MENU == BT_APP_MENU_A2DP_TEST )
       {
         BTApp_ShowDevMsg( pMe, IDS_MSG_AG_CONN, &pMe->mA2DP.bdAddr, 2 );
       }
+
       BTApp_BuildMenu( pMe, TOP_MENU );
 
       if ( (BTApp_CallPresent( pMe ) == BT_APP_CALL_NONE) &&
@@ -153,11 +158,13 @@ void BTApp_ProcessA2DPNotifications(
       }
 
       BTApp_A2DP_retries = 0;
-      BTAppMgr_UpdateProfileType( pMe, &pData->bdAddr, BTAPP_MGR_A2DP, BTAPP_MGR_CONNECTED );
+      BTAppMgr_UpdateProfileType( pMe, &pData->bdAddr, BTAPP_MGR_A2DP, BTAPP_MGR_CONNECTED );	 
+	  
       break;
     }
     case AEEBT_A2DP_EVT_CON_FAILED:
     {
+	  MSG_FATAL("***zzg BTApp_ProcessA2DPNotifi AEEBT_A2DP_EVT_CON_FAILED uError=%x***", pData->uError,0,0);
       MSG_ERROR( "A2DP - Connect failed err=%x",
                   pData->uError,0,0);
 #ifdef FEATURE_APP_TEST_AUTOMATION
@@ -172,7 +179,8 @@ void BTApp_ProcessA2DPNotifications(
       {
         BTApp_ShowDevMsg( pMe, IDS_MSG_AG_CONNF, &pMe->mA2DP.bdAddr, 2 );
       }
-      BTApp_ReleaseA2DPDevice( pMe );
+      BTApp_ReleaseA2DPDevice( pMe );	 
+	  
       break;
     }
     case AEEBT_A2DP_EVT_DISCONNECTED:
@@ -213,6 +221,7 @@ void BTApp_ProcessA2DPNotifications(
         }
       }
       BTAppMgr_UpdateProfileType( pMe, &pMe->mA2DP.bdAddr, BTAPP_MGR_A2DP, BTAPP_MGR_DISCONNECTED );
+	  
       break;
     }
     case AEEBT_A2DP_EVT_BITRATE:
@@ -606,6 +615,20 @@ boolean BTApp_HandleA2DPTestMenu( CBTApp* pMe, uint16 key )
   return ev_processed;
 }
 
+//Add By zzg 2011_10_31
+void BTApp_A2DPSetRetries(CBTApp* pMe, boolean least)		
+{
+	if (TRUE == least)
+	{
+		BTApp_A2DP_retries = 0;
+	}
+	else
+	{
+		BTApp_A2DP_retries = BTAPP_A2DP_MAX_RETRIES;
+	}
+}
+
+
 /* ==========================================================================
 FUNCTION BTApp_HandleA2DPControlMenu
 DESCRIPTION
@@ -764,6 +787,10 @@ DESCRIPTION
 ============================================================================= */
 void BTApp_EnableA2DP( CBTApp* pMe, boolean* pbSettingBondable )
 {
+  MSG_FATAL("***zzg BTApp_EnableA2DP pbSettingBondable=%x, bEnableA2DP=%x***", pbSettingBondable, pMe->mA2DP.bEnableA2DP, 0);
+
+  pMe->mA2DP.bEnableA2DP = pMe->mA2DP.bEnableA2DP ? FALSE : TRUE;
+  
   if ( pMe->mA2DP.bEnableA2DP == TRUE )
   {
 
@@ -780,8 +807,10 @@ void BTApp_EnableA2DP( CBTApp* pMe, boolean* pbSettingBondable )
 
     if ( BTApp_A2DPInit( pMe ) == FALSE )
     {
-      MSG_ERROR( "EnableA2DP - Registration for A2DP notifications failed", 
-                 0, 0, 0 );
+      MSG_ERROR("EnableA2DP - Registration for A2DP notifications failed", 0, 0, 0 );
+	  
+	  MSG_FATAL("***zzg BTApp_EnableA2DP BTApp_A2DPInit Failed!***", 0, 0, 0 );
+	  
       BTApp_A2DPCleanup( pMe );
     }
     else if ( pMe->mA2DP.bEnabled == FALSE )

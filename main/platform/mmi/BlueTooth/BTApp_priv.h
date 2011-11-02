@@ -97,16 +97,12 @@ typedef enum DLGRetValue
 	DLGRET_BOND_OPITION,			//IDD_BT_BOND_OPITION
 	DLGRET_OPITION,					//IDD_BT_OPITION
 
+	DLGRET_DEVICE,					//IDD_DEVICE
 	DLGRET_DEVICE_LIST,				//IDD_DEVICE_LIST
-	DLGRET_BOND_LIST,				//IDD_BOND_LIST
-	DLGRET_ALL_LIST,				//IDD_ALL_LIST
-	DLGRET_CONNECT_LIST,			//IDD_CONNECT_LIST
 	
 	DLGRET_MYINFO,					//IDD_MYINFO
-	DLGRET_MYINFO_OPITION,			//IDD_MYINFO_OPITION
-	DLGRET_EDIT_NAME,				//IDD_BT_EDITNAME
-	DLGRET_EDIT_SHORTNAME,			//IDD_BT_EDIT_SHORTNAME
-	DLGRET_EDIT_MANUDATA,			//IDD_BT_EDIT_MANUDATA
+	DLGRET_MYINFO_OPITION,			//IDD_MYINFO_OPITION	
+	DLGRET_MYINFO_EDIT,				//IDD_MYINFO_EDIT			
 	DLGRET_SET_SECURITY,			//IDD_BT_SECURITY
 	DLGRET_SET_DISCOVERABLE,		//IDD_BT_DISCOVERABLE
 	DLGRET_SET_IOCAPABILITY,		//IDD_BT_IO_CAPABILITY
@@ -123,7 +119,10 @@ typedef enum DLGRetValue
 
 	
 	DLGRET_BT_MSGBOX,				//IDD_BT_MSGBOX
+	DLGRET_MSGBOX_CANCELED,
+	DLGRET_PROGRESS_CANCELED,
 	DLGRET_PROMPT,            		//IDD_PROMPT_MESSEGE
+	DLGRET_PROMPT_CANCELED,			
 
 	DLGRET_BT_SEND_FILE,			//IDD_BT_SEND_FILE
 	DLGRET_BT_OBEX_LIST_SERVERS,	//IDD_BT_OBEX_LIST_SERVERS
@@ -148,13 +147,14 @@ typedef enum _BTAppState
 	BTAPPST_BOND_OPITION,			//IDD_BT_BOND_OPITION
 	BTAPPST_OPITION,				//IDD_BT_OPITION
 
-	BTAPPST_DEVICE_LIST,
-	BTAPPST_BOND_LIST,
-	BTAPPST_ALL_LIST,
-	BTAPPST_CONNECT_LIST,
+	BTAPPST_DEVICE,
+	BTAPPST_DEVICE_LIST,	
 
 	BTAPPST_MYINFO,
 	BTAPPST_MYINFO_OPITION,
+
+	BTAPPST_MYINFO_EDIT,
+	
 	BTAPPST_EDIT_NAME,
 	BTAPPST_EDIT_SHORTNAME,
 	BTAPPST_EDIT_MANUDATA,
@@ -171,14 +171,14 @@ typedef enum _BTAppState
 	BTAPPST_FTP_BROWSE,
 	BTAPPST_FTP_BROWSE_OPITION,
 	
-	BTAPPST_BT_MSGBOX,
-	BTAPPST_PROMPT,
+	//BTAPPST_BT_MSGBOX,
+	//BTAPPST_PROMPT,
 
 	BTAPPST_BT_EDIT,   
 
 	BTAPPST_BT_SEND_FILE,
 	BTAPPST_BT_OBEX_LIST_SERVERS,
-	BTAPPST_BT_FILE_PROGRESS,
+	//BTAPPST_BT_FILE_PROGRESS,
 
 	BTAPPST_EXIT
 } BTAppState;
@@ -233,12 +233,10 @@ typedef struct _CBTApp
 
   //Add For BT_MSG_BOX/BT_PROMPT
   uint16          m_msg_id;
-  uint16		  m_msg_state_id;
   boolean		  m_bNeedStr;
   AECHAR  		  wMsgBuf[MSGBOX_MAXTEXTLEN];
 
-  uint16          m_prompt_id;
-  uint16		  m_prompt_state_id;
+  uint16          m_prompt_id; 
   boolean		  m_bPromptNeedStr;
   AECHAR  		  wPromptBuf[MSGBOX_MAXTEXTLEN];  
 
@@ -248,10 +246,10 @@ typedef struct _CBTApp
   AECHAR  		  wEditBuf[MSGBOX_MAXTEXTLEN];  
 
   uint16		  m_dialog_id;
+  uint16		  m_device_list_id;		//Device list Add By zzg 2011_06_07
 
   boolean		  m_app_flag;			//标示是否当前应用时BLUETOOTHAPP
-  uint16  		  m_user_wParam;		//存储EVT_USER的WPARAM
-
+  uint16  		  m_user_wParam;		//存储EVT_USER的WPARAM  
   uint16		  m_folder_index;		//FTP_Browse时的文件夹INDEX
 
   uint16		  m_obex_list_id;		
@@ -265,12 +263,12 @@ typedef struct _CBTApp
   IModule          *m_pModule;             
   IDialog          *m_pActiveDlg;      // 当前活动对话框ID
   uint16           m_pActiveDlgID;     // 活动对话框关闭时的返回结果
-  DLGRet_Value_e_Type   m_eDlgRet;     // 是否不改写对话框返回结果，一般情况需要改写(FALSE)。
-  boolean          m_bNotOverwriteDlgRet;// Applet 前一状态
-  BTAppState 		m_ePreState;        // Applet 当前状态
-  BTAppState 		m_eCurState;        // Applet是否处于挂起状态
-  boolean          m_bSuspending;      // Applet是否准备好可以处理按键和命令事件。改变量主要用于快速按键引起的问题
-  boolean          m_bAppIsReady;
+  DLGRet_Value_e_Type   m_eDlgRet;     
+  boolean          m_bNotOverwriteDlgRet;	// 是否不改写对话框返回结果，一般情况需要改写(FALSE)。
+  BTAppState 		m_ePreState;        // Applet 前一状态
+  BTAppState 		m_eCurState;        // Applet 当前状态
+  boolean          m_bSuspending;      // Applet是否处于挂起状态
+  boolean          m_bAppIsReady;		// Applet是否准备好可以处理按键和命令事件。改变量主要用于快速按键引起的问题
 
   uint16           m_currDlgId;       //保存当前所选菜单位置
   uint16           m_nSubDlgId;		    //次级菜单位置
@@ -349,8 +347,11 @@ typedef struct _CBTApp
   uint16          uCurrMsgId;
   
   boolean		  bStartFromOtherApp;				//Add By zzg 2010_11_09  
-  boolean		  bUpdateProgress;					//Add By zzg 2010_11_27
-  
+  boolean		  bUpdateProgress;					//Add By zzg 2010_11_27 
+
+  uint16		  uDeviceSrhType;					//Add By zzg 2011_10_19
+  uint16		  uDeviceListType;					//Add By zzg 2011_10_26
+ 
   AECHAR*         pText1;
   AECHAR*         pText2;
   uint8*          pMem;
@@ -379,11 +380,13 @@ extern void    BTApp_DisableBT( CBTApp* pMe );
 //Add By zzg 2011_01_10
 extern void BTApp_LocalOOBCreated( CBTApp* pMe );
 extern void BTApp_CancelMsgBox( CBTApp* pMe );
+extern void BTApp_CancelProMptBox(CBTApp *pMe);
 extern void BTApp_CancelDevNameRequest( CBTApp* pMe );
 extern int BTApp_RemoteOOBWrite( CBTApp* pMe,  AEEBTDeviceInfo *pDev );
 extern void BTApp_DoRemoveOne( CBTApp* pMe );
 extern void BTApp_PadString(char* Passkey, int passKeyLen);
 extern boolean BTApp_UserConfirm( CBTApp* pMe, boolean bConfirmed);
+extern boolean BTApp_DoRebond(CBTApp* pMe ,boolean bAuthorized);
 extern void BTApp_BuildPrompt( CBTApp* pMe, BTAppMenuType menu );
 extern boolean BTApp_DoUnbondAll( CBTApp* pMe );
 extern boolean BTApp_DoRemoveAll( CBTApp* pMe );

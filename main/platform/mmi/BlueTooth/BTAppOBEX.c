@@ -158,7 +158,8 @@ static void BTApp_OBEXPutModelEventHandlerCb( CBTApp* pMe, ModelEvent *pEvent )
   pModelEvent = pN->base;
   MSG_LOW( "OBEX PUT EVT CB - Evt=%d", pModelEvent.evCode, 0, 0 );
 
-  STRTOWSTR( OBEX_PUTFILE_NAME, wObjName, sizeof( wObjName ) );
+  STRTOWSTR(OBEX_PUTFILE_NAME, wObjName, sizeof(wObjName));
+  
   if ( pModelEvent.pModel == pMe->mOBEX.poClient->m_pIModel )
   {
     switch( pModelEvent.evCode )

@@ -225,8 +225,9 @@ when       who  what, where, why
 
 static AEEBTProgressInfo progInfo;
 
-static char   szOperand[ AEEBT_MAX_FILE_NAME+1 ];
-static char   szBuf[ 100 ];
+extern char   szOperandex[AEEBT_MAX_FILE_NAME+1];	//Add By zzg 2011_06_18
+static char   szOperand[AEEBT_MAX_FILE_NAME+1];
+static char   szBuf[100];
 extern uint32 uBTApp_NMask;
 
 static boolean BTApp_HandleFTPMainMenu( CBTApp* pMe, uint16 key );
@@ -270,8 +271,6 @@ void BTApp_FTPUpdateSendingProgress(CBTApp* pMe)
 	}
 	else
 	{
-		MSG_FATAL("***zzg EVT_UPDATE_PROGRESS MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)***", 0, 0, 0);
-
 		pMe->m_eDlgRet = DLGRET_BT_FILE_PROGRESS; 
 		(void) ISHELL_EndDialog(pMe->m_pShell);				
 	}	
@@ -1026,7 +1025,7 @@ void BTApp_FTPLoadBrowsingMenu( CBTApp* pMe )
   }
 
   while ( uNoOfItems > 0 )
-  {
+  {	
     if ( pMe->mFTP.bRemoteBrowsing )
     {
       STRTOWSTR( pMe->mFTP.remoteObjects[ pMe->mFTP.uNumOfObjInRemoteDev-
@@ -1103,34 +1102,28 @@ DESCRIPTION: Registers FTP notifications and creates an object of file manager.
 ============================================================================ */
 boolean BTApp_FTPInit( CBTApp* pMe )
 {
-  static boolean init_done = FALSE;
-  uint32 uNMask = NMASK_BT_FTP | (((uint32)(NOTIFIER_VAL_ANY)) << 16);
+	static boolean init_done = FALSE;
+	uint32 uNMask = NMASK_BT_FTP | (((uint32)(NOTIFIER_VAL_ANY)) << 16);
 
-  if ( init_done == FALSE )
-  {
-    if ( (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_BLUETOOTH_FTP, 
-                                 (void**)&pMe->mFTP.po ) == SUCCESS) &&
-         (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_FILEMGR, 
-                                 (void **)&pMe->mFTP.pIFileMgr ) == SUCCESS) &&
-         (ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,
-                                 AEECLSID_BLUETOOTH_NOTIFIER, 
-                                 uNMask ) == SUCCESS) )
-    {
-      STRLCPY( pMe->mFTP.szCurrentFolder, BTAPP_ROOT_DIR, 
-               sizeof( pMe->mFTP.szCurrentFolder ) );
-      STRTOWSTR( NEW_FOLDER_NAME, pMe->mFTP.wFolderName, 
-                 sizeof( pMe->mFTP.wFolderName ) );
-      pMe->mFTP.bObjectTransfer = FALSE;
-      pMe->mFTP.u8StorageDevice = STORAGE_DEV_EFS;
+	if (init_done == FALSE)
+	{
+		if ((ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_BLUETOOTH_FTP, (void**)&pMe->mFTP.po) == SUCCESS) 
+			 && (ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_FILEMGR, (void **)&pMe->mFTP.pIFileMgr ) == SUCCESS) 
+			 &&	(ISHELL_RegisterNotify( pMe->m_pShell,  AEECLSID_BLUETOOTH_APP,  AEECLSID_BLUETOOTH_NOTIFIER, uNMask) == SUCCESS))
+		{
+		  STRLCPY(pMe->mFTP.szCurrentFolder, BTAPP_ROOT_DIR, sizeof(pMe->mFTP.szCurrentFolder));
+		  STRTOWSTR(NEW_FOLDER_NAME, pMe->mFTP.wFolderName, sizeof(pMe->mFTP.wFolderName));
+		  pMe->mFTP.bObjectTransfer = FALSE;
+		  pMe->mFTP.u8StorageDevice = STORAGE_DEV_EFS;
 
-      uBTApp_NMask |= NMASK_BT_FTP;
-      init_done = TRUE;
+		  uBTApp_NMask |= NMASK_BT_FTP;
+		  init_done = TRUE;
 
-      /* Store 'ROOT' as interop device root folder name is not known */
-      STRLCPY( szOperand, ROOT_FOLDER_STR, sizeof( szOperand ) );
-    }
-  }
-  return init_done;
+		  /* Store 'ROOT' as interop device root folder name is not known */
+		  STRLCPY(szOperand, ROOT_FOLDER_STR, sizeof(szOperand));
+		}
+	}
+	return init_done;
 }
 
 /* ==========================================================================
@@ -1270,82 +1263,102 @@ DESCRIPTION: Reads name of files and folders available in the local folder
 ============================================================================ */
 /*static*/ void BTApp_GetNameOfLocalObjects( CBTApp* pMe, char *pszDir )
 {
-  AEEFileInfoEx fileInfoEx;
-  char          szName[ FILESYS_MAX_PATH ];
-  char*         pszName = NULL;
-  uint8         szCount = 0;
+	AEEFileInfoEx fileInfoEx;
+	char          szName[FILESYS_MAX_PATH];
+	char*         pszName = NULL;
+	uint8         szCount = 0;
 
-  DBGPRINTF( "BTApp_GetNameOfLocalObjects: Path is %s", pszDir );
-  pMe->mFTP.uNumOfObjInLocalDev = 0;
-  for( szCount=0; szCount<MAX_OBJECTS; szCount++ )
-  {
-    MEMSET( pMe->mFTP.localObjects[ szCount ].szFolderFileName, 0, 
-            AEEBT_MAX_FILE_NAME+1 );
-  }
+	DBGPRINTF( "BTApp_GetNameOfLocalObjects: Path is %s", pszDir);
+	
+	pMe->mFTP.uNumOfObjInLocalDev = 0;
 
-  fileInfoEx.nStructSize = sizeof( AEEFileInfoEx );
-  fileInfoEx.attrib = _FA_NORMAL;
-  fileInfoEx.dwCreationDate = 0;
-  fileInfoEx.dwSize = 0;
-  fileInfoEx.pszFile = szName;
-  MEMSET( fileInfoEx.pszFile, 0, sizeof( szName ) );
-  fileInfoEx.nMaxFile = sizeof( szName );
-  fileInfoEx.pszDescription = NULL;
-  fileInfoEx.nDescriptionSize = 0;
-  fileInfoEx.pClasses = 0;
-  fileInfoEx.nClassesSize = 0;
+	for (szCount = 0; szCount < MAX_OBJECTS; szCount++)	
+	{
+		MEMSET(pMe->mFTP.localObjects[szCount].szFolderFileName, 0, AEEBT_MAX_FILE_NAME + 1);
+	}
 
-  szCount = 0;
-  if( IFILEMGR_EnumInit( pMe->mFTP.pIFileMgr, pszDir, TRUE ) == SUCCESS )
-  {
-    while( IFILEMGR_EnumNextEx( pMe->mFTP.pIFileMgr, &fileInfoEx ) )
-    {
-      pszName = STRRCHR( fileInfoEx.pszFile, DIRECTORY_CHAR ) + 1;
+	fileInfoEx.nStructSize = sizeof(AEEFileInfoEx);
+	fileInfoEx.attrib = _FA_NORMAL;
+	fileInfoEx.dwCreationDate = 0;
+	fileInfoEx.dwSize = 0;
+	fileInfoEx.pszFile = szName;
+	
+	MEMSET(fileInfoEx.pszFile, 0, sizeof(szName));
+	
+	fileInfoEx.nMaxFile = sizeof(szName);
+	fileInfoEx.pszDescription = NULL;
+	fileInfoEx.nDescriptionSize = 0;
+	fileInfoEx.pClasses = 0;
+	fileInfoEx.nClassesSize = 0;
 
-      if( STRLEN( pszName ) <= AEEBT_MAX_FILE_NAME )
-      {
-        MEMCPY( pMe->mFTP.localObjects[ szCount ].szFolderFileName, 
-                pszName, STRLEN( pszName ) );
+	szCount = 0;
+	
+	if (IFILEMGR_EnumInit(pMe->mFTP.pIFileMgr, pszDir, TRUE) == SUCCESS)
+	{
+		MSG_FATAL("***zzg bRemoteBrowsing=%d 111***", pMe->mFTP.bRemoteBrowsing, 0, 0);
+		
+		while (IFILEMGR_EnumNextEx(pMe->mFTP.pIFileMgr, &fileInfoEx))
+		{
+			pszName = STRRCHR(fileInfoEx.pszFile, DIRECTORY_CHAR) + 1;
 
-		MSG_FATAL("***zzg szTypeOfObj 1***", 0, 0, 0);
+			MSG_FATAL("***zzg bRemoteBrowsing=%d, szCount=%d EnumInit_TRUE***", pMe->mFTP.bRemoteBrowsing, szCount, 0);
+			MSG_FATAL("***zzg pszName=%s EnumInit_TRUE***", pszName, 0, 0);
 
-        pMe->mFTP.localObjects[ szCount ].szTypeOfObj = AEEBT_FTP_FOLDER;
-        szCount++;
-      }
-    }
-  }
-  else
-  {
-    MSG_ERROR ( "Could not initialize FileMgr object", 0, 0, 0 );
-  }
+			if (STRLEN(pszName) <= AEEBT_MAX_FILE_NAME)
+			{
+				MEMCPY(pMe->mFTP.localObjects[szCount].szFolderFileName, pszName, STRLEN(pszName));
+				pMe->mFTP.localObjects[szCount].szTypeOfObj = AEEBT_FTP_FOLDER;
+				szCount++;
+			}
+		}
 
-  if( IFILEMGR_EnumInit( pMe->mFTP.pIFileMgr, pszDir, FALSE ) == SUCCESS )
-  {
-    while( IFILEMGR_EnumNextEx( pMe->mFTP.pIFileMgr, &fileInfoEx ) )
-    {
-      pszName = STRRCHR( fileInfoEx.pszFile, DIRECTORY_CHAR ) + 1;
+		MSG_FATAL("***zzg bRemoteBrowsing=%d 222***", pMe->mFTP.bRemoteBrowsing, 0, 0);
+	}
+	else
+	{
+		MSG_FATAL("***zzg bRemoteBrowsing=%d 333***", pMe->mFTP.bRemoteBrowsing, 0, 0);
+		
+		MSG_ERROR("Could not initialize FileMgr object", 0, 0, 0);
+	}
 
-      if( STRLEN( pszName ) <= AEEBT_MAX_FILE_NAME )
-      {
-        MEMCPY( pMe->mFTP.localObjects[ szCount ].szFolderFileName, 
-                pszName, STRLEN( pszName ) );
+	if (IFILEMGR_EnumInit(pMe->mFTP.pIFileMgr, pszDir, FALSE) == SUCCESS)
+	{
+		MSG_FATAL("***zzg bRemoteBrowsing=%d 444***", pMe->mFTP.bRemoteBrowsing, 0, 0);
+		
+		while (IFILEMGR_EnumNextEx(pMe->mFTP.pIFileMgr, &fileInfoEx))
+		{
+			pszName = STRRCHR(fileInfoEx.pszFile, DIRECTORY_CHAR) + 1;
 
-		MSG_FATAL("***zzg szTypeOfObj 2***", 0, 0, 0);
-        pMe->mFTP.localObjects[ szCount ].szTypeOfObj = AEEBT_FTP_FILE;
-        szCount++;
-      }
-    }
-  }
-  else
-  {
-    MSG_ERROR ( "Could not initialize FileMgr object", 0, 0, 0 );
-  }
+			MSG_FATAL("***zzg bRemoteBrowsing=%d, szCount=%d EnumInit_FALSE***", pMe->mFTP.bRemoteBrowsing, szCount, 0);
+			DBGPRINTF("***zzg pszName=%s EnumInit_FALSE***", pszName);
 
-  pMe->mFTP.uNumOfObjInLocalDev = szCount;
-  MSG_MED( "No of Objects is %d", pMe->mFTP.uNumOfObjInLocalDev, 0, 0 );
-  
-  return;
+			if (STRLEN(pszName) <= AEEBT_MAX_FILE_NAME)
+			{
+				MEMCPY(pMe->mFTP.localObjects[szCount].szFolderFileName, pszName, STRLEN(pszName));
+				pMe->mFTP.localObjects[szCount].szTypeOfObj = AEEBT_FTP_FILE;
+				szCount++;
+			}
+		}
+
+		MSG_FATAL("***zzg bRemoteBrowsing=%d 555***", pMe->mFTP.bRemoteBrowsing, 0, 0);
+	}
+	else
+	{
+		MSG_FATAL("***zzg bRemoteBrowsing=%d 666***", pMe->mFTP.bRemoteBrowsing, 0, 0);
+		
+		MSG_ERROR("Could not initialize FileMgr object", 0, 0, 0);
+	}
+
+	DBGPRINTF("***zzg BTApp_GetNameOfLocalObjects szCount=%d", szCount);
+
+	MSG_FATAL("***zzg bRemoteBrowsing=%d 777***", pMe->mFTP.bRemoteBrowsing, 0, 0);
+
+	pMe->mFTP.uNumOfObjInLocalDev = szCount;
+	MSG_MED("No of Objects is %d", pMe->mFTP.uNumOfObjInLocalDev, 0, 0);
+
+	return;
 }
+
 
 /* ==========================================================================
 FUNCTION:    BTApp_FTPListFolder
@@ -1384,6 +1397,7 @@ DESCRIPTION: Sends a request to server to GET the server's current folder
 
   STRTOWSTR( DIR_LIST_NAME, wBuf, sizeof( wBuf ) );
   result = IBTEXTFTP_ListFolder( pMe->mFTP.po, NULL, wBuf );
+ 
   if ( result == SUCCESS )
   {
     BTApp_ShowBusyIcon( pMe ); // wait for result
@@ -1396,6 +1410,8 @@ DESCRIPTION: Sends a request to server to GET the server's current folder
 
     MSG_ERROR( "FTPHndlUserEv - ListFolder failed r=%x", result, 0, 0 );
   }
+
+  MSG_FATAL("***zzg BTApp_FTPListFolder result=%d***", result, 0, 0);
 
   return result;
 }
@@ -2699,6 +2715,7 @@ boolean BTApp_FTPHandleMenus( CBTApp* pMe, uint16 key, BTAppMenuType menu )
         handled = BTApp_HandleFTPServerRegisterMenu( pMe, key );
         break;
       case BT_APP_MENU_FTP_BROWSING:
+	  	
         if ( pMe->mFTP.bRemoteBrowsing )
         {
           handled = BTApp_HandleFTPRemoteBrowsingMenu( pMe, key );
@@ -2734,8 +2751,6 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 
   MSG_FATAL("***zzg BTApp_FTPHandleUserEvents dwParam=%d***", dwParam, 0, 0);
 
-  pMe->m_msg_state_id = BTAPPST_FTP;	
-
   switch ( dwParam )
   {
     case EVT_FTP_REG:
@@ -2754,8 +2769,7 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       {
         BTApp_BuildMenu( pMe, TOP_MENU );
       } 
-
-	  pMe->m_msg_state_id = BTAPPST_FTP_SERVER;	
+	  
       break;
     }
     case EVT_FTP_REG_FAILED:
@@ -2774,8 +2788,7 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       {
         BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3 );
       }
-	  
-	  pMe->m_msg_state_id = BTAPPST_FTP_SERVER;		  
+	  	 
       break;
     }
     case EVT_FTP_DEREG:
@@ -2787,8 +2800,7 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_DONE, NULL, 2 );
       pMe->mFTP.bRegistered = FALSE;
       BTApp_ClearBondable( pMe ); // no need to be bondable anymore
-
-	  pMe->m_msg_state_id = BTAPPST_FTP_SERVER;	
+	  
       break;
     }
     case EVT_FTP_DEREG_FAILED:
@@ -2796,8 +2808,7 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif // FEATURE_APP_TEST_AUTOMATION
-	
-	  pMe->m_msg_state_id = BTAPPST_FTP_SERVER;
+		  
       BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
       break;
     }
@@ -2866,7 +2877,14 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
         STRLCPY( szOperand, ROOT_FOLDER_STR, sizeof( szOperand ) );
       }
 
-      BTApp_BuildTopMenu( pMe );
+	  MSG_FATAL("***zzg BTApp_FTPHandleUserEvents EVT_FTP_CONNECTED***", 0, 0, 0);
+
+	  //Add By zzg 2011_06_08
+	  pMe->m_eDlgRet = DLGRET_FTP_CLIENT;
+      (void)ISHELL_EndDialog(pMe->m_pShell);  
+	  //Add End
+	  
+      //BTApp_BuildTopMenu( pMe );	//Del By zzg 2011_06_07
       break;
     }
     case EVT_FTP_CONN_FAILED:
@@ -3218,7 +3236,8 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #endif // FEATURE_APP_TEST_AUTOMATION
 
       pMe->mFTP.bObjectTransfer = FALSE;
-      STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+      //STRTOWSTR(szOperand, wBuf, sizeof(wBuf));
+      STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));	//Add By zzg 2011_06_18
 
       /* Once PUT folder is done on FTP client, app gets set path to ROOT 
          request and 'szCurrentFolder' is set to ROOT. Copy current local 
@@ -3248,7 +3267,9 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #endif // FEATURE_APP_TEST_AUTOMATION
 
       pMe->mFTP.bObjectTransfer = FALSE;
-      STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+      //STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+      STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));	//Add By zzg 2011_06_18
+      
       if ( pMe->mFTP.bRegistered != TRUE )
       {
         BTApp_ShowMessage( pMe, IDS_MSG_FILE_PUT_FAILED, wBuf, 2 );
@@ -3262,7 +3283,8 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #endif // FEATURE_APP_TEST_AUTOMATION
 
       pMe->mFTP.bObjectTransfer = FALSE;
-      STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+      //STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+	  STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));	//Add By zzg 2011_06_18
       if ( pMe->mFTP.bRegistered != TRUE )
       {
 #ifdef FEATURE_APP_TEST_AUTOMATION
@@ -3281,7 +3303,8 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #endif // FEATURE_APP_TEST_AUTOMATION
 
       pMe->mFTP.bObjectTransfer = FALSE;
-      STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+      //STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+      STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));	//Add By zzg 2011_06_18
       if ( pMe->mFTP.bRegistered != TRUE )
       {
         BTApp_ShowMessage( pMe, IDS_MSG_FILE_GET_FAILED, wBuf, 2 );
@@ -3294,15 +3317,21 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #error code not present
 #endif // FEATURE_APP_TEST_AUTOMATION
 
-      STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+      //STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+      STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));	//Add By zzg 2011_06_18
+      
       /* Display file/folder name which got deleted */
       BTApp_ShowMessage( pMe, IDS_MSG_FILE_DELETED, wBuf, 2 );
 
-      STRLCPY( szOperand, CURRENT_FOLDER_STR, sizeof( szOperand ) );
+      //STRLCPY( szOperand, CURRENT_FOLDER_STR, sizeof( szOperand ) );
+      STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));	//Add By zzg 2011_06_18
+      
       if ( BTApp_FTPListFolder( pMe ) != SUCCESS )
       {
         /* Display current folder name */
-        STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+        //STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+        STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));	//Add By zzg 2011_06_18
+        
         BTApp_ShowMessage( pMe, IDS_MSG_FOLDER_BROWSING_FAILED, wBuf, 3 );
       }
       break;
@@ -3313,16 +3342,20 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #error code not present
 #endif // FEATURE_APP_TEST_AUTOMATION
 
-      STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+      //STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+      STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));	//Add By zzg 2011_06_18
+      
       BTApp_ShowMessage( pMe, IDS_MSG_FILE_DELETE_FAILED, wBuf, 2 );
       break;
     }
     case EVT_FTP_CD_DONE:
     {
       MSG_MED( "FTPHndlUserEv - Set Path done", 0, 0, 0 );
+	  MSG_FATAL("***zzg BTAppFTP EVT_FTP_CD_DONE m_pActiveDlgID=%x***", pMe->m_pActiveDlgID, 0, 0);
 
-      if ( BTApp_FTPListFolder( pMe ) != SUCCESS )
+      if (BTApp_FTPListFolder(pMe) != SUCCESS)
       {
+      		MSG_FATAL("***zzg BTAppFTP EVT_FTP_CD_DONE BTApp_FTPListFolder=FALSE***", 0, 0, 0);
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif // FEATURE_APP_TEST_AUTOMATION
@@ -3338,10 +3371,12 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
         }
         else
         {
-          STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+          //STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+          STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));	//Add By zzg 2011_06_18
+          
           BTApp_ShowMessage( pMe, IDS_MSG_FOLDER_BROWSING_FAILED, wBuf, 3 );
         }
-      }
+      }	  
       break;
     }
     case EVT_FTP_CD_FAILED:
@@ -3352,10 +3387,11 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 
 		MSG_ERROR( "FTPHndlUserEv - Set Path failed", 0, 0, 0 );
 
-
 		//Add By zzg 2011_02_22		
-		MSG_FATAL("*** zzg FTPHndlUserEv - Set Path failed***", 0, 0, 0);
-		
+		MSG_FATAL("*** zzg FTPHndlUserEv EVT_FTP_CD_FAILED m_pActiveDlgID=%x***", pMe->m_pActiveDlgID, 0, 0);
+
+		//BTApp_ShowMessage(pMe, IDS_MSG_FOLDER_BROWSING_FAILED, pMe->mFTP.wFolderName, 2);
+
 		if (pMe->m_pActiveDlgID == IDD_BT_FTP_BROWSE)	
 		{
 			pMe->m_eDlgRet = DLGRET_FTP_CLIENT; 		
@@ -3364,7 +3400,7 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 		else if (pMe->m_pActiveDlgID == IDD_BT_FTP_CLIENT)	
 		{
 			BTApp_ShowMessage(pMe, IDS_MSG_FOLDER_BROWSING_FAILED, wBuf, 2);
-		}
+		}		
 		//Add End
 		
 				
@@ -3409,7 +3445,9 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 
       BTApp_ShowMessage( pMe, IDS_FTP_MSG_FOLDER_CREATED, NULL, 2 );
 
-      WSTRTOSTR( pMe->mFTP.wFolderName, szOperand, sizeof( szOperand ) );
+      //WSTRTOSTR( pMe->mFTP.wFolderName, szOperand, sizeof( szOperand ) );
+      WSTRTOSTR( pMe->mFTP.wFolderName, szOperandex, sizeof( szOperand ) );//Add By zzg 2011_06_18
+            
       if ( BTApp_FTPListFolder( pMe ) != SUCCESS )
       {
         BTApp_ShowMessage( pMe, IDS_MSG_FOLDER_BROWSING_FAILED, 
@@ -3446,7 +3484,9 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
       {
         MSG_ERROR( "Could not extract the folder contents successfully", 
                    0, 0, 0 );
-        STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+        //STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+        STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));	//Add By zzg 2011_06_18
+        
         BTApp_ShowMessage( pMe, IDS_MSG_FOLDER_BROWSING_FAILED, wBuf, 2 );
         break;
       }
@@ -3473,7 +3513,9 @@ void BTApp_FTPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 #error code not present
 #endif // FEATURE_APP_TEST_AUTOMATION
 
-      STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+      //STRTOWSTR( szOperand, wBuf, sizeof( wBuf ) );
+      STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));	//Add By zzg 2011_06_18
+      
       BTApp_ShowMessage( pMe, IDS_MSG_FOLDER_BROWSING_FAILED, wBuf, 2 );
       if ( (IFILEMGR_Test( pMe->mFTP.pIFileMgr, DIR_LIST_NAME ) == SUCCESS) &&
            (IFILEMGR_Remove( pMe->mFTP.pIFileMgr, DIR_LIST_NAME ) != SUCCESS) )

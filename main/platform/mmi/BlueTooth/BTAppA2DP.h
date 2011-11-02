@@ -46,6 +46,8 @@ extern boolean BTApp_BuildA2DPControlMenu( CBTApp* pMe );
 extern boolean BTApp_HandleA2DPControlMenu( CBTApp* pMe, AEEEvent evt );
 extern void BTApp_InitiateA2DPConn( CBTApp* pMe );
 
+extern void BTApp_A2DPSetRetries(CBTApp* pMe, boolean least);		//Add By zzg 2011_10_31
+
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present

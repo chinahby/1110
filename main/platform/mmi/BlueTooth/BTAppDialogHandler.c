@@ -21,6 +21,8 @@
                                  本文件包含的外部文件
 ==============================================================================*/
 #include "BTApp_priv.h"		//"BTApp.h"
+#include "BTAppUtils.h"
+
 
 #include "appscommonimages.brh"
 
@@ -62,7 +64,10 @@ char*  szOPPServerName      = "QC OPP";
 #define PARENT_FOLDER_STR  "PARENT"
 #define CURRENT_FOLDER_STR "CURRENT"
 
-static char   szOperandex[AEEBT_MAX_FILE_NAME+1];		
+#define CARD0_DIR    "fs:/card0"		//have no '/'
+
+
+/*static*/ char   szOperandex[AEEBT_MAX_FILE_NAME+1];		
 //Add End
 
 
@@ -117,6 +122,13 @@ static boolean  HandleBondOpitionDialogEvent(CBTApp *pMe,
 );
 
 
+// 对话框 IDD_DEVICE 事件处理函数
+static boolean  HandleDeviceDialogEvent(CBTApp *pMe,
+    AEEEvent eCode,
+    uint16 wParam,
+    uint32 dwParam
+);
+
 // 对话框 IDD_DEVICE_LIST 事件处理函数
 static boolean  HandleDeviceListDialogEvent(CBTApp *pMe,
     AEEEvent eCode,
@@ -124,27 +136,6 @@ static boolean  HandleDeviceListDialogEvent(CBTApp *pMe,
     uint32 dwParam
 );
 
-
-//对话框 IDD_BOND_LIST 事件处理函数
-static boolean  HandleBondListDialogEvent(CBTApp *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-);
-
-// 对话框 IDD_ALL_LIST 事件处理函数
-static boolean  HandleAllListDialogEvent(CBTApp *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-);
-
-// 对话框 IDD_CONNECT_LIST 事件处理函数
-static boolean  HandleConnectListDialogEvent(CBTApp *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-);
 
 
 // 对话框 IDD_MYINFO 事件处理函数
@@ -161,23 +152,8 @@ static boolean  HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
     uint32 dwParam
 );
 
-// 对话框 IDD_BT_EDITNAME 事件处理函数
-static boolean  HandleEditNameDialogEvent(CBTApp *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-);
-
-// 对话框 IDD_BT_EDIT_SHORTNAME 事件处理函数
-static boolean  HandleEditShortNameDialogEvent(CBTApp *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-);
-
-
-// 对话框 IDD_BT_EDIT_MANU_DATA 事件处理函数
-static boolean  HandleEditManuDataDialogEvent(CBTApp *pMe,
+// 对话框 IDD_MYINFO_EDIT 事件处理函数
+static boolean  HandleMyInfoEditDialogEvent(CBTApp *pMe,
     AEEEvent eCode,
     uint16 wParam,
     uint32 dwParam
@@ -308,15 +284,8 @@ static boolean  HandleFileProgressDialogEvent(CBTApp *pMe,
     uint32 dwParam
 );
 
-
-
-
 static boolean BTApp_SaveTextEdit( CBTApp* pMe, uint16 DlgID);	//Add By zzg  2011_01_06	
-
-
 static boolean BTApp_ClearDiscoverableEx( CBTApp* pMe );
-
-
 
 
 /*==============================================================================
@@ -361,7 +330,7 @@ void BTApp_ShowDialog(CBTApp *pMe, uint16  dlgResId)
     {
         // Looks like there is one dialog already opened.
         // Flag an error an return without doing anything.
-        MSG_FATAL("Trying to create a dialog without closing the previous one",0,0,0);
+        MSG_FATAL("Trying to create a dialog without closing the previous one",0,0,0);		
         return;
     }
 
@@ -369,7 +338,7 @@ void BTApp_ShowDialog(CBTApp *pMe, uint16  dlgResId)
 
     if (nRet != SUCCESS)
     {
-        MSG_FATAL("Failed to create the dialog in the BTApp applet",0,0,0);
+        MSG_FATAL("Failed to create the dialog in the BTApp applet nRet=%x",nRet,0,0);
     }
     MSG_FATAL("BTApp_ShowDialog END",0,0,0);
 }
@@ -422,120 +391,83 @@ boolean BTApp_RouteDialogEvent(CBTApp *pMe,
         case IDD_DEVICE_SEARCH:
             return HandleDeviceSearchDialogEvent(pMe,eCode,wParam,dwParam);
 
-		case IDD_SEARCH_RESULT:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_SEARCH_RESULT***", 0, 0, 0);			
+		case IDD_SEARCH_RESULT:			
             return HandleSearchResultDialogEvent(pMe,eCode,wParam,dwParam);
 
-		case IDD_BT_DEVICE_INFO:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_DEVICE_INFO***", 0, 0, 0);			
+		case IDD_BT_DEVICE_INFO:			
             return HandleDeviceInfoDialogEvent(pMe,eCode,wParam,dwParam);	
 
-		case IDD_BT_DEVICE_INFO_OPITION:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_DEVICE_INFO_OPITION***", 0, 0, 0);			
+		case IDD_BT_DEVICE_INFO_OPITION:				
             return HandleDeviceInfoOpitionDialogEvent(pMe,eCode,wParam,dwParam);
 
-		case IDD_BT_BOND_OPITION:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_BOND_OPITION***", 0, 0, 0);			
+		case IDD_BT_BOND_OPITION:				
             return HandleBondOpitionDialogEvent(pMe,eCode,wParam,dwParam);
+
+		case IDD_DEVICE:
+			return HandleDeviceDialogEvent(pMe,eCode,wParam,dwParam);	
 			
 		case IDD_DEVICE_LIST:
             return HandleDeviceListDialogEvent(pMe,eCode,wParam,dwParam);	
-
-		case IDD_BOND_LIST:
-            return HandleBondListDialogEvent(pMe,eCode,wParam,dwParam);	
-
-		case IDD_ALL_LIST:
-            return HandleAllListDialogEvent(pMe,eCode,wParam,dwParam);		
-
-		case IDD_CONNECT_LIST:
-            return HandleConnectListDialogEvent(pMe,eCode,wParam,dwParam);		
-
-		case IDD_MYINFO:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_MYINFO***", 0, 0, 0);
+		
+		case IDD_MYINFO:			
             return HandleMyInfoDialogEvent(pMe,eCode,wParam,dwParam);	
 			
-		case IDD_MYINFO_OPITION:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_MYINFO_OPITION***", 0, 0, 0);
+		case IDD_MYINFO_OPITION:			
             return HandleMyInfoOpitionDialogEvent(pMe,eCode,wParam,dwParam);
 
-		case IDD_BT_EDITNAME:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_EDITNAME***", 0, 0, 0);
-            return HandleEditNameDialogEvent(pMe,eCode,wParam,dwParam);	
-
-		case IDD_BT_EDIT_SHORTNAME:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_EDIT_SHORTNAME***", 0, 0, 0);
-            return HandleEditShortNameDialogEvent(pMe,eCode,wParam,dwParam);	
-
-		case IDD_BT_EDIT_MANU_DATA:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_EDIT_MANU_DATA***", 0, 0, 0);
-            return HandleEditManuDataDialogEvent(pMe,eCode,wParam,dwParam);	
-
-		case IDD_BT_SECURITY:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_SECURITY***", 0, 0, 0);
+		//IDD_BT_EDITNAME/IDD_BT_EDIT_SHORTNAME/IDD_BT_EDIT_MANU_DATA
+		case IDD_MYINFO_EDIT:			
+			return HandleMyInfoEditDialogEvent(pMe,eCode,wParam,dwParam);
+		
+		case IDD_BT_SECURITY:			
             return HandleSetSecurityDialogEvent(pMe,eCode,wParam,dwParam);		
 
-		case IDD_BT_DISCOVERABLE:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_DISCOVERABLE***", 0, 0, 0);
+		case IDD_BT_DISCOVERABLE:			
             return HandleSetDiscoverableDialogEvent(pMe,eCode,wParam,dwParam);	
 
-		case IDD_BT_IO_CAPABILITY:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_IO_CAPABILITY***", 0, 0, 0);
+		case IDD_BT_IO_CAPABILITY:			
             return HandleSetIOCapabilityDialogEvent(pMe,eCode,wParam,dwParam);	
 			
-		case IDD_BT_DEBUG_KEY:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_DEBUG_KEY***", 0, 0, 0);
+		case IDD_BT_DEBUG_KEY:			
             return HandleSetDebugKeyDialogEvent(pMe,eCode,wParam,dwParam);
 
-		case IDD_BT_FTP:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP***", 0, 0, 0);
+		case IDD_BT_FTP:			
             return HandleFtpDialogEvent(pMe,eCode,wParam,dwParam);	
 
-		case IDD_BT_FTP_SERVER:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP_SERVER***", 0, 0, 0);
+		case IDD_BT_FTP_SERVER:			
             return HandleFtpServerDialogEvent(pMe,eCode,wParam,dwParam);
 
-		case IDD_BT_FTP_CLIENT:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP_CLIENT***", 0, 0, 0);
+		case IDD_BT_FTP_CLIENT:			
             return HandleFtpClientDialogEvent(pMe,eCode,wParam,dwParam);
 
-		case IDD_BT_FTP_SETTINGS:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP_SETTINGS***", 0, 0, 0);
+		case IDD_BT_FTP_SETTINGS:			
             return HandleFtpSettingDialogEvent(pMe,eCode,wParam,dwParam);	
 
-		case IDD_BT_FTP_SERVER_REGISTER:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP_SERVER_REGISTER***", 0, 0, 0);
+		case IDD_BT_FTP_SERVER_REGISTER:			
             return HandleFtpServerRegisterDialogEvent(pMe,eCode,wParam,dwParam);
 
-		case IDD_BT_FTP_BROWSE:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP_BROWSE***", 0, 0, 0);
+		case IDD_BT_FTP_BROWSE:			
 			return HandleFtpBrowseDialogEvent(pMe,eCode,wParam,dwParam);	
 
-		case IDD_BT_FTP_BROWSE_OPITION:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FTP_BROWSE_OPITION***", 0, 0, 0);
+		case IDD_BT_FTP_BROWSE_OPITION:			
 			return HandleFtpBrowseOpitionDialogEvent(pMe,eCode,wParam,dwParam);			
 
-		case IDD_BT_MSGBOX:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_MSGBOX***", 0, 0, 0);
+		case IDD_BT_MSGBOX:			
             return HandleMsgBoxDialogEvent(pMe,eCode,wParam,dwParam);	
 
 		case IDD_BT_PROMPT:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_PROMPT***", 0, 0, 0);
-            return HandleProMptDialogEvent(pMe,eCode,wParam,dwParam);	
+			return HandleProMptDialogEvent(pMe,eCode,wParam,dwParam);	
 
-		case IDD_BT_EDIT:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_EDIT***", 0, 0, 0);
+		case IDD_BT_EDIT:			
             return HandleBtTextEditDialogEvent(pMe,eCode,wParam,dwParam);	
 
-		case IDD_BT_SEND_FILE:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_SEND_FILE***", 0, 0, 0);
+		case IDD_BT_SEND_FILE:			
             return HandleSendFileDialogEvent(pMe,eCode,wParam,dwParam);		
 
-		case IDD_BT_OBEX_LIST_SERVERS:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_OBEX_LIST_SERVERS***", 0, 0, 0);
+		case IDD_BT_OBEX_LIST_SERVERS:			
             return HandleObexListServersDialogEvent(pMe,eCode,wParam,dwParam);			
 
-		case IDD_BT_FILE_PROGRESS:
-			MSG_FATAL("***zzg BTApp_RouteDialogEvent IDD_BT_FILE_PROGRESS***", 0, 0, 0);
+		case IDD_BT_FILE_PROGRESS:			
             return HandleFileProgressDialogEvent(pMe,eCode,wParam,dwParam);	
 			
 		case IDD_BT_TEXT_EDIT:
@@ -567,9 +499,9 @@ boolean BTApp_RouteDialogEvent(CBTApp *pMe,
 
 ==============================================================================*/
 static boolean  HandleMainDialogEvent(CBTApp *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
+											    AEEEvent eCode,
+											    uint16 wParam,
+											    uint32 dwParam
 )
 {
     PARAM_NOT_REF(dwParam)
@@ -583,18 +515,13 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
         return FALSE;
     }
 	
-    MSG_FATAL("%x, %x ,%x,HandleMainDialogEvent",eCode,wParam,dwParam);
-
-	if (NULL == pMe->m_pConfig)
-	{
-		MSG_FATAL("***zzg HandleMainDialogEvent NULL == pMe->m_pConfig***", 0, 0, 0);
-	}
-	else
+	if (NULL != pMe->m_pConfig)
 	{
 		ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
 		MSG_FATAL("***zzg HandleMainDialogEvent bt_status=%d***", bt_status, 0, 0);
 	}
-   
+
+    MSG_FATAL("%x, %x ,%x,HandleMainDialogEvent",eCode,wParam,dwParam);
 
     switch (eCode)
     {
@@ -604,15 +531,15 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 		}
 
         case EVT_DIALOG_START:   
-            IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
-
+        {
+			IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
-            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+            IMENUCTL_SetBottomBarType(pMenu, BTBAR_SELECT_BACK);
 
             (void) ISHELL_PostEvent( pMe->m_pShell,
                                      AEECLSID_BLUETOOTH_APP,
@@ -620,14 +547,14 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
                                      0,
                                      0);
             return TRUE;
+        }
 
         case EVT_USER_REDRAW:   
 		{			
 			AECHAR 		WTitle[40] = {0};
+			
 			uint16      titleID = IDS_OFF;
 			uint16      itemID = IDS_BT_ON;
-
-			MSG_FATAL("***zzg HandleMainDialogEvent EVT_DIALOG_INIT***", 0, 0, 0);					
 			
 			if (bt_status == TRUE)  			
 			{				 
@@ -647,8 +574,9 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 			}
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);   
+
 			
-			IMENUCTL_DeleteAll(pMenu);
+			IMENUCTL_DeleteAll(pMenu);	
 			
   			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, itemID, itemID, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DEVICE_SEARCH, IDS_DEVICE_SEARCH, NULL, 0);
@@ -656,9 +584,10 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
             IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_MY_INFO, IDS_MY_INFO, NULL, 0);
 
 #if	1			
-			//IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_SETTINGS, IDS_SETTINGS, NULL, 0);
 			IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP, IDS_FTP, NULL, 0);
 
+			//IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_SETTINGS, IDS_SETTINGS, NULL, 0);
+			
 			/*		
 			if (pMe->mAG.bConnected)
 			{
@@ -676,52 +605,72 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
         }
 
         case EVT_DIALOG_END:
-            return TRUE;
+        {
+			return TRUE;
+        }
 
         case EVT_KEY:
-            switch(wParam)
+        {
+			switch (wParam)
             {
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                {
+					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
+                }
 
                 default:
-                    break;
+                {
+					break;
+                }
             }
             return TRUE;
+        }
 
         case EVT_COMMAND:            
-            pMe->m_currDlgId = wParam;
+        {
+			pMe->m_currDlgId = wParam;
+						
             switch (wParam)
             {
             	case IDS_BT_OFF:
+				{
 					MSG_FATAL("***zzg BTAppDialogHandle EVT_COMMAND IDS_BT_OFF***", 0, 0, 0);
 					BTApp_DisableBT(pMe);
+
+					BTApp_BuildPrompt(pMe, BT_APP_MENU_OFF);					
+					//BTApp_ShowMessage( pMe, IDS_MSG_BT_DISABLED, NULL, 5);					
 		                                     
 		            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_BLUETOOTH_APP,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);                         
+		                                     AEECLSID_BLUETOOTH_APP,
+		                                     EVT_USER_REDRAW,
+		                                     0,
+		                                     0);                         
 					break;
-					
+            	}
+				
 				case IDS_BT_ON:
+				{
 					MSG_FATAL("***zzg BTAppDialogHandle EVT_COMMAND IDS_BT_ON***", 0, 0, 0);
 					BTApp_EnableBT(pMe);
 
+					BTApp_BuildPrompt(pMe, BT_APP_MENU_ON);		
+					//BTApp_ShowMessage( pMe, IDS_MSG_BT_ENABLED, NULL, 5);					
+
 					(void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_BLUETOOTH_APP,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);
+		                                     AEECLSID_BLUETOOTH_APP,
+		                                     EVT_USER_REDRAW,
+		                                     0,
+		                                     0);
 					
 					break;
+				}
 					
 				case IDS_DEVICE_SEARCH: 
 				{	
+					/*
 					if (bt_status == FALSE)					  
-					{
-						pMe->m_msg_state_id = BTAPPST_MAIN;
+					{						
 						pMe->m_msg_id = IDS_BT_CLOSED;
 						pMe->m_bNeedStr = FALSE;
 						
@@ -730,14 +679,23 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 					else
 					{
 						CLOSE_DIALOG(DLGRET_DEVICESRH)
-					}				    
-				    break;
-				}
-				case IDS_DEVICES: 
-				{
+					}	
+					*/
+					
 					if (bt_status == FALSE)					  
 					{
-						pMe->m_msg_state_id = BTAPPST_MAIN;
+						BTApp_EnableBT(pMe);		
+					}
+					CLOSE_DIALOG(DLGRET_DEVICESRH)
+					
+				    break;
+				}
+				
+				case IDS_DEVICES: 
+				{
+					/*
+					if (bt_status == FALSE)					  
+					{						
 						pMe->m_msg_id = IDS_BT_CLOSED;
 						pMe->m_bNeedStr = FALSE;
 						
@@ -745,15 +703,24 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 					}
 					else
 					{
-						CLOSE_DIALOG(DLGRET_DEVICE_LIST)
-					}						   
-				    break;
-				}	
-				case IDS_MY_INFO: 	
-				{
+						CLOSE_DIALOG(DLGRET_DEVICE)
+					}	
+					*/
+
 					if (bt_status == FALSE)					  
 					{
-						pMe->m_msg_state_id = BTAPPST_MAIN;
+						BTApp_EnableBT(pMe);
+					}					
+					CLOSE_DIALOG(DLGRET_DEVICE)
+					
+				    break;
+				}	
+				
+				case IDS_MY_INFO: 	
+				{
+					/*
+					if (bt_status == FALSE)					  
+					{
 						pMe->m_msg_id = IDS_BT_CLOSED;
 						pMe->m_bNeedStr = FALSE;
 						
@@ -762,14 +729,23 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 					else
 					{
 						CLOSE_DIALOG(DLGRET_MYINFO)
-					}						   
-				    break;
-				}	
-				case IDS_FTP:
-				{
+					}	
+					*/
+
 					if (bt_status == FALSE)					  
 					{
-						pMe->m_msg_state_id = BTAPPST_MAIN;
+						BTApp_EnableBT(pMe);
+					}					
+					CLOSE_DIALOG(DLGRET_MYINFO)
+						
+				    break;
+				}	
+				
+				case IDS_FTP:
+				{
+					/*
+					if (bt_status == FALSE)					  
+					{						
 						pMe->m_msg_id = IDS_BT_CLOSED;
 						pMe->m_bNeedStr = FALSE;
 						
@@ -781,25 +757,42 @@ static boolean  HandleMainDialogEvent(CBTApp *pMe,
 						{
 							CLOSE_DIALOG(DLGRET_FTP)
 						}
-					}						   
+					}	
+					*/
+
+					if (bt_status == FALSE)					  
+					{
+						BTApp_EnableBT(pMe);
+					}		
+					
+					if (BTApp_FTPInit(pMe) != FALSE)
+					{
+						CLOSE_DIALOG(DLGRET_FTP)
+					}
 				    break;
 				}
+				
 				default:
-				    ASSERT_NOT_REACHABLE;
+				{
+					ASSERT_NOT_REACHABLE;
+				}
             }
             return TRUE;
-
+        }
+		
         default:
-            break;
+        {
+			break;
+        }
     }
     return FALSE;
 } // HandleMainDialogEvent
 
 
 static boolean HandleDeviceSearchDialogEvent(CBTApp *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
+ 													     AEEEvent eCode,
+ 													     uint16 wParam,
+ 													     uint32 dwParam
 )
 {    
 	PARAM_NOT_REF(dwParam)
@@ -827,20 +820,19 @@ static boolean HandleDeviceSearchDialogEvent(CBTApp *pMe,
 			boolean 	success = FALSE; 
 			
 			(void)ISHELL_LoadResString(pMe->m_pShell,
-										AEE_APPSBTAPP_RES_FILE, 							   
-										IDS_BT_TITLE,
-										WTitle,
-										sizeof(WTitle));
+									   AEE_APPSBTAPP_RES_FILE, 							   
+									   IDS_BT_TITLE,
+									   WTitle,
+									   sizeof(WTitle));
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);  	
 
 			//BTApp_DoDeviceSearch(pMe, AEEBT_COD_SC_ALL, NULL);	
 			pMe->mSD.uNumRecs = 0;
-			MEMSET( pMe->mSD.devRec, 0, (sizeof(AEEBTDeviceRecord)*MAX_DEVICES));
+			MEMSET(pMe->mSD.devRec, 0, (sizeof(AEEBTDeviceRecord)*MAX_DEVICES));
 
-			MSG_FATAL("***zzg IBTEXTSD_DiscoverDevices Start***", 0, 0, 0);
-			
-			success = (IBTEXTSD_DiscoverDevices(pMe->mSD.po, AEEBT_COD_SC_ALL, NULL, pMe->mSD.devRec, MAX_DEVICES ) == SUCCESS);
+			MSG_FATAL("***zzg DeviceSearchDlg IBTEXTSD_DiscoverDevices***", 0, 0, 0);			
+			success = (IBTEXTSD_DiscoverDevices(pMe->mSD.po, pMe->uDeviceSrhType, NULL, pMe->mSD.devRec, MAX_DEVICES ) == SUCCESS);
 
 			if (success)
 			{
@@ -861,12 +853,9 @@ static boolean HandleDeviceSearchDialogEvent(CBTApp *pMe,
 
 			ISTATIC_SetProperties(pStatic, ISTATIC_GetProperties(pStatic) & ~ST_MIDDLETEXT & ~ST_CENTERTEXT);	 
 			ISTATIC_SetProperties(pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);	
-			ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);	
-
-
+			ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
 
 			IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
-
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 
@@ -875,11 +864,11 @@ static boolean HandleDeviceSearchDialogEvent(CBTApp *pMe,
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_BACK);
 			
-			(void) ISHELL_PostEvent( pMe->m_pShell,
-									 AEECLSID_BLUETOOTH_APP,
-									 EVT_USER_REDRAW,
-									 0,
-									 0);
+			(void) ISHELL_PostEvent(pMe->m_pShell,
+									AEECLSID_BLUETOOTH_APP,
+									EVT_USER_REDRAW,
+									0,
+									0);
 			return TRUE;
 		}
 		
@@ -932,9 +921,9 @@ static boolean HandleDeviceSearchDialogEvent(CBTApp *pMe,
 
 
 static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
+														 AEEEvent eCode,
+														 uint16 wParam,
+														 uint32 dwParam
 )
 {	 		
 	PARAM_NOT_REF(dwParam)
@@ -951,7 +940,7 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 #ifdef FEATURE_BT_2_1
 	int 				MapIndex;
 	AEEBTDeviceInfo* 	pMapDev = NULL;
-	AECHAR           	wBuf[ 5 ];
+	AECHAR           	wBuf[5];
 	boolean          	bEIRReqName = TRUE;
 	boolean          	nameReqIssued = FALSE;
 	uint16           	tempuValue1 = 0;
@@ -966,7 +955,7 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
         return FALSE;
     }
 	
-    MSG_FATAL("%x, %x ,%x,HandleSearchResultDialogEvent",eCode,wParam,dwParam);
+    MSG_FATAL("%x, %x ,%x,HandleSearchResultDialogEvent", eCode, wParam, dwParam);
    
     switch (eCode)
     {
@@ -1001,31 +990,19 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 				IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
 			}
 
-			BTApp_InitAddItem( &ai );
+			BTApp_InitAddItem(&ai);
 			ai.wFont = AEE_FONT_BOLD;			
 
 			pMe->uCurrMsgId = 0;
 
-			/*
-			if ( pMe->mSD.bDiscovering == FALSE )
-			{
-				numItems = 0; // force refreshing
-				IMENUCTL_DeleteAll(pMenu);
-			}
-			else
-			{
-				MENU_SET_SEL(IMENUCTL_GetSel(pMenu));
-				numItems = IMENUCTL_GetItemCount(pMenu);
-			}
-			*/
-			
 			MENU_SET_SEL(IMENUCTL_GetSel(pMenu));
 			numItems = IMENUCTL_GetItemCount(pMenu);	
 			
 			MSG_FATAL("***zzg SearchResultDlg numItems=%d, uNumRecs=%d***", numItems, pMe->mSD.uNumRecs, 0);
 			
 #ifdef FEATURE_BT_2_1   			
-			for (i = numItems; i < pMe->mSD.uNumRecs; i ++)
+			//for (i = numItems; i < pMe->mSD.uNumRecs; i ++)
+			for (i = 0; i < pMe->mSD.uNumRecs; i ++)	//Modify by zzg 2011_06_03
 			{					
 				pDev = &pMe->mRM.device[i];
 				pDev->bdAddr = pMe->mSD.devRec[i].bdAddr;
@@ -1036,7 +1013,7 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 				MSG_MED( "BldDevRespMenu - pDev->uValue1 = %d", pDev->uValue1, 0, 0);
 				tempuValue1 = 0;
 
-				MSG_FATAL("***zzg SearchResultDlg uValue1=%d***", pDev->uValue1, 0, 0);
+				MSG_FATAL("***zzg SearchResultDlg uValue1=%d, bDiscovering=%d***", pDev->uValue1, pMe->mSD.bDiscovering, 0);
 				
 				if ((pMe->mSD.bDiscovering == FALSE) && (pDev->uValue1 != 0))
 				{
@@ -1047,6 +1024,9 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 
 				result = IBTEXTRM_DeviceRead(pMe->mRM.po, pDev);
 
+				
+				//Print for the test Start
+				/*
 				{
 					char btname[AEEBT_MAX_DEVICENAME_LEN+1];
   					char btnickname[AEEBT_MAX_NICKNAME_LEN+1];
@@ -1057,14 +1037,16 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 					DBGPRINTF("***zzg SrhRltDlgEvt 1 btname=%s,***", btname);
 					DBGPRINTF("***zzg SrhRltDlgEvt 1 btnickname=%s***", btnickname);
 				}
-				
-				MSG_FATAL("***zzg IBTEXTRM_DeviceRead result=%d***", result, 0, 0);
+				*/
+				//Print for the test End
 				
 				if (result != SUCCESS)
 				{
-					MSG_ERROR( "BldDevRespMenu - DeviceRead() failed for index=%d", i, 0, 0 );
+					MSG_ERROR("BldDevRespMenu - DeviceRead() failed for index=%d", i, 0, 0);
 				}
 
+				MSG_FATAL("***zzg IBTEXTRM_DeviceRead uValue1=%d, bDiscovering=%d***", pDev->uValue1, pMe->mSD.bDiscovering, 0);
+				
 				if ((result == SUCCESS) && (pMe->mSD.bDiscovering == FALSE) && (tempuValue1 != 0))
 				{
 					// restore the value of get name status    
@@ -1083,8 +1065,12 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 					bEIRReqName = FALSE;
 				}
 
-				MSG_MED( "BldDevRespMenu - uFlags = 0x%x", pDev->EIRData.uFlags, 0, 0);
-				MSG_MED( "BldDevRespMenu - nameLen=%d, uValue1=%d, bEIRReqName=%d", len, pDev->uValue1, bEIRReqName );
+				MSG_FATAL("***zzg SearchResult len=%d, bEIRReqName=%d***", len, bEIRReqName, 0);
+
+				MSG_MED("BldDevRespMenu - uFlags = 0x%x", pDev->EIRData.uFlags, 0, 0);
+				MSG_MED("BldDevRespMenu - nameLen=%d, uValue1=%d, bEIRReqName=%d", len, pDev->uValue1, bEIRReqName);
+
+				MSG_FATAL("***zzg before IBTEXTSD_GetDeviceName uValue1=%d***", pDev->uValue1, 0, 0);
 				
 				if ((pDev->uValue1 == 0) && // GetName not done?
 					 (bEIRReqName))
@@ -1101,6 +1087,8 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 							pMe->mRM.uGetNameDevIdx = i;
 						}
 
+						//Print the log Start
+						/*
 						{
 							char btname[AEEBT_MAX_DEVICENAME_LEN+1];
 		  					char btnickname[AEEBT_MAX_NICKNAME_LEN+1];
@@ -1110,18 +1098,19 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 
 							DBGPRINTF("***zzg SrhRltDlgEvt 2 btname=%s***", btname);
 							DBGPRINTF("***zzg SrhRltDlgEvt 2 btnickname=%s***", btnickname);
-
 						}
+						*/
+						//Print the log End						
 					}
 				}
-				else if ( (result == SUCCESS) && (len > 0) )
+				else if ((result == SUCCESS) && (len > 0))
 				{
 					pDev->uValue1 = UD1_GET_NAME_SUCCESS;
 				}
-				
-				for ( MapIndex = i; MapIndex >= 0; MapIndex-- )
+
+				for (MapIndex = i; MapIndex >= 0; MapIndex--)
 				{
-					if ( MapIndex == 0 )
+					if (MapIndex == 0)
 					{
 						pMe->mRM.uDevToDspIdxMap[MapIndex] = i;
 						break;
@@ -1149,10 +1138,10 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 			}
 
 			
-			if (( nameReqIssued == FALSE ) && (pMe->mSD.bDiscovering == FALSE))
+			if ((nameReqIssued == FALSE) && (pMe->mSD.bDiscovering == FALSE))
 			{
 				// Name request for all devices have completed so init uValue1 
-				for ( i = 0; i < MAX_DEVICES; i++ )
+				for (i = 0; i < MAX_DEVICES; i++)
 				{
 					pDev = &pMe->mRM.device[i];
 					pDev->uValue1 = 0;
@@ -1259,7 +1248,7 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 					MSG_MED( "BldDevRespMenu - addr=%04x %04x %04x", 
 					   ((uint16)(pA->uAddr[ 5 ] << 8) | pA->uAddr[ 4 ]),
 					   ((uint16)(pA->uAddr[ 3 ] << 8) | pA->uAddr[ 2 ]),
-					   ((uint16)(pA->uAddr[ 1 ] << 8) | pA->uAddr[ 0 ]) );
+					   ((uint16)(pA->uAddr[ 1 ] << 8) | pA->uAddr[ 0 ]));
 				}
 			}			
 #endif 
@@ -1272,7 +1261,7 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
-            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+            IMENUCTL_SetBottomBarType(pMenu, BTBAR_SELECT_BACK);
 
 
 			IMENUCTL_SetSel(pMenu,  MENU_SEL);  // highlight the selected item
@@ -1287,6 +1276,11 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
         case EVT_DIALOG_END:
             return TRUE;
 
+		//Add By zzg 2011_10_20
+		case EVT_KEY:
+			return TRUE;
+		//Add End
+			
 		case EVT_KEY_PRESS:
         //case EVT_KEY:
         {
@@ -1299,72 +1293,141 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 				case AVK_INFO:	
 				case AVK_SELECT:
 				{
-				  if (pMe->mSD.bDiscovering)
-				  {
-				    IBTEXTSD_StopDeviceDiscovery(pMe->mSD.po);
-				  }
+					if (pMe->mSD.bDiscovering)
+					{
+						IBTEXTSD_StopDeviceDiscovery(pMe->mSD.po);
+					}
 
-				  if (IMENUCTL_GetItemCount(pMenu) > 0)
-				  {
-				    MENU_SET_SEL(IMENUCTL_GetSel(pMenu));
+					MSG_FATAL("***zzg BTApp_HandleSrhResultDlg AVK_INFO***", 0, 0, 0);
+
+					if (IMENUCTL_GetItemCount(pMenu) > 0)
+					{
+						MENU_SET_SEL(IMENUCTL_GetSel(pMenu));
 #ifdef FEATURE_BT_2_1
-				    pMe->mRM.uCurDevIdx = pMe->mSD.uCurRecIdx = pMe->mRM.uDevToDspIdxMap[MENU_SEL];
-				    pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx ];
-				    pRec = &pMe->mSD.devRec[ pMe->mSD.uCurRecIdx ];
+						pMe->mRM.uCurDevIdx = pMe->mSD.uCurRecIdx = pMe->mRM.uDevToDspIdxMap[MENU_SEL];
+						pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
+						pRec = &pMe->mSD.devRec[pMe->mSD.uCurRecIdx];
 #else
-				    pMe->mRM.uCurDevIdx = pMe->mSD.uCurRecIdx = MENU_SEL;
-				    pDev = &pMe->mRM.device[ MENU_SEL ];
-				    pRec = &pMe->mSD.devRec[ MENU_SEL ];
+						pMe->mRM.uCurDevIdx = pMe->mSD.uCurRecIdx = MENU_SEL;
+						pDev = &pMe->mRM.device[MENU_SEL];
+						pRec = &pMe->mSD.devRec[MENU_SEL];
 #endif /* FEATURE_BT_2_1 */
-				    if (pDev->bValid == FALSE)
-				    {
-				      if ((pDev->serviceClass == AEEBT_COD_SC_UNKNOWN) &&
-				          (pRec->serviceClass != AEEBT_COD_SC_UNKNOWN))
-				      {
-				        pDev->serviceClass  = pRec->serviceClass;
-				        pDev->majorDevClass = pRec->majorDevClass;
-				        pDev->minorDevClass = pRec->minorDevClass;
-				      }
-				    }
+						if (pDev->bValid == FALSE)
+						{
+							if ((pDev->serviceClass == AEEBT_COD_SC_UNKNOWN) &&
+							    (pRec->serviceClass != AEEBT_COD_SC_UNKNOWN))
+							{
+								pDev->serviceClass  = pRec->serviceClass;
+								pDev->majorDevClass = pRec->majorDevClass;
+								pDev->minorDevClass = pRec->minorDevClass;
+							}
+						}
 
-					pMe->m_dialog_id = IDD_SEARCH_RESULT;
-				    CLOSE_DIALOG(DLGRET_DEVICEINFO)			    
-				  }
+						MSG_FATAL("***zzg BTApp_HandleSrhResultDlg uDeviceSrhType=%x***", pMe->uDeviceSrhType, 0, 0);
+
+						if (AEEBT_COD_SC_AUDIO == pMe->uDeviceSrhType)	//Add By zzg 2011_10_19
+						{			
+							AEEBTDeviceInfo* pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
+							boolean bSetBondable = FALSE;
+							
+							/*
+							//AG Start
+							if ( pMe->mAG.bconnInPrgs == FALSE )
+							{
+								if ( pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET )
+								{
+									MSG_MED( "HndlSlction - connecting to HS", 0, 0, 0 );
+								}
+								else
+								{
+									MSG_MED( "HndlSlction - connecting to HF", 0, 0, 0 );
+								}
+								
+								if ( BTApp_CallConnected( pMe ) != BT_APP_CALL_NONE )
+								{
+									pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
+								}
+								pMe->mAG.bconnInPrgs = TRUE;
+								IBTEXTAG_Connect( pMe->mAG.po, &pDev->bdAddr, pMe->mAG.devType );
+								BTApp_ShowBusyIcon( pMe );
+							}
+							else
+							{
+								BTApp_ShowMessage( pMe, IDS_AG_CONNECTION_IN_PRGS, NULL, 3 );
+							}							
+							//AG End
+							*/
+							
+							//A2DP Start
+							MSG_FATAL("***zzg A2DP bEnabled=%x, bEnableA2DP=%x, bConnected=%x***", pMe->mA2DP.bEnabled, pMe->mA2DP.bEnableA2DP, pMe->mA2DP.bConnected);
+							
+							pMe->mA2DP.bdAddr = pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr;
+							pMe->bConfigChanged = TRUE;
+						    IBTEXTA2DP_SetDevice(pMe->mA2DP.po, &pMe->mA2DP.bdAddr);						
+
+							//if ((pMe->mA2DP.bEnabled == TRUE) && (pMe->mA2DP.bConnected == FALSE))
+							{
+								if ( IBTEXTA2DP_Connect( pMe->mA2DP.po, &pMe->mA2DP.bdAddr ) != SUCCESS )
+								{
+									BTApp_ShowMessage( pMe, IDS_MSG_CONN_FAILED, NULL, 3 );
+								}  	
+								else
+								{
+									BTApp_A2DPSetRetries(pMe, TRUE);
+								}
+							}
+							//A2DP End
+							
+							break;
+						}
+						else
+						{
+							pMe->m_dialog_id = IDD_SEARCH_RESULT;
+							CLOSE_DIALOG(DLGRET_DEVICEINFO)			    
+						}
+				  	}
 				 
-				  break;
+					break;
 				}
+				
 				case AVK_CLR:
 				{
-				  if (pMe->mSD.bDiscovering)
-				  {
-				    IBTEXTSD_StopDeviceDiscovery(pMe->mSD.po);
-				  }
-				  
-				  BTApp_CancelDevNameRequest(pMe);
-				  
-				  CLOSE_DIALOG(DLGRET_CANCELED)
-                  return TRUE;
-				  break;
+					if (pMe->mSD.bDiscovering)
+					{
+						MSG_FATAL("***zzg HandleSrhResultDlg AVK_CLR***", 0, 0, 0);
+						
+						IBTEXTSD_StopDeviceDiscovery(pMe->mSD.po);
+						BTApp_CancelDevNameRequest(pMe);
+						
+						return TRUE;	
+					}
+
+					BTApp_CancelDevNameRequest(pMe);
+
+					CLOSE_DIALOG(DLGRET_CANCELED)
+					return TRUE;
+					//break;
 				}
+				
 				default:
+				{
 					break;
+				}
 			}
+
+			break;
 		
 		}
+		
         default:
-            break;
+        {
+			break;
+        }
     }
 	
     return FALSE;
 
 }	
-
-
-
-
-
-
-
 
 static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
     AEEEvent eCode,
@@ -1460,7 +1523,8 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 
 			MSG_FATAL("***zzg DeviceInfo 1 WSTRLEN(pDev->wName)=%d***", WSTRLEN(pDev->wName), 0, 0);
 			
-
+			//Print the log Start
+			/*
 			if (WSTRLEN(pDev->wName) > 0)
 			{
 				int temp;
@@ -1477,12 +1541,12 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 				{
 					DBGPRINTF("***zzg DeviceInfoDlgEvt 1 btname[%d]=%c***", temp, btname[temp]);
 				}
-			}
-			
+			}	
+			*/
+			//Print the log  End
 
 			// restore the value of get name status      
-			pDev->uValue1 = tempuValue1;			
-
+			pDev->uValue1 = tempuValue1;		
 			
 			if (pDev->uValue1 == 0)
 			{
@@ -1491,16 +1555,19 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 			  {			  
 			  	MSG_FATAL("***zzg DeviceInfoDlgEvt IBTEXTSD_GetDeviceName***", 0, 0, 0);
 				
-			    if (IBTEXTSD_GetDeviceName(pMe->mSD.po, &pDev->bdAddr,
+			    if (IBTEXTSD_GetDeviceName(pMe->mSD.po, 
+											&pDev->bdAddr,
 			                                pDev->wName, 
 			                                ARR_SIZE(pDev->wName)) == SUCCESS)
 			    {
-			      pMe->mRM.uGetNameDevIdx = pMe->mRM.uCurDevIdx;
+			    	pMe->mRM.uGetNameDevIdx = pMe->mRM.uCurDevIdx;
 			    }
 
 
 				MSG_FATAL("***zzg DeviceInfo 2 WSTRLEN(pDev->wName)=%d***", WSTRLEN(pDev->wName), 0, 0);
 
+				//Print the log Start
+				/*
 				if (WSTRLEN(pDev->wName) > 0)
 				{
 					int temp;
@@ -1519,6 +1586,9 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
 					}
 
 				}
+				*/
+				//Print the log  End
+				
 			  }
 			  else if (WSTRLEN( pDev->wName ) == 0)
 			  {
@@ -1652,27 +1722,41 @@ static boolean HandleDeviceInfoDialogEvent(CBTApp *pMe,
             return TRUE;
 
 		}
+		
         case EVT_DIALOG_END:
-            return TRUE;
+        {
+			return TRUE;
+        }
 
         case EVT_KEY:
-            switch(wParam)
+        {
+			switch(wParam)
             {
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                {
+					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
+                }	
 					
 				case AVK_INFO:
 				case AVK_SELECT:
+				{
 					CLOSE_DIALOG(DLGRET_DEVICEINFO_OPITION)
 					return TRUE;
+				}	
+				
                 default:
-                    break;
+                {
+					break;
+                }
             }
             return TRUE;
-			
+        }
+		
         default:
-            break;
+        {
+			break;
+        }
     }
     return FALSE;
 }	
@@ -1693,14 +1777,39 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
     {
         return FALSE;
     }
+	
     MSG_FATAL("%x, %x ,%x,HandleMyInfoOpitionDialogEvent",eCode,wParam,dwParam);
    
 
     switch (eCode)
     {
         case EVT_DIALOG_INIT:			
-		{
-			
+		{			
+            return TRUE;
+		}
+
+        case EVT_DIALOG_START:       
+        {
+			IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
+
+            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+            IMENUCTL_SetBottomBarType(pMenu, BTBAR_OK_BACK);
+
+            (void) ISHELL_PostEvent( pMe->m_pShell,
+                                     AEECLSID_BLUETOOTH_APP,
+                                     EVT_USER_REDRAW,
+                                     0,
+                                     0);
+            return TRUE;
+        }	
+
+        case EVT_USER_REDRAW:    			
+        {
 			AECHAR 		WTitle[40] = {0};			
 
 			(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -1711,9 +1820,11 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);   
 
-			if ((pMe->m_dialog_id == IDD_ALL_LIST) 
-				|| (pMe->m_dialog_id == IDD_BOND_LIST) 
-				|| (pMe->m_dialog_id == IDD_CONNECT_LIST))		
+			IBTEXTRM_DeviceRead(pMe->mRM.po, pDev);		//Add By zzg 2011_06_07 Update the DeviceInfo
+
+			IMENUCTL_DeleteAll(pMenu);
+			
+			if (pMe->m_dialog_id == IDD_DEVICE_LIST) 				
 			{
 				uint8 i = 0;
 				boolean bIsAudioDev = FALSE;
@@ -1728,8 +1839,8 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 				{
 					while ((i<pDev->uNumSvcs) && (bIsAudioDev == FALSE))
 					{
-						if ( (pDev->svcs[ i ].uServiceClass == AEEBT_SD_SERVICE_CLASS_HEADSET) 
-							|| (pDev->svcs[ i ].uServiceClass == AEEBT_SD_SERVICE_CLASS_HANDSFREE))
+						if ((pDev->svcs[i].uServiceClass == AEEBT_SD_SERVICE_CLASS_HEADSET) 
+							||(pDev->svcs[i].uServiceClass == AEEBT_SD_SERVICE_CLASS_HANDSFREE))
 						{
 							bIsAudioDev = TRUE;
 						}
@@ -1737,21 +1848,44 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 					}
 				}
 
-				if ( bIsAudioDev != FALSE )
+				MSG_FATAL("***zzg A2DP bIsAudioDev=%x, bEnabled=%x, bConnected=%x***", 
+								bIsAudioDev, pMe->mA2DP.bEnabled, pMe->mA2DP.bConnected);
+
+				if (bIsAudioDev != FALSE)
 				{
 					// only Use, Connect, and Disconnect audio device
-					if ( pMe->mAG.bEnabled == FALSE )
+
+					/*
+					//AG Start
+					if (pMe->mAG.bEnabled == FALSE)					
 					{
 						IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_USE, IDS_USE, NULL, 0);						
 					}
-					else if ( pMe->mAG.bConnected == FALSE )
+					else if (pMe->mAG.bConnected == FALSE)
 					{
 						IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_CONNECT, IDS_CONNECT, NULL, 0);						
 					}
-					else if ( AEEBT_BD_ADDRS_EQUAL( &pMe->mAG.connectedBDAddr, &pDev->bdAddr ) != FALSE )
+					else if (AEEBT_BD_ADDRS_EQUAL( &pMe->mAG.bdAddr, &pDev->bdAddr) != FALSE)
 					{					
 						IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DISCONNECT, IDS_DISCONNECT, NULL, 0);			
 					}
+					//AG End
+					*/
+
+					//A2DP Start
+					if (pMe->mA2DP.bEnabled == FALSE)					
+					{
+						IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_USE, IDS_USE, NULL, 0);						
+					}
+					else if (pMe->mA2DP.bConnected == FALSE)
+					{
+						IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_CONNECT, IDS_CONNECT, NULL, 0);						
+					}
+					else if (AEEBT_BD_ADDRS_EQUAL( &pMe->mA2DP.bdAddr, &pDev->bdAddr) != FALSE)
+					{					
+						IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DISCONNECT, IDS_DISCONNECT, NULL, 0);			
+					}
+					//A2DP End
 				}
 				
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, pDev->bBonded ? IDS_UNBOND : IDS_BOND, pDev->bBonded ? IDS_UNBOND : IDS_BOND, NULL, 0);				
@@ -1762,8 +1896,8 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DISCARD, IDS_DISCARD, NULL, 0);
 
 			}
-			else 
-			{
+			else 	//if (pMe->m_dialog_id == IDD_SEARCH_RESULT) 
+			{				
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, pDev->bValid? IDS_DISCARD : IDS_KEEP, pDev->bValid? IDS_DISCARD : IDS_KEEP, NULL, 0);
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, pDev->bBonded ? IDS_UNBOND : IDS_BOND, pDev->bBonded ? IDS_UNBOND : IDS_BOND, NULL, 0);
 #ifdef FEATURE_BT_2_1			
@@ -1774,84 +1908,48 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 				//IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_OPTIONS, IDS_OPTIONS, NULL, 0);
 			}
 			
-			
-
-
+			(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
-		}
-
-        case EVT_DIALOG_START:       
-            IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
-
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
-            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
-
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
-#endif
-            IMENUCTL_SetBottomBarType(pMenu,BTBAR_OK_BACK);
-
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_BLUETOOTH_APP,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);
-            return TRUE;
-
-        case EVT_USER_REDRAW:    			
-            (void)IMENUCTL_Redraw(pMenu);
-            return TRUE;
+        }
 
         case EVT_DIALOG_END:
-            return TRUE;
+        {
+			return TRUE;
+        }
 
         case EVT_KEY:
-            switch(wParam)
+        {
+			switch(wParam)
             {
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                {
+					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
+                }	
 
                 default:
-                    break;
+                {
+					break;
+                }	
             }
             return TRUE;
+        }	
 		
         case EVT_COMMAND:           
-            pMe->m_currDlgId = wParam;		
-
-			pMe->m_prompt_state_id = BTAPPST_DEVICEINFO;
+        {
+			pMe->m_currDlgId = wParam;	
 			
             switch (wParam)
-            {
-				case IDS_USE:
-				{
-					BTApp_BuildPrompt(pMe, BT_APP_MENU_USE_AUDIO_DEV);
-					return TRUE;
-				}
-
-				case IDS_CONNECT:
-				{
-					BTApp_BuildPrompt(pMe, BT_APP_MENU_AG_CONNECT);
-					return TRUE;
-				}
-
-				case IDS_DISCONNECT:
-				{
-					BTApp_BuildPrompt(pMe, BT_APP_MENU_AG_DISCONNECT);
-					return TRUE;
-				}
-							
+            {							
 				case IDS_KEEP:
 				{
 					pDev->bValid = TRUE;
-          			IBTEXTRM_DeviceAdd( pMe->mRM.po, pDev );	//BTApp.c里会收到RSP ，然后做响应
+          			IBTEXTRM_DeviceAdd(pMe->mRM.po, pDev);	//BTApp.c里会收到RSP ，然后做响应
 					return TRUE;
 				}
 				case IDS_DISCARD:
 				{					
-					BTApp_BuildPrompt(pMe, BT_APP_MENU_REMOVE_ONE);
-										
+					BTApp_BuildPrompt(pMe, BT_APP_MENU_REMOVE_ONE);										
 					return TRUE;	
 				}
 				case IDS_BOND:
@@ -1859,7 +1957,7 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 					pMe->mRM.bBonding = TRUE;
 
 #ifdef FEATURE_BT_2_1
-					if (IBTEXTRM_GetLocalInfo(pMe->mRM.po,&pMe->mRM.myInfo ) != SUCCESS)
+					if (IBTEXTRM_GetLocalInfo(pMe->mRM.po,&pMe->mRM.myInfo) != SUCCESS)
 					{
 						MSG_FATAL("***zzg IBTEXTRM_GetLocalInfo Failed!***", 0, 0, 0);						
 					}
@@ -1878,7 +1976,7 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 						else
 						{
 							// Host is 2.1 but, Host Controller is non 2.1         
-							if (WSTRLEN( pMe->mRM.device[ pMe->mRM.uCurDevIdx ].wName) == 0)
+							if (WSTRLEN(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName) == 0)
 							{
 								BTApp_BDAddr2Wstr(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName,&pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr);
 							}
@@ -1901,23 +1999,52 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 					return TRUE;
 				}
 				case IDS_BOND_OPTIONS:
+				{
 					CLOSE_DIALOG(DLGRET_BOND_OPITION)                   
 					return TRUE;
+				}	
 				case IDS_READ_OOB:
+				{
 					pMe->bRemoteOOBRead = TRUE; 					
-					CLOSE_DIALOG(DLGRET_CANCELED) 		
-						
+					CLOSE_DIALOG(DLGRET_CANCELED) 						
 					pMe->bRemoteOOBRead = FALSE; 
 					return TRUE;	
+				}	
+
+				
+				case IDS_USE:
+				{
+					BTApp_BuildPrompt(pMe, BT_APP_MENU_USE_AUDIO_DEV);
+					return TRUE;
+				}
+
+				case IDS_CONNECT:
+				{
+					BTApp_BuildPrompt(pMe, BT_APP_MENU_AG_CONNECT);
+					return TRUE;
+				}
+
+				case IDS_DISCONNECT:
+				{
+					BTApp_BuildPrompt(pMe, BT_APP_MENU_AG_DISCONNECT);
+					return TRUE;
+				}
             	case IDS_OPTIONS:						
-                    return TRUE;					
+                {
+					return TRUE;
+            	}	
 				default:
-				    ASSERT_NOT_REACHABLE;
+				{
+					ASSERT_NOT_REACHABLE;
+				}
             }
             return TRUE;
-
+        }
+		
         default:
-            break;
+        {
+			break;
+        }
     }
     return FALSE;
 }	
@@ -2063,7 +2190,7 @@ IDI_SECURITY_BACKGROUND);
 
 
 
-static boolean HandleDeviceListDialogEvent(CBTApp *pMe,
+static boolean HandleDeviceDialogEvent(CBTApp *pMe,
     AEEEvent eCode,
     uint16 wParam,
     uint32 dwParam
@@ -2071,7 +2198,7 @@ static boolean HandleDeviceListDialogEvent(CBTApp *pMe,
 {	 
 	PARAM_NOT_REF(dwParam)
 
-    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_DEVICE_LIST);
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_DEVICE);
 
 	//AEEBTDeviceInfo*  pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
 	
@@ -2116,7 +2243,7 @@ static boolean HandleDeviceListDialogEvent(CBTApp *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
-            IMENUCTL_SetBottomBarType(pMenu,BTBAR_OK_BACK);
+            IMENUCTL_SetBottomBarType(pMenu, BTBAR_OK_BACK);
 
             (void) ISHELL_PostEvent( pMe->m_pShell,
                                      AEECLSID_BLUETOOTH_APP,
@@ -2125,28 +2252,40 @@ static boolean HandleDeviceListDialogEvent(CBTApp *pMe,
                                      0);
             return TRUE;
         }
+		
         case EVT_USER_REDRAW:    			
-            (void)IMENUCTL_Redraw(pMenu);
+        {
+			(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
+        }
 
         case EVT_DIALOG_END:
-            return TRUE;
+        {
+			return TRUE;
+        }
 
         case EVT_KEY:
-            switch(wParam)
+        {
+			switch(wParam)
             {
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                {
+					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
+                }
 
                 default:
-                    break;
+                {
+					break;
+                }
             }
             return TRUE;
+        }
 		
         case EVT_COMMAND:           
-            pMe->m_currDlgId = wParam;		
-			pMe->m_prompt_state_id = BTAPPST_DEVICE_LIST;
+        {
+			pMe->m_currDlgId = wParam;	
+			pMe->m_dialog_id = IDD_DEVICE_LIST;
 
 			switch (wParam)
             {
@@ -2173,8 +2312,9 @@ static boolean HandleDeviceListDialogEvent(CBTApp *pMe,
 
 					if (i > 0)
 					{
-						MSG_FATAL("***zzg DeviceList IBTEXTRM_DeviceEnumInit i=%d***", i, 0, 0);
-						CLOSE_DIALOG(DLGRET_BOND_LIST)  						
+						MSG_FATAL("***zzg DeviceList IBTEXTRM_DeviceEnumInit i=%d***", i, 0, 0);	
+						pMe->m_device_list_id = IDS_LIST_BONDED;
+						CLOSE_DIALOG(DLGRET_DEVICE_LIST)  						
 					}
 					else
 					{
@@ -2207,7 +2347,9 @@ static boolean HandleDeviceListDialogEvent(CBTApp *pMe,
 					if (i > 0)
 					{
 						MSG_FATAL("***zzg DeviceList IBTEXTRM_DeviceEnumInit i=%d***", i, 0, 0);
-						CLOSE_DIALOG(DLGRET_ALL_LIST)   						
+						//CLOSE_DIALOG(DLGRET_ALL_LIST)   
+						pMe->m_device_list_id = IDS_LIST_ALL;
+						CLOSE_DIALOG(DLGRET_DEVICE_LIST) 
 					}
 					else
 					{
@@ -2247,7 +2389,9 @@ static boolean HandleDeviceListDialogEvent(CBTApp *pMe,
 					if (i > 0)
 					{
 						MSG_FATAL("***zzg DeviceList IBTEXTRM_DeviceEnumInit i=%d***", i, 0, 0);
-						CLOSE_DIALOG(DLGRET_CONNECT_LIST)   						
+						//CLOSE_DIALOG(DLGRET_CONNECT_LIST)  
+						pMe->m_device_list_id = IDS_LIST_CONNECTED;
+						CLOSE_DIALOG(DLGRET_DEVICE_LIST) 
 					}
 					else
 					{
@@ -2270,14 +2414,18 @@ static boolean HandleDeviceListDialogEvent(CBTApp *pMe,
 				    ASSERT_NOT_REACHABLE;
             }
             return TRUE;
-
+        }
+		
         default:
-            break;
+        {
+			break;
+        }
     }
+	
     return FALSE;	
 }	
 
-static boolean HandleBondListDialogEvent(CBTApp *pMe,
+static boolean HandleDeviceListDialogEvent(CBTApp *pMe,
     AEEEvent eCode,
     uint16 wParam,
     uint32 dwParam
@@ -2285,7 +2433,7 @@ static boolean HandleBondListDialogEvent(CBTApp *pMe,
 {	 
 	PARAM_NOT_REF(dwParam)
 
-    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BOND_LIST);
+    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_DEVICE_LIST);
 
 	//AEEBTDeviceInfo*  pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
 	
@@ -2300,11 +2448,26 @@ static boolean HandleBondListDialogEvent(CBTApp *pMe,
     {
         case EVT_DIALOG_INIT:			
 		{			
-			AECHAR 		WTitle[40] = {0};			
+			AECHAR 		WTitle[40] = {0};				
+			uint16      titleID = IDS_BONDED_DEVICES;
+
+			if (pMe->m_device_list_id == IDS_LIST_BONDED)			
+			{
+				titleID = IDS_BONDED_DEVICES;
+			}
+			else if (pMe->m_device_list_id == IDS_LIST_ALL)	
+			{
+				titleID = IDS_LIST_ALL;
+			}
+			else if (pMe->m_device_list_id == IDS_LIST_CONNECTED)			
+			{
+				titleID = IDS_LIST_CONNECTED;
+			}
+					
 
 			(void)ISHELL_LoadResString(pMe->m_pShell,
 				                        AEE_APPSBTAPP_RES_FILE,                                
-				                        IDS_BONDED_DEVICES,
+				                        titleID,
 				                        WTitle,
 				                        sizeof(WTitle));
 			
@@ -2324,19 +2487,50 @@ static boolean HandleBondListDialogEvent(CBTApp *pMe,
 			uint16                stringID;
 			uint16                msgID;
 			uint8                 i;
+
+			uint8 				  j = 0;
+			boolean 			  bAudioDevice = FALSE;
+						
 #ifdef FEATURE_BT_2_1
 			AECHAR*               pwName;
 			AECHAR                wBuf[ 5 ];
 			STRTOWSTR( "...", wBuf, sizeof(wBuf) );
 #endif /* FEATURE_BT_2_1 */
 
-			enumerator.control = AEEBT_RM_EC_MATCH_BONDED;
-			enumerator.bBonded = TRUE;
-			stringID           = IDS_BONDED_DEVICES;
-			msgID              = IDS_MSG_NO_BONDED_DEV;
-			
+			//Add By zzg 2011_10_26
+			if (AEEBT_RM_EC_MATCH_VALUE_1 == pMe->uDeviceListType)
+			{
+				enumerator.control = AEEBT_RM_EC_MATCH_BONDED;
+				enumerator.bBonded = TRUE;
+				stringID		   = IDS_BONDED_DEVICES;
+				msgID			   = IDS_MSG_NO_BONDED_DEV;
+			}		
+			//Add End
 
-			MSG_FATAL("***zzg BondListDialog EVT_DIALOG_START***", 0, 0, 0);
+			if (pMe->m_device_list_id == IDS_LIST_BONDED)		
+			{			
+				enumerator.control = AEEBT_RM_EC_MATCH_BONDED;
+				enumerator.bBonded = TRUE;
+				stringID		   = IDS_BONDED_DEVICES;
+				msgID			   = IDS_MSG_NO_BONDED_DEV;
+				
+			}
+			else if (pMe->m_device_list_id == IDS_LIST_ALL)		
+			{
+				enumerator.control = AEEBT_RM_EC_ALL;
+				stringID           = IDS_KNOWN_DEVICES;
+				msgID              = IDS_MSG_NO_DEV;		
+
+				//PUSH_MENU(BT_APP_MENU_LIST_ALL);
+			}
+			else if (pMe->m_device_list_id == IDS_LIST_CONNECTED)		
+			{
+				enumerator.control = AEEBT_RM_EC_ALL;
+				stringID           = IDS_CONNECTED_DEVICES;
+				msgID              = IDS_MSG_NO_CONNECTED_DEV;
+				
+				//PUSH_MENU(BT_APP_MENU_LIST_CONNECTED);
+			}								
 
 			if (IBTEXTRM_DeviceEnumInit(pMe->mRM.po, &enumerator) == SUCCESS)
 			{
@@ -2352,6 +2546,40 @@ static boolean HandleBondListDialogEvent(CBTApp *pMe,
 						&& pDev->bValid && (i < MAX_DEVICES))
 				{
 					MSG_FATAL("***zzg BondListDialog IBTEXTRM_DeviceEnumNext SUCCESS***", 0, 0, 0);
+
+					if (pMe->m_device_list_id == IDS_LIST_CONNECTED)	
+					{
+						pMe->mRM.linkStatus->bdAddr = pDev->bdAddr;
+						if (IBTEXTRM_GetLinkStatus(pMe->mRM.po, pMe->mRM.linkStatus) != SUCCESS)
+						{
+							// dev not connected to us; skip it
+							continue;
+						}	
+					}
+
+					//Add By zzg 2011_10_26
+					if (AEEBT_RM_EC_MATCH_VALUE_1 == pMe->uDeviceListType)
+					{						
+						// find out if this is an audio device
+						if ((pDev->majorDevClass == AEEBT_COD_MAJ_DEV_CLS_AUDIO) 
+							|| (pDev->serviceClass & AEEBT_COD_SC_AUDIO))
+						{
+							bAudioDevice = TRUE;							
+						}
+						else
+						{
+							while ((j < pDev->uNumSvcs) &&(bAudioDevice == FALSE))
+							{
+								if ((pDev->svcs[j].uServiceClass == AEEBT_SD_SERVICE_CLASS_HEADSET) 
+									||(pDev->svcs[j].uServiceClass == AEEBT_SD_SERVICE_CLASS_HANDSFREE))
+								{									
+									bAudioDevice = TRUE;		
+								}	
+								j++;
+							}
+						}						
+					}
+					//Add End
 					
 					if ( WSTRLEN( pDev->wName ) == 0 )
 					{
@@ -2360,6 +2588,19 @@ static boolean HandleBondListDialogEvent(CBTApp *pMe,
 					else
 					{
 						WSTRLCPY( wName, pDev->wName, ARR_SIZE( wName ) );
+					}
+
+					if (pMe->m_device_list_id == IDS_LIST_CONNECTED)	
+					{
+						AECHAR wM[] = { ' ', '-', ' ', 'M', 0 };
+						AECHAR wS[] = { ' ', '-', ' ', 'S', 0 };
+
+						if (WSTRLEN(wName) > (ARR_SIZE(wName) - 5))
+						{
+							wName[ARR_SIZE(wName) - 5] = NULL;
+						}
+						
+						WSTRLCAT(wName, pMe->mRM.linkStatus->bMaster ? wM : wS, sizeof(wName));
 					}
 				
 #ifdef FEATURE_BT_2_1
@@ -2370,9 +2611,35 @@ static boolean HandleBondListDialogEvent(CBTApp *pMe,
 						WSTRLCAT( pwName, wBuf, AEEBT_MAX_DEVICENAME_LEN );
 					}
 					
-					IMENUCTL_AddItem(pMenu, NULL, 0, i, pwName, 0 );
+					//IMENUCTL_AddItem(pMenu, NULL, 0, i, pwName, 0 );
+					//Modify By zzg 2011_10_26
+					if (AEEBT_RM_EC_MATCH_VALUE_1 == pMe->uDeviceListType)
+					{
+						if (TRUE == bAudioDevice)
+						{
+							IMENUCTL_AddItem(pMenu, NULL, 0, i, pwName, 0 );
+						}
+					}
+					else
+					{
+						IMENUCTL_AddItem(pMenu, NULL, 0, i, pwName, 0 );
+					}
+					//Add End
 #else
-					IMENUCTL_AddItem(pMenu, NULL, 0, i, wName, 0 );
+					//IMENUCTL_AddItem(pMenu, NULL, 0, i, wName, 0 );
+					//Modify By zzg 2011_10_26
+					if (AEEBT_RM_EC_MATCH_VALUE_1 == pMe->uDeviceListType)
+					{
+						if (TRUE == bAudioDevice)
+						{
+							IMENUCTL_AddItem(pMenu, NULL, 0, i, pwName, 0 );
+						}
+					}
+					else
+					{
+						IMENUCTL_AddItem(pMenu, NULL, 0, i, pwName, 0 );
+					}
+					//Add End
 #endif // FEATURE_BT_2_1 
 
 
@@ -2389,17 +2656,34 @@ static boolean HandleBondListDialogEvent(CBTApp *pMe,
 
 				if (i > 0)
 				{
-					MSG_FATAL("***zzg BondListDialog i=%d***", i, 0, 0);
-					
+					MSG_FATAL("***zzg BondListDialog i=%d***", i, 0, 0);					
 					IMENUCTL_SetSel(pMenu, MENU_SEL);
 				}
 				else
 				{
-					MSG_FATAL("***zzg BondListDialog IBTEXTRM_DeviceEnumInit i == 0***", 0, 0, 0);	
+					MSG_FATAL("***zzg BondListDialog IBTEXTRM_DeviceEnumInit i == 0***", 0, 0, 0);
+
+					//Add By zzg 2011_06_07
+					IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
+					
+		            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+		            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
+
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+		            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
+#endif
+		            IMENUCTL_SetBottomBarType(pMenu, BTBAR_BACK);
+					
+		            (void) ISHELL_PostEvent( pMe->m_pShell,
+		                                     AEECLSID_BLUETOOTH_APP,
+		                                     EVT_USER_REDRAW,
+		                                     0,
+		                                     0);
+					//Add End				
+					
 					return TRUE;
 				}
-			}
-			
+			}			
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
 			#error code not present
@@ -2424,6 +2708,7 @@ static boolean HandleBondListDialogEvent(CBTApp *pMe,
                                      0);
             return TRUE;
         }
+		
         case EVT_USER_REDRAW:    
 		{	
 			(void)IMENUCTL_Redraw(pMenu);
@@ -2433,11 +2718,15 @@ static boolean HandleBondListDialogEvent(CBTApp *pMe,
 			IDISPLAY_UpdateEx(pMe->m_pIDisplay, FALSE);			
             return TRUE;
         }
+		
         case EVT_DIALOG_END:
-            return TRUE;
+        {
+			return TRUE;
+        }
 
         case EVT_KEY_PRESS:
-            switch(wParam)
+        {
+			switch(wParam)
             {
             	case AVK_INFO:	
 				case AVK_SELECT:
@@ -2447,408 +2736,32 @@ static boolean HandleBondListDialogEvent(CBTApp *pMe,
 						pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
 						MENU_SET_SEL( pMe->mRM.uCurDevIdx );
 
-						pMe->m_dialog_id = IDD_BOND_LIST;
+						pMe->m_dialog_id = IDD_DEVICE_LIST;
 						CLOSE_DIALOG(DLGRET_DEVICEINFO)
 					}				 				  
 					return TRUE;
             	}
-                case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
-                    return TRUE;
-
-                default:
-                    break;
-            }
-            return TRUE;        
-
-        default:
-            break;
-    }
-	return FALSE;
-}	
-
-static boolean HandleAllListDialogEvent(CBTApp *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-)
-{	 
-	PARAM_NOT_REF(dwParam)
-
-    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_ALL_LIST);
-
-	//AEEBTDeviceInfo*  pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
-	
-    if (pMenu == NULL)
-    {
-        return FALSE;
-    }
-	
-    MSG_FATAL("%x, %x ,%x,HandleAllListDialogEvent",eCode,wParam,dwParam);   
-
-    switch (eCode)
-    {
-        case EVT_DIALOG_INIT:			
-		{			
-			AECHAR 		WTitle[40] = {0};			
-
-			(void)ISHELL_LoadResString(pMe->m_pShell,
-				                        AEE_APPSBTAPP_RES_FILE,                                
-				                        IDS_LIST_ALL,
-				                        WTitle,
-				                        sizeof(WTitle));
-			
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle); 
-
-			MSG_FATAL("***zzg HandleAllListDialogEvent EVT_DIALOG_INIT***", 0, 0, 0);
-			
-            return TRUE;
-		}
-
-        case EVT_DIALOG_START:       
-        {
-			AEEBTDeviceEnumerator enumerator;
-			AEEBTDeviceInfo*      pDev;
-			CtlAddItem            ai;
-			AECHAR                wName[32];
-			uint16                stringID;
-			uint16                msgID;
-			uint8                 i;
-#ifdef FEATURE_BT_2_1
-			AECHAR*               pwName;
-			AECHAR                wBuf[ 5 ];
-			STRTOWSTR( "...", wBuf, sizeof(wBuf) );
-#endif /* FEATURE_BT_2_1 */
-
-			enumerator.control = AEEBT_RM_EC_ALL;
-			stringID           = IDS_KNOWN_DEVICES;
-			msgID              = IDS_MSG_NO_DEV;
-			
-
-			PUSH_MENU(BT_APP_MENU_LIST_ALL);
-			
-			if (IBTEXTRM_DeviceEnumInit(pMe->mRM.po, &enumerator) == SUCCESS)
-			{
-				BTApp_InitAddItem(&ai);
-				ai.wFont = AEE_FONT_BOLD;
-
-				i    = 0;
-				pDev = &pMe->mRM.device[i];
-
-				while ((IBTEXTRM_DeviceEnumNext(pMe->mRM.po, pDev) == SUCCESS) 
-						&& pDev->bValid && (i < MAX_DEVICES))
-				{
-					if (WSTRLEN(pDev->wName) == 0)
-					{
-						BTApp_BDAddr2Wstr(wName, &pDev->bdAddr);
-					}
-					else
-					{
-						WSTRLCPY(wName, pDev->wName, ARR_SIZE(wName));
-					}
-		
-#ifdef FEATURE_BT_2_1
-					pwName = pDev->wName;
-					if ((pDev->EIRData.uFlags & AEEBT_EIR_DATA_RCVD_B) 
-						&& (!(pDev->EIRData.uFlags & AEEBT_EIR_NAME_CMPLT_B)))
-					{
-						WSTRLCAT( pwName, wBuf, AEEBT_MAX_DEVICENAME_LEN);
-					}
-					IMENUCTL_AddItem(pMenu, NULL, 0, i, pwName, 0);
-#else
-					IMENUCTL_AddItem(pMenu, NULL, 0, i, wName, 0);
-#endif 
-					if (pDev->bBonded)
-					{
-						IMENUCTL_SetItem(pMenu, i, MSIF_FONT, &ai);
-					}
-
-					ai.wImage = BTApp_GetDevTypeImageID(pMe, pDev->serviceClass, &pDev->bdAddr );
-					IMENUCTL_SetItem(pMenu, i, MSIF_IMAGE, &ai );
-
-					pDev = &pMe->mRM.device[ ++i ];
-				}
-
-				if (i > 0)
-				{
-					MSG_FATAL("***zzg AllListDialog i=%d***", i, 0, 0);					
-					IMENUCTL_SetSel(pMenu, MENU_SEL);
-				}
-				else
-				{
-					MSG_FATAL("***zzg AllListDialog IBTEXTRM_DeviceEnumInit i == 0***", 0, 0, 0);	
-					return TRUE;
-				}
-			}
-
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-
-		  	IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
-
-			IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
-			IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
-
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-			IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
-#endif
-			IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-
-			IMENUCTL_SetSel(pMenu,	MENU_SEL);	// highlight the selected item
-			
-			(void) ISHELL_PostEvent( pMe->m_pShell,
-									 AEECLSID_BLUETOOTH_APP,
-									 EVT_USER_REDRAW,
-									 0,
-									 0);
-			return TRUE;
-		}
-		case EVT_USER_REDRAW:	 
-		{	
-			(void)IMENUCTL_Redraw(pMenu);
-
-			// Activate menu
-			IMENUCTL_SetActive(pMenu, TRUE);
-			IDISPLAY_UpdateEx(pMe->m_pIDisplay, FALSE); 		
-			return TRUE;
-		}
-
-        case EVT_DIALOG_END:
-            return TRUE;
-
-        case EVT_KEY_PRESS:
-            switch(wParam)
-            {
-            	case AVK_INFO:	
-				case AVK_SELECT:
-				{
-					MSG_FATAL("***zzg AllList AVK_SELECT Count=%d***",IMENUCTL_GetItemCount(pMenu), 0, 0 );
-					
-					if (IMENUCTL_GetItemCount(pMenu) > 0)
-					{
-						pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
-						MENU_SET_SEL( pMe->mRM.uCurDevIdx );
-
-						pMe->m_dialog_id = IDD_ALL_LIST;
-						CLOSE_DIALOG(DLGRET_DEVICEINFO)
-					}				 				  
-					return TRUE;
-            	}
-                case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
-                    return TRUE;
-
-                default:
-                    break;
-            }
-            return TRUE;        
-
-        default:
-            break;
-    }
-	return FALSE;
-}	
-
-static boolean HandleConnectListDialogEvent(CBTApp *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-)		
-{	 
-	PARAM_NOT_REF(dwParam)
-
-    IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_CONNECT_LIST);
-
-	//AEEBTDeviceInfo*  pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
-	
-    if (pMenu == NULL)
-    {
-        return FALSE;
-    }
-	
-    MSG_FATAL("%x, %x ,%x,HandleConnectListDialogEvent",eCode,wParam,dwParam);   
-
-    switch (eCode)
-    {
-        case EVT_DIALOG_INIT:			
-		{			
-			AECHAR 		WTitle[40] = {0};			
-
-			(void)ISHELL_LoadResString(pMe->m_pShell,
-				                        AEE_APPSBTAPP_RES_FILE,                                
-				                        IDS_LIST_CONNECTED,
-				                        WTitle,
-				                        sizeof(WTitle));
-			
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle); 
-
-			MSG_FATAL("***zzg HandleConnectListDialogEvent EVT_DIALOG_INIT***", 0, 0, 0);
-			
-            return TRUE;
-		}
-
-        case EVT_DIALOG_START:       
-        {
-			AEEBTDeviceEnumerator enumerator;
-			AEEBTDeviceInfo*      pDev;
-			CtlAddItem            ai;
-			AECHAR                wName[32];
-			uint16                stringID;
-			uint16                msgID;
-			uint8                 i;
-#ifdef FEATURE_BT_2_1
-			AECHAR*               pwName;
-			AECHAR                wBuf[ 5 ];
-			STRTOWSTR( "...", wBuf, sizeof(wBuf) );
-#endif /* FEATURE_BT_2_1 */
-		
-			enumerator.control = AEEBT_RM_EC_ALL;
-			stringID           = IDS_CONNECTED_DEVICES;
-			msgID              = IDS_MSG_NO_CONNECTED_DEV;
-			
-			PUSH_MENU(BT_APP_MENU_LIST_CONNECTED);
-
-			if (IBTEXTRM_DeviceEnumInit(pMe->mRM.po, &enumerator) == SUCCESS)
-			{
-				BTApp_InitAddItem(&ai);
-				ai.wFont = AEE_FONT_BOLD;
-
-				i    = 0;
-				pDev = &pMe->mRM.device[i];
-
-				while ((IBTEXTRM_DeviceEnumNext(pMe->mRM.po, pDev) == SUCCESS) 
-						&& pDev->bValid && (i < MAX_DEVICES))
-				{				
-					pMe->mRM.linkStatus->bdAddr = pDev->bdAddr;
-					if (IBTEXTRM_GetLinkStatus(pMe->mRM.po, pMe->mRM.linkStatus) != SUCCESS)
-					{
-						// dev not connected to us; skip it
-						continue;
-					}				
 				
-					if (WSTRLEN( pDev->wName) == 0)
-					{
-						BTApp_BDAddr2Wstr(wName, &pDev->bdAddr);
-					}
-					else
-					{
-						WSTRLCPY(wName, pDev->wName, ARR_SIZE(wName));
-					}
-					
-			
-					{
-						AECHAR wM[] = { ' ', '-', ' ', 'M', 0 };
-						AECHAR wS[] = { ' ', '-', ' ', 'S', 0 };
-
-						if (WSTRLEN(wName) > (ARR_SIZE(wName) - 5))
-						{
-							wName[ARR_SIZE(wName) - 5] = NULL;
-						}
-						
-						WSTRLCAT(wName, pMe->mRM.linkStatus->bMaster ? wM : wS, sizeof(wName));
-					}
-					
-#ifdef FEATURE_BT_2_1
-					pwName = pDev->wName;
-					if ((pDev->EIRData.uFlags & AEEBT_EIR_DATA_RCVD_B) 
-						&& (!(pDev->EIRData.uFlags & AEEBT_EIR_NAME_CMPLT_B)))
-					{
-						WSTRLCAT( pwName, wBuf, AEEBT_MAX_DEVICENAME_LEN );
-					}
-					
-					IMENUCTL_AddItem( pMe->m_pIMenu, NULL, 0, i, pwName, 0 );
-#else
-					IMENUCTL_AddItem( pMe->m_pIMenu, NULL, 0, i, wName, 0 );
-#endif 
-					if (pDev->bBonded)
-					{
-						IMENUCTL_SetItem(pMe->m_pIMenu, i, MSIF_FONT, &ai);
-					}
-
-					ai.wImage = BTApp_GetDevTypeImageID(pMe, pDev->serviceClass, &pDev->bdAddr);
-					
-					IMENUCTL_SetItem( pMe->m_pIMenu, i, MSIF_IMAGE, &ai );
-
-					pDev = &pMe->mRM.device[ ++i ];
-				}
-
-				if (i > 0)
-				{
-					MSG_FATAL("***zzg ConnectListDialog i=%d***", i, 0, 0);					
-					IMENUCTL_SetSel(pMenu, MENU_SEL);
-				}
-				else
-				{
-					MSG_FATAL("***zzg ConnectListDialog IBTEXTRM_DeviceEnumInit i == 0***", 0, 0, 0);	
-					return TRUE;
-				}
-			}
-
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-
-
-            IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
-
-            IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
-            IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
-
-#ifdef FEATURE_CARRIER_CHINA_VERTU
-            IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
-#endif
-            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
-
-			IMENUCTL_SetSel(pMenu,  MENU_SEL);  // highlight the selected item
-			
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_BLUETOOTH_APP,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);
-            return TRUE;
-        }
-        case EVT_USER_REDRAW:    
-		{	
-			(void)IMENUCTL_Redraw(pMenu);
-
-			// Activate menu
-			IMENUCTL_SetActive(pMenu, TRUE);
-			IDISPLAY_UpdateEx(pMe->m_pIDisplay, FALSE);			
-            return TRUE;
-        }
-        case EVT_DIALOG_END:
-            return TRUE;
-
-        case EVT_KEY_PRESS:
-            switch(wParam)
-            {
-            	case AVK_INFO:	
-				case AVK_SELECT:
-				{
-					if (IMENUCTL_GetItemCount(pMenu) > 0)
-					{
-						pMe->mRM.uCurDevIdx = IMENUCTL_GetSel(pMenu);
-						MENU_SET_SEL( pMe->mRM.uCurDevIdx );
-
-						pMe->m_dialog_id = IDD_CONNECT_LIST;
-						CLOSE_DIALOG(DLGRET_DEVICEINFO)
-					}				 				  
-					return TRUE;
-            	}
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                {
+					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
+                }
 
                 default:
-                    break;
+                {
+					break;
+                }
             }
             return TRUE;        
-
+        }
+		
         default:
-            break;
+        {
+			break;
+        }
     }
+	
 	return FALSE;
 }	
 
@@ -2862,7 +2775,6 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_MYINFO);
 	IStatic  *pStatic = (IStatic*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_MYINFO_STATIC);
-
 	
     if ((pMenu == NULL) || (pStatic == NULL))
     {
@@ -2871,21 +2783,16 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 	
     MSG_FATAL("%x, %x ,%x,HandleMyInfoDialogEvent",eCode,wParam,dwParam);
    
-
     switch (eCode)
     {
         case EVT_DIALOG_INIT:			
 		{
 			//IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
-
-			MSG_FATAL("***zzg MyInfoDialog EVT_DIALOG_INIT***", 0, 0, 0);
             return TRUE;
 		}
 
         case EVT_DIALOG_START:   
         {	
-			MSG_FATAL("***zzg MyInfoDialog EVT_DIALOG_START***", 0, 0, 0);
-			
 			IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
 			IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
 			IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
@@ -2899,13 +2806,12 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
                                      AEECLSID_BLUETOOTH_APP,
                                      EVT_USER_REDRAW,
                                      0,
-                                     0);     
-						
+                                     0);     						
             return TRUE;
         }
+		
         case EVT_USER_REDRAW:    
 		{
-
 			AEERect 	rc;
 			uint16		uLen = 0;	
 			AECHAR		WTitle[40] = {0};			
@@ -2923,21 +2829,19 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 										IDS_MY_INFO,
 										WTitle,
 										sizeof(WTitle));
+			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);
 
 			MSG_FATAL("***zzg MyInfoDialog EVT_USER_REDRAW bDiscoverable=%d***", pMe->mSD.bDiscoverable, 0, 0);
 			 
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);	
-
-			if ( IBTEXTRM_GetLocalInfo( pMe->mRM.po, &pMe->mRM.myInfo ) == SUCCESS )
+			if (IBTEXTRM_GetLocalInfo(pMe->mRM.po, &pMe->mRM.myInfo) == SUCCESS)
 			{
 				// set rect for info display area
-				SETAEERECT ( &rc, pMe->m_rect.x, 
-							 pMe->m_rect.y, 
-							 pMe->m_rect.dx, 
-							 pMe->m_rect.dy - BOTTOMBAR_HEIGHT); // leave room for SK menu
+				SETAEERECT(&rc, pMe->m_rect.x, 
+						   pMe->m_rect.y, 
+						   pMe->m_rect.dx, 
+						   pMe->m_rect.dy - BOTTOMBAR_HEIGHT); // leave room for SK menu
 						 
 				ISTATIC_SetRect(pStatic, &rc );
-
 
 				ISTATIC_SetProperties(pStatic, 
 									  ISTATIC_GetProperties(pStatic) 
@@ -2949,70 +2853,67 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
 				//Add End
 
 				// BT name
-				uLen += BTApp_FormatBTName( pMe, &pMe->pText1[ uLen], 
-											LONG_TEXT_BUF_LEN - uLen, 
-											pMe->mRM.myInfo.wName );
+				uLen += BTApp_FormatBTName(pMe, &pMe->pText1[uLen], 
+										   LONG_TEXT_BUF_LEN - uLen, 
+										   pMe->mRM.myInfo.wName);
 
 #ifdef FEATURE_BT_2_1
 				// BT ShortName
-				if ( WSTRCMP (pMe->mRM.myInfo.wName , pMe->mRM.myInfo.wShortName ) == 0 )
+				if (WSTRCMP(pMe->mRM.myInfo.wName , pMe->mRM.myInfo.wShortName) == 0)
 				{
 				  	bNameSame = TRUE;
 				} 
-				uLen += BTApp_FormatBTShortName( pMe, &pMe->pText1[ uLen], 
-												 LONG_TEXT_BUF_LEN - uLen, 
-												 pMe->mRM.myInfo.wShortName,
-												 bNameSame ); 
+				uLen += BTApp_FormatBTShortName(pMe, &pMe->pText1[uLen], 
+												LONG_TEXT_BUF_LEN - uLen, 
+												pMe->mRM.myInfo.wShortName,
+												bNameSame); 
 #endif 
 				// BD address
-				uLen += BTApp_FormatBDAddress( pMe, &pMe->pText1[ uLen], 
-											   LONG_TEXT_BUF_LEN - uLen, 
-											   &pMe->mRM.myInfo.bdAddr );
+				uLen += BTApp_FormatBDAddress(pMe, &pMe->pText1[uLen], 
+											  LONG_TEXT_BUF_LEN - uLen, 
+											  &pMe->mRM.myInfo.bdAddr);
 				// Security Level
-				uLen += BTApp_FormatSecurity( pMe, &pMe->pText1[ uLen], 
-											  LONG_TEXT_BUF_LEN - uLen, 
-											  pMe->mRM.myInfo.security );
+				uLen += BTApp_FormatSecurity(pMe, &pMe->pText1[uLen], 
+											 LONG_TEXT_BUF_LEN - uLen, 
+											 pMe->mRM.myInfo.security);
 				// Bondable status
-				uLen += BTApp_FormatBondable( pMe, &pMe->pText1[ uLen], 
-											  LONG_TEXT_BUF_LEN - uLen, 
-											  pMe->mRM.bBondable );
+				uLen += BTApp_FormatBondable(pMe, &pMe->pText1[uLen], 
+											 LONG_TEXT_BUF_LEN - uLen, 
+											 pMe->mRM.bBondable);
 				// Discoverable status
-				uLen += BTApp_FormatDiscoverable( pMe, &pMe->pText1[ uLen], 
-												  LONG_TEXT_BUF_LEN - uLen, 
-												  pMe->mSD.bDiscoverable );
+				uLen += BTApp_FormatDiscoverable(pMe, &pMe->pText1[uLen], 
+												 LONG_TEXT_BUF_LEN - uLen, 
+												 pMe->mSD.bDiscoverable);
 				// Service Class
-				uLen += BTApp_FormatSvcCls( pMe, &pMe->pText1[ uLen], 
-											LONG_TEXT_BUF_LEN - uLen, 
-											pMe->mRM.myInfo.svcCls );
+				uLen += BTApp_FormatSvcCls(pMe, &pMe->pText1[uLen], 
+										   LONG_TEXT_BUF_LEN - uLen, 
+										   pMe->mRM.myInfo.svcCls);
 				// LMP Version
-				uLen += BTApp_FormatLMPVersion( pMe, &pMe->pText1[ uLen], 
-												 LONG_TEXT_BUF_LEN - uLen );
+				uLen += BTApp_FormatLMPVersion(pMe, &pMe->pText1[uLen], 
+											   LONG_TEXT_BUF_LEN - uLen);
 
 				// LMP Subversion
-				uLen += BTApp_FormatLMPSubVersion( pMe, &pMe->pText1[ uLen], 
-												 LONG_TEXT_BUF_LEN - uLen );
+				uLen += BTApp_FormatLMPSubVersion(pMe, &pMe->pText1[uLen], 
+												 LONG_TEXT_BUF_LEN - uLen);
 				// LMP features
-				uLen += BTApp_FormatLMPFeatures( pMe, &pMe->pText1[ uLen], 
+				uLen += BTApp_FormatLMPFeatures(pMe, &pMe->pText1[uLen], 
 												 LONG_TEXT_BUF_LEN - uLen, 
-												 pMe->mRM.myInfo.uLMPFeatures );
+												 pMe->mRM.myInfo.uLMPFeatures);
 #ifdef FEATURE_BT_2_1
 				//ManuData
-				if ( IBTEXTRM_GetEIRManufData( pMe->mRM.po, NULL,
-												 &maxManuDataLen, 
-												 pManuData ) != SUCCESS )
+				if (IBTEXTRM_GetEIRManufData(pMe->mRM.po, NULL,
+											 &maxManuDataLen, 
+											 pManuData) != SUCCESS)
 				{
-				  MSG_ERROR( "MY Info - Manufacturer Data failed failed to read from EFS", 
-							 0, 0, 0 );
+					MSG_ERROR("MY Info - Manufacturer Data failed failed to read from EFS", 0, 0, 0);
 				} 
 				else
 				{
-				  for ( i = 0; i < maxManuDataLen; i++ )
-				  {
-					SNPRINTF( (szManuData + STRLEN(szManuData)), 
-							  sizeof(szManuData) - STRLEN(szManuData), "%c", pManuData[i]);
-				  }
-				  STRTOWSTR( (char*)szManuData, pMe->mRM.wManuData, 
-							 sizeof(pMe->mRM.wManuData) );
+					for (i = 0; i < maxManuDataLen; i++)
+					{
+						SNPRINTF((szManuData + STRLEN(szManuData)), sizeof(szManuData) - STRLEN(szManuData), "%c", pManuData[i]);
+					}
+					STRTOWSTR((char*)szManuData, pMe->mRM.wManuData, sizeof(pMe->mRM.wManuData));
 				}
 
 				uLen += BTApp_FormatManuData( pMe, &pMe->pText1[ uLen], 
@@ -3043,27 +2944,41 @@ static boolean HandleMyInfoDialogEvent(CBTApp *pMe,
             return TRUE;
 
 		}
+		
         case EVT_DIALOG_END:
-            return TRUE;
+        {
+			return TRUE;
+        }
 
         case EVT_KEY:
-            switch(wParam)
+        {
+			switch(wParam)
             {
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                {
+					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
+                }
 					
 				case AVK_INFO:
 				case AVK_SELECT:
+				{
 					CLOSE_DIALOG(DLGRET_MYINFO_OPITION)
 					return TRUE;
-                default:
-                    break;
+				}
+
+				default:
+                {
+					break;
+				}
             }
             return TRUE;
-			
-        default:
-            break;
+        }
+
+		default:
+        {
+			break;
+		}
     }
     return FALSE;
 }	
@@ -3082,21 +2997,20 @@ static boolean HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
     {
         return FALSE;
     }
+	
     MSG_FATAL("%x, %x ,%x,HandleMyInfoOpitionDialogEvent",eCode,wParam,dwParam);
    
-
     switch (eCode)
     {
         case EVT_DIALOG_INIT:			
-		{
-			
+		{			
 			AECHAR 		WTitle[40] = {0};			
 
 			(void)ISHELL_LoadResString(pMe->m_pShell,
-				                        AEE_APPSBTAPP_RES_FILE,                                
-				                        IDS_OPTIONS,
-				                        WTitle,
-				                        sizeof(WTitle));
+				                       AEE_APPSBTAPP_RES_FILE,                                
+				                       IDS_OPTIONS,
+				                       WTitle,
+				                       sizeof(WTitle));
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);   
 
@@ -3113,11 +3027,11 @@ static boolean HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
 		}
 
         case EVT_DIALOG_START:
-            // 给菜单各菜单项加数字编号图标
+        {
+			// 给菜单各菜单项加数字编号图标
             //BTApp_SetItemNumIcon(pMenu);
 
             IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
-
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
             IMENUCTL_SetOemProperties(pMenu, OEMMP_USE_MENU_STYLE);
 
@@ -3126,61 +3040,84 @@ static boolean HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
 #endif
             IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
 
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_BLUETOOTH_APP,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                    AEECLSID_BLUETOOTH_APP,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);
             return TRUE;
+        }
 
         case EVT_USER_REDRAW:    			
-            (void)IMENUCTL_Redraw(pMenu);
+        {
+			(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
+        }	
 
         case EVT_DIALOG_END:
-            return TRUE;
+        {
+			return TRUE;
+		}	
 
         case EVT_KEY:
-            switch(wParam)
+        {   
+			switch(wParam)
             {
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                {    
+					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
-
+				}
+				
                 default:
-                    break;
+                {   
+					break;
+				}
             }
             return TRUE;
-
+		}
+		
         case EVT_COMMAND:           
-            pMe->m_currDlgId = wParam;		
+        {
+			pMe->m_currDlgId = wParam;		
             switch (wParam)
             {
-            	case IDS_EDIT_NAME:	
-					CLOSE_DIALOG(DLGRET_EDIT_NAME)
-                    return TRUE;
-				case IDS_EDIT_SHORT_NAME:	
-					CLOSE_DIALOG(DLGRET_EDIT_SHORTNAME)
-                    return TRUE;
+            	case IDS_EDIT_NAME:					
+				case IDS_EDIT_SHORT_NAME:
 				case IDS_EDIT_MANU_DATA:	
-					CLOSE_DIALOG(DLGRET_EDIT_MANUDATA)
+				{	
+					CLOSE_DIALOG(DLGRET_MYINFO_EDIT)
                     return TRUE;
+				}
+				
 				case IDS_SECURITY:	
+				{	
 					CLOSE_DIALOG(DLGRET_SET_SECURITY)
-                    return TRUE;	
+                    return TRUE;
+				}
+				
 				case IDS_DISCOVERABLE:	
+				{	
 					CLOSE_DIALOG(DLGRET_SET_DISCOVERABLE)
                     return TRUE;
+				}
+				
 				case IDS_IOCAPABILITY:	
+				{	
 					CLOSE_DIALOG(DLGRET_SET_IOCAPABILITY)
                     return TRUE;
+				}
+				
 				case IDS_DBG_KEY:	
+				{	
 					CLOSE_DIALOG(DLGRET_SET_DEBUGKEY)
-                    return TRUE;				
+                    return TRUE;	
+				}
+				
 				case IDS_WRITE_OOB:
-					pMe->m_msg_state_id = BTAPPST_MYINFO;
-					pMe->m_msg_id = IDS_MSG_OOB_DATA_CREATED;
-					pMe->m_bNeedStr = FALSE;
+				{						
+					//pMe->m_msg_id = IDS_MSG_OOB_DATA_CREATED;
+					//pMe->m_bNeedStr = FALSE;
 					
 					BTApp_ShowBusyIcon( pMe );
 					CALLBACK_Init (&pMe->mRM.OOBCreateCb, BTApp_LocalOOBCreated, pMe);
@@ -3188,30 +3125,36 @@ static boolean HandleMyInfoOpitionDialogEvent(CBTApp *pMe,
 					{
 						MSG_ERROR( "BTApp - Failed to create OOB data", 0, 0, 0 );
 					}
-					CLOSE_DIALOG(DLGRET_BT_MSGBOX)
-                    return TRUE;					
+					//CLOSE_DIALOG(DLGRET_BT_MSGBOX)
+                    return TRUE;	
+				}
+				
 				default:
-				    ASSERT_NOT_REACHABLE;
+				{    
+					ASSERT_NOT_REACHABLE;
+				}
             }
             return TRUE;
-
+        }
+		
         default:
-            break;
+        {
+			break;
+        }
     }
     return FALSE;
 }	
 
 
-static boolean  HandleEditNameDialogEvent(CBTApp *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
+static boolean  HandleMyInfoEditDialogEvent(CBTApp *pMe,
+													  AEEEvent eCode,
+													  uint16 wParam,
+													  uint32 dwParam
 )
 {	 
 	PARAM_NOT_REF(dwParam)
 
-
-	ITextCtl *pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_EDITNAME);	
+	ITextCtl *pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_MYINFO_EDIT);	
 	
     if (NULL == pIText)
     {
@@ -3236,25 +3179,90 @@ static boolean  HandleEditNameDialogEvent(CBTApp *pMe,
 			
 			ITEXTCTL_SetMaxSize(pIText, AEEBT_MAX_DEVICENAME_LEN);				
 			ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_USELESS_UPDOWN |TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE |TP_FOCUS_NOSEL);
-			ITEXTCTL_SetText(pIText, pMe->mRM.myInfo.wName, WSTRLEN(pMe->mRM.myInfo.wName));			
-			ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);		
 
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_BLUETOOTH_APP,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);
+
+			MSG_FATAL("***zzg MyInfoEdit m_currDlgId=%d***", pMe->m_currDlgId, 0, 0);
+			
+			switch(pMe->m_currDlgId)
+			{
+				case IDS_EDIT_NAME:				
+				{
+					ITEXTCTL_SetText(pIText, pMe->mRM.myInfo.wName, WSTRLEN(pMe->mRM.myInfo.wName));	
+					break;
+				}
+				
+				case IDS_EDIT_SHORT_NAME:	
+				{
+					ITEXTCTL_SetText(pIText, pMe->mRM.myInfo.wShortName, WSTRLEN(pMe->mRM.myInfo.wShortName));		
+					break;
+				}
+				
+				case IDS_EDIT_MANU_DATA:	
+				{
+					ITEXTCTL_SetText(pIText, pMe->mRM.wManuData, WSTRLEN(pMe->mRM.wManuData));		
+					break;
+				}	
+
+				default:
+				{
+					break;
+				}
+			}
+					
+			ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);		
+			
+            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                    AEECLSID_BLUETOOTH_APP,
+                                    EVT_USER_REDRAW,
+                                    0,
+                                    0);
+			
             return TRUE;
         }
 
         case EVT_USER_REDRAW:    
 		{			
 			AECHAR 		WTitle[40] = {0};	
-			(void)ISHELL_LoadResString(pMe->m_pShell,
-				                        AEE_APPSBTAPP_RES_FILE,                                
-				                        IDS_EDIT_NAME,
-				                        WTitle,
-				                        sizeof(WTitle));
+
+			MSG_FATAL("***zzg MyInfoEdit m_currDlgId=%d***", pMe->m_currDlgId, 0, 0);
+			
+			switch(pMe->m_currDlgId)
+			{
+				case IDS_EDIT_NAME:				
+				{
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+						                       AEE_APPSBTAPP_RES_FILE,                                
+						                       IDS_EDIT_NAME,
+						                       WTitle,
+						                       sizeof(WTitle));	
+					break;
+				}
+				
+				case IDS_EDIT_SHORT_NAME:	
+				{
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+						                       AEE_APPSBTAPP_RES_FILE,                                
+						                       IDS_EDIT_SHORT_NAME,
+						                       WTitle,
+						                       sizeof(WTitle));
+					break;
+				}
+				
+				case IDS_EDIT_MANU_DATA:	
+				{	
+					(void)ISHELL_LoadResString(pMe->m_pShell,
+						                       AEE_APPSBTAPP_RES_FILE,                                
+						                       IDS_EDIT_MANU_DATA,
+						                       WTitle,
+						                       sizeof(WTitle)); 	
+					break;
+				}	
+
+				default:
+				{
+					break;
+				}
+			}			
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle); 
 						
@@ -3267,226 +3275,47 @@ static boolean  HandleEditNameDialogEvent(CBTApp *pMe,
 			IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE); 
             return TRUE;
         }
-        case EVT_DIALOG_END:
-            return TRUE;
-
-        case EVT_KEY:
-            switch(wParam)
-            {
-                case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
-                    return TRUE;
-					
-				case AVK_SELECT:
-				case AVK_INFO:
-					ITEXTCTL_GetText(pIText, pMe->pText2, SHORT_TEXT_BUF_LEN );
-					BTApp_SaveTextEdit(pMe, DLGRET_EDIT_NAME);
-					CLOSE_DIALOG(DLGRET_CANCELED)
-                    return TRUE;
-				
-                default:
-                    break;
-            }
-            return TRUE;
-			
-        default:
-            break;
-    }
-    return FALSE;
-}	
-
-static boolean  HandleEditShortNameDialogEvent(CBTApp *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-)
-{	 
-	PARAM_NOT_REF(dwParam)
-
-	ITextCtl *pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_EDIT_SHORTNAME);	
-	
-    if (NULL == pIText)
-    {
-        return FALSE;
-    }
-	
-    MSG_FATAL("%x, %x ,%x,HandEditNameDialogEvent",eCode,wParam,dwParam);   
-
-    switch (eCode)
-    {
-        case EVT_DIALOG_INIT:			
-		{			
-			//IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);				
-            return TRUE;
-		}
-
-        case EVT_DIALOG_START:   
-		{	  
-			AEERect		rc;		
-			SETAEERECT ( &rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx, pMe->m_rect.dy - BOTTOMBAR_HEIGHT);
-			ITEXTCTL_SetRect(pIText, &rc );
-			
-			ITEXTCTL_SetMaxSize(pIText, AEEBT_MAX_DEVICENAME_LEN);		
-			ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_USELESS_UPDOWN |TP_MULTILINE | TP_STARKEY_SWITCH | TP_NOUPDATE |TP_FOCUS_NOSEL);
-			ITEXTCTL_SetText(pIText, pMe->mRM.myInfo.wShortName, WSTRLEN(pMe->mRM.myInfo.wShortName));			
-			ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);		
-			
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_BLUETOOTH_APP,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);
-            return TRUE;
-        }
-
-        case EVT_USER_REDRAW:    
-		{			
-			AECHAR 		WTitle[40] = {0};	
-			(void)ISHELL_LoadResString(pMe->m_pShell,
-				                        AEE_APPSBTAPP_RES_FILE,                                
-				                        IDS_EDIT_SHORT_NAME,
-				                        WTitle,
-				                        sizeof(WTitle));
-			
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle); 
-
-						
-			ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);    
-			ITEXTCTL_SetActive(pIText, TRUE);
-			ITEXTCTL_Redraw(pIText);	
-
-			BT_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
-			
-			IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE ); 
-            return TRUE;
-        }
-        case EVT_DIALOG_END:
-            return TRUE;
-
-        case EVT_KEY:
-            switch(wParam)
-            {
-                case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
-                    return TRUE;
-					
-				case AVK_SELECT:
-				case AVK_INFO:
-					ITEXTCTL_GetText(pIText, pMe->pText2, SHORT_TEXT_BUF_LEN );
-					BTApp_SaveTextEdit(pMe, DLGRET_EDIT_SHORTNAME);
-					CLOSE_DIALOG(DLGRET_CANCELED)
-                    return TRUE;
-				
-                default:
-                    break;
-            }
-            return TRUE;
-			
-        default:
-            break;
-    }
-    return FALSE;
-}	
-
-static boolean  HandleEditManuDataDialogEvent(CBTApp *pMe,
-    AEEEvent eCode,
-    uint16 wParam,
-    uint32 dwParam
-)
-{	 
-	PARAM_NOT_REF(dwParam)
-
-	ITextCtl *pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_EDIT_MANU_DATA);
 		
-    if (NULL == pIText)
-    {
-        return FALSE;
-    }
-	
-    MSG_FATAL("%x, %x ,%x,HandEditNameDialogEvent",eCode,wParam,dwParam);   
-
-    switch (eCode)
-    {
-        case EVT_DIALOG_INIT:			
-		{			
-			//IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);				
-            return TRUE;
-		}
-
-        case EVT_DIALOG_START:   
-		{	  
-			AEERect		rc;		
-			SETAEERECT ( &rc, pMe->m_rect.x, pMe->m_rect.y, pMe->m_rect.dx, pMe->m_rect.dy - BOTTOMBAR_HEIGHT);
-			ITEXTCTL_SetRect(pIText, &rc );
-			
-			ITEXTCTL_SetMaxSize(pIText, AEEBT_MAX_DEVICENAME_LEN);				
-			ITEXTCTL_SetProperties(pIText, TP_FRAME | TP_USELESS_UPDOWN|TP_MULTILINE  | TP_STARKEY_SWITCH | TP_NOUPDATE |TP_FOCUS_NOSEL);		
-			ITEXTCTL_SetText(pIText, pMe->mRM.wManuData, WSTRLEN(pMe->mRM.wManuData));			
-			ITEXTCTL_SetInputMode(pIText, AEE_TM_LETTERS);			
-
-            (void) ISHELL_PostEvent( pMe->m_pShell,
-                                     AEECLSID_BLUETOOTH_APP,
-                                     EVT_USER_REDRAW,
-                                     0,
-                                     0);
-            return TRUE;
-        }
-
-        case EVT_USER_REDRAW:    
-		{			
-			AECHAR 		WTitle[40] = {0};	
-			(void)ISHELL_LoadResString(pMe->m_pShell,
-				                        AEE_APPSBTAPP_RES_FILE,                                
-				                        IDS_EDIT_MANU_DATA,
-				                        WTitle,
-				                        sizeof(WTitle));
-			
-			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle); 
-
-						
-			ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);    
-			ITEXTCTL_SetActive(pIText, TRUE);
-			ITEXTCTL_Redraw(pIText);	
-
-			BT_DRAW_BOTTOMBAR(BTBAR_OK_BACK)
-			
-			IDISPLAY_UpdateEx( pMe->m_pIDisplay, FALSE ); 
-            return TRUE;
-        }
         case EVT_DIALOG_END:
-            return TRUE;
+        {
+			return TRUE;
+       	}
 
         case EVT_KEY:
-			MSG_FATAL("***zzg HandleEditManuDataDialogEvent EVT_KEY wParam=%x***", wParam, 0, 0);
-			
-            switch(wParam)
+        {
+			switch(wParam)
             {
                 case AVK_CLR:
-					MSG_FATAL("***zzg HandleEditManuDataDialogEvent wParam=AVK_CLR***", 0, 0, 0);
-					
-                    CLOSE_DIALOG(DLGRET_CANCELED)
-                    return TRUE;
-					
-				case AVK_SELECT:
-				case AVK_INFO:					
-					MSG_FATAL("***zzg HandleEditManuDataDialogEvent wParam=%x***", wParam, 0, 0);
-					
-					ITEXTCTL_GetText(pIText, pMe->pText2, SHORT_TEXT_BUF_LEN );
-					BTApp_SaveTextEdit(pMe, DLGRET_EDIT_MANUDATA);
+                {
 					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
+                }
+					
+				case AVK_SELECT:
+				case AVK_INFO:
+				{
+					ITEXTCTL_GetText(pIText, pMe->pText2, SHORT_TEXT_BUF_LEN);
+					MSG_FATAL("***zzg MyInfoEdit m_currDlgId=%d***", pMe->m_currDlgId, 0, 0);
+					BTApp_SaveTextEdit(pMe, pMe->m_currDlgId);
+					CLOSE_DIALOG(DLGRET_CANCELED)
+                    return TRUE;
+				}	
 				
                 default:
-                    break;
+                {
+					break;
+                }
             }
             return TRUE;
-			
+        }	
+		
         default:
-            break;
+        {
+			break;
+       	}
     }
     return FALSE;
-}	
-
+}
 
 static boolean  HandleSetSecurityDialogEvent(CBTApp *pMe,
     AEEEvent eCode,
@@ -4259,11 +4088,11 @@ static boolean  HandleFtpDialogEvent(CBTApp * pMe,
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);  
 
-			if( pMe->mFTP.bRegistered == TRUE )
+			if (pMe->mFTP.bRegistered == TRUE)
 			{
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_SERVER, IDS_FTP_SERVER, NULL, 0);
 			}
-			else if( pMe->mFTP.bConnected == TRUE )
+			else if (pMe->mFTP.bConnected == TRUE)
 			{
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_FTP_CLIENT, IDS_FTP_CLIENT, NULL, 0);		
 			}
@@ -4297,28 +4126,39 @@ static boolean  HandleFtpDialogEvent(CBTApp * pMe,
                                      0);
             return TRUE;
         }
+		
         case EVT_USER_REDRAW:    			
-            (void)IMENUCTL_Redraw(pMenu);
+        {
+			(void)IMENUCTL_Redraw(pMenu);
             return TRUE;
+        }
 
         case EVT_DIALOG_END:
-            return TRUE;
+        {
+			return TRUE;
+       	}
 
         case EVT_KEY:
-            switch(wParam)
+        {
+			switch(wParam)
             {
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                {
+					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
+                }
 
                 default:
-                    break;
+                {
+					break;
+                }
             }
             return TRUE;
+        }
 		
         case EVT_COMMAND:           
-            pMe->m_currDlgId = wParam;		
-			pMe->m_prompt_state_id = BTAPPST_FTP;
+        {
+			pMe->m_currDlgId = wParam;		
 
 			switch (wParam)
             {	
@@ -4338,12 +4178,17 @@ static boolean  HandleFtpDialogEvent(CBTApp * pMe,
 					return TRUE;
 				}
 				default:
-				    ASSERT_NOT_REACHABLE;
+				{
+					ASSERT_NOT_REACHABLE;
+				}
             }
             return TRUE;
-
+        }
+		
         default:
-            break;
+        {
+			break;
+        }
     }
     return FALSE;	
 
@@ -4373,7 +4218,7 @@ static boolean  HandleFtpServerDialogEvent(CBTApp * pMe,
 		}
 
         case EVT_DIALOG_START:   
-			
+		{
             IMENUCTL_SetSel(pMenu, pMe->m_currDlgId);
 
             IMENUCTL_SetProperties(pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
@@ -4390,7 +4235,8 @@ static boolean  HandleFtpServerDialogEvent(CBTApp * pMe,
                                      0,
                                      0);
             return TRUE;
-
+        }
+		
         case EVT_USER_REDRAW:   
 		{			
 			AECHAR 		WTitle[40] = {0};
@@ -4424,30 +4270,39 @@ static boolean  HandleFtpServerDialogEvent(CBTApp * pMe,
         }
 
         case EVT_DIALOG_END:			
-            return TRUE;
+        {
+			return TRUE;
+        }
 
         case EVT_KEY:
-            switch(wParam)
+        {
+			switch(wParam)
             {
                 case AVK_CLR:
-                    CLOSE_DIALOG(DLGRET_CANCELED)
+                {
+					CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
+                }
 
                 default:
-                    break;
+                {
+					break;
+                }
             }
             return TRUE;
+		}
 
         case EVT_COMMAND:            
-            pMe->m_currDlgId = wParam;
-
-			pMe->m_msg_state_id = BTAPPST_FTP_SERVER;	//在此菜单下的所有BTMSG显示后返回到SERVER界面
+        {
+			pMe->m_currDlgId = wParam;
 			
             switch (wParam)
             {
             	case IDS_REGISTER:			
+				{
 					CLOSE_DIALOG(DLGRET_FTP_SERVER_REGISTER)
 					break;
+            	}	
 					
 				case IDS_DEREGISTER:	
 				{
@@ -4457,26 +4312,33 @@ static boolean  HandleFtpServerDialogEvent(CBTApp * pMe,
 					{
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
-#endif 						
+#endif 
+						MSG_ERROR( "FTP_Deregister() failed with %x", result, 0, 0 );					
 						BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
 					}
 					else
 					{
 						bRegistered = pMe->mFTP.bRegistered; 
 						pMe->mFTP.bRegistered = FALSE;
-						BTApp_CheckToClearDiscoverable( pMe );
+						BTApp_CheckToClearDiscoverable(pMe);
 						pMe->mFTP.bRegistered = bRegistered;
 						BTApp_ShowBusyIcon(pMe); 
 					}
 					break;
-				}					
+				}
+				
 				default:
-				    ASSERT_NOT_REACHABLE;
+				{
+					ASSERT_NOT_REACHABLE;
+				}
             }
             return TRUE;
-
+        }
+		
         default:
-            break;
+        {
+			break;
+        }
     }
     return FALSE;	
 }
@@ -4491,6 +4353,8 @@ static boolean  HandleFtpClientDialogEvent(CBTApp * pMe,
     PARAM_NOT_REF(dwParam)
 			
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_BT_FTP_CLIENT);
+
+	AECHAR  wBuf[AEEBT_MAX_FILE_NAME+1];
 		
     if (pMenu == NULL)
     {
@@ -4523,6 +4387,7 @@ static boolean  HandleFtpClientDialogEvent(CBTApp * pMe,
                                      0);
             return TRUE;
         }
+		
         case EVT_USER_REDRAW:   
 		{			
 			AECHAR 		WTitle[40] = {0};
@@ -4583,8 +4448,7 @@ static boolean  HandleFtpClientDialogEvent(CBTApp * pMe,
         case EVT_COMMAND:            
         {
 			pMe->m_currDlgId = wParam;
-			pMe->m_msg_state_id = BTAPPST_FTP_CLIENT;	//在此菜单下的所有BTMSG显示后返回到CLIENT界面
-
+			
 			MSG_FATAL("***zzg FtpClientDlgEvent EVT_COMMAND wParam=%d***", wParam, 0, 0);
 			
             switch (wParam)
@@ -4631,13 +4495,10 @@ static boolean  HandleFtpClientDialogEvent(CBTApp * pMe,
 							BTApp_ShowMessage( pMe, IDS_MSG_NO_OBEX_SERVERS, NULL, 0 );
 						}					
 						
-					}
-					else
-					{
-						//BTApp_ShowMessage( pMe, IDS_MSG_DEREG_SVR_FIRST, NULL, 0 );
-					} 
+					}					
 					break;
             	}
+				
 				case IDS_DISCONNECT:	
 				{
 					if ((IBTEXTFTP_Disconnect(pMe->mFTP.po)) != SUCCESS)
@@ -4650,6 +4511,7 @@ static boolean  HandleFtpClientDialogEvent(CBTApp * pMe,
 
 					break;
 				}
+				
 				case IDS_FTP_LIST_FOLDER:	
 				{
 					pMe->mFTP.bRemoteBrowsing = TRUE;
@@ -4662,9 +4524,8 @@ static boolean  HandleFtpClientDialogEvent(CBTApp * pMe,
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif 
-
-						//STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));
-						//BTApp_ShowMessage( pMe, IDS_MSG_FOLDER_BROWSING_FAILED, wBuf, 3 );
+						STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));
+						BTApp_ShowMessage(pMe, IDS_MSG_FOLDER_BROWSING_FAILED, wBuf, 3);
 					}
 					else
 					{
@@ -4673,30 +4534,41 @@ static boolean  HandleFtpClientDialogEvent(CBTApp * pMe,
 
 					break;
 				}		
+				
 				case IDS_PUT:
 				{
 					pMe->mFTP.bRemoteBrowsing = FALSE;
-
-				//	else if( pMe->mFTP.u8StorageDevice == STORAGE_DEV_MEM_CARD )
+					
+					if (IFILEMGR_Test(pMe->mFTP.pIFileMgr, AEEFS_CARD0_DIR) == SUCCESS)		//Have  T Card
 					{
-						STRLCPY(pMe->mFTP.szLocalBrowsePath, AEEFS_CARD0_DIR, sizeof(pMe->mFTP.szLocalBrowsePath));
-						STRLCPY(pMe->mFTP.szCurrentFolder, AEEFS_CARD0_DIR, sizeof(pMe->mFTP.szCurrentFolder));
+						//	else if( pMe->mFTP.u8StorageDevice == STORAGE_DEV_MEM_CARD )
+						{
+							STRLCPY(pMe->mFTP.szLocalBrowsePath, AEEFS_CARD0_DIR, sizeof(pMe->mFTP.szLocalBrowsePath));
+							STRLCPY(pMe->mFTP.szCurrentFolder, AEEFS_CARD0_DIR, sizeof(pMe->mFTP.szCurrentFolder));
+	
+							// Removing the terminal '/' character as this character is added 
+							//during FTP operations. Otherwise, the path will contain "//". 
+							pMe->mFTP.szLocalBrowsePath[STRLEN(AEEFS_CARD0_DIR) - 1] = '\0';
+							pMe->mFTP.szCurrentFolder[STRLEN(AEEFS_CARD0_DIR) - 1] = '\0';
 
-						// Removing the terminal '/' character as this character is added 
-						//during FTP operations. Otherwise, the path will contain "//". 
-						pMe->mFTP.szLocalBrowsePath[STRLEN(AEEFS_CARD0_DIR) - 1] = '\0';
-						pMe->mFTP.szCurrentFolder[STRLEN(AEEFS_CARD0_DIR) - 1] = '\0';
+							BTApp_GetNameOfLocalObjects(pMe, pMe->mFTP.szLocalBrowsePath);	
 
-						BTApp_GetNameOfLocalObjects(pMe, pMe->mFTP.szLocalBrowsePath);
+							CLOSE_DIALOG(DLGRET_FTP_BROWSE)	
+							return TRUE;
+						}
 					}
-
+					else
+					{
+						BTApp_ShowMessage(pMe, IDS_INSERT_TCARD, wBuf, 3);
+					}					
+					
+				
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
-#endif
-					CLOSE_DIALOG(DLGRET_FTP_BROWSE)	
-					return TRUE;
-					
+#endif					
+					break;
 				}
+				
 				default:
 				{
 					ASSERT_NOT_REACHABLE;
@@ -4704,11 +4576,13 @@ static boolean  HandleFtpClientDialogEvent(CBTApp * pMe,
             }
             return TRUE;
         }
+		
         default:
         {
 			break;
         }
     }
+	
     return FALSE;	
 }
 
@@ -4807,18 +4681,24 @@ static boolean  HandleFtpSettingDialogEvent(CBTApp * pMe,
 				}				
 				
 				case AVK_CLR:
+				{
 					CLOSE_DIALOG(DLGRET_CANCELED)
 					return TRUE;
+				}
 
 				default:
+				{
 					break;
+				}
 			}
 			
-			 return TRUE;
+			return TRUE;
 		}
 		
 		default:
+		{
 			break;
+		}
 	}
     return FALSE;	
 }
@@ -4944,8 +4824,7 @@ static boolean  HandleFtpServerRegisterDialogEvent(CBTApp * pMe,
 
 						MSG_FATAL("***zzg HandleFTPServerRegisterDlg EVT_KEY_PRESS IBTEXTFTP_Register != SUCCESS***", 0, 0, 0);
 						BTApp_ClearBondable( pMe ); // no need to be bondable anymore
-
-						pMe->m_msg_state_id = BTAPPST_FTP_SERVER;	
+						
 						BTApp_ShowMessage( pMe, IDS_MSG_SVR_REG_FAILED, NULL, 3);
 					}
 					else
@@ -4960,7 +4839,6 @@ static boolean  HandleFtpServerRegisterDialogEvent(CBTApp * pMe,
 						BTApp_ShowBusyIcon( pMe ); // wait for command done
 					}
 					
-
 					CLOSE_DIALOG(DLGRET_CANCELED)	
 					return TRUE;
 				}				
@@ -5002,8 +4880,8 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 		{	
 			return TRUE;
 		}
-
-		case EVT_DIALOG_START:		 
+		
+		case EVT_DIALOG_START:
 		{			
 			CtlAddItem ai;
 			AEERect	 rc;
@@ -5011,8 +4889,7 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 			AECHAR	 wName[ AEEBT_MAX_FILE_NAME+1 ];
 
 			AECHAR	WTitle[40] = {0};						
-
-			//.......Show The Title............
+			
 			if (pMe->mFTP.bRemoteBrowsing)
 			{
 				(void)ISHELL_LoadResString(pMe->m_pShell,
@@ -5030,7 +4907,6 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 			}
 			else
 			{
-				// Set the title for the menu
 				STRTOWSTR( "Local Browsing", wName, sizeof(wName));				
 				
 				if (pMe->m_pIAnn != NULL)
@@ -5040,11 +4916,13 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 
 				uNoOfItems = pMe->mFTP.uNumOfObjInLocalDev;
 			}
-			//.........Show Title End...............
-		
+
+			MSG_FATAL("***zzg uNumOfObjInRemoteDev=%d, uNumOfObjInLocalDev=%d***", pMe->mFTP.uNumOfObjInRemoteDev, pMe->mFTP.uNumOfObjInLocalDev, 0);			
+			
+			MSG_FATAL("***zzg FtpBrowseDlg uNoOfItems=%d ***", uNoOfItems, 0, 0);
 
 			while (uNoOfItems > 0)
-			{
+			{				
 				if (pMe->mFTP.bRemoteBrowsing)
 				{
 					STRTOWSTR(pMe->mFTP.remoteObjects[pMe->mFTP.uNumOfObjInRemoteDev-uNoOfItems].szFolderFileName, wName, sizeof(wName));
@@ -5075,6 +4953,7 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
 			IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
+			
 			if (pMe->mFTP.bRemoteBrowsing)
 			{
 				IMENUCTL_SetBottomBarType(pMenu, BTBAR_OPTION_BACK);
@@ -5085,12 +4964,17 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 			}
 
 			IMENUCTL_SetSel(pMenu,	MENU_SEL);	// highlight the selected item
-			
+
 			(void) ISHELL_PostEvent( pMe->m_pShell,
 									 AEECLSID_BLUETOOTH_APP,
 									 EVT_USER_REDRAW,
 									 0,
-									 0);
+									 0);			
+
+			(void)IMENUCTL_Redraw(pMenu);			
+			IMENUCTL_SetActive(pMenu, TRUE);
+			IDISPLAY_UpdateEx(pMe->m_pIDisplay, FALSE); 	
+			
 			return TRUE;
 		}
 		
@@ -5101,7 +4985,7 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 			IDISPLAY_UpdateEx(pMe->m_pIDisplay, FALSE); 		
 			return TRUE;
 		}
-		
+				
 		case EVT_DIALOG_END:
 		{
 			return TRUE;
@@ -5115,10 +4999,7 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 			AECHAR  wName[AEEBT_MAX_FILE_NAME+1]; 
 			AECHAR  wBuf[AEEBT_MAX_FILE_NAME+1];
 			int     result=0;
-
-			MSG_FATAL("***zzg BTappFtpBrowseDlgEvt bRemoteBrowsing=%d, bObjectTransfer=%d***", 
-				       pMe->mFTP.bRemoteBrowsing, pMe->mFTP.bObjectTransfer, 0);
-				
+			
 			if (pMe->mFTP.bRemoteBrowsing)
 			{
 				switch(wParam)
@@ -5158,15 +5039,11 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 						if (IMENUCTL_GetItemCount(pMenu) > 0)					
 						{
 							uIndex = IMENUCTL_GetSel(pMenu);
-							
-							MSG_FATAL("***zzg FtpBrowseOpitionDlgEvt AVK_INFO uIndex=%d***", uIndex, 0, 0);
-							
-														
+																				
 							// Get the name of the menu item selected on the screen
 							STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName)); 
 
-							MSG_FATAL("***zzg FtpBrowseOpition uIndex=%x, szTypeOfObj=%x***", 
-										uIndex, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, 0);
+							MSG_FATAL("***zzg FtpBrowseOpition uIndex=%x, szTypeOfObj=%x***", uIndex, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, 0);
 
 							// If folder,  browse the folder 
 							if (pMe->mFTP.remoteObjects[uIndex].szTypeOfObj == AEEBT_FTP_FOLDER)
@@ -5227,7 +5104,7 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 #error code not present
 #endif 								
 								MSG_ERROR("Set Path to parent failed", 0, 0, 0);
-								MSG_FATAL("***zzg FtpBrowseDlgEvt IBTEXTFTP_SetPath Failed!***", 0, 0, 0);
+								MSG_FATAL("***zzg FtpBrowseDlgEvt IBTEXTFTP_SetPath Failed!***", 0, 0, 0);								
 							}
 							else
 							{
@@ -5235,14 +5112,14 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 								
 								// Store 'PARENT' as interop device parent folder name is not known								
 								STRLCPY(szOperandex, PARENT_FOLDER_STR, sizeof(szOperandex));
-								BTApp_ShowBusyIcon(pMe); // wait for connect confirm
+								BTApp_ShowBusyIcon(pMe); // wait for connect confirm									
 							}
 							
 						}
-							  
-						CLOSE_DIALOG(DLGRET_CANCELED)
-						return TRUE;
-						
+
+						CLOSE_DIALOG(DLGRET_FTP_BROWSE)		  	
+						//CLOSE_DIALOG(DLGRET_CANCELED)
+						return TRUE;						
 					}
 
 					default:
@@ -5290,17 +5167,20 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 #error code not present
 #endif 
 									MSG_MED("Put file failed. Result=%d", result, 0, 0);
+									DBGPRINTF("***zzg IBTEXTFTP_Put result=%d***", result);
 									BTApp_ShowMessage(pMe, IDS_MSG_FILE_PUT_FAILED, wName, 3);
 									ev_processed = FALSE;
+									return TRUE;
 								}
 								else         
 								{
 									pMe->mFTP.bObjectTransfer = TRUE;
 									//ShowBusyIcon(pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE);
-								}
 
-								CLOSE_DIALOG(DLGRET_CANCELED)
-								return TRUE;
+									//CLOSE_DIALOG(DLGRET_CANCELED)
+									return TRUE;
+								}
+								
 							}
 
 							// Folder name having more than AEEBT_MAX_FILE_NAME characters will 
@@ -5320,14 +5200,19 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 							STRLCAT(pMe->mFTP.szLocalBrowsePath, DIRECTORY_STR, sizeof(pMe->mFTP.szLocalBrowsePath));
 							STRLCAT(pMe->mFTP.szLocalBrowsePath, pMe->mFTP.localObjects[uIndex].szFolderFileName, sizeof(pMe->mFTP.szLocalBrowsePath));
 
-							// Local browse path is copied on to szCurrentFolder so that PUT of a
+							//Local browse path is copied on to szCurrentFolder so that PUT of a
 							//local device subfolder points to the right path to read and PUT the 
 							//contents on to the server 
 							STRLCPY(pMe->mFTP.szCurrentFolder, pMe->mFTP.szLocalBrowsePath, sizeof(pMe->mFTP.szCurrentFolder));
 
-							BTApp_GetNameOfLocalObjects(pMe, pMe->mFTP.szLocalBrowsePath);
+							MSG_FATAL("***zzg bRemoteBrowsing=%d xxx***", pMe->mFTP.bRemoteBrowsing, 0, 0);
 
-							CLOSE_DIALOG(DLGRET_FTP_BROWSE)	
+							BTApp_GetNameOfLocalObjects(pMe, pMe->mFTP.szLocalBrowsePath);
+							
+							MSG_FATAL("***zzg bRemoteBrowsing=%d yyy***", pMe->mFTP.bRemoteBrowsing, 0, 0);
+							
+							CLOSE_DIALOG(DLGRET_FTP_BROWSE)								
+														
 							//BTApp_BuildMenu(pMe, BT_APP_MENU_FTP_BROWSING);
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
@@ -5391,6 +5276,8 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 					case AVK_CLR:
 					{
 						MSG_FATAL("***zzg FtpBrowseDlgEvt LocalBrowse AVK_CLR bObjectTransfer=%d***", pMe->mFTP.bObjectTransfer, 0, 0);
+
+						DBGPRINTF("***zzg szLocalBrowsePath=%s, szCurrentFolder=%s***", pMe->mFTP.szLocalBrowsePath, pMe->mFTP.szCurrentFolder);
 						
 						if (pMe->mFTP.bObjectTransfer)
 						{
@@ -5409,34 +5296,46 @@ static boolean HandleFtpBrowseDialogEvent(CBTApp *pMe,
 								MSG_MED("Aborted", 0, 0, 0);
 							} 
 						}
-						else
-						{
-							//Add By zzg 2011_02_24		
-							
+						else if (STRCMP(pMe->mFTP.szLocalBrowsePath, CARD0_DIR) != 0)
+						{						
+							//Add By zzg 2011_02_24									
 							char *pszTemp; 
 							char path[AEEBT_MAX_FILE_NAME * 2 + 1];
 							uint8 tmplen;
 							uint8 pathlen;
+
+							DBGPRINTF("***zzg szLocalBrowsePath=%s***", pMe->mFTP.szLocalBrowsePath);
+							DBGPRINTF("***zzg szCurrentFolder=%s***", pMe->mFTP.szCurrentFolder);
 							
 							pszTemp = STRRCHR(pMe->mFTP.szLocalBrowsePath, DIRECTORY_CHAR);
-
 							tmplen = STRLEN(pszTemp);
 							pathlen = STRLEN(pMe->mFTP.szCurrentFolder);
+
+
+							DBGPRINTF("***zzg pathlen=%d, tmplen=%d***", pathlen, tmplen);
+							DBGPRINTF("***zzg pszTemp=%s, szLocalBrowsePath=%s***", pszTemp, pMe->mFTP.szLocalBrowsePath);
+
 							
 							//STRLCPY(pMe->mFTP.szCurrentFolder, pszTemp, sizeof(pMe->mFTP.szCurrentFolder));
-							STRLCPY(path, pMe->mFTP.szCurrentFolder, (pathlen-tmplen)*sizeof(char));		
-							MEMSET(pMe->mFTP.szCurrentFolder, 0, sizeof(pMe->mFTP.szCurrentFolder));
-							STRLCPY(pMe->mFTP.szCurrentFolder, path, sizeof(pMe->mFTP.szCurrentFolder));								
-							
-							DBGPRINTF("***zzg pszTemp=%s, path=%s***", pszTemp, path);
-							
-							BTApp_GetNameOfLocalObjects(pMe, pMe->mFTP.szCurrentFolder);
+							STRLCPY(path, pMe->mFTP.szLocalBrowsePath, (pathlen-tmplen+1)*sizeof(char));								
+							MEMSET(pMe->mFTP.szLocalBrowsePath, 0, sizeof(pMe->mFTP.szLocalBrowsePath));							
+							STRLCPY(pMe->mFTP.szLocalBrowsePath, path, sizeof(pMe->mFTP.szLocalBrowsePath));	
 
-							CLOSE_DIALOG(DLGRET_FTP_BROWSE)									
-							return TRUE;	
-							//BTApp_BuildMenu(pMe, BT_APP_MENU_FTP_BROWSING);
+							STRLCPY(pMe->mFTP.szCurrentFolder, pMe->mFTP.szLocalBrowsePath, sizeof(pMe->mFTP.szCurrentFolder));
 							
+
+							DBGPRINTF("***zzg pszTemp=%s, path=%s, szLocalBrowsePath=%s***", pszTemp, path, pMe->mFTP.szLocalBrowsePath);
+
+							DBGPRINTF("***zzg pszTemp=%s, path=%s***", pszTemp, path);
+
+							
+							BTApp_GetNameOfLocalObjects(pMe, pMe->mFTP.szLocalBrowsePath);
+
+							CLOSE_DIALOG(DLGRET_FTP_BROWSE)										
+							return TRUE;
 							//Add End
+							
+														
 						}
 
 						CLOSE_DIALOG(DLGRET_CANCELED)						
@@ -5484,7 +5383,7 @@ static boolean HandleFtpBrowseOpitionDialogEvent(CBTApp * pMe,AEEEvent eCode,uin
 										sizeof(WTitle));
 			
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn, WTitle);  	
-
+		
 			if (pMe->mFTP.bRemoteBrowsing)
 			{
 				IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_BT_SELECT, IDS_BT_SELECT, NULL, 0);		
@@ -5556,64 +5455,186 @@ static boolean HandleFtpBrowseOpitionDialogEvent(CBTApp * pMe,AEEEvent eCode,uin
 			AECHAR  wName[AEEBT_MAX_FILE_NAME+1];
 			AECHAR  wBuf[AEEBT_MAX_FILE_NAME+1];
 			int     result = 0;
-
-			
-			pMe->m_currDlgId = wParam;	
-			pMe->m_prompt_state_id = BTAPPST_FTP_BROWSE_OPITION;	
+		
+			pMe->m_currDlgId = wParam;				
 			
 			switch (wParam)
 			{			
 				case IDS_BT_SELECT:
 				{
-					int			count;
-					int 		curItem;
-					uint16		curItemId;
-					CtlAddItem	ai;
-					
-					count = IMENUCTL_GetItemCount(pMenu);					
-					
-					if (IMENUCTL_GetItemCount(pMenu) > 0)					
+					if (IFILEMGR_Test(pMe->mFTP.pIFileMgr, AEEFS_CARD0_DIR) != SUCCESS)		//Have  not T Card
 					{
-						MSG_FATAL("***zzg FtpBrowseOpitionDlgEvt IDS_BT_SELECT m_folder_index=%d***", pMe->m_folder_index, 0, 0);
+						BTApp_ShowMessage(pMe, IDS_INSERT_TCARD, wBuf, 3);
+					}
+					else
+					{
+						int			count;
+						int 		curItem;
+						uint16		curItemId;
+						CtlAddItem	ai;
 						
-						uIndex = pMe->m_folder_index;
+						count = IMENUCTL_GetItemCount(pMenu);					
 						
-						// Get the name of the menu item selected on the screen
-						STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName)); 
-
-						MSG_FATAL("***zzg FtpBrowseOpition uIndex=%x, szTypeOfObj=%x***", 
-									uIndex, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, 0);
-
-						// Check whether the selected item is a folder or file. If file, 
-						//then GET the file. If folder, then browse the folder 
-						if (pMe->mFTP.remoteObjects[uIndex].szTypeOfObj == AEEBT_FTP_FILE)
+						if (IMENUCTL_GetItemCount(pMenu) > 0)					
 						{
+							MSG_FATAL("***zzg FtpBrowseOpitionDlgEvt IDS_BT_SELECT m_folder_index=%d***", pMe->m_folder_index, 0, 0);
+							
+							uIndex = pMe->m_folder_index;
+							
+							// Get the name of the menu item selected on the screen
+							STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName)); 
+
+							MSG_FATAL("***zzg FtpBrowseOpition uIndex=%x, szTypeOfObj=%x***", 
+										uIndex, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, 0);
+
+							// Check whether the selected item is a folder or file. If file, 
+							//then GET the file. If folder, then browse the folder 
+							if (pMe->mFTP.remoteObjects[uIndex].szTypeOfObj == AEEBT_FTP_FILE)
+							{
+								//if (pMe->mFTP.u8StorageDevice == STORAGE_DEV_MEM_CARD)
+								//Default Device is STORAGE_DEV_MEM_CARD
+								{
+									STRLCPY(szOperandex, AEEFS_CARD0_DIR, sizeof(szOperandex));
+								}
+								
+								MSG_FATAL("***zzg szFolderFileName=%s***", pMe->mFTP.remoteObjects[uIndex].szFolderFileName, 0, 0);
+
+								if ((STRLEN(szOperandex) + 
+									STRLEN(pMe->mFTP.remoteObjects[uIndex].szFolderFileName )) > 
+									AEEBT_MAX_FILE_NAME) 
+								{
+									MSG_ERROR( "File / Folder name exceeds max", 0, 0, 0 );
+									MSG_FATAL("***zzg File / Folder name exceeds max***", 0, 0, 0);
+									BTApp_ShowMessage( pMe, IDS_MSG_FILE_GET_FAILED, wName, 3 );
+									break;            
+								}
+
+								STRLCAT(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
+								// Remove if the file already exists
+								if (IFILEMGR_Test(pMe->mFTP.pIFileMgr, szOperandex) == SUCCESS)
+								{
+									if (IFILEMGR_Remove(pMe->mFTP.pIFileMgr, szOperandex) != SUCCESS)
+									{
+										DBGPRINTF("Could not remove the file %s", szOperandex);
+									}
+								}
+
+								STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));
+
+								if (IBTEXTFTP_Get(pMe->mFTP.po, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, wBuf, wName) != SUCCESS)
+								{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+
+									MSG_ERROR("FTP file Get failed", 0, 0, 0);
+									MSG_FATAL("***zzg FTP file Get failed***", 0, 0, 0);
+
+									BTApp_ShowMessage(pMe, IDS_MSG_FILE_GET_FAILED, wName, 3);
+								}
+								else
+								{
+									//Copying the object name just to display once GET is over
+									STRLCPY(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
+									pMe->mFTP.bObjectTransfer = TRUE;
+									//ShowBusyIcon(pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE);
+								}
+								break;
+							}			
+
+							if (IBTEXTFTP_SetPath(pMe->mFTP.po, wName, AEEBT_FTP_SET_PATH_TO_FOLDER) != SUCCESS)
+							{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
+								MSG_ERROR("Set Path to folder failed", 0, 0, 0);
+								BTApp_ShowMessage(pMe, IDS_MSG_FOLDER_BROWSING_FAILED, wName, 3);
+							}
+							else
+							{
+								// Storing folder name to display it later in case of failure
+								STRLCPY(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
+								BTApp_ShowBusyIcon(pMe); // wait for connect confirm
+							}
+						}
+					}
+					//CLOSE_DIALOG(DLGRET_CANCELED)
+					return TRUE;
+				}					
+				case IDS_GET:						
+				{
+					if (IFILEMGR_Test(pMe->mFTP.pIFileMgr, AEEFS_CARD0_DIR) != SUCCESS)		//Have  not T Card
+					{
+						BTApp_ShowMessage(pMe, IDS_INSERT_TCARD, wBuf, 3);
+					}
+					else
+					{
+						if (IMENUCTL_GetItemCount(pMenu) > 0)
+						{
+							MSG_FATAL("***zzg FtpBrowseOpitionDlgEvt IDS_BT_SELECT m_folder_index=%d***", pMe->m_folder_index, 0, 0);
+							uIndex = pMe->m_folder_index;
+							
+							//uIndex = IMENUCTL_GetSel(pMe->m_pIMenu);
+							
+							// Get the name of the menu item selected on the screen
+							STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName));
+
 							//if (pMe->mFTP.u8StorageDevice == STORAGE_DEV_MEM_CARD)
-							//Default Device is STORAGE_DEV_MEM_CARD
+							//Default device is STORAGE_DEV_MEM_CARD
 							{
 								STRLCPY(szOperandex, AEEFS_CARD0_DIR, sizeof(szOperandex));
 							}
 
 							if ((STRLEN(szOperandex) + 
-								STRLEN(pMe->mFTP.remoteObjects[uIndex].szFolderFileName )) > 
+								STRLEN(pMe->mFTP.remoteObjects[uIndex].szFolderFileName)) > 
 								AEEBT_MAX_FILE_NAME) 
 							{
-								MSG_ERROR( "File / Folder name exceeds max", 0, 0, 0 );
-								BTApp_ShowMessage( pMe, IDS_MSG_FILE_GET_FAILED, wName, 3 );
+								MSG_ERROR("File / Folder name exceeds max", 0, 0, 0);
+								BTApp_ShowMessage(pMe, IDS_MSG_FILE_GET_FAILED, wName, 3);
 								break;            
 							}
 
 							STRLCAT(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
-							// Remove if the file already exists
-							if (IFILEMGR_Test(pMe->mFTP.pIFileMgr, szOperandex) == SUCCESS)
+							STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));
+							
+							DBGPRINTF("***zzg GET file/folder name is %s***", szOperandex);
+							DBGPRINTF("***zzg GET szFolderFileName name is %s***", pMe->mFTP.remoteObjects[uIndex].szFolderFileName);						
+
+							MSG_FATAL("***zzg FtpBrowseOpitionDlgEvt IDS_BT_SELECT uIndex=%d, szTypeOfObj=%d***", 
+										uIndex, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, 0);
+
+							if (pMe->mFTP.remoteObjects[uIndex].szTypeOfObj == AEEBT_FTP_FILE)
 							{
-								if (IFILEMGR_Remove(pMe->mFTP.pIFileMgr, szOperandex) != SUCCESS)
+								// Remove if the file already exists
+								if (IFILEMGR_Test(pMe->mFTP.pIFileMgr, szOperandex) == SUCCESS)
 								{
-									DBGPRINTF("Could not remove the file %s", szOperandex);
+									if (IFILEMGR_Remove(pMe->mFTP.pIFileMgr, szOperandex) != SUCCESS)
+									{
+										MSG_MED("Could not remove the file", 0, 0, 0);
+									}
 								}
 							}
+							else
+							{
+								// Remove if the folder already exists
+								if (IFILEMGR_Test(pMe->mFTP.pIFileMgr, szOperandex) == SUCCESS )
+								{
+									if (BTAppFTP_RemoveDir(pMe, szOperandex) != SUCCESS)
+									{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif 
 
-							STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));
+										MSG_ERROR("Folder exists but couldn't be removed", 0, 0, 0);
+										MSG_MED("FTP Folder Get failed", 0, 0, 0);
+
+										MSG_FATAL("***zzg File / Folder name exceeds max***", 0, 0, 0);
+										
+										BTApp_ShowMessage(pMe, IDS_MSG_FILE_GET_FAILED, wName, 3);
+										break;
+									}
+								}
+							}
 
 							if (IBTEXTFTP_Get(pMe->mFTP.po, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, wBuf, wName) != SUCCESS)
 							{
@@ -5621,127 +5642,19 @@ static boolean HandleFtpBrowseOpitionDialogEvent(CBTApp * pMe,AEEEvent eCode,uin
 #error code not present
 #endif 
 
-								MSG_ERROR("FTP file Get failed", 0, 0, 0);
-								MSG_FATAL("***zzg FTP file Get failed***", 0, 0, 0);
+								MSG_ERROR("FTP File / Folder Get failed", 0, 0, 0);
+
+								MSG_FATAL("***zzg FTP File / Folder Get failed***", 0, 0, 0);
 
 								BTApp_ShowMessage(pMe, IDS_MSG_FILE_GET_FAILED, wName, 3);
 							}
 							else
-							{
-								//Copying the object name just to display once GET is over
+							{ 
+								// Copying th	e object name just to display once GET is over 
 								STRLCPY(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
 								pMe->mFTP.bObjectTransfer = TRUE;
 								//ShowBusyIcon(pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE);
 							}
-							break;
-						}			
-
-						if (IBTEXTFTP_SetPath(pMe->mFTP.po, wName, AEEBT_FTP_SET_PATH_TO_FOLDER) != SUCCESS)
-						{
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif 
-							MSG_ERROR("Set Path to folder failed", 0, 0, 0);
-							BTApp_ShowMessage(pMe, IDS_MSG_FOLDER_BROWSING_FAILED, wName, 3);
-						}
-						else
-						{
-							// Storing folder name to display it later in case of failure
-							STRLCPY(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
-							BTApp_ShowBusyIcon(pMe); // wait for connect confirm
-						}
-					}
-
-					//CLOSE_DIALOG(DLGRET_CANCELED)
-					return TRUE;
-				}					
-				case IDS_GET:						
-				{
-					if (IMENUCTL_GetItemCount(pMenu) > 0)
-					{
-						MSG_FATAL("***zzg FtpBrowseOpitionDlgEvt IDS_BT_SELECT m_folder_index=%d***", pMe->m_folder_index, 0, 0);
-						uIndex = pMe->m_folder_index;
-						
-						//uIndex = IMENUCTL_GetSel(pMe->m_pIMenu);
-						
-						// Get the name of the menu item selected on the screen
-						STRTOWSTR(pMe->mFTP.remoteObjects[uIndex].szFolderFileName, wName, sizeof(wName));
-
-						//if (pMe->mFTP.u8StorageDevice == STORAGE_DEV_MEM_CARD)
-						//Default device is STORAGE_DEV_MEM_CARD
-						{
-							STRLCPY(szOperandex, AEEFS_CARD0_DIR, sizeof(szOperandex));
-						}
-
-						if ((STRLEN(szOperandex) + 
-							STRLEN(pMe->mFTP.remoteObjects[uIndex].szFolderFileName)) > 
-							AEEBT_MAX_FILE_NAME) 
-						{
-							MSG_ERROR("File / Folder name exceeds max", 0, 0, 0);
-							BTApp_ShowMessage(pMe, IDS_MSG_FILE_GET_FAILED, wName, 3);
-							break;            
-						}
-
-						STRLCAT(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
-						STRTOWSTR(szOperandex, wBuf, sizeof(wBuf));
-						
-						DBGPRINTF("***zzg GET file/folder name is %s***", szOperandex);
-						DBGPRINTF("***zzg GET szFolderFileName name is %s***", pMe->mFTP.remoteObjects[uIndex].szFolderFileName);						
-
-						MSG_FATAL("***zzg FtpBrowseOpitionDlgEvt IDS_BT_SELECT uIndex=%d, szTypeOfObj=%d***", 
-									uIndex, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, 0);
-
-						if (pMe->mFTP.remoteObjects[uIndex].szTypeOfObj == AEEBT_FTP_FILE)
-						{
-							// Remove if the file already exists
-							if (IFILEMGR_Test(pMe->mFTP.pIFileMgr, szOperandex) == SUCCESS)
-							{
-								if (IFILEMGR_Remove(pMe->mFTP.pIFileMgr, szOperandex) != SUCCESS)
-								{
-									MSG_MED("Could not remove the file", 0, 0, 0);
-								}
-							}
-						}
-						else
-						{
-							// Remove if the folder already exists
-							if (IFILEMGR_Test(pMe->mFTP.pIFileMgr, szOperandex) == SUCCESS )
-							{
-								if (BTAppFTP_RemoveDir(pMe, szOperandex) != SUCCESS)
-								{
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif 
-
-									MSG_ERROR("Folder exists but couldn't be removed", 0, 0, 0);
-									MSG_MED("FTP Folder Get failed", 0, 0, 0);
-
-									MSG_FATAL("***zzg File / Folder name exceeds max***", 0, 0, 0);
-									
-									BTApp_ShowMessage(pMe, IDS_MSG_FILE_GET_FAILED, wName, 3);
-									break;
-								}
-							}
-						}
-
-						if (IBTEXTFTP_Get(pMe->mFTP.po, pMe->mFTP.remoteObjects[uIndex].szTypeOfObj, wBuf, wName) != SUCCESS)
-						{
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif 
-
-							MSG_ERROR("FTP File / Folder Get failed", 0, 0, 0);
-
-							MSG_FATAL("***zzg FTP File / Folder Get failed***", 0, 0, 0);
-
-							BTApp_ShowMessage(pMe, IDS_MSG_FILE_GET_FAILED, wName, 3);
-						}
-						else
-						{ 
-							// Copying th	e object name just to display once GET is over 
-							STRLCPY(szOperandex, pMe->mFTP.remoteObjects[uIndex].szFolderFileName, sizeof(szOperandex));
-							pMe->mFTP.bObjectTransfer = TRUE;
-							//ShowBusyIcon(pMe->a.m_pIShell, pMe->a.m_pIDisplay, &pMe->m_rect, FALSE);
 						}
 					}
 
@@ -5908,7 +5821,7 @@ static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
 					   pMe->m_rect.dx, 
 					   pMe->m_rect.dy - BOTTOMBAR_HEIGHT); // leave room for SK menu
 					 
-			ISTATIC_SetRect(pStatic, &rc );
+			ISTATIC_SetRect(pStatic, &rc);
 
 			ISTATIC_SetProperties(pStatic, ISTATIC_GetProperties(pStatic) & ~ST_MIDDLETEXT & ~ST_CENTERTEXT);	 
 			ISTATIC_SetProperties(pStatic, ST_NOSCROLL|ST_GRAPHIC_BG);	
@@ -5935,10 +5848,8 @@ static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
 	                                    wstrText,
 	                                    sizeof(wstrText));
 
-			MSG_FATAL("***zzg MsgBoxDialog EVT_USER_REDRAW m_msg_id=%d, m_bNeedStr=%d***", pMe->m_msg_id, pMe->m_bNeedStr, 0);
+			MSG_FATAL("***zzg MsgBoxDialog m_msg_id=%d, m_bNeedStr=%d, wMsgBuf_len=%d***", pMe->m_msg_id, pMe->m_bNeedStr, WSTRLEN(pMe->wMsgBuf));
 			
-			MSG_FATAL("***zzg MsgBoxDialog EVT_USER_REDRAW wMsgBuf_len=%d***", WSTRLEN(pMe->wMsgBuf), 0, 0);
-
 			if (pMe->m_msg_id == 0)
 			{
 				// use the wArg as msg
@@ -5992,7 +5903,7 @@ static boolean  HandleMsgBoxDialogEvent(CBTApp * pMe,
 				case AVK_CLR:	
 				{
 					ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)BTApp_CancelMsgBox, pMe);					
-					CLOSE_DIALOG(DLGRET_CANCELED)	
+					CLOSE_DIALOG(DLGRET_MSGBOX_CANCELED)	
 					return TRUE;
 				}
 				default:
@@ -6069,6 +5980,13 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
                                    EVT_USER_REDRAW,
                                    0,
                                    0);   
+
+			//Add By zzg 2011_05_25
+			if ((IDS_MSG_BT_ENABLED == pMe->m_prompt_id) || (IDS_MSG_BT_DISABLED == pMe->m_prompt_id))
+			{
+				ISHELL_SetTimer(pMe->m_pShell, ONE_SECOND*3, (PFNNOTIFY)BTApp_CancelProMptBox, pMe);
+			}
+			//Add End			
      
 	 		return TRUE;
 	  }
@@ -6125,10 +6043,19 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 			{
 				 m_PromptMsg.pwszMsg = wstrText;	
 			}
-
-
-			m_PromptMsg.ePMsgType = MESSAGE_CONFIRM;
+		
+			m_PromptMsg.ePMsgType = MESSAGE_CONFIRM;		
 			m_PromptMsg.eBBarType = BTBAR_OK_BACK;
+
+			//Add By zzg 2011_05_25
+			if ((IDS_MSG_BT_ENABLED == pMe->m_prompt_id) 
+				|| (IDS_MSG_BT_DISABLED == pMe->m_prompt_id))
+			{
+				m_PromptMsg.ePMsgType = MESSAGE_INFORMATIVE;	
+				m_PromptMsg.eBBarType = BTBAR_BACK;
+			}
+			//Add End			
+			
 			DrawPromptMessage(pMe->m_pIDisplay, pStatic, &m_PromptMsg);
 			IDISPLAY_UpdateEx(pMe->m_pIDisplay,FALSE); 
 			return TRUE;
@@ -6140,20 +6067,31 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 			return TRUE;
         }
 
-        case EVT_KEY:
-        {
+		case EVT_KEY_PRESS:
+        //case EVT_KEY:
+        {			
+			//Add By zzg 2011_05_25
+			if ((IDS_MSG_BT_ENABLED == pMe->m_prompt_id) 
+				|| (IDS_MSG_BT_DISABLED == pMe->m_prompt_id))
+			{
+				ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)BTApp_CancelProMptBox, pMe);							
+				CLOSE_DIALOG(DLGRET_PROMPT_CANCELED)
+				return TRUE;	
+			}
+			//Add End	
+			
 			switch (wParam)
             {
                 case AVK_CLR:
                 {
-					CLOSE_DIALOG(DLGRET_CANCELED)
+					CLOSE_DIALOG(DLGRET_PROMPT_CANCELED)
                     return TRUE;
                 }
 					
 				case AVK_INFO:
 				case AVK_SELECT:
 				{
-					CLOSE_DIALOG(DLGRET_CANCELED)	//防止提前进入MSGBOX的消息响应
+					CLOSE_DIALOG(DLGRET_PROMPT_CANCELED)	//防止提前进入MSGBOX的消息响应
 						
 					switch (pMe->m_prompt_id)
 					{
@@ -6162,9 +6100,16 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 							BTApp_DoRemoveOne(pMe);
 							break;
 						}
+
+						case IDS_PROMPT_REBOND:
+						{
+							BTApp_DoRebond(pMe, TRUE);
+							break;
+						}
+						
 						case IDS_PROMPT_PROCEED_BONDING:
 						{
-							BTApp_UserConfirm(pMe, FALSE);
+							BTApp_UserConfirm(pMe, TRUE);
 							break;
 						}
 
@@ -6179,11 +6124,101 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 							BTApp_DoUnbondAll(pMe);  
 							break;       
           				}
+						
 						case IDS_PROMPT_REMOVE_ALL:
 						{
 							BTApp_DoRemoveAll(pMe);							
 							break;   
 						}
+
+						case IDS_PROMPT_USE_AUDIO_DEV:
+						{
+							boolean bSetBondable = FALSE;
+							AEEBTDeviceInfo* pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
+							
+							pMe->mA2DP.bdAddr = pDev->bdAddr;							
+							if (pMe->mA2DP.bEnabled != FALSE )
+							{
+								BTApp_EnableA2DP(pMe, &bSetBondable);
+								//BTApp_ShowDevMsg(pMe, IDS_MSG_MUST_REENABLE_AG, &pMe->mA2DP.bdAddr, 0 );
+							}
+							break;
+						}			
+
+						case IDS_PROMPT_CONNECT:
+						{
+							AEEBTDeviceInfo* pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
+							boolean bSetBondable = FALSE;
+							
+							/*
+							//AG Start
+							if ( pMe->mAG.bconnInPrgs == FALSE )
+							{
+								if ( pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET )
+								{
+									MSG_MED( "HndlSlction - connecting to HS", 0, 0, 0 );
+								}
+								else
+								{
+									MSG_MED( "HndlSlction - connecting to HF", 0, 0, 0 );
+								}
+								
+								if ( BTApp_CallConnected( pMe ) != BT_APP_CALL_NONE )
+								{
+									pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
+								}
+								pMe->mAG.bconnInPrgs = TRUE;
+								IBTEXTAG_Connect( pMe->mAG.po, &pDev->bdAddr, pMe->mAG.devType );
+								BTApp_ShowBusyIcon( pMe );
+							}
+							else
+							{
+								BTApp_ShowMessage( pMe, IDS_AG_CONNECTION_IN_PRGS, NULL, 3 );
+							}
+							//AG End
+							*/
+							
+							MSG_FATAL("***zzg A2DP bEnabled=%x, bEnableA2DP=%x, bConnected=%x***", 
+										pMe->mA2DP.bEnabled, pMe->mA2DP.bEnableA2DP, pMe->mA2DP.bConnected);
+							
+							pMe->mA2DP.bdAddr = pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr;
+							pMe->bConfigChanged = TRUE;
+						    IBTEXTA2DP_SetDevice(pMe->mA2DP.po, &pMe->mA2DP.bdAddr);
+							
+							//if ((pMe->mA2DP.bEnabled == TRUE) && (pMe->mA2DP.bConnected == FALSE))
+							{
+								if ( IBTEXTA2DP_Connect( pMe->mA2DP.po, &pMe->mA2DP.bdAddr ) != SUCCESS )
+								{
+									BTApp_ShowMessage( pMe, IDS_MSG_CONN_FAILED, NULL, 3 );
+								}  	
+								else
+								{
+									BTApp_A2DPSetRetries(pMe, TRUE);
+								}
+							}							
+          
+							break;
+						}
+
+						case IDS_PROMPT_DISCONNECT:
+						{							
+          					//IBTEXTAG_Disconnect(pMe->mAG.po);     
+          					
+          					MSG_FATAL("***zzg IDS_PROMPT_DISCONNECT***", 0, 0, 0);
+          					
+							if (IBTEXTA2DP_Disconnect(pMe->mA2DP.po) != SUCCESS)
+							{
+								MSG_FATAL("***zzg IBTEXTA2DP_Disconnect Failed***", 0, 0, 0);
+								BTApp_ShowMessage(pMe, IDS_A2DP_DISCONNECT_FAILED, NULL, 3);
+							}
+							else
+							{
+								BTApp_A2DPSetRetries(pMe, FALSE);
+							}
+         
+							break;
+						}
+       
 						default:
 						{
 							break;
@@ -6750,10 +6785,48 @@ static boolean HandleSendFileDialogEvent(CBTApp *pMe,
             	case IDS_CONNECT:	
 				{
 					MSG_FATAL("***zzg SendFileDlg IDS_CONNECT bRegistered=%d***", pMe->mOPP.bRegistered, 0, 0);
+					
 					if (pMe->mOPP.bRegistered == FALSE)
 					{
+						AEEBTDeviceEnumerator enumerator;
+						uint8				  i;						
+						AEEBTDeviceInfo*	  pDev;						
+
+						enumerator.control = AEEBT_RM_EC_MATCH_SERVICE_CLASS;
+						enumerator.svcCls  = AEEBT_COD_SC_OBJECT_TRANSFER;
+
 						pMe->m_obex_list_id = IDD_BT_SEND_FILE;
-						CLOSE_DIALOG(DLGRET_BT_OBEX_LIST_SERVERS)
+							
+			
+						if (pMe->mRM.po == NULL)
+						{
+							MSG_FATAL("***zzg ObexListServers pMe->mRM.po == NULL***", 0, 0, 0);
+						}
+						else
+						{				
+							if (IBTEXTRM_DeviceEnumInit(pMe->mRM.po, &enumerator) == SUCCESS)
+							{		
+								i	 = 0;
+								pDev = &pMe->mRM.device[i];
+			
+								while ((IBTEXTRM_DeviceEnumNext( pMe->mRM.po, pDev ) == SUCCESS) 
+										&& pDev->bValid && (i < MAX_DEVICES))
+								{
+									pDev = &pMe->mRM.device[++i];
+								}
+							}
+						}
+
+						if (i > 0)
+						{
+							CLOSE_DIALOG(DLGRET_BT_OBEX_LIST_SERVERS)
+						}
+						else
+						{
+							BTApp_ShowMessage(pMe, IDS_MSG_NO_OBEX_SERVERS, NULL, 0);
+						}
+						
+						//CLOSE_DIALOG(DLGRET_BT_OBEX_LIST_SERVERS)
 					}					
                     return TRUE;
             	}
@@ -6929,7 +7002,7 @@ static boolean HandleObexListServersDialogEvent(CBTApp *pMe,
 #ifdef FEATURE_CARRIER_CHINA_VERTU
             IMENUCTL_SetBackGround(pMenu, AEE_APPSCOMMONRES_IMAGESFILE, IDI_SETTING_BACKGROUND);
 #endif
-            IMENUCTL_SetBottomBarType(pMenu,BTBAR_SELECT_BACK);
+            IMENUCTL_SetBottomBarType(pMenu, BTBAR_SELECT_BACK);
 
 			IMENUCTL_SetSel(pMenu,  MENU_SEL);  // highlight the selected item
 			
@@ -7164,9 +7237,8 @@ static boolean HandleFileProgressDialogEvent(CBTApp *pMe,
 			{			
 				case AVK_CANCEL:
 				case AVK_CLR:	
-				{								
-					
-					CLOSE_DIALOG(DLGRET_CANCELED)	
+				{			
+					CLOSE_DIALOG(DLGRET_PROGRESS_CANCELED)	
 					return TRUE;
 				}
 				default:
@@ -7195,8 +7267,8 @@ static boolean BTApp_SaveTextEdit( CBTApp* pMe, uint16 DlgID)
 	}
 
 	switch (DlgID)
-	{
-		case DLGRET_EDIT_NAME:
+	{			
+		case IDS_EDIT_NAME: 		
 		{
 			if (WSTRCMP(pMe->mRM.myInfo.wName, pMe->pText2) != 0)
 			{
@@ -7211,16 +7283,14 @@ static boolean BTApp_SaveTextEdit( CBTApp* pMe, uint16 DlgID)
 				}
 				else
 				{
-						BTApp_ShowBusyIcon(pMe);
-					
-					//BTApp_ShowBusyIcon(pMe);
+					BTApp_ShowBusyIcon(pMe);	
 				}
 			}	
 			break;
 		}
 		
 #ifdef FEATURE_BT_2_1
-		case DLGRET_EDIT_SHORTNAME:
+		case IDS_EDIT_SHORT_NAME:		
 		{   
 			if (WSTRCMP(pMe->mRM.myInfo.wShortName, pMe->pText2) != 0)
 			{
@@ -7239,7 +7309,7 @@ static boolean BTApp_SaveTextEdit( CBTApp* pMe, uint16 DlgID)
 			break;
 		}
 
-		case DLGRET_EDIT_MANUDATA:
+		case IDS_EDIT_MANU_DATA:		
 		{
 			if (WSTRCMP(pMe->mRM.wManuData, pMe->pText2) != 0)
 			{
@@ -7291,5 +7361,3 @@ static boolean BTApp_ClearDiscoverableEx( CBTApp* pMe )
 
   return (result == SUCCESS);
 }
-
-
