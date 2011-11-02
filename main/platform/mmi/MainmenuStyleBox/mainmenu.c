@@ -1033,11 +1033,11 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
     PARAM_NOT_REF( dwParam)
     switch ( eCode)
     {
-        case EVT_DIALOG_INIT:			
+        case EVT_DIALOG_INIT:	
             IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
             return TRUE;
 
-        case EVT_DIALOG_START:			
+        case EVT_DIALOG_START:	
             if(pMe->m_pImageBg == NULL)
             {
                 {
@@ -1055,9 +1055,8 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 
 
         case EVT_USER_REDRAW:
-            // 初始整个背景及全部初始图标			
+            // 初始整个背景及全部初始图标	
             DrawMatrix(pMe);
-            
             // 绘制聚焦过程动画
             MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
             return TRUE;
@@ -1071,7 +1070,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                     (void) IIMAGE_Release(pMe->m_pImageBg);
                     pMe->m_pImageBg = NULL;
                 }
-
+                
                 for(i=0;i<MAX_MATRIX_ITEMS;i++)
                 {
                     if(pMe->m_pImageIcon[i] != NULL)
@@ -1080,26 +1079,25 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                         pMe->m_pImageIcon[i] = NULL;
                     }
                 } 
-				for(j = 0;j<MAX_BOTTOM_ITEMS;i++)
+                for(j = 0;j<MAX_BOTTOM_ITEMS;j++)
 				{
 					 if(pMe->m_pImageButtom[j] != NULL)
 		            {
-		                (void)IIMAGE_Release(pMe->m_pImageButtom[j]);
+                        (void)IIMAGE_Release(pMe->m_pImageButtom[j]);
 		                pMe->m_pImageButtom[j] = NULL;
 		            }
 				}
-                
                 if(pMe->m_pAnimate != NULL)
                 {
                     (void)IIMAGE_Release(pMe->m_pAnimate);
                     pMe->m_pAnimate = NULL;
                 }
-				if(pMe->m_pImageSelect != NULL)
+                if(pMe->m_pImageSelect != NULL)
 				{
 					(void)IIMAGE_Release(pMe->m_pImageSelect);
 					pMe->m_pImageSelect = NULL;
 				}
-				if(pMe->m_pImageSelect_foucs!= NULL)
+                if(pMe->m_pImageSelect_foucs!= NULL)
 				{
 					(void)IIMAGE_Release(pMe->m_pImageSelect_foucs);
 					pMe->m_pImageSelect_foucs = NULL;
@@ -1523,23 +1521,23 @@ static void MainMenu_DrawSelectIcon(MainMenu *pMe)
 	int i =0;
 	if(pMe->m_pImageSelect == NULL)
 	{
-		pMe->m_pImageSelect = ISHELL_LoadImage(pMe->m_pShell, ICON_SELECT);
+        pMe->m_pImageSelect = ISHELL_LoadImage(pMe->m_pShell, ICON_SELECT);
 	}
 	if(pMe->m_pImageSelect_foucs == NULL)
 	{
-		pMe->m_pImageSelect_foucs = ISHELL_LoadImage(pMe->m_pShell, ICON_SELECT_FOCUS);
+        pMe->m_pImageSelect_foucs = ISHELL_LoadImage(pMe->m_pShell, ICON_SELECT_FOCUS);
 	}
-	for(i=0;i<3;i++)
+    for(i=0;i<3;i++)
 	{
-		if(i == pMe->m_nCurPage)
+        if(i == pMe->m_nCurPage)
 		{
-			IIMAGE_Draw(pMe->m_pImageSelect_foucs,
+           IIMAGE_Draw(pMe->m_pImageSelect_foucs,
                         pMe->m_IconSelect_Pt[i].x,
                         pMe->m_IconSelect_Pt[i].y);
 		}
 		else
 		{
-			IIMAGE_Draw(pMe->m_pImageSelect,
+           IIMAGE_Draw(pMe->m_pImageSelect,
                         pMe->m_IconSelect_Pt[i].x,
                         pMe->m_IconSelect_Pt[i].y);
 		}
@@ -1563,10 +1561,9 @@ static void DrawMatrix(MainMenu *pMe)
         return;
     }
     //draw bg image
-    MainMenu_DrawBackGround(pMe, &pMe->m_rc); 
+    MainMenu_DrawBackGround(pMe, &pMe->m_rc);
 	//Draw select icon
 	MainMenu_DrawSelectIcon(pMe);
-	
     //Draw icon
     for (i = 0; i < MAX_MATRIX_ITEMS; i ++)
     {
@@ -1585,7 +1582,6 @@ static void DrawMatrix(MainMenu *pMe)
     }  
     DrawMatrixStr(pMe);
 	//Draw Bottom ICON
-	
     for(j = 0; j < MAX_BOTTOM_ITEMS;j++)
     {
     	if (pMe->m_pImageButtom[j] == NULL)
@@ -1601,7 +1597,7 @@ static void DrawMatrix(MainMenu *pMe)
                         pMe->m_IconButtom_pt[j].y);
         }
 
-	}		
+	}	
 	//Draw bottom string
 	DrawMatrixBottomStr(pMe);
 }
@@ -2480,7 +2476,6 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     {    	
         return EFAILED;
     }
-    
     // 初始化菜单Title
 #if defined (FEATURE_DISP_160X128)
 #if defined	(FEATURE_VERSION_FLEXI203) || defined	(FEATURE_VERSION_IVIO203)
@@ -3319,7 +3314,6 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             // 初始整个背景及全部初始图标
            // ERR("EVT_USER_REDRAW:::::::::::1111111111",0,0,0);			
             DrawMatrix(pMe);
-            
             // 绘制聚焦过程动画
             MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
             return TRUE;
