@@ -303,8 +303,8 @@ typedef struct _MainMenu
 #endif
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE
-	#define ICON_SELECT          "fs:/image/mianment/select.png"
-	#define ICON_SELECT_FOCUS    "fs:/image/mianment/select_focus.png"
+	#define ICON_SELECT          "fs:/image/mainmenu/select.png"
+	#define ICON_SELECT_FOCUS    "fs:/image/mainmenu/select_focus.png"
 	#define ICON13_ANI           "fs:/image/mainmenu/qsc1100_13.png"
 	#define ICON13_ANI_1         "fs:/image/mainmenu/qsc1100_13_focus.png"
 #endif
