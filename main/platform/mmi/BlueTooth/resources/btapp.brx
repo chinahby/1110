@@ -2312,23 +2312,9 @@
 			</Menu>
 		</Controls>
 	</Dialog>
-	<Dialog Id="6005" Name="IDD_BOND_LIST" Focus="7007">
+	<Dialog Id="6005" Name="IDD_DEVICE_LIST" Focus="7007">
 		<Controls>
-			<Menu Id="7007" Name="IDC_BOND_LIST">
-				<Items/>
-			</Menu>
-		</Controls>
-	</Dialog>
-	<Dialog Id="6006" Name="IDD_ALL_LIST" Focus="7008">
-		<Controls>
-			<Menu Id="7008" Name="IDC_ALL_LIST">
-				<Items/>
-			</Menu>
-		</Controls>
-	</Dialog>
-	<Dialog Id="6007" Name="IDD_CONNECT_LIST" Focus="7009">
-		<Controls>
-			<Menu Id="7009" Name="IDC_CONNECT_LIST">
+			<Menu Id="7007" Name="IDC_DEVICE_LIST">
 				<Items/>
 			</Menu>
 		</Controls>
@@ -2342,9 +2328,9 @@
 				<Items/></Static>
 		</Controls>
 	</Dialog>
-	<Dialog Id="6009" Name="IDD_DEVICE_LIST" Focus="7011">
+	<Dialog Id="6009" Name="IDD_DEVICE" Focus="7011">
 		<Controls>
-			<Menu Id="7011" Name="IDC_DEVICE_LIST">
+			<Menu Id="7011" Name="IDC_DEVICE">
 				<Items/>
 			</Menu>
 		</Controls>
@@ -2354,27 +2340,6 @@
 			<Menu Id="7013" Name="IDC_MYINFO_OPITION">
 				<Items/>
 			</Menu>
-		</Controls>
-	</Dialog>
-	<Dialog Id="6011" Name="IDD_BT_EDITNAME" Focus="7014">
-		<Controls>
-			<Text Id="7014" Name="IDC_BT_EDITNAME">
-				<TitleID>IDS_BT_BLANK</TitleID>
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="6012" Name="IDD_BT_EDIT_SHORTNAME" Focus="7016">
-		<Controls>
-			<Text Id="7016" Name="IDC_BT_EDIT_SHORTNAME">
-				<TitleID>IDS_BT_BLANK</TitleID>
-				<Items/></Text>
-		</Controls>
-	</Dialog>
-	<Dialog Id="6013" Name="IDD_BT_EDIT_MANU_DATA" Focus="7017">
-		<Controls>
-			<Text Id="7017" Name="IDC_BT_EDIT_MANU_DATA">
-				<TitleID>IDS_BT_BLANK</TitleID>
-				<Items/></Text>
 		</Controls>
 	</Dialog>
 	<Dialog Id="6014" Name="IDD_BT_SECURITY" Focus="7018">
@@ -2523,6 +2488,13 @@
 			<Menu Id="7040" Name="IDC_BT_FTP_BROWSE_OPITION">
 				<Items/>
 			</Menu>
+		</Controls>
+	</Dialog>
+	<Dialog Id="6035" Name="IDD_MYINFO_EDIT" Focus="7041">
+		<Controls>
+			<Text Id="7041" Name="IDC_MYINFO_EDIT">
+				<TitleID>IDS_BT_BLANK</TitleID>
+				<Items/></Text>
 		</Controls>
 	</Dialog>
 </Dialogs>
