@@ -1587,7 +1587,7 @@ static void DrawMatrix(MainMenu *pMe)
     	if (pMe->m_pImageButtom[j] == NULL)
         {
             pMe->m_pImageButtom[j] = ISHELL_LoadImage(pMe->m_pShell,
-                                                    ICON_ANI[(i+MAX_MATRIX_ITEMS)]);
+                                                    ICON_ANI[(j+MAX_MATRIX_ITEMS)]);
         }
 
         if (pMe->m_pImageButtom[j] != NULL)
