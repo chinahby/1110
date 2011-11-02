@@ -417,10 +417,15 @@ static int CMusicPlayer_InitAppData(CMusicPlayer *pMe)
 #endif
     pMe->m_bUse848 = TRUE;
     pMe->m_bUseBT = FALSE;
-    pMe->m_isshift = FALSE;
+    pMe->m_isshift = FALSE;	
     SetIsPlayMP3ByBt(FALSE);
     pMe->m_bInterruptByBT = FALSE;
 #endif //FEATURE_SUPPORT_BT_APP
+
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+	pMe->m_bBtHSConnected = FALSE;	  //Add By zzg 2011_10_27
+#endif
+
   if(SUCCESS != ISHELL_GetPrefs(pMe->m_pShell,
                                AEECLSID_APP_MUSICPLAYER,
                                MUSICPLAYERCFG_VERSION,
@@ -668,6 +673,9 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
     CMusicPlayer *pMe = (CMusicPlayer*)pi;
     AEEAppStart *as;
     MSG_FATAL("IMusicPlayer_HandleEvent,eCode = %x",eCode,0,0);
+	
+	MSG_FATAL("***zzg IMusicPlayer_HandleEvent,eCode = %x***",eCode,0,0);
+	
     switch (eCode)
     {
         case EVT_APP_START_BACKGROUND:
@@ -705,6 +713,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
             return TRUE;
 
         case EVT_APP_STOP:
+			MSG_FATAL("***zzg MusicPlayer EVT_APP_STOP***", 0, 0, 0);
            if(GetMp3PlayerStatus()!=MP3STATUS_RUNONBACKGROUND)
            {
                 pMe->m_bActive = FALSE;
@@ -723,21 +732,38 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
            else
            {
               ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)MP3_MusicNameAutoScroll,pMe);
+			  
              (void)ISHELL_PostEvent( pMe->m_pShell,
                                         AEECLSID_CORE_APP,
                                         EVT_DRAWMUSICNAME,
                                         0,
                                         (uint32)pMe->m_pMp3FileToPlay);
+			
+			 
              *((boolean*)dwParam) = FALSE;
            }
             pMe->m_bSuspending = TRUE;
             //*((boolean*)dwParam) = !g_bMp3PlayBackground;
-
             return TRUE;
 
         case EVT_APP_SUSPEND:
-            pMe->m_bSuspending = TRUE;
-            MP3_InterruptHandle(pMe);
+            pMe->m_bSuspending = TRUE;		
+
+			MSG_FATAL("***zzg MP3 m_bBtHSConnected=%x***", pMe->m_bBtHSConnected, 0, 0);
+
+			//MP3_InterruptHandle(pMe);	
+			 
+			//Modify By zzg 2011_10_27
+			if (FALSE == pMe->m_bBtHSConnected)
+			{
+				MP3_InterruptHandle(pMe);	
+			}
+			else
+			{
+				pMe->m_bBtHSConnected = FALSE;	//Add By zzg 2011_10_27
+			}
+			//Modify end			
+           
             MSG_FATAL("pMe->m_nCurrentTime = %d",pMe->m_nCurrentTime,0,0);
             return TRUE;
 
@@ -753,7 +779,16 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
             {
                 pMe->m_eCurState = pMe->m_ePreState;
             }
-            MP3_ResumeHandle(pMe);
+			
+            //MP3_ResumeHandle(pMe);
+            
+            //Modify By zzg 2011_10_27
+			if (FALSE == pMe->m_bBtHSConnected)
+			{
+				MP3_ResumeHandle(pMe);	
+			}
+			//Modify end
+			
             MSG_FATAL("pMe->m_nCurrentTime = %d,pMe->m_eCurState = %d",pMe->m_nCurrentTime,pMe->m_eCurState,0);
             CMusicPlayer_RunFSM(pMe);
             return TRUE;
@@ -960,6 +995,24 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
            }
            return TRUE;
 #endif //FEATURE_SUPPORT_BT_APP
+
+//Add By zzg 2011_10_29
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+        case AVK_BT_HEADSET_CONNECT:   
+			MSG_FATAL("***zzg IMusicPlayer_HandlEvt AVK_BT_HEADSET_CONNECT***", 0, 0, 0);
+             return TRUE;
+             
+        case AVK_BT_HEADSET_DISCONNECT: 
+			MSG_FATAL("***zzg IMusicPlayer_HandlEvt AVK_BT_HEADSET_DISCONNECT***", 0, 0, 0);
+            return TRUE;
+            
+       case EVT_APP_EXIT:         
+	   		MSG_FATAL("***zzg IMusicPlayer_HandlEvt EVT_APP_EXIT***", 0, 0, 0);
+           return TRUE;
+#endif 
+//Add End
+
+
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 		case EVT_USER:
 			{
@@ -1609,6 +1662,7 @@ AEERect *GetPlayerSkinRect(CPlayerSkin ePlayerSkin)
     }
 	return NULL;
 }
+
 #ifdef FEATURE_SUPPORT_BT_APP
 boolean GetIsPlayMP3ByBt(void)
 {

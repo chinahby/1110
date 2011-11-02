@@ -362,7 +362,8 @@ static NextFSMAction Handler_STATE_MAINOPTSMENU(CMusicPlayer *pMe)
         case DLGRET_MINIMIZE:
             MOVE_TO_STATE(STATE_PLAYMUSIC_WINDOWS);
             break;
-#ifdef FEATURE_SUPPORT_BT_APP
+//#ifdef FEATURE_SUPPORT_BT_APP
+#ifdef FEATURE_SUPPORT_BT_AUDIO		//Modify by zzg 2011_10_19
         case DLGRET_UNCONNECT_BT:
              pMe->m_eMsgType = MESSAGE_WARNNING;
              if(SUCCESS != CMusicPlayer_ShowMsgBox(pMe, IDS_MSG_UNCONNECT_BT))

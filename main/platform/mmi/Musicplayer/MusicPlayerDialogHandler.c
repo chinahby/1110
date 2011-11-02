@@ -385,6 +385,7 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
     ASSERT(pMe != NULL);
 #endif
     MSG_FATAL("MP3_PlayMusic_Windows_HandleEvent Start",0,0,0);
+	MSG_FATAL("***zzg MP3_PlayMusic_Windows_HandleEvent eCode=%x, wParam=%x***",eCode,wParam,0);
     switch (eCode)
     {
 	
@@ -515,6 +516,8 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
    {
        return FALSE;
    }
+
+   MSG_FATAL("MP3_MainOptsMenu_HandleEvent eCode=%x, wParam=%x, dwParam=%x", eCode,wParam,dwParam);
    
     switch (eCode)
     {
@@ -693,6 +696,34 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
                     CLOSE_DIALOG(DLGRET_CLOSED_BT);
                     return TRUE;
 #endif //FEATURE_SUPPORT_BT_APP
+
+
+//Add By zzg 2011_10_19
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+			    case IDS_USEBT_HEADSET:
+				{	  
+					MSG_FATAL("***zzg MP3 IDS_USEBT_HEADSET***", 0, 0, 0);
+
+					pMe->m_bBtHSConnected = TRUE;	//Add By zzg 2011_10_28
+
+					//SearchAudio _ will suspend the musicplayer
+					ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "BtHeadSet");						
+					break;
+                }
+
+                case IDS_UNUSE_BT_HEADSET:
+				{		
+					//Disconnect BTHeadSet
+					(void) ISHELL_PostEvent(pMe->m_pShell,
+											AEECLSID_BLUETOOTH_APP,
+											EVT_USER,
+											0x1,	
+											0);
+					CLOSE_DIALOG(DLGRET_CANCELED);
+					break;
+                }
+#endif					
+//Add End
 
                 default:
                     break;
@@ -2709,6 +2740,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
         return TRUE;
         
     case AVK_CLR:
+		MSG_FATAL("***zzg MP3_MusicPlayerHanleKeyEvt  AVK_CLR***", 0, 0, 0);
        if(pMe->m_bPlaying||pMe->m_bPaused)
        {
             ISHELL_CancelTimer(pMe->m_pShell,(PFNNOTIFY)CMusicPlayer_InitMusic,pMe);
@@ -2723,6 +2755,7 @@ static boolean MP3_MusicPlayerHandleKeyEvent(CMusicPlayer*pMe,
             {  
                 if(SUCCESS == IMEDIA_Stop(pMe->m_pMedia))
                 {
+                	MSG_FATAL("***zzg IMEDIA_Stop==SUCCESS***", 0, 0, 0);
                     pMe->m_bUserStopped= TRUE;
                     pMe->m_nCurrentTime = 0;
                     pMe->m_bPlaying = FALSE;
@@ -2853,6 +2886,7 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
     ASSERT(pMe != NULL);
 #endif
     MSG_FATAL("MP3_SimplePlayer_HandleEvent Start",0,0,0);
+	MSG_FATAL("***zzg MP3_SimplePlayer_HandleEvent eCode=%x, wParm=%x***",eCode,wParam,0);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:   
@@ -4142,12 +4176,25 @@ boolean CMusicPlayer_InitMusic(CMusicPlayer *pMe)
    {
       return FALSE;
    }   
+   
 #ifdef FEATURE_SUPPORT_BT_APP
     if(!(pMe->m_bUse848) && pMe->m_bUseBT)
     {
         bcmapp_ag_set_device(pMe->m_nBTID);
     }
 #endif
+
+//Add By zzg 2011_10_19
+#ifdef FEATURE_SUPPORT_BT_APP
+	if(pMe->m_bBtHSConnected)
+	{
+		MSG_FATAL("***zzg InitMusic snd_set_device SND_DEVICE_BT_A2DP_HEADSET***", 0, 0, 0);
+		snd_set_device(SND_DEVICE_BT_A2DP_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);	
+	}
+#endif
+//Add End
+
+
     // 如果是QCP格式的歌曲，必须设置一次声音通道否则声音会自动从RECIVE出来
     if(pMe->m_eStartMethod == STARTMETHOD_SIMPLEPLAYER)
     {
@@ -4161,6 +4208,7 @@ boolean CMusicPlayer_InitMusic(CMusicPlayer *pMe)
     pf++;
     if(0 == STRICMP(pf,QCP_TYPE))
     {
+    	MSG_FATAL("***zzg CMusicPlayer_InitMusic SetAudioDevice HS_HEADSET_ON=%x******", HS_HEADSET_ON(), 0, 0);
         (void)IMEDIA_SetAudioDevice((IMedia *)pMe->m_pMedia, HS_HEADSET_ON()?AEE_SOUND_DEVICE_STEREO_HEADSET:AEE_SOUND_DEVICE_SPEAKER);
     }
     
@@ -5612,6 +5660,24 @@ static boolean MP3_PlayPlaylist(CMusicPlayer *pMe)
 /*添加OPT主菜单*/
 static void MP3_Build_MainOpts_Menu(CMusicPlayer *pMe,IMenuCtl *pMenuCtl)
 {
+	//Add By zzg 2011_10_25
+	uisnd_notify_data_s_type sndInfo;
+	uisnd_get_device(&sndInfo);
+	MSG_FATAL("***zzg UseBTDevice - dev=%d sMute=%d mMute=%d***", 
+	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);
+
+	if ((SND_DEVICE_BT_HEADSET == sndInfo.out_device) || (SND_DEVICE_BT_A2DP_HEADSET == sndInfo.out_device))
+	{
+		pMe->m_bBtHSConnected = TRUE;
+	}
+	else
+	{
+		pMe->m_bBtHSConnected = FALSE;
+	}
+	//Add End
+
+	
+					
     if(!pMenuCtl||!pMe)
     {
      return;
@@ -5630,9 +5696,10 @@ static void MP3_Build_MainOpts_Menu(CMusicPlayer *pMe,IMenuCtl *pMenuCtl)
     MP3MENU_ADDITEM(pMenuCtl,IDS_SETTINGS);
     if(pMe->m_bPlaying==TRUE)
     {
-#ifdef FEATURE_SUPPORT_BT_APP
+//#ifdef FEATURE_SUPPORT_BT_APP
+#ifdef FEATURE_SUPPORT_BT_AUDIO		//Modify by zzg 2011_10_19
       //if(FALSE == GetIsPlayMP3ByBt())
-      if(!pMe->m_bUseBT)
+      if(!pMe->m_bBtHSConnected)
       {
          MP3MENU_ADDITEM(pMenuCtl, IDS_USEBT_HEADSET);
       }
@@ -5934,6 +6001,7 @@ static void CMusicPlayer_PlayPlaylistCB(CMusicPlayer *pMe)
 void MP3_PlayMusicByBTCallBack(void *pCxt, int nErr)
 {
     CMusicPlayer *pMe = (CMusicPlayer *)pCxt;
+
 #ifndef WIN32
     if(nErr == BCMAPP_AG_SUCCESS)
     {
@@ -5949,6 +6017,7 @@ void MP3_PlayMusicByBTCallBack(void *pCxt, int nErr)
                                0);
     }
 #endif
+
 }
 #endif
 

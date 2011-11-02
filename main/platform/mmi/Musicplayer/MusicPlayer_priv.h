@@ -73,6 +73,9 @@
 //#undef FEATURE_SUPPORT_BT_APP
 //#endif
 
+#include "uixsnd.h"	//Add By zzg 2011_10_25
+
+
 #ifndef WIN32
 #ifdef FEATURE_SUPPORT_BT_APP
 #include "bcmapp_ag.h"
@@ -1068,7 +1071,7 @@ typedef struct _CMusicPlayer
     uint8      m_nRandNum;
     AEERect    *m_pMP3FaceRect;
     uint16     m_nSkinImageId;
-#ifdef FEATURE_SUPPORT_BT_APP
+#ifdef FEATURE_SUPPORT_BT_APP	
     //play music by BT or not
     boolean   m_bUseBT;
     // play music by 848 chip or qsc
@@ -1077,6 +1080,11 @@ typedef struct _CMusicPlayer
     // bt ID
     uint8     m_nBTID;
 #endif //FEATURE_SUPPORT_BT_APP
+
+#ifdef	FEATURE_SUPPORT_BT_AUDIO		
+	boolean   m_bBtHSConnected;			//Add By zzg 2011_10_27
+#endif
+
     MP3Recttype m_rtype;////wlh 20090415 mod 为了区别播放区域，加音量，减音量的刷新，加了个参数
     IAnnunciator *m_pIAnn;
     boolean       m_isshift;
@@ -1279,7 +1287,8 @@ void MP3_InitMusicCB(CMusicPlayer *pMe);
 AEERect *GetPlayerSkinRect(CPlayerSkin ePlayerSkin);
 //用来重置随机播放的相关参数
 void MP3_ResetRandonIdentifier(CMusicPlayer *pMe);
-#ifdef FEATURE_SUPPORT_BT_APP
+//#ifdef FEATURE_SUPPORT_BT_APP
+#ifdef FEATURE_SUPPORT_BT_AUDIO	//Modify by zzg 2011_10_19
 void MP3_PlayMusicByBTCallBack(void *pCxt, int nErr);
 void SetIsPlayMP3ByBt(boolean bPlayMp3ByBt);
 #endif
