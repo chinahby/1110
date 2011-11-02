@@ -167,8 +167,8 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #define DATA_X				IDLE_D_CLOCK_X
 #define DATA_Y				(RPLMN_Y + 30) 
 
-#define WEEK_X              5
-#define WEEK_Y              52
+#define WEEK_X              IDLE_D_CLOCK_X
+#define WEEK_Y              (DATA_Y + 30) 
 
 #elif defined(FEATURE_DISP_320X240)
 
@@ -6061,12 +6061,12 @@ static void CoreApp_InitdataBlackBerry(CCoreApp *pMe)
 static void CoreApp_InitdataTouch(CCoreApp *pMe)
 {
 	pMe->m_pImageTouchIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_1);
-	pMe->m_pImageTouchIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_1);
+	pMe->m_pImageTouchIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_3);
 	pMe->m_pImageTouchIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_2);
-	pMe->m_pImageTouchIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_2);
-	pMe->m_pImageTouchSelIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_3); 
-	pMe->m_pImageTouchSelIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_3); 
-	pMe->m_pImageTouchSelIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_4); 
+	pMe->m_pImageTouchIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_4);
+	pMe->m_pImageTouchSelIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_1); 
+	pMe->m_pImageTouchSelIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_2); 
+	pMe->m_pImageTouchSelIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_3); 
 	pMe->m_pImageTouchSelIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_4); 
 }
 static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
@@ -6132,14 +6132,17 @@ static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
 		rc.y  = SCREEN_HEIGHT - 40;
 		rc.dx = IDLE_TOUCH_DRAWDX;
 		rc.dy = IDLE_TOUCH_DRAWDY;
-		(void) IDISPLAY_DrawText(pMe->m_pDisplay, 
-                    AEE_FONT_BOLD, 
-                    wszBottomstr, 
-                    -1, 
-                    0, 
-                    0, 
-                    &rc, 
-                    IDF_ALIGN_BOTTOM | IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);	
+
+		DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
+	                              pMe->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              18,
+	                              wszBottomstr, -1,
+	                              0, 0, &rc, 
+	                              IDF_ALIGN_MIDDLE
+	                              | IDF_ALIGN_CENTER
+	                              | IDF_TEXT_TRANSPARENT); 
+		
     }
 	if(OEMKeyguard_IsEnabled())
 	{

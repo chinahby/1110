@@ -960,7 +960,7 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
         //}
         //else
         {
-            (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:1", STRLEN("a:1"));
+            (void)IDISPLAY_SetPrefs(pMe->m_pDisplay, "a:0", STRLEN("a:0"));
         }
         ISHELL_GetDeviceInfo(pMe->m_pShell, &di);
         pMe->m_rc.dx = di.cxScreen;
@@ -1480,8 +1480,9 @@ static void CalculateScreenParameters(MainMenu *pMe)
 	for(j = 0;j<MAX_BOTTOM_ITEMS;j++)
 	{
 		
-		pMe->m_IconButtom_pt[i].x = (BOTTOM_MID_SPACE*(i+1))+(i*BOTTOM_ICON_WIDTH);
-		pMe->m_IconButtom_pt[i].y = SCREEN_HEIGHT-BOTTOM_ICON_HEIGHT-20;
+		pMe->m_IconButtom_pt[j].x = (BOTTOM_MID_SPACE*(j+1))+(j*BOTTOM_ICON_WIDTH);
+		MSG_FATAL("pMe->m_IconButtom_pt[j].x ======%d",pMe->m_IconButtom_pt[j].x ,0,0);
+		pMe->m_IconButtom_pt[j].y = SCREEN_HEIGHT-BOTTOM_ICON_HEIGHT-20;
 	}
 	pMe->m_IconSelect_Pt[0].x = SELECT_ONE_X;
 	pMe->m_IconSelect_Pt[0].y = SELECT_Y;
@@ -1589,7 +1590,9 @@ static void DrawMatrix(MainMenu *pMe)
             pMe->m_pImageButtom[j] = ISHELL_LoadImage(pMe->m_pShell,
                                                     ICON_ANI[(j+MAX_MATRIX_ITEMS)]);
         }
-
+        MSG_FATAL("pMe->m_IconButtom_pt[j].x=======%d",pMe->m_IconButtom_pt[j].x,0,0);
+		MSG_FATAL("pMe->m_IconButtom_pt[j].y=======%d",pMe->m_IconButtom_pt[j].y,0,0);
+		MSG_FATAL("",0,0,0);
         if (pMe->m_pImageButtom[j] != NULL)
         {
             IIMAGE_Draw(pMe->m_pImageButtom[j],
@@ -1620,14 +1623,16 @@ static void DrawMatrixBottomStr(MainMenu *pMe)
 		rc.y  = SCREEN_HEIGHT - 20;
 		rc.dx = BOTTOM_ICON_WIDTH;
 		rc.dy = 20;
-		(void) IDISPLAY_DrawText(pMe->m_pDisplay, 
-                    AEE_FONT_BOLD, 
-                    wszBottomstr, 
-                    -1, 
-                    0, 
-                    0, 
-                    &rc, 
-                    IDF_ALIGN_BOTTOM | IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);	
+		DrawGreyBitTextWithProfile(pMe->m_pShell,
+	                              pMe->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              18,
+	                              wszBottomstr, -1,
+	                              0, 0, &rc, 
+	                              IDF_ALIGN_MIDDLE
+	                              | IDF_ALIGN_CENTER
+	                              | IDF_TEXT_TRANSPARENT); 
+		
 	}
 }
 static void DrawMatrixStr(MainMenu *pMe)
@@ -1647,14 +1652,16 @@ static void DrawMatrixStr(MainMenu *pMe)
 		rc.y  = pMe->m_Icondefault_Pt[i].y+ICON_HEIGHT;
 		rc.dx = ICON_WIDTH;
 		rc.dy = 20;
-		(void) IDISPLAY_DrawText(pMe->m_pDisplay, 
-                    AEE_FONT_BOLD, 
-                    wszBottomstr, 
-                    -1, 
-                    0, 
-                    0, 
-                    &rc, 
-                    IDF_ALIGN_BOTTOM | IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);	
+		DrawGreyBitTextWithProfile(pMe->m_pShell,
+	                              pMe->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              18,
+	                              wszBottomstr, -1,
+	                              0, 0, &rc, 
+	                              IDF_ALIGN_MIDDLE
+	                              | IDF_ALIGN_CENTER
+	                              | IDF_TEXT_TRANSPARENT); 
+			
 	}
 }
 static void DrawMatrixStr_Move(MainMenu *pMe,int dx)
@@ -1674,14 +1681,16 @@ static void DrawMatrixStr_Move(MainMenu *pMe,int dx)
 		rc.y  = pMe->m_Icondefault_Pt[i].y+ICON_HEIGHT;
 		rc.dx = ICON_WIDTH;
 		rc.dy = 20;
-		(void) IDISPLAY_DrawText(pMe->m_pDisplay, 
-                    AEE_FONT_BOLD, 
-                    wszBottomstr, 
-                    -1, 
-                    0, 
-                    0, 
-                    &rc, 
-                    IDF_ALIGN_BOTTOM | IDF_ALIGN_LEFT | IDF_TEXT_TRANSPARENT);	
+		DrawGreyBitTextWithProfile(pMe->m_pShell,
+	                              pMe->m_pDisplay,
+	                              RGB_WHITE_NO_TRANS,
+	                              18,
+	                              wszBottomstr, -1,
+	                              0, 0, &rc, 
+	                              IDF_ALIGN_MIDDLE
+	                              | IDF_ALIGN_CENTER
+	                              | IDF_TEXT_TRANSPARENT); 
+		
 	}
 }
 
@@ -1752,8 +1761,8 @@ static void DrawFocusIcon(MainMenu *pMe)
 	if( pMe->m_pAnimate != NULL)
     {
 		IIMAGE_Draw(pMe->m_pAnimate,
-                    pMe->m_IconFocus_Pt[theFocus].x, 
-                    pMe->m_IconFocus_Pt[theFocus].y);
+                    pMe->m_Icondefault_Pt[theFocus].x, 
+                    pMe->m_Icondefault_Pt[theFocus].y);
 	    IIMAGE_Release(pMe->m_pAnimate);
         pMe->m_pAnimate = NULL;       
 	    IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);
@@ -1775,8 +1784,8 @@ static void DrawFocusIconMove(MainMenu *pMe,int dx)
 	if( pMe->m_pAnimate != NULL)
     {
 		IIMAGE_Draw(pMe->m_pAnimate,
-                    pMe->m_IconFocus_Pt[theFocus].x+dx, 
-                    pMe->m_IconFocus_Pt[theFocus].y);
+                    pMe->m_Icondefault_Pt[theFocus].x+dx, 
+                    pMe->m_Icondefault_Pt[theFocus].y);
 	    IIMAGE_Release(pMe->m_pAnimate);
         pMe->m_pAnimate = NULL;       
 	    IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);

@@ -207,10 +207,10 @@ typedef struct _MainMenu
 #define ICON_ANIMATED_WIDTH     50 //40
 #define ICON_ANIMATED_HEIGHT    40 //32
 #elif defined (FEATURE_DISP_240X320)
-#define ICON_WIDTH              60
-#define ICON_HEIGHT             60
-#define ICON_ANIMATED_WIDTH     40
-#define ICON_ANIMATED_HEIGHT    32
+#define ICON_WIDTH              50
+#define ICON_HEIGHT             40
+#define ICON_ANIMATED_WIDTH     50
+#define ICON_ANIMATED_HEIGHT    40
 #define BOTTOM_ICON_WIDTH       45
 #define BOTTOM_ICON_HEIGHT      45
 #define BOTTOM_MID_SPACE        11
