@@ -249,7 +249,7 @@ MSG_FATAL("TVApp_StateMainMenuHandle-------------------------",0,0,0);
         case DLGRET_CREATE:
             pMe->m_bNotOverwriteDlgRet = FALSE; 
             /*IANNUNCIATOR_SetField(pMe->m_pIAnn, AEECLSID_DISPLAY1, TRUE);
-            IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn, AEECLSID_DISPLAY1, TRUE);*/
+            		IANNUNCIATOR_EnableAnnunciatorBar(pMe->m_pIAnn, AEECLSID_DISPLAY1, TRUE);*/
             TVApp_ShowDialog(pMe, IDD_CMAINMENU);
             return NFSMACTION_WAIT;
 
