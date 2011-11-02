@@ -2890,6 +2890,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 {
 	//int i;
     CCoreApp *pMe = (CCoreApp *)pUser;
+	static  boolean bFirstStart = TRUE;	//Add By zzg 2011_10_20
 #ifdef FEATURE_KEYGUARD	 
     byte  bData;
 #endif
@@ -2911,6 +2912,21 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 			}
 			
             MEMSET(pMe->m_wstrEnterNum, 0, sizeof(pMe->m_wstrEnterNum));
+			MSG_FATAL("***zzg CoreApp EVT_DIALOG_INIT bFirstStart=%x***", bFirstStart, 0, 0);
+			
+			if (bFirstStart == TRUE)
+			{				
+#ifdef FEATURE_APP_BLUETOOTH
+				boolean bt_status = FALSE;
+				ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
+#endif
+				if (bt_status == TRUE)
+				{					
+					ISHELL_StartBackgroundApplet(pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP, NULL);
+				}
+				
+				bFirstStart = FALSE;
+			}
 			
             //CoreApp_GetRecordCount(pMe);
             CoreApp_DrawWallPaper(pMe);
