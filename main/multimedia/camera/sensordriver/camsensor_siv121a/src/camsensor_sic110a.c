@@ -229,9 +229,9 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
     
     x = (CAMSENSOR_SIC110A_FULL_SIZE_WIDTH-dx)>>1;
     y = (CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-dy)>>1;
-    #ifndef FEATURE_CAMERA_SP0828
+#ifndef FEATURE_CAMERA_SP0828
     dy = CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-y;
-    #else
+#else
     if(x<60)
 	{
 		x = 60;
@@ -242,7 +242,7 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 		dy=dy*1.4;
 		internel_resize = TRUE;
 	}
-	#endif
+#endif
 #endif
     //Sensor Block Setting  ###Don't Change###
     #ifdef FEATURE_CAMERA_SP0828
@@ -482,16 +482,17 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 	sic110a_i2c_write_byte(0x34,0x66);
 	sic110a_i2c_write_byte(0x35,0x04);//out format RGB565
 #if 1
-	sic110a_i2c_write_byte(0x47,(byte)((y>>8)&0xff) );		
+	sic110a_i2c_write_byte(0x47,(byte)((y>>8)&0xff));		
 	sic110a_i2c_write_byte(0x48,(byte)(y&0xff) );	   
-	sic110a_i2c_write_byte(0x49,(byte)((dy>>8)&0xff) ); 	 
+	sic110a_i2c_write_byte(0x49,(byte)((dy>>8)&0xff)); 	 
 	sic110a_i2c_write_byte(0x4a,(byte)(dy&0xff));	   
 	sic110a_i2c_write_byte(0x4b,(byte)(x&0xff) );	   
 	sic110a_i2c_write_byte(0x4c,(byte)(dx&0xff));	  
-
-	if(internel_resize == TRUE)
+    MSG_FATAL("sic110a_i2c_write_byte y=%d dy=%d",y,dy,0);
+    MSG_FATAL("sic110a_i2c_write_byte x=%d dx=%d",y,dy,0);
+	//if(internel_resize == TRUE)
 	{
-		sic110a_i2c_write_byte(0xe0,0x01);      
+		sic110a_i2c_write_byte(0xe0,0x00);     //02 00 
 		sic110a_i2c_write_byte(0xe1,0x60);
 		sic110a_i2c_write_byte(0xe2,0x80);
 		sic110a_i2c_write_byte(0xe3,0x00);
@@ -983,6 +984,8 @@ static boolean camsensor_sic110a_snapshot_config( camsensor_static_params_type  
     #ifndef FEATURE_CAMERA_SP0828
     camera_dy = CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-y;
     #else
+        MSG_FATAL("sic110a_i2c_write_byte y=%d dy=%d",y,camera_dy,0);
+    MSG_FATAL("sic110a_i2c_write_byte x=%d dx=%d",x,camera_dx,0);
     if(x<60)
 	{
 		x = 60;
@@ -994,12 +997,36 @@ static boolean camsensor_sic110a_snapshot_config( camsensor_static_params_type  
 		internel_resize = TRUE;
 	}
 	#endif
+    MSG_FATAL("sic110a_i2c_write_byte y=%d dy=%d",y,camera_dy,0);
+    MSG_FATAL("sic110a_i2c_write_byte x=%d dx=%d",x,camera_dx,0);
+
+#ifndef FEATURE_CAMERA_SP0828    
     sic110a_i2c_write_byte(0x47,(byte)((y>>8)&0xff) );		
 	sic110a_i2c_write_byte(0x48,(byte)(y&0xff) );	   
 	sic110a_i2c_write_byte(0x49,(byte)((camera_dy>>8)&0xff) ); 	 
 	sic110a_i2c_write_byte(0x4a,(byte)(camera_dy&0xff));	   
-	sic110a_i2c_write_byte(0x4b,(byte)(x&0xff) );	   
+	sic110a_i2c_write_byte(0x4b,(byte)(x&0xff));	   
 	sic110a_i2c_write_byte(0x4c,(byte)(camera_dx&0xff));	
+#else
+    if (camera_dy==320||camera_dx==240)
+    {
+        sic110a_i2c_write_byte(0x47,0x0);		
+    	sic110a_i2c_write_byte(0x48,0x0);	   
+    	sic110a_i2c_write_byte(0x49,0x1 ); 	 
+    	sic110a_i2c_write_byte(0x4a,0x40);	   
+    	sic110a_i2c_write_byte(0x4b,0x00);	   
+    	sic110a_i2c_write_byte(0x4c,0xf0);
+    }
+    else
+    {
+        sic110a_i2c_write_byte(0x47,(byte)((y>>8)&0xff) );		
+    	sic110a_i2c_write_byte(0x48,(byte)(y&0xff) );	   
+    	sic110a_i2c_write_byte(0x49,(byte)((camera_dy>>8)&0xff) ); 	 
+    	sic110a_i2c_write_byte(0x4a,(byte)(camera_dy&0xff));	   
+    	sic110a_i2c_write_byte(0x4b,(byte)(x&0xff));	   
+    	sic110a_i2c_write_byte(0x4c,(byte)(camera_dx&0xff));	
+    }
+#endif    
 	#endif
     return TRUE;
 }
