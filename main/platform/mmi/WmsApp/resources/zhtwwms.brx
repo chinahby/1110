@@ -567,6 +567,8 @@
 	</String>
 	<String Id="1029" Name="IDS_SENDERVISIBILITY">
 		<Text>显示彩信发送方号码</Text>
+	<String Id="1033" Name="IDS_GETTINGFROM" Encoding="Unicode">
+		<Text>接受中...</Text>
 	</String>
 </Strings>
 <Dialogs>
@@ -918,12 +920,15 @@
 				<Items/></Countdown>
 		</Controls>
 	</Dialog>
-	<DIALOG Id="6049" Name="IDD_MMSNOTIFY" Focus="7040">
+	<DIALOG Id="6049" Name="IDD_MMSOPTION_YESNO" Focus="7040">
 		<Controls>
 			<Menu Id="7040" Name="IDC_MMSOPTION_YESNO">
 				<Items/>
 			</Menu>
 		</Controls>
 	</DIALOG>
+	<Dialog Id="6050" Name="IDD_GETTING" Focus="0">
+		<Controls/>
+	</Dialog>
 </Dialogs>
 </BREWRes>

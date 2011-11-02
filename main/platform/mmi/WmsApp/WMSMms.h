@@ -150,7 +150,9 @@ typedef enum
     WMS_MMS_PDU_MRetrieveConf,
     WMS_MMS_PDU_MAcknowledgeInd,
     WMS_MMS_PDU_MDeliveryInd,
+    
     WMS_MMS_PDU_WSPHTTPGETreq,
+    WMS_MMS_PDU_WSPHTTPRESEND,
 }WMS_MMS_PDU_MessageTypeValue;
 
 typedef enum _mms_core_ans_
@@ -419,15 +421,15 @@ typedef struct _wsp_encoder_data_message_send
 	uint8 hTransactionID[MMS_MAX_TRANSACTION_ID_SIZE];
 	uint8 hContentType[MMS_MAX_CONTENT_TYPE];
 	WSP_MMS_ENCODE_DATA mms_data;
-	boolean	bDelRep;
-	boolean	bReadRep;
+	int8	bDelRep;
+	int8	bReadRep;
 	uint8* hBody;
 	int	iBodyLen;	
 	int	iRetrieveStatus;
 	int	iDate;
 	int	iPriority;
 	int	iMessageClass;
-	boolean bSenderVisibility;
+	int8 bSenderVisibility;
 	int iMMSVersion;
 	int iExpiry;
 	int iDeliveryTime;
@@ -496,11 +498,11 @@ typedef struct tag_MSocket
     ISocket*		    pISocket;
     INPort				Port;
     uint8*              pSendData;
-    uint16              nDataLen;
-    uint16				nBytesSent;
+    uint32              nDataLen;
+    uint32				nBytesSent;
 
-    uint16 NoDataCount;
-    uint16 nODataLen;
+    uint32 NoDataCount;
+    uint32 nODataLen;
     uint8* pOData;
     int nState;
 

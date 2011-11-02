@@ -270,8 +270,9 @@ typedef enum _Erase_SMS_e_Type
     CLEAR_ALL               //全部删除
 #ifdef FEATURE_USES_MMS
     ,CLEAR_INBOX_MMS
-
+    ,ERASE_INBOX_MMS_ONE
     ,CLEAR_OUTBOX_MMS
+    ,ERASE_OUTBOX_MMS_ONE
 #endif
 } Erase_SMS_e_Type;
 
@@ -542,6 +543,7 @@ typedef enum WMSAPPState
 
 	//用于显示FLASH SMS消息
 	WMSST_FLASHSMS,
+
 #ifdef FEATURE_USES_MMS
     // 显示彩信发件箱列表的状态
     WMSST_MMSNOTIFY,
@@ -553,6 +555,11 @@ typedef enum WMSAPPState
     WMSST_OUTBOX_MMS,
     WMSST_VIEWINBOXMSG_MMS,
     WMSST_VIEWOUTBOXMSG_MMS,
+    WMSST_OUTMSGMMSOPTS,
+    WMSST_INMSGMMSOPTS,
+
+	WMSST_GETTING,
+	
 #endif
 
     // 退出短信应用
@@ -655,6 +662,7 @@ typedef enum DLGRetValue
    DLGRET_SAVEURL,
 #ifdef FEATURE_USES_MMS
    DLGRET_GETMMS,
+   DLGRET_GET,
 #endif
 #endif   
    DLGRET_COPYTORUIM,
@@ -810,6 +818,7 @@ typedef struct WmsApp
     
     Send_OPT_e_Type                 m_SendOPT;                  //当前发送消息选项
     wms_report_status_e_type        m_SendStatus;               //发送消息返回的状态码
+    wms_report_status_e_type        m_GetStatus;               //发送消息返回的状态码
     wms_cdma_tl_status_e_type       m_SendtlStatus;
 
     boolean                         m_bNaturalStart;            //是否常规启动

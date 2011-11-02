@@ -233,6 +233,11 @@ static NextFSMAction WMSST_INBOX_MMS_Handler(WmsApp *pMe);
 static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe);
 extern uint8  g_mmsDataInfoMax;
 extern boolean gbWmsMMSNtf;
+static NextFSMAction WMSST_GETTING_Handler(WmsApp *pMe);
+static NextFSMAction WMSST_OUTMSGOPTS_MMS_Handler(WmsApp *pMe);
+static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe);
+
+
 
 #endif
 
@@ -486,6 +491,12 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
             return WMSST_EXIT_Handler(pMe);
             
 #ifdef FEATURE_USES_MMS
+        case WMSST_OUTMSGMMSOPTS:
+            return WMSST_OUTMSGOPTS_MMS_Handler(pMe);
+            
+        case WMSST_INMSGMMSOPTS:
+            return WMSST_INMSGOPTS_MMS_Handler(pMe);
+            
         case WMSST_OUTBOX_MMS:
             return WMSST_OUTBOX_MMS_Handler(pMe);
 
@@ -497,7 +508,11 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
 
         case WMSST_VIEWINBOXMSG_MMS:
             return WMSST_VIEWINBOXMSG_MMS_Handler(pMe);   
+
+        case WMSST_GETTING:
+            return WMSST_GETTING_Handler(pMe); 
 #endif
+
 
         default:
             break;
@@ -1369,7 +1384,7 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
                 WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)str);
                 IVector_RemoveElementAt(pMe->m_pSaveNumList,0);
             }
-            MOVE_TO_STATE(WMSST_INBOXES)
+            MOVE_TO_STATE(WMSST_GETTING)
             return NFSMACTION_CONTINUE;
         }
         break;
@@ -3403,7 +3418,80 @@ static NextFSMAction WMSST_SENDOPTS_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
     }
 } // WMSST_SENDOPTS_Handler
+#ifdef FEATURE_USES_MMS
+    /*==============================================================================
+    函数:
+        WMSST_GETTING_Handler
+    
+    说明:
+        WMSST_GETTING 状态处理函数。
+    
+    参数:
+        pMe [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+    
+    返回值:
+        NFSMACTION_CONTINUE: 指示不停状态机。
+        NFSMACTION_WAIT: 指示停止状态机。
+    
+    备注:
+           
+    ==============================================================================*/
+static NextFSMAction WMSST_GETTING_Handler(WmsApp *pMe)
+{
+    MSG_FATAL("WMSST_GETTING_Handler Start m_eDlgReturn=%d",pMe->m_eDlgReturn,0,0);
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
 
+    switch (pMe->m_eDlgReturn)
+    {
+        // 显示发送消息状态提示界面
+        case DLGRET_CREATE:
+            MSG_FATAL("WMSST_GETTING_Handler DLGRET_CREATE",0,0,0);
+            pMe->m_SucNum = 0;
+            pMe->m_FailNum = 0;
+            WmsApp_ShowDialog(pMe, IDD_GETTING);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_END:
+        case DLGRET_MSGBOX_OK:
+
+            if (pMe->m_stcontinuesendbk != WMSST_NONE)
+            {
+                if (pMe->m_stcontinuesendbk == WMSST_INBOXES)
+                {
+                    pMe->m_currState = WMSST_MAIN;
+                    pMe->m_eDlgReturn = DLGRET_INBOXES;
+                }
+                else
+                {
+                    pMe->m_currState = pMe->m_stcontinuesendbk;
+                }
+                
+                pMe->m_stcontinuesendbk = WMSST_NONE;
+            }
+            else if (pMe->m_bNaturalStart)
+            {
+                MSG_FATAL("pMe->m_bNaturalStart==TRUE",0,0,0);
+                MOVE_TO_STATE(WMSST_MAIN)
+            }
+            else
+            {
+                MSG_FATAL("pMe->m_bNaturalStart==FALSE",0,0,0);
+                MOVE_TO_STATE(WMSST_EXIT)
+            }
+
+            return NFSMACTION_CONTINUE;
+
+        default:
+            MSG_FATAL("WMSST_GETTING_Handler default",0,0,0);
+            // 用退出程序代替宏断言
+            MOVE_TO_STATE(WMSST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+} // WMSST_SENDING_Handler
+#endif
 /*==============================================================================
 函数:
     WMSST_SENDING_Handler
@@ -4071,7 +4159,28 @@ static NextFSMAction WMSST_DELMSGCONFIRM_Handler(WmsApp *pMe)
                         MOVE_TO_STATE(WMSST_RESERVEDMSGS)
                     }
                     break;
-                    
+#ifdef FEATURE_USES_MMS
+                case WMS_MB_OUTBOX_MMS:
+                    if(pMe->m_eOptType == OPT_VIA_VIEWMSG)
+                    {
+                        MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG_MMS)
+                    }
+                    else
+                    {
+                        MOVE_TO_STATE(WMSST_OUTBOX_MMS)
+                    }
+                    break;
+                case WMS_MB_INBOX_MMS:
+                    if(pMe->m_eOptType == OPT_VIA_VIEWMSG)
+                    {
+                        MOVE_TO_STATE(WMSST_VIEWINBOXMSG_MMS)
+                    }
+                    else
+                    {
+                        MOVE_TO_STATE(WMSST_INBOX_MMS)
+                    }
+                    break;
+#endif
                 default:
                     MOVE_TO_STATE(pMe->m_prevState)
             }
@@ -4084,6 +4193,41 @@ static NextFSMAction WMSST_DELMSGCONFIRM_Handler(WmsApp *pMe)
         case DLGRET_DONE:
             switch(pMe->m_eEraseWMSType)
             {
+#ifdef FEATURE_USES_MMS
+                case ERASE_INBOX_MMS_ONE:
+                { 
+                    if (g_mmsDataInfoMax == 0)
+                    {
+                        MOVE_TO_STATE(WMSST_MAIN)
+                    }
+                    else
+                    {
+                        MOVE_TO_STATE(WMSST_INBOX_MMS)
+                    }
+                }
+                break;
+                
+                case ERASE_OUTBOX_MMS_ONE:
+                { 
+                    if (g_mmsDataInfoMax == 0)
+                    {
+                        MOVE_TO_STATE(WMSST_MAIN)
+                    }
+                    else
+                    {
+                        MOVE_TO_STATE(WMSST_OUTBOX_MMS)
+                    }
+                }
+                break;
+                
+                case CLEAR_OUTBOX_MMS:
+                case CLEAR_INBOX_MMS:
+                { 
+                        MOVE_TO_STATE(WMSST_MAIN)
+                }
+                break;
+                
+#endif
                 case ERASE_DRAFT_ONE: 
                     {
                         uint16  nMsgs;
@@ -5744,7 +5888,7 @@ static NextFSMAction WMSST_EXTARCTDETAILS_Handler(WmsApp *pMe)
                 WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)&str);
                 IVector_RemoveElementAt(pMe->m_pSaveNumList,0);
             }
-            MOVE_TO_STATE(WMSST_INBOXES)
+            MOVE_TO_STATE(WMSST_GETTING)
             return NFSMACTION_CONTINUE;
 
         }
@@ -6634,7 +6778,15 @@ static NextFSMAction WMSST_OUTBOX_MMS_Handler(WmsApp *pMe)
 
         case DLGRET_LOADOK:
             MSG_FATAL("WMSST_OUTBOX_MMS_Handler 3",0,0,0);
-            MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG_MMS)
+            if(pMe->m_eOptType == OPT_VIA_VIEWMSG)
+            {
+                MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG_MMS)
+            }
+            else
+            {
+                MOVE_TO_STATE(WMSST_OUTMSGMMSOPTS)
+                
+            }
             return NFSMACTION_CONTINUE;
             
         case DLGRET_OPT:
@@ -6709,7 +6861,7 @@ static NextFSMAction WMSST_VIEWOUTBOXMSG_MMS_Handler(WmsApp *pMe)
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
             pMe->m_eDlgReturn = DLGRET_RESEND;
             pMe->m_bDoNotOverwriteDlgResult = TRUE;
-            MOVE_TO_STATE(WMSST_OUTMSGOPTS)
+            MOVE_TO_STATE(WMSST_OUTMSGMMSOPTS)
             return NFSMACTION_CONTINUE;
             
         default:
@@ -6719,7 +6871,7 @@ static NextFSMAction WMSST_VIEWOUTBOXMSG_MMS_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
     }
 } // WMSST_VIEWOUTBOXMSG_MMS_Handler
-#ifdef FEATURE_USES_MMS  
+
 /*==============================================================================
 函数:
     WMSST_INTBOX_MMS_Handler
@@ -6757,7 +6909,15 @@ static NextFSMAction WMSST_INBOX_MMS_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_LOADOK:
-            MOVE_TO_STATE(WMSST_VIEWINBOXMSG_MMS)
+            if(pMe->m_eOptType == OPT_VIA_VIEWMSG)
+            {
+                MOVE_TO_STATE(WMSST_VIEWINBOXMSG_MMS)
+            }
+            else
+            {
+                MOVE_TO_STATE(WMSST_INMSGMMSOPTS)
+                
+            }
             return NFSMACTION_CONTINUE;
             
         case DLGRET_OPT:
@@ -6830,7 +6990,7 @@ static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
             pMe->m_eDlgReturn = DLGRET_RESEND;
             pMe->m_bDoNotOverwriteDlgResult = TRUE;
-            MOVE_TO_STATE(WMSST_VIEWINBOXMSG)
+            MOVE_TO_STATE(WMSST_INMSGMMSOPTS)
             return NFSMACTION_CONTINUE;
             
         default:
@@ -6841,5 +7001,197 @@ static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
     }
 } // WMSST_VIEWOUTBOXMSG_MMS_Handler
 
-#endif
+/*==============================================================================
+函数:
+    WMSST_OUTMSGOPTS_MMS_Handler
+
+说明:
+    WMSST_OUTMSGOPTS_MMS_Handler 状态处理函数。
+
+参数:
+    pMe [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    NFSMACTION_CONTINUE: 指示不停状态机。
+    NFSMACTION_WAIT: 指示停止状态机。
+
+备注:
+
+==============================================================================*/
+static NextFSMAction WMSST_OUTMSGOPTS_MMS_Handler(WmsApp *pMe)
+{
+    MSG_FATAL("WMSST_OUTMSGOPTS_MMS_Handler Start m_eDlgReturn=%d",pMe->m_eDlgReturn,0,0);
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch (pMe->m_eDlgReturn)
+    {
+        case DLGRET_CREATE:
+            MSG_FATAL("WMSST_OUTMSGOPTS_MMS_Handler DLGRET_CREATE",0,0,0);
+            WmsApp_ShowDialog(pMe, IDD_MSGOPTS);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_VIEW:
+            MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG_MMS)
+            return NFSMACTION_CONTINUE;
+        
+        case DLGRET_CANCELED:
+            if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
+            {
+                MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG_MMS)
+            }
+            else
+            {
+                MOVE_TO_STATE(WMSST_OUTBOX_MMS)
+            }
+            return NFSMACTION_CONTINUE;
+/*
+        case DLGRET_FORWARD:
+            添加函数
+            // 清空群发地址链表
+            //WmsApp_FreeMultiSendList(pMe->m_pSendList);
+
+            // 拷贝消息
+            //WmsApp_CopyCurMsgForSend(pMe);
+            
+            pMe->m_STSwitchToEditMsg = pMe->m_currState;
+            pMe->m_eCreateWMSType = SEND_MSG_FORWARD;
+            MOVE_TO_STATE(WMSST_WRITEMSG)
+            pMe->m_dwInsertPos = 0;
+            return NFSMACTION_CONTINUE;
+*/
+        case DLGRET_DELETE:
+			
+            pMe->m_eEraseWMSType = ERASE_OUTBOX_MMS_ONE;
+            MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_CLEARALL:
+
+            pMe->m_eEraseWMSType = CLEAR_OUTBOX_MMS;
+            pMe->m_STSwitchToEditMsg = WMSST_MAIN;
+            MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_RESEND:
+
+            pMe->m_eCreateWMSType = SEND_MSG_RESEND;
+            // 检查卡是否插入modi by yangdecai 2010-08-10
+		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+		    {
+		        WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_OUTBOX);
+            	MOVE_TO_STATE(WMSST_SENDING)
+		    }
+			else
+			{
+				MOVE_TO_STATE(WMSST_POPMSG)
+			}
+            return NFSMACTION_CONTINUE;
+            
+        default:
+            // 用退出程序代替宏断言
+            MOVE_TO_STATE(WMSST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+}
+/*==============================================================================
+函数:
+    WMSST_INMSGOPTS_MMS_Handler
+
+说明:
+    WMSST_INMSGOPTS_MMS_Handler 状态处理函数。
+
+参数:
+    pMe [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+
+返回值:
+    NFSMACTION_CONTINUE: 指示不停状态机。
+    NFSMACTION_WAIT: 指示停止状态机。
+
+备注:
+
+==============================================================================*/
+static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe)
+{
+    MSG_FATAL("WMSST_INMSGOPTS_MMS_Handler Start m_eDlgReturn=%d",pMe->m_eDlgReturn,0,0);
+    if (NULL == pMe)
+    {
+        return NFSMACTION_WAIT;
+    }
+
+    switch (pMe->m_eDlgReturn)
+    {
+        case DLGRET_CREATE:
+            MSG_FATAL("WMSST_INMSGOPTS_MMS_Handler DLGRET_CREATE",0,0,0);
+            WmsApp_ShowDialog(pMe, IDD_MSGOPTS);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_VIEW:
+            MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG_MMS)
+            return NFSMACTION_CONTINUE;
+        
+        case DLGRET_CANCELED:
+            if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
+            {
+                MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG_MMS)
+            }
+            else
+            {
+                MOVE_TO_STATE(WMSST_OUTBOX_MMS)
+            }
+            return NFSMACTION_CONTINUE;
+/*
+        case DLGRET_FORWARD:
+            添加函数
+            // 清空群发地址链表
+            //WmsApp_FreeMultiSendList(pMe->m_pSendList);
+
+            // 拷贝消息
+            //WmsApp_CopyCurMsgForSend(pMe);
+            
+            pMe->m_STSwitchToEditMsg = pMe->m_currState;
+            pMe->m_eCreateWMSType = SEND_MSG_FORWARD;
+            MOVE_TO_STATE(WMSST_WRITEMSG)
+            pMe->m_dwInsertPos = 0;
+            return NFSMACTION_CONTINUE;
+*/
+        case DLGRET_DELETE:
+			
+            pMe->m_eEraseWMSType = ERASE_OUTBOX_MMS_ONE;
+            MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_CLEARALL:
+
+            pMe->m_eEraseWMSType = CLEAR_OUTBOX_MMS;
+            pMe->m_STSwitchToEditMsg = WMSST_MAIN;
+            MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_RESEND:
+
+            pMe->m_eCreateWMSType = SEND_MSG_RESEND;
+            // 检查卡是否插入modi by yangdecai 2010-08-10
+		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
+		    {
+		        WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_INBOX);
+            	MOVE_TO_STATE(WMSST_SENDING)
+		    }
+			else
+			{
+				MOVE_TO_STATE(WMSST_POPMSG)
+			}
+            return NFSMACTION_CONTINUE;
+            
+        default:
+            // 用退出程序代替宏断言
+            MOVE_TO_STATE(WMSST_EXIT)
+            return NFSMACTION_CONTINUE;
+    }
+}
+
+
+
 #endif

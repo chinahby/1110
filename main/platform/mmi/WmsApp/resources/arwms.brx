@@ -622,6 +622,9 @@
 	<String Id="1029" Name="IDS_SENDERVISIBILITY">
 		<Text>MMS Sender Visibility</Text>
 	</String>
+	<String Id="1033" Name="IDS_GETTINGFROM" Encoding="Unicode">
+		<Text>Receiving...</Text>
+	</String>
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN" Focus="7001">
@@ -971,5 +974,8 @@
 			</Menu>
 		</Controls>
 	</DIALOG>
+	<Dialog Id="6050" Name="IDD_GETTING" Focus="0">
+		<Controls/>
+	</Dialog>
 </Dialogs>
 </BREWRes>

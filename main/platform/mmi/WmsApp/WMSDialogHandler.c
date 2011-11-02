@@ -296,6 +296,13 @@ static boolean IDD_SENDING_Handler(void *pUser,
     uint16 wParam, 
     uint32 dwParam
 );
+#ifdef FEATURE_USES_MMS
+static boolean IDD_GETTING_Handler(void* pUser,
+    AEEEvent eCode,
+    uint16 wParam, 
+    uint32 dwParam
+);
+#endif
 
 static boolean IDD_TONUMLIST_Handler(void *pUser,
     AEEEvent eCode,
@@ -718,7 +725,11 @@ void WmsApp_SetDialogHandler(WmsApp *pMe)
         case IDD_SENDING:
             pMe->m_pDialogHandler = IDD_SENDING_Handler;
             break;
-            
+#ifdef FEATURE_USES_MMS            
+        case IDD_GETTING:
+            pMe->m_pDialogHandler = IDD_GETTING_Handler;
+            break;
+#endif            
         case IDD_TONUMLIST:
             pMe->m_pDialogHandler = IDD_TONUMLIST_Handler;
             break;
@@ -2122,10 +2133,12 @@ static boolean IDD_MESSAGELIST_Handler(void        *pUser,
                 if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
                 {
                     ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_OUTCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
+                    pMe->m_wSelItemxuhao = IMENUCTL_GetSel(pMenu);
                 }
                 else if(pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
                 {
                     ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMS_INCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
+                    pMe->m_wSelItemxuhao = IMENUCTL_GetSel(pMenu);
                 }
                 else
 #endif
@@ -6786,7 +6799,319 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
 
     return FALSE;
 } // IDD_MESSAGEVALIDITY_Handler
+#ifdef FEATURE_USES_MMS
+    /*==============================================================================
+    函数:
+        IDD_GETTING_Handler
+    
+    说明:
+        WMS Applet对话框IDD_GETTING事件处理函数。显示群发送消息的状态。
+    
+    参数:
+        pUser [in]: 指向WMS Applet对象结构的指针。该结构包含小程序的特定信息。
+        eCode [in]: 事件代码。
+        wParam[in]: 事件参数
+        dwParam [in]: 与事件关联的数据。
+    
+    返回值:
+        TRUE:  传入事件得到处理。
+        FALSE: 传入事件没被处理。
+    
+    备注:
+    发送消息过程：
+    1、重发
+    (1) m_pSendList 中仅一项，为消息发送地址。m_CurMsgNodes 中保存了当前整条消息的
+        全部数据包的 Cache 节点。m_idxCur 用于检索节点。WmsApp_ReSendMsgTimer 负责
+        发出读取当前节点消息的命令。
+    (2) IDD_GETTING_Handler 处理读取消息的结果。
+    
+    ==============================================================================*/
+    static boolean IDD_GETTING_Handler(void *pUser,
+        AEEEvent eCode,
+        uint16   wParam,
+        uint32   dwParam
+    )
+    {
+        WmsApp *pMe = (WmsApp *)pUser;
+        //static boolean bAniStart = FALSE;
+        
+        if (NULL == pMe)
+        {
+            return FALSE;
+        }
+        
+        switch (eCode)
+        {
+            case EVT_DIALOG_INIT:
+                if (pMe->m_pImage == NULL)
+                {
+                    pMe->m_pImage = ISHELL_LoadImage(pMe->m_pShell, SENDINGSMS_ANI);
+                }
+                return TRUE;
+    
+            case EVT_DIALOG_START:
+                (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                        EVTFLG_ASYNC,
+                                        AEECLSID_WMSAPP,
+                                        EVT_USER_REDRAW,
+                                        0, 
+                                        0);
+                return TRUE;
+    
+            // 发送提示
+            case EVT_USER_REDRAW:
+                MSG_FATAL("IDD_SENDING_Handler EVT_USER_REDRAW",0,0,0);
+                {// 发送消息提示界面
+                    AECHAR wszTitle[64] = {0};
+                    CMultiSendItemInfo *pItem = NULL;
+                    AEERect rc;
+                    int x, y, nLineHeight;
+                    RGBVAL oldColor = 0;
+                    
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                    {
+                        IImage *pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
+                        
+                        Appscommon_ResetBackground(pMe->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, &pMe->m_rc, 0, 0);
+                        if(pImageBg != NULL)
+                        {
+                            IImage_Release(pImageBg);
+                        }
+                    }
+#else
+                    Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+#endif
+                    
+                    //获得系统字体高度
+                    nLineHeight = IDISPLAY_GetFontMetrics(pMe->m_pDisplay,
+                                    AEE_FONT_NORMAL,
+                                    NULL,
+                                    NULL);
+                                    
+                    x=0;
+                #ifdef FEATURE_VERSION_FLEXI203P
+                    y=SENDINGSMS_ANI_Y*2;
+                #else
+                    y=SENDINGSMS_ANI_Y;
+                #endif
+                    if (pMe->m_pImage != NULL)
+                    {
+                        AEEImageInfo info;
+                        
+                        IIMAGE_GetInfo(pMe->m_pImage, &info);
+                        y += info.cy;
+                    }
+                    
+                    SETAEERECT(&rc,  0, y, pMe->m_rc.dx, pMe->m_rc.dy-y);
+                    
+                    (void) ISHELL_LoadResString(pMe->m_pShell,
+                            AEE_WMSAPPRES_LANGFILE,
+                            IDS_GETTINGFROM,
+                            wszTitle,
+                            sizeof(wszTitle));
+                    
+                    //IDISPLAY_FillRect(pMe->m_pDisplay, &rc, SENDINGSMS_ANI_G);
+    
+                    y += WMS_PIXELS_BETWEEN_LINE;
+                    oldColor = IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, SENDINGSMS_TEXT_COLOR);
+                    // 绘制提示信息-- Sending To
+                    IDISPLAY_DrawText(pMe->m_pDisplay, 
+                                AEE_FONT_NORMAL, wszTitle,
+                                -1, 0, y, NULL, 
+                                IDF_TEXT_TRANSPARENT|IDF_ALIGN_CENTER);
+                    
+                    wszTitle[0] = 0;
+                    y += (nLineHeight + WMS_PIXELS_BETWEEN_LINE);
+                    
+                    pItem = (CMultiSendItemInfo *)IVector_ElementAt(pMe->m_pSendList, 0);
+                    
+                    if (NULL != pItem)
+                    {
+                        if (WSTRLEN(pItem->m_szName) > 0)
+                        {
+                            (void)WSTRCPY(wszTitle, pItem->m_szName);
+                        }
+                        else
+                        {
+                            (void)WSTRCPY(wszTitle, pItem->m_szTo);
+                        }
+                        // 绘制提示信息-- 目的地或人名
+                        IDISPLAY_DrawText( pMe->m_pDisplay, 
+                                    AEE_FONT_NORMAL, wszTitle,
+                                    -1, 0, y, NULL, 
+                                    IDF_TEXT_TRANSPARENT|IDF_ALIGN_CENTER);
+                        DBGPRINTF("IDD_SENDING_Handler wszTitle=%S", wszTitle);
+                    }
+                    IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
+                    
+                    WmsApp_PlaySendingAni(pMe);
+                }
+                return TRUE;
+                
+            // 发送结果提示
+            case EVT_UPDATE:
+                MSG_FATAL("EVT_UPDATE",0,0,0);
+                if (!WmsApp_CurmessageIsFullSendout(pMe))
+                {// 发送完毕才提示
+                    PFNNOTIFY pfn = WmsApp_MultSendMsgTimer;
+                    MSG_FATAL("EVT_UPDATE 2 m_eCreateWMSType=%d",pMe->m_eCreateWMSType,0,0);
+                    switch (pMe->m_eCreateWMSType)
+                    {
+                        case SEND_MSG_RESEND:
+                            pfn = WmsApp_ReSendMsgTimer;
+                            break;
+                            
+                        case SEND_MSG_RESERVE:
+                            pfn = WmsApp_SendReservedMsgTimer;
+                            break;
+                            
+                        default:
+                            break;
+                    }
+                    
+                    (void)ISHELL_SetTimer(pMe->m_pShell, 300, pfn, pMe);
+    
+                    return TRUE;
+                }
+                // 保存发送失败的短信到 OUTBOX
+                // 对于 FEATURE_CARRIER_VENEZUELA_MOVILNET 要求为群发的每个目标保存短信
+                // ，短信发送前已保存，这里不再保存失败的短信
 
+                {// 消息发送结果提示界面
+                    AECHAR wszText[32] = {0};
+                    uint16 nResID = IDS_FAILED;
+                    AEERect rc;
+                    int x, y;
+                    RGBVAL oldColor = 0;
+                    MSG_FATAL("消息发送结果提示界面",0,0,0);
+                    x=0;
+                    y=SENDINGSMS_ANI_Y;
+                    if (pMe->m_pImage != NULL)
+                    {
+                        AEEImageInfo info;
+                        
+                        IIMAGE_GetInfo(pMe->m_pImage, &info);
+                        y += info.cy;
+                    }
+                
+                    SETAEERECT(&rc,  0, y, pMe->m_rc.dx, pMe->m_rc.dy-y);
+                        //MSG_FATAL("MMS_GetSocketReadStatus()=%d",MMS_GetSocketReadStatus(),0,0);
+                        //if(MMS_GetSocketReadStatus() == HTTP_CODE_OK)
+                    if(pMe->m_GetStatus == HTTP_CODE_OK)
+                    {
+                        nResID = IDS_MSGSENT;
+                    }
+                    else
+                    {
+                        nResID = IDS_FAILED;
+                    }
+                    
+                    (void) ISHELL_LoadResString(pMe->m_pShell,
+                            AEE_WMSAPPRES_LANGFILE,
+                            nResID,
+                            wszText,
+                            sizeof(wszText));
+                            
+                    //IDISPLAY_FillRect(pMe->m_pDisplay, &rc, SENDINGSMS_ANI_G);                
+#ifdef FEATURE_CARRIER_CHINA_VERTU
+                    {
+                        IImage *pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MESSAGE_BACKGROUND);
+                        
+                        Appscommon_ResetBackground(pMe->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, &rc, 0, 0);
+                        if(pImageBg != NULL)
+                        {
+                            IImage_Release(pImageBg);
+                        }
+                    }
+#else
+                    Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &rc, TRUE);
+#endif
+                    
+                    oldColor = IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, SENDINGSMS_TEXT_COLOR);
+                    IDISPLAY_DrawText( pMe->m_pDisplay, 
+                                AEE_FONT_NORMAL, wszText,
+                                -1, 0, 0, &rc, 
+                                IDF_TEXT_TRANSPARENT|IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE);
+                    
+                    IDisplay_SetColor(pMe->m_pDisplay, CLR_USER_TEXT, oldColor);
+                    IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+#ifdef FEATURE_USES_MMS
+                    if(pMe->m_isMMS)    
+                    {
+                        (void)ISHELL_PostEventEx(pMe->m_pShell,
+                                                 EVTFLG_ASYNC, 
+                                                 AEECLSID_WMSAPP, 
+                                                 EVT_SENDSMSEND,
+                                                 0, 
+                                                 0);
+                    }
+#endif                
+                }
+                return TRUE;
+                    
+            case EVT_DIALOG_END:
+                MSG_FATAL("IDD_SENDING_Handler EVT_DIALOG_END",0,0,0);                   
+                (void) ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)WmsApp_PlaySendingAni, pMe);
+                if (pMe->m_pImage != NULL)
+                {
+                    //WmsApp_StopSendingAni(pMe);
+                    IIMAGE_Release(pMe->m_pImage);
+                    pMe->m_pImage = NULL;
+                }
+                return TRUE;
+    
+            case EVT_KEY:
+                return TRUE;
+                
+            case EVT_SENDSMSEND:
+                MSG_FATAL("IDD_SENDING_Handler EVT_SENDSMSEND",0,0,0);
+                CLOSE_DIALOG(DLGRET_END)
+                return TRUE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+    
+            case EVT_PEN_UP:
+                {
+                    AEEDeviceInfo devinfo;
+                    int nBarH ;
+                    AEERect rc;
+                    int16 wXPos = (int16)AEE_GET_X(dwParam);
+                    int16 wYPos = (int16)AEE_GET_Y(dwParam);
+    
+                    nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+            
+                    MEMSET(&devinfo, 0, sizeof(devinfo));
+                    ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+                    SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+    
+                    if(WMSAPP_PT_IN_RECT(wXPos,wYPos,rc))
+                    {
+                        if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
+                        {
+                            boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_SELECT,0);
+                            return rt;
+                        }
+                        else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//左
+                        {
+                             boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_INFO,0);
+                             return rt;
+                        }
+                        else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+                        {                       
+                             boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_CLR,0);
+                             return rt;
+                        }
+                    }
+    
+                }
+                break;
+#endif                         
+            default:
+                break;
+        }
+    
+        return FALSE;
+    } // IDD_SENDING_Handler
+#endif
 /*==============================================================================
 函数:
     IDD_SENDING_Handler
@@ -8079,8 +8404,10 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                                     MEMSET(pMe->m_EncData.pMessage,NULL,sizeof(MMS_WSP_MESSAGE_SEND));
                                 }
                                 
-                                MEMCPY((char*)pMe->m_EncData.pMessage->hTo,pItem->m_szTo,STRLEN((char*)pItem->m_szTo));
+                                //MEMCPY((char*)pMe->m_EncData.pMessage->hTo,pItem->m_szTo,STRLEN((char*)pItem->m_szTo));
                                 WSTRTOSTR(pItem->m_szTo,(char*)pMe->m_EncData.pMessage->hTo,MMS_MAX_SINGLE_ADDRESS_SIZE);
+
+                                MSG_FATAL("IDD_SENDING_Handler to:%s",pMe->m_EncData.pMessage->hTo,0,0);
                                 pMe->m_EncData.pMessage->iRetrieveStatus = MMS_VALUE_USELESSNESS;
                                 pMe->m_EncData.pMessage->iDate = MMS_VALUE_USELESSNESS;
                                 pMe->m_EncData.pMessage->iPriority = MMS_VALUE_USELESSNESS;
@@ -11336,6 +11663,32 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
             {
                 switch (pMe->m_eMBoxType)
                 {
+#ifdef FEATURE_USES_MMS
+                    case WMS_MB_OUTBOX_MMS:
+                    {
+                        if (pMe->m_eOptType == OPT_VIA_LISTMSG)
+                        {
+                            MENU_ADDITEM(pMenu, IDS_VIEW);
+                        }
+                        MENU_ADDITEM(pMenu, IDS_RESEND);
+                        //MENU_ADDITEM(pMenu, IDS_FORWARD);
+                        MENU_ADDITEM(pMenu, IDS_DELETE);
+                        MENU_ADDITEM(pMenu, IDS_DELETEALL);
+                    }
+                    break;
+                    case WMS_MB_INBOX_MMS:
+                    {
+                        if (pMe->m_eOptType == OPT_VIA_LISTMSG)
+                        {
+                            MENU_ADDITEM(pMenu, IDS_VIEW);
+                        }
+                        MENU_ADDITEM(pMenu, IDS_RESEND);
+                        //MENU_ADDITEM(pMenu, IDS_FORWARD);
+                        MENU_ADDITEM(pMenu, IDS_DELETE);
+                        MENU_ADDITEM(pMenu, IDS_DELETEALL);
+                    }
+                    break;
+#endif
                     case WMS_MB_INBOX:
                         if (pMe->m_eOptType == OPT_VIA_LISTMSG)
                         {
@@ -12550,7 +12903,28 @@ static boolean IDD_DELETING_Handler(void        *pUser,
                             }
                         }
                         break;
-                        
+#ifdef FEATURE_USES_MMS
+                    case ERASE_INBOX_MMS_ONE:
+                    {
+                        WMS_MMS_DeleteMMS(pMe->m_wSelItemxuhao - 1,MMS_INBOX);
+                    }
+                    break;
+                    case ERASE_OUTBOX_MMS_ONE:
+                    {
+                        WMS_MMS_DeleteMMS(pMe->m_wSelItemxuhao - 1,MMS_INBOX);
+                    }
+                    break;
+                    case CLEAR_INBOX_MMS:
+                    {
+                        WMS_MMS_DeleteMMSALL(MMS_INBOX);
+                    }
+                    break;
+                    case CLEAR_OUTBOX_MMS:
+                    {
+                        WMS_MMS_DeleteMMSALL(MMS_OUTBOX);
+                    }
+                    break;
+#endif
                     case CLEAR_INBOXES:
 #ifdef FEATURE_CDSMS_RUIM
                         if (IsRunAsUIMVersion())
@@ -16772,9 +17146,9 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 //
                 
                 // Set Active
-                ICONTROL_SetActive((IControl*)pStatic,FALSE);
-                ICONTROL_SetActive((IControl*)pSoundProgressCtl,FALSE);
-                ICONTROL_SetActive((IControl*)pListCtl,FALSE);
+                //ICONTROL_SetActive((IControl*)pStatic,FALSE);
+                //ICONTROL_SetActive((IControl*)pSoundProgressCtl,FALSE);
+                //ICONTROL_SetActive((IControl*)pListCtl,FALSE);
                 
                 switch(pMe->m_eMBoxType)
                 {
@@ -17114,10 +17488,12 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 			return TRUE;
 
         case EVT_DIALOG_END:
+            RELEASEIF(pMe->m_pMedia);
             return TRUE;
             
         case EVT_KEY_PRESS:
         case EVT_KEY:
+            MSG_FATAL("IDD_VIEWMSG_MMS_Handler EVT_KEY 0x%x",wParam,0,0);
             switch(wParam)
             {
                 case AVK_CLR:
@@ -17269,6 +17645,11 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 return TRUE;
                 
                 case AVK_SELECT:
+                
+                    //CLOSE_DIALOG(DLGRET_OK)
+                return TRUE;
+  
+                case AVK_INFO:
                 {
                     switch(pMe->m_ResData.nIndex)
                     {
@@ -17337,12 +17718,8 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         break;
                     }
                 }
-                    //CLOSE_DIALOG(DLGRET_OK)
+                    //CLOSE_DIALOG(DLGRET_INFO)
                 return TRUE;
-  
-                case AVK_INFO:
-                    CLOSE_DIALOG(DLGRET_INFO)
-                    return TRUE;
                     
                 default:
                     break;

@@ -548,6 +548,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     MEMSET(&pMe->m_EncData,NULL,sizeof(MMS_WSP_ENCODE_SEND));
     MEMSET(&pMe->m_ResData,NULL,sizeof(WSP_MMS_RESOURCE));
     pMe->m_pMedia = NULL;
+    pMe->m_GetStatus = WMS_RPT_OK;
 #endif
     // 初始化各成员变量
     pMe->m_prevState = WMSST_NONE;
@@ -558,6 +559,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     pMe->m_eMBoxType = WMS_MB_NONE;
     pMe->m_eCreateWMSType = SEND_MSG_NEW;
     pMe->m_SendStatus = WMS_RPT_OK;
+
     pMe->m_bNaturalStart = TRUE;
     pMe->m_CopyType = NONECOPY;
     pMe->m_eMakeListMode = MAKEMSGLIST_INIT;
@@ -1340,8 +1342,24 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 MSG_FATAL("CWmsApp_HandleEvent EVT_MMS_MSG_SEND_FINSH",0,0,0);
                 pMe->m_SendStatus = wParam;
                 WmsApp_ProcessMMSStatus(pMe);
-                return TRUE;
+                
             }
+            return TRUE;
+        case EVT_MMS_MSG_GET_FINISH:
+            {
+                pMe->m_SendStatus = wParam;
+                if ((pMe->m_wActiveDlgID == IDD_GETTING) &&
+                    (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_WMSAPP))
+                {
+                    (void)ISHELL_PostEventEx(pMe->m_pShell,
+                                             EVTFLG_ASYNC, 
+                                             AEECLSID_WMSAPP, 
+                                             EVT_UPDATE,
+                                             0, 
+                                             0);
+                }
+            }
+            return TRUE;
 #endif
         case EVT_WMS_MSG_RECEIVED_MESSAGE:
             {
@@ -1712,16 +1730,22 @@ Exit:
         case EVT_MMS_PDUDECODE:
         {
             MMS_WSP_DEC_DATA *pDecData = &pMe->m_DecData;
-            int body_len = wParam;
+            uint32 body_len = wParam;
             uint8* pBody = (uint8*)dwParam;
             uint8 nResult = SUCCESS;
             char *strAddr = (char*)MALLOC(100);
             uint8 ePDUType;
             MMS_WSP_ENCODE_SEND* sendData = &pMe->m_EncData;
 
-            if(body_len == 0 || pBody == NULL)
+            if(pBody == NULL)
             {
                 break;
+            }
+
+            if(body_len == 0)
+            {
+                body_len = *(uint32*)pBody;
+                pBody += 4;
             }
             MSG_FATAL("EVT_MMS_PDUDECODE body_len:%d",body_len,0,0);
 
@@ -1885,6 +1909,14 @@ Exit:
                         int i = 0;
                         char dataPath[100];
 
+                        ISHELL_PostEventEx(
+                            AEE_GetShell(),
+                            EVTFLG_ASYNC,
+                            AEECLSID_WMSAPP,
+                            EVT_MMS_MSG_GET_FINISH,
+                            HTTP_CODE_OK,
+                            0);
+                            
                         if(pMe->m_isMMSNotify)
                         {
                             sendData->pDeliveryacknowledgement = (MMS_WSP_ENC_DELIVERY_ACKNOWLEDGEMENT*)MALLOC(sizeof(MMS_WSP_ENC_DELIVERY_ACKNOWLEDGEMENT));
@@ -6791,7 +6823,7 @@ void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
         if (nCount > 1)
         {
             if (pMe->m_eMakeListMode == MAKEMSGLIST_BACKONE)
-            {
+                {
                 wItemID = IMENUCTL_GetItemID(pMenu, nCount-1);
             }
             else
