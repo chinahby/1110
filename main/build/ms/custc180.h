@@ -37,6 +37,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_OMH_SMS
 #define FEATURE_ONEMSG_USE_ONEFILE
 #define FEATURE_CDSMS_CACHE_USELIST
+#define FEATURE_CAMERA_SP0828
 
 
 //#define FEATURE_SPN_FROM_BSMCCMNC
@@ -405,7 +406,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#endif
 
 #ifdef CAMERA_USES_SOFTDSP
-#define FEATURE_CAMERA_NOFULLSCREEN
+#undef FEATURE_CAMERA_NOFULLSCREEN
 #endif
 
 #endif /* CUSTSB2_H */

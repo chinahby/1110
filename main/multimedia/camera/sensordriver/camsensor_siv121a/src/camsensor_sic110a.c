@@ -109,7 +109,7 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
                                camctrl_tbl_type              *camctrl_tbl_ptr)
 {
     uint8   sensor_id;
-    
+    uint8 i=150;
     MSG_FATAL("camsensor_sic110a_init!",0,0,0);
     
     /* Input MCLK = 24MHz */
@@ -126,7 +126,7 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
     
     /*lint -save -e655 */
     camsensor_i2c_command.options    = (i2c_options_type) (I2C_REG_DEV | I2C_START_BEFORE_READ); 
-	#ifndef FEATURE_CAMERA_SP0828   //add by yangdecai 2011-06-20
+#ifndef FEATURE_CAMERA_SP0828   //add by yangdecai 2011-06-20
     CAMERA_CONFIG_GPIO(CAMSENSOR_SIC110A_RESET_PIN);
     gpio_out(CAMSENSOR_SIC110A_RESET_PIN,0);
     camera_timed_wait(10);
@@ -167,31 +167,38 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
 		MSG_FATAL("sensor_id 2 = ......FALSE",0,0,0);
 		return FALSE;
 	} 
-	#else
+#else
+    
 	i2c_operation_fs_set(25);
 	camera_timed_wait(10);  //ovt
+
+    
 	if( !sic110a_i2c_write_byte(0xfd,0x00)) 
 	 {
-		 ERR("Block Select Error!",0,0,0);
+//	 	while(i-->5)
+//        {
+//          rex_wait(100);   
+ //       }
+		 MSG_FATAL("Block Select Error!",0,0,0);
 		 return FALSE;
 	 }
 	 
 	 if( !sic110a_i2c_read_byte(SIC110A_ID_REG,&sensor_id)) 
 	 {
-		 ERR("read sensor_id failed!",0,0,0);
+		 MSG_FATAL("read sensor_id failed!",0,0,0);
 		 return FALSE;
 	 }
 	 
-	 ERR("sensor_id 1 = %x",sensor_id,0,0);
+	 MSG_FATAL("sensor_id 1 = %x",sensor_id,0,0);
 	 
 	 /* Check if it matches it with the value in Datasheet */
 	 if ( sensor_id != SIC110A_SENSOR_ID)
 	 {
-		 ERR("read sensor_id do not matches!",0,0,0);
+		 MSG_FATAL("read sensor_id do not matches!",0,0,0);
 		 return FALSE;
 	 }
 	 
-    #endif
+#endif
     initialize_sic110a_registers(CAMSENSOR_SIC110A_FULL_SIZE_WIDTH, CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT);
     
     /* Register function table: */
@@ -199,6 +206,9 @@ boolean camsensor_sic110a_init(camsensor_function_table_type *camsensor_function
 
     /* Setup camctrl_tbl */
     camsensor_sic110a_setup_camctrl_tbl(camctrl_tbl_ptr);
+    
+    MSG_FATAL("camsensor_sic110a_init Exit",0,0,0);
+    
     return TRUE;
 } /* camsensor_sic110a_init */
 

@@ -14,7 +14,7 @@ CAMSENSOR_SIV121A_SOURCES = \
 else
 CAMSENSOR_SIV121A_SOURCES = \
 	camsensor_siv121a.c \
-	camsensor_sic110a.c
+	camsensor_sic110a.c  	
 endif
 
 vpath %.c $(CAMSENSOR_SIV121A)  

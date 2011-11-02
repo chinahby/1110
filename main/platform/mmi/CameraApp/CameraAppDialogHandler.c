@@ -294,7 +294,7 @@ static const CCameraSize g_CameraSizeCFG_10[] =
 #elif defined(FEATURE_DISP_128X160)
     {128,160,L"128*160"}, // FULL Screen
     {176,220,L"176*220"}, // QCIF
-    {320,240,L"240*320"}, // QVGA    
+    {240,320,L"240*320"}, // QVGA    
 #elif defined(FEATURE_DISP_176X220)
     //{128,160,L"128*160"}, // FULL Screen
     {176,220,L"176*220"}, // QCIF
@@ -1178,7 +1178,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             if(pMe->m_pDisplay != NULL)
             {
                 IDISPLAY_SetClipRect(pMe->m_pDisplay, NULL);
-            }
+            }     
 #ifdef FEATURE_CAMERA_NOFULLSCREEN
             IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, RGB_BLACK);
             IDISPLAY_Update(pMe->m_pDisplay);
