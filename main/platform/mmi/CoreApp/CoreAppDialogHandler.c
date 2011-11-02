@@ -6100,7 +6100,7 @@ static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
 		uint16 nResID = IDS_STR_TOUCH_ONE;// жа
 		//Draw image
 		Draw_x = (IDLE_TOUCH_IDLE_BOTTOM_SPC*(i+1))+(i*IDLE_TOUCH_DRAWDX);
- 		IImage_GetInfo(pMe->m_pImageTouchSelIcon[i],&ImgInfo);
+        IImage_GetInfo(pMe->m_pImageTouchSelIcon[i],&ImgInfo);
     	IIMAGE_Draw(pMe->m_pImageTouchIcon[i],
 	                    Draw_x, 
 	                    Draw_y);
