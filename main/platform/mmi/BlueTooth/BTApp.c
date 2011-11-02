@@ -864,6 +864,10 @@ when       who  what, where, why
 #include "BTAppAVRCP.h"
 #endif
 
+
+#include "AEEAppletCtl.h"  	//Add By zzg 2011_10_20
+
+
 #ifdef FEATURE_BT_EXTPF_HID_HOST
 #error code not present
 #endif
@@ -878,7 +882,10 @@ when       who  what, where, why
 //Add End
 
 //Add By zzg 2010_11_16
-boolean bIsBTOn = FALSE;
+boolean 	bIsBTOn = FALSE;
+
+NotificationData	NotifyData;
+uint16				NotifyType;
 
 
 const AEEBTBDAddr NULL_BD_ADDR = {0,0,0,0,0,0};
@@ -1123,7 +1130,7 @@ static void BTApp_BuildHSButtonHndlrMenu( CBTApp* pMe );
 
 #ifdef FEATURE_BT_2_1
 static void BTApp_BuildIOCapabilityMenu( CBTApp* pMe );
-static boolean BTApp_DoRebond( CBTApp* pMe ,boolean bAuthorized ) ;
+//static boolean BTApp_DoRebond( CBTApp* pMe ,boolean bAuthorized ) ;
 static boolean BTApp_HandleBondOptionsMenu( CBTApp* pMe, uint16 key );
 //static boolean BTApp_UserConfirm( CBTApp* pMe, boolean bConfirmed );
 static void BTApp_BuildBondOptionsMenu( CBTApp* pMe );
@@ -1224,6 +1231,12 @@ static void BTApp_CreateOtherApp( CBTApp* pMe );
 static void BTApp_APPIsReadyTimer(void *pme);
 //Add End
 
+
+//Add By zzg 2011_06_24
+static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pData, uint16 NotifyType);
+static void BTApp_HandleNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pData, uint16 NotifyType);
+static boolean BTApp_CheckAudioDeviceList(CBTApp* pMe);
+//Add End
 
 
 //static void BTApp_DisableBT( CBTApp* pMe );
@@ -1346,6 +1359,8 @@ static int  BTAppMod_CreateInstance(IModule *po,
 )
 {
     *ppObj = NULL;
+
+	MSG_FATAL("***zzg BTAppMod_CreateInstance***", 0, 0, 0);
 	
     if (ClsId != AEECLSID_BLUETOOTH_APP)
     {
@@ -1443,7 +1458,7 @@ static void BTApp_RunFSM(CBTApp *pMe)
     NextFSMAction nextFSMAction = NFSMACTION_WAIT;
 
 	MSG_FATAL("***zzg BTApp_RunFSM***", 0, 0, 0);
-
+		
     for ( ; ; )
     {
         nextFSMAction = BTApp_ProcessState(pMe);
@@ -1549,11 +1564,514 @@ static void BTApp_OnAppStop( CBTApp* pMe )
 }
 
 
+static boolean BTApp_CheckCoreAppState(IShell* piShell)
+{
+	MSG_FATAL("***zzg BTApp_CheckCoreAppState piShell=%x***", piShell, 0, 0);
+	
+	if (NULL != piShell)
+	{
+		IAppletCtl *pAppCtl = NULL;
+		uint32 nState;
+		int nSize = sizeof(nState);
+
+		// Create an instance of appletctl
+		(void)ISHELL_CreateInstance(piShell, AEECLSID_APPLETCTL, (void **)&pAppCtl);
+
+		MSG_FATAL("***zzg AEECLSID_APPLETCTL pAppCtl=%x***", pAppCtl, 0, 0);		
+		
+		if (pAppCtl) 
+		{
+			// Read the state of the app
+			if (SUCCESS == IAPPLETCTL_GetRunningInfo(pAppCtl, AEECLSID_CORE_APP,
+			                                       AEE_APPITEM_STATE, &nState, &nSize)
+			  && nState != APPSTATE_STOPPED 
+			  && nState != APPSTATE_CLOSING) 
+			{
+				MSG_FATAL("***zzg IAPPLETCTL_GetRunningInfo nState=%x***", nState, 0, 0);				
+				return TRUE;
+			}
+			else
+			{
+				MSG_FATAL("***zzg IAPPLETCTL_GetRunningInfo nState=%x***", nState, 0, 0);
+			}
+			
+		}
+	}
+
+	// No App information OR app is not running in background mode
+	return FALSE;
+}
+
+
+static void BTApp_GetAppList(IShell* piShell)
+{
+	int i;
+	IAppletCtl *pAppCtl = NULL;
+	uint32 nAppID[10];		
+	int nAppSize = sizeof(nAppID);
+	
+	if (NULL != piShell)
+	{
+		// Create an instance of appletctl
+		(void)ISHELL_CreateInstance(piShell, AEECLSID_APPLETCTL, (void **)&pAppCtl);
+
+		MSG_FATAL("***zzg AEECLSID_APPLETCTL pAppCtl=%x***", pAppCtl, 0, 0);		
+		
+		if (pAppCtl) 
+		{			
+			// Read the state of the app
+			if (SUCCESS != IAPPLETCTL_GetRunningList(pAppCtl, nAppID, &nAppSize))	
+			{
+				MSG_FATAL("***zzg IAPPLETCTL_GetRunningList Failed***", 0, 0, 0);
+			}			
+		}
+	}
+
+	for (i=0; i<10; i++)
+	{
+		MSG_FATAL("***zzg BTApp_GetAppList nAppID[%d]=%x***", i, nAppID[i], 0);
+	}
+	
+	return;
+}
+
+//Add By zzg 2011_06_24
+static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pData, uint16 NotifyType)
+{
+	boolean result = FALSE;
+
+	if (pMe == NULL)
+	{
+		return;
+	}
+	
+	switch (NotifyType)
+	{
+		case NMASK_BT_AG:
+		{	
+			switch (evt)
+			{
+				case AEEBT_AG_EVT_CONNECTED:
+				case AEEBT_AG_EVT_CONNECT_FAILED:	
+				case AEEBT_AG_EVT_DISCONNECTED:	
+				{
+					result = TRUE;
+					break;
+				}
+
+				//wait for check
+				case AEEBT_AG_EVT_BUTTON_PRESSED:
+				case AEEBT_AG_EVT_SPKR_GAIN_REPORT:
+				case AEEBT_AG_EVT_MIC_GAIN_REPORT:
+				case AEEBT_AG_EVT_SLC_UP:
+				case AEEBT_AG_EVT_SLC_DOWN: 
+				case AEEBT_AG_EVT_DEV_PICKUP: 
+				case AEEBT_AG_EVT_DEV_HANGUP: 
+#ifdef FEATURE_PHONE_VR	
+				case AEEBT_AG_EVT_VR_ON: 
+				case AEEBT_AG_EVT_VR_OFF: 	
+#endif
+				case AEEBT_AG_EVT_DEV_DIAL:
+#ifndef FEATURE_BT_HFP_1_5
+				case AEEBT_AG_EVT_DEV_MEM_DIAL: 
+				case AEEBT_AG_EVT_DEV_REDIAL:	
+#endif
+				case AEEBT_AG_EVT_DEV_SEND_DTMF:
+				case AEEBT_AG_EVT_VR_STATE_UPDATED:
+#ifdef FEATURE_BT_HFP_1_5
+				case AEEBT_AG_EVT_EXTERNAL_IO_ENABLED:
+				case AEEBT_AG_EVT_EXTERNAL_IO_DISABLED:
+				case AEEBT_AG_EVT_RSSI_SET:
+				case AEEBT_AG_EVT_BATTERY_CHARGE_IND_SET:
+				case AEEBT_AG_EVT_INBAND_RING_CAPABLE_SET:	
+#endif
+#ifdef FEATURE_AVS_BT_SCO_REWORK
+				case AEEBT_AG_EVT_SOUND_CHANGING:
+#endif
+
+				//end
+				 
+				
+				case AEEBT_AG_EVT_CONFIGURED:
+				case AEEBT_AG_EVT_ENABLED:	
+				case AEEBT_AG_EVT_RUNG:
+				case AEEBT_AG_EVT_VR_CAPABLE_SET:     
+			    case AEEBT_AG_EVT_SPKR_GAIN_SET:     
+			    case AEEBT_AG_EVT_MIC_GAIN_SET:	
+				case AEEBT_AG_EVT_AUDIO_CONNECTED:	
+				case AEEBT_AG_EVT_AUDIO_CONNECT_FAILED:
+				case AEEBT_AG_EVT_AUDIO_DISCONNECTED:	
+				case AEEBT_AG_EVT_DISABLED:	
+				default:
+				{
+					break;
+				}
+			}
+			break;
+		}
+		case NMASK_BT_NA:
+		{			
+			break;
+		}
+		case NMASK_BT_RM:
+		{			
+			switch (evt)
+			{
+				case AEEBT_RM_EVT_REBOND_REQUEST:	
+				case AEEBT_RM_EVT_USER_CFM_REQUEST: 				
+				case AEEBT_RM_EVT_PASSKEY_REQUEST:
+				case AEEBT_RM_EVT_PIN_REQUESTED:				
+				case AEEBT_RM_EVT_PASSKEY_REPLIED:									
+				case AEEBT_RM_EVT_BONDED:				
+				case AEEBT_RM_EVT_PASSKEY_NOTIFICATION:
+				{
+					result = TRUE;
+					break;
+				}
+				
+				case AEEBT_RM_EVT_UNBONDED: 				
+				case AEEBT_RM_EVT_PIN_REPLIED:
+				case AEEBT_RM_EVT_DEVICE_ADDED:
+				case AEEBT_RM_EVT_DEVICE_REMOVED:
+				case AEEBT_RM_EVT_AUTHORIZE_REQUEST:
+				case AEEBT_RM_EVT_USER_CFM_REPLIED:
+				default:	
+				{			
+					break;
+				}				
+				
+			}
+			break;
+		}
+		case NMASK_BT_SD:
+		{			
+			break;
+		}
+		case NMASK_BT_SPP:
+		{
+			break;
+		}
+		case NMASK_BT_L2:
+		{			
+			break;
+		}
+#ifdef FEATURE_BT_EXTPF_OPP				
+		case NMASK_BT_OPP:
+		{			
+			break;
+		}
+#endif				
+#ifdef FEATURE_BT_EXTPF_FTP
+		case NMASK_BT_FTP:
+		{			
+			break;
+		}
+#endif
+#ifdef FEATURE_BT_EXTPF_BIP		
+		case NMASK_BT_BIP:
+		{			
+			break;
+		}
+#endif
+#ifdef FEATURE_BT_EXTPF_BPP
+		case NMASK_BT_BPP:
+		{			
+			break;
+		}
+#endif
+#ifdef FEATURE_BT_EXTPF_PBAP
+		case NMASK_BT_PBAP:
+		{			
+			break;
+		}
+#endif
+		
+#ifdef FEATURE_BT_EXTPF_HID_HOST
+		#error code not present
+#endif
+		
+#ifdef FEATURE_BT_EXTPF_CTP
+		case NMASK_BT_CTP:
+		{
+			if ( evt & AEEBT_ICP_EVT_BASE ) 
+			{
+				
+			}
+			else
+			{
+				
+			}
+			break;
+		}
+#endif
+		
+#if defined(FEATURE_BT_EXTPF_SAP) && defined(FEATURE_BT_TEST_API)
+		#error code not present
+#endif
+
+#ifdef FEATURE_BT_EXTPF_AV
+		case NMASK_BT_A2DP:
+		{
+
+			switch (evt)
+			{
+				case AEEBT_A2DP_EVT_CONNECTED:
+				case AEEBT_A2DP_EVT_CON_FAILED:	
+				case AEEBT_A2DP_EVT_DISCONNECTED:	
+				{
+					result = TRUE;
+					break;
+				}
+
+				case AEEBT_A2DP_EVT_BITRATE:
+				case AEEBT_A2DP_EVT_START:
+				case AEEBT_A2DP_EVT_SUSPEND:
+				case AEEBT_A2DP_EVT_OPEN:
+				case AEEBT_A2DP_EVT_CLOSE:
+				default:
+				{
+					break;
+				}				
+			}
+			break;
+	  	}
+		case NMASK_BT_AVRCP:
+		{			
+			break;
+		}
+#endif
+		default:
+		{
+			break;
+		}		
+	}
+
+	MSG_FATAL("***zzg BTApp_CheckNotify result=%x***", result, 0, 0);
+	
+	return result;
+}
+static void BTApp_HandleNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pData, uint16 NotifyType)
+{
+	if (pMe == NULL)
+	{
+		return;
+	}
+
+	MSG_FATAL("***zzg BTApp_HandleNotify NotifyType=%x, evt=%x***", NotifyType, evt, 0);
+	
+	switch (NotifyType)
+	{
+		case NMASK_BT_AG:
+		{
+			BTApp_ProcessAGNotifications(pMe, evt, pData);	
+			break;
+		}
+		case NMASK_BT_NA:
+		{
+			BTApp_ProcessNANotifications(pMe, evt, pData);	
+			break;
+		}
+		case NMASK_BT_RM:
+		{
+			BTApp_ProcessRMNotifications(pMe, evt, pData);	
+			break;
+		}
+		case NMASK_BT_SD:
+		{
+			BTApp_ProcessSDNotifications(pMe, evt, pData);	
+			break;
+		}
+		case NMASK_BT_SPP:
+		{
+			BTApp_ProcessSPPNotifications(pMe, evt, pData);
+			break;
+		}
+		case NMASK_BT_L2:
+		{
+			BTApp_ProcessL2Notifications(pMe, evt, pData);	
+			break;
+		}
+#ifdef FEATURE_BT_EXTPF_OPP				
+		case NMASK_BT_OPP:
+		{
+			BTApp_ProcessOPPNotifications(pMe, evt, pData);	
+			break;
+		}
+#endif				
+#ifdef FEATURE_BT_EXTPF_FTP
+		case NMASK_BT_FTP:
+		{
+			BTApp_ProcessFTPNotifications(pMe, evt, pData);	
+			break;
+		}
+#endif
+#ifdef FEATURE_BT_EXTPF_BIP		
+		case NMASK_BT_BIP:
+		{
+			BTApp_ProcessBIPNotifications(pMe, evt, pData);	
+			break;
+		}
+#endif
+#ifdef FEATURE_BT_EXTPF_BPP
+		case NMASK_BT_BPP:
+		{
+			BTApp_ProcessBPPNotifications(pMe, evt, pData);	
+			break;
+		}
+#endif
+#ifdef FEATURE_BT_EXTPF_PBAP
+		case NMASK_BT_PBAP:
+		{
+			BTApp_ProcessPBAPNotifications(pMe, evt, pData);	
+			break;
+		}
+#endif
+		
+#ifdef FEATURE_BT_EXTPF_HID_HOST
+		#error code not present
+#endif
+		
+#ifdef FEATURE_BT_EXTPF_CTP
+		case NMASK_BT_CTP:
+		{
+			if ( evt & AEEBT_ICP_EVT_BASE ) 
+			{
+				BTApp_ProcessICPNotifications(pMe, evt, pData);
+			}
+			else
+			{
+				BTApp_ProcessCTPNotifications(pMe, evt, pData);
+			}
+			break;
+		}
+#endif
+		
+#if defined(FEATURE_BT_EXTPF_SAP) && defined(FEATURE_BT_TEST_API)
+		#error code not present
+#endif
+
+#ifdef FEATURE_BT_EXTPF_AV
+		case NMASK_BT_A2DP:
+		{
+			BTApp_ProcessA2DPNotifications(pMe, evt, pData);
+
+			MSG_FATAL("***zzg BTApp_HandleNotify NMASK_BT_A2DP evt=%x***", evt, 0, 0);
+
+			switch (evt)
+			{
+				case AEEBT_A2DP_EVT_START:
+				{
+					if ((((NotificationData*)pData)->A2DPStartInit == AEEBT_A2DP_EVENT_LOCAL_INIT) 
+						||(pMe->mAG.callState == BTAPP_AG_CALL_NONE))
+					{
+						BTApp_DisconnectAudio( pMe, pMe->mAG.bForceUnmute );
+					}
+					// else, ignore remote-initiated Start command because  a call is present and call audio must be left alone 
+					break;
+				}
+
+				case AEEBT_A2DP_EVT_SUSPEND:
+				{
+					MSG_LOW( "AG: audioConnecting=%d callState=%d", pMe->mAG.bAudioConnecting, pMe->mAG.callState, 0);
+
+					// did we suspend A2DP so we can bring up SCO? 
+					if ( pMe->mAG.bAudioConnecting == TRUE )
+					{
+						// carry out pending SCO connection 
+						pMe->mAG.bAudioConnecting = FALSE;
+						BTApp_ConnectAudio( pMe, pMe->mAG.bForceUnmute );
+					}
+					else if ((pMe->mAG.callState == BTAPP_AG_CALL_INCOMING_INBAND)
+						|| (pMe->mAG.callState == BTAPP_AG_CALL_CONNECTED))
+					{
+						BTApp_ConnectAudio( pMe, TRUE );
+					}
+					break;
+				}
+			}
+			break;
+	  	}
+		case NMASK_BT_AVRCP:
+		{
+			BTApp_ProcessAVRCPNotifications( pMe, evt, pData);
+			break;
+		}
+#endif
+		default:
+		{
+			break;
+		}		
+	}
+}
+
+static boolean BTApp_CheckAudioDeviceList(CBTApp* pMe)
+{
+	boolean result = FALSE;
+	
+	AEEBTDeviceEnumerator enumerator;
+	AEEBTDeviceInfo*      pDev;
+	uint8                 i;
+	uint8				  j;
+	uint8				  agcount=0;
+
+	if (pMe == NULL)
+	{
+		return FALSE;
+	}
+		
+	enumerator.control = AEEBT_RM_EC_MATCH_BONDED;
+	enumerator.bBonded = TRUE;			
+
+	if (IBTEXTRM_DeviceEnumInit(pMe->mRM.po, &enumerator) == SUCCESS)
+	{
+		MSG_FATAL("***zzg BTApp_CheckAudioDeviceList IBTEXTRM_DeviceEnumInit SUCCESS***", 0, 0, 0);		
+		i	= 0;
+		j	= 0;
+		pDev = &pMe->mRM.device[i];
+
+		while ((IBTEXTRM_DeviceEnumNext( pMe->mRM.po, pDev) == SUCCESS) 
+				&& pDev->bValid && (i < MAX_DEVICES))
+		{
+			MSG_FATAL("***zzg BTApp_CheckAudioDeviceList IBTEXTRM_DeviceEnumNext SUCCESS***", 0, 0, 0);
+					
+
+			// find out if this is an audio device
+			if ((pDev->majorDevClass == AEEBT_COD_MAJ_DEV_CLS_AUDIO) 
+				|| (pDev->serviceClass & AEEBT_COD_SC_AUDIO))
+			{
+				agcount++;
+			}
+			else
+			{
+				while (j < pDev->uNumSvcs) 
+				{
+					if ((pDev->svcs[j].uServiceClass == AEEBT_SD_SERVICE_CLASS_HEADSET) 
+						||(pDev->svcs[j].uServiceClass == AEEBT_SD_SERVICE_CLASS_HANDSFREE))
+					{
+						agcount++;
+						break;
+					}
+					j++;
+				}
+			}
+
+			pDev = &pMe->mRM.device[++i];
+			
+		}
+			
+	}					
+
+	MSG_FATAL("***zzg AudioDevice count = %x***", agcount, 0, 0);
+	return ((agcount>0)? TRUE:FALSE);
+}
+
+//Add End
+
 
 static boolean BTApp_HandleEvent(IBTApp *pi,
-    AEEEvent eCode,
-    uint16  wParam,
-    uint32 dwParam
+										  AEEEvent eCode,
+										  uint16  wParam,
+										  uint32 dwParam
 )
 {
     CBTApp *pMe = (CBTApp*)pi;	
@@ -1575,34 +2093,40 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
     AEEAppStart *as;
     AEEDeviceInfo di; 
 
-    ISHELL_GetDeviceInfo(pMe->m_pShell, &di);    
+    ISHELL_GetDeviceInfo(pMe->m_pShell, &di);  
+
+	MSG_FATAL("***zzg BTApp_HandleEvent eCode=%x***", eCode, 0, 0);
     
     switch (eCode)
-    {	
-        case EVT_APP_START:				
+    {	     	
+		case EVT_APP_START_BACKGROUND:		
 		{
-			MSG_FATAL("***zzg EVT_APP_START***", 0, 0, 0);
-			
-            pMe->m_bAppIsReady = FALSE;
-			
+			BTApp_StartBT(pMe);		
+      		return (TRUE);
+		}		
+		
+        case EVT_APP_START:				
+		{			
             ASSERT(dwParam != 0);
             as = (AEEAppStart*)dwParam;
-			
+
+			pMe->m_bAppIsReady = FALSE;
 			pMe->bStartBTaplication = TRUE;
-			
-			//Add By zzg 2010_11_08
+
+			MSG_FATAL("***zzg BTApp_Handle EVT_APP_START***", 0, 0, 0);
+						
 			if ((args != NULL) && (args->pszArgs != NULL))	
 			{
-				// Start BT_APP from Other App, but not for GetFile....
-				//Send File from T_Card
-				if ((STRNCMP(args->pszArgs, "GetFile", 7) != 0)	
+				//Send File from T_Card.....the filepath was args->pszArgs
+				//GetFile(OPPPush)//RestBT(Reset  Factory)
+				if ((STRNCMP(args->pszArgs, "GetFile", 7) != 0)
+					&& (STRNCMP(args->pszArgs, "BtHeadSet", 9) != 0)					
 					&& (STRNCMP(args->pszArgs, "ResetBT", 7) != 0))
 				{
 					pMe->bStartFromOtherApp	= TRUE;		
 					BTApp_SaveSendFilePath(pMe, args->pszArgs);				
 				}
-			}
-			//Add End				
+			}	
 
 			BTApp_CreateOtherApp(pMe);	
 			
@@ -1613,11 +2137,13 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			
 			if (event_processed)
 			{				
+				MSG_FATAL("***zzg mAG.bStartedVr=%x, mAG.callState=%x***", pMe->mAG.bStartedVr, pMe->mAG.callState, 0);
+			
 				if (pMe->mAG.bStartedVr != FALSE)
-				{
+				{					
 					pMe->mAG.bStartedVr = FALSE;
 					IBTEXTAG_UpdateVRState(pMe->mAG.po, FALSE);
-					
+
 					if (pMe->mAG.callState == BTAPP_AG_CALL_STARTVR)
 					{
 						pMe->mAG.callState = BTAPP_AG_CALL_NONE;
@@ -1626,35 +2152,39 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 #endif 
 					}
 				}
-
-				//Add By zzg 2010_11_09, Send File from T_Card
+				
+				//Add By zzg 2010_11_09
+				// Send File from T_Card
 				if (TRUE == pMe->bStartFromOtherApp)
 				{
 					boolean bt_status = FALSE;
+					
 					ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
 
 					if (bt_status == FALSE)	
-					{				
-						BTApp_BuildPrompt(pMe, BT_APP_MENU_OPEN);
-					}
-					else
-					{
-						if (BTApp_HCIModeOn( pMe ) == FALSE)
+					{		
+						if (BTApp_HCIModeOn(pMe) == FALSE)
 						{
-							MSG_FATAL("***zzg BTApp EVT_APP_START  BT_APP_MENU_OPP_SENDFILE***",0,0,0);
-
-							if (BTApp_OPPInit(pMe) != FALSE)
-							{
-								MSG_FATAL("***zzg BTApp_OPPBuildMenu BT_APP_MENU_OPP_SENDFILE***", 0, 0, 0);
-								MOVE_TO_STATE(BTAPPST_BT_SEND_FILE)		//直接用CLIENT(如果是SERVER状态，则切换)								
-							}
-							else
-							{
-								MSG_ERROR( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
-								BTApp_OPPCleanup( pMe );								
-							}	
-						}
+							BTApp_EnableBT(pMe);	
+						}							
 					}
+					
+					if (BTApp_HCIModeOn(pMe) == FALSE)
+					{
+						MSG_FATAL("***zzg BTApp EVT_APP_START  BT_APP_MENU_OPP_SENDFILE***",0,0,0);
+
+						if (BTApp_OPPInit(pMe) != FALSE)
+						{
+							MSG_FATAL("***zzg BTApp_OPPBuildMenu BT_APP_MENU_OPP_SENDFILE***", 0, 0, 0);
+							MOVE_TO_STATE(BTAPPST_BT_SEND_FILE)		//直接用CLIENT(如果是SERVER状态，则切换)								
+						}
+						else
+						{
+							MSG_ERROR( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
+							BTApp_OPPCleanup( pMe );								
+						}	
+					}					
+					
 				}
 				else if (STRNCMP(args->pszArgs, "GetFile", 7) == 0)	//OPP Get File
 				{
@@ -1664,8 +2194,9 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 					{
 						if (BTApp_OPPInit(pMe) != FALSE)
 						{
-							MSG_FATAL("***zzg BTApp_OPPBuildMenu BTAPPST_BT_FILE_PROGRESS***", 0, 0, 0);
-							MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)		//直接用CLIENT(如果是SERVER状态，则切换)									
+							//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)		//直接用CLIENT(如果是SERVER状态，则切换)									
+							pMe->m_eDlgRet = DLGRET_BT_FILE_PROGRESS; 
+							(void) ISHELL_EndDialog(pMe->m_pShell);	
 						}
 						else
 						{
@@ -1682,28 +2213,71 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 				{
 					MSG_FATAL("***zzg ResetBT BTApp***", 0, 0, 0);
 
-					bt_rm_refresh_efs_param();	//Add By zzg 2011_02_25					
+					bt_rm_refresh_efs_param();		
 					
 					BTApp_DisableBT(pMe);
 					break;	
-				}			
+				}	
+				else if (STRNCMP(args->pszArgs, "BtHeadSet", 9) == 0)					
+				{					
+					boolean bt_status = FALSE;
+
+					MSG_FATAL("***zzg SearchAudio BTApp***", 0, 0, 0);
+					
+					ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
+
+					if (bt_status == FALSE)	
+					{		
+						if (BTApp_HCIModeOn(pMe) == FALSE)
+						{
+							BTApp_EnableBT(pMe);	
+						}							
+					}
+					
+					if (BTApp_HCIModeOn(pMe) == FALSE)
+					{
+						if (BTApp_OPPInit(pMe) != FALSE)
+						{
+							MSG_FATAL("***zzg BTApp AG: enable=%x, connect=%x, audioconncect=%x***", 
+									pMe->mAG.bEnabled, pMe->mAG.bConnected, pMe->mAG.bAudioConnected);
+							MSG_FATAL("***zzg BTApp AG: bconnInPrgs=%x, bAudioConnecting=%x, bAudioDisconnecting=%x***", 
+										pMe->mAG.bconnInPrgs, pMe->mAG.bAudioConnecting, pMe->mAG.bAudioDisconnecting);
+
+							if (TRUE == BTApp_CheckAudioDeviceList(pMe))
+							{
+								pMe->uDeviceListType = AEEBT_RM_EC_MATCH_VALUE_1;	//AudioDeviceList
+								MOVE_TO_STATE(BTAPPST_DEVICE_LIST);
+							}
+							else
+							{
+								pMe->uDeviceSrhType		= AEEBT_COD_SC_AUDIO;	//Add By zzg 2011_10_19
+								MOVE_TO_STATE(BTAPPST_DEVICESRH);
+							}
+						}
+						else
+						{
+							MSG_ERROR( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
+							BTApp_OPPCleanup( pMe );								
+						}	
+					}					
+				}				
 				else
-				{
+				{					
 					//BTApp_BuildTopMenu( pMe );
 				}
 				//Add End        
-
+				
 				IBTEXTRM_GetHCIMode( pMe->mRM.po, &HCIMode );
+				MSG_FATAL("***zzg HCIMode=%x***", HCIMode, 0, 0);
 				if (HCIMode != AEEBT_HCIM_OFF)
 				{
 					BTApp_ShowMessage(pMe, IDS_MSG_HCI_ON_WARNING, NULL, 0);
-				}
+				}				
 			}
 			
 			pMe->bFirstLaunch = FALSE;
 			pMe->bSuspended = FALSE;	
 		    //Add End
-
 						
             if (NULL != pMe->m_pIDisplay)
             {            
@@ -1712,110 +2286,43 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
             }
 			
             pMe->m_pIDisplay = as->pDisplay;
-            (void) IDISPLAY_AddRef(pMe->m_pIDisplay);
+            (void) IDISPLAY_AddRef(pMe->m_pIDisplay);					
 			
             pMe->m_rect = as->rc;
             pMe->m_rect.dy = di.cyScreen;
            
-            pMe->m_bSuspending = FALSE;
-						
-            if (pMe->m_pIAnn != NULL)
-            {
-            	IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn, FALSE);                
-            }
+            pMe->m_bSuspending = FALSE;					
+			
+			// 开始BTApp状态机
+			BTApp_RunFSM(pMe); 			
 
 			//Add By zzg 2011_01_20: 在非蓝牙应用界面收到NOTIFY、EVT_USER
 			if (pMe->m_app_flag == TRUE)
 			{
-				MSG_FATAL("***zzg BTApp_Handle EVT_APP_START: pMe->m_app_flag == TRUE***", 0, 0, 0);
-				
-				switch (pMe->m_user_wParam)
+				MSG_FATAL("***zzg pMe->m_app_flag == TRUE***", 0, 0, 0);
+				MSG_FATAL("***zzg pMe->m_user_wParam == %d***", pMe->m_user_wParam, 0, 0);
+				DBGPRINTF("***zzg NotifyType == %d***", NotifyType);
+				DBGPRINTF("***zzg m_user_wParam = %d***", pMe->m_user_wParam);
+
+				if (pMe->m_user_wParam == AEEBT_RM_EVT_CONN)
 				{
-					case EVT_PIN_RQST:
-					{
-						MSG_FATAL("***zzg BTApp_Handle EVT_APP_START: EVT_PIN_RQST***", 0, 0, 0);
-
-						pMe->m_edit_state_id = BTAPPST_MAIN;
-
-#ifdef FEATURE_BT_2_1
-						if (IBTEXTRM_GetLocalInfo( pMe->mRM.po,&pMe->mRM.myInfo ) != SUCCESS)
-						{
-							MSG_FATAL("***zzg IBTEXTRM_GetLocalInfo Failed!***", 0, 0, 0);				
-						}
-						else
-						{
-							MSG_FATAL("***zzg Local HC LMPVersion = %d***", pMe->mRM.myInfo.uLMPVersion, 0, 0);
-
-							BTApp_SetBondable(pMe);
-
-							if (WSTRLEN( pMe->mRM.device[ pMe->mRM.uCurDevIdx ].wName) == 0)
-							{
-								BTApp_BDAddr2Wstr(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName,&pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr);
-							}
-
-							WSTRLCPY(pMe->wEditBuf, pMe->mRM.device[pMe->mRM.uCurDevIdx].wName, ARR_SIZE(pMe->mRM.device[pMe->mRM.uCurDevIdx].wName));
-
-							pMe->mRM.bpassKeyRqst = FALSE;
-
-							pMe->m_edit_id = IDS_PASS_KEY;
-							pMe->m_bEditNeedStr = TRUE;				
-
-							MOVE_TO_STATE(BTAPPST_BT_EDIT)
-
-							pMe->m_user_wParam = 0;								
-
-						}
-#endif									
-						break;
-					}
-
-					case AEEBT_RM_EVT_USER_CFM_REQUEST:
-					{						
-						MSG_FATAL("***zzg BTApp_HandleEvent EVT_APP_START AEEBT_RM_EVT_USER_CFM_REQUEST***", 0, 0, 0);	
-						
-						pMe->m_prompt_state_id = BTAPPST_MAIN;
-						BTApp_BuildPrompt(pMe , BT_APP_MENU_USER_CFM_RQST); 
-
-						pMe->m_user_wParam = 0;	
-						
-						break;
-					}
-
-
-					/*
-					case IDS_MSG_BOND_FAILED:
-					{
-						IDISPLAY_Backlight( pMe->m_pIDisplay, TRUE);
-						
-						//CLOSE_DIALOG(DLGRET_BT_MSGBOX)   
-						//pMe->m_eDlgRet = DLGRET_BT_MSGBOX; 
-						//(void) ISHELL_EndDialog(pMe->m_pShell); 
-
-						MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
-
-						pMe->m_user_wParam = 0;		
-
-						break;
-   
-					}
-					*/
-				
-					
-					default:
-					{
-						pMe->m_user_wParam = 0;
-						break;
-					}
+					AEEBTDeviceInfo dev;
+					DBGPRINTF("***zzg EVT_START RM NotifyData: %04x%04x%04x", 
+					        ((uint16)(NotifyData.bdAddr.uAddr[5] << 8) | NotifyData.bdAddr.uAddr[4]), 
+					        ((uint16)(NotifyData.bdAddr.uAddr[3] << 8) | NotifyData.bdAddr.uAddr[2]), 
+					        ((uint16)(NotifyData.bdAddr.uAddr[1] << 8) | NotifyData.bdAddr.uAddr[0]));
 				}
-
+				
+				BTApp_HandleNotify(pMe, pMe->m_user_wParam, (void *)&NotifyData, NotifyType);
+				
+				pMe->m_user_wParam = 0;
 				pMe->m_app_flag = FALSE;
-			}
-						
+
+				//return TRUE;
+			}					
 			
-            // 开始BTApp状态机
-            BTApp_RunFSM(pMe);
             return TRUE;
-    	}
+    	}		
 
 #ifndef FEATURE_UIONE_HDK
 		case EVT_FIRST_LAUNCH:
@@ -1832,6 +2339,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			boolean* pb = (boolean*)dwParam;
 
 			MSG_HIGH( "HndlEv - APP_STOP dw=0x%x", dwParam, 0, 0);
+
+			MSG_FATAL("***zzg BTApp_HandleEvt EVT_APP_STOP***", 0, 0, 0);
 			
 			if (pb)
 			{
@@ -1840,6 +2349,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 				pMe->bSuspended = TRUE;
 				pMe->bStartFromOtherApp = FALSE;	//Add By zzg 2010_11_08
 				pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+				pMe->uDeviceSrhType		= AEEBT_COD_SC_ALL;	//Add By zzg 2011_10_19
+				pMe->uDeviceListType	= AEEBT_RM_EC_ALL;	//Add By zzg // 2011_10_26
 			}
 			
 			BTApp_OnAppStop(pMe);		
@@ -1849,9 +2360,9 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
                 (void) IDISPLAY_Release(pMe->m_pIDisplay);
                 pMe->m_pIDisplay = NULL;
             }
-			
+
             pMe->m_bSuspending = TRUE;
-			BTApp_FreeOtherApp(pMe);
+			//BTApp_FreeOtherApp(pMe);
 
             return TRUE;
         }
@@ -1872,6 +2383,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
         case EVT_APP_RESUME:
         {
 			ASSERT(dwParam != 0);
+
+			MSG_FATAL("***zzg BTApp_Handle  EVT_APP_RESUME***", 0, 0, 0);
 			
             as = (AEEAppStart*)dwParam;
             pMe->m_bSuspending = FALSE;
@@ -1893,7 +2406,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			
             ERR("pMe->m_rc.y:%d,pMe->m_rc.dy:%d",pMe->m_rect.y,pMe->m_rect.dy,0);
 			
-            BTApp_RunFSM(pMe);
+	        BTApp_RunFSM(pMe);	
+			
             return TRUE;
         }
 		
@@ -1907,6 +2421,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 
             return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
         }
+
 		
         case EVT_DIALOG_START:
         {
@@ -1914,7 +2429,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
         }
 		
         case EVT_USER_REDRAW:
-        {
+        {	
 			(void) BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 			 
 			(void)ISHELL_SetTimer ( pMe->m_pShell,
@@ -1961,11 +2476,10 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
             // Applet被挂起，不跑状态机，等待Applet返回。
             //（注意：EVT_APP_SUSPEND  事件在EVT_DIALOG_END事件前发出。
             if (pMe->m_bSuspending == FALSE)
-            {
-                // 开始BTApp状态机
-                BTApp_RunFSM(pMe);
-            }
-			
+            {	
+            	// 开始BTApp状态机            	
+	            BTApp_RunFSM(pMe);            	
+            }			
             return TRUE;
         }	
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
@@ -1974,7 +2488,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 		{
 			return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 		}
-#if 0
+
 		case EVT_USER:
 		{
 			if ((wParam == AVK_SELECT) || (wParam == AVK_INFO))
@@ -1996,18 +2510,65 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			}
 			return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 		}
-#endif
 #endif//FEATURE_LCD_TOUCH_ENABLE
 
 		case EVT_NOTIFY:
 	    {
 			AEENotify* pN = (AEENotify*) dwParam;
 			AEEEvent  evt = GET_NOTIFIER_VAL(pN->dwMask);
-
-			MSG_FATAL("***zzg BTApp_HandleEvent EVT_NOTIFY cls=%x, NOTIFIER_MASK=%x***", pN->cls, GET_NOTIFIER_MASK(pN->dwMask), 0);		  
 			
+			MSG_FATAL("***zzg BTApp_HandleEvent EVT_NOTIFY cls=%x, NOTIFIER_MASK=%x***", pN->cls, GET_NOTIFIER_MASK(pN->dwMask), 0);	
+
+			//Add By zzg 2011_06_27
+			//NotifyData = *(NotificationData *)(pN->pData);	
+			MEMSET(&NotifyData, 0, sizeof(NotificationData));
+			MEMCPY(&NotifyData, pN->pData, sizeof(NotificationData));	
+
+			if (evt == AEEBT_RM_EVT_CONN)
+			{
+				AEEBTDeviceInfo dev;
+				DBGPRINTF("***zzg EVT_NOTIFY RM pN->pData: %04x%04x%04x", 
+				        ((uint16)(((NotificationData*)(pN->pData))->bdAddr.uAddr[5] << 8) | ((NotificationData*)(pN->pData))->bdAddr.uAddr[4]), 
+				        ((uint16)(((NotificationData*)(pN->pData))->bdAddr.uAddr[3] << 8) | ((NotificationData*)(pN->pData))->bdAddr.uAddr[2]), 
+				        ((uint16)(((NotificationData*)(pN->pData))->bdAddr.uAddr[1] << 8) | ((NotificationData*)(pN->pData))->bdAddr.uAddr[0]));
+				DBGPRINTF("***zzg EVT_NOTIFY RM NotifyData: %04x%04x%04x", 
+				        ((uint16)(NotifyData.bdAddr.uAddr[5] << 8) | NotifyData.bdAddr.uAddr[4]), 
+				        ((uint16)(NotifyData.bdAddr.uAddr[3] << 8) | NotifyData.bdAddr.uAddr[2]), 
+				        ((uint16)(NotifyData.bdAddr.uAddr[1] << 8) | NotifyData.bdAddr.uAddr[0]));
+			}
+			
+			//Add End
+		
 			if (pN->cls == AEECLSID_BLUETOOTH_NOTIFIER)
 			{
+				NotifyType = GET_NOTIFIER_MASK(pN->dwMask);
+
+				//Add By zzg 2011_06_23
+				MSG_FATAL("***zzg ActiveApplet=%x***", ISHELL_ActiveApplet(pMe->m_pShell), 0, 0);
+
+				if (TRUE == BTApp_CheckNotify(pMe, evt, pN->pData, NotifyType))
+				{				
+					MSG_FATAL("***zzg BTApp_CheckNotify TRUE***", 0, 0, 0);					
+
+					MSG_FATAL("***zzg BTApp_CheckNotify bDevPickedUp=%x***", pMe->mAG.bDevPickedUp, 0, 0);
+					
+					//if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
+					if ((ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
+						&& (FALSE == pMe->mAG.bDevPickedUp))
+					{							
+						pMe->m_app_flag = TRUE;
+						pMe->m_user_wParam = evt;	
+
+						ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+
+						DBGPRINTF("***zzg evt=%d, m_user_wParam = %d***", evt, pMe->m_user_wParam);
+
+						break;
+					}		
+				}
+				
+				//Add End
+					
 				switch (GET_NOTIFIER_MASK(pN->dwMask))
 				{
 				  case NMASK_BT_AG:
@@ -2021,8 +2582,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 				    break;
 				  }
 				  case NMASK_BT_RM:
-				  {
-				  	BTApp_ProcessRMNotifications( pMe, evt, pN->pData );
+				  { 
+				  	BTApp_ProcessRMNotifications(pMe, evt, pN->pData);	
 				    break;
 				  }
 				  case NMASK_BT_SD:
@@ -2107,6 +2668,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 #ifdef FEATURE_BT_EXTPF_AV
 				  case NMASK_BT_A2DP:
 				  {
+				  	MSG_FATAL("***zzg BTApp_HandlEvt NMASK_BT_A2DP evt=%x***", evt, 0, 0);
+					
 				  	BTApp_ProcessA2DPNotifications( pMe, evt, pN->pData );
 					
 					switch (evt)
@@ -2202,61 +2765,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 	            // starting for the first time on power up
 	            MSG_FATAL("***zzg BTApp EVT_NOTIFY NMASK_SHELL_INIT***", 0, 0, 0);
 				
-	            event_processed = BTApp_StartBT(pMe); 		
-				
-				if ((event_processed) && (pMe->bEnableAtStart))
-				{
-					if (pMe->mAG.bStartedVr != FALSE)
-					{
-						pMe->mAG.bStartedVr = FALSE;
-						IBTEXTAG_UpdateVRState( pMe->mAG.po, FALSE );
-						
-						if ( pMe->mAG.callState == BTAPP_AG_CALL_STARTVR )
-						{
-							pMe->mAG.callState = BTAPP_AG_CALL_NONE;
-#ifndef FEATURE_AVS_BT_SCO_REWORK
-							BTApp_ReleaseBTDevice( pMe, FALSE );
-#endif 
-						}
-					}
-
-					if (BTApp_HCIModeOn(pMe) == FALSE)
-					{
-						if (BTApp_OPPInit(pMe) != FALSE)	//Init BTApp--->OPP	
-						{					
-							MSG_FATAL("***zzg NMASK_SHELL_INIT bConnected=%d, bConnecting=%d, bRegistered=%d***", pMe->mOPP.bConnected, pMe->mOPP.bConnecting, pMe->mOPP.bRegistered);
-							
-							//change to the server for getin file
-							if ((pMe->mOPP.bConnected == TRUE) || (pMe->mOPP.bConnecting == TRUE))
-							{
-								if (IBTEXTOPP_Disconnect( pMe->mOPP.po) != SUCCESS)
-								{
-									MSG_FATAL("***zzg IBTEXTOPP_Disconnect != SUCCESS***", 0, 0, 0);
-								}	
-								else 
-								{
-									pMe->mOPP.bConnecting = FALSE;
-								}
-							}
-							
-						}
-						else
-						{
-							MSG_ERROR( "OPPBuildMenu - failed to create OPP object", 0, 0, 0 );
-							BTApp_OPPCleanup( pMe );				
-						}
-					}
-
-					IBTEXTRM_GetHCIMode( pMe->mRM.po, &HCIMode );
+	            //event_processed = BTApp_StartBT(pMe); 	//Del By zzg 2011_10_20					
 					
-					if ( HCIMode != AEEBT_HCIM_OFF )
-					{
-						MSG_FATAL("***zzg HCIMode=%x***", HCIMode, 0, 0);						
-						BTApp_ShowMessage( pMe, IDS_MSG_HCI_ON_WARNING, NULL, 0 );
-					}
-				}
-		  		
-				//Add End			
 	            break;
 	          }
 	          default:
@@ -2274,13 +2784,87 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 		}
 
 	case EVT_USER:
-	{
+	{		
 		MSG_MED( "HndlEv - EVT_USER wP=%d tm=%d", wParam, TOP_MENU, 0 );
 
 		MSG_FATAL("***zzg BTApp_HandleEvent EVT_USER wParam=%d, dwparam=%d***", wParam, dwParam, 0);
 
 		switch (wParam)
 		{
+			//Add By zzg 2011_10_25
+			case 1:	//Disconnect BtHeadSet for MusicPlayer
+			{
+				MSG_FATAL("***zzg BTApp Disconnect BtHeadSet AG bEnabled=%x, Connected=%x***", pMe->mAG.bEnabled, pMe->mAG.bConnected, 0);	
+				MSG_FATAL("***zzg BTApp Disconnect BtHeadSet A2DP bEnabled=%x, Connected=%x***", pMe->mA2DP.bEnabled, pMe->mA2DP.bConnected, 0);	
+				
+				MSG_FATAL("***zzg IDS_PROMPT_DISCONNECT***", 0, 0, 0);
+				
+				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
+				{
+					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+				}				
+          					
+				if (IBTEXTA2DP_Disconnect(pMe->mA2DP.po) != SUCCESS)
+				{
+					MSG_FATAL("***zzg IBTEXTA2DP_Disconnect Failed***", 0, 0, 0);
+					BTApp_ShowMessage(pMe, IDS_A2DP_DISCONNECT_FAILED, NULL, 3);
+				}
+				else
+				{
+					BTApp_A2DPSetRetries(pMe, FALSE);
+				}
+							
+				break;
+			}			
+
+			case 2: //Check BTAG connect for callapp
+			{
+				MSG_FATAL("***zzg BTApp EVT_USER AGConnected=%x A2DPConnect=%x***", pMe->mAG.bConnected, pMe->mA2DP.bConnected, 0);
+				
+				if (TRUE == pMe->mAG.bConnected)
+				{
+					ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,0x22,0);
+				}
+				
+				if (TRUE == pMe->mA2DP.bConnected)
+				{
+					ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,0x33,0);
+				}
+				
+				break;
+			}
+
+			case 3:
+			{
+				//MSG_FATAL("***zzg BTApp Connect A2DP***", 0, 0, 0);		
+				
+				//pMe->mA2DP.bdAddr = pMe->mAG.bdAddr;
+				//IBTEXTA2DP_Connect(pMe->mA2DP.po, &pMe->mA2DP.bdAddr);
+
+				AEEBTDeviceInfo* pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
+							
+				if ( pMe->mAG.bconnInPrgs == FALSE )
+				{
+					if ( pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET )
+					{
+						MSG_MED( "HndlSlction - connecting to HS", 0, 0, 0 );
+					}
+					else
+					{
+						MSG_MED( "HndlSlction - connecting to HF", 0, 0, 0 );
+					}
+					
+					if ( BTApp_CallConnected( pMe ) != BT_APP_CALL_NONE )
+					{
+						pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
+					}
+					pMe->mAG.bconnInPrgs = TRUE;
+					IBTEXTAG_Connect( pMe->mAG.po, &pDev->bdAddr, pMe->mAG.devType );					
+				}
+				
+				break;
+			}
+			//Add End
 			case EVT_AG_DISABLED:
 			{
 				BTApp_ProcEvtAGDisabled(pMe);
@@ -2317,6 +2901,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			}
 			case EVT_PIN_RQST:
 			{
+				/*
 				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
 				{
 					MSG_FATAL("***zzg BTApp_HandleEvent EVT_USER ISHELL_ActiveApplet=%x***", ISHELL_ActiveApplet(pMe->m_pShell), dwParam, 0);
@@ -2326,6 +2911,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 					pMe->m_user_wParam = wParam;
 					return TRUE;			
 				}
+				*/
 
 				MSG_FATAL("***zzg BTApp_Handle EVT_USER: EVT_PIN_RQST***", 0, 0, 0);
 
@@ -2514,6 +3100,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			}
 			case EVT_SD_DISC_SET:
 			{
+				MSG_FATAL("***zzg BTApp_HandleEvt EVT_SD_DISC_SET dwParam=%x***", dwParam, 0, 0);
+				
 				if (dwParam == AEEBT_SD_ERR_NONE)
 				{
 					IBTEXTSD_GetDiscoverableMode(pMe->mSD.po);
@@ -2663,6 +3251,9 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 #endif // FEATURE_APP_TEST_AUTOMATION    
 		}
 
+		MSG_FATAL("***zzg ISHELL_ActiveApplet=%x***", ISHELL_ActiveApplet(pMe->m_pShell), 0, 0);
+
+	
 		//Add By zzg 2011_02_16		
 		if (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_BLUETOOTH_APP)
 		{
@@ -2670,9 +3261,10 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
                                      AEECLSID_BLUETOOTH_APP,
                                      EVT_USER_REDRAW,
                                      0,
-                                     0);
-		}
+                                     0);			
+		}		
 		//Add End
+		
 
 		//return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 		break;
@@ -3475,40 +4067,19 @@ static void BTApp_EnableServiceSecurity( CBTApp* pMe )
 FUNCTION BTApp_CreateOtherApp/BTApp_FreeOtherAPp
 DESCRIPTION: 因为蓝牙可能有多个APP实例。
 ============================================================================= */
-static void BTApp_FreeOtherApp( CBTApp* pMe )
-{
-  //Add By zzg 2010_10_29   
-  if (pMe->m_pIAnn != NULL )
-  {
-      IANNUNCIATOR_Release(pMe->m_pIAnn);
-      pMe->m_pIAnn= NULL;
-  }
 
-  if (pMe->m_pConfig) 
-  {
-	  (void)ICONFIG_Release(pMe->m_pConfig);
-	  pMe->m_pConfig = NULL;
-  }
-
-  // 释放 IRUIM 接口
-  if (pMe->m_pIRUIM != NULL)
-  {
-      IRUIM_Release(pMe->m_pIRUIM);
-      pMe->m_pIRUIM = NULL;
-  }
-  //Add End
-  
-}
-
-
-
+//Add By zzg 2010_10_29  
+//将m_pIAnn/m_pConfig/m_pIRUIM分离出来以进行反复CREATE/FREE
+//因为BTApp_InitAppData/BTApp_FreeAppData只在启动和退出时调用一次
 static void BTApp_CreateOtherApp( CBTApp* pMe )
 {
 	AEEDeviceInfo  di;
-
-	MSG_FATAL("***zzg BTApp_CreateOtherApp Start***", 0, 0, 0);
-
-    if (NULL  == pMe)
+	static boolean  bCtDone = FALSE;
+	
+	MSG_FATAL("***zzg BTApp_CreateOtherApp Start bCtDone=%x***", bCtDone, 0, 0);
+	MSG_FATAL("***zzg BTApp_CreateOtherApp m_pConfig=%x, m_pIAnn=%x, m_pIRUIM=%x***", pMe->m_pConfig, pMe->m_pIAnn, pMe->m_pIRUIM);
+	
+    if (NULL == pMe)
     {
         return;
     }
@@ -3516,8 +4087,8 @@ static void BTApp_CreateOtherApp( CBTApp* pMe )
 	
     pMe->m_rect.x       = 0;
     pMe->m_rect.y       = 0;
-    pMe->m_rect.dx      = (int16) di.cxScreen;
-    pMe->m_rect.dy      = (int16) di.cyScreen;
+    pMe->m_rect.dx      = (int16)di.cxScreen;
+    pMe->m_rect.dy      = (int16)di.cyScreen;
 
     pMe->m_bAppIsReady = FALSE;
     pMe->m_ePreState = BTAPPST_NONE;
@@ -3528,34 +4099,144 @@ static void BTApp_CreateOtherApp( CBTApp* pMe )
 
     pMe->m_currDlgId = 0;
     pMe->m_nSubDlgId = 0;
-	
-	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
-	                                        AEECLSID_CONFIG,
-	                                        (void **)&pMe->m_pConfig))
-	{    	
-	    BTApp_FreeOtherApp(pMe);
-	    return;
+
+	if (bCtDone == TRUE)
+	{
+		return;
 	}
 	
-	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
-	                                         AEECLSID_ANNUNCIATOR,
-	                                         (void **)&pMe->m_pIAnn))
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_CONFIG, (void **)&pMe->m_pConfig))
 	{    	
 	    BTApp_FreeOtherApp(pMe);
 	    return;
 	}
 
-#ifndef WIN32    
-	// 创建 IRUIM 接口
-	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,
-			                                 AEECLSID_RUIM,
-			                                 (void **) &pMe->m_pIRUIM))
-	{
+
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_ANNUNCIATOR, (void **)&pMe->m_pIAnn))
+	{    	
 	    BTApp_FreeOtherApp(pMe);
 	    return;
 	}
-#endif//WIN32
+	
+
+#ifndef WIN32    
+	// 创建 IRUIM 接口	
+	if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_RUIM, (void **)&pMe->m_pIRUIM))
+	{
+	    BTApp_FreeOtherApp(pMe);
+	    return;
+	}	
+#endif//WIN32	
+
+	bCtDone = TRUE;
 }
+
+static void BTApp_FreeOtherApp( CBTApp* pMe )
+{	
+	if (pMe->m_pIAnn != NULL )
+	{
+	  IANNUNCIATOR_Release(pMe->m_pIAnn);
+	  pMe->m_pIAnn = NULL;
+	}
+
+	if (pMe->m_pConfig) 
+	{
+	  ICONFIG_Release(pMe->m_pConfig);
+	  pMe->m_pConfig = NULL;
+	}
+
+	// 释放 IRUIM 接口
+	if (pMe->m_pIRUIM != NULL)
+	{
+	  IRUIM_Release(pMe->m_pIRUIM);
+	  pMe->m_pIRUIM = NULL;
+	}
+  
+}
+//Add End
+
+
+//Add By zzg 2011_06_24
+/*
+static void BTApp_HandleRMNotify(CBTApp* pMe, uint16 wParam)
+{	
+	MSG_FATAL("***zzg BTApp_HandleRMNotify wParam=%d***", wParam, 0, 0);		
+	
+	switch (wParam)
+	{
+		//RM_Notify Start
+		case AEEBT_RM_EVT_REBOND_REQUEST:	
+		{
+			char   passkey[AEEBT_SSP_PASSKEY_LEN];
+			
+			WSTRTOSTR(pMe->mRM.wSSPPassKey, passkey, sizeof(passkey));		
+			MSG_FATAL("***zzg BTApp_HandleRMNotify AEEBT_RM_EVT_REBOND_REQUEST passkey=%s***", passkey, 0, 0);
+			DBGPRINTF("***zzg BTApp_HandleRMNotify AEEBT_RM_EVT_REBOND_REQUEST passkey=%s***", passkey);
+
+			BTApp_BuildPrompt(pMe, BT_APP_MENU_REBOND);
+			break;
+		}
+		
+		case AEEBT_RM_EVT_USER_CFM_REQUEST: 
+		{			
+			char   passkey[AEEBT_SSP_PASSKEY_LEN];
+			
+			WSTRTOSTR(pMe->mRM.wSSPPassKey, passkey, sizeof(passkey));		
+			MSG_FATAL("***zzg BTApp_HandleRMNotify AEEBT_RM_EVT_USER_CFM_REQUEST passkey=%s***", passkey, 0, 0);
+			DBGPRINTF("***zzg BTApp_HandleRMNotify AEEBT_RM_EVT_USER_CFM_REQUEST passkey=%s***", passkey);
+			
+			BTApp_BuildPrompt(pMe, BT_APP_MENU_USER_CFM_RQST); 			
+			break;
+		}		
+
+		case AEEBT_RM_EVT_PASSKEY_REQUEST:
+		case AEEBT_RM_EVT_PIN_REQUESTED:	
+		{
+			ISHELL_PostEventEx(pMe->m_pShell, EVTFLG_ASYNC, 
+	                           AEECLSID_BLUETOOTH_APP,
+	                           EVT_USER, EVT_PIN_RQST, 0L);
+			break;
+		}
+		
+		case AEEBT_RM_EVT_PASSKEY_REPLIED:
+		{
+			BTApp_ShowDevMsg(pMe, IDS_MSG_BOND_FAILED, NULL, 0);		
+			break;
+		}
+					
+		case AEEBT_RM_EVT_BONDED:
+		{
+			break;
+		}
+		
+		case AEEBT_RM_EVT_PASSKEY_NOTIFICATION:
+		{
+			ISHELL_PostEventEx(pMe->m_pShell, EVTFLG_ASYNC, 
+			                   AEECLSID_BLUETOOTH_APP,
+			                   EVT_USER, EVT_PASSKY, 0L);   
+			break;
+		}
+		
+		case AEEBT_RM_EVT_UNBONDED: 				
+		case AEEBT_RM_EVT_PIN_REPLIED:
+		case AEEBT_RM_EVT_DEVICE_ADDED:
+		case AEEBT_RM_EVT_DEVICE_REMOVED:
+		case AEEBT_RM_EVT_AUTHORIZE_REQUEST:
+		case AEEBT_RM_EVT_USER_CFM_REPLIED:
+		{			
+			break;
+		}
+		//RM_Notify End
+		
+		default:
+		{
+			break;
+		}
+	}
+}
+//Add End
+
+*/
 
 static void BTApp_APPIsReadyTimer(void *pme)
 {
@@ -3707,7 +4388,10 @@ static int BTApp_InitAppData(CBTApp *pMe)
     pMe->bSuspended       = FALSE;
 
 	pMe->bStartFromOtherApp	= FALSE;	//Add By zzg 2010_11_08
-	pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27
+	pMe->bUpdateProgress	= FALSE;	//Add By zzg 2010_11_27	
+
+	pMe->uDeviceSrhType		= AEEBT_COD_SC_ALL;	//Add By zzg 2011_10_19
+	pMe->uDeviceListType	= AEEBT_RM_EC_ALL;	//Add By zzg 2011_10_26
 	
     pMe->bVocoderOn       = FALSE;
     pMe->uTopMenu         = 0;
@@ -3715,7 +4399,7 @@ static int BTApp_InitAppData(CBTApp *pMe)
     MENU_SET_SEL( 0 );
 #ifdef FEATURE_UI_CORE
     pMe->mAG.bVolumesInit = FALSE;
-#endif //FEATURE_UI_CORE
+#endif //FEATURE_UI_CORE	
   }
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
@@ -3743,6 +4427,8 @@ static void BTApp_FreeAppData(CBTApp *pMe)
 	ISHELL_RegisterNotify(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, AEECLSID_BLUETOOTH_NOTIFIER, 0);
 
 	BTApp_AGDeInit((IApplet*)pMe);
+
+	BTApp_FreeOtherApp(pMe);		//Add By zzg 2011_09_28
 
     //Add By zzg 2011_02_26 
 	if (NULL != pMe->mSD.devRec)
@@ -4900,6 +5586,8 @@ static boolean BTApp_AutoAnswer( CBTApp* pMe )
   BTAppCallType callConn = BTApp_CallConnected( pMe );
   BTAppCallType callPresent = BTApp_CallPresent( pMe );
 
+  MSG_FATAL("***zzg BTApp_AutoAnswer callPresent=%x, callConn=%x***", callPresent, callConn, 0);
+
   MSG_LOW( "AutoAnswer timer expired, cp=%x cc=%x", callPresent, callConn, 0 );
 
   if ( callConn != BT_APP_CALL_NONE )
@@ -5158,6 +5846,8 @@ static void BTApp_AnswerCall( CBTApp* pMe, BTAppCallType callIncoming )
 
   MSG_LOW( "AnswerCall - dev=%d c=%d st=%d", 
            pMe->mAG.devType, callIncoming, pMe->mAG.callState );
+
+  MSG_FATAL("***zzg BTApp_AnswerCall***", 0, 0, 0);
 
   pMe->mAG.bDevPickedUp = TRUE;
   BTApp_StopRing( pMe );
@@ -9606,9 +10296,9 @@ boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu )
   AEEBTDeviceInfo* pDev;
   IDialog*  pCurrentDialog;
 
-  IDISPLAY_Backlight( pMe->m_pIDisplay, TRUE );
-
   return built;	//Add By zzg 2011_01_08
+
+  IDISPLAY_Backlight( pMe->m_pIDisplay, TRUE );
 
   MSG_LOW( "BuildMenu - m=%d tm=%d", menu, TOP_MENU, 0 );
   MSG_FATAL("BuildMenu - m=%d tm=%d", menu, TOP_MENU, 0);
@@ -11725,160 +12415,152 @@ static boolean BTApp_EnableNA( CBTApp* pMe, boolean* pbSettingBondable)
 FUNCTION BTApp_EnableBT
 DESCRIPTION
 ============================================================================= */
-void BTApp_EnableBT( CBTApp* pMe )
+void BTApp_EnableBT(CBTApp* pMe)
 {
-  boolean      bSettingBondable = FALSE;
-#if ( defined(FEATURE_BT_EXTPF_OPP) || defined(FEATURE_BT_EXTPF_FTP) || \
-      defined(FEATURE_BT_EXTPF_BIP) || defined(FEATURE_BT_EXTPF_BPP) || \
-      defined(FEATURE_BT_EXTPF_PBAP) || defined(FEATURE_IOBEX) )
-  boolean      bSettingDiscoverable = FALSE;
+	boolean      bSettingBondable = FALSE;
+	
+#if (defined(FEATURE_BT_EXTPF_OPP) || defined(FEATURE_BT_EXTPF_FTP) || \
+	 defined(FEATURE_BT_EXTPF_BIP) || defined(FEATURE_BT_EXTPF_BPP) || \
+	 defined(FEATURE_BT_EXTPF_PBAP) || defined(FEATURE_IOBEX))
+	boolean      bSettingDiscoverable = FALSE;
 #endif
 
-  MSG_FATAL("***zzg  BTApp_EnableBT mEnablingType=%x***",pMe->mEnablingType,0,0);
+	MSG_FATAL("***zzg  BTApp_EnableBT mEnablingType=%x***", pMe->mEnablingType, 0, 0);
 
-  if(pMe->mEnablingType == BTAPP_ENABLING_NONE)
-  {
-    pMe->mEnablingType = BTAPP_ENABLING_AG;
-  }
+	if (pMe->mEnablingType == BTAPP_ENABLING_NONE)
+	{
+		pMe->mEnablingType = BTAPP_ENABLING_AG;
+	}
+	
+	if (BTApp_HCIModeOn(pMe) == TRUE)
+	{
+		MSG_ERROR("BTApp_HCIModeOn(pMe) == TRUE!", 0, 0, 0);
+		return;
+	}
+	
+	if (pMe->bEnableAtStart == FALSE)
+	{
+		pMe->bEnableAtStart = TRUE;
+		BTApp_WriteConfigFile(pMe);
+	}
 
-  MSG_FATAL("***zzg BTApp_EnableBT 1***", 0, 0, 0);
-  if ( BTApp_HCIModeOn( pMe ) == TRUE )
-  {
-  	MSG_ERROR("BTApp_HCIModeOn( pMe ) == TRUE!",0,0,0);
-    return;
-  }
-
-  MSG_FATAL("***zzg BTApp_EnableBT 2***", 0, 0, 0);
-  if ( pMe->bEnableAtStart == FALSE )
-  {
-    pMe->bEnableAtStart = TRUE;
-    BTApp_WriteConfigFile( pMe );
-  }
-
-  MSG_FATAL("***zzg BTApp_EnableBT 3***", 0, 0, 0);
-  
-  switch(pMe->mEnablingType)
-  {
-    case BTAPP_ENABLING_AG:
-    {
-      if(BTApp_EnableAG(pMe, &bSettingBondable) == TRUE)
-      {
-		//Add By zzg 201011_26
-		//if ( TOP_MENU == BT_APP_MENU_MAIN )
+	MSG_FATAL("***zzg BTApp_EnableBT mEnablingType=%x***", pMe->mEnablingType, 0, 0);
+	
+	switch (pMe->mEnablingType)
+	{
+		case BTAPP_ENABLING_AG:
 		{
-			MSG_FATAL("***zzg BTApp_EnableBT 4***", 0, 0, 0); 
-			
-#ifdef FEATURE_BT_EXTPF_OPP
-			  if (BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable) == TRUE)
-		      {
-		        break;
-		      }
-#endif 
+			if (BTApp_EnableAG(pMe, &bSettingBondable) == TRUE)
+			{	
+				break;
+			}
 		}
-		//Add End   	  
-        break;
-      }
-    }
-    case BTAPP_ENABLING_NA:
-    {
-      if(BTApp_EnableNA(pMe, &bSettingBondable) == TRUE)
-      {
-        break;
-      }
-    }
+		
+		case BTAPP_ENABLING_NA:
+		{
+			if (BTApp_EnableNA(pMe, &bSettingBondable) == TRUE)
+			{
+				break;
+			}
+		}
+		
 #ifdef FEATURE_BT_EXTPF_OPP  
-    case BTAPP_ENABLING_OPP:
-    {		
-	  MSG_FATAL("***zzg  BTApp_EnableBT BTAPP_ENABLING_OPP***",0,0,0);		
-      if ( BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable) == TRUE)
-      {
-        break;
-      }
-    }
+		case BTAPP_ENABLING_OPP:
+		{		
+			MSG_FATAL("***zzg  BTApp_EnableBT BTAPP_ENABLING_OPP***",0,0,0);		
+			if (BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable) == TRUE)
+			{
+				break;
+			}
+		}
 #endif //FEATURE_BT_EXTPF_OPP
+
 #ifdef FEATURE_IOBEX  
-    case BTAPP_ENABLING_OBEX:
-    {
-      BTApp_EnableOBEX(pMe, &bSettingBondable, &bSettingDiscoverable);
-    }
+		case BTAPP_ENABLING_OBEX:
+		{
+			BTApp_EnableOBEX(pMe, &bSettingBondable, &bSettingDiscoverable);
+		}
 #endif //FEATURE_IOBEX
+
 #ifdef FEATURE_BT_EXTPF_FTP 
-    case BTAPP_ENABLING_FTP:
-    {
-      if( BTApp_EnableFTP(pMe, &bSettingBondable, &bSettingDiscoverable)
-                          == TRUE)
-      {
-        break;
-      }
-    }
+		case BTAPP_ENABLING_FTP:
+		{
+			if (BTApp_EnableFTP(pMe, &bSettingBondable, &bSettingDiscoverable) == TRUE)
+			{
+				break;
+			}
+		}
 #endif /* FEATURE_BT_EXTPF_FTP */
+
 #ifdef FEATURE_BT_EXTPF_BIP
-    case BTAPP_ENABLING_BIP:
-    {
-      if( BTApp_EnableBIP( pMe, &bSettingBondable, &bSettingDiscoverable )
-                           == TRUE)
-      {
-        break;
-      }
-    }
+		case BTAPP_ENABLING_BIP:
+		{
+			if (BTApp_EnableBIP(pMe, &bSettingBondable, &bSettingDiscoverable) == TRUE)
+			{
+				break;
+			}
+		}
 #endif //FEATURE_BT_EXTPF_BIP
+
 #ifdef FEATURE_BT_EXTPF_BPP  
-    case BTAPP_ENABLING_BPP:
-    {
-      if ( BTApp_EnableBPP( pMe, &bSettingBondable ,&bSettingDiscoverable )
-                           == TRUE)
-      {
-        break;
-      }
-    }
+		case BTAPP_ENABLING_BPP:
+		{
+			if (BTApp_EnableBPP(pMe, &bSettingBondable ,&bSettingDiscoverable) == TRUE)
+			{
+				break;
+			}
+		}
 #endif //FEATURE_BT_EXTPF_BPP
+
 #ifdef FEATURE_BT_EXTPF_PBAP
-    case BTAPP_ENABLING_PBAP:
-    {
-      if( BTApp_EnablePBAP(pMe, &bSettingBondable, &bSettingDiscoverable) 
-                            == TRUE )
-      {
-        break;
-      }
-    }
+		case BTAPP_ENABLING_PBAP:
+		{
+			if(BTApp_EnablePBAP(pMe, &bSettingBondable, &bSettingDiscoverable) == TRUE)
+			{
+				break;
+			}
+		}
 #endif /*FEATURE_BT_EXTPF_PBAP*/
+
 #ifdef FEATURE_BT_EXTPF_SAP
 #error code not present
 #endif //FEATURE_BT_EXTPF_SAP
+
 #ifdef FEATURE_BT_EXTPF_AV
-    case BTAPP_ENABLING_AV:
-    {
-      BTApp_EnableA2DP(pMe, &bSettingBondable);
-      BTApp_EnableAVRCP(pMe, &bSettingBondable);
-    }
+		case BTAPP_ENABLING_AV:
+		{
+			MSG_FATAL("***zzg BTApp_EnableBT BTAPP_ENABLING_AV***", 0, 0, 0);
+			BTApp_EnableA2DP(pMe, &bSettingBondable);
+			BTApp_EnableAVRCP(pMe, &bSettingBondable);
+		}
 #endif //FEATURE_BT_EXTPF_AV
+
 #ifdef FEATURE_BT_EXTPF_HID_HOST
 #error code not present
 #endif //FEATURE_BT_EXTPF_HID_HOST
-    case BTAPP_ENABLING_L2:
-    {
-      BTApp_EnableL2(pMe);
-      pMe->mEnablingType = BTAPP_ENABLING_AG;
-      BTApp_BuildTopMenu( pMe );
-      break;
-    }
-  }
 
-  //Add By zzg 2010_11_16
-  bIsBTOn = TRUE;
-  
-  if(pMe->m_pIAnn)
-  {
-  	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_ON);
-  }
-  
-  (void) ICONFIG_SetItem(pMe->m_pConfig, CFGI_BT_STATUS,&bIsBTOn,sizeof(bIsBTOn));     
+		case BTAPP_ENABLING_L2:
+		{
+			BTApp_EnableL2(pMe);
+			pMe->mEnablingType = BTAPP_ENABLING_AG;
+			BTApp_BuildTopMenu(pMe);
+			break;
+		}
+	}
 
-  if (FALSE == pMe->bStartFromOtherApp)  
-  {
-  	 //BTApp_ShowMessage( pMe, IDS_MSG_BT_ENABLED, NULL, 5);
-  }
-  //Add End
+	//Add By zzg 2010_11_16
+	bIsBTOn = TRUE;
+
+	if (pMe->m_pIAnn)
+	{
+		IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_ON);		
+	}
+
+	if (pMe->m_pConfig)
+	{
+		(void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_BT_STATUS,&bIsBTOn,sizeof(bIsBTOn));   
+	}		  
+	//Add End
   
 }
 /* ==========================================================================
@@ -11888,209 +12570,221 @@ DESCRIPTION
 //static void BTApp_DisableBT( CBTApp* pMe )
 void BTApp_DisableBT( CBTApp* pMe )
 {
-  int     result;
-  boolean disabling = FALSE;
-#if ( defined(FEATURE_BT_EXTPF_OPP) || defined(FEATURE_BT_EXTPF_FTP) || \
-      defined(FEATURE_BT_EXTPF_BIP) || defined(FEATURE_BT_EXTPF_BPP) || \
-      defined(FEATURE_IOBEX) )
-  boolean bSettingDiscoverable = FALSE;
+	int     result;
+	boolean disabling = FALSE;
+  
+#if (defined(FEATURE_BT_EXTPF_OPP) || defined(FEATURE_BT_EXTPF_FTP) || \
+	 defined(FEATURE_BT_EXTPF_BIP) || defined(FEATURE_BT_EXTPF_BPP) || \
+	 defined(FEATURE_IOBEX))
+	boolean bSettingDiscoverable = FALSE;
 #endif
 
-  MSG_FATAL("***zzg BTApp_DisableBT***", 0, 0, 0);
+	MSG_FATAL("***zzg BTApp_DisableBT***", 0, 0, 0);
 
-  if ( pMe->bEnableAtStart != FALSE )
-  {
-    pMe->bEnableAtStart = FALSE;
-    BTApp_WriteConfigFile( pMe );
-  }
+	if (pMe->bEnableAtStart != FALSE)
+	{
+		pMe->bEnableAtStart = FALSE;
+		BTApp_WriteConfigFile(pMe);
+	}
 
-  if ( pMe->mAG.bEnabled )
-  {
-    MSG_LOW( "DisableBT - disabling AG", 0, 0, 0 );
-    if ( (result = IBTEXTAG_Disable( pMe->mAG.po )) != SUCCESS )
-    {
-      MSG_ERROR( "DisableBT - failed to disable AG, r=%d", result, 0, 0 );
-    }
-    else
-    {
-      disabling = TRUE;
-    }
-  }
-  if ( pMe->mNA.bEnabled )
-  {
-    MSG_LOW( "DisableBT - disabling NA", 0, 0, 0 );
-    if ( (result = IBTEXTNA_Disable( pMe->mNA.po )) != SUCCESS )
-    {
-      MSG_ERROR( "DisableBT - failed to disable NA, r=%d", result, 0, 0 );
-    }
-    else
-    {
-      disabling = TRUE;
-    }
-  }
+	if (pMe->mAG.bEnabled)
+	{
+		MSG_LOW( "DisableBT - disabling AG", 0, 0, 0 );
+		if ((result = IBTEXTAG_Disable(pMe->mAG.po)) != SUCCESS)
+		{
+			MSG_ERROR("DisableBT - failed to disable AG, r=%d", result, 0, 0);
+		}
+		else
+		{
+			disabling = TRUE;
+		}
+	}	
+	
+	if (pMe->mNA.bEnabled)
+	{
+		MSG_LOW( "DisableBT - disabling NA", 0, 0, 0 );
+		if ((result = IBTEXTNA_Disable(pMe->mNA.po)) != SUCCESS)
+		{
+			MSG_ERROR("DisableBT - failed to disable NA, r=%d", result, 0, 0);
+		}
+		else
+		{
+			disabling = TRUE;
+		}
+	}	
+	
+	
 #ifdef FEATURE_BT_EXTPF_OPP
-  if ( pMe->mOPP.bRegistered == TRUE )
-  {
-    //BTApp_DisableOPPService(CBTApp * pMe);		//Add By zzg 2010_11_17
-    
-    if ( (result = IBTEXTOPP_Deregister( pMe->mOPP.po )) != SUCCESS )
-    {
-      MSG_ERROR( "OPP_Deregister() failed with %x", result, 0, 0 );
-      BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
-    }
-    else
-    {
-      BTApp_ClearBondable(pMe); 	//Add By zzg 2010_12_29							 
-								
-      if ( bSettingDiscoverable == FALSE )
-      {
-        IBTEXTSD_SetDiscoverable( pMe->mSD.po, FALSE );
-        bSettingDiscoverable = TRUE;
-      }
-      disabling = TRUE;
-    }
-  }
+	if (pMe->mOPP.bRegistered == TRUE)
+	{
+		if ((result = IBTEXTOPP_Deregister(pMe->mOPP.po)) != SUCCESS)
+		{
+			MSG_ERROR("OPP_Deregister() failed with %x", result, 0, 0);
+			BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
+		}
+		else
+		{
+			BTApp_ClearBondable(pMe); 	//Add By zzg 2010_12_29							 
+									
+			if (bSettingDiscoverable == FALSE)
+			{
+				IBTEXTSD_SetDiscoverable(pMe->mSD.po, FALSE);
+				bSettingDiscoverable = TRUE;
+			}
+			disabling = TRUE;
+		}
+	}
 #endif //FEATURE_BT_EXTPF_OPP
+
 #ifdef FEATURE_BT_EXTPF_FTP
-  if ( pMe->mFTP.bRegistered == TRUE )
-  {
-    if ( (result = IBTEXTFTP_Deregister( pMe->mFTP.po )) != SUCCESS )
-    {
-      MSG_ERROR( "FTP_Deregister() failed with %x", result, 0, 0 );
-      BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
-    }
-    else
-    {
-      if ( bSettingDiscoverable == FALSE )
-      {
-        IBTEXTSD_SetDiscoverable( pMe->mSD.po, FALSE );
-        bSettingDiscoverable = TRUE;
-      }
-      disabling = TRUE;
-    }
-  }
+	if (pMe->mFTP.bRegistered == TRUE)
+	{
+		if ((result = IBTEXTFTP_Deregister(pMe->mFTP.po)) != SUCCESS)
+		{
+			MSG_ERROR("FTP_Deregister() failed with %x", result, 0, 0);
+			BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
+		}
+		else
+		{
+			if (bSettingDiscoverable == FALSE)
+			{
+				IBTEXTSD_SetDiscoverable(pMe->mSD.po, FALSE);
+				bSettingDiscoverable = TRUE;
+			}
+			disabling = TRUE;
+		}
+	}
 #endif //FEATURE_BT_EXTPF_FTP
+
 #ifdef FEATURE_BT_EXTPF_BIP
-  if ( pMe->mBIP.bRegistered == TRUE )
-  {
-    if ( IBTEXTBIP_Deregister( pMe->mBIP.po ) != SUCCESS )
-    {
-      BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
-    }
-    else
-    {
-      if ( bSettingDiscoverable == FALSE )
-      {
-        IBTEXTSD_SetDiscoverable( pMe->mSD.po, FALSE );
-        bSettingDiscoverable = TRUE;
-      }
-      disabling = TRUE;
-    }
-  }
+	if (pMe->mBIP.bRegistered == TRUE)
+	{
+		if (IBTEXTBIP_Deregister( pMe->mBIP.po) != SUCCESS)
+		{
+			BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
+		}
+		else
+		{
+			if (bSettingDiscoverable == FALSE)
+			{
+				IBTEXTSD_SetDiscoverable(pMe->mSD.po, FALSE);
+				bSettingDiscoverable = TRUE;
+			}
+			disabling = TRUE;
+		}
+	}
 #endif //FEATURE_BT_EXTPF_BIP
+
 #ifdef FEATURE_BT_EXTPF_BPP
-  if ( pMe->mBPP.bRegistered == TRUE )
-  {
-    if ( IBTEXTBPP_Deregister( pMe->mBPP.po ) != SUCCESS )
-    {
-      BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
-    }
-    else
-    {
-      if ( bSettingDiscoverable == FALSE )
-      {
-        IBTEXTSD_SetDiscoverable( pMe->mSD.po, FALSE );
-        bSettingDiscoverable = TRUE;
-      }
-      disabling = TRUE;
-    }
-  }
+	if (pMe->mBPP.bRegistered == TRUE)
+	{
+		if (IBTEXTBPP_Deregister(pMe->mBPP.po) != SUCCESS)
+		{
+			BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
+		}
+		else
+		{
+			if (bSettingDiscoverable == FALSE)
+			{
+				IBTEXTSD_SetDiscoverable(pMe->mSD.po, FALSE);
+				bSettingDiscoverable = TRUE;
+			}
+			disabling = TRUE;
+		}
+	}
 #endif //FEATURE_BT_EXTPF_BPP
+
 #ifdef FEATURE_BT_EXTPF_PBAP
-  if ( pMe->mPBAP.bSrvRegistered != FALSE )
-  {
-    if ( IBTEXTPBAP_DeregisterServer( pMe->mPBAP.po ) != SUCCESS )
-    {
-      BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
-    }
-    else
-    {
-      if ( bSettingDiscoverable == FALSE )
-      {
-        IBTEXTSD_SetDiscoverable( pMe->mSD.po, FALSE );
-        bSettingDiscoverable = TRUE;
-      }
-      disabling = TRUE;
-    }
-  }
+	if (pMe->mPBAP.bSrvRegistered != FALSE)
+	{
+		if (IBTEXTPBAP_DeregisterServer(pMe->mPBAP.po) != SUCCESS)
+		{
+			BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
+		}
+		else
+		{
+			if (bSettingDiscoverable == FALSE)
+			{
+				IBTEXTSD_SetDiscoverable(pMe->mSD.po, FALSE);
+				bSettingDiscoverable = TRUE;
+			}
+			disabling = TRUE;
+		}
+	}
 #endif //FEATURE_BT_EXTPF_PBAP
+
 #ifdef FEATURE_IOBEX
-  if ( pMe->mOBEX.bRegistered == TRUE )
-  {
-    result = IOBEXServer_Deregister( pMe->mOBEX.poServer );
-    if ( result != SUCCESS )
-    {
-      MSG_ERROR( "DisableBT - OBEX Deregister Failed with %x", result, 0, 0 );
-      BTApp_ShowMessage( pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3 );
-    }
-    else
-    {
-      pMe->mOBEX.bRegistered = FALSE;
-      if ( bSettingDiscoverable == FALSE )
-      {
-        IBTEXTSD_SetDiscoverable( pMe->mSD.po, FALSE );
-        bSettingDiscoverable = TRUE;
-      }
-      disabling = TRUE;
-      if ( pMe->mOBEX.poServer != NULL )
-      {
-        IOBEXServer_Release( pMe->mOBEX.poServer );
-        pMe->mOBEX.poServer = NULL;
-      }
-    }
-  }
+	if (pMe->mOBEX.bRegistered == TRUE)
+	{
+		result = IOBEXServer_Deregister(pMe->mOBEX.poServer);
+		if (result != SUCCESS)
+		{
+			MSG_ERROR("DisableBT - OBEX Deregister Failed with %x", result, 0, 0);
+			BTApp_ShowMessage(pMe, IDS_MSG_SVR_DEREG_FAILED, NULL, 3);
+		}
+		else
+		{
+			pMe->mOBEX.bRegistered = FALSE;
+			
+			if (bSettingDiscoverable == FALSE)
+			{
+				IBTEXTSD_SetDiscoverable(pMe->mSD.po, FALSE);
+				bSettingDiscoverable = TRUE;
+			}
+			disabling = TRUE;
+			
+			if (pMe->mOBEX.poServer != NULL)
+			{
+				IOBEXServer_Release(pMe->mOBEX.poServer);
+				pMe->mOBEX.poServer = NULL;
+			}
+		}
+	}
 #endif //FEATURE_IOBEX
+
 #ifdef FEATURE_BT_EXTPF_SAP
 #error code not present
 #endif //FEATURE_BT_EXTPF_SAP
-#ifdef FEATURE_BT_EXTPF_AV
-  if ( pMe->mA2DP.bEnabled == TRUE )
-  {
-    BTApp_A2DPDisable( pMe );
-  }
 
-  if ( pMe->mAVRCP.bEnabled == TRUE )
-  {
-    BTApp_AVRCPDisable( pMe );
-  }
+#ifdef FEATURE_BT_EXTPF_AV
+	if (pMe->mA2DP.bEnabled == TRUE)
+	{
+		BTApp_A2DPDisable(pMe);
+	}
+
+	if (pMe->mAVRCP.bEnabled == TRUE)
+	{
+		BTApp_AVRCPDisable(pMe);
+	}
 #endif //FEATURE_BT_EXTPF_AV
+
 #ifdef FEATURE_BT_EXTPF_HID_HOST
 #error code not present
 #endif //FEATURE_BT_EXTPF_HID_HOST
-  if ( pMe->mL2.bEnabled == TRUE )
-  {
-    BTApp_L2Disable( pMe );
-  }
-  if ( disabling )
-  {
-    BTApp_ShowBusyIcon( pMe );
-  }
 
-  //Add By zzg 2010_11_16
-  bIsBTOn = FALSE;	
-  
-  if(pMe->m_pIAnn)
-  {
-  	IANNUNCIATOR_SetField (pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_OFF);
-  }
+	if (pMe->mL2.bEnabled == TRUE)
+	{
+		BTApp_L2Disable(pMe);
+	}
+	
+	if (disabling)
+	{
+		BTApp_ShowBusyIcon(pMe);
+	}
 
-  if ( pMe->m_pConfig )
-  {
-  	(void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_BT_STATUS,&bIsBTOn,sizeof(bIsBTOn));   
-  }
-  
-  //BTApp_ShowMessage( pMe, IDS_MSG_BT_DISABLED, NULL, 5);
-  //Add End
+	//Add By zzg 2010_11_16
+	bIsBTOn = FALSE;	
+
+	if (pMe->m_pIAnn)
+	{
+		IANNUNCIATOR_SetField(pMe->m_pIAnn, ANNUN_FIELD_BLUETOOTH, ANNUN_STATE_BT_OFF);
+	}
+
+	if (pMe->m_pConfig)
+	{
+		(void) ICONFIG_SetItem(pMe->m_pConfig,CFGI_BT_STATUS,&bIsBTOn,sizeof(bIsBTOn));   
+	}	
+	//Add End
   
 }
 
@@ -13328,7 +14022,7 @@ DESCRIPTION
 FUNCTION BTApp_DoRebond
 DESCRIPTION
 ============================================================================= */
-static boolean BTApp_DoRebond( CBTApp* pMe ,boolean bAuthorized )
+/*static*/ boolean BTApp_DoRebond( CBTApp* pMe ,boolean bAuthorized )
 {
   boolean               success = TRUE;
   AEEBTRebondSecurity   rebondSec;
@@ -13722,9 +14416,20 @@ void BTApp_CancelMsgBox( CBTApp* pMe )
   
   ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)BTApp_CancelMsgBox, pMe);
 
-  pMe->m_eDlgRet = DLGRET_CANCELED;
+  pMe->m_eDlgRet = DLGRET_MSGBOX_CANCELED;
   (void) ISHELL_EndDialog(pMe->m_pShell);   
 }
+
+void BTApp_CancelProMptBox(CBTApp* pMe)
+{
+  MSG_FATAL("***zzg BTApp_CancelProMptBox***", 0, 0, 0);
+  
+  ISHELL_CancelTimer(pMe->m_pShell, (PFNNOTIFY)BTApp_CancelProMptBox, pMe);
+
+  pMe->m_eDlgRet = DLGRET_PROMPT_CANCELED;
+  (void) ISHELL_EndDialog(pMe->m_pShell);   
+}
+
 //Add End
 
 
@@ -13927,6 +14632,7 @@ static boolean BTApp_HandleSelection( CBTApp* pMe, uint16 selection )
         }
         case BT_APP_MENU_AG_DISCONNECT:
         {
+			MSG_FATAL("***zzg IBTEXTAG_Disconnect***", 0, 0, 0);
           IBTEXTAG_Disconnect( pMe->mAG.po );
           BTApp_HandleClearKey( pMe );
           break;
@@ -14550,6 +15256,8 @@ static void BTApp_InitVolumes( CBTApp* pMe )
   nv_item_type nvi;
   nv_stat_enum_type result;
 
+  MSG_FATAL("***zzg BTApp_InitVolumes***", 0, 0, 0);
+
   if ( pMe->mAG.bVolumesInit != FALSE )
   {
     return;
@@ -14619,6 +15327,8 @@ void BTApp_InitA2DPVolumes( CBTApp* pMe )
 {
   nv_item_type nvi;
   nv_stat_enum_type result;
+
+  MSG_FATAL("***zzg BTApp_InitA2DPVolumes***", 0, 0, 0);
 
   if ( pMe->mA2DP.bVolumesInit != FALSE )
   {
@@ -14808,35 +15518,30 @@ static boolean BTApp_Init( CBTApp* pMe )
 		}
 		
 		MSG_ERROR("BTApp_Init - failed allocating Memory", 0, 0, 0 );   
-		MSG_FATAL("***zzg BTApp_Init - Failed allocating Memory!***", 0, 0, 0 );
 		
       	return FALSE;
     }
     
     if ((IBTEXTRM_AutoServiceSearchDisable(pMe->mRM.po)) != SUCCESS)
     {
-		MSG_ERROR("BTApp_Init - failed disabling auto service search", 0, 0, 0);
-		MSG_FATAL("***zzg BTApp_Init - Failed disabling auto service search!", 0, 0, 0);
+		MSG_ERROR("BTApp_Init - failed disabling auto service search", 0, 0, 0);		
     }
 
     if (IBTEXTRM_RegisterConnStatus(pMe->mRM.po) != SUCCESS)
     {
-		MSG_ERROR("BTApp_Init - failed registering for connection status", 0, 0, 0);
-		MSG_FATAL("***zzg BTApp_Init - Failed registering for connection status!", 0, 0, 0);
+		MSG_ERROR("BTApp_Init - failed registering for connection status", 0, 0, 0);		
     }
 
     CALLBACK_Init(&pMe->mRM.radioActivityCb, BTApp_RadioActivityChanged, pMe);
 	
     if (IBTEXTRM_RegisterRadioActivity(pMe->mRM.po, &pMe->mRM.radioActivity, &pMe->mRM.radioActivityCb) != SUCCESS)
     {
-		MSG_ERROR("BTApp_Init - failed registering for radio activity change", 0, 0, 0);
-		MSG_FATAL("***zzg BTApp_Init - Failed registering for radio activity change!", 0, 0, 0);
+		MSG_ERROR("BTApp_Init - failed registering for radio activity change", 0, 0, 0);		
     }
 
     if (IBTEXTRM_ConfigApplication(pMe->mRM.po, FALSE, pMe->mRM.pageScanParam, pMe->mRM.inquiryScanParam, FALSE) != SUCCESS)
     {
-		MSG_ERROR("BTApp_Init - Failed to configure application", 0, 0, 0);
-		MSG_FATAL("***zzg BTApp_Init - Failed to configure application!", 0, 0, 0);
+		MSG_ERROR("BTApp_Init - Failed to configure application", 0, 0, 0);		
     }
 	
     bInitDone = TRUE;
@@ -14844,8 +15549,7 @@ static boolean BTApp_Init( CBTApp* pMe )
   else
   {
 	MSG_ERROR("BTApp_Init - Failed to create ... some'n", 0, 0, 0);
-	MSG_FATAL("***zzg BTApp_Init - Failed to create ... some'n!", 0, 0, 0);
-
+	
 	//BTApp_FreeAppData( (IApplet*) pMe );
 	BTApp_FreeAppData(pMe);
   }
@@ -14860,32 +15564,36 @@ DESCRIPTION
 ============================================================================= */
 static boolean BTApp_StartBT( CBTApp* pMe)
 {
-  BTApp_CreateOtherApp(pMe);			//Add By zzg 2011_01_05
+	BTApp_CreateOtherApp(pMe);			//Add By zzg 2011_01_05
 	
-  if ( BTApp_Init( pMe ) )  
-  {
-  	MSG_FATAL("***zzg BTApp_StartBT bEnableAtStart=%d***", pMe->bEnableAtStart, 0, 0);
-	
-    if ( pMe->bEnableAtStart != FALSE )
-    {
-      BTApp_EnableBT( pMe );
-    }
-#ifndef  FEATURE_BT_2_1
-    if ( pMe->mNA.bEnableSvcSec != FALSE )
-    {
-      BTApp_EnableServiceSecurity( pMe);
-    }
-#endif // FEATURE_BT_2_1
-    ISHELL_CloseApplet( pMe->m_pShell, FALSE );
-    pMe->bFirstLaunch = FALSE;
-    return TRUE;
-  }
-  else
-  { 
-    pMe->bFirstLaunch = FALSE;
-    return FALSE;  
-  }
+	if (BTApp_Init(pMe))  
+	{
+		MSG_FATAL("***zzg BTApp_StartBT bEnableAtStart=%d***", pMe->bEnableAtStart, 0, 0);
 
+		if (pMe->bEnableAtStart != FALSE)
+		{
+			BTApp_EnableBT(pMe);
+		}
+		
+#ifndef  FEATURE_BT_2_1
+		if (pMe->mNA.bEnableSvcSec != FALSE)
+		{
+			BTApp_EnableServiceSecurity( pMe);
+		}
+#endif // FEATURE_BT_2_1
+
+		ISHELL_CloseApplet(pMe->m_pShell, FALSE);		
+		
+		pMe->bFirstLaunch = FALSE;
+		
+		return TRUE;
+		
+	}
+	else	
+	{ 
+		pMe->bFirstLaunch = FALSE;
+		return FALSE;  
+	}
 }
 
 /* ==========================================================================
@@ -16856,6 +17564,19 @@ DESCRIPTION
 			break;
 		}
 #endif 
+		//Add By zzg 2011_05_25
+		case BT_APP_MENU_ON:
+		{
+			msgID = IDS_MSG_BT_ENABLED; 		
+			break;
+		}
+
+		case BT_APP_MENU_OFF:
+		{
+			msgID = IDS_MSG_BT_DISABLED; 		
+			break;
+		}		
+		//Add End
 
 		case BT_APP_MENU_REMOVE_ALL:
 		{
@@ -16940,8 +17661,8 @@ DESCRIPTION
 	WSTRCPY(pMe->wPromptBuf, wBuf);	
 				
 
-	MOVE_TO_STATE(BTAPPST_PROMPT)
-		
+	//MOVE_TO_STATE(BTAPPST_PROMPT)
+
 	pMe->m_eDlgRet = DLGRET_PROMPT; 
     (void) ISHELL_EndDialog(pMe->m_pShell); 
   
@@ -17134,7 +17855,6 @@ static void BTApp_BuildDeviceList( CBTApp* pMe, BTAppMenuType menu )
 static void BTApp_SaveSendFilePath(CBTApp *pMe, const char* filepath)
 {	
 	MEMSET(pMe->m_pfilepath, 0, AEEBT_MAX_FILE_NAME*sizeof(char) );
-
 	MEMCPY(pMe->m_pfilepath, filepath, STRLEN(filepath));	
 }
 //Add End
@@ -17925,17 +18645,16 @@ DESCRIPTION
 ============================================================================= */
 /*static*/ boolean BTApp_UserConfirm( CBTApp* pMe, boolean bConfirmed )
 {
-  boolean  success = TRUE;
+	boolean  success = TRUE;
 
-  MSG_FATAL("***zzg BTApp_UserConfirm***", 0, 0, 0);
+	MSG_FATAL("***zzg BTApp_UserConfirm***", 0, 0, 0);
 
-  if ( IBTEXTRM_UserConfirmationReply( pMe->mRM.po, &pMe->mRM.BondBDAddr, 
-                                       bConfirmed ) != SUCCESS )
-  {
-    MSG_ERROR( "UserConfirm - DeviceEnumInit failed", 0, 0, 0 );
-    success = FALSE;
-  }
-  return success;
+	if (IBTEXTRM_UserConfirmationReply(pMe->mRM.po, &pMe->mRM.BondBDAddr, bConfirmed ) != SUCCESS )
+	{
+		MSG_ERROR( "UserConfirm - DeviceEnumInit failed", 0, 0, 0 );
+		success = FALSE;
+	}
+	return success;
 }
 /* ==========================================================================
 FUNCTION BTApp_HandleDbgKey
@@ -19418,6 +20137,8 @@ static boolean BTApp_ConnectAudio( CBTApp* pMe, boolean bForceUnmute )
 {
   boolean bDone = FALSE;
 
+  MSG_FATAL("***zzg BTApp_ConnectAudio bForceUnmute=%x***", bForceUnmute, 0, 0);
+  
   if ( IS_AG_CONNECTABLE() != FALSE )
   {
     BTApp_UseBTDevice( pMe, bForceUnmute );
@@ -19479,6 +20200,9 @@ static boolean BTApp_DisconnectAudio( CBTApp* pMe, boolean bForceUnmute )
   boolean  bDone        = FALSE;
   pMe->mAG.bForceUnmute = bForceUnmute;
 
+  MSG_FATAL("***zzg BTApp_DisconnectAudio bAudioConnected=%x***", pMe->mAG.bAudioConnected, 0, 0);
+  MSG_FATAL("***zzg BTApp_DisconnectAudio bAudioDisconnecting=%x***", pMe->mAG.bAudioDisconnecting, 0, 0);
+	
   if ( pMe->mAG.bAudioConnected != FALSE )
   {
     MSG_LOW( "AG - Disc Audio, Disconnecting=%d",
@@ -19524,6 +20248,7 @@ DESCRIPTION
 ============================================================================= */
 static void BTApp_DisconnectAudioDelayed( CBTApp* pMe )
 {
+  MSG_FATAL("***zzg BTApp_DisconnectAudioDelayed***", 0, 0, 0);
   BTApp_DisconnectAudio( pMe, TRUE );
 }
 
@@ -19552,6 +20277,8 @@ static void BTApp_HandleAudioSetup( CBTApp* pMe, BTAppCallType callPresent )
 {
   boolean  bUp = FALSE;
 
+  MSG_FATAL("***zzg BTApp_HandleAudioSetup Start***", 0, 0, 0);
+
   /* Audio handling happens if AG is active */
   if ( pMe->mAG.bEnabled != FALSE )
   {
@@ -19568,6 +20295,8 @@ static void BTApp_HandleAudioSetup( CBTApp* pMe, BTAppCallType callPresent )
         bUp = TRUE;
       }
     }
+
+	MSG_FATAL("***zzg BTApp_HandleAudioSetup uSoundType=%x***", pMe->mAG.uSoundType, 0, 0);
 
     switch ( pMe->mAG.uSoundType )
     {
@@ -19662,6 +20391,8 @@ static void BTApp_HandleAudioSetup( CBTApp* pMe, BTAppCallType callPresent )
         ISHELL_CancelTimer( pMe->m_pShell, 
                             (PFNNOTIFY) BTApp_ReleaseBTDeviceDelayed, pMe );
 
+		MSG_FATAL("***zzg BTApp_HandleAudioSetup callPresent=%x, bDevDialed=%x***", callPresent, pMe->mAG.bDevDialed, 0);
+
         if ( callPresent != BT_APP_CALL_NONE )
         {
           if ( BTAPP_AG_ISBITSET( BTAPP_AG_FLAG_SCO_4_VOICE_WANTED_B ) )
@@ -19726,6 +20457,8 @@ static void BTApp_HandleMTCall( CBTApp* pMe )
 {
   MSG_MED( "AG - HndlMTCall cSt=%d snd=0x%x", 
            pMe->mAG.callState, pMe->mAG.uSoundType, 0 );
+
+  MSG_FATAL("***zzg BTApp_HandleMTCall uSoundType=%x***", pMe->mAG.uSoundType, 0, 0);
 
   switch ( pMe->mAG.uSoundType )
   {
@@ -19902,6 +20635,9 @@ DESCRIPTION
 static void BTApp_HandleMTCall( CBTApp* pMe )
 {
   boolean bDoInband = BTApp_CheckInBandRing( pMe );
+
+  MSG_FATAL("***zzg BTApp_HandleMTCall bDoInband=%x***", bDoInband, 0, 0);
+  
   MSG_MED( "AG - HndlMTCall callSt=%d AGconn=%d AGas=%d", 
            pMe->mAG.callState, pMe->mAG.bConnected, pMe->mAG.bAudioConnected );
   pMe->mAG.bDevPickedUp = FALSE;
@@ -19922,6 +20658,7 @@ static void BTApp_HandleMTCall( CBTApp* pMe )
   {
     IBTEXTAG_Connect( pMe->mAG.po, &pMe->mAG.bdAddr, pMe->mAG.devType );
   }
+  
 }
 #endif /* FEATURE_AVS_BT_SCO_REWORK */
 
@@ -19935,6 +20672,8 @@ static void BTApp_HandleCallAndMOSSetup( CBTApp* pMe )
   BTAppCallType callIncoming = BTApp_CallIncoming( pMe );
 
   MSG_HIGH( "AG - HndlCall&MOSSetup c=%x i=%x", callPresent, callIncoming, 0 );
+
+  MSG_FATAL("***zzg BTApp_HandleCallAndMOSSetup callIncoming=%x, callPresent=%x***", callIncoming, callPresent, 0);
 
   if ( callIncoming != BT_APP_CALL_NONE )
   {
@@ -19951,6 +20690,7 @@ static void BTApp_HandleCallAndMOSSetup( CBTApp* pMe )
             (pMe->mAG.bPrivateMode == FALSE)) )
       {
         pMe->mAG.bDevPickedUp = FALSE;
+		MSG_FATAL("***zzg BTApp_ConnectAudio 1***", 0, 0, 0);
         BTApp_ConnectAudio( pMe, TRUE );
       }
       else
@@ -19964,6 +20704,7 @@ static void BTApp_HandleCallAndMOSSetup( CBTApp* pMe )
       if ( BTAPP_AG_ISBITSET( BTAPP_AG_FLAG_NON_VOICE_AUDIO_ON_B ) )
       {
         /* playback is on, bring up SCO to route it to headset */
+		MSG_FATAL("***zzg BTApp_ConnectAudio 2***", 0, 0, 0);
         BTApp_ConnectAudio( pMe, TRUE );
       }
       else
@@ -19996,6 +20737,8 @@ static void BTApp_HandleAudioConnEv( CBTApp *pMe )
 {
   BTAppCallType callIncoming = BTApp_CallIncoming( pMe );
 
+  MSG_FATAL("***zzg BTApp_HandleAudioConnEv***", 0, 0, 0);
+  
   MSG_HIGH( "AudioConnEv - ac|as=0x%04x deSelA=%d ci|callSt=0x%04x ", 
             ((uint16)(pMe->mAG.bAudioConnected << 8) | 
              BTApp_BTAudioSelected( pMe )), pMe->mAG.bAudioDisconnecting,
@@ -20011,21 +20754,30 @@ static void BTApp_HandleAudioConnEv( CBTApp *pMe )
 #endif /* defined (FEATURE_UI_CORE) && defined (FEATURE_BT) */
 
   pMe->mAG.bAudioConnected = TRUE;
+
+  MSG_FATAL("***zzg bAudioConnecting=%d***", pMe->mAG.bAudioConnecting, 0, 0);
+  
   if ( pMe->mAG.bAudioConnecting != FALSE ) // mobile initiated SCO
   {
     pMe->mAG.bAudioConnecting = FALSE;
+
+	
     if ( pMe->mAG.bAudioDisconnecting != FALSE )
     {
       /* now carry out pending SCO disconnection */
       /* clear the flag so the following operation can get through */
       pMe->mAG.bAudioDisconnecting = FALSE;
+	 
       BTApp_DisconnectAudio( pMe, TRUE );
     }
     else
-    {
+    {    
       BTApp_UseBTDevice( pMe, pMe->mAG.bForceUnmute );
       pMe->mAG.bForceUnmute = FALSE;
     }
+
+	MSG_FATAL("***zzg BTApp_HandleAudioConnEv callState=%x***", pMe->mAG.callState, 0, 0);
+	
     switch ( pMe->mAG.callState )
     {
       case BTAPP_AG_CALL_INCOMING_INBAND:
@@ -20073,31 +20825,37 @@ static void BTApp_HandleAudioConnEv( CBTApp *pMe )
   {
     boolean bAGWins = TRUE;
     MSG_HIGH( "AudioConnEv - carkit initiated connection", 0, 0, 0 );
+	
+	MSG_FATAL("***zzg AudioConnEv - carkit initiated connection", 0, 0, 0 );
 
 #ifdef FEATURE_BT_EXTPF_AV
     if ( pMe->mA2DP.bStreaming != FALSE )
-    {
+    {      
       bAGWins = BTApp_PickAudioLink( pMe );
       if ( bAGWins != FALSE )
-      {
+      {       
         BTApp_SuspendA2DP( pMe );
       }
     }
 #endif // FEATURE_BT_EXTPF_AV
     if ( bAGWins != FALSE )
-    {
+    {     
       BTApp_UseBTDevice( pMe, FALSE );
     }
   }
-
+    
   if ( TOP_MENU == BT_APP_MENU_MAIN )
-  {
+  {  	
     BTApp_BuildMenu( pMe, TOP_MENU );
   }
   else if ( TOP_MENU == BT_APP_MENU_TESTS )
-  {
+  {  	
     BTApp_HandleClearKey( pMe );
   }
+
+  ISHELL_CloseApplet(pMe->m_pShell, FALSE);	 //Add By zzg 2011_10_24
+
+  MSG_FATAL("***zzg BTApp_HandleAudioConnEv 8***", 0, 0, 0);
 }
 
 /* ==========================================================================
@@ -20177,9 +20935,8 @@ static void BTApp_ProcessAGNotifications(
         {
           IBTEXTAG_Connect( pMe->mAG.po, &pMe->mAG.bdAddr, pMe->mAG.devType );
         }
-        pMe->mEnablingType++;
-		
-        //BTApp_EnableBT(pMe);	//Del By zzg 2010_11_18
+        pMe->mEnablingType++;		
+        BTApp_EnableBT(pMe);	
       }
       break;
     }
@@ -20196,9 +20953,10 @@ static void BTApp_ProcessAGNotifications(
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
 
+	  /*	
       if ( TOP_MENU == BT_APP_MENU_MAIN )
       {
-        BTApp_BuildMenu( pMe, TOP_MENU );
+         BTApp_BuildMenu( pMe, TOP_MENU );
       }
       else
       {
@@ -20207,11 +20965,21 @@ static void BTApp_ProcessAGNotifications(
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
       }
+	  */
+
+	//Add By zzg 2011_10_24
+	//BTApp_ShowDevMsg( pMe, IDS_MSG_AG_CONN, &pData->bdAddr, 2 );
+	//Add End
+	  
+	  MSG_FATAL("***zzg BTApp_ProcessAGNotifications devType=%d", pMe->mAG.devType, 0, 0);
+	  
       if ( pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET )
       {
         BTAppMgr_UpdateProfileType( pMe, &pMe->mAG.bdAddr, BTAPP_MGR_AG, BTAPP_MGR_CONNECTED );
         BTApp_HandleCallAndMOSSetup( pMe );
       }
+	  
+	  ISHELL_CloseApplet(pMe->m_pShell, FALSE);	 //Add By zzg 2011_10_24
       break;
     }
     case AEEBT_AG_EVT_CONNECT_FAILED:
@@ -20220,13 +20988,16 @@ static void BTApp_ProcessAGNotifications(
                ((uint16)(pData->bdAddr.uAddr[5] << 8) | pData->bdAddr.uAddr[4]), 
                ((uint16)(pData->bdAddr.uAddr[3] << 8) | pData->bdAddr.uAddr[2]), 
                ((uint16)(pData->bdAddr.uAddr[1] << 8) | pData->bdAddr.uAddr[0]) );
-      BTApp_ShowDevMsg( pMe, IDS_MSG_AG_CONNF, &pData->bdAddr, 2 );
+
+	  BTApp_ShowDevMsg( pMe, IDS_MSG_AG_CONNF, &pData->bdAddr, 2 );
 
       // clean up, in case connection attempt was done to transfer 
       // voice call to HS/HF
       pMe->mAG.bDevPickedUp = FALSE;
       pMe->mAG.bAudioConnecting = FALSE;
       pMe->mAG.bconnInPrgs = FALSE;
+
+	  ISHELL_CloseApplet(pMe->m_pShell, FALSE);	 //Add By zzg 2011_10_24
       break;
     }
     case AEEBT_AG_EVT_DISCONNECTED:
@@ -20257,6 +21028,7 @@ static void BTApp_ProcessAGNotifications(
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
+	  /*
       if ( TOP_MENU == BT_APP_MENU_MAIN )
       {
         BTApp_BuildMenu( pMe, TOP_MENU );
@@ -20269,9 +21041,17 @@ static void BTApp_ProcessAGNotifications(
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
       }
+	  */
+
+	//Add By zzg 2011_10_24
+	BTApp_ShowDevMsg( pMe, IDS_MSG_AG_DISCONN, &pMe->mAG.connectedBDAddr, 2);
+	ISHELL_CloseApplet(pMe->m_pShell, FALSE);	
+	//Add End
       break;
     }
     case AEEBT_AG_EVT_RUNG:                // response to Ring()
+      MSG_FATAL("***zzg BTApp_ProcessAGNotify AEEBT_AG_EVT_RUNG***", 0, 0, 0);
+	  
       MSG_MED( "AG - RUNG err=%d", pData->uError, 0, 0 );
       if ( pData->uError == AEEBT_AG_ERR_RING_FAILED )
       {
@@ -20283,7 +21063,8 @@ static void BTApp_ProcessAGNotifications(
     case AEEBT_AG_EVT_MIC_GAIN_SET:        // response to SetMicGain()
       MSG_LOW( "AG Notif - evt=%d", evt, 0, 0 );
       break;
-    case AEEBT_AG_EVT_AUDIO_CONNECTED:     // may be due to ConnectAudio()
+    case AEEBT_AG_EVT_AUDIO_CONNECTED:     // may be due to ConnectAudio()     
+      MSG_FATAL("***zzg AGNotify AEEBT_AG_EVT_AUDIO_CONNECTED***", 0, 0, 0);
       BTApp_HandleAudioConnEv( pMe );
       break;
     case AEEBT_AG_EVT_AUDIO_CONNECT_FAILED:
@@ -20317,72 +21098,105 @@ static void BTApp_ProcessAGNotifications(
       MSG_HIGH( "AG - Audio Disc reason=0x%x cp=%d", 
                 pData->reason, callPresent, 0 );
       pMe->mAG.bAudioConnected     = FALSE;
+
+	  MSG_FATAL("***zzg BTApp_AGNotify AEEBT_AG_EVT_AUDIO_DISCONNECTED 1***", 0, 0, 0);
+	  
 #ifdef FEATURE_AVS_BT_SCO_REWORK
       pMe->mAG.bAudioDisconnecting = FALSE;
 
+		MSG_FATAL("***zzg BTApp_AGNotify bAudioConnecting=%x***", pMe->mAG.bAudioConnecting, 0, 0);
       if ( pMe->mAG.bAudioConnecting == TRUE )
-      {
+      {      
+      	MSG_FATAL("***zzg BTApp_AGNotify AEEBT_AG_EVT_AUDIO_DISCONNECTED 2***", 0, 0, 0);
         /* carry out pending SCO connection */
         pMe->mAG.bAudioConnecting = FALSE;
         BTApp_ConnectAudio( pMe, TRUE );
       }
 #endif /* FEATURE_AVS_BT_SCO_REWORK */
 
+		MSG_FATAL("***zzg BTApp_AGNotify bStartedVr=%x***", pMe->mAG.bStartedVr, 0, 0);
       if ( pMe->mAG.bStartedVr != FALSE )
-      {
+      {        
+      	MSG_FATAL("***zzg BTApp_AGNotify AEEBT_AG_EVT_AUDIO_DISCONNECTED 3***", 0, 0, 0);
         pMe->mAG.bStartedVr = FALSE;
         IBTEXTAG_UpdateVRState( pMe->mAG.po, FALSE );
+
+		MSG_FATAL("***zzg BTApp_AGNotify callState=%x***", pMe->mAG.callState, 0, 0);
         if ( pMe->mAG.callState == BTAPP_AG_CALL_STARTVR )
         {
           pMe->mAG.callState = BTAPP_AG_CALL_NONE;
 #ifndef FEATURE_AVS_BT_SCO_REWORK
+			MSG_FATAL("***zzg BTApp_AGNotify AEEBT_AG_EVT_AUDIO_DISCONNECTED 4***", 0, 0, 0);
           BTApp_ReleaseBTDevice( pMe, FALSE );
 #endif /* !FEATURE_AVS_BT_SCO_REWORK */
         }
       }
+
+	  MSG_FATAL("***zzg BTApp_AGNotify callState2=%x***", pMe->mAG.callState, 0, 0);
+	  
       if ( pMe->mAG.callState == BTAPP_AG_CALL_HANGUP )
-      {
+      {      	
+      	MSG_FATAL("***zzg BTApp_AGNotify AEEBT_AG_EVT_AUDIO_DISCONNECTED 5***", 0, 0, 0);
         BTApp_EndCall( pMe, callPresent );
       }
       else
       {
+      	MSG_FATAL("***zzg BTApp_AGNotify callPresent=%x, bAudioConnecting=%x, BTAPP_AG_ISBITSET=%x***", 
+				callPresent, pMe->mAG.bAudioConnecting, BTAPP_AG_ISBITSET( BTAPP_AG_FLAG_AUDIO_WANTED_B ));
 #ifdef FEATURE_AVS_BT_SCO_REWORK
+		/*
         if ( (callPresent != BT_APP_CALL_NONE) &&
              (pMe->mAG.bAudioConnecting == FALSE) &&
              !BTAPP_AG_ISBITSET( BTAPP_AG_FLAG_AUDIO_WANTED_B ) ) // disc'd due to non-BT device being used.
-        {
+        {        	
+        	MSG_FATAL("***zzg BTApp_AGNotify AEEBT_AG_EVT_AUDIO_DISCONNECTED 6***", 0, 0, 0);
           BTApp_ReleaseBTDevice( pMe, FALSE );
         }
+		*/
+
+		//Modify By zzg 2011_10_25
+		if ((pMe->mAG.bAudioConnecting == FALSE) &&
+             !BTAPP_AG_ISBITSET( BTAPP_AG_FLAG_AUDIO_WANTED_B ))
+		{
+			MSG_FATAL("***zzg BTApp_AGNotify AEEBT_AG_EVT_AUDIO_DISCONNECTED 6.5***", 0, 0, 0);
+			BTApp_ReleaseBTDevice( pMe, FALSE );	
+		}
+		//Add End
 #else
         if ( pData->reason != AEEBT_REASON_LOCAL_HOST_TERMINATED_CONNECTION )
-        {
+        {        	
+        	MSG_FATAL("***zzg BTApp_AGNotify AEEBT_AG_EVT_AUDIO_DISCONNECTED 7***", 0, 0, 0);
           BTApp_ReleaseBTDevice(
             pMe, (callPresent != BT_APP_CALL_NONE) ? TRUE : FALSE );
         }
         else
-        {
+        {      
+        	MSG_FATAL("***zzg BTApp_AGNotify AEEBT_AG_EVT_AUDIO_DISCONNECTED 8***", 0, 0, 0);
           BTApp_ReleaseBTDevice( pMe, pMe->mAG.bForceUnmute );
           pMe->mAG.bForceUnmute = FALSE;
         }
 #endif /* FEATURE_AVS_BT_SCO_REWORK */
       }
 
+		MSG_FATAL("***zzg BTApp_AGNotify IS_A2DP_CONNECTABLE=%x, bConnected=%x***", IS_A2DP_CONNECTABLE(), pMe->mA2DP.bConnected, 0);
+		
 #ifdef FEATURE_BT_EXTPF_AV
       if ( IS_A2DP_CONNECTABLE() )
       {
         if (pMe->mA2DP.bConnected != FALSE)
-        {   
+        {           	
+        	MSG_FATAL("***zzg BTApp_AGNotify AEEBT_AG_EVT_AUDIO_DISCONNECTED 9***", 0, 0, 0);
           BTApp_UseA2DPDevice( pMe );
         }
       }
 #endif
 
       if ( TOP_MENU == BT_APP_MENU_MAIN )
-      {
+      {      	
         BTApp_BuildMenu( pMe, TOP_MENU );
       }
       else if ( TOP_MENU == BT_APP_MENU_TESTS )
-      {
+      {      	
         BTApp_HandleClearKey( pMe );
       }
       break;
@@ -20464,7 +21278,7 @@ static void BTApp_ProcessAGNotifications(
       if ( TOP_MENU == BT_APP_MENU_MAIN )
       {
       	MSG_FATAL("BTApp_ProcessAGNotifications  BTApp_BuildMainMenu",0,0,0);
-        BTApp_BuildMainMenu( pMe );
+        //BTApp_BuildMainMenu( pMe );	//Del by zzg 2011_10_20
       }
       break;
     }
@@ -20975,295 +21789,456 @@ static void BTApp_ProcessRMNotifications(
   NotificationData* pData
 )
 {
-  uint16 msgID;
+	uint16 msgID;
+	
 #ifdef FEATURE_BT_2_1
-  AECHAR wBuf[8];
-  uint8 len =0;
-  STRTOWSTR ("*", wBuf , sizeof(wBuf) );
+	AECHAR wBuf[8];
+	uint8 len =0;
+	STRTOWSTR ("*", wBuf , sizeof(wBuf));
 #endif /* FEATURE_BT_2_1 */     
 
-  MSG_LOW( "RM Notif - evt=%d", evt, 0, 0 );
+	MSG_LOW( "RM Notif - evt=%d", evt, 0, 0);
+	MSG_FATAL("***zzg BTApp_ProcessRMNotifications evt=%d***", evt, 0, 0);
 
-  MSG_FATAL("***zzg BTApp_ProcessRMNotifications evt=%d***", evt, 0, 0);
-
-  switch ( evt )
-  {
-    case AEEBT_RM_EVT_LOCAL_NAME_SET:  // response to SetName()      
-      ISHELL_SetTimer( pMe->m_pShell, 500, (PFNNOTIFY) BTApp_RefreshMyInfo, pMe );
+	switch (evt)
+	{
+		case AEEBT_RM_EVT_LOCAL_NAME_SET:  // response to SetName()      
+		{
+			ISHELL_SetTimer( pMe->m_pShell, 500, (PFNNOTIFY) BTApp_RefreshMyInfo, pMe );
 #ifdef FEATURE_APP_TEST_AUTOMATION
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
-      break;
+		 	break;
+		}
+		
 #ifdef FEATURE_BT_2_1
-    case AEEBT_RM_EVT_NICK_NAME_SET:  // response to SetName()
-      ISHELL_SetTimer( pMe->m_pShell, 500, (PFNNOTIFY) BTApp_RefreshMyInfo, pMe );
-      break;
-    case AEEBT_RM_EVT_MANUF_DATA_SET:  // response to       
-      ISHELL_SetTimer( pMe->m_pShell, 500, (PFNNOTIFY) BTApp_RefreshMyInfo, pMe );
-      break;
-    case AEEBT_RM_EVT_KEYPRESS_NOTIFICATION:
-    {
-      MSG_LOW( "AEEBT_RM_EVT_KEYPRESS_NOTIFICATION - keypressType=%d", pData->keypress, 0, 0 );
-	  
-	  MSG_FATAL("***zzg AEEBT_RM_EVT_KEYPRESS_NOTIFICATION keypressType=%d", pData->keypress, 0, 0 );
-	  
-      switch ( pData->keypress )
-      {
-        case AEEBT_RM_KPN_DIGIT_ENTERED:
-          //ACG
-          //STRTOWSTR ("*", wBuf , sizeof(AECHAR) );
-          STRTOWSTR ("*", wBuf , sizeof(wBuf) );
-          WSTRLCAT(pMe->mRM.wDisplayPassKey, wBuf, sizeof(pMe->mRM.wDisplayPassKey) );
-          DBGPRINTF_FATAL (" pMe->mRM.wDisplayPassKey =%s",pMe->mRM.wDisplayPassKey);
-          ISHELL_SetTimer(pMe->m_pShell, 500, (PFNNOTIFY) BTApp_RefreshDisplayPasskey, pMe );
-          break;
-        case AEEBT_RM_KPN_DIGIT_ERASED:
-          len = WSTRLEN( pMe->mRM.wDisplayPassKey );
-          pMe->mRM.wDisplayPassKey [len -1] = (AECHAR)'\0';
-          DBGPRINTF_FATAL (" pMe->mRM.wDisplayPassKey =%s",
-                           pMe->mRM.wDisplayPassKey);
-          ISHELL_SetTimer( pMe->m_pShell, 500, 
-                           (PFNNOTIFY) BTApp_RefreshDisplayPasskey, pMe );
-          break;
-        case AEEBT_RM_KPN_COMPLETED:
-          BTApp_ShowBusyIcon( pMe );
-          break;
-      }
-      break;
-    }
-    case AEEBT_RM_EVT_PASSKEY_REQUEST:
-    {
-      pMe->mRM.bPassKey = TRUE ;
-      pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr = pData->bdAddr;
-      IBTEXTRM_DeviceRead( pMe->mRM.po,
-                           &pMe->mRM.device[ pMe->mRM.uCurDevIdx ] );      
-      pMe->mRM.bpassKeyRqst = TRUE;
-      ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
-                          AEECLSID_BLUETOOTH_APP,
-                          EVT_USER, EVT_PIN_RQST, 0L );      
-      break;   
-    }
-    case AEEBT_RM_EVT_PASSKEY_REPLIED:
-    {
-	  MSG_FATAL("***zzg BTApp RMNotify AEEBT_RM_EVT_PASSKEY_REPLIED pData->uError=%d***", pData->uError, 0, 0);
+		case AEEBT_RM_EVT_NICK_NAME_SET:  // response to SetName()
+		{
+			ISHELL_SetTimer( pMe->m_pShell, 500, (PFNNOTIFY) BTApp_RefreshMyInfo, pMe );
+		  	break;
+		}
+		
+		case AEEBT_RM_EVT_MANUF_DATA_SET:  // response to   SetManuData() 
+		{
+			ISHELL_SetTimer( pMe->m_pShell, 500, (PFNNOTIFY) BTApp_RefreshMyInfo, pMe );
+		  	break;
+		}
+		
+		case AEEBT_RM_EVT_KEYPRESS_NOTIFICATION:
+		{
+			MSG_LOW( "AEEBT_RM_EVT_KEYPRESS_NOTIFICATION - keypressType=%d", pData->keypress, 0, 0 );
 
-      pMe->mRM.bPassKey = FALSE ;
-      if (pData->uError !=  AEEBT_RM_ERR_NONE)
-      {
-        if (pMe->mRM.bBonding )
-        {
-          pMe->mRM.bBonding = FALSE;
-        }
+			MSG_FATAL("***zzg AEEBT_RM_EVT_KEYPRESS_NOTIFICATION keypressType=%d", pData->keypress, 0, 0 );
 
-		BTApp_ShowDevMsg( pMe, IDS_MSG_BOND_FAILED, NULL, 0 );
-      }
-      break;
-    }
-#endif /* FEATURE_BT_2_1 */
-    case AEEBT_RM_EVT_LOCAL_COD_SET:   // response to SetClassOfDevice()
-      break;
-    case AEEBT_RM_EVT_LOCAL_SECURITY_SET:
-      ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
-                          AEECLSID_BLUETOOTH_APP,
-                          EVT_USER, EVT_RM_LOCAL_SEC_SET, 0L );
-      break;
-  case AEEBT_RM_EVT_PIN_REQUESTED:   // remote device initiated bonding
-      pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr = pData->bdAddr;
-      IBTEXTRM_DeviceRead( pMe->mRM.po,
-                           &pMe->mRM.device[ pMe->mRM.uCurDevIdx ] );
-      ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
-                          AEECLSID_BLUETOOTH_APP,
-                          EVT_USER, EVT_PIN_RQST, 0L );        
-      break;
-    case AEEBT_RM_EVT_BONDED:          // when bonding completed
-    {
-	
-#ifndef FEATURE_BT_2_1
-      AEEBTDeviceInfo* pDev = &pMe->mRM.device[ pMe->mRM.uCurDevIdx ];
-      MSG_MED( "RM - Bonded err=%d", pData->pDevUpdateStatus->error, 0, 0 );
+			switch (pData->keypress)
+			{
+				case AEEBT_RM_KPN_DIGIT_ENTERED:
+				{
+					//ACG
+					//STRTOWSTR ("*", wBuf , sizeof(AECHAR) );
+					STRTOWSTR ("*", wBuf , sizeof(wBuf) );
+					WSTRLCAT(pMe->mRM.wDisplayPassKey, wBuf, sizeof(pMe->mRM.wDisplayPassKey));
+					DBGPRINTF_FATAL (" pMe->mRM.wDisplayPassKey =%s",pMe->mRM.wDisplayPassKey);
+					ISHELL_SetTimer(pMe->m_pShell, 500, (PFNNOTIFY) BTApp_RefreshDisplayPasskey, pMe);
+					break;
+				}
+				
+				case AEEBT_RM_KPN_DIGIT_ERASED:
+				{
+					len = WSTRLEN( pMe->mRM.wDisplayPassKey );
+					pMe->mRM.wDisplayPassKey [len -1] = (AECHAR)'\0';
+					DBGPRINTF_FATAL (" pMe->mRM.wDisplayPassKey =%s", pMe->mRM.wDisplayPassKey);
+					ISHELL_SetTimer(pMe->m_pShell, 500, (PFNNOTIFY) BTApp_RefreshDisplayPasskey, pMe);
+					break;
+				}
+				
+				case AEEBT_RM_KPN_COMPLETED:
+				{
+					BTApp_ShowBusyIcon(pMe);
+				  	break;
+				}
 
-      if ( AEEBT_BD_ADDRS_EQUAL( &pDev->bdAddr,
-                                 &pData->pDevUpdateStatus->bdAddr) == FALSE)
-      {
-        MSG_ERROR( "RM - Bonded addr != curRMDev(%d)", pMe->mRM.uCurDevIdx, 0, 0 );
-        pDev->bdAddr = pData->pDevUpdateStatus->bdAddr;
-        IBTEXTRM_DeviceRead( pMe->mRM.po, pDev );
-      }
+				default:
+				{
+					break;
+				}
+			}
+			break;
+		}
+		
+		case AEEBT_RM_EVT_PASSKEY_REQUEST:
+		{
+			pMe->mRM.bPassKey = TRUE ;
+			pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr = pData->bdAddr;
+			IBTEXTRM_DeviceRead(pMe->mRM.po, &pMe->mRM.device[pMe->mRM.uCurDevIdx]);      
+			pMe->mRM.bpassKeyRqst = TRUE;
 
-      pMe->mRM.bBonding = FALSE;
-
-      if ( pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE )
-      {
-        ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
-                            AEECLSID_BLUETOOTH_APP,
-                            EVT_USER, EVT_RM_BONDED, 0L );
-      }
-      else
-      {
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-		MSG_FATAL("***zzg BTApp RMNotify AEEBT_RM_EVT_BONDED pData->error=%d***", pData->pDevUpdateStatus->error, 0, 0);
-
-        BTApp_ShowDevMsg(pMe, IDS_MSG_BOND_FAILED, &pData->pDevUpdateStatus->bdAddr, 0);
-      }
+#if 1
+			ISHELL_PostEventEx(pMe->m_pShell, EVTFLG_ASYNC, 
+  					                     AEECLSID_BLUETOOTH_APP,
+  					                     EVT_USER, EVT_PIN_RQST, 0L);    
 #else
-      AEEBTDeviceInfo dev;
 
-		/*
-      if ((TOP_MENU == BT_APP_MENU_REBOND) || (TOP_MENU == BT_APP_MENU_DISPLAY_PASSKEY))
-      {
-        (void)POP_MENU();
-      }
+			//Add By zzg 2011_06_23
+			if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
+			{							
+				pMe->m_app_flag = TRUE;
+				pMe->m_user_wParam = evt;	
+				ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+			}	
+			else
+			{
+				ISHELL_PostEventEx(pMe->m_pShell, EVTFLG_ASYNC, 
+				                   AEECLSID_BLUETOOTH_APP,
+				                   EVT_USER, EVT_PIN_RQST, 0L);  
+			}
+			//Add End
+#endif
+			break;   
+		}
 		
-      if (ISHELL_GetActiveDialog( pMe->m_pShell ) != NULL)
-      {
-        MSG_MED("AEEBT_RM_EVT_BONDED received when there isalready an active dialog.exiting", 0, 0,0);
-        break;
-      }
-      */
-       
-      if ((pMe->mRM.bUserCfm != FALSE) 
-	  		&& (AEEBT_BD_ADDRS_EQUAL(&pMe->mRM.BondBDAddr,&pData->sBonded.bdAddr)) == FALSE)
-      {
-        MSG_ERROR("RM -  SSP Bonded addr != one requested .. exiting", 0, 0, 0);
-        break;
-      }
-	  
-      if (pData->sBonded.uError == AEEBT_RM_ERR_NONE)
-      {
-        pMe->mRM.BondBDAddr = pData->sBonded.bdAddr;
-        dev.bdAddr = pData->sBonded.bdAddr;
-        IBTEXTRM_DeviceRead(pMe->mRM.po, &dev);
-		
-        if (dev.majorDevClass == AEEBT_COD_MAJ_DEV_CLS_AUDIO)
-        {
-          if (AEEBT_BD_ADDRS_EQUAL(&pMe->mAG.bdAddr,&dev.bdAddr) == FALSE)
-          {
-            BTApp_BuildMenu( pMe, BT_APP_MENU_USE_AUDIO_DEV );
-          }
-          else
-          {
-            BTApp_ShowDevMsg( pMe, IDS_MSG_BONDED, &pData->sBonded.bdAddr, 2 );
-          }
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-        }
-        else
-        {
-          BTApp_ShowDevMsg( pMe, IDS_MSG_BONDED, &pData->sBonded.bdAddr, 2 );
-        }
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-      }
-      else
-      {
-      	MSG_FATAL("***zzg BTApp RMNotify AEEBT_RM_EVT_BONDED pData->error=%d***", pData->sBonded.uError, 0, 0);
+		case AEEBT_RM_EVT_PASSKEY_REPLIED:
+		{
+			MSG_FATAL("***zzg BTApp RMNotify AEEBT_RM_EVT_PASSKEY_REPLIED pData->uError=%d***", pData->uError, 0, 0);
 
-		BTApp_ShowDevMsg(pMe, IDS_MSG_BOND_FAILED, &pData->sBonded.bdAddr, 0);
+			pMe->mRM.bPassKey = FALSE ;
+			if (pData->uError !=  AEEBT_RM_ERR_NONE)
+			{
+				if (pMe->mRM.bBonding)
+				{
+					pMe->mRM.bBonding = FALSE;
+				}
+
+#if 1
+				BTApp_ShowDevMsg( pMe, IDS_MSG_BOND_FAILED, NULL, 0 );
+#else
+				//Add By zzg 2011_06_23
+				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
+				{							
+					pMe->m_app_flag = TRUE;
+					pMe->m_user_wParam = evt;	
+					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+				}	
+				else
+				{
+					BTApp_ShowDevMsg(pMe, IDS_MSG_BOND_FAILED, NULL, 0); 
+				}
+				//Add End	
+#endif
+			}
+			break;
+		}
 		
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-      }
-      pMe->mRM.bUserCfm = FALSE;
-      pMe->mRM.bBonding = FALSE;
 #endif /* FEATURE_BT_2_1 */
-      break;
-    }
+
+		case AEEBT_RM_EVT_LOCAL_COD_SET:   // response to SetClassOfDevice()
+		{
+			break;
+		}
+		
+		case AEEBT_RM_EVT_LOCAL_SECURITY_SET:
+		{
+			ISHELL_PostEventEx(pMe->m_pShell, EVTFLG_ASYNC, 
+			                   AEECLSID_BLUETOOTH_APP,
+			                   EVT_USER, EVT_RM_LOCAL_SEC_SET, 0L);
+		  	break;
+		}
+		
+		case AEEBT_RM_EVT_PIN_REQUESTED:   // remote device initiated bonding
+		{
+			pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr = pData->bdAddr;
+			IBTEXTRM_DeviceRead(pMe->mRM.po,
+			                   &pMe->mRM.device[pMe->mRM.uCurDevIdx]);
+
+#if 1
+			ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
+			                  AEECLSID_BLUETOOTH_APP,
+			                  EVT_USER, EVT_PIN_RQST, 0L );   
+#else
+			//Add By zzg 2011_06_23
+			if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
+			{							
+				pMe->m_app_flag = TRUE;
+				pMe->m_user_wParam = evt;	
+				ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+			}	
+			else
+			{
+				ISHELL_PostEventEx(pMe->m_pShell, EVTFLG_ASYNC, 
+				                   AEECLSID_BLUETOOTH_APP,
+				                   EVT_USER, EVT_PIN_RQST, 0L);  
+			}
+			//Add End
+#endif
+
+			break;
+		}
+		
+		case AEEBT_RM_EVT_BONDED:          // when bonding completed
+		{
+#ifndef FEATURE_BT_2_1
+			AEEBTDeviceInfo* pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
+			MSG_MED("RM - Bonded err=%d", pData->pDevUpdateStatus->error, 0, 0);
+
+			if (AEEBT_BD_ADDRS_EQUAL(&pDev->bdAddr,
+			                         &pData->pDevUpdateStatus->bdAddr) == FALSE)
+			{
+				MSG_ERROR("RM - Bonded addr != curRMDev(%d)", pMe->mRM.uCurDevIdx, 0, 0);
+				pDev->bdAddr = pData->pDevUpdateStatus->bdAddr;
+				IBTEXTRM_DeviceRead(pMe->mRM.po, pDev);
+			}
+
+			pMe->mRM.bBonding = FALSE;
+
+			if (pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE)
+			{
+				ISHELL_PostEventEx(pMe->m_pShell, EVTFLG_ASYNC, 
+				                   AEECLSID_BLUETOOTH_APP,
+				                   EVT_USER, EVT_RM_BONDED, 0L);
+			}
+			else
+			{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif //FEATURE_APP_TEST_AUTOMATION
+				MSG_FATAL("***zzg BTApp RMNotify AEEBT_RM_EVT_BONDED pData->error=%d***", pData->pDevUpdateStatus->error, 0, 0);
+				BTApp_ShowDevMsg(pMe, IDS_MSG_BOND_FAILED, &pData->pDevUpdateStatus->bdAddr, 0);
+			}
+#else
+			AEEBTDeviceInfo dev;
+
+			/*
+			if ((TOP_MENU == BT_APP_MENU_REBOND) || (TOP_MENU == BT_APP_MENU_DISPLAY_PASSKEY))
+			{
+			(void)POP_MENU();
+			}
+
+			if (ISHELL_GetActiveDialog( pMe->m_pShell ) != NULL)
+			{
+			MSG_MED("AEEBT_RM_EVT_BONDED received when there isalready an active dialog.exiting", 0, 0,0);
+			break;
+			}
+			*/
+
+			if ((pMe->mRM.bUserCfm != FALSE) 
+				 && (AEEBT_BD_ADDRS_EQUAL(&pMe->mRM.BondBDAddr,&pData->sBonded.bdAddr)) == FALSE)
+			{
+				MSG_ERROR("RM -  SSP Bonded addr != one requested .. exiting", 0, 0, 0);
+				break;
+			}
+
+			if (pData->sBonded.uError == AEEBT_RM_ERR_NONE)
+			{
+				pMe->mRM.BondBDAddr = pData->sBonded.bdAddr;
+				dev.bdAddr = pData->sBonded.bdAddr;
+				IBTEXTRM_DeviceRead(pMe->mRM.po, &dev);
+
+				if (dev.majorDevClass == AEEBT_COD_MAJ_DEV_CLS_AUDIO)
+				{
+					if (AEEBT_BD_ADDRS_EQUAL(&pMe->mAG.bdAddr,&dev.bdAddr) == FALSE)
+					{
+						BTApp_BuildMenu( pMe, BT_APP_MENU_USE_AUDIO_DEV);
+					}
+					else
+					{
+						BTApp_ShowDevMsg( pMe, IDS_MSG_BONDED, &pData->sBonded.bdAddr, 2);
+					}
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif //FEATURE_APP_TEST_AUTOMATION
+				}
+				else
+				{
+					BTApp_ShowDevMsg( pMe, IDS_MSG_BONDED, &pData->sBonded.bdAddr, 2);
+				}
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif //FEATURE_APP_TEST_AUTOMATION
+			}
+			else
+			{
+				MSG_FATAL("***zzg BTApp RMNotify AEEBT_RM_EVT_BONDED pData->error=%d***", pData->sBonded.uError, 0, 0);
+				BTApp_ShowDevMsg(pMe, IDS_MSG_BOND_FAILED, &pData->sBonded.bdAddr, 0);
+
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif //FEATURE_APP_TEST_AUTOMATION
+			}
+			
+			pMe->mRM.bUserCfm = FALSE;
+			pMe->mRM.bBonding = FALSE;
+#endif /* FEATURE_BT_2_1 */
+			break;
+		}
+		
+		
 #ifdef FEATURE_BT_2_1
-    case AEEBT_RM_EVT_REBOND_REQUEST:
-    {
-      pMe->mRM.BondBDAddr = pData->bdAddr;
-      BTApp_BuildMenu( pMe, BT_APP_MENU_REBOND );
-      break;
-    }
-    case AEEBT_RM_EVT_PASSKEY_NOTIFICATION:
-    {
-      MSG_MED( " RM - received Passkey Notification ",0, 0, 0 );
-      pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr = pData->sPasskey.bdAddr;
-      IBTEXTRM_DeviceRead( pMe->mRM.po,
-                           &pMe->mRM.device[ pMe->mRM.uCurDevIdx ] );
-      STRTOWSTR( (pData->sPasskey.passkey), (pMe->mRM.wPassKey), 
-                 (AEEBT_SSP_PASSKEY_LEN*sizeof( AECHAR )) ); 
-      pMe->mRM.wDisplayPassKey[0] =(AECHAR) '\0';
-      ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
-                          AEECLSID_BLUETOOTH_APP,
-                          EVT_USER, EVT_PASSKY, 0L );   
-      break;
-    }
+		case AEEBT_RM_EVT_REBOND_REQUEST:
+		{
+			MSG_FATAL("***zzg AEEBT_RM_EVT_REBOND_REQUEST***", 0, 0, 0);
+			pMe->mRM.BondBDAddr = pData->bdAddr;
+
+#if 1
+			//BTApp_BuildMenu( pMe, BT_APP_MENU_REBOND );
+			BTApp_BuildPrompt(pMe, BT_APP_MENU_REBOND);
+#else
+			//Add By zzg 2011_06_23
+			if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
+			{							
+				pMe->m_app_flag = TRUE;
+				pMe->m_user_wParam = evt;	
+				ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+			}	
+			else
+			{
+				BTApp_BuildMenu(pMe, BT_APP_MENU_REBOND);
+			}
+			//Add End	
+#endif			
+					
+			break;
+		}
+		
+	    case AEEBT_RM_EVT_PASSKEY_NOTIFICATION:
+	    {
+			MSG_MED(" RM - received Passkey Notification ", 0, 0, 0);
+			pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr = pData->sPasskey.bdAddr;
+			IBTEXTRM_DeviceRead(pMe->mRM.po, &pMe->mRM.device[pMe->mRM.uCurDevIdx]);
+
+			DBGPRINTF("***zzg AEEBT_RM_EVT_PASSKEY_NOTIFICATION passkey=%s***", pData->sPasskey.passkey);
+
+			STRTOWSTR((pData->sPasskey.passkey), (pMe->mRM.wPassKey), (AEEBT_SSP_PASSKEY_LEN*sizeof( AECHAR )) ); 
+			pMe->mRM.wDisplayPassKey[0] =(AECHAR) '\0';
+			
+#if 1
+			ISHELL_PostEventEx(pMe->m_pShell, EVTFLG_ASYNC, 
+			                   AEECLSID_BLUETOOTH_APP,
+			                   EVT_USER, EVT_PASSKY, 0L);   
+#else
+
+			//Add By zzg 2011_06_24
+			if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
+			{							
+				pMe->m_app_flag = TRUE;
+				pMe->m_user_wParam = evt;	
+				ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+			}	
+			else
+			{
+				ISHELL_PostEventEx(pMe->m_pShell, EVTFLG_ASYNC, 
+			                       AEECLSID_BLUETOOTH_APP,
+			                       EVT_USER, EVT_PASSKY, 0L);   
+			}
+			//Add End	
+#endif
+			
+			break;
+	    }
+		
 #endif /* FEATURE_BT_2_1 */
-    case AEEBT_RM_EVT_UNBONDED:        // response to Unbond()
-    {		
-      MSG_MED( "RM - Unbonded err=%d", pData->pDevUpdateStatus->error, 0, 0 );
-      if ( pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE )
-      {
-        msgID = IDS_MSG_DEV_UNBONDED;
-      }
-      else
-      {
-        msgID = IDS_MSG_DEV_UNBOND_FAILED;
-      }
-      BTApp_ShowDevMsg( pMe, msgID, &pData->pDevUpdateStatus->bdAddr, 2 );
-      break;
-    }
+
+		case AEEBT_RM_EVT_UNBONDED:        // response to Unbond()
+		{		
+			MSG_MED( "RM - Unbonded err=%d", pData->pDevUpdateStatus->error, 0, 0);
+			if (pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE)
+			{
+				msgID = IDS_MSG_DEV_UNBONDED;
+			}
+			else
+			{
+				msgID = IDS_MSG_DEV_UNBOND_FAILED;
+			}
+			BTApp_ShowDevMsg(pMe, msgID, &pData->pDevUpdateStatus->bdAddr, 2);
+			break;
+		}
+		
 #ifdef FEATURE_BT_2_1
-    case AEEBT_RM_EVT_USER_CFM_REQUEST:      
-    {		
-		MSG_FATAL("***zzg AEEBT_RM_EVT_USER_CFM_REQUEST***", 0, 0, 0);
+		case AEEBT_RM_EVT_USER_CFM_REQUEST:      
+		{		
+			DBGPRINTF("***zzg AEEBT_RM_EVT_USER_CFM_REQUEST passkey=%s***", pData->sPasskey.passkey);
 
-		STRTOWSTR(pData->sPasskey.passkey, pMe->mRM.wSSPPassKey, AEEBT_SSP_PASSKEY_LEN*sizeof(AECHAR));
-		pMe->mRM.bUserCfm = TRUE;
-		pMe->mRM.BondBDAddr = pData->sPasskey.bdAddr;
+			STRTOWSTR(pData->sPasskey.passkey, pMe->mRM.wSSPPassKey, AEEBT_SSP_PASSKEY_LEN*sizeof(AECHAR));
+			pMe->mRM.bUserCfm = TRUE;
+			pMe->mRM.BondBDAddr = pData->sPasskey.bdAddr;
 
-		pMe->m_prompt_state_id = BTAPPST_DEVICEINFO;
-		BTApp_BuildPrompt(pMe , BT_APP_MENU_USER_CFM_RQST);	  
-		break;
-    }
+#if 1
+			BTApp_BuildPrompt(pMe , BT_APP_MENU_USER_CFM_RQST);	 
+#else
+			//Add By zzg 2011_06_23
+			if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
+			{							
+				pMe->m_app_flag = TRUE;
+				pMe->m_user_wParam = evt;	
+				ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+			}	
+			else
+			{
+				BTApp_BuildPrompt(pMe , BT_APP_MENU_USER_CFM_RQST);	 
+			}
+			//Add End	
+#endif			 
+			break;
+		}
 #endif /* FEATURE_BT_2_1 */
-    case AEEBT_RM_EVT_BONDABLE_MODE:   // response to SetBondable()
-    {
-      MSG_MED( "RM - SetBondable err=%d", pData->uError, 0, 0 );
-      if ( pData->uError == AEEBT_RM_ERR_NONE )
-      {
-        pMe->mRM.bBondable = pMe->mRM.bBondable ? FALSE : TRUE;
-        if(TOP_MENU == BT_APP_MENU_MASTER_CONTROL)
-        {
-           BTApp_ShowMessage( pMe, pMe->mRM.bBondable ? IDS_MSG_BONDABLE_SET : 
-               IDS_MSG_BONDABLE_CLEARED, NULL, 2 );
-        }
-      }
-      else
-      {
-        msgID = pMe->mRM.bBondable ? IDS_MSG_BONDABLE_NOT_CLEARED : 
-                  IDS_MSG_BONDABLE_NOT_SET;
-        BTApp_ShowMessage( pMe, msgID, NULL, 2 );
-      }
-      break;
-    }
+
+		case AEEBT_RM_EVT_BONDABLE_MODE:   // response to SetBondable()
+		{
+			MSG_MED("RM - SetBondable err=%d", pData->uError, 0, 0);
+			
+			if (pData->uError == AEEBT_RM_ERR_NONE)
+			{
+				pMe->mRM.bBondable = pMe->mRM.bBondable ? FALSE : TRUE;
+				if (TOP_MENU == BT_APP_MENU_MASTER_CONTROL)
+				{
+				   BTApp_ShowMessage(pMe, pMe->mRM.bBondable ? IDS_MSG_BONDABLE_SET : IDS_MSG_BONDABLE_CLEARED, NULL, 2);
+				}
+			}
+			else
+			{
+				msgID = pMe->mRM.bBondable ? IDS_MSG_BONDABLE_NOT_CLEARED : IDS_MSG_BONDABLE_NOT_SET;
+				BTApp_ShowMessage(pMe, msgID, NULL, 2);
+			}
+			break;
+		}
     
-    case AEEBT_RM_EVT_PIN_REPLIED:     // response to PinReply()
-      if ( pData->uError != AEEBT_RM_ERR_NONE )
-      {
-        /* 
-         * In that case the variable should be restored as no more 
-         * related events would come 
-         */
-        pMe->mRM.bBonding = FALSE;
-        BTApp_ShowMessage( pMe, IDS_MSG_PIN_REPLY_FAILED, NULL, 2 );
-      }
-      break;
+		case AEEBT_RM_EVT_PIN_REPLIED:     // response to PinReply()
+		{
+			if (pData->uError != AEEBT_RM_ERR_NONE)
+			{
+				/* 
+				 * In that case the variable should be restored as no more 
+				 * related events would come 
+				 */
+				pMe->mRM.bBonding = FALSE;
+
+#if 1				
+				BTApp_ShowMessage(pMe, IDS_MSG_PIN_REPLY_FAILED, NULL, 2);
+#else
+				//Add By zzg 2011_06_24
+				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
+				{							
+					pMe->m_app_flag = TRUE;
+					pMe->m_user_wParam = evt;	
+					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
+				}	
+				else
+				{
+					BTApp_ShowMessage(pMe, IDS_MSG_PIN_REPLY_FAILED, NULL, 2);
+				}
+				//Add End	
+#endif				
+			}
+			break;
+		}
 	  
-    case AEEBT_RM_EVT_DEVICE_ADDED:    // response to DeviceAdd()
-      MSG_MED( "RM - DevAdded err=%d m=%d bonding=%d", pData->pDevUpdateStatus->error, TOP_MENU, pMe->mRM.bBonding );
+		case AEEBT_RM_EVT_DEVICE_ADDED:    // response to DeviceAdd()
+			MSG_MED( "RM - DevAdded err=%d m=%d bonding=%d", pData->pDevUpdateStatus->error, TOP_MENU, pMe->mRM.bBonding );
 
 #ifdef FEATURE_APP_TEST_AUTOMATION
-	#error code not present
+#error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
 
-	MSG_FATAL("***zzg ProcessRMNotify AEEBT_RM_EVT_DEVICE_ADDED***", 0, 0, 0);
+			MSG_FATAL("***zzg ProcessRMNotify AEEBT_RM_EVT_DEVICE_ADDED***", 0, 0, 0);
 
 	  /*
 	  if ((TOP_MENU == BT_APP_MENU_DEV_INFO) && (pMe->mRM.bBonding == FALSE) )
@@ -21289,23 +22264,21 @@ static void BTApp_ProcessRMNotifications(
 	  //Add By zzg 2011_01_11
 	  if (pMe->mRM.bBonding == FALSE)
       {
-        if ( pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE )
-        {			
+		if (pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE )
+		{			
 			msgID = IDS_MSG_DEV_ADDED;
 #ifdef FEATURE_APP_TEST_AUTOMATION
 			#error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
-        }
-        else
-        {
+		}
+		else
+		{
 			msgID = IDS_MSG_DEV_ADD_FAILED;
 #ifdef FEATURE_APP_TEST_AUTOMATION
 			#error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
-        }
-
-		pMe->m_msg_state_id = BTAPPST_DEVICEINFO;
-
+		}
+		
 		pMe->m_msg_id = msgID;		
 		pMe->m_bNeedStr = TRUE;
 
@@ -21335,10 +22308,13 @@ static void BTApp_ProcessRMNotifications(
 	  //Add End	  
 	  	
       break;
-    case AEEBT_RM_EVT_DEVICE_UPDATED:  // response to DeviceUpdate()
-      MSG_MED( "RM - DevUpdated err=%d bm=0x%x", pData->pDevUpdateStatus->error,
-               pData->pDevUpdateStatus->updateBitmap, 0 );
-      break;
+	  
+		case AEEBT_RM_EVT_DEVICE_UPDATED:  // response to DeviceUpdate()
+		{
+			MSG_MED("RM - DevUpdated err=%d bm=0x%x", pData->pDevUpdateStatus->error,pData->pDevUpdateStatus->updateBitmap, 0);
+			break;
+		}
+		
     case AEEBT_RM_EVT_DEVICE_REMOVED:  // response to DeviceRemove()
       MSG_MED( "RM - DevRem err=%d", pData->pDevUpdateStatus->error, 0, 0 );
 
@@ -21437,281 +22413,313 @@ static void BTApp_ProcessRMNotifications(
         (void) ISHELL_EndDialog(pMe->m_pShell); 
      
       break;
-    case AEEBT_RM_EVT_LINK_STATUS_REG:
-    {
-      break;
-    }
-    case AEEBT_RM_EVT_LINK_STATUS:     // status info of existing BT link
-    {
-      AEEBTDeviceInfo dev;
+	  
+		case AEEBT_RM_EVT_LINK_STATUS_REG:
+		{
+			break;
+		}
+		
+		case AEEBT_RM_EVT_LINK_STATUS:     // status info of existing BT link
+		{
+			AEEBTDeviceInfo dev;
 
-      dev.bdAddr = pData->pLinkStatus->bdAddr;
-      IBTEXTRM_DeviceRead( pMe->mRM.po, &dev );
-      if ( dev.uValue2 != pData->pLinkStatus->linkMode )
-      {
-        MSG_MED( "RM - Link mode change for %04x%04x lm=%d",
-                 ((uint16)(pData->pLinkStatus->bdAddr.uAddr[3] << 8) | 
-                  pData->pLinkStatus->bdAddr.uAddr[2]), 
-                 ((uint16)(pData->pLinkStatus->bdAddr.uAddr[1] << 8) | 
-                  pData->pLinkStatus->bdAddr.uAddr[0]),
-                 pData->pLinkStatus->linkMode );
-      }
-      if ( pMe->mRM.linkStatus->bMaster != pData->pLinkStatus->bMaster )
-      {
-        MSG_MED( "RM - dev role chgd=%d", pData->pLinkStatus->bMaster, 0, 0 );
-      }
-      MEMCPY(pMe->mRM.linkStatus, pData->pLinkStatus, sizeof(AEEBTLinkStatus));
-      break;
-    }
-    case AEEBT_RM_EVT_DEVICE_SECURITY_SET:
-      MSG_MED( "RM - DevSecSet err=%d", pData->pDevUpdateStatus->error, 0, 0 );
-      if ( pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE )
-      {
-        msgID = EVT_RM_DEV_SEC_SET;
-      }
-      else
-      {
-        msgID = EVT_RM_DEV_SEC_FAILED;
-      }
-      ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
-                          AEECLSID_BLUETOOTH_APP,
-                          EVT_USER, 
-                          msgID, 0L );
-      break;
-    case AEEBT_RM_EVT_SERVICE_SECURITY_SET:
-    {
-      //uint16 selection;
-      boolean SecEnabled;
+			dev.bdAddr = pData->pLinkStatus->bdAddr;
+			IBTEXTRM_DeviceRead(pMe->mRM.po, &dev);
+			
+			if (dev.uValue2 != pData->pLinkStatus->linkMode)
+			{
+				MSG_MED("RM - Link mode change for %04x%04x lm=%d",
+				         ((uint16)(pData->pLinkStatus->bdAddr.uAddr[3] << 8) | 
+				          pData->pLinkStatus->bdAddr.uAddr[2]), 
+				         ((uint16)(pData->pLinkStatus->bdAddr.uAddr[1] << 8) | 
+				          pData->pLinkStatus->bdAddr.uAddr[0]),
+				         pData->pLinkStatus->linkMode);
+			}
+			
+			if (pMe->mRM.linkStatus->bMaster != pData->pLinkStatus->bMaster)
+			{
+				MSG_MED("RM - dev role chgd=%d", pData->pLinkStatus->bMaster, 0, 0);
+			}
+			
+			MEMCPY(pMe->mRM.linkStatus, pData->pLinkStatus, sizeof(AEEBTLinkStatus));
+			break;
+		}
+		
+		case AEEBT_RM_EVT_DEVICE_SECURITY_SET:
+		{
+			MSG_MED( "RM - DevSecSet err=%d", pData->pDevUpdateStatus->error, 0, 0);
+			
+			if (pData->pDevUpdateStatus->error == AEEBT_RM_ERR_NONE)
+			{
+				msgID = EVT_RM_DEV_SEC_SET;
+			}
+			else
+			{
+				msgID = EVT_RM_DEV_SEC_FAILED;
+			}
+			
+			ISHELL_PostEventEx(pMe->m_pShell, EVTFLG_ASYNC, 
+			                  AEECLSID_BLUETOOTH_APP,
+			                  EVT_USER, 
+			                  msgID, 0L);
+			break;
+		}
+		
+		case AEEBT_RM_EVT_SERVICE_SECURITY_SET:
+		{
+			//uint16 selection;
+			boolean SecEnabled;
 
-      MSG_MED( "RM - SvcSecSet err=%d", pData->uError, 0, 0 );
+			MSG_MED( "RM - SvcSecSet err=%d", pData->uError, 0, 0 );
 
 #ifdef FEATURE_BT_2_1
-      //if (TOP_MENU != BT_APP_MENU_SECURITY_OPTIONS )
+			//if (TOP_MENU != BT_APP_MENU_SECURITY_OPTIONS )
 #endif
-      {
-        //selection = IMENUCTL_GetSel( pMe->m_pIMenu );
+			{
+				//selection = IMENUCTL_GetSel( pMe->m_pIMenu );
 
-        if( pMe->mL2.dwSettingSec > 0 )
-        {
-          SecEnabled = pMe->mL2.bEnableSrvSvcSec;
-          pMe->mL2.dwSettingSec--;
-        }
-        else
-        {
-          SecEnabled = pMe->mNA.bEnableSvcSec;
-        }
+				if( pMe->mL2.dwSettingSec > 0 )
+				{
+					SecEnabled = pMe->mL2.bEnableSrvSvcSec;
+					pMe->mL2.dwSettingSec--;
+				}
+				else
+				{
+					SecEnabled = pMe->mNA.bEnableSvcSec;
+				}
 
-		/*
-        if( TOP_MENU != BT_APP_MENU_MAIN )
-        {
-          BTApp_UpdateMenuItemImage( 
-          pMe->m_pIDisplay, pMe->m_pIMenu, selection,
-          SecEnabled ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
-        }
-		*/
-        
-      }
-      break;
-    }
-    case AEEBT_RM_EVT_AUTHORIZE_REQUEST:
-    {
-      MSG_MED( "RM - AuthReq sim=%d", 
-               pData->pAuthorizeReq->serviceId.serviceIdMethod, 0, 0 );
-      if ( (pData->pAuthorizeReq->serviceId.serviceIdMethod ==
-            pMe->mRM.svcId.serviceIdMethod) &&
-           (pData->pAuthorizeReq->serviceId.id.uPSM == pMe->mRM.svcId.id.uPSM) )
-      {
-        pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr = 
-          pData->pAuthorizeReq->bdAddr;
-        IBTEXTRM_DeviceRead( pMe->mRM.po,
-                           &pMe->mRM.device[ pMe->mRM.uCurDevIdx ] );
-        ISHELL_PostEventEx( pMe->m_pShell, EVTFLG_ASYNC, 
-                            AEECLSID_BLUETOOTH_APP,
-                            EVT_USER, EVT_RM_AUTH_REQ, 0L );
-      }
-      else
-      {
-        IBTEXTRM_AuthorizeReply( pMe->mRM.po, &pData->pAuthorizeReq->serviceId,
-                                 &pData->pAuthorizeReq->bdAddr, FALSE );
-      }
-      break;
-    }
-    case AEEBT_RM_EVT_AUTHORIZE_REPLIED:
-    {
-      BTApp_HandleClearKey( pMe );
-      break;
-    }
+				/*
+				if( TOP_MENU != BT_APP_MENU_MAIN )
+				{
+				  BTApp_UpdateMenuItemImage( 
+				  pMe->m_pIDisplay, pMe->m_pIMenu, selection,
+				  SecEnabled ? IDB_BT_CHECK_ON : IDB_BT_CHECK_OFF );
+				}
+				*/
+			}
+			break;
+		}
+		
+		case AEEBT_RM_EVT_AUTHORIZE_REQUEST:
+		{
+			MSG_MED("RM - AuthReq sim=%d", pData->pAuthorizeReq->serviceId.serviceIdMethod, 0, 0);
+			
+			if ((pData->pAuthorizeReq->serviceId.serviceIdMethod == pMe->mRM.svcId.serviceIdMethod) &&
+			    (pData->pAuthorizeReq->serviceId.id.uPSM == pMe->mRM.svcId.id.uPSM))
+			{
+				pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr = pData->pAuthorizeReq->bdAddr;
+				IBTEXTRM_DeviceRead(pMe->mRM.po, &pMe->mRM.device[pMe->mRM.uCurDevIdx]);
+				ISHELL_PostEventEx(pMe->m_pShell, EVTFLG_ASYNC, 
+				                   AEECLSID_BLUETOOTH_APP,
+				                   EVT_USER, EVT_RM_AUTH_REQ, 0L);
+			}
+			else
+			{
+				IBTEXTRM_AuthorizeReply(pMe->mRM.po, &pData->pAuthorizeReq->serviceId,
+				                        &pData->pAuthorizeReq->bdAddr, FALSE);
+			}
+			
+			break;
+		}
+		
+		case AEEBT_RM_EVT_AUTHORIZE_REPLIED:
+		{
+			BTApp_HandleClearKey(pMe);
+			break;
+		}
+		
 #ifdef FEATURE_BT_2_1
-    case AEEBT_RM_EVT_USER_CFM_REPLIED:
-    {
-      if ( pData->uError != AEEBT_RM_ERR_NONE )
-      {
-        MSG_FATAL("***zzg RMNotify uError=%d***", pData->uError, 0 , 0);
+		case AEEBT_RM_EVT_USER_CFM_REPLIED:
+		{
+			if (pData->uError != AEEBT_RM_ERR_NONE)
+			{
+				MSG_FATAL("***zzg RMNotify uError=%d***", pData->uError, 0 , 0);
 
-		//BTApp_ShowMessage( pMe, IDS_MSG_USER_CFM_FAILED, NULL, 2 );
-		
-		pMe->m_msg_id = IDS_MSG_USER_CFM_FAILED;	
-		pMe->m_bNeedStr = FALSE;
+				//BTApp_ShowMessage( pMe, IDS_MSG_USER_CFM_FAILED, NULL, 2 );
 
-		//CLOSE_DIALOG(DLGRET_BT_MSGBOX)   
-		pMe->m_eDlgRet = DLGRET_BT_MSGBOX; 
-		(void) ISHELL_EndDialog(pMe->m_pShell); 
+				pMe->m_msg_id = IDS_MSG_USER_CFM_FAILED;	
+				pMe->m_bNeedStr = FALSE;
+
+				//CLOSE_DIALOG(DLGRET_BT_MSGBOX)   
+				pMe->m_eDlgRet = DLGRET_BT_MSGBOX; 
+				(void) ISHELL_EndDialog(pMe->m_pShell); 
+
+			}
+			else
+			{
+				BTApp_HandleClearKey(pMe);
+			}
+			break;
+		}
 		
-      }
-      else
-      {
-        BTApp_HandleClearKey( pMe );
-      }
-      break;
-    }
 #endif /* FEATURE_BT_2_1 */
-    case AEEBT_RM_EVT_TEST_MODE_ENTERED:
-      MSG_MED( "RM - DUTEntered err=%d", pData->uError, 0, 0 );
-      BTApp_ShowMessage( pMe, IDS_MSG_TEST_MODE, NULL, 0 );
-      break;
-    case AEEBT_RM_EVT_TEST_MODE_EXITED:
-      MSG_MED( "RM - DUTExited err=%d", pData->uError, 0, 0 );
-      BTApp_HandleClearKey( pMe );
-      break;
-    case AEEBT_RM_EVT_AUTO_SERVICE_SEARCH_DISABLED:
-      MSG_MED( "RM - Auto Svc Srch Disabled err=%d", pData->uError, 0, 0 );
-      break;
-    case AEEBT_RM_EVT_ROLE_SW_CTRL_SET:
-    {
-      if ( pData->uError != AEEBT_RM_ERR_NONE )
-      {
-        msgID = IDS_MSG_ROLE_SW_CTRL_FAILED;
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-      }
-      else
-      {
-        pMe->mRM.bRoleSwitchAllowed = !pMe->mRM.bRoleSwitchAllowed;
-        msgID = IDS_MSG_ROLE_SW_CTRL_SUCCESS;
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-      }
-      MSG_LOW( "RoleSwEvt : RoleSwAlw=%d", pMe->mRM.bRoleSwitchAllowed, 0, 0 );
-      BTApp_ShowMessage( pMe, msgID, NULL, 3 );
-      break;
-    }
-    case AEEBT_RM_EVT_RADIO_STATUS:
-    {
-      AECHAR wShortText[ 5 ];
-      STRTOWSTR( pMe->mRM.bRadioOn ? "OFF" : "ON", 
-                 wShortText, sizeof( wShortText ) );
-      MSG_MED( "RM - Radio Status stat=%d", pData->uStatus, 0, 0 );
-      if ( pMe->mRM.bRadioOn != pData->uStatus )
-      {
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-        pMe->mRM.bRadioOn = pData->uStatus;
-        BTApp_ShowMessage( pMe, IDS_MSG_RADIO_CTRL_SUCCESS, wShortText, 3 );
-      }
-      else
-      {
-#ifdef FEATURE_APP_TEST_AUTOMATION
-#error code not present
-#endif //FEATURE_APP_TEST_AUTOMATION
-        BTApp_ShowMessage( pMe, IDS_MSG_RADIO_CTRL_FAILED, wShortText, 3 );
-      }
-      break;
-    }
-    case AEEBT_RM_EVT_VISIBILITY_STATUS:
-    {
-      AECHAR wShortText[ 5 ];
-      STRTOWSTR( pMe->mRM.bVisibilityOn ? "OFF" : "ON", 
-                 wShortText, sizeof( wShortText ) );
-      MSG_MED( "RM - Radio Status stat=%d", pData->uStatus, 0, 0 );
-      if ( pMe->mRM.bVisibilityOn != pData->uStatus )
-      {
-        pMe->mRM.bVisibilityOn = pData->uStatus;
-        BTApp_ShowMessage( pMe, IDS_MSG_VISIBILITY_CTRL_SUCCESS, wShortText, 3 );
-      }
-      else
-      {
-        BTApp_ShowMessage( pMe, IDS_MSG_VISIBILITY_CTRL_FAILED, wShortText, 3 );
-      }
-      break;
-    }
-    case AEEBT_RM_EVT_CONN:
-    {
-      AEEBTDeviceInfo dev;
 
-      MSG_HIGH( "RM - Connected to %04x%04x%04x", 
-               ((uint16)(pData->bdAddr.uAddr[5] << 8) | pData->bdAddr.uAddr[4]), 
-               ((uint16)(pData->bdAddr.uAddr[3] << 8) | pData->bdAddr.uAddr[2]), 
-               ((uint16)(pData->bdAddr.uAddr[1] << 8) | pData->bdAddr.uAddr[0]) );
-      IBTEXTRM_RegisterLinkStatus( pMe->mRM.po, &pData->bdAddr, 0 );
+		case AEEBT_RM_EVT_TEST_MODE_ENTERED:
+		{
+			MSG_MED( "RM - DUTEntered err=%d", pData->uError, 0, 0 );
+			BTApp_ShowMessage( pMe, IDS_MSG_TEST_MODE, NULL, 0 );
+			break;
+		}
+		
+		case AEEBT_RM_EVT_TEST_MODE_EXITED:
+		{
+			MSG_MED( "RM - DUTExited err=%d", pData->uError, 0, 0 );
+			BTApp_HandleClearKey( pMe );
+			break;
+		}
+		
+		case AEEBT_RM_EVT_AUTO_SERVICE_SEARCH_DISABLED:
+		{
+			MSG_MED( "RM - Auto Svc Srch Disabled err=%d", pData->uError, 0, 0 );
+			break;
+		}
+		
+		case AEEBT_RM_EVT_ROLE_SW_CTRL_SET:
+		{
+			if (pData->uError != AEEBT_RM_ERR_NONE)
+			{
+				msgID = IDS_MSG_ROLE_SW_CTRL_FAILED;
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif //FEATURE_APP_TEST_AUTOMATION
+			}
+			else
+			{
+				pMe->mRM.bRoleSwitchAllowed = !pMe->mRM.bRoleSwitchAllowed;
+				msgID = IDS_MSG_ROLE_SW_CTRL_SUCCESS;
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif //FEATURE_APP_TEST_AUTOMATION
+			}
+			
+			MSG_LOW("RoleSwEvt : RoleSwAlw=%d", pMe->mRM.bRoleSwitchAllowed, 0, 0);
+			BTApp_ShowMessage(pMe, msgID, NULL, 3);
+			break;
+		}
+		
+		case AEEBT_RM_EVT_RADIO_STATUS:
+		{
+			AECHAR wShortText[5];
+			STRTOWSTR(pMe->mRM.bRadioOn ? "OFF" : "ON", wShortText, sizeof(wShortText));
+			MSG_MED("RM - Radio Status stat=%d", pData->uStatus, 0, 0);
+			
+			if (pMe->mRM.bRadioOn != pData->uStatus)
+			{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif //FEATURE_APP_TEST_AUTOMATION
+				pMe->mRM.bRadioOn = pData->uStatus;
+				BTApp_ShowMessage(pMe, IDS_MSG_RADIO_CTRL_SUCCESS, wShortText, 3);
+			}
+			else
+			{
+#ifdef FEATURE_APP_TEST_AUTOMATION
+#error code not present
+#endif //FEATURE_APP_TEST_AUTOMATION
+				BTApp_ShowMessage(pMe, IDS_MSG_RADIO_CTRL_FAILED, wShortText, 3);
+			}
+			break;
+		}
+		
+		case AEEBT_RM_EVT_VISIBILITY_STATUS:
+		{
+			AECHAR wShortText[5];
+			STRTOWSTR(pMe->mRM.bVisibilityOn ? "OFF" : "ON", wShortText, sizeof(wShortText));
+			MSG_MED("RM - Radio Status stat=%d", pData->uStatus, 0, 0);
+			
+			if (pMe->mRM.bVisibilityOn != pData->uStatus)
+			{
+				pMe->mRM.bVisibilityOn = pData->uStatus;				
+				BTApp_ShowMessage(pMe, IDS_MSG_VISIBILITY_CTRL_SUCCESS, wShortText, 3);
+			}
+			else
+			{
+				BTApp_ShowMessage(pMe, IDS_MSG_VISIBILITY_CTRL_FAILED, wShortText, 3);
+			}
+			break;
+		}
+		
+		case AEEBT_RM_EVT_CONN:
+		{
+			AEEBTDeviceInfo dev;
 
-      // check if the device is already in the database
-      dev.bdAddr = pData->bdAddr;
+			MSG_HIGH("RM - Connected to %04x%04x%04x", 
+			        ((uint16)(pData->bdAddr.uAddr[5] << 8) | pData->bdAddr.uAddr[4]), 
+			        ((uint16)(pData->bdAddr.uAddr[3] << 8) | pData->bdAddr.uAddr[2]), 
+			        ((uint16)(pData->bdAddr.uAddr[1] << 8) | pData->bdAddr.uAddr[0]));
+			
+			IBTEXTRM_RegisterLinkStatus(pMe->mRM.po, &pData->bdAddr, 0);
+
+			// check if the device is already in the database
+			dev.bdAddr = pData->bdAddr;
 #ifdef FEATURE_BT_2_1
 #ifdef FEATURE_BT_TEST_API
 #error code not present
 #endif /* FEATURE_BT_TEST_API */
 #endif /* FEATURE_BT_2_1 */
-      if ( IBTEXTRM_DeviceRead( pMe->mRM.po, &dev ) == SUCCESS )
-      {
-        if ( dev.bValid == FALSE )
-        {
-          IBTEXTRM_DeviceAdd( pMe->mRM.po, &dev );
-        }
-        dev.uValue2 = AEEBT_LM_ACTIVE;
-        IBTEXTRM_DeviceUpdate( pMe->mRM.po, AEEBT_RM_DU_VALUE_2_B, &dev );
-      }
-      else
-      {
-        MSG_ERROR( "RM - DB entry missing!", 0, 0, 0 );
-      }	  	
-	  
-      break;
-    }
-    case AEEBT_RM_EVT_DISCONN:
-    {
-      MSG_HIGH( "RM - Disconnected from %04x%04x%04x", 
-               ((uint16)(pData->bdAddr.uAddr[5] << 8) | pData->bdAddr.uAddr[4]), 
-               ((uint16)(pData->bdAddr.uAddr[3] << 8) | pData->bdAddr.uAddr[2]), 
-               ((uint16)(pData->bdAddr.uAddr[1] << 8) | pData->bdAddr.uAddr[0]) );
-      // unregistering link status here would result in error because connection
-      // no longer exists; RM automatically unreg link status when ACL is down
-      break;
-    }
-    case AEEBT_RM_EVT_CONN_ROLE_SET:
-    {
-      MSG_MED( "RM - Conn Role Set err=%d", pData->uError, 0, 0 );
-      if ( pData->uError != AEEBT_RM_ERR_NONE )
-      {
-        BTApp_ShowMessage( pMe, IDS_MSG_SET_CONN_ROLE_FAILED, NULL, 0 );
-      }
-      else
-      {
-        BTApp_ShowMessage( pMe, IDS_MSG_SET_CONN_ROLE_SUCCESS, NULL, 2 );
-      }
-      break;
-    }
-    case AEEBT_RM_EVT_APPLICATION_CONFIGURED:
-    {
-      MSG_MED( "RM - App Config done, err=%d", pData->uError, 0, 0 );
-      break;
-    }
+			if (IBTEXTRM_DeviceRead(pMe->mRM.po, &dev) == SUCCESS)
+			{
+				if (dev.bValid == FALSE)
+				{
+					IBTEXTRM_DeviceAdd(pMe->mRM.po, &dev);
+				}
+				dev.uValue2 = AEEBT_LM_ACTIVE;
+				IBTEXTRM_DeviceUpdate( pMe->mRM.po, AEEBT_RM_DU_VALUE_2_B, &dev);
+			}
+			else
+			{
+				MSG_ERROR("RM - DB entry missing!", 0, 0, 0);
+			}	  	
+
+			break;
+		}
+		
+		case AEEBT_RM_EVT_DISCONN:
+		{
+			MSG_HIGH("RM - Disconnected from %04x%04x%04x", 
+			        ((uint16)(pData->bdAddr.uAddr[5] << 8) | pData->bdAddr.uAddr[4]), 
+			        ((uint16)(pData->bdAddr.uAddr[3] << 8) | pData->bdAddr.uAddr[2]), 
+			        ((uint16)(pData->bdAddr.uAddr[1] << 8) | pData->bdAddr.uAddr[0]));
+			// unregistering link status here would result in error because connection
+			// no longer exists; RM automatically unreg link status when ACL is down
+			break;
+		}
+		
+		case AEEBT_RM_EVT_CONN_ROLE_SET:
+		{
+			MSG_MED("RM - Conn Role Set err=%d", pData->uError, 0, 0);
+			
+			if (pData->uError != AEEBT_RM_ERR_NONE)
+			{
+				BTApp_ShowMessage(pMe, IDS_MSG_SET_CONN_ROLE_FAILED, NULL, 0);
+			}
+			else
+			{
+				BTApp_ShowMessage(pMe, IDS_MSG_SET_CONN_ROLE_SUCCESS, NULL, 2);
+			}
+			break;
+		}
+		
+		case AEEBT_RM_EVT_APPLICATION_CONFIGURED:
+		{
+			MSG_MED("RM - App Config done, err=%d", pData->uError, 0, 0);
+			break;
+		}
 #ifdef FEATURE_BT_2_1
-    case AEEBT_RM_EVT_KEYPRESS_NOTIFICATION_REPLIED:
-    {
-      MSG_MED( "RM - KPNotif Sent, err=%d", pData->uError, 0, 0 );
-      break;
-    }
-    case AEEBT_RM_EVT_LPM_CONFIGURED:
-    {
-      MSG_MED( "RM - Low Pwr Mode Configured, err=%d", pData->uError, 0, 0 );
-      break;
-    }
+		case AEEBT_RM_EVT_KEYPRESS_NOTIFICATION_REPLIED:
+		{
+			MSG_MED("RM - KPNotif Sent, err=%d", pData->uError, 0, 0);
+			break;
+		}
+		case AEEBT_RM_EVT_LPM_CONFIGURED:
+		{
+			MSG_MED("RM - Low Pwr Mode Configured, err=%d", pData->uError, 0, 0);
+			break;
+		}
 #endif /* FEATURE_BT_2_1 */
-    default:
-      MSG_ERROR( "RM - unexpected ev=%d", evt, 0, 0 );
+
+		default:
+		MSG_ERROR("RM - unexpected ev=%d", evt, 0, 0);
   }
 }
 
@@ -21973,8 +22981,37 @@ DESCRIPTION
 static void BTApp_HandleCallOrig( CBTApp* pMe )
 {
   pMe->mAG.uNumCalls++; // another call to keep track of
+
+  MSG_FATAL("***zzg BTApp_HandleCallOrig A2DP bConnected=%x***", pMe->mA2DP.bConnected, 0, 0);
+  MSG_FATAL("***zzg BTApp_HandleCallOrig AG bConnected=%x***", pMe->mAG.bConnected, 0, 0);
+
+	//Add By zzg 2011_11_02
+	if (pMe->mA2DP.bConnected != FALSE)
+	{
+		BTApp_ReleaseA2DPDevice( pMe );
+	} 
+	
+	if (pMe->mA2DP.bConnected != FALSE)
+	{
+		pMe->mAG.bdAddr = pMe->mA2DP.bdAddr;			
+
+		if (pMe->mAG.bConnected == FALSE)
+		{
+			if ( pMe->mAG.bconnInPrgs == FALSE )
+			{			
+				if (BTApp_CallConnected(pMe) != BT_APP_CALL_NONE)
+				{
+					pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
+				}
+				pMe->mAG.bconnInPrgs = TRUE;
+				IBTEXTAG_Connect( pMe->mAG.po, &pMe->mAG.bdAddr, pMe->mAG.devType);			
+			}	
+		}
+	}
+	//Add End
   
-  if ( IS_AG_CONNECTABLE() != FALSE )
+  //if ( IS_AG_CONNECTABLE() != FALSE )
+  if (0)
   {
     if ( pMe->mAG.bDevDialed == FALSE ) 
     {
@@ -22023,10 +23060,30 @@ static void BTApp_HandleCallIncom( CBTApp* pMe )
  /* Releasing the availability of A2dp device to prevent the AVS from  
   * sending the ring on a2dp media during the incoming call 
   */
+  MSG_FATAL("***zzg BTApp_HandleCallIncom A2DP_Connected=%x AG_Connected=%x***", 
+  			pMe->mA2DP.bConnected, pMe->mAG.bConnected, 0);
+ 
   if (pMe->mA2DP.bConnected != FALSE)
   {
     BTApp_ReleaseA2DPDevice( pMe );
   } 
+
+	//Add By zzg 2011_11_02
+	if (pMe->mA2DP.bConnected != FALSE)
+	{
+		pMe->mAG.bdAddr = pMe->mA2DP.bdAddr;			
+			
+		if ( pMe->mAG.bconnInPrgs == FALSE )
+		{			
+			if (BTApp_CallConnected(pMe) != BT_APP_CALL_NONE)
+			{
+				pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
+			}
+			pMe->mAG.bconnInPrgs = TRUE;
+			IBTEXTAG_Connect( pMe->mAG.po, &pMe->mAG.bdAddr, pMe->mAG.devType);			
+		}		
+	}
+	//Add End
   
   if ( IS_AG_CONNECTABLE() != FALSE )
   {
@@ -22050,6 +23107,14 @@ DESCRIPTION
 ============================================================================= */
 static void BTApp_HandleCallAnswer( CBTApp* pMe )
 {
+	MSG_FATAL("***zzg BTApp_HandleCallAnswer bDevPickedUp=%x, devType=%x, bPrivateMode=%x***",
+				pMe->mAG.bDevPickedUp, pMe->mAG.devType, pMe->mAG.bPrivateMode);
+
+	MSG_FATAL("***zzg BTApp_HandleCallAnswer AG bEnabled=%x, bConnected=%x***",
+					pMe->mAG.bEnabled, pMe->mAG.bConnected, 0);
+
+	pMe->mAG.bDevPickedUp = TRUE;	//Add By zzg 2011_10_29
+	
   if ( IS_AG_CONNECTABLE() != FALSE )
   {
     BTApp_StopRing( pMe );
@@ -22090,6 +23155,13 @@ DESCRIPTION
 static void BTApp_HandleCallEnd( CBTApp* pMe )
 {
   pMe->mAG.uNumCalls--; // one fewer call to keep track of
+
+  MSG_FATAL("***zzg BTApp_HandleCallEnd***", 0, 0, 0);
+
+  MSG_FATAL("***zzg BTApp_HandleCallEnd AG bEnabled=%x, bConnected=%x, callState=%x***", 
+  				pMe->mAG.bEnabled, pMe->mAG.bConnected, pMe->mAG.callState);
+  MSG_FATAL("***zzg BTApp_HandleCallEnd A2DP bEnabled=%x, bConnected=%x***", 
+  				pMe->mA2DP.bEnabled, pMe->mA2DP.bConnected, 0);
   
   if ( pMe->mAG.bEnabled != FALSE )
   {
@@ -22151,6 +23223,7 @@ static boolean BTApp_ProcessTPCallEvents( CBTApp* pMe, uint16  wParam,
 {
   boolean bEventProcessed = FALSE;
   AEETNotifyInfo* pEv = (((AEENotify*) dwParam)->pData);
+  MSG_FATAL("***zzg BTApp_ProcessTPCallEvents event=%x***", pEv->event, 0, 0);
   switch ( pEv->event )
   {
     case AEET_EVENT_CALL_ORIG:
@@ -22232,6 +23305,8 @@ static boolean BTApp_ProcessTELEPHONEEvents(
   boolean bEventProcessed = FALSE;
   AEENotify* pNotify = (AEENotify*)dwParam;
 
+  MSG_FATAL("***zzg BTApp_ProcessTELEPHONEEvents ***", 0, 0, 0);
+
   if ( pNotify->cls != AEECLSID_PHONENOTIFIER )
   {
     return TRUE;
@@ -22269,6 +23344,8 @@ static boolean BTApp_ProcessVTEvents(
   {
     return TRUE;
   }
+
+  MSG_FATAL("***zzg BTApp_ProcessVTEvents event=%x***", pNotify->event, 0, 0);
 
   switch ( pNotify->event )
   {
