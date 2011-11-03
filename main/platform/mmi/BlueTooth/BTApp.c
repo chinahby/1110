@@ -2489,27 +2489,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 		}
 
-		case EVT_USER:
-		{
-			if ((wParam == AVK_SELECT) || (wParam == AVK_INFO))
-			{
-				if (dwParam != 0)
-				{
-					eCode = EVT_COMMAND;
-					wParam = dwParam;
-					dwParam = 0;
-				}
-				else
-				{
-					eCode = EVT_KEY;
-				}
-			}
-			else if (wParam == AVK_CLR)
-			{
-				eCode = EVT_KEY;
-			}
-			return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-		}
+
 #endif//FEATURE_LCD_TOUCH_ENABLE
 
 		case EVT_NOTIFY:
@@ -2791,6 +2771,30 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 
 		switch (wParam)
 		{
+			#ifdef FEATURE_LCD_TOUCH_ENABLE
+			case AVK_CLR:
+					{
+							eCode = EVT_KEY;
+							return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+					}
+					break;
+			case AVK_SELECT:
+			case AVK_INFO:
+					{
+						if (dwParam != 0)
+						{
+							eCode = EVT_COMMAND;
+							wParam = dwParam;
+							dwParam = 0;
+						}
+						else
+						{
+							eCode = EVT_KEY;
+						}
+						return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+					}
+					break;
+			#endif
 			//Add By zzg 2011_10_25
 			case 1:	//Disconnect BtHeadSet for MusicPlayer
 			{
