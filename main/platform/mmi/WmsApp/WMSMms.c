@@ -3141,11 +3141,10 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 					return MMC_GENERIC;
 				}
 				i += iDataOffset;
-				STRNCPY((char*)decdata->message.hFrom,(char*)&ptr[i],len);
+				STRNCPY((char*)decdata->message.hFrom,(char*)&ptr[i + 1],len - 1);//Address-present-token | Insert-address-token
 				j = i;
 				i += len;
 				i--;
-				
 				break;
 			}
 

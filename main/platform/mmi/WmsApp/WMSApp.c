@@ -1911,7 +1911,7 @@ Exit:
 
                         ISHELL_PostEventEx(
                             AEE_GetShell(),
-                            EVTFLG_ASYNC,
+                            EVTFLG_UNIQUE,
                             AEECLSID_WMSAPP,
                             EVT_MMS_MSG_GET_FINISH,
                             HTTP_CODE_OK,
