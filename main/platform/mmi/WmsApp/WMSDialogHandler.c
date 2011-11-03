@@ -9773,6 +9773,8 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 
 int AddMimeResIntoMms(WmsApp *pMe,char* pPath)
 {
+#ifdef FEATURE_USES_MMS
+
     WSP_MMS_ENCODE_DATA* pEncData = NULL;
     char* pFilePath = NULL;    
     int nIndex = 0;
@@ -9821,11 +9823,13 @@ int AddMimeResIntoMms(WmsApp *pMe,char* pPath)
         }
         nIndex ++;
     }
+	#endif
     MSG_FATAL("[AddMimeResIntoMms] Add Failed",0,0,0);
     return  -1;
 }
 int DeleteMimeResFromMms(WmsApp *pMe,char* pPath)
 {
+#ifdef FEATURE_USES_MMS
     WSP_MMS_ENCODE_DATA* pEncData = NULL;
     char* pFilePath = NULL;    
     int nIndex = 0;
@@ -9853,11 +9857,14 @@ int DeleteMimeResFromMms(WmsApp *pMe,char* pPath)
         }
         nIndex ++;
     }
+	#endif
     MSG_FATAL("[DeleteMimeResFromMms] Not Find File",0,0,0);
     return  -1;
 }
 int MimeResCheckFileExist(WmsApp *pMe,char* pPath)
 {
+#ifdef FEATURE_USES_MMS
+
     WSP_MMS_ENCODE_DATA* pEncData = NULL;
     char* pFilePath = NULL;    
     int nIndex = 0;
@@ -9882,12 +9889,15 @@ int MimeResCheckFileExist(WmsApp *pMe,char* pPath)
         }
         nIndex ++;
     }
+	#endif
     MSG_FATAL("[MimeResCheckFileExist] Add Failed",0,0,0);
     return  -1;
 }
 
 char* MimeResCheckTypeExist(WmsApp *pMe,char* pType,uint8** ppBuf,uint32* pBufLen)
 {
+#ifdef FEATURE_USES_MMS
+
     WSP_MMS_ENCODE_DATA* pEncData = NULL;
     char* pFilePath = NULL;    
     int nIndex = 0;
@@ -9924,7 +9934,7 @@ char* MimeResCheckTypeExist(WmsApp *pMe,char* pType,uint8** ppBuf,uint32* pBufLe
         }
         nIndex ++;
     }
-
+#endif
     MSG_FATAL("[MimeResCheckTypeExist] Not Find",0,0,0);
     return NULL;
 }
@@ -9932,6 +9942,7 @@ char* MimeResCheckTypeExist(WmsApp *pMe,char* pType,uint8** ppBuf,uint32* pBufLe
 int WMSMMS_GetResByExplorer(void* pv, FileNamesBuf pBuf, uint32 nBufSize)
 {
     WmsApp* pMe = (WmsApp*)pv;
+	#ifdef FEATURE_USES_MMS
     WSP_MMS_ENCODE_DATA* pData = NULL;
     int nIndex = 0;
     if(NULL == pMe->m_EncData.pMessage)
@@ -9957,6 +9968,7 @@ int WMSMMS_GetResByExplorer(void* pv, FileNamesBuf pBuf, uint32 nBufSize)
         }
         nIndex++;
     }
+	#endif
     return EFAILED;
     
 }
