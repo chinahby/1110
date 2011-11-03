@@ -116,6 +116,7 @@
 #include "OEMCFGI.h"
 // 图片资源文件
 #include "appscommonimages.brh"
+#include "uixsnd.h"
 
 #define FEATURE_DIALER_ANIMAION_SUPPORT	0
 

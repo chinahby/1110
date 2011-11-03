@@ -1668,8 +1668,14 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 			{
 				return CallApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 			}
+		
+#endif
 
+		//Add By zzg 2011_10_27
 		case EVT_USER:
+		{
+			MSG_FATAL("***zzg CallApp_HandleEvt EVT_USER wParam=%x***", wParam, 0, 0);
+			#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
 			{				
 				if((wParam == AVK_SELECT) || (wParam == AVK_INFO))
 				{
@@ -1683,30 +1689,26 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 					{
 						eCode = EVT_KEY;
 					}
+					return CallApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 				}
 				else if(wParam == AVK_CLR)
 				{
 					eCode = EVT_KEY;
+					return CallApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 				}
 				else if((wParam >= AVK_0) && (wParam <= AVK_POUND))
 				{
 					eCode = EVT_KEY;
+					return CallApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 				}				
-				return CallApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+				
 			}
-#endif
-
-		//Add By zzg 2011_10_27
-		case EVT_USER:
-		{
-			MSG_FATAL("***zzg CallApp_HandleEvt EVT_USER wParam=%x***", wParam, 0, 0);
-
+			#endif
 			if ((wParam == 0x22) || (wParam == 0x33))
 			{
-				pMe->m_bBtAvailable = TRUE;				
+				pMe->m_bBtAvailable = TRUE;		
+				CallApp_SetupCallAudio(pMe);
 			}
-			
-			CallApp_SetupCallAudio(pMe);
 			
 			break;
 			
