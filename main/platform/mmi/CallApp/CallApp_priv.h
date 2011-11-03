@@ -102,12 +102,6 @@
 #include "AEERUIM.h"
 #endif
 
-//Add By zzg 2011_10_28
-#ifdef FEATURE_SUPPORT_BT_AUDIO
-#include "uixsnd.h"	
-#endif
-
-
 #include "Appscommon.h"
 #include "AppComFunc.h"
 #include "AEECallHistory.h"
