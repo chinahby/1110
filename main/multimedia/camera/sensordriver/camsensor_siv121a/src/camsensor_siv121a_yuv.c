@@ -504,6 +504,7 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
 
 	if ( (manufacturer_id_msb != 0x92) || (manufacturer_id_lsb != 0x11) )
 	{
+		MSG_FATAL("manufacturer_id_msb:0x%x,manufacturer_id_lsb:0x%x",manufacturer_id_msb,manufacturer_id_lsb,0);///yty 
 		return FALSE;
 	} 
 

@@ -185,7 +185,7 @@ static register_address_value_pair siv121d_reg_settings_array[] =
 	{0x00, 	0x04},
 	{0x10,	0xff},
 	{0x11,	0x0D},
-	{0x12,	0x1D},
+	{0x12,	0x9D},
 	{0x14,	0x00},
 
 	//DPCBNR
@@ -391,19 +391,11 @@ None
 void camsensor_siv121d_0m3_init_camsensor_info()
 {    
 	MSG_FATAL("    camsensor_siv121d_0m3_init_camsensor_info     ",0,0,0);
-	camsensor_info.pclk_invert = TRUE;
-	format_preview  = CAMIF_YCbCr_Cr_Y_Cb_Y;
-	format_snapshot = CAMIF_YCbCr_Cr_Y_Cb_Y;
-
-	camsensor_info.snapshot_width        = 640; 
-	camsensor_info.snapshot_height       = 480;
-	camsensor_info.snapshot_dummy_pixels =  0;
-	camsensor_info.snapshot_dummy_lines  =  0;
-
-	camsensor_info.preview_width         = 640;
-	camsensor_info.preview_height        = 480;
-	camsensor_info.preview_dummy_pixels  = 0;
-	camsensor_info.preview_dummy_lines   = 0;
+	camsensor_info.pclk_invert	=FALSE;
+	camsensor_info.preview_dummy_pixels = 0;
+	format_preview	= CAMIF_YCbCr_Cr_Y_Cb_Y;
+	format_snapshot	= CAMIF_YCbCr_Cr_Y_Cb_Y;
+	camsensor_camclk_po_hz	=24000000;
 
 	switch (camsensor_info.msm_id)
 	{
@@ -411,11 +403,6 @@ void camsensor_siv121d_0m3_init_camsensor_info()
 		case MSM6260:
 		case QSC6270:
 			camsensor_info.pclk_invert = FALSE;
-			break;
-
-		case QSC1110:
-			format_preview  = CAMIF_YCbCr_Cr_Y_Cb_Y;
-			format_snapshot = CAMIF_YCbCr_Cr_Y_Cb_Y;
 			break;
 
 		case MSM6280:
@@ -476,7 +463,7 @@ boolean camsensor_siv121d_0m3_start(camsensor_static_params_type *camsensor_para
 	camsensor_params->sensor_type   = CAMSENSOR_CMOS;
 
 	/* Sensor output data format */
-	camsensor_params->format = CAMIF_YCbCr_Y_Cr_Y_Cb;
+	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
 
 	/* BAYER or YCbCr */
 	camsensor_params->output_format = CAMSENSOR_YCBCR;
@@ -710,7 +697,6 @@ camsensor_static_params_type  *camsensor_params		 /* Camera sensor config params
 
 	//	camsensor_SIV121A_ycbcr_write_sensor (camsensor_preview_resolution);//yty add
 	camsensor_current_resolution = camsensor_preview_resolution;
-
 	return TRUE;
 } /* camsensor_siv121d_0m3_video_config */
 
