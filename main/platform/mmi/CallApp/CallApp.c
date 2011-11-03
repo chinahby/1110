@@ -1662,15 +1662,6 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
             return CallApp_RouteDialogEvent(pMe,EVT_KEY,key,dwParam);
         }
 #endif
-#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
-		case EVT_PEN_UP:
-		case EVT_PEN_DOWN:
-			{
-				return CallApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-			}
-		
-#endif
-
 		//Add By zzg 2011_10_27
 		case EVT_USER:
 		{
@@ -1704,6 +1695,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 				
 			}
 			#endif
+			#ifdef FEATURE_SUPPORT_BT_AUDIO
 			if ((wParam == 0x22) || (wParam == 0x33))
 			{
 #ifdef FEATURE_SUPPORT_BT_AUDIO                
@@ -1711,7 +1703,7 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 #endif
 				CallApp_SetupCallAudio(pMe);
 			}
-			
+			#endif
 			break;
 			
 		}

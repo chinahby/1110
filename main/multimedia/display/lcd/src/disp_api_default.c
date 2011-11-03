@@ -515,13 +515,17 @@ dword disp_capture2
 
 #ifdef FEATURE_TORCH_SUPPORT
 #ifdef FEATURE_LCD_TOUCH_ENABLE
+#define GPIO_LAMP_EN GPIO_OUTPUT_62
+
 void disp_set_torch(void)
 {
-
+	gpio_tlmm_config(GPIO_LAMP_EN);
+	gpio_out(GPIO_LAMP_EN,GPIO_HIGH_VALUE);
 }
 void disp_clear_torch(void)
 {
-
+	gpio_tlmm_config(GPIO_LAMP_EN);
+	gpio_out(GPIO_LAMP_EN,GPIO_LOW_VALUE);
 }
 
 #else

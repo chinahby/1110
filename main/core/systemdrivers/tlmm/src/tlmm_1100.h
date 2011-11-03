@@ -444,6 +444,6 @@ extern const GPIO_SignalType  TLMM_GPIO_CONFIG[GPIO_NUM_GPIOS];
 #define GPIO_61_SIGNAL EBI1_A_D_22
 
 /* GPIO 62 */
-#define GPIO_62_SIGNAL EBI1_A_D_23
+#define GPIO_62_SIGNAL GPIO_OUTPUT_62
 
 #endif /* TLMM_1100_H */

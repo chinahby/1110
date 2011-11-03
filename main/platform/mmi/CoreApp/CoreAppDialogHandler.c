@@ -3638,6 +3638,60 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     break;
             }
             return FALSE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+		case EVT_PEN_DOWN:
+			{
+				
+				break;
+			}
+		case EVT_PEN_MOVE:
+			{
+				
+				break;
+			}
+		case EVT_PEN_UP:
+			{
+				AEERect rc;
+				uint16 wXPos = (int16)AEE_GET_X(dwParam);
+				uint16 wYPos = (int16)AEE_GET_Y(dwParam);
+				uint16 i = 0;
+				boolean m_bInRect = FALSE;
+				rc.y = SCREEN_HEIGHT - IDLE_TOUCH_DRAWDX - 40;;
+				rc.x = (IDLE_TOUCH_IDLE_BOTTOM_SPC*(i+1))+(i*IDLE_TOUCH_DRAWDX);
+				for(i=0;i<IDLE_TOUCH_ITEMMAX;)
+				{
+					rc.x  = (IDLE_TOUCH_IDLE_BOTTOM_SPC*(i+1))+(i*IDLE_TOUCH_DRAWDX);
+					rc.dx = IDLE_TOUCH_DRAWDX;
+					rc.dy = IDLE_TOUCH_DRAWDX;
+					m_bInRect = CORE_PT_IN_RECT(wXPos,wYPos,rc);
+					if(m_bInRect)
+					{
+						MSG_FATAL("m_bInRect......222........I=%d",i,0,0);
+						break;
+					}
+					i++;
+				}
+				MSG_FATAL("m_bInRect......111........I=%d",i,0,0);
+				switch(i)
+				{
+					case 0:
+						return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+						break;
+					case 1:
+						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+						break;
+					case 2:
+						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+						break;
+					case 3:
+						return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
+						break;
+					default:
+						break;
+				}
+				break;
+			}
+#endif
 
         case EVT_GSENSOR_SHAKE:
         case EVT_KEY:
@@ -3672,58 +3726,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                 }
 #endif                
             }
-#ifdef FEATURE_LCD_TOUCH_ENABLE
-			case EVT_PEN_DOWN:
-				{
-					
-					break;
-				}
-			case EVT_PEN_MOVE:
-				{
-					
-					break;
-				}
-			case EVT_PEN_UP:
-				{
-					AEERect rc;
-					uint16 wXPos = (int16)AEE_GET_X(dwParam);
-					uint16 wYPos = (int16)AEE_GET_Y(dwParam);
-					uint16 i = 0;
-					boolean m_bInRect = FALSE;
-					rc.y = SCREEN_HEIGHT - IDLE_TOUCH_DRAWDX - 40;;
-					rc.x = (IDLE_TOUCH_IDLE_BOTTOM_SPC*(i+1))+(i*IDLE_TOUCH_DRAWDX);
-					for(i=0;i<IDLE_TOUCH_ITEMMAX;i++)
-					{
-						rc.x  = (IDLE_TOUCH_IDLE_BOTTOM_SPC*(i+1))+(i*IDLE_TOUCH_DRAWDX);
-						rc.dx = IDLE_TOUCH_DRAWDX;
-						rc.dy = IDLE_TOUCH_DRAWDX;
-						m_bInRect = CORE_PT_IN_RECT(wXPos,wYPos,rc);
-						if(m_bInRect)
-						{
-							break;
-						}
-					}
-					switch(i)
-					{
-						case 0:
-							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
-							break;
-						case 1:
-							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
-							break;
-						case 2:
-							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
-							break;
-						case 3:
-							return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
-							break;
-						default:
-							break;
-					}
-					break;
-				}
-#endif
-            
+		MSG_FATAL("EVT_KEY........................000000",0,0,0);
+
+            MSG_FATAL("EVT_KEY........................1110000",0,0,0);
             if(pMe->m_bemergencymode)
             {
                 switch (wParam)

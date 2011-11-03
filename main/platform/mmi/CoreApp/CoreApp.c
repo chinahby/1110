@@ -1086,9 +1086,14 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                 }
             }
 #endif
+			
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+		case EVT_PEN_UP:
+		case EVT_PEN_MOVE:
+		case EVT_PEN_DOWN:
+#endif
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
