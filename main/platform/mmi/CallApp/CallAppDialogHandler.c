@@ -6067,10 +6067,10 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
     {
         headsetPresent = FALSE;
     }
-
+#ifdef FEATURE_SUPPORT_BT_AUDIO
 	MSG_FATAL("***zzg CallApp_SetupCallAudio headsetPresent=%x, m_bHandFree=%x, m_bBtAvailable=%x***", 
 				headsetPresent, pMe->m_bHandFree, pMe->m_bBtAvailable);	
-
+#endif
 #ifdef FEATURE_SUPPORT_BT_APP
     CALL_FUN_START("CallApp_SetupCallAudio %d %d %d", pMe->m_bHandFree, headsetPresent, pMe->m_bt_audio );
 #else

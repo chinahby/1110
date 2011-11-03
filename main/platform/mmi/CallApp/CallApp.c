@@ -1706,7 +1706,9 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 			#endif
 			if ((wParam == 0x22) || (wParam == 0x33))
 			{
+#ifdef FEATURE_SUPPORT_BT_AUDIO                
 				pMe->m_bBtAvailable = TRUE;		
+#endif
 				CallApp_SetupCallAudio(pMe);
 			}
 			
