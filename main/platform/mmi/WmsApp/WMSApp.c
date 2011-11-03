@@ -1744,7 +1744,7 @@ Exit:
 
             if(body_len == 0)
             {
-                body_len = *(uint32*)pBody;
+                MEMCPY((void*)&body_len,(void*)pBody,4);
                 pBody += 4;
             }
             MSG_FATAL("EVT_MMS_PDUDECODE body_len:%d",body_len,0,0);

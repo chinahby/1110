@@ -514,6 +514,11 @@ static boolean IDD_OPTION_YESNO_Handle(void *pUser,
 boolean WmsApp_SaveToFile(char* pFileName,void* pData,uint32 nDataLen);
 static IImage* WmsLoadImageFromData(WmsApp *pMe,int nFragIndex,char* pMimeType);
 static void WmsLoadSoundFromData(WmsApp *pMe,int nFragIndex,char* pMimeType);
+char* MimeResCheckTypeExist(WmsApp *pMe,char* pType,uint8** ppBuf,uint32* pBufLen);
+int AddMimeResIntoMms(WmsApp *pMe,char* pPath);
+int DeleteMimeResFromMms(WmsApp *pMe,char* pPath);
+int MimeResCheckFileExist(WmsApp *pMe,char* pPath);
+int WMSMMS_GetResByExplorer(void* pv, FileNamesBuf pBuf, uint32 nBufSize);
 
 
 #endif
@@ -9766,6 +9771,196 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
     return FALSE;
 } // IDD_SENDOPTS_Handler
 
+int AddMimeResIntoMms(WmsApp *pMe,char* pPath)
+{
+    WSP_MMS_ENCODE_DATA* pEncData = NULL;
+    char* pFilePath = NULL;    
+    int nIndex = 0;
+    uint32 size = 0;
+    char* pFileType = NULL; 
+    
+    if(NULL == pMe)
+    {
+        MSG_FATAL("[AddMimeResIntoMms] Init Error",0,0,0);
+        return  -1;
+    }   
+
+    if(NULL == pMe->m_EncData.pMessage)
+    {
+        pMe->m_EncData.pMessage = (MMS_WSP_MESSAGE_SEND*)MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+        MSG_FATAL("[AddMimeResIntoMms] NEW MMS MSG",0,0,0);
+    }
+
+    if(NULL == pMe->m_EncData.pMessage)
+    {
+        MSG_FATAL("[AddMimeResIntoMms] No Memory",0,0,0);
+        return -1;
+    }    
+    nIndex = MimeResCheckFileExist(pMe,pPath);
+    
+    if(nIndex != -1)
+    {
+        return nIndex;
+    }
+    else
+    {
+        nIndex = 0;
+    }
+        
+    pEncData = &pMe->m_EncData.pMessage->mms_data;
+    pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+    while(nIndex < WMSMMS_FRAGMENTCOUNT)
+    {
+        pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+        
+        if(STRLEN(pFilePath) == 0)
+        {
+            STRCPY(pFilePath, pPath);
+            MSG_FATAL("[AddMimeResIntoMms] Add Success",0,0,0);
+            return nIndex;   
+        }
+        nIndex ++;
+    }
+    MSG_FATAL("[AddMimeResIntoMms] Add Failed",0,0,0);
+    return  -1;
+}
+int DeleteMimeResFromMms(WmsApp *pMe,char* pPath)
+{
+    WSP_MMS_ENCODE_DATA* pEncData = NULL;
+    char* pFilePath = NULL;    
+    int nIndex = 0;
+    uint32 size = 0;
+    char* pFileType = NULL; 
+    
+    if(NULL == pMe || !pMe->m_EncData.pMessage)
+    {
+        MSG_FATAL("[DeleteMimeResFromMms] Init Error",0,0,0);
+        return  -1;
+    }    
+        
+    pEncData = &pMe->m_EncData.pMessage->mms_data;
+    pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+    while(nIndex < WMSMMS_FRAGMENTCOUNT)
+    {
+        pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+        
+        if(STRCMP(pPath,pFilePath) == 0)
+        {
+            MEMSET(pFilePath,NULL,STRLEN(pFilePath));
+            FREEIF(pEncData->fragment[nIndex].pBuf);
+            MSG_FATAL("[DeleteMimeResFromMms] Delete Success",0,0,0);
+            return nIndex;   
+        }
+        nIndex ++;
+    }
+    MSG_FATAL("[DeleteMimeResFromMms] Not Find File",0,0,0);
+    return  -1;
+}
+int MimeResCheckFileExist(WmsApp *pMe,char* pPath)
+{
+    WSP_MMS_ENCODE_DATA* pEncData = NULL;
+    char* pFilePath = NULL;    
+    int nIndex = 0;
+    uint32 size = 0;
+    char* pFileType = NULL; 
+    
+    if(NULL == pMe || !pMe->m_EncData.pMessage)
+    {
+        MSG_FATAL("[MimeResCheckFileExist] Init Error",0,0,0);
+        return  -1;
+    }    
+        
+    pEncData = &pMe->m_EncData.pMessage->mms_data;
+    pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+    while(nIndex < WMSMMS_FRAGMENTCOUNT)
+    {
+        pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+        
+        if(STRNCMP(pFilePath,pPath,STRLEN(pPath)) == 0)
+        {
+            return nIndex;   
+        }
+        nIndex ++;
+    }
+    MSG_FATAL("[MimeResCheckFileExist] Add Failed",0,0,0);
+    return  -1;
+}
+
+char* MimeResCheckTypeExist(WmsApp *pMe,char* pType,uint8** ppBuf,uint32* pBufLen)
+{
+    WSP_MMS_ENCODE_DATA* pEncData = NULL;
+    char* pFilePath = NULL;    
+    int nIndex = 0;
+    uint32 size = 0;
+    char* pFileType = NULL; 
+    
+    if(NULL == pMe || !pMe->m_EncData.pMessage)
+    {
+        MSG_FATAL("[MimeResCheckTypeExist] Init Error",0,0,0);
+        return NULL;
+    }    
+        
+    pEncData = &pMe->m_EncData.pMessage->mms_data;
+    pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+    while(STRLEN(pFilePath) != 0 && nIndex < WMSMMS_FRAGMENTCOUNT)
+    {
+        pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+        ISHELL_DetectType(AEE_GetShell(),NULL,&size,pFilePath,(const char**)&pFileType);
+        if(!STRNCMP(pType,pFileType,STRLEN(pType)))
+        {
+            if(pEncData->fragment[nIndex].pBuf && pEncData->fragment[nIndex].nBufLen > 0)
+            {
+                if(ppBuf == NULL || pBufLen == NULL)
+                {
+                    nIndex ++;
+                    continue;
+                }    
+                    
+                *pBufLen = pEncData->fragment[nIndex].nBufLen;
+                *ppBuf = pEncData->fragment[nIndex].pBuf;
+            }
+            MSG_FATAL("[MimeResCheckTypeExist] Find File:%s",pFilePath,0,0);
+            return pFilePath;   
+        }
+        nIndex ++;
+    }
+
+    MSG_FATAL("[MimeResCheckTypeExist] Not Find",0,0,0);
+    return NULL;
+}
+
+int WMSMMS_GetResByExplorer(void* pv, FileNamesBuf pBuf, uint32 nBufSize)
+{
+    WmsApp* pMe = (WmsApp*)pv;
+    WSP_MMS_ENCODE_DATA* pData = NULL;
+    int nIndex = 0;
+    if(NULL == pMe->m_EncData.pMessage)
+    {
+        pMe->m_EncData.pMessage = (MMS_WSP_MESSAGE_SEND*)MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+    }
+
+    if(NULL == pMe->m_EncData.pMessage)
+        return EFAILED;
+    
+    pData = &pMe->m_EncData.pMessage->mms_data;
+
+    if(pData->frag_num >= WMSMMS_FRAGMENTCOUNT)
+        return EFAILED;
+
+    while(nIndex < WMSMMS_FRAGMENTCOUNT)
+    {
+        if(STRLEN((char*)pData->fragment[nIndex].hContentFile) == 0)
+        {
+            pData->frag_num ++;
+            STRNCPY((char*)pData->fragment[nIndex].hContentFile,(char*)pBuf,nBufSize);
+            return SUCCESS;
+        }
+        nIndex++;
+    }
+    return EFAILED;
+    
+}
+
 /*==============================================================================
 º¯Êý:
     IDD_WRITEMSG_Handler
@@ -9786,6 +9981,7 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
 ±¸×¢:
 
 ==============================================================================*/
+
 static boolean IDD_WRITEMSG_Handler(void *pUser, 
     AEEEvent eCode,
     uint16 wParam, 
@@ -9824,7 +10020,6 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
         	{
         		boolean Is_notend = TRUE;
 #ifdef FEATURE_USES_MMS                 
-                //char MMSImagepszPath[MG_MAX_FILE_NAME];
                 char MMSImagepszPath[70];
                 char MMSSoundpszPath[70];
                 char MMSVideopszPath[70];
@@ -9853,6 +10048,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     if(pMe->m_pMMSImage != NULL)
                     {
                         pMe->m_isMMS = TRUE;
+                        AddMimeResIntoMms(pMe,MMSImagepszPath);
                         IIMAGE_SetParm(pMe->m_pMMSImage,IPARM_SCALE, pMe->m_rc.dx/2, pMe->m_rc.dy/2);
                         SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
                         ICONTROL_SetRect((IControl*)pIText, &ctlRect);                           
@@ -9876,6 +10072,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     else
                     {
                         pMe->m_isMMS = TRUE;
+                        AddMimeResIntoMms(pMe,MMSSoundpszPath);
                         SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
                         ICONTROL_SetRect((IControl*)pIText, &ctlRect);     
                     }
@@ -9891,6 +10088,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     else
                     {
                         pMe->m_isMMS = TRUE;
+                        AddMimeResIntoMms(pMe,MMSVideopszPath);
                         SETAEERECT(&ctlRect,  0, 0, pMe->m_rc.dx, (pMe->m_rc.dy - pMe->m_rc.dy/2 - GetBottomBarHeight(pMe->m_pDisplay))-2);
                         ICONTROL_SetRect((IControl*)pIText, &ctlRect);     
                     }
@@ -10596,12 +10794,13 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     {
 #ifdef FEATURE_USES_MMS
                         if(pMe->m_isMMS)
-                        {
+                        { 
                             char pszPath[50]={'\0'};
                             DBGPRINTF("MMSImageName=%s len=%d", pszPath, STRLEN(pszPath));
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,pszPath, sizeof(pszPath));      
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,pszPath, sizeof(pszPath)); 
                             ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,pszPath, sizeof(pszPath)); 
+                            FREEIF(pMe->m_EncData.pMessage);
                             RELEASEIF(pMe->m_pMMSImage);
                             RELEASEIF(pMe->m_pMMSSOUND);
                             RELEASEIF(pMe->m_pMMSVIDEO);
@@ -10835,9 +11034,22 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 
                 case IDS_REMOVE_PICTURE:
                 {
-                    char MMSImageName[MG_MAX_FILE_NAME]={'/0'};
+                    char MMSImageName[AEE_MAX_FILE_NAME]={'/0'};
+                    char* pMMSImageName = NULL;
+                    uint8* pBuf = NULL;
+                    uint32 nBufLen = 0;
                     MSG_FATAL("pMe->m_pMMSImage != NULL",0,0,0);
                     ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImageName, sizeof(MMSImageName));       
+                    while(pMMSImageName = MimeResCheckTypeExist(pMe,IMAGE_MIME_BASE,&pBuf,&nBufLen))
+                    {
+                        if(nBufLen > 0)
+                        {
+                            FREEIF(pBuf);
+                        }
+                        MEMSET(pMMSImageName,NULL,STRLEN(pMMSImageName));
+                        pMe->m_EncData.pMessage->mms_data.frag_num --;
+                    };
+                    
                     RELEASEIF(pMe->m_pMMSImage);
                 	(void) ISHELL_PostEventEx(pMe->m_pShell, 
                                         EVTFLG_ASYNC,
@@ -10850,9 +11062,23 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 
                 case IDS_REMOVE_SOUND:
                 {
-                    char MMSImageName[MG_MAX_FILE_NAME]={'/0'};
+                    char MMSImageName[AEE_MAX_FILE_NAME]={'/0'};
+                    char* pMMSSoundName = NULL;
+                    uint8* pBuf = NULL;
+                    uint32 nBufLen = 0;
                     MSG_FATAL("pMe->m_pMMSSOUND != NULL",0,0,0);
                     ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSImageName, sizeof(MMSImageName));       
+                    while((pMMSSoundName = MimeResCheckTypeExist(pMe,SOUND_MIME_BASE,&pBuf,&nBufLen))
+                        || (pMMSSoundName = MimeResCheckTypeExist(pMe,AUDIO_MIME_BASE,&pBuf,&nBufLen)))
+                    {
+                        if(nBufLen > 0)
+                        {
+                            FREEIF(pBuf);
+                        }
+                        MEMSET(pMMSSoundName,NULL,STRLEN(pMMSSoundName));
+                        pMe->m_EncData.pMessage->mms_data.frag_num --;
+                    };   
+                    
                     RELEASEIF(pMe->m_pMMSSOUND);
                 	(void) ISHELL_PostEventEx(pMe->m_pShell, 
                                         EVTFLG_ASYNC,
@@ -10865,9 +11091,21 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 
                 case IDS_REMOVE_VIDEO:
                 {
-                    char MMSImageName[MG_MAX_FILE_NAME]={'/0'};
+                    char MMSImageName[AEE_MAX_FILE_NAME]={'/0'};
+                    char* pMMSVideoName = NULL;
+                    uint8* pBuf = NULL;
+                    uint32 nBufLen = 0;
                     MSG_FATAL("pMe->m_pMMSVIDEO != NULL",0,0,0);
                     ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSImageName, sizeof(MMSImageName));       
+                    while(pMMSVideoName = MimeResCheckTypeExist(pMe,VIDEO_MIME_BASE,&pBuf,&nBufLen))
+                    {
+                        if(nBufLen > 0)
+                        {
+                            FREEIF(pBuf);
+                        }
+                        MEMSET(pMMSVideoName,NULL,STRLEN(pMMSVideoName));
+                        pMe->m_EncData.pMessage->mms_data.frag_num --;
+                    };      
                     RELEASEIF(pMe->m_pMMSVIDEO);
                 	(void) ISHELL_PostEventEx(pMe->m_pShell, 
                                         EVTFLG_ASYNC,

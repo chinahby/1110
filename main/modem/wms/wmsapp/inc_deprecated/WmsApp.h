@@ -378,6 +378,7 @@ typedef struct
 
 #ifdef FEATURE_USES_MMS
 #define EVT_MMS_MSG_SEND_FINSH                0x2012
+#define EVT_MMS_MSG_GET_FINISH                0x2013
 #endif
 
 #define EVT_WMS_CMD_ERR                 0x3000

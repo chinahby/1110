@@ -312,6 +312,7 @@ enum
 #endif
 #ifdef FEATURE_USES_MMS
     EVT_MMS_MSG_SEND_FINSH,
+    EVT_MMS_MSG_GET_FINISH,
     EVT_MMS_PDUDECODE,
 #endif
 #ifdef FEATURE_QQ_APP

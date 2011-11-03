@@ -67,7 +67,7 @@
 #define MMS_MAX_TIME_SIZE  
 #define MMS_DEFAULT_PROXYHOST		("10.0.0.200")
 #define MMS_DEFAULT_PROXYPORT		(80)
-
+#define OTHER_MIME_BASE "other/"
 #define WMSMMS_FRAGMENTCOUNT 10
 
 /* constant for http status code */
@@ -288,6 +288,8 @@ typedef struct _wsp_encoder_data_fragment_
 	uint8 hContentEnCode[MMS_MAX_CONTENT_ENCODE];
 	uint8 hContentFile[MMS_MAX_FILE_NAME_PATH];
 	uint8 hContentText[MMS_MAX_TEXT_SIZE];
+	uint8* pBuf;
+	uint32 nBufLen;
 	char* pType;
 }WSP_ENCODE_DATA_FRAGMENT;
 

@@ -536,7 +536,8 @@ static MMS_MESSAGE_TYPE MMS_GetMMSTypeByName(uint8 *hContentType)
 		return MMS_MESSAGE_TYPE_IMAGE;
 	}
 	
-	if (slim_strncmp_nocase((char*)hContentType,"audio",5) == 0)
+	if ((slim_strncmp_nocase((char*)hContentType,"audio",5) == 0)
+	    || (slim_strncmp_nocase((char*)hContentType,"snd",3) == 0))
 	{
 		return MMS_MESSAGE_TYPE_AUDIO;
 	}
@@ -838,7 +839,7 @@ static int MMS_Encode_MsgBody(uint8* hPDU,WSP_MMS_ENCODE_DATA* pData)
 	MMS_DEBUG(("[MMS] MMS_EncodeSmilFile head_len2 = %d",head_len));	
 	pCurPos += head_len;
 
-	for(i=0; i< pData->frag_num; i++)
+	for(i=0; i< WMSMMS_FRAGMENTCOUNT; i++)
 	{
 		head_len = MMS_GetFileContent(pCurPos,pData->fragment[i]);
 		pCurPos += head_len;
@@ -864,7 +865,13 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	uint8 *temp_pos;
 	int i = 0;
     MMS_MESSAGE_TYPE type;
-    
+
+    if(STRLEN((char*)frag.hContentFile) == 0)
+    {
+        MMS_DEBUG(("[MMS]: MMS_GetFileContent No File Path"));
+        return 0;
+    }    
+        
     type = MMS_GetMMSTypeByName(frag.hContentType);
 
     if ( type != MMS_MESSAGE_TYPE_TEXT )
@@ -873,7 +880,8 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
     	if (SUCCESS != result)
         {
     		MSG_FATAL("MRS: Open file error %x", result,0,0);
-    		return -1;
+    		RELEASEIF(pIFileMgr);
+    		return 0;
         }
 
         if (IFILEMGR_GetInfo(pIFileMgr,(char*)frag.hContentFile, &pInfo) == SUCCESS)
@@ -884,8 +892,9 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
         }
         else
         {
+            RELEASEIF(pIFileMgr);
             MSG_FATAL("MRS: Get content info failed", 0,0,0);
-    		return -1;
+    		return 0;
         }
     }
 
@@ -1028,23 +1037,30 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	{
         if ( type != MMS_MESSAGE_TYPE_TEXT )
         {
-    		pIFile = IFILEMGR_OpenFile( pIFileMgr, (char*)frag.hContentFile, _OFM_READ);
-    		if ( pIFile != NULL )
-    	    {
-    	        uint32 nContentLen = 0;
-    	        IFILE_Seek(pIFile, _SEEK_START, 0);
-    	        nContentLen = IFILE_Read( pIFile, (char*)pCurPos, content_size);
+            if(frag.pBuf != NULL && frag.nBufLen > 0)
+            {
+                MEMCPY(pCurPos,frag.pBuf,frag.nBufLen);
+                content_size = frag.nBufLen;
+            }
+            else
+            {
+        		pIFile = IFILEMGR_OpenFile( pIFileMgr, (char*)frag.hContentFile, _OFM_READ);
+        		if ( pIFile != NULL )
+        	    {
+        	        uint32 nContentLen = 0;
+        	        IFILE_Seek(pIFile, _SEEK_START, 0);
+        	        nContentLen = IFILE_Read( pIFile, (char*)pCurPos, content_size);
 
-    	        MSG_FATAL("IFILEMGR_OpenFile content_size:%d,nContentLen:%d",content_size,nContentLen,0);
-    	        IFILE_Release( pIFile);
-    	        pIFile = NULL;
-    	        IFILEMGR_Release(pIFileMgr);
-    	        pIFileMgr = NULL;
+        	        MSG_FATAL("IFILEMGR_OpenFile content_size:%d,nContentLen:%d",content_size,nContentLen,0);
+        	    }
+        	    RELEASEIF(pIFile);
     	    }
+    	    
         }
 	}
 	pCurPos += content_size;
 	
+	RELEASEIF(pIFileMgr);
     return (uint32)(pCurPos-encbuf);
 }
 
@@ -1068,8 +1084,11 @@ int WMS_MMS_CreateSMIL(uint8 *out_buf,int buf_size,WSP_MMS_ENCODE_DATA data)
 	STRNCPY(cur_pos,"<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" />",len);
 	cur_pos += len;
 
-	for(i = 0; i < data.frag_num; i++)
+	for(i = 0; i < WMSMMS_FRAGMENTCOUNT; i++)
 	{
+	    if(STRLEN((char*)data.fragment[i].hContentFile) == 0)
+	        continue;
+	        
     	if ( !STRCMP(data.fragment[i].pType,IMAGE_MIME_BASE) )
     	{
     		len = STRLEN("<region id=\"Image\" width=\"120px\" height=\"77px\" top=\"0px\" left=\"0px\" fit=\"meet\" />");
@@ -1092,8 +1111,11 @@ int WMS_MMS_CreateSMIL(uint8 *out_buf,int buf_size,WSP_MMS_ENCODE_DATA data)
 	STRNCPY(cur_pos,"<body><par>",len);
 	cur_pos += len;
 	
-	for(i=0; i<data.frag_num; i++)
+	for(i=0; i< WMSMMS_FRAGMENTCOUNT; i++)
 	{
+	    if(STRLEN((char*)data.fragment[i].hContentFile) == 0)
+	        continue;
+	        
 		type = MMS_GetMMSTypeByName(data.fragment[i].hContentType);
 
 		if ( type == MMS_MESSAGE_TYPE_IMAGE)
@@ -1692,6 +1714,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
     }   
 
 //  Save mms info
+    DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:0x%x:0x%x:0x%x",phoneNumber[0],phoneNumber[1],phoneNumber[2]);  
     STRTOPHONENUMBER(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber,phoneNumber);
 	//STRCPY(mmsDataInfoList[g_mmsDataInfoMax].phoneNumber, phoneNumber);
     DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:0x%x:0x%x:0x%x",mmsDataFileName[0],mmsDataFileName[1],mmsDataFileName[2]);  
@@ -2228,11 +2251,11 @@ void WMS_MMS_DATA_Encode(WSP_MMS_ENCODE_DATA* pData)
 {
     IConfig *pConfig = NULL;
 	IShell  *pShell = AEE_GetShell();
-    char MMSImagepszPath[70] = {0};
-    char MMSSoundpszPath[70] = {0};
-    char MMSVideopszPath[70] = {0};
     int len = 0;
-    int index = pData->frag_num;
+    int index = 0;
+    char* pFilePath = NULL;
+    uint32 size = 0;
+    char* pFileType = NULL;
 
     MMS_DEBUG(("[WMS_MMS_DATA_Encode] ENTER"));
     
@@ -2248,57 +2271,30 @@ void WMS_MMS_DATA_Encode(WSP_MMS_ENCODE_DATA* pData)
     }
     
     ICONFIG_GetItem(pConfig,CFGI_MMS_OUTCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
-    ICONFIG_GetItem(pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
-    ICONFIG_GetItem(pConfig, CFGI_MMSSOUND,MMSSoundpszPath, sizeof(MMSSoundpszPath));
-    ICONFIG_GetItem(pConfig, CFGI_MMSVIDEO,MMSVideopszPath, sizeof(MMSVideopszPath));
+
+    pFilePath = (char*)(pData->fragment[index].hContentFile);
     
-    
-    if(STRLEN(MMSImagepszPath) != 0)
+    while(index < WMSMMS_FRAGMENTCOUNT)
     {
-        pData->fragment[index].pType = IMAGE_MIME_BASE;
-        
-        len = STRLEN(MMS_GetMimeType(MMSImagepszPath));
-    	STRNCPY((char*)pData->fragment[index].hContentType,MMS_GetMimeType(MMSImagepszPath),len);
-    	len = STRLEN(MMSImagepszPath);
-    	STRNCPY((char*)pData->fragment[index].hContentFile,MMSImagepszPath,len);
-    	len = STRLEN(BASENAME(MMSImagepszPath));
-    	MEMCPY((void*)pData->fragment[index].hContentLocation,(void*)BASENAME(MMSImagepszPath),len);
-    	MEMCPY((void*)pData->fragment[index].hContentID,(void*)BASENAME(MMSImagepszPath),len);
-    	MEMCPY((void*)pData->fragment[index].hContentName,(void*)BASENAME(MMSImagepszPath),len);   
-        pData->frag_num++;
+        if(STRLEN(pFilePath) != 0)
+        {
+            MMS_DEBUG(("[WMS_MMS_DATA_Encode] Find Resource"));
+            pFilePath = (char*)(pData->fragment[index].hContentFile);
+            MMS_DEBUG(("[WMS_MMS_DATA_Encode] File Path:%s",pFilePath));
+            ISHELL_DetectType(AEE_GetShell(),NULL,&size,pFilePath,(const char**)&pFileType);
+            pData->fragment[index].pType =  pFileType ? pFileType : OTHER_MIME_BASE;//IMAGE_MIME_BASE;
+
+            MMS_DEBUG(("[WMS_MMS_DATA_Encode] File Type:%s",pData->fragment[index].pType));
+            len = STRLEN(MMS_GetMimeType(pFilePath));
+        	STRNCPY((char*)pData->fragment[index].hContentType,MMS_GetMimeType(pFilePath),len);
+
+        	len = STRLEN(BASENAME(pFilePath));
+        	MEMCPY((void*)pData->fragment[index].hContentLocation,(void*)BASENAME(pFilePath),len);
+        	MEMCPY((void*)pData->fragment[index].hContentID,(void*)BASENAME(pFilePath),len);
+        	MEMCPY((void*)pData->fragment[index].hContentName,(void*)BASENAME(pFilePath),len); 
+        }
         ++index;
-    }
-    if(STRLEN(MMSSoundpszPath) != 0)
-    {
-        pData->fragment[index].pType = AUDIO_MIME_BASE;
-        len = STRLEN(MMS_GetMimeType(MMSSoundpszPath));
-    	MEMCPY((char*)pData->fragment[index].hContentType,MMS_GetMimeType(MMSSoundpszPath),len);
-        MMS_DEBUG(("GetMimeType(MMSSoundpszPath)=%s len=%d", pData->fragment[index].hContentType, len));
-        MMS_DEBUG(("MMSSoundpszPath=%s", MMSSoundpszPath));
-    	len = STRLEN(MMSSoundpszPath);
-    	STRNCPY((char*)pData->fragment[index].hContentFile,MMSSoundpszPath,len);
-    	len = STRLEN(BASENAME(MMSSoundpszPath));
-    	MEMCPY((void*)pData->fragment[index].hContentLocation,(void*)BASENAME(MMSSoundpszPath),len);
-    	MEMCPY((void*)pData->fragment[index].hContentID,(void*)BASENAME(MMSSoundpszPath),len);
-    	MEMCPY((void*)pData->fragment[index].hContentName,(void*)BASENAME(MMSSoundpszPath),len);   
-        pData->frag_num++;
-        ++index;
-    }   
-    if(STRLEN(MMSVideopszPath) != 0)
-    {
-        pData->fragment[index].pType = VIDEO_MIME_BASE;
-        len = STRLEN(MMS_GetMimeType(MMSVideopszPath));
-    	MEMCPY((void*)pData->fragment[index].hContentType,MMS_GetMimeType(MMSVideopszPath),len);
-    	len = STRLEN(MMSVideopszPath);
-    	MEMCPY((void*)pData->fragment[index].hContentFile,MMSVideopszPath,len);
-    	len = STRLEN(BASENAME(MMSVideopszPath));
-    	MEMCPY((void*)pData->fragment[index].hContentLocation,(void*)BASENAME(MMSVideopszPath),len);
-    	MEMCPY((void*)pData->fragment[index].hContentID,(void*)BASENAME(MMSVideopszPath),len);
-    	MEMCPY((void*)pData->fragment[index].hContentName,(void*)BASENAME(MMSVideopszPath),len);   
-        pData->frag_num++;
-        ++index;
-        MMS_DEBUG(("MMSVideopszPath=%s len=%d", BASENAME(MMSVideopszPath), STRLEN(MMSVideopszPath)));  
-    }      
+    }; 
 #else    
 	pData->frag_num = 1;
     pData->bImage = TRUE;
@@ -3788,6 +3784,7 @@ boolean  MMSSocketClose (MMSSocket **pps)
 		(void)IBASE_Release((IBase*)pSocketInfo->pISocket);
 		pSocketInfo->pISocket = NULL;
 	}
+	FREEIF(pSocketInfo->pSendData);
 	FREEIF(pSocketInfo);
 	MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketClose Exit!"));
 	return TRUE;
@@ -4209,7 +4206,7 @@ static void MMSSocketState(MMSSocket *ps)
                 if(pData != NULL && nDataLen > 0)
                 {
                     pData -= 4;
-                    (*((int*)pData)) = nDataLen;
+                    MEMCPY((void*)pData,(void*)&nDataLen,4);
                     
                     ISHELL_PostEventEx(
                         AEE_GetShell(),
