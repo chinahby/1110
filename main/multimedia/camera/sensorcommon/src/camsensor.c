@@ -4291,47 +4291,62 @@ SIDE EFFECTS
 ===========================================================================*/
 boolean camsensor_init (void)
 {
-  if (camsensor_initialized)
-  {
-    return TRUE;
-  }
+	if (camsensor_initialized)
+	{
+		return TRUE;
+	}
 
 #ifndef FEATURE_CAMERA_MULTI_SENSOR
-  camsensor_id = CAMSENSOR_ID_MAX;
+  	camsensor_id = CAMSENSOR_ID_MAX;
 #endif /* FEATURE_CAMERA_MULTI_SENSOR */
 
 #ifdef FEATURE_CAMERA_SENSOR_AUTO_DETECT
-#ifndef FEATURE_CAMERA_MULTI_SENSOR
-#ifdef FEATURE_NI_GPIO
-  for (camsensor_id = CAMSENSOR_NI_GPIO; camsensor_id < CAMSENSOR_ID_MAX; ++camsensor_id)
-#else /* FEATURE_NI_GPIO */
-/* camsensor_id starts with -1 instead of CAMSENSOR_OV2620 as before since
- * customer may not want to include USE_CAMSENSOR_OV2620 in the build in which
- * case this shoots an error. Care should be taken to see that camsensor_id starts
- * with the first value of the enum "camsensor_sensor_model_type" */
-  for (camsensor_id = (camsensor_sensor_model_type) 0; camsensor_id < CAMSENSOR_ID_MAX; ++camsensor_id)
-#endif /* FEATURE_NI_GPIO */
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+	#ifdef FEATURE_NI_GPIO
+  		for (camsensor_id = CAMSENSOR_NI_GPIO; camsensor_id < CAMSENSOR_ID_MAX; ++camsensor_id)
+	#else /* FEATURE_NI_GPIO */
+		/* camsensor_id starts with -1 instead of CAMSENSOR_OV2620 as before since
+		 * customer may not want to include USE_CAMSENSOR_OV2620 in the build in which
+		 * case this shoots an error. Care should be taken to see that camsensor_id starts
+		 * with the first value of the enum "camsensor_sensor_model_type" */
+  		for (camsensor_id = (camsensor_sensor_model_type) 0; camsensor_id < CAMSENSOR_ID_MAX; ++camsensor_id)
+	#endif /* FEATURE_NI_GPIO */
+#else
+	#ifdef FEATURE_NI_GPIO
+  		for (camsensor_id = CAMSENSOR_NI_GPIO; camsensor_id < CAMSENSOR_ID_MAX; ++camsensor_id)
+	#else /* FEATURE_NI_GPIO */
+		/* camsensor_id starts with -1 instead of CAMSENSOR_OV2620 as before since
+		 * customer may not want to include USE_CAMSENSOR_OV2620 in the build in which
+		 * case this shoots an error. Care should be taken to see that camsensor_id starts
+		 * with the first value of the enum "camsensor_sensor_model_type" */
+  		for (camsensor_id = (camsensor_sensor_model_type) 0; camsensor_id < CAMSENSOR_ID_MAX; ++camsensor_id)
+	#endif /* FEATURE_NI_GPIO */
 #endif /* FEATURE_CAMERA_MULTI_SENSOR */
-  {
-  	MSG_FATAL("camsensor_id================%d",camsensor_id,0,0);
-    if (camsensor_detect_table[camsensor_id])
-    {
-      camctrl_init_tbl();
-      camsensor_init_func_tbl();
-      camsensor_initialized = (*camsensor_detect_table[camsensor_id])(&camsensor_function_table,
-                                                                      &camctrl_tbl);
-    }
+	{
+		MSG_FATAL("camsensor_id================%d",camsensor_id,0,0);
+		if (camsensor_detect_table[camsensor_id])
+		{
+		  camctrl_init_tbl();
+		  camsensor_init_func_tbl();
+		  camsensor_initialized = (*camsensor_detect_table[camsensor_id])(&camsensor_function_table,
+		                                                                  &camctrl_tbl);
+		}
 
-#ifndef FEATURE_CAMERA_MULTI_SENSOR
-    if (camsensor_initialized)
-    {
-      break;
-    }
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+	    if (camsensor_initialized)
+	    {
+	      	break;
+	    }
+#else
+		if (camsensor_initialized)
+	    {
+	      	break;
+	    }
 #endif /* nFEATURE_CAMERA_MULTI_SENSOR */
-  }
+	}
 #endif /* FEATURE_CAMERA_SENSOR_AUTO_DETECT */
 
-  return camsensor_initialized;
+	return camsensor_initialized;
 } /* camsensor_init */
 
 /*===========================================================================
