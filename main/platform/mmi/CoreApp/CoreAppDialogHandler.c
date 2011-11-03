@@ -6066,8 +6066,8 @@ static void CoreApp_InitdataBlackBerry(CCoreApp *pMe)
 static void CoreApp_InitdataTouch(CCoreApp *pMe)
 {
 	pMe->m_pImageTouchIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_1);
-	pMe->m_pImageTouchIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_3);
-	pMe->m_pImageTouchIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_2);
+	pMe->m_pImageTouchIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_2);
+	pMe->m_pImageTouchIcon[2] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_3);
 	pMe->m_pImageTouchIcon[3] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_4);
 	pMe->m_pImageTouchSelIcon[0] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_1); 
 	pMe->m_pImageTouchSelIcon[1] = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_SEL_2); 

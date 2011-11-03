@@ -1316,8 +1316,8 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 					}
 					if(pMe->m_PenPos>0)
 					{
-						nRow = (pMe->m_PenPos+1)/MAX_MATRIX_COLS;
-						nCol = (pMe->m_PenPos+1)%MAX_MATRIX_COLS;
+						nRow = (pMe->m_PenPos)/MAX_MATRIX_COLS;
+						nCol = (pMe->m_PenPos)%MAX_MATRIX_COLS;
 						MoveCursorTo(pMe, nRow, nCol);
 					}
 					else
