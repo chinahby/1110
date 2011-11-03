@@ -5665,7 +5665,7 @@ static void MP3_Build_MainOpts_Menu(CMusicPlayer *pMe,IMenuCtl *pMenuCtl)
 	uisnd_get_device(&sndInfo);
 	MSG_FATAL("***zzg UseBTDevice - dev=%d sMute=%d mMute=%d***", 
 	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);
-
+#ifdef FEATURE_SUPPORT_BT_AUDIO
 	if ((SND_DEVICE_BT_HEADSET == sndInfo.out_device) || (SND_DEVICE_BT_A2DP_HEADSET == sndInfo.out_device))
 	{
 		pMe->m_bBtHSConnected = TRUE;
@@ -5675,7 +5675,7 @@ static void MP3_Build_MainOpts_Menu(CMusicPlayer *pMe,IMenuCtl *pMenuCtl)
 		pMe->m_bBtHSConnected = FALSE;
 	}
 	//Add End
-
+#endif
 	
 					
     if(!pMenuCtl||!pMe)
