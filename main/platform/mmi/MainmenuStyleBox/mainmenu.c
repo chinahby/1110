@@ -541,6 +541,7 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
                 pMe->m_pImageIcon[i] = NULL;
             }
         } 
+		#if 0
 		for(j = 0;j<MAX_BOTTOM_ITEMS;j++)
 		{
 			 if(pMe->m_pImageButtom[j] != NULL)
@@ -549,6 +550,7 @@ static void CMainMenu_FreeAppData(MainMenu *pMe)
                 pMe->m_pImageButtom[j] = NULL;
             }
 		}
+		#endif
 
         if(pMe->m_pAnimate != NULL)
         {
@@ -1079,6 +1081,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
                         pMe->m_pImageIcon[i] = NULL;
                     }
                 } 
+				#if 0
                 for(j = 0;j<MAX_BOTTOM_ITEMS;j++)
 				{
 					 if(pMe->m_pImageButtom[j] != NULL)
@@ -1087,6 +1090,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 		                pMe->m_pImageButtom[j] = NULL;
 		            }
 				}
+				#endif
                 if(pMe->m_pAnimate != NULL)
                 {
                     (void)IIMAGE_Release(pMe->m_pAnimate);
@@ -1389,6 +1393,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 				else
 				{
 					//最低层 4个快捷键响应
+					#if 0
 					for(j=0;j<MAX_BOTTOM_ITEMS;j++)
 					{
 						m_bInRect = FALSE;
@@ -1407,6 +1412,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 					{
 						StartApplet( pMe,pMe->m_IconTitle[baseBottom+j]);
 					}
+					#endif
 				}
 				
 				return TRUE;
@@ -1573,7 +1579,8 @@ static void DrawMatrix(MainMenu *pMe)
             pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
                                                     ICON_ANI[i]);
         }
-
+        MSG_FATAL("pMe->m_Icondefault_Pt[i].x======%d",pMe->m_Icondefault_Pt[i].x,0,0);
+		MSG_FATAL("pMe->m_Icondefault_Pt[i].y======%d",pMe->m_Icondefault_Pt[i].y,0,0);
         if (pMe->m_pImageIcon[i] != NULL)
         {
             IIMAGE_Draw(pMe->m_pImageIcon[i],
@@ -1583,6 +1590,7 @@ static void DrawMatrix(MainMenu *pMe)
     }  
     DrawMatrixStr(pMe);
 	//Draw Bottom ICON
+	#if 0
     for(j = 0; j < MAX_BOTTOM_ITEMS;j++)
     {
     	if (pMe->m_pImageButtom[j] == NULL)
@@ -1603,6 +1611,7 @@ static void DrawMatrix(MainMenu *pMe)
 	}	
 	//Draw bottom string
 	DrawMatrixBottomStr(pMe);
+	#endif
 }
 static void DrawMatrixBottomStr(MainMenu *pMe)
 {

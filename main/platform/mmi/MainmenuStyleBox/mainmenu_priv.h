@@ -44,8 +44,8 @@
 #define  MAX_MATRIX_ROWS 4
 #define  MAX_MATRIX_COLS 3
 #elif defined (FEATURE_DISP_240X320)
-#define  MAX_MATRIX_ITEMS 9
-#define  MAX_MATRIX_ROWS  3
+#define  MAX_MATRIX_ITEMS 12
+#define  MAX_MATRIX_ROWS  4
 #define  MAX_MATRIX_COLS  3
 #define  SELECT_ONE_X     70
 #define  SELECT_TWO_X     112
