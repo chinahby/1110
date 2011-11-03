@@ -367,7 +367,7 @@ const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ABM_96MHZ[] =
 };
 
 //ิฺต๗สิ
-#if 0
+#if 1
 const static dbl_parser_cfg_data_item_type ebi1_cfg_data_K5N5629ATC_48MHZ[] =
 {
   {WRITE_16_BIT,   (FLASH_BASE_ADDRESS | 0x00000000),  0xF0    },
