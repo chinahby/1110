@@ -397,6 +397,14 @@
 #include "camsensor_sic110a.h"
 #endif
 
+#ifdef USE_CAMSENSOR_SID130B
+#include "camsensor_sid130b.h"
+#endif
+
+#ifdef USE_CAMSENSOR_MICRON_SIV121D_0M3
+#include "camsensor_siv121d.h"
+#endif
+
 #ifdef USE_CAMSENSOR_OV7675
 #include "camsensor_ov7675.h"
 #endif
@@ -780,6 +788,13 @@ LOCAL boolean (*camsensor_detect_table[])(camsensor_function_table_type *, camct
   camsensor_sic110a_init,
 #endif
 
+#ifdef USE_CAMSENSOR_SID130B
+  camsensor_SID130B_init,
+#endif
+
+#ifdef USE_CAMSENSOR_MICRON_SIV121D_0M3
+  camsensor_siv121d_0m3_init,
+#endif
 
 #ifdef USE_CAMSENSOR_OV7675
   camsensor_ov7675_init
@@ -2290,8 +2305,30 @@ else {
     pm_vote_vreg_switch( PM_ON_CMD, PM_VREG_MMC_ID, PM_VOTE_VREG_MMC_APP__MMC );
 }
 #endif /* CAMERA_USE_PMIC_TO_POWER_SENSOR */
-  
-  /* Enable the Sensor Module */
+
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+	MSG_FATAL("camsensor_power_on camera_asi = %d",camera_asi,0,0);
+	camera_timed_wait(13);
+	CAMERA_CONFIG_GPIO(CAMSENSOR1_POWER_PIN);
+	CAMERA_CONFIG_GPIO(CAMSENSOR2_POWER_PIN);
+	
+	camera_timed_wait(10);
+	if ( camera_asi == 0)
+	{
+		gpio_out(CAMSENSOR1_POWER_PIN, (GPIO_ValueType)0);
+  		gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)0);
+	}
+	else if ( camera_asi == 1)
+	{
+		gpio_out(CAMSENSOR1_POWER_PIN, (GPIO_ValueType)1);
+  		gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)1);
+	}
+	else
+	{
+		gpio_out(CAMSENSOR1_POWER_PIN, (GPIO_ValueType)1);
+  		gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)0);
+	}
+#else
   #ifdef GPIO_CAMIF_EN_ON_V
   CAMERA_CONFIG_GPIO(CAMIF_EN_N);
   #if defined(FEATURE_CAMERA_SP0828)
@@ -2300,6 +2337,8 @@ else {
   gpio_out(CAMIF_EN_N, (GPIO_ValueType)GPIO_CAMIF_EN_ON_V);
   #endif
   #endif
+#endif/* FEATURE_CAMERA_MULTI_SENSOR */
+
   (void) camsensor_config_camclk_po(camsensor_camclk_po_hz);
   camera_timed_wait(13);
 #ifdef FEATURE_CAMERA_MOBICAT_CAMERA_CONFIG_H
@@ -2407,14 +2446,18 @@ else {
 #endif /* CAMERA_USE_PMIC_TO_POWER_SENSOR */
   
 /* Disable the Sensor when not in use */
-
-  #ifdef GPIO_CAMIF_EN_OFF_V
-  #if defined(FEATURE_CAMERA_SP0828)
-  gpio_out(CAMIF_EN_N, (GPIO_ValueType)GPIO_CAMIF_EN_ON_V);
-  #else
-  gpio_out(CAMIF_EN_N, (GPIO_ValueType)GPIO_CAMIF_EN_OFF_V);
-  #endif
-  #endif
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+	gpio_out(CAMSENSOR1_POWER_PIN, (GPIO_ValueType)1);
+	gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)0);  
+#else
+	#ifdef GPIO_CAMIF_EN_OFF_V
+		#if defined(FEATURE_CAMERA_SP0828)
+			gpio_out(CAMIF_EN_N, (GPIO_ValueType)GPIO_CAMIF_EN_ON_V);
+		#else
+			gpio_out(CAMIF_EN_N, (GPIO_ValueType)GPIO_CAMIF_EN_OFF_V);
+		#endif
+	#endif
+#endif
   /* If the sensor need to be initialized next time when powered
    * on, then you need to clear camsensor_initialized */
   camsensor_initialized = FALSE;

@@ -34,6 +34,8 @@ when       who     what, where, why
 #define USE_CAMSENSOR_SIV121A
 #ifdef T_QSC1110
 #define USE_CAMSENSOR_DB8B63A
+#define USE_CAMSENSOR_SID130B
+#define USE_CAMSENSOR_MICRON_SIV121D_0M3
 #endif
 #define USE_CAMSENSOR_SIC110A
 //bool use_camsensor_siv121a = FALSE;

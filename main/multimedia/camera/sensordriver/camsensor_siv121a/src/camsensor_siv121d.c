@@ -356,10 +356,6 @@ boolean camsensor_siv121d_0m3_init(camsensor_function_table_type *camsensor_func
         return FALSE;
 	}
 
-	if (!initialize_siv121d_0m3_registers())
-	{
-	    return FALSE;
-	}
 	/* Register function table: */
 	camsensor_siv121d_0m3_register(camsensor_function_table_ptr);
 
@@ -661,6 +657,12 @@ camsensor_static_params_type  *camsensor_params		 /* Camera sensor config params
 )
 {
 	MSG_FATAL("    camsensor_siv121d_0m3_video_config     ",0,0,0);
+
+	if (!initialize_siv121d_0m3_registers())
+	{
+	    return FALSE;
+	}
+	
 	/* Sensor output data format */
 	camsensor_params->discardFirstFrame = TRUE;
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
