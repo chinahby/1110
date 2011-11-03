@@ -131,7 +131,7 @@ static  camera_nightshot_mode_type night_mode = CAMERA_MAX_NIGHTSHOT_MODE;
 ============================================================================*/
 LOCAL boolean camsensor_SIV121A_sensor_init(void)
 {
-	ERR("-----camsensor_SIV121A_sensor_init-----enter",0,0,0);
+	MSG_FATAL("-----camsensor_SIV121A_sensor_init-----enter",0,0,0);
 		
   // SNR Block [Vendor recommended value ##Don't change##]
     camsensor_SIV121A_ycbcr_i2c_write_byte(0x00,0x00);
@@ -462,7 +462,7 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
     uint8  manufacturer_id_msb;
     uint8  manufacturer_id_lsb;
 
-	ERR("camsensor_SIV121A_ycbcr_init()\n",0,0,0);///yty 
+	MSG_FATAL("camsensor_SIV121A_ycbcr_init()\n",0,0,0);///yty 
 
 
 	camsensor_camclk_po_hz =24000000;
@@ -492,13 +492,13 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
 
 	if (camsensor_SIV121A_ycbcr_i2c_read_byte(0x01, &manufacturer_id_msb) == FALSE) ///0x92
 	{
-		ERR("camsensor_SIV121A_read REG0x1 fail %x ",manufacturer_id_msb,0,0);///yty 
+		MSG_FATAL("camsensor_SIV121A_read REG0x1 fail %x ",manufacturer_id_msb,0,0);///yty 
 		return FALSE;
 	}
 
 	if (camsensor_SIV121A_ycbcr_i2c_read_byte(0x02, &manufacturer_id_lsb) == FALSE) ///0x11
 	{
-		ERR("camsensor_SIV121A_read REG0x2 fail %x ",manufacturer_id_lsb,0,0);///yty 
+		MSG_FATAL("camsensor_SIV121A_read REG0x2 fail %x ",manufacturer_id_lsb,0,0);///yty 
 		return FALSE;
 	}
 
@@ -537,7 +537,7 @@ SIDE EFFECTS
 boolean camsensor_SIV121A_ycbcr_start( camsensor_static_params_type *camsensor_params)
 {
 
-	ERR("camsensor_SIV121A_ycbcr_start begin ", 0,0,0);///yty 
+	MSG_FATAL("camsensor_SIV121A_ycbcr_start begin ", 0,0,0);///yty 
 
 	/* Initialize CAMIF operation mode */
 	camsensor_params->camif_config.SyncMode         = CAMIF_APS;
@@ -839,17 +839,17 @@ SIDE EFFECTS
 ===========================================================================*/
 void camsensor_SIV121A_ycbcr_power_down(void)
 {
-    ERR ("camsensor_SIV121A_ycbcr_power_down begin", 0,0,0);
+    MSG_FATAL ("camsensor_SIV121A_ycbcr_power_down begin", 0,0,0);
 	g_reflect = CAMERA_MAX_REFLECT;
 	g_effect = CAMERA_EFFECT_MIN_MINUS_1;
     // Sensor off
     if( camsensor_SIV121A_ycbcr_i2c_write_byte(0x00,0x00) == FALSE)
     {
-        ERR("camsensor_SIV121A_ycbcr_i2c_write_byte(0x00,0x00) return fail", 0, 0, 0);
+        MSG_FATAL("camsensor_SIV121A_ycbcr_i2c_write_byte(0x00,0x00) return fail", 0, 0, 0);
     }
     if( camsensor_SIV121A_ycbcr_i2c_write_byte(0x03,0x02) == FALSE)
     {
-        ERR("camsensor_SIV121A_ycbcr_i2c_write_byte(0x03,0x02) return fail", 0, 0, 0);
+        MSG_FATAL("camsensor_SIV121A_ycbcr_i2c_write_byte(0x03,0x02) return fail", 0, 0, 0);
     }
 }
 
@@ -892,12 +892,12 @@ static boolean camsensor_SIV121A_ycbcr_i2c_read_byte(uint8 reg, uint8 *data)
 		if (i2c_read(&camsensor_i2c_command) == I2C_SUCCESS)
 		{
 			*data  = readbyte;
-			//ERR("camsensor_SIV121A_ycbcr_i2c_read_byte: OK %x",reg,0,0);
+			MSG_FATAL("camsensor_SIV121A_ycbcr_i2c_read_byte: OK %x",reg,0,0);
 			return TRUE;
 		}
 	}
 
-	ERR("camsensor_SIV121A_ycbcr_i2c_read_byte: false %x",reg,0,0);
+	MSG_FATAL("camsensor_SIV121A_ycbcr_i2c_read_byte: false %x",reg,0,0);
 	return FALSE;
 }
 
@@ -935,11 +935,11 @@ static boolean camsensor_SIV121A_ycbcr_i2c_write_byte(uint8 reg, uint8 data)
 	{
 		if (i2c_write(&camsensor_i2c_command) == I2C_SUCCESS)
 		{
-			//ERR("camsensor_SIV121A_ycbcr_i2c_read_byte: OK %x,%x",reg,data,0);
+			MSG_FATAL("camsensor_SIV121A_ycbcr_i2c_read_byte: OK %x,%x",reg,data,0);
 			return TRUE;
 		}
 	}
-	ERR("camsensor_SIV121A_ycbcr_i2c_read_byte: false %x,%x",reg,data,0);
+	MSG_FATAL("camsensor_SIV121A_ycbcr_i2c_read_byte: false %x,%x",reg,data,0);
 	return FALSE;
 } /* camsensor_SIV121A_ycbcr_i2c_write_byte */
 
@@ -955,7 +955,7 @@ camera_ret_code_type camsensor_SIV121A_set_effect(int8 effect)
 {
 	camera_ret_code_type ret_val = CAMERA_SUCCESS;
 
-	ERR ("+++++ camsensor_siv121a_set_effect effect = %d",effect,0,0);
+	MSG_FATAL ("+++++ camsensor_siv121a_set_effect effect = %d",effect,0,0);
 
 	if ( g_effect == effect )
 	{
@@ -1002,7 +1002,7 @@ camera_ret_code_type camsensor_SIV121A_set_wb(int8 wb)
 		return CAMERA_SUCCESS;
 	}
 	
-	ERR ("+++++ camsensor_SIV121A_set_wb wb = %d",wb,0,0);
+	MSG_FATAL ("+++++ camsensor_SIV121A_set_wb wb = %d",wb,0,0);
 	camsensor_SIV121A_ycbcr_i2c_write_byte(0x00, 0x03);
 
   	switch (wb)
