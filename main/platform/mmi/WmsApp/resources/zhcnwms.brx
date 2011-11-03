@@ -591,6 +591,7 @@
 	</String>
 	<String Id="1029" Name="IDS_SENDERVISIBILITY">
 		<Text>显示彩信发送方号码</Text>
+    </String>
 	<String Id="1033" Name="IDS_GETTINGFROM" Encoding="Unicode">
 		<Text>接受中...</Text>
 	</String>
