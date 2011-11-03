@@ -444,13 +444,13 @@ typedef struct _CFmRadio
 
 #elif defined(FEATURE_DISP_240X320)
 //当前操作字符串显示y偏移
-#define FMRADIO_OPERATION_YOFFSET   	14
+#define FMRADIO_OPERATION_YOFFSET   	45
 //频率图像显示区域x偏移
 #define FMRADIO_CHANNEL_XOFFSET      	12//30//12
 //频率图像显示区域y偏移
 #define FMRADIO_CHANNEL_YOFFSET      	46//52
 //频率字符显示y偏移
-#define FMRADIO_CHANNEL_FREQ_YOFFSET 	10//97
+#define FMRADIO_CHANNEL_FREQ_YOFFSET 	40//97
 //频率指针高度
 #define FMRADIO_CURSOR_DY           	4
 //音量显示区域x偏移
