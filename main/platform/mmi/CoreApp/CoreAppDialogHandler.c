@@ -2919,12 +2919,12 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_APP_BLUETOOTH
 				boolean bt_status = FALSE;
 				ICONFIG_GetItem(pMe->m_pConfig, CFGI_BT_STATUS, &bt_status, sizeof(bt_status));
-#endif
+
 				if (bt_status == TRUE)
 				{					
 					ISHELL_StartBackgroundApplet(pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP, NULL);
 				}
-				
+#endif				
 				bFirstStart = FALSE;
 			}
 			
