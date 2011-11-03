@@ -623,10 +623,10 @@ if(!(x))         \
 #define ANI_NUM 5
 
 //进度条
-#define SCHEDULEBAR_X 25
-#define SCHEDULEBAR_Y 40
-#define SCHEDULEBAR_W 108 //94
-#define SCHEDULEBAR_H 7
+#define SCHEDULEBAR_X 12
+#define SCHEDULEBAR_Y 123
+#define SCHEDULEBAR_W 210 //94
+#define SCHEDULEBAR_H 4
 
 //进度条(简单播放)
 #define SIMSCHEDULEBAR_X 17
@@ -634,23 +634,30 @@ if(!(x))         \
 #define SIMSCHEDULEBAR_W 94
 #define SIMSCHEDULEBAR_H 7
 
+//当前播放名称（简单播放）
+#define SIMMUSICNAME_X 5
+#define SIMMUSICNAME_Y 15
+#define SIMMUSICNAME_W 210
+#define SIMMUSICNAME_H 20
+
+
 //播放按钮
-#define PLAY_X 65 //66
-#define PLAY_Y 70 //55
-#define PLAY_W 26 //45
-#define PLAY_H 26 //44
+#define PLAY_X 108 //66
+#define PLAY_Y 170 //55
+#define PLAY_W 44 //45
+#define PLAY_H 39 //44
 
 //前一个曲目
-#define PREVIOUSPRESS_X 42 //37
-#define PREVIOUSPRESS_Y 71 //60
-#define PREVIOUSPRESS_W 19 //31
-#define PREVIOUSPRESS_H 20 //32
+#define PREVIOUSPRESS_X 43 //37
+#define PREVIOUSPRESS_Y 170 //60
+#define PREVIOUSPRESS_W 44 //31
+#define PREVIOUSPRESS_H 39 //32
 
 //后一个曲目
-#define NEXTPRESS_X 95 //107
-#define NEXTPRESS_Y 71 //60
-#define NEXTPRESS_W 19 //31
-#define NEXTPRESS_H 20 //32
+#define NEXTPRESS_X 170 //107
+#define NEXTPRESS_Y 170 //60
+#define NEXTPRESS_W 44 //31
+#define NEXTPRESS_H 39 //32
 
 //降低音量
 #define DECREASEVOLUMEPRESS_X 2
@@ -665,25 +672,30 @@ if(!(x))         \
 #define ADDVOLUMEPRESS_H 18
 
 //音量
-#define VOLUME_X 5
-#define VOLUME_Y 60
+#define VOLUME_X 8
+#define VOLUME_Y 170
 #define VOLUME_W 12
 #define VOLUME_H 18
 
+#define MUSICNAME_X 5
+#define MUSICNAME_Y 40
+#define MUSICNAME_W 230
+#define MUSICNAME_H 30
+
 //当前序号/总数量
-#define LISTINDEX_X (NEXTPRESS_X+NEXTPRESS_W+5) //5
-#define LISTINDEX_Y NEXTPRESS_Y //95
+#define LISTINDEX_X 90 //5
+#define LISTINDEX_Y 138 //95
 
 //当前歌曲的总时间
-#define TOTALTIME_X 120
-#define TOTALTIME_Y 50 
+#define TOTALTIME_X 180
+#define TOTALTIME_Y 138 
 
 //当前播放时间
 #define PLAYINGTICK_X 25 //117
-#define PLAYINGTICK_Y 50 //47
+#define PLAYINGTICK_Y 138 //47
 
 //播放时间和总时间的宽度高度
-#define TIME_WIDTH	35
+#define TIME_WIDTH	50
 #define TIME_HEIGHT 18
 
 //当前播放时间（简单播放）
