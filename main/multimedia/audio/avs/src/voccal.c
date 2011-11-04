@@ -4159,9 +4159,9 @@ const voc_cal_audio_path_config_type
 							&voc_adie_codec_headset_fm_config,
 							&voc_cal_pmic_config_legacy_mic) }
     #endif  /* MSMAUD_GRND_REFERENCED_CAPLESS_MODE */
-       ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_int0_mixer,
-                        &voc_adie_codec_speaker_fm_config,
-                        &voc_cal_pmic_config_legacy_mic) }
+       ,{ AUDIO_PATH_CONFIG(&voc_cal_codec_sdac,
+                            &voc_adie_codec_speaker_fm_config,
+                            &voc_cal_pmic_config_legacy_mic) }
 #endif
 
   }
