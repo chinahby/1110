@@ -2797,10 +2797,12 @@ void OEM_RestoreFactorySetting( void )
             MEMSET(oemi_cache.MMSInDataInfo[index].phoneNumber, 0, 13);
             MEMSET(oemi_cache.MMSInDataInfo[index].MMSDataFileName, 0, MMS_MAX_FILE_NAME);
             oemi_cache.MMSInDataInfo[index].MMSDatasize = 0;
+            oemi_cache.MMSInDataInfo[index].MMSDatasize = FALSE;
 
             MEMSET(oemi_cache.MMSOutDataInfo[index].phoneNumber, 0, 13);
             MEMSET(oemi_cache.MMSOutDataInfo[index].MMSDataFileName, 0, MMS_MAX_FILE_NAME);
             oemi_cache.MMSOutDataInfo[index].MMSDatasize = 0;
+            oemi_cache.MMSOutDataInfo[index].MMSDatasize = FALSE;
         }
    }
    oemi_cache.mmsInCount = 0;

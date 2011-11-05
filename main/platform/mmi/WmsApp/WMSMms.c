@@ -1803,6 +1803,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
     DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber:0x%x:0x%x:0x%x",mmsDataFileName[0],mmsDataFileName[1],mmsDataFileName[2]);  
     STRCPY(mmsDataInfoList[g_mmsDataInfoMax].MMSDataFileName, mmsDataFileName);
     mmsDataInfoList[g_mmsDataInfoMax].MMSDatasize = DataLen;
+    mmsDataInfoList[g_mmsDataInfoMax].MMSDataReaded = FALSE;
     
     DBGPRINTF("[WMS_MMS_SaveMMS] PhoneNumber=%s, length=%d",
         mmsDataInfoList[g_mmsDataInfoMax].phoneNumber,
