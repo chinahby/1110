@@ -9,9 +9,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define CUST_EDITION
 #endif
 
-#define FEATURE_VERSION_S106
-#define FEATURE_VERSION_W516
-#define FEATURE_VERSION_W208
+#define FEATURE_LCD_TOUCH_ENABLE //add by Andrew
+
 #ifdef CUST_EDITION
 
 //Add by zzg 2010_10_13

@@ -946,13 +946,43 @@ static boolean MP3_Playlist_HandleEvent(CMusicPlayer *pMe,
                CLOSE_DIALOG(DLGRET_CREATEORRENAMELIST);
             }
             return TRUE;
-#ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
-		case AVK_SELECT:
-		{
-			return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,1);
-		}
-		return TRUE;
-#endif//FEATURE_LCD_TOUCH_ENABLE            
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_CLR,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif          
             
         default:
             break;
@@ -1253,7 +1283,43 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
 			return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,KEY_PRESS_DWPARM);
 #endif//FEATURE_LCD_TOUCH_ENABLE
            return TRUE;
- 
+ 		#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_CLR,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif
         default:
             break;
             
@@ -1998,7 +2064,43 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
 #endif//WIN32
             }
             return TRUE;
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_CLR,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif
         default:
             break;
             
@@ -2178,7 +2280,43 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
                     
             }
             break;
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_CLR,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif
         default:
             break;
             
@@ -3434,7 +3572,43 @@ static boolean  CMusicPlayer_HandleYesNoDlgEvent( CMusicPlayer  *pMe,
         case EVT_DISPLAYDIALOGTIMEOUT:
             CLOSE_DIALOG(DLGRET_YES);
             return TRUE;
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif
         default:
             break;
             

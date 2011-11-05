@@ -564,6 +564,7 @@ static boolean Game_HandleEvent( IGame *pi,
     AEEDeviceInfo di; 
 
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di); 
+	MSG_FATAL("Game_HandleEvent..................",0,0,0);
     switch ( eCode)
     {
         case EVT_APP_START:
@@ -637,7 +638,7 @@ static boolean Game_HandleEvent( IGame *pi,
                 Game_RunFSM(pMe);
             }
             return TRUE;
-            
+        
         case EVT_KEY:
 #if MIN_BREW_VERSION(3,0)
             // do not want to handle au
@@ -651,10 +652,50 @@ static boolean Game_HandleEvent( IGame *pi,
             }
 #endif
             return Game_RouteDialogEvt(pMe,eCode,wParam,dwParam);   
-
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+			case EVT_USER:
+				{
+					if((wParam == AVK_SELECT) || (wParam == AVK_INFO))
+					{
+						if(dwParam != 0)
+						{
+							eCode = EVT_COMMAND;
+							wParam = dwParam;
+							dwParam = 0;
+						}
+						else
+						{
+							eCode = EVT_KEY;
+						}
+					}
+					else if(wParam == AVK_CLR)
+					{
+						eCode = EVT_KEY;
+					}
+					else if(wParam == AVK_DOWN)//wlh »»×ÀÃæÍ¼Æ¬
+					{
+						eCode = EVT_KEY;
+					}
+					else if (wParam == AVK_POUND)
+					{
+						eCode = EVT_KEY_PRESS;
+					}
+					return Game_RouteDialogEvt(pMe,eCode,wParam,dwParam);
+				}
+#endif
+        case EVT_PEN_UP:
+			MSG_FATAL("00000000000000000000000000000 up....",0,0,0);
+			return Game_RouteDialogEvt(pMe,eCode,wParam,dwParam); 
+			break;
+		case EVT_PEN_MOVE:
+			MSG_FATAL("00000000000000000000000000000 move....",0,0,0);
+			return Game_RouteDialogEvt(pMe,eCode,wParam,dwParam); 
+			break;
+		case EVT_PEN_DOWN:
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
+			MSG_FATAL("00000000000000000000000000000",0,0,0);
             return Game_RouteDialogEvt(pMe,eCode,wParam,dwParam); 
         default:
             return Game_RouteDialogEvt(pMe,eCode,wParam,dwParam);
@@ -871,12 +912,12 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
 {
     PARAM_NOT_REF(dwParam)
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg,IDC_GAME_LIST);
-        
+    MSG_FATAL("Game_ListMenuHandler........00000",0,0,0);
     if (pMenu == NULL)
     {
         return FALSE;
     }
-
+    MSG_FATAL("Game_ListMenuHandler........11111==%d",eCode,0,0);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -970,7 +1011,48 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
                     return TRUE;
             }
             return TRUE;
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+                MSG_FATAL("Game_ListMenuHandler........22222",0,0,0);
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("wXPos=====%d,wYPos=====%d",wXPos,wYPos,0);
+				MSG_FATAL("rc====%d,,,=%d,,,=%d",rc.dx,rc.dy,rc.y);
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_GAME,EVT_KEY,AVK_SELECT,0);
+						MSG_FATAL(".......................1111",0,0,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_GAME,EVT_KEY,AVK_INFO,0);
+						 MSG_FATAL(".......................2222",0,0,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_GAME,EVT_KEY,AVK_CLR,0);
+						 MSG_FATAL(".......................33333",0,0,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif
         default:
             break;
     }             

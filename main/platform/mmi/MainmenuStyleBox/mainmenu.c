@@ -1413,6 +1413,10 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 						StartApplet( pMe,pMe->m_IconTitle[baseBottom+j]);
 					}
 					#endif
+					// 初始整个背景及全部初始图标	
+            		DrawMatrix(pMe);
+            		// 绘制聚焦过程动画
+            		MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
 				}
 				
 				return TRUE;

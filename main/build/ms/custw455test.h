@@ -9,7 +9,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define CUST_EDITION
 #endif
 #define FEATURE_LCD_TOUCH_ENABLE //add by Andrew
-
+#define FEATURE_CAMERA_MULTI_SENSOR    //Ë«ÉãÏñÍ·±êÇ©  
 #ifdef CUST_EDITION
 #define FEATURE_APP_BLUETOOTH
 #define FEATURE_BT

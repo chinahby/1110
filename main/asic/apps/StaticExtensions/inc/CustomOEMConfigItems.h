@@ -407,6 +407,9 @@ enum{
     ////////////////////////////////////////////////////////////////
     // CameraApp
     ////////////////////////////////////////////////////////////////
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+   CFGI_CAMERA_MULTI,
+#endif
     CFGI_CAMERA_ENVIROMENT,      //type = byte
     CFGI_CAMERA_QUALITY,         //type = byte
     CFGI_CAMERA_SIZE,            //type = byte

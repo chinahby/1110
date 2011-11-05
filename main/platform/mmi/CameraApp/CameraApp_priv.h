@@ -281,9 +281,9 @@
 
 //Add By zzg 2010_07_24
 #define CFGBAR_TEXT_X		   2
-#define CFGBAR_TEXT_Y		   18
-#define CFGBAR_TEXT_WIDTH	   80
-#define CFGBAR_TEXT_HEIGHT	   16		//NormalFont Height
+#define CFGBAR_TEXT_Y		   25
+#define CFGBAR_TEXT_WIDTH	   120
+#define CFGBAR_TEXT_HEIGHT	   24		//NormalFont Height
 
 #define CFGBAR_ARROW_WIDTH		8
 #define CFGBAR_ARROW_HEIGHT		14
@@ -411,13 +411,19 @@ typedef enum
 // 照相机设置参数列表
 typedef enum 
 {
+	#ifdef FEATURE_CAMERA_MULTI_SENSOR  //add by yangdecai
+	CAMERACFGMULTI,
+	CAMERACFGFIRST = CAMERACFGMULTI,
+	#endif
     #if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
     CAMERACFGENVIRMENT,
     CAMERACFGQUALITY,    
     CAMERACFGFIRST = CAMERACFGQUALITY,
     #else
     CAMERACFGENVIRMENT,
-    CAMERACFGFIRST = CAMERACFGENVIRMENT,
+    #ifndef FEATURE_CAMERA_MULTI_SENSOR  //add by andrew
+	CAMERACFGFIRST = CAMERACFGENVIRMENT,
+	#endif
     CAMERACFGQUALITY,
     #endif
     CAMERACFGSIZE,
@@ -597,7 +603,9 @@ typedef struct _CCameraApp
     
     CAMERACFG            m_nCameraCFG;           // camera设置
     CAMERASTATE          m_nCameraState;         // camera的运行状态
-    
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+    OEMCAMERAMULTI       m_nCameraMulti;         // camera前后设置   add by andrew
+#endif
     OEMCAMERAQUALITY     m_nCameraQuality;       // camera拍照质量
     OEMCAMERATONE        m_nCameraTone;          // camera快门声音
     OEMCAMERAENVIR       m_nCameraEnviroment;    // camera拍照环境  fps

@@ -73,6 +73,10 @@ static boolean  CameraApp_PopMSGHandleEvent(CCameraApp *pMe,
 // PopMenu事件路由处理函数
 static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, 
                                                   uint16 wParam);
+#ifdef FEATURE_CAMERA_MULTI_SENSOR  //add by adrew
+static boolean CameraApp_PopMenu_MultiCommandHandleEvent(CCameraApp *pMe, 
+                                                               uint16 wParam);
+#endif
 // PopMenu环境模式菜单处理函数                           
 static boolean CameraApp_PopMenu_EnvironmentCommandHandleEvent(CCameraApp *pMe, 
                                                                uint16 wParam);
@@ -111,7 +115,12 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe,
 
 // 初始化设置数据
 static void CameraApp_InitCFGData(CCameraApp * pMe);
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+// 初始化拍照环境设置菜单
+static void CameraApp_PopMenu_MultiInit(CCameraApp *pMe, 
+                                              IMenuCtl *popMenu);
 
+#endif
 // 初始化拍照环境设置菜单
 static void CameraApp_PopMenu_EnvironmentInit(CCameraApp *pMe, 
                                               IMenuCtl *popMenu);
@@ -777,7 +786,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             return TRUE;
             
         case EVT_DIALOG_START:     
-        
+        	MSG_FATAL("CameraApp_PreviewHandleEvent  EVT_DIALOG_START",0,0,0);
 			//Add By zzg 2010_09_01  			
 #ifdef FEATURE_APP_MUSICPLAYER	
 			if (app_media_scheduler() == APP_MEDIA_IMPACT_BY_MP3)
@@ -819,6 +828,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             return TRUE;
             
         case EVT_USER_REDRAW:
+			MSG_FATAL("EVT_USER_REDRAW........0000000000000000000",0,0,0);
             // camera preview start....
 #ifndef FEATURE_DSP            
             if(pMe->m_pCamera && (!pMe->m_bIsPreview))
@@ -838,11 +848,13 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 #else
 			if(pMe->m_pCamera && (!pMe->m_bIsPreview))
             {
+            	MSG_FATAL("EVT_USER_REDRAW........11111111111111",0,0,0);
                 CameraApp_CPreviewStart(pMe);
                 return TRUE;
             }            
             if(pMe->m_bRePreview && pMe->m_pCamera)
             {
+            	MSG_FATAL("EVT_USER_REDRAW........222222222222222",0,0,0);
                 CameraApp_CPreviewStart(pMe);
                 pMe->m_bRePreview = FALSE;
                 return TRUE;
@@ -1196,6 +1208,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
 #else
 			if(pMe->m_bRePreview)
             {
+            	MSG_FATAL("EVT_USER_REDRAW...CFG.....0000000000000000000",0,0,0);
                 CameraApp_CPreviewStart(pMe);
                 pMe->m_bRePreview = FALSE;
             }
@@ -1720,6 +1733,11 @@ static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, uint16 wParam
     {
         switch(pMe->m_nCameraCFG)
         {
+        	#ifdef FEATURE_CAMERA_MULTI_SENSOR
+			case CAMERACFGMULTI:
+				return CameraApp_PopMenu_MultiCommandHandleEvent(pMe, wParam);
+                break;
+		    #endif
             case CAMERACFGENVIRMENT:
                 return CameraApp_PopMenu_EnvironmentCommandHandleEvent(pMe, wParam);
 
@@ -1748,6 +1766,68 @@ static boolean CameraApp_RoutePopMenuCommandEvent(CCameraApp *pMe, uint16 wParam
     }
     return TRUE;
 }
+#ifdef FEATURE_CAMERA_MULTI_SENSOR  //add by adrew
+/*==============================================================================
+函数：
+       CameraApp_PopMenu_MultiCommandHandleEvent
+说明：
+       环境设置菜单命令处理函数
+       
+参数：
+       pMe [in]：指向CameraApp Applet对象结构的指针。该结构包含小程序的特定信息。
+       wParam：事件相关数据。
+       
+返回值：
+       TRUE：传入事件被处理。
+       FALSE：传入事件被忽略。
+
+       
+备注：
+       
+==============================================================================*/
+
+static boolean CameraApp_PopMenu_MultiCommandHandleEvent(CCameraApp *pMe, 
+                                                               uint16 wParam)
+{
+	
+	 switch(wParam)
+            {
+                case IDS_MULTI_PRE:
+					MSG_FATAL("CameraApp_PopMenu_MultiCommandHandleEvent OEMNV_CAMERA_MULTI_ONE",0,0,0);
+                    pMe->m_nCameraMulti = OEMNV_CAMERA_MULTI_ONE;
+                    //dwFPS = 0;
+                    break;
+
+                case IDS_MULTI_BACK:
+					MSG_FATAL("CameraApp_PopMenu_MultiCommandHandleEvent OEMNV_CAMERA_MULTI_TWO",0,0,0);
+                    pMe->m_nCameraMulti = OEMNV_CAMERA_MULTI_TWO;
+                    //dwFPS = 3;	
+                    break;
+				default:
+					break;
+			 }
+	 (void)ICONFIG_SetItem(pMe->m_pConfig,
+                                  CFGI_CAMERA_MULTI,
+                                  &pMe->m_nCameraMulti,
+                                  sizeof(pMe->m_nCameraMulti));
+	 MSG_FATAL("CameraApp_PopMenu_MultiCommandHandleEvent.................0000",0,0,0);
+	 if(SUCCESS == ICAMERA_Stop(pMe->m_pCamera))
+    {
+    	MSG_FATAL("CameraApp_PopMenu_MultiCommandHandleEvent.................11111",0,0,0);
+        pMe->m_bIsPreview = FALSE;
+        pMe->m_nCameraState = CAM_STOP;
+		if(pMe->m_pCamera != NULL)
+		{
+			ICAMERA_Release(pMe->m_pCamera);
+            pMe->m_pCamera = NULL;
+		}
+		CameraApp_InitCameraCheck(pMe);
+        CLOSE_DIALOG(DLGRET_CANCELED);
+    }
+    
+    return TRUE;
+}
+#endif
 
 /*==============================================================================
 函数：
@@ -2185,6 +2265,11 @@ static boolean CameraApp_InitpopMenu(CCameraApp *pMe, IMenuCtl *popMenu)
     {
         switch(pMe->m_nCameraCFG)
         {
+        	#ifdef FEATURE_CAMERA_MULTI_SENSOR
+			case CAMERACFGMULTI:
+ 				CameraApp_PopMenu_MultiInit(pMe,popMenu);
+				break;
+			#endif
             case CAMERACFGENVIRMENT:
                 MSG_FATAL("CAMERACFGQUALITY",0,0,0);
                 CameraApp_PopMenu_EnvironmentInit(pMe, popMenu);
@@ -2245,6 +2330,9 @@ static void CameraApp_InitCFGData(CCameraApp * pMe)
 {
     if(pMe->m_pActiveDlgID == IDD_CCAMERACFG)
     {
+    	#ifdef FEATURE_CAMERA_MULTI_SENSOR  //add by andrew
+    	pMe->m_nCameraMulti = OEMNV_CAMERA_MULTI_ONE;
+		#endif
         pMe->m_nCameraEnviroment = OEMNV_CAMERA_ENVIR_AUTO;
         pMe->m_nCameraQuality = OEMNV_CAMERA_QUALITY_HIGH;       
 #ifdef FEATURE_CARRIER_CHINA_TELCOM
@@ -2277,7 +2365,13 @@ static void CameraApp_InitCFGData(CCameraApp * pMe)
 		//Add End
 #endif        
         pMe->m_nSelfTimeItemSel = IDS_SELFTIME_OFF;
- 
+
+ 		#ifdef FEATURE_CAMERA_MULTI_SENSOR  //add by andrew
+		(void)ICONFIG_SetItem(pMe->m_pConfig,
+                              CFGI_CAMERA_MULTI,
+                              &pMe->m_nCameraMulti,
+                              sizeof(pMe->m_nCameraMulti));
+		#endif
         (void)ICONFIG_SetItem(pMe->m_pConfig,
                               CFGI_CAMERA_ENVIROMENT,
                               &pMe->m_nCameraEnviroment,
@@ -2309,6 +2403,47 @@ static void CameraApp_InitCFGData(CCameraApp * pMe)
                               sizeof(pMe->m_nCameraStorage)); 
     }
 }
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+// 初始化拍照环境设置菜单
+static void CameraApp_PopMenu_MultiInit(CCameraApp *pMe, 
+                                              IMenuCtl *popMenu)
+{
+	IMENUCTL_DeleteAll(popMenu);
+    CameraApp_SetPopMenuRect(pMe, popMenu, 3);
+	IMENUCTL_AddItem(popMenu, 
+                     AEE_APPSCAMERAAPP_RES_FILE, 
+                     IDS_MULTI_PRE, 
+                     IDS_MULTI_PRE, 
+                     NULL, 
+                     0);
+    IMENUCTL_AddItem(popMenu, 
+                     AEE_APPSCAMERAAPP_RES_FILE,
+                     IDS_MULTI_BACK, 
+                     IDS_MULTI_BACK, 
+                     NULL,
+                     0);
+	InitMenuIcons(popMenu);
+	 (void)ICONFIG_GetItem(pMe->m_pConfig,
+                          CFGI_CAMERA_MULTI,
+                          &pMe->m_nCameraMulti,
+                          sizeof(pMe->m_nCameraMulti));
+                                           
+    switch(pMe->m_nCameraMulti)
+    {
+        case OEMNV_CAMERA_MULTI_ONE:
+            CameraApp_SetCFGMenuIcon(popMenu, IDS_MULTI_PRE, TRUE);
+            break;
+                
+        case OEMNV_CAMERA_MULTI_TWO:
+            CameraApp_SetCFGMenuIcon(popMenu, IDS_MULTI_BACK, TRUE);
+            break;
+   
+        default:
+            break;  
+    }
+}
+
+#endif
 
 static void CameraApp_PopMenu_EnvironmentInit(CCameraApp *pMe, IMenuCtl *popMenu)
 {
@@ -2876,6 +3011,23 @@ static void CameraApp_DrawTopBar(CCameraApp *pMe)
     int i;
     int16  nResID[CAMERACFGMAX];
     IImage *pTopBarImage = NULL; 
+	#ifdef FEATURE_CAMERA_MULTI_SENSOR  //add by andrew
+		(void)ICONFIG_GetItem(pMe->m_pConfig,
+                              CFGI_CAMERA_MULTI,
+                              &pMe->m_nCameraMulti,
+                              sizeof(pMe->m_nCameraMulti));
+	   switch(pMe->m_nCameraMulti)
+    	{
+    		case OEMNV_CAMERA_MULTI_ONE:
+				nResID[CAMERACFGMULTI] = IDI_MULTI;
+				break;
+			case OEMNV_CAMERA_MULTI_TWO:
+				nResID[CAMERACFGMULTI] = IDI_MULTI;
+				break;
+			default:
+				break;
+	   	}
+	#endif
 #if defined(FEATURE_VERSION_W515V3)||defined(FEATURE_VERSION_S1000T)
 #else
     // enviroment cfgID
@@ -3128,6 +3280,11 @@ static void CameraApp_DrawCFGPromptText(CCameraApp *pMe)
     {
         switch(pMe->m_nCameraCFG)
         {
+        	#ifdef FEATURE_CAMERA_MULTI_SENSOR
+			case CAMERACFGMULTI:
+				nResID = IDS_CFG_MULTI;
+                break;
+		    #endif
             case CAMERACFGENVIRMENT:
                 nResID = IDS_CFG_ENVIR;
                 break;
@@ -4026,13 +4183,38 @@ void CameraApp_InitCameraCheck(void *po)
 {
     CCameraApp *pMe = (CCameraApp *)po; 
     CameraApp_CreateDirectory(pMe);
- 
+	MSG_FATAL("CameraApp_InitCameraCheck.................",0,0,0);
+	#ifdef FEATURE_CAMERA_MULTI_SENSOR
+	(void)ICONFIG_GetItem(pMe->m_pConfig,
+                                  CFGI_CAMERA_MULTI,
+                                  &pMe->m_nCameraMulti,
+                                  sizeof(pMe->m_nCameraMulti));
+    #endif
     if(pMe->m_pCamera == NULL)
     {
     	MSG_FATAL("AEECLSID_CAMERA create.....m_pCamera....",0,0,0);
-        ISHELL_CreateInstance(pMe->m_pShell, 
+		#ifdef FEATURE_CAMERA_MULTI_SENSOR
+		MSG_FATAL("pMe->m_nCameraMulti=============%d",pMe->m_nCameraMulti,0,0);
+		switch(pMe->m_nCameraMulti)
+			{
+				case OEMNV_CAMERA_MULTI_ONE:
+        			ISHELL_CreateInstance(pMe->m_pShell, 
+                              AEECLSID_CAMERA1, 
+                              (void **)&pMe->m_pCamera);
+				break;
+				case OEMNV_CAMERA_MULTI_TWO:
+					ISHELL_CreateInstance(pMe->m_pShell, 
+                              AEECLSID_CAMERA2, 
+                              (void **)&pMe->m_pCamera);
+				break;
+				default:
+					break;
+			}
+		#else
+		ISHELL_CreateInstance(pMe->m_pShell, 
                               AEECLSID_CAMERA, 
                               (void **)&pMe->m_pCamera);
+		#endif
     }
     if(pMe->m_pCamera != NULL)
     {
@@ -4052,6 +4234,7 @@ void CameraApp_InitCameraCheck(void *po)
 #ifdef FEATURE_DSP
          ICAMERA_Preview(pMe->m_pCamera);
 #else
+		 MSG_FATAL("pMe->m_pCamera != NULL.................",0,0,0);
          ICAMERA_RegisterNotify(pMe->m_pCamera,(PFNCAMERANOTIFY)CameraApp_EventNotify,po);
 #endif
     }

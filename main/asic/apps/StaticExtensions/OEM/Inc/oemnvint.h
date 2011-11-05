@@ -962,6 +962,14 @@ typedef PACKED struct _ringID
 #define   OEMNV_PLANEMODE_QUERY     (3)
 #endif
 
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+   typedef enum{
+   OEMNV_CAMERA_MULTI_ONE,
+   OEMNV_CAMERA_MULTI_TWO	
+   }OEMCAMERAMULTI;
+#endif
+
+
 typedef enum {
     OEMNV_CAMERA_ENVIR_AUTO,
     OEMNV_CAMERA_ENVIR_NIGHT,

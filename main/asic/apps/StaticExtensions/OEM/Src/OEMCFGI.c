@@ -631,7 +631,9 @@ typedef struct
 #ifdef FEATURE_MENU_STYLE
   byte menu_style;              /*CFGI_MENU_STYLE*/
  #endif
-
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+   byte camera_multi;       //CFGI_CAMERA_MULTI
+#endif
    byte camera_enviroment; /*CFGI_CAMERA_ENVIROMENT*/
    byte camera_quality;    /*CFGI_CAMERA_QUALITY*/
    byte camera_size;       /*CFGI_CAMERA_SIZE*/
@@ -1451,6 +1453,11 @@ static int OEMPriv_GetItem_CFGI_MENU_STYLE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_MENU_STYLE(void *pBuff);
 #endif
 
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+static int OEMPriv_GetItem_CFGI_CAMERA_MULTI(void *pBuff);
+static int OEMPriv_SetItem_CFGI_CAMERA_MULTI(void *pBuff);
+#endif
+
 static int OEMPriv_GetItem_CFGI_CAMERA_ENVIROMENT(void *pBuff);
 static int OEMPriv_SetItem_CFGI_CAMERA_ENVIROMENT(void *pBuff);
 
@@ -1773,7 +1780,9 @@ static OEMConfigListType oemi_cache = {
     #ifdef FEATURE_MENU_STYLE
    ,OEMNV_MENU_STYLE_ICON
    #endif
-
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+   ,OEMNV_CAMERA_MULTI_ONE       //CFGI_CAMER_MULTI
+#endif
    ,OEMNV_CAMERA_ENVIR_AUTO         /*CFGI_CAMERA_ENVIROMENT*/
    ,OEMNV_CAMERA_QUALITY_HIGH       /*CFGI_CAMERA_QUALITY*/
    ,OEMNV_CAMERA_SIZE_DEFAULT         /*CFGI_CAMERA_SIZE*/
@@ -2323,6 +2332,9 @@ static ConfigItemTableEntry const customOEMItemTable[] =
 
 #ifdef FEATURE_MENU_STYLE
    ,CFGTABLEITEM(CFGI_MENU_STYLE, sizeof(byte))
+#endif
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+   ,CFGTABLEITEM(CFGI_CAMERA_MULTI, sizeof(byte))
 #endif
    ,CFGTABLEITEM(CFGI_CAMERA_ENVIROMENT, sizeof(byte))
    ,CFGTABLEITEM(CFGI_CAMERA_QUALITY, sizeof(byte))
@@ -2891,6 +2903,9 @@ void OEM_RestoreFactorySetting( void )
    oemi_cache.input_mode=OEMNV_INPUTMODE_DEFAULT;
 #ifdef FEATURE_MENU_STYLE
    oemi_cache.menu_style= OEMNV_MENU_STYLE_ICON;
+#endif
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+   oemi_cache.camera_multi = OEMNV_CAMERA_MULTI_ONE;
 #endif
    oemi_cache.camera_enviroment = OEMNV_CAMERA_ENVIR_AUTO;
    oemi_cache.camera_quality = OEMNV_CAMERA_QUALITY_HIGH;
@@ -10968,6 +10983,22 @@ static int OEMPriv_SetItem_CFGI_MENU_STYLE(void *pBuff)
    return SUCCESS;
 }
 #endif
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+static int OEMPriv_GetItem_CFGI_CAMERA_MULTI(void *pBuff)
+{
+	*(byte *) pBuff = oemi_cache.camera_multi;
+   return SUCCESS;
+}
+static int OEMPriv_SetItem_CFGI_CAMERA_MULTI(void *pBuff)
+{
+	if (oemi_cache.camera_multi != *(byte *)pBuff) {
+      oemi_cache.camera_multi = *(byte *)pBuff;
+      OEMPriv_WriteOEMConfigList();
+   }
+   return SUCCESS;
+}
+#endif
+
 static int OEMPriv_GetItem_CFGI_CAMERA_ENVIROMENT(void *pBuff)
 {
    *(byte *) pBuff = oemi_cache.camera_enviroment;

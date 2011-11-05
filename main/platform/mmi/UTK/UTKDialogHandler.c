@@ -1148,7 +1148,43 @@ static boolean  IDD_DISPLAY_Handler(CUTK *pMe,
                     break;
             }
             return TRUE;
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_CLR,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif
         default:
             break;
     }
@@ -1404,7 +1440,44 @@ static boolean  IDD_SENDMSG_Handler(CUTK *pMe,
 				}
 			}
             return TRUE;
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+			case EVT_PEN_UP:
+				{
+					AEEDeviceInfo devinfo;
+					int nBarH ;
+					AEERect rc;
+					int16 wXPos = (int16)AEE_GET_X(dwParam);
+					int16 wYPos = (int16)AEE_GET_Y(dwParam);
+	
+					nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+			
+					MEMSET(&devinfo, 0, sizeof(devinfo));
+					ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+					SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+	
+					if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+					{
+						if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+						{
+							boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_SELECT,0);
+							return rt;
+						}
+						else if(wXPos >= rc.x + (rc.dx/3)	&& wXPos < rc.x + (rc.dx/3)*2 )//×ó
+						{
+							 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_INFO,0);
+							 return rt;
+						}
+						else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+						{						
+							 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_CLR,0);
+							 return rt;
+						}
+					}
+	
+				}
+				break;
+#endif
+
         default:
             break;
     }
@@ -1619,7 +1692,43 @@ static boolean  IDD_PLAYTONE_Handler(CUTK *pMe,
                                        pMe );            
             UTK_GiveResponse(pMe, pMe->cmd_type, FALSE, UIM_TK_CMD_PERFORMED_SUCCESSFULLY);
             return TRUE;         
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_CLR,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif
         default:
             break;
     }
@@ -1735,7 +1844,43 @@ static boolean  IDD_MSGBOX_Handler( CUTK *pMe,
         case EVT_DIALOGTIMEOUT:  
             CLOSE_DIALOG(DLGRET_MSGBOX_OK);
             return TRUE;         
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_CLR,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif 
         default:
             break;            
     }
@@ -1855,7 +2000,43 @@ static boolean  IDD_POPMSG_Handler( CUTK *pMe,
         case EVT_DIALOGTIMEOUT:  
             CLOSE_DIALOG(DLGRET_MSGBOX_OK);
             return TRUE;         
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_KEY,AVK_CLR,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif   
         default:
             break;            
     }

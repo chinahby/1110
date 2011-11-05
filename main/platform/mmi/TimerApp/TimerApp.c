@@ -1034,17 +1034,43 @@ static boolean AppTimer_HandleEvent(CAppTimer *pme, AEEEvent eCode, uint16 wPara
 		case EVT_PEN_UP:
 			{
 				int i=0;
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
 				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
 				int xy[][4] = {
 					{42,107,64,130},      // hour
 					{77,107,99,130},      // minute
-					{111,107,133,130},    // second
-					{60,184,118,202},
-					{119,184,176,202},
-					{0,184,59,202}
+					{111,107,133,130}     // second
+					
 				};
-				for( i = 0; i < 6; i ++)
+				nBarH = GetBottomBarHeight(pme->a.m_pIDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pme->a.m_pIShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_APPTIMER,EVT_KEY,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_APPTIMER,EVT_KEY,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_APPTIMER,EVT_KEY,AVK_CLR,0);
+						 return rt;
+					}
+				}
+				
+				for( i = 0; i < 3; i ++)
 				{
 					if( wXPos >= xy[i][0] &&
 						wXPos <= xy[i][2] &&
@@ -1083,21 +1109,7 @@ static boolean AppTimer_HandleEvent(CAppTimer *pme, AEEEvent eCode, uint16 wPara
 								(void)ITIMECTL_Redraw(pme->m_pTime);
 							}
 						}
-						else if (i == 3)
-						{
-							boolean rt =  ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_APPTIMER,EVT_USER,AVK_INFO,0);
-							return rt;
-						}
-						else if (i == 4)
-						{
-							boolean rt =  ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_APPTIMER,EVT_USER,AVK_CLR,0);
-							return rt;
-						}
-						else if (i == 5)
-						{
-							boolean rt =  ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_APPTIMER,EVT_USER,AVK_SELECT,0);
-							return rt;
-						}
+						
 					}
 				}
 			}
