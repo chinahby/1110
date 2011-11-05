@@ -150,6 +150,7 @@ typedef enum
     WMS_MMS_PDU_MRetrieveConf,
     WMS_MMS_PDU_MAcknowledgeInd,
     WMS_MMS_PDU_MDeliveryInd,
+    WMS_MMS_PDU_MReadRecInd,
     
     WMS_MMS_PDU_WSPHTTPGETreq,
     WMS_MMS_PDU_WSPHTTPRESEND,
@@ -396,6 +397,17 @@ typedef struct _wsp_encoder_data_delivery_acknowledgement
 	boolean bReportAllowed;
 }MMS_WSP_ENC_DELIVERY_ACKNOWLEDGEMENT;
 
+typedef struct _wsp_encoder_data_read_report
+{
+	uint8 hTransactionID[MMS_MAX_TRANSACTION_ID_SIZE];
+	uint8 hMessageID[MMS_MAX_MESSAGEID_CHARSIZE];
+	uint8 hFrom[MMS_MAX_SINGLE_ADDRESS_SIZE];
+	uint8 hTo[MMS_MAX_SINGLE_ADDRESS_SIZE];
+	int iMMSVersion;	
+	boolean bReadStutas;
+	int	iMessageClass;
+}MMS_WSP_ENC_READ_REPORT;
+
 
 typedef struct _wsp_decoder_data_readrep_received
 {
@@ -442,6 +454,7 @@ typedef struct _wsp_encoder_data_send
     MMS_WSP_MESSAGE_SEND                *pMessage;
     MMS_WSP_ENC_NOTIFY_RESP             *pNotifyresp;
     MMS_WSP_ENC_DELIVERY_ACKNOWLEDGEMENT *pDeliveryacknowledgement;
+    MMS_WSP_ENC_READ_REPORT             *pReadReport;
 }MMS_WSP_ENCODE_SEND;
 
 typedef union _wsp_decoder_data_
@@ -525,7 +538,7 @@ The newly-created socket object is returned as an out parameter
 
 \return ETrue if a new socket is created
 */
-void WMS_MMSState(int nState,int16 wParam,uint32 dwParam);
+boolean WMS_MMSState(int nState,int16 wParam,uint32 dwParam);
 
 //boolean  MMSSocketNew (MMSSocket **pps, uint16 nType);
 //boolean  MMSSocketClose(MMSSocket **pps);

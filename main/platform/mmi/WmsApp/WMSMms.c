@@ -122,12 +122,14 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind);
 uint8* WMS_MMS_PDUHeader_Encode(uint8* pBuf,int nKind,uint8* pValue,int32 nValue);
 uint8* WMS_MMS_PDU_SendRequest(uint8* pBuff,MMS_WSP_ENCODE_SEND *pData);
 uint8* WMS_MMS_PDU_NotifyResp(uint8* pBuff,MMS_WSP_ENCODE_SEND *pData);
+uint8* WMS_MMS_PDU_ReadRecInd(uint8* pBuff,MMS_WSP_ENCODE_SEND *pData);
 uint8* WMS_MMS_PDU_AcknowledgeInd(uint8* pBuff,MMS_WSP_ENCODE_SEND *pData);
 uint8* WMS_MMS_BUFFERGet();
 void WMS_MMS_BUFFERReset();
 void WMS_MMS_BUFFERRelease();
 char* STRTOPHONENUMBER(char* pDesStr,char* pScrStr);
 uint8* WMS_MMS_ReadMMS(uint32 index,int nKind,uint32* pLen);
+boolean WMS_MMS_Resend(int nIndex,int nKind);
 
 
 
@@ -179,9 +181,24 @@ uint8* WMS_MMS_ReadMMS(uint32 index,int nKind,uint32* pLen);
 #define slim_toupper(c) ((int)cSlim_clib_toupper_table_mms[(c)])
 
 #define POST_TEST ("POST http://mmsc.vnet.mobi HTTP/1.1\r\nHost:10.0.0.200:80\r\nAccept-Charset:utf-8\r\nContent-Length:%d\r\nAccept:*/*,application/vnd.wap.mms-message\r\nAccept-Language:en\r\nAccept-Encoding:gzip,deflate\r\nContent-Type:application/vnd.wap.mms-message\r\nUser-Agent: Nokia6235/1.0 (S190V0200.nep) UP.Browser/6.2.3.2 MMP/2.0\r\nx-wap-profile: \"http://nds1.nds.nokia.com/uaprof/N6235r200.xml\"\r\nKeep-Alive:300\r\nConnection:Keep-Alive\r\n\r\n")
+boolean bSocketLock = FALSE;
+IVector* pSocketParam= NULL;
 
-
-
+boolean WMS_SOCKET_LOCK()
+{
+    if(bSocketLock)
+        return FALSE;
+        
+    bSocketLock = TRUE;
+}
+boolean WMS_GETSOCKET_STATUS()
+{
+    return bSocketLock;
+}
+void WMS_SOCKET_UNLOK()
+{
+    bSocketLock = FALSE;
+}
 
 /*
 ** 彩信里面用到的数据类型
@@ -737,6 +754,23 @@ static int MMS_Encode_header(uint8* mms_context,int nType,MMS_WSP_ENCODE_SEND* p
 	        pCurPos = WMS_MMS_PDU_AcknowledgeInd(pCurPos,pData);
 	    }
 	    break;
+	    case WMS_MMS_PDU_MReadRecInd:
+	    {
+	        if(pData->pReadReport == NULL)
+                return 0;
+
+            //  X-Mms-MMS-Version
+            pData->pReadReport->iMMSVersion = 10;
+
+            pData->pReadReport->bReadStutas = TRUE;
+
+            pData->pReadReport->iMessageClass = MMS_CLASS_AUTO;
+            
+            if(STRLEN((char*)pData->pReadReport->hTo)&&!STRSTR((char*)pData->pReadReport->hTo,"/TYPE=PLMN"))
+                STRCAT((char*)pData->pReadReport->hTo,"/TYPE=PLMN");
+            
+	        pCurPos = WMS_MMS_PDU_ReadRecInd(pCurPos,pData);
+	    }
 	}
 	
     MMS_DEBUG(("[MMS_Encode_header] EXIT"));
@@ -1269,7 +1303,9 @@ typedef enum
     WMS_MMS_PDU_Status,
     WMS_MMS_PDU_Subject,
     WMS_MMS_PDU_To,
-    WMS_MMS_PDU_TransactionId
+    WMS_MMS_PDU_TransactionId,
+
+    WMS_MMS_PDU_ReadStatus = 0x1d,
 } WMS_MMS_PDU_AssignedNumbers;
 
 typedef enum
@@ -1383,7 +1419,36 @@ uint8* WMS_MMS_PDU_AcknowledgeInd(uint8* pBuff,MMS_WSP_ENCODE_SEND *pData)
 
     return pCurPos;
 }
+uint8* WMS_MMS_PDU_ReadRecInd(uint8* pBuff,MMS_WSP_ENCODE_SEND *pData)
+{
+    uint8* pCurPos = pBuff;
+        
+    //X-Mms-Message-Type
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_MessageType,NULL,WMS_MMS_PDU_MReadRecInd);
 
+    // X-Mms-Transaction-ID
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_TransactionId,pData->pReadReport->hTransactionID,0);
+    
+    // X-Mms-MMS-Version 
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_MMSVersion,NULL,pData->pReadReport->iMMSVersion);
+
+    // X-Mms-Message-Id 
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_MessageID,pData->pReadReport->hMessageID,0);
+    
+    // X-Mms-Report-Allowed
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_FLAGS_EN(WMS_MMS_PDU_From,INSERT_ADDRESS),pData->pReadReport->hFrom,0);
+    
+    // X-Mms-Report-Allowed
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_To,pData->pReadReport->hTo,0);
+    
+    // X-Mms-Report-Allowed
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_ReadStatus,NULL,pData->pReadReport->bReadStutas);
+
+    // X-Mms-Report-Allowed
+    pCurPos = WMS_MMS_PDUHeader_Encode(pCurPos,WMS_MMS_PDU_MessageClass,NULL,pData->pReadReport->iMessageClass);
+
+    return pCurPos;
+}
 
 uint8* WMS_MMS_PDUHeader_Encode(uint8* pBuf,int nKind,uint8* pValue,int32 nValue)
 {
@@ -1511,10 +1576,7 @@ uint8* WMS_MMS_PDUHeader_Encode(uint8* pBuf,int nKind,uint8* pValue,int32 nValue
         // enum
         case WMS_MMS_PDU_MessageClass:
         case WMS_MMS_PDU_MessageType:
-        case WMS_MMS_PDU_DeliveryReport: 
         case WMS_MMS_PDU_Priority:
-        case WMS_MMS_PDU_ReadReply:
-        case WMS_MMS_PDU_ReportAllowed:
         case WMS_MMS_PDU_ResponseStatus:
         case WMS_MMS_PDU_SenderVisibility:
         case WMS_MMS_PDU_Status:
@@ -1523,6 +1585,27 @@ uint8* WMS_MMS_PDUHeader_Encode(uint8* pBuf,int nKind,uint8* pValue,int32 nValue
             
             pBuf ++;
             *pBuf = (nValue | 0x80);
+        }
+        break;
+
+        // Yes Or No
+        case WMS_MMS_PDU_ReadStatus:
+        case WMS_MMS_PDU_DeliveryReport: 
+        case WMS_MMS_PDU_ReadReply:
+        case WMS_MMS_PDU_ReportAllowed:
+        {
+            *pBuf = (nMainFlag | 0x80);
+            
+            pBuf ++;
+            if(nValue)
+            {
+                *pBuf = 0x80;
+            }
+            else
+            {
+                *pBuf = 0x81;
+            }
+            
         }
         break;
         
@@ -2397,6 +2480,24 @@ int WMS_MMS_PDU_Encode(MMS_WSP_ENCODE_SEND* encdata, uint8* hPDU, uint8 ePDUType
 	        if(NULL == encdata->pDeliveryacknowledgement)
 	            return 0;
 	        head_len = MMS_Encode_header(pCurPos,WMS_MMS_PDU_MAcknowledgeInd,encdata);
+	        pCurPos += head_len;
+	        size = head_len;
+
+            MMS_DEBUG(("[MMS] MMS_SEND_TEST size = %d",size));
+            SNPRINTF((char*)hPDU,MSG_MAX_PACKET_SIZE,POST_TEST,size);
+
+            MMS_DEBUG(("POST_TEST:%s",hPDU));
+            head_len = STRLEN((char*)hPDU);
+            MMS_DEBUG(("[MMS] POST_TEST head_len = %d",head_len));
+
+            MEMCPY((void*)(hPDU+head_len),(void*)WMS_MMS_BUFFERGet(),size);
+	    }
+	    break;
+	    case WMS_MMS_PDU_MReadRecInd:
+	    {
+	        if(NULL == encdata->pReadReport)
+	            return 0;
+	        head_len = MMS_Encode_header(pCurPos,WMS_MMS_PDU_MReadRecInd,encdata);
 	        pCurPos += head_len;
 	        size = head_len;
 
@@ -3785,6 +3886,7 @@ boolean  MMSSocketClose (MMSSocket **pps)
 	}
 	FREEIF(pSocketInfo->pSendData);
 	FREEIF(pSocketInfo);
+	WMS_SOCKET_UNLOK();
 	MMS_DEBUG(("[MSG][DeviceSocket]: DeviceSocketClose Exit!"));
 	return TRUE;
 }
@@ -4018,23 +4120,80 @@ static uint32 WMS_MMS_EncodePostHead(uint8* pBuf,uint8* pContentBuf,uint32 nCont
 
     return nContentLen + nHeaderLen;
 }
-uint8* WMS_MMS_Resend(int nIndex,int nKind)
+boolean WMS_MMS_Resend(int nIndex,int nKind)
 {
-    WMS_MMSState(WMS_MMS_PDU_WSPHTTPRESEND,nKind,nIndex);
+    return WMS_MMSState(WMS_MMS_PDU_WSPHTTPRESEND,nKind,nIndex);
+}
+typedef struct
+{
+    int nState;
+    int16 wParam;
+    uint32 dwParam;
+}WMS_MMS_SOCKET_PARAM;
+
+void WMS_MMSWaitStack(void *pShell)
+{
+    if(!WMS_GETSOCKET_STATUS())
+    {
+        WMS_MMS_SOCKET_PARAM *pParam = NULL;
+        pParam = IVector_ElementAt(pSocketParam,0);  
+        WMS_MMSState(pParam->nState,pParam->wParam,pParam->dwParam);
+        IVector_RemoveElementAt(pSocketParam,0);
+    }
+    
+    ISHELL_SetTimer(pShell,2000,&WMS_MMSWaitStack,pShell);
+}
+void WMS_MMS_RELEASE()
+{
+    IVector_RemoveAllElements(pSocketParam);
+    RELEASEIF(pSocketParam);
+    WMS_MMS_BUFFERRelease();
 }
 
-void WMS_MMSState(int nState,int16 wParam,uint32 dwParam)
+boolean WMS_MMSState(int nState,int16 wParam,uint32 dwParam)
 {
     MMSSocket *pMMSSocket = NULL;
+    boolean isLocked = FALSE;
+    
+    if(!WMS_SOCKET_LOCK())
+    {
+        WMS_MMS_SOCKET_PARAM* pParam = NULL;
+        int i = 0;
+        if(pSocketParam == NULL)
+        {
+            ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_VECTOR,(void**)&pSocketParam);
+        }
+
+        while(pParam = IVector_ElementAt(pSocketParam,i))
+        {
+            if((pParam->dwParam == dwParam) 
+                && (pParam->nState == nState) 
+                && (pParam->wParam == wParam))
+            {
+                return TRUE;
+            }
+            i++;
+        }
+        
+        pParam = (WMS_MMS_SOCKET_PARAM*)MALLOC(sizeof(WMS_MMS_SOCKET_PARAM));
+        pParam->dwParam = dwParam;
+        pParam->nState = nState;
+        pParam->wParam = wParam;
+        
+        IVector_AddElement(pSocketParam,pParam);
+        ISHELL_SetTimer(AEE_GetShell(),2000,&WMS_MMSWaitStack,AEE_GetShell());
+        return TRUE;
+    }
     MMSSocketNew(&pMMSSocket,AEE_SOCK_STREAM);
     if(pMMSSocket == NULL)
-        return;
+        return FALSE;
 
     pMMSSocket->nState = nState;
     pMMSSocket->wParam = wParam;
     pMMSSocket->dwParam = dwParam;
         
     MMSSocketState(pMMSSocket);
+    return TRUE;
 }
 
 static void MMSSocketState(MMSSocket *ps)
@@ -4087,7 +4246,30 @@ static void MMSSocketState(MMSSocket *ps)
             FREEIF(pBuf);
         }
         break;
-        
+
+        case WMS_MMS_PDU_MReadRecInd:
+        {
+            uint8* pBuf = NULL;
+            uint32 nBufLen = 0;
+            if(ps->nDataLen != 0)
+            {
+                if(ps->nBytesSent == ps->nDataLen)
+                {
+                    FREEIF(ps->pSendData);
+        		    ps->nDataLen = 0;
+        		    ps->nBytesSent = 0;
+                    MMSSocketClose(&ps);
+                    return;
+                }
+                break;
+            }
+            pBuf = (uint8*)MALLOC(SOCKET_BUFFER_SIZE);
+            nBufLen = WMS_MMS_PDU_Encode((MMS_WSP_ENCODE_SEND*)ps->dwParam,pBuf,ps->nState);
+            MMSSocketSend(ps,pBuf,nBufLen);
+            FREEIF(((MMS_WSP_ENCODE_SEND*)ps->dwParam)->pReadReport);
+            FREEIF(pBuf);
+        }
+        break;
         case WMS_MMS_PDU_MAcknowledgeInd:
         {
             uint8* pBuf = NULL;
@@ -4299,7 +4481,8 @@ boolean  MMSSocketSend (MMSSocket *ps, const uint8 *pBuf, uint32 nLen)
 	MEMCPY(ps->pSendData,pBuf,nLen);  
     
 	ISOCKET_Writeable(ps->pISocket, MMI_SocketSend, ps);
-
+	
+    MMS_DEBUG(("[MSG][MMSSocketSend]: End"));
 	return ret;
 }
 

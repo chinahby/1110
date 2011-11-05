@@ -776,12 +776,13 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
         FREEIF(pMe->m_DecData.message.mms_data.fragment[i].pContent);
     }
     FREEIF(pMe->m_pMsgEvent);
+    FREEIF(pMe->m_EncData.pReadReport);
     FREEIF(pMe->m_EncData.pDeliveryacknowledgement);
     FREEIF(pMe->m_EncData.pNotifyresp);
     FREEIF(pMe->m_EncData.pMessage);
     FREEIF(pMe->m_MMSData);
     pMe->m_isMMS = FALSE;
-    WMS_MMS_BUFFERRelease();
+    WMS_MMS_RELEASE();
 #endif    
     pMe->m_eAppStatus = WMSAPP_STOP;
     FREEIF(pMe->m_strPhonePWD);
@@ -1380,7 +1381,48 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
                 
                 
                 MSG_FATAL("WMSApp received new message teleservice=%d",info->mt_message_info.message.u.cdma_message.teleservice,0,0);
-                
+
+#ifdef MMS_TEST
+                {
+                    IFile* pIFile = NULL;
+        		    IFileMgr *pIFileMgr = NULL;
+        		    int result = 0;
+
+        			result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+        			if (SUCCESS != result)
+        		    {
+        				MSG_FATAL("MRS: Open file error %x", result,0,0);
+        				return;
+        		    }
+
+        		    pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/raw_ts_data.txt", _OFM_READWRITE);
+        			if ( pIFile != NULL )
+        	        {
+        	            IFILE_Seek(pIFile, _SEEK_START, 0);
+        	            IFILE_Write( pIFile, info->mt_message_info.message.u.cdma_message.raw_ts.data, info->mt_message_info.message.u.cdma_message.raw_ts.len);
+
+        	            MSG_FATAL("IFILEMGR_OpenFile pDataFragment.size=%d",info->mt_message_info.message.u.cdma_message.raw_ts.len,0,0);
+        	            IFILE_Release( pIFile);
+        	            pIFile = NULL;
+        	            IFILEMGR_Release(pIFileMgr);
+        	            pIFileMgr = NULL;
+        	        }
+        	        else
+        	        {
+        				pIFile = IFILEMGR_OpenFile( pIFileMgr, "fs:/hsmm/pictures/raw_ts_data.txt", _OFM_CREATE);
+        				if ( pIFile != NULL )
+        		        {
+        		            IFILE_Write( pIFile, info->mt_message_info.message.u.cdma_message.raw_ts.data, info->mt_message_info.message.u.cdma_message.raw_ts.len);
+
+        		            MSG_FATAL("IFILEMGR_OpenFile pDataFragment.size=%d",info->mt_message_info.message.u.cdma_message.raw_ts.len,0,0);
+        		            IFILE_Release( pIFile);
+        		            pIFile = NULL;
+        		            IFILEMGR_Release(pIFileMgr);
+        		            pIFileMgr = NULL;
+        		        }
+        	        }
+                }
+#endif   
                 // 非 CDMA 模式消息不予受理
                 if (info->mt_message_info.message.msg_hdr.message_mode != WMS_MESSAGE_MODE_CDMA)
                 {
@@ -1754,11 +1796,36 @@ Exit:
             if(body_len != 0)
                 nResult = WMS_MMS_PDU_Decode(pDecData,pBody,body_len,&ePDUType); 
                 
-             MSG_FATAL("EVT_MMS_PDUDECODE nResult:%d ePDUType:%d",nResult,ePDUType,0);
+            MSG_FATAL("EVT_MMS_PDUDECODE nResult:%d ePDUType:%d",nResult,ePDUType,0);
             if(!nResult)
             {
                 switch(ePDUType)
                 {
+                    case MMS_PDU_READ_ORIG_IND:
+                    {
+                        WMS_MMS_SaveMMS(pDecData->readrep.hFrom,pBody,body_len,MMS_INBOX);
+                        gbWmsMMSNtf = TRUE;
+                        WmsApp_PlaySMSAlert(pMe, TRUE);
+                        if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
+        				{
+        					#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+        					if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
+        					#endif
+        					{
+            					(void) ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_WMSAPP, "NEWMMS");
+            				}
+        				}
+                        else if(pMe->m_currState == WMSST_WMSNEW)
+                        {
+                            CLOSE_DIALOG(DLGRET_CREATE)
+                        }
+                        else
+                        {
+                            gbWmsMMSNtf = FALSE;
+                            CLOSE_DIALOG(DLGRET_INBOX_MMS);
+                        }
+                    }
+                    break;
                     case MMS_PDU_SEND_CONF:
                     {
                         MSG_FATAL("EVT_MMS_PDUDECODE iResponseStatus:%d ",pDecData->sendconf.iResponseStatus,0,0);
@@ -1902,6 +1969,31 @@ Exit:
                             }
                         }
                         FREEIF(pBody); // YY: add
+                    }
+                    break;
+                    case MMS_PDU_DELIVERY_IND:
+                    {
+                        WMS_MMS_SaveMMS(pDecData->delrep.hTo,pBody,body_len,MMS_INBOX);
+                        gbWmsMMSNtf = TRUE;
+                        WmsApp_PlaySMSAlert(pMe, TRUE);
+                        if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_WMSAPP)
+        				{
+        					#if defined(FEATURE_VERSION_S1000T) || defined(FEATURE_VERSION_W515V3)
+        					if(ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_CORE_APP)
+        					#endif
+        					{
+            					(void) ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_WMSAPP, "NEWMMS");
+            				}
+        				}
+                        else if(pMe->m_currState == WMSST_WMSNEW)
+                        {
+                            CLOSE_DIALOG(DLGRET_CREATE)
+                        }
+                        else
+                        {
+                            gbWmsMMSNtf = FALSE;
+                            CLOSE_DIALOG(DLGRET_INBOX_MMS);
+                        }
                     }
                     break;
                     case MMS_PDU_RETRIEVE_CONF:
@@ -6752,8 +6844,8 @@ void WmsApp_ProcessMMSStatus(WmsApp *pMe)
     
     ERR("m_SendStatus = %d", pMe->m_SendStatus, 0, 0);    
     
-    if ((pMe->m_wActiveDlgID == IDD_SENDING) &&
-        (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_WMSAPP))
+    if (((pMe->m_wActiveDlgID == IDD_SENDING) || (pMe->m_wActiveDlgID == IDD_GETTING))
+        && (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_WMSAPP))
     {
         (void)ISHELL_PostEventEx(pMe->m_pShell,
                                  EVTFLG_ASYNC, 

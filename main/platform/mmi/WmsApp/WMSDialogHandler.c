@@ -7070,7 +7070,7 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
                 
             case EVT_SENDSMSEND:
                 MSG_FATAL("IDD_SENDING_Handler EVT_SENDSMSEND",0,0,0);
-                CLOSE_DIALOG(DLGRET_END)
+                CLOSE_DIALOG(DLGRET_INBOXES)
                 return TRUE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
     
@@ -8422,8 +8422,13 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                                 pMe->m_EncData.pMessage->iDeliveryTime = MMS_VALUE_USELESSNESS;
                                 pMe->m_EncData.pMessage->bReadRep = pMe->m_isMMSReadReply;
                                 pMe->m_EncData.pMessage->bDelRep = pMe->m_isMMSDeliveryReport;
+
                                 
-                                WMS_MMSState(WMS_MMS_PDU_MSendReq,0,(uint32)&pMe->m_EncData);
+                                if(!WMS_MMSState(WMS_MMS_PDU_MSendReq,0,(uint32)&pMe->m_EncData))
+                                {
+                                    pMe->m_SendStatus = HTTP_CODE_Bad_Request;
+		                            ISHELL_SetTimer(pMe->m_pShell,20,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
+                                }
                             }
                             //return TRUE;
 #endif
@@ -9771,207 +9776,6 @@ static boolean IDD_SENDOPTS_Handler(void   *pUser,
     return FALSE;
 } // IDD_SENDOPTS_Handler
 
-int AddMimeResIntoMms(WmsApp *pMe,char* pPath)
-{
-#ifdef FEATURE_USES_MMS
-
-    WSP_MMS_ENCODE_DATA* pEncData = NULL;
-    char* pFilePath = NULL;    
-    int nIndex = 0;
-    uint32 size = 0;
-    char* pFileType = NULL; 
-    
-    if(NULL == pMe)
-    {
-        MSG_FATAL("[AddMimeResIntoMms] Init Error",0,0,0);
-        return  -1;
-    }   
-
-    if(NULL == pMe->m_EncData.pMessage)
-    {
-        pMe->m_EncData.pMessage = (MMS_WSP_MESSAGE_SEND*)MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
-        MSG_FATAL("[AddMimeResIntoMms] NEW MMS MSG",0,0,0);
-    }
-
-    if(NULL == pMe->m_EncData.pMessage)
-    {
-        MSG_FATAL("[AddMimeResIntoMms] No Memory",0,0,0);
-        return -1;
-    }    
-    nIndex = MimeResCheckFileExist(pMe,pPath);
-    
-    if(nIndex != -1)
-    {
-        return nIndex;
-    }
-    else
-    {
-        nIndex = 0;
-    }
-        
-    pEncData = &pMe->m_EncData.pMessage->mms_data;
-    pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
-    while(nIndex < WMSMMS_FRAGMENTCOUNT)
-    {
-        pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
-        
-        if(STRLEN(pFilePath) == 0)
-        {
-            STRCPY(pFilePath, pPath);
-            MSG_FATAL("[AddMimeResIntoMms] Add Success",0,0,0);
-            return nIndex;   
-        }
-        nIndex ++;
-    }
-	#endif
-    MSG_FATAL("[AddMimeResIntoMms] Add Failed",0,0,0);
-    return  -1;
-}
-int DeleteMimeResFromMms(WmsApp *pMe,char* pPath)
-{
-#ifdef FEATURE_USES_MMS
-    WSP_MMS_ENCODE_DATA* pEncData = NULL;
-    char* pFilePath = NULL;    
-    int nIndex = 0;
-    uint32 size = 0;
-    char* pFileType = NULL; 
-    
-    if(NULL == pMe || !pMe->m_EncData.pMessage)
-    {
-        MSG_FATAL("[DeleteMimeResFromMms] Init Error",0,0,0);
-        return  -1;
-    }    
-        
-    pEncData = &pMe->m_EncData.pMessage->mms_data;
-    pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
-    while(nIndex < WMSMMS_FRAGMENTCOUNT)
-    {
-        pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
-        
-        if(STRCMP(pPath,pFilePath) == 0)
-        {
-            MEMSET(pFilePath,NULL,STRLEN(pFilePath));
-            FREEIF(pEncData->fragment[nIndex].pBuf);
-            MSG_FATAL("[DeleteMimeResFromMms] Delete Success",0,0,0);
-            return nIndex;   
-        }
-        nIndex ++;
-    }
-	#endif
-    MSG_FATAL("[DeleteMimeResFromMms] Not Find File",0,0,0);
-    return  -1;
-}
-int MimeResCheckFileExist(WmsApp *pMe,char* pPath)
-{
-#ifdef FEATURE_USES_MMS
-
-    WSP_MMS_ENCODE_DATA* pEncData = NULL;
-    char* pFilePath = NULL;    
-    int nIndex = 0;
-    uint32 size = 0;
-    char* pFileType = NULL; 
-    
-    if(NULL == pMe || !pMe->m_EncData.pMessage)
-    {
-        MSG_FATAL("[MimeResCheckFileExist] Init Error",0,0,0);
-        return  -1;
-    }    
-        
-    pEncData = &pMe->m_EncData.pMessage->mms_data;
-    pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
-    while(nIndex < WMSMMS_FRAGMENTCOUNT)
-    {
-        pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
-        
-        if(STRNCMP(pFilePath,pPath,STRLEN(pPath)) == 0)
-        {
-            return nIndex;   
-        }
-        nIndex ++;
-    }
-	#endif
-    MSG_FATAL("[MimeResCheckFileExist] Add Failed",0,0,0);
-    return  -1;
-}
-
-char* MimeResCheckTypeExist(WmsApp *pMe,char* pType,uint8** ppBuf,uint32* pBufLen)
-{
-#ifdef FEATURE_USES_MMS
-
-    WSP_MMS_ENCODE_DATA* pEncData = NULL;
-    char* pFilePath = NULL;    
-    int nIndex = 0;
-    uint32 size = 0;
-    char* pFileType = NULL; 
-    
-    if(NULL == pMe || !pMe->m_EncData.pMessage)
-    {
-        MSG_FATAL("[MimeResCheckTypeExist] Init Error",0,0,0);
-        return NULL;
-    }    
-        
-    pEncData = &pMe->m_EncData.pMessage->mms_data;
-    pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
-    while(STRLEN(pFilePath) != 0 && nIndex < WMSMMS_FRAGMENTCOUNT)
-    {
-        pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
-        ISHELL_DetectType(AEE_GetShell(),NULL,&size,pFilePath,(const char**)&pFileType);
-        if(!STRNCMP(pType,pFileType,STRLEN(pType)))
-        {
-            if(pEncData->fragment[nIndex].pBuf && pEncData->fragment[nIndex].nBufLen > 0)
-            {
-                if(ppBuf == NULL || pBufLen == NULL)
-                {
-                    nIndex ++;
-                    continue;
-                }    
-                    
-                *pBufLen = pEncData->fragment[nIndex].nBufLen;
-                *ppBuf = pEncData->fragment[nIndex].pBuf;
-            }
-            MSG_FATAL("[MimeResCheckTypeExist] Find File:%s",pFilePath,0,0);
-            return pFilePath;   
-        }
-        nIndex ++;
-    }
-#endif
-    MSG_FATAL("[MimeResCheckTypeExist] Not Find",0,0,0);
-    return NULL;
-}
-
-int WMSMMS_GetResByExplorer(void* pv, FileNamesBuf pBuf, uint32 nBufSize)
-{
-    WmsApp* pMe = (WmsApp*)pv;
-	#ifdef FEATURE_USES_MMS
-    WSP_MMS_ENCODE_DATA* pData = NULL;
-    int nIndex = 0;
-    if(NULL == pMe->m_EncData.pMessage)
-    {
-        pMe->m_EncData.pMessage = (MMS_WSP_MESSAGE_SEND*)MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
-    }
-
-    if(NULL == pMe->m_EncData.pMessage)
-        return EFAILED;
-    
-    pData = &pMe->m_EncData.pMessage->mms_data;
-
-    if(pData->frag_num >= WMSMMS_FRAGMENTCOUNT)
-        return EFAILED;
-
-    while(nIndex < WMSMMS_FRAGMENTCOUNT)
-    {
-        if(STRLEN((char*)pData->fragment[nIndex].hContentFile) == 0)
-        {
-            pData->frag_num ++;
-            STRNCPY((char*)pData->fragment[nIndex].hContentFile,(char*)pBuf,nBufSize);
-            return SUCCESS;
-        }
-        nIndex++;
-    }
-	#endif
-    return EFAILED;
-    
-}
 
 /*==============================================================================
 º¯Êý:
@@ -17456,7 +17260,26 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 RELEASEIF(pIFileMgr);
                
                 result = WMS_MMS_PDU_Decode(pDecdata,(uint8*)pBuffer,pMmsDataInfoCur->MMSDatasize, &ePDUType);
-              
+
+                if(!pMmsDataInfoCur->MMSDataReaded && pDecdata->message.bReadRep)
+                {
+                    if(NULL == pMe->m_EncData.pReadReport)
+                    {
+                        pMe->m_EncData.pReadReport = (MMS_WSP_ENC_READ_REPORT*)MALLOC(sizeof(MMS_WSP_ENC_READ_REPORT));
+                    }
+
+                    STRCPY((char*)pMe->m_EncData.pReadReport->hTransactionID,(char*)pDecdata->message.hTransactionID);
+                    STRCPY((char*)pMe->m_EncData.pReadReport->hTo,(char*)pDecdata->message.hFrom);
+                    STRCPY((char*)pMe->m_EncData.pReadReport->hMessageID,(char*)pDecdata->message.hMessageID);
+
+                    pMmsDataInfoCur->MMSDataReaded = TRUE;
+                    WMS_MMSState(WMS_MMS_PDU_MReadRecInd,NULL,(uint32)&pMe->m_EncData);
+                    
+                    (void) ICONFIG_SetItem(pMe->m_pConfig,
+                                   nMmsDataInfo,
+                                   (void*)mmsDataInfoList,
+                                   sizeof(mmsDataInfoList));  
+                }
                 MSG_FATAL("IDD_VIEWMSG_MMS_Handler result=%d, frag_num=%d, pMe->m_wCurindex=%d", result, pDecdata->message.mms_data.frag_num, pMe->m_wCurindex);
                 for(; index < pDecdata->message.mms_data.frag_num; index++)
                 {
@@ -17895,7 +17718,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 return TRUE;
                 
                 case AVK_SELECT:
-                
+                    CLOSE_DIALOG(DLGRET_INFO)
                     //CLOSE_DIALOG(DLGRET_OK)
                 return TRUE;
   
@@ -18101,6 +17924,196 @@ boolean WmsApp_SaveToFile(char* pFileName,void* pData,uint32 nDataLen)
     RELEASEIF(pFileMgr);
 
     return (SUCCESS == nResult);
+}
+
+int AddMimeResIntoMms(WmsApp *pMe,char* pPath)
+{
+    WSP_MMS_ENCODE_DATA* pEncData = NULL;
+    char* pFilePath = NULL;    
+    int nIndex = 0;
+    uint32 size = 0;
+    char* pFileType = NULL; 
+    
+    if(NULL == pMe)
+    {
+        MSG_FATAL("[AddMimeResIntoMms] Init Error",0,0,0);
+        return  -1;
+    }   
+
+    if(NULL == pMe->m_EncData.pMessage)
+    {
+        pMe->m_EncData.pMessage = (MMS_WSP_MESSAGE_SEND*)MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+        MSG_FATAL("[AddMimeResIntoMms] NEW MMS MSG",0,0,0);
+    }
+
+    if(NULL == pMe->m_EncData.pMessage)
+    {
+        MSG_FATAL("[AddMimeResIntoMms] No Memory",0,0,0);
+        return -1;
+    }    
+    nIndex = MimeResCheckFileExist(pMe,pPath);
+    
+    if(nIndex != -1)
+    {
+        return nIndex;
+    }
+    else
+    {
+        nIndex = 0;
+    }
+        
+    pEncData = &pMe->m_EncData.pMessage->mms_data;
+    pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+    while(nIndex < WMSMMS_FRAGMENTCOUNT)
+    {
+        pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+        
+        if(STRLEN(pFilePath) == 0)
+        {
+            STRCPY(pFilePath, pPath);
+            MSG_FATAL("[AddMimeResIntoMms] Add Success",0,0,0);
+            return nIndex;   
+        }
+        nIndex ++;
+    }
+    MSG_FATAL("[AddMimeResIntoMms] Add Failed",0,0,0);
+    return  -1;
+}
+int DeleteMimeResFromMms(WmsApp *pMe,char* pPath)
+{
+    WSP_MMS_ENCODE_DATA* pEncData = NULL;
+    char* pFilePath = NULL;    
+    int nIndex = 0;
+    uint32 size = 0;
+    char* pFileType = NULL; 
+    
+    if(NULL == pMe || !pMe->m_EncData.pMessage)
+    {
+        MSG_FATAL("[DeleteMimeResFromMms] Init Error",0,0,0);
+        return  -1;
+    }    
+        
+    pEncData = &pMe->m_EncData.pMessage->mms_data;
+    pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+    while(nIndex < WMSMMS_FRAGMENTCOUNT)
+    {
+        pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+        
+        if(STRCMP(pPath,pFilePath) == 0)
+        {
+            MEMSET(pFilePath,NULL,STRLEN(pFilePath));
+            FREEIF(pEncData->fragment[nIndex].pBuf);
+            MSG_FATAL("[DeleteMimeResFromMms] Delete Success",0,0,0);
+            return nIndex;   
+        }
+        nIndex ++;
+    }
+    MSG_FATAL("[DeleteMimeResFromMms] Not Find File",0,0,0);
+    return  -1;
+}
+int MimeResCheckFileExist(WmsApp *pMe,char* pPath)
+{
+    WSP_MMS_ENCODE_DATA* pEncData = NULL;
+    char* pFilePath = NULL;    
+    int nIndex = 0;
+    uint32 size = 0;
+    char* pFileType = NULL; 
+    
+    if(NULL == pMe || !pMe->m_EncData.pMessage)
+    {
+        MSG_FATAL("[MimeResCheckFileExist] Init Error",0,0,0);
+        return  -1;
+    }    
+        
+    pEncData = &pMe->m_EncData.pMessage->mms_data;
+    pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+    while(nIndex < WMSMMS_FRAGMENTCOUNT)
+    {
+        pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+        
+        if(STRNCMP(pFilePath,pPath,STRLEN(pPath)) == 0)
+        {
+            return nIndex;   
+        }
+        nIndex ++;
+    }
+    MSG_FATAL("[MimeResCheckFileExist] Add Failed",0,0,0);
+    return  -1;
+}
+
+char* MimeResCheckTypeExist(WmsApp *pMe,char* pType,uint8** ppBuf,uint32* pBufLen)
+{
+    WSP_MMS_ENCODE_DATA* pEncData = NULL;
+    char* pFilePath = NULL;    
+    int nIndex = 0;
+    uint32 size = 0;
+    char* pFileType = NULL; 
+    
+    if(NULL == pMe || !pMe->m_EncData.pMessage)
+    {
+        MSG_FATAL("[MimeResCheckTypeExist] Init Error",0,0,0);
+        return NULL;
+    }    
+        
+    pEncData = &pMe->m_EncData.pMessage->mms_data;
+    pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+    while(STRLEN(pFilePath) != 0 && nIndex < WMSMMS_FRAGMENTCOUNT)
+    {
+        pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+        ISHELL_DetectType(AEE_GetShell(),NULL,&size,pFilePath,(const char**)&pFileType);
+        if(!STRNCMP(pType,pFileType,STRLEN(pType)))
+        {
+            if(pEncData->fragment[nIndex].pBuf && pEncData->fragment[nIndex].nBufLen > 0)
+            {
+                if(ppBuf == NULL || pBufLen == NULL)
+                {
+                    nIndex ++;
+                    continue;
+                }    
+                    
+                *pBufLen = pEncData->fragment[nIndex].nBufLen;
+                *ppBuf = pEncData->fragment[nIndex].pBuf;
+            }
+            MSG_FATAL("[MimeResCheckTypeExist] Find File:%s",pFilePath,0,0);
+            return pFilePath;   
+        }
+        nIndex ++;
+    }
+
+    MSG_FATAL("[MimeResCheckTypeExist] Not Find",0,0,0);
+    return NULL;
+}
+
+int WMSMMS_GetResByExplorer(void* pv, FileNamesBuf pBuf, uint32 nBufSize)
+{
+    WmsApp* pMe = (WmsApp*)pv;
+    WSP_MMS_ENCODE_DATA* pData = NULL;
+    int nIndex = 0;
+    if(NULL == pMe->m_EncData.pMessage)
+    {
+        pMe->m_EncData.pMessage = (MMS_WSP_MESSAGE_SEND*)MALLOC(sizeof(MMS_WSP_MESSAGE_SEND));
+    }
+
+    if(NULL == pMe->m_EncData.pMessage)
+        return EFAILED;
+    
+    pData = &pMe->m_EncData.pMessage->mms_data;
+
+    if(pData->frag_num >= WMSMMS_FRAGMENTCOUNT)
+        return EFAILED;
+
+    while(nIndex < WMSMMS_FRAGMENTCOUNT)
+    {
+        if(STRLEN((char*)pData->fragment[nIndex].hContentFile) == 0)
+        {
+            pData->frag_num ++;
+            STRNCPY((char*)pData->fragment[nIndex].hContentFile,(char*)pBuf,nBufSize);
+            return SUCCESS;
+        }
+        nIndex++;
+    }
+    return EFAILED;
+    
 }
 
 #endif

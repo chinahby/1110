@@ -1381,7 +1381,11 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
                     str,
                     100);
                 MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%s",str,0,0);
-                WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)str);
+                if(!WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)str))
+                {
+                    pMe->m_GetStatus = HTTP_CODE_Bad_Request;
+    		        ISHELL_SetTimer(pMe->m_pShell,20,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
+		        }
                 IVector_RemoveElementAt(pMe->m_pSaveNumList,0);
             }
             MOVE_TO_STATE(WMSST_GETTING)
@@ -5885,8 +5889,12 @@ static NextFSMAction WMSST_EXTARCTDETAILS_Handler(WmsApp *pMe)
                     (char*)&str,
                     sizeof(str));
                 MSG_FATAL("WMSST_TONUMLIST_Handler DLGRET_GETMMS=%s",&str,0,0);
-                WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)&str);
-                IVector_RemoveElementAt(pMe->m_pSaveNumList,0);
+                if(!WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)str))
+                {
+                    pMe->m_GetStatus = HTTP_CODE_Bad_Request;
+    		        ISHELL_SetTimer(pMe->m_pShell,20,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
+		        }
+                IVector_RemoveElementAt(pMe->m_pSaveNumList,0);   
             }
             MOVE_TO_STATE(WMSST_GETTING)
             return NFSMACTION_CONTINUE;
@@ -6896,6 +6904,7 @@ static NextFSMAction WMSST_INBOX_MMS_Handler(WmsApp *pMe)
     {
         return NFSMACTION_WAIT;
     }
+    MSG_FATAL("WMSST_INBOX_MMS_Handler pMe->m_eDlgReturn:%d",pMe->m_eDlgReturn,0,0);
     switch (pMe->m_eDlgReturn)
     {
         case DLGRET_CREATE:
@@ -7076,13 +7085,28 @@ static NextFSMAction WMSST_OUTMSGOPTS_MMS_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_RESEND:
-
+           
             pMe->m_eCreateWMSType = SEND_MSG_RESEND;
             // 检查卡是否插入modi by yangdecai 2010-08-10
 		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 		    {
-		        WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_OUTBOX);
-            	MOVE_TO_STATE(WMSST_SENDING)
+		        CMultiSendItemInfo *pPhoneNumber = (CMultiSendItemInfo*)MALLOC(sizeof(CMultiSendItemInfo));
+		        MMSData	mmsDataInfoList[MAX_MMS_STORED];
+		        
+		        pMe->m_isMMS = TRUE;
+		        ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSOUTDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
+		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].MMSDataFileName,pPhoneNumber->m_szName,sizeof(pPhoneNumber->m_szName));
+		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,pPhoneNumber->m_szTo,sizeof(pPhoneNumber->m_szTo));
+		        IVector_AddElement(pMe->m_pSendList,pPhoneNumber);
+		        if(WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_OUTBOX))
+		        {
+		            MOVE_TO_STATE(WMSST_SENDING)
+		            WmsApp_ProcessMMSStatus(pMe);
+		        }
+		        else
+		        {
+		        }
+            	
 		    }
 			else
 			{
@@ -7173,11 +7197,25 @@ static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe)
         case DLGRET_RESEND:
 
             pMe->m_eCreateWMSType = SEND_MSG_RESEND;
+            
             // 检查卡是否插入modi by yangdecai 2010-08-10
 		    if (IRUIM_IsCardConnected(pMe->m_pIRUIM)) 
 		    {
-		        WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_INBOX);
-            	MOVE_TO_STATE(WMSST_SENDING)
+		        CMultiSendItemInfo *pPhoneNumber = (CMultiSendItemInfo*)MALLOC(sizeof(CMultiSendItemInfo));
+		        MMSData	mmsDataInfoList[MAX_MMS_STORED];
+		        
+		        pMe->m_isMMS = TRUE;
+		        ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSINDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
+		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].MMSDataFileName,pPhoneNumber->m_szName,sizeof(pPhoneNumber->m_szName));
+		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,pPhoneNumber->m_szTo,sizeof(pPhoneNumber->m_szTo));
+		        IVector_AddElement(pMe->m_pSendList,pPhoneNumber);
+		        if(!WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_INBOX))
+		        {
+		            pMe->m_SendStatus = HTTP_CODE_Bad_Request;
+		            ISHELL_SetTimer(pMe->m_pShell,20,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
+		        }
+		        MOVE_TO_STATE(WMSST_SENDING)
+            	
 		    }
 			else
 			{

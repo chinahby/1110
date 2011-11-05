@@ -851,6 +851,7 @@ typedef struct _MMSData
     char      phoneNumber[13];
     char      MMSDataFileName[MMS_MAX_FILE_NAME]; 
     int       MMSDatasize;
+    boolean   MMSDataReaded;
 } MMSData;
 #endif
 
