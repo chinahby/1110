@@ -3367,7 +3367,15 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 */				
 				break;
 			}
-
+            case 0x90:/* Read-Reply */
+            {
+                i++;
+                if (*ePDUType == MMS_PDU_RETRIEVE_CONF) 
+				{
+					MMS_PDU_PutDeliveryReport(ptr[i], &decdata->message.bReadRep);
+				}
+            }
+            break;
 			case 0x92:/* response status */
 			{
 				i++;
@@ -4372,7 +4380,6 @@ static void MMSSocketState(MMSSocket *ps)
             pContentBuf[1] = 0x80;
             nBufLen =  WMS_MMS_EncodePostHead(pBuf,pContentBuf,nContentLen);
             MMSSocketSend(ps,pBuf,nBufLen);
-            FREEIF(((MMS_WSP_ENCODE_SEND*)ps->dwParam)->pMessage);
             FREEIF(pBuf);
         }
         break;

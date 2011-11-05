@@ -7027,6 +7027,8 @@ static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
 ±¸×¢:
 
 ==============================================================================*/
+extern char* STRTOPHONENUMBER(char* pDesStr,char* pScrStr);
+
 static NextFSMAction WMSST_OUTMSGOPTS_MMS_Handler(WmsApp *pMe)
 {
     MSG_FATAL("WMSST_OUTMSGOPTS_MMS_Handler Start m_eDlgReturn=%d",pMe->m_eDlgReturn,0,0);
@@ -7095,17 +7097,19 @@ static NextFSMAction WMSST_OUTMSGOPTS_MMS_Handler(WmsApp *pMe)
 		        
 		        pMe->m_isMMS = TRUE;
 		        ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSOUTDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
-		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].MMSDataFileName,pPhoneNumber->m_szName,sizeof(pPhoneNumber->m_szName));
-		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,pPhoneNumber->m_szTo,sizeof(pPhoneNumber->m_szTo));
+		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].MMSDataFileName,
+		            pPhoneNumber->m_szName,
+		            sizeof(pPhoneNumber->m_szName));
+		        STRTOWSTR(STRTOPHONENUMBER(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber),
+		            pPhoneNumber->m_szTo,
+		            sizeof(pPhoneNumber->m_szTo));
 		        IVector_AddElement(pMe->m_pSendList,pPhoneNumber);
-		        if(WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_OUTBOX))
+		        if(!WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_OUTBOX))
 		        {
-		            MOVE_TO_STATE(WMSST_SENDING)
-		            WmsApp_ProcessMMSStatus(pMe);
+		            pMe->m_SendStatus = HTTP_CODE_Bad_Request;
+		            ISHELL_SetTimer(pMe->m_pShell,20,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
 		        }
-		        else
-		        {
-		        }
+		        MOVE_TO_STATE(WMSST_SENDING)
             	
 		    }
 			else
@@ -7206,8 +7210,12 @@ static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe)
 		        
 		        pMe->m_isMMS = TRUE;
 		        ICONFIG_GetItem(pMe->m_pConfig,CFGI_MMSINDATA_INFO,&mmsDataInfoList,sizeof(mmsDataInfoList));
-		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].MMSDataFileName,pPhoneNumber->m_szName,sizeof(pPhoneNumber->m_szName));
-		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,pPhoneNumber->m_szTo,sizeof(pPhoneNumber->m_szTo));
+		        STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].MMSDataFileName,
+		            pPhoneNumber->m_szName,
+		            sizeof(pPhoneNumber->m_szName));
+		        STRTOWSTR(STRTOPHONENUMBER(mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber,mmsDataInfoList[pMe->m_wSelItemxuhao - 1].phoneNumber),
+		            pPhoneNumber->m_szTo,
+		            sizeof(pPhoneNumber->m_szTo));
 		        IVector_AddElement(pMe->m_pSendList,pPhoneNumber);
 		        if(!WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_INBOX))
 		        {

@@ -17285,15 +17285,32 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 {
                     if(STRISTR((char*)(pDecdata->message.mms_data.fragment[index].hContentType), "text/"))
                     {
-                        rSize = pDecdata->message.mms_data.fragment[index].size+1;
+                        char* pContentText = NULL;
+                        rSize = pDecdata->message.mms_data.fragment[index].size;
+                        
                         MSG_FATAL("index=%d,hContentType=%s",index,(char*)(pDecdata->message.mms_data.fragment[index].hContentType),0);
+                        if(STRSTR((char*)pDecdata->message.mms_data.fragment[index].hContentEnCode,"utf-8"))
+                        {
+                            pContentText = (char*)MALLOC(rSize + 4);// 4 format token
+                            pContentText[0] = 0xef;
+                            pContentText[1] = 0xbb;
+                            pContentText[2] = 0xbf;
+                            MEMCPY((void*)&pContentText[3],(void*)pDecdata->message.mms_data.fragment[index].pContent,rSize);
+                            rSize += 3;
+                        }
+                        else
+                        {
+                            MEMCPY((void*)pContentText,(void*)pDecdata->message.mms_data.fragment[index].pContent,rSize);
+                        }
                         pFormatedText = (AECHAR *)MALLOC((rSize*sizeof(AECHAR)));
-                        MEMSET((void*)pFormatedText, L'\0', rSize*sizeof(AECHAR));
+                        MEMSET((void*)pFormatedText, 0, rSize*sizeof(AECHAR));
                         MSG_FATAL("size=%d", rSize,0,0);
                         DBGPRINTF("pContent=%s", pDecdata->message.mms_data.fragment[index].pContent);
-                        UTF8TOWSTR((byte*)pDecdata->message.mms_data.fragment[index].pContent,rSize, pFormatedText, rSize*sizeof(AECHAR));
+                        
+                        UTF8TOWSTR((byte*)pContentText,rSize, pFormatedText, rSize*sizeof(AECHAR));
                         DBGPRINTF("pContent=%S", pFormatedText);
-
+                        FREEIF(pContentText);
+                        
                         if (NULL != pFormatedText)
                         {
                             // 设置静态控件文本
