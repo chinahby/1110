@@ -3207,7 +3207,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             	case AVK_BLUETOOTH:
 					return CoreApp_LaunchApplet(pMe, AEECLSID_BLUETOOTH_APP);
 #endif
-#if 0
+#ifndef FEATURE_VERSION_C180
                 case AVK_MUSIC:
                 	if(pMe->m_iskeypadtime)
 					{
@@ -3231,7 +3231,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);
                 case AVK_CAMERA:
                 	
-                	#if defined(FEATURE_VERSION_C306) ||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_C01)
+                	#if defined(FEATURE_VERSION_C306) ||defined(FEATURE_VERSION_W0216A)|| defined(FEAUTRE_VERSION_N450)|| defined(FEATURE_VERSION_C01)
                 	{
                 	
 					nv_item_type	SimChoice;
