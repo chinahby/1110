@@ -1096,7 +1096,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 						IIMAGE_Release( image);
 			    	}
 			    	break;
-#if 0
+#ifndef FEATURE_VERSION_C180
 			    case AVK_MUSIC:
 			    	{
 			    		IImage* image	= NULL;
