@@ -264,8 +264,8 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 
 	sic110a_i2c_write_byte(0xfd,0x00);
 	sic110a_i2c_write_byte(0x31,0x00);	 //Upside/mirr/Pclk inv/sub
-	sic110a_i2c_write_byte(0xd8,0x58);
-	sic110a_i2c_write_byte(0xd9,0x58);
+	sic110a_i2c_write_byte(0xd8,0x62);  //0x58 pzt 20111102
+	sic110a_i2c_write_byte(0xd9,0x62);  //0x58 pzt 20111102
 	sic110a_i2c_write_byte(0xda,0x58);
 	sic110a_i2c_write_byte(0xdb,0x48);
 
@@ -336,10 +336,10 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 	sic110a_i2c_write_byte(0x68,0x43);
 	sic110a_i2c_write_byte(0x69,0x7f);
 	sic110a_i2c_write_byte(0x6a,0x01);
-	sic110a_i2c_write_byte(0x6b,0x03);
+	sic110a_i2c_write_byte(0x6b,0x03);    
 	sic110a_i2c_write_byte(0x6c,0x01);
-	sic110a_i2c_write_byte(0x6d,0x03);
-	sic110a_i2c_write_byte(0x6e,0x43);
+	sic110a_i2c_write_byte(0x6d,0x06);  //0x03  pzt 20111102
+	sic110a_i2c_write_byte(0x6e,0x46);  //0x43 pzt 20111102
 	sic110a_i2c_write_byte(0x6f,0x7f);
 	sic110a_i2c_write_byte(0x70,0x01);
 	sic110a_i2c_write_byte(0x71,0x03);
@@ -393,7 +393,7 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 	sic110a_i2c_write_byte(0xd4,0x00);
 	sic110a_i2c_write_byte(0xd6,0x1c);
 	sic110a_i2c_write_byte(0xd7,0x16);
-	sic110a_i2c_write_byte(0xdd,0x70);// ;heq
+	sic110a_i2c_write_byte(0xdd,0x70);// ;heq  
 	sic110a_i2c_write_byte(0xde,0x90);
 	sic110a_i2c_write_byte(0xb9,0x00);//;Ygamma 
 	sic110a_i2c_write_byte(0xba,0x04); 

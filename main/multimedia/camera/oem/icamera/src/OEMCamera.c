@@ -385,8 +385,13 @@ static AEESize gCameraSnapshotSizeList [] = {
   { 128, 128 },
   { 160, 120 },
 #endif
+#if defined(FEATURE_DISP_128X160)
+  { 176 , 220},
+  { 240 , 320},
+#else
   { 220 , 176},
   { 320 , 240},
+#endif
   { 640 , 480},
 #elif defined(USE_CAMSENSOR_SIV120)
 #if defined(FEATURE_DISP_160X128)

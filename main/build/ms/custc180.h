@@ -406,7 +406,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#endif
 
 #ifdef CAMERA_USES_SOFTDSP
-#undef FEATURE_CAMERA_NOFULLSCREEN
+#define FEATURE_CAMERA_NOFULLSCREEN
 #endif
 
 #endif /* CUSTSB2_H */
