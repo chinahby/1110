@@ -1331,6 +1331,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
                     break;
                 case AVK_SOFT2:
                 case AVK_CLR:
+					MSG_FATAL("AVK_CLR............",0,0,0);
                 	#ifdef FEATURE_ALL_KEY_PAD  //add by yangdecai 
                 	if(dwParam == 1)
                 	#else
@@ -1371,6 +1372,52 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 
             return TRUE;
         } // case EVT_KEY
+        #ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pme->a.m_pIDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pme->a.m_pIShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				MSG_FATAL("EVT_PEN_UP CALC..wXPos===%d,rc.x=%d,rc.dx=%d",wXPos,rc.x,rc.dx);
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					MSG_FATAL("TOUCH_PT_IN_RECT..............",0,0,0);
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_CALCAPP,EVT_USER,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_CALCAPP,EVT_USER,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+						 boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_CALCAPP,EVT_USER,AVK_CLR,0);
+						 MSG_FATAL("ringsdfsdf..............",0,0,0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+		case EVT_USER:
+			if(wParam == AVK_CLR)
+			{
+				MSG_FATAL("EVT_USER...........................",0,0,0);
+				eCode = EVT_KEY;
+				return Calc_HandleEvent(pme,eCode,wParam,dwParam);
+		    }
+#endif
 
 
 
