@@ -8161,15 +8161,15 @@ boolean CallApp_AnswerCall(CCallApp  *pMe, boolean bAnswerHold,AEEEvent eCode,ui
 	else
 	#endif
 	{
-    if((((wParam == AVK_SEND|| wParam == AVK_CAMERA) && (pMe->m_anykey_answer & 0x4))
+    if((((wParam == AVK_SEND/*|| wParam == AVK_CAMERA*/) && (pMe->m_anykey_answer & 0x4))
         ||(eCode == EVT_FLIP && ((boolean)wParam == TRUE)  && (pMe->m_anykey_answer & 0x2))
-        ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND )|| (wParam == AVK_CAMERA) || (wParam == AVK_MUSIC)) && (pMe->m_anykey_answer & 0x8))
+        ||(((wParam == AVK_USER_HEADSET) || (wParam == AVK_SEND )/*|| (wParam == AVK_CAMERA) || (wParam == AVK_MUSIC)*/) && (pMe->m_anykey_answer & 0x8))
         ||(((((AVK_FIRST < wParam && wParam <AVK_POWER ) ||(wParam == AVK_INFO)||(wParam == AVK_SHIFT)||
         	   (wParam == AVK_ENTER)||(wParam == AVK_CAPLK)||(wParam == AVK_SYMBOL)||
         	   (wParam == AVK_RWD)||(wParam == AVK_LCTRL)||(wParam == AVK_SPACE)||
         	   (AVK_A <= wParam && wParam <= AVK_Z) ||(AVK_CLR < wParam && wParam <AVK_SOFT1 ))
                  && !bKeyguardEnabled)
-                 ||(wParam == AVK_SEND || wParam == AVK_CAMERA || wParam == AVK_MUSIC))
+                 ||(wParam == AVK_SEND /*|| wParam == AVK_CAMERA || wParam == AVK_MUSIC*/))
                  && (pMe->m_anykey_answer & 0x1))
         ) ||auto_answer ||wParam == AVK_SELECT)
     {
