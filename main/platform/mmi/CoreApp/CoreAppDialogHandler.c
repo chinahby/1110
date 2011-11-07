@@ -3207,6 +3207,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             	case AVK_BLUETOOTH:
 					return CoreApp_LaunchApplet(pMe, AEECLSID_BLUETOOTH_APP);
 #endif
+#if 0
                 case AVK_MUSIC:
                 	if(pMe->m_iskeypadtime)
 					{
@@ -3219,6 +3220,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #else
                     return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #endif    
+#endif
                 case AVK_FM:
                 	if(pMe->m_iskeypadtime)
 					{

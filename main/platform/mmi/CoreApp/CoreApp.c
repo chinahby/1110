@@ -1036,7 +1036,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             #endif
             
             #if defined(FEATURE_TORCH_KEY_CAMERA)					
-				case AVK_CAMERA:
+				case AVK_INFO:
                 {
                     if ( pMe->TorchOn == FALSE )
                     {
