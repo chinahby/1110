@@ -30,7 +30,12 @@ static __inline void AEE_POINTER_SEND_XY(AEEEvent evtCode, int x, int y)
    int nBufferLength = sizeof(pszXY);
 	
 	AEE_POINTER_SET_XY(pszXY, nBufferLength, x, y);
-      
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+    if (OEMKeyguard_HandleEvent(evtCode, nBufferLength,(uint32)pszXY))
+    {	
+        return;
+    }	
+#endif
 	(void)AEE_Event(evtCode, nBufferLength, (uint32)pszXY);
   
 }

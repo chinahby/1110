@@ -169,10 +169,7 @@ ifeq ($(USES_LCD_TOUCH),yes)
 		mediaplayer.png|fs:/image/core/mediaplayer.png \
 		mediaplayer_sel.png|fs:/image/core/mediaplayer_sel.png \
 		calendar.png|fs:/image/core/calendar.png \
-		calendar_sel.png|fs:/image/core/calendar_sel.png \
-		slide.png|fs:/image/core/slide.png \
-		slide_bar.png|fs:/image/core/slide_bar.png \
-		slide_bottom.png|fs:/image/core/slide_bottom.png
+		calendar_sel.png|fs:/image/core/calendar_sel.png
 endif
 
 # 加入另外一种语言资源文件

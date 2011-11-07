@@ -6153,8 +6153,9 @@ static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
     }
 	if(OEMKeyguard_IsEnabled())
 	{
+	/*
 		IImage *m_bottom_lock_icon = NULL;
-		ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_BOTTOM_ICON); 
+		m_bottom_lock_icon = ISHELL_LoadImage(pMe->a.m_pIShell,IDLE_TOUCH_BOTTOM_ICON); 
 		IIMAGE_Draw(m_bottom_lock_icon,
 	                    0, 
 	                    SCREEN_HEIGHT-60);
@@ -6163,6 +6164,8 @@ static void CoreApp_DrawTouch_IDLE(CCoreApp *pMe)
 			(void)IIMAGE_Release(m_bottom_lock_icon);
             m_bottom_lock_icon = NULL;
 		}
+		*/
+		Appscomm_Draw_Keyguard_BackGroud(pMe->m_pDisplay,0,SCREEN_HEIGHT-60);
 		
 	}
 }

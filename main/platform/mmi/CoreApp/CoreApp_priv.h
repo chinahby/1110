@@ -360,8 +360,6 @@
 #define    IDLE_TOUCH_SEL_3                   "fs:/image/core/mediaplayer_sel.png"
 #define    IDLE_TOUCH_4                       "fs:/image/core/calendar.png"
 #define    IDLE_TOUCH_SEL_4                   "fs:/image/core/calendar_sel.png"
-#define    IDLE_TOUCH_BOTTOM_ICON             "fs:/image/core/slide_bottom.png"
-
 #else
 #define    IDLE_TOUCH_ITEMMAX                 4
 #define    IDLE_TOUCH_IDLE_BOTTOM_SPC         12
@@ -375,7 +373,6 @@
 #define    IDLE_TOUCH_SEL_3                   "fs:/image/core/mediaplayer_sel.png"
 #define    IDLE_TOUCH_4                       "fs:/image/core/calendar.png"
 #define    IDLE_TOUCH_SEL_4                   "fs:/image/core/calendar_sel.png"
-#define    IDLE_TOUCH_BOTTOM_ICON             "fs:/image/core/slide_bottom.png"
 #endif
 #endif
 #ifdef FEATURE_USES_BLACKBERRY
@@ -433,9 +430,13 @@
 #define MUSIC_WIDTH            (SCREEN_HEIGHT-82) //78
 #define MUSIC_START_WIDTH      (SCREEN_HEIGHT-80) //80
 #else
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#define MUSIC_WIDTH            (SCREEN_HEIGHT-137) //78
+#define MUSIC_START_WIDTH      (SCREEN_HEIGHT-135) //80
+#else
 #define MUSIC_WIDTH            (SCREEN_HEIGHT-52) //78
 #define MUSIC_START_WIDTH      (SCREEN_HEIGHT-50) //80
-
+#endif
 #endif
 #endif
 

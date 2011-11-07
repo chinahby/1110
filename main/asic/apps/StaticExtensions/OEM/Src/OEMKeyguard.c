@@ -59,6 +59,7 @@ when       who     what, where, why
 #include "AEE_OEMDispatch.h"
 #include "AEETAPI.h"
 #include "OEMClassIDs.h"
+#include "AEEPointerHelpers.h"
 /*===========================================================================
 
                     DEFINITIONS AND CONSTANTS
@@ -117,6 +118,7 @@ static void    OEMKeyguard_Set_Annunciator_Enable(boolean b_state);
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 static void    OEMPriv_DrawPenMoveBar(uint16 x,uint16 y);
+static void    OEMPriv_DrawTouchBackgroundBar(uint16 x,uint16 y);
 #endif
 /*===========================================================================
 
@@ -131,7 +133,7 @@ static uint16 m_privpinter_x = 0;
 static uint16 m_privpinter_y = 0;
 static uint16 m_bstartInRect = FALSE;
 static AEERect m_Rct = {16,13,53,30};
-#define MOVE_DY                3
+#define MOVE_DY                10
 #endif
 #ifdef FEATURE_ICM
 static ICM *spPhone  = NULL;
@@ -486,7 +488,7 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 {
     // The keyguard message better be on the screen!
     ASSERT(sbMessageActive);
-    
+    MSG_FATAL("OEMPriv_KeyguardEventHandler......................",0,0,0);
     switch (evt)
     {
     	//Add By zzg 2010_11_23		
@@ -702,44 +704,50 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
             break;
 		
 #ifdef FEATURE_LCD_TOUCH_ENABLE
-		if(evt == EVT_PEN_DOWN)
+		case EVT_POINTER_DOWN:
 		{
-			AEERect rct_Start = {16,13,53,30};
-			uint16 wXPos = (int16)AEE_GET_X(dwParam);
-			uint16 wYPos = (int16)AEE_GET_Y(dwParam);
+			AEERect rct_Start = {16,273,52,30};
+			uint16 wXPos = (int16)AEE_POINTER_GET_X((const char *)dwParam);
+			uint16 wYPos = (int16)AEE_POINTER_GET_Y((const char *)dwParam);
 			m_Rct.x = rct_Start.x;
 			m_Rct.y = rct_Start.y;
 			m_Rct.dx = rct_Start.dx;
 			m_Rct.dy = rct_Start.dy;
 			if(OEMKEYGUARD_PT_IN_RECT(wXPos,wYPos,rct_Start))
 			{
+				m_privpinter_x = wXPos;
+				m_privpinter_y = wYPos;
 				m_bstartInRect = TRUE;	
 			}
 		}
-		else if(evt == EVT_PEN_MOVE)
+		break;
+		case EVT_POINTER_MOVE:
 		{
 			AEERect rct = {0};
-			uint16 wXPos = (int16)AEE_GET_X(dwParam);
-			uint16 wYPos = (int16)AEE_GET_Y(dwParam);
+			uint16 wXPos = (int16)AEE_POINTER_GET_X((const char *)dwParam);
+			uint16 wYPos = (int16)AEE_POINTER_GET_Y((const char *)dwParam);
 			uint16 m_Move_Dx = wXPos-m_privpinter_x;
-			
+			MSG_FATAL("EVT_PEN_MOVE..............................",0,0,0);
 			if((m_Move_Dx>MOVE_DY) &&(m_bstartInRect))
 			{
+				MSG_FATAL("EVT_PEN_MOVE..............................111",0,0,0);
 				m_Rct.x = m_Rct.x + m_Move_Dx;
 				rct.x = m_Rct.x;
 				rct.y = m_Rct.y;
+				OEMPriv_DrawTouchBackgroundBar(0,SCREEN_HEIGHT-60);
 				OEMPriv_DrawPenMoveBar(rct.x,rct.y);
+				m_privpinter_x = wXPos;
+				m_privpinter_y = wYPos;
 				//drew »¬¶¯Í¼±ê
 			}
-			m_privpinter_x = wXPos;
-			m_privpinter_y = wYPos;
 			return TRUE;
 		}
-		else if(evt == EVT_PEN_UP)
+		break;
+		case EVT_POINTER_UP:
 		{
-			AEERect rct_End = {0};
-			uint16 wXPos = (int16)AEE_GET_X(dwParam);
-			uint16 wYPos = (int16)AEE_GET_Y(dwParam);
+			AEERect rct_End = {170,273,52,30};
+			uint16 wXPos = (int16)AEE_POINTER_GET_X((const char *)dwParam);
+			uint16 wYPos = (int16)AEE_POINTER_GET_Y((const char *)dwParam);
 			if(m_bstartInRect)
 			{
 				if(OEMKEYGUARD_PT_IN_RECT(wXPos,wYPos,rct_End))
@@ -759,10 +767,15 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
                     OEMPriv_ResumeBREW();
 				}
 			}
+			else
+			{
+				OEMPriv_DrawTouchBackgroundBar(0,SCREEN_HEIGHT-60);
+			}
 			m_bstartInRect = FALSE;	
 		}
 		m_privpinter_x = 0;
 		m_privpinter_y = 0;
+		break;
 #endif
         default:
             break;
@@ -850,6 +863,21 @@ static void    OEMPriv_DrawPenMoveBar(uint16 x,uint16 y)
         ISHELL_GetDeviceInfo(pShell, &devinfo);
 	}
 	Appscomm_Draw_Keyguard_Slide(pd,x,y);
+	IDISPLAY_Release(pd);
+}
+static void    OEMPriv_DrawTouchBackgroundBar(uint16 x,uint16 y)
+{
+	IDisplay      *pd;
+    KEYGUARD_ERR("OEMPriv_DrawPenMoveBar %x",sgpShell,0,0);
+    (void) ISHELL_CreateInstance(sgpShell,AEECLSID_DISPLAY,(void**) &pd);
+	if(pd)
+	{
+		AEEDeviceInfo devinfo = {0};
+        IShell      *pShell = AEE_GetShell();
+        
+        ISHELL_GetDeviceInfo(pShell, &devinfo);
+	}
+	Appscomm_Draw_Keyguard_BackGroud(pd,x,y);
 	IDISPLAY_Release(pd);
 }
 #endif
@@ -974,12 +1002,16 @@ SEE ALSO:
 boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dwParam)
 {
     boolean bRet = FALSE;
-
+    
+	boolean b = OEMKeyguard_IsEnabled() ;
+	boolean b2 = OEMPriv_IsPhoneIdle();
+	MSG_FATAL("OEMKeyguard_HandleEvent........000000",0,0,0);
+	MSG_FATAL("b====%d...b2======%d.....",b,b2,0);
     if (OEMKeyguard_IsEnabled() && OEMPriv_IsPhoneIdle())
     {
         boolean bKeyPress = FALSE;
         AEECLSID cls = AEE_Active(); 
-        KEYGUARD_ERR("OEMKeyguard_HandleEvent %d %x %x",sbMessageActive,evt,wParam);
+        MSG_FATAL("OEMKeyguard_HandleEvent %d %x %x",sbMessageActive,evt,wParam);
 
         //{
         //    db_items_value_type  db_value;
@@ -1018,7 +1050,11 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
 #ifdef FEATURE_UNLOCK_KEY_SPACE	        
         if ((EVT_KEY_PRESS == evt) || (EVT_KEY_HELD == evt))	
 #else
-		if (EVT_KEY_PRESS == evt)    
+#ifdef FEATURE_LCD_TOUCH_ENABLE  //add by andrew
+		if ((EVT_POINTER_UP == evt)||(EVT_KEY_PRESS == evt)||(EVT_POINTER_DOWN == evt)||(EVT_POINTER_MOVE == evt)) 
+#else
+		if (EVT_KEY_PRESS == evt) 
+#endif
 #endif
 //Add End
         {
@@ -1071,13 +1107,13 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
                 AEE_Suspend();
             }
         }
-
+        MSG_FATAL("sbMessageActive===========%d",sbMessageActive,0,0);
         if (sbMessageActive)
         {
             OEMPriv_ResetMessageTimer();
-
+            
             // Pass the event to the keyguard event handler
-            bRet = OEMPriv_KeyguardEventHandler(evt, wParam, 0);
+            bRet = OEMPriv_KeyguardEventHandler(evt, wParam, dwParam);
         }
 
     }
@@ -1087,7 +1123,7 @@ boolean OEMKeyguard_HandleEvent(AEEEvent  evt,    uint16    wParam,uint32     dw
         OEMPriv_ResetAutoguardTimer();
     }
 #endif
-	
+	MSG_FATAL("bRet=====%d",bRet,0,0);
     return bRet;
 }
 
