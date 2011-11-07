@@ -1096,6 +1096,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 						IIMAGE_Release( image);
 			    	}
 			    	break;
+#if 0
 			    case AVK_MUSIC:
 			    	{
 			    		IImage* image	= NULL;
@@ -1123,6 +1124,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 			        IIMAGE_Release( image);
 			    	}
 			    	break;
+#endif
 #ifdef	FEATURE_APP_BLUETOOTH 
 				case AVK_BLUETOOTH:	//ÓÐ´ýÐÞ¸Ä£¬À¶ÑÀµÄ¼üÅÌ²âÊÔ
 			    	{
