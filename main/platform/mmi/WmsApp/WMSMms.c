@@ -3454,7 +3454,24 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 				}
 				break;
 			}
-
+            case 0x97 /* to */
+            {
+                i++;
+				len = MMS_WSP_GetValueLen(&ptr[i],datalen-i,&iDataOffset);
+				if (len == MMS_DECODER_ERROR_VALUE)
+				{
+					MMS_DEBUG(("len == MMS_DECODER_ERROR_VALUE"));
+					return MMC_GENERIC;
+				}
+				i += iDataOffset;
+				STRNCPY((char*)decdata->delrep.hTo,(char*)&ptr[i],len);
+				j = i;
+				i += len;
+				i--;
+				break;
+            }
+            break;
+            
 			case 0x99:/* retrieve status */
 			{
 				i++;
