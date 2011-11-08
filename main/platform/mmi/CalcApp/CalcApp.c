@@ -513,23 +513,33 @@ when         who            what, where, why
 
 #elif defined(FEATURE_DISP_240X320)
 //显示数字线条宽度
-#define CALC_NUMBER_LINE_WIDTH     2
+#define CALC_NUMBER_LINE_WIDTH        2
 //显示数字宽度
 #define CALC_NUMBER_WIDTH             9
 //显示数字高度
 #define CALC_NUMBER_HEIGHT            19
 //显示计算区域X坐标原点
-#define CALC_VAL_RECT_X                  10
+#define CALC_VAL_RECT_X              10
 //显示计算区域最底行Y坐标原点
-#define CALC_VAL_RECT_Y                  22
+#define CALC_VAL_RECT_Y              32
 //显示计算区域宽度
-#define CALC_VAL_RECT_WIDTH          112
+#define CALC_VAL_RECT_WIDTH          212
 //显示单行计算区域高度
 #define CALC_VAL_RECT_HEIGHT         26
 //显示数字间间隔
-#define CALC_BETWEEN_NUM_PIXEL     1
-    
-
+#define CALC_BETWEEN_NUM_PIXEL       1
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#define CALC_ITEM                    18
+#define CALC_LINE_ROW1               88//(88+25)
+#define CALC_LINE_ROW2               125//(125+25)
+#define CALC_LINE_ROW3               162//(162+25)
+#define CALC_LINE_ROW4               199//(199+25)
+#define CALC_LINE_ROW5               236//(236+25)
+#define STARX                        5
+#define SPACEX                       9
+#define NUMWINDTH                    50
+#define NUMHEIGHT                    27
+#endif
 //wlh 20090417 add icon x/y
 //正负号
 #define CALC_ZHENFU_X 12
@@ -1069,6 +1079,7 @@ static void Calc_Backspace( CCalcApp *pme)
             // operators/values in the entire expression, simulate
             // a press of the Clear softkey to remove the entire
             // expression
+            MSG_FATAL("reset...............",0,0,0);
             Calc_Reset( pme);
         }
         else
@@ -1132,6 +1143,41 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 {
 	BottomBar_Param_type BarParam;        //wlh 20090417 add   
 
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	AEERect rc[CALC_ITEM]= 
+					  	{
+					  		{STARX,CALC_LINE_ROW1,NUMWINDTH,NUMHEIGHT},
+					  		{STARX+(NUMWINDTH+SPACEX),CALC_LINE_ROW1,NUMWINDTH,NUMHEIGHT},
+					  		{STARX+(NUMWINDTH+SPACEX)*2,CALC_LINE_ROW1,NUMWINDTH,NUMHEIGHT},
+					  		{STARX+(NUMWINDTH+SPACEX)*3,CALC_LINE_ROW1,NUMWINDTH,NUMHEIGHT},
+					  		{STARX,CALC_LINE_ROW2,NUMWINDTH,NUMHEIGHT},
+					  		{STARX+(NUMWINDTH+SPACEX),CALC_LINE_ROW2,NUMWINDTH,NUMHEIGHT},
+					  		{STARX+(NUMWINDTH+SPACEX)*2,CALC_LINE_ROW2,NUMWINDTH,NUMHEIGHT},
+					  		{STARX+(NUMWINDTH+SPACEX)*3,CALC_LINE_ROW2,NUMWINDTH,NUMHEIGHT},
+					  		{STARX,CALC_LINE_ROW3,NUMWINDTH,NUMHEIGHT},
+					  		{STARX+(NUMWINDTH+SPACEX),CALC_LINE_ROW3,NUMWINDTH,NUMHEIGHT},
+					  		{STARX+(NUMWINDTH+SPACEX)*2,CALC_LINE_ROW3,NUMWINDTH,NUMHEIGHT},
+					  		{STARX+(NUMWINDTH+SPACEX)*3,CALC_LINE_ROW3,NUMWINDTH,NUMHEIGHT},
+					  		{STARX,CALC_LINE_ROW4,NUMWINDTH,NUMHEIGHT},
+					  		{STARX+(NUMWINDTH+SPACEX),CALC_LINE_ROW4,NUMWINDTH,NUMHEIGHT},
+					  		{STARX+(NUMWINDTH+SPACEX)*2,CALC_LINE_ROW4,NUMWINDTH,NUMHEIGHT},
+					  		{STARX+(NUMWINDTH+SPACEX)*3,CALC_LINE_ROW4,NUMWINDTH,(NUMHEIGHT+CALC_LINE_ROW5-CALC_LINE_ROW4)},
+					  		{STARX,CALC_LINE_ROW5,NUMWINDTH+(NUMWINDTH+SPACEX),NUMHEIGHT},
+					  		{STARX+(NUMWINDTH+SPACEX)*2,CALC_LINE_ROW5,NUMWINDTH,NUMHEIGHT}
+					  	};
+  int imageId[CALC_ITEM] = {IDB_CALCAPP_C_DOWN,IDB_CALCAPP_SIGN_DOWN,IDB_CALCAPP_DIV_DOWN,IDB_CALCAPP_MUL_DOWN
+  						  ,IDB_CALCAPP_NUM7_DOWN,IDB_CALCAPP_NUM8_DOWN,IDB_CALCAPP_NUM9_DOWN,IDB_CALCAPP_SUB_DOWN
+  						  ,IDB_CALCAPP_NUM4_DOWN,IDB_CALCAPP_NUM5_DOWN,IDB_CALCAPP_NUM6_DOWN,IDB_CALCAPP_ADD_DOWN
+  						  ,IDB_CALCAPP_NUM1_DOWN,IDB_CALCAPP_NUM2_DOWN,IDB_CALCAPP_NUM3_DOWN,IDB_CALCAPP_EQUAL_DOWN
+  						  ,IDB_CALCAPP_NUM0_DOWN,IDB_CALCAPP_DOT_DOWN};
+  int imageIdN[CALC_ITEM] = {IDB_CALCAPP_C_NORMAL,IDB_CALCAPP_SIGN_NORMAL,IDB_CALCAPP_DIV_NORMAL,IDB_CALCAPP_MUL_NORMAL
+  						  ,IDB_CALCAPP_NUM7_NORMAL,IDB_CALCAPP_NUM8_NORMAL,IDB_CALCAPP_NUM9_NORMAL,IDB_CALCAPP_SUB_NORMAL
+  						  ,IDB_CALCAPP_NUM4_NORMAL,IDB_CALCAPP_NUM5_NORMAL,IDB_CALCAPP_NUM6_NORMAL,IDB_CALCAPP_ADD_NORMAL
+  						  ,IDB_CALCAPP_NUM1_NORMAL,IDB_CALCAPP_NUM2_NORMAL,IDB_CALCAPP_NUM3_NORMAL,IDB_CALCAPP_EQUAL_NORMAL
+  						  ,IDB_CALCAPP_NUM0_NORMAL,IDB_CALCAPP_DOT_NORMAL};
+  AECHAR digits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+  #endif
+  
     if (pme == NULL)
     {
         return FALSE;
@@ -1377,43 +1423,182 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 			{
 				AEEDeviceInfo devinfo;
 				int nBarH ;
-				AEERect rc;
+				//AEERect rc;
 				int16 wXPos = (int16)AEE_GET_X(dwParam);
 				int16 wYPos = (int16)AEE_GET_Y(dwParam);
-
+				int i = 0;
+				AEERect rct;
+				IImage *image = NULL;
 				nBarH = GetBottomBarHeight(pme->a.m_pIDisplay);
-        
-				MEMSET(&devinfo, 0, sizeof(devinfo));
+        		MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pme->a.m_pIShell, &devinfo);
-				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
-				MSG_FATAL("EVT_PEN_UP CALC..wXPos===%d,rc.x=%d,rc.dx=%d",wXPos,rc.x,rc.dx);
-				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				SETAEERECT(&rct, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rct))
 				{
-					MSG_FATAL("TOUCH_PT_IN_RECT..............",0,0,0);
-					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
-					{
-						boolean rt =  ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_CALCAPP,EVT_USER,AVK_SELECT,0);
-						return rt;
-					}
-					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//左
-					{
-						 boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_CALCAPP,EVT_USER,AVK_INFO,0);
-						 return rt;
-					}
-					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
+					if(wXPos >= rct.x + (rct.dx/3)*2 && wXPos < rct.x + (rct.dx/3)*3 )//左
 					{						
 						 boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_CALCAPP,EVT_USER,AVK_CLR,0);
-						 MSG_FATAL("ringsdfsdf..............",0,0,0);
 						 return rt;
 					}
 				}
+				
+                for(i = 0;i<CALC_ITEM;i++)
+                {
+                	if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc[i]))
+                	{
+                	#if 1
+	                	image = ISHELL_LoadResImage( pme->a.m_pIShell,
+                                        AEE_APPSCOMMONRES_IMAGESFILE,
+                                        imageIdN[i]);
+						if(image!=NULL)
+						{
+							IIMAGE_Draw(image,rc[i].x,rc[i].y);
+							IIMAGE_Release(image);
+						}
+						switch(i)
+						{
+							case 0:
+							{
+								//boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_CALCAPP,EVT_USER,AVK_CLR,0);
+						 		//return rt;
+						 		Calc_Reset( pme);
+						 		
+								return TRUE;
+							}
+								break;
+							case 1:
+								IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+								pme->m_rtype = TYPE_ZHENFU;
+								
+                   			 	Calc_ToggleSign(pme);
+								break;
+							case 2:
+								IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+								pme->m_rtype = TYPE_DIVIDE;
+								
+                    			Calc_PushVal(pme, OP_DIV);
+								break;
+							case 3:
+								IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+								pme->m_rtype = TYPE_MULTI;
+								
+                    			Calc_PushVal(pme, OP_MUL);
+								break;
+							case 4:
+								Calc_AddChar(pme, digits[7], FALSE);
+                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+								return TRUE;
+								break;
+							case 5:
+								Calc_AddChar(pme, digits[8], FALSE);
+                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+								return TRUE;
+								break;
+							case 6:
+								Calc_AddChar(pme, digits[9], FALSE);
+                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+								return TRUE;
+								break;
+							case 7:
+								IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+								pme->m_rtype = TYPE_SUBTRACT;
+								
+                    			Calc_PushVal(pme, OP_SUB);
+								break;
+							case 8:
+								Calc_AddChar(pme, digits[4], FALSE);
+                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+								return TRUE;
+								break;
+							case 9:
+								Calc_AddChar(pme, digits[5], FALSE);
+                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+								return TRUE;
+								break;
+							case 10:
+								Calc_AddChar(pme, digits[6], FALSE);
+                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+								return TRUE;
+								break;
+							case 11:
+								IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+								pme->m_rtype = TYPE_PLUS;
+								
+                    			Calc_PushVal(pme, OP_ADD);
+								break;
+							case 12:
+								Calc_AddChar(pme, digits[1], FALSE);
+                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+								return TRUE;
+								break;
+							case 13:
+								Calc_AddChar(pme, digits[2], FALSE);
+                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+								return TRUE;
+								break;
+							case 14:
+								Calc_AddChar(pme, digits[3], FALSE);
+                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+								return TRUE;
+								break;
+							case 15:
+								IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+								pme->m_rtype = TYPE_EQUAL;
+								
+                    			Calc_PushVal(pme, OP_EQUAL);
+								break;
+							case 16:
+                				Calc_AddChar(pme, digits[0], FALSE);
+                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+								return TRUE;
+								break;
+							case 17:
+								Calc_AddChar(pme, (AECHAR)'.', TRUE);
+								return TRUE;
+								break;
+							default:
+								break;
+						}
+						#endif
+                	}
+                } 
+				IDISPLAY_Update(pme->a.m_pIDisplay);
 
+			}
+			break;
+		case EVT_PEN_DOWN:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				int i = 0;
+				int j = 0;
+				
+				int16 wXPos   = (int16)AEE_GET_X(dwParam);
+				int16 wYPos   = (int16)AEE_GET_Y(dwParam);
+				IImage *image = NULL;
+				MSG_FATAL("wXPos===%d,     wYPos===%d",wXPos,wYPos,0);
+                for(i = 0;i<CALC_ITEM;i++)
+                {
+                	if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc[i]))
+                	{
+	                	image = ISHELL_LoadResImage( pme->a.m_pIShell,
+                                        AEE_APPSCOMMONRES_IMAGESFILE,
+                                        imageId[i]);
+						if(image!=NULL)
+						{
+							MSG_FATAL("rc[i].x===%d,rc[i].y===%d,i===%d",rc[i].x,rc[i].y,i);
+							IIMAGE_Draw(image,rc[i].x,rc[i].y);
+							IIMAGE_Release( image);
+						}
+	                	break;
+                	}
+                } 
+				IDISPLAY_Update(pme->a.m_pIDisplay);
 			}
 			break;
 		case EVT_USER:
 			if(wParam == AVK_CLR)
 			{
-				MSG_FATAL("EVT_USER...........................",0,0,0);
 				eCode = EVT_KEY;
 				return Calc_HandleEvent(pme,eCode,wParam,dwParam);
 		    }

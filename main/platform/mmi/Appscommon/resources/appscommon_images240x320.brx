@@ -583,5 +583,113 @@
 	<Object Id="7153" Name="IDB_MODE_IME_LEFT">
 		<File>..\images\240x320\common\ime\LEFT.bmp</File>
 	</Object>
+	<Object Id="7200" Name="IDB_CALCAPP_ADD_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_ADD_DOWN.png</File>
+	</Object>
+	<Object Id="7201" Name="IDB_CALCAPP_ADD_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_ADD_NORMAL.png</File>
+	</Object>
+	<Object Id="7202" Name="IDB_CALCAPP_C_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_C_DOWN.png</File>
+	</Object>
+	<Object Id="7203" Name="IDB_CALCAPP_C_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_C_NORMAL.png</File>
+	</Object>
+	<Object Id="7204" Name="IDB_CALCAPP_DIV_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_DIV_DOWN.png</File>
+	</Object>
+	<Object Id="7205" Name="IDB_CALCAPP_DIV_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_DIV_NORMAL.png</File>
+	</Object>
+	<Object Id="7206" Name="IDB_CALCAPP_DOT_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_DOT_DOWN.png</File>
+	</Object>
+	<Object Id="7207" Name="IDB_CALCAPP_DOT_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_DOT_NORMAL.png</File>
+	</Object>
+	<Object Id="7208" Name="IDB_CALCAPP_EQUAL_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_EQUAL_DOWN.png</File>
+	</Object>
+	<Object Id="7209" Name="IDB_CALCAPP_EQUAL_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_EQUAL_NORMAL.png</File>
+	</Object>
+	<Object Id="7210" Name="IDB_CALCAPP_MUL_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_MUL_DOWN.png</File>
+	</Object>
+	<Object Id="7211" Name="IDB_CALCAPP_MUL_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_MUL_NORMAL.png</File>
+	</Object>
+	<Object Id="7212" Name="IDB_CALCAPP_NUM0_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM0_DOWN.png</File>
+	</Object>
+	<Object Id="7213" Name="IDB_CALCAPP_NUM0_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM0_NORMAL.png</File>
+	</Object>
+	<Object Id="7214" Name="IDB_CALCAPP_NUM1_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM1_DOWN.png</File>
+	</Object>
+	<Object Id="7215" Name="IDB_CALCAPP_NUM1_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM1_NORMAL.png</File>
+	</Object>
+	<Object Id="7216" Name="IDB_CALCAPP_NUM2_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM2_DOWN.png</File>
+	</Object>
+	<Object Id="7217" Name="IDB_CALCAPP_NUM2_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM2_NORMAL.png</File>
+	</Object>
+	<Object Id="7218" Name="IDB_CALCAPP_NUM3_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM3_DOWN.png</File>
+	</Object>
+	<Object Id="7219" Name="IDB_CALCAPP_NUM3_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM3_NORMAL.png</File>
+	</Object>
+	<Object Id="7220" Name="IDB_CALCAPP_NUM4_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM4_DOWN.png</File>
+	</Object>
+	<Object Id="7221" Name="IDB_CALCAPP_NUM4_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM4_NORMAL.png</File>
+	</Object>
+	<Object Id="7222" Name="IDB_CALCAPP_NUM5_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM5_DOWN.png</File>
+	</Object>
+	<Object Id="7223" Name="IDB_CALCAPP_NUM5_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM5_NORMAL.png</File>
+	</Object>
+	<Object Id="7224" Name="IDB_CALCAPP_NUM6_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM6_DOWN.png</File>
+	</Object>
+	<Object Id="7225" Name="IDB_CALCAPP_NUM6_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM6_NORMAL.png</File>
+	</Object>
+	<Object Id="7226" Name="IDB_CALCAPP_NUM7_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM7_DOWN.png</File>
+	</Object>
+	<Object Id="7227" Name="IDB_CALCAPP_NUM7_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM7_NORMAL.png</File>
+	</Object>
+	<Object Id="7228" Name="IDB_CALCAPP_NUM8_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM8_DOWN.png</File>
+	</Object>
+	<Object Id="7229" Name="IDB_CALCAPP_NUM8_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM8_NORMAL.png</File>
+	</Object>
+	<Object Id="7230" Name="IDB_CALCAPP_NUM9_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM9_DOWN.png</File>
+	</Object>
+	<Object Id="7231" Name="IDB_CALCAPP_NUM9_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_NUM9_NORMAL.png</File>
+	</Object>
+	<Object Id="7232" Name="IDB_CALCAPP_SIGN_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_SIGN_DOWN.png</File>
+	</Object>
+	<Object Id="7233" Name="IDB_CALCAPP_SIGN_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_SIGN_NORMAL.png</File>
+	</Object>
+	<Object Id="7234" Name="IDB_CALCAPP_SUB_DOWN" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_SUB_DOWN.png</File>
+	</Object>
+	<Object Id="7235" Name="IDB_CALCAPP_SUB_NORMAL" MimeType="image/png">
+		<File>..\images\240x320\common\Calculator\IMAGE_CALC_SUB_NORMAL.png</File>
+	</Object>
 </Objects>
 </BREWRes>
