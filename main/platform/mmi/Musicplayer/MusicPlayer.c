@@ -890,7 +890,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
                     return TRUE;
             }
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
-		case EVT_PEN_UP:
+		//case EVT_PEN_UP:
 		//case EVT_PEN_DOWN:
 #endif//FEATURE_LCD_TOUCH_ENABLE
 		case EVT_HEADSET:

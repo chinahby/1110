@@ -470,7 +470,34 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
         }
         //case EVT_GSENSOR_SHAKE:
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
+
 		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+                MSG_FATAL("Windows--EVT_PEN_UP",0,0,0);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, devinfo.cyScreen);
+				if ((wXPos>0)&&(wXPos<devinfo.cxScreen/2)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+				{
+					boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,0);
+					return rt;
+				}
+				else if ((wXPos>devinfo.cxScreen/2)&&(wXPos<devinfo.cxScreen)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+				{
+					boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
+					return rt;
+				}
+
+			}
+			return TRUE;
+
+
 #endif//FEATURE_LCD_TOUCH_ENABLE
         case EVT_KEY:
              return MP3_MusicPlayerHandleKeyEvent(pMe,eCode,wParam,dwParam);
@@ -965,17 +992,17 @@ static boolean MP3_Playlist_HandleEvent(CMusicPlayer *pMe,
 				{
 					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
 					{
-						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_SELECT,0);
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,0);
 						return rt;
 					}
 					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
 					{
-						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_INFO,0);
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
 						 return rt;
 					}
 					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
 					{						
-						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_CLR,0);
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
 						 return rt;
 					}
 				}
@@ -1302,17 +1329,17 @@ static boolean MP3_SetRingtone_HandleEvent(CMusicPlayer *pMe,
 				{
 					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
 					{
-						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_SELECT,0);
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,0);
 						return rt;
 					}
 					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
 					{
-						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_INFO,0);
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
 						 return rt;
 					}
 					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
 					{						
-						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_CLR,0);
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
 						 return rt;
 					}
 				}
@@ -2083,17 +2110,17 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
 				{
 					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
 					{
-						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_SELECT,0);
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,0);
 						return rt;
 					}
 					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
 					{
-						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_INFO,0);
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
 						 return rt;
 					}
 					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
 					{						
-						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_CLR,0);
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
 						 return rt;
 					}
 				}
@@ -2299,17 +2326,17 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
 				{
 					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
 					{
-						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_SELECT,0);
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,0);
 						return rt;
 					}
 					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
 					{
-						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_INFO,0);
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
 						 return rt;
 					}
 					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
 					{						
-						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_KEY,AVK_CLR,0);
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
 						 return rt;
 					}
 				}
