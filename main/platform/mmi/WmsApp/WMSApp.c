@@ -129,7 +129,9 @@ static void WmsApp_UpdateMemoryStatus(WmsApp *pMe, wms_memory_status_s_type *ptr
 static uint16 WmsApp_GetMsgICONID(wms_cache_info_node * pNode);
 
 static void WmsApp_ReservedMsgTimer(void * pUser);
-
+#ifdef MMS_TEST
+void WmsApp_debug_CheckChariFromRawDaTa(WmsApp *pMe);
+#endif
 /*==============================================================================
                               全局数据
 ==============================================================================*/
@@ -1032,6 +1034,9 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             MSG_FATAL("EVT_APP_START %d",pMe->m_currState,0,0);
             // 开始跑WMS状态机
             CWmsApp_RunFSM(pMe);
+#ifdef MMS_TEST            
+            //WmsApp_debug_CheckChariFromRawDaTa(pMe);
+#endif            
             return TRUE;
 
         case EVT_APP_STOP: 
@@ -1473,9 +1478,23 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 						//get URL,we only need the first sms nofity
 						if ( notify_buf[2] == 0 )
 						{
-							//WDP body
+							//WDP body							
+								
 							data = &notify_buf[7];
 							header_len = data[HEADER_INFO-1];
+							if(header_len == 0x1f)
+							{
+							    header_len = data[HEADER_INFO];
+							}
+							else if(header_len > 0x1f)
+							{
+							    header_len = 0;
+							    while(data[HEADER_INFO - 1 + header_len] != 0)	
+							    {
+							        header_len ++;
+							    }
+							}
+							
 							if( data_len <= HEADER_INFO + header_len ) 
 							{
 								goto Exit;
@@ -1483,9 +1502,9 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 							else
 							{
 								uint8 *header = NULL;
-								body = data + HEADER_INFO + header_len;
 								header = (uint8 *)MALLOC(header_len+1);
-
+                                uint8 *ptrCur = NULL;
+                                
 								if( NULL == header)
 								{
 									MSG_FATAL("SMSPUSH_ALLOC_ERROR1",0,0,0);
@@ -1500,7 +1519,23 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 									FREEIF( header );
 									goto Exit;
 								}
+								// yy add header judgement
+								body = data + HEADER_INFO + header_len;
+								ptrCur = (uint8*)STRCHR((char*)body,0xb4);
+								if(ptrCur == NULL || ptrCur[1] != 0x87)
+								{
+									FREEIF( header );
+									goto Exit;
+								}
 
+								ptrCur = (uint8*)STRCHR((char*)body,0xaf);
+								if(ptrCur == NULL || ptrCur[1] != 0x84)
+								{
+									FREEIF( header );
+									goto Exit;
+								}
+				
+								header_len += 4;
 								body_len = data_len - HEADER_INFO - header_len;
 								FREEIF( header );
 							}
@@ -1825,6 +1860,7 @@ Exit:
                             CLOSE_DIALOG(DLGRET_INBOX_MMS);
                         }
                     }
+                    FREEIF(pBody);
                     break;
                     case MMS_PDU_SEND_CONF:
                     {
@@ -1994,6 +2030,7 @@ Exit:
                             gbWmsMMSNtf = FALSE;
                             CLOSE_DIALOG(DLGRET_INBOX_MMS);
                         }
+                        FREEIF(pBody); // YY: add
                     }
                     break;
                     case MMS_PDU_RETRIEVE_CONF:
@@ -2003,7 +2040,7 @@ Exit:
 
                         ISHELL_PostEventEx(
                             AEE_GetShell(),
-                            EVTFLG_UNIQUE,
+                            EVTFLG_ASYNC,
                             AEECLSID_WMSAPP,
                             EVT_MMS_MSG_GET_FINISH,
                             HTTP_CODE_OK,
@@ -2030,6 +2067,7 @@ Exit:
             					(void) ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_WMSAPP, "NEWMMS");
             				}
         				}
+        				/*
                         else if(pMe->m_currState == WMSST_WMSNEW)
                         {
                             CLOSE_DIALOG(DLGRET_CREATE)
@@ -2039,7 +2077,7 @@ Exit:
                             gbWmsMMSNtf = FALSE;
                             CLOSE_DIALOG(DLGRET_INBOX_MMS);
                         }
-                        
+                        */
                         MSG_FATAL("pDecData->message.hFrom=%s",(char*)&pDecData->message.hFrom,0,0);
                         MSG_FATAL("pDecData->message.hFrom=%s",pDecData->message.hTo,0,0);
                         MSG_FATAL("pDecData->message.hFrom=%s,",pDecData->message.hCc,0,0);
@@ -6863,7 +6901,153 @@ void WmsApp_ProcessMMSStatus(WmsApp *pMe)
     }
     MSG_FATAL("WmsApp_ProcessMMSStatus End",0,0,0);
 }
+extern uint8* WMS_MMS_BUFFERGet();
 
+void WmsApp_debug_CheckChariFromRawDaTa(WmsApp *pMe)
+{
+    uint8* pRawData = WMS_MMS_BUFFERGet();
+    IFileMgr* pFileMgr = NULL;
+    IFile* pFile = NULL;
+    uint32 nSize = 0;
+    int nRet = SUCCESS;
+    uint8* body = NULL;
+    wms_raw_ts_data_s_type  raw_data;
+    uint32 header_len = 0;
+    uint32 body_len = 0;
+    
+    raw_data.format = WMS_FORMAT_CDMA;
+    raw_data.tpdu_type = WMS_TPDU_DELIVER;
+    
+    if(ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_FILEMGR,(void**)&pFileMgr))
+    {
+        return;
+    }
+
+    pFile =  IFILEMGR_OpenFile(pFileMgr,"fs:/hsmm/pictures/rawdata.txt",_OFM_READ);
+    if(pFile)
+    {
+        raw_data.len = IFILE_Read(pFile,raw_data.data,WMS_MAX_LEN);
+
+        RELEASEIF(pFile);
+            
+        nRet = IWMS_TsDecode(pMe->m_pwms, 
+	                             &raw_data, 
+	                             &pMe->m_CltTsdata);
+	                             
+	    pFile = IFILEMGR_OpenFile(pFileMgr,"fs:/hsmm/pictures/rawdataDec.txt",_OFM_CREATE);
+	    if(pFile)
+	    {
+	        nSize = IFILE_Write(pFile,pMe->m_CltTsdata.u.cdma.user_data.data,pMe->m_CltTsdata.u.cdma.user_data.data_len);
+	    }
+	    
+        RELEASEIF(pFile);
+
+        nSize = IWMS_MMsDecodeNotifyBody(pMe->m_pwms,&pMe->m_CltTsdata,pRawData);
+
+        pFile = IFILEMGR_OpenFile(pFileMgr,"fs:/hsmm/pictures/rawdataChari.txt",_OFM_CREATE);
+	    if(pFile && nSize > 0)
+	    {
+	        nSize = IFILE_Write(pFile,pRawData,nSize);
+	    }
+
+        RELEASEIF(pFile);
+
+        if ( pRawData[2] == 0 )
+		{
+			//WDP body							
+			uint8* data = NULL;
+			
+			#define HEADER_INFO 3
+			
+			data = &pRawData[7];
+			header_len = data[HEADER_INFO-1];
+			if(header_len == 0x1f)
+			{
+			    header_len = data[HEADER_INFO];
+			}
+			else if(header_len > 0x1f)
+			{
+			    header_len = 0;
+			    while(data[HEADER_INFO - 1 + header_len] != 0)	
+			    {
+			        header_len ++;
+			    }
+			}
+			
+			if( nSize <= HEADER_INFO + header_len ) 
+			{
+				goto Exit;
+			}
+			else
+			{
+				uint8 *header = NULL;							
+				uint8 *ptrCur = NULL;
+				header = (uint8 *)MALLOC(header_len+1);
+
+				if( NULL == header)
+				{
+					MSG_FATAL("SMSPUSH_ALLOC_ERROR1",0,0,0);
+					goto Exit;
+				}
+
+				MEMCPY( header, &data[HEADER_INFO], header_len );
+				header[header_len] = '\0';
+
+				if( !STRSTR((char*)header, "application/vnd.wap.mms-message"))
+				{
+					FREEIF( header );
+					goto Exit;
+				}
+				
+				
+				// yy add header judgement
+				body = data + HEADER_INFO + header_len;
+				ptrCur = (uint8*)STRCHR((char*)body,0xb4);
+				if(ptrCur == NULL || ptrCur[1] != 0x87)
+				{
+					FREEIF( header );
+					goto Exit;
+				}
+
+				ptrCur = (uint8*)STRCHR((char*)body,0xaf);
+				if(ptrCur == NULL || ptrCur[1] != 0x84)
+				{
+					FREEIF( header );
+					goto Exit;
+				}
+				
+				header_len += 4;
+
+				body_len = nSize - HEADER_INFO - header_len;
+				FREEIF( header );
+			}
+
+			body = (uint8*)sys_malloc(body_len);
+			if( NULL == body )
+			{
+				MSG_FATAL("SMSPUSH_ALLOC_ERROR2",0,0,0);
+				goto Exit;
+			}
+
+			MEMCPY( (void*)body, (void*)(data + HEADER_INFO + header_len), body_len);
+
+			//now, body need pass to function WMS_MMS_PDU_Decode to decode the URL.
+			MSG_FATAL(" MMS_WSP_DEC_DATA decData",0,0,0);
+           
+			ISHELL_PostEventEx(pMe->m_pShell,
+			    EVTFLG_ASYNC,
+			    AEECLSID_WMSAPP,
+			    EVT_MMS_PDUDECODE,
+			    body_len,
+			    (int32)body);
+			    
+		}
+    }
+    
+Exit:    
+    RELEASEIF(pFile);
+    RELEASEIF(pFileMgr);
+}
 void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu)
 {
     int i, nItems;
