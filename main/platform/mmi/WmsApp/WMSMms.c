@@ -2392,8 +2392,9 @@ void WMS_MMS_DATA_Encode(WSP_MMS_ENCODE_DATA* pData)
     
     ICONFIG_GetItem(pConfig,CFGI_MMS_OUTCOUNT,&g_mmsDataInfoMax,sizeof(g_mmsDataInfoMax));
 
-    pFilePath = (char*)(pData->fragment[index].hContentFile);
-    
+//    pFilePath = (char*)(pData->fragment[1].hContentFile);
+
+    pData->frag_num = 0;
     while(index < WMSMMS_FRAGMENTCOUNT)
     {
         if(index == 0 && STRLEN((char*)pData->fragment[index].hContentText) != 0)
@@ -2405,12 +2406,12 @@ void WMS_MMS_DATA_Encode(WSP_MMS_ENCODE_DATA* pData)
             len = STRLEN("1.txt");
             STRNCPY((char*)pData->fragment[0].hContentID,"1.txt",len);
             len = STRLEN("1.txt");
-            STRNCPY((char*)pData->fragment[0].hContentName,"1.txt",len);   
+            STRNCPY((char*)pData->fragment[0].hContentName,"1.txt",len);  
+            pData->frag_num ++;
         }
-        else if(STRLEN(pFilePath) != 0)
+        else if(STRLEN(pFilePath = (char*)(pData->fragment[index].hContentFile)) != 0)
         {
             MMS_DEBUG(("[WMS_MMS_DATA_Encode] Find Resource"));
-            pFilePath = (char*)(pData->fragment[index].hContentFile);
             MMS_DEBUG(("[WMS_MMS_DATA_Encode] File Path:%s",pFilePath));
             ISHELL_DetectType(AEE_GetShell(),NULL,&size,pFilePath,(const char**)&pFileType);
             pData->fragment[index].pType =  pFileType ? pFileType : OTHER_MIME_BASE;//IMAGE_MIME_BASE;
@@ -2423,9 +2424,9 @@ void WMS_MMS_DATA_Encode(WSP_MMS_ENCODE_DATA* pData)
         	MEMCPY((void*)pData->fragment[index].hContentLocation,(void*)BASENAME(pFilePath),len);
         	MEMCPY((void*)pData->fragment[index].hContentID,(void*)BASENAME(pFilePath),len);
         	MEMCPY((void*)pData->fragment[index].hContentName,(void*)BASENAME(pFilePath),len); 
+        	pData->frag_num ++;
         }
         ++index;
-        pData->frag_num = index;
     }; 
 #else    
 	pData->frag_num = 1;
@@ -4190,11 +4191,18 @@ typedef struct
 
 void WMS_MMSWaitStack(void *pShell)
 {
+    if(IVector_IsEmpty(pSocketParam))
+    {
+        ISHELL_CancelTimer(pShell,&WMS_MMSWaitStack,pShell);
+        return;
+    }    
+        
     if(!WMS_GETSOCKET_STATUS())
     {
         WMS_MMS_SOCKET_PARAM *pParam = NULL;
         pParam = IVector_ElementAt(pSocketParam,0);  
         WMS_MMSState(pParam->nState,pParam->wParam,pParam->dwParam);
+        MMS_DEBUG(("[MSG][WMS_MMSState]: pParam->nState:%d,wParam:%d,dwParam:%d!"));
         IVector_RemoveElementAt(pSocketParam,0);
     }
     
@@ -4211,11 +4219,13 @@ boolean WMS_MMSState(int nState,int16 wParam,uint32 dwParam)
 {
     MMSSocket *pMMSSocket = NULL;
     boolean isLocked = FALSE;
-    
+
+    MMS_DEBUG(("[MSG][WMS_MMSState]: Enter!"));
     if(!WMS_SOCKET_LOCK())
     {
         WMS_MMS_SOCKET_PARAM* pParam = NULL;
         int i = 0;
+        MMS_DEBUG(("[MSG][WMS_MMSState]: LOCK!"));
         if(pSocketParam == NULL)
         {
             ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_VECTOR,(void**)&pSocketParam);

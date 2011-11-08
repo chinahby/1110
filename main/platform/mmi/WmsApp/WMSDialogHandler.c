@@ -17994,7 +17994,7 @@ int AddMimeResIntoMms(WmsApp *pMe,char* pPath)
     }
     else
     {
-        nIndex = 0;
+        nIndex = 1;//0;ÎÄ×Ö×ÊÔ´
     }
         
     pEncData = &pMe->m_EncData.pMessage->mms_data;
