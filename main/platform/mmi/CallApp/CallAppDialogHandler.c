@@ -7017,11 +7017,22 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
 
     pMe->m_pCurrNumFont     = NULL;
     pMe->m_nCurrLineSpace   = 0;
-    SETAEERECT(&dialerRect,
-                0,
-                0,
-                pMe->m_rc.dx,
-                pMe->m_rc.dy - BOTTOMBAR_HEIGHT);
+	MSG_FATAL("pMe->m_rc.dy==============%d",pMe->m_rc.dy,0,0);
+    
+    #ifdef FEATURE_LCD_TOUCH_ENABLE
+	SETAEERECT(&dialerRect,
+    0,
+    0,
+    pMe->m_rc.dx,
+    pMe->m_rc.dy - BOTTOMBAR_HEIGHT-220 );
+    #else
+	SETAEERECT(&dialerRect,
+    0,
+    0,
+    pMe->m_rc.dx,
+	pMe->m_rc.dy - BOTTOMBAR_HEIGHT );
+	#endif
+               
     
     // Clear the dialer rectangle
     Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &dialerRect, TRUE);
@@ -7068,9 +7079,11 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         #else
         pMe->m_nCurrNumHeight =pMe->m_large_Num_Height;
         #endif
-        
+        MSG_FATAL("CallApp_DrawDialerString....................1",0,0,0);
         nLineMax    = dialerRect.dy/pMe->m_nCurrNumHeight;
+		#ifndef FEATURE_LCD_TOUCH_ENABLE
         pMe->m_nCurrLineSpace = (dialerRect.dy - pMe->m_nCurrNumHeight*nLineMax)/(nLineMax-1);
+		#endif
         nLine = 0;
         while(1)
         {
@@ -7086,11 +7099,12 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
             {
                 break;
             }
+			MSG_FATAL("fits=======%d",fits,0,0);
             pMe->m_nCurrLineFits[nLine] = fits;
             dstStr += fits;
             nLine++;
         }
-        
+        MSG_FATAL("CallApp_DrawDialerString....................2",0,0,0);
         if(nLine <= nLineMax)
         {
             
@@ -7100,14 +7114,19 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
             pMe->m_pCurrNumFont = NULL;
         }
     }
-
+	MSG_FATAL("CallApp_DrawDialerString....................3",0,0,0);
     dstStr = revStr;
+	MSG_FATAL("CallApp_DrawDialerString....................300",0,0,0);
     if(pMe->m_pNormalNumFont && pMe->m_pCurrNumFont == NULL)
     {
+    	MSG_FATAL("nLineMax===========%d",nLineMax,0,0);
         pMe->m_pCurrNumFont = pMe->m_pNormalNumFont;
         pMe->m_nCurrNumHeight = pMe->m_Normal_Num_Height;
         nLineMax    = dialerRect.dy/pMe->m_nCurrNumHeight;
+		#ifndef FEATURE_LCD_TOUCH_ENABLE
         pMe->m_nCurrLineSpace  = (dialerRect.dy - pMe->m_nCurrNumHeight*nLineMax)/(nLineMax-1);
+		#endif
+		MSG_FATAL("pMe->m_nCurrLineSpace===========%d",pMe->m_nCurrLineSpace,0,0);
         nLine = 0;
         while(1)
         {
@@ -7118,7 +7137,9 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
             }
             
             fits     = 0;
+			MSG_FATAL("CallApp_DrawDialerString....................30",0,0,0);
             IFONT_MeasureText(pMe->m_pCurrNumFont, dstStr, -1, dialerRect.dx, &fits, NULL);
+			MSG_FATAL("CallApp_DrawDialerString....................31",0,0,0);
             if(fits == 0)
             {
                 break;
@@ -7129,7 +7150,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
             MSG_FATAL("nLine---=%d",nLine,0,0);
         }
     }
-    
+    MSG_FATAL("CallApp_DrawDialerString....................4",0,0,0);
     if(pMe->m_pCurrNumFont == NULL)
     {
         if(pBmp)
@@ -7139,7 +7160,7 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         }
         return;
     }
-    
+    MSG_FATAL("CallApp_DrawDialerString....................5",0,0,0);
     // »­×Ö·û´®
     nLine = nLine<nLineMax?nLine:nLineMax;
     pMe->m_nCurrLine = nLine;
@@ -7152,9 +7173,11 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
         y -= pMe->m_nCurrNumHeight;
         srcStr -= pMe->m_nCurrLineFits[i];
         IFONT_DrawText(pMe->m_pCurrNumFont, pBmp, 0, y, srcStr, pMe->m_nCurrLineFits[i], clrFG, 0, &dialerRect, IDF_TEXT_TRANSPARENT|IDF_ALIGN_RIGHT);
+		#ifndef FEATURE_LCD_TOUCH_ENABLE
         y -= pMe->m_nCurrLineSpace;
+		#endif
     }
-    
+    MSG_FATAL("CallApp_DrawDialerString....................6",0,0,0);
     // ÊÍ·Å×ÊÔ´
     if(pBmp)
     {
@@ -11928,8 +11951,11 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
         int nCurrLineMaxPos = nLen;
         int nCurrLineMinPos = nLen;
         int nCurrPos    = nLen-pMe->m_nCursorPos;
-        
+        #ifdef FEATURE_LCD_TOUCH_ENABLE
+		y = pMe->m_rc.dy-BOTTOMBAR_HEIGHT - 220;
+		#else
         y = pMe->m_rc.dy-BOTTOMBAR_HEIGHT;
+		#endif
         
         for(i=0;i<pMe->m_nCurrLine;i++)
         {
@@ -11957,7 +11983,9 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
             }
             
             nCurrLineMaxPos -= pMe->m_nCurrLineFits[i];
+			#ifndef FEATURE_LCD_TOUCH_ENABLE
             y -= pMe->m_nCurrLineSpace;
+			#endif
         }
     }
     SETAEERECT(pRect, x, y, 1, pMe->m_nCurrNumHeight);

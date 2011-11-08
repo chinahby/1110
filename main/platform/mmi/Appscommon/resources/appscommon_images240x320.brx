@@ -691,5 +691,101 @@
 	<Object Id="7235" Name="IDB_CALCAPP_SUB_NORMAL" MimeType="image/png">
 		<File>..\images\240x320\common\Calculator\IMAGE_CALC_SUB_NORMAL.png</File>
 	</Object>
+	<Object Id="7300" Name="IDB_DIALER_MAIN" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\DIALER_MAIN.png</File>
+	</Object>
+	<Object Id="7301" Name="IDB_DIALER_1" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer1.png</File>
+	</Object>
+	<Object Id="7302" Name="IDB_DIALER_2" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer2.png</File>
+	</Object>
+	<Object Id="7303" Name="IDB_DIALER_3" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer3.png</File>
+	</Object>
+	<Object Id="7304" Name="IDB_DIALER_4" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer4.png</File>
+	</Object>
+	<Object Id="7305" Name="IDB_DIALER_5" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer5.png</File>
+	</Object>
+	<Object Id="7306" Name="IDB_DIALER_6" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer6.png</File>
+	</Object>
+	<Object Id="7307" Name="IDB_DIALER_7" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer7.png</File>
+	</Object>
+	<Object Id="7308" Name="IDB_DIALER_8" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer8.png</File>
+	</Object>
+	<Object Id="7309" Name="IDB_DIALER_9" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer9.png</File>
+	</Object>
+	<Object Id="7310" Name="IDB_DIALER_STAR" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_star.png</File>
+	</Object>
+	<Object Id="7311" Name="IDB_DIALER_0" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer0.png</File>
+	</Object>
+	<Object Id="7312" Name="IDB_DIALER_PUND" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_pund.png</File>
+	</Object>
+	<Object Id="7313" Name="IDB_DIALER_ADD" MimeType="image/png">
+	<File>..\images\240x320\common\dialer\dialeradd.png</File>
+	</Object>
+	<Object Id="7314" Name="IDB_DIALER_CALL" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialercall.png</File>
+	</Object>
+	<Object Id="7315" Name="IDB_DIALER_DEL" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialerdel.png</File>
+	</Object>
+	<Object Id="7316" Name="IDB_DIALER_TOP" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialertop.png</File>
+	</Object>
+	<Object Id="7317" Name="IDB_DIALER_SEL_1" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_1.png</File>
+	</Object>
+	<Object Id="7318" Name="IDB_DIALER_SEL_2" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_2.png</File>
+	</Object>
+	<Object Id="7319" Name="IDB_DIALER_SEL_3" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_3.png</File>
+	</Object>
+	<Object Id="7320" Name="IDB_DIALER_SEL_4" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_4.png</File>
+	</Object>
+	<Object Id="7321" Name="IDB_DIALER_SEL_5" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_5.png</File>
+	</Object>
+	<Object Id="7322" Name="IDB_DIALER_SEL_6" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_6.png</File>
+	</Object>
+	<Object Id="7323" Name="IDB_DIALER_SEL_7" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_7.png</File>
+	</Object>
+	<Object Id="7324" Name="IDB_DIALER_SEL_8" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_8.png</File>
+	</Object>
+	<Object Id="7325" Name="IDB_DIALER_SEL_9" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_9.png</File>
+	</Object>
+	<Object Id="7326" Name="IDB_DIALER_SEL_STAR" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_star_sel.png</File>
+	</Object>
+	<Object Id="7327" Name="IDB_DIALER_SEL_0" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_0.png</File>
+	</Object>
+	<Object Id="7328" Name="IDB_DIALER_SEL_PUND" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_pund_sel.png</File>
+	</Object>
+	<Object Id="7329" Name="IDB_DIALER_SEL_ADD" MimeType="image/png">
+	<File>..\images\240x320\common\dialer\dialer_add.png</File>
+	</Object>
+	<Object Id="7330" Name="IDB_DIALER_SEL_CALL" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_call.png</File>
+	</Object>
+	<Object Id="7331" Name="IDB_DIALER_SEL_DEL" MimeType="image/png">
+		<File>..\images\240x320\common\dialer\dialer_del.png</File>
+	</Object>
 </Objects>
 </BREWRes>
