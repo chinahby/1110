@@ -276,6 +276,10 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
         pMe->m_currState == WMSST_RESERVEDMSGOPT ||
         pMe->m_currState == WMSST_DRAFTMSGOPTS ||
         pMe->m_currState == WMSST_DELMSGCONFIRM ||
+#ifdef FEATURE_USES_MMS  
+        pMe->m_currState == WMSST_OUTMSGMMSOPTS ||
+        pMe->m_currState == WMSST_INMSGMMSOPTS ||
+#endif
         pMe->m_currState == WMSST_MSGCOPYCONFIRM)
     {
         pMe->m_isPopMenu = TRUE;
@@ -1384,7 +1388,7 @@ static NextFSMAction WMSST_INBOXMSGOPTS_Handler(WmsApp *pMe)
                 if(!WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)str))
                 {
                     pMe->m_GetStatus = HTTP_CODE_Bad_Request;
-    		        ISHELL_SetTimer(pMe->m_pShell,20,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
+    		        ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
 		        }
                 IVector_RemoveElementAt(pMe->m_pSaveNumList,0);
             }
@@ -5892,7 +5896,7 @@ static NextFSMAction WMSST_EXTARCTDETAILS_Handler(WmsApp *pMe)
                 if(!WMS_MMSState(WMS_MMS_PDU_WSPHTTPGETreq,0,(uint32)str))
                 {
                     pMe->m_GetStatus = HTTP_CODE_Bad_Request;
-    		        ISHELL_SetTimer(pMe->m_pShell,20,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
+    		        ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
 		        }
                 IVector_RemoveElementAt(pMe->m_pSaveNumList,0);   
             }
@@ -6783,25 +6787,16 @@ static NextFSMAction WMSST_OUTBOX_MMS_Handler(WmsApp *pMe)
             MSG_FATAL("WMSST_OUTBOX_MMS_Handler 2",0,0,0);
             MOVE_TO_STATE(WMSST_MAIN)
             return NFSMACTION_CONTINUE;
-
+        
         case DLGRET_LOADOK:
             MSG_FATAL("WMSST_OUTBOX_MMS_Handler 3",0,0,0);
-            if(pMe->m_eOptType == OPT_VIA_VIEWMSG)
-            {
-                MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG_MMS)
-            }
-            else
-            {
-                MOVE_TO_STATE(WMSST_OUTMSGMMSOPTS)
-                
-            }
+            MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG_MMS)
             return NFSMACTION_CONTINUE;
             
         case DLGRET_OPT:
-            MSG_FATAL("WMSST_OUTBOX_MMS_Handler 4",0,0,0);
             pMe->m_eOptType = OPT_VIA_LISTMSG;
-            WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
-            return NFSMACTION_WAIT;
+            MOVE_TO_STATE(WMSST_OUTMSGMMSOPTS)
+            return NFSMACTION_CONTINUE;
         case DLGRET_DELETE:
 #if 0            
         	//释放查看的消息内存
@@ -6861,14 +6856,12 @@ static NextFSMAction WMSST_VIEWOUTBOXMSG_MMS_Handler(WmsApp *pMe)
         case DLGRET_OK:
             MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_OK",0,0,0);
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
-            MOVE_TO_STATE(WMSST_OUTMSGOPTS)
+            MOVE_TO_STATE(WMSST_OUTMSGMMSOPTS)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_INFO:
             MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_INFO",0,0,0);
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
-            pMe->m_eDlgReturn = DLGRET_RESEND;
-            pMe->m_bDoNotOverwriteDlgResult = TRUE;
             MOVE_TO_STATE(WMSST_OUTMSGMMSOPTS)
             return NFSMACTION_CONTINUE;
             
@@ -6918,21 +6911,15 @@ static NextFSMAction WMSST_INBOX_MMS_Handler(WmsApp *pMe)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_LOADOK:
-            if(pMe->m_eOptType == OPT_VIA_VIEWMSG)
-            {
-                MOVE_TO_STATE(WMSST_VIEWINBOXMSG_MMS)
-            }
-            else
-            {
-                MOVE_TO_STATE(WMSST_INMSGMMSOPTS)
-                
-            }
+
+            MOVE_TO_STATE(WMSST_VIEWINBOXMSG_MMS)
+
             return NFSMACTION_CONTINUE;
             
         case DLGRET_OPT:
             pMe->m_eOptType = OPT_VIA_LISTMSG;
-            WmsApp_ShowDialog(pMe, IDD_LOADINGMSG);
-            return NFSMACTION_WAIT;
+            MOVE_TO_STATE(WMSST_INMSGMMSOPTS)
+            return NFSMACTION_CONTINUE;
         case DLGRET_DELETE:
 #if 0            
         	//释放查看的消息内存
@@ -6991,14 +6978,12 @@ static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
         case DLGRET_OK:
             MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_OK",0,0,0);
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
-            MOVE_TO_STATE(WMSST_VIEWINBOXMSG)
+            MOVE_TO_STATE(WMSST_INMSGMMSOPTS)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_INFO:
             MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_INFO",0,0,0);
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
-            pMe->m_eDlgReturn = DLGRET_RESEND;
-            pMe->m_bDoNotOverwriteDlgResult = TRUE;
             MOVE_TO_STATE(WMSST_INMSGMMSOPTS)
             return NFSMACTION_CONTINUE;
             
@@ -7082,7 +7067,6 @@ static NextFSMAction WMSST_OUTMSGOPTS_MMS_Handler(WmsApp *pMe)
         case DLGRET_CLEARALL:
 
             pMe->m_eEraseWMSType = CLEAR_OUTBOX_MMS;
-            pMe->m_STSwitchToEditMsg = WMSST_MAIN;
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
             return NFSMACTION_CONTINUE;
 
@@ -7107,7 +7091,7 @@ static NextFSMAction WMSST_OUTMSGOPTS_MMS_Handler(WmsApp *pMe)
 		        if(!WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_OUTBOX))
 		        {
 		            pMe->m_SendStatus = HTTP_CODE_Bad_Request;
-		            ISHELL_SetTimer(pMe->m_pShell,20,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
+		            ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
 		        }
 		        MOVE_TO_STATE(WMSST_SENDING)
             	
@@ -7157,17 +7141,17 @@ static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe)
             return NFSMACTION_WAIT;
 
         case DLGRET_VIEW:
-            MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG_MMS)
+            MOVE_TO_STATE(WMSST_VIEWINBOXMSG_MMS)
             return NFSMACTION_CONTINUE;
         
         case DLGRET_CANCELED:
             if (pMe->m_eOptType == OPT_VIA_VIEWMSG)
             {
-                MOVE_TO_STATE(WMSST_VIEWOUTBOXMSG_MMS)
+                MOVE_TO_STATE(WMSST_VIEWINBOXMSG_MMS)
             }
             else
             {
-                MOVE_TO_STATE(WMSST_OUTBOX_MMS)
+                MOVE_TO_STATE(WMSST_INBOX_MMS)
             }
             return NFSMACTION_CONTINUE;
 /*
@@ -7187,14 +7171,13 @@ static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe)
 */
         case DLGRET_DELETE:
 			
-            pMe->m_eEraseWMSType = ERASE_OUTBOX_MMS_ONE;
+            pMe->m_eEraseWMSType = ERASE_INBOX_MMS_ONE;
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
             return NFSMACTION_CONTINUE;
 
         case DLGRET_CLEARALL:
 
-            pMe->m_eEraseWMSType = CLEAR_OUTBOX_MMS;
-            pMe->m_STSwitchToEditMsg = WMSST_MAIN;
+            pMe->m_eEraseWMSType = CLEAR_INBOX_MMS;
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
             return NFSMACTION_CONTINUE;
 
@@ -7220,7 +7203,7 @@ static NextFSMAction WMSST_INMSGOPTS_MMS_Handler(WmsApp *pMe)
 		        if(!WMS_MMS_Resend(pMe->m_wSelItemxuhao - 1,MMS_INBOX))
 		        {
 		            pMe->m_SendStatus = HTTP_CODE_Bad_Request;
-		            ISHELL_SetTimer(pMe->m_pShell,20,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
+		            ISHELL_SetTimer(pMe->m_pShell,1000,(PFNNOTIFY)&WmsApp_ProcessMMSStatus,pMe);
 		        }
 		        MOVE_TO_STATE(WMSST_SENDING)
             	

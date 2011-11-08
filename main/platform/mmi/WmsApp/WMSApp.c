@@ -6844,15 +6844,22 @@ void WmsApp_ProcessMMSStatus(WmsApp *pMe)
     
     ERR("m_SendStatus = %d", pMe->m_SendStatus, 0, 0);    
     
-    if (((pMe->m_wActiveDlgID == IDD_SENDING) || (pMe->m_wActiveDlgID == IDD_GETTING))
-        && (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_WMSAPP))
+    if (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_WMSAPP)
     {
-        (void)ISHELL_PostEventEx(pMe->m_pShell,
+        if((pMe->m_wActiveDlgID == IDD_SENDING) 
+            || (pMe->m_wActiveDlgID == IDD_GETTING))
+        {
+            (void)ISHELL_PostEventEx(pMe->m_pShell,
                                  EVTFLG_ASYNC, 
                                  AEECLSID_WMSAPP, 
                                  EVT_UPDATE,
                                  0, 
                                  0);
+        }
+        else
+        {
+            MOVE_TO_STATE(WMSST_MAIN)
+        }
     }
     MSG_FATAL("WmsApp_ProcessMMSStatus End",0,0,0);
 }

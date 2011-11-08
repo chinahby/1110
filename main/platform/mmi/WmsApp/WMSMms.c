@@ -900,16 +900,17 @@ static int MMS_GetFileContent(uint8* encbuf,WSP_ENCODE_DATA_FRAGMENT frag)
 	int i = 0;
     MMS_MESSAGE_TYPE type;
 
-    if(STRLEN((char*)frag.hContentFile) == 0)
-    {
-        MMS_DEBUG(("[MMS]: MMS_GetFileContent No File Path"));
-        return 0;
-    }    
+        
         
     type = MMS_GetMMSTypeByName(frag.hContentType);
 
     if ( type != MMS_MESSAGE_TYPE_TEXT )
     {
+        if(STRLEN((char*)frag.hContentFile) == 0)
+        {
+            MMS_DEBUG(("[MMS]: MMS_GetFileContent No File Path"));
+            return 0;
+        }
         result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
     	if (SUCCESS != result)
         {
@@ -1118,7 +1119,14 @@ int WMS_MMS_CreateSMIL(uint8 *out_buf,int buf_size,WSP_MMS_ENCODE_DATA data)
 	STRNCPY(cur_pos,"<smil><head><layout><root-layout width=\"220px\" height=\"96px\" background-color=\"#FFFFFF\" />",len);
 	cur_pos += len;
 
-	for(i = 0; i < WMSMMS_FRAGMENTCOUNT; i++)
+    if(STRLEN((char*)data.fragment[i].hContentText) != 0)
+    {
+        len = STRLEN("<region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head>");
+    	STRNCPY(cur_pos,"<region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head>",len);
+    	cur_pos += len;
+    }
+    
+	for(i = 1; i < WMSMMS_FRAGMENTCOUNT; i++)
 	{
 	    if(STRLEN((char*)data.fragment[i].hContentFile) == 0)
 	        continue;
@@ -1137,15 +1145,28 @@ int WMS_MMS_CreateSMIL(uint8 *out_buf,int buf_size,WSP_MMS_ENCODE_DATA data)
     		cur_pos += len;
     	}
     }
-	len = STRLEN("<region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head>");
-	STRNCPY(cur_pos,"<region id=\"Text\" width=\"220px\" height=\"0px\" top=\"96px\" left=\"0px\" fit=\"meet\" /></layout></head>",len);
-	cur_pos += len;
+	
 
 	len = STRLEN("<body><par>");
 	STRNCPY(cur_pos,"<body><par>",len);
 	cur_pos += len;
+
+	if(STRLEN((char*)data.fragment[0].hContentText) != 0)
+	{
+	    len = STRLEN("<text src=\"");
+		STRNCPY(cur_pos,"<text src=\"",len);
+		cur_pos += len;
+
+		len = STRLEN((char*)data.fragment[0].hContentName);
+		STRNCPY(cur_pos,(char*)data.fragment[0].hContentName,len);
+		cur_pos += len;
+
+		len = STRLEN("\" region=\"Text\"/>");
+		STRNCPY(cur_pos,"\" region=\"Text\"/>",len);
+		cur_pos += len;
+	}
 	
-	for(i=0; i< WMSMMS_FRAGMENTCOUNT; i++)
+	for(i=1; i< WMSMMS_FRAGMENTCOUNT; i++)
 	{
 	    if(STRLEN((char*)data.fragment[i].hContentFile) == 0)
 	        continue;
@@ -1858,13 +1879,10 @@ boolean WMS_MMS_DeleteMMSALL(int nKind)
         &g_mmsDataInfoMax,
         sizeof(g_mmsDataInfoMax)); 
         
-    for(i = 0; i < g_mmsDataInfoMax;i++)
+    for(i = 0; i < WMSMMS_FRAGMENTCOUNT;i++)
     {
-        if(!WMS_MMS_DeleteMMS(i,nKind))
-        {
-            RELEASEIF(pConfig);
-            return FALSE;
-        }
+        WMS_MMS_DeleteMMS(i,nKind);
+        MSG_FATAL("[WMS_MMS_DeleteMMSALL] index=%d",i,0,0);
     }
     RELEASEIF(pConfig);
     return TRUE;
@@ -1882,9 +1900,7 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
     MMSData	*pMmsDataInfoListNext = NULL;
     int nMmsDataInfoType = 0;
     int nMmsCoutType = 0;
-    
-    if(index >= g_mmsDataInfoMax)
-        return FALSE;
+    boolean isRemoveSuccess = FALSE;
         
     if (result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_CONFIG,(void **)&pConfig) != SUCCESS)
     {
@@ -1894,7 +1910,7 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
     result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
     if (SUCCESS != result)
     {
-    	MSG_FATAL("[WMS_MMS_SaveMMS] Open file error %x", result,0,0);
+    	MSG_FATAL("[WMS_MMS_DeleteMMS] Open file error %x", result,0,0);
     	goto Exit;
     }
 
@@ -1931,31 +1947,42 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
         result = EFAILED;
         goto Exit;
     }   
-
+    MSG_FATAL("[WMS_MMS_DeleteMMS] g_mmsDataInfoMax:%d", g_mmsDataInfoMax,0,0);
+    
     pMmsDataInfoListCur = &mmsDataInfoList[index];
 
     if(SUCCESS == IFILEMGR_Test(pIFileMgr,
         pMmsDataInfoListCur->MMSDataFileName))
     {
-        if(EFAILED == IFILEMGR_Remove(pIFileMgr,
+        MSG_FATAL("[WMS_MMS_DeleteMMS] find file", 0,0,0);
+        if(SUCCESS == IFILEMGR_Remove(pIFileMgr,
             pMmsDataInfoListCur->MMSDataFileName))
         {
+            isRemoveSuccess = TRUE;
+            MSG_FATAL("[WMS_MMS_DeleteMMS] find remove success", 0,0,0);
+        }
+        else
+        {
             result = IFILEMGR_GetLastError(pIFileMgr);
-            goto Exit;
+            MSG_FATAL("[WMS_MMS_DeleteMMS] find remove error 0x%x", result,0,0);
+            //goto Exit;
         }
     }
     else
     {
         result = IFILEMGR_GetLastError(pIFileMgr);
-        goto Exit;
+        MSG_FATAL("[WMS_MMS_DeleteMMS] find file error 0x%x", result,0,0);
+        //goto Exit;
     }
     
 
     for(i = index;
         i < g_mmsDataInfoMax;
-        i++,pMmsDataInfoListCur = &mmsDataInfoList[i],pMmsDataInfoListNext = &mmsDataInfoList[i + 1])
+        i++)
     {
-        
+        MSG_FATAL("[WMS_MMS_DeleteMMS] rename file index:%d", i,0,0);
+        pMmsDataInfoListCur = &mmsDataInfoList[i];
+        pMmsDataInfoListNext = &mmsDataInfoList[i + 1];
         if(EFAILED == IFILEMGR_Test(pIFileMgr,pMmsDataInfoListCur->MMSDataFileName)
             && SUCCESS == IFILEMGR_Test(pIFileMgr,pMmsDataInfoListNext->MMSDataFileName))
         {
@@ -1963,10 +1990,14 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
             {
                 STRCPY(pMmsDataInfoListCur->phoneNumber,pMmsDataInfoListNext->phoneNumber);
                 pMmsDataInfoListCur->MMSDatasize = pMmsDataInfoListNext->MMSDatasize;
+                MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone number:%s", pMmsDataInfoListCur->phoneNumber,0,0);
+                MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone number len:%d", pMmsDataInfoListCur->MMSDatasize,0,0);
+                MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone name:%s", pMmsDataInfoListCur->MMSDataFileName,0,0);
             }
             else
             {
                 result = IFILEMGR_GetLastError(pIFileMgr);
+                MSG_FATAL("[WMS_MMS_DeleteMMS] rename file error:0x%x", result,0,0);
                 //goto Exit;
                 continue;
             }
@@ -1974,14 +2005,19 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
         else
         {
             result = IFILEMGR_GetLastError(pIFileMgr);
+            MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone name:%s", pMmsDataInfoListCur->MMSDataFileName,0,0);
+            MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone name:%s", pMmsDataInfoListNext->MMSDataFileName,0,0);
+            MSG_FATAL("[WMS_MMS_DeleteMMS] Test file error:0x%x", result,0,0);
             //goto Exit;
             continue;
         }
         
     };
     MEMSET((void*)pMmsDataInfoListNext,NULL,sizeof(MMSData));
-    
-    g_mmsDataInfoMax --;
+
+    if(isRemoveSuccess)
+        g_mmsDataInfoMax --;
+        
     ICONFIG_SetItem(pConfig, nMmsDataInfoType, (void*)mmsDataInfoList, sizeof(mmsDataInfoList));        
     ICONFIG_SetItem(pConfig, nMmsCoutType, &g_mmsDataInfoMax, sizeof(g_mmsDataInfoMax)); 
     
@@ -2360,7 +2396,18 @@ void WMS_MMS_DATA_Encode(WSP_MMS_ENCODE_DATA* pData)
     
     while(index < WMSMMS_FRAGMENTCOUNT)
     {
-        if(STRLEN(pFilePath) != 0)
+        if(index == 0 && STRLEN((char*)pData->fragment[index].hContentText) != 0)
+        {
+            len = STRLEN("text/plain");
+            STRNCPY((char*)pData->fragment[0].hContentType,"text/plain",len);
+            len = STRLEN("1.txt");
+            STRNCPY((char*)pData->fragment[0].hContentLocation,"1.txt",len);
+            len = STRLEN("1.txt");
+            STRNCPY((char*)pData->fragment[0].hContentID,"1.txt",len);
+            len = STRLEN("1.txt");
+            STRNCPY((char*)pData->fragment[0].hContentName,"1.txt",len);   
+        }
+        else if(STRLEN(pFilePath) != 0)
         {
             MMS_DEBUG(("[WMS_MMS_DATA_Encode] Find Resource"));
             pFilePath = (char*)(pData->fragment[index].hContentFile);
@@ -2378,6 +2425,7 @@ void WMS_MMS_DATA_Encode(WSP_MMS_ENCODE_DATA* pData)
         	MEMCPY((void*)pData->fragment[index].hContentName,(void*)BASENAME(pFilePath),len); 
         }
         ++index;
+        pData->frag_num = index;
     }; 
 #else    
 	pData->frag_num = 1;
@@ -4171,6 +4219,7 @@ boolean WMS_MMSState(int nState,int16 wParam,uint32 dwParam)
         if(pSocketParam == NULL)
         {
             ISHELL_CreateInstance(AEE_GetShell(),AEECLSID_VECTOR,(void**)&pSocketParam);
+            IVector_Init(pSocketParam,20);
         }
 
         while(pParam = IVector_ElementAt(pSocketParam,i))
@@ -4433,6 +4482,7 @@ static void MMSSocketState(MMSSocket *ps)
         break;
         default:
         {
+            MMSSocketClose(&ps);
             return;
         }
     }
