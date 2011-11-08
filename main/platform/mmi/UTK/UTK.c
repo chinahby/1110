@@ -695,7 +695,38 @@ static boolean UTK_HandleEvent(IUTK *pi,
                 UTK_RunFSM(pMe);
             }
             return TRUE;
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+        case EVT_USER:
+            {
+                if((wParam == AVK_SELECT) || (wParam == AVK_INFO))
+                {
+                    if(dwParam != 0)
+                    {
+                        eCode = EVT_COMMAND;
+                        wParam = dwParam;
+                        dwParam = 0;
+                    }
+                    else
+                    {
+                        eCode = EVT_KEY;
+                    }
+                }
+                else if(wParam == AVK_CLR)
+                {
+                    eCode = EVT_KEY;
+                }
+                else if(wParam == AVK_DOWN)//wlh »»×ÀÃæÍ¼Æ¬
+                {
+                    eCode = EVT_KEY;
+                }
+                else if (wParam == AVK_POUND)
+                {
+                    eCode = EVT_KEY_PRESS;
+                }
+                return UTK_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            }
+#endif
+
         case EVT_BACKUTK:
             (void)ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APP_UTK);
             return TRUE;
