@@ -3454,7 +3454,7 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 				}
 				break;
 			}
-            case 0x97 /* to */
+            case 0x97: /* to */
             {
                 i++;
 				len = MMS_WSP_GetValueLen(&ptr[i],datalen-i,&iDataOffset);

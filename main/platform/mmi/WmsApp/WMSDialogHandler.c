@@ -7070,7 +7070,7 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
                 
             case EVT_SENDSMSEND:
                 MSG_FATAL("IDD_SENDING_Handler EVT_SENDSMSEND",0,0,0);
-                CLOSE_DIALOG(DLGRET_INBOXES)
+                CLOSE_DIALOG(DLGRET_END)
                 return TRUE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
     

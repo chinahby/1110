@@ -550,7 +550,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     MEMSET(&pMe->m_EncData,NULL,sizeof(MMS_WSP_ENCODE_SEND));
     MEMSET(&pMe->m_ResData,NULL,sizeof(WSP_MMS_RESOURCE));
     pMe->m_pMedia = NULL;
-    pMe->m_GetStatus = WMS_RPT_OK;
+    pMe->m_GetStatus = HTTP_CODE_OK;
 #endif
     // 初始化各成员变量
     pMe->m_prevState = WMSST_NONE;
@@ -1502,8 +1502,9 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
 							else
 							{
 								uint8 *header = NULL;
+								uint8 *ptrCur = NULL;
 								header = (uint8 *)MALLOC(header_len+1);
-                                uint8 *ptrCur = NULL;
+                                
                                 
 								if( NULL == header)
 								{
