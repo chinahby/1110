@@ -245,6 +245,16 @@
     #define REFUI_CALL_MAX_IMAGSIZE       (16)
 #endif
 #endif
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#define CALC_ITEM                    15
+#define STARTY                       50
+#define STARX                        0
+#define SPACEX                       0
+#define NUMWINDTH                    80
+#define NUMHEIGHT                    44
+#endif
+
 //#define KEYSND_ZY
 //#define FEATURE_UTK2
 //#define FEATURE_PERU_VERSION

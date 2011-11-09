@@ -314,6 +314,11 @@ static void CallApp_Set_Cursor_Blink(void* pUser);
 #endif
 static void CallApp_ProcessUIMMMIStr(CCallApp* pMe, AECHAR *pStr);
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+static void CallApp_Draw_BackGround(CCallApp* pMe, AEERect * rect);
+
+#endif
+
 /*==============================================================================
                                  全局数据
 ==============================================================================*/
@@ -544,8 +549,29 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                                           uint32      dwParam)//This is dialerapp numedit dialog
 {
     boolean vol_add =FALSE;
-	
-    CALL_ERR("eCode= %x,w=%x,dw=%x CallApp_Dialer_NumEdit_DlgHandler ",eCode,wParam,dwParam);
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	AEERect rc[CALC_ITEM]= 
+					  	{
+					  		{0,STARTY,NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,STARTY,NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,STARTY,NUMWINDTH,NUMHEIGHT},
+					  		{0,STARTY+NUMHEIGHT,NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,STARTY+NUMHEIGHT,NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,STARTY+NUMHEIGHT,NUMWINDTH,NUMHEIGHT},
+					  		{0,(STARTY+(NUMHEIGHT)*2),NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,(STARTY+(NUMHEIGHT)*2),NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,(STARTY+(NUMHEIGHT)*2),NUMWINDTH,NUMHEIGHT},
+					  		{0,(STARTY+(NUMHEIGHT)*3),NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,(STARTY+(NUMHEIGHT)*3),NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,(STARTY+(NUMHEIGHT)*3),NUMWINDTH,NUMHEIGHT},
+					  		{0,(STARTY+(NUMHEIGHT)*4),NUMWINDTH,NUMHEIGHT},
+					  		{NUMWINDTH,(STARTY+(NUMHEIGHT)*4),NUMWINDTH,NUMHEIGHT},
+					  		{(NUMWINDTH)*2,(STARTY+(NUMHEIGHT)*4),NUMWINDTH,NUMHEIGHT}
+					  		
+					  	};
+
+	#endif
+    MSG_FATAL("eCode= %x,w=%x,dw=%x CallApp_Dialer_NumEdit_DlgHandler ",eCode,wParam,dwParam);
 
     if ( pMe->m_bShowPopMenu && IMENUCTL_IsActive(pMe->m_pMenu) )
     {
@@ -613,7 +639,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 IANNUNCIATOR_SetHasTitleText(pMe->m_pIAnn, FALSE);
                 IANNUNCIATOR_Redraw(pMe->m_pIAnn);
             }
+			MSG_FATAL("EVT_DIALOG_START.........................",0,0,0);
+			#ifndef FEATURE_LCD_TOUCH_ENABLE
             if (WSTRLEN(pMe->m_DialString) > 0) //copy from the start info
+            #endif
             {
                 pMe->m_bShowPopMenu = FALSE; // flag of pop menu
                 if((0 == WSTRCMP(pMe->m_DialString, L"0") )||(0 == WSTRCMP(pMe->m_DialString, L"#") )||(0 == WSTRCMP(pMe->m_DialString, L"*") ))
@@ -649,7 +678,11 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
         	}
 #endif
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+			CallApp_Draw_BackGround(pMe,&pMe->m_rc);
+#else
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
+#endif
             
             CallApp_Draw_NumEdit_SoftKey(pMe);
             CallApp_Display_Number(pMe);
@@ -734,7 +767,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             return TRUE;
 
         case EVT_COMMAND:
-            //CALL_ERR("EVT_COMMAND",0,0,0);
+            MSG_FATAL("EVT_COMMANDpMe->m_bShowPopMenu==%d",pMe->m_bShowPopMenu,0,0);
             if (TRUE == pMe->m_bShowPopMenu) //(pMe->m_b_incall )
             {
                 pMe->m_bShowPopMenu = FALSE;
@@ -885,7 +918,213 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
             }
 #endif
             return TRUE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+		case EVT_PEN_DOWN:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				int i = 0;
+				int j = 0;
+				
+				int16 wXPos   = (int16)AEE_GET_X(dwParam);
+				int16 wYPos   = (int16)AEE_GET_Y(dwParam);
+				IImage *image = NULL;
+				MSG_FATAL("pMe->m_bShowPopMenu========%d",pMe->m_bShowPopMenu,0,0);
+				if(!pMe->m_bShowPopMenu)
+				{
+				MSG_FATAL("wXPos===%d,     wYPos===%d",wXPos,wYPos,0);
+                for(i = 0;i<CALC_ITEM;i++)
+                {
+                	if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc[i]))
+                	{
+	                	image = ISHELL_LoadResImage( pMe->m_pShell,
+                                        AEE_APPSCOMMONRES_IMAGESFILE,
+                                        IDB_DIALER_SEL_1+i);
+						if(image!=NULL)
+						{
+							MSG_FATAL("rc[i].x===%d,rc[i].y===%d,i===%d",rc[i].x,rc[i].y,i);
+							IIMAGE_Draw(image,rc[i].x,rc[i].y);
+							IIMAGE_Release( image);
+						}
+	                	break;
+                	}
+                } 
+				}
+				IDISPLAY_Update(pMe->m_pDisplay);
+			}
+			break;
+		case EVT_PEN_UP:
+		{
+			AEEDeviceInfo devinfo;
+			int nBarH ;
+			//AEERect rc;
+			int16 wXPos = (int16)AEE_GET_X(dwParam);
+			int16 wYPos = (int16)AEE_GET_Y(dwParam);
+			int i = 0;
+			AEERect rct;
+			IImage *image = NULL;
+			nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+    		MEMSET(&devinfo, 0, sizeof(devinfo));
+			ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+			SETAEERECT(&rct, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+			if(TOUCH_PT_IN_RECT(wXPos,wYPos,rct))
+			{
+				if(wXPos >= rct.x  && wXPos < rct.x + (rct.dx/3)*1 )
+				{
+					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_SELECT,0);
+					 return rt;
+				}
+				else if(wXPos >= rct.x + (rct.dx/3) && wXPos < rct.x + (rct.dx/3)*2)
+				{
+					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_INFO,0);
+					 return rt;
+				}
+				else if(wXPos >= rct.x + (rct.dx/3)*2 && wXPos < rct.x + (rct.dx/3)*3)
+				{						
+					 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_CLR,0);
+					 return rt;
+				}
+			}
+			MSG_FATAL("EVT_PEN_UP..................",0,0,0);
+			for(i = 0;i<CALC_ITEM;i++)
+            {
+            	if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc[i]))
+            	{
 
+                	image = ISHELL_LoadResImage(pMe->m_pShell,
+                                    AEE_APPSCOMMONRES_IMAGESFILE,
+                                    IDB_DIALER_1+i);
+					if(image!=NULL)
+					{
+						IIMAGE_Draw(image,rc[i].x,rc[i].y);
+						IIMAGE_Release(image);
+					}
+					switch(i)
+					{
+						case 0:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_1,0);
+						 	return rt;
+						}
+							break;
+						case 1:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_2,0);
+						 	return rt;
+						}
+							break;
+						case 2:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_3,0);
+						 	return rt;
+						}
+							break;
+						case 3:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_4,0);
+						 	return rt;
+						}
+							break;
+						case 4:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_5,0);
+						 	return rt;
+						}
+							break;
+						case 5:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_6,0);
+						 	return rt;
+						}
+							break;
+						case 6:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_7,0);
+						 	return rt;
+						}
+							break;
+						case 7:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_8,0);
+						 	return rt;
+						}
+							break;
+						case 8:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_9,0);
+						 	return rt;
+						}
+							break;
+						case 9:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_STAR,0);
+						 	return rt;
+						}
+							break;
+						case 10:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_0,0);
+						 	return rt;
+						}
+							break;
+						case 11:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_POUND,0);
+						 	return rt;
+						}
+							break;
+						case 12:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_SELECT,0);
+						 	return rt;
+						}
+							break;
+						case 13:
+						{
+								return CallApp_Process_Send_Key_Release_Event(pMe);
+						}
+							break;
+						case 14:
+						{
+							boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,AVK_CLR,0);
+						 	return rt;
+						}
+							break;
+						default:
+							break;
+					}
+            	}
+			}
+		}
+		break;
+		case EVT_USER:
+			switch(wParam)
+			
+			{
+				case AVK_0:
+				case AVK_1:
+				case AVK_2:
+				case AVK_3:
+				case AVK_4:
+				case AVK_5:
+				case AVK_6:
+				case AVK_7:
+				case AVK_8:
+				case AVK_9:
+				case AVK_STAR:
+				case AVK_POUND:
+				case AVK_CLR:
+				case AVK_SELECT:
+				case AVK_INFO:
+				{
+					eCode = EVT_KEY;
+					return CallApp_Dialer_NumEdit_DlgHandler(pMe,eCode,wParam,dwParam);
+				}
+		    }
+			MSG_FATAL("EVT_USER..................",0,0,0);
+			
+			break;
+#endif
         
 #ifdef FEATURE_MORSE
         case EVT_DISPLAYDIALOGTIMEOUT:
@@ -1586,6 +1825,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 #endif
                         CallApp_Build_NumEdit_Option_Menu ( pMe,pMe->m_pMenu );
                         pMe->m_bShowPopMenu = TRUE;
+						MSG_FATAL("pMe->m_bShowPopMenu=====%d",pMe->m_bShowPopMenu,0,0);
                         //CallApp_Draw_NumEdit_SoftKey( pMe );
                     }
                     return TRUE;
@@ -7035,8 +7275,11 @@ static void CallApp_DrawDialerString(CCallApp   *pMe,  AECHAR const *dialStr)
                
     
     // Clear the dialer rectangle
+    #ifdef FEATURE_LCD_TOUCH_ENABLE
+	CallApp_Draw_BackGround(pMe,&dialerRect);
+	#else
     Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &dialerRect, TRUE);
-    
+    #endif
     // Return if empty
     len = WSTRLEN(dialStr);
     if (len <= 0)
@@ -11988,6 +12231,12 @@ static void CallApp_Calc_Cursor_Rect(CCallApp* pMe, AEERect *pRect)
 			#endif
         }
     }
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	else
+	{
+		x = pMe->m_rc.dx-2;
+	}
+	#endif
     SETAEERECT(pRect, x, y, 1, pMe->m_nCurrNumHeight);
 #endif
 }
@@ -12246,4 +12495,22 @@ static void CallApp_ProcessUIMMMIStr(CCallApp* pMe, AECHAR *pStr)
         CoreApp_DisplayADN(pMe->m_pShell, wRecID);
     }
 }
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+static void CallApp_Draw_BackGround(CCallApp* pMe, AEERect * rect)
+{
+	IImage *pImageBg = NULL;
+	AEERect oldClip = {0};
+	pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_DIALER_MAIN);
+	//IImage_Draw(pImageBg, rect->x, rect->y);
+    IDisplay_GetClipRect(pMe->m_pDisplay, &oldClip);
+    IDisplay_SetClipRect(pMe->m_pDisplay, rect);
+    IImage_Draw(pImageBg, rect->x, rect->y);
+    IDisplay_SetClipRect(pMe->m_pDisplay, &oldClip);
+	if(pImageBg != NULL)
+    {
+        IImage_Release(pImageBg);
+        pImageBg = NULL;
+    }
+}
+#endif
 

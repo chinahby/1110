@@ -3677,16 +3677,33 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 				switch(i)
 				{
 					case 0:
-						return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
+						{
+						//return CoreApp_LaunchApplet(pMe, AEECLSID_DIALER);
+						ICallApp         *pCallApp = NULL;
+                        if ( SUCCESS != ISHELL_CreateInstance( pMe->a.m_pIShell,
+                                                        AEECLSID_DIALER,
+                                                        (void **)&pCallApp))
+                        {
+                            return FALSE;
+                        }
+                        MEMSET(pMe->m_wstrEnterNum, 0, sizeof(pMe->m_wstrEnterNum));
+                        ICallApp_VoiceCallDial_F(pCallApp,pMe->m_wstrEnterNum);
+                        if (pCallApp) 
+                        {
+                            ICallApp_Release(pCallApp);
+                            pCallApp = NULL;
+                        }
+						return TRUE;
+						}
 						break;
 					case 1:
-						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
+						return CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
 						break;
 					case 2:
-						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
+						return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);
 						break;
 					case 3:
-						return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
+						return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT);
 						break;
 					default:
 						break;

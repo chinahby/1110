@@ -162,14 +162,15 @@ ifeq ($(USES_BLACKBERRY),yes)
 endif
 ifeq ($(USES_LCD_TOUCH),yes)
 	CONSTFILE_FILES+=\
+		dialer.png|fs:/image/core/dialer.png \
+		dialer_sel.png|fs:/image/core/dialer_sel.png \
+		main.png|fs:/image/core/main.png\
+		main_sel.png|fs:/image/core/main_sel.png \
 		messages.png|fs:/image/core/messages.png \
 		messages_sel.png|fs:/image/core/messages_sel.png \
 		contact.png|fs:/image/core/contact.png \
 		contact_sel.png|fs:/image/core/contact_sel.png \
-		mediaplayer.png|fs:/image/core/mediaplayer.png \
-		mediaplayer_sel.png|fs:/image/core/mediaplayer_sel.png \
-		calendar.png|fs:/image/core/calendar.png \
-		calendar_sel.png|fs:/image/core/calendar_sel.png
+		
 endif
 
 # 加入另外一种语言资源文件

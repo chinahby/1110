@@ -33,8 +33,8 @@
 #define TOUCHPAD_YCHANGE    1140
 
 
-#define TOUCHPAD_MIN_INTERVAL 		50		/* min  5 ms */
-#define TOUCHPAD_DEFAULT_INTERVAL 	75		/* default to 50 ms */
+#define TOUCHPAD_MIN_INTERVAL 		5		/* min  5 ms */
+#define TOUCHPAD_DEFAULT_INTERVAL 	50		/* default to 50 ms */
 #define TOUCHPAD_MAX_INTERVAL 		500		/* max 500 ms */
 
 #define TOUCHPAD_PARAM_LIMITED	0
@@ -63,7 +63,7 @@ and other items needed by this module.
 ===========================================================================*/
 #define TOUCH_SCREEN_WIDTH	   (DISP_WIDTH)
 #define TOUCH_SCREEN_HEIGHT	   (DISP_HEIGHT)
-#define DELTA_MV			    80	//允许飘移的点距(该距离对应的电压值)
+#define DELTA_MV			    40	//允许飘移的点距(该距离对应的电压值)
 							        // 大约20 等于1  个点的距离
 #define DELTA_MV2			    50
 

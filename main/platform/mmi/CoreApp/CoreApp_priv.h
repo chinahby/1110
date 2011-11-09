@@ -352,27 +352,28 @@
 #define    IDLE_TOUCH_IDLE_BOTTOM_SPC         12
 #define    IDLE_TOUCH_DRAWDX                  45
 #define    IDLE_TOUCH_DRAWDY                  45
-#define    IDLE_TOUCH_1                       "fs:/image/core/messages.png"
-#define    IDLE_TOUCH_SEL_1                   "fs:/image/core/messages_sel.png"
-#define    IDLE_TOUCH_2                       "fs:/image/core/contact.png"
-#define    IDLE_TOUCH_SEL_2                   "fs:/image/core/contact_sel.png"
-#define    IDLE_TOUCH_3                       "fs:/image/core/mediaplayer.png"
-#define    IDLE_TOUCH_SEL_3                   "fs:/image/core/mediaplayer_sel.png"
-#define    IDLE_TOUCH_4                       "fs:/image/core/calendar.png"
-#define    IDLE_TOUCH_SEL_4                   "fs:/image/core/calendar_sel.png"
+#define    IDLE_TOUCH_1                       "fs:/image/core/dialer.png"
+#define    IDLE_TOUCH_SEL_1                   "fs:/image/core/dialer_sel.png"
+#define    IDLE_TOUCH_2                       "fs:/image/core/main.png"
+#define    IDLE_TOUCH_SEL_2                   "fs:/image/core/main_sel.png"
+#define    IDLE_TOUCH_3                       "fs:/image/core/messages.png"
+#define    IDLE_TOUCH_SEL_3                   "fs:/image/core/messages_sel.png"
+#define    IDLE_TOUCH_4                       "fs:/image/core/contact.png"
+#define    IDLE_TOUCH_SEL_4                   "fs:/image/core/contact_sel.png"
 #else
 #define    IDLE_TOUCH_ITEMMAX                 4
 #define    IDLE_TOUCH_IDLE_BOTTOM_SPC         12
 #define    IDLE_TOUCH_DRAWDX                  45
 #define    IDLE_TOUCH_DRAWDY                  45
-#define    IDLE_TOUCH_1                       "fs:/image/core/messages.png"
-#define    IDLE_TOUCH_SEL_1                   "fs:/image/core/messages_sel.png"
-#define    IDLE_TOUCH_2                       "fs:/image/core/contact.png"
-#define    IDLE_TOUCH_SEL_2                   "fs:/image/core/contact_sel.png"
-#define    IDLE_TOUCH_3                       "fs:/image/core/mediaplayer.png"
-#define    IDLE_TOUCH_SEL_3                   "fs:/image/core/mediaplayer_sel.png"
-#define    IDLE_TOUCH_4                       "fs:/image/core/calendar.png"
-#define    IDLE_TOUCH_SEL_4                   "fs:/image/core/calendar_sel.png"
+#define    IDLE_TOUCH_1                       "fs:/image/core/dialer.png"
+#define    IDLE_TOUCH_SEL_1                   "fs:/image/core/dialer_sel.png"
+#define    IDLE_TOUCH_2                       "fs:/image/core/main.png"
+#define    IDLE_TOUCH_SEL_2                   "fs:/image/core/main_sel.png"
+#define    IDLE_TOUCH_3                       "fs:/image/core/messages.png"
+#define    IDLE_TOUCH_SEL_3                   "fs:/image/core/messages_sel.png"
+#define    IDLE_TOUCH_4                       "fs:/image/core/contact.png"
+#define    IDLE_TOUCH_SEL_4                   "fs:/image/core/contact_sel.png"
+
 #endif
 #endif
 #ifdef FEATURE_USES_BLACKBERRY
