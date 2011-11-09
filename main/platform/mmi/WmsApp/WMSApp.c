@@ -1353,17 +1353,8 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             return TRUE;
         case EVT_MMS_MSG_GET_FINISH:
             {
-                pMe->m_SendStatus = wParam;
-                if ((pMe->m_wActiveDlgID == IDD_GETTING) &&
-                    (ISHELL_ActiveApplet(pMe->m_pShell) == AEECLSID_WMSAPP))
-                {
-                    (void)ISHELL_PostEventEx(pMe->m_pShell,
-                                             EVTFLG_ASYNC, 
-                                             AEECLSID_WMSAPP, 
-                                             EVT_UPDATE,
-                                             0, 
-                                             0);
-                }
+                pMe->m_GetStatus = wParam;
+                WmsApp_ProcessMMSStatus(pMe);
             }
             return TRUE;
 #endif
@@ -6888,6 +6879,7 @@ void WmsApp_ProcessMMSStatus(WmsApp *pMe)
         if((pMe->m_wActiveDlgID == IDD_SENDING) 
             || (pMe->m_wActiveDlgID == IDD_GETTING))
         {
+            pMe->m_isMMS = TRUE;
             (void)ISHELL_PostEventEx(pMe->m_pShell,
                                  EVTFLG_ASYNC, 
                                  AEECLSID_WMSAPP, 

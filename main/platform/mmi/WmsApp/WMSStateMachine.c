@@ -3465,30 +3465,8 @@ static NextFSMAction WMSST_GETTING_Handler(WmsApp *pMe)
         case DLGRET_END:
         case DLGRET_MSGBOX_OK:
 
-            if (pMe->m_stcontinuesendbk != WMSST_NONE)
-            {
-                if (pMe->m_stcontinuesendbk == WMSST_INBOXES)
-                {
-                    pMe->m_currState = WMSST_MAIN;
-                    pMe->m_eDlgReturn = DLGRET_INBOXES;
-                }
-                else
-                {
-                    pMe->m_currState = pMe->m_stcontinuesendbk;
-                }
-                
-                pMe->m_stcontinuesendbk = WMSST_NONE;
-            }
-            else if (pMe->m_bNaturalStart)
-            {
-                MSG_FATAL("pMe->m_bNaturalStart==TRUE",0,0,0);
-                MOVE_TO_STATE(WMSST_MAIN)
-            }
-            else
-            {
-                MSG_FATAL("pMe->m_bNaturalStart==FALSE",0,0,0);
-                MOVE_TO_STATE(WMSST_EXIT)
-            }
+            pMe->m_currState = WMSST_MAIN;
+            pMe->m_eDlgReturn = DLGRET_INBOX_MMS;
 
             return NFSMACTION_CONTINUE;
 

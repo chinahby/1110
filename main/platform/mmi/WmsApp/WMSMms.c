@@ -1977,7 +1977,7 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
     
 
     for(i = index;
-        i < g_mmsDataInfoMax;
+        i < (g_mmsDataInfoMax - 1);
         i++)
     {
         MSG_FATAL("[WMS_MMS_DeleteMMS] rename file index:%d", i,0,0);

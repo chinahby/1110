@@ -7004,7 +7004,7 @@ static boolean IDD_MESSAGEVALIDITY_Handler(void   *pUser,
                         //if(MMS_GetSocketReadStatus() == HTTP_CODE_OK)
                     if(pMe->m_GetStatus == HTTP_CODE_OK)
                     {
-                        nResID = IDS_MSGSENT;
+                        nResID = IDS_SAVED;
                     }
                     else
                     {
