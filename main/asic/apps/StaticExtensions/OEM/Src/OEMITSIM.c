@@ -120,13 +120,13 @@ extern T9STATUS T9FARCALL T9CCLoadLdb(T9CCFieldInfo *pFieldInfo, T9ChineseData T
 
 //draw image
 #define  HAND_IMAGE_X 0
-#define  HAND_IMAGE_Y 144
+#define  HAND_IMAGE_Y 220
 
 //DEFINE HANSTROKE candidate
 #define  HAND_CANDIDATE_X 4
 #define  HAND_CANDIDATE_Y 125
-#define  HAND_CANDIDATE_DX 172
-#define  HAND_CANDIDATE_DY 141
+#define  HAND_CANDIDATE_DX 240//172
+#define  HAND_CANDIDATE_DY 195//141
 
 
 //判断是是否为全屏手写
@@ -212,9 +212,9 @@ ZI8WCHAR TSIM_ziWordBuffer[32];
 #define TSIMLINEBREAK       ((AECHAR) '\n')
 #define PT_IN_RECT(a,b,rct) (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
 
-#define MAX_SCREEN_HEIGHT              204
+#define MAX_SCREEN_HEIGHT              304
 #define SOFTKEY_HEIGHT                 20
-#define TMTILE_HEIGHT                  21
+#define TMTILE_HEIGHT                  28
 
 #define TSIM_NOTHWRITE_NONE            (-1)
 #define TSIM_NOTHWRITE_OK              (0)
@@ -594,7 +594,7 @@ static ModeInfo sTSIMModes[] =
 //set the symbol for the handwrite inputmode
 static const AECHAR fullscreen_symbol[FULLSCREEN_SYMBOL_NUM] =
 {
-    ',', 0x3002, '!', '?', 0x201c, 0x201d, 0x2018, 0x2019, ';', ':', 0x3001
+    ',', '.', '!', '?', 0x201c, 0x201d, 0x2018, 0x2019, ';', ':', 0x3001
 };
 static const AECHAR onerect_symbol[ONERECT_SYMBOL_NUM] =
 {
@@ -1012,6 +1012,7 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
 					point.y = AEE_GET_Y(dwParam);
 					m_bBack = TSIM_HandleInputControlOnPenDown(pme,point);
 					IDISPLAY_Update(pme->m_pIDisplay);
+                     DBGPRINTF("CTSIM_HandleEvent-----point.x=%d--point.y=%d",point.x,point.y);
 					return m_bBack;
 					//return TRUE;
 				}
@@ -1068,6 +1069,7 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
                 //if the pen hit the keypad area
                 if (sTSIMModes[pme->m_tsm_curr - 1].pfn_pendown)
                 {
+                     DBGPRINTF("CTSIM_HandleEvent-----");
                     // Exit the old mode before changing the mode number
                     // or the edit flag
                     //BRIDLE_ASSERT_SAFE_PFN(*sTSIMModes[pme->m_tsm_curr - 1].pfn_pendown);//lint !e611 !e534
@@ -1158,6 +1160,7 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
 				point.x = AEE_GET_X(dwParam);
 				point.y = AEE_GET_Y(dwParam);
 				m_bBack = TSIM_HandleInputControlOnPenUp(pme,point);
+                 DBGPRINTF("CTSIM_HandleEvent1-----point.x=%d--point.y=%d",point.x,point.y);
 				IDISPLAY_Update(pme->m_pIDisplay);
 				return m_bBack;
 			}
@@ -1199,6 +1202,7 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
 				point.x = AEE_GET_X(dwParam);
 				point.y = AEE_GET_Y(dwParam);
 				m_bBack = TSIM_HandleInputControlOnPenMove(pme,point);
+                 DBGPRINTF("CTSIM_HandleEvent2-----point.x=%d--point.y=%d",point.x,point.y);
 				IDISPLAY_Update(pme->m_pIDisplay);
 				return m_bBack;
 			}
@@ -2295,7 +2299,7 @@ static void TSIM_CalcRects(CTSIM * pme)
     if ((pme->hstrokestateparam.hanstroke_range == OEMNV_HANSTROKE_RANGE_ALL)
        && (pme->m_tsm_curr == TSIM_HANSTROKE))
     {
-        rc.dy = (int16)(pme->m_rc.dy - (5 * TSIMLINEHEIGHT + 2));
+        rc.dy = (int16)(pme->m_rc.dy - (4 * TSIMLINEHEIGHT + 2));
     }
     else
     {
@@ -2872,7 +2876,7 @@ static void TSIM_DrawModeTitle(CTSIM * pme)
             return;
         }
 
-        IIMAGE_Draw(pImage, 1 + 25 * ((int)pme->m_tsm_curr - 1), 165);
+        IIMAGE_Draw(pImage, 1 + 34 * ((int)pme->m_tsm_curr - 1), 245);
         (void)IIMAGE_Release(pImage);
     }
     return;
@@ -2901,7 +2905,7 @@ static void TSIM_DrawSoftkey(CTSIM *pme, int index)
     IImage *    pImage;
     
     pImage = NULL;
-    
+    DBGPRINTF("TSIM_DrawSoftkey-----index=%d",index);
     switch(index)
     {
         case -1:
@@ -2910,22 +2914,25 @@ static void TSIM_DrawSoftkey(CTSIM *pme, int index)
 			
                 if (pme->hstrokestateparam.hanstroke_range == OEMNV_HANSTROKE_RANGE_ONERECT)
                 {
+                     DBGPRINTF("TSIM_DrawSoftkey-----index=%d-----1",index);
                     IIMAGE_SetParm(pme->m_phwimage, IPARM_OFFSET, 0, 86);
                 }
                 else if (pme->hstrokestateparam.hanstroke_range == OEMNV_HANSTROKE_RANGE_ALL)
                 {
+                     DBGPRINTF("TSIM_DrawSoftkey-----index=%d-----2",index);
                     IIMAGE_SetParm(pme->m_phwimage, IPARM_OFFSET, 0, 42);
                 }
-                IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 176, 20);
-                IIMAGE_Draw(pme->m_phwimage, 0, 187);  
+                IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 240, 20);
+                IIMAGE_Draw(pme->m_phwimage, 0, 287);  
 				DBGPRINTF("TSIM_DrawSoftkey image_draw 1");  //090602  debug
 				
             }
             else
             {
+                 DBGPRINTF("TSIM_DrawSoftkey-----index=%d-----3",index);
                 IIMAGE_SetParm(pme->m_pnothwimage, IPARM_OFFSET, 0, 23);
-                IIMAGE_SetParm(pme->m_pnothwimage, IPARM_SIZE, 176, 20);
-                IIMAGE_Draw(pme->m_pnothwimage, 0, 187);
+                IIMAGE_SetParm(pme->m_pnothwimage, IPARM_SIZE, 240, 20);
+                IIMAGE_Draw(pme->m_pnothwimage, 0, 287);
             }
             return;
             
@@ -2992,7 +2999,7 @@ static void TSIM_DrawSoftkey(CTSIM *pme, int index)
         return;
     }
     
-    IIMAGE_Draw(pImage, (1 + 44 * index) - (index + 3) / 4, 187);
+    IIMAGE_Draw(pImage, (1 + 44 * index) - (index + 3) / 4, 287);
     (void)IIMAGE_Release(pImage);
     return;
 }
@@ -3043,6 +3050,7 @@ static boolean TSIM_SetText(CTSIM* pme, const AECHAR * pszText, int nChars)
         {
             nLen = nChars;
         }
+        DBGPRINTF("TSIM_SetText-----");
 
         // Make room for NULL
         if (pszText ||!nLen)
@@ -3238,7 +3246,7 @@ static void TSIM_TextChanged(CTSIM* pme)
     // Assume we're never called with a NULL pointer as this
     // is a private function.
     int iFontAscent, iFontDescent;
-
+     DBGPRINTF("TSIM_TextChanged-----");
     // We must validate various aspects of the text control
     // and determine whether or not the display needs to
     // be re-calculated/re-drawn.
@@ -5794,6 +5802,7 @@ SEE ALSO:
 static boolean TSIM_HanstrokePenDown(CTSIM *pme, uint32 dwparam)
 {
     int i;
+    DBGPRINTF("TSIM_HanstrokePenDown---1");  
 
     //if it is not in the hanstroke inputmode,
     //nothing to do just retrun FALSE.
@@ -5836,6 +5845,7 @@ static boolean TSIM_HanstrokePenDown(CTSIM *pme, uint32 dwparam)
     }
     else
     {
+        DBGPRINTF("fullscreen_symrange[0]---x=%d---y=%d",(&(pme->fullscreen_symrange[0]))->xmin,(&(pme->fullscreen_symrange[0]))->ymin); 
         if (TSIM_IsInRange(dwparam, (&(pme->fullscreen_wholesymrange))))
         {
             for (i=0; i<FULLSCREEN_SYMBOL_NUM; i++)
@@ -5880,6 +5890,7 @@ static boolean TSIM_HanstrokePenUp(CTSIM *pme, uint32 dwparam)
 	T9SYMB sExplSym;
 	T9STATUS sStatus = T9STATERROR;
 	int i;
+     DBGPRINTF("TSIM_HanstrokePenUp-----");
 	IDISPLAY_SetColor(pme->m_pIDisplay,CLR_USER_TEXT,RGB_WHITE); 
     if (pme->m_tsm_curr == TSIM_HANSTROKE)
     {
@@ -5944,9 +5955,10 @@ static boolean TSIM_HanstrokePenUp(CTSIM *pme, uint32 dwparam)
             }
             pme->selectsymbol_index = -1;
             TSIM_Draw(pme);
+             DBGPRINTF("TSIM_HanstrokePenUp-----HAND_IMAGE_X=%d-----HAND_IMAGE_X=%d",HAND_IMAGE_X,HAND_IMAGE_X);
             IIMAGE_SetParm(pme->m_phwimage, IPARM_OFFSET, 0, 0);
             IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 47, 63);
-            IIMAGE_Draw(pme->m_phwimage,HAND_IMAGE_X,HAND_IMAGE_Y);
+            IIMAGE_Draw(pme->m_phwimage,HAND_IMAGE_X,HAND_IMAGE_X);
             IDISPLAY_Update(pme->m_pIDisplay);
 			DBGPRINTF("TSIM_HanstrokePenUp image_draw 2");  //090602  debug
             return TRUE;
@@ -5954,12 +5966,13 @@ static boolean TSIM_HanstrokePenUp(CTSIM *pme, uint32 dwparam)
         
        if ((pme->hstrokestateparam.hanstroke_range == OEMNV_HANSTROKE_RANGE_ALL))
        {
-		   
+		    DBGPRINTF("fullscreen_symrange --------------------------pme->selectsymbol_index=%d",pme->selectsymbol_index);
             if (TSIM_IsInRange(dwparam, (&(pme->fullscreen_symrange[pme->selectsymbol_index]))))
             {
-
+                DBGPRINTF("fullscreen_symrange --------------------------1");
 				if (pme->selectsymbol_index >=0)
 				{
+                    DBGPRINTF("fullscreen_symrange --------------------------2");
 					 TSIM_AddChar(pme, fullscreen_symbol[pme->selectsymbol_index]);
 					 pme->is_redraw_hanwrite = TRUE;
 				}
@@ -5970,7 +5983,7 @@ static boolean TSIM_HanstrokePenUp(CTSIM *pme, uint32 dwparam)
 				TSIM_Draw(pme);
 			}
             IIMAGE_SetParm(pme->m_phwimage, IPARM_OFFSET, 0, 0);
-            IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 176, 20);
+            IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 240, 80);
             IIMAGE_Draw(pme->m_phwimage,HAND_IMAGE_X,HAND_IMAGE_Y);
             IDISPLAY_Update(pme->m_pIDisplay);
 			DBGPRINTF("TSIM_HanstrokePenUp image_draw 3");  //090602  debug
@@ -6021,6 +6034,7 @@ static boolean TSIM_HanstrokePenMove(CTSIM* pme, uint32 dwparam)
     //other place.
     if (pme->bdowntext)
     {
+        DBGPRINTF("TSIM_HanstrokePenMove---1");  
         return(TSIM_FixCopiedSelection(pme, dwparam));
     }
 
@@ -6059,6 +6073,7 @@ static boolean TSIM_HanstrokePenReady(CTSIM* pme)
 	//unsigned long m_pCands[10];
     //temp_szResult = (HW_Result *)MALLOC(sizeof(HW_Result));
 	//初始化手写识别参数
+	  DBGPRINTF("TSIM_HanstrokePenReady---1"); 
 	pme->m_Thwattribute.wLanguage = HWLANG_GB2312;  //识别语言
     pme->m_Thwattribute.dwRange =ALC_CHN_STANDARD;//|ALC_LATIN;        //识别范围
 	pme->m_Thwattribute.iSlantScope = 20;                  //识别倾斜角度范围
@@ -6258,11 +6273,11 @@ static void TSIM_HanstrokeDraw(CTSIM *pme)
     IIMAGE_SetParm(pme->m_phwimage, IPARM_OFFSET, 0, 0);
     if (pme->hstrokestateparam.hanstroke_range == OEMNV_HANSTROKE_RANGE_ALL)
     {
-        IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 176, 62);
+        IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 240, 80);
     }
     else
     {
-        IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 176, 105);
+        IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 240, 105);
     }
 	IIMAGE_Draw(pme->m_phwimage,HAND_IMAGE_X,HAND_IMAGE_Y);
 	DBGPRINTF("TSIM_HanstrokeDraw image_draw 4");  //090602  debug
@@ -6271,8 +6286,8 @@ static void TSIM_HanstrokeDraw(CTSIM *pme)
 
 	candi_rc.x = 0;
 	candi_rc.y = 120;
-	candi_rc.dx = 176;
-	candi_rc.dy = 20;
+	candi_rc.dx = 240;
+	candi_rc.dy = 40;
 
 
 	/*
@@ -6283,7 +6298,7 @@ static void TSIM_HanstrokeDraw(CTSIM *pme)
 	//erase the old rectangle
 	IDISPLAY_EraseRect(pme->m_pIDisplay, &candi_rc);
 	//draw the new rectangle
-	IDISPLAY_DrawRect(pme->m_pIDisplay,
+ 	IDISPLAY_DrawRect(pme->m_pIDisplay,
 		&candi_rc,
 		RGB_WINTE_BACKDROP,//RGB_BLACK           //modi by ydc 090522              
 		RGB_WINTE_BACKDROP,//TSIM_UP_COLOR,      //modi by ydc 090522
@@ -6537,6 +6552,8 @@ static boolean TSIM_IsInRange(uint32 dwparam, CoordiRange* range)
 
     penx = (int16)(AEE_GET_X(dwparam));
     peny = (int16)(AEE_GET_Y(dwparam));
+     DBGPRINTF("TSIM_IsInRange-----penx=%d--peny=%d",penx,peny);
+     DBGPRINTF("fullscreen_symrange[0]---range->xmin=%d---range->ymin=%d---range->ymax=%d",range->xmin,range->ymin,range->ymax);
     if ((range)
        && (penx>= range->xmin) 
        && (penx <= range->xmax)
@@ -6795,7 +6812,7 @@ static void TSIM_PressFuncButton(CTSIM *pme, int  index, CoordiRange *prange)
     IImage *     pImage;
     
     pImage = NULL;
-
+    DBGPRINTF("TSIM_PressFuncButton---1");  
     //record the state of that the pen has hit the function button.
     pme->bselect_funtitle = TRUE;
     
@@ -6934,7 +6951,7 @@ static void TSIM_PressFuncButton(CTSIM *pme, int  index, CoordiRange *prange)
         return;
     }
 
-    IIMAGE_Draw(pImage, 101 + 25 * index, 165);
+    IIMAGE_Draw(pImage, 137 + 34 * index, 245);
     (void)IIMAGE_Release(pImage);
    
     //update the screen so that the changes can be displayed
@@ -7035,18 +7052,19 @@ static void TSIM_SelectSymbol(CTSIM *pme, int  index)
     {
         return;
     }
+    DBGPRINTF("TSIM_SelectSymbol-----index=%d",index);
 
     if (pme->m_tsm_curr == TSIM_HANSTROKE)
     {
-        IIMAGE_SetParm(pme->m_phwsymimage, IPARM_OFFSET, 7+15*index, 1);
-        IIMAGE_SetParm(pme->m_phwsymimage, IPARM_SIZE, 15, 18);
+        IIMAGE_SetParm(pme->m_phwsymimage, IPARM_OFFSET, 7+21*index, 1);
+        IIMAGE_SetParm(pme->m_phwsymimage, IPARM_SIZE, 20, 22);
         if(pme->hstrokestateparam.hanstroke_range == OEMNV_HANSTROKE_RANGE_ONERECT)
         {
             IIMAGE_Draw(pme->m_phwsymimage, 1+(index%3)*15, 101+(index/3)*21);
         }
         else
         {
-            IIMAGE_Draw(pme->m_phwsymimage, 7+15*index, 145);
+            IIMAGE_Draw(pme->m_phwsymimage, 7+21*index, 222);
         }
         IDISPLAY_UpdateEx(pme->m_pIDisplay, FALSE);
         pme->selectsymbol_index = (int16)index;
@@ -7111,6 +7129,7 @@ static boolean TSIM_ChangeCursorPos(CTSIM *pme, uint32 dwparam)
 
     penx = (int16)AEE_GET_X(dwparam);
     peny = (int16)AEE_GET_Y(dwparam);
+    DBGPRINTF("TSIM_ChangeCursorPos-----penx=%d--peny=%d",penx,peny);
 
     if (TSIM_FixCursorPos(pme, penx, peny, &curindex))
     {
@@ -7264,6 +7283,9 @@ static boolean TSIM_FixCopiedSelection(CTSIM *pme, uint32 dwparam)
     
     penx = (int16)AEE_GET_X(dwparam);
     peny = (int16)AEE_GET_Y(dwparam);
+    DBGPRINTF("TSIM_FixCopiedSelection-----penx=%d--peny=%d",penx,peny);
+    DBGPRINTF("TSIM_FixCopiedSelection---rect.x=%d-----rect.y=%d",rect.x,rect.y);  
+    DBGPRINTF("TSIM_FixCopiedSelection---rect.dx=%d-----rect.dy=%d",rect.dx,rect.dy); 
 
     // Calculate the text rect and pixel width for lines
     if (pme->m_dwProps & TP_FRAME)
@@ -7298,6 +7320,7 @@ static boolean TSIM_FixCopiedSelection(CTSIM *pme, uint32 dwparam)
     {
         peny = rect.y + rect.dy;
     }
+    DBGPRINTF("TSIM_FixCopiedSelection---penx=%d-----peny=%d",penx,peny);  
 
     if (TSIM_FixCursorPos(pme, penx, peny, &cselend))
     {
@@ -7517,16 +7540,18 @@ static void TSIM_DrawFuncButton(CTSIM *pme)
             }
             else if (pme->hstrokestateparam.hanstroke_range == OEMNV_HANSTROKE_RANGE_ALL)
             {
-                IIMAGE_SetParm(pme->m_phwimage, IPARM_OFFSET, 100, 20);
+                IIMAGE_SetParm(pme->m_phwimage, IPARM_OFFSET, 0, 0);
             }
-            IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 76, 22);
-            IIMAGE_Draw(pme->m_phwimage, 100, 164);
+            IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 240, 220);
+           // IIMAGE_Draw(pme->m_phwimage, 100, 164);
+            IIMAGE_Draw(pme->m_phwimage,HAND_IMAGE_X,HAND_IMAGE_Y);
         }
         else
         {
-            IIMAGE_SetParm(pme->m_pnothwimage, IPARM_OFFSET, 100, 0);
+            IIMAGE_SetParm(pme->m_pnothwimage, IPARM_OFFSET, 240, 220);
             IIMAGE_SetParm(pme->m_pnothwimage, IPARM_SIZE, 76, 22);
-            IIMAGE_Draw(pme->m_pnothwimage, 100, 164);
+           // IIMAGE_Draw(pme->m_pnothwimage, 100, 164);
+           IIMAGE_Draw(pme->m_pnothwimage,HAND_IMAGE_X,HAND_IMAGE_Y);
         }
     }
 	DBGPRINTF("TSIM_DrawFuncButton image_draw 5");  //090602  debug
@@ -7559,6 +7584,7 @@ static boolean TSIM_DragBar(CTSIM *pme, uint32 dwparam)
     //get the x/y coordinate
     penx = (int16)(AEE_GET_X(dwparam));
     peny = (int16)(AEE_GET_Y(dwparam));
+    DBGPRINTF("TSIM_DragBar-----penx=%d--peny=%d",penx,peny);
     //if the pen has hit down the scroll bar
     if (pme->bselect_blackscrbar)
     {
@@ -7686,11 +7712,12 @@ static void Hanstroke_FixRange(CTSIM *pme)
                       (int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy - 1));
     }
 
-
+      DBGPRINTF("Hanstroke_FixRange    pme->m_rectDisplay.x=%d---pme->m_rectDisplay.y=%d",pme->m_rectDisplay.x,pme->m_rectDisplay.y); 
+       DBGPRINTF("Hanstroke_FixRange    pme->m_rectDisplay.dx=%d---pme->m_rectDisplay.dy=%d",pme->m_rectDisplay.dx,pme->m_rectDisplay.dy);
     //set the text display range
     SETCoordiRange(&(pme->textrange),
                    pme->m_rectDisplay.x,
-                   pme->m_rectDisplay.y,
+                   pme->m_rectDisplay.y+TSIMLINEHEIGHT,
                    pme->m_rectDisplay.x + pme->m_rectDisplay.dx - 1,
                    pme->m_rectDisplay.y + pme->m_rectDisplay.dy - 1);
 
@@ -7706,6 +7733,8 @@ static void Hanstroke_FixRange(CTSIM *pme)
 		                            ,HAND_CANDIDATE_Y
 									,HAND_CANDIDATE_DX
 									,HAND_CANDIDATE_DY);
+    DBGPRINTF("Hanstroke_FixRange    HAND_CANDIDATE_X=%d---HAND_CANDIDATE_Y=%d",HAND_CANDIDATE_X,HAND_CANDIDATE_Y); 
+     DBGPRINTF("Hanstroke_FixRange    HAND_CANDIDATE_DX=%d---pme->m_rectDisplay.dy=%d",HAND_CANDIDATE_DX,HAND_CANDIDATE_DY);
 
     //set the candidate character rectangle
     SETAEERECT(&pme->hscandi_rc,
@@ -7717,24 +7746,27 @@ static void Hanstroke_FixRange(CTSIM *pme)
     //set the coordinage range of the symbol of the fullscreen handwrite inputmode
     SETCoordiRange(&pme->fullscreen_wholesymrange,
                    pme->m_rectDisplay.x + 6,
-                   (int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy + 21),
+                   (int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy + 47), //280,//
                    (pme->m_rectDisplay.x + pme->m_rectDisplay.dx) - 6,
-                   ((int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy
-                   + 38)));
+                   ((int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy+ 75))
+                   );
     for(i=0; i<FULLSCREEN_SYMBOL_NUM; i++)
     {
+        DBGPRINTF("pme->fullscreen_symrange  x=%d---y=%d",pme->m_rectDisplay.x + 6 + 15 * i,(int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy + 72)); 
+        DBGPRINTF("pme->fullscreen_symrange  dx=%d---dy=%d",pme->m_rectDisplay.x + 20 + 15 * i,((int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy+ 100)));
+
         SETCoordiRange(&pme->fullscreen_symrange[i],
-                       pme->m_rectDisplay.x + 6 + 15 * i,
-                       (int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy + 21),
-                       pme->m_rectDisplay.x + 20 + 15 * i,
-                       ((int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy
-                       + 38)));
+                       pme->m_rectDisplay.x + 6 + 21 * i,
+                       (int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy + 47),
+                       pme->m_rectDisplay.x + 20 + 21 * i,
+                       ((int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy+ 73))
+                      );
     }
                    
     //set the coordinage range of the symbol of the onerect handwrite inputmode
     SETCoordiRange(&pme->onerect_wholesymrange,
                    pme->m_rectDisplay.x + 1,
-                   (int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy + 22),
+                   (int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy + 72),
                    pme->m_rectDisplay.x + 45,
                    ((int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy
                    + 80)));
@@ -7761,17 +7793,17 @@ static void Hanstroke_FixRange(CTSIM *pme)
                        (linegb + TSIMLINEHEIGHT) - 1);
     }
 
-    //set the coordinate range of the area of functitle
-    hs_funtitlerc.x = pme->m_rectDisplay.x + 101;
+    //set the coordinate range of the area of functitle  空回车退
+    hs_funtitlerc.x = pme->m_rectDisplay.x + 137;
     hs_funtitlerc.y = (int16)(MAX_SCREEN_HEIGHT - (SOFTKEY_HEIGHT + TMTILE_HEIGHT));
     hs_funtitlerc.dx = FONT_WIDTH + 8;
     hs_funtitlerc.dy = (int16)(TSIMLINEHEIGHT + 4);
     for (i=(int)FUNCTITLE_BLANK; i<(int)MAX_FN_TYPE; i++)
     {
         SETCoordiRange(&(pme->hs_funtitlerange[i]),
-                       hs_funtitlerc.x + i * 25,
-                       hs_funtitlerc.y,
-                       (hs_funtitlerc.x + i * 25 + hs_funtitlerc.dx) - 1,
+                       hs_funtitlerc.x + i * 34 ,
+                       (int16)(MAX_SCREEN_HEIGHT- (SOFTKEY_HEIGHT + TMTILE_HEIGHT)),
+                       (hs_funtitlerc.x + i * 34 + hs_funtitlerc.dx) - 1,
                        (hs_funtitlerc.y + TSIMLINEHEIGHT) + 3);
     }
 
@@ -7809,7 +7841,7 @@ static void Hanstroke_FixRange(CTSIM *pme)
                    pme->m_rectDisplay.x + 1,
                    (int16)(MAX_SCREEN_HEIGHT
                    - (SOFTKEY_HEIGHT + TMTILE_HEIGHT)),
-                   99,
+                   139,
                    (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) - 2));
 
 	//set the whole hand writting range
@@ -7832,10 +7864,10 @@ static void Hanstroke_FixRange(CTSIM *pme)
     for (i = 0; i < MAX_TSM_TYPE; i++)
     {
         SETCoordiRange(&(pme->tmtitle_range[i]),
-                       (int16)(pme->m_rectDisplay.x + 1 + i * 25),
+                       (int16)(pme->m_rectDisplay.x + 1 + i * 34),
                        (int16)(MAX_SCREEN_HEIGHT
                        - (SOFTKEY_HEIGHT + TMTILE_HEIGHT)),
-                       (int16)(pme->m_rectDisplay.x + 24 + i * 25),
+                       (int16)(pme->m_rectDisplay.x + 34+ i * 34),
                        (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) - 2));
     }
 }
@@ -8052,9 +8084,14 @@ static void Pinyin_DrawCandiRect(CTSIM *pme)
 
     //draw a frame for the candidate character area
     candi_rc.x  = pme->m_rectDisplay.x;
-    candi_rc.y  = pme->m_rectDisplay.y + pme->m_rectDisplay.dy;
+   candi_rc.y  = pme->m_rectDisplay.y + pme->m_rectDisplay.dy;
     candi_rc.dx = pme->m_rectDisplay.dx;
     candi_rc.dy = (int16)(TSIMLINEHEIGHT + 4);
+
+   // candi_rc.x = 0;
+	//candi_rc.y = 120;
+	//candi_rc.dx = 240;
+	//candi_rc.dy = 40;
     
     //erase the old rectangle
     IDISPLAY_EraseRect(pme->m_pIDisplay, &candi_rc);
@@ -8093,8 +8130,10 @@ static void TSIM_PinyinDraw(CTSIM *pme)
         //ERR("There is no image to draw", 0, 0, 0);
         return;
     }
-    IIMAGE_Draw(pme->m_pnothwimage, 0, 164);
-       
+    //IIMAGE_Draw(pme->m_pnothwimage, 0, 164);
+    IIMAGE_SetParm(pme->m_pnothwimage, IPARM_OFFSET, 0, 0);
+    IIMAGE_SetParm(pme->m_pnothwimage, IPARM_SIZE, 240, 80);
+    IIMAGE_Draw(pme->m_pnothwimage,HAND_IMAGE_X,HAND_IMAGE_Y+21);   
     //display the pinyin virtual keypad for user inputing
     pykpad_rc.x  = pme->pykpad.xmin;
     pykpad_rc.y  = pme->pykpad.ymin;
@@ -8271,6 +8310,7 @@ static boolean TSIM_PinyinPenUp(CTSIM *pme, uint32 dwparam)
 	T9SYMB sExplSym;
 	T9STATUS sStatus = T9STATERROR;
 	int i;
+    DBGPRINTF("TSIM_PinyinPenUp --------------");
     if (pme->m_tsm_curr != TSIM_PINYIN)
     {
         return FALSE;
@@ -8323,7 +8363,7 @@ static boolean TSIM_PinyinPenUp(CTSIM *pme, uint32 dwparam)
 			pme->py_state = PY_ASSOC_MODE;
 		}
         rc = pme->pywholeassoc_rc;
-        TSIM_DispChinese(pme, pme->gb, &rc, 8);
+        TSIM_DispChinese(pme, pme->gb, &rc, 10);
         pme->selectchar_index = -1;
 		if (pme->wSelStart<pme->m_nMaxChars)
 		{
@@ -8585,7 +8625,7 @@ SEE ALSO:
 static void Pinyin_FixRange(CTSIM *pme)
 {
     int i; 
-    
+    DBGPRINTF("Pinyin_FixRange --------------");
     //set the range of the text area
     SETCoordiRange(&(pme->textrange),
                    pme->m_rectDisplay.x,
@@ -8605,8 +8645,8 @@ static void Pinyin_FixRange(CTSIM *pme)
     //set the associated character rectangle
     SETAEERECT(&pme->pywholeassoc_rc,
                (pme->m_rectDisplay.x + 1),
-               pme->m_rectDisplay.y + pme->m_rectDisplay.dy,
-               175,
+               pme->m_rectDisplay.y + pme->m_rectDisplay.dy+TSIMLINEHEIGHT,
+               238,
                (int16)(TSIMLINEHEIGHT + 4));
 
     //set the coordinate range of the associated characters
@@ -8643,7 +8683,7 @@ static void Pinyin_FixRange(CTSIM *pme)
                    pme->pywholecandi_rc.y + TSIMLINEHEIGHT + 1);
 
     //set each associated character range
-    for (i = 0; i <=9; i++)
+    for (i = 0; i <=10; i++)
     {
        SETCoordiRange(&(pme->pyassoc[i]),
                       pme->pywholeassoc_rc.x + 3 + i * 21,
@@ -8653,12 +8693,12 @@ static void Pinyin_FixRange(CTSIM *pme)
     }
 
     //set each candidate character range
-    for (i = 0; i <= 5; i++)
+    for (i = 0; i <= 3; i++)
     {
        SETCoordiRange(&(pme->pycandi[i]),
-                      pme->pywholecandi_rc.x + 3 + i * 17,
+                      pme->pywholecandi_rc.x + 3 + i * 24,
                       pme->pywholecandi_rc.y + 2,
-                      pme->pywholecandi_rc.x + (i + 1)  * 17 + 1,
+                      pme->pywholecandi_rc.x + (i + 1)  * 24 + 1,
                       pme->pywholecandi_rc.y + 1 + TSIMLINEHEIGHT);
     }
 }
@@ -9090,15 +9130,15 @@ SEE ALSO:
 static void  TSIM_LettersDraw(CTSIM *pme)
 {
     AEERect   zmkpad_rc;
-    
+    DBGPRINTF("TSIM_LettersDraw    1"); 
     //draw the button image.
     if (pme->m_pnothwimage == NULL)
     {
         //ERR("There is no image to draw", 0, 0, 0);
         return;
     }
-    IIMAGE_Draw(pme->m_pnothwimage, 0, 164);
-    
+    //IIMAGE_Draw(pme->m_pnothwimage, 0, 164);
+     IIMAGE_Draw(pme->m_pnothwimage,HAND_IMAGE_X,HAND_IMAGE_Y+23); 
     //display the zimu virtual keypad for user inputing
     zmkpad_rc.x  = pme->m_rectDisplay.x;
     zmkpad_rc.y  = pme->m_rectDisplay.y + pme->m_rectDisplay.dy;
@@ -9196,7 +9236,8 @@ SEE ALSO:
 =============================================================================*/
 static boolean TSIM_LetSymPenUp(CTSIM* pme, uint32 dwparam)
 {   
-    //if the pen hit the black scoll bar     
+    //if the pen hit the black scoll bar 
+      DBGPRINTF("TSIM_LetSymPenUp    1"); 
     if (pme->bselect_blackscrbar)
     {
         pme->bselect_blackscrbar = FALSE;
@@ -9237,6 +9278,7 @@ static boolean TSIM_LetSymPenMove(CTSIM* pme, uint32 dwparam)
 {
     //if the coordinate is in the scroll bar area,then
     //drag the scroll bar
+       DBGPRINTF("TSIM_LetSymPenMove    1"); 
     if (pme->bselect_blackscrbar)
     {
         return(TSIM_DragBar(pme, dwparam));
@@ -9286,6 +9328,7 @@ static boolean  TSIM_LetSymEvtChar(CTSIM* pme, AEEEvent eCode, AECHAR receivecha
     {
         return TRUE;
     }
+    DBGPRINTF("TSIM_LetSymEvtChar    1"); 
 
     if(receivechar == (AECHAR)0x6362)
     {
@@ -9441,15 +9484,15 @@ SEE ALSO:
 static void  TSIM_SymbolsDraw(CTSIM *pme)
 {
     AEERect   fhkpad_rc;
-    
+     DBGPRINTF("TSIM_SymbolsDraw    1"); 
     //draw the button image.
     if (pme->m_pnothwimage == NULL)
     {
         //ERR("There is no image to draw", 0, 0, 0);
         return;
     }
-    IIMAGE_Draw(pme->m_pnothwimage, 0, 164);
-    
+    //IIMAGE_Draw(pme->m_pnothwimage, 0, 164);
+     IIMAGE_Draw(pme->m_pnothwimage,HAND_IMAGE_X,HAND_IMAGE_Y+23); 
     //display the FuHao virtual keypad for user inputing
     fhkpad_rc.x  = pme->m_rectDisplay.x;
     fhkpad_rc.y  = pme->m_rectDisplay.y + pme->m_rectDisplay.dy;
@@ -10584,6 +10627,7 @@ static boolean TSIM_HandleInputControlOnPenMove(CTSIM *pme,THWPoint point)
 	boolean     is_in_rect = FALSE;
 	//AEERect     clip_rect;
 	uint32      hw_status = INPUT_STATUS_NONE;
+    DBGPRINTF("TSIM_HandleInputControlOnPenMove    1"); 
 	hw_status = TSIM_GetHWStatus();
 	if (INPUT_STATUS_PREVHW == hw_status || INPUT_STATUS_HW == hw_status)
 	{
