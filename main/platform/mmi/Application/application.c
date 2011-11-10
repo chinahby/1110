@@ -611,8 +611,9 @@ static boolean Application_HandleEvent( IApplication *pi,
             pMe->m_eDlgReturn = DLGRET_CREATE;
             pMe->m_eAppStatus = APPLICATION_RUNNING;
             if(pMe->m_pIAnn != NULL)
-            {
-                IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);
+            {	    			
+                IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,FALSE);				
+				MSG_FATAL("***zzg Application EVT_APP_START EnableAnnunciatorBar TRUE",0,0,0);				   
             }
             {
                 AECHAR WTitle[20] = {0};
@@ -1428,7 +1429,7 @@ PARAMETERS:  如果APPLET 有变动，只需改动次函数
 static int StartApplet(Application *pMe, int i)
 {
     int Result = EUNSUPPORTED;
-    
+	
     switch(i){
     case IDS_APPLICATION_BAM:
 #ifdef FEATURE_OEMOMH
@@ -1445,7 +1446,7 @@ static int StartApplet(Application *pMe, int i)
         break;
         
     case IDS_APPLICATION_TIMER:
-        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);
+        Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_APPTIMER);		
         break;
         
     case IDS_APPLICATION_STOPWATCH:
@@ -1503,7 +1504,8 @@ static int StartApplet(Application *pMe, int i)
         SPRINTF(buf, "%p", &start_info);
 		Result = ISHELL_StartAppletArgs(pMe->m_pShell,AEECLSID_NF3,buf);
         //Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRW_APP);
-        MSG_FATAL("AEECLSID_BRW_APP...........Result=%d",Result,0,0);
+        MSG_FATAL("AEECLSID_BRW_APP...........Result=%d",Result,0,0);		
+		
         break;
     }
 #endif
