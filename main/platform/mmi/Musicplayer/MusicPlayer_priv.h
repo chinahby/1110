@@ -85,6 +85,7 @@
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 //发送keypress消息用的宏
 #define KEY_PRESS_DWPARM   10000
+#define MUSIC_PLAYLIS_PENFLAG 10001
 #endif//FEATURE_LCD_TOUCH_ENABLE
 /*==============================================================================
                                  宏定义和常数

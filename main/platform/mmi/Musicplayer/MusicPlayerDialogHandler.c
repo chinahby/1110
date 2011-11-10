@@ -483,16 +483,20 @@ static boolean MP3_PlayMusic_Windows_HandleEvent(CMusicPlayer *pMe,
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
                 MSG_FATAL("Windows--EVT_PEN_UP",0,0,0);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, devinfo.cyScreen);
-				if ((wXPos>0)&&(wXPos<devinfo.cxScreen/2)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+				if ((wXPos>0)&&(wXPos<devinfo.cxScreen/3)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
 				{
 					boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,0);
 					return rt;
 				}
-				else if ((wXPos>devinfo.cxScreen/2)&&(wXPos<devinfo.cxScreen)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+				else if ((wXPos>2*(devinfo.cxScreen/3))&&(wXPos<devinfo.cxScreen)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
 				{
 					boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
 					return rt;
 				}
+                else
+                {
+                    return     MP3_MusicPlayerHandleKeyEvent(pMe,eCode,wParam,dwParam);
+                }
 
 			}
 			return TRUE;
@@ -770,13 +774,13 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, devinfo.cyScreen);
-				if ((wXPos>0)&&(wXPos<devinfo.cxScreen/2)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+				if ((wXPos>0)&&(wXPos<devinfo.cxScreen/3)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
 				{
 					uint16 nEvtCommand = IMENUCTL_GetSel(pMenuCtl);
 					boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,nEvtCommand);
 					return rt;
 				}
-				else if ((wXPos>devinfo.cxScreen/2)&&(wXPos<devinfo.cxScreen)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+				else if ((wXPos>2*(devinfo.cxScreen/3))&&(wXPos<devinfo.cxScreen)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
 				{
 					boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
 					return rt;
@@ -943,6 +947,7 @@ static boolean MP3_Playlist_HandleEvent(CMusicPlayer *pMe,
                     return TRUE;
                     
                 case AVK_SELECT:
+                    MSG_FATAL("PlayList--->AVK_SELECT",0,0,0);
                     if(pMe->m_nPlaylistNum == 0)
                     {
                         CLOSE_DIALOG(DLGRET_CREATEORRENAMELIST);
@@ -954,6 +959,7 @@ static boolean MP3_Playlist_HandleEvent(CMusicPlayer *pMe,
             break;
             
         case EVT_COMMAND:
+             MSG_FATAL("PlayList--->EVT_COMMAND",0,0,0);
             if(pMe->m_nPlaylistNum>0)
             {
                 pMe->m_nCurPlaylistID = IMENUCTL_GetSel(pMenuCtl);
@@ -981,7 +987,7 @@ static boolean MP3_Playlist_HandleEvent(CMusicPlayer *pMe,
 				AEERect rc;
 				int16 wXPos = (int16)AEE_GET_X(dwParam);
 				int16 wYPos = (int16)AEE_GET_Y(dwParam);
-
+                MSG_FATAL("PlayList--->EVT_PEN_UP",0,0,0);
 				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
         
 				MEMSET(&devinfo, 0, sizeof(devinfo));
@@ -990,21 +996,17 @@ static boolean MP3_Playlist_HandleEvent(CMusicPlayer *pMe,
 
 				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
 				{
-					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
-					{
-						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,0);
-						return rt;
-					}
-					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
-					{
-						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
-						 return rt;
-					}
-					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
-					{						
-						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
-						 return rt;
-					}
+                    if ((wXPos>0)&&(wXPos<devinfo.cxScreen/3)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+                    {
+                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,MUSIC_PLAYLIS_PENFLAG);
+                        return rt;
+                    }
+                    else if ((wXPos>2*(devinfo.cxScreen/3))&&(wXPos<devinfo.cxScreen)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+                    {
+                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
+                        return rt;
+                    }
+
 				}
 
 			}
@@ -2108,21 +2110,17 @@ static boolean MP3_PlaylistOpts_HandleEvent(CMusicPlayer *pMe,
 
 				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
 				{
-					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
-					{
-						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,0);
-						return rt;
-					}
-					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
-					{
-						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
-						 return rt;
-					}
-					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
-					{						
-						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
-						 return rt;
-					}
+                    if ((wXPos>0)&&(wXPos<devinfo.cxScreen/2)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+                    {
+                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,0);
+                        return rt;
+                    }
+                    else if ((wXPos>devinfo.cxScreen/2)&&(wXPos<devinfo.cxScreen)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+                    {
+                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
+                        return rt;
+                    }
+
 				}
 
 			}
@@ -2386,7 +2384,7 @@ static boolean MP3_CreatOrRenamelist_HandleEvent(CMusicPlayer *pMe,
     ASSERT(pMe != NULL);
 #endif
     
-    MSG_FATAL("MP3_CreatOrRenamelist_HandleEvent Start",0,0,0);
+    MSG_FATAL("MP3_CreatOrRenamelist_HandleEvent Start->eCode = %x, wParam = %x, dwparam =%x",eCode,wParam,dwParam);
     pTextCtl = (ITextCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                              IDC_CREATEORRENAMELIST_TEXTCTL);
     if (pTextCtl == NULL)
@@ -2494,6 +2492,7 @@ static boolean MP3_CreatOrRenamelist_HandleEvent(CMusicPlayer *pMe,
             switch (wParam)
             {
                 case AVK_CLR:
+                    MSG_FATAL("MP3_CreatOrRenamelist_HandleEvent->AVK_CLR",0,0,0);
                     FREEIF(pMe->m_pInputListName);
                     if(pMe->m_bRenameOpt)
                     {
@@ -2624,6 +2623,7 @@ static boolean MP3_CreatOrRenamelist_HandleEvent(CMusicPlayer *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, devinfo.cyScreen);
+                MSG_FATAL("MP3_CreatOrRenamelist_HandleEvent->EVT_PEN_UP",0,0,0);
 				if ((wXPos>0)&&(wXPos<devinfo.cxScreen/3)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
 				{
 					boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,0);
