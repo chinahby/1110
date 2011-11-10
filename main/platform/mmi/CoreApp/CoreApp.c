@@ -612,6 +612,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                                    uint32 dwParam)
 {
     CCoreApp * pMe = (CCoreApp *)pi;
+	
     switch (eCode)
     {
         case EVT_APP_START:
@@ -893,6 +894,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             }
             return FALSE;
         case EVT_KEY_HELD:
+			
             switch (wParam)
             {
                 case AVK_POWER:
@@ -1069,8 +1071,9 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
             default:
                 break;
             }
-            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)
-            return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+            #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W515V3)||defined(FEATURE_LCD_TOUCH_ENABLE)
+			
+			return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             #endif
             break;
             
@@ -1102,6 +1105,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
         case EVT_KEY_RELEASE:
         case EVT_COMMAND:
         {
+				
             return CoreApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
         }
             

@@ -142,6 +142,9 @@
 	<STRING Id="1047" Name="IDS_WAITING">
 		<Text>Waiting</Text>
 	</STRING>
+	<String Id="1048" Name="IDS_SUPER_SINGAL_ON">
+		<Text>Super singal on!</Text>
+	</String>
 	<String Id="1049" Name="IDS_MSG_OK">
 		<Text>OK</Text>
 	</String>
@@ -189,6 +192,9 @@
 	</String>
 	<String Id="1064" Name="IDS_USERPROFILE_NOMAL">
 		<Text>normal mode activated</Text>
+	</String>
+	<String Id="1065" Name="IDS_SUPER_SINGAL_OFF">
+		<Text>Super singal off!</Text>
 	</String>
 </Strings>
 <Dialogs>

@@ -213,6 +213,7 @@ static IImage * pWallPaper = NULL;
 
 static boolean bHideText = FALSE;
 static boolean bImageDecoded = FALSE;
+static boolean bsupersingal = FALSE;
 /*==============================================================================
 
                                  函数声明
@@ -3037,8 +3038,28 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
             }
             return TRUE;            
         }
-        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_S1000T)
+        #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_S1000T)||defined(FEATURE_LCD_TOUCH_ENABLE)
         case EVT_KEY_HELD:
+			#ifdef FEATURE_LCD_TOUCH_ENABLE
+			if(wParam == AVK_CLR)
+			{
+				MSG_FATAL("evt_key_held============%d",bsupersingal,0,0);
+				if(bsupersingal)
+				{
+					bsupersingal  = FALSE;
+					//CoreApp_ShowMsgDialog(pMe,IDS_SUPER_SINGAL_OFF);
+					pMe->m_nMsgID = IDS_SUPER_SINGAL_OFF;
+          			CLOSE_DIALOG(DLGRET_BATT_INFO)
+				}
+				else
+				{
+					bsupersingal  = TRUE;
+					//CoreApp_ShowMsgDialog(pMe,IDS_SUPER_SINGAL_ON);
+					pMe->m_nMsgID = IDS_SUPER_SINGAL_ON;
+          			CLOSE_DIALOG(DLGRET_BATT_INFO)
+				}
+			}
+			#else
     		if(wParam == AVK_SPACE)
             {
             	boolean bData;
@@ -3158,6 +3179,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
       			CLOSE_DIALOG(DLGRET_BATT_INFO)
             	return TRUE;
             }
+		#endif
         #endif    
         case EVT_DIALOG_END:
             // 取消相关定时器			
@@ -3573,6 +3595,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #endif
 					}
 					break;
+#ifndef FEATURE_LCD_TOUCH_ENABLE
 #if defined(FEATURE_VERSION_SMART) || defined(FEATURE_VERSION_M8) || defined(FEATURE_VERSION_M8P) || defined (FEATURE_VERSION_M8021)
 				case AVK_SOFT2:
 #else
@@ -3638,7 +3661,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                     }
 			
 				    break;
-
+#endif
                 default:
                     break;
             }
@@ -3646,12 +3669,10 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 		case EVT_PEN_DOWN:
 			{
-				
 				break;
 			}
 		case EVT_PEN_MOVE:
 			{
-				
 				break;
 			}
 		case EVT_PEN_UP:
