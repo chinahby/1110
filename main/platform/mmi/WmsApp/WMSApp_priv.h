@@ -1600,5 +1600,6 @@ void WmsApp_ReservedMsgSetTimer(WmsApp * pMe);
 ==============================================================================*/
 void WmsApp_UpdateMenuList_MMS(WmsApp *pMe, IMenuCtl *pMenu);
 #endif
+void WMSDialog_KeypadLock(boolean block);
 
 #endif // end WMSAPP_PRIV_H
