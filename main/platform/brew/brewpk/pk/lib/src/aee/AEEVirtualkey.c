@@ -89,9 +89,9 @@ when         who     what, where, why
 #else
 #define PY_KEYPAD_MINHEIGHT      63
 #endif
-#define OTHER_KEYPAD_MINWIDTH    176
+#define OTHER_KEYPAD_MINWIDTH    240
 #ifndef WIN32
-#define OTHER_KEYPAD_MINHEIGHT   80
+#define OTHER_KEYPAD_MINHEIGHT   106
 #else
 #define OTHER_KEYPAD_MINHEIGHT   83
 #endif
@@ -1332,11 +1332,13 @@ static void      VkeyCtl_SetLittleCharPad(VkeyCtl * pme,AEERect * prc)
     {
         for(j = 0; j < VLCharKeyPad.coloum; j++)
         {
-            pme->GridRect[count].x = (int16)(pme->m_rc.x + 6 + 15 * j);
-            pme->GridRect[count].y = (int16)(pme->m_rc.y + 1 + 21 * i);
-            pme->GridRect[count].dx = 15;
-            pme->GridRect[count].dy = 19;
+            pme->GridRect[count].x = (int16)(pme->m_rc.x + 6 + 22 * j);
+            pme->GridRect[count].y = (int16)(pme->m_rc.y + 1 + 28 * i);
+            pme->GridRect[count].dx = 22;
+            pme->GridRect[count].dy = 28;
             count++;
+            DBGPRINTF("VkeyCtl_SetLittleCharPad-----pme->GridRect[count].x=%d--pme->GridRect[count].y",pme->GridRect[count].x,pme->GridRect[count].y);
+            DBGPRINTF("VkeyCtl_SetLittleCharPad-----pme->GridRect[count].dx=%d--pme->GridRect[count].dy",pme->GridRect[count].dx,pme->GridRect[count].dy);
         }
     }
     
@@ -1469,7 +1471,7 @@ static void      VkeyCtl_SetSymbolPad(VkeyCtl * pme,AEERect * prc)
     }
     
     IIMAGE_Draw(pme->m_KeyPadNormal, pme->m_rc.x, pme->m_rc.y);
-    
+    DBGPRINTF("VkeyCtl_SetSymbolPad-----pme->m_rc.x=%d----pme->m_rc.y=%d",pme->m_rc.x,pme->m_rc.y);
     for(i = 0; i < VSymbolKeyPad.row; i++)
     {
         for(j = 0; j < VSymbolKeyPad.coloum; j++)
@@ -1478,6 +1480,8 @@ static void      VkeyCtl_SetSymbolPad(VkeyCtl * pme,AEERect * prc)
             pme->GridRect[count].y = (int16)((i == 0)?(pme->m_rc.y + 1):(pme->m_rc.y + 21 * i));
             pme->GridRect[count].dx = 15;
             pme->GridRect[count].dy = ((i == 0)?18:19);
+            DBGPRINTF("VkeyCtl_SetSymbolPad-----pme->GridRect[count].x=%d----pme->GridRect[count].y=%d",pme->GridRect[count].x,pme->GridRect[count].y); 
+            DBGPRINTF("VkeyCtl_SetSymbolPad-----pme->GridRect[count].dx=%d----pme->GridRect[count].dy=%d",pme->GridRect[count].dx,pme->GridRect[count].dy); 
             count++;
         }
     }
@@ -1845,6 +1849,8 @@ help function
 ======================================================================*/
 static boolean IsInRect(int x,int y,AEERect *prc)
 {
+    DBGPRINTF("IsInRect-----x=%d----prc->x=%d---prc->maxx=%d",x,prc->x,prc->x+prc->dx-1);
+    DBGPRINTF("IsInRect-----y=%d----prc->y=%d---prc->maxy=%d",y,prc->y,prc->y+prc->dy-1);
     if (prc->x > x || x > (prc->x+prc->dx-1))
     {
         return FALSE;
@@ -1973,7 +1979,8 @@ static boolean VkeyCtl_MapLittleChar(VkeyCtl * pme,int x,int y,AEEEvent *evt,uin
     int i,j,count;
     //boolean outloop = FALSE;      
     count = 0;
-   
+    return FALSE;
+    DBGPRINTF("VkeyCtl_MapLittleChar-----1");
     /* 3*10µÄ¼üÅÌ */
     for (i = 0; i < VLCharKeyPad.row; i++)
     {
@@ -1981,6 +1988,7 @@ static boolean VkeyCtl_MapLittleChar(VkeyCtl * pme,int x,int y,AEEEvent *evt,uin
         {
             if ( IsInRect(x,y,&pme->GridRect[count]) )
             {
+                DBGPRINTF("VkeyCtl_MapLittleChar-----2");
                 *wp = VLCharKeyItem[count].wp;
                 *evt = VLCharKeyItem[count].evt;
                 return TRUE;

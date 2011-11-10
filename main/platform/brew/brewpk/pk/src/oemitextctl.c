@@ -607,6 +607,7 @@ static boolean CTextCtl_HandleEvent(ITextCtl * pITextCtl,
           int16   xpos, ypos;
           xpos = AEE_GET_X(dwParam);
           ypos = AEE_GET_Y(dwParam);
+          MSG_FATAL("TSIM_DragBar-----xpos=%d--ypos=%d",xpos,ypos,0);
           if((eCode == EVT_PEN_UP )
           && (PT_IN_RECT(xpos,ypos,pme->m_tmrc)))
           {
