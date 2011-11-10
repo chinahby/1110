@@ -922,7 +922,10 @@ static int CallApp_InitAppData(CCallApp *pMe)
 	pMe->m_bBtUsing		= FALSE;
 #endif
 	//Add End
-
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+	pMe->m_bup= TRUE;
+    pMe->m_i  = -1;
+#endif
 
     (void) ISHELL_LoadResString(pMe->m_pShell,
                                             AEE_APPSCALLAPP_RES_FILE,

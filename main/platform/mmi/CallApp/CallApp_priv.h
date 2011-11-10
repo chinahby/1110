@@ -714,6 +714,10 @@ typedef struct _CCallApp
 #ifdef FEATURE_OEMOMH
     AEECLSID  m_clsOMHApplet;
 #endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+	boolean  m_bup;
+	int16   m_i;
+#endif
 } CCallApp;
 
 /*==============================================================================

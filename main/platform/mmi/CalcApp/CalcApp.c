@@ -774,6 +774,10 @@ typedef struct _CCalcApp {
     boolean   m_bIdle;
 	CALCRecttype m_rtype;//wlh 20090417 add区分点击的区域
 	IAnnunciator        *m_pIAnn;
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+	boolean m_bup;
+	int16   m_i;
+#endif
 } CCalcApp;
 
 
@@ -1187,7 +1191,10 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
         case EVT_APP_START:
             pme->m_TempValue = 0.0;
             pme->m_bIdle = TRUE;
-			
+			#ifdef FEATURE_LCD_TOUCH_ENABLE
+			pme->m_bup = TRUE;
+			pme->m_i = -1;
+			#endif
             Calc_Startup(pme, (AEEAppStart *) dwParam);
 			IANNUNCIATOR_SetFieldIsActiveEx(pme->m_pIAnn,FALSE);   
 			IANNUNCIATOR_SetHasTitleText(pme->m_pIAnn,FALSE);
@@ -1419,6 +1426,7 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
             return TRUE;
         } // case EVT_KEY
         #ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_MOVE:
 		case EVT_PEN_UP:
 			{
 				AEEDeviceInfo devinfo;
@@ -1441,129 +1449,136 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 						 return rt;
 					}
 				}
-				
-                for(i = 0;i<CALC_ITEM;i++)
-                {
-                	if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc[i]))
-                	{
-                	#if 1
-	                	image = ISHELL_LoadResImage( pme->a.m_pIShell,
-                                        AEE_APPSCOMMONRES_IMAGESFILE,
-                                        imageIdN[i]);
-						if(image!=NULL)
+				MSG_FATAL("00000pme->m_bup==%d,pme->m_i====%d",pme->m_bup,pme->m_i,0);
+				if(!pme->m_bup)
+				{
+				MSG_FATAL("11111pme->m_bup==%d,pme->m_i====%d",pme->m_bup,pme->m_i,0);
+            	if((TOUCH_PT_IN_RECT(wXPos,wYPos,rc[pme->m_i])&&eCode==EVT_PEN_UP)||
+				   (!TOUCH_PT_IN_RECT(wXPos,wYPos,rc[pme->m_i])&&eCode==EVT_PEN_MOVE)
+				  )
+            	{
+            		
+                	image = ISHELL_LoadResImage( pme->a.m_pIShell,
+                                    AEE_APPSCOMMONRES_IMAGESFILE,
+                                    imageIdN[pme->m_i]);
+					if(image!=NULL)
+					{
+						IIMAGE_Draw(image,rc[pme->m_i].x,rc[pme->m_i].y);
+						IIMAGE_Release(image);
+					}
+					i = pme->m_i;
+					pme->m_bup = TRUE;
+					pme->m_i = -1;
+					switch(i)
+					{
+						case 0:
 						{
-							IIMAGE_Draw(image,rc[i].x,rc[i].y);
-							IIMAGE_Release(image);
+							//boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_CALCAPP,EVT_USER,AVK_CLR,0);
+					 		//return rt;
+					 		Calc_Reset( pme);
+					 		
+							return TRUE;
 						}
-						switch(i)
-						{
-							case 0:
-							{
-								//boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_CALCAPP,EVT_USER,AVK_CLR,0);
-						 		//return rt;
-						 		Calc_Reset( pme);
-						 		
-								return TRUE;
-							}
-								break;
-							case 1:
-								IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
-								pme->m_rtype = TYPE_ZHENFU;
-								
-                   			 	Calc_ToggleSign(pme);
-								break;
-							case 2:
-								IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
-								pme->m_rtype = TYPE_DIVIDE;
-								
-                    			Calc_PushVal(pme, OP_DIV);
-								break;
-							case 3:
-								IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
-								pme->m_rtype = TYPE_MULTI;
-								
-                    			Calc_PushVal(pme, OP_MUL);
-								break;
-							case 4:
-								Calc_AddChar(pme, digits[7], FALSE);
-                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
-								return TRUE;
-								break;
-							case 5:
-								Calc_AddChar(pme, digits[8], FALSE);
-                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
-								return TRUE;
-								break;
-							case 6:
-								Calc_AddChar(pme, digits[9], FALSE);
-                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
-								return TRUE;
-								break;
-							case 7:
-								IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
-								pme->m_rtype = TYPE_SUBTRACT;
-								
-                    			Calc_PushVal(pme, OP_SUB);
-								break;
-							case 8:
-								Calc_AddChar(pme, digits[4], FALSE);
-                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
-								return TRUE;
-								break;
-							case 9:
-								Calc_AddChar(pme, digits[5], FALSE);
-                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
-								return TRUE;
-								break;
-							case 10:
-								Calc_AddChar(pme, digits[6], FALSE);
-                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
-								return TRUE;
-								break;
-							case 11:
-								IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
-								pme->m_rtype = TYPE_PLUS;
-								
-                    			Calc_PushVal(pme, OP_ADD);
-								break;
-							case 12:
-								Calc_AddChar(pme, digits[1], FALSE);
-                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
-								return TRUE;
-								break;
-							case 13:
-								Calc_AddChar(pme, digits[2], FALSE);
-                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
-								return TRUE;
-								break;
-							case 14:
-								Calc_AddChar(pme, digits[3], FALSE);
-                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
-								return TRUE;
-								break;
-							case 15:
-								IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
-								pme->m_rtype = TYPE_EQUAL;
-								
-                    			Calc_PushVal(pme, OP_EQUAL);
-								break;
-							case 16:
-                				Calc_AddChar(pme, digits[0], FALSE);
-                				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
-								return TRUE;
-								break;
-							case 17:
-								Calc_AddChar(pme, (AECHAR)'.', TRUE);
-								return TRUE;
-								break;
-							default:
-								break;
-						}
-						#endif
-                	}
-                } 
+							break;
+						case 1:
+							IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+							pme->m_rtype = TYPE_ZHENFU;
+							
+               			 	Calc_ToggleSign(pme);
+							break;
+						case 2:
+							IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+							pme->m_rtype = TYPE_DIVIDE;
+							
+                			Calc_PushVal(pme, OP_DIV);
+							break;
+						case 3:
+							IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+							pme->m_rtype = TYPE_MULTI;
+							
+                			Calc_PushVal(pme, OP_MUL);
+							break;
+						case 4:
+							Calc_AddChar(pme, digits[7], FALSE);
+            				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+							return TRUE;
+							break;
+						case 5:
+							Calc_AddChar(pme, digits[8], FALSE);
+            				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+							return TRUE;
+							break;
+						case 6:
+							Calc_AddChar(pme, digits[9], FALSE);
+            				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+							return TRUE;
+							break;
+						case 7:
+							IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+							pme->m_rtype = TYPE_SUBTRACT;
+							
+                			Calc_PushVal(pme, OP_SUB);
+							break;
+						case 8:
+							Calc_AddChar(pme, digits[4], FALSE);
+            				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+							return TRUE;
+							break;
+						case 9:
+							Calc_AddChar(pme, digits[5], FALSE);
+            				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+							return TRUE;
+							break;
+						case 10:
+							Calc_AddChar(pme, digits[6], FALSE);
+            				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+							return TRUE;
+							break;
+						case 11:
+							IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+							pme->m_rtype = TYPE_PLUS;
+							
+                			Calc_PushVal(pme, OP_ADD);
+							break;
+						case 12:
+							Calc_AddChar(pme, digits[1], FALSE);
+            				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+							return TRUE;
+							break;
+						case 13:
+							Calc_AddChar(pme, digits[2], FALSE);
+            				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+							return TRUE;
+							break;
+						case 14:
+							Calc_AddChar(pme, digits[3], FALSE);
+            				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+							return TRUE;
+							break;
+						case 15:
+							IDISPLAY_UpdateEx(pme->a.m_pIDisplay,FALSE);
+							pme->m_rtype = TYPE_EQUAL;
+							
+                			Calc_PushVal(pme, OP_EQUAL);
+							break;
+						case 16:
+            				Calc_AddChar(pme, digits[0], FALSE);
+            				pme->m_TempValue = WSTRTOFLOAT(pme->m_szText);
+							return TRUE;
+							break;
+						case 17:
+							Calc_AddChar(pme, (AECHAR)'.', TRUE);
+							return TRUE;
+							break;
+						default:
+							break;
+					}
+					
+            	}
+                
 				IDISPLAY_Update(pme->a.m_pIDisplay);
-
+				}
+				
 			}
 			break;
 		case EVT_PEN_DOWN:
@@ -1576,11 +1591,14 @@ static boolean Calc_HandleEvent(CCalcApp *pme, AEEEvent eCode, uint16 wParam, ui
 				int16 wXPos   = (int16)AEE_GET_X(dwParam);
 				int16 wYPos   = (int16)AEE_GET_Y(dwParam);
 				IImage *image = NULL;
+				pme->m_i = -1;
 				MSG_FATAL("wXPos===%d,     wYPos===%d",wXPos,wYPos,0);
                 for(i = 0;i<CALC_ITEM;i++)
                 {
                 	if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc[i]))
                 	{
+                		pme->m_i = i;
+						pme->m_bup = FALSE;
 	                	image = ISHELL_LoadResImage( pme->a.m_pIShell,
                                         AEE_APPSCOMMONRES_IMAGESFILE,
                                         imageId[i]);
