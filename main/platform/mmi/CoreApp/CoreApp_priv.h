@@ -293,10 +293,10 @@
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 #elif defined FEATURE_VERSION_MYANMAR
-#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronani.gif"
+#define    PWRON_ANI_FILE                        "fs:/image/pwronoffani/poweronoffani.gif"
 #define    PWRON_ANI_FRAME_COUNT                 (1)
 #define    PWRON_ANI_RATE                        (5000)
-#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweroffani.gif"
+#define    PWROFF_ANI_FILE                       "fs:/image/pwronoffani/poweronoffani.gif"
 #define    PWROFF_ANI_FRAME_COUNT                PWRON_ANI_FRAME_COUNT
 #define    PWROFF_ANI_RATE                       PWRON_ANI_RATE
 #elif defined FEATURE_VERSION_N021
