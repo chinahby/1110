@@ -8049,6 +8049,7 @@ static NextFSMAction Handler_STATE_MANAGEMENT(CContApp *pMe)
             break;
             
 #if defined(FEATURE_SUPPORT_BT_APP) && defined(FEATURE_SUPPORT_VCARD)
+//#if defined(FEATURE_SUPPORT_VCARD)		//Modify by zzg 2011_10_25
         case DLGRET_SEND_BY_BT:
             // Save the menu select
             PUSH_OPTSMENU_SEL(pMe->m_wOptsStatSel);

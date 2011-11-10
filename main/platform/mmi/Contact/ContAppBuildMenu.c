@@ -174,6 +174,7 @@ int CContApp_BuildOptsMenu(CContApp *pMe, IMenuCtl *pMenuCtl, boolean bAll)
 #endif   
 
 #if defined(FEATURE_SUPPORT_BT_APP) && defined(FEATURE_SUPPORT_VCARD)
+//#if	defined(FEATURE_SUPPORT_VCARD)	//Modify by zzg 2011_10_25
             // 7
             ai.wText       = IDS_SEND_VIA_BLUETOOTH;
             ai.wItemID   = IDI_OPTS_MENU_BLUETOOTH;
@@ -546,6 +547,7 @@ int CContApp_BuildManagementMenu(CContApp *pMe, IMenuCtl *pMenuCtl)
 #endif
 
 #if defined(FEATURE_SUPPORT_BT_APP) && defined(FEATURE_SUPPORT_VCARD)
+//#if defined(FEATURE_SUPPORT_VCARD) 	//Modify by zzg 2011_10_25
         ai.wText       = IDS_BT_COPYN;
         ai.wItemID   = IDS_BT_COPYN;
         //ai.wImage    = IDB_FAXNUM;

@@ -593,6 +593,7 @@ typedef enum _DLGRetValue
     DLGRET_NO_SELECTION,
     DLGRET_NUMBER_TOOLONG,
 #if defined(FEATURE_SUPPORT_BT_APP) && defined(FEATURE_SUPPORT_VCARD)
+//#if defined(FEATURE_SUPPORT_VCARD)		//Modify by zzg 2011_10_25
     DLGRET_SEND_BY_BT,
 #endif
 #ifdef FEATURE_GIVEUP_EDIT

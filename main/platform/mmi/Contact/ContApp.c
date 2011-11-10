@@ -796,6 +796,8 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             CContApp_RunFSM(pMe);
             return TRUE;
 #if defined(FEATURE_SUPPORT_BT_APP) && defined(FEATURE_SUPPORT_VCARD) 
+//#if defined(FEATURE_SUPPORT_VCARD) 	//Modify by zzg 2011_10_25
+
         case EVT_NEWMSGIN:/*test only*/
         {
             ERR("EVT_NEWMSGIN",dwParam,0,0);

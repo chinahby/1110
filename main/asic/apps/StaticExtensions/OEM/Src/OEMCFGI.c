@@ -3638,7 +3638,7 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
 {
    uint32 j;
    nv_item_type nvi;
-   MSG_FATAL("OEM_GetCachedConfig Start", 0, 0, 0);
+   
    if (!cache_initialized) {
       OEM_InitPreference();
    }
@@ -3651,20 +3651,20 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
    // First check if the item can be found in any of the config
    // tables before resorting to the ugly switch() statement below...
    for (j = 0; j < ARR_SIZE(cfgTable); j++) {
-      MSG_FATAL("OEM_GetCachedConfig 1", 0, 0, 0);  
+     
       // Is the item in the range of this table?
       if ( (i >= cfgTable[j].tbl[0].item) &&
            (i <= cfgTable[j].tbl[cfgTable[j].size-1].item) ) {
 
          int idx = (int)i - (int) cfgTable[j].tbl[0].item;
-         MSG_FATAL("OEM_GetCachedConfig 2", 0, 0, 0);   
+        
          // Ensure the config item table is valid
          ASSERT(i == (int) cfgTable[j].tbl[idx].item);
 
          if (NULL == cfgTable[j].tbl[idx].get) {
             // Exit the for() loop immediately if we found the
             // entry and it had a NULL function.
-            MSG_FATAL("OEM_GetCachedConfig 2", 0, 0, 0);
+            
             break;
          }
 
@@ -3674,11 +3674,11 @@ int OEM_GetCachedConfig(AEEConfigItem i, void * pBuff, int nSize)
             MSG_FATAL("GetConfig(): invalid parm size", 0, 0, 0);
             return EBADPARM;
          }
-        MSG_FATAL("OEM_GetCachedConfig 3", 0, 0, 0);
+      
          return cfgTable[j].tbl[idx].get(pBuff);
       }
    }
-   MSG_FATAL("OEM_GetCachedConfig 3", 0, 0, 0);    
+   
    // Didn't find the config item in the tables, maybe it's in this switch...
    switch (i) {
    case CFGI_BACK_LIGHT:

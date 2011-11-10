@@ -6653,6 +6653,8 @@ static boolean  CContApp_HandleOptsDlgEvent( CContApp  *pMe,
     
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveDlg,
                                               IDC_OPTS_MENU);
+
+	MSG_FATAL("***zzg CContApp_HandleOptsDlgEvent eCode=%x, wParam=%x***", eCode, wParam, 0);
     
     MENU_AUTO_SCROLL(pMenuCtl, eCode, wParam);
     switch (eCode)
@@ -6846,6 +6848,7 @@ static boolean  CContApp_HandleOptsDlgEvent( CContApp  *pMe,
 #endif                    
 
 #if defined(FEATURE_SUPPORT_BT_APP) && defined(FEATURE_SUPPORT_VCARD)
+//#if defined(FEATURE_SUPPORT_VCARD)		//Modify by zzg 2011_10_25
                 case IDI_OPTS_MENU_BLUETOOTH:
                     //CLOSE_DIALOG(DLGRET_DELETE);
                     //if( TRUE == BTApp_OPPCreateVCard(pMe))
@@ -6861,7 +6864,12 @@ static boolean  CContApp_HandleOptsDlgEvent( CContApp  *pMe,
                         SPRINTF(buf, "%c%d", 'A', (uint32)pSelectFieldListRoot);
 
                         str = STRDUP(buf);
-                        ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BTUIAPP, str);
+
+						MSG_FATAL("***zzg IDI_OPTS_MENU_BLUETOOTH ***", 0, 0, 0);			
+						DBGPRINTF("***zzg Send Via Bluetooth str=%s***", str);
+						
+                        //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BTUIAPP, str);
+                        ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, str);	//Modify by zzg 2011_10_26
                         return TRUE;
                         
                         //ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BTUIAPP, DEFAULT_VCARD_SENDNAME);
@@ -11227,6 +11235,7 @@ static boolean  CContApp_HandleManagementDlgEvent( CContApp  *pMe,
                     return TRUE;
                     
 #if defined(FEATURE_SUPPORT_BT_APP) && defined(FEATURE_SUPPORT_VCARD)
+//#if defined(FEATURE_SUPPORT_VCARD) 	//Modify by zzg 2011_10_25
                 case IDS_BT_COPYN:
                     CContApp_LoadPhoneBook(pMe, CONTCFG_VIEWTYPE_ALL);
                     CLOSE_DIALOG(DLGRET_SEND_BY_BT);
