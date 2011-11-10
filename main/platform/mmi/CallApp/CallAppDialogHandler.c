@@ -12392,117 +12392,6 @@ static void callApp_draw_pendown(CCallApp* pMe,int16 x,int16 y)
         	image = ISHELL_LoadResImage( pMe->m_pShell,
                             AEE_APPSCOMMONRES_IMAGESFILE,
                             IDB_DIALER_SEL_1+i);
-
-
-//Add By zzg 2011_11_09
-static boolean CallApp_CheckBtHeadSetInUsing(CCallApp* pMe)
-{
-	boolean result = FALSE;
-	uisnd_notify_data_s_type sndInfo;
-	uisnd_get_device(&sndInfo);
-	MSG_FATAL("***zzg CallApp_CheckBtHeadSetInUsing - dev=%d sMute=%d mMute=%d***", 
-	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);	
-
-	if (SND_DEVICE_BT_HEADSET == sndInfo.out_device)
-	{
-		result = TRUE;
-	}
-
-	return result;
-}
-
-void CallApp_SwitchCallAudio(CCallApp *pMe, boolean bIsBtAudio)
-{
-    AEESoundInfo                soundStuff;
-    boolean                     headsetPresent =FALSE;
-#ifndef FEATURE_ICM
-	AEETCalls po;
-#endif
-
-	//Add By zzg 2011_10_25
-	uisnd_notify_data_s_type sndInfo;
-	uisnd_get_device(&sndInfo);
-	MSG_FATAL("***zzg CallApp_SetupCallAudio - dev=%d sMute=%d mMute=%d***", 
-	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);	
-	//Add End
-
-    if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,CFGI_HEADSET_PRESENT,&headsetPresent,sizeof(headsetPresent)))
-    {
-        headsetPresent = FALSE;
-    }
-
-	if (headsetPresent)
-    {
-      soundStuff.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; 
-    }	
-    else if(pMe->m_bHandFree)
-    {
-#ifdef FEATURE_SPEAKER_PHONE
-        soundStuff.eDevice = AEE_SOUND_DEVICE_SPEAKER;
-#else
-        soundStuff.eDevice = AEE_SOUND_DEVICE_HFK;
-#endif
-    }	
-	else if (TRUE == bIsBtAudio)
-	{
-		soundStuff.eDevice = AEE_SOUND_DEVICE_BT_HEADSET;
-	}
-    else
-    {
-        soundStuff.eDevice = AEE_SOUND_DEVICE_HANDSET;
-    }
-
-
-	MSG_FATAL("***zzg CallApp_SwitchCallAudio eDevice=%d***", soundStuff.eDevice, 0, 0);
-
-    soundStuff.eMethod = AEE_SOUND_METHOD_VOICE;
-    soundStuff.eAPath = AEE_SOUND_APATH_BOTH;
-    
-#ifdef FEATURE_ICM
-    if(AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM) )
-#else
-	if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
-	{
-		return ;
-	}
-
-    if(po.dwCount>0)
-#endif
-    {
-        soundStuff.eEarMuteCtl = AEE_SOUND_MUTECTL_UNMUTED;
-        if (pMe->m_CallMuted)
-        {
-            soundStuff.eMicMuteCtl = AEE_SOUND_MUTECTL_MUTED;
-        }
-
-        else
-        {
-            soundStuff.eMicMuteCtl = AEE_SOUND_MUTECTL_UNMUTED;
-        }
-    }
-
-    else
-    {
-        soundStuff.eEarMuteCtl = AEE_SOUND_MUTECTL_MUTED;
-        soundStuff.eMicMuteCtl = AEE_SOUND_MUTECTL_MUTED;
-    }
-
-    (void) ISOUND_Set(pMe->m_pSound,  &soundStuff);
-
-    ISOUND_SetDevice(pMe->m_pSound);
-    if(pMe->m_CallVolume == OEMSOUND_MUTE_VOL)
-    {
-        pMe->m_CallVolume = OEMSOUND_1ST_VOL;
-    }
-    ISOUND_SetVolume(pMe->m_pSound,
-                     GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
-}
-
-//Add End
-
-
-
-
 			pMe->m_i = i;
 			pMe->m_bup = FALSE;
 			if(image!=NULL)
@@ -12829,4 +12718,111 @@ static void callApp_draw_penup(CCallApp* pMe,int16 x,int16 y)
 }
 
 #endif
+
+//Add By zzg 2011_11_09
+static boolean CallApp_CheckBtHeadSetInUsing(CCallApp* pMe)
+{
+	boolean result = FALSE;
+	uisnd_notify_data_s_type sndInfo;
+	uisnd_get_device(&sndInfo);
+	MSG_FATAL("***zzg CallApp_CheckBtHeadSetInUsing - dev=%d sMute=%d mMute=%d***", 
+	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);	
+
+	if (SND_DEVICE_BT_HEADSET == sndInfo.out_device)
+	{
+		result = TRUE;
+	}
+
+	return result;
+}
+
+void CallApp_SwitchCallAudio(CCallApp *pMe, boolean bIsBtAudio)
+{
+    AEESoundInfo                soundStuff;
+    boolean                     headsetPresent =FALSE;
+#ifndef FEATURE_ICM
+	AEETCalls po;
+#endif
+
+	//Add By zzg 2011_10_25
+	uisnd_notify_data_s_type sndInfo;
+	uisnd_get_device(&sndInfo);
+	MSG_FATAL("***zzg CallApp_SetupCallAudio - dev=%d sMute=%d mMute=%d***", 
+	  			sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);	
+	//Add End
+
+    if (SUCCESS != ICONFIG_GetItem(pMe->m_pConfig,CFGI_HEADSET_PRESENT,&headsetPresent,sizeof(headsetPresent)))
+    {
+        headsetPresent = FALSE;
+    }
+
+	if (headsetPresent)
+    {
+      soundStuff.eDevice = AEE_SOUND_DEVICE_STEREO_HEADSET; 
+    }	
+    else if(pMe->m_bHandFree)
+    {
+#ifdef FEATURE_SPEAKER_PHONE
+        soundStuff.eDevice = AEE_SOUND_DEVICE_SPEAKER;
+#else
+        soundStuff.eDevice = AEE_SOUND_DEVICE_HFK;
+#endif
+    }	
+	else if (TRUE == bIsBtAudio)
+	{
+		soundStuff.eDevice = AEE_SOUND_DEVICE_BT_HEADSET;
+	}
+    else
+    {
+        soundStuff.eDevice = AEE_SOUND_DEVICE_HANDSET;
+    }
+
+
+	MSG_FATAL("***zzg CallApp_SwitchCallAudio eDevice=%d***", soundStuff.eDevice, 0, 0);
+
+    soundStuff.eMethod = AEE_SOUND_METHOD_VOICE;
+    soundStuff.eAPath = AEE_SOUND_APATH_BOTH;
+    
+#ifdef FEATURE_ICM
+    if(AEECM_IS_VOICECALL_CONNECTED(pMe->m_pICM) )
+#else
+	if(SUCCESS != ITELEPHONE_GetCalls(pMe->m_pITelephone, &po,sizeof(AEETCalls)))
+	{
+		return ;
+	}
+
+    if(po.dwCount>0)
+#endif
+    {
+        soundStuff.eEarMuteCtl = AEE_SOUND_MUTECTL_UNMUTED;
+        if (pMe->m_CallMuted)
+        {
+            soundStuff.eMicMuteCtl = AEE_SOUND_MUTECTL_MUTED;
+        }
+
+        else
+        {
+            soundStuff.eMicMuteCtl = AEE_SOUND_MUTECTL_UNMUTED;
+        }
+    }
+
+    else
+    {
+        soundStuff.eEarMuteCtl = AEE_SOUND_MUTECTL_MUTED;
+        soundStuff.eMicMuteCtl = AEE_SOUND_MUTECTL_MUTED;
+    }
+
+    (void) ISOUND_Set(pMe->m_pSound,  &soundStuff);
+
+    ISOUND_SetDevice(pMe->m_pSound);
+    if(pMe->m_CallVolume == OEMSOUND_MUTE_VOL)
+    {
+        pMe->m_CallVolume = OEMSOUND_1ST_VOL;
+    }
+    ISOUND_SetVolume(pMe->m_pSound,
+                     GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
+}
+
+//Add End
+
 
