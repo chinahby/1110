@@ -250,6 +250,34 @@ else
             ring07.mid|fs:/ringers/ring07.mid \
             ring11.mp3|fs:/ringers/ring11.mp3 \
             ring12.mp3|fs:/ringers/ring12.mp3 
+    else ifeq ($(USES_RESDIR), N68TH)
+    	CONSTFILE_FILES+=\
+            ring01.mp3|fs:/ringers/ring01.mp3 \
+            ring02.mp3|fs:/ringers/ring02.mp3 \
+            ring03.mp3|fs:/ringers/ring03.mp3 \
+            ring04.mp3|fs:/ringers/ring04.mp3 \
+            ring05.mp3|fs:/ringers/ring05.mp3 \
+            ring06.mp3|fs:/ringers/ring06.mp3 \
+            ring07.mp3|fs:/ringers/ring07.mp3 \
+            ring08.mp3|fs:/ringers/ring08.mp3 \
+            lucky.mid|fs:/ringers/lucky.mid \
+            feeling_on.mid|fs:/ringers/feeling_on.mid \
+            ring09.mp3|fs:/ringers/ring09.mp3 \
+            ring10.mp3|fs:/ringers/ring10.mp3 
+    else ifeq ($(USES_RESDIR), VG68)
+    	CONSTFILE_FILES+=\
+            blues.mid|fs:/ringers/blues.mid \
+            blue_load.mid|fs:/ringers/blue_load.mid \
+            champagne.mid|fs:/ringers/champagne.mid \
+            clock.mid|fs:/ringers/clock.mid \
+            dance_craze.mid|fs:/ringers/dance_craze.mid \
+            green_line.mid|fs:/ringers/green_line.mid \
+            jumping.mid|fs:/ringers/jumping.mid \
+            lucky.mid|fs:/ringers/lucky.mid \
+            feeling_on.mid|fs:/ringers/feeling_on.mid \
+            m7.mp3|fs:/ringers/m7.mp3 \
+            m2.mp3|fs:/ringers/m2.mp3 \
+            ring10.mp3|fs:/ringers/ring10.mp3             
     else ifeq ($(USES_RESDIR), N68)
     	CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
@@ -263,7 +291,7 @@ else
             feeling_on.mid|fs:/ringers/feeling_on.mid \
             m7.mp3|fs:/ringers/m7.mp3 \
             m2.mp3|fs:/ringers/m2.mp3 \
-            m11.mp3|fs:/ringers/m11.mp3
+            m11.mp3|fs:/ringers/m11.mp3            
     else ifeq ($(USES_RESDIR), N450)
     	CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
