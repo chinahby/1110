@@ -839,11 +839,28 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
                 {  
                    MSG_FATAL("EVT_ALARM wParam == TRUE",0,0,0);
                    MP3_InterruptHandle(pMe);
+
+				   //Add End
+				   (void)ISHELL_PostEvent( pMe->m_pShell,
+	                                        AEECLSID_BLUETOOTH_APP,
+	                                        EVT_USER,
+	                                        EVT_MUSICPLAYER_ALARM_SUSPEND_BT,
+	                                        0);
+				   //Add End
+				   
                 }
                 else
                 {    
                    MSG_FATAL("EVT_ALARM wParam == FALSE",0,0,0);
                    MP3_ResumeHandle(pMe);
+
+					//Add By zzg 2011_11_07
+				   (void)ISHELL_PostEvent( pMe->m_pShell,
+	                                        AEECLSID_BLUETOOTH_APP,
+	                                        EVT_USER,
+	                                        EVT_MUSICPLAYER_ALARM_RESUME_BT,
+	                                        0);
+					//Add End
                 }
      
             }

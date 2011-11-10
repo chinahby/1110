@@ -919,7 +919,6 @@ static int CallApp_InitAppData(CCallApp *pMe)
 	//Add By zzg 2011_10_27
 #ifdef FEATURE_SUPPORT_BT_AUDIO
 	pMe->m_bBtAvailable = FALSE;
-	pMe->m_bBtUsing		= FALSE;
 #endif
 	//Add End
 #ifdef FEATURE_LCD_TOUCH_ENABLE
@@ -1200,11 +1199,13 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 
 			//Add By zzg 2011_10_27
 			MSG_FATAL("***zzg CallApp EVT_APP_START***", 0, 0, 0);
+#ifdef FEATURE_SUPPORT_BT_AUDIO			
 			(void) ISHELL_PostEvent(pMe->m_pShell,
 									AEECLSID_BLUETOOTH_APP,
 									EVT_USER,
-									0x2,	
-									0);
+									EVT_CALLAPP_CHECK_BT_STATUS,	
+									0);			
+#endif
 			//Add End
 			
             CallApp_SetupCallAudio(pMe);
@@ -1314,7 +1315,6 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 
 #ifdef FEATURE_SUPPORT_BT_AUDIO
 			pMe->m_bBtAvailable = FALSE;	
-			pMe->m_bBtUsing		= FALSE;
 #endif
 
             //IALERT_StopAlerting(pMe->m_pAlert);
@@ -1698,15 +1698,14 @@ static boolean CallApp_HandleEvent(ICallApp *pi,
 				
 			}
 			#endif
-			#ifdef FEATURE_SUPPORT_BT_AUDIO
-			if ((wParam == 0x22) || (wParam == 0x33))
-			{
-#ifdef FEATURE_SUPPORT_BT_AUDIO                
+			
+#ifdef FEATURE_SUPPORT_BT_AUDIO
+			if ((wParam == EVT_BT_AG_AUDIO_CONNECTED) || (wParam == EVT_BT_A2DP_AUDIO_CONNECTED))			
+			{              
 				pMe->m_bBtAvailable = TRUE;		
-#endif
 				CallApp_SetupCallAudio(pMe);
 			}
-			#endif
+#endif
 			break;
 			
 		}

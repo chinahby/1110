@@ -683,7 +683,6 @@ typedef struct _CCallApp
 //Add By zzg 2011_10_27
 #ifdef FEATURE_SUPPORT_BT_AUDIO
 	boolean				  m_bBtAvailable;
-	boolean				  m_bBtUsing;    
 #endif
 //Add End
 
@@ -841,6 +840,8 @@ void CallApp_ShowDialog(CCallApp *pMe,uint16  dlgResId);
 
 //Sets the current sound path
 void CallApp_SetupCallAudio(CCallApp *pMe);
+
+void CallApp_SwitchCallAudio(CCallApp *pMe, boolean bIsBtAudio);	//Add By zzg 2011_11_09
 
 //Handles the details of making a call
 MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe);

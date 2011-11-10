@@ -748,7 +748,7 @@ static boolean MP3_MainOptsMenu_HandleEvent(CMusicPlayer *pMe,
 					(void) ISHELL_PostEvent(pMe->m_pShell,
 											AEECLSID_BLUETOOTH_APP,
 											EVT_USER,
-											0x1,	
+											EVT_MUSICPLAYER_DISCONNECT_FROM_BT,	
 											0);
 					CLOSE_DIALOG(DLGRET_CANCELED);
 					break;
