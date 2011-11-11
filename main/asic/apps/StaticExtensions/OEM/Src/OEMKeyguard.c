@@ -133,7 +133,7 @@ static uint16 m_privpinter_x = 0;
 static uint16 m_privpinter_y = 0;
 static uint16 m_bstartInRect = FALSE;
 static AEERect m_Rct = {16,13,53,30};
-#define MOVE_DY                10
+#define MOVE_DY                3
 #endif
 #ifdef FEATURE_ICM
 static ICM *spPhone  = NULL;
@@ -724,11 +724,12 @@ static boolean OEMPriv_KeyguardEventHandler(AEEEvent  evt,
 		case EVT_POINTER_MOVE:
 		{
 			AEERect rct = {0};
+			AEERect rct_Move = {16,273,206,30};
 			uint16 wXPos = (int16)AEE_POINTER_GET_X((const char *)dwParam);
 			uint16 wYPos = (int16)AEE_POINTER_GET_Y((const char *)dwParam);
 			uint16 m_Move_Dx = wXPos-m_privpinter_x;
 			MSG_FATAL("EVT_PEN_MOVE..............................",0,0,0);
-			if((m_Move_Dx>MOVE_DY) &&(m_bstartInRect))
+			if((m_Move_Dx>MOVE_DY) &&(m_bstartInRect)&&(OEMKEYGUARD_PT_IN_RECT(wXPos,wYPos,rct_Move)))
 			{
 				MSG_FATAL("EVT_PEN_MOVE..............................111",0,0,0);
 				m_Rct.x = m_Rct.x + m_Move_Dx;
