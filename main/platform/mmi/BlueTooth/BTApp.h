@@ -659,6 +659,14 @@ when        who   what, where, why
 
 #define AEE_APPSBTAPP_RES_FILE AEE_RES_LANGDIR BTAPP_RES_FILE	//Add By zzg 2010_12_10
 
+//Add By zzg 2011_11_04 
+//2者取其一
+
+#define BTAPP_HEADSET_USE_AG		
+//#define BTAPP_HEADSET_USE_A2DP
+
+//Add End
+
 
 #ifdef FEATURE_BT_2_1
 #define BTAPP_CONFIG_VERSION     12

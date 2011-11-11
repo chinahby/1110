@@ -1329,43 +1329,70 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 						{			
 							AEEBTDeviceInfo* pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
 							boolean bSetBondable = FALSE;
-							
-							/*
+
+//#ifdef BTAPP_HEADSET_USE_AG															
 							//AG Start
-							if ( pMe->mAG.bconnInPrgs == FALSE )
+							MSG_FATAL("***zzg AG bEnabled=%x, bConnected=%x, devType=%x***", 
+										pMe->mAG.bEnabled, pMe->mAG.bConnected, pMe->mAG.devType);
+
+							pMe->mAG.bdAddr = pDev->bdAddr;
+							//BTApp_WriteBtAddrConfigFile(pMe);
+							BTApp_WriteConfigFile(pMe);
+
+							if ((FALSE == pMe->mAG.bConnected) && (TRUE == pMe->mAG.bEnabled))
 							{
-								if ( pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET )
+								if (pMe->mAG.bconnInPrgs == FALSE)
 								{
-									MSG_MED( "HndlSlction - connecting to HS", 0, 0, 0 );
+									if (pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET)
+									{
+										MSG_MED("HndlSlction - connecting to HS", 0, 0, 0);
+									}
+									else
+									{
+										MSG_MED("HndlSlction - connecting to HF", 0, 0, 0);
+									}
+									
+									if (BTApp_CallConnected(pMe) != BT_APP_CALL_NONE)
+									{
+										pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
+									}
+									pMe->mAG.bconnInPrgs = TRUE;
+									IBTEXTAG_Connect(pMe->mAG.po, &pDev->bdAddr, pMe->mAG.devType);
+									BTApp_ShowBusyIcon(pMe);
 								}
 								else
 								{
-									MSG_MED( "HndlSlction - connecting to HF", 0, 0, 0 );
-								}
-								
-								if ( BTApp_CallConnected( pMe ) != BT_APP_CALL_NONE )
-								{
-									pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
-								}
-								pMe->mAG.bconnInPrgs = TRUE;
-								IBTEXTAG_Connect( pMe->mAG.po, &pDev->bdAddr, pMe->mAG.devType );
-								BTApp_ShowBusyIcon( pMe );
+									BTApp_ShowMessage( pMe, IDS_AG_CONNECTION_IN_PRGS, NULL, 3 );
+								}				
 							}
-							else
-							{
-								BTApp_ShowMessage( pMe, IDS_AG_CONNECTION_IN_PRGS, NULL, 3 );
-							}							
 							//AG End
-							*/
+//#endif
+
 							
-							//A2DP Start
-							MSG_FATAL("***zzg A2DP bEnabled=%x, bEnableA2DP=%x, bConnected=%x***", pMe->mA2DP.bEnabled, pMe->mA2DP.bEnableA2DP, pMe->mA2DP.bConnected);
+//#ifdef BTAPP_HEADSET_USE_A2DP			
+							/*
+							//A2DP Start							
+							MSG_FATAL("***zzg A2DP bEnabled=%x, bEnableA2DP=%x, bConnected=%x***", 
+										pMe->mA2DP.bEnabled, pMe->mA2DP.bEnableA2DP, pMe->mA2DP.bConnected);
 							
 							pMe->mA2DP.bdAddr = pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr;
+							
+							DBGPRINTF("***zzg SearchRst mA2DP:%02x%02x%02x%02x%02x%02x***", 
+										(uint16)(pMe->mA2DP.bdAddr.uAddr[5]), (uint16)(pMe->mA2DP.bdAddr.uAddr[4]),
+					               		(uint16)(pMe->mA2DP.bdAddr.uAddr[3]), (uint16)(pMe->mA2DP.bdAddr.uAddr[2]), 
+					               		(uint16)(pMe->mA2DP.bdAddr.uAddr[1]), (uint16)(pMe->mA2DP.bdAddr.uAddr[0]));
+							
 							pMe->bConfigChanged = TRUE;
-						    IBTEXTA2DP_SetDevice(pMe->mA2DP.po, &pMe->mA2DP.bdAddr);						
+						    IBTEXTA2DP_SetDevice(pMe->mA2DP.po, &pMe->mA2DP.bdAddr);	
 
-							//if ((pMe->mA2DP.bEnabled == TRUE) && (pMe->mA2DP.bConnected == FALSE))
+							//Add By zzg 2011_11_03
+							if (pMe->bConfigChanged)
+							{								
+								BTApp_WriteBtAddrConfigFile(pMe);
+							}							
+							//Add End
+
+							if ((pMe->mA2DP.bEnabled == TRUE) && (pMe->mA2DP.bConnected == FALSE))
 							{
 								if ( IBTEXTA2DP_Connect( pMe->mA2DP.po, &pMe->mA2DP.bdAddr ) != SUCCESS )
 								{
@@ -1377,6 +1404,8 @@ static boolean HandleSearchResultDialogEvent(CBTApp *pMe,
 								}
 							}
 							//A2DP End
+							*/
+//#endif							
 							
 							break;
 						}
@@ -1851,11 +1880,21 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 				MSG_FATAL("***zzg A2DP bIsAudioDev=%x, bEnabled=%x, bConnected=%x***", 
 								bIsAudioDev, pMe->mA2DP.bEnabled, pMe->mA2DP.bConnected);
 
+				MSG_FATAL("***zzg pDev:%04x %04x %04x***", 
+					((uint16)(pDev->bdAddr.uAddr[ 5 ] << 8) | pDev->bdAddr.uAddr[ 4 ]),
+               		((uint16)(pDev->bdAddr.uAddr[ 3 ] << 8) | pDev->bdAddr.uAddr[ 2 ]),
+               		((uint16)(pDev->bdAddr.uAddr[ 1 ] << 8) | pDev->bdAddr.uAddr[ 0 ]));
+				
+
+				MSG_FATAL("***zzg mA2DP:%04x %04x %04x***", 
+					((uint16)(pMe->mA2DP.bdAddr.uAddr[ 5 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 4 ]),
+               		((uint16)(pMe->mA2DP.bdAddr.uAddr[ 3 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 2 ]),
+               		((uint16)(pMe->mA2DP.bdAddr.uAddr[ 1 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 0 ]));
+
 				if (bIsAudioDev != FALSE)
 				{
 					// only Use, Connect, and Disconnect audio device
-
-					/*
+#ifdef BTAPP_HEADSET_USE_AG					
 					//AG Start
 					if (pMe->mAG.bEnabled == FALSE)					
 					{
@@ -1870,8 +1909,9 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 						IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DISCONNECT, IDS_DISCONNECT, NULL, 0);			
 					}
 					//AG End
-					*/
+#endif
 
+#ifdef BTAPP_HEADSET_USE_A2DP
 					//A2DP Start
 					if (pMe->mA2DP.bEnabled == FALSE)					
 					{
@@ -1885,6 +1925,7 @@ static boolean HandleDeviceInfoOpitionDialogEvent(CBTApp *pMe,
 					{					
 						IMENUCTL_AddItem(pMenu, AEE_APPSBTAPP_RES_FILE, IDS_DISCONNECT, IDS_DISCONNECT, NULL, 0);			
 					}
+#endif					
 					//A2DP End
 				}
 				
@@ -6127,7 +6168,28 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 						
 						case IDS_PROMPT_REMOVE_ALL:
 						{
-							BTApp_DoRemoveAll(pMe);							
+							BTApp_DoRemoveAll(pMe);
+
+							/*
+							//Add by zzg 2011_11_08		
+							if (BDADDR_VALID(&pMe->mAG.bdAddr) || BDADDR_VALID(&pMe->mA2DP.bdAddr))
+							{
+								if (BDADDR_VALID(&pMe->mAG.bdAddr))
+								{
+									pMe->mAG.bdAddr = NULL_BD_ADDR;
+								}
+
+								if (BDADDR_VALID(&pMe->mA2DP.bdAddr))
+								{
+									pMe->mA2DP.bdAddr = NULL_BD_ADDR;
+								}
+								
+								//BTApp_WriteBtAddrConfigFile(pMe);
+								BTApp_WriteConfigFile(pMe);
+							}
+							//Add End		
+							*/
+							
 							break;   
 						}
 
@@ -6135,13 +6197,35 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 						{
 							boolean bSetBondable = FALSE;
 							AEEBTDeviceInfo* pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
+
+//#ifdef BTAPP_HEADSET_USE_AG	
+							//AG Start
+							pMe->mAG.bdAddr = pDev->bdAddr;
+							//BTApp_WriteBtAddrConfigFile( pMe );	
+							BTApp_WriteConfigFile(pMe);
+
+							if ( pMe->mAG.bEnabled != FALSE )
+							{
+								BTApp_ShowDevMsg(pMe, IDS_MSG_MUST_REENABLE_AG, 
+								              		&pMe->mAG.bdAddr, 0 );
+							}
+							//AG End	
+//#endif
+
+#ifdef BTAPP_HEADSET_USE_A2DP
+							/*
+							//A2DP Start
+							pMe->mA2DP.bdAddr = pDev->bdAddr;	
+							BTApp_WriteBtAddrConfigFile( pMe );
 							
-							pMe->mA2DP.bdAddr = pDev->bdAddr;							
 							if (pMe->mA2DP.bEnabled != FALSE )
 							{
 								BTApp_EnableA2DP(pMe, &bSetBondable);
 								//BTApp_ShowDevMsg(pMe, IDS_MSG_MUST_REENABLE_AG, &pMe->mA2DP.bdAddr, 0 );
 							}
+							//A2DP End
+							*/
+#endif							
 							break;
 						}			
 
@@ -6150,42 +6234,65 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 							AEEBTDeviceInfo* pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
 							boolean bSetBondable = FALSE;
 							
-							/*
+//#ifdef BTAPP_HEADSET_USE_AG	
 							//AG Start
-							if ( pMe->mAG.bconnInPrgs == FALSE )
+							pMe->mAG.bdAddr = pDev->bdAddr;
+							//BTApp_WriteBtAddrConfigFile(pMe);
+							BTApp_WriteConfigFile(pMe);
+
+							if ((pMe->mAG.bEnabled == TRUE) && (pMe->mA2DP.bConnected== FALSE))							
 							{
-								if ( pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET )
+								if ( pMe->mAG.bconnInPrgs == FALSE )
 								{
-									MSG_MED( "HndlSlction - connecting to HS", 0, 0, 0 );
+									if ( pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET )
+									{
+										MSG_MED( "HndlSlction - connecting to HS", 0, 0, 0 );
+									}
+									else
+									{
+										MSG_MED( "HndlSlction - connecting to HF", 0, 0, 0 );
+									}
+									
+									if ( BTApp_CallConnected( pMe ) != BT_APP_CALL_NONE )
+									{
+										pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
+									}
+									pMe->mAG.bconnInPrgs = TRUE;
+									IBTEXTAG_Connect( pMe->mAG.po, &pDev->bdAddr, pMe->mAG.devType );
+									BTApp_ShowBusyIcon( pMe );
 								}
 								else
 								{
-									MSG_MED( "HndlSlction - connecting to HF", 0, 0, 0 );
+									BTApp_ShowMessage( pMe, IDS_AG_CONNECTION_IN_PRGS, NULL, 3 );
 								}
-								
-								if ( BTApp_CallConnected( pMe ) != BT_APP_CALL_NONE )
-								{
-									pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
-								}
-								pMe->mAG.bconnInPrgs = TRUE;
-								IBTEXTAG_Connect( pMe->mAG.po, &pDev->bdAddr, pMe->mAG.devType );
-								BTApp_ShowBusyIcon( pMe );
-							}
-							else
-							{
-								BTApp_ShowMessage( pMe, IDS_AG_CONNECTION_IN_PRGS, NULL, 3 );
 							}
 							//AG End
-							*/
-							
+//#endif							
+
+#ifdef BTAPP_HEADSET_USE_A2DP			
+							/*
+							MSG_FATAL("***zzg AG bEnabled=%x, bConnected=%x***", pMe->mAG.bEnabled, pMe->mAG.bConnected, 0);
 							MSG_FATAL("***zzg A2DP bEnabled=%x, bEnableA2DP=%x, bConnected=%x***", 
 										pMe->mA2DP.bEnabled, pMe->mA2DP.bEnableA2DP, pMe->mA2DP.bConnected);
 							
 							pMe->mA2DP.bdAddr = pMe->mRM.device[pMe->mRM.uCurDevIdx].bdAddr;
-							pMe->bConfigChanged = TRUE;
-						    IBTEXTA2DP_SetDevice(pMe->mA2DP.po, &pMe->mA2DP.bdAddr);
+
+			               	MSG_FATAL("***zzg Prompt mA2DP:%04x %04x %04x***", 
+										((uint16)(pMe->mA2DP.bdAddr.uAddr[ 5 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 4 ]),
+							       		((uint16)(pMe->mA2DP.bdAddr.uAddr[ 3 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 2 ]),
+							       		((uint16)(pMe->mA2DP.bdAddr.uAddr[ 1 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 0 ]));	
 							
-							//if ((pMe->mA2DP.bEnabled == TRUE) && (pMe->mA2DP.bConnected == FALSE))
+							pMe->bConfigChanged = TRUE;
+						    IBTEXTA2DP_SetDevice(pMe->mA2DP.po, &pMe->mA2DP.bdAddr);	
+
+							//Add By zzg 2011_11_03
+							if (pMe->bConfigChanged)
+							{								
+								BTApp_WriteBtAddrConfigFile(pMe);
+							}							
+							//Add End
+							
+							if ((pMe->mA2DP.bEnabled == TRUE) && (pMe->mA2DP.bConnected == FALSE))
 							{
 								if ( IBTEXTA2DP_Connect( pMe->mA2DP.po, &pMe->mA2DP.bdAddr ) != SUCCESS )
 								{
@@ -6195,26 +6302,58 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 								{
 									BTApp_A2DPSetRetries(pMe, TRUE);
 								}
-							}							
+							}		
+							*/
+#endif
           
 							break;
 						}
 
 						case IDS_PROMPT_DISCONNECT:
-						{							
-          					//IBTEXTAG_Disconnect(pMe->mAG.po);     
-          					
-          					MSG_FATAL("***zzg IDS_PROMPT_DISCONNECT***", 0, 0, 0);
-          					
-							if (IBTEXTA2DP_Disconnect(pMe->mA2DP.po) != SUCCESS)
+						{		
+							MSG_FATAL("***zzg IDS_PROMPT_DISCONNECT***", 0, 0, 0);	
+
+//#ifdef BTAPP_HEADSET_USE_A2DP	
+							if ((pMe->mA2DP.bEnabled == TRUE) && (pMe->mA2DP.bConnected == TRUE))
 							{
-								MSG_FATAL("***zzg IBTEXTA2DP_Disconnect Failed***", 0, 0, 0);
-								BTApp_ShowMessage(pMe, IDS_A2DP_DISCONNECT_FAILED, NULL, 3);
+								if (IBTEXTA2DP_Disconnect(pMe->mA2DP.po) != SUCCESS)
+								{
+									MSG_FATAL("***zzg IBTEXTA2DP_Disconnect Failed***", 0, 0, 0);
+									BTApp_ShowMessage(pMe, IDS_A2DP_DISCONNECT_FAILED, NULL, 3);
+								}
+								else
+								{
+									BTApp_A2DPSetRetries(pMe, FALSE);
+								}		
 							}
-							else
+//#endif							
+
+//#ifdef BTAPP_HEADSET_USE_AG	
+							if ((pMe->mAG.bEnabled == TRUE) && (pMe->mAG.bConnected == TRUE))							
 							{
-								BTApp_A2DPSetRetries(pMe, FALSE);
+								IBTEXTAG_Disconnect(pMe->mAG.po); 
 							}
+//#endif						
+							/*
+							//Add by zzg 2011_11_08
+							if (BDADDR_VALID(&pMe->mAG.bdAddr) || BDADDR_VALID(&pMe->mA2DP.bdAddr))
+							{
+								if (BDADDR_VALID(&pMe->mAG.bdAddr))
+								{
+									pMe->mAG.bdAddr = NULL_BD_ADDR;
+								}
+
+								if (BDADDR_VALID(&pMe->mA2DP.bdAddr))
+								{
+									pMe->mA2DP.bdAddr = NULL_BD_ADDR;
+								}
+								
+								//BTApp_WriteBtAddrConfigFile(pMe);
+								BTApp_WriteConfigFile(pMe);
+							}							
+							//Add End
+							*/
+
          
 							break;
 						}

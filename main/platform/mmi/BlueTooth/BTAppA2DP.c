@@ -97,6 +97,7 @@ void BTApp_A2DPHandleDevListMenu(
   CBTApp*           pMe
 )
 {
+	
   pMe->mA2DP.bdAddr = pMe->mRM.device[ pMe->mRM.uCurDevIdx ].bdAddr;
   pMe->bConfigChanged = TRUE;
   IBTEXTA2DP_SetDevice( pMe->mA2DP.po, &pMe->mA2DP.bdAddr );
@@ -144,12 +145,15 @@ void BTApp_ProcessA2DPNotifications(
 #error code not present
 #endif //FEATURE_APP_TEST_AUTOMATION
 
+	 
       //if ( TOP_MENU == BT_APP_MENU_A2DP_TEST )
       {
-        BTApp_ShowDevMsg( pMe, IDS_MSG_AG_CONN, &pMe->mA2DP.bdAddr, 2 );
+        //BTApp_ShowDevMsg( pMe, IDS_MSG_AG_CONN, &pMe->mA2DP.bdAddr, 2 );
       }
+	  
 
       BTApp_BuildMenu( pMe, TOP_MENU );
+	 
 
       if ( (BTApp_CallPresent( pMe ) == BT_APP_CALL_NONE) &&
            (pMe->mAG.bAudioConnected == FALSE) )
@@ -177,7 +181,7 @@ void BTApp_ProcessA2DPNotifications(
       }
       else
       {
-        BTApp_ShowDevMsg( pMe, IDS_MSG_AG_CONNF, &pMe->mA2DP.bdAddr, 2 );
+        //BTApp_ShowDevMsg( pMe, IDS_MSG_AG_CONNF, &pMe->mA2DP.bdAddr, 2 );
       }
       BTApp_ReleaseA2DPDevice( pMe );	 
 	  
@@ -210,13 +214,13 @@ void BTApp_ProcessA2DPNotifications(
           }
           else
           {
-            BTApp_ShowDevMsg( pMe, IDS_MSG_AG_DISCONN, &pMe->mA2DP.bdAddr, 2 );
+            //BTApp_ShowDevMsg( pMe, IDS_MSG_AG_DISCONN, &pMe->mA2DP.bdAddr, 2 );
             BTApp_BuildMenu( pMe, TOP_MENU );
           }
         }
         else
         {
-          BTApp_ShowDevMsg( pMe, IDS_MSG_AG_DISCONN, &pMe->mA2DP.bdAddr, 2 );
+          //BTApp_ShowDevMsg( pMe, IDS_MSG_AG_DISCONN, &pMe->mA2DP.bdAddr, 2 );
           BTApp_BuildMenu( pMe, TOP_MENU );
         }
       }
@@ -840,8 +844,15 @@ void BTApp_EnableA2DP( CBTApp* pMe, boolean* pbSettingBondable )
             MSG_ERROR( "BTApp_EnableBT - Failed to init AG while enabling A2DP", 0, 0, 0 );
           }
         }
+
+		DBGPRINTF("***zzg BTApp_EnableA2DP mA2DP:%02x%02x%02x%02x%02x%02x***", 
+						(uint16)(pMe->mA2DP.bdAddr.uAddr[5]), (uint16)(pMe->mA2DP.bdAddr.uAddr[4]),
+	               		(uint16)(pMe->mA2DP.bdAddr.uAddr[3]), (uint16)(pMe->mA2DP.bdAddr.uAddr[2]), 
+	               		(uint16)(pMe->mA2DP.bdAddr.uAddr[1]), (uint16)(pMe->mA2DP.bdAddr.uAddr[0]));
+		
         if ( BDADDR_VALID( &pMe->mA2DP.bdAddr ) )
         {
+        	MSG_FATAL("***zzg mA2DP.bdAddr 2***", 0, 0, 0);
           // The saved BD Addr is not null.
           IBTEXTA2DP_SetDevice( pMe->mA2DP.po, &pMe->mA2DP.bdAddr );
 #ifdef FEATURE_AVS_BT_SCO_REWORK

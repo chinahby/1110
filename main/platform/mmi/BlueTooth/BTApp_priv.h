@@ -351,6 +351,8 @@ typedef struct _CBTApp
 
   uint16		  uDeviceSrhType;					//Add By zzg 2011_10_19
   uint16		  uDeviceListType;					//Add By zzg 2011_10_26
+
+  boolean		  bMusicPlayerSuspend;				//Add By zzg 2011_11_07
  
   AECHAR*         pText1;
   AECHAR*         pText2;
@@ -370,6 +372,7 @@ extern boolean BTApp_BuildMenu( CBTApp* pMe, BTAppMenuType menu );
 extern boolean BTApp_BuildTopMenu( CBTApp* pMe );
 extern boolean BTApp_HandleClearKey( CBTApp *pMe );
 extern boolean BTApp_WriteConfigFile( CBTApp* pMe );
+extern boolean BTApp_WriteBtAddrConfigFile(CBTApp * pMe);	//Add By zzg 2011_11_08
 extern boolean BTApp_AGInit( CBTApp *pMe );
 extern void    BTApp_AGDeInit( IApplet *pi  );
 extern void    BTApp_DeregisterAGNotif( CBTApp *pMe );

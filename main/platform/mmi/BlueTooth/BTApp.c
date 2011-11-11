@@ -1602,6 +1602,45 @@ static boolean BTApp_CheckCoreAppState(IShell* piShell)
 	return FALSE;
 }
 
+static boolean BTApp_CheckMusicPlayrState(IShell* piShell)
+{
+	MSG_FATAL("***zzg BTApp_CheckMusicPlayrState piShell=%x***", piShell, 0, 0);
+	
+	if (NULL != piShell)
+	{
+		IAppletCtl *pAppCtl = NULL;
+		uint32 nState;
+		int nSize = sizeof(nState);
+
+		// Create an instance of appletctl
+		(void)ISHELL_CreateInstance(piShell, AEECLSID_APPLETCTL, (void **)&pAppCtl);
+
+		MSG_FATAL("***zzg AEECLSID_APPLETCTL pAppCtl=%x***", pAppCtl, 0, 0);		
+		
+		if (pAppCtl) 
+		{
+			// Read the state of the app
+			if (SUCCESS == IAPPLETCTL_GetRunningInfo(pAppCtl, AEECLSID_APP_MUSICPLAYER,
+			                                       AEE_APPITEM_STATE, &nState, &nSize)
+			  && nState != APPSTATE_STOPPED 
+			  && nState != APPSTATE_CLOSING) 
+			{
+				MSG_FATAL("***zzg IAPPLETCTL_GetRunningInfo nState=%x***", nState, 0, 0);				
+				return TRUE;
+			}
+			else
+			{
+				MSG_FATAL("***zzg IAPPLETCTL_GetRunningInfo nState=%x***", nState, 0, 0);
+			}
+			
+		}
+	}
+
+	// No App information OR app is not running in background mode
+	return FALSE;
+}
+
+
 
 static void BTApp_GetAppList(IShell* piShell)
 {
@@ -1644,6 +1683,8 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 	{
 		return;
 	}
+
+	MSG_FATAL("***zzg BTApp_CheckNotify NotifyType=%x, evt=%x***", NotifyType, evt, 0);
 	
 	switch (NotifyType)
 	{
@@ -1651,6 +1692,7 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 		{	
 			switch (evt)
 			{
+				//Need BTApp EVT_START
 				case AEEBT_AG_EVT_CONNECTED:
 				case AEEBT_AG_EVT_CONNECT_FAILED:	
 				case AEEBT_AG_EVT_DISCONNECTED:	
@@ -1658,19 +1700,30 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 					result = TRUE;
 					break;
 				}
+				//Need End
 
-				//wait for check
+				//Needn't BTApp EVT_START
+				case AEEBT_AG_EVT_CONFIGURED:
+				case AEEBT_AG_EVT_ENABLED:	
+				case AEEBT_AG_EVT_RUNG:
+				case AEEBT_AG_EVT_VR_CAPABLE_SET:     
+			    case AEEBT_AG_EVT_SPKR_GAIN_SET:     
+			    case AEEBT_AG_EVT_MIC_GAIN_SET:	
+				case AEEBT_AG_EVT_AUDIO_CONNECTED:	
+				case AEEBT_AG_EVT_AUDIO_CONNECT_FAILED:
+				case AEEBT_AG_EVT_AUDIO_DISCONNECTED:	
+				case AEEBT_AG_EVT_DISABLED:	
 				case AEEBT_AG_EVT_BUTTON_PRESSED:
 				case AEEBT_AG_EVT_SPKR_GAIN_REPORT:
 				case AEEBT_AG_EVT_MIC_GAIN_REPORT:
 				case AEEBT_AG_EVT_SLC_UP:
 				case AEEBT_AG_EVT_SLC_DOWN: 
 				case AEEBT_AG_EVT_DEV_PICKUP: 
-				case AEEBT_AG_EVT_DEV_HANGUP: 
+				case AEEBT_AG_EVT_DEV_HANGUP: 	
 #ifdef FEATURE_PHONE_VR	
 				case AEEBT_AG_EVT_VR_ON: 
 				case AEEBT_AG_EVT_VR_OFF: 	
-#endif
+#endif					
 				case AEEBT_AG_EVT_DEV_DIAL:
 #ifndef FEATURE_BT_HFP_1_5
 				case AEEBT_AG_EVT_DEV_MEM_DIAL: 
@@ -1685,23 +1738,31 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 				case AEEBT_AG_EVT_BATTERY_CHARGE_IND_SET:
 				case AEEBT_AG_EVT_INBAND_RING_CAPABLE_SET:	
 #endif
+
 #ifdef FEATURE_AVS_BT_SCO_REWORK
 				case AEEBT_AG_EVT_SOUND_CHANGING:
 #endif
+				default:
+				{
+					break;
+				}
+				//Needn't  End
+			}
+			break;
+		}
+		case NMASK_BT_NA:
+		{			
+			switch (evt)
+			{
+				case AEEBT_NA_EVT_CONNECTED:
+				case AEEBT_NA_EVT_DISCONNECTED:	
+				{					
+					result = TRUE;
+					break;				
+				}
 
-				//end
-				 
-				
-				case AEEBT_AG_EVT_CONFIGURED:
-				case AEEBT_AG_EVT_ENABLED:	
-				case AEEBT_AG_EVT_RUNG:
-				case AEEBT_AG_EVT_VR_CAPABLE_SET:     
-			    case AEEBT_AG_EVT_SPKR_GAIN_SET:     
-			    case AEEBT_AG_EVT_MIC_GAIN_SET:	
-				case AEEBT_AG_EVT_AUDIO_CONNECTED:	
-				case AEEBT_AG_EVT_AUDIO_CONNECT_FAILED:
-				case AEEBT_AG_EVT_AUDIO_DISCONNECTED:	
-				case AEEBT_AG_EVT_DISABLED:	
+				case AEEBT_NA_EVT_ENABLED:
+				case AEEBT_NA_EVT_DISABLED:
 				default:
 				{
 					break;
@@ -1709,37 +1770,107 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 			}
 			break;
 		}
-		case NMASK_BT_NA:
-		{			
-			break;
-		}
 		case NMASK_BT_RM:
 		{			
 			switch (evt)
-			{
-				case AEEBT_RM_EVT_REBOND_REQUEST:	
-				case AEEBT_RM_EVT_USER_CFM_REQUEST: 				
-				case AEEBT_RM_EVT_PASSKEY_REQUEST:
-				case AEEBT_RM_EVT_PIN_REQUESTED:				
-				case AEEBT_RM_EVT_PASSKEY_REPLIED:									
-				case AEEBT_RM_EVT_BONDED:				
-				case AEEBT_RM_EVT_PASSKEY_NOTIFICATION:
+			{	
+				case AEEBT_RM_EVT_LOCAL_NAME_SET:
+#ifdef FEATURE_BT_2_1					
+				case AEEBT_RM_EVT_NICK_NAME_SET:
+				case AEEBT_RM_EVT_MANUF_DATA_SET:	
+				case AEEBT_RM_EVT_KEYPRESS_NOTIFICATION:					
+				{			
+					break;
+				}	
+				
+				case AEEBT_RM_EVT_PASSKEY_REQUEST:					
 				{
 					result = TRUE;
 					break;
 				}
-				
-				case AEEBT_RM_EVT_UNBONDED: 				
-				case AEEBT_RM_EVT_PIN_REPLIED:
-				case AEEBT_RM_EVT_DEVICE_ADDED:
-				case AEEBT_RM_EVT_DEVICE_REMOVED:
-				case AEEBT_RM_EVT_AUTHORIZE_REQUEST:
+
+				case AEEBT_RM_EVT_PASSKEY_REPLIED:
+				{
+					if ( pData->uError !=  AEEBT_RM_ERR_NONE)
+					{
+						result = TRUE;
+					}
+					break;
+				}
+#endif				
+				case AEEBT_RM_EVT_LOCAL_COD_SET:
+				case AEEBT_RM_EVT_LOCAL_SECURITY_SET:	
+				{
+					break;
+				}
+
+				case AEEBT_RM_EVT_PIN_REQUESTED:	
+				case AEEBT_RM_EVT_BONDED:	
+#ifdef FEATURE_BT_2_1
+				case AEEBT_RM_EVT_REBOND_REQUEST:
+				{
+					result = TRUE;
+					break;
+				}
+				case AEEBT_RM_EVT_PASSKEY_NOTIFICATION:		//????
+				{
+					break;
+				}
+#endif				
+				case AEEBT_RM_EVT_UNBONDED: 
+#ifdef FEATURE_BT_2_1
+   				case AEEBT_RM_EVT_USER_CFM_REQUEST: 	
+#endif
+				{
+					result = TRUE;
+					break;
+				}
+
+				case AEEBT_RM_EVT_BONDABLE_MODE:  
+				case AEEBT_RM_EVT_PIN_REPLIED:	
+#ifdef FEATURE_BT_2_1
 				case AEEBT_RM_EVT_USER_CFM_REPLIED:
-				default:	
-				{			
+#endif
+				{
+					if (pData->uError != AEEBT_RM_ERR_NONE)
+					{
+						result = TRUE;						
+					}
 					break;
 				}				
-				
+
+				case AEEBT_RM_EVT_DEVICE_ADDED:
+				case AEEBT_RM_EVT_DEVICE_REMOVED:	
+				case AEEBT_RM_EVT_TEST_MODE_ENTERED:
+				case AEEBT_RM_EVT_ROLE_SW_CTRL_SET:
+				case AEEBT_RM_EVT_RADIO_STATUS:
+				case AEEBT_RM_EVT_VISIBILITY_STATUS:	
+				case AEEBT_RM_EVT_CONN_ROLE_SET:	
+				{
+					result = TRUE;
+					break;
+				}
+
+				case AEEBT_RM_EVT_DEVICE_UPDATED:
+				case AEEBT_RM_EVT_LINK_STATUS_REG:
+				case AEEBT_RM_EVT_LINK_STATUS:
+				case AEEBT_RM_EVT_DEVICE_SECURITY_SET:
+				case AEEBT_RM_EVT_SERVICE_SECURITY_SET:
+				case AEEBT_RM_EVT_AUTHORIZE_REQUEST:
+				case AEEBT_RM_EVT_AUTHORIZE_REPLIED:
+				case AEEBT_RM_EVT_TEST_MODE_EXITED:
+				case AEEBT_RM_EVT_AUTO_SERVICE_SEARCH_DISABLED:	
+				case AEEBT_RM_EVT_CONN:
+				case AEEBT_RM_EVT_DISCONN:
+				case AEEBT_RM_EVT_APPLICATION_CONFIGURED:
+#ifdef FEATURE_BT_2_1
+				case AEEBT_RM_EVT_KEYPRESS_NOTIFICATION_REPLIED:	
+				case AEEBT_RM_EVT_LPM_CONFIGURED:
+#endif
+				default:
+				{
+					break;
+				}				
 			}
 			break;
 		}
@@ -1819,7 +1950,7 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 				case AEEBT_A2DP_EVT_CON_FAILED:	
 				case AEEBT_A2DP_EVT_DISCONNECTED:	
 				{
-					result = TRUE;
+					//result = TRUE;
 					break;
 				}
 
@@ -2101,6 +2232,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
     {	     	
 		case EVT_APP_START_BACKGROUND:		
 		{
+			MSG_FATAL("***zzg BTApp Start Background***", 0, 0, 0);
 			BTApp_StartBT(pMe);		
       		return (TRUE);
 		}		
@@ -2656,11 +2788,22 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 					{
 						case AEEBT_A2DP_EVT_START:
 						{
+							MSG_FATAL("***zzg BTApp_Handle AEEBT_A2DP_EVT_START***", 0, 0, 0);
+
+							MSG_FATAL("***zzg AEEBT_A2DP_EVT_START mA2DP bEnabled=%x, bConnected=%x***", 
+										pMe->mA2DP.bEnabled, pMe->mA2DP.bConnected, 0);
+							MSG_FATAL("***zzg AEEBT_A2DP_EVT_START mAG bEnabled=%x, bConnected=%x, bAudioConnect=%x***", 
+										pMe->mAG.bEnabled, pMe->mAG.bConnected, pMe->mAG.bAudioConnected);
+
+
+						
 							if ((((NotificationData*)pN->pData)->A2DPStartInit == AEEBT_A2DP_EVENT_LOCAL_INIT) 
 								||(pMe->mAG.callState == BTAPP_AG_CALL_NONE))
 							{
+								MSG_FATAL("***zzg AEEBT_A2DP_EVT_START BTApp_DisconnectAudio***", 0, 0, 0);
 							  BTApp_DisconnectAudio( pMe, pMe->mAG.bForceUnmute );
-							}
+							}								
+							
 							// else, ignore remote-initiated Start command because  a call is present and call audio must be left alone 
 							break;
 						}
@@ -2668,10 +2811,22 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 						case AEEBT_A2DP_EVT_SUSPEND:
 						{
 							MSG_LOW( "AG: audioConnecting=%d callState=%d", pMe->mAG.bAudioConnecting, pMe->mAG.callState, 0);
-							
+
+							MSG_FATAL("***zzg BTApp_Handle AEEBT_A2DP_EVT_SUSPEND***", 0, 0, 0);
+
+							MSG_FATAL("***zzg AEEBT_A2DP_EVT_SUSPEND mA2DP bEnabled=%x, bConnected=%x***", 
+											pMe->mA2DP.bEnabled, pMe->mA2DP.bConnected, 0);
+							MSG_FATAL("***zzg AEEBT_A2DP_EVT_SUSPEND mAG bEnabled=%x, bConnected=%x, bAudioConnect=%x***", 
+											pMe->mAG.bEnabled, pMe->mAG.bConnected, pMe->mAG.bAudioConnected);
+
+							MSG_FATAL("***zzg AEEBT_A2DP_EVT_SUSPEND mAG bAudioConnecting=%x, callState=%x***", 
+											pMe->mAG.bAudioConnecting, pMe->mAG.callState, 0);
+
+
 							// did we suspend A2DP so we can bring up SCO? 
 							if ( pMe->mAG.bAudioConnecting == TRUE )
 							{
+								MSG_FATAL("***zzg AEEBT_A2DP_EVT_SUSPEND BTApp_ConnectAudio 1***", 0, 0, 0);
 							  // carry out pending SCO connection 
 							  pMe->mAG.bAudioConnecting = FALSE;
 							  BTApp_ConnectAudio( pMe, pMe->mAG.bForceUnmute );
@@ -2679,8 +2834,10 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 							else if ((pMe->mAG.callState == BTAPP_AG_CALL_INCOMING_INBAND)
 									|| (pMe->mAG.callState == BTAPP_AG_CALL_CONNECTED))
 							{
+								MSG_FATAL("***zzg AEEBT_A2DP_EVT_SUSPEND BTApp_ConnectAudio 2***", 0, 0, 0);
 							  BTApp_ConnectAudio( pMe, TRUE );
-							}
+							}							
+							
 							break;
 						}
 				    }
@@ -2795,8 +2952,8 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 					}
 					break;
 			#endif
-			//Add By zzg 2011_10_25
-			case 1:	//Disconnect BtHeadSet for MusicPlayer
+			//Add By zzg 2011_10_25			
+			case EVT_MUSICPLAYER_DISCONNECT_FROM_BT:	//Disconnect BtHeadSet for MusicPlayer
 			{
 				MSG_FATAL("***zzg BTApp Disconnect BtHeadSet AG bEnabled=%x, Connected=%x***", pMe->mAG.bEnabled, pMe->mAG.bConnected, 0);	
 				MSG_FATAL("***zzg BTApp Disconnect BtHeadSet A2DP bEnabled=%x, Connected=%x***", pMe->mA2DP.bEnabled, pMe->mA2DP.bConnected, 0);	
@@ -2806,68 +2963,79 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 				if (ISHELL_ActiveApplet(pMe->m_pShell) != AEECLSID_BLUETOOTH_APP)
 				{
 					ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP);
-				}				
-          					
-				if (IBTEXTA2DP_Disconnect(pMe->mA2DP.po) != SUCCESS)
+				}		
+
+				if ((pMe->mA2DP.bEnabled == TRUE) && (pMe->mA2DP.bConnected == TRUE))
 				{
-					MSG_FATAL("***zzg IBTEXTA2DP_Disconnect Failed***", 0, 0, 0);
-					BTApp_ShowMessage(pMe, IDS_A2DP_DISCONNECT_FAILED, NULL, 3);
+					if (IBTEXTA2DP_Disconnect(pMe->mA2DP.po) != SUCCESS)
+					{
+						MSG_FATAL("***zzg IBTEXTA2DP_Disconnect Failed***", 0, 0, 0);
+						BTApp_ShowMessage(pMe, IDS_A2DP_DISCONNECT_FAILED, NULL, 3);
+					}
+					else
+					{
+						BTApp_A2DPSetRetries(pMe, FALSE);
+					}
 				}
-				else
+				
+//#ifdef BTAPP_HEADSET_USE_AG
+				if ((TRUE == pMe->mAG.bEnabled) && (TRUE == pMe->mAG.bConnected))
 				{
-					BTApp_A2DPSetRetries(pMe, FALSE);
+					IBTEXTAG_Disconnect(pMe->mAG.po);
 				}
+//#endif		
+
+				/*
+				//Add by zzg 2011_11_08
+				if (BDADDR_VALID(&pMe->mAG.bdAddr) || BDADDR_VALID(&pMe->mA2DP.bdAddr))
+				{
+					if (BDADDR_VALID(&pMe->mAG.bdAddr))
+					{
+						pMe->mAG.bdAddr = NULL_BD_ADDR;
+					}
+
+					if (BDADDR_VALID(&pMe->mA2DP.bdAddr))
+					{
+						pMe->mA2DP.bdAddr = NULL_BD_ADDR;
+					}
+					
+					//BTApp_WriteBtAddrConfigFile(pMe);
+					BTApp_WriteConfigFile(pMe);
+				}
+				//Add End		
+				*/
 							
 				break;
 			}			
 
-			case 2: //Check BTAG connect for callapp
+			case EVT_CALLAPP_CHECK_BT_STATUS: //Check BTAG connect for callapp
 			{
 				MSG_FATAL("***zzg BTApp EVT_USER AGConnected=%x A2DPConnect=%x***", pMe->mAG.bConnected, pMe->mA2DP.bConnected, 0);
 				
 				if (TRUE == pMe->mAG.bConnected)
 				{
-					ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,0x22,0);
+					ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,EVT_BT_AG_AUDIO_CONNECTED,0);
 				}
 				
 				if (TRUE == pMe->mA2DP.bConnected)
 				{
-					ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,0x33,0);
+					ISHELL_PostEvent(pMe->m_pShell,AEECLSID_DIALER,EVT_USER,EVT_BT_A2DP_AUDIO_CONNECTED,0);
 				}
 				
 				break;
 			}
-
-			case 3:
+			
+			case EVT_MUSICPLAYER_ALARM_SUSPEND_BT:		//MusicPlayer Suspend
 			{
-				//MSG_FATAL("***zzg BTApp Connect A2DP***", 0, 0, 0);		
-				
-				//pMe->mA2DP.bdAddr = pMe->mAG.bdAddr;
-				//IBTEXTA2DP_Connect(pMe->mA2DP.po, &pMe->mA2DP.bdAddr);
-
-				AEEBTDeviceInfo* pDev = &pMe->mRM.device[pMe->mRM.uCurDevIdx];
-							
-				if ( pMe->mAG.bconnInPrgs == FALSE )
-				{
-					if ( pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET )
-					{
-						MSG_MED( "HndlSlction - connecting to HS", 0, 0, 0 );
-					}
-					else
-					{
-						MSG_MED( "HndlSlction - connecting to HF", 0, 0, 0 );
-					}
-					
-					if ( BTApp_CallConnected( pMe ) != BT_APP_CALL_NONE )
-					{
-						pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
-					}
-					pMe->mAG.bconnInPrgs = TRUE;
-					IBTEXTAG_Connect( pMe->mAG.po, &pDev->bdAddr, pMe->mAG.devType );					
-				}
-				
+				pMe->bMusicPlayerSuspend = TRUE;
 				break;
 			}
+			case EVT_MUSICPLAYER_ALARM_RESUME_BT:		//MusicPlayer Resume
+			{	
+				pMe->bMusicPlayerSuspend = FALSE;
+				break;
+			}
+			
 			//Add End
 			case EVT_AG_DISABLED:
 			{
@@ -3434,15 +3602,113 @@ PFNMODENTRY BTApp_GetModInfo(IShell *ps,
 #endif  /* BREW_STATIC_APP */
 
 /* ==========================================================================
+FUNCTION BTApp_WriteBtAddrConfigFile
+DESCRIPTION
+============================================================================= */
+
+//Add By zzg 2011_11_08
+boolean BTApp_WriteBtAddrConfigFile(CBTApp* pMe)
+{
+	boolean   success   = FALSE;
+	IFile*    pIFile    = NULL;
+	IFileMgr* pIFileMgr = NULL;
+	uint8     version   = BTAPP_CONFIG_VERSION;
+
+	MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile***", 0, 0, 0);
+
+	MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile before bEnableAtStart=%x!***", pMe->bEnableAtStart, 0, 0);
+
+
+	MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile mAG:%04x %04x %04x***", 
+			((uint16)(pMe->mAG.bdAddr.uAddr[ 5 ] << 8) | pMe->mAG.bdAddr.uAddr[ 4 ]),
+       		((uint16)(pMe->mAG.bdAddr.uAddr[ 3 ] << 8) | pMe->mAG.bdAddr.uAddr[ 2 ]),
+       		((uint16)(pMe->mAG.bdAddr.uAddr[ 1 ] << 8) | pMe->mAG.bdAddr.uAddr[ 0 ]));	
+
+	MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile mA2DP:%04x %04x %04x***", 
+			((uint16)(pMe->mA2DP.bdAddr.uAddr[ 5 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 4 ]),
+       		((uint16)(pMe->mA2DP.bdAddr.uAddr[ 3 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 2 ]),
+       		((uint16)(pMe->mA2DP.bdAddr.uAddr[ 1 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 0 ]));
+  	
+	MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile 1***", 0, 0, 0);
+	
+	if ( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_FILEMGR, 
+	                      (void **)&pIFileMgr ) == SUCCESS )
+	{
+		MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile 2***", 0, 0, 0);
+		if( IFILEMGR_Test( pIFileMgr, BTAPP_CONFIG_FILE ) != SUCCESS )
+		{
+			MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile 3***", 0, 0, 0);
+			pIFile = IFILEMGR_OpenFile( pIFileMgr, BTAPP_CONFIG_FILE, _OFM_CREATE );
+		}
+		else
+		{
+			MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile 4***", 0, 0, 0);
+			pIFile = IFILEMGR_OpenFile( pIFileMgr, BTAPP_CONFIG_FILE, _OFM_READWRITE );
+		}
+
+		MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile 5***", 0, 0, 0);
+		
+    	if ((pIFile != NULL) 
+			&& BTAPP_WRITE_VALUE(version) 
+			&& BTAPP_WRITE_VALUE(pMe->mAG.bdAddr)           
+#ifdef FEATURE_BT_EXTPF_AV
+         	&&	BTAPP_WRITE_VALUE(pMe->mA2DP.bdAddr)        
+#endif
+        	&& TRUE ) // fix BT_2_1 compilation issue because of trailing &&'s, if ( expr && TRUE) is same as if( expr )
+	    {
+	    	MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile 6***", 0, 0, 0);
+			success = TRUE;
+	    }
+	    else
+	    {
+	    	MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile write failed***", 0, 0, 0);			
+	    }
+
+		MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile 7***", 0, 0, 0);
+		
+		if ( pIFile != NULL )
+		{
+			MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile 8***", 0, 0, 0);
+			IFILE_Release( pIFile );
+		}
+
+		MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile 9***", 0, 0, 0);
+		IFILEMGR_Release( pIFileMgr );
+  	}
+
+	MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile 10***", 0, 0, 0);
+
+	MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile version=%x***", version, 0, 0);
+
+	MSG_FATAL("***zzg BTApp_WriteBtAddrConfigFile after bEnableAtStart=%x!***", pMe->bEnableAtStart, 0, 0);
+
+	return success;
+}
+//Add End
+
+
+
+
+
+
+/* ==========================================================================
 FUNCTION BTApp_WriteConfigFile
 DESCRIPTION
 ============================================================================= */
+
 boolean BTApp_WriteConfigFile( CBTApp* pMe )
 {
   boolean   success   = FALSE;
   IFile*    pIFile    = NULL;
   IFileMgr* pIFileMgr = NULL;
   uint8     version   = BTAPP_CONFIG_VERSION;
+
+  MSG_FATAL("***zzg BTApp_WriteConfigFile***", 0, 0, 0);
+
+  MSG_FATAL("***zzg WriteConfigFile mA2DP:%04x %04x %04x***", 
+					((uint16)(pMe->mA2DP.bdAddr.uAddr[ 5 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 4 ]),
+               		((uint16)(pMe->mA2DP.bdAddr.uAddr[ 3 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 2 ]),
+               		((uint16)(pMe->mA2DP.bdAddr.uAddr[ 1 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 0 ]));
 
   if ( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_FILEMGR, 
                               (void **)&pIFileMgr ) == SUCCESS )
@@ -3594,10 +3860,14 @@ boolean BTApp_WriteConfigFile( CBTApp* pMe )
 #endif
          TRUE ) // fix BT_2_1 compilation issue because of trailing &&'s, if ( expr && TRUE) is same as if( expr )
     {
+    	 MSG_FATAL("***zzg BTApp_WriteConfigFile Succeed!***", 0, 0, 0);
+
+		 MSG_FATAL("***zzg BTApp_WriteConfigFile Succeed bEnableAtStart=%x!***", pMe->bEnableAtStart, 0, 0);
       success = TRUE;
     }
     else
     {
+    	 MSG_FATAL("***zzg BTApp_WriteConfigFile Failed!***", 0, 0, 0);
       MSG_ERROR( "WriteConfigFile - write failed", 0, 0, 0 );
     }
 
@@ -3608,6 +3878,8 @@ boolean BTApp_WriteConfigFile( CBTApp* pMe )
 
     IFILEMGR_Release( pIFileMgr );
   }
+
+  MSG_FATAL("***zzg BTApp_WriteConfigFile version=%x***", version, 0, 0);
 
   return success;
 }
@@ -3624,20 +3896,30 @@ static boolean BTApp_ReadConfigFile( CBTApp* pMe )
   IFileMgr* pIFileMgr = NULL;
   uint8     version;
 
+  MSG_FATAL("***zzg BTApp_ReadConfigFile start***", 0, 0, 0);
+  
   if ( ISHELL_CreateInstance( pMe->m_pShell, AEECLSID_FILEMGR, 
                               (void **)&pIFileMgr ) == SUCCESS )
   {
+  	MSG_FATAL("***zzg BTApp_ReadConfigFile 1***", 0, 0, 0);
     if( IFILEMGR_Test( pIFileMgr, BTAPP_CONFIG_FILE ) == SUCCESS )
     {
+    	MSG_FATAL("***zzg BTApp_ReadConfigFile 2***", 0, 0, 0);
       pIFile = IFILEMGR_OpenFile( pIFileMgr, BTAPP_CONFIG_FILE, _OFM_READ );
     }
     if ( pIFile != NULL )
     {
+    	MSG_FATAL("***zzg BTApp_ReadConfigFile 3***", 0, 0, 0);
+		
       if ( !BTAPP_READ_VALUE( version ) )
       {
+      	MSG_FATAL("***zzg BTApp_ReadConfigFile 4***", 0, 0, 0);
         MSG_ERROR( "Can't read version from DB", 0, 0, 0);
         version = 0;
       }
+
+	  MSG_FATAL("***zzg BTApp_ReadConfigFile start version=%x***", version, 0, 0);
+	  
       if ( (version == BTAPP_CONFIG_VERSION)         &&
            BTAPP_READ_VALUE( pMe->bEnableAtStart )   &&
            BTAPP_READ_VALUE( pMe->mAG.bSelected )    &&
@@ -3776,6 +4058,13 @@ static boolean BTApp_ReadConfigFile( CBTApp* pMe )
       {
         success = TRUE;
 
+		MSG_FATAL("***zzg BTApp_ReadConfigFile TRUE***", 0, 0, 0);
+
+		MSG_FATAL("***zzg ReadConfigFile mA2DP:%04x %04x %04x***", 
+					((uint16)(pMe->mA2DP.bdAddr.uAddr[ 5 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 4 ]),
+               		((uint16)(pMe->mA2DP.bdAddr.uAddr[ 3 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 2 ]),
+               		((uint16)(pMe->mA2DP.bdAddr.uAddr[ 1 ] << 8) | pMe->mA2DP.bdAddr.uAddr[ 0 ]));
+
 #ifdef FEATURE_BT_2_1
         if( pMe->mAG.srvSecType != BTAPP_RM_SVC_SEC_DEFAULT ||
             pMe->mAG.bAuthorize != FALSE ||
@@ -3880,6 +4169,8 @@ static boolean BTApp_ReadConfigFile( CBTApp* pMe )
   if ( success == FALSE )
   {
     MSG_ERROR( "ReadConfigFile - read failed", 0, 0, 0 );
+
+	MSG_FATAL("***zzg BTApp_ReadConfigFile FALSE***", 0, 0, 0);
 	
     pMe->mAG.bSelected    = TRUE;
     pMe->mAG.bdAddr       = NULL_BD_ADDR;
@@ -4396,6 +4687,8 @@ static int BTApp_InitAppData(CBTApp *pMe)
 
 	pMe->uDeviceSrhType		= AEEBT_COD_SC_ALL;	//Add By zzg 2011_10_19
 	pMe->uDeviceListType	= AEEBT_RM_EC_ALL;	//Add By zzg 2011_10_26
+
+	pMe->bMusicPlayerSuspend = FALSE;	//Add By zzg 2011_11_07
 	
     pMe->bVocoderOn       = FALSE;
     pMe->uTopMenu         = 0;
@@ -5630,11 +5923,15 @@ DESCRIPTION
 ============================================================================= */
 static void BTApp_SendRing( CBTApp* pMe )
 {
+	MSG_FATAL("***zzg BTApp_SendRing***", 0, 0, 0);
   if ( (BTApp_CallIncoming( pMe ) != BT_APP_CALL_NONE) && 
        (IS_AG_CONNECTABLE() != FALSE) )
   {
     // when AVS sends in-band ring tone, it does not command 
     // BT driver to send RINGs to BT HS
+
+	MSG_FATAL("***zzg BTApp_SendRing IBTEXTAG_Ring***", 0, 0, 0);
+	
     IBTEXTAG_Ring( pMe->mAG.po, 1, 0 );
     ISHELL_SetTimer( pMe->m_pShell, ONE_SECOND*2, 
                      (PFNNOTIFY) BTApp_SendRing, pMe );
@@ -11915,6 +12212,8 @@ boolean BTApp_AGInit( CBTApp *pMe )
 {
   uint32 nmask;
 
+  MSG_FATAL("***zzg BTApp_AGInit bInitialized=%x***", pMe->mAG.bInitialized, 0, 0);
+
   if ( pMe->mAG.bInitialized != FALSE )
   {
     return TRUE;
@@ -11935,6 +12234,7 @@ boolean BTApp_AGInit( CBTApp *pMe )
                                (void**)&pMe->mAG.pICallMgr ) != SUCCESS )
     {
       MSG_ERROR( "BTApp_AGInit - ICallMgr create instance failed", 0, 0, 0 );
+	  MSG_FATAL("***zzg BTApp_AGInit - ICallMgr create instance failed***", 0, 0, 0);
       pMe->mAG.pICallMgr = NULL;
     }
 #ifdef FEATURE_BT_HFP_1_5
@@ -11983,6 +12283,7 @@ boolean BTApp_AGInit( CBTApp *pMe )
          SUCCESS )
     {
       MSG_ERROR( "BTApp_AGInit - failed enabling AG external I/O", 0, 0, 0 );
+	  MSG_FATAL("***zzg BTApp_AGInit - failed enabling AG external I/O***", 0, 0, 0);
     }
 #endif /* FEATURE_BT_HFP_1_5 */
 /* Instance for ITelephone*/
@@ -11990,6 +12291,7 @@ boolean BTApp_AGInit( CBTApp *pMe )
                                (void**)&pMe->pIPhone ) != SUCCESS )
     {
       MSG_ERROR( "BTApp_AGInit - ITelephone create instance failed", 0, 0, 0 );
+	  MSG_FATAL("***zzg BTApp_AGInit - ITelephone create instance failed***", 0, 0, 0);
       pMe->pIPhone = NULL;
     }
     if ( pMe->pIPhone != NULL )
@@ -12011,6 +12313,7 @@ boolean BTApp_AGInit( CBTApp *pMe )
   else
   {
     MSG_ERROR( "BTAppAG_Init - Failed to create AG instance", 0, 0, 0 );
+	MSG_FATAL("***zzg BTAppAG_Init - Failed to create AG instance***", 0, 0, 0);
     /*  De-register the events for AG if A2DP is not enabled */
 #ifdef FEATURE_BT_EXTPF_AV
     if ( pMe->mA2DP.bEnabled == FALSE )
@@ -12287,7 +12590,8 @@ static boolean BTApp_EnableAG( CBTApp* pMe, boolean* pbSettingBondable)
 
     if ( BTApp_AGInit( pMe ) == FALSE )
     {
-      MSG_ERROR( "BTApp_EnableBT - Failed to register for AG events", 0, 0, 0 );
+      MSG_ERROR("BTApp_EnableBT - Failed to register for AG events", 0, 0, 0);
+	  MSG_FATAL("***zzg BTApp_EnableBT - Failed to register for AG events***", 0, 0, 0);
     }
     else
     {
@@ -12297,6 +12601,7 @@ static boolean BTApp_EnableAG( CBTApp* pMe, boolean* pbSettingBondable)
         if ( idleMode == AEEBT_AG_IDLEMODE_ACTIVE )
         {
           MSG_MED( "EnableAG - forcing Passive mode", 0, 0, 0 );
+		  MSG_FATAL("***zzg EnableAG - forcing Passive mode***", 0, 0, 0);
           idleMode    = AEEBT_AG_IDLEMODE_PASSIVE;
           idleTimeout = 0;
         }
@@ -12316,21 +12621,36 @@ static boolean BTApp_EnableAG( CBTApp* pMe, boolean* pbSettingBondable)
              (IBTEXTAG_SetBatteryChargeIndicator(pMe->mAG.po, 
                (AEEBTBatteryChargeLevel)uLevel)) != SUCCESS )
         {
+        	MSG_FATAL("***zzg EnableAG- Invalid no of Batt Scale***", 0, 0, 0);
           MSG_ERROR( "EnableAG- Invalid no of Batt Scale ", 0, 0, 0 );
         }
       }
 #endif /* FEATURE_BT_HFP_1_5*/
      MSG_MED( "EnableAG - AG BDa=%2x%2x%2x", pMe->mAG.bdAddr.uAddr[5],
                pMe->mAG.bdAddr.uAddr[4], pMe->mAG.bdAddr.uAddr[3] );
-  
+ 
       if ( BDADDR_VALID( &pMe->mAG.bdAddr ) )
       {
       	MSG_FATAL("BDADDR_VALID",0,0,0);
         pBDAddr = &pMe->mAG.bdAddr;
       }
+
+	  MSG_FATAL("***zzg EnableAG mAG:%04x %04x %04x***", 
+			((uint16)(pMe->mAG.bdAddr.uAddr[ 5 ] << 8) | pMe->mAG.bdAddr.uAddr[ 4 ]),
+       		((uint16)(pMe->mAG.bdAddr.uAddr[ 3 ] << 8) | pMe->mAG.bdAddr.uAddr[ 2 ]),
+       		((uint16)(pMe->mAG.bdAddr.uAddr[ 1 ] << 8) | pMe->mAG.bdAddr.uAddr[ 0 ]));
+
+	  MSG_FATAL("***zzg EnableAG pBDAddr:%04x %04x %04x***", 
+			((uint16)(pBDAddr->uAddr[ 5 ] << 8) | pBDAddr->uAddr[ 4 ]),
+       		((uint16)(pBDAddr->uAddr[ 3 ] << 8) | pBDAddr->uAddr[ 2 ]),
+       		((uint16)(pBDAddr->uAddr[ 1 ] << 8) | pBDAddr->uAddr[ 0 ]));
+
+	  MSG_FATAL("***zzg IBTEXTAG_Enable devType=%x***", pMe->mAG.devType, 0, 0);
+	  
       if ( IBTEXTAG_Enable( pMe->mAG.po, pBDAddr, pMe->mAG.devType ) != SUCCESS )
       {
         MSG_ERROR( "EnableAG - failed to enable AG", 0, 0, 0 );
+		MSG_FATAL("***zzg EnableAG - failed to enable AG***", 0, 0, 0);
         BTApp_ClearBondable( pMe ); // no need to be bondable anymore
         /*  De-register the events for AG if A2DP is not enabled */
 #ifdef FEATURE_BT_EXTPF_AV
@@ -12352,6 +12672,8 @@ static boolean BTApp_EnableAG( CBTApp* pMe, boolean* pbSettingBondable)
       }
     }
   }
+
+  MSG_FATAL("***zzg EnableAG Final bAGEnabled=%x***", bAGEnabled, 0, 0);
   return bAGEnabled;
 }
 /* ==========================================================================
@@ -12456,26 +12778,35 @@ void BTApp_EnableBT(CBTApp* pMe)
 		{
 			if (BTApp_EnableAG(pMe, &bSettingBondable) == TRUE)
 			{	
+				MSG_FATAL("***zzg BTApp Enable AG TRUE***", 0, 0, 0);
 				break;
 			}
+
+			MSG_FATAL("***zzg BTApp Enable AG FALSE***", 0, 0, 0);			
 		}
 		
 		case BTAPP_ENABLING_NA:
 		{
 			if (BTApp_EnableNA(pMe, &bSettingBondable) == TRUE)
 			{
+				MSG_FATAL("***zzg BTApp Enable NA TRUE***", 0, 0, 0);
 				break;
 			}
+			
+			MSG_FATAL("***zzg BTApp Enable NA FALSE***", 0, 0, 0);
+			
 		}
 		
 #ifdef FEATURE_BT_EXTPF_OPP  
 		case BTAPP_ENABLING_OPP:
-		{		
-			MSG_FATAL("***zzg  BTApp_EnableBT BTAPP_ENABLING_OPP***",0,0,0);		
+		{			
 			if (BTApp_EnableOPP(pMe, &bSettingBondable, &bSettingDiscoverable) == TRUE)
 			{
+				MSG_FATAL("***zzg BTApp Enable OPP TRUE***",0,0,0);
 				break;
 			}
+
+			MSG_FATAL("***zzg BTApp Enable OPP FALSE***",0,0,0);
 		}
 #endif //FEATURE_BT_EXTPF_OPP
 
@@ -12491,8 +12822,12 @@ void BTApp_EnableBT(CBTApp* pMe)
 		{
 			if (BTApp_EnableFTP(pMe, &bSettingBondable, &bSettingDiscoverable) == TRUE)
 			{
+				MSG_FATAL("***zzg BTApp Enable FTP TRUE***", 0, 0, 0);
 				break;
 			}
+			
+			MSG_FATAL("***zzg BTApp Enable FTP FALSE***", 0, 0, 0);
+			
 		}
 #endif /* FEATURE_BT_EXTPF_FTP */
 
@@ -12501,8 +12836,11 @@ void BTApp_EnableBT(CBTApp* pMe)
 		{
 			if (BTApp_EnableBIP(pMe, &bSettingBondable, &bSettingDiscoverable) == TRUE)
 			{
+				MSG_FATAL("***zzg BTApp Enable BIP TRUE***", 0, 0, 0);
 				break;
 			}
+
+			MSG_FATAL("***zzg BTApp Enable BIP FALSE***", 0, 0, 0);
 		}
 #endif //FEATURE_BT_EXTPF_BIP
 
@@ -12511,8 +12849,11 @@ void BTApp_EnableBT(CBTApp* pMe)
 		{
 			if (BTApp_EnableBPP(pMe, &bSettingBondable ,&bSettingDiscoverable) == TRUE)
 			{
+				MSG_FATAL("***zzg BTApp Enable BPP TRUE***", 0, 0, 0);
 				break;
 			}
+
+			MSG_FATAL("***zzg BTApp Enable BPP FALSE***", 0, 0, 0);
 		}
 #endif //FEATURE_BT_EXTPF_BPP
 
@@ -12521,8 +12862,11 @@ void BTApp_EnableBT(CBTApp* pMe)
 		{
 			if(BTApp_EnablePBAP(pMe, &bSettingBondable, &bSettingDiscoverable) == TRUE)
 			{
+				MSG_FATAL("***zzg BTApp Enable PBAP TRUE***", 0, 0, 0);
 				break;
 			}
+
+			MSG_FATAL("***zzg BTApp Enable PBAP FALSE***", 0, 0, 0);
 		}
 #endif /*FEATURE_BT_EXTPF_PBAP*/
 
@@ -14452,6 +14796,8 @@ void BTApp_DeviceChangeCallBack( CBTApp* pMe,
             SND_DEVICE_BT_HEADSET,
             pNotifyData->out_device, 0 );
 
+  MSG_FATAL("***zzg BTApp_DeviceChangeCallBack out_device=%x***", pNotifyData->out_device, 0, 0);
+
   if ( pNotifyData->out_device != SND_DEVICE_BT_HEADSET )
   {
     /* if device change was caused by non-BT subsystems */
@@ -14466,6 +14812,7 @@ void BTApp_DeviceChangeCallBack( CBTApp* pMe,
         BTAPP_AG_SETBIT( BTAPP_AG_FLAG_AUDIO_WANTED_B );
       }
 
+		MSG_FATAL("***zzg BTApp_DeviceChangeCallBack BTApp_DisconnectAudio***", 0, 0, 0);
       BTApp_DisconnectAudio( pMe, FALSE );
     }
   }
@@ -14475,6 +14822,8 @@ void BTApp_DeviceChangeCallBack( CBTApp* pMe,
     {
       /* SCO was needed and is now still needed */
       BTAPP_AG_CLRBIT( BTAPP_AG_FLAG_AUDIO_WANTED_B );
+
+	  MSG_FATAL("***zzg BTApp_DeviceChangeCallBack BTApp_ConnectAudio***", 0, 0, 0);
       BTApp_ConnectAudio( pMe, TRUE );
     }
   }
@@ -20105,6 +20454,10 @@ DESCRIPTION
 static boolean BTApp_SuspendA2DP( CBTApp* pMe )
 {
   boolean bProceed = TRUE;
+
+  MSG_FATAL("***zzg BTApp_SuspendA2DP bStreaming=%x, bAudioSelected=%x, bConnected=%x***", 
+  			pMe->mA2DP.bStreaming, pMe->mA2DP.bAudioSelected, pMe->mA2DP.bConnected);
+  
 #ifdef FEATURE_BT_EXTPF_AV
   if ( pMe->mA2DP.bStreaming != FALSE )
   {
@@ -20166,6 +20519,8 @@ static boolean BTApp_ConnectAudio( CBTApp* pMe, boolean bForceUnmute )
       /* cancel any pending SCO disconnection */
       pMe->mAG.bAudioDisconnecting = FALSE;
 
+	  MSG_FATAL("***zzg BTApp_SuspendA2DP 1***", 0, 0, 0);
+	  
       if ( BTApp_SuspendA2DP( pMe ) == FALSE )
       {
         /* remember the reason for suspending A2DP streaming */
@@ -20181,6 +20536,7 @@ static boolean BTApp_ConnectAudio( CBTApp* pMe, boolean bForceUnmute )
 
         pMe->mAG.bAudioConnecting = TRUE;
 
+		MSG_FATAL("***zzg IBTEXTAG_ConnectAudio***", 0, 0, 0);
         IBTEXTAG_ConnectAudio( pMe->mAG.po );
         /* set timer for SCO establishment attempts */
         ISHELL_SetTimer( pMe->m_pShell, BT_APP_RELEASE_BT_DEVICE_DELAY_MS,
@@ -20340,32 +20696,96 @@ static void BTApp_HandleAudioSetup( CBTApp* pMe, BTAppCallType callPresent )
       }
       case (AEEBT_SND_BT_SCO | AEEBT_SND_BT_OTHER):
       {
-#ifdef FEATURE_BT_EXTPF_AV
-        if ( IS_A2DP_CONNECTABLE() )
-        {
-          if ((pMe->mA2DP.bConnected != FALSE) || \
-              ((pMe->mAG.bConnected != FALSE) && \
-               (pMe->mA2DP.bConnected == FALSE) && \
-                AEEBT_BD_ADDRS_EQUAL(&(pMe->mAG.bdAddr), \
-                                     &(pMe->mA2DP.bdAddr))))
-          {
-            BTApp_DisconnectAudio( pMe, FALSE );
-            BTApp_UseA2DPDevice( pMe );
-            BTAppMgr_UpdateStateType( pMe, &pMe->mA2DP.bdAddr,
-                                    BTAPP_MGR_USE_A2DP );
-          }
-          // AVS will initiate A2DP connection
-        }
-        else
+#ifdef FEATURE_BT_EXTPF_AV	
+		uisnd_notify_data_s_type sndInfo;
+		uisnd_get_device(&sndInfo);
+		MSG_FATAL("***zzg dev=%d sMute=%d mMute=%d***", 
+				sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);
+
+		MSG_FATAL("***zzg AudioSetup AG bEnable=%x, bConnected=%x***", pMe->mAG.bEnabled, pMe->mAG.bConnected, 0);
+		MSG_FATAL("***zzg AudioSetup A2DP bEnable=%x, bConnected=%x***", pMe->mA2DP.bEnabled, pMe->mA2DP.bConnected, 0);
+				
+		//Add By zzg 2011_11_07
+		if (pMe->mA2DP.bEnabled == TRUE)
+		{
+			MSG_FATAL("***zzg bMusicPlayerSuspend=%x***", pMe->bMusicPlayerSuspend, 0, 0);
+
+			if (TRUE == BTApp_CheckMusicPlayrState(pMe->m_pShell))
+			{
+				if (pMe->bMusicPlayerSuspend == FALSE)
+				{
+					uisnd_set_device_status(SND_DEVICE_BT_A2DP_HEADSET, UISND_DEV_ENABLED);
+				}
+			}
+			else
+			{
+				uisnd_set_device_status(SND_DEVICE_BT_A2DP_HEADSET, UISND_DEV_UNATTACHED);
+				//pMe->bMusicPlayerSuspend = TRUE;
+			}	 
+			 
+		}
+		//Add End
+
+		if (pMe->mAG.bConnected == TRUE)
+		{
+			if (TRUE == uisnd_is_device_enabled(SND_DEVICE_BT_A2DP_HEADSET))
+			{
+				MSG_FATAL("***zzg SND_DEVICE_BT_A2DP_HEADSET Enabled***", 0, 0, 0);
+		        if ( IS_A2DP_CONNECTABLE() )
+		        {
+		        	MSG_FATAL("***zzg IS_A2DP_CONNECTABLE TRUE***", 0, 0, 0);
+
+					MSG_FATAL("***zzg IS_A2DP_CONNECTABLE TRUE bStreaming=%x***", pMe->mA2DP.bStreaming, 0, 0);
+
+					MSG_FATAL("***zzg IS_A2DP_CONNECTABLE mAG bEnabled=%x, bConnected=%x, bAudioConnected=%x***", 
+								pMe->mAG.bEnabled, pMe->mAG.bConnected, pMe->mAG.bAudioConnected);
+
+					MSG_FATAL("***zzg IS_A2DP_CONNECTABLE mA2DP bEnabled=%x, bConnected=%x***", 
+								pMe->mA2DP.bEnabled, pMe->mA2DP.bConnected, 0);
+					
+		          if ((pMe->mA2DP.bConnected != FALSE) || \
+		              ((pMe->mAG.bConnected != FALSE) && \
+		               (pMe->mA2DP.bConnected == FALSE) && \
+		                AEEBT_BD_ADDRS_EQUAL(&(pMe->mAG.bdAddr), \
+		                                     &(pMe->mA2DP.bdAddr))))
+		          {
+		            MSG_FATAL("***zzg IS_A2DP_CONNECTABLE TRUE 1***", 0, 0, 0);
+		            BTApp_DisconnectAudio( pMe, FALSE );
+		            BTApp_UseA2DPDevice( pMe );
+		            BTAppMgr_UpdateStateType( pMe, &pMe->mA2DP.bdAddr,
+		                                    BTAPP_MGR_USE_A2DP );
+		          }
+		          // AVS will initiate A2DP connection
+		        }
+			}
+	        else
 #endif /* FEATURE_BT_EXTPF_AV */
-        {
-          BTApp_ConnectAudio( pMe, TRUE );
-          if( pMe->mA2DP.bAudioSelected == FALSE )
-          {
-            BTAppMgr_UpdateStateType( pMe, &pMe->mA2DP.bdAddr,
-                                    BTAPP_MGR_RELEASE_A2DP );
-          }
-        }        
+	        {
+	        	MSG_FATAL("***zzg SND_DEVICE_BT_A2DP_HEADSET Disabled***", 0, 0, 0);
+	        	MSG_FATAL("***zzg IS_A2DP_CONNECTABLE TRUE 2***", 0, 0, 0);
+
+				MSG_FATAL("***zzg AudioSetup TRUE 2***", 0, 0, 0);
+
+				DBGPRINTF("***zzg AudioSetup mAG:%02x%02x%02x%02x%02x%02x***", 
+											(uint16)(pMe->mAG.bdAddr.uAddr[5]), (uint16)(pMe->mAG.bdAddr.uAddr[4]),
+						               		(uint16)(pMe->mAG.bdAddr.uAddr[3]), (uint16)(pMe->mAG.bdAddr.uAddr[2]), 
+						               		(uint16)(pMe->mAG.bdAddr.uAddr[1]), (uint16)(pMe->mAG.bdAddr.uAddr[0]));
+				DBGPRINTF("***zzg AudioSetup mA2DP:%02x%02x%02x%02x%02x%02x***", 
+											(uint16)(pMe->mA2DP.bdAddr.uAddr[5]), (uint16)(pMe->mA2DP.bdAddr.uAddr[4]),
+						               		(uint16)(pMe->mA2DP.bdAddr.uAddr[3]), (uint16)(pMe->mA2DP.bdAddr.uAddr[2]), 
+						               		(uint16)(pMe->mA2DP.bdAddr.uAddr[1]), (uint16)(pMe->mA2DP.bdAddr.uAddr[0]));				
+				
+	          	BTApp_ConnectAudio( pMe, TRUE );	
+				
+	          if( pMe->mA2DP.bAudioSelected == FALSE )
+	          {
+	            BTAppMgr_UpdateStateType( pMe, &pMe->mA2DP.bdAddr,
+	                                    BTAPP_MGR_RELEASE_A2DP );
+	          }
+	        }  
+#ifdef FEATURE_BT_EXTPF_AV	
+		}
+#endif		
         break;
       }
       case AEEBT_SND_OTHER:
@@ -20381,12 +20801,23 @@ static void BTApp_HandleAudioSetup( CBTApp* pMe, BTAppCallType callPresent )
       }
       case AEEBT_SND_NONE:
       {
+	  	MSG_FATAL("***zzg BTApp Audio_Setup AEEBT_SND_NONE***", 0, 0, 0);
+		
         BTAPP_AG_CLRBIT( BTAPP_AG_FLAG_NON_VOICE_AUDIO_ON_B );
+
+		//Add By zzg 2011_11_07
+		if (pMe->mA2DP.bEnabled == TRUE)
+		{
+			uisnd_set_device_status(SND_DEVICE_BT_A2DP_HEADSET, UISND_DEV_UNATTACHED);
+		}
+		//Add End
+		
 
         if ( BTAPP_AG_ISBITSET( BTAPP_AG_FLAG_AUDIO_WANTED_B ) )
         {
           BTAPP_AG_CLRBIT( BTAPP_AG_FLAG_AUDIO_WANTED_B );
 
+		  MSG_FATAL("***zzg AEEBT_SND_NONE uisnd_notify_unregister***", 0, 0, 0);
           uisnd_notify_unregister(
             (UISND_NOTIFY_FUNC)BTApp_DeviceChangeCallBack,
             (void*)pMe );
@@ -20415,6 +20846,7 @@ static void BTApp_HandleAudioSetup( CBTApp* pMe, BTAppCallType callPresent )
           else if ( BTApp_DisconnectAudio( pMe, FALSE ) != FALSE )
           {
             /* could be A2DP used just now */
+			 MSG_FATAL("***zzg BTApp_SuspendA2DP 2***", 0, 0, 0);
             BTApp_SuspendA2DP( pMe );
           }
         }
@@ -20462,7 +20894,7 @@ static void BTApp_HandleMTCall( CBTApp* pMe )
   MSG_MED( "AG - HndlMTCall cSt=%d snd=0x%x", 
            pMe->mAG.callState, pMe->mAG.uSoundType, 0 );
 
-  MSG_FATAL("***zzg BTApp_HandleMTCall uSoundType=%x***", pMe->mAG.uSoundType, 0, 0);
+  MSG_FATAL("***zzg BTApp_HandleMTCall uSoundType=%x, callState=%x***", pMe->mAG.uSoundType, pMe->mAG.callState, 0);
 
   switch ( pMe->mAG.uSoundType )
   {
@@ -20534,6 +20966,8 @@ static void BTApp_HandleMTCall( CBTApp* pMe )
           (UISND_NOTIFY_FUNC)BTApp_DeviceChangeCallBack,
           (void*)pMe );
       }
+
+	   MSG_FATAL("***zzg BTApp_SuspendA2DP 3***", 0, 0, 0);
 
       BTApp_SuspendA2DP( pMe );
       break;
@@ -20647,6 +21081,9 @@ static void BTApp_HandleMTCall( CBTApp* pMe )
   pMe->mAG.bDevPickedUp = FALSE;
   pMe->mAG.callState = (bDoInband != FALSE) ? BTAPP_AG_CALL_INCOMING_INBAND :
                                               BTAPP_AG_CALL_INCOMING_NOINBAND;
+
+   MSG_FATAL("***zzg BTApp_SuspendA2DP 4***", 0, 0, 0);
+											  
   if ( (BTApp_SuspendA2DP( pMe ) != FALSE) )
   {
     if ( pMe->mAG.callState == BTAPP_AG_CALL_INCOMING_INBAND )
@@ -20709,7 +21146,49 @@ static void BTApp_HandleCallAndMOSSetup( CBTApp* pMe )
       {
         /* playback is on, bring up SCO to route it to headset */
 		MSG_FATAL("***zzg BTApp_ConnectAudio 2***", 0, 0, 0);
-        BTApp_ConnectAudio( pMe, TRUE );
+
+		
+		//Add By zzg 2011_11_07
+		MSG_FATAL("***zzg AG bEnabled=%x, bConnected=%x***", pMe->mAG.bEnabled, pMe->mAG.bConnected, 0);
+		MSG_FATAL("***zzg A2DP bEnabled=%x, bEnableA2DP=%x, bConnected=%x***", 
+					pMe->mA2DP.bEnabled, pMe->mA2DP.bEnableA2DP, pMe->mA2DP.bConnected);
+
+		if ((pMe->mA2DP.bEnabled == TRUE) && (pMe->mA2DP.bConnected == FALSE))
+		{
+			pMe->mA2DP.bdAddr = pMe->mAG.bdAddr;
+
+			DBGPRINTF("***zzg HandleCallAndMOSSetup mA2DP:%02x%02x%02x%02x%02x%02x***", 
+						(uint16)(pMe->mA2DP.bdAddr.uAddr[5]), (uint16)(pMe->mA2DP.bdAddr.uAddr[4]),
+	               		(uint16)(pMe->mA2DP.bdAddr.uAddr[3]), (uint16)(pMe->mA2DP.bdAddr.uAddr[2]), 
+	               		(uint16)(pMe->mA2DP.bdAddr.uAddr[1]), (uint16)(pMe->mA2DP.bdAddr.uAddr[0]));
+			
+			pMe->bConfigChanged = TRUE;
+		    IBTEXTA2DP_SetDevice(pMe->mA2DP.po, &pMe->mA2DP.bdAddr);	
+
+			//Add By zzg 2011_11_03
+			//BTApp_WriteBtAddrConfigFile(pMe);			
+			BTApp_WriteConfigFile(pMe);
+			//Add End				
+			
+			if ( IBTEXTA2DP_Connect( pMe->mA2DP.po, &pMe->mA2DP.bdAddr ) != SUCCESS )
+			{
+				//BTApp_ShowMessage( pMe, IDS_MSG_CONN_FAILED, NULL, 3 );
+			}  	
+			else
+			{
+				BTApp_A2DPSetRetries(pMe, TRUE);
+			}
+
+			//Add By zzg 2011_11_09 for MO_call(The MT_Call has registered by the BTApp_ConnectAudio)
+			//uisnd_notify_register( (UISND_NOTIFY_FUNC)BTApp_DeviceChangeCallBack, (void*)pMe );
+			//Add End
+			
+		}
+		else		
+		//Add End	
+        {
+        	BTApp_ConnectAudio( pMe, TRUE );
+		}
       }
       else
       {
@@ -20838,6 +21317,7 @@ static void BTApp_HandleAudioConnEv( CBTApp *pMe )
       bAGWins = BTApp_PickAudioLink( pMe );
       if ( bAGWins != FALSE )
       {       
+      	 MSG_FATAL("***zzg BTApp_SuspendA2DP 5***", 0, 0, 0);
         BTApp_SuspendA2DP( pMe );
       }
     }
@@ -20857,7 +21337,7 @@ static void BTApp_HandleAudioConnEv( CBTApp *pMe )
     BTApp_HandleClearKey( pMe );
   }
 
-  ISHELL_CloseApplet(pMe->m_pShell, FALSE);	 //Add By zzg 2011_10_24
+  //ISHELL_CloseApplet(pMe->m_pShell, FALSE);	 //Add By zzg 2011_10_24
 
   MSG_FATAL("***zzg BTApp_HandleAudioConnEv 8***", 0, 0, 0);
 }
@@ -20937,6 +21417,7 @@ static void BTApp_ProcessAGNotifications(
         if ( BDADDR_VALID( &pMe->mAG.bdAddr ) &&
              (BTApp_CallPresent( pMe ) != BT_APP_CALL_NONE) )
         {
+        	MSG_FATAL("***zzg AEEBT_AG_EVT_ENABLED***", 0, 0, 0);
           IBTEXTAG_Connect( pMe->mAG.po, &pMe->mAG.bdAddr, pMe->mAG.devType );
         }
         pMe->mEnablingType++;		
@@ -20972,7 +21453,7 @@ static void BTApp_ProcessAGNotifications(
 	  */
 
 	//Add By zzg 2011_10_24
-	//BTApp_ShowDevMsg( pMe, IDS_MSG_AG_CONN, &pData->bdAddr, 2 );
+	BTApp_ShowDevMsg( pMe, IDS_MSG_AG_CONN, &pData->bdAddr, 2 );
 	//Add End
 	  
 	  MSG_FATAL("***zzg BTApp_ProcessAGNotifications devType=%d", pMe->mAG.devType, 0, 0);
@@ -20983,7 +21464,7 @@ static void BTApp_ProcessAGNotifications(
         BTApp_HandleCallAndMOSSetup( pMe );
       }
 	  
-	  ISHELL_CloseApplet(pMe->m_pShell, FALSE);	 //Add By zzg 2011_10_24
+	  //ISHELL_CloseApplet(pMe->m_pShell, FALSE);	 //Add By zzg 2011_10_24
       break;
     }
     case AEEBT_AG_EVT_CONNECT_FAILED:
@@ -21001,7 +21482,7 @@ static void BTApp_ProcessAGNotifications(
       pMe->mAG.bAudioConnecting = FALSE;
       pMe->mAG.bconnInPrgs = FALSE;
 
-	  ISHELL_CloseApplet(pMe->m_pShell, FALSE);	 //Add By zzg 2011_10_24
+	  //ISHELL_CloseApplet(pMe->m_pShell, FALSE);	 //Add By zzg 2011_10_24
       break;
     }
     case AEEBT_AG_EVT_DISCONNECTED:
@@ -21049,12 +21530,12 @@ static void BTApp_ProcessAGNotifications(
 
 	//Add By zzg 2011_10_24
 	BTApp_ShowDevMsg( pMe, IDS_MSG_AG_DISCONN, &pMe->mAG.connectedBDAddr, 2);
-	ISHELL_CloseApplet(pMe->m_pShell, FALSE);	
+	//ISHELL_CloseApplet(pMe->m_pShell, FALSE);	
 	//Add End
       break;
     }
     case AEEBT_AG_EVT_RUNG:                // response to Ring()
-      MSG_FATAL("***zzg BTApp_ProcessAGNotify AEEBT_AG_EVT_RUNG***", 0, 0, 0);
+      MSG_FATAL("***zzg BTApp_ProcessAGNotify AEEBT_AG_EVT_RUNG uError=%x***", pData->uError, 0, 0);
 	  
       MSG_MED( "AG - RUNG err=%d", pData->uError, 0, 0 );
       if ( pData->uError == AEEBT_AG_ERR_RING_FAILED )
@@ -21395,6 +21876,20 @@ static void BTApp_ProcessAGNotifications(
 
       pMe->mAG.uSoundType = pData->sSoundType;
 
+	  MSG_FATAL("***zzg AGNotify AEEBT_AG_EVT_SOUND_CHANGING***", 0, 0, 0);
+	  
+		{
+			uisnd_notify_data_s_type sndInfo;
+			uisnd_get_device(&sndInfo);
+			MSG_FATAL("***zzg dev=%d sMute=%d mMute=%d***", 
+				sndInfo.out_device, sndInfo.speaker_mute, sndInfo.microphone_mute);
+				
+			MSG_FATAL("***zzg dev_attached=%x, dev_enabled=%x***", 
+					uisnd_is_device_attached(sndInfo.out_device),
+					uisnd_is_device_enabled(sndInfo.out_device),
+					0);					
+		}
+
       if ( (callIncoming != BT_APP_CALL_NONE) &&
            (pMe->mAG.callState < BTAPP_AG_CALL_ANSWERED) && // call still in incoming state
            (pMe->mAG.bEnabled != FALSE) )
@@ -21478,11 +21973,14 @@ static void BTApp_ProcessNANotifications(
       MSG_HIGH( "NA - Connected", 0, 0, 0 );
       pMe->mNA.bConnected = TRUE;
       pMe->mNA.connectedBDAddr = pData->bdAddr;
+
+	  /*
       if ( TOP_MENU == BT_APP_MENU_MAIN )
       {
         BTApp_BuildMenu( pMe, TOP_MENU );
       }
       else
+	  */	
       {
         BTApp_ShowDevMsg( pMe, IDS_MSG_NA_CONN, &pData->bdAddr, 2 );
       }
@@ -21490,11 +21988,13 @@ static void BTApp_ProcessNANotifications(
     case AEEBT_NA_EVT_DISCONNECTED:
       MSG_HIGH( "NA - Disconnected", 0, 0, 0 );
       pMe->mNA.bConnected = FALSE;
+	  /*
       if ( TOP_MENU == BT_APP_MENU_MAIN )
       {
         BTApp_BuildMenu( pMe, TOP_MENU );
       }
       else
+	  	*/
       {
         BTApp_ShowDevMsg( pMe, IDS_MSG_NA_DISCONN, &pData->bdAddr, 2 );
       }
@@ -22374,7 +22874,8 @@ static void BTApp_ProcessRMNotifications(
 #ifdef FEATURE_BT_EXTPF_AV
 			if (AEEBT_BD_ADDRS_EQUAL(&pMe->mA2DP.bdAddr, 
 			                         &pData->pDevUpdateStatus->bdAddr))
-			{
+			{				
+				MSG_FATAL("***zzg BTApp_RMnotify Set mA2DP.bdAddr NULL***", 0, 0, 0);
 				pMe->mA2DP.bdAddr = NULL_BD_ADDR;
 				pMe->bConfigChanged = TRUE;
 				if( pMe->mA2DP.po != NULL )
@@ -22987,9 +23488,11 @@ static void BTApp_HandleCallOrig( CBTApp* pMe )
   pMe->mAG.uNumCalls++; // another call to keep track of
 
   MSG_FATAL("***zzg BTApp_HandleCallOrig A2DP bConnected=%x***", pMe->mA2DP.bConnected, 0, 0);
-  MSG_FATAL("***zzg BTApp_HandleCallOrig AG bConnected=%x***", pMe->mAG.bConnected, 0, 0);
+  MSG_FATAL("***zzg BTApp_HandleCallOrig AG bConnected=%x, bDevDialed=%x***", 
+  				pMe->mAG.bConnected, pMe->mAG.bDevDialed, 0);
 
 	//Add By zzg 2011_11_02
+	/*
 	if (pMe->mA2DP.bConnected != FALSE)
 	{
 		BTApp_ReleaseA2DPDevice( pMe );
@@ -23012,10 +23515,13 @@ static void BTApp_HandleCallOrig( CBTApp* pMe )
 			}	
 		}
 	}
+	*/
 	//Add End
-  
-  //if ( IS_AG_CONNECTABLE() != FALSE )
-  if (0)
+
+	 MSG_FATAL("***zzg BTApp_HandleCallOrig AG devType=%x, bPrivateMode=%x, uNumCalls=%x***", 
+	 			pMe->mAG.devType, pMe->mAG.bPrivateMode, pMe->mAG.uNumCalls);
+	
+  if ( IS_AG_CONNECTABLE() != FALSE ) 
   {
     if ( pMe->mAG.bDevDialed == FALSE ) 
     {
@@ -23023,6 +23529,8 @@ static void BTApp_HandleCallOrig( CBTApp* pMe )
       /* if there's more than 1 call, don't bring down audio link
          that might already be up for the call on hold
       */
+      //Del by zzg 2011_11_10
+      /*
       if ( (pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HEADSET) ||
            ((pMe->mAG.devType == AEEBT_AG_AUDIO_DEVICE_HANDSFREE) &&
             (pMe->mAG.bPrivateMode != FALSE)) &&
@@ -23030,10 +23538,12 @@ static void BTApp_HandleCallOrig( CBTApp* pMe )
       {
 #ifdef FEATURE_AVS_BT_SCO_REWORK
         BTApp_ReleaseBTDevice( pMe, FALSE );
-#endif /* FEATURE_AVS_BT_SCO_REWORK */
+#endif 
         BTApp_DisconnectAudio( pMe, FALSE );
       }
       else
+	  */	
+	  //Del End
       {
         BTApp_CheckNeedForSCO( pMe );
         BTApp_ConnectAudio( pMe, TRUE );
@@ -23072,22 +23582,27 @@ static void BTApp_HandleCallIncom( CBTApp* pMe )
     BTApp_ReleaseA2DPDevice( pMe );
   } 
 
+	/*
 	//Add By zzg 2011_11_02
 	if (pMe->mA2DP.bConnected != FALSE)
 	{
-		pMe->mAG.bdAddr = pMe->mA2DP.bdAddr;			
-			
-		if ( pMe->mAG.bconnInPrgs == FALSE )
-		{			
-			if (BTApp_CallConnected(pMe) != BT_APP_CALL_NONE)
-			{
-				pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
-			}
-			pMe->mAG.bconnInPrgs = TRUE;
-			IBTEXTAG_Connect( pMe->mAG.po, &pMe->mAG.bdAddr, pMe->mAG.devType);			
-		}		
+		if (FALSE == pMe->mAG.bConnected)
+		{
+			pMe->mAG.bdAddr = pMe->mA2DP.bdAddr;			
+				
+			if ( pMe->mAG.bconnInPrgs == FALSE )
+			{			
+				if (BTApp_CallConnected(pMe) != BT_APP_CALL_NONE)
+				{
+					pMe->mAG.bDevPickedUp = TRUE; // signal self to send audio to HS/HF
+				}
+				pMe->mAG.bconnInPrgs = TRUE;
+				IBTEXTAG_Connect( pMe->mAG.po, &pMe->mAG.bdAddr, pMe->mAG.devType);			
+			}		
+		}
 	}
 	//Add End
+	*/
   
   if ( IS_AG_CONNECTABLE() != FALSE )
   {
