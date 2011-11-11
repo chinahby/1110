@@ -166,6 +166,7 @@ typedef struct _MainMenu
 	Point           m_IconButtom_pt[MAX_BOTTOM_ITEMS];
 	Point           m_Primove_Pt;
 	uint16          m_PenPos;
+	boolean         m_bmove;
 #endif
 } MainMenu;
 

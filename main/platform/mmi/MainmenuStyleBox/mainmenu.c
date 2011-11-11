@@ -430,6 +430,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_nColumn     = 1;	
 	pMe->m_nCurPage    = 0;
 	pMe->m_PenPos      = -1;
+	pMe->m_bmove       = FALSE;
 
 
     // 接口创建及相关初始化
@@ -1301,6 +1302,10 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 					boolean m_bInRect = FALSE;
 					uint16 nRow = 0;
 					uint16 nCol = 0;
+					pMe->m_Primove_Pt.x = wXPos;
+					pMe->m_Primove_Pt.y = wYPos;
+					pMe->m_bmove = FALSE;
+					MSG_FATAL("EVT_PEN_DOWN................",0,0,0);
 					for(i=0;i<MAX_MATRIX_ITEMS;i++)
 					{
 						rc.x = pMe->m_Icondefault_Pt[i].x;
@@ -1338,6 +1343,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 					int wDxPos   = wXPos-pMe->m_Primove_Pt.x;
 					int wDyPos   = wYPos-pMe->m_Primove_Pt.y;
 					uint16 uDxPos = 0;
+					MSG_FATAL("EVT_PEN_MOVE................",0,0,0);
 					if(wDxPos>0)
 					{
 						uDxPos = wDxPos;
@@ -1349,9 +1355,12 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 					if(uDxPos>DX_MAIN_MOVE)
 					{
 						MovePen(pMe,wDxPos);
+						MSG_FATAL("EVT_PEN_MOVE................ok",0,0,0);
+						pMe->m_Primove_Pt.x = wXPos;
+						pMe->m_Primove_Pt.y = wYPos;
+						pMe->m_bmove = TRUE;
 					}
-					pMe->m_Primove_Pt.x = wXPos;
-					pMe->m_Primove_Pt.y = wYPos;
+					
 					return TRUE;
 				}
 				break;
@@ -1367,6 +1376,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 				uint16 nCol = 0;
 				uint16 j    = 0;
 				int baseBottom = BASE_BOTTON_TITLE;
+				MSG_FATAL("EVT_PEN_UP................",0,0,0);
 				for(i=0;i<MAX_MATRIX_ITEMS;i++)
 				{
 					rc.x = pMe->m_Icondefault_Pt[i].x;
@@ -1385,7 +1395,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 						break;
 					}
 				}
-				if(pMe->m_PenPos>0)
+				if((pMe->m_PenPos>0)&&(!pMe->m_bmove))
 				{
 					StartApplet( pMe,pMe->m_IconTitle[pMe->m_PenPos]);
 					pMe->m_PenPos = -1;
@@ -1417,6 +1427,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
             		DrawMatrix(pMe);
             		// 绘制聚焦过程动画
             		MoveCursorTo(pMe, pMe->m_nRow, pMe->m_nColumn);
+					pMe->m_bmove = FALSE;
 				}
 				
 				return TRUE;
