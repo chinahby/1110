@@ -1,0 +1,311 @@
+; NeoPlanet WindowBlinds Personality by Orkin Man - Dennis Hallman
+;
+; This is a .UIS Version 2 file
+;
+; For use ONLY with WindowBlinds or WindowFX by Stardock Systems, Inc
+
+[TitlebarSkin]
+SkinName=NeoPlanetFull
+SkinAuthor=Orkin Man - Dennis Hallman
+Generator=BuilderBlinds ver 0.16.34, Build 72  - http://welcome.to/BuilderBlinds
+
+[Personality]
+;No button transparencies=0
+UsesTran=0
+
+;Number of buttons we have defined in this personality
+ButtonCount=5
+
+;0 - Left, 1 - Centre, 2 - Right
+TextAlignment=0
+TileMenu=1
+
+;Amount in pixels to shift the titlebar text by from the left
+TextShift=60
+;Amount in pixels to shift the titlebar text down by
+TextShiftVert=0
+;How far from the right edge should clipping of the text start
+TextRightClip=82
+;0 - Normal text behaviour, 1 - Place the text on the bottom on the window
+TextOnBottom=0
+;FrontString=
+;EndString=
+
+;The menubar bitmap
+Menubar=NeoPlanetFull\menu.bmp
+;TileLeftMenu=
+;TileRightMenu=
+
+;Specifies the amount to shift the menu text by again in pixels 
+MenuLeftTile=0
+
+;RGB value of the menubar when you click on an entry
+MenuR=64
+MenuG=112
+MenuB=176
+
+;RGB value of the active title bar text color
+ActiveTextR=255
+ActiveTextG=255
+ActiveTextB=255
+
+;RGB value of the inactive title bar text color
+InactiveTextR=255
+InactiveTextG=255
+InactiveTextB=255
+
+;RGB value of the menubar text color
+MenuTextR=0
+MenuTextG=0
+MenuTextB=0
+
+;1 - Use 6 images in one, 0 - Use 3 images ******
+TripleImages=0
+
+;Border and title bar bitmaps
+Top=NeoPlanetFull\top.bmp
+Left=NeoPlanetFull\left.bmp
+Right=NeoPlanetFull\right.bmp
+Bottom=NeoPlanetFull\bottom.bmp
+
+; And last of all we want the respective heights of the bits 76, 84
+TopTopHeight=76
+TopBotHeight=84
+
+LeftTopHeight=33
+LeftBotHeight=13
+
+RightTopHeight=33
+RightBotHeight=13
+
+BottomTopHeight=0
+BottomBotHeight=0
+
+; Use stretching on this image?
+TopStretch=0
+LeftStretch=0
+RightStretch=0
+BottomStretch=0
+
+; To support animation we want the time delay
+AniRate=0
+
+;DynamicFrame=
+
+; And per edge we want the number of frames stored
+; How many states do we want it to have (2 is for active/inactive)
+TopFrame=2
+LeftFrame=2
+RightFrame=2
+BottomFrame=2
+
+;TextBack=
+;ActiveAlpha=
+;InactiveAlpha=
+
+;TXTBackLeft=
+;TXTBackRight=
+
+;Wallpaper=NeoPlanetFull\Wallpaper.bmp
+;Exec=
+;RunStyle=
+;IconTheme=
+ExplorerBmp=NeoPlanetFull\Explorer.bmp
+DialogBmp=NeoPlanetFull\Dialog.bmp
+MDIBmp=NeoPlanetFull\Mdi.bmp
+
+MenuBorders=NeoPlanetFull\Menuborder.bmp
+MaxBorderCutLeft=0
+MaxBorderCutTop=0
+MaxBorderCutRight=0
+MaxBorderCutBottom=0
+;MouseOver=
+;TripleImages=
+
+SoundEnabled=0
+RollUpSize=44
+RightClickAction=4
+;DoubleClickAction=
+
+[Text]
+Use3DText=2
+ShadowTextR=0 
+ShadowTextG=0
+ShadowTextB=0
+NoShadowInactiveText=0
+ShadowOffset=1
+
+[Button0]
+Align=1
+XCoord=61
+YCoord=2
+Action=2
+Command=
+ButtonImage=NeoPlanetFull\min.bmp
+
+[Button1]
+Align=1
+XCoord=42
+YCoord=4
+Action=1
+Command=
+ButtonImage=NeoPlanetFull\max.bmp
+Visibility=4
+
+[Button2]
+Align=1
+XCoord=23
+YCoord=4
+Action=0
+Command=
+ButtonImage=NeoPlanetFull\close.bmp
+
+[Button3]
+Align=1
+XCoord=42
+YCoord=4
+Action=1
+Command=
+ButtonImage=NeoPlanetFull\restore.bmp
+Visibility=3
+
+[Button4]
+Align=0
+XCoord=14
+YCoord=6
+Action=11
+Command=
+
+;InSound=
+;OutSound=
+
+[Buttons]
+CheckButton=NeoPlanetFull\checkbox.bmp
+RadioButton=NeoPlanetFull\radio.bmp
+Bitmap=NeoPlanetFull\button.bmp
+TopHeight=11
+BottomHeight=11
+LeftWidth=12
+RightWidth=12
+MouseOver=1
+Tile=1
+Trans=1
+
+[Taskbar]
+TaskImg=NeoPlanetFull\task.bmp
+Image=NeoPlanetFull\taskbar.bmp
+TopHeight=7
+BottomHeight=7
+LeftWidth=7
+RightWidth=7
+Tile=1
+Trans=1
+
+[Toolbars]
+Image=NeoPlanetFull\toolbar.bmp
+TopHeight=7
+BottomHeight=7
+LeftWidth=7
+RightWidth=7
+Tile=1
+Trans=1
+
+[Colours]
+ActiveBorder=220 220 220
+ActiveTitle=0 0 128
+AppWorkSpace=146 146 146
+Background=64 112 176
+ButtonAlternateFace=184 184 184
+ButtonDkShadow=0 0 0
+ButtonFace=207 207 207
+ButtonHilight=238 238 238
+ButtonLight=220 220 220
+ButtonShadow=146 146 146
+ButtonText=0 0 0
+GradientActiveTitle=64 112 176
+GradientInactiveTitle=129 142 150
+GrayText=146 146 146
+Hilight=64 112 176
+HilightText=255 255 255
+HotTrackingColor=0 0 255
+InactiveBorder=220 220 220
+InactiveTitle=146 146 146
+InactiveTitleText=192 192 192
+InfoText=0 0 0
+InfoWindow=255 154 53
+Menu=207 207 207
+MenuText=0 0 0
+Scrollbar=238 238 238
+TitleText=255 255 255
+Window=255 255 255
+WindowFrame=0 0 0
+WindowText=0 0 0
+
+[Tabs]
+Border=NeoPlanetFull\tabborder.bmp
+Image=NeoPlanetFull\tabs.bmp
+TopHeight=7
+BottomHeight=7
+LeftWidth=7
+RightWidth=7
+Trans=1
+
+[Progress]
+Bitmap=NeoPlanetFull\progress.bmp
+TopHeight=5
+BottomHeight=5
+LeftWidth=9
+RightWidth=9
+Tile=0
+Trans=0
+
+[Scrollbar]
+Image=NeoPlanetFull/arrows.bmp
+TopHeight=1
+BottomHeight=2
+LeftWidth=1
+RightWidth=2
+Trans=1
+Tile=0
+MouseOver=0
+
+[HorzScroll]
+Image=NeoPlanetFull\scrollhz.bmp
+TopHeight=3
+BottomHeight=3
+LeftWidth=0
+RightWidth=0
+Trans=0
+Tile=1
+
+[HorzScrollThumb] 
+Image=NeoPlanetFull\scrollhb.bmp
+TopHeight=2
+BottomHeight=2
+LeftWidth=2
+RightWidth=2
+Trans=0
+Tile=1
+ShowDot=1
+
+[VertScroll]
+Image=NeoPlanetFull\scrollvt.bmp
+TopHeight=0
+BottomHeight=0
+LeftWidth=3
+RightWidth=3
+Trans=0
+Tile=1
+
+[VertScrollThumb]
+Image=NeoPlanetFull\scrollvb.bmp
+TopHeight=2
+BottomHeight=2
+LeftWidth=2
+RightWidth=2
+Trans=0
+Tile=1
+ShowDot=1
+
+[StartButton]
+Image=NeoPlanetFull\start.bmp
