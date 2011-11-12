@@ -2903,6 +2903,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     {
 	    IANNUNCIATOR_SetFieldIsActiveEx(pMe->m_pIAnn,TRUE);
     }
+    MSG_FATAL("IDD_IDLE_Handler:eCode=%x,wParam=%x,dwParam=%x",eCode, wParam, dwParam);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -3867,7 +3868,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 						}
 					}
 					#endif
-                    if (pMe->m_bAcquiredTime && !pMe->m_bemergencymode)
+                    if (/*pMe->m_bAcquiredTime &&*/ !pMe->m_bemergencymode)
                     {
                         IRecentCalls  *pRecentCall = NULL;
                         if (AEE_SUCCESS == ISHELL_CreateInstance(pMe->a.m_pIShell,
