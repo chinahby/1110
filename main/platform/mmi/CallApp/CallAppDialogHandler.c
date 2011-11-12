@@ -10825,7 +10825,8 @@ static boolean CallApp_Process_HeldKey_Event(CCallApp *pMe,
 #endif /*FEATRUE_SET_IP_NUMBER*/
         if ( (AVKType)wParam == AVK_STAR)
         {
-#ifndef FEATURE_DISP_128X160
+#if !defined(FEATURE_DISP_128X160)&&!defined(FEATURE_DISP_176X220)
+
 #ifdef FEATURE_KEYGUARD
             if(WSTRLEN(pMe->m_DialString) == 1)
             {
