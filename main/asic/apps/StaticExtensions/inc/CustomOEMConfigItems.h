@@ -441,7 +441,7 @@ enum{
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for REND
     CFGI_REND_STATE,
 #endif
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
     CFGI_PEN_CAL,     // ¡À¨ºD¡ê¡Á?2?¨ºy
 #endif
     CFGI_BREWSET_USENAME,

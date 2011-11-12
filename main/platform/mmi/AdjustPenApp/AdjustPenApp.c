@@ -38,7 +38,7 @@ when         who            what, where, why
 #include "AppComFunc.h"
 #include "adjustpenapp.brh"
 #include "Appscommon.h"
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 #include "touchpad.h"
 #endif
 /*===========================================================================
@@ -91,7 +91,7 @@ typedef struct _CAdjustPenApp {
 	AECHAR    *m_szBuffer; 
 	AEERect   m_rctext;          // Applet rectangle
 	BigSmall  m_bigsmall;
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
     pen_cal_param_type m_cal[TOUCHPAD_CAL_NUM];
 #endif
 } CAdjustPenApp;
@@ -252,7 +252,7 @@ static void changestate( CAdjustPenApp *pMe)
 			break;
     	case ADJUST_CENTER:     //е§жа
             {
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
                 pen_cal_type pen_adjust_data;
 				if(touchpad_adjust_cal(pMe->m_cal,TOUCHPAD_CAL_NUM, &pen_adjust_data))
 				{
@@ -307,7 +307,7 @@ static void drawImage( void *pMe)
 		y = 0;
 		rc.x = x;
 		rc.y = y;
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
         pme->m_cal[0].x_disp = x+(IMAGE_CAL_WIDTH>>1);
         pme->m_cal[0].y_disp = y+(IMAGE_CAL_HEIGHT>>1);
 #endif
@@ -318,7 +318,7 @@ static void drawImage( void *pMe)
 		y = (pme->m_rc.dy-IMAGE_CAL_HEIGHT)>>1;
 		rc.x = x;
 		rc.y = y;
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
         pme->m_cal[2].x_disp = x+(IMAGE_CAL_WIDTH>>1);
         pme->m_cal[2].y_disp = y+(IMAGE_CAL_HEIGHT>>1);
 #endif
@@ -329,7 +329,7 @@ static void drawImage( void *pMe)
 		y = pme->m_rc.dy-IMAGE_CAL_HEIGHT;
 		rc.x = x;
 		rc.y = y;
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
         pme->m_cal[1].x_disp = x+(IMAGE_CAL_WIDTH>>1);
         pme->m_cal[1].y_disp = y+(IMAGE_CAL_HEIGHT>>1);
 #endif
@@ -411,7 +411,7 @@ static boolean AdjustPen_HandleEvent(CAdjustPenApp *pme, AEEEvent eCode, uint16 
                 }
                 else
                 {
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
                     pen_cal_type pen_adjust_data;
                     (void)OEM_GetConfig(CFGI_PEN_CAL, (void*)&pen_adjust_data, sizeof(pen_cal_type));
                     touchpad_adjust(&pen_adjust_data);
@@ -431,7 +431,7 @@ static boolean AdjustPen_HandleEvent(CAdjustPenApp *pme, AEEEvent eCode, uint16 
                 
 				if(pme->m_aState == ADJUST_NONE)
 				{
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
                     touchpad_adjust(NULL);
 #endif
 					changestate(pme);
@@ -439,7 +439,8 @@ static boolean AdjustPen_HandleEvent(CAdjustPenApp *pme, AEEEvent eCode, uint16 
 				}
 				else if(pme->m_aState == ADJUST_LEFTTOP)
 				{
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+					MSG_FATAL("pme->m_cal[0].x_mv==%d,pme->m_cal[0].y_mv==%d",pme->m_cal[0].x_mv,pme->m_cal[0].y_mv,0);
                     touchpad_xy_2_mv(wXPos, wYPos, &pme->m_cal[0].x_mv, &pme->m_cal[0].y_mv);
 #endif
 					changestate(pme);
@@ -447,7 +448,8 @@ static boolean AdjustPen_HandleEvent(CAdjustPenApp *pme, AEEEvent eCode, uint16 
 				}
 				else if(pme->m_aState == ADJUST_CENTER)
 				{
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+					MSG_FATAL("pme->m_cal[2].x_mv==%d,pme->m_cal[2].y_mv==%d",pme->m_cal[2].x_mv,pme->m_cal[2].y_mv,0);
                     touchpad_xy_2_mv(wXPos, wYPos, &pme->m_cal[2].x_mv, &pme->m_cal[2].y_mv);
 #endif
 					changestate(pme);
@@ -455,7 +457,8 @@ static boolean AdjustPen_HandleEvent(CAdjustPenApp *pme, AEEEvent eCode, uint16 
 				}
 				else if(pme->m_aState == ADJUST_RIGHTBOM)
 				{
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+					MSG_FATAL("pme->m_cal[1].x_mv==%d,pme->m_cal[1].y_mv==%d",pme->m_cal[1].x_mv,pme->m_cal[1].y_mv,0);
                     touchpad_xy_2_mv(wXPos, wYPos, &pme->m_cal[1].x_mv, &pme->m_cal[1].y_mv);
 #endif
 					changestate(pme);

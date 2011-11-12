@@ -38,6 +38,10 @@
 #include "AEEClipboard.h"
 #include "appscommonimages.brh"
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#include "touchpad.h"
+#endif
+
 #include "Appscommon.h"//wlh add
 #include "ui.h"
 #if defined(FEATURE_WMS_APP)
@@ -2489,7 +2493,20 @@ static void CoreApp_PoweronStartApps(CCoreApp *pMe)
     OEMKeyguard_Init(pMe->a.m_pIShell,pMe->m_pITelephone,pMe->m_pAlert,pMe->m_pIAnn);
 #endif
 #endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+{
+    pen_cal_type pen_adjust_data;
     
+    (void)OEM_GetConfig(CFGI_PEN_CAL, (void*)&pen_adjust_data, sizeof(pen_cal_type));
+	MSG_FATAL("pen_adjust_data.kmvx===%d,pen_adjust_data.kmvy=%d",pen_adjust_data.kmvx,pen_adjust_data.kmvy,0);
+	MSG_FATAL("pen_adjust_data.kmv0===%d,pen_adjust_data.kmv0=%d",pen_adjust_data.mvx0,pen_adjust_data.mvy0,0);
+    if(pen_adjust_data.kmvx == -1 && pen_adjust_data.kmvy == -1
+        && pen_adjust_data.mvx0 == -1 && pen_adjust_data.mvy0 == -1 )
+    {
+        ISHELL_StartApplet(pMe->a.m_pIShell, AEECLSID_ADJUSTPENAPP);
+    }
+}
+#endif
     bRun = TRUE;
 }
 

@@ -585,7 +585,7 @@ boolean 	touchpad_mv_2_xy(pen_event_type*pen_event,pen_value_type *pen_value)
 void touchpad_xy_2_mv(int16 x, int16 y, int16 *x_mv, int16 *y_mv)
 {
     int32 mv;
-    
+    MSG_FATAL("pen_cal_data.kmvx===%d,pen_cal_data.mvx0====%d",pen_cal_data.kmvx,pen_cal_data.mvx0,0);
     if(x_mv)
     {
         mv = ((x<<TOUCHPAD_SHIFT)/pen_cal_data.kmvx)-pen_cal_data.mvx0;
@@ -887,9 +887,15 @@ boolean touchpad_adjust_cal(pen_cal_param_type* pen_param,byte param_num,pen_cal
 	}
 	else
 	{
+		MSG_FATAL("pen_param[0].x_disp==%d,pen_param[0].y_disp==%d",pen_param[0].x_disp,pen_param[0].y_disp,0);
+		MSG_FATAL("pen_param[1].x_disp==%d,pen_param[1].y_disp==%d",pen_param[1].x_disp,pen_param[1].y_disp,0);
+		MSG_FATAL("pen_param[2].x_disp==%d,pen_param[2].y_disp==%d",pen_param[2].x_disp,pen_param[2].y_disp,0);
 		delta01=ABS(pen_param[0].x_disp - pen_param[1].x_disp) *ABS(pen_param[0].y_disp - pen_param[1].y_disp); 
 		delta02=ABS(pen_param[0].x_disp - pen_param[2].x_disp) *ABS(pen_param[0].y_disp - pen_param[2].y_disp); 
 		delta12=ABS(pen_param[1].x_disp - pen_param[2].x_disp) *ABS(pen_param[1].y_disp - pen_param[2].y_disp); 
+		MSG_FATAL("delta01===============%d",delta01,0,0);
+		MSG_FATAL("delta02===============%d",delta02,0,0);
+		MSG_FATAL("delta12===============%d",delta12,0,0);
 		if(delta01 >= delta02 && delta01 >= delta12)
 		{
 			i=0;
@@ -921,16 +927,16 @@ boolean touchpad_adjust_cal(pen_cal_param_type* pen_param,byte param_num,pen_cal
 	{
 		x = (kmvx*(pen_param[k].x_mv+mvx0))>>TOUCHPAD_SHIFT;
 		y = (kmvy*(pen_param[k].y_mv+mvy0))>>TOUCHPAD_SHIFT;
-
-		if(ABS(x-pen_param[k].x_disp) > 5 || ABS(y-pen_param[k].y_disp) > 5)
+        MSG_FATAL("x===========%d,y=====%d",x,y,0);
+		if(ABS(x-pen_param[k].x_disp) > 8 || ABS(y-pen_param[k].y_disp) > 8)
 		{
 			ret = FALSE;
 		}
 	}
-    
+    MSG_FATAL("ret=======0000======%d",ret,0,0);
 	if(ret)
 	{
-		if(!touchpad_check_cal_data(mvx0,mvy0,kmvx,kmvy))
+		if(FALSE/*!touchpad_check_cal_data(mvx0,mvy0,kmvx,kmvy)*/)
 		{
 			ret =  FALSE;
 		}
@@ -945,6 +951,7 @@ boolean touchpad_adjust_cal(pen_cal_param_type* pen_param,byte param_num,pen_cal
 			}
 		}
 	}
+	MSG_FATAL("ret======11111======%d",ret,0,0);
 	return ret;
 }
 

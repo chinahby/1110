@@ -247,7 +247,7 @@ when       who     what, where, why
 #include "bt_ui_int.h"
 #endif
 #endif
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 #include "touchpad.h"
 #endif
 #ifdef FEATURE_RANDOM_MENU_REND
@@ -656,7 +656,7 @@ typedef struct
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
    byte m_nrendstate;                      //CFGI_REND_STATE
 #endif
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
    pen_cal_type m_pencal_data;
 #endif
 #endif //#ifdef CUST_EDITION
@@ -1399,7 +1399,7 @@ static int OEMPriv_GetItem_CFGI_REND_STATE(void *pBuff);
 static int OEMPriv_SetItem_CFGI_REND_STATE(void *pBuff);
 #endif//FEATURE_RANDOM_MENU_REND
 
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 static int OEMPriv_GetItem_CFGI_PEN_CAL(void *pBuff);
 static int OEMPriv_SetItem_CFGI_PEN_CAL(void *pBuff);
 #endif//FEATURE_TOUCHPAD
@@ -1808,7 +1808,7 @@ static OEMConfigListType oemi_cache = {
 #ifdef FEATURE_RANDOM_MENU_REND//wlh 20090405 add for rend
    ,DISPLAYREND_TYPE_ONEBYONE
 #endif
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
    ,{-1,-1,-1,-1}
 #endif//FEATURE_TOUCHPAD
 #endif //CUST_EDITION
@@ -2365,8 +2365,8 @@ static ConfigItemTableEntry const customOEMItemTable[] =
    CFGTABLEITEM(CFGI_REND_STATE,sizeof(byte)),
 #endif//FEATURE_RANDOM_MENU_REND
 
-#ifdef FEATURE_TOUCHPAD
-   CFGTABLEITEM(CFGI_PEN_CAL,sizeof(pen_cal_type))
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+   CFGTABLEITEM(CFGI_PEN_CAL,sizeof(pen_cal_type)),
 #endif//FEATURE_TOUCHPAD
    CFGTABLEITEM(CFGI_BREWSET_USENAME,sizeof(byte)*MAS_BREWSETINT_STRING),
    CFGTABLEITEM(CFGI_BREWSET_PASSWORD,sizeof(byte)*MAS_BREWSETINT_STRING),
@@ -10922,7 +10922,7 @@ static int OEMPriv_SetItem_CFGI_REND_STATE(void *pBuff)
     return SUCCESS;
 }
 #endif//FEATURE_RANDOM_MENU_REND
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 static int OEMPriv_GetItem_CFGI_PEN_CAL(void *pBuff)
 {
     MEMCPY(pBuff, (void*) &oemi_cache.m_pencal_data, sizeof(pen_cal_type));

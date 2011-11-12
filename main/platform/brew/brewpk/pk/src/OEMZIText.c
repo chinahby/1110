@@ -1198,7 +1198,7 @@ SEE ALSO:
 AECHAR* OEM_TextGet(OEMCONTEXT hTextCtl)
 {
    register TextCtlContext *pContext = (TextCtlContext *) hTextCtl;
-#ifdef FEATURE_TOUCHPAD
+#ifdef FEATURE_LCD_TOUCH_ENABLE
    if(pContext)
    {
 	   //Add the Get Text when TSIM
