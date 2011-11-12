@@ -376,6 +376,13 @@ else
             techno_meto.mid|fs:/ringers/techno_meto.mid \
             feeling_on.mid|fs:/ringers/feeling_on.mid \
             feeling_off.mid|fs:/ringers/feeling_off.mid
+	else ifeq ($(USES_RESDIR), N68TH)
+        CONSTFILE_FILES+=\
+            feeling_on.mid|fs:/ringers/feeling_on.mid\
+            lucky.mid|fs:/ringers/lucky.mid \
+            ring01.mp3|fs:/ringers/ring01.mp3 \
+            ring02.mp3|fs:/ringers/ring02.mp3 
+
     else                                            
         CONSTFILE_FILES+=\
             blues.mid|fs:/ringers/blues.mid \
