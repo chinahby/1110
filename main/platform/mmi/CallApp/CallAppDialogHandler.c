@@ -316,7 +316,9 @@ static void CallApp_ProcessUIMMMIStr(CCallApp* pMe, AECHAR *pStr);
 
 
 //Add By zzg 2011_11_09
+#ifdef FEATURE_SUPPORT_BT_AUDIO
 static boolean CallApp_CheckBtHeadSetInUsing(CCallApp* pMe);
+#endif
 //Add End
 
 
@@ -12720,6 +12722,7 @@ static void callApp_draw_penup(CCallApp* pMe,int16 x,int16 y)
 #endif
 
 //Add By zzg 2011_11_09
+#ifdef FEATURE_SUPPORT_BT_AUDIO
 static boolean CallApp_CheckBtHeadSetInUsing(CCallApp* pMe)
 {
 	boolean result = FALSE;
@@ -12822,6 +12825,7 @@ void CallApp_SwitchCallAudio(CCallApp *pMe, boolean bIsBtAudio)
     ISOUND_SetVolume(pMe->m_pSound,
                      GET_ISOUND_VOL_LEVEL(pMe->m_CallVolume));
 }
+#endif
 
 //Add End
 

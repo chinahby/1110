@@ -841,7 +841,9 @@ void CallApp_ShowDialog(CCallApp *pMe,uint16  dlgResId);
 //Sets the current sound path
 void CallApp_SetupCallAudio(CCallApp *pMe);
 
+#ifdef FEATURE_SUPPORT_BT_AUDIO
 void CallApp_SwitchCallAudio(CCallApp *pMe, boolean bIsBtAudio);	//Add By zzg 2011_11_09
+#endif
 
 //Handles the details of making a call
 MAKE_CALL_VALUE CallApp_MakeCall(CCallApp *pMe);
