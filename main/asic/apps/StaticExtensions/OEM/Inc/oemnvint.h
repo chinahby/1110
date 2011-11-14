@@ -468,6 +468,7 @@ typedef PACKED struct _Key_pad_Cfg
 // Backlighting -- CFGI_BACK_LIGHT
 /////////////////////////////////////////////////////////////////////////
 #define   OEMNV_BL_OFF    0
+#define   OEMNV_BL_7S     7
 #define   OEMNV_BL_10S     10
 #define   OEMNV_BL_30S     30
 #define   OEMNV_BL_50S     50
