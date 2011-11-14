@@ -2607,6 +2607,9 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
 				IANNUNCIATOR_SetFieldText(pMe->m_pAnn,WTitle);
             }
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_30SEC, IDS_AKG_30SEC, NULL, 0);
+            #ifdef FEATURE_VERSION_W208S
+            IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_1MIN, IDS_AKG_1MIN, NULL, 0);
+            #endif
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_2MIN, IDS_AKG_2MIN, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_AKG_5MIN, IDS_AKG_5MIN, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSSETTINGMENU_RES_FILE, IDS_OFF, IDS_OFF, NULL, 0);
@@ -2633,6 +2636,9 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
                     case 3:    // 五分钟
                       ui16_return = IDS_AKG_5MIN;
                       break;
+                    case 4:
+                      ui16_return = IDS_AKG_1MIN;
+                      break;   //一分钟
                    default:
                     case 0: //关
                       ui16_return = IDS_OFF;
@@ -2692,6 +2698,9 @@ static boolean  HandleAKGDialogEvent(CSettingMenu *pMe,
                         break;
                     case IDS_AKG_5MIN:     //5minute
                         AKG = 3;
+                        break;
+                    case IDS_AKG_1MIN:     //1minute
+                        AKG = 4;
                         break;
                     case IDS_OFF:     //关
                         AKG = 0;
