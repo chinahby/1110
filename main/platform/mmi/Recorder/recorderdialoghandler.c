@@ -3782,12 +3782,12 @@ static boolean recorder_format_file_name( Media* pme, char* fileNameBuffer, int 
 		SPRINTF( fileNameBuffer + 6  + offset, "%02d", julian.wDay);
 		SPRINTF( fileNameBuffer + 8  + offset, "%02d", julian.wHour);
 		SPRINTF( fileNameBuffer + 10 + offset, "%02d", julian.wMinute);
-		#ifdef FEATURE_LANG_THAI
-		SPRINTF( fileNameBuffer + 12 + offset, "%s",   pme->m_pszFileExtension);
-		#else
+	//	#ifdef FEATURE_LANG_THAI
+	//	SPRINTF( fileNameBuffer + 12 + offset, "%s",   pme->m_pszFileExtension);
+	//	#else
 		SPRINTF( fileNameBuffer + 12 + offset, "%02d", julian.wSecond);
 		SPRINTF( fileNameBuffer + 14 + offset, "%s",   pme->m_pszFileExtension);
-		#endif
+	//	#endif
 
 		debug( ";file name, %s", fileNameBuffer);
 		return TRUE;
