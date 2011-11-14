@@ -1373,9 +1373,12 @@ static boolean  HandleBacklightingDialogEvent(CDisplayMenu *pMe,
                     backlight = OEMNV_BL_OFF;
                     break;
 #endif
+
+#ifdef FEATURE_VERSION_W208S
                 case IDS_7S:          //7√Î
                     backlight = OEMNV_BL_7S;
                     break;
+#endif					
 
                 case IDS_10S:          //10√Î
                     backlight = OEMNV_BL_10S;
