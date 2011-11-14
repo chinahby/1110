@@ -1243,8 +1243,13 @@ static boolean  HandleBacklightingDialogEvent(CDisplayMenu *pMe,
 
         case EVT_DIALOG_START:
         {
-            byte      backlight = OEMNV_BL_10S;
+#ifdef FETURE_VERSION_W208S
+            byte      backlight = OEMNV_BL_7S;
+            uint16    ui16_return = IDS_7S;
+#else
+		    byte      backlight = OEMNV_BL_10S;
             uint16    ui16_return = IDS_10S;
+#endif
 			//add by yangdecai
 			{
 				AECHAR WTitle[40] = {0};
@@ -1258,7 +1263,13 @@ static boolean  HandleBacklightingDialogEvent(CDisplayMenu *pMe,
 #ifdef FEATRUE_SET_LCD_ALWAYS_OFF
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_ALWAYS_OFF, IDS_ALWAYS_OFF, NULL, 0);
 #endif
+#ifdef FEATURE_VERSION_W208S
+
+            IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_7S, IDS_7S, NULL, 0);
+#else 
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_10S, IDS_10S, NULL, 0);
+
+#endif
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_30S, IDS_30S, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_50S, IDS_50S, NULL, 0);
             IMENUCTL_AddItem(pMenu, AEE_APPSDISPLAYMENU_RES_FILE, IDS_ALWAYS_ON, IDS_ALWAYS_ON, NULL, 0);
@@ -1276,10 +1287,19 @@ static boolean  HandleBacklightingDialogEvent(CDisplayMenu *pMe,
                     ui16_return = IDS_ALWAYS_OFF;
                     break;
 #endif
+#ifdef FEATURE_VERSION_W208S
+
+                case OEMNV_BL_7S:      //7s
+                default:
+                    ui16_return = IDS_7S;
+                    break;
+#else
+
                 case OEMNV_BL_10S:      //10s
                 default:
                     ui16_return = IDS_10S;
                     break;
+#endif
 
                 case OEMNV_BL_30S:      //30s
                     ui16_return = IDS_30S;
@@ -1353,6 +1373,10 @@ static boolean  HandleBacklightingDialogEvent(CDisplayMenu *pMe,
                     backlight = OEMNV_BL_OFF;
                     break;
 #endif
+                case IDS_7S:          //7√Î
+                    backlight = OEMNV_BL_7S;
+                    break;
+
                 case IDS_10S:          //10√Î
                     backlight = OEMNV_BL_10S;
                     break;

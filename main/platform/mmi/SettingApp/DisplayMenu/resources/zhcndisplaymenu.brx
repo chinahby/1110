@@ -31,6 +31,9 @@
 	<STRING Id="1010" Name="IDS_LED_NETWORK">
 		<Text>网络</Text>
 	</STRING>
+	<String Id="1011" Name="IDS_7S">
+		<Text>7秒</Text>
+	</String>
 	<STRING Id="1012" Name="IDS_LED_ALARM">
 		<Text>闹钟</Text>
 	</STRING>
