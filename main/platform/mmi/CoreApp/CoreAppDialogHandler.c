@@ -197,6 +197,121 @@ extern boolean   IsRunAsFactoryTestMode(void);
 #define DATA_Y				(RPLMN_Y + 30) 
 
 #endif
+// add pandy 2011-11-04
+enum {
+#if 1 /*APP_CONFIG_USE_EVENTLISTENER*/
+	APP_ORIGINATOR_ALLAPPSELECT = -1,
+#endif /*APP_CONFIG_USE_EVENTLISTENER*/
+	APP_ORIGINATOR_TASK = 0,
+	APP_ORIGINATOR_MANAGER,
+	APP_ORIGINATOR_LAUNCHER,
+	APP_ORIGINATOR_BROWSER,
+	APP_ORIGINATOR_MAILER,
+	APP_ORIGINATOR_DATAFOLDER,
+	APP_ORIGINATOR_ADDRESSBOOK,
+	APP_ORIGINATOR_MEDIAPLAYER,
+	APP_ORIGINATOR_IrDA,
+	APP_ORIGINATOR_BLUETOOTH,
+	APP_ORIGINATOR_MMS,
+	APP_ORIGINATOR_SISL,
+	APP_ORIGINATOR_SISLDAEMON,
+	APP_ORIGINATOR_NETMANAGER,
+	APP_ORIGINATOR_MIMEVIEWER,
+	APP_ORIGINATOR_CALENDAR,
+	APP_ORIGINATOR_MMSDAEMON,
+	APP_ORIGINATOR_WAPPUSHDAEMON,
+	APP_ORIGINATOR_DOWNLOAD,
+	APP_ORIGINATOR_JAVA,
+	APP_ORIGINATOR_EVENTLISTENER,
+	APP_ORIGINATOR_TELCALL,
+	APP_ORIGINATOR_JAMSTUB,
+	APP_ORIGINATOR_PDFVIEWER,
+	APP_ORIGINATOR_DOCVIEWER,
+#ifdef APP_CONFIG_USE_DOWNLOAD_DAEMON
+	APP_ORIGINATOR_DOWNLOADDAEMON,
+	APP_ORIGINATOR_DOWNLOADEXT,
+#endif
+	APP_ORIGINATORS
+};
+// add pandy 2011-11-04
+#define	APPLICATION_MSGBASE_SYSTEM			0x00000
+
+enum{
+	APP_BROWSER_START_MAINMENU = APPLICATION_MSGBASE_SYSTEM,
+	APP_BROWSER_START_HOME,		/* arg: not use */
+	APP_BROWSER_START_BY_MAINMENU, /* arg : slim_int IDM_BROWSER_XXX */
+	APP_BROWSER_START_URL,			/* arg: TString url */
+	APP_BROWSER_START_PAGESAVEINFO,	/* arg : TPageSaveInfo (slim_handle) */
+	APP_BROWSER_START_BY_PUSH,			/* arg: TString url */
+	APP_BROWSER_RESULT_SAVEFILE,	/* arg: TString file name */
+#ifdef WIRELESS_BROWSER_CONFIG_USE_FILEUPLOAD
+	APP_BROWSER_RESULT_FILESELECT,	/* arg: TString file name */
+#endif
+	APP_BROWSER_RESULT_ADDRESS_BOOK,	/* arg : TString add addressbook */
+#ifdef WIRELESS_BROWSER_CONFIG_USE_VBOOKMARK
+	APP_BROWSER_VBOOKMARK_IMPORT,				/* arg: TString file name */
+#endif
+	APP_BROWSER_REQUEST_BOOKMARKLIST_UPDATE,	/* arg: not use */
+#ifdef APP_CONFIG_USE_DRM
+	APP_BROWSER_START_RIGHTS,
+	APP_BROWSER_START_RIGHTS_ONMEMORY,
+#endif
+#ifdef APP_CONFIG_USE_CASTING
+	APP_BROWSER_START_URL_WITH_POST,
+#endif
+	APP_BROWSER_RES_INSTALL,
+	APP_BROWSER_STARTS
+};
+typedef struct {
+    char	*title;
+    char	*url;
+} StartupInfoURL;
+
+typedef struct {
+	char *fMailAddress;
+	char *fSubject;
+	char *fContent;
+	char *fFilePath;
+}StartupInfoEmailComposition;
+
+typedef struct{
+	char *fStr;
+}StartupInfoMMSComposition;
+typedef enum {
+	JAM_APP_TYPE_UNKOWN = -1,
+	JAM_APP_TYPE_CLDC = 0,
+	JAM_APP_TYPE_MIDP,
+	JAM_APP_TYPE_DOJA,
+	JAM_APP_TYPE_DIR,
+
+	JAM_APP_TYPES
+} TJamAppType_;
+
+typedef struct{
+	TJamAppType_ fType;
+	char *fAdfUrl;
+	int fAdfUrlLen;
+	byte *fAdfContent;
+	int fAdfContentSize;
+	char *fUserName;
+	int fUserNameLen;
+	char *fPassword;
+	int fPasswordLen;
+	byte *fSessionID;
+	int fSessionIDLen;
+}StartupInfoJava;
+
+typedef struct {
+	int appid_fx;
+	int subtype_keycode;
+	int par_keychar;
+	union {  
+		StartupInfoURL	url_info;
+		StartupInfoEmailComposition	emailcomposition_info;
+		StartupInfoMMSComposition	mmscomposition_info;
+		StartupInfoJava				java_info;
+    	} fInfo;
+} StartInfo;
 
 /*==============================================================================
 
@@ -214,7 +329,9 @@ static IImage * pWallPaper = NULL;
 static boolean bHideText = FALSE;
 static boolean bImageDecoded = FALSE;
 static boolean bsupersingal = FALSE;
-/*==============================================================================
+static StartInfo start_info;
+<<<<<<< .mine
+=======>>>>>>> .theirs/*==============================================================================
 
                                  º¯ÊýÉùÃ÷
                                  
@@ -3013,6 +3130,14 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                                     CoreApp_TimeKeyguard,
                                     pMe);
                         	}
+							break;
+                            case 4:
+                            {
+                    			(void)ISHELL_SetTimer(pMe->a.m_pIShell,
+                                    60*1000,
+                                    CoreApp_TimeKeyguard,
+                                    pMe);
+                            }
                         	break;
                     	}
                  	}
@@ -3350,6 +3475,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_CONTACT); 
 	#elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO); 
+	#elif defined(FEATURE_VERSION_W208S)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP); 
 	#else
 					return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK); 
 	#endif
@@ -3409,6 +3536,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);
 #elif defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
 					return CoreApp_LaunchApplet(pMe, AEECLSID_SCHEDULEAPP);
+#elif defined(FEATURE_VERSION_W208S)
+					return CoreApp_LaunchApplet(pMe, AEECLSID_APPMANAGER);
 #else
 					
 					return CoreApp_LaunchApplet(pMe, AEECLSID_APP_SETTINGMENU);
@@ -3442,6 +3571,29 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 							return CoreApp_LaunchApplet(pMe, AEECLSID_WMSAPP);//
 					    #elif defined(FEATURE_VERSION_W0216A)
 					    	return CoreApp_LaunchApplet(pMe, AEECLSID_APP_MUSICPLAYER);//
+					    
+				    	#elif defined(FEATURE_VERSION_W208S)
+				    	{
+                        	char	buf[12];
+		                    
+                    		OEM_SetBAM_ADSAccount();
+                    		
+                        	start_info.appid_fx = APP_ORIGINATOR_BROWSER;
+                            start_info.subtype_keycode = APP_BROWSER_START_MAINMENU;
+                            start_info.par_keychar = 0;
+                            //start_info.fInfo.url_info.title = "163";
+                            //start_info.fInfo.url_info.url = "http://www.163.com";
+                            SPRINTF(buf, "%p", &start_info);
+                            if(SUCCESS == ISHELL_StartAppletArgs(pMe->a.m_pIShell,AEECLSID_NF3,buf))
+                            {
+                                return TRUE;
+                            }
+                            else
+                            {
+                                return FALSE;
+                            }
+				    	}
+                        
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
 							#endif
@@ -3473,6 +3625,9 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
     						pMe->m_iskeypadtime = TRUE;
     					}
 #else
+#ifdef FEATURE_VERSION_W208S
+                        ret= CoreApp_LaunchApplet(pMe, AEECLSID_MAIN_MENU);
+#endif
 #if defined	(FEATURE_VERSION_FLEXI203) 
 #ifdef FEATURE_FLEXI_STATIC_BREW_APP				
 #if defined (FEATURE_NASRANI)
@@ -5821,7 +5976,7 @@ static void CoreApp_UpdateBottomBar(CCoreApp    *pMe)
 			eBBarType = BTBAR_MENU_CONTACTS; //add by yangdecai
 		}			
 	#else
-        #if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_S1000T)
+        #if defined(FEATURE_VERSION_W515V3)|| defined(FEATURE_VERSION_S1000T)|| defined(FEATURE_VERSION_W208S)
            eBBarType = BTBAR_MENU_CONTACTS;
         #else
 		   eBBarType = BTBAR_MESSAGES_CONTACTS; //add by yangdecai  BTBAR_MESSAGES_CONTACTS
