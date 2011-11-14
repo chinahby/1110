@@ -330,8 +330,7 @@ static boolean bHideText = FALSE;
 static boolean bImageDecoded = FALSE;
 static boolean bsupersingal = FALSE;
 static StartInfo start_info;
-<<<<<<< .mine
-=======>>>>>>> .theirs/*==============================================================================
+/*==============================================================================
 
                                  º¯ÊýÉùÃ÷
                                  
