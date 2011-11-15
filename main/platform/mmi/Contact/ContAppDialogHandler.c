@@ -14503,6 +14503,8 @@ static boolean  CContApp_HandleNunFldDlgEvent( CContApp  *pMe,
                             switch(pMe->m_wFiledOptState) 
                             {
 #ifndef WIN32 
+#ifdef FEATURE_WMS_APP
+
                                 case FIELDSENDSMS:
                                     // Send SMS
                                     (void)CContApp_SendSMS(pMe,  (AECHAR *)ai.pText, NULL);  
@@ -14511,6 +14513,7 @@ static boolean  CContApp_HandleNunFldDlgEvent( CContApp  *pMe,
                                     // Send SMS
                                     (void)CContApp_SendSMS(pMe,  (AECHAR *)ai.pText, pMe->m_pBuf); 
                                     break;
+#endif									
                                 case FIELDCALL:
                                     // Make voice call if it is number
                                     //(void)MakeVoiceCall(pMe->m_pShell, FALSE, (AECHAR *)ai.pText);

@@ -295,7 +295,11 @@ static void CallApp_Display_Number(CCallApp *pMe);
 static void CallApp_Send_DTMF(CCallApp *pMe , AECHAR *w_str );
 static void notifyFMRadioAlertEvent( CCallApp *pMe, boolean toStartAlert);
 
+
+#if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)
 static boolean CallApp_SendSMS(CCallApp *pMe);
+#endif
+
 #if defined( FEATURE_CALL_RECORDER)
 static void CallApp_Dialer_Connect_Turn_On_Recorder( CCallApp* pme);
 static void CallApp_Dialer_Connect_Turn_Off_Recorder( CCallApp* pme);
@@ -845,7 +849,10 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                         return TRUE;
                         
                       case IDS_SEND_MESSAGE:
+#if defined(FEATURE_WMS_APP) && !defined(FEATURE_WMSAPP_ONLYSUPPORTVMAIL)					  	
                         return CallApp_SendSMS(pMe);
+#endif
+							break;
                         
                       case IDS_CALL:
                         return CallApp_Process_Send_Key_Release_Event(pMe);

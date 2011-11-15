@@ -1119,15 +1119,19 @@ SIDE EFFECTS:
 ===================================================================================*/
 uint16 RecentCalls_GetRemainWMSNum(CRecentCalls *pMe)
 {
-    IWmsApp *pWmsApp = NULL;
-    int     nRemainNum = 0;
+	int     nRemainNum = 0;
+	
+#ifdef FEATURE_WMS_APP
+    IWmsApp *pWmsApp = NULL;    
     
     if (SUCCESS == ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_WMSAPP, (void**)&pWmsApp))
     {
         (void)IWmsApp_GetLeftSendListNodeNum(pWmsApp, &nRemainNum);
         IWmsApp_Release(pWmsApp);
     }
-    
+#endif	
+
+	
     return (uint16)nRemainNum;
 }
 
