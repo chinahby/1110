@@ -673,6 +673,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                                   RESETPROFILE_TIME,
                                   CoreApp_ResetProfileTimer, 
                                   pMe);
+#ifdef FEATURE_WMS_APP			
             MSG_FATAL("EVT_APP_RESUME %d %d %d",gbWmsVMailNtf,gbWmsSMSNtf,gbWmsLastNtfIsSMS);
             if(gbWmsVMailNtf || gbWmsSMSNtf)
             {
@@ -688,6 +689,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 	                         0);
                 }
             }
+#endif			
             return TRUE;
         case EVT_APP_STOP:
 			{
@@ -767,6 +769,8 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
 
             // ÅÜ×´Ì¬»ú
             CoreApp_RunFSM(pMe);
+
+#ifdef FEATURE_WMS_APP				
             MSG_FATAL("EVT_APP_RESUME %d %d %d",gbWmsVMailNtf,gbWmsSMSNtf,gbWmsLastNtfIsSMS);
             if(gbWmsVMailNtf || gbWmsSMSNtf)
             {
@@ -782,6 +786,7 @@ static boolean CoreApp_HandleEvent(IApplet * pi,
                          0);
                 }
             }
+#endif			
             return TRUE;
         }
 
