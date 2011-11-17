@@ -9854,170 +9854,169 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
         case EVT_DIALOG_INIT:
         	{
         		boolean Is_notend = TRUE;
-#ifdef FEATURE_USES_MMS                 
-                char MMSImagepszPath[70];
-                char MMSSoundpszPath[70];
-                char MMSVideopszPath[70];
-                CtlAddItem ai;
-                AEERect rc={0};
-                AEEDeviceInfo devinfo={0};
-                MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_INIT",0,0,0);
-                dwMask = IDIALOG_GetProperties(pMe->m_pActiveIDlg);
-                dwMask |= DLG_NOT_SET_FOCUS_AUTO;
-                IDIALOG_SetProperties(pMe->m_pActiveIDlg, dwMask);                
-                pMe->m_pMMSMenuHasFocus = FALSE;
-                ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
-                ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSSoundpszPath, sizeof(MMSSoundpszPath));
-                ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSVideopszPath, sizeof(MMSVideopszPath));
-                DBGPRINTF("MMSImagepszPath=%s len=%d", MMSImagepszPath, STRLEN(MMSImagepszPath));
-                DBGPRINTF("MMSSoundpszPath=%s len=%d", MMSSoundpszPath, STRLEN(MMSSoundpszPath));
-                DBGPRINTF("MMSVideopszPath=%s len=%d", MMSVideopszPath, STRLEN(MMSVideopszPath));
-                pMe->m_wSelectStore = 1;
-                if( (STRLEN(MMSImagepszPath) != 0) || (STRLEN(MMSSoundpszPath) != 0) || (STRLEN(MMSVideopszPath) != 0))
+                MSG_FATAL("111111111111111", 0,0,0);
+#if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
+                ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL);
+#else
+                ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+#endif
+                SetControlRect(pMe, pIText);
+#ifdef FEATURE_USES_MMS    
                 {
-                    uint8 ImageIndex = IMAGE_MENU_INDEX;
-                    uint8 SoundIndex = SOUND_MENU_INDEX;
-                    uint8 VideoIndex = VIDEO_MENU_INDEX;
-                    char* pszBasename = NULL;
-                    AECHAR FileName[30];
-                    rc = pMe->m_rc;
-                    pMe->m_isMMS = TRUE;
-                    ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
-                    rc.y = 0; 
-                    rc.dy = devinfo.cyScreen;
-                    rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);   
-                    MSG_FATAL("IDD_WRITEMSG_Handler rc.x=%d, rc.y=%d,rc.dy=%d", rc.x, rc.y, rc.dy);
-                    IMENUCTL_SetRect(pMenuCtl, &rc);
-                    IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL| OEMMP_USE_MENU_INFO_SELECT);
-                    IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY|OEMMP_USE_MENU_STYLE);
-            
-                    // Clear items
-                    (void)IMENUCTL_DeleteAll(pMenuCtl);                
-                    // Init items
-                    MEMSET(&ai, 0, sizeof(ai));
-
-                    ai.pszResText = CONTAPP_RES_FILE_LANG;
-                    ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
-
-                    ai.wItemID   = pMe->m_wSelectStore;
-                    ai.wImage    = IDB_HOMENUM;
-                          
-                    if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+                    char MMSImagepszPath[70];
+                    char MMSSoundpszPath[70];
+                    char MMSVideopszPath[70];
+                    CtlAddItem ai;
+                    AEERect rc={0};
+                    AEEDeviceInfo devinfo={0};
+                    MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_INIT",0,0,0);
+                    dwMask = IDIALOG_GetProperties(pMe->m_pActiveIDlg);
+                    dwMask |= DLG_NOT_SET_FOCUS_AUTO;
+                    IDIALOG_SetProperties(pMe->m_pActiveIDlg, dwMask);                
+                    pMe->m_pMMSMenuHasFocus = FALSE;
+                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
+                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSSoundpszPath, sizeof(MMSSoundpszPath));
+                    ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSVideopszPath, sizeof(MMSVideopszPath));
+                    DBGPRINTF("MMSImagepszPath=%s len=%d", MMSImagepszPath, STRLEN(MMSImagepszPath));
+                    DBGPRINTF("MMSSoundpszPath=%s len=%d", MMSSoundpszPath, STRLEN(MMSSoundpszPath));
+                    DBGPRINTF("MMSVideopszPath=%s len=%d", MMSVideopszPath, STRLEN(MMSVideopszPath));
+                    pMe->m_wSelectStore = 1;
+                    if( (STRLEN(MMSImagepszPath) != 0) || (STRLEN(MMSSoundpszPath) != 0) || (STRLEN(MMSVideopszPath) != 0))
                     {
-                        MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
-                        return EFAILED;
-                    }    
-                    IMENUCTL_SetItemText(pMenuCtl, pMe->m_wSelectStore, AEE_WMSAPPRES_LANGFILE, IDS_PHONE, NULL);
-                    MSG_FATAL("pMe->m_wSelectStore=%d", pMe->m_wSelectStore,0,0);
-                    //IMENUCTL_SetItemText(pMenuCtl, pMe->m_wSelectStore++, NULL, 0, L"homenum");
-                      
-                    if(STRLEN(MMSImagepszPath) != 0)
-                    {
-                        pMe->m_pMMSImage = ISHELL_LoadImage(pMe->m_pShell,MMSImagepszPath);
-                        if(pMe->m_pMMSImage != NULL)
+                        uint8 ImageIndex = IMAGE_MENU_INDEX;
+                        uint8 SoundIndex = SOUND_MENU_INDEX;
+                        uint8 VideoIndex = VIDEO_MENU_INDEX;
+                        char* pszBasename = NULL;
+                        AECHAR FileName[30];
+                        rc = pMe->m_rc;
+                        pMe->m_isMMS = TRUE;
+                        ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+                        rc.y = 0; 
+                        rc.dy = devinfo.cyScreen;
+                        rc.dy -= GetBottomBarHeight(pMe->m_pDisplay);   
+                        MSG_FATAL("IDD_WRITEMSG_Handler rc.x=%d, rc.y=%d,rc.dy=%d", rc.x, rc.y, rc.dy);
+                        IMENUCTL_SetRect(pMenuCtl, &rc);
+                        IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL| OEMMP_USE_MENU_INFO_SELECT);
+                        IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY|OEMMP_USE_MENU_STYLE);
+                
+                        // Clear items
+                        (void)IMENUCTL_DeleteAll(pMenuCtl);                
+                        // Init items
+                        MEMSET(&ai, 0, sizeof(ai));
+
+                        ai.pszResText = CONTAPP_RES_FILE_LANG;
+                        ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
+
+                        ai.wItemID   = pMe->m_wSelectStore;
+                        ai.wImage    = IDB_HOMENUM;
+                              
+                        if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
                         {
-                            pszBasename = BASENAME(MMSImagepszPath);
-                            STRTOWSTR(pszBasename, FileName, sizeof(FileName));
-                            //IIMAGE_SetParm(pMe->m_pMMSImage,IPARM_SCALE, pMe->m_rc.dx/2, (devinfo.cyScreen-GetBottomBarHeight(pMe->m_pDisplay))/2);
-                            IIMAGE_SetParm(pMe->m_pMMSImage,IPARM_SCALE, 30, 30);
+                            MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
+                            return EFAILED;
+                        }    
+                        IMENUCTL_SetItemText(pMenuCtl, pMe->m_wSelectStore, AEE_WMSAPPRES_LANGFILE, IDS_PHONE, NULL);
+                        MSG_FATAL("pMe->m_wSelectStore=%d", pMe->m_wSelectStore,0,0);
+                        //IMENUCTL_SetItemText(pMenuCtl, pMe->m_wSelectStore++, NULL, 0, L"homenum");
+                          
+                        if(STRLEN(MMSImagepszPath) != 0)
+                        {
+                            pMe->m_pMMSImage = ISHELL_LoadImage(pMe->m_pShell,MMSImagepszPath);
+                            if(pMe->m_pMMSImage != NULL)
+                            {
+                                pszBasename = BASENAME(MMSImagepszPath);
+                                STRTOWSTR(pszBasename, FileName, sizeof(FileName));
+                                //IIMAGE_SetParm(pMe->m_pMMSImage,IPARM_SCALE, pMe->m_rc.dx/2, (devinfo.cyScreen-GetBottomBarHeight(pMe->m_pDisplay))/2);
+                                IIMAGE_SetParm(pMe->m_pMMSImage,IPARM_SCALE, 30, 30);
+                                MEMSET(&ai, 0, sizeof(ai));
+                               // ai.pText = L"Image";
+                                ai.wItemID   = ImageIndex;
+                                ai.pImage = pMe->m_pMMSImage;
+                                if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+                                {
+                                   MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
+                                   return EFAILED;
+                                }
+                                MSG_FATAL("ImageIndex=%d", ImageIndex,0,0);
+                               // IMENUCTL_SetItemText(pMenuCtl, ImageIndex++, NULL, 0, pMe->m_msSend.m_szMessage);
+                                IMENUCTL_SetItemText(pMenuCtl, ImageIndex++, NULL, 0, FileName);
+                                pszBasename = NULL;
+                                MEMSET(FileName, 0, sizeof(FileName));
+                                AddMimeResIntoMms(pMe,MMSImagepszPath);
+                                MSG_FATAL("m_pMMSImage != NULL,dy=%d, pMe->m_rc.dy=%d",pMe->m_rc.dy/2,pMe->m_rc.dy,0);
+                            }                          
+                        }
+                        if(STRLEN(MMSSoundpszPath) != 0)
+                        {
+                            pszBasename = BASENAME(MMSSoundpszPath);
+                            STRTOWSTR(pszBasename, FileName, sizeof(FileName));                        
+                            pMe->m_pMMSSOUND = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MUSIC);           
+                            //IIMAGE_SetParm(pMe->m_pMMSSOUND,IPARM_SCALE, pMe->m_rc.dx/2, (devinfo.cyScreen-GetBottomBarHeight(pMe->m_pDisplay))/2);      
+                            IIMAGE_SetParm(pMe->m_pMMSSOUND,IPARM_SCALE, 30, 30);                        
                             MEMSET(&ai, 0, sizeof(ai));
-                           // ai.pText = L"Image";
-                            ai.wItemID   = ImageIndex;
-                            ai.pImage = pMe->m_pMMSImage;
+                            MEMSET(&ai, 0, sizeof(ai));
+                            //ai.pText = L"Sound";
+                            ai.wItemID   = SoundIndex;
+                            ai.pImage = pMe->m_pMMSSOUND;
                             if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
                             {
                                MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
                                return EFAILED;
-                            }
-                            MSG_FATAL("ImageIndex=%d", ImageIndex,0,0);
-                           // IMENUCTL_SetItemText(pMenuCtl, ImageIndex++, NULL, 0, pMe->m_msSend.m_szMessage);
-                            IMENUCTL_SetItemText(pMenuCtl, ImageIndex++, NULL, 0, FileName);
+                            }                   
+                            MSG_FATAL("SoundIndex=%d", SoundIndex,0,0);
+                            IMENUCTL_SetItemText(pMenuCtl, SoundIndex++, NULL, 0, FileName);
                             pszBasename = NULL;
                             MEMSET(FileName, 0, sizeof(FileName));
-                            AddMimeResIntoMms(pMe,MMSImagepszPath);
-                            MSG_FATAL("m_pMMSImage != NULL,dy=%d, pMe->m_rc.dy=%d",pMe->m_rc.dy/2,pMe->m_rc.dy,0);
-                        }                          
-                    }
-                    if(STRLEN(MMSSoundpszPath) != 0)
-                    {
-                        pszBasename = BASENAME(MMSSoundpszPath);
-                        STRTOWSTR(pszBasename, FileName, sizeof(FileName));                        
-                        pMe->m_pMMSSOUND = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_MUSIC);           
-                        //IIMAGE_SetParm(pMe->m_pMMSSOUND,IPARM_SCALE, pMe->m_rc.dx/2, (devinfo.cyScreen-GetBottomBarHeight(pMe->m_pDisplay))/2);      
-                        IIMAGE_SetParm(pMe->m_pMMSSOUND,IPARM_SCALE, 30, 30);                        
-                        MEMSET(&ai, 0, sizeof(ai));
-                        MEMSET(&ai, 0, sizeof(ai));
-                        //ai.pText = L"Sound";
-                        ai.wItemID   = SoundIndex;
-                        ai.pImage = pMe->m_pMMSSOUND;
-                        if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+                            AddMimeResIntoMms(pMe,MMSSoundpszPath);
+                        }
+                        if(STRLEN(MMSVideopszPath) != 0)
                         {
-                           MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
-                           return EFAILED;
-                        }                   
-                        MSG_FATAL("SoundIndex=%d", SoundIndex,0,0);
-                        IMENUCTL_SetItemText(pMenuCtl, SoundIndex++, NULL, 0, FileName);
-                        pszBasename = NULL;
-                        MEMSET(FileName, 0, sizeof(FileName));
-                        AddMimeResIntoMms(pMe,MMSSoundpszPath);
-                    }
-                    if(STRLEN(MMSVideopszPath) != 0)
-                    {
-                        pszBasename = BASENAME(MMSVideopszPath);
-                        STRTOWSTR(pszBasename, FileName, sizeof(FileName));                         
-                        pMe->m_pMMSVIDEO = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_VIDEO);           
-                        //IIMAGE_SetParm(pMe->m_pMMSVIDEO,IPARM_SCALE, pMe->m_rc.dx/2, (devinfo.cyScreen-GetBottomBarHeight(pMe->m_pDisplay))/2);                                                
-                        IIMAGE_SetParm(pMe->m_pMMSVIDEO,IPARM_SCALE, 30, 30);                
-                        MEMSET(&ai, 0, sizeof(ai));
-                        ai.wItemID   = VideoIndex;
-                        ai.pImage = pMe->m_pMMSVIDEO;
-                        if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-                        {
-                           MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
-                           return EFAILED;
-                        }            
-                        IMENUCTL_SetItemText(pMenuCtl, VideoIndex++, NULL, 0, FileName);
-                        pszBasename = NULL;
-                        MEMSET(FileName, 0, sizeof(FileName));
+                            pszBasename = BASENAME(MMSVideopszPath);
+                            STRTOWSTR(pszBasename, FileName, sizeof(FileName));                         
+                            pMe->m_pMMSVIDEO = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_VIDEO);           
+                            //IIMAGE_SetParm(pMe->m_pMMSVIDEO,IPARM_SCALE, pMe->m_rc.dx/2, (devinfo.cyScreen-GetBottomBarHeight(pMe->m_pDisplay))/2);                                                
+                            IIMAGE_SetParm(pMe->m_pMMSVIDEO,IPARM_SCALE, 30, 30);                
+                            MEMSET(&ai, 0, sizeof(ai));
+                            ai.wItemID   = VideoIndex;
+                            ai.pImage = pMe->m_pMMSVIDEO;
+                            if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
+                            {
+                               MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
+                               return EFAILED;
+                            }            
+                            IMENUCTL_SetItemText(pMenuCtl, VideoIndex++, NULL, 0, FileName);
+                            pszBasename = NULL;
+                            MEMSET(FileName, 0, sizeof(FileName));
 
-                        AddMimeResIntoMms(pMe,MMSVideopszPath);
-                    }    
-                    IMENUCTL_Redraw(pMenuCtl);
-                    MEMSET(&rc, 0, sizeof(rc));
-                    pMe->m_wSelectStore = 1;
-                    IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectStore);
-                    MSG_FATAL("IDD_WRITEMSG_Handler m_rc.x=%d, m_rc.y=%d, m_rc.dy=%d", pMe->m_rc.x, pMe->m_rc.y, pMe->m_rc.dy);
-                    //IMENUCTL_GetSelItemRect( pMenuCtl, &rc);
-                    rc.x = 0;//大概的一个数字
-                    rc.y = 0;
-                    rc.dy = GetBottomBarHeight(pMe->m_pDisplay);
-                    rc.dx = pMe->m_rc.dx;//five pixels for right edge, 
-                    ITEXTCTL_SetRect( pIText, &rc);
-                    ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL));
-                    if (NULL != pMe->m_msSend.m_szMessage)
-                    {
-                        ITEXTCTL_SetText( pIText, pMe->m_msSend.m_szMessage, WSTRLEN(pMe->m_msSend.m_szMessage));
+                            AddMimeResIntoMms(pMe,MMSVideopszPath);
+                        }    
+                        IMENUCTL_Redraw(pMenuCtl);
+                        MEMSET(&rc, 0, sizeof(rc));
+                        pMe->m_wSelectStore = 1;
+                        IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectStore);
+                        MSG_FATAL("IDD_WRITEMSG_Handler m_rc.x=%d, m_rc.y=%d, m_rc.dy=%d", pMe->m_rc.x, pMe->m_rc.y, pMe->m_rc.dy);
+                        //IMENUCTL_GetSelItemRect( pMenuCtl, &rc);
+                        rc.x = 0;//大概的一个数字
+                        rc.y = 0;
+                        rc.dy = GetBottomBarHeight(pMe->m_pDisplay);
+                        rc.dx = pMe->m_rc.dx;//five pixels for right edge, 
+                        ITEXTCTL_SetRect( pIText, &rc);
+                        ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH));
+                        if (NULL != pMe->m_msSend.m_szMessage)
+                        {
+                            ITEXTCTL_SetText( pIText, pMe->m_msSend.m_szMessage, WSTRLEN(pMe->m_msSend.m_szMessage));
+                        }
+                        IMENUCTL_SetActive(pMenuCtl, FALSE);
+                        ITEXTCTL_SetActive(pIText, TRUE);
+                        ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
+                        IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_WRITEMSG_TEXT);
+                        IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);          
                     }
-                    IMENUCTL_SetActive(pMenuCtl, FALSE);
-                    ITEXTCTL_SetActive(pIText, TRUE);
-                    ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
-                    IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_WRITEMSG_TEXT);
-                    IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);          
-                }
-                else
-                {
-                    SetControlRect(pMe, pIText);
-                }   
-                MSG_FATAL("Menu count=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
-                
+                    MSG_FATAL("Menu count=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
+                }                
 #endif       
                 MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_INIT",0,0,0);
 	            //IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
-#if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
-	            ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL);
-#else
-	           // ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
-#endif
 	            ICONFIG_GetItem(pMe->m_pConfig,CFGI_WMSWRITD_END_STATUS,&Is_notend,sizeof(Is_notend));
                 MSG_FATAL("Is_notend=%d",Is_notend,0,0);
 	            if(!Is_notend)
@@ -10375,9 +10374,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                                     0);
             return TRUE;
 
-        case EVT_USER_REDRAW:
+        case EVT_USER_REDRAW:          
+#ifdef FEATURE_USES_MMS  
             MSG_FATAL("EVT_USER_REDRAW sel=%d, count=%d",IMENUCTL_GetSel(pMenuCtl),IMENUCTL_GetItemCount(pMenuCtl),0);
-#ifdef FEATURE_USES_MMS      
             if((pMenuCtl != NULL) && pMe->m_isMMS && ((NULL == pMe->m_pMenu)))
             {
                 //IDISPLAY_ClearScreen(pMe->m_pDisplay);
@@ -10393,7 +10392,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     rc.dx = pMe->m_rc.dx;//five pixels for right edge, 
                     ITEXTCTL_SetRect( pIText, &rc);
                     MSG_FATAL("EVT_USER_REDRAW rc.x=%d, rc.y=%d, rc.dy=%d", rc.x, rc.y, rc.dy);
-                    ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL));
+                    ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH));
                     //IDISPLAY_ClearScreen(pMe->m_pDisplay);
                     if(NULL != pMe->m_msSend.m_szMessage)
                     {
@@ -10421,7 +10420,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 ITEXTCTL_SetCursorPos(pIText, pMe->m_dwInsertPos);
             }
             ITEXTCTL_SetActive(pIText, TRUE);  
-            //ITEXTCTL_Redraw(pIText);
+            ITEXTCTL_Redraw(pIText);
             // 中断退出时保存的输入法
             {
                 if(nMode == AEE_TM_SYMBOLS || nMode == AEE_TM_FACE_SYMBOL)
@@ -10690,7 +10689,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     rc.dx = pMe->m_rc.dx;//five pixels for right edge, 
                     ITEXTCTL_SetRect( pIText, &rc);
                     MSG_FATAL("EVT_USER_REDRAW rc.x=%d, rc.y=%d, rc.dy=%d", rc.x, rc.y, rc.dy);
-                    ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL));
+                    ITEXTCTL_SetProperties( pIText, (TP_FIXSETRECT |TP_EDITNUMBER_PTSTRING |TP_FIXOEM | TP_USELESS_UPDOWN | TP_GRAPHIC_BG | TP_FOCUS_NOSEL| TP_STARKEY_SWITCH));
                     //IDISPLAY_ClearScreen(pMe->m_pDisplay);
                     if(NULL != pMe->m_msSend.m_szMessage)
                     {
