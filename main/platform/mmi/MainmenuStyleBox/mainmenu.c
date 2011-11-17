@@ -2133,7 +2133,7 @@ static boolean  MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 w
 ==============================================================================*/
 static char* ICON_ANI[] =
 {
-#if defined FEATURE_VERSION_H19C
+#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)   
     ICON_ANI_BG,
 #else
     ICON1_ANI,
@@ -2193,9 +2193,11 @@ static char* ICON_ANI_1[] =
     ICON11_ANI_1,
     ICON12_ANI_1,    
 #elif defined (FEATURE_DISP_128X160)
+#ifndef FEATURE_VERSION_C01
     ICON10_ANI_1,
     ICON11_ANI_1,
-    ICON12_ANI_1,   
+    ICON12_ANI_1,  
+#endif    
 #elif defined (FEATURE_DISP_176X220)
     ICON10_ANI_1,
     ICON11_ANI_1,
@@ -2693,6 +2695,16 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_TIMER;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_SCHEDULER;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
+    #elif defined (FEATURE_VERSION_C01)
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_CONTACTS;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_USERPROFILE;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_TOOLS;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SETTINGS;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_UTK;
     #else
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
@@ -3209,7 +3221,7 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
     if (NULL != pMe->m_pDisplay)
     {
         AEEDeviceInfo di={0,};
-#ifdef FEATURE_VERSION_H19C      
+#if defined (FEATURE_VERSION_H19C)
         if(pMe->m_pIAnn != NULL)
         {
             if (dlgResId == IDD_MAIN_MENU)
@@ -3234,8 +3246,16 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
         }
 #endif
         ISHELL_GetDeviceInfo(pMe->m_pShell, &di);
+#if defined (FEATURE_VERSION_C01)
+        pMe->m_rc.x = 0;
+        pMe->m_rc.y = 0;
+        
         pMe->m_rc.dx = di.cxScreen;
         pMe->m_rc.dy = di.cyScreen;
+#else
+        pMe->m_rc.dx = di.cxScreen;
+        pMe->m_rc.dy = di.cyScreen;
+#endif        
         IDISPLAY_SetClipRect(pMe->m_pDisplay, &pMe->m_rc);
         CalculateScreenParameters(pMe);
     }
@@ -3326,7 +3346,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 				#endif 
 #endif
                 {
-#if defined FEATURE_VERSION_H19C  
+#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)
                     pMe->m_pImageBg = ISHELL_LoadImage(pMe->m_pShell,ICON_ANI[0]);
 #else
                     pMe->m_pImageBg = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);//modi by yangdecai
@@ -3593,6 +3613,51 @@ static void CalculateScreenParameters(MainMenu *pMe)
     imageInfoIcon.cy = ICON_HEIGHT;
 
     /* icon size in all might be larger than screen*/
+#ifdef FEATURE_VERSION_C01   
+    pMe->m_Icondefault_Pt[0].x = 0;
+    pMe->m_Icondefault_Pt[0].y = 23;
+    pMe->m_Icondefault_Pt[1].x = 42;
+    pMe->m_Icondefault_Pt[1].y = 23;
+    pMe->m_Icondefault_Pt[2].x = 86;
+    pMe->m_Icondefault_Pt[2].x = 23;
+
+    pMe->m_Icondefault_Pt[3].x = 0;
+    pMe->m_Icondefault_Pt[3].y = 64;
+    pMe->m_Icondefault_Pt[4].x = 42;
+    pMe->m_Icondefault_Pt[4].y = 64;
+    pMe->m_Icondefault_Pt[5].x = 86;
+    pMe->m_Icondefault_Pt[5].y = 64;
+
+    pMe->m_Icondefault_Pt[6].x = 0;
+    pMe->m_Icondefault_Pt[6].y = 104;
+    pMe->m_Icondefault_Pt[7].x = 42;
+    pMe->m_Icondefault_Pt[7].y = 104;
+    pMe->m_Icondefault_Pt[8].x = 86;
+    pMe->m_Icondefault_Pt[8].y = 104;  
+
+    //计算焦点图片的坐标
+    pMe->m_IconFocus_Pt[0].x = 0;
+    pMe->m_IconFocus_Pt[0].y = 18;
+    pMe->m_IconFocus_Pt[1].x = 43;
+    pMe->m_IconFocus_Pt[1].y = 18;
+    pMe->m_IconFocus_Pt[2].x = 86;
+    pMe->m_IconFocus_Pt[2].y = 18;    
+
+    pMe->m_IconFocus_Pt[3].x = 0;
+    pMe->m_IconFocus_Pt[3].y = 59;
+    pMe->m_IconFocus_Pt[4].x = 43;
+    pMe->m_IconFocus_Pt[4].y = 59;
+    pMe->m_IconFocus_Pt[5].x = 86;
+    pMe->m_IconFocus_Pt[5].y = 59;    
+
+    pMe->m_IconFocus_Pt[6].x = 0;
+    pMe->m_IconFocus_Pt[6].y = 100;
+    pMe->m_IconFocus_Pt[7].x = 43;
+    pMe->m_IconFocus_Pt[7].y = 100;
+    pMe->m_IconFocus_Pt[8].x = 86;
+    pMe->m_IconFocus_Pt[8].y = 100;      
+#else
+
 #ifdef FEATURE_VERSION_H19C   
     iconSpaceHorizontal = 12;
     iconSpaceVertical = 2;
@@ -3629,7 +3694,7 @@ static void CalculateScreenParameters(MainMenu *pMe)
         pMe->m_IconFocus_Pt[i].y = pMe->m_Icondefault_Pt[i].y - (ICON_ANIMATED_HEIGHT- imageInfoIcon.cy)/2;
         //end added
     }
-    
+#endif    
 }
 
 static void MainMenu_DrawBackGround(MainMenu *pMe, AEERect *pRect)
@@ -3675,6 +3740,7 @@ static void DrawMatrix(MainMenu *pMe)
     //draw bg image
     MainMenu_DrawBackGround(pMe, &pMe->m_rc);
 #ifndef FEATURE_VERSION_H19C  
+#ifndef FEATURE_VERSION_C01 
     //Draw icon
     for (i = 0; i < MAX_MATRIX_ITEMS; i ++)
     {
@@ -3691,6 +3757,7 @@ static void DrawMatrix(MainMenu *pMe)
                         pMe->m_Icondefault_Pt[i].y);
         }
     }  
+#endif
 #endif
     BarParam.eBBarType = BTBAR_SELECT_BACK;
     DrawBottomBar(pMe->m_pDisplay, &BarParam);//wlh 20090412 add
@@ -3726,7 +3793,7 @@ static void DrawFocusIcon(MainMenu *pMe)
 	titleBarParms.nTitleResID   = pMe->m_IconTitle[theFocus];
     DrawTitleBar(pMe->m_pDisplay, &titleBarParms);
     
- #if defined FEATURE_VERSION_H19C
+ #if defined (FEATURE_VERSION_H19C) || (defined FEATURE_VERSION_C01)
     if(pMe->m_pAnimate != NULL)
     {
         IIMAGE_Stop(pMe->m_pAnimate);
@@ -3741,7 +3808,7 @@ static void DrawFocusIcon(MainMenu *pMe)
 
 	if( pMe->m_pAnimate != NULL)
     {
-#if defined FEATURE_VERSION_H19C
+#if defined (FEATURE_VERSION_H19C) || defined (FEATURE_VERSION_C01)
         IIMAGE_Start(pMe->m_pAnimate,
                      pMe->m_IconFocus_Pt[theFocus].x, 
                      pMe->m_IconFocus_Pt[theFocus].y);
@@ -3775,6 +3842,7 @@ SEE ALSO:
 static void MoveCursorTo(MainMenu *pMe, int row, int column)
 {
 #ifndef FEATURE_VERSION_H19C
+#ifndef FEATURE_VERSION_C01
     int theFocus = pMe->m_nRow * MAX_MATRIX_COLS + pMe->m_nColumn;
     AEERect rect;
     
@@ -3792,6 +3860,7 @@ static void MoveCursorTo(MainMenu *pMe, int row, int column)
                     pMe->m_Icondefault_Pt[theFocus].x, 
                     pMe->m_Icondefault_Pt[theFocus].y);
     }
+#endif
 #endif
     // 开始聚焦动画过程
     SetCursor(pMe, row, column);

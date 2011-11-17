@@ -6548,7 +6548,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
     }
 	//MSG_FATAL("T9TextCtl_MultitapKey::1",0,0,0);
 	#ifdef FEATURE_VERSION_C01
-	if(key == AVK_1 && pContext->byMode == TEXT_MODE_T9_MT_THAI)
+	if(key == AVK_1 && pContext->byMode == TEXT_MODE_T9_MT_ARABIC)
 	{
 		return FALSE;
 	}
@@ -8371,7 +8371,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
         }
     }
 	#ifdef FEATURE_VERSION_C01
-	if(key == AVK_1 && pContext->byMode == TEXT_MODE_T9_MT_THAI)
+	if(key == AVK_1 && pContext->byMode == TEXT_MODE_T9_MT_ARABIC)
 	{
 		return FALSE;
 	}

@@ -36,9 +36,15 @@
 #define  MAX_MATRIX_ROWS 3
 #define  MAX_MATRIX_COLS 3
 #elif defined (FEATURE_DISP_128X160)
+#ifdef FEATURE_VERSION_C01
+#define  MAX_MATRIX_ITEMS 9
+#define  MAX_MATRIX_ROWS 3
+#define  MAX_MATRIX_COLS 3
+#else
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 4
 #define  MAX_MATRIX_COLS 3
+#endif
 #elif defined (FEATURE_DISP_176X220)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 4
@@ -198,10 +204,17 @@ typedef struct _MainMenu
 #define ICON_ANIMATED_WIDTH     50 //40
 #define ICON_ANIMATED_HEIGHT    40 //32
 #elif defined (FEATURE_DISP_128X160)
+#if defined FEATURE_VERSION_C01
+#define ICON_WIDTH              41
+#define ICON_HEIGHT             41
+#define ICON_ANIMATED_WIDTH     41
+#define ICON_ANIMATED_HEIGHT    41
+#else
 #define ICON_WIDTH              40
 #define ICON_HEIGHT             32
 #define ICON_ANIMATED_WIDTH     40
 #define ICON_ANIMATED_HEIGHT    32
+#endif
 #elif defined (FEATURE_DISP_176X220)
 #define ICON_WIDTH              50 //40
 #define ICON_HEIGHT             40 //32
@@ -231,7 +244,9 @@ typedef struct _MainMenu
 
 #ifndef FEATURE_DISP_128X128
 
-
+#ifdef FEATURE_VERSION_C01   
+    #define ICON_ANI_BG    "fs:/image/mainmenu/Backgroud.png"
+#else
 	#define ICON1_ANI      "fs:/image/mainmenu/qsc1100_01.png"
     #define ICON2_ANI      "fs:/image/mainmenu/qsc1100_02.png"
     #define ICON3_ANI      "fs:/image/mainmenu/qsc1100_03.png"
@@ -244,7 +259,7 @@ typedef struct _MainMenu
     #define ICON10_ANI     "fs:/image/mainmenu/qsc1100_10.png"
     #define ICON11_ANI     "fs:/image/mainmenu/qsc1100_11.png"
     #define ICON12_ANI     "fs:/image/mainmenu/qsc1100_12.png"
-    
+#endif    
 #endif
 #if defined (FEATURE_DISP_128X128)
 #if defined FEATURE_VERSION_H19C    
@@ -265,6 +280,17 @@ typedef struct _MainMenu
 
 
 #ifndef FEATURE_DISP_128X128
+#ifdef FEATURE_VERSION_C01
+    #define ICON1_ANI_1    "fs:/image/mainmenu/Recent_calls.gif"
+    #define ICON2_ANI_1    "fs:/image/mainmenu/Multimedia.gif"
+    #define ICON3_ANI_1    "fs:/image/mainmenu/contacts.gif"
+    #define ICON4_ANI_1    "fs:/image/mainmenu/User_Profile.gif"
+    #define ICON5_ANI_1    "fs:/image/mainmenu/Messages.gif"
+    #define ICON6_ANI_1    "fs:/image/mainmenu/Tools.gif"
+    #define ICON7_ANI_1    "fs:/image/mainmenu/Setting.gif"         
+    #define ICON8_ANI_1    "fs:/image/mainmenu/Game.gif"
+    #define ICON9_ANI_1    "fs:/image/mainmenu/Net_Serve.gif"
+#else
 	#define ICON1_ANI_1      "fs:/image/mainmenu/qsc1100_01_focus.png"
     #define ICON2_ANI_1      "fs:/image/mainmenu/qsc1100_02_focus.png"
     #define ICON3_ANI_1      "fs:/image/mainmenu/qsc1100_03_focus.png"
@@ -277,7 +303,7 @@ typedef struct _MainMenu
     #define ICON10_ANI_1     "fs:/image/mainmenu/qsc1100_10_focus.png"
     #define ICON11_ANI_1     "fs:/image/mainmenu/qsc1100_11_focus.png"
     #define ICON12_ANI_1     "fs:/image/mainmenu/qsc1100_12_focus.png"
-    
+#endif    
 #endif
 #if defined (FEATURE_DISP_128X128)
 #if defined FEATURE_VERSION_H19C

@@ -67,7 +67,20 @@ endif
 endif
 
 ifneq ($(USES_LCD_SIZE),128x128)
-
+ifeq ($(USES_RESDIR),C01)
+CONSTFILE_FILES+=\
+	contacts.gif|fs:/image/mainmenu/contacts.gif\
+	Game.gif|fs:/image/mainmenu/Game.gif \
+	Messages.gif|fs:/image/mainmenu/Messages.gif \
+	Multimedia.gif|fs:/image/mainmenu/Multimedia.gif \
+	Net_Serve.gif|fs:/image/mainmenu/Net_Serve.gif \
+	Recent_calls.gif|fs:/image/mainmenu/Recent_calls.gif \
+	Setting.gif|fs:/image/mainmenu/Setting.gif \
+	Tools.gif|fs:/image/mainmenu/Tools.gif \
+	User_Profile.gif|fs:/image/mainmenu/User_Profile.gif\
+	Backgroud.png|fs:/image/mainmenu/Backgroud.png
+else
+	
 CONSTFILE_FILES+=\
 	qsc1100_01.png|fs:/image/mainmenu/qsc1100_01.png \
 	qsc1100_02.png|fs:/image/mainmenu/qsc1100_02.png \
@@ -93,7 +106,7 @@ CONSTFILE_FILES+=\
 	qsc1100_10_focus.png|fs:/image/mainmenu/qsc1100_10_focus.png \
 	qsc1100_11_focus.png|fs:/image/mainmenu/qsc1100_11_focus.png \
 	qsc1100_12_focus.png|fs:/image/mainmenu/qsc1100_12_focus.png
-	
+endif	
 endif
 
 ifeq ($(USES_LCD_TOUCH),yes)
