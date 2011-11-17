@@ -9854,13 +9854,16 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
         case EVT_DIALOG_INIT:
         	{
         		boolean Is_notend = TRUE;
-                MSG_FATAL("111111111111111", 0,0,0);
+#ifndef FEATURE_USES_MMS                  
+                IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
 #if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
                 ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL);
 #else
                 ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
 #endif
                 SetControlRect(pMe, pIText);
+#endif
+
 #ifdef FEATURE_USES_MMS    
                 {
                     char MMSImagepszPath[70];
@@ -10183,11 +10186,13 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 					#endif
 				 }
 			 #endif
+#ifndef FEATURE_USES_MMS              
             (void)ISHELL_PostEvent( pMe->m_pShell,
                                     AEECLSID_WMSAPP,
                                     EVT_USER_REDRAW,
                                     0,
-                                    0);				
+                                    0);		
+#endif
 	            return TRUE;
             }
         case EVT_WMS_MSG_READ:
@@ -10455,8 +10460,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 }
             }
             #endif 
-            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);  
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+#ifndef FEATURE_USES_MMS             
             IDISPLAY_Update(pMe->m_pDisplay);  
+#endif
             return TRUE; 
             
         case EVT_KEY_RELEASE:
