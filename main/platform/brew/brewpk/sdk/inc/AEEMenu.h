@@ -69,6 +69,9 @@ typedef struct _IMenuCtl      IMenuCtl;
 #define OEMMP_GRAPHIC_UNDERLINE 0x0000040  //设置此掩码将绘制菜单下划线
 #define OEMMP_GRAPHIC_BG             0x0000080  //设置此掩码将绘制默认图片背景
 #define OEMMP_USE_MENU_STYLE        0x00000C0  //设置此掩码将设置统一列表显示风格
+#ifdef FEATURE_USES_MMS 
+#define OEMMP_USE_MENU_INFO_SELECT        0x00000C1//设置此掩码，将全部区别对待info, select键
+#endif
 #endif /*CUST_EDITION*/
 //
 // Menu Color - The following bits are passed to IMENUCTL_SetColors() to
