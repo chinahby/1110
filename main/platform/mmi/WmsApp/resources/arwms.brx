@@ -622,7 +622,7 @@
 	<String Id="1029" Name="IDS_SENDERVISIBILITY">
 		<Text>MMS Sender Visibility</Text>
 	</String>
-	<String Id="1033" Name="IDS_GETTINGFROM" Encoding="Unicode">
+	<String Id="1033" Name="IDS_GETTINGFROM">
 		<Text>Receiving...</Text>
 	</String>
 </Strings>
@@ -665,6 +665,9 @@
 			<Text Id="7006" Name="IDC_WRITEMSG_TEXT">
 				<TitleID>IDS_BLANK</TitleID>
 				<Items/></Text>
+			<Menu Id="7042" Name="IDC_WRITEMSG_MENU">
+				<Items/>
+			</Menu>
 		</Controls>
 	</DIALOG>
 	<Dialog Id="6007" Name="IDD_PWD" Focus="0">
@@ -958,13 +961,9 @@
 		<Controls>
 			<Static Id="7039" Name="IDC_VIEWMSG_MMS_STATIC">
 				<Items/></Static>
-			<Image Id="7041" Name="IDC_VIEWMSG_MMS_IMAGE">
-				<Items/></Image>
-			<List Id="7043" Name="IDC_VIEWMSG_MMS_LIST">
+			<Menu Id="7045" Name="IDC_VIEWMSG_MMS_MENU">
 				<Items/>
-			</List>
-			<Countdown Id="7044" Name="IDC_VIEWMSG_MMS_MUSICPROGRESS">
-				<Items/></Countdown>
+			</Menu>
 		</Controls>
 	</Dialog>
 	<DIALOG Id="6049" Name="IDD_MMSOPTION_YESNO" Focus="7040">
