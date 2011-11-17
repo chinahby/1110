@@ -897,6 +897,8 @@ typedef struct WmsApp
     int                             m_nDlgID;
     IMedia                          *m_pMedia;
     WSP_MMS_RESOURCE                m_ResData;
+    uint8                          m_wSelectStore;
+    boolean                        m_pMMSMenuHasFocus;
     //MMSData		                   m_mmsDataInfoList[MAX_MMS_STORED];
 #endif    
 } WmsApp;

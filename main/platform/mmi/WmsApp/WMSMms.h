@@ -487,7 +487,7 @@ typedef enum _HTTP_METHOD_TYPE_
 
 //#define MSG_MAX_PACKET_SIZE		(6*1024)//MUST bigger than max header length, because client must send whole header in singal packet
 
-#define MSG_MAX_PACKET_SIZE		(300*1024)
+#define MSG_MAX_PACKET_SIZE		(400*1024)//(300*1024)
 #define SOCKET_BUFFER_SIZE		(30*1024)
 #define SENDDATAQUEUE_SIZE		(5)
 #define NOQUEUESLOTAVAILABLE	(-1)

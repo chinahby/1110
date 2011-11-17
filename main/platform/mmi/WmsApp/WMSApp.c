@@ -551,6 +551,8 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     MEMSET(&pMe->m_ResData,NULL,sizeof(WSP_MMS_RESOURCE));
     pMe->m_pMedia = NULL;
     pMe->m_GetStatus = HTTP_CODE_OK;
+    pMe->m_wSelectStore = 1;
+    pMe->m_pMMSMenuHasFocus = FALSE;
 #endif
     // 初始化各成员变量
     pMe->m_prevState = WMSST_NONE;
@@ -784,6 +786,8 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
     FREEIF(pMe->m_EncData.pMessage);
     FREEIF(pMe->m_MMSData);
     pMe->m_isMMS = FALSE;
+    pMe->m_wSelectStore = 1;
+    pMe->m_pMMSMenuHasFocus = FALSE;
     WMS_MMS_RELEASE();
 #endif    
     pMe->m_eAppStatus = WMSAPP_STOP;
