@@ -35,7 +35,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_USES_BLACKBERRY                  //USE BLACKBERRY STYLE
 
 //wangliang add!   2011-07-30
-//#define FEATURE_USES_MMS
+#define FEATURE_USES_MMS
 
 
 #define FEATURE_SMS_UDH

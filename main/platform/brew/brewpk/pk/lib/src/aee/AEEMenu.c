@@ -358,6 +358,9 @@ typedef struct
 #define IS_MENU(p)            ((p)->m_cls == AEECLSID_MENUCTL)
 #define IS_ICON_VIEW(p)       ((p)->m_cls == AEECLSID_ICONVIEWCTL)
 
+#ifdef FEATURE_USES_MMS 
+#define IS_INFO_SELECT(p)       IS_PROP_SET(p->m_dwProps,OEMMP_USE_MENU_INFO_SELECT)
+#endif
 //
 // Local function prototypes
 //
@@ -1014,8 +1017,17 @@ static boolean IMenuCtl_HandleEvent(IMenuCtl * po, AEEEvent eCode, uint16 wParam
                else
 #endif/*if defined( FEATURE_CUSTOMIZED_MENU_STYLE)*/
                {
-                  DBGPRINTF("AVK_SELECT 0x%x %d",eCode,wParam);
-                  return Menu_HandleSelection(pme, pme->m_nSelect);
+#ifdef FEATURE_USES_MMS                 
+                  if(IS_INFO_SELECT(pme))
+                  {
+                    break;
+                  }
+                  else
+#endif                    
+                  {
+                      DBGPRINTF("AVK_SELECT 0x%x %d",eCode,wParam);
+                      return Menu_HandleSelection(pme, pme->m_nSelect);
+                  }
                }
 
          // Note: We have already handled keys for AEECLSID_ICONVIEWCTL so here we only care
@@ -4028,10 +4040,12 @@ Local Method - Draws a standard menu
 ======================================================================*/
 #if defined( FEATURE_CUSTOMIZED_MENU_STYLE)
 
-static void Menu_DrawSelectBar( CMenuCtl *pme, AEERect *prc, AEEFrameType ft)
+static void Menu_DrawSelectBar( CMenuCtl *pme, AEERect *prc, AEEFrameType ft, uint8 BarHeight)
 {
     AEERect oldClip;
-
+#ifdef FEATURE_USES_MMS 
+    AEEImageInfo         imageInfo   = {0}; 
+#endif
     if (pme->m_dwOemProps & OEMMP_NODRAWSELECTBAR)
     {
         return;
@@ -4081,6 +4095,14 @@ static void Menu_DrawSelectBar( CMenuCtl *pme, AEERect *prc, AEEFrameType ft)
         }
 
 #endif //#if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
+
+#ifdef FEATURE_USES_MMS  
+        if(pme->m_cyFont < BarHeight)
+        {
+            IIMAGE_GetInfo( pme->imageSelectBar, &imageInfo);
+            IIMAGE_SetParm(pme->imageSelectBar,IPARM_SCALE, imageInfo.cx, BarHeight);
+        }
+#endif  
 
         IIMAGE_Draw( pme->imageSelectBar, prc->x, prc->y);
         IIMAGE_Release(pme->imageSelectBar);
@@ -4547,7 +4569,7 @@ static void Menu_DrawItem(CMenuCtl * pme, CMenuItem * p, AEERect * prc, boolean 
 
     if( !pme->userSetStyle && ( IS_MENU( pme) || ( IS_SOFTKEY_MENU( pme) && pme->m_nItems > 1)) && bSel)
     {
-        Menu_DrawSelectBar( pme, prc, ft);
+        Menu_DrawSelectBar( pme, prc, ft, p->cyImage);
     }
 #if !defined( FEATURE_CONTROL_BG_USE_IMAGE)
     else if( pme->userSetStyle || IS_MENU( pme))
@@ -7892,7 +7914,7 @@ static void Cal_DrawItem(CMenuCtl * pme, CMenuItem * pi, int nIdx, boolean bClea
       
       rc.x  += IMAGE_WIDTH * 6;
       rc.dx -= IMAGE_WIDTH * 6;
-      Menu_DrawSelectBar( pme, &rc, pme->m_style[1].ft);
+      Menu_DrawSelectBar( pme, &rc, pme->m_style[1].ft, pi->cyImage);
       rc.x  -= IMAGE_WIDTH * 6;
       rc.dx = cx;  
   }
