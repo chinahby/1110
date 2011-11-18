@@ -3283,7 +3283,7 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 				i--;
 				break;
 			}
-
+            case 0x80:
 			case 0x89:/*from*/
 			{
 				i++;
@@ -3294,7 +3294,9 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 					return MMC_GENERIC;
 				}
 				i += iDataOffset;
-				STRNCPY((char*)decdata->message.hFrom,(char*)&ptr[i + 1],len - 1);//Address-present-token | Insert-address-token
+                if (*ePDUType == MMS_PDU_RETRIEVE_CONF)
+				    STRNCPY((char*)decdata->message.hFrom,(char*)&ptr[i + 1],len - 1);//Address-present-token | Insert-address-token
+				    
 				j = i;
 				i += len;
 				i--;
@@ -3466,7 +3468,15 @@ int WMS_MMS_PDU_Decode(MMS_WSP_DEC_DATA* decdata,uint8* ptr, int datalen,uint8 *
 					return MMC_GENERIC;
 				}
 				i += iDataOffset;
-				STRNCPY((char*)decdata->delrep.hTo,(char*)&ptr[i],len);
+                if (*ePDUType == MMS_PDU_DELIVERY_IND)
+                {
+    				STRNCPY((char*)decdata->delrep.hTo,(char*)&ptr[i],len);
+                }
+                else if (*ePDUType == MMS_PDU_RETRIEVE_CONF)
+                {
+                    STRNCPY((char*)decdata->message.hTo,(char*)&ptr[i],len);
+                }
+                    
 				j = i;
 				i += len;
 				i--;

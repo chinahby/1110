@@ -1675,7 +1675,11 @@ static OEMConfigListType oemi_cache = {
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)||defined(FEATURE_VERSION_C01)
    1,											//CFGI_KEY_LOCK_CHECK			
 #else
-   0,                                           //CFGI_KEY_LOCK_CHECK
+#ifdef FEATURE_VERSION_W208S
+   4,                                           //CFGI_KEY_LOCK_CHECK
+#else
+   0,
+#endif
 #endif   
 
    OEMNV_LOCK_RUIM,                                 // CFGI_LOCK_RUIM,   //type = boolean
@@ -2600,8 +2604,10 @@ void OEM_RestoreFactorySetting( void )
 
 #if defined(FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM) ||defined(FEATURE_VERSION_C01)
 	oemi_cache.b_key_lock       =  1; 
+#elif defined(FEATURE_VERSION_W208S)
+    oemi_cache.b_key_lock       =  4; 
 #else
-    oemi_cache.b_key_lock       =  0; 
+	oemi_cache.b_key_lock       =  0;
 #endif
 
 #endif
@@ -3002,9 +3008,15 @@ void OEM_RestoreFactorySetting( void )
    nvi_cache.backlight = OEMNV_BL_30S;
 #else
    // NV_BACK_LIGHT_I
+   #ifdef FEATURE_VERSION_W208S //add pandy 2011-11-04
+   nvi.back_light = OEMNV_BL_7S;
+   (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
+   nvi_cache.backlight = OEMNV_BL_7S;
+   #else
    nvi.back_light = OEMNV_BL_10S;
    (void) OEMNV_Put( NV_BACK_LIGHT_I, &nvi );
    nvi_cache.backlight = OEMNV_BL_10S;
+   #endif
 #endif //defined FEATURE_CARRIER_THAILAND_CAT
 
    // Data Call Counters
@@ -3108,10 +3120,16 @@ void OEM_RestoreFactorySetting( void )
         (void) OEMNV_Put( NV_LANGUAGE_SELECTION_I, &nvi );
         (void) AEE_IssueSystemCallback(AEE_SCB_DEVICE_INFO_CHANGED);
     }
+#ifdef FEATURE_VERSION_W208S
+   nvi.set_time_format = NV_SET_TIME_FORMAT_12_HOUR;
+   (void) OEMNV_Put( NV_SET_TIME_FORMAT_I, &nvi);
+   nvi_cache.set_time_format = (byte)NV_SET_TIME_FORMAT_12_HOUR;
+#else
+	
    nvi.set_time_format = NV_SET_TIME_FORMAT_24_HOUR;
    (void) OEMNV_Put( NV_SET_TIME_FORMAT_I, &nvi);
    nvi_cache.set_time_format = (byte)NV_SET_TIME_FORMAT_24_HOUR;
-   
+#endif   
 #ifdef FEATURE_TIME_DATA_SETTING
     nvi.set_date_format = NV_SET_DATE_FORMAT_DD_MM_YYYY;
     (void) OEMNV_Put( NV_SET_DATE_FORMAT_I, &nvi);
@@ -11561,7 +11579,7 @@ void OEM_SetBAM_ADSAccount(STATIC_BREW_APP_e eApp)
 } /* OEM_SetBAM_ADSAccount */
 
 //Add By zzg 2011_07_08
-#elif defined(FEATURE_VERSION_W208)
+#elif defined(FEATURE_VERSION_W208) || defined(FEATURE_VERSION_W208S)
 void OEM_SetBAM_ADSAccount(void)
 {
 #ifndef WIN32

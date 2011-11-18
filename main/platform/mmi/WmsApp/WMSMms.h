@@ -29,8 +29,9 @@
 #include "AEEShell.h"         // AEE Shell Services
 #include "AEENet.h"
 #include "AEECallback.h"
-
+#ifndef USES_RELEASE_VERSION
 #define MMS_TEST
+#endif
 /////////////////////////////////////////////////////////////
 
 #define MMS_DELREP_STATUS_FLAG_NOREQ 0x0000
@@ -38,11 +39,12 @@
 #define MMS_DELREP_STATUS_FLAG_OK 0x0002
 #define MMS_DELREP_STATUS_FLAG_NG 0x0004
 #define MMS_DELREP_STATUS_FLAG_NOCHK 0x0008
+#define MSG_MAX_PACKET_SIZE		(400*1024)//(400*1024)//(300*1024)
 
 #define	MMS_STANDARD_PROGRESS 10
 #define MMS_VALUE_USELESSNESS -1
-#define MMS_MAX_RECEIVED_MMS_PDU_SIZE (300*1024)
-#define MMS_MAX_RECEIVED_MMS_CONTENT_SIZE (300*1024)
+#define MMS_MAX_RECEIVED_MMS_PDU_SIZE MSG_MAX_PACKET_SIZE
+#define MMS_MAX_RECEIVED_MMS_CONTENT_SIZE MSG_MAX_PACKET_SIZE
 
 #define MMS_MAX_SUBJECT_SIZE 40
 #define MMS_MAX_TRANSACTION_ID_SIZE 128
@@ -487,7 +489,7 @@ typedef enum _HTTP_METHOD_TYPE_
 
 //#define MSG_MAX_PACKET_SIZE		(6*1024)//MUST bigger than max header length, because client must send whole header in singal packet
 
-#define MSG_MAX_PACKET_SIZE		(400*1024)//(300*1024)
+
 #define SOCKET_BUFFER_SIZE		(30*1024)
 #define SENDDATAQUEUE_SIZE		(5)
 #define NOQUEUESLOTAVAILABLE	(-1)

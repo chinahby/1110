@@ -1347,18 +1347,14 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             return TRUE;
 
 #ifdef FEATURE_USES_MMS
+        case EVT_MMS_MSG_GET_FINISH:
         case EVT_MMS_MSG_SEND_FINSH:
             {
                 MSG_FATAL("CWmsApp_HandleEvent EVT_MMS_MSG_SEND_FINSH",0,0,0);
                 pMe->m_SendStatus = wParam;
-                WmsApp_ProcessMMSStatus(pMe);
-                
-            }
-            return TRUE;
-        case EVT_MMS_MSG_GET_FINISH:
-            {
                 pMe->m_GetStatus = wParam;
                 WmsApp_ProcessMMSStatus(pMe);
+                
             }
             return TRUE;
 #endif
