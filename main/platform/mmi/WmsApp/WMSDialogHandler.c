@@ -442,6 +442,9 @@ static boolean IDD_VMNUM_Handler(void *pUser,
     uint32 dwParam
 );
 
+static boolean  gbWMSDialogLock = FALSE;
+
+static void WMSDialog_keypadtimer(void *pUser);
 static boolean IDD_LOADINGMSG_Handler(void   *pUser,
     AEEEvent eCode,
     uint16   wParam,
@@ -1027,6 +1030,8 @@ static boolean IDD_MAIN_Handler(void        *pUser,
             MENU_ADDITEM(pMenu, IDS_MSGMANAGEMENT);
             MENU_ADDITEM(pMenu, IDS_MSGSETTING);
             MENU_ADDITEM(pMenu, IDS_TEMPLATES);   
+            AEE_CancelTimer(WMSDialog_keypadtimer,pMe);
+			AEE_SetTimer(5*1000,WMSDialog_keypadtimer,pMe);            
             MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT 6",0,0,0);
             return TRUE;
 
@@ -1192,7 +1197,13 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
-                    
+                case AVK_STAR:
+                    if(gbWMSDialogLock)
+                    {
+                        OEMKeyguard_SetState(TRUE);
+                        ISHELL_CloseApplet(pMe->m_pShell, TRUE); 
+                    }
+                    return TRUE;                    
                 default:
                     break;
             }
@@ -1289,6 +1300,14 @@ static boolean IDD_MAIN_Handler(void        *pUser,
     return FALSE;
 } // IDD_MAIN_Handler()
 
+void WMSDialog_KeypadLock(boolean block)
+{
+   gbWMSDialogLock = block;
+}
+static void WMSDialog_keypadtimer(void *pUser)
+{
+    gbWMSDialogLock =FALSE;
+}
 /*==============================================================================
 º¯Êý:
     IDD_PWD_Handler
