@@ -1006,7 +1006,7 @@ static boolean IDD_MAIN_Handler(void        *pUser,
                 MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT result=%d",result,0,0);
                 if(pMe->m_pIAnn != NULL)
                 {
-				    //IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
+				    IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,WTitle);
                 }
             }
             MSG_FATAL("IDD_MAIN_Handler EVT_DIALOG_INIT 3",0,0,0);
