@@ -1228,7 +1228,7 @@ void OEM_TextSetEdit(OEMCONTEXT hTextCtl,
    if (pContext) {
       unsigned char byModeIndex = FindModeIndex(pContext, wmode);
       boolean bRedraw=FALSE, bRestartEdit=FALSE, bExitEdit=FALSE;
-		MSG_FATAL("OEM_TextSetEdit pContext.............",0,0,0);
+		MSG_FATAL("OEM_TextSetEdit pContext......byModeIndex=%d",byModeIndex,0,0);
       if (pContext->bEditable != bIsEditable) {
          // We must redraw here after changing mode
          bRedraw=TRUE;
@@ -2470,9 +2470,10 @@ static unsigned char FindModeIndex(TextCtlContext   *pContext,
    }
    
    sTextModesSize = ARRAY_SIZE(sTextModes);
-   
+   MSG_FATAL("C01 textCtrl Error sTextModesSize=%d",sTextModesSize,0,0);
    for (i=0; i<sTextModesSize; ++i) {
       if (sTextModes[i].info.wID == wMode) {
+            MSG_FATAL("C01 textCtrl Error sTextModesSize=%d i=%d",sTextModesSize,i,0);   
          return i;
       }
    }
@@ -4502,7 +4503,8 @@ static void T9TextCtl_Latin_Rapid_Restart(TextCtlContext *pContext)
     
     // Init Alphabet input
     T9_AW_Init ( pContext );
-
+    
+    MSG_FATAL("T9TextCtl_Latin_Rapid_Restart Status=%d",OEM_TextGetCurrentMode((OEMCONTEXT)pContext) ,0,0);
     switch ( OEM_TextGetCurrentMode((OEMCONTEXT)pContext) )
     {
 #ifdef FEATURE_T9_RAPID_ARABIC
@@ -5913,13 +5915,14 @@ static void T9TextCtl_MultitapRestart(TextCtlContext *pContext)
     
     // Init Alphabet input
     T9_AW_Init ( pContext );
-
+    MSG_FATAL("OEM_TextGetCurrentMode %d %d %d",OEM_TextGetCurrentMode((OEMCONTEXT)pContext),T9PIDArabic,TEXT_MODE_T9_MT_ARABIC);
     switch ( OEM_TextGetCurrentMode((OEMCONTEXT)pContext) )
     {
 #ifdef FEATURE_T9_MT_ARABIC
                      case TEXT_MODE_T9_MT_ARABIC:
                         sT9Status = T9AWSetLanguage ( &pContext->sT9awFieldInfo, 
-                                                      T9PIDArabic, 0, 0 );   
+                                                      T9PIDArabic, 0, 0 );  
+                        MSG_FATAL("TEXT_MODE_T9_MT_ARABIC %d",sT9Status,0,0);
                         break;
 #endif //FEATURE_T9_MT_ARABIC
 
@@ -5985,9 +5988,11 @@ static void T9TextCtl_MultitapRestart(TextCtlContext *pContext)
                     default:
                         sT9Status = T9AWSetLanguage ( &pContext->sT9awFieldInfo, 
                                                   T9PIDEnglish, 0, 0 );
+                        MSG_FATAL("TEXT_MODE_MULTITAP %d",sT9Status,0,0);
                         break;
     }   
-    
+
+    MSG_FATAL("T9TextCtl_MultitapRestart %d",sT9Status,0,0);
     //set to Ambiguous mode
     if ( T9STATNONE == sT9Status )
     {
@@ -6648,7 +6653,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             MSG_FATAL("pContext->sT9awFieldInfo.G.psTxtBuf=%0x,=%d.....",pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart],pContext->wSelStart,0);
             #ifdef FEATURE_T9_MT_ARABIC
             MSG_FATAL("pContext->byMode=%d,t9Key=%d",pContext->byMode,t9Key,0);
-            if(pContext->byMode == 3)
+            if(pContext->byMode == 4)
             {
             
             pContext->uModeInfo.mtap.kLast = key; 
@@ -6975,7 +6980,7 @@ static void T9TextCtl_Cap_Lower_Restart(TextCtlContext *pContext)
     
     // Init Alphabet input
     T9_AW_Init ( pContext );
-
+    MSG_FATAL("T9TextCtl_Cap_Lower_Restart Status=%d, %d",OEM_TextGetCurrentMode((OEMCONTEXT)pContext) ,AEE_TM_CAPLOWER,0);
     switch ( OEM_TextGetCurrentMode((OEMCONTEXT)pContext) )
     {
 #ifdef FEATURE_T9_CAP_LOWER_ENGLISH
@@ -6988,6 +6993,7 @@ static void T9TextCtl_Cap_Lower_Restart(TextCtlContext *pContext)
 			break;
 
     }
+    MSG_FATAL("sT9Status=%d",sT9Status,0,0);
 	//set to Ambiguous mode
     if ( T9STATNONE == sT9Status )
     {
@@ -8465,7 +8471,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 #endif
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
             MSG_FATAL("pContext->sT9awFieldInfo.G.psTxtBuf=%0x,=%d.....",pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart],pContext->wSelStart,0);
-            #ifdef FEATURE_T9_MT_ARABIC
+            #if 0//def FEATURE_T9_MT_ARABIC
             MSG_FATAL("pContext->byMode=%d,t9Key=%d",pContext->byMode,t9Key,0);
             if(pContext->byMode == 3)
             {
@@ -9193,6 +9199,7 @@ static boolean T9_AW_DisplayText(TextCtlContext *pContext, AVKType key)
 static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent eCode, AVKType cKey)
 {
     uint16 i;
+    MSG_FATAL("T9_BrewKeyToT9AlphabeticKey CurrentMode=%d", OEM_TextGetCurrentMode((OEMCONTEXT)pContext),0,0);
     switch ( OEM_TextGetCurrentMode((OEMCONTEXT)pContext) )
     {    
 #ifdef FEATURE_T9_MT_THAI     
@@ -9234,6 +9241,7 @@ static T9KEY T9_BrewKeyToT9AlphabeticKey(TextCtlContext *pContext,AEEEvent eCode
 #ifdef FEATURE_T9_MT_ARABIC
 		case TEXT_MODE_T9_MT_ARABIC:
 		{
+            MSG_FATAL("TEXT_MODE_T9_MT_ARABIC Start",0,0,0);
 			for (i = 0; ThaiArabic2T9Map[i].cKey != 0; i++) 
             {
                 if (ThaiArabic2T9Map[i].cKey == cKey)
@@ -10039,7 +10047,8 @@ static void T9_CJK_MYANMAR_AdjustInputInfoLocation(TextCtlContext *pContext,
  *-----------------------------------------------------------------------*/
 static void T9TextCtl_CJK_CHINESE_Restart(TextCtlContext *pContext)
 {
-    T9STATUS sT9Status = T9STATERROR;  
+    T9STATUS sT9Status = T9STATERROR; 
+    MSG_FATAL("T9TextCtl_CJK_CHINESE_Restart Start",0,0,0);
     // TRI Chinese input Init
     sT9Status = T9_CJK_CHINESE_Init ( pContext );
 
