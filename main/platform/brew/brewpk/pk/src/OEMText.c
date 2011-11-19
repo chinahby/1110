@@ -9903,7 +9903,11 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
                                    g_SplImeGlobals.outputInfo.inputString,//pContext->m_date.outputInfo.candidates[k],
                                    -1,
                                    iSyllableWindX+2,
+                                   #ifdef FEATURE_VERSION_VG68
+                                   pRect.y-MYANMAR_FONT_HEIGHT-5,//SCREEN_HEIGHT - pContext->nLineHeight,
+                                   #else
                                    pRect.y-MYANMAR_FONT_HEIGHT,//SCREEN_HEIGHT - pContext->nLineHeight,
+                                   #endif
                                    NULL,
                                    format);
         }
@@ -9982,9 +9986,17 @@ static void T9_CJK_MYANMAR_DisplaySelection(TextCtlContext *pContext)
             	int strsize = WSTRLEN((void*)g_SplImeGlobals.outputInfo.inputString);
             	len = strsize*7;
             	invertRect.x = iSyllableWindX+2;
-            	invertRect.y = pRect.y-MYANMAR_FONT_HEIGHT+2;
+                #ifdef FEATURE_VERSION_VG68
+            	invertRect.y = pRect.y-MYANMAR_FONT_HEIGHT-4;
+                #else
+                invertRect.y = pRect.y-MYANMAR_FONT_HEIGHT+2;
+                #endif
             	invertRect.dx = len+2;
-            	invertRect.dy = MYANMAR_FONT_HEIGHT-4;
+                #ifdef FEATURE_VERSION_VG68
+            	invertRect.dy = MYANMAR_FONT_HEIGHT;
+            	#else
+                invertRect.dy = MYANMAR_FONT_HEIGHT-4;
+                #endif
             }
             if(pContext->m_Selectcandidates)
             {
