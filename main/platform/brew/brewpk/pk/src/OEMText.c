@@ -5915,7 +5915,6 @@ static void T9TextCtl_MultitapRestart(TextCtlContext *pContext)
     
     // Init Alphabet input
     T9_AW_Init ( pContext );
-    MSG_FATAL("OEM_TextGetCurrentMode %d %d %d",OEM_TextGetCurrentMode((OEMCONTEXT)pContext),T9PIDArabic,TEXT_MODE_T9_MT_ARABIC);
     switch ( OEM_TextGetCurrentMode((OEMCONTEXT)pContext) )
     {
 #ifdef FEATURE_T9_MT_ARABIC

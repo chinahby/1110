@@ -3105,6 +3105,7 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 					#ifdef FEATURE_ALL_KEY_PAD
 					pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
 					#else
+                    MSG_FATAL("IDB_MODE_T9_MT_ENGLISH_UP",0,0,0);
 					pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 					#endif
 				}
@@ -3118,6 +3119,7 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 					#ifdef FEATURE_ALL_KEY_PAD
 					pme->m_wResID = IDB_MODE_T9_MT_ENGLISH;
 					#else
+                    MSG_FATAL("IDB_MODE_T9_MT_ENGLISH_UP",0,0,0);
 					pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
 					#endif
 				}
@@ -5513,6 +5515,7 @@ static void OEM_SetInputMode(CTextCtl * pme)
 			wMode = AEE_TM_CAPLOWER;//小写字母输入模式
 			OEM_TextSetMultiCaps(pme->m_pText,MULTITAP_ALL_CAPS); 
 			pme->m_wResID = IDB_MODE_T9_MT_ENGLISH_UP;
+            MSG_FATAL("IDB_MODE_T9_MT_ENGLISH_UP",0,0,0);
 	        #else
 			wMode = AEE_TM_CAPLOWER;//大小写字母输入模?
 			#ifdef FEATURE_VERSION_W516
@@ -5911,7 +5914,7 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 #else //FEATURE_CARRIER_VENEZUELA_MOVILNET
 
 #ifdef FEATURE_ZI_MT_ENGLISH
-#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| (defined(FEATURE_VERSION_C01)&&defined(FEATURE_LANG_ARABIC))
 	pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_ENGLISH_LOW;
 	pme->m_nCurrInputModeList[i++] = OEM_MODE_ZI_MT_ENGLISH_UP;
 #else
@@ -6056,7 +6059,7 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 #else //FEATURE_CARRIER_VENEZUELA_MOVILNET
 
 #ifdef FEATURE_T9_MT_ENGLISH
-#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)
+#if defined(FEATURE_VERSION_C306)||defined(FEATURE_VERSION_W0216A)|| (defined(FEATURE_VERSION_C01)&&defined(FEATURE_LANG_ARABIC))
 	pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_MT_ENGLISH_LOW;
 	pme->m_nCurrInputModeList[i++] = OEM_MODE_T9_MT_ENGLISH_UP;
 #else
