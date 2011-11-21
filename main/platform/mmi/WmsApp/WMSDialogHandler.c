@@ -10736,8 +10736,18 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 MSG_FATAL("EVT_CTL_SEL_CHANGED pMe->m_wSelectStore=%d", pMe->m_wSelectStore,0,0);
             }
             return TRUE;
-
+#endif
         case EVT_KEY_PRESS:
+#ifdef FEATURE_USES_MMS              
+            if(!pMe->m_isMMS)
+            {
+                IMENUCTL_SetActive(pMenuCtl, FALSE);
+                ITEXTCTL_SetActive(pIText, TRUE);
+                ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);                
+                IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_WRITEMSG_TEXT);
+                return TRUE;
+            }
+#endif                
             switch(wParam)
             {
                 case AVK_UP:
@@ -10768,7 +10778,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 } 
             }
             return TRUE;
-#endif                
+            
         case EVT_KEY:
             MSG_FATAL("IDD_WRITEMSG_Handler EVT_KEY",0,0,0);
             switch (wParam)
