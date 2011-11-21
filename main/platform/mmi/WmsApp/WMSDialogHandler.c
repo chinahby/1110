@@ -10737,22 +10737,20 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             }
             return TRUE;
 #endif
-        case EVT_KEY_PRESS:
-#ifdef FEATURE_USES_MMS              
-            if(!pMe->m_isMMS)
-            {
-                IMENUCTL_SetActive(pMenuCtl, FALSE);
-                ITEXTCTL_SetActive(pIText, TRUE);
-                ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);                
-                IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_WRITEMSG_TEXT);
-                return TRUE;
-            }
-#endif                
+        case EVT_KEY_PRESS:             
             switch(wParam)
             {
                 case AVK_UP:
                 case AVK_DOWN:
                 {
+                    if((!pMe->m_isMMS) && (NULL == pMe->m_pMenu))
+                    {
+                        IMENUCTL_SetActive(pMenuCtl, FALSE);
+                        ITEXTCTL_SetActive(pIText, TRUE);
+                        ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);                
+                        IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_WRITEMSG_TEXT);
+                        return TRUE;
+                    }                    
                     if ((NULL == pMe->m_pMenu) && (IMENUCTL_GetItemCount(pMenuCtl) > 0))
                     {
                         MSG_FATAL("IMENUCTL_GetSel=%d, m_wSelectStore=%d, Count=%d", IMENUCTL_GetSel(pMenuCtl),pMe->m_wSelectStore,IMENUCTL_GetItemCount(pMenuCtl));                        
