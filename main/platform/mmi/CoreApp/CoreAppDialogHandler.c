@@ -1292,7 +1292,7 @@ static void CoreApp_DrawChargeing(CCoreApp *pMe, int iLevel)
     AEERect hdRect;
     uint16  chHeight;
     byte    R,G;
-    
+
     SETAEERECT(&bgRect, pMe->m_rc.x+((pMe->m_rc.dx-BATT_WIDTH)>>1), pMe->m_rc.y+((pMe->m_rc.dy-BATT_HEIGHT)>>1), BATT_WIDTH, BATT_HEIGHT);
     fgRect  = bgRect;
     hdRect.dx = BATT_WIDTH/5;
@@ -6906,12 +6906,15 @@ void CoreApp_Poweroff_Phone(void *pp)
     }
     CoreTask_SetPwrDnComplete(TRUE);
 }
+uint16 hxid;
+
 
 void CoreApp_Draw_Charger_image(void *pp)
 {
     CCoreApp *pMe = (CCoreApp *)pp;
     //AEEBatteryChargerStatus status;
     
+	MSG_FATAL("CoreApp_DrawChargeing hxid=%x",hxid,0,0);
     //CORE_ERR("%d  %d Charger_image",pMe->m_battery_count,pMe->m_bExtPwrState);
     IDISPLAY_ClearScreen(pMe->m_pDisplay);
     if(pMe->m_battery_count >= CHARGING_FRAME_COUNT)

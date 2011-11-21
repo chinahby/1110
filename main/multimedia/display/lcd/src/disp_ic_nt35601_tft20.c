@@ -227,7 +227,7 @@ static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row
     
     LCD_WRITE_CMD(0x2C);
 }
-
+#include "err.h"
 static void disp_ic_sleep(boolean bin)
 {
     if(bin)
@@ -241,6 +241,8 @@ static void disp_ic_sleep(boolean bin)
         LCD_WRITE_CMD(0x11);
         LCD_DELAY(120);
         LCD_WRITE_CMD(0x29);
+        LCD_DELAY(120);
+		ERR_FATAL("DDFDF",0,0,0);
     }
 }
 
@@ -258,7 +260,7 @@ static void disp_ic_rot(uint16 degree)
 #endif
     return;
 }
-
+extern uint16 hxid;
 boolean disp_nt35601_tft20(disp_drv_ic_type *pdispic)
 {
     uint8 id1,id2,id3;
@@ -270,8 +272,10 @@ boolean disp_nt35601_tft20(disp_drv_ic_type *pdispic)
     id2 = LCD_READ_DATA();
     id3 = LCD_READ_DATA();
     
+	hxid=(id1|id2<<8);
     if(id1 == 0x01 && id2 == 0x15)
     {
+        
         DISP_IC_INIT_TBL(pdispic);
         return TRUE;
     }

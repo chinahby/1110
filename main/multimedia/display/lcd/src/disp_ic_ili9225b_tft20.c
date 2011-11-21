@@ -196,6 +196,8 @@ static void disp_ic_rot(uint16 degree)
     return;
 }
 
+extern uint16 hxid;
+
 boolean disp_ili9225b_tft20(disp_drv_ic_type *pdispic)
 {
     uint8 id1,id2;
@@ -204,8 +206,8 @@ boolean disp_ili9225b_tft20(disp_drv_ic_type *pdispic)
     LCD_WRITE_CMD(0x00);
     id1 = LCD_READ_DATA();
     id2 = LCD_READ_DATA();
-    
-    //if(id1 == 0x92 && id2 == 0x25)
+    hxid=(id1|id2<<8);
+    if(id1 == 0x92 && id2 == 0x25)
     {
         DISP_IC_INIT_TBL(pdispic);
         return TRUE;

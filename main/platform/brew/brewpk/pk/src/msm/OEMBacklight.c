@@ -487,7 +487,7 @@ static int AEEBacklight_Disable(IBacklight *pme)
    {
       case AEECLSID_BACKLIGHT_DISPLAY1:
          gbBacklightDisplay1Enabled = FALSE;
-         disp_set_backlight(0);
+         disp_set_backlight(1);
          nErr = SUCCESS;
 #ifdef FEATURE_AUTOEXIT_AFTER_BLDISABLE
          AEEBacklight_CancelNotifyTimer(pme);
