@@ -17839,7 +17839,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             return TRUE;
 
         case EVT_DIALOG_START:
-            //WmsApp_UpdateAnnunciators(pMe);
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
                                     AEECLSID_WMSAPP,
@@ -17854,9 +17853,9 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 ISTATIC_Redraw(pStatic);
                 if(pMe->m_pMedia)
                 {
-                    int nTime = 0;
+                    //int nTime = 0;
                     MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Play",0 ,0 , 0);
-                    nTime = IMEDIA_GetTotalTime(pMe->m_pMedia);
+                    //nTime = IMEDIA_GetTotalTime(pMe->m_pMedia);
                     IMEDIA_Play(pMe->m_pMedia);
                  }   
                 DRAW_BOTTOMBAR(BTBAR_BACK);
