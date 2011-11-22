@@ -748,11 +748,13 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
 
         case EVT_APP_SUSPEND:
             pMe->m_bSuspending = TRUE;		
+
+#if 0
+			MP3_InterruptHandle(pMe);	
+#else			 
 #ifdef FEATURE_SUPPORT_BT_AUDIO
 			MSG_FATAL("***zzg MP3 m_bBtHSConnected=%x***", pMe->m_bBtHSConnected, 0, 0);
 
-			//MP3_InterruptHandle(pMe);	
-			 
 			//Modify By zzg 2011_10_27
 			if (FALSE == pMe->m_bBtHSConnected)
 			{
@@ -762,7 +764,8 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
 			{
 				pMe->m_bBtHSConnected = FALSE;	//Add By zzg 2011_10_27
 			}
-			//Modify end			
+			//Modify end	
+#endif			
 #endif           
             MSG_FATAL("pMe->m_nCurrentTime = %d",pMe->m_nCurrentTime,0,0);
             return TRUE;
@@ -779,8 +782,10 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
             {
                 pMe->m_eCurState = pMe->m_ePreState;
             }
-			
-            //MP3_ResumeHandle(pMe);
+
+#if 0			
+            MP3_ResumeHandle(pMe);
+#else
 #ifdef FEATURE_SUPPORT_BT_AUDIO            
             //Modify By zzg 2011_10_27
 			if (FALSE == pMe->m_bBtHSConnected)
@@ -789,6 +794,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
 			}
 			//Modify end
 #endif			
+#endif
             MSG_FATAL("pMe->m_nCurrentTime = %d,pMe->m_eCurState = %d",pMe->m_nCurrentTime,pMe->m_eCurState,0);
             CMusicPlayer_RunFSM(pMe);
             return TRUE;

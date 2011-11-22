@@ -252,7 +252,8 @@ void BTApp_ProcessOPPNotifications(
 {
   uint32 userEvent;
 
-
+  MSG_FATAL("***zzg BTApp_ProcessOPPNotifications evt=%x***", evt, 0, 0);
+  
   switch ( evt )
   {
     case AEEBT_OPP_EVT_REG_DONE:    // registration process done
@@ -2160,7 +2161,7 @@ void BTApp_OPPHandleUserEvents( CBTApp* pMe, uint32 dwParam )
 	    //Server send file to Client
 		case EVT_OPP_PUSH_REQ:
 		{
-			ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "GetFile");	//Add By zzg 2010_11_25
+			//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "GetFile");	//Add By zzg 2010_11_25
 			
 			BTApp_OPPPull( pMe );
 			

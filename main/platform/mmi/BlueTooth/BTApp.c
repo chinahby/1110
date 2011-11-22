@@ -1685,6 +1685,9 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 	}
 
 	MSG_FATAL("***zzg BTApp_CheckNotify NotifyType=%x, evt=%x***", NotifyType, evt, 0);
+
+	//result == TRUE : Need BTApp EVT_START
+	//result == FALSE: Need not
 	
 	switch (NotifyType)
 	{
@@ -1692,17 +1695,15 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 		{	
 			switch (evt)
 			{
-				//Need BTApp EVT_START
 				case AEEBT_AG_EVT_CONNECTED:
 				case AEEBT_AG_EVT_CONNECT_FAILED:	
 				case AEEBT_AG_EVT_DISCONNECTED:	
 				{
 					result = TRUE;
 					break;
-				}
-				//Need End
+				}				
 
-				//Needn't BTApp EVT_START
+				/*
 				case AEEBT_AG_EVT_CONFIGURED:
 				case AEEBT_AG_EVT_ENABLED:	
 				case AEEBT_AG_EVT_RUNG:
@@ -1742,6 +1743,7 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 #ifdef FEATURE_AVS_BT_SCO_REWORK
 				case AEEBT_AG_EVT_SOUND_CHANGING:
 #endif
+				*/
 				default:
 				{
 					break;
@@ -1888,7 +1890,28 @@ static boolean BTApp_CheckNotify(CBTApp* pMe, AEEEvent evt, NotificationData* pD
 		}
 #ifdef FEATURE_BT_EXTPF_OPP				
 		case NMASK_BT_OPP:
-		{			
+		{		
+			switch (evt)
+			{
+				case AEEBT_OPP_EVT_CONNECTED:
+				{
+					if (pMe->m_pActiveDlgID == IDD_BT_OBEX_LIST_SERVERS)
+					{
+						result = TRUE;
+					}
+					break;
+				}
+				case AEEBT_OPP_EVT_PUSH_REQ:
+				case AEEBT_OPP_EVT_PROGRESS:
+				{
+					result = TRUE;
+					break;
+				}
+				default:
+				{
+					break;
+				}
+			}
 			break;
 		}
 #endif				
@@ -2318,6 +2341,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 					}					
 					
 				}
+				/*
 				else if (STRNCMP(args->pszArgs, "GetFile", 7) == 0)	//OPP Get File
 				{
 					MSG_FATAL("***zzg GetFile StartBTApp***", 0, 0, 0);
@@ -2341,6 +2365,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 					pMe->bSuspended = FALSE;	
 					
 				}
+				*/
 				else if (STRNCMP(args->pszArgs, "ResetBT", 7) == 0)	//Factory Reset					
 				{
 					MSG_FATAL("***zzg ResetBT BTApp***", 0, 0, 0);
@@ -2928,30 +2953,31 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 
 		switch (wParam)
 		{
-			#ifdef FEATURE_LCD_TOUCH_ENABLE
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 			case AVK_CLR:
-					{
-							eCode = EVT_KEY;
-							return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-					}
-					break;
+			{
+				eCode = EVT_KEY;
+				return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+			}
+			break;
+			
 			case AVK_SELECT:
 			case AVK_INFO:
-					{
-						if (dwParam != 0)
-						{
-							eCode = EVT_COMMAND;
-							wParam = dwParam;
-							dwParam = 0;
-						}
-						else
-						{
-							eCode = EVT_KEY;
-						}
-						return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-					}
-					break;
-			#endif
+			{
+				if (dwParam != 0)
+				{
+					eCode = EVT_COMMAND;
+					wParam = dwParam;
+					dwParam = 0;
+				}
+				else
+				{
+					eCode = EVT_KEY;
+				}
+				return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+			}
+			break;
+#endif
 			//Add By zzg 2011_10_25			
 			case EVT_MUSICPLAYER_DISCONNECT_FROM_BT:	//Disconnect BtHeadSet for MusicPlayer
 			{
@@ -2974,6 +3000,7 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 					}
 					else
 					{
+						MSG_FATAL("***zzg IBTEXTA2DP_Disconnect Succeed***", 0, 0, 0);
 						BTApp_A2DPSetRetries(pMe, FALSE);
 					}
 				}
@@ -18015,6 +18042,7 @@ DESCRIPTION
 				
 
 	//MOVE_TO_STATE(BTAPPST_PROMPT)
+	//CLOSE_DIALOG(DLGRET_PROMPT)
 
 	pMe->m_eDlgRet = DLGRET_PROMPT; 
     (void) ISHELL_EndDialog(pMe->m_pShell); 
@@ -20712,7 +20740,8 @@ static void BTApp_HandleAudioSetup( CBTApp* pMe, BTAppCallType callPresent )
 
 			if (TRUE == BTApp_CheckMusicPlayrState(pMe->m_pShell))
 			{
-				if (pMe->bMusicPlayerSuspend == FALSE)
+				//if (pMe->bMusicPlayerSuspend == FALSE)
+				if ((pMe->bMusicPlayerSuspend == FALSE) && (pMe->mA2DP.bConnected == TRUE))
 				{
 					uisnd_set_device_status(SND_DEVICE_BT_A2DP_HEADSET, UISND_DEV_ENABLED);
 				}
@@ -21167,7 +21196,7 @@ static void BTApp_HandleCallAndMOSSetup( CBTApp* pMe )
 
 			//Add By zzg 2011_11_03
 			//BTApp_WriteBtAddrConfigFile(pMe);			
-			BTApp_WriteConfigFile(pMe);
+			//BTApp_WriteConfigFile(pMe);
 			//Add End				
 			
 			if ( IBTEXTA2DP_Connect( pMe->mA2DP.po, &pMe->mA2DP.bdAddr ) != SUCCESS )
@@ -21414,8 +21443,17 @@ static void BTApp_ProcessAGNotifications(
           return;
         }        
 #endif
+
+		MSG_FATAL("***zzg AEEBT_AG_EVT_ENABLED mAG:%04x %04x %04x***", 
+					((uint16)(pMe->mAG.bdAddr.uAddr[ 5 ] << 8) | pMe->mAG.bdAddr.uAddr[ 4 ]),
+		       		((uint16)(pMe->mAG.bdAddr.uAddr[ 3 ] << 8) | pMe->mAG.bdAddr.uAddr[ 2 ]),
+		       		((uint16)(pMe->mAG.bdAddr.uAddr[ 1 ] << 8) | pMe->mAG.bdAddr.uAddr[ 0 ]));
+
+		/*
         if ( BDADDR_VALID( &pMe->mAG.bdAddr ) &&
              (BTApp_CallPresent( pMe ) != BT_APP_CALL_NONE) )
+             */
+        if (BDADDR_VALID( &pMe->mAG.bdAddr ))	//Modify by zzg 2011_11_22 (first connect AG, then A2DP)
         {
         	MSG_FATAL("***zzg AEEBT_AG_EVT_ENABLED***", 0, 0, 0);
           IBTEXTAG_Connect( pMe->mAG.po, &pMe->mAG.bdAddr, pMe->mAG.devType );
@@ -22021,35 +22059,40 @@ static void BTApp_ProcessSDNotifications(
   {
     case AEEBT_SD_EVT_DEVICE_DISCOVERY_RESP:
     {
-      MSG_MED( "SD - DiscResp nD=%d", pData->uNumDevicesDiscovered, 0, 0 );
+		MSG_MED( "SD - DiscResp nD=%d", pData->uNumDevicesDiscovered, 0, 0 );
 
-	  MSG_FATAL("***zzg AEEBT_SD_EVT_DEVICE_DISCOVERY_RESP uNumRecs=%d***", pData->uNumDevicesDiscovered, 0, 0 );
-	  
-      pMe->mSD.uNumRecs = pData->uNumDevicesDiscovered;
-	  
-      //if ( (pMe->mSD.uNumRecs == 1) || (TOP_MENU == BT_APP_MENU_DEV_RESP) )
-      // Find the first Device, create the dlg of searchresult......
-      if (pMe->mSD.uNumRecs == 1) 
+		MSG_FATAL("***zzg AEEBT_SD_EVT_DEVICE_DISCOVERY_RESP uNumRecs=%d***", pData->uNumDevicesDiscovered, 0, 0 );
+
+		pMe->mSD.uNumRecs = pData->uNumDevicesDiscovered;
+
+	  /*
+      if ((pMe->mSD.uNumRecs == 1) || (TOP_MENU == BT_APP_MENU_DEV_RESP))
       {
-      	//CLOSE_DIALOG(DLGRET_SRHRESULT)
-      	pMe->m_eDlgRet = DLGRET_SRHRESULT;
- 		(void) ISHELL_EndDialog(pMe->m_pShell);  	//¹Ø±ÕBTMSGBOX 
-      	
-        //BTApp_BuildMenu( pMe, BT_APP_MENU_DEV_RESP );
-      }
-	  //Add By zzg 2011_01_11
-	  else
-	  {
-	    //find more Device, Update the dlg of searchresult............
-	  	MSG_FATAL("***zzg EVT_USER_REDRAW 111 AEEBT_SD_EVT_DEVICE_DISCOVERY_RESP uNumRecs=%d***", pMe->mSD.uNumRecs, 0 , 0);
-		(void) ISHELL_PostEvent( pMe->m_pShell,
-                                 AEECLSID_BLUETOOTH_APP,
-                                 EVT_USER_REDRAW,
-                                 0,
-                                 0);
+		 BTApp_BuildMenu( pMe, BT_APP_MENU_DEV_RESP );
 	  }
-	  //Add End
-      break;
+	  */
+
+		//Add By zzg 2011_01_11
+		// Find the first Device, create the dlg of searchresult......
+		if (pMe->mSD.uNumRecs == 1) 
+		{
+			//CLOSE_DIALOG(DLGRET_SRHRESULT)
+			pMe->m_eDlgRet = DLGRET_SRHRESULT;
+			(void) ISHELL_EndDialog(pMe->m_pShell);  	//¹Ø±ÕBTMSGBOX      	
+
+		}	  
+		else
+		{
+			//find more Device, Update the dlg of searchresult............
+			MSG_FATAL("***zzg EVT_USER_REDRAW 111 AEEBT_SD_EVT_DEVICE_DISCOVERY_RESP uNumRecs=%d***", pMe->mSD.uNumRecs, 0 , 0);
+			(void) ISHELL_PostEvent( pMe->m_pShell,
+			                     AEECLSID_BLUETOOTH_APP,
+			                     EVT_USER_REDRAW,
+			                     0,
+			                     0);
+		}
+		//Add End
+		break;
     }
     case AEEBT_SD_EVT_DEVICE_DISCOVERY_STARTED:
     {

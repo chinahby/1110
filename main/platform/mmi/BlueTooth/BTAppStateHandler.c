@@ -159,6 +159,10 @@ static NextFSMAction BTApp_StateExitHandler(CBTApp *pMe);
 ±¸×¢:
 
 ==============================================================================*/
+
+#define ASSERT_BT_NOT_REACHABLE 
+
+
 NextFSMAction BTApp_ProcessState(CBTApp *pMe)
 {
     NextFSMAction retVal = NFSMACTION_WAIT;
@@ -367,7 +371,7 @@ NextFSMAction BTApp_ProcessState(CBTApp *pMe)
 
         default:
         {   
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}	
     }
 	
@@ -498,16 +502,7 @@ static NextFSMAction BTApp_StateMainHandler(CBTApp *pMe)
 			MOVE_TO_STATE(BTAPPST_FTP)
             return NFSMACTION_CONTINUE;		
 		}
-
-		case DLGRET_BT_FILE_PROGRESS:
-		{
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
-			//return NFSMACTION_CONTINUE;	
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
-		}
+		
 
 		case DLGRET_BT_MSGBOX:
 		{
@@ -519,12 +514,6 @@ static NextFSMAction BTApp_StateMainHandler(CBTApp *pMe)
 			return NFSMACTION_WAIT;
 		}
 
-		case DLGRET_BT_EDIT:			
-		{
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;			
-		}
-			
 		case DLGRET_PROMPT:
 		{
 			//MOVE_TO_STATE(BTAPPST_PROMPT)
@@ -533,6 +522,22 @@ static NextFSMAction BTApp_StateMainHandler(CBTApp *pMe)
 			pMe->m_bNotOverwriteDlgRet = FALSE;
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
+		}	
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:			
+		{
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;			
 		}	
 		
         case DLGRET_CANCELED:
@@ -549,7 +554,7 @@ static NextFSMAction BTApp_StateMainHandler(CBTApp *pMe)
 
         default:
         {
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
         }
     }
 
@@ -583,16 +588,6 @@ static NextFSMAction BTApp_StateDeviceSearchHandler(CBTApp *pMe)
             return NFSMACTION_CONTINUE;
 		}	
 
-		case DLGRET_BT_FILE_PROGRESS:
-		{	
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
-			//return NFSMACTION_CONTINUE;	
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
-		}	
-
 		case DLGRET_BT_MSGBOX:
 		{	
 			//MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
@@ -603,12 +598,6 @@ static NextFSMAction BTApp_StateDeviceSearchHandler(CBTApp *pMe)
 			return NFSMACTION_WAIT;
 		}	
 
-		case DLGRET_BT_EDIT:
-		{				
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
-		}	
-			
 		case DLGRET_PROMPT:
 		{	
 			//MOVE_TO_STATE(BTAPPST_PROMPT)
@@ -617,8 +606,24 @@ static NextFSMAction BTApp_StateDeviceSearchHandler(CBTApp *pMe)
 			pMe->m_bNotOverwriteDlgRet = FALSE;
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
-		}	
+		}
 
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{				
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+		}	
+			
 		case DLGRET_MSGBOX_CANCELED:	//Add By zzg 2011_09_24	
         case DLGRET_CANCELED:
 		{	
@@ -635,7 +640,7 @@ static NextFSMAction BTApp_StateDeviceSearchHandler(CBTApp *pMe)
 		
         default:
         {    
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
     }
 
@@ -668,17 +673,7 @@ static NextFSMAction BTApp_StateSearchResultHandler(CBTApp *pMe)
 			MOVE_TO_STATE(BTAPPST_DEVICEINFO)
 			return NFSMACTION_CONTINUE;
 		}	
-
-		case DLGRET_BT_FILE_PROGRESS:
-		{	
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
-			//return NFSMACTION_CONTINUE;	
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
-		}	
-
+		
 		case DLGRET_BT_MSGBOX:
 		{	
 			//MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
@@ -689,12 +684,6 @@ static NextFSMAction BTApp_StateSearchResultHandler(CBTApp *pMe)
 			return NFSMACTION_WAIT;
 		}	
 
-		case DLGRET_BT_EDIT:
-		{	
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
-		}	
-			
 		case DLGRET_PROMPT:
 		{	
 			//MOVE_TO_STATE(BTAPPST_PROMPT)
@@ -703,8 +692,24 @@ static NextFSMAction BTApp_StateSearchResultHandler(CBTApp *pMe)
 			pMe->m_bNotOverwriteDlgRet = FALSE;
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{	
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
 		}	
-			
+						
 		case DLGRET_CANCELED:
 		{	
 			MOVE_TO_STATE(BTAPPST_MAIN)
@@ -713,7 +718,7 @@ static NextFSMAction BTApp_StateSearchResultHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}	
 	}
 
@@ -745,6 +750,27 @@ static NextFSMAction BTApp_StateDeviceInfoHandler(CBTApp * pMe)
 			MOVE_TO_STATE(BTAPPST_DEVICEINFO_OPITION)
 			return NFSMACTION_CONTINUE;
 		}
+		
+
+		case DLGRET_BT_MSGBOX:
+		{			
+			//MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
+			//return NFSMACTION_CONTINUE;
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
+			return NFSMACTION_WAIT;
+		}
+			
+		case DLGRET_PROMPT:
+		{			
+			//MOVE_TO_STATE(BTAPPST_PROMPT)
+			//return NFSMACTION_CONTINUE;
+			
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
+            return NFSMACTION_WAIT;
+		}
 
 		case DLGRET_BT_FILE_PROGRESS:
 		{
@@ -756,30 +782,10 @@ static NextFSMAction BTApp_StateDeviceInfoHandler(CBTApp * pMe)
 			return NFSMACTION_WAIT;
 		}
 
-		case DLGRET_BT_MSGBOX:
-		{			
-			//MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
-			//return NFSMACTION_CONTINUE;
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
-			return NFSMACTION_WAIT;
-		}
-
 		case DLGRET_BT_EDIT:
 		{
 			MOVE_TO_STATE(BTAPPST_BT_EDIT)
 			return NFSMACTION_CONTINUE;
-		}
-			
-		case DLGRET_PROMPT:
-		{			
-			//MOVE_TO_STATE(BTAPPST_PROMPT)
-			//return NFSMACTION_CONTINUE;
-			
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
-            return NFSMACTION_WAIT;
 		}
 						
 		case DLGRET_CANCELED:
@@ -801,7 +807,7 @@ static NextFSMAction BTApp_StateDeviceInfoHandler(CBTApp * pMe)
 		}
 		default:
 		{
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -837,22 +843,6 @@ static NextFSMAction BTApp_StateDeviceInfoOpitionHandler(CBTApp * pMe)
 			return NFSMACTION_CONTINUE;		
 		}
 
-		case DLGRET_BT_FILE_PROGRESS:
-		{
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
-			//return NFSMACTION_CONTINUE;	
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
-		}
-			
-		case DLGRET_CANCELED:
-		{
-			MOVE_TO_STATE(BTAPPST_DEVICEINFO)
-			return NFSMACTION_CONTINUE;
-		}
-
 		case DLGRET_BT_MSGBOX:
 		{
 			//MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
@@ -861,12 +851,6 @@ static NextFSMAction BTApp_StateDeviceInfoOpitionHandler(CBTApp * pMe)
 			pMe->m_bNotOverwriteDlgRet = FALSE;
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
-		}
-
-		case DLGRET_BT_EDIT:
-		{
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
 		}
 			
 		case DLGRET_PROMPT:
@@ -878,10 +862,32 @@ static NextFSMAction BTApp_StateDeviceInfoOpitionHandler(CBTApp * pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
 		}
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+		}
+			
+		case DLGRET_CANCELED:
+		{
+			MOVE_TO_STATE(BTAPPST_DEVICEINFO)
+			return NFSMACTION_CONTINUE;
+		}
 			
 		default:
 		{
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -907,16 +913,6 @@ static NextFSMAction BTApp_StateBondOpitionHandler(CBTApp * pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_BOND_OPITION);
 			return NFSMACTION_WAIT;
 		}
-
-		case DLGRET_BT_FILE_PROGRESS:
-		{
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
-			//return NFSMACTION_CONTINUE;
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
-		}
 			
 		case DLGRET_BT_MSGBOX:
 		{
@@ -926,13 +922,7 @@ static NextFSMAction BTApp_StateBondOpitionHandler(CBTApp * pMe)
 			pMe->m_bNotOverwriteDlgRet = FALSE;
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
-		}
-
-		case DLGRET_BT_EDIT:
-		{			
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
-		}
+		}		
 			
 		case DLGRET_PROMPT:
 		{			
@@ -943,6 +933,22 @@ static NextFSMAction BTApp_StateBondOpitionHandler(CBTApp * pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
 		}
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{			
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+		}
 						
 		case DLGRET_CANCELED:
 		{
@@ -952,7 +958,7 @@ static NextFSMAction BTApp_StateBondOpitionHandler(CBTApp * pMe)
 
 		default:
 		{
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -980,16 +986,6 @@ static NextFSMAction BTApp_StateDeviceHandler(CBTApp *pMe)
 			return NFSMACTION_WAIT;
 		}
 
-		case DLGRET_BT_FILE_PROGRESS:
-		{
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
-			//return NFSMACTION_CONTINUE;
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
-		}
-
 		case DLGRET_DEVICE_LIST:
 		{
 			MOVE_TO_STATE(BTAPPST_DEVICE_LIST)
@@ -1005,12 +1001,6 @@ static NextFSMAction BTApp_StateDeviceHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
 		}
-
-		case DLGRET_BT_EDIT:
-		{			
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
-		}
 			
 		case DLGRET_PROMPT:
 		{			
@@ -1021,6 +1011,22 @@ static NextFSMAction BTApp_StateDeviceHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
 		}
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{			
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+		}
 			
 		case DLGRET_CANCELED:
 		{
@@ -1030,7 +1036,7 @@ static NextFSMAction BTApp_StateDeviceHandler(CBTApp *pMe)
 
 		default:
 		{
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -1063,16 +1069,6 @@ static NextFSMAction BTApp_StateDeviceListHandler(CBTApp *pMe)
 			MOVE_TO_STATE(BTAPPST_DEVICEINFO)
 			return NFSMACTION_CONTINUE;
 		}
-
-		case DLGRET_BT_FILE_PROGRESS:
-		{
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
-			//return NFSMACTION_CONTINUE;	
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
-		}
 			
 		case DLGRET_BT_MSGBOX:
 		{			
@@ -1083,12 +1079,6 @@ static NextFSMAction BTApp_StateDeviceListHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
 		}
-		
-		case DLGRET_BT_EDIT:
-		{	
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
-		}	
 			
 		case DLGRET_PROMPT:
 		{
@@ -1099,6 +1089,22 @@ static NextFSMAction BTApp_StateDeviceListHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
 		}	
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{	
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+		}
 			
 		case DLGRET_CANCELED:
 		{
@@ -1108,7 +1114,7 @@ static NextFSMAction BTApp_StateDeviceListHandler(CBTApp *pMe)
 	
 		default:
 		{
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}	
 	}
 
@@ -1141,16 +1147,6 @@ static NextFSMAction BTApp_StateMyInfoHandler(CBTApp *pMe)
 			return NFSMACTION_CONTINUE;
 		}
 
-		case DLGRET_BT_FILE_PROGRESS:
-		{	
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
-			//return NFSMACTION_CONTINUE;
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
-		}
-
 		case DLGRET_BT_MSGBOX:
 		{	
 			//MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
@@ -1159,12 +1155,6 @@ static NextFSMAction BTApp_StateMyInfoHandler(CBTApp *pMe)
 			pMe->m_bNotOverwriteDlgRet = FALSE;
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
-		}	
-
-		case DLGRET_BT_EDIT:
-		{	
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
 		}	
 			
 		case DLGRET_PROMPT:
@@ -1175,7 +1165,23 @@ static NextFSMAction BTApp_StateMyInfoHandler(CBTApp *pMe)
 			pMe->m_bNotOverwriteDlgRet = FALSE;
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
-		}	
+		}
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{	
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+		}
 		
 		case DLGRET_CANCELED:
 		{	
@@ -1185,7 +1191,7 @@ static NextFSMAction BTApp_StateMyInfoHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -1211,17 +1217,7 @@ static NextFSMAction BTApp_StateMyInfoOpitionHandler(CBTApp *pMe)
 			pMe->m_bNotOverwriteDlgRet = FALSE;
 			BTApp_ShowDialog(pMe, IDD_MYINFO_OPITION);
 			return NFSMACTION_WAIT;
-		}	
-			
-		case DLGRET_BT_FILE_PROGRESS:
-		{	
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
-			//return NFSMACTION_CONTINUE;	
-			
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
-		}
+		}						
 
 		//Add By zzg 2011_05_28
 		case DLGRET_MYINFO_EDIT:
@@ -1264,13 +1260,7 @@ static NextFSMAction BTApp_StateMyInfoOpitionHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
 		}	
-
-		case DLGRET_BT_EDIT:
-		{	
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
-		}	
-			
+		
 		case DLGRET_PROMPT:
 		{	
 			//MOVE_TO_STATE(BTAPPST_PROMPT)
@@ -1280,6 +1270,22 @@ static NextFSMAction BTApp_StateMyInfoOpitionHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
 		}	
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+			
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{	
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+		}
 					
 		case DLGRET_CANCELED:
 		{	
@@ -1289,7 +1295,7 @@ static NextFSMAction BTApp_StateMyInfoOpitionHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -1317,6 +1323,20 @@ static NextFSMAction BTApp_StateMyInfoEditHandler(CBTApp *pMe)
 			return NFSMACTION_WAIT;
 		}	
 
+		case DLGRET_BT_MSGBOX:
+		{	
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
+			return NFSMACTION_WAIT;
+		}	
+			
+		case DLGRET_PROMPT:
+		{	
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
+            return NFSMACTION_WAIT;
+		}	
+
 		case DLGRET_BT_FILE_PROGRESS:
 		{	
 			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
@@ -1327,25 +1347,11 @@ static NextFSMAction BTApp_StateMyInfoEditHandler(CBTApp *pMe)
 			return NFSMACTION_WAIT;
 		}
 
-		case DLGRET_BT_MSGBOX:
-		{	
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
-			return NFSMACTION_WAIT;
-		}	
-
 		case DLGRET_BT_EDIT:
 		{	
 			MOVE_TO_STATE(BTAPPST_BT_EDIT)
 			return NFSMACTION_CONTINUE;
-		}	
-			
-		case DLGRET_PROMPT:
-		{	
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
-            return NFSMACTION_WAIT;
-		}	
+		}
 
 		case DLGRET_CANCELED:
 		{	
@@ -1355,7 +1361,7 @@ static NextFSMAction BTApp_StateMyInfoEditHandler(CBTApp *pMe)
 			
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -1426,7 +1432,7 @@ static NextFSMAction BTApp_StateSetSecurityHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -1455,16 +1461,6 @@ static NextFSMAction BTApp_StateSetDiscoverableHandler(CBTApp *pMe)
 			return NFSMACTION_WAIT;
 		}	
 
-		case DLGRET_BT_FILE_PROGRESS:
-		{	
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
-			//return NFSMACTION_CONTINUE;	
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
-		}
-
 		case DLGRET_BT_MSGBOX:
 		{	
 			//MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
@@ -1473,13 +1469,7 @@ static NextFSMAction BTApp_StateSetDiscoverableHandler(CBTApp *pMe)
 			pMe->m_bNotOverwriteDlgRet = FALSE;
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
-		}	
-
-		case DLGRET_BT_EDIT:
-		{	
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
-		}
+		}			
 			
 		case DLGRET_PROMPT:
 		{	
@@ -1491,6 +1481,22 @@ static NextFSMAction BTApp_StateSetDiscoverableHandler(CBTApp *pMe)
             return NFSMACTION_WAIT;
 		}	
 
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{	
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+		}
+
 		case DLGRET_CANCELED:
 		{	
 			MOVE_TO_STATE(BTAPPST_MYINFO)
@@ -1499,7 +1505,7 @@ static NextFSMAction BTApp_StateSetDiscoverableHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -1570,7 +1576,7 @@ static NextFSMAction BTApp_StateSetIOCapabilityHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -1642,7 +1648,7 @@ static NextFSMAction BTApp_StateSetDebugKeyHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -1662,6 +1668,7 @@ static NextFSMAction BTApp_StateFtpHandler(CBTApp *pMe)
 	{
 		case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROMPT_CANCELED:
+		case DLGRET_PROGRESS_CANCELED:	
 		case DLGRET_CREATE:
 		{	
 			pMe->m_bNotOverwriteDlgRet = FALSE;
@@ -1696,12 +1703,6 @@ static NextFSMAction BTApp_StateFtpHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
 		}	
-
-		case DLGRET_BT_EDIT:
-		{	
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
-		}	
 			
 		case DLGRET_PROMPT:
 		{	
@@ -1712,6 +1713,22 @@ static NextFSMAction BTApp_StateFtpHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
 			return NFSMACTION_WAIT;
 		}	
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{	
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+		}
 			
 		case DLGRET_CANCELED:
 		{	
@@ -1721,7 +1738,7 @@ static NextFSMAction BTApp_StateFtpHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -1741,6 +1758,7 @@ static NextFSMAction BTApp_StateFtpServerHandler(CBTApp *pMe)
 	{
 		case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROMPT_CANCELED:
+		case DLGRET_PROGRESS_CANCELED:		
 		case DLGRET_CREATE:
 		{	
 			pMe->m_bNotOverwriteDlgRet = FALSE;
@@ -1763,13 +1781,7 @@ static NextFSMAction BTApp_StateFtpServerHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
 		}	
-
-		case DLGRET_BT_EDIT:
-		{	
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
-		}	
-			
+		
 		case DLGRET_PROMPT:
 		{	
 			//MOVE_TO_STATE(BTAPPST_PROMPT)
@@ -1779,6 +1791,22 @@ static NextFSMAction BTApp_StateFtpServerHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
 		}	
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{	
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+		}
 			
 		case DLGRET_CANCELED:
 		{	
@@ -1788,7 +1816,7 @@ static NextFSMAction BTApp_StateFtpServerHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -1807,6 +1835,7 @@ static NextFSMAction BTApp_StateFtpClientHandler(CBTApp *pMe)
 	{
 		case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROMPT_CANCELED:
+		case DLGRET_PROGRESS_CANCELED:		
 		case DLGRET_CREATE:
 		{	
 			pMe->m_bNotOverwriteDlgRet = FALSE;
@@ -1835,13 +1864,7 @@ static NextFSMAction BTApp_StateFtpClientHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
 		}	
-
-		case DLGRET_BT_EDIT:
-		{	
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
-		}	
-			
+		
 		case DLGRET_PROMPT:
 		{	
 			//MOVE_TO_STATE(BTAPPST_PROMPT)
@@ -1850,6 +1873,22 @@ static NextFSMAction BTApp_StateFtpClientHandler(CBTApp *pMe)
 			pMe->m_bNotOverwriteDlgRet = FALSE;
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
+		}	
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{	
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
 		}	
 			
 		case DLGRET_CANCELED:
@@ -1860,7 +1899,7 @@ static NextFSMAction BTApp_StateFtpClientHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -1879,6 +1918,7 @@ static NextFSMAction BTApp_StateFtpSettingHandler(CBTApp *pMe)
 	{
 		case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROMPT_CANCELED:
+		case DLGRET_PROGRESS_CANCELED:		
 		case DLGRET_CREATE:
 		{	
 			pMe->m_bNotOverwriteDlgRet = FALSE;
@@ -1894,13 +1934,7 @@ static NextFSMAction BTApp_StateFtpSettingHandler(CBTApp *pMe)
 			pMe->m_bNotOverwriteDlgRet = FALSE;
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
-		}	
-
-		case DLGRET_BT_EDIT:
-		{	
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
-		}	
+		}				
 			
 		case DLGRET_PROMPT:
 		{				
@@ -1911,6 +1945,22 @@ static NextFSMAction BTApp_StateFtpSettingHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
 		}	
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{	
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+		}
 			
 		case DLGRET_CANCELED:
 		{	
@@ -1920,7 +1970,7 @@ static NextFSMAction BTApp_StateFtpSettingHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -1940,6 +1990,7 @@ static NextFSMAction BTApp_StateFtpServerRegisterHandler(CBTApp *pMe)
 	{
 		case DLGRET_MSGBOX_CANCELED:
 		case DLGRET_PROMPT_CANCELED:
+		case DLGRET_PROGRESS_CANCELED:		
 		case DLGRET_CREATE:
 		{	
 			pMe->m_bNotOverwriteDlgRet = FALSE;
@@ -1956,13 +2007,7 @@ static NextFSMAction BTApp_StateFtpServerRegisterHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
 		}	
-
-		case DLGRET_BT_EDIT:
-		{	
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
-		}	
-			
+		
 		case DLGRET_PROMPT:
 		{	
 			//MOVE_TO_STATE(BTAPPST_PROMPT)
@@ -1972,6 +2017,22 @@ static NextFSMAction BTApp_StateFtpServerRegisterHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
 		}	
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{	
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+		}
 			
 		case DLGRET_CANCELED:
 		{	
@@ -1981,7 +2042,7 @@ static NextFSMAction BTApp_StateFtpServerRegisterHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -2020,6 +2081,26 @@ static NextFSMAction BTApp_StateFtpBrowseHandler(CBTApp *pMe)
 			MOVE_TO_STATE(BTAPPST_FTP_CLIENT)
 			return NFSMACTION_CONTINUE;
 		}	
+		
+		case DLGRET_BT_MSGBOX:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
+			//return NFSMACTION_CONTINUE;
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
+			return NFSMACTION_WAIT;
+		}	
+		
+		case DLGRET_PROMPT:
+		{	
+			//MOVE_TO_STATE(BTAPPST_PROMPT)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
+            return NFSMACTION_WAIT;
+		}
 
 		case DLGRET_BT_FILE_PROGRESS:
 		{	
@@ -2031,30 +2112,10 @@ static NextFSMAction BTApp_StateFtpBrowseHandler(CBTApp *pMe)
 			return NFSMACTION_WAIT;
 		}
 
-		case DLGRET_BT_MSGBOX:
-		{	
-			//MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
-			//return NFSMACTION_CONTINUE;
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
-			return NFSMACTION_WAIT;
-		}	
-
 		case DLGRET_BT_EDIT:
 		{	
 			MOVE_TO_STATE(BTAPPST_BT_EDIT)
 			return NFSMACTION_CONTINUE;
-		}	
-			
-		case DLGRET_PROMPT:
-		{	
-			//MOVE_TO_STATE(BTAPPST_PROMPT)
-			//return NFSMACTION_CONTINUE;	
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
-            return NFSMACTION_WAIT;
 		}
 			
 		case DLGRET_CANCELED:		
@@ -2068,7 +2129,7 @@ static NextFSMAction BTApp_StateFtpBrowseHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -2107,16 +2168,6 @@ static NextFSMAction BTApp_StateFtpBrowseOpitionHandler(CBTApp *pMe)
 			MOVE_TO_STATE(BTAPPST_FTP_BROWSE)
 			return NFSMACTION_CONTINUE;
 		}
-
-		case DLGRET_BT_FILE_PROGRESS:
-		{	
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
-			//return NFSMACTION_CONTINUE;	
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
-		}
 		
 		case DLGRET_BT_MSGBOX:			
 		{	
@@ -2126,12 +2177,6 @@ static NextFSMAction BTApp_StateFtpBrowseOpitionHandler(CBTApp *pMe)
 			pMe->m_bNotOverwriteDlgRet = FALSE;
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
-		}
-
-		case DLGRET_BT_EDIT:			
-		{	
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;
 		}
 			
 		case DLGRET_PROMPT:			
@@ -2143,6 +2188,22 @@ static NextFSMAction BTApp_StateFtpBrowseOpitionHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
 		}
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:			
+		{	
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;
+		}
 			
 		case DLGRET_CANCELED:
 		{	
@@ -2152,7 +2213,7 @@ static NextFSMAction BTApp_StateFtpBrowseOpitionHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -2178,16 +2239,6 @@ static NextFSMAction BTApp_StateEditHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_EDIT);
 			return NFSMACTION_WAIT;		
 		}	
-
-		case DLGRET_BT_FILE_PROGRESS:
-		{	
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
-			//return NFSMACTION_CONTINUE;	
-			
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
-		}
 			
 		case DLGRET_CANCELED:				
 		{	
@@ -2205,12 +2256,6 @@ static NextFSMAction BTApp_StateEditHandler(CBTApp *pMe)
             return NFSMACTION_WAIT;	
 		}
 			
-		case DLGRET_BT_EDIT:
-		{	
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;		
-		}
-			
 		case DLGRET_BT_MSGBOX:			
 		{	
 			//MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
@@ -2221,9 +2266,25 @@ static NextFSMAction BTApp_StateEditHandler(CBTApp *pMe)
 			return NFSMACTION_WAIT;	
 		}
 
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;	
+			
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{	
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;		
+		}
+
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -2257,15 +2318,15 @@ static NextFSMAction BTApp_StateSendFileHandler(CBTApp *pMe)
 			MOVE_TO_STATE(BTAPPST_BT_OBEX_LIST_SERVERS)
 			return NFSMACTION_CONTINUE;
 		}	
-
-		case DLGRET_BT_FILE_PROGRESS:
+			
+		case DLGRET_BT_MSGBOX:			
 		{	
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
 			//return NFSMACTION_CONTINUE;
 
 			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
+			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
+			return NFSMACTION_WAIT;		
 		}
 
 		case DLGRET_PROMPT:			
@@ -2277,21 +2338,21 @@ static NextFSMAction BTApp_StateSendFileHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
             return NFSMACTION_WAIT;
 		}
-			
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
 		case DLGRET_BT_EDIT:
 		{	
 			MOVE_TO_STATE(BTAPPST_BT_EDIT)
 			return NFSMACTION_CONTINUE;		
-		}
-			
-		case DLGRET_BT_MSGBOX:			
-		{	
-			//MOVE_TO_STATE(BTAPPST_BT_MSGBOX)
-			//return NFSMACTION_CONTINUE;
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
-			return NFSMACTION_WAIT;		
 		}
 			
 		case DLGRET_CANCELED:		
@@ -2302,7 +2363,7 @@ static NextFSMAction BTApp_StateSendFileHandler(CBTApp *pMe)
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -2342,33 +2403,7 @@ static NextFSMAction BTApp_StateObexListServersHandler(CBTApp *pMe)
 		{	
 			MOVE_TO_STATE(BTAPPST_BT_SEND_FILE)
 			return NFSMACTION_CONTINUE;		
-		}
-			
-		case DLGRET_BT_FILE_PROGRESS:
-		{	
-			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
-			//return NFSMACTION_CONTINUE;
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
-			return NFSMACTION_WAIT;
-		}
-			
-		case DLGRET_PROMPT:			
-		{	
-			//MOVE_TO_STATE(BTAPPST_PROMPT)
-			//return NFSMACTION_CONTINUE;	
-
-			pMe->m_bNotOverwriteDlgRet = FALSE;
-			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
-            return NFSMACTION_WAIT;
-		}
-			
-		case DLGRET_BT_EDIT:
-		{	
-			MOVE_TO_STATE(BTAPPST_BT_EDIT)
-			return NFSMACTION_CONTINUE;	
-		}
+		}		
 			
 		case DLGRET_BT_MSGBOX:			
 		{	
@@ -2379,16 +2414,49 @@ static NextFSMAction BTApp_StateObexListServersHandler(CBTApp *pMe)
 			BTApp_ShowDialog(pMe, IDD_BT_MSGBOX);
 			return NFSMACTION_WAIT;
 		}
+
+		case DLGRET_PROMPT:			
+		{	
+			//MOVE_TO_STATE(BTAPPST_PROMPT)
+			//return NFSMACTION_CONTINUE;	
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_PROMPT);	
+            return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_FILE_PROGRESS:
+		{	
+			//MOVE_TO_STATE(BTAPPST_BT_FILE_PROGRESS)
+			//return NFSMACTION_CONTINUE;
+
+			pMe->m_bNotOverwriteDlgRet = FALSE;
+			BTApp_ShowDialog(pMe, IDD_BT_FILE_PROGRESS);
+			return NFSMACTION_WAIT;
+		}
+
+		case DLGRET_BT_EDIT:
+		{	
+			MOVE_TO_STATE(BTAPPST_BT_EDIT)
+			return NFSMACTION_CONTINUE;	
+		}
 			
 		case DLGRET_CANCELED:		
 		{	
-			MOVE_TO_STATE(BTAPPST_BT_SEND_FILE)
+			if (pMe->m_obex_list_id == IDD_BT_FTP_CLIENT)	
+			{
+				MOVE_TO_STATE(BTAPPST_FTP_CLIENT)
+			}
+			else 
+			{
+				MOVE_TO_STATE(BTAPPST_BT_SEND_FILE)
+			}
 			return NFSMACTION_CONTINUE;	
 		}
 
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
@@ -2464,7 +2532,7 @@ static NextFSMAction BTApp_StateFileProgressHandler(CBTApp *pMe)
 		
 		default:
 		{	
-			ASSERT_NOT_REACHABLE;
+			ASSERT_BT_NOT_REACHABLE;
 		}
 	}
 
