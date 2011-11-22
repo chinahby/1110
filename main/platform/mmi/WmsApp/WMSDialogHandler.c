@@ -9835,10 +9835,10 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 	AECHAR Annstr[20] = {0};
     WmsApp *pMe = (WmsApp *)pUser;
     boolean m_Issetmod = FALSE;
-#ifdef FEATURE_USES_MMS
+#ifdef FEATURE_USES_MMS     
     IMenuCtl *pMenuCtl = NULL;
-    uint32 dwMask;
 #endif
+    uint32 dwMask;
     MSG_FATAL("IDD_WRITEMSG_Handler Start eCode=0x%x, wParam=0x%x",eCode,wParam,0);
     if (NULL == pMe)
     {
@@ -9853,13 +9853,14 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
         }
     }
     MSG_FATAL("IDD_WRITEMSG_Handler Start 1",0,0,0);
-#ifdef FEATURE_USES_MMS
+#ifdef FEATURE_USES_MMS      
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveIDlg, IDC_WRITEMSG_MENU);
     if(NULL == pMenuCtl)
     {
+        MSG_FATAL("IDD_WRITEMSG_Handler Start NULL == pMenuCtl",0,0,0);
         return FALSE;
     }
-#endif
+#endif    
     MSG_FATAL("IDD_WRITEMSG_Handler Start 2",0,0,0);
     pIText = (ITextCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_WRITEMSG_TEXT);
 
@@ -9882,6 +9883,9 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 #endif
                 SetControlRect(pMe, pIText);
 #endif
+                dwMask = IDIALOG_GetProperties(pMe->m_pActiveIDlg); 
+                dwMask |= DLG_NOT_SET_FOCUS_AUTO;
+                IDIALOG_SetProperties(pMe->m_pActiveIDlg, dwMask);  
 
 #ifdef FEATURE_USES_MMS    
                 {
@@ -9892,9 +9896,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     AEERect rc={0};
                     AEEDeviceInfo devinfo={0};
                     MSG_FATAL("IDD_WRITEMSG_Handler EVT_DIALOG_INIT",0,0,0);
-                    dwMask = IDIALOG_GetProperties(pMe->m_pActiveIDlg);
-                    dwMask |= DLG_NOT_SET_FOCUS_AUTO;
-                    IDIALOG_SetProperties(pMe->m_pActiveIDlg, dwMask);                
+                                 
                     pMe->m_pMMSMenuHasFocus = FALSE;
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImagepszPath, sizeof(MMSImagepszPath));
                     ICONFIG_GetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSSoundpszPath, sizeof(MMSSoundpszPath));
@@ -10033,6 +10035,16 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
                         IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_WRITEMSG_TEXT);
                         IDISPLAY_UpdateEx(pMe->m_pDisplay, TRUE);          
+                    }
+                    else
+                    {
+                        IDIALOG_SetProperties((IDialog *)dwParam, DLG_NOT_REDRAW_AFTER_START);
+#if defined FEATURE_CARRIER_THAILAND_HUTCH || defined FEATURE_CARRIER_THAILAND_CAT
+                        ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT|TP_FOCUS_NOSEL);
+#else
+                        ITEXTCTL_SetProperties(pIText, TP_GRAPHIC_BG|TP_FRAME | TP_MULTILINE | TP_STARKEY_SWITCH | TP_DISPLAY_COUNT | TP_DISPLAY_SMSCOUNT | TP_NOUPDATE|TP_FOCUS_NOSEL);
+#endif
+                        SetControlRect(pMe, pIText);                        
                     }
                     MSG_FATAL("Menu count=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
                 }                
@@ -10736,21 +10748,27 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                 MSG_FATAL("EVT_CTL_SEL_CHANGED pMe->m_wSelectStore=%d", pMe->m_wSelectStore,0,0);
             }
             return TRUE;
-            
+          
         case EVT_KEY_PRESS:             
             switch(wParam)
             {
                 case AVK_UP:
                 case AVK_DOWN:
-                {
+                {                    
                     if((!pMe->m_isMMS) && (NULL == pMe->m_pMenu))
                     {
-                        IMENUCTL_SetActive(pMenuCtl, FALSE);
+                        MSG_FATAL("EVT_KEY_PRESS AVK_DOWN",0,0,0);
+                        if(pMenuCtl != NULL)
+                        {
+                            MSG_FATAL("EVT_KEY_PRESS AVK_DOWN 1",0,0,0);
+                            IMENUCTL_SetActive(pMenuCtl, FALSE);
+                        }
+                        MSG_FATAL("EVT_KEY_PRESS AVK_DOWN 2",0,0,0);
                         ITEXTCTL_SetActive(pIText, TRUE);
                         ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);                
                         IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_WRITEMSG_TEXT);
                         return TRUE;
-                    }                    
+                    }                          
                     if ((NULL == pMe->m_pMenu) && (IMENUCTL_GetItemCount(pMenuCtl) > 0))
                     {
                         MSG_FATAL("IMENUCTL_GetSel=%d, m_wSelectStore=%d, Count=%d", IMENUCTL_GetSel(pMenuCtl),pMe->m_wSelectStore,IMENUCTL_GetItemCount(pMenuCtl));                        
@@ -10772,11 +10790,12 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                         pMe->m_pMMSMenuHasFocus = TRUE;
                         IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_WRITEMSG_MENU);                       
                     }
-                    return TRUE;
+                    return TRUE;                   
                 } 
             }
             return TRUE;
-#endif            
+#endif
+
         case EVT_KEY:
             MSG_FATAL("IDD_WRITEMSG_Handler EVT_KEY",0,0,0);
             switch (wParam)
@@ -17764,10 +17783,10 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             {
                                 uint8 result = 0;
                                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] m_pMedia Play",0 ,0 , 0);
-                                result = IMEDIA_GetTotalTime(pMe->m_pMedia);
-                                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] result=%d",result ,0 , 0);
-                                result = IMEDIA_SetVolume((IMedia*)pMe->m_pMedia, 50); 
-                                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] result=%d",result ,0 , 0);
+                               // result = IMEDIA_GetTotalTime(pMe->m_pMedia);
+                               // MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] result=%d",result ,0 , 0);
+                                //result = IMEDIA_SetVolume(pMe->m_pMedia, 50); 
+                                //MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] result=%d",result ,0 , 0);
                                 result = IMEDIA_Play(pMe->m_pMedia);
                                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] result=%d",result ,0 , 0);
                              }   
@@ -18188,7 +18207,7 @@ static void WmsLoadSoundFromData(WmsApp *pMe,int nFragIndex,char* pMimeType)
 
     mediaData.clsData = MMD_BUFFER;
     mediaData.pData = pMmsData->fragment[nFragIndex].pContent;
-    mediaData.dwSize = rSize;
+    mediaData.dwSize = 0;
     
     RELEASEIF(pMe->m_pMedia);
 
