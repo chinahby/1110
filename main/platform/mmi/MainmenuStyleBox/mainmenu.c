@@ -163,7 +163,7 @@ static char* ICON_ANI[] =
     ICON12_ANI,
     ICON13_ANI,
 };
-
+ 
 static char* ICON_ANI_1[] =
 {
     ICON1_ANI_1,
@@ -2158,9 +2158,11 @@ static char* ICON_ANI[] =
     ICON11_ANI,
     ICON12_ANI,
 #elif defined (FEATURE_DISP_176X220)
+#ifndef FEATURE_VERSION_VG68
     ICON10_ANI,
     ICON11_ANI,
     ICON12_ANI,
+#endif
 #elif defined (FEATURE_DISP_240X320)
     ICON10_ANI,
     ICON11_ANI,
@@ -2199,9 +2201,11 @@ static char* ICON_ANI_1[] =
     ICON12_ANI_1,  
 #endif    
 #elif defined (FEATURE_DISP_176X220)
+#ifndef FEATURE_VERSION_VG68
     ICON10_ANI_1,
     ICON11_ANI_1,
     ICON12_ANI_1,  
+#endif
 #elif defined (FEATURE_DISP_240X320)
     ICON10_ANI_1,
     ICON11_ANI_1,
@@ -2720,6 +2724,17 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
     #endif
 #elif defined (FEATURE_DISP_176X220)
+#ifdef FEATURE_VERSION_VG68
+    pMe->m_IconTitle[0]     = IDS_MAIN_MENU_RECENTCALLS;
+    pMe->m_IconTitle[1]     = IDS_MAIN_MENU_MULTIMEDIA;
+    pMe->m_IconTitle[2]     = IDS_MAIN_MENU_CONTACTS;
+    pMe->m_IconTitle[3]     = IDS_MAIN_MENU_SCHEDULER;
+    pMe->m_IconTitle[4]     = IDS_MAIN_MENU_MESSAGES;
+    pMe->m_IconTitle[5]     = IDS_MAIN_MENU_TOOLS;
+    pMe->m_IconTitle[6]     = IDS_MAIN_MENU_SETTINGS;
+    pMe->m_IconTitle[7]     = IDS_MAIN_MENU_GAMES;
+    pMe->m_IconTitle[8]     = IDS_MAIN_MENU_UTK;
+#else
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
     pMe->m_IconTitle[2]     = IDS_MAIN_MENU_UTK;
@@ -2732,6 +2747,7 @@ static int CMainMenu_InitAppData(MainMenu *pMe)
     pMe->m_IconTitle[9]     = IDS_MAIN_MENU_SETTINGS;
     pMe->m_IconTitle[10]    = IDS_MAIN_MENU_GAMES;
     pMe->m_IconTitle[11]    = IDS_MAIN_MENU_CALCULATOR;
+#endif
 #elif defined (FEATURE_DISP_240X320)
     pMe->m_IconTitle[0]     = IDS_MAIN_MENU_MEDIAGALLERY;
     pMe->m_IconTitle[1]     = IDS_MAIN_MENU_CONTACTS;
@@ -3246,7 +3262,7 @@ void MainMenu_ShowDialog(MainMenu  *pMe,  uint16 dlgResId)
         }
 #endif
         ISHELL_GetDeviceInfo(pMe->m_pShell, &di);
-#if defined (FEATURE_VERSION_C01)
+#if defined (FEATURE_VERSION_C01)|| defined(FEATURE_VERSION_VG68)
         pMe->m_rc.x = 0;
         pMe->m_rc.y = 0;
         
@@ -3619,7 +3635,7 @@ static void CalculateScreenParameters(MainMenu *pMe)
     pMe->m_Icondefault_Pt[1].x = 42;
     pMe->m_Icondefault_Pt[1].y = 23;
     pMe->m_Icondefault_Pt[2].x = 86;
-    pMe->m_Icondefault_Pt[2].x = 23;
+    pMe->m_Icondefault_Pt[2].y = 23;
 
     pMe->m_Icondefault_Pt[3].x = 0;
     pMe->m_Icondefault_Pt[3].y = 64;

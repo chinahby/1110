@@ -564,7 +564,7 @@ static boolean Game_HandleEvent( IGame *pi,
     AEEDeviceInfo di; 
 
     ISHELL_GetDeviceInfo(pMe->m_pShell,&di); 
-	MSG_FATAL("Game_HandleEvent..................",0,0,0);
+	MSG_FATAL("Game_HandleEvent...eCode=%x,wParam=%x,",eCode,wParam,0);
     switch ( eCode)
     {
         case EVT_APP_START:
@@ -847,6 +847,7 @@ void Game_ShowDialog(Game  *pMe,  uint16 dlgResId)
     nRet = ISHELL_CreateDialog(pMe->m_pShell,GAME_RES_FILE_LANG,dlgResId,NULL);
     if (nRet != SUCCESS)
     {
+        return;
     }
 }
 

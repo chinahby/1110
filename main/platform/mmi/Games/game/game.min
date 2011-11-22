@@ -25,7 +25,7 @@ $(EXTLANG1)game.bar|fs:/mod/game/$(EXTLANG1)/game.bar
 endif
 ifneq ($(EXTLANG2),NO)
 CONSTFILE_FILES+=\
-$(EXTLANG2)game.bar|fs:/mod/application/$(EXTLANG2)/game.bar
+$(EXTLANG2)game.bar|fs:/mod/game/$(EXTLANG2)/game.bar
 endif
 
 

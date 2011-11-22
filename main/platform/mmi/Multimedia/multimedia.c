@@ -934,7 +934,7 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_CAMERA, IDS_MULTIMEDIA_CAMERA, NULL, 0);
 #endif
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_FMRADIO, IDS_MULTIMEDIA_FMRADIO, NULL, 0);
-#if defined	(FEATURE_VERSION_FLEXI203) || defined (FEATURE_VERSION_IVIO203) ||defined (FEATURE_VERSION_FLEXI203P)|| defined (FEATURE_VERSION_C500BE)
+#if defined	(FEATURE_VERSION_FLEXI203) || defined (FEATURE_VERSION_IVIO203) ||defined (FEATURE_VERSION_FLEXI203P)|| defined (FEATURE_VERSION_C500BE)||defined (FEATURE_VERSION_VG68)
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MUSICPLAYER, IDS_MULTIMEDIA_MUSICPLAYER, NULL, 0);
 #endif
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_RECORDER, IDS_MULTIMEDIA_RECORDER, NULL, 0);
@@ -943,6 +943,9 @@ static boolean Multimed_ListMenuHandler(Multimed *pMe, AEEEvent eCode, uint16 wP
 #endif
 #ifdef FEATURE_ANALOG_TV
             IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_TV, IDS_MULTIMEDIA_TV, NULL, 0);
+#endif
+#ifdef FEATURE_VERSION_VG68
+            IMENUCTL_AddItem(pMenu, MULTIMEDIA_RES_FILE_LANG,IDS_MULTIMEDIA_MEDIAGALLERY,IDS_MULTIMEDIA_MEDIAGALLERY, NULL, 0);
 #endif
             return TRUE;
             
@@ -1105,6 +1108,11 @@ static int StartApplet(Multimed *pMe, int i)
 #ifdef FEATURE_ANALOG_TV
         case IDS_MULTIMEDIA_TV:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_TVAPP);
+            break;
+#endif
+#ifdef FEATURE_VERSION_VG68
+        case IDS_MULTIMEDIA_MEDIAGALLERY:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_MEDIAGALLERY);
             break;
 #endif
 		default:

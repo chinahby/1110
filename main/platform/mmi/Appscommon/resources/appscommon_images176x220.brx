@@ -34,6 +34,12 @@
 	<Object Id="5011" Name="IDI_TEST_DOWN" MimeType="image/png">
 		<File>..\images\176x220\common\QuickTest\down.png</File>
 	</Object>
+	<Object Id="5012" Name="IDB_RSSI5">
+		<File>..\images\176x220\common\Annunciator\rssi5.bmp</File>
+	</Object>
+	<Object Id="5013" Name="IDB_RSSI6">
+		<File>..\images\176x220\common\Annunciator\rssi6.bmp</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
@@ -177,7 +183,7 @@
 	</Object>
 	<Object Id="5427" Name="IDI_MODE_MYANMAR" MimeType="image/png">
 		<File>..\images\176x220\common\IME\mya.png</File>
-	</Object>	
+	</Object>
 	<Object Id="5801" Name="IDB_TEMPLATE">
 		<File>..\images\176x220\common\Message\Icon\Template.bmp</File>
 	</Object>
@@ -429,13 +435,13 @@
 	</Object>
 	<Object Id="7045" Name="IDB_QQMSG">
 		<File>..\images\128x160\common\Annunciator\qqmsg.bmp</File>
-	</Object>	
+	</Object>
 	<Object Id="7046" Name="IDB_QQHIDING">
 		<File>..\images\128x160\common\Annunciator\qqhiding.bmp</File>
 	</Object>
 	<Object Id="7047" Name="IDB_QQLEAVE">
 		<File>..\images\128x160\common\Annunciator\qqleave.bmp</File>
-	</Object>			
+	</Object>
 	<Object Id="7101" Name="IDB_MMS_ENTER" MimeType="image/png">
 		<File>..\images\176x220\common\Appscommon\Icon\enter.png</File>
 	</Object>

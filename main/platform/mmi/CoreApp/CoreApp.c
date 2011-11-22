@@ -51,6 +51,8 @@
 #include "AEEDownload.h"
 #include "OEMDeviceNotifier.h"
 #include "gsdi.h"
+#include "Msg.h"
+
 /*==============================================================================
                                  
                                  宏定义和常数
@@ -2530,12 +2532,26 @@ SIDE EFFECTS
 ===========================================================================*/
 static int DBToLevel (int nDBVal)
 {
+    MSG_FATAL("DBToLevel",0,0,0);
+	#ifdef FEATURE_VERSION_VG68
     if (nDBVal < 92)
+        return ANNUN_STATE_RSSI_6;
+    else if(nDBVal<95)
+        return ANNUN_STATE_RSSI_5;
+    else if (nDBVal < 97)
+        return ANNUN_STATE_RSSI_4;
+    else if (nDBVal < 102)
+        return ANNUN_STATE_RSSI_3;
+    else if (nDBVal < 106)
+        return ANNUN_STATE_RSSI_2;
+	#else
+	if (nDBVal < 92)
         return ANNUN_STATE_RSSI_4;
     else if (nDBVal < 97)
         return ANNUN_STATE_RSSI_3;
     else if (nDBVal < 102)
         return ANNUN_STATE_RSSI_2;
+	#endif
     else if (nDBVal < 108)
         return ANNUN_STATE_RSSI_1;
     else

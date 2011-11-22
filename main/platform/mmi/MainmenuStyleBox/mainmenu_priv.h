@@ -46,9 +46,15 @@
 #define  MAX_MATRIX_COLS 3
 #endif
 #elif defined (FEATURE_DISP_176X220)
+#ifdef FEATURE_VERSION_VG68
+#define  MAX_MATRIX_ITEMS 9
+#define  MAX_MATRIX_ROWS 3
+#define  MAX_MATRIX_COLS 3
+#else
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS 4
 #define  MAX_MATRIX_COLS 3
+#endif
 #elif defined (FEATURE_DISP_240X320)
 #define  MAX_MATRIX_ITEMS 12
 #define  MAX_MATRIX_ROWS  4
@@ -243,9 +249,18 @@ typedef struct _MainMenu
 #define STARTARGPREFIX_VIEWDATA              'D'
 
 #ifndef FEATURE_DISP_128X128
-
 #ifdef FEATURE_VERSION_C01   
     #define ICON_ANI_BG    "fs:/image/mainmenu/Backgroud.png"
+#elif defined (FEATURE_VERSION_VG68)
+	#define ICON1_ANI      "fs:/image/mainmenu/qsc1100_06.png"
+    #define ICON2_ANI      "fs:/image/mainmenu/qsc1100_04.png"
+    #define ICON3_ANI      "fs:/image/mainmenu/qsc1100_02.png"
+    #define ICON4_ANI      "fs:/image/mainmenu/qsc1100_09.png"
+    #define ICON5_ANI      "fs:/image/mainmenu/qsc1100_05.png"
+    #define ICON6_ANI      "fs:/image/mainmenu/qsc1100_08.png"
+    #define ICON7_ANI      "fs:/image/mainmenu/qsc1100_10.png"
+    #define ICON8_ANI      "fs:/image/mainmenu/qsc1100_11.png"
+	#define ICON9_ANI      "fs:/image/mainmenu/qsc1100_03.png"
 #else
 	#define ICON1_ANI      "fs:/image/mainmenu/qsc1100_01.png"
     #define ICON2_ANI      "fs:/image/mainmenu/qsc1100_02.png"
@@ -290,6 +305,16 @@ typedef struct _MainMenu
     #define ICON7_ANI_1    "fs:/image/mainmenu/Setting.gif"         
     #define ICON8_ANI_1    "fs:/image/mainmenu/Game.gif"
     #define ICON9_ANI_1    "fs:/image/mainmenu/Net_Serve.gif"
+#elif defined (FEATURE_VERSION_VG68)
+	#define ICON1_ANI_1      "fs:/image/mainmenu/qsc1100_06_focus.png"
+    #define ICON2_ANI_1      "fs:/image/mainmenu/qsc1100_04_focus.png"
+    #define ICON3_ANI_1      "fs:/image/mainmenu/qsc1100_02_focus.png"
+    #define ICON4_ANI_1      "fs:/image/mainmenu/qsc1100_09_focus.png"
+    #define ICON5_ANI_1      "fs:/image/mainmenu/qsc1100_05_focus.png"
+    #define ICON6_ANI_1      "fs:/image/mainmenu/qsc1100_08_focus.png"
+    #define ICON7_ANI_1      "fs:/image/mainmenu/qsc1100_10_focus.png"
+    #define ICON8_ANI_1      "fs:/image/mainmenu/qsc1100_11_focus.png"
+	#define ICON9_ANI_1      "fs:/image/mainmenu/qsc1100_03_focus.png"
 #else
 	#define ICON1_ANI_1      "fs:/image/mainmenu/qsc1100_01_focus.png"
     #define ICON2_ANI_1      "fs:/image/mainmenu/qsc1100_02_focus.png"
