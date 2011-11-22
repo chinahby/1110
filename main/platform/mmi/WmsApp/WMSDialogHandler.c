@@ -17778,19 +17778,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].nResIndex,
                                 pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].type);
                             MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Play %d",pMe->m_pMedia ,0 , 0);
-                            
-                            if(pMe->m_pMedia)
-                            {
-                                uint8 result = 0;
-                                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] m_pMedia Play",0 ,0 , 0);
-                               // result = IMEDIA_GetTotalTime(pMe->m_pMedia);
-                               // MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] result=%d",result ,0 , 0);
-                                //result = IMEDIA_SetVolume(pMe->m_pMedia, 50); 
-                                //MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] result=%d",result ,0 , 0);
-                                result = IMEDIA_Play(pMe->m_pMedia);
-                                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] result=%d",result ,0 , 0);
-                             }   
-
                         }
                         else if(STRISTR(pMimeType, VIDEO_MIME_BASE))
                         {
@@ -17865,23 +17852,13 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             {
                 IMENUCTL_Redraw(pMenuCtl);  
                 ISTATIC_Redraw(pStatic);
-     /*           if(pMe->m_ResData.soundData.nCount)
+                if(pMe->m_pMedia)
                 {
-                    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Sound",0 ,0 , 0);
-                    WmsLoadSoundFromData(pMe,
-                        pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].nResIndex,
-                        pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].type);
-                    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Play %d",pMe->m_pMedia ,0 , 0);
-
-                    if(pMe->m_pMedia)
-                    {
-                        int nTime = 0;
-                        MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Play",0 ,0 , 0);
-                        nTime = IMEDIA_GetTotalTime(pMe->m_pMedia);
-                        IMEDIA_Play(pMe->m_pMedia);
-                     }   
-                }    */
-                //DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                    int nTime = 0;
+                    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Play",0 ,0 , 0);
+                    nTime = IMEDIA_GetTotalTime(pMe->m_pMedia);
+                    IMEDIA_Play(pMe->m_pMedia);
+                 }   
                 DRAW_BOTTOMBAR(BTBAR_BACK);
                 IDISPLAY_Update(pMe->m_pDisplay);         
                 return TRUE;
@@ -18194,7 +18171,7 @@ static void WmsLoadSoundFromData(WmsApp *pMe,int nFragIndex,char* pMimeType)
     rSize = pMmsData->fragment[nFragIndex].size;
 
     
-    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] pMimeType:%s", pMimeType, 0, 0);
+    DBGPRINTF("[IDD_VIEWMSG_MMS_Handler] pMimeType:%s, rSize=%d", pMimeType, rSize);
 
     cls = ISHELL_GetHandler(pMe->m_pShell,
         HTYPE_SOUND,
@@ -18207,8 +18184,7 @@ static void WmsLoadSoundFromData(WmsApp *pMe,int nFragIndex,char* pMimeType)
 
     mediaData.clsData = MMD_BUFFER;
     mediaData.pData = pMmsData->fragment[nFragIndex].pContent;
-    mediaData.dwSize = 0;
-    
+    mediaData.dwSize = rSize;
     RELEASEIF(pMe->m_pMedia);
 
     nResult = AEEMediaUtil_CreateMedia(pMe->m_pShell,&mediaData,&pMe->m_pMedia);

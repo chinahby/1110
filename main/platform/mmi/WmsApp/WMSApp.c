@@ -790,6 +790,7 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
     pMe->m_pMMSMenuHasFocus = FALSE;
     WMS_MMS_RELEASE();
 #endif    
+
     pMe->m_eAppStatus = WMSAPP_STOP;
     FREEIF(pMe->m_strPhonePWD);
 
