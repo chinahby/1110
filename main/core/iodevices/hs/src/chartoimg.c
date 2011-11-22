@@ -269,6 +269,7 @@ static void UpdateAnnunciators(AnnunciatorData *pAnnunData)
 #endif
 
   /* Check RSSI level */
+  MSG_FATAL("UpdateAnnunciators",0,0,0);
   switch( pAnnunData->rssi )
   {
     case 5:

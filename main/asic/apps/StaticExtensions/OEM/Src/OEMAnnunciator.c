@@ -209,7 +209,11 @@ typedef struct {
   {ANNUN_STATE_RSSI_1, IDB_RSSI1, NULL},
   {ANNUN_STATE_RSSI_2, IDB_RSSI2, NULL},
   {ANNUN_STATE_RSSI_3, IDB_RSSI3, NULL},
-  {ANNUN_STATE_RSSI_4, IDB_RSSI4, NULL}
+  {ANNUN_STATE_RSSI_4, IDB_RSSI4, NULL},
+#ifdef FEATURE_VERSION_VG68    
+  {ANNUN_STATE_RSSI_5, IDB_RSSI5, NULL},
+  {ANNUN_STATE_RSSI_6, IDB_RSSI6, NULL}
+#endif
 };
 /*1x/Wap/Roam*/
 static OEMState_data wap_image_data[]=
@@ -322,9 +326,13 @@ static OEMState_data qq_image_data[]=
  /*ANNUN_FIELD_RSSI*/
 OEMAnnun_content rssi_content =
 #ifndef FEATURE_USES_LOWMEM
-     {ANNUN_TYPE_IMAGE, 7, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
+#ifdef FEATURE_VERSION_VG68
+     {ANNUN_TYPE_IMAGE, 9, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
 #else
-     {ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
+     {ANNUN_TYPE_IMAGE, 7, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
+#endif
+#else
+    {ANNUN_TYPE_IMAGE, 6, ANNUN_STATE_RSSI_NO_SERV, (void *)rssi_image_data};
 #endif
 /*ANNUN_FIELD_WAP*/
 OEMAnnun_content wap_content =
@@ -571,9 +579,11 @@ static OEMAnnun_data Annunciators[] =
 };
 //lint +e545
 #define ANNUN_BUFFER_BITS    (10)
-
+#ifdef FEATURE_VERSION_VG68
+#define ANNUN_MAX_STATES     (9)//(7)
+#else
 #define ANNUN_MAX_STATES     (7)
-
+#endif
 /* Status of bitmap cache */
 static IANNUNCore *IAnnunCoreObj = NULL;
 

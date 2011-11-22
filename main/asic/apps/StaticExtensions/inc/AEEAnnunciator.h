@@ -99,6 +99,14 @@ typedef struct IAnnunciator IAnnunciator;
 // Mask to get the seven highest priority state
 #define ANNUN_SEVENTH_STATE   0x00000100
 #define ANNUN_SEVENTH_STATE_OFF   0xFFFFFEFE
+#ifdef FEATURE_VERSION_VG68
+// Mask to get the eight highest priority state
+#define ANNUN_EIGHTH_STATE   0x00000200
+#define ANNUN_EIGHTH_STATE_OFF   0xFFFFFDFE
+// Mask to get the nine highest priority state
+#define ANNUN_NINTH_STATE   0x00000400
+#define ANNUN_NINTH_STATE_OFF   0xFFFFFBFE
+#endif
 
 // Mask to know if the state is going to turn a state off
 #define ANNUN_TURN_OFF_STATE    0x00000002
@@ -137,6 +145,10 @@ typedef struct IAnnunciator IAnnunciator;
 #define ANNUN_STATE_RSSI_2                ANNUN_FIFTH_STATE
 #define ANNUN_STATE_RSSI_3                ANNUN_SIXTH_STATE
 #define ANNUN_STATE_RSSI_4                ANNUN_SEVENTH_STATE
+#ifdef FEATURE_VERSION_VG68
+#define ANNUN_STATE_RSSI_5                ANNUN_EIGHTH_STATE
+#define ANNUN_STATE_RSSI_6                ANNUN_NINTH_STATE
+#endif
 
 /*ANNUN_FIELD_WAP*/
 #define ANNUN_STATE_WAP_ON      ANNUN_FIRST_STATE
