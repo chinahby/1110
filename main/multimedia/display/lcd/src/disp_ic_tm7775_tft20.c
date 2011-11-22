@@ -152,7 +152,7 @@ static void disp_ic_setwindow(uint32 start_row, uint32 start_col, uint32 end_row
 static void disp_ic_sleep(boolean bin)
 {
     if(bin)
-    {//lcd_message("disp_ic_sleep");
+    {
          	
        LCD_WRITE_OUT(0x0007,0x0000);
        LCD_DELAY(25); 	
@@ -164,10 +164,8 @@ static void disp_ic_sleep(boolean bin)
         LCD_WRITE_OUT(0x0010,0x0000);
         LCD_DELAY(50);
         LCD_WRITE_OUT(0x0007,0x1017);
-	
-		//ERR_FATAL("disp_ic_sleep",0,0,0);
-    		LCD_DELAY(200);
-		//disp_ic_init();
+	    LCD_DELAY(200);
+		
     }
 
 }
@@ -187,7 +185,7 @@ static void disp_ic_rot(uint16 degree)
     return;
 }
 
-extern uint16 hxid;
+
 
 boolean disp_tm7775r_tft20(disp_drv_ic_type *pdispic)
 {
@@ -199,7 +197,7 @@ boolean disp_tm7775r_tft20(disp_drv_ic_type *pdispic)
     id1 = LCD_READ_DATA();
     id2 = LCD_READ_DATA();
     
-   // if(id1==0x77&&id2==0x75)
+    if(id1==0x77&&id2==0x75)
     {
         
         DISP_IC_INIT_TBL(pdispic);
