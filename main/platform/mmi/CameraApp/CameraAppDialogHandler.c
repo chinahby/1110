@@ -267,7 +267,9 @@ static const CCameraSize g_CameraSizeCFG[] =
 #elif defined(FEATURE_DISP_176X220)
     {176,220,L"176*220"}, // QCIF
     {240,320,L"240*320"}, // QVGA
+#ifndef FEATURE_VERSION_VG68
     {480,640,L"480*640"}, // VGA    
+#endif
 #elif defined(FEATURE_DISP_240X320)
     //{128,160,L"128*160"}, // FULL Screen
     //{176,220,L"176*220"}, // QCIF
@@ -2605,6 +2607,7 @@ static void CameraApp_PopMenu_SizeInit(CCameraApp *pMe, IMenuCtl *popMenu)
         	MSG_FATAL("CameraApp_PopMenu_SizeInit...........",0,0,0);
             if(pMe->m_sensor_model == 30)
             {
+                MSG_FATAL("add SizeItem",0,0,0);
                 if(g_CameraSizeCFG[i].dx == 0)
                 {
                     break;
