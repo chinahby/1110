@@ -717,6 +717,16 @@ typedef enum DLGRetValue
    ,DLGRET_INSERTFILE //add by xuhui 2011/08/01*/
 } DLGRetValue;
 
+#ifdef FEATURE_USES_MMS
+typedef enum
+{
+    PLAYER_IDLE   =  0,	
+	PLAYER_STOP,	 
+	PLAYER_PLAY,		
+	PLAYER_PAUSE,
+	PLAYER_ERROR
+} MMSMediaPlayerState;
+#endif
 
 #ifdef _MSC_VER
 #pragma pack(push,1)
@@ -899,7 +909,7 @@ typedef struct WmsApp
     WSP_MMS_RESOURCE                m_ResData;
     uint8                          m_wSelectStore;
     boolean                        m_pMMSMenuHasFocus;
-    //MMSData		                   m_mmsDataInfoList[MAX_MMS_STORED];
+	MMSMediaPlayerState      	   m_CurrentState;                    /*²¥·Å×´Ì¬*/
 #endif    
 } WmsApp;
 

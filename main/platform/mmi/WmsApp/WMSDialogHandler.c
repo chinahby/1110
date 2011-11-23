@@ -529,6 +529,7 @@ int DeleteMimeResFromMms(WmsApp *pMe,char* pPath);
 int MimeResCheckFileExist(WmsApp *pMe,char* pPath);
 int WMSMMS_GetResByExplorer(void* pv, FileNamesBuf pBuf, uint32 nBufSize);
 
+static void WMSMMS_MediaNotify(void * pUser, AEEMediaCmdNotify *pCmdNotify);
 
 #endif
 /*==============================================================================
@@ -17508,6 +17509,14 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
     {
         return FALSE;
     }
+
+    if (pMe->m_pMenu != NULL)
+    {
+        if (IMENUCTL_HandleEvent(pMe->m_pMenu, eCode, wParam, dwParam))
+        {
+            return TRUE;
+        }
+    }
     
     pStatic = (IStatic*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_STATIC);
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_MENU);
@@ -17546,7 +17555,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 uint8 menuItemIndex=1;
                 IImage* pIImage = NULL;
                 IImage* pISound = NULL;
-
+                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_INIT",0 ,0 , 0);
                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] g_mmsDataInfoMax=%d", g_mmsDataInfoMax,0,0);
                 dwMask = IDIALOG_GetProperties(pMe->m_pActiveIDlg);
                 dwMask |= DLG_NOT_SET_FOCUS_AUTO;
@@ -17684,21 +17693,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         
                         if (NULL != pFormatedText)
                         {
-                         /*   MEMSET(&ai, 0, sizeof(ai));
-                            ai.pszResText = CONTAPP_RES_FILE_LANG;
-                            ai.pszResImage = AEE_APPSCOMMONRES_IMAGESFILE;
-
-                            ai.wItemID   = menuItemIndex;
-                            ai.wImage    = IDB_HOMENUM;   
-                            if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
-                            {
-                                MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
-                                return EFAILED;
-                            }             
-                            IMENUCTL_SetItemText(pMenuCtl, menuItemIndex++, NULL, 0, pFormatedText);
-                            
-                            DBGPRINTF("pFormatedText=%s, ItemCount=%d", pFormatedText, IMENUCTL_GetItemCount(pMenuCtl));*/
-                            // 释放格式化消息时动态分配的空间
                             AEERect StaticRect={0};
                             boolean Status = ISTATIC_SetText(pStatic, NULL, pFormatedText,AEE_FONT_BOLD, AEE_FONT_BOLD);
                             StaticRect.x = 0;
@@ -17777,7 +17771,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             WmsLoadSoundFromData(pMe,
                                 pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].nResIndex,
                                 pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].type);
-                            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Play %d",pMe->m_pMedia ,0 , 0);
+                            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Play %d",pMe->m_pMedia ,0 , 0);                         
                         }
                         else if(STRISTR(pMimeType, VIDEO_MIME_BASE))
                         {
@@ -17839,26 +17833,46 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             return TRUE;
 
         case EVT_DIALOG_START:
+            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_START",0 ,0 , 0);
+            if(pMe->m_pMedia)
+            {
+                int result = 0;
+                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Play",0 ,0 , 0);
+                IMEDIA_Play(pMe->m_pMedia);
+                	//注册播放回调
+	            result = IMEDIA_RegisterNotify(pMe->m_pMedia, (PFNMEDIANOTIFY)WMSMMS_MediaNotify, pMe);
+                MSG_FATAL("IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_STAR result=%d", result,0,0);
+            } 
+            
             (void) ISHELL_PostEventEx(pMe->m_pShell, 
                                     EVTFLG_ASYNC,
                                     AEECLSID_WMSAPP,
                                     EVT_USER_REDRAW,
                                     0, 
-                                    0);
+                                    0);                 
             return TRUE;
 
         case EVT_USER_REDRAW:
             {
                 IMENUCTL_Redraw(pMenuCtl);  
                 ISTATIC_Redraw(pStatic);
-                if(pMe->m_pMedia)
+                MSG_FATAL("pMe->m_CurrentState=%d",pMe->m_CurrentState,0,0);
+                if(pMe->m_CurrentState == PLAYER_PAUSE)
                 {
-                    //int nTime = 0;
-                    MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Play",0 ,0 , 0);
-                    //nTime = IMEDIA_GetTotalTime(pMe->m_pMedia);
-                    IMEDIA_Play(pMe->m_pMedia);
-                 }   
-                DRAW_BOTTOMBAR(BTBAR_BACK);
+                    DRAW_BOTTOMBAR(BTBAR_OPTION_PLAY_BACK);
+                }
+                else if(pMe->m_CurrentState == PLAYER_PLAY)
+                {
+                    DRAW_BOTTOMBAR(BTBAR_OPTION_STOP_BACK);
+                }
+                else if(pMe->m_CurrentState == PLAYER_STOP)
+                {
+                    DRAW_BOTTOMBAR(BTBAR_OPTION_PLAY_BACK);
+                }
+                else
+                {
+                    DRAW_BOTTOMBAR(BTBAR_OPTION_STOP_BACK);
+                }
                 IDISPLAY_Update(pMe->m_pDisplay);         
                 return TRUE;
             }
@@ -17867,250 +17881,206 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 			return TRUE;
 
         case EVT_DIALOG_END:
+            if (NULL != pMe->m_pMenu)
+            {
+                IMENUCTL_Release(pMe->m_pMenu);
+                pMe->m_pMenu = NULL;
+            }            
             RELEASEIF(pMe->m_pMedia);
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:   
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
             return TRUE;
+
+        case EVT_KEY_RELEASE:
+            {
+                if (pMe->m_pMenu != NULL)
+                {
+                    return TRUE;
+                }
+            }
+            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);             
+            return TRUE;
             
-        case EVT_KEY_PRESS:
         case EVT_KEY:
-            MSG_FATAL("IDD_VIEWMSG_MMS_Handler EVT_KEY 0x%x",wParam,0,0);
-            switch(wParam)
+            switch (wParam)
             {
                 case AVK_CLR:
-                {
-                    int i;
-                    MSG_FATAL("IDD_VIEWMSG_MMS_Handler EVT_KEY AVK_CLR",0,0,0);
-                    
-                    CLOSE_DIALOG(DLGRET_CANCELED)
-                }    
-                return TRUE;
-
-				//Add By zzg 2010_09_09
-				case AVK_SEND:	
-				{
-					#if defined(FEATURE_VERSION_C01) 
-					{
-						nv_item_type	SimChoice;
-						OEMNV_Get(NV_SIM_SELECT_I,&SimChoice);
-						if(SimChoice.sim_select==AVK_SEND_TWO)
-						{
-							return TRUE;
-						}
-					}
-					#endif
-					if (pMe->m_currState == WMSST_VIEWINBOXMSG)
-                	{                	           
-	                    if (WSTRLEN(pMe->m_msCur.m_szNum) > 0)
-	                    {
-	                        // 调用呼叫接口，本 Applet 会被挂起，返回时回到当前状态
-	                        WMSExtApp_CallPhoneNumber(pMe, pMe->m_msCur.m_szNum, FALSE);
-	                    }
-					}
-					return TRUE;
-				}
-
-				case AVK_LEFT:
-				{
-				    switch(pMe->m_ResData.nIndex)
+#ifdef FEATURE_ALL_KEY_PAD
+                    if(dwParam == 1)
                     {
- /*                       case IDC_VIEWMSG_MMS_IMAGE:
+                        if (NULL != pMe->m_pMenu)
                         {
-                            
-                            pMe->m_ResData.imageData.nIndex = ((pMe->m_ResData.imageData.nIndex == 0) ?
-                                -- pMe->m_ResData.imageData.nIndex :
-                                pMe->m_ResData.imageData.nCount - 1);
-                        }
-                        break;
-                        case IDC_VIEWMSG_MMS_MUSICPROGRESS:
-                        {
-                            pMe->m_ResData.soundData.nIndex = ((pMe->m_ResData.soundData.nIndex == 0) ?
-                                -- pMe->m_ResData.soundData.nIndex :
-                                pMe->m_ResData.soundData.nCount - 1);
-                            
-                        }
-                        break;
-                        
-                        case IDC_VIEWMSG_MMS_MUSICPROGRESS:
-                        {
-                            pMe->m_ResData.videoData.nIndex = ((pMe->m_ResData.videoData.nIndex == 0) ?
-                                -- pMe->m_ResData.videoData.nIndex :
-                                pMe->m_ResData.videoData.nCount - 1);
-                        }
-                        break;
-*/                        
-                    }
-				    
-				}
-				break;
-
-				case AVK_RIGHT:
-				{
-/*				    switch(pMe->m_ResData.nIndex)
-                    {
-                        case IDC_VIEWMSG_MMS_IMAGE:
-                        {
-                            pMe->m_ResData.imageData.nIndex = ((++pMe->m_ResData.imageData.nIndex >= pMe->m_ResData.imageData.nCount) ?
-                                0 : 
-                                pMe->m_ResData.imageData.nIndex);
-                        }
-                        break;
-                        case IDC_VIEWMSG_MMS_MUSICPROGRESS:
-                        {
-                            pMe->m_ResData.soundData.nIndex = ((++pMe->m_ResData.soundData.nIndex >= pMe->m_ResData.soundData.nCount) ?
-                                0 : 
-                                pMe->m_ResData.soundData.nIndex);       
-                        }
-                        break;
-                        
-                        case IDC_VIEWMSG_MMS_MUSICPROGRESS:
-                        {
-                            pMe->m_ResData.videoData.nIndex = ((++pMe->m_ResData.videoData.nIndex >= pMe->m_ResData.videoData.nCount) ?
-                                0 : 
-                                pMe->m_ResData.videoData.nIndex);       
-                        }
-                        break;                        
-                    }*/
-				    
-				}
-				break;
-
-                case AVK_UP:
-                case AVK_DOWN:
-                {
- /*                   int nFoucedItemID = IDC_VIEWMSG_MMS_STATIC;
-                    switch(pMe->m_ResData.nIndex)
-                    {
-                        case IDC_VIEWMSG_MMS_STATIC:
-                        {
-                            nFoucedItemID = IDC_VIEWMSG_MMS_IMAGE; 
-                        }
-                        break;
-                        case IDC_VIEWMSG_MMS_IMAGE:
-                        {
-                            nFoucedItemID = IDC_VIEWMSG_MMS_MUSICPROGRESS; 
-                        }
-                        break;
-                        case IDC_VIEWMSG_MMS_MUSICPROGRESS:
-                        {
-                            nFoucedItemID = IDC_VIEWMSG_MMS_LIST; 
-                        }
-                        break;
-                        case IDC_VIEWMSG_MMS_LIST:
-                        default:
-                        {
-                            int nListItemIndex = IMENUCTL_GetSel(pMenuCtl);
-                            
-                            IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam);
-                            
-                            if( nListItemIndex >= IMENUCTL_GetItemCount(pMenuCtl))
-                            {
-                                nFoucedItemID = IDC_VIEWMSG_MMS_STATIC; 
-                            }  
-                        }
-                        break;
-                    }
-                    if(nFoucedItemID != pMe->m_ResData.nIndex)
-                    {
-                        pMe->m_ResData.nIndex = nFoucedItemID;
-                        IDIALOG_SetFocus(pMe->m_pActiveIDlg,nFoucedItemID);
-                    }
-                    (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);*/
-                }
-                return TRUE;
-                
-                case AVK_SELECT:
-                    //CLOSE_DIALOG(DLGRET_INFO)
-                return TRUE;
-  
-                case AVK_INFO:
-                {/*
-                    switch(pMe->m_ResData.nIndex)
-                    {
-                        case IDC_VIEWMSG_MMS_STATIC:
-                        {
-                            ;
-                        }
-                        break;
-                        case IDC_VIEWMSG_MMS_IMAGE:
-                        { 
-                            pMe->m_ResData.imageData.isDoing = !pMe->m_ResData.imageData.isDoing;
-
+                            IMENUCTL_Release(pMe->m_pMenu);
+                            pMe->m_pMenu = NULL;
                             (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                EVTFLG_ASYNC,
-                                AEECLSID_WMSAPP,
-                                EVT_USER_REDRAW,
-                                0, 
-                                0);  
+                                                EVTFLG_ASYNC,
+                                                AEECLSID_WMSAPP,
+                                                EVT_USER_REDRAW,
+                                                0, 
+                                                0);
                         }
-                        break;
-                        case IDC_VIEWMSG_MMS_MUSICPROGRESS:
+                    }
+                    else
+                    {
+                        CLOSE_DIALOG(DLGRET_CANCELED)
+                    }
+#else
+                    if (NULL == pMe->m_pMenu)
+                    {
+                        CLOSE_DIALOG(DLGRET_CANCELED)
+                    }
+                    else
+                    {
+                        MSG_FATAL("pMe->m_pMenu != NULL",0,0,0);
+                        IMENUCTL_Release(pMe->m_pMenu);
+                        pMe->m_pMenu = NULL;
+                        (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                                EVTFLG_ASYNC,
+                                                AEECLSID_WMSAPP,
+                                                EVT_USER_REDRAW,
+                                                0, 
+                                                0);
+                    }
+#endif      
+                    return TRUE;
+                       
+                    case AVK_SELECT:
+                        if (pMe->m_pMenu != NULL)
                         {
-                            boolean isMediaStateChange = FALSE;
-                            int nMediaState = MM_STATE_IDLE;
-                            if(pMe->m_pMedia)
+                            return TRUE;
+                        }
+                        // 显示弹出菜单
+                        if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_MENUCTL, 
+                                (void **) &pMe->m_pMenu) == SUCCESS)
+                        {
+                        
+                            AEERect rc={0};
+                            AEERect Temprc={0};
+                            
+                            // 动态添加菜单项
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_REPLY);
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_FORWARD);
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_CALL);
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_SAVE);    //Add By zzg 2010_09_11                     
+                            MENU_ADDITEM(pMe->m_pMenu, IDS_DELETE);
+                            // 设置菜单属性
+                            IMENUCTL_SetPopMenuRect(pMe->m_pMenu);
+
+                            IMENUCTL_SetProperties(pMe->m_pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+                            IMENUCTL_SetBottomBarType(pMe->m_pMenu,BTBAR_SELECT_BACK);
+                            
+                            IMENUCTL_SetActive(pMe->m_pMenu, TRUE);
+                            
+                            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                        }
+                        return TRUE;
+                    
+                    case AVK_INFO:
+                        if(pMe->m_pMenu == NULL)
+                        {
+                            if(pMe->m_pMedia != NULL)
                             {
-                                nMediaState = IMEDIA_GetState(pMe->m_pMedia,&isMediaStateChange);
-                                if(isMediaStateChange || nMediaState != MM_STATE_READY)
+                                int result = 0;
+                                MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] AVK_INFO m_CurrentState=%d",pMe->m_CurrentState ,0 , 0);
+                                if(pMe->m_CurrentState == PLAYER_PAUSE)
                                 {
-                                    IMEDIA_Stop(pMe->m_pMedia);
+                                    result = IMedia_Resume(pMe->m_pMedia);
+                                }
+                                else if(pMe->m_CurrentState == PLAYER_PLAY)
+                                {
+                                    result = IMedia_Pause(pMe->m_pMedia);
+                                }
+                                else if(pMe->m_CurrentState == PLAYER_STOP)
+                                {
+                                    result = IMedia_Play(pMe->m_pMedia);
                                 }
                                 else
                                 {
-                                    IMedia_Play(pMe->m_pMedia);
+                                    result = IMedia_Stop(pMe->m_pMedia);
                                 }
-                            }
-                            
-                            (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                    EVTFLG_ASYNC,
-                                    AEECLSID_WMSAPP,
-                                    EVT_USER_REDRAW,
-                                    0, 
-                                    0);
+                                MSG_FATAL("IDD_VIEWMSG_MMS_Handler] State=%d, result=%d", pMe->m_CurrentState, result, 0);
+                            }                           
+                            return TRUE;
                         }
+                        return IDD_WRITEMSG_Handler((void *)pMe, EVT_COMMAND, IDS_SEND, 0);
+                        
+                    default:
                         break;
-                        case IDC_VIEWMSG_MMS_LIST:
-                        default:
-                        {
-                            uint32* pData = NULL;
-                            int nIndex = IMENUCTL_GetSel(pMenuCtl);
-                            CtlAddItem item = {0};
-                            char szFilename[100] = "fs:/hsmm/others/";
-                            
-                            if(!IMENUCTL_GetItemData(pMenuCtl,nIndex,(uint32*)&pData) || pData == NULL)
-                            {
-                               MSG_FATAL("IDD_VIEWMSG_MMS_Handler ERROR: NOT GET ANY DATA",0,0,0);
-                               break;
-                            }   
-                            if(IMENUCTL_GetItem(pMenuCtl,nIndex,&item))
-                            {
-                                WSTRTOUTF8(item.pText,WSTRLEN(item.pText),(byte*)(szFilename + STRLEN((char*)szFilename)),sizeof(szFilename));
-                                MSG_FATAL("IDD_VIEWMSG_MMS_Handler ERROR: Item Name:%s",szFilename,0,0);
-                            } 
-                            WmsApp_SaveToFile(szFilename,pData,STRLEN((char*)pData));
-                        }
-                        break;
-                    }*/
-                }
-                    //CLOSE_DIALOG(DLGRET_INFO)
-                return TRUE;
+            }
+            return TRUE;
+
+        case EVT_COMMAND:
+            if (NULL != pMe->m_pMenu)
+            {
+                IMENUCTL_Release(pMe->m_pMenu);
+                pMe->m_pMenu = NULL;
+            }
+            switch(wParam)
+            {
+                // 播放
+                case IDS_REPLY:      
+                	(void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                        EVTFLG_ASYNC,
+                                        AEECLSID_WMSAPP,
+                                        EVT_USER_REDRAW,
+                                        0, 
+                                        0);                    
+                    //CLOSE_DIALOG(DLGRET_SEND)
+                    return TRUE;
+
+                // 转发
+                case IDS_FORWARD:      
+                	(void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                        EVTFLG_ASYNC,
+                                        AEECLSID_WMSAPP,
+                                        EVT_USER_REDRAW,
+                                        0, 
+                                        0);                    
+                    //CLOSE_DIALOG(DLGRET_SEND)
+                    return TRUE;
+
+                //呼叫
+                case IDS_CALL:  
+                	(void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                        EVTFLG_ASYNC,
+                                        AEECLSID_WMSAPP,
+                                        EVT_USER_REDRAW,
+                                        0, 
+                                        0);                    
+                    //CLOSE_DIALOG(DLGRET_SEND)
+                    return TRUE;
+
+                //保存
+                case IDS_SAVE:  
+                	(void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                        EVTFLG_ASYNC,
+                                        AEECLSID_WMSAPP,
+                                        EVT_USER_REDRAW,
+                                        0, 
+                                        0);                    
+                    //CLOSE_DIALOG(DLGRET_SEND)
+                    return TRUE;
+
+                // 删除
+                case IDS_DELETE:  
+                	(void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                        EVTFLG_ASYNC,
+                                        AEECLSID_WMSAPP,
+                                        EVT_USER_REDRAW,
+                                        0, 
+                                        0);                    
+                    //CLOSE_DIALOG(DLGRET_SEND)
+                    return TRUE;;
                     
                 default:
                     break;
             }
-            return TRUE;
-
+            
         default:
             break;
     }
-
     return FALSE;
 } // IDD_VIEWMSG_MMS_Handler
 
@@ -18447,6 +18417,52 @@ int WMSMMS_GetResByExplorer(void* pv, FileNamesBuf pBuf, uint32 nBufSize)
     }
     return EFAILED;
     
+}
+
+static void WMSMMS_MediaNotify(void * pUser, AEEMediaCmdNotify *pCmdNotify)
+{
+	WmsApp* pMe = (WmsApp*)pUser;
+	int          nSpecSize = 0;
+    MSG_FATAL("WMSMMS_MediaNotify nCmd=%d, nStatus=%d", pCmdNotify->nCmd, pCmdNotify->nStatus, 0);
+	if (pCmdNotify->nCmd == MM_CMD_PLAY)
+	{
+		switch(pCmdNotify->nStatus)
+		{
+			case  MM_STATUS_START:                          
+				pMe->m_CurrentState = PLAYER_PLAY;
+				break;
+                
+			case MM_STATUS_PAUSE:		/* pause的回调 */
+				pMe->m_CurrentState = PLAYER_PAUSE;
+                break;
+                
+			case MM_STATUS_RESUME:		/* resume的回调 */     
+				pMe->m_CurrentState = PLAYER_PLAY;
+				break;
+
+			case MM_STATUS_DONE:
+                pMe->m_CurrentState = PLAYER_STOP;
+				break;
+                
+			case MM_STATUS_ABORT:
+			{
+				//IPriorityMgr_UnregisterNotify(pThis->pIPriorityMgr, &pThis->PriorityHnd);
+			}
+			pMe->m_CurrentState = PLAYER_PAUSE;
+			break;
+			default:
+				break;		
+		}
+        if (NULL == pMe->m_pMenu)
+        {
+            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                EVTFLG_ASYNC,
+                                AEECLSID_WMSAPP,
+                                EVT_USER_REDRAW,
+                                0, 
+                                0);    
+        }
+	}
 }
 
 #endif
