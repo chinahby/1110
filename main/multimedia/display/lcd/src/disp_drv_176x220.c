@@ -37,6 +37,7 @@ INITIALIZATION AND SEQUENCING REQUIREMENTS
 extern boolean disp_ili9225b_tft20(disp_drv_ic_type *pdispic);
 extern boolean disp_nt35601_tft20(disp_drv_ic_type *pdispic);
 extern boolean disp_tm7775r_tft20(disp_drv_ic_type *pdispic);
+extern boolean disp_ili9225b_tft20_rot(disp_drv_ic_type *pdispic);
 
 /*============================================================================
 
