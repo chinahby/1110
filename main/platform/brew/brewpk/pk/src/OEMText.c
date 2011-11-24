@@ -6644,7 +6644,8 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
                    #endif
                 }                                        
             } 
-#ifdef FEATURE_VERSION_W516
+#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) 
+
             pContext->nMultitapCaps = MULTITAP_ALL_SMALL;
 #endif
             MSG_FATAL("pContext->nMultitapCaps=========%d",pContext->nMultitapCaps,0,0);
@@ -7497,6 +7498,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	            break;  
 	    }   
 	}		
+#ifdef FEATURE_ALL_KEY_PAD
 #elif defined (FEATURE_DISP_176X220)
     if(eCode == EVT_KEY_HELD)
     {
@@ -8349,6 +8351,7 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
 	            break;  
 	    }   
 	}	
+#endif
 #elif defined (FEATURE_DISP_240X320) || defined (FEATURE_DISP_320X240)
 #else
 	//MSG_FATAL("T9TextCtl_MultitapKey::1",0,0,0);
@@ -8499,9 +8502,10 @@ static boolean T9TextCtl_Cap_Lower_Rapid_Key(TextCtlContext *pContext,AEEEvent e
                    pContext->nMultitapCaps = MULTITAP_ALL_CAPS;
                 }                                        
             } 
-#ifdef FEATURE_VERSION_W516
+//#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) 
+
             pContext->nMultitapCaps = MULTITAP_ALL_CAPS;
-#endif
+//#endif
             sT9Status = T9HandleKey ( &pContext->sT9awFieldInfo.G, t9Key ); 
             MSG_FATAL("pContext->sT9awFieldInfo.G.psTxtBuf=%0x,=%d.....",pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart],pContext->wSelStart,0);
             #if 0//def FEATURE_T9_MT_ARABIC
@@ -12204,7 +12208,7 @@ boolean OEM_isFirstCap (OEMCONTEXT hTextField)
     boolean bRet = FALSE;
     int maxsymbolcount;
     int i,j;
-	#ifdef FEATURE_VERSION_W516
+	#if  defined(FEATURE_VERSION_W516) ||defined(FEATURE_VERSION_VG68) 
 	return FALSE;
 	#endif
     
