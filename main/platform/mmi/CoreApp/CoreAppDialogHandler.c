@@ -6906,7 +6906,6 @@ void CoreApp_Poweroff_Phone(void *pp)
     }
     CoreTask_SetPwrDnComplete(TRUE);
 }
-uint16 hxid;
 
 
 void CoreApp_Draw_Charger_image(void *pp)
@@ -6914,7 +6913,6 @@ void CoreApp_Draw_Charger_image(void *pp)
     CCoreApp *pMe = (CCoreApp *)pp;
     //AEEBatteryChargerStatus status;
     
-	MSG_FATAL("CoreApp_DrawChargeing hxid=%x",hxid,0,0);
     //CORE_ERR("%d  %d Charger_image",pMe->m_battery_count,pMe->m_bExtPwrState);
     IDISPLAY_ClearScreen(pMe->m_pDisplay);
     if(pMe->m_battery_count >= CHARGING_FRAME_COUNT)
