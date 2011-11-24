@@ -779,15 +779,19 @@ LOCAL boolean (*camsensor_detect_table[])(camsensor_function_table_type *, camct
 #ifdef USE_CAMSENSOR_SIC110A
   camsensor_sic110a_init,
 #endif
-
-
+#ifdef USE_CAMSENSOR_SID130B
+   NULL,
+#endif
+#ifdef USE_CAMSENSOR_MICRON_SIV121D_0M3
+    NULL,
+#endif
 #ifdef USE_CAMSENSOR_OV7675
   camsensor_ov7675_init
 #endif
 
 #endif /* FEATURE_NI_GPIO */
 };
-
+ 
 static void camsensor_create_fps_list
 (
   const camsensor_static_params_type * camsensor_params
