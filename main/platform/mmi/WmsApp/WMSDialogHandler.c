@@ -17815,6 +17815,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     }
                 }
                 pMe->m_CurrentState == PLAYER_IDLE;
+                MSG_FATAL("IDD_VIEWMSG_MMS_Handler init m_CurrentState=%d", pMe->m_CurrentState,0,0);
                 IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_MENU);
                 IMENUCTL_Redraw(pMenuCtl);
                 IMENUCTL_SetActive(pMenuCtl, TRUE);
@@ -17857,8 +17858,13 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 IMENUCTL_SetActive(pMenuCtl, TRUE);
                 IMENUCTL_Redraw(pMenuCtl);  
                 ISTATIC_Redraw(pStatic);
-                MSG_FATAL("pMe->m_CurrentState=%d",pMe->m_CurrentState,0,0);
-                if(pMe->m_CurrentState == PLAYER_IDLE)
+                MSG_FATAL("pMe->m_CurrentState=%d, soundData.nCount=%d",pMe->m_CurrentState,pMe->m_ResData.soundData.nCount,0);
+                if(pMe->m_ResData.soundData.nCount < 1)
+                {
+                    DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                    pMe->m_CurrentState == PLAYER_IDLE;
+                }
+                else if(pMe->m_CurrentState == PLAYER_IDLE)
                 {
                     DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
                 }
@@ -17890,8 +17896,14 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             {
                 IMENUCTL_Release(pMe->m_pMenu);
                 pMe->m_pMenu = NULL;
-            }            
+            }      
+            if(pMe->m_pMedia != NULL)
+            {
+                IMedia_Stop(pMe->m_pMedia);
+            }
             RELEASEIF(pMe->m_pMedia);
+            pMe->m_CurrentState == PLAYER_IDLE;
+            MEMSET(&pMe->m_ResData,NULL,sizeof(WSP_MMS_RESOURCE));
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:   
@@ -18522,11 +18534,9 @@ static void WMSMMS_MediaNotify(void * pUser, AEEMediaCmdNotify *pCmdNotify)
 				break;
                 
 			case MM_STATUS_ABORT:
-			{
-				//IPriorityMgr_UnregisterNotify(pThis->pIPriorityMgr, &pThis->PriorityHnd);
-			}
-			pMe->m_CurrentState = PLAYER_PAUSE;
-			break;
+    			pMe->m_CurrentState = PLAYER_PAUSE;
+    			break;
+                
 			default:
 				break;		
 		}
