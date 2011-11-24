@@ -10713,7 +10713,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
             return TRUE;
 #ifdef FEATURE_USES_MMS 
         case EVT_CTL_SEL_CHANGED:
-            if((pMenuCtl != NULL) && pMe->m_isMMS && ((NULL == pMe->m_pMenu)))
+            if((pMenuCtl != NULL) && pMe->m_isMMS && (NULL == pMe->m_pMenu))
             {
                 pMe->m_wSelectStore = wParam;
                 MSG_FATAL("m_wSelectStore=%d",pMe->m_wSelectStore,0,0);
@@ -17504,6 +17504,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
     IStatic * pStatic = NULL;
     IMenuCtl* pMenuCtl = NULL;
     uint32 dwMask;
+    static MMS_WSP_DEC_DATA *pDecdata = NULL;
     MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] eCode:0x%x, wParam=0x%x",eCode,wParam,0);
     if (NULL == pMe)
     {
@@ -17534,7 +17535,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 AECHAR wszTitle[32] = {0};
                 MMSData mmsDataInfoList[MAX_MMS_STORED];
                 WSP_MMS_DATA *pContent = NULL;
-                MMS_WSP_DEC_DATA *pDecdata = &pMe->m_DecData;
                 MMSData* pMmsDataInfoCur = NULL;
                 char* pMimeType = NULL;
                 
@@ -17552,11 +17552,11 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 CtlAddItem ai;
                 AEERect rc={0};
                 AEEDeviceInfo devinfo={0};
-                uint8 menuItemIndex=1;
                 IImage* pIImage = NULL;
                 IImage* pISound = NULL;
                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_INIT",0 ,0 , 0);
                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] g_mmsDataInfoMax=%d", g_mmsDataInfoMax,0,0);
+                pDecdata = &pMe->m_DecData;
                 dwMask = IDIALOG_GetProperties(pMe->m_pActiveIDlg);
                 dwMask |= DLG_NOT_SET_FOCUS_AUTO;
                 IDIALOG_SetProperties(pMe->m_pActiveIDlg, dwMask); 
@@ -17732,15 +17732,15 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] pIImage != NULL", 0, 0, 0);
                                 IIMAGE_SetParm(pIImage,IPARM_SCALE, 30, 30);
                                 MEMSET(&ai, 0, sizeof(ai));
-                                ai.wItemID   = menuItemIndex;
+                                ai.wItemID   = index;
                                 ai.pImage = pIImage;
                                 if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
                                 {
                                    MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
                                    return EFAILED;
                                 }   
-                                IMENUCTL_SetItemText(pMenuCtl, menuItemIndex++, NULL, 0, menuItemName);
-                                DBGPRINTF("Image menuItemName=%s, ItemCount=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl));
+                                IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);
+                                DBGPRINTF("Image menuItemName=%s, ItemCount=%d, wItemID=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl), ai.wItemID);
                             }
                         }
                         else if(STRISTR(pMimeType, SOUND_MIME_BASE))
@@ -17758,16 +17758,16 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             IIMAGE_SetParm(pISound,IPARM_SCALE, 30, 30);                        
                             MEMSET(&ai, 0, sizeof(ai));
                             MEMSET(&ai, 0, sizeof(ai));
-                            ai.wItemID   = menuItemIndex;
+                            ai.wItemID   = index;
                             ai.pImage = pISound;
                             if(FALSE == IMENUCTL_AddItemEx(pMenuCtl, &ai))
                             {
                                MSG_FATAL("Failed to Add Opts item %d", ai.wItemID,0,0);
                                return EFAILED;
                             }                   
-                            MSG_FATAL("SoundIndex=%d", menuItemIndex,0,0);
-                            IMENUCTL_SetItemText(pMenuCtl, menuItemIndex++, NULL, 0, menuItemName);   
-                            DBGPRINTF("Sound menuItemName=%s, ItemCount=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl));
+                            MSG_FATAL("SoundIndex=%d", index,0,0);
+                            IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);   
+                            DBGPRINTF("Sound menuItemName=%s, ItemCount=%d, wItemID=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl), ai.wItemID);
                             WmsLoadSoundFromData(pMe,
                                 pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].nResIndex,
                                 pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].type);
@@ -17854,10 +17854,15 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 
         case EVT_USER_REDRAW:
             {
+                IMENUCTL_SetActive(pMenuCtl, TRUE);
                 IMENUCTL_Redraw(pMenuCtl);  
                 ISTATIC_Redraw(pStatic);
                 MSG_FATAL("pMe->m_CurrentState=%d",pMe->m_CurrentState,0,0);
-                if(pMe->m_CurrentState == PLAYER_PAUSE)
+                if(pMe->m_CurrentState == PLAYER_IDLE)
+                {
+                    DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                }
+                else if(pMe->m_CurrentState == PLAYER_PAUSE)
                 {
                     DRAW_BOTTOMBAR(BTBAR_OPTION_PLAY_BACK);
                 }
@@ -17871,7 +17876,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 }
                 else
                 {
-                    DRAW_BOTTOMBAR(BTBAR_OPTION_STOP_BACK);
+                    DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
                 }
                 IDISPLAY_Update(pMe->m_pDisplay);         
                 return TRUE;
@@ -17890,7 +17895,10 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             return TRUE;
 
         case EVT_CTL_SEL_CHANGED:   
-            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            if (pMe->m_pMenu == NULL)
+            {
+                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+            }
             return TRUE;
 
         case EVT_KEY_RELEASE:
@@ -17970,7 +17978,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 
                             IMENUCTL_SetProperties(pMe->m_pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
                             IMENUCTL_SetBottomBarType(pMe->m_pMenu,BTBAR_SELECT_BACK);
-                            
+                            IMENUCTL_SetActive(pMenuCtl, FALSE);
                             IMENUCTL_SetActive(pMe->m_pMenu, TRUE);
                             
                             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
@@ -18054,12 +18062,71 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 
                 //±£´æ
                 case IDS_SAVE:  
-                	(void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                        EVTFLG_ASYNC,
-                                        AEECLSID_WMSAPP,
-                                        EVT_USER_REDRAW,
-                                        0, 
-                                        0);                    
+                    {
+                        char FilePath[MMS_MAX_CONTENT_NAME];  
+                        char* pMimeType = NULL;
+                        IFile* pIFile = NULL;
+            		    IFileMgr *pIFileMgr = NULL;                        
+                        uint8 MenuSelectdId = IMENUCTL_GetSel(pMenuCtl);
+            			int result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+                        MSG_FATAL("IDS_SAVE MenuSelectdId=%d", MenuSelectdId,0,0);
+            			if (SUCCESS != result)
+            		    {
+            				MSG_FATAL("MRS: Open file error %x", result,0,0);
+            				return TRUE;
+            		    } 
+                        if(pDecdata != NULL)
+                        {
+                            DBGPRINTF("MenuSelectdItem hContentType=%s", (const char*)pDecdata->message.mms_data.fragment[MenuSelectdId].hContentType);
+                            pMimeType = MMS_WSP_MineType2MormalMimeType((const char*)pDecdata->message.mms_data.fragment[MenuSelectdId].hContentType);
+                            if(pMimeType != NULL)
+                            {
+                                DBGPRINTF("pMimeType=%s", pMimeType);
+                            }
+                            if(STRISTR(pMimeType, IMAGE_MIME_BASE))
+                            {
+                                MSG_FATAL("IDS_SAVE IMAGE_MIME_BASE", 0,0,0);
+                                if (SUCCESS != IFILEMGR_Test(pIFileMgr, "fs:/hsmm/pictures"))
+                            	{
+                            	    (void)IFILEMGR_MkDir(pIFileMgr, "fs:/hsmm/pictures");
+                            	}  
+                                SPRINTF(FilePath,"fs:/hsmm/pictures/%s",(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
+                            }
+                            else if(STRISTR(pMimeType, SOUND_MIME_BASE))
+                            {
+                                MSG_FATAL("IDS_SAVE SOUND_MIME_BASE", 0,0,0);
+                                if (SUCCESS != IFILEMGR_Test(pIFileMgr, "fs:/hsmm/music"))
+                            	{
+                            	    (void)IFILEMGR_MkDir(pIFileMgr, "fs:/hsmm/music");
+                            	}                              
+                                SPRINTF(FilePath,"fs:/hsmm/music/%s",(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
+                            }
+                            if (SUCCESS == IFILEMGR_Test(pIFileMgr, FilePath))
+                        	{
+                        	    IFILEMGR_Remove(pIFileMgr, FilePath); 
+                        	}       
+                            MSG_FATAL("IDS_SAVE  1", 0,0,0);
+                            pIFile = IFILEMGR_OpenFile( pIFileMgr, FilePath, _OFM_CREATE);
+                            if ( pIFile != NULL )
+                            {
+                                MSG_FATAL("IDS_SAVE  pIFile != NULL ", 0,0,0);
+                                IFILE_Write( pIFile, pDecdata->message.mms_data.fragment[MenuSelectdId].pContent, pDecdata->message.mms_data.fragment[MenuSelectdId].size);
+                        
+                                MSG_FATAL("size=%d",pDecdata->message.mms_data.fragment[MenuSelectdId].size,0,0);
+                                IFILE_Release( pIFile);
+                                pIFile = NULL;
+                                IFILEMGR_Release(pIFileMgr);
+                                pIFileMgr = NULL;
+                            }
+                            MSG_FATAL("IDS_SAVE  2", 0,0,0);
+                        }
+                        (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                        EVTFLG_ASYNC,
+                        AEECLSID_WMSAPP,
+                        EVT_USER_REDRAW,
+                        0, 
+                        0);        
+                    }
                     //CLOSE_DIALOG(DLGRET_SEND)
                     return TRUE;
 
