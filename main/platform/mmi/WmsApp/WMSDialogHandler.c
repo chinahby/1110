@@ -17771,7 +17771,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             WmsLoadSoundFromData(pMe,
                                 pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].nResIndex,
                                 pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].type);
-                            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Play %d",pMe->m_pMedia ,0 , 0);                         
                         }
                         else if(STRISTR(pMimeType, VIDEO_MIME_BASE))
                         {
@@ -17815,6 +17814,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                        //ICONTROL_SetActive((IControl*)pListCtl,TRUE);
                     }
                 }
+                pMe->m_CurrentState == PLAYER_IDLE;
                 IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_MENU);
                 IMENUCTL_Redraw(pMenuCtl);
                 IMENUCTL_SetActive(pMenuCtl, TRUE);
@@ -18066,7 +18066,8 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         char FilePath[MMS_MAX_CONTENT_NAME];  
                         char* pMimeType = NULL;
                         IFile* pIFile = NULL;
-            		    IFileMgr *pIFileMgr = NULL;                        
+            		    IFileMgr *pIFileMgr = NULL; 
+                        uint8 step = 1;
                         uint8 MenuSelectdId = IMENUCTL_GetSel(pMenuCtl);
             			int result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
                         MSG_FATAL("IDS_SAVE MenuSelectdId=%d", MenuSelectdId,0,0);
@@ -18091,6 +18092,12 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             	    (void)IFILEMGR_MkDir(pIFileMgr, "fs:/hsmm/pictures");
                             	}  
                                 SPRINTF(FilePath,"fs:/hsmm/pictures/%s",(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
+                                while(SUCCESS == IFILEMGR_Test(pIFileMgr, FilePath))
+                                {
+                                    MEMSET(FilePath, 0, sizeof(FilePath));
+                                    SPRINTF(FilePath,"fs:/hsmm/pictures/(%d)%s", step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
+                                    //IFILEMGR_Remove(pIFileMgr, FilePath); 
+                                }  
                             }
                             else if(STRISTR(pMimeType, SOUND_MIME_BASE))
                             {
@@ -18100,11 +18107,14 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             	    (void)IFILEMGR_MkDir(pIFileMgr, "fs:/hsmm/music");
                             	}                              
                                 SPRINTF(FilePath,"fs:/hsmm/music/%s",(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
-                            }
-                            if (SUCCESS == IFILEMGR_Test(pIFileMgr, FilePath))
-                        	{
-                        	    IFILEMGR_Remove(pIFileMgr, FilePath); 
-                        	}       
+                                while(SUCCESS == IFILEMGR_Test(pIFileMgr, FilePath))
+                                {
+                                    MEMSET(FilePath, 0, sizeof(FilePath));
+                                    SPRINTF(FilePath,"fs:/hsmm/music/(%d)%s", step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
+                                    //IFILEMGR_Remove(pIFileMgr, FilePath); 
+                                }  
+                            }    
+                            DBGPRINTF("FilePath=%s",FilePath);
                             MSG_FATAL("IDS_SAVE  1", 0,0,0);
                             pIFile = IFILEMGR_OpenFile( pIFileMgr, FilePath, _OFM_CREATE);
                             if ( pIFile != NULL )
