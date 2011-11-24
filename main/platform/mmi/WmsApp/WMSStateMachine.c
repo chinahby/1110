@@ -6881,6 +6881,7 @@ static NextFSMAction WMSST_INBOX_MMS_Handler(WmsApp *pMe)
         case DLGRET_CREATE:
         case DLGRET_LOADCANCELED:
         case DLGRET_LOADFAILED:
+            MSG_FATAL("WMSST_INBOX_MMS_Handler DLGRET_CREATE",0,0,0);
             WmsApp_ShowDialog(pMe, IDD_MESSAGELIST);
             return NFSMACTION_WAIT;
             
@@ -6898,6 +6899,7 @@ static NextFSMAction WMSST_INBOX_MMS_Handler(WmsApp *pMe)
             pMe->m_eOptType = OPT_VIA_LISTMSG;
             MOVE_TO_STATE(WMSST_INMSGMMSOPTS)
             return NFSMACTION_CONTINUE;
+            
         case DLGRET_DELETE:
 #if 0            
         	//释放查看的消息内存
@@ -6907,7 +6909,7 @@ static NextFSMAction WMSST_INBOX_MMS_Handler(WmsApp *pMe)
             MOVE_TO_STATE(WMSST_DELMSGCONFIRM)
 #endif                
             return NFSMACTION_CONTINUE;
-            
+
         default:
             // 用退出程序代替宏断言
             MOVE_TO_STATE(WMSST_EXIT)
@@ -6963,6 +6965,21 @@ static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
             MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler DLGRET_INFO",0,0,0);
             pMe->m_eOptType = OPT_VIA_VIEWMSG;
             MOVE_TO_STATE(WMSST_INMSGMMSOPTS)
+            return NFSMACTION_CONTINUE;
+
+        case DLGRET_SAVE:
+            pMe->m_ePMsgType = MESSAGE_INFORMATIVE;
+            WmsApp_ShowMsgBox(pMe, IDS_SAVED);
+            return NFSMACTION_WAIT; 
+
+        case DLGRET_EFSFULL_MMS:
+            pMe->m_ePMsgType = MESSAGE_WARNNING;
+            WmsApp_ShowMsgBox(pMe, IDS_STOREINSUFFICIENCY);
+            return NFSMACTION_WAIT;
+
+        case DLGRET_MSGBOX_OK:  
+            MSG_FATAL("WMSST_INBOX_MMS_Handler DLGRET_MSGBOX_OK",0,0,0);
+            MOVE_TO_STATE(WMSST_VIEWINBOXMSG_MMS)
             return NFSMACTION_CONTINUE;
             
         default:

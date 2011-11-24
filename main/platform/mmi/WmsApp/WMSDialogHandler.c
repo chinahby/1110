@@ -18128,12 +18128,14 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             }    
                             DBGPRINTF("FilePath=%s",FilePath);
                             MSG_FATAL("IDS_SAVE  1", 0,0,0);
+                            result = EBADPARM;
                             pIFile = IFILEMGR_OpenFile( pIFileMgr, FilePath, _OFM_CREATE);
+                            result = IFILEMGR_GetLastError(pIFileMgr);
                             if ( pIFile != NULL )
                             {
                                 MSG_FATAL("IDS_SAVE  pIFile != NULL ", 0,0,0);
                                 IFILE_Write( pIFile, pDecdata->message.mms_data.fragment[MenuSelectdId].pContent, pDecdata->message.mms_data.fragment[MenuSelectdId].size);
-                        
+                                result = IFILEMGR_GetLastError(pIFileMgr);
                                 MSG_FATAL("size=%d",pDecdata->message.mms_data.fragment[MenuSelectdId].size,0,0);
                                 IFILE_Release( pIFile);
                                 pIFile = NULL;
@@ -18142,14 +18144,22 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             }
                             MSG_FATAL("IDS_SAVE  2", 0,0,0);
                         }
-                        (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                     /*   (void) ISHELL_PostEventEx(pMe->m_pShell, 
                         EVTFLG_ASYNC,
                         AEECLSID_WMSAPP,
                         EVT_USER_REDRAW,
                         0, 
-                        0);        
+                        0);  */
+                        MSG_FATAL("IFILEMGR_GetLastError =%d", result,0,0);
+                        if(result == SUCCESS)
+                        {
+                            CLOSE_DIALOG(DLGRET_SAVE)
+                        }
+                        else if(result == EFSFULL)
+                        {
+                            CLOSE_DIALOG(DLGRET_EFSFULL_MMS)
+                        }
                     }
-                    //CLOSE_DIALOG(DLGRET_SEND)
                     return TRUE;
 
                 // É¾³ý
@@ -18166,6 +18176,11 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 default:
                     break;
             }
+
+        case EVT_DISPLAYDIALOGTIMEOUT:
+            MSG_FATAL("IDD_VIEWMSG_MMS_Handler",0,0,0);
+            CLOSE_DIALOG(DLGRET_MSGBOX_OK)
+            return TRUE;
             
         default:
             break;
