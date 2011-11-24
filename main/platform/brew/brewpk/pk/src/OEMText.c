@@ -6694,6 +6694,40 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             	}
             }
             }
+            
+            #endif
+            #if defined(FEATURE_VERSION_VG68) || defined(FEATURE_T9_MT_THAI)            
+            MSG_FATAL("pContext->byMode=%d,t9Key=%d",pContext->byMode,t9Key,0);
+            if(pContext->byMode == 4)
+            {
+            	pContext->uModeInfo.mtap.kLast = key; 
+	            if(pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED)
+	            {
+	            	uint32 i,j;
+	            	uint32 AVK_Size = 0;
+	            	for(i = 0;i<MAX_THKEYPAD_NUMBER;i++)
+	            	{
+	            		if (key == VLTHCharKeyItem[i].wParam)
+            			{
+            				AVK_Size = VLTHCharKeyItem[i].wsize;
+            				if(pContext->m_curpos<AVK_Size)
+	            			{
+	            				pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = VLTHCharKeyItem[i].wp[pContext->m_curpos];
+	            			}
+	            			if(pContext->m_curpos<(AVK_Size-1))
+	            			{
+	            				pContext->m_curpos = pContext->m_curpos+1;
+	            				
+	            			}
+	            			else
+	            			{
+	            				pContext->m_curpos = 0;
+	            			}
+	            			MSG_FATAL("pContext->m_curpos==========%d",pContext->m_curpos,0,0);
+            		}
+	            	}
+	            }
+            }
             #endif
             //MSG_FATAL("pContext->sT9awFieldInfo.G.nCursor=%d",pContext->sT9awFieldInfo.G.nCursor,0,0);
             //MSG_FATAL("pContext->sT9awFieldInfo.G.nWordLen=%d",pContext->sT9awFieldInfo.G.nWordLen,0,0);
