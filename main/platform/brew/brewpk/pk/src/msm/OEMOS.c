@@ -646,7 +646,7 @@ extern boolean print_allocation(const char *fname, void *ptr);
 
 #if 1//ndef USES_RELEASE_VERSION
 #define HEAPNODE_NUM_MAX    10240
-
+#ifndef USES_RELEASE_VERSION
 typedef struct
 {
     void *ptr;
@@ -655,9 +655,10 @@ typedef struct
 }OEMOSHeapNode;
 
 static OEMOSHeapNode g_OEMOSHEAPNODES[HEAPNODE_NUM_MAX];
-
+#endif
 void *OEMOS_DbgMark(void *ptr,const char *cpszFile, int nLine)
 {
+#ifndef USES_RELEASE_VERSION
     OEMOSHeapNode *pNode = g_OEMOSHEAPNODES;
     int i;
     
@@ -672,11 +673,13 @@ void *OEMOS_DbgMark(void *ptr,const char *cpszFile, int nLine)
         }
         pNode++;
     }
+#endif
     return ptr;
 }
 
 void *OEMOS_DbgReallocMark(void *ptr, void *oldptr, const char *cpszFile, int nLine)
 {
+#ifndef USES_RELEASE_VERSION
     OEMOSHeapNode *pNode = g_OEMOSHEAPNODES;
     int i;
     
@@ -691,11 +694,13 @@ void *OEMOS_DbgReallocMark(void *ptr, void *oldptr, const char *cpszFile, int nL
         }
         pNode++;
     }
+#endif
     return ptr;
 }
 
 void OEMOS_DbgUnMark(PFNNOTIFY pfn,void *ptr,const char *cpszFile, int nLine)
 {
+#ifndef USES_RELEASE_VERSION
     OEMOSHeapNode *pNode = g_OEMOSHEAPNODES;
     int i;
     
@@ -717,10 +722,12 @@ void OEMOS_DbgUnMark(PFNNOTIFY pfn,void *ptr,const char *cpszFile, int nLine)
     {
         DBGPRINTF("***Free 0x%08X %s %d",ptr,cpszFile,nLine);
     }
+#endif    
 }
 
 void OEMOS_DbgDump(void)
 {
+#ifndef USES_RELEASE_VERSION
     OEMOSHeapNode *pNode = g_OEMOSHEAPNODES;
     int i;
     
@@ -732,10 +739,12 @@ void OEMOS_DbgDump(void)
         }
         pNode++;
     }
+#endif
 }
 
 static void OEMOS_PrintPtrInfo(void *ptr)
 {
+#ifndef USES_RELEASE_VERSION
     OEMOSHeapNode *pNode = g_OEMOSHEAPNODES;
     int i;
     
@@ -748,6 +757,7 @@ static void OEMOS_PrintPtrInfo(void *ptr)
         }
         pNode++;
     }
+#endif
 }
 #endif
 
