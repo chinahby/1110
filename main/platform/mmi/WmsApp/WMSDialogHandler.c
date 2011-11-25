@@ -18120,6 +18120,21 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                     //IFILEMGR_Remove(pIFileMgr, FilePath); 
                                 }  
                             }    
+                            else
+                            {
+                                MSG_FATAL("IDS_SAVE SOUND_MIME_BASE", 0,0,0);
+                                if (SUCCESS != IFILEMGR_Test(pIFileMgr, "fs:/hsmm/other"))
+                            	{
+                            	    (void)IFILEMGR_MkDir(pIFileMgr, "fs:/hsmm/other");
+                            	}                              
+                                SPRINTF(FilePath,"fs:/hsmm/other/%s",(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));
+                                while(SUCCESS == IFILEMGR_Test(pIFileMgr, FilePath))
+                                {
+                                    MEMSET(FilePath, 0, sizeof(FilePath));
+                                    SPRINTF(FilePath,"fs:/hsmm/other/(%d)%s", step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
+                                    //IFILEMGR_Remove(pIFileMgr, FilePath); 
+                                }                                  
+                            }
                             DBGPRINTF("FilePath=%s",FilePath);
                             MSG_FATAL("IDS_SAVE  1", 0,0,0);
                             result = EBADPARM;
