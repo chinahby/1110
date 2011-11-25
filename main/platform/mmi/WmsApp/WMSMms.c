@@ -4236,9 +4236,12 @@ void WMS_MMSWaitStack(void *pShell)
     ISHELL_SetTimer(pShell,2000,&WMS_MMSWaitStack,pShell);
 }
 void WMS_MMS_RELEASE()
-{
-    IVector_RemoveAllElements(pSocketParam);
-    RELEASEIF(pSocketParam);
+{    
+    if(pSocketParam != NULL)
+    {
+        IVector_RemoveAllElements(pSocketParam);
+        RELEASEIF(pSocketParam);
+    }
     WMS_MMS_BUFFERRelease();
 }
 
