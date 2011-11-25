@@ -553,6 +553,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     pMe->m_GetStatus = HTTP_CODE_OK;
     pMe->m_wSelectStore = 1;
     pMe->m_pMMSMenuHasFocus = FALSE;
+    pMe->m_CurrentState = PLAYER_IDLE;
 #endif
     // 初始化各成员变量
     pMe->m_prevState = WMSST_NONE;
@@ -2074,7 +2075,7 @@ Exit:
                         MSG_FATAL("pDecData->message.hFrom=%s",(char*)&pDecData->message.hFrom,0,0);
                         MSG_FATAL("pDecData->message.hFrom=%s",pDecData->message.hTo,0,0);
                         MSG_FATAL("pDecData->message.hFrom=%s,",pDecData->message.hCc,0,0);
-#ifdef MMS_TEST
+#if 0//def MMS_TEST
                         MSG_FATAL("IFILEMGR_OpenFile pDecData->message.mms_data.frag_num=%d",pDecData->message.mms_data.frag_num,0,0);
                         for(;i < pDecData->message.mms_data.frag_num; i ++)
                         {

@@ -288,6 +288,7 @@ NextFSMAction WmsApp_ProcessState(WmsApp *pMe)
     {
         pMe->m_isPopMenu = FALSE;
     }
+    MSG_FATAL("WmsApp_ProcessState pMe->m_currState=%d", pMe->m_currState, 0, 0);
     // 根据WMS applet状态，调用相应的状态处理函数
     switch (pMe->m_currState)
     {
@@ -2968,6 +2969,7 @@ static NextFSMAction WMSST_TONUMLIST_Handler(WmsApp *pMe)
 ==============================================================================*/
 static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
 {
+    MSG_FATAL("WMSST_WRITEMSG_Handler Start",0,0,0);
     if (NULL == pMe)
     {
         return NFSMACTION_WAIT;
@@ -3080,6 +3082,7 @@ static NextFSMAction WMSST_WRITEMSG_Handler(WmsApp *pMe)
 
         // 用户在输入界面，选择发送/发送至多人
         case DLGRET_SEND:
+            MSG_FATAL("WMSST_WRITEMSG_Handler m_eCreateWMSType=%d", pMe->m_eCreateWMSType,0,0);
             pMe->m_ContinueSendType = NONE_CONTINUE;
 #ifdef FEATURE_CARRIER_THAILAND_HUTCH           
             // Hutch 不允许发空白短信
@@ -6980,6 +6983,94 @@ static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
         case DLGRET_MSGBOX_OK:  
             MSG_FATAL("WMSST_INBOX_MMS_Handler DLGRET_MSGBOX_OK",0,0,0);
             MOVE_TO_STATE(WMSST_VIEWINBOXMSG_MMS)
+            return NFSMACTION_CONTINUE;
+            
+        case DLGRET_REPLY:
+            {// 对于回复操作不再进入地址列表输入界面
+                AECHAR  *pwstrNum = NULL;
+                CMultiSendItemInfo *pItem = NULL;
+                MSG_FATAL("WMSST_VIEWINBOXMSG_MMS_Handler DLGRET_REPLY",0,0,0);
+                //释放查看的消息内存
+                WMSMessageStruct_Free(pMe);
+                //ADD BY YANGDECAI 2010-08-16
+                // 先清空群发地址链表
+                WmsApp_FreeMultiSendList(pMe->m_pSendList);
+                
+                // 拷贝回复地址 
+#if defined(FEATURE_CARRIER_VENEZUELA_MOVILNET)
+                // 该运营商要求回复短信时 CBN 优先
+                if (WSTRLEN(pMe->m_msCur.m_szCallBkNum)>0)
+                {
+                    pwstrNum = pMe->m_msCur.m_szCallBkNum;
+                }
+                else if (WSTRLEN(pMe->m_msCur.m_szNum)>0)
+                {
+                    pwstrNum = pMe->m_msCur.m_szNum;
+                }
+#else
+                // 运营商要求回复短信时缺省地址取Originating Address
+                if (WSTRLEN(pMe->m_msCur.m_szNum)>0)
+                {
+                    pwstrNum = pMe->m_msCur.m_szNum;
+                }
+                else if (WSTRLEN(pMe->m_msCur.m_szCallBkNum)>0)
+                {
+                    pwstrNum = pMe->m_msCur.m_szCallBkNum;
+                }
+#endif                
+                DBGPRINTF("pwstrNum=%S",pwstrNum);
+                if (NULL != pwstrNum)
+                { 
+                    pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
+                }
+                    
+                // 将回复号码保存入链表
+                if ((pItem == NULL) || 
+                    (SUCCESS != IVector_AddElement(pMe->m_pSendList, pItem)))
+                {
+                    MMSData	mmsDataInfoList[MAX_MMS_STORED];
+                    AECHAR  wstrNum[MAX_PH_DIGITS+1];
+                    (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                       CFGI_MMSINDATA_INFO,
+                                       (void*)mmsDataInfoList,
+                                       sizeof(mmsDataInfoList));  
+                    
+                    DBGPRINTF("mmsDataInfoList[%d].phoneNumber=%s, length=%d",pMe->m_wSelItemxuhao-1, 
+                        mmsDataInfoList[pMe->m_wSelItemxuhao-1].phoneNumber, STRLEN(mmsDataInfoList[pMe->m_wSelItemxuhao-1].phoneNumber));
+                    DBGPRINTF("MMSDataFileName=%s,g_mmsDataInfoMax=%d",mmsDataInfoList[g_mmsDataInfoMax-1].MMSDataFileName, g_mmsDataInfoMax);
+                    (void)STRTOWSTR(mmsDataInfoList[pMe->m_wSelItemxuhao-1].phoneNumber, wstrNum, sizeof(wstrNum));
+                    if (NULL == pItem)
+                    { 
+                        pItem = (CMultiSendItemInfo *)sys_malloc(sizeof(CMultiSendItemInfo));
+                    }
+                    if(SUCCESS != IVector_AddElement(pMe->m_pSendList, pItem))
+                    {
+                        MSG_FATAL("WMSST_VIEWINBOXMSG_MMS_Handler IVector_AddElement Faild",0,0,0);
+                    }
+                    (void)WSTRCPY(pItem->m_szTo, wstrNum);
+                }
+                pMe->m_CurAddID = MSG_CMD_BASE;
+                
+                // 从电话本中取人名, 用于提示
+                WMSUtil_GetContactName(pMe, pItem->m_szTo, pItem->m_szName, MAX_TITLE_LEN);
+                
+                DBGPRINTF("pItem->m_szName=%s", pItem->m_szName);
+            }
+            
+            pMe->m_STSwitchToEditMsg = pMe->m_currState;
+            pMe->m_eCreateWMSType = SEND_MSG_REPLY;
+            pMe->m_dwInsertPos = 0;
+            
+            // 结构数据清零
+            WMSMessageStruct_Reset(&pMe->m_msSend);
+            
+            MOVE_TO_STATE(WMSST_WRITEMSG)
+            return NFSMACTION_CONTINUE;
+            
+
+        case DLGRET_WRITEMSG:
+            MSG_FATAL("WMSST_VIEWINBOXMSG_MMS_Handler DLGRET_WRITEMSG",0,0,0);
+            MOVE_TO_STATE(WMSST_WRITEMSG)
             return NFSMACTION_CONTINUE;
             
         default:

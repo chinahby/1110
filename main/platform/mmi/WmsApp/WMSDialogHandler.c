@@ -18039,15 +18039,9 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             }
             switch(wParam)
             {
-                // 播放
-                case IDS_REPLY:      
-                	(void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                        EVTFLG_ASYNC,
-                                        AEECLSID_WMSAPP,
-                                        EVT_USER_REDRAW,
-                                        0, 
-                                        0);                    
-                    //CLOSE_DIALOG(DLGRET_SEND)
+                // 回复
+                case IDS_REPLY:                       
+                    CLOSE_DIALOG(DLGRET_REPLY)
                     return TRUE;
 
                 // 转发
