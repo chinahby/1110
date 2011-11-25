@@ -554,6 +554,7 @@ static int CWmsApp_InitAppData(WmsApp *pMe)
     pMe->m_wSelectStore = 1;
     pMe->m_pMMSMenuHasFocus = FALSE;
     pMe->m_CurrentState = PLAYER_IDLE;
+    pMe->m_isForward = FALSE;
 #endif
     // 初始化各成员变量
     pMe->m_prevState = WMSST_NONE;
@@ -787,6 +788,7 @@ static void CWmsApp_FreeAppData(WmsApp *pMe)
     FREEIF(pMe->m_EncData.pMessage);
     FREEIF(pMe->m_MMSData);
     pMe->m_isMMS = FALSE;
+    pMe->m_isForward = FALSE;
     pMe->m_wSelectStore = 1;
     pMe->m_pMMSMenuHasFocus = FALSE;
     WMS_MMS_RELEASE();

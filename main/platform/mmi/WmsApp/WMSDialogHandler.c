@@ -7492,6 +7492,28 @@ static boolean IDD_SENDING_Handler(void *pUser,
 #ifdef FEATURE_USES_MMS
                 if(pMe->m_isMMS)    
                 {
+                    if(pMe->m_isForward)//如果是转发进来的，必须把转发的临时文件给删掉
+                    {
+                        IFile* pIFile = NULL;
+            		    IFileMgr *pIFileMgr = NULL;                             
+                        AEEFileInfo myInfo;
+                        int result = 0;
+                        result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+                        if( IFILEMGR_EnumInit(pIFileMgr, "fs:/hsmm/MMSTemp", FALSE ) == SUCCESS )
+                        {
+                            while( IFILEMGR_EnumNext(pIFileMgr, &myInfo ) )
+                            {
+                                result = IFILEMGR_Remove(pIFileMgr, myInfo.szName);
+                                if( result != SUCCESS )
+                                {
+                                    DBGPRINTF( "File %s could not be removed result=%d", myInfo.szName, result );
+                                }
+                                DBGPRINTF( "File name %s", myInfo.szName );
+                            }
+                            IFILEMGR_RmDir(pIFileMgr, "fs:/hsmm/MMSTemp");
+                        }
+                        pMe->m_isForward = FALSE;
+                    }                    
                     //MSG_FATAL("MMS_GetSocketReadStatus()=%d",MMS_GetSocketReadStatus(),0,0);
                     //if(MMS_GetSocketReadStatus() == HTTP_CODE_OK)
                     if(pMe->m_SendStatus == HTTP_CODE_OK)
@@ -18045,15 +18067,137 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                     return TRUE;
 
                 // 转发
-                case IDS_FORWARD:      
-                	(void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                        EVTFLG_ASYNC,
-                                        AEECLSID_WMSAPP,
-                                        EVT_USER_REDRAW,
-                                        0, 
-                                        0);                    
-                    //CLOSE_DIALOG(DLGRET_SEND)
+                case IDS_FORWARD:     
+                {
+                    uint8 index = 0;
+                    int rSize = 0;
+                    char* pMimeType = NULL;
+                    AECHAR *pFormatedText = NULL;
+                    char FilePath[MMS_MAX_CONTENT_NAME];  
+                    for(; index < pDecdata->message.mms_data.frag_num; index++)
+                    {
+                        if(STRISTR((char*)(pDecdata->message.mms_data.fragment[index].hContentType), "text/"))
+                        {
+                            char* pContentText = NULL;
+                            rSize = pDecdata->message.mms_data.fragment[index].size;
+                            
+                            MSG_FATAL("index=%d,hContentType=%s",index,(char*)(pDecdata->message.mms_data.fragment[index].hContentType),0);
+                            if(STRSTR((char*)pDecdata->message.mms_data.fragment[index].hContentEnCode,"utf-8"))
+                            {
+                                pContentText = (char*)MALLOC(rSize + 4);// 4 format token
+                                pContentText[0] = 0xef;
+                                pContentText[1] = 0xbb;
+                                pContentText[2] = 0xbf;
+                                MEMCPY((void*)&pContentText[3],(void*)pDecdata->message.mms_data.fragment[index].pContent,rSize);
+                                rSize += 3;
+                            }
+                            else
+                            {
+                                MEMCPY((void*)pContentText,(void*)pDecdata->message.mms_data.fragment[index].pContent,rSize);
+                            }
+                            pFormatedText = (AECHAR *)MALLOC((rSize*sizeof(AECHAR)));
+                            MEMSET((void*)pFormatedText, 0, rSize*sizeof(AECHAR));
+                            MSG_FATAL("size=%d", rSize,0,0);
+                            DBGPRINTF("IDD_VIEWMSG_MMS_Handler pContent=%s", pDecdata->message.mms_data.fragment[index].pContent);
+                            
+                            UTF8TOWSTR((byte*)pContentText,rSize, pFormatedText, rSize*sizeof(AECHAR));
+                            DBGPRINTF("pContent=%S", pFormatedText);
+                            FREEIF(pContentText);
+                            
+                            if (NULL != pFormatedText)
+                            {
+                                pMe->m_msSend.m_szMessage = WSTRDUP(pFormatedText);
+                                FREEIF(pFormatedText);
+                            }
+                        }
+                        else if(pMimeType = MMS_WSP_MineType2MormalMimeType((const char*)pDecdata->message.mms_data.fragment[index].hContentType))
+                        {
+                            IFile* pIFile = NULL;
+        		            IFileMgr *pIFileMgr = NULL;
+                            int result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+                            pMe->m_isMMS = TRUE;
+                            MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] pMimeType:%d", pMimeType, 0, 0);
+                            if(pDecdata != NULL)
+                            {
+                                DBGPRINTF("MenuSelectdItem hContentType=%s", (const char*)pDecdata->message.mms_data.fragment[index].hContentType);
+                                pMimeType = MMS_WSP_MineType2MormalMimeType((const char*)pDecdata->message.mms_data.fragment[index].hContentType);
+                                if (SUCCESS != IFILEMGR_Test(pIFileMgr, "fs:/hsmm/MMSTemp"))
+                                {
+                                    (void)IFILEMGR_MkDir(pIFileMgr, "fs:/hsmm/MMSTemp");
+                                }  
+                                SPRINTF(FilePath,"fs:/hsmm/MMSTemp/%s",(char*)(pDecdata->message.mms_data.fragment[index].hContentName));
+                                DBGPRINTF("FilePath=%s",FilePath);
+                                result = EBADPARM;
+                                if(IFILEMGR_Test(pIFileMgr, FilePath) ==  SUCCESS)
+                                {
+                                    IFILEMGR_Remove(pIFileMgr, FilePath);
+                                }
+                                pIFile = IFILEMGR_OpenFile( pIFileMgr, FilePath, _OFM_CREATE);
+                                result = IFILEMGR_GetLastError(pIFileMgr);
+                                if ( (pIFile != NULL ) && (result == SUCCESS))
+                                {
+                                    MSG_FATAL("IDS_SAVE  pIFile != NULL ", 0,0,0);
+                                    IFILE_Write( pIFile, pDecdata->message.mms_data.fragment[index].pContent, pDecdata->message.mms_data.fragment[index].size);
+                                    result = IFILEMGR_GetLastError(pIFileMgr);
+                                    MSG_FATAL("size=%d",pDecdata->message.mms_data.fragment[index].size,0,0);
+                                }
+
+                                if(result == EFSFULL)
+                                {
+                                    AEEFileInfo myInfo;
+                                    if( IFILEMGR_EnumInit(pIFileMgr, "fs:/hsmm/MMSTemp", FALSE ) == SUCCESS )
+                                    {
+                                        while( IFILEMGR_EnumNext(pIFileMgr, &myInfo ) )
+                                        {
+                                            result = IFILEMGR_Remove(pIFileMgr, myInfo.szName);
+                                            if( result != SUCCESS )
+                                            {
+                                                DBGPRINTF( "File %s could not be removed result=%d", myInfo.szName, result );
+                                                //return result;
+                                            }
+                                        }
+                                        IFILEMGR_RmDir(pIFileMgr, "fs:/hsmm/MMSTemp");
+                                    }
+                                    CLOSE_DIALOG(DLGRET_EFSFULL_MMS)
+                                    return TRUE;
+                                }
+                                else if(result == SUCCESS)
+                                {
+                                    if(STRISTR(pMimeType, IMAGE_MIME_BASE))
+                                    {   
+                                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,FilePath, sizeof(FilePath));
+                                    }
+                                    else if(STRISTR(pMimeType, SOUND_MIME_BASE))
+                                    {
+                                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,FilePath, sizeof(FilePath)); 
+                                    }
+                                    else if(STRISTR(pMimeType, VIDEO_MIME_BASE))
+                                    {
+                                        ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,FilePath, sizeof(FilePath)); 
+                                    }       
+                                }
+                                if ( pIFile != NULL )
+                                {
+                                    IFILE_Release( pIFile);
+                                    pIFile = NULL;
+                                }
+                                if ( pIFileMgr != NULL )
+                                {
+                                    IFILEMGR_Release(pIFileMgr);
+                                    pIFileMgr = NULL;
+                                }
+                                MSG_FATAL("IDS_SAVE  2", 0,0,0);
+                            }
+                        }
+                        else
+                        {
+                            ;
+                        }
+                    }
+                    pMe->m_isForward = TRUE;
+                    CLOSE_DIALOG(DLGRET_WRITEMSG)   
                     return TRUE;
+                }                 
 
                 //呼叫
                 case IDS_CALL:  
@@ -18102,7 +18246,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 {
                                     MEMSET(FilePath, 0, sizeof(FilePath));
                                     SPRINTF(FilePath,"fs:/hsmm/pictures/(%d)%s", step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
-                                    //IFILEMGR_Remove(pIFileMgr, FilePath); 
                                 }  
                             }
                             else if(STRISTR(pMimeType, SOUND_MIME_BASE))
@@ -18117,7 +18260,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 {
                                     MEMSET(FilePath, 0, sizeof(FilePath));
                                     SPRINTF(FilePath,"fs:/hsmm/music/(%d)%s", step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
-                                    //IFILEMGR_Remove(pIFileMgr, FilePath); 
                                 }  
                             }    
                             else
@@ -18132,7 +18274,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 {
                                     MEMSET(FilePath, 0, sizeof(FilePath));
                                     SPRINTF(FilePath,"fs:/hsmm/other/(%d)%s", step++,(char*)(pDecdata->message.mms_data.fragment[MenuSelectdId].hContentName));                                
-                                    //IFILEMGR_Remove(pIFileMgr, FilePath); 
                                 }                                  
                             }
                             DBGPRINTF("FilePath=%s",FilePath);
@@ -18153,12 +18294,6 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             }
                             MSG_FATAL("IDS_SAVE  2", 0,0,0);
                         }
-                     /*   (void) ISHELL_PostEventEx(pMe->m_pShell, 
-                        EVTFLG_ASYNC,
-                        AEECLSID_WMSAPP,
-                        EVT_USER_REDRAW,
-                        0, 
-                        0);  */
                         MSG_FATAL("IFILEMGR_GetLastError =%d", result,0,0);
                         if(result == SUCCESS)
                         {

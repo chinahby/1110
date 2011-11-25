@@ -911,6 +911,7 @@ typedef struct WmsApp
     uint8                          m_wSelectStore;
     boolean                        m_pMMSMenuHasFocus;
 	MMSMediaPlayerState      	   m_CurrentState;                    /*²¥·Å×´Ì¬*/
+    boolean                        m_isForward;
 #endif    
 } WmsApp;
 

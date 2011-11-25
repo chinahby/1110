@@ -7066,7 +7066,6 @@ static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
             
             MOVE_TO_STATE(WMSST_WRITEMSG)
             return NFSMACTION_CONTINUE;
-            
 
         case DLGRET_WRITEMSG:
             MSG_FATAL("WMSST_VIEWINBOXMSG_MMS_Handler DLGRET_WRITEMSG",0,0,0);
