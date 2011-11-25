@@ -1383,18 +1383,21 @@ void  VideoPlayer_InitVideo(CVideoPlayer  *pMe)
     pMe->m_md.dwSize = 0;
 	pMe->m_pMediaUtil = 0;
 	pMe->m_pHelp = NULL;
+    //snd_set_device(snd_device_type device,snd_mute_control_type ear_mute,snd_mute_control_type mic_mute,snd_cb_func_ptr_type callback_ptr,const void * client_data)
 	//pMe->m_InitFailed = AEEMediaUtil_CreateMedia(pMe->m_pShell, &pMe->m_md, &pMe->m_pMedia);
 	pMe->m_InitFailed = AEEMediaUtil_CreateMedia(pMe->m_pShell, &pMe->m_md,&(IMedia*)pMe->m_pMedia);
     DBGPRINTF("pMe->m_InitFailed=%d",pMe->m_InitFailed);
+    //(void)IMEDIA_SetAudioDevice((IMedia *)pMe->m_pMedia, HS_HEADSET_ON()?AEE_SOUND_DEVICE_STEREO_HEADSET:AEE_SOUND_DEVICE_SPEAKER);
 
     if(pMe->m_InitFailed == SUCCESS)
-    {     
+    {             
         (void)IMEDIA_RegisterNotify((IMedia*)pMe->m_pMedia, VideoPlayer_VideoNotify, pMe);//注册底层回调 
         pMe->bCurrentTime = 0;
         pMe->bTotalTime = 0;
 		uiClsId = IMEDIA_GetTotalTime((IMedia*)pMe->m_pMedia); 
-		DBGPRINTF("(void)IMEDIA_GetTotalTime(pMe->m_pMedia); %d",uiClsId);
-        (void)IMEDIA_SetVolume((IMedia*)pMe->m_pMedia, pMe->totalvolume); //设置当前音量大小
+		DBGPRINTF("(void)IMEDIA_GetTotalTime(pMe->m_pMedia); %d",uiClsId);        
+        (void)IMEDIA_SetAudioDevice((IMedia *)pMe->m_pMedia, HS_HEADSET_ON()?AEE_SOUND_DEVICE_STEREO_HEADSET:AEE_SOUND_DEVICE_SPEAKER);
+        (void)IMEDIA_SetVolume((IMedia*)pMe->m_pMedia, 80/*pMe->totalvolume*/); //设置当前音量大小
        // VideoPlayer_ChangeScrState(pMe,TRUE);
     }    
 }
@@ -1408,7 +1411,8 @@ void VideoPlayer_PlayVideo(CVideoPlayer *pMe)
     	MSG_FATAL("VideoPlayer_PlayVideo YY Said : Play!!! ",0,0,0);
     	VideoPlayer_ChangeScrState(pMe,TRUE);
 		b_is_GetFrame = FALSE;
-        pMe->m_PlayFailed = IMEDIA_Play((IMedia*)pMe->m_pMedia);//播放  
+        pMe->m_PlayFailed = IMEDIA_Play((IMedia*)pMe->m_pMedia);//播放          
+        
         SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_ON);
 		MSG_FATAL("b_is_GetFrame===========%d",b_is_GetFrame,0,0);
     }      
@@ -2290,7 +2294,11 @@ static void VideoPlayer_VideoNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify
                 
                 IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);                                    
                 break;
-                 
+            case MM_MP4_STATUS_OPEN_COMPLETE:
+                //(void)IMEDIA_SetAudioDevice((IMedia *)pMe->m_pMedia, AEE_SOUND_DEVICE_SPEAKER);                
+				IMEDIA_SetVolume((IMedia *)pMe->m_pMedia, 50);
+                break;
+                
             // playback aborted,异常中断
             case MM_STATUS_ABORT:
                 CLOSE_DIALOG(DLGRET_MSGBOX); // 提示播放失败后退出  
@@ -2308,7 +2316,8 @@ static void VideoPlayer_VideoNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify
             //播放的时候每秒会发上来一次
             case MM_STATUS_TICK_UPDATE: 
 				MSG_FATAL("b_is_GetFrame========%d",b_is_GetFrame,0,0);
-				
+				//(void)IMEDIA_SetAudioDevice((IMedia *)pMe->m_pMedia, AEE_SOUND_DEVICE_SPEAKER);                
+				//(void)IMEDIA_SetVolume((IMedia *)pMe->m_pMedia, pMe->totalvolume);
                 pMe->bCurrentTime=((uint32)pCmdNotify->pCmdData) / 1000;  
 				if(!b_is_GetFrame && pMe->bCurrentTime>0)
 				{
