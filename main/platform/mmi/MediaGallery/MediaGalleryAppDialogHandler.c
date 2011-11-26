@@ -7886,7 +7886,9 @@ static boolean MGAppUtil_OnMediaMenuDefaultKeyEvt(CMediaGalleryApp* pMe,
       MG_FARF(ADDR, ("Error, unknown status !"));
       return FALSE;
    }
-#ifdef FEATURE_USES_MMS                     
+#ifdef FEATURE_USES_MMS   
+    if((pMe->m_nActiveDlgID == IDD_MG_MUSICETTING) &&
+        ((wParam == AVK_SELECT) || (wParam == AVK_INFO)))
     {
        uint16 i = IMENUCTL_GetSel(pMenuCtl);
        MSG_FATAL("i=%d",i,0,0);
