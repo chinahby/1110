@@ -71,7 +71,11 @@ when       who     what, where, why
 // USE T9 input method
 #define FEATURE_T9_INPUT
 #ifdef FEATURE_LANGUAGE_MYANMAR
+#ifdef FEATURE_VERSION_VG68
+#define FEATURE_MT_MYANMRA
+#else
 #define FEATURE_MYANMAR_INPUT_MOD     //add by yangdecai 2010-12-23
+#endif
 #endif
 #ifdef WIN32  //add by ydc
 #define FEATURE_LANG_ENGLISH
@@ -200,6 +204,9 @@ when       who     what, where, why
 #endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD
 #define TEXT_MODE_MYANMAR  AEE_TM_MYANMAR   //add by yangdecai   2010-12-23
+#endif
+#ifdef FEATURE_MT_MYANMRA
+#define TEXT_MODE_MT_MYANMAR       AEE_TM_MYANMAR_R
 #endif
 #ifdef FEATURE_T9_PINYIN
 #define TEXT_MODE_T9_PINYIN        AEE_TM_PINYIN 
@@ -338,6 +345,9 @@ enum
 #endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD
 	,OEM_MODE_MYANMAR
+#endif
+#ifdef FEATURE_MT_MYANMRA
+	,OEM_MT_MODE_MYANMAR
 #endif
 #ifdef FEATURE_T9_PINYIN
     ,OEM_MODE_T9_PINYIN
@@ -480,6 +490,11 @@ enum
 #else // #ifdef FEATURE_T9_PINYIN
 #define _T9_MYANMAR_MODE             (0)
 #endif //FEATURE_T9_PINYIN
+#ifdef FEATURE_MT_MYANMRA
+#define _MT_MYANMAR_MODE             (1)
+#else
+#define _MT_MYANMAR_MODE             (0) 
+#endif
 #ifdef FEATURE_T9_STROKE
 #define _T9_STROKE_MODE             (1)
 #else // #ifdef FEATURE_T9_STROKE
@@ -622,6 +637,7 @@ enum
                                 + _T9_MULTITAP_MODES \
                                 + _T9_RAPID_ENGLISH_MODE \
                                 + _T9_MYANMAR_MODE \
+                                + _MT_MYANMAR_MODE \
                                 + _T9_PINYIN_MODE \
                                 + _T9_STROKE_MODE \
                                 + _T9_ZHUYIN_MODE \
@@ -671,6 +687,9 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD      //add by yangdecai 2010-1223
    ,{'M','Y','A','N','M','A','R',0}
+#endif
+#ifdef FEATURE_MT_MYANMRA
+   ,{'M','T','M','Y','A','N','M','A','R',0}
 #endif
 #ifdef FEATURE_T9_PINYIN
    ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}
@@ -788,6 +807,9 @@ static const AECHAR englishTitle[NUM_OF_MODES][MAX_MODE_STR+1] =
 #endif
 #ifdef FEATURE_MYANMAR_INPUT_MOD      //add by yangdecai 2010-1223
    ,{'M','Y','A','N','M','A','R',0}
+#endif
+#ifdef FEATURE_MT_MYANMRA
+   ,{'M','T','M','Y','A','N','M','A','R',0}
 #endif
 #ifdef FEATURE_T9_PINYIN
    ,{'T', '9','P', 'I', 'N', 'Y', 'I', 'N', 0}

@@ -663,6 +663,13 @@ static ModeInfo sTextModes[NUM_OF_MODES] =
       T9TextCtl_CJK_MYANMAR_Exit ,
       {TEXT_MODE_MYANMAR, {0}}}
 #endif
+#ifdef FEATURE_MT_MYANMRA
+    ,{T9TextCtl_MultitapRestart,
+      T9TextCtl_MultitapKey,
+      NULL,
+      T9TextCtl_MultitapExit,
+      {TEXT_MODE_MT_MYANMAR, {0}}}
+#endif //FEATURE_T9_MT_ARABIC
 
 #ifdef FEATURE_T9_PINYIN
    ,{T9TextCtl_CJK_CHINESE_Restart,
@@ -6699,7 +6706,7 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
             #endif
             #if defined(FEATURE_VERSION_VG68) || defined(FEATURE_T9_MT_THAI)            
             MSG_FATAL("pContext->byMode=%d,t9Key=%d",pContext->byMode,t9Key,0);
-            if(pContext->byMode == 4)
+            if(pContext->byMode == 5)
             {
             	pContext->uModeInfo.mtap.kLast = key; 
 	            if(pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED)
@@ -6729,6 +6736,38 @@ static boolean T9TextCtl_MultitapKey(TextCtlContext *pContext,AEEEvent eCode, AV
 	            	}
 	            }
             }
+			#ifdef FEATURE_MT_MYANMRA
+			else if(pContext->byMode == 4)
+			{
+				pContext->uModeInfo.mtap.kLast = key; 
+	            if(pContext->uModeInfo.mtap.kLast != AVK_UNDEFINED)
+	            {
+	            	uint32 i,j;
+	            	uint32 AVK_Size = 0;
+	            	for(i = 0;i<MAX_MULTITAPS;i++)
+	            	{
+	            		if (key == default_mynamar_multitap_strings[i].wParam)
+            			{
+            				AVK_Size = default_mynamar_multitap_strings[i].wsize;
+							if(pContext->m_curpos<AVK_Size)
+	            			{
+	            				pContext->sT9awFieldInfo.G.psTxtBuf[pContext->wSelStart] = default_mynamar_multitap_strings[i].wp[pContext->m_curpos];
+	            			}
+	            			if(pContext->m_curpos<(AVK_Size-1))
+	            			{
+	            				pContext->m_curpos = pContext->m_curpos+1;
+	            				
+	            			}
+	            			else
+	            			{
+	            				pContext->m_curpos = 0;
+	            			}
+	            			MSG_FATAL("pContext->m_curpos==========%d",pContext->m_curpos,0,0);
+	            		}
+	            	}
+	            }
+			}
+			#endif 
             #endif
             //MSG_FATAL("pContext->sT9awFieldInfo.G.nCursor=%d",pContext->sT9awFieldInfo.G.nCursor,0,0);
             //MSG_FATAL("pContext->sT9awFieldInfo.G.nWordLen=%d",pContext->sT9awFieldInfo.G.nWordLen,0,0);

@@ -3204,6 +3204,11 @@ static AEETextInputMode CTextCtl_SetInputMode(ITextCtl * po, AEETextInputMode m)
 				pme->m_wResID = IDI_MODE_MYANMAR;
 				break;
 #endif
+#ifdef FEATURE_MT_MYANMRA
+			case TEXT_MODE_MT_MYANMAR:
+				pme->m_wResID = IDI_MODE_MYANMAR;
+				break;
+#endif
 
             default:
                 break;
@@ -5545,6 +5550,16 @@ static void OEM_SetInputMode(CTextCtl * pme)
 	                          sizeof(boolean));
 			break;
 #endif
+#ifdef FEATURE_MT_MYANMRA
+		case OEM_MT_MODE_MYANMAR:
+			wMode = AEE_TM_MYANMAR_R;	//add by yangdecai	 2010-12-23
+			pme->m_wResID = IDI_MODE_MYANMAR;
+			(void)OEM_SetConfig(CFGI_LANGUAGE_MOD,
+							  (void*)&is_Taimod,
+							  sizeof(boolean));
+			break;
+#endif
+
         case OEM_MODE_T9_MT_ENGLISH_UP:
             wMode = AEE_TM_LETTERS;//大写字母输入模式
 #ifdef FEATURE_PREPAID_ISRAEL_HEBREW 
@@ -5946,6 +5961,11 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 		pme->m_nCurrInputModeList[i++] = OEM_MODE_MYANMAR;
 
 #endif
+#ifdef FEATURE_MT_MYANMRA  //add by yangdecai 20101223
+		
+		pme->m_nCurrInputModeList[i++] = OEM_MT_MODE_MYANMAR;
+
+#endif
 
 #ifdef FEATURE_ZI_PINYIN
 	MSG_FATAL("TextCtl_SetInputList...333",0,0,0);
@@ -6091,6 +6111,13 @@ static void TextCtl_SetInputList(CTextCtl *pme)
 		pme->m_nCurrInputModeList[i++] = OEM_MODE_MYANMAR;
 
 #endif
+#ifdef FEATURE_MT_MYANMRA  //add by yangdecai 20101223
+		
+		pme->m_nCurrInputModeList[i++] = OEM_MT_MODE_MYANMAR;
+
+#endif
+
+
 
 #ifdef FEATURE_T9_PINYIN
 	MSG_FATAL("TextCtl_SetInputList...333",0,0,0);
@@ -6452,7 +6479,13 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
                 		if(!(pme->m_dwProps & TP_MULTILINE)/*&&( 2== i)*/)
                 		{
                 			
-                			if(pme->m_nCurrInputMode == OEM_MODE_MYANMAR)
+                			if(
+								#ifdef FEATURE_MT_MYANMRA
+								pme->m_nCurrInputMode == OEM_MT_MODE_MYANMAR 
+								#else
+								pme->m_nCurrInputMode == OEM_MODE_MYANMAR
+								#endif
+								)
                 			{
                 				pme->m_nCurrInputMode = OEM_MODE_T9_RAPID_ENGLISH;
                 			}
@@ -6916,6 +6949,12 @@ static int TextCtl_Oemmode_Textmode(byte oeminputmode)
 #ifdef FEATURE_MYANMAR_INPUT_MOD
 		case TEXT_MODE_MYANMAR:
 			wMode = AEE_TM_MYANMAR;   //add by yangdecai   2010-12-23
+			break;
+#endif
+
+#ifdef FEATURE_MT_MYANMRA
+		case TEXT_MODE_MT_MYANMAR:
+			wMode = AEE_TM_MYANMAR_R;   //add by yangdecai   2011-12-23
 			break;
 #endif
 

@@ -167,7 +167,8 @@ typedef struct _ITextCtl ITextCtl;
 #define AEE_TM_FACE_SYMBOL       0x0055  // Face symbol mode
 #define AEE_TM_ZHUYIN            0x0056  // Traditional Chinese Input 
 #define AEE_TM_CAPLOWER          0x0057  //lower cap input   by yangdecai 2010-0909
-#define AEE_TM_MYANMAR           0x0058  //MYANMAR input mod by yangdecai 2010-12            
+#define AEE_TM_MYANMAR           0x0058  //MYANMAR input mod by yangdecai 2010-12    
+#define AEE_TM_MYANMAR_R         0x0059  //MYANMRA multi input mod by yangdecai 2011-12 
 #endif /*CUST_EDITION*/
 // Note: New text modes should not be added to this range
 // Add new text modes to the AEE_TM_RESERVED range below
