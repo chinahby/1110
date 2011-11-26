@@ -4407,7 +4407,7 @@ boolean CMusicPlayer_InitMusic(CMusicPlayer *pMe)
     }
     
     pf++;
-    if(0 == STRICMP(pf,QCP_TYPE)||0 == STRICMP(pf,AMR_TYPE))
+    if((0 == STRICMP(pf,QCP_TYPE))||(0 == STRICMP(pf,AMR_TYPE)))
     {
     	MSG_FATAL("***zzg CMusicPlayer_InitMusic SetAudioDevice HS_HEADSET_ON=%x******", HS_HEADSET_ON(), 0, 0);
         (void)IMEDIA_SetAudioDevice((IMedia *)pMe->m_pMedia, HS_HEADSET_ON()?AEE_SOUND_DEVICE_STEREO_HEADSET:AEE_SOUND_DEVICE_SPEAKER);
