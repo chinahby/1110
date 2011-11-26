@@ -1923,10 +1923,10 @@ static void Calc_PushVal(CCalcApp *pme, OpType wOp)
     {
 
         //如果第一个node优先级高于第二个node优先级，首先计算第一个node
-        if( Calc_GetOpPrecedence(pme->m_pValList[i].wOp) >=
-            Calc_GetOpPrecedence(pme->m_pValList[i + 1].wOp)
-        )
-        {
+      //  if( Calc_GetOpPrecedence(pme->m_pValList[i].wOp) >=
+      //      Calc_GetOpPrecedence(pme->m_pValList[i + 1].wOp)
+      //  )
+      //  {
             if( pme->m_pValList[i].wOp == OP_UNDEFINED)
             {
                 Calc_Reset( pme);
@@ -1959,11 +1959,11 @@ static void Calc_PushVal(CCalcApp *pme, OpType wOp)
             }
 
             i = 1;
-        }
-        else
-        {
-            i ++;
-        }
+        //}
+        //else
+       // {
+        //    i ++;
+       // }
     }
 
 
