@@ -9,6 +9,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define CUST_EDITION
 #endif
 #define FEATURE_LCD_TOUCH_ENABLE //add by Andrew
+#define FEATURE_CAMERA_MULTI_SENSOR    //Ë«ÉãÏñÍ·±êÇ©  
 #ifdef CUST_EDITION
 #define FEATURE_APP_BLUETOOTH
 #define FEATURE_BT
@@ -17,6 +18,9 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_DRM_NO_BREW 
 //#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
 #define FEATURE_IS683A_450M_SUPPORT
+#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
+#define FEATURE_SUPPORT_BT_AUDIO		//Add By z zg 2011_10_19
+
 
 #define BT_QSC1110//FEATURE_BT_QSC1100
 #define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  ÐÍºÅ
@@ -53,6 +57,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #endif
 
 
+
 //#define FEATURE_DATA_STRIP_ATCOP 
 #define FEATURE_STD_MIDI 
 //#define FEATURE_GSTK 
@@ -61,13 +66,10 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define T_QSC1110
 #define CUST_MOB_MODEL 25
 #define FEATURE_PLL_192 
-#define FEATURE_CLKREGIM_1X_MODE 
+#define FEATURE_CLKREGIM_2X_MODE 
 #define FEATURE_AUDIO_CONFIGURATION_MINIMAL 
 //Gemsea Remove #define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
 //#define FEATURE_IPL_NO_CAMERA
-#define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
-#define FEATURE_SUPPORT_BT_AUDIO		//Add By z zg 2011_10_19
-
 #define FEATURE_IIPL
 #define FEATURE_UIM_QSC1100_LOW_MEMORY 
 #define CM_FEATURE_HSBASED_PLUS_DIAL_DISPLAY 
