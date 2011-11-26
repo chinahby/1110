@@ -3592,7 +3592,8 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
                                 return FALSE;
                             }
 				    	}
-                        
+                        #elif defined(FEATURE_VERSION_VG68)
+                            return CoreApp_LaunchApplet(pMe, AEECLSID_ALARMCLOCK);
 						#else
 							return CoreApp_LaunchApplet(pMe, AEECLSID_APP_FMRADIO);//
 							#endif
@@ -5116,6 +5117,11 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
     //AEEDeviceInfo di;
 #endif /*FEATURE_CARRIER_SUDAN_SUDATEL*/
     byte      bTFmt;
+#ifdef FEATURE_VERSION_VG68
+    int nFont = 33;//VG68默认时间字体大小
+#endif
+
+
     
     if ( pMe == NULL ) 
     {
@@ -5349,10 +5355,34 @@ static void CoreApp_UpdateDateTime(CCoreApp    *pMe)
 	                              | IDF_TEXT_TRANSPARENT);
 
 #elif defined FEATURE_DISP_176X220
+#ifdef FEATURE_VERSION_VG68
+    {
+        byte Timefontmode = 0;
+        (void) ICONFIG_GetItem(pMe->m_pConfig,
+                               CFGI_IDLE_DATETIME_MODE,
+                               &Timefontmode,
+                               sizeof(Timefontmode));
+        switch(Timefontmode)
+        {
+            default:
+            case 1:
+                nFont = 33;
+                break;
+            case 2:
+                nFont = 27;
+                break;
+            case 3:
+                nFont = 21;
+                break;
+            
+        }
+        
+    }
+#endif
 	DrawGreyBitTextWithProfile(pMe->a.m_pIShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
-	                              33, 
+	                              nFont, 
 	                              wszDate, -1,
 	                              0, 0, &rc, 
 	                              IDF_ALIGN_MIDDLE
@@ -7278,7 +7308,7 @@ static void CoreApp_DrawMusicName(CCoreApp    *pMe,uint16 nIdx)
   	m_musicstl=(pMe->m_rc.dx*2/3-2*DISP_BLANK_WIDTH);
   }
   SETAEERECT(&rect, (pMe->m_rc.dx/6 /*((pMe->m_rc.dx*3/4)-m_musicstl)/2*/), MUSIC_START_WIDTH,(pMe->m_rc.dx*2/3), pMe->m_nLargeFontHeight);
-  MSG_FATAL("rect.x=%d,w=%d", (pMe->m_rc.dx/6 + pMe->m_nLargeFontHeight), (pMe->m_rc.dx*2/3 - 2*DISP_BLANK_WIDTH), 0);
+  MSG_FATAL("rect.x=%d,w=%d,rect.dy=%d", (pMe->m_rc.dx/6 + pMe->m_nLargeFontHeight), (pMe->m_rc.dx*2/3 - 2*DISP_BLANK_WIDTH), rect.dy);
   #ifdef FEATURE_VERSION_MYANMAR
   {
 	  AECHAR M_usicname[128] = {0};
