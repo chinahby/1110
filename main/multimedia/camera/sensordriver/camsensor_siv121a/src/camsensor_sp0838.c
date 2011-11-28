@@ -74,11 +74,11 @@ typedef struct register_address_value_pair_struct {
 
 
 /* From the logic analyzer measurements */
-#define OV_SP0838_YCBCR_FULL_SIZE_WIDTH           640//640
-#define OV_SP0838_YCBCR_FULL_SIZE_HEIGHT          480
+#define OV_SP0838_YCBCR_FULL_SIZE_WIDTH           320//640
+#define OV_SP0838_YCBCR_FULL_SIZE_HEIGHT          240
 
-#define OV_SP0838_YCBCR_QTR_SIZE_WIDTH   		640//640   
-#define OV_SP0838_YCBCR_QTR_SIZE_HEIGHT  		480//240//   
+#define OV_SP0838_YCBCR_QTR_SIZE_WIDTH   		480//640   
+#define OV_SP0838_YCBCR_QTR_SIZE_HEIGHT  		360//240//   
 
 /* Strobe Flash Epoch Interrupt time before the end of line count */
 static camera_antibanding_type g_iBanding = CAMERA_ANTIBANDING_OFF;
@@ -104,89 +104,24 @@ static boolean camsensor_SP0838_ycbcr_i2c_write_byte(uint8 reg, uint8 data);
 static void camsensor_sp0838_ycbcr_register(camsensor_function_table_type *camsensor_function_table_ptr);
 static boolean camsensor_SP0838_ycbcr_i2c_read_byte(uint8 reg, uint8 *data); 
 static void    camsensor_sp0838_0m3_setup_camctrl_tbl(camctrl_tbl_type *camctrl_tbl_ptr);
+static void SP0838_config_window(uint16 startx,uint16 starty,uint16 width, uint16 height);
 
-static const register_address_value_pair sp0838_preview_8fps[] =
-{ 
-  {0xfd , 0x00},	//sp0838 24M 1·ÖÆµ 50Hz VGA 8-8fps 2xgain
-  {0x05 , 0x00},
-  {0x06 , 0x00},
-  {0x09 , 0x08},
-  {0x0a , 0xed},
-  {0xf0 , 0x27},
-  {0xf1 , 0x00},
-  {0xf2 , 0x4c},
-  {0xf5 , 0x65},
-  {0xfd , 0x01},
-  {0x00 , 0x9f},
-  {0x0f , 0x4d},
-  {0x16 , 0x4d},
-  {0x17 , 0x8f},
-  {0x18 , 0x97},
-  {0x1b , 0x4d},
-  {0x1c , 0x97},
-  {0xb4 , 0x21},
-  {0xb5 , 0x25},
-  {0xb6 , 0x25},
-  {0xb9 , 0x40},
-  {0xba , 0x4f},
-  {0xbb , 0x47},
-  {0xbc , 0x45},
-  {0xbd , 0x43},
-  {0xbe , 0x42},
-  {0xbf , 0x42},
-  {0xc0 , 0x42},
-  {0xc1 , 0x41},
-  {0xc2 , 0x41},
-  {0xc3 , 0x41},
-  {0xc4 , 0x41},
-  {0xc5 , 0x70},
-  {0xc6 , 0x41},
-  {0xca , 0x70},
-  {0xcb , 0x0c},
-  {0xfd , 0x00},
-};
 
-static const register_address_value_pair sp0838_preview_5fps[] =
-{ 
-  {0xfd , 0x00},	//sp0838 24M 1·ÖÆµ 50Hz VGA 5-5fps 2xgain
-  {0x05 , 0x00},
-  {0x06 , 0x00},
-  {0x09 , 0x00},
-  {0x0a , 0x46},
-  {0xf0 , 0x19},
-  {0xf1 , 0x00},
-  {0xf2 , 0x41},
-  {0xf5 , 0x5a},
-  {0xfd , 0x01},
-  {0x00 , 0x9e},
-  {0x0f , 0x42},
-  {0x16 , 0x42},
-  {0x17 , 0x8e},
-  {0x18 , 0x96},
-  {0x1b , 0x42},
-  {0x1c , 0x96},
-  {0xb4 , 0x18},
-  {0xb5 , 0x18},
-  {0xb6 , 0x18},
-  {0xb9 , 0x40},
-  {0xba , 0x4f},
-  {0xbb , 0x47},
-  {0xbc , 0x45},
-  {0xbd , 0x43},
-  {0xbe , 0x42},
-  {0xbf , 0x42},
-  {0xc0 , 0x42},
-  {0xc1 , 0x41},
-  {0xc2 , 0x41},
-  {0xc3 , 0x41},
-  {0xc4 , 0x41},
-  {0xc5 , 0x41},
-  {0xc6 , 0x41},
-  {0xca , 0x70},
-  {0xcb , 0x14},
-  {0xfd , 0x00},
-};
+static void SP0838_config_window(uint16 startx,uint16 starty,uint16 width, uint16 height)
+{
+	camsensor_SP0838_ycbcr_i2c_write_byte(0xfd,0x00);//page 0
+	// Horizontal
+	camsensor_SP0838_ycbcr_i2c_write_byte(0x4b,(startx&0x0300)>>8);	       //2msb
+	camsensor_SP0838_ycbcr_i2c_write_byte(0x4c,startx&0x00FF);			// 8lsb
+	camsensor_SP0838_ycbcr_i2c_write_byte(0x4d,(width&0x0300)>>8);	       //2msb
+	camsensor_SP0838_ycbcr_i2c_write_byte(0x4e,width&0x00FF);			// 8lsb
+	// Vertical
+	camsensor_SP0838_ycbcr_i2c_write_byte(0x47,(starty&0x0100)>>8);	       //1msb
+	camsensor_SP0838_ycbcr_i2c_write_byte(0x48,starty&0x00FF);   			// 8lsb
+	camsensor_SP0838_ycbcr_i2c_write_byte(0x49,(height&0x0100)>>8);	       // 1msb
+	camsensor_SP0838_ycbcr_i2c_write_byte(0x4a,height&0x00FF);		   	// 8lsb
 
+}	/* config_SP0838_window */
 /*============================================================================
                           EXTERNAL API DEFINITIONS
 ============================================================================*/
@@ -401,7 +336,7 @@ LOCAL boolean camsensor_sp0838_sensor_init(void)
 	camsensor_SP0838_ycbcr_i2c_write_byte(0xca , 0x78);
 	camsensor_SP0838_ycbcr_i2c_write_byte(0xcb , 0x0c);  //AEdebug end
 
-#if 1//caprure preview daylight 24M 50hz 20-8FPS maxgain:0x70	
+	//caprure preview daylight 24M 50hz 20-8FPS maxgain:0x70	
 	camsensor_SP0838_ycbcr_i2c_write_byte(0xfd , 0x00);
 	camsensor_SP0838_ycbcr_i2c_write_byte(0x05 , 0x0 );
 	camsensor_SP0838_ycbcr_i2c_write_byte(0x06 , 0x0 );
@@ -439,12 +374,7 @@ LOCAL boolean camsensor_sp0838_sensor_init(void)
 	camsensor_SP0838_ycbcr_i2c_write_byte(0xca , 0x70);
 	camsensor_SP0838_ycbcr_i2c_write_byte(0xcb , 0xc );
 	camsensor_SP0838_ycbcr_i2c_write_byte(0xfd , 0x00);
-#else
-	for(i=0; i<sizeof(sp0838_preview_8fps)/sizeof(register_address_value_pair); i++)
-	{
-		camsensor_SP0838_ycbcr_i2c_write_byte(sp0838_preview_8fps[i].register_address, sp0838_preview_8fps[i].register_value);
-	}
-#endif
+
 	camsensor_SP0838_ycbcr_i2c_write_byte(0xfd , 0x00);  //P0
 	camsensor_SP0838_ycbcr_i2c_write_byte(0x32 , 0x15);  //Auto_mode set
 	camsensor_SP0838_ycbcr_i2c_write_byte(0x34 , 0x66);  //Isp_mode set
@@ -520,7 +450,6 @@ boolean camsensor_sp0838_init(camsensor_function_table_type *camsensor_function_
 		return FALSE;
 	} 
 
-	clk_busy_wait(10*1000);
 	//camsensor_sp0838_sensor_init();
 	/* Initialize the sensor_function_table */
 	camsensor_sp0838_ycbcr_register (camsensor_function_table_ptr);
@@ -724,6 +653,8 @@ boolean camsensor_sp0838_ycbcr_snapshot_config
   camsensor_static_params_type *camsensor_params /* Other config params */
 ) 
 {
+	SP0838_config_window(0,0,320,240);
+	
 	/* Sensor output data format */
 	camsensor_params->format = CAMIF_YCbCr_Cb_Y_Cr_Y;
 
@@ -799,7 +730,8 @@ boolean camsensor_sp0838_ycbcr_video_config
 )
 {
 	camsensor_sp0838_sensor_init();
-	
+
+	SP0838_config_window(0,0,480,360);
 	/* Sensor output data format */
 	camsensor_params->discardFirstFrame = TRUE;
 	camsensor_params->format = CAMIF_YCbCr_Cb_Y_Cr_Y;
