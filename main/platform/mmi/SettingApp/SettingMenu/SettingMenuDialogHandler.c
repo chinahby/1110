@@ -4710,7 +4710,12 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
 {
 
     static byte timeFormatType = 0;
-
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	AEERect pL_Rect1 = {0};
+	AEERect pL_Rect2 = {0};
+	AEERect pR_Rect1 = {0};
+	AEERect pR_Rect2 = {0};
+	#endif
     MSG_FATAL("%x, %x ,%x,Setting_HandleAuto_Power_DialogEvent",eCode,wParam,dwParam);
 
     switch (eCode)
@@ -5050,9 +5055,10 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
             {
                 IImage      *pR_ResImg = NULL;
                 IImage      *pL_ResImg = NULL;
+				AEEImageInfo iInfo;
                 pL_ResImg  = ISHELL_LoadResImage(pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDB_LEFTARROW);
                 pR_ResImg  = ISHELL_LoadResImage(pMe->m_pShell,AEE_APPSCOMMONRES_IMAGESFILE,IDB_RIGHTARROW);
-                
+                IImage_GetInfo(pL_ResImg,&iInfo);
                 if(pR_ResImg != NULL)
                 {
                     //在功能和状态模式后面画该ICON,表示上下键改变值
@@ -5070,6 +5076,12 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
                     IIMAGE_Draw(pL_ResImg, CONTROL_RECT_START_X,titleheight + lineSpace*2 + itemheight + 4+CONTROL_RECT_RESET_Y);
 #endif
                 }
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+				SETAEERECT(&pL_Rect1, pMe->m_rc.dx - 10, titleheight+ lineSpace + 4-CONTROL_RECT_RESET_Y, iInfo.cx, iInfo.cy); 
+				SETAEERECT(&pL_Rect2, pMe->m_rc.dx - 10, titleheight + lineSpace*2 + itemheight + 4+CONTROL_RECT_RESET_Y, iInfo.cx, iInfo.cy); 
+				SETAEERECT(&pR_Rect1, CONTROL_RECT_START_X, titleheight + lineSpace + 4-CONTROL_RECT_RESET_Y, iInfo.cx, iInfo.cy); 
+				SETAEERECT(&pR_Rect2, CONTROL_RECT_START_X, titleheight + lineSpace*2 + itemheight + 4+CONTROL_RECT_RESET_Y, iInfo.cx, iInfo.cy); 
+#endif
                 IIMAGE_Release(pR_ResImg);
                 pR_ResImg = NULL;
                 IIMAGE_Release(pL_ResImg);
@@ -5220,6 +5232,35 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
                                             wParam,
                                             0);
             return TRUE;
+		#ifdef FEATURE_LCD_TOUCH_ENABLE
+		case EVT_PEN_UP:
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				if(TOUCH_PT_IN_RECT(wXPos, wYPos, pL_Rect1))
+				{
+					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_LEFT,0);
+					return rt;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pL_Rect2))
+				{
+					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_LEFT,0);
+					return rt;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pR_Rect1))
+				{
+					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_RIGHT,0);
+					return rt;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pR_Rect2))
+				{
+					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_RIGHT,0);
+					return rt;
+				}
+			}
+			break;
+		
+		#endif
         case EVT_KEY_RELEASE:
             switch(wParam)
             {

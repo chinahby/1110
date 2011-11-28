@@ -87,6 +87,8 @@ struct _CWorldTime {
 	boolean     m_ismyatime;
 	boolean     m_isMya;
     boolean     m_isIndia;
+	AEERect LeftrowRect;
+	AEERect RightrowRect;
 };
 
 /*===========================================================================
@@ -398,6 +400,8 @@ static boolean InitWorldTime(CWorldTime *pme)
         IIMAGE_Draw( pme->m_leftArrow, SPACE_BETWEEN_MENU_AND_EDGE, yArrow);
 
         IIMAGE_Draw( pme->m_rightArrow, di.cxScreen - SPACE_BETWEEN_MENU_AND_EDGE - iInfo.cx, yArrow);
+		SETAEERECT(&pme->LeftrowRect, SPACE_BETWEEN_MENU_AND_EDGE, yArrow, iInfo.cx, iInfo.cy); 
+		SETAEERECT(&pme->RightrowRect, di.cxScreen - SPACE_BETWEEN_MENU_AND_EDGE - iInfo.cx, yArrow,  iInfo.cx, iInfo.cy); 
     }
 
 
@@ -1249,7 +1253,44 @@ static boolean WorldTime_HandleEvent(CWorldTime * pMe, AEEEvent eCode, uint16 wP
                     return TRUE;
             }
             return TRUE;
-
+		#ifdef FEATURE_LCD_TOUCH_ENABLE
+		case EVT_PEN_UP:
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pMe->a.m_pIDisplay);
+			  	
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->a.m_pIShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				if( PT_IN_RECT(wXPos, wYPos, bottomBarRect) )
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//×ó
+					{						
+						CWorldTime_Free( pMe);
+                    	ISHELL_CloseApplet(pMe->a.m_pIShell, FALSE);
+						return TRUE;
+					}
+				}
+				if(PT_IN_RECT(wXPos, wYPos,pMe->LeftrowRect))
+				{
+					WorldTime_DrawNextCity(pMe, TRUE);
+					return TRUE;
+				}
+				if(PT_IN_RECT(wXPos, wYPos,pMe->RightrowRect))
+				{
+					WorldTime_DrawNextCity(pMe, FALSE);
+					return TRUE;
+				}
+				
+			}
+			return TRUE;
+			break;
+		#endif
         default:
             break;
     }

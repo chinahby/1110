@@ -848,7 +848,7 @@ static boolean SettingMenu_HandleEvent(ISettingMenu *pi,
 						eCode = EVT_KEY;
 					}
 				}
-				else if(wParam == AVK_CLR)
+				else if((wParam == AVK_CLR) || (wParam == AVK_LEFT) ||(wParam == AVK_RIGHT))
 				{
 					eCode = EVT_KEY;
 				}

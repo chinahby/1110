@@ -66,9 +66,15 @@ static int IMAGE_WIDTH           = 5;                           // Frame Width f
 
 #define SOFT_PAGE_ITEMS       (3)                           // Initializes # of soft key items visible at once
 #define MAX_SOFT_PAGE_ITEMS   (12)                          // Max SK items/screen
+#ifdef FEATURE_DISP_240X320
+#define CXARROW               (8)                           // Arrow Width
+#define CYARROW               (10)                           // Arrow Height
+#define ARROWMARGIN           (10)                           // Spacing for arrow (margins and pad)
+#else
 #define CXARROW               (3)                           // Arrow Width
 #define CYARROW               (5)                           // Arrow Height
 #define ARROWMARGIN           (5)                           // Spacing for arrow (margins and pad)
+#endif
 #define CELL_LMARGIN          (1 + CXARROW + 1)             // Left Margin - space, arrow, space, border
 #define CELL_RMARGIN          CELL_LMARGIN                  // Right Margin - same as left margin
 #define CELL_SIDE_WIDTH       (CELL_LMARGIN + CELL_RMARGIN) // space taken up by both cell margins
@@ -784,7 +790,11 @@ static int Menu_New(IShell * pIShell, AEECLSID cls, void ** ppobj)
 #endif
    // get display metrics
    ISHELL_GetDeviceInfo(pme->m_pIShell, &dm);
+#ifdef FEATURE_DISP_240X320
+	pme->m_nSBWidth = CXARROW;                     // Scroll Bar Width
+#else
    pme->m_nSBWidth = dm.cxScrollBar;               // Scroll Bar Width
+#endif
    pme->m_bColor = (boolean)(bi.nDepth > 1);  // Color Depth
 
    pme->m_nSBWidth += 2*AEE_FRAME_SIZE;            // Adjust for frame

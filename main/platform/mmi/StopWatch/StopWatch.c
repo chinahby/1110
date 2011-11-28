@@ -113,6 +113,8 @@ struct _CStopWatch {
    AEERect             m_rc;
    IAnnunciator *m_pIAnn;
    IMenuCtl*           m_pStopWatch;
+   AEERect LeftrowRect;
+   AEERect RightrowRect;
    //StopWatchTimeData  timeData2;
 };
 /*===========================================================================
@@ -753,52 +755,53 @@ static boolean StopWatch_HandleEvent(CStopWatch *pme, AEEEvent eCode, uint16 wPa
                 
             }
             return TRUE;
-#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+#ifdef FEATURE_LCD_TOUCH_ENABLE
 		case EVT_PEN_UP:
 			{
-				AEERect rc;
-#if 0                
-				int yMenu = TITLEBAR_HEIGHT + 2*MENUITEM_HEIGHT;
-#else
-                int yMenu = 2*MENUITEM_HEIGHT;
-#endif
 				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pme->a.m_pIDisplay);
 				
-				SETAEERECT( &rc, 0, yMenu, pme->m_rc.dx,  pme->m_rc.dy - yMenu);
-				if ((wXPos>=0)&&(wXPos<59)&&(wYPos>=184)&&(wYPos<=202))
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pme->a.m_pIShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect) )
 				{
-					boolean rt =  ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_STOPWATCH,EVT_USER,AVK_SELECT,0);
-					return rt;
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//×ó
+					{						
+	                    boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_STOPWATCH,EVT_USER,AVK_CLR,0);
+						return rt;
+					}
+					else if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3) && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*2)
+					{
+						boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_STOPWATCH,EVT_USER,AVK_INFO,0);
+						return rt;
+					}
+					if(wXPos >0 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3))
+					{
+						boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_STOPWATCH,EVT_USER,AVK_SELECT,0);
+						return rt;
+					}
 				}
-				else if ((wXPos>=59)&&(wXPos<118)&&(wYPos>=184)&&(wYPos<=202))
+				if(TOUCH_PT_IN_RECT(wXPos, wYPos,pme->LeftrowRect))
 				{
-					boolean rt =  ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_STOPWATCH,EVT_USER,AVK_INFO,0);
-					return rt;
+					boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_STOPWATCH,EVT_USER,AVK_LEFT,0);
+				    return rt;
 				}
-				else if ((wXPos>=118)&&(wXPos<=176)&&(wYPos>=184)&&(wYPos<=202))
+				if(TOUCH_PT_IN_RECT(wXPos, wYPos,pme->RightrowRect))
 				{
-					boolean rt =  ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_STOPWATCH,EVT_USER,AVK_CLR,0);
-					return rt;
+					boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_STOPWATCH,EVT_USER,AVK_RIGHT,0);
+				    return rt;
 				}
-				else if ((wXPos>=0)&&(wXPos<=20)&&(wYPos>=30)&&(wYPos<=50))
-				{
-					boolean rt =  ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_STOPWATCH,EVT_USER,AVK_LEFT,0);
-					return rt;
-				}
-				else if ((wXPos>=156)&&(wXPos<=176)&&(wYPos>=30)&&(wYPos<=50))
-				{
-					boolean rt =  ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_STOPWATCH,EVT_USER,AVK_RIGHT,0);
-					return rt;
-				}
-				else if(STOPWATCH_PT_IN_RECT(wXPos,wXPos,rc))
-				{
-					if (pme->m_pmenu )//&& IMENUCTL_IsActive(pme->m_pmenu))
-                    {
-                        IMENUCTL_HandleEvent(pme->m_pmenu, EVT_PEN_UP, wParam, dwParam);
-                    }
-				}
-				return TRUE;
+			}
+		case EVT_USER:
+			{
+				eCode = EVT_KEY;
+				return StopWatch_HandleEvent(pme,eCode,wParam,dwParam);
 			}
 #endif
         default:
@@ -834,6 +837,7 @@ static void StopWatch_Redraw(CStopWatch *pme)
     AECHAR                   wszTitle[16] = { 0 };
     BottomBar_e_Type     btbType = 0;
     IImage                    *pImage = NULL;
+	AEEImageInfo   iInfo = {0};
 #if 0    
     int yArrow               = TITLEBAR_HEIGHT + 2*SPACE_BETWEEN_MENU + (MENUITEM_HEIGHT - ARROW_HEIGHT)/2;
 #else
@@ -900,12 +904,13 @@ static void StopWatch_Redraw(CStopWatch *pme)
     }
     
     pImage  = ISHELL_LoadResImage(pme->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_LEFTARROW);
+	IIMAGE_GetInfo(pImage, &iInfo);
     if(pImage)
     {
         IIMAGE_Draw(pImage,  + SPACE_BETWEEN_MENU, yArrow);
         IIMAGE_Release(pImage);
     }
-    
+    SETAEERECT(&pme->LeftrowRect, SPACE_BETWEEN_MENU, yArrow, iInfo.cx, iInfo.cy); 
     pImage = ISHELL_LoadResImage(pme->a.m_pIShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_RIGHTARROW);
     if(pImage)
     {
@@ -913,7 +918,7 @@ static void StopWatch_Redraw(CStopWatch *pme)
         IIMAGE_Release(pImage);
         pImage = NULL;
     }
-    
+    SETAEERECT(&pme->RightrowRect, pme->m_rc.dx - SPACE_BETWEEN_MENU - ARROW_WIDTH, yArrow, iInfo.cx, iInfo.cy); 
     IMENUCTL_Redraw(pme->m_pStopWatch);
     ITIMECTL_Redraw(pme->m_pTime);
     IMENUCTL_Redraw(pme->m_pmenu);
