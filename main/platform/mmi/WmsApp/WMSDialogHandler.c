@@ -17587,7 +17587,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 rc.y = GetBottomBarHeight(pMe->m_pDisplay)*2; 
                 rc.dy = devinfo.cyScreen;
                 rc.dy -= (GetBottomBarHeight(pMe->m_pDisplay)*3);   
-                MSG_FATAL("IDD_WRITEMSG_Handler rc.x=%d, rc.y=%d,rc.dy=%d", rc.x, rc.y, rc.dy);
+                MSG_FATAL("IDD_VIEWMSG_MMS_Handler rc.x=%d, rc.y=%d,rc.dy=%d", rc.x, rc.y, rc.dy);
                 IMENUCTL_SetRect(pMenuCtl, &rc);
                 IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL| OEMMP_USE_MENU_INFO_SELECT);
                 IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY|OEMMP_USE_MENU_STYLE);
@@ -17656,7 +17656,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 else
                 {
                     MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] File Open Failed Error:0x%x", IFILEMGR_GetLastError(pIFileMgr),0,0);
-                    break;
+                    return FALSE;
                 }
                 RELEASEIF(pIFile);
                 RELEASEIF(pIFileMgr);
@@ -18201,14 +18201,34 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 
                 //呼叫
                 case IDS_CALL:  
-                	(void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                        EVTFLG_ASYNC,
-                                        AEECLSID_WMSAPP,
-                                        EVT_USER_REDRAW,
-                                        0, 
-                                        0);                    
-                    //CLOSE_DIALOG(DLGRET_SEND)
-                    return TRUE;
+                    {
+                        int nInfoIndex = pMe->m_wCurindex - 1;
+                        MMSData mmsDataInfoList[MAX_MMS_STORED];
+                        MMSData* pMmsDataInfoCur = NULL;
+                        AECHAR phoneNumber[13] = {0};  
+                        (void) ICONFIG_GetItem(pMe->m_pConfig,
+                                           CFGI_MMSINDATA_INFO,
+                                           (void*)mmsDataInfoList,
+                                           sizeof(mmsDataInfoList));   
+                        pMmsDataInfoCur  = &mmsDataInfoList[nInfoIndex]; 
+                        STRTOWSTR(pMmsDataInfoCur->phoneNumber,phoneNumber,sizeof(phoneNumber));                         
+                        if (WSTRLEN(phoneNumber) > 0)
+                        {
+                            DBGPRINTF("phoneNumber=%S, nInfoIndex=%d", phoneNumber, nInfoIndex);
+                            // 调用呼叫接口，本 Applet 会被挂起，返回时回到当前状态
+                            WMSExtApp_CallPhoneNumber(pMe, phoneNumber, FALSE);
+                        }                
+                        else
+                        {
+                            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                                EVTFLG_ASYNC,
+                                                AEECLSID_WMSAPP,
+                                                EVT_USER_REDRAW,
+                                                0, 
+                                                0);                    
+                        }
+                        return TRUE;
+                    }
 
                 //保存
                 case IDS_SAVE:  
