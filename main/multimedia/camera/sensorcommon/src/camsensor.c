@@ -2332,12 +2332,12 @@ else {
 	if ( camera_asi == 0)
 	{
 		gpio_out(CAMSENSOR1_POWER_PIN, (GPIO_ValueType)0);
-  		gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)1);
+  		gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)0);
 	}
 	else if ( camera_asi == 1)
 	{
 		gpio_out(CAMSENSOR1_POWER_PIN, (GPIO_ValueType)1);
-  		gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)0);
+  		gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)1);
 	}
 	else
 	{
@@ -2464,7 +2464,7 @@ else {
 /* Disable the Sensor when not in use */
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
 	gpio_out(CAMSENSOR1_POWER_PIN, (GPIO_ValueType)1);
-	gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)1);  
+	gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)0);  
 #else
 	#ifdef GPIO_CAMIF_EN_OFF_V
 		#if defined(FEATURE_CAMERA_SP0828)
