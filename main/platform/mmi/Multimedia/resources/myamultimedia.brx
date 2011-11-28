@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BREWRes Name="multimedia" VERSION="1">
+<BREWRes Name="myamultimedia" VERSION="1">
 <Strings Encoding="UNICODE">
 	<String Id="1001" Name="IDS_MULTIMEDIA_TITLE">
 		<Text></Text>
 	</String>
-	<STRING Id="1011" Name="IDS_MULTIMEDIA_TITLE_1">
-		<Text></Text>
+	<String Id="1002" Name="IDS_MULTIMEDIA_MEDIAGALLERY">
+		<Text></Text>
+	</String>
+	<STRING Id="1011" Name="IDS_MULTIMEDIA_CAMERA">
+		<Text>Camera</Text>
 	</STRING>
 	<STRING Id="1012" Name="IDS_MULTIMEDIA_TITLE_2">
 		<Text>FM </Text>
