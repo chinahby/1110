@@ -386,10 +386,33 @@ typedef enum
 typedef enum
 {
 #ifdef FEATURE_NI_GPIO
-  CAMSENSOR_NI_GPIO
-  ,CAMSENSOR_ID_MAX
+  CAMSENSOR_NI_GPIO,
+  CAMSENSOR_ID_MAX
 
 #else /* FEATURE_NI_GPIO */
+
+#ifdef USE_CAMSENSOR_SIV121A
+  CAMSENSOR_SIV121A_ID,
+#endif
+#ifdef USE_CAMSENSOR_SIC110A
+  CAMSENSOR_SIC110A_ID,
+#endif
+
+#ifdef USE_CAMSENSOR_SID130B
+  CAMSENSOR_ID_SID130B,
+#endif
+
+#ifdef USE_CAMSENSOR_MICRON_SIV121D_0M3
+  CAMSENSOR_MICRON_SIV121D_0M3,
+#endif
+
+#ifdef USE_CAMSENSOR_SP0838
+  CAMSENSOR_ID_SP0838,
+#endif
+
+#ifdef USE_CAMSENSOR_SP0A18
+   CAMSENSOR_ID_SP0A18,
+#endif
 
 #ifdef USE_CAMSENSOR_OMNI_VISION_9650
   CAMSENSOR_OMNI_VISION_9650,
@@ -491,31 +514,9 @@ typedef enum
 #ifdef USE_CAMSENSOR_GC0309
   CAMSENSOR_GC0309_ID,
 #endif
-  
-#ifdef USE_CAMSENSOR_SIV121A
-  CAMSENSOR_SIV121A_ID,
-#endif
+
 #ifdef USE_CAMSENSOR_DB8B63A
   CAMSENSOR_DB8V63A_ID,
-#endif
-#ifdef USE_CAMSENSOR_SIC110A
-  CAMSENSOR_SIC110A_ID,
-#endif
-
-#ifdef USE_CAMSENSOR_SID130B
-  CAMSENSOR_ID_SID130B,
-#endif
-
-#ifdef USE_CAMSENSOR_MICRON_SIV121D_0M3
-  CAMSENSOR_MICRON_SIV121D_0M3,
-#endif
-
-#ifdef USE_CAMSENSOR_SP0838
-  CAMSENSOR_ID_SP0838,
-#endif
-
-#ifdef USE_CAMSENSOR_SP0A18
-   CAMSENSOR_ID_SP0A18,
 #endif
 
 #ifdef USE_CAMSENSOR_OV7675
@@ -526,6 +527,34 @@ typedef enum
 
 #endif/* FEATURE_NI_GPIO */
 } camsensor_sensor_model_type;
+
+
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+/* ********************* WARNING WARNING **************************** */
+/* ********************* WARNING WARNING **************************** */
+/* MUST CHANGE camsensor_detect_table in camsensor.c when             */
+/* modifying this table                                               */
+/* ********************* WARNING WARNING **************************** */
+typedef enum
+{
+	CAMSENSOR_ID_PAIR_START=0,
+	CAMSENSOR_ID_PAIR_SIV121D_SID130B = CAMSENSOR_ID_PAIR_START,
+	CAMSENSOR_ID_PAIR_SID130B_SIV121D,
+	CAMSENSOR_ID_PAIR_SP0838_SP0A18,
+	CAMSENSOR_ID_PAIR_SP0A18_SP0838,
+	CAMSENSOR_ID_PAIR_SIV121A_SIV121A,
+	CAMSENSOR_ID_PAIR_END
+}camsensor_sensor_model_pair_type;
+
+typedef struct camsensor_sensor_model_pair_id
+{
+	camsensor_sensor_model_type camsensor_first;
+	camsensor_sensor_model_type camsensor_second;
+}camsensor_sensor_model_pair_id;
+
+typedef uint8 (*camsensor_active_fn_type)(void);
+typedef uint8 (*camsensor_unactive_fn_type)(void);
+#endif
 
 /* ********************* WARNING WARNING **************************** */
 /* ********************* WARNING WARNING **************************** */

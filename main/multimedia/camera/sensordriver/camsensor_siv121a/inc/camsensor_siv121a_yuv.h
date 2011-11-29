@@ -24,6 +24,10 @@ boolean camsensor_SIV121A_ycbcr_video_config
 void camsensor_SIV121A_ycbcr_power_up(void);
 
 
+uint8 camsensor_SIV121A_ycbcr_active(void);
+uint8 camsensor_SIV121A_ycbcr_unactive(void);
+
+
 boolean camsensor_SIV121A_ycbcr_snapshot_config
 ( 
 	camsensor_static_params_type *camsensor_params /* Other config params */

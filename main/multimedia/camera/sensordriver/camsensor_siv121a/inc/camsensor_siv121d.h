@@ -51,6 +51,9 @@
                           EXPORTED FUNCTIONS
 ============================================================================*/
 
+
+uint8 camsensor_SIV121D_ycbcr_active(void);
+uint8 camsensor_SIV121D_ycbcr_unactive(void);
 /*===========================================================================
 
 FUNCTION      CAMSENSOR_OV7675_OV0M3_INIT

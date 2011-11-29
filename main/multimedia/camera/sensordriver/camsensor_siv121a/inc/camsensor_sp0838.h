@@ -10,6 +10,8 @@ boolean camsensor_sp0838_init
 	camctrl_tbl_type			  *camctrl_tbl_ptr
 );
 
+uint8 camsensor_sp0838_ycbcr_active(void);
+uint8 camsensor_sp0838_ycbcr_unactive(void);
 
 boolean camsensor_sp0838_ycbcr_start
 ( 

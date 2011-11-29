@@ -665,6 +665,294 @@ LOCAL uint aec_frame_average_bias_table_64[] =  /* Q8 format */
 };
 #endif
 
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+
+camsensor_sensor_model_pair_type current_camsensor_pair;
+
+camsensor_sensor_model_pair_id camsensor_pair[] = 
+{
+	{CAMSENSOR_SIV121A_ID,CAMSENSOR_ID_SID130B},        
+	{CAMSENSOR_ID_SID130B,CAMSENSOR_SIV121A_ID},
+	{CAMSENSOR_ID_SP0838,CAMSENSOR_ID_SP0A18},
+	{CAMSENSOR_ID_SP0A18,CAMSENSOR_ID_SP0838},
+	{CAMSENSOR_SIV121A_ID,CAMSENSOR_SIV121A_ID},
+	{CAMSENSOR_ID_MAX,CAMSENSOR_ID_MAX},
+};
+
+LOCAL camsensor_unactive_fn_type camsensor_unactive_value_table[CAMSENSOR_ID_MAX] = 
+{
+#ifdef USE_CAMSENSOR_SIV121A
+  camsensor_SIV121A_ycbcr_unactive,
+#endif
+
+#ifdef USE_CAMSENSOR_SIC110A
+  NULL,
+#endif
+
+#ifdef USE_CAMSENSOR_SID130B
+  camsensor_SID130B_unactive,
+#endif
+
+#ifdef USE_CAMSENSOR_MICRON_SIV121D_0M3
+  camsensor_SIV121D_ycbcr_unactive,
+#endif
+
+#ifdef USE_CAMSENSOR_SP0838
+  camsensor_sp0838_ycbcr_unactive,
+#endif
+
+#ifdef USE_CAMSENSOR_SP0A18
+   camsensor_sp0a18_ycbcr_unactive,
+#endif
+
+#ifdef USE_CAMSENSOR_OMNI_VISION_9650
+  NULL,
+#endif /* USE_CAMSENSOR_OMNI_VISION_9650 */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9P012
+ NULL,
+ #endif /*USE_CAMSENSOR_MICRON_MT9P012*/
+
+#ifdef USE_CAMSENSOR_OMNI_VISION_2630
+  NULL,
+#endif /* USE_CAMSENSOR_OMNI_VISION_2630 */
+
+#ifdef USE_CAMSENSOR_VB6800_STM3M2VC
+  NULL,
+#endif /* USE_CAMSENSOR_VB6800_STM3M2VC */
+
+#ifdef USE_CAMSENSOR_VB6801_STM3M2VC
+  NULL,
+#endif /* USE_CAMSENSOR_VB6801_STM3M2VC */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9T012_PIEZO
+  NULL,
+#endif /* USE_CAMSENSOR_MICRON_MT9T012_PIEZO */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9V111_YCBCR
+  NULL,
+#endif
+
+#ifdef USE_CAMSENSOR_MICRON_MT9D011_VCM_AF
+  NULL,
+#endif /* USE_CAMSENSOR_MICRON_MT9D011_VCM_AF */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9D011
+  NULL,
+#endif /* USE_CAMSENSOR_MICRON_MT9D011 */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9D111_MU2M0
+  NULL,
+#endif /* USE_CAMSENSOR_MICRON_MT9D111_MU2M0 */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9D112_MU2M0
+  NULL,
+#endif /* USE_CAMSENSOR_MICRON_MT9D112_MU2M0 */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9D112_MU2M0YU
+  NULL,
+#endif /* USE_CAMSENSOR_MICRON_MT9D112_MU2M0YU */
+
+#ifdef USE_CAMSENSOR_MICRON_MU1M3YU_MT9M112 
+   NULL,
+#endif
+
+#ifdef USE_CAMSENSOR_CASIO_NX5300
+  NULL,
+#endif 
+  /* Sharp YCbCr driver init should be called first when both YCbCr, Bayer
+   * Modes are supported
+   */
+#ifdef USE_CAMSENSOR_SHARP_LZOP3733_YCBCR
+  NULL,
+#endif /* USE_CAMSENSOR_CASIO_NX5300 */
+
+#ifdef USE_CAMSENSOR_SHARP_LZOP3731
+  NULL,
+#endif /*  USE_CAMSENSOR_SHARP_LZOP3731 */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9T012_VCM_AF
+	NULL,
+#endif /*USE_CAMSENSOR_MICRON_MT9T012_VCM_AF*/
+
+#ifdef USE_CAMSENSOR_MICRON_MT9T013
+	NULL,
+#endif /*USE_CAMSENSOR_MICRON_MT9T013*/
+
+  /* this Sony 2.0 MP does not have auto-detect capability.  
+   * Therefore, it must featurized and when enabled cannot be 
+   * used with any sensor below it 
+   */
+#ifdef USE_CAMSENSOR_SONY_IU011FS
+  NULL,
+#endif /* USE_CAMSENSOR_SONY_IU011FS*/
+
+#ifdef USE_CAMSENSOR_SONY_IU011F_PIEZO
+  NULL,
+#endif /* USE_CAMSENSOR_SONY_IU011F_PIEZO*/
+
+#ifdef USE_CAMSENSOR_SONY_IU018F_PIEZO
+  NULL,
+#endif /* USE_CAMSENSOR_SONY_IU018F_PIEZO */
+  /* this Sony 1.3 MP does not have auto-detect capability.  
+   * Therefore, it must be last in the list 
+   */
+
+#ifdef USE_CAMSENSOR_SONY_IMX006FQ
+  NULL,
+#endif /* USE_CAMSENSOR_SONY_IMX006 */
+
+#ifdef USE_CAMSENSOR_GC0309
+  NULL,
+#endif
+
+#ifdef USE_CAMSENSOR_DB8B63A
+  NULL,
+#endif
+
+#ifdef USE_CAMSENSOR_OV7675
+  NULL,
+#endif
+};
+
+LOCAL camsensor_active_fn_type camsensor_active_value_table[CAMSENSOR_ID_MAX] = 
+{
+#ifdef USE_CAMSENSOR_SIV121A
+  camsensor_SIV121A_ycbcr_active,
+#endif
+
+#ifdef USE_CAMSENSOR_SIC110A
+  NULL,
+#endif
+
+#ifdef USE_CAMSENSOR_SID130B
+  camsensor_SID130B_active,
+#endif
+
+#ifdef USE_CAMSENSOR_MICRON_SIV121D_0M3
+  camsensor_SIV121D_ycbcr_active,
+#endif
+
+#ifdef USE_CAMSENSOR_SP0838
+  camsensor_sp0838_ycbcr_active,
+#endif
+
+#ifdef USE_CAMSENSOR_SP0A18
+   camsensor_sp0a18_ycbcr_active,
+#endif
+
+#ifdef USE_CAMSENSOR_OMNI_VISION_9650
+  NULL,
+#endif /* USE_CAMSENSOR_OMNI_VISION_9650 */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9P012
+ NULL,
+ #endif /*USE_CAMSENSOR_MICRON_MT9P012*/
+
+#ifdef USE_CAMSENSOR_OMNI_VISION_2630
+  NULL,
+#endif /* USE_CAMSENSOR_OMNI_VISION_2630 */
+
+#ifdef USE_CAMSENSOR_VB6800_STM3M2VC
+  NULL,
+#endif /* USE_CAMSENSOR_VB6800_STM3M2VC */
+
+#ifdef USE_CAMSENSOR_VB6801_STM3M2VC
+  NULL,
+#endif /* USE_CAMSENSOR_VB6801_STM3M2VC */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9T012_PIEZO
+  NULL,
+#endif /* USE_CAMSENSOR_MICRON_MT9T012_PIEZO */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9V111_YCBCR
+  NULL,
+#endif
+
+#ifdef USE_CAMSENSOR_MICRON_MT9D011_VCM_AF
+  NULL,
+#endif /* USE_CAMSENSOR_MICRON_MT9D011_VCM_AF */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9D011
+  NULL,
+#endif /* USE_CAMSENSOR_MICRON_MT9D011 */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9D111_MU2M0
+  NULL,
+#endif /* USE_CAMSENSOR_MICRON_MT9D111_MU2M0 */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9D112_MU2M0
+  NULL,
+#endif /* USE_CAMSENSOR_MICRON_MT9D112_MU2M0 */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9D112_MU2M0YU
+  NULL,
+#endif /* USE_CAMSENSOR_MICRON_MT9D112_MU2M0YU */
+
+#ifdef USE_CAMSENSOR_MICRON_MU1M3YU_MT9M112 
+   NULL,
+#endif
+
+#ifdef USE_CAMSENSOR_CASIO_NX5300
+  NULL,
+#endif 
+  /* Sharp YCbCr driver init should be called first when both YCbCr, Bayer
+   * Modes are supported
+   */
+#ifdef USE_CAMSENSOR_SHARP_LZOP3733_YCBCR
+  NULL,
+#endif /* USE_CAMSENSOR_CASIO_NX5300 */
+
+#ifdef USE_CAMSENSOR_SHARP_LZOP3731
+  NULL,
+#endif /*  USE_CAMSENSOR_SHARP_LZOP3731 */
+
+#ifdef USE_CAMSENSOR_MICRON_MT9T012_VCM_AF
+	NULL,
+#endif /*USE_CAMSENSOR_MICRON_MT9T012_VCM_AF*/
+
+#ifdef USE_CAMSENSOR_MICRON_MT9T013
+	NULL,
+#endif /*USE_CAMSENSOR_MICRON_MT9T013*/
+
+  /* this Sony 2.0 MP does not have auto-detect capability.  
+   * Therefore, it must featurized and when enabled cannot be 
+   * used with any sensor below it 
+   */
+#ifdef USE_CAMSENSOR_SONY_IU011FS
+  NULL,
+#endif /* USE_CAMSENSOR_SONY_IU011FS*/
+
+#ifdef USE_CAMSENSOR_SONY_IU011F_PIEZO
+  NULL,
+#endif /* USE_CAMSENSOR_SONY_IU011F_PIEZO*/
+
+#ifdef USE_CAMSENSOR_SONY_IU018F_PIEZO
+  NULL,
+#endif /* USE_CAMSENSOR_SONY_IU018F_PIEZO */
+  /* this Sony 1.3 MP does not have auto-detect capability.  
+   * Therefore, it must be last in the list 
+   */
+
+#ifdef USE_CAMSENSOR_SONY_IMX006FQ
+  NULL,
+#endif /* USE_CAMSENSOR_SONY_IMX006 */
+
+#ifdef USE_CAMSENSOR_GC0309
+  NULL,
+#endif
+
+#ifdef USE_CAMSENSOR_DB8B63A
+  NULL,
+#endif
+
+#ifdef USE_CAMSENSOR_OV7675
+  NULL,
+#endif
+};
+
+#endif
+
 
 LOCAL camsensor_sensor_model_type camsensor_id = CAMSENSOR_ID_MAX;
 
@@ -684,6 +972,30 @@ LOCAL boolean (*camsensor_detect_table[])(camsensor_function_table_type *, camct
   camsensor_ni_gpio_init
 
 #else /* FEATURE_NI_GPIO */
+
+#ifdef USE_CAMSENSOR_SIV121A
+  camsensor_siv121a_init,
+#endif
+
+#ifdef USE_CAMSENSOR_SIC110A
+  camsensor_sic110a_init,
+#endif
+
+#ifdef USE_CAMSENSOR_SID130B
+  camsensor_SID130B_init,
+#endif
+
+#ifdef USE_CAMSENSOR_MICRON_SIV121D_0M3
+  camsensor_siv121d_0m3_init,
+#endif
+
+#ifdef USE_CAMSENSOR_SP0838
+  camsensor_sp0838_init,
+#endif
+
+#ifdef USE_CAMSENSOR_SP0A18
+  camsensor_sp0a18_init,
+#endif
 
 #ifdef USE_CAMSENSOR_OMNI_VISION_9650
   camsensor_ov9650_init,
@@ -783,33 +1095,9 @@ LOCAL boolean (*camsensor_detect_table[])(camsensor_function_table_type *, camct
 #ifdef USE_CAMSENSOR_GC0309
   camsensor_gc0309_0p1mp_init,
 #endif
-  
-#ifdef USE_CAMSENSOR_SIV121A
-  camsensor_siv121a_init,
-#endif
 
 #ifdef USE_CAMSENSOR_DB8B63A
   camsensor_DB8V63A_ycbcr_init,
-#endif
-
-#ifdef USE_CAMSENSOR_SIC110A
-  camsensor_sic110a_init,
-#endif
-
-#ifdef USE_CAMSENSOR_SID130B
-  camsensor_SID130B_init,
-#endif
-
-#ifdef USE_CAMSENSOR_MICRON_SIV121D_0M3
-  camsensor_siv121d_0m3_init,
-#endif
-
-#ifdef USE_CAMSENSOR_SP0838
-  camsensor_sp0838_init,
-#endif
-
-#ifdef USE_CAMSENSOR_SP0A18
-  camsensor_sp0a18_init,
 #endif
 
 #ifdef USE_CAMSENSOR_OV7675
@@ -932,6 +1220,10 @@ extern pm_model_type  pm_ft_get_pmic_model(void);
 #ifdef CAMERA_VOTES_FOR_PMIC
 #error code not present
 #endif /* CAMERA_VOTES_FOR_PMIC */
+#endif
+
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+extern uint8 camera_asi;
 #endif
 /*============================================================================
                         EXTERNAL API DEFINITIONS
@@ -2322,6 +2614,66 @@ else {
 }
 #endif /* CAMERA_USE_PMIC_TO_POWER_SENSOR */
 
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+  	/* Enable the Sensor Module */
+	camera_timed_wait(10);
+
+	CAMERA_CONFIG_GPIO(CAMSENSOR1_POWER_PIN);
+	CAMERA_CONFIG_GPIO(CAMSENSOR2_POWER_PIN);
+	
+    ERR("current_camsensor_pair = %d",current_camsensor_pair,0,0);
+	if ( current_camsensor_pair < CAMSENSOR_ID_PAIR_END )
+	{
+		if ( camera_asi == 0)
+		{
+            camsensor_active_fn_type pfn_active = camsensor_active_value_table[camsensor_pair[current_camsensor_pair].camsensor_first];
+            camsensor_unactive_fn_type pfn_unactive = camsensor_unactive_value_table[camsensor_pair[current_camsensor_pair].camsensor_second];
+            
+            if(pfn_active)
+            {
+			    gpio_out(CAMSENSOR1_POWER_PIN, (GPIO_ValueType)pfn_active());
+            }
+            if(pfn_unactive)
+            {
+	  		    gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)pfn_unactive());
+            }
+		}
+		else if ( camera_asi == 1)
+		{
+            camsensor_active_fn_type pfn_active = camsensor_active_value_table[camsensor_pair[current_camsensor_pair].camsensor_second];
+            camsensor_unactive_fn_type pfn_unactive = camsensor_unactive_value_table[camsensor_pair[current_camsensor_pair].camsensor_first];
+            
+            if(pfn_unactive)
+            {
+			    gpio_out(CAMSENSOR1_POWER_PIN, (GPIO_ValueType)pfn_unactive());
+            }
+            if(pfn_active)
+            {
+	  		    gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)pfn_active());
+            }
+		}
+        else
+		{
+            camsensor_unactive_fn_type pfn_unactive1 = camsensor_active_value_table[camsensor_pair[current_camsensor_pair].camsensor_first];
+            camsensor_unactive_fn_type pfn_unactive2 = camsensor_unactive_value_table[camsensor_pair[current_camsensor_pair].camsensor_second];
+            
+            if(pfn_unactive1)
+            {
+			    gpio_out(CAMSENSOR1_POWER_PIN, (GPIO_ValueType)pfn_unactive1());
+            }
+            if(pfn_unactive2)
+            {
+	  		    gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)pfn_unactive2());
+            }
+		}
+	}
+  	(void)camsensor_config_camclk_po(camsensor_camclk_po_hz);
+  	camera_timed_wait(13);
+#endif
+
+#else
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
 	MSG_FATAL("camsensor_power_on camera_asi = %d",camera_asi,0,0);
 	camera_timed_wait(13);
@@ -2354,6 +2706,7 @@ else {
   #endif
   #endif
 #endif/* FEATURE_CAMERA_MULTI_SENSOR */
+#endif
 
   (void) camsensor_config_camclk_po(camsensor_camclk_po_hz);
   camera_timed_wait(13);
@@ -2462,6 +2815,12 @@ else {
 #endif /* CAMERA_USE_PMIC_TO_POWER_SENSOR */
   
 /* Disable the Sensor when not in use */
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+	gpio_out(CAMSENSOR1_POWER_PIN, (GPIO_ValueType)(*camsensor_unactive_value_table[camsensor_pair[current_camsensor_pair].camsensor_first])());
+  	gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)(*camsensor_unactive_value_table[camsensor_pair[current_camsensor_pair].camsensor_second])());
+#endif
+#else
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
 	gpio_out(CAMSENSOR1_POWER_PIN, (GPIO_ValueType)1);
 	gpio_out(CAMSENSOR2_POWER_PIN, (GPIO_ValueType)0);  
@@ -2473,6 +2832,7 @@ else {
 			gpio_out(CAMIF_EN_N, (GPIO_ValueType)GPIO_CAMIF_EN_OFF_V);
 		#endif
 	#endif
+#endif
 #endif
   /* If the sensor need to be initialized next time when powered
    * on, then you need to clear camsensor_initialized */
@@ -4316,6 +4676,32 @@ boolean camsensor_init (void)
   	camsensor_id = CAMSENSOR_ID_MAX;
 #endif /* FEATURE_CAMERA_MULTI_SENSOR */
 
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+	if ( camera_asi == 0 )
+	{
+		if (camsensor_detect_table[camsensor_pair[current_camsensor_pair].camsensor_first])
+		{
+			camctrl_init_tbl();
+			camsensor_init_func_tbl();
+			camsensor_initialized = (*camsensor_detect_table[camsensor_pair[current_camsensor_pair].camsensor_first])(&camsensor_function_table,
+	                                              &camctrl_tbl);
+		}
+	}
+	else if ( camera_asi == 1 )
+	{
+		if (camsensor_detect_table[camsensor_pair[current_camsensor_pair].camsensor_second])
+		{
+			camctrl_init_tbl();
+			camsensor_init_func_tbl();
+			camsensor_initialized = (*camsensor_detect_table[camsensor_pair[current_camsensor_pair].camsensor_second])(&camsensor_function_table,&camctrl_tbl);
+		}
+	}
+#endif /* nFEATURE_CAMERA_MULTI_SENSOR */
+
+
+#else
 #ifdef FEATURE_CAMERA_SENSOR_AUTO_DETECT
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
 	#ifdef FEATURE_NI_GPIO
@@ -4361,6 +4747,7 @@ boolean camsensor_init (void)
 #endif /* nFEATURE_CAMERA_MULTI_SENSOR */
 	}
 #endif /* FEATURE_CAMERA_SENSOR_AUTO_DETECT */
+#endif
 
 	return camsensor_initialized;
 } /* camsensor_init */

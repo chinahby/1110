@@ -77,8 +77,6 @@ $Header: //depot/asic/msm6550/drivers/camsensor/camsensor_ SP0A18_ycbcr.c#3 $ $D
 /* Strobe Flash Epoch Interrupt time before the end of line count */
 
 static camera_antibanding_type g_iBanding = CAMERA_ANTIBANDING_OFF;
-static camera_reflect_type g_reflect = CAMERA_MAX_REFLECT;
-static int8 g_effect = CAMERA_EFFECT_MIN_MINUS_1;
 
 /*===========================================================================
                           MACRO DEFINITIONS
@@ -380,7 +378,15 @@ LOCAL boolean camsensor_sp0a18_sensor_init(void)
 
 
 
+uint8 camsensor_sp0a18_ycbcr_active(void)
+{
+	return 0;
+}
 
+uint8 camsensor_sp0a18_ycbcr_unactive(void)
+{
+	return 1;
+}
 /*===========================================================================
 
 FUNCTION      CAMSENSOR_SP0A18_YCBCR_INIT
@@ -829,8 +835,6 @@ SIDE EFFECTS
 void camsensor_sp0a18_ycbcr_power_down(void)
 {
     MSG_FATAL ("camsensor_SP0A18_ycbcr_power_down begin", 0,0,0);
-	g_reflect = CAMERA_MAX_REFLECT;
-	g_effect = CAMERA_EFFECT_MIN_MINUS_1;
 }
 
 
@@ -936,11 +940,6 @@ camera_ret_code_type camsensor_sp0a18_set_effect(int8 effect)
 	camera_ret_code_type ret_val = CAMERA_SUCCESS;
 	
 	MSG_FATAL ("+++++ camsensor_SP0A18_set_effect effect = %d",effect,0,0);
-
-	if ( g_effect == effect )
-	{
-		return CAMERA_SUCCESS;
-	}
 	
 
 	switch(effect)
@@ -962,19 +961,12 @@ camera_ret_code_type camsensor_sp0a18_set_effect(int8 effect)
 			break;
 	}
 
-	g_effect = effect;
   	return ret_val;
 }/* camsensor_SP0A18_set_effect */
 
 camera_ret_code_type camsensor_sp0a18_set_wb(int8 wb) 
 {
   	camera_ret_code_type ret_val = CAMERA_SUCCESS;
-	static int8 m_wb = CAMERA_WB_MIN_MINUS_1;
-	
-	if ( wb == m_wb )
-	{
-		return CAMERA_SUCCESS;
-	}
 	
 	MSG_FATAL ("+++++ camsensor_SP0A18_set_wb wb = %d",wb,0,0);
 
@@ -1001,7 +993,6 @@ camera_ret_code_type camsensor_sp0a18_set_wb(int8 wb)
 	  		break;
   	}
 
-	m_wb = wb;
   	return ret_val;
 }/* camsensor_SP0A18_set_wb */
 //wlr 1114 end

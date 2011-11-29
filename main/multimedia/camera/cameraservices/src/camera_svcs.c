@@ -2653,6 +2653,10 @@ static camera_cb_type camera_svcs_translate_ret_val_to_cb
 (
  camera_ret_code_type ret_val
 );
+
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+extern camsensor_sensor_model_pair_type current_camsensor_pair;
+#endif
 /*===========================================================================
 
 FUNCTION      CAMERA_VFE_CONTROL_AND_STATUS_SET_DEFAULT
@@ -2956,6 +2960,70 @@ void camera_svcs_init(void)
   clk_def (&camera_service_unavailable_clk);
 
 #ifdef CUST_EDITION
+
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+	for (current_camsensor_pair=CAMSENSOR_ID_PAIR_START; current_camsensor_pair < CAMSENSOR_ID_PAIR_END; current_camsensor_pair++)
+  	{
+  		camera_number_of_sensors = 0;
+  		for(camera_asi=0; camera_asi < NUM_OF_SENSORS_ON_PHONE; camera_asi++)
+  		{
+			camsensor_power_on();
+
+			camsensor_power_up();
+
+			/* Assign this sensor the available ID */
+    		camera_sensors[camera_asi].sensor_id = (uint16)camera_asi;
+			if ( camsensor_initialized == TRUE )
+			{
+				/* Sensor responded as expected during initization. */
+				camera_sensors[camera_asi].sensor_available = TRUE;
+
+				/* Don't set camera_sensors[camera_asi].sensor_width/height
+				* here because camsensor_start() (called in camera_start())
+				* change it based on the specific sensor selected. */
+
+				/* Set the fps to the maximum supported by this sensor */
+				camera_sensors[camera_asi].fps = 15 * Q8;
+
+				 /* Whether the device driver can sense when sensor is rotated */
+				if(camera_asi == 0)
+					camera_sensors[camera_asi].sensor_rotation_sensing = FALSE;
+				else if(camera_asi == 1)
+					camera_sensors[camera_asi].sensor_rotation_sensing = TRUE;
+
+				/* How the sensor are installed */
+				if(camera_asi == 0)
+				{
+					camera_sensors[camera_asi].default_rotation = 0;
+					camera_sensors[camera_asi].default_orientation = CAMERA_ORIENTATION_PORTRAIT;
+				}
+				else
+				{
+					camera_sensors[camera_asi].default_rotation = 90;
+					camera_sensors[camera_asi].default_orientation = CAMERA_ORIENTATION_PORTRAIT;
+				}
+
+				camera_number_of_sensors++;
+			}
+			else
+    		{
+      			camera_sensors[camera_asi].sensor_available = FALSE;
+    		}
+
+    		camsensor_power_down();
+  			camsensor_power_off();
+  		}
+
+  		if ( camera_number_of_sensors == NUM_OF_SENSORS_ON_PHONE )
+  		{
+			break;
+  		}
+  	}
+#endif
+
+#else
   /* The following sequence gets the camera initialized and then
    * put in power down mode. We cannot leave camera in power up state
    * until used.
@@ -3006,6 +3074,8 @@ void camera_svcs_init(void)
   camsensor_power_off ();
   }
 #endif
+#endif
+
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
   camera_asi = 0; /* select the primary sensor */
 #endif /* FEATURE_CAMERA_MULTI_SENSOR */

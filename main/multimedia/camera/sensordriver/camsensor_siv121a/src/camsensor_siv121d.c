@@ -293,6 +293,16 @@ static register_address_value_pair siv121d_reg_settings_array[] =
 	  EXPORTED FUNCTIONS
 ============================================================================*/
 
+uint8 camsensor_SIV121D_ycbcr_active(void)
+{
+	return 0;
+}
+
+uint8 camsensor_SIV121D_ycbcr_unactive(void)
+{
+	return 1;
+}
+
 /*===========================================================================
 
 FUNCTION      CAMSENSOR_SIV121D_0M3_INIT

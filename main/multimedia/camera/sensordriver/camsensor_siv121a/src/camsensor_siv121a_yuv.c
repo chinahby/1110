@@ -434,7 +434,15 @@ LOCAL boolean camsensor_SIV121A_sensor_init(void)
 } /* camsensor_ov7690_write_sensor */
 
 
+uint8 camsensor_SIV121A_ycbcr_active(void)
+{
+	return 0;
+}
 
+uint8 camsensor_SIV121A_ycbcr_unactive(void)
+{
+	return 1;
+}
 
 /*===========================================================================
 

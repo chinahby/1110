@@ -82,9 +82,6 @@ typedef struct register_address_value_pair_struct {
 
 /* Strobe Flash Epoch Interrupt time before the end of line count */
 static camera_antibanding_type g_iBanding = CAMERA_ANTIBANDING_OFF;
-static camera_reflect_type g_reflect = CAMERA_MAX_REFLECT;
-static int8 g_effect = CAMERA_EFFECT_MIN_MINUS_1;
-
 /*===========================================================================
                           MACRO DEFINITIONS
 ============================================================================*/
@@ -383,7 +380,15 @@ LOCAL boolean camsensor_sp0838_sensor_init(void)
 } /* camsensor_ov7690_write_sensor */
 
 
+uint8 camsensor_sp0838_ycbcr_active(void)
+{
+	return 0;
+}
 
+uint8 camsensor_sp0838_ycbcr_unactive(void)
+{
+	return 1;
+}
 
 /*===========================================================================
 
@@ -526,7 +531,7 @@ boolean camsensor_sp0838_ycbcr_start( camsensor_static_params_type *camsensor_pa
 	/* CCD or CMOS */
 	camsensor_params->sensor_type = CAMSENSOR_CMOS;
 
-	camsensor_params->format = CAMIF_YCbCr_Cb_Y_Cr_Y;
+	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
 	/* BAYER or YCbCr */
 	camsensor_params->output_format = CAMSENSOR_YCBCR;
 
@@ -656,7 +661,7 @@ boolean camsensor_sp0838_ycbcr_snapshot_config
 	SP0838_config_window(0,0,320,240);
 	
 	/* Sensor output data format */
-	camsensor_params->format = CAMIF_YCbCr_Cb_Y_Cr_Y;
+	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
 
 	/* Set the current dimensions */
 	camsensor_params->camsensor_width = camsensor_params->full_size_width;
@@ -734,7 +739,7 @@ boolean camsensor_sp0838_ycbcr_video_config
 	SP0838_config_window(0,0,480,360);
 	/* Sensor output data format */
 	camsensor_params->discardFirstFrame = TRUE;
-	camsensor_params->format = CAMIF_YCbCr_Cb_Y_Cr_Y;
+	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
 
 	switch ( camsensor_preview_resolution )
     {
@@ -847,9 +852,6 @@ SIDE EFFECTS
 void camsensor_sp0838_ycbcr_power_down(void)
 {
     MSG_FATAL ("camsensor_SP0838_ycbcr_power_down begin", 0,0,0);
-	g_reflect = CAMERA_MAX_REFLECT;
-	g_effect = CAMERA_EFFECT_MIN_MINUS_1;
-
 }
 
 
@@ -955,11 +957,6 @@ camera_ret_code_type camsensor_sp0838_set_effect(int8 effect)
 	camera_ret_code_type ret_val = CAMERA_SUCCESS;
 	
 	MSG_FATAL ("+++++ camsensor_SP0838_set_effect effect = %d",effect,0,0);
-
-	if ( g_effect == effect )
-	{
-		return CAMERA_SUCCESS;
-	}
 	
 	switch(effect)
 	{
@@ -980,19 +977,12 @@ camera_ret_code_type camsensor_sp0838_set_effect(int8 effect)
 			break;
 	}
 
-	g_effect = effect;
   	return ret_val;
 }/* camsensor_SP0838_set_effect */
 
 camera_ret_code_type camsensor_sp0838_set_wb(int8 wb) 
 {
   	camera_ret_code_type ret_val = CAMERA_SUCCESS;
-	static int8 m_wb = CAMERA_WB_MIN_MINUS_1;
-	
-	if ( wb == m_wb )
-	{
-		return CAMERA_SUCCESS;
-	}
 	
 	MSG_FATAL ("+++++ camsensor_SP0838_set_wb wb = %d",wb,0,0);
 
@@ -1019,7 +1009,6 @@ camera_ret_code_type camsensor_sp0838_set_wb(int8 wb)
 	  		break;
   	}
 
-	m_wb = wb;
   	return ret_val;
 }/* camsensor_SP0838_set_wb */
 //wlr 1114 end

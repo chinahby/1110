@@ -21,6 +21,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_BT_SEND_FILE_ONLY		//Add By zzg 2010_11_03
 #define FEATURE_SUPPORT_BT_AUDIO		//Add By z zg 2011_10_19
 
+#define FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
 
 #define BT_QSC1110//FEATURE_BT_QSC1100
 #define FEATURE_BT_QSOC_BTS4025_B2   //this is now we used  bluetooth  ÐÍºÅ
@@ -66,7 +67,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define T_QSC1110
 #define CUST_MOB_MODEL 25
 #define FEATURE_PLL_192 
-#define FEATURE_CLKREGIM_1X_MODE 
+#define FEATURE_CLKREGIM_2X_MODE 
 #define FEATURE_AUDIO_CONFIGURATION_MINIMAL 
 //Gemsea Remove #define FEATURE_AUDIO_CONFIGURATION_LO_TIER 
 //#define FEATURE_IPL_NO_CAMERA
