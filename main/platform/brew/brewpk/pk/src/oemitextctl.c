@@ -6466,18 +6466,21 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
                 	}
                 	else
                 	{
-                		MSG_FATAL("222222============%d",i,0,0);
+                		MSG_FATAL("222222============%d,%d",i,pme->m_nCurrInputModeCount,0);
                 		#if defined(FEATURE_VERSION_MYANMAR)||defined(FEATURE_VERSION_MYANMAR_MTM)
                 		if(!(pme->m_dwProps & TP_MULTILINE)/*&&( 2== i)*/)
                 		{
-                			pme->m_nCurrInputModeCount = 3;
+                            MSG_FATAL("TP_MULTILINE",0,0,0);
+                			pme->m_nCurrInputModeCount = 7;
                 		}
                 		#endif
                     	 
                     	#if defined(FEATURE_VERSION_MYANMAR)||defined(FEATURE_VERSION_MYANMAR_MTM)
                     	pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1]; 
+                        #if 0
                 		if(!(pme->m_dwProps & TP_MULTILINE)/*&&( 2== i)*/)
                 		{
+                            MSG_FATAL("TP_MULTILINE2",0,0,0);
                 			
                 			if(
 								#ifdef FEATURE_MT_MYANMRA
@@ -6492,6 +6495,7 @@ static boolean TextCtl_SetNextInputMode(CTextCtl *pme)
                 		}
                 		#else
                 		pme->m_nCurrInputMode = pme->m_nCurrInputModeList[i+1];
+                        #endif
                 		#endif
                     }
                 }

@@ -3130,7 +3130,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                      wszText, 
                      -1, 
                      PIXELS_TO_EDGE,
-                     PIXELS_TO_EDGE  + ((4 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	5
+                     PIXELS_TO_EDGE  + ((5 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	5
                      NULL,
                      IDF_TEXT_TRANSPARENT);
    (void)IDISPLAY_DrawText(pMe->m_pDisplay,
@@ -3138,7 +3138,7 @@ static void RecentCalls_RecordDetail(CRecentCalls   *pMe)
                      wszCount, 
                      -1, 
                      nTextWidth + 3 * nNumberWidth,
-                     PIXELS_TO_EDGE  + ((4 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	5
+                     PIXELS_TO_EDGE  + ((5 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	5
                      NULL,
                      IDF_TEXT_TRANSPARENT);
 #endif   
@@ -3162,7 +3162,7 @@ Description 当前号码的通话时间,日期
 ===============================================================================*/
 static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
 {
-
+    AECHAR                  szbuf[16] = {0};
     AECHAR                  buffer[32] = {0};
 #ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
    AEEDeviceInfo DeviceInfo;
@@ -3181,18 +3181,19 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
     (void) ISHELL_LoadResString( pMe->m_pShell,
                     AEE_RECENTCALLSRES_LANGFILE,
                     IDS_CALLTIME,
-                    buffer,
-                    sizeof( buffer)
+                    szbuf,
+                    sizeof( szbuf)
                 );
     (void) IDISPLAY_DrawText( pMe->m_pDisplay,
                     AEE_FONT_NORMAL,
-                    buffer,
+                    szbuf,
                     -1,
                     PIXELS_TO_EDGE,
                     PIXELS_TO_EDGE  + ((2 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT
                     NULL,
                     IDF_TEXT_TRANSPARENT
-                );  //画出"日期/时间"字符串
+                );
+  //画出"日期/时间"字符串
 
 	nCallTimeTextWidth = IDISPLAY_MeasureText(pMe->m_pDisplay, AEE_FONT_NORMAL, buffer);
     (void) ISHELL_LoadResString(pMe->m_pShell,
@@ -3218,7 +3219,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                     buffer,
                     -1,
                     PIXELS_TO_EDGE,
-                    PIXELS_TO_EDGE  + ((3 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 
+                    PIXELS_TO_EDGE  + ((4 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 
                     NULL,
                     IDF_TEXT_TRANSPARENT
                 );  //画出"通话时间"字符串
@@ -3248,7 +3249,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                       buffer,
                       -1,
                       nCallTimeTextWidth + nNumberWidth, //ELS_TO_EDGE,
-                      PIXELS_TO_EDGE  + ((2 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	3
+                      PIXELS_TO_EDGE  + ((3 + nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	3
                       NULL,
                       IDF_TEXT_TRANSPARENT
                   );
@@ -3460,7 +3461,7 @@ static void RecentCalls_TimeRecord(CRecentCalls *pMe, int nSinkingLines)
                   buffer,
                   -1,
                   nTextWidth + nNumberWidth,
-                  PIXELS_TO_EDGE  + ((3+ nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	 
+                  PIXELS_TO_EDGE  + ((4+ nSinkingLines)*nLineHeight),	//+ TITLEBAR_HEIGHT	 	 
                   NULL,
                   IDF_TEXT_TRANSPARENT
               );

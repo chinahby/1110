@@ -727,7 +727,7 @@ boolean Calendar_FormatTime( uint32 seconds, AECHAR* resultString, int resultStr
 #endif
 
 		//wangliang close!  2010-08-09   没有足够的空间显示这种模式
-#if 0
+#ifdef FEATURE_VERSION_VG68
         if (timeFormatType == OEMNV_TIMEFORM_AMPM)
         {
 

@@ -9497,7 +9497,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		}
 	        		else
 	        		{
-	        			#if 0//def //FEATURE_ARPHIC_LAYOUT_ENGINE
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 			            if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
 			            {
 			                   uint16 wNewSel;
@@ -9511,7 +9511,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 			                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 			                   }
 			            }
-//#else//change by xuhui
+#else//change by xuhui
 	//#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 			            if (OEM_TextGetCursorPos(pContext) == 0)
 			                {
@@ -9561,7 +9561,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 	        		}
 	        		else
 	        		{
-	        			#if 0//def FEATURE_ARPHIC_LAYOUT_ENGINE
+#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 		            	if ( IDF_ALIGN_RIGHT == pContext->dwAlignFlags )
 		                {
 		                   uint16 wNewSel;
@@ -9579,7 +9579,7 @@ static boolean T9TextCtl_CJK_MYANMAR_Key(TextCtlContext *pContext, AEEEvent eCod
 		                       OEM_TextSetSel(pContext, wNewSel, wNewSel);                       
 		                   }
 		                }
-//#else//change by xuhui
+#else//change by xuhui
 //#endif //#ifdef FEATURE_ARPHIC_LAYOUT_ENGINE
 		             if (OEM_TextGetCursorPos(pContext) == WSTRLEN(pContext->pszContents))
 		                {
