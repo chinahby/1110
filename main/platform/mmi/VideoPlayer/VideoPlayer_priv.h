@@ -784,6 +784,14 @@ typedef struct _Help
   uint16 m_Height;
 } CHelp,*CHelpPtr;
 
+typedef enum
+{
+    IDI_SCHEDULE_EMPTY_PRELOAD,
+    IDI_GLIDER_PRELOAD,
+    IDI_TIME_PART_PRELOAD,
+    IDI_PNG_PRELOAD_MAX
+};
+
 // VideoPlayer Applet对象结构体：
 typedef struct _CVideoPlayer
 {
@@ -905,6 +913,8 @@ typedef struct _CVideoPlayer
     //Applet是否处于活动状态
     boolean          m_bActive;    
 	VPlayerRecttype m_rtype;////wlh 20090420 add 为了区别播放区域，加音量，减音量的刷新，加了个参数
+
+    IImage *        TickUpdateImg[IDI_PNG_PRELOAD_MAX];
 
 	CHelpPtr         m_pHelp;
 }CVideoPlayer;

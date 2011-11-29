@@ -39,7 +39,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 #define FEATURE_RUIM_PHONEBOOK
 #define FEATURE_ICARD_NO_UI_BASE
 #define FEATURE_LANG_ENGLISH
-//#define FEATURE_LANG_INDONESIAN
+//#define FEATURE_LANG_ARABIC
 //#define FEATURE_NUM_KEY_MID
 //#define FEATURE_INPUTMODE_INDONESIAN //Add By zzg 2010_09_06
 #undef FEATURE_LANG_CHINESE
@@ -77,7 +77,7 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
 //#define FEATURE_AUDIO_SPECTRUM_ANALYZER 
 #define CLKRGM_INCLUDE_TD 
 #define FEATURE_MMODE_LOW_MEM_TARGET 
-//#define FEATURE_LOWTIER_LOWMEM 
+#define FEATURE_LOWTIER_LOWMEM 
 #define FEATURE_REX_IPC 
 #define FEATURE_ASYNC_DATA_NOOP 
 #define HS_USB_SCSI_BUFFER_SIZE (512 * 2)
@@ -380,8 +380,8 @@ Copyright (c) 2001-2010 by QUALCOMM Incorporated.  All Rights Reserved.
    #undef FEATURE_UNIFORM_SCAN_OOS
 #endif
 
-#ifdef CAMERA_USES_SOFTDSP
-#define FEATURE_CAMERA_NOFULLSCREEN
-#endif
+//#ifdef CAMERA_USES_SOFTDSP
+//#define FEATURE_CAMERA_NOFULLSCREEN
+//#endif
 
 #endif /* CUSTSB2_H */

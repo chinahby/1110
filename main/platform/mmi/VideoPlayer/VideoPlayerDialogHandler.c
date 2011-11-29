@@ -1373,7 +1373,64 @@ static void VideoPlayer_UpdateFRButton(CVideoPlayer *pMe)
 /*=================================================================================================================
 初始化video
 =================================================================================================================*/
+void VidePlayer_SoundRestore()
+{    
+    IConfig             *pConfig;
+    int nRet = EFAILED;
+    byte		return_ringer_level[PROFILENUMBER];
+	byte	    return_beep_level[PROFILENUMBER];    
+	byte        CurProfile;      //当前情景模式	
+	byte		set_ringer_level;
+	byte		set_beep_level;
+	byte        CallVolume;
+        // Create the IConfig Serivce object.
+    nRet = ISHELL_CreateInstance(AEE_GetShell(),
+                                 AEECLSID_CONFIG,
+                                (void **) &pConfig);
+    if (nRet != SUCCESS||pConfig==NULL) 
+    {
+        return ;
+    }
+    
+    ICONFIG_GetItem(pConfig, CFGI_PROFILE_CUR_NUMBER,&CurProfile, sizeof(byte));
+    MSG_FATAL("VidePlayer_SoundRestore CurProfile=%d",CurProfile,0,0);
+    //wangliang modify!  2010-09-25
+	(void) ICONFIG_GetItem(pConfig,
+	                    CFGI_PROFILE_RINGER_VOL,
+	                    return_ringer_level,
+	                    sizeof(return_ringer_level));
 
+	(void) ICONFIG_GetItem(pConfig,
+	                    CFGI_PROFILE_BEEP_VOL,
+	                    return_beep_level,
+	                    sizeof(return_beep_level));
+
+	(void) ICONFIG_GetItem(pConfig,CFGI_EAR_VOL,&CallVolume,sizeof(byte));
+    MSG_FATAL("VidePlayer_SoundRestore CallVolume=%d",CallVolume,0,0);                                            
+	set_ringer_level            =   return_ringer_level[CurProfile];
+	set_beep_level              =   return_beep_level[CurProfile];
+    if (!HS_HEADSET_ON())
+   {    
+        snd_set_device(SND_DEVICE_HANDSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+    	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_KEY_BEEP,set_beep_level, NULL, NULL );
+    	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_VOICE,CallVolume, NULL, NULL );		
+
+    	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_MESSAGE,set_ringer_level, NULL, NULL );	
+    	snd_set_volume( SND_DEVICE_HANDSET, SND_METHOD_RING,set_ringer_level, NULL, NULL );	
+    }
+    else
+    {        
+        snd_set_device(SND_DEVICE_STEREO_HEADSET, SND_MUTE_UNMUTED, SND_MUTE_UNMUTED, NULL, NULL);
+        snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_KEY_BEEP,set_beep_level, NULL, NULL );
+        snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_VOICE,CallVolume, NULL, NULL );		
+
+        snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MESSAGE,set_ringer_level, NULL, NULL );	
+        snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_RING,set_ringer_level, NULL, NULL );	
+    }
+    
+    FREEIF(pConfig);
+    
+}
 void  VideoPlayer_InitVideo(CVideoPlayer  *pMe)                  
 {    
     //填写m_md stucture
@@ -1668,17 +1725,19 @@ static void VideoPlayer_RefreshPlayingTick(CVideoPlayer *pMe)
     {
         pMe->PauseLock = FALSE; 
     }      
-   
-    //画时间显示区域
-    #if defined(FEATURE_DISP_128X160)
-	#elif defined(FEATURE_DISP_220X176)
-    VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_TIME_PART, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y+2); 
-	VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_TIME_PART, VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y+2); 
-    //tick time
-    #else
-	VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_TIME_PART, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y); 
-	VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_TIME_PART, VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y); 
-    #endif
+    if (pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD]!=NULL)
+    {
+        //画时间显示区域
+        #if defined(FEATURE_DISP_128X160)
+    	#elif defined(FEATURE_DISP_220X176)
+        IIMAGE_Draw(pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD], VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y+2); 
+    	IIMAGE_Draw(pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD], VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y+2); 
+        //tick time
+        #else
+    	IIMAGE_Draw(pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD], VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y); 
+    	IIMAGE_Draw(pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD], VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y); 
+        #endif
+    }
 	#if defined(FEATURE_DISP_220X176)
     SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y+3, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
 	#else
@@ -1739,26 +1798,35 @@ static void VideoPlayer_RefreshScheduleBar(CVideoPlayer *pMe)
     AEERect  Clip;
     int16    ma;
 	AEEImageInfo pi;
+    IImage *iGlider = NULL,*iSchedule=NULL;
 
-	IImage *image = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY);
-	IIMAGE_GetInfo(image, &pi);
+	//IImage *image = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY);
+//	IIMAGE_GetInfo(image, &pi);
     //取小图标图片
-    image =ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_GLIDER); 
-	#if defined(FEATURE_DISP_128X160)
-	VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY, VIDEOPLAYER_SCHEDULE_X, VIDEOPLAYER_SCHEDULE_Y); 
-    SETAEERECT(&rc,VIDEOPLAYER_SCHEDULE_X,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块起始位置 
-    SETAEERECT(&Rc,pi.cx-9,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块最终位置   
-    #elif defined(FEATURE_DISP_220X176)
-	//画进度条
-    VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY, VIDEOPLAYER_SCHEDULE_X, VIDEOPLAYER_SCHEDULE_Y); 
-    SETAEERECT(&rc,VIDEOPLAYER_SCHEDULE_X,VIDEOPLAYER_SCHEDULE_Y,5,5);//滑块起始位置 
-    SETAEERECT(&Rc,pi.cx-5,VIDEOPLAYER_SCHEDULE_Y,5,5);//滑块最终位置   
-	#else
-    //画进度条
-    VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY, VIDEOPLAYER_SCHEDULE_X, VIDEOPLAYER_SCHEDULE_Y); 
-    SETAEERECT(&rc,VIDEOPLAYER_SCHEDULE_X,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块起始位置 
-    SETAEERECT(&Rc,pi.cx-9,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块最终位置    
-    #endif
+    //image =ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_GLIDER); 
+
+    if (pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD]!=NULL)
+    {
+        iSchedule = pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD];        
+        IIMAGE_Draw(iSchedule, VIDEOPLAYER_SCHEDULE_X, VIDEOPLAYER_SCHEDULE_Y);
+        IIMAGE_GetInfo(iSchedule, &pi);
+#if defined(FEATURE_DISP_128X160)
+    	//VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY, VIDEOPLAYER_SCHEDULE_X, VIDEOPLAYER_SCHEDULE_Y);     	
+        SETAEERECT(&rc,VIDEOPLAYER_SCHEDULE_X,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块起始位置 
+        SETAEERECT(&Rc,pi.cx-9,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块最终位置   
+ #elif defined(FEATURE_DISP_220X176)
+    	//画进度条
+        //VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY, VIDEOPLAYER_SCHEDULE_X, VIDEOPLAYER_SCHEDULE_Y);         
+        SETAEERECT(&rc,VIDEOPLAYER_SCHEDULE_X,VIDEOPLAYER_SCHEDULE_Y,5,5);//滑块起始位置 
+        SETAEERECT(&Rc,pi.cx-5,VIDEOPLAYER_SCHEDULE_Y,5,5);//滑块最终位置   
+ #else
+        //画进度条
+        //VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY, VIDEOPLAYER_SCHEDULE_X, VIDEOPLAYER_SCHEDULE_Y); 
+        SETAEERECT(&rc,VIDEOPLAYER_SCHEDULE_X,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块起始位置 
+        SETAEERECT(&Rc,pi.cx-9,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块最终位置    
+ #endif
+    }
+	
     ma=Rc.x-rc.x;//滑块可以移动的长度，26个像素  
     if(pMe->bCurrentTime == 0)
     {
@@ -1795,14 +1863,19 @@ static void VideoPlayer_RefreshScheduleBar(CVideoPlayer *pMe)
 	SETAEERECT(&Clip,Clip.x,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块移动时的位置  
 	#endif
     IDISPLAY_SetClipRect(pMe->m_pDisplay, &Clip);
-	#if defined( FEATURE_DISP_128X160)
-	IIMAGE_Draw(image,Clip.x,VIDEOPLAYER_SCHEDULE_Y);  
-	#elif defined(FEATURE_DISP_220X176)
-	IIMAGE_Draw(image,Clip.x,VIDEOPLAYER_SCHEDULE_Y+1);
-	#else
-    IIMAGE_Draw(image,Clip.x,VIDEOPLAYER_SCHEDULE_Y);    
-    #endif
-    IIMAGE_Release(image);
+    if (pMe->TickUpdateImg[IDI_GLIDER_PRELOAD]!=NULL)
+    {
+        iGlider = pMe->TickUpdateImg[IDI_GLIDER_PRELOAD];
+  #if defined( FEATURE_DISP_128X160)
+    	IIMAGE_Draw(iGlider,Clip.x,VIDEOPLAYER_SCHEDULE_Y);  
+ #elif defined(FEATURE_DISP_220X176)
+    	IIMAGE_Draw(iGlider,Clip.x,VIDEOPLAYER_SCHEDULE_Y+1);
+ #else
+        IIMAGE_Draw(iGlider,Clip.x,VIDEOPLAYER_SCHEDULE_Y);    
+ #endif
+    }
+
+    //IMAGE_Release(image);
     IDISPLAY_SetClipRect(pMe->m_pDisplay, &OldClip);//recover clip rect
 
 }
@@ -2315,7 +2388,7 @@ static void VideoPlayer_VideoNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify
                                
             //播放的时候每秒会发上来一次
             case MM_STATUS_TICK_UPDATE: 
-				MSG_FATAL("b_is_GetFrame========%d",b_is_GetFrame,0,0);
+                MSG_FATAL("b_is_GetFrame========%d",b_is_GetFrame,0,0);
 				//(void)IMEDIA_SetAudioDevice((IMedia *)pMe->m_pMedia, AEE_SOUND_DEVICE_SPEAKER);                
 				//(void)IMEDIA_SetVolume((IMedia *)pMe->m_pMedia, pMe->totalvolume);
                 pMe->bCurrentTime=((uint32)pCmdNotify->pCmdData) / 1000;  

@@ -365,7 +365,14 @@ static int VideoPlayer_InitAppData(CVideoPlayer *pMe)
     pMe->IsGallery      = FALSE; 
     pMe->Is848Busy      = FALSE;
 	pMe->m_InitFailed   = TRUE;
-   
+
+    pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD] = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY);
+        
+    pMe->TickUpdateImg[IDI_GLIDER_PRELOAD] = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_GLIDER);
+
+    pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD] = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_TIME_PART);
+
+    
     //创建需要的接口
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,AEECLSID_CONFIG,(void **)&pMe->m_pConfig))
     {
@@ -410,8 +417,28 @@ static void VideoPlayer_FreeAppData(CVideoPlayer *pMe)
     {
         return ;
     }
+    
+    if (pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD]!=NULL)
+    {
+        IIMAGE_Release(pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD]);
+    }
+
+    
+    if (pMe->TickUpdateImg[IDI_GLIDER_PRELOAD]!=NULL)
+    {
+        
+        IIMAGE_Release(pMe->TickUpdateImg[IDI_GLIDER_PRELOAD]);
+    }
+
+    if (pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD]!=NULL)
+    {
+        
+        IIMAGE_Release(pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD]);
+    }
     //恢复按键音
     (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_BEEP_VOL,&pMe->m_CKSound,sizeof(byte));    
+
+    VidePlayer_SoundRestore();
     
     if (pMe->m_pConfig)
     {
