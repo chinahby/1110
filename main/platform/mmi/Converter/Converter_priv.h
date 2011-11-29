@@ -183,6 +183,12 @@ typedef struct _CConverter
     ConverterMode   m_converterMode; //切换单位换算模式
     boolean             b_overflow; //结果溢出
     IAnnunciator *m_pIAnn;
+	AEERect      pL_rect1;
+	AEERect      pL_rect2;
+    AEERect      pR_rect1;
+	AEERect      pR_rect2;
+	AEERect      pL_rect3;
+	AEERect      pR_rect3;
 } CConverter;
 
 /*==============================================================================

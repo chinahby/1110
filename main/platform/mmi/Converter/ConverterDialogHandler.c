@@ -477,8 +477,13 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
     static char   *m_inputNumber = NULL;
     int              nLen = 0;
     AECHAR       wstrDisplay[MAX_INPUT_NUMBER+3] = {0};
-    ERR("%x, %x ,%x,Converter_ConvertEvent",eCode,wParam,dwParam);
-    
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	
+	AEERect      p_Number1 = {0};
+	AEERect		 p_Number2 = {0};
+	AEERect		 p_Menu1   = {0};
+	AEERect      p_Menu2   = {0};
+	#endif
     if (NULL == pMe)
     {
         return FALSE;
@@ -714,7 +719,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
             BottomBar_Param_type  BBarParam ={0};
             IImage                       *Image;
             AEERect                     rect;
-            
+            AEEImageInfo iInfo;
             //先清屏
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, TRUE);
             // 画标题
@@ -780,6 +785,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
 			#endif
             //画箭头
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_LEFTARROW);
+			IImage_GetInfo(Image,&iInfo);
             MSG_FATAL("Image address=%x",Image,0,0);
             if(Image)
             {
@@ -806,6 +812,12 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                 //Add End
 				IIMAGE_Release(Image);
             }
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+				SETAEERECT(&pMe->pL_rect1, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2 - 1*FRAME_SIZE, iInfo.cx, iInfo.cy); 
+				SETAEERECT(&pMe->pL_rect2, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2 + 5*FRAME_SIZE, iInfo.cx, iInfo.cy); 
+				SETAEERECT(&pMe->pR_rect1, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2 - 1*FRAME_SIZE, iInfo.cx, iInfo.cy); 
+				SETAEERECT(&pMe->pR_rect2, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + pMe->dyMenu*2 + (pMe->dyMenu - ARROW_HEIGHT)/2 + 5*FRAME_SIZE, iInfo.cx, iInfo.cy); 
+#endif
 
             //画底条
             nLen = STRLEN(m_inputNumber);
@@ -1421,8 +1433,146 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                                             0);
             }
         }
-            return TRUE;
-            
+        return TRUE;
+		#ifdef FEATURE_LCD_TOUCH_ENABLE
+        case  EVT_PEN_UP:
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+				
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
+				SETAEERECT(&p_Menu1, 8, 18, 224, 20); 
+				SETAEERECT(&p_Menu2, 8, 80, 224, 20); 
+				SETAEERECT(&p_Number1, 0, 45, 240, 30); 
+				SETAEERECT(&p_Number2, 0, 110, 240, 30); 
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//右
+					{						
+						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CONVERTER,EVT_USER,AVK_CLR,0);
+						return rt;
+					}
+					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//左
+					{						
+						
+						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CONVERTER,EVT_USER,AVK_SELECT,0);
+						return rt;
+					}
+				}
+				MSG_FATAL("pL_rect1X=%d,y=%d,dy=%d",pMe->pL_rect1.x,pMe->pL_rect1.y,pMe->pL_rect1.dy);
+				MSG_FATAL("pL_rect2X=%d,y=%d,dy=%d",pMe->pL_rect2.x,pMe->pL_rect2.y,pMe->pL_rect2.dy);
+				MSG_FATAL("pR_rect1X=%d,y=%d,dy=%d",pMe->pR_rect1.x,pMe->pR_rect1.y,pMe->pR_rect1.dy);
+				MSG_FATAL("pR_rect2X=%d,y=%d,dy=%d",pMe->pR_rect2.x,pMe->pR_rect2.y,pMe->pR_rect2.dy);
+				if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pL_rect1))
+				{
+					if(pMe->m_nCtlID == IDC_UNIT_MENU1)
+					{
+						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CONVERTER,EVT_USER,AVK_LEFT,0);
+						MSG_FATAL("IDC_UNIT_MENU1.....left",0,0,0);
+						return rt;
+					}
+					break;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pL_rect2))
+				{
+					if(pMe->m_nCtlID == IDC_UNIT_MENU2)
+					{
+						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CONVERTER,EVT_USER,AVK_LEFT,0);
+						MSG_FATAL("IDC_UNIT_MENU2.....left",0,0,0);
+						return rt;
+					}
+					break;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pR_rect1))
+				{
+					if(pMe->m_nCtlID == IDC_UNIT_MENU1)
+					{
+						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CONVERTER,EVT_USER,AVK_RIGHT,0);
+						MSG_FATAL("IDC_UNIT_MENU1.....right",0,0,0);
+						return rt;
+					}
+					break;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pR_rect2))
+				{
+					if(pMe->m_nCtlID == IDC_UNIT_MENU2)
+					{
+						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CONVERTER,EVT_USER,AVK_RIGHT,0);
+						MSG_FATAL("IDC_UNIT_MENU2.....right",0,0,0);
+						return rt;
+					}
+					break;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, p_Number1))
+				{
+					 MSG_FATAL("IDC_NUMBER1..........1",0,0,0);
+					 pMe->m_nCtlID = IDC_NUMBER1;
+					 (void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_CONVERTER,
+                                            EVT_USER_REDRAW,
+                                            0,
+                                            0);
+					 return TRUE;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, p_Number2))
+				{
+					 MSG_FATAL("IDC_NUMBER2..........2",0,0,0);
+					 pMe->m_nCtlID = IDC_NUMBER2;
+					 (void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_CONVERTER,
+                                            EVT_USER_REDRAW,
+                                            0,
+                                            0);
+					 return TRUE;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, p_Menu1))
+				{
+					MSG_FATAL("IDC_UNIT_MENU1..........1",0,0,0);
+					pMe->m_nCtlID = IDC_UNIT_MENU1;
+                    ITEXTCTL_GetText(pMe->pNumber1, wstrDisplay, sizeof(wstrDisplay));
+                    nLen = WSTRLEN(wstrDisplay);
+                    if(wstrDisplay[nLen - 1] == L'.')
+                    {
+                        wstrDisplay[nLen - 1] = L'\0';
+                    }
+                    ITEXTCTL_SetText(pMe->pNumber1, wstrDisplay, -1);
+					(void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_CONVERTER,
+                                            EVT_USER_REDRAW,
+                                            0,
+                                            0);
+					return TRUE;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, p_Menu2))
+				{
+					MSG_FATAL("IDC_UNIT_MENU2..........2",0,0,0);
+					pMe->m_nCtlID = IDC_UNIT_MENU2;
+                    ITEXTCTL_GetText(pMe->pNumber2, wstrDisplay, sizeof(wstrDisplay));
+                    nLen = WSTRLEN(wstrDisplay);
+                    if(wstrDisplay[nLen - 1] == L'.')
+                    {
+                        wstrDisplay[nLen - 1] = L'\0';
+                    }
+                    ITEXTCTL_SetText(pMe->pNumber2, wstrDisplay, -1);
+					(void) ISHELL_PostEvent(pMe->m_pShell,
+                                            AEECLSID_CONVERTER,
+                                            EVT_USER_REDRAW,
+                                            0,
+                                            0);
+					return TRUE;
+				}
+				
+			}
+			break;
+		#endif
         default:
             break;
     }
@@ -1521,8 +1671,8 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
             IImage                       *Image;
             uint16                        coefficient1, coefficient2, coefficient3;
             uint16                        uint = 0;
-            AEERect                     rect;
-            
+            AEERect                       rect;
+            AEEImageInfo                  iInfo;
             //先清屏
             Appscommon_ResetBackgroundEx(pMe->m_pDisplay, &pMe->m_rc, FALSE);
             // 画标题
@@ -1540,12 +1690,14 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
 			#endif
             //画箭头
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_LEFTARROW);
+			IImage_GetInfo(Image,&iInfo);
             IIMAGE_Draw(Image, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2);
             if(Image)
             {
                 IIMAGE_Release(Image);
                 Image = NULL;
             }
+			SETAEERECT(&pMe->pL_rect3, pMe->m_rc.x, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2, iInfo.cx, iInfo.cy); 
             
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_RIGHTARROW);
             MSG_FATAL("Image address=%x", Image,0,0);
@@ -1555,7 +1707,7 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
                 IIMAGE_Release(Image);
                 Image = NULL;
             }
-
+			SETAEERECT(&pMe->pR_rect3, pMe->m_rc.dx - ARROW_WIDTH, pMe->m_rc.y + TITLEBAR_HEIGHT/2 + (pMe->dyMenu - ARROW_HEIGHT)/2, iInfo.cx, iInfo.cy); 
             //画底条
             nLen = STRLEN(m_inputNumber);
             if((pMe->m_nCtlID == basicCurrency) ||
@@ -2028,7 +2180,49 @@ static boolean  Converter_ChangeCurrencyEvent(CConverter *pMe, AEEEvent eCode, u
             }
         }
             return TRUE;
-            
+        #ifdef FEATURE_LCD_TOUCH_ENABLE
+        case  EVT_PEN_UP:
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+				
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect) )
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//右
+					{						
+						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CONVERTER,EVT_USER,AVK_CLR,0);
+						return rt;
+					}
+					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//左
+					{						
+						
+						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CONVERTER,EVT_USER,AVK_SELECT,0);
+						return rt;
+					}
+				}
+				if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pL_rect3))
+				{
+					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CONVERTER,EVT_USER,AVK_LEFT,0);
+					return rt;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pR_rect3))
+				{
+					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CONVERTER,EVT_USER,AVK_RIGHT,0);
+					return rt;
+				}
+				
+			}
+			break;
+		#endif
         default:
             break;
     }

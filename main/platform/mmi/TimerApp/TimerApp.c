@@ -107,6 +107,13 @@ when         who            what, where, why
 #define TIMER_SCREEN_XOFFSET   38
 #define TIMER_SCREEN_YOFFSET   36
 #define TIMER_HEIGHT_N         3
+#elif defined(FEATURE_DISP_240X320)
+#define TIMER_SCREEN_HEIGHT    38
+#define TIMER_SCREEN_WIDTH     62
+#define TIMER_IMAGE_WIDTH      138
+#define TIMER_SCREEN_XOFFSET   38
+#define TIMER_SCREEN_YOFFSET   36
+#define TIMER_HEIGHT_N         3
 
 #else
 #define TIMER_SCREEN_HEIGHT    38
@@ -1040,11 +1047,12 @@ static boolean AppTimer_HandleEvent(CAppTimer *pme, AEEEvent eCode, uint16 wPara
 				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
 				int xy[][4] = {
-					{42,107,64,130},      // hour
-					{77,107,99,130},      // minute
-					{111,107,133,130}     // second
+					{79,107,99,132},      // hour
+					{107,107,130,132},      // minute
+					{138,107,158,132}     // second
 					
 				};
+				MSG_FATAL("wXPos========%d,wYPos==========%d",wXPos,wYPos,0);
 				nBarH = GetBottomBarHeight(pme->a.m_pIDisplay);
         
 				MEMSET(&devinfo, 0, sizeof(devinfo));
@@ -1055,17 +1063,17 @@ static boolean AppTimer_HandleEvent(CAppTimer *pme, AEEEvent eCode, uint16 wPara
 				{
 					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
 					{
-						boolean rt =  ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_APPTIMER,EVT_KEY,AVK_SELECT,0);
+						boolean rt =  ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_APPTIMER,EVT_USER,AVK_SELECT,0);
 						return rt;
 					}
-					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//ÖÐ
 					{
-						 boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_APPTIMER,EVT_KEY,AVK_INFO,0);
+						 boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_APPTIMER,EVT_USER,AVK_INFO,0);
 						 return rt;
 					}
-					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//ÓÒ
 					{						
-						 boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_APPTIMER,EVT_KEY,AVK_CLR,0);
+						 boolean rt = ISHELL_PostEvent(pme->a.m_pIShell,AEECLSID_APPTIMER,EVT_USER,AVK_CLR,0);
 						 return rt;
 					}
 				}
@@ -1086,6 +1094,7 @@ static boolean AppTimer_HandleEvent(CAppTimer *pme, AEEEvent eCode, uint16 wPara
 								pme->m_nNumKeyCount = 0;
 								ITIMECTL_SetEditField(pme->m_pTime,ITF_HOUR); 
 								(void)ITIMECTL_Redraw(pme->m_pTime);
+								return TRUE;
 							}
 
 						}
@@ -1097,6 +1106,7 @@ static boolean AppTimer_HandleEvent(CAppTimer *pme, AEEEvent eCode, uint16 wPara
 								pme->m_nNumKeyCount = 2;
 								ITIMECTL_SetEditField(pme->m_pTime,ITF_MIN); 
 								(void)ITIMECTL_Redraw(pme->m_pTime);
+								return TRUE;
 							}
 						}
 						else if (i == 2)
@@ -1107,6 +1117,7 @@ static boolean AppTimer_HandleEvent(CAppTimer *pme, AEEEvent eCode, uint16 wPara
 								pme->m_nNumKeyCount = 4;
 								ITIMECTL_SetEditField(pme->m_pTime,ITF_SEC); 
 								(void)ITIMECTL_Redraw(pme->m_pTime);
+								return TRUE;
 							}
 						}
 						

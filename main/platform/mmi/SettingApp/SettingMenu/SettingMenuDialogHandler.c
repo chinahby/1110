@@ -4710,12 +4710,7 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
 {
 
     static byte timeFormatType = 0;
-	#ifdef FEATURE_LCD_TOUCH_ENABLE
-	AEERect pL_Rect1 = {0};
-	AEERect pL_Rect2 = {0};
-	AEERect pR_Rect1 = {0};
-	AEERect pR_Rect2 = {0};
-	#endif
+	
     MSG_FATAL("%x, %x ,%x,Setting_HandleAuto_Power_DialogEvent",eCode,wParam,dwParam);
 
     switch (eCode)
@@ -5077,10 +5072,10 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
 #endif
                 }
 #ifdef FEATURE_LCD_TOUCH_ENABLE
-				SETAEERECT(&pL_Rect1, pMe->m_rc.dx - 10, titleheight+ lineSpace + 4-CONTROL_RECT_RESET_Y, iInfo.cx, iInfo.cy); 
-				SETAEERECT(&pL_Rect2, pMe->m_rc.dx - 10, titleheight + lineSpace*2 + itemheight + 4+CONTROL_RECT_RESET_Y, iInfo.cx, iInfo.cy); 
-				SETAEERECT(&pR_Rect1, CONTROL_RECT_START_X, titleheight + lineSpace + 4-CONTROL_RECT_RESET_Y, iInfo.cx, iInfo.cy); 
-				SETAEERECT(&pR_Rect2, CONTROL_RECT_START_X, titleheight + lineSpace*2 + itemheight + 4+CONTROL_RECT_RESET_Y, iInfo.cx, iInfo.cy); 
+				SETAEERECT(&pMe->pL_Rect1, pMe->m_rc.dx - 10, titleheight+ lineSpace + 4-CONTROL_RECT_RESET_Y, iInfo.cx, iInfo.cy); 
+				SETAEERECT(&pMe->pL_Rect2, pMe->m_rc.dx - 10, titleheight + lineSpace*2 + itemheight + 4+CONTROL_RECT_RESET_Y, iInfo.cx, iInfo.cy); 
+				SETAEERECT(&pMe->pR_Rect1, CONTROL_RECT_START_X, titleheight + lineSpace + 4-CONTROL_RECT_RESET_Y, iInfo.cx, iInfo.cy); 
+				SETAEERECT(&pMe->pR_Rect2, CONTROL_RECT_START_X, titleheight + lineSpace*2 + itemheight + 4+CONTROL_RECT_RESET_Y, iInfo.cx, iInfo.cy); 
 #endif
                 IIMAGE_Release(pR_ResImg);
                 pR_ResImg = NULL;
@@ -5237,22 +5232,22 @@ static boolean  Setting_HandleAuto_Power_DialogEvent(CSettingMenu *pMe,
 			{
 				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-				if(TOUCH_PT_IN_RECT(wXPos, wYPos, pL_Rect1))
+				if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pL_Rect1))
 				{
 					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_LEFT,0);
 					return rt;
 				}
-				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pL_Rect2))
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pL_Rect2))
 				{
 					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_LEFT,0);
 					return rt;
 				}
-				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pR_Rect1))
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pR_Rect1))
 				{
 					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_RIGHT,0);
 					return rt;
 				}
-				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pR_Rect2))
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pR_Rect2))
 				{
 					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SETTINGMENU,EVT_USER,AVK_RIGHT,0);
 					return rt;

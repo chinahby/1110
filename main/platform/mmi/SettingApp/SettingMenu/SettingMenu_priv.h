@@ -322,6 +322,12 @@ typedef struct _CSettingMenu
     nv_item_type    nviNewSimChoice;
     nv_item_type    nviOldSimChoice;
     nv_item_type    nvsearchmode;
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	AEERect pL_Rect1;
+	AEERect pL_Rect2;
+	AEERect pR_Rect1;
+	AEERect pR_Rect2;
+	#endif
 } CSettingMenu;
 
 /*==============================================================================

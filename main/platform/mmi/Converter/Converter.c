@@ -533,7 +533,31 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
                 return TRUE;
             }
             return Converter_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-            
+			
+        case EVT_USER:
+			{
+				MSG_FATAL("wParam=============%d",wParam,0,0);
+				if((wParam == AVK_SELECT)||(wParam == AVK_INFO))
+				{
+					if(dwParam != 0)
+					{
+						eCode = EVT_COMMAND;
+						wParam = dwParam;
+						dwParam = 0;
+					}
+					else
+					{
+						eCode = EVT_KEY;
+					}
+				}
+				else if((wParam == AVK_CLR)||(wParam == AVK_LEFT)||(wParam == AVK_RIGHT))
+				{
+					eCode = EVT_KEY;
+				}
+				return Converter_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+			}
+			break;
+			
         case EVT_DIALOG_END:
             if (wParam == 0)
             {
