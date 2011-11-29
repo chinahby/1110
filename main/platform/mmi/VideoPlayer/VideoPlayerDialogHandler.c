@@ -1427,8 +1427,8 @@ void VidePlayer_SoundRestore()
         snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_MESSAGE,set_ringer_level, NULL, NULL );	
         snd_set_volume( SND_DEVICE_STEREO_HEADSET, SND_METHOD_RING,set_ringer_level, NULL, NULL );	
     }
-    
-    FREEIF(pConfig);
+    if (pConfig!=NULL)
+        ICONFIG_Release(pConfig);
     
 }
 void  VideoPlayer_InitVideo(CVideoPlayer  *pMe)                  
@@ -1725,17 +1725,17 @@ static void VideoPlayer_RefreshPlayingTick(CVideoPlayer *pMe)
     {
         pMe->PauseLock = FALSE; 
     }      
-    if (pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD]!=NULL)
+    if (pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD]!=NULL)
     {
         //画时间显示区域
         #if defined(FEATURE_DISP_128X160)
     	#elif defined(FEATURE_DISP_220X176)
-        IIMAGE_Draw(pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD], VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y+2); 
-    	IIMAGE_Draw(pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD], VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y+2); 
+        IIMAGE_Draw(pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD], VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y+2); 
+    	IIMAGE_Draw(pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD], VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y+2); 
         //tick time
         #else
-    	IIMAGE_Draw(pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD], VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y); 
-    	IIMAGE_Draw(pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD], VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y); 
+    	IIMAGE_Draw(pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD], VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y); 
+    	IIMAGE_Draw(pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD], VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y); 
         #endif
     }
 	#if defined(FEATURE_DISP_220X176)
