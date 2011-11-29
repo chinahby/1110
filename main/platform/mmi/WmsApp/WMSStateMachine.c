@@ -7071,7 +7071,18 @@ static NextFSMAction WMSST_VIEWINBOXMSG_MMS_Handler(WmsApp *pMe)
             MSG_FATAL("WMSST_VIEWINBOXMSG_MMS_Handler DLGRET_WRITEMSG",0,0,0);
             MOVE_TO_STATE(WMSST_WRITEMSG)
             return NFSMACTION_CONTINUE;
-            
+
+        case DLGRET_DELETE:
+            WMS_MMS_DeleteMMS(pMe->m_wSelItemxuhao - 1,MMS_INBOX);
+            if (g_mmsDataInfoMax == 0)
+            {
+                MOVE_TO_STATE(WMSST_MAIN)
+            }
+            else
+            {
+                MOVE_TO_STATE(WMSST_INBOX_MMS)
+            }            
+            return NFSMACTION_CONTINUE;
         default:
             MSG_FATAL("WMSST_VIEWOUTBOXMSG_MMS_Handler default",0,0,0);
             // 用退出程序代替宏断言

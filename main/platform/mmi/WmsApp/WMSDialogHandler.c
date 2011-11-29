@@ -18329,13 +18329,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
 
                 // É¾³ý
                 case IDS_DELETE:  
-                	(void) ISHELL_PostEventEx(pMe->m_pShell, 
-                                        EVTFLG_ASYNC,
-                                        AEECLSID_WMSAPP,
-                                        EVT_USER_REDRAW,
-                                        0, 
-                                        0);                    
-                    //CLOSE_DIALOG(DLGRET_SEND)
+                	CLOSE_DIALOG(DLGRET_DELETE)
                     return TRUE;;
                     
                 default:
