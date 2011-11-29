@@ -139,7 +139,29 @@ typedef struct _VkeyCtl
 ==============================================================================*/
 //数字键盘
 
-static AEEVKeyItem_Own  VNumberKeyItem[10] =
+static AEEVKeyItem_Own  VNumberKeyItem[15] =
+{
+    {EVT_CHAR, '1', {'1'}},
+    {EVT_CHAR, '2', {'2'}},
+    {EVT_CHAR, '3', {'3'}},
+    {EVT_CHAR, '4', {'4'}},
+    {EVT_CHAR, ' ', {' '}},
+        
+    {EVT_CHAR, '5', {'5'}},
+    {EVT_CHAR, '6', {'6'}},
+    {EVT_CHAR, '7', {'7'}},
+    {EVT_CHAR, '8', {'8'}},
+    {EVT_CHAR, '\n', {'\n'}},
+    
+    {EVT_CHAR, '9', {'9'}},
+    {EVT_CHAR, '0', {'0'}},
+    {EVT_CHAR, '.', {'.'}},    
+    {EVT_CHAR, ',', {','}},
+    {EVT_CHAR, ' ', {' '}}    
+};
+
+
+/*static AEEVKeyItem_Own  VNumberKeyItem[10] =
 {
     {EVT_CHAR, '1', {'1'}},
     {EVT_CHAR, '2', {'2'}},
@@ -152,7 +174,8 @@ static AEEVKeyItem_Own  VNumberKeyItem[10] =
     {EVT_CHAR, '9', {'9'}},
     {EVT_CHAR, '0', {'0'}}
 };
-static AEEVKeyPad_Own VNumberKeyPad = {2,5};
+*/
+static AEEVKeyPad_Own VNumberKeyPad = {3,5};
 //小写字母键盘
 
 static AEEVKeyItem_Own  VLCharKeyItem[MAX_PYKEYPAD_NUMBER] =
@@ -238,7 +261,56 @@ static AEEVKeyItem_Own  VBCharKeyItem[MAX_PYKEYPAD_NUMBER] =
 static AEEVKeyPad_Own VBCharKeyPad = {3,11};                                      
 //SYMBOL KEYPAD 
 
+static AEEVKeyItem_Own  VSymbolKeyItem[MAX_OTHERKEYPAD_NUMBER] =
+{
+    {EVT_CHAR, ':', {':'}},
+    {EVT_CHAR, ',', {','}},
+    {EVT_CHAR, ';', {';'}}, 
+    {EVT_CHAR, '.', {'.'}},
+    {EVT_CHAR, 0x3002, {0x3002}},
+    {EVT_CHAR, '?', {'?'}},    
+    {EVT_CHAR, '!', {'!'}},
 
+    {EVT_CHAR, '(', {'('}},
+    {EVT_CHAR, ')', {')'}},
+    {EVT_CHAR, '@', {'@'}},
+    {EVT_CHAR, 0x2026, {0x2026}},
+    {EVT_CHAR, 0x3001, {0x3001}},
+    {EVT_CHAR, '/', {'/'}},
+    {EVT_CHAR, '\\', {'\\'}},    
+
+    {EVT_CHAR, '|', {'|'}},
+    {EVT_CHAR, '^', {'^'}},
+    {EVT_CHAR, '<', {'<'}},
+    {EVT_CHAR, '>', {'>'}},
+    {EVT_CHAR, '+', {'+'}}, 
+    {EVT_CHAR, '-', {'-'}},
+    {EVT_CHAR, '_', {'_'}},
+    
+    {EVT_CHAR, '=', {'='}},
+    {EVT_CHAR, '~', {'~'}},
+    {EVT_CHAR, 0x201c, {0x201c}},
+    {EVT_CHAR, 0x201d, {0x201d}},
+    {EVT_CHAR, '{', {'{'}},
+    {EVT_CHAR, '}', {'}'}}, 
+    {EVT_CHAR, '*', {'*'}},
+
+    {EVT_CHAR, '#', {'#'}},
+    {EVT_CHAR, '%', {'%'}},
+    {EVT_CHAR, '$', {'$'}},
+    {EVT_CHAR, '&', {'&'}},
+    {EVT_CHAR, 0x2018, {0x2018}},
+    {EVT_CHAR, 0x2019, {0x2019}},
+    {EVT_CHAR, '[', {'['}},
+        
+    {EVT_CHAR, ']', {']'}},
+    {EVT_CHAR, 0x300a, {0x300a}},
+    {EVT_CHAR, 0x300b, {0x300b}},
+    {EVT_CHAR, ' ', {' '}},    
+    {EVT_CHAR, '\n', {'\n'}}      
+};
+
+/*
 static AEEVKeyItem_Own  VSymbolKeyItem[MAX_OTHERKEYPAD_NUMBER] =
 {
     {EVT_CHAR, ',', {','}},
@@ -289,11 +361,62 @@ static AEEVKeyItem_Own  VSymbolKeyItem[MAX_OTHERKEYPAD_NUMBER] =
     {EVT_CHAR, '\\', {'\\'}},
     {EVT_CHAR, 0x00a2, {0x00a2}}
 };
+*/
+static AEEVKeyPad_Own VSymbolKeyPad = {6,7};
 
-static AEEVKeyPad_Own VSymbolKeyPad = {4,11};
+//数字与小写字母    
 
-//数字与小写字母                                        
                                       
+static AEEVKeyItem_Own  VNumLCharKeyItem[MAX_OTHERKEYPAD_NUMBER] =
+{
+    {EVT_CHAR, 'q', {'q'}},
+    {EVT_CHAR, 'w', {'w'}},
+    {EVT_CHAR, 'e', {'e'}},
+    {EVT_CHAR, 'r', {'r'}},
+    {EVT_CHAR, 't', {'t'}},
+    {EVT_CHAR, 'y', {'y'}},
+    {EVT_CHAR, 'u', {'u'}},
+
+    {EVT_CHAR, 'i', {'i'}},
+    {EVT_CHAR, 'o', {'o'}},
+    {EVT_CHAR, 'p', {'p'}},
+    {EVT_CHAR, 'a', {'a'}},
+    {EVT_CHAR, 's', {'s'}},
+    {EVT_CHAR, 'd', {'d'}},
+    {EVT_CHAR, 'f', {'f'}},
+
+    {EVT_CHAR, 'g', {'g'}},
+    {EVT_CHAR, 'h', {'h'}},
+    {EVT_CHAR, 'j', {'j'}},
+    {EVT_CHAR, 'k', {'k'}},
+    {EVT_CHAR, 'l', {'l'}},
+    {EVT_CHAR, 'z', {'z'}},
+    {EVT_CHAR, 'x', {'x'}},
+
+    {EVT_CHAR, 'c', {'c'}},
+    {EVT_CHAR, 'v', {'v'}},
+    {EVT_CHAR, 'b', {'b'}},
+    {EVT_CHAR, 'n', {'n'}},
+    {EVT_CHAR, 'm', {'m'}},
+    {EVT_CHAR, ':', {':'}}, 
+    {EVT_CHAR, ',', {','}},
+
+    {EVT_CHAR, '.', {'.'}},
+    {EVT_CHAR, '?', {'?'}},
+    {EVT_CHAR, '!', {'!'}}, 
+    {EVT_CHAR, '(', {'('}},
+    {EVT_CHAR, ')', {')'}},
+    {EVT_CHAR, '-', {'-'}},    
+    {EVT_CHAR, '_', {'_'}},
+
+    {EVT_CHAR, '/', {'/'}},
+    {EVT_CHAR, '@', {'@'}}, 
+    {EVT_CHAR, ' ', {' '}},    
+    {EVT_CHAR, '\n', {'\n'}}
+    
+};  
+
+/*                                      
 static AEEVKeyItem_Own  VNumLCharKeyItem[MAX_OTHERKEYPAD_NUMBER] =
 {
     {EVT_CHAR, '1', {'1'}},
@@ -344,12 +467,62 @@ static AEEVKeyItem_Own  VNumLCharKeyItem[MAX_OTHERKEYPAD_NUMBER] =
     {EVT_CHAR, '?', {'?'}},
     {EVT_CHAR, 0x6362, {0x6362}}
 };  
-
-static AEEVKeyPad_Own VNumLCharKeyPad = {4,11}; 
-                            
+*/
+//static AEEVKeyPad_Own VNumLCharKeyPad = {4,11}; 
+static AEEVKeyPad_Own VNumLCharKeyPad = {6,7};                            
 //数字与大写字母
 
+static AEEVKeyItem_Own  VNumBCharKeyItem[MAX_OTHERKEYPAD_NUMBER] =  
+{
+    {EVT_CHAR, 'Q', {'Q'}},
+    {EVT_CHAR, 'W', {'W'}},
+    {EVT_CHAR, 'E', {'E'}},
+    {EVT_CHAR, 'R', {'R'}},
+    {EVT_CHAR, 'T', {'T'}},
+    {EVT_CHAR, 'Y', {'Y'}},
+    {EVT_CHAR, 'U', {'U'}},
 
+    {EVT_CHAR, 'I', {'I'}},
+    {EVT_CHAR, 'O', {'O'}},
+    {EVT_CHAR, 'P', {'P'}},
+    {EVT_CHAR, 'A', {'A'}},
+    {EVT_CHAR, 'S', {'S'}},
+    {EVT_CHAR, 'D', {'D'}},
+    {EVT_CHAR, 'F', {'F'}},
+
+    {EVT_CHAR, 'G', {'G'}},
+    {EVT_CHAR, 'H', {'H'}},
+    {EVT_CHAR, 'J', {'J'}},
+    {EVT_CHAR, 'K', {'K'}},
+    {EVT_CHAR, 'L', {'L'}},
+    {EVT_CHAR, 'Z', {'Z'}},
+    {EVT_CHAR, 'X', {'X'}},
+
+    {EVT_CHAR, 'C', {'C'}},
+    {EVT_CHAR, 'V', {'V'}},
+    {EVT_CHAR, 'B', {'B'}},
+    {EVT_CHAR, 'N', {'N'}},
+    {EVT_CHAR, 'M', {'M'}},
+    {EVT_CHAR, ':', {':'}}, 
+    {EVT_CHAR, ',', {','}},
+
+    {EVT_CHAR, '.', {'.'}},
+    {EVT_CHAR, '?', {'?'}},
+    {EVT_CHAR, '!', {'!'}}, 
+    {EVT_CHAR, '(', {'('}},
+    {EVT_CHAR, ')', {')'}},
+    {EVT_CHAR, '-', {'-'}},    
+    {EVT_CHAR, '_', {'_'}},
+
+    {EVT_CHAR, '/', {'/'}},
+    {EVT_CHAR, '@', {'@'}}, 
+    {EVT_CHAR, ' ', {' '}},    
+    {EVT_CHAR, '\n', {'\n'}}
+
+
+} ;
+
+/*
 static AEEVKeyItem_Own  VNumBCharKeyItem[MAX_OTHERKEYPAD_NUMBER] =  
 {
     {EVT_CHAR, '1', {'1'}},
@@ -401,8 +574,9 @@ static AEEVKeyItem_Own  VNumBCharKeyItem[MAX_OTHERKEYPAD_NUMBER] =
     {EVT_CHAR, 0x6362, {0x6362}}
 
 } ;
-
-static AEEVKeyPad_Own VNumBCharKeyPad = {4,11};
+*/
+//static AEEVKeyPad_Own VNumBCharKeyPad = {4,11};
+static AEEVKeyPad_Own VNumBCharKeyPad = {6,7};  
 
 //tcl whewei050302 add for zhuyin begin
 //注音键盘
@@ -1171,6 +1345,7 @@ static void      IVkeyCtl_SetKeyPad(IVkeyCtl * po,AEERect * prc,uint32  m_dwProp
             VkeyCtl_SetSymbolPad(pme,prc);
             break;
         case AEE_VKEY_NUMBER_LITTLECHAR:
+            DBGPRINTF("AEE_VKEY_NUMBER_LITTLECHAR    1"); 
             VkeyCtl_SetNumberLittleCharPad(pme,prc);
             break;
         case AEE_VKEY_NUMBER_BIGCHAR:
@@ -1216,6 +1391,62 @@ Comments:
 
 ======================================================================*/
 static void      VkeyCtl_SetNumberPad(VkeyCtl * pme,AEERect * prc)
+{
+    int   i, j, count = 0;
+    
+    if(pme == NULL)
+    {
+        return;
+    }
+    
+    /*=======================================================================
+    检查最小空间
+    =======================================================================*/
+    pme->m_rc = *prc;
+    if ((pme->m_rc.dx < OTHER_KEYPAD_MINWIDTH)
+       || (pme->m_rc.dy < OTHER_KEYPAD_MINHEIGHT))
+    {
+        return ;  //没有达到最小空间的要求
+    }
+    
+    if (pme->m_KeyPadNormal != NULL)
+    {
+        (void)IIMAGE_Release(pme->m_KeyPadNormal);
+    }
+    if (pme->m_KeyPadDown != NULL)
+    {
+        (void)IIMAGE_Release(pme->m_KeyPadDown);
+    }
+    pme->m_KeyPadNormal = ISHELL_LoadResImage(pme->m_pIShell,
+                                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_DIGITUNPRESS);
+    pme->m_KeyPadDown = ISHELL_LoadResImage(pme->m_pIShell,
+                                        AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_DIGITPRESS);
+    if ((pme->m_KeyPadNormal == NULL)
+       || (pme->m_KeyPadDown == NULL))
+    {
+        return;
+    }
+    
+    IIMAGE_Draw(pme->m_KeyPadNormal, pme->m_rc.x, pme->m_rc.y);
+
+    for(i = 0; i < VNumberKeyPad.row; i++)
+    {
+        for(j = 0; j < VNumberKeyPad.coloum; j++)
+        {
+            pme->GridRect[count].x = (int16)(pme->m_rc.x + 3*j + 45 * j);
+            pme->GridRect[count].y = (int16)((i == 0)?(pme->m_rc.y + 4):(pme->m_rc.y+8*i + 44 * i));
+            pme->GridRect[count].dx = 45;
+            pme->GridRect[count].dy = 44;//((i == 0)?18:19);
+            count++;
+        }
+     }
+    
+    
+    IDISPLAY_Update(pme->m_pIDisplay);
+   
+    return;
+}
+#if 0
 {
     int i,j,count;
     int rc_x,rc_y,rc_dx,rc_dy;
@@ -1267,6 +1498,7 @@ static void      VkeyCtl_SetNumberPad(VkeyCtl * pme,AEERect * prc)
     return;
     
 }
+#endif
 /*=====================================================================
 VkeyCtl_SetLittleCharPad()
 
@@ -1315,10 +1547,10 @@ static void      VkeyCtl_SetLittleCharPad(VkeyCtl * pme,AEERect * prc)
     {
         (void)IIMAGE_Release(pme->m_KeyPadDown);
     }
-    pme->m_KeyPadNormal = ISHELL_LoadResImage(pme->m_pIShell,
-                                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PINYINKEYPAD);
-    pme->m_KeyPadDown = ISHELL_LoadResImage(pme->m_pIShell,
-                                         AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PINYINKEYPADDOWN);
+  //  pme->m_KeyPadNormal = ISHELL_LoadResImage(pme->m_pIShell,
+  //                                         AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PINYINKEYPAD);
+  //  pme->m_KeyPadDown = ISHELL_LoadResImage(pme->m_pIShell,
+   //                                      AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PINYINKEYPADDOWN);
     
 	if ((pme->m_KeyPadNormal == NULL)
        || (pme->m_KeyPadDown == NULL))
@@ -1461,9 +1693,9 @@ static void      VkeyCtl_SetSymbolPad(VkeyCtl * pme,AEERect * prc)
         (void)IIMAGE_Release(pme->m_KeyPadDown);
     }
     pme->m_KeyPadNormal = ISHELL_LoadResImage(pme->m_pIShell,
-                                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_FUHAOKEYPAD);
+                                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_SYMBOLUNPRESS);
     pme->m_KeyPadDown = ISHELL_LoadResImage(pme->m_pIShell,
-                                         AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_FUHAOKEYPADDOWN);
+                                        AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_SYMBOLPRESS);
     if ((pme->m_KeyPadNormal == NULL)
        || (pme->m_KeyPadDown == NULL))
     {
@@ -1472,19 +1704,21 @@ static void      VkeyCtl_SetSymbolPad(VkeyCtl * pme,AEERect * prc)
     
     IIMAGE_Draw(pme->m_KeyPadNormal, pme->m_rc.x, pme->m_rc.y);
     DBGPRINTF("VkeyCtl_SetSymbolPad-----pme->m_rc.x=%d----pme->m_rc.y=%d",pme->m_rc.x,pme->m_rc.y);
-    for(i = 0; i < VSymbolKeyPad.row; i++)
+
+    for(i = 0; i < VNumLCharKeyPad.row; i++)
     {
-        for(j = 0; j < VSymbolKeyPad.coloum; j++)
+        for(j = 0; j < VNumLCharKeyPad.coloum; j++)
         {
-            pme->GridRect[count].x = (int16)(pme->m_rc.x + 6 + 15 * j);
-            pme->GridRect[count].y = (int16)((i == 0)?(pme->m_rc.y + 1):(pme->m_rc.y + 21 * i));
-            pme->GridRect[count].dx = 15;
-            pme->GridRect[count].dy = ((i == 0)?18:19);
+            pme->GridRect[count].x = (int16)(pme->m_rc.x + 5*(j+1) + 29 * j-2);
+            pme->GridRect[count].y = (int16)((i == 0)?(pme->m_rc.y + 1):(pme->m_rc.y + 25 * i));
+            pme->GridRect[count].dx = 29;
+            pme->GridRect[count].dy = 25;//((i == 0)?18:19);
             DBGPRINTF("VkeyCtl_SetSymbolPad-----pme->GridRect[count].x=%d----pme->GridRect[count].y=%d",pme->GridRect[count].x,pme->GridRect[count].y); 
             DBGPRINTF("VkeyCtl_SetSymbolPad-----pme->GridRect[count].dx=%d----pme->GridRect[count].dy=%d",pme->GridRect[count].dx,pme->GridRect[count].dy); 
             count++;
         }
-    }
+     }
+    
     
     IDISPLAY_Update(pme->m_pIDisplay);
    
@@ -1538,12 +1772,13 @@ static void      VkeyCtl_SetNumberLittleCharPad(VkeyCtl * pme,AEERect * prc)
         (void)IIMAGE_Release(pme->m_KeyPadDown);
     }
     pme->m_KeyPadNormal = ISHELL_LoadResImage(pme->m_pIShell,
-                                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_LETTERKEYPAD);
+                                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_LOWERENUNGPRESS);
     pme->m_KeyPadDown = ISHELL_LoadResImage(pme->m_pIShell,
-                                         AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_LETTERKEYPADDOWN);
+                                         AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_LOWERENGPRESS);
     if ((pme->m_KeyPadNormal == NULL)
        || (pme->m_KeyPadDown == NULL))
     {
+        DBGPRINTF("pme->m_KeyPadNormal   -is NULL"); 
         return;
     }
     
@@ -1553,10 +1788,10 @@ static void      VkeyCtl_SetNumberLittleCharPad(VkeyCtl * pme,AEERect * prc)
     {
         for(j = 0; j < VNumLCharKeyPad.coloum; j++)
         {
-            pme->GridRect[count].x = (int16)(pme->m_rc.x + 6 + 15 * j);
-            pme->GridRect[count].y = (int16)((i == 0)?(pme->m_rc.y + 1):(pme->m_rc.y + 21 * i));
-            pme->GridRect[count].dx = 15;
-            pme->GridRect[count].dy = ((i == 0)?18:19);
+            pme->GridRect[count].x = (int16)(pme->m_rc.x+ 5*(j+1)+ 29 * j-2);
+            pme->GridRect[count].y = (int16)((i == 0)?(pme->m_rc.y + 1):(pme->m_rc.y +2+ 25 * i));
+            pme->GridRect[count].dx = 29;
+            pme->GridRect[count].dy = 25;//((i == 0)?18:19);
             count++;
         }
     }
@@ -1613,9 +1848,9 @@ static void      VkeyCtl_SetNumberBigCharPad(VkeyCtl * pme,AEERect * prc)
         (void)IIMAGE_Release(pme->m_KeyPadDown);
     }
     pme->m_KeyPadNormal = ISHELL_LoadResImage(pme->m_pIShell,
-                                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_LETTERCAPKEYPAD);
+                                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_UPPERENGUNPRESS);
     pme->m_KeyPadDown = ISHELL_LoadResImage(pme->m_pIShell,
-                                         AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_LETTERCAPKEYPADDOWN);
+                                        AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_UPPERENGPRESS);
     if ((pme->m_KeyPadNormal == NULL)
        || (pme->m_KeyPadDown == NULL))
     {
@@ -1628,10 +1863,10 @@ static void      VkeyCtl_SetNumberBigCharPad(VkeyCtl * pme,AEERect * prc)
     {
         for(j = 0; j < VNumBCharKeyPad.coloum; j++)
         {
-            pme->GridRect[count].x = (int16)(pme->m_rc.x + 6 + 15 * j);
-            pme->GridRect[count].y = (int16)((i == 0)?(pme->m_rc.y + 1):(pme->m_rc.y + 21 * i));
-            pme->GridRect[count].dx = 15;
-            pme->GridRect[count].dy = ((i == 0)?18:19);
+            pme->GridRect[count].x = (int16)(pme->m_rc.x + 5*(j+1) + 29 * j-2);
+            pme->GridRect[count].y = (int16)((i == 0)?(pme->m_rc.y + 1):(pme->m_rc.y + 25 * i));
+            pme->GridRect[count].dx = 29;
+            pme->GridRect[count].dy = 25;//((i == 0)?18:19);
             count++;
         }
     }
@@ -1803,6 +2038,7 @@ static boolean VkeyCtl_MapParam(VkeyCtl * pme,int cx,int cy,AEEEvent *evt,uint16
            
         case AEE_VKEY_NUMBER_LITTLECHAR:
         {
+            DBGPRINTF("AEE_VKEY_NUMBER_LITTLECHAR    1"); 
             ret = VkeyCtl_MapNumberLittleChar(pme,cx,cy,evt,wp);
             return ret;
         }
@@ -1900,9 +2136,12 @@ static boolean VkeyCtl_MapNumber(VkeyCtl * pme,int x,int y,AEEEvent *evt,uint16 
         {
             if( IsInRect(x,y,&pme->GridRect[count]) )
             {
-                *wp = VNumberKeyItem[count].wp;
-                *evt = VNumberKeyItem[count].evt;
-                return TRUE;
+                if(count != 4)
+                {
+                 *wp = VNumberKeyItem[count].wp;
+                 *evt = VNumberKeyItem[count].evt;
+                 return TRUE;
+                }
             }
             
         }//end   for (j = 0;j < 5;j++,count++) 
@@ -2030,9 +2269,12 @@ static boolean VkeyCtl_MapSymbol(VkeyCtl * pme,int x,int y,AEEEvent *evt,uint16 
         {
             if ( IsInRect(x,y,&pme->GridRect[count]) )
             {
+                if(count < 40)
+                {
                 *wp = VSymbolKeyItem[count].wp;
                 *evt = VSymbolKeyItem[count].evt;
                 return TRUE;
+                }
             }               
         }
     }
@@ -2073,9 +2315,13 @@ static boolean  VkeyCtl_MapNumberLittleChar(VkeyCtl * pme,int x,int y,AEEEvent *
         {
             if ( IsInRect(x,y,&pme->GridRect[count]) )
             {
+                if(count < 40)
+                {
                 *wp = VNumLCharKeyItem[count].wp;
                 *evt = VNumLCharKeyItem[count].evt;
                 return TRUE;
+                 }
+               
             }               
         }
     }
@@ -2114,9 +2360,12 @@ static boolean      VkeyCtl_MapNumberBigChar(VkeyCtl * pme,int x,int y,AEEEvent 
         {
             if ( IsInRect(x,y,&pme->GridRect[count]) )
             {
+                if(count < 40)
+                {
                 *wp = VNumBCharKeyItem[count].wp;
                 *evt = VNumBCharKeyItem[count].evt;
                 return TRUE;
+                }
             }               
         }
     }
@@ -2328,6 +2577,7 @@ static void      VkeyCtl_HitPad(VkeyCtl* pme, int x, int y,boolean sign)
             VkeyCtl_HitSymbolPad(pme, x, y, sign);
             break;
         case AEE_VKEY_NUMBER_LITTLECHAR:
+            DBGPRINTF("AEE_VKEY_NUMBER_LITTLECHAR    1"); 
             VkeyCtl_HitNumberLittleCharPad(pme, x, y, sign);
             break;
         case AEE_VKEY_NUMBER_BIGCHAR:
@@ -2370,6 +2620,48 @@ Return Value:
 ========================================================================*/
 static void VkeyCtl_HitNumberPad(VkeyCtl * pme, int x, int y, boolean sign)
 {
+    if (pme)
+    {
+        int   i;
+        for (i = 0; i < 15; i++)
+        {
+            if (IsInRect(x, y, &pme->GridRect[i]))
+            {
+                IImage *     pImage;
+                pImage = NULL;
+                if (sign)
+                {
+                    pImage = pme->m_KeyPadDown;
+                }
+                else
+                {
+                    pImage = pme->m_KeyPadNormal;
+                }
+                
+                if (pImage == NULL)
+                {
+                    return;
+                }
+                
+                IIMAGE_SetParm(pImage,
+                               IPARM_OFFSET,
+                               pme->GridRect[i].x - pme->m_rc.x,
+                               pme->GridRect[i].y - pme->m_rc.y);
+               
+                IIMAGE_SetParm(pImage,
+                               IPARM_SIZE,
+                               45,
+                               //((i < 11)?18:19)
+                               44);
+                IIMAGE_Draw(pImage,
+                            pme->GridRect[i].x,
+                            pme->GridRect[i].y);
+                IDISPLAY_Update(pme->m_pIDisplay);
+            }
+        }
+    }
+    
+    #if 0
     int i,j,count;
     //boolean outloop=FALSE;
     AEERect temp_rc;
@@ -2427,6 +2719,7 @@ static void VkeyCtl_HitNumberPad(VkeyCtl * pme, int x, int y, boolean sign)
         }//end   for (j = 0;j < 5;j++,count++)    
     
     }//end for (i = 0;i < 2;i++)
+#endif    
     return ;
 }
 
@@ -2616,17 +2909,38 @@ static void      VkeyCtl_HitSymbolPad(VkeyCtl* pme, int x, int y,boolean sign)
                     return;
                 }
                 
-                IIMAGE_SetParm(pImage,
+               
+                if(i > 39)
+                {
+                 IIMAGE_SetParm(pImage,
+                               IPARM_OFFSET,
+                               pme->GridRect[40].x - pme->m_rc.x,
+                               pme->GridRect[40].y - pme->m_rc.y);    
+                 IIMAGE_SetParm(pImage,
+                               IPARM_SIZE,
+                               65,
+                               //((i < 11)?18:19)
+                               25);
+                 IIMAGE_Draw(pImage,
+                            pme->GridRect[40].x,
+                            pme->GridRect[40].y);
+                }
+                else
+                {
+                 IIMAGE_SetParm(pImage,
                                IPARM_OFFSET,
                                pme->GridRect[i].x - pme->m_rc.x,
-                               pme->GridRect[i].y - pme->m_rc.y);
-                IIMAGE_SetParm(pImage,
+                               pme->GridRect[i].y - pme->m_rc.y);   
+                 IIMAGE_SetParm(pImage,
                                IPARM_SIZE,
-                               15,
-                               ((i < 11)?18:19));
-                IIMAGE_Draw(pImage,
+                               30,
+                               //((i < 11)?18:19)
+                               25);   
+                 IIMAGE_Draw(pImage,
                             pme->GridRect[i].x,
                             pme->GridRect[i].y);
+                }                
+                
                 IDISPLAY_Update(pme->m_pIDisplay);
             }
         }
@@ -2675,19 +2989,38 @@ static void      VkeyCtl_HitNumberLittleCharPad(VkeyCtl* pme, int x, int y,boole
                 if (pImage == NULL)
                 {
                     return;
+                }                
+              
+                if(i > 39)
+                {
+                 IIMAGE_SetParm(pImage,
+                               IPARM_OFFSET,
+                               pme->GridRect[40].x - pme->m_rc.x,
+                               pme->GridRect[40].y - pme->m_rc.y);    
+                 IIMAGE_SetParm(pImage,
+                               IPARM_SIZE,
+                               65,
+                               25);
+                 IIMAGE_Draw(pImage,
+                            pme->GridRect[40].x,
+                            pme->GridRect[40].y);
                 }
-                
-                IIMAGE_SetParm(pImage,
+                else
+                {
+                 IIMAGE_SetParm(pImage,
                                IPARM_OFFSET,
                                pme->GridRect[i].x - pme->m_rc.x,
-                               pme->GridRect[i].y - pme->m_rc.y);
+                               pme->GridRect[i].y - pme->m_rc.y);    
                 IIMAGE_SetParm(pImage,
                                IPARM_SIZE,
-                               15,
-                               ((i < 11)?18:19));
-                IIMAGE_Draw(pImage,
+                               30,
+                               25);
+                 IIMAGE_Draw(pImage,
                             pme->GridRect[i].x,
                             pme->GridRect[i].y);
+                }
+                
+               
                 IDISPLAY_Update(pme->m_pIDisplay);
             }
         }
@@ -2738,17 +3071,36 @@ static void      VkeyCtl_HitNumberBigCharPad(VkeyCtl* pme, int x, int y,boolean 
                     return;
                 }
                 
-                IIMAGE_SetParm(pImage,
+                
+                if(i > 39)
+                {    
+                 IIMAGE_SetParm(pImage,
+                               IPARM_OFFSET,
+                               pme->GridRect[40].x - pme->m_rc.x,
+                               pme->GridRect[40].y - pme->m_rc.y);    
+                 IIMAGE_SetParm(pImage,
+                               IPARM_SIZE,
+                               65,
+                               25);
+                 IIMAGE_Draw(pImage,
+                            pme->GridRect[40].x,
+                            pme->GridRect[40].y);
+                }
+                else
+                {
+                 IIMAGE_SetParm(pImage,
                                IPARM_OFFSET,
                                pme->GridRect[i].x - pme->m_rc.x,
-                               pme->GridRect[i].y - pme->m_rc.y);
-                IIMAGE_SetParm(pImage,
+                               pme->GridRect[i].y - pme->m_rc.y);    
+                 IIMAGE_SetParm(pImage,
                                IPARM_SIZE,
-                               15,
-                               ((i < 11)?18:19));
-                IIMAGE_Draw(pImage,
+                               30,
+                               25);
+                 IIMAGE_Draw(pImage,
                             pme->GridRect[i].x,
                             pme->GridRect[i].y);
+                }
+               
                 IDISPLAY_Update(pme->m_pIDisplay);
             }
         }
