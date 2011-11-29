@@ -156,7 +156,7 @@ static void CClockApps_DrawSaveAlert(CClockApps *pMe);
 
 static void CClockApps_Set_CTL(CClockApps *pMe);
 
-static void CClockApps_Draw_Arrow(CClockApps *pMe, AEERect* pRect);
+static void CClockApps_Draw_Arrow(CClockApps *pMe, AEERect* pRect,int i);
 
 static void CClockApps_DialogTimeout(void *pme);
 
@@ -803,16 +803,42 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
 		{
 			int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 			int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-			if ((wXPos>32)&&(wXPos<176)&&(wYPos>37)&&(wYPos<58))
+			AEERect bottomBarRect;
+			//int ht;
+			int nBarH ;
+			AEEDeviceInfo devinfo;
+			nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+			
+			MEMSET(&devinfo, 0, sizeof(devinfo));
+			ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+			SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+			if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+			{
+				if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//右
+				{						
+					boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_ALARMCLOCK,EVT_USER,AVK_CLR,0);
+					return rt;
+				}
+				else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//左
+				{						
+					//boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_ALARMCLOCK,EVT_USER,AVK_SELECT,0);
+					//MSG_FATAL("AEECLSID_ALARMCLOCK............",0,0,0);
+					//return rt;
+					eCode = EVT_KEY_RELEASE;
+					wParam = AVK_SELECT;
+				}
+			}	
+			
+			if (TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->rectLine[0]))
 			{
 				if (IMENUCTL_IsActive(pMe->m_pState))
 				{
-					if (wXPos<60)
+					if (TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pL_Rect1))
 					{
 						eCode = EVT_KEY;
 						wParam = AVK_LEFT;
 					}
-					else if(wXPos>148)
+					else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pR_Rect1))
 					{
 						eCode = EVT_KEY;
 						wParam = AVK_RIGHT;
@@ -838,7 +864,7 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
 				
 				}
 			}
-			else if ((wXPos>32)&&(wXPos<176)&&(wYPos>73)&&(wYPos<94))
+			else if (TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->rectLine[1]))
 			{
 				if (ITIMECTL_IsActive(pMe->m_pTime))
 				{
@@ -872,16 +898,16 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
 					return TRUE;
 				}
 			}
-			else if ((wXPos>32)&&(wXPos<176)&&(wYPos>111)&&(wYPos<131))
+			else if (TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->rectLine[2]))
 			{
 				if (IMENUCTL_IsActive(pMe->m_pRepMode))
 				{
-					if (wXPos<60)
+					if (TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pL_Rect2))
 					{
 						eCode = EVT_KEY;
 						wParam = AVK_LEFT;
 					}
-					else if(wXPos>148)
+					else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pR_Rect2))
 					{
 						eCode = EVT_KEY;
 						wParam = AVK_RIGHT;
@@ -907,16 +933,16 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
 				}
 	
 			}
-			else if ((wXPos>32)&&(wXPos<176)&&(wYPos>147)&&(wYPos<168))
+			else if (TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->rectLine[3]))
 			{
 				if (IMENUCTL_IsActive(pMe->m_pSnooze))
 				{
-					if (wXPos<60)
+					if (TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pL_Rect3))
 					{
 						eCode = EVT_KEY;
 						wParam = AVK_LEFT;
 					}
-					else if(wXPos>148)
+					else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pMe->pR_Rect3))
 					{
 						eCode = EVT_KEY;
 						wParam = AVK_RIGHT;
@@ -941,17 +967,6 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
 					return TRUE;
 				}
 			}
-			else if ((wXPos>0)&&(wXPos<88)&&(wYPos>184)&&(wYPos<202))
-			{
-				boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_ALARMCLOCK,EVT_USER,AVK_SELECT,0);
-				return rt;
-			}
-			else if ((wXPos>88)&&(wXPos<176)&&(wYPos>184)&&(wYPos<202))
-			{
-				boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_ALARMCLOCK,EVT_USER,AVK_CLR,0);
-				return rt;
-			}
-	
 		}
 #endif
 
@@ -1085,7 +1100,7 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
             AECHAR      wszState[8];    //闹钟开关状态
             AECHAR      wszTime[8];     //时间
             AECHAR      wszMode[8];     //重复方式
-            AECHAR      wszSnooze[8];  //snooze
+            AECHAR      wszSnooze[8];   //snooze
 
             int title_hight = GetTitleBarHeight(pMe->m_pDisplay);
             int bottomheight = GetBottomBarHeight(pMe->m_pDisplay);
@@ -1259,7 +1274,8 @@ static boolean  HandleAlarmSubDialogEvent(CClockApps *pMe,
                     {
                     
                         SETAEERECT( &pMe->rectLine[i], x + LEFT_ICON_WHID, pMe->rectLine[i].y, width - LEFT_ICON_HEIGHT, pMe->rectLine[i].dy);
-                        CClockApps_Draw_Arrow( pMe, &pMe->rectLine[i]);
+                        CClockApps_Draw_Arrow( pMe, &pMe->rectLine[i],i);
+						
                         SETAEERECT( &pMe->rectLine[i], x + LEFT_ICON_WHID-(LEFT_ICON_WHID-8), pMe->rectLine[i].y, width - LEFT_ICON_HEIGHT+(LEFT_ICON_HEIGHT-16), pMe->rectLine[i].dy);
                     }
                     
@@ -2156,7 +2172,36 @@ static boolean HandleAlarmDelConfirmEvent(CClockApps *pMe,
                     break;
             }
             return TRUE;
-
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+		case EVT_PEN_UP:
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+				
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//右
+					{						
+						CLOSE_DIALOG(DLGRET_CANCELED)
+                    	break;
+					}
+					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//左
+					{						
+						CLOSE_DIALOG(DLGRET_OK)
+                    	break;
+					}
+				}	
+			}
+		break;
+#endif
         default:
             break;
     }
@@ -2287,6 +2332,33 @@ static boolean HandleAlarmMsgBox(CClockApps *pMe,
             ISHELL_CancelTimer(pMe->m_pShell, NULL,  pMe);
             CLOSE_DIALOG(DLGRET_MSGBOX_OK)
             return TRUE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+		case EVT_PEN_UP:
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+				
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//右
+					{						
+						ISHELL_CancelTimer(pMe->m_pShell, NULL,  pMe);
+            			CLOSE_DIALOG(DLGRET_MSGBOX_OK)
+            			return TRUE;
+					}
+					
+				}	
+			}
+		break;
+#endif
 
         default:
             break;
@@ -3349,7 +3421,7 @@ static void CClockApps_Set_CTL(CClockApps *pMe)
     }
 }
 
-static void CClockApps_Draw_Arrow(CClockApps *pMe, AEERect* pRect)
+static void CClockApps_Draw_Arrow(CClockApps *pMe, AEERect* pRect,int i)
 {
 	IImage      *pR_ResImg = NULL;
 	IImage      *pL_ResImg = NULL;
@@ -3371,6 +3443,23 @@ static void CClockApps_Draw_Arrow(CClockApps *pMe, AEERect* pRect)
         IIMAGE_Draw( pL_ResImg, pRect->x - imageInfo.cx, pRect->y + (pRect->dy - imageInfo.cy) / 2);
         IIMAGE_Release(pL_ResImg);
     }
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+	if(i==0)
+	{
+		SETAEERECT(&pMe->pL_Rect1, pRect->x - imageInfo.cx, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx, imageInfo.cy);
+		SETAEERECT(&pMe->pR_Rect1, pRect->x + pRect->dx, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx, imageInfo.cy);
+	}
+	else if(i == 2)
+	{
+		SETAEERECT(&pMe->pL_Rect2, pRect->x - imageInfo.cx, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx, imageInfo.cy);
+		SETAEERECT(&pMe->pR_Rect2, pRect->x + pRect->dx, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx, imageInfo.cy);
+	}
+	else if(i == 3)
+	{
+		SETAEERECT(&pMe->pL_Rect3, pRect->x - imageInfo.cx, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx, imageInfo.cy);
+		SETAEERECT(&pMe->pR_Rect3, pRect->x + pRect->dx, pRect->y + (pRect->dy - imageInfo.cy) / 2, imageInfo.cx, imageInfo.cy);
+	}
+	#endif
 
 }
 static void ClockNotifyMP3PlayerAlertEvent(CClockApps *pMe, boolean toStartAlert)

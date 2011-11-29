@@ -328,7 +328,39 @@ static boolean  Converter_MsgBoxEvent(CConverter *pMe,
                 CLOSE_DIALOG(DLGRET_MSGBOX_CANCEL);
             }
             return TRUE;
-        
+ #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+		case EVT_PEN_UP:
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+				
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ср
+					{						
+						(void)ISHELL_CancelTimer(pMe->m_pShell, NULL,  pMe);
+			            if(pMe->m_wMsgResID == IDS_DONE)
+			            {
+			                CLOSE_DIALOG(DLGRET_MSGBOX_OK);
+			            }
+			            else
+			            {
+			                CLOSE_DIALOG(DLGRET_MSGBOX_CANCEL);
+			            }
+			            return TRUE;
+					}
+				}	
+			}
+		break;
+#endif
         default:
             break;
     }

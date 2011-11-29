@@ -846,7 +846,7 @@ static boolean ClockApps_HandleEvent(IClockApps *pi,
 			{
 				eCode = EVT_KEY;
 			}
-			else if (wParam == AVK_SELECT)
+			else if ((wParam == AVK_SELECT)||(wParam == AVK_INFO))
 			{
 				if (dwParam == 0)
 				{

@@ -103,18 +103,24 @@ boolean Recorder_RouteDialogEvent( Recorder* pme, AEEEvent evt, uint16 wParam, u
 	switch( pme->m_nActiveDialogId)
 	{
 		case IDD_MAIN:
+			MSG_FATAL("IDD_MAIN.............",0,0,0);
 			return dialog_handler_of_state_main( pme, evt, wParam, dwParam);
 		case IDD_RECORD:
+			MSG_FATAL("IDD_RECORD.............",0,0,0);
 			return dialog_handler_of_state_record( pme, evt, wParam, dwParam);
 		case IDD_RECORD_LIST:
+			MSG_FATAL("IDD_RECORD_LIST.............evt=%d,wParam=%d",evt,wParam,0);
 			return dialog_handler_of_state_record_list( pme, evt, wParam, dwParam);
 #if defined( FEATURE_RECORDER_SET_AS)
 		case IDD_SET_AS_RECORD:
+			MSG_FATAL("IDD_SET_AS_RECORD.............",0,0,0);
 			return dialog_handler_of_state_set_as( pme, evt, wParam, dwParam);
 #endif
 		case IDD_SET_PLAY_MSG:
+			MSG_FATAL("IDD_SET_PLAY_MSG.............",0,0,0);
 			return dialog_handler_of_state_play_msg( pme, evt, wParam, dwParam);
 		case IDD_STORAGE_SETUP:
+			MSG_FATAL("IDD_STORAGE_SETUP.............",0,0,0);
 			return dialog_handler_of_state_storage_setup( pme, evt, wParam, dwParam);
 		default:
 			return FALSE;
@@ -1796,6 +1802,43 @@ __dialog_handler_of_state_record_pause_resume__:
 			}
 		}
 		break;
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+		case EVT_PEN_UP:
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pme->m_pDisplay);
+				
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pme->m_pShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+					{						
+						boolean rt = ISHELL_PostEvent(pme->m_pShell,AEECLSID_RECORDER,EVT_USER,AVK_CLR,0);
+						return rt;
+					}
+					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
+					{						
+						
+						boolean rt = ISHELL_PostEvent(pme->m_pShell,AEECLSID_RECORDER,EVT_USER,AVK_SELECT,0);
+						return rt;
+					}
+					else if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3) && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*2 )
+					{
+						boolean rt = ISHELL_PostEvent(pme->m_pShell,AEECLSID_RECORDER,EVT_USER,AVK_INFO,0);
+						return rt;
+					}
+					
+				}	
+			}
+		break;
+#endif
 	}
 
 	return FALSE;
@@ -2352,6 +2395,39 @@ static boolean  dialog_handler_of_state_record_list( Recorder* pme, AEEEvent evt
 
 	switch (evt)
 	{
+
+		#ifdef FEATURE_LCD_TOUCH_ENABLE
+        case  EVT_PEN_UP:
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pme->m_pDisplay);
+				
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pme->m_pShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
+				
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+					{						
+						evt = EVT_KEY;
+						wParam = AVK_CLR;
+					}
+					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
+					{						
+						
+						evt = EVT_KEY;
+						wParam = AVK_SELECT;
+					}
+				}
+        	}
+		#endif
 
 		case EVT_DIALOG_INIT:
 		{
@@ -3050,6 +3126,39 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 
 	switch (evt)
 	{
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+		case  EVT_PEN_UP:
+		{
+			int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+			int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+			AEERect bottomBarRect;
+			//int ht;
+			int nBarH ;
+			AEEDeviceInfo devinfo;
+			nBarH = GetBottomBarHeight(pme->m_pDisplay);
+			
+			MEMSET(&devinfo, 0, sizeof(devinfo));
+			ISHELL_GetDeviceInfo(pme->m_pShell, &devinfo);
+			SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+			MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
+			
+			if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+			{
+				if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+				{						
+					evt = EVT_KEY;
+					wParam = AVK_CLR;
+				}
+				else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
+				{						
+					
+					evt = EVT_KEY_PRESS;
+					wParam = AVK_SELECT;
+					MSG_FATAL("AVK_SELECT",0,0,0);
+				}
+			}
+		}
+#endif
 
 		case EVT_DIALOG_INIT:
 		{
@@ -3234,15 +3343,8 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 						CLOSE_DIALOG(DLGRET_CANCELED);
 					}
 				}
-			}
-		}
-		return TRUE;
-
-		case EVT_KEY_PRESS:
-		{
-			switch( wParam)
-			{
-#if defined( AEE_SIMULATOR)
+				break;
+				#if defined( AEE_SIMULATOR)
 				case AVK_SOFT1:
 #else
 				//case AVK_INFO:
@@ -3269,6 +3371,7 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 
 #endif
 				}
+				break;
 			}
 		}
 		return TRUE;
@@ -3352,6 +3455,38 @@ static boolean dialog_handler_of_state_play_msg( Recorder* pme, AEEEvent evt, ui
     media_scheduler = app_media_scheduler();
 	switch (evt)
 	{
+		#ifdef FEATURE_LCD_TOUCH_ENABLE
+        case  EVT_PEN_UP:
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pme->m_pDisplay);
+				
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pme->m_pShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
+				
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+					{						
+						evt = EVT_KEY_PRESS;
+						wParam = AVK_CLR;
+					}
+					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
+					{						
+						
+						evt = EVT_KEY_PRESS;
+						wParam = AVK_SELECT;
+					}
+				}
+        	}
+		#endif
 	    case EVT_DIALOG_START:
 		{
           repaint( TRUE);
@@ -4218,6 +4353,38 @@ static boolean dialog_handler_of_state_storage_setup( Recorder* pme, AEEEvent ev
 	
 	switch (evt)
 	{
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+		case  EVT_PEN_UP:
+		{
+			int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+			int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+			AEERect bottomBarRect;
+			//int ht;
+			int nBarH ;
+			AEEDeviceInfo devinfo;
+			nBarH = GetBottomBarHeight(pme->m_pDisplay);
+			
+			MEMSET(&devinfo, 0, sizeof(devinfo));
+			ISHELL_GetDeviceInfo(pme->m_pShell, &devinfo);
+			SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+			MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
+			
+			if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+			{
+				if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+				{						
+					evt = EVT_KEY;
+					wParam = AVK_CLR;
+				}
+				else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
+				{						
+					
+					evt = EVT_KEY;
+					wParam = AVK_SELECT;
+				}
+			}
+		}
+#endif
 
 		case EVT_DIALOG_INIT:
 		{

@@ -1155,10 +1155,26 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
                     ISHELL_CloseApplet( pMe->m_pShell, FALSE);
                     return TRUE;
                 default:
+					if (wParam == AVK_CLR)
+					{
+						eCode = EVT_KEY;
+					}
+					else if ((wParam == AVK_SELECT)||(wParam == AVK_INFO))
+					{
+						if (dwParam == 0)
+						{
+							
+							eCode = EVT_KEY;
+						}
+						else
+						{
+							eCode = EVT_COMMAND;
+						}
+					}
+					return FmRadio_RouteDialogEvent(pMe,eCode,wParam,dwParam);
                     break;
             }
         }
-
         default:
             // 将接收到的事件路由至当前活动的对话框事件处理函数。
             return FmRadio_RouteDialogEvent(pMe,eCode,wParam,dwParam);

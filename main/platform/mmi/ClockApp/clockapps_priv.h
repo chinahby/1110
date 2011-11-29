@@ -410,6 +410,14 @@ typedef struct _CClockApps
 #endif
    AEERect rectLine[4];
    boolean          m_bAlarmSuspend;
+#ifdef FEATURE_LCD_TOUCH_ENABLE 
+   AEERect          pL_Rect1;
+   AEERect          pL_Rect2;
+   AEERect          pL_Rect3;
+   AEERect          pR_Rect1;
+   AEERect          pR_Rect2;
+   AEERect          pR_Rect3;
+#endif
 } CClockApps;
 
 
