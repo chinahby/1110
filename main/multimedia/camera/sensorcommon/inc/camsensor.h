@@ -385,12 +385,7 @@ typedef enum
 /* ********************* WARNING WARNING **************************** */
 typedef enum
 {
-#ifdef FEATURE_NI_GPIO
-  CAMSENSOR_NI_GPIO,
-  CAMSENSOR_ID_MAX
-
-#else /* FEATURE_NI_GPIO */
-
+#ifndef FEATURE_NI_GPIO
 #ifdef USE_CAMSENSOR_SIV121A
   CAMSENSOR_SIV121A_ID,
 #endif
@@ -524,7 +519,9 @@ typedef enum
 #endif
 
   CAMSENSOR_ID_MAX
-
+#else
+	CAMSENSOR_NI_GPIO,
+  	CAMSENSOR_ID_MAX
 #endif/* FEATURE_NI_GPIO */
 } camsensor_sensor_model_type;
 
