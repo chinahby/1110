@@ -332,10 +332,10 @@ enum
 #define EVT_USER                 0x7000   // Start of App/User defined Events.  Private to apps...
 
 //Add By zzg 2011_11_10
-#define EVT_MUSICPLAYER_DISCONNECT_FROM_BT	0x7001			//Disconnect BtHeadSet for MusicPlayer
-#define EVT_CALLAPP_CHECK_BT_STATUS			0x7002			//Check BTAG connect for callapp
-#define EVT_MUSICPLAYER_ALARM_SUSPEND_BT	0x7003			//MusicPlayer Suspend
-#define EVT_MUSICPLAYER_ALARM_RESUME_BT		0x7004			//MusicPlayer Resume
+#define EVT_MUSICPLAYER_DISCONNECT_FROM_BT	0x7101			//Disconnect BtHeadSet for MusicPlayer
+#define EVT_CALLAPP_CHECK_BT_STATUS			0x7102			//Check BTAG connect for callapp
+#define EVT_MUSICPLAYER_ALARM_SUSPEND_BT	0x7103			//MusicPlayer Suspend
+#define EVT_MUSICPLAYER_ALARM_RESUME_BT		0x7104			//MusicPlayer Resume
 	
 #define EVT_BT_AG_AUDIO_CONNECTED			0x7005			//AG connected
 #define EVT_BT_A2DP_AUDIO_CONNECTED			0x7006			//A2DP Connected

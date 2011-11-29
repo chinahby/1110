@@ -1339,6 +1339,7 @@ static boolean  IDD_LPM_Handler(void       *pUser,
                                 uint32     dwParam)
 {
     CCoreApp *pMe = (CCoreApp *)pUser;
+	MSG_FATAL("IDD_LPM_Handler:eCode=%x,wParam=%x,dwParam=%x",eCode, wParam, dwParam);
     
     switch (eCode)
     {
@@ -3040,6 +3041,7 @@ static boolean  IDD_IDLE_Handler(void       *pUser,
 
 				if (bt_status == TRUE)
 				{					
+					MSG_FATAL("***zzg CoreApp EVT_DIALOG_INIT ISHELL_StartBackgroundApplet***", 0, 0, 0);
 					ISHELL_StartBackgroundApplet(pMe->a.m_pIShell, AEECLSID_BLUETOOTH_APP, NULL);
 				}
 #endif				
