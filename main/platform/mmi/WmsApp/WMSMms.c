@@ -112,7 +112,7 @@ static boolean is_us_ascii_string(char * in_s, int in_len);
 static int MMS_WSP_ContentTypeDB_Text2MMS(uint8* ct, int ct_len, uint8* ctbyte);
 static int slim_strncmp_nocase(char *in_s, char *in_t, int in_n);
 static MMS_MESSAGE_TYPE MMS_GetMMSTypeByName(uint8 *hContentType);
-static const char *MMS_GetMimeType(const char *pszSrc);
+const char *MMS_GetMimeType(const char *pszSrc);
 static boolean MMS_STREQI(const char *s1, const char *s2);
 static void MMSSocketState(MMSSocket *ps);
 boolean  MMSSocketRecv (MMSSocket *ps, uint8 *pBuf, uint32 *pLen);
@@ -1724,7 +1724,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
     char mmsDataFileName[MMS_MAX_FILE_NAME];
     MMSData	mmsDataInfoList[MAX_MMS_STORED];
     char sz[2] =   { '/', 0 };
-    int nCharBegin = 0;
+    int nCharBegin = 'A';
     
     MSG_FATAL("[WMS_MMS_SaveMMS] g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
     
@@ -1734,7 +1734,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
         {
             nMmsDataInfoType = CFGI_MMSOUTDATA_INFO;
             nMmsCoutType = CFGI_MMS_OUTCOUNT;
-            nCharBegin = 'a';
+            //nCharBegin = 'a';
         }
         break;
         
@@ -1743,7 +1743,7 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
         {
             nMmsDataInfoType = CFGI_MMSINDATA_INFO;
             nMmsCoutType = CFGI_MMS_INCOUNT;
-            nCharBegin = 'A';
+            //nCharBegin = 'A';
         }
         break;
     }
@@ -1785,7 +1785,15 @@ boolean WMS_MMS_SaveMMS(char* phoneNumber,char *pBuffer,int DataLen,int nKind)
 
 // Emulator filename and path
     MEMSET((void*)mmsDataFileName, 0, MMS_MAX_FILE_NAME);
-    psz[0] = g_mmsDataInfoMax+nCharBegin;
+    psz[1] = g_mmsDataInfoMax+nCharBegin;
+    if(nKind == MMS_OUTBOX)
+    {
+        psz[0]='O';
+    }
+    else if(nKind == MMS_INBOX)
+    {
+        psz[0]='I';
+    }
     STRCPY(mmsDataFileName, "fs:/hsmm/mmsDataFile");
 
     if(SUCCESS != IFILEMGR_Test(pIFileMgr, mmsDataFileName))
@@ -1848,14 +1856,24 @@ Exit:
 boolean WMS_MMS_DeleteMMSALL(int nKind)
 {
     int i = 0;
+    uint8 mmsCount = 0;
     IConfig *pConfig = NULL;
     int nMmsCoutType = 0;
+    int nMmsDataInfoType = 0;
     int result = SUCCESS;
-    
+    IFileMgr *pIFileMgr = NULL;
+    MMSData	mmsDataInfoList[MAX_MMS_STORED];
+    MSG_FATAL("WMS_MMS_DeleteMMSALL Start nKind=%d",nKind,0,0);
     if (ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_CONFIG,(void **)&pConfig) != SUCCESS)
     {
         RELEASEIF(pConfig);
         return FALSE;
+    }
+    result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_FILEMGR,(void **)&pIFileMgr);
+    if (SUCCESS != result)
+    {
+    	MSG_FATAL("[WMS_MMS_DeleteMMS] Open file error %x", result,0,0);
+    	return FALSE;
     }
 
     switch(nKind)
@@ -1863,6 +1881,7 @@ boolean WMS_MMS_DeleteMMSALL(int nKind)
         case MMS_OUTBOX:
         {
             nMmsCoutType = CFGI_MMS_OUTCOUNT;
+            nMmsDataInfoType = CFGI_MMSOUTDATA_INFO;
         }
         break;
         
@@ -1870,21 +1889,40 @@ boolean WMS_MMS_DeleteMMSALL(int nKind)
         case MMS_INBOX:
         {
             nMmsCoutType = CFGI_MMS_INCOUNT;
+            nMmsDataInfoType = CFGI_MMSINDATA_INFO;
         }
         break;
     }
     
     ICONFIG_GetItem(pConfig, 
         nMmsCoutType,
-        &g_mmsDataInfoMax,
-        sizeof(g_mmsDataInfoMax)); 
-        
-    for(i = 0; i < WMSMMS_FRAGMENTCOUNT;i++)
+        &mmsCount,
+        sizeof(mmsCount)); 
+
+    ICONFIG_GetItem(pConfig,
+       nMmsDataInfoType,
+       (void*)mmsDataInfoList,
+       sizeof(mmsDataInfoList));
+    
+    MSG_FATAL("g_mmsDataInfoMax=%d",mmsCount,0,0);   
+    for(i = 0; i < mmsCount;i++)
     {
-        WMS_MMS_DeleteMMS(i,nKind);
-        MSG_FATAL("[WMS_MMS_DeleteMMSALL] index=%d",i,0,0);
+        if(SUCCESS == IFILEMGR_Test(pIFileMgr, mmsDataInfoList[i].MMSDataFileName))
+        {
+            if(SUCCESS != IFILEMGR_Remove(pIFileMgr,mmsDataInfoList[i].MMSDataFileName))   
+            {
+                result = IFILEMGR_GetLastError(pIFileMgr);
+                MSG_FATAL("[WMS_MMS_DeleteMMSALL] find remove error 0x%x", result,0,0);               
+            }
+            DBGPRINTF("%d FileName=%s", i,mmsDataInfoList[i].MMSDataFileName);
+        }
     }
+    mmsCount = 0;
+    MEMSET((void*)mmsDataInfoList,NULL,sizeof(MMSData));
+    ICONFIG_SetItem(pConfig, nMmsDataInfoType, (void*)mmsDataInfoList, sizeof(mmsDataInfoList));        
+    ICONFIG_SetItem(pConfig, nMmsCoutType, &mmsCount, sizeof(mmsCount));     
     RELEASEIF(pConfig);
+    RELEASEIF(pIFileMgr);
     return TRUE;
 }
 
@@ -1901,7 +1939,7 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
     int nMmsDataInfoType = 0;
     int nMmsCoutType = 0;
     boolean isRemoveSuccess = FALSE;
-        
+    MSG_FATAL("WMS_MMS_DeleteMMS, Start, index=%d, nKind=%d",index,nKind,0);
     if (result = ISHELL_CreateInstance(AEE_GetShell(), AEECLSID_CONFIG,(void **)&pConfig) != SUCCESS)
     {
         goto Exit;
@@ -1913,7 +1951,7 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
     	MSG_FATAL("[WMS_MMS_DeleteMMS] Open file error %x", result,0,0);
     	goto Exit;
     }
-
+    MSG_FATAL("WMS_MMS_DeleteMMS, 1",0,0,0);
     switch(nKind)
     {
         case MMS_OUTBOX:
@@ -1931,12 +1969,12 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
         }
         break;
     }
-    
+    MSG_FATAL("WMS_MMS_DeleteMMS, 2",0,0,0);
     ICONFIG_GetItem(pConfig, 
         nMmsCoutType,
         &g_mmsDataInfoMax,
         sizeof(g_mmsDataInfoMax));  
-
+    MSG_FATAL("g_mmsDataInfoMax=%d",g_mmsDataInfoMax,0,0);
     ICONFIG_GetItem(pConfig,
        nMmsDataInfoType,
        (void*)mmsDataInfoList,
@@ -1947,10 +1985,13 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
         result = EFAILED;
         goto Exit;
     }   
-    MSG_FATAL("[WMS_MMS_DeleteMMS] g_mmsDataInfoMax:%d", g_mmsDataInfoMax,0,0);
+    MSG_FATAL("[WMS_MMS_DeleteMMS] g_mmsDataInfoMax:%d, index=%d", g_mmsDataInfoMax,index,0);
     
     pMmsDataInfoListCur = &mmsDataInfoList[index];
-
+    if(pMmsDataInfoListCur != NULL)
+    {
+        DBGPRINTF("MMSDataFileName = %s", pMmsDataInfoListCur->MMSDataFileName);
+    }
     if(SUCCESS == IFILEMGR_Test(pIFileMgr,
         pMmsDataInfoListCur->MMSDataFileName))
     {
@@ -1986,13 +2027,15 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
         if(EFAILED == IFILEMGR_Test(pIFileMgr,pMmsDataInfoListCur->MMSDataFileName)
             && SUCCESS == IFILEMGR_Test(pIFileMgr,pMmsDataInfoListNext->MMSDataFileName))
         {
+            DBGPRINTF("Cur FileName=%s",pMmsDataInfoListCur->MMSDataFileName);
+            DBGPRINTF("Next FileName=%s",pMmsDataInfoListNext->MMSDataFileName);
             if(SUCCESS == IFILEMGR_Rename(pIFileMgr,pMmsDataInfoListNext->MMSDataFileName,pMmsDataInfoListCur->MMSDataFileName))
             {
                 STRCPY(pMmsDataInfoListCur->phoneNumber,pMmsDataInfoListNext->phoneNumber);
                 pMmsDataInfoListCur->MMSDatasize = pMmsDataInfoListNext->MMSDatasize;
-                MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone number:%s", pMmsDataInfoListCur->phoneNumber,0,0);
+                DBGPRINTF("[WMS_MMS_DeleteMMS] rename file phone number:%s", pMmsDataInfoListCur->phoneNumber);
                 MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone number len:%d", pMmsDataInfoListCur->MMSDatasize,0,0);
-                MSG_FATAL("[WMS_MMS_DeleteMMS] rename file phone name:%s", pMmsDataInfoListCur->MMSDataFileName,0,0);
+                DBGPRINTF("[WMS_MMS_DeleteMMS] rename file phone name:%s", pMmsDataInfoListCur->MMSDataFileName);
             }
             else
             {
@@ -2013,7 +2056,10 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
         }
         
     };
-    MEMSET((void*)pMmsDataInfoListNext,NULL,sizeof(MMSData));
+    if(pMmsDataInfoListNext != NULL)
+    {
+        MEMSET((void*)pMmsDataInfoListNext,NULL,sizeof(MMSData));
+    }
 
     if(isRemoveSuccess)
         g_mmsDataInfoMax --;
@@ -2023,6 +2069,7 @@ boolean WMS_MMS_DeleteMMS(uint32 index,int nKind)
     
     
 Exit:
+    MSG_FATAL("WMS_MMS_DeleteMMS Exit",0,0,0);
     RELEASEIF(pIFileMgr);
     RELEASEIF(pConfig);
     
@@ -2416,7 +2463,7 @@ void WMS_MMS_DATA_Encode(WSP_MMS_ENCODE_DATA* pData)
             ISHELL_DetectType(AEE_GetShell(),NULL,&size,pFilePath,(const char**)&pFileType);
             pData->fragment[index].pType =  pFileType ? pFileType : OTHER_MIME_BASE;//IMAGE_MIME_BASE;
 
-            MMS_DEBUG(("[WMS_MMS_DATA_Encode] File Type:%s",pData->fragment[index].pType));
+            DBGPRINTF("[WMS_MMS_DATA_Encode] File Type:%s",pData->fragment[index].pType);
             len = STRLEN(MMS_GetMimeType(pFilePath));
         	STRNCPY((char*)pData->fragment[index].hContentType,MMS_GetMimeType(pFilePath),len);
 

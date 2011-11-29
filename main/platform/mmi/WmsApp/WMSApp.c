@@ -1043,7 +1043,7 @@ static boolean CWmsApp_HandleEvent(IWmsApp  *pi,
             // ¿ªÊ¼ÅÜWMS×´Ì¬»ú
             CWmsApp_RunFSM(pMe);
 #ifdef MMS_TEST            
-            //WmsApp_debug_CheckChariFromRawDaTa(pMe);
+           // WmsApp_debug_CheckChariFromRawDaTa(pMe);
 #endif            
             return TRUE;
 

@@ -11133,7 +11133,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     CtlAddItem ai;
                     MSG_FATAL("IDS_REMOVE_PICTURE pMe->m_pMMSImage != NULL",0,0,0);
                     ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSIMAGE,MMSImageName, sizeof(MMSImageName));       
-                    while(pMMSImageName = MimeResCheckTypeExist(pMe,IMAGE_MIME_BASE,&pBuf,&nBufLen))
+                    if((pMMSImageName = MimeResCheckTypeExist(pMe,IMAGE_MIME_BASE,&pBuf,&nBufLen)) != NULL)
                     {
                         if(nBufLen > 0)
                         {
@@ -11202,8 +11202,8 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     uint8 i = SOUND_MENU_INDEX;
                     MSG_FATAL("pMe->m_pMMSSOUND != NULL",0,0,0);
                     ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSSOUND,MMSImageName, sizeof(MMSImageName));       
-                    while((pMMSSoundName = MimeResCheckTypeExist(pMe,SOUND_MIME_BASE,&pBuf,&nBufLen))
-                        || (pMMSSoundName = MimeResCheckTypeExist(pMe,AUDIO_MIME_BASE,&pBuf,&nBufLen)))
+                    if(((pMMSSoundName = MimeResCheckTypeExist(pMe,SOUND_MIME_BASE,&pBuf,&nBufLen)) != NULL)
+                        || ((pMMSSoundName = MimeResCheckTypeExist(pMe,AUDIO_MIME_BASE,&pBuf,&nBufLen)) != NULL))
                     {
                         if(nBufLen > 0)
                         {
@@ -11214,7 +11214,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     };   
                     
                     RELEASEIF(pMe->m_pMMSSOUND);
-                    MSG_FATAL("IMENUCTL_DeleteItem index=%d",IMENUCTL_GetSel(pMenuCtl),0,0);
+                    MSG_FATAL("IMENUCTL_DeleteItem index=%d,frag_num=%d",IMENUCTL_GetSel(pMenuCtl),pMe->m_EncData.pMessage->mms_data.frag_num,0);
                     for(; i < VIDEO_MENU_INDEX; i++)
                     {
                         if ( IMENUCTL_GetItem( pMenuCtl, i ,&ai ) )
@@ -11267,7 +11267,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
                     uint8 i = VIDEO_MENU_INDEX;                    
                     MSG_FATAL("pMe->m_pMMSVIDEO != NULL",0,0,0);
                     ICONFIG_SetItem(pMe->m_pConfig, CFGI_MMSVIDEO,MMSImageName, sizeof(MMSImageName));       
-                    while(pMMSVideoName = MimeResCheckTypeExist(pMe,VIDEO_MIME_BASE,&pBuf,&nBufLen))
+                    if((pMMSVideoName = MimeResCheckTypeExist(pMe,VIDEO_MIME_BASE,&pBuf,&nBufLen)) != NULL)
                     {
                         if(nBufLen > 0)
                         {
@@ -13249,7 +13249,7 @@ static boolean IDD_DELETING_Handler(void        *pUser,
     {
         return FALSE;
     }
-    
+    MSG_FATAL("IDD_DELETING_Handler Start eCode=0x%x", eCode,0,0);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -13270,7 +13270,7 @@ static boolean IDD_DELETING_Handler(void        *pUser,
                 AECHAR wstrText[MSGBOX_MAXTEXTLEN];
                 int nRet=EFAILED;
                 PromptMsg_Param_type  Msg_Param={0};
-                
+                MSG_FATAL("IDD_DELETING_Handler m_eEraseWMSType=%d", pMe->m_eEraseWMSType,0,0);
                 switch (pMe->m_eEraseWMSType)
                 {
                     case ERASE_DRAFT_ONE:
@@ -13497,7 +13497,7 @@ static boolean IDD_DELETING_Handler(void        *pUser,
             {
                 AECHAR  wstrText[MSGBOX_MAXTEXTLEN];
                 PromptMsg_Param_type  Msg_Param={0};
-          
+                MSG_FATAL("IDD_DELETING_Handler DELETE MMS", 0,0,0);
                 pMe->m_eDlgReturn = DLGRET_DONE;
                 
                 //删除完成
@@ -17518,6 +17518,7 @@ static void WmsApp_ReadMsg(void *pUser)
     
 ==============================================================================*/
 extern char* MMS_WSP_MineType2MormalMimeType(const char* pszSrc);
+extern const char *MMS_GetMimeType(const char *pszSrc);
 static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
     WmsApp *pMe = (WmsApp *)pUser;
@@ -18594,7 +18595,7 @@ char* MimeResCheckTypeExist(WmsApp *pMe,char* pType,uint8** ppBuf,uint32* pBufLe
     char* pFilePath = NULL;    
     int nIndex = 1;//0;零为文本
     uint32 size = 0;
-    char* pFileType = NULL; 
+    int result = 0;
     boolean isNotInBREWMineType = FALSE;
     MSG_FATAL("[MimeResCheckTypeExist] Enter",0,0,0);
     
@@ -18606,11 +18607,30 @@ char* MimeResCheckTypeExist(WmsApp *pMe,char* pType,uint8** ppBuf,uint32* pBufLe
         
     pEncData = &pMe->m_EncData.pMessage->mms_data;
     pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
+    DBGPRINTF("pFilePath 1:%s",pFilePath);
+    if(pFilePath == NULL)
+    {
+        DBGPRINTF("pFilePath == NULL");
+        return NULL;
+    }
     while(STRLEN(pFilePath) != 0 && nIndex < WMSMMS_FRAGMENTCOUNT)
     {
+        isNotInBREWMineType = FALSE;
         pFilePath = (char*)pEncData->fragment[nIndex].hContentFile;
-        isNotInBREWMineType = (SUCCESS != ISHELL_DetectType(AEE_GetShell(),NULL,&size,pFilePath,(const char**)&pFileType));
-
+        DBGPRINTF("pFilePath 2:%s, pType=%s",pFilePath, pType);
+        if(STRSTR(MMS_GetMimeType(pFilePath), pType) == NULL)
+        {
+            isNotInBREWMineType = TRUE;
+        }
+        DBGPRINTF("isNotInBREWMineType:%d",isNotInBREWMineType);
+        if(MMS_GetMimeType(pFilePath) != NULL)
+        {
+            DBGPRINTF("pFileType 2:%s",MMS_GetMimeType(pFilePath));
+        }
+        else
+        {
+            DBGPRINTF("pFileType is NULL");
+        }
         if(NULL == pType && isNotInBREWMineType)
         {
             if(pEncData->fragment[nIndex].pBuf && pEncData->fragment[nIndex].nBufLen > 0)
@@ -18624,15 +18644,10 @@ char* MimeResCheckTypeExist(WmsApp *pMe,char* pType,uint8** ppBuf,uint32* pBufLe
                 *pBufLen = pEncData->fragment[nIndex].nBufLen;
                 *ppBuf = pEncData->fragment[nIndex].pBuf;
             }
-            MSG_FATAL("[MimeResCheckTypeExist] Find File:%s",pFilePath,0,0);
+            DBGPRINTF("[MimeResCheckTypeExist] Find File:%s",pFilePath);
             return pFilePath;   
         }
-        else
-        {
-            nIndex ++;
-            continue;
-        }
-        if(!STRNCMP(pType,pFileType,STRLEN(pType)))
+        else if(STRSTR(MMS_GetMimeType(pFilePath), pType) != NULL)
         {
             if(pEncData->fragment[nIndex].pBuf && pEncData->fragment[nIndex].nBufLen > 0)
             {
@@ -18645,7 +18660,7 @@ char* MimeResCheckTypeExist(WmsApp *pMe,char* pType,uint8** ppBuf,uint32* pBufLe
                 *pBufLen = pEncData->fragment[nIndex].nBufLen;
                 *ppBuf = pEncData->fragment[nIndex].pBuf;
             }
-            MSG_FATAL("[MimeResCheckTypeExist] Find File:%s",pFilePath,0,0);
+            DBGPRINTF("[MimeResCheckTypeExist] Find File:%s",pFilePath);
             return pFilePath;   
         }
         nIndex ++;
