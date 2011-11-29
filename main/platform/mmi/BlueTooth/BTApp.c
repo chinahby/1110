@@ -2255,8 +2255,25 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
     {	     	
 		case EVT_APP_START_BACKGROUND:		
 		{
-			MSG_FATAL("***zzg BTApp Start Background***", 0, 0, 0);
-			BTApp_StartBT(pMe);		
+			MSG_FATAL("***zzg BTApp Start Background***", 0, 0, 0);			
+
+			if ((args != NULL) && (args->pszArgs != NULL))	
+			{
+				if (STRNCMP(args->pszArgs, "ResetBT", 7) == 0)	//Factory Reset					
+				{
+					MSG_FATAL("***zzg ResetBT BTApp***", 0, 0, 0);
+
+					bt_rm_refresh_efs_param();		
+					
+					BTApp_DisableBT(pMe);
+					break;	
+				}
+			}
+			else
+			{
+				BTApp_StartBT(pMe);		
+			}
+			 
       		return (TRUE);
 		}		
 		
@@ -21513,6 +21530,8 @@ static void BTApp_ProcessAGNotifications(
                ((uint16)(pData->bdAddr.uAddr[1] << 8) | pData->bdAddr.uAddr[0]) );
 
 	  BTApp_ShowDevMsg( pMe, IDS_MSG_AG_CONNF, &pData->bdAddr, 2 );
+
+	  MSG_FATAL("***zzg AEEBT_AG_EVT_CONNECT_FAILED uError=%x", pData->uError, 0, 0);	  
 
       // clean up, in case connection attempt was done to transfer 
       // voice call to HS/HF

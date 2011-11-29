@@ -4888,8 +4888,8 @@ static void SecurityMenu_RestoryFactorySet(CSecurityMenu *pMe)
     
 //Add By zzg 2010_10_22
 #ifdef FEATURE_APP_BLUETOOTH
-	//ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");	
-	ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
+	ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");	
+	//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
 #endif
 //Add End   
     OEM_RestoreFactorySetting();

@@ -1877,9 +1877,9 @@ static void CoreTask_CreateAEEInstance(void)
 	{
 	
 //Add By zzg 2010_10_22
-#ifdef FEATURE_APP_BLUETOOTH
-		//ISHELL_StartBackgroundApplet(pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
-		ISHELL_StartAppletArgs(pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");	
+#ifdef FEATURE_APP_BLUETOOTH	
+		ISHELL_StartBackgroundApplet(pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");		
+		//ISHELL_StartAppletArgs(pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");	
 #endif
 //Add End   
 

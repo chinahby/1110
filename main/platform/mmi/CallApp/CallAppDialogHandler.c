@@ -1278,8 +1278,8 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 							#endif
 //Add By zzg 2010_10_22
 #ifdef FEATURE_APP_BLUETOOTH
-							//ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
-							ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");	
+							ISHELL_StartBackgroundApplet(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");
+							//ISHELL_StartAppletArgs(pMe->m_pShell, AEECLSID_BLUETOOTH_APP, "ResetBT");	
 #endif
 //Add End   
 							OEM_RestoreFactorySetting();
@@ -6187,21 +6187,24 @@ void CallApp_SetupCallAudio(CCallApp *pMe)
     }
 #endif
 
+
 //Add By zzg 2011_10_28
 #ifdef FEATURE_SUPPORT_BT_AUDIO
 	//else if(TRUE == pMe->m_bBtAvailable)
-	else if (sndInfo.out_device == SND_DEVICE_BT_HEADSET) 			
+	else if (sndInfo.out_device == SND_DEVICE_BT_HEADSET) 
 	{				
 		soundStuff.eDevice = AEE_SOUND_DEVICE_BT_HEADSET;		
 		//bt_ui_process_vol_change(pMe->m_CallVolume);
-	}		
-	else if (sndInfo.out_device == SND_DEVICE_BT_A2DP_HEADSET)
+	}	
+	else if (sndInfo.out_device == SND_DEVICE_BT_A2DP_HEADSET)	
 	{				
 		soundStuff.eDevice = AEE_SOUND_DEVICE_BT_STEREO_HEADSET;		
 		//bt_ui_process_vol_change(pMe->m_CallVolume);
 	}	
-	#endif
+#endif
 //Add End
+
+
 
 	/*
     else if (headsetPresent)
