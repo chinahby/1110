@@ -53,10 +53,11 @@ typedef struct _ITSIM ITSIM;   //the struct of ITSIM interface
 
 typedef enum
 {
-    TSIM_NONE = 0x00,      //the touch screen mode is none
+    TSIM_NONE = 0x00,      //the touch screen mode is none  
     TSIM_HANSTROKE,        //the touch screen hanstroke input method
     TSIM_PINYIN,           //the touch screen pinyin input method
     TSIM_LETTERS,          //the touch screen letter input method
+    TSIM_NUM,
     TSIM_SYMBOLS           //the touch screen symbol input method
 }OEMTSIMInputMode;
 
