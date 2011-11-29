@@ -222,6 +222,18 @@ ZI8WCHAR TSIM_ziWordBuffer[32];
 #define TSIM_NOTHWRITE_PASTE           (2)
 #define TSIM_NOTHWRITE_CLEAR           (3)
 
+//set del range area
+#define DELRANGE_MINX                  140
+#define DELRANGE_MINY                  220
+#define DELRANGE_MAXX                  170
+#define DELRANGE_MAXY                  245
+
+//set caps range area
+#define CAPSRANGE_MINX                 175
+#define CAPSRANGE_MINY                 220
+#define CAPSRANGE_MAXX                 235
+#define CAPSRANGE_MAXY                 245
+
 //set hand writting area
 #define HANDWRITE_TOP                  100
 #define HANDWRITE_BOTTOM               163
@@ -305,6 +317,8 @@ OBJECT(CTSIM)
    CoordiRange                clearsk_range;          // the range of the clear softkey
    CoordiRange                copysk_range;           // the range of the copy softkey
    CoordiRange                pastesk_range;          // the range of the paste softkey
+   CoordiRange                selectdel_range;        // the range of the select del
+   CoordiRange                selectcaps_range;       // the range of the select caps
    CoordiRange                wholetmtitle_range;     // the range of the whole modetitle area
    CoordiRange                fullscreen_wholesymrange;// the range of symbols of the fullscreen handwrite inputmode
    CoordiRange                onerect_wholesymrange;  // the range of symbols of the onerect handwrite inputmode
@@ -362,6 +376,7 @@ OBJECT(CTSIM)
    short                      nSelectionSelectd;      // The current HanZi which in the Selection is selected.
    //add by ydc 20090527
    boolean                    bcourshow;              //光标显示
+   boolean                    bletterkeyPad;          //大小写切换
 }; 
 
 typedef boolean         (*PFN_PenDownHandler)(CTSIM *, uint32);
@@ -545,6 +560,12 @@ static void             TSIM_SymbolsExit(CTSIM *pme);
 static void             TSIM_SymbolsDraw(CTSIM *pme);
 static void             Symbols_Init(CTSIM *pme);
 
+//touch screen Number inputmode
+static void             TSIM_NumberRestart(CTSIM *pme);
+static void             TSIM_NumberExit(CTSIM *pme);
+static void             TSIM_NumberDraw(CTSIM *pme);
+static void             Number_Init(CTSIM *pme);
+
 //just for clipboard             
 static int              TSIM_ClipBoardAddItem(IClipboard *pClipboard, AECHAR *pText);
 static AECHAR *         TSIM_GetClipBoardItemText(IClipboard *pClipboard, uint16  wItemID);     
@@ -556,7 +577,7 @@ static void             TSIM_Draw3DFrame(CTSIM * pme, AEERect *pRc, int nStyle);
 //
 //-----------------------------------------------------------------------------
 static ModeInfo sTSIMModes[] =
-{
+{ 
    {  TSIM_HanstrokeRestart,
       TSIM_HanstrokePenDown,
       TSIM_HanstrokePenUp,
@@ -565,6 +586,7 @@ static ModeInfo sTSIMModes[] =
       TSIM_HanstrokeExit,
       TSIM_HanstrokeDraw,
       {TSIM_HANSTROKE, {0x624b, 0}}},//lint !e785
+      
    {  TSIM_PinyinRestart,
       TSIM_PinyinPenDown,
       TSIM_PinyinPenUp,
@@ -573,6 +595,7 @@ static ModeInfo sTSIMModes[] =
       TSIM_PinyinExit,
   	  TSIM_PinyinDraw,
       {TSIM_PINYIN, {0x62fc, 0}}},//lint !e785
+
    {  TSIM_LettersRestart,
       TSIM_LetSymPenDown,
       TSIM_LetSymPenUp,
@@ -581,6 +604,16 @@ static ModeInfo sTSIMModes[] =
       TSIM_LettersExit,
       TSIM_LettersDraw,
       {TSIM_LETTERS, {0x82f1, 0}}},//lint !e785
+      
+   {  TSIM_NumberRestart,
+      TSIM_LetSymPenDown,
+      TSIM_LetSymPenUp,
+      TSIM_LetSymPenMove,
+      TSIM_LetSymEvtChar,
+      TSIM_NumberExit,
+      TSIM_NumberDraw,
+      {TSIM_NUM, {0x6570, 0}}},//lint !e785
+     
    {  TSIM_SymbolsRestart,
       TSIM_LetSymPenDown,
       TSIM_LetSymPenUp, /* Use default name for Numbers mode */
@@ -774,16 +807,16 @@ int TSIM_New(IShell * pIShell, AEECLSID clsID, void ** ppobj)
     pme->font = AEE_FONT_NORMAL;
          
     //default mode is hanstroke
-    pme->m_tsm_curr = TSIM_HANSTROKE;
+    pme->m_tsm_curr = TSIM_LETTERS;//TSIM_HANSTROKE;
+
 
     pme->bselect_funtitle = FALSE;
 
 	//add by ydc 20090527
 	pme->bcourshow = TRUE;
-
+    pme->bletterkeyPad= FALSE;
 	//default language is chinese
-	pme->language = NV_LANGUAGE_CHINESE;
-
+	pme->language = NV_LANGUAGE_ENGLISH;// NV_LANGUAGE_CHINESE;
     (void) OEM_GetConfig(CFGI_LANGUAGE_SELECTION,
                          &pme->language,
                          sizeof(byte));
@@ -1030,20 +1063,25 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
                 {
                     return TRUE;
                 }
-                
+                 
                 //if the pen hit the touch modetitle
                 if (TSIM_IsInRange(dwParam, &pme->wholetmtitle_range))
                 {
-                    for (i = 0;  i < MAX_TSM_TYPE; i++)
+                    for (i = 2;  i < MAX_TSM_TYPE; i++)
                     {
+                        //i=i+3;
                         if (TSIM_IsInRange(dwParam, &(pme->tmtitle_range[i])))
                         {
+                             DBGPRINTF("CTSIM-HandleEvent----------i=%d",i);
                             if(CTSIM_GetInputMode(pITSIM, NULL) != (OEMTSIMInputMode)(i + 1))
                             {
+                                 DBGPRINTF("CTSIM-HandleEvent----------2");
                                 if((OEMTSIMInputMode)(i + 1) == TSIM_SYMBOLS)
                                 {
+                                     DBGPRINTF("CTSIM-HandleEvent----------1");
                                     pme->m_tsm_last = CTSIM_GetInputMode(pITSIM, NULL);
                                 }
+                                   DBGPRINTF("CTSIM-HandleEvent----------");
                                 (void)CTSIM_SetInputMode(pITSIM, (OEMTSIMInputMode)(i + 1));
                                 //according to the inputmode to redraw
                                 //the keypad or handwrite area
@@ -1154,7 +1192,7 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
             }
 
 			//if the pen hit the touch area
-			if ((pme->m_tsm_curr == TSIM_HANSTROKE)/*&&
+			if ((pme->m_tsm_curr ==TSIM_HANSTROKE)/*&& //)
 				TSIM_IsInRange(dwParam,&(pme->hs_range))*/)
 			{
 				point.x = AEE_GET_X(dwParam);
@@ -1196,7 +1234,7 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
                 return TRUE;
             }
 
-			if ((pme->m_tsm_curr == TSIM_HANSTROKE)&&
+			if ((pme->m_tsm_curr ==TSIM_HANSTROKE)&&  // TSIM_HANSTROKE
 				TSIM_IsInRange(dwParam,&(pme->hs_range)))
 			{
 				point.x = AEE_GET_X(dwParam);
@@ -1313,7 +1351,7 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
                     }
                     return TRUE;
                 }
-
+               #if 0
                 case AVK_UP:
                     if ((pme->m_tsm_curr == TSIM_PINYIN)
                     && (pme->py_state == PY_SELECT_MODE))
@@ -1479,8 +1517,10 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
                     {
                         return TRUE;
                     }
-                    return FALSE;   
+                    return FALSE; 
+                 #endif    
                 case AVK_CLR:
+                    #if 0
                     if ((pme->m_tsm_curr == TSIM_PINYIN)
                     && (pme->py_state == PY_SELECT_MODE))
                     {
@@ -1544,6 +1584,7 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
                         }     
                     }
                     else
+                    #endif
                     {
                         //if the options is to backspace a character or letter or number
                         if (pme->m_wContentsChars > 0)
@@ -1560,6 +1601,7 @@ static boolean CTSIM_HandleEvent(ITSIM * pITSIM, AEEEvent eCode, uint16 wParam, 
                             return TRUE;
                         }
                     }
+                  
                     return FALSE;
                 
                 default:
@@ -1645,7 +1687,7 @@ static boolean CTSIM_Redraw(ITSIM * pITSIM)
         }
         
         //draw the touchscreen mode image.
-        TSIM_DrawModeTitle(pme);
+        //TSIM_DrawModeTitle(pme);
 
         //redraw the text area
         TSIM_Draw(pme);
@@ -2846,23 +2888,33 @@ static void TSIM_DrawModeTitle(CTSIM * pme)
 
         if (pme->m_tsm_curr == TSIM_HANSTROKE)
         {
-            pImage = ISHELL_LoadResImage(pme->m_pIShell,
-                                      AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_HANDWRITE);
+           // pImage = ISHELL_LoadResImage(pme->m_pIShell,
+           //                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_BUTTONNUM);
+           // IIMAGE_Draw(pImage, 1 + 80 * 1, 292);
         }
+        #if 0
         else if (pme->m_tsm_curr == TSIM_PINYIN)
         {
             pImage = ISHELL_LoadResImage(pme->m_pIShell,
                                       AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_ITSIMPINYIN);
         }
-        else if (pme->m_tsm_curr == TSIM_LETTERS)
+        else if (pme->m_tsm_curr == TSIM_NUM)
         {
             pImage = ISHELL_LoadResImage(pme->m_pIShell,
-                                      AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_ITSIMLETTER);
+                                      AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_BUTTONNUM);
+        }
+        #endif
+        else if (pme->m_tsm_curr == TSIM_LETTERS)
+        {
+           // pImage = ISHELL_LoadResImage(pme->m_pIShell,
+           //                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_BUTTONENG);
+           // IIMAGE_Draw(pImage, 1 + 80 * 0, 292);
         }
         else if (pme->m_tsm_curr == TSIM_SYMBOLS)
         {
-            pImage = ISHELL_LoadResImage(pme->m_pIShell,
-                                      AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_ITSIMSYMBOL);
+           // pImage = ISHELL_LoadResImage(pme->m_pIShell,
+           //                           AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_BUTTONSYMBOL);
+           // IIMAGE_Draw(pImage, 1 + 80 * 2, 292);
         }
         else
         {
@@ -2876,7 +2928,7 @@ static void TSIM_DrawModeTitle(CTSIM * pme)
             return;
         }
 
-        IIMAGE_Draw(pImage, 1 + 34 * ((int)pme->m_tsm_curr - 1), 245);
+        //IIMAGE_Draw(pImage, 1 + 80 * ((int)pme->m_tsm_curr - 1), 292);
         (void)IIMAGE_Release(pImage);
     }
     return;
@@ -2922,17 +2974,17 @@ static void TSIM_DrawSoftkey(CTSIM *pme, int index)
                      DBGPRINTF("TSIM_DrawSoftkey-----index=%d-----2",index);
                     IIMAGE_SetParm(pme->m_phwimage, IPARM_OFFSET, 0, 42);
                 }
-                IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 240, 20);
-                IIMAGE_Draw(pme->m_phwimage, 0, 287);  
+                IIMAGE_SetParm(pme->m_phwimage, IPARM_SIZE, 240, 25);
+                IIMAGE_Draw(pme->m_phwimage, 0, 275);  
 				DBGPRINTF("TSIM_DrawSoftkey image_draw 1");  //090602  debug
 				
             }
             else
             {
                  DBGPRINTF("TSIM_DrawSoftkey-----index=%d-----3",index);
-                IIMAGE_SetParm(pme->m_pnothwimage, IPARM_OFFSET, 0, 23);
-                IIMAGE_SetParm(pme->m_pnothwimage, IPARM_SIZE, 240, 20);
-                IIMAGE_Draw(pme->m_pnothwimage, 0, 287);
+                //IIMAGE_SetParm(pme->m_pnothwimage, IPARM_OFFSET, 0, 25);
+                //IIMAGE_SetParm(pme->m_pnothwimage, IPARM_SIZE, 240, 25);
+                IIMAGE_Draw(pme->m_pnothwimage, 0, 275);
             }
             return;
             
@@ -2945,7 +2997,7 @@ static void TSIM_DrawSoftkey(CTSIM *pme, int index)
             else if (pme->language == NV_LANGUAGE_ENGLISH)
             {
                 pImage = ISHELL_LoadResImage(pme->m_pIShell,
-                                          AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_NOTHWRITEOKCH);
+                                          AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_NOTHWRITEOKEN);
             }
             break;
 
@@ -2958,7 +3010,7 @@ static void TSIM_DrawSoftkey(CTSIM *pme, int index)
             else if (pme->language == NV_LANGUAGE_ENGLISH)
             {
                 pImage = ISHELL_LoadResImage(pme->m_pIShell,
-                                          AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_NOTHWRITECOPYCH);
+                                          AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_NOTHWRITECOPYEN);
             }
             break;
             
@@ -2971,7 +3023,7 @@ static void TSIM_DrawSoftkey(CTSIM *pme, int index)
             else if (pme->language == NV_LANGUAGE_ENGLISH)
             {
                 pImage = ISHELL_LoadResImage(pme->m_pIShell,
-                                          AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_NOTHWRITEPASTECH);
+                                          AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_NOTHWRITEPASTEEN);
             }
             break;
             
@@ -2983,8 +3035,8 @@ static void TSIM_DrawSoftkey(CTSIM *pme, int index)
             }
             else if (pme->language == NV_LANGUAGE_ENGLISH)
             {
-                pImage = ISHELL_LoadImage(pme->m_pIShell,
-                                          AEEFS_SHARED_DIR"nothwriteclearen.bmp");
+                 pImage = ISHELL_LoadResImage(pme->m_pIShell,
+                                          AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_CLEAREN);
             }
             break;
             
@@ -2999,7 +3051,8 @@ static void TSIM_DrawSoftkey(CTSIM *pme, int index)
         return;
     }
     
-    IIMAGE_Draw(pImage, (1 + 44 * index) - (index + 3) / 4, 287);
+   // IIMAGE_Draw(pImage, (1 + 44 * index) - (index + 3) / 4, 287);
+     IIMAGE_Draw(pImage, 60 * index, 275);
     (void)IIMAGE_Release(pImage);
     return;
 }
@@ -3303,7 +3356,7 @@ static void TSIM_TextChanged(CTSIM* pme)
 			pme->nDisplayLines = 5;
 
 		}
-		else if ((pme->m_tsm_curr == TSIM_PINYIN) || (pme->m_tsm_curr == TSIM_LETTERS) || (pme->m_tsm_curr == TSIM_SYMBOLS))
+		else if ( (pme->m_tsm_curr == TSIM_LETTERS) || (pme->m_tsm_curr == TSIM_SYMBOLS))
 		{
 			pme->nDisplayLines = 3;
 		}
@@ -3658,8 +3711,8 @@ static void TSIM_DrawScrollBar(CTSIM* pme)
     uint16      wBlackPixels;
     uint16      wTopWhitePixels;
     uint16      wBottomWhitePixels;
-    uint16      wScrollBarHeight = (uint16)(pme->m_rectDisplay.dy
-                                    - 2 * pme->wScrollBarWidth);
+    uint16      wScrollBarHeight = 60;//(uint16)(pme->m_rectDisplay.dy
+                                    //- 2 * pme->wScrollBarWidth);
 
 	boolean bpressed = FALSE;
     AEETriangle aboveTri, belowTri; 
@@ -3681,6 +3734,7 @@ static void TSIM_DrawScrollBar(CTSIM* pme)
 //    IDISPLAY_FillRect(pme->m_pIDisplay, &scratchRect, CLR_SYS_WIN);
 
     // Now calculate the length of the black portion of the scroll bar
+      DBGPRINTF("TSIM_DrawScrollBar-----   pme->wLines=%d----pme->nDisplayLines=%d---wScrollBarHeight=%d",pme->wLines,pme->nDisplayLines,wScrollBarHeight); 
     if (pme->wLines > pme->nDisplayLines)
     {
         uint16 wLinesOffScreen;
@@ -3801,6 +3855,7 @@ static void TSIM_DrawScrollBar(CTSIM* pme)
    
     // Draw the black pixels (we always have some of these)
     aRect.dy = (int16)wBlackPixels;
+    DBGPRINTF("aRect.dy=%d,aRect.y=%d",aRect.dy,aRect.y);
     blackrc = aRect;
     pme->rc_blackscrbar = aRect;
     TSIM_Draw3DFrame(pme, &blackrc, 1);
@@ -5666,7 +5721,7 @@ static boolean  TSIM_HandleUpSoftkey(CTSIM *pme, uint32 dwparam)
                     }
                 }
                 if  ((pme->m_tsm_curr == TSIM_HANSTROKE)
-                    || (pme->m_tsm_curr == TSIM_PINYIN))
+                    /*|| (pme->m_tsm_curr == TSIM_PINYIN)*/)
                 {
 					/*
                     if (TSIM_pZiGetParam->WordCharacterCount)
@@ -6368,7 +6423,7 @@ static void Hanstroke_Init(CTSIM *pme)
 		pme->m_Thwattribute.wMode = HWMODE_SINGLECHAR;
         if (pme->hstrokestateparam.hanstroke_range == OEMNV_HANSTROKE_RANGE_ALL)
         {
-            pme->m_rectDisplay.dy = (int16)(pme->m_rc.dy - (5 * TSIMLINEHEIGHT + 2));
+        //    pme->m_rectDisplay.dy = (int16)(pme->m_rc.dy - (5 * TSIMLINEHEIGHT + 2));
         }
         else
         {
@@ -6404,15 +6459,15 @@ static void Hanstroke_Init(CTSIM *pme)
         {
             if (pme->hstrokestateparam.hanstroke_range == OEMNV_HANSTROKE_RANGE_ALL)
             {
-				pme->m_phwimage = ISHELL_LoadResImage(pme->m_pIShell,
-					AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_FULLWICH);
-				pme->m_phwsymimage = ISHELL_LoadResImage(pme->m_pIShell,
-					AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_FULLOLFHD);
+				//pme->m_phwimage = ISHELL_LoadResImage(pme->m_pIShell,
+				//	AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_FULLWICH);
+				//pme->m_phwsymimage = ISHELL_LoadResImage(pme->m_pIShell,
+				//	AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_FULLOLFHD);
             }
             else
             {
-				pme->m_phwimage = ISHELL_LoadResImage(pme->m_pIShell,
-					AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_FULLWICH);
+				//pme->m_phwimage = ISHELL_LoadResImage(pme->m_pIShell,
+				//	AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_FULLWICH);
 				pme->m_phwsymimage = ISHELL_LoadResImage(pme->m_pIShell,
 					AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_FULLOLFHD);
             }
@@ -6421,10 +6476,10 @@ static void Hanstroke_Init(CTSIM *pme)
         {
             if (/*pme->hstrokestateparam.hanstroke_range == OEMNV_HANSTROKE_RANGE_ALL*/TRUE)
             {
-                pme->m_phwimage = ISHELL_LoadImage(pme->m_pIShell,
-                                                   AEEFS_SHARED_DIR"fullhwriteinterfaceen.bmp");
-                pme->m_phwsymimage = ISHELL_LoadImage(pme->m_pIShell,
-                                                   AEEFS_SHARED_DIR"fullonelinefuhaodown.bmp");
+              	pme->m_phwimage = ISHELL_LoadResImage(pme->m_pIShell,
+					AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_LOWERENUNGPRESS);
+				pme->m_phwsymimage = ISHELL_LoadResImage(pme->m_pIShell,
+					AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_LOWERENGPRESS);
             }
             else
             {
@@ -6835,6 +6890,7 @@ static void TSIM_PressFuncButton(CTSIM *pme, int  index, CoordiRange *prange)
     {
         pImage = ISHELL_LoadResImage(pme->m_pIShell,
                                   AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_ITSIMBACKSPACE);
+        #if 0
         if ((pme->m_tsm_curr == TSIM_PINYIN)
            && (pme->py_state == PY_SELECT_MODE))
         {
@@ -6894,6 +6950,7 @@ static void TSIM_PressFuncButton(CTSIM *pme, int  index, CoordiRange *prange)
             }     
         }
         else
+            #endif
         {
             //if the options is to backspace a character or letter or number
             if (pme->m_wContentsChars > 0)
@@ -6991,7 +7048,7 @@ static void TSIM_SelectCandiChar(CTSIM *pme, int  index, CoordiRange *prange)
     }
 
     if (((pme->m_tsm_curr == TSIM_HANSTROKE) && (pme->bhs_ready))
-          || (pme->m_tsm_curr == TSIM_PINYIN))
+          /*|| (pme->m_tsm_curr == TSIM_PINYIN)*/)
     {
 		if ((pme->py_state == PY_ASSOC_MODE)||(pme->m_tsm_curr == TSIM_HANSTROKE))
 		{
@@ -7009,11 +7066,13 @@ static void TSIM_SelectCandiChar(CTSIM *pme, int  index, CoordiRange *prange)
 		{
 			rc.y = (int16)(prange->ymin);
 		}
+        #if 0
 		if ((pme->m_tsm_curr == TSIM_PINYIN)&&(pme->py_state == PY_ASSOC_MODE))
 		{
 			rc.dx = (int16)((prange->xmax - prange->xmin) -3);
 		}
 		else
+            #endif
 		{
 			rc.dx = (int16)((prange->xmax - prange->xmin) +1);
 		}
@@ -7284,8 +7343,7 @@ static boolean TSIM_FixCopiedSelection(CTSIM *pme, uint32 dwparam)
     penx = (int16)AEE_GET_X(dwparam);
     peny = (int16)AEE_GET_Y(dwparam);
     DBGPRINTF("TSIM_FixCopiedSelection-----penx=%d--peny=%d",penx,peny);
-    DBGPRINTF("TSIM_FixCopiedSelection---rect.x=%d-----rect.y=%d",rect.x,rect.y);  
-    DBGPRINTF("TSIM_FixCopiedSelection---rect.dx=%d-----rect.dy=%d",rect.dx,rect.dy); 
+
 
     // Calculate the text rect and pixel width for lines
     if (pme->m_dwProps & TP_FRAME)
@@ -7310,7 +7368,8 @@ static boolean TSIM_FixCopiedSelection(CTSIM *pme, uint32 dwparam)
             rect.dx -= (int16)pme->wScrollBarWidth;
         }
     }
-    
+    DBGPRINTF("TSIM_FixCopiedSelection---rect.x=%d-----rect.y=%d",rect.x,rect.y);  
+    DBGPRINTF("TSIM_FixCopiedSelection---rect.dx=%d-----rect.dy=%d",rect.dx,rect.dy); 
     if(peny <= rect.y)
     {
         peny = rect.y;
@@ -7402,6 +7461,7 @@ static void TSIM_DispChinese(CTSIM *pme, AECHAR *pIn,
         //display the candidate characters on the text
         for (i=0; (i<(int)num) && (pme->sT9ccFieldInfo.pwSelectPage[i]!='\0')/*(pIn[i]!='\0'*/; i++)
         {
+            #if 0
             if ((pme->m_tsm_curr == TSIM_PINYIN)
                 && (pme->py_state == PY_SELECT_MODE)
                 && (pme->nPages > 1)
@@ -7425,6 +7485,7 @@ static void TSIM_DispChinese(CTSIM *pme, AECHAR *pIn,
 						dwflags);
 				}
 				else
+                    
 				{
 					 atmprc.x = (int16)(17*i + candi_rc->x + 11);
 					(void)IDISPLAY_DrawText(pme->m_pIDisplay,
@@ -7439,6 +7500,7 @@ static void TSIM_DispChinese(CTSIM *pme, AECHAR *pIn,
                 
             }
             else
+                #endif
             {
                 AEERect    btmprc;
                 btmprc.y = candi_rc->y + 2;
@@ -7471,7 +7533,7 @@ static void TSIM_DispChinese(CTSIM *pme, AECHAR *pIn,
                 
             }
         }
-
+     #if 0
         //draw the left\right arrow
         if ((pme->m_tsm_curr == TSIM_PINYIN)
              && (pme->py_state == PY_SELECT_MODE))
@@ -7506,6 +7568,7 @@ static void TSIM_DispChinese(CTSIM *pme, AECHAR *pIn,
                 (void)IGRAPHICS_DrawTriangle(pme->m_pIGraphics, &rarrow);
             }
         }
+        #endif
     }
     return;
 }
@@ -7593,7 +7656,7 @@ static boolean TSIM_DragBar(CTSIM *pme, uint32 dwparam)
         aRect.x = (int16)((pme->m_rectDisplay.x + pme->m_rectDisplay.dx) - pme->wScrollBarWidth);
         aRect.y = pme->m_rectDisplay.y + pme->wScrollBarWidth;
         aRect.dx = (int16)pme->wScrollBarWidth;
-        aRect.dy = pme->m_rectDisplay.dy - 2 * pme->wScrollBarWidth;
+        aRect.dy =115;// pme->m_rectDisplay.dy - 2 * pme->wScrollBarWidth;
         
         if (PT_IN_RECT(penx, peny, aRect))
         {
@@ -7601,8 +7664,8 @@ static boolean TSIM_DragBar(CTSIM *pme, uint32 dwparam)
             uint16 wWhitePixels;
             uint16 wBlackPixels;
             uint16 wsave = pme->wDisplayStartLine;
-            uint16 wScrollBarHeight = (uint16)(pme->m_rectDisplay.dy
-                                       - 2 * pme->wScrollBarWidth);
+            uint16 wScrollBarHeight =115;// (uint16)(pme->m_rectDisplay.dy
+                                       //- 2 * pme->wScrollBarWidth);
                                        
             wBlackPixels = (uint16) ((pme->nDisplayLines *
                                      wScrollBarHeight)
@@ -7692,7 +7755,7 @@ static void Hanstroke_FixRange(CTSIM *pme)
     int       i;
     int16     linegb;
     AEERect   hs_funtitlerc;
-
+/*
     //set the hand writing area
     if (pme->hstrokestateparam.hanstroke_range == OEMNV_HANSTROKE_RANGE_ONERECT)
     {
@@ -7711,16 +7774,16 @@ static void Hanstroke_FixRange(CTSIM *pme)
                       (int16)(pme->m_rectDisplay.x + pme->m_rectDisplay.dx - 1),
                       (int16)(pme->m_rectDisplay.y + pme->m_rectDisplay.dy - 1));
     }
-
+   */
       DBGPRINTF("Hanstroke_FixRange    pme->m_rectDisplay.x=%d---pme->m_rectDisplay.y=%d",pme->m_rectDisplay.x,pme->m_rectDisplay.y); 
        DBGPRINTF("Hanstroke_FixRange    pme->m_rectDisplay.dx=%d---pme->m_rectDisplay.dy=%d",pme->m_rectDisplay.dx,pme->m_rectDisplay.dy);
     //set the text display range
-    SETCoordiRange(&(pme->textrange),
+ /*   SETCoordiRange(&(pme->textrange),
                    pme->m_rectDisplay.x,
                    pme->m_rectDisplay.y+TSIMLINEHEIGHT,
                    pme->m_rectDisplay.x + pme->m_rectDisplay.dx - 1,
                    pme->m_rectDisplay.y + pme->m_rectDisplay.dy - 1);
-
+*/
     //SET THE whole candidate area 
 	/*
     SETCoordiRange(&pme->wholecandi,
@@ -7864,12 +7927,12 @@ static void Hanstroke_FixRange(CTSIM *pme)
     for (i = 0; i < MAX_TSM_TYPE; i++)
     {
         SETCoordiRange(&(pme->tmtitle_range[i]),
-                       (int16)(pme->m_rectDisplay.x + 1 + i * 34),
-                       (int16)(MAX_SCREEN_HEIGHT
-                       - (SOFTKEY_HEIGHT + TMTILE_HEIGHT)),
-                       (int16)(pme->m_rectDisplay.x + 34+ i * 34),
-                       (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) - 2));
+                       (int16)(pme->m_rectDisplay.x + 1 + i * 80),
+                        292,
+                       (int16)(pme->m_rectDisplay.x + 80+ i * 80),
+                       28);
     }
+    
 }
 
 /*===========================================================================
@@ -8215,7 +8278,7 @@ static boolean TSIM_PinyinPenDown(CTSIM *pme, uint32 dwparam)
     int           i;
    
     //if it is not in the pinyin input mode, then exit
-    if (pme->m_tsm_curr != TSIM_PINYIN)
+    //if (pme->m_tsm_curr != TSIM_PINYIN)
     {
         return FALSE;
     }
@@ -8311,7 +8374,7 @@ static boolean TSIM_PinyinPenUp(CTSIM *pme, uint32 dwparam)
 	T9STATUS sStatus = T9STATERROR;
 	int i;
     DBGPRINTF("TSIM_PinyinPenUp --------------");
-    if (pme->m_tsm_curr != TSIM_PINYIN)
+   // if (pme->m_tsm_curr != TSIM_PINYIN)
     {
         return FALSE;
     }
@@ -9030,6 +9093,7 @@ SEE ALSO:
 =============================================================================*/
 static void TSIM_LettersRestart(CTSIM *pme)
 {
+    
     Letters_Init(pme);
     TSIM_NoSelection(pme);
     TSIM_TextChanged(pme);
@@ -9054,25 +9118,33 @@ SEE ALSO:
 =============================================================================*/
 static void Letters_Init(CTSIM *pme)
 { 
-    pme->m_rectDisplay.dy = (int16)(pme->m_rc.dy - (6 * TSIMLINEHEIGHT + 29));
+    int       i;
+            
+    //pme->m_rectDisplay.dy = (int16)(pme->m_rc.dy - (6 * TSIMLINEHEIGHT + 29));
     //initialize the variants
     pme->bselect_blackscrbar = FALSE;
     pme->bkpaddown = FALSE;
-
+    pme->m_rectDisplay.dy=95;
+    
     //set the range of the text area
     SETCoordiRange(&(pme->textrange),
                    pme->m_rectDisplay.x,
                    pme->m_rectDisplay.y,
                    pme->m_rectDisplay.x + pme->m_rectDisplay.dx - 1,
                    pme->m_rectDisplay.y + pme->m_rectDisplay.dy - 1);
+    DBGPRINTF("Hanstroke_FixRange    pme->m_rectDisplay.x=%d---pme->m_rectDisplay.y=%d",pme->m_rectDisplay.x,pme->m_rectDisplay.y); 
 
     //SET THE keypad area
     SETCoordiRange(&pme->keypad,
                    pme->m_rectDisplay.x,
                    pme->m_rectDisplay.y + pme->m_rectDisplay.dy,
                    (pme->m_rectDisplay.x + pme->m_rectDisplay.dx) - 1,
-                   (pme->m_rectDisplay.y + pme->m_rectDisplay.dy
-                   + (int16)(4 * TSIMLINEHEIGHT + 19)));
+                   //(pme->m_rectDisplay.y + pme->m_rectDisplay.dy
+                   //+ (int16)(4 * TSIMLINEHEIGHT + 19))
+                   pme->m_rectDisplay.dy+180);
+     DBGPRINTF("Hanstroke_FixRange    pme->m_rectDisplay.dx=%d---pme->m_rectDisplay.dy=%d",pme->m_rectDisplay.dx,pme->m_rectDisplay.dy); 
+#if 0
+
     //set the keypad rectangle
     SETAEERECT(&pme->rc_keypad,
                pme->keypad.xmin,
@@ -9085,8 +9157,64 @@ static void Letters_Init(CTSIM *pme)
                    pme->m_rectDisplay.x,
                    pme->m_rectDisplay.y + pme->m_rectDisplay.dy,
                    (pme->m_rectDisplay.x + pme->m_rectDisplay.dx) - 1,
-                   (pme->m_rectDisplay.y + pme->m_rectDisplay.dy
-                   + (int16)(4 * TSIMLINEHEIGHT + 20)) - 2);
+                   //(pme->m_rectDisplay.y + pme->m_rectDisplay.dy
+                   //+ (int16)(4 * TSIMLINEHEIGHT + 20)) - 2
+                   pme->m_rectDisplay.dy+180);
+#endif
+   SETCoordiRange(&pme->selectsk_range,
+               pme->m_rectDisplay.x + 1,
+               (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) -9),
+               pme->m_rectDisplay.x
+               + (pme->m_rectDisplay.dx/ 4 - 2),
+               (int16)(MAX_SCREEN_HEIGHT - 2));
+   SETCoordiRange(&pme->copysk_range,
+                  pme->m_rectDisplay.x
+                  + pme->m_rectDisplay.dx / 4,
+                  (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) -9),
+                  pme->m_rectDisplay.x
+                  + (2 * pme->m_rectDisplay.dx/ 4 - 2),
+                  (int16)(MAX_SCREEN_HEIGHT - 2));
+   SETCoordiRange(&pme->pastesk_range,
+                  pme->m_rectDisplay.x
+                  + 2 * pme->m_rectDisplay.dx/ 4,
+                  (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) -9),
+                  pme->m_rectDisplay.x
+                  + (3 * pme->m_rectDisplay.dx/ 4 - 2),
+                  (int16)(MAX_SCREEN_HEIGHT - 2));
+   SETCoordiRange(&pme->clearsk_range,
+                  pme->m_rectDisplay.x
+                  + 3 * pme->m_rectDisplay.dx/ 4,
+                  (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) -9),
+                  pme->m_rectDisplay.x
+                  + (4 * pme->m_rectDisplay.dx/ 4 - 2),
+                  (int16)(MAX_SCREEN_HEIGHT - 2));
+
+   SETCoordiRange(&pme->selectdel_range,
+                   DELRANGE_MINX,
+                   DELRANGE_MINY,
+                   DELRANGE_MAXX,
+                   DELRANGE_MAXY);
+    SETCoordiRange(&pme->selectcaps_range,
+                   CAPSRANGE_MINX,
+                   CAPSRANGE_MINY,
+                   CAPSRANGE_MAXX,
+                   CAPSRANGE_MAXY);                
+
+    SETCoordiRange(&pme->wholetmtitle_range,
+                   pme->m_rectDisplay.x + 1,
+                   (int16)(MAX_SCREEN_HEIGHT
+                   - (SOFTKEY_HEIGHT + TMTILE_HEIGHT+11)),
+                   240,
+                   (int16)((MAX_SCREEN_HEIGHT - SOFTKEY_HEIGHT) - 2));
+    
+    for (i = 2; i < MAX_TSM_TYPE; i++)
+    {
+        SETCoordiRange(&(pme->tmtitle_range[i]),
+                       (int16)(pme->m_rectDisplay.x + 1 + (i-2) * 80),
+                        245,
+                       (int16)(pme->m_rectDisplay.x + 80+ (i-2) * 80),
+                        273);
+    }
 
     //initialize the capstate of the letter in the keypad  
     pme->capstate = 0;
@@ -9099,13 +9227,18 @@ static void Letters_Init(CTSIM *pme)
     }
     else if (pme->language == NV_LANGUAGE_ENGLISH)
     {
-        pme->m_pnothwimage = ISHELL_LoadImage(pme->m_pIShell,
-                                              AEEFS_SHARED_DIR"pybuttonen.bmp");
+       // pme->m_pnothwimage = ISHELL_LoadImage(pme->m_pIShell,
+        //                                      AEEFS_SHARED_DIR"pybuttonen.bmp");
+      pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
+                                              AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_BUTTONEN);
     }
     if (pme->m_pnothwimage == NULL)
     {
+        DBGPRINTF("pme->m_pnothwimage----is NULL");
         //ERR("LOAD IMAGE FAIL", 0, 0, 0);
     }
+
+   // Hanstroke_Init(pme);
     return;
 }
 
@@ -9138,12 +9271,12 @@ static void  TSIM_LettersDraw(CTSIM *pme)
         return;
     }
     //IIMAGE_Draw(pme->m_pnothwimage, 0, 164);
-     IIMAGE_Draw(pme->m_pnothwimage,HAND_IMAGE_X,HAND_IMAGE_Y+23); 
+     IIMAGE_Draw(pme->m_pnothwimage,HAND_IMAGE_X,HAND_IMAGE_Y+55); 
     //display the zimu virtual keypad for user inputing
     zmkpad_rc.x  = pme->m_rectDisplay.x;
-    zmkpad_rc.y  = pme->m_rectDisplay.y + pme->m_rectDisplay.dy;
+    zmkpad_rc.y  = pme->m_rectDisplay.dy;// pme->m_rectDisplay.y + pme->m_rectDisplay.dy;
     zmkpad_rc.dx = pme->m_rectDisplay.dx;
-    zmkpad_rc.dy = (int16)(4 * TSIMLINEHEIGHT + 20);
+    zmkpad_rc.dy = 180;//(int16)(4 * TSIMLINEHEIGHT + 20);
 
     //draw the virtual zimu keypad
     IVKEYCTL_SetKeyPad(pme->m_pIVkeyCtl, &zmkpad_rc, AEE_VKEY_NUMBER_LITTLECHAR);
@@ -9181,7 +9314,7 @@ static void TSIM_LettersExit(CTSIM *pme)
         IIMAGE_Release(pme->m_pnothwimage);
         pme->m_pnothwimage = NULL;
     }
-    
+            
     TSIM_NoSelection(pme);
 }
 /*=============================================================================
@@ -9204,8 +9337,26 @@ SEE ALSO:
 
 =============================================================================*/
 static boolean TSIM_LetSymPenDown(CTSIM *pme, uint32 dwparam)
-{    
+{                    
     //if the pendown point is in the pinyin keypad, then pass the event to the virtualkey controls
+              
+    if((pme->m_tsm_curr == TSIM_LETTERS || pme->m_tsm_curr == TSIM_NUM) && TSIM_IsInRange(dwparam,&pme->selectdel_range))
+    {
+     if (pme->m_wContentsChars > 0)
+        {
+            if (pme->wSelStart && (pme->wSelStart == pme->wSelEnd))
+            {
+                /* Set selection to the character before the insertion point */
+                --pme->wSelStart;
+            }
+            /* Insert a "NUL" to just delete and insert nothing */
+            TSIM_AddChar(pme, 0);
+            TSIM_Draw(pme);
+            IDISPLAY_Update(pme->m_pIDisplay);
+        }
+        //return TRUE;
+    }      
+           
     if (TSIM_IsInRange(dwparam, &pme->keypad))
     {
         (void)IVKEYCTL_HandleEvent(pme->m_pIVkeyCtl, EVT_PEN_DOWN, 0, dwparam);
@@ -9236,6 +9387,9 @@ SEE ALSO:
 =============================================================================*/
 static boolean TSIM_LetSymPenUp(CTSIM* pme, uint32 dwparam)
 {   
+     DBGPRINTF("TSIM_LetSymPenUp-----pme->keypad.xmin=%d-- pme->keypad.ymin=%d",pme->keypad.xmin, pme->keypad.ymin); 
+    DBGPRINTF("TSIM_LetSymPenUp-----pme->keypad.xmax=%d-- pme->keypad.ymax=%d",pme->keypad.xmax, pme->keypad.ymax); 
+    
     //if the pen hit the black scoll bar 
       DBGPRINTF("TSIM_LetSymPenUp    1"); 
     if (pme->bselect_blackscrbar)
@@ -9243,6 +9397,26 @@ static boolean TSIM_LetSymPenUp(CTSIM* pme, uint32 dwparam)
         pme->bselect_blackscrbar = FALSE;
         return TRUE;
     }
+    if((pme->m_tsm_curr == TSIM_LETTERS) && TSIM_IsInRange(dwparam,&pme->selectcaps_range))
+     {
+         AEERect   zmkpad_rc;
+         zmkpad_rc.x  = pme->m_rectDisplay.x;
+         zmkpad_rc.y  = pme->m_rectDisplay.dy;// pme->m_rectDisplay.y + pme->m_rectDisplay.dy;
+         zmkpad_rc.dx = pme->m_rectDisplay.dx;
+         zmkpad_rc.dy = 180;
+         if(pme->bletterkeyPad)
+         {
+          pme->bletterkeyPad=FALSE;
+          IVKEYCTL_SetKeyPad(pme->m_pIVkeyCtl, &zmkpad_rc, AEE_VKEY_NUMBER_LITTLECHAR);
+         }
+         else
+         {
+           pme->bletterkeyPad=TRUE;
+           IVKEYCTL_SetKeyPad(pme->m_pIVkeyCtl, &zmkpad_rc, AEE_VKEY_NUMBER_BIGCHAR);
+         }
+        
+        return TRUE;
+     }
 
     //if the coordinate is in the virtual keypad area,
     //then pass the event to the virtual key control
@@ -9276,9 +9450,9 @@ SEE ALSO:
 =============================================================================*/
 static boolean TSIM_LetSymPenMove(CTSIM* pme, uint32 dwparam)
 {
+    IIMAGE_Draw(pme->m_pnothwimage,HAND_IMAGE_X,HAND_IMAGE_Y+55); 
     //if the coordinate is in the scroll bar area,then
     //drag the scroll bar
-       DBGPRINTF("TSIM_LetSymPenMove    1"); 
     if (pme->bselect_blackscrbar)
     {
         return(TSIM_DragBar(pme, dwparam));
@@ -9291,7 +9465,23 @@ static boolean TSIM_LetSymPenMove(CTSIM* pme, uint32 dwparam)
     {
         return(TSIM_FixCopiedSelection(pme, dwparam));
     }
-    
+   
+    if((pme->m_tsm_curr == TSIM_SYMBOLS) && TSIM_IsInRange(dwparam,&pme->selectcaps_range))
+    {
+        if (pme->m_wContentsChars > 0)
+           {
+               if (pme->wSelStart && (pme->wSelStart == pme->wSelEnd))
+               {
+                   /* Set selection to the character before the insertion point */
+                   --pme->wSelStart;
+               }
+               /* Insert a "NUL" to just delete and insert nothing */
+               TSIM_AddChar(pme, 0);
+               TSIM_Draw(pme);
+               IDISPLAY_Update(pme->m_pIDisplay);
+           }
+        return TRUE;
+    }   
     //if the coordinate is in the virtual keypad area,
     //then pass the event to the virtual key control
     if (TSIM_IsInRange(dwparam, &pme->keypad))
@@ -9328,10 +9518,10 @@ static boolean  TSIM_LetSymEvtChar(CTSIM* pme, AEEEvent eCode, AECHAR receivecha
     {
         return TRUE;
     }
-    DBGPRINTF("TSIM_LetSymEvtChar    1"); 
 
     if(receivechar == (AECHAR)0x6362)
     {
+        #if 0
         if (pme->m_tsm_curr == TSIM_LETTERS)
         {
             if (pme->capstate == 0)
@@ -9348,10 +9538,16 @@ static boolean  TSIM_LetSymEvtChar(CTSIM* pme, AEEEvent eCode, AECHAR receivecha
             }
             IVKEYCTL_SetActive(pme->m_pIVkeyCtl, TRUE);
         }
+        #endif
     }
     else
     {
         if (pme->m_tsm_curr == TSIM_LETTERS)
+        {
+            TSIM_AddChar(pme, receivechar);
+            TSIM_Draw(pme);
+        }
+        else if (pme->m_tsm_curr == TSIM_NUM)
         {
             TSIM_AddChar(pme, receivechar);
             TSIM_Draw(pme);
@@ -9366,6 +9562,175 @@ static boolean  TSIM_LetSymEvtChar(CTSIM* pme, AEEEvent eCode, AECHAR receivecha
     }
     return TRUE;
 }
+
+
+/*=============================================================================
+FUNCTION: TSIM_NumberRestart
+
+DESCRIPTION:
+
+PARAMETERS:
+   *pme:pointer to the CTSIM object
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void TSIM_NumberRestart(CTSIM *pme)
+{
+    
+    Number_Init(pme);
+    TSIM_NoSelection(pme);
+    TSIM_TextChanged(pme);
+}
+
+/*=============================================================================
+FUNCTION: NUM_Init
+
+DESCRIPTION:  Initialize FuHao vars in pTextCtl
+
+PARAMETERS:
+   *pme:pointer to the CTSIM object.
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void Number_Init(CTSIM *pme)
+{
+    //pme->m_rectDisplay.dy = (int16)(pme->m_rc.dy - (6 * TSIMLINEHEIGHT + 29));
+    //initialize the variants of the symbols inputmode
+    pme->bselect_blackscrbar = FALSE;
+    pme->bkpaddown = FALSE;
+    pme->m_rectDisplay.dy=95;
+
+    //set the range of the text area
+    SETCoordiRange(&(pme->textrange),
+                   pme->m_rectDisplay.x,
+                   pme->m_rectDisplay.y,
+                   pme->m_rectDisplay.x + pme->m_rectDisplay.dx - 1,
+                   pme->m_rectDisplay.y + pme->m_rectDisplay.dy - 1);
+
+    //SET THE keypad area
+    SETCoordiRange(&pme->keypad,
+                   pme->m_rectDisplay.x,
+                   pme->m_rectDisplay.y + pme->m_rectDisplay.dy,
+                   (pme->m_rectDisplay.x + pme->m_rectDisplay.dx) - 1,
+                   //(pme->m_rectDisplay.y + pme->m_rectDisplay.dy
+                   //+ (int16)(4 * TSIMLINEHEIGHT + 19))
+                   pme->m_rectDisplay.dy+180);
+    SETCoordiRange(&pme->selectdel_range,
+                   DELRANGE_MINX+52,
+                   DELRANGE_MINY-125,
+                   DELRANGE_MAXX+67,
+                   DELRANGE_MAXY-106);            
+    //load the image to the memory.
+    if (pme->language == NV_LANGUAGE_CHINESE)
+    {
+        pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
+                                              AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PYBUTTONCH);
+    }
+    else if (pme->language == NV_LANGUAGE_ENGLISH)
+    {
+           pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
+                                              AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_BUTTONEN);
+    }
+    if (pme->m_pnothwimage == NULL)
+    {
+        //ERR("LOAD IMAGE FAIL", 0, 0, 0);
+    }
+
+    return;
+}
+
+
+/*=============================================================================
+FUNCTION: TSIM_NumberDraw
+
+DESCRIPTION: draw Pinyin inputmode
+
+PARAMETERS:
+   *pme:the pointer to the CTSIM.
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void  TSIM_NumberDraw(CTSIM *pme)
+{
+    AEERect   zmkpad_rc;
+    DBGPRINTF("TSIM_LettersDraw    1"); 
+    //draw the button image.
+    if (pme->m_pnothwimage == NULL)
+    {
+        //ERR("There is no image to draw", 0, 0, 0);
+        return;
+    }
+    //IIMAGE_Draw(pme->m_pnothwimage, 0, 164);
+     IIMAGE_Draw(pme->m_pnothwimage,HAND_IMAGE_X,HAND_IMAGE_Y+55); 
+    //display the zimu virtual keypad for user inputing
+    zmkpad_rc.x  = pme->m_rectDisplay.x;
+    zmkpad_rc.y  = pme->m_rectDisplay.dy;// pme->m_rectDisplay.y + pme->m_rectDisplay.dy;
+    zmkpad_rc.dx = pme->m_rectDisplay.dx;
+    zmkpad_rc.dy = 180;//(int16)(4 * TSIMLINEHEIGHT + 20);
+
+    //draw the virtual zimu keypad
+    IVKEYCTL_SetKeyPad(pme->m_pIVkeyCtl, &zmkpad_rc, AEE_VKEY_NUMBER);
+    //set the virtualkey control to be active
+    IVKEYCTL_SetActive(pme->m_pIVkeyCtl, TRUE);
+    return;
+}
+/*=============================================================================
+FUNCTION: TSIM_NumberExit
+
+DESCRIPTION:The Exit function for ZiMu Input Method.
+
+PARAMETERS:
+   *pme:pointer to the CTSIM object
+
+RETURN VALUE:
+   None
+
+COMMENTS:
+
+SIDE EFFECTS:
+
+SEE ALSO:
+
+=============================================================================*/
+static void TSIM_NumberExit(CTSIM *pme)
+{
+    //set the virtualkey control to be not active
+    IVKEYCTL_SetActive(pme->m_pIVkeyCtl, FALSE);
+
+    //free the image pointer.
+    if (pme->m_pnothwimage)
+    {
+        IIMAGE_Release(pme->m_pnothwimage);
+        pme->m_pnothwimage = NULL;
+    }
+    
+    TSIM_NoSelection(pme);
+}
+
 /*=============================================================================
 FUNCTION: TSIM_SymbolsRestart
 
@@ -9390,6 +9755,7 @@ static void TSIM_SymbolsRestart(CTSIM *pme)
     TSIM_NoSelection(pme);
     TSIM_TextChanged(pme);
 }
+
 /*=============================================================================
 FUNCTION: Symbols_Init
 
@@ -9410,10 +9776,11 @@ SEE ALSO:
 =============================================================================*/
 static void Symbols_Init(CTSIM *pme)
 {
-    pme->m_rectDisplay.dy = (int16)(pme->m_rc.dy - (6 * TSIMLINEHEIGHT + 29));
+    //pme->m_rectDisplay.dy = (int16)(pme->m_rc.dy - (6 * TSIMLINEHEIGHT + 29));
     //initialize the variants of the symbols inputmode
     pme->bselect_blackscrbar = FALSE;
     pme->bkpaddown = FALSE;
+    pme->m_rectDisplay.dy=95;
 
     //set the range of the text area
     SETCoordiRange(&(pme->textrange),
@@ -9427,8 +9794,10 @@ static void Symbols_Init(CTSIM *pme)
                    pme->m_rectDisplay.x,
                    pme->m_rectDisplay.y + pme->m_rectDisplay.dy,
                    (pme->m_rectDisplay.x + pme->m_rectDisplay.dx) - 1,
-                   (pme->m_rectDisplay.y + pme->m_rectDisplay.dy
-                   + (int16)(4 * TSIMLINEHEIGHT + 19)));
+                   //(pme->m_rectDisplay.y + pme->m_rectDisplay.dy
+                   //+ (int16)(4 * TSIMLINEHEIGHT + 19))
+                   pme->m_rectDisplay.dy+180);
+#if 0
     //set the keypad rectangle
     SETAEERECT(&pme->rc_keypad,
                pme->keypad.xmin,
@@ -9441,9 +9810,10 @@ static void Symbols_Init(CTSIM *pme)
                    pme->m_rectDisplay.x,
                    pme->m_rectDisplay.y + pme->m_rectDisplay.dy,
                    (pme->m_rectDisplay.x + pme->m_rectDisplay.dx) - 1,
-                   (pme->m_rectDisplay.y + pme->m_rectDisplay.dy
-                   + (int16)(4 * TSIMLINEHEIGHT + 20)) - 2);
-                   
+                   //(pme->m_rectDisplay.y + pme->m_rectDisplay.dy
+                   //+ (int16)(4 * TSIMLINEHEIGHT + 20)) - 2
+                   pme->m_rectDisplay.dy+180);
+#endif                   
     //load the image to the memory.
     if (pme->language == NV_LANGUAGE_CHINESE)
     {
@@ -9452,8 +9822,8 @@ static void Symbols_Init(CTSIM *pme)
     }
     else if (pme->language == NV_LANGUAGE_ENGLISH)
     {
-        pme->m_pnothwimage = ISHELL_LoadImage(pme->m_pIShell,
-                                              AEEFS_SHARED_DIR"pybuttonen.bmp");
+           pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
+                                              AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_BUTTONEN);
     }
     if (pme->m_pnothwimage == NULL)
     {
@@ -9486,18 +9856,18 @@ static void  TSIM_SymbolsDraw(CTSIM *pme)
     AEERect   fhkpad_rc;
      DBGPRINTF("TSIM_SymbolsDraw    1"); 
     //draw the button image.
-    if (pme->m_pnothwimage == NULL)
+  if (pme->m_pnothwimage == NULL)
     {
         //ERR("There is no image to draw", 0, 0, 0);
         return;
     }
     //IIMAGE_Draw(pme->m_pnothwimage, 0, 164);
-     IIMAGE_Draw(pme->m_pnothwimage,HAND_IMAGE_X,HAND_IMAGE_Y+23); 
+     IIMAGE_Draw(pme->m_pnothwimage,HAND_IMAGE_X,HAND_IMAGE_Y+55); 
     //display the FuHao virtual keypad for user inputing
     fhkpad_rc.x  = pme->m_rectDisplay.x;
-    fhkpad_rc.y  = pme->m_rectDisplay.y + pme->m_rectDisplay.dy;
+    fhkpad_rc.y  = pme->m_rectDisplay.dy;//pme->m_rectDisplay.y + pme->m_rectDisplay.dy;
     fhkpad_rc.dx = pme->m_rectDisplay.dx;
-    fhkpad_rc.dy = (int16)(4 * TSIMLINEHEIGHT + 20);
+    fhkpad_rc.dy = 180;//(int16)(4 * TSIMLINEHEIGHT + 20);
 
     //draw the virtual FuHao keypad
     IVKEYCTL_SetKeyPad(pme->m_pIVkeyCtl, &fhkpad_rc, AEE_VKEY_SYMBOL);
@@ -10716,7 +11086,7 @@ static T9STATUS T9_CJK_CHINESE_Init(CTSIM *pme)
 				CAUDB_SIZE, 1);
 		}   
 		//T9_CJK_CHINESE_GetCoreVerString(pContext);  
-		if (pme->m_tsm_curr == TSIM_PINYIN)
+		//if (pme->m_tsm_curr == TSIM_PINYIN)
 		{
 			if ( T9STATNONE == sStatus ) 
 			{
