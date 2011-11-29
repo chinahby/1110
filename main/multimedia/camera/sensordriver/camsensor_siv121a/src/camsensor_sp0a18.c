@@ -68,11 +68,11 @@ $Header: //depot/asic/msm6550/drivers/camsensor/camsensor_ SP0A18_ycbcr.c#3 $ $D
 
 
 /* From the logic analyzer measurements */
-#define OV_SP0A18_YCBCR_FULL_SIZE_WIDTH           640//640
-#define OV_SP0A18_YCBCR_FULL_SIZE_HEIGHT          480
+#define OV_SP0A18_YCBCR_FULL_SIZE_WIDTH           320//640
+#define OV_SP0A18_YCBCR_FULL_SIZE_HEIGHT          240
 
-#define OV_SP0A18_YCBCR_QTR_SIZE_WIDTH   		640//640   
-#define OV_SP0A18_YCBCR_QTR_SIZE_HEIGHT  		480//240//   
+#define OV_SP0A18_YCBCR_QTR_SIZE_WIDTH   		480//640   
+#define OV_SP0A18_YCBCR_QTR_SIZE_HEIGHT  		360//240//   
 
 /* Strobe Flash Epoch Interrupt time before the end of line count */
 
@@ -97,7 +97,24 @@ static boolean camsensor_SP0A18_ycbcr_i2c_write_byte(uint8 reg, uint8 data);
 static void camsensor_sp0a18_ycbcr_register(camsensor_function_table_type *camsensor_function_table_ptr);
 static boolean camsensor_SP0A18_ycbcr_i2c_read_byte(uint8 reg, uint8 *data); 
 static void    camsensor_sp0a18_0m3_setup_camctrl_tbl(camctrl_tbl_type *camctrl_tbl_ptr);
+static void SP0A18_config_window(uint16 startx,uint16 starty,uint16 width, uint16 height);
 
+
+static void SP0A18_config_window(uint16 startx,uint16 starty,uint16 width, uint16 height)
+{
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x00);//page 0
+	// Horizontal
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x4b,(startx&0x0300)>>8);	//2msb
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x4c,startx&0x00FF);			// 8lsb
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x4d,(width&0x0300)>>8);			//2msb
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x4e,width&0x00FF);			// 8lsb
+	// Vertical
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x47,(starty&0x0100)>>8);	//1msb
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x48,starty&0x00FF);   			// 8lsb
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x49,(height&0x0100)>>8);		   	// 1msb
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x4a,height&0x00FF);		   	// 8lsb
+
+}	/* config_SP0A18_window */
 /*============================================================================
                           EXTERNAL API DEFINITIONS
 ============================================================================*/
@@ -105,273 +122,271 @@ LOCAL boolean camsensor_sp0a18_sensor_init(void)
 {
 	MSG_FATAL("-----camsensor_SP0A18_sensor_init-----enter",0,0,0);
 
-#define  SP0A18_write_cmos_sensor camsensor_SP0A18_ycbcr_i2c_write_byte
-
-	SP0A18_write_cmos_sensor(0xfd , 0x00);  
-	SP0A18_write_cmos_sensor(0x1C , 0x00);  
-	SP0A18_write_cmos_sensor(0x32 , 0x00); 
-	SP0A18_write_cmos_sensor(0xfd , 0x01);  
-	SP0A18_write_cmos_sensor(0x28 , 0xac);                                      
-	SP0A18_write_cmos_sensor(0x29 , 0x94);  
-	SP0A18_write_cmos_sensor(0xfd , 0x00); 
-	SP0A18_write_cmos_sensor(0xe7 , 0x03); 
-	SP0A18_write_cmos_sensor(0xe7 , 0x00); 
-	SP0A18_write_cmos_sensor(0x0f , 0x3f);                                      
-	SP0A18_write_cmos_sensor(0x10 , 0x3a);                                      
-	SP0A18_write_cmos_sensor(0x13 , 0x3f);  //5f                                    
-	SP0A18_write_cmos_sensor(0x15 , 0x30); // 4f                                    
-	SP0A18_write_cmos_sensor(0x44 , 0x0e);                                      
-	SP0A18_write_cmos_sensor(0x22 , 0x10);                                      
-	SP0A18_write_cmos_sensor(0x26 , 0x02);                                      
-	SP0A18_write_cmos_sensor(0x27 , 0x68); //e8                                    
-	SP0A18_write_cmos_sensor(0x28 , 0x12); //b                                    
-	SP0A18_write_cmos_sensor(0x30 , 0x00);                                      
-	SP0A18_write_cmos_sensor(0x31 , 0x10);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x1C , 0x00);  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x32 , 0x00); 
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x28 , 0xac);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x29 , 0x94);  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00); 
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe7 , 0x03); 
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe7 , 0x00); 
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x0f , 0x3f);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x10 , 0x3a);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x13 , 0x3f);  //5f                                    
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x15 , 0x30); // 4f                                    
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x44 , 0x0e);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x22 , 0x10);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x26 , 0x02);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x27 , 0x68); //e8                                    
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x28 , 0x12); //b                                    
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x30 , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x31 , 0x30);                                      
 	                                  
-	SP0A18_write_cmos_sensor(0x34 , 0x00);         
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x34 , 0x00);         
 
 	//special
-	SP0A18_write_cmos_sensor(0xfd , 0x01);                                      
-	SP0A18_write_cmos_sensor(0x00 , 0x01);  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x00 , 0x01);  
 
 	//pregain
-	SP0A18_write_cmos_sensor(0xfd , 0x01);                                      
-	SP0A18_write_cmos_sensor(0xc6 , 0x06);  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xc6 , 0x06);  
 	                                                
 	//Del sunspot                                       
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0xcd , 0x24);                                      
-	SP0A18_write_cmos_sensor(0xd1 , 0x03);                                      
-	SP0A18_write_cmos_sensor(0xd5 , 0xff);                                      
-	SP0A18_write_cmos_sensor(0xfc , 0x03);                                      
-	SP0A18_write_cmos_sensor(0xfb , 0x0f); //27                                     
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xcd , 0x24);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xd1 , 0x03);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xd5 , 0xff);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfc , 0x03);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfb , 0x0f); //27                                     
 	                                                   
 	//Blacklevel                                        
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0x65 , 0x00);//blue_suboffset                       
-	SP0A18_write_cmos_sensor(0x66 , 0x00);//red_suboffset                        
-	SP0A18_write_cmos_sensor(0x67 , 0x00);//gr_suboffset                         
-	SP0A18_write_cmos_sensor(0x68 , 0x00);//gb_suboffset                         
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x65 , 0x00);//blue_suboffset                       
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x66 , 0x00);//red_suboffset                        
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x67 , 0x00);//gr_suboffset                         
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x68 , 0x00);//gb_suboffset                         
 	                                                   
 	//AWB                                               
-	SP0A18_write_cmos_sensor(0xfd , 0x01);                                                                          
-	SP0A18_write_cmos_sensor(0x03 , 0x7d);                                      
-	SP0A18_write_cmos_sensor(0x04 , 0x88);                                      
-	SP0A18_write_cmos_sensor(0x05 , 0x07);                                      
-	SP0A18_write_cmos_sensor(0x11 , 0x11);                                      
-	SP0A18_write_cmos_sensor(0x12 , 0x11); 
-	SP0A18_write_cmos_sensor(0x17 , 0x27);                                      
-	SP0A18_write_cmos_sensor(0x18 , 0x45);                                      
-	SP0A18_write_cmos_sensor(0x1a , 0x9e);                                      
-	SP0A18_write_cmos_sensor(0x1b , 0x9e);                                      
-	SP0A18_write_cmos_sensor(0x2a , 0xE0);                                      
-	SP0A18_write_cmos_sensor(0x2b , 0x10);                                      
-	SP0A18_write_cmos_sensor(0x2c , 0x9f);//90                                   
-	SP0A18_write_cmos_sensor(0x6f , 0x05);                                      
-	SP0A18_write_cmos_sensor(0x8b , 0x2f);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                                                          
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x03 , 0x7d);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x04 , 0x88);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x05 , 0x07);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x11 , 0x11);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x12 , 0x11); 
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x17 , 0x27);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x18 , 0x45);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x1a , 0x9e);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x1b , 0x9e);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x2a , 0xE0);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x2b , 0x10);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x2c , 0x9f);//90                                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x6f , 0x05);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8b , 0x2f);                                      
 	                                                   
 	//smooth                                            
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0x4f , 0x54);//raw_gf_fac_outdoor raw_gf_fac_nr 55  
-	SP0A18_write_cmos_sensor(0x50 , 0x22);//draw_gf_fac_dummy raw_gf_fac_low     
-	SP0A18_write_cmos_sensor(0x57 , 0x06);//raw_dif_thr_outdoor                  
-	SP0A18_write_cmos_sensor(0x58 , 0x0f);//raw_dif_thr_normal                   
-	SP0A18_write_cmos_sensor(0x56 , 0x10);//dummy                                
-	SP0A18_write_cmos_sensor(0x59 , 0x10);//low                                  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x4f , 0x54);//raw_gf_fac_outdoor raw_gf_fac_nr 55  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x50 , 0x22);//draw_gf_fac_dummy raw_gf_fac_low     
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x57 , 0x06);//raw_dif_thr_outdoor                  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x58 , 0x0f);//raw_dif_thr_normal                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x56 , 0x10);//dummy                                
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x59 , 0x10);//low                                  
 	                                                   
-	SP0A18_write_cmos_sensor(0x5a , 0x70);//raw_rb_fac_outdoor,raw_rb_fac_nr     
-	SP0A18_write_cmos_sensor(0x5b , 0x00);//raw_rb_fac_dummy,raw_rb_fac_low      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x5a , 0x70);//raw_rb_fac_outdoor,raw_rb_fac_nr     
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x5b , 0x00);//raw_rb_fac_dummy,raw_rb_fac_low      
 	                                                   
 	//sharpen                                           
-	SP0A18_write_cmos_sensor(0xfd , 0x01); 
-	SP0A18_write_cmos_sensor(0xe5 , 0x20);              
-	SP0A18_write_cmos_sensor(0xe6 , 0x10);              
-	SP0A18_write_cmos_sensor(0xe7 , 0x20);
-	SP0A18_write_cmos_sensor(0xe8 , 0x60);//sharp_fac_pos_outdoor                
-	SP0A18_write_cmos_sensor(0xec , 0x60);//sharp_fac_neg_outdoor                
-	SP0A18_write_cmos_sensor(0xe9 , 0x40);//sharp_fac_pos_nr                     
-	SP0A18_write_cmos_sensor(0xed , 0x40);//sharp_fac_neg_nr                     
-	SP0A18_write_cmos_sensor(0xea , 0x40);//sharp_fac_pos_dummy                  
-	SP0A18_write_cmos_sensor(0xef , 0x40);//sharp_fac_neg_dummy                  
-	SP0A18_write_cmos_sensor(0xeb , 0x40);//sharp_fac_pos_low                    
-	SP0A18_write_cmos_sensor(0xf0 , 0x40);//sharp_fac_neg_low                    
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01); 
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe5 , 0x20);              
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe6 , 0x10);              
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe7 , 0x20);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe8 , 0x60);//sharp_fac_pos_outdoor                
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xec , 0x60);//sharp_fac_neg_outdoor                
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe9 , 0x40);//sharp_fac_pos_nr                     
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xed , 0x40);//sharp_fac_neg_nr                     
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xea , 0x40);//sharp_fac_pos_dummy                  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xef , 0x40);//sharp_fac_neg_dummy                  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xeb , 0x40);//sharp_fac_pos_low                    
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf0 , 0x40);//sharp_fac_neg_low                    
 	                                                   
 	//rpc                                               
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                 
-	SP0A18_write_cmos_sensor(0xe0 , 0x32);//rpc_1base_max  
-	SP0A18_write_cmos_sensor(0xe1 , 0x26);//rpc_2base_max  
-	SP0A18_write_cmos_sensor(0xe2 , 0x22);//rpc_3base_max  
-	SP0A18_write_cmos_sensor(0xe3 , 0x1e);//rpc_4base_max  
-	SP0A18_write_cmos_sensor(0xe4 , 0x1e);//rpc_5base_max  
-	SP0A18_write_cmos_sensor(0xe5 , 0x1d);//rpc_6base_max  
-	SP0A18_write_cmos_sensor(0xe6 , 0x1d);//rpc_7base_max  
-	SP0A18_write_cmos_sensor(0xe8 , 0x1b);//rpc_8base_max  
-	SP0A18_write_cmos_sensor(0xe9 , 0x1b);//rpc_9base_max  
-	SP0A18_write_cmos_sensor(0xea , 0x1b);//rpc_10base_max 
-	SP0A18_write_cmos_sensor(0xeb , 0x1a);//rpc_11base_max 
-	SP0A18_write_cmos_sensor(0xf5 , 0x1a);//rpc_12base_max 
-	SP0A18_write_cmos_sensor(0xf6 , 0x1a);//rpc_13base_max                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                 
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe0 , 0x32);//rpc_1base_max  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe1 , 0x26);//rpc_2base_max  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe2 , 0x22);//rpc_3base_max  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe3 , 0x1e);//rpc_4base_max  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe4 , 0x1e);//rpc_5base_max  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe5 , 0x1d);//rpc_6base_max  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe6 , 0x1d);//rpc_7base_max  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe8 , 0x1b);//rpc_8base_max  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xe9 , 0x1b);//rpc_9base_max  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xea , 0x1b);//rpc_10base_max 
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xeb , 0x1a);//rpc_11base_max 
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf5 , 0x1a);//rpc_12base_max 
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf6 , 0x1a);//rpc_13base_max                      
 	                                                   
 	//ae min gain                                       
-	SP0A18_write_cmos_sensor(0xfd , 0x01);                                      
-	SP0A18_write_cmos_sensor(0x94 , 0x70);//rpc_max_indr                         
-	SP0A18_write_cmos_sensor(0x95 , 0x1a);//rpc_min_indr                         
-	SP0A18_write_cmos_sensor(0x9c , 0x70);//rpc_max_outdr                        
-	SP0A18_write_cmos_sensor(0x9d , 0x1a);//rpc_min_outdr                        
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x94 , 0x70);//rpc_max_indr                         
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x95 , 0x1a);//rpc_min_indr                         
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x9c , 0x70);//rpc_max_outdr                        
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x9d , 0x1a);//rpc_min_outdr                        
 	                                                   
 	//ae setting                                        
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0x05 , 0x00);                                      
-	SP0A18_write_cmos_sensor(0x06 , 0x00);                                      
-	SP0A18_write_cmos_sensor(0x07 , 0x00);                                      
-	SP0A18_write_cmos_sensor(0x08 , 0x00);                                      
-	SP0A18_write_cmos_sensor(0x09 , 0x01);                                      
-	SP0A18_write_cmos_sensor(0x0A , 0x76);                                      
-	SP0A18_write_cmos_sensor(0xf0 , 0x62);//ABF_exp_base_8lsb                    
-	SP0A18_write_cmos_sensor(0xf1 , 0x00);//exp_min_base_msb                     
-	SP0A18_write_cmos_sensor(0xfd , 0x01);                                      
-	SP0A18_write_cmos_sensor(0x90 , 0x98);//exp_max_indr[7:0]                    
-	SP0A18_write_cmos_sensor(0x91 , 0x04);//exp_max_indr[12:8]                   
-	SP0A18_write_cmos_sensor(0x92 , 0x62);//exp_min_indr[7:0]                    
-	SP0A18_write_cmos_sensor(0x93 , 0x00);//exp_min_indr[12:8]                   
-	SP0A18_write_cmos_sensor(0x98 , 0x62);//exp_max_outdr[7:0]                   
-	SP0A18_write_cmos_sensor(0x99 , 0x00);//exp_max_outdr[12:8]                  
-	SP0A18_write_cmos_sensor(0x9a , 0x01);//exp_min_outdr[7:0]                   
-	SP0A18_write_cmos_sensor(0x9b , 0x00);//exp_min_outdr[12:8]                  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x05 , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x06 , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x07 , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x08 , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x09 , 0x01);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x0A , 0x76);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf0 , 0x62);//ABF_exp_base_8lsb                    
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf1 , 0x00);//exp_min_base_msb                     
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x90 , 0x98);//exp_max_indr[7:0]                    
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x91 , 0x04);//exp_max_indr[12:8]                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x92 , 0x62);//exp_min_indr[7:0]                    
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x93 , 0x00);//exp_min_indr[12:8]                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x98 , 0x62);//exp_max_outdr[7:0]                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x99 , 0x00);//exp_max_outdr[12:8]                  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x9a , 0x01);//exp_min_outdr[7:0]                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x9b , 0x00);//exp_min_outdr[12:8]                  
 	                                                   
 	//Status                                            
-	SP0A18_write_cmos_sensor(0xfd , 0x01);                                      
-	SP0A18_write_cmos_sensor(0xc4 , 0x70);//mean_nr_dummy                        
-	SP0A18_write_cmos_sensor(0xc5 , 0x74);//mean_dummy_nr                        
-	SP0A18_write_cmos_sensor(0xca , 0x30);//mean_heq_low                         
-	SP0A18_write_cmos_sensor(0xcb , 0x45);//mean_heq_dummy                       
-	SP0A18_write_cmos_sensor(0xcc , 0x70);//rpc_heq_low                          
-	SP0A18_write_cmos_sensor(0xcd , 0x70);//rpc_heq_dummy                        
-	SP0A18_write_cmos_sensor(0xce , 0x98);//exp_heq_dummy_8lsm                   
-	SP0A18_write_cmos_sensor(0xcf , 0x04);//exp_heq_dummy_5hsm                   
-	SP0A18_write_cmos_sensor(0xd0 , 0x98);//exp_heq_low_8lsm                     
-	SP0A18_write_cmos_sensor(0xd1 , 0x04);//exp_heq_low_5hsm                     
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xc4 , 0x70);//mean_nr_dummy                        
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xc5 , 0x74);//mean_dummy_nr                        
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xca , 0x30);//mean_heq_low                         
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xcb , 0x45);//mean_heq_dummy                       
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xcc , 0x70);//rpc_heq_low                          
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xcd , 0x70);//rpc_heq_dummy                        
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xce , 0x98);//exp_heq_dummy_8lsm                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xcf , 0x04);//exp_heq_dummy_5hsm                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xd0 , 0x98);//exp_heq_low_8lsm                     
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xd1 , 0x04);//exp_heq_low_5hsm                     
 	                                                   
 	//ae target                                         
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0xed , 0x80);//90                                   
-	SP0A18_write_cmos_sensor(0xf7 , 0x7c);//8c                                   
-	SP0A18_write_cmos_sensor(0xf8 , 0x70);//84                                   
-	SP0A18_write_cmos_sensor(0xec , 0x6c);//80                                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xed , 0x80);//90                                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf7 , 0x7c);//8c                                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf8 , 0x70);//84                                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xec , 0x6c);//80                                   
 	                                                   
-	SP0A18_write_cmos_sensor(0xef , 0x74);//99                                   
-	SP0A18_write_cmos_sensor(0xf9 , 0x70);//90                                   
-	SP0A18_write_cmos_sensor(0xfa , 0x68);//80                                   
-	SP0A18_write_cmos_sensor(0xee , 0x64);//78                                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xef , 0x74);//99                                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xf9 , 0x70);//90                                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfa , 0x68);//80                                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xee , 0x64);//78                                   
 	                                                   
 	//gamma                                             
-	SP0A18_write_cmos_sensor(0xfd , 0x00);
-	SP0A18_write_cmos_sensor(0x8b , 0x0 );
-	SP0A18_write_cmos_sensor(0x8c , 0x9 );
-	SP0A18_write_cmos_sensor(0x8d , 0x11);
-	SP0A18_write_cmos_sensor(0x8e , 0x20);
-	SP0A18_write_cmos_sensor(0x8f , 0x40);
-	SP0A18_write_cmos_sensor(0x90 , 0x59);
-	SP0A18_write_cmos_sensor(0x91 , 0x72);
-	SP0A18_write_cmos_sensor(0x92 , 0x85);
-	SP0A18_write_cmos_sensor(0x93 , 0x98);
-	SP0A18_write_cmos_sensor(0x94 , 0xa9);
-	SP0A18_write_cmos_sensor(0x95 , 0xba);
-	SP0A18_write_cmos_sensor(0x96 , 0xc8);
-	SP0A18_write_cmos_sensor(0x97 , 0xd5);
-	SP0A18_write_cmos_sensor(0x98 , 0xe1);
-	SP0A18_write_cmos_sensor(0x99 , 0xec);
-	SP0A18_write_cmos_sensor(0x9a , 0xf4);
-	SP0A18_write_cmos_sensor(0x9b , 0xfa);
-	SP0A18_write_cmos_sensor(0xfd , 0x01);
-	SP0A18_write_cmos_sensor(0x8d , 0xfe);
-	SP0A18_write_cmos_sensor(0x8e , 0xff);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8b , 0x0 );
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8c , 0x9 );
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8d , 0x11);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8e , 0x20);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8f , 0x40);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x90 , 0x59);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x91 , 0x72);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x92 , 0x85);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x93 , 0x98);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x94 , 0xa9);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x95 , 0xba);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x96 , 0xc8);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x97 , 0xd5);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x98 , 0xe1);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x99 , 0xec);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x9a , 0xf4);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x9b , 0xfa);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8d , 0xfe);
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8e , 0xff);
 	                                                                                     
 	//Lens shading                                      
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0xa0 , 0x10);//lsc_gr_gain                          
-	SP0A18_write_cmos_sensor(0xa1 , 0x10);//lsc_gb_gain                          
-	SP0A18_write_cmos_sensor(0xa2 , 0x14);//lsc_r_gain                           
-	SP0A18_write_cmos_sensor(0xa3 , 0x10);//lsc_b_gain                           
-	SP0A18_write_cmos_sensor(0xa4 , 0x14);//lsc_gain_max                         
-	SP0A18_write_cmos_sensor(0xa5 , 0x80);//col_center                           
-	SP0A18_write_cmos_sensor(0xa6 , 0x80);//row_center                           
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa0 , 0x10);//lsc_gr_gain                          
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa1 , 0x10);//lsc_gb_gain                          
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa2 , 0x14);//lsc_r_gain                           
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa3 , 0x10);//lsc_b_gain                           
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa4 , 0x14);//lsc_gain_max                         
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa5 , 0x80);//col_center                           
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa6 , 0x80);//row_center                           
 	                                                   
 	//uv en                                             
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0xb0 , 0x00);//uv_dif_gain_outdoor,uv_dif_gain_nr   
-	SP0A18_write_cmos_sensor(0xb1 , 0x33);//uv_dif_gain_dummy,uv_dif_gain_low    
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xb0 , 0x00);//uv_dif_gain_outdoor,uv_dif_gain_nr   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xb1 , 0x33);//uv_dif_gain_dummy,uv_dif_gain_low    
 	                                                   
 	//lowlight lum                                      
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0xb2 , 0x20);//lum_limit                            
-	SP0A18_write_cmos_sensor(0xb3 , 0x1f);//lum_set                              
-	SP0A18_write_cmos_sensor(0xb4 , 0x20);//black_vt                             
-	SP0A18_write_cmos_sensor(0xb5 , 0x45);//white_vt                             
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xb2 , 0x20);//lum_limit                            
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xb3 , 0x1f);//lum_set                              
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xb4 , 0x20);//black_vt                             
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xb5 , 0x45);//white_vt                             
 	                                                   
 	//auto sat                                          
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0xbf , 0x01);//autosa_en                            
-	SP0A18_write_cmos_sensor(0xc0 , 0xff);//y_p_th                               
-	SP0A18_write_cmos_sensor(0xc1 , 0xff);//y_mean_th                            
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xbf , 0x01);//autosa_en                            
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xc0 , 0xff);//y_p_th                               
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xc1 , 0xff);//y_mean_th                            
 	                                                   
 	//saturation                                        
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0xd8 , 0x80);//sat_uv_s1                            
-	SP0A18_write_cmos_sensor(0xd9 , 0x80);//sat_uv_s2                            
-	SP0A18_write_cmos_sensor(0xda , 0x80);//sat_uv_s3                            
-	SP0A18_write_cmos_sensor(0xdb , 0x80);//sat_uv_s4                            
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xd8 , 0x80);//sat_uv_s1                            
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xd9 , 0x80);//sat_uv_s2                            
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xda , 0x80);//sat_uv_s3                            
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xdb , 0x80);//sat_uv_s4                            
 	                                                   
 	//heq                                               
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0xdc , 0x10);//heq_offset                           
-	SP0A18_write_cmos_sensor(0xdd , 0x80);//ku                                   
-	SP0A18_write_cmos_sensor(0xde , 0x90);//kl                                   
-	SP0A18_write_cmos_sensor(0xdf , 0x70);//heq_mean                             
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xdc , 0x10);//heq_offset                           
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xdd , 0x80);//ku                                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xde , 0x90);//kl                                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xdf , 0x70);//heq_mean                             
 	                                                   
 	//CCM                                               
-	SP0A18_write_cmos_sensor(0xfd , 0x01);                                      
-	SP0A18_write_cmos_sensor(0xa0 , 0x80);                                      
-	SP0A18_write_cmos_sensor(0xa1 , 0x0 );                                      
-	SP0A18_write_cmos_sensor(0xa2 , 0x0 );                                     
-	SP0A18_write_cmos_sensor(0xa3 , 0xf3);                                      
-	SP0A18_write_cmos_sensor(0xa4 , 0x8e);                                      
-	SP0A18_write_cmos_sensor(0xa5 , 0x0 );                                      
-	SP0A18_write_cmos_sensor(0xa6 , 0x0 );                                      
-	SP0A18_write_cmos_sensor(0xa7 , 0xe6);//55                                   
-	SP0A18_write_cmos_sensor(0xa8 , 0x9a);//                                  
-	SP0A18_write_cmos_sensor(0xa9 , 0x0 );                                     
-	SP0A18_write_cmos_sensor(0xaa , 0x3 );                                      
-	SP0A18_write_cmos_sensor(0xab , 0xc );//f                                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa0 , 0x80);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa1 , 0x0 );                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa2 , 0x0 );                                     
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa3 , 0xf3);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa4 , 0x8e);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa5 , 0x0 );                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa6 , 0x0 );                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa7 , 0xe6);//55                                   
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa8 , 0x9a);//                                  
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xa9 , 0x0 );                                     
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xaa , 0x3 );                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xab , 0xc );//f                                   
 	                                                   
 	//LSC                                               
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0x33 , 0xcf);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x33 , 0xcf);                                      
 	                                                   
 	//skin                                              
-	SP0A18_write_cmos_sensor(0xfd , 0x01);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
 	                                                   
-	SP0A18_write_cmos_sensor(0x8b , 0x2f);//bit7,0 en                            
-	SP0A18_write_cmos_sensor(0x01 , 0xf0);                                      
-	SP0A18_write_cmos_sensor(0x02 , 0x04);                                      
-	SP0A18_write_cmos_sensor(0x03 , 0x7e);                                      
-	SP0A18_write_cmos_sensor(0x04 , 0x88);                                      
-	SP0A18_write_cmos_sensor(0x05 , 0x07);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x8b , 0x2f);//bit7,0 en                            
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x01 , 0xf0);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x02 , 0x04);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x03 , 0x7e);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x04 , 0x88);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x05 , 0x07);                                      
 	                                                   
 	//resize_en                                         
-	SP0A18_write_cmos_sensor(0xfd , 0x01);                                      
-	SP0A18_write_cmos_sensor(0x0e , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x01);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x0e , 0x00);                                      
 	                                                   
 	                                                   
 	//outformat                                         
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0x35 , 0x00);                                      
-	SP0A18_write_cmos_sensor(0x5f , 0x01);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x35 , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x5f , 0x01);                                      
 	                                                   
 	//En AE                                             
-	SP0A18_write_cmos_sensor(0xfd , 0x00);                                      
-	SP0A18_write_cmos_sensor(0x32 , 0x0d);                                      
-	SP0A18_write_cmos_sensor(0x34 , 0x06);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd , 0x00);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x32 , 0x0d);                                      
+	camsensor_SP0A18_ycbcr_i2c_write_byte(0x34 , 0x06);                                      
           
 	return  TRUE;
 } /* camsensor_ov7690_write_sensor */
@@ -642,6 +657,8 @@ boolean camsensor_sp0a18_ycbcr_snapshot_config
   camsensor_static_params_type *camsensor_params /* Other config params */
 ) 
 {
+	SP0A18_config_window(0,0,OV_SP0A18_YCBCR_FULL_SIZE_WIDTH,OV_SP0A18_YCBCR_FULL_SIZE_HEIGHT);
+	
 	/* Sensor output data format */
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
 
@@ -717,7 +734,8 @@ boolean camsensor_sp0a18_ycbcr_video_config
 )
 {
 	camsensor_sp0a18_sensor_init();
-	
+
+	SP0A18_config_window(0,0,OV_SP0A18_YCBCR_QTR_SIZE_WIDTH,OV_SP0A18_YCBCR_QTR_SIZE_HEIGHT);
 	/* Sensor output data format */
 	camsensor_params->discardFirstFrame = TRUE;
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
