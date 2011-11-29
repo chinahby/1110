@@ -230,7 +230,7 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
     x = (CAMSENSOR_SIC110A_FULL_SIZE_WIDTH-dx)>>1;
     y = (CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-dy)>>1;
 #ifndef FEATURE_CAMERA_SP0828
-    dy = CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-y;
+    //dy = CAMSENSOR_SIC110A_FULL_SIZE_HEIGHT-y;
 #else
     if(x<60)
 	{
@@ -245,7 +245,7 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 #endif
 #endif
     //Sensor Block Setting  ###Don't Change###
-    #ifdef FEATURE_CAMERA_SP0828
+#ifdef FEATURE_CAMERA_SP0828
     
 	sic110a_i2c_write_byte(0xfd,0x00);
 	sic110a_i2c_write_byte(0x1c,0x00);//08
@@ -436,7 +436,7 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 	sic110a_i2c_write_byte(0x14,0x20);
 	sic110a_i2c_write_byte(0x15,0x0f); 
 
-#if 1 // MCLK 2.4M fix5fps maxgain:0x70
+ // MCLK 2.4M fix5fps maxgain:0x70
 	sic110a_i2c_write_byte(0xfd,0x00);
 	sic110a_i2c_write_byte(0x05,0x0 );
 	sic110a_i2c_write_byte(0x06,0x0 );
@@ -474,7 +474,7 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 	sic110a_i2c_write_byte(0xca,0x70);
 	sic110a_i2c_write_byte(0xcb,0x14);
 	sic110a_i2c_write_byte(0xfd,0x00);
-#endif
+
 
 
 	sic110a_i2c_write_byte(0xfd,0x00);
@@ -531,7 +531,7 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 
 	sic110a_i2c_write_byte(0x36,0x80);		
 	sic110a_i2c_write_byte(0x30,0x00);			 
-    #else
+#else
     sic110a_i2c_write_byte(0x00, 0x00); 
     sic110a_i2c_write_byte(0x04, 0x00); 
     sic110a_i2c_write_byte(0x05, 0x03); 
@@ -967,6 +967,8 @@ static boolean camsensor_sic110a_snapshot_config( camsensor_static_params_type  
     camsensor_params->camif_window_height_config.lastLine  = camsensor_params->camif_window_height_config.firstLine+camera_dy;
     camsensor_params->pixel_clock = 1;
     #ifndef FEATURE_CAMERA_SP0828
+        MSG_FATAL("sic110a_i2c_write_byte y=%d dy=%d",y,camera_dy,0);
+    MSG_FATAL("sic110a_i2c_write_byte x=%d dx=%d",x,camera_dx,0);
     initialize_sic110a_registers(camera_dx, camera_dy);
     #else
     if(camera_dx > CAMSENSOR_SIC110A_FULL_SIZE_WIDTH)
