@@ -12558,6 +12558,7 @@ boolean OEM_HandlePenEvt(OEMCONTEXT hTextField,AEEEvent eCode,uint16 wLwrTime,in
 	   }
 	   break;
    case EVT_PEN_UP:
+        MSG_FATAL("1---------EVT_PEN_UP",0,0,0);
 	   if( pme->ptTracker.cbHit )
 	   {
 		   if( pme->ptTracker.cbFlags & PTRCK_GEN_TMRSET )
@@ -12575,9 +12576,11 @@ boolean OEM_HandlePenEvt(OEMCONTEXT hTextField,AEEEvent eCode,uint16 wLwrTime,in
 		   bRet = TRUE;
 	   }
 	   // Pen is up, can't store these
+	   MSG_FATAL("2---------EVT_PEN_UP",0,0,0);
 	   MEMSET((void *)&pme->ptTracker, 0, sizeof(pme->ptTracker));
 	   if ((pme->pIDialog == NULL)&&(1)&&(1)&&(1)&&(1))
 	   {
+        MSG_FATAL("3---------EVT_PEN_UP",0,0,0);
 		   return(TSIM_ProcPenUp(pme,wXPos,wYPos));    //modi 090519
 	   }
 	   break;
@@ -12610,12 +12613,13 @@ SEE ALSO:
 boolean TSIM_ProcPenUp(OEMCONTEXT hTextCtl,int16 xpos,int16 ypos)
 {
 	register TextCtlContext *pContext = (TextCtlContext *) hTextCtl;
+    MSG_FATAL("---------TSIM_ProcPenUp",0,0,0);
 
 	pContext->rc_text.x = 0;
 	pContext->rc_text.y = 20;
 	pContext->rc_text.dx = 170;
 	pContext->rc_text.dy = 164;
-	pContext ->binorig = TRUE;
+	pContext->binorig = TRUE;
 
 	//if the pendown point is in the pinyin keypad, then pass the event to the virtualkey controls
 	//set the range of the text now
@@ -12624,13 +12628,16 @@ boolean TSIM_ProcPenUp(OEMCONTEXT hTextCtl,int16 xpos,int16 ypos)
 		pContext->rc_text.y,
 		(pContext->rc_text.x + pContext->rc_text.dx) - 1,
 		(pContext->rc_text.y + pContext->rc_text.dy) - 1);
+    MSG_FATAL("1---------TSIM_ProcPenUp",0,0,0);
 
 	if ((TextCtl_IsInRange(xpos, ypos, &pContext->textrange))
 		&& pContext->binorig)
 	{
 		pContext->bdowntsim = TRUE;
+        MSG_FATAL("2---------TSIM_ProcPenUp",0,0,0);
 		if (pContext->pIDialog == NULL)
 		{
+            MSG_FATAL("3---------TSIM_ProcPenUp",0,0,0);
 			pContext->bdowntsim = FALSE;
 			pContext->binorig = FALSE;
 			TSIM_CreateDlg(pContext);
@@ -13109,6 +13116,7 @@ static void  TSIM_CreateDlg(TextCtlContext *pContext)
 
 	//get the information of the bitmap gotten
 	(void)IBITMAP_GetInfo(pBmp, &bi, sizeof(AEEBitmapInfo));
+    MSG_FATAL("---------TSIM_CreateDlg",0,0,0);
 
 	//fill the di with the information of bitmap
 	SETAEERECT(&di.h.rc,
