@@ -963,15 +963,31 @@ camera_ret_code_type camsensor_sp0a18_set_effect(int8 effect)
 	switch(effect)
 	{
 		case CAMERA_EFFECT_OFF://normal
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd, 0x00);			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x62, 0x00);			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x63, 0x80);			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x64, 0x80);
 			break;
 			
 		case CAMERA_EFFECT_MONO:
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd, 0x00);			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x62, 0x20);			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x63, 0x80);			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x64, 0x80);
 			break;
 			
 		case CAMERA_EFFECT_NEGATIVE://负片
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd, 0x00);			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x62, 0x04);			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x63, 0x80);			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x64, 0x80);
 			break;
 			
 		case CAMERA_EFFECT_SEPIA://棕褐色
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd, 0x00);			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x62, 0x10);			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x63, 0xc0);			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x64, 0x20);
 			break;
 
 		default:
@@ -991,19 +1007,48 @@ camera_ret_code_type camsensor_sp0a18_set_wb(int8 wb)
   	switch (wb)
   	{
 		case  CAMERA_WB_AUTO://自动
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x01);
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x28,0xac);
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x29,0x94);
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x00);  // AUTO 3000K~7000K   	  			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x32,0x0d); 
 	  		break;
 
 		case CAMERA_WB_CLOUDY_DAYLIGHT://多云
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x00);   //7000K                                     			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x32,0x05);                                                          			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x01);                                                          			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x28,0xe2);		                                                       			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x29,0x82);		                                                       			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x00);   
 	  		break;
 	
 		case CAMERA_WB_INCANDESCENT://白炽灯
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x00);  //2800K~3000K                                     			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x32,0x05);                                                          			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x01);                                                          			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x28,0x7b);		                                                       			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x29,0xd3);		                                                       			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x00); 
 	  		break;
 
 		case CAMERA_WB_FLUORESCENT: //荧光
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x00);  //4200K~5000K                                     			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x32,0x05);                                                          			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x01);                                                          			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x28,0xb4);		                                                       			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x29,0xc4);		                                                       			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x00); 
 			ret_val = CAMERA_SUCCESS;
 	  		break;	
 	  
 		case CAMERA_WB_DAYLIGHT:  //日光
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x00);  //6500K                                     			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x32,0x05);                                                          			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x01);                                                          			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x28,0xc1);		                                                       			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0x29,0x88);		                                                       			
+			camsensor_SP0A18_ycbcr_i2c_write_byte(0xfd,0x00); 
 			break;
 
 		default:
