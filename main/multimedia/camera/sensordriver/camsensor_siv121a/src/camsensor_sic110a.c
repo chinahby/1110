@@ -489,7 +489,7 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
 	sic110a_i2c_write_byte(0x4b,(byte)(x&0xff) );	   
 	sic110a_i2c_write_byte(0x4c,(byte)(dx&0xff));	  
     MSG_FATAL("sic110a_i2c_write_byte y=%d dy=%d",y,dy,0);
-    MSG_FATAL("sic110a_i2c_write_byte x=%d dx=%d",y,dy,0);
+    MSG_FATAL("sic110a_i2c_write_byte x=%d dx=%d",x,dx,0);
 	//if(internel_resize == TRUE)
 	{
 		sic110a_i2c_write_byte(0xe0,0x00);     //02 00 
@@ -769,7 +769,10 @@ static boolean initialize_sic110a_registers(uint16 dx, uint16 dy)
     sic110a_i2c_write_byte(0xA1, (byte)x); 
     sic110a_i2c_write_byte(0xA2, (byte)dx); 
     sic110a_i2c_write_byte(0xA3, (byte)y); 
-    sic110a_i2c_write_byte(0xA4, (byte)dy); 
+    sic110a_i2c_write_byte(0xA4, (byte)dy);     
+    camera_timed_wait(100);  //ovt
+    MSG_FATAL("sic110a_i2c_write_byte x=%d dx=%d",x,dx,0);    
+    MSG_FATAL("sic110a_i2c_write_byte y=%d dy=%d",y,dy,0);
 #else
     sic110a_i2c_write_byte(0xA0, 0x14);
     sic110a_i2c_write_byte(0xA1, 0x00); 
