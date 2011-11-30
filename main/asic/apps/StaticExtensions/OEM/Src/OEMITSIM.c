@@ -6468,8 +6468,8 @@ static void Hanstroke_Init(CTSIM *pme)
             {
 				//pme->m_phwimage = ISHELL_LoadResImage(pme->m_pIShell,
 				//	AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_FULLWICH);
-				pme->m_phwsymimage = ISHELL_LoadResImage(pme->m_pIShell,
-					AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_FULLOLFHD);
+				//pme->m_phwsymimage = ISHELL_LoadResImage(pme->m_pIShell,
+				//	AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_FULLOLFHD);
             }
         }
         else if (pme->language == NV_LANGUAGE_ENGLISH)
@@ -8091,8 +8091,8 @@ static void Pinyin_Init(CTSIM *pme)
     //load the image to the memory.
     if (pme->language == NV_LANGUAGE_CHINESE)
     {
-        pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
-                                              AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PYBUTTONCH);
+       // pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
+       //                                       AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PYBUTTONCH);
     }
     else if (pme->language == NV_LANGUAGE_ENGLISH)
     {
@@ -9222,8 +9222,8 @@ static void Letters_Init(CTSIM *pme)
     //load the image to the memory.
     if (pme->language == NV_LANGUAGE_CHINESE)
     {
-        pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
-                                              AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PYBUTTONCH);
+       // pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
+       //                                       AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PYBUTTONCH);
     }
     else if (pme->language == NV_LANGUAGE_ENGLISH)
     {
@@ -9639,8 +9639,8 @@ static void Number_Init(CTSIM *pme)
     //load the image to the memory.
     if (pme->language == NV_LANGUAGE_CHINESE)
     {
-        pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
-                                              AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PYBUTTONCH);
+        //pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
+        //                                      AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PYBUTTONCH);
     }
     else if (pme->language == NV_LANGUAGE_ENGLISH)
     {
@@ -9817,8 +9817,8 @@ static void Symbols_Init(CTSIM *pme)
     //load the image to the memory.
     if (pme->language == NV_LANGUAGE_CHINESE)
     {
-        pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
-                                              AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PYBUTTONCH);
+       // pme->m_pnothwimage = ISHELL_LoadResImage(pme->m_pIShell,
+       //                                       AEE_APPSCOMMONRES_IMAGESFILE,IDB_MODE_IME_PYBUTTONCH);
     }
     else if (pme->language == NV_LANGUAGE_ENGLISH)
     {
