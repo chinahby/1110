@@ -33,6 +33,7 @@ when       who     what, where, why
 //#define USE_CAMSENSOR_GC0309
 #define USE_CAMSENSOR_SIV121A
 #ifdef T_QSC1110
+#define USE_CAMSENSOR_SIV120A
 #define USE_CAMSENSOR_DB8B63A
 #define USE_CAMSENSOR_SID130B
 #define USE_CAMSENSOR_SP0838
