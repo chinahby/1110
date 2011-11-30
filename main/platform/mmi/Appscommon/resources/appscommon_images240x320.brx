@@ -499,23 +499,11 @@
 	<Object Id="7119" Name="IDB_MODE_IME_BTITLE">
 		<File>..\images\240x320\common\ime\b_title.bmp</File>
 	</Object>
-	<Object Id="7120" Name="IDB_MODE_IME_CALCDOWNKEYPAD">
-		<File>..\images\240x320\common\ime\calcdownkeypad.bmp</File>
-	</Object>
 	<Object Id="7123" Name="IDB_MODE_IME_DAILKEYDOWN">
 		<File>..\images\240x320\common\ime\dailkeydown.bmp</File>
 	</Object>
 	<Object Id="7124" Name="IDB_MODE_IME_DAILKEYUP">
 		<File>..\images\240x320\common\ime\dailkeyup.bmp</File>
-	</Object>
-	<Object Id="7126" Name="IDB_MODE_IME_FUHAOKEYPAD">
-		<File>..\images\240x320\common\ime\fuhaokeypad.bmp</File>
-	</Object>
-	<Object Id="7127" Name="IDB_MODE_IME_FUHAOKEYPADDOWN">
-		<File>..\images\240x320\common\ime\fuhaokeypaddown.bmp</File>
-	</Object>
-	<Object Id="7128" Name="IDB_MODE_IME_FULLWICH">
-		<File>..\images\240x320\common\ime\fullhwriteinterfaceCH.bmp</File>
 	</Object>
 	<Object Id="7130" Name="IDB_MODE_IME_FULLOLFHD">
 		<File>..\images\240x320\common\ime\fullonelinefuhaodown.bmp</File>
@@ -541,18 +529,6 @@
 	<Object Id="7139" Name="IDB_MODE_IME_ITSIMSYMBOL">
 		<File>..\images\240x320\common\ime\itsimsymbol.bmp</File>
 	</Object>
-	<Object Id="7140" Name="IDB_MODE_IME_LETTERCAPKEYPAD">
-		<File>..\images\240x320\common\ime\lettercapkeypad.bmp</File>
-	</Object>
-	<Object Id="7141" Name="IDB_MODE_IME_LETTERCAPKEYPADDOWN">
-		<File>..\images\240x320\common\ime\lettercapkeypaddown.bmp</File>
-	</Object>
-	<Object Id="7142" Name="IDB_MODE_IME_LETTERKEYPAD">
-		<File>..\images\240x320\common\ime\letterkeypad.bmp</File>
-	</Object>
-	<Object Id="7143" Name="IDB_MODE_IME_LETTERKEYPADDOWN">
-		<File>..\images\240x320\common\ime\letterkeypaddown.bmp</File>
-	</Object>
 	<Object Id="7144" Name="IDB_MODE_IME_NOTHWRITECLEARCH">
 		<File>..\images\240x320\common\ime\nothwriteclearCH.bmp</File>
 	</Object>
@@ -564,12 +540,6 @@
 	</Object>
 	<Object Id="7147" Name="IDB_MODE_IME_NOTHWRITEPASTECH">
 		<File>..\images\240x320\common\ime\nothwritepasteCH.bmp</File>
-	</Object>
-	<Object Id="7148" Name="IDB_MODE_IME_PINYINKEYPAD">
-		<File>..\images\240x320\common\ime\pinyinkeypad.bmp</File>
-	</Object>
-	<Object Id="7149" Name="IDB_MODE_IME_PINYINKEYPADDOWN">
-		<File>..\images\240x320\common\ime\pinyinkeypaddown.bmp</File>
 	</Object>
 	<Object Id="7150" Name="IDB_MODE_IME_PYBUTTONCH">
 		<File>..\images\240x320\common\ime\pybuttonCH.bmp</File>
@@ -583,6 +553,45 @@
 	<Object Id="7153" Name="IDB_MODE_IME_LEFT">
 		<File>..\images\240x320\common\ime\LEFT.bmp</File>
 	</Object>
+	<Object Id="7154" Name="IDB_MODE_IME_DIGITPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_ONLY_DIGIT_PRESS.bmp</File>
+	</Object>
+	<Object Id="7155" Name="IDB_MODE_IME_DIGITUNPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_ONLY_DIGIT_UNPRESS.bmp</File>
+	</Object>
+	<Object Id="7156" Name="IDB_MODE_IME_LOWERENGPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_ONLY_LOWERENG_PRESS.bmp</File>
+	</Object>
+	<Object Id="7157" Name="IDB_MODE_IME_LOWERENUNGPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_ONLY_LOWERENG_UNPRESS.bmp</File>
+	</Object>	
+	<Object Id="7158" Name="IDB_MODE_IME_UPPERENGPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_ONLY_UPPERENG_PRESS.bmp</File>
+	</Object>	
+	<Object Id="7159" Name="IDB_MODE_IME_UPPERENGUNPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_ONLY_UPPERENG_UNPRESS.bmp</File>
+	</Object>	
+	<Object Id="7160" Name="IDB_MODE_IME_SYMBOLPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_SYMBOL_PRESS.bmp</File>
+	</Object>	
+	<Object Id="7161" Name="IDB_MODE_IME_SYMBOLUNPRESS">
+		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_SYMBOL_UNPRESS.bmp</File>
+	</Object>	
+	<Object Id="7162" Name="IDB_MODE_IME_BUTTONEN">
+		<File>..\images\240x320\common\ime\buttonEN.bmp</File>
+	</Object>
+	<Object Id="7163" Name="IDB_MODE_IME_CLEAREN">
+		<File>..\images\240x320\common\ime\nothwriteclearEN.bmp</File>
+	</Object>								
+	<Object Id="7164" Name="IDB_MODE_IME_NOTHWRITEPASTEEN">
+		<File>..\images\240x320\common\ime\nothwritepasteEN.bmp</File>
+	</Object>
+	<Object Id="7165" Name="IDB_MODE_IME_NOTHWRITECOPYEN">
+		<File>..\images\240x320\common\ime\nothwritecopyEN.bmp</File>
+	</Object>
+	<Object Id="7166" Name="IDB_MODE_IME_NOTHWRITEOKEN">
+		<File>..\images\240x320\common\ime\nothwriteokEN.bmp</File>
+	</Object>	
 	<Object Id="7200" Name="IDB_CALCAPP_ADD_DOWN" MimeType="image/png">
 		<File>..\images\240x320\common\Calculator\IMAGE_CALC_ADD_DOWN.png</File>
 	</Object>
