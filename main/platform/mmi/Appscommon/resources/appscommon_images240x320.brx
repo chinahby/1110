@@ -505,9 +505,6 @@
 	<Object Id="7124" Name="IDB_MODE_IME_DAILKEYUP">
 		<File>..\images\240x320\common\ime\dailkeyup.bmp</File>
 	</Object>
-	<Object Id="7130" Name="IDB_MODE_IME_FULLOLFHD">
-		<File>..\images\240x320\common\ime\fullonelinefuhaodown.bmp</File>
-	</Object>
 	<Object Id="7131" Name="IDB_MODE_IME_HANDWRITE">
 		<File>..\images\240x320\common\ime\handwrite.bmp</File>
 	</Object>
@@ -540,9 +537,6 @@
 	</Object>
 	<Object Id="7147" Name="IDB_MODE_IME_NOTHWRITEPASTECH">
 		<File>..\images\240x320\common\ime\nothwritepasteCH.bmp</File>
-	</Object>
-	<Object Id="7150" Name="IDB_MODE_IME_PYBUTTONCH">
-		<File>..\images\240x320\common\ime\pybuttonCH.bmp</File>
 	</Object>
 	<Object Id="7151" Name="IDB_MODE_IME_ONLINEFUHAODOWN">
 		<File>..\images\240x320\common\ime\onelinefuhaodown.bmp</File>
