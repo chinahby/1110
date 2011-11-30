@@ -417,6 +417,10 @@
 #include "camsensor_ov7675.h"
 #endif
 
+#ifdef USE_CAMSENSOR_SIV120A
+#include "camsensor_SIV120A_yuv.h"
+#endif
+
 #endif /* FEATURE_NI_GPIO*/
 
 #include "ipl.h"
@@ -677,6 +681,8 @@ camsensor_sensor_model_pair_id camsensor_pair[] =
 	{CAMSENSOR_ID_SID130B,CAMSENSOR_MICRON_SIV121D_0M3},
 	{CAMSENSOR_ID_SP0838,CAMSENSOR_ID_SP0A18},
 	{CAMSENSOR_ID_SP0A18,CAMSENSOR_ID_SP0838},
+	{CAMSENSOR_ID_SIV120A,CAMSENSOR_ID_SID130B},        
+	{CAMSENSOR_ID_SID130B,CAMSENSOR_ID_SIV120A},
 	{CAMSENSOR_SIV121A_ID,CAMSENSOR_SIV121A_ID},
 	{CAMSENSOR_ID_MAX,CAMSENSOR_ID_MAX},
 };
@@ -705,6 +711,10 @@ LOCAL camsensor_unactive_fn_type camsensor_unactive_value_table[CAMSENSOR_ID_MAX
 
 #ifdef USE_CAMSENSOR_SP0A18
    camsensor_sp0a18_ycbcr_unactive,
+#endif
+
+#ifdef USE_CAMSENSOR_SIV120A
+   camsensor_SIV120A_ycbcr_unactive,
 #endif
 
 #ifdef USE_CAMSENSOR_OMNI_VISION_9650
@@ -841,6 +851,10 @@ LOCAL camsensor_active_fn_type camsensor_active_value_table[CAMSENSOR_ID_MAX] =
 
 #ifdef USE_CAMSENSOR_SP0A18
    camsensor_sp0a18_ycbcr_active,
+#endif
+
+#ifdef USE_CAMSENSOR_SIV120A
+   camsensor_SIV120A_ycbcr_active,
 #endif
 
 #ifdef USE_CAMSENSOR_OMNI_VISION_9650
@@ -997,6 +1011,10 @@ LOCAL boolean (*camsensor_detect_table[])(camsensor_function_table_type *, camct
 
 #ifdef USE_CAMSENSOR_SP0A18
   camsensor_sp0a18_init,
+#endif
+
+#ifdef USE_CAMSENSOR_SIV120A
+  camsensor_siv120a_init,
 #endif
 
 #ifdef USE_CAMSENSOR_OMNI_VISION_9650
