@@ -283,54 +283,6 @@
 	<Object Id="6026" Name="IDI_REFUI_LOUDSPEAKER" MimeType="image/png">
 		<File>..\images\240x320\common\CallApp\Call\loudspeaker.png</File>
 	</Object>
-	<Object Id="6041" Name="IDI_NUMBER_0">
-		<File>..\images\240x320\common\CallApp\DialedNumber\0.png</File>
-	</Object>
-	<Object Id="6042" Name="IDI_NUMBER_1">
-		<File>..\images\240x320\common\CallApp\DialedNumber\1.png</File>
-	</Object>
-	<Object Id="6043" Name="IDI_NUMBER_2">
-		<File>..\images\240x320\common\CallApp\DialedNumber\2.png</File>
-	</Object>
-	<Object Id="6044" Name="IDI_NUMBER_3">
-		<File>..\images\240x320\common\CallApp\DialedNumber\3.png</File>
-	</Object>
-	<Object Id="6045" Name="IDI_NUMBER_4">
-		<File>..\images\240x320\common\CallApp\DialedNumber\4.png</File>
-	</Object>
-	<Object Id="6046" Name="IDI_NUMBER_5">
-		<File>..\images\240x320\common\CallApp\DialedNumber\5.png</File>
-	</Object>
-	<Object Id="6047" Name="IDI_NUMBER_6">
-		<File>..\images\240x320\common\CallApp\DialedNumber\6.png</File>
-	</Object>
-	<Object Id="6048" Name="IDI_NUMBER_7">
-		<File>..\images\240x320\common\CallApp\DialedNumber\7.png</File>
-	</Object>
-	<Object Id="6049" Name="IDI_NUMBER_8">
-		<File>..\images\240x320\common\CallApp\DialedNumber\8.png</File>
-	</Object>
-	<Object Id="6050" Name="IDI_NUMBER_9">
-		<File>..\images\240x320\common\CallApp\DialedNumber\9.png</File>
-	</Object>
-	<Object Id="6051" Name="IDI_NUMBER_STAR">
-		<File>..\images\240x320\common\CallApp\DialedNumber\Star.png</File>
-	</Object>
-	<Object Id="6052" Name="IDI_NUMBER_POUND">
-		<File>..\images\240x320\common\CallApp\DialedNumber\Pound.png</File>
-	</Object>
-	<Object Id="6053" Name="IDI_NUMBER_P">
-		<File>..\images\240x320\common\CallApp\DialedNumber\P.png</File>
-	</Object>
-	<Object Id="6054" Name="IDI_NUMBER_T">
-		<File>..\images\240x320\common\CallApp\DialedNumber\T.png</File>
-	</Object>
-	<Object Id="6055" Name="IDI_NUMBER_PLUS">
-		<File>..\images\240x320\common\CallApp\DialedNumber\+.png</File>
-	</Object>
-	<Object Id="6056" Name="IDI_NUMBER_SUB">
-		<File>..\images\240x320\common\CallApp\DialedNumber\-.png</File>
-	</Object>
 	<Object Id="6201" Name="IDB_UTKMENU">
 		<File>..\images\240x320\common\UTK\utkmenu.bmp</File>
 	</Object>
@@ -490,24 +442,6 @@
 	<Object Id="7102" Name="IDB_MMS_SPACE" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\space.png</File>
 	</Object>
-	<Object Id="7117" Name="IDB_MODE_IME_BGROUND">
-		<File>..\images\240x320\common\ime\b_bground.bmp</File>
-	</Object>
-	<Object Id="7118" Name="IDB_MODE_IME_SELAR">
-		<File>..\images\240x320\common\ime\b_selbar.bmp</File>
-	</Object>
-	<Object Id="7119" Name="IDB_MODE_IME_BTITLE">
-		<File>..\images\240x320\common\ime\b_title.bmp</File>
-	</Object>
-	<Object Id="7123" Name="IDB_MODE_IME_DAILKEYDOWN">
-		<File>..\images\240x320\common\ime\dailkeydown.bmp</File>
-	</Object>
-	<Object Id="7124" Name="IDB_MODE_IME_DAILKEYUP">
-		<File>..\images\240x320\common\ime\dailkeyup.bmp</File>
-	</Object>
-	<Object Id="7131" Name="IDB_MODE_IME_HANDWRITE">
-		<File>..\images\240x320\common\ime\handwrite.bmp</File>
-	</Object>
 	<Object Id="7134" Name="IDB_MODE_IME_ITSIMBACKSPACE">
 		<File>..\images\240x320\common\ime\itsimbackspace.bmp</File>
 	</Object>
@@ -558,25 +492,25 @@
 	</Object>
 	<Object Id="7157" Name="IDB_MODE_IME_LOWERENUNGPRESS">
 		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_ONLY_LOWERENG_UNPRESS.bmp</File>
-	</Object>	
+	</Object>
 	<Object Id="7158" Name="IDB_MODE_IME_UPPERENGPRESS">
 		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_ONLY_UPPERENG_PRESS.bmp</File>
-	</Object>	
+	</Object>
 	<Object Id="7159" Name="IDB_MODE_IME_UPPERENGUNPRESS">
 		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_ONLY_UPPERENG_UNPRESS.bmp</File>
-	</Object>	
+	</Object>
 	<Object Id="7160" Name="IDB_MODE_IME_SYMBOLPRESS">
 		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_SYMBOL_PRESS.bmp</File>
-	</Object>	
+	</Object>
 	<Object Id="7161" Name="IDB_MODE_IME_SYMBOLUNPRESS">
 		<File>..\images\240x320\common\ime\IMAGE_INPUT_EG_PEN_SYMBOL_UNPRESS.bmp</File>
-	</Object>	
+	</Object>
 	<Object Id="7162" Name="IDB_MODE_IME_BUTTONEN">
 		<File>..\images\240x320\common\ime\buttonEN.bmp</File>
 	</Object>
 	<Object Id="7163" Name="IDB_MODE_IME_CLEAREN">
 		<File>..\images\240x320\common\ime\nothwriteclearEN.bmp</File>
-	</Object>								
+	</Object>
 	<Object Id="7164" Name="IDB_MODE_IME_NOTHWRITEPASTEEN">
 		<File>..\images\240x320\common\ime\nothwritepasteEN.bmp</File>
 	</Object>
@@ -585,7 +519,7 @@
 	</Object>
 	<Object Id="7166" Name="IDB_MODE_IME_NOTHWRITEOKEN">
 		<File>..\images\240x320\common\ime\nothwriteokEN.bmp</File>
-	</Object>	
+	</Object>
 	<Object Id="7200" Name="IDB_CALCAPP_ADD_DOWN" MimeType="image/png">
 		<File>..\images\240x320\common\Calculator\IMAGE_CALC_ADD_DOWN.png</File>
 	</Object>
@@ -734,7 +668,7 @@
 		<File>..\images\240x320\common\dialer\dialer_pund.png</File>
 	</Object>
 	<Object Id="7313" Name="IDB_DIALER_ADD" MimeType="image/png">
-	<File>..\images\240x320\common\dialer\dialeradd.png</File>
+		<File>..\images\240x320\common\dialer\dialeradd.png</File>
 	</Object>
 	<Object Id="7314" Name="IDB_DIALER_CALL" MimeType="image/png">
 		<File>..\images\240x320\common\dialer\dialercall.png</File>
@@ -782,7 +716,7 @@
 		<File>..\images\240x320\common\dialer\dialer_pund_sel.png</File>
 	</Object>
 	<Object Id="7329" Name="IDB_DIALER_SEL_ADD" MimeType="image/png">
-	<File>..\images\240x320\common\dialer\dialer_add.png</File>
+		<File>..\images\240x320\common\dialer\dialer_add.png</File>
 	</Object>
 	<Object Id="7330" Name="IDB_DIALER_SEL_CALL" MimeType="image/png">
 		<File>..\images\240x320\common\dialer\dialer_call.png</File>

@@ -1155,6 +1155,8 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
                     ISHELL_CloseApplet( pMe->m_pShell, FALSE);
                     return TRUE;
                 default:
+				{
+					MSG_FATAL("FmRadio_RouteDialogEvent..............",0,0,0);
 					if (wParam == AVK_CLR)
 					{
 						eCode = EVT_KEY;
@@ -1172,7 +1174,8 @@ static boolean FmRadio_HandleEvent(IFmRadio *pi,
 						}
 					}
 					return FmRadio_RouteDialogEvent(pMe,eCode,wParam,dwParam);
-                    break;
+                }
+                break;
             }
         }
         default:

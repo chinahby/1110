@@ -355,42 +355,42 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
                                      uint32   dwParam
 )
 {
-
-    switch (eCode)
-    {
 #ifdef FEATURE_LCD_TOUCH_ENABLE
-		case  EVT_PEN_UP:
-		{
-			int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
-			int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-			AEERect bottomBarRect;
-			//int ht;
-			int nBarH ;
-			AEEDeviceInfo devinfo;
-			nBarH = GetBottomBarHeight(pMe->m_pDisplay);
-			
-			MEMSET(&devinfo, 0, sizeof(devinfo));
-			ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
-			SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
-			MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
-			
-			if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+			if(eCode == EVT_PEN_UP)
 			{
-				if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
-				{						
-					eCode = EVT_KEY;
-					wParam = AVK_CLR;
-				}
-				else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
-				{						
-					
-					eCode = EVT_KEY;
-					wParam = AVK_SELECT;
-					MSG_FATAL("AVK_SELECT",0,0,0);
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+				
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
+				
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+					{						
+						eCode = EVT_KEY;
+						wParam = AVK_CLR;
+					}
+					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
+					{						
+						
+						eCode = EVT_KEY;
+						wParam = AVK_SELECT;
+						MSG_FATAL("AVK_SELECT",0,0,0);
+					}
 				}
 			}
-		}
 #endif
+    switch (eCode)
+    {
+		
         case EVT_DIALOG_INIT:
         {
             pMe->drawRefreshListPrompt  = FALSE;
@@ -481,9 +481,11 @@ static boolean  HandleFmRadioMainDialogEvent(CFmRadio *pMe,
         case EVT_GSENSOR_SHAKE:
         case EVT_KEY:
         {
-
+			
+			
             if( handleKeyEvent( pMe, wParam, dwParam))
             {
+            	MSG_FATAL("handleKeyEvent.......TRUE",0,0,0);
                 return TRUE;
             }
         }

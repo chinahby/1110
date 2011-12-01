@@ -2392,42 +2392,41 @@ static boolean  dialog_handler_of_state_record_list( Recorder* pme, AEEEvent evt
 #if defined( FEATURE_RECORDER_RENAME)
 	static AECHAR text[RECORDER_FILE_NAME_LENGHT + 8] = { 0};
 #endif
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+		if(evt == EVT_PEN_UP)
+		{
+			int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+			int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+			AEERect bottomBarRect;
+			//int ht;
+			int nBarH ;
+			AEEDeviceInfo devinfo;
+			nBarH = GetBottomBarHeight(pme->m_pDisplay);
+			
+			MEMSET(&devinfo, 0, sizeof(devinfo));
+			ISHELL_GetDeviceInfo(pme->m_pShell, &devinfo);
+			SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+			MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
+			
+			if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+			{
+				if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+				{						
+					evt = EVT_KEY;
+					wParam = AVK_CLR;
+				}
+				else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
+				{						
+					
+					evt = EVT_KEY;
+					wParam = AVK_SELECT;
+				}
+			}
+		}
+#endif
 
 	switch (evt)
 	{
-
-		#ifdef FEATURE_LCD_TOUCH_ENABLE
-        case  EVT_PEN_UP:
-			{
-				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
-				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-				AEERect bottomBarRect;
-				//int ht;
-				int nBarH ;
-				AEEDeviceInfo devinfo;
-				nBarH = GetBottomBarHeight(pme->m_pDisplay);
-				
-				MEMSET(&devinfo, 0, sizeof(devinfo));
-				ISHELL_GetDeviceInfo(pme->m_pShell, &devinfo);
-				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
-				MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
-				
-				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
-				{
-					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
-					{						
-						evt = EVT_KEY;
-						wParam = AVK_CLR;
-					}
-					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
-					{						
-						
-						evt = EVT_KEY;
-						wParam = AVK_SELECT;
-					}
-				}
-        	}
-		#endif
 
 		case EVT_DIALOG_INIT:
 		{
@@ -3123,42 +3122,42 @@ static boolean  dialog_handler_of_state_set_as( Recorder* pme, AEEEvent evt, uin
 	// 16 set as sms ringtone faile
 	static int			subState = 0;
 	static uint16    	selected = 0;
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+	if(evt == EVT_PEN_UP)
+	{
+		int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+		int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+		AEERect bottomBarRect;
+		//int ht;
+		int nBarH ;
+		AEEDeviceInfo devinfo;
+		nBarH = GetBottomBarHeight(pme->m_pDisplay);
+		
+		MEMSET(&devinfo, 0, sizeof(devinfo));
+		ISHELL_GetDeviceInfo(pme->m_pShell, &devinfo);
+		SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+		MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
+		
+		if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+		{
+			if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+			{						
+				evt = EVT_KEY;
+				wParam = AVK_CLR;
+			}
+			else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
+			{						
+				
+				evt = EVT_KEY;
+				wParam = AVK_SELECT;
+				MSG_FATAL("AVK_SELECT",0,0,0);
+			}
+		}
+	}
+#endif
 
 	switch (evt)
 	{
-#ifdef FEATURE_LCD_TOUCH_ENABLE
-		case  EVT_PEN_UP:
-		{
-			int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
-			int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-			AEERect bottomBarRect;
-			//int ht;
-			int nBarH ;
-			AEEDeviceInfo devinfo;
-			nBarH = GetBottomBarHeight(pme->m_pDisplay);
-			
-			MEMSET(&devinfo, 0, sizeof(devinfo));
-			ISHELL_GetDeviceInfo(pme->m_pShell, &devinfo);
-			SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
-			MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
-			
-			if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
-			{
-				if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
-				{						
-					evt = EVT_KEY;
-					wParam = AVK_CLR;
-				}
-				else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
-				{						
-					
-					evt = EVT_KEY_PRESS;
-					wParam = AVK_SELECT;
-					MSG_FATAL("AVK_SELECT",0,0,0);
-				}
-			}
-		}
-#endif
 
 		case EVT_DIALOG_INIT:
 		{
@@ -3451,13 +3450,9 @@ int  Recorder_ShowMsgBoxDialog( Recorder *pMe,
 static boolean dialog_handler_of_state_play_msg( Recorder* pme, AEEEvent evt, uint16 wParam, uint32 dwParam)
 {
 	int media_scheduler;
-	
-    media_scheduler = app_media_scheduler();
-	switch (evt)
-	{
-		#ifdef FEATURE_LCD_TOUCH_ENABLE
-        case  EVT_PEN_UP:
-			{
+	#ifdef FEATURE_LCD_TOUCH_ENABLE
+        if(evt == EVT_PEN_UP)
+		{
 				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
 				AEERect bottomBarRect;
@@ -3485,8 +3480,12 @@ static boolean dialog_handler_of_state_play_msg( Recorder* pme, AEEEvent evt, ui
 						wParam = AVK_SELECT;
 					}
 				}
-        	}
-		#endif
+        }
+#endif
+    media_scheduler = app_media_scheduler();
+	switch (evt)
+	{
+		
 	    case EVT_DIALOG_START:
 		{
           repaint( TRUE);
