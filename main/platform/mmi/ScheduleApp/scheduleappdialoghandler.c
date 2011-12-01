@@ -1422,25 +1422,39 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
     static int     subState = 0;
     static boolean bRedrawDone = FALSE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
-
 	if (eCode == EVT_PEN_UP)
 	{
 		int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 		int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-		if ((wXPos>=0)&&(wXPos<59)&&(wYPos>=184)&&(wYPos<=202))
+		AEERect bottomBarRect;
+		//int ht;
+		int nBarH ;
+		AEEDeviceInfo devinfo;
+		nBarH = GetBottomBarHeight(pme->m_pDisplay);
+		
+		MEMSET(&devinfo, 0, sizeof(devinfo));
+		ISHELL_GetDeviceInfo(pme->m_pShell, &devinfo);
+		SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+		MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
+		
+		if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
 		{
-			boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_SELECT,0);
-			return rt;
-		}
-		else if ((wXPos>=59)&&(wXPos<118)&&(wYPos>=184)&&(wYPos<=202))
-		{
-			boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_INFO,0);
-			return rt;
-		}
-		else if ((wXPos>=118)&&(wXPos<=176)&&(wYPos>=184)&&(wYPos<=202))
-		{
-			boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_CLR,0);
-			return rt;
+			if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+			{						
+				boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_CLR,0);
+				return rt;
+			}
+			else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
+			{						
+				
+				boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_SELECT,0);
+				return rt;
+			}
+			else if((wXPos >= bottomBarRect.x +(bottomBarRect.dx/3)) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*2))
+			{
+				boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_INFO,0);
+				return rt;
+			}
 		}
 	}
 #endif
@@ -6595,14 +6609,27 @@ static boolean  dialog_handler_of_state_viewevent( CScheduleApp* pme,
 
 #ifdef FEATURE_LCD_TOUCH_ENABLE//ydc ADD FOR LCD TOUCH
 		case EVT_PEN_UP:
+		{
+			int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+			int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+			AEERect bottomBarRect;
+			//int ht;
+			int nBarH ;
+			AEEDeviceInfo devinfo;
+			nBarH = GetBottomBarHeight(pme->m_pDisplay);
+			
+			MEMSET(&devinfo, 0, sizeof(devinfo));
+			ISHELL_GetDeviceInfo(pme->m_pShell, &devinfo);
+			SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+			MSG_FATAL("wXPos=====%d,wYPos=========%d",wXPos,wYPos,0);
+			if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
 			{
-				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
-				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-				if ((117<wYPos)&&(wXPos<176)&&(wYPos>182)&&(wYPos<202))
-				{
+				if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+				{						
 					return  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_CLR,0);
 				}
 			}
+		}
 #endif
 
         case EVT_KEY:
