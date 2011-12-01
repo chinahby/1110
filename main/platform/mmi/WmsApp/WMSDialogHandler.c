@@ -17871,7 +17871,8 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             {
                 int result = 0;
                 MSG_FATAL("[IDD_VIEWMSG_MMS_Handler] Draw Play",0 ,0 , 0);
-                IMEDIA_Play(pMe->m_pMedia);
+                result = IMEDIA_Play(pMe->m_pMedia);
+                MSG_FATAL("IDD_VIEWMSG_MMS_Handler] IMEDIA_Play result=%d", result,0,0);
                 	//×¢²á²¥·Å»Øµ÷
 	            result = IMEDIA_RegisterNotify(pMe->m_pMedia, (PFNMEDIANOTIFY)WMSMMS_MediaNotify, pMe);
                 MSG_FATAL("IDD_VIEWMSG_MMS_Handler] EVT_DIALOG_STAR result=%d", result,0,0);
@@ -18076,6 +18077,11 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 if(pMe->m_CurrentState == PLAYER_PAUSE)
                                 {
                                     result = IMedia_Resume(pMe->m_pMedia);
+                                    if(result != SUCCESS)
+                                    {
+                                        result = IMedia_Stop(pMe->m_pMedia);
+                                        result = IMedia_Play(pMe->m_pMedia);
+                                    }                                    
                                 }
                                 else if(pMe->m_CurrentState == PLAYER_PLAY)
                                 {
@@ -18084,6 +18090,11 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 else if(pMe->m_CurrentState == PLAYER_STOP)
                                 {
                                     result = IMedia_Play(pMe->m_pMedia);
+                                    if(result != SUCCESS)
+                                    {
+                                        result = IMedia_Stop(pMe->m_pMedia);
+                                        result = IMedia_Play(pMe->m_pMedia);
+                                    }                                    
                                 }
                                 else
                                 {
