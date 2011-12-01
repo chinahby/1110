@@ -2446,6 +2446,7 @@ void WMS_MMS_DATA_Encode(WSP_MMS_ENCODE_DATA* pData)
     {
         if(index == 0 && STRLEN((char*)pData->fragment[index].hContentText) != 0)
         {
+            MSG_FATAL("STRLEN((char*)pData->fragment[index].hContentText) != 0",0,0,0);
             len = STRLEN("text/plain");
             STRNCPY((char*)pData->fragment[0].hContentType,"text/plain",len);
             len = STRLEN("1.txt");

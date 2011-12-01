@@ -17560,7 +17560,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 WSP_MMS_DATA *pContent = NULL;
                 MMSData* pMmsDataInfoCur = NULL;
                 char* pMimeType = NULL;
-                
+                boolean hasIStatic = FALSE;
                 uint8 ePDUType;
                 uint8 result = 0;
                 uint8 index = 0;
@@ -17589,7 +17589,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                 rc.dy = devinfo.cyScreen;
                 rc.dy -= (GetBottomBarHeight(pMe->m_pDisplay)*3);   
                 MSG_FATAL("IDD_VIEWMSG_MMS_Handler rc.x=%d, rc.y=%d,rc.dy=%d", rc.x, rc.y, rc.dy);
-                IMENUCTL_SetRect(pMenuCtl, &rc);
+                //IMENUCTL_SetRect(pMenuCtl, &rc);
                 IMENUCTL_SetProperties(pMenuCtl, MP_UNDERLINE_TITLE |MP_WRAPSCROLL| OEMMP_USE_MENU_INFO_SELECT);
                 IMENUCTL_SetOemProperties(pMenuCtl, OEMMP_DISTINGUISH_INFOKEY_SELECTKEY|OEMMP_USE_MENU_STYLE);
                 (void)IMENUCTL_DeleteAll(pMenuCtl); 
@@ -17691,7 +17691,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         char* pContentText = NULL;
                         rSize = pDecdata->message.mms_data.fragment[index].size;
                         
-                        MSG_FATAL("index=%d,hContentType=%s",index,(char*)(pDecdata->message.mms_data.fragment[index].hContentType),0);
+                        DBGPRINTF("index=%d,hContentType=%s",index,(char*)(pDecdata->message.mms_data.fragment[index].hContentType));
                         if(STRSTR((char*)pDecdata->message.mms_data.fragment[index].hContentEnCode,"utf-8"))
                         {
                             pContentText = (char*)MALLOC(rSize + 4);// 4 format token
@@ -17727,8 +17727,10 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             ISTATIC_SetBackGround(pStatic, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
                             DBGPRINTF("pFormatedText=%s, Status=%d", pFormatedText, Status);
                             FREE(pFormatedText);
+                            hasIStatic = TRUE;
                           //  pMe->m_ResData.textData.nCount++;
                         }
+                        MSG_FATAL("IMENUCTL_GetItemCount0=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
                         //break;
                     }
                     else if(pMimeType = MMS_WSP_MineType2MormalMimeType((const char*)pDecdata->message.mms_data.fragment[index].hContentType))
@@ -17764,6 +17766,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 }   
                                 IMENUCTL_SetItemText(pMenuCtl, index, NULL, 0, menuItemName);
                                 DBGPRINTF("Image menuItemName=%s, ItemCount=%d, wItemID=%d", menuItemName, IMENUCTL_GetItemCount(pMenuCtl), ai.wItemID);
+                                MSG_FATAL("IMENUCTL_GetItemCount1=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
                             }
                         }
                         else if(STRISTR(pMimeType, SOUND_MIME_BASE))
@@ -17794,6 +17797,7 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                             WmsLoadSoundFromData(pMe,
                                 pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].nResIndex,
                                 pMe->m_ResData.soundData.data[pMe->m_ResData.soundData.nIndex].type);
+                            MSG_FATAL("IMENUCTL_GetItemCount2=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
                         }
                         else if(STRISTR(pMimeType, VIDEO_MIME_BASE))
                         {
@@ -17837,6 +17841,11 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                        //ICONTROL_SetActive((IControl*)pListCtl,TRUE);
                     }
                 }
+                if(hasIStatic)
+                {
+                    IMENUCTL_SetRect(pMenuCtl, &rc);                   
+                }
+                MSG_FATAL("IMENUCTL_GetItemCount3=%d", IMENUCTL_GetItemCount(pMenuCtl),0,0);
                 pMe->m_CurrentState == PLAYER_IDLE;
                 MSG_FATAL("IDD_VIEWMSG_MMS_Handler init m_CurrentState=%d", pMe->m_CurrentState,0,0);
                 IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_VIEWMSG_MMS_MENU);
@@ -17880,34 +17889,68 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
             {
                 IMENUCTL_SetActive(pMenuCtl, TRUE);
                 IMENUCTL_Redraw(pMenuCtl);  
-                ISTATIC_Redraw(pStatic);
+                if(ISTATIC_IsActive(pStatic))
+                {
+                    ISTATIC_Redraw(pStatic);
+                }
                 MSG_FATAL("pMe->m_CurrentState=%d, soundData.nCount=%d",pMe->m_CurrentState,pMe->m_ResData.soundData.nCount,0);
-                if(pMe->m_ResData.soundData.nCount < 1)
+                if(pMe->m_eMBoxType == WMS_MB_OUTBOX_MMS)
                 {
-                    DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
-                    pMe->m_CurrentState == PLAYER_IDLE;
-                }
-                else if(pMe->m_CurrentState == PLAYER_IDLE)
-                {
-                    DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
-                }
-                else if(pMe->m_CurrentState == PLAYER_PAUSE)
-                {
-                    DRAW_BOTTOMBAR(BTBAR_OPTION_PLAY_BACK);
-                }
-                else if(pMe->m_CurrentState == PLAYER_PLAY)
-                {
-                    DRAW_BOTTOMBAR(BTBAR_OPTION_STOP_BACK);
-                }
-                else if(pMe->m_CurrentState == PLAYER_STOP)
-                {
-                    DRAW_BOTTOMBAR(BTBAR_OPTION_PLAY_BACK);
+                    if(pMe->m_ResData.soundData.nCount < 1)
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_BACK);
+                        pMe->m_CurrentState == PLAYER_IDLE;
+                    }      
+                    else if(pMe->m_CurrentState == PLAYER_IDLE)
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_BACK);
+                    }
+                    else if(pMe->m_CurrentState == PLAYER_PAUSE)
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_PLAY_BACK);
+                    }
+                    else if(pMe->m_CurrentState == PLAYER_PLAY)
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_STOP_BACK);
+                    }
+                    else if(pMe->m_CurrentState == PLAYER_STOP)
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_PLAY_BACK);
+                    }
+                    else
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_BACK);
+                    }                    
                 }
                 else
                 {
-                    DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                    if(pMe->m_ResData.soundData.nCount < 1)
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                        pMe->m_CurrentState == PLAYER_IDLE;
+                    }
+                    else if(pMe->m_CurrentState == PLAYER_IDLE)
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                    }
+                    else if(pMe->m_CurrentState == PLAYER_PAUSE)
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_PLAY_BACK);
+                    }
+                    else if(pMe->m_CurrentState == PLAYER_PLAY)
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_STOP_BACK);
+                    }
+                    else if(pMe->m_CurrentState == PLAYER_STOP)
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_PLAY_BACK);
+                    }
+                    else
+                    {
+                        DRAW_BOTTOMBAR(BTBAR_OPTION_BACK);
+                    }
                 }
-                IDISPLAY_Update(pMe->m_pDisplay);         
+               // IDISPLAY_Update(pMe->m_pDisplay);         
                 return TRUE;
             }
         
@@ -17994,29 +18037,32 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                         {
                             return TRUE;
                         }
-                        // 显示弹出菜单
-                        if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_MENUCTL, 
-                                (void **) &pMe->m_pMenu) == SUCCESS)
+                        if(pMe->m_eMBoxType == WMS_MB_INBOX_MMS)
                         {
-                        
-                            AEERect rc={0};
-                            AEERect Temprc={0};
+                            // 显示弹出菜单
+                            if (ISHELL_CreateInstance(pMe->m_pShell, AEECLSID_MENUCTL, 
+                                    (void **) &pMe->m_pMenu) == SUCCESS)
+                            {
                             
-                            // 动态添加菜单项
-                            MENU_ADDITEM(pMe->m_pMenu, IDS_REPLY);
-                            MENU_ADDITEM(pMe->m_pMenu, IDS_FORWARD);
-                            MENU_ADDITEM(pMe->m_pMenu, IDS_CALL);
-                            MENU_ADDITEM(pMe->m_pMenu, IDS_SAVE);    //Add By zzg 2010_09_11                     
-                            MENU_ADDITEM(pMe->m_pMenu, IDS_DELETE);
-                            // 设置菜单属性
-                            IMENUCTL_SetPopMenuRect(pMe->m_pMenu);
+                                AEERect rc={0};
+                                AEERect Temprc={0};
+                                
+                                // 动态添加菜单项
+                                MENU_ADDITEM(pMe->m_pMenu, IDS_REPLY);
+                                MENU_ADDITEM(pMe->m_pMenu, IDS_FORWARD);
+                                MENU_ADDITEM(pMe->m_pMenu, IDS_CALL);
+                                MENU_ADDITEM(pMe->m_pMenu, IDS_SAVE);    //Add By zzg 2010_09_11                     
+                                MENU_ADDITEM(pMe->m_pMenu, IDS_DELETE);
+                                // 设置菜单属性
+                                IMENUCTL_SetPopMenuRect(pMe->m_pMenu);
 
-                            IMENUCTL_SetProperties(pMe->m_pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
-                            IMENUCTL_SetBottomBarType(pMe->m_pMenu,BTBAR_SELECT_BACK);
-                            IMENUCTL_SetActive(pMenuCtl, FALSE);
-                            IMENUCTL_SetActive(pMe->m_pMenu, TRUE);
-                            
-                            IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                                IMENUCTL_SetProperties(pMe->m_pMenu, MP_UNDERLINE_TITLE|MP_WRAPSCROLL|MP_BIND_ITEM_TO_NUMBER_KEY);
+                                IMENUCTL_SetBottomBarType(pMe->m_pMenu,BTBAR_SELECT_BACK);
+                                IMENUCTL_SetActive(pMenuCtl, FALSE);
+                                IMENUCTL_SetActive(pMe->m_pMenu, TRUE);
+                                
+                                IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
+                            }
                         }
                         return TRUE;
                     
@@ -18042,6 +18088,11 @@ static boolean IDD_VIEWMSG_MMS_Handler(void *pUser, AEEEvent eCode, uint16 wPara
                                 else
                                 {
                                     result = IMedia_Stop(pMe->m_pMedia);
+                                }
+                                if(result != SUCCESS)
+                                {
+                                    result = IMedia_Stop(pMe->m_pMedia);
+                                    result = IMedia_Play(pMe->m_pMedia);
                                 }
                                 MSG_FATAL("IDD_VIEWMSG_MMS_Handler] State=%d, result=%d", pMe->m_CurrentState, result, 0);
                             }                           
