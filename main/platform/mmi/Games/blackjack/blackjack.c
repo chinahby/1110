@@ -179,6 +179,9 @@ when       who     what, where, why
 #define SetDeviceAttributeOn(pMe,devattr)   \
           ( pMe->m_deviceAttributeFlags |= devattr )
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#define PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
+#endif
 //#define SetDeviceAttributeOff(pMe,devattr) ( pMe->m_deviceAttributeFlags &= ~devattr )
 
 
@@ -826,6 +829,43 @@ static boolean BlackJack_HandleEvent(BlackJackApp *pMe,
       bEventHandled = BlackJack_HandleKey(pMe, wParam, dwParam);
       break;
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+      case EVT_PEN_UP:
+        if ( (pMe->m_pIStatic != NULL) && ISTATIC_HandleEvent(pMe->m_pIStatic,
+                                                              eCode,
+                                                              wParam,
+                                                              dwParam)) {
+           return FALSE;
+        }
+ 
+        if (pMe->m_pCurrentMenu != NULL)
+        {
+            AEERect rc;
+            int16 wXPos = (int16)AEE_GET_X(dwParam);
+            int16 wYPos = (int16)AEE_GET_Y(dwParam);
+            IMENUCTL_GetRect(pMe->m_pCurrentMenu,&rc); 
+            if(PT_IN_RECT(wXPos,wYPos,rc))      
+            {
+                if(( pMe->m_playState == state_showingContinueOrNewScreen) ||
+                   ( pMe->m_playState == state_betweenHands) ||
+                   ( pMe->m_playState == state_cashBelowBetMinimumScreen) ||
+                   ( pMe->m_playState == state_cashBelowBetMinimumScreen)
+                   )
+                {
+                     if (ISHELL_GetActiveDialog(pMe->a.m_pIShell)) 
+                     {
+                        (void) ISHELL_EndDialog(pMe->a.m_pIShell);
+                     }       
+                }
+                bEventHandled = IMENUCTL_HandleEvent(pMe->m_pCurrentMenu,
+                                                eCode,
+                                                wParam,
+                                                dwParam);
+            }
+        }        
+        break;
+#endif            
+
    default:
       bEventHandled = FALSE;
       break;
@@ -1027,7 +1067,6 @@ static boolean BlackJack_HandleCommand(BlackJackApp *pMe,
                                        uint16        wParam)
 {
    boolean bEventHandled = TRUE;
-
    switch (wParam) {
    case IDC_INSTRUCTIONS_OK:
       BlackJack_SetState(pMe, state_showingContinueOrNewScreen);
@@ -1119,7 +1158,6 @@ static boolean BlackJack_HandleKey(BlackJackApp *pMe,
                                    uint32        dwParam)
 {
    boolean bEventHandled = FALSE;
-
 #if defined( AEE_SIMULATOR)
     if( wParam == AVK_SOFT1)
 #else
@@ -1151,20 +1189,26 @@ static boolean BlackJack_HandleKey(BlackJackApp *pMe,
    // have an impatient user, cancel timer and call the function immediately.
    switch (pMe->m_playState) {
    case state_showingContinueOrNewScreen:
-      if (((AVKType) wParam == AVK_1) || ((AVKType) wParam == AVK_2)) {
+      if (((AVKType) wParam == AVK_1) || ((AVKType) wParam == AVK_2)) 
+      {
          // Remove the "show continue or new" IShell_Prompt
-         if (ISHELL_GetActiveDialog(pMe->a.m_pIShell)) {
+         if (ISHELL_GetActiveDialog(pMe->a.m_pIShell)) 
+         {
             (void) ISHELL_EndDialog(pMe->a.m_pIShell);
          }
 
-         if ((AVKType) wParam == AVK_1) {
+         if ((AVKType) wParam == AVK_1) 
+         {
             bEventHandled = BlackJack_HandleCommand(pMe, IDC_CONTINUE_GAME);
-         } else {
+         } 
+         else 
+         {
             bEventHandled = BlackJack_HandleCommand(pMe,
                                                     IDC_NEW_GAME_SHORT_TITLE);
          }
       }
-      if ((AVKType) wParam == AVK_CLR) {
+      if ((AVKType) wParam == AVK_CLR) 
+      {
           BlackJack_ShowOpeningScreen(pMe);
           pMe->m_prevPlayState = state_showingOpeningScreen;
           pMe->m_playState = state_showingOpeningScreen;
@@ -1173,15 +1217,20 @@ static boolean BlackJack_HandleKey(BlackJackApp *pMe,
       break;
 
    case state_betweenHands:
-      if (((AVKType) wParam == AVK_1) || ((AVKType) wParam == AVK_2)) {
+      if (((AVKType) wParam == AVK_1) || ((AVKType) wParam == AVK_2)) 
+        {
          // Remove the "between hands info" IShell_Prompt
-         if (ISHELL_GetActiveDialog(pMe->a.m_pIShell)) {
+         if (ISHELL_GetActiveDialog(pMe->a.m_pIShell)) 
+         {
             (void) ISHELL_EndDialog(pMe->a.m_pIShell);
          }
 
-         if ((AVKType) wParam == AVK_1) {
+         if ((AVKType) wParam == AVK_1) 
+         {
             bEventHandled = BlackJack_HandleCommand(pMe, IDC_DEAL);
-         } else {
+         } 
+         else 
+         {
             bEventHandled = BlackJack_HandleCommand(pMe, IDC_CHANGE_BET);
          }
       }
@@ -1311,11 +1360,13 @@ static boolean BlackJack_HandleKey(BlackJackApp *pMe,
    if ( (pMe->m_pIStatic != NULL) && ISTATIC_HandleEvent(pMe->m_pIStatic,
                                                          EVT_KEY,
                                                          wParam,
-                                                         dwParam)) {
+                                                         dwParam)) 
+   {
       return FALSE;
    }
 
-   if (!bEventHandled && (pMe->m_pCurrentMenu != NULL)) {
+   if (!bEventHandled && (pMe->m_pCurrentMenu != NULL)) 
+    {
       bEventHandled = IMENUCTL_HandleEvent(pMe->m_pCurrentMenu,
                                            EVT_KEY,
                                            wParam,

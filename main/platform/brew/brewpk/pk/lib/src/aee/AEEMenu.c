@@ -3009,6 +3009,7 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
 	int16 wYPos = (int16)AEE_GET_Y(dwParam);
 	//int nClickCount = AEE_POINTER_GET_CLICKCOUNT((const char *)dwParam);//wlh 不需要双击启动
 #endif //FEATURE_LCD_TOUCH_ENABLE 
+    MSG_FATAL("Menu_HandlePens, evtCode=0x%x, m_cls=%d",evtCode, pme->m_cls, 0);
    	switch( evtCode ){
 
 #ifndef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH		
@@ -3212,7 +3213,8 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
 	  	
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH 只对EVT_PEN_UP 的响应做处理，这里说的是发送事件回当前applet
 			AEECLSID  pCLSID = ISHELL_ActiveApplet (pme->m_pIShell);
-		//	if(pme->bottomBarType != BTBAR_NONE)
+            MSG_FATAL("Menu_HandlePens, EVT_PEN_UP",0,0,0);
+			if(pme->m_cls != AEECLSID_SOFTKEYCTL)
 		  	{
 			  	AEERect bottomBarRect;
 				//int ht;
@@ -3268,7 +3270,9 @@ static boolean Menu_HandlePens(CMenuCtl * pme, AEEEvent evtCode, uint16 wParam, 
 				  CMenuItem * pItem;
 #endif//FEATURE_LCD_TOUCH_ENABLE
                   uint16 wIdx;
+                  MSG_FATAL("Menu_HandlePens, AEECLSID_SOFTKEYCTL",0,0,0);
                   pme->m_ptTracker.cbHit = SK_HandlePen(pme, wXPos, wYPos, &pme->m_ptTracker.wData, &wIdx);
+                  Menu_SetSelbyIdx(pme, pme->m_ptTracker.wData, -1);//add by xuhui
                   /* Index returned above may not be correct if there are 
                   * duplicate item ids - Need to address this
                   */ 
@@ -6303,7 +6307,7 @@ static uint8 SK_HandlePen(CMenuCtl * pme, int16 wXPos, int16 wYPos, uint16 * pwE
    SKDrawItem *   pdi   = NULL;
    AEERect        rct;
    int            i;
-
+   MSG_FATAL("SK_HandlePen, Start, wXPos=%d, wYPos=%d, m_nVisibleItems=%d",wXPos,wYPos,pme->m_nVisibleItems);
    // Looking to Fill in the Visible Items and their rects
    SK_CalcLayout(pme);
    // Each item's rect is inside a fixed y boundary
@@ -6314,12 +6318,14 @@ static uint8 SK_HandlePen(CMenuCtl * pme, int16 wXPos, int16 wYPos, uint16 * pwE
       pdi = &pme->m_draw[i];
       rct.x = pdi->x;
       rct.dx = pdi->dx;
-
+      MSG_FATAL("SK_HandlePen x=%d, dx=%d, y=%d",rct.x, rct.dx, rct.y);
+      MSG_FATAL("SK_HandlePen dy=%d", rct.dy,0,0);
       if(PT_IN_RECT(wXPos,wYPos,rct)){
          int nIdx;
          // Hit! Now store the selection item for later use.
          CMenuItem * pItem = GetItemByIDEx(pme->m_pItemList, pdi->pmi->nItemID, NULL, &nIdx);
          if( pItem ){
+            MSG_FATAL("SK_HandlePen nIdx=%d, nItemID=%d", (uint16)nIdx, pdi->pmi->nItemID, 0);
             *pwIndex  = (uint16)nIdx;
             *pwExtraData = pdi->pmi->nItemID;
             return PTRCK_HIT_ITEM;
