@@ -1087,6 +1087,7 @@ boolean camsensor_SETi_SID130B_snapshot_config
 	MSG_FATAL("camsensor_SETi_SID130B_snapshot_config!",0,0,0);
 
 	camsensor_params->format = format_snapshot;
+ 	camsensor_params->discardFirstFrame =  FALSE;
  	
 	camsensor_params->camsensor_width  = \
 			camsensor_params->full_size_width;
