@@ -533,7 +533,9 @@ typedef struct _CScheduleApp
     boolean             m_bshowEventDetail; //modify for snooze and see detail when alerting
     boolean             m_bRepaint;  //modify for phone die in display loading menu when incoming call
     boolean             m_bDeferred; //for phone die in display loading menu when incoming call
-    
+    AEERect  rc_year;
+	AEERect  rc_month;
+	AEERect  rc_day;
     IAnnunciator *m_pIAnn;
 } CScheduleApp;
 

@@ -1785,6 +1785,10 @@ static boolean dialog_handler_of_state_viewmonth( CScheduleApp* pme,
                 case AVK_CLR:
                     CLOSE_DIALOG(DLGRET_CANCELED)
                     return TRUE;
+				case AVK_INFO:
+					(void)IDATECTL_SetJulianDay(pDatePick,(int32)pme->m_CalMgr.m_lToday);
+                    repaint(pme, TRUE);
+					return TRUE;
             }
         }
         break;
@@ -2417,7 +2421,7 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
         case EVT_USER_REDRAW:
         {
             AEEDeviceInfo di;
-            AEERect rc,rc_year,rc_month,rc_day;
+            AEERect rc;
             uint16  FontHeight;
             RGBVAL nOldFontColor;
 
@@ -2555,9 +2559,9 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
 	                	//SETAEERECT(&rc_year, x, y, FontHeight*2, FontHeight);
 	                	//SETAEERECT(&rc_month, x + FontHeight * 3, y, FontHeight, FontHeight);
 	                	//SETAEERECT(&rc_day, x + FontHeight * 5, y, FontHeight, FontHeight);
-	                	SETAEERECT(&rc_day, x, y, FontHeight, FontHeight);
-	                	SETAEERECT(&rc_month, x + FontHeight * 2, y, FontHeight, FontHeight);
-	                	SETAEERECT(&rc_year, x + FontHeight * 4, y, FontHeight*2, FontHeight);    
+	                	SETAEERECT(&pme->rc_day, x, y, FontHeight, FontHeight);
+	                	SETAEERECT(&pme->rc_month, x + FontHeight * 2, y, FontHeight, FontHeight);
+	                	SETAEERECT(&pme->rc_year, x + FontHeight * 4, y, FontHeight*2, FontHeight);    
 	                	}
 	                	break;
 	                case OEMNV_DATEFORM_MDY:
@@ -2565,9 +2569,9 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
 	                	//SETAEERECT(&rc_year, x, y, FontHeight*2, FontHeight);
 	                	//SETAEERECT(&rc_month, x + FontHeight * 3, y, FontHeight, FontHeight);
 	                	//SETAEERECT(&rc_day, x + FontHeight * 5, y, FontHeight, FontHeight);
-	                	SETAEERECT(&rc_month, x, y, FontHeight, FontHeight);
-	                	SETAEERECT(&rc_day, x + FontHeight * 2, y, FontHeight, FontHeight);
-	                	SETAEERECT(&rc_year, x + FontHeight * 4, y, FontHeight*2, FontHeight);    
+	                	SETAEERECT(&pme->rc_month, x, y, FontHeight, FontHeight);
+	                	SETAEERECT(&pme->rc_day, x + FontHeight * 2, y, FontHeight, FontHeight);
+	                	SETAEERECT(&pme->rc_year, x + FontHeight * 4, y, FontHeight*2, FontHeight);    
 	                	}
 	                	break;
 	                case OEMNV_DATEFORM_YMD:
@@ -2575,9 +2579,9 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
 	                	//SETAEERECT(&rc_year, x, y, FontHeight*2, FontHeight);
 	                	//SETAEERECT(&rc_month, x + FontHeight * 3, y, FontHeight, FontHeight);
 	                	//SETAEERECT(&rc_day, x + FontHeight * 5, y, FontHeight, FontHeight);
-	                	SETAEERECT(&rc_year, x, y, FontHeight*2, FontHeight);
-	                	SETAEERECT(&rc_month, x + FontHeight * 3, y, FontHeight, FontHeight);
-	                	SETAEERECT(&rc_day, x + FontHeight * 5, y, FontHeight, FontHeight);    
+	                	SETAEERECT(&pme->rc_year, x, y, FontHeight*2, FontHeight);
+	                	SETAEERECT(&pme->rc_month, x + FontHeight * 3, y, FontHeight, FontHeight);
+	                	SETAEERECT(&pme->rc_day, x + FontHeight * 5, y, FontHeight, FontHeight);    
 	                	}
 	                	break;
 	                default:
@@ -2595,14 +2599,14 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                     clrFrame = clrNosel; 
                     clrFill =  RGB_WHITE;
                 }                
-                IDISPLAY_DrawRect(pme->m_pDisplay, &rc_year, clrFrame, clrFill, IDF_RECT_FRAME | IDF_RECT_FILL);
+                IDISPLAY_DrawRect(pme->m_pDisplay, &pme->rc_year, clrFrame, clrFill, IDF_RECT_FRAME | IDF_RECT_FILL);
                 IDISPLAY_DrawText(pme->m_pDisplay, 
                                     AEE_FONT_NORMAL, 
                                     pme->wstrYear, 
                                     -1, 
-                                    rc_year.x, 
-                                    rc_year.y, 
-                                    &rc_year, 
+                                    pme->rc_year.x, 
+                                    pme->rc_year.y, 
+                                    &pme->rc_year, 
                                     IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT);
 
                 //month
@@ -2616,14 +2620,14 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                     clrFrame = clrNosel;
                     clrFill  = RGB_WHITE;
                 }
-                IDISPLAY_DrawRect(pme->m_pDisplay, &rc_month, clrFrame, clrFill, IDF_RECT_FRAME | IDF_RECT_FILL);
+                IDISPLAY_DrawRect(pme->m_pDisplay, &pme->rc_month, clrFrame, clrFill, IDF_RECT_FRAME | IDF_RECT_FILL);
                 IDISPLAY_DrawText(pme->m_pDisplay,
                                     AEE_FONT_NORMAL,
                                     pme->wstrMonth,
                                     -1,
-                                    rc_month.x,
-                                    rc_month.y,
-                                    &rc_month,
+                                    pme->rc_month.x,
+                                    pme->rc_month.y,
+                                    &pme->rc_month,
                                     IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT);
 
                 //day
@@ -2637,14 +2641,14 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
                     clrFrame = clrNosel;
                     clrFill  = RGB_WHITE;
                 }
-                IDISPLAY_DrawRect(pme->m_pDisplay, &rc_day, clrFrame, clrFill, IDF_RECT_FRAME | IDF_RECT_FILL);
+                IDISPLAY_DrawRect(pme->m_pDisplay, &pme->rc_day, clrFrame, clrFill, IDF_RECT_FRAME | IDF_RECT_FILL);
                 IDISPLAY_DrawText(pme->m_pDisplay,
                                     AEE_FONT_NORMAL,
                                     pme->wstrDay,
                                     -1,
-                                    rc_day.x,
-                                    rc_day.y,
-                                    &rc_day,
+                                    pme->rc_day.x,
+                                    pme->rc_day.y,
+                                    &pme->rc_day,
                                     IDF_ALIGN_CENTER | IDF_ALIGN_MIDDLE | IDF_TEXT_TRANSPARENT);
 
             }
@@ -2662,58 +2666,50 @@ static boolean  dialog_handler_of_state_gotodate( CScheduleApp* pme,
 		case EVT_PEN_UP:
 			{
 				int i;
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
 				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-				int xy[][4] = {
-					{24,120,73,140},     // Year
-					{82,120,113,140},    // Month 
-					{122,120,151,140},   // Day
-					{0,184,59,202},    //AVK_SELECT
-					{60,184,118,202},  //AVK_INFO
-					{119,184,176,202}, //AVK_CLR
-				};
-				for( i = 0; i < 6; i ++)
+				
+				nBarH = GetBottomBarHeight(pme->m_pDisplay);
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pme->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, devinfo.cyScreen);
+				if ((wXPos>0)&&(wXPos<devinfo.cxScreen/3)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
 				{
-					if( wXPos >= xy[i][0] &&
-						wXPos <= xy[i][2] &&
-						wYPos >= xy[i][1] &&
-						wYPos <= xy[i][3]
-					)
-					{
-						if (i == 0)
-						{
-							pme->curSel = DATE_SEL_YEAR;
-						}
-						else if (i == 1)
-						{
-							pme->curSel = DATE_SEL_MONTH;
-						}
-						else if (i == 2)
-						{
-							pme->curSel = DATE_SEL_DAY;
-						}
-						else if (i == 3)
-						{
-							boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_SELECT,0);
-							return rt;
-						}
-						else if (i == 4)
-						{
-							boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_INFO,0);
-							return rt;
-						}
-						else if (i == 5)
-						{
-							boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_CLR,0);
-							return rt;
-						}
-						(void) ISHELL_PostEvent(pme->m_pShell,
-							AEECLSID_SCHEDULEAPP,
-							EVT_USER_REDRAW,
-							NULL,
-							TRUE);
-					}
+					boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_SELECT,0);
+					return rt;
 				}
+				else if ((wXPos>devinfo.cxScreen/3)&&(wXPos<(devinfo.cxScreen/3)*2)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+				{
+					boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_INFO,0);
+					return rt;
+				}
+				else if ((wXPos>(devinfo.cxScreen/3)*2)&&(wXPos<devinfo.cxScreen)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+				{
+					boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_CLR,0);
+					return rt;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pme->rc_year))
+				{
+					pme->curSel = DATE_SEL_YEAR;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pme->rc_month))
+				{
+					pme->curSel = DATE_SEL_MONTH;
+				}
+				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, pme->rc_day))
+				{
+					pme->curSel = DATE_SEL_DAY;
+				}
+				MSG_FATAL("wXPos==========%d,wYPos====%d",wXPos,wYPos,0);
+				(void) ISHELL_PostEvent(pme->m_pShell,
+					AEECLSID_SCHEDULEAPP,
+					EVT_USER_REDRAW,
+					NULL,
+					TRUE);
+
 			}
 			return TRUE;
 #endif    
@@ -4734,21 +4730,39 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
 
 				case EVT_PEN_UP:
 				{
+					
 					int i;
+					AEEDeviceInfo devinfo;
+					int nBarH ;
+					AEERect rc;
 					int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 					int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
 					int xy[][4] = {
-						{20,55,156,75},		// Menu1
-						{0,55,20,75},		// ×ó
-						{156,55,176,75},	// ÓÒ
-						{0,102,176,122},	// Menu2
-						{0,102,20,122}, 	// ×ó
-						{156,102,176,122},	// ÓÒ 
-						{0,153,176,173},	// Menu3
-						{0,184,60,202}, 	// AVK_SELECT
-						{116,184,176,202}	// AVK_CLR
-					};
-					for( i = 0; i < 9; i ++)
+							{20,55,156,75},		// Menu1
+							{0,38,20,75},		// ×ó
+							{156,55,176,75},	// ÓÒ
+							{0,102,176,122},	// Menu2
+							{0,102,20,122}, 	// ×ó
+							{156,102,176,122},	// ÓÒ 
+							{0,153,176,173},	// Menu3
+							
+						};
+					nBarH = GetBottomBarHeight(pme->m_pDisplay);
+					MEMSET(&devinfo, 0, sizeof(devinfo));
+					ISHELL_GetDeviceInfo(pme->m_pShell, &devinfo);
+					SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, devinfo.cyScreen);
+					if ((wXPos>0)&&(wXPos<devinfo.cxScreen/3)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+					{
+						boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_SELECT,NEVT_KEY_PRESSS);
+						return rt;
+					}
+					else if ((wXPos>(devinfo.cxScreen/3)*2)&&(wXPos<devinfo.cxScreen)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+					{
+						boolean rt =  ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_CLR,NEVT_KEY_PRESSS);
+						return rt;
+					}
+					MSG_FATAL("wXPos==========%d,wYPos====%d",wXPos,wYPos,0);
+					for( i = 0; i < 7; i ++)
 					{
 						if( wXPos >= xy[i][0] &&
 							wXPos <= xy[i][2] &&
@@ -4789,16 +4803,7 @@ static boolean  dialog_handler_of_state_setup( CScheduleApp* pme,
 							{
 								currentItem = 2;
 							}
-							else if (i == 7)
-							{
-								int rt = ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_SELECT,NEVT_KEY_PRESSS);
-								return rt;
-							}
-							else if (i == 8)
-							{
-								int rt = ISHELL_PostEvent(pme->m_pShell,AEECLSID_SCHEDULEAPP,EVT_USER,AVK_CLR,NEVT_KEY_PRESSS);
-								return rt;
-							}
+							
 						}
 					}
 					repaint(pme, TRUE);
