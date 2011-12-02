@@ -64,9 +64,6 @@ $Header: //depot/asic/msm6550/drivers/camsensor/camsensor_ SIV121A_ycbcr.c#3 $ $
 #define SIV121A_MAX_CONTRAST   4
 #define SIV121A_MIN_CONTRAST   0
 
-#define RETURN_ON_FALSE(rc) if ((rc)==FALSE) return FALSE  ///lee
-
-
 /* From the logic analyzer measurements */
 #define OV_SIV121A_YCBCR_FULL_SIZE_WIDTH           600//640
 #define OV_SIV121A_YCBCR_FULL_SIZE_HEIGHT          480
