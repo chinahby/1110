@@ -168,6 +168,10 @@ when       who     what, where, why
 //#define SetVisible(pb)        SET_BBFLAG(pb,BF_VISIBLE)
 
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#define PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
+#endif
+
 /*===========================================================================
 
                     TYPE DECLARATIONs
@@ -612,11 +616,13 @@ static boolean Brick_HandleEvent(IApplet *po,
    case EVT_COMMAND:
       switch (wParam) {
       case IDC_EXIT:           // CLR during main screen...
+         MSG_FATAL("Brick_HandleEvent EVT_COMMAND IDC_EXIT",0,0,0);
          Brick_SetHighScore(pme);
          (void) ISHELL_CloseApplet(pme->a.m_pIShell, FALSE);
          break;
 
       case IDC_NEW_GAME:
+         MSG_FATAL("Brick_HandleEvent EVT_COMMAND IDC_NEW_GAME",0,0,0);
          if (pme->m_bStarted)
          {
             pme->m_st.nState = BO_RESTART;
@@ -625,6 +631,7 @@ static boolean Brick_HandleEvent(IApplet *po,
 
          //lint -fallthrough
       case IDC_RESUME:
+         MSG_FATAL("Brick_HandleEvent EVT_COMMAND IDC_RESUME",0,0,0);
          Brick_Start(pme);
          break;
 
@@ -632,6 +639,39 @@ static boolean Brick_HandleEvent(IApplet *po,
          return FALSE;
       }
       return TRUE;
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+    case EVT_PEN_UP:
+    {
+        AEERect rc;
+        int16 wXPos = (int16)AEE_GET_X(dwParam);
+        int16 wYPos = (int16)AEE_GET_Y(dwParam);
+        IMENUCTL_GetRect(pme->m_pISoftkey,&rc); 
+        if(pme->m_pISoftkey != NULL)
+        {
+            if(PT_IN_RECT(wXPos,wYPos,rc)) 
+            {
+                if (pme->m_st.nState != BO_PLAYING)
+                {
+                    if ( (pme->m_pIStatic != NULL) && ISTATIC_HandleEvent(pme->m_pIStatic,
+                                                                          eCode,
+                                                                          wParam,
+                                                                          dwParam)) {
+                       return TRUE;
+                    }
+                    
+                    if ( (pme->m_pISoftkey != NULL) && IMENUCTL_HandleEvent(pme->m_pISoftkey,
+                                                                            eCode,
+                                                                            wParam,
+                                                                            dwParam)) {
+                       return TRUE;
+                    }
+
+                }
+            }
+        }
+    }
+#endif            
 
    case EVT_KEY:
 
