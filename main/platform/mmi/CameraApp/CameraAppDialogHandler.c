@@ -754,7 +754,7 @@ static boolean CameraApp_CameraPhotoModeHandleEvent(CCameraApp *pMe, AEEEvent eC
 static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
     int   nCameraSelfTime = 0;
-    
+    MSG_FATAL("CameraApp_PreviewHandleEvent eCode=0x%x, wParam=0x%x",eCode, wParam, 0);
     switch(eCode) 
     {
         case EVT_DIALOG_INIT:
@@ -928,6 +928,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             return TRUE;
 
         case EVT_KEY:
+            MSG_FATAL("CameraApp_PreviewHandleEvent EVT_KEY wParam=0x%x", wParam,0,0);
             switch(wParam)
             {
                 case AVK_SELECT: 
@@ -952,7 +953,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             {
                 return TRUE;
             }
-            
+            MSG_FATAL("CameraApp_PreviewHandleEvent EVT_KEY_PRESS wParam=0x%x", wParam,0,0);
             switch(wParam){
             case AVK_END:
                 ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
@@ -1109,6 +1110,60 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
             } 
             return TRUE;
 
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+                MSG_FATAL("CameraApp_PreviewHandleEvent EVT_PEN_UP, wXPos=%d, wYPos=%d",wXPos, wYPos, 0);
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+                    IImage *pImage = NULL;
+                    AEEImageInfo myInfo;
+                    MSG_FATAL("CameraApp_PreviewHandleEvent TOUCH_PT_IN_RECT",0, 0, 0);
+                    pImage = ISHELL_LoadResImage(pMe->m_pShell,
+                                             CAMERAAPP_IMAGE_RES_FILE,
+                                             IDI_MID_CAMERA);
+                    if(pImage != NULL)
+                    {
+                        IIMAGE_GetInfo(pImage, &myInfo);
+                        IIMAGE_Release(pImage);
+                        pImage = NULL;
+                    }
+                    
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  CameraApp_PreviewHandleEvent(pMe, EVT_KEY, AVK_SELECT, 0);
+                        MSG_FATAL("CameraApp_PreviewHandleEvent left rt=%d",rt, 0, 0);
+						return rt;
+					}
+					else if(wXPos >= (pMe->m_cxWidth - myInfo.cx)/2   && wXPos < (pMe->m_cxWidth - myInfo.cx)/2+myInfo.cx )//ÖÐ
+					{
+						 boolean rt = CameraApp_PreviewHandleEvent(pMe, EVT_KEY_PRESS, AVK_INFO, 0);
+                         MSG_FATAL("CameraApp_PreviewHandleEvent mid rt=%d",rt, 0, 0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//ÓÒ
+					{						
+						 boolean rt = CameraApp_PreviewHandleEvent(pMe, EVT_KEY_PRESS, AVK_CLR, 0);
+                         MSG_FATAL("CameraApp_PreviewHandleEvent right rt=%d",rt, 0, 0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif            
+
         case EVT_NO_CLOSEBACKLIGHT:
             return TRUE;
             
@@ -1141,7 +1196,7 @@ static boolean CameraApp_PreviewHandleEvent(CCameraApp *pMe, AEEEvent eCode, uin
 static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
     IMenuCtl *popMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg, IDC_CAMERA_CFGMENU);    
-    
+    MSG_FATAL("CameraApp_CameraCFGHandleEvent eCode=0x%x, wParam=0x%x",eCode,wParam,0);
     if(popMenu == NULL)
     {
         return FALSE;
@@ -1323,7 +1378,49 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
             } 
         case EVT_NO_CLOSEBACKLIGHT:
             return TRUE;
-            
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+                MSG_FATAL("CameraApp_PreviewHandleEvent EVT_PEN_UP, wXPos=%d, wYPos=%d",wXPos, wYPos, 0);
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+                    IImage *pImage = NULL;
+                    AEEImageInfo myInfo;
+                    MSG_FATAL("CameraApp_CameraCFGHandleEvent TOUCH_PT_IN_RECT",0, 0, 0);
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  IMENUCTL_HandleEvent(popMenu,eCode,wParam,dwParam);
+                        uint16 index = IMENUCTL_GetSel( popMenu );
+                        rt = CameraApp_RoutePopMenuCommandEvent(pMe, index);
+#ifdef FEATURE_DSP                        
+                        CameraApp_Update(pMe); 
+#endif
+                        MSG_FATAL("CameraApp_CameraCFGHandleEvent left rt=%d index=%d",rt, index, 0);
+						return rt;
+					}
+                    if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//ÓÒ
+					{						
+						 boolean rt = CameraApp_CameraCFGHandleEvent(pMe, EVT_KEY_PRESS, AVK_CLR, 0);
+                         MSG_FATAL("CameraApp_CameraCFGHandleEvent right rt=%d",rt, 0, 0);
+						 return rt;
+					}
+				}
+
+			}
+			break;
+#endif              
         default:
             break;
     }

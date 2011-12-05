@@ -899,7 +899,10 @@ static boolean CameraApp_HandleEvent(ICameraApp  *pi,
         case EVT_KEY_PRESS:
         case EVT_KEY_RELEASE:
         case EVT_KEY:
-        case EVT_COMMAND:         
+        case EVT_COMMAND:    
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+		case EVT_PEN_UP:
+#endif          
             if(!pMe->m_bAppIsReady)
             {
                 return TRUE;
