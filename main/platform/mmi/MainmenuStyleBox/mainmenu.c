@@ -1319,7 +1319,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 							break;
 						}
 					}
-					if(pMe->m_PenPos>0)
+					if(pMe->m_PenPos>-1)
 					{
 						nRow = (pMe->m_PenPos)/MAX_MATRIX_COLS;
 						nCol = (pMe->m_PenPos)%MAX_MATRIX_COLS;
@@ -1376,7 +1376,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 				uint16 nCol = 0;
 				uint16 j    = 0;
 				int baseBottom = BASE_BOTTON_TITLE;
-				MSG_FATAL("EVT_PEN_UP................",0,0,0);
+				MSG_FATAL("EVT_PEN_UP m_bmove=%d",pMe->m_bmove,0,0);
 				for(i=0;i<MAX_MATRIX_ITEMS;i++)
 				{
 					rc.x = pMe->m_Icondefault_Pt[i].x;
@@ -1395,7 +1395,7 @@ static boolean MainMenu_IconMenuHandler(MainMenu *pMe, AEEEvent eCode, uint16 wP
 						break;
 					}
 				}
-				if((pMe->m_PenPos>0)&&(!pMe->m_bmove))
+				if((pMe->m_PenPos != -1)&&(!pMe->m_bmove))
 				{
 					StartApplet( pMe,pMe->m_IconTitle[pMe->m_PenPos]);
 					pMe->m_PenPos = -1;
@@ -1594,8 +1594,8 @@ static void DrawMatrix(MainMenu *pMe)
             pMe->m_pImageIcon[i] = ISHELL_LoadImage(pMe->m_pShell,
                                                     ICON_ANI[i]);
         }
-        MSG_FATAL("pMe->m_Icondefault_Pt[i].x======%d",pMe->m_Icondefault_Pt[i].x,0,0);
-		MSG_FATAL("pMe->m_Icondefault_Pt[i].y======%d",pMe->m_Icondefault_Pt[i].y,0,0);
+        MSG_FATAL("pMe->m_Icondefault_Pt[%d].x======%d",i,pMe->m_Icondefault_Pt[i].x,0);
+		MSG_FATAL("pMe->m_Icondefault_Pt[%d].y======%d",i,pMe->m_Icondefault_Pt[i].y,0);
         if (pMe->m_pImageIcon[i] != NULL)
         {
             IIMAGE_Draw(pMe->m_pImageIcon[i],
