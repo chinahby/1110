@@ -188,6 +188,24 @@ Qualcomm Confidential and Proprietary
 #define CAM_PARM_AF_INFO            (CAM_PARM_CTL_BASE + 129) // [Set/Get] Set the auto focus info
 #define CAM_PARM_BESTSHOT           (CAM_PARM_CTL_BASE + 130)// [Set/Get] Best shot mode
 
+#define CAM_PARM_CURRENT_SENSOR		(CAM_PARM_QCOM_RESERVED_BEGIN + 1)// [Set/Get] Current sensor
+/*
+** 保持和camsensor_sensor_model_pair_type一致
+*/
+typedef enum
+{
+	CAM_PARM_ID_PAIR_START=0,
+	CAM_PARM_ID_PAIR_SIV121A_SID130B = CAM_PARM_ID_PAIR_START,
+	CAM_PARM_ID_PAIR_SID130B_SIV121A,
+	CAM_PARM_ID_PAIR_SIV121D_SID130B,
+	CAM_PARM_ID_PAIR_SID130B_SIV121D,
+	CAM_PARM_ID_PAIR_SP0838_SP0A18,
+	CAM_PARM_ID_PAIR_SP0A18_SP0838,
+	CAM_PARM_ID_PAIR_SIV120A_SID130B,
+	CAM_PARM_ID_PAIR_SID130B_SIV120A,
+	CAM_PARM_ID_PAIR_SIV121A_SIV121A,
+	CAM_PARM_ID_PAIR_END
+}cam_sensor_model_pair_type;
 //
 // Reference values for CAM_PARM_SIZE:
 //
@@ -656,6 +674,10 @@ AEEINTERFACE(ICamera)
 #define ICAMERA_IsMovie(p, pb)                  ICAMERA_GetParm(p, CAM_PARM_IS_MOVIE,     (int32 *)(pb),                   NULL)
 #define ICAMERA_GetSizeList(p, ppl, pb)         ICAMERA_GetParm(p, CAM_PARM_SIZE_LIST,    (int32 *)(ppl),                  (int32 *)(pb))
 #define ICAMERA_GetDisplaySizeList(p, ppl, pb)  ICAMERA_GetParm(p, CAM_PARM_DISPLAY_SIZE_LIST,(int32 *)(ppl),              (int32 *)(pb))
+
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+#define ICAMERA_GetCurrentSensor(p, ppl, pb)    ICAMERA_GetParm(p, CAM_PARM_CURRENT_SENSOR,(int32 *)(ppl),                 (int32 *)(pb))
+#endif
 
 static __inline int ICAMERA_SetFlashCtl(ICamera *me, int32 nFlashType, int32 nFlashLevel, int32 nCustomLevel)
 {

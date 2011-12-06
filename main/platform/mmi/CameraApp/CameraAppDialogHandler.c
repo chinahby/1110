@@ -3468,17 +3468,34 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     AEESize displaySize, captureSize; 
     int16 quality = 0;
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
-	if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_ONE )
+	cam_sensor_model_pair_type sensor_type;
+
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+	ICAMERA_GetCurrentSensor(pMe->m_pCamera,&sensor_type,&sensor_type);
+#endif
+
+	MSG_FATAL("CameraApp_CPreviewStart sensor_type=%d",sensor_type,0,0);
+	if ( sensor_type == CAM_PARM_ID_PAIR_SIV121A_SID130B || sensor_type == CAM_PARM_ID_PAIR_SIV120A_SID130B )
+	{
+		if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_ONE )
+		{
+			captureSize.cx = 480;
+		    captureSize.cy = 640;
+		    displaySize.cx = 240;
+		    displaySize.cy = 320;
+		}
+		else if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
+		{
+			captureSize.cx = 1200;
+		    captureSize.cy = 1600;
+		    displaySize.cx = 240;
+		    displaySize.cy = 320;
+		}
+	}
+	else if ( sensor_type == CAM_PARM_ID_PAIR_SP0838_SP0A18 || sensor_type == CAM_PARM_ID_PAIR_SP0A18_SP0838 )
 	{
 		captureSize.cx = 480;
 	    captureSize.cy = 640;
-	    displaySize.cx = 240;
-	    displaySize.cy = 320;
-	}
-	else if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
-	{
-		captureSize.cx = 1200;
-	    captureSize.cy = 1600;
 	    displaySize.cx = 240;
 	    displaySize.cy = 320;
 	}
@@ -3675,6 +3692,9 @@ static void CameraApp_RecordVideo(CCameraApp *pMe)
 static void CameraApp_RecordSnapShot(CCameraApp *pMe)
 { 
     char sFileName[MIN_PIC_CHAR_NAME_LEN];
+    cam_sensor_model_pair_type sensor_type;
+
+    
     MSG_FATAL("CameraApp_RecordSnapShot..........",0,0,0);
     MEMSET(pMe->m_sCurrentFileName, '\0', sizeof(pMe->m_sCurrentFileName));
     MEMSET(sFileName, '\0', sizeof(sFileName));
@@ -3706,9 +3726,17 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
 #endif
 
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
-	if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
+
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+	ICAMERA_GetCurrentSensor(pMe->m_pCamera,&sensor_type,&sensor_type);
+#endif
+
+	if ( sensor_type == CAM_PARM_ID_PAIR_SIV121A_SID130B || sensor_type == CAM_PARM_ID_PAIR_SIV120A_SID130B )
 	{
-		ICAMERA_RotateEncode(pMe->m_pCamera, 180);
+		if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
+		{
+			ICAMERA_RotateEncode(pMe->m_pCamera, 180);
+		}
 	}
 #endif
     

@@ -843,6 +843,9 @@ typedef enum
 #ifdef FEATURE_CAMERA_BURST_MODE
 #error code not present
 #endif /*FEATURE_CAMERA_BURST_MODE*/
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+  CAMERA_PARM_CURRENT_SENSOR,
+#endif
   CAMERA_PARM_MAX
 } camera_parm_type;
 

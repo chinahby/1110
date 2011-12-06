@@ -849,10 +849,11 @@ Done:
 
 #ifdef FEATURE_CAMERA_MULTI_SENSOR
   camera_num_sensors = camera_get_sensors(&sensorInfo);
+  MSG_FATAL("camera_num_sensors=%d",camera_num_sensors,0,0);
   if (camera_num_sensors == 0)
   {
-    nRet = EFAILED;
-    goto Done;
+    //nRet = EFAILED;
+    //goto Done;
   }
   MEMCPY(gCameraInfo, sensorInfo, sizeof(gCameraInfo));
 
@@ -2226,6 +2227,11 @@ int OEMCamera_GetParm(OEMINSTANCE h, int16 nParmID, int32 * pP1, int32 * pP2)
          eParm = CAMERA_PARM_CONTRAST;
          break;
 
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+	  case CAM_PARM_CURRENT_SENSOR:
+	  	   eParm = CAMERA_PARM_CURRENT_SENSOR;
+         break;
+#endif
       case CAM_PARM_BRIGHTNESS:
            eParm = CAMERA_PARM_BRIGHTNESS;
          break;
@@ -2613,6 +2619,13 @@ int OEMCamera_GetParm(OEMINSTANCE h, int16 nParmID, int32 * pP1, int32 * pP2)
                *(boolean *)pP1 = (boolean)pi.nCurrent;
              break;
 #endif //FEATURE_CAMERA_V770
+
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+		  case CAM_PARM_CURRENT_SENSOR:
+			 if (pP1)
+             *(cam_sensor_model_pair_type *)pP1 = (cam_sensor_model_pair_type)pi.nCurrent;
+		  	 break;
+#endif	
           default:
              if (pP1)
                 *pP1 = pi.nCurrent;

@@ -7736,7 +7736,12 @@ camera_ret_code_type camera_svcs_get_parm
     case CAMERA_PARM_ANTIBANDING:
       *parm = camera_parm_antibanding;
       break;
-
+      
+#ifdef FEATURE_CAMERA_MULTI_NEW_AUTO_DETECT
+	case CAMERA_PARM_CURRENT_SENSOR:
+	  parm->current_value = current_camsensor_pair;
+      break;
+#endif
     case CAMERA_PARM_FOCUS_STEP:
       /* AF must be both supported by current sensor and enabled */
       if (!camctrl_tbl.af_is_supported)
@@ -13495,6 +13500,7 @@ static void  camera_process_qdsp_output1_msg (Camera_EndOfFrameMessageType *msg)
 #endif /* FEATURE_CAMERA_BURST_MODE */
     camera_take_picture_status.received_output1 = TRUE;
 
+	MSG_FATAL("camera_take_picture_status.received_output1 == TRUE!!!",0,0,0);
 #ifdef FEATURE_CAMERA_HJR
 #ifdef FEATURE_CAMERA_BURST_MODE
 #error code not present

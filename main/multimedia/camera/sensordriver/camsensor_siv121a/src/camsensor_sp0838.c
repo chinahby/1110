@@ -74,8 +74,8 @@ typedef struct register_address_value_pair_struct {
 #define OV_SP0838_YCBCR_FULL_SIZE_WIDTH           640//640
 #define OV_SP0838_YCBCR_FULL_SIZE_HEIGHT          480
 
-#define OV_SP0838_YCBCR_QTR_SIZE_WIDTH   		640//640   
-#define OV_SP0838_YCBCR_QTR_SIZE_HEIGHT  		480//240//   
+#define OV_SP0838_YCBCR_QTR_SIZE_WIDTH   		480//640   
+#define OV_SP0838_YCBCR_QTR_SIZE_HEIGHT  		360//240//   
 
 /* Strobe Flash Epoch Interrupt time before the end of line count */
 static camera_antibanding_type g_iBanding = CAMERA_ANTIBANDING_OFF;
@@ -655,7 +655,7 @@ boolean camsensor_sp0838_ycbcr_snapshot_config
   camsensor_static_params_type *camsensor_params /* Other config params */
 ) 
 {
-	SP0838_config_window(0,0,320,240);
+	SP0838_config_window(0,0,OV_SP0838_YCBCR_FULL_SIZE_WIDTH,OV_SP0838_YCBCR_FULL_SIZE_HEIGHT);
 	
 	/* Sensor output data format */
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
@@ -733,7 +733,7 @@ boolean camsensor_sp0838_ycbcr_video_config
 {
 	camsensor_sp0838_sensor_init();
 
-	SP0838_config_window(0,0,480,360);
+	SP0838_config_window(0,0,OV_SP0838_YCBCR_QTR_SIZE_WIDTH,OV_SP0838_YCBCR_QTR_SIZE_HEIGHT);
 	/* Sensor output data format */
 	camsensor_params->discardFirstFrame = TRUE;
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
