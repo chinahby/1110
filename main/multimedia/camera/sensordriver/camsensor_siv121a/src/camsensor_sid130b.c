@@ -131,11 +131,11 @@ static const char camsensor_SETi_SID130B_sensor_suffix[]= "SID130B_mu2myu";
 /***************************************************************
 * The following defines are used as UI parameters
 ***************************************************************/
-#define CAMSENSOR_SID130B_FULL_SIZE_WIDTH  320
-#define CAMSENSOR_SID130B_FULL_SIZE_HEIGHT 240
+#define CAMSENSOR_SID130B_FULL_SIZE_WIDTH  1600
+#define CAMSENSOR_SID130B_FULL_SIZE_HEIGHT 1200
 
-#define CAMSENSOR_SID130B_QTR_SIZE_WIDTH   800
-#define CAMSENSOR_SID130B_QTR_SIZE_HEIGHT  600
+#define CAMSENSOR_SID130B_QTR_SIZE_WIDTH   240
+#define CAMSENSOR_SID130B_QTR_SIZE_HEIGHT  320
 
 #define CAMSENSOR_MIN_BRIGHTNESS 0
 
@@ -777,8 +777,7 @@ boolean camsensor_SID130B_init(camsensor_function_table_type *camsensor_function
   	/* Input MCLK = 24MHz */
 
   	camsensor_camclk_po_hz = 24000000;
-	(void)camsensor_config_camclk_po(camsensor_camclk_po_hz);
-	
+
   	gpio_tlmm_config(CAMSENSOR_SIV130B_RESET_PIN);
   	gpio_out(CAMSENSOR_SIV130B_RESET_PIN, GPIO_HIGH_VALUE);
   	clk_busy_wait(1000);
@@ -1069,13 +1068,37 @@ None
 // 1600x1200,UXGA YUV output
 static register_address_value_pair SID130B_mode_full[] = 
 {
+	{0x00, 0x00},
+	{0x04, 0x13},
+	{0x05, 0x8f},
+	{0x06, 0x8e},
+	//GA-STiLL 
+	{0x20, 0x00},
+	{0x21, 0x02},
+	{0x23, 0x51},
+	//GB-Preview 
+	{0x24, 0x00},
+	{0x25, 0x10},
+	{0x27, 0xaf},
+		
+	{0x41, 0x17},
+	{0x42, 0x52},
+
+	// AE		 
+	{0x00, 0x01},
+	   
+	{0x34, 0x64},	//100
+	{0x35, 0x3c},	//
+	{0x36, 0x26}, //0X35/0X34=X/64
+
+
 //IDP
 	{0x00, 0x03},
 		
-	{0x94, 0x01}, //win size 1600x12600
+	{0x94, 0x06}, //win size 1600x12600
 	{0x95, 0x40},
-	{0x96, 0x00},
-	{0x97, 0xF0},
+	{0x96, 0x04},
+	{0x97, 0xb0},
 };
 
 boolean camsensor_SETi_SID130B_snapshot_config
@@ -1087,7 +1110,6 @@ boolean camsensor_SETi_SID130B_snapshot_config
 	MSG_FATAL("camsensor_SETi_SID130B_snapshot_config!",0,0,0);
 
 	camsensor_params->format = format_snapshot;
- 	camsensor_params->discardFirstFrame =  FALSE;
  	
 	camsensor_params->camsensor_width  = \
 			camsensor_params->full_size_width;
@@ -1108,8 +1130,7 @@ boolean camsensor_SETi_SID130B_snapshot_config
 	camsensor_params->camif_window_height_config.firstLine = 0;
 	camsensor_params->camif_window_height_config.lastLine  = \
 			camsensor_params->full_size_height-1;
-
-#if 1			
+			
 	array_length = sizeof(SID130B_mode_full) / sizeof(SID130B_mode_full[0]);
 	/* Configure sensor for Preview mode  */
 	for (i = 0; i < array_length; i++)
@@ -1119,7 +1140,8 @@ boolean camsensor_SETi_SID130B_snapshot_config
 			return(FALSE);
 		}
 	}
-#endif
+
+	clk_busy_wait(100*1000);
 	camsensor_current_resolution = camsensor_snapshot_resolution;
 	return TRUE;
 } /* camsensor_mt9d112_mu2m0yu_snapshot_config */
@@ -1199,7 +1221,12 @@ boolean camsensor_SETi_SID130B_video_config
 	    	return(FALSE);
 	 	}
 	}
-
+		
+	SETi_SID130B_i2c_write_byte(0x00, 0x03);
+	SETi_SID130B_i2c_write_byte(0x94, 0x00);
+	SETi_SID130B_i2c_write_byte(0x95, 0xF0);
+	SETi_SID130B_i2c_write_byte(0x96, 0x01);
+	SETi_SID130B_i2c_write_byte(0x97, 0x40);
 	camera_timed_wait(100); 
       
 	camsensor_params->format 			= format_preview;
