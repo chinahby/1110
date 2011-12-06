@@ -700,8 +700,8 @@ if(!(x))         \
 #define TIME_HEIGHT 18
 
 //当前播放时间（简单播放）
-#define SIMPLAYINGTICK_X 60
-#define SIMPLAYINGTICK_Y 155
+#define SIMPLAYINGTICK_X PLAYINGTICK_X
+#define SIMPLAYINGTICK_Y PLAYINGTICK_Y
 
 //播放区域，包含前一首，播放，下一首
 #define OLDPLAY_X 30

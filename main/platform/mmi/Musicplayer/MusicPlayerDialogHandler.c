@@ -5182,6 +5182,28 @@ static void MP3_RefreshVolBar(CMusicPlayer *pMe)
     {
         switch ((int)pMe->m_nCurrentVolume)
         {
+            #ifdef FEATURE_DISP_240X320
+            case VOLUME_OFF*AEE_MAX_VOLUME/5:
+                ResID = IDI_VOLUME_OFF;
+                break;
+            case VOLUME_ONE*AEE_MAX_VOLUME/5:
+                ResID = IDI_VOLUME_ONE;
+                break;
+            case VOLUME_TWO*AEE_MAX_VOLUME/5:
+                ResID = IDI_VOLUME_TWO;
+                break;
+            case VOLUME_THREE*AEE_MAX_VOLUME/5:
+                ResID = IDI_VOLUME_THREE;
+                break;
+            case VOLUME_FOUR*AEE_MAX_VOLUME/5:
+                ResID = IDI_VOLUME_FOUR;
+                break;
+            case VOLUME_FIVE*AEE_MAX_VOLUME/5:
+                ResID = IDI_VOLUME_FIVE;
+                break;
+            default :
+                ResID = IDI_VOLUME_THREE;  
+            #else
             case VOLUME_OFF*AEE_MAX_VOLUME/5:
                 ResID = IDI_SIMPLEVOL_OFF;
                 break;
@@ -5201,7 +5223,8 @@ static void MP3_RefreshVolBar(CMusicPlayer *pMe)
                 ResID = IDI_SIMPLEVOL_FIVE;
                 break;
             default :
-                ResID = IDI_SIMPLEVOL_THREE;            
+                ResID = IDI_SIMPLEVOL_THREE;   
+            #endif
         }
     }
 	 
@@ -5271,7 +5294,11 @@ static void MP3_RefreshPlayingTick(CMusicPlayer *pMe)
 	{
         //SETAEERECT( &clip, 6,165,50,18);//wlh 20090415 mod
 		SETAEERECT( &clip, x, y, TIME_WIDTH, TIME_HEIGHT); //50
+		#ifdef FEATURE_DISP_240X320
+        IDISPLAY_FillRect(pMe->m_pDisplay, &clip, 0x0);
+        #else
         MP3_drawClipRectWithOffset(pMe,IDI_SIMPLEPLAYER,&clip);
+        #endif
         //SPRINTF(tick_time, "%02d:%02d", (pMe->m_nTotalTime - pMe->m_nSimPlayCurTime )/60, (pMe->m_nTotalTime - pMe->m_nSimPlayCurTime)% 60);
         SPRINTF(tick_time,"%02d:%02d",pMe->m_nSimPlayCurTime /60,pMe->m_nSimPlayCurTime %60);
 	}
@@ -5425,7 +5452,14 @@ static void MP3_DrawSimplePlayerFace(CMusicPlayer *pMe)
     {
         return;
     }
+ //   IDISPLAY_FillRect(pMe->m_pDisplay, &pMe->m_rc, 0x0);
+ #ifdef FEATURE_DISP_240X320
+    MP3_DrawImage(pMe, IDI_BACKGROUND, 0, 0);//»­±³¾°	
+ #endif
     MP3_DrawImage(pMe, IDI_SIMPLEPLAYER, 0, 0);
+ #ifdef FEATURE_DISP_240X320
+    MP3_DrawIndexAndTotalTime(pMe);
+ #endif
     MP3_ResetScroll(pMe);//ok
     MP3_RefreshVolBar(pMe);//ok
     MP3_RefreshPlayingTick(pMe);//ok
@@ -5525,18 +5559,23 @@ static void MP3_DrawIndexAndTotalTime(CMusicPlayer *pMe)
                  ,pMe->m_nPlayinglistMusicNum);		
         STRTOWSTR(list_n_str,wliststr,sizeof(wliststr));	
     }
-
-DrawTextWithProfile(pMe->m_pShell, 
- 		                pMe->m_pDisplay, 
- 		                RGB_WHITE_NO_TRANS, 
- 		                AEE_FONT_BOLD,
- 		                wliststr, 
- 		                -1, 
- 					    LISTINDEX_X, 
- 		                LISTINDEX_Y,
- 		                &clip, 
- 		                IDF_ALIGN_RIGHT|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT
-               			);
+    if(pMe->m_eStartMethod != STARTMETHOD_SIMPLEPLAYER)//wlh 20090420 add
+    {
+        
+        DrawTextWithProfile(pMe->m_pShell, 
+                                pMe->m_pDisplay, 
+                                RGB_WHITE_NO_TRANS, 
+                                AEE_FONT_BOLD,
+                                wliststr, 
+                                -1, 
+                                LISTINDEX_X, 
+                                LISTINDEX_Y,
+                                &clip, 
+                                IDF_ALIGN_RIGHT|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT
+                                );
+        
+    }
+    
 
 
 	//Draw TotalTime Rect 
@@ -5632,8 +5671,13 @@ static void MP3_RefreshSimpleSchBar(CMusicPlayer *pMe)
 	}
 	else
 	{//¼òµ¥²¥·Å
+	#ifdef FEATURE_DISP_240X320
+		x = SCHEDULEBAR_X;
+		y = SCHEDULEBAR_Y;
+    #else
 		x = SIMSCHEDULEBAR_X;
 		y = SIMSCHEDULEBAR_Y;
+    #endif
 	}
 
     if(pMe->m_nSimPlayCurTime >= pMe->m_nTotalTime)
