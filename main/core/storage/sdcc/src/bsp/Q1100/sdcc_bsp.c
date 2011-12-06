@@ -108,12 +108,12 @@ sdcc_bsp_vdd_control (sdcc_bsp_vdd_ctl_type state)
       }
 #endif
       /*Configure all SDCC GPIOs as input to avoid current drain*/
-      gpio_tlmm_config(GPIO_INPUT_24);
-      gpio_tlmm_config(GPIO_INPUT_29);
-      gpio_tlmm_config(GPIO_INPUT_25);
-      gpio_tlmm_config(GPIO_INPUT_26);
-      gpio_tlmm_config(GPIO_INPUT_27);
-      gpio_tlmm_config(GPIO_INPUT_28);
+      //gpio_tlmm_config(GPIO_INPUT_24);
+      //gpio_tlmm_config(GPIO_INPUT_29);
+      //gpio_tlmm_config(GPIO_INPUT_25);
+      //gpio_tlmm_config(GPIO_INPUT_26);
+      //gpio_tlmm_config(GPIO_INPUT_27);
+      //gpio_tlmm_config(GPIO_INPUT_28);
 #else
       //gpio_out(SD_PWR_EN_N, 0);
       gpio_out(GPIO_SDCC_CLK, 1);
