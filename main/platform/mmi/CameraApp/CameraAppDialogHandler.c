@@ -3467,6 +3467,22 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 {
     AEESize displaySize, captureSize; 
     int16 quality = 0;
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+	if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_ONE )
+	{
+		captureSize.cx = 480;
+	    captureSize.cy = 640;
+	    displaySize.cx = 240;
+	    displaySize.cy = 320;
+	}
+	else if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
+	{
+		captureSize.cx = 1200;
+	    captureSize.cy = 1600;
+	    displaySize.cx = 240;
+	    displaySize.cy = 320;
+	}
+#else
     if(pMe->m_sensor_model == 30)
     {
         captureSize.cx = g_CameraSizeCFG[pMe->m_nCameraSize].dx;
@@ -3485,6 +3501,7 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
         displaySize.cy = g_CameraSizeCFG_10[0].dy;
 #endif
     }
+#endif
 #ifdef FEATURE_CAMERA_NOFULLSCREEN
 #if defined(FEATURE_DISP_160X128)
     displaySize.cx = 96;
@@ -3509,6 +3526,7 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_LCD_DIRECT_ACCESS, (int32)FALSE, (int32)&(pMe->m_rcPreview));
 #elif defined(T_QSC1110)
 {
+	
     CameraDirectMode myMode;
     myMode.clsDisplay = 0;
     myMode.nLayer     = 0;
@@ -3519,6 +3537,7 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     //ICAMERA_SetParm(pMe->m_pCamera, CAM_PARM_LCD_DIRECT_ACCESS_EX, (int32)TRUE, (int32)&(myMode));
 }
 #endif
+        
     // set camera quality
     switch(pMe->m_nCameraQuality)
     {
@@ -3553,6 +3572,7 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
     ICAMERA_SetQuality(pMe->m_pCamera, quality);    
     ICAMERA_SetSize(pMe->m_pCamera, &captureSize);
     ICAMERA_SetDisplaySize(pMe->m_pCamera, &displaySize);
+
     
     ICAMERA_Preview(pMe->m_pCamera);
 #endif
@@ -3684,6 +3704,14 @@ static void CameraApp_RecordSnapShot(CCameraApp *pMe)
 #ifndef FEATURE_DSP
     (void)ICAMERA_DeferEncode(pMe->m_pCamera, TRUE);
 #endif
+
+#ifdef FEATURE_CAMERA_MULTI_SENSOR
+	if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_TWO)
+	{
+		ICAMERA_RotateEncode(pMe->m_pCamera, 180);
+	}
+#endif
+    
     
     // ÅÄÕÕ×´Ì¬µÄ´¦Àí
     if(SUCCESS != ICAMERA_RecordSnapshot(pMe->m_pCamera))
@@ -4221,20 +4249,26 @@ FUNCTION CameraApp_SavePhoto
 ===========================================================================*/
 static int CameraApp_SavePhoto(CCameraApp *pMe)
 {
-  AEEMediaData   md;
-  
-  if (!pMe)
-    return EBADPARM;
+	AEEMediaData   md;
 
-  //Fill media data
-  md.clsData = MMD_FILE_NAME;
-  md.pData = (void *)pMe->m_sCurrentFileName;
-  md.dwSize = 0;
+	MSG_FATAL("CameraApp_SavePhoto!!!!!",0,0,0);
+	if (!pMe)
+		return EBADPARM;
 
-  //Start encoding processing
-  (void)ICAMERA_SetMediaData(pMe->m_pCamera, &md, 0);
-  
-  return ICAMERA_EncodeSnapshot(pMe->m_pCamera);
+	//Fill media data
+	md.clsData = MMD_FILE_NAME;
+	md.pData = (void *)pMe->m_sCurrentFileName;
+	md.dwSize = 0;
+
+	//Start encoding processing
+	(void)ICAMERA_SetMediaData(pMe->m_pCamera, &md, 0);
+
+	ICAMERA_SetVideoEncode(pMe->m_pCamera, AEECLSID_JPEG, 0);
+
+		
+	ICAMERA_DeferEncode(pMe->m_pCamera, TRUE);
+			
+  	return ICAMERA_EncodeSnapshot(pMe->m_pCamera);
 } /* END CameraApp_SavePhoto */
 
 static void CameraApp_EventNotify(CCameraApp *pMe, AEECameraNotify *pcn)
@@ -4389,7 +4423,7 @@ void CameraApp_AppEventNotify(CCameraApp *pMe, int16 nCmd, int16 nStatus)
 
 	        case CAM_STATUS_ABORT:
 	        case CAM_STATUS_FAIL:
-	            if(pMe->m_nCameraState == CAM_CAPTURE)
+	            if(pMe->m_nCameraState == CAM_CAPTURE || pMe->m_nCameraState == CAM_SAVE )
 	            {
 	                pMe->m_bRePreview = TRUE;
 	                pMe->m_wMsgID = IDS_MSG_CAPTURE_FAILED;
