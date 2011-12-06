@@ -337,7 +337,9 @@ static  boolean VPDVideoPlayer_HandleEvent(CVideoPlayer *pMe,AEEEvent eCode,uint
             {
                 VideoPlayer_RefreshPlayerFileName(pMe); //刷新文件名
             }
+			#ifndef FEATURE_DISP_240X320
 			VideoPlayer_RefreshVolBar(pMe);
+			#endif
             if(!pMe->IsPause && !pMe->IsPlay)                 
             {
                 if(!pMe->UserStop)
@@ -795,7 +797,11 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                         if(pMe->IsPause)// 当前状态为暂停时
                         {                             
                             IMEDIA_Resume((IMedia*)pMe->m_pMedia);
-                            //ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)(IMEDIA_Resume),pMe->m_pMedia);
+							#ifdef FEATURE_DISP_240X320 
+                            VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SELECT_PAUSE, VIDEOPLAYER_PLAY_X, VIDEOPLAYER_PLAY_Y);
+                            ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)(IMEDIA_Resume),pMe->m_pMedia);
+                            (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);
+							#endif
                             SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_ON);                              
                         }
                         else  
@@ -816,8 +822,12 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 #endif
 						pMe->m_rtype = TYPE_PLAYER;
                         DRAW_BOTTOMBAR(BTBAR_PLAY_STOP); 
-                        IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
                         //IMEDIA_Pause(pMe->m_pMedia); // 不设时间的话，底条刷不出来
+						#ifdef FEATURE_DISP_240X320 
+                        VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SELECT_PLAY, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y);
+                        (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);
+						#endif
+                        IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
                         ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)(IMEDIA_Pause),pMe->m_pMedia); 
                         SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_OFF);  
                         pMe->IsPlay=FALSE;
@@ -871,8 +881,15 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
 #if 0                
                     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAY, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y); //将中间图标刷新为三角形的小图标      
 #endif
-                    AEERect rc = {0,0,SCR_W,SCR_H};         
+                    AEERect rc = {0,0,SCR_W,SCR_H}; 
                     IDisplay_FillRect(pMe->m_pDisplay,&rc,0x0);
+                    #ifdef FEATURE_DISP_240X320
+                    VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAY, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y); //将中间图标刷新为三角形的小图标
+                 // VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_BEFORE, VIDEOPLAYER_PREVIOUS_X, VIDEOPLAYER_PREVIOUS_Y); //画按键按下去的小图标
+                 // VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_NEXT, VIDEOPLAYER_NEXT_X, VIDEOPLAYER_NEXT_Y); //画按键按下去的小图标
+        		    VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_ADD, VIDEOPLAYER_VOLUME_ADD_X,VIDEOPLAYER_VOLUME_ADD_Y);   
+		            VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_LOW, VIDEOPLAYER_VOLUME_LOW_X,VIDEOPLAYER_VOLUME_LOW_Y);
+                    #endif
                     VideoPlayer_WriteTitleRes(pMe,AEE_APPSVIDEOPLAYER_RES_FILE,IDS_TITLE);
 					#ifndef FEATURE_DISP_128X160
                     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_LOGO, VIDEOPLAYER_LOGO_X, VIDEOPLAYER_LOGO_Y);
@@ -888,10 +905,11 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                         DRAW_BOTTOMBAR(BTBAR_PLAY_BACK);
                     }                
                     pMe->bCurrentTime=0; //将当前播放时间设为0，总时间不变 
-                   // VideoPlayer_RefreshPlayingTick(pMe);//刷新时间
+                    pMe->bOldTime = 0;
+                    VideoPlayer_RefreshPlayingTick(pMe);//刷新时间
                     VideoPlayer_RefreshScheduleBar(pMe);//进度条置在初始位置，不刷新文件名和其他设置
+                    VideoPlayer_RefreshVolBar(pMe);// 刷新音量
                     IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-                    
                     pMe->UserStop=TRUE;
                     pMe->IsPlay=FALSE;
                     pMe->IsPause=FALSE;
@@ -998,14 +1016,14 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 if(!pMe->IsFullScreen)
                 {
                     
-                    VideoPlayer_RefreshPlayingTick(pMe);//刷新时间
-                    VideoPlayer_RefreshScheduleBar(pMe);//刷新播放进度
-#if 0
+#ifdef FEATURE_DISP_240X320
                     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_FORWARD_SELECT, VIDEOPLAYER_FORWARD_X,VIDEOPLAYER_FORWARD_Y); //画按键按下去的小图标
 #endif
 					pMe->m_rtype = TYPE_KUAIJIN;
                     IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-                    (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateFRButton, pMe);            
+                    VideoPlayer_RefreshPlayingTick(pMe);//刷新时间
+                    VideoPlayer_RefreshScheduleBar(pMe);//刷新播放进度
+                    (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);            
                 }
             }
             return TRUE;
@@ -1026,14 +1044,14 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 }
                 if(!pMe->IsFullScreen)
                 {
-                    VideoPlayer_RefreshPlayingTick(pMe);
-                    VideoPlayer_RefreshScheduleBar(pMe);//刷新播放进度条
-#if 0                    
+#ifdef FEATURE_DISP_240X320
                     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_REWIND_SELECT, VIDEOPLAYER_REWIND_X, VIDEOPLAYER_REWIND_Y); //画按键按下去的小图标   
 #endif
+                    VideoPlayer_RefreshPlayingTick(pMe);
+                    VideoPlayer_RefreshScheduleBar(pMe);//刷新播放进度条
 					pMe->m_rtype = TYPE_KUAITUI;
                     IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-                    //(void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateFRButton, pMe);            
+                    (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);            
                 }
             }
             return TRUE;     
@@ -1045,19 +1063,20 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 return TRUE;
             }
             ISHELL_SetTimer(pMe->m_pShell,APPISREADY_TIMER,VideoPlayer_APPIsReadyTimer,pMe);
-            if(! pMe->m_bAppIsReady)
+            if((!pMe->m_bAppIsReady)||(pMe->UserStop))
             {
                 return TRUE;
             }
             if(!pMe->IsFullScreen)
             {
-#if 0   
+#ifdef FEATURE_DISP_240X320
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_BEFORE_SELECT, VIDEOPLAYER_PREVIOUS_X, VIDEOPLAYER_PREVIOUS_Y); //画按键按下去的小图标
 #endif
                 pMe->bOldTime=0;
                 pMe->m_rtype = TYPE_PREVIOUS;
                 IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-                (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);//100ms后画按钮弹起的图
+              //(void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);//100ms后画按钮弹起的图
+              //  pMe->UserStop = FALSE;
                 VideoPlayer_PlayNext(pMe, FALSE); 
             }
             else if(!pMe->IsPause)
@@ -1074,19 +1093,20 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 return TRUE;
             }
             ISHELL_SetTimer(pMe->m_pShell,APPISREADY_TIMER,VideoPlayer_APPIsReadyTimer,pMe);
-            if(! pMe->m_bAppIsReady)
+            if((!pMe->m_bAppIsReady) ||(pMe->UserStop))
             {
                 return TRUE;
             }
             if(!pMe->IsFullScreen)
             { 
-#if 0            
+#ifdef FEATURE_DISP_240X320
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NEXT_SELECT, VIDEOPLAYER_NEXT_X, VIDEOPLAYER_NEXT_Y);//画按键按下去的小图标  
 #endif
                 pMe->bOldTime=0;
 				pMe->m_rtype = TYPE_NEXT;
                 IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
-                (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);//100ms后画按钮弹起的图
+               //(void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);//100ms后画按钮弹起的图
+               // pMe->UserStop = FALSE;
                 VideoPlayer_PlayNext(pMe, TRUE);
             }            
             else if(!pMe->IsPause)//全屏播放状态
@@ -1116,10 +1136,10 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 } 
                 if(!pMe->IsFullScreen)
                 {
-                    VideoPlayer_RefreshVolBar(pMe); // 重新刷新音量bar
-#if 0
+#ifdef FEATURE_DISP_240X320
                     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_ADD_SELECT, VIDEOPLAYER_VOLUME_ADD_X,VIDEOPLAYER_VOLUME_ADD_Y);// 画按键按下去的小图标
 #endif
+                    VideoPlayer_RefreshVolBar(pMe); // 重新刷新音量bar
 					pMe->m_rtype = TYPE_ADDVOLUME;
                     IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);                    
                     (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);// 50ms后画按钮弹起的图                
@@ -1139,10 +1159,10 @@ static boolean VPDVideoPlayer_HandleKeyEvent(CVideoPlayer *pMe,AEEEvent eCode,ui
                 } 
                 if(!pMe->IsFullScreen)
                 {
-                    VideoPlayer_RefreshVolBar(pMe);// 重新刷新音量bar 
-#if 0
+#ifdef FEATURE_DISP_240X320
                     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_LOW_SELECT, VIDEOPLAYER_VOLUME_LOW_X, VIDEOPLAYER_VOLUME_LOW_Y);// 画按键按下去的小图标
 #endif
+                    VideoPlayer_RefreshVolBar(pMe);// 重新刷新音量bar 
 					pMe->m_rtype = TYPE_DECVOLUME;
                     IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
                     (void) ISHELL_SetTimer(pMe->m_pShell, 100, (PFNNOTIFY)VideoPlayer_UpdateButton, pMe);// 50ms后画按钮弹起的图   
@@ -1329,12 +1349,12 @@ static void VideoPlayer_DrawImage(CVideoPlayer *pMe, char *resFile, int16 resId,
 =================================================================================================================*/                
 static  void VideoPlayer_UpdateButton(CVideoPlayer *pMe)
 {
-#if 0
+#ifdef FEATURE_DISP_240X320
     if(!pMe->IsPlay)
     {
-        VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_PLAY_PART, VIDEOPLAYER_PLAY_PART_X,VIDEOPLAYER_PLAY_PART_Y);//重画三角形按键盘,弹起的大图   
+        VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_PLAY, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y);//重画三角形按键盘,弹起的大图   
     }
-    else VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_PAUSE_PART, VIDEOPLAYER_PAUSE_PART_X,VIDEOPLAYER_PAUSE_PART_Y);//重画"||"按键盘
+    else VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_PAUSE, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y);//重画"||"按键盘
 
 	if(pMe->m_rtype == TYPE_ADDVOLUME)
 	{
@@ -1469,7 +1489,16 @@ void VideoPlayer_PlayVideo(CVideoPlayer *pMe)
     	VideoPlayer_ChangeScrState(pMe,TRUE);
 		b_is_GetFrame = FALSE;
         pMe->m_PlayFailed = IMEDIA_Play((IMedia*)pMe->m_pMedia);//播放          
-        
+        #ifdef FEATURE_DISP_240X320
+        VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PAUSE, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y);
+        VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_BEFORE, VIDEOPLAYER_PREVIOUS_X,VIDEOPLAYER_PREVIOUS_Y);
+        VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NEXT, VIDEOPLAYER_NEXT_X,VIDEOPLAYER_NEXT_Y);
+        VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_REWIND, VIDEOPLAYER_REWIND_X,VIDEOPLAYER_REWIND_Y);
+        VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_FORWARD, VIDEOPLAYER_FORWARD_X,VIDEOPLAYER_FORWARD_Y);
+        VideoPlayer_RefreshVolBar(pMe);
+		VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_ADD, VIDEOPLAYER_VOLUME_ADD_X,VIDEOPLAYER_VOLUME_ADD_Y);   
+		VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_LOW, VIDEOPLAYER_VOLUME_LOW_X,VIDEOPLAYER_VOLUME_LOW_Y);
+        #endif
         SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_ON);
 		MSG_FATAL("b_is_GetFrame===========%d",b_is_GetFrame,0,0);
     }      
@@ -1488,6 +1517,8 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
     
     videoID=VideoPlayer_GetFileID(pMe);
     //video放置在指定文件夹外
+    MSG_FATAL("videoID=%d,pMe->m_RecordCount=%d",videoID,pMe->m_RecordCount,0);
+    MSG_FATAL("pMe->IsPause=%d,pMe->UserStop=%d",pMe->IsPause,pMe->UserStop,0);
     if(videoID >= pMe->m_RecordCount)
     {  
         return ;
@@ -1507,22 +1538,43 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
                 {
                     (void)IMEDIA_Stop((IMedia*)pMe->m_pMedia); 
                 }
-                VideoPlayer_PlayVideo(pMe);   
+                VideoPlayer_ReleaseVideo(pMe);
                 videoplayer_play_flag = TRUE;
-                pMe->IsPlay   = TRUE;
-                pMe->IsPause  = FALSE;
-                pMe->UserStop = FALSE; 
-                if( ! pMe->IsFullScreen && !pMe->IsPlay)
+                #if 0
+                if( ! pMe->IsFullScreen && pMe->IsPlay)
                 {
 #if 0
                     VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PAUSE, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y);            
 #endif
                     // YY TODO:
-					//DRAW_BOTTOMBAR(BTBAR_PAUSE_STOP); 
-                    
+					//DRAW_BOTTOMBAR(BTBAR_FULLSCREEN_PAUSE_STOP); 
+                    ISHELL_SetTimer(pMe->m_pShell,50,(PFNNOTIFY)(IMEDIA_Resume),pMe->m_pMedia);
                     VideoPlayer_RefreshPlayingTick(pMe);//刷新时间
                     VideoPlayer_RefreshScheduleBar(pMe);//进度条置在初始位置
                     IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);
+                }
+                #endif
+                VideoPlayer_InitVideo(pMe);
+                // 如果当前视频为播放状态,则下一首视频也直接置为播放状态;不是,则手动播放                
+               
+                VideoPlayer_PlayVideo(pMe); 
+                if(pMe->IsPause)
+                {
+                    IMedia_Pause((IMedia*)pMe->m_pMedia);                    
+                }
+                if(pMe->UserStop)
+                {
+                    IMedia_Stop((IMedia*)pMe->m_pMedia);                   
+                }
+                if(!pMe->IsFullScreen)
+                {
+                    if(pMe->m_PlayFailed == SUCCESS)
+                    {
+                        VideoPlayer_RefreshPlayingTick(pMe);// 刷新播放时间             
+                        VideoPlayer_RefreshScheduleBar(pMe);// 刷新进度条 
+                    }
+                    VideoPlayer_RefreshPlayerFileName(pMe);// 刷新文件名 
+                    IDISPLAY_UpdateEx(pMe->m_pDisplay,FALSE);    
                 }
                 break;
         
@@ -1565,7 +1617,6 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
                 // 如果当前视频为播放状态,则下一首视频也直接置为播放状态;不是,则手动播放                
                
                 VideoPlayer_PlayVideo(pMe); 
-                
                 if(pMe->IsPause)
                 {
                     IMedia_Pause((IMedia*)pMe->m_pMedia);                    
@@ -1616,7 +1667,21 @@ static  void VideoPlayer_PlayNext(CVideoPlayer *pMe, boolean bDirection)
 void VideoPlayer_WriteTitle(CVideoPlayer *pMe,AECHAR* pText)
 {
 	AEERect   rc_name;
-	VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NAME_PART, 0, 0);  
+	VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_NAME_PART, 0, 0); 
+	#ifdef FEATURE_DISP_240X320
+	SETAEERECT(&rc_name, VIDEOPLAYER_NAMEPART_X+60,VIDEOPLAYER_NAMEPART_Y, VIDEOPLAYER_NAMEPART_W-120, VIDEOPLAYER_NAMEPART_H-8);
+	//写title
+	DrawTextWithProfile(pMe->m_pShell, 
+					pMe->m_pDisplay, 
+					RGB_WHITE, //文本轮廓的RGBVAL颜色值,RGB_BLACK
+					AEE_FONT_BOLD,
+					pText, 
+					-1, 
+					0, 
+					0, 
+					&rc_name, 
+					IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);	
+	#else 
 	SETAEERECT(&rc_name, VIDEOPLAYER_NAMEPART_X + 20,VIDEOPLAYER_NAMEPART_Y, VIDEOPLAYER_NAMEPART_W - 40, VIDEOPLAYER_NAMEPART_H);
 	//写title
 	DrawTextWithProfile(pMe->m_pShell, 
@@ -1628,7 +1693,8 @@ void VideoPlayer_WriteTitle(CVideoPlayer *pMe,AECHAR* pText)
 					22, 
 					22, 
 					&rc_name, 
-					IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);	
+					IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+    #endif	
 }
 void VideoPlayer_WriteTitleRes(CVideoPlayer *pMe,char* pResPath,int uResId)
 {
@@ -1733,47 +1799,42 @@ static void VideoPlayer_RefreshPlayingTick(CVideoPlayer *pMe)
         IIMAGE_Draw(pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD], VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y+2); 
     	IIMAGE_Draw(pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD], VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y+2); 
         //tick time
-        #else
+        #else 
+		#ifndef FEATURE_DISP_240X320
     	IIMAGE_Draw(pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD], VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y); 
     	IIMAGE_Draw(pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD], VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y); 
+		#endif
         #endif
     }
 	#if defined(FEATURE_DISP_220X176)
     SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y+3, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
 	#else
 	SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
+    IDISPLAY_FillRect(pMe->m_pDisplay,&rc_tick,0x0);
 	#endif
+    
     MEMSET(tick_time,0,MAX_STR_LEN);
-
+#ifdef FEATURE_DISP_240X320
+    SPRINTF(tick_time,"%02d:%02d/",
+        pMe->bCurrentTime/60,pMe->bCurrentTime%60);
+#else
     SPRINTF(tick_time,"%02d:%02d",
 		pMe->bCurrentTime/60,pMe->bCurrentTime%60);
-    
+#endif
     STRTOWSTR(tick_time, Wtick_time, sizeof(Wtick_time));
 	#ifndef FEATURE_DISP_128X160
-    DrawTextWithProfile(pMe->m_pShell, 
-                        pMe->m_pDisplay, 
-                        RGB_WHITE, 
-                        AEE_FONT_BOLD,
-                        Wtick_time, 
-                        -1, 
-                        21, 
-                        57, 
-                        &rc_tick, 
-                        IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
-	#else
-	#endif
-	#if defined(FEATURE_DISP_128X160)
-	SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
-	#elif defined(FEATURE_DISP_220X176)
-	SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y+3, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
-	#else
-	SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
-    #endif
-	MEMSET(tick_time, 0, MAX_STR_LEN);
-	MEMSET(Wtick_time, 0, sizeof(Wtick_time));
-	SPRINTF(tick_time, "%02d:%02d",
-		pMe->bTotalTime/60,pMe->bTotalTime%60);
-	STRTOWSTR(tick_time, Wtick_time, sizeof(Wtick_time));
+#ifdef FEATURE_DISP_240X320
+	DrawTextWithProfile(pMe->m_pShell, 
+                    pMe->m_pDisplay, 
+                    RGB_WHITE, 
+                    AEE_FONT_BOLD,
+                    Wtick_time, 
+                    -1, 
+                    0, 
+                    0, 
+                    &rc_tick, 
+                    IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+#else
 	DrawTextWithProfile(pMe->m_pShell, 
                         pMe->m_pDisplay, 
                         RGB_WHITE, 
@@ -1784,6 +1845,48 @@ static void VideoPlayer_RefreshPlayingTick(CVideoPlayer *pMe)
                         57, 
                         &rc_tick, 
                         IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+#endif
+
+	#else
+	#endif
+	#if defined(FEATURE_DISP_128X160)
+	SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
+	#elif defined(FEATURE_DISP_220X176)
+	SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y+3, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
+	#elif defined(FEATURE_DISP_240X320)
+	SETAEERECT(&rc_tick, 120, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
+    IDISPLAY_FillRect(pMe->m_pDisplay,&rc_tick,0x0);
+	#else
+	SETAEERECT(&rc_tick, VIDEOPLAYER_TIME_X+85, VIDEOPLAYER_TIME_Y, VIDEOPLAYER_TIME_W, VIDEOPLAYER_TIME_H);
+    #endif
+	MEMSET(tick_time, 0, MAX_STR_LEN);
+	MEMSET(Wtick_time, 0, sizeof(Wtick_time));
+	SPRINTF(tick_time, "%02d:%02d",
+		pMe->bTotalTime/60,pMe->bTotalTime%60);
+	STRTOWSTR(tick_time, Wtick_time, sizeof(Wtick_time));
+    #ifdef FEATURE_DISP_240X320
+	DrawTextWithProfile(pMe->m_pShell, 
+                    pMe->m_pDisplay, 
+                    RGB_WHITE, 
+                    AEE_FONT_BOLD,
+                    Wtick_time, 
+                    -1, 
+                    0, 
+                    0, 
+                    &rc_tick, 
+                    IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+    #else
+	DrawTextWithProfile(pMe->m_pShell, 
+                        pMe->m_pDisplay, 
+                        RGB_WHITE, 
+                        AEE_FONT_BOLD,
+                        Wtick_time, 
+                        -1, 
+                        21, 
+                        57, 
+                        &rc_tick, 
+                        IDF_ALIGN_CENTER|IDF_ALIGN_MIDDLE|IDF_TEXT_TRANSPARENT);
+    #endif
 }    
 
 /*=================================================================================================================
@@ -1823,7 +1926,11 @@ static void VideoPlayer_RefreshScheduleBar(CVideoPlayer *pMe)
         //画进度条
         //VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY, VIDEOPLAYER_SCHEDULE_X, VIDEOPLAYER_SCHEDULE_Y); 
         SETAEERECT(&rc,VIDEOPLAYER_SCHEDULE_X,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块起始位置 
-        SETAEERECT(&Rc,pi.cx-9,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块最终位置    
+		#ifdef FEATURE_DISP_240X320
+		SETAEERECT(&Rc,pi.cx+VIDEOPLAYER_SCHEDULE_X-9,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块最终位置  
+		#else
+        SETAEERECT(&Rc,pi.cx-9,VIDEOPLAYER_SCHEDULE_Y,9,9);//滑块最终位置   
+		#endif 
  #endif
     }
 	
@@ -1946,9 +2053,10 @@ boolean VideoPlayer_PlayMod(CVideoPlayer *pMe, uint16 wParam)
                 pMe->IsFullScreen = FALSE;
                 FullScreen = FALSE;
 				VideoPlayer_ChangeScrState(pMe,TRUE);
-                
+                #ifndef FEATURE_DISP_240X320
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE,IDI_PLAYERPICTURE_PAUSE, 0, 0);//背景图
-                DRAW_BOTTOMBAR(BTBAR_FULLSCREEN_PAUSE_STOP);               
+                #endif
+			    DRAW_BOTTOMBAR(BTBAR_FULLSCREEN_PAUSE_STOP);               
                 VideoPlayer_RefreshPlayerFileName(pMe); //刷新文件名               
                 VideoPlayer_RefreshPlayingTick(pMe);
                 VideoPlayer_RefreshVolBar(pMe);//刷新音量
@@ -2351,9 +2459,10 @@ static void VideoPlayer_VideoNotify(void * pUser, AEEMediaCmdNotify * pCmdNotify
                 VideoPlayer_RefreshPlayerFileName(pMe);
                 VideoPlayer_RefreshScheduleBar(pMe);//刷新进度条
                 VideoPlayer_RefreshVolBar(pMe);// 刷新音量
-#if 0
+#ifdef FEATURE_DISP_240X320
                 VideoPlayer_DrawImage(pMe,VIDEOPLAYER_IMAGES_RES_FILE, IDI_PLAY, VIDEOPLAYER_PLAY_X,VIDEOPLAYER_PLAY_Y); //"|>"
 #endif
+
 				pMe->m_rtype = TYPE_PLAYER;
                 
                 if(pMe->m_IsPlaynext)
@@ -2554,6 +2663,8 @@ boolean VideoPlayer_ChangeScrState(CVideoPlayer* pMe,boolean isLockScr)
 			rc.dy   = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H - 26-  GetBottomBarHeight(pMe->m_pDisplay);
 			#elif defined(FEATURE_DISP_220X176)
 			rc.dy   = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H - 5 -  GetBottomBarHeight(pMe->m_pDisplay);
+            #elif defined(FEATURE_DISP_240X320)
+            rc.dy   = pMe->m_rc.dy - VIDEOPLAYER_TIME_W -  GetBottomBarHeight(pMe->m_pDisplay)-VIDEOPLAYER_PLAY_H-10;
 			#else
 			rc.dy   = pMe->m_rc.dy - VIDEOPLAYER_NAMEPART_H -  GetBottomBarHeight(pMe->m_pDisplay);
 			#endif

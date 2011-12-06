@@ -369,8 +369,9 @@ static int VideoPlayer_InitAppData(CVideoPlayer *pMe)
     pMe->TickUpdateImg[IDI_SCHEDULE_EMPTY_PRELOAD] = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_SCHEDULE_EMPTY);
         
     pMe->TickUpdateImg[IDI_GLIDER_PRELOAD] = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_GLIDER);
-
+    #ifndef FEATURE_DISP_240X320
     pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD] = ISHELL_LoadResImage(pMe->m_pShell, VIDEOPLAYER_IMAGES_RES_FILE, IDI_TIME_PART);
+    #endif
 
     
     //创建需要的接口
@@ -429,12 +430,13 @@ static void VideoPlayer_FreeAppData(CVideoPlayer *pMe)
         
         IIMAGE_Release(pMe->TickUpdateImg[IDI_GLIDER_PRELOAD]);
     }
-
+    #ifndef FEATURE_DISP_240X320
     if (pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD]!=NULL)
     {
         
         IIMAGE_Release(pMe->TickUpdateImg[IDI_TIME_PART_PRELOAD]);
     }
+    #endif
     //恢复按键音
     (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_BEEP_VOL,&pMe->m_CKSound,sizeof(byte));    
 
@@ -535,7 +537,8 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
 {
     CVideoPlayer *pMe = (CVideoPlayer*)pi;
     AEEAppStart  *as;
-  
+
+    MSG_FATAL("VideoPlayer_HandleEvent:eCode=%x,wParam=%x",eCode,wParam,0);
     switch (eCode)
     {
         case EVT_APP_START:
@@ -597,10 +600,15 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
 
 
         case EVT_APP_STOP: 
+            if(pMe->m_pMedia)
+			{
+				IMEDIA_Stop((IMedia*)pMe->m_pMedia);
+			}	
+            (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
             SetDeviceState(DEVICE_TYPE_MP4,DEVICE_MP4_STATE_OFF);
              //恢复按键音
             (void)ICONFIG_SetItem(pMe->m_pConfig,CFGI_BEEP_VOL,&pMe->m_CKSound,sizeof(byte));
-            (void)ISHELL_CancelTimer(pMe->m_pShell, NULL, pMe);
+            
             pMe->m_bAppIsReady  = FALSE;
              videoplayer_play_flag = FALSE;
             if (pMe->m_pDisplay != NULL)
@@ -797,6 +805,20 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
 			  {
 				  return  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_VIDEOPLAYER,EVT_USER,AVK_RIGHT,0);
 			  }
+              #ifdef FEATURE_DISP_240X320
+  			  //增加音量
+			  SETAEERECT(&rc,VIDEOPLAYER_VOLUME_ADD_X-15,VIDEOPLAYER_VOLUME_ADD_Y,VIDEOPLAYER_VOLUME_ADD_W+15, VIDEOPLAYER_VOLUME_ADD_H);
+			  if(VIDEOPLAYER_PT_IN_RECT(wXPos,wYPos,rc))
+			  {
+				  return  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_VIDEOPLAYER,EVT_USER,AVK_UP,0);
+			  }
+			  //降低音量
+			  SETAEERECT(&rc,VIDEOPLAYER_VOLUME_LOW_X,VIDEOPLAYER_VOLUME_LOW_Y,VIDEOPLAYER_VOLUME_LOW_W+15, VIDEOPLAYER_VOLUME_LOW_H);
+			  if(VIDEOPLAYER_PT_IN_RECT(wXPos,wYPos,rc))
+			  {
+				  return  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_VIDEOPLAYER,EVT_USER,AVK_DOWN,0);
+			  }
+              #else
 			  //增加音量
 			  SETAEERECT(&rc,VIDEOPLAYER_VOLUME_ADD_X,VIDEOPLAYER_VOLUME_ADD_Y,VIDEOPLAYER_VOLUME_ADD_W, VIDEOPLAYER_VOLUME_ADD_H);
 			  if(VIDEOPLAYER_PT_IN_RECT(wXPos,wYPos,rc))
@@ -809,6 +831,7 @@ static boolean VideoPlayer_HandleEvent(IVideoPlayer *pi, AEEEvent  eCode, uint16
 			  {
 				  return  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_VIDEOPLAYER,EVT_USER,AVK_DOWN,0);
 			  }
+              #endif
 			  //全屏
 			  //SETAEERECT(&rc,VIDEOPLAYER_FULLSCREEN_X,VIDEOPLAYER_FULLSCREEN_Y,VIDEOPLAYER_FULLSCREEN_W, VIDEOPLAYER_FULLSCREEN_H);
 			  //if(VIDEOPLAYER_PT_IN_RECT(wXPos,wYPos,rc))
