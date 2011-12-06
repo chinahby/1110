@@ -64,15 +64,12 @@ $Header: //depot/asic/msm6550/drivers/camsensor/camsensor_ SP0A18_ycbcr.c#3 $ $D
 #define SP0A18_MAX_CONTRAST   4
 #define SP0A18_MIN_CONTRAST   0
 
-#define RETURN_ON_FALSE(rc) if ((rc)==FALSE) return FALSE  ///lee
-
-
 /* From the logic analyzer measurements */
-#define OV_SP0A18_YCBCR_FULL_SIZE_WIDTH           320//640
-#define OV_SP0A18_YCBCR_FULL_SIZE_HEIGHT          240
+#define OV_SP0A18_YCBCR_FULL_SIZE_WIDTH           640//640
+#define OV_SP0A18_YCBCR_FULL_SIZE_HEIGHT          480
 
-#define OV_SP0A18_YCBCR_QTR_SIZE_WIDTH   		480//640   
-#define OV_SP0A18_YCBCR_QTR_SIZE_HEIGHT  		360//240//   
+#define OV_SP0A18_YCBCR_QTR_SIZE_WIDTH   		640//640   
+#define OV_SP0A18_YCBCR_QTR_SIZE_HEIGHT  		480//240//   
 
 /* Strobe Flash Epoch Interrupt time before the end of line count */
 

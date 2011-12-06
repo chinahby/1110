@@ -51,8 +51,8 @@ $Header: //depot/asic/msm6550/drivers/camsensor/camsensor_ SIV120A_ycbcr.c#3 $ $
 #define CAMSENSOR_SIV120A_RESET_PIN         GPIO_OUTPUT_10
 
 /* From the logic analyzer measurements */
-#define OV_SIV120A_YCBCR_FULL_SIZE_WIDTH           320//640
-#define OV_SIV120A_YCBCR_FULL_SIZE_HEIGHT          240
+#define OV_SIV120A_YCBCR_FULL_SIZE_WIDTH           640//640
+#define OV_SIV120A_YCBCR_FULL_SIZE_HEIGHT          480
 
 #define OV_SIV120A_YCBCR_QTR_SIZE_WIDTH   		640//640   
 #define OV_SIV120A_YCBCR_QTR_SIZE_HEIGHT  		480//240//   
@@ -513,13 +513,6 @@ boolean camsensor_SIV120A_ycbcr_snapshot_config
   camsensor_static_params_type *camsensor_params /* Other config params */
 ) 
 {
-	camsensor_SIV120A_ycbcr_i2c_write_byte(0x00, 0x03);
-	camsensor_SIV120A_ycbcr_i2c_write_byte(0xA0, 0x10);
-	camsensor_SIV120A_ycbcr_i2c_write_byte(0xA1, 0x00);
-	camsensor_SIV120A_ycbcr_i2c_write_byte(0xA2, 0x40);
-	camsensor_SIV120A_ycbcr_i2c_write_byte(0xA3, 0x00);
-	camsensor_SIV120A_ycbcr_i2c_write_byte(0xA4, 0xF0);
-	
 	/* Discard the first frame.*/
 	camsensor_params->discardFirstFrame = FALSE;
 	/* Sensor output data format */
@@ -598,13 +591,6 @@ boolean camsensor_SIV120A_ycbcr_video_config
 {
 	camsensor_SIV120A_sensor_init();
 
-	camsensor_SIV120A_ycbcr_i2c_write_byte(0x00, 0x03);
-	camsensor_SIV120A_ycbcr_i2c_write_byte(0xA0, 0x24);
-	camsensor_SIV120A_ycbcr_i2c_write_byte(0xA1, 0x00);
-	camsensor_SIV120A_ycbcr_i2c_write_byte(0xA2, 0x80);
-	camsensor_SIV120A_ycbcr_i2c_write_byte(0xA3, 0x00);
-	camsensor_SIV120A_ycbcr_i2c_write_byte(0xA4, 0xE0);
-	
 	/* Sensor output data format */
 	camsensor_params->discardFirstFrame = TRUE;
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
@@ -637,7 +623,7 @@ boolean camsensor_SIV120A_ycbcr_video_config
 	camsensor_params->camif_window_width_config.firstPixel = 0;
 	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel + camsensor_params->camsensor_width*2 - 1;
 	camsensor_params->camif_window_height_config.firstLine = 0;
-	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camif_window_height_config.firstLine + camsensor_params->camsensor_height*2 - 1;
+	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camif_window_height_config.firstLine + camsensor_params->camsensor_height - 1;
 
 	camsensor_current_resolution = camsensor_preview_resolution;
 	

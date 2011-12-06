@@ -65,14 +65,18 @@ $Header: //depot/asic/msm6550/drivers/camsensor/camsensor_ SIV121A_ycbcr.c#3 $ $
 #define SIV121A_MIN_CONTRAST   0
 
 /* From the logic analyzer measurements */
-#define OV_SIV121A_YCBCR_FULL_SIZE_WIDTH           600//640
+#define OV_SIV121A_YCBCR_FULL_SIZE_WIDTH           640//640
 #define OV_SIV121A_YCBCR_FULL_SIZE_HEIGHT          480
 
-#define OV_SIV121A_YCBCR_QTR_SIZE_WIDTH   		600//640   
+#ifdef FEATURE_PROJECT_W455
+#define OV_SIV121A_YCBCR_QTR_SIZE_WIDTH   		240//640   
+#define OV_SIV121A_YCBCR_QTR_SIZE_HEIGHT  		320//240//   
+#else
+#define OV_SIV121A_YCBCR_QTR_SIZE_WIDTH   		640//640   
 #define OV_SIV121A_YCBCR_QTR_SIZE_HEIGHT  		480//240//   
-
+#endif
 /* Strobe Flash Epoch Interrupt time before the end of line count */
-#define OV_SIV121A_YCBCR_EPOCH_LINES_DELAY       4
+#define OV_SIV121A_YCBCR_EPOCH_LINES_DELAY       1
 
 #define PV_MODE_HBLANK_50HZ_NORMAL 		(0x1C3)
 #define PV_MODE_VBLANK_50HZ_NORMAL 		(0x4D)
@@ -122,6 +126,20 @@ static boolean camsensor_SIV121A_ycbcr_i2c_write_byte(uint8 reg, uint8 data);
 static void camsensor_SIV121A_ycbcr_register(camsensor_function_table_type *camsensor_function_table_ptr);
 static boolean camsensor_SIV121A_ycbcr_i2c_read_byte(uint8 reg, uint8 *data); 
 static  camera_nightshot_mode_type night_mode = CAMERA_MAX_NIGHTSHOT_MODE;
+
+static void SIV121A_config_window(uint16 startx,uint16 starty,uint16 width, uint16 height);
+
+
+static void SIV121A_config_window(uint16 startx,uint16 starty,uint16 width, uint16 height)
+{
+	camsensor_SIV121A_ycbcr_i2c_write_byte(0x00,0x04);//page 0
+
+	camsensor_SIV121A_ycbcr_i2c_write_byte(0xc0,(byte)((startx>>8)<<6)|((width>>8)<<4)|((starty>>8)<<3)|((height>>8)<<2));//10 40 F0 QVGA WINDOW 00 A0 80 160*128
+    camsensor_SIV121A_ycbcr_i2c_write_byte(0xc1,(byte)startx);
+    camsensor_SIV121A_ycbcr_i2c_write_byte(0xc2,(byte)width);
+    camsensor_SIV121A_ycbcr_i2c_write_byte(0xc3,(byte)starty);
+    camsensor_SIV121A_ycbcr_i2c_write_byte(0xc4,(byte)height);
+}
 
 /*============================================================================
                           EXTERNAL API DEFINITIONS
@@ -481,7 +499,7 @@ boolean camsensor_siv121a_init(camsensor_function_table_type *camsensor_function
     gpio_out(CAMSENSOR_SIV121A_RESET_PIN,1);
     clk_busy_wait(2*1000);
 
-	camsensor_preview_resolution  = CAMSENSOR_FULL_SIZE;
+	camsensor_preview_resolution  = CAMSENSOR_QTR_SIZE;
 	camsensor_snapshot_resolution = CAMSENSOR_FULL_SIZE;
 
 
@@ -688,22 +706,43 @@ boolean camsensor_SIV121A_ycbcr_snapshot_config
   camsensor_static_params_type *camsensor_params /* Other config params */
 ) 
 {
+#ifdef FEATURE_PROJECT_W455
+	SIV121A_config_window(0,0,OV_SIV121A_YCBCR_FULL_SIZE_WIDTH,OV_SIV121A_YCBCR_FULL_SIZE_HEIGHT);
+#endif
 	/* Sensor output data format */
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
 
-	/* Set the current dimensions */
-	camsensor_params->camsensor_width = camsensor_params->full_size_width;
-	camsensor_params->camsensor_height = camsensor_params->full_size_height;
-	/* CAMIF frame */
-	camsensor_params->camif_frame_config.pixelsPerLine = OV_SIV121A_YCBCR_FULL_SIZE_WIDTH*2;
-	camsensor_params->camif_frame_config.linesPerFrame = OV_SIV121A_YCBCR_FULL_SIZE_HEIGHT;
-	
+	switch (camsensor_snapshot_resolution)
+	{
+		case CAMSENSOR_QTR_SIZE:
+			/* Set the current dimensions */
+			camsensor_params->camsensor_width = camsensor_params->qtr_size_width;
+			camsensor_params->camsensor_height = camsensor_params->qtr_size_height;
+			/* CAMIF frame */
+			camsensor_params->camif_frame_config.pixelsPerLine = camsensor_params->qtr_size_width*2;
+			camsensor_params->camif_frame_config.linesPerFrame = camsensor_params->qtr_size_height;
+			break;
+
+		case CAMSENSOR_FULL_SIZE:
+			/* Set the current dimensions */
+			camsensor_params->camsensor_width = camsensor_params->full_size_width;
+			camsensor_params->camsensor_height = camsensor_params->full_size_height;
+			/* CAMIF frame */
+			camsensor_params->camif_frame_config.pixelsPerLine = camsensor_params->full_size_width*2;
+			camsensor_params->camif_frame_config.linesPerFrame = camsensor_params->full_size_height;
+			break;
+
+		default:
+			return FALSE;
+	} /* camsensor_preview_resolution */
+
 	/* CAMIF window */
 	camsensor_params->camif_window_width_config.firstPixel = 0;
-	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camsensor_width*2 - 1;
+	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel + camsensor_params->camsensor_width*2 - 1;
 	camsensor_params->camif_window_height_config.firstLine = 0;
-	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camsensor_height - VIDEO_CAPTURE_CUT_LINE;
-	
+	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camif_window_height_config.firstLine + camsensor_params->camsensor_height - 1;
+
+	clk_busy_wait(100*1000);
 	camsensor_current_resolution = camsensor_snapshot_resolution;
 	return TRUE;
 } /* camsensor_SIV121A_ycbcr_snapshot_config */
@@ -763,7 +802,10 @@ boolean camsensor_SIV121A_ycbcr_video_config
 )
 {
 	camsensor_SIV121A_sensor_init();
-	
+
+#ifdef FEATURE_PROJECT_W455
+	SIV121A_config_window(0,0,OV_SIV121A_YCBCR_QTR_SIZE_WIDTH,OV_SIV121A_YCBCR_QTR_SIZE_HEIGHT);
+#endif
 	/* Sensor output data format */
 	camsensor_params->discardFirstFrame = TRUE;
 	camsensor_params->format = CAMIF_YCbCr_Cr_Y_Cb_Y;
@@ -796,7 +838,7 @@ boolean camsensor_SIV121A_ycbcr_video_config
 	camsensor_params->camif_window_width_config.firstPixel = 0;
 	camsensor_params->camif_window_width_config.lastPixel  = camsensor_params->camif_window_width_config.firstPixel + camsensor_params->camsensor_width*2 - 1;
 	camsensor_params->camif_window_height_config.firstLine = 0;
-	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camif_window_height_config.firstLine + camsensor_params->camsensor_height*2 - 1;
+	camsensor_params->camif_window_height_config.lastLine = camsensor_params->camif_window_height_config.firstLine + camsensor_params->camsensor_height - 1;
 
 	//	camsensor_SIV121A_ycbcr_write_sensor (camsensor_preview_resolution);//yty add
 	camsensor_current_resolution = camsensor_preview_resolution;
