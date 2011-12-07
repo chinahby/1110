@@ -798,8 +798,19 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
             MSG_FATAL("pMe->m_nCurrentTime = %d,pMe->m_eCurState = %d",pMe->m_nCurrentTime,pMe->m_eCurState,0);
             CMusicPlayer_RunFSM(pMe);
             return TRUE;
+        case EVT_DIALOG_START:
+			if(OEM_IME_DIALOG == wParam)
+			{
+				return TRUE;
+			}
+            (void) CMusicPlayer_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
+            return TRUE;  
         case EVT_DIALOG_INIT:
+            if( wParam == OEM_IME_DIALOG)
+			{
+				return TRUE;
+			}
             // 更新对话框控制参数信息！！！
             pMe->m_pActiveDlg = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
@@ -821,7 +832,10 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
             {
                 return TRUE;
             }
-
+            if(OEM_IME_DIALOG == wParam)
+			{
+				return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER_REDRAW,0,0);
+			}
             (void) CMusicPlayer_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             pMe->m_pActiveDlg = NULL;
             // Applet被挂起，不跑状态机，等待Applet返回。（注意：EVT_APP_SUSPEND
