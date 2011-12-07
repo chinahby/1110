@@ -39,8 +39,8 @@
 
 #define TOUCHPAD_PARAM_LIMITED	0
 #define PEN_SAMPLE_NUM		3
-
-#define TOUCHPAD_GPIO_INT    	 	    GPIO_INT_32  //X+
+#if 1
+#define TOUCHPAD_GPIO_INT    	 	    GPIO_INT_30//GPIO_INT_32  //X+
 
 #define TOUCHPAD_XL_IN                  GPIO_INPUT_31
 #define TOUCHPAD_XL_OUT                 GPIO_OUTPUT_31
@@ -53,6 +53,22 @@
 
 #define TOUCHPAD_YD_IN                  GPIO_INPUT_36
 #define TOUCHPAD_YD_OUT                 GPIO_OUTPUT_36
+
+#else
+#define TOUCHPAD_GPIO_INT    	 	    GPIO_INT_36  //X+
+
+#define TOUCHPAD_XL_IN                  GPIO_INPUT_30 //GPIO_INPUT_31
+#define TOUCHPAD_XL_OUT                 GPIO_OUTPUT_30//GPIO_OUTPUT_31
+
+#define TOUCHPAD_XR_IN                  GPIO_INPUT_36//GPIO_INPUT_32
+#define TOUCHPAD_XR_OUT                 GPIO_OUTPUT_36//GPIO_OUTPUT_32
+
+#define TOUCHPAD_YU_IN                  GPIO_INPUT_31//GPIO_INPUT_30 
+#define TOUCHPAD_YU_OUT                 GPIO_OUTPUT_31//GPIO_OUTPUT_30
+
+#define TOUCHPAD_YD_IN                  GPIO_INPUT_32//GPIO_INPUT_36
+#define TOUCHPAD_YD_OUT                 GPIO_OUTPUT_32//GPIO_OUTPUT_36
+#endif
 /*===========================================================================
 
                  DEFINITIONS AND DECLARATIONS FOR MODULE
@@ -69,11 +85,17 @@ and other items needed by this module.
 
 #define TOUCHPAD_SHIFT          13
 #define TOUCHPAD_MV_MAX         0xFFF // ADC Max value
-
-#define TOUCHPAD_MVX_MAX        940
-#define TOUCHPAD_MVY_MAX        900
-#define INIT_MVX0               -340
-#define INIT_MVY0              	-240
+#if 1   //客户屏
+#define TOUCHPAD_MVX_MAX        1008
+#define TOUCHPAD_MVY_MAX        1020
+#define INIT_MVX0               -96
+#define INIT_MVY0              	-116
+#else    //中广电屏
+#define TOUCHPAD_MVX_MAX        992
+#define TOUCHPAD_MVY_MAX       1020
+#define INIT_MVX0              -116
+#define INIT_MVY0              	-96
+#endif
 
 #define INIT_KMVX               (((TOUCH_SCREEN_WIDTH) <<TOUCHPAD_SHIFT)/(TOUCHPAD_MVX_MAX+INIT_MVX0))
 #define INIT_KMVY               (((TOUCH_SCREEN_HEIGHT)<<TOUCHPAD_SHIFT)/(TOUCHPAD_MVY_MAX+INIT_MVY0))
@@ -296,24 +318,37 @@ static uint16 touchpad_read_x(void);
 boolean touchpad_isr_open()
 {
     MSG_FATAL("[TP]: touchpad_isr_open", 0, 0, 0);
-	gpio_tlmm_config(TOUCHPAD_YD_OUT);
-	gpio_tlmm_config(TOUCHPAD_YU_IN);
-	gpio_tlmm_config(TOUCHPAD_XL_IN);
-	gpio_tlmm_config(TOUCHPAD_XR_IN);
-	gpio_out(TOUCHPAD_YD_OUT,GPIO_LOW_VALUE);
+	gpio_tlmm_config(TOUCHPAD_XL_OUT);//gpio_tlmm_config(TOUCHPAD_YD_OUT);
+	gpio_tlmm_config(TOUCHPAD_XR_IN);//gpio_tlmm_config(TOUCHPAD_YU_IN);
+	//gpio_tlmm_config(TOUCHPAD_YU_OUT);
+	//gpio_out(TOUCHPAD_YU_OUT,GPIO_LOW_VALUE);
 	
+	gpio_tlmm_config(TOUCHPAD_YD_IN);//gpio_tlmm_config(TOUCHPAD_XL_IN);
+	//gpio_tlmm_config(TOUCHPAD_XL_OUT);
+	//gpio_out(TOUCHPAD_XL_OUT,GPIO_HIGH_VALUE);
+	
+	gpio_tlmm_config(TOUCHPAD_YU_IN);//gpio_tlmm_config(TOUCHPAD_XR_IN);
+	//gpio_tlmm_config(TOUCHPAD_XR_OUT);
+	//gpio_out(TOUCHPAD_XR_OUT,GPIO_HIGH_VALUE);
+	
+	gpio_out(TOUCHPAD_XL_OUT,GPIO_HIGH_VALUE);//gpio_out(TOUCHPAD_YD_OUT,GPIO_LOW_VALUE);
+
 	gpio_int_set_detect((gpio_int_type)TOUCHPAD_GPIO_INT,DETECT_LEVEL);
 	
 	/* Let the sleep task know it is now ok to sleep*/
 	TOUCHPAD_SLEEP_ALLOW();
-	return gpio_int_set_handler((gpio_int_type)TOUCHPAD_GPIO_INT, ACTIVE_LOW, touchpad_pen_isr);
+	return gpio_int_set_handler((gpio_int_type)TOUCHPAD_GPIO_INT, ACTIVE_HIGH, touchpad_pen_isr);
 }
 
 boolean touchpad_isr_close()
 {
     MSG_FATAL("[TP]: touchpad_isr_close", 0, 0, 0);
 
-	gpio_int_set_handler((gpio_int_type)TOUCHPAD_GPIO_INT, ACTIVE_LOW, NULL);
+	gpio_int_set_handler((gpio_int_type)TOUCHPAD_GPIO_INT, ACTIVE_HIGH, NULL);
+	gpio_tlmm_config(TOUCHPAD_YD_IN);
+	gpio_tlmm_config(TOUCHPAD_YU_IN);
+	gpio_tlmm_config(TOUCHPAD_XL_IN);
+	gpio_tlmm_config(TOUCHPAD_XR_IN);
 	return TRUE;
 }
 
@@ -642,13 +677,12 @@ boolean touchpad_get_pen_value(pen_value_type  *pen_value)
 
 boolean touchpad_press()
 {
-	gpio_tlmm_config(TOUCHPAD_YD_OUT);
-	gpio_tlmm_config(TOUCHPAD_YU_IN);
-	gpio_tlmm_config(TOUCHPAD_XL_IN);
+	gpio_tlmm_config(TOUCHPAD_XL_OUT);
 	gpio_tlmm_config(TOUCHPAD_XR_IN);
-	gpio_out(TOUCHPAD_YD_OUT,GPIO_LOW_VALUE);
-    
-    if(gpio_in((GPIO_SignalType)TOUCHPAD_XR_IN)==GPIO_LOW_VALUE)
+	gpio_tlmm_config(TOUCHPAD_YD_IN);
+	gpio_tlmm_config(TOUCHPAD_YU_IN);
+	gpio_out(TOUCHPAD_XL_OUT,GPIO_HIGH_VALUE);
+	if(gpio_in((GPIO_SignalType)TOUCHPAD_YU_IN)==GPIO_HIGH_VALUE)
     {
         MSG_FATAL("[TP]: touchpad_press TRUE",0,0,0);
         return TRUE;
@@ -747,8 +781,8 @@ static uint16 touchpad_read_x(void)
 	gpio_tlmm_config(TOUCHPAD_YU_IN);
 	gpio_tlmm_config(TOUCHPAD_XL_OUT);
 	gpio_tlmm_config(TOUCHPAD_XR_OUT);
-	gpio_out(TOUCHPAD_XL_OUT,GPIO_LOW_VALUE);
-	gpio_out(TOUCHPAD_XR_OUT,GPIO_HIGH_VALUE);
+	gpio_out(TOUCHPAD_XL_OUT,GPIO_HIGH_VALUE);
+	gpio_out(TOUCHPAD_XR_OUT,GPIO_LOW_VALUE);
 	
     // Read from ADC1
 	return (uint16)adc_read(ADC_TOUCHPAD_X);
@@ -760,8 +794,8 @@ static uint16 touchpad_read_y(void)
 	gpio_tlmm_config(TOUCHPAD_YU_OUT);
 	gpio_tlmm_config(TOUCHPAD_XL_IN);
 	gpio_tlmm_config(TOUCHPAD_XR_IN);
-	gpio_out(TOUCHPAD_YD_OUT,GPIO_LOW_VALUE);
-	gpio_out(TOUCHPAD_YU_OUT,GPIO_HIGH_VALUE);
+	gpio_out(TOUCHPAD_YD_OUT,GPIO_HIGH_VALUE);
+	gpio_out(TOUCHPAD_YU_OUT,GPIO_LOW_VALUE);
     
 	// Read from ADC0
 	return (uint16)adc_read(ADC_TOUCHPAD_Y);
@@ -812,8 +846,18 @@ boolean touchpad_read_value(pen_value_type *pen_value)
 	pen_value->pen_y_mv = touchpad_read_y();
 
 	//值对调
-	pen_value->pen_x_mv = TOUCHPAD_XCHANGE - pen_value->pen_x_mv;
-	pen_value->pen_y_mv = TOUCHPAD_YCHANGE - pen_value->pen_y_mv;
+	pen_value->pen_x_mv = pen_value->pen_x_mv;
+	pen_value->pen_y_mv = pen_value->pen_y_mv;
+	if(pen_value->pen_x_mv<=(-INIT_MVX0))
+	{
+		pen_value->pen_x_mv = (-INIT_MVX0)+1;
+		
+	}
+	if(pen_value->pen_y_mv<=(-INIT_MVY0))
+	{
+		pen_value->pen_y_mv = (-INIT_MVY0)+1;
+		
+	}
    
     MSG_FATAL("touchpad_read_value x = %d y = %d",pen_value->pen_x_mv,pen_value->pen_y_mv,0);
     return TRUE;

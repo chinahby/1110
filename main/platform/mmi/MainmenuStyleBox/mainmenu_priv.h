@@ -63,7 +63,7 @@
 #define  SELECT_TWO_X     112
 #define  SELECT_THR_X     155
 #define  SELECT_Y         20
-#define  DX_MAIN_MOVE     10
+#define  DX_MAIN_MOVE     20
 #define  MAIN_ICON_W      60
 #define  MAIN_ICON_H      60
 #define  MAX_BOTTOM_ITEMS 4

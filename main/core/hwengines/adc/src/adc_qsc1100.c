@@ -153,7 +153,7 @@ when       who     what, where, why
 /* ADIE MUX settings */
 #define ADC_PM_AMUXOUT_ADIE_MUXSEL              ADIE_AD_MUX3
 #ifdef FEATURE_LCD_TOUCH_ENABLE
-#define ADC_BATT_THERM_ADIE_MUXSEL              ADIE_AD_MUX_INVALID
+#define ADC_BATT_THERM_ADIE_MUXSEL              ADIE_AD_MUX1
 #else
 #define ADC_BATT_THERM_ADIE_MUXSEL              ADIE_AD_MUX1
 #endif
@@ -188,7 +188,7 @@ when       who     what, where, why
 #define ADC_BATT_THERM_PM_MUXSEL           PM_ADC_MUXSEL5
 #define ADC_BATT_THERM_PM_MUXSCALE         PM_ADC_MUXSCALE15
 #ifdef FEATURE_LCD_TOUCH_ENABLE
-#define ADC_BATT_ID_ADIE_MUXSEL            ADIE_AD_MUX_INVALID
+#define ADC_BATT_ID_ADIE_MUXSEL            ADIE_AD_MUX2
 #else
 #define ADC_BATT_ID_ADIE_MUXSEL            ADIE_AD_MUX2
 #endif
