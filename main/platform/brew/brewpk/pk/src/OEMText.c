@@ -1605,6 +1605,8 @@ SEE ALSO:
 void OEM_TextSetRect(OEMCONTEXT hTextCtl, const AEERect *pInRect)
 {
    register TextCtlContext *pContext = (TextCtlContext *) hTextCtl;
+   MSG_FATAL("pContext->rectDisplay.x=%d---pContext->rectDisplay.y=%d",pContext->rectDisplay.x,pContext->rectDisplay.y,0);
+   MSG_FATAL("pContext->rectDisplay.dx=%d---pContext->rectDisplay.dy=%d",pContext->rectDisplay.dx,pContext->rectDisplay.dy,0);
 
    if (pContext && pInRect) {
       if (pInRect->x != pContext->rectDisplay.x
@@ -1612,8 +1614,7 @@ void OEM_TextSetRect(OEMCONTEXT hTextCtl, const AEERect *pInRect)
           || pInRect->dx != pContext->rectDisplay.dx
           || pInRect->dy != pContext->rectDisplay.dy) {
          // Size is changing
-         pContext->rectDisplay = *pInRect;
-
+         pContext->rectDisplay = *pInRect;       
          TextCtl_TextChanged(pContext);
       }
    }
@@ -2098,7 +2099,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
     boolean bScroll = FALSE;
     boolean bFrame = FALSE;
     RGBVAL nOldFontColor;
-
+   
 #ifdef FEATURE_FUNCS_THEME 
     RGBVAL dwOldBkClr;
 #endif
@@ -2108,6 +2109,7 @@ void OEM_TextDraw(OEMCONTEXT hTextCtl)
     {
         return;
     }
+    MSG_FATAL("OEM_TextDraw----------",0,0,0);
     if (pContext->bValid)
     {
         if (pContext->dwProperties & TP_FRAME) 
@@ -12615,11 +12617,19 @@ boolean TSIM_ProcPenUp(OEMCONTEXT hTextCtl,int16 xpos,int16 ypos)
 	register TextCtlContext *pContext = (TextCtlContext *) hTextCtl;
     MSG_FATAL("---------TSIM_ProcPenUp",0,0,0);
 
-	pContext->rc_text.x = 0;
-	pContext->rc_text.y = 20;
-	pContext->rc_text.dx = 170;
-	pContext->rc_text.dy = 164;
+	//pContext->rc_text.x = 0;
+	//pContext->rc_text.y = 20;
+	//pContext->rc_text.dx = 234;
+	//pContext->rc_text.dy = 270;
+
+    pContext->rc_text.x = pContext->rectDisplay.x;
+	pContext->rc_text.y = pContext->rectDisplay.y;
+	pContext->rc_text.dx = pContext->rectDisplay.dx;
+	pContext->rc_text.dy = pContext->rectDisplay.dy;
 	pContext->binorig = TRUE;
+    
+    MSG_FATAL("pContext->rc_text.x=%d---pContext->rc_text.y=%d",pContext->rc_text.x,pContext->rc_text.y,0);
+    MSG_FATAL("pContext->rectDisplay.dx=%d---pContext->rectDisplay.dy=%d",(pContext->rc_text.x + pContext->rc_text.dx) - 1,(pContext->rc_text.y + pContext->rc_text.dy) - 1,0);
 
 	//if the pendown point is in the pinyin keypad, then pass the event to the virtualkey controls
 	//set the range of the text now
@@ -13053,10 +13063,15 @@ boolean TSIM_ProcPenDown(OEMCONTEXT hTextCtl, int16 xpos, int16 ypos)
 	//	return FALSE;
 	//}
 	//add by ydc  2009/04/02
-	pContext->rc_text.x = 0;
-	pContext->rc_text.y = 20;
-	pContext->rc_text.dx = 170;
-	pContext->rc_text.dy = 164;
+	//pContext->rc_text.x = 0;
+	//pContext->rc_text.y = 20;
+	//pContext->rc_text.dx = 234;
+	//pContext->rc_text.dy = 270;
+
+    pContext->rc_text.x = pContext->rectDisplay.x;
+	pContext->rc_text.y = pContext->rectDisplay.y;
+	pContext->rc_text.dx = pContext->rectDisplay.dx;
+	pContext->rc_text.dy = pContext->rectDisplay.dy;
 	pContext ->binorig = TRUE;
 
 	//if the pendown point is in the pinyin keypad, then pass the event to the virtualkey controls
@@ -13142,7 +13157,7 @@ static void  TSIM_CreateDlg(TextCtlContext *pContext)
 	// (0, 0, bitmap width, 18 is abritrary just to keep things from being too smart on creation)
 	// The rect will self calculate when IDisplay is set to it.
 	SETAEERECT(&di.controls[0].h.rc, 0, 0, bi.cx, bi.cy);
-
+    MSG_FATAL("di.controls------------------bi.cx=%d----bi.cy=%d",bi.cx,bi.cy,0);
 	// These lines are to work around a context-less dialog event
 	// So the text control can work the same when launched inside a dialog
 	// and when flat on screen.
@@ -13150,12 +13165,13 @@ static void  TSIM_CreateDlg(TextCtlContext *pContext)
 	// modi by ydc nf
 	//pac = AEE_SetAppContext(AEE_GetStackedAppContext());
 	//create the dialog
-
+    MSG_FATAL("ISHELL_CreateDialog-------------------0",0,0,0);
 	if (AEE_SUCCESS != ISHELL_CreateDialog((IShell *)pContext->pIShell,
 		NULL,
 		0,
 		&di))
 	{
+        MSG_FATAL("ISHELL_CreateDialog-------------------1",0,0,0);
 		IBITMAP_Release( pBmp );
 		return;
 	}
