@@ -1110,6 +1110,7 @@ static boolean MediaGalleryApp_MainMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
             return TRUE;
 
          case IDS_MG_CARDMEMORY:
+            MSG_FATAL("IDS_MG_CARDMEMORY pMe->m_bCardExist=%d", pMe->m_bCardExist, 0, 0);
             if(pMe->m_bCardExist)
             {
 #ifdef FEATURE_MG_MASSCARD_EXPLORER
@@ -1372,7 +1373,7 @@ static boolean MediaGalleryApp_CardMemDlg_HandleEvent(CMediaGalleryApp* pMe,
 {
    IMenuCtl* pMenuCtl;
 	 uint16 *pPrevSelItemID;
-
+   MSG_FATAL("MediaGalleryApp_CardMemDlg_HandleEvent eCode=0x%x, wParam=0x%x, dwParam=0x%x", eCode, wParam, dwParam); 
    if(!pMe)
    {
       return FALSE;
@@ -2047,7 +2048,7 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
    {
       return FALSE;
    }
-
+   MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent eCode=0x%x, wParam=0x%x",eCode,wParam,0);
    pMenuCtl = pMe->m_pMediaMenu;
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
 
@@ -2055,7 +2056,15 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
    {
       return FALSE;
    }
-
+   if(pMenuCtl != NULL)
+   {
+       if (IMENUCTL_HandleEvent(pMenuCtl, eCode, wParam, dwParam))
+       {
+           MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent 0",0,0,0); 
+           return TRUE;
+       }
+   }
+   MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent 1",0,0,0);
    switch(eCode)
    {
       case EVT_DIALOG_INIT:
@@ -2201,10 +2210,16 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
       }
 
       case EVT_COMMAND:
-         return MGAppUtil_OnMediaMenuCommandEvt(pMe,
+         MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent EVT_COMMAND",0,0,0);
+         return MGAppUtil_OnMediaMenuInfoKeyEvt(pMe,
+                                                  pMenuCtl,
+                                                  eCode,
+                                                  wParam,
+                                                  0);         
+     /*    return MGAppUtil_OnMediaMenuCommandEvt(pMe,
                                                 pMenuCtl,
                                                 wParam,
-                                                dwParam);
+                                                dwParam);*/
          break;
 
       case EVT_CTL_SEL_CHANGED:
@@ -2245,7 +2260,8 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 #endif
          }
          break;
-#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+      
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch   
 		case EVT_PEN_UP:
 			{
 				AEEDeviceInfo devinfo;
@@ -2253,7 +2269,7 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 				AEERect rc;
 				int16 wXPos = (int16)AEE_GET_X(dwParam);
 				int16 wYPos = (int16)AEE_GET_Y(dwParam);
-
+                MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent wXPos=%d ,wYPos=%d",wXPos,wYPos,0);
 				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
         
 				MEMSET(&devinfo, 0, sizeof(devinfo));
@@ -7677,17 +7693,18 @@ static __inline boolean MGAppUtil_OnMediaMenuInfoKeyEvt(CMediaGalleryApp* pMe,
 {
    boolean bMenuEmpty;
    MediaDlgStat eDlgStat;
-   MSG_FATAL("MGAppUtil_OnMediaMenuInfoKeyEvt Start",0,0,0); 
+   MSG_FATAL("MGAppUtil_OnMediaMenuInfoKeyEvt Start wParam=0x%x, dwParam=0x%x",wParam,dwParam,0); 
    if(!pMe || !pMenuCtl)
    {
       return FALSE;
    }
-
+   MSG_FATAL("MGAppUtil_OnMediaMenuInfoKeyEvt 1",0,0,0); 
    if((dwParam & KB_AUTOREPEAT) != 0)
    {
       /*Do not handle repeat event for info key*/
       return FALSE;
    }
+   MSG_FATAL("MGAppUtil_OnMediaMenuInfoKeyEvt 2",0,0,0); 
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
    bMenuEmpty = pMe->m_bMediaMenuEmpty;
    MSG_FATAL("MGAppUtil_OnMediaMenuInfoKeyEvt bMenuEmpty=%d,eDlgStat=%d",bMenuEmpty,eDlgStat,0); 
