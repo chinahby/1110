@@ -5494,6 +5494,7 @@ static boolean  CContApp_HandleListDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -5881,6 +5882,7 @@ static boolean  CContApp_HandleInputFldDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -6147,7 +6149,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
         {
              // Restore the menu select from suspend
              MSG_FATAL("EVT_USER_REDRAW....................",0,0,0);
-            if(pMe->m_wSelectStore != MENU_SELECT_NULL)
+           if(pMe->m_wSelectStore != MENU_SELECT_NULL)
             {
                 IMENUCTL_SetSel(pMenuCtl, pMe->m_wSelectStore);
             }
@@ -6221,12 +6223,13 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
         return TRUE;
         
         /*下面有对4个数字域 m_nFldInputID 的邋付值， 其他的文字域在按任意键邋(1 - #)的时候编辑*/
-        case EVT_CTL_SEL_CHANGED : 
+        case EVT_CTL_SEL_CHANGED :
+            MSG_FATAL("EVT_CTL_SEL_CHANGED---0",0,0,0);
             if(EDIT_GROUP == pMe->m_nInputMode)
             {
                 return TRUE;
             }
-            
+            MSG_FATAL("EVT_CTL_SEL_CHANGED----1----wParam=%d",wParam,0,0);
             pMe->m_wSelectEdit = wParam;
             CContApp_SetInputMode(pMe);
             switch(wParam)
@@ -6431,7 +6434,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                         // 不需要返回菜单，直接弹出DONE， 传第三个参数TRUE
                         CContApp_SetEditGroup(pMe, pMenuCtl, TRUE, IMENUCTL_GetSel(pGroupList));
                     }
-                    
+                    MSG_FATAL("CLOSE_DIALOG(DLGRET_OK);",0,0,0);
                     CLOSE_DIALOG(DLGRET_OK);
                 }
                 return TRUE;
@@ -6511,13 +6514,37 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                  }
 
                 default: 
-                    CLOSE_DIALOG(DLGRET_OK);
-                    return TRUE;
+                    MSG_FATAL("CLOSE_DIALOG(DLGRET_OK);",0,0,0);
+                    break;
+                    //CLOSE_DIALOG(DLGRET_OK);
+                    //return TRUE;
             }
 
         }
         return TRUE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+        case EVT_PEN_DOWN:
+            {
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+                if(ITEXTCTL_IsActive(pTextCtl))
+				{
+				   ITEXTCTL_GetRect(pTextCtl,&rc); 
+                   if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
+			        {
+                     if(OPT_TEXT_INPUT != pMe->m_nInputMode)
+                     {
+                         TSIM_NumberKeypad(TRUE);
+                         return TRUE;
+                     }                    
+                     CContApp_SaveLocal_Input(pMe, pTextCtl);// 本地是可以先删除一些字符后，在按任意键进去编辑的
+                     CLOSE_DIALOG(DLGRET_EDIT);
+				    }         
+                }
+            	
+            }
+            break;
 		case EVT_PEN_UP:
 			{
 				AEEDeviceInfo devinfo;
@@ -6531,7 +6558,7 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
-
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
 					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
@@ -6556,23 +6583,57 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
 						 return rt;
 					}
 				}
+                #if 1
 				else
 				{
 
 					if(ITEXTCTL_IsActive(pTextCtl))
 					{
 							ITEXTCTL_GetRect(pTextCtl,&rc); 
+                            MSG_FATAL("CONTAPP_PT_IN_RECT------0",0,0,0);
 							if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 							{
-								;
+                                ;
 							}
 							else
 							{
-								if((!IMENUCTL_IsActive(pMenuCtl)))
+								/*if((!IMENUCTL_IsActive(pMenuCtl)))
 									IMENUCTL_SetActive(pMenuCtl, TRUE);
-
-								IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam);
-
+                                //ITEXTCTL_HandleEvent(pTextCtl,EVT_KEY,AVK_UP,0);
+                                MSG_FATAL("pMenuCtleCode=%x---wParam%x---dwParam%x",eCode,wParam,dwParam);
+								IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam);  */
+                                #if 1
+                                 if(EDIT_GROUP == pMe->m_nInputMode)
+                                    {                    
+                                        CContApp_SetEditGroup(pMe, pMenuCtl, FALSE, IMENUCTL_GetSel(pGroupList));
+                                        IMENUCTL_SetActive(pGroupList, FALSE);
+                                        IMENUCTL_SetActive(pMenuCtl, TRUE);
+                                    }
+                                    if(OPT_TEXT_INPUT == pMe->m_nInputMode || LOCAL_NUMBER_INPUT == pMe->m_nInputMode)
+                                    {
+                                        if(TRUE == CContApp_SaveLocal_Input(pMe, pTextCtl))
+                                        {
+                                            MSG_FATAL("CContApp_SaveLocal_Input=TRUE",0,0,0);
+                                           // itemTextBuf = pMe->m_pFldInputBuf;
+                                            if (AEE_ADDRFIELD_NONE != pMe->m_nFldInputID)
+                                            {
+                                                CContApp_SetRecByFLDID(pMe, pMe->m_nFldInputID);
+                                            } 
+                                            
+                                            CContApp_SetMenuItemText(pMe, pMenuCtl, pMe->m_wSelectEdit);
+                                        }
+                                        else
+                                        {   
+                                            MSG_FATAL("CContApp_SaveLocal_Input=FALSE",0,0,0);
+                                            return TRUE;
+                                        }
+                                        
+                                        ITEXTCTL_SetActive(pTextCtl, FALSE);
+                                        IMENUCTL_SetActive(pMenuCtl, TRUE);
+                                        IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_ADDNEW_MENU);
+                                    }
+                                    ITEXTCTL_SetActive(pTextCtl, FALSE);
+                                #endif
 							}
 
 					}
@@ -6585,30 +6646,99 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
 							}
 							else
 							{
-								if((!IMENUCTL_IsActive(pMenuCtl)))
+							/*	if((!IMENUCTL_IsActive(pMenuCtl)))
 									IMENUCTL_SetActive(pMenuCtl, TRUE);
-
+                                //ITEXTCTL_HandleEvent(pTextCtl,EVT_KEY,AVK_UP,0);
+                                MSG_FATAL("pMenuCtleCode=%x---wParam%x---dwParam%x",eCode,wParam,dwParam);
 								IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam);
+							*/
+                                
+                              #if 1
+                                 if(EDIT_GROUP == pMe->m_nInputMode)
+                                    {                    
+                                        CContApp_SetEditGroup(pMe, pMenuCtl, FALSE, IMENUCTL_GetSel(pGroupList));
+                                        IMENUCTL_SetActive(pGroupList, FALSE);
+                                        IMENUCTL_SetActive(pMenuCtl, TRUE);
+                                    }
+                                    if(OPT_TEXT_INPUT == pMe->m_nInputMode || LOCAL_NUMBER_INPUT == pMe->m_nInputMode)
+                                    {
+                                        if(TRUE == CContApp_SaveLocal_Input(pMe, pTextCtl))
+                                        {
+                                            MSG_FATAL("CContApp_SaveLocal_Input=TRUE",0,0,0);
+                                           // itemTextBuf = pMe->m_pFldInputBuf;
+                                            if (AEE_ADDRFIELD_NONE != pMe->m_nFldInputID)
+                                            {
+                                                CContApp_SetRecByFLDID(pMe, pMe->m_nFldInputID);
+                                            } 
+                                            
+                                            CContApp_SetMenuItemText(pMe, pMenuCtl, pMe->m_wSelectEdit);
+                                        }
+                                        else
+                                        {   
+                                            MSG_FATAL("CContApp_SaveLocal_Input=FALSE",0,0,0);
+                                            return TRUE;
+                                        }
+                                        
+                                        ITEXTCTL_SetActive(pTextCtl, FALSE);
+                                        IMENUCTL_SetActive(pMenuCtl, TRUE);
+                                        IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_ADDNEW_MENU);
+                                    }
+                                    IMENUCTL_SetActive(pGroupList, FALSE);
+                               #endif
 
 							}
 
 					}
 					else
 					{
-						if((!IMENUCTL_IsActive(pMenuCtl)))
+						/* if((!IMENUCTL_IsActive(pMenuCtl)))
 							IMENUCTL_SetActive(pMenuCtl, TRUE);
+                        MSG_FATAL("pMenuCtleCode=%x---wParam%x---dwParam%x",eCode,wParam,dwParam);
 
 						IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam);
-
 						if((!IMENUCTL_IsActive(pGroupList)))
 							IMENUCTL_SetActive(pGroupList, TRUE);
+                        MSG_FATAL("pMenuCtleCode=%x---wParam%x---dwParam%x",eCode,wParam,dwParam);
 
-						IMENUCTL_HandleEvent(pGroupList,eCode,wParam,dwParam);
-
+						IMENUCTL_HandleEvent(pGroupList,eCode,wParam,dwParam); */
 						
+#if 1
+                         if(EDIT_GROUP == pMe->m_nInputMode)
+                            {                    
+                                CContApp_SetEditGroup(pMe, pMenuCtl, FALSE, IMENUCTL_GetSel(pGroupList));
+                                IMENUCTL_SetActive(pGroupList, FALSE);
+                                IMENUCTL_SetActive(pMenuCtl, TRUE);
+                            }
+                            if(OPT_TEXT_INPUT == pMe->m_nInputMode || LOCAL_NUMBER_INPUT == pMe->m_nInputMode)
+                            {
+                                if(TRUE == CContApp_SaveLocal_Input(pMe, pTextCtl))
+                                {
+                                    MSG_FATAL("CContApp_SaveLocal_Input=TRUE",0,0,0);
+                                   // itemTextBuf = pMe->m_pFldInputBuf;
+                                    if (AEE_ADDRFIELD_NONE != pMe->m_nFldInputID)
+                                    {
+                                        CContApp_SetRecByFLDID(pMe, pMe->m_nFldInputID);
+                                    } 
+                                    
+                                    CContApp_SetMenuItemText(pMe, pMenuCtl, pMe->m_wSelectEdit);
+                                }
+                                else
+                                {   
+                                    MSG_FATAL("CContApp_SaveLocal_Input=FALSE",0,0,0);
+                                    return TRUE;
+                                }
+                                
+                                ITEXTCTL_SetActive(pTextCtl, FALSE);
+                                IMENUCTL_SetActive(pMenuCtl, TRUE);
+                                IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_ADDNEW_MENU);
+                            }
+                            ITEXTCTL_SetActive(pTextCtl, FALSE);
+                            IMENUCTL_SetActive(pGroupList, FALSE);
+#endif
 					}
-      
+                    IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam); 
 				}
+                #endif
 
 			}
 			break;
@@ -6914,6 +7044,7 @@ static boolean  CContApp_HandleOptsDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -7137,6 +7268,7 @@ static boolean  CContApp_HandleMainMenuDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -7517,6 +7649,7 @@ static boolean  CContApp_HandleViewDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -7738,6 +7871,7 @@ static boolean  CContApp_HandleFldOptsDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -7928,6 +8062,7 @@ static boolean  CContApp_HandleFindDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -8139,6 +8274,7 @@ static boolean  CContApp_HandleGroupDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -8814,6 +8950,7 @@ static boolean  CContApp_HandleCopyDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -9159,6 +9296,7 @@ static boolean  CContApp_HandleOneDialDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -9666,6 +9804,7 @@ static boolean  CContApp_HandleCapacityDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -10339,6 +10478,7 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -10532,6 +10672,7 @@ static boolean  CContApp_HandleSettingDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -10847,6 +10988,7 @@ static boolean  CContApp_HandleInputDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -11032,6 +11174,7 @@ static boolean  CContApp_HandleSearchDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -11260,6 +11403,7 @@ static boolean  CContApp_HandleManagementDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -11515,6 +11659,7 @@ static boolean  CContApp_HandleSearchNameDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -12368,6 +12513,7 @@ static boolean  CContApp_HandleSelectDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -13422,6 +13568,7 @@ static boolean  CContApp_HandleGroupOptEditDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -14580,6 +14727,7 @@ static boolean  CContApp_HandleNunFldDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{
@@ -14951,6 +15099,7 @@ static boolean  CContApp_HandleSelectOptDlgEvent( CContApp  *pMe,
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+                MSG_FATAL("devinfo.cyScreen-nBarH=%d----devinfo.cxScreen=%d----nBarH=%d",devinfo.cyScreen-nBarH,devinfo.cxScreen,nBarH);
 
 				if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
 				{

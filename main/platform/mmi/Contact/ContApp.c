@@ -871,8 +871,19 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             
             CContApp_RunFSM(pMe);
             return TRUE;
-            
+        case EVT_DIALOG_START:
+			if(OEM_IME_DIALOG == wParam)
+			{
+				return TRUE;
+			}
+            (void) CContApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
+            return TRUE;    
         case EVT_DIALOG_INIT:
+            if( wParam == OEM_IME_DIALOG)
+			{
+				return TRUE;
+			}
             MSG_FATAL("IContApp_HandleEvent EVT_DIALOG_INIT",0,0,0);
             // 更新对话框控制参数信息！！！
             pMe->m_pActiveDlg = (IDialog*)dwParam;
@@ -882,6 +893,17 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             
         case EVT_DIALOG_END:
             MSG_FATAL("IContApp_HandleEvent EVT_DIALOG_END",0,0,0);
+            
+			/*if( wParam == OEM_IME_DIALOG)
+			{
+				repaint( TRUE);
+				return TRUE;
+			} */
+            if(OEM_IME_DIALOG == wParam)
+			{
+				return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_CONTACT,EVT_USER_REDRAW,0,0);
+			}
+                        
             if (wParam == 0)
             {
                 return TRUE;
@@ -889,7 +911,6 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
             
             (void) CContApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             pMe->m_pActiveDlg = NULL;
-            
             // Applet被挂起，不跑状态机，等待Applet返回。（注意：EVT_APP_SUSPEND
             // 事件在EVT_DIALOG_END事件前发出。
             if (pMe->m_bSuspending == FALSE)
