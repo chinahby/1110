@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="gmfive" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1" Name="IDS_APP_TITLE">
+		<Text>五子棋</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_GAME_NEW">
+		<Text>新游戏</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_GAME_UNDO">
+		<Text>悔棋</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_GAME_EXIT">
+		<Text>退出游戏</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_GAME_HELP">
+		<Text>游戏帮助</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_GAME_ABOUT">
+		<Text>关于我们</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_OK">
+		<Text>确定</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_HELP_TITLE">
+		<Text>操作提示</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_HELP_CONTENT">
+		<Text>游戏简介:\1、游戏规则: 先落子者在游戏当中禁止下三三,否则判为输;对局黑白双方依次落子,任一方先在棋盘上形成横向、竖向、斜向的连续的相同颜色的五个棋子的一方获胜;\2、按键操作: 游戏过程中,按*键将恢复上一步的局势,方向键控制光标的移动,选定、中间键落子,CLR键退出当前游戏，数字键2、4、6、8对应方向键，数字1、3、7、9键对应斜上下移动，数字5键对应落子;\3、选择游戏方式: 可以选择人先下和机先下,游戏级别分初级、业余、专家、大师四种级别;\4、英雄榜： 将记录各级别下赢机器时的最少的步子，同时也可以清除历史记录,重新记录成绩。\5、按#键可以控制背景音乐的开关,点击屏幕上喇叭图标可以控制点笔的声音。</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_TOTAL_POINT">
+		<Text>得分 %d</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_GAME_OVER">
+		<Text>游戏结束!你 的得分是:%d</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_SELECT_RESULT_TITLE">
+		<Text>选择结果是:</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_SELECT_RESULT">
+		<Text>%s</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_HERO_OK">
+		<Text>确定</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_HERO_RESUME_INIT">
+		<Text>清除</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_RINGER_TITLE">
+		<Text>铃声选择</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_RINGER_SELECT">
+		<Text>选择</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_RINGER_CANCEL">
+		<Text>取消</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_CHESS_LEVLE">
+		<Text>级别选择</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_GAME_LEVEL_1">
+		<Text>初级</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_GAME_LEVEL_2">
+		<Text>业余</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_GAME_LEVEL_3">
+		<Text>专家</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_GAME_LEVEL_4">
+		<Text>大师</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_BACKRINGER_SELECT">
+		<Text>背景声音选择</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_MAINMENU_STYLE">
+		<Text>菜单显示方式</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_CONTINUE_GAME">
+		<Text>继续游戏</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_MENU_RETURN">
+		<Text>返回</Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_PRE_LISTEN_RINGER">
+		<Text>预听</Text>
+	</STRING>
+	<STRING Id="29" Name="IDS_PLAY_CHESS_MODE">
+		<Text>下棋方式</Text>
+	</STRING>
+	<STRING Id="30" Name="IDS_GAME_GO_MODE_1">
+		<Text>人先走</Text>
+	</STRING>
+	<STRING Id="31" Name="IDS_GAME_GO_MODE_2">
+		<Text>机先走</Text>
+	</STRING>
+	<STRING Id="32" Name="IDS_STOP_RINGER">
+		<Text>停止</Text>
+	</STRING>
+	<STRING Id="40" Name="IDS_HERO_SCORE">
+		<Text>英雄榜</Text>
+	</STRING>
+	<STRING Id="41" Name="IDS_HERO_SCORE_TITLE">
+		<Text>  级别      步</Text>
+	</STRING>
+	<STRING Id="50" Name="IDS_SOUND_SET">
+		<Text>声音设置</Text>
+	</STRING>
+	<STRING Id="51" Name="IDS_SOUND_CLOSE_MODE">
+		<Text>关</Text>
+	</STRING>
+	<STRING Id="52" Name="IDS_SOUND_OPEN_MODE">
+		<Text>开</Text>
+	</STRING>
+	<STRING Id="61" Name="IDS_LISTMENU_MODE">
+		<Text>列表</Text>
+	</STRING>
+	<STRING Id="62" Name="IDS_ICON_MODE">
+		<Text>小图标</Text>
+	</STRING>
+	<STRING Id="100" Name="IDS_CHESS_RESULT_2">
+		<Text>恭喜, 你赢了!</Text>
+	</STRING>
+	<STRING Id="101" Name="IDS_CHESS_RESULT_1">
+		<Text>哈哈, 你输了!</Text>
+	</STRING>
+	<STRING Id="102" Name="IDS_CHESS_RESULT_3">
+		<Text>有意思, 下平了!</Text>
+	</STRING>
+	<STRING Id="103" Name="IDS_CHESS_RESULT_TITLE">
+		<Text>大战结果</Text>
+	</STRING>
+	<STRING Id="104" Name="IDS_NO_RINGER">
+		<Text>没有铃声!</Text>
+	</STRING>
+	<STRING Id="105" Name="IDS_CHESS_RESULT_4">
+		<Text>你先下，下了三三禁手输棋了!</Text>
+	</STRING>
+	<STRING Id="106" Name="IDS_CHESS_RESULT_5">
+		<Text>手机先下，下三三禁手，你赢棋了!</Text>
+	</STRING>
+	<STRING Id="110" Name="IDS_GAME_INFORMATION">
+		<Text>公司名称:\四川长城软件科技有限公司\客服电话:028-86617036\ \公司网站:\http://www.gwsoft.com.cn\软件名称:  五子棋\版本号:  V1.0</Text>
+	</STRING>
+</Strings>
+<Objects MimeType="image/bmp">
+	<Object Id="1" Name="IDB_GAME_NEW">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\startgame.bmp</File>
+	</Object>
+	<Object Id="3" Name="IDB_GAME_HELP">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\help.bmp</File>
+	</Object>
+	<Object Id="4" Name="IDB_GAME_ABOUT">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\about.bmp</File>
+	</Object>
+	<Object Id="5" Name="IDB_GAME_EXIT">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\exit.bmp</File>
+	</Object>
+	<Object Id="6" Name="IDB_SPLASH">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\splash.bmp</File>
+	</Object>
+	<Object Id="8" Name="IDB_GAME_RADIO_UNSEL">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\RadioUnselIcon.bmp</File>
+	</Object>
+	<Object Id="9" Name="IDB_GAME_RADIO_SEL">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\RadioSelIcon.bmp</File>
+	</Object>
+	<Object Id="10" Name="IDB_RINGER_VIEW">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\ringerview.bmp</File>
+	</Object>
+	<Object Id="11" Name="IDB_SOUND_SET">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\soundset.bmp</File>
+	</Object>
+	<Object Id="12" Name="IDB_HERO_SCORE">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\hero.bmp</File>
+	</Object>
+	<Object Id="14" Name="IDB_CHESS_MODE">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\chessmode.bmp</File>
+	</Object>
+	<Object Id="15" Name="IDB_GAME_LEVEL">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\gamelevel.bmp</File>
+	</Object>
+	<Object Id="16" Name="IDB_SOFTKEY_BUTTOM">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\softkeybottom.bmp</File>
+	</Object>
+	<Object Id="17" Name="IDB_TOP_BGBMP">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\topTitle.bmp</File>
+	</Object>
+	<Object Id="18" Name="IDB_BOTTOM">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\BGbottom.bmp</File>
+	</Object>
+	<Object Id="19" Name="IDB_SOUNDON">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\SoundOn.bmp</File>
+	</Object>
+	<Object Id="20" Name="IDB_SOUNDOFF">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\SoundOff.bmp</File>
+	</Object>
+</Objects>
+</BREWRes>

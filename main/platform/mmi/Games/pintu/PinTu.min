@@ -1,0 +1,34 @@
+################################################################################
+# brick attack gnumake variable definition
+################################################################################
+PINTU_INC = $(PINTU)
+PINTU_RES = $(PINTU)/resources
+PINTU_SRC = $(PINTU)
+PINTU_LIB = $(PINTU)
+
+PINTU_SOURCES = PinTu.c
+
+PINTU_OBJS :=  $(addprefix $(TARGETDIR)/, $(PINTU_SOURCES:%.c=%.o))
+$(PINTU_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c               $(PINTU_SRC)
+vpath %.bar             $(PINTU_RES)
+vpath %.brx             $(PINTU_RES)
+
+CONSTFILE_FILES+=\
+pintu.mif|fs:/mif/pintu.mif \
+pintu.bar|fs:/mod/pintu/en/pintu.bar
+    
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG1)pintu.bar|fs:/mod/pintu/$(EXTLANG1)/pintu.bar
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG2)pintu.bar|fs:/mod/pintu/$(EXTLANG2)/pintu.bar
+endif
+
+INC  += $(PINTU_INC) $(PINTU_RES)
+#SRC  += $(PINTU_SOURCES)
+OBJECTS+=$(PINTU_OBJS)
+#LIBS += 

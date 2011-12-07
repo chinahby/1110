@@ -1,0 +1,34 @@
+################################################################################
+# brick attack gnumake variable definition
+################################################################################
+FIVEBALL_INC = $(FIVEBALL)
+FIVEBALL_RES = $(FIVEBALL)/resources
+FIVEBALL_SRC = $(FIVEBALL)
+FIVEBALL_LIB = $(FIVEBALL)
+
+FIVEBALL_SOURCES = FiveBall.c
+
+FIVEBALL_OBJS :=  $(addprefix $(TARGETDIR)/, $(FIVEBALL_SOURCES:%.c=%.o))
+$(FIVEBALL_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c               $(FIVEBALL_SRC)
+vpath %.bar             $(FIVEBALL_RES)
+vpath %.brx             $(FIVEBALL_RES)
+
+CONSTFILE_FILES+=\
+fiveball.mif|fs:/mif/fiveball.mif \
+fiveball.bar|fs:/mod/FiveBall/en/fiveball.bar
+    
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG1)fiveball.bar|fs:/mod/FiveBall/$(EXTLANG1)/fiveball.bar
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG2)fiveball.bar|fs:/mod/FiveBall/$(EXTLANG2)/fiveball.bar
+endif
+
+INC  += $(FIVEBALL_INC) $(FIVEBALL_RES)
+#SRC  += $(FIVEBALL_SOURCES)
+OBJECTS+=$(FIVEBALL_OBJS)
+#LIBS += 

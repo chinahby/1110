@@ -6,7 +6,8 @@ GAME_INC = $(GAME)
 GAME_RES = $(GAME)/resources
 GAME_SRC = $(GAME)
 GAME_LIB = $(GAME)
-GAME_SOURCES = game.c
+GAME_SOURCES = game.c \
+							 Common.c
 
 GAME_OBJS :=  $(addprefix $(TARGETDIR)/, $(GAME_SOURCES:%.c=%.o))
 $(GAME_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC

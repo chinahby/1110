@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="pintu" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1" Name="IDS_APP_TITLE">
+		<Text>趣味拼图</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_NEW_GAME">
+		<Text>新游戏</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_GAME_CONTINUE">
+		<Text>继续游戏</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_CONTROL_HELP">
+		<Text>操作指南</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_ABOUT_VERSION">
+		<Text>关于</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_EXIT_GAME">
+		<Text>退出游戏</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_SET_PARAM">
+		<Text>设置参数</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_SOUND_SET">
+		<Text>声音设置</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_SOUND_ON">
+		<Text>开</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_SOUND_OFF">
+		<Text>关</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_ALERT_INFO">
+		<Text>提示</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_GAME_OVER">
+		<Text>祝贺你成功!</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_SELECT_IMAGE">
+		<Text>选择图片</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_NOT_SELECT_IMAGE">
+		<Text>无法选择其他的图片!</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_OK">
+		<Text>确定</Text>
+	</STRING>
+	<STRING Id="20" Name="IDS_SELECT">
+		<Text>选择</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_RETURN">
+		<Text>返回</Text>
+	</STRING>
+	<STRING Id="22" Name="IDS_CANCLE">
+		<Text>取消</Text>
+	</STRING>
+	<STRING Id="23" Name="IDS_PRVIEW_IMAGE">
+		<Text>预览</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_MOVE_TOTAL_STEPS">
+		<Text>第 %d 步</Text>
+	</STRING>
+	<STRING Id="25" Name="IDS_HELP_CONTENT">
+		<Text>游戏简介：\1、游戏规则：将一张打乱顺序的图片摆放到原图所在的位置就算成功。\2、游戏中提供自我挑战方式，如参数设置，限时3分钟、最多预览5次、选择是否显示数字提示、4×4或3×3模式；\3、操作方式：本游戏支持按键和点笔两种模式，在点笔方式下，点中将要移动的图片，图片将移到有空格的位置上去，在按键方式下，通过方向键来移动要行走的方格；在拼图游戏当中通过标有“e”图标的按键来进行图片预览参考； \4、根据自己的喜好可以更换新的图片来进行拼图。</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_GAME_INFORMATION">
+		<Text>公司名称:\科技有限公司\客服电话:***\公司网站:\http://www.***\软件名称:  趣味拼图\版本号:  V1.0</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_RECORD_CLOCK">
+		<Text>%3d 秒</Text>
+	</STRING>
+	<STRING Id="28" Name="IDS_GAME_INTERRUPT">
+		<Text>很抱歉,时间到,欢迎重新开始游戏。</Text>
+	</STRING>
+	<STRING Id="29" Name="IDS_VIEW_PIC_INFO">
+		<Text>还剩余 %d 次预览机会</Text>
+	</STRING>
+	<STRING Id="30" Name="IDS_MODI_PARAM">
+		<Text>修改</Text>
+	</STRING>
+	<STRING Id="31" Name="IDS_VIEW_PIC_WARNING">
+		<Text>禁止预览</Text>
+	</STRING>
+	<STRING Id="40" Name="IDS_PLAY_MUSIC">
+		<Text>播放</Text>
+	</STRING>
+	<STRING Id="51" Name="IDS_START_GAME_ALARM">
+		<Text>没有找到默认图片,请选择新图片!</Text>
+	</STRING>
+	<STRING Id="101" Name="IDS_LIMIT_TIMER">
+		<Text>限时3分钟</Text>
+	</STRING>
+	<STRING Id="102" Name="IDS_LIMIT_PREVIEW_TIMER">
+		<Text>最多预览5次</Text>
+	</STRING>
+	<STRING Id="103" Name="IDS_MODE_3">
+		<Text>3×3方式</Text>
+	</STRING>
+	<STRING Id="104" Name="IDS_DISP_NUMBER_LABEL">
+		<Text>显示数字提示</Text>
+	</STRING>
+	<STRING Id="107" Name="IDS_MODE_4">
+		<Text>4×4方式</Text>
+	</STRING>
+</Strings>
+<Objects MimeType="image/bmp">
+	<Object Id="11" Name="IDB_START_GAME">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\imageStart.bmp</File>
+	</Object>
+	<Object Id="12" Name="IDB_HELP">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\help.bmp</File>
+	</Object>
+	<Object Id="13" Name="IDB_ABOUT_GAME">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\about.bmp</File>
+	</Object>
+	<Object Id="14" Name="IDB_EXIT_GAME">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\exit.bmp</File>
+	</Object>
+	<Object Id="15" Name="IDB_SOFTKEY_BUTTOM">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\softkeybottom.bmp</File>
+	</Object>
+	<Object Id="16" Name="IDB_PINTU_RADIO_UNSEL">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\RadioUnselIcon.bmp</File>
+	</Object>
+	<Object Id="17" Name="IDB_PINTU_RADIO_SEL">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\RadioSelIcon.bmp</File>
+	</Object>
+	<Object Id="18" Name="IDB_SELECT_FILE">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\imageStart.bmp</File>
+	</Object>
+	<Object Id="19" Name="IDB_TOP_BGBMP">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\topTitle.bmp</File>
+	</Object>
+	<Object Id="20" Name="IDB_BOTTOM">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\BGbottom.bmp</File>
+	</Object>
+	<Object Id="21" Name="IDB_NUMBER">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\number.bmp</File>
+	</Object>
+	<Object Id="22" Name="IDB_DEFAULT_IMAGE" MimeType="image/png">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\defaultres.png</File>
+	</Object>
+	<Object Id="23" Name="IDB_CONTINUE">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\imageGo.bmp</File>
+	</Object>
+	<Object Id="24" Name="IDB_SELECT_IAMGE">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\imageSelect.bmp</File>
+	</Object>
+	<Object Id="25" Name="IDB_SETTING">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\imageSet.bmp</File>
+	</Object>
+	<Object Id="26" Name="IDB_START_FLASH" MimeType="image/png">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\pintuFlash.png</File>
+	</Object>
+	<Object Id="27" Name="IDB_SOUNDON">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\SoundOn.bmp</File>
+	</Object>
+	<Object Id="28" Name="IDB_SOUNDOFF">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\SoundOff.bmp</File>
+	</Object>
+	<Object Id="29" Name="IDB_SOUND_SET">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\TetrisSound.bmp</File>
+	</Object>
+	<Object Id="30" Name="IDB_SOUND_SELON">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\RadioSelIcon.bmp</File>
+	</Object>
+	<Object Id="31" Name="IDB_SOUND_UNSELOFF">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\RadioUnselIcon.bmp</File>
+	</Object>
+</Objects>
+</BREWRes>

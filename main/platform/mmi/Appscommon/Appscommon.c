@@ -653,6 +653,24 @@ static boolean AppsCommon_GetTxtIDFromBarType(BottomBar_Param_type *pBTBarParam,
             nResID_L = IDS_OK;	//SELECT;
             nResID_R = IDS_BACK;
             break;
+		case BTBAR_PRIVIEW_BACK:
+			nResID_L = IDS_OK;	//SELECT;
+            nResID_R = IDS_BACK;
+		 	break;
+		case BTBAR_MODIFY_BACK:
+			nResID_L = IDS_OK;	//SELECT;
+            nResID_R = IDS_BACK;
+		 	break;
+		case BTBAR_SELECT_PLAY_BACK:
+			nResID_L = IDS_OK;	//SELECT;
+			nResID_M = IDS_PLAY;
+            nResID_R = IDS_BACK;
+		 	break;
+		case BTBAR_SELECT_STOP_BACK:
+			nResID_L = IDS_OK;	//SELECT;
+			nResID_M = IDS_STOP;
+            nResID_R = IDS_BACK;
+		 	break;
             //Ñ¡Ôñ--------É¾³ý
          case BTBAR_SELECT_DEL:
             nResID_L = IDS_OK; //IDS_SELECT;
@@ -3037,7 +3055,24 @@ void DrawBottomBar_Ex(IShell    *m_pIShell, IDisplay  * pIDisplay, BottomBar_e_T
             nResID_L = IDS_OK;	//SELECT;
             nResID_R = IDS_BACK;
             break;
-            
+         case BTBAR_PRIVIEW_BACK:
+		 	nResID_L = IDS_OK;	//SELECT;
+            nResID_R = IDS_BACK;
+		 	break;
+		case BTBAR_MODIFY_BACK:
+			nResID_L = IDS_OK;	//SELECT;
+            nResID_R = IDS_BACK;
+		 	break;
+		case BTBAR_SELECT_PLAY_BACK:
+			nResID_L = IDS_OK;	//SELECT;
+			nResID_M = IDS_PLAY;
+            nResID_R = IDS_BACK;
+		 	break;
+		case BTBAR_SELECT_STOP_BACK:
+			nResID_L = IDS_OK;	//SELECT;
+			nResID_M = IDS_STOP;
+            nResID_R = IDS_BACK;
+		 	break;
         case BTBAR_SAVE_BACK:
             nResID_L = IDS_SAVE;
             nResID_R = IDS_BACK;

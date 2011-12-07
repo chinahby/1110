@@ -348,7 +348,10 @@ typedef enum BottomBar_e_Type
    BTBAR_UNLOCK,
    BTBAR_LUNLOCK,
    BTBAR_OPTION_SAVE_BACK,
-   
+   BTBAR_PRIVIEW_BACK,
+   BTBAR_MODIFY_BACK,
+   BTBAR_SELECT_PLAY_BACK,
+   BTBAR_SELECT_STOP_BACK,
    BTBAR_MAX = 0xFFFF, /*For ADS compiler allocate one byte to enumerate type
                      variable by default if the max value not exceed 256*/
 

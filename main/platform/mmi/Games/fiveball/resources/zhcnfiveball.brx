@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BREWRes Name="fiveball" VERSION="1">
+<Strings Encoding="Unicode">
+	<STRING Id="1" Name="IDS_APP_TITLE">
+		<Text>五子连珠</Text>
+	</STRING>
+	<STRING Id="2" Name="IDS_GAME_NEW">
+		<Text>新游戏</Text>
+	</STRING>
+	<STRING Id="3" Name="IDS_HERO_SCORE">
+		<Text>英雄榜</Text>
+	</STRING>
+	<STRING Id="4" Name="IDS_GAME_HELP">
+		<Text>游戏帮助</Text>
+	</STRING>
+	<STRING Id="5" Name="IDS_GAME_EXIT">
+		<Text>退出游戏</Text>
+	</STRING>
+	<STRING Id="6" Name="IDS_HELP_CONTENT">
+		<Text>1、游戏规则：\在这个游戏中，你需要设法将7种同颜色的彩球以横，竖，斜排的形式排列成一条线，5个球以上便可自行消除，一次消去5颗得10分，多消一颗多五分，若空格全部被充满则游戏结束；\ 2、操作方式：\在按键方式下，通过方向键控制方框的移动，中间键和OK键是落球或选球，e键保存游戏，多媒体键切换声音，C键退出当前游戏，本游戏同样支持点笔方式。</Text>
+	</STRING>
+	<STRING Id="7" Name="IDS_HELP_TITLE">
+		<Text>操作提示</Text>
+	</STRING>
+	<STRING Id="8" Name="IDS_OVER_OK">
+		<Text>确定</Text>
+	</STRING>
+	<STRING Id="9" Name="IDS_PROMPT_TITLE">
+		<Text>提示</Text>
+	</STRING>
+	<STRING Id="10" Name="IDS_PROMPT_TEXT">
+		<Text>无保存记录</Text>
+	</STRING>
+	<STRING Id="11" Name="IDS_GAME_OVER">
+		<Text>! 游戏结束</Text>
+	</STRING>
+	<STRING Id="12" Name="IDS_NAMEINPUT">
+		<Text>请输入姓名：</Text>
+	</STRING>
+	<STRING Id="13" Name="IDS_NON_RECORD">
+		<Text>英雄榜无记录</Text>
+	</STRING>
+	<STRING Id="14" Name="IDS_GAME_CONTINUE">
+		<Text>继续游戏</Text>
+	</STRING>
+	<STRING Id="15" Name="IDS_PLACE">
+		<Text>名次</Text>
+	</STRING>
+	<STRING Id="16" Name="IDS_NAME">
+		<Text>名字</Text>
+	</STRING>
+	<STRING Id="17" Name="IDS_RECORD">
+		<Text>分数</Text>
+	</STRING>
+	<STRING Id="18" Name="IDS_EXIT_OK">
+		<Text>确定</Text>
+	</STRING>
+	<STRING Id="19" Name="IDS_INPUT">
+		<Text>恭喜! 留下大名:</Text>
+	</STRING>
+	<STRING Id="21" Name="IDS_EXIT">
+		<Text>退出游戏</Text>
+	</STRING>
+	<STRING Id="24" Name="IDS_EXIT_CANCEL">
+		<Text>取消</Text>
+	</STRING>
+	<STRING Id="26" Name="IDS_INPUT_OK">
+		<Text>确定</Text>
+	</STRING>
+	<STRING Id="27" Name="IDS_INPUT_CANCEL">
+		<Text>取消</Text>
+	</STRING>
+	<STRING Id="32" Name="IDS_SOUND_ON">
+		<Text>开</Text>
+	</STRING>
+	<STRING Id="33" Name="IDS_SOUND_OFF">
+		<Text>关</Text>
+	</STRING>
+	<STRING Id="34" Name="IDS_SOUND_SET">
+		<Text>声音设置</Text>
+	</STRING>
+</Strings>
+<Objects MimeType="image/bmp">
+	<Object Id="5001" Name="IDB_BRICK">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\1234.bmp</File>
+	</Object>
+	<Object Id="5002" Name="IDB_QIU01">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\子-蓝.bmp</File>
+	</Object>
+	<Object Id="5003" Name="IDB_QIU02">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\子-浅蓝.bmp</File>
+	</Object>
+	<Object Id="5004" Name="IDB_QIU03">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\子-红.bmp</File>
+	</Object>
+	<Object Id="5005" Name="IDB_QIU04">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\子-黄2.bmp</File>
+	</Object>
+	<Object Id="5006" Name="IDB_QIU05">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\子-灰.bmp</File>
+	</Object>
+	<Object Id="5007" Name="IDB_QIU06">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\子-紫2.bmp</File>
+	</Object>
+	<Object Id="5008" Name="IDB_QIU07">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\子-绿.bmp</File>
+	</Object>
+	<Object Id="5009" Name="IDB_GAME_NEW">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\startgame.bmp</File>
+	</Object>
+	<Object Id="5010" Name="IDB_NUM0">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\num-0.bmp</File>
+	</Object>
+	<Object Id="5012" Name="IDB_INPUT">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\PIMS16x16-1.bmp</File>
+	</Object>
+	<Object Id="5013" Name="IDB_NUM1">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\num-1.bmp</File>
+	</Object>
+	<Object Id="5014" Name="IDB_NUM2">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\num-2.bmp</File>
+	</Object>
+	<Object Id="5015" Name="IDB_NUM3">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\num-3.bmp</File>
+	</Object>
+	<Object Id="5016" Name="IDB_NUM4">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\num-4.bmp</File>
+	</Object>
+	<Object Id="5017" Name="IDB_NUM5">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\num-5.bmp</File>
+	</Object>
+	<Object Id="5018" Name="IDB_NUM6">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\num-6.bmp</File>
+	</Object>
+	<Object Id="5019" Name="IDB_NUM7">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\num-7.bmp</File>
+	</Object>
+	<Object Id="5020" Name="IDB_NUM8">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\num-8.bmp</File>
+	</Object>
+	<Object Id="5021" Name="IDB_NUM9">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\num-9.bmp</File>
+	</Object>
+	<Object Id="5022" Name="IDB_HERO_SCORE">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\hero.bmp</File>
+	</Object>
+	<Object Id="5023" Name="IDB_GAME_HELP">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\help.bmp</File>
+	</Object>
+	<Object Id="5024" Name="IDB_GAME_EXIT">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\exit.bmp</File>
+	</Object>
+	<Object Id="5025" Name="IDB_SOFTKEY_BOTTOM">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\softkeybottom.bmp</File>
+	</Object>
+	<Object Id="5026" Name="IDB_GAME_BSAVE">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\beforesave.bmp</File>
+	</Object>
+	<Object Id="5027" Name="IDB_GAME_ASAVE">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\save2.bmp</File>
+	</Object>
+	<Object Id="5028" Name="IDB_EXIT_WARNING">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\Warning.bmp</File>
+	</Object>
+	<Object Id="5029" Name="IDB_SOUND_SELON">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\RadioSelIcon.bmp</File>
+	</Object>
+	<Object Id="5030" Name="IDB_SOUND_SELOFF">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\RadioSelIcon.bmp</File>
+	</Object>
+	<Object Id="5031" Name="IDB_SOUND_SET">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\soundset.bmp</File>
+	</Object>
+	<Object Id="5032" Name="IDB_SOUND_UNSELON">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\RadioUnselIcon.bmp</File>
+	</Object>
+	<Object Id="5033" Name="IDB_SOUND_UNSELOFF">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\RadioUnselIcon.bmp</File>
+	</Object>
+	<Object Id="5034" Name="IDB_FIVEBALL_SPLASH" MimeType="image/png">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\wuzilianzhu.png</File>
+	</Object>
+	<Object Id="5035" Name="IDB_BRICK2">
+		<File>..\..\..\Appscommon\images\240x320\common\Game\FiveBall\brick3.bmp</File>
+	</Object>
+</Objects>
+</BREWRes>

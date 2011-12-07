@@ -1,0 +1,34 @@
+################################################################################
+# brick attack gnumake variable definition
+################################################################################
+GMFIVE_INC = $(GMFIVE)
+GMFIVE_RES = $(GMFIVE)/resources
+GMFIVE_SRC = $(GMFIVE)
+GMFIVE_LIB = $(GMFIVE)
+
+GMFIVE_SOURCES = GmFive.c
+
+GMFIVE_OBJS :=  $(addprefix $(TARGETDIR)/, $(GMFIVE_SOURCES:%.c=%.o))
+$(GMFIVE_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c               $(GMFIVE_SRC)
+vpath %.bar             $(GMFIVE_RES)
+vpath %.brx             $(GMFIVE_RES)
+
+CONSTFILE_FILES+=\
+gmfive.mif|fs:/mif/gmfive.mif \
+gmfive.bar|fs:/mod/GmFive/en/gmfive.bar
+    
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG1)gmfive.bar|fs:/mod/GmFive/$(EXTLANG1)/gmfive.bar
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG2)gmfive.bar|fs:/mod/GmFive/$(EXTLANG2)/gmfive.bar
+endif
+
+INC  += $(GMFIVE_INC) $(GMFIVE_RES)
+#SRC  += $(GMFIVE_SOURCES)
+OBJECTS+=$(GMFIVE_OBJS)
+#LIBS += 

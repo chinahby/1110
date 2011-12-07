@@ -947,6 +947,10 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
         #ifdef FEATURE_SMARTFREN_TOMB
         	IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_BOMB, IDS_GAME_TITLE_BOMB, NULL, 0);
 		#endif
+			//IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_FIVEBALL, IDS_GAME_TITLE_FIVEBALL, NULL, 0);
+            //IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_GMFIVE, IDS_GAME_TITLE_GMFIVE, NULL, 0);
+			IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_PINTU, IDS_GAME_TITLE_PINTU, NULL, 0);
+            IMENUCTL_AddItem(pMenu, GAME_RES_FILE_LANG,IDS_GAME_TITLE_TETRIS, IDS_GAME_TITLE_TETRIS, NULL, 0);
             return TRUE;
             
         case EVT_DIALOG_START:
@@ -1008,6 +1012,10 @@ static boolean Game_ListMenuHandler(Game *pMe, AEEEvent eCode, uint16 wParam, ui
                 case IDS_GAME_TITLE_BRICK:
                 case IDS_GAME_TITLE_MAGICSUSHI:
                 case IDS_GAME_TITLE_BOMB:
+				case IDS_GAME_TITLE_FIVEBALL:
+				case IDS_GAME_TITLE_GMFIVE:
+				case IDS_GAME_TITLE_PINTU:
+				case IDS_GAME_TITLE_TETRIS:
                     StartApplet(pMe,wParam);
                     return TRUE;
             }
@@ -1084,6 +1092,20 @@ static boolean StartApplet(Game *pMe, int i)
             
         case IDS_GAME_TITLE_BRICK:
             Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_BRICK);
+            break;
+		case IDS_GAME_TITLE_FIVEBALL:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_FIVEBALL);
+            break;
+            
+        case IDS_GAME_TITLE_GMFIVE:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_GMFIVE);
+            break;
+		case IDS_GAME_TITLE_PINTU:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_PINTU);
+            break;
+            
+        case IDS_GAME_TITLE_TETRIS:
+            Result = ISHELL_StartApplet(pMe->m_pShell, AEECLSID_TETRIS);
             break;
            #if defined (FEATURE_SMARTFREN_STATIC_BREW_APP)
         case IDS_GAME_TITLE_MAGICSUSHI:

@@ -1,0 +1,34 @@
+################################################################################
+# brick attack gnumake variable definition
+################################################################################
+TETRIS_INC = $(TETRIS)
+TETRIS_RES = $(TETRIS)/resources
+TETRIS_SRC = $(TETRIS)
+TETRIS_LIB = $(TETRIS)
+
+TETRIS_SOURCES = tetris.c
+
+TETRIS_OBJS :=  $(addprefix $(TARGETDIR)/, $(TETRIS_SOURCES:%.c=%.o))
+$(TETRIS_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
+
+vpath %.c               $(TETRIS_SRC)
+vpath %.bar             $(TETRIS_RES)
+vpath %.brx             $(TETRIS_RES)
+
+CONSTFILE_FILES+=\
+tetris.mif|fs:/mif/tetris.mif \
+tetris.bar|fs:/mod/tetris/en/tetris.bar
+    
+ifneq ($(EXTLANG1),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG1)tetris.bar|fs:/mod/tetris/$(EXTLANG1)/tetris.bar
+endif
+ifneq ($(EXTLANG2),NO)
+CONSTFILE_FILES+=\
+    $(EXTLANG2)tetris.bar|fs:/mod/tetris/$(EXTLANG2)/tetris.bar
+endif
+
+INC  += $(TETRIS_INC) $(TETRIS_RES)
+#SRC  += $(TETRIS_SOURCES)
+OBJECTS+=$(TETRIS_OBJS)
+#LIBS += 
