@@ -9858,9 +9858,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 	AECHAR Annstr[20] = {0};
     WmsApp *pMe = (WmsApp *)pUser;
     boolean m_Issetmod = FALSE;
-#ifdef FEATURE_USES_MMS     
     IMenuCtl *pMenuCtl = NULL;
-#endif
     uint32 dwMask;
     MSG_FATAL("IDD_WRITEMSG_Handler Start eCode=0x%x, wParam=0x%x",eCode,wParam,0);
     if (NULL == pMe)
@@ -9876,12 +9874,25 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
         }
     }
     MSG_FATAL("IDD_WRITEMSG_Handler Start 1",0,0,0);
-#ifdef FEATURE_USES_MMS      
+     
     pMenuCtl = (IMenuCtl*)IDIALOG_GetControl( pMe->m_pActiveIDlg, IDC_WRITEMSG_MENU);
+
     if(NULL == pMenuCtl)
     {
         MSG_FATAL("IDD_WRITEMSG_Handler Start NULL == pMenuCtl",0,0,0);
         return FALSE;
+    }
+#ifndef FEATURE_USES_MMS
+    {
+        //如果不给这个菜单控件设置坐标，那么在触摸事件中，事件会乱传，有时会传到MENU菜单中去
+        //只有把这控件的坐标设到屏幕外面去，才可以避免这种情况
+        AEERect rc={0};
+        rc.y = -1; 
+        rc.dy = 1;
+        rc.x = -1;
+        rc.dx = 1;
+        MSG_FATAL("IDD_WRITEMSG_Handler rc.x=%d, rc.y=%d,rc.dy=%d", rc.x, rc.y, rc.dy);
+        IMENUCTL_SetRect(pMenuCtl, &rc);
     }
 #endif    
     MSG_FATAL("IDD_WRITEMSG_Handler Start 2",0,0,0);
@@ -11478,7 +11489,7 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 							AEERect rc;
 							int16 wXPos = (int16)AEE_GET_X(dwParam);
 							int16 wYPos = (int16)AEE_GET_Y(dwParam);
-			
+			                MSG_FATAL("IDD_WRITEMSG_Handler EVT_PEN_UP wXPos=%d, wYPos=%d",wXPos,wYPos,0);
 							nBarH = GetBottomBarHeight(pMe->m_pDisplay);
 					
 							MEMSET(&devinfo, 0, sizeof(devinfo));
@@ -11487,31 +11498,26 @@ static boolean IDD_WRITEMSG_Handler(void *pUser,
 			
 							if(WMSAPP_PT_IN_RECT(wXPos,wYPos,rc))
 							{
+                                MSG_FATAL("IDD_WRITEMSG_Handler EVT_PEN_UP WMSAPP_PT_IN_RECT",0,0,0);
 								if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//左
 								{
-									boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_SELECT,0);
-									return rt;
-								}
-								else if(wXPos >= rc.x + (rc.dx/3)	&& wXPos < rc.x + (rc.dx/3)*2 )//左
-								{
-									 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_INFO,0);
-									 return rt;
+                                    MSG_FATAL("IDD_WRITEMSG_Handler EVT_PEN_UP left",0,0,0);
+									return IDD_WRITEMSG_Handler((void *)pMe,EVT_KEY,AVK_SELECT,0);
 								}
 								else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//左
 								{					
 									boolean rt;
 									int len = WSTRLEN(ITEXTCTL_GetTextPtr(pIText));
-			
+			                        MSG_FATAL("IDD_WRITEMSG_Handler EVT_PEN_UP left len=%d",len,0,0);
 									if((ITEXTCTL_IsActive(pIText)) && (len > 0))
-										rt = ITEXTCTL_HandleEvent(pIText,EVT_KEY,AVK_CLR,0);
+										return ITEXTCTL_HandleEvent(pIText,EVT_KEY,AVK_CLR,0);
 									else
-										rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_CLR,0);
-									 return rt;
+                                        return IDD_WRITEMSG_Handler((void *)pMe, EVT_KEY, AVK_CLR, 0);
 								}
 							}
 			
 						}
-						break;
+						return TRUE;
 #endif 
 
         default:
