@@ -12077,12 +12077,13 @@ static boolean IDD_MSGOPTS_Handler(void *pUser,
         
         case EVT_DIALOG_START:
             // 设置菜单矩形区域
-            //SetControlRect(pMe,pMenu);
+            SetControlRect(pMe,pMenu);
             
             MENU_SETBOTTOMBAR(pMenu, BTBAR_SELECT_BACK);
             // 此对话框为几个状态公用，菜单项差别较大，故采取动态建立菜单项的方式
             if (WMSST_TEMPLATESOPTS == pMe->m_currState)
             {
+                MSG_FATAL("pMe->m_eOptType=%d",pMe->m_eOptType,0,0);
                 if(pMe->m_eOptType == OPT_VIA_VIEWMSG)
                 {
                     MENU_ADDITEM(pMenu, IDS_EDIT);
@@ -15343,6 +15344,39 @@ static boolean IDD_VMNUM_Handler(void   *pUser,
                     break;
             }
             return TRUE;
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam); 
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+                    if ((wXPos>0)&&(wXPos<devinfo.cxScreen/3)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+                    {
+                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_SELECT,0);
+                        return rt;
+                    }
+                    else if ((wXPos>2*(devinfo.cxScreen/3))&&(wXPos<devinfo.cxScreen)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
+                    {
+                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_CLR,0);
+                        return rt;
+                    }
+
+				}
+
+			}
+			break;
+#endif          
+       
   
         default:
             break;
