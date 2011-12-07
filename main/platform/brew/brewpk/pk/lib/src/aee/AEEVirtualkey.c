@@ -151,12 +151,15 @@ static AEEVKeyItem_Own  VNumberKeyItem[15] =
     {EVT_CHAR, '6', {'6'}},
     {EVT_CHAR, '7', {'7'}},
     {EVT_CHAR, '8', {'8'}},
-    {EVT_CHAR, '\n', {'\n'}},
+    //{EVT_CHAR, '\n', {'\n'}},
+    {EVT_CHAR, '+', {'+'}},
     
     {EVT_CHAR, '9', {'9'}},
     {EVT_CHAR, '0', {'0'}},
-    {EVT_CHAR, '.', {'.'}},    
-    {EVT_CHAR, ',', {','}},
+    //{EVT_CHAR, '.', {'.'}},    
+    //{EVT_CHAR, ',', {','}},
+    {EVT_CHAR, '*', {'*'}},
+    {EVT_CHAR, '#', {'#'}},    
     {EVT_CHAR, ' ', {' '}}    
 };
 
