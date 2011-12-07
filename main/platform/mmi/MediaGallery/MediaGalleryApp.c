@@ -395,9 +395,21 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
          MediaGalleryApp_RunFSM(pMe);
          return TRUE;
       }
+   case EVT_DIALOG_START:
+      if(OEM_IME_DIALOG == wParam)
+      {
+          return TRUE;
+      }
+      (void) MediaGalleryApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
+
+       return TRUE;  
 
    case EVT_DIALOG_INIT:
       {
+         if( wParam == OEM_IME_DIALOG)
+    		{
+    			return TRUE;
+    		}
          // Update the active dialog info in the one and only Media gallery
          // applet object.
          pMe->m_pActiveDlg = (IDialog*)dwParam;
@@ -410,6 +422,10 @@ static boolean CMediaGallery_HandleEvent(IMediaGallery* pi, AEEEvent eCode,
       if(0 == wParam)
       {
          return TRUE;
+      }
+      if(OEM_IME_DIALOG == wParam)
+      {
+    	 return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_MEDIAGALLERY,EVT_USER_REDRAW,0,0);
       }
       MediaGalleryApp_RouteDialogEvent(pMe, eCode, wParam, dwParam);
       pMe->m_pActiveDlg = NULL;
