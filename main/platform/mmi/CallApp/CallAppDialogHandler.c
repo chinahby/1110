@@ -1715,6 +1715,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                 {
                     char   szStr[2];
                     AECHAR wStr[2];
+					MSG_FATAL("CALLAPP_DIAler_numedit_dlg......evt key",0,0,0);
                     if ((dwParam & KB_AUTOREPEAT) != 0 && (AVKType)wParam != AVK_0&& (AVKType)wParam != AVK_STAR&& (AVKType)wParam != AVK_POUND)
                     {
                         CALL_ERR("OK,it is repeat,don't process it ",0,0,0);
@@ -1728,12 +1729,13 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
 					}
                     szStr[1] = '\0';
                     STR_TO_WSTR(szStr, wStr, sizeof(wStr));
-
+					#ifndef FEATURE_LCD_TOUCH_ENABLE
                     if((AVKType)wParam == AVK_POUND||(AVKType)wParam == AVK_STAR|| (AVKType)wParam == AVK_0)
                     {
                         CallApp_Process_Spec_Key_Event(pMe,wParam);
                     }
                     else
+					#endif
                     {
                         int    len;
                         //char   szStr[2];
@@ -1828,7 +1830,7 @@ static boolean  CallApp_Dialer_NumEdit_DlgHandler(CCallApp *pMe,
                     {
                         CallApp_Send_DTMF(pMe , wStr);
                     }
-
+                    
                     CallApp_Draw_NumEdit_SoftKey(pMe);
                     CallApp_Display_Number(pMe);
 
