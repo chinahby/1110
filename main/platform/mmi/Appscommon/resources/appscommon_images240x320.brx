@@ -40,6 +40,9 @@
 	<Object Id="5013" Name="IDI_SLIDE_BOTTOM" MimeType="image/png">
 		<File>..\images\240x320\common\core\slide_bottom.png</File>
 	</Object>
+	<Object Id="5014" Name="IDB_PROMPT_MSG_STATIC_BG">
+		<File>..\images\240x320\common\Appscommon\MessageBox\background_static.bmp</File>
+	</Object>
 	<Object Id="5021" Name="IDB_CHECK_ON" MimeType="image/png">
 		<File>..\images\240x320\common\Appscommon\Icon\check_yes.png</File>
 	</Object>
