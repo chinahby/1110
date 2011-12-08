@@ -6111,7 +6111,9 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 				m_PromptMsg.ePMsgType = MESSAGE_INFORMATIVE;	
 				m_PromptMsg.eBBarType = BTBAR_BACK;
 			}
-			//Add End			
+			//Add End		
+
+			MSG_FATAL("***zzg BTAppDlg DrawPromptMessage***", 0, 0, 0);
 			
 			DrawPromptMessage(pMe->m_pIDisplay, pStatic, &m_PromptMsg);
 			IDISPLAY_UpdateEx(pMe->m_pIDisplay,FALSE); 
@@ -6121,6 +6123,8 @@ static boolean  HandleProMptDialogEvent(CBTApp *pMe,
 	  
         case EVT_DIALOG_END:
         {
+			MSG_FATAL("***zzg BTAppDlg DrawPromptMessage EVT_DIALOG_END***", 0, 0, 0);			
+			//CancelReDrawPromptMessage(pMe->m_pShell);	//取消Prompt和AEE_STATIC的Auto_scroll的同步
 			return TRUE;
         }
 

@@ -293,7 +293,6 @@ static boolean AStatic_HandleEvent
 )
 {
 	AStatic* pme = (AStatic*)po;
-
 	switch (eCode)
 	{
       case EVT_POINTER_STALE_MOVE:
@@ -718,7 +717,7 @@ static boolean AStatic_Redraw(IStatic * po)
     }
 #endif
 
-   rc = pme->m_rc;
+   rc = pme->m_rc;   
    
     if(pme->m_dwProps & ST_TRANSPARENT) 
     {
@@ -736,7 +735,7 @@ static boolean AStatic_Redraw(IStatic * po)
             {
                 IDISPLAY_FillRect(pme->m_pDisplay, &rc, CLR_USER_BACKGROUND);
             }
-        }
+        }	 		
     }
 
    if(pme->m_pTitle){
@@ -1003,7 +1002,7 @@ static boolean AStatic_SetText
 	AEEFont  fntText
 )
 {
-	AStatic*      pme = (AStatic*)po;
+	AStatic*      pme = (AStatic*)po;	
 
 	FreePtr((void**)&pme->m_pTitle);
 	pme->m_cyTitle = 0;
@@ -1127,7 +1126,7 @@ static boolean AStatic_SetTextEx
 	boolean  bsb;
 
 	// If this is a complete replacement of the text then 
-	// free all existing text...
+	// free all existing text...	
 
 	AStatic_SetPageLineCount(pme);
 
@@ -1397,6 +1396,8 @@ static boolean AStatic_Recalc(AStatic * pme)
 
    // Determine the starting point for text drawing...
 
+   DBGPRINTF("***zzg Aeestatic Recalc m_bAutoScroll=%x***", pme->m_bAutoScroll);
+
    pme->m_yText = pme->m_cyTitle + pme->m_rc.y + TEXT_BETWEEN_LINE_PIXEL;
    if(!pme->m_bAutoScroll && (pme->m_dwProps & ST_MIDDLETEXT)){
       cy = nLines * (pme->m_cyText + TEXT_BETWEEN_LINE_PIXEL);
@@ -1495,6 +1496,8 @@ static void AStatic_RedrawText(AStatic * pme)
   if (pme->m_nLines > pme->m_nPageLines)
      rc.dx -= pme->m_nSBWidth + 1;   // Now paired with Recalc
 
+  DBGPRINTF("***zzg AStatic_RedrawText***");
+  
    // Draw the next lines...
 
    nIdx = pme->m_nIdx;
@@ -1505,23 +1508,59 @@ static void AStatic_RedrawText(AStatic * pme)
    rc.dx -= 2;
    rc.y++;
    rc.dy -= 2;
+
+   DBGPRINTF("***zzg AStatic_RedrawText rt:%d,%d,%d,%d***", rc.x, rc.y, rc.dx, rc.dy);
+   
    if(pme->m_dwProps & ST_TRANSPARENT) 
     {
+    	DBGPRINTF("***zzg AStatic_RedrawText ST_TRANSPARENT***");
         AStatic_FillRect_Transparence(pme, rc);
     }   
     else
     {   
+    	DBGPRINTF("***zzg AStatic_RedrawText !!!!ST_TRANSPARENT***");
     	 if(!(pme->m_dwProps & ST_TRANSPARENTBACK))
     	 {
+    	 	DBGPRINTF("***zzg AStatic_RedrawText !!ST_TRANSPARENTBACK***");
             if(pme->m_dwProps & ST_GRAPHIC_BG)
             {
+            	DBGPRINTF("***zzg AStatic_RedrawText !!ST_GRAPHIC_BG***");
                 AStatic_DrawBackground(pme, &rc);
             }
             else
             {
                 IDISPLAY_EraseRect(pd,&rc);
             }
-    }
+    	}	
+		 //Add By zzg 2011_12_08
+		 //Ë¢ÐÂSTATICµÄ±³¾°ÇøÓò (·ÀÖ¹Auto_scrollµÄË¢ÐÂ»ìÂÒ)
+		 else
+		 {
+			IBitmap *      pFrame;
+			AEEBitmapInfo  bi;
+
+			DBGPRINTF("***zzg AStatic_RedrawText ST_TRANSPARENTBACK***");
+
+			pFrame = ISHELL_LoadResBitmap(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_PROMPT_MSG_STATIC_BG);
+
+			if ((pFrame != NULL) && (pme->m_bAutoScroll == TRUE))
+			{
+				IBITMAP_GetInfo(pFrame, &bi, sizeof(bi));
+
+				DBGPRINTF("***zzg rc:%d,%d,%d,%d**", rc.x, rc.y, rc.dx, rc.dy);
+				DBGPRINTF("***zzg bi:%d,%d**", bi.cx, bi.cy);
+				
+				IDISPLAY_BitBlt(pd, rc.x, rc.y, rc.dx, rc.dy, pFrame, 1, (bi.cy-rc.dy), AEE_RO_COPY);
+				IBITMAP_Release(pFrame);
+		 	}
+			else
+			{
+				DBGPRINTF("***zzg AStatic_RedrawText pFrame != NULL***");
+			}
+
+			IDISPLAY_Update(pd);
+		 }
+		 //Add End
     }
    // Now back... the ys are  already adjusted below
    rc.x--;
@@ -1566,30 +1605,30 @@ static void AStatic_RedrawText(AStatic * pme)
         if(!(pme->m_dwProps & ST_TRANSPARENTBACK))
         {
             RGBVAL oldFontColor;
-            
+			
             if(pme->m_dwProps & ST_GRAPHIC_BG)
-            {
+            {            	
                 TextProps = TextProps|IDF_TEXT_TRANSPARENT;
                 oldFontColor = TEXT_GRAPHIC_FONT_COLOR;
             }
             else
-            {
+            {            	
                 oldFontColor = pme->m_nFontColor;
             }
-            
-            oldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, oldFontColor);
+			
+            oldFontColor = IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, oldFontColor);			
             IDISPLAY_DrawText(pd,pme->m_fntText,psz,pl->nLen,rc.x,rc.y,&rc,TextProps);
             (void)IDISPLAY_SetColor(pme->m_pDisplay, CLR_USER_TEXT, oldFontColor);
         }
         else
         {
-            RGBVAL oldFontColor;
+            RGBVAL oldFontColor;			
 
             if(pme->m_bUserCustomColor)
             {
                 oldFontColor = IDISPLAY_SetColor(pd, CLR_USER_TEXT, pme->m_nFontColor);
-            }
-            IDISPLAY_DrawText(pd,pme->m_fntText,psz,pl->nLen,rc.x,rc.y,&rc,TextProps);
+            }			
+           IDISPLAY_DrawText(pd,pme->m_fntText,psz,pl->nLen,rc.x,rc.y,&rc,TextProps);
             if(pme->m_bUserCustomColor)
             {
                 (void)IDISPLAY_SetColor(pd, CLR_USER_TEXT, oldFontColor);
@@ -1607,9 +1646,10 @@ static void AStatic_RedrawText(AStatic * pme)
    if(pme->m_nLines > pme->m_nPageLines)
       AStatic_DrawScrollBar(pme,pme->m_nIdx);
    
-   IDISPLAY_Update(pd);
-
-   if(pme->m_bAutoScroll){
+   IDISPLAY_Update(pd);	
+	
+   if(pme->m_bAutoScroll)
+   {
       nMS = 0;
 #if defined( AEE_SIMULATOR)
 	  nMS = SCROLL_TIME_PER_LINE;
@@ -1618,7 +1658,10 @@ static void AStatic_RedrawText(AStatic * pme)
          nMS = SCROLL_TIME_PER_LINE;
       }
 #endif
-      nMS *= pme->m_nPageLines;
+
+	  //Del by zzg 2011_12_08
+      //nMS *= pme->m_nPageLines;
+		
       ISHELL_SetTimer(pme->m_pShell, nMS, (PFNNOTIFY)(AStatic_ScrollTimerCB), pme);
    }
 }
@@ -1641,19 +1684,32 @@ static void AStatic_ScrollTimerCB(AStatic * pme)
 {
    int   nIdx, nLastScroll;
 
-   if(pme->m_bAutoScroll){
+   DBGPRINTF("***zzg AStatic_ScrollTimerCB***");
+
+   if(pme->m_bAutoScroll)
+   {	   
       nIdx = pme->m_nIdx += pme->m_nPageLines;
-      nLastScroll = pme->m_nLines - pme->m_nPageLines;
+      nLastScroll = pme->m_nLines - pme->m_nPageLines;	  
+	  
       if(nIdx >= pme->m_nLines)
-         nIdx = 0;
-      else{
-         if(nIdx > nLastScroll)
-            nIdx = nLastScroll;
+      {
+      	nIdx = 0;
       }
+      else
+	  {
+         if(nIdx > nLastScroll)
+         {
+         	nIdx = nLastScroll;
+         }
+      }
+	  
       pme->m_nIdx = nIdx;
+	  
       AStatic_RedrawText(pme);
-      if(pme->m_bActive && (pme->m_dwProps & ST_ENABLE_HLGHT) ){
-         AEERect rc = pme->m_rc;
+	  
+      if(pme->m_bActive && (pme->m_dwProps & ST_ENABLE_HLGHT) )
+	  {
+         AEERect rc = pme->m_rc;		 
          IDISPLAY_FrameRect(pme->m_pDisplay, &rc);
       }
    }
@@ -2549,8 +2605,8 @@ static void     AStatic_DrawBackground(AStatic * pme, AEERect *rc)
         pImageBg = ISHELL_LoadResImage(pme->m_pShell, pme->m_strBgImgResFile, pme->m_nBgImgResID);
     }
     else
-    {
-        pImageBg = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);
+    {    	
+        pImageBg = ISHELL_LoadResImage(pme->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_BACKGROUND);       
     }
     
     Appscommon_ResetBackground(pme->m_pDisplay, pImageBg, APPSCOMMON_BG_COLOR, rc, 0, 0);
@@ -2583,5 +2639,6 @@ static void AStatic_SetFontColor(IStatic * po, RGBVAL nFontColor)
     {
         pme->m_nFontColor = nFontColor;
         pme->m_bUserCustomColor = TRUE;
+		DBGPRINTF("***zzg AStatic_SetFontColor***");
     }
 }

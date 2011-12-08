@@ -2400,6 +2400,48 @@ int GetBottomBarHeight(IDisplay  * pIDisplay)
 #endif /* FEATURE_FUNCS_BOTTOM_BAR */    
 }
 
+
+//Add By zzg 2011_12_08
+void ReDrawPromptMessage(void *pShell)
+{
+	IImage          *StringBgMsgImg; 
+	AEEImageInfo 	StringBgImgInfo = {0};
+	AEERect         totalrect;
+	AEEDeviceInfo   devinfo;         
+
+	DBGPRINTF("***zzg ReDrawPromptMessage***");
+	
+	MEMSET(&devinfo, 0, sizeof(devinfo));
+    ISHELL_GetDeviceInfo(pShell, &devinfo);
+
+	totalrect.x = devinfo.cxScreen / 2;    
+    totalrect.y = (devinfo.cyScreen  - BOTTOMBAR_HEIGHT)/2;	//Add By zzg 2010_07_16
+	
+    //Draw string background picture
+    StringBgMsgImg = ISHELL_LoadResImage(pShell,
+                        AEE_APPSCOMMONRES_IMAGESFILE,
+                        IDB_PROMPT_MSG_BG);
+    if(StringBgMsgImg != NULL)
+    {
+        IIMAGE_GetInfo(StringBgMsgImg, &StringBgImgInfo);
+        //totalrect.x = (devinfo.cxScreen - StringBgImgInfo.cx)/2;
+        IIMAGE_Draw(StringBgMsgImg, totalrect.x - StringBgImgInfo.cx/2, totalrect.y - StringBgImgInfo.cy/2);
+        IIMAGE_Release(StringBgMsgImg);
+        StringBgMsgImg = NULL;       
+    }
+
+	ISHELL_SetTimer(pShell, 1000, (PFNNOTIFY)(ReDrawPromptMessage),pShell);
+}
+
+
+
+void CancelReDrawPromptMessage(void *pShell)
+{	
+	ISHELL_CancelTimer(pShell, (PFNNOTIFY)(ReDrawPromptMessage),pShell);
+}
+//Add End
+
+
 /*==============================================================================
 函数:
     DrawPromptMessage
@@ -2434,6 +2476,8 @@ void DrawPromptMessage (IDisplay *pIDisplay,
     boolean         drawbottomStr;  
     boolean         drawbgimage = FALSE;  
     AECHAR         *pwszMsg = NULL;  
+
+	DBGPRINTF("***zzg DrawPromptMessage***");
                
     pShell = AEE_GetShell();                       
     
@@ -2694,12 +2738,34 @@ void DrawPromptMessage (IDisplay *pIDisplay,
 #endif
         if (TRUE== drawbgimage)
         {
-            ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);   
+        	DBGPRINTF("***zzg Appscommon DrawPromptMessage***");
+            ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT|ST_TRANSPARENTBACK);               
         }
         else
         {
             ISTATIC_SetProperties(pStatic, ST_CENTERTEXT|ST_MIDDLETEXT); 
         }   
+
+		MSG_FATAL("***zzg Appscommon DrawPromptMessage***", 0, 0, 0);
+
+		ISTATIC_SetFontColor(pStatic, RGB_WHITE);		//Add By zzg 2011_12_07
+
+		/*
+		//为了同步AEE_Static 的Auto_scroll 
+		{
+			uint32      nMS;
+			if(OEM_GetConfig(CFGI_ISTATIC_SCROLL, &nMS, sizeof(uint32)) || nMS == 0)
+			{
+         		nMS = 1000;
+      		}
+
+			//nMS *= pStatic->m_nPageLines;	
+			
+      		ISHELL_SetTimer(pShell, nMS, (PFNNOTIFY)(ReDrawPromptMessage),pShell);
+		}
+		*/
+		
+		
         (void)ISTATIC_SetText(pStatic, 
                               NULL, 
                               pwszMsg, 
@@ -2715,6 +2781,7 @@ void DrawPromptMessage (IDisplay *pIDisplay,
         IDISPLAY_SetColor(pIDisplay, CLR_USER_TEXT, RGB_BLACK);
     } 
 }
+
 #ifdef FEATURE_KEYGUARD
 void Appscomm_Draw_Keyguard_Msg(IDisplay *pIDisplay,IStatic *pStatic,boolean unlockkey)
 {

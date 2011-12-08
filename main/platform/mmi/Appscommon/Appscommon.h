@@ -758,6 +758,29 @@ void DrawPromptMessage (IDisplay *pIDisplay,
                         IStatic *pStatic,
                         PromptMsg_Param_type *PParam);
 
+
+//Add By zzg 2011_12_08
+/*
+函数:
+    CancelReDrawPromptMessage
+
+说明:
+    本函数用于取消RedrawPromptMessage的TIMER
+
+参数:   
+
+返回值:
+    none
+
+备注:
+    为了同步AutoScroll的Static空间的刷新而额外开的一个TIMER
+
+*/
+
+void CancelReDrawPromptMessage (void *pShell);
+
+//Add End
+
 /*==============================================================================
 函数:
     DrawBackground
