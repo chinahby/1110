@@ -954,11 +954,32 @@ static boolean  IContApp_HandleEvent( IContApp   *pi,
 
 		case EVT_USER:
 			{
+				MSG_FATAL("EVT_USER dwParam========%d",dwParam,0,0);
 				if((wParam == AVK_SELECT) || (wParam == AVK_INFO))
 				{
-					eCode = EVT_COMMAND;
-					wParam = dwParam;
-					dwParam = 0;
+					if(dwParam == 0)
+					{
+						MSG_FATAL("EVT_USER dwParam====0K",0,0,0);
+						eCode = EVT_KEY;
+						dwParam = 0;
+					}
+					else if(dwParam == EVT_KEY_PRESS)
+					{
+						eCode = EVT_KEY_PRESS;
+						dwParam = 0;
+					}
+					else if(dwParam == EVT_KEY_RELEASE)
+					{
+						eCode = EVT_KEY_RELEASE;
+						dwParam = 0;
+					}
+					else
+					{
+						MSG_FATAL("EVT_COMMAND.....................",0,0,0);
+						eCode = EVT_COMMAND;
+						wParam = dwParam;
+						dwParam = 0;
+					}
 				}
 				else if(wParam == AVK_CLR)
 				{

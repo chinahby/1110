@@ -1643,9 +1643,9 @@ static void DrawMatrixBottomStr(MainMenu *pMe)
                                     pMe->m_IconTitle[baseBottom],
                                     wszBottomstr,
                                     sizeof(wszBottomstr));
-		rc.x  = pMe->m_IconButtom_pt[i].x;
+		rc.x  = pMe->m_IconButtom_pt[i].x+15;
 		rc.y  = SCREEN_HEIGHT - 20;
-		rc.dx = BOTTOM_ICON_WIDTH;
+		rc.dx = BOTTOM_ICON_WIDTH+30;
 		rc.dy = 20;
 		DrawGreyBitTextWithProfile(pMe->m_pShell,
 	                              pMe->m_pDisplay,
@@ -1672,14 +1672,14 @@ static void DrawMatrixStr(MainMenu *pMe)
                                     pMe->m_IconTitle[i],
                                     wszBottomstr,
                                     sizeof(wszBottomstr));
-		rc.x  = pMe->m_Icondefault_Pt[i].x;
+		rc.x  = pMe->m_Icondefault_Pt[i].x-15;
 		rc.y  = pMe->m_Icondefault_Pt[i].y+ICON_HEIGHT;
-		rc.dx = ICON_WIDTH;
+		rc.dx = ICON_WIDTH+30;
 		rc.dy = 20;
 		DrawGreyBitTextWithProfile(pMe->m_pShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
-	                              18,
+	                              16,
 	                              wszBottomstr, -1,
 	                              0, 0, &rc, 
 	                              IDF_ALIGN_MIDDLE
@@ -1701,14 +1701,14 @@ static void DrawMatrixStr_Move(MainMenu *pMe,int dx)
                                     pMe->m_IconTitle[i],
                                     wszBottomstr,
                                     sizeof(wszBottomstr));
-		rc.x  = pMe->m_Icondefault_Pt[i].x+dx;
+		rc.x  = pMe->m_Icondefault_Pt[i].x+dx-15;
 		rc.y  = pMe->m_Icondefault_Pt[i].y+ICON_HEIGHT;
-		rc.dx = ICON_WIDTH;
+		rc.dx = ICON_WIDTH+30;
 		rc.dy = 20;
 		DrawGreyBitTextWithProfile(pMe->m_pShell,
 	                              pMe->m_pDisplay,
 	                              RGB_WHITE_NO_TRANS,
-	                              18,
+	                              16,
 	                              wszBottomstr, -1,
 	                              0, 0, &rc, 
 	                              IDF_ALIGN_MIDDLE
