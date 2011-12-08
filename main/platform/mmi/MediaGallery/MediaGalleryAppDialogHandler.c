@@ -3894,6 +3894,25 @@ static boolean MGAppPopupMenu_OnRename(CMediaGalleryApp* pMe,
       break;
 
    case EVT_USER_REDRAW:
+      {
+          int nLen =0;
+          AECHAR* pwstrText;
+          pwstrText = ITEXTCTL_GetTextPtr(pEditText);
+          if (NULL != pwstrText)
+          {
+             nLen = WSTRLEN(pwstrText);
+          }
+          
+          if(nLen == 0)
+          {
+             MGAppUtil_DrawSoftkey(pMe, BTBAR_BACK);
+          }
+          else
+          {
+             MGAppUtil_DrawSoftkey(pMe, BTBAR_SAVE_BACK);
+          }
+
+      }
       return TRUE;
 
    case EVT_DIALOG_END:
