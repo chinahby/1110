@@ -1448,6 +1448,7 @@ static boolean CameraApp_CameraCFGHandleEvent(CCameraApp *pMe, AEEEvent eCode, u
 ==============================================================================*/
 static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {  
+    MSG_FATAL("CameraApp_PicHandleEvent eCode=0x%x, wParam=0x%x, dwParam=0x%x",eCode, wParam, dwParam);
     switch(eCode)
     {
         case EVT_DIALOG_INIT:          
@@ -1524,6 +1525,40 @@ static boolean CameraApp_PicHandleEvent(CCameraApp *pMe, AEEEvent eCode, uint16 
  
         case EVT_KEY_HELD:
             return TRUE;  
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+                MSG_FATAL("CameraApp_PicHandleEvent EVT_PEN_UP, wXPos=%d, wYPos=%d",wXPos, wYPos, 0);
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+                    IImage *pImage = NULL;
+                    AEEImageInfo myInfo;
+                    MSG_FATAL("CameraApp_CameraCFGHandleEvent TOUCH_PT_IN_RECT",0, 0, 0);
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						return CameraApp_PicHandleEvent(pMe, EVT_KEY, AVK_SELECT, 0);
+					}
+                    if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//ÓÒ
+					{						
+						 return CameraApp_PicHandleEvent(pMe, EVT_KEY, AVK_CLR, 0);
+					}
+				}
+
+			}
+			break;
+#endif              
     }
     return FALSE;
 
