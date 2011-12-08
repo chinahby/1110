@@ -2083,14 +2083,15 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
    {
       return FALSE;
    }
-   if(pMenuCtl != NULL)
+ /*  if(pMenuCtl != NULL)
    {
+       MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent pMenuCtl != NULL",0,0,0);  
        if (IMENUCTL_HandleEvent(pMenuCtl, eCode, wParam, dwParam))
        {
            MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent 0",0,0,0); 
            return TRUE;
        }
-   }
+   }*/
    MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent 1",0,0,0);
    switch(eCode)
    {
@@ -2219,6 +2220,7 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
                break;
 
             case AVK_SELECT:
+               MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent AVK_SELECT",0,0,0);  
                return MGAppUtil_OnMediaMenuSelectKeyEvt(pMe,
                                                         pMenuCtl,
                                                         eCode,
@@ -2321,6 +2323,18 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 						 return rt;
 					}
 				}
+                else
+                {
+                    if(pMenuCtl != NULL)
+                    {
+                        MSG_FATAL("EVT_PEN_UP pMenuCtl != NULL",0,0,0);  
+                        if (IMENUCTL_HandleEvent(pMenuCtl, eCode, wParam, dwParam))
+                        {
+                            MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent 0",0,0,0); 
+                            return TRUE;
+                        }
+                    }                    
+                }
 			}
 			break;
 #endif //FEATURE_LCD_TOUCH_ENABLE
@@ -7876,7 +7890,7 @@ static __inline boolean MGAppUtil_OnMediaMenuSelectKeyEvt(CMediaGalleryApp *pMe,
 {
    MediaDlgStat eDlgStat;
    boolean bMenuEmpty;
-
+   MSG_FATAL("MGAppUtil_OnMediaMenuSelectKeyEvt Start",0,0,0);   
    if(!pMe || !pMenuCtl)
    {
       MG_FARF(ADDR, ("Bad parameter, MGAppUtil_OnMediaMenuSelectKeyEvt!"));
@@ -7886,7 +7900,7 @@ static __inline boolean MGAppUtil_OnMediaMenuSelectKeyEvt(CMediaGalleryApp *pMe,
    bMenuEmpty = pMe->m_bMediaMenuEmpty;
 
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
-
+   MSG_FATAL("MGAppUtil_OnMediaMenuSelectKeyEvt eDlgStat=%d",eDlgStat,0,0);
    if(eDlgStat == MG_DLGSTAT_NORMAL)
    {
    return MGAppUtil_OnMediaMenuCommandEvt(pMe,
@@ -8224,7 +8238,7 @@ static __inline boolean MGAppUtil_OnMediaMenuCommandEvt(CMediaGalleryApp* pMe,
     * create pop up menu at EVT_COMMAND.
     * 4, pop up should receive key event, and it do at EVT_KEY
     */
-
+   MSG_FATAL("MGAppUtil_OnMediaMenuCommandEvt eDlgStat=%d",eDlgStat,0,0); 
    if(eDlgStat == MG_DLGSTAT_NORMAL)
    {
       MSG_FATAL("MGAppUtil_OnMediaMenuCommandEvt MGAppUtil_BuildPopupMenuItems",0,0,0);
