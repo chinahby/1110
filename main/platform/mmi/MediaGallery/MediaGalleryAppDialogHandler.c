@@ -5847,8 +5847,30 @@ static boolean MediaGalleryApp_VideoAddDlg_HandleEvent(CMediaGalleryApp* pMe,
       break;
 
       case EVT_COMMAND:
-         return MGAppUtil_OnMediaMenuCommandEvt(pMe,
+        /* return MGAppUtil_OnMediaMenuCommandEvt(pMe,
+                                 pMenuCtl, wParam, dwParam);*/
+           MSG_FATAL("MediaGalleryApp_VideoAddDlg_HandleEvent EVT_COMMAND eDlgStat=%d",eDlgStat,0,0);                      
+           if(eDlgStat == MG_DLGSTAT_NORMAL)
+           {
+              IMENUCTL_SetActive(pMenuCtl, FALSE);
+              MGAppUtil_UpdateSelItemCheck(pMe);
+              MediaGalleryApp_ShowProgressBox(pMe,
+                                              MG_MSGID_BUILDVIDEOLIST);
+#ifndef AEE_SIMULATOR
+              MGExplorer_InitBuildVideoDatabase(pMe,
+                                   MG_VIDEOFILE_DB_NAME,
+                                   MGAppUtil_VideoDatabaseBuildComplete);
+#else
+              MGAppUtil_VideoDatabaseBuildComplete((void*)pMe);
+#endif
+              return TRUE;
+           }
+           else
+           {
+                return MGAppUtil_OnMediaMenuCommandEvt(pMe,
                                  pMenuCtl, wParam, dwParam);
+           }
+           break;                                 
 
       case EVT_CTL_SEL_CHANGED:
          MGAppUtil_OnMediaMenuSelChange(pMe, eDlgStat);
@@ -5858,6 +5880,57 @@ static boolean MediaGalleryApp_VideoAddDlg_HandleEvent(CMediaGalleryApp* pMe,
          MSG_FATAL("EVT_DISPLAYDIALOGTIMEOUT",0,0,0);
          return MGAppUtil_OnMediaMenuMsgBoxTimeOut(pMe,
                                             pMenuCtl, wParam, dwParam);
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch   
+      case EVT_PEN_UP:
+          {
+              AEEDeviceInfo devinfo;
+              int nBarH ;
+              AEERect rc;
+              int16 wXPos = (int16)AEE_GET_X(dwParam);
+              int16 wYPos = (int16)AEE_GET_Y(dwParam);
+              MSG_FATAL("MediaGalleryApp_VideoAddDlg_HandleEvent wXPos=%d ,wYPos=%d",wXPos,wYPos,0);
+              nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+      
+              MEMSET(&devinfo, 0, sizeof(devinfo));
+              ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+              SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+              if(MEDIAGALLERYAPP_PT_IN_RECT(wXPos,wYPos,rc))
+              {
+                  if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+                  {
+                      return  MediaGalleryApp_VideoAddDlg_HandleEvent(pMe,EVT_KEY,AVK_SELECT,0);
+                  }
+                  else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//ÖÐ
+                  {
+                       return MediaGalleryApp_VideoAddDlg_HandleEvent(pMe,EVT_KEY,AVK_INFO,0);
+                  }
+                  else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//ÓÒ
+                  {                       
+                       return  MediaGalleryApp_VideoAddDlg_HandleEvent(pMe,EVT_KEY,AVK_CLR,0);
+                  }
+              }
+              else
+              {
+                  if(eDlgStat == MG_DLGSTAT_POPUP)
+                  {
+                       MSG_FATAL("eDlgStat == MG_DLGSTAT_POPUP",0,0,0);  
+                      return IMENUCTL_HandleEvent(pMe->m_pMenuPopup, eCode, wParam, dwParam);
+                  }  
+                  else if(pMenuCtl != NULL)
+                  {
+                      MSG_FATAL("EVT_PEN_UP pMenuCtl != NULL",0,0,0);  
+                      if (IMENUCTL_HandleEvent(pMenuCtl, eCode, wParam, dwParam))
+                      {
+                          MSG_FATAL("MediaGalleryApp_VideoAddDlg_HandleEvent 0",0,0,0); 
+                          return TRUE;
+                      }
+                  }    
+              }
+          }
+          break;
+#endif //FEATURE_LCD_TOUCH_ENABLE
 
       default:
          break;
