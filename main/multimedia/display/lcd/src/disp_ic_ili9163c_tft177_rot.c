@@ -206,10 +206,14 @@ static void disp_ic_init(void)
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x00);
     LCD_WRITE_DATA(0x9F);
-    
+
+#ifdef FEATURE_VERSION_W025    
     LCD_WRITE_CMD(0x36); //Set Scanning Direction
+    LCD_WRITE_DATA(0xa0); // 0x60 For Old LCD 0x68 For New LCD
+#else
+	LCD_WRITE_CMD(0x36); //Set Scanning Direction
     LCD_WRITE_DATA(0x68); // 0x60 For Old LCD 0x68 For New LCD
-    
+#endif
     LCD_WRITE_CMD(0xF2); //Enable Gamma bit
     LCD_WRITE_DATA(0x01);
     
