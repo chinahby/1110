@@ -674,7 +674,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
     AEEAppStart *as;
     MSG_FATAL("IMusicPlayer_HandleEvent,eCode = %x",eCode,0,0);
 	
-	MSG_FATAL("***zzg IMusicPlayer_HandleEvent,eCode = %x***",eCode,0,0);
+	MSG_FATAL("***zzg IMusicPlayer_HandleEvent,eCode = %x,dwParam=%d***",eCode,dwParam,0);
 	
     switch (eCode)
     {
@@ -926,10 +926,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
                     pMe->m_bUserPressNext = FALSE;
                     return TRUE;
             }
-#ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
-		//case EVT_PEN_UP:
-		//case EVT_PEN_DOWN:
-#endif//FEATURE_LCD_TOUCH_ENABLE
+            break;
 		case EVT_HEADSET:
 			//recorder_set_media_device_auto( &pMe->m_Media);
 			if(pMe->m_pMedia != NULL)
@@ -1078,7 +1075,7 @@ static boolean IMusicPlayer_HandleEvent( IMusicPlayer *pi,
 				{
 					eCode = EVT_KEY;
 				}
-				else if ((wParam == AVK_LEFT)||(wParam == AVK_RIGHT))
+				else if ((wParam == AVK_LEFT)||(wParam == AVK_RIGHT)||(wParam == AVK_UP)||(wParam == AVK_DOWN))
 				{
 					eCode = EVT_KEY;
 				}

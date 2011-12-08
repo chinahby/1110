@@ -348,6 +348,7 @@ boolean CMusicPlayer_RouteDialogEvent(CMusicPlayer *pMe,
         case IDD_VIEW_OPTS:
              return MP3_View_Opts_HandleEvent(pMe,eCode, wParam, dwParam);
         case IDD_SIMPLEPLAYER:
+            MSG_FATAL("dwParam=%d",dwParam,0,0);
              return MP3_SimplePlayer_HandleEvent(pMe,eCode, wParam, dwParam);
         case IDD_MSGFULL:
         	 return CMusicPlayer_MsgFull_HandleEvent(pMe,eCode, wParam, dwParam);
@@ -3203,6 +3204,7 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
                default:
                   break;
              }
+             break;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//WLH ADD FOR LCD TOUCH
 	  case EVT_PEN_UP:
 		  {
@@ -3237,13 +3239,13 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
 			  SETAEERECT(&rc,ADDVOLUMEPRESS_X,ADDVOLUMEPRESS_Y,ADDVOLUMEPRESS_W, ADDVOLUMEPRESS_H);
 			  if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,rc))
 			  {
-				  return  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
+				  return  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_UP,0);
 			  }
 			  //½µµÍÒôÁ¿
 			  SETAEERECT(&rc,DECREASEVOLUMEPRESS_X,DECREASEVOLUMEPRESS_Y,DECREASEVOLUMEPRESS_W, DECREASEVOLUMEPRESS_H);
 			  if(MUSICPLAYER_PT_IN_RECT(wXPos,wYPos,rc))
 			  {
-				  return  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
+				  return  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_DOWN,0);
 			  }
 			  //µ×²¿²Ù×÷À¸
 			  nBarH = GetBottomBarHeight(pMe->m_pDisplay);
@@ -5173,6 +5175,10 @@ static void MP3_RefreshVolBar(CMusicPlayer *pMe)
             default :
                 ResID = IDI_VOLUME_THREE;            
         }
+        #ifdef FEATURE_DISP_240X320
+        MP3_DrawImage( pMe, IDI_DECREASEVOLUME_PRESS, DECREASEVOLUMEPRESS_X, DECREASEVOLUMEPRESS_Y);
+        MP3_DrawImage( pMe, IDI_ADDVOLUME_PRESS, ADDVOLUMEPRESS_X, ADDVOLUMEPRESS_Y);
+        #endif
         //MP3_DrawImage( pMe, ResID, 131, 168);//wlh 20090415 mod
     }
     else
@@ -5223,6 +5229,10 @@ static void MP3_RefreshVolBar(CMusicPlayer *pMe)
                 ResID = IDI_SIMPLEVOL_THREE;   
             #endif
         }
+        #ifdef FEATURE_DISP_240X320
+        MP3_DrawImage( pMe, IDI_DECREASEVOLUME_PRESS, DECREASEVOLUMEPRESS_X, DECREASEVOLUMEPRESS_Y);
+        MP3_DrawImage( pMe, IDI_ADDVOLUME_PRESS, ADDVOLUMEPRESS_X, ADDVOLUMEPRESS_Y);
+        #endif
     }
 	 
 #endif

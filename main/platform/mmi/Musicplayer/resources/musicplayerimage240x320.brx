@@ -41,7 +41,7 @@
 		<File>..\..\Appscommon\images\240x320\common\MusicPlayer\playlistplaying.bmp</File>
 	</Object>
 	<Object Id="5014" Name="IDI_DECREASEVOLUME_PRESS">
-		<File>..\..\Appscommon\images\240x320\common\MusicPlayer\decreaseVolumepress.png</File>
+		<File>..\..\Appscommon\images\240x320\common\MusicPlayer\volume_low.png</File>
 	</Object>
 	<Object Id="5015" Name="IDI_SCHEDULEBAR_FULL">
 		<File>..\..\Appscommon\images\240x320\common\MusicPlayer\schedulebarfull.png</File>
@@ -56,7 +56,7 @@
 		<File>..\..\Appscommon\images\240x320\common\MusicPlayer\forward.png</File>
 	</Object>
 	<Object Id="5019" Name="IDI_ADDVOLUME_PRESS">
-		<File>..\..\Appscommon\images\240x320\common\MusicPlayer\addVolumepress.png</File>
+		<File>..\..\Appscommon\images\240x320\common\MusicPlayer\volume_add.png</File>
 	</Object>
 	<Object Id="5020" Name="IDI_FORWARD_PRESS">
 		<File>..\..\Appscommon\images\240x320\common\MusicPlayer\forward_select.png</File>
