@@ -22,6 +22,9 @@ when         who     what, where, why
 
 =============================================================================*/
 #include "PinTu.h"
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#define PINTU_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
+#endif//FEATURE_LCD_TOUCH_ENABLE
 
 
 /*===============================================================================
@@ -660,10 +663,40 @@ static boolean PinTu_HandleEvent(IApplet * pi, AEEEvent eCode, uint16 wParam, ui
          else break;
 
       case EVT_PEN_UP:
-         if((pMe->m_eAppState == APP_STATE_START)&&(!pMe->m_endGameFlg) && pMe->m_keyAvaible) //during the game state
-         {
-            return GetPlaceByPenDown(pMe,dwParam);
-         }
+          {
+              AEEDeviceInfo devinfo;
+              int nBarH ;
+              AEERect rc;
+              int16 wXPos = (int16)AEE_GET_X(dwParam);
+              int16 wYPos = (int16)AEE_GET_Y(dwParam);
+              MSG_FATAL("Tetris_HandleEvent wXPos=%d ,wYPos=%d",wXPos,wYPos,0);
+              nBarH = GetBottomBarHeight(pMe->a.m_pIDisplay);
+          
+              MEMSET(&devinfo, 0, sizeof(devinfo));
+              ISHELL_GetDeviceInfo(pMe->a.m_pIShell, &devinfo);
+              SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+          
+              if(PINTU_PT_IN_RECT(wXPos,wYPos,rc) && (pMe->m_eAppState != APP_STATE_START))
+              {
+                  if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+                  {
+                      boolean rt =  PinTu_HandleEvent((IApplet*)pMe,EVT_KEY,AVK_SELECT,0);
+                      return rt;
+                  }
+                  else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//ÓÒ
+                  {                       
+                       boolean rt = PinTu_HandleEvent((IApplet*)pMe,EVT_KEY,AVK_CLR,0);
+                       return rt;
+                  }
+              }    
+                
+             MSG_FATAL("PinTu_HandleEvent EVT_PEN_UP m_eAppState=%d",pMe->m_eAppState,0,0);
+             if((pMe->m_eAppState == APP_STATE_START)&&(!pMe->m_endGameFlg) && pMe->m_keyAvaible) //during the game state
+             {
+                return GetPlaceByPenDown(pMe,dwParam);
+             }
+             break;
+        }
       
       case EVT_PEN_MOVE:
       case EVT_PEN_DOWN:         
@@ -2412,7 +2445,7 @@ static void SetParamScreen(PinTu *pMe)
    uint16    i,tmpVal;
    AEERect   rc;
    int16     startPoint;
-
+   MSG_FATAL("SetParamScreen Start",0,0,0);
    if (pMe == NULL)   return ;
 
    PinTu_Reset(pMe);
@@ -2452,12 +2485,14 @@ static void SetParamScreen(PinTu *pMe)
    IMENUCTL_Redraw(pMe->m_pMenuCtl);
    //add softkey prompt
 #if defined(AEE_STATIC) 
-    DRAW_PROMPT_BAR(BTBAR_MODIFY_BACK);
+    MSG_FATAL("SetParamScreen 1",0,0,0);
+    DRAW_PROMPT_BAR(BTBAR_OK_BACK);
 #else   
+   MSG_FATAL("SetParamScreen 2",0,0,0); 
    PinTu_AddSoftkeyPrompt(pMe,IDS_OK,IDS_MODI_PARAM,IDS_RETURN);
 #endif //AEE_STATIC   
    //IDISPLAY_Update(pd);
-
+    MSG_FATAL("SetParamScreen End",0,0,0);
 }//SetParamScreen()
 
 /*===========================================================================
@@ -2633,7 +2668,7 @@ static boolean GetPlaceByPenDown(PinTu *pMe,uint32 dwParam)
 
     uint16 x = AEE_GET_X(dwParam);
     uint16 y = AEE_GET_Y(dwParam);
-
+    MSG_FATAL("GetPlaceByPenDown Start",0,0,0);
     if (pMe == NULL ) return FALSE;
 
 

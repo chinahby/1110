@@ -21,6 +21,12 @@ when           who      what, where, why
 =============================================================================== */
 #include "tetris.h"
 
+
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE
+#define TETRIS_PT_IN_RECT(a,b,rct)      (boolean)( ((a) >= (rct).x && (a) <= ((rct).x + (rct).dx)) && ((b) >= (rct).y && (b) <= ((rct).y + (rct).dy)) )
+#endif//FEATURE_LCD_TOUCH_ENABLE
+
 /*-------------------------------------------------------------------
                             Function Prototypes
 -------------------------------------------------------------------*/
@@ -451,7 +457,7 @@ static boolean Tetris_HandleEvent(CTetrisApp * pMe, AEEEvent eCode, uint16 wPara
             default:
                 break;
             }
-
+#ifdef FEATURE_LCD_TOUCH_ENABLE
         case EVT_PEN_DOWN:
         case EVT_PEN_MOVE:
             
@@ -477,8 +483,8 @@ static boolean Tetris_HandleEvent(CTetrisApp * pMe, AEEEvent eCode, uint16 wPara
             break;           
             
         case EVT_PEN_UP:
-           
-#if defined AEE_STATIC       
+           MSG_FATAL("Tetris_HandleEvent EVT_PEN_UP",0,0,0);
+#if 0//defined AEE_STATIC       
             if(pMe->m_AppState == APP_STATE_MAIN ||
                pMe->m_AppState == APP_STATE_GRID ||
                pMe->m_AppState == APP_STATE_LEVEL||
@@ -493,17 +499,77 @@ static boolean Tetris_HandleEvent(CTetrisApp * pMe, AEEEvent eCode, uint16 wPara
                                                 wParam,
                                                 dwParam))*/
                 {
+                    MSG_FATAL("Tetris_HandleEvent EVT_PEN_UP 1",0,0,0);
                     return TRUE;
                 }
             }         
 #endif    
- 
-            if(JudgeAction(pMe, dwParam) == TRUE)
             {
-                return TRUE;                // Handle stroke events 
-            }
-            break;
+    			AEEDeviceInfo devinfo;
+    			int nBarH ;
+    			AEERect rc;
+    			int16 wXPos = (int16)AEE_GET_X(dwParam);
+    			int16 wYPos = (int16)AEE_GET_Y(dwParam);
+                MSG_FATAL("Tetris_HandleEvent wXPos=%d ,wYPos=%d",wXPos,wYPos,0);
+    			nBarH = GetBottomBarHeight(pMe->a.m_pIDisplay);
+        
+    			MEMSET(&devinfo, 0, sizeof(devinfo));
+    			ISHELL_GetDeviceInfo(pMe->a.m_pIShell, &devinfo);
+    			SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
 
+    			if(TETRIS_PT_IN_RECT(wXPos,wYPos,rc) && (pMe->m_AppState != APP_STATE_RUNNING))
+    			{
+    				if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+    				{
+    					boolean rt =  Tetris_HandleEvent(pMe,EVT_KEY,AVK_SELECT,0);
+    					return rt;
+    				}
+                    else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//ÓÒ
+    				{						
+    					 boolean rt = Tetris_HandleEvent(pMe,EVT_KEY,AVK_CLR,0);
+    					 return rt;
+    				}
+    			}    
+                if(JudgeAction(pMe, dwParam) == TRUE)
+                {
+                    MSG_FATAL("Tetris_HandleEvent EVT_PEN_UP 2",0,0,0);
+                    return TRUE;                // Handle stroke events 
+                }
+                if(IMENUCTL_IsActive(pMe->m_pMainMenu))
+                {
+                    MSG_FATAL("Tetris_HandleEvent EVT_PEN_UP 3",0,0,0);
+                   if(IMENUCTL_HandleEvent(pMe->m_pMainMenu, eCode, wParam, dwParam))
+                   {
+                       MSG_FATAL("Tetris_HandleEvent EVT_PEN_UP 4",0,0,0); 
+                       return TRUE; 
+                   }
+                }   
+                if(IMENUCTL_IsActive(pMe->m_pMenu))
+                {
+                    MSG_FATAL("Tetris_HandleEvent EVT_PEN_UP 5",0,0,0);
+                   if(IMENUCTL_HandleEvent(pMe->m_pMenu, eCode, wParam, dwParam))
+                   {
+                        MSG_FATAL("Tetris_HandleEvent EVT_PEN_UP 6",0,0,0);
+                       return TRUE; 
+                   }
+                }   
+                if(ISTATIC_IsActive(pMe->m_pStatic))
+                {
+                    if(ISTATIC_HandleEvent(pMe->m_pStatic, eCode, wParam, dwParam))
+                    {
+                        return TRUE;
+                    }
+                }  
+                if (IMENUCTL_IsActive(pMe->m_pSoftKeyMenu))
+                {
+                    if(IMENUCTL_HandleEvent(pMe->m_pSoftKeyMenu, eCode, wParam, dwParam))
+                    {
+                        return TRUE;
+                    }
+                }                
+                break;
+        }
+#endif
         case EVT_KEY:
             if(IMENUCTL_UpAndDownScroll_HandleEvent(pMe->a.m_pIShell, 
                                                     pMe->m_pMainMenu, 
