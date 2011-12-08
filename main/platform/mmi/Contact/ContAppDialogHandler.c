@@ -6219,6 +6219,9 @@ static boolean  CContApp_HandleAddNewDlgEvent( CContApp  *pMe,
                 pMe->m_wSelectStore = MENU_SELECT_NULL;
             }
             pMe->m_bInputNotComplete = FALSE;
+            #ifdef FEATURE_LCD_TOUCH_ENABLE
+            TSIM_NumberKeypad(FALSE);
+            #endif
         }
         return TRUE;
         
@@ -10146,6 +10149,9 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                 pMe->m_wSelectStore = MENU_SELECT_NULL;
             }
             pMe->m_bInputNotComplete = FALSE;
+            #ifdef FEATURE_LCD_TOUCH_ENABLE
+            TSIM_NumberKeypad(FALSE);
+            #endif
         }
         return TRUE;
 
@@ -10458,13 +10464,36 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
                     return TRUE;
                  }
 
-                default: 
-                    CLOSE_DIALOG(DLGRET_OK);
-                    return TRUE;
+                default:
+                    break;
+                    //CLOSE_DIALOG(DLGRET_OK);
+                    //return TRUE;
             }
         }
         return TRUE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+        case EVT_PEN_DOWN:
+            {
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+                if(ITEXTCTL_IsActive(pTextCtl))
+				{
+				   ITEXTCTL_GetRect(pTextCtl,&rc); 
+                   if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
+			        {
+                     if(OPT_TEXT_INPUT != pMe->m_nInputMode)
+                     {
+                         TSIM_NumberKeypad(TRUE);
+                         return TRUE;
+                     }                    
+                     CContApp_SaveLocal_Input(pMe, pTextCtl);// 本地是可以先删除一些字符后，在按任意键进去编辑的
+                     CLOSE_DIALOG(DLGRET_EDIT);
+				    }         
+                }
+            	
+            }
+            break;
 		case EVT_PEN_UP:
 			{
 				AEEDeviceInfo devinfo;
@@ -10498,7 +10527,162 @@ static boolean  CContApp_HandleEditDlgEvent( CContApp  *pMe,
 						 return rt;
 					}
 				}
+                #if 1
+				else
+				{
 
+					if(ITEXTCTL_IsActive(pTextCtl))
+					{
+							ITEXTCTL_GetRect(pTextCtl,&rc); 
+                            MSG_FATAL("CONTAPP_PT_IN_RECT------0",0,0,0);
+							if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
+							{
+                                ;
+							}
+							else
+							{
+								/*if((!IMENUCTL_IsActive(pMenuCtl)))
+									IMENUCTL_SetActive(pMenuCtl, TRUE);
+                                //ITEXTCTL_HandleEvent(pTextCtl,EVT_KEY,AVK_UP,0);
+                                MSG_FATAL("pMenuCtleCode=%x---wParam%x---dwParam%x",eCode,wParam,dwParam);
+								IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam);  */
+                                #if 1
+                                 if(EDIT_GROUP == pMe->m_nInputMode)
+                                    {                    
+                                        CContApp_SetEditGroup(pMe, pMenuCtl, FALSE, IMENUCTL_GetSel(pGroupList));
+                                        IMENUCTL_SetActive(pGroupList, FALSE);
+                                        IMENUCTL_SetActive(pMenuCtl, TRUE);
+                                    }
+                                    if(OPT_TEXT_INPUT == pMe->m_nInputMode || LOCAL_NUMBER_INPUT == pMe->m_nInputMode)
+                                    {
+                                        if(TRUE == CContApp_SaveLocal_Input(pMe, pTextCtl))
+                                        {
+                                            MSG_FATAL("CContApp_SaveLocal_Input=TRUE",0,0,0);
+                                           // itemTextBuf = pMe->m_pFldInputBuf;
+                                            if (AEE_ADDRFIELD_NONE != pMe->m_nFldInputID)
+                                            {
+                                                CContApp_SetRecByFLDID(pMe, pMe->m_nFldInputID);
+                                            } 
+                                            
+                                            CContApp_SetMenuItemText(pMe, pMenuCtl, pMe->m_wSelectEdit);
+                                        }
+                                        else
+                                        {   
+                                            MSG_FATAL("CContApp_SaveLocal_Input=FALSE",0,0,0);
+                                            return TRUE;
+                                        }
+                                        
+                                        ITEXTCTL_SetActive(pTextCtl, FALSE);
+                                        IMENUCTL_SetActive(pMenuCtl, TRUE);
+                                        IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_ADDNEW_MENU);
+                                    }
+                                    ITEXTCTL_SetActive(pTextCtl, FALSE);
+                                #endif
+							}
+
+					}
+					else if(IMENUCTL_IsActive(pGroupList))
+					{
+							IMENUCTL_GetRect(pGroupList,&rc); 
+							if(CONTAPP_PT_IN_RECT(wXPos,wYPos,rc))
+							{
+								;
+							}
+							else
+							{
+							/*	if((!IMENUCTL_IsActive(pMenuCtl)))
+									IMENUCTL_SetActive(pMenuCtl, TRUE);
+                                //ITEXTCTL_HandleEvent(pTextCtl,EVT_KEY,AVK_UP,0);
+                                MSG_FATAL("pMenuCtleCode=%x---wParam%x---dwParam%x",eCode,wParam,dwParam);
+								IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam);
+							*/
+                                
+                              #if 1
+                                 if(EDIT_GROUP == pMe->m_nInputMode)
+                                    {                    
+                                        CContApp_SetEditGroup(pMe, pMenuCtl, FALSE, IMENUCTL_GetSel(pGroupList));
+                                        IMENUCTL_SetActive(pGroupList, FALSE);
+                                        IMENUCTL_SetActive(pMenuCtl, TRUE);
+                                    }
+                                    if(OPT_TEXT_INPUT == pMe->m_nInputMode || LOCAL_NUMBER_INPUT == pMe->m_nInputMode)
+                                    {
+                                        if(TRUE == CContApp_SaveLocal_Input(pMe, pTextCtl))
+                                        {
+                                            MSG_FATAL("CContApp_SaveLocal_Input=TRUE",0,0,0);
+                                           // itemTextBuf = pMe->m_pFldInputBuf;
+                                            if (AEE_ADDRFIELD_NONE != pMe->m_nFldInputID)
+                                            {
+                                                CContApp_SetRecByFLDID(pMe, pMe->m_nFldInputID);
+                                            } 
+                                            
+                                            CContApp_SetMenuItemText(pMe, pMenuCtl, pMe->m_wSelectEdit);
+                                        }
+                                        else
+                                        {   
+                                            MSG_FATAL("CContApp_SaveLocal_Input=FALSE",0,0,0);
+                                            return TRUE;
+                                        }
+                                        
+                                        ITEXTCTL_SetActive(pTextCtl, FALSE);
+                                        IMENUCTL_SetActive(pMenuCtl, TRUE);
+                                        IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_ADDNEW_MENU);
+                                    }
+                                    IMENUCTL_SetActive(pGroupList, FALSE);
+                               #endif
+
+							}
+
+					}
+					else
+					{
+						/* if((!IMENUCTL_IsActive(pMenuCtl)))
+							IMENUCTL_SetActive(pMenuCtl, TRUE);
+                        MSG_FATAL("pMenuCtleCode=%x---wParam%x---dwParam%x",eCode,wParam,dwParam);
+
+						IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam);
+						if((!IMENUCTL_IsActive(pGroupList)))
+							IMENUCTL_SetActive(pGroupList, TRUE);
+                        MSG_FATAL("pMenuCtleCode=%x---wParam%x---dwParam%x",eCode,wParam,dwParam);
+
+						IMENUCTL_HandleEvent(pGroupList,eCode,wParam,dwParam); */
+						
+#if 1
+                         if(EDIT_GROUP == pMe->m_nInputMode)
+                            {                    
+                                CContApp_SetEditGroup(pMe, pMenuCtl, FALSE, IMENUCTL_GetSel(pGroupList));
+                                IMENUCTL_SetActive(pGroupList, FALSE);
+                                IMENUCTL_SetActive(pMenuCtl, TRUE);
+                            }
+                            if(OPT_TEXT_INPUT == pMe->m_nInputMode || LOCAL_NUMBER_INPUT == pMe->m_nInputMode)
+                            {
+                                if(TRUE == CContApp_SaveLocal_Input(pMe, pTextCtl))
+                                {
+                                    MSG_FATAL("CContApp_SaveLocal_Input=TRUE",0,0,0);
+                                   // itemTextBuf = pMe->m_pFldInputBuf;
+                                    if (AEE_ADDRFIELD_NONE != pMe->m_nFldInputID)
+                                    {
+                                        CContApp_SetRecByFLDID(pMe, pMe->m_nFldInputID);
+                                    } 
+                                    
+                                    CContApp_SetMenuItemText(pMe, pMenuCtl, pMe->m_wSelectEdit);
+                                }
+                                else
+                                {   
+                                    MSG_FATAL("CContApp_SaveLocal_Input=FALSE",0,0,0);
+                                    return TRUE;
+                                }
+                                
+                                ITEXTCTL_SetActive(pTextCtl, FALSE);
+                                IMENUCTL_SetActive(pMenuCtl, TRUE);
+                                IDIALOG_SetFocus(pMe->m_pActiveDlg, IDC_ADDNEW_MENU);
+                            }
+                            ITEXTCTL_SetActive(pTextCtl, FALSE);
+                            IMENUCTL_SetActive(pGroupList, FALSE);
+#endif
+					}
+                    IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam); 
+				}
+                #endif
 			}
 			break;
 #endif         
