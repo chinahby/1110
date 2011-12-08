@@ -15367,7 +15367,41 @@ static boolean IDD_VMNUM_Handler(void   *pUser,
                     }
                     else if ((wXPos>2*(devinfo.cxScreen/3))&&(wXPos<devinfo.cxScreen)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
                     {
-                        boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_CLR,0);
+                        AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pTextCtl);
+                        int nLen = 0;
+                        boolean rt = FALSE;
+                        int nCount = 0;
+                        if (NULL != pwstrText)
+                        {
+                            nLen = WSTRLEN(pwstrText);
+                        }
+                        MSG_FATAL("IDD_VMNUM_Handler:nLen=%d",nLen,0,0);
+                        if(nLen == 0)
+                        {
+                            rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_WMSAPP,EVT_USER,AVK_CLR,0);
+                        }
+                        else
+                        {
+
+                            AECHAR newstrText[MAX_PH_DIGITS] = {0};
+                            nCount = WSTRNCOPYN(newstrText,sizeof(newstrText),pwstrText,nLen-1);
+                            if(nCount == 0)
+                            {
+                                ITEXTCTL_Reset(pTextCtl);
+                                ITEXTCTL_SetActive(pTextCtl,TRUE);
+                            }
+                            else
+                            {
+                                rt = ITEXTCTL_SetText(pTextCtl,newstrText,WSTRLEN(newstrText));
+                            }
+                            (void) ISHELL_PostEventEx(pMe->m_pShell, 
+                                    EVTFLG_ASYNC,
+                                    AEECLSID_WMSAPP,
+                                    EVT_USER_REDRAW,
+                                    0, 
+                                    0);
+                        }
+                        MSG_FATAL("IDD_VMNUM_Handler:rt=%d,nCount=%d",rt,nCount,0);
                         return rt;
                     }
 
