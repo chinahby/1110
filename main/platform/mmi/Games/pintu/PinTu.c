@@ -2486,7 +2486,7 @@ static void SetParamScreen(PinTu *pMe)
    //add softkey prompt
 #if defined(AEE_STATIC) 
     MSG_FATAL("SetParamScreen 1",0,0,0);
-    DRAW_PROMPT_BAR(BTBAR_OK_BACK);
+    DRAW_PROMPT_BAR(BTBAR_MODIFY_BACK);
 #else   
    MSG_FATAL("SetParamScreen 2",0,0,0); 
    PinTu_AddSoftkeyPrompt(pMe,IDS_OK,IDS_MODI_PARAM,IDS_RETURN);
