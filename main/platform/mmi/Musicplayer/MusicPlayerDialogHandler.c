@@ -3212,7 +3212,7 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
 			  AEERect rc;
 			  int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 			  int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-
+              MSG_FATAL("MP3_SimplePlayer_HandleEvent EVT_PEN_UP wXPos=%d, wYPos=%d",wXPos,wYPos,0);
 
 
 			  //²¥·Å
@@ -3252,18 +3252,15 @@ static boolean MP3_SimplePlayer_HandleEvent(CMusicPlayer *pMe,
 			  SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, devinfo.cyScreen);
 			  if ((wXPos>0)&&(wXPos<devinfo.cxScreen/3)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
 			  {
-				  boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_SELECT,1);
-				  return rt;
+				  return MP3_SimplePlayer_HandleEvent(pMe,EVT_KEY,AVK_SELECT,1);
 			  }
 			  else if ((wXPos>devinfo.cxScreen/3)&&(wXPos<(devinfo.cxScreen/3)*2)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
 			  {
-				  boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
-				  return rt;
+				  return  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_INFO,0);
 			  }
 			  else if ((wXPos>wXPos<(devinfo.cxScreen/3)*2)&&(wXPos<devinfo.cxScreen)&&(wYPos>rc.y)&&(wYPos<devinfo.cyScreen))
 			  {
-				  boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
-				  return rt;
+				  return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_MUSICPLAYER,EVT_USER,AVK_CLR,0);
 			  }
 		  }
 		  return TRUE;
