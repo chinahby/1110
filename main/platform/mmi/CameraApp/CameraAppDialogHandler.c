@@ -3475,7 +3475,7 @@ static void CameraApp_CPreviewStart(CCameraApp *pMe)
 #endif
 
 	MSG_FATAL("CameraApp_CPreviewStart sensor_type=%d",sensor_type,0,0);
-	if ( sensor_type == CAM_PARM_ID_PAIR_SIV121A_SID130B || sensor_type == CAM_PARM_ID_PAIR_SIV120A_SID130B )
+	if ( sensor_type == CAM_PARM_ID_PAIR_SIV121A_SID130B || CAM_PARM_ID_PAIR_SIV121D_SID130B || sensor_type == CAM_PARM_ID_PAIR_SIV120A_SID130B )
 	{
 		if ( pMe->m_nCameraMulti == OEMNV_CAMERA_MULTI_ONE )
 		{
