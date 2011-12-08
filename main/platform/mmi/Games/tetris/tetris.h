@@ -64,13 +64,13 @@ AUTHOR: whewei
 
 #define LARGE_POP_WIN_X    25
 #define LARGE_POP_WIN_Y    45
-#define LARGE_POP_WIN_DX   125
-#define LARGE_POP_WIN_DY   100
+#define LARGE_POP_WIN_DX   160
+#define LARGE_POP_WIN_DY   200
 
 #define SMALL_POP_WIN_X    35
 #define SMALL_POP_WIN_Y    60
-#define SMALL_POP_WIN_DX   100
-#define SMALL_POP_WIN_DY   80
+#define SMALL_POP_WIN_DX   120
+#define SMALL_POP_WIN_DY   160
 
 //Styles of the menu
 #define MENU_COLOR_MASK             (MC_BACK | MC_SEL_BACK | MC_SEL_TEXT | MC_SCROLLBAR | MC_SCROLLBAR_FILL)        

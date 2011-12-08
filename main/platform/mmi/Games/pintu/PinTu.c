@@ -886,7 +886,9 @@ static void PinTu_DisplayMainScreen(PinTu * pMe)
       (void)Brew_AddMenuItem(pMe->m_pMenuCtl,PINTU_RES_FILE_LANG,IDS_GAME_CONTINUE, NULL, IDB_CONTINUE,IDS_GAME_CONTINUE,0);    //game continue
    (void)Brew_AddMenuItem(pMe->m_pMenuCtl,PINTU_RES_FILE_LANG,IDS_SELECT_IMAGE,     NULL, IDB_SELECT_IAMGE,IDS_SELECT_IMAGE,0);    //select image to spelling
    (void)Brew_AddMenuItem(pMe->m_pMenuCtl,PINTU_RES_FILE_LANG,IDS_SET_PARAM,        NULL, IDB_SETTING,IDS_SET_PARAM,   0);    //set paramter
+   #if 0
    (void)Brew_AddMenuItem(pMe->m_pMenuCtl,PINTU_RES_FILE_LANG,IDS_SOUND_SET,        NULL, IDB_SOUND_SET,IDS_SOUND_SET,   0);    //set sound  added by tcl wgs 050120
+   #endif
    (void)Brew_AddMenuItem(pMe->m_pMenuCtl,PINTU_RES_FILE_LANG,IDS_CONTROL_HELP,  NULL, IDB_HELP,      IDS_CONTROL_HELP, 0);       //game help
 #ifndef AEE_STATIC
    (void)Brew_AddMenuItem(pMe->m_pMenuCtl,PINTU_RES_FILE_LANG,IDS_ABOUT_VERSION, NULL, IDB_ABOUT_GAME,IDS_ABOUT_VERSION,0);       //game about
@@ -1684,6 +1686,7 @@ static boolean ProcessKeyEvent(PinTu *pMe, uint16 wParam)
          }
          if(pMe->m_Soundflag)
          {
+         	MSG_FATAL("type===============%d",type,0,0);
              PlayerSound(pMe->m_promptVoice,type);  //player background music  
          }       
       }
@@ -2029,12 +2032,12 @@ static void DrawCtrlFrame(PinTu *pMe,uint16 titleID,AEERect *fRect)
    //draw window frame
 
    frameRect.x  = fRect->x-5;
-   frameRect.y  = fRect->y-18;
+   frameRect.y  = fRect->y-32;
    frameRect.dx = fRect->dx+10;
-   frameRect.dy = fRect->dy+22;
+   frameRect.dy = fRect->dy+38;
    (void)MEMCPY(&tempRect,&frameRect,sizeof(AEERect));
 
-   (void)IGRAPHICS_DrawRoundRectangle(pMe->m_pGraphics,&frameRect,15,15);
+   (void)IGRAPHICS_DrawRoundRectangle(pMe->m_pGraphics,&frameRect,32,32);
    oldTextColor = IDISPLAY_SetColor(pMe->a.m_pIDisplay, CLR_USER_TEXT, MAKE_RGB(0,0,255));
    if(titleID)
    {
@@ -2831,7 +2834,7 @@ static void PinTu_SetSoundMode(PinTu *pMe)
                        GRID_R_COLOR,
                        GRID_G_COLOR,
                        GRID_B_COLOR, 0); 
-    SETAEERECT(&dispRect, x, 3*x - 4, cx - 2*x, cy - 5*x);
+    SETAEERECT(&dispRect, x, 3*x - 4, cx - 2*x, cy - 2*x);
     IDISPLAY_EraseRect(pMe->a.m_pIDisplay, &dispRect);
         
     if(!IGRAPHICS_GetFillMode(pMe->m_pGraphics))

@@ -268,19 +268,19 @@ void PlayerSound(IRingerMgr* pRingerMgr,MediaType type)
     switch(type)
     {
         case DROP_PIECE_MEDIA:
-            STRCAT(fileName,"droppiece.mmf");
+            STRCAT(fileName,"droppiece.wav");
             break;
         
         case DANGER_MEIDA:
-            STRCAT(fileName,"clean.qcp");
+            STRCAT(fileName,"clean.wav");
             break;
         
         case SUCCESS_MEIDA:
-            STRCAT(fileName,"success.mmf");
+            STRCAT(fileName,"success.wav");
             break;
         
         case FAILURE_MEDIA:         
-            STRCAT(fileName,"fail.mmf");
+            STRCAT(fileName,"fail.wav");
             break;
         
         default:

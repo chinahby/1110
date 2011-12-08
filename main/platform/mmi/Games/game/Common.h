@@ -19,7 +19,7 @@
 //key value definition
 ///////////////////////////////////////////
 #if defined(AEE_STATIC)
-#define MEDIA_PATH            "gamemusic"                 //save data path
+#define MEDIA_PATH            "fs:/gamemusic"                 //save data path
 #else
 
 #define MEDIA_PATH            ""                          //save data path

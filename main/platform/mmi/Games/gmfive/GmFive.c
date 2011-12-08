@@ -634,9 +634,11 @@ static boolean GmFive_Init(IApplet* pi)
                           CFGI_RINGER_VOL,
                           &RingVol,
                           sizeof(byte));
+		#ifdef  SOUND_FEATURE
         IRINGERMGR_SetRinger( pMe->m_pIRingerMgr, 
                            GET_ISOUND_VOL_LEVEL((uint8) RingVol), 
                            TRUE);    
+		#endif
    }   
    (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_BEEP_VOL, &pMe->m_beepVol, sizeof(byte));
    (void) ICONFIG_GetItem(pMe->m_pConfig, CFGI_RINGER_VOL, &pMe->m_RingVol, sizeof(byte));
@@ -1453,7 +1455,7 @@ static void GmFive_DisplayMainScreen(GmFive * pMe)
 
     (void)Brew_AddMenuItem(pMe->m_pMenuCtl,GMFIVE_RES_FILE_LANG,IDS_PLAY_CHESS_MODE,  NULL, IDB_CHESS_MODE,IDS_PLAY_CHESS_MODE,0); //play chess mode
     (void)Brew_AddMenuItem(pMe->m_pMenuCtl,GMFIVE_RES_FILE_LANG,IDS_CHESS_LEVLE,  NULL, IDB_GAME_LEVEL,IDS_CHESS_LEVLE,0);//chess level
-#ifdef  SOUND_FEATURE
+#if 0
     if(pMe->m_ringerSelItemID != 0) // 没有选择背景铃声将不出现声音设置菜单
         (void)Brew_AddMenuItem(pMe->m_pMenuCtl,GMFIVE_RES_FILE_LANG,IDS_SOUND_SET,  NULL, IDB_SOUND_SET,IDS_SOUND_SET,0);  //sound set for open or close
     (void)Brew_AddMenuItem(pMe->m_pMenuCtl,GMFIVE_RES_FILE_LANG,IDS_BACKRINGER_SELECT,  NULL, IDB_RINGER_VIEW,IDS_BACKRINGER_SELECT,0);  //set background sound

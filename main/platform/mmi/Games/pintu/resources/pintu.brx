@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="pintu" VERSION="1">
-<Strings Encoding="Unicode">
+<Strings Encoding="ISOLATIN1">
 	<STRING Id="1" Name="IDS_APP_TITLE">
 		<Text>Fun puzzle</Text>
 	</STRING>

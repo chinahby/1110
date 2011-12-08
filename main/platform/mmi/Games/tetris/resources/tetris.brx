@@ -31,7 +31,7 @@
 	<STRING Id="21" Name="IDS_TETRIS_LEVEL_1">
 		<Text>Easy</Text>
 	</STRING>
-	<STRING Id="22" Name="IDS_TETRIS_LEVEL_2" Encoding="Unicode">
+	<STRING Id="22" Name="IDS_TETRIS_LEVEL_2">
 		<Text>More difficult</Text>
 	</STRING>
 	<STRING Id="23" Name="IDS_TETRIS_LEVEL_3">
@@ -70,19 +70,19 @@
 	<STRING Id="37" Name="IDS_GAME_EXIT">
 		<Text>Exits</Text>
 	</STRING>
-	<STRING Id="41" Name="IDS_THELP_CONTENT" Encoding="Unicode">
+	<STRING Id="41" Name="IDS_THELP_CONTENT">
 		<Text>   1, the rules of the game: A total of seven different box shapes, different colors were used to represent. Easy to set up the game more difficult, very difficult three difficulty, each corresponding to a different degree of difficulty falling speed; easy to level the initial velocity is zero; score of 500 each, speed, plus 1; speed of 8 or 16, you can choose into the next difficulty. \ 2, instructions: via button or use the stylus to move or rotate the box. \ Key, press the "*" key to pause or continue the game, press the up arrow key or the middle to rotate the box, press the left and right arrow keys, respectively, to achieve the left, move to the right, under the direction keys to achieve acceleration, the box directly in the end. \ Use the stylus, the points achieved in the current box at the top spin, just below the box directly in the end, left to achieve the left, the right to achieve the right. \ 3, the sound settings: add sound support the game, will play in a particular case corresponding to the sound. Can choose to turn sound on or off. \ 4, grid settings: in the main game display area in the grid, you can clear the location box. You can choose to show or hide the grid. \ 5, Heroes: display all corresponding to the highest degree of difficulty score. You can reset these scores.</Text>
 	</STRING>
-	<STRING Id="42" Name="IDS_REPORT_SCORE" Encoding="Unicode">
+	<STRING Id="42" Name="IDS_REPORT_SCORE">
 		<Text>Your score is this: %d, the highest score: %d. Continue to work hard!</Text>
 	</STRING>
-	<STRING Id="43" Name="IDS_REPORT_RECORD" Encoding="Unicode">
+	<STRING Id="43" Name="IDS_REPORT_RECORD">
 		<Text>Congratulations! Your score is this:% d. Which becomes the first level of your master! ! !</Text>
 	</STRING>
-	<STRING Id="44" Name="IDS_PASS" Encoding="Unicode">
+	<STRING Id="44" Name="IDS_PASS">
 		<Text>Amazing! You have successfully passed this difficulty, current score:% d, continue to the next degree of difficulty?</Text>
 	</STRING>
-	<STRING Id="45" Name="IDS_PASS_LAST" Encoding="Unicode">
+	<STRING Id="45" Name="IDS_PASS_LAST">
 		<Text>Great! You have successfully passed the highest degree of difficulty of the game, your score is:% d. There is nothing wrong!</Text>
 	</STRING>
 	<STRING Id="46" Name="IDS_GAME_SCORE">

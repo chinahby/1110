@@ -14,10 +14,23 @@ $(TETRIS_OBJS): APPFLAGS = -DBREW_STATIC_APP -DAEE_STATIC
 vpath %.c               $(TETRIS_SRC)
 vpath %.bar             $(TETRIS_RES)
 vpath %.brx             $(TETRIS_RES)
-
+vpath %.wav             $(TETRIS_RES)/gamemusic
 CONSTFILE_FILES+=\
 tetris.mif|fs:/mif/tetris.mif \
 tetris.bar|fs:/mod/tetris/en/tetris.bar
+
+CONSTFILE_FILES+=\
+            blink.wav|fs:/gamemusic/blink.wav \
+            drop.wav|fs:/gamemusic/drop.wav \
+            droppiece.wav|fs:/gamemusic/droppiece.wav \
+            fail.wav|fs:/gamemusic/fail.wav \
+            hero.wav|fs:/gamemusic/hero.wav \
+            mullines.wav|fs:/gamemusic/mullines.wav \
+            over.wav|fs:/gamemusic/over.wav \
+            select.wav|fs:/gamemusic/select.wav \
+            singleline.wav|fs:/gamemusic/singleline.wav \
+            success.wav|fs:/gamemusic/success.wav \
+            undrop.wav|fs:/gamemusic/undrop.wav
     
 ifneq ($(EXTLANG1),NO)
 CONSTFILE_FILES+=\

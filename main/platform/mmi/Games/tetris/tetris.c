@@ -348,6 +348,7 @@ static boolean Tetris_HandleEvent(CTetrisApp * pMe, AEEEvent eCode, uint16 wPara
                 return TRUE;
 
             case APP_STATE_OVER:
+				MSG_FATAL("APP_STATE_OVER..............",0,0,0);
                 UpdateScreen(pMe);
                 return TRUE;
 
@@ -1258,7 +1259,9 @@ static void DisplayMainMenu(CTetrisApp * pMe)
         AddMenuItem(pMe->m_pMainMenu, IDS_TETRIS_CONTINUE, IDB_TETRIS_CONTINUE);
     }
     AddMenuItem(pMe->m_pMainMenu, IDS_TETRIS_LEVEL, IDB_TETRIS_LEVEL);
+	#if 0
     AddMenuItem(pMe->m_pMainMenu, IDS_TETRIS_SOUND, IDB_TETRIS_SOUND);
+	#endif
     AddMenuItem(pMe->m_pMainMenu, IDS_TETRIS_GRID,  IDB_TETRIS_GRID);
     AddMenuItem(pMe->m_pMainMenu, IDS_TETRIS_SCORE, IDB_TETRIS_SCORE);
     AddMenuItem(pMe->m_pMainMenu, IDS_TETRIS_HELP,  IDB_TETRIS_HELP);
@@ -1501,7 +1504,7 @@ static void DisplayHerosScreen(CTetrisApp * pMe)
                             &rect, 
                             IDF_ALIGN_CENTER | IDF_TEXT_TRANSPARENT);
 
-    StartX += 20;
+    StartX += 5;
     (void)STRTOWSTR(szFormat, wstrFor, sizeof(wstrFor));
     (void)IDISPLAY_SetColor(pMe->a.m_pIDisplay, CLR_USER_TEXT, CLR_DEF_TEXT);
     for(i = 0; i < MAX_LEVEL; i++)
@@ -1528,7 +1531,7 @@ static void DisplayHerosScreen(CTetrisApp * pMe)
                                 AEE_FONT_NORMAL,
                                 Score,
                                 -1,
-                                StartX + 3 * pMe->m_rLineHeight,
+                                StartX + 4 * pMe->m_rLineHeight+5,
                                 StartY,
                                 NULL,
                                 IDF_TEXT_TRANSPARENT);
@@ -2136,15 +2139,15 @@ static void DrawCtrlFrame(CTetrisApp * pMe, uint16 titleID, AEERect * fRect)
     IGRAPHICS_SetColor(pMe->m_pGraphics, 0, 0, 0, 0);
 
     frameRect.x  = fRect->x  - 5;
-    frameRect.y  = fRect->y  - 18;
+    frameRect.y  = fRect->y  - 32;
     frameRect.dx = fRect->dx + 10;
-    frameRect.dy = fRect->dy + 22;
+    frameRect.dy = fRect->dy + 38;
     (void)MEMCPY(&tempRect,&frameRect,sizeof(AEERect));
     
     (void)IGRAPHICS_DrawRoundRectangle(pMe->m_pGraphics, 
                                        &frameRect, 
-                                       20, 
-                                       20);
+                                       32, 
+                                       32);
 
     oldTextColor = IDISPLAY_SetColor(pMe->a.m_pIDisplay, 
                                      CLR_USER_TEXT, 
@@ -3394,34 +3397,34 @@ static boolean PlayMusic(CTetrisApp * pMe, MusicType type)
         }
     } 
     //PlayerInfo.eInput = SDT_FILE;
-    
+    MSG_FATAL("play sound sucesss btVolLevel===%d",btVolLevel,0,0);
     MEMSET(fileName, 0, sizeof(fileName));
-    STRCAT(fileName, "gamemusic/");
+    STRCAT(fileName, "fs:/gamemusic/");
     
     switch(type)
     {
     case MUSIC_PLACE:
-        STRCAT(fileName, "select.mmf");
+        STRCAT(fileName, "select.wav");
         break;
         
     case MUSIC_SINLINE:
-        STRCAT(fileName, "singleline.mmf");
+        STRCAT(fileName, "singleline.wav");
         break;
 
     case MUSIC_MULLINES:
-        STRCAT(fileName, "mullines.mmf");
+        STRCAT(fileName, "mullines.wav");
         break;
 
     case MUSIC_NEXTSPEED:
-        STRCAT(fileName, "hero.mmf");
+        STRCAT(fileName, "hero.wav");
         break;
 
     case MUSIC_NEXTLEVEL:
-        STRCAT(fileName, "success.mmf");
+        STRCAT(fileName, "success.wav");
         break;
 
     case MUSIC_GAMEOVER:
-        STRCAT(fileName, "fail.mmf");
+        STRCAT(fileName, "fail.wav");
         break;
 
     default:
@@ -3440,9 +3443,11 @@ static boolean PlayMusic(CTetrisApp * pMe, MusicType type)
 
     //IRINGERMGR_RegisterNotify(pMe->m_pPlayer, NULL, NULL);
     //IRINGERMGR_Play(pMe->m_pPlayer);
+	MSG_FATAL("play sound sucesss  000",0,0,0);
 
     (void)IRINGERMGR_Stop(pMe->m_pPlayer);
     (void)IRINGERMGR_PlayFile(pMe->m_pPlayer, fileName, 0);
+	MSG_FATAL("play sound sucesss",0,0,0);
     return TRUE;
 }
 
@@ -3770,7 +3775,7 @@ SIDE EFFECTS:
 static void GameOver(CTetrisApp * pMe)
 {
     pMe->m_AppState = APP_STATE_OVER;
-
+    MSG_FATAL("GameOver..............",0,0,0);
     (void)ISHELL_CancelTimer(pMe->a.m_pIShell, NULL, pMe);
     UpdateScreen(pMe);                  
 }
@@ -3793,13 +3798,14 @@ SIDE EFFECTS:
 static void UpdateScreen(CTetrisApp * pMe)
 {
     int j;
-    
+    MSG_FATAL("pMe->m_Rect.y==%d,,,pMe->m_MainRect.y=%d",pMe->m_Rect.y,pMe->m_MainRect.y,0);
     if(pMe->m_Rect.y > pMe->m_MainRect.y)
     {
         pMe->m_Rect.y -= BLOCK_SIZE;    // Change vertical position, refresh the next line.
     }
     else
     {
+    	MSG_FATAL("SetCfgData..............",0,0,0);
         SetCfgData(pMe);
         return;
     }
@@ -3811,7 +3817,7 @@ static void UpdateScreen(CTetrisApp * pMe)
         pMe->m_Rect.x += BLOCK_SIZE;
     }
     IDISPLAY_UpdateEx(pMe->a.m_pIDisplay, FALSE);
-
+    MSG_FATAL("ISHELL_SetTimer..............",0,0,0);
     (void)ISHELL_SetTimer(pMe->a.m_pIShell, OVER_TIME, (PFNNOTIFY)UpdateScreen, pMe);
 }
 /*===============================================================================
@@ -3910,7 +3916,7 @@ static void ReportScore(CTetrisApp * pMe, uint16 strID, uint32 Score, boolean Ne
                                sizeof(Title));
     DrawCtrlFrame(pMe, TitleID, &Rect);
     
-    StaticProp = ST_CENTERTITLE | ST_UNDERLINE | ST_CENTERTEXT | ST_MIDDLETEXT;
+    StaticProp = ST_CENTERTITLE | ST_UNDERLINE | ST_CENTERTEXT | ST_MIDDLETEXT|ST_NOSCROLL;
     ISTATIC_SetRect(pMe->m_pStatic, &Rect);
     ISTATIC_SetProperties(pMe->m_pStatic, StaticProp);
     (void)ISTATIC_SetText(pMe->m_pStatic, 

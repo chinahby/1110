@@ -2784,9 +2784,11 @@ static void FiveBall_DisplayMainMenu(CFiveBall *pMe)
     (void)FiveBall_AddMenuItem(pMe->m_pMenuCtl,
                                IDS_GAME_CONTINUE, 
                                IDB_GAME_NEW);   //¼ÌÐøÓÎÏ·
+                               #if 0
     (void)FiveBall_AddMenuItem(pMe->m_pMenuCtl,
                                IDS_SOUND_SET, 
                                IDB_SOUND_SET);   //ÉùÒôÉèÖÃ
+                               #endif
     (void)FiveBall_AddMenuItem(pMe->m_pMenuCtl,
                                IDS_HERO_SCORE,
                                IDB_HERO_SCORE); //Ó¢ÐÛ°ñ 

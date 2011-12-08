@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BREWRes Name="fiveball" VERSION="1">
-<Strings Encoding="Unicode">
+<Strings Encoding="ISOLATIN1">
 	<STRING Id="1" Name="IDS_APP_TITLE">
 		<Text>Five or</Text>
 	</STRING>
