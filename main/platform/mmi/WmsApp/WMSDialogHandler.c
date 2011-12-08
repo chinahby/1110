@@ -8180,7 +8180,7 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
     {
         return FALSE;
     }
-    
+    MSG_FATAL("IDD_TONUMLIST_Handler---------eCode=%x-----wParam=%x",eCode,wParam,0);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -8236,7 +8236,6 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 uint16 nSelID = WmsApp_UpdateAddListMenu(pMe, pMenu);
 
 				int nLen=0;
-
                 if (pMe->m_eMakeAddListMode != MAKEADDLIST_NONE)
                 {// 群发: 提示当前已输入地址数和最大允许输入地址数
                     AECHAR wstrTitle[MAX_TITLE_LEN] = {0};
@@ -8265,12 +8264,17 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 }
                 
                 IMENUCTL_SetSel(pMenu, nSelID);
-                
                 pItem = WmsApp_GetAddItem(pMe->m_pSendList, (nSelID-MSG_CMD_BASE));
                 if (nCount<=0)
-                {
-                    ITEXTCTL_SetText(pIText, wstrText, -1);     
-                    
+                { 
+                    #ifdef FEATURE_LCD_TOUCH_ENABLE
+                    {
+                    AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
+                    ITEXTCTL_SetText(pIText, pwstrText, -1);     
+                    }
+                    #else
+                    ITEXTCTL_SetText(pIText, wstrText, -1); 
+                    #endif
                     // 绘制底条提示
                     // Search      Back
                     //MENU_SETBOTTOMBAR(pMenu, BTBAR_FIND_BACK);
@@ -8311,6 +8315,9 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 (void)IDIALOG_SetFocus(pMe->m_pActiveIDlg, IDC_NUMTEXT);
                 
                 (void)ITEXTCTL_SetInputMode(pIText, AEE_TM_NUMBERS);
+                #ifdef FEATURE_LCD_TOUCH_ENABLE
+                TSIM_NumberKeypad(TRUE);
+                #endif
                 ITEXTCTL_SetCursorPos(pIText, TC_CURSOREND);
                 (void)ITEXTCTL_Redraw(pIText);
             }
@@ -8336,7 +8343,9 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
                 }
                 
                 pItem = WmsApp_GetAddItem(pMe->m_pSendList, (pMe->m_CurAddID-MSG_CMD_BASE));
-                
+                #ifdef FEATURE_LCD_TOUCH_ENABLE
+                TSIM_NumberKeypad(FALSE);
+                #endif
                 if (WSTRLEN(pwsText)>0)
                 {
                     if (NULL == pItem)
@@ -8828,7 +8837,6 @@ static boolean IDD_TONUMLIST_Handler(void   *pUser,
             
             return TRUE;
 #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
-
 		case EVT_PEN_UP:
 			{
 				AEEDeviceInfo devinfo;
@@ -15294,7 +15302,9 @@ static boolean IDD_VMNUM_Handler(void   *pUser,
                 }
             }
             IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
-            
+            #ifdef FEATURE_LCD_TOUCH_ENABLE
+            TSIM_NumberKeypad(TRUE);
+            #endif
             (void)ITEXTCTL_Redraw(pTextCtl);
             
             return TRUE;
@@ -15308,6 +15318,9 @@ static boolean IDD_VMNUM_Handler(void   *pUser,
                         
                 (void) ITEXTCTL_GetText(pTextCtl, pMe->m_msSend.m_szNum, MAX_PH_DIGITS);
             }
+            #ifdef FEATURE_LCD_TOUCH_ENABLE
+            TSIM_NumberKeypad(FALSE);
+            #endif
             return TRUE;
             
         case EVT_KEY:
