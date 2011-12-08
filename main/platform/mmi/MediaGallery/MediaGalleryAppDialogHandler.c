@@ -2075,10 +2075,10 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
    {
       return FALSE;
    }
-   MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent eCode=0x%x, wParam=0x%x",eCode,wParam,0);
+   
    pMenuCtl = pMe->m_pMediaMenu;
    MGAppUtil_GetMediaDlgStat(pMe, &eDlgStat);
-
+   MSG_FATAL("MediaMenuDlg_HandleEvent eCode=0x%x, wParam=0x%x, eDlgStat=%d",eCode,wParam,eDlgStat); 
    if(NULL == pMenuCtl && eCode != EVT_DIALOG_INIT)
    {
       return FALSE;
@@ -2239,12 +2239,24 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
       }
 
       case EVT_COMMAND:
-         MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent EVT_COMMAND",0,0,0);
-         return MGAppUtil_OnMediaMenuInfoKeyEvt(pMe,
+        MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent EVT_COMMAND",0,0,0);
+        if(eDlgStat == MG_DLGSTAT_POPUP)
+        {
+            MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent EVT_COMMAND 1",0,0,0);
+            return MGAppUtil_OnMediaMenuCommandEvt(pMe,
+                                                pMenuCtl,
+                                                wParam,
+                                                dwParam);
+        } 
+        else
+        {
+            MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent EVT_COMMAND 2",0,0,0);
+            return MGAppUtil_OnMediaMenuInfoKeyEvt(pMe,
                                                   pMenuCtl,
                                                   eCode,
                                                   wParam,
-                                                  0);         
+                                                  0);   
+        }
      /*    return MGAppUtil_OnMediaMenuCommandEvt(pMe,
                                                 pMenuCtl,
                                                 wParam,
@@ -2325,7 +2337,12 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
 				}
                 else
                 {
-                    if(pMenuCtl != NULL)
+                    if(eDlgStat == MG_DLGSTAT_POPUP)
+                    {
+                         MSG_FATAL("eDlgStat == MG_DLGSTAT_POPUP",0,0,0);  
+                        return IMENUCTL_HandleEvent(pMe->m_pMenuPopup, eCode, wParam, dwParam);
+                    }  
+                    else if(pMenuCtl != NULL)
                     {
                         MSG_FATAL("EVT_PEN_UP pMenuCtl != NULL",0,0,0);  
                         if (IMENUCTL_HandleEvent(pMenuCtl, eCode, wParam, dwParam))
@@ -2333,7 +2350,7 @@ static boolean MediaGalleryApp_MediaMenuDlg_HandleEvent(CMediaGalleryApp* pMe,
                             MSG_FATAL("MediaGalleryApp_MediaMenuDlg_HandleEvent 0",0,0,0); 
                             return TRUE;
                         }
-                    }                    
+                    }    
                 }
 			}
 			break;
@@ -8009,7 +8026,7 @@ static boolean MGAppUtil_OnMediaMenuDefaultKeyEvt(CMediaGalleryApp* pMe,
    MSG_FATAL("MGAppUtil_OnMediaMenuDefaultKeyEvt Start",0,0,0);
    if(!pMe || !pMenuCtl)
    {
-      MSG_FATAL("Bad parameter, MGAppUtil_OnMediaMenuCommandEvt!",0,0,0);
+      MSG_FATAL("Bad parameter, MGAppUtil_OnMediaMenuDefaultKeyEvt!",0,0,0);
       return FALSE;
    }
 
