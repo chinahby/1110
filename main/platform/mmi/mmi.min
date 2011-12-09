@@ -94,8 +94,6 @@ endif
 ifeq ($(MMI_ADD_GAME),yes)
 include $(BRICKATTACK)/brickattack.min
 include $(BLACKJACK)/blackjack.min
-include $(FIVEBALL)/FiveBall.min
-include $(GMFIVE)/GmFive.min
 include $(PINTU)/Pintu.min
 include $(TETRIS)/Tetris.min
 endif
