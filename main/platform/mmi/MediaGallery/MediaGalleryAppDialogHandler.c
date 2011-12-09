@@ -6178,7 +6178,7 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
 {
    IMenuCtl* pMenuCtl;
    MediaDlgStat eDlgStat;
-
+   MSG_FATAL("SoundSettingDlg_HandleEvent eCode=0x%x,wParam=0x%x, dwParam=0x%x",eCode,wParam,dwParam );
    if(!pMe)
       return FALSE;
 
@@ -6276,11 +6276,12 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
 
       case EVT_KEY:
          {
+            MSG_FATAL("SoundSettingDlg_HandleEvent EVT_KEY",0,0,0 );
             if(FALSE == MGAppUtil_IsNeedHandleKey(pMe, wParam))
             {
                return TRUE;
             }
-
+            MSG_FATAL("SoundSettingDlg_HandleEvent EVT_KEY 1 wParam=0x%x, dwParam=0x%x",wParam,dwParam,0 );
             switch(wParam)
             {
             case AVK_CLR:
@@ -6316,6 +6317,7 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
                return TRUE;
 
             default:
+               MSG_FATAL("SoundSettingDlg_HandleEvent EVT_KEY 2",0,0,0 ); 
                return MGAppUtil_OnMediaMenuDefaultKeyEvt(pMe,
                                                          pMenuCtl,
                                                          eCode,
@@ -6335,17 +6337,21 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
 
       case EVT_COMMAND:
          {
-            char *szName = MediaGalleryApp_GetCurrentNodeName(pMe);
-
+            char *szName = NULL;
+            MSG_FATAL("SoundSettingDlg_HandleEvent EVT_COMMAND",0,0,0);
+            
             MGAppUtil_UpdateSelItemCheck(pMe);
-
+            szName = MediaGalleryApp_GetCurrentNodeName(pMe);
+            DBGPRINTF("szName=%s",szName);
             if(SUCCESS ==
                MediaGallery_DoExplorerAddCB((FileNamesBuf)szName, 1))
             {
+                MSG_FATAL("SoundSettingDlg_HandleEvent EVT_COMMAND 1",0,0,0);
                MGCLOSE_DIALOG(MGDLGRET_SETTING_SELECT);
             }
             else
             {
+                MSG_FATAL("SoundSettingDlg_HandleEvent EVT_COMMAND 2",0,0,0);
                MGCLOSE_DIALOG(MGDLGRET_SETTING_SELECT);
                //MGCLOSE_DIALOG(MGDLGRET_CANCELED);
                MG_FARF(ADDR, ("do call back failed!"));
@@ -6367,6 +6373,44 @@ static boolean MediaGalleryApp_SoundSettingDlg_HandleEvent(CMediaGalleryApp *pMe
                                                       wParam,
                                                       dwParam);
          }
+
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch   
+        case EVT_PEN_UP:
+            {
+                AEEDeviceInfo devinfo;
+                int nBarH ;
+                AEERect rc;
+                int16 wXPos = (int16)AEE_GET_X(dwParam);
+                int16 wYPos = (int16)AEE_GET_Y(dwParam);
+                MSG_FATAL("MediaGalleryApp_VideoAddDlg_HandleEvent wXPos=%d ,wYPos=%d",wXPos,wYPos,0);
+                nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+        
+                MEMSET(&devinfo, 0, sizeof(devinfo));
+                ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+                SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+  
+                if(MEDIAGALLERYAPP_PT_IN_RECT(wXPos,wYPos,rc))
+                {
+                    if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+                    {
+                        return MGAppUtil_OnMediaMenuDefaultKeyEvt(pMe,
+                                                                  pMenuCtl,
+                                                                  EVT_KEY,
+                                                                  AVK_SELECT,
+                                                                  0);                        
+                    }
+                    else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//ÓÒ
+                    {                       
+                         return  MediaGalleryApp_SoundSettingDlg_HandleEvent(pMe,EVT_KEY,AVK_CLR,0);
+                    }
+                }
+                else
+                {
+                    return IMENUCTL_HandleEvent(pMenuCtl,eCode,wParam,dwParam);
+                }
+            }
+            break;
+#endif //FEATURE_LCD_TOUCH_ENABLE
 
       default:
          break;
@@ -8137,10 +8181,12 @@ static boolean MGAppUtil_OnMediaMenuDefaultKeyEvt(CMediaGalleryApp* pMe,
    {
       if(FALSE == bMenuEmpty && FALSE ==IMENUCTL_IsActive(pMenuCtl))
       {
+         MSG_FATAL("MGAppUtil_OnMediaMenuDefaultKeyEvt 1",0,0,0);
          IMENUCTL_SetActive(pMenuCtl ,TRUE);
       }
       else
       {
+         MSG_FATAL("MGAppUtil_OnMediaMenuDefaultKeyEvt 2",0,0,0);
          IMENUCTL_HandleEvent(pMenuCtl, eCode, wParam, dwParam);
       }
    }
@@ -8276,6 +8322,7 @@ static boolean MGAppUtil_OnMediaMenuSelChange(CMediaGalleryApp* pMe,
 
 static boolean MGAppUtil_UpdateSelItemCheck(CMediaGalleryApp *pMe)
 {
+   MSG_FATAL("UpdateSelItemCheck m_StartMode=%d, m_bUpdateSelItem=%d",pMe->m_StartMode,pMe->m_bUpdateSelItem,0);
    if(NULL == pMe)
       return FALSE;
 
