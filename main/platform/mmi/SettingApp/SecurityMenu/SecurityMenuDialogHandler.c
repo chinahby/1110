@@ -271,6 +271,7 @@ boolean SecurityMenu_RouteDialogEvent(CSecurityMenu *pMe,
                                       uint16         wParam,
                                       uint32         dwParam)
 {
+	MSG_FATAL("SecurityMenu_RouteDialogEvent....0000......%x",eCode,0,0);
     if (NULL == pMe)
     {
         return FALSE;
@@ -280,7 +281,7 @@ boolean SecurityMenu_RouteDialogEvent(CSecurityMenu *pMe,
     {
         return FALSE;
     }
-    
+    MSG_FATAL("SecurityMenu_RouteDialogEvent..........%x",eCode,0,0);
     if(wParam == AVK_WITHDRAW &&
         pMe->m_eCurState !=  SECURITYMENU_ASKPUKPASSWORD &&
         pMe->m_eCurState !=  SECURITYMENU_UIMERR &&
@@ -288,7 +289,7 @@ boolean SecurityMenu_RouteDialogEvent(CSecurityMenu *pMe,
     {
         ISHELL_CloseApplet(pMe->m_pShell, TRUE);
     }
-    
+    MSG_FATAL("SecurityMenu_RouteDialogEvent....22......%x,%d",eCode,pMe->m_pActiveDlgID,0);
     //SEC_ERR("%d SecurityMenu_RouteDialogEvent",pMe->m_pActiveDlgID,0,0);
     switch (pMe->m_pActiveDlgID)
     {
@@ -2150,38 +2151,7 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                 }
             }
             return TRUE;
-#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
-			if (eCode == EVT_PEN_UP)
-			{
-				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
-				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
-				AEERect bottomBarRect;
-				//int ht;
-				int nBarH ;
-				AEEDeviceInfo devinfo;
-				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
-				
-				MEMSET(&devinfo, 0, sizeof(devinfo));
-				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
-				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
-				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
-				{
-					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
-					{						
-						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
-						return rt;
-					}
-					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
-					{						
-						//boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_ALARMCLOCK,EVT_USER,AVK_SELECT,0);
-						//MSG_FATAL("AEECLSID_ALARMCLOCK............",0,0,0);
-						//return rt;
-						//eCode = EVT_KEY;
-						//wParam = AVK_SELECT;
-					}
-				}
-			}
-#endif
+
         default:
             break;
     }
@@ -3040,7 +3010,39 @@ static boolean  SecurityAskPinDlgHandler(CSecurityMenu *pMe,
                 }
             }
             return TRUE;
-            
+        #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+			case EVT_PEN_UP:
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+				
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+					{						
+						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
+						return rt;
+					}
+					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
+					{						
+						//boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_ALARMCLOCK,EVT_USER,AVK_SELECT,0);
+						//MSG_FATAL("AEECLSID_ALARMCLOCK............",0,0,0);
+						//return rt;
+						//eCode = EVT_KEY;
+						//wParam = AVK_SELECT;
+					}
+				}
+			}
+			break;
+#endif
         default:
             break;
     }
@@ -3348,7 +3350,39 @@ static boolean  SecurityAskCallPasswordDlgHandler(CSecurityMenu *pMe,
                 }
             }
             return TRUE;
-            
+            #ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+			case EVT_PEN_UP:
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+				
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+					{						
+						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
+						return rt;
+					}
+					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
+					{						
+						//boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_ALARMCLOCK,EVT_USER,AVK_SELECT,0);
+						//MSG_FATAL("AEECLSID_ALARMCLOCK............",0,0,0);
+						//return rt;
+						//eCode = EVT_KEY;
+						//wParam = AVK_SELECT;
+					}
+				}
+			}
+			break;
+#endif
         default:
             break;
     }
@@ -5036,12 +5070,13 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
 {
     PARAM_NOT_REF(dwParam)
     IMenuCtl *pMenu = (IMenuCtl*)IDIALOG_GetControl(pMe->m_pActiveDlg,
-                                                      IDC_CHANGECODE);
+                                                    IDC_CHANGECODE);
+	MSG_FATAL("HandleChangeCodeDialogEvent....11......%x",eCode,0,0); 
     if (pMenu == NULL)
     {
         return FALSE;
     }
-
+	MSG_FATAL("HandleChangeCodeDialogEvent..........%x",eCode,0,0);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -5120,7 +5155,7 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
 
             return TRUE;
 		#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
-			if (eCode == EVT_PEN_UP)
+			case EVT_PEN_UP:
 			{
 				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
 				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
@@ -5129,10 +5164,11 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
 				int nBarH ;
 				AEEDeviceInfo devinfo;
 				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
-				
+				MSG_FATAL("EVT_PEN_UP  nBarH====%d",nBarH,0,0);
 				MEMSET(&devinfo, 0, sizeof(devinfo));
 				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
 				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				MSG_FATAL("EVT_PEN_UP  devinfo.cyScreen====%d,devinfo.cxScreen=%d",devinfo.cyScreen,devinfo.cxScreen,0);
 				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
 				{
 					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
@@ -5150,6 +5186,7 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
 					}
 				}
 			}
+			break;
 #endif
         default:
             break;
