@@ -544,6 +544,8 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 85, 32);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 85, 42);
+#elif defined(FEATURE_DISP_240X320)
+							//IIMAGE_Draw(image, 160, 236);
 #else
 							IIMAGE_Draw(image, ENDCALL_START, 0);
 							IIMAGE_Draw(image, ENDCALL_END, 0);
@@ -584,6 +586,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 118, 57);
 #elif defined(FEATURE_DISP_128X160)
                             IIMAGE_Draw(image, 85, 41);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 160, 236);
+							IIMAGE_Draw(image, 200, 236);
+
 #else						
 							IIMAGE_Draw(image, ENDCALL_START, 0);
 							IIMAGE_Draw(image, ENDCALL_END, 0);
@@ -612,6 +618,11 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 118, 0);
 #elif defined(FEATURE_DISP_128X160)
 						IIMAGE_Draw(image, 86, 0);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 160, 118);
+							IIMAGE_Draw(image, 200, 118);
+
+
 #else                        
 						if((uint32)dwParam == 1)
 						{
@@ -635,6 +646,8 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
                         if(pMe->m_testkeycount >=22)
 #elif defined(FEATURE_DISP_128X160) ||defined(FEATURE_DISP_176X220)
+						if(pMe->m_testkeycount >=22)
+#elif defined(FEATURE_DISP_240X320) 
 						if(pMe->m_testkeycount >=22)
 #else
 						if(pMe->m_testkeycount >=45)
@@ -660,6 +673,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 58, 169);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 43, 123);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 160, 59);
+
 #else
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, FIVE_LINE);
 #endif							
@@ -688,6 +704,8 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 0, 85);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 0, 62);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 0, 0);
 #else						
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT, SECONDE_LINE);
 #endif
@@ -714,6 +732,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 59, 85);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 43, 62);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 40, 0);
+
 #else						
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, SECONDE_LINE);
 #endif
@@ -740,6 +761,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 118, 85);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 86, 62);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 80, 0);
+
 #else								
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, SECONDE_LINE);
 #endif
@@ -766,6 +790,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 0, 113);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 0, 83);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 120, 0);
+
 #else								
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT, THRID_LINE);
 #endif
@@ -792,6 +819,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 59, 113);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 43, 83);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 160, 0);
+
 #else							
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, THRID_LINE);
 #endif
@@ -818,6 +848,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 118, 113);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 86, 83);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 0, 59);
+
 #else							
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, THRID_LINE);
 #endif
@@ -844,6 +877,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 0, 141);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 0, 103);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 40, 59);
+
 #else						
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT, FOUR_LINE);
 #endif
@@ -871,6 +907,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 59, 141);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 43, 103);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 80, 59);
+
 #else						
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*2, FOUR_LINE);
 #endif
@@ -897,6 +936,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 118, 141);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 86, 103);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 120, 59);
+
 #else							
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, FOUR_LINE);
 #endif
@@ -923,6 +965,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 0, 169);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 0, 123);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 200, 0);
+
 #else							
 							IIMAGE_Draw(image, 0, THRID_LINE);
 #endif
@@ -949,6 +994,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 118, 169);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 86, 123);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 200, 59);
+
 #else						
 							IIMAGE_Draw(image, 0, SECONDE_LINE);
 #endif
@@ -970,6 +1018,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 0, 0);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 0, 0);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 0, 118);
+							IIMAGE_Draw(image, 40, 118);
+
 #else						
 							IIMAGE_Draw(image, 22, 0);
 							IIMAGE_Draw(image, 26, 0);
@@ -1000,6 +1052,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                             IIMAGE_Draw(image, 0, 57);
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_Draw(image, 0, 42);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 0, 236);
+							IIMAGE_Draw(image, 40, 236);
+
 #else
 							IIMAGE_Draw(image, 0, 0);
 							IIMAGE_Draw(image, 4, 0);
@@ -1033,6 +1089,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_SetDrawSize(image,14, 20);
                             IIMAGE_Draw(image, 57, 21);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 120, 177);
+							IIMAGE_Draw(image, 80, 177);
 #else						
 							IIMAGE_Draw(image, THRID_LINE, TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, FOUR_LINE, TITLEBAR_HEIGHT);
@@ -1061,6 +1120,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_SetDrawSize(image,14, 20);
                             IIMAGE_Draw(image, 57, 0);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 120, 118);
+							IIMAGE_Draw(image, 80, 118);
+
 #else
 #ifndef FEATURE_VERSION_HITZ181
 							if((uint32)dwParam == 1)
@@ -1157,6 +1220,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_SetDrawSize(image,14, 20);
                             IIMAGE_Draw(image, 57, 42);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 120, 236);
+							IIMAGE_Draw(image, 80, 236);
+
 #else						
 							#ifndef FEATURE_VERSION_HITZ181
 							if((uint32)dwParam == 1)
@@ -1194,6 +1261,10 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_SetDrawSize(image,14, 20);
                             IIMAGE_Draw(image, 43, 21);
+#elif defined(FEATURE_DISP_240X320)
+	 						IIMAGE_Draw(image, 0, 177);
+	 						IIMAGE_Draw(image, 40,177);
+
 #else						
 							IIMAGE_Draw(image, LEFT_START, TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, LEFT_START, TITLEBAR_HEIGHT+2);
@@ -1224,6 +1295,9 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 #elif defined(FEATURE_DISP_128X160)
 							IIMAGE_SetDrawSize(image,14, 20);
                             IIMAGE_Draw(image, 71, 21);
+#elif defined(FEATURE_DISP_240X320)
+							IIMAGE_Draw(image, 200, 177);
+							IIMAGE_Draw(image, 160, 177);
 #else							
 							IIMAGE_Draw(image, RITHT_START, TITLEBAR_HEIGHT);
 							IIMAGE_Draw(image, RITHT_START, TITLEBAR_HEIGHT+2);

@@ -17,7 +17,7 @@
 		<Text>Tools</Text>
 	</STRING>
 	<STRING Id="1015" Name="IDS_MAIN_MENU_RECENTCALLS">
-		<Text>Recent calls</Text>
+		<Text>Recentcalls</Text>
 	</STRING>
 	<STRING Id="1016" Name="IDS_MAIN_MENU_MESSAGES">
 		<Text>Messages</Text>
@@ -35,7 +35,7 @@
 		<Text>Settings</Text>
 	</STRING>
 	<STRING Id="1021" Name="IDS_MAIN_MENU_USERPROFILE">
-		<Text>User Profile</Text>
+		<Text>Profile</Text>
 	</STRING>
 	<String Id="1022" Name="IDS_MAIN_MENU_CAMERA">
 		<Text>Camera</Text>
@@ -71,7 +71,7 @@
 		<Text>FM Radio</Text>
 	</STRING>
 	<STRING Id="1051" Name="IDS_MAIN_MENU_MUSICPLAYER">
-		<Text>Music Player</Text>
+		<Text>MusicPlayer</Text>
 	</STRING>
 	<STRING Id="1061" Name="IDS_MAIN_MENU_SMARTWORLD">
 		<Text>Smart World</Text>
@@ -100,6 +100,7 @@
 	<String Id="1085" Name="IDS_MAIN_MENU_FRENDUO">
 		<Text>Frenduo</Text>
 	</String>
+
 </Strings>
 <Dialogs>
 	<DIALOG Id="6001" Name="IDD_MAIN_MENU" Focus="0">
