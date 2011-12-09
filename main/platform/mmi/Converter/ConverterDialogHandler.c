@@ -520,7 +520,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
     {
         return FALSE;
     }
-    
+    MSG_FATAL("Converter_ConvertEvent---------eCode=%x-----wParam=%x",eCode,wParam,0);
     switch (eCode)
     {
         case EVT_DIALOG_INIT:
@@ -815,6 +815,52 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
 			#else
 			IANNUNCIATOR_SetFieldText(pMe->m_pIAnn,text);
 			#endif
+            #ifdef FEATURE_LCD_TOUCH_ENABLE
+            if (pMe->PENUPbRedraw)
+               {
+                if(pMe->PENUPbCalc)
+                {
+                    double result;                   
+                    if(pMe->m_nCtlID == IDC_NUMBER1 || pMe->m_nCtlID == IDC_UNIT_MENU1)
+                    {
+                        ITEXTCTL_GetText(pMe->pNumber1, wstrDisplay, sizeof(wstrDisplay));                      
+                    }
+                    else
+                    {
+                        ITEXTCTL_GetText(pMe->pNumber2, wstrDisplay, sizeof(wstrDisplay));
+                    }                    
+                    if(WSTRLEN(wstrDisplay) == 0 || WSTRLEN(wstrDisplay) >7)
+                    {
+                        wstrDisplay[0] = '\0';
+                    }
+                    else                       
+                    {
+                        result = Converter_CalcResult(pMe);
+                        if(pMe->b_overflow)
+                        {
+                            (void)ISHELL_LoadResString(pMe->m_pShell, 
+                                                                AEE_CONVERTER_LANGFILE,
+                                                                IDS_OVERFLOW, 
+                                                                wstrDisplay,
+                                                                sizeof(wstrDisplay));
+                        }
+                        else
+                        {
+                            (void)Converter_FloatToWstr(result, wstrDisplay, sizeof(wstrDisplay));
+                        }
+                    }
+                    
+                    if(pMe->m_nCtlID == IDC_NUMBER1 || pMe->m_nCtlID == IDC_UNIT_MENU1)
+                    {
+                        ITEXTCTL_SetText(pMe->pNumber2, wstrDisplay, -1);
+                    }
+                    else
+                    {
+                        ITEXTCTL_SetText(pMe->pNumber1, wstrDisplay, -1);
+                    }
+                }
+            }
+            #endif
             //»­¼ýÍ·
             Image = ISHELL_LoadResImage(pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDB_LEFTARROW);
 			IImage_GetInfo(Image,&iInfo);
@@ -945,6 +991,11 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
             
         case EVT_DIALOG_END:
         {
+            #ifdef FEATURE_LCD_TOUCH_ENABLE
+            TSIM_NumberKeypad(FALSE);
+            pMe->PENUPbRedraw = FALSE;
+            pMe->PENUPbCalc = FALSE;
+            #endif
             IMENUCTL_DeleteAll(pMe->pUnitMenu1);
             IMENUCTL_DeleteAll(pMe->pUnitMenu2);
             FREEIF(m_inputNumber);
@@ -1473,7 +1524,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
 				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
 				AEERect bottomBarRect;
 				//int ht;
-				int nBarH ;
+				int nBarH ;                
 				AEEDeviceInfo devinfo;
 				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
 				
@@ -1546,24 +1597,43 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
 				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, p_Number1))
 				{
 					 MSG_FATAL("IDC_NUMBER1..........1",0,0,0);
+                     if(pMe->m_nCtlID != IDC_NUMBER1)
+                     {
 					 pMe->m_nCtlID = IDC_NUMBER1;
 					 (void) ISHELL_PostEvent(pMe->m_pShell,
                                             AEECLSID_CONVERTER,
                                             EVT_USER_REDRAW,
                                             0,
                                             0);
-					 return TRUE;
+                     }
+                     else
+                     {
+                     TSIM_NumberKeypad(TRUE);
+                     pMe->PENUPbRedraw = TRUE;
+                     pMe->PENUPbCalc = TRUE;
+					 return ITEXTCTL_HandleEvent(pMe->pNumber1,EVT_PEN_UP,wParam, dwParam);
+                     }
 				}
 				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, p_Number2))
 				{
 					 MSG_FATAL("IDC_NUMBER2..........2",0,0,0);
-					 pMe->m_nCtlID = IDC_NUMBER2;
-					 (void) ISHELL_PostEvent(pMe->m_pShell,
-                                            AEECLSID_CONVERTER,
-                                            EVT_USER_REDRAW,
-                                            0,
-                                            0);
-					 return TRUE;
+                     if(pMe->m_nCtlID != IDC_NUMBER2)
+                     {
+                      pMe->m_nCtlID = IDC_NUMBER2;
+                      (void) ISHELL_PostEvent(pMe->m_pShell,
+                                                 AEECLSID_CONVERTER,
+                                                 EVT_USER_REDRAW,
+                                                 0,
+                                                 0);
+                     }
+                     else
+                     {
+                     TSIM_NumberKeypad(TRUE);
+                     pMe->PENUPbRedraw = TRUE;
+                     pMe->PENUPbCalc = TRUE;
+					 return ITEXTCTL_HandleEvent(pMe->pNumber2,EVT_PEN_UP,wParam, dwParam);
+                     }	 
+                     
 				}
 				else if(TOUCH_PT_IN_RECT(wXPos, wYPos, p_Menu1))
 				{
@@ -1600,8 +1670,7 @@ static boolean  Converter_ConvertEvent(CConverter *pMe, AEEEvent eCode, uint16 w
                                             0,
                                             0);
 					return TRUE;
-				}
-				
+				}  
 			}
 			break;
 		#endif

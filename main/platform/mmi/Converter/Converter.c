@@ -502,6 +502,10 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
         }
 
         case EVT_DIALOG_INIT:
+            if( wParam == OEM_IME_DIALOG)
+			{
+				return TRUE;
+			}
             pMe->m_bAppIsReady = FALSE;
             pMe->m_pDialog = (IDialog*)dwParam;
             pMe->m_pActiveDlgID = wParam;
@@ -509,6 +513,10 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
             return Converter_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_DIALOG_START:
+            if(OEM_IME_DIALOG == wParam)
+			{
+				return TRUE;
+			}
             return Converter_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 
         case EVT_USER_REDRAW:
@@ -563,6 +571,10 @@ static boolean Converter_HandleEvent(IConverter *pi, AEEEvent eCode, uint16  wPa
             {
                 return TRUE;
             }
+            if(OEM_IME_DIALOG == wParam)
+			{
+				return ISHELL_PostEvent(pMe->m_pShell,AEECLSID_CONVERTER,EVT_USER_REDRAW,0,0);
+			}
             pMe->m_bAppIsReady = FALSE;
             (void) Converter_RouteDialogEvent(pMe,eCode,wParam,dwParam);
             pMe->m_pDialog = NULL;
@@ -621,6 +633,10 @@ static int Converter_InitAppData(CConverter *pMe)
     pMe->basiccoefficient = 0;
     pMe->m_converterMode = CONVERTER_MODE_NONE;
     pMe->b_overflow = FALSE;
+    #ifdef FEATURE_LCD_TOUCH_ENABLE
+    pMe->PENUPbRedraw = FALSE;
+    pMe->PENUPbCalc = FALSE;
+    #endif
     (void)MEMSET(&pMe->m_CurrencyCFG, 0, sizeof(ConverterCurrencyCfg));
     
     if (AEE_SUCCESS != ISHELL_CreateInstance(pMe->m_pShell,

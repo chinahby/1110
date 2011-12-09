@@ -182,6 +182,8 @@ typedef struct _CConverter
     uint16               m_selectedItem; //菜单记录当前选择的项
     ConverterMode   m_converterMode; //切换单位换算模式
     boolean             b_overflow; //结果溢出
+    boolean            PENUPbRedraw;
+    boolean            PENUPbCalc;
     IAnnunciator *m_pIAnn;
 	AEERect      pL_rect1;
 	AEERect      pL_rect2;
