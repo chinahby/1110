@@ -3357,7 +3357,77 @@ static boolean  HandleMyInfoEditDialogEvent(CBTApp *pMe,
             }
             return TRUE;
         }	
-		
+#ifdef FEATURE_LCD_TOUCH_ENABLE//andrew add for LCD touch
+		case EVT_PEN_UP:
+			{
+				AEEDeviceInfo devinfo;
+				int nBarH ;
+				AEERect rc;
+				int16 wXPos = (int16)AEE_GET_X(dwParam);
+				int16 wYPos = (int16)AEE_GET_Y(dwParam);
+
+				nBarH = GetBottomBarHeight(pMe->m_pIDisplay);
+        
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&rc, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+
+				if(TOUCH_PT_IN_RECT(wXPos,wYPos,rc))
+				{
+					if(wXPos >= rc.x && wXPos < rc.x + (rc.dx/3) )//×ó
+					{
+						boolean rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_BLUETOOTH_APP,EVT_USER,AVK_SELECT,0);
+                        MSG_FATAL("HandleFTPServerRegisterDlg:EVT_PEN_UP",0,0,0);
+                        return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)   && wXPos < rc.x + (rc.dx/3)*2 )//×ó
+					{
+						 boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_BLUETOOTH_APP,EVT_USER,AVK_INFO,0);
+						 return rt;
+					}
+					else if(wXPos >= rc.x + (rc.dx/3)*2 && wXPos < rc.x + (rc.dx/3)*3 )//×ó
+					{						
+                        AECHAR *pwstrText = ITEXTCTL_GetTextPtr(pIText);
+                        int nLen = 0;
+                        boolean rt = FALSE;
+                        int nCount = 0;
+                        if (NULL != pwstrText)
+                        {
+                            nLen = WSTRLEN(pwstrText);
+                        }
+                        if(nLen == 0)
+                        {
+                            rt =  ISHELL_PostEvent(pMe->m_pShell,AEECLSID_BLUETOOTH_APP,EVT_USER,AVK_CLR,0);
+                        }
+                        else
+                        {
+
+                            AECHAR newstrText[MAX_HANDLE_NAME_LEN] = {0};
+                            nCount = WSTRNCOPYN(newstrText,sizeof(newstrText),pwstrText,nLen-1);
+                            if(nCount == 0)
+                            {
+                                ITEXTCTL_Reset(pIText);
+                                ITEXTCTL_SetActive(pIText,TRUE);
+                            }
+                            else
+                            {
+                                rt = ITEXTCTL_SetText(pIText,newstrText,WSTRLEN(newstrText));
+                            }
+                            (void) ISHELL_PostEvent(pMe->m_pShell,
+                                                    AEECLSID_BLUETOOTH_APP,
+                                                    EVT_USER_REDRAW,
+                                                    0,
+                                                    0);
+
+                        }
+                        return rt;
+
+					}
+				}
+
+			}
+			break;
+#endif
         default:
         {
 			break;
@@ -4904,7 +4974,6 @@ static boolean  HandleFtpServerRegisterDialogEvent(CBTApp * pMe,
 			
 			 return TRUE;
 		}
-		
 		default:
 			break;
 	}

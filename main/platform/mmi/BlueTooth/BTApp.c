@@ -2983,7 +2983,22 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 #ifdef FEATURE_LCD_TOUCH_ENABLE
 			case AVK_CLR:
 			{
-				eCode = EVT_KEY;
+                if((pMe->m_eCurState == BTAPPST_SRHRESULT)||(pMe->m_eCurState == BTAPPST_DEVICESRH)
+                    ||(pMe->m_eCurState == BTAPPST_BOND_OPITION)
+                    ||(pMe->m_eCurState == BTAPPST_SET_SECURITY)||(pMe->m_eCurState == BTAPPST_SET_DISCOVERABLE)
+                    ||(pMe->m_eCurState == BTAPPST_SET_IOCAPABILITY)||(pMe->m_eCurState == BTAPPST_SET_DEBUGKEY)
+                    ||(pMe->m_eCurState == BTAPPST_FTP_SETTING)||(pMe->m_eCurState == BTAPPST_FTP_SERVER_REGISTER)
+                    ||(pMe->m_eCurState == BTAPPST_FTP_BROWSE)||(pMe->m_eCurState == BTAPPST_FTP_BROWSE_OPITION)
+                    ||(pMe->m_pActiveDlgID == IDD_BT_PROMPT)||(pMe->m_pActiveDlgID == IDD_BT_MSGBOX)
+                    ||(pMe->m_eCurState == BTAPPST_BT_OBEX_LIST_SERVERS)||(pMe->m_eCurState == BTAPPST_DEVICE_LIST))
+                {
+                    eCode = EVT_KEY_PRESS;
+                }
+                else
+                {
+                    eCode = EVT_KEY;
+                }
+				
 				return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 			}
 			break;
@@ -2993,13 +3008,37 @@ static boolean BTApp_HandleEvent(IBTApp *pi,
 			{
 				if (dwParam != 0)
 				{
-					eCode = EVT_COMMAND;
-					wParam = dwParam;
-					dwParam = 0;
+                    if((pMe->m_pActiveDlgID == IDD_BT_FTP_SERVER_REGISTER)||(pMe->m_pActiveDlgID == IDD_BT_FTP_SETTINGS)
+                        ||(pMe->m_pActiveDlgID == IDD_BT_OBEX_LIST_SERVERS)||(pMe->m_pActiveDlgID == IDD_BT_DISCOVERABLE)
+                        ||(pMe->m_pActiveDlgID == IDD_BT_BOND_OPITION))
+                    {
+                        eCode = EVT_KEY_PRESS;
+                    }
+                    else
+                    {
+    					eCode = EVT_COMMAND;
+    					wParam = dwParam;
+    					dwParam = 0;
+                    }
+
 				}
-				else
+				else	
 				{
-					eCode = EVT_KEY;
+                    if((pMe->m_eCurState == BTAPPST_SRHRESULT)||(pMe->m_eCurState == BTAPPST_DEVICESRH)
+                        ||(pMe->m_eCurState == BTAPPST_BOND_OPITION)
+                        ||(pMe->m_eCurState == BTAPPST_SET_SECURITY)||(pMe->m_eCurState == BTAPPST_SET_DISCOVERABLE)
+                        ||(pMe->m_eCurState == BTAPPST_SET_IOCAPABILITY)||(pMe->m_eCurState == BTAPPST_SET_DEBUGKEY)
+                        ||(pMe->m_eCurState == BTAPPST_FTP_SETTING)||(pMe->m_eCurState == BTAPPST_FTP_SERVER_REGISTER)
+                        ||(pMe->m_eCurState == BTAPPST_FTP_BROWSE)||(pMe->m_eCurState == BTAPPST_FTP_BROWSE_OPITION)
+                        ||(pMe->m_pActiveDlgID == IDD_BT_PROMPT)||(pMe->m_pActiveDlgID == IDD_BT_MSGBOX)
+                        ||(pMe->m_eCurState == BTAPPST_BT_OBEX_LIST_SERVERS)||(pMe->m_eCurState == BTAPPST_DEVICE_LIST))
+                    {
+                        eCode = EVT_KEY_PRESS;
+                    }
+                    else
+                    {
+                        eCode = EVT_KEY;
+                    }
 				}
 				return BTApp_RouteDialogEvent(pMe,eCode,wParam,dwParam);
 			}
