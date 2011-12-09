@@ -2150,7 +2150,38 @@ static boolean  SecurityPinChangeDlgHandler(CSecurityMenu *pMe,
                 }
             }
             return TRUE;
-            
+#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+			if (eCode == EVT_PEN_UP)
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+				
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+					{						
+						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
+						return rt;
+					}
+					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
+					{						
+						//boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_ALARMCLOCK,EVT_USER,AVK_SELECT,0);
+						//MSG_FATAL("AEECLSID_ALARMCLOCK............",0,0,0);
+						//return rt;
+						//eCode = EVT_KEY;
+						//wParam = AVK_SELECT;
+					}
+				}
+			}
+#endif
         default:
             break;
     }
@@ -5088,7 +5119,38 @@ static boolean  HandleChangeCodeDialogEvent(CSecurityMenu *pMe,
             }
 
             return TRUE;
-
+		#ifdef FEATURE_LCD_TOUCH_ENABLE//wlh add for LCD touch
+			if (eCode == EVT_PEN_UP)
+			{
+				int16 wXPos = (int16)AEE_GET_X((const char *)dwParam);
+				int16 wYPos = (int16)AEE_GET_Y((const char *)dwParam);
+				AEERect bottomBarRect;
+				//int ht;
+				int nBarH ;
+				AEEDeviceInfo devinfo;
+				nBarH = GetBottomBarHeight(pMe->m_pDisplay);
+				
+				MEMSET(&devinfo, 0, sizeof(devinfo));
+				ISHELL_GetDeviceInfo(pMe->m_pShell, &devinfo);
+				SETAEERECT(&bottomBarRect, 0, devinfo.cyScreen-nBarH, devinfo.cxScreen, nBarH);
+				if( TOUCH_PT_IN_RECT(wXPos, wYPos, bottomBarRect))
+				{
+					if(wXPos >= bottomBarRect.x + (bottomBarRect.dx/3)*2 && wXPos < bottomBarRect.x + (bottomBarRect.dx/3)*3 )//ÓÒ
+					{						
+						boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_APP_SECURITYMENU,EVT_USER,AVK_CLR,0);
+						return rt;
+					}
+					else if((wXPos >= bottomBarRect.x) && (wXPos < bottomBarRect.x + (bottomBarRect.dx/3)))//×ó
+					{						
+						//boolean rt = ISHELL_PostEvent(pMe->m_pShell,AEECLSID_ALARMCLOCK,EVT_USER,AVK_SELECT,0);
+						//MSG_FATAL("AEECLSID_ALARMCLOCK............",0,0,0);
+						//return rt;
+						//eCode = EVT_KEY;
+						//wParam = AVK_SELECT;
+					}
+				}
+			}
+#endif
         default:
             break;
     }
