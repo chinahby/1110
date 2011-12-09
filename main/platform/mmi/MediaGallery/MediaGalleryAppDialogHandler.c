@@ -6087,11 +6087,23 @@ static boolean MediaGalleryApp_ImageSettingDlg_HandleEvent(
       }
 
       case EVT_COMMAND:
-      return MGAppUtil_OnMediaMenuCommandEvt(pMe,
-                                             pMenuCtl,
-                                             wParam,
-                                             dwParam);
+        if(eDlgStat == MG_DLGSTAT_NORMAL)
+        {
+           MGAppUtil_UpdateSelItemCheck(pMe);
 
+           MediaGalleryApp_SetOps(pMe, MG_OPS_MEDIAMENU, MG_OP_VIEWIMG);
+           MediaGalleryApp_SetOps(pMe, MG_OPS_IMAGEVIEW, MG_OP_NULL);
+           MGCLOSE_DIALOG(MGDLGRET_VIEW);
+           return TRUE;
+        }
+        else  
+        {
+            return MGAppUtil_OnMediaMenuCommandEvt(pMe,
+                                                 pMenuCtl,
+                                                 wParam,
+                                                 dwParam);
+        }
+        
       case EVT_CTL_SEL_CHANGED:
          MGAppUtil_OnMediaMenuSelChange(pMe, eDlgStat);
          return TRUE;
@@ -6151,6 +6163,23 @@ static boolean MediaGalleryApp_ImageSettingDlg_HandleEvent(
                   return rt;
              }
          }
+        else
+        {
+            if(eDlgStat == MG_DLGSTAT_POPUP)
+            {
+                MSG_FATAL("eDlgStat == MG_DLGSTAT_POPUP",0,0,0);  
+                return IMENUCTL_HandleEvent(pMe->m_pMenuPopup, eCode, wParam, dwParam);
+            }  
+            else if(pMenuCtl != NULL)
+            {
+                MSG_FATAL("EVT_PEN_UP pMenuCtl != NULL",0,0,0);  
+                if (IMENUCTL_HandleEvent(pMenuCtl, eCode, wParam, dwParam))
+                {
+                    MSG_FATAL("MediaGalleryApp_ImageSettingDlg_HandleEvent 0",0,0,0); 
+                    return TRUE;
+                }
+            }    
+        }         
      }
      break;
 #endif //FEATURE_LCD_TOUCH_ENABLE
