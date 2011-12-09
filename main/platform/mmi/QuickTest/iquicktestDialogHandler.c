@@ -537,7 +537,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					{
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					 
+					 	MSG_FATAL("AVK_ENDCALL..........................",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -576,7 +576,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					{
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					    
+					    MSG_FATAL("AVK_ENDCALL.....2.....................",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -612,6 +612,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 						IImage* image	= NULL;
 						
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+						MSG_FATAL("AVK_ENDCALL...........3...............",0,0,0);
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
                         IIMAGE_Draw(image, 86, 0);
 #elif defined(FEATURE_DISP_176X220)
@@ -664,7 +665,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					{
 	                    IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL.............4.............",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -694,7 +695,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL.............5.............",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -723,7 +724,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL.............6.............",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -752,7 +753,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL..........7................",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -781,7 +782,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL............8..............",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -810,7 +811,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL.................9.........",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -839,7 +840,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL.............10.............",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -868,7 +869,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL.................11.........",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -897,7 +898,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL...........12...............",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -927,7 +928,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL.........13.................",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -956,7 +957,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL..........14................",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -985,7 +986,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL............15..............",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -1011,7 +1012,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL...........16...............",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128) || defined(FEATURE_DISP_176X220)
@@ -1043,7 +1044,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL..........17................",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -1076,7 +1077,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 					{
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL............18..............",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -1109,6 +1110,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+						MSG_FATAL("AVK_ENDCALL..............19............",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -1151,6 +1153,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 			    	{
 			    		IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+						MSG_FATAL("AVK_ENDCALL.....................20.....",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*3, FIVE_LINE);
@@ -1164,6 +1167,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
 			    	{
 			    		IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+						MSG_FATAL("AVK_ENDCALL................21..........",0,0,0);
 			    	#if defined(FEATURE_DISP_128X160)
 			    		if( image != NULL)
 						{
@@ -1209,6 +1213,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
+						MSG_FATAL("AVK_ENDCALL...............22...........",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -1248,7 +1253,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL..................23........",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -1282,7 +1287,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL..........24................",0,0,0);
 						if( image != NULL)
 						{
 #if defined	(FEATURE_VERSION_ESIA021  ) ||  defined	(FEATURE_VERSION_FLEXI021) || defined(FEATURE_DISP_128X128)
@@ -1315,7 +1320,7 @@ static boolean  QuickTest_KeyTestHandler(CQuickTest *pMe,
                     {
                         IImage* image   = NULL;
                         image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-                    
+                        MSG_FATAL("AVK_ENDCALL.........25.................",0,0,0);
                         if( image != NULL)
                         {
                             
@@ -1336,7 +1341,7 @@ case AVK_CAMERA:
                     {
                         IImage* image   = NULL;
                         image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-                    
+                        MSG_FATAL("AVK_ENDCALL.............26.............",0,0,0);
                         if( image != NULL)
                         {
                             IIMAGE_Draw(image, 0, 21);
@@ -1356,7 +1361,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL...............27...........",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*4, SECONDE_LINE);
@@ -1374,7 +1379,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL.........28.................",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*5, SECONDE_LINE);
@@ -1392,7 +1397,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL............29..............",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, SECONDE_LINE);
@@ -1406,7 +1411,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL..........30................",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*7, SECONDE_LINE);
@@ -1420,7 +1425,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL............31..............",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*8, SECONDE_LINE);
@@ -1434,7 +1439,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL.........32.................",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*9, SECONDE_LINE);
@@ -1452,7 +1457,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL..............33............",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*4, THRID_LINE);
@@ -1470,7 +1475,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL........34..................",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*5, THRID_LINE);
@@ -1488,7 +1493,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL............35..............",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, THRID_LINE);
@@ -1502,7 +1507,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL..............36............",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*7, THRID_LINE);
@@ -1516,7 +1521,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL.............37.............",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*8, THRID_LINE);
@@ -1538,7 +1543,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL.............38............",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*4, FOUR_LINE);
@@ -1560,7 +1565,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL............39..............",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*5, FOUR_LINE);
@@ -1582,7 +1587,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL.........40.................",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*6, FOUR_LINE);
@@ -1600,7 +1605,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL...........41...............",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*7, FOUR_LINE);
@@ -1618,7 +1623,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL..........42................",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*8, FOUR_LINE);
@@ -1632,7 +1637,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL........43..................",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*9, FOUR_LINE);
@@ -1650,7 +1655,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL............44..............",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, 0, FOUR_LINE);
@@ -1664,7 +1669,7 @@ case AVK_CAMERA:
                      {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL................45..........",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*4, FIVE_LINE);
@@ -1675,11 +1680,12 @@ case AVK_CAMERA:
                      }
 					 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                      break;
+			#ifndef FEATURE_DISP_240X320
 				 case AVK_SYMBOL:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL................46..........",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*7, FIVE_LINE);
@@ -1689,6 +1695,7 @@ case AVK_CAMERA:
                      }
 					 IDISPLAY_UpdateEx(pMe->m_pDisplay, FALSE);
                      break;
+			#endif
 #if defined( FEATURE_VERSION_HITZ181)||defined(FEATURE_VERSION_MTM)
                  case AVK_SHIFT:
 #else
@@ -1697,7 +1704,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL.................47.........",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, 0, FIVE_LINE);
@@ -1712,7 +1719,7 @@ case AVK_CAMERA:
                     {
 						IImage* image	= NULL;
 						image = ISHELL_LoadResImage( pMe->m_pShell, AEE_APPSCOMMONRES_IMAGESFILE, IDI_TEST_DOWN);
-					
+					    MSG_FATAL("AVK_ENDCALL................48..........",0,0,0);
 						if( image != NULL)
 						{
 							IIMAGE_Draw(image, TITLEBAR_HEIGHT*8, FIVE_LINE);
